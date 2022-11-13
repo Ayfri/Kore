@@ -86,6 +86,7 @@ data class SelectorNbtData(
 	var advancements: Advancements? = null,
 	var scores: Scores? = null,
 	var sort: Sort? = null,
+	var predicate: String? = null,
 ) {
 	@SerialName("gamemode")
 	private var _gamemode: GamemodeSelector = GamemodeSelector()
