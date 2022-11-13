@@ -1,10 +1,5 @@
 
-import arguments.BossBarColor
-import arguments.Gamemode
-import arguments.SelectorType
-import arguments.advancements
-import arguments.range
-import arguments.scores
+import arguments.*
 import commands.*
 import functions.function
 
@@ -55,7 +50,7 @@ fun main() {
 				addBlank()
 				comment("Ouais ceci n'a aucun sens mais juste je teste si ça compile mdr")
 				modify("Motion") {
-					insert(1, block("stone_slab", states = mapOf("half" to "top")), "test")
+					insert(1, coordinate(pos(2).relative, pos(2), pos(2)), "test")
 				}
 			}
 			
@@ -64,6 +59,30 @@ fun main() {
 			effect(selector(SelectorType.ALL_PLAYERS)) {
 				clear()
 				give("minecraft:regeneration", 10, 1, false)
+			}
+			
+			execute {
+				ifCondition {
+					score(literal("Ayfri"), "test", literal("other"), "test") { first, second ->
+						first lessThan second
+					}
+				}
+				
+				at(selector(SelectorType.ALL_PLAYERS))
+				asTarget(selector(SelectorType.SELF))
+				align(Axes.XY)
+				inDimension(Dimension.OVERWORLD)
+				facingEntity(selector(SelectorType.ALL_ENTITIES, true) {
+					sort = Sort.NEAREST
+				})
+				
+				rotatedAs(selector(SelectorType.ALL_ENTITIES, true) {
+					sort = Sort.RANDOM
+				})
+				
+				run {
+					advancement(AdvancementAction.GRANT, selector(SelectorType.ALL_PLAYERS), advancement("story/iron_tools"))
+				}
 			}
 		}
 		

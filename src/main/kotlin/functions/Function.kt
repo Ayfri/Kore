@@ -13,8 +13,9 @@ class Function(val name: String, val namespace: String = "minecraft", val lines:
 		lines.add(line)
 	}
 	
-	fun addLine(command: Command) {
+	fun addLine(command: Command): Command {
 		lines.add(command.toString())
+		return command
 	}
 	
 	fun comment(comment: String) {
@@ -27,7 +28,13 @@ class Function(val name: String, val namespace: String = "minecraft", val lines:
 		file.writeText(lines.joinToString("\n"))
 	}
 	
+	fun clear() = lines.clear()
+	
 	override fun toString() = lines.joinToString("\n")
+	
+	companion object {
+		val EMPTY = Function("")
+	}
 }
 
 fun DataPack.function(name: String, namespace: String = this.name, directory: String = "", block: Function.() -> Unit) {
