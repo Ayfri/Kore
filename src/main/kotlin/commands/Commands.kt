@@ -1,6 +1,8 @@
 package commands
 
 import arguments.BossBarColor
+import arguments.Difficulty
+import arguments.Gamemode
 import functions.Function
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -197,7 +199,64 @@ class Data(private val fn: Function, val target: Argument.Data) {
 		fn.literal(target.literalName),
 		target,
 		fn.literal(path)
-	))
+	)
+	)
 }
 
 fun Function.data(target: Argument.Data, block: Data.() -> Unit) = Data(this, target).apply(block)
+
+@Serializable(DatapackPriority.Companion.DatapackPrioritySerializer::class)
+enum class DatapackPriority {
+	FIRST,
+	LAST;
+	
+	companion object {
+		val values = values()
+		
+		object DatapackPrioritySerializer : LowercaseSerializer<DatapackPriority>(values)
+	}
+}
+
+class Datapack(private val fn: Function, val name: String) {
+	fun disable() = fn.addLine(command("datapack", fn.literal("disable"), fn.literal(name)))
+	fun enable(priority: DatapackPriority? = null) = fn.addLine(command("datapack", fn.literal("enable"), fn.literal(name), fn.literal(priority?.asArg())))
+	fun enableFirst() = fn.addLine(command("datapack", fn.literal("enable"), fn.literal("first"), fn.literal(name)))
+	fun enableLast() = fn.addLine(command("datapack", fn.literal("enable"), fn.literal("last"), fn.literal(name)))
+	fun enableBefore(name: String) = fn.addLine(command("datapack", fn.literal("enable"), fn.literal("before"), fn.literal(name), fn.literal(name)))
+	fun enableAfter(name: String) = fn.addLine(command("datapack", fn.literal("enable"), fn.literal("after"), fn.literal(name), fn.literal(name)))
+}
+
+class Datapacks(private val fn: Function) {
+	fun available() = fn.addLine(command("datapack", fn.literal("available")))
+	fun enabled() = fn.addLine(command("datapack", fn.literal("enabled")))
+	fun list() = fn.addLine(command("datapack", fn.literal("list")))
+}
+
+fun Function.datapack(name: String, block: Datapack.() -> Unit) = Datapack(this, name).apply(block)
+val Function.datapacks get() = Datapacks(this)
+
+fun Function.debugStart() = addLine(command("debug", literal("start")))
+fun Function.debugStop() = addLine(command("debug", literal("stop")))
+
+fun Function.defaultGamemode(mode: Gamemode) = addLine(command("defaultgamemode", literal(mode.asArg())))
+
+fun Function.difficulty(difficulty: Difficulty? = null) = addLine(command("difficulty", literal(difficulty?.asArg())))
+
+class Effect(private val fn: Function, val target: Argument.Entity) {
+	fun clear(effect: String? = null) = fn.addLine(command("effect", fn.literal("clear"), target, fn.literal(effect)))
+	fun give(effect: String, duration: Int? = null, amplifier: Int? = null, hideParticles: Boolean? = null) = fn.addLine(
+		command(
+			"effect",
+			fn.literal("give"),
+			target,
+			fn.literal(effect),
+			fn.int(duration),
+			fn.int(amplifier),
+			fn.bool(hideParticles)
+		)
+	)
+}
+
+fun Function.effect(target: Argument.Entity, block: Effect.() -> Unit) = Effect(this, target).apply(block)
+
+fun Function.enchant(enchantment: String, level: Int? = null) = addLine(command("enchant", literal(enchantment), int(level)))

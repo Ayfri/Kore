@@ -129,7 +129,8 @@ fun Function.block(
 ) = Argument.Block(block, namespace, states.toMutableMap(), nbtData)
 
 fun Function.blockTag(tag: String, namespace: String = "minecraft") = Argument.BlockTag(tag, namespace)
-fun Function.bool(value: Boolean) = if (value) Argument.Literal("true") else Argument.Literal("false")
+fun Function.bool(value: Boolean) = Argument.Literal(value.toString())
+internal fun Function.bool(value: Boolean?) = value?.let { Argument.Literal(it.toString()) }
 fun Function.coordinate(x: Double, y: Double, z: Double, type: Argument.Coordinate.Type = Argument.Coordinate.Type.World) = Argument.Coordinate(x, y, z, type)
 fun Function.coordinate(x: Int, y: Int, z: Int, type: Argument.Coordinate.Type = Argument.Coordinate.Type.World) = Argument.Coordinate(x.toDouble(), y.toDouble(), z.toDouble(), type)
 fun Function.float(value: Double) = Argument.Float(value)
@@ -147,7 +148,11 @@ fun Function.selector(base: SelectorType, limitToOne: Boolean = false, data: Sel
 	nbtData.data()
 	if (limitToOne) nbtData.limit = 1
 })
+
 fun Function.literal(name: String) = Argument.Literal(name)
+
+@JvmName("literalNullable")
+internal fun Function.literal(name: String?) = name?.let { Argument.Literal(it) }
 fun Function.time(value: Double, type: Argument.Time.Type = Argument.Time.Type.Tick) = Argument.Time(value, type)
 fun Function.time(value: Int, type: Argument.Time.Type = Argument.Time.Type.Tick) = Argument.Time(value.toDouble(), type)
 fun Function.uuid(uuid: java.util.UUID) = Argument.UUID(uuid)

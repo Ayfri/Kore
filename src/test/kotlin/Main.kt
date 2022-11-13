@@ -58,6 +58,13 @@ fun main() {
 					insert(1, block("stone_slab", states = mapOf("half" to "top")), "test")
 				}
 			}
+			
+			defaultGamemode(Gamemode.SURVIVAL)
+			
+			effect(selector(SelectorType.ALL_PLAYERS)) {
+				clear()
+				give("minecraft:regeneration", 10, 1, false)
+			}
 		}
 		
 		pack {
