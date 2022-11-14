@@ -6,36 +6,47 @@ sealed class NbtEntry {
 	class Byte(val value: kotlin.Byte) : NbtEntry() {
 		override fun asString() = value.toString()
 	}
+	
 	class Short(val value: kotlin.Short) : NbtEntry() {
 		override fun asString() = value.toString()
 	}
+	
 	class Int(val value: kotlin.Int) : NbtEntry() {
 		override fun asString() = value.toString()
 	}
+	
 	class Long(val value: kotlin.Long) : NbtEntry() {
 		override fun asString() = value.toString()
 	}
+	
 	class Float(val value: kotlin.Float) : NbtEntry() {
 		override fun asString() = value.toString()
 	}
+	
 	class Double(val value: kotlin.Double) : NbtEntry() {
 		override fun asString() = value.toString()
 	}
+	
 	class ByteArray(val value: kotlin.ByteArray) : NbtEntry() {
 		override fun asString() = value.toString()
 	}
+	
 	class String(val value: kotlin.String) : NbtEntry() {
 		override fun asString() = value
 	}
+	
 	class List(val value: kotlin.collections.List<NbtEntry>) : NbtEntry() {
 		override fun asString() = value.joinToString(", ", "[", "]")
 	}
+	
 	class Compound(val value: kotlin.collections.List<Nbt<NbtEntry>>) : NbtEntry() {
 		override fun asString() = value.joinToString(", ", "{", "}")
 	}
+	
 	class IntArray(val value: kotlin.IntArray) : NbtEntry() {
 		override fun asString() = value.toString()
 	}
+	
 	class LongArray(val value: kotlin.LongArray) : NbtEntry() {
 		override fun asString() = value.toString()
 	}

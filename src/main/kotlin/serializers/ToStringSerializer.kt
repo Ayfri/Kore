@@ -11,7 +11,7 @@ open class ToStringSerializer<T> : KSerializer<T> {
 	override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ToStringSerializer", PrimitiveKind.STRING)
 	
 	override fun deserialize(decoder: Decoder): T = decoder.decodeString() as T
-
+	
 	override fun serialize(encoder: Encoder, value: T) {
 		encoder.encodeString(value.toString())
 	}

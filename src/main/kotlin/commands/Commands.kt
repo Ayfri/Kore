@@ -147,46 +147,25 @@ class DataModifyOperation(private val fn: Function) {
 class Data(private val fn: Function, val target: Argument.Data) {
 	fun get(path: String, scale: Double? = null) = fn.addLine(
 		command(
-			"data",
-			fn.literal("get"),
-			fn.literal(target.literalName),
-			target,
-			fn.literal(path),
-			fn.float(scale)
+			"data", fn.literal("get"), fn.literal(target.literalName), target, fn.literal(path), fn.float(scale)
 		)
 	)
 	
 	fun modify(path: String, value: DataModifyOperation.() -> List<Argument>) = fn.addLine(
 		command(
-			"data",
-			fn.literal("modify"),
-			fn.literal(target.literalName),
-			target,
-			fn.literal(path),
-			*DataModifyOperation(fn).value().toTypedArray()
+			"data", fn.literal("modify"), fn.literal(target.literalName), target, fn.literal(path), *DataModifyOperation(fn).value().toTypedArray()
 		)
 	)
 	
 	fun merge(from: Argument.Data, path: String) = fn.addLine(
 		command(
-			"data",
-			fn.literal("merge"),
-			fn.literal(target.literalName),
-			target,
-			fn.literal("from"),
-			fn.literal(from.literalName),
-			from,
-			fn.literal(path)
+			"data", fn.literal("merge"), fn.literal(target.literalName), target, fn.literal("from"), fn.literal(from.literalName), from, fn.literal(path)
 		)
 	)
 	
 	fun remove(path: String) = fn.addLine(
 		command(
-			"data",
-			fn.literal("remove"),
-			fn.literal(target.literalName),
-			target,
-			fn.literal(path)
+			"data", fn.literal("remove"), fn.literal(target.literalName), target, fn.literal(path)
 		)
 	)
 }
@@ -234,13 +213,7 @@ class Effect(private val fn: Function, val target: Argument.Entity) {
 	fun clear(effect: String? = null) = fn.addLine(command("effect", fn.literal("clear"), target, fn.literal(effect)))
 	fun give(effect: String, duration: Int? = null, amplifier: Int? = null, hideParticles: Boolean? = null) = fn.addLine(
 		command(
-			"effect",
-			fn.literal("give"),
-			target,
-			fn.literal(effect),
-			fn.int(duration),
-			fn.int(amplifier),
-			fn.bool(hideParticles)
+			"effect", fn.literal("give"), target, fn.literal(effect), fn.int(duration), fn.int(amplifier), fn.bool(hideParticles)
 		)
 	)
 }
@@ -277,18 +250,11 @@ class ExecuteCondition(private val fn: Function) {
 	fun block(pos: Argument.Coordinate, block: Argument.Block) = listOf(fn.literal("block"), pos, block)
 	
 	fun blocks(start: Argument.Coordinate, end: Argument.Coordinate, destination: Argument.Coordinate, mode: BlocksTestMode) = listOf(
-		fn.literal("blocks"),
-		start,
-		end,
-		destination,
-		fn.literal(mode.asArg())
+		fn.literal("blocks"), start, end, destination, fn.literal(mode.asArg())
 	)
 	
 	fun data(target: Argument.Data, path: String) = listOf(
-		fn.literal("data"),
-		fn.literal(target.literalName),
-		target,
-		fn.literal(path)
+		fn.literal("data"), fn.literal(target.literalName), target, fn.literal(path)
 	)
 	
 	fun entity(target: Argument.Entity) = listOf(fn.literal("entity"), target)
@@ -296,19 +262,11 @@ class ExecuteCondition(private val fn: Function) {
 	fun predicate(predicate: String) = listOf(fn.literal("predicate"), fn.literal(predicate))
 	
 	fun score(target: Argument.ScoreHolder, objective: String, source: Argument.ScoreHolder, sourceObjective: String, relation: RelationBlock.(Number, Number) -> Relation) = listOf(
-		fn.literal("score"),
-		target,
-		fn.literal(objective),
-		fn.literal(relation(RelationBlock(), 0.0, 0.0).asArg()),
-		source,
-		fn.literal(sourceObjective)
+		fn.literal("score"), target, fn.literal(objective), fn.literal(relation(RelationBlock(), 0.0, 0.0).asArg()), source, fn.literal(sourceObjective)
 	)
 	
 	fun score(target: Argument.ScoreHolder, objective: String, range: RangeOrInt) = listOf(
-		fn.literal("score"),
-		target,
-		fn.literal(objective),
-		fn.literal(range.asArg())
+		fn.literal("score"), target, fn.literal(objective), fn.literal(range.asArg())
 	)
 }
 
@@ -340,8 +298,7 @@ class Execute(private val fn: Function) {
 	fun at(target: Argument.Entity) = array.addAll(fn.literal("at"), target)
 	fun facing(target: Argument.Entity, anchor: Anchor? = null) = array.addAll(fn.literal("facing"), target, fn.literal(anchor?.asArg()))
 	fun facingBlock(pos: Argument.Coordinate, anchor: Anchor? = null) = array.addAll(fn.literal("facing"), fn.literal("block"), pos, fn.literal(anchor?.asArg()))
-	fun facingEntity(target: Argument.Entity, anchor: Anchor? = null) =
-		array.addAll(fn.literal("facing"), target, fn.literal("entity"), target, fn.literal(anchor?.asArg()))
+	fun facingEntity(target: Argument.Entity, anchor: Anchor? = null) = array.addAll(fn.literal("facing"), target, fn.literal("entity"), target, fn.literal(anchor?.asArg()))
 	
 	fun facingPos(pos: Argument.Coordinate, anchor: Anchor? = null) = array.addAll(fn.literal("facing"), fn.literal("position"), pos, fn.literal(anchor?.asArg()))
 	fun inDimension(dimension: Dimension) = array.addAll(fn.literal("in"), fn.dimension(dimension))

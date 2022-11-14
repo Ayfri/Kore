@@ -7,7 +7,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-open class LowercaseSerializer<T>(private val values : Array<T>) : KSerializer<T> where T : Enum<T> {
+open class LowercaseSerializer<T>(private val values: Array<T>) : KSerializer<T> where T : Enum<T> {
 	override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("LowercaseSerializer", PrimitiveKind.STRING)
 	
 	override fun deserialize(decoder: Decoder): T {

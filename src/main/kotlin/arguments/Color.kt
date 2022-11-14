@@ -21,10 +21,10 @@ enum class Color {
 	LIGHT_PURPLE,
 	YELLOW,
 	WHITE;
-
+	
 	companion object {
 		val values = values()
-
+		
 		object ColorSerializer : LowercaseSerializer<Color>(values)
 	}
 }
@@ -38,10 +38,10 @@ enum class BossBarColor {
 	RED,
 	WHITE,
 	YELLOW;
-
+	
 	companion object {
 		val values = values()
-
+		
 		object BossBarColorSerializer : LowercaseSerializer<BossBarColor>(values)
 	}
 }

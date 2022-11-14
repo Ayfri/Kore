@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import serializers.ToStringSerializer
 
 @Serializable(Score.Companion.ScoreSerializer::class)
-data class Score(val name: String, val value: RangeOrInt)  {
+data class Score(val name: String, val value: RangeOrInt) {
 	override fun toString() = "$name=${value}"
 	
 	companion object {
@@ -13,7 +13,7 @@ data class Score(val name: String, val value: RangeOrInt)  {
 }
 
 @Serializable(Scores.Companion.ScoresSerializer::class)
-data class Scores(val scores: Map<String, Score> = emptyMap())  {
+data class Scores(val scores: Map<String, Score> = emptyMap()) {
 	override fun toString() = scores.entries.joinToString(",", "{", "}") { "${it.key}=${it.value}" }
 	
 	companion object {

@@ -4,7 +4,7 @@ import java.io.File
 
 data class Pack(
 	var packFormat: Int,
-	var description: String
+	var description: String,
 )
 
 @FunctionsHolder
