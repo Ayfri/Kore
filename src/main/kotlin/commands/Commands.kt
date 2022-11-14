@@ -1,14 +1,6 @@
 package commands
 
-import arguments.Axes
-import arguments.BossBarColor
-import arguments.DataType
-import arguments.Difficulty
-import arguments.Dimension
-import arguments.Gamemode
-import arguments.RangeOrInt
-import arguments.Relation
-import arguments.RelationBlock
+import arguments.*
 import functions.Function
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -373,3 +365,44 @@ class Execute(private val fn: Function) {
 }
 
 fun Function.execute(block: Execute.() -> Unit) = addLine(command("execute", *Execute(this).apply(block).getFinalCommand()))
+
+fun Function.experienceAdd(target: Argument.Entity, amount: Int, type: ExperienceType = ExperienceType.POINTS) =
+	addLine(command("experience", literal("add"), target, int(amount), literal(type.asArg())))
+
+fun Function.experienceAdd(target: Argument.Entity, amount: XpNumber) = addLine(command("experience", literal("add"), target, int(amount.value), literal(amount.typeString)))
+
+fun Function.experienceQuery(target: Argument.Entity, type: ExperienceType = ExperienceType.POINTS) = addLine(command("experience", literal("query"), target, literal(type.asArg())))
+
+fun Function.experienceSet(target: Argument.Entity, amount: Int, type: ExperienceType = ExperienceType.POINTS) =
+	addLine(command("experience", literal("set"), target, int(amount), literal(type.asArg())))
+
+fun Function.experienceSet(target: Argument.Entity, amount: XpNumber) = addLine(command("experience", literal("set"), target, int(amount.value), literal(amount.typeString)))
+
+@Serializable(FillOption.Companion.FillOptionSerializer::class)
+enum class FillOption {
+	DESTROY,
+	HOLLOW,
+	KEEP,
+	OUTLINE;
+	
+	companion object {
+		val values = values()
+		
+		object FillOptionSerializer : LowercaseSerializer<FillOption>(values)
+	}
+}
+
+fun Function.fill(from: Argument.Coordinate, to: Argument.Coordinate, block: Argument.Block, fillOption: FillOption? = null) = addLine(command("fill", from, to, block, literal(fillOption?.asArg())))
+fun Function.fill(from: Argument.Coordinate, to: Argument.Coordinate, block: Argument.Block, filter: Argument.Block) = addLine(command("fill", from, to, block, literal("replace"), filter))
+
+fun Function.function(name: String) = addLine(command("function", literal(name)))
+fun Function.function(namespace: String, name: String) = addLine(command("function", literal(namespace), literal(name)))
+
+fun Function.gamemode(gamemode: Gamemode, target: Argument.Entity? = null) = addLine(command("gamemode", literal(gamemode.asArg()), target))
+
+fun Function.gamerule(rule: String, value: Boolean? = null) = addLine(command("gamerule", literal(rule), bool(value)))
+fun Function.gamerule(rule: String, value: Int) = addLine(command("gamerule", literal(rule), int(value)))
+
+fun Function.give(target: Argument.Entity, item: Argument.Item, count: Int? = null) = addLine(command("give", target, item, int(count)))
+
+fun Function.help(command: String? = null) = addLine(command("help", literal(command)))

@@ -4,7 +4,8 @@ import DataPack
 import commands.Command
 import java.io.File
 
-class Function(val name: String, val namespace: String = "minecraft", val lines: MutableList<String> = mutableListOf()) {
+class Function(val name: String, val namespace: String = "minecraft", val datapack: DataPack) {
+	val lines = mutableListOf<String>()
 	var directory = ""
 	
 	fun addBlank() = lines.add("")
@@ -33,12 +34,12 @@ class Function(val name: String, val namespace: String = "minecraft", val lines:
 	override fun toString() = lines.joinToString("\n")
 	
 	companion object {
-		val EMPTY = Function("")
+		val EMPTY = Function("", datapack = DataPack(""))
 	}
 }
 
 fun DataPack.function(name: String, namespace: String = this.name, directory: String = "", block: Function.() -> Unit) {
-	val function = Function(name, namespace)
+	val function = Function(name, namespace, this)
 	function.directory = directory
 	function.block()
 	functions.add(function)

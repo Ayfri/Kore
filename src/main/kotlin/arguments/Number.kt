@@ -1,5 +1,8 @@
 package arguments
 
+import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.jsonPrimitive
+
 private val Double.str
 	get() = when {
 		this == toFloat().toDouble() -> this.toInt().toString()
@@ -61,3 +64,24 @@ fun Double.toRot() = RotNumber(this)
 fun Int.toRot() = RotNumber(this.toDouble())
 fun rot(value: Double, type: RotNumber.Type = RotNumber.Type.RELATIVE) = RotNumber(value, type)
 fun rot(value: Int, type: RotNumber.Type = RotNumber.Type.RELATIVE) = RotNumber(value.toDouble(), type)
+
+class XpNumber(val value: Long, val type: ExperienceType = ExperienceType.POINTS) {
+	val typeString get() = json.encodeToJsonElement(type).jsonPrimitive.content
+	
+	operator fun plus(other: XpNumber) = XpNumber(value + other.value, type)
+	operator fun minus(other: XpNumber) = XpNumber(value - other.value, type)
+	operator fun times(other: XpNumber) = XpNumber(value * other.value, type)
+	operator fun div(other: XpNumber) = XpNumber(value / other.value, type)
+	operator fun rem(other: XpNumber) = XpNumber(value % other.value, type)
+	
+	fun toLevels() = XpNumber(value, ExperienceType.LEVELS)
+	fun toPoints() = XpNumber(value, ExperienceType.POINTS)
+	
+	override fun toString() = when (type) {
+		ExperienceType.LEVELS -> "${value}L"
+		ExperienceType.POINTS -> value.toString()
+	}
+}
+
+val Int.levels get() = XpNumber(this.toLong(), ExperienceType.LEVELS)
+val Int.points get() = XpNumber(this.toLong(), ExperienceType.POINTS)
