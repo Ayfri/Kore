@@ -1,3 +1,4 @@
+import annotations.FunctionsHolder
 import functions.Function
 import java.io.File
 
@@ -6,6 +7,7 @@ data class Pack(
 	var description: String
 )
 
+@FunctionsHolder
 class DataPack(val name: String) {
 	val pack = Pack(10, "Kordex Plugin")
 	val path = "out"
