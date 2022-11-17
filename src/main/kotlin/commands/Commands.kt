@@ -78,3 +78,14 @@ fun Function.gamerule(rule: String, value: Int) = addLine(command("gamerule", li
 fun Function.give(target: Argument.Entity, item: Argument.Item, count: Int? = null) = addLine(command("give", target, item, int(count)))
 
 fun Function.help(command: String? = null) = addLine(command("help", literal(command)))
+
+fun Function.jfrStart() = addLine(command("jfr", literal("start")))
+fun Function.jfrStop() = addLine(command("jfr", literal("stop")))
+
+fun Function.kill(targets: Argument.Selector? = null) = addLine(command("kill", targets))
+
+fun Function.list(uuids: Boolean = false) = addLine(command("list", literal(if (uuids) "uuids" else null)))
+
+fun Function.locateStructure(structure: String) = addLine(command("locate", literal("structure"), literal(structure)))
+fun Function.locateBiome(biome: String) = addLine(command("locate", literal("biome"), literal(biome)))
+fun Function.locatePointOfInterest(pointOfInterest: String) = addLine(command("locate", literal("poi"), literal(pointOfInterest)))
