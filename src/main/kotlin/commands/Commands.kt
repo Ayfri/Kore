@@ -1,6 +1,7 @@
 package commands
 
 import arguments.*
+import arguments.numbers.Experience
 import functions.Function
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -41,14 +42,14 @@ fun Function.enchant(enchantment: String, level: Int? = null) = addLine(command(
 fun Function.experienceAdd(target: Argument.Entity, amount: Int, type: ExperienceType = ExperienceType.POINTS) =
 	addLine(command("experience", literal("add"), target, int(amount), literal(type.asArg())))
 
-fun Function.experienceAdd(target: Argument.Entity, amount: XpNumber) = addLine(command("experience", literal("add"), target, int(amount.value), literal(amount.typeString)))
+fun Function.experienceAdd(target: Argument.Entity, amount: Experience) = addLine(command("experience", literal("add"), target, int(amount.value), literal(amount.typeString)))
 
 fun Function.experienceQuery(target: Argument.Entity, type: ExperienceType = ExperienceType.POINTS) = addLine(command("experience", literal("query"), target, literal(type.asArg())))
 
 fun Function.experienceSet(target: Argument.Entity, amount: Int, type: ExperienceType = ExperienceType.POINTS) =
 	addLine(command("experience", literal("set"), target, int(amount), literal(type.asArg())))
 
-fun Function.experienceSet(target: Argument.Entity, amount: XpNumber) = addLine(command("experience", literal("set"), target, int(amount.value), literal(amount.typeString)))
+fun Function.experienceSet(target: Argument.Entity, amount: Experience) = addLine(command("experience", literal("set"), target, int(amount.value), literal(amount.typeString)))
 
 @Serializable(FillOption.Companion.FillOptionSerializer::class)
 enum class FillOption {
@@ -89,3 +90,68 @@ fun Function.list(uuids: Boolean = false) = addLine(command("list", literal(if (
 fun Function.locateStructure(structure: String) = addLine(command("locate", literal("structure"), literal(structure)))
 fun Function.locateBiome(biome: String) = addLine(command("locate", literal("biome"), literal(biome)))
 fun Function.locatePointOfInterest(pointOfInterest: String) = addLine(command("locate", literal("poi"), literal(pointOfInterest)))
+
+fun Function.me(message: String) = addLine(command("me", literal(message)))
+
+fun Function.msg(target: Argument.Entity, message: String) = addLine(command("msg", target, literal(message)))
+
+fun Function.particule(name: String, pos: Argument.Coordinate? = null) = addLine(command("particle", literal(name), pos))
+
+@Serializable(ParticleMode.Companion.ParticleModeSerializer::class)
+enum class ParticleMode {
+	NORMAL,
+	FORCE;
+	
+	companion object {
+		val values = values()
+		
+		object ParticleModeSerializer : LowercaseSerializer<ParticleMode>(values)
+	}
+}
+
+fun Function.particule(
+	name: String,
+	pos: Argument.Coordinate,
+	delta: Argument.Coordinate,
+	speed: Double,
+	count: Int,
+	mode: ParticleMode,
+	viewers: Argument.Entity? = null,
+) = addLine(command("particle", literal(name), pos, delta, float(speed), int(count), literal(mode.asArg()), viewers))
+
+fun Function.perfStart() = addLine(command("perf", literal("start")))
+fun Function.perfStop() = addLine(command("perf", literal("stop")))
+
+@Serializable(PlaySoundSource.Companion.PlaySoundSourceSerializer::class)
+enum class PlaySoundSource {
+	MASTER,
+	MUSIC,
+	RECORD,
+	WEATHER,
+	BLOCK,
+	HOSTILE,
+	NEUTRAL,
+	PLAYER,
+	AMBIENT,
+	VOICE;
+	
+	companion object {
+		val values = values()
+		
+		object PlaySoundSourceSerializer : LowercaseSerializer<PlaySoundSource>(values)
+	}
+}
+
+fun Function.playSound(
+	sound: String,
+	source: PlaySoundSource,
+	target: Argument.Entity,
+	pos: Argument.Coordinate? = null,
+	volume: Double? = null,
+	pitch: Double? = null,
+	minVolume: Double? = null,
+) = addLine(command("playsound", literal(sound), literal(source.asArg()), target, pos, float(volume), float(pitch), float(minVolume)))
+
+fun Function.publish() = addLine(command("publish"))
+
+fun Function.say(message: String) = addLine(command("say", literal(message)))
