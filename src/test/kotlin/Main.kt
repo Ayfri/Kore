@@ -2,10 +2,8 @@
 import arguments.*
 import commands.*
 import functions.function
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
 
-@OptIn(ExperimentalPathApi::class)
 fun main() {
 	val dataPack = dataPack("test") {
 		function("load", "minecraft") {
@@ -13,6 +11,10 @@ fun main() {
 				dx = 1.0
 				level = range(1..5)
 				gamemode = Gamemode.SURVIVAL
+			}
+			
+			val nearestEntity = selector(SelectorType.ALL_ENTITIES, true) {
+				sort = Sort.NEAREST
 			}
 			
 			advancement(AdvancementAction.GRANT, selector, advancement("story/iron_tools"))
@@ -29,7 +31,7 @@ fun main() {
 			
 			bossbars.list()
 			
-			addBlank()
+			addBlankLine()
 			cloneFiltered(coordinate(20, 50, 30), coordinate(40, 60, 50), coordinate(0, 0, 0), blockTag("wool"), CloneMode.MASKED)
 			
 			data(selector(SelectorType.ALL_ENTITIES, true) {
@@ -50,8 +52,7 @@ fun main() {
 					set(coordinate(0, 0, 0))
 				}
 				
-				addBlank()
-				comment("Ouais ceci n'a aucun sens mais juste je teste si ça compile mdr")
+				addBlankLine()
 				modify("Motion") {
 					insert(1, coordinate(pos(2).relative, pos(2), pos(2)), "test")
 				}
@@ -87,6 +88,12 @@ fun main() {
 					advancement(AdvancementAction.GRANT, selector(SelectorType.ALL_PLAYERS), advancement("story/iron_tools"))
 				}
 			}
+			
+			addBlankLine()
+			items.replaceBlock(coordinate(0, 0, 0), CONTAINER[5], item("stone"), 20)
+			
+			comment("Replacing head with dirt")
+			items.replaceEntity(nearestEntity, ARMOR.HEAD, item("dirt"), 64)
 		}
 		
 		iconPath = Path("src", "test", "resources", "Kotlin Full Color Logo Mark RGB.png")

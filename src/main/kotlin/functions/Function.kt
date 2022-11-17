@@ -7,7 +7,7 @@ import java.io.File
 class Function(val name: String, val namespace: String = "minecraft", var directory: String = "", val datapack: DataPack) {
 	val lines = mutableListOf<String>()
 	
-	fun addBlank() = lines.add("")
+	fun addBlankLine() = lines.add("")
 	
 	fun addLine(line: String) {
 		lines.add(line)
