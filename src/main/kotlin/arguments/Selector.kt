@@ -1,5 +1,6 @@
 package arguments
 
+import arguments.numbers.FloatRangeOrFloat
 import arguments.numbers.IntRange
 import arguments.numbers.Range
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -74,9 +75,9 @@ data class SelectorNbtData(
 	var dy: Double? = null,
 	var dz: Double? = null,
 	@SerialName("x_rotation")
-	var xRotation: Double? = null,
+	var xRotation: FloatRangeOrFloat? = null,
 	@SerialName("y_rotation")
-	var yRotation: Double? = null,
+	var yRotation: FloatRangeOrFloat? = null,
 	var distance: Range? = null,
 	var limit: Int? = null,
 	var level: IntRange? = null,
