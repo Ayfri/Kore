@@ -11,6 +11,6 @@ import net.benwoodworth.knbt.putNbtCompound
 
 fun Function.nbt(block: NbtCompoundBuilder.() -> Unit) = buildNbtCompound(block)
 fun NbtCompoundBuilder.nbt(name: String, block: NbtCompoundBuilder.() -> Unit) = putNbtCompound(name, block)
-fun NbtCompoundBuilder.json(name: String, block: NbtCompoundBuilder.() -> Unit): NbtTag? {
-	return put(name, StringifiedNbt.encodeToString(buildNbtCompound(block).also { println(it) }))
-}
+fun NbtCompoundBuilder.json(name: String, block: NbtCompoundBuilder.() -> Unit) = put(name, StringifiedNbt.encodeToString(buildNbtCompound(block)))
+
+fun Function.nbt(nbt: NbtTag) = literal(StringifiedNbt.encodeToString(nbt))
