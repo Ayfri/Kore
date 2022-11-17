@@ -164,6 +164,12 @@ fun Function.selector(base: SelectorType, limitToOne: Boolean = false, data: Sel
 	if (limitToOne) nbtData.limit = 1
 })
 
+fun Function.allPlayers(limitToOne: Boolean = false, data: SelectorNbtData.() -> Unit = {}) = selector(SelectorType.ALL_PLAYERS, limitToOne, data)
+fun Function.allEntities(limitToOne: Boolean = false, data: SelectorNbtData.() -> Unit = {}) = selector(SelectorType.ALL_ENTITIES, limitToOne, data)
+fun Function.nearestPlayer(data: SelectorNbtData.() -> Unit = {}) = selector(SelectorType.NEAREST_PLAYER, data = data)
+fun Function.randomPlayer(data: SelectorNbtData.() -> Unit = {}) = selector(SelectorType.RANDOM_PLAYER, data = data)
+fun Function.self(limitToOne: Boolean = false, data: SelectorNbtData.() -> Unit = {}) = selector(SelectorType.SELF, limitToOne, data)
+
 fun Function.storage(storage: String, namespace: String = "minecraft") = Argument.Storage(storage, namespace)
 
 fun Function.tag(name: String, group: Boolean = true) = Argument.Literal(if (group) "#$name" else name)

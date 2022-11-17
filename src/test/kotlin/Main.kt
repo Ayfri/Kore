@@ -17,7 +17,7 @@ fun main() {
 				gamemode = !Gamemode.CREATIVE
 			}
 			
-			val nearestEntity = selector(SelectorType.ALL_ENTITIES, true) {
+			val nearestEntity = allEntities(true) {
 				sort = Sort.NEAREST
 			}
 			
@@ -101,7 +101,7 @@ fun main() {
 			
 			loot {
 				target {
-					give(selector(SelectorType.NEAREST_PLAYER))
+					give(nearestPlayer())
 				}
 				
 				source {
