@@ -9,7 +9,13 @@ private val Double.str
 		else -> toString()
 	}
 
-class PosNumber(var value: Double, var type: Type = Type.RELATIVE) {
+private val Double.strUnlessZero
+	get() = when {
+		this == 0.0 -> ""
+		else -> str
+	}
+
+class PosNumber(var value: Double, var type: Type = Type.WORLD) {
 	enum class Type {
 		RELATIVE,
 		LOCAL,
@@ -28,18 +34,21 @@ class PosNumber(var value: Double, var type: Type = Type.RELATIVE) {
 	val world get() = PosNumber(value, Type.WORLD)
 	
 	override fun toString() = when (type) {
-		Type.RELATIVE -> "~${value.str}"
-		Type.LOCAL -> "^${value.str}"
+		Type.RELATIVE -> "~${value.strUnlessZero}"
+		Type.LOCAL -> "^${value.strUnlessZero}"
 		Type.WORLD -> value.str
 	}
 }
 
-fun Double.toPos() = PosNumber(this)
-fun Int.toPos() = PosNumber(this.toDouble())
-fun pos(value: Double, type: PosNumber.Type = PosNumber.Type.RELATIVE) = PosNumber(value, type)
-fun pos(value: Int, type: PosNumber.Type = PosNumber.Type.RELATIVE) = PosNumber(value.toDouble(), type)
+val Double.pos get() = PosNumber(this)
+val Double.localPos get() = PosNumber(this, PosNumber.Type.LOCAL)
+val Double.relativePos get() = PosNumber(this, PosNumber.Type.RELATIVE)
+val Int.pos get() = PosNumber(this.toDouble())
+val Int.localPos get() = PosNumber(this.toDouble(), PosNumber.Type.LOCAL)
+val Int.relativePos get() = PosNumber(this.toDouble(), PosNumber.Type.RELATIVE)
+fun pos(value: Number = 0, type: PosNumber.Type = PosNumber.Type.RELATIVE) = PosNumber(value.toDouble(), type)
 
-class RotNumber(val value: Double, val type: Type = Type.RELATIVE) {
+class RotNumber(val value: Double, val type: Type = Type.WORLD) {
 	enum class Type {
 		RELATIVE,
 		WORLD
@@ -55,15 +64,16 @@ class RotNumber(val value: Double, val type: Type = Type.RELATIVE) {
 	fun toWorld() = RotNumber(value, Type.WORLD)
 	
 	override fun toString() = when (type) {
-		Type.RELATIVE -> "~${value.str}"
+		Type.RELATIVE -> "~${value.strUnlessZero}"
 		Type.WORLD -> value.str
 	}
 }
 
-fun Double.toRot() = RotNumber(this)
-fun Int.toRot() = RotNumber(this.toDouble())
-fun rot(value: Double, type: RotNumber.Type = RotNumber.Type.RELATIVE) = RotNumber(value, type)
-fun rot(value: Int, type: RotNumber.Type = RotNumber.Type.RELATIVE) = RotNumber(value.toDouble(), type)
+val Double.rot get() = RotNumber(this)
+val Double.relativeRot get() = RotNumber(this, RotNumber.Type.RELATIVE)
+val Int.rot get() = RotNumber(this.toDouble())
+val Int.relativeRot get() = RotNumber(this.toDouble(), RotNumber.Type.RELATIVE)
+fun rot(value: Number = 0, type: RotNumber.Type = RotNumber.Type.RELATIVE) = RotNumber(value.toDouble(), type)
 
 class XpNumber(val value: Long, val type: ExperienceType = ExperienceType.POINTS) {
 	val typeString get() = json.encodeToJsonElement(type).jsonPrimitive.content

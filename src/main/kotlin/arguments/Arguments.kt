@@ -132,8 +132,8 @@ fun Function.blockTag(tag: String, namespace: String = "minecraft") = Argument.B
 fun Function.bool(value: Boolean) = Argument.Literal(value.toString())
 internal fun Function.bool(value: Boolean?) = value?.let { Argument.Literal(it.toString()) }
 
-fun Function.coordinate(x: Double, y: Double, z: Double) = Argument.Coordinate(x.toPos(), y.toPos(), z.toPos())
-fun Function.coordinate(x: Int, y: Int, z: Int) = Argument.Coordinate(x.toPos(), y.toPos(), z.toPos())
+fun Function.coordinate(x: Double, y: Double, z: Double) = Argument.Coordinate(x.pos, y.pos, z.pos)
+fun Function.coordinate(x: Int, y: Int, z: Int) = Argument.Coordinate(x.pos, y.pos, z.pos)
 fun Function.coordinate(x: PosNumber, y: PosNumber, z: PosNumber) = Argument.Coordinate(x, y, z)
 
 fun Function.dimension(dimension: Dimension? = null) = Argument.Dimension("minecraft", dimension)
@@ -160,8 +160,8 @@ internal fun Function.literal(name: String?) = name?.let { Argument.Literal(it) 
 
 fun Function.nbtData(nbt: nbt.NbtData) = Argument.NbtData(nbt)
 
-fun Function.rotation(hor: Double, ver: Double) = Argument.Rotation(hor.toRot(), ver.toRot())
-fun Function.rotation(hor: Int, ver: Int) = Argument.Rotation(hor.toRot(), ver.toRot())
+fun Function.rotation(hor: Double, ver: Double) = Argument.Rotation(hor.rot, ver.rot)
+fun Function.rotation(hor: Int, ver: Int) = Argument.Rotation(hor.rot, ver.rot)
 fun Function.rotation(hor: RotNumber, ver: RotNumber) = Argument.Rotation(hor, ver)
 
 fun Function.selector(base: SelectorType, limitToOne: Boolean = false, data: SelectorNbtData.() -> Unit = {}) = Argument.Selector(Selector(base).apply {
