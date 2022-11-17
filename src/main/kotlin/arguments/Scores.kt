@@ -1,10 +1,12 @@
 package arguments
 
+import arguments.numbers.IntRangeOrInt
+import arguments.numbers.asRangeOrInt
 import kotlinx.serialization.Serializable
 import serializers.ToStringSerializer
 
 @Serializable(Score.Companion.ScoreSerializer::class)
-data class Score(val name: String, val value: RangeOrInt) {
+data class Score(val name: String, val value: IntRangeOrInt) {
 	override fun toString() = "$name=${value}"
 	
 	companion object {
@@ -24,7 +26,7 @@ data class Scores(val scores: Map<String, Score> = emptyMap()) {
 class ScoreBuilder {
 	private val scores = mutableMapOf<String, Score>()
 	
-	fun score(name: String, value: RangeOrInt) = scores.put(name, Score(name, value))
+	fun score(name: String, value: IntRangeOrInt) = scores.put(name, Score(name, value))
 	fun score(name: String, value: Int) = scores.put(name, Score(name, value.asRangeOrInt()))
 	fun score(name: String, value: IntRange) = scores.put(name, Score(name, value.asRangeOrInt()))
 	

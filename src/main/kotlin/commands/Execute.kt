@@ -1,6 +1,7 @@
 package commands
 
 import arguments.*
+import arguments.numbers.IntRangeOrInt
 import functions.Function
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
@@ -48,14 +49,18 @@ class ExecuteCondition(private val fn: Function) {
 		fn.literal("score"), target, fn.literal(objective), fn.literal(relation(RelationBlock(), 0.0, 0.0).asArg()), source, fn.literal(sourceObjective)
 	)
 	
-	fun score(target: Argument.ScoreHolder, objective: String, range: RangeOrInt) = listOf(
+	fun score(target: Argument.ScoreHolder, objective: String, range: IntRangeOrInt) = listOf(
 		fn.literal("score"), target, fn.literal(objective), fn.literal(range.asArg())
 	)
 }
 
 class ExecuteStore(private val fn: Function) {
-	fun block(pos: Argument.Coordinate, path: String, type: DataType, scale: Double) =
-		listOf(fn.literal("store"), fn.literal("block"), pos, fn.literal(path), fn.literal(type.asArg()), fn.float(scale))
+	fun block(
+		pos: Argument.Coordinate,
+		path: String,
+		type: DataType,
+		scale: Double,
+	) = listOf(fn.literal("store"), fn.literal("block"), pos, fn.literal(path), fn.literal(type.asArg()), fn.float(scale))
 	
 	fun bossbarMax(id: String) = listOf(fn.literal("bossbar"), fn.literal(id), fn.literal("max"))
 	fun bossbarValue(id: String) = listOf(fn.literal("bossbar"), fn.literal(id), fn.literal("value"))

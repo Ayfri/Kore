@@ -1,5 +1,7 @@
 package arguments
 
+import arguments.numbers.IntRange
+import arguments.numbers.Range
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
@@ -75,9 +77,9 @@ data class SelectorNbtData(
 	var xRotation: Double? = null,
 	@SerialName("y_rotation")
 	var yRotation: Double? = null,
-	var distance: Double? = null,
+	var distance: Range? = null,
 	var limit: Int? = null,
-	var level: Range? = null,
+	var level: IntRange? = null,
 	var team: String? = null,
 	var name: String? = null,
 	var type: String? = null,
@@ -127,9 +129,6 @@ data class SelectorNbtData(
 							null -> return@mapNotNull null
 							else -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
 						}
-						
-						is Sort -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
-						is Scores -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
 						is Advancements -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
 						is List<*> -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
 						is Map<*, *> -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
