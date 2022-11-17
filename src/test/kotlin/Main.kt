@@ -1,5 +1,8 @@
 
 import arguments.*
+import arguments.numbers.pos
+import arguments.numbers.relativePos
+import arguments.numbers.ticks
 import commands.*
 import functions.function
 import kotlin.io.path.Path
@@ -103,6 +106,11 @@ fun main() {
 				source {
 					fish("minecraft:cod", coordinate(0.relativePos, 0.relativePos, 0.relativePos), Hand.MAIN_HAND)
 				}
+			}
+			
+			schedule {
+				append("repeat", 1.ticks)
+				clear("test")
 			}
 		}
 		

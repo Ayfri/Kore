@@ -1,5 +1,10 @@
 package arguments
 
+import arguments.numbers.PosNumber
+import arguments.numbers.RotNumber
+import arguments.numbers.TimeNumber
+import arguments.numbers.pos
+import arguments.numbers.rot
 import functions.Function
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonPrimitive
@@ -99,18 +104,8 @@ sealed interface Argument {
 		override fun asString() = "$namespace:$storage"
 	}
 	
-	data class Time(val value: Double, val type: Type = Type.Tick) : Argument {
-		enum class Type {
-			Tick,
-			Second,
-			Day
-		}
-		
-		override fun asString() = when (type) {
-			Type.Tick -> "${value}t"
-			Type.Second -> "${value}s"
-			Type.Day -> "${value}d"
-		}
+	data class Time(val value: TimeNumber) : Argument {
+		override fun asString() = value.toString()
 	}
 	
 	data class UUID(val uuid: java.util.UUID) : Entity, ScoreHolder {
@@ -173,7 +168,7 @@ fun Function.storage(storage: String, namespace: String = "minecraft") = Argumen
 
 fun Function.tag(name: String, group: Boolean = true) = Argument.Literal(if (group) "#$name" else name)
 fun Function.tag(name: String, namespace: String, group: Boolean = true) = Argument.Literal(if (group) "#$namespace:$name" else "$namespace:$name")
-fun Function.time(value: Double, type: Argument.Time.Type = Argument.Time.Type.Tick) = Argument.Time(value, type)
-fun Function.time(value: Int, type: Argument.Time.Type = Argument.Time.Type.Tick) = Argument.Time(value.toDouble(), type)
+
+fun Function.time(value: TimeNumber) = Argument.Time(value)
 
 fun Function.uuid(uuid: java.util.UUID) = Argument.UUID(uuid)
