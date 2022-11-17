@@ -155,3 +155,20 @@ fun Function.playSound(
 fun Function.publish() = addLine(command("publish"))
 
 fun Function.say(message: String) = addLine(command("say", literal(message)))
+
+fun Function.seed() = addLine(command("seed"))
+
+@Serializable(SetBlockMode.Companion.SetBlockModeSerializer::class)
+enum class SetBlockMode {
+	REPLACE,
+	DESTROY,
+	KEEP;
+	
+	companion object {
+		val values = values()
+		
+		object SetBlockModeSerializer : LowercaseSerializer<SetBlockMode>(values)
+	}
+}
+
+fun Function.setBlock(pos: Argument.Coordinate, block: Argument.Block, mode: SetBlockMode? = null) = addLine(command("setblock", pos, block, literal(mode?.asArg())))

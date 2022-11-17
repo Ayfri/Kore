@@ -154,6 +154,7 @@ fun Function.literal(name: String) = Argument.Literal(name)
 internal fun Function.literal(name: String?) = name?.let { Argument.Literal(it) }
 
 fun Function.nbtData(nbt: nbt.NbtData) = Argument.NbtData(nbt)
+fun Function.nbtData(block: nbt.NbtData.() -> Unit) = Argument.NbtData(nbt.NbtData().apply(block))
 
 fun Function.rotation(hor: Double, ver: Double) = Argument.Rotation(hor.rot, ver.rot)
 fun Function.rotation(hor: Int, ver: Int) = Argument.Rotation(hor.rot, ver.rot)
