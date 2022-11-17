@@ -121,9 +121,13 @@ data class SelectorNbtData(
 					map[serialName] = it.getter.call(value)
 				}
 				
-				encoder.encodeString(map.filter { it.value != null }.map { (key, value) ->
+				encoder.encodeString(map.filter { it.value != null }.mapNotNull { (key, value) ->
 					when (value) {
-						is GamemodeSelector -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
+						is GamemodeSelector -> when (value.gamemode) {
+							null -> return@mapNotNull null
+							else -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
+						}
+						
 						is Sort -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
 						is Scores -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
 						is Advancements -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"

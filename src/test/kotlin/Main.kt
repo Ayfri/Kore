@@ -10,7 +10,7 @@ fun main() {
 			val selector = selector(SelectorType.ALL_ENTITIES) {
 				dx = 1.0
 				level = range(1..5)
-				gamemode = Gamemode.SURVIVAL
+				gamemode = !Gamemode.CREATIVE
 			}
 			
 			val nearestEntity = selector(SelectorType.ALL_ENTITIES, true) {
