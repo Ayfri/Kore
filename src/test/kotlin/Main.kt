@@ -6,9 +6,7 @@ import arguments.numbers.relativePos
 import arguments.numbers.ticks
 import commands.*
 import functions.function
-import nbt.bool
-import nbt.json
-import nbt.string
+import net.benwoodworth.knbt.put
 import kotlin.io.path.Path
 
 fun main() {
@@ -133,14 +131,14 @@ fun main() {
 					reset()
 				}
 				
-				setBlock(coordinate(0, 0, 0), block("sign", states = mapOf("rotation" to "4"), nbtData = nbt.nbtData {
-					string("Text1", "Hello")
-					string("Text2", "World")
+				setBlock(coordinate(0, 0, 0), block("sign", states = mapOf("rotation" to "4"), nbtData = nbt {
+					put("Text1", "Hello")
+					put("Text2", "World")
 					
 					json("Text3") {
-						string("text", "test")
-						string("color", Color.RED.asArg())
-						bool("bold", true)
+						put("text", "test")
+						put("color", Color.RED.asArg())
+						put("bold", true)
 					}
 				}))
 			}

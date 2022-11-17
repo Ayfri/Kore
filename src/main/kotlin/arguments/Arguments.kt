@@ -8,6 +8,7 @@ import arguments.numbers.rot
 import functions.Function
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonPrimitive
+import net.benwoodworth.knbt.NbtTag
 
 sealed interface Argument {
 	fun asString(): String
@@ -47,7 +48,7 @@ sealed interface Argument {
 		val block: String,
 		val namespace: String = "minecraft",
 		val states: MutableMap<String, String> = mutableMapOf(),
-		val nbtData: nbt.NbtData? = null,
+		val nbtData: NbtTag? = null,
 	) : BlockOrTag {
 		override fun asString() = "$namespace:$block${states.map { "[$it]" }.joinToString("")}${nbtData?.toString() ?: ""}"
 	}
@@ -76,7 +77,7 @@ sealed interface Argument {
 		override fun asString() = value.toString()
 	}
 	
-	data class Item(val item: String, val namespace: String = "minecraft", val nbtData: nbt.NbtData? = null) : ItemOrTag {
+	data class Item(val item: String, val namespace: String = "minecraft", val nbtData: NbtTag? = null) : ItemOrTag {
 		override fun asString() = "$namespace:$item${nbtData?.toString() ?: ""}"
 	}
 	
@@ -86,10 +87,6 @@ sealed interface Argument {
 	
 	data class Literal(val name: String) : Argument, Possessor, ScoreHolder {
 		override fun asString() = name
-	}
-	
-	data class NbtData(val nbt: nbt.NbtData) : Argument {
-		override fun asString() = "\"$nbt\""
 	}
 	
 	data class Rotation(val hor: RotNumber, val ver: RotNumber) : Argument {
@@ -119,7 +116,7 @@ fun Function.block(
 	block: String,
 	namespace: String = "minecraft",
 	states: Map<String, String> = mutableMapOf(),
-	nbtData: nbt.NbtData? = null,
+	nbtData: NbtTag? = null,
 ) = Argument.Block(block, namespace, states.toMutableMap(), nbtData)
 
 fun Function.blockTag(tag: String, namespace: String = "minecraft") = Argument.BlockTag(tag, namespace)
@@ -144,7 +141,7 @@ fun Function.int(value: Int) = Argument.Int(value.toLong())
 internal fun Function.int(value: Int?) = value?.let { Argument.Int(it.toLong()) }
 internal fun Function.int(value: Long?) = value?.let { Argument.Int(it) }
 
-fun Function.item(item: String, namespace: String = "minecraft", nbtData: nbt.NbtData? = null) = Argument.Item(item, namespace, nbtData)
+fun Function.item(item: String, namespace: String = "minecraft", nbtData: NbtTag? = null) = Argument.Item(item, namespace, nbtData)
 
 fun Function.itemTag(tag: String, namespace: String = "minecraft") = Argument.ItemTag(tag, namespace)
 
@@ -152,9 +149,6 @@ fun Function.literal(name: String) = Argument.Literal(name)
 
 @JvmName("literalNullable")
 internal fun Function.literal(name: String?) = name?.let { Argument.Literal(it) }
-
-fun Function.nbtData(nbt: nbt.NbtData) = Argument.NbtData(nbt)
-fun Function.nbtData(block: nbt.NbtData.() -> Unit) = Argument.NbtData(nbt.NbtData().apply(block))
 
 fun Function.rotation(hor: Double, ver: Double) = Argument.Rotation(hor.rot, ver.rot)
 fun Function.rotation(hor: Int, ver: Int) = Argument.Rotation(hor.rot, ver.rot)

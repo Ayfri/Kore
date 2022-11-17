@@ -14,6 +14,7 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
     implementation(kotlin("reflect"))
+    implementation("net.benwoodworth.knbt:knbt:0.11.3")
 }
 
 java {

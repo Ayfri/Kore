@@ -16,7 +16,7 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonPrimitive
-import nbt.NbtData
+import net.benwoodworth.knbt.NbtCompound
 import serializers.LowercaseSerializer
 import serializers.ToStringSerializer
 import kotlin.reflect.full.findAnnotation
@@ -85,7 +85,7 @@ data class SelectorNbtData(
 	var name: String? = null,
 	var type: String? = null,
 	var tag: String? = null,
-	var nbtData: NbtData? = null,
+	var nbtData: NbtCompound? = null,
 	var advancements: Advancements? = null,
 	var scores: Scores? = null,
 	var sort: Sort? = null,
