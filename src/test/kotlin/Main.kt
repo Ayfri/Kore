@@ -89,6 +89,12 @@ fun main() {
 		pack {
 			description = "Test"
 		}
+		
+		filter {
+			block {
+				namespace = "mine.*"
+			}
+		}
 	}
 	
 	dataPack.generate()
