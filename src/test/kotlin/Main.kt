@@ -94,6 +94,16 @@ fun main() {
 			
 			comment("Replacing head with dirt")
 			items.replaceEntity(nearestEntity, ARMOR.HEAD, item("dirt"), 64)
+			
+			loot {
+				target {
+					give(selector(SelectorType.NEAREST_PLAYER))
+				}
+				
+				source {
+					fish("minecraft:cod", coordinate(0.relativePos, 0.relativePos, 0.relativePos), Hand.MAIN_HAND)
+				}
+			}
 		}
 		
 		iconPath = Path("src", "test", "resources", "Kotlin Full Color Logo Mark RGB.png")
