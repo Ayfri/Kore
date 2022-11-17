@@ -7,6 +7,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.Path
 
 @Serializable
 data class Pack(
@@ -54,10 +56,16 @@ data class SerializedDataPack(
 
 @FunctionsHolder
 class DataPack(val name: String) {
-	val filter = Filter()
-	val pack = Pack(10, "Kordex Plugin")
-	val path = "out"
-	val functions = mutableListOf<Function>()
+	val path: Path = Path("out")
+	var iconPath: Path? = null
+	
+	private val filter = Filter()
+	private val pack = Pack(10, "Kordex Plugin")
+	private val functions = mutableListOf<Function>()
+	
+	fun addFunction(function: Function) {
+		functions += function
+	}
 	
 	fun pack(block: Pack.() -> Unit) = pack.run(block)
 	fun filter(block: Filter.() -> Unit) = filter.run(block)
@@ -69,6 +77,8 @@ class DataPack(val name: String) {
 		val serialized = SerializedDataPack(pack, filter)
 		
 		File(root, "pack.mcmeta").writeText(json.encodeToString(serialized))
+		iconPath?.let { File(root, "pack.png").writeBytes(it.toFile().readBytes()) }
+		
 		val data = File(root, "data")
 		data.mkdirs()
 		

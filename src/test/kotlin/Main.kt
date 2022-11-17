@@ -2,7 +2,10 @@
 import arguments.*
 import commands.*
 import functions.function
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.Path
 
+@OptIn(ExperimentalPathApi::class)
 fun main() {
 	val dataPack = dataPack("test") {
 		function("load", "minecraft") {
@@ -85,6 +88,8 @@ fun main() {
 				}
 			}
 		}
+		
+		iconPath = Path("src", "test", "resources", "Kotlin Full Color Logo Mark RGB.png")
 		
 		pack {
 			description = "Test"
