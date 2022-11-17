@@ -96,7 +96,7 @@ sealed interface Argument {
 		override fun asString() = "$hor $ver"
 	}
 	
-	data class Selector(val selector: arguments.Selector) : Entity, Data, Possessor {
+	data class Selector(val selector: arguments.Selector) : Entity, Data, Possessor, ScoreHolder {
 		override fun asString() = selector.toString()
 	}
 	

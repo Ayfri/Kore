@@ -17,8 +17,9 @@ fun main() {
 				gamemode = !Gamemode.CREATIVE
 			}
 			
-			val nearestEntity = allEntities(true) {
+			fun nearestEntity(block: SelectorNbtData.() -> Unit = {}) = allEntities(true) {
 				sort = Sort.NEAREST
+				block()
 			}
 			
 			advancement(AdvancementAction.GRANT, selector, advancement("story/iron_tools"))
@@ -97,7 +98,7 @@ fun main() {
 			items.replaceBlock(coordinate(0, 0, 0), CONTAINER[5], item("stone"), 20)
 			
 			comment("Replacing head with dirt")
-			items.replaceEntity(nearestEntity, ARMOR.HEAD, item("dirt"), 64)
+			items.replaceEntity(nearestEntity { type = "minecraft:zombie" }, ARMOR.HEAD, item("dirt"), 64)
 			
 			loot {
 				target {
@@ -112,6 +113,22 @@ fun main() {
 			schedule {
 				append("repeat", 1.ticks)
 				clear("test")
+			}
+			
+			scoreboard {
+				objectives {
+					add("test", "dummy", "Test")
+					setDisplay(DisplaySlot.sidebar, "test")
+				}
+				
+				players {
+					add(allPlayers(), "test", 1)
+				}
+				
+				objective(allPlayers(), "test") {
+					this += 5
+					reset()
+				}
 			}
 		}
 		
