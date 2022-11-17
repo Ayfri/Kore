@@ -1,12 +1,5 @@
-package commands
+package arguments
 
-import arguments.PosNumber
-import arguments.RotNumber
-import arguments.Selector
-import arguments.SelectorNbtData
-import arguments.SelectorType
-import arguments.toPos
-import arguments.toRot
 import functions.Function
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonPrimitive
@@ -126,7 +119,7 @@ sealed interface Argument {
 }
 
 fun Function.advancement(name: String, namespace: String = "minecraft") = Argument.Advancement(name, namespace)
-fun Function.attribute(attribute: arguments.Attribute, namespace: String = "minecraft") = Argument.Attribute(attribute, namespace)
+fun Function.attribute(attribute: Attribute, namespace: String = "minecraft") = Argument.Attribute(attribute, namespace)
 fun Function.block(
 	block: String,
 	namespace: String = "minecraft",
@@ -143,7 +136,7 @@ fun Function.coordinate(x: Double, y: Double, z: Double) = Argument.Coordinate(x
 fun Function.coordinate(x: Int, y: Int, z: Int) = Argument.Coordinate(x.toPos(), y.toPos(), z.toPos())
 fun Function.coordinate(x: PosNumber, y: PosNumber, z: PosNumber) = Argument.Coordinate(x, y, z)
 
-fun Function.dimension(dimension: arguments.Dimension? = null) = Argument.Dimension("minecraft", dimension)
+fun Function.dimension(dimension: Dimension? = null) = Argument.Dimension("minecraft", dimension)
 fun Function.dimension(customDimension: String, namespace: String? = null) = Argument.Dimension(namespace, customDimension = customDimension)
 
 fun Function.float(value: Double) = Argument.Float(value)

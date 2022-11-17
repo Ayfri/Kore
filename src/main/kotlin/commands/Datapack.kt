@@ -1,5 +1,6 @@
 package commands
 
+import arguments.literal
 import functions.Function
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer

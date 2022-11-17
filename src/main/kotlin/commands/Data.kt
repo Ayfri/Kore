@@ -1,5 +1,9 @@
 package commands
 
+import arguments.Argument
+import arguments.float
+import arguments.int
+import arguments.literal
 import functions.Function
 
 class DataModifyOperation(private val fn: Function) {

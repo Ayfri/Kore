@@ -1,11 +1,6 @@
 package commands
 
-import arguments.Axes
-import arguments.DataType
-import arguments.Dimension
-import arguments.RangeOrInt
-import arguments.Relation
-import arguments.RelationBlock
+import arguments.*
 import functions.Function
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
