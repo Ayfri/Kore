@@ -178,6 +178,8 @@ fun Function.selector(base: SelectorType, limitToOne: Boolean = false, data: Sel
 
 fun Function.storage(storage: String, namespace: String = "minecraft") = Argument.Storage(storage, namespace)
 
+fun Function.tag(name: String, group: Boolean = true) = Argument.Literal(if (group) "#$name" else name)
+fun Function.tag(name: String, namespace: String, group: Boolean = true) = Argument.Literal(if (group) "#$namespace:$name" else "$namespace:$name")
 fun Function.time(value: Double, type: Argument.Time.Type = Argument.Time.Type.Tick) = Argument.Time(value, type)
 fun Function.time(value: Int, type: Argument.Time.Type = Argument.Time.Type.Tick) = Argument.Time(value.toDouble(), type)
 

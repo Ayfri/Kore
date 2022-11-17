@@ -352,8 +352,8 @@ enum class FillOption {
 fun Function.fill(from: Argument.Coordinate, to: Argument.Coordinate, block: Argument.Block, fillOption: FillOption? = null) = addLine(command("fill", from, to, block, literal(fillOption?.asArg())))
 fun Function.fill(from: Argument.Coordinate, to: Argument.Coordinate, block: Argument.Block, filter: Argument.Block) = addLine(command("fill", from, to, block, literal("replace"), filter))
 
-fun Function.function(name: String) = addLine(command("function", literal(name)))
-fun Function.function(namespace: String, name: String) = addLine(command("function", literal(namespace), literal(name)))
+fun Function.function(name: String, group: Boolean = false) = addLine(command("function", tag(name, group)))
+fun Function.function(namespace: String, name: String, group: Boolean = false) = addLine(command("function", tag(name, namespace, group)))
 
 fun Function.gamemode(gamemode: Gamemode, target: Argument.Entity? = null) = addLine(command("gamemode", literal(gamemode.asArg()), target))
 
