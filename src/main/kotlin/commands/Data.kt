@@ -7,19 +7,19 @@ import arguments.literal
 import functions.Function
 
 class DataModifyOperation(private val fn: Function) {
-	fun append(from: Argument.Data, path: String) = listOf(fn.literal("append"), fn.literal("from"), fn.literal(from.literalName), from, fn.literal("path"), fn.literal(path))
+	fun append(from: Argument.Data, path: String) = listOf(fn.literal("append"), fn.literal("from"), fn.literal(from.literalName), from, fn.literal(path))
 	fun append(value: Argument) = listOf(fn.literal("append"), fn.literal("value"), value)
 	
 	fun insert(index: Int, from: Argument.Data, path: String) = listOf(fn.literal("insert"), fn.int(index), fn.literal("from"), fn.literal(from.literalName), from, fn.literal(path))
 	fun insert(index: Int, value: Argument) = listOf(fn.literal("insert"), fn.int(index), fn.literal("value"), value)
 	
-	fun merge(from: Argument.Data, path: String) = listOf(fn.literal("merge"), fn.literal("from"), fn.literal(from.literalName), from, fn.literal("path"), fn.literal(path))
+	fun merge(from: Argument.Data, path: String) = listOf(fn.literal("merge"), fn.literal("from"), fn.literal(from.literalName), from, fn.literal(path))
 	fun merge(value: Argument) = listOf(fn.literal("merge"), fn.literal("value"), value)
 	
-	fun prepend(from: Argument.Data, path: String) = listOf(fn.literal("prepend"), fn.literal("from"), fn.literal(from.literalName), from, fn.literal("path"), fn.literal(path))
+	fun prepend(from: Argument.Data, path: String) = listOf(fn.literal("prepend"), fn.literal("from"), fn.literal(from.literalName), from, fn.literal(path))
 	fun prepend(value: Argument) = listOf(fn.literal("prepend"), fn.literal("value"), value)
 	
-	fun set(from: Argument.Data, path: String) = listOf(fn.literal("set"), fn.literal("from"), fn.literal(from.literalName), from, fn.literal("path"), fn.literal(path))
+	fun set(from: Argument.Data, path: String) = listOf(fn.literal("set"), fn.literal("from"), fn.literal(from.literalName), from, fn.literal(path))
 	fun set(value: Argument) = listOf(fn.literal("set"), fn.literal("value"), value)
 	
 	fun remove(path: String) = listOf(fn.literal("remove"), fn.literal(path))
