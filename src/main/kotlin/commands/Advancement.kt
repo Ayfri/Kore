@@ -31,10 +31,19 @@ enum class AdvancementRoute {
 	}
 }
 
-fun Function.advancement(action: AdvancementAction, targets: Argument.Selector, advancement: Argument.Advancement, criterion: String = "") =
-	addLine(command("advancement", literal(action.asArg()), targets, literal("only"), advancement, literal(criterion)))
+fun Function.advancement(
+	action: AdvancementAction,
+	targets: Argument.Selector,
+	advancement: Argument.Advancement,
+	criterion: String = "",
+) = addLine(command("advancement", literal(action.asArg()), targets, literal("only"), advancement, literal(criterion)))
 
-fun Function.advancement(action: AdvancementAction, targets: Argument.Selector, route: AdvancementRoute, advancement: Argument.Advancement, criterion: String = "") =
-	addLine(command("advancement", literal(action.asArg()), targets, literal(route.asArg()), advancement, literal(criterion)))
+fun Function.advancement(
+	action: AdvancementAction,
+	targets: Argument.Selector,
+	route: AdvancementRoute,
+	advancement: Argument.Advancement,
+	criterion: String = "",
+) = addLine(command("advancement", literal(action.asArg()), targets, literal(route.asArg()), advancement, literal(criterion)))
 
 fun Function.advancement(action: AdvancementAction, targets: Argument.Selector) = addLine(command("advancement", literal(action.asArg()), targets, literal("everything")))
