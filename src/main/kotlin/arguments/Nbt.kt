@@ -14,3 +14,6 @@ fun NbtCompoundBuilder.nbt(name: String, block: NbtCompoundBuilder.() -> Unit) =
 fun NbtCompoundBuilder.json(name: String, block: NbtCompoundBuilder.() -> Unit) = put(name, StringifiedNbt.encodeToString(buildNbtCompound(block)))
 
 fun Function.nbt(nbt: NbtTag) = literal(StringifiedNbt.encodeToString(nbt))
+
+@JvmName("nbtNullable")
+internal fun Function.nbt(nbt: NbtTag? = null) = nbt?.let { literal(StringifiedNbt.encodeToString(it)) }

@@ -6,6 +6,7 @@ import arguments.numbers.relativePos
 import arguments.numbers.ticks
 import commands.*
 import functions.function
+import net.benwoodworth.knbt.NbtString
 import net.benwoodworth.knbt.put
 import kotlin.io.path.Path
 
@@ -141,6 +142,22 @@ fun main() {
 						put("bold", true)
 					}
 				}))
+				
+				team {
+					val team = "admin"
+					
+					add(team, NbtString("Admin"))
+					modify(team) {
+						color(Color.DARK_RED)
+						friendlyFire(false)
+						deathMessageVisibility(Visibility.HIDE_FOR_OTHER_TEAMS)
+						prefix(nbt {
+							put("text", "<Admin>")
+							put("color", Color.RED.asArg())
+							put("bold", true)
+						})
+					}
+				}
 			}
 		}
 		

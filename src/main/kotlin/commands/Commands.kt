@@ -7,7 +7,10 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonPrimitive
+import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.NbtTag
 import serializers.LowercaseSerializer
+import sun.jvm.hotspot.oops.CellTypeState.value
 
 internal val json = Json { ignoreUnknownKeys = true }
 internal inline fun <reified T : @Serializable Any> T.asArg() = json.encodeToJsonElement(this).jsonPrimitive.content
@@ -122,6 +125,23 @@ fun Function.particule(
 fun Function.perfStart() = addLine(command("perf", literal("start")))
 fun Function.perfStop() = addLine(command("perf", literal("stop")))
 
+fun Function.placeFeature(feature: String, pos: Argument.Coordinate) = addLine(command("place", literal("feature"), literal(feature), pos))
+fun Function.placeJigsaw(
+	jigsaw: String,
+	target: String,
+	maxDepth: Int,
+	pos: Argument.Coordinate? = null,
+) = addLine(command("place", literal("jigsaw"), literal(jigsaw), literal(target), int(maxDepth), pos))
+
+fun Function.placeStructure(structure: String, pos: Argument.Coordinate) = addLine(command("place", literal("structure"), literal(structure), pos))
+fun Function.placeTemplate(
+	template: String,
+	pos: Argument.Coordinate? = null,
+	rotation: Argument.Rotation? = null,
+	mirror: Boolean? = null,
+	seed: Long? = null,
+) = addLine(command("place", literal("template"), literal(template), pos, rotation, literal(mirror?.asArg()), int(seed)))
+
 @Serializable(PlaySoundSource.Companion.PlaySoundSourceSerializer::class)
 enum class PlaySoundSource {
 	MASTER,
@@ -154,6 +174,11 @@ fun Function.playSound(
 
 fun Function.publish() = addLine(command("publish"))
 
+fun Function.recipeGive(target: Argument.Entity, recipe: String) = addLine(command("recipe", literal("give"), target, literal(recipe)))
+fun Function.recipeGiveAll(target: Argument.Entity) = addLine(command("recipe", literal("give"), target, literal("*")))
+fun Function.recipeTake(target: Argument.Entity, recipe: String) = addLine(command("recipe", literal("take"), target, literal(recipe)))
+fun Function.recipeTakeAll(target: Argument.Entity) = addLine(command("recipe", literal("take"), target, literal("*")))
+
 fun Function.say(message: String) = addLine(command("say", literal(message)))
 
 fun Function.seed() = addLine(command("seed"))
@@ -172,3 +197,88 @@ enum class SetBlockMode {
 }
 
 fun Function.setBlock(pos: Argument.Coordinate, block: Argument.Block, mode: SetBlockMode? = null) = addLine(command("setblock", pos, block, literal(mode?.asArg())))
+
+fun Function.setWorldSpawn(pos: Argument.Coordinate? = null, angle: Argument.Rotation) = addLine(command("setworldspawn", pos, angle))
+
+fun Function.spawnPoint(target: Argument.Entity? = null, pos: Argument.Coordinate? = null, angle: Argument.Rotation? = null) = addLine(command("spawnpoint", target, pos, angle))
+
+fun Function.spectate(target: Argument.Entity, player: Argument.Entity? = null) = addLine(command("spectate", target, player))
+fun Function.spectate() = addLine(command("spectate"))
+
+fun Function.spreadPlayers(
+	center: Argument.Coordinate,
+	spreadDistance: Double,
+	maxRange: Double,
+	respectTeams: Boolean,
+	targets: Argument.Selector,
+) = addLine(command("spreadplayers", center, float(spreadDistance), float(maxRange), bool(respectTeams), targets))
+
+fun Function.spreadPlayers(
+	center: Argument.Coordinate,
+	spreadDistance: Double,
+	maxRange: Double,
+	maxHeight: Int,
+	respectTeams: Boolean,
+	targets: Argument.Selector,
+) = addLine(command("spreadplayers", center, float(spreadDistance), float(maxRange), int(maxHeight), bool(respectTeams), targets))
+
+fun Function.stopSound(
+	targets: Argument.Entity,
+	source: PlaySoundSource? = null,
+	sound: String? = null,
+) = addLine(command("stopsound", targets, literal(source?.asArg()), literal(sound)))
+
+fun Function.summon(entity: Argument.Entity, pos: Argument.Coordinate? = null, nbt: NbtCompound) = addLine(command("summon", entity, pos, nbt(nbt)))
+
+fun Function.teamMsg(message: String) = addLine(command("teammsg", literal(message)))
+
+fun Function.teleport(destination: Argument.Entity) = addLine(command("teleport", destination))
+fun Function.teleport(target: Argument.Entity, destination: Argument.Entity) = addLine(command("teleport", target, destination))
+fun Function.teleport(location: Argument.Coordinate) = addLine(command("teleport", location))
+fun Function.teleport(target: Argument.Entity, location: Argument.Coordinate, rotation: Argument.Rotation? = null) = addLine(command("teleport", target, location, rotation))
+fun Function.teleport(target: Argument.Entity, location: Argument.Coordinate, facing: Argument.Coordinate) = addLine(command("teleport", target, location, literal("facing"), facing))
+fun Function.teleport(target: Argument.Entity, location: Argument.Coordinate, facing: Argument.Entity, facingAnchor: Anchor) =
+	addLine(command("teleport", target, location, literal("facing"), facing, literal(facingAnchor.asArg())))
+
+fun Function.tell(targets: Argument.Entity, message: String) = addLine(command("tell", targets, literal(message)))
+
+fun Function.tellraw(targets: Argument.Entity, message: NbtTag) = addLine(command("tellraw", targets, nbt(message)))
+
+@Serializable(TitleAction.Companion.TitleActionSerializer::class)
+enum class TitleAction {
+	CLEAR,
+	RESET;
+	
+	companion object {
+		val values = values()
+		
+		object TitleActionSerializer : LowercaseSerializer<TitleAction>(values)
+	}
+}
+
+@Serializable(TitleLocation.Companion.TitleLocationSerializer::class)
+enum class TitleLocation {
+	TITLE,
+	SUBTITLE,
+	ACTIONBAR;
+	
+	companion object {
+		val values = values()
+		
+		object TitleLocationSerializer : LowercaseSerializer<TitleLocation>(values)
+	}
+}
+
+fun Function.title(targets: Argument.Entity, action: TitleAction) = addLine(command("title", targets, literal(action.asArg()), literal(value.asArg())))
+fun Function.title(targets: Argument.Entity, location: TitleLocation, message: NbtTag) = addLine(command("title", targets, literal(location.asArg()), nbt(message)))
+fun Function.title(targets: Argument.Entity, fadeIn: Int, stay: Int, fadeOut: Int) = addLine(command("title", targets, literal("times"), int(fadeIn), int(stay), int(fadeOut)))
+
+fun Function.tm(message: String) = addLine(command("tm", literal(message)))
+
+fun Function.tp(destination: Argument.Entity) = addLine(command("tp", destination))
+fun Function.tp(target: Argument.Entity, destination: Argument.Entity) = addLine(command("tp", target, destination))
+fun Function.tp(location: Argument.Coordinate) = addLine(command("tp", location))
+fun Function.tp(target: Argument.Entity, location: Argument.Coordinate, rotation: Argument.Rotation? = null) = addLine(command("tp", target, location, rotation))
+fun Function.tp(target: Argument.Entity, location: Argument.Coordinate, facing: Argument.Coordinate) = addLine(command("tp", target, location, literal("facing"), facing))
+fun Function.tp(target: Argument.Entity, location: Argument.Coordinate, facing: Argument.Entity, facingAnchor: Anchor) =
+	addLine(command("tp", target, location, literal("facing"), facing, literal(facingAnchor.asArg())))
