@@ -22,10 +22,11 @@ enum class TimeSpec {
 }
 
 class Time(private val fn: Function) {
-	fun add(value: Int) = fn.addLine(command("time", fn.literal("add"), fn.int(value)))
-	fun query(type: TimeType) = fn.addLine(command("time", fn.literal("query"), fn.literal(type.asArg())))
-	fun set(value: Int) = fn.addLine(command("time", fn.literal("set"), fn.int(value)))
-	fun set(spec: TimeSpec) = fn.addLine(command("time", fn.literal("set"), fn.literal(spec.asArg())))
+	fun add(value: Int) = fn.addLine(command("time", literal("add"), int(value)))
+	fun query(type: TimeType) = fn.addLine(command("time", literal("query"), literal(type.asArg())))
+	fun set(value: Int) = fn.addLine(command("time", literal("set"), int(value)))
+	fun set(spec: TimeSpec) = fn.addLine(command("time", literal("set"), literal(spec.asArg())))
 }
 
 val Function.time get() = Time(this)
+fun Function.time(block: Time.() -> Unit) = Time(this).apply(block)

@@ -6,47 +6,47 @@ import arguments.int
 import arguments.literal
 import functions.Function
 
-class DataModifyOperation(private val fn: Function) {
-	fun append(from: Argument.Data, path: String) = listOf(fn.literal("append"), fn.literal("from"), fn.literal(from.literalName), from, fn.literal(path))
-	fun append(value: Argument) = listOf(fn.literal("append"), fn.literal("value"), value)
+object DataModifyOperation {
+	fun append(from: Argument.Data, path: String) = listOf(literal("append"), literal("from"), literal(from.literalName), from, literal(path))
+	fun append(value: Argument) = listOf(literal("append"), literal("value"), value)
 	
-	fun insert(index: Int, from: Argument.Data, path: String) = listOf(fn.literal("insert"), fn.int(index), fn.literal("from"), fn.literal(from.literalName), from, fn.literal(path))
-	fun insert(index: Int, value: Argument) = listOf(fn.literal("insert"), fn.int(index), fn.literal("value"), value)
+	fun insert(index: Int, from: Argument.Data, path: String) = listOf(literal("insert"), int(index), literal("from"), literal(from.literalName), from, literal(path))
+	fun insert(index: Int, value: Argument) = listOf(literal("insert"), int(index), literal("value"), value)
 	
-	fun merge(from: Argument.Data, path: String) = listOf(fn.literal("merge"), fn.literal("from"), fn.literal(from.literalName), from, fn.literal(path))
-	fun merge(value: Argument) = listOf(fn.literal("merge"), fn.literal("value"), value)
+	fun merge(from: Argument.Data, path: String) = listOf(literal("merge"), literal("from"), literal(from.literalName), from, literal(path))
+	fun merge(value: Argument) = listOf(literal("merge"), literal("value"), value)
 	
-	fun prepend(from: Argument.Data, path: String) = listOf(fn.literal("prepend"), fn.literal("from"), fn.literal(from.literalName), from, fn.literal(path))
-	fun prepend(value: Argument) = listOf(fn.literal("prepend"), fn.literal("value"), value)
+	fun prepend(from: Argument.Data, path: String) = listOf(literal("prepend"), literal("from"), literal(from.literalName), from, literal(path))
+	fun prepend(value: Argument) = listOf(literal("prepend"), literal("value"), value)
 	
-	fun set(from: Argument.Data, path: String) = listOf(fn.literal("set"), fn.literal("from"), fn.literal(from.literalName), from, fn.literal(path))
-	fun set(value: Argument) = listOf(fn.literal("set"), fn.literal("value"), value)
+	fun set(from: Argument.Data, path: String) = listOf(literal("set"), literal("from"), literal(from.literalName), from, literal(path))
+	fun set(value: Argument) = listOf(literal("set"), literal("value"), value)
 	
-	fun remove(path: String) = listOf(fn.literal("remove"), fn.literal(path))
+	fun remove(path: String) = listOf(literal("remove"), literal(path))
 }
 
 class Data(private val fn: Function, val target: Argument.Data) {
 	fun get(path: String, scale: Double? = null) = fn.addLine(
 		command(
-			"data", fn.literal("get"), fn.literal(target.literalName), target, fn.literal(path), fn.float(scale)
+			"data", literal("get"), literal(target.literalName), target, literal(path), float(scale)
 		)
 	)
 	
 	fun modify(path: String, value: DataModifyOperation.() -> List<Argument>) = fn.addLine(
 		command(
-			"data", fn.literal("modify"), fn.literal(target.literalName), target, fn.literal(path), *DataModifyOperation(fn).value().toTypedArray()
+			"data", literal("modify"), literal(target.literalName), target, literal(path), *DataModifyOperation.value().toTypedArray()
 		)
 	)
 	
 	fun merge(from: Argument.Data, path: String) = fn.addLine(
 		command(
-			"data", fn.literal("merge"), fn.literal(target.literalName), target, fn.literal("from"), fn.literal(from.literalName), from, fn.literal(path)
+			"data", literal("merge"), literal(target.literalName), target, literal("from"), literal(from.literalName), from, literal(path)
 		)
 	)
 	
 	fun remove(path: String) = fn.addLine(
 		command(
-			"data", fn.literal("remove"), fn.literal(target.literalName), target, fn.literal(path)
+			"data", literal("remove"), literal(target.literalName), target, literal(path)
 		)
 	)
 }

@@ -1,7 +1,5 @@
 package arguments
 
-import functions.Function
-
 fun interface SlotType {
 	fun name(): String
 }
@@ -48,4 +46,4 @@ data class Slot(val type: SlotEntry) : Argument {
 	override fun asString() = type.name()
 }
 
-fun Function.slot(type: SlotEntry) = Slot(type)
+fun slot(type: SlotEntry) = Slot(type)

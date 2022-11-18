@@ -39,22 +39,22 @@ enum class BossBarStyle {
 }
 
 class BossBar(private val fn: Function, val id: String) {
-	fun add(name: String) = fn.addLine(command("bossbar", fn.literal("add"), fn.literal(id), fn.literal(name)))
-	fun get(result: BossBarGetResult) = fn.addLine(command("bossbar", fn.literal("get"), fn.literal(id), fn.literal(result.asArg())))
-	fun remove() = fn.addLine(command("bossbar", fn.literal("remove"), fn.literal(id)))
-	fun setColor(action: BossBarColor) = fn.addLine(command("bossbar", fn.literal("set"), fn.literal(id), fn.literal(action.asArg())))
-	fun setMax(max: Int) = fn.addLine(command("bossbar", fn.literal("set"), fn.literal(id), fn.literal("max"), fn.int(max)))
-	fun setName(name: String) = fn.addLine(command("bossbar", fn.literal("set"), fn.literal(id), fn.literal("name"), fn.literal(name)))
-	fun setPlayers(targets: Argument.Selector) = fn.addLine(command("bossbar", fn.literal("set"), fn.literal(id), fn.literal("players"), targets))
-	fun setStyle(style: BossBarStyle) = fn.addLine(command("bossbar", fn.literal("set"), fn.literal(id), fn.literal("style"), fn.literal(style.asArg())))
-	fun setValue(value: Int) = fn.addLine(command("bossbar", fn.literal("set"), fn.literal(id), fn.literal("value"), fn.int(value)))
-	fun setVisible(visible: Boolean) = fn.addLine(command("bossbar", fn.literal("set"), fn.literal(id), fn.literal("visible"), fn.bool(visible)))
+	fun add(name: String) = fn.addLine(command("bossbar", literal("add"), literal(id), literal(name)))
+	fun get(result: BossBarGetResult) = fn.addLine(command("bossbar", literal("get"), literal(id), literal(result.asArg())))
+	fun remove() = fn.addLine(command("bossbar", literal("remove"), literal(id)))
+	fun setColor(action: BossBarColor) = fn.addLine(command("bossbar", literal("set"), literal(id), literal(action.asArg())))
+	fun setMax(max: Int) = fn.addLine(command("bossbar", literal("set"), literal(id), literal("max"), int(max)))
+	fun setName(name: String) = fn.addLine(command("bossbar", literal("set"), literal(id), literal("name"), literal(name)))
+	fun setPlayers(targets: Argument.Selector) = fn.addLine(command("bossbar", literal("set"), literal(id), literal("players"), targets))
+	fun setStyle(style: BossBarStyle) = fn.addLine(command("bossbar", literal("set"), literal(id), literal("style"), literal(style.asArg())))
+	fun setValue(value: Int) = fn.addLine(command("bossbar", literal("set"), literal(id), literal("value"), int(value)))
+	fun setVisible(visible: Boolean) = fn.addLine(command("bossbar", literal("set"), literal(id), literal("visible"), bool(visible)))
 }
 
 class BossBars(private val fn: Function) {
-	fun list() = fn.addLine(command("bossbar", fn.literal("list")))
+	fun list() = fn.addLine(command("bossbar", literal("list")))
 	fun get(id: String) = BossBar(fn, id)
 }
 
-fun Function.bossbar(name: String, block: BossBar.() -> Unit = {}) = BossBar(this, name).apply(block)
-val Function.bossbars get() = BossBars(this)
+val Function.bossBars get() = BossBars(this)
+fun Function.bossBar(name: String, block: BossBar.() -> Unit = {}) = BossBar(this, name).apply(block)

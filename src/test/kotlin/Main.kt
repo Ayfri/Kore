@@ -40,7 +40,7 @@ fun main() {
 			
 			clear(targets = selector(SelectorType.ALL_PLAYERS), item = item("stone"), maxCount = 1)
 			
-			bossbar("test") {
+			bossBar("test") {
 				setColor(BossBarColor.BLUE)
 				setStyle(BossBarStyle.NOTCHED_6)
 				setMax(100)
@@ -48,7 +48,7 @@ fun main() {
 				setValue(50)
 			}
 			
-			bossbars.list()
+			bossBars.list()
 			
 			addBlankLine()
 			cloneFiltered(coordinate(20, 50, 30), coordinate(40, 60, 50), coordinate(0, 0, 0), blockTag("wool"), CloneMode.MASKED)

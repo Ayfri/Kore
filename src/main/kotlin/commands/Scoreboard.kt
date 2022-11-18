@@ -35,19 +35,19 @@ enum class RenderType {
 class Objectives(private val fn: Function) {
 	fun add(name: String, criteria: String, displayName: String? = null) = fn.addLine(
 		command(
-			"scoreboard", fn.literal("objective"), fn.literal("add"), fn.literal(name), fn.literal(criteria), fn.literal(displayName)
+			"scoreboard", literal("objective"), literal("add"), literal(name), literal(criteria), literal(displayName)
 		)
 	)
 	
-	fun list() = fn.addLine(command("scoreboard", fn.literal("objective"), fn.literal("list")))
+	fun list() = fn.addLine(command("scoreboard", literal("objective"), literal("list")))
 	fun modify(name: String, displayName: String? = null) =
-		fn.addLine(command("scoreboard", fn.literal("objective"), fn.literal("modify"), fn.literal(name), fn.literal("displayname"), fn.literal(displayName)))
+		fn.addLine(command("scoreboard", literal("objective"), literal("modify"), literal(name), literal("displayname"), literal(displayName)))
 	
 	fun modify(name: String, renderType: RenderType) =
-		fn.addLine(command("scoreboard", fn.literal("objective"), fn.literal("modify"), fn.literal(name), fn.literal("rendertype"), fn.literal(renderType.asArg())))
+		fn.addLine(command("scoreboard", literal("objective"), literal("modify"), literal(name), literal("rendertype"), literal(renderType.asArg())))
 	
-	fun remove(name: String) = fn.addLine(command("scoreboard", fn.literal("objective"), fn.literal("remove"), fn.literal(name)))
-	fun setDisplay(slot: SetDisplaySlot, name: String) = fn.addLine(command("scoreboard", fn.literal("objective"), fn.literal("setdisplay"), fn.literal(slot.asString()), fn.literal(name)))
+	fun remove(name: String) = fn.addLine(command("scoreboard", literal("objective"), literal("remove"), literal(name)))
+	fun setDisplay(slot: SetDisplaySlot, name: String) = fn.addLine(command("scoreboard", literal("objective"), literal("setdisplay"), literal(slot.asString()), literal(name)))
 }
 
 @Serializable(Operation.Companion.OperationSerializer::class)
@@ -72,18 +72,18 @@ enum class Operation(val symbol: String) {
 }
 
 class Players(private val fn: Function) {
-	fun list(target: Argument.ScoreHolder? = null) = fn.addLine(command("scoreboard", fn.literal("players"), fn.literal("list"), target))
-	fun get(target: Argument.ScoreHolder, objective: String) = fn.addLine(command("scoreboard", fn.literal("players"), fn.literal("get"), target, fn.literal(objective)))
-	fun set(target: Argument.ScoreHolder, objective: String, score: Int) = fn.addLine(command("scoreboard", fn.literal("players"), fn.literal("set"), target, fn.literal(objective), fn.int(score)))
-	fun add(target: Argument.ScoreHolder, objective: String, score: Int) = fn.addLine(command("scoreboard", fn.literal("players"), fn.literal("add"), target, fn.literal(objective), fn.int(score)))
+	fun list(target: Argument.ScoreHolder? = null) = fn.addLine(command("scoreboard", literal("players"), literal("list"), target))
+	fun get(target: Argument.ScoreHolder, objective: String) = fn.addLine(command("scoreboard", literal("players"), literal("get"), target, literal(objective)))
+	fun set(target: Argument.ScoreHolder, objective: String, score: Int) = fn.addLine(command("scoreboard", literal("players"), literal("set"), target, literal(objective), int(score)))
+	fun add(target: Argument.ScoreHolder, objective: String, score: Int) = fn.addLine(command("scoreboard", literal("players"), literal("add"), target, literal(objective), int(score)))
 	fun remove(target: Argument.ScoreHolder, objective: String, score: Int) = fn.addLine(
 		command(
-			"scoreboard", fn.literal("players"), fn.literal("remove"), target, fn.literal(objective), fn.int(score)
+			"scoreboard", literal("players"), literal("remove"), target, literal(objective), int(score)
 		)
 	)
 	
-	fun reset(target: Argument.ScoreHolder, objective: String? = null) = fn.addLine(command("scoreboard", fn.literal("players"), fn.literal("reset"), target, fn.literal(objective)))
-	fun enable(target: Argument.ScoreHolder, objective: String) = fn.addLine(command("scoreboard", fn.literal("players"), fn.literal("enable"), target, fn.literal(objective)))
+	fun reset(target: Argument.ScoreHolder, objective: String? = null) = fn.addLine(command("scoreboard", literal("players"), literal("reset"), target, literal(objective)))
+	fun enable(target: Argument.ScoreHolder, objective: String) = fn.addLine(command("scoreboard", literal("players"), literal("enable"), target, literal(objective)))
 	
 	fun operation(
 		target: Argument.ScoreHolder,
@@ -91,10 +91,10 @@ class Players(private val fn: Function) {
 		operation: Operation,
 		source: Argument.ScoreHolder,
 		sourceObjective: String,
-	) = fn.addLine(command("scoreboard", fn.literal("players"), fn.literal("operation"), target, fn.literal(objective), fn.literal(operation.asArg()), source, fn.literal(sourceObjective)))
+	) = fn.addLine(command("scoreboard", literal("players"), literal("operation"), target, literal(objective), literal(operation.asArg()), source, literal(sourceObjective)))
 }
 
-class Player(private val fn: Function, val target: Argument.ScoreHolder) {
+class Player(fn: Function, val target: Argument.ScoreHolder) {
 	val objectives = Objectives(fn)
 	val players = Players(fn)
 	
@@ -108,7 +108,7 @@ class Player(private val fn: Function, val target: Argument.ScoreHolder) {
 	fun operation(objective: String, operation: Operation, source: Argument.ScoreHolder, sourceObjective: String) = players.operation(target, objective, operation, source, sourceObjective)
 }
 
-class PlayerObjective(private val fn: Function, val target: Argument.ScoreHolder, val objective: String) {
+class PlayerObjective(fn: Function, val target: Argument.ScoreHolder, val objective: String) {
 	val players = Players(fn)
 	
 	fun get() = players.get(target, objective)

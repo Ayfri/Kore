@@ -30,77 +30,77 @@ enum class BlocksTestMode {
 	}
 }
 
-class ExecuteCondition(private val fn: Function) {
-	fun block(pos: Argument.Coordinate, block: Argument.Block) = listOf(fn.literal("block"), pos, block)
+object ExecuteCondition {
+	fun block(pos: Argument.Coordinate, block: Argument.Block) = listOf(literal("block"), pos, block)
 	
 	fun blocks(start: Argument.Coordinate, end: Argument.Coordinate, destination: Argument.Coordinate, mode: BlocksTestMode) = listOf(
-		fn.literal("blocks"), start, end, destination, fn.literal(mode.asArg())
+		literal("blocks"), start, end, destination, literal(mode.asArg())
 	)
 	
 	fun data(target: Argument.Data, path: String) = listOf(
-		fn.literal("data"), fn.literal(target.literalName), target, fn.literal(path)
+		literal("data"), literal(target.literalName), target, literal(path)
 	)
 	
-	fun entity(target: Argument.Entity) = listOf(fn.literal("entity"), target)
+	fun entity(target: Argument.Entity) = listOf(literal("entity"), target)
 	
-	fun predicate(predicate: String) = listOf(fn.literal("predicate"), fn.literal(predicate))
+	fun predicate(predicate: String) = listOf(literal("predicate"), literal(predicate))
 	
 	fun score(target: Argument.ScoreHolder, objective: String, source: Argument.ScoreHolder, sourceObjective: String, relation: RelationBlock.(Number, Number) -> Relation) = listOf(
-		fn.literal("score"), target, fn.literal(objective), fn.literal(relation(RelationBlock(), 0.0, 0.0).asArg()), source, fn.literal(sourceObjective)
+		literal("score"), target, literal(objective), literal(relation(RelationBlock(), 0.0, 0.0).asArg()), source, literal(sourceObjective)
 	)
 	
 	fun score(target: Argument.ScoreHolder, objective: String, range: IntRangeOrInt) = listOf(
-		fn.literal("score"), target, fn.literal(objective), fn.literal(range.asArg())
+		literal("score"), target, literal(objective), literal(range.asArg())
 	)
 }
 
-class ExecuteStore(private val fn: Function) {
+object ExecuteStore {
 	fun block(
 		pos: Argument.Coordinate,
 		path: String,
 		type: DataType,
 		scale: Double,
-	) = listOf(fn.literal("store"), fn.literal("block"), pos, fn.literal(path), fn.literal(type.asArg()), fn.float(scale))
+	) = listOf(literal("store"), literal("block"), pos, literal(path), literal(type.asArg()), float(scale))
 	
-	fun bossbarMax(id: String) = listOf(fn.literal("bossbar"), fn.literal(id), fn.literal("max"))
-	fun bossbarValue(id: String) = listOf(fn.literal("bossbar"), fn.literal(id), fn.literal("value"))
+	fun bossbarMax(id: String) = listOf(literal("bossbar"), literal(id), literal("max"))
+	fun bossbarValue(id: String) = listOf(literal("bossbar"), literal(id), literal("value"))
 	
-	fun entity(target: Argument.Entity, path: String, type: DataType, scale: Double) = listOf(fn.literal("entity"), target, fn.literal(path), fn.literal(type.asArg()), fn.float(scale))
+	fun entity(target: Argument.Entity, path: String, type: DataType, scale: Double) = listOf(literal("entity"), target, literal(path), literal(type.asArg()), float(scale))
 	
-	fun score(target: Argument.ScoreHolder, objective: String) = listOf(fn.literal("score"), target, fn.literal(objective))
+	fun score(target: Argument.ScoreHolder, objective: String) = listOf(literal("score"), target, literal(objective))
 	
-	fun storage(target: Argument.Storage, path: String, type: DataType, scale: Double) = listOf(fn.literal("storage"), target, fn.literal(path), fn.literal(type.asArg()), fn.float(scale))
+	fun storage(target: Argument.Storage, path: String, type: DataType, scale: Double) = listOf(literal("storage"), target, literal(path), literal(type.asArg()), float(scale))
 }
 
-class Execute(private val fn: Function) {
+class Execute {
 	private val array = mutableListOf<Argument>()
 	private var command: Command? = null
 	
 	private fun <T> MutableList<T>.addAll(vararg args: T?) = addAll(args.filterNotNull())
 	
-	fun getFinalCommand() = (array + fn.literal("run") + fn.literal(command?.toString())).toTypedArray()
+	fun getFinalCommand() = (array + literal("run") + literal(command?.toString())).toTypedArray()
 	
-	fun align(axis: Axes, offset: Int? = null) = array.addAll(fn.literal("align"), fn.literal(axis.asArg()), fn.int(offset))
-	fun anchored(anchor: Anchor) = array.addAll(fn.literal("anchored"), fn.literal(anchor.asArg()))
-	fun asTarget(target: Argument.Entity) = array.addAll(fn.literal("as"), target)
-	fun at(target: Argument.Entity) = array.addAll(fn.literal("at"), target)
-	fun facing(target: Argument.Entity, anchor: Anchor? = null) = array.addAll(fn.literal("facing"), target, fn.literal(anchor?.asArg()))
-	fun facingBlock(pos: Argument.Coordinate, anchor: Anchor? = null) = array.addAll(fn.literal("facing"), fn.literal("block"), pos, fn.literal(anchor?.asArg()))
-	fun facingEntity(target: Argument.Entity, anchor: Anchor? = null) = array.addAll(fn.literal("facing"), target, fn.literal("entity"), target, fn.literal(anchor?.asArg()))
+	fun align(axis: Axes, offset: Int? = null) = array.addAll(literal("align"), literal(axis.asArg()), int(offset))
+	fun anchored(anchor: Anchor) = array.addAll(literal("anchored"), literal(anchor.asArg()))
+	fun asTarget(target: Argument.Entity) = array.addAll(literal("as"), target)
+	fun at(target: Argument.Entity) = array.addAll(literal("at"), target)
+	fun facing(target: Argument.Entity, anchor: Anchor? = null) = array.addAll(literal("facing"), target, literal(anchor?.asArg()))
+	fun facingBlock(pos: Argument.Coordinate, anchor: Anchor? = null) = array.addAll(literal("facing"), literal("block"), pos, literal(anchor?.asArg()))
+	fun facingEntity(target: Argument.Entity, anchor: Anchor? = null) = array.addAll(literal("facing"), target, literal("entity"), target, literal(anchor?.asArg()))
 	
-	fun facingPos(pos: Argument.Coordinate, anchor: Anchor? = null) = array.addAll(fn.literal("facing"), fn.literal("position"), pos, fn.literal(anchor?.asArg()))
-	fun inDimension(dimension: Dimension) = array.addAll(fn.literal("in"), fn.dimension(dimension))
-	fun inDimension(customDimension: String, namespace: String? = null) = array.addAll(fn.literal("in"), fn.dimension(customDimension, namespace))
-	fun positioned(pos: Argument.Coordinate) = array.addAll(fn.literal("positioned"), pos)
-	fun positionedAs(target: Argument.Entity) = array.addAll(fn.literal("positioned"), target, fn.literal("as"), target)
-	fun rotated(rotation: Argument.Rotation) = array.addAll(fn.literal("rotated"), rotation)
-	fun rotatedAs(target: Argument.Entity) = array.addAll(fn.literal("rotated"), target, fn.literal("as"), target)
+	fun facingPos(pos: Argument.Coordinate, anchor: Anchor? = null) = array.addAll(literal("facing"), literal("position"), pos, literal(anchor?.asArg()))
+	fun inDimension(dimension: Dimension) = array.addAll(literal("in"), dimension(dimension))
+	fun inDimension(customDimension: String, namespace: String? = null) = array.addAll(literal("in"), dimension(customDimension, namespace))
+	fun positioned(pos: Argument.Coordinate) = array.addAll(literal("positioned"), pos)
+	fun positionedAs(target: Argument.Entity) = array.addAll(literal("positioned"), target, literal("as"), target)
+	fun rotated(rotation: Argument.Rotation) = array.addAll(literal("rotated"), rotation)
+	fun rotatedAs(target: Argument.Entity) = array.addAll(literal("rotated"), target, literal("as"), target)
 	
-	fun ifCondition(block: ExecuteCondition.() -> List<Argument>) = array.addAll(fn.literal("if"), *ExecuteCondition(fn).block().toTypedArray())
-	fun unlessCondition(block: ExecuteCondition.() -> List<Argument>) = array.addAll(fn.literal("unless"), *ExecuteCondition(fn).block().toTypedArray())
+	fun ifCondition(block: ExecuteCondition.() -> List<Argument>) = array.addAll(literal("if"), *ExecuteCondition.block().toTypedArray())
+	fun unlessCondition(block: ExecuteCondition.() -> List<Argument>) = array.addAll(literal("unless"), *ExecuteCondition.block().toTypedArray())
 	
-	fun storeResult(block: ExecuteStore.() -> List<Argument>) = array.addAll(fn.literal("store"), fn.literal("result"), *ExecuteStore(fn).block().toTypedArray())
-	fun storeValue(block: ExecuteStore.() -> List<Argument>) = array.addAll(fn.literal("store"), fn.literal("value"), *ExecuteStore(fn).block().toTypedArray())
+	fun storeResult(block: ExecuteStore.() -> List<Argument>) = array.addAll(literal("store"), literal("result"), *ExecuteStore.block().toTypedArray())
+	fun storeValue(block: ExecuteStore.() -> List<Argument>) = array.addAll(literal("store"), literal("value"), *ExecuteStore.block().toTypedArray())
 	
 	fun run(block: Function.() -> Command) {
 		val function = Function.EMPTY
@@ -109,4 +109,4 @@ class Execute(private val fn: Function) {
 	}
 }
 
-fun Function.execute(block: Execute.() -> Unit) = addLine(command("execute", *Execute(this).apply(block).getFinalCommand()))
+fun Function.execute(block: Execute.() -> Unit) = addLine(command("execute", *Execute().apply(block).getFinalCommand()))
