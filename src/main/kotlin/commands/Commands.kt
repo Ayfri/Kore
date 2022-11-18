@@ -9,7 +9,6 @@ import kotlinx.serialization.json.jsonPrimitive
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtTag
 import serializers.LowercaseSerializer
-import sun.jvm.hotspot.oops.CellTypeState.value
 
 internal val json = Json { ignoreUnknownKeys = true }
 internal inline fun <reified T : @Serializable Any> T.asArg() = json.encodeToJsonElement(this).jsonPrimitive.content
@@ -224,8 +223,12 @@ fun Function.teleport(target: Argument.Entity, destination: Argument.Entity) = a
 fun Function.teleport(location: Argument.Coordinate) = addLine(command("teleport", location))
 fun Function.teleport(target: Argument.Entity, location: Argument.Coordinate, rotation: Argument.Rotation? = null) = addLine(command("teleport", target, location, rotation))
 fun Function.teleport(target: Argument.Entity, location: Argument.Coordinate, facing: Argument.Coordinate) = addLine(command("teleport", target, location, literal("facing"), facing))
-fun Function.teleport(target: Argument.Entity, location: Argument.Coordinate, facing: Argument.Entity, facingAnchor: Anchor) =
-	addLine(command("teleport", target, location, literal("facing"), facing, literal(facingAnchor.asArg())))
+fun Function.teleport(
+	target: Argument.Entity,
+	location: Argument.Coordinate,
+	facing: Argument.Entity,
+	facingAnchor: Anchor,
+) = addLine(command("teleport", target, location, literal("facing"), facing, literal(facingAnchor.asArg())))
 
 fun Function.tell(targets: Argument.Entity, message: String) = addLine(command("tell", targets, literal(message)))
 
@@ -256,7 +259,7 @@ enum class TitleLocation {
 	}
 }
 
-fun Function.title(targets: Argument.Entity, action: TitleAction) = addLine(command("title", targets, literal(action.asArg()), literal(value.asArg())))
+fun Function.title(targets: Argument.Entity, action: TitleAction) = addLine(command("title", targets, literal(action.asArg())))
 fun Function.title(targets: Argument.Entity, location: TitleLocation, message: NbtTag) = addLine(command("title", targets, literal(location.asArg()), nbt(message)))
 fun Function.title(targets: Argument.Entity, fadeIn: Int, stay: Int, fadeOut: Int) = addLine(command("title", targets, literal("times"), int(fadeIn), int(stay), int(fadeOut)))
 
@@ -267,5 +270,15 @@ fun Function.tp(target: Argument.Entity, destination: Argument.Entity) = addLine
 fun Function.tp(location: Argument.Coordinate) = addLine(command("tp", location))
 fun Function.tp(target: Argument.Entity, location: Argument.Coordinate, rotation: Argument.Rotation? = null) = addLine(command("tp", target, location, rotation))
 fun Function.tp(target: Argument.Entity, location: Argument.Coordinate, facing: Argument.Coordinate) = addLine(command("tp", target, location, literal("facing"), facing))
-fun Function.tp(target: Argument.Entity, location: Argument.Coordinate, facing: Argument.Entity, facingAnchor: Anchor) =
-	addLine(command("tp", target, location, literal("facing"), facing, literal(facingAnchor.asArg())))
+fun Function.tp(
+	target: Argument.Entity,
+	location: Argument.Coordinate,
+	facing: Argument.Entity,
+	facingAnchor: Anchor,
+) = addLine(command("tp", target, location, literal("facing"), facing, literal(facingAnchor.asArg())))
+
+fun Function.w(message: String) = addLine(command("w", literal(message)))
+
+fun Function.weatherClear(duration: Int? = null) = addLine(command("weather", literal("clear"), int(duration)))
+fun Function.weatherRain(duration: Int? = null) = addLine(command("weather", literal("rain"), int(duration)))
+fun Function.weatherThunder(duration: Int? = null) = addLine(command("weather", literal("thunder"), int(duration)))
