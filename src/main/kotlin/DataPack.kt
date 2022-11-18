@@ -6,13 +6,18 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.io.BufferedOutputStream
 import java.io.File
+import java.io.FileOutputStream
 import java.nio.file.Path
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 import kotlin.io.path.Path
 
 @Serializable
 data class Pack(
-	var packFormat: Int,
+	@SerialName("pack_format")
+	var format: Int,
 	var description: String,
 )
 
@@ -90,6 +95,21 @@ class DataPack(val name: String) {
 			functionsDir.mkdirs()
 			
 			functions.forEach { it.generate(functionsDir) }
+		}
+	}
+	
+	fun generateZip() {
+		generate()
+		
+		ZipOutputStream(BufferedOutputStream(FileOutputStream("$path/$name.zip"))).use { zip ->
+			val root = File("$path/$name")
+			root.walk().forEach { file ->
+				if (file.isFile) {
+					zip.putNextEntry(ZipEntry(file.relativeTo(root).path))
+					zip.write(file.readBytes())
+					zip.closeEntry()
+				}
+			}
 		}
 	}
 	
