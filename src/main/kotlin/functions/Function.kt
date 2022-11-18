@@ -2,6 +2,7 @@ package functions
 
 import DataPack
 import commands.Command
+import tags.addToTag
 import java.io.File
 
 class Function(val name: String, val namespace: String = "minecraft", var directory: String = "", val datapack: DataPack) {
@@ -39,4 +40,10 @@ class Function(val name: String, val namespace: String = "minecraft", var direct
 
 fun DataPack.function(name: String, namespace: String = this.name, directory: String = "", block: Function.() -> Unit) {
 	addFunction(Function(name, namespace, directory, this).apply(block))
+}
+
+fun Function.setTag(tagFile: String, tagNamespace: String = namespace, entryNamespace: String = namespace, group: Boolean = false, required: Boolean? = null) {
+	datapack.addToTag(tagNamespace, "functions", tagFile) {
+		add(name, entryNamespace, group, required)
+	}
 }

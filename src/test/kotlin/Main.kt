@@ -8,11 +8,23 @@ import commands.*
 import functions.function
 import net.benwoodworth.knbt.NbtString
 import net.benwoodworth.knbt.put
+import tags.tags
 import kotlin.io.path.Path
 
 fun main() {
 	val dataPack = dataPack("test") {
-		function("load", "minecraft") {
+		addLoad(this)
+		
+		tags("minecraft") {
+			tag("blocks", "op") {
+				add("minecraft:command_block")
+				add("minecraft:repeating_command_block")
+				add("minecraft:chain_command_block")
+				add("minecraft:barrier", required = true)
+			}
+		}
+		
+		function("test") {
 			val selector = selector(SelectorType.ALL_ENTITIES) {
 				dx = 1.0
 				level = range(1..5)
@@ -164,15 +176,16 @@ fun main() {
 		iconPath = Path("src", "test", "resources", "Kotlin Full Color Logo Mark RGB.png")
 		
 		pack {
+			format = 10
 			description = "Test"
 		}
 		
 		filter {
 			block {
-				namespace = "mine.*"
+				namespace = "test"
 			}
 		}
 	}
 	
-	dataPack.generate()
+	dataPack.generateZip()
 }

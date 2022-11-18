@@ -6,6 +6,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import tags.Tags
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -67,6 +68,7 @@ class DataPack(val name: String) {
 	private val filter = Filter()
 	private val pack = Pack(10, "Kordex Plugin")
 	private val functions = mutableListOf<Function>()
+	val tags = mutableListOf<Tags>()
 	
 	fun addFunction(function: Function) {
 		functions += function
@@ -81,7 +83,7 @@ class DataPack(val name: String) {
 		
 		val serialized = SerializedDataPack(pack, filter)
 		
-		File(root, "pack.mcmeta").writeText(json.encodeToString(serialized))
+		File(root, "pack.mcmeta").writeText(jsonEncoder.encodeToString(serialized))
 		iconPath?.let { File(root, "pack.png").writeBytes(it.toFile().readBytes()) }
 		
 		val data = File(root, "data")
@@ -95,6 +97,16 @@ class DataPack(val name: String) {
 			functionsDir.mkdirs()
 			
 			functions.forEach { it.generate(functionsDir) }
+		}
+		
+		tags.groupBy { it.namespace }.forEach { (namespace, tags) ->
+			val namespaceDir = File(data, namespace)
+			namespaceDir.mkdirs()
+			
+			val tagsDir = File(namespaceDir, "tags")
+			tagsDir.mkdirs()
+			
+			tags.forEach { it.generate(tagsDir) }
 		}
 	}
 	
@@ -115,8 +127,9 @@ class DataPack(val name: String) {
 	
 	companion object {
 		@OptIn(ExperimentalSerializationApi::class)
-		private val json = Json {
+		val jsonEncoder = Json {
 			prettyPrint = true
+			encodeDefaults = true
 			ignoreUnknownKeys = true
 			explicitNulls = false
 		}
