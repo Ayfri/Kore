@@ -1,7 +1,6 @@
 package commands
 
 import arguments.*
-import arguments.numbers.Experience
 import functions.Function
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -41,18 +40,6 @@ class Effect(private val fn: Function, val target: Argument.Entity) {
 fun Function.effect(target: Argument.Entity, block: Effect.() -> Unit) = Effect(this, target).apply(block)
 
 fun Function.enchant(enchantment: String, level: Int? = null) = addLine(command("enchant", literal(enchantment), int(level)))
-
-fun Function.experienceAdd(target: Argument.Entity, amount: Int, type: ExperienceType = ExperienceType.POINTS) =
-	addLine(command("experience", literal("add"), target, int(amount), literal(type.asArg())))
-
-fun Function.experienceAdd(target: Argument.Entity, amount: Experience) = addLine(command("experience", literal("add"), target, int(amount.value), literal(amount.typeString)))
-
-fun Function.experienceQuery(target: Argument.Entity, type: ExperienceType = ExperienceType.POINTS) = addLine(command("experience", literal("query"), target, literal(type.asArg())))
-
-fun Function.experienceSet(target: Argument.Entity, amount: Int, type: ExperienceType = ExperienceType.POINTS) =
-	addLine(command("experience", literal("set"), target, int(amount), literal(type.asArg())))
-
-fun Function.experienceSet(target: Argument.Entity, amount: Experience) = addLine(command("experience", literal("set"), target, int(amount.value), literal(amount.typeString)))
 
 @Serializable(FillOption.Companion.FillOptionSerializer::class)
 enum class FillOption {
