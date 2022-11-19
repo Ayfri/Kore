@@ -7,6 +7,7 @@ import arguments.numbers.ticks
 import commands.*
 import functions.function
 import net.benwoodworth.knbt.NbtString
+import net.benwoodworth.knbt.addNbtCompound
 import net.benwoodworth.knbt.put
 import tags.tags
 import kotlin.io.path.Path
@@ -177,7 +178,23 @@ fun main() {
 		
 		pack {
 			format = 10
-			description = "Test"
+			description = nbtList {
+				addNbtCompound {
+					put("text", "My ")
+					put("color", Color.RED.toString())
+				}
+				
+				addNbtCompound {
+					put("text", "nice ")
+					put("color", Color.GREEN.toString())
+				}
+				
+				addNbtCompound {
+					put("text", "datapack")
+					put("color", Color.BLUE.toString())
+					put("bold", true)
+				}
+			}
 		}
 		
 		filter {

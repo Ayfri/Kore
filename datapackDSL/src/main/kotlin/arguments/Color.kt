@@ -22,6 +22,8 @@ enum class Color {
 	YELLOW,
 	WHITE;
 	
+	override fun toString() = name.lowercase()
+	
 	companion object {
 		val values = values()
 		
