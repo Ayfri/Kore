@@ -43,5 +43,7 @@ inline fun KotlinIntRange.asRange() = IntRange(first, last)
 
 inline fun rangeOrInt(range: IntRange) = IntRangeOrInt(range)
 inline fun rangeOrInt(int: Int) = IntRangeOrInt(int = int)
+inline fun rangeOrIntStart(int: Int) = IntRangeOrInt(IntRange(int, null))
+inline fun rangeOrIntEnd(int: Int) = IntRangeOrInt(IntRange(null, int))
 inline fun Int.asRangeOrInt() = IntRangeOrInt(int = this)
 inline fun KotlinIntRange.asRangeOrInt() = IntRangeOrInt(IntRange(first, last))

@@ -40,5 +40,7 @@ inline fun ClosedFloatingPointRange<Double>.asRange() = FloatRange(start, endInc
 
 inline fun rangeOrDouble(range: FloatRange) = FloatRangeOrFloat(range)
 inline fun rangeOrDouble(double: Double) = FloatRangeOrFloat(double = double)
+inline fun rangeOrDoubleStart(double: Double) = FloatRangeOrFloat(FloatRange(double, null))
+inline fun rangeOrDoubleEnd(double: Double) = FloatRangeOrFloat(FloatRange(null, double))
 inline fun Double.asRangeOrDouble() = FloatRangeOrFloat(double = this)
 inline fun ClosedFloatingPointRange<Double>.asRangeOrDouble() = FloatRangeOrFloat(FloatRange(start, endInclusive))
