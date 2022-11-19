@@ -5,36 +5,43 @@ import commands.Command
 import tags.addToTag
 import java.io.File
 
-class Function(val name: String, val namespace: String = "minecraft", var directory: String = "", val datapack: DataPack) {
+open class Function(val name: String, val namespace: String = "minecraft", var directory: String = "", val datapack: DataPack) {
 	val lines = mutableListOf<String>()
 	
 	fun addBlankLine() = lines.add("")
 	
-	fun addLine(line: String) {
+	open fun addLine(line: String) {
 		lines.add(line)
 	}
 	
-	fun addLine(command: Command): Command {
+	open fun addLine(command: Command): Command {
 		lines.add(command.toString())
 		return command
 	}
 	
-	fun comment(comment: String) {
+	open fun comment(comment: String) {
 		lines.add("# $comment")
 	}
 	
-	fun generate(functionsDir: File) {
+	open fun generate(functionsDir: File) {
 		val file = File(functionsDir, "$directory/$name.mcfunction")
 		file.parentFile.mkdirs()
 		file.writeText(lines.joinToString("\n"))
 	}
 	
-	fun clear() = lines.clear()
+	open fun clear() = lines.clear()
 	
 	override fun toString() = lines.joinToString("\n")
 	
 	companion object {
-		val EMPTY = Function("", datapack = DataPack(""))
+		val EMPTY = object : Function("", datapack = DataPack("")) {
+			override fun addLine(line: String) {}
+			override fun addLine(command: Command) = command
+			override fun comment(comment: String) {}
+			override fun generate(functionsDir: File) {}
+			override fun clear() {}
+			override fun toString() = ""
+		}
 	}
 }
 

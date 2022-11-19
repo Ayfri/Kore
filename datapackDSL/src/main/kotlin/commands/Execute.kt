@@ -105,7 +105,6 @@ class Execute {
 	fun run(block: Function.() -> Command) {
 		val function = Function.EMPTY
 		command = function.block()
-		function.clear()
 	}
 }
 
