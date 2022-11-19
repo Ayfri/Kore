@@ -61,4 +61,4 @@ class Team(private val fn: Function) {
 }
 
 val Function.teams get() = Team(this)
-fun Function.team(block: Team.() -> Unit) = Team(this).block()
+fun Function.teams(block: Team.() -> Unit) = Team(this).block()

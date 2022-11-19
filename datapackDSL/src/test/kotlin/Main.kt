@@ -155,7 +155,7 @@ fun main() {
 					}
 				}))
 				
-				team {
+				teams {
 					val team = "admin"
 					
 					add(team, NbtString("Admin"))
@@ -173,7 +173,7 @@ fun main() {
 			}
 		}
 		
-		iconPath = Path("src", "test", "resources", "Kotlin Full Color Logo Mark RGB.png")
+		iconPath = Path("datapackDSL", "src", "test", "resources", "Kotlin Full Color Logo Mark RGB.png")
 		
 		pack {
 			format = 10

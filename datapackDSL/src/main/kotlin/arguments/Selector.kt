@@ -108,6 +108,30 @@ data class SelectorNbtData(
 	
 	operator fun String.not() = "!$this"
 	
+	fun copyFrom(other: SelectorNbtData) {
+		x = other.x
+		y = other.y
+		z = other.z
+		dx = other.dx
+		dy = other.dy
+		dz = other.dz
+		xRotation = other.xRotation
+		yRotation = other.yRotation
+		distance = other.distance
+		limit = other.limit
+		level = other.level
+		team = other.team
+		name = other.name
+		type = other.type
+		tag = other.tag
+		nbtData = other.nbtData
+		advancements = other.advancements
+		scores = other.scores
+		sort = other.sort
+		predicate = other.predicate
+		_gamemode = other._gamemode
+	}
+	
 	companion object {
 		object SelectorNbtDataSerializer : KSerializer<SelectorNbtData> {
 			override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("SelectorNbtData", PrimitiveKind.STRING)

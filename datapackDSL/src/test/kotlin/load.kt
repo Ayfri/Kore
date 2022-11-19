@@ -1,7 +1,7 @@
 import arguments.Color
 import arguments.nbt
 import commands.asArg
-import commands.team
+import commands.teams
 import functions.function
 import functions.setTag
 import net.benwoodworth.knbt.NbtString
@@ -22,7 +22,7 @@ fun addLoad(dataPack: DataPack) {
 		)
 		
 		teams.forEach {
-			team {
+			teams {
 				add(it.name, NbtString(it.display))
 				modify(it.name) {
 					color(it.color)
