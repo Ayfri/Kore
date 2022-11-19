@@ -78,7 +78,7 @@ class Execute {
 	
 	private fun <T> MutableList<T>.addAll(vararg args: T?) = addAll(args.filterNotNull())
 	
-	fun getFinalCommand() = (array + literal("run") + literal(command?.toString())).toTypedArray()
+	fun getArguments() = array.toTypedArray()
 	
 	fun align(axis: Axes, offset: Int? = null) = array.addAll(literal("align"), literal(axis.asArg()), int(offset))
 	fun anchored(anchor: Anchor) = array.addAll(literal("anchored"), literal(anchor.asArg()))
@@ -102,10 +102,11 @@ class Execute {
 	fun storeResult(block: ExecuteStore.() -> List<Argument>) = array.addAll(literal("store"), literal("result"), *ExecuteStore.block().toTypedArray())
 	fun storeValue(block: ExecuteStore.() -> List<Argument>) = array.addAll(literal("store"), literal("value"), *ExecuteStore.block().toTypedArray())
 	
-	fun run(block: Function.() -> Command) {
-		val function = Function.EMPTY
-		command = function.block()
-	}
+	fun run(block: Function.() -> Command) = Function.EMPTY.block()
 }
 
-fun Function.execute(block: Execute.() -> Unit) = addLine(command("execute", *Execute().apply(block).getFinalCommand()))
+fun Function.execute(block: Execute.() -> Command): Command {
+	val execute = Execute()
+	val run = execute.block()
+	return addLine(command("execute", *execute.getArguments(), literal("run"), literal(run.toString())))
+}

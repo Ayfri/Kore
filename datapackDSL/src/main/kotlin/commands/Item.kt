@@ -58,4 +58,4 @@ class Item(private val fn: Function) {
 }
 
 val Function.items get() = Item(this)
-fun Function.items(block: Item.() -> Unit) = Item(this).apply(block)
+fun Function.items(block: Item.() -> Command) = Item(this).block()

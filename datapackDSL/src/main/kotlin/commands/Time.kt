@@ -29,4 +29,4 @@ class Time(private val fn: Function) {
 }
 
 val Function.time get() = Time(this)
-fun Function.time(block: Time.() -> Unit) = Time(this).apply(block)
+fun Function.time(block: Time.() -> Command) = Time(this).block()

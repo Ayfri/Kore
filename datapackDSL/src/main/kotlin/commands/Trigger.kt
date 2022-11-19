@@ -17,4 +17,4 @@ class Trigger(private val fn: Function, val objective: String) {
 	}
 }
 
-fun Function.trigger(objective: String, block: Trigger.() -> Unit) = Trigger(this, objective).block()
+fun Function.trigger(objective: String, block: Trigger.() -> Command) = Trigger(this, objective).block()

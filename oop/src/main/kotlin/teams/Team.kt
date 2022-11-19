@@ -87,11 +87,7 @@ fun Team.setColor(color: Color) = teams {
 }
 
 context(Function)
-fun Team.addMembers(vararg members: Argument.ScoreHolder) = teams {
-	members.forEach { member ->
-		join(name, member)
-	}
-}
+fun Team.addMembers(vararg members: Argument.ScoreHolder) = members.forEach { teams { join(name, it) } }
 
 context(Function)
 fun Team.addMembers(vararg members: Entity) = addMembers(*members.map { it.asSelector() }.toTypedArray())

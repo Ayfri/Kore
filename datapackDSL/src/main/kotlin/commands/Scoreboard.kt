@@ -137,13 +137,14 @@ class PlayerObjective(fn: Function, val target: Argument.ScoreHolder, val object
 }
 
 class Scoreboard(private val fn: Function) {
-	fun objectives(block: Objectives.() -> Unit) = Objectives(fn).block()
+	fun objectives(block: Objectives.() -> Command) = Objectives(fn).block()
 	
-	fun objective(target: Argument.ScoreHolder, objective: String, block: PlayerObjective.() -> Unit) = PlayerObjective(fn, target, objective).block()
+	fun objective(target: Argument.ScoreHolder, objective: String, block: PlayerObjective.() -> Command) = PlayerObjective(fn, target, objective).block()
 	fun objective(target: Argument.ScoreHolder, objective: String) = PlayerObjective(fn, target, objective)
 	
-	fun players(block: Players.() -> Unit) = Players(fn).block()
-	fun player(target: Argument.ScoreHolder, block: Player.() -> Unit) = Player(fn, target).block()
+	fun players(block: Players.() -> Command) = Players(fn).block()
+	fun player(target: Argument.ScoreHolder, block: Player.() -> Command) = Player(fn, target).block()
 }
 
-fun Function.scoreboard(block: Scoreboard.() -> Unit) = Scoreboard(this).block()
+val Function.scoreboard get() = Scoreboard(this)
+fun Function.scoreboard(block: Scoreboard.() -> Command) = Scoreboard(this).block()

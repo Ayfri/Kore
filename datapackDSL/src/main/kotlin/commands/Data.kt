@@ -51,4 +51,4 @@ class Data(private val fn: Function, val target: Argument.Data) {
 	)
 }
 
-fun Function.data(target: Argument.Data, block: Data.() -> Unit) = Data(this, target).apply(block)
+fun Function.data(target: Argument.Data, block: Data.() -> Command) = Data(this, target).block()

@@ -19,5 +19,5 @@ class WorldBorder(private val fn: Function) {
 }
 
 val Function.worldBorder get() = WorldBorder(this)
-fun Function.worldBorder(block: WorldBorder.() -> Unit) = WorldBorder(this).block()
+fun Function.worldBorder(block: WorldBorder.() -> Command) = WorldBorder(this).block()
 fun Function.worldBorder() = worldBorder.get()

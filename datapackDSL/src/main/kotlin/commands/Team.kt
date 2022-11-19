@@ -56,9 +56,9 @@ class Team(private val fn: Function) {
 	fun join(team: String, entity: Argument.ScoreHolder) = fn.addLine(command("team", literal("join"), literal(team), entity))
 	fun leave(entity: Argument.ScoreHolder) = fn.addLine(command("team", literal("leave"), entity))
 	fun list(team: String? = null) = fn.addLine(command("team", literal("list"), literal(team)))
-	fun modify(team: String, block: Modify.() -> Unit) = Modify(fn, team).block()
+	fun modify(team: String, block: Modify.() -> Command) = Modify(fn, team).block()
 	fun remove(team: String) = fn.addLine(command("team", literal("remove"), literal(team)))
 }
 
 val Function.teams get() = Team(this)
-fun Function.teams(block: Team.() -> Unit) = Team(this).block()
+fun Function.teams(block: Team.() -> Command) = Team(this).block()

@@ -125,7 +125,7 @@ fun main() {
 				}
 			}
 			
-			schedule {
+			schedules {
 				append("repeat", 1.ticks)
 				clear("test")
 			}

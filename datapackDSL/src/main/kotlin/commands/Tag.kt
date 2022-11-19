@@ -10,4 +10,4 @@ class Tag(private val fn: Function, val entity: Argument.Entity) {
 	fun remove(tag: String) = fn.addLine(command("tag", entity, literal("remove"), literal(tag)))
 }
 
-fun Function.tag(entity: Argument.Entity, block: Tag.() -> Unit) = Tag(this, entity).block()
+fun Function.tag(entity: Argument.Entity, block: Tag.() -> Command) = Tag(this, entity).block()

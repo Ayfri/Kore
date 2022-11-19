@@ -51,6 +51,7 @@ class Loot(private val fn: Function) {
 	}
 }
 
-fun Function.loot(block: Loot.() -> Unit) = Loot(this).apply(block).let { loot ->
+fun Function.loot(block: Loot.() -> Command) = Loot(this).let { loot ->
+	loot.block()
 	addLine(command("loot", *loot.target.toTypedArray(), *loot.source.toTypedArray()))
 }

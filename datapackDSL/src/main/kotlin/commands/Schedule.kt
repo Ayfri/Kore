@@ -25,4 +25,5 @@ class Schedule(private val fn: Function) {
 	)
 }
 
-fun Function.schedule(block: Schedule.() -> Unit) = Schedule(this).apply(block)
+val Function.schedules get() = Schedule(this)
+fun Function.schedules(block: Schedule.() -> Command) = Schedule(this).block()

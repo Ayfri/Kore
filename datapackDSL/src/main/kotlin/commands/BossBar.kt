@@ -57,4 +57,4 @@ class BossBars(private val fn: Function) {
 }
 
 val Function.bossBars get() = BossBars(this)
-fun Function.bossBar(name: String, block: BossBar.() -> Unit = {}) = BossBar(this, name).apply(block)
+fun Function.bossBar(name: String, block: BossBar.() -> Command) = BossBar(this, name).block()

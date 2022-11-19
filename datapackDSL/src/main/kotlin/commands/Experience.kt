@@ -16,4 +16,4 @@ class Experience(private val fn: Function, val target: Argument.Entity) {
 	}
 }
 
-fun Function.experience(target: Argument.Entity, block: Experience.() -> Unit) = Experience(this, target).apply(block)
+fun Function.experience(target: Argument.Entity, block: Experience.() -> Command) = Experience(this, target).block()

@@ -33,4 +33,4 @@ class DataPacks(private val fn: Function) {
 }
 
 val Function.dataPacks get() = DataPacks(this)
-fun Function.dataPack(name: String, block: DataPack.() -> Unit) = DataPack(this, name).apply(block)
+fun Function.dataPack(name: String, block: DataPack.() -> Command) = DataPack(this, name).block()
