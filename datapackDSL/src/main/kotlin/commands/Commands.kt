@@ -214,7 +214,7 @@ fun Function.stopSound(
 	sound: String? = null,
 ) = addLine(command("stopsound", targets, literal(source?.asArg()), literal(sound)))
 
-fun Function.summon(entity: Argument.Entity, pos: Argument.Coordinate? = null, nbt: NbtCompound) = addLine(command("summon", entity, pos, nbt(nbt)))
+fun Function.summon(entity: String, pos: Argument.Coordinate? = null, nbt: NbtCompound? = null) = addLine(command("summon", literal(entity), pos, nbt(nbt)))
 
 fun Function.teamMsg(message: String) = addLine(command("teammsg", literal(message)))
 
