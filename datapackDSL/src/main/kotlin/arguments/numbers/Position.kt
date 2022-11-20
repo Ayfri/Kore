@@ -8,11 +8,17 @@ class PosNumber(var value: Double, var type: Type = Type.WORLD) {
 	}
 	
 	operator fun plus(other: PosNumber) = PosNumber(value + other.value, type)
+	operator fun plus(other: Number) = PosNumber(value + other.toDouble(), type)
 	operator fun minus(other: PosNumber) = PosNumber(value - other.value, type)
+	operator fun minus(other: Number) = PosNumber(value - other.toDouble(), type)
 	operator fun times(other: PosNumber) = PosNumber(value * other.value, type)
+	operator fun times(other: Number) = PosNumber(value * other.toDouble(), type)
 	operator fun div(other: PosNumber) = PosNumber(value / other.value, type)
+	operator fun div(other: Number) = PosNumber(value / other.toDouble(), type)
 	operator fun rem(other: PosNumber) = PosNumber(value % other.value, type)
+	operator fun rem(other: Number) = PosNumber(value % other.toDouble(), type)
 	operator fun unaryMinus() = PosNumber(-value, type)
+	operator fun unaryPlus() = PosNumber(+value, type)
 	
 	val relative get() = PosNumber(value, Type.RELATIVE)
 	val local get() = PosNumber(value, Type.LOCAL)
