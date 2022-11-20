@@ -89,8 +89,8 @@ sealed interface Argument {
 		override fun asString() = name
 	}
 	
-	data class Rotation(val hor: RotNumber, val ver: RotNumber) : Argument {
-		override fun asString() = "$hor $ver"
+	data class Rotation(val yaw: RotNumber, val pitch: RotNumber) : Argument {
+		override fun asString() = "$yaw $pitch"
 	}
 	
 	data class Selector(val selector: arguments.Selector) : Entity, Data, Possessor, ScoreHolder {
@@ -124,8 +124,7 @@ fun blockTag(tag: String, namespace: String = "minecraft") = Argument.BlockTag(t
 fun bool(value: Boolean) = Argument.Literal(value.toString())
 internal fun bool(value: Boolean?) = value?.let { Argument.Literal(it.toString()) }
 
-fun coordinate(x: Double, y: Double, z: Double) = Argument.Coordinate(x.pos, y.pos, z.pos)
-fun coordinate(x: Int, y: Int, z: Int) = Argument.Coordinate(x.pos, y.pos, z.pos)
+fun coordinate(x: Number, y: Number, z: Number) = Argument.Coordinate(x.pos, y.pos, z.pos)
 fun coordinate(x: PosNumber, y: PosNumber, z: PosNumber) = Argument.Coordinate(x, y, z)
 
 fun dimension(dimension: Dimension? = null) = Argument.Dimension("minecraft", dimension)
@@ -150,8 +149,7 @@ fun literal(name: String) = Argument.Literal(name)
 @JvmName("literalNullable")
 internal fun literal(name: String?) = name?.let { Argument.Literal(it) }
 
-fun rotation(hor: Double, ver: Double) = Argument.Rotation(hor.rot, ver.rot)
-fun rotation(hor: Int, ver: Int) = Argument.Rotation(hor.rot, ver.rot)
+fun rotation(yaw: Number, pitch: Number) = Argument.Rotation(yaw.rot, pitch.rot)
 fun rotation(hor: RotNumber, ver: RotNumber) = Argument.Rotation(hor, ver)
 
 fun selector(base: SelectorType, limitToOne: Boolean = false, data: SelectorNbtData.() -> Unit = {}) = Argument.Selector(Selector(base).apply {
