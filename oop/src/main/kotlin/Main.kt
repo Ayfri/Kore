@@ -21,7 +21,12 @@ import teams.team
 fun main() {
 	dataPack("oop") {
 		
-		val player = player("Ayfri")
+		val player = player("Ayfri") {
+			gamemode = Gamemode.SURVIVAL
+			team = "red"
+		}
+		val item = itemStack("diamond_sword")
+		
 		function("main") {
 			player.getScore("test").apply {
 				ensureExists()
