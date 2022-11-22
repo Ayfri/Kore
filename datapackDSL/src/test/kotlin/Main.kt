@@ -1,9 +1,14 @@
 
 import arguments.*
+import arguments.enums.Dimension
+import arguments.enums.Gamemode
 import arguments.numbers.pos
 import arguments.numbers.range
 import arguments.numbers.relativePos
 import arguments.numbers.ticks
+import arguments.selector.SelectorNbtData
+import arguments.selector.SelectorType
+import arguments.selector.Sort
 import commands.*
 import functions.function
 import net.benwoodworth.knbt.NbtString

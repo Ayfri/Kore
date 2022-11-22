@@ -39,7 +39,7 @@ object Source {
 	fun mine(pos: Coordinate, hand: Hand) = listOf(literal("mine"), pos, literal(hand.asArg()))
 }
 
-class Loot(private val fn: Function) {
+class Loot {
 	lateinit var target: List<Argument?>
 	lateinit var source: List<Argument?>
 	
@@ -52,7 +52,7 @@ class Loot(private val fn: Function) {
 	}
 }
 
-fun Function.loot(block: Loot.() -> Command) = Loot(this).let { loot ->
+fun Function.loot(block: Loot.() -> Unit) = Loot().let { loot ->
 	loot.block()
 	addLine(command("loot", *loot.target.toTypedArray(), *loot.source.toTypedArray()))
 }
