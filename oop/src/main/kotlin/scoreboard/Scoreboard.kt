@@ -13,7 +13,7 @@ context(Function)
 fun Scoreboard.getScore(entity: Entity) = ScoreboardEntity(name, entity)
 
 context(Function)
-fun Scoreboard.ensureExists(criteria: String = "dummy") = scoreboard {
+fun Scoreboard.create(criteria: String = "dummy") = scoreboard {
 	objectives {
 		add(name, criteria)
 	}

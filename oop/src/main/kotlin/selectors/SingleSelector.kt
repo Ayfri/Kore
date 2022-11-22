@@ -1,7 +1,7 @@
 package selectors
 
-import arguments.SelectorNbtData
-import arguments.SelectorType
+import arguments.selector.SelectorNbtData
+import arguments.selector.SelectorType
 import entities.Entity
 import entities.toEntity
 
