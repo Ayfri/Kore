@@ -1,6 +1,5 @@
 package arguments
 
-import functions.Function
 import kotlinx.serialization.encodeToString
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtCompoundBuilder
@@ -24,7 +23,7 @@ fun NbtCompoundBuilder.json(name: String, block: NbtCompoundBuilder.() -> Unit) 
 fun stringifiedNbt(block: NbtCompoundBuilder.() -> Unit) = StringifiedNbt.encodeToString(buildNbtCompound(block))
 fun stringifiedNbtList(block: NbtListBuilder<NbtCompound>.() -> Unit) = StringifiedNbt.encodeToString(buildNbtList(block))
 
-fun Function.nbt(nbt: NbtTag) = literal(StringifiedNbt.encodeToString(nbt))
+fun nbt(nbt: NbtTag) = literal(StringifiedNbt.encodeToString(nbt))
 
 @JvmName("nbtNullable")
-internal fun Function.nbt(nbt: NbtTag? = null) = nbt?.let { literal(StringifiedNbt.encodeToString(it)) }
+internal fun nbt(nbt: NbtTag? = null) = nbt?.let { literal(StringifiedNbt.encodeToString(it)) }

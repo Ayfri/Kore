@@ -1,6 +1,7 @@
 package commands
 
 import arguments.Argument
+import arguments.Coordinate
 import arguments.SlotEntry
 import arguments.int
 import arguments.literal
@@ -11,9 +12,9 @@ import serializers.LowercaseSerializer
 
 object Target {
 	fun give(targets: Argument.Entity) = listOf(literal("give"), targets)
-	fun insert(pos: Argument.Coordinate) = listOf(literal("insert"), pos)
-	fun spawn(pos: Argument.Coordinate) = listOf(literal("spawn"), pos)
-	fun replaceBlock(pos: Argument.Coordinate, slot: SlotEntry, count: Int? = null) = listOf(literal("replace"), pos, slot(slot), int(count))
+	fun insert(pos: Coordinate) = listOf(literal("insert"), pos)
+	fun spawn(pos: Coordinate) = listOf(literal("spawn"), pos)
+	fun replaceBlock(pos: Coordinate, slot: SlotEntry, count: Int? = null) = listOf(literal("replace"), pos, slot(slot), int(count))
 	fun replaceEntity(entity: Argument.Entity, slot: SlotEntry, count: Int? = null) = listOf(literal("replace"), entity, slot(slot), int(count))
 }
 
@@ -30,12 +31,12 @@ enum class Hand {
 }
 
 object Source {
-	fun fish(lootTable: String, pos: Argument.Coordinate, tool: Argument.Item? = null) = listOf(literal("fish"), literal(lootTable), pos, tool)
-	fun fish(lootTable: String, pos: Argument.Coordinate, hand: Hand) = listOf(literal("fish"), literal(lootTable), pos, literal(hand.asArg()))
+	fun fish(lootTable: String, pos: Coordinate, tool: Argument.Item? = null) = listOf(literal("fish"), literal(lootTable), pos, tool)
+	fun fish(lootTable: String, pos: Coordinate, hand: Hand) = listOf(literal("fish"), literal(lootTable), pos, literal(hand.asArg()))
 	fun loot(lootTable: String) = listOf(literal("loot"), literal(lootTable))
 	fun kill(targets: Argument.Entity) = listOf(literal("kill"), targets)
-	fun mine(pos: Argument.Coordinate, tool: Argument.Item? = null) = listOf(literal("mine"), pos, tool)
-	fun mine(pos: Argument.Coordinate, hand: Hand) = listOf(literal("mine"), pos, literal(hand.asArg()))
+	fun mine(pos: Coordinate, tool: Argument.Item? = null) = listOf(literal("mine"), pos, tool)
+	fun mine(pos: Coordinate, hand: Hand) = listOf(literal("mine"), pos, literal(hand.asArg()))
 }
 
 class Loot(private val fn: Function) {

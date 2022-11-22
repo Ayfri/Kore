@@ -1,6 +1,8 @@
 package commands
 
 import arguments.*
+import arguments.enums.DataType
+import arguments.enums.Dimension
 import arguments.numbers.IntRangeOrInt
 import functions.Function
 import kotlinx.serialization.Serializable
@@ -31,9 +33,9 @@ enum class BlocksTestMode {
 }
 
 object ExecuteCondition {
-	fun block(pos: Argument.Coordinate, block: Argument.Block) = listOf(literal("block"), pos, block)
+	fun block(pos: Coordinate, block: Argument.Block) = listOf(literal("block"), pos, block)
 	
-	fun blocks(start: Argument.Coordinate, end: Argument.Coordinate, destination: Argument.Coordinate, mode: BlocksTestMode) = listOf(
+	fun blocks(start: Coordinate, end: Coordinate, destination: Coordinate, mode: BlocksTestMode) = listOf(
 		literal("blocks"), start, end, destination, literal(mode.asArg())
 	)
 	
@@ -56,7 +58,7 @@ object ExecuteCondition {
 
 object ExecuteStore {
 	fun block(
-		pos: Argument.Coordinate,
+		pos: Coordinate,
 		path: String,
 		type: DataType,
 		scale: Double,
@@ -85,13 +87,13 @@ class Execute {
 	fun asTarget(target: Argument.Entity) = array.addAll(literal("as"), target)
 	fun at(target: Argument.Entity) = array.addAll(literal("at"), target)
 	fun facing(target: Argument.Entity, anchor: Anchor? = null) = array.addAll(literal("facing"), target, literal(anchor?.asArg()))
-	fun facingBlock(pos: Argument.Coordinate, anchor: Anchor? = null) = array.addAll(literal("facing"), literal("block"), pos, literal(anchor?.asArg()))
+	fun facingBlock(pos: Coordinate, anchor: Anchor? = null) = array.addAll(literal("facing"), literal("block"), pos, literal(anchor?.asArg()))
 	fun facingEntity(target: Argument.Entity, anchor: Anchor? = null) = array.addAll(literal("facing"), target, literal("entity"), target, literal(anchor?.asArg()))
 	
-	fun facingPos(pos: Argument.Coordinate, anchor: Anchor? = null) = array.addAll(literal("facing"), literal("position"), pos, literal(anchor?.asArg()))
+	fun facingPos(pos: Coordinate, anchor: Anchor? = null) = array.addAll(literal("facing"), literal("position"), pos, literal(anchor?.asArg()))
 	fun inDimension(dimension: Dimension) = array.addAll(literal("in"), dimension(dimension))
 	fun inDimension(customDimension: String, namespace: String? = null) = array.addAll(literal("in"), dimension(customDimension, namespace))
-	fun positioned(pos: Argument.Coordinate) = array.addAll(literal("positioned"), pos)
+	fun positioned(pos: Coordinate) = array.addAll(literal("positioned"), pos)
 	fun positionedAs(target: Argument.Entity) = array.addAll(literal("positioned"), target, literal("as"), target)
 	fun rotated(rotation: Argument.Rotation) = array.addAll(literal("rotated"), rotation)
 	fun rotatedAs(target: Argument.Entity) = array.addAll(literal("rotated"), target, literal("as"), target)

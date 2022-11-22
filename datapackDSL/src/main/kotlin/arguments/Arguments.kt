@@ -1,10 +1,16 @@
 package arguments
 
+import arguments.enums.Attribute
+import arguments.enums.Dimension
 import arguments.numbers.PosNumber
 import arguments.numbers.RotNumber
 import arguments.numbers.TimeNumber
 import arguments.numbers.pos
 import arguments.numbers.rot
+import arguments.selector.Selector
+import arguments.selector.SelectorNbtData
+import arguments.selector.SelectorType
+import arguments.selector.json
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonPrimitive
 import net.benwoodworth.knbt.NbtTag
@@ -40,7 +46,7 @@ sealed interface Argument {
 		override fun asString() = "$namespace:$advancement"
 	}
 	
-	data class Attribute(val attribute: arguments.Attribute, val namespace: String = "minecraft") : Argument {
+	data class Attribute(val attribute: arguments.enums.Attribute, val namespace: String = "minecraft") : Argument {
 		override fun asString() = "$namespace:${json.encodeToJsonElement(attribute).jsonPrimitive.content}"
 	}
 	
@@ -57,11 +63,7 @@ sealed interface Argument {
 		override fun asString() = "#$namespace:$tag"
 	}
 	
-	data class Coordinate(val x: PosNumber, val y: PosNumber, val z: PosNumber) : Argument, Data {
-		override fun asString() = "$x $y $z"
-	}
-	
-	data class Dimension(val namespace: String? = null, val dimension: arguments.Dimension? = null, val customDimension: String? = null) : Argument {
+	data class Dimension(val namespace: String? = null, val dimension: arguments.enums.Dimension? = null, val customDimension: String? = null) : Argument {
 		override fun asString() = when {
 			dimension != null -> "${namespace?.let { "$it:" } ?: ""}${json.encodeToJsonElement(dimension).jsonPrimitive.content}"
 			customDimension != null -> "${namespace?.let { "$it:" } ?: ""}:$customDimension"
@@ -93,7 +95,7 @@ sealed interface Argument {
 		override fun asString() = "$yaw $pitch"
 	}
 	
-	data class Selector(val selector: arguments.Selector) : Entity, Data, Possessor, ScoreHolder {
+	data class Selector(val selector: arguments.selector.Selector) : Entity, Data, Possessor, ScoreHolder {
 		override fun asString() = selector.toString()
 	}
 	
@@ -125,8 +127,8 @@ fun blockTag(tag: String, namespace: String = "minecraft") = Argument.BlockTag(t
 fun bool(value: Boolean) = Argument.Literal(value.toString())
 internal fun bool(value: Boolean?) = value?.let { Argument.Literal(it.toString()) }
 
-fun coordinate(x: Number, y: Number, z: Number) = Argument.Coordinate(x.pos, y.pos, z.pos)
-fun coordinate(x: PosNumber, y: PosNumber, z: PosNumber) = Argument.Coordinate(x, y, z)
+fun coordinate(x: Number, y: Number, z: Number) = Coordinate(x.pos, y.pos, z.pos)
+fun coordinate(x: PosNumber, y: PosNumber, z: PosNumber) = Coordinate(x, y, z)
 
 fun dimension(dimension: Dimension? = null) = Argument.Dimension("minecraft", dimension)
 fun dimension(customDimension: String, namespace: String? = null) = Argument.Dimension(namespace, customDimension = customDimension)

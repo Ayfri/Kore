@@ -1,4 +1,4 @@
-package arguments
+package arguments.enums
 
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer

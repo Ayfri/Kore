@@ -2,6 +2,7 @@ package arguments
 
 import arguments.numbers.IntRangeOrInt
 import arguments.numbers.asRangeOrInt
+import arguments.selector.SelectorNbtData
 import kotlinx.serialization.Serializable
 import serializers.ToStringSerializer
 

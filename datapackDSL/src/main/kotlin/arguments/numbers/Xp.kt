@@ -1,7 +1,7 @@
 package arguments.numbers
 
-import arguments.ExperienceType
-import arguments.json
+import arguments.enums.ExperienceType
+import arguments.selector.json
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonPrimitive
 

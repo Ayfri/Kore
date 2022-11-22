@@ -1,4 +1,4 @@
-package arguments
+package arguments.selector
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encoding.Encoder
@@ -38,10 +38,4 @@ class AdvancementBuilder {
 	}
 	
 	fun build() = Advancements(advancements)
-}
-
-fun SelectorNbtData.advancements(block: AdvancementBuilder.() -> Unit) {
-	val builder = AdvancementBuilder()
-	builder.block()
-	advancements = builder.build()
 }

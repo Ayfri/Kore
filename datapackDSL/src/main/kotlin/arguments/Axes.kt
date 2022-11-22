@@ -1,22 +1,8 @@
 package arguments
 
-import functions.Function
+import arguments.enums.Axis
 import kotlinx.serialization.Serializable
-import serializers.LowercaseSerializer
 import serializers.ToStringSerializer
-
-@Serializable(Axis.Companion.AxisSerializer::class)
-enum class Axis {
-	X,
-	Y,
-	Z;
-	
-	companion object {
-		val values = values()
-		
-		object AxisSerializer : LowercaseSerializer<Axis>(values)
-	}
-}
 
 @Serializable(Axes.Companion.AxesRotationSerializer::class)
 class Axes(var x: Boolean = false, var y: Boolean = false, var z: Boolean = false) {
@@ -48,12 +34,12 @@ class Axes(var x: Boolean = false, var y: Boolean = false, var z: Boolean = fals
 	}
 }
 
-fun Function.axes(init: Axes.() -> Unit) = Axes().apply(init)
-fun Function.axes(x: Boolean = false, y: Boolean = false, z: Boolean = false) = Axes(x, y, z)
-fun Function.x() = Axis.X
-fun Function.y() = Axis.Y
-fun Function.z() = Axis.Z
-fun Function.xy() = Axes.XY
-fun Function.xz() = Axes.XZ
-fun Function.yz() = Axes.YZ
-fun Function.xyz() = Axes.XYZ
+fun axes(init: Axes.() -> Unit) = Axes().apply(init)
+fun axes(x: Boolean = false, y: Boolean = false, z: Boolean = false) = Axes(x, y, z)
+fun x() = Axis.X
+fun y() = Axis.Y
+fun z() = Axis.Z
+fun xy() = Axes.XY
+fun xz() = Axes.XZ
+fun yz() = Axes.YZ
+fun xyz() = Axes.XYZ
