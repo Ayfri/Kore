@@ -111,6 +111,7 @@ sealed interface Argument {
 }
 
 fun advancement(name: String, namespace: String = "minecraft") = Argument.Advancement(name, namespace)
+fun all() = Argument.All
 fun attribute(attribute: Attribute, namespace: String = "minecraft") = Argument.Attribute(attribute, namespace)
 fun block(
 	block: String,
