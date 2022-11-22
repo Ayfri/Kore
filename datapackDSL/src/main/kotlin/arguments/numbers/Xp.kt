@@ -5,7 +5,7 @@ import arguments.json
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonPrimitive
 
-class Xp(val value: Long, val type: ExperienceType = ExperienceType.POINTS) {
+class Xp(val value: Long, val type: ExperienceType = ExperienceType.POINTS) : Comparable<Xp> {
 	val typeString get() = json.encodeToJsonElement(type).jsonPrimitive.content
 	
 	operator fun plus(other: Xp) = Xp(value + other.value, type)
@@ -20,6 +20,7 @@ class Xp(val value: Long, val type: ExperienceType = ExperienceType.POINTS) {
 	operator fun rem(other: Number) = Xp(value % other.toLong(), type)
 	operator fun unaryMinus() = Xp(-value, type)
 	operator fun unaryPlus() = Xp(+value, type)
+	override fun compareTo(other: Xp) = value.compareTo(other.value)
 	
 	fun toLevels() = Xp(value, ExperienceType.LEVELS)
 	fun toPoints() = Xp(value, ExperienceType.POINTS)

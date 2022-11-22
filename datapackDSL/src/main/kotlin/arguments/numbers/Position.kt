@@ -1,6 +1,6 @@
 package arguments.numbers
 
-class PosNumber(var value: Double, var type: Type = Type.WORLD) {
+class PosNumber(var value: Double, var type: Type = Type.WORLD) : Comparable<PosNumber> {
 	enum class Type {
 		RELATIVE,
 		LOCAL,
@@ -19,6 +19,7 @@ class PosNumber(var value: Double, var type: Type = Type.WORLD) {
 	operator fun rem(other: Number) = PosNumber(value % other.toDouble(), type)
 	operator fun unaryMinus() = PosNumber(-value, type)
 	operator fun unaryPlus() = PosNumber(+value, type)
+	override fun compareTo(other: PosNumber) = value.compareTo(other.value)
 	
 	val relative get() = PosNumber(value, Type.RELATIVE)
 	val local get() = PosNumber(value, Type.LOCAL)

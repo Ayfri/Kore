@@ -21,12 +21,15 @@ enum class TimeType(val unit: String) {
 	}
 }
 
-class TimeNumber(val value: Long, val type: TimeType = TimeType.TICKS) {
+class TimeNumber(val value: Long, val type: TimeType = TimeType.TICKS) : Comparable<TimeNumber> {
 	operator fun plus(other: TimeNumber) = TimeNumber(value + other.value, type)
 	operator fun minus(other: TimeNumber) = TimeNumber(value - other.value, type)
 	operator fun times(other: TimeNumber) = TimeNumber(value * other.value, type)
 	operator fun div(other: TimeNumber) = TimeNumber(value / other.value, type)
 	operator fun rem(other: TimeNumber) = TimeNumber(value % other.value, type)
+	operator fun unaryMinus() = TimeNumber(-value, type)
+	operator fun unaryPlus() = TimeNumber(+value, type)
+	override operator fun compareTo(other: TimeNumber) = value.compareTo(other.value)
 	
 	fun toTicks() = TimeNumber(value, TimeType.TICKS)
 	fun toSeconds() = TimeNumber(value, TimeType.SECONDS)

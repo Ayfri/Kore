@@ -1,6 +1,6 @@
 package arguments.numbers
 
-class RotNumber(val value: Double, val type: Type = Type.WORLD) {
+class RotNumber(val value: Double, val type: Type = Type.WORLD) : Comparable<RotNumber> {
 	enum class Type {
 		RELATIVE,
 		WORLD
@@ -18,9 +18,11 @@ class RotNumber(val value: Double, val type: Type = Type.WORLD) {
 	operator fun rem(other: Number) = RotNumber(value % other.toDouble(), type)
 	operator fun unaryMinus() = RotNumber(-value, type)
 	operator fun unaryPlus() = RotNumber(+value, type)
+	override fun compareTo(other: RotNumber) = value.compareTo(other.value)
 	
 	fun toRelative() = RotNumber(value, Type.RELATIVE)
 	fun toWorld() = RotNumber(value, Type.WORLD)
+	
 	
 	override fun toString() = when (type) {
 		Type.RELATIVE -> "~${value.strUnlessZero}"
