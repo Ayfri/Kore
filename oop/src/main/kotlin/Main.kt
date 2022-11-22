@@ -1,12 +1,23 @@
+
 import arguments.Color
+import arguments.enums.Gamemode
 import arguments.nbt
+import arguments.numbers.rangeOrIntStart
 import commands.DisplaySlot
+import commands.execute
+import entities.executeAs
+import entities.executeAt
 import entities.getScore
+import entities.giveItem
+import entities.joinTeam
 import entities.player
+import entities.teleportTo
 import functions.function
+import items.itemStack
+import items.summon
 import net.benwoodworth.knbt.put
 import scoreboard.copyFrom
-import scoreboard.ensureExists
+import scoreboard.create
 import scoreboard.plusAssign
 import scoreboard.scoreboard
 import scoreboard.set
@@ -28,9 +39,30 @@ fun main() {
 		val item = itemStack("diamond_sword")
 		
 		function("main") {
-			player.getScore("test").apply {
-				ensureExists()
+			player.giveItem(item)
+			player.executeAt {
+				run {
+					item.summon()
+				}
+			}
+			
+			player.executeAs {
+				run {
+					it.teleportTo(it)
+				}
+			}
+			
+			execute {
+				ifCondition {
+					score(player.asSelector(), "deathCount", rangeOrIntStart(2))
+				}
 				
+				run {
+					player.joinTeam("red")
+				}
+			}
+			
+			player.getScore("test").apply {
 				set(10)
 				this += 5
 				
@@ -38,7 +70,7 @@ fun main() {
 			}
 			
 			scoreboard("other.test") {
-				ensureExists()
+				create()
 				setDisplaySlot(DisplaySlot.sidebar)
 				setDisplayName("Test")
 			}
