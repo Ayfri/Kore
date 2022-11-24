@@ -1,9 +1,6 @@
 package serializers
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.serialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonArray
@@ -13,8 +10,7 @@ import kotlinx.serialization.json.JsonPrimitive
 import net.benwoodworth.knbt.*
 
 object NbtAsJsonTextComponentSerializer : KSerializer<NbtTag> {
-	@OptIn(ExperimentalSerializationApi::class)
-	override val descriptor = SerialDescriptor("TextComponentJsonSerializer", serialDescriptor<JsonElement>())
+	override val descriptor = JsonElement.serializer().descriptor
 	
 	override fun serialize(encoder: Encoder, value: NbtTag) = encoder.encodeSerializableValue(JsonElement.serializer(), value.toJsonElement())
 	
