@@ -87,8 +87,8 @@ sealed interface Argument {
 		override fun asString() = "#$namespace:$tag"
 	}
 	
-	data class Literal(val name: String) : Argument, Possessor, ScoreHolder {
-		override fun asString() = name
+	data class Literal(val text: String) : Argument, Possessor, ScoreHolder {
+		override fun asString() = text
 	}
 	
 	data class Rotation(val yaw: RotNumber, val pitch: RotNumber) : Argument {

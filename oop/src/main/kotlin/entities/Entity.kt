@@ -82,7 +82,7 @@ fun <T : Entity> T.executeAt(block: Execute.(T) -> Command) = execute {
 context(Function)
 fun <T : Entity> T.executeAsAt(block: Execute.(T) -> Command) = execute {
 	asTarget(asSelector())
-	at(self())
+	at(asSelector())
 	block(this@executeAsAt)
 }
 
