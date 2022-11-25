@@ -110,20 +110,8 @@ class DataPack(val name: String) {
 		}
 	}
 	
-	fun generateZip() {
-		generate()
-		
-		ZipOutputStream(BufferedOutputStream(FileOutputStream("$path/$name.zip"))).use { zip ->
-			val root = File("$path/$name")
-			root.walk().forEach { file ->
-				if (file.isFile) {
-					zip.putNextEntry(ZipEntry(file.relativeTo(root).path))
-					zip.write(file.readBytes())
-					zip.closeEntry()
-				}
-			}
-		}
-	}
+	@Deprecated("Generation to zip is for now not working fine with Minecraft, please use generate() instead", ReplaceWith("generate()"), DeprecationLevel.WARNING)
+	fun generateZip() = generate()
 	
 	companion object {
 		@OptIn(ExperimentalSerializationApi::class)

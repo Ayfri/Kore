@@ -209,5 +209,5 @@ fun main() {
 		}
 	}
 	
-	dataPack.generateZip()
+	dataPack.generate()
 }
