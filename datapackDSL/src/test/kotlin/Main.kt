@@ -23,10 +23,10 @@ fun main() {
 		
 		tags("minecraft") {
 			tag("blocks", "op") {
-				add("minecraft:command_block")
-				add("minecraft:repeating_command_block")
-				add("minecraft:chain_command_block")
-				add("minecraft:barrier", required = true)
+				add("command_block")
+				add("repeating_command_block")
+				add("chain_command_block")
+				add("barrier", required = true)
 			}
 		}
 		
