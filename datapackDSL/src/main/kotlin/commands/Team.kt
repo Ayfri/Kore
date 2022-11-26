@@ -40,7 +40,7 @@ enum class CollisionRule {
 
 class Modify(private val fn: Function, val team: String) {
 	fun collisionRule(rule: CollisionRule) = fn.addLine(command("team", literal("modify"), literal(team), literal("collisionRule"), literal(rule.asArg())))
-	fun color(color: Color) = fn.addLine(command("team", literal("modify"), literal(team), literal("color"), literal(color.asArg())))
+	fun color(color: NamedColor) = fn.addLine(command("team", literal("modify"), literal(team), literal("color"), literal(color.asArg())))
 	fun deathMessageVisibility(visibility: Visibility) = fn.addLine(command("team", literal("modify"), literal(team), literal("deathMessageVisibility"), literal(visibility.asArg())))
 	fun displayName(name: NbtTag) = fn.addLine(command("team", literal("modify"), literal(team), literal("displayName"), nbt(name)))
 	fun friendlyFire(allowed: Boolean) = fn.addLine(command("team", literal("modify"), literal(team), literal("friendlyFire"), bool(allowed)))

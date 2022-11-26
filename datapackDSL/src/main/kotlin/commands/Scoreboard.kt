@@ -1,7 +1,7 @@
 package commands
 
 import arguments.Argument
-import arguments.Color
+import arguments.NamedColor
 import arguments.int
 import arguments.literal
 import functions.Function
@@ -17,7 +17,7 @@ object DisplaySlot {
 	val belowName = SetDisplaySlot { "belowName" }
 	val list = SetDisplaySlot { "list" }
 	val sidebar = SetDisplaySlot { "sidebar" }
-	fun sidebarTeam(color: Color) = SetDisplaySlot { "sidebar.team.${color.name.lowercase()}" }
+	fun sidebarTeam(color: NamedColor) = SetDisplaySlot { "sidebar.team.${color.name}" }
 }
 
 @Serializable(RenderType.Companion.RenderTypeSerializer::class)

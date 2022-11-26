@@ -1,49 +1,171 @@
 package arguments
 
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import serializers.LowercaseSerializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import serializers.ToStringSerializer
 
-@Serializable(Color.Companion.ColorSerializer::class)
-enum class Color {
-	BLACK,
-	DARK_BLUE,
-	DARK_GREEN,
-	DARK_AQUA,
-	DARK_RED,
-	DARK_PURPLE,
-	GOLD,
-	GRAY,
-	DARK_GRAY,
-	BLUE,
-	GREEN,
-	AQUA,
-	RED,
-	LIGHT_PURPLE,
-	YELLOW,
-	WHITE;
-	
-	override fun toString() = name.lowercase()
-	
+@Serializable
+sealed interface Color {
 	companion object {
-		val values = values()
-		
-		object ColorSerializer : LowercaseSerializer<Color>(values)
+		val AQUA = NamedColorImpl("aqua")
+		val BLACK = NamedColorImpl("black")
+		val BLUE = BossBarColorImpl("blue")
+		val DARK_AQUA = NamedColorImpl("dark_aqua")
+		val DARK_BLUE = NamedColorImpl("dark_blue")
+		val DARK_GRAY = NamedColorImpl("dark_gray")
+		val DARK_GREEN = NamedColorImpl("dark_green")
+		val DARK_PURPLE = NamedColorImpl("dark_purple")
+		val DARK_RED = NamedColorImpl("dark_red")
+		val GOLD = NamedColorImpl("gold")
+		val GRAY = NamedColorImpl("gray")
+		val GREEN = BossBarColorImpl("green")
+		val LIGHT_PURPLE = NamedColorImpl("light_purple")
+		val PINK = BossBarColorImpl("pink")
+		val PURPLE = BossBarColorImpl("purple")
+		val RED = BossBarColorImpl("red")
+		val WHITE = BossBarColorImpl("white")
+		val YELLOW = BossBarColorImpl("yellow")
 	}
 }
 
-@Serializable(BossBarColor.Companion.BossBarColorSerializer::class)
-enum class BossBarColor {
-	BLUE,
-	GREEN,
-	PINK,
-	PURPLE,
-	RED,
-	WHITE,
-	YELLOW;
+interface NamedColor : Color {
+	val name: String
+}
+
+interface BossBarColor : NamedColor
+
+@Serializable(NamedColorImpl.Companion.NamedColorSerializer::class)
+class NamedColorImpl(override val name: String) : NamedColor {
+	override fun toString() = name
 	
 	companion object {
-		val values = values()
-		
-		object BossBarColorSerializer : LowercaseSerializer<BossBarColor>(values)
+		object NamedColorSerializer : ToStringSerializer<NamedColorImpl>()
 	}
 }
+
+@Serializable(BossBarColorImpl.Companion.BossBarColorSerializer::class)
+class BossBarColorImpl(override val name: String) : BossBarColor {
+	override fun toString() = name
+	
+	companion object {
+		object BossBarColorSerializer : ToStringSerializer<BossBarColorImpl>()
+	}
+}
+
+@Serializable(RGB.Companion.ColorSerializer::class)
+data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
+	private constructor(hex: String) : this(
+		hex.substring(0, 2).toInt(16),
+		hex.substring(2, 4).toInt(16),
+		hex.substring(4, 6).toInt(16),
+	)
+	
+	val hex get() = "%02x%02x%02x".format(red, green, blue)
+	val hexWithHash get() = "#$hex"
+	
+	val r get() = red
+	val g get() = green
+	val b get() = blue
+	
+	operator fun plus(other: RGB) = RGB(
+		(red + other.red).coerceIn(0, 255),
+		(green + other.green).coerceIn(0, 255),
+		(blue + other.blue).coerceIn(0, 255),
+	)
+	
+	operator fun minus(other: RGB) = RGB(
+		(red - other.red).coerceIn(0, 255),
+		(green - other.green).coerceIn(0, 255),
+		(blue - other.blue).coerceIn(0, 255),
+	)
+	
+	operator fun times(quotient: Double) = RGB(
+		(red * quotient).toInt().coerceIn(0, 255),
+		(green * quotient).toInt().coerceIn(0, 255),
+		(blue * quotient).toInt().coerceIn(0, 255),
+	)
+	
+	operator fun div(quotient: Double) = RGB(
+		(red / quotient).toInt().coerceIn(0, 255),
+		(green / quotient).toInt().coerceIn(0, 255),
+		(blue / quotient).toInt().coerceIn(0, 255),
+	)
+	
+	@Throws(IndexOutOfBoundsException::class)
+	operator fun get(index: Int) = when (index) {
+		0 -> red
+		1 -> green
+		2 -> blue
+		else -> throw IndexOutOfBoundsException()
+	}
+	
+	@Throws(IndexOutOfBoundsException::class)
+	operator fun set(index: Int, value: Int) = when (index) {
+		0 -> red = value
+		1 -> green = value
+		2 -> blue = value
+		else -> throw IndexOutOfBoundsException()
+	}
+	
+	fun toHex(withHash: Boolean = false) = if (withHash) hexWithHash else hex
+	fun inverse() = RGB(255 - red, 255 - green, 255 - blue)
+	fun grayscale() = RGB((red + green + blue) / 3, (red + green + blue) / 3, (red + green + blue) / 3)
+	infix fun mix(other: RGB) = RGB(
+		(red + other.red) / 2,
+		(green + other.green) / 2,
+		(blue + other.blue) / 2,
+	)
+	
+	fun mix(other: RGB, count: Int): List<RGB> {
+		val result = mutableListOf<RGB>()
+		val step = 1.0 / count
+		for (i in 0 until count) {
+			result.add(this * (1 - step * i) + other * (step * i))
+		}
+		return result
+	}
+	
+	companion object {
+		fun fromHex(hex: String) = RGB(hex.removePrefix("#"))
+		fun fromRGB(red: Int, green: Int, blue: Int) = RGB(red, green, blue)
+		fun fromNamedColor(color: NamedColor) = when (color) {
+			Color.AQUA -> RGB(85, 255, 255)
+			Color.BLACK -> RGB(0, 0, 0)
+			Color.BLUE -> RGB(85, 85, 255)
+			Color.DARK_AQUA -> RGB(0, 170, 170)
+			Color.DARK_BLUE -> RGB(0, 0, 170)
+			Color.DARK_GRAY -> RGB(85, 85, 85)
+			Color.DARK_GREEN -> RGB(0, 170, 0)
+			Color.DARK_PURPLE -> RGB(170, 0, 170)
+			Color.DARK_RED -> RGB(170, 0, 0)
+			Color.GOLD -> RGB(255, 170, 0)
+			Color.GRAY -> RGB(170, 170, 170)
+			Color.GREEN -> RGB(85, 255, 85)
+			Color.LIGHT_PURPLE -> RGB(255, 85, 255)
+			Color.PINK -> RGB(255, 0, 255)
+			Color.PURPLE -> RGB(170, 0, 255)
+			Color.RED -> RGB(255, 85, 85)
+			Color.WHITE -> RGB(255, 255, 255)
+			Color.YELLOW -> RGB(255, 255, 85)
+			else -> RGB(0, 0, 0)
+		}
+		
+		object ColorSerializer : KSerializer<RGB> {
+			override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("RGB", PrimitiveKind.STRING)
+			
+			override fun serialize(encoder: Encoder, value: RGB) {
+				encoder.encodeString(value.toHex(withHash = true))
+			}
+			
+			override fun deserialize(decoder: Decoder) = fromHex(decoder.decodeString())
+		}
+	}
+}
+
+fun mix(color1: RGB, weight1: Double, color2: RGB, weight2: Double) = color1 * weight1 + color2 * weight2
+fun NamedColor.toRGB() = RGB.fromNamedColor(this)

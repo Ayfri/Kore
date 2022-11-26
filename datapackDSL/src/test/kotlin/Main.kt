@@ -49,7 +49,7 @@ fun main() {
 			clear(targets = selector(SelectorType.ALL_PLAYERS), item = item("stone"), maxCount = 1)
 			
 			bossBar("test") {
-				setColor(BossBarColor.BLUE)
+				setColor(Color.BLUE)
 				setStyle(BossBarStyle.NOTCHED_6)
 				setMax(100)
 				setVisible(true)
