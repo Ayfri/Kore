@@ -42,7 +42,7 @@ fun main() {
 				block()
 			}
 			
-			advancement(AdvancementAction.GRANT, selector, advancement("story/iron_tools"))
+			advancements.grant(selector, advancement("story/iron_tools"))
 			
 			clear(targets = selector(SelectorType.ALL_PLAYERS), item = item("stone"), maxCount = 1)
 			
@@ -110,7 +110,9 @@ fun main() {
 				})
 				
 				run {
-					advancement(AdvancementAction.GRANT, selector(SelectorType.ALL_PLAYERS), advancement("story/iron_tools"))
+					advancement {
+						grant(self(), advancement("story/iron_tools"))
+					}
 				}
 			}
 			
