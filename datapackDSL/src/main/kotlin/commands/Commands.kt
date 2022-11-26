@@ -15,11 +15,6 @@ import serializers.LowercaseSerializer
 internal val json = Json { ignoreUnknownKeys = true }
 internal inline fun <reified T : @Serializable Any> T.asArg() = json.encodeToJsonElement(this).jsonPrimitive.content
 
-fun Function.attribute(targets: Argument.Selector, attribute: Argument.Attribute, base: Boolean = false) =
-	addLine(command("attribute", targets, attribute, if (base) literal("base get") else literal("get")))
-
-fun Function.attribute(targets: Argument.Selector, attribute: Argument.Attribute, amount: Argument.Float) = addLine(command("attribute", targets, attribute, literal("base set"), amount))
-
 fun Function.clear(targets: Argument.Selector? = null, item: Argument.Item? = null, maxCount: Int? = null) = addLine(command("clear", targets, item, int(maxCount)))
 
 fun Function.debugStart() = addLine(command("debug", literal("start")))

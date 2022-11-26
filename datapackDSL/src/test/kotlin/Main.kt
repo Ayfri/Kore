@@ -1,5 +1,6 @@
 
 import arguments.*
+import arguments.enums.Attribute
 import arguments.enums.Dimension
 import arguments.enums.Gamemode
 import arguments.numbers.pos
@@ -15,6 +16,7 @@ import net.benwoodworth.knbt.NbtString
 import net.benwoodworth.knbt.addNbtCompound
 import net.benwoodworth.knbt.put
 import tags.tags
+import java.util.*
 import kotlin.io.path.Path
 
 fun main() {
@@ -88,6 +90,16 @@ fun main() {
 			effect(selector(SelectorType.ALL_PLAYERS)) {
 				clear()
 				give("minecraft:regeneration", 10, 1, false)
+			}
+			
+			attributes(nearestPlayer(), Attribute.GENERIC_ARMOR) {
+				base.set(10.0)
+				modifiers {
+					val uuid = UUID.randomUUID()
+					add(uuid, "test", 10.0, AttributeModifierOperation.ADD)
+					get(uuid, .5)
+					remove(uuid)
+				}
 			}
 			
 			execute {
