@@ -80,7 +80,7 @@ fun Team.setDeathMessageVisibility(visibility: Visibility) = teams {
 }
 
 context(Function)
-fun Team.setColor(color: Color) = teams {
+fun Team.setColor(color: NamedColor) = teams {
 	modify(name) {
 		color(color)
 	}

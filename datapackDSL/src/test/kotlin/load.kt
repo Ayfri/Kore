@@ -9,7 +9,7 @@ import net.benwoodworth.knbt.put
 
 fun addLoad(dataPack: DataPack) {
 	dataPack.function("load") {
-		class Team(val name: String, val display: String, val color: Color, val bold: Boolean = false)
+		class Team(val name: String, val display: String, val color: NamedColor, val bold: Boolean = false)
 		
 		val teams = listOf(
 			Team("admin", "Admin", Color.DARK_RED, true),

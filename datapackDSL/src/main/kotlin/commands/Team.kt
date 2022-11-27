@@ -1,7 +1,7 @@
 package commands
 
 import arguments.Argument
-import arguments.Color
+import arguments.NamedColor
 import arguments.bool
 import arguments.literal
 import arguments.nbt

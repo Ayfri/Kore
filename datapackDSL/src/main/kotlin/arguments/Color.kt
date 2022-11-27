@@ -9,53 +9,51 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import serializers.ToStringSerializer
 
-@Serializable
+@Serializable(Color.Companion.ColorSerializer::class)
 sealed interface Color {
 	companion object {
-		val AQUA = NamedColorImpl("aqua")
-		val BLACK = NamedColorImpl("black")
-		val BLUE = BossBarColorImpl("blue")
-		val DARK_AQUA = NamedColorImpl("dark_aqua")
-		val DARK_BLUE = NamedColorImpl("dark_blue")
-		val DARK_GRAY = NamedColorImpl("dark_gray")
-		val DARK_GREEN = NamedColorImpl("dark_green")
-		val DARK_PURPLE = NamedColorImpl("dark_purple")
-		val DARK_RED = NamedColorImpl("dark_red")
-		val GOLD = NamedColorImpl("gold")
-		val GRAY = NamedColorImpl("gray")
-		val GREEN = BossBarColorImpl("green")
-		val LIGHT_PURPLE = NamedColorImpl("light_purple")
-		val PINK = BossBarColorImpl("pink")
-		val PURPLE = BossBarColorImpl("purple")
-		val RED = BossBarColorImpl("red")
-		val WHITE = BossBarColorImpl("white")
-		val YELLOW = BossBarColorImpl("yellow")
+		val AQUA = NamedColor("aqua")
+		val BLACK = NamedColor("black")
+		val BLUE = BossBarColor("blue")
+		val DARK_AQUA = NamedColor("dark_aqua")
+		val DARK_BLUE = NamedColor("dark_blue")
+		val DARK_GRAY = NamedColor("dark_gray")
+		val DARK_GREEN = NamedColor("dark_green")
+		val DARK_PURPLE = NamedColor("dark_purple")
+		val DARK_RED = NamedColor("dark_red")
+		val GOLD = NamedColor("gold")
+		val GRAY = NamedColor("gray")
+		val GREEN = BossBarColor("green")
+		val LIGHT_PURPLE = NamedColor("light_purple")
+		val PINK = BossBarColor("pink")
+		val PURPLE = BossBarColor("purple")
+		val RED = BossBarColor("red")
+		val WHITE = BossBarColor("white")
+		val YELLOW = BossBarColor("yellow")
+		
+		object ColorSerializer : KSerializer<Color> {
+			override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Color", PrimitiveKind.STRING)
+			
+			override fun deserialize(decoder: Decoder) = NamedColor(decoder.decodeString())
+			
+			override fun serialize(encoder: Encoder, value: Color) = when (value) {
+				is NamedColor -> NamedColor.serializer().serialize(encoder, value)
+				is BossBarColor -> BossBarColor.serializer().serialize(encoder, value)
+				is RGB -> RGB.serializer().serialize(encoder, value)
+			}
+		}
 	}
 }
 
-interface NamedColor : Color {
-	val name: String
-}
+internal object NamedColorSerializer : ToStringSerializer<NamedColor>()
 
-interface BossBarColor : NamedColor
-
-@Serializable(NamedColorImpl.Companion.NamedColorSerializer::class)
-class NamedColorImpl(override val name: String) : NamedColor {
+@Serializable(with = NamedColorSerializer::class)
+open class NamedColor(val name: String) : Color {
 	override fun toString() = name
-	
-	companion object {
-		object NamedColorSerializer : ToStringSerializer<NamedColorImpl>()
-	}
 }
 
-@Serializable(BossBarColorImpl.Companion.BossBarColorSerializer::class)
-class BossBarColorImpl(override val name: String) : BossBarColor {
-	override fun toString() = name
-	
-	companion object {
-		object BossBarColorSerializer : ToStringSerializer<BossBarColorImpl>()
-	}
-}
+@Serializable(with = NamedColorSerializer::class)
+class BossBarColor(name: String) : NamedColor(name)
 
 @Serializable(RGB.Companion.ColorSerializer::class)
 data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
