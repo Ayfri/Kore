@@ -9,7 +9,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonPrimitive
 import net.benwoodworth.knbt.NbtCompound
-import net.benwoodworth.knbt.NbtTag
 import serializers.LowercaseSerializer
 
 internal val json = Json { ignoreUnknownKeys = true }
@@ -229,7 +228,7 @@ fun Function.teleport(
 
 fun Function.tell(targets: Argument.Entity, message: String) = addLine(command("tell", targets, literal(message)))
 
-fun Function.tellraw(targets: Argument.Entity, message: NbtTag) = addLine(command("tellraw", targets, nbt(message)))
+fun Function.tellraw(targets: Argument.Entity, message: TextComponents) = addLine(command("tellraw", targets, textComponent(message)))
 
 @Serializable(TitleAction.Companion.TitleActionSerializer::class)
 enum class TitleAction {
@@ -257,7 +256,7 @@ enum class TitleLocation {
 }
 
 fun Function.title(targets: Argument.Entity, action: TitleAction) = addLine(command("title", targets, literal(action.asArg())))
-fun Function.title(targets: Argument.Entity, location: TitleLocation, message: NbtTag) = addLine(command("title", targets, literal(location.asArg()), nbt(message)))
+fun Function.title(targets: Argument.Entity, location: TitleLocation, message: TextComponents) = addLine(command("title", targets, literal(location.asArg()), textComponent(message)))
 fun Function.title(targets: Argument.Entity, fadeIn: Int, stay: Int, fadeOut: Int) = addLine(command("title", targets, literal("times"), int(fadeIn), int(stay), int(fadeOut)))
 
 fun Function.tm(message: String) = addLine(command("tm", literal(message)))

@@ -12,8 +12,6 @@ import arguments.selector.SelectorType
 import arguments.selector.Sort
 import commands.*
 import functions.function
-import net.benwoodworth.knbt.NbtString
-import net.benwoodworth.knbt.addNbtCompound
 import net.benwoodworth.knbt.put
 import tags.tags
 import java.util.*
@@ -21,7 +19,9 @@ import kotlin.io.path.Path
 
 fun main() {
 	val dataPack = dataPack("test") {
-		addLoad(this)
+		loadTeams(this)
+		unloadTeams(this)
+		gradiant(this)
 		
 		tags("minecraft") {
 			tag("blocks", "op") {
@@ -178,15 +178,15 @@ fun main() {
 				teams {
 					val team = "admin"
 					
-					add(team, NbtString("Admin"))
+					add(team, textComponent("Admin"))
 					modify(team) {
 						color(Color.DARK_RED)
 						friendlyFire(false)
 						deathMessageVisibility(Visibility.HIDE_FOR_OTHER_TEAMS)
-						prefix(nbt {
-							put("text", "<Admin>")
-							put("color", Color.RED.asArg())
-							put("bold", true)
+						prefix(textComponent {
+							text = "<Admin>"
+							color = Color.RED
+							bold = true
 						})
 					}
 				}
@@ -197,22 +197,16 @@ fun main() {
 		
 		pack {
 			format = 10
-			description = nbtList {
-				addNbtCompound {
-					put("text", "My ")
-					put("color", Color.RED.toString())
-				}
-				
-				addNbtCompound {
-					put("text", "nice ")
-					put("color", Color.GREEN.toString())
-				}
-				
-				addNbtCompound {
-					put("text", "datapack")
-					put("color", Color.BLUE.toString())
-					put("bold", true)
-				}
+			description = textComponent {
+				text = "My "
+				color = RGB(255, 0, 0)
+			} + textComponent {
+				text = "nice "
+				color = Color.GREEN
+			} + textComponent {
+				text = "datapack"
+				color = Color.BLUE
+				bold = true
 			}
 		}
 		

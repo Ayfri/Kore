@@ -2,12 +2,12 @@ package commands
 
 import arguments.Argument
 import arguments.NamedColor
+import arguments.TextComponents
 import arguments.bool
 import arguments.literal
-import arguments.nbt
+import arguments.textComponent
 import functions.Function
 import kotlinx.serialization.Serializable
-import net.benwoodworth.knbt.NbtTag
 import serializers.CamelcaseSerializer
 
 @Serializable(Visibility.Companion.NametagVisibilitySerializer::class)
@@ -42,16 +42,16 @@ class Modify(private val fn: Function, val team: String) {
 	fun collisionRule(rule: CollisionRule) = fn.addLine(command("team", literal("modify"), literal(team), literal("collisionRule"), literal(rule.asArg())))
 	fun color(color: NamedColor) = fn.addLine(command("team", literal("modify"), literal(team), literal("color"), literal(color.asArg())))
 	fun deathMessageVisibility(visibility: Visibility) = fn.addLine(command("team", literal("modify"), literal(team), literal("deathMessageVisibility"), literal(visibility.asArg())))
-	fun displayName(name: NbtTag) = fn.addLine(command("team", literal("modify"), literal(team), literal("displayName"), nbt(name)))
+	fun displayName(name: TextComponents) = fn.addLine(command("team", literal("modify"), literal(team), literal("displayName"), textComponent(name)))
 	fun friendlyFire(allowed: Boolean) = fn.addLine(command("team", literal("modify"), literal(team), literal("friendlyFire"), bool(allowed)))
 	fun nametagVisibility(visibility: Visibility) = fn.addLine(command("team", literal("modify"), literal(team), literal("nametagVisibility"), literal(visibility.asArg())))
-	fun prefix(prefix: NbtTag) = fn.addLine(command("team", literal("modify"), literal(team), literal("prefix"), nbt(prefix)))
+	fun prefix(prefix: TextComponents) = fn.addLine(command("team", literal("modify"), literal(team), literal("prefix"), textComponent(prefix)))
 	fun seeFriendlyInvisibles(allowed: Boolean) = fn.addLine(command("team", literal("modify"), literal(team), literal("seeFriendlyInvisibles"), bool(allowed)))
-	fun suffix(suffix: NbtTag) = fn.addLine(command("team", literal("modify"), literal(team), literal("suffix"), nbt(suffix)))
+	fun suffix(suffix: TextComponents) = fn.addLine(command("team", literal("modify"), literal(team), literal("suffix"), textComponent(suffix)))
 }
 
 class Team(private val fn: Function) {
-	fun add(team: String, displayName: NbtTag? = null) = fn.addLine(command("team", literal("add"), literal(team), nbt(displayName)))
+	fun add(team: String, displayName: TextComponents? = null) = fn.addLine(command("team", literal("add"), literal(team), textComponent(displayName)))
 	fun empty(team: String) = fn.addLine(command("team", literal("empty"), literal(team)))
 	fun join(team: String, entity: Argument.ScoreHolder) = fn.addLine(command("team", literal("join"), literal(team), entity))
 	fun leave(entity: Argument.ScoreHolder) = fn.addLine(command("team", literal("leave"), entity))

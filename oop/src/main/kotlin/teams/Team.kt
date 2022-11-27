@@ -1,13 +1,13 @@
 package teams
 
 import arguments.Argument
-import arguments.Color
+import arguments.NamedColor
+import arguments.TextComponents
 import commands.CollisionRule
 import commands.Visibility
 import commands.teams
 import entities.Entity
 import functions.Function
-import net.benwoodworth.knbt.NbtTag
 
 data class Team(val name: String)
 
@@ -24,21 +24,21 @@ fun Team.delete() = teams {
 }
 
 context(Function)
-fun Team.setDisplayName(displayName: NbtTag) = teams {
+fun Team.setDisplayName(displayName: TextComponents) = teams {
 	modify(name) {
 		displayName(displayName)
 	}
 }
 
 context(Function)
-fun Team.setPrefix(prefix: NbtTag) = teams {
+fun Team.setPrefix(prefix: TextComponents) = teams {
 	modify(name) {
 		prefix(prefix)
 	}
 }
 
 context(Function)
-fun Team.setSuffix(suffix: NbtTag) = teams {
+fun Team.setSuffix(suffix: TextComponents) = teams {
 	modify(name) {
 		suffix(suffix)
 	}
