@@ -53,11 +53,11 @@ fun ScoreboardEntity.copyFrom(source: Argument.ScoreHolder, sourceObjective: Str
 }
 
 context(Function)
-	operator fun ScoreboardEntity.plusAssign(value: Int) {
+operator fun ScoreboardEntity.plusAssign(value: Int) {
 	add(value)
 }
 
 context(Function)
-	operator fun ScoreboardEntity.minusAssign(value: Int) {
+operator fun ScoreboardEntity.minusAssign(value: Int) {
 	remove(value)
 }
