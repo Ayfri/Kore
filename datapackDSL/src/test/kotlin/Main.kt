@@ -1,8 +1,8 @@
-
 import arguments.*
 import arguments.enums.Attribute
 import arguments.enums.Dimension
 import arguments.enums.Gamemode
+import arguments.numbers.PosNumber
 import arguments.numbers.pos
 import arguments.numbers.range
 import arguments.numbers.relativePos
@@ -12,7 +12,6 @@ import arguments.selector.SelectorType
 import arguments.selector.Sort
 import commands.*
 import functions.function
-import net.benwoodworth.knbt.put
 import tags.tags
 import java.util.*
 import kotlin.io.path.Path
@@ -59,7 +58,7 @@ fun main() {
 			bossBars.list()
 			
 			addBlankLine()
-			cloneFiltered(coordinate(20, 50, 30), coordinate(40, 60, 50), coordinate(0, 0, 0), blockTag("wool"), CloneMode.MASKED)
+			cloneFiltered(coordinate(20, 50, 30), coordinate(40, 60, 50), coordinate(), blockTag("wool"), CloneMode.MASKED)
 			
 			data(selector(SelectorType.ALL_ENTITIES, true) {
 				advancements {
@@ -76,12 +75,12 @@ fun main() {
 				type = "zombie"
 			}) {
 				modify("Position") {
-					set(coordinate(0, 0, 0))
+					set(coordinate())
 				}
 				
 				addBlankLine()
 				modify("Motion") {
-					insert(1, coordinate(pos(2).relative, pos(2), pos(2)), "test")
+					insert(1, coordinate(2.relativePos, 2.pos, 2.pos), "test")
 				}
 			}
 			
@@ -113,11 +112,9 @@ fun main() {
 				asTarget(selector(SelectorType.SELF))
 				align(Axes.XY)
 				inDimension(Dimension.OVERWORLD)
-				facingEntity(selector(SelectorType.ALL_ENTITIES, true) {
-					sort = Sort.NEAREST
-				})
+				facingEntity(nearestEntity())
 				
-				rotatedAs(selector(SelectorType.ALL_ENTITIES, true) {
+				rotatedAs(allEntities(true) {
 					sort = Sort.RANDOM
 				})
 				
@@ -140,7 +137,7 @@ fun main() {
 				}
 				
 				source {
-					fish("minecraft:cod", coordinate(0.relativePos, 0.relativePos, 0.relativePos), Hand.MAIN_HAND)
+					fish("minecraft:cod", coordinate(PosNumber.Type.RELATIVE), Hand.MAIN_HAND)
 				}
 			}
 			
@@ -164,16 +161,34 @@ fun main() {
 					reset()
 				}
 				
-				setBlock(coordinate(0, 0, 0), block("sign", states = mapOf("rotation" to "4"), nbtData = nbt {
-					put("Text1", "Hello")
-					put("Text2", "World")
+				setBlock(coordinate(PosNumber.Type.RELATIVE), block("oak_sign", states = mapOf("rotation" to "4"), nbtData = nbt {
+					this["Text1"] = "Hello"
+					this["Text2"] = "World"
 					
-					json("Text3") {
-						put("text", "test")
-						put("color", Color.RED.asArg())
-						put("bold", true)
+					this["Text3"] = textComponent {
+						text = "This is a text component"
+						color = Color.RED
+						italic = true
 					}
+					
 				}))
+				
+				tellraw(allPlayers(), textComponent {
+					text = "Hello World"
+					color = Color.RED
+					italic = true
+					clickEvent {
+						action = ClickAction.OPEN_URL
+						value = "https://www.google.com".nbt
+					}
+					hoverEvent {
+						action = HoverAction.SHOW_TEXT
+						value = textComponent {
+							text = "This is a hover event"
+							color = Color.BLUE
+						}.toNbtTag()
+					}
+				})
 				
 				teams {
 					val team = "admin"

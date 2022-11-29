@@ -1,5 +1,6 @@
 package arguments
 
+import commands.asArg
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -8,7 +9,13 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.encodeToJsonElement
+import net.benwoodworth.knbt.NbtString
+import net.benwoodworth.knbt.NbtTag
+import net.benwoodworth.knbt.buildNbtCompound
+import net.benwoodworth.knbt.buildNbtList
 import serializers.LowercaseSerializer
+import serializers.NbtAsJsonTextComponentSerializer
 
 @Serializable(with = TextComponents.Companion.TextComponentsSerializer::class)
 data class TextComponents(val list: MutableList<TextComponent> = mutableListOf()) {
@@ -24,6 +31,18 @@ data class TextComponents(val list: MutableList<TextComponent> = mutableListOf()
 		return this
 	}
 	
+	fun toJsonString() = Json.encodeToString(list)
+	
+	fun toNbtTag(): NbtTag = when (list.size) {
+		0 -> NbtString("")
+		1 -> list[0].toNbtTag()
+		else -> buildNbtList {
+			list.forEach {
+				this += Json.encodeToJsonElement(it)
+			}
+		}
+	}
+	
 	companion object {
 		object TextComponentsSerializer : KSerializer<TextComponents> {
 			override val descriptor = ListSerializer(JsonElement.serializer()).descriptor
@@ -34,10 +53,9 @@ data class TextComponents(val list: MutableList<TextComponent> = mutableListOf()
 			override fun serialize(encoder: Encoder, value: TextComponents) {
 				if (value.list.size == 1) {
 					val component = value.list[0]
-					if (component.containsOnlyText()) {
-						encoder.encodeString(component.text)
-					} else {
-						encoder.encodeSerializableValue(TextComponent.serializer(), component)
+					when {
+						component.containsOnlyText() -> encoder.encodeString(component.text)
+						else -> encoder.encodeSerializableValue(TextComponent.serializer(), component)
 					}
 				} else {
 					encoder.encodeSerializableValue(ListSerializer(TextComponent.serializer()), value.list)
@@ -61,6 +79,20 @@ data class TextComponent(
 	var hoverEvent: HoverEvent? = null,
 	var font: String? = null,
 ) {
+	fun toNbtTag() = buildNbtCompound {
+		this["text"] = text
+		color?.let { this["color"] = it.asArg() }
+		bold?.let { this["bold"] = it }
+		italic?.let { this["italic"] = it }
+		underlined?.let { this["underlined"] = it }
+		strikethrough?.let { this["strikethrough"] = it }
+		obfuscated?.let { this["obfuscated"] = it }
+		insertion?.let { this["insertion"] = it }
+		clickEvent?.let { this["clickEvent"] = it }
+		hoverEvent?.let { this["hoverEvent"] = it }
+		font?.let { this["font"] = it }
+	}
+	
 	fun containsOnlyText() = color == null
 		&& bold == null
 		&& italic == null
@@ -76,7 +108,8 @@ data class TextComponent(
 @Serializable
 data class ClickEvent(
 	var action: ClickAction,
-	var value: String,
+	@Serializable(with = NbtAsJsonTextComponentSerializer::class)
+	var value: NbtTag,
 )
 
 @Serializable(ClickAction.Companion.ClickActionSerializer::class)
@@ -98,7 +131,8 @@ enum class ClickAction {
 @Serializable
 data class HoverEvent(
 	var action: HoverAction,
-	var value: String,
+	@Serializable(with = NbtAsJsonTextComponentSerializer::class)
+	var value: NbtTag,
 )
 
 @Serializable(HoverAction.Companion.HoverActionSerializer::class)
@@ -115,8 +149,8 @@ enum class HoverAction {
 }
 
 fun textComponent(text: String = "", block: TextComponent.() -> Unit = {}) = TextComponents(TextComponent(text).apply(block))
-fun TextComponent.hoverEvent(block: HoverEvent.() -> Unit) = HoverEvent(HoverAction.SHOW_TEXT, "").apply(block)
-fun TextComponent.clickEvent(block: ClickEvent.() -> Unit) = ClickEvent(ClickAction.RUN_COMMAND, "").apply(block)
+fun TextComponent.hoverEvent(action: HoverAction = HoverAction.SHOW_TEXT, block: HoverEvent.() -> Unit) = apply { hoverEvent = HoverEvent(action, "".nbt).apply(block) }
+fun TextComponent.clickEvent(action: ClickAction = ClickAction.RUN_COMMAND, block: ClickEvent.() -> Unit) = apply { clickEvent = ClickEvent(action, "".nbt).apply(block) }
 fun textComponent(textComponents: TextComponents) = literal(Json.encodeToString(textComponents))
 
 @JvmName("textComponentNullable")
