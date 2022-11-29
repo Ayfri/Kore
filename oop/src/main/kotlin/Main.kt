@@ -1,8 +1,8 @@
 
 import arguments.Color
 import arguments.enums.Gamemode
-import arguments.nbt
 import arguments.numbers.rangeOrIntStart
+import arguments.textComponent
 import commands.DisplaySlot
 import commands.execute
 import entities.executeAs
@@ -15,7 +15,6 @@ import entities.teleportTo
 import functions.function
 import items.itemStack
 import items.summon
-import net.benwoodworth.knbt.put
 import scoreboard.copyFrom
 import scoreboard.create
 import scoreboard.plusAssign
@@ -78,10 +77,10 @@ fun main() {
 			team("red") {
 				ensureExists()
 				setColor(Color.DARK_RED)
-				setPrefix(nbt {
-					put("text", "RED ")
-					put("color", Color.DARK_RED.name.lowercase())
-					put("bold", true)
+				setPrefix(textComponent {
+					text = "RED "
+					color = Color.DARK_RED
+					bold = true
 				})
 				
 				addMembers(player)
