@@ -35,6 +35,17 @@ fun main() {
 		}
 	}
 	
+	pack {
+		description = textComponent {
+			text = "Datapack test for "
+			color = Color.GOLD
+		} + textComponent {
+			text = "Datapack-DSL"
+			color = Color.AQUA
+			bold = true
+		}
+	}
+	
 	datapack.generate()
 }
 ```
