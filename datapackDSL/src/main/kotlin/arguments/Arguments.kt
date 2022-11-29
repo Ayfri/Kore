@@ -127,8 +127,10 @@ fun blockTag(tag: String, namespace: String = "minecraft") = Argument.BlockTag(t
 fun bool(value: Boolean) = Argument.Literal(value.toString())
 internal fun bool(value: Boolean?) = value?.let { Argument.Literal(it.toString()) }
 
-fun coordinate(x: Number, y: Number, z: Number) = Coordinate(x.pos, y.pos, z.pos)
+fun coordinate(x: Number = 0, y: Number = 0, z: Number = 0) = Coordinate(x.pos, y.pos, z.pos)
 fun coordinate(x: PosNumber, y: PosNumber, z: PosNumber) = Coordinate(x, y, z)
+fun coordinate(x: PosNumber.Type, y: PosNumber.Type, z: PosNumber.Type) = Coordinate(pos(type = x), pos(type = y), pos(type = z))
+fun coordinate(type: PosNumber.Type) = Coordinate(pos(type = type), pos(type = type), pos(type = type))
 
 fun dimension(dimension: Dimension? = null) = Argument.Dimension("minecraft", dimension)
 fun dimension(customDimension: String, namespace: String? = null) = Argument.Dimension(namespace, customDimension = customDimension)
