@@ -10,7 +10,7 @@ import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 data class Coordinate(val x: PosNumber, val y: PosNumber, val z: PosNumber) : Argument, Argument.Data {
-	constructor(x: Number, y: Number, z: Number) : this(x.pos, y.pos, z.pos)
+	constructor(x: Number = 0, y: Number = 0, z: Number = 0) : this(x.pos, y.pos, z.pos)
 	
 	val length get() = sqrt(lengthSquared)
 	val lengthSquared get() = x.value * x.value + y.value * y.value + z.value * z.value
