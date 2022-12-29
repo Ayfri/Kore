@@ -14,7 +14,7 @@ suspend fun downloadAdvancements() {
 	val objectName = "Advancements"
 
 	val content = buildString {
-		append("object $objectName {")
+		append("sealed interface $objectName {")
 
 		val attributesTree = attributes.groupBy {
 			it.substringBeforeLast("/")
@@ -32,6 +32,7 @@ suspend fun downloadAdvancements() {
 					serializer = Serializer.Lowercase,
 					parent = "$objectName.${parent.pascalCase()}",
 					customEncoder = """encoder.encodeString("$path/${"\${value.name.lowercase()}"}")""",
+					enumInheritances = listOf(objectName),
 				)
 
 				appendLine()

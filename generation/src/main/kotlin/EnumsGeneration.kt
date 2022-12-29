@@ -34,6 +34,7 @@ fun generateEnumText(
 	serializer: Serializer,
 	properties: Collection<String>,
 	parent: String? = null,
+	enumInheritances: List<String> = emptyList(),
 	vararg customLines: String
 ): String {
 	val serializerName = "${enumName}Serializer"
@@ -54,9 +55,10 @@ fun generateEnumText(
 		|object $serializerName : ${serializer.name}Serializer<$serializerGenericType>(values) $encoder
 	""".trimMargin()
 
+	val inheritances = enumInheritances.joinToString(prefix = if (enumInheritances.isNotEmpty()) " : " else "", separator = ", ")
 	return """
 		|@Serializable(with = $enumName.Companion.$serializerName::class)
-		|enum class $enumName {
+		|enum class $enumName$inheritances {
 		|	${properties.sorted().joinToString(separator = ",\n\t", postfix = ";")}
 		|	
 		|	${customLines.joinToString(separator = "\n\t")}
