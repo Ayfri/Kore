@@ -7,3 +7,6 @@ build
 
 ### Tests
 out
+
+### Auto-Generation
+**/generated/**.kt
