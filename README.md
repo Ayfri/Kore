@@ -52,10 +52,23 @@ fun main() {
 
 There are multiple other new features that I want to add to this project like :
 
-- [ ] Pre-generating the list of Blocks/Items/Entities/Advancements/... and a lot of other repositories.
+- [X] Pre-generating the list of Blocks/Items/Entities/Advancements/... and a lot of other repositories.
+- [ ] Pre-generating the list of Sounds/Tags & Advancements using the enum tree generation method.
 - [ ] Pre-generating the list of BlockStates, BlockNbtTags, EntityNbtTags etc.
 - [ ] API for creating all the JSON-base features of Minecraft (Advancements, Loot Tables, Recipes, ...).
 - [ ] Better methods for creating NBT tags.
 - [ ] An OOP way to create the datapacks (like `player.teleportTo(entity)` instead of `teleport(player, entity)` and `player.giveItem(item)` etc).
 - [ ] Useful libraries made by different people recreated in Kotlin.
 - [ ] Maybe a way to import a datapack and create Kotlin equivalent code.
+
+## Contributing
+
+If you want to contribute to this project, you can do it by creating a pull request or by creating an issue.
+
+Instructions to run the project :
+
+1. First, clone the project.
+2. Then, run gradle `generation:run` task to generate the auto-generated files.
+3. Finally, run gradle `datapackDSL:run` or `oop:run` to run the examples.
+
+> Note : OOP module is not finished yet and experimental, it might change a lot in the future.
