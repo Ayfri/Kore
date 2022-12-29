@@ -70,6 +70,13 @@ suspend fun downloadAdvancements() {
 			add("serializers.${Serializer.Lowercase.name}Serializer")
 			add("kotlinx.serialization.Serializable")
 			add("kotlinx.serialization.encoding.Encoder")
-		}
+			add("arguments.Argument")
+			add("kotlinx.serialization.json.Json")
+			add("kotlinx.serialization.json.encodeToJsonElement")
+			add("kotlinx.serialization.json.jsonPrimitive")
+		},
+		additionalLines = arrayOf(
+			"inline fun <reified T : Advancements> advancement(advancement: T) = Argument.Advancement(Json.encodeToJsonElement(advancement).jsonPrimitive.content)",
+		)
 	)
 }
