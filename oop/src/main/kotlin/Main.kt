@@ -5,28 +5,14 @@ import arguments.numbers.rangeOrIntStart
 import arguments.textComponent
 import commands.DisplaySlot
 import commands.execute
-import entities.executeAs
-import entities.executeAt
-import entities.getScore
-import entities.giveItem
-import entities.joinTeam
-import entities.player
-import entities.teleportTo
+import commands.say
+import entities.*
 import functions.function
 import items.itemStack
 import items.summon
-import scoreboard.copyFrom
-import scoreboard.create
-import scoreboard.plusAssign
-import scoreboard.scoreboard
-import scoreboard.set
-import scoreboard.setDisplayName
-import scoreboard.setDisplaySlot
-import teams.addMembers
-import teams.ensureExists
-import teams.setColor
-import teams.setPrefix
-import teams.team
+import scoreboard.*
+import teams.*
+import kotlin.io.path.Path
 
 fun main() {
 	dataPack("oop") {
@@ -36,7 +22,12 @@ fun main() {
 			team = "red"
 		}
 		val item = itemStack("diamond_sword")
-		
+
+		pack {
+			description = textComponent("This is a test")
+			format = 10
+		}
+
 		function("main") {
 			player.giveItem(item)
 			player.executeAt {
@@ -44,36 +35,36 @@ fun main() {
 					item.summon()
 				}
 			}
-			
+
 			player.executeAs {
 				run {
 					it.teleportTo(it)
 				}
 			}
-			
+
 			execute {
 				ifCondition {
 					score(player.asSelector(), "deathCount", rangeOrIntStart(2))
 				}
-				
+
 				run {
 					player.joinTeam("red")
 				}
 			}
-			
+
 			player.getScore("test").apply {
 				set(10)
 				this += 5
-				
+
 				copyFrom(player.asSelector(), "foodLevel")
 			}
-			
+
 			scoreboard("other.test") {
 				create()
 				setDisplaySlot(DisplaySlot.sidebar)
 				setDisplayName("Test")
 			}
-			
+
 			team("red") {
 				ensureExists()
 				setColor(Color.DARK_RED)
@@ -82,9 +73,11 @@ fun main() {
 					color = Color.DARK_RED
 					bold = true
 				})
-				
+
 				addMembers(player)
 			}
+
+			say("Loaded")
 		}
 	}.generate()
 }
