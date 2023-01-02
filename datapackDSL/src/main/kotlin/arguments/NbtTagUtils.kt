@@ -6,14 +6,14 @@ import kotlinx.serialization.json.Json
 import net.benwoodworth.knbt.*
 import serializers.NbtAsJsonTextComponentSerializer
 
-fun nbt(block: NbtCompoundBuilder.() -> Unit) = buildNbtCompound(block)
-fun <T : NbtTag> nbtList(block: NbtListBuilder<T>.() -> Unit) = buildNbtList(block)
+fun nbt(block: NbtCompoundBuilder.() -> Unit = {}) = buildNbtCompound(block)
+fun <T : NbtTag> nbtList(block: NbtListBuilder<T>.() -> Unit = {}) = buildNbtList(block)
 
 @JvmName("nbtListCompound")
-fun nbtList(block: NbtListBuilder<NbtCompound>.() -> Unit) = buildNbtList(block)
+fun nbtList(block: NbtListBuilder<NbtCompound>.() -> Unit = {}) = buildNbtList(block)
 
-fun NbtCompoundBuilder.nbt(name: String, block: NbtCompoundBuilder.() -> Unit) = putNbtCompound(name, block)
-fun NbtCompoundBuilder.json(name: String, block: NbtCompoundBuilder.() -> Unit) = put(name, StringifiedNbt.encodeToString(buildNbtCompound(block)))
+fun NbtCompoundBuilder.nbt(name: String, block: NbtCompoundBuilder.() -> Unit = {}) = putNbtCompound(name, block)
+fun NbtCompoundBuilder.json(name: String, block: NbtCompoundBuilder.() -> Unit = {}) = put(name, StringifiedNbt.encodeToString(buildNbtCompound(block)))
 
 fun stringifiedNbt(block: NbtCompoundBuilder.() -> Unit) = StringifiedNbt.encodeToString(buildNbtCompound(block))
 fun stringifiedNbtList(block: NbtListBuilder<NbtCompound>.() -> Unit) = StringifiedNbt.encodeToString(buildNbtList(block))
