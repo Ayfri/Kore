@@ -9,13 +9,13 @@ import serializers.LowercaseSerializer
 
 @Serializable(CloneMode.Companion.CloneModeSerializer::class)
 enum class CloneMode {
-	MASKED,
-	NOT,
-	ONLY;
-	
+	FORCE,
+	MOVE,
+	NORMAL;
+
 	companion object {
 		val values = values()
-		
+
 		object CloneModeSerializer : LowercaseSerializer<CloneMode>(values)
 	}
 }

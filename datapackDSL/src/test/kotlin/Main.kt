@@ -58,8 +58,8 @@ fun main() {
 			bossBars.list()
 			
 			addBlankLine()
-			cloneFiltered(coordinate(20, 50, 30), coordinate(40, 60, 50), coordinate(), blockTag("wool"), CloneMode.MASKED)
-			
+			cloneFiltered(coordinate(20, 50, 30), coordinate(40, 60, 50), coordinate(), blockTag("wool"), CloneMode.MOVE)
+
 			data(selector(SelectorType.ALL_ENTITIES, true) {
 				advancements {
 					advancement("story/kill_all_mobs") {
