@@ -30,7 +30,7 @@ class GamemodeSelector(var gamemode: Gamemode? = null, var invert: Boolean = fal
 		invert -> "!${json.encodeToJsonElement(gamemode).jsonPrimitive.content}"
 		else -> json.encodeToJsonElement(gamemode).jsonPrimitive.content
 	}
-	
+
 	companion object {
 		object GamemodeSelectorSerializer : ToStringSerializer<GamemodeSelector>()
 	}
@@ -63,27 +63,27 @@ data class SelectorNbtData(
 ) {
 	@SerialName("gamemode")
 	private var _gamemode: GamemodeSelector = GamemodeSelector()
-	
+
 	@Transient
 	var gamemode
 		get() = _gamemode.gamemode
 		set(value) {
 			_gamemode.gamemode = value
 		}
-	
+
 	fun advancements(block: AdvancementBuilder.() -> Unit) {
 		val builder = AdvancementBuilder()
 		builder.block()
 		advancements = builder.build()
 	}
-	
+
 	operator fun Gamemode.not(): Gamemode {
 		_gamemode.invert = true
 		return this
 	}
-	
+
 	operator fun String.not() = "!$this"
-	
+
 	fun copyFrom(other: SelectorNbtData) {
 		x = other.x
 		y = other.y
@@ -107,30 +107,31 @@ data class SelectorNbtData(
 		predicate = other.predicate
 		_gamemode = other._gamemode
 	}
-	
+
 	companion object {
 		object SelectorNbtDataSerializer : KSerializer<SelectorNbtData> {
 			override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("SelectorNbtData", PrimitiveKind.STRING)
-			
+
 			override fun deserialize(decoder: Decoder) = SelectorNbtData()
-			
+
 			override fun serialize(encoder: Encoder, value: SelectorNbtData) {
 				val map = mutableMapOf<String, Any?>()
 				value::class.memberProperties.forEach {
 					it.isAccessible = true
 					if (it.hasAnnotation<Transient>()) return@forEach
-					
+
 					val serialName = it.findAnnotation<SerialName>()?.value ?: it.name
 					map[serialName] = it.getter.call(value)
 				}
-				
+
 				encoder.encodeString(map.filter { it.value != null }.mapNotNull { (key, value) ->
 					when (value) {
 						is GamemodeSelector -> when (value.gamemode) {
 							null -> return@mapNotNull null
 							else -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
 						}
-						
+
+						is Sort -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
 						is Advancements -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
 						is List<*> -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
 						is Map<*, *> -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
