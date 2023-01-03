@@ -1,16 +1,13 @@
 package arguments
 
-import arguments.enums.Attribute
 import arguments.enums.Dimension
-import arguments.numbers.PosNumber
-import arguments.numbers.RotNumber
-import arguments.numbers.TimeNumber
-import arguments.numbers.pos
-import arguments.numbers.rot
+import arguments.numbers.*
 import arguments.selector.Selector
 import arguments.selector.SelectorNbtData
 import arguments.selector.SelectorType
 import arguments.selector.json
+import commands.asArg
+import generated.Attributes
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonPrimitive
 import net.benwoodworth.knbt.NbtTag
@@ -18,9 +15,9 @@ import java.util.*
 
 sealed interface Argument {
 	fun asString(): String
-	
+
 	sealed interface BlockOrTag : Argument
-	
+
 	sealed interface Data : Argument {
 		val literalName
 			get() = when (this) {
@@ -29,40 +26,40 @@ sealed interface Argument {
 				is Storage -> "storage"
 			}
 	}
-	
+
 	sealed interface ItemOrTag : Argument
-	
+
 	sealed interface Entity : Data
-	
+
 	sealed interface Possessor : Argument
-	
+
 	sealed interface ScoreHolder : Argument
-	
+
 	object All : Argument, Possessor, ScoreHolder {
 		override fun asString() = "*"
 	}
-	
+
 	data class Advancement(val advancement: String, val namespace: String = "minecraft") : Argument {
 		override fun asString() = "$namespace:$advancement"
 	}
-	
-	data class Attribute(val attribute: arguments.enums.Attribute, val namespace: String = "minecraft") : Argument {
-		override fun asString() = "$namespace:${json.encodeToJsonElement(attribute).jsonPrimitive.content}"
+
+	data class Attribute(val attribute: String, val namespace: String = "minecraft") : Argument {
+		override fun asString() = "$namespace:$attribute"
 	}
-	
+
 	data class Block(
 		val block: String,
 		val namespace: String = "minecraft",
 		val states: MutableMap<String, String> = mutableMapOf(),
-		val nbtData: NbtTag? = null,
+		var nbtData: NbtTag? = null,
 	) : BlockOrTag {
 		override fun asString() = "$namespace:$block${states.map { "[$it]" }.joinToString("")}${nbtData?.toString() ?: ""}"
 	}
-	
+
 	data class BlockTag(val tag: String, val namespace: String = "minecraft") : BlockOrTag {
 		override fun asString() = "#$namespace:$tag"
 	}
-	
+
 	data class Dimension(val namespace: String? = null, val dimension: arguments.enums.Dimension? = null, val customDimension: String? = null) : Argument {
 		override fun asString() = when {
 			dimension != null -> "${namespace?.let { "$it:" } ?: ""}${json.encodeToJsonElement(dimension).jsonPrimitive.content}"
@@ -70,43 +67,43 @@ sealed interface Argument {
 			else -> ""
 		}
 	}
-	
+
 	data class Float(val value: Double) : Argument {
 		override fun asString() = value.toString()
 	}
-	
+
 	data class Int(val value: Long) : Argument {
 		override fun asString() = value.toString()
 	}
-	
+
 	data class Item(val item: String, val namespace: String = "minecraft", val nbtData: NbtTag? = null) : ItemOrTag {
 		override fun asString() = "$namespace:$item${nbtData?.toString() ?: ""}"
 	}
-	
+
 	data class ItemTag(val tag: String, val namespace: String = "minecraft") : ItemOrTag {
 		override fun asString() = "#$namespace:$tag"
 	}
-	
+
 	data class Literal(val text: String) : Argument, Possessor, ScoreHolder {
 		override fun asString() = text
 	}
-	
+
 	data class Rotation(val yaw: RotNumber, val pitch: RotNumber) : Argument {
 		override fun asString() = "$yaw $pitch"
 	}
-	
+
 	data class Selector(val selector: arguments.selector.Selector) : Entity, Data, Possessor, ScoreHolder {
 		override fun asString() = selector.toString()
 	}
-	
+
 	data class Storage(val storage: String, val namespace: String = "minecraft") : Data {
 		override fun asString() = "$namespace:$storage"
 	}
-	
+
 	data class Time(val value: TimeNumber) : Argument {
 		override fun asString() = value.toString()
 	}
-	
+
 	data class UUID(val uuid: java.util.UUID) : Entity, ScoreHolder {
 		override fun asString() = uuid.toString()
 	}
@@ -114,7 +111,8 @@ sealed interface Argument {
 
 fun advancement(name: String, namespace: String = "minecraft") = Argument.Advancement(name, namespace)
 fun all() = Argument.All
-fun attribute(attribute: Attribute, namespace: String = "minecraft") = Argument.Attribute(attribute, namespace)
+fun attribute(attribute: Attributes, namespace: String = "minecraft") = Argument.Attribute(attribute.asArg(), namespace)
+fun attribute(attribute: String, namespace: String = "minecraft") = Argument.Attribute(attribute, namespace)
 fun block(
 	block: String,
 	namespace: String = "minecraft",

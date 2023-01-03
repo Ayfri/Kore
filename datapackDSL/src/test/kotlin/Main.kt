@@ -1,17 +1,15 @@
+
 import arguments.*
-import arguments.enums.Attribute
 import arguments.enums.Dimension
 import arguments.enums.Gamemode
-import arguments.numbers.PosNumber
-import arguments.numbers.pos
-import arguments.numbers.range
-import arguments.numbers.relativePos
-import arguments.numbers.ticks
+import arguments.numbers.*
 import arguments.selector.SelectorNbtData
 import arguments.selector.SelectorType
 import arguments.selector.Sort
 import commands.*
 import functions.function
+import generated.*
+import generated.Attributes
 import tags.tags
 import java.util.*
 import kotlin.io.path.Path
@@ -90,8 +88,8 @@ fun main() {
 				clear()
 				give("minecraft:regeneration", 10, 1, false)
 			}
-			
-			attributes(nearestPlayer(), Attribute.GENERIC_ARMOR) {
+
+			attributes(nearestPlayer(), Attributes.GENERIC_ARMOR) {
 				base.set(10.0)
 				modifiers {
 					val uuid = UUID.randomUUID()
