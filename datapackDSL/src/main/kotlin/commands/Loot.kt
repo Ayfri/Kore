@@ -1,13 +1,9 @@
 package commands
 
-import arguments.Argument
-import arguments.Coordinate
-import arguments.SlotEntry
-import arguments.int
-import arguments.literal
-import arguments.slot
+import arguments.*
 import functions.Function
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encoding.Encoder
 import serializers.LowercaseSerializer
 
 object Target {
@@ -22,11 +18,15 @@ object Target {
 enum class Hand {
 	MAIN_HAND,
 	OFF_HAND;
-	
+
 	companion object {
 		val values = values()
-		
-		object HandSerializer : LowercaseSerializer<Hand>(values)
+
+		object HandSerializer : LowercaseSerializer<Hand>(values) {
+			override fun serialize(encoder: Encoder, value: Hand) {
+				encoder.encodeString(value.name.lowercase().replace("_", ""))
+			}
+		}
 	}
 }
 
@@ -42,11 +42,11 @@ object Source {
 class Loot {
 	lateinit var target: List<Argument?>
 	lateinit var source: List<Argument?>
-	
+
 	fun target(block: Target.() -> List<Argument>) {
 		target = Target.block()
 	}
-	
+
 	fun source(block: Source.() -> List<Argument>) {
 		source = Source.block()
 	}
