@@ -1,5 +1,8 @@
 package scoreboard
 
+import arguments.TextComponents
+import arguments.textComponent
+import commands.RenderType
 import commands.SetDisplaySlot
 import commands.scoreboard
 import entities.Entity
@@ -34,15 +37,22 @@ fun Scoreboard.setDisplaySlot(slot: SetDisplaySlot) = scoreboard {
 }
 
 context(Function)
-fun Scoreboard.setRenderType(type: String) = scoreboard {
+fun Scoreboard.setRenderType(type: RenderType) = scoreboard {
 	objectives {
 		modify(name, type)
 	}
 }
 
 context(Function)
-fun Scoreboard.setDisplayName(displayName: String) = scoreboard {
+fun Scoreboard.setDisplayName(displayName: TextComponents) = scoreboard {
 	objectives {
 		modify(name, displayName)
+	}
+}
+
+context(Function)
+fun Scoreboard.setDisplayName(displayName: String) = scoreboard {
+	objectives {
+		modify(name, textComponent(displayName))
 	}
 }

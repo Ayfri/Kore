@@ -13,10 +13,10 @@ import serializers.LowercaseSerializer
 enum class Anchor {
 	FEET,
 	EYES;
-	
+
 	companion object {
 		val values = values()
-		
+
 		object AnchorSerializer : LowercaseSerializer<Anchor>(values)
 	}
 }
@@ -25,35 +25,35 @@ enum class Anchor {
 enum class BlocksTestMode {
 	ALL,
 	MASKED;
-	
+
 	companion object {
 		val values = values()
-		
+
 		object FillModeSerializer : LowercaseSerializer<BlocksTestMode>(values)
 	}
 }
 
 class ExecuteCondition(private val ex: Execute) {
 	fun block(pos: Coordinate, block: Argument.Block) = listOf(literal("block"), pos, block)
-	
+
 	fun blocks(start: Coordinate, end: Coordinate, destination: Coordinate, mode: BlocksTestMode) = listOf(
 		literal("blocks"), start, end, destination, literal(mode.asArg())
 	)
-	
+
 	fun data(target: Argument.Data, path: String) = listOf(
 		literal("data"), literal(target.literalName), ex.targetArg(target), literal(path)
 	)
-	
+
 	fun entity(target: Argument.Entity) = listOf(literal("entity"), ex.targetArg(target))
-	
+
 	fun predicate(predicate: String) = listOf(literal("predicate"), literal(predicate))
-	
+
 	fun score(target: Argument.ScoreHolder, objective: String, source: Argument.ScoreHolder, sourceObjective: String, relation: RelationBlock.(Number, Number) -> Relation) = listOf(
 		literal("score"), ex.targetArg(target), literal(objective), literal(relation(RelationBlock(), 0.0, 0.0).asArg()), source, literal(sourceObjective)
 	)
-	
+
 	fun score(target: Argument.ScoreHolder, objective: String, range: IntRangeOrInt) = listOf(
-		literal("score"), ex.targetArg(target), literal(objective), literal(range.asArg())
+		literal("score"), ex.targetArg(target), literal(objective), literal("matches"), literal(range.asArg())
 	)
 }
 
@@ -64,25 +64,25 @@ class ExecuteStore(private val ex: Execute) {
 		type: DataType,
 		scale: Double,
 	) = listOf(literal("store"), literal("block"), pos, literal(path), literal(type.asArg()), float(scale))
-	
+
 	fun bossBarMax(id: String) = listOf(literal("bossbar"), literal(id), literal("max"))
 	fun bossBarValue(id: String) = listOf(literal("bossbar"), literal(id), literal("value"))
-	
+
 	fun entity(target: Argument.Entity, path: String, type: DataType, scale: Double) = listOf(literal("entity"), ex.targetArg(target), literal(path), literal(type.asArg()), float(scale))
-	
+
 	fun score(target: Argument.ScoreHolder, objective: String) = listOf(literal("score"), ex.targetArg(target), literal(objective))
-	
+
 	fun storage(target: Argument.Storage, path: String, type: DataType, scale: Double) = listOf(literal("storage"), target, literal(path), literal(type.asArg()), float(scale))
 }
 
 class Execute {
 	private val array = mutableListOf<Argument>()
 	private var command: Command? = null
-	
+
 	private fun <T> MutableList<T>.addAll(vararg args: T?) = addAll(args.filterNotNull())
-	
+
 	private var asArg: Argument.Entity? = null
-	
+
 	internal fun targetArg(arg: Argument) = when {
 		asArg is Argument.UUID || (asArg as? Argument.Selector)?.selector?.let {
 			val nbtData = it.nbtData
@@ -90,13 +90,13 @@ class Execute {
 			val otherNbtData = otherSel?.nbtData
 			nbtData.limit == 1 && nbtData.sort != Sort.RANDOM && nbtData == otherNbtData
 		} == true -> self()
-		
+
 		asArg == arg -> self()
 		else -> arg
 	}
-	
+
 	fun getArguments() = array.toTypedArray()
-	
+
 	fun align(axis: Axes, offset: Int? = null) = array.addAll(literal("align"), literal(axis.asArg()), int(offset))
 	fun anchored(anchor: Anchor) = array.addAll(literal("anchored"), literal(anchor.asArg()))
 	fun asTarget(target: Argument.Entity) = array.addAll(literal("as"), target).also { asArg = target }
@@ -111,13 +111,13 @@ class Execute {
 	fun positionedAs(target: Argument.Entity) = array.addAll(literal("positioned"), literal("as"), targetArg(target))
 	fun rotated(rotation: Argument.Rotation) = array.addAll(literal("rotated"), rotation)
 	fun rotatedAs(target: Argument.Entity) = array.addAll(literal("rotated"), literal("as"), targetArg(target))
-	
+
 	fun ifCondition(block: ExecuteCondition.() -> List<Argument>) = array.addAll(literal("if"), *ExecuteCondition(this).block().toTypedArray())
 	fun unlessCondition(block: ExecuteCondition.() -> List<Argument>) = array.addAll(literal("unless"), *ExecuteCondition(this).block().toTypedArray())
-	
+
 	fun storeResult(block: ExecuteStore.() -> List<Argument>) = array.addAll(literal("store"), literal("result"), *ExecuteStore(this).block().toTypedArray())
 	fun storeValue(block: ExecuteStore.() -> List<Argument>) = array.addAll(literal("store"), literal("value"), *ExecuteStore(this).block().toTypedArray())
-	
+
 	fun run(block: Function.() -> Command) = Function.EMPTY.block().apply {
 		arguments.replaceAll {
 			when (it) {

@@ -1,11 +1,6 @@
 package commands
 
-import arguments.Argument
-import arguments.NamedColor
-import arguments.TextComponents
-import arguments.bool
-import arguments.literal
-import arguments.textComponent
+import arguments.*
 import functions.Function
 import kotlinx.serialization.Serializable
 import serializers.CamelcaseSerializer
@@ -16,10 +11,10 @@ enum class Visibility {
 	HIDE_FOR_OTHER_TEAMS,
 	HIDE_FOR_OWN_TEAM,
 	NEVER;
-	
+
 	companion object {
 		val values = values()
-		
+
 		object NametagVisibilitySerializer : CamelcaseSerializer<Visibility>(values)
 	}
 }
@@ -30,10 +25,10 @@ enum class CollisionRule {
 	PUSH_OTHER_TEAMS,
 	PUSH_OWN_TEAM,
 	NEVER;
-	
+
 	companion object {
 		val values = values()
-		
+
 		object CollisionRuleSerializer : CamelcaseSerializer<CollisionRule>(values)
 	}
 }
@@ -51,7 +46,9 @@ class Modify(private val fn: Function, val team: String) {
 }
 
 class Team(private val fn: Function) {
-	fun add(team: String, displayName: TextComponents? = null) = fn.addLine(command("team", literal("add"), literal(team), textComponent(displayName)))
+	fun add(team: String, displayName: TextComponents? = null) =
+		fn.addLine(command("team", literal("add"), literal(team), displayName?.let { textComponent(it) }))
+
 	fun empty(team: String) = fn.addLine(command("team", literal("empty"), literal(team)))
 	fun join(team: String, entity: Argument.ScoreHolder) = fn.addLine(command("team", literal("join"), literal(team), entity))
 	fun leave(entity: Argument.ScoreHolder) = fn.addLine(command("team", literal("leave"), entity))
