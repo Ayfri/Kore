@@ -30,15 +30,15 @@ sealed interface Color {
 		val RED = BossBarColor("red")
 		val WHITE = BossBarColor("white")
 		val YELLOW = BossBarColor("yellow")
-		
+
 		object ColorSerializer : KSerializer<Color> {
 			override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Color", PrimitiveKind.STRING)
-			
+
 			override fun deserialize(decoder: Decoder) = NamedColor(decoder.decodeString())
-			
+
 			override fun serialize(encoder: Encoder, value: Color) = when (value) {
-				is NamedColor -> NamedColor.serializer().serialize(encoder, value)
 				is BossBarColor -> BossBarColor.serializer().serialize(encoder, value)
+				is NamedColor -> NamedColor.serializer().serialize(encoder, value)
 				is RGB -> RGB.serializer().serialize(encoder, value)
 			}
 		}
@@ -62,38 +62,38 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 		hex.substring(2, 4).toInt(16),
 		hex.substring(4, 6).toInt(16),
 	)
-	
+
 	val hex get() = "%02x%02x%02x".format(red, green, blue)
 	val hexWithHash get() = "#$hex"
-	
+
 	val r get() = red
 	val g get() = green
 	val b get() = blue
-	
+
 	operator fun plus(other: RGB) = RGB(
 		(red + other.red).coerceIn(0, 255),
 		(green + other.green).coerceIn(0, 255),
 		(blue + other.blue).coerceIn(0, 255),
 	)
-	
+
 	operator fun minus(other: RGB) = RGB(
 		(red - other.red).coerceIn(0, 255),
 		(green - other.green).coerceIn(0, 255),
 		(blue - other.blue).coerceIn(0, 255),
 	)
-	
+
 	operator fun times(quotient: Double) = RGB(
 		(red * quotient).toInt().coerceIn(0, 255),
 		(green * quotient).toInt().coerceIn(0, 255),
 		(blue * quotient).toInt().coerceIn(0, 255),
 	)
-	
+
 	operator fun div(quotient: Double) = RGB(
 		(red / quotient).toInt().coerceIn(0, 255),
 		(green / quotient).toInt().coerceIn(0, 255),
 		(blue / quotient).toInt().coerceIn(0, 255),
 	)
-	
+
 	@Throws(IndexOutOfBoundsException::class)
 	operator fun get(index: Int) = when (index) {
 		0 -> red
@@ -101,7 +101,7 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 		2 -> blue
 		else -> throw IndexOutOfBoundsException()
 	}
-	
+
 	@Throws(IndexOutOfBoundsException::class)
 	operator fun set(index: Int, value: Int) = when (index) {
 		0 -> red = value
@@ -109,7 +109,7 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 		2 -> blue = value
 		else -> throw IndexOutOfBoundsException()
 	}
-	
+
 	fun toHex(withHash: Boolean = false) = if (withHash) hexWithHash else hex
 	fun inverse() = RGB(255 - red, 255 - green, 255 - blue)
 	fun grayscale() = RGB((red + green + blue) / 3, (red + green + blue) / 3, (red + green + blue) / 3)
@@ -118,7 +118,7 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 		(green + other.green) / 2,
 		(blue + other.blue) / 2,
 	)
-	
+
 	fun mix(other: RGB, count: Int): List<RGB> {
 		val result = mutableListOf<RGB>()
 		val step = 1.0 / count
@@ -127,7 +127,7 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 		}
 		return result
 	}
-	
+
 	companion object {
 		fun fromHex(hex: String) = RGB(hex.removePrefix("#"))
 		fun fromRGB(red: Int, green: Int, blue: Int) = RGB(red, green, blue)
@@ -152,14 +152,14 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 			Color.YELLOW -> RGB(255, 255, 85)
 			else -> RGB(0, 0, 0)
 		}
-		
+
 		object ColorSerializer : KSerializer<RGB> {
 			override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("RGB", PrimitiveKind.STRING)
-			
+
 			override fun serialize(encoder: Encoder, value: RGB) {
 				encoder.encodeString(value.toHex(withHash = true))
 			}
-			
+
 			override fun deserialize(decoder: Decoder) = fromHex(decoder.decodeString())
 		}
 	}
