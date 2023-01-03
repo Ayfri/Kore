@@ -112,7 +112,7 @@ fun main() {
 				asTarget(selector(SelectorType.SELF))
 				align(Axes.XY)
 				inDimension(Dimension.OVERWORLD)
-				facingEntity(nearestEntity())
+				facingEntity(nearestEntity(), Anchor.EYES)
 
 				rotatedAs(allEntities(true) {
 					sort = Sort.RANDOM
