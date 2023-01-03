@@ -30,21 +30,21 @@ fun main() {
 		}
 		
 		function("test") {
-			val selector = selector(SelectorType.ALL_ENTITIES) {
-				dx = 1.0
-				level = range(1..5)
-				gamemode = !Gamemode.CREATIVE
-			}
-			
 			fun nearestEntity(block: SelectorNbtData.() -> Unit = {}) = allEntities(true) {
 				sort = Sort.NEAREST
 				block()
 			}
-			
-			advancements.grant(selector, advancement("story/iron_tools"))
-			
-			clear(targets = selector(SelectorType.ALL_PLAYERS), item = item("stone"), maxCount = 1)
-			
+
+			val selector = allPlayers {
+				dx = 1.0
+				level = range(1..5)
+				gamemode = !Gamemode.CREATIVE
+			}
+
+			advancements.grant(selector, advancement(Advancements.Story.IronTools))
+
+			clear(targets = allPlayers(), item = item(Items.STONE), maxCount = 1)
+
 			bossBar("test") {
 				setColor(Color.BLUE)
 				setStyle(BossBarStyle.NOTCHED_6)
@@ -124,11 +124,11 @@ fun main() {
 			}
 			
 			addBlankLine()
-			items.replaceBlock(coordinate(0, 0, 0), CONTAINER[5], item("stone"), 20)
-			
+			items.replaceBlock(coordinate(0, 0, 0), CONTAINER[5], item(Items.STONE), 20)
+
 			comment("Replacing head with dirt")
-			items.replaceEntity(nearestEntity { type = "minecraft:zombie" }, ARMOR.HEAD, item("dirt"), 64)
-			
+			items.replaceEntity(nearestEntity { type = "minecraft:zombie" }, ARMOR.HEAD, item(Items.DIRT), 64)
+
 			loot {
 				target {
 					give(nearestPlayer())
