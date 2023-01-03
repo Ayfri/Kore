@@ -12,7 +12,7 @@ data class Advancement(val name: String, val namespace: String? = null, val done
 		object AdvancementSerializer : ToStringSerializer<Advancement>() {
 			override fun serialize(encoder: Encoder, value: Advancement) {
 				val criteria = if (value.criteria.isNotEmpty()) value.criteria.entries.joinToString(",", "{", "}") { "${it.key}=${it.value}" } else ""
-				encoder.encodeString("${value.namespace?.let { "$it:" } ?: ""}${value.name}=${value.done}$criteria")
+				encoder.encodeString("${value.namespace?.let { "$it:" } ?: ""}${value.name}=${criteria.ifEmpty { value.done }}")
 			}
 		}
 	}
@@ -31,11 +31,11 @@ data class Advancements(val advancements: Map<String, Advancement> = emptyMap())
 
 class AdvancementBuilder {
 	private val advancements = mutableMapOf<String, Advancement>()
-	
+
 	fun advancement(name: String, namespace: String? = null, done: Boolean = true, block: MutableMap<String, Boolean>.() -> Unit = {}) {
 		val criteria = buildMap(block)
 		advancements[name] = Advancement(name, namespace, done, criteria)
 	}
-	
+
 	fun build() = Advancements(advancements)
 }
