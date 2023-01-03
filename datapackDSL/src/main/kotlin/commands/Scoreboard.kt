@@ -30,9 +30,9 @@ enum class RenderType {
 }
 
 class Objectives(private val fn: Function) {
-	fun add(name: String, criteria: String, displayName: String? = null) = fn.addLine(
+	fun add(name: String, criteria: String, displayName: TextComponents? = null) = fn.addLine(
 		command(
-			"scoreboard", literal("objectives"), literal("add"), literal(name), literal(criteria), literal(displayName)
+			"scoreboard", literal("objectives"), literal("add"), literal(name), literal(criteria), textComponent(displayName)
 		)
 	)
 

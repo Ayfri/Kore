@@ -148,7 +148,7 @@ fun main() {
 
 			scoreboard {
 				objectives {
-					add("test", "dummy", "Test")
+					add("test", "dummy", textComponent("Test"))
 					setDisplay(DisplaySlot.sidebar, "test")
 				}
 
