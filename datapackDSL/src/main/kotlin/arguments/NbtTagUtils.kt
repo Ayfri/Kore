@@ -189,10 +189,6 @@ operator fun NbtListBuilder<NbtByte>.plusAssign(value: Byte) {
 	add(NbtByte(value))
 }
 
-operator fun NbtListBuilder<NbtByte>.plusAssign(value: Boolean) {
-	add(NbtByte(value))
-}
-
 operator fun NbtListBuilder<NbtShort>.plusAssign(value: Short) {
 	add(NbtShort(value))
 }
@@ -234,3 +230,44 @@ inline operator fun <reified T : @Serializable Any> NbtListBuilder<NbtString>.pl
 }
 
 val String.nbt get() = NbtString(this)
+
+
+fun nbtListOf(vararg elements: Byte) = nbtList<NbtByte> {
+	elements.forEach { add(it) }
+}
+
+fun nbtListOf(vararg elements: Short) = nbtList<NbtShort> {
+	elements.forEach { add(it) }
+}
+
+fun nbtListOf(vararg elements: Int) = nbtList<NbtInt> {
+	elements.forEach { add(it) }
+}
+
+fun nbtListOf(vararg elements: Long) = nbtList<NbtLong> {
+	elements.forEach { add(it) }
+}
+
+fun nbtListOf(vararg elements: Float) = nbtList<NbtFloat> {
+	elements.forEach { add(it) }
+}
+
+fun nbtListOf(vararg elements: Double) = nbtList<NbtDouble> {
+	elements.forEach { add(it) }
+}
+
+fun nbtListOf(vararg elements: String) = nbtList<NbtString> {
+	elements.forEach { add(it) }
+}
+
+fun nbtListOf(vararg elements: ByteArray) = nbtList<NbtByteArray> {
+	elements.forEach { add(it) }
+}
+
+fun nbtListOf(vararg elements: IntArray) = nbtList<NbtIntArray> {
+	elements.forEach { add(it) }
+}
+
+fun nbtListOf(vararg elements: LongArray) = nbtList<NbtLongArray> {
+	elements.forEach { add(it) }
+}

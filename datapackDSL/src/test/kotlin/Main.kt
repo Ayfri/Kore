@@ -19,7 +19,7 @@ fun main() {
 		loadTeams(this)
 		unloadTeams(this)
 		gradiant(this)
-		
+
 		tags("minecraft") {
 			tag("blocks", "op") {
 				add("command_block")
@@ -28,7 +28,7 @@ fun main() {
 				add("barrier", required = true)
 			}
 		}
-		
+
 		function("test") {
 			fun nearestEntity(block: SelectorNbtData.() -> Unit = {}) = allEntities(true) {
 				sort = Sort.NEAREST
@@ -54,9 +54,9 @@ fun main() {
 				setVisible(true)
 				setValue(50)
 			}
-			
+
 			bossBars.list()
-			
+
 			addBlankLine()
 			cloneFiltered(coordinate(20, 50, 30), coordinate(40, 60, 50), coordinate(), blockTag("wool"), CloneMode.MOVE)
 
@@ -66,26 +66,26 @@ fun main() {
 						put("witch", true)
 					}
 				}
-				
+
 				scores {
 					score("test", 4..8)
 				}
-				
+
 				gamemode = !Gamemode.SURVIVAL
 				type = "zombie"
 			}) {
 				modify("Position") {
-					set(coordinate())
+					set(nbtListOf(0.0, 150.0, 0.0))
 				}
-				
+
 				addBlankLine()
 				modify("Motion") {
 					insert(1, coordinate(2.relativePos, 2.pos, 2.pos), "test")
 				}
 			}
-			
+
 			defaultGamemode(Gamemode.SURVIVAL)
-			
+
 			effect(selector(SelectorType.ALL_PLAYERS)) {
 				clear()
 				give("minecraft:regeneration", 10, 1, false)
@@ -100,31 +100,31 @@ fun main() {
 					remove(uuid)
 				}
 			}
-			
+
 			execute {
 				ifCondition {
 					score(literal("Ayfri"), "test", literal("other"), "test") { first, second ->
 						first lessThan second
 					}
 				}
-				
+
 				at(selector(SelectorType.ALL_PLAYERS))
 				asTarget(selector(SelectorType.SELF))
 				align(Axes.XY)
 				inDimension(Dimension.OVERWORLD)
 				facingEntity(nearestEntity())
-				
+
 				rotatedAs(allEntities(true) {
 					sort = Sort.RANDOM
 				})
-				
+
 				run {
 					advancement {
 						grant(self(), advancement("story/iron_tools"))
 					}
 				}
 			}
-			
+
 			addBlankLine()
 			items.replaceBlock(coordinate(0, 0, 0), CONTAINER[5], item(Items.STONE), 20)
 
@@ -135,44 +135,44 @@ fun main() {
 				target {
 					give(nearestPlayer())
 				}
-				
+
 				source {
 					fish("minecraft:cod", coordinate(PosNumber.Type.RELATIVE), Hand.MAIN_HAND)
 				}
 			}
-			
+
 			schedules {
 				append("repeat", 1.ticks)
 				clear("test")
 			}
-			
+
 			scoreboard {
 				objectives {
 					add("test", "dummy", "Test")
 					setDisplay(DisplaySlot.sidebar, "test")
 				}
-				
+
 				players {
 					add(allPlayers(), "test", 1)
 				}
-				
+
 				objective(allPlayers(), "test") {
 					this += 5
 					reset()
 				}
-				
+
 				setBlock(coordinate(PosNumber.Type.RELATIVE), block("oak_sign", states = mapOf("rotation" to "4"), nbtData = nbt {
 					this["Text1"] = "Hello"
 					this["Text2"] = "World"
-					
+
 					this["Text3"] = textComponent {
 						text = "This is a text component"
 						color = Color.RED
 						italic = true
 					}
-					
+
 				}))
-				
+
 				tellraw(allPlayers(), textComponent {
 					text = "Hello World"
 					color = Color.RED
@@ -189,10 +189,10 @@ fun main() {
 						}.toNbtTag()
 					}
 				})
-				
+
 				teams {
 					val team = "admin"
-					
+
 					add(team, textComponent("Admin"))
 					modify(team) {
 						color(Color.DARK_RED)
@@ -207,9 +207,9 @@ fun main() {
 				}
 			}
 		}
-		
+
 		iconPath = Path("datapackDSL", "src", "test", "resources", "Kotlin Full Color Logo Mark RGB.png")
-		
+
 		pack {
 			format = 10
 			description = textComponent {
@@ -224,13 +224,13 @@ fun main() {
 				bold = true
 			}
 		}
-		
+
 		filter {
 			block {
 				namespace = "test"
 			}
 		}
 	}
-	
+
 	dataPack.generate()
 }
