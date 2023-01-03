@@ -46,6 +46,8 @@ fun main() {
 			clear(targets = allPlayers(), item = item(Items.STONE), maxCount = 1)
 
 			bossBar("test") {
+				remove()
+				add(textComponent("test"))
 				setColor(Color.BLUE)
 				setStyle(BossBarStyle.NOTCHED_6)
 				setMax(100)

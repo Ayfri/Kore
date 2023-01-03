@@ -60,6 +60,10 @@ sealed interface Argument {
 		override fun asString() = "#$namespace:$tag"
 	}
 
+	data class BossBar(val id: String, val namespace: String = "minecraft") : Argument {
+		override fun asString() = "$namespace:$id"
+	}
+
 	data class Dimension(val namespace: String? = null, val dimension: arguments.enums.Dimension? = null, val customDimension: String? = null) : Argument {
 		override fun asString() = when {
 			dimension != null -> "${namespace?.let { "$it:" } ?: ""}${json.encodeToJsonElement(dimension).jsonPrimitive.content}"
@@ -124,6 +128,8 @@ fun blockTag(tag: String, namespace: String = "minecraft") = Argument.BlockTag(t
 
 fun bool(value: Boolean) = Argument.Literal(value.toString())
 internal fun bool(value: Boolean?) = value?.let { Argument.Literal(it.toString()) }
+
+fun bossBar(id: String, namespace: String = "minecraft") = Argument.BossBar(id, namespace)
 
 fun coordinate(x: Number = 0, y: Number = 0, z: Number = 0) = Coordinate(x.pos, y.pos, z.pos)
 fun coordinate(x: PosNumber, y: PosNumber, z: PosNumber) = Coordinate(x, y, z)
