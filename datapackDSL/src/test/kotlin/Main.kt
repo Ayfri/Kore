@@ -18,7 +18,7 @@ fun main() {
 	val dataPack = dataPack("test") {
 		loadTeams(this)
 		unloadTeams(this)
-		gradiant(this)
+		gradient(this)
 
 		tags("minecraft") {
 			tag("blocks", "op") {
