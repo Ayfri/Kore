@@ -36,7 +36,7 @@ fun clearGeneratedPackage() {
 }
 
 suspend fun main(args: Array<String>) {
-	if (args.contains("--reload-cache")) clearCache()
+	if ("--reload-cache" in args) clearCache()
 	clearGeneratedPackage()
 
 	downloadAdvancements()
