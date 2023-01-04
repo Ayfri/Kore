@@ -16,9 +16,9 @@ class IntRange(val start: Int?, val end: Int?) : IntegerRange {
 		end == null -> "$start.."
 		else -> "$start..$end"
 	}
-	
+
 	fun asRangeOrInt() = IntRangeOrInt(this)
-	
+
 	companion object {
 		object IntRangeSerializer : ToStringSerializer<IntRange>()
 	}
@@ -27,9 +27,9 @@ class IntRange(val start: Int?, val end: Int?) : IntegerRange {
 @Serializable(IntRangeOrInt.Companion.IntRangeOrIntSerializer::class)
 class IntRangeOrInt(val range: IntRange? = null, val int: Int? = null) : IntegerRange {
 	override fun toString() = range?.toString() ?: int.toString()
-	
+
 	fun asRange() = range ?: IntRange(int, int)
-	
+
 	companion object {
 		object IntRangeOrIntSerializer : ToStringSerializer<IntRangeOrInt>()
 	}
@@ -46,4 +46,6 @@ inline fun rangeOrInt(int: Int) = IntRangeOrInt(int = int)
 inline fun rangeOrIntStart(int: Int) = IntRangeOrInt(IntRange(int, null))
 inline fun rangeOrIntEnd(int: Int) = IntRangeOrInt(IntRange(null, int))
 inline fun Int.asRangeOrInt() = IntRangeOrInt(int = this)
+inline fun Int.asStartRangeOrInt() = IntRangeOrInt(IntRange(this, null))
+inline fun Int.asEndRangeOrInt() = IntRangeOrInt(IntRange(null, this))
 inline fun KotlinIntRange.asRangeOrInt() = IntRangeOrInt(IntRange(first, last))
