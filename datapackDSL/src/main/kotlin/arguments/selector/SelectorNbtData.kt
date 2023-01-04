@@ -5,10 +5,7 @@ import arguments.enums.Gamemode
 import arguments.numbers.FloatRangeOrFloat
 import arguments.numbers.IntRange
 import arguments.numbers.Range
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
+import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -17,6 +14,8 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonPrimitive
 import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.NbtTag
+import net.benwoodworth.knbt.StringifiedNbt
 import serializers.ToStringSerializer
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
@@ -55,7 +54,7 @@ data class SelectorNbtData(
 	var name: String? = null,
 	var type: String? = null,
 	var tag: String? = null,
-	var nbtData: NbtCompound? = null,
+	var nbt: NbtCompound? = null,
 	var advancements: Advancements? = null,
 	var scores: Scores? = null,
 	var sort: Sort? = null,
@@ -100,7 +99,7 @@ data class SelectorNbtData(
 		name = other.name
 		type = other.type
 		tag = other.tag
-		nbtData = other.nbtData
+		nbt = other.nbt
 		advancements = other.advancements
 		scores = other.scores
 		sort = other.sort
@@ -133,8 +132,7 @@ data class SelectorNbtData(
 
 						is Sort -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
 						is Advancements -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
-						is List<*> -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
-						is Map<*, *> -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
+						is NbtTag -> "$key=${StringifiedNbt.encodeToString(value).removeSurrounding("\"")}"
 						else -> "$key=$value"
 					}
 				}.joinToString(","))
