@@ -32,7 +32,7 @@ class Effect(private val fn: Function, val target: Argument.Entity) {
 	)
 }
 
-fun Function.effect(target: Argument.Entity, block: Effect.() -> Unit) = Effect(this, target).apply(block)
+fun Function.effect(target: Argument.Entity, block: Effect.() -> Command) = Effect(this, target).block()
 
 fun Function.enchant(enchantment: String, level: Int? = null) = addLine(command("enchant", literal(enchantment), int(level)))
 
@@ -42,10 +42,10 @@ enum class FillOption {
 	HOLLOW,
 	KEEP,
 	OUTLINE;
-	
+
 	companion object {
 		val values = values()
-		
+
 		object FillOptionSerializer : LowercaseSerializer<FillOption>(values)
 	}
 }
@@ -86,10 +86,10 @@ fun Function.particule(name: String, pos: Coordinate? = null) = addLine(command(
 enum class ParticleMode {
 	NORMAL,
 	FORCE;
-	
+
 	companion object {
 		val values = values()
-		
+
 		object ParticleModeSerializer : LowercaseSerializer<ParticleMode>(values)
 	}
 }
@@ -136,10 +136,10 @@ enum class PlaySoundSource {
 	PLAYER,
 	AMBIENT,
 	VOICE;
-	
+
 	companion object {
 		val values = values()
-		
+
 		object PlaySoundSourceSerializer : LowercaseSerializer<PlaySoundSource>(values)
 	}
 }
@@ -170,10 +170,10 @@ enum class SetBlockMode {
 	REPLACE,
 	DESTROY,
 	KEEP;
-	
+
 	companion object {
 		val values = values()
-		
+
 		object SetBlockModeSerializer : LowercaseSerializer<SetBlockMode>(values)
 	}
 }
@@ -234,10 +234,10 @@ fun Function.tellraw(targets: Argument.Entity, message: TextComponents) = addLin
 enum class TitleAction {
 	CLEAR,
 	RESET;
-	
+
 	companion object {
 		val values = values()
-		
+
 		object TitleActionSerializer : LowercaseSerializer<TitleAction>(values)
 	}
 }
@@ -247,10 +247,10 @@ enum class TitleLocation {
 	TITLE,
 	SUBTITLE,
 	ACTIONBAR;
-	
+
 	companion object {
 		val values = values()
-		
+
 		object TitleLocationSerializer : LowercaseSerializer<TitleLocation>(values)
 	}
 }
