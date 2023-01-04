@@ -30,7 +30,6 @@ const val vanishTrigger = "vanish"
 
 fun loadTeams(dataPack: DataPack) = dataPack.function("load") {
 	vanish(dataPack)
-	debug = true
 
 	teamList.forEach {
 		teams {
@@ -70,11 +69,11 @@ fun vanish(dataPack: DataPack) = dataPack.function("vanish") {
 		}
 
 		execute {
-			asTarget(teamPlayer())
-
-			ifCondition {
-				score(self(), vanishTrigger, 1.asRangeOrInt())
-			}
+			asTarget(teamPlayer {
+				scores {
+					score(vanishTrigger, 1.asRangeOrInt())
+				}
+			})
 
 			run {
 				effect(self()) {
@@ -86,6 +85,10 @@ fun vanish(dataPack: DataPack) = dataPack.function("vanish") {
 
 		execute {
 			asTarget(teamPlayer {
+				scores {
+					score(vanishTrigger, 0.asRangeOrInt())
+				}
+
 				nbt = nbt {
 					this["ActiveEffects"] = nbtList {
 						addNbtCompound {
@@ -95,10 +98,6 @@ fun vanish(dataPack: DataPack) = dataPack.function("vanish") {
 					}
 				}
 			})
-
-			ifCondition {
-				score(self(), vanishTrigger, 0.asRangeOrInt())
-			}
 
 			run {
 				effect(self()) {
