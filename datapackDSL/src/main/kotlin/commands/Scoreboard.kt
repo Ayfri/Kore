@@ -32,7 +32,7 @@ enum class RenderType {
 class Objectives(private val fn: Function) {
 	fun add(name: String, criteria: String, displayName: TextComponents? = null) = fn.addLine(
 		command(
-			"scoreboard", literal("objectives"), literal("add"), literal(name), literal(criteria), textComponent(displayName)
+			"scoreboard", literal("objectives"), literal("add"), literal(name), literal(criteria), displayName?.let { textComponent(it) }
 		)
 	)
 
