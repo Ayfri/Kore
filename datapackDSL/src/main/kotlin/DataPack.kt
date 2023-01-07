@@ -128,6 +128,8 @@ class DataPack(val name: String) {
 
 			tags.forEach { it.generate(tagsDir) }
 		}
+
+		println("Generated data pack '$name' in: ${root.absolutePath}")
 	}
 
 	@Deprecated("Generation to zip is for now not working fine with Minecraft, please use generate() instead", ReplaceWith("generate()"), DeprecationLevel.WARNING)
