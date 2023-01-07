@@ -6,7 +6,12 @@ import commands.Command
 import tags.addToTag
 import java.io.File
 
-open class Function(val name: String, val namespace: String = "minecraft", var directory: String = "", val datapack: DataPack) {
+open class Function(
+	val name: String,
+	val namespace: String = "minecraft",
+	var directory: String = "",
+	val datapack: DataPack
+) {
 	val lines = mutableListOf<String>()
 	var debug = false
 
@@ -103,7 +108,16 @@ fun DataPack.function(name: String, namespace: String = this.name, directory: St
 	addFunction(Function(name, namespace, directory, this).apply(block))
 }
 
-fun Function.setTag(tagFile: String, tagNamespace: String = namespace, entryNamespace: String = namespace, group: Boolean = false, required: Boolean? = null) {
+fun DataPack.generatedFunction(name: String, directory: String = "", block: Function.() -> Unit) =
+	addGeneratedFunction(Function(name, this.name, directory, this).apply(block))
+
+fun Function.setTag(
+	tagFile: String,
+	tagNamespace: String = namespace,
+	entryNamespace: String = namespace,
+	group: Boolean = false,
+	required: Boolean? = null
+) {
 	datapack.addToTag(tagNamespace, "functions", tagFile) {
 		add(this@setTag.name, entryNamespace, group, required)
 	}

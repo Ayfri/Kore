@@ -1,11 +1,14 @@
 package commands
 
+import DataPack.Companion.GENERATED_FUNCTIONS_FOLDER
 import arguments.*
 import arguments.enums.DataType
 import arguments.enums.Dimension
 import arguments.numbers.IntRangeOrInt
 import arguments.selector.Sort
 import functions.Function
+import functions.function
+import functions.generatedFunction
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
 
@@ -110,20 +113,50 @@ class Execute {
 	fun rotated(rotation: Argument.Rotation) = array.addAll(literal("rotated"), rotation)
 	fun rotatedAs(target: Argument.Entity) = array.addAll(literal("rotated"), literal("as"), targetArg(target))
 
-	fun ifCondition(block: ExecuteCondition.() -> List<Argument>) = array.addAll(literal("if"), *ExecuteCondition(this).block().toTypedArray())
-	fun unlessCondition(block: ExecuteCondition.() -> List<Argument>) = array.addAll(literal("unless"), *ExecuteCondition(this).block().toTypedArray())
+	fun ifCondition(block: ExecuteCondition.() -> List<Argument>) =
+		array.addAll(literal("if"), *ExecuteCondition(this).block().toTypedArray())
 
-	fun storeResult(block: ExecuteStore.() -> List<Argument>) = array.addAll(literal("store"), literal("result"), *ExecuteStore(this).block().toTypedArray())
-	fun storeValue(block: ExecuteStore.() -> List<Argument>) = array.addAll(literal("store"), literal("value"), *ExecuteStore(this).block().toTypedArray())
+	fun unlessCondition(block: ExecuteCondition.() -> List<Argument>) =
+		array.addAll(literal("unless"), *ExecuteCondition(this).block().toTypedArray())
 
-	fun run(block: Function.() -> Command) = Function.EMPTY.block().apply {
+	fun storeResult(block: ExecuteStore.() -> List<Argument>) =
+		array.addAll(literal("store"), literal("result"), *ExecuteStore(this).block().toTypedArray())
+
+	fun storeValue(block: ExecuteStore.() -> List<Argument>) =
+		array.addAll(literal("store"), literal("value"), *ExecuteStore(this).block().toTypedArray())
+
+}
+
+
+context(Function)
+fun Execute.run(name: String, namespace: String = datapack.name, block: Function.() -> Unit): Command {
+	datapack.function(name, namespace, block = block)
+
+	return function(namespace, "$GENERATED_FUNCTIONS_FOLDER/$name")
+}
+
+context(Function)
+fun Execute.run(block: Function.() -> Command): Command {
+	val function = Function("", "", "", datapack).apply { block() }
+
+	if (function.lines.size == 1) return Function.EMPTY.block().apply {
 		arguments.replaceAll {
 			when (it) {
-				is Argument.Entity -> targetArg(it)
+				is Argument.Entity -> this@run.targetArg(it)
 				else -> it
 			}
 		}
 	}
+
+	val name = "generated_${hashCode()}"
+	val namespace = datapack.name
+
+	val finalName = datapack.generatedFunction(name) { block() }
+	val usageName = "$GENERATED_FUNCTIONS_FOLDER/$finalName"
+
+	if (finalName == name) comment("Generated function $namespace:$usageName")
+
+	return Function.EMPTY.function(namespace, usageName)
 }
 
 fun Function.execute(block: Execute.() -> Command): Command {
