@@ -35,6 +35,19 @@ class GamemodeSelector(var gamemode: Gamemode? = null, var invert: Boolean = fal
 	}
 }
 
+@Serializable(NbtCompoundSelector.Companion.NbtDataSelectorSerializer::class)
+class NbtCompoundSelector(var nbt: NbtCompound? = null, var invert: Boolean = false) {
+	override fun toString() = when {
+		nbt == null -> ""
+		invert -> "!${StringifiedNbt.encodeToString(nbt)}"
+		else -> StringifiedNbt.encodeToString(nbt)
+	}
+
+	companion object {
+		object NbtDataSelectorSerializer : ToStringSerializer<NbtCompoundSelector>()
+	}
+}
+
 @Serializable(SelectorNbtData.Companion.SelectorNbtDataSerializer::class)
 data class SelectorNbtData(
 	var x: Double? = null,
@@ -54,7 +67,6 @@ data class SelectorNbtData(
 	var name: String? = null,
 	var type: String? = null,
 	var tag: String? = null,
-	var nbt: NbtCompound? = null,
 	var advancements: Advancements? = null,
 	var scores: Scores? = null,
 	var sort: Sort? = null,
@@ -70,6 +82,16 @@ data class SelectorNbtData(
 			_gamemode.gamemode = value
 		}
 
+	@SerialName("nbt")
+	private var _nbt: NbtCompoundSelector = NbtCompoundSelector()
+
+	@Transient
+	var nbt
+		get() = _nbt.nbt
+		set(value) {
+			_nbt.nbt = value
+		}
+
 	fun advancements(block: AdvancementBuilder.() -> Unit) {
 		val builder = AdvancementBuilder()
 		builder.block()
@@ -78,6 +100,11 @@ data class SelectorNbtData(
 
 	operator fun Gamemode.not(): Gamemode {
 		_gamemode.invert = true
+		return this
+	}
+
+	operator fun NbtCompound.not(): NbtCompound {
+		_nbt.invert = true
 		return this
 	}
 
@@ -128,6 +155,11 @@ data class SelectorNbtData(
 						is GamemodeSelector -> when (value.gamemode) {
 							null -> return@mapNotNull null
 							else -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
+						}
+
+						is NbtCompoundSelector -> when (value.nbt) {
+							null -> return@mapNotNull null
+							else -> "$key=${StringifiedNbt.encodeToString(value.nbt)}"
 						}
 
 						is Sort -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
