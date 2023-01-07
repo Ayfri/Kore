@@ -1,10 +1,13 @@
+
 import arguments.*
-import arguments.numbers.asRangeOrInt
+import arguments.numbers.asStartRangeOrInt
 import arguments.selector.SelectorNbtData
 import commands.*
+import functions.Function
 import functions.function
 import functions.setTag
 import generated.Effects
+import generated.Items
 import net.benwoodworth.knbt.addNbtCompound
 
 data class Team(
@@ -27,8 +30,18 @@ val teamList = listOf(
 )
 
 const val vanishTrigger = "vanish"
+const val vanishItemTag = "vanish"
+const val vanishItemTrigger = "vanish_item"
+val vanishItem = Items.WARPED_FUNGUS_ON_A_STICK
+
+fun teamPlayer(team: Team, selector: SelectorNbtData.() -> Unit = {}) = allPlayers {
+	this.team = team.name
+	selector()
+}
 
 fun loadTeams(dataPack: DataPack) = dataPack.function("load") {
+	detectVanishItemClick(dataPack)
+	giveVanishItem(dataPack)
 	vanish(dataPack)
 
 	teamList.forEach {
@@ -51,42 +64,49 @@ fun loadTeams(dataPack: DataPack) = dataPack.function("load") {
 	addBlankLine()
 
 	scoreboard.objectives {
+		remove(vanishTrigger)
+		remove(vanishItemTrigger)
 		add(vanishTrigger, "trigger")
+		add(vanishItemTrigger, "minecraft.used:${vanishItem.asArg().replace(":", ".")}")
 	}
 
 	setTag("load", tagNamespace = "minecraft")
 }
 
+private fun Function.displayVanish(value: Boolean) {
+	title(self(), TitleLocation.ACTIONBAR, textComponent("Vanish: ") + textComponent(if (value) "ON" else "OFF") {
+		color = if (value) Color.GREEN else Color.RED
+	})
+}
+
+fun Function.vanishPlayer() = effect(self()) {
+	give("minecraft:invisibility", 1, 0, true)
+}
+
+fun Function.unVanishPlayer() = effect(self()) {
+	clear("minecraft:invisibility")
+}
+
 fun vanish(dataPack: DataPack) = dataPack.function("vanish") {
 	teamList.filter { it.vanish }.forEach {
-		fun teamPlayer(selector: SelectorNbtData.() -> Unit = {}) = allPlayers {
-			team = it.name
-			selector()
-		}
-
-		scoreboard.player(teamPlayer()) {
+		scoreboard.player(teamPlayer(it)) {
 			enable(vanishTrigger)
 		}
 
 		execute {
-			asTarget(teamPlayer {
+			asTarget(teamPlayer(it) {
 				scores {
-					score(vanishTrigger, 1.asRangeOrInt())
+					score(vanishTrigger, 1)
 				}
 			})
 
-			run {
-				effect(self()) {
-					give("minecraft:invisibility", 1, 0, true)
-				}
-			}
+			run(Function::vanishPlayer)
 		}
 
-
 		execute {
-			asTarget(teamPlayer {
+			asTarget(teamPlayer(it) {
 				scores {
-					score(vanishTrigger, 0.asRangeOrInt())
+					score(vanishTrigger, 0)
 				}
 
 				nbt = nbt {
@@ -99,9 +119,95 @@ fun vanish(dataPack: DataPack) = dataPack.function("vanish") {
 				}
 			})
 
+			run(Function::unVanishPlayer)
+		}
+	}
+
+	execute {
+		asTarget(allPlayers {
+			scores {
+				score(vanishTrigger, 2.asStartRangeOrInt())
+			}
+		})
+
+		run {
+			scoreboard.player(self()) {
+				reset(vanishTrigger)
+			}
+		}
+	}
+
+	setTag("tick", tagNamespace = "minecraft")
+}
+
+fun giveVanishItem(dataPack: DataPack) = dataPack.function("give_vanish_item") {
+	teamList.filter { it.vanish }.forEach {
+		execute {
+			asTarget(teamPlayer(it))
+
 			run {
-				effect(self()) {
-					clear("minecraft:invisibility")
+				give(self(), item(vanishItem.asArg().removePrefix("minecraft:"), nbtData = nbt {
+					this[vanishItemTag] = 1.toByte()
+				}))
+			}
+		}
+	}
+}
+
+fun detectVanishItemClick(dataPack: DataPack) = dataPack.function("detect_vanish_item_click") {
+	teamList.filter { it.vanish }.forEach {
+		val itemNbt = nbt {
+			this["SelectedItem"] = nbt {
+				this["tag"] = nbt {
+					this[vanishItemTag] = 1.toByte()
+				}
+			}
+		}
+
+		execute {
+			asTarget(teamPlayer(it) {
+				scores {
+					score(vanishItemTrigger, 1)
+					score(vanishTrigger, 0)
+				}
+				nbt = itemNbt
+			})
+
+			run {
+				displayVanish(true)
+				scoreboard.player(self()) {
+					reset(vanishItemTrigger)
+					set(vanishTrigger, 1)
+				}
+			}
+		}
+
+		execute {
+			asTarget(teamPlayer(it) {
+				scores {
+					score(vanishItemTrigger, 1)
+					score(vanishTrigger, 1)
+				}
+				nbt = itemNbt
+			})
+
+			run {
+				displayVanish(false)
+				scoreboard.player(self()) {
+					reset(vanishItemTrigger)
+					set(vanishTrigger, 0)
+				}
+			}
+		}
+
+		execute {
+			asTarget(teamPlayer(it) {
+				nbt = !itemNbt
+			})
+
+			run {
+				scoreboard.player(self()) {
+					reset(vanishItemTrigger)
 				}
 			}
 		}
