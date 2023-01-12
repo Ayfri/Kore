@@ -87,6 +87,7 @@ class DataPack(val name: String) {
 	fun filter(block: Filter.() -> Unit) = Filter().apply(block).also { filter = it }
 
 	fun generate() {
+		val start = System.currentTimeMillis()
 		val root = File("$path/$name")
 		root.mkdirs()
 
@@ -129,10 +130,15 @@ class DataPack(val name: String) {
 			tags.forEach { it.generate(tagsDir) }
 		}
 
-		println("Generated data pack '$name' in: ${root.absolutePath}")
+		val end = System.currentTimeMillis()
+		println("Generated data pack '$name' in ${end - start}ms in: ${root.absolutePath}")
 	}
 
-	@Deprecated("Generation to zip is for now not working fine with Minecraft, please use generate() instead", ReplaceWith("generate()"), DeprecationLevel.WARNING)
+	@Deprecated(
+		"Generation to zip is for now not working fine with Minecraft, please use generate() instead",
+		ReplaceWith("generate()"),
+		DeprecationLevel.WARNING
+	)
 	fun generateZip() = generate()
 
 	companion object {
