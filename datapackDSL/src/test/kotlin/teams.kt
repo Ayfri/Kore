@@ -74,9 +74,17 @@ fun loadTeams(dataPack: DataPack) = dataPack.function("load") {
 }
 
 private fun Function.displayVanish(value: Boolean) {
-	title(self(), TitleLocation.ACTIONBAR, textComponent("Vanish: ") + textComponent(if (value) "ON" else "OFF") {
-		color = if (value) Color.GREEN else Color.RED
-	})
+	startDebug()
+	debug("Display vanish: $value") {
+		color = Color.GRAY
+	}
+	endDebug()
+
+	debug {
+		title(self(), TitleLocation.ACTIONBAR, textComponent("Vanish: ") + textComponent(if (value) "ON" else "OFF") {
+			color = if (value) Color.GREEN else Color.RED
+		})
+	}
 }
 
 fun Function.vanishPlayer() = effect(self()) {
