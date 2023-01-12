@@ -3,6 +3,7 @@ package functions
 import DataPack
 import arguments.*
 import commands.Command
+import commands.tellraw
 import tags.addToTag
 import java.io.File
 
@@ -89,6 +90,24 @@ open class Function(
 	}
 
 	open fun clear() = lines.clear()
+
+	open fun startDebug() {
+		debug = true
+	}
+
+	open fun endDebug() {
+		debug = false
+	}
+
+	open fun debug(block: Function.() -> Unit) {
+		startDebug()
+		block()
+		endDebug()
+	}
+
+	open fun debug(text: String, options: TextComponent.() -> Unit = {}) = debug(textComponent(text, options))
+
+	open fun debug(textComponent: TextComponents) = tellraw(allPlayers(), textComponent)
 
 	override fun toString() = lines.joinToString("\n")
 
