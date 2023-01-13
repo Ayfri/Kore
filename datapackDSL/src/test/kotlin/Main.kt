@@ -163,6 +163,7 @@ fun main() {
 			}
 
 			summon(Entities.ARROW)
+			locateBiome(Biomes.OLD_GROWTH_BIRCH_FOREST)
 
 			setBlock(
 				coordinate(PosNumber.Type.RELATIVE),

@@ -15,7 +15,8 @@ import serializers.LowercaseSerializer
 internal val json = Json { ignoreUnknownKeys = true }
 internal inline fun <reified T : @Serializable Any> T.asArg() = json.encodeToJsonElement(this).jsonPrimitive.content
 
-fun Function.clear(targets: Argument.Selector? = null, item: Argument.Item? = null, maxCount: Int? = null) = addLine(command("clear", targets, item, int(maxCount)))
+fun Function.clear(targets: Argument.Selector? = null, item: Argument.Item? = null, maxCount: Int? = null) =
+	addLine(command("clear", targets, item, int(maxCount)))
 
 fun Function.debugStart() = addLine(command("debug", literal("start")))
 fun Function.debugStop() = addLine(command("debug", literal("stop")))
@@ -51,8 +52,11 @@ enum class FillOption {
 	}
 }
 
-fun Function.fill(from: Coordinate, to: Coordinate, block: Argument.Block, fillOption: FillOption? = null) = addLine(command("fill", from, to, block, literal(fillOption?.asArg())))
-fun Function.fill(from: Coordinate, to: Coordinate, block: Argument.Block, filter: Argument.Block) = addLine(command("fill", from, to, block, literal("replace"), filter))
+fun Function.fill(from: Coordinate, to: Coordinate, block: Argument.Block, fillOption: FillOption? = null) =
+	addLine(command("fill", from, to, block, literal(fillOption?.asArg())))
+
+fun Function.fill(from: Coordinate, to: Coordinate, block: Argument.Block, filter: Argument.Block) =
+	addLine(command("fill", from, to, block, literal("replace"), filter))
 
 fun Function.function(name: String, group: Boolean = false) =
 	addLine(command("function", tag(name, datapack.name, group)))
@@ -78,6 +82,7 @@ fun Function.list(uuids: Boolean = false) = addLine(command("list", literal(if (
 
 fun Function.locateStructure(structure: String) = addLine(command("locate", literal("structure"), literal(structure)))
 fun Function.locateBiome(biome: String) = addLine(command("locate", literal("biome"), literal(biome)))
+fun Function.locateBiome(biome: Argument.Biome) = addLine(command("locate", literal("biome"), biome))
 fun Function.locatePointOfInterest(pointOfInterest: String) = addLine(command("locate", literal("poi"), literal(pointOfInterest)))
 
 fun Function.me(message: String) = addLine(command("me", literal(message)))
@@ -182,11 +187,13 @@ enum class SetBlockMode {
 	}
 }
 
-fun Function.setBlock(pos: Coordinate, block: Argument.Block, mode: SetBlockMode? = null) = addLine(command("setblock", pos, block, literal(mode?.asArg())))
+fun Function.setBlock(pos: Coordinate, block: Argument.Block, mode: SetBlockMode? = null) =
+	addLine(command("setblock", pos, block, literal(mode?.asArg())))
 
 fun Function.setWorldSpawn(pos: Coordinate? = null, angle: Argument.Rotation) = addLine(command("setworldspawn", pos, angle))
 
-fun Function.spawnPoint(target: Argument.Entity? = null, pos: Coordinate? = null, angle: Argument.Rotation? = null) = addLine(command("spawnpoint", target, pos, angle))
+fun Function.spawnPoint(target: Argument.Entity? = null, pos: Coordinate? = null, angle: Argument.Rotation? = null) =
+	addLine(command("spawnpoint", target, pos, angle))
 
 fun Function.spectate(target: Argument.Entity, player: Argument.Entity? = null) = addLine(command("spectate", target, player))
 fun Function.spectate() = addLine(command("spectate"))
@@ -225,9 +232,7 @@ fun Function.summon(entity: Argument.EntitySummon, pos: Coordinate? = null, nbt:
 fun Function.teamMsg(message: String) = addLine(command("teammsg", literal(message)))
 
 fun Function.teleport(destination: Argument.Entity) = addLine(command("teleport", destination))
-fun Function.teleport(target: Argument.Entity, destination: Argument.Entity) =
-	addLine(command("teleport", target, destination))
-
+fun Function.teleport(target: Argument.Entity, destination: Argument.Entity) = addLine(command("teleport", target, destination))
 fun Function.teleport(location: Coordinate) = addLine(command("teleport", location))
 fun Function.teleport(target: Argument.Entity, location: Coordinate, rotation: Argument.Rotation? = null) =
 	addLine(command("teleport", target, location, rotation))
@@ -272,8 +277,11 @@ enum class TitleLocation {
 }
 
 fun Function.title(targets: Argument.Entity, action: TitleAction) = addLine(command("title", targets, literal(action.asArg())))
-fun Function.title(targets: Argument.Entity, location: TitleLocation, message: TextComponents) = addLine(command("title", targets, literal(location.asArg()), textComponent(message)))
-fun Function.title(targets: Argument.Entity, fadeIn: Int, stay: Int, fadeOut: Int) = addLine(command("title", targets, literal("times"), int(fadeIn), int(stay), int(fadeOut)))
+fun Function.title(targets: Argument.Entity, location: TitleLocation, message: TextComponents) =
+	addLine(command("title", targets, literal(location.asArg()), textComponent(message)))
+
+fun Function.title(targets: Argument.Entity, fadeIn: Int, stay: Int, fadeOut: Int) =
+	addLine(command("title", targets, literal("times"), int(fadeIn), int(stay), int(fadeOut)))
 
 fun Function.tm(message: String) = addLine(command("tm", literal(message)))
 

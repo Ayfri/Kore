@@ -62,11 +62,29 @@ sealed interface Argument {
 		override fun asString() = "#$namespace:$tag"
 	}
 
+	interface Biome : Argument {
+		val name: String
+		val namespace: String
+
+		override fun asString() = "$namespace:$name"
+
+		companion object {
+			operator fun invoke(biome: String, namespace: String = "minecraft") = object : Biome {
+				override val name = biome
+				override val namespace = namespace
+			}
+		}
+	}
+
 	data class BossBar(val id: String, val namespace: String = "minecraft") : Argument {
 		override fun asString() = "$namespace:$id"
 	}
 
-	data class Dimension(val namespace: String? = null, val dimension: arguments.enums.Dimension? = null, val customDimension: String? = null) : Argument {
+	data class Dimension(
+		val namespace: String? = null,
+		val dimension: arguments.enums.Dimension? = null,
+		val customDimension: String? = null
+	) : Argument {
 		override fun asString() = when {
 			dimension != null -> "${namespace?.let { "$it:" } ?: ""}${json.encodeToJsonElement(dimension).jsonPrimitive.content}"
 			customDimension != null -> "${namespace?.let { "$it:" } ?: ""}:$customDimension"

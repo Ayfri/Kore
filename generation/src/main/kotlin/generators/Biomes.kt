@@ -31,6 +31,13 @@ fun generateBiomesEnum(biomes: List<String>, sourceUrl: String) {
 		additionalHeaders = listOf("Minecraft version: $minecraftVersion"),
 		properties = biomes.map { it.substringAfter("minecraft:").uppercase() },
 		serializer = Serializer.Lowercase,
-		customEncoder = """encoder.encodeString("minecraft:${"\${value.name.lowercase()}"}")"""
+		customEncoder = """encoder.encodeString("minecraft:${"\${value.name.lowercase()}"}")""",
+		additionalImports = listOf("arguments.Argument"),
+		customLines = listOf(
+			"override val namespace = \"minecraft\"",
+			"",
+			"override fun asString() = \"minecraft:\${name.lowercase()}\""
+		),
+		inheritances = listOf("Argument.Biome"),
 	)
 }
