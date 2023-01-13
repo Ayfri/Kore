@@ -43,6 +43,8 @@ class ExecuteCondition(private val ex: Execute) {
 		literal("blocks"), start, end, destination, literal(mode.asArg())
 	)
 
+	fun biome(biome: Argument.Biome) = listOf(literal("biome"), biome)
+
 	fun data(target: Argument.Data, path: String) = listOf(
 		literal("data"), literal(target.literalName), ex.targetArg(target), literal(path)
 	)
@@ -51,7 +53,13 @@ class ExecuteCondition(private val ex: Execute) {
 
 	fun predicate(predicate: String) = listOf(literal("predicate"), literal(predicate))
 
-	fun score(target: Argument.ScoreHolder, objective: String, source: Argument.ScoreHolder, sourceObjective: String, relation: RelationBlock.(Number, Number) -> Relation) = listOf(
+	fun score(
+		target: Argument.ScoreHolder,
+		objective: String,
+		source: Argument.ScoreHolder,
+		sourceObjective: String,
+		relation: RelationBlock.(Number, Number) -> Relation
+	) = listOf(
 		literal("score"), ex.targetArg(target), literal(objective), literal(relation(RelationBlock(), 0.0, 0.0).asArg()), source, literal(sourceObjective)
 	)
 

@@ -165,6 +165,11 @@ fun main() {
 			summon(Entities.ARROW)
 			locateBiome(Biomes.OLD_GROWTH_BIRCH_FOREST)
 
+			publish()
+			publish(false)
+			publish(true, Gamemode.ADVENTURE)
+			publish(true, Gamemode.ADVENTURE, 12000)
+
 			setBlock(
 				coordinate(PosNumber.Type.RELATIVE),
 				block("oak_sign", states = mapOf("rotation" to "4"), nbtData = nbt {

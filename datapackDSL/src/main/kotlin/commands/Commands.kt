@@ -58,6 +58,10 @@ fun Function.fill(from: Coordinate, to: Coordinate, block: Argument.Block, fillO
 fun Function.fill(from: Coordinate, to: Coordinate, block: Argument.Block, filter: Argument.Block) =
 	addLine(command("fill", from, to, block, literal("replace"), filter))
 
+fun Function.fillbiome(from: Coordinate, to: Coordinate, biome: Argument.Biome) = addLine(command("fillbiome", from, to, biome))
+fun Function.fillbiome(from: Coordinate, to: Coordinate, biome: Argument.Biome, filter: Argument.Biome) =
+	addLine(command("fillbiome", from, to, biome, literal("replace"), filter))
+
 fun Function.function(name: String, group: Boolean = false) =
 	addLine(command("function", tag(name, datapack.name, group)))
 
@@ -163,7 +167,9 @@ fun Function.playSound(
 	minVolume: Double? = null,
 ) = addLine(command("playsound", literal(sound), literal(source.asArg()), target, pos, float(volume), float(pitch), float(minVolume)))
 
-fun Function.publish() = addLine(command("publish"))
+fun Function.publish(allowCommands: Boolean? = null) = addLine(command("publish", bool(allowCommands)))
+fun Function.publish(allowCommands: Boolean, gamemode: Gamemode, port: Int? = null) =
+	addLine(command("publish", bool(allowCommands), literal(gamemode.asArg()), int(port)))
 
 fun Function.recipeGive(target: Argument.Entity, recipe: String) = addLine(command("recipe", literal("give"), target, literal(recipe)))
 fun Function.recipeGiveAll(target: Argument.Entity) = addLine(command("recipe", literal("give"), target, literal("*")))
