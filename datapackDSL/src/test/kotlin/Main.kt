@@ -164,6 +164,8 @@ fun main() {
 
 			summon(Entities.ARROW)
 			locateBiome(Biomes.OLD_GROWTH_BIRCH_FOREST)
+			gamerule(Gamerules.DO_DAYLIGHT_CYCLE, false)
+			gamerule(Gamerules.RANDOM_TICK_SPEED, 12)
 
 			publish()
 			publish(false)

@@ -4,6 +4,7 @@ import arguments.*
 import arguments.enums.Difficulty
 import arguments.enums.Gamemode
 import functions.Function
+import generated.Gamerules
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
@@ -72,6 +73,8 @@ fun Function.gamemode(gamemode: Gamemode, target: Argument.Entity? = null) = add
 
 fun Function.gamerule(rule: String, value: Boolean? = null) = addLine(command("gamerule", literal(rule), bool(value)))
 fun Function.gamerule(rule: String, value: Int) = addLine(command("gamerule", literal(rule), int(value)))
+fun Function.gamerule(rule: Gamerules.Int, value: Int) = addLine(command("gamerule", literal(rule.asArg()), int(value)))
+fun Function.gamerule(rule: Gamerules.Boolean, value: Boolean? = null) = addLine(command("gamerule", literal(rule.asArg()), bool(value)))
 
 fun Function.give(target: Argument.Entity, item: Argument.Item, count: Int? = null) = addLine(command("give", target, item, int(count)))
 

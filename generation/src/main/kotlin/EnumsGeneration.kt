@@ -39,7 +39,7 @@ fun generateEnum(
 			customLines = customLines.toTypedArray()
 		),
 		imports,
-		*additionalLines
+		additionalLines = additionalLines
 	)
 }
 
@@ -94,6 +94,7 @@ fun generateFile(
 	additionalHeaders: Collection<String> = emptyList(),
 	content: String,
 	additionalImports: Collection<String> = emptyList(),
+	suppresses: Collection<String> = emptyList(),
 	vararg additionalLines: String,
 ) {
 	val file = File(libDir, "src/main/kotlin/generated${path?.let { "/${it.removeSurrounding("/")}" } ?: ""}/$name.kt")
@@ -104,10 +105,18 @@ fun generateFile(
 		add(0, header.removePrefix("// "))
 	}
 
+	val suppressStatement = if (suppresses.isNotEmpty()) "\n\n@file:Suppress(${
+		suppresses.joinToString(
+			prefix = "\"",
+			postfix = "\"",
+			separator = "\", \""
+		)
+	})" else ""
+
 	val imports = additionalImports.toMutableList().sorted().map { "import $it" }
 
 	val text = """
-		|${headers.joinToString(separator = "\n// ", prefix = "// ")}
+		|${headers.joinToString(separator = "\n// ", prefix = "// ")}$suppressStatement
 		|
 		|package generated${path?.let { ".${it.removeSurrounding("/").replace("/", ".")}" } ?: ""}
 		|

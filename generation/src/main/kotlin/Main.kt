@@ -51,6 +51,7 @@ suspend fun main(args: Array<String>) {
 	downloadEffects()
 	downloadEnchantments()
 	downloadEntities()
+	downloadGamerules()
 	downloadItems()
 	downloadParticules()
 	downloadRecipes()
