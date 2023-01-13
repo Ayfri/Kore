@@ -19,6 +19,7 @@ fun stringifiedNbt(block: NbtCompoundBuilder.() -> Unit) = StringifiedNbt.encode
 fun stringifiedNbtList(block: NbtListBuilder<NbtCompound>.() -> Unit) = StringifiedNbt.encodeToString(buildNbtList(block))
 
 fun nbt(nbt: NbtTag) = literal(StringifiedNbt.encodeToString(nbt))
+fun nbtArg(nbt: NbtCompoundBuilder.() -> Unit) = literal(StringifiedNbt.encodeToString(buildNbtCompound(nbt)))
 fun nbtText(nbt: NbtTag) = literal(Json.encodeToString(NbtAsJsonTextComponentSerializer, nbt))
 
 @JvmName("nbtNullable")

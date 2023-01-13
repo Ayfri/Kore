@@ -14,6 +14,8 @@ fun generateEnum(
 	serializer: Serializer,
 	customEncoder: String? = null,
 	additionalImports: List<String> = emptyList(),
+	customLines: List<String> = emptyList(),
+	inheritances: List<String> = emptyList(),
 	vararg additionalLines: String,
 ) {
 	val enumName = name.pascalCase()
@@ -24,7 +26,20 @@ fun generateEnum(
 	}
 
 	generateFile(
-		name, path, sourceUrl, additionalHeaders, generateEnumText(enumName, customEncoder, serializer, properties), imports, *additionalLines
+		name,
+		path,
+		sourceUrl,
+		additionalHeaders,
+		generateEnumText(
+			enumName,
+			customEncoder,
+			serializer,
+			properties,
+			enumInheritances = inheritances,
+			customLines = customLines.toTypedArray()
+		),
+		imports,
+		*additionalLines
 	)
 }
 

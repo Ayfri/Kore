@@ -9,6 +9,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonPrimitive
 import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.NbtCompoundBuilder
 import serializers.LowercaseSerializer
 
 internal val json = Json { ignoreUnknownKeys = true }
@@ -213,15 +214,27 @@ fun Function.stopSound(
 	sound: String? = null,
 ) = addLine(command("stopsound", targets, literal(source?.asArg()), literal(sound)))
 
-fun Function.summon(entity: String, pos: Coordinate? = null, nbt: NbtCompound? = null) = addLine(command("summon", literal(entity), pos, nbt(nbt)))
+fun Function.summon(entity: String, pos: Coordinate? = null, nbt: NbtCompound?) = addLine(command("summon", literal(entity), pos, nbt(nbt)))
+fun Function.summon(entity: String, pos: Coordinate? = null, nbt: (NbtCompoundBuilder.() -> Unit)? = null) =
+	addLine(command("summon", literal(entity), pos, nbt?.let { nbtArg(nbt) }))
+
+fun Function.summon(entity: Argument.EntitySummon, pos: Coordinate? = null, nbt: NbtCompound?) = summon(entity.asArg(), pos, nbt)
+fun Function.summon(entity: Argument.EntitySummon, pos: Coordinate? = null, nbt: (NbtCompoundBuilder.() -> Unit)? = null) =
+	addLine(command("summon", entity, pos, nbt?.let { nbtArg(nbt) }))
 
 fun Function.teamMsg(message: String) = addLine(command("teammsg", literal(message)))
 
 fun Function.teleport(destination: Argument.Entity) = addLine(command("teleport", destination))
-fun Function.teleport(target: Argument.Entity, destination: Argument.Entity) = addLine(command("teleport", target, destination))
+fun Function.teleport(target: Argument.Entity, destination: Argument.Entity) =
+	addLine(command("teleport", target, destination))
+
 fun Function.teleport(location: Coordinate) = addLine(command("teleport", location))
-fun Function.teleport(target: Argument.Entity, location: Coordinate, rotation: Argument.Rotation? = null) = addLine(command("teleport", target, location, rotation))
-fun Function.teleport(target: Argument.Entity, location: Coordinate, facing: Coordinate) = addLine(command("teleport", target, location, literal("facing"), facing))
+fun Function.teleport(target: Argument.Entity, location: Coordinate, rotation: Argument.Rotation? = null) =
+	addLine(command("teleport", target, location, rotation))
+
+fun Function.teleport(target: Argument.Entity, location: Coordinate, facing: Coordinate) =
+	addLine(command("teleport", target, location, literal("facing"), facing))
+
 fun Function.teleport(
 	target: Argument.Entity,
 	location: Coordinate,
@@ -267,8 +280,12 @@ fun Function.tm(message: String) = addLine(command("tm", literal(message)))
 fun Function.tp(destination: Argument.Entity) = addLine(command("tp", destination))
 fun Function.tp(target: Argument.Entity, destination: Argument.Entity) = addLine(command("tp", target, destination))
 fun Function.tp(location: Coordinate) = addLine(command("tp", location))
-fun Function.tp(target: Argument.Entity, location: Coordinate, rotation: Argument.Rotation? = null) = addLine(command("tp", target, location, rotation))
-fun Function.tp(target: Argument.Entity, location: Coordinate, facing: Coordinate) = addLine(command("tp", target, location, literal("facing"), facing))
+fun Function.tp(target: Argument.Entity, location: Coordinate, rotation: Argument.Rotation? = null) =
+	addLine(command("tp", target, location, rotation))
+
+fun Function.tp(target: Argument.Entity, location: Coordinate, facing: Coordinate) =
+	addLine(command("tp", target, location, literal("facing"), facing))
+
 fun Function.tp(
 	target: Argument.Entity,
 	location: Coordinate,

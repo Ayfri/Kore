@@ -160,8 +160,13 @@ fun main() {
 					this += 5
 					reset()
 				}
+			}
 
-				setBlock(coordinate(PosNumber.Type.RELATIVE), block("oak_sign", states = mapOf("rotation" to "4"), nbtData = nbt {
+			summon(Entities.ARROW)
+
+			setBlock(
+				coordinate(PosNumber.Type.RELATIVE),
+				block("oak_sign", states = mapOf("rotation" to "4"), nbtData = nbt {
 					this["Text1"] = "Hello"
 					this["Text2"] = "World"
 
@@ -171,39 +176,39 @@ fun main() {
 						italic = true
 					}
 
-				}))
-
-				tellraw(allPlayers(), textComponent {
-					text = "Hello World"
-					color = Color.RED
-					italic = true
-					clickEvent {
-						action = ClickAction.OPEN_URL
-						value = "https://www.google.com".nbt
-					}
-					hoverEvent {
-						action = HoverAction.SHOW_TEXT
-						value = textComponent {
-							text = "This is a hover event"
-							color = Color.BLUE
-						}.toNbtTag()
-					}
 				})
+			)
 
-				teams {
-					val team = "admin"
+			tellraw(allPlayers(), textComponent {
+				text = "Hello World"
+				color = Color.RED
+				italic = true
+				clickEvent {
+					action = ClickAction.OPEN_URL
+					value = "https://www.google.com".nbt
+				}
+				hoverEvent {
+					action = HoverAction.SHOW_TEXT
+					value = textComponent {
+						text = "This is a hover event"
+						color = Color.BLUE
+					}.toNbtTag()
+				}
+			})
 
-					add(team, textComponent("Admin"))
-					modify(team) {
-						color(Color.DARK_RED)
-						friendlyFire(false)
-						deathMessageVisibility(Visibility.HIDE_FOR_OTHER_TEAMS)
-						prefix(textComponent {
-							text = "<Admin>"
-							color = Color.RED
-							bold = true
-						})
-					}
+			teams {
+				val team = "admin"
+
+				add(team, textComponent("Admin"))
+				modify(team) {
+					color(Color.DARK_RED)
+					friendlyFire(false)
+					deathMessageVisibility(Visibility.HIDE_FOR_OTHER_TEAMS)
+					prefix(textComponent {
+						text = "<Admin>"
+						color = Color.RED
+						bold = true
+					})
 				}
 			}
 		}

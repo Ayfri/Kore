@@ -35,6 +35,8 @@ sealed interface Argument {
 
 	sealed interface ScoreHolder : Argument
 
+
+
 	object All : Argument, Possessor, ScoreHolder {
 		override fun asString() = "*"
 	}
@@ -74,6 +76,20 @@ sealed interface Argument {
 
 	data class Float(val value: Double) : Argument {
 		override fun asString() = value.toString()
+	}
+
+	interface EntitySummon : Argument {
+		val name: String
+		val namespace: String
+
+		override fun asString() = "$namespace:$name"
+
+		companion object {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : EntitySummon {
+				override val name = name
+				override val namespace = namespace
+			}
+		}
 	}
 
 	data class Int(val value: Long) : Argument {

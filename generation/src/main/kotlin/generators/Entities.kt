@@ -23,6 +23,12 @@ fun generateEntitiesEnum(entities: List<String>, sourceUrl: String) {
 		serializer = Serializer.Lowercase,
 		customEncoder = """encoder.encodeString("minecraft:${"\${value.name.lowercase()}"}")""",
 		additionalImports = listOf("arguments.Argument", "arguments.selector.SelectorNbtData", "commands.asArg"),
+		customLines = listOf(
+			"override val namespace = \"minecraft\"",
+			"",
+			"override fun asString() = \"minecraft:\${name.lowercase()}\""
+		),
+		inheritances = listOf("Argument.EntitySummon"),
 		additionalLines = arrayOf("fun SelectorNbtData.type(entity: $name) {\n\ttype = entity.asArg()\n}")
 	)
 }
