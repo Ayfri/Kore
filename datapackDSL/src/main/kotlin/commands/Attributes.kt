@@ -34,7 +34,7 @@ class AttributeModifiers(private val fn: Function, private val target: Argument.
 				literal("modifier"),
 				literal("add"),
 				uuid(id),
-				literal(name.asArg()),
+				name,
 				float(value),
 				literal(operation.asArg())
 			)
@@ -49,7 +49,7 @@ class AttributeModifiers(private val fn: Function, private val target: Argument.
 				literal("modifier"),
 				literal("add"),
 				uuid(UUID.randomUUID()),
-				literal(name.asArg()),
+				name,
 				float(value),
 				literal(operation.asArg())
 			)
