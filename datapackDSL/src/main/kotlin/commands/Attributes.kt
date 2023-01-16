@@ -25,13 +25,39 @@ class AttributeBase(private val fn: Function, private val target: Argument.Selec
 }
 
 class AttributeModifiers(private val fn: Function, private val target: Argument.Selector, private val attribute: Argument.Attribute) {
-	fun add(id: UUID, name: String, value: Double, operation: AttributeModifierOperation) =
-		fn.addLine(command("attribute", target, attribute, literal("modifier"), literal("add"), uuid(id), literal(name), float(value), literal(operation.asArg())))
+	fun add(id: UUID, name: Argument.Attribute, value: Double, operation: AttributeModifierOperation) =
+		fn.addLine(
+			command(
+				"attribute",
+				target,
+				attribute,
+				literal("modifier"),
+				literal("add"),
+				uuid(id),
+				literal(name.asArg()),
+				float(value),
+				literal(operation.asArg())
+			)
+		)
 
-	fun add(name: String, value: Double, operation: AttributeModifierOperation) =
-		fn.addLine(command("attribute", target, attribute, literal("modifier"), literal("add"), uuid(UUID.randomUUID()), literal(name), float(value), literal(operation.asArg())))
+	fun add(name: Argument.Attribute, value: Double, operation: AttributeModifierOperation) =
+		fn.addLine(
+			command(
+				"attribute",
+				target,
+				attribute,
+				literal("modifier"),
+				literal("add"),
+				uuid(UUID.randomUUID()),
+				literal(name.asArg()),
+				float(value),
+				literal(operation.asArg())
+			)
+		)
 
-	fun get(id: UUID, scale: Double? = null) = fn.addLine(command("attribute", target, attribute, literal("modifier"), literal("value"), literal("get"), uuid(id), float(scale)))
+	fun get(id: UUID, scale: Double? = null) =
+		fn.addLine(command("attribute", target, attribute, literal("modifier"), literal("value"), literal("get"), uuid(id), float(scale)))
+
 	fun remove(id: UUID) = fn.addLine(command("attribute", target, attribute, literal("modifier"), literal("remove"), uuid(id)))
 }
 
@@ -46,18 +72,15 @@ class Attribute(private val fn: Function, private val target: Argument.Selector,
 }
 
 class AttributeTarget(private val fn: Function, private val target: Argument.Selector) {
-	fun get(attribute: generated.Attributes) = Attribute(fn, target, attribute(attribute))
-	fun get(attribute: String) = Attribute(fn, target, attribute(attribute))
+	fun get(attribute: Argument.Attribute) = Attribute(fn, target, attribute)
 }
 
 class Attributes(private val fn: Function) {
-	fun get(target: Argument.Selector, attribute: generated.Attributes) = Attribute(fn, target, attribute(attribute))
+	fun get(target: Argument.Selector, attribute: Argument.Attribute) = Attribute(fn, target, attribute)
 	fun get(target: Argument.Selector, block: AttributeTarget.() -> Command) = AttributeTarget(fn, target).run(block)
 }
 
 fun Function.attributes(block: Attributes.() -> Command) = Attributes(this).run(block)
-fun Function.attributes(target: Argument.Selector, block: AttributeTarget.() -> Unit) = AttributeTarget(this, target).run(block)
-fun Function.attributes(target: Argument.Selector, attribute: generated.Attributes, block: Attribute.() -> Unit) =
-	Attribute(this, target, attribute(attribute)).run(block)
-
-fun Function.attributes(target: Argument.Selector, attribute: String, block: Attribute.() -> Unit) = Attribute(this, target, attribute(attribute)).run(block)
+fun Function.attributes(target: Argument.Selector, block: AttributeTarget.() -> Command) = AttributeTarget(this, target).run(block)
+fun Function.attributes(target: Argument.Selector, attribute: Argument.Attribute, block: Attribute.() -> Command) =
+	Attribute(this, target, attribute).run(block)

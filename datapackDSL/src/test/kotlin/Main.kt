@@ -35,6 +35,13 @@ fun main() {
 				block()
 			}
 
+			attributes {
+				get(self()) {
+					val first = get(Attributes.GENERIC_ARMOR)
+					first.get()
+				}
+			}
+
 			val selector = allPlayers {
 				dx = 1.0
 				level = range(1..5)
@@ -95,7 +102,7 @@ fun main() {
 				base.set(10.0)
 				modifiers {
 					val uuid = UUID.randomUUID()
-					add(uuid, "test", 10.0, AttributeModifierOperation.ADD)
+					add(uuid, Attributes.GENERIC_MOVEMENT_SPEED, 10.0, AttributeModifierOperation.ADD)
 					get(uuid, .5)
 					remove(uuid)
 				}

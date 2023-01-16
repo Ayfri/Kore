@@ -6,8 +6,6 @@ import arguments.selector.Selector
 import arguments.selector.SelectorNbtData
 import arguments.selector.SelectorType
 import arguments.selector.json
-import commands.asArg
-import generated.Attributes
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonPrimitive
 import net.benwoodworth.knbt.NbtTag
@@ -35,18 +33,26 @@ sealed interface Argument {
 
 	sealed interface ScoreHolder : Argument
 
+	sealed interface Namespaced : Argument {
+		val name: String
+		val namespace: String
 
+		override fun asString() = "$namespace:$name"
+	}
 
 	object All : Argument, Possessor, ScoreHolder {
 		override fun asString() = "*"
 	}
 
-	data class Advancement(val advancement: String, val namespace: String = "minecraft") : Argument {
-		override fun asString() = "$namespace:$advancement"
-	}
+	data class Advancement(override val name: String, override val namespace: String = "minecraft") : Namespaced
 
-	data class Attribute(val attribute: String, val namespace: String = "minecraft") : Argument {
-		override fun asString() = "$namespace:$attribute"
+	interface Attribute : Namespaced {
+		companion object {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : Attribute {
+				override val name = name
+				override val namespace = namespace
+			}
+		}
 	}
 
 	data class Block(
@@ -58,16 +64,11 @@ sealed interface Argument {
 		override fun asString() = "$namespace:$block${states.map { "[$it]" }.joinToString("")}${nbtData?.toString() ?: ""}"
 	}
 
-	data class BlockTag(val tag: String, val namespace: String = "minecraft") : BlockOrTag {
-		override fun asString() = "#$namespace:$tag"
+	data class BlockTag(val name: String, val namespace: String = "minecraft") : BlockOrTag {
+		override fun asString() = "#$namespace:$name"
 	}
 
-	interface Biome : Argument {
-		val name: String
-		val namespace: String
-
-		override fun asString() = "$namespace:$name"
-
+	interface Biome : Namespaced {
 		companion object {
 			operator fun invoke(biome: String, namespace: String = "minecraft") = object : Biome {
 				override val name = biome
@@ -76,9 +77,7 @@ sealed interface Argument {
 		}
 	}
 
-	data class BossBar(val id: String, val namespace: String = "minecraft") : Argument {
-		override fun asString() = "$namespace:$id"
-	}
+	data class BossBar(override val name: String, override val namespace: String = "minecraft") : Namespaced
 
 	data class Dimension(
 		val namespace: String? = null,
@@ -96,12 +95,7 @@ sealed interface Argument {
 		override fun asString() = value.toString()
 	}
 
-	interface EntitySummon : Argument {
-		val name: String
-		val namespace: String
-
-		override fun asString() = "$namespace:$name"
-
+	interface EntitySummon : Namespaced {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : EntitySummon {
 				override val name = name
@@ -134,9 +128,7 @@ sealed interface Argument {
 		override fun asString() = selector.toString()
 	}
 
-	data class Storage(val storage: String, val namespace: String = "minecraft") : Data {
-		override fun asString() = "$namespace:$storage"
-	}
+	data class Storage(override val name: String, override val namespace: String = "minecraft") : Data, Namespaced
 
 	data class Time(val value: TimeNumber) : Argument {
 		override fun asString() = value.toString()
@@ -149,8 +141,6 @@ sealed interface Argument {
 
 fun advancement(name: String, namespace: String = "minecraft") = Argument.Advancement(name, namespace)
 fun all() = Argument.All
-fun attribute(attribute: Attributes, namespace: String = "minecraft") = Argument.Attribute(attribute.asArg(), namespace)
-fun attribute(attribute: String, namespace: String = "minecraft") = Argument.Attribute(attribute, namespace)
 fun block(
 	block: String,
 	namespace: String = "minecraft",

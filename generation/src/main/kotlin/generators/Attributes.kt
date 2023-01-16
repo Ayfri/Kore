@@ -22,5 +22,12 @@ fun generateAttributesEnum(attributes: List<String>, sourceUrl: String) {
 		properties = attributes.map { it.substringAfter("minecraft:").replaceFirst(".", "_").uppercase() },
 		serializer = Serializer.Lowercase,
 		customEncoder = """encoder.encodeString(${"value.name.lowercase().replaceFirst(\"_\", \".\")"})""",
+		additionalImports = listOf("arguments.Argument"),
+		customLines = listOf(
+			"override val namespace = \"minecraft\"",
+			"",
+			"override fun asString() = \"minecraft:\${name.lowercase().replaceFirst(\"_\", \".\")}\""
+		),
+		inheritances = listOf("Argument.Attribute"),
 	)
 }
