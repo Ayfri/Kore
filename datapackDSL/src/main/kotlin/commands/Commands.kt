@@ -27,10 +27,10 @@ fun Function.defaultGamemode(mode: Gamemode) = addLine(command("defaultgamemode"
 fun Function.difficulty(difficulty: Difficulty? = null) = addLine(command("difficulty", literal(difficulty?.asArg())))
 
 class Effect(private val fn: Function, val target: Argument.Entity) {
-	fun clear(effect: String? = null) = fn.addLine(command("effect", literal("clear"), target, literal(effect)))
-	fun give(effect: String, duration: Int? = null, amplifier: Int? = null, hideParticles: Boolean? = null) = fn.addLine(
+	fun clear(effect: Argument.MobEffect? = null) = fn.addLine(command("effect", literal("clear"), target, effect))
+	fun give(effect: Argument.MobEffect, duration: Int? = null, amplifier: Int? = null, hideParticles: Boolean? = null) = fn.addLine(
 		command(
-			"effect", literal("give"), target, literal(effect), int(duration), int(amplifier), bool(hideParticles)
+			"effect", literal("give"), target, effect, int(duration), int(amplifier), bool(hideParticles)
 		)
 	)
 }

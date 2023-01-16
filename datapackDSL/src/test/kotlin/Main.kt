@@ -95,7 +95,7 @@ fun main() {
 
 			effect(selector(SelectorType.ALL_PLAYERS)) {
 				clear()
-				give("minecraft:regeneration", 10, 1, false)
+				give(Effects.REGENERATION, 10, 1, false)
 			}
 
 			attributes(nearestPlayer(), Attributes.GENERIC_ARMOR) {

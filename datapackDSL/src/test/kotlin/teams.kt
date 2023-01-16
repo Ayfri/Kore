@@ -88,11 +88,11 @@ private fun Function.displayVanish(value: Boolean) {
 }
 
 fun Function.vanishPlayer() = effect(self()) {
-	give("minecraft:invisibility", 1, 0, true)
+	give(Effects.INVISIBILITY, 1, 0, true)
 }
 
 fun Function.unVanishPlayer() = effect(self()) {
-	clear("minecraft:invisibility")
+	clear(Effects.INVISIBILITY)
 }
 
 fun vanish(dataPack: DataPack) = dataPack.function("vanish") {

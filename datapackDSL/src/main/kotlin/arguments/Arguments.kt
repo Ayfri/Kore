@@ -120,6 +120,15 @@ sealed interface Argument {
 		override fun asString() = text
 	}
 
+	interface MobEffect : Namespaced {
+		companion object {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : MobEffect {
+				override val name = name
+				override val namespace = namespace
+			}
+		}
+	}
+
 	data class Rotation(val yaw: RotNumber, val pitch: RotNumber) : Argument {
 		override fun asString() = "$yaw $pitch"
 	}
