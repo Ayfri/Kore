@@ -48,7 +48,7 @@ fun main() {
 				gamemode = !Gamemode.CREATIVE
 			}
 
-			advancements.grant(selector, advancement(Advancements.Story.IronTools))
+			advancements.grant(selector, Advancements.Story.IronTools)
 
 			clear(targets = allPlayers(), item = item(Items.STONE), maxCount = 1)
 
@@ -69,8 +69,8 @@ fun main() {
 
 			data(selector(SelectorType.ALL_ENTITIES, true) {
 				advancements {
-					advancement("story/kill_all_mobs") {
-						put("witch", true)
+					Advancements.Story.IronTools {
+						this["witch"] = true
 					}
 				}
 
@@ -127,7 +127,7 @@ fun main() {
 
 				run {
 					advancement {
-						grant(self(), advancement("story/iron_tools"))
+						grant(self(), Advancements.Story.IronTools)
 					}
 				}
 			}

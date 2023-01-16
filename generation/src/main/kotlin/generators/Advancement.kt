@@ -14,7 +14,8 @@ suspend fun downloadAdvancements() {
 	val objectName = "Advancements"
 
 	val content = buildString {
-		append("sealed interface $objectName {")
+		appendLine("sealed interface $objectName : Argument.Advancement {")
+		appendLine("\n\toverride val namespace get() = \"minecraft\"")
 
 		val attributesTree = attributes.groupBy {
 			it.substringBeforeLast("/")
@@ -33,6 +34,7 @@ suspend fun downloadAdvancements() {
 					parent = "$objectName.${parent.pascalCase()}",
 					customEncoder = """encoder.encodeString("$path/${"\${value.name.lowercase()}"}")""",
 					enumInheritances = listOf(objectName),
+					customLines = arrayOf("override fun asString() = \"\$namespace:$path/\${name.lowercase()}\"")
 				)
 
 				appendLine()
@@ -75,8 +77,8 @@ suspend fun downloadAdvancements() {
 			add("kotlinx.serialization.json.encodeToJsonElement")
 			add("kotlinx.serialization.json.jsonPrimitive")
 		},
-		additionalLines = arrayOf(
+		/* additionalLines = arrayOf(
 			"inline fun <reified T : Advancements> advancement(advancement: T) = Argument.Advancement(Json.encodeToJsonElement(advancement).jsonPrimitive.content)",
-		)
+		) */
 	)
 }

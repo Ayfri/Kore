@@ -44,7 +44,14 @@ sealed interface Argument {
 		override fun asString() = "*"
 	}
 
-	data class Advancement(override val name: String, override val namespace: String = "minecraft") : Namespaced
+	interface Advancement : Namespaced {
+		companion object {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : Advancement {
+				override val name = name
+				override val namespace = namespace
+			}
+		}
+	}
 
 	interface Attribute : Namespaced {
 		companion object {
