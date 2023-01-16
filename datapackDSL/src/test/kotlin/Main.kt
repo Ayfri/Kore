@@ -110,7 +110,7 @@ fun main() {
 
 			execute {
 				ifCondition {
-					score(literal("Ayfri"), "test", literal("other"), "test") { first, second ->
+					score(player("Ayfri"), "test", entity("other"), "test") { first, second ->
 						first lessThan second
 					}
 				}
