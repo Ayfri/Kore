@@ -40,8 +40,17 @@ fun generateBlocksEnum(sourceUrl: String, properties: Collection<String>) {
 		properties = properties,
 		serializer = Serializer.Lowercase,
 		customEncoder = """encoder.encodeString("minecraft:${"\${value.name.lowercase()}"}")""",
-		additionalImports = listOf("arguments.Argument"),
-		additionalLines = arrayOf("fun block(block: $name) = Argument.Block(block.name.lowercase())")
+		additionalImports = listOf("arguments.Argument", "net.benwoodworth.knbt.NbtCompound"),
+		customLines = listOf(
+			"override val namespace = \"minecraft\"",
+			"",
+			"override var states = mutableMapOf<String, String>()",
+			"",
+			"override var nbtData: NbtCompound? = null",
+			"",
+			"override fun asString() = \"minecraft:\${name.lowercase()}\""
+		),
+		inheritances = listOf("Argument.Block"),
 	)
 }
 

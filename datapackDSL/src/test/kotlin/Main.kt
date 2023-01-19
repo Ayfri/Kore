@@ -181,16 +181,14 @@ fun main() {
 
 			setBlock(
 				coordinate(PosNumber.Type.RELATIVE),
-				block("oak_sign", states = mapOf("rotation" to "4"), nbtData = nbt {
-					this["Text1"] = "Hello"
-					this["Text2"] = "World"
-
+				Blocks.OAK_SIGN(states = mapOf("rotation" to "4"), nbtData = {
+					this["Text1"] = textComponent("Hello")
+					this["Text2"] = textComponent("World")
 					this["Text3"] = textComponent {
 						text = "This is a text component"
 						color = Color.RED
 						italic = true
 					}
-
 				})
 			)
 

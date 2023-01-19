@@ -8,6 +8,8 @@ import arguments.selector.SelectorType
 import arguments.selector.json
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonPrimitive
+import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.NbtCompoundBuilder
 import net.benwoodworth.knbt.NbtTag
 import java.util.*
 
@@ -62,17 +64,43 @@ sealed interface Argument {
 		}
 	}
 
-	data class Block(
-		val block: String,
-		val namespace: String = "minecraft",
-		val states: MutableMap<String, String> = mutableMapOf(),
-		var nbtData: NbtTag? = null,
-	) : BlockOrTag {
-		override fun asString() = "$namespace:$block${states.map { "[$it]" }.joinToString("")}${nbtData?.toString() ?: ""}"
+	interface Block : Namespaced, BlockOrTag {
+		var states: MutableMap<String, String>
+		var nbtData: NbtCompound?
+
+		override fun asString(): String {
+			return "$namespace:$name${states.map { "[$it]" }.joinToString("")}${nbtData?.toString() ?: ""}"
+		}
+
+		operator fun invoke(states: Map<String, String> = mutableMapOf(), nbtData: (NbtCompoundBuilder.() -> Unit)? = null) = apply {
+			this.states = states.toMutableMap()
+			nbtData?.let { this.nbtData = nbt(it) }
+		}
+
+		companion object {
+			operator fun invoke(
+				name: String,
+				namespace: String,
+				states: Map<String, String> = mutableMapOf(),
+				nbtData: NbtCompound? = null
+			) = object : Block {
+				override val name = name
+				override val namespace = namespace
+				override var states = states.toMutableMap()
+				override var nbtData = nbtData
+			}
+		}
 	}
 
-	data class BlockTag(val name: String, val namespace: String = "minecraft") : BlockOrTag {
+	interface BlockTag : Namespaced, BlockOrTag {
 		override fun asString() = "#$namespace:$name"
+
+		companion object {
+			operator fun invoke(blockOrTag: String, namespace: String = "minecraft") = object : BlockTag {
+				override val name = blockOrTag
+				override val namespace = namespace
+			}
+		}
 	}
 
 	interface Biome : Namespaced {
@@ -161,8 +189,8 @@ fun block(
 	block: String,
 	namespace: String = "minecraft",
 	states: Map<String, String> = mutableMapOf(),
-	nbtData: NbtTag? = null,
-) = Argument.Block(block, namespace, states.toMutableMap(), nbtData)
+	nbtData: NbtCompoundBuilder.() -> Unit = {},
+) = Argument.Block(block, namespace, states.toMutableMap(), nbt(nbtData))
 
 fun blockTag(tag: String, namespace: String = "minecraft") = Argument.BlockTag(tag, namespace)
 
