@@ -162,8 +162,15 @@ sealed interface Argument {
 		}
 	}
 
-	data class ItemTag(val tag: String, val namespace: String = "minecraft") : ItemOrTag {
-		override fun asString() = "#$namespace:$tag"
+	interface ItemTag : Namespaced, BlockOrTag {
+		override fun asString() = "#$namespace:$name"
+
+		companion object {
+			operator fun invoke(blockOrTag: String, namespace: String = "minecraft") = object : ItemTag {
+				override val name = blockOrTag
+				override val namespace = namespace
+			}
+		}
 	}
 
 	data class Literal(val text: String) : Argument, Possessor, ScoreHolder {
