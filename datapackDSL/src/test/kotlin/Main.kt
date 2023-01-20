@@ -146,6 +146,7 @@ fun main() {
 
 			comment("Replacing head with dirt")
 			items.replaceEntity(nearestEntity { type = "minecraft:zombie" }, ARMOR.HEAD, Items.DIRT, 64)
+			enchant(Enchantments.FEATHER_FALLING, 3)
 
 			loot {
 				target {

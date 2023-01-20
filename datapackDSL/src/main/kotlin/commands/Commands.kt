@@ -37,7 +37,7 @@ class Effect(private val fn: Function, val target: Argument.Entity) {
 
 fun Function.effect(target: Argument.Entity, block: Effect.() -> Command) = Effect(this, target).block()
 
-fun Function.enchant(enchantment: String, level: Int? = null) = addLine(command("enchant", literal(enchantment), int(level)))
+fun Function.enchant(enchantment: Argument.Enchantment, level: Int? = null) = addLine(command("enchant", enchantment, int(level)))
 
 @Serializable(FillOption.Companion.FillOptionSerializer::class)
 enum class FillOption {
