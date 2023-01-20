@@ -154,9 +154,9 @@ fun giveVanishItem(dataPack: DataPack) = dataPack.function("give_vanish_item") {
 			asTarget(teamPlayer(it))
 
 			run {
-				give(self(), item(vanishItem.asArg().removePrefix("minecraft:"), nbtData = nbt {
+				give(self(), vanishItem {
 					this[vanishItemTag] = 1.toByte()
-				}))
+				})
 			}
 		}
 	}

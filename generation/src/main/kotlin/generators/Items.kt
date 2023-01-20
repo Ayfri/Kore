@@ -22,7 +22,14 @@ fun generateItemsEnum(items: List<String>, sourceUrl: String) {
 		properties = items.map { it.substringAfter("minecraft:").uppercase() },
 		serializer = Serializer.Lowercase,
 		customEncoder = """encoder.encodeString("minecraft:${"\${value.name.lowercase()}"}")""",
-		additionalImports = listOf("arguments.Argument"),
-		additionalLines = arrayOf("fun item(item: $name) = Argument.Item(item.name.lowercase())")
+		additionalImports = listOf("arguments.Argument", "net.benwoodworth.knbt.NbtCompound"),
+		customLines = listOf(
+			"override val namespace = \"minecraft\"",
+			"",
+			"override var nbtData: NbtCompound? = null",
+			"",
+			"override fun asString() = \"minecraft:\${name.lowercase()}\""
+		),
+		inheritances = listOf("Argument.Item"),
 	)
 }

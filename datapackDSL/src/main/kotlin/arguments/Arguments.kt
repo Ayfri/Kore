@@ -10,7 +10,6 @@ import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonPrimitive
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtCompoundBuilder
-import net.benwoodworth.knbt.NbtTag
 import java.util.*
 
 sealed interface Argument {
@@ -143,8 +142,24 @@ sealed interface Argument {
 		override fun asString() = value.toString()
 	}
 
-	data class Item(val item: String, val namespace: String = "minecraft", val nbtData: NbtTag? = null) : ItemOrTag {
-		override fun asString() = "$namespace:$item${nbtData?.toString() ?: ""}"
+	interface Item : Namespaced, ItemOrTag {
+		var nbtData: NbtCompound?
+
+		override fun asString() = "$namespace:$name${nbtData?.toString() ?: ""}"
+
+		operator fun invoke(nbtData: (NbtCompoundBuilder.() -> Unit)? = null) = apply { nbtData?.let { this.nbtData = nbt(it) } }
+
+		companion object {
+			operator fun invoke(
+				name: String,
+				namespace: String,
+				nbtData: NbtCompound? = null
+			) = object : Item {
+				override val name = name
+				override val namespace = namespace
+				override var nbtData = nbtData
+			}
+		}
 	}
 
 	data class ItemTag(val tag: String, val namespace: String = "minecraft") : ItemOrTag {
@@ -217,7 +232,11 @@ fun int(value: Int) = Argument.Int(value.toLong())
 internal fun int(value: Int?) = value?.let { Argument.Int(it.toLong()) }
 internal fun int(value: Long?) = value?.let { Argument.Int(it) }
 
-fun item(item: String, namespace: String = "minecraft", nbtData: NbtTag? = null) = Argument.Item(item, namespace, nbtData)
+fun item(
+	item: String,
+	namespace: String = "minecraft",
+	nbtData: (NbtCompoundBuilder.() -> Unit)? = null
+) = Argument.Item(item, namespace, nbtData?.let { nbt(it) })
 
 fun itemTag(tag: String, namespace: String = "minecraft") = Argument.ItemTag(tag, namespace)
 

@@ -10,6 +10,7 @@ import commands.*
 import functions.function
 import generated.*
 import generated.Attributes
+import net.benwoodworth.knbt.addNbtCompound
 import tags.tags
 import java.util.*
 import kotlin.io.path.Path
@@ -50,7 +51,7 @@ fun main() {
 
 			advancements.grant(selector, Advancements.Story.IronTools)
 
-			clear(targets = allPlayers(), item = item(Items.STONE), maxCount = 1)
+			clear(targets = allPlayers(), item = Items.STONE, maxCount = 1)
 
 			bossBar("test") {
 				remove()
@@ -133,10 +134,17 @@ fun main() {
 			}
 
 			addBlankLine()
-			items.replaceBlock(coordinate(0, 0, 0), CONTAINER[5], item(Items.STONE), 20)
+			items.replaceBlock(coordinate(0, 0, 0), CONTAINER[5], Items.DIAMOND_SWORD {
+				this["Enchantments"] = nbtList {
+					addNbtCompound {
+						this["level"] = 5
+						this["name"] = Enchantments.SHARPNESS
+					}
+				}
+			}, 20)
 
 			comment("Replacing head with dirt")
-			items.replaceEntity(nearestEntity { type = "minecraft:zombie" }, ARMOR.HEAD, item(Items.DIRT), 64)
+			items.replaceEntity(nearestEntity { type = "minecraft:zombie" }, ARMOR.HEAD, Items.DIRT, 64)
 
 			loot {
 				target {
