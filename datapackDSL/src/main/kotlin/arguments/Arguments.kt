@@ -125,6 +125,15 @@ sealed interface Argument {
 		}
 	}
 
+	interface Enchantment : Namespaced {
+		companion object {
+			operator fun invoke(enchantment: String, namespace: String = "minecraft") = object : Enchantment {
+				override val name = enchantment
+				override val namespace = namespace
+			}
+		}
+	}
+
 	data class Float(val value: Double) : Argument {
 		override fun asString() = value.toString()
 	}
@@ -237,6 +246,8 @@ fun coordinate(type: PosNumber.Type) = Vec3(pos(type = type), pos(type = type), 
 
 fun dimension(dimension: Dimension? = null) = Argument.Dimension("minecraft", dimension)
 fun dimension(customDimension: String, namespace: String? = null) = Argument.Dimension(namespace, customDimension = customDimension)
+
+fun enchantment(name: String, namespace: String = "minecraft") = Argument.Enchantment(name, namespace)
 
 fun float(value: Double) = Argument.Float(value)
 fun float(value: Float) = Argument.Float(value.toDouble())
