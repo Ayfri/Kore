@@ -34,7 +34,7 @@ sealed interface Argument {
 
 	sealed interface ScoreHolder : Argument
 
-	sealed interface Namespaced : Argument {
+	sealed interface ResourceLocation : Argument {
 		val name: String
 		val namespace: String
 
@@ -45,7 +45,7 @@ sealed interface Argument {
 		override fun asString() = "*"
 	}
 
-	interface Advancement : Namespaced {
+	interface Advancement : ResourceLocation {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : Advancement {
 				override val name = name
@@ -54,7 +54,7 @@ sealed interface Argument {
 		}
 	}
 
-	interface Attribute : Namespaced {
+	interface Attribute : ResourceLocation {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : Attribute {
 				override val name = name
@@ -63,7 +63,7 @@ sealed interface Argument {
 		}
 	}
 
-	interface Block : Namespaced, BlockOrTag {
+	interface Block : ResourceLocation, BlockOrTag {
 		var states: MutableMap<String, String>
 		var nbtData: NbtCompound?
 
@@ -91,7 +91,7 @@ sealed interface Argument {
 		}
 	}
 
-	interface BlockTag : Namespaced, BlockOrTag {
+	interface BlockTag : ResourceLocation, BlockOrTag {
 		override fun asString() = "#$namespace:$name"
 
 		companion object {
@@ -102,7 +102,7 @@ sealed interface Argument {
 		}
 	}
 
-	interface Biome : Namespaced {
+	interface Biome : ResourceLocation {
 		companion object {
 			operator fun invoke(biome: String, namespace: String = "minecraft") = object : Biome {
 				override val name = biome
@@ -111,7 +111,7 @@ sealed interface Argument {
 		}
 	}
 
-	data class BossBar(override val name: String, override val namespace: String = "minecraft") : Namespaced
+	data class BossBar(override val name: String, override val namespace: String = "minecraft") : ResourceLocation
 
 	data class Dimension(
 		val namespace: String? = null,
@@ -125,7 +125,7 @@ sealed interface Argument {
 		}
 	}
 
-	interface Enchantment : Namespaced {
+	interface Enchantment : ResourceLocation {
 		companion object {
 			operator fun invoke(enchantment: String, namespace: String = "minecraft") = object : Enchantment {
 				override val name = enchantment
@@ -138,7 +138,7 @@ sealed interface Argument {
 		override fun asString() = value.toString()
 	}
 
-	interface EntitySummon : Namespaced {
+	interface EntitySummon : ResourceLocation {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : EntitySummon {
 				override val name = name
@@ -151,7 +151,7 @@ sealed interface Argument {
 		override fun asString() = value.toString()
 	}
 
-	interface Item : Namespaced, ItemOrTag {
+	interface Item : ResourceLocation, ItemOrTag {
 		var nbtData: NbtCompound?
 
 		override fun asString() = "$namespace:$name${nbtData?.toString() ?: ""}"
@@ -171,7 +171,7 @@ sealed interface Argument {
 		}
 	}
 
-	interface ItemTag : Namespaced, BlockOrTag {
+	interface ItemTag : ResourceLocation, BlockOrTag {
 		override fun asString() = "#$namespace:$name"
 
 		companion object {
@@ -186,7 +186,7 @@ sealed interface Argument {
 		override fun asString() = text
 	}
 
-	interface MobEffect : Namespaced {
+	interface MobEffect : ResourceLocation {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : MobEffect {
 				override val name = name
@@ -195,7 +195,7 @@ sealed interface Argument {
 		}
 	}
 
-	interface Particle : Namespaced {
+	interface Particle : ResourceLocation {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : Particle {
 				override val name = name
@@ -212,7 +212,7 @@ sealed interface Argument {
 		override fun asString() = selector.toString()
 	}
 
-	data class Storage(override val name: String, override val namespace: String = "minecraft") : Data, Namespaced
+	data class Storage(override val name: String, override val namespace: String = "minecraft") : Data, ResourceLocation
 
 	data class Time(val value: TimeNumber) : Argument {
 		override fun asString() = value.toString()
