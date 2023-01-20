@@ -6,7 +6,7 @@ class PosNumber(var value: Double, var type: Type = Type.WORLD) : Comparable<Pos
 		LOCAL,
 		WORLD
 	}
-	
+
 	operator fun plus(other: PosNumber) = PosNumber(value + other.value, type)
 	operator fun plus(other: Number) = PosNumber(value + other.toDouble(), type)
 	operator fun minus(other: PosNumber) = PosNumber(value - other.value, type)
@@ -20,11 +20,11 @@ class PosNumber(var value: Double, var type: Type = Type.WORLD) : Comparable<Pos
 	operator fun unaryMinus() = PosNumber(-value, type)
 	operator fun unaryPlus() = PosNumber(+value, type)
 	override fun compareTo(other: PosNumber) = value.compareTo(other.value)
-	
+
 	val relative get() = PosNumber(value, Type.RELATIVE)
 	val local get() = PosNumber(value, Type.LOCAL)
 	val world get() = PosNumber(value, Type.WORLD)
-	
+
 	override fun toString() = when (type) {
 		Type.RELATIVE -> "~${value.strUnlessZero}"
 		Type.LOCAL -> "^${value.strUnlessZero}"

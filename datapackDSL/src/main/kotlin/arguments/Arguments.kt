@@ -179,6 +179,15 @@ sealed interface Argument {
 		}
 	}
 
+	interface Particle : Namespaced {
+		companion object {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : Particle {
+				override val name = name
+				override val namespace = namespace
+			}
+		}
+	}
+
 	data class Rotation(val yaw: RotNumber, val pitch: RotNumber) : Argument {
 		override fun asString() = "$yaw $pitch"
 	}

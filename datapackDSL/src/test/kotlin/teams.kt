@@ -8,6 +8,7 @@ import functions.function
 import functions.setTag
 import generated.Effects
 import generated.Items
+import generated.Particles
 import net.benwoodworth.knbt.addNbtCompound
 
 data class Team(
@@ -91,8 +92,12 @@ fun Function.vanishPlayer() = effect(self()) {
 	give(Effects.INVISIBILITY, 1, 0, true)
 }
 
-fun Function.unVanishPlayer() = effect(self()) {
-	clear(Effects.INVISIBILITY)
+fun Function.unVanishPlayer(): Command {
+	effect(self()) {
+		clear(Effects.INVISIBILITY)
+	}
+
+	return particle(Particles.WAX_OFF, coordinate(), coordinate(.125, .25, .125), 0.0, 5, ParticleMode.NORMAL)
 }
 
 fun vanish(dataPack: DataPack) = dataPack.function("vanish") {

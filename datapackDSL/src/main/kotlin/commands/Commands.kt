@@ -96,7 +96,7 @@ fun Function.me(message: String) = addLine(command("me", literal(message)))
 
 fun Function.msg(target: Argument.Entity, message: String) = addLine(command("msg", target, literal(message)))
 
-fun Function.particle(name: String, pos: Coordinate? = null) = addLine(command("particle", literal(name), pos))
+fun Function.particle(particle: Argument.Particle, pos: Coordinate? = null) = addLine(command("particle", particle, pos))
 
 @Serializable(ParticleMode.Companion.ParticleModeSerializer::class)
 enum class ParticleMode {
@@ -111,14 +111,14 @@ enum class ParticleMode {
 }
 
 fun Function.particle(
-	name: String,
+	particle: Argument.Particle,
 	pos: Coordinate,
 	delta: Coordinate,
 	speed: Double,
 	count: Int,
 	mode: ParticleMode,
 	viewers: Argument.Entity? = null,
-) = addLine(command("particle", literal(name), pos, delta, float(speed), int(count), literal(mode.asArg()), viewers))
+) = addLine(command("particle", particle, pos, delta, float(speed), int(count), literal(mode.asArg()), viewers))
 
 fun Function.perfStart() = addLine(command("perf", literal("start")))
 fun Function.perfStop() = addLine(command("perf", literal("stop")))
