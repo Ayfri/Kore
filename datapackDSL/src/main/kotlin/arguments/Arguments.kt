@@ -228,11 +228,6 @@ fun coordinate(x: PosNumber, y: PosNumber, z: PosNumber) = Vec3(x, y, z)
 fun coordinate(x: PosNumber.Type, y: PosNumber.Type, z: PosNumber.Type) = Vec3(pos(type = x), pos(type = y), pos(type = z))
 fun coordinate(type: PosNumber.Type) = Vec3(pos(type = type), pos(type = type), pos(type = type))
 
-fun vec3(x: Number = 0, y: Number = 0, z: Number = 0) = Vec3(x.pos, y.pos, z.pos)
-fun vec3(x: PosNumber, y: PosNumber, z: PosNumber) = Vec3(x, y, z)
-fun vec3(x: PosNumber.Type, y: PosNumber.Type, z: PosNumber.Type) = Vec3(pos(type = x), pos(type = y), pos(type = z))
-fun vec3(type: PosNumber.Type) = Vec3(pos(type = type), pos(type = type), pos(type = type))
-
 fun dimension(dimension: Dimension? = null) = Argument.Dimension("minecraft", dimension)
 fun dimension(customDimension: String, namespace: String? = null) = Argument.Dimension(namespace, customDimension = customDimension)
 
@@ -283,3 +278,13 @@ fun tag(name: String, namespace: String, group: Boolean = true) = Argument.Liter
 fun time(value: TimeNumber) = Argument.Time(value)
 
 fun uuid(uuid: UUID) = Argument.UUID(uuid)
+
+fun vec2(x: Number = 0, y: Number = 0) = Vec2(x, y)
+fun vec2(x: PosNumber, y: PosNumber) = Vec2(x, y)
+fun vec2(x: PosNumber.Type, y: PosNumber.Type) = Vec2(pos(type = x), pos(type = y))
+fun vec2(type: PosNumber.Type) = Vec2(pos(type = type), pos(type = type))
+
+fun vec3(x: Number = 0, y: Number = 0, z: Number = 0) = Vec3(x, y, z)
+fun vec3(x: PosNumber, y: PosNumber, z: PosNumber) = Vec3(x, y, z)
+fun vec3(x: PosNumber.Type, y: PosNumber.Type, z: PosNumber.Type) = Vec3(pos(type = x), pos(type = y), pos(type = z))
+fun vec3(type: PosNumber.Type) = Vec3(pos(type = type), pos(type = type), pos(type = type))

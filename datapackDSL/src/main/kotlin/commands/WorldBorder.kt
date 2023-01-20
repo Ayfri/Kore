@@ -1,5 +1,6 @@
 package commands
 
+import arguments.Vec2
 import arguments.float
 import arguments.int
 import arguments.literal
@@ -8,6 +9,7 @@ import functions.Function
 
 class WorldBorder(private val fn: Function) {
 	fun add(distance: Double, time: Int? = null) = fn.addLine(command("worldborder", literal("add"), float(distance), int(time)))
+	fun center(pos: Vec2) = fn.addLine(command("center", pos))
 	fun center(x: Double, z: Double) = fn.addLine(command("worldborder", literal("center"), float(x), float(z)))
 	fun center(x: PosNumber, z: PosNumber) = fn.addLine(command("worldborder", literal("center"), literal(x.asArg()), literal(z.asArg())))
 	fun damageBuffer(distance: Double) = fn.addLine(command("worldborder", literal("damage"), literal("buffer"), float(distance)))

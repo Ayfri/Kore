@@ -208,7 +208,7 @@ fun Function.spectate(target: Argument.Entity, player: Argument.Entity? = null) 
 fun Function.spectate() = addLine(command("spectate"))
 
 fun Function.spreadPlayers(
-	center: Vec3,
+	center: Vec2,
 	spreadDistance: Double,
 	maxRange: Double,
 	respectTeams: Boolean,
@@ -216,7 +216,7 @@ fun Function.spreadPlayers(
 ) = addLine(command("spreadplayers", center, float(spreadDistance), float(maxRange), bool(respectTeams), targets))
 
 fun Function.spreadPlayers(
-	center: Vec3,
+	center: Vec2,
 	spreadDistance: Double,
 	maxRange: Double,
 	maxHeight: Int,
