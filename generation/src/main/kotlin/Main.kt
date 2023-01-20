@@ -53,6 +53,6 @@ suspend fun main(args: Array<String>) {
 	downloadEntities()
 	downloadGamerules()
 	downloadItems()
-	downloadParticules()
+	downloadParticles()
 	downloadRecipes()
 }

@@ -6,20 +6,20 @@ import getFromCacheOrDownloadTxt
 import minecraftVersion
 import url
 
-suspend fun downloadParticules() {
+suspend fun downloadParticles() {
 	val url = url("data/registries/particle_type.txt")
-	val particules = getFromCacheOrDownloadTxt("particules.txt", url).lines()
+	val particles = getFromCacheOrDownloadTxt("particles.txt", url).lines()
 
-	generateParticulesEnum(particules, url)
+	generateParticlesEnum(particles, url)
 }
 
-fun generateParticulesEnum(particules: List<String>, sourceUrl: String) {
-	val name = "Particules"
+fun generateParticlesEnum(particles: List<String>, sourceUrl: String) {
+	val name = "Particles"
 	generateEnum(
 		name = name,
 		sourceUrl = sourceUrl,
 		additionalHeaders = listOf("Minecraft version: $minecraftVersion"),
-		properties = particules.map { it.substringAfter("minecraft:").uppercase() },
+		properties = particles.map { it.substringAfter("minecraft:").uppercase() },
 		serializer = Serializer.Lowercase,
 		customEncoder = """encoder.encodeString("minecraft:${"\${value.name.lowercase()}"}")""",
 		additionalImports = listOf("arguments.Argument")
