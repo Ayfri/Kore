@@ -72,7 +72,12 @@ class Attribute(private val fn: Function, private val target: Argument.Selector,
 }
 
 class AttributeTarget(private val fn: Function, private val target: Argument.Selector) {
-	fun get(attribute: Argument.Attribute) = Attribute(fn, target, attribute)
+	fun attribute(attribute: Argument.Attribute) = Attribute(fn, target, attribute)
+
+	fun base(attribute: Argument.Attribute, block: AttributeBase.() -> Command) = Attribute(fn, target, attribute).base(block)
+	fun get(attribute: Argument.Attribute, scale: Double? = null) = Attribute(fn, target, attribute).get(scale)
+	fun modifiers(attribute: Argument.Attribute, block: AttributeModifiers.() -> Command) =
+		Attribute(fn, target, attribute).modifiers(block)
 }
 
 class Attributes(private val fn: Function) {
@@ -84,3 +89,8 @@ fun Function.attributes(block: Attributes.() -> Command) = Attributes(this).run(
 fun Function.attributes(target: Argument.Selector, block: AttributeTarget.() -> Command) = AttributeTarget(this, target).run(block)
 fun Function.attributes(target: Argument.Selector, attribute: Argument.Attribute, block: Attribute.() -> Command) =
 	Attribute(this, target, attribute).run(block)
+
+fun Function.attributes(target: Argument.Selector) = AttributeTarget(this, target)
+fun Function.attributes(target: Argument.Selector, attribute: Argument.Attribute) = Attribute(this, target, attribute)
+
+val Function.attributes get() = Attributes(this)

@@ -36,20 +36,21 @@ fun main() {
 				block()
 			}
 
-			attributes {
-				get(self()) {
-					val first = get(Attributes.GENERIC_ARMOR)
-					first.get()
+			execute {
+				storeResult {
+					score(self(), "test")
+				}
+
+				run {
+					attributes(self(), Attributes.GENERIC_ARMOR).get()
 				}
 			}
 
-			val selector = allPlayers {
+			advancements.grant(allPlayers {
 				dx = 1.0
 				level = range(1..5)
 				gamemode = !Gamemode.CREATIVE
-			}
-
-			advancements.grant(selector, Advancements.Story.IronTools)
+			}, Advancements.Story.IronTools)
 
 			clear(targets = allPlayers(), item = Items.STONE, maxCount = 1)
 
@@ -88,7 +89,7 @@ fun main() {
 
 				addBlankLine()
 				modify("Motion") {
-					insert(1, coordinate(2.relativePos, 2.pos, 2.pos), "test")
+					insert(1, vec3(2.relativePos, 2.pos, 2.pos), "test")
 				}
 			}
 
@@ -137,8 +138,8 @@ fun main() {
 			items.replaceBlock(coordinate(0, 0, 0), CONTAINER[5], Items.DIAMOND_SWORD {
 				this["Enchantments"] = nbtList {
 					addNbtCompound {
-						this["level"] = 5
-						this["name"] = Enchantments.SHARPNESS
+						this["lvl"] = 5
+						this["id"] = Enchantments.SHARPNESS
 					}
 				}
 			}, 20)
