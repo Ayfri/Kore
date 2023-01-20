@@ -1,7 +1,7 @@
 package commands
 
 import arguments.Argument
-import arguments.Coordinate
+import arguments.Vec3
 import arguments.literal
 import functions.Function
 import kotlinx.serialization.Serializable
@@ -20,12 +20,12 @@ enum class CloneMode {
 	}
 }
 
-fun Function.clone(begin: Coordinate, end: Coordinate, destination: Coordinate) = addLine(command("clone", begin, end, destination))
-fun Function.cloneFiltered(begin: Coordinate, end: Coordinate, destination: Coordinate, filter: Argument.BlockOrTag, mode: CloneMode) =
+fun Function.clone(begin: Vec3, end: Vec3, destination: Vec3) = addLine(command("clone", begin, end, destination))
+fun Function.cloneFiltered(begin: Vec3, end: Vec3, destination: Vec3, filter: Argument.BlockOrTag, mode: CloneMode) =
 	addLine(command("clone", begin, end, destination, literal("filtered"), filter, literal(mode.asArg())))
 
-fun Function.cloneMasked(begin: Coordinate, end: Coordinate, destination: Coordinate, mode: CloneMode) =
+fun Function.cloneMasked(begin: Vec3, end: Vec3, destination: Vec3, mode: CloneMode) =
 	addLine(command("clone", begin, end, destination, literal("masked"), literal(mode.asArg())))
 
-fun Function.cloneReplace(begin: Coordinate, end: Coordinate, destination: Coordinate, mode: CloneMode) =
+fun Function.cloneReplace(begin: Vec3, end: Vec3, destination: Vec3, mode: CloneMode) =
 	addLine(command("clone", begin, end, destination, literal("replace"), literal(mode.asArg())))

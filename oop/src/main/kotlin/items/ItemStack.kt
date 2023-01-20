@@ -24,4 +24,4 @@ fun itemStack(name: String, namespace: String = "minecraft", count: Int = 1, nbt
 	ItemStack(name, namespace, count, nbtData)
 
 context(Function)
-fun ItemStack.summon(position: Coordinate = coordinate()) = summon("minecraft:item", position, nbtData.toNbtCompound())
+fun ItemStack.summon(position: Vec3 = coordinate()) = summon("minecraft:item", position, nbtData.toNbtCompound())

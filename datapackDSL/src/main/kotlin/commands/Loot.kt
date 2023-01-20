@@ -8,10 +8,11 @@ import serializers.LowercaseSerializer
 
 object Target {
 	fun give(targets: Argument.Entity) = listOf(literal("give"), targets)
-	fun insert(pos: Coordinate) = listOf(literal("insert"), pos)
-	fun spawn(pos: Coordinate) = listOf(literal("spawn"), pos)
-	fun replaceBlock(pos: Coordinate, slot: SlotEntry, count: Int? = null) = listOf(literal("replace"), pos, slot(slot), int(count))
-	fun replaceEntity(entity: Argument.Entity, slot: SlotEntry, count: Int? = null) = listOf(literal("replace"), entity, slot(slot), int(count))
+	fun insert(pos: Vec3) = listOf(literal("insert"), pos)
+	fun spawn(pos: Vec3) = listOf(literal("spawn"), pos)
+	fun replaceBlock(pos: Vec3, slot: SlotEntry, count: Int? = null) = listOf(literal("replace"), pos, slot(slot), int(count))
+	fun replaceEntity(entity: Argument.Entity, slot: SlotEntry, count: Int? = null) =
+		listOf(literal("replace"), entity, slot(slot), int(count))
 }
 
 @Serializable(Hand.Companion.HandSerializer::class)
@@ -31,12 +32,12 @@ enum class Hand {
 }
 
 object Source {
-	fun fish(lootTable: String, pos: Coordinate, tool: Argument.Item? = null) = listOf(literal("fish"), literal(lootTable), pos, tool)
-	fun fish(lootTable: String, pos: Coordinate, hand: Hand) = listOf(literal("fish"), literal(lootTable), pos, literal(hand.asArg()))
+	fun fish(lootTable: String, pos: Vec3, tool: Argument.Item? = null) = listOf(literal("fish"), literal(lootTable), pos, tool)
+	fun fish(lootTable: String, pos: Vec3, hand: Hand) = listOf(literal("fish"), literal(lootTable), pos, literal(hand.asArg()))
 	fun loot(lootTable: String) = listOf(literal("loot"), literal(lootTable))
 	fun kill(targets: Argument.Entity) = listOf(literal("kill"), targets)
-	fun mine(pos: Coordinate, tool: Argument.Item? = null) = listOf(literal("mine"), pos, tool)
-	fun mine(pos: Coordinate, hand: Hand) = listOf(literal("mine"), pos, literal(hand.asArg()))
+	fun mine(pos: Vec3, tool: Argument.Item? = null) = listOf(literal("mine"), pos, tool)
+	fun mine(pos: Vec3, hand: Hand) = listOf(literal("mine"), pos, literal(hand.asArg()))
 }
 
 class Loot {

@@ -53,14 +53,14 @@ enum class FillOption {
 	}
 }
 
-fun Function.fill(from: Coordinate, to: Coordinate, block: Argument.Block, fillOption: FillOption? = null) =
+fun Function.fill(from: Vec3, to: Vec3, block: Argument.Block, fillOption: FillOption? = null) =
 	addLine(command("fill", from, to, block, literal(fillOption?.asArg())))
 
-fun Function.fill(from: Coordinate, to: Coordinate, block: Argument.Block, filter: Argument.Block) =
+fun Function.fill(from: Vec3, to: Vec3, block: Argument.Block, filter: Argument.Block) =
 	addLine(command("fill", from, to, block, literal("replace"), filter))
 
-fun Function.fillbiome(from: Coordinate, to: Coordinate, biome: Argument.Biome) = addLine(command("fillbiome", from, to, biome))
-fun Function.fillbiome(from: Coordinate, to: Coordinate, biome: Argument.Biome, filter: Argument.Biome) =
+fun Function.fillbiome(from: Vec3, to: Vec3, biome: Argument.Biome) = addLine(command("fillbiome", from, to, biome))
+fun Function.fillbiome(from: Vec3, to: Vec3, biome: Argument.Biome, filter: Argument.Biome) =
 	addLine(command("fillbiome", from, to, biome, literal("replace"), filter))
 
 fun Function.function(name: String, group: Boolean = false) =
@@ -96,7 +96,7 @@ fun Function.me(message: String) = addLine(command("me", literal(message)))
 
 fun Function.msg(target: Argument.Entity, message: String) = addLine(command("msg", target, literal(message)))
 
-fun Function.particle(particle: Argument.Particle, pos: Coordinate? = null) = addLine(command("particle", particle, pos))
+fun Function.particle(particle: Argument.Particle, pos: Vec3? = null) = addLine(command("particle", particle, pos))
 
 @Serializable(ParticleMode.Companion.ParticleModeSerializer::class)
 enum class ParticleMode {
@@ -112,8 +112,8 @@ enum class ParticleMode {
 
 fun Function.particle(
 	particle: Argument.Particle,
-	pos: Coordinate,
-	delta: Coordinate,
+	pos: Vec3,
+	delta: Vec3,
 	speed: Double,
 	count: Int,
 	mode: ParticleMode,
@@ -123,18 +123,18 @@ fun Function.particle(
 fun Function.perfStart() = addLine(command("perf", literal("start")))
 fun Function.perfStop() = addLine(command("perf", literal("stop")))
 
-fun Function.placeFeature(feature: String, pos: Coordinate) = addLine(command("place", literal("feature"), literal(feature), pos))
+fun Function.placeFeature(feature: String, pos: Vec3) = addLine(command("place", literal("feature"), literal(feature), pos))
 fun Function.placeJigsaw(
 	jigsaw: String,
 	target: String,
 	maxDepth: Int,
-	pos: Coordinate? = null,
+	pos: Vec3? = null,
 ) = addLine(command("place", literal("jigsaw"), literal(jigsaw), literal(target), int(maxDepth), pos))
 
-fun Function.placeStructure(structure: String, pos: Coordinate) = addLine(command("place", literal("structure"), literal(structure), pos))
+fun Function.placeStructure(structure: String, pos: Vec3) = addLine(command("place", literal("structure"), literal(structure), pos))
 fun Function.placeTemplate(
 	template: String,
-	pos: Coordinate? = null,
+	pos: Vec3? = null,
 	rotation: Argument.Rotation? = null,
 	mirror: Boolean? = null,
 	seed: Long? = null,
@@ -164,7 +164,7 @@ fun Function.playSound(
 	sound: String,
 	source: PlaySoundSource,
 	target: Argument.Entity,
-	pos: Coordinate? = null,
+	pos: Vec3? = null,
 	volume: Double? = null,
 	pitch: Double? = null,
 	minVolume: Double? = null,
@@ -196,19 +196,19 @@ enum class SetBlockMode {
 	}
 }
 
-fun Function.setBlock(pos: Coordinate, block: Argument.Block, mode: SetBlockMode? = null) =
+fun Function.setBlock(pos: Vec3, block: Argument.Block, mode: SetBlockMode? = null) =
 	addLine(command("setblock", pos, block, literal(mode?.asArg())))
 
-fun Function.setWorldSpawn(pos: Coordinate? = null, angle: Argument.Rotation) = addLine(command("setworldspawn", pos, angle))
+fun Function.setWorldSpawn(pos: Vec3? = null, angle: Argument.Rotation) = addLine(command("setworldspawn", pos, angle))
 
-fun Function.spawnPoint(target: Argument.Entity? = null, pos: Coordinate? = null, angle: Argument.Rotation? = null) =
+fun Function.spawnPoint(target: Argument.Entity? = null, pos: Vec3? = null, angle: Argument.Rotation? = null) =
 	addLine(command("spawnpoint", target, pos, angle))
 
 fun Function.spectate(target: Argument.Entity, player: Argument.Entity? = null) = addLine(command("spectate", target, player))
 fun Function.spectate() = addLine(command("spectate"))
 
 fun Function.spreadPlayers(
-	center: Coordinate,
+	center: Vec3,
 	spreadDistance: Double,
 	maxRange: Double,
 	respectTeams: Boolean,
@@ -216,7 +216,7 @@ fun Function.spreadPlayers(
 ) = addLine(command("spreadplayers", center, float(spreadDistance), float(maxRange), bool(respectTeams), targets))
 
 fun Function.spreadPlayers(
-	center: Coordinate,
+	center: Vec3,
 	spreadDistance: Double,
 	maxRange: Double,
 	maxHeight: Int,
@@ -230,28 +230,28 @@ fun Function.stopSound(
 	sound: String? = null,
 ) = addLine(command("stopsound", targets, literal(source?.asArg()), literal(sound)))
 
-fun Function.summon(entity: String, pos: Coordinate? = null, nbt: NbtCompound?) = addLine(command("summon", literal(entity), pos, nbt(nbt)))
-fun Function.summon(entity: String, pos: Coordinate? = null, nbt: (NbtCompoundBuilder.() -> Unit)? = null) =
+fun Function.summon(entity: String, pos: Vec3? = null, nbt: NbtCompound?) = addLine(command("summon", literal(entity), pos, nbt(nbt)))
+fun Function.summon(entity: String, pos: Vec3? = null, nbt: (NbtCompoundBuilder.() -> Unit)? = null) =
 	addLine(command("summon", literal(entity), pos, nbt?.let { nbtArg(nbt) }))
 
-fun Function.summon(entity: Argument.EntitySummon, pos: Coordinate? = null, nbt: NbtCompound?) = summon(entity.asArg(), pos, nbt)
-fun Function.summon(entity: Argument.EntitySummon, pos: Coordinate? = null, nbt: (NbtCompoundBuilder.() -> Unit)? = null) =
+fun Function.summon(entity: Argument.EntitySummon, pos: Vec3? = null, nbt: NbtCompound?) = summon(entity.asArg(), pos, nbt)
+fun Function.summon(entity: Argument.EntitySummon, pos: Vec3? = null, nbt: (NbtCompoundBuilder.() -> Unit)? = null) =
 	addLine(command("summon", entity, pos, nbt?.let { nbtArg(nbt) }))
 
 fun Function.teamMsg(message: String) = addLine(command("teammsg", literal(message)))
 
 fun Function.teleport(destination: Argument.Entity) = addLine(command("teleport", destination))
 fun Function.teleport(target: Argument.Entity, destination: Argument.Entity) = addLine(command("teleport", target, destination))
-fun Function.teleport(location: Coordinate) = addLine(command("teleport", location))
-fun Function.teleport(target: Argument.Entity, location: Coordinate, rotation: Argument.Rotation? = null) =
+fun Function.teleport(location: Vec3) = addLine(command("teleport", location))
+fun Function.teleport(target: Argument.Entity, location: Vec3, rotation: Argument.Rotation? = null) =
 	addLine(command("teleport", target, location, rotation))
 
-fun Function.teleport(target: Argument.Entity, location: Coordinate, facing: Coordinate) =
+fun Function.teleport(target: Argument.Entity, location: Vec3, facing: Vec3) =
 	addLine(command("teleport", target, location, literal("facing"), facing))
 
 fun Function.teleport(
 	target: Argument.Entity,
-	location: Coordinate,
+	location: Vec3,
 	facing: Argument.Entity,
 	facingAnchor: Anchor,
 ) = addLine(command("teleport", target, location, literal("facing"), facing, literal(facingAnchor.asArg())))
@@ -296,16 +296,16 @@ fun Function.tm(message: String) = addLine(command("tm", literal(message)))
 
 fun Function.tp(destination: Argument.Entity) = addLine(command("tp", destination))
 fun Function.tp(target: Argument.Entity, destination: Argument.Entity) = addLine(command("tp", target, destination))
-fun Function.tp(location: Coordinate) = addLine(command("tp", location))
-fun Function.tp(target: Argument.Entity, location: Coordinate, rotation: Argument.Rotation? = null) =
+fun Function.tp(location: Vec3) = addLine(command("tp", location))
+fun Function.tp(target: Argument.Entity, location: Vec3, rotation: Argument.Rotation? = null) =
 	addLine(command("tp", target, location, rotation))
 
-fun Function.tp(target: Argument.Entity, location: Coordinate, facing: Coordinate) =
+fun Function.tp(target: Argument.Entity, location: Vec3, facing: Vec3) =
 	addLine(command("tp", target, location, literal("facing"), facing))
 
 fun Function.tp(
 	target: Argument.Entity,
-	location: Coordinate,
+	location: Vec3,
 	facing: Argument.Entity,
 	facingAnchor: Anchor,
 ) = addLine(command("tp", target, location, literal("facing"), facing, literal(facingAnchor.asArg())))

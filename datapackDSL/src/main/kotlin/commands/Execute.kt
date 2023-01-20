@@ -37,9 +37,9 @@ enum class BlocksTestMode {
 }
 
 class ExecuteCondition(private val ex: Execute) {
-	fun block(pos: Coordinate, block: Argument.Block) = listOf(literal("block"), pos, block)
+	fun block(pos: Vec3, block: Argument.Block) = listOf(literal("block"), pos, block)
 
-	fun blocks(start: Coordinate, end: Coordinate, destination: Coordinate, mode: BlocksTestMode) = listOf(
+	fun blocks(start: Vec3, end: Vec3, destination: Vec3, mode: BlocksTestMode) = listOf(
 		literal("blocks"), start, end, destination, literal(mode.asArg())
 	)
 
@@ -70,7 +70,7 @@ class ExecuteCondition(private val ex: Execute) {
 
 class ExecuteStore(private val ex: Execute) {
 	fun block(
-		pos: Coordinate,
+		pos: Vec3,
 		path: String,
 		type: DataType,
 		scale: Double,
@@ -112,11 +112,12 @@ class Execute {
 	fun anchored(anchor: Anchor) = array.addAll(literal("anchored"), literal(anchor.asArg()))
 	fun asTarget(target: Argument.Entity) = array.addAll(literal("as"), target).also { asArg = target }
 	fun at(target: Argument.Entity) = array.addAll(literal("at"), targetArg(target))
-	fun facing(target: Coordinate) = array.addAll(literal("facing"), target)
-	fun facingEntity(target: Argument.Entity, anchor: Anchor) = array.addAll(literal("facing"), literal("entity"), targetArg(target), literal(anchor.asArg()))
+	fun facing(target: Vec3) = array.addAll(literal("facing"), target)
+	fun facingEntity(target: Argument.Entity, anchor: Anchor) =
+		array.addAll(literal("facing"), literal("entity"), targetArg(target), literal(anchor.asArg()))
 	fun inDimension(dimension: Dimension) = array.addAll(literal("in"), dimension(dimension))
 	fun inDimension(customDimension: String, namespace: String? = null) = array.addAll(literal("in"), dimension(customDimension, namespace))
-	fun positioned(pos: Coordinate) = array.addAll(literal("positioned"), pos)
+	fun positioned(pos: Vec3) = array.addAll(literal("positioned"), pos)
 	fun positionedAs(target: Argument.Entity) = array.addAll(literal("positioned"), literal("as"), targetArg(target))
 	fun rotated(rotation: Argument.Rotation) = array.addAll(literal("rotated"), rotation)
 	fun rotatedAs(target: Argument.Entity) = array.addAll(literal("rotated"), literal("as"), targetArg(target))

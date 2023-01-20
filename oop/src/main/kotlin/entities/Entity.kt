@@ -2,21 +2,9 @@
 
 package entities
 
-import arguments.Argument
-import arguments.Coordinate
-import arguments.SlotEntry
-import arguments.allEntities
-import arguments.coordinate
-import arguments.rotation
+import arguments.*
 import arguments.selector.SelectorNbtData
-import arguments.self
-import commands.Command
-import commands.Execute
-import commands.execute
-import commands.give
-import commands.items
-import commands.teams
-import commands.teleport
+import commands.*
 import functions.Function
 import items.ItemStack
 import scoreboard.ScoreboardEntity
@@ -26,7 +14,7 @@ import teams.addMembers
 open class Entity(val selector: SelectorNbtData = SelectorNbtData()) {
 	open val type: String = selector.type ?: "null"
 	open val isPlayer get() = type == "player"
-	
+
 	fun asSelector() = allEntities(true) {
 		copyFrom(selector)
 		type = this@Entity.type
@@ -96,4 +84,4 @@ fun Entity.teleportTo(x: Number, y: Number, z: Number, yaw: Number? = null, pitc
 }
 
 context(Function)
-fun Entity.teleportTo(coordinate: Coordinate, rotation: Argument.Rotation? = null) = teleport(asSelector(), coordinate, rotation)
+fun Entity.teleportTo(coordinate: Vec3, rotation: Argument.Rotation? = null) = teleport(asSelector(), coordinate, rotation)
