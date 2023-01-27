@@ -35,10 +35,10 @@ enum class BossBarStyle {
 }
 
 class BossBar(private val fn: Function, val id: Argument.BossBar) {
-	fun add(name: TextComponents) = fn.addLine(command("bossbar", literal("add"), id, textComponent(name)))
+	fun add(name: TextComponents) = fn.addLine(command("bossbar", literal("add"), id, name))
 	fun get(result: BossBarGetResult) = fn.addLine(command("bossbar", literal("get"), id, literal(result.asArg())))
 	fun remove() = fn.addLine(command("bossbar", literal("remove"), id))
-	fun setColor(action: BossBarColor) = fn.addLine(command("bossbar", literal("set"), id, literal("color"), literal(action.asArg())))
+	fun setColor(color: BossBarColor) = fn.addLine(command("bossbar", literal("set"), id, literal("color"), color))
 	fun setMax(max: Int) = fn.addLine(command("bossbar", literal("set"), id, literal("max"), int(max)))
 	fun setName(name: String) = fn.addLine(command("bossbar", literal("set"), id, literal("name"), literal(name)))
 	fun setPlayers(targets: Argument.Selector) = fn.addLine(command("bossbar", literal("set"), id, literal("players"), targets))

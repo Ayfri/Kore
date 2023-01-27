@@ -60,7 +60,7 @@ class ExecuteCondition(private val ex: Execute) {
 		sourceObjective: String,
 		relation: RelationBlock.(Number, Number) -> Relation
 	) = listOf(
-		literal("score"), ex.targetArg(target), literal(objective), literal(relation(RelationBlock(), 0.0, 0.0).asArg()), source, literal(sourceObjective)
+		literal("score"), ex.targetArg(target), literal(objective), relation(RelationBlock(), 0.0, 0.0), source, literal(sourceObjective)
 	)
 
 	fun score(target: Argument.ScoreHolder, objective: String, range: IntRangeOrInt) = listOf(
@@ -108,7 +108,7 @@ class Execute {
 
 	fun getArguments() = array.toTypedArray()
 
-	fun align(axis: Axes, offset: Int? = null) = array.addAll(literal("align"), literal(axis.asArg()), int(offset))
+	fun align(axis: Axes, offset: Int? = null) = array.addAll(literal("align"), axis, int(offset))
 	fun anchored(anchor: Anchor) = array.addAll(literal("anchored"), literal(anchor.asArg()))
 	fun asTarget(target: Argument.Entity) = array.addAll(literal("as"), target).also { asArg = target }
 	fun at(target: Argument.Entity) = array.addAll(literal("at"), targetArg(target))

@@ -10,7 +10,9 @@ import kotlinx.serialization.encoding.Encoder
 import serializers.ToStringSerializer
 
 @Serializable(Color.Companion.ColorSerializer::class)
-sealed interface Color {
+sealed interface Color : Argument {
+	override fun asString() = toString()
+
 	companion object {
 		val AQUA = NamedColor("aqua")
 		val BLACK = NamedColor("black")

@@ -18,22 +18,22 @@ import serializers.LowercaseSerializer
 import serializers.NbtAsJsonTextComponentSerializer
 
 @Serializable(with = TextComponents.Companion.TextComponentsSerializer::class)
-data class TextComponents(val list: MutableList<TextComponent> = mutableListOf()) {
+data class TextComponents(val list: MutableList<TextComponent> = mutableListOf()) : Argument {
 	constructor(vararg components: TextComponent) : this(components.toMutableList())
-	
+
 	operator fun plus(textComponent: TextComponent): TextComponents {
 		list += textComponent
 		return this
 	}
-	
+
 	operator fun plus(textComponents: TextComponents): TextComponents {
 		list += textComponents.list
 		return this
 	}
-	
+
 	fun toJsonString() = Json.encodeToString(list)
-	
-	fun toNbtTag(): NbtTag = when (list.size) {
+
+	fun toNbtTag() = when (list.size) {
 		0 -> NbtString("")
 		1 -> list[0].toNbtTag()
 		else -> buildNbtList {
@@ -42,13 +42,20 @@ data class TextComponents(val list: MutableList<TextComponent> = mutableListOf()
 			}
 		}
 	}
-	
+
+	override fun asString() = Json.encodeToString(
+		when (list.size) {
+			1 -> if (list[0].containsOnlyText()) list[0].text else list[0]
+			else -> list
+		}
+	)
+
 	companion object {
 		object TextComponentsSerializer : KSerializer<TextComponents> {
 			override val descriptor = ListSerializer(JsonElement.serializer()).descriptor
-			
+
 			override fun deserialize(decoder: Decoder) = TextComponents()
-			
+
 			/* Encode each component, if there's only one, encode it as a single component, if the component only contains a text, encode it as a string. */
 			override fun serialize(encoder: Encoder, value: TextComponents) {
 				if (value.list.size == 1) {
@@ -92,7 +99,7 @@ data class TextComponent(
 		hoverEvent?.let { this["hoverEvent"] = it }
 		font?.let { this["font"] = it }
 	}
-	
+
 	fun containsOnlyText() = color == null
 		&& bold == null
 		&& italic == null
@@ -120,10 +127,10 @@ enum class ClickAction {
 	SUGGEST_COMMAND,
 	CHANGE_PAGE,
 	COPY_TO_CLIPBOARD;
-	
+
 	companion object {
 		val values = values()
-		
+
 		object ClickActionSerializer : LowercaseSerializer<ClickAction>(values)
 	}
 }
@@ -140,10 +147,10 @@ enum class HoverAction {
 	SHOW_TEXT,
 	SHOW_ITEM,
 	SHOW_ENTITY;
-	
+
 	companion object {
 		val values = values()
-		
+
 		object HoverActionSerializer : LowercaseSerializer<HoverAction>(values)
 	}
 }

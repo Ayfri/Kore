@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 import serializers.ToStringSerializer
 
 @Serializable(Axes.Companion.AxesRotationSerializer::class)
-class Axes(var x: Boolean = false, var y: Boolean = false, var z: Boolean = false) {
+class Axes(var x: Boolean = false, var y: Boolean = false, var z: Boolean = false) : Argument {
 	override fun toString() = when {
 		x && y && z -> "xyz"
 		x && y -> "xy"
@@ -16,11 +16,13 @@ class Axes(var x: Boolean = false, var y: Boolean = false, var z: Boolean = fals
 		z -> "z"
 		else -> ""
 	}
-	
+
+	override fun asString() = toString()
+
 	fun x() = apply { x = true }
 	fun y() = apply { y = true }
 	fun z() = apply { z = true }
-	
+
 	companion object {
 		val X = Axes(x = true)
 		val Y = Axes(y = true)
@@ -29,7 +31,7 @@ class Axes(var x: Boolean = false, var y: Boolean = false, var z: Boolean = fals
 		val XZ = Axes(x = true, z = true)
 		val YZ = Axes(y = true, z = true)
 		val XYZ = Axes(x = true, y = true, z = true)
-		
+
 		object AxesRotationSerializer : ToStringSerializer<Axes>()
 	}
 }
