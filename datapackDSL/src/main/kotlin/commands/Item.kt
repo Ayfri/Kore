@@ -4,79 +4,95 @@ import arguments.*
 import functions.Function
 
 class Item(private val fn: Function) {
-	fun modifyBlock(pos: Vec3, slot: SlotEntry, modifier: String) = fn.addLine(
+	fun modifyBlock(pos: Vec3, slot: ItemSlotType, modifier: String) = fn.addLine(
 		command(
-			"item", literal("modify"), pos, slot(slot), literal(modifier)
+			"item", literal("modify"), pos, slot, literal(modifier)
 		)
 	)
 
-	fun modifyEntity(entity: Argument.Entity, slot: SlotEntry, modifier: String) = fn.addLine(
+	fun modifyEntity(entity: Argument.Entity, slot: ItemSlotType, modifier: String) = fn.addLine(
 		command(
-			"item", literal("modify"), entity, slot(slot), literal(modifier)
+			"item", literal("modify"), entity, slot, literal(modifier)
 		)
 	)
 
-	fun replaceBlock(pos: Vec3, slot: SlotEntry, item: Argument.Item, count: Int? = null) = fn.addLine(
+	fun replaceBlock(pos: Vec3, slot: ItemSlotType, item: Argument.Item, count: Int? = null) = fn.addLine(
 		command(
-			"item", literal("replace"), literal("block"), pos, slot(slot), literal("with"), item, int(count)
+			"item", literal("replace"), literal("block"), pos, slot, literal("with"), item, int(count)
 		)
 	)
 
-	fun replaceBlock(pos: Vec3, slot: SlotEntry, withBlock: Vec3, withSlot: SlotEntry, modifier: String? = null) = fn.addLine(
+	fun replaceBlock(pos: Vec3, slot: ItemSlotType, withBlock: Vec3, withSlot: ItemSlotType, modifier: String? = null) = fn.addLine(
 		command(
 			"item",
 			literal("replace"),
 			literal("block"),
 			pos,
-			slot(slot),
+			slot,
 			literal("from"),
 			literal("block"),
 			withBlock,
-			slot(withSlot),
+			withSlot,
 			literal(modifier)
 		)
 	)
 
-	fun replaceBlock(pos: Vec3, slot: SlotEntry, withEntity: Argument.Entity, withSlot: SlotEntry, modifier: String? = null) = fn.addLine(
+	fun replaceBlock(pos: Vec3, slot: ItemSlotType, withEntity: Argument.Entity, withSlot: ItemSlotType, modifier: String? = null) =
+		fn.addLine(
+			command(
+				"item",
+				literal("replace"),
+				literal("block"),
+				pos,
+				slot,
+				literal("from"),
+				literal("entity"),
+				withEntity,
+				withSlot,
+				literal(modifier)
+			)
+	)
+
+	fun replaceEntity(entity: Argument.Entity, slot: ItemSlotType, item: Argument.Item, count: Int? = null) = fn.addLine(
 		command(
-			"item",
-			literal("replace"),
-			literal("block"),
-			pos,
-			slot(slot),
-			literal("from"),
-			literal("entity"),
-			withEntity,
-			slot(withSlot),
-			literal(modifier)
+			"item", literal("replace"), literal("entity"), entity, slot, literal("with"), item, int(count)
 		)
 	)
 
-	fun replaceEntity(entity: Argument.Entity, slot: SlotEntry, item: Argument.Item, count: Int? = null) = fn.addLine(
-		command(
-			"item", literal("replace"), literal("entity"), entity, slot(slot), literal("with"), item, int(count)
-		)
-	)
-
-	fun replaceEntity(entity: Argument.Entity, slot: SlotEntry, withBlock: Vec3, withSlot: SlotEntry, modifier: String? = null) =
+	fun replaceEntity(entity: Argument.Entity, slot: ItemSlotType, withBlock: Vec3, withSlot: ItemSlotType, modifier: String? = null) =
 		fn.addLine(
 			command(
 				"item",
 				literal("replace"),
 				literal("entity"),
 				entity,
-				slot(slot),
+				slot,
 				literal("from"),
 				literal("block"),
 				withBlock,
-				slot(withSlot),
+				withSlot,
 				literal(modifier)
 			)
 		)
 
-	fun replaceEntity(entity: Argument.Entity, slot: SlotEntry, withEntity: Argument.Entity, withSlot: SlotEntry, modifier: String? = null) = fn.addLine(
+	fun replaceEntity(
+		entity: Argument.Entity,
+		slot: ItemSlotType,
+		withEntity: Argument.Entity,
+		withSlot: ItemSlotType,
+		modifier: String? = null
+	) = fn.addLine(
 		command(
-			"item", literal("replace"), literal("entity"), entity, slot(slot), literal("from"), literal("entity"), withEntity, slot(withSlot), literal(modifier)
+			"item",
+			literal("replace"),
+			literal("entity"),
+			entity,
+			slot,
+			literal("from"),
+			literal("entity"),
+			withEntity,
+			withSlot,
+			literal(modifier)
 		)
 	)
 }

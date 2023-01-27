@@ -10,9 +10,9 @@ object Target {
 	fun give(targets: Argument.Entity) = listOf(literal("give"), targets)
 	fun insert(pos: Vec3) = listOf(literal("insert"), pos)
 	fun spawn(pos: Vec3) = listOf(literal("spawn"), pos)
-	fun replaceBlock(pos: Vec3, slot: SlotEntry, count: Int? = null) = listOf(literal("replace"), pos, slot(slot), int(count))
-	fun replaceEntity(entity: Argument.Entity, slot: SlotEntry, count: Int? = null) =
-		listOf(literal("replace"), entity, slot(slot), int(count))
+	fun replaceBlock(pos: Vec3, slot: ItemSlotType, count: Int? = null) = listOf(literal("replace"), pos, slot, int(count))
+	fun replaceEntity(entity: Argument.Entity, slot: ItemSlotType, count: Int? = null) =
+		listOf(literal("replace"), entity, slot, int(count))
 }
 
 @Serializable(Hand.Companion.HandSerializer::class)

@@ -51,7 +51,7 @@ context(Function)
 fun Entity.giveItem(item: ItemStack) = give(asSelector(), item.asArgument(), item.count)
 
 context(Function)
-fun Entity.replaceItem(slot: SlotEntry, item: ItemStack) = items {
+fun Entity.replaceItem(slot: ItemSlotType, item: ItemStack) = items {
 	replaceEntity(asSelector(), slot, item.asArgument(), item.count)
 }
 

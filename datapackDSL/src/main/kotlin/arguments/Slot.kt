@@ -1,49 +1,43 @@
 package arguments
 
-fun interface SlotType {
-	fun name(): String
+fun interface ItemSlot : Argument
+
+fun interface ItemSlotType : ItemSlot
+
+fun interface IndexedItemSlot : ItemSlot {
+	operator fun get(index: Int) = ItemSlotType { "${asString()}.$index" }
 }
 
-fun interface SlotEntry : SlotType
+private fun ItemSlot.subType(name: String) = ItemSlotType { "${asString()}.$name" }
 
-fun interface IndexedSlotType : SlotType {
-	operator fun get(index: Int) = SlotEntry { "${name()}.$index" }
+object ARMOR : ItemSlot {
+	override fun asString() = "armor"
+
+	val FEET = subType("feet")
+	val LEGS = subType("legs")
+	val CHEST = subType("chest")
+	val HEAD = subType("head")
 }
 
-private fun SlotType.subEntry(name: String) = SlotEntry { "${name()}.$name" }
+val CONTAINER = IndexedItemSlot { "container" }
+val CRAFTING = IndexedItemSlot { "crafting" }
+val ENDERCHEST = IndexedItemSlot { "enderchest" }
 
-object ARMOR : SlotType {
-	override fun name() = "armor"
-	
-	val FEET = subEntry("feet")
-	val LEGS = subEntry("legs")
-	val CHEST = subEntry("chest")
-	val HEAD = subEntry("head")
+object HORSE : IndexedItemSlot {
+	override fun asString() = "horse"
+
+	val ARMOR = subType("armor")
+	val CHEST = subType("chest")
+	val SADDLE = subType("saddle")
 }
 
-val CONTAINER = IndexedSlotType { "container" }
-val CRAFTING = IndexedSlotType { "crafting" }
-val ENDERCHEST = IndexedSlotType { "enderchest" }
+val HOTBAR = IndexedItemSlot { "hotbar" }
 
-object HORSE : IndexedSlotType {
-	override fun name() = "horse"
-	
-	val ARMOR = subEntry("armor")
-	val CHEST = subEntry("chest")
-	val SADDLE = subEntry("saddle")
+object WEAPON : ItemSlotType {
+	override fun asString() = "weapon"
+
+	val MAINHAND = subType("mainhand")
+	val OFFHAND = subType("offhand")
 }
 
-val HOTBAR = IndexedSlotType { "hotbar" }
-
-object WEAPON : SlotEntry {
-	override fun name() = "weapon"
-	
-	val MAINHAND = subEntry("mainhand")
-	val OFFHAND = subEntry("offhand")
-}
-
-data class Slot(val type: SlotEntry) : Argument {
-	override fun asString() = type.name()
-}
-
-fun slot(type: SlotEntry) = Slot(type)
+val VILLAGER = IndexedItemSlot { "villager" }
