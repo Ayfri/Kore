@@ -1,5 +1,7 @@
 import java.util.*
 
+fun String.asSerializer() = "${this}Serializer"
+
 fun String.camelCase(separator: String = "_"): String {
 	val words = lowercase().split(separator)
 	return words[0] + words.drop(1).joinToString("") { word ->

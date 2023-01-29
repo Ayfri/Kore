@@ -38,6 +38,7 @@ fun clearGeneratedPackage() {
 	generatedDir.mkdirs()
 }
 
+@Suppress("UNREACHABLE_CODE")
 suspend fun main(args: Array<String>) {
 	if ("--reload-cache" in args) clearCache()
 	clearGeneratedPackage()
@@ -55,4 +56,5 @@ suspend fun main(args: Array<String>) {
 	downloadItems()
 	downloadParticles()
 	downloadRecipes()
+	downloadSounds()
 }

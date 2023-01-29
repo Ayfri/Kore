@@ -214,6 +214,15 @@ sealed interface Argument {
 
 	data class Storage(override val name: String, override val namespace: String = "minecraft") : Data, ResourceLocation
 
+	interface Sound : ResourceLocation {
+		companion object {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : Sound {
+				override val name = name
+				override val namespace = namespace
+			}
+		}
+	}
+
 	data class Time(val value: TimeNumber) : Argument {
 		override fun asString() = value.toString()
 	}
