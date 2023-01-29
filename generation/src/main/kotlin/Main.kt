@@ -57,4 +57,5 @@ suspend fun main(args: Array<String>) {
 	downloadParticles()
 	downloadRecipes()
 	downloadSounds()
+	downloadTags()
 }

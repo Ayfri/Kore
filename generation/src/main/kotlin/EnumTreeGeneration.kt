@@ -1,20 +1,24 @@
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 
-fun generatePathEnumTree(paths: List<String>, name: String, sourceUrl: String, parentArgumentType: String) {
+fun generatePathEnumTree(paths: List<String>, name: String, sourceUrl: String, parentArgumentType: String? = null) {
 	val typeBuilders = MutableList(paths.maxOf { path -> path.count { it == '/' } }) {
 		mutableMapOf<String, TypeSpec.Builder>()
 	}
 
+	val hasParent = parentArgumentType != null
+
 	val topLevel = TypeSpec.interfaceBuilder(name).apply {
-		addSuperinterface(ClassName("arguments", "Argument", parentArgumentType))
+		parentArgumentType?.let { addSuperinterface(ClassName("arguments", "Argument", parentArgumentType)) }
 		addModifiers(KModifier.SEALED)
-		addProperty(
-			PropertySpec.builder("namespace", String::class)
-				.addModifiers(KModifier.OVERRIDE)
-				.getter(FunSpec.getterBuilder().addStatement("return \"minecraft\"").build())
-				.build()
-		)
+		if (hasParent) {
+			addProperty(
+				PropertySpec.builder("namespace", String::class)
+					.addModifiers(KModifier.OVERRIDE)
+					.getter(FunSpec.getterBuilder().addStatement("return \"minecraft\"").build())
+					.build()
+			)
+		}
 	}
 
 	for (path in paths) {
@@ -27,17 +31,18 @@ fun generatePathEnumTree(paths: List<String>, name: String, sourceUrl: String, p
 		typeBuilders[depth].getOrPut(parent) {
 			TypeSpec.enumBuilder(enumName).apply {
 				addSuperinterface(ClassName("", name))
-				addFunction(
-					FunSpec.builder("asString")
-						.addStatement("return \"\$namespace:$parent/\${name.lowercase()}\"")
-						.addModifiers(KModifier.OVERRIDE)
-						.build()
-				)
+
+				if (hasParent) {
+					addFunction(
+						FunSpec.builder("asString")
+							.addStatement("return \"\$namespace:$parent/\${name.lowercase()}\"")
+							.overrides()
+							.build()
+					)
+				}
 
 				addAnnotation(
-					AnnotationSpec.builder(
-						ClassName("kotlinx.serialization", "Serializable")
-					)
+					AnnotationSpec.builder(ClassName("kotlinx.serialization", "Serializable"))
 						.addMember("with = $enumName.Companion.${enumName.asSerializer()}::class")
 						.build()
 				)
