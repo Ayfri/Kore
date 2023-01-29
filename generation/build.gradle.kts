@@ -10,6 +10,8 @@ dependencies {
 	implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
 	implementation("io.ktor:ktor-serialization:$ktorVersion")
 	implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+
+	implementation("com.squareup:kotlinpoet:1.12.0")
 }
 
 application {
