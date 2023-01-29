@@ -50,7 +50,7 @@ fun main() {
 				dx = 1.0
 				level = range(1..5)
 				gamemode = !Gamemode.CREATIVE
-			}, Advancements.Story.IronTools)
+			}, Advancements.Story.IRON_TOOLS)
 
 			clear(targets = allPlayers(), item = Items.STONE, maxCount = 1)
 
@@ -71,7 +71,7 @@ fun main() {
 
 			data(selector(SelectorType.ALL_ENTITIES, true) {
 				advancements {
-					Advancements.Story.IronTools {
+					Advancements.Story.IRON_TOOLS {
 						this["witch"] = true
 					}
 				}
@@ -129,7 +129,7 @@ fun main() {
 
 				run {
 					advancement {
-						grant(self(), Advancements.Story.IronTools)
+						grant(self(), Advancements.Adventure.ADVENTURING_TIME)
 					}
 				}
 			}
