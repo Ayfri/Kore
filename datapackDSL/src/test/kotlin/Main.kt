@@ -156,7 +156,7 @@ fun main() {
 				}
 
 				source {
-					fish("minecraft:cod", coordinate(PosNumber.Type.RELATIVE), Hand.MAIN_HAND)
+					fish(LootTables.Entities.COD, coordinate(PosNumber.Type.RELATIVE), Hand.MAIN_HAND)
 				}
 			}
 

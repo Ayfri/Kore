@@ -186,6 +186,15 @@ sealed interface Argument {
 		override fun asString() = text
 	}
 
+	interface LootTable : ResourceLocation {
+		companion object {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : LootTable {
+				override val name = name
+				override val namespace = namespace
+			}
+		}
+	}
+
 	interface MobEffect : ResourceLocation {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : MobEffect {
