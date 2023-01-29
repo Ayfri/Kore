@@ -17,7 +17,7 @@ data class ItemStack(val name: String, val namespace: String = "minecraft", val 
 		}
 	}
 
-	fun asArgument() = item(name, namespace, nbtData.toNbtCompound())
+	fun asArgument() = Argument.Item(name, namespace, nbtData.toNbtCompound())
 }
 
 fun itemStack(name: String, namespace: String = "minecraft", count: Int = 1, nbtData: MutableNbtCompound = mutableNbt()) =
