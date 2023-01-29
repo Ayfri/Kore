@@ -61,8 +61,6 @@ fun generatePathEnumTree(paths: List<String>, name: String, sourceUrl: String, p
 	typeBuilders.firstOrNull()?.forEach { topLevel.addType(it.value.build()) }
 
 	generateFile(name, sourceUrl, topLevel)
-
-//	generateFile(name, content = text, sourceUrl = sourceUrl)
 }
 
 fun generateCompanion(name: String, encoderValue: String = "minecraft:\${value.name.lowercase()}"): TypeSpec {

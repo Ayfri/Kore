@@ -1,12 +1,10 @@
 package generators
 
-import Serializer
 import generateEnum
 import getFromCacheOrDownloadJson
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import minecraftVersion
 import url
 
 suspend fun downloadBiomes() {
@@ -24,20 +22,5 @@ suspend fun downloadBiomes() {
 }
 
 fun generateBiomesEnum(biomes: List<String>, sourceUrl: String) {
-	val name = "Biomes"
-	generateEnum(
-		name = name,
-		sourceUrl = sourceUrl,
-		additionalHeaders = listOf("Minecraft version: $minecraftVersion"),
-		properties = biomes.map { it.substringAfter("minecraft:").uppercase() },
-		serializer = Serializer.Lowercase,
-		customEncoder = """encoder.encodeString("minecraft:${"\${value.name.lowercase()}"}")""",
-		additionalImports = listOf("arguments.Argument"),
-		customLines = listOf(
-			"override val namespace = \"minecraft\"",
-			"",
-			"override fun asString() = \"minecraft:\${name.lowercase()}\""
-		),
-		inheritances = listOf("Argument.Biome"),
-	)
+	generateEnum(biomes, "Biomes", sourceUrl, "Biome")
 }

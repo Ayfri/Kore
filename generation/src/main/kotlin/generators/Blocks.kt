@@ -1,14 +1,14 @@
 package generators
 
-import Serializer
 import camelCase
+import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import generateEnum
 import getFromCacheOrDownloadJson
 import header
 import isIntOrBoolean
 import kotlinx.serialization.json.*
 import libDir
-import minecraftVersion
 import pascalCase
 import snakeCase
 import url
@@ -27,31 +27,29 @@ suspend fun downloadBlocks() {
 fun generateBlocks(urlString: String, blocks: JsonObject) {
 	val blocksList = blocks.keys.map { it.substringAfter("minecraft:").uppercase() }
 
-	generateBlocksEnum(urlString, blocksList)
+	generateBlocksEnum(blocksList, urlString)
 	generateSealedBlockStateClass()
 }
 
-fun generateBlocksEnum(sourceUrl: String, properties: Collection<String>) {
-	val name = "Blocks"
-	generateEnum(
-		name = name,
-		sourceUrl = sourceUrl,
-		additionalHeaders = listOf("Minecraft version: $minecraftVersion"),
-		properties = properties,
-		serializer = Serializer.Lowercase,
-		customEncoder = """encoder.encodeString("minecraft:${"\${value.name.lowercase()}"}")""",
-		additionalImports = listOf("arguments.Argument", "net.benwoodworth.knbt.NbtCompound"),
-		customLines = listOf(
-			"override val namespace = \"minecraft\"",
-			"",
-			"override var states = mutableMapOf<String, String>()",
-			"",
-			"override var nbtData: NbtCompound? = null",
-			"",
-			"override fun asString() = \"minecraft:\${name.lowercase()}\""
-		),
-		inheritances = listOf("Argument.Block"),
-	)
+fun generateBlocksEnum(blocks: List<String>, sourceUrl: String) {
+	generateEnum(blocks, "Blocks", sourceUrl, "Block") {
+		addProperty(
+			PropertySpec.builder("nbtData", ClassName("net.benwoodworth.knbt", "NbtCompound").copy(nullable = true))
+				.addModifiers(KModifier.OVERRIDE)
+				.mutable()
+				.initializer("null")
+				.build()
+		)
+
+		val stringTypeName = String::class.asTypeName()
+		addProperty(
+			PropertySpec.builder("states", MUTABLE_MAP.parameterizedBy(stringTypeName, stringTypeName))
+				.addModifiers(KModifier.OVERRIDE)
+				.mutable()
+				.initializer("mutableMapOf()")
+				.build()
+		)
+	}
 }
 
 fun generateBlockStates(urlString: String, blocks: JsonObject) {
@@ -86,7 +84,7 @@ fun generateBlockStates(urlString: String, blocks: JsonObject) {
 
 			if (propertyName in propertiesTypes) return@forEach
 			propertiesTypes[propertyName] = propertyValues
-			generateBlockStateType(propertyName, propertyValues)
+			generateBlockStateType(propertyValues, propertyName)
 		}
 
 		val states = properties.keys.filter {
@@ -113,12 +111,7 @@ fun generateSealedBlockStateClass() {
 	)
 }
 
-fun generateBlockStateType(name: String, values: Collection<String>) = generateEnum(
-	name = name,
-	path = "blockStates/types",
-	properties = values.map { it.pascalCase() },
-	serializer = Serializer.Lowercase,
-)
+fun generateBlockStateType(values: Collection<String>, name: String) = Unit
 
 fun generateBlockStatesClass(name: String, states: List<Pair<String, String>>, defaultValues: Map<String, String> = emptyMap()) {
 	val className = name.pascalCase()

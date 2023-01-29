@@ -1,9 +1,7 @@
 package generators
 
-import Serializer
 import generateEnum
 import getFromCacheOrDownloadTxt
-import minecraftVersion
 import url
 
 suspend fun downloadAttributes() {
@@ -14,20 +12,11 @@ suspend fun downloadAttributes() {
 }
 
 fun generateAttributesEnum(attributes: List<String>, sourceUrl: String) {
-	val name = "Attributes"
 	generateEnum(
-		name = name,
+		values = attributes.map { it.replaceFirst(".", "_") },
+		name = "Attributes",
 		sourceUrl = sourceUrl,
-		additionalHeaders = listOf("Minecraft version: $minecraftVersion"),
-		properties = attributes.map { it.substringAfter("minecraft:").replaceFirst(".", "_").uppercase() },
-		serializer = Serializer.Lowercase,
-		customEncoder = """encoder.encodeString(${"value.name.lowercase().replaceFirst(\"_\", \".\")"})""",
-		additionalImports = listOf("arguments.Argument"),
-		customLines = listOf(
-			"override val namespace = \"minecraft\"",
-			"",
-			"override fun asString() = \"minecraft:\${name.lowercase().replaceFirst(\"_\", \".\")}\""
-		),
-		inheritances = listOf("Argument.Attribute"),
+		parentArgumentType = "Attribute",
+		asString = "lowercase().replaceFirst(\"_\", \".\")"
 	)
 }

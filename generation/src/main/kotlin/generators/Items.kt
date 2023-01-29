@@ -1,9 +1,10 @@
 package generators
 
-import Serializer
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.PropertySpec
 import generateEnum
 import getFromCacheOrDownloadTxt
-import minecraftVersion
 import url
 
 suspend fun downloadItems() {
@@ -14,22 +15,13 @@ suspend fun downloadItems() {
 }
 
 fun generateItemsEnum(items: List<String>, sourceUrl: String) {
-	val name = "Items"
-	generateEnum(
-		name = name,
-		sourceUrl = sourceUrl,
-		additionalHeaders = listOf("Minecraft version: $minecraftVersion"),
-		properties = items.map { it.substringAfter("minecraft:").uppercase() },
-		serializer = Serializer.Lowercase,
-		customEncoder = """encoder.encodeString("minecraft:${"\${value.name.lowercase()}"}")""",
-		additionalImports = listOf("arguments.Argument", "net.benwoodworth.knbt.NbtCompound"),
-		customLines = listOf(
-			"override val namespace = \"minecraft\"",
-			"",
-			"override var nbtData: NbtCompound? = null",
-			"",
-			"override fun asString() = \"minecraft:\${name.lowercase()}\""
-		),
-		inheritances = listOf("Argument.Item"),
-	)
+	generateEnum(items, "Items", sourceUrl, "Item") {
+		addProperty(
+			PropertySpec.builder("nbtData", ClassName("net.benwoodworth.knbt", "NbtCompound").copy(nullable = true))
+				.addModifiers(KModifier.OVERRIDE)
+				.mutable()
+				.initializer("null")
+				.build()
+		)
+	}
 }

@@ -204,6 +204,15 @@ sealed interface Argument {
 		}
 	}
 
+	interface Recipe : ResourceLocation {
+		companion object {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : Recipe {
+				override val name = name
+				override val namespace = namespace
+			}
+		}
+	}
+
 	data class Rotation(val yaw: RotNumber, val pitch: RotNumber) : Argument {
 		override fun asString() = "$yaw $pitch"
 	}

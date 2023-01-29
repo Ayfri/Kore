@@ -1,9 +1,7 @@
 package generators
 
-import Serializer
 import generateEnum
 import getFromCacheOrDownloadTxt
-import minecraftVersion
 import url
 
 suspend fun downloadParticles() {
@@ -14,7 +12,8 @@ suspend fun downloadParticles() {
 }
 
 fun generateParticlesEnum(particles: List<String>, sourceUrl: String) {
-	val name = "Particles"
+	generateEnum(particles, "Particles", sourceUrl, "Particle")
+	/* val name = "Particles"
 	generateEnum(
 		name = name,
 		sourceUrl = sourceUrl,
@@ -29,5 +28,5 @@ fun generateParticlesEnum(particles: List<String>, sourceUrl: String) {
 			"override fun asString() = \"minecraft:\${name.lowercase()}\""
 		),
 		inheritances = listOf("Argument.Particle")
-	)
+	) */
 }

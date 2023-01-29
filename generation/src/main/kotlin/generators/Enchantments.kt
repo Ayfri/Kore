@@ -1,9 +1,7 @@
 package generators
 
-import Serializer
 import generateEnum
 import getFromCacheOrDownloadTxt
-import minecraftVersion
 import url
 
 suspend fun downloadEnchantments() {
@@ -14,6 +12,8 @@ suspend fun downloadEnchantments() {
 }
 
 fun generateEnchantmentsEnum(enchantments: List<String>, sourceUrl: String) {
+	generateEnum(enchantments, "Enchantments", sourceUrl, "Enchantment")
+	/*
 	val name = "Enchantments"
 	generateEnum(
 		name = name,
@@ -29,5 +29,5 @@ fun generateEnchantmentsEnum(enchantments: List<String>, sourceUrl: String) {
 			"override fun asString() = \"minecraft:\${name.lowercase()}\""
 		),
 		inheritances = listOf("Argument.Enchantment")
-	)
+	) */
 }

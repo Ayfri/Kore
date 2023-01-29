@@ -1,9 +1,7 @@
 package generators
 
-import Serializer
 import generateEnum
 import getFromCacheOrDownloadTxt
-import minecraftVersion
 import url
 
 suspend fun downloadRecipes() {
@@ -14,7 +12,8 @@ suspend fun downloadRecipes() {
 }
 
 fun generateRecipesEnum(recipes: List<String>, sourceUrl: String) {
-	val name = "Recipes"
+	generateEnum(recipes, "Recipes", sourceUrl, "Recipe")
+	/* val name = "Recipes"
 	generateEnum(
 		name = name,
 		sourceUrl = sourceUrl,
@@ -23,5 +22,5 @@ fun generateRecipesEnum(recipes: List<String>, sourceUrl: String) {
 		serializer = Serializer.Lowercase,
 		customEncoder = """encoder.encodeString("minecraft:${"\${value.name.lowercase()}"}")""",
 		additionalImports = listOf("arguments.Argument")
-	)
+	) */
 }

@@ -1,9 +1,9 @@
 package generators
 
-import Serializer
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.FunSpec
 import generateEnum
 import getFromCacheOrDownloadTxt
-import minecraftVersion
 import url
 
 suspend fun downloadEntities() {
@@ -14,21 +14,15 @@ suspend fun downloadEntities() {
 }
 
 fun generateEntitiesEnum(entities: List<String>, sourceUrl: String) {
-	val name = "Entities"
-	generateEnum(
-		name = name,
-		sourceUrl = sourceUrl,
-		additionalHeaders = listOf("Minecraft version: $minecraftVersion"),
-		properties = entities.map { it.substringAfter("minecraft:").uppercase() },
-		serializer = Serializer.Lowercase,
-		customEncoder = """encoder.encodeString("minecraft:${"\${value.name.lowercase()}"}")""",
-		additionalImports = listOf("arguments.Argument", "arguments.selector.SelectorNbtData", "commands.asArg"),
-		customLines = listOf(
-			"override val namespace = \"minecraft\"",
-			"",
-			"override fun asString() = \"minecraft:\${name.lowercase()}\""
-		),
-		inheritances = listOf("Argument.EntitySummon"),
-		additionalLines = arrayOf("fun SelectorNbtData.type(entity: $name) {\n\ttype = entity.asArg()\n}")
-	)
+	generateEnum(entities, "Entities", sourceUrl, "EntitySummon", additionalCode = { enum ->
+		addFunction(
+			FunSpec.builder("type")
+				.receiver(ClassName("arguments.selector", "SelectorNbtData"))
+				.addParameter("entity", ClassName("generated", enum))
+				.addStatement("type = entity.asArg()")
+				.build()
+		)
+
+		addImport("commands", "asArg")
+	})
 }
