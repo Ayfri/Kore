@@ -258,7 +258,7 @@ fun Function.teleport(
 
 fun Function.tell(targets: Argument.Entity, message: String) = addLine(command("tell", targets, literal(message)))
 
-fun Function.tellraw(targets: Argument.Entity, message: TextComponents) = addLine(command("tellraw", targets, textComponent(message)))
+fun Function.tellraw(targets: Argument.Entity, message: TextComponents) = addLine(command("tellraw", targets, message))
 
 @Serializable(TitleAction.Companion.TitleActionSerializer::class)
 enum class TitleAction {
@@ -287,7 +287,7 @@ enum class TitleLocation {
 
 fun Function.title(targets: Argument.Entity, action: TitleAction) = addLine(command("title", targets, literal(action.asArg())))
 fun Function.title(targets: Argument.Entity, location: TitleLocation, message: TextComponents) =
-	addLine(command("title", targets, literal(location.asArg()), textComponent(message)))
+	addLine(command("title", targets, literal(location.asArg()), message))
 
 fun Function.title(targets: Argument.Entity, fadeIn: Int, stay: Int, fadeOut: Int) =
 	addLine(command("title", targets, literal("times"), int(fadeIn), int(stay), int(fadeOut)))

@@ -26,7 +26,7 @@ open class Function(
 		lines.add(command.toString())
 		if (debug) lines.add(
 			"tellraw @a ${
-				textComponent(textComponent {
+				textComponent {
 					text = "/$command"
 
 					clickEvent {
@@ -42,7 +42,7 @@ open class Function(
 							color = Color.GRAY
 						}.toNbtTag()
 					}
-				}).asString()
+				}.asString()
 			}"
 		)
 		return command
@@ -59,7 +59,7 @@ open class Function(
 		val text = when {
 			debug -> """
 				|tellraw @a ${
-				textComponent(textComponent {
+				(textComponent {
 					text = "Running function "
 					color = Color.GRAY
 				} + textComponent {
@@ -72,7 +72,7 @@ open class Function(
 				|$this
 				|
 				|tellraw @a ${
-				textComponent(textComponent {
+				(textComponent {
 					text = "Finished running function "
 					color = Color.GRAY
 				} + textComponent {

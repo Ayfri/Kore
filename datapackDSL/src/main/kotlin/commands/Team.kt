@@ -40,18 +40,23 @@ class Modify(private val fn: Function, val team: String) {
 	fun color(color: NamedColor) = fn.addLine(command("team", literal("modify"), literal(team), literal("color"), color))
 	fun deathMessageVisibility(visibility: Visibility) =
 		fn.addLine(command("team", literal("modify"), literal(team), literal("deathMessageVisibility"), literal(visibility.asArg())))
-	fun displayName(name: TextComponents) = fn.addLine(command("team", literal("modify"), literal(team), literal("displayName"), textComponent(name)))
-	fun friendlyFire(allowed: Boolean) = fn.addLine(command("team", literal("modify"), literal(team), literal("friendlyFire"), bool(allowed)))
-	fun nametagVisibility(visibility: Visibility) = fn.addLine(command("team", literal("modify"), literal(team), literal("nametagVisibility"), literal(visibility.asArg())))
-	fun prefix(prefix: TextComponents) = fn.addLine(command("team", literal("modify"), literal(team), literal("prefix"), textComponent(prefix)))
-	fun seeFriendlyInvisibles(allowed: Boolean) = fn.addLine(command("team", literal("modify"), literal(team), literal("seeFriendlyInvisibles"), bool(allowed)))
-	fun suffix(suffix: TextComponents) = fn.addLine(command("team", literal("modify"), literal(team), literal("suffix"), textComponent(suffix)))
+
+	fun displayName(name: TextComponents) = fn.addLine(command("team", literal("modify"), literal(team), literal("displayName"), name))
+	fun friendlyFire(allowed: Boolean) =
+		fn.addLine(command("team", literal("modify"), literal(team), literal("friendlyFire"), bool(allowed)))
+
+	fun nametagVisibility(visibility: Visibility) =
+		fn.addLine(command("team", literal("modify"), literal(team), literal("nametagVisibility"), literal(visibility.asArg())))
+
+	fun prefix(prefix: TextComponents) = fn.addLine(command("team", literal("modify"), literal(team), literal("prefix"), prefix))
+	fun seeFriendlyInvisibles(allowed: Boolean) =
+		fn.addLine(command("team", literal("modify"), literal(team), literal("seeFriendlyInvisibles"), bool(allowed)))
+
+	fun suffix(suffix: TextComponents) = fn.addLine(command("team", literal("modify"), literal(team), literal("suffix"), suffix))
 }
 
 class Team(private val fn: Function) {
-	fun add(team: String, displayName: TextComponents? = null) =
-		fn.addLine(command("team", literal("add"), literal(team), displayName?.let { textComponent(it) }))
-
+	fun add(team: String, displayName: TextComponents? = null) = fn.addLine(command("team", literal("add"), literal(team), displayName))
 	fun empty(team: String) = fn.addLine(command("team", literal("empty"), literal(team)))
 	fun join(team: String, entity: Argument.ScoreHolder) = fn.addLine(command("team", literal("join"), literal(team), entity))
 	fun leave(entity: Argument.ScoreHolder) = fn.addLine(command("team", literal("leave"), entity))

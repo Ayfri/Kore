@@ -10,10 +10,7 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.encodeToJsonElement
-import net.benwoodworth.knbt.NbtString
-import net.benwoodworth.knbt.NbtTag
-import net.benwoodworth.knbt.buildNbtCompound
-import net.benwoodworth.knbt.buildNbtList
+import net.benwoodworth.knbt.*
 import serializers.LowercaseSerializer
 import serializers.NbtAsJsonTextComponentSerializer
 
@@ -43,12 +40,7 @@ data class TextComponents(val list: MutableList<TextComponent> = mutableListOf()
 		}
 	}
 
-	override fun asString() = Json.encodeToString(
-		when (list.size) {
-			1 -> if (list[0].containsOnlyText()) list[0].text else list[0]
-			else -> list
-		}
-	)
+	override fun asString() = StringifiedNbt.encodeToString(toNbtTag())
 
 	companion object {
 		object TextComponentsSerializer : KSerializer<TextComponents> {
@@ -158,7 +150,3 @@ enum class HoverAction {
 fun textComponent(text: String = "", block: TextComponent.() -> Unit = {}) = TextComponents(TextComponent(text).apply(block))
 fun TextComponent.hoverEvent(action: HoverAction = HoverAction.SHOW_TEXT, block: HoverEvent.() -> Unit) = apply { hoverEvent = HoverEvent(action, "".nbt).apply(block) }
 fun TextComponent.clickEvent(action: ClickAction = ClickAction.RUN_COMMAND, block: ClickEvent.() -> Unit) = apply { clickEvent = ClickEvent(action, "".nbt).apply(block) }
-fun textComponent(textComponents: TextComponents) = literal(Json.encodeToString(textComponents))
-
-@JvmName("textComponentNullable")
-internal fun textComponent(textComponent: TextComponents?) = literal(Json.encodeToString(textComponent))
