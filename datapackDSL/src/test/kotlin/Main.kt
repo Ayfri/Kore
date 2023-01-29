@@ -131,6 +131,8 @@ fun main() {
 					advancement {
 						grant(self(), Advancements.Adventure.ADVENTURING_TIME)
 					}
+
+					recipeGive(self(), Recipes.POLISHED_BLACKSTONE_BRICK_STAIRS_FROM_POLISHED_BLACKSTONE_BRICKS_STONECUTTING)
 				}
 			}
 

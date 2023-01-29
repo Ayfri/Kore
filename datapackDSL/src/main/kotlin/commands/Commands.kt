@@ -174,9 +174,9 @@ fun Function.publish(allowCommands: Boolean? = null) = addLine(command("publish"
 fun Function.publish(allowCommands: Boolean, gamemode: Gamemode, port: Int? = null) =
 	addLine(command("publish", bool(allowCommands), literal(gamemode.asArg()), int(port)))
 
-fun Function.recipeGive(target: Argument.Entity, recipe: String) = addLine(command("recipe", literal("give"), target, literal(recipe)))
+fun Function.recipeGive(target: Argument.Entity, recipe: Argument.Recipe) = addLine(command("recipe", literal("give"), target, recipe))
 fun Function.recipeGiveAll(target: Argument.Entity) = addLine(command("recipe", literal("give"), target, literal("*")))
-fun Function.recipeTake(target: Argument.Entity, recipe: String) = addLine(command("recipe", literal("take"), target, literal(recipe)))
+fun Function.recipeTake(target: Argument.Entity, recipe: Argument.Recipe) = addLine(command("recipe", literal("take"), target, recipe))
 fun Function.recipeTakeAll(target: Argument.Entity) = addLine(command("recipe", literal("take"), target, literal("*")))
 
 fun Function.say(message: String) = addLine(command("say", literal(message)))
