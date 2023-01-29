@@ -1,10 +1,12 @@
 package generators
 
-import Serializer
-import generateEnum
+import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.MemberName.Companion.member
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import generateFile
 import getFromCacheOrDownloadTxt
-import minecraftVersion
+import overrides
+import setSealed
 import snakeCase
 import url
 
@@ -15,80 +17,144 @@ suspend fun downloadGamerules() {
 	generateGamerulesEnums(gamerules, url)
 }
 
+private val interfaceName = "Gamerules"
+
+
 private fun String.toGameruleName() = substringAfter("gamerule").substringBefore("<").snakeCase().trim().uppercase()
 
+private fun addGameruleChild(name: String) = TypeSpec.interfaceBuilder(name).apply {
+	addAnnotation(
+		AnnotationSpec.builder(ClassName("kotlinx.serialization", "Serializable"))
+			.addMember("with = Serializer::class")
+			.build()
+	)
+
+	addSuperinterface(ClassName("generated", interfaceName))
+	setSealed()
+}.build()
+
+private fun addGamerule(name: String, parent: String) = TypeSpec.objectBuilder(name)
+	.addSuperinterface(ClassName("generated", interfaceName, parent))
+	.build()
+
 fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
-	val name = "Gamerules"
 	val booleanGamerules = gamerules.filter { it.endsWith("<value: bool>") }.map(String::toGameruleName)
 	val integerGamerules = gamerules.filter { it.endsWith("<value: integer>") }.map(String::toGameruleName)
 
-	generateEnum(
-		name = name,
-		sourceUrl = sourceUrl,
-		additionalHeaders = listOf("Minecraft version: $minecraftVersion"),
-		properties = booleanGamerules + integerGamerules.map { "$it { override val isInt = true }" },
-		serializer = Serializer.Lowercase,
-		customEncoder = """encoder.encodeString(value.name.lowercase())""",
-		customLines = listOf("open val isInt = false")
-	)
+	val topLevelInterface = TypeSpec.interfaceBuilder(interfaceName).apply {
+		addAnnotation(
+			AnnotationSpec.builder(ClassName("kotlinx.serialization", "Serializable"))
+				.addMember("with = $interfaceName.Companion.Serializer::class")
+				.build()
+		)
 
-	generateFile(
-		name = name,
-		sourceUrl = sourceUrl,
-		additionalHeaders = listOf(),
-		content = """
-			|@Serializable(with = $name.Companion.Serializer::class)
-			|sealed interface $name {
-			|	val name get() = this::class.simpleName!!
-			|
-			|	@Serializable(with = Serializer::class)
-			|	sealed interface Boolean : $name
-			|	@Serializable(with = Serializer::class)
-			|	sealed interface Int : $name
-			|
-			|	${booleanGamerules.joinToString(separator = "\n\t") { "object $it : Boolean" }}
-			|	${integerGamerules.joinToString(separator = "\n\t") { "object $it : Int" }}
-			|
-			|	companion object {
-			|		val values = $name::class.sealedSubclasses.map {
-			|			it.sealedSubclasses.map { it.objectInstance!! }
-			|		}.flatten()
-			|
-			|		fun fromString(name: String) = values.firstOrNull { it.name.equals(name, ignoreCase = true) }
-			|
-			|		object Serializer : KSerializer<$name> {
-			|			override val descriptor = PrimitiveSerialDescriptor("$name", PrimitiveKind.STRING)
-			|
-			|			override fun deserialize(decoder: Decoder): $name {
-			|				val name = decoder.decodeString()
-			|
-			|				return fromString(name) ?: throw IllegalArgumentException("Unknown $name: $${'$'}name")
-			|			}
-			|
-			|			override fun serialize(encoder: Encoder, value: $name) {
-			|				fun String.camelCase(separator: String = "_"): String {
-			|					val words = lowercase().split(separator)
-			|					return words[0] + words.drop(1).joinToString("") { word ->
-			|						word.replaceFirstChar { it.titlecase(Locale.ENGLISH) }
-			|					}
-			|				}
-			|
-			|				encoder.encodeString(value.name.camelCase())
-			|			}
-			|		}
-			|	}
-			|}
-		""".trimMargin(),
-		additionalImports = listOf(
-			"kotlinx.serialization.KSerializer",
-			"kotlinx.serialization.descriptors.PrimitiveKind",
-			"kotlinx.serialization.descriptors.PrimitiveSerialDescriptor",
-			"kotlinx.serialization.encoding.Decoder",
-			"kotlinx.serialization.encoding.Encoder",
-			"kotlinx.serialization.Serializable",
-			"java.util.*"
-		),
-		suppresses = listOf("ClassName", "SERIALIZER_TYPE_INCOMPATIBLE"),
-		additionalLines = arrayOf("")
-	)
+		setSealed()
+
+		addProperty(
+			PropertySpec.builder("name", String::class)
+				.getter(FunSpec.getterBuilder().addStatement("return this::class.simpleName!!").build())
+				.build()
+		)
+
+		addType(addGameruleChild("Int"))
+		addType(addGameruleChild("Boolean"))
+
+		booleanGamerules.forEach { addType(addGamerule(it, "Boolean")) }
+		integerGamerules.forEach { addType(addGamerule(it, "Int")) }
+
+		addType(
+			TypeSpec.companionObjectBuilder().apply {
+				addProperty(
+					PropertySpec.builder("values", List::class.asClassName().parameterizedBy(ClassName("generated", interfaceName)))
+						.getter(
+							FunSpec.getterBuilder()
+								.addStatement(
+									"return %T::class.sealedSubclasses.map { it.sealedSubclasses.map { it.objectInstance!! } }.flatten()",
+									ClassName("generated", interfaceName)
+								)
+								.build()
+						)
+						.build()
+				)
+
+				addFunction(
+					FunSpec.builder("fromString")
+						.addParameter("name", String::class)
+						.returns(ClassName("generated", interfaceName).copy(nullable = true))
+						.addStatement("return values.firstOrNull { it.name.equals(name, ignoreCase = true) }")
+						.build()
+				)
+
+				addFunction(
+					FunSpec.builder("camelCase")
+						.receiver(String::class)
+						.returns(String::class)
+						.addStatement("val words = lowercase().split(\"_\")")
+						.addStatement("return words[0] + words.drop(1).joinToString(\"\") { word -> word.replaceFirstChar { it.titlecase(Locale.ENGLISH) } }")
+						.build()
+				)
+
+				addType(
+					TypeSpec.classBuilder("Serializer").apply {
+						addSuperinterface(
+							ClassName("kotlinx.serialization", "KSerializer").parameterizedBy(
+								ClassName(
+									"generated",
+									interfaceName
+								)
+							)
+						)
+
+						addProperty(
+							PropertySpec.builder("descriptor", ClassName("kotlinx.serialization.descriptors", "SerialDescriptor"))
+								.overrides()
+								.getter(
+									FunSpec.getterBuilder()
+										.addStatement(
+											"return %T(%S, %M)",
+											ClassName("kotlinx.serialization.descriptors", "PrimitiveSerialDescriptor"),
+											interfaceName,
+											ClassName("kotlinx.serialization.descriptors", "PrimitiveKind").member("STRING")
+										)
+										.build()
+								)
+								.build()
+						)
+
+						addFunction(
+							FunSpec.builder("deserialize")
+								.addParameter("decoder", ClassName("kotlinx.serialization.encoding", "Decoder"))
+								.returns(ClassName("generated", interfaceName))
+								.addStatement(
+									"return fromString(decoder.decodeString()) ?: throw %T(%S)",
+									IllegalArgumentException::class,
+									"Unknown '\${name}' gamerule"
+								)
+								.overrides()
+								.build()
+						)
+
+						addFunction(
+							FunSpec.builder("serialize")
+								.addParameter("encoder", ClassName("kotlinx.serialization.encoding", "Encoder"))
+								.addParameter("value", ClassName("generated", interfaceName))
+								.addStatement("encoder.encodeString(value.name.camelCase())")
+								.overrides()
+								.build()
+						)
+					}.build()
+				)
+			}.build()
+		)
+	}
+
+	generateFile(interfaceName, sourceUrl, topLevelInterface) {
+		addImport("java.util", "Locale")
+		addAnnotation(
+			AnnotationSpec.builder(Suppress::class)
+				.addMember("%S", "ClassName")
+				.addMember("%S", "SERIALIZER_TYPE_INCOMPATIBLE")
+				.build()
+		)
+	}
 }

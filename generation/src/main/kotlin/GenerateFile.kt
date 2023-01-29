@@ -18,7 +18,6 @@ fun generateFile(
 		)
 
 		addType(topLevel.build())
-
 		additionalCode(name)
 	}
 
