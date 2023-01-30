@@ -2,7 +2,7 @@
 
 A Kotlin DSL to generate Datapacks for Minecraft Java.
 
-It is made for now for 1.19.2, I don't think that I will support older versions.
+It is made for now for 1.19.3, I don't think that I will support older versions.
 For now, it's not on Maven Central, but I'll publish it soon.
 
 Exemple of usage :
