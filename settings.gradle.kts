@@ -1,5 +1,6 @@
 rootProject.name = "DatapackDSL"
 
+include(":conversion")
 include(":datapackDSL")
-include(":oop")
 include(":generation")
+include(":oop")
