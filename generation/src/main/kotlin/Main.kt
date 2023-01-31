@@ -9,11 +9,16 @@ import kotlinx.serialization.json.Json
 import java.io.File
 import java.nio.file.Paths
 import java.util.*
+import kotlin.io.path.absolute
 
 const val header = """// Automatically generated - do not modify!"""
 const val mainGitHubUrl = "https://raw.githubusercontent.com/PixiGeko/Minecraft-generated-data/master"
 
-val rootDir: File = Paths.get(".").toFile()
+val rootDir: File = Paths.get(".").absolute().normalize().let {
+	if (it.endsWith("generation")) it.parent
+	else it
+}.toFile()
+
 val libDir = File(rootDir, "datapackDSL")
 val cacheDir = File(rootDir, "generation/build/cache")
 
