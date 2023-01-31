@@ -34,7 +34,7 @@ class Objectives(private val fn: Function) {
 				literal("modify"),
 				literal(name),
 				literal("displayname"),
-				displayName
+				displayName.asJsonArg()
 			)
 		)
 

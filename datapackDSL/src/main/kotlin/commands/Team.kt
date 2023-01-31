@@ -48,11 +48,11 @@ class Modify(private val fn: Function, val team: String) {
 	fun nametagVisibility(visibility: Visibility) =
 		fn.addLine(command("team", literal("modify"), literal(team), literal("nametagVisibility"), literal(visibility.asArg())))
 
-	fun prefix(prefix: TextComponents) = fn.addLine(command("team", literal("modify"), literal(team), literal("prefix"), prefix))
+	fun prefix(prefix: TextComponents) = fn.addLine(command("team", literal("modify"), literal(team), literal("prefix"), prefix.asJsonArg()))
 	fun seeFriendlyInvisibles(allowed: Boolean) =
 		fn.addLine(command("team", literal("modify"), literal(team), literal("seeFriendlyInvisibles"), bool(allowed)))
 
-	fun suffix(suffix: TextComponents) = fn.addLine(command("team", literal("modify"), literal(team), literal("suffix"), suffix))
+	fun suffix(suffix: TextComponents) = fn.addLine(command("team", literal("modify"), literal(team), literal("suffix"), suffix.asJsonArg()))
 }
 
 class Team(private val fn: Function) {
