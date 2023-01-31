@@ -1,5 +1,8 @@
 package nbt
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtInt
 import net.benwoodworth.knbt.NbtString
@@ -17,6 +20,10 @@ class MutableNbtCompound(
 
 	fun nbtCompound(key: String, value: MutableNbtCompound.() -> Unit) {
 		nbtData[key] = MutableNbtCompound().apply(value).toNbtCompound()
+	}
+
+	operator fun set(key: String, value: NbtTag) {
+		nbtData[key] = value
 	}
 
 	operator fun set(key: String, value: String) {
@@ -65,6 +72,10 @@ class MutableNbtCompound(
 
 	operator fun set(key: String, value: MutableNbtCompound) {
 		nbtData[key] = value.toNbtCompound()
+	}
+
+	inline operator fun <reified T : @Serializable Any> MutableNbtCompound.set(name: String, value: T) {
+		this[name] = Json.encodeToString(value)
 	}
 }
 
