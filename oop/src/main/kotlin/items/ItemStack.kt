@@ -25,3 +25,15 @@ fun itemStack(name: String, namespace: String = "minecraft", count: Int = 1, nbt
 
 context(Function)
 fun ItemStack.summon(position: Vec3 = coordinate()) = summon("minecraft:item", position, nbtData.toNbtCompound())
+
+context(Function)
+fun ItemStack.summon(displayName: String, visible: Boolean = true) = summon("minecraft:item", coordinate(), nbtData.apply {
+	this["CustomName"] = textComponent(displayName)
+	this["CustomNameVisible"] = visible
+}.toNbtCompound())
+
+context(Function)
+fun ItemStack.summon(displayName: TextComponents, visible: Boolean = true) = summon("minecraft:item", coordinate(), nbtData.apply {
+	this["CustomName"] = displayName
+	this["CustomNameVisible"] = visible
+}.toNbtCompound())

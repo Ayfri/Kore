@@ -1,9 +1,9 @@
 
 import arguments.Color
+import arguments.DisplaySlot
 import arguments.enums.Gamemode
 import arguments.numbers.rangeOrIntStart
 import arguments.textComponent
-import commands.DisplaySlot
 import commands.execute
 import commands.say
 import entities.*
@@ -32,7 +32,11 @@ fun main() {
 			player.giveItem(item)
 			player.executeAt {
 				run {
-					item.summon()
+					item.summon(textComponent {
+						text = "MY ITEM"
+						color = Color.RED
+						bold = true
+					})
 				}
 			}
 
