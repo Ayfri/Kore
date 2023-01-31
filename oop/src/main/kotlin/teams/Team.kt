@@ -90,4 +90,4 @@ context(Function)
 fun Team.addMembers(vararg members: Argument.ScoreHolder) = members.forEach { teams { join(name, it) } }
 
 context(Function)
-fun Team.addMembers(vararg members: Entity) = addMembers(*members.map { it.asSelector() }.toTypedArray())
+fun Team.addMembers(vararg members: Entity) = addMembers(*members.map { it.asSelector { team = null } }.toTypedArray())

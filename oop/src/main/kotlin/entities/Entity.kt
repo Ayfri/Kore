@@ -15,10 +15,17 @@ open class Entity(val selector: SelectorNbtData = SelectorNbtData()) {
 	open val type: String = selector.type ?: "null"
 	open val isPlayer get() = type == "player"
 
-	fun asSelector() = allEntities(true) {
+	fun asSelector(modification: SelectorNbtData.() -> Unit = {}) = allEntities(true) {
 		copyFrom(selector)
+		modification()
 		type = this@Entity.type
 	}
+
+	var team: String?
+		get() = selector.team
+		set(value) {
+			selector.team = value
+		}
 }
 
 inline fun <reified T : Entity> Entity.toEntityOrNull() = when (this) {
@@ -36,16 +43,16 @@ fun Entity.getScore(name: String) = ScoreboardEntity(name, this@Entity)
 
 context(Function)
 fun Entity.joinTeam(team: String) = teams {
-	join(team, asSelector())
-}
+	join(team, asSelector { this.team = null })
+}.also { this.team = team }
 
 context(Function)
-fun Entity.joinTeam(team: Team) = team.addMembers(this@Entity.asSelector())
+fun Entity.joinTeam(team: Team) = team.addMembers(this@Entity.asSelector()).also { this.team = team.name }
 
 context(Function)
 fun Entity.leaveAnyTeam() = teams {
 	leave(asSelector())
-}
+}.also { team = null }
 
 context(Function)
 fun Entity.giveItem(item: ItemStack) = give(asSelector(), item.asArgument(), item.count)
