@@ -1,9 +1,9 @@
 package scoreboard
 
+import arguments.SetDisplaySlot
 import arguments.TextComponents
 import arguments.textComponent
 import commands.RenderType
-import commands.SetDisplaySlot
 import commands.scoreboard
 import entities.Entity
 import functions.Function

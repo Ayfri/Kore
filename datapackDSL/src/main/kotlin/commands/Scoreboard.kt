@@ -6,17 +6,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encoding.Encoder
 import serializers.LowercaseSerializer
 
-fun interface SetDisplaySlot {
-	fun asString(): String
-}
-
-object DisplaySlot {
-	val belowName = SetDisplaySlot { "belowName" }
-	val list = SetDisplaySlot { "list" }
-	val sidebar = SetDisplaySlot { "sidebar" }
-	fun sidebarTeam(color: NamedColor) = SetDisplaySlot { "sidebar.team.${color.name}" }
-}
-
 @Serializable(RenderType.Companion.RenderTypeSerializer::class)
 enum class RenderType {
 	HEARTS,
@@ -70,7 +59,7 @@ class Objectives(private val fn: Function) {
 				"scoreboard",
 				literal("objectives"),
 				literal("setdisplay"),
-				literal(slot.asString()),
+				slot,
 				literal(name)
 			)
 		)
@@ -119,7 +108,7 @@ class Objective(private val fn: Function, val objective: String) {
 			"scoreboard",
 			literal("players"),
 			literal("setdisplay"),
-			literal(slot.asString()),
+			slot,
 			literal(objective)
 		)
 	)
