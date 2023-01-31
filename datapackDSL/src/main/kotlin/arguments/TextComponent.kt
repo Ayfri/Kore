@@ -28,7 +28,7 @@ data class TextComponents(val list: MutableList<TextComponent> = mutableListOf()
 		return this
 	}
 
-	fun toJsonString() = Json.encodeToString(list)
+	fun toJsonString() = Json.encodeToString(this)
 
 	fun toNbtTag() = when (list.size) {
 		0 -> NbtString("")
@@ -41,6 +41,8 @@ data class TextComponents(val list: MutableList<TextComponent> = mutableListOf()
 	}
 
 	override fun asString() = StringifiedNbt.encodeToString(toNbtTag())
+
+	fun asJsonArg() = literal(toJsonString())
 
 	companion object {
 		object TextComponentsSerializer : KSerializer<TextComponents> {
@@ -92,23 +94,14 @@ data class TextComponent(
 		font?.let { this["font"] = it }
 	}
 
-	fun containsOnlyText() = color == null
-		&& bold == null
-		&& italic == null
-		&& underlined == null
-		&& strikethrough == null
-		&& obfuscated == null
-		&& insertion == null
-		&& clickEvent == null
-		&& hoverEvent == null
-		&& font == null
+	fun containsOnlyText() =
+		color == null && bold == null && italic == null && underlined == null && strikethrough == null && obfuscated == null && insertion == null && clickEvent == null && hoverEvent == null && font == null
 }
 
 @Serializable
 data class ClickEvent(
 	var action: ClickAction,
-	@Serializable(with = NbtAsJsonTextComponentSerializer::class)
-	var value: NbtTag,
+	@Serializable(with = NbtAsJsonTextComponentSerializer::class) var value: NbtTag,
 )
 
 @Serializable(ClickAction.Companion.ClickActionSerializer::class)
@@ -130,8 +123,7 @@ enum class ClickAction {
 @Serializable
 data class HoverEvent(
 	var action: HoverAction,
-	@Serializable(with = NbtAsJsonTextComponentSerializer::class)
-	var value: NbtTag,
+	@Serializable(with = NbtAsJsonTextComponentSerializer::class) var value: NbtTag,
 )
 
 @Serializable(HoverAction.Companion.HoverActionSerializer::class)
@@ -148,5 +140,8 @@ enum class HoverAction {
 }
 
 fun textComponent(text: String = "", block: TextComponent.() -> Unit = {}) = TextComponents(TextComponent(text).apply(block))
-fun TextComponent.hoverEvent(action: HoverAction = HoverAction.SHOW_TEXT, block: HoverEvent.() -> Unit) = apply { hoverEvent = HoverEvent(action, "".nbt).apply(block) }
-fun TextComponent.clickEvent(action: ClickAction = ClickAction.RUN_COMMAND, block: ClickEvent.() -> Unit) = apply { clickEvent = ClickEvent(action, "".nbt).apply(block) }
+fun TextComponent.hoverEvent(action: HoverAction = HoverAction.SHOW_TEXT, block: HoverEvent.() -> Unit) =
+	apply { hoverEvent = HoverEvent(action, "".nbt).apply(block) }
+
+fun TextComponent.clickEvent(action: ClickAction = ClickAction.RUN_COMMAND, block: ClickEvent.() -> Unit) =
+	apply { clickEvent = ClickEvent(action, "".nbt).apply(block) }
