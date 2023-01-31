@@ -299,7 +299,7 @@ fun literal(name: String) = Argument.Literal(name)
 @JvmName("literalNullable")
 internal fun literal(name: String?) = name?.let { Argument.Literal(it) }
 
-fun rotation(yaw: Number, pitch: Number) = Argument.Rotation(yaw.rot, pitch.rot)
+fun rotation(yaw: Number = 0, pitch: Number = 0) = Argument.Rotation(yaw.rot, pitch.rot)
 fun rotation(hor: RotNumber, ver: RotNumber) = Argument.Rotation(hor, ver)
 
 fun selector(base: SelectorType, limitToOne: Boolean = false, data: SelectorNbtData.() -> Unit = {}) = Argument.Selector(Selector(base).apply {
