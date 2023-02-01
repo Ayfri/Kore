@@ -131,6 +131,15 @@ sealed interface Argument {
 		override fun asString() = value.toString()
 	}
 
+	interface Fluid : ResourceLocation {
+		companion object {
+			operator fun invoke(fluid: String, namespace: String = "minecraft") = object : Fluid {
+				override val name = fluid
+				override val namespace = namespace
+			}
+		}
+	}
+
 	interface EntitySummon : ResourceLocation {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : EntitySummon {

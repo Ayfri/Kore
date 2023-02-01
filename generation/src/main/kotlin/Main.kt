@@ -54,6 +54,7 @@ suspend fun main(args: Array<String>) {
 	downloadAttributes()
 	downloadBiomes()
 	downloadBlocks()
+	downloadFluids()
 	downloadEffects()
 	downloadEnchantments()
 	downloadEntities()
