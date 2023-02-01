@@ -13,14 +13,4 @@ suspend fun downloadRecipes() {
 
 fun generateRecipesEnum(recipes: List<String>, sourceUrl: String) {
 	generateEnum(recipes, "Recipes", sourceUrl, "Recipe")
-	/* val name = "Recipes"
-	generateEnum(
-		name = name,
-		sourceUrl = sourceUrl,
-		additionalHeaders = listOf("Minecraft version: $minecraftVersion"),
-		properties = recipes.map { it.substringAfter("minecraft:").uppercase() },
-		serializer = Serializer.Lowercase,
-		customEncoder = """encoder.encodeString("minecraft:${"\${value.name.lowercase()}"}")""",
-		additionalImports = listOf("arguments.Argument")
-	) */
 }

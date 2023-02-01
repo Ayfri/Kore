@@ -13,20 +13,4 @@ suspend fun downloadParticles() {
 
 fun generateParticlesEnum(particles: List<String>, sourceUrl: String) {
 	generateEnum(particles, "Particles", sourceUrl, "Particle")
-	/* val name = "Particles"
-	generateEnum(
-		name = name,
-		sourceUrl = sourceUrl,
-		additionalHeaders = listOf("Minecraft version: $minecraftVersion"),
-		properties = particles.map { it.substringAfter("minecraft:").uppercase() },
-		serializer = Serializer.Lowercase,
-		customEncoder = """encoder.encodeString("minecraft:${"\${value.name.lowercase()}"}")""",
-		additionalImports = listOf("arguments.Argument"),
-		customLines = listOf(
-			"override val namespace = \"minecraft\"",
-			"",
-			"override fun asString() = \"minecraft:\${name.lowercase()}\""
-		),
-		inheritances = listOf("Argument.Particle")
-	) */
 }
