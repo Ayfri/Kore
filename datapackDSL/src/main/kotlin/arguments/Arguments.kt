@@ -1,13 +1,9 @@
 package arguments
 
-import arguments.enums.Dimension
 import arguments.numbers.*
 import arguments.selector.Selector
 import arguments.selector.SelectorNbtData
 import arguments.selector.SelectorType
-import arguments.selector.json
-import kotlinx.serialization.json.encodeToJsonElement
-import kotlinx.serialization.json.jsonPrimitive
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtCompoundBuilder
 import java.util.*
@@ -113,15 +109,12 @@ sealed interface Argument {
 
 	data class BossBar(override val name: String, override val namespace: String = "minecraft") : ResourceLocation
 
-	data class Dimension(
-		val namespace: String? = null,
-		val dimension: arguments.enums.Dimension? = null,
-		val customDimension: String? = null
-	) : Argument {
-		override fun asString() = when {
-			dimension != null -> "${namespace?.let { "$it:" } ?: ""}${json.encodeToJsonElement(dimension).jsonPrimitive.content}"
-			customDimension != null -> "${namespace?.let { "$it:" } ?: ""}:$customDimension"
-			else -> ""
+	interface Dimension : ResourceLocation {
+		companion object {
+			operator fun invoke(dimension: String, namespace: String = "minecraft") = object : Dimension {
+				override val name = dimension
+				override val namespace = namespace
+			}
 		}
 	}
 
@@ -271,8 +264,7 @@ fun coordinate(x: PosNumber, y: PosNumber, z: PosNumber) = Vec3(x, y, z)
 fun coordinate(x: PosNumber.Type, y: PosNumber.Type, z: PosNumber.Type) = Vec3(pos(type = x), pos(type = y), pos(type = z))
 fun coordinate(type: PosNumber.Type) = Vec3(pos(type = type), pos(type = type), pos(type = type))
 
-fun dimension(dimension: Dimension? = null) = Argument.Dimension("minecraft", dimension)
-fun dimension(customDimension: String, namespace: String? = null) = Argument.Dimension(namespace, customDimension = customDimension)
+fun dimension(customDimension: String, namespace: String = "minecraft") = Argument.Dimension(customDimension, namespace)
 
 fun enchantment(name: String, namespace: String = "minecraft") = Argument.Enchantment(name, namespace)
 
