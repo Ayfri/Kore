@@ -1,6 +1,11 @@
 plugins {
-	kotlin("jvm") version "1.8.0"
+	kotlin("jvm")
 	application
+}
+
+
+repositories {
+	mavenCentral()
 }
 
 dependencies {
@@ -14,9 +19,10 @@ dependencies {
 	implementation("com.squareup:kotlinpoet:1.12.0")
 }
 
+kotlin {
+	jvmToolchain(18)
+}
+
 application {
 	mainClass.set("MainKt")
-}
-repositories {
-	mavenCentral()
 }

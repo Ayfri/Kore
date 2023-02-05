@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	kotlin("jvm") version "1.8.0"
-	kotlin("plugin.serialization") version "1.8.0"
+	kotlin("jvm")
+	kotlin("plugin.serialization")
 	application
 }
 
@@ -16,6 +16,10 @@ dependencies {
 	api("net.benwoodworth.knbt:knbt:0.11.3")
 
 	testImplementation("org.jetbrains.kotlin:kotlin-test")
+}
+
+kotlin {
+	jvmToolchain(18)
 }
 
 tasks.withType<KotlinCompile> {
