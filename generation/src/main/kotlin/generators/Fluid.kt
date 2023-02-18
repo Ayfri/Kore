@@ -5,7 +5,7 @@ import getFromCacheOrDownloadTxt
 import url
 
 suspend fun downloadFluids() {
-	val url = url("data/registries/fluid.txt")
+	val url = url("custom-generated/registries/fluid.txt")
 	val fluids = getFromCacheOrDownloadTxt("fluids.txt", url).lines()
 
 	generateFluidsObject(fluids, url)

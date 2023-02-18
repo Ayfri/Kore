@@ -7,7 +7,7 @@ import getFromCacheOrDownloadTxt
 import url
 
 suspend fun downloadEntities() {
-	val url = url("data/registries/entity_type.txt")
+	val url = url("custom-generated/registries/entity_type.txt")
 	val entities = getFromCacheOrDownloadTxt("entities.txt", url).lines()
 
 	generateEntitiesEnum(entities, url)

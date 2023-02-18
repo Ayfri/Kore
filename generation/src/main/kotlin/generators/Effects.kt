@@ -5,7 +5,7 @@ import getFromCacheOrDownloadTxt
 import url
 
 suspend fun downloadEffects() {
-	val url = url("data/registries/mob_effect.txt")
+	val url = url("custom-generated/registries/mob_effect.txt")
 	val effects = getFromCacheOrDownloadTxt("effects.txt", url).lines()
 
 	generateEffectsEnum(effects, url)

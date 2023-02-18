@@ -8,7 +8,7 @@ import getFromCacheOrDownloadTxt
 import url
 
 suspend fun downloadItems() {
-	val url = url("data/registries/item.txt")
+	val url = url("custom-generated/registries/item.txt")
 	val items = getFromCacheOrDownloadTxt("items.txt", url).lines()
 
 	generateItemsEnum(items, url)

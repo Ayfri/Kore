@@ -4,12 +4,13 @@ import camelCase
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import generateEnum
-import getFromCacheOrDownloadJson
+import getFromCacheOrDownloadTxt
 import header
 import isIntOrBoolean
 import kotlinx.serialization.json.*
 import libDir
 import pascalCase
+import removeMinecraftPrefix
 import snakeCase
 import url
 import java.io.File
@@ -19,13 +20,13 @@ import kotlin.collections.contains
 import kotlin.collections.set
 
 suspend fun downloadBlocks() {
-	val urlString = url("generated/blocks.json")
-	val blocks = getFromCacheOrDownloadJson("blocks.json", urlString).jsonObject
-	generateBlocks(urlString, blocks)
+	val url = url("custom-generated/registries/block.txt")
+	val blocks = getFromCacheOrDownloadTxt("blocks.txt", url).lines()
+	generateBlocks(url, blocks)
 }
 
-fun generateBlocks(urlString: String, blocks: JsonObject) {
-	val blocksList = blocks.keys.map { it.substringAfter("minecraft:").uppercase() }
+fun generateBlocks(urlString: String, blocks: List<String>) {
+	val blocksList = blocks.removeMinecraftPrefix()
 
 	generateBlocksEnum(blocksList, urlString)
 	generateSealedBlockStateClass()

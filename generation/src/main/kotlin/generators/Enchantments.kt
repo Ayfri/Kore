@@ -5,7 +5,7 @@ import getFromCacheOrDownloadTxt
 import url
 
 suspend fun downloadEnchantments() {
-	val url = url("data/registries/enchantment.txt")
+	val url = url("custom-generated/registries/enchantment.txt")
 	val enchantments = getFromCacheOrDownloadTxt("enchantments.txt", url).lines()
 
 	generateEnchantmentsEnum(enchantments, url)
