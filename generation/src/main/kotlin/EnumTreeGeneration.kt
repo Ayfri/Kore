@@ -30,7 +30,7 @@ fun generatePathEnumTree(paths: List<String>, name: String, sourceUrl: String, p
 
 		typeBuilders[depth].getOrPut(parent) {
 			TypeSpec.enumBuilder(enumName).apply {
-				addSuperinterface(ClassName("", name))
+				addSuperinterface(ClassName("generated", name))
 
 				if (hasParent) {
 					addFunction(
