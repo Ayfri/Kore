@@ -104,7 +104,7 @@ fun main() {
 				base.set(10.0)
 				modifiers {
 					val uuid = UUID.randomUUID()
-					add(uuid, Attributes.GENERIC_MOVEMENT_SPEED, 10.0, AttributeModifierOperation.ADD)
+					add(uuid, "test", 10.0, AttributeModifierOperation.ADD)
 					get(uuid, .5)
 					remove(uuid)
 				}
@@ -148,7 +148,7 @@ fun main() {
 
 			comment("Replacing head with dirt")
 			items.replaceEntity(nearestEntity { type = "minecraft:zombie" }, ARMOR.HEAD, Items.DIRT, 64)
-			enchant(Enchantments.FEATHER_FALLING, 3)
+			enchant(allPlayers(), Enchantments.FEATHER_FALLING, 3)
 
 			loot {
 				target {
@@ -185,11 +185,6 @@ fun main() {
 			locateBiome(Biomes.OLD_GROWTH_BIRCH_FOREST)
 			gamerule(Gamerules.DO_DAYLIGHT_CYCLE, false)
 			gamerule(Gamerules.RANDOM_TICK_SPEED, 12)
-
-			publish()
-			publish(false)
-			publish(true, Gamemode.ADVENTURE)
-			publish(true, Gamemode.ADVENTURE, 12000)
 
 			setBlock(
 				coordinate(PosNumber.Type.RELATIVE),
