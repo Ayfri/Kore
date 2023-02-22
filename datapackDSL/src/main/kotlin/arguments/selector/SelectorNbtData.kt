@@ -67,7 +67,7 @@ data class SelectorNbtData(
 	var name: String? = null,
 	var type: String? = null,
 	var tag: String? = null,
-	var advancements: Advancements? = null,
+	@Contextual var advancements: Advancements? = null,
 	var scores: Scores? = null,
 	var sort: Sort? = null,
 	var predicate: String? = null,
@@ -163,7 +163,13 @@ data class SelectorNbtData(
 						}
 
 						is Sort -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
-						is Advancements -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
+						is Advancements -> "$key=${
+							json.encodeToJsonElement(
+								Advancements.Companion.AdvancementsSerializer,
+								value
+							).jsonPrimitive.content
+						}"
+
 						is NbtTag -> "$key=${StringifiedNbt.encodeToString(value).removeSurrounding("\"")}"
 						else -> "$key=$value"
 					}

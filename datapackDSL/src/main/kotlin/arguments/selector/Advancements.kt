@@ -1,15 +1,36 @@
 package arguments.selector
 
 import arguments.Argument
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.encoding.encodeStructure
 import kotlinx.serialization.json.jsonPrimitive
 import serializers.ToStringSerializer
 
-@Serializable(Advancement.Companion.AdvancementSerializer::class)
+@Serializable(Advancement.Companion.DefaultAdvancementSerializer::class)
 data class Advancement(val advancement: Argument.Advancement, val done: Boolean = false, val criteria: Map<String, Boolean> = emptyMap()) {
 	companion object {
+		object DefaultAdvancementSerializer : ToStringSerializer<Advancement>() {
+			override val descriptor = buildClassSerialDescriptor("Advancement") {
+				element<String>("advancement")
+				element<Boolean>("done")
+				element<Map<String, Boolean>>("criteria")
+			}
+
+			override fun serialize(encoder: Encoder, value: Advancement) {
+				encoder.encodeStructure(descriptor) {
+					encodeStringElement(descriptor, 0, value.advancement.asString())
+					encodeBooleanElement(descriptor, 1, value.done)
+					encodeSerializableElement(descriptor, 2, MapSerializer(String.serializer(), Boolean.serializer()), value.criteria)
+				}
+			}
+		}
+
 		object AdvancementSerializer : ToStringSerializer<Advancement>() {
 			override fun serialize(encoder: Encoder, value: Advancement) {
 				val criteria = when {
@@ -22,13 +43,13 @@ data class Advancement(val advancement: Argument.Advancement, val done: Boolean 
 	}
 }
 
-@Serializable(Advancements.Companion.AdvancementsSerializer::class)
-data class Advancements(val advancements: Set<Advancement> = emptySet()) {
+@Serializable
+data class Advancements(val advancements: Set<@Contextual Advancement> = emptySet()) {
 	companion object {
 		object AdvancementsSerializer : ToStringSerializer<Advancements>() {
 			override fun serialize(encoder: Encoder, value: Advancements) {
 				encoder.encodeString(value.advancements.joinToString(",", "{", "}") {
-					json.encodeToJsonElement(it).jsonPrimitive.content
+					json.encodeToJsonElement(Advancement.Companion.AdvancementSerializer, it).jsonPrimitive.content
 				})
 			}
 		}

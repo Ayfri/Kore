@@ -3,12 +3,17 @@ package arguments.selector
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.modules.SerializersModule
 
 @OptIn(ExperimentalSerializationApi::class)
 internal val json = Json {
 	ignoreUnknownKeys = true
 	allowStructuredMapKeys = true
 	explicitNulls = false
+	serializersModule = SerializersModule {
+		contextual(Advancements::class, Advancements.Companion.AdvancementsSerializer)
+		contextual(Advancement::class, Advancement.Companion.AdvancementSerializer)
+	}
 }
 
 /**
@@ -25,7 +30,7 @@ private fun String.unescape(): String {
 			result = result.replaceRange(i, i + 2, result[i + 1].toString())
 		}
 	}
-	
+
 	return when {
 		result.startsWith('"') && result.endsWith('"') -> result.substring(1, result.length - 1)
 		else -> result
@@ -34,7 +39,7 @@ private fun String.unescape(): String {
 
 data class Selector(val base: SelectorType) {
 	val nbtData = SelectorNbtData()
-	
+
 	override fun toString(): String {
 		val builder = StringBuilder("@")
 		builder.append(base.value)
@@ -43,7 +48,7 @@ data class Selector(val base: SelectorType) {
 			builder.append(json.encodeToJsonElement(nbtData).toString().unescape())
 			builder.append("]")
 		}
-		
+
 		return builder.toString()
 	}
 }
