@@ -1,9 +1,12 @@
+package features
+
+import DataPack
 import features.advancements.*
 import features.advancements.triggers.ConsumeItem
 import features.advancements.types.itemStack
-import features.predicates.RandomChance
-import features.predicates.TimeCheck
-import features.predicates.providers.intRange
+import features.predicates.conditions.alternative
+import features.predicates.conditions.randomChance
+import features.predicates.conditions.timeCheck
 import generated.Items
 import generated.LootTables
 import generated.Recipes
@@ -18,10 +21,15 @@ fun DataPack.advancementTests() {
 
 		criteria(
 			name = "test",
-			triggerCondition = ConsumeItem(itemStack(Items.ENCHANTED_GOLDEN_APPLE)),
-			RandomChance(chance = 0.5f),
-			TimeCheck(value = intRange(10f..20f)),
-		)
+			triggerCondition = ConsumeItem(itemStack(Items.ENCHANTED_GOLDEN_APPLE))
+		) {
+			randomChance(chance = 0.5f)
+			timeCheck(10f..20f)
+
+			alternative {
+				timeCheck(10f..20f)
+			}
+		}
 
 		requirements("test")
 		rewards {

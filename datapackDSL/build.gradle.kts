@@ -16,6 +16,7 @@ dependencies {
 	api("net.benwoodworth.knbt:knbt:0.11.3")
 
 	testImplementation("org.jetbrains.kotlin:kotlin-test")
+	testImplementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
 }
 
 kotlin {

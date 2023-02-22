@@ -10,3 +10,6 @@ out
 
 ### Auto-Generation
 **/generated/**.kt
+
+### Tests configurations
+**/test/**/resources/**.env

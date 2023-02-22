@@ -7,19 +7,28 @@ import arguments.selector.SelectorNbtData
 import arguments.selector.SelectorType
 import arguments.selector.Sort
 import commands.*
+import features.advancementTests
+import features.predicateTests
 import features.tags.tags
 import functions.function
 import generated.*
 import generated.Attributes
+import io.github.cdimascio.dotenv.dotenv
 import net.benwoodworth.knbt.addNbtCompound
 import java.util.*
 import kotlin.io.path.Path
 
+val configuration = dotenv()
+val minecraftSaveTestPath = Path(configuration["TEST_FOLDER"])
+
 fun main() {
+	predicateTests()
+
 	val dataPack = dataPack("test") {
 		loadTeams(this)
 		unloadTeams(this)
 		gradient(this)
+		Tellraw.launchTests()
 		advancementTests()
 
 		tags("minecraft") {
