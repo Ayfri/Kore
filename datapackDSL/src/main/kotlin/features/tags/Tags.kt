@@ -1,15 +1,19 @@
-package tags
+package features.tags
 
 import DataPack
+import Generator
 import java.io.File
 
-data class Tags(val namespace: String, val tags: MutableList<Pair<String, Tag>> = mutableListOf()) {
+data class Tags(
+	val namespace: String,
+	val tags: MutableList<Pair<String, Tag>> = mutableListOf()
+) : Generator {
 	fun add(type: String, name: String, replace: Boolean = false, block: Tag.() -> Unit): Pair<String, Tag> {
 		val tag = type to Tag(name, replace).apply(block)
 		tags += tag
 		return tag
 	}
-	
+
 	fun addTo(type: String, name: String, block: Tag.() -> Unit) {
 		val tag = tags.find { it.first == type && it.second.name == name }
 		when {
@@ -17,12 +21,12 @@ data class Tags(val namespace: String, val tags: MutableList<Pair<String, Tag>> 
 			else -> add(type, name, block = block)
 		}
 	}
-	
+
 	fun tag(type: String, name: String, replace: Boolean = false, block: Tag.() -> Unit) = add(type, name, replace, block)
-	
-	fun generate(tagsDir: File) {
+
+	override fun generate(directory: File) {
 		tags.forEach { (type, tag) ->
-			tag.generate(File(tagsDir, type))
+			tag.generate(File(directory, type))
 		}
 	}
 }

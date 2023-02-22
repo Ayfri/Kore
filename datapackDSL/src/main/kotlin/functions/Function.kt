@@ -5,7 +5,7 @@ import arguments.*
 import commands.Command
 import commands.command
 import commands.tellraw
-import tags.addToTag
+import features.tags.addToTag
 import java.io.File
 
 open class Function(

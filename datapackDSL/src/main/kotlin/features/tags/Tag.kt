@@ -1,20 +1,16 @@
-package tags
+package features.tags
 
 import DataPack
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.encodeStructure
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonTransformingSerializer
 import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.serializer
 import java.io.File
 
 @Serializable
@@ -47,9 +43,9 @@ data class SerializedTag(
 				element<Boolean>("replace")
 				element<List<TagEntry>>("values")
 			}
-			
+
 			override fun deserialize(decoder: Decoder) = serializer<SerializedTag>().deserialize(decoder)
-			
+
 			override fun serialize(encoder: Encoder, value: SerializedTag) {
 				encoder.encodeStructure(descriptor) {
 					encodeBooleanElement(descriptor, 0, value.replace)
@@ -68,23 +64,23 @@ data class Tag(
 	operator fun plusAssign(value: TagEntry) {
 		values += value
 	}
-	
+
 	operator fun plusAssign(value: String) {
 		values += TagEntry(value)
 	}
-	
+
 	operator fun plusAssign(value: Pair<String, Boolean>) {
 		values += TagEntry(value.first, value.second)
 	}
-	
+
 	fun addTag(name: String, required: Boolean? = null) {
 		values += TagEntry("#$name", required)
 	}
-	
+
 	fun add(name: String, namespace: String = "minecraft", group: Boolean = false, required: Boolean? = null) {
 		values += TagEntry("${if (group) "#" else ""}$namespace:$name", required)
 	}
-	
+
 	fun generate(tagsDir: File) {
 		val file = File(tagsDir, "$name.json")
 		file.parentFile.mkdirs()

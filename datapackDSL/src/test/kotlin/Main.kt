@@ -7,11 +7,11 @@ import arguments.selector.SelectorNbtData
 import arguments.selector.SelectorType
 import arguments.selector.Sort
 import commands.*
+import features.tags.tags
 import functions.function
 import generated.*
 import generated.Attributes
 import net.benwoodworth.knbt.addNbtCompound
-import tags.tags
 import java.util.*
 import kotlin.io.path.Path
 
