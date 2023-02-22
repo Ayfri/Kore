@@ -115,8 +115,11 @@ class Execute {
 	fun facing(target: Vec3) = array.addAll(literal("facing"), target)
 	fun facingEntity(target: Argument.Entity, anchor: Anchor) =
 		array.addAll(literal("facing"), literal("entity"), targetArg(target), literal(anchor.asArg()))
-	fun inDimension(dimension: Dimension) = array.addAll(literal("in"), dimension(dimension))
-	fun inDimension(customDimension: String, namespace: String? = null) = array.addAll(literal("in"), dimension(customDimension, namespace))
+
+	fun inDimension(dimension: Dimension) = array.addAll(literal("in"), dimension)
+	fun inDimension(customDimension: String, namespace: String = "minecraft") =
+		array.addAll(literal("in"), dimension(customDimension, namespace))
+
 	fun positioned(pos: Vec3) = array.addAll(literal("positioned"), pos)
 	fun positionedAs(target: Argument.Entity) = array.addAll(literal("positioned"), literal("as"), targetArg(target))
 	fun rotated(rotation: Argument.Rotation) = array.addAll(literal("rotated"), rotation)

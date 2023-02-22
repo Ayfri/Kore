@@ -35,7 +35,7 @@ enum class BossBarStyle {
 }
 
 class BossBar(private val fn: Function, val id: Argument.BossBar) {
-	fun add(name: TextComponents) = fn.addLine(command("bossbar", literal("add"), id, name))
+	fun add(name: TextComponents) = fn.addLine(command("bossbar", literal("add"), id, name.asJsonArg()))
 	fun get(result: BossBarGetResult) = fn.addLine(command("bossbar", literal("get"), id, literal(result.asArg())))
 	fun remove() = fn.addLine(command("bossbar", literal("remove"), id))
 	fun setColor(color: BossBarColor) = fn.addLine(command("bossbar", literal("set"), id, literal("color"), color))

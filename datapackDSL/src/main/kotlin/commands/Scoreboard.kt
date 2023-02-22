@@ -21,7 +21,7 @@ enum class RenderType {
 class Objectives(private val fn: Function) {
 	fun add(name: String, criteria: String, displayName: TextComponents? = null) = fn.addLine(
 		command(
-			"scoreboard", literal("objectives"), literal("add"), literal(name), literal(criteria), displayName
+			"scoreboard", literal("objectives"), literal("add"), literal(name), literal(criteria), displayName?.asJsonArg()
 		)
 	)
 
@@ -76,7 +76,7 @@ class Objective(private val fn: Function, val objective: String) {
 			literal("add"),
 			literal(objective),
 			literal(criteria),
-			displayName
+			displayName?.asJsonArg()
 		)
 	)
 
@@ -87,7 +87,7 @@ class Objective(private val fn: Function, val objective: String) {
 			literal("modify"),
 			literal(objective),
 			literal("displayname"),
-			displayName
+			displayName.asJsonArg()
 		)
 	)
 

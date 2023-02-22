@@ -56,7 +56,9 @@ class Modify(private val fn: Function, val team: String) {
 }
 
 class Team(private val fn: Function) {
-	fun add(team: String, displayName: TextComponents? = null) = fn.addLine(command("team", literal("add"), literal(team), displayName))
+	fun add(team: String, displayName: TextComponents? = null) =
+		fn.addLine(command("team", literal("add"), literal(team), displayName?.asJsonArg()))
+
 	fun empty(team: String) = fn.addLine(command("team", literal("empty"), literal(team)))
 	fun join(team: String, entity: Argument.ScoreHolder) = fn.addLine(command("team", literal("join"), literal(team), entity))
 	fun leave(entity: Argument.ScoreHolder) = fn.addLine(command("team", literal("leave"), entity))

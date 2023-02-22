@@ -25,7 +25,7 @@ class AttributeBase(private val fn: Function, private val target: Argument.Selec
 }
 
 class AttributeModifiers(private val fn: Function, private val target: Argument.Selector, private val attribute: Argument.Attribute) {
-	fun add(id: UUID, name: Argument.Attribute, value: Double, operation: AttributeModifierOperation) =
+	fun add(id: UUID, name: String, value: Double, operation: AttributeModifierOperation) =
 		fn.addLine(
 			command(
 				"attribute",
@@ -34,7 +34,7 @@ class AttributeModifiers(private val fn: Function, private val target: Argument.
 				literal("modifier"),
 				literal("add"),
 				uuid(id),
-				name,
+				literal(name),
 				float(value),
 				literal(operation.asArg())
 			)

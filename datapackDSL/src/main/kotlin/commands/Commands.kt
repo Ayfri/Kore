@@ -37,7 +37,8 @@ class Effect(private val fn: Function, val target: Argument.Entity) {
 
 fun Function.effect(target: Argument.Entity, block: Effect.() -> Command) = Effect(this, target).block()
 
-fun Function.enchant(enchantment: Argument.Enchantment, level: Int? = null) = addLine(command("enchant", enchantment, int(level)))
+fun Function.enchant(target: Argument.Entity, enchantment: Argument.Enchantment, level: Int? = null) =
+	addLine(command("enchant", target, enchantment, int(level)))
 
 @Serializable(FillOption.Companion.FillOptionSerializer::class)
 enum class FillOption {
@@ -170,10 +171,6 @@ fun Function.playSound(
 	minVolume: Double? = null,
 ) = addLine(command("playsound", literal(sound), literal(source.asArg()), target, pos, float(volume), float(pitch), float(minVolume)))
 
-fun Function.publish(allowCommands: Boolean? = null) = addLine(command("publish", bool(allowCommands)))
-fun Function.publish(allowCommands: Boolean, gamemode: Gamemode, port: Int? = null) =
-	addLine(command("publish", bool(allowCommands), literal(gamemode.asArg()), int(port)))
-
 fun Function.recipeGive(target: Argument.Entity, recipe: Argument.Recipe) = addLine(command("recipe", literal("give"), target, recipe))
 fun Function.recipeGiveAll(target: Argument.Entity) = addLine(command("recipe", literal("give"), target, literal("*")))
 fun Function.recipeTake(target: Argument.Entity, recipe: Argument.Recipe) = addLine(command("recipe", literal("take"), target, recipe))
@@ -258,7 +255,7 @@ fun Function.teleport(
 
 fun Function.tell(targets: Argument.Entity, message: String) = addLine(command("tell", targets, literal(message)))
 
-fun Function.tellraw(targets: Argument.Entity, message: TextComponents) = addLine(command("tellraw", targets, message))
+fun Function.tellraw(targets: Argument.Entity, message: TextComponents) = addLine(command("tellraw", targets, message.asJsonArg()))
 
 @Serializable(TitleAction.Companion.TitleActionSerializer::class)
 enum class TitleAction {
