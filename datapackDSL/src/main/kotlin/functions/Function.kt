@@ -3,6 +3,7 @@ package functions
 import DataPack
 import arguments.*
 import commands.Command
+import commands.command
 import commands.tellraw
 import tags.addToTag
 import java.io.File
@@ -42,9 +43,10 @@ open class Function(
 							color = Color.GRAY
 						}.toNbtTag()
 					}
-				}.asString()
+				}.toJsonString()
 			}"
 		)
+
 		return command
 	}
 
@@ -52,41 +54,31 @@ open class Function(
 		lines.add("# $comment")
 	}
 
-	open fun generate(functionsDir: File) {
-		val file = File(functionsDir, "$directory/$name.mcfunction")
+	override fun generate(directory: File) {
+		val file = File(directory, "${this.directory}/$name.mcfunction")
 		file.parentFile.mkdirs()
 
-		val text = when {
-			debug -> """
-				|tellraw @a ${
-				(textComponent {
-					text = "Running function "
-					color = Color.GRAY
-				} + textComponent {
-					text = "$namespace:$name"
-					color = Color.WHITE
-					bold = true
-				}).asString()
-			}
-				|
-				|$this
-				|
-				|tellraw @a ${
-				(textComponent {
-					text = "Finished running function "
-					color = Color.GRAY
-				} + textComponent {
-					text = "$namespace:$name"
-					color = Color.WHITE
-					bold = true
-				}).asString()
-			}
-			""".trimMargin()
+		if (debug) {
+			lines.add(0, command("tellraw", allPlayers(), textComponent {
+				text = "Running function "
+				color = Color.GRAY
+			} + textComponent {
+				text = "$namespace:$name"
+				color = Color.WHITE
+				bold = true
+			}).toString())
 
-			else -> toString()
+			tellraw(allPlayers(), textComponent {
+				text = "Finished running function "
+				color = Color.GRAY
+			} + textComponent {
+				text = "$namespace:$name"
+				color = Color.WHITE
+				bold = true
+			})
 		}
 
-		file.writeText(text)
+		file.writeText(toString())
 	}
 
 	open fun clear() = lines.clear()
@@ -101,7 +93,7 @@ open class Function(
 
 	open fun debug(block: Function.() -> Unit) {
 		startDebug()
-		block()
+		apply(block)
 		endDebug()
 	}
 
@@ -116,7 +108,7 @@ open class Function(
 			override fun addLine(line: String) {}
 			override fun addLine(command: Command) = command
 			override fun comment(comment: String) {}
-			override fun generate(functionsDir: File) {}
+			override fun generate(directory: File) {}
 			override fun clear() {}
 			override fun toString() = ""
 		}
