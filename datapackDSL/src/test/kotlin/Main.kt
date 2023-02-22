@@ -21,16 +21,20 @@ import kotlin.io.path.Path
 val configuration = dotenv()
 val minecraftSaveTestPath = Path(configuration["TEST_FOLDER"])
 
+fun DataPack.setTestPath() {
+	path = minecraftSaveTestPath
+}
+
 fun main() {
+	advancementTests()
 	predicateTests()
+	Tellraw.launchTests()
 
 	val dataPack = dataPack("test") {
-		path = minecraftSaveTestPath
+		setTestPath()
 		loadTeams(this)
 		unloadTeams(this)
 		gradient(this)
-		Tellraw.launchTests()
-		advancementTests()
 
 		tags("minecraft") {
 			tag("blocks", "op") {

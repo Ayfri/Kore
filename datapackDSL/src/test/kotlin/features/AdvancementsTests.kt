@@ -1,6 +1,6 @@
 package features
 
-import DataPack
+import dataPack
 import features.advancements.*
 import features.advancements.triggers.ConsumeItem
 import features.advancements.types.itemStack
@@ -10,8 +10,10 @@ import features.predicates.conditions.timeCheck
 import generated.Items
 import generated.LootTables
 import generated.Recipes
+import setTestPath
 
-fun DataPack.advancementTests() {
+fun advancementTests() = dataPack("advancementTests") {
+	setTestPath()
 	advancement("test") {
 		display(Items.DIAMOND_SWORD, "Hello", "World") {
 			frameType = AdvancementFrameType.CHALLENGE
@@ -39,4 +41,4 @@ fun DataPack.advancementTests() {
 			recipes = listOf(Recipes.POLISHED_BLACKSTONE_BRICK_STAIRS_FROM_POLISHED_BLACKSTONE_BRICKS_STONECUTTING)
 		}
 	}
-}
+}.generate()
