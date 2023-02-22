@@ -4,12 +4,22 @@ import arguments.numbers.*
 import arguments.selector.Selector
 import arguments.selector.SelectorNbtData
 import arguments.selector.SelectorType
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encoding.Encoder
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtCompoundBuilder
+import serializers.ToStringSerializer
 import java.util.*
 
+@Serializable(Argument.ArgumentSerializer::class)
 sealed interface Argument {
 	fun asString(): String
+
+	object ArgumentSerializer : ToStringSerializer<Argument>() {
+		override fun serialize(encoder: Encoder, value: Argument) {
+			encoder.encodeString(value.asString())
+		}
+	}
 
 	sealed interface BlockOrTag : Argument
 
@@ -37,10 +47,12 @@ sealed interface Argument {
 		override fun asString() = "$namespace:$name"
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
 	object All : Argument, Possessor, ScoreHolder {
 		override fun asString() = "*"
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
 	interface Advancement : ResourceLocation {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : Advancement {
@@ -50,6 +62,7 @@ sealed interface Argument {
 		}
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
 	interface Attribute : ResourceLocation {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : Attribute {
@@ -59,6 +72,7 @@ sealed interface Argument {
 		}
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
 	interface Block : ResourceLocation, BlockOrTag {
 		var states: MutableMap<String, String>
 		var nbtData: NbtCompound?
@@ -87,6 +101,7 @@ sealed interface Argument {
 		}
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
 	interface BlockTag : ResourceLocation, BlockOrTag {
 		override fun asString() = "#$namespace:$name"
 
@@ -98,6 +113,7 @@ sealed interface Argument {
 		}
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
 	interface Biome : ResourceLocation {
 		companion object {
 			operator fun invoke(biome: String, namespace: String = "minecraft") = object : Biome {
@@ -107,8 +123,20 @@ sealed interface Argument {
 		}
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
 	data class BossBar(override val name: String, override val namespace: String = "minecraft") : ResourceLocation
 
+	@Serializable(with = ArgumentSerializer::class)
+	interface CatVariant : ResourceLocation {
+		companion object {
+			operator fun invoke(catVariant: String, namespace: String = "minecraft") = object : CatVariant {
+				override val name = catVariant
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
 	interface Dimension : ResourceLocation {
 		companion object {
 			operator fun invoke(dimension: String, namespace: String = "minecraft") = object : Dimension {
@@ -118,6 +146,7 @@ sealed interface Argument {
 		}
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
 	interface Enchantment : ResourceLocation {
 		companion object {
 			operator fun invoke(enchantment: String, namespace: String = "minecraft") = object : Enchantment {
@@ -127,10 +156,12 @@ sealed interface Argument {
 		}
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
 	data class Float(val value: Double) : Argument {
 		override fun asString() = value.toString()
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
 	interface Fluid : ResourceLocation {
 		companion object {
 			operator fun invoke(fluid: String, namespace: String = "minecraft") = object : Fluid {
@@ -140,6 +171,17 @@ sealed interface Argument {
 		}
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
+	interface FrogVariant : ResourceLocation {
+		companion object {
+			operator fun invoke(frogVariant: String, namespace: String = "minecraft") = object : FrogVariant {
+				override val name = frogVariant
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
 	interface EntitySummon : ResourceLocation {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : EntitySummon {
@@ -149,10 +191,12 @@ sealed interface Argument {
 		}
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
 	data class Int(val value: Long) : Argument {
 		override fun asString() = value.toString()
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
 	interface Item : ResourceLocation, ItemOrTag {
 		var nbtData: NbtCompound?
 
@@ -173,6 +217,7 @@ sealed interface Argument {
 		}
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
 	interface ItemTag : ResourceLocation, BlockOrTag {
 		override fun asString() = "#$namespace:$name"
 
@@ -184,10 +229,12 @@ sealed interface Argument {
 		}
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
 	data class Literal(val text: String) : Argument, Possessor, ScoreHolder {
 		override fun asString() = text
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
 	interface LootTable : ResourceLocation {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : LootTable {
@@ -197,6 +244,7 @@ sealed interface Argument {
 		}
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
 	interface MobEffect : ResourceLocation {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : MobEffect {
@@ -206,6 +254,7 @@ sealed interface Argument {
 		}
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
 	interface Particle : ResourceLocation {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : Particle {
@@ -215,6 +264,17 @@ sealed interface Argument {
 		}
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
+	interface Potion : ResourceLocation {
+		companion object {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : Potion {
+				override val name = name
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
 	interface Recipe : ResourceLocation {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : Recipe {
@@ -224,16 +284,50 @@ sealed interface Argument {
 		}
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
 	data class Rotation(val yaw: RotNumber, val pitch: RotNumber) : Argument {
 		override fun asString() = "$yaw $pitch"
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
 	data class Selector(val selector: arguments.selector.Selector) : Entity, Data, Possessor, ScoreHolder {
 		override fun asString() = selector.toString()
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
+	interface StatisticType : ResourceLocation {
+		companion object {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : StatisticType {
+				override val name = name
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
+	interface Statistic : ResourceLocation {
+		companion object {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : Statistic {
+				override val name = name
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
 	data class Storage(override val name: String, override val namespace: String = "minecraft") : Data, ResourceLocation
 
+	@Serializable(with = ArgumentSerializer::class)
+	interface Structure : ResourceLocation {
+		companion object {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : Structure {
+				override val name = name
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
 	interface Sound : ResourceLocation {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : Sound {
@@ -243,10 +337,12 @@ sealed interface Argument {
 		}
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
 	data class Time(val value: TimeNumber) : Argument {
 		override fun asString() = value.toString()
 	}
 
+	@Serializable(with = ArgumentSerializer::class)
 	data class UUID(val uuid: java.util.UUID) : Entity, ScoreHolder {
 		override fun asString() = uuid.toString()
 	}
@@ -312,7 +408,9 @@ fun allPlayers(limitToOne: Boolean = false, data: SelectorNbtData.() -> Unit = {
 fun allEntities(limitToOne: Boolean = false, data: SelectorNbtData.() -> Unit = {}) = selector(SelectorType.ALL_ENTITIES, limitToOne, data)
 fun entity(name: String) = literal(name)
 fun nearestPlayer(data: SelectorNbtData.() -> Unit = {}) = selector(SelectorType.NEAREST_PLAYER, data = data)
-fun player(name: String, data: SelectorNbtData.() -> Unit = {}) = allPlayers { this.name = name; data() }
+fun player(name: String, limitToOne: Boolean = true, data: SelectorNbtData.() -> Unit = {}) =
+	allPlayers(limitToOne) { this.name = name; data() }
+
 fun randomPlayer(data: SelectorNbtData.() -> Unit = {}) = selector(SelectorType.RANDOM_PLAYER, data = data)
 fun self(limitToOne: Boolean = false, data: SelectorNbtData.() -> Unit = {}) = selector(SelectorType.SELF, limitToOne, data)
 
