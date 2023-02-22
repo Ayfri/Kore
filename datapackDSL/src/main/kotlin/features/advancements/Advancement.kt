@@ -10,6 +10,7 @@ import features.advancements.triggers.AdvancementTriggerCondition
 import features.advancements.types.AdvancementsJSONSerializer
 import features.advancements.types.Entity
 import features.predicates.Predicate
+import features.predicates.conditions.PredicateCondition
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString
@@ -82,8 +83,15 @@ fun Advancement.criteria(name: String, triggerCondition: AdvancementTriggerCondi
 	criteria += name to AdvancementCriterion(triggerCondition, EntityOrPredicates(condition))
 }
 
-fun Advancement.criteria(name: String, triggerCondition: AdvancementTriggerCondition, vararg conditions: Predicate) {
-	criteria += name to AdvancementCriterion(triggerCondition, EntityOrPredicates(predicates = listOf(*conditions)))
+fun Advancement.criteria(name: String, triggerCondition: AdvancementTriggerCondition, vararg conditions: PredicateCondition) {
+	criteria += name to AdvancementCriterion(triggerCondition, EntityOrPredicates(predicateConditions = listOf(*conditions)))
+}
+
+fun Advancement.criteria(name: String, triggerCondition: AdvancementTriggerCondition, block: Predicate.() -> Unit) {
+	criteria += name to AdvancementCriterion(
+		triggerCondition,
+		EntityOrPredicates(predicateConditions = Predicate().apply(block).predicateConditions)
+	)
 }
 
 fun Advancement.requirements(vararg requirements: List<String>) {

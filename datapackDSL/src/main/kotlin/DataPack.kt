@@ -3,6 +3,7 @@ import annotations.FunctionsHolder
 import arguments.TextComponents
 import arguments.textComponent
 import features.advancements.Advancement
+import features.predicates.Predicate
 import features.tags.Tags
 import functions.Function
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -70,6 +71,7 @@ class DataPack(val name: String) {
 	private val functions = mutableListOf<Function>()
 	private val generatedFunctions = mutableListOf<Function>()
 	val advancements = mutableListOf<Advancement>()
+	val predicates = mutableListOf<Predicate>()
 	val tags = mutableListOf<Tags>()
 
 	fun addFunction(function: Function) {
@@ -104,6 +106,7 @@ class DataPack(val name: String) {
 		data.generateResources("advancements", advancements)
 		data.generateResources("functions", functions.groupBy { it.namespace })
 		data.generateResources("functions/$GENERATED_FUNCTIONS_FOLDER", generatedFunctions.groupBy { it.namespace }, true)
+		data.generateResources("predicates", predicates)
 		data.generateResources("tags", tags.groupBy { it.namespace })
 
 		val end = System.currentTimeMillis()

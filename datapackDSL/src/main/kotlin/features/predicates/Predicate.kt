@@ -1,49 +1,35 @@
 package features.predicates
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.descriptors.serialDescriptor
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.*
-import utils.snakeCase
+import DataPack
+import Generator
+import arguments.selector.Advancements
+import features.advancements.types.AdvancementsJSONSerializer
+import features.predicates.conditions.PredicateCondition
+import features.predicates.conditions.predicateConditionsSerializer
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import java.io.File
 
-@Serializable
-private data class PredicateSerialized(val condition: String, val predicate: Predicate) {
+
+data class Predicate(
+	var fileName: String = "predicate",
+	var predicateConditions: List<PredicateCondition> = mutableListOf(),
+) : Generator {
+	override fun generate(directory: File) {
+		val json = json.encodeToString(predicateConditionsSerializer, predicateConditions)
+		File(directory, "$fileName.json").writeText(json)
+	}
+
 	companion object {
-		object PredicateSerializedSerializer : JsonTransformingSerializer<PredicateSerialized>(serializer()) {
-			override fun transformSerialize(element: JsonElement) = buildJsonObject {
-				val condition = element.jsonObject["condition"]!!
-				put("condition", condition)
-				if (condition.jsonPrimitive.content == "minecraft:impossible") return@buildJsonObject
-
-				element.jsonObject["predicate"]?.let { predicate ->
-					predicate.jsonObject.forEach { (key, value) ->
-						if (key != "type") put(key, value)
-					}
-				}
+		private val json = Json {
+			prettyPrint = true
+			serializersModule = SerializersModule {
+				contextual(Advancements::class, AdvancementsJSONSerializer)
 			}
 		}
 	}
 }
 
-@Serializable
-internal data class PredicateFile(val predicates: Collection<Predicate> = mutableListOf()) {
-	companion object {
-		object PredicateFileSerializer : KSerializer<PredicateFile> by serializer() {
-			override val descriptor = serialDescriptor<PredicateSerialized>()
-
-			override fun serialize(encoder: Encoder, value: PredicateFile) {
-				encoder.encodeSerializableValue(
-					ListSerializer(PredicateSerialized.Companion.PredicateSerializedSerializer),
-					value.predicates.map { PredicateSerialized("minecraft:${it::class.simpleName!!.snakeCase()}", it) }
-				)
-			}
-		}
-	}
+fun DataPack.predicate(fileName: String, predicate: Predicate.() -> Unit) {
+	predicates += Predicate(fileName).apply(predicate)
 }
-
-@Serializable
-sealed interface Predicate
-
-internal fun Collection<Predicate>.toPredicateFile() = PredicateFile(this)

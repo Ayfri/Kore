@@ -4,6 +4,8 @@ import arguments.Argument
 import features.advancements.serializers.IntRangeOrIntJson
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.NbtCompoundBuilder
+import net.benwoodworth.knbt.buildNbtCompound
 
 @Serializable
 data class ItemStack(
@@ -27,4 +29,12 @@ fun itemStack(item: Argument.Item, init: ItemStack.() -> Unit = {}): ItemStack {
 	val itemStack = ItemStack(items = listOf(item))
 	itemStack.init()
 	return itemStack
+}
+
+fun ItemStack.item(vararg items: Argument.Item) {
+	this.items = items.toList()
+}
+
+fun ItemStack.nbt(block: NbtCompoundBuilder.() -> Unit) {
+	nbt = buildNbtCompound(block)
 }

@@ -25,6 +25,7 @@ fun main() {
 	predicateTests()
 
 	val dataPack = dataPack("test") {
+		path = minecraftSaveTestPath
 		loadTeams(this)
 		unloadTeams(this)
 		gradient(this)
