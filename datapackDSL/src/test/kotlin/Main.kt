@@ -20,6 +20,7 @@ fun main() {
 		loadTeams(this)
 		unloadTeams(this)
 		gradient(this)
+		advancementTests()
 
 		tags("minecraft") {
 			tag("blocks", "op") {
