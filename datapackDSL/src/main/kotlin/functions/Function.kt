@@ -1,6 +1,7 @@
 package functions
 
 import DataPack
+import Generator
 import arguments.*
 import commands.Command
 import commands.command
@@ -13,7 +14,7 @@ open class Function(
 	val namespace: String = "minecraft",
 	var directory: String = "",
 	val datapack: DataPack
-) {
+) : Generator {
 	val lines = mutableListOf<String>()
 	var debug = false
 
