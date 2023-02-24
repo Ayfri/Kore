@@ -96,7 +96,6 @@ class DataPack(val name: String) {
 		root.mkdirs()
 
 		val serialized = SerializedDataPack(pack, filter)
-
 		File(root, "pack.mcmeta").writeText(jsonEncoder.encodeToString(serialized))
 		iconPath?.let { File(root, "pack.png").writeBytes(it.toFile().readBytes()) }
 

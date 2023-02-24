@@ -1,30 +1,36 @@
 package features
 
+import commands.execute
 import dataPack
 import features.advancements.types.item
-import features.predicates.conditions.*
+import features.predicates.conditions.matchTool
 import features.predicates.predicate
+import functions.function
+import functions.load
 import generated.Items
 import setTestPath
 
 fun predicateTests() = dataPack("predicate_tests") {
 	setTestPath()
-	predicate("test1") {
-		damageSourceProperties {
-			bypassesArmor = true
-			isExplosion = true
-		}
-
-		alternative {
-			inverted {
-				timeCheck(10f..1000f)
-			}
-		}
-
-		killedByPlayer()
-
+	val myPredicate = predicate("test1") {
 		matchTool {
 			item(Items.DIAMOND_PICKAXE)
+		}
+	}
+
+	load {
+		debug("predicate test")
+	}
+
+	function("test") {
+		execute {
+			ifCondition {
+				predicate(myPredicate)
+			}
+
+			run {
+				debug("predicate validated !")
+			}
 		}
 	}
 }.generate()

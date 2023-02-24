@@ -51,6 +51,7 @@ class ExecuteCondition(private val ex: Execute) {
 
 	fun entity(target: Argument.Entity) = listOf(literal("entity"), ex.targetArg(target))
 
+	fun predicate(predicate: Argument.Predicate) = listOf(literal("predicate"), predicate)
 	fun predicate(predicate: String) = listOf(literal("predicate"), literal(predicate))
 
 	fun score(

@@ -275,6 +275,16 @@ sealed interface Argument {
 	}
 
 	@Serializable(with = ArgumentSerializer::class)
+	interface Predicate : ResourceLocation {
+		companion object {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : Predicate {
+				override val name = name
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
 	interface Recipe : ResourceLocation {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : Recipe {
