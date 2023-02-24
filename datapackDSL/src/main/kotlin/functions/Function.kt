@@ -69,7 +69,7 @@ open class Function(
 				bold = true
 			}).toString())
 
-			tellraw(allPlayers(), textComponent {
+			debug(textComponent {
 				text = "Finished running function "
 				color = Color.GRAY
 			} + textComponent {
@@ -130,17 +130,17 @@ fun DataPack.tick(name: String? = null, directory: String = "", block: Function.
 	addToMinecraftTag("tick", name, block, directory)
 
 private fun DataPack.addToMinecraftTag(
-	name: String,
+	fileName: String,
 	functionName: String?,
 	block: Function.() -> Unit,
 	directory: String
 ) {
 	val function = Function("", "", "", this).apply(block)
-	val name = functionName ?: "${name}_${function.hashCode()}"
+	val name = functionName ?: "${fileName}_${function.hashCode()}"
 	val finalName = generatedFunction(name, directory, block)
 	val usageName = "${DataPack.GENERATED_FUNCTIONS_FOLDER}/$finalName"
-	addToTag("minecraft", "functions", name) {
-		add(usageName, "minecraft")
+	addToTag("minecraft", "functions", fileName) {
+		add(usageName, this@DataPack.name)
 	}
 }
 
