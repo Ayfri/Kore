@@ -264,12 +264,6 @@ fun main() {
 				bold = true
 			}
 		}
-
-		filter {
-			block {
-				namespace = "test"
-			}
-		}
 	}
 
 	dataPack.generate()
