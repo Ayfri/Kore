@@ -5,12 +5,12 @@ import arguments.textComponent
 import dataPack
 import functions.Function
 import functions.function
-import minecraftSaveTestPath
+import setTestPath
 
 
 object Tellraw {
 	val dp = dataPack("unit_tests") {
-		path = minecraftSaveTestPath
+		setTestPath()
 		function("complete") { complete() }
 	}
 
