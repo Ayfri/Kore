@@ -12,7 +12,7 @@ import generated.LootTables
 import generated.Recipes
 import setTestPath
 
-fun advancementTests() = dataPack("advancementTests") {
+fun advancementTests() = dataPack("advancement_tests") {
 	setTestPath()
 	advancement("test") {
 		display(Items.DIAMOND_SWORD, "Hello", "World") {
