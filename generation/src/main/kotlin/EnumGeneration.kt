@@ -31,7 +31,7 @@ fun generateEnum(
 		)
 
 		addFunction(
-			FunSpec.builder("asString")
+			FunSpec.builder("asId")
 				.addStatement("return \"\$namespace:\${name.$asString}\"")
 				.addModifiers(KModifier.OVERRIDE)
 				.build()

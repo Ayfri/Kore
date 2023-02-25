@@ -45,7 +45,7 @@ sealed interface Argument {
 		val namespace: String
 
 		fun asId() = "$namespace:$name"
-		override fun asString() = "$namespace:$name"
+		override fun asString() = asId()
 	}
 
 	@Serializable(with = ArgumentSerializer::class)
@@ -79,7 +79,7 @@ sealed interface Argument {
 		var nbtData: NbtCompound?
 
 		override fun asString(): String {
-			return "$namespace:$name${states.map { "[$it]" }.joinToString("")}${nbtData?.toString() ?: ""}"
+			return "${asId()}${states.map { "[$it]" }.joinToString("")}${nbtData?.toString() ?: ""}"
 		}
 
 		operator fun invoke(states: Map<String, String> = mutableMapOf(), nbtData: (NbtCompoundBuilder.() -> Unit)? = null) = apply {
@@ -104,7 +104,7 @@ sealed interface Argument {
 
 	@Serializable(with = ArgumentSerializer::class)
 	interface BlockTag : ResourceLocation, BlockOrTag {
-		override fun asString() = "#$namespace:$name"
+		override fun asString() = "#${asId()}"
 
 		companion object {
 			operator fun invoke(blockOrTag: String, namespace: String = "minecraft") = object : BlockTag {
@@ -201,9 +201,9 @@ sealed interface Argument {
 	interface Item : ResourceLocation, ItemOrTag {
 		var nbtData: NbtCompound?
 
-		override fun asString() = "$namespace:$name${nbtData?.toString() ?: ""}"
+		override fun asString() = "${asId()}${nbtData?.toString() ?: ""}"
 
-		operator fun invoke(nbtData: (NbtCompoundBuilder.() -> Unit)? = null) = apply { nbtData?.let { this.nbtData = nbt(it) } }
+		operator fun invoke(block: NbtCompoundBuilder.() -> Unit = {}) = apply { nbtData = nbt(block) }
 
 		companion object {
 			operator fun invoke(
@@ -220,7 +220,7 @@ sealed interface Argument {
 
 	@Serializable(with = ArgumentSerializer::class)
 	interface ItemTag : ResourceLocation, BlockOrTag {
-		override fun asString() = "#$namespace:$name"
+		override fun asString() = "#${asId()}"
 
 		companion object {
 			operator fun invoke(blockOrTag: String, namespace: String = "minecraft") = object : ItemTag {
