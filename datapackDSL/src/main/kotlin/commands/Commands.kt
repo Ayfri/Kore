@@ -257,7 +257,10 @@ fun Function.teleport(
 
 fun Function.tell(targets: Argument.Entity, message: String) = addLine(command("tell", targets, literal(message)))
 
-fun Function.tellraw(targets: Argument.Entity, message: TextComponents) = addLine(command("tellraw", targets, message.asJsonArg()))
+fun Function.tellraw(targets: Argument.Entity, text: String = "", block: TextComponent.() -> Unit) =
+	addLine(command("tellraw", targets, textComponent(text, block).asJsonArg()))
+
+fun Function.tellraw(targets: Argument.Entity, message: ChatComponents) = addLine(command("tellraw", targets, message.asJsonArg()))
 fun Function.tellraw(targets: Argument.Entity, message: String) = addLine(command("tellraw", targets, textComponent(message).asJsonArg()))
 
 @Serializable(TitleAction.Companion.TitleActionSerializer::class)
