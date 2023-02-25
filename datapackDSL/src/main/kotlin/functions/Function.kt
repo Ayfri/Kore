@@ -95,7 +95,10 @@ open class Function(
 		endDebug()
 	}
 
-	open fun debug(text: String, options: TextComponent.() -> Unit = {}) = debug(textComponent(text, options))
+	open fun debug(text: String, color: Color? = null, options: TextComponent.() -> Unit = {}) = debug(textComponent(text) {
+		color?.let { this.color = it }
+		options()
+	})
 
 	open fun debug(textComponent: ChatComponents) = tellraw(allPlayers(), textComponent)
 
