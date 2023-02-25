@@ -31,7 +31,7 @@ object DataModifyOperation {
 }
 
 class Data(private val fn: Function, val target: Argument.Data) {
-	fun get(path: String, scale: Double? = null) = fn.addLine(
+	fun get(path: String? = null, scale: Double? = null) = fn.addLine(
 		command(
 			"data", literal("get"), literal(target.literalName), target, literal(path), float(scale)
 		)
