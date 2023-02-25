@@ -19,14 +19,14 @@ enum class RenderType {
 }
 
 class Objectives(private val fn: Function) {
-	fun add(name: String, criteria: String, displayName: TextComponents? = null) = fn.addLine(
+	fun add(name: String, criteria: String, displayName: ChatComponents? = null) = fn.addLine(
 		command(
 			"scoreboard", literal("objectives"), literal("add"), literal(name), literal(criteria), displayName?.asJsonArg()
 		)
 	)
 
 	fun list() = fn.addLine(command("scoreboard", literal("objectives"), literal("list")))
-	fun modify(name: String, displayName: TextComponents) =
+	fun modify(name: String, displayName: ChatComponents) =
 		fn.addLine(
 			command(
 				"scoreboard",
@@ -68,11 +68,11 @@ class Objectives(private val fn: Function) {
 class Objective(private val fn: Function, val objective: String) {
 	fun player(target: Argument.ScoreHolder) = PlayerObjective(fn, target, objective)
 
-	fun add(criteria: String, displayName: TextComponents? = null) = create(criteria, displayName)
-	fun create(criteria: String, displayName: TextComponents? = null) = fn.addLine(
+	fun add(criteria: String, displayName: ChatComponents? = null) = create(criteria, displayName)
+	fun create(criteria: String, displayName: ChatComponents? = null) = fn.addLine(
 		command(
 			"scoreboard",
-			literal("players"),
+			literal("objectives"),
 			literal("add"),
 			literal(objective),
 			literal(criteria),
@@ -80,10 +80,10 @@ class Objective(private val fn: Function, val objective: String) {
 		)
 	)
 
-	fun modify(displayName: TextComponents) = fn.addLine(
+	fun modify(displayName: ChatComponents) = fn.addLine(
 		command(
 			"scoreboard",
-			literal("players"),
+			literal("objectives"),
 			literal("modify"),
 			literal(objective),
 			literal("displayname"),
@@ -94,7 +94,7 @@ class Objective(private val fn: Function, val objective: String) {
 	fun modify(renderType: RenderType) = fn.addLine(
 		command(
 			"scoreboard",
-			literal("players"),
+			literal("objectives"),
 			literal("modify"),
 			literal(objective),
 			literal("rendertype"),
@@ -106,15 +106,15 @@ class Objective(private val fn: Function, val objective: String) {
 	fun setDisplay(slot: SetDisplaySlot) = fn.addLine(
 		command(
 			"scoreboard",
-			literal("players"),
+			literal("objectives"),
 			literal("setdisplay"),
 			slot,
 			literal(objective)
 		)
 	)
 
-	fun add(target: Argument.ScoreHolder, amount: Double) =
-		fn.addLine(command("scoreboard", literal("players"), literal("add"), target, literal(objective), float(amount)))
+	fun add(target: Argument.ScoreHolder, amount: Int) =
+		fn.addLine(command("scoreboard", literal("players"), literal("add"), target, literal(objective), int(amount)))
 
 	fun enable(target: Argument.ScoreHolder) =
 		fn.addLine(command("scoreboard", literal("players"), literal("enable"), target, literal(objective)))
@@ -139,14 +139,14 @@ class Objective(private val fn: Function, val objective: String) {
 			)
 		)
 
-	fun remove(target: Argument.ScoreHolder, amount: Double) = fn.addLine(
+	fun remove(target: Argument.ScoreHolder, amount: Int) = fn.addLine(
 		command(
 			"scoreboard",
 			literal("players"),
 			literal("remove"),
 			target,
 			literal(objective),
-			float(amount)
+			int(amount)
 		)
 	)
 
