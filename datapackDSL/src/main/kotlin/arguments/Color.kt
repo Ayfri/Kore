@@ -167,5 +167,8 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 	}
 }
 
+fun color(red: Int, green: Int, blue: Int) = RGB.fromRGB(red, green, blue)
+fun color(hex: String) = RGB.fromHex(hex)
+fun rgb(red: Int, green: Int, blue: Int) = RGB.fromRGB(red, green, blue)
 fun mix(color1: RGB, weight1: Double, color2: RGB, weight2: Double) = color1 * weight1 + color2 * weight2
 fun NamedColor.toRGB() = RGB.fromNamedColor(this)
