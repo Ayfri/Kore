@@ -64,17 +64,22 @@ data class ChatComponents(val list: MutableList<ChatComponent> = mutableListOf()
 					}
 				} else {
 					encoder.encodeCollection(descriptor, value.list.size) {
-						value.list.forEach {
-							when (it) {
-								is EntityComponent -> encoder.encodeSerializableValue(EntityComponent.serializer(), it)
-								is ScoreComponent -> encoder.encodeSerializableValue(ScoreComponent.serializer(), it)
-								is NbtComponent -> encoder.encodeSerializableValue(NbtComponent.serializer(), it)
-								is TranslatedTextComponent -> encoder.encodeSerializableValue(TranslatedTextComponent.serializer(), it)
-								is TextComponent -> encoder.encodeSerializableValue(TextComponent.serializer(), it)
+						value.list.forEachIndexed { i, component ->
+							when (component) {
+								is EntityComponent -> encodeSerializableElement(descriptor, i, EntityComponent.serializer(), component)
+								is ScoreComponent -> encodeSerializableElement(descriptor, i, ScoreComponent.serializer(), component)
+								is NbtComponent -> encodeSerializableElement(descriptor, i, NbtComponent.serializer(), component)
+								is TranslatedTextComponent -> encodeSerializableElement(
+									descriptor,
+									i,
+									TranslatedTextComponent.serializer(),
+									component
+								)
+
+								is TextComponent -> encodeSerializableElement(descriptor, i, TextComponent.serializer(), component)
 							}
 						}
 					}
-					encoder.encodeSerializableValue(ListSerializer(ChatComponent.serializer()), value.list)
 				}
 			}
 		}
