@@ -290,7 +290,7 @@ enum class TitleLocation {
 
 fun Function.title(targets: Argument.Entity, action: TitleAction) = addLine(command("title", targets, literal(action.asArg())))
 fun Function.title(targets: Argument.Entity, location: TitleLocation, message: ChatComponents) =
-	addLine(command("title", targets, literal(location.asArg()), message))
+	addLine(command("title", targets, literal(location.asArg()), message.asJsonArg()))
 
 fun Function.title(targets: Argument.Entity, fadeIn: Int, stay: Int, fadeOut: Int) =
 	addLine(command("title", targets, literal("times"), int(fadeIn), int(stay), int(fadeOut)))
