@@ -1,5 +1,6 @@
 
 import arguments.*
+import arguments.chatcomponents.*
 import arguments.enums.Dimension
 import arguments.enums.Gamemode
 import arguments.numbers.*
@@ -15,6 +16,7 @@ import generated.*
 import generated.Attributes
 import io.github.cdimascio.dotenv.dotenv
 import net.benwoodworth.knbt.addNbtCompound
+import serialization.selectorTests
 import java.util.*
 import kotlin.io.path.Path
 
@@ -28,6 +30,7 @@ fun DataPack.setTestPath() {
 fun main() {
 	advancementTests()
 	predicateTests()
+	selectorTests()
 	Tellraw.launchTests()
 
 	val dataPack = dataPack("test") {
@@ -219,15 +222,12 @@ fun main() {
 				color = Color.RED
 				italic = true
 				clickEvent {
-					action = ClickAction.OPEN_URL
-					value = "https://www.google.com".nbt
+					openUrl("https://www.google.com")
 				}
 				hoverEvent {
-					action = HoverAction.SHOW_TEXT
-					value = textComponent {
-						text = "This is a hover event"
+					showText("This is a hover event") {
 						color = Color.BLUE
-					}.toNbtTag()
+					}
 				}
 			})
 
@@ -252,14 +252,11 @@ fun main() {
 
 		pack {
 			format = 10
-			description = textComponent {
-				text = "My "
+			description = textComponent("My ") {
 				color = RGB(255, 0, 0)
-			} + textComponent {
-				text = "nice "
+			} + textComponent("nice ") {
 				color = Color.GREEN
-			} + textComponent {
-				text = "datapack"
+			} + textComponent("datapack") {
 				color = Color.BLUE
 				bold = true
 			}

@@ -1,9 +1,9 @@
 
 import arguments.Color
 import arguments.DisplaySlot
+import arguments.chatcomponents.textComponent
 import arguments.enums.Gamemode
 import arguments.numbers.rangeOrIntStart
-import arguments.textComponent
 import commands.execute
 import commands.say
 import entities.*
@@ -12,12 +12,11 @@ import items.itemStack
 import items.summon
 import scoreboard.*
 import teams.*
-import kotlin.io.path.Path
 
 fun main() {
 	dataPack("oop") {
-		
-		val player = player("Ayfri") {
+
+	val player = player("Ayfri") {
 			gamemode = Gamemode.SURVIVAL
 			team = "red"
 		}

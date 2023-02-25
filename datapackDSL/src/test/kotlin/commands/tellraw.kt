@@ -1,7 +1,7 @@
 package commands
 
 import arguments.allPlayers
-import arguments.textComponent
+import arguments.chatcomponents.textComponent
 import dataPack
 import functions.Function
 import functions.function

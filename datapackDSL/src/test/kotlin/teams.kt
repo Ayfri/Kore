@@ -1,6 +1,8 @@
 
 import arguments.*
+import arguments.chatcomponents.textComponent
 import arguments.numbers.asStartRangeOrInt
+import arguments.numbers.rangeOrIntStart
 import arguments.selector.SelectorNbtData
 import commands.*
 import functions.Function
@@ -160,7 +162,7 @@ fun giveVanishItem(dataPack: DataPack) = dataPack.function("give_vanish_item") {
 
 			run {
 				give(self(), vanishItem {
-					this[vanishItemTag] = 1.toByte()
+					this[vanishItemTag] = true
 				})
 			}
 		}
@@ -180,7 +182,7 @@ fun detectVanishItemClick(dataPack: DataPack) = dataPack.function("detect_vanish
 		execute {
 			asTarget(teamPlayer(it) {
 				scores {
-					score(vanishItemTrigger, 1)
+					score(vanishItemTrigger, rangeOrIntStart(1))
 					score(vanishTrigger, 0)
 				}
 				nbt = itemNbt
@@ -198,7 +200,7 @@ fun detectVanishItemClick(dataPack: DataPack) = dataPack.function("detect_vanish
 		execute {
 			asTarget(teamPlayer(it) {
 				scores {
-					score(vanishItemTrigger, 1)
+					score(vanishItemTrigger, rangeOrIntStart(1))
 					score(vanishTrigger, 1)
 				}
 				nbt = itemNbt
