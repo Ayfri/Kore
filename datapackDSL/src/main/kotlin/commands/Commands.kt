@@ -234,7 +234,7 @@ fun Function.summon(entity: String, pos: Vec3? = null, nbt: (NbtCompoundBuilder.
 	addLine(command("summon", literal(entity), pos, nbt?.let { nbtArg(nbt) }))
 
 fun Function.summon(entity: Argument.EntitySummon, pos: Vec3? = null, nbt: NbtCompound?) = summon(entity.asArg(), pos, nbt)
-fun Function.summon(entity: Argument.EntitySummon, pos: Vec3? = null, nbt: (NbtCompoundBuilder.() -> Unit)? = null) =
+fun Function.summon(entity: Argument.EntitySummon, pos: Vec3 = vec3(), nbt: (NbtCompoundBuilder.() -> Unit)? = null) =
 	addLine(command("summon", entity, pos, nbt?.let { nbtArg(nbt) }))
 
 fun Function.teamMsg(message: String) = addLine(command("teammsg", literal(message)))
