@@ -88,7 +88,7 @@ class DataPack(val name: String) {
 	}
 
 	fun pack(block: Pack.() -> Unit) = pack.run(block)
-	fun filter(block: Filter.() -> Unit) = Filter().apply(block).also { filter = it }
+	fun filter(block: Filter.() -> Unit) = Filter().apply(block).let { filter = it }
 
 	fun generate() {
 		val start = System.currentTimeMillis()
