@@ -278,6 +278,9 @@ class PlayerObjective(fn: Function, val target: Argument.ScoreHolder, val object
 }
 
 class Scoreboard(private val fn: Function) {
+	val objectives = Objectives(fn)
+	val players = Players(fn)
+
 	fun objectives(block: Objectives.() -> Command) = Objectives(fn).block()
 
 	fun objective(target: Argument.ScoreHolder, objective: String, block: PlayerObjective.() -> Command) =
