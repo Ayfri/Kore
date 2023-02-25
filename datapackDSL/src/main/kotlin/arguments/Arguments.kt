@@ -44,6 +44,7 @@ sealed interface Argument {
 		val name: String
 		val namespace: String
 
+		fun asId() = "$namespace:$name"
 		override fun asString() = "$namespace:$name"
 	}
 
@@ -433,12 +434,12 @@ fun time(value: TimeNumber) = Argument.Time(value)
 
 fun uuid(uuid: UUID) = Argument.UUID(uuid)
 
-fun vec2(x: Number = 0, y: Number = 0) = Vec2(x, y)
+fun vec2(x: Number, y: Number) = Vec2(x, y)
 fun vec2(x: PosNumber, y: PosNumber) = Vec2(x, y)
 fun vec2(x: PosNumber.Type, y: PosNumber.Type) = Vec2(pos(type = x), pos(type = y))
-fun vec2(type: PosNumber.Type) = Vec2(pos(type = type), pos(type = type))
+fun vec2(type: PosNumber.Type = PosNumber.Type.RELATIVE) = Vec2(pos(type = type), pos(type = type))
 
-fun vec3(x: Number = 0, y: Number = 0, z: Number = 0) = Vec3(x, y, z)
+fun vec3(x: Number, y: Number, z: Number) = Vec3(x, y, z)
 fun vec3(x: PosNumber, y: PosNumber, z: PosNumber) = Vec3(x, y, z)
 fun vec3(x: PosNumber.Type, y: PosNumber.Type, z: PosNumber.Type) = Vec3(pos(type = x), pos(type = y), pos(type = z))
-fun vec3(type: PosNumber.Type) = Vec3(pos(type = type), pos(type = type), pos(type = type))
+fun vec3(type: PosNumber.Type = PosNumber.Type.RELATIVE) = Vec3(pos(type = type), pos(type = type), pos(type = type))

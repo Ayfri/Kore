@@ -1,6 +1,8 @@
 package commands
 
 import arguments.*
+import arguments.chatcomponents.TextComponent
+import arguments.chatcomponents.textComponent
 import arguments.enums.Difficulty
 import arguments.enums.Gamemode
 import functions.Function
@@ -284,7 +286,7 @@ enum class TitleLocation {
 }
 
 fun Function.title(targets: Argument.Entity, action: TitleAction) = addLine(command("title", targets, literal(action.asArg())))
-fun Function.title(targets: Argument.Entity, location: TitleLocation, message: TextComponents) =
+fun Function.title(targets: Argument.Entity, location: TitleLocation, message: ChatComponents) =
 	addLine(command("title", targets, literal(location.asArg()), message))
 
 fun Function.title(targets: Argument.Entity, fadeIn: Int, stay: Int, fadeOut: Int) =
