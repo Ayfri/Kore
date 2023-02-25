@@ -23,7 +23,7 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
 @Serializable(GamemodeSelector.Companion.GamemodeSelectorSerializer::class)
-class GamemodeSelector(var gamemode: Gamemode? = null, var invert: Boolean = false) {
+data class GamemodeSelector(var gamemode: Gamemode? = null, var invert: Boolean = false) {
 	override fun toString() = when {
 		gamemode == null -> ""
 		invert -> "!${json.encodeToJsonElement(gamemode).jsonPrimitive.content}"
@@ -36,7 +36,7 @@ class GamemodeSelector(var gamemode: Gamemode? = null, var invert: Boolean = fal
 }
 
 @Serializable(NbtCompoundSelector.Companion.NbtDataSelectorSerializer::class)
-class NbtCompoundSelector(var nbt: NbtCompound? = null, var invert: Boolean = false) {
+data class NbtCompoundSelector(var nbt: NbtCompound? = null, var invert: Boolean = false) {
 	override fun toString() = when {
 		nbt == null -> ""
 		invert -> "!${StringifiedNbt.encodeToString(nbt)}"
@@ -71,19 +71,19 @@ data class SelectorNbtData(
 	var scores: Scores? = null,
 	var sort: Sort? = null,
 	var predicate: String? = null,
-) {
 	@SerialName("gamemode")
-	private var _gamemode: GamemodeSelector = GamemodeSelector()
-
+	@Serializable
+	private var _gamemode: GamemodeSelector = GamemodeSelector(),
+	@SerialName("nbt")
+	@Serializable
+	private var _nbt: NbtCompoundSelector = NbtCompoundSelector(),
+) {
 	@Transient
 	var gamemode
 		get() = _gamemode.gamemode
 		set(value) {
 			_gamemode.gamemode = value
 		}
-
-	@SerialName("nbt")
-	private var _nbt: NbtCompoundSelector = NbtCompoundSelector()
 
 	@Transient
 	var nbt
@@ -126,12 +126,12 @@ data class SelectorNbtData(
 		name = other.name
 		type = other.type
 		tag = other.tag
-		nbt = other.nbt
 		advancements = other.advancements
 		scores = other.scores
 		sort = other.sort
 		predicate = other.predicate
 		_gamemode = other._gamemode
+		_nbt = other._nbt
 	}
 
 	companion object {
