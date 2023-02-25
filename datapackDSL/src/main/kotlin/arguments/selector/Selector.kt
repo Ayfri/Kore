@@ -26,7 +26,7 @@ internal val json = Json {
 private fun String.unescape(): String {
 	var result = this
 	for (i in 0 until result.length - 2) {
-		if (result[i] == '\\') {
+		if (i in result.indices && result[i] == '\\') {
 			result = result.replaceRange(i, i + 2, result[i + 1].toString())
 		}
 	}
