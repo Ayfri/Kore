@@ -1,8 +1,8 @@
 package teams
 
 import arguments.Argument
+import arguments.ChatComponents
 import arguments.NamedColor
-import arguments.TextComponents
 import commands.CollisionRule
 import commands.Visibility
 import commands.teams
@@ -24,21 +24,21 @@ fun Team.delete() = teams {
 }
 
 context(Function)
-fun Team.setDisplayName(displayName: TextComponents) = teams {
+fun Team.setDisplayName(displayName: ChatComponents) = teams {
 	modify(name) {
 		displayName(displayName)
 	}
 }
 
 context(Function)
-fun Team.setPrefix(prefix: TextComponents) = teams {
+fun Team.setPrefix(prefix: ChatComponents) = teams {
 	modify(name) {
 		prefix(prefix)
 	}
 }
 
 context(Function)
-fun Team.setSuffix(suffix: TextComponents) = teams {
+fun Team.setSuffix(suffix: ChatComponents) = teams {
 	modify(name) {
 		suffix(suffix)
 	}

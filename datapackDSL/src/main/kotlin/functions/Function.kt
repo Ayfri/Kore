@@ -2,7 +2,10 @@ package functions
 
 import DataPack
 import Generator
-import arguments.*
+import arguments.ChatComponents
+import arguments.Color
+import arguments.allPlayers
+import arguments.chatcomponents.*
 import commands.Command
 import commands.command
 import commands.tellraw
@@ -33,16 +36,14 @@ open class Function(
 
 					clickEvent {
 						action = ClickAction.SUGGEST_COMMAND
-						value = "/$command".nbt
+						value = "/$command"
 					}
 
 					hoverEvent {
-						action = HoverAction.SHOW_TEXT
-						value = textComponent {
-							text = "Click to copy command"
+						showText("Click to copy command") {
 							italic = true
 							color = Color.GRAY
-						}.toNbtTag()
+						}
 					}
 				}.toJsonString()
 			}"
@@ -60,20 +61,16 @@ open class Function(
 		file.parentFile.mkdirs()
 
 		if (debug) {
-			lines.add(0, command("tellraw", allPlayers(), textComponent {
-				text = "Running function "
+			lines.add(0, command("tellraw", allPlayers(), textComponent("Running function ") {
 				color = Color.GRAY
-			} + textComponent {
-				text = "$namespace:$name"
+			} + textComponent("$namespace:$name") {
 				color = Color.WHITE
 				bold = true
 			}).toString())
 
-			debug(textComponent {
-				text = "Finished running function "
+			debug(textComponent("Finished running function ") {
 				color = Color.GRAY
-			} + textComponent {
-				text = "$namespace:$name"
+			} + textComponent("$namespace:$name") {
 				color = Color.WHITE
 				bold = true
 			})
@@ -100,7 +97,7 @@ open class Function(
 
 	open fun debug(text: String, options: TextComponent.() -> Unit = {}) = debug(textComponent(text, options))
 
-	open fun debug(textComponent: TextComponents) = tellraw(allPlayers(), textComponent)
+	open fun debug(textComponent: ChatComponents) = tellraw(allPlayers(), textComponent)
 
 	override fun toString() = lines.joinToString("\n")
 

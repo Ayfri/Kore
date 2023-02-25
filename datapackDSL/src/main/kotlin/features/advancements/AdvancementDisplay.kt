@@ -1,7 +1,7 @@
 package features.advancements
 
 import arguments.Argument
-import arguments.TextComponents
+import arguments.ChatComponents
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtTag
 import serializers.LowercaseSerializer
@@ -11,9 +11,9 @@ import serializers.NbtAsJsonTextComponentSerializer
 data class AdvancementDisplay(
 	var icon: AdvancementIcon,
 	@Serializable
-	var title: TextComponents,
+	var title: ChatComponents,
 	@Serializable
-	var description: TextComponents,
+	var description: ChatComponents,
 	var frameType: AdvancementFrameType = AdvancementFrameType.TASK,
 	var background: String? = null,
 	var showToast: Boolean = true,

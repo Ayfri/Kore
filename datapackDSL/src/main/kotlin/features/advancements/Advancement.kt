@@ -3,9 +3,9 @@ package features.advancements
 import DataPack
 import Generator
 import arguments.Argument
-import arguments.TextComponents
+import arguments.ChatComponents
+import arguments.chatcomponents.textComponent
 import arguments.selector.Advancements
-import arguments.textComponent
 import features.advancements.triggers.AdvancementTriggerCondition
 import features.advancements.types.AdvancementsJSONSerializer
 import features.advancements.types.Entity
@@ -55,8 +55,8 @@ fun Advancement.display(icon: AdvancementIcon, title: String = "", description: 
 
 fun Advancement.display(
 	icon: AdvancementIcon,
-	title: TextComponents,
-	description: TextComponents,
+	title: ChatComponents,
+	description: ChatComponents,
 	block: AdvancementDisplay.() -> Unit = {}
 ) {
 	display = AdvancementDisplay(icon, title, description).apply(block)
@@ -68,8 +68,8 @@ fun Advancement.display(icon: Argument.Item, title: String = "", description: St
 
 fun Advancement.display(
 	icon: Argument.Item,
-	title: TextComponents,
-	description: TextComponents,
+	title: ChatComponents,
+	description: ChatComponents,
 	block: AdvancementDisplay.() -> Unit = {}
 ) {
 	display = AdvancementDisplay(AdvancementIcon(icon), title, description).apply(block)

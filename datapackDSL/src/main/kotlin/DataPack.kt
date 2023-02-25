@@ -1,7 +1,7 @@
 
 import annotations.FunctionsHolder
-import arguments.TextComponents
-import arguments.textComponent
+import arguments.ChatComponents
+import arguments.chatcomponents.textComponent
 import features.advancements.Advancement
 import features.predicates.Predicate
 import features.tags.Tags
@@ -52,7 +52,7 @@ data class Pack(
 	@SerialName("pack_format")
 	var format: Int,
 	@Serializable
-	var description: TextComponents,
+	var description: ChatComponents,
 )
 
 @Serializable

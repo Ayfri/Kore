@@ -1,6 +1,7 @@
 package items
 
 import arguments.*
+import arguments.chatcomponents.textComponent
 import commands.summon
 import functions.Function
 import nbt.MutableNbtCompound
@@ -33,7 +34,7 @@ fun ItemStack.summon(displayName: String, visible: Boolean = true) = summon("min
 }.toNbtCompound())
 
 context(Function)
-fun ItemStack.summon(displayName: TextComponents, visible: Boolean = true) = summon("minecraft:item", coordinate(), nbtData.apply {
+fun ItemStack.summon(displayName: ChatComponents, visible: Boolean = true) = summon("minecraft:item", coordinate(), nbtData.apply {
 	this["CustomName"] = displayName
 	this["CustomNameVisible"] = visible
 }.toNbtCompound())

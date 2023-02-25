@@ -41,22 +41,25 @@ class Modify(private val fn: Function, val team: String) {
 	fun deathMessageVisibility(visibility: Visibility) =
 		fn.addLine(command("team", literal("modify"), literal(team), literal("deathMessageVisibility"), literal(visibility.asArg())))
 
-	fun displayName(name: TextComponents) = fn.addLine(command("team", literal("modify"), literal(team), literal("displayName"), name))
+	fun displayName(name: ChatComponents) = fn.addLine(command("team", literal("modify"), literal(team), literal("displayName"), name))
 	fun friendlyFire(allowed: Boolean) =
 		fn.addLine(command("team", literal("modify"), literal(team), literal("friendlyFire"), bool(allowed)))
 
 	fun nametagVisibility(visibility: Visibility) =
 		fn.addLine(command("team", literal("modify"), literal(team), literal("nametagVisibility"), literal(visibility.asArg())))
 
-	fun prefix(prefix: TextComponents) = fn.addLine(command("team", literal("modify"), literal(team), literal("prefix"), prefix.asJsonArg()))
+	fun prefix(prefix: ChatComponents) =
+		fn.addLine(command("team", literal("modify"), literal(team), literal("prefix"), prefix.asJsonArg()))
+
 	fun seeFriendlyInvisibles(allowed: Boolean) =
 		fn.addLine(command("team", literal("modify"), literal(team), literal("seeFriendlyInvisibles"), bool(allowed)))
 
-	fun suffix(suffix: TextComponents) = fn.addLine(command("team", literal("modify"), literal(team), literal("suffix"), suffix.asJsonArg()))
+	fun suffix(suffix: ChatComponents) =
+		fn.addLine(command("team", literal("modify"), literal(team), literal("suffix"), suffix.asJsonArg()))
 }
 
 class Team(private val fn: Function) {
-	fun add(team: String, displayName: TextComponents? = null) =
+	fun add(team: String, displayName: ChatComponents? = null) =
 		fn.addLine(command("team", literal("add"), literal(team), displayName?.asJsonArg()))
 
 	fun empty(team: String) = fn.addLine(command("team", literal("empty"), literal(team)))

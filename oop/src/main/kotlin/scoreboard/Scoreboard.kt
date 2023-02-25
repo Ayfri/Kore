@@ -1,8 +1,8 @@
 package scoreboard
 
+import arguments.ChatComponents
 import arguments.SetDisplaySlot
-import arguments.TextComponents
-import arguments.textComponent
+import arguments.chatcomponents.textComponent
 import commands.RenderType
 import commands.scoreboard
 import entities.Entity
@@ -44,7 +44,7 @@ fun Scoreboard.setRenderType(type: RenderType) = scoreboard {
 }
 
 context(Function)
-fun Scoreboard.setDisplayName(displayName: TextComponents) = scoreboard {
+fun Scoreboard.setDisplayName(displayName: ChatComponents) = scoreboard {
 	objectives {
 		modify(name, displayName)
 	}
