@@ -384,6 +384,8 @@ fun dimension(customDimension: String, namespace: String = "minecraft") = Argume
 
 fun enchantment(name: String, namespace: String = "minecraft") = Argument.Enchantment(name, namespace)
 
+fun entity(name: String) = literal(name)
+
 fun float(value: Double) = Argument.Float(value)
 fun float(value: Float) = Argument.Float(value.toDouble())
 internal fun float(value: Double?) = value?.let { Argument.Float(it) }
@@ -416,12 +418,13 @@ fun selector(base: SelectorType, limitToOne: Boolean = false, data: SelectorNbtD
 })
 
 fun allPlayers(limitToOne: Boolean = false, data: SelectorNbtData.() -> Unit = {}) = selector(SelectorType.ALL_PLAYERS, limitToOne, data)
-fun allEntities(limitToOne: Boolean = false, data: SelectorNbtData.() -> Unit = {}) = selector(SelectorType.ALL_ENTITIES, limitToOne, data)
-fun entity(name: String) = literal(name)
-fun nearestPlayer(data: SelectorNbtData.() -> Unit = {}) = selector(SelectorType.NEAREST_PLAYER, data = data)
-fun player(name: String, limitToOne: Boolean = true, data: SelectorNbtData.() -> Unit = {}) =
-	allPlayers(limitToOne) { this.name = name; data() }
+fun allPlayers(limit: Int, data: SelectorNbtData.() -> Unit = {}) = allPlayers { this.limit = limit; data() }
 
+fun allEntities(limitToOne: Boolean = false, data: SelectorNbtData.() -> Unit = {}) = selector(SelectorType.ALL_ENTITIES, limitToOne, data)
+fun allEntities(limit: Int, data: SelectorNbtData.() -> Unit = {}) = allEntities { this.limit = limit; data() }
+
+fun nearestPlayer(data: SelectorNbtData.() -> Unit = {}) = selector(SelectorType.NEAREST_PLAYER, data = data)
+fun player(name: String, limitToOne: Boolean = true, data: SelectorNbtData.() -> Unit = {}) = allPlayers(limitToOne) { this.name = name; data() }
 fun randomPlayer(data: SelectorNbtData.() -> Unit = {}) = selector(SelectorType.RANDOM_PLAYER, data = data)
 fun self(limitToOne: Boolean = false, data: SelectorNbtData.() -> Unit = {}) = selector(SelectorType.SELF, limitToOne, data)
 
