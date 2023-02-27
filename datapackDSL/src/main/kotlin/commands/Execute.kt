@@ -36,23 +36,27 @@ enum class BlocksTestMode {
 	}
 }
 
-class ExecuteCondition(private val ex: Execute) {
-	fun block(pos: Vec3, block: Argument.Block) = listOf(literal("block"), pos, block)
+class ExecuteCondition(private val ex: Execute, isUnless: Boolean) {
+	private val prefix = if (isUnless) "unless" else "if"
+	val arguments = mutableListOf<Argument>()
 
-	fun blocks(start: Vec3, end: Vec3, destination: Vec3, mode: BlocksTestMode) = listOf(
-		literal("blocks"), start, end, destination, literal(mode.asArg())
-	)
+	private fun addArguments(arguments: List<Argument>) {
+		this.arguments += listOf(literal(prefix), *arguments.toTypedArray())
+	}
 
-	fun biome(biome: Argument.Biome) = listOf(literal("biome"), biome)
+	fun block(pos: Vec3, block: Argument.Block) = addArguments(listOf(literal("block"), pos, block))
 
-	fun data(target: Argument.Data, path: String) = listOf(
-		literal("data"), literal(target.literalName), ex.targetArg(target), literal(path)
-	)
+	fun blocks(start: Vec3, end: Vec3, destination: Vec3, mode: BlocksTestMode) =
+		addArguments(listOf(literal("blocks"), start, end, destination, literal(mode.asArg())))
 
-	fun entity(target: Argument.Entity) = listOf(literal("entity"), ex.targetArg(target))
+	fun biome(biome: Argument.Biome) = addArguments(listOf(literal("biome"), biome))
 
-	fun predicate(predicate: Argument.Predicate) = listOf(literal("predicate"), predicate)
-	fun predicate(predicate: String) = listOf(literal("predicate"), literal(predicate))
+	fun data(target: Argument.Data, path: String) = addArguments(listOf(literal("data"), literal(target.literalName), ex.targetArg(target), literal(path)))
+
+	fun entity(target: Argument.Entity) = addArguments(listOf(literal("entity"), ex.targetArg(target)))
+
+	fun predicate(predicate: Argument.Predicate) = addArguments(listOf(literal("predicate"), predicate))
+	fun predicate(predicate: String) = addArguments(listOf(literal("predicate"), literal(predicate)))
 
 	fun score(
 		target: Argument.ScoreHolder,
@@ -60,13 +64,10 @@ class ExecuteCondition(private val ex: Execute) {
 		source: Argument.ScoreHolder,
 		sourceObjective: String,
 		relation: RelationBlock.(Number, Number) -> Relation
-	) = listOf(
-		literal("score"), ex.targetArg(target), literal(objective), relation(RelationBlock(), 0.0, 0.0), source, literal(sourceObjective)
-	)
+	) = addArguments(listOf(literal("score"), ex.targetArg(target), literal(objective), relation(RelationBlock(), 0.0, 0.0), source, literal(sourceObjective)))
 
-	fun score(target: Argument.ScoreHolder, objective: String, range: IntRangeOrInt) = listOf(
-		literal("score"), ex.targetArg(target), literal(objective), literal("matches"), literal(range.asArg())
-	)
+	fun score(target: Argument.ScoreHolder, objective: String, range: IntRangeOrInt) =
+		addArguments(listOf(literal("score"), ex.targetArg(target), literal(objective), literal("matches"), literal(range.asArg())))
 }
 
 class ExecuteStore(private val ex: Execute) {
@@ -126,11 +127,8 @@ class Execute {
 	fun rotated(rotation: Argument.Rotation) = array.addAll(literal("rotated"), rotation)
 	fun rotatedAs(target: Argument.Entity) = array.addAll(literal("rotated"), literal("as"), targetArg(target))
 
-	fun ifCondition(block: ExecuteCondition.() -> List<Argument>) =
-		array.addAll(literal("if"), *ExecuteCondition(this).block().toTypedArray())
-
-	fun unlessCondition(block: ExecuteCondition.() -> List<Argument>) =
-		array.addAll(literal("unless"), *ExecuteCondition(this).block().toTypedArray())
+	fun ifCondition(block: ExecuteCondition.() -> Unit) = array.addAll(ExecuteCondition(this, false).apply(block).arguments)
+	fun unlessCondition(block: ExecuteCondition.() -> Unit) = array.addAll(ExecuteCondition(this, true).apply(block).arguments)
 
 	fun storeResult(block: ExecuteStore.() -> List<Argument>) =
 		array.addAll(literal("store"), literal("result"), *ExecuteStore(this).block().toTypedArray())
@@ -139,7 +137,6 @@ class Execute {
 		array.addAll(literal("store"), literal("value"), *ExecuteStore(this).block().toTypedArray())
 
 }
-
 
 context(Function)
 fun Execute.run(name: String, namespace: String = datapack.name, block: Function.() -> Unit): Command {
