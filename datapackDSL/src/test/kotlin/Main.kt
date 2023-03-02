@@ -249,6 +249,15 @@ fun main() {
 			}
 		}
 
+		val reference = function("test2") {
+			debug("Executing test2")
+		}
+
+		function("test3") {
+			function(reference)
+			debug("Executing test3")
+		}
+
 		iconPath = Path("datapackDSL", "src", "test", "resources", "Kotlin Full Color Logo Mark RGB.png")
 
 		pack {
