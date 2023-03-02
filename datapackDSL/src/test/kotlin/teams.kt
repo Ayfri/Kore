@@ -42,38 +42,40 @@ fun teamPlayer(team: Team, selector: SelectorNbtData.() -> Unit = {}) = allPlaye
 	selector()
 }
 
-fun loadTeams(dataPack: DataPack) = dataPack.function("load") {
-	detectVanishItemClick(dataPack)
-	giveVanishItem(dataPack)
-	vanish(dataPack)
+fun DataPack.loadTeams() {
+	detectVanishItemClick()
+	giveVanishItem()
+	vanish()
 
-	teamList.forEach {
-		teams {
-			add(it.name, textComponent(it.display))
-			modify(it.name) {
-				color(it.color)
-				friendlyFire(false)
-				nametagVisibility(if (it.vanish) Visibility.HIDE_FOR_OTHER_TEAMS else Visibility.ALWAYS)
-				if (!it.canBePushed) collisionRule(CollisionRule.NEVER)
-				prefix(textComponent {
-					text = "${it.display} "
-					color = it.color
-					bold = it.bold
-				})
+	function("load") {
+		teamList.forEach {
+			teams {
+				add(it.name, textComponent(it.display))
+				modify(it.name) {
+					color(it.color)
+					friendlyFire(false)
+					nametagVisibility(if (it.vanish) Visibility.HIDE_FOR_OTHER_TEAMS else Visibility.ALWAYS)
+					if (!it.canBePushed) collisionRule(CollisionRule.NEVER)
+					prefix(textComponent {
+						text = "${it.display} "
+						color = it.color
+						bold = it.bold
+					})
+				}
 			}
 		}
+
+		addBlankLine()
+
+		scoreboard.objectives {
+			remove(vanishTrigger)
+			remove(vanishItemTrigger)
+			add(vanishTrigger, "trigger")
+			add(vanishItemTrigger, "minecraft.used:${vanishItem.asArg().replace(":", ".")}")
+		}
+
+		setTag("load", tagNamespace = "minecraft")
 	}
-
-	addBlankLine()
-
-	scoreboard.objectives {
-		remove(vanishTrigger)
-		remove(vanishItemTrigger)
-		add(vanishTrigger, "trigger")
-		add(vanishItemTrigger, "minecraft.used:${vanishItem.asArg().replace(":", ".")}")
-	}
-
-	setTag("load", tagNamespace = "minecraft")
 }
 
 private fun Function.displayVanish(value: Boolean) {
@@ -102,7 +104,7 @@ fun Function.unVanishPlayer(): Command {
 	return particle(Particles.WAX_OFF, coordinate(), coordinate(.125, .25, .125), 0.0, 5, ParticleMode.NORMAL)
 }
 
-fun vanish(dataPack: DataPack) = dataPack.function("vanish") {
+fun DataPack.vanish() = function("vanish") {
 	teamList.filter { it.vanish }.forEach {
 		scoreboard.player(teamPlayer(it)) {
 			enable(vanishTrigger)
@@ -155,7 +157,7 @@ fun vanish(dataPack: DataPack) = dataPack.function("vanish") {
 	setTag("tick", tagNamespace = "minecraft")
 }
 
-fun giveVanishItem(dataPack: DataPack) = dataPack.function("give_vanish_item") {
+fun DataPack.giveVanishItem() = function("give_vanish_item") {
 	teamList.filter { it.vanish }.forEach {
 		execute {
 			asTarget(teamPlayer(it))
@@ -169,7 +171,7 @@ fun giveVanishItem(dataPack: DataPack) = dataPack.function("give_vanish_item") {
 	}
 }
 
-fun detectVanishItemClick(dataPack: DataPack) = dataPack.function("detect_vanish_item_click") {
+fun DataPack.detectVanishItemClick() = function("detect_vanish_item_click") {
 	teamList.filter { it.vanish }.forEach {
 		val itemNbt = nbt {
 			this["SelectedItem"] = nbt {
@@ -231,7 +233,7 @@ fun detectVanishItemClick(dataPack: DataPack) = dataPack.function("detect_vanish
 	setTag("tick", tagNamespace = "minecraft")
 }
 
-fun unloadTeams(dataPack: DataPack) = dataPack.function("unload") {
+fun DataPack.unloadTeams() = function("unload") {
 	teamList.forEach {
 		teams.remove(it.name)
 	}

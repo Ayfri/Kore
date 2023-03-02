@@ -135,25 +135,25 @@ class Execute {
 
 	fun storeValue(block: ExecuteStore.() -> List<Argument>) =
 		array.addAll(literal("store"), literal("value"), *ExecuteStore(this).block().toTypedArray())
-
 }
 
 context(Function)
-fun Execute.run(name: String, namespace: String = datapack.name, block: Function.() -> Unit): Command {
+fun Execute.run(name: String, namespace: String = datapack.name, block: Function.() -> Unit): Argument.Function {
 	datapack.function(name, namespace, block = block)
-
-	return function(namespace, "$GENERATED_FUNCTIONS_FOLDER/$name")
+	return Argument.Function(namespace, "$GENERATED_FUNCTIONS_FOLDER/$name")
 }
 
 context(Function)
-fun Execute.run(block: Function.() -> Command): Command {
+fun Execute.run(block: Function.() -> Command): Argument.Function {
 	val function = Function("", "", "", datapack).apply { block() }
 
-	if (function.lines.size == 1) return Function.EMPTY.block().apply {
-		arguments.replaceAll {
-			when (it) {
-				is Argument.Entity -> this@run.targetArg(it)
-				else -> it
+	if (function.lines.size == 1) return Function.EMPTY.apply {
+		block().apply {
+			arguments.replaceAll {
+				when (it) {
+					is Argument.Entity -> this@run.targetArg(it)
+					else -> it
+				}
 			}
 		}
 	}
@@ -164,13 +164,13 @@ fun Execute.run(block: Function.() -> Command): Command {
 	val finalName = datapack.generatedFunction(name) { block() }
 	val usageName = "$GENERATED_FUNCTIONS_FOLDER/$finalName"
 
-	if (finalName == name) comment("Generated function $namespace:$usageName")
+	if (finalName.name == name) comment("Generated function $namespace:$usageName")
 
-	return Function.EMPTY.function(namespace, usageName)
+	return Argument.Function(namespace, usageName)
 }
 
-fun Function.execute(block: Execute.() -> Command): Command {
+fun Function.execute(block: Execute.() -> Argument.Function): Command {
 	val execute = Execute()
 	val run = execute.block()
-	return addLine(command("execute", *execute.getArguments(), literal("run"), literal(run.toString())))
+	return addLine(command("execute", *execute.getArguments(), literal("run"), literal(run.asString())))
 }

@@ -31,13 +31,14 @@ fun main() {
 	advancementTests()
 	predicateTests()
 	selectorTests()
-	Tellraw.launchTests()
+	runUnitTests()
 
 	val dataPack = dataPack("test") {
 		setTestPath()
-		loadTeams(this)
-		unloadTeams(this)
-		gradient(this)
+
+		loadTeams()
+		unloadTeams()
+		gradient()
 
 		tags("minecraft") {
 			tag("blocks", "op") {

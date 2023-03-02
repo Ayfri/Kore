@@ -5,7 +5,7 @@ import arguments.toRGB
 import commands.tellraw
 import functions.function
 
-fun gradient(datapack: DataPack) = datapack.function("gradient") {
+fun DataPack.gradient() = function("gradient") {
 	val firstColor = Color.DARK_RED.toRGB()
 	val secondColor = Color.DARK_BLUE.toRGB()
 	val text = "Hello world! "
