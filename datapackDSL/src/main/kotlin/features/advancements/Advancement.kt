@@ -114,3 +114,12 @@ fun Advancement.rewards(
 ) {
 	rewards = AdvancementReward(experience, function, loot, recipes)
 }
+
+fun Advancement.rewards(
+	function: Argument.Function? = null,
+	experience: Int? = null,
+	loot: List<Argument.LootTable>? = null,
+	recipes: List<Argument.Recipe>? = null
+) {
+	rewards = AdvancementReward(experience, function?.asString(), loot, recipes)
+}

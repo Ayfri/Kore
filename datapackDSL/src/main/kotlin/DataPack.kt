@@ -1,5 +1,6 @@
 
 import annotations.FunctionsHolder
+import arguments.Argument
 import arguments.ChatComponents
 import arguments.chatcomponents.textComponent
 import features.advancements.Advancement
@@ -74,17 +75,18 @@ class DataPack(val name: String) {
 	val predicates = mutableListOf<Predicate>()
 	val tags = mutableListOf<Tags>()
 
-	fun addFunction(function: Function) {
+	fun addFunction(function: Function): Argument.Function {
 		functions += function
+		return function
 	}
 
-	fun addGeneratedFunction(function: Function): String {
+	fun addGeneratedFunction(function: Function): Argument.Function {
 		generatedFunctions.find { it.lines == function.lines }?.let {
-			return@addGeneratedFunction it.name
+			return@addGeneratedFunction it
 		}
 
 		generatedFunctions += function
-		return function.name
+		return function
 	}
 
 	fun pack(block: Pack.() -> Unit) = pack.run(block)

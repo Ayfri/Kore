@@ -9,6 +9,7 @@ import kotlinx.serialization.encoding.Encoder
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtCompoundBuilder
 import serializers.ToStringSerializer
+import utils.ifNotEmpty
 import java.util.*
 
 @Serializable(Argument.ArgumentSerializer::class)
@@ -183,6 +184,21 @@ sealed interface Argument {
 	}
 
 	@Serializable(with = ArgumentSerializer::class)
+	interface Function : ResourceLocation {
+		var directory: String
+
+		override fun asId() = "$namespace:${directory.ifNotEmpty { "$it/" }}$name"
+
+		companion object {
+			operator fun invoke(function: String, namespace: String = "minecraft", directory: String = "") = object : Function {
+				override val name = function
+				override val namespace = namespace
+				override var directory = directory
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
 	interface EntitySummon : ResourceLocation {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : EntitySummon {
@@ -342,6 +358,16 @@ sealed interface Argument {
 	interface Sound : ResourceLocation {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : Sound {
+				override val name = name
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
+	interface Tag : ResourceLocation {
+		companion object {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : Tag {
 				override val name = name
 				override val namespace = namespace
 			}

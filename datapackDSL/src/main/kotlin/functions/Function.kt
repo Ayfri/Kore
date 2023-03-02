@@ -2,6 +2,7 @@ package functions
 
 import DataPack
 import Generator
+import arguments.Argument
 import arguments.ChatComponents
 import arguments.Color
 import arguments.allPlayers
@@ -10,16 +11,17 @@ import commands.Command
 import commands.command
 import commands.tellraw
 import features.tags.addToTag
+import utils.ifNotEmpty
 import java.io.File
 
 open class Function(
-	val name: String,
-	val namespace: String = "minecraft",
-	var directory: String = "",
+	override val name: String,
+	override val namespace: String = "minecraft",
+	override var directory: String = "",
 	val datapack: DataPack
-) : Generator {
+) : Generator, Argument.Function {
 	val lines = mutableListOf<String>()
-	var debug = false
+	private var debug = false
 
 	fun addBlankLine() = lines.add("")
 
@@ -116,9 +118,8 @@ open class Function(
 	}
 }
 
-fun DataPack.function(name: String, namespace: String = this.name, directory: String = "", block: Function.() -> Unit) {
+fun DataPack.function(name: String, namespace: String = this.name, directory: String = "", block: Function.() -> Unit) =
 	addFunction(Function(name, namespace, directory, this).apply(block))
-}
 
 fun DataPack.generatedFunction(name: String, directory: String = "", block: Function.() -> Unit) =
 	addGeneratedFunction(Function(name, this.name, directory, this).apply(block))
@@ -134,14 +135,16 @@ private fun DataPack.addToMinecraftTag(
 	functionName: String?,
 	block: Function.() -> Unit,
 	directory: String
-) {
+): Argument.Function {
 	val function = Function("", "", "", this).apply(block)
 	val name = functionName ?: "${fileName}_${function.hashCode()}"
-	val finalName = generatedFunction(name, directory, block)
-	val usageName = "${DataPack.GENERATED_FUNCTIONS_FOLDER}/$finalName"
+	val generatedFunction = generatedFunction(name, directory, block)
 	addToTag("minecraft", "functions", fileName) {
+		val usageName = "${DataPack.GENERATED_FUNCTIONS_FOLDER}/${generatedFunction.directory.ifNotEmpty { "$it/" }}${generatedFunction.name}"
 		add(usageName, this@DataPack.name)
 	}
+
+	return generatedFunction
 }
 
 fun Function.setTag(

@@ -24,10 +24,8 @@ data class Tags(
 
 	fun tag(type: String, name: String, replace: Boolean = false, block: Tag.() -> Unit) = add(type, name, replace, block)
 
-	override fun generate(directory: File) {
-		tags.forEach { (type, tag) ->
-			tag.generate(File(directory, type))
-		}
+	override fun generate(directory: File) = tags.forEach { (type, tag) ->
+		tag.generate(File(directory, type))
 	}
 }
 

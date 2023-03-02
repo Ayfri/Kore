@@ -66,11 +66,9 @@ fun Function.fillbiome(from: Vec3, to: Vec3, biome: Argument.Biome) = addLine(co
 fun Function.fillbiome(from: Vec3, to: Vec3, biome: Argument.Biome, filter: Argument.Biome) =
 	addLine(command("fillbiome", from, to, biome, literal("replace"), filter))
 
-fun Function.function(name: String, group: Boolean = false) =
-	addLine(command("function", tag(name, datapack.name, group)))
-
-fun Function.function(namespace: String, name: String, group: Boolean = false) =
-	addLine(command("function", tag(name, namespace, group)))
+fun Function.function(name: String, group: Boolean = false) = addLine(command("function", tag(name, datapack.name, group)))
+fun Function.function(namespace: String, name: String, group: Boolean = false) = addLine(command("function", tag(name, namespace, group)))
+fun Function.function(function: Argument.Function) = addLine(command("function", function))
 
 fun Function.gamemode(gamemode: Gamemode, target: Argument.Entity? = null) = addLine(command("gamemode", literal(gamemode.asArg()), target))
 
