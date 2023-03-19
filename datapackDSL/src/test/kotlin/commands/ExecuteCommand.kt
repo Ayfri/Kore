@@ -9,9 +9,9 @@ import commands.execute.*
 import commands.execute.Relation
 import functions.Function
 import functions.function
-import generated.Biomes
 import generated.Blocks
 import generated.Entities
+import generated.Tags
 import utils.assertsIs
 import utils.debugEntity
 
@@ -110,7 +110,7 @@ fun Function.executeTests() {
 
 	execute {
 		ifCondition {
-			biome(vec3(), Biomes.BADLANDS)
+			biome(vec3(), Tags.Worldgen.Biome.HasStructure.ANCIENT_CITY)
 			block(vec3(), Blocks.AIR)
 			blocks(vec3(PosNumber.Type.LOCAL), vec3(1, 2, 3), vec3(4, 5, 6), BlocksTestMode.MASKED)
 			data(self(), "test")

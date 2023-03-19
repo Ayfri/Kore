@@ -22,6 +22,8 @@ sealed interface Argument {
 		}
 	}
 
+	sealed interface BiomeOrTag : Argument
+
 	sealed interface BlockOrTag : Argument
 
 	sealed interface Data : Argument {
@@ -49,6 +51,10 @@ sealed interface Argument {
 		override fun asString() = asId()
 	}
 
+	sealed interface TaggedResourceLocation : ResourceLocation {
+		override fun asId(): String = "#$namespace:$name"
+	}
+
 	@Serializable(with = ArgumentSerializer::class)
 	object All : Argument, Possessor, ScoreHolder {
 		override fun asString() = "*"
@@ -69,6 +75,26 @@ sealed interface Argument {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : Attribute {
 				override val name = name
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
+	interface Biome : ResourceLocation, BiomeOrTag {
+		companion object {
+			operator fun invoke(biome: String, namespace: String = "minecraft") = object : Biome {
+				override val name = biome
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
+	interface BiomeTag : TaggedResourceLocation, BiomeOrTag {
+		companion object {
+			operator fun invoke(biomeOrTag: String, namespace: String = "minecraft") = object : BiomeTag {
+				override val name = biomeOrTag
 				override val namespace = namespace
 			}
 		}
@@ -104,22 +130,10 @@ sealed interface Argument {
 	}
 
 	@Serializable(with = ArgumentSerializer::class)
-	interface BlockTag : ResourceLocation, BlockOrTag {
-		override fun asString() = "#${asId()}"
-
+	interface BlockTag : TaggedResourceLocation, BlockOrTag {
 		companion object {
 			operator fun invoke(blockOrTag: String, namespace: String = "minecraft") = object : BlockTag {
 				override val name = blockOrTag
-				override val namespace = namespace
-			}
-		}
-	}
-
-	@Serializable(with = ArgumentSerializer::class)
-	interface Biome : ResourceLocation {
-		companion object {
-			operator fun invoke(biome: String, namespace: String = "minecraft") = object : Biome {
-				override val name = biome
 				override val namespace = namespace
 			}
 		}
@@ -245,9 +259,7 @@ sealed interface Argument {
 	}
 
 	@Serializable(with = ArgumentSerializer::class)
-	interface ItemTag : ResourceLocation, BlockOrTag {
-		override fun asString() = "#${asId()}"
-
+	interface ItemTag : TaggedResourceLocation, BlockOrTag {
 		companion object {
 			operator fun invoke(blockOrTag: String, namespace: String = "minecraft") = object : ItemTag {
 				override val name = blockOrTag

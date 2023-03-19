@@ -16,6 +16,7 @@ fun generateTagsObject(tags: List<String>, sourceUrl: String) {
 	val branchesParents = buildMap {
 		put("blocks", "BlockTag")
 		put("items", "ItemTag")
+		put("worldgen/biome", "BiomeTag")
 	}
 
 	generatePathEnumTree(tags.removeJSONSuffix(), "Tags", sourceUrl, tagsParents = branchesParents)

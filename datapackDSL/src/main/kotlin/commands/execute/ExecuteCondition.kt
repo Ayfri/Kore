@@ -32,7 +32,7 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) {
 	fun blocks(start: Vec3, end: Vec3, destination: Vec3, mode: BlocksTestMode) =
 		addArguments(listOf(literal("blocks"), start, end, destination, literal(mode.asArg())))
 
-	fun biome(pos: Vec3, biome: Argument.Biome) = addArguments(listOf(literal("biome"), pos, biome))
+	fun biome(pos: Vec3, biome: Argument.BiomeOrTag) = addArguments(listOf(literal("biome"), pos, biome))
 
 	fun data(target: Argument.Data, path: String) = addArguments(
 		listOf(

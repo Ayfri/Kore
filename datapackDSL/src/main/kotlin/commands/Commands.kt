@@ -80,7 +80,7 @@ fun Function.list(uuids: Boolean = false) = addLine(command("list", literal(if (
 
 fun Function.locateStructure(structure: String) = addLine(command("locate", literal("structure"), literal(structure)))
 fun Function.locateBiome(biome: String) = addLine(command("locate", literal("biome"), literal(biome)))
-fun Function.locateBiome(biome: Argument.Biome) = addLine(command("locate", literal("biome"), biome))
+fun Function.locateBiome(biome: Argument.BiomeOrTag) = addLine(command("locate", literal("biome"), biome))
 fun Function.locatePointOfInterest(pointOfInterest: String) = addLine(command("locate", literal("poi"), literal(pointOfInterest)))
 
 fun Function.me(message: String) = addLine(command("me", literal(message)))

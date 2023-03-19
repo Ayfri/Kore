@@ -33,8 +33,8 @@ fun generatePathEnumTree(
 
 		val enumValue = path.substringAfterLast('/').snakeCase().uppercase()
 		val enumName = parent.substringAfterLast('/').pascalCase()
-		val parentName = parent.substringAfterLast('/').snakeCase()
-		val tagParent = tagsParents?.get(parentName)
+		val tagParentKey = path.substringBeforeLast('/')
+		val tagParent = tagsParents?.keys?.firstOrNull { parent.startsWith(it) }
 
 		typeBuilders[depth].getOrPut(parent) {
 			TypeSpec.enumBuilder(enumName).apply {
@@ -47,14 +47,17 @@ fun generatePathEnumTree(
 							.build()
 					)
 
-					addSuperinterface(ClassName("arguments", "Argument", tagParent))
+					addSuperinterface(ClassName("arguments", "Argument", tagsParents[tagParent]!!))
 				}
 
 				if (hasParent || tagParent != null) {
 					val hash = if (tagParent != null) "#" else ""
+					var tagPath = if (tagParent != null) parent.substringAfter(tagParent).substringAfterLast("/") + "/" else ""
+					if (tagPath == "/") tagPath = ""
+
 					addFunction(
 						FunSpec.builder("asString")
-							.addStatement("return \"$hash\$namespace:\${name.lowercase()}\"")
+							.addStatement("return \"$hash\$namespace:$tagPath\${name.lowercase()}\"")
 							.overrides()
 							.build()
 					)
