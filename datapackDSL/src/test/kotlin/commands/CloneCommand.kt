@@ -26,7 +26,7 @@ fun Function.cloneTests() {
 
 		from = Dimension.THE_NETHER
 		to = Dimension.OVERWORLD
-	} assertsMatches Regex("clone from minecraft:the_nether ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* to minecraft:overworld")
+	} assertsMatches Regex("clone from minecraft:the_nether ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* to minecraft:overworld ~\\d* ~\\d* ~\\d*")
 
 	clone {
 		randomZoneAndDestination()
@@ -36,5 +36,5 @@ fun Function.cloneTests() {
 	clone {
 		randomZoneAndDestination()
 		filter(Tags.Blocks.BASE_STONE_OVERWORLD, CloneMode.FORCE)
-	} assertsMatches Regex("clone ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* filtered minecraft:blocks/base_stone_overworld force")
+	} assertsMatches Regex("clone ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* filtered #minecraft:base_stone_overworld force")
 }

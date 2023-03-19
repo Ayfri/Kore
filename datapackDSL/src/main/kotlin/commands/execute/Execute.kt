@@ -31,14 +31,10 @@ fun Execute.run(block: Function.() -> Command): Argument.Function {
 	}
 
 	val name = "generated_${hashCode()}"
-	val namespace = datapack.name
+	val generatedFunction = datapack.generatedFunction(name) { block() }
+	if (generatedFunction.name == name) comment("Generated function ${asString()}")
 
-	val finalName = datapack.generatedFunction(name) { block() }
-	val usageName = "$GENERATED_FUNCTIONS_FOLDER/$finalName"
-
-	if (finalName.name == name) comment("Generated function $namespace:$usageName")
-
-	return Argument.Function(namespace, usageName)
+	return generatedFunction
 }
 
 fun Function.execute(block: Execute.() -> Argument.Function): Command {

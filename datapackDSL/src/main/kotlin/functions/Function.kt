@@ -128,7 +128,11 @@ fun DataPack.function(name: String, namespace: String = this.name, directory: St
 	addFunction(Function(name, namespace, directory, this).apply(block))
 
 fun DataPack.generatedFunction(name: String, directory: String = "", block: Function.() -> Unit) =
-	addGeneratedFunction(Function(name, this.name, directory, this).apply(block))
+	addGeneratedFunction(
+		Function(name, this.name, "${DataPack.GENERATED_FUNCTIONS_FOLDER}${directory.ifNotEmpty { "/$it" }}", this).apply(
+			block
+		)
+	)
 
 fun DataPack.load(name: String? = null, directory: String = "", block: Function.() -> Unit) =
 	addToMinecraftTag("load", name, block, directory)
@@ -146,8 +150,7 @@ private fun DataPack.addToMinecraftTag(
 	val name = functionName ?: "${fileName}_${function.hashCode()}"
 	val generatedFunction = generatedFunction(name, directory, block)
 	addToTag("minecraft", "functions", fileName) {
-		val usageName = "${DataPack.GENERATED_FUNCTIONS_FOLDER}/${generatedFunction.directory.ifNotEmpty { "$it/" }}${generatedFunction.name}"
-		add(usageName, this@DataPack.name)
+		this += generatedFunction.asId()
 	}
 
 	return generatedFunction

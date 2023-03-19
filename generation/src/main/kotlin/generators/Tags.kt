@@ -18,5 +18,5 @@ fun generateTagsObject(tags: List<String>, sourceUrl: String) {
 		put("items", "ItemTag")
 	}
 
-	generatePathEnumTree(tags.removeJSONSuffix(), "Tags", sourceUrl, branchesParents = branchesParents)
+	generatePathEnumTree(tags.removeJSONSuffix(), "Tags", sourceUrl, tagsParents = branchesParents)
 }

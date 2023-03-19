@@ -84,8 +84,8 @@ class Execute {
 	fun storeResult(block: ExecuteStore.() -> List<Argument>) =
 		array.addAll(literal("store"), literal("result"), *ExecuteStore(this).block().toTypedArray())
 
-	fun storeValue(block: ExecuteStore.() -> List<Argument>) =
-		array.addAll(literal("store"), literal("value"), *ExecuteStore(this).block().toTypedArray())
+	fun storeSuccess(block: ExecuteStore.() -> List<Argument>) =
+		array.addAll(literal("store"), literal("success"), *ExecuteStore(this).block().toTypedArray())
 
 	fun summon(entity: Argument.EntitySummon) = array.addAll(literal("summon"), entity)
 }

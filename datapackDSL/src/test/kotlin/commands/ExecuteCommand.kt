@@ -110,7 +110,7 @@ fun Function.executeTests() {
 
 	execute {
 		ifCondition {
-			biome(Biomes.BADLANDS)
+			biome(vec3(), Biomes.BADLANDS)
 			block(vec3(), Blocks.AIR)
 			blocks(vec3(PosNumber.Type.LOCAL), vec3(1, 2, 3), vec3(4, 5, 6), BlocksTestMode.MASKED)
 			data(self(), "test")
@@ -131,11 +131,11 @@ fun Function.executeTests() {
 			say("test")
 		}
 	} assertsIs """
-		execute if biome minecraft:badlands if block ~ ~ ~ minecraft:air if blocks ^ ^ ^ 1 2 3 4 5 6 masked if data entity @s test if dimension minecraft:the_end if loaded -2 -2 -2 if predicate test unless score $selectorAsString test matches ..1 store result block ~ ~ ~ test byte 1 run say test
+		execute if biome ~ ~ ~ minecraft:badlands if block ~ ~ ~ minecraft:air if blocks ^ ^ ^ 1 2 3 4 5 6 masked if data entity @s test if dimension minecraft:the_end if loaded -2 -2 -2 if predicate test unless score $selectorAsString test matches ..1 store result block ~ ~ ~ test byte 1 run say test
 	""".trimIndent()
 
 	execute {
-		storeValue {
+		storeSuccess {
 			bossBarValue("test")
 		}
 
@@ -143,6 +143,6 @@ fun Function.executeTests() {
 			say("test")
 		}
 	} assertsIs """
-		execute store value bossbar test value run say test
+		execute store success bossbar test value run say test
 	""".trimIndent()
 }

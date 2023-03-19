@@ -6,7 +6,7 @@ fun generatePathEnumTree(
 	name: String,
 	sourceUrl: String,
 	parentArgumentType: String? = null,
-	branchesParents: Map<String, String>? = null
+	tagsParents: Map<String, String>? = null
 ) {
 	val typeBuilders = MutableList(paths.maxOf { path -> path.count { it == '/' } }) {
 		mutableMapOf<String, TypeSpec.Builder>()
@@ -34,12 +34,12 @@ fun generatePathEnumTree(
 		val enumValue = path.substringAfterLast('/').snakeCase().uppercase()
 		val enumName = parent.substringAfterLast('/').pascalCase()
 		val parentName = parent.substringAfterLast('/').snakeCase()
-		val branchParent = branchesParents?.get(parentName)
+		val tagParent = tagsParents?.get(parentName)
 
 		typeBuilders[depth].getOrPut(parent) {
 			TypeSpec.enumBuilder(enumName).apply {
 				addSuperinterface(ClassName("generated", name))
-				if (branchParent != null) {
+				if (tagParent != null) {
 					addProperty(
 						PropertySpec.builder("namespace", String::class)
 							.addModifiers(KModifier.OVERRIDE)
@@ -47,13 +47,14 @@ fun generatePathEnumTree(
 							.build()
 					)
 
-					addSuperinterface(ClassName("arguments", "Argument", branchParent))
+					addSuperinterface(ClassName("arguments", "Argument", tagParent))
 				}
 
-				if (hasParent || branchParent != null) {
+				if (hasParent || tagParent != null) {
+					val hash = if (tagParent != null) "#" else ""
 					addFunction(
 						FunSpec.builder("asString")
-							.addStatement("return \"\$namespace:$parent/\${name.lowercase()}\"")
+							.addStatement("return \"$hash\$namespace:\${name.lowercase()}\"")
 							.overrides()
 							.build()
 					)

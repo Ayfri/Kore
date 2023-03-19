@@ -69,8 +69,8 @@ class Clone(private val fn: Function) {
 			*fromArgs,
 			begin,
 			end,
-			destination,
 			*toArgs,
+			destination,
 			literal(type?.asArg()),
 			filter,
 			literal(cloneMode?.asArg())

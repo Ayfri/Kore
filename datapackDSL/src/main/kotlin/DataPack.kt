@@ -106,7 +106,14 @@ class DataPack(val name: String) {
 
 		data.generateResources("advancements", advancements)
 		data.generateResources("functions", functions.groupBy { it.namespace })
-		data.generateResources("functions/$GENERATED_FUNCTIONS_FOLDER", generatedFunctions.groupBy { it.namespace }, true)
+		data.generateResources(
+			dirName = "functions/$GENERATED_FUNCTIONS_FOLDER",
+			resources = generatedFunctions.map {
+				it.directory = it.directory.removePrefix(GENERATED_FUNCTIONS_FOLDER)
+				it
+			}.groupBy { it.namespace },
+			deleteOldFiles = true
+		)
 		data.generateResources("predicates", predicates)
 		data.generateResources("tags", tags.groupBy { it.namespace })
 
