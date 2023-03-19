@@ -17,6 +17,7 @@ import features.tags.tags
 import functions.function
 import generated.*
 import generated.Attributes
+import helpers.helpersTests
 import io.github.cdimascio.dotenv.dotenv
 import net.benwoodworth.knbt.addNbtCompound
 import serialization.selectorTests
@@ -32,6 +33,7 @@ fun DataPack.setTestPath() {
 
 fun main() {
 	advancementTests()
+	helpersTests()
 	predicateTests()
 	selectorTests()
 	runUnitTests()
