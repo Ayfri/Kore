@@ -109,11 +109,17 @@ open class Function(
 	companion object {
 		val EMPTY = object : Function("", datapack = DataPack("")) {
 			override fun addLine(line: String) {}
-			override fun addLine(command: Command) = command
+			override fun addLine(command: Command): Command {
+				lines.clear()
+				lines += command.toString()
+				return command
+			}
+
 			override fun comment(comment: String) {}
 			override fun generate(directory: File) {}
 			override fun clear() {}
 			override fun toString() = ""
+			override fun asId() = lines.getOrElse(0) { "" }
 		}
 	}
 }

@@ -172,5 +172,6 @@ fun Execute.run(block: Function.() -> Command): Argument.Function {
 fun Function.execute(block: Execute.() -> Argument.Function): Command {
 	val execute = Execute()
 	val run = execute.block()
-	return addLine(command("execute", *execute.getArguments(), literal("run"), literal(run.asString())))
+	val runArg = if (run.toString() == "") run.asId() else "function ${run.asId()}"
+	return addLine(command("execute", *execute.getArguments(), literal("run"), literal(runArg)))
 }
