@@ -12,7 +12,7 @@ import net.benwoodworth.knbt.buildNbtCompound
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
-open class TextComponent constructor(
+open class TextComponent(
 	@EncodeDefault(EncodeDefault.Mode.NEVER)
 	var text: String = "",
 	var bold: Boolean? = null,

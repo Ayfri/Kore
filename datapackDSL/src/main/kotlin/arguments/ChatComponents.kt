@@ -33,7 +33,10 @@ data class ChatComponents(val list: MutableList<ChatComponent> = mutableListOf()
 
 	fun toNbtTag() = when (list.size) {
 		0 -> NbtString("")
-		1 -> list[0].toNbtTag()
+		1 -> list[0].also {
+			if (it is TextComponent && it.containsOnlyText()) return NbtString(it.text)
+		}.toNbtTag()
+
 		else -> buildNbtList {
 			list.forEach {
 				this += it.toNbtTag()
