@@ -12,6 +12,7 @@ val dp = dataPack("unit_tests") {
 		effectTests()
 		executeTests()
 		rideTests()
+		scheduleTests()
 		tellrawTests()
 		titleTests()
 		weatherTests()
