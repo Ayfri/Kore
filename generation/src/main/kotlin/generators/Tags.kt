@@ -13,5 +13,10 @@ suspend fun downloadTags() {
 }
 
 fun generateTagsObject(tags: List<String>, sourceUrl: String) {
-	generatePathEnumTree(tags.removeJSONSuffix(), "Tags", sourceUrl)
+	val branchesParents = buildMap {
+		put("blocks", "BlockTag")
+		put("items", "ItemTag")
+	}
+
+	generatePathEnumTree(tags.removeJSONSuffix(), "Tags", sourceUrl, branchesParents = branchesParents)
 }
