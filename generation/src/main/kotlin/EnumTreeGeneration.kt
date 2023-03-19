@@ -1,7 +1,13 @@
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 
-fun generatePathEnumTree(paths: List<String>, name: String, sourceUrl: String, parentArgumentType: String? = null) {
+fun generatePathEnumTree(
+	paths: List<String>,
+	name: String,
+	sourceUrl: String,
+	parentArgumentType: String? = null,
+	branchesParents: Map<String, String>? = null
+) {
 	val typeBuilders = MutableList(paths.maxOf { path -> path.count { it == '/' } }) {
 		mutableMapOf<String, TypeSpec.Builder>()
 	}
@@ -27,12 +33,24 @@ fun generatePathEnumTree(paths: List<String>, name: String, sourceUrl: String, p
 
 		val enumValue = path.substringAfterLast('/').snakeCase().uppercase()
 		val enumName = parent.substringAfterLast('/').pascalCase()
+		val parentName = parent.substringAfterLast('/').snakeCase()
+		val branchParent = branchesParents?.get(parentName)
 
 		typeBuilders[depth].getOrPut(parent) {
 			TypeSpec.enumBuilder(enumName).apply {
 				addSuperinterface(ClassName("generated", name))
+				if (branchParent != null) {
+					addProperty(
+						PropertySpec.builder("namespace", String::class)
+							.addModifiers(KModifier.OVERRIDE)
+							.getter(FunSpec.getterBuilder().addStatement("return \"minecraft\"").build())
+							.build()
+					)
 
-				if (hasParent) {
+					addSuperinterface(ClassName("arguments", "Argument", branchParent))
+				}
+
+				if (hasParent || branchParent != null) {
 					addFunction(
 						FunSpec.builder("asString")
 							.addStatement("return \"\$namespace:$parent/\${name.lowercase()}\"")
