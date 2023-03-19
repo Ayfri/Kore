@@ -5,6 +5,7 @@ import arguments.chatcomponents.TextComponent
 import arguments.chatcomponents.textComponent
 import arguments.enums.Difficulty
 import arguments.enums.Gamemode
+import commands.execute.Anchor
 import functions.Function
 import generated.Gamerules
 import kotlinx.serialization.Serializable
@@ -27,17 +28,6 @@ fun Function.debugStop() = addLine(command("debug", literal("stop")))
 fun Function.defaultGamemode(mode: Gamemode) = addLine(command("defaultgamemode", literal(mode.asArg())))
 
 fun Function.difficulty(difficulty: Difficulty? = null) = addLine(command("difficulty", literal(difficulty?.asArg())))
-
-class Effect(private val fn: Function, val target: Argument.Entity) {
-	fun clear(effect: Argument.MobEffect? = null) = fn.addLine(command("effect", literal("clear"), target, effect))
-	fun give(effect: Argument.MobEffect, duration: Int? = null, amplifier: Int? = null, hideParticles: Boolean? = null) = fn.addLine(
-		command(
-			"effect", literal("give"), target, effect, int(duration), int(amplifier), bool(hideParticles)
-		)
-	)
-}
-
-fun Function.effect(target: Argument.Entity, block: Effect.() -> Command) = Effect(this, target).block()
 
 fun Function.enchant(target: Argument.Entity, enchantment: Argument.Enchantment, level: Int? = null) =
 	addLine(command("enchant", target, enchantment, int(level)))
@@ -261,38 +251,6 @@ fun Function.tellraw(targets: Argument.Entity, text: String = "", block: TextCom
 fun Function.tellraw(targets: Argument.Entity, message: ChatComponents) = addLine(command("tellraw", targets, message.asJsonArg()))
 fun Function.tellraw(targets: Argument.Entity, message: String) = addLine(command("tellraw", targets, textComponent(message).asJsonArg()))
 
-@Serializable(TitleAction.Companion.TitleActionSerializer::class)
-enum class TitleAction {
-	CLEAR,
-	RESET;
-
-	companion object {
-		val values = values()
-
-		object TitleActionSerializer : LowercaseSerializer<TitleAction>(values)
-	}
-}
-
-@Serializable(TitleLocation.Companion.TitleLocationSerializer::class)
-enum class TitleLocation {
-	TITLE,
-	SUBTITLE,
-	ACTIONBAR;
-
-	companion object {
-		val values = values()
-
-		object TitleLocationSerializer : LowercaseSerializer<TitleLocation>(values)
-	}
-}
-
-fun Function.title(targets: Argument.Entity, action: TitleAction) = addLine(command("title", targets, literal(action.asArg())))
-fun Function.title(targets: Argument.Entity, location: TitleLocation, message: ChatComponents) =
-	addLine(command("title", targets, literal(location.asArg()), message.asJsonArg()))
-
-fun Function.title(targets: Argument.Entity, fadeIn: Int, stay: Int, fadeOut: Int) =
-	addLine(command("title", targets, literal("times"), int(fadeIn), int(stay), int(fadeOut)))
-
 fun Function.tm(message: String) = addLine(command("tm", literal(message)))
 
 fun Function.tp(destination: Argument.Entity) = addLine(command("tp", destination))
@@ -312,7 +270,3 @@ fun Function.tp(
 ) = addLine(command("tp", target, location, literal("facing"), facing, literal(facingAnchor.asArg())))
 
 fun Function.w(message: String) = addLine(command("w", literal(message)))
-
-fun Function.weatherClear(duration: Int? = null) = addLine(command("weather", literal("clear"), int(duration)))
-fun Function.weatherRain(duration: Int? = null) = addLine(command("weather", literal("rain"), int(duration)))
-fun Function.weatherThunder(duration: Int? = null) = addLine(command("weather", literal("thunder"), int(duration)))

@@ -1,7 +1,7 @@
 package features
 
-import commands.execute
-import commands.run
+import commands.execute.execute
+import commands.execute.run
 import dataPack
 import features.advancements.types.item
 import features.predicates.conditions.matchTool

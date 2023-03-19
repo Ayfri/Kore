@@ -5,6 +5,8 @@ package entities
 import arguments.*
 import arguments.selector.SelectorNbtData
 import commands.*
+import commands.execute.Execute
+import commands.execute.execute
 import functions.Function
 import items.ItemStack
 import scoreboard.ScoreboardEntity
@@ -63,19 +65,19 @@ fun Entity.replaceItem(slot: ItemSlotType, item: ItemStack) = items {
 }
 
 context(Function)
-fun <T : Entity> T.executeAs(block: Execute.(T) -> Command) = execute {
+fun <T : Entity> T.executeAs(block: Execute.(T) -> Argument.Function) = execute {
 	asTarget(asSelector())
 	block(this@executeAs)
 }
 
 context(Function)
-fun <T : Entity> T.executeAt(block: Execute.(T) -> Command) = execute {
+fun <T : Entity> T.executeAt(block: Execute.(T) -> Argument.Function) = execute {
 	at(asSelector())
 	block(this@executeAt)
 }
 
 context(Function)
-fun <T : Entity> T.executeAsAt(block: Execute.(T) -> Command) = execute {
+fun <T : Entity> T.executeAsAt(block: Execute.(T) -> Argument.Function) = execute {
 	asTarget(asSelector())
 	at(asSelector())
 	block(this@executeAsAt)

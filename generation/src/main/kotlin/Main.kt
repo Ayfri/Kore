@@ -55,6 +55,7 @@ suspend fun main(args: Array<String>) {
 	downloadBiomes()
 	downloadBlocks()
 	downloadCatVariants()
+	downloadDamageTypes()
 	downloadFluids()
 	downloadFrogVariants()
 	downloadEffects()

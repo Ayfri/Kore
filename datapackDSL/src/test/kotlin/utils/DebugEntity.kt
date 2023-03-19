@@ -5,6 +5,8 @@ import arguments.chatcomponents.*
 import arguments.numbers.rangeOrIntStart
 import arguments.selector.SelectorNbtData
 import commands.*
+import commands.execute.execute
+import commands.execute.run
 import functions.Function
 import generated.Entities
 import net.benwoodworth.knbt.put

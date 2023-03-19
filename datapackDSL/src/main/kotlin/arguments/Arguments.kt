@@ -139,6 +139,16 @@ sealed interface Argument {
 	}
 
 	@Serializable(with = ArgumentSerializer::class)
+	interface DamageType : ResourceLocation {
+		companion object {
+			operator fun invoke(damageType: String, namespace: String = "minecraft") = object : DamageType {
+				override val name = damageType
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
 	interface Dimension : ResourceLocation {
 		companion object {
 			operator fun invoke(dimension: String, namespace: String = "minecraft") = object : Dimension {
@@ -160,7 +170,7 @@ sealed interface Argument {
 
 	@Serializable(with = ArgumentSerializer::class)
 	data class Float(val value: Double) : Argument {
-		override fun asString() = value.toString()
+		override fun asString() = value.str
 	}
 
 	@Serializable(with = ArgumentSerializer::class)

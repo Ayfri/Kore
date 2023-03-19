@@ -1,8 +1,9 @@
 package commands
 
-import arguments.Color
-import arguments.allEntities
-import arguments.numbers.rangeOrInt
+import arguments.*
+import arguments.enums.DataType
+import arguments.enums.Dimension
+import arguments.numbers.*
 import arguments.selector.Sort
 import functions.Function
 import functions.function

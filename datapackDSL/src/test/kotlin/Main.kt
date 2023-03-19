@@ -8,6 +8,9 @@ import arguments.selector.SelectorNbtData
 import arguments.selector.SelectorType
 import arguments.selector.Sort
 import commands.*
+import commands.execute.Anchor
+import commands.execute.execute
+import commands.execute.run
 import features.advancementTests
 import features.predicateTests
 import features.tags.tags

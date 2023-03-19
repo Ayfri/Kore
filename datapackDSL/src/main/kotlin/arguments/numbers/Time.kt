@@ -1,5 +1,6 @@
 package arguments.numbers
 
+import arguments.literal
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encoding.Encoder
 import serializers.LowercaseSerializer
@@ -9,10 +10,10 @@ enum class TimeType(val unit: String) {
 	TICKS("t"),
 	SECONDS("s"),
 	DAYS("d");
-	
+
 	companion object {
 		val values = values()
-		
+
 		object TimeTypeSerializer : LowercaseSerializer<TimeType>(values) {
 			override fun serialize(encoder: Encoder, value: TimeType) {
 				encoder.encodeString(value.unit)
@@ -21,7 +22,7 @@ enum class TimeType(val unit: String) {
 	}
 }
 
-class TimeNumber(val value: Long, val type: TimeType = TimeType.TICKS) : Comparable<TimeNumber> {
+class TimeNumber(val value: Double, val type: TimeType = TimeType.TICKS) : Comparable<TimeNumber> {
 	operator fun plus(other: TimeNumber) = TimeNumber(value + other.value, type)
 	operator fun minus(other: TimeNumber) = TimeNumber(value - other.value, type)
 	operator fun times(other: TimeNumber) = TimeNumber(value * other.value, type)
@@ -30,19 +31,22 @@ class TimeNumber(val value: Long, val type: TimeType = TimeType.TICKS) : Compara
 	operator fun unaryMinus() = TimeNumber(-value, type)
 	operator fun unaryPlus() = TimeNumber(+value, type)
 	override operator fun compareTo(other: TimeNumber) = value.compareTo(other.value)
-	
+
+	fun asString() = toString()
+	fun asArg() = literal(asString())
+
 	fun toTicks() = TimeNumber(value, TimeType.TICKS)
 	fun toSeconds() = TimeNumber(value, TimeType.SECONDS)
 	fun toDays() = TimeNumber(value, TimeType.DAYS)
-	
+
 	override fun toString() = when (type) {
-		TimeType.TICKS -> value.toString()
-		TimeType.SECONDS -> "${value}s"
-		TimeType.DAYS -> "${value}d"
+		TimeType.TICKS -> value.str
+		TimeType.SECONDS -> "${value.str}s"
+		TimeType.DAYS -> "${value.str}d"
 	}
 }
 
-val Number.ticks get() = TimeNumber(toLong())
-val Number.seconds get() = TimeNumber(toLong(), TimeType.SECONDS)
-val Number.days get() = TimeNumber(toLong(), TimeType.DAYS)
-fun time(value: Number = 0, type: TimeType = TimeType.TICKS) = TimeNumber(value.toLong(), type)
+val Number.ticks get() = TimeNumber(toDouble())
+val Number.seconds get() = TimeNumber(toDouble(), TimeType.SECONDS)
+val Number.days get() = TimeNumber(toDouble(), TimeType.DAYS)
+fun time(value: Number = 0, type: TimeType = TimeType.TICKS) = TimeNumber(value.toDouble(), type)
