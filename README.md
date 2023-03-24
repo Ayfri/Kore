@@ -63,14 +63,9 @@ There are multiple other new features that I want to add to this project like :
 - [ ] Useful libraries made by different people recreated in Kotlin.
 - [ ] Maybe a way to import a datapack and create Kotlin equivalent code.
 
-## Contributing
+## How to run the project
 
-If you want to contribute to this project, you can do it by creating a pull request or by creating an issue.
-
-Instructions to run the project :
-
-1. First, clone the project.
-2. Then, run gradle `generation:run` task to generate the auto-generated files.
+1. First, run gradle `generation:run` task to generate the auto-generated files.
 3. Finally, run gradle `datapackDSL:run` or `oop:run` to run the examples.
 
 > Note : OOP module is not finished yet and experimental, it might change a lot in the future.
