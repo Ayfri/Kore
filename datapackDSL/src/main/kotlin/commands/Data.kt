@@ -67,16 +67,22 @@ object DataModifyOperation {
 		listOf(literal("set"), literal("value"), literal(StringifiedNbt.encodeToString(value)))
 }
 
-class Data(private val fn: Function, val target: Argument.Data) {
+class Data(val fn: Function, val target: Argument.Data) {
 	fun get(path: String? = null, scale: Double? = null) = fn.addLine(
 		command(
 			"data", literal("get"), literal(target.literalName), target, literal(path), float(scale)
 		)
 	)
 
-	fun merge(from: Argument.Data, path: String) = fn.addLine(
+	fun merge(data: NbtTag) = fn.addLine(
 		command(
-			"data", literal("merge"), literal(target.literalName), target, literal("from"), literal(from.literalName), from, literal(path)
+			"data", literal("merge"), literal(target.literalName), target, literal(StringifiedNbt.encodeToString(data))
+		)
+	)
+
+	inline fun <reified T : Any> merge(data: @Serializable T) = fn.addLine(
+		command(
+			"data", literal("merge"), literal(target.literalName), target, literal(StringifiedNbt.encodeToString(data))
 		)
 	)
 

@@ -1,9 +1,8 @@
 package commands
 
+import arguments.chatcomponents.scoreComponent
 import arguments.chatcomponents.textComponent
 import arguments.self
-import arguments.storage
-import arguments.vec3
 import functions.Function
 import net.benwoodworth.knbt.NbtInt
 import utils.assertsIs
@@ -13,9 +12,7 @@ fun Function.dataTests() {
 		get("foo") assertsIs "data get entity @s foo"
 		get("foo", 1.0) assertsIs "data get entity @s foo 1"
 
-		merge(self(), "foo") assertsIs "data merge entity @s from entity @s foo"
-		merge(vec3(), "foo") assertsIs "data merge entity @s from block ~ ~ ~ foo"
-		merge(storage("foo", "bar"), "baz") assertsIs "data merge entity @s from storage bar:foo baz"
+		merge(scoreComponent("foo", self())) assertsIs "data merge entity @s {score:{name:\"@s\",objective:\"foo\"}}"
 
 		modify("foo") { append(self(), "bar") } assertsIs "data modify entity @s foo append from entity @s bar"
 		modify("foo") { append(NbtInt(1)) } assertsIs "data modify entity @s foo append value 1"
