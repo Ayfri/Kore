@@ -9,6 +9,7 @@ val dp = dataPack("unit_tests") {
 	load {
 		cloneTests()
 		damageTests()
+		dataTests()
 		effectTests()
 		executeTests()
 		rideTests()
