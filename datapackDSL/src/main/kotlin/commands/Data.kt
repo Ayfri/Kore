@@ -54,7 +54,7 @@ object DataModifyOperation {
 
 	fun set(from: Argument.Data, path: String) = listOf(literal("set"), literal("from"), literal(from.literalName), from, literal(path))
 	fun set(string: Argument.Data, path: String, start: Int? = null, end: Int? = null) =
-		listOf(literal("set"), literal("from"), literal(string.literalName), string, literal(path), int(start), int(end))
+		listOfNotNull(literal("set"), literal("string"), literal(string.literalName), string, literal(path), int(start), int(end))
 
 	fun set(value: NbtTag) = listOf(literal("set"), literal("value"), literal(StringifiedNbt.encodeToString(value)))
 	fun set(value: Int) = listOf(literal("set"), literal("value"), int(value))

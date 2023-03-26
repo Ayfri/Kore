@@ -33,6 +33,8 @@ fun Function.dataTests() {
 		modify("foo") { set(NbtInt(1)) } assertsIs "data modify entity @s foo set value 1"
 		modify("foo") { set(true) } assertsIs "data modify entity @s foo set value true"
 		modify("foo") { set(textComponent("bar")) } assertsIs "data modify entity @s foo set value \"bar\""
+		modify("foo") { set(self(), "bar", 1) } assertsIs "data modify entity @s foo set string entity @s bar 1"
+		modify("foo") { set(self(), "bar", 0, 1) } assertsIs "data modify entity @s foo set string entity @s bar 0 1"
 
 		remove("foo") assertsIs "data remove entity @s foo"
 	}
