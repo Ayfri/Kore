@@ -52,8 +52,6 @@ object DataModifyOperation {
 	inline fun <reified T : Any> prepend(value: @Serializable T) =
 		listOf(literal("prepend"), literal("value"), literal(StringifiedNbt.encodeToString(value)))
 
-	fun remove(path: String) = listOf(literal("remove"), literal(path))
-
 	fun set(from: Argument.Data, path: String) = listOf(literal("set"), literal("from"), literal(from.literalName), from, literal(path))
 	fun set(string: Argument.Data, path: String, start: Int? = null, end: Int? = null) =
 		listOf(literal("set"), literal("from"), literal(string.literalName), string, literal(path), int(start), int(end))

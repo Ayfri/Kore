@@ -29,8 +29,6 @@ fun Function.dataTests() {
 		modify("foo") { prepend(true) } assertsIs "data modify entity @s foo prepend value true"
 		modify("foo") { prepend(textComponent("bar")) } assertsIs "data modify entity @s foo prepend value \"bar\""
 
-		modify("foo") { remove("bar") } assertsIs "data modify entity @s foo remove bar"
-
 		modify("foo") { set(self(), "bar") } assertsIs "data modify entity @s foo set from entity @s bar"
 		modify("foo") { set(NbtInt(1)) } assertsIs "data modify entity @s foo set value 1"
 		modify("foo") { set(true) } assertsIs "data modify entity @s foo set value true"
