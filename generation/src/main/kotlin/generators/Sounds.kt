@@ -1,14 +1,13 @@
 package generators
 
 import generatePathEnumTree
-import getFromCacheOrDownloadJson
-import kotlinx.serialization.json.jsonObject
+import getFromCacheOrDownloadTxt
 import removeSuffix
 import url
 
 suspend fun downloadSounds() {
-	val url = url("custom-generated/misc/sounds.json")
-	val sounds = getFromCacheOrDownloadJson("sounds.json", url).jsonObject.keys.toList()
+	val url = url("custom-generated/lists/sounds.txt")
+	val sounds = getFromCacheOrDownloadTxt("sounds.txt", url).lines()
 
 	generateSoundsObject(sounds, url)
 }
