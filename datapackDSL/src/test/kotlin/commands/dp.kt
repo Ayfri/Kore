@@ -11,6 +11,7 @@ val dp = dataPack("unit_tests") {
 		effectTests()
 		executeTests()
 		forceLoadTests()
+		gameruleTests()
 		lootTests()
 		rideTests()
 		scheduleTests()
