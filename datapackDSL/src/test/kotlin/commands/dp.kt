@@ -2,16 +2,15 @@ package commands
 
 import dataPack
 import functions.load
-import setTestPath
 
 val dp = dataPack("unit_tests") {
-	setTestPath()
 	load {
 		cloneTests()
 		damageTests()
 		dataTests()
 		effectTests()
 		executeTests()
+		forceLoadTests()
 		rideTests()
 		scheduleTests()
 		tellrawTests()
