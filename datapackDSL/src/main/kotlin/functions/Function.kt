@@ -33,11 +33,8 @@ open class Function(
 		lines.add(command.toString())
 		if (debug) lines.add(
 			"tellraw @a ${
-				textComponent {
-					text = "/$command"
-
-					clickEvent {
-						action = ClickAction.SUGGEST_COMMAND
+				textComponent("/$command") {
+					clickEvent(ClickAction.SUGGEST_COMMAND) {
 						value = "/$command"
 					}
 
@@ -63,19 +60,45 @@ open class Function(
 		file.parentFile.mkdirs()
 
 		if (debug) {
-			lines.add(0, command("tellraw", allPlayers(), textComponent("Running function ") {
+			lines.add(0, command("tellraw", allPlayers(), (textComponent("Running function ") {
 				color = Color.GRAY
-			} + textComponent("$namespace:$name") {
+				italic = true
+			} + textComponent(asId()) {
 				color = Color.WHITE
 				bold = true
-			}).toString())
+				italic = true
 
-			debug(textComponent("Finished running function ") {
+				clickEvent(ClickAction.RUN_COMMAND) {
+					value = "/function ${asId()}"
+				}
+
+				hoverEvent {
+					showText("Click to execute function") {
+						italic = true
+						color = Color.GRAY
+					}
+				}
+			}).asJsonArg()).toString())
+
+			lines.add(command("tellraw", allPlayers(), (textComponent("Finished running function ") {
 				color = Color.GRAY
-			} + textComponent("$namespace:$name") {
+				italic = true
+			} + textComponent(asId()) {
 				color = Color.WHITE
 				bold = true
-			})
+				italic = true
+
+				clickEvent(ClickAction.RUN_COMMAND) {
+					value = "/function ${asId()}"
+				}
+
+				hoverEvent {
+					showText("Click to execute function") {
+						italic = true
+						color = Color.GRAY
+					}
+				}
+			}).asJsonArg()).toString())
 		}
 
 		file.writeText(toString())
