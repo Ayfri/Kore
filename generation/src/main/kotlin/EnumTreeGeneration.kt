@@ -5,17 +5,17 @@ fun generatePathEnumTree(
 	paths: List<String>,
 	name: String,
 	sourceUrl: String,
-	parentArgumentType: String? = null,
+	parentResourceType: String? = null,
 	tagsParents: Map<String, String>? = null
 ) {
 	val typeBuilders = MutableList(paths.maxOf { path -> path.count { it == '/' } }) {
 		mutableMapOf<String, TypeSpec.Builder>()
 	}
 
-	val hasParent = parentArgumentType != null
+	val hasParent = parentResourceType != null
 
 	val topLevel = TypeSpec.interfaceBuilder(name).apply {
-		parentArgumentType?.let { addSuperinterface(ClassName("arguments", "Argument", parentArgumentType)) }
+		parentResourceType?.let { addSuperinterface(ClassName("arguments", "Argument", parentResourceType)) }
 		addModifiers(KModifier.SEALED)
 		if (hasParent) {
 			addProperty(
@@ -33,12 +33,12 @@ fun generatePathEnumTree(
 
 		val enumValue = path.substringAfterLast('/').snakeCase().uppercase()
 		val enumName = parent.substringAfterLast('/').pascalCase()
-		val tagParentKey = path.substringBeforeLast('/')
 		val tagParent = tagsParents?.keys?.firstOrNull { parent.startsWith(it) }
 
 		typeBuilders[depth].getOrPut(parent) {
 			TypeSpec.enumBuilder(enumName).apply {
 				addSuperinterface(ClassName("generated", name))
+
 				if (tagParent != null) {
 					addProperty(
 						PropertySpec.builder("namespace", String::class)
@@ -54,6 +54,8 @@ fun generatePathEnumTree(
 					val hash = if (tagParent != null) "#" else ""
 					var tagPath = if (tagParent != null) parent.substringAfter(tagParent).substringAfterLast("/") + "/" else ""
 					if (tagPath == "/") tagPath = ""
+
+					if (hasParent) tagPath = parent.substringAfterLast("/") + "/"
 
 					addFunction(
 						FunSpec.builder("asString")
@@ -90,8 +92,8 @@ fun generatePathEnumTree(
 	generateFile(name, sourceUrl, topLevel)
 }
 
-fun generateCompanion(name: String, encoderValue: String = "minecraft:\${value.name.lowercase()}"): TypeSpec {
-	return TypeSpec.companionObjectBuilder().apply {
+fun generateCompanion(name: String, encoderValue: String = "minecraft:\${value.name.lowercase()}") =
+	TypeSpec.companionObjectBuilder().apply {
 		addProperty(
 			PropertySpec.Companion.builder("values", ARRAY.parameterizedBy(ClassName("", name)))
 				.initializer("values()")
@@ -113,4 +115,3 @@ fun generateCompanion(name: String, encoderValue: String = "minecraft:\${value.n
 				.build()
 		)
 	}.build()
-}
