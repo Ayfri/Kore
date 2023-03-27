@@ -10,9 +10,9 @@ object Target {
 	fun give(targets: Argument.Entity) = listOf(literal("give"), targets)
 	fun insert(pos: Vec3) = listOf(literal("insert"), pos)
 	fun spawn(pos: Vec3) = listOf(literal("spawn"), pos)
-	fun replaceBlock(pos: Vec3, slot: ItemSlotType, count: Int? = null) = listOf(literal("replace"), pos, slot, int(count))
+	fun replaceBlock(pos: Vec3, slot: ItemSlotType, count: Int? = null) = listOfNotNull(literal("replace"), pos, slot, int(count))
 	fun replaceEntity(entity: Argument.Entity, slot: ItemSlotType, count: Int? = null) =
-		listOf(literal("replace"), entity, slot, int(count))
+		listOfNotNull(literal("replace"), entity, slot, int(count))
 }
 
 @Serializable(Hand.Companion.HandSerializer::class)
@@ -32,11 +32,11 @@ enum class Hand {
 }
 
 object Source {
-	fun fish(lootTable: Argument.LootTable, pos: Vec3, tool: Argument.Item? = null) = listOf(literal("fish"), lootTable, pos, tool)
+	fun fish(lootTable: Argument.LootTable, pos: Vec3, tool: Argument.Item? = null) = listOfNotNull(literal("fish"), lootTable, pos, tool)
 	fun fish(lootTable: Argument.LootTable, pos: Vec3, hand: Hand) = listOf(literal("fish"), lootTable, pos, literal(hand.asArg()))
 	fun loot(lootTable: Argument.LootTable) = listOf(literal("loot"), lootTable)
 	fun kill(targets: Argument.Entity) = listOf(literal("kill"), targets)
-	fun mine(pos: Vec3, tool: Argument.Item? = null) = listOf(literal("mine"), pos, tool)
+	fun mine(pos: Vec3, tool: Argument.Item? = null) = listOfNotNull(literal("mine"), pos, tool)
 	fun mine(pos: Vec3, hand: Hand) = listOf(literal("mine"), pos, literal(hand.asArg()))
 }
 
