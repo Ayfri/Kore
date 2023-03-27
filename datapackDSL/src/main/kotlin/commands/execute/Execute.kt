@@ -1,19 +1,14 @@
 package commands.execute
 
-import DataPack.Companion.GENERATED_FUNCTIONS_FOLDER
 import arguments.Argument
 import arguments.literal
 import commands.Command
 import commands.command
 import functions.Function
-import functions.function
 import functions.generatedFunction
 
 context(Function)
-fun Execute.run(name: String, namespace: String = datapack.name, block: Function.() -> Unit): Argument.Function {
-	datapack.function(name, namespace, block = block)
-	return Argument.Function(namespace, "$GENERATED_FUNCTIONS_FOLDER/$name")
-}
+fun Execute.run(name: String, directory: String = "", block: Function.() -> Unit) = datapack.generatedFunction(name, directory, block)
 
 context(Function)
 fun Execute.run(block: Function.() -> Command): Argument.Function {
