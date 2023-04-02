@@ -14,6 +14,7 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
 	implementation(kotlin("reflect"))
 	api("net.benwoodworth.knbt:knbt:0.11.3")
+	api("org.joml:joml:1.10.5")
 
 	testImplementation("org.jetbrains.kotlin:kotlin-test")
 	testImplementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
