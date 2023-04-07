@@ -58,7 +58,7 @@ class Modify(private val fn: Function, val team: String) {
 		fn.addLine(command("team", literal("modify"), literal(team), literal("suffix"), suffix.asJsonArg()))
 }
 
-class Team(private val fn: Function) {
+class Teams(private val fn: Function) {
 	fun add(team: String, displayName: ChatComponents? = null) =
 		fn.addLine(command("team", literal("add"), literal(team), displayName?.asJsonArg()))
 
@@ -70,5 +70,5 @@ class Team(private val fn: Function) {
 	fun remove(team: String) = fn.addLine(command("team", literal("remove"), literal(team)))
 }
 
-val Function.teams get() = Team(this)
-fun Function.teams(block: Team.() -> Command) = Team(this).block()
+val Function.teams get() = Teams(this)
+fun Function.teams(block: Teams.() -> Command) = Teams(this).block()
