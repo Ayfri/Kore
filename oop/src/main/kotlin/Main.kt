@@ -1,4 +1,3 @@
-
 import arguments.Color
 import arguments.DisplaySlot
 import arguments.chatcomponents.textComponent
@@ -16,8 +15,7 @@ import teams.*
 
 fun main() {
 	dataPack("oop") {
-
-	val player = player("Ayfri") {
+		val player = player("Ayfri") {
 			gamemode = Gamemode.SURVIVAL
 			team = "red"
 		}

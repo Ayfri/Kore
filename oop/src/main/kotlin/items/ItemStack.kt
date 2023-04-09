@@ -7,7 +7,12 @@ import functions.Function
 import nbt.MutableNbtCompound
 import nbt.mutableNbt
 
-data class ItemStack(val name: String, val namespace: String = "minecraft", val count: Int = 1, val nbtData: MutableNbtCompound = mutableNbt()) {
+data class ItemStack(
+	val name: String,
+	val namespace: String = "minecraft",
+	val count: Int = 1,
+	val nbtData: MutableNbtCompound = mutableNbt()
+) {
 	init {
 		require(count in 1..64) { "Count must be between 1 and 64" }
 
