@@ -7,6 +7,7 @@ import arguments.selector.Advancements
 import features.advancements.types.AdvancementsJSONSerializer
 import features.predicates.conditions.PredicateCondition
 import features.predicates.conditions.predicateConditionsSerializer
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import java.io.File
@@ -16,17 +17,26 @@ data class Predicate(
 	var fileName: String = "predicate",
 	var predicateConditions: List<PredicateCondition> = mutableListOf(),
 ) : Generator {
-	override fun generate(directory: File) {
-		val json = json.encodeToString(predicateConditionsSerializer, predicateConditions)
+	@Transient
+	private lateinit var json: Json
+
+	override fun generate(dataPack: DataPack, directory: File) {
+		val json = getJsonEncoder(dataPack).encodeToString(predicateConditionsSerializer, predicateConditions)
 		File(directory, "$fileName.json").writeText(json)
 	}
 
-	companion object {
-		private val json = Json {
-			prettyPrint = true
-			serializersModule = SerializersModule {
-				contextual(Advancements::class, AdvancementsJSONSerializer)
+	@OptIn(ExperimentalSerializationApi::class)
+	fun getJsonEncoder(dataPack: DataPack) = when {
+		::json.isInitialized -> json
+		else -> {
+			json = Json {
+				prettyPrint = dataPack.jsonEncoder.configuration.prettyPrint
+				if (prettyPrint) prettyPrintIndent = dataPack.jsonEncoder.configuration.prettyPrintIndent
+				serializersModule = SerializersModule {
+					contextual(Advancements::class, AdvancementsJSONSerializer)
+				}
 			}
+			json
 		}
 	}
 }

@@ -3,9 +3,9 @@ package commands.execute
 import arguments.*
 import arguments.Relation
 import arguments.numbers.IntRangeOrInt
-import commands.asArg
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
+import utils.asArg
 
 @Serializable(BlocksTestMode.Companion.FillModeSerializer::class)
 enum class BlocksTestMode {

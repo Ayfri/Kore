@@ -5,6 +5,7 @@ import functions.Function
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encoding.Encoder
 import serializers.LowercaseSerializer
+import utils.asArg
 
 @Serializable(RenderType.Companion.RenderTypeSerializer::class)
 enum class RenderType {

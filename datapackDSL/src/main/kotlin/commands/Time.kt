@@ -6,6 +6,7 @@ import arguments.numbers.TimeType
 import functions.Function
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
+import utils.asArg
 
 @Serializable(TimeSpec.Companion.TimeSpecSerializer::class)
 enum class TimeSpec {
@@ -13,10 +14,10 @@ enum class TimeSpec {
 	NOON,
 	NIGHT,
 	MIDNIGHT;
-	
+
 	companion object {
 		val values = values()
-		
+
 		object TimeSpecSerializer : LowercaseSerializer<TimeSpec>(values)
 	}
 }

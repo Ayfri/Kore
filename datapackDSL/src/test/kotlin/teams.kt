@@ -1,4 +1,3 @@
-
 import arguments.*
 import arguments.chatcomponents.textComponent
 import arguments.numbers.asStartRangeOrInt
@@ -14,6 +13,7 @@ import generated.Effects
 import generated.Items
 import generated.Particles
 import net.benwoodworth.knbt.addNbtCompound
+import utils.asArg
 
 data class Team(
 	val name: String,

@@ -1,9 +1,13 @@
 package commands
 
-import arguments.*
+import arguments.Argument
+import arguments.float
+import arguments.literal
+import arguments.uuid
 import functions.Function
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
+import utils.asArg
 import java.util.*
 
 @Serializable(AttributeModifierOperation.Companion.AttributeModifierOperationSerializer::class)

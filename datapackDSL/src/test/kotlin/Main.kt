@@ -1,4 +1,3 @@
-
 import arguments.*
 import arguments.chatcomponents.*
 import arguments.enums.Dimension
@@ -12,7 +11,6 @@ import commands.execute.Anchor
 import commands.execute.execute
 import commands.execute.run
 import features.advancementTests
-import features.predicateTests
 import features.tags.tags
 import functions.function
 import generated.*
@@ -20,7 +18,6 @@ import generated.Attributes
 import helpers.helpersTests
 import io.github.cdimascio.dotenv.dotenv
 import net.benwoodworth.knbt.addNbtCompound
-import serialization.selectorTests
 import java.util.*
 import kotlin.io.path.Path
 

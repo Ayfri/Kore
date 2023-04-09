@@ -4,7 +4,6 @@ import arguments.ChatComponents
 import arguments.Color
 import arguments.nbt
 import arguments.set
-import commands.asArg
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
@@ -32,7 +31,7 @@ open class TextComponent(
 
 	override fun toNbtTag() = buildNbtCompound {
 		if (extra == null) this["text"] = text
-		color?.let { this["color"] = it.asArg() }
+		color?.let { this["color"] = it.asString() }
 		bold?.let { this["bold"] = it }
 		clickEvent?.let { this["clickEvent"] = it.toNbtTag() }
 		font?.let { this["font"] = it }
@@ -67,9 +66,7 @@ open class TextComponent(
 		if (keybind != other.keybind) return false
 		if (obfuscated != other.obfuscated) return false
 		if (strikethrough != other.strikethrough) return false
-		if (underlined != other.underlined) return false
-
-		return true
+		return underlined == other.underlined
 	}
 
 	override fun hashCode(): Int {

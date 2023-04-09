@@ -4,6 +4,7 @@ import arguments.*
 import functions.Function
 import kotlinx.serialization.Serializable
 import serializers.CamelcaseSerializer
+import utils.asArg
 
 @Serializable(Visibility.Companion.NametagVisibilitySerializer::class)
 enum class Visibility {

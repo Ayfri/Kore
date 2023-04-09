@@ -5,7 +5,7 @@ import arguments.Vec3
 import arguments.enums.DataType
 import arguments.float
 import arguments.literal
-import commands.asArg
+import utils.asArg
 
 class ExecuteStore(private val ex: Execute) {
 	fun block(

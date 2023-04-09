@@ -13,7 +13,8 @@ fun <T : NbtTag> nbtList(block: NbtListBuilder<T>.() -> Unit = {}) = buildNbtLis
 fun nbtList(block: NbtListBuilder<NbtCompound>.() -> Unit = {}) = buildNbtList(block)
 
 fun NbtCompoundBuilder.nbt(name: String, block: NbtCompoundBuilder.() -> Unit = {}) = putNbtCompound(name, block)
-fun NbtCompoundBuilder.json(name: String, block: NbtCompoundBuilder.() -> Unit = {}) = put(name, StringifiedNbt.encodeToString(buildNbtCompound(block)))
+fun NbtCompoundBuilder.json(name: String, block: NbtCompoundBuilder.() -> Unit = {}) =
+	put(name, StringifiedNbt.encodeToString(buildNbtCompound(block)))
 
 fun stringifiedNbt(nbt: NbtTag) = StringifiedNbt.encodeToString(nbt)
 fun stringifiedNbt(block: NbtCompoundBuilder.() -> Unit) = StringifiedNbt.encodeToString(buildNbtCompound(block))

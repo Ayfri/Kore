@@ -2,7 +2,9 @@ package features.tags
 
 import DataPack
 import Generator
-import kotlinx.serialization.*
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import kotlinx.serialization.encodeToString
 import java.io.File
 
 @Serializable
@@ -32,9 +34,9 @@ data class Tag(
 		values += TagEntry("${if (group) "#" else ""}$namespace:$name", required)
 	}
 
-	override fun generate(directory: File) {
+	override fun generate(dataPack: DataPack, directory: File) {
 		val file = File(directory, "$name.json")
 		file.parentFile.mkdirs()
-		file.writeText(DataPack.jsonEncoder.encodeToString(this))
+		file.writeText(dataPack.jsonEncoder.encodeToString(this))
 	}
 }

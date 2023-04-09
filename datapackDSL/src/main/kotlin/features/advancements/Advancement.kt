@@ -11,6 +11,7 @@ import features.advancements.types.AdvancementsJSONSerializer
 import features.advancements.types.Entity
 import features.predicates.Predicate
 import features.predicates.conditions.PredicateCondition
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString
@@ -28,17 +29,26 @@ data class Advancement internal constructor(
 	var requirements: List<List<String>>? = null,
 	var rewards: AdvancementReward? = null,
 ) : Generator {
-	override fun generate(directory: File) {
-		val json = json.encodeToString(this)
+	@Transient
+	private lateinit var jsonEncoder: Json
+
+	override fun generate(dataPack: DataPack, directory: File) {
+		val json = getJsonEncoder(dataPack).encodeToString(this)
 		File(directory, "$fileName.json").writeText(json)
 	}
 
-	companion object {
-		private val json = Json {
-			prettyPrint = true
-			serializersModule = SerializersModule {
-				contextual(Advancements::class, AdvancementsJSONSerializer)
+	@OptIn(ExperimentalSerializationApi::class)
+	fun getJsonEncoder(dataPack: DataPack) = when {
+		::jsonEncoder.isInitialized -> jsonEncoder
+		else -> {
+			jsonEncoder = Json {
+				prettyPrint = dataPack.jsonEncoder.configuration.prettyPrint
+				if (prettyPrint) prettyPrintIndent = dataPack.jsonEncoder.configuration.prettyPrintIndent
+				serializersModule = SerializersModule {
+					contextual(Advancements::class, AdvancementsJSONSerializer)
+				}
 			}
+			jsonEncoder
 		}
 	}
 }

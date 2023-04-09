@@ -1,5 +1,5 @@
 import java.io.File
 
 interface Generator {
-	fun generate(directory: File)
+	fun generate(dataPack: DataPack, directory: File)
 }

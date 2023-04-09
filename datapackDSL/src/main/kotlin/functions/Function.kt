@@ -55,7 +55,7 @@ open class Function(
 		lines.add("# $comment")
 	}
 
-	override fun generate(directory: File) {
+	override fun generate(dataPack: DataPack, directory: File) {
 		val file = File(directory, "${this.directory}/$name.mcfunction")
 		file.parentFile.mkdirs()
 
@@ -139,7 +139,7 @@ open class Function(
 			}
 
 			override fun comment(comment: String) {}
-			override fun generate(directory: File) {}
+			override fun generate(dataPack: DataPack, directory: File) {}
 			override fun clear() {}
 			override fun toString() = ""
 			override fun asId() = lines.getOrElse(0) { "" }

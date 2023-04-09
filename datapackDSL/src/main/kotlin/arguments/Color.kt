@@ -130,6 +130,8 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 		return result
 	}
 
+	override fun toString() = hexWithHash
+
 	companion object {
 		fun fromHex(hex: String) = RGB(hex.removePrefix("#"))
 		fun fromRGB(red: Int, green: Int, blue: Int) = RGB(red, green, blue)
@@ -159,7 +161,7 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 			override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("RGB", PrimitiveKind.STRING)
 
 			override fun serialize(encoder: Encoder, value: RGB) {
-				encoder.encodeString(value.toHex(withHash = true))
+				encoder.encodeString(value.hexWithHash)
 			}
 
 			override fun deserialize(decoder: Decoder) = fromHex(decoder.decodeString())

@@ -24,12 +24,12 @@ data class Tags(
 
 	fun tag(type: String, name: String, replace: Boolean = false, block: Tag.() -> Unit) = add(type, name, replace, block)
 
-	override fun generate(directory: File) = tags.forEach { (type, tag) ->
-		tag.generate(File(directory, type))
+	override fun generate(dataPack: DataPack, directory: File) = tags.forEach { (type, tag) ->
+		tag.generate(dataPack, File(directory, type))
 	}
 }
 
-fun DataPack.tags(namespace: String = this.name, block: Tags.() -> Unit = {}): Tags {
+fun DataPack.tags(namespace: String = name, block: Tags.() -> Unit = {}): Tags {
 	val newTags = Tags(namespace).apply(block)
 	tags += newTags
 	return newTags

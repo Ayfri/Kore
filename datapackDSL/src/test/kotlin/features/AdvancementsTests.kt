@@ -1,5 +1,6 @@
 package features
 
+import configuration
 import dataPack
 import features.advancements.*
 import features.advancements.triggers.ConsumeItem
@@ -14,6 +15,11 @@ import setTestPath
 
 fun advancementTests() = dataPack("advancement_tests") {
 	setTestPath()
+
+	configuration {
+		prettyPrint = true
+	}
+
 	advancement("test") {
 		display(Items.DIAMOND_SWORD, "Hello", "World") {
 			frameType = AdvancementFrameType.CHALLENGE

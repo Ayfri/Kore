@@ -4,6 +4,7 @@ import arguments.*
 import functions.Function
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
+import utils.asArg
 
 @Serializable(BossBarGetResult.Companion.BossBarActionSerializer::class)
 enum class BossBarGetResult {
@@ -53,4 +54,5 @@ class BossBars(private val fn: Function) {
 }
 
 val Function.bossBars get() = BossBars(this)
-fun Function.bossBar(name: String, namespace: String = "minecraft", block: BossBar.() -> Command) = BossBar(this, bossBar(name, namespace)).block()
+fun Function.bossBar(name: String, namespace: String = "minecraft", block: BossBar.() -> Command) =
+	BossBar(this, bossBar(name, namespace)).block()

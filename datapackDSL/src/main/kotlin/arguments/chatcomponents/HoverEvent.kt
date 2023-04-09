@@ -4,12 +4,12 @@ import arguments.*
 import arguments.chatcomponents.hover.Contents
 import arguments.chatcomponents.hover.ContentsEntity
 import arguments.chatcomponents.hover.ContentsItem
-import commands.asArg
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.buildNbtCompound
 import serializers.LowercaseSerializer
 import serializers.NbtAsJsonTextComponentSerializer
+import utils.asArg
 
 @Serializable
 data class HoverEvent(

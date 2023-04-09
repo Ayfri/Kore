@@ -7,6 +7,7 @@ import arguments.vec3
 import functions.Function
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
+import utils.asArg
 
 @Serializable(Type.Companion.TypeSerializer::class)
 private enum class Type {

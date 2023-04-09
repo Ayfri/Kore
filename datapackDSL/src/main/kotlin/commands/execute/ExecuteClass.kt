@@ -3,9 +3,9 @@ package commands.execute
 import arguments.*
 import arguments.enums.Dimension
 import arguments.selector.Sort
-import commands.asArg
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
+import utils.asArg
 
 @Serializable(Anchor.Companion.AnchorSerializer::class)
 enum class Anchor {

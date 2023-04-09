@@ -9,15 +9,10 @@ import commands.execute.Anchor
 import functions.Function
 import generated.Gamerules
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.encodeToJsonElement
-import kotlinx.serialization.json.jsonPrimitive
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtCompoundBuilder
 import serializers.LowercaseSerializer
-
-internal val json = Json { ignoreUnknownKeys = true }
-internal inline fun <reified T : @Serializable Any> T.asArg() = json.encodeToJsonElement(this).jsonPrimitive.content
+import utils.asArg
 
 fun Function.clear(targets: Argument.Selector? = null, item: Argument.Item? = null, maxCount: Int? = null) =
 	addLine(command("clear", targets, item, int(maxCount)))
@@ -221,7 +216,7 @@ fun Function.summon(entity: String, pos: Vec3? = null, nbt: NbtCompound?) = addL
 fun Function.summon(entity: String, pos: Vec3? = null, nbt: (NbtCompoundBuilder.() -> Unit)? = null) =
 	addLine(command("summon", literal(entity), pos, nbt?.let { nbtArg(nbt) }))
 
-fun Function.summon(entity: Argument.EntitySummon, pos: Vec3? = null, nbt: NbtCompound?) = summon(entity.asArg(), pos, nbt)
+fun Function.summon(entity: Argument.EntitySummon, pos: Vec3, nbt: NbtCompound?) = summon(entity.asArg(), pos, nbt)
 fun Function.summon(entity: Argument.EntitySummon, pos: Vec3 = vec3(), nbt: (NbtCompoundBuilder.() -> Unit)? = null) =
 	addLine(command("summon", entity, pos, nbt?.let { nbtArg(nbt) }))
 

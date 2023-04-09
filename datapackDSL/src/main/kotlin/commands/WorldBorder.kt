@@ -6,6 +6,7 @@ import arguments.int
 import arguments.literal
 import arguments.numbers.PosNumber
 import functions.Function
+import utils.asArg
 
 class WorldBorder(private val fn: Function) {
 	fun add(distance: Double, time: Int? = null) = fn.addLine(command("worldborder", literal("add"), float(distance), int(time)))

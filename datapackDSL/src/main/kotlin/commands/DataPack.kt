@@ -4,22 +4,25 @@ import arguments.literal
 import functions.Function
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
+import utils.asArg
 
 @Serializable(DatapackPriority.Companion.DatapackPrioritySerializer::class)
 enum class DatapackPriority {
 	FIRST,
 	LAST;
-	
+
 	companion object {
 		val values = values()
-		
+
 		object DatapackPrioritySerializer : LowercaseSerializer<DatapackPriority>(values)
 	}
 }
 
 class DataPack(private val fn: Function, val name: String) {
 	fun disable() = fn.addLine(command("datapack", literal("disable"), literal(name)))
-	fun enable(priority: DatapackPriority? = null) = fn.addLine(command("datapack", literal("enable"), literal(name), literal(priority?.asArg())))
+	fun enable(priority: DatapackPriority? = null) =
+		fn.addLine(command("datapack", literal("enable"), literal(name), literal(priority?.asArg())))
+
 	fun enableFirst() = fn.addLine(command("datapack", literal("enable"), literal("first"), literal(name)))
 	fun enableLast() = fn.addLine(command("datapack", literal("enable"), literal("last"), literal(name)))
 	fun enableBefore(name: String) = fn.addLine(command("datapack", literal("enable"), literal("before"), literal(name), literal(name)))
