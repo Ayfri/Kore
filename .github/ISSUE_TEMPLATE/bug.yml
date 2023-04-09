@@ -1,0 +1,37 @@
+name: Report a bug
+description: Report a bug in the documentation
+labels: [bug]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear and concise description of what the issue is.
+    validations:
+      required: true
+  - type: textarea
+    id: what-should-happen
+    attributes:
+      label: What should have happened?
+      description: A clear and concise description of what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: how-to-reproduce
+    attributes:
+      label: How can we reproduce this issue?
+      description: Please provide a link to a live example, or an unambiguous set of steps to reproduce this issue. Include code to reproduce, if relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: Extra info
+    attributes:
+      label: extra-info
+      description: |
+        Please provide any additional information that may be helpful in understanding the issue.
+        You can also include screenshots or animated GIFs.
