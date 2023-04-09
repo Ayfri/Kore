@@ -8,6 +8,16 @@ body:
       value: |
         Thanks for taking the time to fill out this bug report!
   - type: textarea
+    id: minecraft-version
+    attributes:
+      label: Minecraft version
+      description: What version of Minecraft are you using?
+  - type: textarea
+    id: datapack-generator-version
+    attributes:
+      label: Datapack Generator version
+      description: What version of the Datapack Generator are you using?
+  - type: textarea
     id: what-happened
     attributes:
       label: What happened?
