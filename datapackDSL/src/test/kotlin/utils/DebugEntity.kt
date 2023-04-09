@@ -2,6 +2,8 @@ package utils
 
 import arguments.*
 import arguments.chatcomponents.*
+import arguments.chatcomponents.events.runCommand
+import arguments.chatcomponents.events.suggestCommand
 import arguments.numbers.rangeOrIntStart
 import arguments.selector.SelectorNbtData
 import commands.*
@@ -165,7 +167,7 @@ data class DebugEntity(val data: Map<String, String> = mutableMapOf()) {
 }
 
 context(DebugEntity)
-private fun TextComponent.setupDisplay(k: String) {
+private fun ChatComponent.setupDisplay(k: String) {
 	clickEvent {
 		runCommand {
 			debug(textComponent("Real value: ") + nbtComponent("data.$k", selector) {

@@ -13,8 +13,8 @@ data class NbtComponent(
 	var block: String? = null,
 	var entity: String? = null,
 	var storage: String? = null,
-	var separator: TextComponent? = null,
-) : TextComponent() {
+	var separator: ChatComponent? = null,
+) : ChatComponent() {
 	override fun toNbtTag() = buildNbtCompound {
 		super.toNbtTag().entries.forEach { (key, value) -> if (key != "text") this[key] = value }
 		this["nbt"] = nbt

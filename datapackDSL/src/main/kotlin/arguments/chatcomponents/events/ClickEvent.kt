@@ -1,4 +1,4 @@
-package arguments.chatcomponents
+package arguments.chatcomponents.events
 
 import arguments.set
 import commands.Command

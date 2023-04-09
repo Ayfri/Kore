@@ -1,5 +1,6 @@
 import arguments.Color
 import arguments.allPlayers
+import arguments.chatcomponents.text
 import arguments.chatcomponents.textComponent
 import arguments.toRGB
 import commands.tellraw
@@ -12,9 +13,6 @@ fun DataPack.gradient() = function("gradient") {
 	val colors = firstColor.mix(secondColor, text.length * 5)
 
 	tellraw(allPlayers(), colors.mapIndexed { index, color ->
-		textComponent {
-			this.text = text[index % text.length].toString()
-			this.color = color
-		}
-	}.reduce { acc, textComponent -> acc + textComponent })
+		text(text[index % text.length].toString(), color)
+	}.fold(textComponent()) { acc, textComponent -> acc + textComponent })
 }

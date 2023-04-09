@@ -1,7 +1,7 @@
 package helpers
 
 import arguments.*
-import arguments.chatcomponents.TextComponent
+import arguments.chatcomponents.PlainTextComponent
 import arguments.chatcomponents.textComponent
 import commands.Command
 import commands.execute.ExecuteCondition
@@ -27,10 +27,8 @@ data class ScoreboardDisplay(val name: String) {
 	}
 
 	context(Function)
-	fun appendLine(text: String, color: Color? = null, componentBlock: TextComponent.() -> Unit = {}) = appendLine(textComponent(text) {
-		if (color != null) this.color = color
-		componentBlock()
-	})
+	fun appendLine(text: String, color: Color? = null, componentBlock: PlainTextComponent.() -> Unit = {}) =
+		appendLine(textComponent(text, color ?: Color.WHITE, componentBlock))
 
 	context(Function)
 	fun create(display: Boolean = true, slot: SetDisplaySlot = DisplaySlot.sidebar) {
@@ -58,10 +56,8 @@ data class ScoreboardDisplay(val name: String) {
 	}
 
 	context(Function)
-	fun setLine(index: Int, text: String, color: Color? = null, componentBlock: TextComponent.() -> Unit = {}) = setLine(index, textComponent(text) {
-		if (color != null) this.color = color
-		componentBlock()
-	})
+	fun setLine(index: Int, text: String, color: Color? = null, componentBlock: PlainTextComponent.() -> Unit = {}) =
+		setLine(index, textComponent(text, color ?: Color.WHITE, componentBlock))
 
 	context(Function)
 	fun remove() {
@@ -95,18 +91,23 @@ data class ScoreboardLine(private val sc: ScoreboardDisplay, val index: Int) {
 	val fakePlayer = "§${abs(index).toString(16)}"
 	var condition: (ExecuteCondition.() -> Unit)? = null
 	var text: ChatComponents? = null
+		set(value) {
+			value?.requireSimpleComponents()
+			field = value
+		}
+
 	var teamName: String? = null
 		private set
 
 	context(Function)
 	private fun setText(): Command {
-		if (text != null) {
+		text?.let {
 			val teamName = hashCode().toString()
 			teams {
 				add(teamName)
 				join(teamName, entity(fakePlayer))
 				modify(teamName) {
-					suffix(text!!)
+					suffix(it)
 				}
 			}
 

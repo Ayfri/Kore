@@ -7,6 +7,8 @@ import arguments.ChatComponents
 import arguments.Color
 import arguments.allPlayers
 import arguments.chatcomponents.*
+import arguments.chatcomponents.events.ClickAction
+import arguments.chatcomponents.events.showText
 import commands.Command
 import commands.command
 import commands.tellraw
@@ -80,11 +82,9 @@ open class Function(
 				}
 			}).asJsonArg()).toString())
 
-			lines.add(command("tellraw", allPlayers(), (textComponent("Finished running function ") {
-				color = Color.GRAY
+			lines.add(command("tellraw", allPlayers(), (textComponent("Finished running function ", Color.GRAY) {
 				italic = true
-			} + textComponent(asId()) {
-				color = Color.WHITE
+			} + text(asId(), Color.WHITE) {
 				bold = true
 				italic = true
 
@@ -120,7 +120,7 @@ open class Function(
 		endDebug()
 	}
 
-	open fun debug(text: String, color: Color? = null, options: TextComponent.() -> Unit = {}) = debug(textComponent(text) {
+	open fun debug(text: String, color: Color? = null, options: ChatComponent.() -> Unit = {}) = debug(textComponent(text) {
 		color?.let { this.color = it }
 		options()
 	})

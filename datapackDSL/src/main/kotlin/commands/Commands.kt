@@ -1,7 +1,7 @@
 package commands
 
 import arguments.*
-import arguments.chatcomponents.TextComponent
+import arguments.chatcomponents.PlainTextComponent
 import arguments.chatcomponents.textComponent
 import arguments.enums.Difficulty
 import arguments.enums.Gamemode
@@ -240,7 +240,7 @@ fun Function.teleport(
 
 fun Function.tell(targets: Argument.Entity, message: String) = addLine(command("tell", targets, literal(message)))
 
-fun Function.tellraw(targets: Argument.Entity, text: String = "", block: TextComponent.() -> Unit) =
+fun Function.tellraw(targets: Argument.Entity, text: String = "", block: PlainTextComponent.() -> Unit) =
 	addLine(command("tellraw", targets, textComponent(text, block).asJsonArg()))
 
 fun Function.tellraw(targets: Argument.Entity, message: ChatComponents) = addLine(command("tellraw", targets, message.asJsonArg()))

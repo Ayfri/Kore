@@ -10,7 +10,7 @@ import net.benwoodworth.knbt.buildNbtCompound
 @Serializable
 data class ScoreComponent(
 	var score: ScoreComponentEntry,
-) : TextComponent() {
+) : ChatComponent() {
 	override fun toNbtTag() = buildNbtCompound {
 		super.toNbtTag().entries.forEach { (key, value) -> if (key != "text") this[key] = value }
 		this["score"] = score.toNbtTag()

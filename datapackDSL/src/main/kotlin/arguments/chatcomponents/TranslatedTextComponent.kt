@@ -10,7 +10,7 @@ data class TranslatedTextComponent(
 	var translate: String,
 	var with: List<ChatComponent>? = null,
 	var fallback: String? = null,
-) : TextComponent() {
+) : ChatComponent(), SimpleComponent {
 	override fun toNbtTag() = buildNbtCompound {
 		super.toNbtTag().entries.forEach { (key, value) -> if (key != "text") this[key] = value }
 		this["translate"] = translate

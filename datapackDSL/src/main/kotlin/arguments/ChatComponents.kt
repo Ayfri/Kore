@@ -16,17 +16,31 @@ import net.benwoodworth.knbt.buildNbtList
 import serializers.NbtAsJsonTextComponentSerializer
 
 @Serializable(with = ChatComponents.Companion.ChatComponentsSerializer::class)
-data class ChatComponents(val list: MutableList<ChatComponent> = mutableListOf()) : Argument {
+data class ChatComponents(val list: MutableList<ChatComponent> = mutableListOf(), var onlySimpleComponents: Boolean = false) : Argument {
 	constructor(vararg components: ChatComponent) : this(components.toMutableList())
 
+	val containsOnlySimpleComponents get() = list.all { it is SimpleComponent }
+
+	init {
+		if (onlySimpleComponents) requireSimpleComponents()
+	}
+
 	operator fun plus(textComponent: ChatComponent): ChatComponents {
+		if (onlySimpleComponents) throw ONLY_SIMPLE_COMPONENTS_EXCEPTION
 		list += textComponent
 		return this
 	}
 
 	operator fun plus(chatComponents: ChatComponents): ChatComponents {
+		if (onlySimpleComponents) {
+			throw ONLY_SIMPLE_COMPONENTS_EXCEPTION
+		}
 		list += chatComponents.list
 		return this
+	}
+
+	fun requireSimpleComponents() {
+		if (!containsOnlySimpleComponents) throw ONLY_SIMPLE_COMPONENTS_EXCEPTION
 	}
 
 	fun toJsonString() = Json.encodeToString(NbtAsJsonTextComponentSerializer, toNbtTag())
@@ -34,7 +48,7 @@ data class ChatComponents(val list: MutableList<ChatComponent> = mutableListOf()
 	fun toNbtTag() = when (list.size) {
 		0 -> NbtString("")
 		1 -> list[0].also {
-			if (it is TextComponent && it.containsOnlyText()) return NbtString(it.text)
+			if (it.containsOnlyText()) return NbtString(it.text)
 		}.toNbtTag()
 
 		else -> buildNbtList {
@@ -49,6 +63,8 @@ data class ChatComponents(val list: MutableList<ChatComponent> = mutableListOf()
 	fun asJsonArg() = literal(toJsonString())
 
 	companion object {
+		val ONLY_SIMPLE_COMPONENTS_EXCEPTION = IllegalArgumentException("This ChatComponents should only contain simple components.")
+
 		object ChatComponentsSerializer : KSerializer<ChatComponents> {
 			override val descriptor = ListSerializer(JsonElement.serializer()).descriptor
 
@@ -62,8 +78,8 @@ data class ChatComponents(val list: MutableList<ChatComponent> = mutableListOf()
 						is ScoreComponent -> encoder.encodeSerializableValue(ScoreComponent.serializer(), component)
 						is NbtComponent -> encoder.encodeSerializableValue(NbtComponent.serializer(), component)
 						is TranslatedTextComponent -> encoder.encodeSerializableValue(TranslatedTextComponent.serializer(), component)
-						is TextComponent -> if (component.containsOnlyText()) encoder.encodeString(component.text)
-						else encoder.encodeSerializableValue(TextComponent.serializer(), component)
+						is PlainTextComponent -> if (component.containsOnlyText()) encoder.encodeString(component.text)
+						else encoder.encodeSerializableValue(PlainTextComponent.serializer(), component)
 					}
 				} else {
 					encoder.encodeCollection(descriptor, value.list.size) {
@@ -79,7 +95,12 @@ data class ChatComponents(val list: MutableList<ChatComponent> = mutableListOf()
 									component
 								)
 
-								is TextComponent -> encodeSerializableElement(descriptor, i, TextComponent.serializer(), component)
+								is PlainTextComponent -> encodeSerializableElement(
+									descriptor,
+									i,
+									PlainTextComponent.serializer(),
+									component
+								)
 							}
 						}
 					}

@@ -1,9 +1,12 @@
-package arguments.chatcomponents
+package arguments.chatcomponents.events
 
 import arguments.*
+import arguments.chatcomponents.ChatComponent
 import arguments.chatcomponents.hover.Contents
 import arguments.chatcomponents.hover.ContentsEntity
 import arguments.chatcomponents.hover.ContentsItem
+import arguments.chatcomponents.text
+import arguments.chatcomponents.textComponent
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.buildNbtCompound
@@ -29,7 +32,7 @@ fun HoverEvent.showEntity(entity: Argument.Entity) = apply {
 	value = entity.asString().nbt
 }
 
-fun HoverEvent.showEntity(type: Argument.EntitySummon, name: TextComponent? = null, id: Argument.UUID? = null) = apply {
+fun HoverEvent.showEntity(type: Argument.EntitySummon, name: ChatComponent? = null, id: Argument.UUID? = null) = apply {
 	action = HoverAction.SHOW_ENTITY
 	contents = ContentsEntity(type.asString(), name, id?.asString())
 }
@@ -49,7 +52,7 @@ fun HoverEvent.showText(block: ChatComponents.() -> Unit) = apply {
 	value = ChatComponents().apply(block).toNbtTag()
 }
 
-fun HoverEvent.showText(text: String, block: TextComponent.() -> Unit = {}) = apply {
+fun HoverEvent.showText(text: String, block: ChatComponent.() -> Unit = {}) = apply {
 	action = HoverAction.SHOW_TEXT
 	value = textComponent(text, block).toNbtTag()
 }
