@@ -29,7 +29,7 @@ body:
     validations:
       required: true
   - type: textarea
-    id: Extra info
+    id: extra-info
     attributes:
       label: extra-info
       description: |
