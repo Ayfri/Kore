@@ -1,5 +1,7 @@
 package arguments
 
+import arguments.colors.NamedColor
+
 fun interface SetDisplaySlot : Argument
 
 object DisplaySlot {

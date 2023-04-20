@@ -4,6 +4,7 @@ import arguments.chatcomponents.events.openUrl
 import arguments.chatcomponents.events.showText
 import arguments.chatcomponents.hoverEvent
 import arguments.chatcomponents.textComponent
+import arguments.colors.RGB
 import arguments.enums.Dimension
 import arguments.enums.Gamemode
 import arguments.numbers.*

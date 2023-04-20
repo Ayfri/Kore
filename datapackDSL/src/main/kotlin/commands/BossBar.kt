@@ -1,6 +1,7 @@
 package commands
 
 import arguments.*
+import arguments.colors.BossBarColor
 import functions.Function
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer

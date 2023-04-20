@@ -1,6 +1,10 @@
 package commands
 
-import arguments.*
+import arguments.Argument
+import arguments.ChatComponents
+import arguments.bool
+import arguments.colors.NamedColor
+import arguments.literal
 import functions.Function
 import kotlinx.serialization.Serializable
 import serializers.CamelcaseSerializer

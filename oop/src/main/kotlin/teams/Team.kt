@@ -2,7 +2,7 @@ package teams
 
 import arguments.Argument
 import arguments.ChatComponents
-import arguments.NamedColor
+import arguments.colors.NamedColor
 import commands.CollisionRule
 import commands.Visibility
 import commands.teams

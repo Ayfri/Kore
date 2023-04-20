@@ -1,5 +1,6 @@
 import arguments.*
 import arguments.chatcomponents.textComponent
+import arguments.colors.NamedColor
 import arguments.numbers.asStartRangeOrInt
 import arguments.numbers.rangeOrIntStart
 import arguments.selector.SelectorNbtData
