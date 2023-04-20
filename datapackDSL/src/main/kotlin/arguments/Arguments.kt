@@ -460,10 +460,11 @@ internal fun literal(name: String?) = name?.let { Argument.Literal(it) }
 fun rotation(yaw: Number = 0, pitch: Number = 0) = Argument.Rotation(yaw.rot, pitch.rot)
 fun rotation(hor: RotNumber, ver: RotNumber) = Argument.Rotation(hor, ver)
 
-fun selector(base: SelectorType, limitToOne: Boolean = false, data: SelectorNbtData.() -> Unit = {}) = Argument.Selector(Selector(base).apply {
-	nbtData.data()
-	if (limitToOne) nbtData.limit = 1
-})
+fun selector(base: SelectorType, limitToOne: Boolean = false, data: SelectorNbtData.() -> Unit = {}) =
+	Argument.Selector(Selector(base).apply {
+		nbtData.data()
+		if (limitToOne) nbtData.limit = 1
+	})
 
 fun allPlayers(limitToOne: Boolean = false, data: SelectorNbtData.() -> Unit = {}) = selector(SelectorType.ALL_PLAYERS, limitToOne, data)
 fun allPlayers(limit: Int, data: SelectorNbtData.() -> Unit = {}) = allPlayers { this.limit = limit; data() }
@@ -471,8 +472,12 @@ fun allPlayers(limit: Int, data: SelectorNbtData.() -> Unit = {}) = allPlayers {
 fun allEntities(limitToOne: Boolean = false, data: SelectorNbtData.() -> Unit = {}) = selector(SelectorType.ALL_ENTITIES, limitToOne, data)
 fun allEntities(limit: Int, data: SelectorNbtData.() -> Unit = {}) = allEntities { this.limit = limit; data() }
 
+fun allEntitiesLimitToOne(data: SelectorNbtData.() -> Unit = {}) = allEntities(true, data)
+
 fun nearestPlayer(data: SelectorNbtData.() -> Unit = {}) = selector(SelectorType.NEAREST_PLAYER, data = data)
-fun player(name: String, limitToOne: Boolean = true, data: SelectorNbtData.() -> Unit = {}) = allPlayers(limitToOne) { this.name = name; data() }
+fun player(name: String, limitToOne: Boolean = true, data: SelectorNbtData.() -> Unit = {}) =
+	allPlayers(limitToOne) { this.name = name; data() }
+
 fun randomPlayer(data: SelectorNbtData.() -> Unit = {}) = selector(SelectorType.RANDOM_PLAYER, data = data)
 fun self(limitToOne: Boolean = false, data: SelectorNbtData.() -> Unit = {}) = selector(SelectorType.SELF, limitToOne, data)
 
