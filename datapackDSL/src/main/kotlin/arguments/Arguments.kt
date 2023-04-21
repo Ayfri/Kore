@@ -8,6 +8,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encoding.Encoder
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtCompoundBuilder
+import net.benwoodworth.knbt.NbtIntArray
 import serializers.ToStringSerializer
 import utils.ifNotEmpty
 import java.util.*
@@ -404,6 +405,19 @@ sealed interface Argument {
 	@Serializable(with = ArgumentSerializer::class)
 	data class UUID(val uuid: java.util.UUID) : Entity, ScoreHolder {
 		override fun asString() = uuid.toString()
+
+		fun toIntArray() = intArrayOf(
+			(uuid.mostSignificantBits ushr 32).toInt(),
+			(uuid.mostSignificantBits and 0xFFFFFFFF).toInt(),
+			(uuid.leastSignificantBits ushr 32).toInt(),
+			(uuid.leastSignificantBits and 0xFFFFFFFF).toInt()
+		)
+
+		fun toNBTIntArray() = NbtIntArray(toIntArray())
+
+		companion object {
+			fun random() = UUID(java.util.UUID.randomUUID())
+		}
 	}
 }
 
