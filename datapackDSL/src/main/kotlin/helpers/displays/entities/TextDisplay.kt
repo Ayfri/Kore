@@ -1,9 +1,9 @@
 package helpers.displays.entities
 
 import arguments.ChatComponents
-import arguments.chatcomponents.ChatComponent
 import arguments.chatcomponents.PlainTextComponent
 import arguments.colors.ARGB
+import arguments.stringifiedNbt
 import generated.Entities
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -38,7 +38,7 @@ data class TextDisplay(
 				element("line_width", Int.serializer().descriptor)
 				element("see_through", Boolean.serializer().descriptor)
 				element("shadow", Boolean.serializer().descriptor)
-				element("text", ChatComponent.serializer().descriptor)
+				element("text", String.serializer().descriptor)
 				element("text_opacity", Byte.serializer().descriptor)
 				addDisplayEntity()
 			}
@@ -53,7 +53,14 @@ data class TextDisplay(
 					value.lineWidth?.let { encodeSerializableElement(descriptor, 3, Int.serializer(), it) }
 					value.seeThrough?.let { encodeSerializableElement(descriptor, 4, Boolean.serializer(), it) }
 					value.shadow?.let { encodeSerializableElement(descriptor, 5, Boolean.serializer(), it) }
-					value.text?.let { encodeSerializableElement(descriptor, 6, ChatComponents.serializer(), ChatComponents(it)) }
+					value.text?.let {
+						encodeSerializableElement(
+							descriptor,
+							6,
+							String.serializer(),
+							stringifiedNbt(ChatComponents(it).toNbtTag())
+						)
+					}
 					value.textOpacity?.let { encodeSerializableElement(descriptor, 7, Byte.serializer(), it) }
 					encodeDisplayEntity(value, descriptor, 8)
 				}
