@@ -4,6 +4,7 @@ import arguments.*
 import functions.Function
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
+import net.benwoodworth.knbt.NbtCompoundBuilder
 import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.StringifiedNbt
 
@@ -77,6 +78,8 @@ class Data(val fn: Function, val target: Argument.Data) {
 			"data", literal("merge"), literal(target.literalName), target, literal(StringifiedNbt.encodeToString(data))
 		)
 	)
+
+	fun merge(block: NbtCompoundBuilder.() -> Unit) = merge(nbt(block))
 
 	inline fun <reified T : Any> merge(data: @Serializable T) = fn.addLine(
 		command(
