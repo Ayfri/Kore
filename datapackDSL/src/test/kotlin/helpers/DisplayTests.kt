@@ -66,7 +66,7 @@ fun Function.displayTests() {
 	val blockDisplay = blockDisplay {
 		blockState(Blocks.GRASS_BLOCK) {
 			properties {
-				put("snowy", "true")
+				this["snowy"] = true
 			}
 		}
 	}

@@ -21,6 +21,6 @@ fun blockState(name: Argument.Block, block: BlockStateBuilder.() -> Unit) = Bloc
 fun blockState(name: Argument.Block, properties: Map<String, String>) = BlockState(name.asId(), properties)
 fun blockState(name: Argument.Block, vararg properties: Pair<String, String>) = BlockState(name.asId(), properties.toMap())
 
-fun BlockStateBuilder.properties(block: MutableMap<String, String>.() -> Unit) {
-	properties = buildMap(block)
+fun BlockStateBuilder.properties(block: BlockStatePropertiesBuilder.() -> Unit) {
+	properties = BlockStatePropertiesBuilder().apply(block).properties
 }
