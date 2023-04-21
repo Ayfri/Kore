@@ -6,7 +6,6 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.descriptors.nullable
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.encodeStructure
@@ -25,7 +24,8 @@ data class ItemDisplay(
 	companion object {
 		object DisplayEntitySerializer : KSerializer<ItemDisplay> {
 			override val descriptor = buildClassSerialDescriptor("ItemDisplay") {
-				element("item", ItemStack.serializer().descriptor.nullable)
+				element("item", ItemStack.serializer().descriptor)
+				element("item_display", ItemDisplayModelMode.serializer().descriptor)
 				addDisplayEntity()
 			}
 
