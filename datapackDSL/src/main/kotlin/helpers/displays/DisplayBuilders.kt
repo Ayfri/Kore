@@ -1,6 +1,7 @@
 package helpers.displays
 
 import arguments.Argument
+import arguments.Color
 import arguments.chatcomponents.PlainTextComponent
 import data.block.BlockStateBuilder
 import data.item.builders.ItemStackBuilder
@@ -21,8 +22,12 @@ fun BlockDisplay.blockState(block: Argument.Block, init: BlockStateBuilder.() ->
 	blockState = data.block.blockState(block, init)
 }
 
-fun TextDisplay.text(text: String, init: PlainTextComponent.() -> Unit = {}) {
+fun TextDisplay.text(text: String = "", init: PlainTextComponent.() -> Unit = {}) {
 	this.text = arguments.chatcomponents.text(text, init)
+}
+
+fun TextDisplay.text(text: String = "", color: Color, init: PlainTextComponent.() -> Unit = {}) {
+	this.text = arguments.chatcomponents.text(text, color, init)
 }
 
 fun textDisplay(block: TextDisplay.() -> Unit) = TextDisplay().apply(block)
