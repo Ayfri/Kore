@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 data class BlockState(
 	@SerialName("Name")
 	val name: String,
-	val properties: Map<String, String>,
+	val properties: Map<String, String>? = null,
 )

@@ -3,9 +3,9 @@ package data.block
 import arguments.Argument
 
 data class BlockStateBuilder(var name: String = "") {
-	var properties: Map<String, String> = emptyMap()
+	var properties = emptyMap<String, String>()
 
-	fun build() = BlockState(name, properties)
+	fun build() = BlockState(name, properties.ifEmpty { null })
 }
 
 fun blockState(block: BlockStateBuilder.() -> Unit) = BlockStateBuilder().apply(block).build()
