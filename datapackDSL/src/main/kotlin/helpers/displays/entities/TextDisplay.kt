@@ -55,7 +55,7 @@ data class TextDisplay(
 					value.shadow?.let { encodeSerializableElement(descriptor, 5, Boolean.serializer(), it) }
 					value.text?.let { encodeSerializableElement(descriptor, 6, ChatComponents.serializer(), ChatComponents(it)) }
 					value.textOpacity?.let { encodeSerializableElement(descriptor, 7, Byte.serializer(), it) }
-					encodeDisplayEntity(value)
+					encodeDisplayEntity(value, descriptor, 8)
 				}
 			}
 		}

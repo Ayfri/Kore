@@ -30,7 +30,7 @@ data class BlockDisplay(
 			override fun serialize(encoder: Encoder, value: BlockDisplay) {
 				encoder.encodeStructure(descriptor) {
 					value.blockState?.let { encodeSerializableElement(descriptor, 0, BlockState.serializer(), it) }
-					encodeDisplayEntity(value)
+					encodeDisplayEntity(value, descriptor, 1)
 				}
 			}
 		}

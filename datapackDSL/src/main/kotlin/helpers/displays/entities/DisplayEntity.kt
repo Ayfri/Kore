@@ -6,10 +6,7 @@ import helpers.displays.maths.Transformation
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.descriptors.ClassSerialDescriptorBuilder
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.element
+import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
@@ -72,46 +69,18 @@ sealed class DisplayEntity(
 		}
 
 		@JvmStatic
-		protected fun <T : DisplayEntity> CompositeEncoder.encodeDisplayEntity(value: T) {
-			value.billboardMode?.let {
-				encodeSerializableElement(
-					ItemDisplay.Companion.DisplayEntitySerializer.descriptor,
-					2,
-					BillboardMode.serializer(),
-					it
-				)
-			}
-			value.brightness?.let {
-				encodeSerializableElement(
-					ItemDisplay.Companion.DisplayEntitySerializer.descriptor,
-					3,
-					Brightness.serializer(),
-					it
-				)
-			}
-			value.glowColorOverride?.let {
-				encodeSerializableElement(
-					ItemDisplay.Companion.DisplayEntitySerializer.descriptor,
-					4,
-					RGB.serializer(),
-					it
-				)
-			}
-			value.height?.let { encodeIntElement(ItemDisplay.Companion.DisplayEntitySerializer.descriptor, 5, it) }
-			value.interpolationDuration?.let { encodeIntElement(ItemDisplay.Companion.DisplayEntitySerializer.descriptor, 6, it) }
-			value.startInterpolation?.let { encodeIntElement(ItemDisplay.Companion.DisplayEntitySerializer.descriptor, 7, it) }
-			value.shadowRadius?.let { encodeFloatElement(ItemDisplay.Companion.DisplayEntitySerializer.descriptor, 8, it) }
-			value.shadowStrength?.let { encodeFloatElement(ItemDisplay.Companion.DisplayEntitySerializer.descriptor, 9, it) }
-			value.transformation?.let {
-				encodeSerializableElement(
-					ItemDisplay.Companion.DisplayEntitySerializer.descriptor,
-					10,
-					Transformation.serializer(),
-					it
-				)
-			}
-			value.viewRange?.let { encodeIntElement(ItemDisplay.Companion.DisplayEntitySerializer.descriptor, 11, it) }
-			value.width?.let { encodeIntElement(ItemDisplay.Companion.DisplayEntitySerializer.descriptor, 12, it) }
+		protected fun <T : DisplayEntity> CompositeEncoder.encodeDisplayEntity(value: T, descriptor: SerialDescriptor, offset: Int) {
+			value.billboardMode?.let { encodeSerializableElement(descriptor, offset, BillboardMode.serializer(), it) }
+			value.brightness?.let { encodeSerializableElement(descriptor, offset + 1, Brightness.serializer(), it) }
+			value.glowColorOverride?.let { encodeSerializableElement(descriptor, offset + 2, RGB.serializer(), it) }
+			value.height?.let { encodeIntElement(descriptor, offset + 3, it) }
+			value.interpolationDuration?.let { encodeIntElement(descriptor, offset + 4, it) }
+			value.startInterpolation?.let { encodeIntElement(descriptor, offset + 5, it) }
+			value.shadowRadius?.let { encodeFloatElement(descriptor, offset + 6, it) }
+			value.shadowStrength?.let { encodeFloatElement(descriptor, offset + 7, it) }
+			value.transformation?.let { encodeSerializableElement(descriptor, offset + 8, Transformation.serializer(), it) }
+			value.viewRange?.let { encodeIntElement(descriptor, offset + 9, it) }
+			value.width?.let { encodeIntElement(descriptor, offset + 10, it) }
 		}
 
 		@JvmStatic
