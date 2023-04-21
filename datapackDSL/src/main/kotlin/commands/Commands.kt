@@ -102,9 +102,9 @@ fun Function.particle(
 	delta: Vec3,
 	speed: Double,
 	count: Int,
-	mode: ParticleMode,
+	mode: ParticleMode? = null,
 	viewers: Argument.Entity? = null,
-) = addLine(command("particle", particle, pos, delta, float(speed), int(count), literal(mode.asArg()), viewers))
+) = addLine(command("particle", particle, pos, delta, float(speed), int(count), literal(mode?.asArg()), viewers))
 
 fun Function.perfStart() = addLine(command("perf", literal("start")))
 fun Function.perfStop() = addLine(command("perf", literal("stop")))
