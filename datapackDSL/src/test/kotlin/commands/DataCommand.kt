@@ -3,6 +3,7 @@ package commands
 import arguments.chatcomponents.scoreComponent
 import arguments.chatcomponents.textComponent
 import arguments.self
+import arguments.set
 import functions.Function
 import net.benwoodworth.knbt.NbtInt
 import utils.assertsIs
@@ -13,6 +14,9 @@ fun Function.dataTests() {
 		get("foo", 1.0) assertsIs "data get entity @s foo 1"
 
 		merge(scoreComponent("foo", self())) assertsIs "data merge entity @s {score:{name:\"@s\",objective:\"foo\"}}"
+		merge {
+			this["foo"] = "bar"
+		} assertsIs "data merge entity @s {foo:\"bar\"}"
 
 		modify("foo") { append(self(), "bar") } assertsIs "data modify entity @s foo append from entity @s bar"
 		modify("foo") { append(NbtInt(1)) } assertsIs "data modify entity @s foo append value 1"

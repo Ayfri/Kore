@@ -13,6 +13,7 @@ val dp = dataPack("unit_tests") {
 		forceLoadTests()
 		gameruleTests()
 		lootTests()
+		particleTests()
 		rideTests()
 		scheduleTests()
 		tellrawTests()
