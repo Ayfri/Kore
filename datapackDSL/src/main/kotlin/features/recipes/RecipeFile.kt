@@ -27,7 +27,6 @@ data class RecipeFile(
 				else put(key, value)
 			}
 		}
-		println(json)
 		File(directory, "$fileName.json").writeText(json.toString())
 	}
 
