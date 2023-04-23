@@ -35,6 +35,24 @@ class TimeNumber(val value: Double, val type: TimeType = TimeType.TICKS) : Compa
 	fun asString() = toString()
 	fun asArg() = literal(asString())
 
+	fun inTicks() = when (type) {
+		TimeType.TICKS -> TimeNumber(value, TimeType.TICKS)
+		TimeType.SECONDS -> TimeNumber(value * 20, TimeType.TICKS)
+		TimeType.DAYS -> TimeNumber(value * 24000, TimeType.TICKS)
+	}
+
+	fun inSeconds() = when (type) {
+		TimeType.TICKS -> TimeNumber(value / 20, TimeType.SECONDS)
+		TimeType.SECONDS -> TimeNumber(value, TimeType.SECONDS)
+		TimeType.DAYS -> TimeNumber(value * 1200, TimeType.SECONDS)
+	}
+
+	fun inDays() = when (type) {
+		TimeType.TICKS -> TimeNumber(value / 24000, TimeType.DAYS)
+		TimeType.SECONDS -> TimeNumber(value / 1200, TimeType.DAYS)
+		TimeType.DAYS -> TimeNumber(value, TimeType.DAYS)
+	}
+
 	fun toTicks() = TimeNumber(value, TimeType.TICKS)
 	fun toSeconds() = TimeNumber(value, TimeType.SECONDS)
 	fun toDays() = TimeNumber(value, TimeType.DAYS)
