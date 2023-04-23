@@ -43,7 +43,7 @@ class BossBar(private val fn: Function, val id: Argument.BossBar) {
 	fun setColor(color: BossBarColor) = fn.addLine(command("bossbar", literal("set"), id, literal("color"), color))
 	fun setMax(max: Int) = fn.addLine(command("bossbar", literal("set"), id, literal("max"), int(max)))
 	fun setName(name: String) = fn.addLine(command("bossbar", literal("set"), id, literal("name"), literal(name)))
-	fun setPlayers(targets: Argument.Selector) = fn.addLine(command("bossbar", literal("set"), id, literal("players"), targets))
+	fun setPlayers(targets: Argument.Entity) = fn.addLine(command("bossbar", literal("set"), id, literal("players"), targets))
 	fun setStyle(style: BossBarStyle) = fn.addLine(command("bossbar", literal("set"), id, literal("style"), literal(style.asArg())))
 	fun setValue(value: Int) = fn.addLine(command("bossbar", literal("set"), id, literal("value"), int(value)))
 	fun setVisible(visible: Boolean) = fn.addLine(command("bossbar", literal("set"), id, literal("visible"), bool(visible)))

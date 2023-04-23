@@ -14,7 +14,7 @@ import net.benwoodworth.knbt.NbtCompoundBuilder
 import serializers.LowercaseSerializer
 import utils.asArg
 
-fun Function.clear(targets: Argument.Selector? = null, item: Argument.Item? = null, maxCount: Int? = null) =
+fun Function.clear(targets: Argument.Entity? = null, item: Argument.Item? = null, maxCount: Int? = null) =
 	addLine(command("clear", targets, item, int(maxCount)))
 
 fun Function.debugStart() = addLine(command("debug", literal("start")))
@@ -69,7 +69,7 @@ fun Function.help(command: String? = null) = addLine(command("help", literal(com
 fun Function.jfrStart() = addLine(command("jfr", literal("start")))
 fun Function.jfrStop() = addLine(command("jfr", literal("stop")))
 
-fun Function.kill(targets: Argument.Selector? = null) = addLine(command("kill", targets))
+fun Function.kill(targets: Argument.Entity? = null) = addLine(command("kill", targets))
 
 fun Function.list(uuids: Boolean = false) = addLine(command("list", literal(if (uuids) "uuids" else null)))
 
@@ -194,7 +194,7 @@ fun Function.spreadPlayers(
 	spreadDistance: Double,
 	maxRange: Double,
 	respectTeams: Boolean,
-	targets: Argument.Selector,
+	targets: Argument.Entity,
 ) = addLine(command("spreadplayers", center, float(spreadDistance), float(maxRange), bool(respectTeams), targets))
 
 fun Function.spreadPlayers(
@@ -203,7 +203,7 @@ fun Function.spreadPlayers(
 	maxRange: Double,
 	maxHeight: Int,
 	respectTeams: Boolean,
-	targets: Argument.Selector,
+	targets: Argument.Entity,
 ) = addLine(command("spreadplayers", center, float(spreadDistance), float(maxRange), int(maxHeight), bool(respectTeams), targets))
 
 fun Function.stopSound(
