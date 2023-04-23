@@ -1,18 +1,19 @@
 package helpers
 
+import arguments.allEntities
 import arguments.chatcomponents.textComponent
+import arguments.numbers.seconds
 import arguments.vec3
 import commands.AttributeModifierOperation
+import commands.kill
+import commands.schedule
 import commands.summon
 import data.block.properties
 import data.item.builders.canDestroy
 import data.item.builders.enchantments
 import data.item.builders.modifiers
 import functions.Function
-import generated.Attributes
-import generated.Blocks
-import generated.Enchantments
-import generated.Items
+import generated.*
 import helpers.displays.*
 import helpers.displays.entities.ItemDisplayModelMode
 import helpers.displays.maths.*
@@ -75,9 +76,32 @@ fun Function.displayTests() {
 
 	val textDisplay = textDisplay {
 		text("test")
-
 		interpolationDuration = 1
 	}
 
 	summon(textDisplay.entityType, vec3(), textDisplay.toNbt())
+
+	kill(allEntities { type(itemDisplay.entityType) })
+	kill(allEntities { type(blockDisplay.entityType) })
+	kill(allEntities { type(textDisplay.entityType) })
+
+	val simpleInterpolationEntity = blockDisplay {
+		blockState(Blocks.STONE)
+	}.interpolable(vec3(0, -59, 0))
+
+	simpleInterpolationEntity.summon()
+
+	schedule(1.seconds) {
+		simpleInterpolationEntity.interpolateTo(1.5.seconds) {
+			scale = Vec3f(1f, 1f, 1f)
+		}
+
+		schedule(3.seconds) {
+			simpleInterpolationEntity.interpolateTo(1.5.seconds) {
+				scale = Vec3f(0.5f, 0.5f, 0.5f)
+			}
+		}
+
+		schedule(this).replace(6.seconds)
+	}
 }
