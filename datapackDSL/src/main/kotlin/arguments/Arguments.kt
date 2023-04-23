@@ -502,6 +502,7 @@ fun tag(name: String, namespace: String, group: Boolean = true) = Argument.Liter
 
 fun time(value: TimeNumber) = Argument.Time(value)
 
+fun randomUUID() = Argument.UUID.random()
 fun uuid(uuid: UUID) = Argument.UUID(uuid)
 
 fun vec2(x: Number, y: Number) = Vec2(x, y)
