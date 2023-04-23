@@ -4,6 +4,7 @@ import arguments.ChatComponents
 import arguments.chatcomponents.textComponent
 import features.advancements.Advancement
 import features.predicates.Predicate
+import features.recipes.RecipeFile
 import features.tags.Tags
 import functions.Function
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -69,6 +70,7 @@ class DataPack(val name: String) {
 	private val generatedFunctions = mutableListOf<Function>()
 	val advancements = mutableListOf<Advancement>()
 	val predicates = mutableListOf<Predicate>()
+	val recipes = mutableListOf<RecipeFile>()
 	val tags = mutableListOf<Tags>()
 
 	var configuration: Configuration = Configuration.Default
@@ -115,6 +117,7 @@ class DataPack(val name: String) {
 			deleteOldFiles = true
 		)
 		data.generateResources("predicates", predicates)
+		data.generateResources("recipes", recipes)
 		data.generateResources("tags", tags.groupBy(Tags::namespace))
 
 		val end = System.currentTimeMillis()
