@@ -7,8 +7,11 @@ import features.recipes.*
 import functions.load
 import generated.Items
 import generated.Tags
+import setTestPath
 
 fun recipeTest() = dataPack("recipe_tests") {
+	setTestPath()
+
 	recipes {
 		blasting("test_blasting") {
 			ingredient {

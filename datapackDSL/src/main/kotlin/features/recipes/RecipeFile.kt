@@ -6,6 +6,7 @@ import features.recipes.types.Recipe
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import java.io.File
 
@@ -19,7 +20,8 @@ data class RecipeFile(
 	private lateinit var json: Json
 
 	override fun generate(dataPack: DataPack, directory: File) {
-		var json = getJsonEncoder(dataPack).encodeToJsonElement(Recipe.serializer(), recipe)
+		val jsonEncoder = getJsonEncoder(dataPack)
+		var json = jsonEncoder.encodeToJsonElement(recipe)
 		json = buildJsonObject {
 			json.jsonObject.forEach { (key, value) ->
 				if (key == "__type__") return@forEach
@@ -27,7 +29,7 @@ data class RecipeFile(
 				else put(key, value)
 			}
 		}
-		File(directory, "$fileName.json").writeText(json.toString())
+		File(directory, "$fileName.json").writeText(jsonEncoder.encodeToString(json))
 	}
 
 	@OptIn(ExperimentalSerializationApi::class)
