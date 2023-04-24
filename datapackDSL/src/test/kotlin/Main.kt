@@ -161,7 +161,7 @@ fun main() {
 			}
 
 			addBlankLine()
-			items.replaceBlock(coordinate(0, 0, 0), CONTAINER[5], Items.DIAMOND_SWORD {
+			items.replace(coordinate(0, 0, 0), CONTAINER[5], Items.DIAMOND_SWORD {
 				this["Enchantments"] = nbtList {
 					addNbtCompound {
 						this["lvl"] = 5
@@ -171,7 +171,7 @@ fun main() {
 			}, 20)
 
 			comment("Replacing head with dirt")
-			items.replaceEntity(nearestEntity { type = "minecraft:zombie" }, ARMOR.HEAD, Items.DIRT, 64)
+			items.replace(nearestEntity { type = "minecraft:zombie" }, ARMOR.HEAD, Items.DIRT, 64)
 			enchant(allPlayers(), Enchantments.FEATHER_FALLING, 3)
 
 			loot {

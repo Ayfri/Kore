@@ -27,6 +27,8 @@ sealed interface Argument {
 
 	sealed interface BlockOrTag : Argument
 
+	sealed interface Container : Argument
+
 	sealed interface Data : Argument {
 		val literalName
 			get() = when (this) {
@@ -36,9 +38,9 @@ sealed interface Argument {
 			}
 	}
 
-	sealed interface ItemOrTag : Argument
+	sealed interface Entity : Data, Container
 
-	sealed interface Entity : Data
+	sealed interface ItemOrTag : Argument
 
 	sealed interface Possessor : Argument
 
@@ -420,6 +422,12 @@ sealed interface Argument {
 		}
 	}
 }
+
+val Argument.Container.literalName
+	get() = when (this) {
+		is Vec3 -> "block"
+		is Argument.Entity -> "entity"
+	}
 
 fun advancement(name: String, namespace: String = "minecraft") = Argument.Advancement(name, namespace)
 fun all() = Argument.All

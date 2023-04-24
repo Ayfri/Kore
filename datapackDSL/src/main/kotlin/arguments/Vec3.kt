@@ -7,7 +7,7 @@ import kotlin.math.*
 
 typealias Coordinate = Vec3
 
-data class Vec3(val x: PosNumber, val y: PosNumber, val z: PosNumber) : Argument, Argument.Data {
+data class Vec3(val x: PosNumber, val y: PosNumber, val z: PosNumber) : Argument, Argument.Container, Argument.Data {
 	constructor(x: Number = 0, y: Number = 0, z: Number = 0) : this(x.pos, y.pos, z.pos)
 
 	val length get() = sqrt(lengthSquared)

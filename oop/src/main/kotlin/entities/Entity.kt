@@ -38,7 +38,8 @@ inline fun <reified T : Entity> Entity.toEntityOrNull() = when (this) {
 	} as T?
 }
 
-inline fun <reified T : Entity> Entity.toEntity() = toEntityOrNull<T>() ?: throw IllegalArgumentException("Cannot cast entity '$this' to type '${T::class.simpleName}'")
+inline fun <reified T : Entity> Entity.toEntity() =
+	toEntityOrNull<T>() ?: throw IllegalArgumentException("Cannot cast entity '$this' to type '${T::class.simpleName}'")
 
 context(Function)
 fun Entity.getScore(name: String) = ScoreboardEntity(name, this@Entity)
@@ -61,7 +62,7 @@ fun Entity.giveItem(item: ItemStack) = give(asSelector(), item.asArgument(), ite
 
 context(Function)
 fun Entity.replaceItem(slot: ItemSlotType, item: ItemStack) = items {
-	replaceEntity(asSelector(), slot, item.asArgument(), item.count)
+	replace(asSelector(), slot, item.asArgument(), item.count)
 }
 
 context(Function)
