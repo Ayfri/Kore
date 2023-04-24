@@ -138,9 +138,7 @@ fun main() {
 
 			execute {
 				ifCondition {
-					score(player("Ayfri"), "test", entity("other"), "test") { first, second ->
-						first lessThan second
-					}
+					score(player("Ayfri"), "test") lessThan score(entity("other"), "test")
 				}
 
 				at(selector(SelectorType.ALL_PLAYERS))

@@ -19,17 +19,7 @@ enum class Relation(val symbol: String) : Argument {
 		val values = values()
 
 		object RelationSerializer : KSerializer<Relation> by LowercaseSerializer(values) {
-			override fun serialize(encoder: Encoder, value: Relation) {
-				encoder.encodeString(value.symbol)
-			}
+			override fun serialize(encoder: Encoder, value: Relation) = encoder.encodeString(value.symbol)
 		}
 	}
-}
-
-class RelationBlock {
-	infix fun Number.lessThan(other: Number) = Relation.LESS_THAN
-	infix fun Number.lessThanOrEqual(other: Number) = Relation.LESS_THAN_OR_EQUAL_TO
-	infix fun Number.equal(other: Number) = Relation.EQUAL_TO
-	infix fun Number.greaterThanOrEqual(other: Number) = Relation.GREATER_THAN_OR_EQUAL_TO
-	infix fun Number.greaterThan(other: Number) = Relation.GREATER_THAN
 }

@@ -134,6 +134,41 @@ fun Function.executeTests() {
 		execute if biome ~ ~ ~ #minecraft:has_structure/ancient_city if block ~ ~ ~ minecraft:air if blocks ^ ^ ^ 1 2 3 4 5 6 masked if data entity @s test if dimension minecraft:the_end if loaded -2 -2 -2 if predicate test unless score $selectorAsString test matches ..1 store result block ~ ~ ~ test byte 1 run say test
 	""".trimIndent()
 
+	val scoreName = "test"
+
+	fun ifScoreMatches(matches: String) = "if score $selectorAsString $scoreName matches $matches"
+	fun ifScoreRelation(relation: String) = "if score $selectorAsString $scoreName $relation $selectorAsString $scoreName"
+
+	execute {
+		ifCondition {
+			val score = score(testEntity.selector, scoreName)
+
+			score lessThan 1
+			score lessThanOrEqualTo 1
+			score equalTo 1
+			score greaterThanOrEqualTo 1
+			score greaterThan 1
+
+			score lessThan score
+			score lessThanOrEqualTo score
+			score equalTo score
+			score greaterThanOrEqualTo score
+			score greaterThan score
+
+			score matches 1..5
+			score matches rangeOrInt(1)
+		}
+
+		run {
+			say("test")
+		}
+	} assertsIs """
+		execute ${ifScoreMatches("..0")} ${ifScoreMatches("..1")} ${ifScoreMatches("1")} ${ifScoreMatches("1..")} ${ifScoreMatches("2..")}
+		${ifScoreRelation("<")} ${ifScoreRelation("<=")} ${ifScoreRelation("=")} ${ifScoreRelation(">=")} ${ifScoreRelation(">")}
+		${ifScoreMatches("1..5")} ${ifScoreMatches("1")}
+		run say test
+	""".trimIndent().replace("\n", " ")
+
 	execute {
 		storeSuccess {
 			bossBarValue("test")
