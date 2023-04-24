@@ -15,9 +15,7 @@ import commands.*
 import commands.execute.Anchor
 import commands.execute.execute
 import commands.execute.run
-import features.advancementTests
-import features.predicateTests
-import features.recipeTest
+import features.featuresTests
 import features.tags.tags
 import functions.function
 import generated.*
@@ -37,11 +35,9 @@ fun DataPack.setTestPath() {
 }
 
 fun main() {
-	advancementTests()
+	featuresTests()
 	helpersTests()
-	predicateTests()
 	selectorTests()
-	recipeTest()
 	runUnitTests()
 
 	val dataPack = dataPack("test") {

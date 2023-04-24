@@ -6,6 +6,7 @@ import features.advancements.Advancement
 import features.predicates.Predicate
 import features.recipes.RecipeFile
 import features.tags.Tags
+import features.worldgen.DimensionType
 import functions.Function
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
@@ -69,6 +70,7 @@ class DataPack(val name: String) {
 	private val functions = mutableListOf<Function>()
 	private val generatedFunctions = mutableListOf<Function>()
 	val advancements = mutableListOf<Advancement>()
+	val dimensionTypes = mutableListOf<DimensionType>()
 	val predicates = mutableListOf<Predicate>()
 	val recipes = mutableListOf<RecipeFile>()
 	val tags = mutableListOf<Tags>()
@@ -107,6 +109,7 @@ class DataPack(val name: String) {
 		data.mkdirs()
 
 		data.generateResources("advancements", advancements)
+		data.generateResources("dimension_type", dimensionTypes)
 		data.generateResources("functions", functions.groupBy(Function::namespace))
 		data.generateResources(
 			dirName = "functions/$GENERATED_FUNCTIONS_FOLDER",

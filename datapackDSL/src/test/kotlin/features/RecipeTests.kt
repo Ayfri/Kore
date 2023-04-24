@@ -1,17 +1,14 @@
 package features
 
+import DataPack
 import arguments.allPlayers
 import commands.recipeGive
-import dataPack
 import features.recipes.*
 import functions.load
 import generated.Items
 import generated.Tags
-import setTestPath
 
-fun recipeTest() = dataPack("recipe_tests") {
-	setTestPath()
-
+fun DataPack.recipeTest() {
 	recipes {
 		blasting("test_blasting") {
 			ingredient {
@@ -54,4 +51,4 @@ fun recipeTest() = dataPack("recipe_tests") {
 	load {
 		recipeGive(allPlayers(), bowsRecipe)
 	}
-}.generate()
+}
