@@ -5,9 +5,12 @@ import Generator
 import arguments.Argument
 import features.worldgen.intproviders.IntProvider
 import features.worldgen.intproviders.constant
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNamingStrategy
 import java.io.File
 
 
@@ -37,8 +40,26 @@ data class DimensionType(
 	var infiniburn: Argument.BlockTag,
 	var effects: Argument.Dimension? = null,
 ) : Generator {
+	@Transient
+	private lateinit var jsonEncoder: Json
+
 	override fun generate(dataPack: DataPack, directory: File) {
-		val json = dataPack.jsonEncoder.encodeToString(this)
+		val json = getJsonEncoder(dataPack).encodeToString(this)
 		File(directory, "$fileName.json").writeText(json)
+	}
+
+	@OptIn(ExperimentalSerializationApi::class)
+	fun getJsonEncoder(dataPack: DataPack) = when {
+		::jsonEncoder.isInitialized -> jsonEncoder
+		else -> {
+			jsonEncoder = Json {
+				prettyPrint = dataPack.jsonEncoder.configuration.prettyPrint
+				if (prettyPrint) prettyPrintIndent = dataPack.jsonEncoder.configuration.prettyPrintIndent
+				namingStrategy = JsonNamingStrategy.SnakeCase
+				encodeDefaults = true
+				explicitNulls = false
+			}
+			jsonEncoder
+		}
 	}
 }
