@@ -1,6 +1,7 @@
 package commands
 
 import arguments.*
+import arguments.chatcomponents.textComponent
 import functions.Function
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
@@ -53,51 +54,60 @@ object DataModifyOperation {
 	inline fun <reified T : Any> prepend(value: @Serializable T) =
 		listOf(literal("prepend"), literal("value"), literal(StringifiedNbt.encodeToString(value)))
 
-	fun set(from: Argument.Data, path: String) = listOf(literal("set"), literal("from"), literal(from.literalName), from, literal(path))
+	operator fun set(from: Argument.Data, path: String) =
+		listOf(literal("set"), literal("from"), literal(from.literalName), from, literal(path))
+
 	fun set(string: Argument.Data, path: String, start: Int? = null, end: Int? = null) =
 		listOfNotNull(literal("set"), literal("string"), literal(string.literalName), string, literal(path), int(start), int(end))
 
 	fun set(value: NbtTag) = listOf(literal("set"), literal("value"), literal(StringifiedNbt.encodeToString(value)))
 	fun set(value: Int) = listOf(literal("set"), literal("value"), int(value))
 	fun set(value: Float) = listOf(literal("set"), literal("value"), float(value))
-	fun set(value: String) = listOf(literal("set"), literal("value"), literal(value))
+	fun set(value: String) = listOf(literal("set"), literal("value"), textComponent(value))
 	fun set(value: Boolean) = listOf(literal("set"), literal("value"), bool(value))
 	inline fun <reified T : Any> set(value: @Serializable T) =
 		listOf(literal("set"), literal("value"), literal(StringifiedNbt.encodeToString(value)))
 }
 
 class Data(val fn: Function, val target: Argument.Data) {
-	fun get(path: String? = null, scale: Double? = null) = fn.addLine(
-		command(
-			"data", literal("get"), literal(target.literalName), target, literal(path), float(scale)
-		)
-	)
+	operator fun get(path: String? = null, scale: Double? = null) =
+		fn.addLine(command("data", literal("get"), literal(target.literalName), target, literal(path), float(scale)))
 
-	fun merge(data: NbtTag) = fn.addLine(
-		command(
-			"data", literal("merge"), literal(target.literalName), target, literal(StringifiedNbt.encodeToString(data))
-		)
-	)
+	fun merge(data: NbtTag) =
+		fn.addLine(command("data", literal("merge"), literal(target.literalName), target, literal(StringifiedNbt.encodeToString(data))))
 
 	fun merge(block: NbtCompoundBuilder.() -> Unit) = merge(nbt(block))
 
-	inline fun <reified T : Any> merge(data: @Serializable T) = fn.addLine(
-		command(
-			"data", literal("merge"), literal(target.literalName), target, literal(StringifiedNbt.encodeToString(data))
-		)
-	)
+	inline fun <reified T : Any> merge(data: @Serializable T) =
+		fn.addLine(command("data", literal("merge"), literal(target.literalName), target, literal(StringifiedNbt.encodeToString(data))))
 
-	fun modify(path: String, value: DataModifyOperation.() -> List<Argument>) = fn.addLine(
-		command(
-			"data", literal("modify"), literal(target.literalName), target, literal(path), *DataModifyOperation.value().toTypedArray()
+	fun modify(path: String, value: DataModifyOperation.() -> List<Argument>) =
+		fn.addLine(
+			command(
+				"data",
+				literal("modify"),
+				literal(target.literalName),
+				target,
+				literal(path),
+				*DataModifyOperation.value().toTypedArray()
+			)
 		)
-	)
 
-	fun remove(path: String) = fn.addLine(
-		command(
-			"data", literal("remove"), literal(target.literalName), target, literal(path)
-		)
-	)
+	fun modify(path: String, value: NbtTag) = modify(path) { set(value) }
+	fun modify(path: String, value: Int) = modify(path) { set(value) }
+	fun modify(path: String, value: Float) = modify(path) { set(value) }
+	fun modify(path: String, value: String) = modify(path) { set(value) }
+	fun modify(path: String, value: Boolean) = modify(path) { set(value) }
+	inline fun <reified T : Any> modify(path: String, value: @Serializable T) = modify(path) { set(value) }
+
+	fun remove(path: String) = fn.addLine(command("data", literal("remove"), literal(target.literalName), target, literal(path)))
+
+	operator fun set(path: String, value: NbtTag) = modify(path) { set(value) }
+	operator fun set(path: String, value: Int) = modify(path) { set(value) }
+	operator fun set(path: String, value: Float) = modify(path) { set(value) }
+	operator fun set(path: String, value: String) = modify(path) { set(value) }
+	operator fun set(path: String, value: Boolean) = modify(path) { set(value) }
+	inline operator fun <reified T : Any> set(path: String, value: @Serializable T) = modify(path) { set(value) }
 }
 
 fun Function.data(target: Argument.Data, block: Data.() -> Command) = Data(this, target).block()
