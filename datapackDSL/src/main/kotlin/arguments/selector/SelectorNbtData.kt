@@ -1,10 +1,12 @@
 package arguments.selector
 
-import arguments.Scores
+import arguments.Argument
 import arguments.enums.Gamemode
 import arguments.numbers.FloatRangeOrFloat
-import arguments.numbers.IntRange
+import arguments.numbers.IntRangeOrInt
 import arguments.numbers.Range
+import arguments.scores.Scores
+import arguments.scores.SelectorScore
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -60,17 +62,17 @@ data class SelectorNbtData(
 	var xRotation: FloatRangeOrFloat? = null,
 	@SerialName("y_rotation")
 	var yRotation: FloatRangeOrFloat? = null,
+	@Contextual var advancements: Advancements? = null,
 	var distance: Range? = null,
 	var limit: Int? = null,
-	var level: IntRange? = null,
-	var team: String? = null,
+	var level: IntRangeOrInt? = null,
 	var name: String? = null,
-	var type: String? = null,
-	var tag: String? = null,
-	@Contextual var advancements: Advancements? = null,
-	var scores: Scores? = null,
+	var predicate: Argument.Predicate? = null,
+	var scores: Scores<SelectorScore>? = null,
 	var sort: Sort? = null,
-	var predicate: String? = null,
+	var tag: String? = null,
+	var team: String? = null,
+	var type: String? = null,
 	@SerialName("gamemode")
 	@Serializable
 	private var _gamemode: GamemodeSelector = GamemodeSelector(),
@@ -152,6 +154,13 @@ data class SelectorNbtData(
 
 				encoder.encodeString(map.filter { it.value != null }.mapNotNull { (key, value) ->
 					when (value) {
+						is Advancements -> "$key=${
+							json.encodeToJsonElement(
+								Advancements.Companion.AdvancementsSerializer,
+								value
+							).jsonPrimitive.content
+						}"
+
 						is GamemodeSelector -> when (value.gamemode) {
 							null -> return@mapNotNull null
 							else -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
@@ -162,14 +171,10 @@ data class SelectorNbtData(
 							else -> "$key=$value"
 						}
 
-						is Sort -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
-						is Advancements -> "$key=${
-							json.encodeToJsonElement(
-								Advancements.Companion.AdvancementsSerializer,
-								value
-							).jsonPrimitive.content
-						}"
+						is Argument.Predicate -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
 
+						is Scores<*> -> "$key={${value.scores.joinToString(",")}}"
+						is Sort -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
 						is NbtTag -> "$key=${StringifiedNbt.encodeToString(value).removeSurrounding("\"")}"
 						else -> "$key=$value"
 					}

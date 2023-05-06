@@ -1,81 +1,116 @@
 package serialization
 
 import arguments.*
-import arguments.chatcomponents.scoreComponent
-import arguments.chatcomponents.textComponent
 import arguments.enums.Gamemode
 import arguments.numbers.rangeOrDouble
-import arguments.numbers.rangeOrIntStart
+import arguments.numbers.rangeOrDoubleEnd
+import arguments.numbers.rangeOrInt
+import arguments.numbers.rangeOrIntEnd
+import arguments.scores.lessThan
+import arguments.scores.score
+import arguments.selector.SelectorType
+import arguments.selector.Sort
+import arguments.selector.scores
 import dataPack
-import functions.load
+import features.advancements.types.block
+import features.predicates.conditions.entityProperties
+import features.predicates.predicate
+import generated.Blocks
 import generated.Entities
 import generated.type
 import setTestPath
-import utils.debugEntity
+import utils.assertsIs
 
-fun selectorTests() = dataPack("serialization_tests") {
+fun selectorTests() = dataPack("selector_tests") {
 	setTestPath()
-	load("selector_serialization") {
-		val debugEntity = debugEntity {
-			this["advancements"] = "@e[advancements={test:foo={bar=true}}]"
-			this["gamemode_not"] = "@e[gamemode=!creative]"
-			this["simple"] = "@e"
-			this["scores"] = "@e[scores={foo=1..}]"
-			this["type"] = "@e[type=minecraft:marker]"
-			this["type+tags"] = "@e[tag=foo,type=minecraft:marker]"
-			this["type+tags+nbt"] = "@e[nbt={foo:\"bar\"},tag=foo,type=minecraft:marker]"
-			this["xRotation_renamed"] = "@e[x_rotation=1.5]"
-		}
 
-		debugEntity.whenAllTestsValid {
-			debug("All selector serialization tests passed !") {
-				bold = true
-				color = Color.GREEN
+	selector(SelectorType.ALL_ENTITIES) assertsIs "@e"
+
+	allEntities() assertsIs "@e"
+	allPlayers() assertsIs "@a"
+	randomPlayer() assertsIs "@r"
+	nearestPlayer() assertsIs "@p"
+	self() assertsIs "@s"
+
+	player("foo") assertsIs "@a[limit=1,name=foo]"
+
+	allEntities {
+		advancements {
+			Argument.Advancement("foo", "test")() {
+				this["bar"] = true
 			}
 		}
+	} assertsIs "@e[advancements={test:foo={bar=true}}]"
 
-		debugEntity.whenAnyTestInvalid {
-			debug(scoreComponent(debugEntity.scoreName, debugEntity.selector) {
-				bold = true
-				color = Color.RED
-			} + textComponent(" / ${debugEntity.scoreToValidateAllTests} scores passed") {
-				bold = true
-				color = Color.RED
-			})
+	allEntities {
+		distance = rangeOrDoubleEnd(1.5)
+	} assertsIs "@e[distance=..1.5]"
+
+	allEntities {
+		dx = 1.0
+		dy = 2.0
+		dz = 3.0
+	} assertsIs "@e[dx=1.0,dy=2.0,dz=3.0]"
+
+	allEntities {
+		gamemode = !Gamemode.CREATIVE
+	} assertsIs "@e[gamemode=!creative]"
+
+	allEntities {
+		level = rangeOrIntEnd(1)
+	} assertsIs "@e[level=..1]"
+
+	allEntities {
+		limit = 1
+	} assertsIs "@e[limit=1]"
+
+	allEntities(true) assertsIs "@e[limit=1]"
+	allEntitiesLimitToOne() assertsIs "@e[limit=1]"
+
+	allEntities {
+		name = "foo"
+	} assertsIs "@e[name=foo]"
+
+	allEntities {
+		nbt = nbt {
+			this["foo"] = "bar"
 		}
+	} assertsIs "@e[nbt={foo:\"bar\"}]"
 
-		debugEntity.assertAllData {
-			this["advancements"] = allEntities {
-				advancements {
-					Argument.Advancement("foo", "test")() {
-						this["bar"] = true
-					}
-				}
-			}.asString()
-
-			this["gamemode_not"] = allEntities {
-				gamemode = !Gamemode.CREATIVE
-			}.asString()
-
-			this["simple"] = allEntities().asString()
-
-			this["scores"] = allEntities {
-				scores {
-					score("foo", rangeOrIntStart(1))
-				}
-			}.asString()
-
-			this["type"] = allEntities { type(Entities.MARKER) }.asString()
-			this["type+tags"] = allEntities { type(Entities.MARKER); tag = "foo" }.asString()
-			this["type+tags+nbt"] = allEntities {
-				type(Entities.MARKER)
-				tag = "foo"
-				nbt = nbt test@{ this@test["foo"] = "bar" }
-			}.asString()
-
-			this["xRotation_renamed"] = allEntities { xRotation = rangeOrDouble(1.5) }.asString()
+	allEntities {
+		predicate = predicate("foo") {
+			entityProperties {
+				steppingOn = block(Blocks.STONE)
+			}
 		}
+	} assertsIs "@e[predicate=selector_tests:foo]"
 
-		debugEntity.remove()
-	}
+	allEntities {
+		scores {
+			score("foo", rangeOrInt(1))
+			score("bar") greaterThanOrEqualTo 1
+			"baz" lessThan 1
+		}
+	} assertsIs "@e[scores={foo=1,bar=1..,baz=..0}]"
+
+	allEntities {
+		sort = Sort.RANDOM
+	} assertsIs "@e[sort=random]"
+
+	allEntities {
+		tag = "foo"
+	} assertsIs "@e[tag=foo]"
+
+	allEntities {
+		team = !""
+	} assertsIs "@e[team=!]"
+
+	allEntities {
+		type(Entities.MARKER)
+	} assertsIs "@e[type=minecraft:marker]"
+
+	allEntities {
+		xRotation = rangeOrDouble(1.5)
+		y = 5.0
+	} assertsIs "@e[x_rotation=1.5,y=5.0]"
 }.generate()

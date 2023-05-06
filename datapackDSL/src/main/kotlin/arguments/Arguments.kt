@@ -55,7 +55,7 @@ sealed interface Argument {
 	}
 
 	sealed interface TaggedResourceLocation : ResourceLocation {
-		override fun asId(): String = "#$namespace:$name"
+		override fun asId() = "#$namespace:$name"
 	}
 
 	@Serializable(with = ArgumentSerializer::class)

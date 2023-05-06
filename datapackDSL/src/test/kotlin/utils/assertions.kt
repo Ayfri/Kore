@@ -1,5 +1,6 @@
 package utils
 
+import arguments.Argument
 import commands.Command
 
 private val alreadyPrinted = mutableSetOf<Int>()
@@ -26,4 +27,15 @@ infix fun Command.assertsMatches(regex: Regex): Command {
 	System.err.println(generateDiffString(regex, toString()))
 
 	return this
+}
+
+infix fun Argument.assertsIs(string: String) {
+	if (asString() == string || !alreadyPrinted.add(hashCode())) return
+
+	val stack = Thread.currentThread().stackTrace
+	with(stack[2]) {
+		System.err.println("\nat $className.$methodName($fileName:$lineNumber)")
+	}
+
+	System.err.println(generateDiffString(string, asString()))
 }
