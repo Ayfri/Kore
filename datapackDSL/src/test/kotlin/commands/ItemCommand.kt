@@ -12,4 +12,11 @@ fun Function.itemTests() {
 		replace(self(), ARMOR.HEAD, Items.BOW, 3) assertsIs "item replace entity @s armor.head with minecraft:bow 3"
 		replace(vec3(), ENDERCHEST[2], vec3(0, 0, 0), WEAPON) assertsIs "item replace block ~ ~ ~ enderchest.2 from block 0 0 0 weapon"
 	}
+
+	itemSlot(self(), WEAPON) {
+		modify("baz") assertsIs "item modify entity @s weapon baz"
+		replace(Items.DIRT) assertsIs "item replace entity @s weapon with minecraft:dirt"
+		replace(Items.BOW, 3) assertsIs "item replace entity @s weapon with minecraft:bow 3"
+		replace(vec3(0, 0, 0), WEAPON) assertsIs "item replace entity @s weapon from block 0 0 0 weapon"
+	}
 }
