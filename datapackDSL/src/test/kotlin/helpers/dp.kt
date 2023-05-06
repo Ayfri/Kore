@@ -10,6 +10,7 @@ fun helpersTests() = dataPack("helpers_tests") {
 
 	load {
 		displayTests()
+		inventoryManagerTests()
 		scoreboardTests()
 	}
 }.generate()
