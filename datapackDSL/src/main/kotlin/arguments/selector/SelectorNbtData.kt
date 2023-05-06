@@ -159,7 +159,7 @@ data class SelectorNbtData(
 
 						is NbtCompoundSelector -> when (value.nbt) {
 							null -> return@mapNotNull null
-							else -> "$key=${StringifiedNbt.encodeToString(value.nbt)}"
+							else -> "$key=$value"
 						}
 
 						is Sort -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
