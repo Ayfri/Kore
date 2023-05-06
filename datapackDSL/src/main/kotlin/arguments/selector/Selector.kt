@@ -39,6 +39,7 @@ private fun String.unescape(): String {
 
 data class Selector(val base: SelectorType) {
 	val nbtData = SelectorNbtData()
+	val isPlayer get() = base.isPlayer
 
 	override fun toString(): String {
 		val builder = StringBuilder("@")
