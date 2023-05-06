@@ -8,9 +8,11 @@ import arguments.colors.RGB
 import arguments.enums.Dimension
 import arguments.enums.Gamemode
 import arguments.numbers.*
+import arguments.scores.score
 import arguments.selector.SelectorNbtData
 import arguments.selector.SelectorType
 import arguments.selector.Sort
+import arguments.selector.scores
 import commands.*
 import commands.execute.Anchor
 import commands.execute.execute
@@ -74,7 +76,7 @@ fun main() {
 
 			advancements.grant(allPlayers {
 				dx = 1.0
-				level = range(1..5)
+				level = rangeOrInt(1..5)
 				gamemode = !Gamemode.CREATIVE
 			}, Advancements.Story.IRON_TOOLS)
 
@@ -103,7 +105,7 @@ fun main() {
 				}
 
 				scores {
-					score("test", 4..8)
+					score("test") matches 4..8
 				}
 
 				gamemode = !Gamemode.SURVIVAL

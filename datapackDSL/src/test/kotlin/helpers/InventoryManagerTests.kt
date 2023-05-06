@@ -3,7 +3,8 @@ package helpers
 import arguments.*
 import arguments.chatcomponents.scoreComponent
 import arguments.chatcomponents.textComponent
-import arguments.numbers.rangeOrIntStart
+import arguments.scores.score
+import arguments.selector.scores
 import commands.TitleLocation
 import commands.execute.execute
 import commands.execute.run
@@ -40,7 +41,7 @@ fun Function.inventoryManagerTests() {
 			execute {
 				asTarget(allEntities {
 					scores {
-						score(counterScoreName, rangeOrIntStart(3))
+						score(counterScoreName) greaterThanOrEqualTo 3
 					}
 				})
 

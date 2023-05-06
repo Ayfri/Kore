@@ -4,6 +4,7 @@ import arguments.*
 import arguments.enums.DataType
 import arguments.enums.Dimension
 import arguments.numbers.*
+import arguments.scores.score
 import arguments.selector.Sort
 import commands.execute.*
 import commands.execute.Relation

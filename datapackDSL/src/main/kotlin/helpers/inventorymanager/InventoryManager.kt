@@ -3,6 +3,8 @@ package helpers.inventorymanager
 import DataPack
 import arguments.*
 import arguments.numbers.rangeOrInt
+import arguments.scores.score
+import arguments.selector.scores
 import commands.*
 import commands.execute.execute
 import commands.execute.run
@@ -141,7 +143,7 @@ fun InventoryManager<*>.generateSlotsListeners() {
 					execute {
 						val targets = allEntities {
 							scores {
-								score(scoreName, rangeOrInt(1))
+								score(scoreName) greaterThanOrEqualTo 1
 							}
 
 							nbt = containerNbt
@@ -190,27 +192,6 @@ fun InventoryManager<*>.generateSlotsListeners() {
 						function(function)
 					}
 				}
-				/*
-								if (it.type != SlotEventType.WHEN_TAKEN) return@slotListenersLoop
-								execute {
-									val targets = allEntities {
-										scores {
-											score(scoreName, rangeOrInt(1))
-										}
-
-										nbt = containerNbt
-									}
-
-									if (container is Argument.Entity) asTarget(targets)
-									else ifCondition {
-										score(scoreBoardSelector, scoreName) equalTo 1
-										data(container as Argument.Data, containerNbt.toString())
-									}
-
-									run {
-										scoreboard.players.set(scoreBoardSelector, scoreName, 0)
-									}
-								} */
 			}
 		}
 	}

@@ -1,9 +1,9 @@
 import arguments.*
 import arguments.chatcomponents.textComponent
 import arguments.colors.NamedColor
-import arguments.numbers.asStartRangeOrInt
-import arguments.numbers.rangeOrIntStart
+import arguments.scores.score
 import arguments.selector.SelectorNbtData
+import arguments.selector.scores
 import commands.*
 import commands.execute.execute
 import commands.execute.run
@@ -116,7 +116,7 @@ fun DataPack.vanish() = function("vanish") {
 		execute {
 			asTarget(teamPlayer(it) {
 				scores {
-					score(vanishTrigger, 1)
+					score(vanishTrigger) equalTo 1
 				}
 			})
 
@@ -126,7 +126,7 @@ fun DataPack.vanish() = function("vanish") {
 		execute {
 			asTarget(teamPlayer(it) {
 				scores {
-					score(vanishTrigger, 0)
+					score(vanishTrigger) equalTo 0
 				}
 
 				nbt = nbt {
@@ -146,7 +146,7 @@ fun DataPack.vanish() = function("vanish") {
 	execute {
 		asTarget(allPlayers {
 			scores {
-				score(vanishTrigger, 2.asStartRangeOrInt())
+				score(vanishTrigger) greaterThanOrEqualTo 2
 			}
 		})
 
@@ -161,7 +161,7 @@ fun DataPack.vanish() = function("vanish") {
 }
 
 fun DataPack.giveVanishItem() = function("give_vanish_item") {
-	teamList.filter { it.vanish }.forEach {
+	teamList.filter(Team::vanish).forEach {
 		execute {
 			asTarget(teamPlayer(it))
 
@@ -175,7 +175,7 @@ fun DataPack.giveVanishItem() = function("give_vanish_item") {
 }
 
 fun DataPack.detectVanishItemClick() = function("detect_vanish_item_click") {
-	teamList.filter { it.vanish }.forEach {
+	teamList.filter(Team::vanish).forEach {
 		val itemNbt = nbt {
 			this["SelectedItem"] = nbt {
 				this["tag"] = nbt {
@@ -187,8 +187,8 @@ fun DataPack.detectVanishItemClick() = function("detect_vanish_item_click") {
 		execute {
 			asTarget(teamPlayer(it) {
 				scores {
-					score(vanishItemTrigger, rangeOrIntStart(1))
-					score(vanishTrigger, 0)
+					score(vanishItemTrigger) greaterThanOrEqualTo 1
+					score(vanishTrigger) equalTo 0
 				}
 				nbt = itemNbt
 			})
@@ -205,8 +205,8 @@ fun DataPack.detectVanishItemClick() = function("detect_vanish_item_click") {
 		execute {
 			asTarget(teamPlayer(it) {
 				scores {
-					score(vanishItemTrigger, rangeOrIntStart(1))
-					score(vanishTrigger, 1)
+					score(vanishItemTrigger) greaterThanOrEqualTo 1
+					score(vanishTrigger) equalTo 1
 				}
 				nbt = itemNbt
 			})
