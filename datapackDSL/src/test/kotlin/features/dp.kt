@@ -15,6 +15,7 @@ fun featuresTests() = dataPack("features_tests") {
 
 	advancementTests()
 	dimensionTypeTests()
+	lootTableTests()
 	predicateTests()
 	recipeTest()
 }.generate()

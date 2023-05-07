@@ -54,7 +54,7 @@ fun main() {
 				}
 			}
 
-			player.getScore("test").apply {
+			player.getScoreEntity("test").apply {
 				set(10)
 				this += 5
 

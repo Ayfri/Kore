@@ -23,6 +23,6 @@ fun generateEntitiesEnum(entities: List<String>, sourceUrl: String) {
 				.build()
 		)
 
-		addImport("commands", "asArg")
+		addImport("utils", "asArg")
 	})
 }

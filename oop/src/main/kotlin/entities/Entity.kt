@@ -42,7 +42,10 @@ inline fun <reified T : Entity> Entity.toEntity() =
 	toEntityOrNull<T>() ?: throw IllegalArgumentException("Cannot cast entity '$this' to type '${T::class.simpleName}'")
 
 context(Function)
-fun Entity.getScore(name: String) = ScoreboardEntity(name, this@Entity)
+fun Entity.getScoreEntity(name: String) = ScoreboardEntity(name, this@Entity)
+
+context(Function)
+fun Entity.setScore(name: String, value: Int) = scoreboard.players.set(asSelector(), name, value)
 
 context(Function)
 fun Entity.joinTeam(team: String) = teams {

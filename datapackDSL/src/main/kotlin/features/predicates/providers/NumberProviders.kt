@@ -63,7 +63,7 @@ data class ScoreTargetNumberProvider(
 					if (value.type == ScoreTargetType.FIXED) {
 						encodeStringElement(descriptor, 1, value.name!!)
 					} else {
-						encodeStringElement(descriptor, 2, value.target!!.name)
+						encodeStringElement(descriptor, 1, value.target!!.name)
 					}
 				}
 			}
