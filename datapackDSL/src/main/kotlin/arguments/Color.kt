@@ -16,6 +16,14 @@ import kotlinx.serialization.encoding.Encoder
 interface Color : Argument {
 	override fun asString() = toString()
 
+	fun toRGB() = when (this) {
+		is NamedColor -> RGB.fromNamedColor(this)
+		is BossBarColor -> RGB.fromNamedColor(this)
+		is RGB -> this
+		is ARGB -> RGB(red, green, blue)
+		else -> error("Unknown color type: $this")
+	}
+
 	companion object {
 		val AQUA = NamedColor("aqua")
 		val BLACK = NamedColor("black")
