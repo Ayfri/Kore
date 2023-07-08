@@ -37,9 +37,7 @@ enum class ScoreTargetType {
 	CONTEXT;
 
 	companion object {
-		val values = values()
-
-		object ScoreTargetTypeSerializer : LowercaseSerializer<ScoreTargetType>(values)
+		data object ScoreTargetTypeSerializer : LowercaseSerializer<ScoreTargetType>(entries)
 	}
 }
 

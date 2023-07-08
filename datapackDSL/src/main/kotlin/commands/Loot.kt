@@ -22,9 +22,7 @@ enum class Hand {
 	OFF_HAND;
 
 	companion object {
-		val values = values()
-
-		object HandSerializer : LowercaseSerializer<Hand>(values) {
+		data object HandSerializer : LowercaseSerializer<Hand>(entries) {
 			override fun serialize(encoder: Encoder, value: Hand) {
 				encoder.encodeString(value.name.lowercase().replace("_", ""))
 			}

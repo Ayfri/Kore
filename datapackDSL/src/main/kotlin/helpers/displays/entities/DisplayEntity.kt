@@ -23,9 +23,7 @@ enum class BillboardMode {
 	CENTER;
 
 	companion object {
-		val values = values()
-
-		object BillboardModeSerializer : LowercaseSerializer<BillboardMode>(values)
+		data object BillboardModeSerializer : LowercaseSerializer<BillboardMode>(entries)
 	}
 }
 

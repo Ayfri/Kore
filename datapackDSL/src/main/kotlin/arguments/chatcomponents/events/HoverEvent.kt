@@ -64,8 +64,6 @@ enum class HoverAction {
 	SHOW_ENTITY;
 
 	companion object {
-		val values = values()
-
-		object HoverActionSerializer : LowercaseSerializer<HoverAction>(values)
+		data object HoverActionSerializer : LowercaseSerializer<HoverAction>(entries)
 	}
 }

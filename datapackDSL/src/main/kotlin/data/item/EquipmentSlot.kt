@@ -13,8 +13,6 @@ enum class EquipmentSlot {
 	HEAD;
 
 	companion object {
-		val values = values()
-
-		object EquipmentSlotSerializer : LowercaseSerializer<EquipmentSlot>(values)
+		data object EquipmentSlotSerializer : LowercaseSerializer<EquipmentSlot>(entries)
 	}
 }

@@ -14,9 +14,7 @@ enum class AdvancementRoute {
 	UNTIL;
 
 	companion object {
-		val values = values()
-
-		object AdvancementRouteSerializer : LowercaseSerializer<AdvancementRoute>(values)
+		data object AdvancementRouteSerializer : LowercaseSerializer<AdvancementRoute>(entries)
 	}
 }
 

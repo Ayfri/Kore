@@ -14,6 +14,6 @@ data class AttributeModifier(
 	val uuid: Argument.UUID? = null,
 ) {
 	companion object {
-		object AttributeModifierOperationSerializer : EnumOrdinalSerializer<AttributeModifierOperation>(AttributeModifierOperation.values)
+		object AttributeModifierOperationSerializer : EnumOrdinalSerializer<AttributeModifierOperation>(AttributeModifierOperation.entries)
 	}
 }

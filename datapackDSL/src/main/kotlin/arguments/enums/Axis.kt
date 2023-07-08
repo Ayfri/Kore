@@ -8,10 +8,8 @@ enum class Axis {
 	X,
 	Y,
 	Z;
-	
+
 	companion object {
-		val values = values()
-		
-		object AxisSerializer : LowercaseSerializer<Axis>(values)
+		data object AxisSerializer : LowercaseSerializer<Axis>(entries)
 	}
 }

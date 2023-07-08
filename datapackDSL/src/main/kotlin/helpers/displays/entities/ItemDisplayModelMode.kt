@@ -16,8 +16,6 @@ enum class ItemDisplayModelMode {
 	FIXED;
 
 	companion object {
-		val values = values()
-
-		object ItemDisplayModelModeSerializer : LowercaseSerializer<ItemDisplayModelMode>(values)
+		data object ItemDisplayModelModeSerializer : LowercaseSerializer<ItemDisplayModelMode>(entries)
 	}
 }

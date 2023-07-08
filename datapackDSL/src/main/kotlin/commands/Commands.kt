@@ -35,9 +35,7 @@ enum class FillOption {
 	OUTLINE;
 
 	companion object {
-		val values = values()
-
-		object FillOptionSerializer : LowercaseSerializer<FillOption>(values)
+		data object FillOptionSerializer : LowercaseSerializer<FillOption>(entries)
 	}
 }
 
@@ -90,9 +88,7 @@ enum class ParticleMode {
 	FORCE;
 
 	companion object {
-		val values = values()
-
-		object ParticleModeSerializer : LowercaseSerializer<ParticleMode>(values)
+		data object ParticleModeSerializer : LowercaseSerializer<ParticleMode>(entries)
 	}
 }
 
@@ -140,9 +136,7 @@ enum class PlaySoundSource {
 	VOICE;
 
 	companion object {
-		val values = values()
-
-		object PlaySoundSourceSerializer : LowercaseSerializer<PlaySoundSource>(values)
+		data object PlaySoundSourceSerializer : LowercaseSerializer<PlaySoundSource>(entries)
 	}
 }
 
@@ -172,9 +166,7 @@ enum class SetBlockMode {
 	KEEP;
 
 	companion object {
-		val values = values()
-
-		object SetBlockModeSerializer : LowercaseSerializer<SetBlockMode>(values)
+		data object SetBlockModeSerializer : LowercaseSerializer<SetBlockMode>(entries)
 	}
 }
 

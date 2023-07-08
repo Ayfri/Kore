@@ -12,9 +12,7 @@ enum class DatapackPriority {
 	LAST;
 
 	companion object {
-		val values = values()
-
-		object DatapackPrioritySerializer : LowercaseSerializer<DatapackPriority>(values)
+		data object DatapackPrioritySerializer : LowercaseSerializer<DatapackPriority>(entries)
 	}
 }
 

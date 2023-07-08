@@ -17,9 +17,7 @@ enum class AttributeModifierOperation {
 	MULTIPLY_BASE;
 
 	companion object {
-		val values = values()
-
-		object AttributeModifierOperationSerializer : LowercaseSerializer<AttributeModifierOperation>(values)
+		data object AttributeModifierOperationSerializer : LowercaseSerializer<AttributeModifierOperation>(entries)
 	}
 }
 

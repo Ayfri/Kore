@@ -28,9 +28,7 @@ enum class AdvancementFrameType {
 	TASK;
 
 	companion object {
-		val values = values()
-
-		object AdvancementFrameTypeSerializer : LowercaseSerializer<AdvancementFrameType>(values)
+		data object AdvancementFrameTypeSerializer : LowercaseSerializer<AdvancementFrameType>(entries)
 	}
 }
 

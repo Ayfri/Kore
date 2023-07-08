@@ -9,10 +9,8 @@ enum class Difficulty {
 	EASY,
 	NORMAL,
 	HARD;
-	
+
 	companion object {
-		val values = values()
-		
-		object DifficultySerializer : LowercaseSerializer<Difficulty>(values)
+		data object DifficultySerializer : LowercaseSerializer<Difficulty>(entries)
 	}
 }

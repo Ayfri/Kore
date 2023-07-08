@@ -12,9 +12,7 @@ enum class TimeType(val unit: String) {
 	DAYS("d");
 
 	companion object {
-		val values = values()
-
-		object TimeTypeSerializer : LowercaseSerializer<TimeType>(values) {
+		data object TimeTypeSerializer : LowercaseSerializer<TimeType>(entries) {
 			override fun serialize(encoder: Encoder, value: TimeType) {
 				encoder.encodeString(value.unit)
 			}

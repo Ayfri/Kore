@@ -33,6 +33,7 @@ private fun addGameruleChild(name: String) = TypeSpec.interfaceBuilder(name).app
 }.build()
 
 private fun addGamerule(name: String, parent: String) = TypeSpec.objectBuilder(name)
+	.addModifiers(KModifier.DATA)
 	.addSuperinterface(ClassName("generated", INTERFACE_NAME, parent))
 	.build()
 
@@ -51,7 +52,7 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 
 		addProperty(
 			PropertySpec.builder("name", String::class)
-				.getter(FunSpec.getterBuilder().addStatement("return this::class.simpleName!!").build())
+				.getter(FunSpec.getterBuilder().addStatement("return toString()").build())
 				.build()
 		)
 

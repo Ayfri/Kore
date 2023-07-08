@@ -28,9 +28,7 @@ enum class Relation(val symbol: String) : Argument {
 	}
 
 	companion object {
-		val values = values()
-
-		object RelationSerializer : KSerializer<Relation> by LowercaseSerializer(values) {
+		data object RelationSerializer : KSerializer<Relation> by LowercaseSerializer(entries) {
 			override fun serialize(encoder: Encoder, value: Relation) = encoder.encodeString(value.symbol)
 		}
 	}

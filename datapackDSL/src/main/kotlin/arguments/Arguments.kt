@@ -13,6 +13,7 @@ import serializers.ToStringSerializer
 import utils.ifNotEmpty
 import java.util.*
 
+@Suppress("SERIALIZER_TYPE_INCOMPATIBLE")
 @Serializable(Argument.ArgumentSerializer::class)
 sealed interface Argument {
 	fun asString(): String

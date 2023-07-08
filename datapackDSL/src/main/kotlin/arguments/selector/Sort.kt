@@ -9,10 +9,8 @@ enum class Sort {
 	FURTHEST,
 	RANDOM,
 	ARBITRARY;
-	
+
 	companion object {
-		val values = Sort.values()
-		
-		object SortSerializer : LowercaseSerializer<Sort>(values)
+		object SortSerializer : LowercaseSerializer<Sort>(entries)
 	}
 }

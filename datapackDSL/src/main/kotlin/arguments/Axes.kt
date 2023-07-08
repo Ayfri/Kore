@@ -32,7 +32,7 @@ class Axes(var x: Boolean = false, var y: Boolean = false, var z: Boolean = fals
 		val YZ = Axes(y = true, z = true)
 		val XYZ = Axes(x = true, y = true, z = true)
 
-		object AxesRotationSerializer : ToStringSerializer<Axes>()
+		data object AxesRotationSerializer : ToStringSerializer<Axes>()
 	}
 }
 

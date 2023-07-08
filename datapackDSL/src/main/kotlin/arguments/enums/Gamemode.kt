@@ -9,10 +9,8 @@ enum class Gamemode {
 	CREATIVE,
 	ADVENTURE,
 	SPECTATOR;
-	
+
 	companion object {
-		val values = values()
-		
-		object GamemodeSerializer : LowercaseSerializer<Gamemode>(values)
+		data object GamemodeSerializer : LowercaseSerializer<Gamemode>(entries)
 	}
 }

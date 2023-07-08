@@ -15,9 +15,7 @@ enum class BossBarGetResult {
 	VISIBLE;
 
 	companion object {
-		val values = values()
-
-		object BossBarActionSerializer : LowercaseSerializer<BossBarGetResult>(values)
+		data object BossBarActionSerializer : LowercaseSerializer<BossBarGetResult>(entries)
 	}
 }
 
@@ -30,9 +28,7 @@ enum class BossBarStyle {
 	PROGRESS;
 
 	companion object {
-		val values = values()
-
-		object BossBarStyleSerializer : LowercaseSerializer<BossBarStyle>(values)
+		data object BossBarStyleSerializer : LowercaseSerializer<BossBarStyle>(entries)
 	}
 }
 

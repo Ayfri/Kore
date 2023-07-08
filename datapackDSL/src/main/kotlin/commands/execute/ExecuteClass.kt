@@ -13,9 +13,7 @@ enum class Anchor {
 	EYES;
 
 	companion object {
-		val values = values()
-
-		object AnchorSerializer : LowercaseSerializer<Anchor>(values)
+		data object AnchorSerializer : LowercaseSerializer<Anchor>(entries)
 	}
 }
 
@@ -30,9 +28,7 @@ enum class Relation {
 	VEHICLE;
 
 	companion object {
-		val values = values()
-
-		object RelationSerializer : LowercaseSerializer<Relation>(values)
+		data object RelationSerializer : LowercaseSerializer<Relation>(entries)
 	}
 }
 

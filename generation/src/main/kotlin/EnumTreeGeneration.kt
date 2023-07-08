@@ -94,16 +94,10 @@ fun generatePathEnumTree(
 
 fun generateCompanion(name: String, encoderValue: String = "minecraft:\${value.name.lowercase()}") =
 	TypeSpec.companionObjectBuilder().apply {
-		addProperty(
-			PropertySpec.Companion.builder("values", ARRAY.parameterizedBy(ClassName("", name)))
-				.initializer("values()")
-				.build()
-		)
-
 		addType(
 			TypeSpec.objectBuilder(name.asSerializer())
 				.superclass(ClassName("serializers", "LowercaseSerializer").parameterizedBy(ClassName("", name)))
-				.addSuperclassConstructorParameter("values")
+				.addSuperclassConstructorParameter("entries")
 				.addFunction(
 					FunSpec.builder("serialize")
 						.addModifiers(KModifier.OVERRIDE)

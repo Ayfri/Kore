@@ -16,9 +16,7 @@ enum class TitleAction {
 	RESET;
 
 	companion object {
-		val values = values()
-
-		object TitleActionSerializer : LowercaseSerializer<TitleAction>(values)
+		data object TitleActionSerializer : LowercaseSerializer<TitleAction>(entries)
 	}
 }
 
@@ -29,9 +27,7 @@ enum class TitleLocation {
 	ACTIONBAR;
 
 	companion object {
-		val values = values()
-
-		object TitleLocationSerializer : LowercaseSerializer<TitleLocation>(values)
+		data object TitleLocationSerializer : LowercaseSerializer<TitleLocation>(entries)
 	}
 }
 

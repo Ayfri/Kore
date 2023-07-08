@@ -12,7 +12,8 @@ import net.benwoodworth.knbt.*
 object NbtAsJsonTextComponentSerializer : KSerializer<NbtTag> {
 	override val descriptor = JsonElement.serializer().descriptor
 
-	override fun serialize(encoder: Encoder, value: NbtTag) = encoder.encodeSerializableValue(JsonElement.serializer(), value.toJsonElement())
+	override fun serialize(encoder: Encoder, value: NbtTag) =
+		encoder.encodeSerializableValue(JsonElement.serializer(), value.toJsonElement())
 
 	override fun deserialize(decoder: Decoder): NbtTag = throw UnsupportedOperationException("Deserializing not supported")
 

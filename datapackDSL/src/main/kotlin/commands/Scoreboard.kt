@@ -13,9 +13,7 @@ enum class RenderType {
 	INTEGER;
 
 	companion object {
-		val values = values()
-
-		object RenderTypeSerializer : LowercaseSerializer<RenderType>(values)
+		data object RenderTypeSerializer : LowercaseSerializer<RenderType>(entries)
 	}
 }
 
@@ -174,9 +172,7 @@ enum class Operation(val symbol: String) {
 	MAX(">");
 
 	companion object {
-		val values = values()
-
-		object OperationSerializer : LowercaseSerializer<Operation>(values) {
+		data object OperationSerializer : LowercaseSerializer<Operation>(entries) {
 			override fun serialize(encoder: Encoder, value: Operation) = encoder.encodeString(value.symbol)
 		}
 	}

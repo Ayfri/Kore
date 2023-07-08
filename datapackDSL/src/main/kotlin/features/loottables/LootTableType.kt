@@ -19,8 +19,6 @@ enum class LootTableType {
 	BLOCK;
 
 	companion object {
-		val values = values()
-
-		object LootTableTypeSerializer : LowercaseSerializer<LootTableType>(values)
+		data object LootTableTypeSerializer : LowercaseSerializer<LootTableType>(entries)
 	}
 }
