@@ -1,0 +1,20 @@
+[versions]
+joml = "1.10.5"
+knbt = "0.11.3"
+kotlin = "1.9.0"
+kotlin-dotenv = "6.4.1"
+kotlinpoet = "1.12.0"
+kotlinx-serialization = "1.5.1"
+ktor = "2.3.0"
+
+[libraries]
+joml = { module = "org.joml:joml", version.ref = "joml" }
+knbt = { module = "net.benwoodworth.knbt:knbt", version.ref = "knbt" }
+kotlin-dotenv = { module = "io.github.cdimascio:dotenv-kotlin", version.ref = "kotlin-dotenv" }
+kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
+kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-serialization = { module = "io.ktor:ktor-serialization", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
