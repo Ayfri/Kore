@@ -1,4 +1,3 @@
-
 import generators.*
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -12,7 +11,7 @@ import java.util.*
 import kotlin.io.path.absolute
 
 const val header = """// Automatically generated - do not modify!"""
-const val mainGitHubUrl = "https://raw.githubusercontent.com/PixiGeko/Minecraft-generated-data/master"
+const val mainGitHubUrl = "https://raw.githubusercontent.com/PixiGeko/Minecraft-generated-data"
 
 val rootDir: File = Paths.get(".").absolute().normalize().let {
 	if (it.endsWith("generation")) it.parent
@@ -34,7 +33,7 @@ val client = HttpClient(CIO) {
 	}
 }
 
-fun url(path: String) = "$mainGitHubUrl/${minecraftVersion.substringBeforeLast(".")}/releases/$minecraftVersion/$path"
+fun url(path: String) = "$mainGitHubUrl/$minecraftVersion/$path"
 
 fun clearGeneratedPackage() {
 	println("Clearing generated packages")
