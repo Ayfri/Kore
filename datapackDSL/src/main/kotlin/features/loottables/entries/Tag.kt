@@ -13,3 +13,15 @@ data class Tag(
 	var quality: Int? = null,
 	var weight: Int? = null,
 ) : LootEntry
+
+fun LootEntries.tag(name: Argument.Tag, block: Tag.() -> Unit = {}) {
+	add(Tag(name).apply(block))
+}
+
+fun Tag.conditions(block: MutableList<PredicateCondition>.() -> Unit) {
+	conditions = buildList(block)
+}
+
+fun Tag.functions(block: MutableList<String>.() -> Unit) {
+	functions = buildList(block)
+}

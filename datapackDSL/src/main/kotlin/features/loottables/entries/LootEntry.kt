@@ -11,6 +11,8 @@ import utils.snakeCase
 
 typealias LootEntry = @Serializable(LootEntrySurrogate.Companion.LootEntrySerializer::class) LootEntrySurrogate
 
+typealias LootEntries = MutableList<LootEntry>
+
 @Serializable
 sealed interface LootEntrySurrogate {
 	companion object {

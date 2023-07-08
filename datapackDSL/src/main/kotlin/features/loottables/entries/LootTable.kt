@@ -12,3 +12,15 @@ data class LootTable(
 	var quality: Int? = null,
 	var weight: Int? = null,
 ) : LootEntry
+
+fun LootEntries.lootTable(name: Argument.LootTable, block: LootTable.() -> Unit = {}) {
+	add(LootTable(name).apply(block))
+}
+
+fun LootTable.conditions(block: MutableList<PredicateCondition>.() -> Unit) {
+	conditions = buildList(block)
+}
+
+fun LootTable.functions(block: MutableList<String>.() -> Unit) {
+	functions = buildList(block)
+}

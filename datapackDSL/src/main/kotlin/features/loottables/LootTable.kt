@@ -2,8 +2,11 @@ package features.loottables
 
 import DataPack
 import Generator
+import arguments.Argument
 import arguments.selector.Advancements
 import features.advancements.types.AdvancementsJSONSerializer
+import features.predicates.providers.NumberProvider
+import features.predicates.providers.constant
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -39,4 +42,18 @@ data class LootTable(
 			json
 		}
 	}
+}
+
+fun DataPack.lootTable(fileName: String, block: LootTable.() -> Unit = {}): Argument.LootTable {
+	val lootTable = LootTable(fileName).apply(block)
+	lootTables += lootTable
+	return Argument.LootTable(fileName, name)
+}
+
+fun LootTable.function(function: String) {
+	functions = (functions ?: emptyList()) + function
+}
+
+fun LootTable.pool(rolls: NumberProvider = constant(1f), block: LootPool.() -> Unit = {}) {
+	pools = (pools ?: emptyList()) + LootPool(rolls).apply(block)
 }

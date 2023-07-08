@@ -12,3 +12,15 @@ data class Item(
 	var weight: Int? = null,
 	var quality: Int? = null,
 ) : LootEntry
+
+fun LootEntries.item(name: Argument.Item, block: Item.() -> Unit = {}) {
+	add(Item(name).apply(block))
+}
+
+fun Item.conditions(block: MutableList<PredicateCondition>.() -> Unit) {
+	conditions = buildList(block)
+}
+
+fun Item.functions(block: MutableList<String>.() -> Unit) {
+	functions = buildList(block)
+}

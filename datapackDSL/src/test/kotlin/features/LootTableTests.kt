@@ -1,39 +1,38 @@
 package features
 
 import DataPack
-import features.loottables.LootPool
-import features.loottables.LootTable
-import features.predicates.Predicate
+import arguments.self
+import commands.loot
+import features.loottables.*
+import features.loottables.entries.lootTable
 import features.predicates.conditions.weatherCheck
 import features.predicates.providers.constant
+import functions.load
 import generated.LootTables
 
 fun DataPack.lootTableTests() {
-	val lootTable = LootTable(
-		fileName = "loot_table",
-		functions = listOf("test fonction loottable"),
-		pools = listOf(
-			LootPool(
-				rolls = constant(2f),
-				bonusRolls = constant(1f),
-				conditions = Predicate().apply {
-					weatherCheck(true)
-				}.predicateConditions,
-				entries = listOf(
-					features.loottables.entries.LootTable(
-						name = LootTables.Gameplay.PIGLIN_BARTERING,
-						conditions = Predicate().apply {
-							weatherCheck(true)
-						}.predicateConditions,
-						functions = listOf("test fonction lootpool entry loottable"),
-						quality = null,
-						weight = null
-					)
-				),
-				functions = listOf("test fonction lootpool")
-			)
-		)
-	)
+	val lootTable = lootTable("loot_table") {
+		function("test fonction loottable2")
+		pool {
+			rolls = constant(2f)
+			bonusRolls = constant(1f)
+			conditions {
+				weatherCheck(true)
+			}
 
-	lootTables += lootTable
+			entries {
+				lootTable(LootTables.Gameplay.PIGLIN_BARTERING) {
+					conditions {
+						weatherCheck(true)
+					}
+					function("function are currently not implemented")
+				}
+			}
+			function("test fonction lootpool2")
+		}
+	}
+
+	load {
+		loot(self(), lootTable)
+	}
 }

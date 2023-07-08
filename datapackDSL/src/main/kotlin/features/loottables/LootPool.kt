@@ -1,7 +1,9 @@
 package features.loottables
 
+import features.loottables.entries.LootEntries
 import features.loottables.entries.LootEntry
 import features.loottables.entries.LootEntrySurrogate
+import features.predicates.Predicate
 import features.predicates.conditions.PredicateCondition
 import features.predicates.conditions.PredicateConditionsSerializer
 import features.predicates.providers.NumberProvider
@@ -22,7 +24,7 @@ data class LootPoolSurrogate(
 	var bonusRolls: NumberProvider? = null,
 	@Serializable(with = PredicateConditionsSerializer::class)
 	var conditions: List<PredicateCondition>? = null,
-	var entries: List<LootEntry>? = null,
+	var entries: List<LootEntry> = emptyList(),
 	var functions: List<String>? = null,
 )
 
@@ -54,7 +56,7 @@ object LootPoolSerializer : KSerializer<LootPool> by DefaultLootPoolSerializer {
 				put("conditions", JsonArray(resultElement))
 			}
 
-			value.entries?.let {
+			value.entries.let {
 				put("entries", Json.encodeToJsonElement(ListSerializer(LootEntrySurrogate.Companion.LootEntrySerializer), it))
 			}
 
@@ -65,4 +67,32 @@ object LootPoolSerializer : KSerializer<LootPool> by DefaultLootPoolSerializer {
 
 		encoder.encodeJsonElement(result)
 	}
+}
+
+fun LootPoolSurrogate.rolls(value: NumberProvider) {
+	rolls = value
+}
+
+fun LootPoolSurrogate.bonusRolls(value: NumberProvider) {
+	bonusRolls = value
+}
+
+fun LootPoolSurrogate.conditions(vararg value: PredicateCondition) {
+	conditions = value.toList()
+}
+
+fun LootPoolSurrogate.conditions(predicate: Predicate.() -> Unit) {
+	conditions = Predicate().apply(predicate).predicateConditions
+}
+
+fun LootPoolSurrogate.entries(vararg value: LootEntry) {
+	entries = value.toList()
+}
+
+fun LootPoolSurrogate.entries(values: LootEntries.() -> Unit) {
+	entries = buildList(values)
+}
+
+fun LootPoolSurrogate.functions(vararg value: String) {
+	functions = value.toList()
 }
