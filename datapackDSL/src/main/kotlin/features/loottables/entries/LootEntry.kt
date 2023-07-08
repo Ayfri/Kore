@@ -2,15 +2,26 @@ package features.loottables.entries
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import serializers.DirectPolymorphicSerializer
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.descriptors.element
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.*
+import utils.snakeCase
 
-typealias LootEntry = @Serializable(LootEntrySerializer::class) LootEntrySurrogate
+typealias LootEntry = @Serializable(LootEntrySurrogate.Companion.LootEntrySerializer::class) LootEntrySurrogate
 
 @Serializable
-sealed interface LootEntrySurrogate /*{
+sealed interface LootEntrySurrogate {
 	companion object {
-		object LootEntrySerializer : KSerializer<LootEntrySerialized> by serializer() {
-			override fun serialize(encoder: Encoder, value: LootEntrySerialized) {
+		object LootEntrySerializer : KSerializer<LootEntry> {
+			override val descriptor = buildClassSerialDescriptor("LootEntry") {
+				element<String>("type")
+			}
+
+			override fun deserialize(decoder: Decoder) = error("LootEntry cannot be deserialized")
+
+			override fun serialize(encoder: Encoder, value: LootEntry) {
 				require(encoder is JsonEncoder) { "LootTable can only be serialized with Json" }
 
 				encoder.encodeJsonElement(buildJsonObject {
@@ -23,6 +34,3 @@ sealed interface LootEntrySurrogate /*{
 		}
 	}
 }
-*/
-
-object LootEntrySerializer : KSerializer<LootEntry> by DirectPolymorphicSerializer(LootEntrySurrogate.serializer())

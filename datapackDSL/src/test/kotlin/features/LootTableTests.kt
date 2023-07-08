@@ -7,7 +7,6 @@ import features.predicates.Predicate
 import features.predicates.conditions.weatherCheck
 import features.predicates.providers.constant
 import generated.LootTables
-import kotlinx.serialization.serializer
 
 fun DataPack.lootTableTests() {
 	val lootTable = LootTable(
@@ -36,7 +35,5 @@ fun DataPack.lootTableTests() {
 		)
 	)
 
-	val lootTableStr = lootTable.getJsonEncoder(this).encodeToString(serializer<LootTable>(), lootTable)
 	lootTables += lootTable
-//	println(lootTableStr)
 }

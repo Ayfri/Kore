@@ -7,7 +7,8 @@ import features.advancements.types.AdvancementsJSONSerializer
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.json.*
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import java.io.File
 
@@ -21,37 +22,7 @@ data class LootTable(
 	private lateinit var json: Json
 
 	override fun generate(dataPack: DataPack, directory: File) {
-		val jsonEncoder = getJsonEncoder(dataPack)
-		val json = jsonEncoder.encodeToJsonElement(this)
-		val finalJson = buildJsonObject {
-			json.jsonObject.forEach { (key, value) ->
-				println("$key: $value")
-				if (key == "pools") {
-					put(key, buildJsonArray {
-						value.jsonArray.forEach { pool ->
-							val finalPool = buildJsonObject {
-								pool.jsonObject.forEach poolProperties@{ (key, value) ->
-									println("$key: $value")
-									if (key == "conditions") {
-										val finalConditions = value.jsonArray.filterNot { it.jsonPrimitive.isString }
-
-										if (finalConditions.isNotEmpty()) put(key, JsonArray(finalConditions))
-										return@poolProperties
-									}
-
-									put(key, value)
-								}
-							}
-							add(finalPool)
-						}
-					})
-					return@forEach
-				}
-
-				put(key, value)
-			}
-		}
-		File(directory, "$fileName.json").writeText(jsonEncoder.encodeToString(JsonElement.serializer(), finalJson))
+		File(directory, "$fileName.json").writeText(getJsonEncoder(dataPack).encodeToString(this))
 	}
 
 	@OptIn(ExperimentalSerializationApi::class)
