@@ -3,16 +3,27 @@ package features
 import DataPack
 import arguments.self
 import commands.loot
+import features.itemmodifiers.conditions
+import features.itemmodifiers.functions.enchantRandomly
+import features.itemmodifiers.functions.setCount
 import features.loottables.*
+import features.loottables.entries.functions
 import features.loottables.entries.lootTable
+import features.predicates.conditions.randomChance
 import features.predicates.conditions.weatherCheck
 import features.predicates.providers.constant
 import functions.load
+import generated.Enchantments
 import generated.LootTables
 
 fun DataPack.lootTableTests() {
 	val lootTable = lootTable("loot_table") {
-		function("test fonction loottable2")
+		functions {
+			enchantRandomly {
+				this += Enchantments.LOOTING
+			}
+		}
+
 		pool {
 			rolls = constant(2f)
 			bonusRolls = constant(1f)
@@ -25,10 +36,20 @@ fun DataPack.lootTableTests() {
 					conditions {
 						weatherCheck(true)
 					}
-					function("function are currently not implemented")
+
+					functions {
+						setCount(1f)
+
+						conditions {
+							randomChance(0.5f)
+						}
+					}
 				}
 			}
-			function("test fonction lootpool2")
+
+			functions {
+				setCount(1f)
+			}
 		}
 	}
 

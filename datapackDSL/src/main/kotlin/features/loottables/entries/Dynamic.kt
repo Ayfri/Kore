@@ -1,5 +1,7 @@
 package features.loottables.entries
 
+import features.itemmodifiers.ItemModifier
+import features.itemmodifiers.ItemModifierEntry
 import features.predicates.conditions.PredicateCondition
 import features.predicates.conditions.PredicateConditions
 import kotlinx.serialization.Serializable
@@ -8,7 +10,7 @@ import kotlinx.serialization.Serializable
 data class Dynamic(
 	var name: String,
 	var conditions: List<PredicateCondition>? = null,
-	var functions: List<String>? = null,
+	var functions: ItemModifier? = null,
 	var quality: Int? = null,
 	var weight: Int? = null,
 ) : LootEntry
@@ -21,6 +23,8 @@ fun Dynamic.conditions(block: PredicateConditions.() -> Unit) {
 	conditions = buildList(block)
 }
 
-fun Dynamic.functions(block: MutableList<String>.() -> Unit) {
-	functions = buildList(block)
+fun Dynamic.functions(block: ItemModifierEntry.() -> Unit) {
+	functions = ItemModifier().apply {
+		modifiers += ItemModifierEntry().apply(block)
+	}
 }

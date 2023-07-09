@@ -2,10 +2,12 @@ package features.itemmodifiers
 
 import features.itemmodifiers.functions.ItemFunction
 import features.itemmodifiers.functions.ItemFunctionSurrogate
+import features.itemmodifiers.functions.SetCount
 import features.loottables.LootPoolSerializer
 import features.predicates.Predicate
 import features.predicates.conditions.PredicateCondition
 import features.predicates.conditions.PredicateConditions
+import features.predicates.providers.constant
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -21,6 +23,8 @@ data class ItemModifierEntry(
 	var function: ItemFunction,
 	var conditions: PredicateConditions? = null,
 ) {
+	internal constructor() : this(SetCount(constant(1f)))
+
 	companion object {
 		data object ItemModifierEntrySerializer : KSerializer<ItemModifierEntry> {
 			private val WORKAROUND_FIELD = "______do_not_use_this_field______${LootPoolSerializer.hashCode()}"

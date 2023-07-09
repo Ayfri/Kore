@@ -1,5 +1,7 @@
 package features.loottables
 
+import features.itemmodifiers.ItemModifier
+import features.itemmodifiers.ItemModifierEntry
 import features.loottables.entries.LootEntries
 import features.loottables.entries.LootEntry
 import features.loottables.entries.LootEntrySurrogate
@@ -12,7 +14,6 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Serializer
 import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 
@@ -25,7 +26,7 @@ data class LootPoolSurrogate(
 	@Serializable(with = PredicateConditionsSerializer::class)
 	var conditions: List<PredicateCondition>? = null,
 	var entries: List<LootEntry> = emptyList(),
-	var functions: List<String>? = null,
+	var functions: ItemModifier? = null,
 )
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -56,12 +57,10 @@ object LootPoolSerializer : KSerializer<LootPool> by DefaultLootPoolSerializer {
 				put("conditions", JsonArray(resultElement))
 			}
 
-			value.entries.let {
-				put("entries", Json.encodeToJsonElement(ListSerializer(LootEntrySurrogate.Companion.LootEntrySerializer), it))
-			}
+			put("entries", Json.encodeToJsonElement(ListSerializer(LootEntrySurrogate.Companion.LootEntrySerializer), value.entries))
 
 			value.functions?.let {
-				put("functions", Json.encodeToJsonElement(ListSerializer(String.serializer()), it))
+				put("functions", Json.encodeToJsonElement(ItemModifier.serializer(), it))
 			}
 		}
 
@@ -81,18 +80,20 @@ fun LootPoolSurrogate.conditions(vararg value: PredicateCondition) {
 	conditions = value.toList()
 }
 
-fun LootPoolSurrogate.conditions(predicate: Predicate.() -> Unit) {
-	conditions = Predicate().apply(predicate).predicateConditions
+fun LootPoolSurrogate.conditions(block: Predicate.() -> Unit) {
+	conditions = Predicate().apply(block).predicateConditions
 }
 
 fun LootPoolSurrogate.entries(vararg value: LootEntry) {
 	entries = value.toList()
 }
 
-fun LootPoolSurrogate.entries(values: LootEntries.() -> Unit) {
-	entries = buildList(values)
+fun LootPoolSurrogate.entries(block: LootEntries.() -> Unit) {
+	entries = buildList(block)
 }
 
-fun LootPoolSurrogate.functions(vararg value: String) {
-	functions = value.toList()
+fun LootPoolSurrogate.functions(block: ItemModifierEntry.() -> Unit) {
+	functions = ItemModifier().apply {
+		modifiers += ItemModifierEntry().apply(block)
+	}
 }
