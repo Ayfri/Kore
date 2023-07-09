@@ -15,7 +15,6 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 import java.util.concurrent.locks.Condition
-import javax.swing.UIManager.put
 
 @Serializable(with = ItemModifierEntry.Companion.ItemModifierEntrySerializer::class)
 data class ItemModifierEntry(
@@ -38,16 +37,23 @@ data class ItemModifierEntry(
 			override fun deserialize(decoder: Decoder) = error("ItemModifierEntry cannot be deserialized")
 
 			override fun serialize(encoder: Encoder, value: ItemModifierEntry) {
-				encoder.encodeSerializableValue(ItemFunctionSurrogate.Companion.ItemFunctionSerializer, value.function)
+				require(encoder is JsonEncoder) { "ItemModifier serializer can only be used with JsonEncoder" }
 
-				value.conditions?.let {
-					val element = workaroundJson.encodeToJsonElement(ListSerializer(PredicateCondition.serializer()), it)
-					val resultElement = element.jsonArray.map { jsonElement ->
-						JsonObject(jsonElement.jsonObject.filterKeys { key -> key != WORKAROUND_FIELD })
+				encoder.encodeJsonElement(buildJsonObject {
+					val json = Json.encodeToJsonElement(ItemFunctionSurrogate.Companion.ItemFunctionSerializer, value.function)
+					json.jsonObject.forEach { (key, value) ->
+						put(key, value)
 					}
 
-					put("conditions", JsonArray(resultElement))
-				}
+					value.conditions?.let {
+						val element = workaroundJson.encodeToJsonElement(ListSerializer(PredicateCondition.serializer()), it)
+						val resultElement = element.jsonArray.map { jsonElement ->
+							JsonObject(jsonElement.jsonObject.filterKeys { key -> key != WORKAROUND_FIELD })
+						}
+
+						put("conditions", JsonArray(resultElement))
+					}
+				})
 			}
 		}
 	}
