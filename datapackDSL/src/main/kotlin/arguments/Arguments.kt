@@ -305,6 +305,16 @@ sealed interface Argument {
 	}
 
 	@Serializable(with = ArgumentSerializer::class)
+	interface ItemModifier : ResourceLocation {
+		companion object {
+			operator fun invoke(itemModifier: String, namespace: String = "minecraft") = object : ItemModifier {
+				override val name = itemModifier
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
 	interface ItemTag : TaggedResourceLocation, BlockOrTag {
 		companion object {
 			operator fun invoke(blockOrTag: String, namespace: String = "minecraft") = object : ItemTag {

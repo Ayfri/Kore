@@ -1,5 +1,6 @@
 package features.itemmodifiers.functions
 
+import features.itemmodifiers.ItemModifierEntry
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
 
@@ -16,4 +17,8 @@ enum class Source {
 	companion object {
 		data object SourceSerializer : LowercaseSerializer<Source>(entries)
 	}
+}
+
+fun ItemModifierEntry.copyName(source: Source) {
+	function = CopyName(source)
 }

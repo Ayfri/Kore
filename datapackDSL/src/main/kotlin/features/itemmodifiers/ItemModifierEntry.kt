@@ -3,6 +3,7 @@ package features.itemmodifiers
 import features.itemmodifiers.functions.ItemFunction
 import features.itemmodifiers.functions.ItemFunctionSurrogate
 import features.loottables.LootPoolSerializer
+import features.predicates.Predicate
 import features.predicates.conditions.PredicateCondition
 import features.predicates.conditions.PredicateConditions
 import kotlinx.serialization.KSerializer
@@ -50,4 +51,8 @@ data class ItemModifierEntry(
 			}
 		}
 	}
+}
+
+fun ItemModifierEntry.conditions(init: Predicate.() -> Unit) {
+	conditions = Predicate().apply(init).predicateConditions
 }

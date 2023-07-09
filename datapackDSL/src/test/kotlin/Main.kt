@@ -132,7 +132,7 @@ fun main() {
 				base.set(10.0)
 				modifiers {
 					val uuid = UUID.randomUUID()
-					add(uuid, "test", 10.0, AttributeModifierOperation.ADD)
+					add(uuid, "test", 10.0, AttributeModifierOperation.ADDITION)
 					get(uuid, .5)
 					remove(uuid)
 				}

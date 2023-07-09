@@ -1,12 +1,13 @@
 package features.itemmodifiers.functions
 
+import features.itemmodifiers.ItemModifierEntry
 import generated.Tags
 import kotlinx.serialization.Serializable
-import serializers.EnumOrdinalSerializer
+import serializers.LowercaseSerializer
 
 @Serializable
 data class ExplorationMap(
-	var destination: Tags.Worldgen.Structure,
+	var destination: Tags.Worldgen.Structure? = null,
 	var decoration: MapDecoration? = null,
 	var zoom: Int? = null,
 	var searchRadius: Int? = null,
@@ -15,16 +16,6 @@ data class ExplorationMap(
 
 @Serializable(MapDecoration.Companion.MapDecorationSerializer::class)
 enum class MapDecoration {
-	PLAYER,
-	FRAME,
-	RED_MARKER,
-	BLUE_MARKER,
-	TARGET_X,
-	TARGET_POINT,
-	PLAYER_OFF_MAP,
-	PLAYER_OFF_LIMITS,
-	MANSION,
-	MONUMENT,
 	BANNER_BLACK,
 	BANNER_BLUE,
 	BANNER_BROWN,
@@ -41,9 +32,33 @@ enum class MapDecoration {
 	BANNER_RED,
 	BANNER_WHITE,
 	BANNER_YELLOW,
-	RED_X;
+	BLUE_MARKER,
+	FRAME,
+	MANSION,
+	MONUMENT,
+	PLAYER,
+	PLAYER_OFF_LIMITS,
+	PLAYER_OFF_MAP,
+	RED_MARKER,
+	RED_X,
+	TARGET_POINT,
+	TARGET_X;
 
 	companion object {
-		data object MapDecorationSerializer : EnumOrdinalSerializer<MapDecoration>(entries)
+		data object MapDecorationSerializer : LowercaseSerializer<MapDecoration>(entries)
 	}
+}
+
+fun ItemModifierEntry.explorationMap(
+	destination: Tags.Worldgen.Structure,
+	decoration: MapDecoration? = null,
+	zoom: Int? = null,
+	searchRadius: Int? = null,
+	skipExistingChunks: Boolean? = null,
+) {
+	function = ExplorationMap(destination, decoration, zoom, searchRadius, skipExistingChunks)
+}
+
+fun ItemModifierEntry.explorationMap(block: ExplorationMap.() -> Unit) {
+	function = ExplorationMap().apply(block)
 }

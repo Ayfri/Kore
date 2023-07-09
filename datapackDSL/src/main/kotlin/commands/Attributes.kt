@@ -12,7 +12,7 @@ import java.util.*
 
 @Serializable(AttributeModifierOperation.Companion.AttributeModifierOperationSerializer::class)
 enum class AttributeModifierOperation {
-	ADD,
+	ADDITION,
 	MULTIPLY,
 	MULTIPLY_BASE;
 

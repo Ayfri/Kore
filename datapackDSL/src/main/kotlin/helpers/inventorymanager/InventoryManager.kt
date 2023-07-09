@@ -42,13 +42,13 @@ data class InventoryManager<T : Argument.Container>(val container: T) {
 	}
 
 	context(Function)
-	fun modify(slot: ItemSlotType, modifier: String) = items.modify(container, slot, modifier)
+	fun modify(slot: ItemSlotType, modifier: Argument.ItemModifier) = items.modify(container, slot, modifier)
 
 	context(Function)
 	fun replace(slot: ItemSlotType, item: Argument.Item, count: Int? = null) = items.replace(container, slot, item, count)
 
 	context(Function)
-	fun replace(fromSlot: ItemSlotType, withSlot: ItemSlotType, modifier: String? = null) =
+	fun replace(fromSlot: ItemSlotType, withSlot: ItemSlotType, modifier: Argument.ItemModifier? = null) =
 		items.replace(container, fromSlot, container, withSlot, modifier)
 
 	context(Function)

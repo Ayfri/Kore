@@ -25,7 +25,7 @@ fun Function.inventoryManagerTests() {
 	inventoryManager.clearAll(Items.DIAMOND_SWORD {
 		this["Damage"] = 0
 	}) assertsIs "data remove block 0 0 0 Items[{id:\"minecraft:diamond_sword\",tag:{Damage:0}}]"
-	inventoryManager.modify(WEAPON, "baz") assertsIs "item modify block 0 0 0 weapon baz"
+	inventoryManager.modify(WEAPON, Argument.ItemModifier("baz")) assertsIs "item modify block 0 0 0 weapon minecraft:baz"
 
 	val counterScoreName = "take_counter"
 	val playerInventory = inventoryManager(nearestPlayer())
