@@ -35,9 +35,7 @@ enum class FillOption {
 	OUTLINE;
 
 	companion object {
-		val values = values()
-
-		object FillOptionSerializer : LowercaseSerializer<FillOption>(values)
+		data object FillOptionSerializer : LowercaseSerializer<FillOption>(entries)
 	}
 }
 
@@ -82,6 +80,28 @@ fun Function.me(message: String) = addLine(command("me", literal(message)))
 
 fun Function.msg(target: Argument.Entity, message: String) = addLine(command("msg", target, literal(message)))
 
+fun Function.particle(particle: Argument.Particle, pos: Vec3? = null) = addLine(command("particle", particle, pos))
+
+@Serializable(ParticleMode.Companion.ParticleModeSerializer::class)
+enum class ParticleMode {
+	NORMAL,
+	FORCE;
+
+	companion object {
+		data object ParticleModeSerializer : LowercaseSerializer<ParticleMode>(entries)
+	}
+}
+
+fun Function.particle(
+	particle: Argument.Particle,
+	pos: Vec3,
+	delta: Vec3,
+	speed: Double,
+	count: Int,
+	mode: ParticleMode? = null,
+	viewers: Argument.Entity? = null,
+) = addLine(command("particle", particle, pos, delta, float(speed), int(count), literal(mode?.asArg()), viewers))
+
 fun Function.perfStart() = addLine(command("perf", literal("start")))
 fun Function.perfStop() = addLine(command("perf", literal("stop")))
 
@@ -116,9 +136,7 @@ enum class PlaySoundSource {
 	VOICE;
 
 	companion object {
-		val values = values()
-
-		object PlaySoundSourceSerializer : LowercaseSerializer<PlaySoundSource>(values)
+		data object PlaySoundSourceSerializer : LowercaseSerializer<PlaySoundSource>(entries)
 	}
 }
 
@@ -148,9 +166,7 @@ enum class SetBlockMode {
 	KEEP;
 
 	companion object {
-		val values = values()
-
-		object SetBlockModeSerializer : LowercaseSerializer<SetBlockMode>(values)
+		data object SetBlockModeSerializer : LowercaseSerializer<SetBlockMode>(entries)
 	}
 }
 

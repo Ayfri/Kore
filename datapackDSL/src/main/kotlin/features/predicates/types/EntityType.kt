@@ -11,8 +11,6 @@ enum class EntityType {
 	THIS;
 
 	companion object {
-		val values = values()
-
-		object EntitySerializer : LowercaseSerializer<EntityType>(values)
+		data object EntitySerializer : LowercaseSerializer<EntityType>(entries)
 	}
 }

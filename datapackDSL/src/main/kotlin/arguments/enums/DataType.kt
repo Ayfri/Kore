@@ -11,10 +11,8 @@ enum class DataType {
 	LONG,
 	FLOAT,
 	DOUBLE;
-	
+
 	companion object {
-		val values = values()
-		
-		object DataTypeSerializer : LowercaseSerializer<DataType>(values)
+		data object DataTypeSerializer : LowercaseSerializer<DataType>(entries)
 	}
 }

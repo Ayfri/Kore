@@ -7,10 +7,8 @@ import serializers.LowercaseSerializer
 enum class ExperienceType {
 	LEVELS,
 	POINTS;
-	
+
 	companion object {
-		val values = values()
-		
-		object ExperienceTypeSerializer : LowercaseSerializer<ExperienceType>(values)
+		data object ExperienceTypeSerializer : LowercaseSerializer<ExperienceType>(entries)
 	}
 }

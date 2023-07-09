@@ -16,9 +16,7 @@ private enum class Type {
 	REPLACE;
 
 	companion object {
-		val values = values()
-
-		object TypeSerializer : LowercaseSerializer<Type>(values)
+		data object TypeSerializer : LowercaseSerializer<Type>(entries)
 	}
 }
 
@@ -29,9 +27,7 @@ enum class CloneMode {
 	NORMAL;
 
 	companion object {
-		val values = values()
-
-		object CloneModeSerializer : LowercaseSerializer<CloneMode>(values)
+		data object CloneModeSerializer : LowercaseSerializer<CloneMode>(entries)
 	}
 }
 

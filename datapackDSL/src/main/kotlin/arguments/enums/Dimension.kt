@@ -15,8 +15,6 @@ enum class Dimension : Argument.Dimension {
 	override fun asId() = "$namespace:${name.lowercase()}"
 
 	companion object {
-		val values = values()
-
-		object DimensionSerializer : LowercaseSerializer<Dimension>(values)
+		data object DimensionSerializer : LowercaseSerializer<Dimension>(entries)
 	}
 }

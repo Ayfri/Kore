@@ -17,9 +17,7 @@ enum class BlocksTestMode {
 	MASKED;
 
 	companion object {
-		val values = values()
-
-		object FillModeSerializer : LowercaseSerializer<BlocksTestMode>(values)
+		data object FillModeSerializer : LowercaseSerializer<BlocksTestMode>(entries)
 	}
 }
 

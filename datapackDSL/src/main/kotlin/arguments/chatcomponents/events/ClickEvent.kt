@@ -75,8 +75,6 @@ enum class ClickAction {
 	SUGGEST_COMMAND;
 
 	companion object {
-		val values = values()
-
-		object ClickActionSerializer : LowercaseSerializer<ClickAction>(values)
+		data object ClickActionSerializer : LowercaseSerializer<ClickAction>(entries)
 	}
 }

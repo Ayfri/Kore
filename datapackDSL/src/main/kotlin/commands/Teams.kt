@@ -18,9 +18,7 @@ enum class Visibility {
 	NEVER;
 
 	companion object {
-		val values = values()
-
-		object NametagVisibilitySerializer : CamelcaseSerializer<Visibility>(values)
+		object NametagVisibilitySerializer : CamelcaseSerializer<Visibility>(entries)
 	}
 }
 
@@ -32,9 +30,7 @@ enum class CollisionRule {
 	NEVER;
 
 	companion object {
-		val values = values()
-
-		object CollisionRuleSerializer : CamelcaseSerializer<CollisionRule>(values)
+		object CollisionRuleSerializer : CamelcaseSerializer<CollisionRule>(entries)
 	}
 }
 

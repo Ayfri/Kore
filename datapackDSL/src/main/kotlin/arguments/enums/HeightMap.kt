@@ -11,8 +11,6 @@ enum class HeightMap {
 	WORLD_SURFACE;
 
 	companion object {
-		val values = values()
-
-		object HeightMapSerializer : LowercaseSerializer<HeightMap>(values)
+		data object HeightMapSerializer : LowercaseSerializer<HeightMap>(entries)
 	}
 }

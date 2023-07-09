@@ -16,9 +16,7 @@ enum class TimeSpec {
 	MIDNIGHT;
 
 	companion object {
-		val values = values()
-
-		object TimeSpecSerializer : LowercaseSerializer<TimeSpec>(values)
+		data object TimeSpecSerializer : LowercaseSerializer<TimeSpec>(entries)
 	}
 }
 

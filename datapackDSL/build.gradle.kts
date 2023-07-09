@@ -11,16 +11,16 @@ repositories {
 }
 
 dependencies {
-	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+	implementation(libs.kotlinx.serialization)
 	implementation(kotlin("reflect"))
-	api("net.benwoodworth.knbt:knbt:0.11.3")
-	api("org.joml:joml:1.10.5")
+	api(libs.knbt)
+	api(libs.joml)
 
-	testImplementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
+	testImplementation(libs.kotlin.dotenv)
 }
 
 kotlin {
-	jvmToolchain(18)
+	jvmToolchain(17)
 }
 
 tasks.withType<KotlinCompile> {

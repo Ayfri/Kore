@@ -10,8 +10,6 @@ enum class TextAlignment {
 	RIGHT;
 
 	companion object {
-		val values = values()
-
-		object TextAlignmentSerializer : LowercaseSerializer<TextAlignment>(values)
+		data object TextAlignmentSerializer : LowercaseSerializer<TextAlignment>(entries)
 	}
 }

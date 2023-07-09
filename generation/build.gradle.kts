@@ -3,24 +3,22 @@ plugins {
 	application
 }
 
-
 repositories {
 	mavenCentral()
 }
 
 dependencies {
-	val ktorVersion = "2.2.1"
-	implementation("io.ktor:ktor-client-core:$ktorVersion")
-	implementation("io.ktor:ktor-client-cio:$ktorVersion")
-	implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-	implementation("io.ktor:ktor-serialization:$ktorVersion")
-	implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+	implementation(libs.ktor.client.core)
+	implementation(libs.ktor.client.cio)
+	implementation(libs.ktor.client.content.negotiation)
+	implementation(libs.ktor.serialization)
+	implementation(libs.ktor.serialization.kotlinx.json)
 
-	implementation("com.squareup:kotlinpoet:1.12.0")
+	implementation(libs.kotlinpoet)
 }
 
 kotlin {
-	jvmToolchain(18)
+	jvmToolchain(17)
 }
 
 application {

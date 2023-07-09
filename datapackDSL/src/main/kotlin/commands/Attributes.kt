@@ -12,14 +12,12 @@ import java.util.*
 
 @Serializable(AttributeModifierOperation.Companion.AttributeModifierOperationSerializer::class)
 enum class AttributeModifierOperation {
-	ADD,
+	ADDITION,
 	MULTIPLY,
 	MULTIPLY_BASE;
 
 	companion object {
-		val values = values()
-
-		object AttributeModifierOperationSerializer : LowercaseSerializer<AttributeModifierOperation>(values)
+		data object AttributeModifierOperationSerializer : LowercaseSerializer<AttributeModifierOperation>(entries)
 	}
 }
 

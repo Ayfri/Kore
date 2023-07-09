@@ -15,6 +15,6 @@ fun Predicate.entityScore(entity: EntityType, scores: Map<String, IntOrNumberPro
 	predicateConditions += EntityScore(entity, scores)
 }
 
-fun Predicate.entityScore(entity: EntityType, scores: Map<String, IntOrNumberProvidersRange>.() -> Unit) {
+fun Predicate.entityScore(entity: EntityType, scores: MutableMap<String, IntOrNumberProvidersRange>.() -> Unit) {
 	predicateConditions += EntityScore(entity, buildMap(scores))
 }

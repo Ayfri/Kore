@@ -12,6 +12,7 @@ import data.block.properties
 import data.item.builders.canDestroy
 import data.item.builders.enchantments
 import data.item.builders.modifiers
+import features.predicates.providers.constant
 import functions.Function
 import generated.*
 import helpers.displays.*
@@ -29,7 +30,7 @@ fun Function.displayTests() {
 			}
 
 			modifiers {
-				modifier(Attributes.GENERIC_ATTACK_DAMAGE, 1.0, AttributeModifierOperation.ADD)
+				modifier(Attributes.GENERIC_ATTACK_DAMAGE, constant(1f), AttributeModifierOperation.ADDITION)
 			}
 
 			customModelData = 1
