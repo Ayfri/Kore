@@ -50,6 +50,7 @@ suspend fun main(args: Array<String>) {
 
 	downloadAdvancements()
 	downloadAttributes()
+	downloadBannerPatterns()
 	downloadBiomes()
 	downloadBlocks()
 	downloadCatVariants()
@@ -60,6 +61,7 @@ suspend fun main(args: Array<String>) {
 	downloadEnchantments()
 	downloadEntities()
 	downloadGamerules()
+	downloadInstruments()
 	downloadItems()
 	downloadLootTables()
 	downloadParticles()

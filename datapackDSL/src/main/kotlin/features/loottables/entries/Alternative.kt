@@ -1,13 +1,12 @@
 package features.loottables.entries
 
-import features.predicates.conditions.PredicateCondition
 import features.predicates.conditions.PredicateConditions
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Alternative(
 	var children: List<LootEntry>,
-	var conditions: List<PredicateCondition>? = null,
+	var conditions: PredicateConditions? = null,
 ) : LootEntry
 
 fun LootEntries.alternative(children: List<LootEntry> = emptyList(), conditions: PredicateConditions.() -> Unit = {}) {

@@ -15,6 +15,7 @@ suspend fun downloadTags() {
 fun generateTagsObject(tags: List<String>, sourceUrl: String) {
 	val branchesParents = buildMap {
 		put("blocks", "BlockTag")
+		put("instrument", "InstrumentTag")
 		put("items", "ItemTag")
 		put("worldgen/biome", "BiomeTag")
 	}

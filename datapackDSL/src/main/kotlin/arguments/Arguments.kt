@@ -41,6 +41,8 @@ sealed interface Argument {
 
 	sealed interface Entity : Data, Container
 
+	sealed interface InstrumentOrTag : Argument
+
 	sealed interface ItemOrTag : Argument
 
 	sealed interface Possessor : Argument
@@ -78,6 +80,16 @@ sealed interface Argument {
 	interface Attribute : ResourceLocation {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : Attribute {
+				override val name = name
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
+	interface BannerPattern : ResourceLocation {
+		companion object {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : BannerPattern {
 				override val name = name
 				override val namespace = namespace
 			}
@@ -129,6 +141,16 @@ sealed interface Argument {
 				override val namespace = namespace
 				override var states = states.toMutableMap()
 				override var nbtData = nbtData
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
+	interface BlockEntityType : ResourceLocation {
+		companion object {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : BlockEntityType {
+				override val name = name
+				override val namespace = namespace
 			}
 		}
 	}
@@ -231,6 +253,26 @@ sealed interface Argument {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : EntitySummon {
 				override val name = name
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
+	interface Instrument : ResourceLocation, InstrumentOrTag {
+		companion object {
+			operator fun invoke(instrument: String, namespace: String = "minecraft") = object : Instrument {
+				override val name = instrument
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
+	interface InstrumentTag : TaggedResourceLocation, Instrument, InstrumentOrTag {
+		companion object {
+			operator fun invoke(instrumentTag: String, namespace: String = "minecraft") = object : InstrumentTag {
+				override val name = instrumentTag
 				override val namespace = namespace
 			}
 		}
