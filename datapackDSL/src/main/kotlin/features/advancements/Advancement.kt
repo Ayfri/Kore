@@ -28,6 +28,7 @@ data class Advancement internal constructor(
 	var criteria: Map<String, AdvancementCriterion> = emptyMap(),
 	var requirements: List<List<String>>? = null,
 	var rewards: AdvancementReward? = null,
+	var sendsTelemetryEvent: Boolean? = null,
 ) : Generator {
 	@Transient
 	private lateinit var jsonEncoder: Json

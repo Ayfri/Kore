@@ -42,6 +42,7 @@ fun Function.dataTests() {
 		modify("foo") { set(textComponent("bar")) } assertsIs "data modify entity @s foo set value \"bar\""
 		modify("foo") { set(self(), "bar", 1) } assertsIs "data modify entity @s foo set string entity @s bar 1"
 		modify("foo") { set(self(), "bar", 0, 1) } assertsIs "data modify entity @s foo set string entity @s bar 0 1"
+		modify("foo") { set(self(), "bar", -2) } assertsIs "data modify entity @s foo set string entity @s bar -2"
 
 		modify("foo", "bar") assertsIs "data modify entity @s foo set value \"bar\""
 

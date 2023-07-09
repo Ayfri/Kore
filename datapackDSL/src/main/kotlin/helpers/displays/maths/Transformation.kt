@@ -113,11 +113,11 @@ fun Transformation.matrix(block: MatrixBuilder.() -> Unit) {
 }
 
 fun Transformation.leftRotation(block: RotationBuilder.() -> Unit) {
-	leftRotation = RotationBuilder(this).apply(block).rotation
+	leftRotation = RotationBuilder().apply(block).rotation
 }
 
 fun Transformation.rightRotation(block: RotationBuilder.() -> Unit) {
-	rightRotation = RotationBuilder(this).apply(block).rotation
+	rightRotation = RotationBuilder().apply(block).rotation
 }
 
 fun Transformation.scale(block: Vec3f.() -> Unit) {

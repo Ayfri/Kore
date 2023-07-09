@@ -22,6 +22,7 @@ data class LootTable(
 	@Transient var fileName: String = "loot_table",
 	var functions: ItemModifier? = null,
 	var pools: List<LootPool>? = null,
+	var randomSequence: Argument.RandomSequence? = null,
 ) : Generator {
 	@Transient
 	private lateinit var json: Json

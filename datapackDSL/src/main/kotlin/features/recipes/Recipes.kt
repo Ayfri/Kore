@@ -60,25 +60,56 @@ fun Recipes.smelting(name: String, block: CookingRecipe.() -> Unit): Argument.Re
 	return Argument.Recipe(name, dp.name)
 }
 
-fun Recipes.smithing(name: String, block: Smithing.() -> Unit): Argument.Recipe {
-	dp.recipes.add(RecipeFile(name, Smithing(base = Ingredient(), addition = Ingredient(), result = item("")).apply(block)))
+fun Recipes.smithingTransform(name: String, block: SmithingTransform.() -> Unit): Argument.Recipe {
+	dp.recipes.add(
+		RecipeFile(
+			name,
+			SmithingTransform(template = Ingredient(), base = Ingredient(), addition = Ingredient(), result = item("")).apply(block)
+		)
+	)
 	return Argument.Recipe(name, dp.name)
 }
 
-fun Smithing.base(block: Ingredient.() -> Unit) {
+fun SmithingTransform.template(block: Ingredient.() -> Unit) {
+	template = Ingredient().apply(block)
+}
+
+fun SmithingTransform.base(block: Ingredient.() -> Unit) {
 	base = Ingredient().apply(block)
 }
 
-fun Smithing.base(item: Argument.Item? = null, tag: Argument.ItemTag? = null) {
+fun SmithingTransform.base(item: Argument.Item? = null, tag: Argument.ItemTag? = null) {
 	base = Ingredient(item, tag)
 }
 
-fun Smithing.addition(block: Ingredient.() -> Unit) {
+fun SmithingTransform.addition(block: Ingredient.() -> Unit) {
 	addition = Ingredient().apply(block)
 }
 
-fun Smithing.addition(item: Argument.Item? = null, tag: Argument.ItemTag? = null) {
+fun SmithingTransform.addition(item: Argument.Item? = null, tag: Argument.ItemTag? = null) {
 	addition = Ingredient(item, tag)
+}
+
+fun Recipes.smithingTrim(name: String, block: SmithingTrim.() -> Unit): Argument.Recipe {
+	dp.recipes.add(
+		RecipeFile(
+			name,
+			SmithingTrim(template = Ingredient(), base = Ingredient(), addition = Ingredient()).apply(block)
+		)
+	)
+	return Argument.Recipe(name, dp.name)
+}
+
+fun SmithingTrim.template(block: Ingredient.() -> Unit) {
+	template = Ingredient().apply(block)
+}
+
+fun SmithingTrim.base(block: Ingredient.() -> Unit) {
+	base = Ingredient().apply(block)
+}
+
+fun SmithingTrim.base(item: Argument.Item? = null, tag: Argument.ItemTag? = null) {
+	base = Ingredient(item, tag)
 }
 
 fun Recipes.smoking(name: String, block: CookingRecipe.() -> Unit): Argument.Recipe {

@@ -1,11 +1,9 @@
 package features.advancements.triggers
 
-import features.advancements.types.ItemStack
-import features.advancements.types.Location
+import features.advancements.LocationOrPredicates
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class ItemUsedOnBlock(
-	var location: Location? = null,
-	var item: ItemStack? = null,
+	var location: LocationOrPredicates = LocationOrPredicates()
 ) : AdvancementTriggerCondition

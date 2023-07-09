@@ -1,6 +1,9 @@
 package helpers.displays
 
-import helpers.displays.maths.*
+import helpers.displays.maths.AxisAngle
+import helpers.displays.maths.Matrix
+import helpers.displays.maths.Quaternion
+import helpers.displays.maths.Vec3f
 
 class MatrixBuilder {
 	private val elements = mutableListOf<Float>()
@@ -30,8 +33,8 @@ class AxisAngleBuilder {
 	fun build() = AxisAngle(angle, axis.x, axis.y, axis.z)
 }
 
-class RotationBuilder(private val transform: Transformation) {
-	var rotation = Quaternion()
+class RotationBuilder {
+	var rotation = Quaternion.IDENTITY
 
 	fun quaternion(block: Quaternion.() -> Unit) {
 		rotation = Quaternion.IDENTITY.copy().apply(block).normalize()

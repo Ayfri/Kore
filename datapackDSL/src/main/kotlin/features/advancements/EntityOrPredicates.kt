@@ -8,13 +8,13 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.encoding.Encoder
 import serializers.ToStringSerializer
 
-@Serializable(with = EntityOrPredicates.Companion.AdvancementConditionsSerializer::class)
+@Serializable(with = EntityOrPredicates.Companion.EntityOrPredicatesSerializer::class)
 data class EntityOrPredicates(
 	var legacyEntity: Entity? = null,
 	var predicateConditions: List<PredicateCondition>? = null,
 ) {
 	companion object {
-		object AdvancementConditionsSerializer : ToStringSerializer<EntityOrPredicates>() {
+		object EntityOrPredicatesSerializer : ToStringSerializer<EntityOrPredicates>() {
 			override fun serialize(encoder: Encoder, value: EntityOrPredicates) {
 				when {
 					value.legacyEntity != null -> encoder.encodeSerializableValue(Entity.serializer(), value.legacyEntity!!)
@@ -23,7 +23,7 @@ data class EntityOrPredicates(
 						value.predicateConditions!!
 					)
 
-					else -> error("AdvancementConditions must have either an Entity or predicates")
+					else -> error("EntityOrPredicates must have either an Entity or predicates")
 				}
 			}
 		}

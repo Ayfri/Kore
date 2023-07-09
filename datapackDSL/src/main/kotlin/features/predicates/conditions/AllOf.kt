@@ -4,10 +4,10 @@ import features.predicates.Predicate
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Alternative(
+data class AllOf(
 	var terms: List<PredicateCondition>? = null,
 ) : PredicateCondition
 
-fun Predicate.alternative(terms: Predicate.() -> Unit = {}) {
-	predicateConditions += Alternative(Predicate().apply(terms).predicateConditions.toList())
+fun Predicate.allOf(terms: Predicate.() -> Unit = {}) {
+	predicateConditions += AllOf(Predicate().apply(terms).predicateConditions.toList())
 }

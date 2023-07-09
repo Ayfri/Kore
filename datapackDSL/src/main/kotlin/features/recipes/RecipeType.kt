@@ -29,7 +29,8 @@ object RecipeTypes {
 	val CRAFTING_SHAPELESS = RecipeType { "crafting_shapeless" }
 	val CRAFTING_SPECIAL = CraftingSpecial
 	val SMELTING = RecipeType { "smelting" }
-	val SMITHING = RecipeType { "smithing" }
+	val SMITHING_TRANSFORM = RecipeType { "smithing_transform" }
+	val SMITHING_TRIM = RecipeType { "smithing_trim" }
 	val SMOKING = RecipeType { "smoking" }
 	val STONECUTTING = RecipeType { "stonecutting" }
 
@@ -40,7 +41,8 @@ object RecipeTypes {
 		CRAFTING_SHAPELESS,
 		CRAFTING_SPECIAL,
 		SMELTING,
-		SMITHING,
+		SMITHING_TRANSFORM,
+		SMITHING_TRIM,
 		SMOKING,
 		STONECUTTING,
 	)

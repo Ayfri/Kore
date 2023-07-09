@@ -4,7 +4,7 @@ import DataPack
 import features.advancements.*
 import features.advancements.triggers.ConsumeItem
 import features.advancements.types.itemStack
-import features.predicates.conditions.alternative
+import features.predicates.conditions.anyOf
 import features.predicates.conditions.randomChance
 import features.predicates.conditions.timeCheck
 import generated.Items
@@ -26,7 +26,7 @@ fun DataPack.advancementTests() {
 			randomChance(chance = 0.5f)
 			timeCheck(10f..20f)
 
-			alternative {
+			anyOf {
 				timeCheck(10f..20f)
 			}
 		}
