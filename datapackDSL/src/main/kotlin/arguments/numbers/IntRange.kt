@@ -20,7 +20,7 @@ class IntRange(val start: Int?, val end: Int?) : IntegerRange {
 	fun asRangeOrInt() = IntRangeOrInt(this)
 
 	companion object {
-		object IntRangeSerializer : ToStringSerializer<IntRange>()
+		data object IntRangeSerializer : ToStringSerializer<IntRange>()
 	}
 }
 
@@ -31,7 +31,7 @@ class IntRangeOrInt(val range: IntRange? = null, val int: Int? = null) : Integer
 	fun asRange() = range ?: IntRange(int, int)
 
 	companion object {
-		object IntRangeOrIntSerializer : ToStringSerializer<IntRangeOrInt>()
+		data object IntRangeOrIntSerializer : ToStringSerializer<IntRangeOrInt>()
 	}
 }
 

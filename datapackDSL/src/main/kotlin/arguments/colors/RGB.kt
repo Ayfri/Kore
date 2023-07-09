@@ -79,9 +79,7 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 	fun mix(other: RGB, count: Int): List<RGB> {
 		val result = mutableListOf<RGB>()
 		val step = 1.0 / count
-		for (i in 0 until count) {
-			result.add(this * (1 - step * i) + other * (step * i))
-		}
+		(0..<count).mapTo(result) { this * (1 - step * it) + other * (step * it) }
 		return result
 	}
 

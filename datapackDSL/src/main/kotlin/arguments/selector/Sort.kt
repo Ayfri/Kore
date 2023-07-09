@@ -11,6 +11,6 @@ enum class Sort {
 	ARBITRARY;
 
 	companion object {
-		object SortSerializer : LowercaseSerializer<Sort>(entries)
+		data object SortSerializer : LowercaseSerializer<Sort>(entries)
 	}
 }

@@ -3,9 +3,8 @@ package utils
 fun generateDiffString(expected: String, got: String): String {
 	val minLength = minOf(expected.length, got.length)
 	var firstDifferenceIndex = -1
-	var lastDifferenceIndex = -1
 
-	for (i in 0 until minLength) {
+	for (i in 0..<minLength) {
 		if (expected[i] != got[i]) {
 			firstDifferenceIndex = i
 			break
@@ -16,19 +15,14 @@ fun generateDiffString(expected: String, got: String): String {
 		expected.length - got.length
 	)
 
-	for (i in (minLength - 1) downTo firstDifferenceIndex) {
-		if (expected[i] != got[i]) {
-			lastDifferenceIndex = i
-			break
-		}
-	}
+	val lastDifferenceIndex = ((minLength - 1) downTo firstDifferenceIndex).firstOrNull { expected[it] != got[it] } ?: -1
 
 	val expectedDiff = expected.substring(firstDifferenceIndex..lastDifferenceIndex)
 	val gotDiff = got.substring(firstDifferenceIndex..lastDifferenceIndex)
 
 	val stringBuilder = StringBuilder()
 	stringBuilder.append("Expected: '$expected'\nGot     : '$got'\n")
-	for (i in 0 until firstDifferenceIndex + "Expected: '".length) {
+	for (i in 0..<firstDifferenceIndex + "Expected: '".length) {
 		stringBuilder.append(" ")
 	}
 	for (i in firstDifferenceIndex..lastDifferenceIndex) {

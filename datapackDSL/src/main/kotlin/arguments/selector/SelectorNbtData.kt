@@ -33,7 +33,7 @@ data class GamemodeSelector(var gamemode: Gamemode? = null, var invert: Boolean 
 	}
 
 	companion object {
-		object GamemodeSelectorSerializer : ToStringSerializer<GamemodeSelector>()
+		data object GamemodeSelectorSerializer : ToStringSerializer<GamemodeSelector>()
 	}
 }
 
@@ -46,7 +46,7 @@ data class NbtCompoundSelector(var nbt: NbtCompound? = null, var invert: Boolean
 	}
 
 	companion object {
-		object NbtDataSelectorSerializer : ToStringSerializer<NbtCompoundSelector>()
+		data object NbtDataSelectorSerializer : ToStringSerializer<NbtCompoundSelector>()
 	}
 }
 

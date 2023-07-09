@@ -19,7 +19,7 @@ data class Ingredient(
 	companion object {
 		@OptIn(ExperimentalSerializationApi::class)
 		@Serializer(forClass = Ingredient::class)
-		object DefaultIngredientSerializer
+		data object DefaultIngredientSerializer
 
 		object IngredientSerializer : KSerializer<Ingredient> by DefaultIngredientSerializer {
 			override fun serialize(encoder: Encoder, value: Ingredient) {

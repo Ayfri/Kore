@@ -88,6 +88,6 @@ data class ARGB(var alpha: Int, var red: Int, var green: Int, var blue: Int) : C
 		fun fromHex(hex: String) = ARGB(hex.removePrefix("#"))
 		fun fromNamedColor(color: NamedColor) = RGB.fromNamedColor(color).toARGB()
 
-		object ARGBSerializer : ToStringSerializer<ARGB>()
+		data object ARGBSerializer : ToStringSerializer<ARGB>()
 	}
 }

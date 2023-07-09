@@ -13,22 +13,22 @@ class FloatRange(val start: Double?, val end: Double?) : FloatingRange {
 		end == null -> "${start.str}.."
 		else -> "${start.str}..${end.str}"
 	}
-	
+
 	fun asRangeOrDouble() = FloatRangeOrFloat(this)
-	
+
 	companion object {
-		object FloatRangeSerializer : ToStringSerializer<FloatRange>()
+		data object FloatRangeSerializer : ToStringSerializer<FloatRange>()
 	}
 }
 
 @Serializable(FloatRangeOrFloat.Companion.FloatRangeOrFloatSerializer::class)
 class FloatRangeOrFloat(val range: FloatRange? = null, val double: Double? = null) : FloatingRange {
 	override fun toString() = range?.toString() ?: double.toString()
-	
+
 	fun asRange() = range ?: FloatRange(double, double)
-	
+
 	companion object {
-		object FloatRangeOrFloatSerializer : ToStringSerializer<FloatRangeOrFloat>()
+		data object FloatRangeOrFloatSerializer : ToStringSerializer<FloatRangeOrFloat>()
 	}
 }
 

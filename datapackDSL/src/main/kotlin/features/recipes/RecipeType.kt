@@ -8,7 +8,7 @@ fun interface RecipeType {
 	override fun toString(): String
 
 	companion object {
-		object RecipeTypeSerializer : ToStringSerializer<RecipeType>()
+		data object RecipeTypeSerializer : ToStringSerializer<RecipeType>()
 	}
 }
 
