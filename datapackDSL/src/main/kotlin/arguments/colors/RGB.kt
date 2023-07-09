@@ -25,6 +25,7 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 	val b get() = blue
 
 	val array get() = intArrayOf(red, green, blue)
+	val normalizedArray get() = doubleArrayOf(red / 255.0, green / 255.0, blue / 255.0)
 
 	operator fun plus(other: RGB) = RGB(
 		(red + other.red).coerceIn(0, 255),

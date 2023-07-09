@@ -22,6 +22,7 @@ data class ARGB(var alpha: Int, var red: Int, var green: Int, var blue: Int) : C
 	val b get() = blue
 
 	val array get() = intArrayOf(alpha, red, green, blue)
+	val normalizedArray get() = doubleArrayOf(red / 255.0, green / 255.0, blue / 255.0)
 
 	operator fun plus(other: ARGB) = ARGB(
 		(alpha + other.alpha).coerceIn(0, 255),
@@ -80,7 +81,6 @@ data class ARGB(var alpha: Int, var red: Int, var green: Int, var blue: Int) : C
 	)
 
 	fun toHex(withHash: Boolean = false) = if (withHash) hexWithHash else hex
-	fun toRGB() = RGB(red, green, blue)
 
 	override fun toString() = hexWithHash
 
