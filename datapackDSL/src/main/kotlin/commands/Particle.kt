@@ -13,9 +13,7 @@ enum class ParticleMode {
 	FORCE;
 
 	companion object {
-		val values = values()
-
-		object ParticleModeSerializer : LowercaseSerializer<ParticleMode>(values)
+		data object ParticleModeSerializer : LowercaseSerializer<ParticleMode>(entries)
 	}
 }
 
