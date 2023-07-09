@@ -3,6 +3,7 @@ import arguments.Argument
 import arguments.ChatComponents
 import arguments.chatcomponents.textComponent
 import features.advancements.Advancement
+import features.chattype.ChatType
 import features.damagetypes.DamageType
 import features.itemmodifiers.ItemModifier
 import features.loottables.LootTable
@@ -73,6 +74,7 @@ class DataPack(val name: String) {
 	private val functions = mutableListOf<Function>()
 	private val generatedFunctions = mutableListOf<Function>()
 	val advancements = mutableListOf<Advancement>()
+	val chatTypes = mutableListOf<ChatType>()
 	val damageTypes = mutableListOf<DamageType>()
 	val dimensionTypes = mutableListOf<DimensionType>()
 	val itemModifiers = mutableListOf<ItemModifier>()
@@ -115,6 +117,7 @@ class DataPack(val name: String) {
 		data.mkdirs()
 
 		data.generateResources("advancements", advancements)
+		data.generateResources("chat_types", chatTypes)
 		data.generateResources("damage_types", damageTypes)
 		data.generateResources("dimension_type", dimensionTypes)
 		data.generateResources("functions", functions.groupBy(Function::namespace))

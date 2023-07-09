@@ -179,6 +179,16 @@ sealed interface Argument {
 	}
 
 	@Serializable(with = ArgumentSerializer::class)
+	interface ChatType : ResourceLocation {
+		companion object {
+			operator fun invoke(chatType: String, namespace: String = "minecraft") = object : ChatType {
+				override val name = chatType
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
 	interface DamageType : ResourceLocation {
 		companion object {
 			operator fun invoke(damageType: String, namespace: String = "minecraft") = object : DamageType {

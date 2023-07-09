@@ -14,6 +14,7 @@ fun featuresTests() = dataPack("features_tests") {
 	}
 
 	advancementTests()
+	chatTypeTests()
 	damageTypeTests()
 	dimensionTypeTests()
 	itemModifierTests()
