@@ -1,15 +1,20 @@
 package features.recipes.types
 
+import features.recipes.RecipeFile
 import features.recipes.RecipeTypes
+import features.recipes.Recipes
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @Serializable
 data class CraftingSpecial(
 	var name: String,
 ) : Recipe() {
+	@Transient
+	@Deprecated("CraftingSpecial does not have a group", level = DeprecationLevel.HIDDEN)
 	override var group: String? = null
-		@Deprecated("CraftingSpecial does not have a group", level = DeprecationLevel.HIDDEN)
 		set(_) = Unit
+
 	override val type = RecipeTypes.CRAFTING_SPECIAL(name)
 }
 
@@ -26,3 +31,9 @@ val CraftingSpecialShieldDecoration = CraftingSpecial("shielddecoration")
 val CraftingSpecialShulkerBoxColoring = CraftingSpecial("shulkerboxcoloring")
 val CraftingSpecialSuspiciousStew = CraftingSpecial("suspiciousstew")
 val CraftingSpecialTippedArrow = CraftingSpecial("tippedarrow")
+
+fun Recipes.craftingSpecial(name: String, craftingTypeName: String, block: CraftingSpecial.() -> Unit) =
+	dp.recipes.add(RecipeFile(name, CraftingSpecial(craftingTypeName).apply(block)))
+
+fun Recipes.craftingSpecial(name: String, craftingSpecial: CraftingSpecial) =
+	dp.recipes.add(RecipeFile(name, craftingSpecial))

@@ -13,3 +13,6 @@ interface CookingRecipe {
 	var experience: Double?
 	var cookingTime: Int?
 }
+
+fun CookingRecipe.ingredient(block: Ingredient.() -> Unit) = ingredient.add(Ingredient().apply(block))
+fun CookingRecipe.ingredient(item: Argument.Item? = null, tag: Argument.ItemTag? = null) = ingredient.add(Ingredient(item, tag))
