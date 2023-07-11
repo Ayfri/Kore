@@ -11,6 +11,7 @@ import features.predicates.Predicate
 import features.recipes.RecipeFile
 import features.tags.Tags
 import features.worldgen.DimensionType
+import features.worldgen.biome.Biome
 import functions.Function
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
@@ -74,6 +75,7 @@ class DataPack(val name: String) {
 	private val functions = mutableListOf<Function>()
 	private val generatedFunctions = mutableListOf<Function>()
 	val advancements = mutableListOf<Advancement>()
+	val biomes = mutableListOf<Biome>()
 	val chatTypes = mutableListOf<ChatType>()
 	val damageTypes = mutableListOf<DamageType>()
 	val dimensionTypes = mutableListOf<DimensionType>()
@@ -117,6 +119,7 @@ class DataPack(val name: String) {
 		data.mkdirs()
 
 		data.generateResources("advancements", advancements)
+		data.generateResources("biomes", biomes)
 		data.generateResources("chat_types", chatTypes)
 		data.generateResources("damage_types", damageTypes)
 		data.generateResources("dimension_type", dimensionTypes)

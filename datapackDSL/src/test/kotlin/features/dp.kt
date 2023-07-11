@@ -2,6 +2,7 @@ package features
 
 import configuration
 import dataPack
+import features.worldgen.biomeTests
 import features.worldgen.dimensionTypeTests
 import setTestPath
 
@@ -14,6 +15,7 @@ fun featuresTests() = dataPack("features_tests") {
 	}
 
 	advancementTests()
+	biomeTests()
 	chatTypeTests()
 	damageTypeTests()
 	dimensionTypeTests()

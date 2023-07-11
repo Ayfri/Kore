@@ -1,4 +1,6 @@
 import generators.*
+import generators.worldgen.downloadCarvers
+import generators.worldgen.downloadFeatures
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -53,8 +55,10 @@ suspend fun main(args: Array<String>) {
 	downloadBannerPatterns()
 	downloadBiomes()
 	downloadBlocks()
+	downloadCarvers()
 	downloadCatVariants()
 	downloadDamageTypes()
+	downloadFeatures()
 	downloadFluids()
 	downloadFrogVariants()
 	downloadEffects()

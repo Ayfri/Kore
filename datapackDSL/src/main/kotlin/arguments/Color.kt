@@ -57,15 +57,19 @@ interface Color : Argument {
 				else -> error("Unknown color type: $value")
 			}
 		}
+
 	}
+
 }
 
 fun color(red: Int, green: Int, blue: Int) = RGB(red, green, blue)
 fun color(hex: String) = RGB.fromHex(hex)
+fun color(decimal: Int) = RGB.fromDecimal(decimal)
 fun color(red: Int, green: Int, blue: Int, alpha: Int) = ARGB(alpha, red, green, blue)
 
 fun rgb(red: Int, green: Int, blue: Int) = RGB(red, green, blue)
 fun rgb(hex: String) = RGB.fromHex(hex)
+fun rgb(decimal: Int) = RGB.fromDecimal(decimal)
 
 fun argb(alpha: Int, red: Int, green: Int, blue: Int) = ARGB(alpha, red, green, blue)
 fun argb(hex: String) = ARGB.fromHex(hex)

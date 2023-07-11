@@ -90,6 +90,13 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 
 	companion object {
 		fun fromHex(hex: String) = RGB(hex.removePrefix("#"))
+		fun fromDecimal(decimal: Int): RGB {
+			val red = decimal shr 16 and 0xFF
+			val green = decimal shr 8 and 0xFF
+			val blue = decimal and 0xFF
+			return RGB(red, green, blue)
+		}
+
 		fun fromNamedColor(color: NamedColor) = when (color) {
 			Color.AQUA -> RGB(85, 255, 255)
 			Color.BLACK -> RGB(0, 0, 0)
@@ -120,6 +127,16 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 			}
 
 			override fun deserialize(decoder: Decoder) = fromHex(decoder.decodeString())
+		}
+
+		object ColorAsDecimalSerializer : KSerializer<RGB> {
+			override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("RGB", PrimitiveKind.INT)
+
+			override fun serialize(encoder: Encoder, value: RGB) {
+				encoder.encodeInt(value.red shl 16 or (value.green shl 8) or value.blue)
+			}
+
+			override fun deserialize(decoder: Decoder) = fromDecimal(decoder.decodeInt())
 		}
 	}
 }

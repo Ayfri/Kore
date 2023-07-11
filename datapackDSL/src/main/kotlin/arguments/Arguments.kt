@@ -169,6 +169,16 @@ sealed interface Argument {
 	data class BossBar(override val name: String, override val namespace: String = "minecraft") : ResourceLocation
 
 	@Serializable(with = ArgumentSerializer::class)
+	interface Carver : ResourceLocation {
+		companion object {
+			operator fun invoke(carver: String, namespace: String = "minecraft") = object : Carver {
+				override val name = carver
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
 	interface CatVariant : ResourceLocation {
 		companion object {
 			operator fun invoke(catVariant: String, namespace: String = "minecraft") = object : CatVariant {
@@ -213,6 +223,16 @@ sealed interface Argument {
 		companion object {
 			operator fun invoke(enchantment: String, namespace: String = "minecraft") = object : Enchantment {
 				override val name = enchantment
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
+	interface Feature : ResourceLocation {
+		companion object {
+			operator fun invoke(feature: String, namespace: String = "minecraft") = object : Feature {
+				override val name = feature
 				override val namespace = namespace
 			}
 		}
