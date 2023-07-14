@@ -65,9 +65,7 @@ data class DimensionType(
  * Creates a new DimensionType.
  * Values are the minimal values for a dimension type, booleans have the same values as overworld.
  */
-fun DataPack.dimensionType(fileName: String, dimensionType: DimensionType.() -> Unit = {}): DimensionType {
-	val type = DimensionType(infiniburn = Tags.Blocks.INFINIBURN_OVERWORLD).apply(dimensionType)
-	type.fileName = fileName
-	dimensionTypes += type
-	return type
+fun DataPack.dimensionType(fileName: String, dimensionType: DimensionType.() -> Unit = {}): Argument.DimensionType {
+	dimensionTypes += DimensionType(fileName, infiniburn = Tags.Blocks.INFINIBURN_OVERWORLD).apply(dimensionType)
+	return Argument.DimensionType(fileName, name)
 }

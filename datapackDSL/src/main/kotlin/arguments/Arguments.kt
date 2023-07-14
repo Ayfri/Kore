@@ -219,10 +219,30 @@ sealed interface Argument {
 	}
 
 	@Serializable(with = ArgumentSerializer::class)
+	interface DimensionType : ResourceLocation {
+		companion object {
+			operator fun invoke(dimension: String, namespace: String = "minecraft") = object : DimensionType {
+				override val name = dimension
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
 	interface Enchantment : ResourceLocation {
 		companion object {
 			operator fun invoke(enchantment: String, namespace: String = "minecraft") = object : Enchantment {
 				override val name = enchantment
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
+	interface EntitySummon : ResourceLocation {
+		companion object {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : EntitySummon {
+				override val name = name
 				override val namespace = namespace
 			}
 		}
@@ -274,16 +294,6 @@ sealed interface Argument {
 				override val name = function
 				override val namespace = namespace
 				override var directory = directory
-			}
-		}
-	}
-
-	@Serializable(with = ArgumentSerializer::class)
-	interface EntitySummon : ResourceLocation {
-		companion object {
-			operator fun invoke(name: String, namespace: String = "minecraft") = object : EntitySummon {
-				override val name = name
-				override val namespace = namespace
 			}
 		}
 	}
