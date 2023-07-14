@@ -1,13 +1,14 @@
 package features.predicates.conditions
 
 import features.predicates.Predicate
+import features.predicates.PredicateAsList
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class AnyOf(
-	var terms: List<PredicateCondition>? = null,
+	var terms: PredicateAsList? = null,
 ) : PredicateCondition
 
 fun Predicate.anyOf(terms: Predicate.() -> Unit = {}) {
-	predicateConditions += AnyOf(Predicate().apply(terms).predicateConditions.toList())
+	predicateConditions += AnyOf(Predicate().apply(terms))
 }
