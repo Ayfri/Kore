@@ -71,15 +71,15 @@ class DataPack(val name: String) {
 		data.mkdirs()
 
 		data.generateResources("advancements", advancements)
-		data.generateResources("chat_types", chatTypes)
-		data.generateResources("damage_types", damageTypes)
+		data.generateResources("chat_type", chatTypes)
+		data.generateResources("damage_type", damageTypes)
 		data.generateResources("dimension_type", dimensionTypes)
 		data.generateResources("item_modifiers", itemModifiers)
 		data.generateResources("loot_tables", lootTables)
 		data.generateResources("predicates", predicates)
 		data.generateResources("recipes", recipes)
 		data.generateResources("tags", tags.groupBy(Tags::namespace))
-		data.generateResources("worldgen/biomes", biomes)
+		data.generateResources("worldgen/biome", biomes)
 
 		data.generateFunctions("functions", functions.groupBy(Function::namespace))
 		data.generateFunctions(
