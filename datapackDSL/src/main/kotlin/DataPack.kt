@@ -1,6 +1,5 @@
 import annotations.FunctionsHolder
 import arguments.Argument
-import arguments.ChatComponents
 import arguments.chatcomponents.textComponent
 import features.advancements.Advancement
 import features.chattype.ChatType
@@ -14,60 +13,12 @@ import features.worldgen.DimensionType
 import features.worldgen.biome.Biome
 import functions.Function
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNamingStrategy
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.Path
-
-@Serializable
-data class FilteredBlock(
-	var namespace: String? = null,
-	var path: String? = null,
-)
-
-@Serializable
-class Filter {
-	@SerialName("block")
-	internal val blocks = mutableListOf<FilteredBlock>()
-
-	fun block(namespace: String? = null, path: String? = null) {
-		blocks += FilteredBlock(namespace, path)
-	}
-
-	fun block(block: FilteredBlock) {
-		blocks += block
-	}
-
-	fun block(block: FilteredBlock.() -> Unit) {
-		blocks += FilteredBlock().apply(block)
-	}
-
-	fun blocks(vararg blocks: FilteredBlock) {
-		this.blocks += blocks
-	}
-
-	fun blocks(blocks: Collection<FilteredBlock>) {
-		this.blocks += blocks
-	}
-}
-
-@Serializable
-data class Pack(
-	@SerialName("pack_format")
-	var format: Int,
-	@Serializable
-	var description: ChatComponents,
-)
-
-@Serializable
-data class SerializedDataPack(
-	val pack: Pack,
-	val filter: Filter? = null,
-)
 
 @FunctionsHolder
 class DataPack(val name: String) {
@@ -112,8 +63,8 @@ class DataPack(val name: String) {
 		val root = File("$path/$name")
 		root.mkdirs()
 
-		val serialized = SerializedDataPack(pack, filter)
-		File(root, "pack.mcmeta").writeText(jsonEncoder.encodeToString(serialized))
+		val packMCMeta = PackMCMeta(pack, filter)
+		File(root, "pack.mcmeta").writeText(jsonEncoder.encodeToString(packMCMeta))
 		iconPath?.let { File(root, "pack.png").writeBytes(it.toFile().readBytes()) }
 
 		val data = File(root, "data")
@@ -207,7 +158,6 @@ class DataPack(val name: String) {
 
 	companion object {
 		const val GENERATED_FUNCTIONS_FOLDER = "generated_scopes"
-		const val defaultIndent = "   "
 	}
 }
 
