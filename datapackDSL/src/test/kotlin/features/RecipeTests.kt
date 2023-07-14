@@ -9,6 +9,7 @@ import features.recipes.types.*
 import functions.load
 import generated.Items
 import generated.Tags
+import utils.assertsIs
 
 fun DataPack.recipeTest() {
 	recipes {
@@ -56,6 +57,27 @@ fun DataPack.recipeTest() {
 
 		result(Items.BOW)
 	}
+	recipes.last() assertsIs """
+		{
+			"pattern": [
+				" ~|",
+				"~ |",
+				" ~|"
+			],
+			"key": {
+				"~": {
+					"item": "minecraft:string"
+				},
+				"|": {
+					"item": "minecraft:stick"
+				}
+			},
+			"result": {
+				"item": "minecraft:bow"
+			},
+			"type": "minecraft:crafting_shaped"
+		}
+	""".trimIndent()
 
 	load {
 		recipeGive(allPlayers(), bowsRecipe)

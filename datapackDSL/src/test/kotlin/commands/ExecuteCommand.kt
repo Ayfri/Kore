@@ -13,6 +13,7 @@ import functions.function
 import generated.Blocks
 import generated.Entities
 import generated.Tags
+import helpers.predicateRandomChance
 import utils.assertsIs
 import utils.debugEntity
 
@@ -180,5 +181,15 @@ fun Function.executeTests() {
 		}
 	} assertsIs """
 		execute store success bossbar test value run say test
+	""".trimIndent()
+
+	execute {
+		ifCondition(datapack.predicateRandomChance(0.5f))
+
+		run {
+			say("Hello 50% of the time!")
+		}
+	} assertsIs """
+		execute if predicate ${datapack.name}:random_chance run say Hello 50% of the time!
 	""".trimIndent()
 }

@@ -3,7 +3,7 @@ package features
 import DataPack
 import arguments.self
 import commands.loot
-import features.itemmodifiers.conditions
+import features.itemmodifiers.functions.conditions
 import features.itemmodifiers.functions.enchantRandomly
 import features.itemmodifiers.functions.setCount
 import features.loottables.*
@@ -15,12 +15,13 @@ import features.predicates.providers.constant
 import functions.load
 import generated.Enchantments
 import generated.LootTables
+import utils.assertsIs
 
 fun DataPack.lootTableTests() {
 	val lootTable = lootTable("loot_table") {
 		functions {
 			enchantRandomly {
-				this += Enchantments.LOOTING
+				enchantments += Enchantments.LOOTING
 			}
 		}
 
@@ -38,10 +39,10 @@ fun DataPack.lootTableTests() {
 					}
 
 					functions {
-						setCount(1f)
-
-						conditions {
-							randomChance(0.5f)
+						setCount(1f) {
+							conditions {
+								randomChance(0.5f)
+							}
 						}
 					}
 				}
@@ -52,6 +53,55 @@ fun DataPack.lootTableTests() {
 			}
 		}
 	}
+
+	lootTables.last() assertsIs """
+		{
+			"functions": [
+				{
+					"function": "minecraft:enchant_randomly",
+					"enchantments": [
+						"minecraft:looting"
+					]
+				}
+			],
+			"pools": [
+				{
+					"rolls": 2.0,
+					"bonus_rolls": 1.0,
+					"conditions": [
+						{
+							"condition": "minecraft:weather_check",
+							"raining": true
+						}
+					],
+					"entries": [
+						{
+							"type": "minecraft:loot_table",
+							"name": "minecraft:gameplay/piglin_bartering",
+							"functions": [
+								{
+									"function": "minecraft:set_count",
+									"conditions": [
+										{
+											"condition": "minecraft:random_chance",
+											"chance": 0.5
+										}
+									],
+									"count": 1.0
+								}
+							]
+						}
+					],
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": 1.0
+						}
+					]
+				}
+			]
+		}
+	""".trimIndent()
 
 	load {
 		loot(self(), lootTable)

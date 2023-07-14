@@ -9,6 +9,7 @@ import functions.load
 import generated.Carvers
 import generated.Entities
 import generated.Features
+import utils.assertsIs
 
 fun DataPack.biomeTests() {
 	val biome = biome("my_biome") {
@@ -52,6 +53,53 @@ fun DataPack.biomeTests() {
 			rawGeneration = listOf(Features.ORE, Features.DISK)
 		}
 	}
+	biomes.last() assertsIs """
+		{
+			"temperature": 0.8,
+			"downfall": 0.4,
+			"has_precipitation": true,
+			"temperature_modifier": "none",
+			"effects": {
+				"sky_color": 16733525,
+				"fog_color": 5592575,
+				"water_color": 5635925,
+				"water_fog_color": 16777045,
+				"grass_color": 16777215,
+				"foliage_color": 11141375
+			},
+			"spawners": {
+				"creature": [
+					{
+						"type": "minecraft:zombie",
+						"weight": 1,
+						"min_count": 1,
+						"max_count": 2
+					}
+				]
+			},
+			"spawn_costs": {
+				"minecraft:zombie": {
+					"energy_budget": 1.0,
+					"charge": 1.0
+				}
+			},
+			"carvers": {
+				"air": [
+					"minecraft:canyon"
+				],
+				"liquid": [
+					"minecraft:nether_cave",
+					"minecraft:cave"
+				]
+			},
+			"features": [
+				[
+					"minecraft:ore",
+					"minecraft:disk"
+				]
+			]
+		}
+	""".trimIndent()
 
 	load {
 		locateBiome(biome)
