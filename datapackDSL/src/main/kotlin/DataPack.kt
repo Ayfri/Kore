@@ -71,7 +71,6 @@ class DataPack(val name: String) {
 		data.mkdirs()
 
 		data.generateResources("advancements", advancements)
-		data.generateResources("biomes", biomes)
 		data.generateResources("chat_types", chatTypes)
 		data.generateResources("damage_types", damageTypes)
 		data.generateResources("dimension_type", dimensionTypes)
@@ -80,6 +79,7 @@ class DataPack(val name: String) {
 		data.generateResources("predicates", predicates)
 		data.generateResources("recipes", recipes)
 		data.generateResources("tags", tags.groupBy(Tags::namespace))
+		data.generateResources("worldgen/biomes", biomes)
 
 		data.generateFunctions("functions", functions.groupBy(Function::namespace))
 		data.generateFunctions(
