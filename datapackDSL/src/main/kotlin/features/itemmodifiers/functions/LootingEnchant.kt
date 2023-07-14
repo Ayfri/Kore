@@ -1,6 +1,6 @@
 package features.itemmodifiers.functions
 
-import features.itemmodifiers.ItemModifierEntry
+import features.itemmodifiers.ItemModifier
 import features.predicates.providers.NumberProvider
 import kotlinx.serialization.Serializable
 
@@ -8,8 +8,8 @@ import kotlinx.serialization.Serializable
 data class LootingEnchant(
 	var count: NumberProvider,
 	var limit: Int? = null,
-) : ItemFunctionSurrogate
+) : ItemFunction()
 
-fun ItemModifierEntry.lootingEnchant(count: NumberProvider, limit: Int? = null) {
-	function = LootingEnchant(count, limit)
+fun ItemModifier.lootingEnchant(count: NumberProvider, limit: Int? = null, block: LootingEnchant.() -> Unit = {}) {
+	modifiers += LootingEnchant(count, limit).apply(block)
 }

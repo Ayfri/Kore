@@ -1,6 +1,6 @@
 package features.itemmodifiers.functions
 
-import features.itemmodifiers.ItemModifierEntry
+import features.itemmodifiers.ItemModifier
 import generated.Tags
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
@@ -12,7 +12,7 @@ data class ExplorationMap(
 	var zoom: Int? = null,
 	var searchRadius: Int? = null,
 	var skipExistingChunks: Boolean? = null,
-) : ItemFunctionSurrogate
+) : ItemFunction()
 
 @Serializable(MapDecoration.Companion.MapDecorationSerializer::class)
 enum class MapDecoration {
@@ -49,16 +49,17 @@ enum class MapDecoration {
 	}
 }
 
-fun ItemModifierEntry.explorationMap(
+fun ItemModifier.explorationMap(
 	destination: Tags.Worldgen.Structure,
 	decoration: MapDecoration? = null,
 	zoom: Int? = null,
 	searchRadius: Int? = null,
 	skipExistingChunks: Boolean? = null,
+	block: ExplorationMap.() -> Unit = {},
 ) {
-	function = ExplorationMap(destination, decoration, zoom, searchRadius, skipExistingChunks)
+	modifiers += ExplorationMap(destination, decoration, zoom, searchRadius, skipExistingChunks).apply(block)
 }
 
-fun ItemModifierEntry.explorationMap(block: ExplorationMap.() -> Unit) {
-	function = ExplorationMap().apply(block)
+fun ItemModifier.explorationMap(block: ExplorationMap.() -> Unit) {
+	modifiers += ExplorationMap().apply(block)
 }

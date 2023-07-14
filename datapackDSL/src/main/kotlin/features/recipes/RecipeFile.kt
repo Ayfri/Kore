@@ -4,22 +4,16 @@ import DataPack
 import Generator
 import features.recipes.types.Recipe
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
-import java.io.File
 
-@Serializable
 data class RecipeFile(
-	@Transient
-	var fileName: String = "recipe",
+	override var fileName: String = "recipe",
 	var recipe: Recipe,
 ) : Generator {
-	@Transient
 	private lateinit var json: Json
 
-	override fun generate(dataPack: DataPack, directory: File) {
+	override fun generateJson(dataPack: DataPack): String {
 		val jsonEncoder = getJsonEncoder(dataPack)
 		var json = jsonEncoder.encodeToJsonElement(recipe)
 		json = buildJsonObject {
@@ -29,7 +23,7 @@ data class RecipeFile(
 				else put(key, value)
 			}
 		}
-		File(directory, "$fileName.json").writeText(jsonEncoder.encodeToString(json))
+		return jsonEncoder.encodeToString(json)
 	}
 
 	@OptIn(ExperimentalSerializationApi::class)

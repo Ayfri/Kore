@@ -1,7 +1,7 @@
 package features.itemmodifiers.functions
 
 import arguments.Argument
-import features.itemmodifiers.ItemModifierEntry
+import features.itemmodifiers.ItemModifier
 import features.loottables.entries.Item
 import kotlinx.serialization.Serializable
 
@@ -9,8 +9,7 @@ import kotlinx.serialization.Serializable
 data class SetContents(
 	var type: Argument.BlockEntityType,
 	var entries: List<Item>,
-) : ItemFunctionSurrogate
+) : ItemFunction()
 
-fun ItemModifierEntry.setContents(type: Argument.BlockEntityType, entries: MutableList<Item>.() -> Unit = {}) {
-	function = SetContents(type, buildList(entries))
-}
+fun ItemModifier.setContents(type: Argument.BlockEntityType, entries: MutableList<Item>.() -> Unit = {}) =
+	SetContents(type, buildList(entries)).also { modifiers += it }

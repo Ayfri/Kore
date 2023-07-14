@@ -14,7 +14,7 @@ data class AdvancementDisplay(
 	var title: ChatComponents,
 	@Serializable
 	var description: ChatComponents,
-	var frameType: AdvancementFrameType = AdvancementFrameType.TASK,
+	var frame: AdvancementFrameType = AdvancementFrameType.TASK,
 	var background: String? = null,
 	var showToast: Boolean = true,
 	var announceToChat: Boolean = true,

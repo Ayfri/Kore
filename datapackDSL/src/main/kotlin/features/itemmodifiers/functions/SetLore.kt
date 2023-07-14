@@ -6,7 +6,7 @@ import arguments.chatcomponents.ChatComponent
 import arguments.chatcomponents.PlainTextComponent
 import arguments.chatcomponents.text
 import arguments.chatcomponents.textComponent
-import features.itemmodifiers.ItemModifierEntry
+import features.itemmodifiers.ItemModifier
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -14,37 +14,37 @@ data class SetLore(
 	var entity: Source? = null,
 	var lore: ChatComponents = textComponent(),
 	var replace: Boolean? = null,
-) : ItemFunctionSurrogate
+) : ItemFunction()
 
-fun ItemModifierEntry.setLore(entity: Source? = null, replace: Boolean? = null, vararg lore: String) {
-	function = SetLore(entity, ChatComponents(lore.map { text(it) }.toMutableList()), replace)
+fun ItemModifier.setLore(entity: Source? = null, replace: Boolean? = null, vararg lore: String, block: SetLore.() -> Unit = {}) {
+	modifiers += SetLore(entity, ChatComponents(lore.map { text(it) }.toMutableList()), replace).apply(block)
 }
 
-fun ItemModifierEntry.setLore(
+fun ItemModifier.setLore(
 	entity: Source? = null,
 	replace: Boolean? = null,
 	text: String,
 	color: Color? = null,
 	block: PlainTextComponent.() -> Unit = {}
-) {
-	function = SetLore(entity, textComponent(text) {
-		this.color = color
-		block()
-	}, replace)
-}
+) = SetLore(entity, textComponent(text) {
+	this.color = color
+	block()
+}, replace).also { modifiers += it }
 
-fun ItemModifierEntry.setLore(
+fun ItemModifier.setLore(
 	entity: Source? = null,
 	replace: Boolean? = null,
 	components: ChatComponents,
+	block: SetLore.() -> Unit = {},
 ) {
-	function = SetLore(entity, components, replace)
+	modifiers += SetLore(entity, components, replace).apply(block)
 }
 
-fun ItemModifierEntry.setLore(
+fun ItemModifier.setLore(
 	entity: Source? = null,
 	replace: Boolean? = null,
 	component: ChatComponent,
+	block: SetLore.() -> Unit = {},
 ) {
-	function = SetLore(entity, ChatComponents(component), replace)
+	modifiers += SetLore(entity, ChatComponents(component), replace).apply(block)
 }

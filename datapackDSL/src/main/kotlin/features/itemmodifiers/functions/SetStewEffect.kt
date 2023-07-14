@@ -1,7 +1,7 @@
 package features.itemmodifiers.functions
 
 import arguments.Argument
-import features.itemmodifiers.ItemModifierEntry
+import features.itemmodifiers.ItemModifier
 import features.predicates.providers.NumberProvider
 import features.predicates.providers.constant
 import kotlinx.serialization.Serializable
@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SetStewEffect(
 	val effects: List<PotionEffect>
-) : ItemFunctionSurrogate
+) : ItemFunction()
 
 @Serializable
 data class PotionEffect(
@@ -17,12 +17,11 @@ data class PotionEffect(
 	var duration: NumberProvider = constant(0f)
 )
 
-fun ItemModifierEntry.setStewEffect(effects: MutableList<PotionEffect>.() -> Unit) {
-	function = SetStewEffect(buildList(effects))
-}
+fun ItemModifier.setStewEffect(effects: MutableList<PotionEffect>.() -> Unit) =
+	SetStewEffect(buildList(effects)).also { modifiers += it }
 
-fun ItemModifierEntry.setStewEffect(type: Argument.Potion, duration: NumberProvider = constant(0f)) {
-	function = SetStewEffect(listOf(PotionEffect(type, duration)))
+fun ItemModifier.setStewEffect(type: Argument.Potion, duration: NumberProvider = constant(0f), block: SetStewEffect.() -> Unit = {}) {
+	modifiers += SetStewEffect(listOf(PotionEffect(type, duration))).apply(block)
 }
 
 fun MutableList<PotionEffect>.potionEffect(type: Argument.Potion, duration: NumberProvider = constant(0f)) {

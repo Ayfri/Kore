@@ -1,7 +1,7 @@
 package features.itemmodifiers.functions
 
 import arguments.Argument
-import features.itemmodifiers.ItemModifierEntry
+import features.itemmodifiers.ItemModifier
 import features.predicates.providers.NumberProvider
 import kotlinx.serialization.Serializable
 
@@ -9,8 +9,7 @@ import kotlinx.serialization.Serializable
 data class SetEnchantments(
 	var enchantments: Map<Argument.Enchantment, NumberProvider> = emptyMap(),
 	var add: Boolean? = null,
-) : ItemFunctionSurrogate
+) : ItemFunction()
 
-fun ItemModifierEntry.setEnchantments(add: Boolean? = null, enchantments: Map<Argument.Enchantment, NumberProvider>.() -> Unit = {}) {
-	function = SetEnchantments(buildMap(enchantments), add)
-}
+fun ItemModifier.setEnchantments(add: Boolean? = null, enchantments: Map<Argument.Enchantment, NumberProvider>.() -> Unit = {}) =
+	SetEnchantments(buildMap(enchantments), add).also { modifiers += it }

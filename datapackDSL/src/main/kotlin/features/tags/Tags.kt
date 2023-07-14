@@ -2,9 +2,9 @@ package features.tags
 
 import DataPack
 import Generator
-import java.io.File
 
 data class Tags(
+	override var fileName: String = "tags",
 	val namespace: String,
 	val tags: MutableList<Pair<String, Tag>> = mutableListOf()
 ) : Generator {
@@ -15,7 +15,7 @@ data class Tags(
 	}
 
 	fun addTo(type: String, name: String, block: Tag.() -> Unit) {
-		val tag = tags.find { it.first == type && it.second.name == name }
+		val tag = tags.find { it.first == type && it.second.fileName == name }
 		when {
 			tag != null -> tag.second.apply(block)
 			else -> add(type, name, block = block)
@@ -24,13 +24,14 @@ data class Tags(
 
 	fun tag(type: String, name: String, replace: Boolean = false, block: Tag.() -> Unit) = add(type, name, replace, block)
 
-	override fun generate(dataPack: DataPack, directory: File) = tags.forEach { (type, tag) ->
-		tag.generate(dataPack, File(directory, type))
-	}
+	// TODO : Refactor tags to use Generator syntax
+	override fun generateJson(dataPack: DataPack) = tags.forEach { (type, tag) ->
+		tag.generateJson(dataPack)
+	}.let { "" }
 }
 
 fun DataPack.tags(namespace: String = name, block: Tags.() -> Unit = {}): Tags {
-	val newTags = Tags(namespace).apply(block)
+	val newTags = Tags(namespace = namespace).apply(block)
 	tags += newTags
 	return newTags
 }

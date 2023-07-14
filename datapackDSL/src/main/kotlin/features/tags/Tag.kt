@@ -5,15 +5,16 @@ import Generator
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString
-import java.io.File
 
 @Serializable
 data class Tag(
 	@Transient
-	val name: String = "tag",
+	override var fileName: String = "tag",
 	val replace: Boolean = false,
 	val values: MutableList<@Serializable(TagEntry.Companion.TagEntrySerializer::class) TagEntry> = mutableListOf(),
 ) : Generator {
+	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
+
 	operator fun plusAssign(value: TagEntry) {
 		values += value
 	}
@@ -32,11 +33,5 @@ data class Tag(
 
 	fun add(name: String, namespace: String = "minecraft", group: Boolean = false, required: Boolean? = null) {
 		values += TagEntry("${if (group) "#" else ""}$namespace:$name", required)
-	}
-
-	override fun generate(dataPack: DataPack, directory: File) {
-		val file = File(directory, "$name.json")
-		file.parentFile.mkdirs()
-		file.writeText(dataPack.jsonEncoder.encodeToString(this))
 	}
 }

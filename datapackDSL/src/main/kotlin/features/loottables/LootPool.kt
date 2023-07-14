@@ -1,99 +1,104 @@
 package features.loottables
 
+import dataPack
 import features.itemmodifiers.ItemModifier
-import features.itemmodifiers.ItemModifierEntry
+import features.itemmodifiers.ItemModifierAsList
 import features.loottables.entries.LootEntries
 import features.loottables.entries.LootEntry
 import features.loottables.entries.LootEntrySurrogate
 import features.predicates.Predicate
 import features.predicates.conditions.PredicateCondition
-import features.predicates.conditions.PredicateConditionsSerializer
+import features.predicates.conditions.PredicateConditionsAsList
 import features.predicates.providers.NumberProvider
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Serializer
 import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.descriptors.element
+import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.JsonEncoder
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.serializer
 
-typealias LootPool = @Serializable(LootPoolSerializer::class) LootPoolSurrogate
-
-@Serializable
-data class LootPoolSurrogate(
+@Serializable(with = LootPool.Companion.LootPoolSerializer::class)
+data class LootPool(
 	var rolls: NumberProvider,
 	var bonusRolls: NumberProvider? = null,
-	@Serializable(with = PredicateConditionsSerializer::class)
-	var conditions: List<PredicateCondition>? = null,
+	var conditions: Predicate? = null,
 	var entries: List<LootEntry> = emptyList(),
-	var functions: ItemModifier? = null,
-)
-
-@OptIn(ExperimentalSerializationApi::class)
-@Serializer(forClass = LootPoolSurrogate::class)
-object DefaultLootPoolSerializer
-
-object LootPoolSerializer : KSerializer<LootPool> by DefaultLootPoolSerializer {
-	private val WORKAROUND_FIELD = "______do_not_use_this_field______${hashCode()}"
-	private val workaroundJson = Json {
-		classDiscriminator = WORKAROUND_FIELD
-	}
-
-	override fun serialize(encoder: Encoder, value: LootPool) {
-		require(encoder is JsonEncoder) { "LootPool can only be serialized with Json" }
-		val result = buildJsonObject {
-			put("rolls", Json.encodeToJsonElement(NumberProvider.serializer(), value.rolls))
-
-			value.bonusRolls?.let {
-				put("bonus_rolls", Json.encodeToJsonElement(NumberProvider.serializer(), it))
+	var functions: ItemModifierAsList? = null,
+) {
+	companion object {
+		object LootPoolSerializer : KSerializer<LootPool> {
+			override val descriptor = buildClassSerialDescriptor("LootPool") {
+				element<NumberProvider>("rolls")
+				element<NumberProvider?>("bonus_rolls", isOptional = true)
+				element<PredicateConditionsAsList>("conditions", isOptional = true)
+				element<List<LootEntrySurrogate>>("entries")
+				element<ItemModifierAsList?>("functions", isOptional = true)
 			}
 
-			value.conditions?.let {
-				val element = workaroundJson.encodeToJsonElement(ListSerializer(PredicateCondition.serializer()), it)
-				val resultElement = element.jsonArray.map { jsonElement ->
-					JsonObject(jsonElement.jsonObject.filterKeys { key -> key != WORKAROUND_FIELD })
+			override fun deserialize(decoder: Decoder) = error("LootPool cannot be deserialized")
+
+			override fun serialize(encoder: Encoder, value: LootPool) {
+				require(encoder is JsonEncoder) { "LootPool can only be serialized with Json" }
+				val result = buildJsonObject {
+					put("rolls", encoder.json.encodeToJsonElement(NumberProvider.serializer(), value.rolls))
+
+					value.bonusRolls?.let {
+						put("bonus_rolls", encoder.json.encodeToJsonElement(NumberProvider.serializer(), it))
+					}
+
+					value.conditions?.let {
+						val jsonElement = it
+							.getJsonEncoder(dataPack("") {})
+							.encodeToJsonElement(serializer<PredicateConditionsAsList>(), it.predicateConditions)
+						put("conditions", jsonElement)
+					}
+
+					put(
+						"entries",
+						encoder.json.encodeToJsonElement(ListSerializer(LootEntrySurrogate.Companion.LootEntrySerializer), value.entries)
+					)
+
+					value.functions?.let {
+						put("functions", encoder.json.encodeToJsonElement(ItemModifier.Companion.ItemModifierAsListSerializer, it))
+					}
 				}
 
-				put("conditions", JsonArray(resultElement))
-			}
-
-			put("entries", Json.encodeToJsonElement(ListSerializer(LootEntrySurrogate.Companion.LootEntrySerializer), value.entries))
-
-			value.functions?.let {
-				put("functions", Json.encodeToJsonElement(ItemModifier.serializer(), it))
+				encoder.encodeJsonElement(result)
 			}
 		}
-
-		encoder.encodeJsonElement(result)
 	}
 }
 
-fun LootPoolSurrogate.rolls(value: NumberProvider) {
+fun LootPool.rolls(value: NumberProvider) {
 	rolls = value
 }
 
-fun LootPoolSurrogate.bonusRolls(value: NumberProvider) {
+fun LootPool.bonusRolls(value: NumberProvider) {
 	bonusRolls = value
 }
 
-fun LootPoolSurrogate.conditions(vararg value: PredicateCondition) {
-	conditions = value.toList()
+fun LootPool.conditions(vararg value: PredicateCondition) {
+	conditions = conditions?.also {
+		it.predicateConditions += value.toList()
+	} ?: Predicate(predicateConditions = value.toList())
 }
 
-fun LootPoolSurrogate.conditions(block: Predicate.() -> Unit) {
-	conditions = Predicate().apply(block).predicateConditions
+fun LootPool.conditions(block: Predicate.() -> Unit) {
+	conditions = Predicate().apply(block)
 }
 
-fun LootPoolSurrogate.entries(vararg value: LootEntry) {
+fun LootPool.entries(vararg value: LootEntry) {
 	entries = value.toList()
 }
 
-fun LootPoolSurrogate.entries(block: LootEntries.() -> Unit) {
+fun LootPool.entries(block: LootEntries.() -> Unit) {
 	entries = buildList(block)
 }
 
-fun LootPoolSurrogate.functions(block: ItemModifierEntry.() -> Unit) {
-	functions = ItemModifier().apply {
-		modifiers += ItemModifierEntry().apply(block)
-	}
+fun LootPool.functions(block: ItemModifier.() -> Unit) {
+	functions = ItemModifierAsList().apply(block)
 }

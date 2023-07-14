@@ -28,7 +28,7 @@ sealed interface LootEntrySurrogate {
 
 				encoder.encodeJsonElement(buildJsonObject {
 					put("type", JsonPrimitive("minecraft:${value::class.simpleName!!.snakeCase()}"))
-					Json.encodeToJsonElement(value).jsonObject.forEach { (key, value) ->
+					encoder.json.encodeToJsonElement(value).jsonObject.forEach { (key, value) ->
 						if (key != "type") put(key, value)
 					}
 				})

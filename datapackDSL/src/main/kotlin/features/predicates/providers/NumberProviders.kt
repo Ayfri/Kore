@@ -1,6 +1,5 @@
 package features.predicates.providers
 
-import arguments.numbers.FloatRangeOrFloat
 import features.predicates.types.EntityType
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
@@ -21,14 +20,14 @@ value class ConstantNumberProvider(
 
 @Serializable
 data class UniformNumberProvider(
-	var min: FloatRangeOrFloat,
-	var max: FloatRangeOrFloat,
+	var min: NumberProvider,
+	var max: NumberProvider,
 ) : NumberProvider
 
 @Serializable
 data class BinomialNumberProvider(
-	var n: Int,
-	var p: Float,
+	var n: NumberProvider,
+	var p: NumberProvider,
 ) : NumberProvider
 
 @Serializable(ScoreTargetType.Companion.ScoreTargetTypeSerializer::class)

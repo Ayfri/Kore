@@ -1,6 +1,6 @@
 package features.itemmodifiers.functions
 
-import features.itemmodifiers.ItemModifierEntry
+import features.itemmodifiers.ItemModifier
 import features.predicates.providers.NumberProvider
 import features.predicates.providers.constant
 import kotlinx.serialization.Serializable
@@ -9,12 +9,12 @@ import kotlinx.serialization.Serializable
 data class SetCount(
 	var count: NumberProvider,
 	var add: Boolean? = null,
-) : ItemFunctionSurrogate
+) : ItemFunction()
 
-fun ItemModifierEntry.setCount(count: NumberProvider, add: Boolean? = null) {
-	function = SetCount(count, add)
+fun ItemModifier.setCount(count: NumberProvider, add: Boolean? = null, block: SetCount.() -> Unit = {}) {
+	modifiers += SetCount(count, add).apply(block)
 }
 
-fun ItemModifierEntry.setCount(count: Float, add: Boolean? = null) {
-	function = SetCount(constant(count), add)
+fun ItemModifier.setCount(count: Float, add: Boolean? = null, block: SetCount.() -> Unit = {}) {
+	modifiers += SetCount(constant(count), add).apply(block)
 }

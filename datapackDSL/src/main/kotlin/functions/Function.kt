@@ -1,7 +1,6 @@
 package functions
 
 import DataPack
-import Generator
 import arguments.Argument
 import arguments.ChatComponents
 import arguments.Color
@@ -21,7 +20,7 @@ open class Function(
 	override val namespace: String = "minecraft",
 	override var directory: String = "",
 	val datapack: DataPack
-) : Generator, Argument.Function {
+) : Argument.Function {
 	val lines = mutableListOf<String>()
 	private var debug = false
 
@@ -57,7 +56,7 @@ open class Function(
 		lines.add("# $comment")
 	}
 
-	override fun generate(dataPack: DataPack, directory: File) {
+	fun generate(directory: File) {
 		val file = File(directory, "${this.directory}/$name.mcfunction")
 		file.parentFile.mkdirs()
 
@@ -139,7 +138,6 @@ open class Function(
 			}
 
 			override fun comment(comment: String) {}
-			override fun generate(dataPack: DataPack, directory: File) {}
 			override fun clear() {}
 			override fun toString() = ""
 			override fun asId() = lines.getOrElse(0) { "" }

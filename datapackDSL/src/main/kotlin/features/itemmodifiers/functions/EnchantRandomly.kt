@@ -1,22 +1,22 @@
 package features.itemmodifiers.functions
 
 import arguments.Argument
-import features.itemmodifiers.ItemModifierEntry
+import features.itemmodifiers.ItemModifier
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class EnchantRandomly(
-	val enchantments: List<Argument.Enchantment> = emptyList(),
-) : ItemFunctionSurrogate
+	var enchantments: List<Argument.Enchantment> = emptyList(),
+) : ItemFunction()
 
-fun ItemModifierEntry.enchantRandomly(enchantments: List<Argument.Enchantment> = emptyList()) {
-	function = EnchantRandomly(enchantments)
+fun ItemModifier.enchantRandomly(enchantments: List<Argument.Enchantment> = emptyList(), block: EnchantRandomly.() -> Unit = {}) {
+	modifiers += EnchantRandomly(enchantments).apply(block)
 }
 
-fun ItemModifierEntry.enchantRandomly(vararg enchantments: Argument.Enchantment) {
-	function = EnchantRandomly(enchantments.toList())
+fun ItemModifier.enchantRandomly(vararg enchantments: Argument.Enchantment, block: EnchantRandomly.() -> Unit = {}) {
+	modifiers += EnchantRandomly(enchantments.toList()).apply(block)
 }
 
-fun ItemModifierEntry.enchantRandomly(enchantments: MutableList<Argument.Enchantment>.() -> Unit) {
-	function = EnchantRandomly(buildList(enchantments))
+fun EnchantRandomly.enchantments(block: MutableList<Argument.Enchantment>.() -> Unit = {}) {
+	enchantments = buildList(block)
 }

@@ -15,17 +15,33 @@ import utils.snakeCase
 typealias PredicateCondition = @Serializable(PredicateConditionSurrogate.Companion.PredicateConditionSerializer::class) PredicateConditionSurrogate
 
 typealias PredicateConditions = @Serializable(PredicateConditionsSerializer::class) List<PredicateCondition>
+typealias PredicateConditionsAsList = @Serializable(PredicateConditionsAsListSerializer::class) List<PredicateCondition>
 
 object PredicateConditionsSerializer : KSerializer<List<PredicateCondition>?> {
 	@OptIn(ExperimentalSerializationApi::class)
-	override val descriptor = listSerialDescriptor(PredicateConditionSurrogate.Companion.PredicateConditionSerializer.descriptor)
+	override val descriptor = listSerialDescriptor(serialDescriptor<PredicateCondition>())
 	override fun deserialize(decoder: Decoder) = error("PredicateConditions cannot be deserialized")
 
-	override fun serialize(encoder: Encoder, value: List<PredicateCondition>?) {
+	override fun serialize(encoder: Encoder, value: List<PredicateCondition>?) =
+		when (value?.size) {
+			null -> {}
+			1 -> encoder.encodeSerializableValue(PredicateConditionSurrogate.Companion.PredicateConditionSerializer, value.first())
+			else -> encoder.encodeSerializableValue(
+				ListSerializer(PredicateConditionSurrogate.Companion.PredicateConditionSerializer),
+				value
+			)
+		}
+}
 
-		if (value != null)
-			encoder.encodeSerializableValue(ListSerializer(PredicateConditionSurrogate.Companion.PredicateConditionSerializer), value)
-	}
+object PredicateConditionsAsListSerializer : KSerializer<List<PredicateCondition>?> by PredicateConditionsSerializer {
+	override fun serialize(encoder: Encoder, value: List<PredicateCondition>?) =
+		when (value?.size) {
+			null -> {}
+			else -> encoder.encodeSerializableValue(
+				ListSerializer(PredicateConditionSurrogate.Companion.PredicateConditionSerializer),
+				value
+			)
+		}
 }
 
 
@@ -47,7 +63,7 @@ sealed interface PredicateConditionSurrogate {
 					val condition = "minecraft:${value::class.simpleName!!.snakeCase()}"
 					put("condition", JsonPrimitive(condition))
 
-					Json.encodeToJsonElement(value).jsonObject.forEach { (key, value) ->
+					encoder.json.encodeToJsonElement(value).jsonObject.forEach { (key, value) ->
 						if (key != "type") put(key, value)
 					}
 				})

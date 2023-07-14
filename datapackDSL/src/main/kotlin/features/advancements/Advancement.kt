@@ -18,11 +18,11 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.NbtTag
-import java.io.File
 
 @Serializable
 data class Advancement internal constructor(
-	@Transient var fileName: String = "advancement",
+	@Transient
+	override var fileName: String = "advancement",
 	var display: AdvancementDisplay? = null,
 	var parent: Argument.Advancement? = null,
 	var criteria: Map<String, AdvancementCriterion> = emptyMap(),
@@ -33,10 +33,7 @@ data class Advancement internal constructor(
 	@Transient
 	private lateinit var jsonEncoder: Json
 
-	override fun generate(dataPack: DataPack, directory: File) {
-		val json = getJsonEncoder(dataPack).encodeToString(this)
-		File(directory, "$fileName.json").writeText(json)
-	}
+	override fun generateJson(dataPack: DataPack) = getJsonEncoder(dataPack).encodeToString(this)
 
 	@OptIn(ExperimentalSerializationApi::class)
 	fun getJsonEncoder(dataPack: DataPack) = when {
@@ -48,16 +45,16 @@ data class Advancement internal constructor(
 				serializersModule = SerializersModule {
 					contextual(Advancements::class, AdvancementsJSONSerializer)
 				}
+				namingStrategy = dataPack.jsonEncoder.configuration.namingStrategy
 			}
 			jsonEncoder
 		}
 	}
 }
 
-fun DataPack.advancement(fileName: String, block: Advancement.() -> Unit = {}): Advancement {
-	val advancement = Advancement(fileName).apply(block)
-	advancements += advancement
-	return advancement
+fun DataPack.advancement(fileName: String, block: Advancement.() -> Unit = {}): Argument.Advancement {
+	advancements += Advancement(fileName).apply(block)
+	return Argument.Advancement(fileName, name)
 }
 
 fun Advancement.display(icon: AdvancementIcon, title: String = "", description: String = "", block: AdvancementDisplay.() -> Unit = {}) {

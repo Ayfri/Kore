@@ -6,7 +6,7 @@ import arguments.Argument
 import arguments.selector.Advancements
 import features.advancements.types.AdvancementsJSONSerializer
 import features.itemmodifiers.ItemModifier
-import features.itemmodifiers.ItemModifierEntry
+import features.itemmodifiers.ItemModifierAsList
 import features.predicates.providers.NumberProvider
 import features.predicates.providers.constant
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -15,21 +15,19 @@ import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
-import java.io.File
 
 @Serializable
 data class LootTable(
-	@Transient var fileName: String = "loot_table",
-	var functions: ItemModifier? = null,
+	@Transient
+	override var fileName: String = "loot_table",
+	var functions: ItemModifierAsList? = null,
 	var pools: List<LootPool>? = null,
 	var randomSequence: Argument.RandomSequence? = null,
 ) : Generator {
 	@Transient
 	private lateinit var json: Json
 
-	override fun generate(dataPack: DataPack, directory: File) {
-		File(directory, "$fileName.json").writeText(getJsonEncoder(dataPack).encodeToString(this))
-	}
+	override fun generateJson(dataPack: DataPack) = getJsonEncoder(dataPack).encodeToString(this)
 
 	@OptIn(ExperimentalSerializationApi::class)
 	private fun getJsonEncoder(dataPack: DataPack) = when {
@@ -53,10 +51,8 @@ fun DataPack.lootTable(fileName: String, block: LootTable.() -> Unit = {}): Argu
 	return Argument.LootTable(fileName, name)
 }
 
-fun LootTable.functions(block: ItemModifierEntry.() -> Unit) {
-	functions = ItemModifier().apply {
-		modifiers += ItemModifierEntry().apply(block)
-	}
+fun LootTable.functions(block: ItemModifier.() -> Unit) {
+	functions = ItemModifier().apply(block)
 }
 
 fun LootTable.pool(rolls: NumberProvider = constant(1f), block: LootPool.() -> Unit = {}) {

@@ -1,6 +1,6 @@
 package features.itemmodifiers.functions
 
-import features.itemmodifiers.ItemModifierEntry
+import features.itemmodifiers.ItemModifier
 import features.predicates.providers.NumberProvider
 import features.predicates.providers.constant
 import kotlinx.serialization.Serializable
@@ -9,12 +9,12 @@ import kotlinx.serialization.Serializable
 data class SetDamage(
 	var damage: NumberProvider,
 	var add: Boolean? = null,
-) : ItemFunctionSurrogate
+) : ItemFunction()
 
-fun ItemModifierEntry.setDamage(damage: NumberProvider, add: Boolean? = null) {
-	function = SetDamage(damage, add)
+fun ItemModifier.setDamage(damage: NumberProvider, add: Boolean? = null, block: SetDamage.() -> Unit = {}) {
+	modifiers += SetDamage(damage, add).apply(block)
 }
 
-fun ItemModifierEntry.setDamage(damage: Float, add: Boolean? = null) {
-	function = SetDamage(constant(damage), add)
+fun ItemModifier.setDamage(damage: Float, add: Boolean? = null, block: SetDamage.() -> Unit = {}) {
+	modifiers += SetDamage(constant(damage), add).apply(block)
 }

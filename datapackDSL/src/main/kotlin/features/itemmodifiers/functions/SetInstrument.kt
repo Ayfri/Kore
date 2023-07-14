@@ -1,14 +1,14 @@
 package features.itemmodifiers.functions
 
 import arguments.Argument
-import features.itemmodifiers.ItemModifierEntry
+import features.itemmodifiers.ItemModifier
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class SetInstrument(
 	val instrument: Argument.InstrumentTag
-) : ItemFunctionSurrogate
+) : ItemFunction()
 
-fun ItemModifierEntry.setInstrument(instrument: Argument.InstrumentTag) {
-	function = SetInstrument(instrument)
+fun ItemModifier.setInstrument(instrument: Argument.InstrumentTag, block: SetInstrument.() -> Unit = {}) {
+	modifiers += SetInstrument(instrument).apply(block)
 }

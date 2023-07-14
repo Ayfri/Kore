@@ -1,13 +1,13 @@
 package features.itemmodifiers.functions
 
-import features.itemmodifiers.ItemModifierEntry
+import features.itemmodifiers.ItemModifier
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class FillPlayerHead(
 	val entity: Source,
-) : ItemFunctionSurrogate
+) : ItemFunction()
 
-fun ItemModifierEntry.fillPlayerHead(entity: Source) {
-	function = FillPlayerHead(entity)
+fun ItemModifier.fillPlayerHead(entity: Source, block: FillPlayerHead.() -> Unit = {}) {
+	modifiers += FillPlayerHead(entity).apply(block)
 }

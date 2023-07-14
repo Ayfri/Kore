@@ -1,7 +1,7 @@
 package features.itemmodifiers.functions
 
 import arguments.Argument
-import features.itemmodifiers.ItemModifierEntry
+import features.itemmodifiers.ItemModifier
 import features.itemmodifiers.formulas.Formula
 import kotlinx.serialization.Serializable
 
@@ -9,8 +9,8 @@ import kotlinx.serialization.Serializable
 data class ApplyBonus(
 	var enchantment: Argument.Enchantment,
 	var formula: Formula,
-) : ItemFunctionSurrogate
+) : ItemFunction()
 
-fun ItemModifierEntry.applyBonus(enchantment: Argument.Enchantment, formula: Formula) {
-	function = ApplyBonus(enchantment, formula)
+fun ItemModifier.applyBonus(enchantment: Argument.Enchantment, formula: Formula, block: ApplyBonus.() -> Unit = {}) {
+	modifiers += ApplyBonus(enchantment, formula).apply(block)
 }

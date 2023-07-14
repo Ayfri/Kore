@@ -1,6 +1,6 @@
 package features.itemmodifiers.functions
 
-import features.itemmodifiers.ItemModifierEntry
+import features.itemmodifiers.ItemModifier
 import features.predicates.providers.NumberProvider
 import kotlinx.serialization.Serializable
 
@@ -8,8 +8,8 @@ import kotlinx.serialization.Serializable
 data class EnchantWithLevels(
 	var levels: NumberProvider,
 	var treasure: Boolean? = null,
-) : ItemFunctionSurrogate
+) : ItemFunction()
 
-fun ItemModifierEntry.enchantWithLevels(levels: NumberProvider, treasure: Boolean? = null) {
-	function = EnchantWithLevels(levels, treasure)
+fun ItemModifier.enchantWithLevels(levels: NumberProvider, treasure: Boolean? = null, block: EnchantWithLevels.() -> Unit = {}) {
+	modifiers += EnchantWithLevels(levels, treasure).apply(block)
 }

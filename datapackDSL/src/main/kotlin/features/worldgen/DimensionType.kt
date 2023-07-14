@@ -10,8 +10,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonNamingStrategy
-import java.io.File
 
 
 /**
@@ -20,33 +18,31 @@ import java.io.File
  */
 @Serializable
 data class DimensionType(
-	@Transient var fileName: String = "dimension_type",
+	@Transient
+	override var fileName: String = "dimension_type",
 	var ultrawarm: Boolean = false,
 	var natural: Boolean = true,
-	var coordinateScale: Double = 1.0,
+	var piglinSafe: Boolean = false,
+	var respawnAnchorWorks: Boolean = false,
+	var bedWorks: Boolean = true,
+	var hasRaids: Boolean = true,
 	var hasSkylight: Boolean = true,
 	var hasCeiling: Boolean = false,
+	var coordinateScale: Double = 1.0,
 	var ambientLight: Float = 0f,
-	var fixedTime: Long? = null,
-	var monsterSpawnLightLevel: IntProvider = constant(0),
-	var monsterSpawnBlockLightLimit: Int = 0,
-	var piglinSafe: Boolean = false,
-	var bedWorks: Boolean = true,
-	var respawnAnchorWorks: Boolean = false,
-	var hasRaids: Boolean = true,
 	var logicalHeight: Int = 0,
+	var fixedTime: Long? = null,
+	var effects: Argument.Dimension? = null,
+	var infiniburn: Argument.BlockTag,
 	var minY: Int = 0,
 	var height: Int = 16,
-	var infiniburn: Argument.BlockTag,
-	var effects: Argument.Dimension? = null,
+	var monsterSpawnLightLevel: IntProvider = constant(0),
+	var monsterSpawnBlockLightLimit: Int = 0,
 ) : Generator {
 	@Transient
 	private lateinit var jsonEncoder: Json
 
-	override fun generate(dataPack: DataPack, directory: File) {
-		val json = getJsonEncoder(dataPack).encodeToString(this)
-		File(directory, "$fileName.json").writeText(json)
-	}
+	override fun generateJson(dataPack: DataPack) = getJsonEncoder(dataPack).encodeToString(this)
 
 	@OptIn(ExperimentalSerializationApi::class)
 	fun getJsonEncoder(dataPack: DataPack) = when {
@@ -55,7 +51,7 @@ data class DimensionType(
 			jsonEncoder = Json {
 				prettyPrint = dataPack.jsonEncoder.configuration.prettyPrint
 				if (prettyPrint) prettyPrintIndent = dataPack.jsonEncoder.configuration.prettyPrintIndent
-				namingStrategy = JsonNamingStrategy.SnakeCase
+				namingStrategy = dataPack.jsonEncoder.configuration.namingStrategy
 				encodeDefaults = true
 				explicitNulls = false
 			}

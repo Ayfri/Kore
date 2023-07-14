@@ -5,26 +5,21 @@ import Generator
 import arguments.Argument
 import arguments.selector.Advancements
 import features.advancements.types.AdvancementsJSONSerializer
-import features.predicates.conditions.PredicateCondition
 import features.predicates.conditions.PredicateConditions
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
-import java.io.File
 
 
 data class Predicate(
-	var fileName: String = "predicate",
+	override var fileName: String = "predicate",
 	var predicateConditions: PredicateConditions = mutableListOf(),
 ) : Generator {
 	@Transient
 	private lateinit var json: Json
 
-	override fun generate(dataPack: DataPack, directory: File) {
-		val json = getJsonEncoder(dataPack).encodeToString(ListSerializer(PredicateCondition.serializer()), predicateConditions)
-		File(directory, "$fileName.json").writeText(json)
-	}
+	override fun generateJson(dataPack: DataPack) = getJsonEncoder(dataPack).encodeToString(predicateConditions)
 
 	@OptIn(ExperimentalSerializationApi::class)
 	fun getJsonEncoder(dataPack: DataPack) = when {

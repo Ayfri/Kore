@@ -4,22 +4,21 @@ import arguments.ChatComponents
 import arguments.Color
 import arguments.chatcomponents.ChatComponent
 import arguments.chatcomponents.textComponent
-import features.itemmodifiers.ItemModifierEntry
+import features.itemmodifiers.ItemModifier
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class SetName(
 	var entity: Source? = null,
 	var name: ChatComponents,
-) : ItemFunctionSurrogate
+) : ItemFunction()
 
-fun ItemModifierEntry.setName(entity: Source? = null, name: String, color: Color? = null, block: ChatComponent.() -> Unit = {}) {
-	function = SetName(entity, textComponent(name) {
+fun ItemModifier.setName(entity: Source? = null, name: String, color: Color? = null, block: ChatComponent.() -> Unit = {}) =
+	SetName(entity, textComponent(name) {
 		this.color = color
 		block()
-	})
-}
+	}).also { modifiers += it }
 
-fun ItemModifierEntry.setName(entity: Source? = null, name: ChatComponent) {
-	function = SetName(entity, ChatComponents(name))
+fun ItemModifier.setName(entity: Source? = null, name: ChatComponent, block: SetName.() -> Unit = {}) {
+	modifiers += SetName(entity, ChatComponents(name)).apply(block)
 }

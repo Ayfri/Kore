@@ -71,7 +71,12 @@ class Execute {
 	fun rotatedAs(target: Argument.Entity) = array.addAll(literal("rotated"), literal("as"), targetArg(target))
 
 	fun ifCondition(block: ExecuteCondition.() -> Unit) = array.addAll(ExecuteCondition(this, false).apply(block).arguments)
+	fun ifCondition(vararg predicates: Argument.Predicate) =
+		array.addAll(ExecuteCondition(this, false).apply { predicates.forEach(::predicate) }.arguments)
+
 	fun unlessCondition(block: ExecuteCondition.() -> Unit) = array.addAll(ExecuteCondition(this, true).apply(block).arguments)
+	fun unlessCondition(vararg predicates: Argument.Predicate) =
+		array.addAll(ExecuteCondition(this, true).apply { predicates.forEach(::predicate) }.arguments)
 
 	fun on(relation: Relation) = array.addAll(literal("on"), literal(relation.asArg()))
 

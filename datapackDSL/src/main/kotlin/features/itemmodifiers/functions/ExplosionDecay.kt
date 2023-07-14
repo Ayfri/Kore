@@ -1,11 +1,11 @@
 package features.itemmodifiers.functions
 
-import features.itemmodifiers.ItemModifierEntry
+import features.itemmodifiers.ItemModifier
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object ExplosionDecay : ItemFunctionSurrogate
+class ExplosionDecay : ItemFunction()
 
-fun ItemModifierEntry.explosionDecay() {
-	function = ExplosionDecay
+fun ItemModifier.explosionDecay(block: ExplosionDecay.() -> Unit = {}) {
+	modifiers += ExplosionDecay().apply(block)
 }

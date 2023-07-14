@@ -18,6 +18,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNamingStrategy
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -123,24 +124,42 @@ class DataPack(val name: String) {
 		data.generateResources("chat_types", chatTypes)
 		data.generateResources("damage_types", damageTypes)
 		data.generateResources("dimension_type", dimensionTypes)
-		data.generateResources("functions", functions.groupBy(Function::namespace))
-		data.generateResources(
-			dirName = "functions/$GENERATED_FUNCTIONS_FOLDER",
-			resources = generatedFunctions.map {
-				it.directory = it.directory.removePrefix(GENERATED_FUNCTIONS_FOLDER)
-				it
-			}.groupBy(Function::namespace),
-			deleteOldFiles = true
-		)
 		data.generateResources("item_modifiers", itemModifiers)
 		data.generateResources("loot_tables", lootTables)
 		data.generateResources("predicates", predicates)
 		data.generateResources("recipes", recipes)
 		data.generateResources("tags", tags.groupBy(Tags::namespace))
 
+		data.generateFunctions("functions", functions.groupBy(Function::namespace))
+		data.generateFunctions(
+			dirName = "functions/$GENERATED_FUNCTIONS_FOLDER",
+			functionsMap = generatedFunctions.map {
+				it.directory = it.directory.removePrefix(GENERATED_FUNCTIONS_FOLDER)
+				it
+			}.groupBy(Function::namespace),
+			deleteOldFiles = true
+		)
 		val end = System.currentTimeMillis()
 		println("Generated data pack '$name' in ${end - start}ms in: ${root.absolutePath}")
 	}
+
+	private fun File.generateFunctions(
+		dirName: String,
+		functionsMap: Map<String, List<Function>>,
+		deleteOldFiles: Boolean = false
+	) =
+		functionsMap.forEach { (namespace, functions) ->
+			val namespaceDir = File(this, namespace)
+			namespaceDir.mkdirs()
+
+			if (functions.isEmpty()) return
+			val dir = File(let { if (it.name == "data") File(it, this@DataPack.name) else it }, dirName)
+			if (deleteOldFiles) dir.deleteRecursively()
+			dir.mkdirs()
+
+			functions.forEach { it.generate(dir) }
+		}
+
 
 	private fun <T : Generator> File.generateResources(
 		dirName: String,
@@ -164,7 +183,7 @@ class DataPack(val name: String) {
 		if (deleteOldFiles) dir.deleteRecursively()
 		dir.mkdirs()
 
-		resources.forEach { it.generate(this@DataPack, dir) }
+		resources.forEach { it.generateFile(this@DataPack, dir) }
 	}
 
 	@Deprecated(
@@ -182,6 +201,7 @@ class DataPack(val name: String) {
 			encodeDefaults = true
 			explicitNulls = false
 			ignoreUnknownKeys = true
+			namingStrategy = JsonNamingStrategy.SnakeCase
 			useAlternativeNames = false
 		}
 

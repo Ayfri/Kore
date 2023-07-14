@@ -6,18 +6,15 @@ import arguments.Argument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString
-import java.io.File
 
 @Serializable
 data class ChatType(
 	@Transient
-	var fileName: String = "chat_type",
+	override var fileName: String = "chat_type",
 	var chat: ChatTypeDecoration = ChatTypeDecoration("chat.type.text"),
 	var narration: ChatTypeDecoration = ChatTypeDecoration("chat.type.text.narrate"),
 ) : Generator {
-	override fun generate(dataPack: DataPack, directory: File) {
-		File(directory, "$fileName.json").writeText(dataPack.jsonEncoder.encodeToString(this))
-	}
+	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
 fun DataPack.chatType(

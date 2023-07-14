@@ -2,18 +2,16 @@ package features.itemmodifiers.functions
 
 import arguments.Argument
 import data.item.AttributeModifier
-import features.itemmodifiers.ItemModifierEntry
+import features.itemmodifiers.ItemModifier
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class SetAttributes(
 	val modifiers: List<AttributeModifier>
-) : ItemFunctionSurrogate
+) : ItemFunction()
 
-fun ItemModifierEntry.setAttributes(modifiers: MutableList<AttributeModifier>.() -> Unit = {}) {
-	function = SetAttributes(buildList(modifiers))
-}
+fun ItemModifier.setAttributes(modifiers: MutableList<AttributeModifier>.() -> Unit = {}) =
+	SetAttributes(buildList(modifiers)).also { this.modifiers += it }
 
-fun ItemModifierEntry.setAttribute(attribute: Argument.Attribute, modifier: AttributeModifier.() -> Unit = {}) {
-	function = SetAttributes(listOf(AttributeModifier(attribute).apply(modifier)))
-}
+fun ItemModifier.setAttribute(attribute: Argument.Attribute, modifier: AttributeModifier.() -> Unit = {}) =
+	SetAttributes(listOf(AttributeModifier(attribute).apply(modifier))).also { modifiers += it }

@@ -18,7 +18,7 @@ fun Execute.run(block: Function.() -> Command): Argument.Function {
 		block().apply {
 			arguments.replaceAll {
 				when (it) {
-					is Argument.Entity -> this@run.targetArg(it)
+					is Argument.Entity -> targetArg(it)
 					else -> it
 				}
 			}

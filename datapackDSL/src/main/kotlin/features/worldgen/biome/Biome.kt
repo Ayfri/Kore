@@ -7,12 +7,11 @@ import features.worldgen.biome.types.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString
-import java.io.File
 
 @Serializable
 data class Biome(
 	@Transient
-	var fileName: String = "biome",
+	override var fileName: String = "biome",
 	var temperature: Float = 0.8f,
 	var downfall: Float = 0.4f,
 	var hasPrecipitation: Boolean = true,
@@ -24,9 +23,7 @@ data class Biome(
 	var carvers: Carvers = Carvers(),
 	var features: Features = Features(),
 ) : Generator {
-	override fun generate(dataPack: DataPack, directory: File) {
-		File(directory, "$fileName.json").writeText(dataPack.jsonEncoder.encodeToString(this))
-	}
+	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
 fun DataPack.biome(fileName: String, init: Biome.() -> Unit = {}): Argument.Biome {

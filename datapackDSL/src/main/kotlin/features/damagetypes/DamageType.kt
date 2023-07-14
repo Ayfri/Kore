@@ -9,21 +9,18 @@ import features.damagetypes.types.Scaling
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString
-import java.io.File
 
 @Serializable
 data class DamageType(
 	@Transient
-	var fileName: String = "damage_type",
+	override var fileName: String = "damage_type",
 	var messageId: String,
 	var exhaustion: Float = 0f,
 	var scaling: Scaling,
 	var effects: Effects? = null,
 	var deathMessageType: DeathMessageType? = null,
 ) : Generator {
-	override fun generate(dataPack: DataPack, directory: File) {
-		File(directory, "$fileName.json").writeText(dataPack.jsonEncoder.encodeToString(this))
-	}
+	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
 fun DataPack.damageType(

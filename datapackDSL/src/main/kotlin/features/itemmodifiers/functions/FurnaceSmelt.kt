@@ -1,11 +1,11 @@
 package features.itemmodifiers.functions
 
-import features.itemmodifiers.ItemModifierEntry
+import features.itemmodifiers.ItemModifier
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object FurnaceSmelt : ItemFunctionSurrogate
+class FurnaceSmelt : ItemFunction()
 
-fun ItemModifierEntry.furnaceSmelt() {
-	function = FurnaceSmelt
+fun ItemModifier.furnaceSmelt(block: FurnaceSmelt.() -> Unit = {}) {
+	modifiers += FurnaceSmelt().apply(block)
 }

@@ -1,39 +1,18 @@
 package features.itemmodifiers.functions
 
-import features.itemmodifiers.ItemModifierEntry
-import kotlinx.serialization.KSerializer
+import features.itemmodifiers.ItemModifier
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
 import serializers.LowercaseSerializer
 
 @Serializable
 data class CopyNbt(
 	var source: NbtProvider,
 	var ops: List<CopyNbtOperation> = emptyList(),
-) : ItemFunctionSurrogate
+) : ItemFunction()
 
 @Serializable
-/* (with = NbtProvider.Companion.NbtProviderSerializer::class) */
-sealed interface NbtProvider {
-	companion object {
-		data object NbtProviderSerializer : KSerializer<NbtProvider> {
-			override val descriptor = buildClassSerialDescriptor("NbtProviderSurrogate")
-
-			override fun deserialize(decoder: Decoder) = error("NbtProviderSurrogate cannot be deserialized")
-
-			override fun serialize(encoder: Encoder, value: NbtProvider) {
-				if (value is CopyNbtContext) {
-					encoder.encodeSerializableValue(Source.serializer(), value.source)
-				} else if (value is CopyNbtStorage) {
-					encoder.encodeSerializableValue(CopyNbtStorage.serializer(), value)
-				}
-			}
-		}
-	}
-}
+sealed interface NbtProvider
 
 @Serializable
 data class CopyNbtContext(val source: Source) : NbtProvider
@@ -62,10 +41,9 @@ enum class CopyNbtOperationType {
 	}
 }
 
-fun ItemModifierEntry.copyNbt(source: Source, ops: MutableList<CopyNbtOperation>.() -> Unit = {}) {
-	function = CopyNbt(CopyNbtContext(source), buildList(ops))
-}
+fun ItemModifier.copyNbt(source: Source, ops: MutableList<CopyNbtOperation>.() -> Unit = {}) =
+	CopyNbt(CopyNbtContext(source), buildList(ops)).also { modifiers += it }
 
-fun ItemModifierEntry.copyNbt(source: String, ops: MutableList<CopyNbtOperation>.() -> Unit = {}) {
-	function = CopyNbt(CopyNbtStorage(source), buildList(ops))
-}
+
+fun ItemModifier.copyNbt(source: String, ops: MutableList<CopyNbtOperation>.() -> Unit = {}) =
+	CopyNbt(CopyNbtStorage(source), buildList(ops)).also { modifiers += it }
