@@ -1,6 +1,7 @@
 package features.worldgen
 
 import DataPack
+import features.worldgen.dimensiontype.dimensionType
 import features.worldgen.intproviders.*
 import utils.assertsIs
 

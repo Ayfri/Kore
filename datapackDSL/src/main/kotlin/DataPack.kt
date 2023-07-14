@@ -9,8 +9,8 @@ import features.loottables.LootTable
 import features.predicates.Predicate
 import features.recipes.RecipeFile
 import features.tags.Tags
-import features.worldgen.DimensionType
 import features.worldgen.biome.Biome
+import features.worldgen.dimensiontype.DimensionType
 import functions.Function
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString

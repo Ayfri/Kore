@@ -1,10 +1,11 @@
-package features.worldgen
+package features.worldgen.dimensiontype
 
 import DataPack
 import Generator
 import arguments.Argument
 import features.worldgen.intproviders.IntProvider
 import features.worldgen.intproviders.constant
+import generated.Tags
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -58,4 +59,15 @@ data class DimensionType(
 			jsonEncoder
 		}
 	}
+}
+
+/**
+ * Creates a new DimensionType.
+ * Values are the minimal values for a dimension type, booleans have the same values as overworld.
+ */
+fun DataPack.dimensionType(fileName: String, dimensionType: DimensionType.() -> Unit = {}): DimensionType {
+	val type = DimensionType(infiniburn = Tags.Blocks.INFINIBURN_OVERWORLD).apply(dimensionType)
+	type.fileName = fileName
+	dimensionTypes += type
+	return type
 }
