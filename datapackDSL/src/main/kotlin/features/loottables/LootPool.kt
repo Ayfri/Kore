@@ -7,8 +7,8 @@ import features.loottables.entries.LootEntries
 import features.loottables.entries.LootEntry
 import features.loottables.entries.LootEntrySurrogate
 import features.predicates.Predicate
+import features.predicates.PredicateAsList
 import features.predicates.conditions.PredicateCondition
-import features.predicates.conditions.PredicateConditionsAsList
 import features.predicates.providers.NumberProvider
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -19,13 +19,12 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.serializer
 
 @Serializable(with = LootPool.Companion.LootPoolSerializer::class)
 data class LootPool(
 	var rolls: NumberProvider,
 	var bonusRolls: NumberProvider? = null,
-	var conditions: Predicate? = null,
+	var conditions: PredicateAsList? = null,
 	var entries: List<LootEntry> = emptyList(),
 	var functions: ItemModifierAsList? = null,
 ) {
@@ -34,7 +33,7 @@ data class LootPool(
 			override val descriptor = buildClassSerialDescriptor("LootPool") {
 				element<NumberProvider>("rolls")
 				element<NumberProvider?>("bonus_rolls", isOptional = true)
-				element<PredicateConditionsAsList>("conditions", isOptional = true)
+				element<PredicateAsList>("conditions", isOptional = true)
 				element<List<LootEntrySurrogate>>("entries")
 				element<ItemModifierAsList?>("functions", isOptional = true)
 			}
@@ -53,7 +52,7 @@ data class LootPool(
 					value.conditions?.let {
 						val jsonElement = it
 							.getJsonEncoder(dataPack("") {})
-							.encodeToJsonElement(serializer<PredicateConditionsAsList>(), it.predicateConditions)
+							.encodeToJsonElement(Predicate.Companion.PredicateAsListSerializer, it)
 						put("conditions", jsonElement)
 					}
 

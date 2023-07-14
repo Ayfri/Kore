@@ -1,7 +1,7 @@
 package features.itemmodifiers.functions
 
 import features.predicates.Predicate
-import features.predicates.conditions.PredicateConditionsAsList
+import features.predicates.PredicateAsList
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
@@ -13,13 +13,13 @@ import utils.snakeCase
 
 @Serializable
 sealed class ItemFunction(
-	var conditions: PredicateConditionsAsList? = null
+	var conditions: PredicateAsList? = null
 ) {
 	companion object {
 		object ItemFunctionSerializer : KSerializer<ItemFunction> {
 			override val descriptor = buildClassSerialDescriptor("ItemFunctionSurrogate") {
 				element<String>("function")
-				element<PredicateConditionsAsList>("conditions")
+				element<PredicateAsList>("conditions")
 			}
 
 			override fun deserialize(decoder: Decoder) = error("ItemFunctionSurrogate cannot be deserialized")
@@ -41,5 +41,5 @@ sealed class ItemFunction(
 }
 
 fun ItemFunction.conditions(block: Predicate.() -> Unit) {
-	conditions = Predicate().apply(block).predicateConditions
+	conditions = Predicate().apply(block)
 }

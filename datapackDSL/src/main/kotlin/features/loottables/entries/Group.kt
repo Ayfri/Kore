@@ -1,17 +1,17 @@
 package features.loottables.entries
 
-import features.predicates.conditions.PredicateCondition
-import features.predicates.conditions.PredicateConditions
+import features.predicates.Predicate
+import features.predicates.PredicateAsList
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Group(
 	var children: List<LootEntry>,
-	var conditions: List<PredicateCondition>? = null,
+	var conditions: PredicateAsList? = null,
 ) : LootEntry
 
-fun LootEntries.group(children: List<LootEntry> = emptyList(), conditions: PredicateConditions.() -> Unit = {}) {
-	add(Group(children, buildList(conditions)))
+fun LootEntries.group(children: List<LootEntry> = emptyList(), conditions: Predicate.() -> Unit = {}) {
+	add(Group(children, Predicate().apply(conditions)))
 }
 
 fun LootEntries.group(group: Group.() -> Unit = {}) {
@@ -22,6 +22,6 @@ fun Group.children(block: LootEntries.() -> Unit) {
 	children = buildList(block)
 }
 
-fun Group.conditions(block: PredicateConditions.() -> Unit) {
-	conditions = buildList(block)
+fun Group.conditions(block: Predicate.() -> Unit) {
+	conditions = Predicate().apply(block)
 }
