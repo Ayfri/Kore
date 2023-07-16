@@ -27,6 +27,8 @@ fun generatePathEnumTree(
 		}
 	}
 
+	val topLevelInterfaceClassName = ClassName("generated", name)
+
 	for (path in paths) {
 		val parent = path.substringBeforeLast('/')
 		val depth = parent.count { it == '/' }
@@ -35,9 +37,30 @@ fun generatePathEnumTree(
 		val enumName = parent.substringAfterLast('/').pascalCase()
 		val tagParent = tagsParents?.keys?.firstOrNull { parent.startsWith(it) }
 
+		if ("/" !in path) {
+			println("Skipping $path")
+			topLevel.addType(
+				TypeSpec
+					.objectBuilder(enumName)
+					.apply {
+						addModifiers(KModifier.DATA)
+						addSuperinterface(topLevelInterfaceClassName)
+						addProperty(
+							PropertySpec
+								.builder("name", String::class)
+								.overrides()
+								.initializer("\"${enumValue.lowercase()}\"")
+								.build()
+						)
+					}
+					.build()
+			)
+			continue
+		}
+
 		typeBuilders[depth].getOrPut(parent) {
 			TypeSpec.enumBuilder(enumName).apply {
-				addSuperinterface(ClassName("generated", name))
+				addSuperinterface(topLevelInterfaceClassName)
 
 				if (tagParent != null) {
 					addProperty(
