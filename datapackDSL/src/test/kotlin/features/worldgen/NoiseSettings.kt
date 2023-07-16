@@ -1,7 +1,7 @@
 package features.worldgen
 
 import DataPack
-import features.worldgen.dimension.biomesource.multinoise.multinoiseBiomeSourceParameters
+import features.worldgen.dimension.biomesource.multinoise.multiNoiseBiomeSourceParameters
 import features.worldgen.noisesettings.*
 import features.worldgen.noisesettings.rules.Bandlands
 import features.worldgen.noisesettings.rules.block
@@ -31,7 +31,7 @@ fun DataPack.noiseSettingsTests() {
 
 		noiseOptions(-64, 384, 1, 2)
 
-		spawnTarget += multinoiseBiomeSourceParameters(
+		spawnTarget += multiNoiseBiomeSourceParameters(
 			0.0,
 			0.0,
 			0.0,

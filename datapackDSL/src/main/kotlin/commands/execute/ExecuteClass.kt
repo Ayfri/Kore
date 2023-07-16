@@ -1,7 +1,6 @@
 package commands.execute
 
 import arguments.*
-import arguments.enums.Dimension
 import arguments.selector.Sort
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
@@ -61,7 +60,7 @@ class Execute {
 	fun facingEntity(target: Argument.Entity, anchor: Anchor) =
 		array.addAll(literal("facing"), literal("entity"), targetArg(target), literal(anchor.asArg()))
 
-	fun inDimension(dimension: Dimension) = array.addAll(literal("in"), dimension)
+	fun inDimension(dimension: Argument.Dimension) = array.addAll(literal("in"), dimension)
 	fun inDimension(customDimension: String, namespace: String = "minecraft") =
 		array.addAll(literal("in"), dimension(customDimension, namespace))
 

@@ -59,6 +59,7 @@ suspend fun main(args: Array<String>) {
 	downloadCatVariants()
 	downloadDamageTypes()
 	downloadDensityFunctions()
+	downloadDimensionTypes()
 	downloadEffects()
 	downloadEnchantments()
 	downloadEntities()

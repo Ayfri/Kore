@@ -10,6 +10,7 @@ import features.predicates.Predicate
 import features.recipes.RecipeFile
 import features.tags.Tags
 import features.worldgen.biome.Biome
+import features.worldgen.dimension.Dimension
 import features.worldgen.dimensiontype.DimensionType
 import features.worldgen.noisesettings.NoiseSettings
 import functions.Function
@@ -31,6 +32,7 @@ class DataPack(val name: String) {
 	val biomes = mutableListOf<Biome>()
 	val chatTypes = mutableListOf<ChatType>()
 	val damageTypes = mutableListOf<DamageType>()
+	val dimensions = mutableListOf<Dimension>()
 	val dimensionTypes = mutableListOf<DimensionType>()
 	val itemModifiers = mutableListOf<ItemModifier>()
 	val lootTables = mutableListOf<LootTable>()
@@ -75,6 +77,7 @@ class DataPack(val name: String) {
 		data.generateResources("advancements", advancements)
 		data.generateResources("chat_type", chatTypes)
 		data.generateResources("damage_type", damageTypes)
+		data.generateResources("dimensions", dimensions)
 		data.generateResources("dimension_type", dimensionTypes)
 		data.generateResources("item_modifiers", itemModifiers)
 		data.generateResources("loot_tables", lootTables)

@@ -117,6 +117,16 @@ sealed interface Argument {
 	}
 
 	@Serializable(with = ArgumentSerializer::class)
+	interface BiomePresets : ResourceLocation, BiomeOrTag {
+		companion object {
+			operator fun invoke(preset: String, namespace: String = "minecraft") = object : BiomePresets {
+				override val name = preset
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
 	interface Block : ResourceLocation, BlockOrTag {
 		var states: MutableMap<String, String>
 		var nbtData: NbtCompound?
@@ -232,6 +242,16 @@ sealed interface Argument {
 	interface DimensionType : ResourceLocation {
 		companion object {
 			operator fun invoke(dimension: String, namespace: String = "minecraft") = object : DimensionType {
+				override val name = dimension
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
+	interface DimensionGenerator : ResourceLocation {
+		companion object {
+			operator fun invoke(dimension: String, namespace: String = "minecraft") = object : DimensionGenerator {
 				override val name = dimension
 				override val namespace = namespace
 			}
@@ -506,6 +526,17 @@ sealed interface Argument {
 	interface Structure : ResourceLocation {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : Structure {
+				override val name = name
+				override val namespace = namespace
+			}
+		}
+	}
+
+
+	@Serializable(with = ArgumentSerializer::class)
+	interface StructureSet : ResourceLocation {
+		companion object {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : StructureSet {
 				override val name = name
 				override val namespace = namespace
 			}

@@ -12,6 +12,7 @@ fun DataPack.dimensionTypeTests() {
 		minY = 0
 		monsterSpawnLightLevel = uniform(7, 15)
 	}
+
 	dimensionTypes.last() assertsIs """
 		{
 			"ultrawarm": false,
