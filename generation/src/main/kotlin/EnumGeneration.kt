@@ -4,7 +4,7 @@ fun generateEnum(
 	values: Collection<String>,
 	name: String,
 	sourceUrl: String,
-	parentArgumentType: String,
+	parentArgumentType: String? = null,
 	asString: String = "lowercase()",
 	additionalCode: FileSpec.Builder.(enumName: String) -> Unit = {},
 	additionalEnumCode: TypeSpec.Builder.() -> Unit = {}
@@ -17,7 +17,10 @@ fun generateEnum(
 				.addMember("with = $name.Companion.${name.asSerializer()}::class")
 				.build()
 		)
-		addSuperinterface(ClassName("arguments", "Argument", parentArgumentType))
+
+		parentArgumentType?.let {
+			addSuperinterface(ClassName("arguments", "Argument", it))
+		}
 
 		values.removeMinecraftPrefix().forEach { value ->
 			addEnumConstant(value.snakeCase().uppercase())

@@ -4,6 +4,7 @@ import configuration
 import dataPack
 import features.worldgen.biomeTests
 import features.worldgen.dimensionTypeTests
+import features.worldgen.noiseSettingsTests
 import setTestPath
 
 fun featuresTests() = dataPack("features_tests") {
@@ -21,6 +22,7 @@ fun featuresTests() = dataPack("features_tests") {
 	dimensionTypeTests()
 	itemModifierTests()
 	lootTableTests()
+	noiseSettingsTests()
 	predicateTests()
 	recipeTest()
 }.generate()

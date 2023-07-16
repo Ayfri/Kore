@@ -209,6 +209,16 @@ sealed interface Argument {
 	}
 
 	@Serializable(with = ArgumentSerializer::class)
+	interface DensityFunction : ResourceLocation {
+		companion object {
+			operator fun invoke(densityFunctionType: String, namespace: String = "minecraft") = object : DensityFunction {
+				override val name = densityFunctionType
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
 	interface Dimension : ResourceLocation {
 		companion object {
 			operator fun invoke(dimension: String, namespace: String = "minecraft") = object : Dimension {
@@ -390,6 +400,26 @@ sealed interface Argument {
 	}
 
 	@Serializable(with = ArgumentSerializer::class)
+	interface Noise : ResourceLocation {
+		companion object {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : Noise {
+				override val name = name
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
+	interface NoiseSettings : ResourceLocation {
+		companion object {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : NoiseSettings {
+				override val name = name
+				override val namespace = namespace
+			}
+		}
+	}
+
+	@Serializable(with = ArgumentSerializer::class)
 	interface Particle : ResourceLocation {
 		companion object {
 			operator fun invoke(name: String, namespace: String = "minecraft") = object : Particle {
@@ -450,9 +480,9 @@ sealed interface Argument {
 	}
 
 	@Serializable(with = ArgumentSerializer::class)
-	interface StatisticType : ResourceLocation {
+	interface Statistic : ResourceLocation {
 		companion object {
-			operator fun invoke(name: String, namespace: String = "minecraft") = object : StatisticType {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : Statistic {
 				override val name = name
 				override val namespace = namespace
 			}
@@ -460,9 +490,9 @@ sealed interface Argument {
 	}
 
 	@Serializable(with = ArgumentSerializer::class)
-	interface Statistic : ResourceLocation {
+	interface StatisticType : ResourceLocation {
 		companion object {
-			operator fun invoke(name: String, namespace: String = "minecraft") = object : Statistic {
+			operator fun invoke(name: String, namespace: String = "minecraft") = object : StatisticType {
 				override val name = name
 				override val namespace = namespace
 			}

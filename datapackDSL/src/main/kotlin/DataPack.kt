@@ -11,6 +11,7 @@ import features.recipes.RecipeFile
 import features.tags.Tags
 import features.worldgen.biome.Biome
 import features.worldgen.dimensiontype.DimensionType
+import features.worldgen.noisesettings.NoiseSettings
 import functions.Function
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
@@ -33,6 +34,7 @@ class DataPack(val name: String) {
 	val dimensionTypes = mutableListOf<DimensionType>()
 	val itemModifiers = mutableListOf<ItemModifier>()
 	val lootTables = mutableListOf<LootTable>()
+	val noiseSettings = mutableListOf<NoiseSettings>()
 	val predicates = mutableListOf<Predicate>()
 	val recipes = mutableListOf<RecipeFile>()
 	val tags = mutableListOf<Tags>()
@@ -80,6 +82,7 @@ class DataPack(val name: String) {
 		data.generateResources("recipes", recipes)
 		data.generateResources("tags", tags.groupBy(Tags::namespace))
 		data.generateResources("worldgen/biome", biomes)
+		data.generateResources("worldgen/noise_settings", noiseSettings)
 
 		data.generateFunctions("functions", functions.groupBy(Function::namespace))
 		data.generateFunctions(
