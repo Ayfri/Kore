@@ -1,5 +1,6 @@
-package arguments
+package utils
 
+import arguments.types.literals.literal
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json

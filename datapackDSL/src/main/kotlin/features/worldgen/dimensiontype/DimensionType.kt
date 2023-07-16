@@ -2,7 +2,9 @@ package features.worldgen.dimensiontype
 
 import DataPack
 import Generator
-import arguments.Argument
+import arguments.types.resources.DimensionArgument
+import arguments.types.resources.DimensionTypeArgument
+import arguments.types.resources.tagged.BlockTagArgument
 import features.worldgen.intproviders.IntProvider
 import features.worldgen.intproviders.constant
 import generated.Tags
@@ -33,8 +35,8 @@ data class DimensionType(
 	var ambientLight: Float = 0f,
 	var logicalHeight: Int = 0,
 	var fixedTime: Long? = null,
-	var effects: Argument.Dimension? = null,
-	var infiniburn: Argument.BlockTag,
+	var effects: DimensionArgument? = null,
+	var infiniburn: BlockTagArgument,
 	var minY: Int = 0,
 	var height: Int = 16,
 	var monsterSpawnLightLevel: IntProvider = constant(0),
@@ -65,7 +67,7 @@ data class DimensionType(
  * Creates a new DimensionType.
  * Values are the minimal values for a dimension type, booleans have the same values as overworld.
  */
-fun DataPack.dimensionType(fileName: String, dimensionType: DimensionType.() -> Unit = {}): Argument.DimensionType {
+fun DataPack.dimensionType(fileName: String, dimensionType: DimensionType.() -> Unit = {}): DimensionTypeArgument {
 	dimensionTypes += DimensionType(fileName, infiniburn = Tags.Blocks.INFINIBURN_OVERWORLD).apply(dimensionType)
-	return Argument.DimensionType(fileName, name)
+	return DimensionTypeArgument(fileName, name)
 }

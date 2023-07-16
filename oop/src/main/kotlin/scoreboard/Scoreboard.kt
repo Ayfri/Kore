@@ -1,7 +1,7 @@
 package scoreboard
 
-import arguments.ChatComponents
-import arguments.SetDisplaySlot
+import arguments.DisplaySlot
+import arguments.chatcomponents.ChatComponents
 import arguments.chatcomponents.textComponent
 import commands.RenderType
 import commands.scoreboard
@@ -30,7 +30,7 @@ fun Scoreboard.remove() = scoreboard {
 }
 
 context(Function)
-fun Scoreboard.setDisplaySlot(slot: SetDisplaySlot) = scoreboard {
+fun Scoreboard.setDisplaySlot(slot: DisplaySlot) = scoreboard {
 	objectives {
 		setDisplay(slot, name)
 	}

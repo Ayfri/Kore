@@ -2,10 +2,10 @@ package features.advancements
 
 import DataPack
 import Generator
-import arguments.Argument
-import arguments.ChatComponents
+import arguments.chatcomponents.ChatComponents
 import arguments.chatcomponents.textComponent
 import arguments.selector.Advancements
+import arguments.types.resources.*
 import features.advancements.triggers.AdvancementTriggerCondition
 import features.advancements.types.AdvancementsJSONSerializer
 import features.advancements.types.Entity
@@ -24,7 +24,7 @@ data class Advancement internal constructor(
 	@Transient
 	override var fileName: String = "advancement",
 	var display: AdvancementDisplay? = null,
-	var parent: Argument.Advancement? = null,
+	var parent: AdvancementArgument? = null,
 	var criteria: Map<String, AdvancementCriterion> = emptyMap(),
 	var requirements: List<List<String>>? = null,
 	var rewards: AdvancementReward? = null,
@@ -52,9 +52,9 @@ data class Advancement internal constructor(
 	}
 }
 
-fun DataPack.advancement(fileName: String, block: Advancement.() -> Unit = {}): Argument.Advancement {
+fun DataPack.advancement(fileName: String, block: Advancement.() -> Unit = {}): AdvancementArgument {
 	advancements += Advancement(fileName).apply(block)
-	return Argument.Advancement(fileName, name)
+	return AdvancementArgument(fileName, name)
 }
 
 fun Advancement.display(icon: AdvancementIcon, title: String = "", description: String = "", block: AdvancementDisplay.() -> Unit = {}) {
@@ -70,12 +70,12 @@ fun Advancement.display(
 	display = AdvancementDisplay(icon, title, description).apply(block)
 }
 
-fun Advancement.display(icon: Argument.Item, title: String = "", description: String = "", block: AdvancementDisplay.() -> Unit = {}) {
+fun Advancement.display(icon: ItemArgument, title: String = "", description: String = "", block: AdvancementDisplay.() -> Unit = {}) {
 	display = AdvancementDisplay(AdvancementIcon(icon), textComponent(title), textComponent(description)).apply(block)
 }
 
 fun Advancement.display(
-	icon: Argument.Item,
+	icon: ItemArgument,
 	title: ChatComponents,
 	description: ChatComponents,
 	block: AdvancementDisplay.() -> Unit = {}
@@ -83,7 +83,7 @@ fun Advancement.display(
 	display = AdvancementDisplay(AdvancementIcon(icon), title, description).apply(block)
 }
 
-fun AdvancementDisplay.icon(icon: Argument.Item, nbtData: NbtTag? = null) {
+fun AdvancementDisplay.icon(icon: ItemArgument, nbtData: NbtTag? = null) {
 	this.icon = AdvancementIcon(icon, nbtData)
 }
 
@@ -117,17 +117,17 @@ fun Advancement.rewards(block: AdvancementReward.() -> Unit) {
 fun Advancement.rewards(
 	function: String? = null,
 	experience: Int? = null,
-	loot: List<Argument.LootTable>? = null,
-	recipes: List<Argument.Recipe>? = null
+	loot: List<LootTableArgument>? = null,
+	recipes: List<RecipeArgument>? = null
 ) {
 	rewards = AdvancementReward(experience, function, loot, recipes)
 }
 
 fun Advancement.rewards(
-	function: Argument.Function? = null,
+	function: FunctionArgument? = null,
 	experience: Int? = null,
-	loot: List<Argument.LootTable>? = null,
-	recipes: List<Argument.Recipe>? = null
+	loot: List<LootTableArgument>? = null,
+	recipes: List<RecipeArgument>? = null
 ) {
 	rewards = AdvancementReward(experience, function?.asString(), loot, recipes)
 }

@@ -1,8 +1,8 @@
 package commands
 
-import arguments.int
-import arguments.literal
 import arguments.numbers.TimeType
+import arguments.types.literals.int
+import arguments.types.literals.literal
 import functions.Function
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer

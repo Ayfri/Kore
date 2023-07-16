@@ -1,10 +1,10 @@
 package features.recipes.data
 
-import arguments.Argument
+import arguments.types.resources.ItemArgument
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class CraftingResult(
-	var item: Argument.Item,
+	var item: ItemArgument,
 	var count: Int? = null,
 )

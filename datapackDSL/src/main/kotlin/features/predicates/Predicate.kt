@@ -2,8 +2,8 @@ package features.predicates
 
 import DataPack
 import Generator
-import arguments.Argument
 import arguments.selector.Advancements
+import arguments.types.resources.PredicateArgument
 import features.advancements.types.AdvancementsJSONSerializer
 import features.predicates.conditions.PredicateCondition
 import features.predicates.conditions.PredicateConditionSurrogate
@@ -68,7 +68,7 @@ data class Predicate(
 	}
 }
 
-fun DataPack.predicate(fileName: String, predicate: Predicate.() -> Unit): Argument.Predicate {
+fun DataPack.predicate(fileName: String, predicate: Predicate.() -> Unit): PredicateArgument {
 	predicates += Predicate(fileName).apply(predicate)
-	return Argument.Predicate(fileName, name)
+	return PredicateArgument(fileName, name)
 }

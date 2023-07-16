@@ -1,7 +1,7 @@
 package features
 
 import DataPack
-import arguments.allPlayers
+import arguments.types.literals.allPlayers
 import commands.recipeGive
 import features.recipes.recipes
 import features.recipes.recipesBuilder
@@ -57,6 +57,7 @@ fun DataPack.recipeTest() {
 
 		result(Items.BOW)
 	}
+
 	recipes.last() assertsIs """
 		{
 			"pattern": [

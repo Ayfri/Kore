@@ -1,8 +1,8 @@
 package helpers
 
 import DataPack
-import arguments.Argument
 import arguments.numbers.TimeNumber
+import arguments.types.resources.FunctionArgument
 import commands.Command
 import commands.function
 import commands.schedule
@@ -10,8 +10,8 @@ import functions.Function
 import functions.generatedFunction
 import functions.load
 
-data class Scheduler(val function: Argument.Function, var delay: TimeNumber? = null, var period: TimeNumber? = null) {
-	internal var generatedFunction: Argument.Function? = null
+data class Scheduler(val function: FunctionArgument, var delay: TimeNumber? = null, var period: TimeNumber? = null) {
+	internal var generatedFunction: FunctionArgument? = null
 
 	context(Function)
 	fun execute() {
@@ -52,12 +52,12 @@ data class SchedulerManager(private val dp: DataPack) {
 		}
 
 	fun addScheduler(function: String, namespace: String = dp.name, delay: TimeNumber? = null, period: TimeNumber? = null) =
-		Scheduler(Argument.Function(function, namespace), delay, period).also {
+		Scheduler(FunctionArgument(function, namespace), delay, period).also {
 			with(fn) { it.execute() }
 			schedulers.add(it)
 		}
 
-	fun addScheduler(function: Argument.Function, delay: TimeNumber? = null, period: TimeNumber? = null) =
+	fun addScheduler(function: FunctionArgument, delay: TimeNumber? = null, period: TimeNumber? = null) =
 		Scheduler(function, delay, period).also {
 			with(fn) { it.execute() }
 			schedulers.add(it)
@@ -65,16 +65,16 @@ data class SchedulerManager(private val dp: DataPack) {
 
 	fun clear() = schedulers.clear()
 
-	fun removeScheduler(function: Argument.Function) = schedulers.removeIf { it.function.asId() == function.asId() }
+	fun removeScheduler(function: FunctionArgument) = schedulers.removeIf { it.function.asId() == function.asId() }
 	fun removeScheduler(function: String, namespace: String = dp.name) =
-		schedulers.removeIf { it.function.asId() == Argument.Function(function, namespace).asId() }
+		schedulers.removeIf { it.function.asId() == FunctionArgument(function, namespace).asId() }
 
 	context(Function)
-	fun unSchedule(function: Argument.Function) =
+	fun unSchedule(function: FunctionArgument) =
 		schedulers.find { it.function.asId() == function.asId() }?.let { UnScheduler(it).execute() }
 
 	context(Function)
-	fun unSchedule(function: String, namespace: String = dp.name) = unSchedule(Argument.Function(function, namespace))
+	fun unSchedule(function: String, namespace: String = dp.name) = unSchedule(FunctionArgument(function, namespace))
 
 	context(Function)
 	fun unScheduleAll() = schedulers.filter { it.period != null }.forEach { UnScheduler(it).execute() }

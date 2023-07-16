@@ -19,7 +19,7 @@ fun generateEnum(
 		)
 
 		parentArgumentType?.let {
-			addSuperinterface(ClassName("arguments", "Argument", it))
+			addSuperinterface(argumentClassName(it))
 		}
 
 		values.removeMinecraftPrefix().forEach { value ->

@@ -1,6 +1,6 @@
 package features.worldgen.biome.types
 
-import arguments.Argument
+import arguments.types.resources.ParticleArgument
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -11,5 +11,5 @@ data class Particle(
 
 @Serializable
 data class ParticleOptions(
-	var type: Argument.Particle
+	var type: ParticleArgument
 )

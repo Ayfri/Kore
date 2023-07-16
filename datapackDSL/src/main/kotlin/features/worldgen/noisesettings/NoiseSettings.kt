@@ -2,7 +2,8 @@ package features.worldgen.noisesettings
 
 import DataPack
 import Generator
-import arguments.Argument
+import arguments.types.resources.BlockArgument
+import arguments.types.resources.NoiseSettingsArgument
 import data.block.BlockState
 import data.block.blockState
 import features.worldgen.dimension.biomesource.multinoise.MultiNoiseBiomeSourceParameters
@@ -39,9 +40,9 @@ data class NoiseSettings(
  * Creates a new [NoiseSettings], default options are from overworld except for the [NoiseSettings.noiseRouter],
 [NoiseSettings.spawnTarget] and [NoiseSettings.surfaceRule] which are empty for simpler instantiation.
  */
-fun DataPack.noiseSettings(fileName: String = "noise_settings", configure: NoiseSettings.() -> Unit = {}): Argument.NoiseSettings {
+fun DataPack.noiseSettings(fileName: String = "noise_settings", configure: NoiseSettings.() -> Unit = {}): NoiseSettingsArgument {
 	noiseSettings += NoiseSettings(fileName).apply(configure)
-	return Argument.NoiseSettings(fileName, name)
+	return NoiseSettingsArgument(fileName, name)
 }
 
 fun NoiseSettings.noiseRouter(configure: NoiseRouter.() -> Unit = {}) = NoiseRouter().apply(configure).also { noiseRouter = it }
@@ -53,8 +54,8 @@ fun NoiseSettings.noiseOptions(
 	sizeVertical: Int
 ) = NoiseOptions(minY, height, sizeHorizontal, sizeVertical).also { noise = it }
 
-fun NoiseSettings.defaultBlock(block: Argument.Block, properties: MutableMap<String, String>.() -> Unit = {}) =
+fun NoiseSettings.defaultBlock(block: BlockArgument, properties: MutableMap<String, String>.() -> Unit = {}) =
 	blockState(block, buildMap(properties)).also { defaultBlock = it }
 
-fun NoiseSettings.defaultFluid(fluid: Argument.Block, properties: MutableMap<String, String>.() -> Unit = {}) =
+fun NoiseSettings.defaultFluid(fluid: BlockArgument, properties: MutableMap<String, String>.() -> Unit = {}) =
 	blockState(fluid, buildMap(properties)).also { defaultFluid = it }

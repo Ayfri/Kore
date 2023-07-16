@@ -1,6 +1,6 @@
 package features.loottables.entries
 
-import arguments.Argument
+import arguments.types.resources.TagArgument
 import features.itemmodifiers.ItemModifier
 import features.itemmodifiers.ItemModifierAsList
 import features.predicates.Predicate
@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Tag(
-	var name: Argument.Tag,
+	var name: TagArgument,
 	var conditions: PredicateAsList? = null,
 	var expand: Boolean? = null,
 	var functions: ItemModifierAsList? = null,
@@ -17,7 +17,7 @@ data class Tag(
 	var weight: Int? = null,
 ) : LootEntry
 
-fun LootEntries.tag(name: Argument.Tag, block: Tag.() -> Unit = {}) {
+fun LootEntries.tag(name: TagArgument, block: Tag.() -> Unit = {}) {
 	add(Tag(name).apply(block))
 }
 

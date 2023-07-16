@@ -1,13 +1,16 @@
-package arguments
+package arguments.maths
 
+import arguments.Argument
 import arguments.enums.Axis
 import arguments.numbers.PosNumber
 import arguments.numbers.pos
-import kotlin.math.*
+import arguments.types.ContainerArgument
+import arguments.types.DataArgument
+import kotlin.math.acos
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
-typealias Coordinate = Vec3
-
-data class Vec3(val x: PosNumber, val y: PosNumber, val z: PosNumber) : Argument, Argument.Container, Argument.Data {
+data class Vec3(val x: PosNumber, val y: PosNumber, val z: PosNumber) : Argument, ContainerArgument, DataArgument {
 	constructor(x: Number = 0, y: Number = 0, z: Number = 0) : this(x.pos, y.pos, z.pos)
 
 	val length get() = sqrt(lengthSquared)
@@ -57,9 +60,14 @@ data class Vec3(val x: PosNumber, val y: PosNumber, val z: PosNumber) : Argument
 	infix fun max(other: Vec3) = Vec3(maxOf(x, other.x), maxOf(y, other.y), maxOf(z, other.z))
 
 	fun round() = Vec3(x.value.roundToInt(), y.value.roundToInt(), z.value.roundToInt())
-	fun floor() = Vec3(floor(x.value), floor(y.value), floor(z.value))
-	fun ceil() = Vec3(ceil(x.value), ceil(y.value), ceil(z.value))
+	fun floor() = Vec3(kotlin.math.floor(x.value), kotlin.math.floor(y.value), kotlin.math.floor(z.value))
+	fun ceil() = Vec3(kotlin.math.ceil(x.value), kotlin.math.ceil(y.value), kotlin.math.ceil(z.value))
 	fun abs() = Vec3(+x, +y, +z)
 	fun negate() = Vec3(-x, -y, -z)
 	fun normalize() = this / length
 }
+
+fun vec3(x: Number, y: Number, z: Number) = Vec3(x, y, z)
+fun vec3(x: PosNumber, y: PosNumber, z: PosNumber) = Vec3(x, y, z)
+fun vec3(x: PosNumber.Type, y: PosNumber.Type, z: PosNumber.Type) = Vec3(pos(type = x), pos(type = y), pos(type = z))
+fun vec3(type: PosNumber.Type = PosNumber.Type.RELATIVE) = Vec3(pos(type = type), pos(type = type), pos(type = type))

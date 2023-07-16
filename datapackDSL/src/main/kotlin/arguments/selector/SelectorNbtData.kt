@@ -1,12 +1,12 @@
 package arguments.selector
 
-import arguments.Argument
 import arguments.enums.Gamemode
 import arguments.numbers.FloatRangeOrFloat
 import arguments.numbers.IntRangeOrInt
 import arguments.numbers.Range
 import arguments.scores.Scores
 import arguments.scores.SelectorScore
+import arguments.types.resources.PredicateArgument
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -67,7 +67,7 @@ data class SelectorNbtData(
 	var limit: Int? = null,
 	var level: IntRangeOrInt? = null,
 	var name: String? = null,
-	var predicate: Argument.Predicate? = null,
+	var predicate: PredicateArgument? = null,
 	var scores: Scores<SelectorScore>? = null,
 	var sort: Sort? = null,
 	var tag: String? = null,
@@ -171,7 +171,7 @@ data class SelectorNbtData(
 							else -> "$key=$value"
 						}
 
-						is Argument.Predicate -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
+						is PredicateArgument -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
 
 						is Scores<*> -> "$key={${value.scores.joinToString(",")}}"
 						is Sort -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"

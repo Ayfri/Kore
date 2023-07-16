@@ -2,7 +2,7 @@ package features
 
 import DataPack
 import arguments.WEAPON
-import arguments.self
+import arguments.types.literals.self
 import commands.items
 import features.itemmodifiers.functions.MapDecoration
 import features.itemmodifiers.functions.conditions

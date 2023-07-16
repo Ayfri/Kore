@@ -2,7 +2,7 @@ package features.damagetypes
 
 import DataPack
 import Generator
-import arguments.Argument
+import arguments.types.resources.DamageTypeArgument
 import features.damagetypes.types.DeathMessageType
 import features.damagetypes.types.Effects
 import features.damagetypes.types.Scaling
@@ -28,9 +28,9 @@ fun DataPack.damageType(
 	messageId: String,
 	scaling: Scaling,
 	damageType: DamageType.() -> Unit = {}
-): Argument.DamageType {
+): DamageTypeArgument {
 	damageTypes += DamageType(fileName, messageId, scaling = scaling).apply(damageType)
-	return Argument.DamageType(fileName, name)
+	return DamageTypeArgument(fileName, name)
 }
 
 fun DataPack.damageType(
@@ -40,7 +40,7 @@ fun DataPack.damageType(
 	scaling: Scaling,
 	effects: Effects? = null,
 	deathMessageType: DeathMessageType? = null,
-): Argument.DamageType {
+): DamageTypeArgument {
 	damageTypes += DamageType(fileName, messageId, exhaustion, scaling, effects, deathMessageType)
-	return Argument.DamageType(fileName, name)
+	return DamageTypeArgument(fileName, name)
 }

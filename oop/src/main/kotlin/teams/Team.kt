@@ -1,8 +1,8 @@
 package teams
 
-import arguments.Argument
-import arguments.ChatComponents
+import arguments.chatcomponents.ChatComponents
 import arguments.colors.NamedColor
+import arguments.types.ScoreHolderArgument
 import commands.CollisionRule
 import commands.Visibility
 import commands.teams
@@ -87,7 +87,7 @@ fun Team.setColor(color: NamedColor) = teams {
 }
 
 context(Function)
-fun Team.addMembers(vararg members: Argument.ScoreHolder) = members.forEach { teams { join(name, it) } }
+fun Team.addMembers(vararg members: ScoreHolderArgument) = members.forEach { teams { join(name, it) } }
 
 context(Function)
 fun Team.addMembers(vararg members: Entity) = addMembers(*members.map { it.asSelector { team = null } }.toTypedArray())

@@ -1,9 +1,9 @@
 package features.worldgen.dimension.biomesource
 
-import arguments.Argument
+import arguments.types.resources.BiomeArgument
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Fixed(var biome: Argument.Biome) : BiomeSource()
+data class Fixed(var biome: BiomeArgument) : BiomeSource()
 
-fun fixed(biome: Argument.Biome) = Fixed(biome)
+fun fixed(biome: BiomeArgument) = Fixed(biome)

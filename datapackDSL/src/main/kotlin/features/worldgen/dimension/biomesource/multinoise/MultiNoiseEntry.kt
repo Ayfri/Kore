@@ -1,11 +1,11 @@
 package features.worldgen.dimension.biomesource.multinoise
 
-import arguments.Argument
+import arguments.types.resources.BiomeArgument
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class MultiNoiseEntry(
-	var biome: Argument.Biome,
+	var biome: BiomeArgument,
 	var parameters: MultiNoiseBiomeSourceParameters
 )
 
@@ -13,6 +13,6 @@ data class MultiNoiseEntry(
  * Creates a [MultiNoiseEntry] with all values set to `0.0` by default for [MultiNoiseBiomeSourceParameters].
  */
 fun multiNoiseEntry(
-	biome: Argument.Biome,
+	biome: BiomeArgument,
 	block: MultiNoiseBiomeSourceParameters.() -> Unit = {}
 ) = MultiNoiseEntry(biome, multiNoiseBiomeSourceParameters(block))

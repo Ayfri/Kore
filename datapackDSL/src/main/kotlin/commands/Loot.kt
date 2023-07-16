@@ -1,6 +1,13 @@
 package commands
 
-import arguments.*
+import arguments.Argument
+import arguments.ItemSlotType
+import arguments.maths.Vec3
+import arguments.types.EntityArgument
+import arguments.types.literals.int
+import arguments.types.literals.literal
+import arguments.types.resources.ItemArgument
+import arguments.types.resources.LootTableArgument
 import functions.Function
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encoding.Encoder
@@ -8,11 +15,11 @@ import serializers.LowercaseSerializer
 import utils.asArg
 
 object Target {
-	fun give(targets: Argument.Entity) = listOf(literal("give"), targets)
+	fun give(targets: EntityArgument) = listOf(literal("give"), targets)
 	fun insert(pos: Vec3) = listOf(literal("insert"), pos)
 	fun spawn(pos: Vec3) = listOf(literal("spawn"), pos)
 	fun replaceBlock(pos: Vec3, slot: ItemSlotType, count: Int? = null) = listOfNotNull(literal("replace"), pos, slot, int(count))
-	fun replaceEntity(entity: Argument.Entity, slot: ItemSlotType, count: Int? = null) =
+	fun replaceEntity(entity: EntityArgument, slot: ItemSlotType, count: Int? = null) =
 		listOfNotNull(literal("replace"), entity, slot, int(count))
 }
 
@@ -31,11 +38,11 @@ enum class Hand {
 }
 
 object Source {
-	fun fish(lootTable: Argument.LootTable, pos: Vec3, tool: Argument.Item? = null) = listOfNotNull(literal("fish"), lootTable, pos, tool)
-	fun fish(lootTable: Argument.LootTable, pos: Vec3, hand: Hand) = listOf(literal("fish"), lootTable, pos, literal(hand.asArg()))
-	fun loot(lootTable: Argument.LootTable) = listOf(literal("loot"), lootTable)
-	fun kill(targets: Argument.Entity) = listOf(literal("kill"), targets)
-	fun mine(pos: Vec3, tool: Argument.Item? = null) = listOfNotNull(literal("mine"), pos, tool)
+	fun fish(lootTable: LootTableArgument, pos: Vec3, tool: ItemArgument? = null) = listOfNotNull(literal("fish"), lootTable, pos, tool)
+	fun fish(lootTable: LootTableArgument, pos: Vec3, hand: Hand) = listOf(literal("fish"), lootTable, pos, literal(hand.asArg()))
+	fun loot(lootTable: LootTableArgument) = listOf(literal("loot"), lootTable)
+	fun kill(targets: EntityArgument) = listOf(literal("kill"), targets)
+	fun mine(pos: Vec3, tool: ItemArgument? = null) = listOfNotNull(literal("mine"), pos, tool)
 	fun mine(pos: Vec3, hand: Hand) = listOf(literal("mine"), pos, literal(hand.asArg()))
 }
 
@@ -57,9 +64,9 @@ fun Function.loot(block: Loot.() -> Unit) = Loot().let { loot ->
 	addLine(command("loot", *loot.target.toTypedArray(), *loot.source.toTypedArray()))
 }
 
-fun Function.loot(target: Argument.Entity, source: Source.() -> List<Argument>) = loot {
+fun Function.loot(target: EntityArgument, source: Source.() -> List<Argument>) = loot {
 	target { give(target) }
 	source { source() }
 }
 
-fun Function.loot(target: Argument.Entity, lootTable: Argument.LootTable) = loot(target) { loot(lootTable) }
+fun Function.loot(target: EntityArgument, lootTable: LootTableArgument) = loot(target) { loot(lootTable) }

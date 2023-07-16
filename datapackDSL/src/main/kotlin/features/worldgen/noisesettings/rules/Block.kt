@@ -1,6 +1,6 @@
 package features.worldgen.noisesettings.rules
 
-import arguments.Argument
+import arguments.types.resources.BlockArgument
 import data.block.BlockState
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -41,5 +41,5 @@ data class Block(
 	}
 }
 
-fun block(name: Argument.Block, block: MutableMap<String, String>.() -> Unit = {}) = Block(BlockState(name, buildMap(block)))
-fun block(name: Argument.Block, properties: Map<String, String>) = Block(BlockState(name, properties))
+fun block(name: BlockArgument, block: MutableMap<String, String>.() -> Unit = {}) = Block(BlockState(name, buildMap(block)))
+fun block(name: BlockArgument, properties: Map<String, String>) = Block(BlockState(name, properties))

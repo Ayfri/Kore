@@ -2,7 +2,8 @@ package features.worldgen.dimension
 
 import DataPack
 import Generator
-import arguments.Argument
+import arguments.types.resources.DimensionArgument
+import arguments.types.resources.DimensionTypeArgument
 import features.worldgen.dimension.generator.Debug
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -13,7 +14,7 @@ import features.worldgen.dimension.generator.Generator as DimensionGenerator
 data class Dimension(
 	@Transient
 	override var fileName: String = "dimension",
-	var type: Argument.DimensionType,
+	var type: DimensionTypeArgument,
 	var generator: DimensionGenerator = Debug
 ) : Generator {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
@@ -25,9 +26,9 @@ data class Dimension(
  */
 fun DataPack.dimension(
 	fileName: String = "dimension",
-	type: Argument.DimensionType,
+	type: DimensionTypeArgument,
 	block: Dimension.() -> Unit = {},
-): Argument.Dimension {
+): DimensionArgument {
 	dimensions += Dimension(fileName, type).apply(block)
-	return Argument.Dimension(fileName, name)
+	return DimensionArgument(fileName, name)
 }

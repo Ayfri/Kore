@@ -1,7 +1,7 @@
 package helpers.displays.entities
 
-import arguments.Argument
 import arguments.colors.RGB
+import arguments.types.resources.EntitySummonArgument
 import helpers.displays.maths.Transformation
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -48,7 +48,7 @@ sealed class DisplayEntity(
 	var width: Int? = null,
 ) {
 	@Transient
-	abstract val entityType: Argument.EntitySummon
+	abstract val entityType: EntitySummonArgument
 
 	open fun toNbt() = StringifiedNbt.encodeToNbtTag(this).nbtCompound
 

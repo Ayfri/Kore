@@ -1,8 +1,8 @@
 package arguments.scores
 
-import arguments.Argument
-import arguments.Relation
+import arguments.enums.Relation
 import arguments.numbers.*
+import arguments.types.ScoreHolderArgument
 import kotlin.ranges.IntRange as KotlinIntRange
 
 open class Scores<T : Score>(val scores: MutableSet<String> = mutableSetOf()) {
@@ -36,8 +36,8 @@ fun Scores<SelectorScore>.score(name: String, value: KotlinIntRange) = addScore(
 fun Scores<SelectorScore>.score(name: String, value: Int, relation: Relation) =
 	addScore(SelectorScore(name).asString(relation.applyAsRange(value)))
 
-fun Scores<ExecuteScore>.score(holder: Argument.ScoreHolder, name: String) = ExecuteScore(holder, name)
-fun Scores<ExecuteScore>.score(holder: Argument.ScoreHolder, name: String, value: Int, relation: Relation) =
+fun Scores<ExecuteScore>.score(holder: ScoreHolderArgument, name: String) = ExecuteScore(holder, name)
+fun Scores<ExecuteScore>.score(holder: ScoreHolderArgument, name: String, value: Int, relation: Relation) =
 	addScore(ExecuteScore(holder, name).asString(relation.applyAsRange(value)))
 
 context(Scores<SelectorScore>)

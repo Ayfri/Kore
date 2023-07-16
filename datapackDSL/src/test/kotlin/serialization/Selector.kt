@@ -1,6 +1,5 @@
 package serialization
 
-import arguments.*
 import arguments.enums.Gamemode
 import arguments.numbers.rangeOrDouble
 import arguments.numbers.rangeOrDoubleEnd
@@ -11,6 +10,8 @@ import arguments.scores.score
 import arguments.selector.SelectorType
 import arguments.selector.Sort
 import arguments.selector.scores
+import arguments.types.literals.*
+import arguments.types.resources.AdvancementArgument
 import dataPack
 import features.advancements.types.block
 import features.predicates.conditions.entityProperties
@@ -20,6 +21,8 @@ import generated.Entities
 import generated.type
 import setTestPath
 import utils.assertsIs
+import utils.nbt
+import utils.set
 
 fun selectorTests() = dataPack("selector_tests") {
 	setTestPath()
@@ -36,7 +39,7 @@ fun selectorTests() = dataPack("selector_tests") {
 
 	allEntities {
 		advancements {
-			Argument.Advancement("foo", "test")() {
+			AdvancementArgument("foo", "test")() {
 				this["bar"] = true
 			}
 		}

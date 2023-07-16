@@ -1,10 +1,10 @@
 package commands
 
-import arguments.Vec2
-import arguments.float
-import arguments.int
-import arguments.literal
+import arguments.maths.Vec2
 import arguments.numbers.PosNumber
+import arguments.types.literals.float
+import arguments.types.literals.int
+import arguments.types.literals.literal
 import functions.Function
 import utils.asArg
 

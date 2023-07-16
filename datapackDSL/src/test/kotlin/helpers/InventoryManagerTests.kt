@@ -1,10 +1,20 @@
 package helpers
 
-import arguments.*
+import arguments.CONTAINER
+import arguments.HOTBAR
+import arguments.WEAPON
 import arguments.chatcomponents.scoreComponent
 import arguments.chatcomponents.textComponent
+import arguments.colors.Color
+import arguments.maths.vec3
 import arguments.scores.score
 import arguments.selector.scores
+import arguments.types.ScoreHolderArgument
+import arguments.types.literals.allEntities
+import arguments.types.literals.allPlayers
+import arguments.types.literals.nearestPlayer
+import arguments.types.literals.self
+import arguments.types.resources.ItemModifierArgument
 import commands.TitleLocation
 import commands.execute.execute
 import commands.execute.run
@@ -17,6 +27,8 @@ import generated.Blocks
 import generated.Items
 import helpers.inventorymanager.*
 import utils.assertsIs
+import utils.nbt
+import utils.set
 
 fun Function.inventoryManagerTests() {
 	val inventoryManager = inventoryManager(vec3(0, 0, 0))
@@ -25,7 +37,7 @@ fun Function.inventoryManagerTests() {
 	inventoryManager.clearAll(Items.DIAMOND_SWORD {
 		this["Damage"] = 0
 	}) assertsIs "data remove block 0 0 0 Items[{id:\"minecraft:diamond_sword\",tag:{Damage:0}}]"
-	inventoryManager.modify(WEAPON, Argument.ItemModifier("baz")) assertsIs "item modify block 0 0 0 weapon minecraft:baz"
+	inventoryManager.modify(WEAPON, ItemModifierArgument("baz")) assertsIs "item modify block 0 0 0 weapon minecraft:baz"
 
 	val counterScoreName = "take_counter"
 	val playerInventory = inventoryManager(nearestPlayer())
@@ -71,7 +83,7 @@ fun Function.inventoryManagerTests() {
 
 	datapack.load {
 		scoreboard.objectives.add(counterScoreName, "dummy")
-		scoreboard.players.set(playerInventory.container as Argument.ScoreHolder, counterScoreName, 0)
+		scoreboard.players.set(playerInventory.container as ScoreHolderArgument, counterScoreName, 0)
 	}
 
 	inventoryManager(vec3(0, -59, 0)) {

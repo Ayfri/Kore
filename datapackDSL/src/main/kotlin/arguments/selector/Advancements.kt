@@ -1,6 +1,6 @@
 package arguments.selector
 
-import arguments.Argument
+import arguments.types.resources.AdvancementArgument
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.MapSerializer
@@ -13,7 +13,11 @@ import kotlinx.serialization.json.jsonPrimitive
 import serializers.ToStringSerializer
 
 @Serializable(Advancement.Companion.DefaultAdvancementSerializer::class)
-data class Advancement(val advancement: Argument.Advancement, val done: Boolean = false, val criteria: Map<String, Boolean> = emptyMap()) {
+data class Advancement(
+	val advancement: AdvancementArgument,
+	val done: Boolean = false,
+	val criteria: Map<String, Boolean> = emptyMap()
+) {
 	companion object {
 		object DefaultAdvancementSerializer : ToStringSerializer<Advancement>() {
 			override val descriptor = buildClassSerialDescriptor("Advancement") {
@@ -59,12 +63,19 @@ data class Advancements(val advancements: Set<@Contextual Advancement> = emptySe
 class AdvancementBuilder {
 	private val advancements = mutableSetOf<Advancement>()
 
-	fun advancement(advancement: Argument.Advancement, done: Boolean = true, block: MutableMap<String, Boolean>.() -> Unit = {}) {
+	fun advancement(
+		advancement: AdvancementArgument,
+		done: Boolean = true,
+		block: MutableMap<String, Boolean>.() -> Unit = {}
+	) {
 		val criteria = buildMap(block)
 		advancements.add(Advancement(advancement, done, criteria))
 	}
 
-	operator fun <T : Argument.Advancement> T.invoke(done: Boolean = true, block: MutableMap<String, Boolean>.() -> Unit = {}) {
+	operator fun <T : AdvancementArgument> T.invoke(
+		done: Boolean = true,
+		block: MutableMap<String, Boolean>.() -> Unit = {}
+	) {
 		val criteria = buildMap(block)
 		advancements.add(Advancement(this, done, criteria))
 	}

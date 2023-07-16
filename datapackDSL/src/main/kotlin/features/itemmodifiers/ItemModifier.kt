@@ -2,7 +2,7 @@ package features.itemmodifiers
 
 import DataPack
 import Generator
-import arguments.Argument
+import arguments.types.resources.ItemModifierArgument
 import features.itemmodifiers.functions.ItemFunction
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -47,7 +47,7 @@ data class ItemModifier(
 	}
 }
 
-fun DataPack.itemModifier(fileName: String = "item_modifier", configure: ItemModifier.() -> Unit = {}): Argument.ItemModifier {
+fun DataPack.itemModifier(fileName: String = "item_modifier", configure: ItemModifier.() -> Unit = {}): ItemModifierArgument {
 	itemModifiers += ItemModifier(fileName).apply(configure)
-	return Argument.ItemModifier(fileName, name)
+	return ItemModifierArgument(fileName, name)
 }

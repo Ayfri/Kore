@@ -1,9 +1,9 @@
 package features.advancements.triggers
 
-import arguments.Argument
+import arguments.types.resources.PotionArgument
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class BrewedPotion(
-	var potion: Argument.Potion? = null,
+	var potion: PotionArgument? = null,
 ) : AdvancementTriggerCondition

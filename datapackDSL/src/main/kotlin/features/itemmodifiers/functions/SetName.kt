@@ -1,9 +1,9 @@
 package features.itemmodifiers.functions
 
-import arguments.ChatComponents
-import arguments.Color
 import arguments.chatcomponents.ChatComponent
+import arguments.chatcomponents.ChatComponents
 import arguments.chatcomponents.textComponent
+import arguments.colors.Color
 import features.itemmodifiers.ItemModifier
 import kotlinx.serialization.Serializable
 

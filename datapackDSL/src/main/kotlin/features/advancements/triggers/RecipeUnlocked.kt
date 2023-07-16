@@ -1,9 +1,9 @@
 package features.advancements.triggers
 
-import arguments.Argument
+import arguments.types.resources.RecipeArgument
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class RecipeUnlocked(
-	var recipe: Argument.Recipe,
+	var recipe: RecipeArgument,
 ) : AdvancementTriggerCondition

@@ -1,5 +1,6 @@
-package arguments
+package arguments.maths
 
+import arguments.Argument
 import arguments.enums.Axis
 import kotlinx.serialization.Serializable
 import serializers.ToStringSerializer

@@ -1,26 +1,26 @@
 package features.worldgen.biome.types
 
-import arguments.Argument
+import arguments.types.resources.CarverArgument
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Carvers(
-	var air: List<Argument.Carver>? = null,
-	var liquid: List<Argument.Carver>? = null
+	var air: List<CarverArgument>? = null,
+	var liquid: List<CarverArgument>? = null
 )
 
-fun Carvers.air(init: MutableList<Argument.Carver>.() -> Unit) {
+fun Carvers.air(init: MutableList<CarverArgument>.() -> Unit) {
 	air = buildList(init)
 }
 
-fun Carvers.air(vararg values: Argument.Carver) {
+fun Carvers.air(vararg values: CarverArgument) {
 	air = values.toList()
 }
 
-fun Carvers.liquid(init: MutableList<Argument.Carver>.() -> Unit) {
+fun Carvers.liquid(init: MutableList<CarverArgument>.() -> Unit) {
 	liquid = buildList(init)
 }
 
-fun Carvers.liquid(vararg values: Argument.Carver) {
+fun Carvers.liquid(vararg values: CarverArgument) {
 	liquid = values.toList()
 }

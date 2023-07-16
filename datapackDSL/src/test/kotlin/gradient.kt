@@ -1,8 +1,7 @@
-import arguments.Color
-import arguments.allPlayers
 import arguments.chatcomponents.text
 import arguments.chatcomponents.textComponent
-import arguments.toRGB
+import arguments.colors.Color
+import arguments.types.literals.allPlayers
 import commands.tellraw
 import functions.function
 

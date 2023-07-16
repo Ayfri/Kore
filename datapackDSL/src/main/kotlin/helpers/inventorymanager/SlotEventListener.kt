@@ -1,6 +1,14 @@
 package helpers.inventorymanager
 
-import arguments.*
+import arguments.ItemSlotType
+import arguments.maths.Vec3
+import arguments.types.ContainerArgument
+import arguments.types.EntityArgument
+import arguments.types.literals.allEntities
+import arguments.types.literals.randomUUID
+import arguments.types.literals.self
+import arguments.types.resources.FunctionArgument
+import arguments.types.resources.ItemArgument
 import commands.data
 import commands.execute.execute
 import commands.execute.run
@@ -11,6 +19,9 @@ import generated.Entities
 import generated.Items
 import generated.type
 import net.benwoodworth.knbt.addNbtCompound
+import utils.nbt
+import utils.nbtList
+import utils.set
 
 enum class SlotEventType {
 	DURING_TAKEN,
@@ -19,14 +30,14 @@ enum class SlotEventType {
 }
 
 data class SlotEventListener(
-	val container: Argument.Container,
+	val container: ContainerArgument,
 	val slot: ItemSlotType,
-	var item: Argument.Item,
+	var item: ItemArgument,
 ) {
 	val events = mutableListOf<SlotEvent>()
 	var randomTag = randomUUID().asString()
 	internal var onTick: (Function.() -> Unit)? = null
-	internal var onTickFunction: Argument.Function? = null
+	internal var onTickFunction: FunctionArgument? = null
 
 	val randomTagNbt
 		get() = nbt {
@@ -51,13 +62,13 @@ data class SlotEventListener(
 		onTick = block
 	}
 
-	fun onTick(function: Argument.Function) {
+	fun onTick(function: FunctionArgument) {
 		onTickFunction = function
 	}
 
 	context(Function)
-	fun clearAllItemsNotInSlot(fromContainer: Argument.Container = container) = when (fromContainer) {
-		is Argument.Entity -> items {
+	fun clearAllItemsNotInSlot(fromContainer: ContainerArgument = container) = when (fromContainer) {
+		is EntityArgument -> items {
 			fun executeIfItem(index: Int) = execute {
 				asTarget(fromContainer)
 				asTarget(self {
@@ -91,6 +102,8 @@ data class SlotEventListener(
 			}
 			remove("Items[{Slot:53b$itemNbt}]")
 		}
+
+		else -> error("Unsupported container type: $fromContainer")
 	}
 
 	context(Function)
@@ -110,7 +123,7 @@ data class SlotEventListener(
 
 fun InventoryManager<*>.slotEvent(
 	slot: ItemSlotType,
-	item: Argument.Item,
+	item: ItemArgument,
 	block: SlotEventListener.() -> Unit
 ) {
 	slotsListeners += SlotEventListener(container, slot, item).apply(block)

@@ -1,38 +1,39 @@
 package commands
 
-import arguments.Argument
-import arguments.Vec3
-import arguments.float
-import arguments.literal
+import arguments.maths.Vec3
+import arguments.types.EntityArgument
+import arguments.types.literals.float
+import arguments.types.literals.literal
+import arguments.types.resources.DamageTypeArgument
 import functions.Function
 
-class Damage(private val fn: Function, private val selector: Argument.Entity) {
-	fun apply(amount: Float, damageType: Argument.DamageType? = null) = fn.addLine(command("damage", selector, float(amount), damageType))
-	fun applyAt(amount: Float, damageType: Argument.DamageType, at: Vec3) =
+class Damage(private val fn: Function, private val selector: EntityArgument) {
+	fun apply(amount: Float, damageType: DamageTypeArgument? = null) = fn.addLine(command("damage", selector, float(amount), damageType))
+	fun applyAt(amount: Float, damageType: DamageTypeArgument, at: Vec3) =
 		fn.addLine(command("damage", selector, float(amount), damageType, literal("at"), at))
 
-	fun applyBy(amount: Float, damageType: Argument.DamageType, by: Argument.Entity) =
+	fun applyBy(amount: Float, damageType: DamageTypeArgument, by: EntityArgument) =
 		fn.addLine(command("damage", selector, float(amount), damageType, literal("by"), by))
 
-	fun applyBy(amount: Float, damageType: Argument.DamageType, by: Argument.Entity, from: Argument.Entity) =
+	fun applyBy(amount: Float, damageType: DamageTypeArgument, by: EntityArgument, from: EntityArgument) =
 		fn.addLine(command("damage", selector, float(amount), damageType, literal("by"), by, literal("from"), from))
 }
 
-fun Function.damage(targets: Argument.Entity, amount: Float, damageType: Argument.DamageType? = null) =
+fun Function.damage(targets: EntityArgument, amount: Float, damageType: DamageTypeArgument? = null) =
 	addLine(command("damage", targets, float(amount), damageType))
 
-fun Function.damage(targets: Argument.Entity, amount: Float, damageType: Argument.DamageType, at: Vec3) =
+fun Function.damage(targets: EntityArgument, amount: Float, damageType: DamageTypeArgument, at: Vec3) =
 	addLine(command("damage", targets, float(amount), damageType, literal("at"), at))
 
-fun Function.damage(targets: Argument.Entity, amount: Float, damageType: Argument.DamageType, by: Argument.Entity) =
+fun Function.damage(targets: EntityArgument, amount: Float, damageType: DamageTypeArgument, by: EntityArgument) =
 	addLine(command("damage", targets, float(amount), damageType, literal("by"), by))
 
 fun Function.damage(
-	targets: Argument.Entity,
+	targets: EntityArgument,
 	amount: Float,
-	damageType: Argument.DamageType,
-	by: Argument.Entity,
-	from: Argument.Entity
+	damageType: DamageTypeArgument,
+	by: EntityArgument,
+	from: EntityArgument
 ) = addLine(command("damage", targets, float(amount), damageType, literal("by"), by, literal("from"), from))
 
-fun Function.damages(targets: Argument.Entity, block: Damage.() -> Command) = Damage(this, targets).block()
+fun Function.damages(targets: EntityArgument, block: Damage.() -> Command) = Damage(this, targets).block()

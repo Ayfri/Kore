@@ -1,9 +1,10 @@
 package commands
 
-import arguments.Argument
-import arguments.Vec3
-import arguments.literal
-import arguments.vec3
+import arguments.maths.Vec3
+import arguments.maths.vec3
+import arguments.types.BlockOrTagArgument
+import arguments.types.literals.literal
+import arguments.types.resources.DimensionArgument
 import functions.Function
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
@@ -34,17 +35,17 @@ enum class CloneMode {
 class Clone(private val fn: Function) {
 	private var type: Type? = null
 	private var cloneMode: CloneMode? = null
-	private var filter: Argument.BlockOrTag? = null
+	private var filter: BlockOrTagArgument? = null
 	var begin = vec3()
 	var destination = vec3()
 	var end = vec3()
-	var from: Argument.Dimension? = null
-	var to: Argument.Dimension? = null
+	var from: DimensionArgument? = null
+	var to: DimensionArgument? = null
 
 	private val fromArgs get() = from?.let { arrayOf(literal("from"), it) } ?: emptyArray()
 	private val toArgs get() = to?.let { arrayOf(literal("to"), it) } ?: emptyArray()
 
-	fun filter(filter: Argument.BlockOrTag, mode: CloneMode? = null) {
+	fun filter(filter: BlockOrTagArgument, mode: CloneMode? = null) {
 		type = Type.FILTERED
 		this.filter = filter
 		cloneMode = mode
@@ -76,7 +77,7 @@ class Clone(private val fn: Function) {
 }
 
 fun Function.clone(begin: Vec3, end: Vec3, destination: Vec3) = addLine(command("clone", begin, end, destination))
-fun Function.cloneFiltered(begin: Vec3, end: Vec3, destination: Vec3, filter: Argument.BlockOrTag, mode: CloneMode? = null) =
+fun Function.cloneFiltered(begin: Vec3, end: Vec3, destination: Vec3, filter: BlockOrTagArgument, mode: CloneMode? = null) =
 	addLine(command("clone", begin, end, destination, literal("filtered"), filter, literal(mode?.asArg())))
 
 fun Function.cloneMasked(begin: Vec3, end: Vec3, destination: Vec3, mode: CloneMode? = null) =

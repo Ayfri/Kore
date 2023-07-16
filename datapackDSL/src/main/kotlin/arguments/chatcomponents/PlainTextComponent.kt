@@ -1,6 +1,6 @@
 package arguments.chatcomponents
 
-import arguments.Color
+import arguments.colors.Color
 import kotlinx.serialization.Serializable
 
 @Serializable

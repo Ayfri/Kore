@@ -1,9 +1,10 @@
 package commands
 
-import arguments.Argument
-import arguments.float
-import arguments.literal
-import arguments.uuid
+import arguments.types.EntityArgument
+import arguments.types.literals.float
+import arguments.types.literals.literal
+import arguments.types.literals.uuid
+import arguments.types.resources.AttributeArgument
 import functions.Function
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
@@ -21,12 +22,12 @@ enum class AttributeModifierOperation {
 	}
 }
 
-class AttributeBase(private val fn: Function, private val target: Argument.Entity, private val attribute: Argument.Attribute) {
+class AttributeBase(private val fn: Function, private val target: EntityArgument, private val attribute: AttributeArgument) {
 	fun get() = fn.addLine(command("attribute", target, attribute, literal("base"), literal("get")))
 	fun set(value: Double) = fn.addLine(command("attribute", target, attribute, literal("base"), literal("set"), float(value)))
 }
 
-class AttributeModifiers(private val fn: Function, private val target: Argument.Entity, private val attribute: Argument.Attribute) {
+class AttributeModifiers(private val fn: Function, private val target: EntityArgument, private val attribute: AttributeArgument) {
 	fun add(id: UUID, name: String, value: Double, operation: AttributeModifierOperation) =
 		fn.addLine(
 			command(
@@ -42,7 +43,7 @@ class AttributeModifiers(private val fn: Function, private val target: Argument.
 			)
 		)
 
-	fun add(name: Argument.Attribute, value: Double, operation: AttributeModifierOperation) =
+	fun add(name: AttributeArgument, value: Double, operation: AttributeModifierOperation) =
 		fn.addLine(
 			command(
 				"attribute",
@@ -63,7 +64,7 @@ class AttributeModifiers(private val fn: Function, private val target: Argument.
 	fun remove(id: UUID) = fn.addLine(command("attribute", target, attribute, literal("modifier"), literal("remove"), uuid(id)))
 }
 
-class Attribute(private val fn: Function, private val target: Argument.Entity, private val attribute: Argument.Attribute) {
+class Attribute(private val fn: Function, private val target: EntityArgument, private val attribute: AttributeArgument) {
 	val base = AttributeBase(fn, target, attribute)
 	fun base(block: AttributeBase.() -> Command) = base.run(block)
 
@@ -73,26 +74,26 @@ class Attribute(private val fn: Function, private val target: Argument.Entity, p
 	fun get(scale: Double? = null) = fn.addLine(command("attribute", target, attribute, literal("get"), float(scale)))
 }
 
-class AttributeTarget(private val fn: Function, private val target: Argument.Entity) {
-	fun attribute(attribute: Argument.Attribute) = Attribute(fn, target, attribute)
+class AttributeTarget(private val fn: Function, private val target: EntityArgument) {
+	fun attribute(attribute: AttributeArgument) = Attribute(fn, target, attribute)
 
-	fun base(attribute: Argument.Attribute, block: AttributeBase.() -> Command) = Attribute(fn, target, attribute).base(block)
-	fun get(attribute: Argument.Attribute, scale: Double? = null) = Attribute(fn, target, attribute).get(scale)
-	fun modifiers(attribute: Argument.Attribute, block: AttributeModifiers.() -> Command) =
+	fun base(attribute: AttributeArgument, block: AttributeBase.() -> Command) = Attribute(fn, target, attribute).base(block)
+	fun get(attribute: AttributeArgument, scale: Double? = null) = Attribute(fn, target, attribute).get(scale)
+	fun modifiers(attribute: AttributeArgument, block: AttributeModifiers.() -> Command) =
 		Attribute(fn, target, attribute).modifiers(block)
 }
 
 class Attributes(private val fn: Function) {
-	fun get(target: Argument.Entity, attribute: Argument.Attribute) = Attribute(fn, target, attribute)
-	fun get(target: Argument.Entity, block: AttributeTarget.() -> Command) = AttributeTarget(fn, target).run(block)
+	fun get(target: EntityArgument, attribute: AttributeArgument) = Attribute(fn, target, attribute)
+	fun get(target: EntityArgument, block: AttributeTarget.() -> Command) = AttributeTarget(fn, target).run(block)
 }
 
 fun Function.attributes(block: Attributes.() -> Command) = Attributes(this).run(block)
-fun Function.attributes(target: Argument.Entity, block: AttributeTarget.() -> Command) = AttributeTarget(this, target).run(block)
-fun Function.attributes(target: Argument.Entity, attribute: Argument.Attribute, block: Attribute.() -> Command) =
+fun Function.attributes(target: EntityArgument, block: AttributeTarget.() -> Command) = AttributeTarget(this, target).run(block)
+fun Function.attributes(target: EntityArgument, attribute: AttributeArgument, block: Attribute.() -> Command) =
 	Attribute(this, target, attribute).run(block)
 
-fun Function.attributes(target: Argument.Entity) = AttributeTarget(this, target)
-fun Function.attributes(target: Argument.Entity, attribute: Argument.Attribute) = Attribute(this, target, attribute)
+fun Function.attributes(target: EntityArgument) = AttributeTarget(this, target)
+fun Function.attributes(target: EntityArgument, attribute: AttributeArgument) = Attribute(this, target, attribute)
 
 val Function.attributes get() = Attributes(this)

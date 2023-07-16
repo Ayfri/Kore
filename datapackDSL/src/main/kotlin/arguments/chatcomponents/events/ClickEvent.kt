@@ -1,6 +1,5 @@
 package arguments.chatcomponents.events
 
-import arguments.set
 import commands.Command
 import functions.Function
 import kotlinx.serialization.SerialName
@@ -8,6 +7,7 @@ import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.buildNbtCompound
 import serializers.LowercaseSerializer
 import utils.asArg
+import utils.set
 import java.io.File
 import java.net.URL
 

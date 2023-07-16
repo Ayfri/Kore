@@ -1,10 +1,10 @@
 package features.advancements.triggers
 
-import arguments.Argument
+import arguments.types.resources.DimensionArgument
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class ChangedDimension(
-	var from: Argument.Dimension? = null,
-	var to: Argument.Dimension? = null,
+	var from: DimensionArgument? = null,
+	var to: DimensionArgument? = null,
 ) : AdvancementTriggerCondition

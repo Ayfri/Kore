@@ -1,6 +1,6 @@
 package features.chattype
 
-import arguments.Color
+import arguments.colors.Color
 import kotlinx.serialization.Serializable
 
 @Serializable

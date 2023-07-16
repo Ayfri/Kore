@@ -1,7 +1,9 @@
 package features.recipes.types
 
-import arguments.Argument
-import arguments.item
+import arguments.types.resources.ItemArgument
+import arguments.types.resources.RecipeArgument
+import arguments.types.resources.item
+import arguments.types.resources.tagged.ItemTagArgument
 import features.recipes.RecipeFile
 import features.recipes.RecipeTypes
 import features.recipes.Recipes
@@ -14,7 +16,7 @@ data class SmithingTransform(
 	var template: Ingredient,
 	var base: Ingredient,
 	var addition: Ingredient,
-	var result: Argument.Item,
+	var result: ItemArgument,
 ) : Recipe() {
 	@Transient
 	@Deprecated("SmithingTransform does not have a group", level = DeprecationLevel.HIDDEN)
@@ -24,14 +26,14 @@ data class SmithingTransform(
 	override val type = RecipeTypes.SMITHING_TRANSFORM
 }
 
-fun Recipes.smithingTransform(name: String, block: SmithingTransform.() -> Unit): Argument.Recipe {
+fun Recipes.smithingTransform(name: String, block: SmithingTransform.() -> Unit): RecipeArgument {
 	dp.recipes.add(
 		RecipeFile(
 			name,
 			SmithingTransform(template = Ingredient(), base = Ingredient(), addition = Ingredient(), result = item("")).apply(block)
 		)
 	)
-	return Argument.Recipe(name, dp.name)
+	return RecipeArgument(name, dp.name)
 }
 
 fun SmithingTransform.template(block: Ingredient.() -> Unit) {
@@ -42,7 +44,7 @@ fun SmithingTransform.base(block: Ingredient.() -> Unit) {
 	base = Ingredient().apply(block)
 }
 
-fun SmithingTransform.base(item: Argument.Item? = null, tag: Argument.ItemTag? = null) {
+fun SmithingTransform.base(item: ItemArgument? = null, tag: ItemTagArgument? = null) {
 	base = Ingredient(item, tag)
 }
 
@@ -50,6 +52,6 @@ fun SmithingTransform.addition(block: Ingredient.() -> Unit) {
 	addition = Ingredient().apply(block)
 }
 
-fun SmithingTransform.addition(item: Argument.Item? = null, tag: Argument.ItemTag? = null) {
+fun SmithingTransform.addition(item: ItemArgument? = null, tag: ItemTagArgument? = null) {
 	addition = Ingredient(item, tag)
 }

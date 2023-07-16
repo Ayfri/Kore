@@ -1,20 +1,18 @@
 package features.recipes.data
 
-import arguments.Argument
+import arguments.types.resources.ItemArgument
+import arguments.types.resources.tagged.ItemTagArgument
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Serializer
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.encodeStructure
-import serializers.SingleOrMultiSerializer
-
-typealias Ingredients = @Serializable(with = SingleOrMultiSerializer::class) MutableList<Ingredient>
 
 @Serializable(with = Ingredient.Companion.IngredientSerializer::class)
 data class Ingredient(
-	var item: Argument.Item? = null,
-	var tag: Argument.ItemTag? = null,
+	var item: ItemArgument? = null,
+	var tag: ItemTagArgument? = null,
 ) {
 	companion object {
 		@OptIn(ExperimentalSerializationApi::class)

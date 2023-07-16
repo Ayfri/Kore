@@ -1,4 +1,4 @@
-import arguments.ChatComponents
+import arguments.chatcomponents.ChatComponents
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

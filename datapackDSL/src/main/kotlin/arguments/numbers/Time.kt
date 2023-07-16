@@ -1,6 +1,6 @@
 package arguments.numbers
 
-import arguments.literal
+import arguments.types.literals.literal
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encoding.Encoder
 import serializers.LowercaseSerializer

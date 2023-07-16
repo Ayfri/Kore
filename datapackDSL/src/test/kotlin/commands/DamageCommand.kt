@@ -1,8 +1,8 @@
 package commands
 
-import arguments.Vec3
-import arguments.allEntities
-import arguments.self
+import arguments.maths.Vec3
+import arguments.types.literals.allEntities
+import arguments.types.literals.self
 import functions.Function
 import generated.DamageTypes
 import utils.assertsIs

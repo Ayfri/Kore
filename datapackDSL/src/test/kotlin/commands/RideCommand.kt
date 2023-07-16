@@ -1,7 +1,7 @@
 package commands
 
-import arguments.allEntities
-import arguments.self
+import arguments.types.literals.allEntities
+import arguments.types.literals.self
 import functions.Function
 import utils.assertsIs
 

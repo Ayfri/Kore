@@ -1,15 +1,15 @@
 package features.worldgen.dimension.generator
 
-import arguments.Argument
+import arguments.types.resources.NoiseSettingsArgument
 import features.worldgen.dimension.Dimension
 import features.worldgen.dimension.biomesource.BiomeSource
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Noise(
-	var settings: Argument.NoiseSettings,
+	var settings: NoiseSettingsArgument,
 	var biomeSource: BiomeSource,
 ) : Generator()
 
-fun Dimension.noiseGenerator(settings: Argument.NoiseSettings, biomeSource: BiomeSource) =
+fun Dimension.noiseGenerator(settings: NoiseSettingsArgument, biomeSource: BiomeSource) =
 	Noise(settings, biomeSource).also { generator = it }

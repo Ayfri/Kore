@@ -1,14 +1,14 @@
 package features.itemmodifiers.functions
 
-import arguments.Argument
+import arguments.types.resources.PotionArgument
 import features.itemmodifiers.ItemModifier
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class SetPotion(
-	val potion: Argument.Potion
+	val potion: PotionArgument
 ) : ItemFunction()
 
-fun ItemModifier.setPotion(potion: Argument.Potion, block: SetPotion.() -> Unit = {}) {
+fun ItemModifier.setPotion(potion: PotionArgument, block: SetPotion.() -> Unit = {}) {
 	modifiers += SetPotion(potion).apply(block)
 }

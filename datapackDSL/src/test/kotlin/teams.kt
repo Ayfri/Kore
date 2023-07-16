@@ -1,9 +1,12 @@
-import arguments.*
 import arguments.chatcomponents.textComponent
+import arguments.colors.Color
 import arguments.colors.NamedColor
+import arguments.maths.coordinate
 import arguments.scores.score
 import arguments.selector.SelectorNbtData
 import arguments.selector.scores
+import arguments.types.literals.allPlayers
+import arguments.types.literals.self
 import commands.*
 import commands.execute.execute
 import commands.execute.run
@@ -15,6 +18,9 @@ import generated.Items
 import generated.Particles
 import net.benwoodworth.knbt.addNbtCompound
 import utils.asArg
+import utils.nbt
+import utils.nbtList
+import utils.set
 
 data class Team(
 	val name: String,

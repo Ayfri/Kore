@@ -1,11 +1,11 @@
 package features.itemmodifiers.functions
 
-import arguments.nbt
-import arguments.stringifiedNbt
 import features.itemmodifiers.ItemModifier
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompoundBuilder
 import net.benwoodworth.knbt.NbtTag
+import utils.nbt
+import utils.stringifiedNbt
 
 @Serializable
 data class SetNbt(

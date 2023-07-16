@@ -1,18 +1,25 @@
-import arguments.*
+import arguments.ARMOR
+import arguments.CONTAINER
+import arguments.DisplaySlots
 import arguments.chatcomponents.clickEvent
 import arguments.chatcomponents.events.openUrl
 import arguments.chatcomponents.events.showText
 import arguments.chatcomponents.hoverEvent
 import arguments.chatcomponents.textComponent
+import arguments.colors.Color
 import arguments.colors.RGB
 import arguments.enums.Dimension
 import arguments.enums.Gamemode
+import arguments.maths.Axes
+import arguments.maths.coordinate
+import arguments.maths.vec3
 import arguments.numbers.*
 import arguments.scores.score
 import arguments.selector.SelectorNbtData
 import arguments.selector.SelectorType
 import arguments.selector.Sort
 import arguments.selector.scores
+import arguments.types.literals.*
 import commands.*
 import commands.execute.Anchor
 import commands.execute.execute
@@ -26,6 +33,9 @@ import helpers.helpersTests
 import io.github.cdimascio.dotenv.dotenv
 import net.benwoodworth.knbt.addNbtCompound
 import serialization.selectorTests
+import utils.nbtList
+import utils.nbtListOf
+import utils.set
 import java.util.*
 import kotlin.io.path.Path
 
@@ -95,7 +105,7 @@ fun main() {
 			bossBars.list()
 
 			addBlankLine()
-			cloneFiltered(coordinate(20, 50, 30), coordinate(40, 60, 50), coordinate(), blockTag("wool"), CloneMode.MOVE)
+			cloneFiltered(coordinate(20, 50, 30), coordinate(40, 60, 50), coordinate(), Tags.Blocks.WOOL, CloneMode.MOVE)
 
 			data(selector(SelectorType.ALL_ENTITIES, true) {
 				advancements {
@@ -194,7 +204,7 @@ fun main() {
 			scoreboard {
 				objectives {
 					add("test", "dummy", textComponent("Test"))
-					setDisplay(DisplaySlot.sidebar, "test")
+					setDisplay(DisplaySlots.sidebar, "test")
 				}
 
 				players {

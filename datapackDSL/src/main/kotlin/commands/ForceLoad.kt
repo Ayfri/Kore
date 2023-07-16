@@ -1,7 +1,7 @@
 package commands
 
-import arguments.Vec2
-import arguments.literal
+import arguments.maths.Vec2
+import arguments.types.literals.literal
 import functions.Function
 
 class ForceLoad(private val fn: Function) {

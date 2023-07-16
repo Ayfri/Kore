@@ -1,6 +1,6 @@
 package features.loottables.entries
 
-import arguments.Argument
+import arguments.types.resources.ItemArgument
 import features.itemmodifiers.ItemModifier
 import features.itemmodifiers.ItemModifierAsList
 import features.predicates.Predicate
@@ -9,14 +9,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Item(
-	var name: Argument.Item,
+	var name: ItemArgument,
 	var conditions: PredicateAsList? = null,
 	var functions: ItemModifierAsList? = null,
 	var weight: Int? = null,
 	var quality: Int? = null,
 ) : LootEntry
 
-fun LootEntries.item(name: Argument.Item, block: Item.() -> Unit = {}) {
+fun LootEntries.item(name: ItemArgument, block: Item.() -> Unit = {}) {
 	add(Item(name).apply(block))
 }
 

@@ -1,12 +1,19 @@
 package commands.execute
 
 import arguments.Argument
-import arguments.Relation
-import arguments.Vec3
-import arguments.literal
+import arguments.enums.Relation
+import arguments.maths.Vec3
 import arguments.numbers.IntRangeOrInt
 import arguments.scores.ExecuteScore
 import arguments.scores.Scores
+import arguments.types.BiomeOrTagArgument
+import arguments.types.DataArgument
+import arguments.types.EntityArgument
+import arguments.types.ScoreHolderArgument
+import arguments.types.literals.literal
+import arguments.types.resources.BlockArgument
+import arguments.types.resources.DimensionArgument
+import arguments.types.resources.PredicateArgument
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
 import utils.asArg
@@ -29,14 +36,14 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 		this.arguments += listOf(literal(prefix), *arguments.toTypedArray())
 	}
 
-	fun block(pos: Vec3, block: Argument.Block) = addArguments(listOf(literal("block"), pos, block))
+	fun block(pos: Vec3, block: BlockArgument) = addArguments(listOf(literal("block"), pos, block))
 
 	fun blocks(start: Vec3, end: Vec3, destination: Vec3, mode: BlocksTestMode) =
 		addArguments(listOf(literal("blocks"), start, end, destination, literal(mode.asArg())))
 
-	fun biome(pos: Vec3, biome: Argument.BiomeOrTag) = addArguments(listOf(literal("biome"), pos, biome))
+	fun biome(pos: Vec3, biome: BiomeOrTagArgument) = addArguments(listOf(literal("biome"), pos, biome))
 
-	fun data(target: Argument.Data, path: String) = addArguments(
+	fun data(target: DataArgument, path: String) = addArguments(
 		listOf(
 			literal("data"),
 			literal(target.literalName), ex.targetArg(target),
@@ -44,19 +51,19 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 		)
 	)
 
-	fun dimension(dimension: Argument.Dimension) = addArguments(listOf(literal("dimension"), dimension))
+	fun dimension(dimension: DimensionArgument) = addArguments(listOf(literal("dimension"), dimension))
 
-	fun entity(target: Argument.Entity) = addArguments(listOf(literal("entity"), ex.targetArg(target)))
+	fun entity(target: EntityArgument) = addArguments(listOf(literal("entity"), ex.targetArg(target)))
 
 	fun loaded(pos: Vec3) = addArguments(listOf(literal("loaded"), pos))
 
-	fun predicate(predicate: Argument.Predicate) = addArguments(listOf(literal("predicate"), predicate))
+	fun predicate(predicate: PredicateArgument) = addArguments(listOf(literal("predicate"), predicate))
 	fun predicate(predicate: String) = addArguments(listOf(literal("predicate"), literal(predicate)))
 
 	fun score(
-		target: Argument.ScoreHolder,
+		target: ScoreHolderArgument,
 		objective: String,
-		source: Argument.ScoreHolder,
+		source: ScoreHolderArgument,
 		sourceObjective: String,
 		relation: Relation
 	) = addArguments(
@@ -69,6 +76,6 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 
 	override fun addScore(string: String) = addArguments(listOf(literal("score"), literal(string)))
 
-	fun score(target: Argument.ScoreHolder, objective: String, range: IntRangeOrInt) =
+	fun score(target: ScoreHolderArgument, objective: String, range: IntRangeOrInt) =
 		addArguments(listOf(literal("score"), ex.targetArg(target), literal(objective), literal("matches"), literal(range.asArg())))
 }

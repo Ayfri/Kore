@@ -1,6 +1,7 @@
-package arguments
+package arguments.chatcomponents
 
-import arguments.chatcomponents.*
+import arguments.Argument
+import arguments.types.literals.literal
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -14,6 +15,7 @@ import net.benwoodworth.knbt.NbtString
 import net.benwoodworth.knbt.StringifiedNbt
 import net.benwoodworth.knbt.buildNbtList
 import serializers.NbtAsJsonTextComponentSerializer
+import utils.plusAssign
 
 @Serializable(with = ChatComponents.Companion.ChatComponentsSerializer::class)
 data class ChatComponents(val list: MutableList<ChatComponent> = mutableListOf(), var onlySimpleComponents: Boolean = false) : Argument {

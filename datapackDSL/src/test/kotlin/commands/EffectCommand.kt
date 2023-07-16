@@ -1,6 +1,6 @@
 package commands
 
-import arguments.self
+import arguments.types.literals.self
 import functions.Function
 import generated.Effects
 import utils.assertsIs

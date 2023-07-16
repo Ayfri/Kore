@@ -1,9 +1,8 @@
 package helpers.displays
 
-import arguments.Vec3
+import arguments.maths.Vec3
 import arguments.numbers.TimeNumber
-import arguments.randomUUID
-import arguments.set
+import arguments.types.literals.randomUUID
 import commands.Command
 import commands.data
 import commands.summon
@@ -11,6 +10,7 @@ import functions.Function
 import helpers.displays.entities.DisplayEntity
 import helpers.displays.maths.Transformation
 import net.benwoodworth.knbt.*
+import utils.set
 
 class DisplayEntityInterpolable(val entity: DisplayEntity, var lastPosition: Vec3) {
 	val selector = randomUUID()

@@ -1,11 +1,17 @@
 package items
 
-import arguments.*
+import arguments.chatcomponents.ChatComponents
 import arguments.chatcomponents.textComponent
+import arguments.maths.Vec3
+import arguments.maths.coordinate
+import arguments.types.resources.ItemArgument
+import arguments.types.resources.item
 import commands.summon
 import functions.Function
 import nbt.MutableNbtCompound
 import nbt.mutableNbt
+import utils.nbt
+import utils.set
 
 data class ItemStack(
 	val name: String,
@@ -23,7 +29,7 @@ data class ItemStack(
 		}
 	}
 
-	fun asArgument() = Argument.Item(name, namespace, nbtData.toNbtCompound())
+	fun asArgument() = ItemArgument(name, namespace, nbtData.toNbtCompound())
 }
 
 fun itemStack(name: String, namespace: String = "minecraft", count: Int = 1, nbtData: MutableNbtCompound = mutableNbt()) =

@@ -1,11 +1,15 @@
 package utils
 
-import arguments.*
+import arguments.DisplaySlots
 import arguments.chatcomponents.*
 import arguments.chatcomponents.events.runCommand
 import arguments.chatcomponents.events.suggestCommand
+import arguments.colors.Color
 import arguments.numbers.rangeOrIntStart
 import arguments.selector.SelectorNbtData
+import arguments.types.literals.allEntities
+import arguments.types.literals.allPlayers
+import arguments.types.literals.self
 import commands.*
 import commands.execute.execute
 import commands.execute.run
@@ -112,7 +116,7 @@ data class DebugEntity(val data: Map<String, String> = mutableMapOf()) {
 
 	context(Function)
 	fun displayDebugScore() {
-		scoreboard.objective(scoreName).setDisplay(DisplaySlot.sidebar)
+		scoreboard.objective(scoreName).setDisplay(DisplaySlots.sidebar)
 	}
 
 	context(Function)

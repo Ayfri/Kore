@@ -1,11 +1,11 @@
 package arguments.chatcomponents
 
-import arguments.Argument
-import arguments.ChatComponents
-import arguments.set
+import arguments.types.ScoreHolderArgument
+import arguments.types.literals.AllArgument
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.buildNbtCompound
+import utils.set
 
 @Serializable
 data class ScoreComponent(
@@ -32,7 +32,7 @@ data class ScoreComponentEntry(
 
 fun scoreComponent(
 	objective: String,
-	selector: Argument.ScoreHolder = Argument.All,
+	selector: ScoreHolderArgument = AllArgument,
 	value: String? = null,
 	block: ScoreComponent.() -> Unit = {}
 ) =

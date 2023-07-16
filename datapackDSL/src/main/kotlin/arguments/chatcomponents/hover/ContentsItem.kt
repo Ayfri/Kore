@@ -1,8 +1,8 @@
 package arguments.chatcomponents.hover
 
-import arguments.set
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.buildNbtCompound
+import utils.set
 
 @Serializable
 data class ContentsItem(

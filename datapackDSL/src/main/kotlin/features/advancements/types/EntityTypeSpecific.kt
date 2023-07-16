@@ -1,10 +1,13 @@
 package features.advancements.types
 
-import arguments.Argument
 import arguments.enums.Gamemode
 import arguments.selector.Advancements
+import arguments.types.resources.CatVariantArgument
+import arguments.types.resources.FrogVariantArgument
+import arguments.types.resources.RecipeArgument
+import arguments.types.resources.StatisticArgument
 import features.advancements.serializers.IntRangeOrIntJson
-import kotlinx.serialization.*
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 
 @Serializable
@@ -14,13 +17,13 @@ sealed interface EntityTypeSpecific
 object AnyTypeSpecific : EntityTypeSpecific
 
 @Serializable
-data class CatTypeSpecific(var variant: Argument.CatVariant? = null) : EntityTypeSpecific
+data class CatTypeSpecific(var variant: CatVariantArgument? = null) : EntityTypeSpecific
 
 @Serializable
 data class FishingHookTypeSpecific(var inOpenWater: Boolean? = null) : EntityTypeSpecific
 
 @Serializable
-data class FrogTypeSpecific(var variant: Argument.FrogVariant? = null) : EntityTypeSpecific
+data class FrogTypeSpecific(var variant: FrogVariantArgument? = null) : EntityTypeSpecific
 
 @Serializable
 data class LightningTypeSpecific(
@@ -54,8 +57,8 @@ data class PlayerTypeSpecific(
 	@Serializable(AdvancementsJSONSerializer::class) var advancements: Advancements? = null,
 	var gamemode: Gamemode? = null,
 	var level: IntRangeOrIntJson? = null,
-	var recipes: Map<Argument.Recipe, Boolean>? = null,
-	var stats: Map<Argument.Statistic, Statistic>? = null,
+	var recipes: Map<RecipeArgument, Boolean>? = null,
+	var stats: Map<StatisticArgument, Statistic>? = null,
 ) : EntityTypeSpecific
 
 @Serializable

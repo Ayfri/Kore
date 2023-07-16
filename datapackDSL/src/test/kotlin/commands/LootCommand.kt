@@ -2,9 +2,9 @@ package commands
 
 import arguments.ARMOR
 import arguments.CONTAINER
+import arguments.maths.vec3
 import arguments.numbers.PosNumber
-import arguments.self
-import arguments.vec3
+import arguments.types.literals.self
 import functions.Function
 import generated.Items
 import generated.LootTables

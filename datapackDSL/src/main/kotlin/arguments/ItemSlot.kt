@@ -51,7 +51,7 @@ interface IndexedItemSlot : ItemSlot {
 
 private fun ItemSlot.subType(name: String, index: Int) = ItemSlotType(index) { "${asString()}.$name" }
 
-object ARMOR : ItemSlot {
+data object ARMOR : ItemSlot {
 	override fun asString() = "armor"
 
 	val FEET = subType("feet", 100)
@@ -63,7 +63,7 @@ object ARMOR : ItemSlot {
 val CONTAINER = IndexedItemSlot(0) { "container" }
 val ENDERCHEST = IndexedItemSlot(200) { "enderchest" }
 
-object HORSE : IndexedItemSlot {
+data object HORSE : IndexedItemSlot {
 	override var startIndex = 500
 
 	override fun asString() = "horse"
@@ -76,7 +76,7 @@ object HORSE : IndexedItemSlot {
 val HOTBAR = IndexedItemSlot(0) { "hotbar" }
 val INVENTORY = IndexedItemSlot(9) { "inventory" }
 
-object WEAPON : ItemSlotType {
+data object WEAPON : ItemSlotType {
 	override fun asIndex() = 98
 
 	override fun asString() = "weapon"

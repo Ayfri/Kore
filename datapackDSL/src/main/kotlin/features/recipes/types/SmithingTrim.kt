@@ -1,6 +1,8 @@
 package features.recipes.types
 
-import arguments.Argument
+import arguments.types.resources.ItemArgument
+import arguments.types.resources.RecipeArgument
+import arguments.types.resources.tagged.ItemTagArgument
 import features.recipes.RecipeFile
 import features.recipes.RecipeTypes
 import features.recipes.Recipes
@@ -22,14 +24,14 @@ data class SmithingTrim(
 	override val type = RecipeTypes.SMITHING_TRANSFORM
 }
 
-fun Recipes.smithingTrim(name: String, block: SmithingTrim.() -> Unit): Argument.Recipe {
+fun Recipes.smithingTrim(name: String, block: SmithingTrim.() -> Unit): RecipeArgument {
 	dp.recipes.add(
 		RecipeFile(
 			name,
 			SmithingTrim(template = Ingredient(), base = Ingredient(), addition = Ingredient()).apply(block)
 		)
 	)
-	return Argument.Recipe(name, dp.name)
+	return RecipeArgument(name, dp.name)
 }
 
 fun SmithingTrim.template(block: Ingredient.() -> Unit) {
@@ -40,6 +42,6 @@ fun SmithingTrim.base(block: Ingredient.() -> Unit) {
 	base = Ingredient().apply(block)
 }
 
-fun SmithingTrim.base(item: Argument.Item? = null, tag: Argument.ItemTag? = null) {
+fun SmithingTrim.base(item: ItemArgument? = null, tag: ItemTagArgument? = null) {
 	base = Ingredient(item, tag)
 }

@@ -1,6 +1,6 @@
 package commands
 
-import arguments.vec2
+import arguments.maths.vec2
 import functions.Function
 import utils.assertsIs
 

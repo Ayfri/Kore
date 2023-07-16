@@ -13,5 +13,5 @@ suspend fun downloadBiomePresets() {
 }
 
 fun generateBiomePresetsEnum(noiseSettings: List<String>, sourceUrl: String) {
-	generateEnum(noiseSettings.removeJSONSuffix(), "BiomePresets", sourceUrl, "BiomePresets")
+	generateEnum(noiseSettings.removeJSONSuffix(), "BiomePresets", sourceUrl, "BiomePreset")
 }

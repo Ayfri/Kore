@@ -1,7 +1,7 @@
 package features
 
 import DataPack
-import arguments.self
+import arguments.types.literals.self
 import commands.damage
 import features.damagetypes.damageType
 import features.damagetypes.types.DeathMessageType

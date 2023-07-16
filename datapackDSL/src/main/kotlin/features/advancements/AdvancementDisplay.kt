@@ -1,7 +1,7 @@
 package features.advancements
 
-import arguments.Argument
-import arguments.ChatComponents
+import arguments.chatcomponents.ChatComponents
+import arguments.types.resources.ItemArgument
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtTag
 import serializers.LowercaseSerializer
@@ -34,6 +34,6 @@ enum class AdvancementFrameType {
 
 @Serializable
 data class AdvancementIcon(
-	var item: Argument.Item,
+	var item: ItemArgument,
 	@Serializable(with = NbtAsJsonTextComponentSerializer::class) var nbtData: NbtTag? = null
 )

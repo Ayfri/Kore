@@ -15,7 +15,10 @@ fun generatePathEnumTree(
 	val hasParent = parentResourceType != null
 
 	val topLevel = TypeSpec.interfaceBuilder(name).apply {
-		parentResourceType?.let { addSuperinterface(ClassName("arguments", "Argument", parentResourceType)) }
+		parentResourceType?.let {
+			addSuperinterface(argumentClassName(it))
+		}
+
 		addModifiers(KModifier.SEALED)
 		if (hasParent) {
 			addProperty(
@@ -38,7 +41,6 @@ fun generatePathEnumTree(
 		val tagParent = tagsParents?.keys?.firstOrNull { parent.startsWith(it) }
 
 		if ("/" !in path) {
-			println("Skipping $path")
 			topLevel.addType(
 				TypeSpec
 					.objectBuilder(enumName)
@@ -70,7 +72,8 @@ fun generatePathEnumTree(
 							.build()
 					)
 
-					addSuperinterface(ClassName("arguments", "Argument", tagsParents[tagParent]!!))
+					val argumentType = tagsParents[tagParent]!!
+					addSuperinterface(argumentClassName("tagged.${argumentType}"))
 				}
 
 				if (hasParent || tagParent != null) {

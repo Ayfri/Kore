@@ -1,8 +1,8 @@
 package helpers
 
-import arguments.Color
 import arguments.chatcomponents.text
 import arguments.chatcomponents.textComponent
+import arguments.colors.Color
 import functions.Function
 
 fun Function.scoreboardTests() {

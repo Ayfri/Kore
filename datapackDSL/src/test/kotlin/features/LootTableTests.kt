@@ -1,7 +1,7 @@
 package features
 
 import DataPack
-import arguments.self
+import arguments.types.literals.self
 import commands.loot
 import features.itemmodifiers.functions.conditions
 import features.itemmodifiers.functions.enchantRandomly

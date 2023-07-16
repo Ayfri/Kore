@@ -1,6 +1,14 @@
 package commands
 
-import arguments.*
+import arguments.colors.Color
+import arguments.maths.Vec3
+import arguments.types.EntityArgument
+import arguments.types.literals.float
+import arguments.types.literals.int
+import arguments.types.literals.literal
+import arguments.types.resources.BlockArgument
+import arguments.types.resources.ItemArgument
+import arguments.types.resources.ParticleArgument
 import functions.Function
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
@@ -20,27 +28,27 @@ enum class ParticleMode {
 private fun Color.asArgs() = toRGB().normalizedArray.map { float(it) }.toTypedArray()
 
 class Particles(private val fn: Function) {
-	fun block(block: Argument.Block, pos: Vec3? = null) = fn.addLine(command("particle", literal("block"), block, pos))
+	fun block(block: BlockArgument, pos: Vec3? = null) = fn.addLine(command("particle", literal("block"), block, pos))
 	fun block(
-		block: Argument.Block,
+		block: BlockArgument,
 		pos: Vec3,
 		delta: Vec3,
 		speed: Double,
 		count: Int,
 		mode: ParticleMode? = null,
-		viewers: Argument.Entity? = null
+		viewers: EntityArgument? = null
 	) =
 		fn.addLine(command("particle", literal("block"), block, pos, delta, float(speed), int(count), literal(mode?.asArg()), viewers))
 
-	fun blockMarker(block: Argument.Block, pos: Vec3? = null) = fn.addLine(command("particle", literal("block_marker"), block, pos))
+	fun blockMarker(block: BlockArgument, pos: Vec3? = null) = fn.addLine(command("particle", literal("block_marker"), block, pos))
 	fun blockMarker(
-		block: Argument.Block,
+		block: BlockArgument,
 		pos: Vec3,
 		delta: Vec3,
 		speed: Double,
 		count: Int,
 		mode: ParticleMode? = null,
-		viewers: Argument.Entity? = null
+		viewers: EntityArgument? = null
 	) =
 		fn.addLine(
 			command(
@@ -56,15 +64,15 @@ class Particles(private val fn: Function) {
 			)
 		)
 
-	fun fallingDust(block: Argument.Block, pos: Vec3? = null) = fn.addLine(command("particle", literal("falling_dust"), block, pos))
+	fun fallingDust(block: BlockArgument, pos: Vec3? = null) = fn.addLine(command("particle", literal("falling_dust"), block, pos))
 	fun fallingDust(
-		block: Argument.Block,
+		block: BlockArgument,
 		pos: Vec3,
 		delta: Vec3,
 		speed: Double,
 		count: Int,
 		mode: ParticleMode? = null,
-		viewers: Argument.Entity? = null
+		viewers: EntityArgument? = null
 	) =
 		fn.addLine(
 			command(
@@ -91,7 +99,7 @@ class Particles(private val fn: Function) {
 		speed: Double,
 		count: Int,
 		mode: ParticleMode? = null,
-		viewers: Argument.Entity? = null
+		viewers: EntityArgument? = null
 	) =
 		fn.addLine(
 			command(
@@ -120,7 +128,7 @@ class Particles(private val fn: Function) {
 		speed: Double,
 		count: Int,
 		mode: ParticleMode? = null,
-		viewers: Argument.Entity? = null
+		viewers: EntityArgument? = null
 	) =
 		fn.addLine(
 			command(
@@ -138,27 +146,27 @@ class Particles(private val fn: Function) {
 			)
 		)
 
-	fun item(item: Argument.Item, pos: Vec3? = null) = fn.addLine(command("particle", literal("item"), item, pos))
+	fun item(item: ItemArgument, pos: Vec3? = null) = fn.addLine(command("particle", literal("item"), item, pos))
 	fun item(
-		item: Argument.Item,
+		item: ItemArgument,
 		pos: Vec3,
 		delta: Vec3,
 		speed: Double,
 		count: Int,
 		mode: ParticleMode? = null,
-		viewers: Argument.Entity? = null
+		viewers: EntityArgument? = null
 	) =
 		fn.addLine(command("particle", literal("item"), item, pos, delta, float(speed), int(count), literal(mode?.asArg()), viewers))
 
-	fun particle(particle: Argument.Particle, pos: Vec3? = null) = fn.addLine(command("particle", particle, pos))
+	fun particle(particle: ParticleArgument, pos: Vec3? = null) = fn.addLine(command("particle", particle, pos))
 	fun particle(
-		particle: Argument.Particle,
+		particle: ParticleArgument,
 		pos: Vec3,
 		delta: Vec3,
 		speed: Double,
 		count: Int,
 		mode: ParticleMode? = null,
-		viewers: Argument.Entity? = null
+		viewers: EntityArgument? = null
 	) =
 		fn.addLine(command("particle", particle, pos, delta, float(speed), int(count), literal(mode?.asArg()), viewers))
 
@@ -170,7 +178,7 @@ class Particles(private val fn: Function) {
 		speed: Double,
 		count: Int,
 		mode: ParticleMode? = null,
-		viewers: Argument.Entity? = null
+		viewers: EntityArgument? = null
 	) =
 		fn.addLine(
 			command(
@@ -194,7 +202,7 @@ class Particles(private val fn: Function) {
 		speed: Double,
 		count: Int,
 		mode: ParticleMode? = null,
-		viewers: Argument.Entity? = null
+		viewers: EntityArgument? = null
 	) =
 		fn.addLine(
 			command(
@@ -221,7 +229,7 @@ class Particles(private val fn: Function) {
 		speed: Double,
 		count: Int,
 		mode: ParticleMode? = null,
-		viewers: Argument.Entity? = null
+		viewers: EntityArgument? = null
 	) =
 		fn.addLine(
 			command(
@@ -239,16 +247,16 @@ class Particles(private val fn: Function) {
 		)
 }
 
-fun Function.particle(particle: Argument.Particle, pos: Vec3? = null) = addLine(command("particle", particle, pos))
+fun Function.particle(particle: ParticleArgument, pos: Vec3? = null) = addLine(command("particle", particle, pos))
 
 fun Function.particle(
-	particle: Argument.Particle,
+	particle: ParticleArgument,
 	pos: Vec3,
 	delta: Vec3,
 	speed: Double,
 	count: Int,
 	mode: ParticleMode? = null,
-	viewers: Argument.Entity? = null,
+	viewers: EntityArgument? = null,
 ) = addLine(command("particle", particle, pos, delta, float(speed), int(count), literal(mode?.asArg()), viewers))
 
 val Function.particles get() = Particles(this)

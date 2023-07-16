@@ -1,6 +1,6 @@
 package maths
 
-import arguments.Vec3
+import arguments.maths.Vec3
 import arguments.numbers.PosNumber
 
 data class Area(var first: Vec3, var second: Vec3 = first) {

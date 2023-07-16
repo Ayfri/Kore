@@ -1,12 +1,12 @@
 package commands
 
-import arguments.Color
 import arguments.chatcomponents.textComponent
+import arguments.colors.Color
 import arguments.numbers.days
 import arguments.numbers.seconds
 import arguments.numbers.ticks
-import arguments.randomPlayer
-import arguments.self
+import arguments.types.literals.randomPlayer
+import arguments.types.literals.self
 import functions.Function
 import utils.assertsIs
 

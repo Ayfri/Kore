@@ -2,7 +2,7 @@ package features.chattype
 
 import DataPack
 import Generator
-import arguments.Argument
+import arguments.types.resources.ChatTypeArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString
@@ -20,9 +20,9 @@ data class ChatType(
 fun DataPack.chatType(
 	fileName: String = "chat_type",
 	block: ChatType.() -> Unit = {},
-): Argument.ChatType {
+): ChatTypeArgument {
 	chatTypes += ChatType(fileName).apply(block)
-	return Argument.ChatType(fileName, name)
+	return ChatTypeArgument(fileName, name)
 }
 
 fun ChatType.chat(translationKey: String = "chat.type.text", block: ChatTypeDecoration.() -> Unit = {}) {

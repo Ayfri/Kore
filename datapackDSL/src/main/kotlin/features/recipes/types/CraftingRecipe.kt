@@ -1,7 +1,7 @@
 package features.recipes.types
 
-import arguments.Argument
-import arguments.item
+import arguments.types.resources.ItemArgument
+import arguments.types.resources.item
 import features.recipes.data.CraftingResult
 
 interface CraftingRecipe {
@@ -12,6 +12,6 @@ fun CraftingRecipe.result(block: CraftingResult.() -> Unit) {
 	result = CraftingResult(item = item("")).apply(block)
 }
 
-fun CraftingRecipe.result(item: Argument.Item, count: Int? = null) {
+fun CraftingRecipe.result(item: ItemArgument, count: Int? = null) {
 	result = CraftingResult(item, count)
 }

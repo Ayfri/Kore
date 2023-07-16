@@ -1,13 +1,13 @@
 package features.worldgen.noisesettings.rules.conditions
 
-import arguments.Argument
+import arguments.types.resources.BiomeArgument
 import kotlinx.serialization.Serializable
 import serializers.InlinableList
 
 @Serializable
 data class Biome(
-	var biomeIs: InlinableList<Argument.Biome> = listOf(),
+	var biomeIs: InlinableList<BiomeArgument> = listOf(),
 ) : SurfaceRuleCondition()
 
-fun biomes(block: MutableList<Argument.Biome>.() -> Unit) = Biome(buildList(block))
-fun biomes(vararg biome: Argument.Biome): Biome = Biome(biome.toList())
+fun biomes(block: MutableList<BiomeArgument>.() -> Unit) = Biome(buildList(block))
+fun biomes(vararg biome: BiomeArgument): Biome = Biome(biome.toList())

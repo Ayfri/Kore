@@ -1,10 +1,11 @@
 package arguments.chatcomponents
 
-import arguments.Argument
-import arguments.ChatComponents
-import arguments.set
+import arguments.types.EntityArgument
+import arguments.types.resources.BlockArgument
+import arguments.types.resources.StorageArgument
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.buildNbtCompound
+import utils.set
 
 @Serializable
 data class NbtComponent(
@@ -28,11 +29,11 @@ data class NbtComponent(
 
 fun nbtComponent(path: String, block: NbtComponent.() -> Unit = {}) = ChatComponents(NbtComponent(path).apply(block))
 
-fun nbtComponent(path: String, block: Argument.Block, block2: NbtComponent.() -> Unit = {}) =
+fun nbtComponent(path: String, block: BlockArgument, block2: NbtComponent.() -> Unit = {}) =
 	ChatComponents(NbtComponent(path, block = block.asString()).apply(block2))
 
-fun nbtComponent(path: String, entity: Argument.Entity, block: NbtComponent.() -> Unit = {}) =
+fun nbtComponent(path: String, entity: EntityArgument, block: NbtComponent.() -> Unit = {}) =
 	ChatComponents(NbtComponent(path, entity = entity.asString()).apply(block))
 
-fun nbtComponent(path: String, storage: Argument.Storage, block: NbtComponent.() -> Unit = {}) =
+fun nbtComponent(path: String, storage: StorageArgument, block: NbtComponent.() -> Unit = {}) =
 	ChatComponents(NbtComponent(path, storage = storage.asString()).apply(block))

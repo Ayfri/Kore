@@ -1,5 +1,6 @@
-package arguments
+package arguments.maths
 
+import arguments.Argument
 import arguments.enums.Axis
 import arguments.numbers.PosNumber
 import arguments.numbers.pos
@@ -62,3 +63,8 @@ data class Vec2(val x: PosNumber, val y: PosNumber) : Argument {
 	fun negate() = Vec2(-x, -y)
 	fun normalize() = this / length
 }
+
+fun vec2(x: Number, y: Number) = Vec2(x, y)
+fun vec2(x: PosNumber, y: PosNumber) = Vec2(x, y)
+fun vec2(x: PosNumber.Type, y: PosNumber.Type) = Vec2(pos(type = x), pos(type = y))
+fun vec2(type: PosNumber.Type = PosNumber.Type.RELATIVE) = Vec2(pos(type = type), pos(type = type))

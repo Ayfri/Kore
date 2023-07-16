@@ -1,16 +1,22 @@
 package commands
 
-import arguments.*
+import arguments.Argument
 import arguments.chatcomponents.textComponent
+import arguments.types.DataArgument
+import arguments.types.literals.bool
+import arguments.types.literals.float
+import arguments.types.literals.int
+import arguments.types.literals.literal
 import functions.Function
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import net.benwoodworth.knbt.NbtCompoundBuilder
 import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.StringifiedNbt
+import utils.nbt
 
 object DataModifyOperation {
-	fun append(from: Argument.Data, path: String) =
+	fun append(from: DataArgument, path: String) =
 		listOf(literal("append"), literal("from"), literal(from.literalName), from, literal(path))
 
 	fun append(value: NbtTag) = listOf(literal("append"), literal("value"), literal(StringifiedNbt.encodeToString(value)))
@@ -21,7 +27,7 @@ object DataModifyOperation {
 	inline fun <reified T : Any> append(value: @Serializable T) =
 		listOf(literal("append"), literal("value"), literal(StringifiedNbt.encodeToString(value)))
 
-	fun insert(index: Int, from: Argument.Data, path: String) =
+	fun insert(index: Int, from: DataArgument, path: String) =
 		listOf(literal("insert"), int(index), literal("from"), literal(from.literalName), from, literal(path))
 
 	fun insert(index: Int, value: NbtTag) =
@@ -34,7 +40,9 @@ object DataModifyOperation {
 	inline fun <reified T : Any> insert(index: Int, value: @Serializable T) =
 		listOf(literal("insert"), int(index), literal("value"), literal(StringifiedNbt.encodeToString(value)))
 
-	fun merge(from: Argument.Data, path: String) = listOf(literal("merge"), literal("from"), literal(from.literalName), from, literal(path))
+	fun merge(from: DataArgument, path: String) =
+		listOf(literal("merge"), literal("from"), literal(from.literalName), from, literal(path))
+
 	fun merge(value: NbtTag) = listOf(literal("merge"), literal("value"), literal(StringifiedNbt.encodeToString(value)))
 	fun merge(value: Int) = listOf(literal("merge"), literal("value"), int(value))
 	fun merge(value: Float) = listOf(literal("merge"), literal("value"), float(value))
@@ -43,7 +51,7 @@ object DataModifyOperation {
 	inline fun <reified T : Any> merge(value: @Serializable T) =
 		listOf(literal("merge"), literal("value"), literal(StringifiedNbt.encodeToString(value)))
 
-	fun prepend(from: Argument.Data, path: String) =
+	fun prepend(from: DataArgument, path: String) =
 		listOf(literal("prepend"), literal("from"), literal(from.literalName), from, literal(path))
 
 	fun prepend(value: NbtTag) = listOf(literal("prepend"), literal("value"), literal(StringifiedNbt.encodeToString(value)))
@@ -54,10 +62,10 @@ object DataModifyOperation {
 	inline fun <reified T : Any> prepend(value: @Serializable T) =
 		listOf(literal("prepend"), literal("value"), literal(StringifiedNbt.encodeToString(value)))
 
-	operator fun set(from: Argument.Data, path: String) =
+	operator fun set(from: DataArgument, path: String) =
 		listOf(literal("set"), literal("from"), literal(from.literalName), from, literal(path))
 
-	fun set(string: Argument.Data, path: String, start: Int? = null, end: Int? = null) =
+	fun set(string: DataArgument, path: String, start: Int? = null, end: Int? = null) =
 		listOfNotNull(literal("set"), literal("string"), literal(string.literalName), string, literal(path), int(start), int(end))
 
 	fun set(value: NbtTag) = listOf(literal("set"), literal("value"), literal(StringifiedNbt.encodeToString(value)))
@@ -69,7 +77,7 @@ object DataModifyOperation {
 		listOf(literal("set"), literal("value"), literal(StringifiedNbt.encodeToString(value)))
 }
 
-class Data(val fn: Function, val target: Argument.Data) {
+class Data(val fn: Function, val target: DataArgument) {
 	operator fun get(path: String? = null, scale: Double? = null) =
 		fn.addLine(command("data", literal("get"), literal(target.literalName), target, literal(path), float(scale)))
 
@@ -110,5 +118,5 @@ class Data(val fn: Function, val target: Argument.Data) {
 	inline operator fun <reified T : Any> set(path: String, value: @Serializable T) = modify(path) { set(value) }
 }
 
-fun Function.data(target: Argument.Data, block: Data.() -> Command) = Data(this, target).block()
-fun Function.data(target: Argument.Data) = Data(this, target)
+fun Function.data(target: DataArgument, block: Data.() -> Command) = Data(this, target).block()
+fun Function.data(target: DataArgument) = Data(this, target)

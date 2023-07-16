@@ -1,9 +1,6 @@
-package arguments
+package arguments.colors
 
-import arguments.colors.ARGB
-import arguments.colors.BossBarColor
-import arguments.colors.NamedColor
-import arguments.colors.RGB
+import arguments.Argument
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -77,5 +74,4 @@ fun argb(hex: String) = ARGB.fromHex(hex)
 fun mix(color1: RGB, weight1: Double, color2: RGB, weight2: Double) = color1 * weight1 + color2 * weight2
 fun mix(color1: ARGB, weight1: Double, color2: ARGB, weight2: Double) = color1 * weight1 + color2 * weight2
 
-fun NamedColor.toRGB() = RGB.fromNamedColor(this)
 fun NamedColor.toARGB() = ARGB.fromNamedColor(this)

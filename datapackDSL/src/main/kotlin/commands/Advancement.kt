@@ -1,7 +1,8 @@
 package commands
 
-import arguments.Argument
-import arguments.literal
+import arguments.types.EntityArgument
+import arguments.types.literals.literal
+import arguments.types.resources.AdvancementArgument
 import functions.Function
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
@@ -20,45 +21,45 @@ enum class AdvancementRoute {
 
 class Advancement(private val fn: Function) {
 	fun grant(
-		target: Argument.Entity,
+		target: EntityArgument,
 		route: AdvancementRoute,
-		advancement: Argument.Advancement,
+		advancement: AdvancementArgument,
 		criterion: String? = null,
 	) = fn.addLine(command("advancement", literal("grant"), target, literal(route.asArg()), advancement, literal(criterion)))
 
 	fun grant(
-		targets: Argument.Entity,
-		advancement: Argument.Advancement,
+		targets: EntityArgument,
+		advancement: AdvancementArgument,
 		criterion: String? = null,
 	) = fn.addLine(command("advancement", literal("grant"), targets, literal("only"), advancement, literal(criterion)))
 
-	fun grantEverything(target: Argument.Entity) = fn.addLine(command("advancement", literal("grant"), target, literal("everything")))
+	fun grantEverything(target: EntityArgument) = fn.addLine(command("advancement", literal("grant"), target, literal("everything")))
 
 	fun revoke(
-		target: Argument.Entity,
+		target: EntityArgument,
 		route: AdvancementRoute,
-		advancement: Argument.Advancement,
+		advancement: AdvancementArgument,
 		criterion: String? = null,
 	) = fn.addLine(command("advancement", literal("revoke"), target, literal(route.asArg()), advancement, literal(criterion)))
 
 	fun revoke(
-		targets: Argument.Entity,
-		advancement: Argument.Advancement,
+		targets: EntityArgument,
+		advancement: AdvancementArgument,
 		criterion: String? = null,
 	) = fn.addLine(command("advancement", literal("revoke"), targets, literal("only"), advancement, literal(criterion)))
 
-	fun revokeEverything(target: Argument.Entity) = fn.addLine(command("advancement", literal("revoke"), target, literal("everything")))
+	fun revokeEverything(target: EntityArgument) = fn.addLine(command("advancement", literal("revoke"), target, literal("everything")))
 }
 
-class AdvancementTarget(private val fn: Function, private val target: Argument.Entity) {
+class AdvancementTarget(private val fn: Function, private val target: EntityArgument) {
 	fun grant(
 		route: AdvancementRoute,
-		advancement: Argument.Advancement,
+		advancement: AdvancementArgument,
 		criterion: String? = null,
 	) = fn.addLine(command("advancement", literal("grant"), target, literal(route.asArg()), advancement, literal(criterion)))
 
 	fun grant(
-		advancement: Argument.Advancement,
+		advancement: AdvancementArgument,
 		criterion: String? = null,
 	) = fn.addLine(command("advancement", literal("grant"), target, literal("only"), advancement, literal(criterion)))
 
@@ -66,12 +67,12 @@ class AdvancementTarget(private val fn: Function, private val target: Argument.E
 
 	fun revoke(
 		route: AdvancementRoute,
-		advancement: Argument.Advancement,
+		advancement: AdvancementArgument,
 		criterion: String? = null,
 	) = fn.addLine(command("advancement", literal("revoke"), target, literal(route.asArg()), advancement, literal(criterion)))
 
 	fun revoke(
-		advancement: Argument.Advancement,
+		advancement: AdvancementArgument,
 		criterion: String? = null,
 	) = fn.addLine(command("advancement", literal("revoke"), target, literal("only"), advancement, literal(criterion)))
 
@@ -79,6 +80,6 @@ class AdvancementTarget(private val fn: Function, private val target: Argument.E
 }
 
 fun Function.advancement(block: Advancement.() -> Command) = Advancement(this).block()
-fun Function.advancement(target: Argument.Entity, block: AdvancementTarget.() -> Command) = AdvancementTarget(this, target).block()
+fun Function.advancement(target: EntityArgument, block: AdvancementTarget.() -> Command) = AdvancementTarget(this, target).block()
 
 val Function.advancements get() = Advancement(this)

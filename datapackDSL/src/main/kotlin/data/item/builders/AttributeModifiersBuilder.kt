@@ -1,6 +1,7 @@
 package data.item.builders
 
-import arguments.Argument
+import arguments.types.literals.UUIDArgument
+import arguments.types.resources.AttributeArgument
 import commands.AttributeModifierOperation
 import data.item.AttributeModifier
 import data.item.EquipmentSlot
@@ -10,11 +11,11 @@ class AttributeModifiersBuilder {
 	val modifiers = mutableSetOf<AttributeModifier>()
 
 	fun modifier(
-		attribute: Argument.Attribute,
+		attribute: AttributeArgument,
 		amount: NumberProvider,
 		operation: AttributeModifierOperation,
 		slot: List<EquipmentSlot>? = null,
-		uuid: Argument.UUID? = null
+		uuid: UUIDArgument? = null
 	) {
 		modifiers += AttributeModifier(attribute, amount, operation, slot, uuid)
 	}
@@ -24,29 +25,29 @@ class AttributeModifiersBuilder {
 		amount: NumberProvider,
 		operation: AttributeModifierOperation,
 		slot: List<EquipmentSlot>? = null,
-		uuid: Argument.UUID? = null
+		uuid: UUIDArgument? = null
 	) {
-		modifier(Argument.Attribute(attribute), amount, operation, slot, uuid)
+		modifier(AttributeArgument(attribute), amount, operation, slot, uuid)
 	}
 
 	fun modifier(block: AttributeModifierBuilder.() -> Unit) {
 		modifiers += AttributeModifierBuilder().apply(block).build()
 	}
 
-	operator fun Argument.Attribute.invoke(
+	operator fun AttributeArgument.invoke(
 		amount: NumberProvider,
 		operation: AttributeModifierOperation,
 		slot: List<EquipmentSlot>? = null,
-		uuid: Argument.UUID? = null
+		uuid: UUIDArgument? = null
 	) = modifier(this, amount, operation, slot, uuid)
 }
 
 class AttributeModifierBuilder {
-	var attribute: Argument.Attribute? = null
+	var attribute: AttributeArgument? = null
 	var amount: NumberProvider? = null
 	var operation: AttributeModifierOperation? = null
 	var slot: List<EquipmentSlot>? = null
-	var uuid: Argument.UUID? = null
+	var uuid: UUIDArgument? = null
 
 	fun build() = AttributeModifier(
 		attribute ?: error("Attribute not set"),

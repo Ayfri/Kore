@@ -1,6 +1,7 @@
 package data.item
 
-import arguments.Argument
+import arguments.types.literals.UUIDArgument
+import arguments.types.resources.AttributeArgument
 import commands.AttributeModifierOperation
 import features.predicates.providers.*
 import kotlinx.serialization.KSerializer
@@ -12,11 +13,11 @@ import serializers.EnumOrdinalSerializer
 
 @Serializable
 data class AttributeModifier(
-	val attribute: Argument.Attribute,
+	val attribute: AttributeArgument,
 	@Serializable(NumberProviderSerializer::class) val amount: NumberProvider = constant(0f),
 	@Serializable(AttributeModifierOperationSerializer::class) val operation: AttributeModifierOperation = AttributeModifierOperation.ADDITION,
 	val slot: List<EquipmentSlot>? = null,
-	val uuid: Argument.UUID? = null,
+	val uuid: UUIDArgument? = null,
 ) {
 	companion object {
 		object AttributeModifierOperationSerializer : EnumOrdinalSerializer<AttributeModifierOperation>(AttributeModifierOperation.entries)

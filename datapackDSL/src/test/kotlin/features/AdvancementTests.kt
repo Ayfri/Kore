@@ -1,7 +1,7 @@
 package features
 
 import DataPack
-import arguments.self
+import arguments.types.literals.self
 import commands.advancement
 import features.advancements.*
 import features.advancements.triggers.ConsumeItem
@@ -45,6 +45,7 @@ fun DataPack.advancementTests() {
 
 		sendsTelemetryEvent = false
 	}
+
 	advancements.last() assertsIs """
 		{
 			"display": {

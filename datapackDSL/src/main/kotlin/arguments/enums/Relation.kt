@@ -1,5 +1,6 @@
-package arguments
+package arguments.enums
 
+import arguments.Argument
 import arguments.numbers.IntRangeOrInt
 import arguments.numbers.rangeOrInt
 import arguments.numbers.rangeOrIntEnd

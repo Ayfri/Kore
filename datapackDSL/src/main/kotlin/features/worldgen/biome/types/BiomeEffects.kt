@@ -1,9 +1,10 @@
 package features.worldgen.biome.types
 
-import arguments.Argument
-import arguments.Color
-import arguments.ColorAsDecimalSerializer
-import arguments.color
+import arguments.colors.Color
+import arguments.colors.ColorAsDecimalSerializer
+import arguments.colors.color
+import arguments.types.resources.ParticleArgument
+import arguments.types.resources.SoundArgument
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -15,33 +16,33 @@ data class BiomeEffects(
 	@Serializable(ColorAsDecimalSerializer::class) var grassColor: Color? = null,
 	@Serializable(ColorAsDecimalSerializer::class) var foliageColor: Color? = null,
 	var grassColorModifier: GrassColorModifier? = null,
-	var ambientSound: Argument.Sound? = null,
+	var ambientSound: SoundArgument? = null,
 	var moodSound: MoodSound? = null,
 	var additionsSound: AdditionalSound? = null,
 	var music: Music? = null,
 	var particle: Particle? = null,
 )
 
-fun BiomeEffects.moodSound(sound: Argument.Sound, init: MoodSound.() -> Unit = {}) {
+fun BiomeEffects.moodSound(sound: SoundArgument, init: MoodSound.() -> Unit = {}) {
 	moodSound = MoodSound(sound).apply(init)
 }
 
-fun BiomeEffects.moodSound(sound: Argument.Sound, tickDelay: Int, blockSearchExtent: Int, offset: Float) {
+fun BiomeEffects.moodSound(sound: SoundArgument, tickDelay: Int, blockSearchExtent: Int, offset: Float) {
 	moodSound = MoodSound(sound, tickDelay, blockSearchExtent, offset)
 }
 
-fun BiomeEffects.additionsSound(sound: Argument.Sound, tickChance: Float) {
+fun BiomeEffects.additionsSound(sound: SoundArgument, tickChance: Float) {
 	additionsSound = AdditionalSound(sound, tickChance)
 }
 
-fun BiomeEffects.music(sound: Argument.Sound, init: Music.() -> Unit = {}) {
+fun BiomeEffects.music(sound: SoundArgument, init: Music.() -> Unit = {}) {
 	music = Music(sound).apply(init)
 }
 
-fun BiomeEffects.music(sound: Argument.Sound, minDelay: Int, maxDelay: Int, replaceCurrentMusic: Boolean) {
+fun BiomeEffects.music(sound: SoundArgument, minDelay: Int, maxDelay: Int, replaceCurrentMusic: Boolean) {
 	music = Music(sound, minDelay, maxDelay, replaceCurrentMusic)
 }
 
-fun BiomeEffects.particle(type: Argument.Particle, probability: Float) {
+fun BiomeEffects.particle(type: ParticleArgument, probability: Float) {
 	particle = Particle(ParticleOptions(type), probability)
 }

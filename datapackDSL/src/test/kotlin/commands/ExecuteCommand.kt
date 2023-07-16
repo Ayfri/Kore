@@ -1,13 +1,17 @@
 package commands
 
-import arguments.*
+import arguments.colors.Color
 import arguments.enums.DataType
 import arguments.enums.Dimension
+import arguments.maths.Axes
+import arguments.maths.vec3
 import arguments.numbers.*
 import arguments.scores.score
 import arguments.selector.Sort
+import arguments.types.literals.allEntities
+import arguments.types.literals.rotation
+import arguments.types.literals.self
 import commands.execute.*
-import commands.execute.Relation
 import functions.Function
 import functions.function
 import generated.Blocks

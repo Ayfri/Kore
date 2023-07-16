@@ -1,10 +1,10 @@
 package commands
 
-import arguments.Argument
-import arguments.ChatComponents
-import arguments.float
-import arguments.literal
+import arguments.chatcomponents.ChatComponents
 import arguments.numbers.TimeNumber
+import arguments.types.EntityArgument
+import arguments.types.literals.float
+import arguments.types.literals.literal
 import functions.Function
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
@@ -31,12 +31,12 @@ enum class TitleLocation {
 	}
 }
 
-fun Function.title(targets: Argument.Entity, action: TitleAction) = addLine(command("title", targets, literal(action.asArg())))
-fun Function.title(targets: Argument.Entity, location: TitleLocation, message: ChatComponents) =
+fun Function.title(targets: EntityArgument, action: TitleAction) = addLine(command("title", targets, literal(action.asArg())))
+fun Function.title(targets: EntityArgument, location: TitleLocation, message: ChatComponents) =
 	addLine(command("title", targets, literal(location.asArg()), message.asJsonArg()))
 
-fun Function.title(targets: Argument.Entity, fadeIn: Double, stay: Double, fadeOut: Double) =
+fun Function.title(targets: EntityArgument, fadeIn: Double, stay: Double, fadeOut: Double) =
 	addLine(command("title", targets, literal("times"), float(fadeIn), float(stay), float(fadeOut)))
 
-fun Function.title(targets: Argument.Entity, fadeIn: TimeNumber, stay: TimeNumber, fadeOut: TimeNumber) =
+fun Function.title(targets: EntityArgument, fadeIn: TimeNumber, stay: TimeNumber, fadeOut: TimeNumber) =
 	addLine(command("title", targets, literal("times"), fadeIn.asArg(), stay.asArg(), fadeOut.asArg()))

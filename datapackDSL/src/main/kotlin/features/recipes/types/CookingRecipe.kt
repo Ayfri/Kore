@@ -1,18 +1,17 @@
 package features.recipes.types
 
-import arguments.Argument
+import arguments.types.resources.ItemArgument
+import arguments.types.resources.tagged.ItemTagArgument
 import features.recipes.data.Ingredient
-import kotlinx.serialization.Serializable
-import serializers.SingleOrMultiSerializer
+import serializers.InlinableList
 
 interface CookingRecipe {
-	@Serializable(SingleOrMultiSerializer::class)
-	val ingredient: MutableList<Ingredient>
-	var result: Argument.Item
+	var ingredient: InlinableList<Ingredient>
+	var result: ItemArgument
 	var group: String?
 	var experience: Double?
 	var cookingTime: Int?
 }
 
-fun CookingRecipe.ingredient(block: Ingredient.() -> Unit) = ingredient.add(Ingredient().apply(block))
-fun CookingRecipe.ingredient(item: Argument.Item? = null, tag: Argument.ItemTag? = null) = ingredient.add(Ingredient(item, tag))
+fun CookingRecipe.ingredient(block: Ingredient.() -> Unit) = Ingredient().apply(block).also { ingredient += it }
+fun CookingRecipe.ingredient(item: ItemArgument? = null, tag: ItemTagArgument? = null) = Ingredient(item, tag).also { ingredient += it }

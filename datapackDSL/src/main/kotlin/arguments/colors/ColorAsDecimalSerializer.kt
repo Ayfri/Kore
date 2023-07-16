@@ -1,6 +1,5 @@
-package arguments
+package arguments.colors
 
-import arguments.colors.RGB
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor

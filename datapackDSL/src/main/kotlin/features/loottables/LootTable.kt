@@ -2,8 +2,9 @@ package features.loottables
 
 import DataPack
 import Generator
-import arguments.Argument
 import arguments.selector.Advancements
+import arguments.types.resources.LootTableArgument
+import arguments.types.resources.RandomSequenceArgument
 import features.advancements.types.AdvancementsJSONSerializer
 import features.itemmodifiers.ItemModifier
 import features.itemmodifiers.ItemModifierAsList
@@ -22,7 +23,7 @@ data class LootTable(
 	override var fileName: String = "loot_table",
 	var functions: ItemModifierAsList? = null,
 	var pools: List<LootPool>? = null,
-	var randomSequence: Argument.RandomSequence? = null,
+	var randomSequence: RandomSequenceArgument? = null,
 ) : Generator {
 	@Transient
 	private lateinit var json: Json
@@ -45,10 +46,10 @@ data class LootTable(
 	}
 }
 
-fun DataPack.lootTable(fileName: String, block: LootTable.() -> Unit = {}): Argument.LootTable {
+fun DataPack.lootTable(fileName: String, block: LootTable.() -> Unit = {}): LootTableArgument {
 	val lootTable = LootTable(fileName).apply(block)
 	lootTables += lootTable
-	return Argument.LootTable(fileName, name)
+	return LootTableArgument(fileName, name)
 }
 
 fun LootTable.functions(block: ItemModifier.() -> Unit) {

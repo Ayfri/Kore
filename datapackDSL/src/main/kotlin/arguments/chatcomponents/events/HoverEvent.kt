@@ -1,18 +1,25 @@
 package arguments.chatcomponents.events
 
-import arguments.*
 import arguments.chatcomponents.ChatComponent
+import arguments.chatcomponents.ChatComponents
 import arguments.chatcomponents.hover.Contents
 import arguments.chatcomponents.hover.ContentsEntity
 import arguments.chatcomponents.hover.ContentsItem
 import arguments.chatcomponents.text
 import arguments.chatcomponents.textComponent
+import arguments.types.EntityArgument
+import arguments.types.literals.UUIDArgument
+import arguments.types.resources.EntitySummonArgument
+import arguments.types.resources.ItemArgument
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.buildNbtCompound
 import serializers.LowercaseSerializer
 import serializers.NbtAsJsonTextComponentSerializer
 import utils.asArg
+import utils.nbt
+import utils.set
+import utils.stringifiedNbt
 
 @Serializable
 data class HoverEvent(
@@ -27,22 +34,22 @@ data class HoverEvent(
 	}
 }
 
-fun HoverEvent.showEntity(entity: Argument.Entity) = apply {
+fun HoverEvent.showEntity(entity: EntityArgument) = apply {
 	action = HoverAction.SHOW_ENTITY
 	value = entity.asString().nbt
 }
 
-fun HoverEvent.showEntity(type: Argument.EntitySummon, name: ChatComponent? = null, id: Argument.UUID? = null) = apply {
+fun HoverEvent.showEntity(type: EntitySummonArgument, name: ChatComponent? = null, id: UUIDArgument? = null) = apply {
 	action = HoverAction.SHOW_ENTITY
 	contents = ContentsEntity(type.asString(), name, id?.asString())
 }
 
-fun HoverEvent.showEntity(type: Argument.EntitySummon, name: String? = null, id: Argument.UUID? = null) = apply {
+fun HoverEvent.showEntity(type: EntitySummonArgument, name: String? = null, id: UUIDArgument? = null) = apply {
 	action = HoverAction.SHOW_ENTITY
 	contents = ContentsEntity(type.asString(), name?.let { text(it) }, id?.asString())
 }
 
-fun HoverEvent.showItem(item: Argument.Item, count: Int) = apply {
+fun HoverEvent.showItem(item: ItemArgument, count: Int) = apply {
 	action = HoverAction.SHOW_ITEM
 	contents = ContentsItem(item.asId(), count, item.nbtData?.let { stringifiedNbt(it) })
 }

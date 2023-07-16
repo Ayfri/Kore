@@ -1,9 +1,9 @@
 package helpers
 
-import arguments.allEntities
 import arguments.chatcomponents.textComponent
+import arguments.maths.vec3
 import arguments.numbers.seconds
-import arguments.vec3
+import arguments.types.literals.allEntities
 import commands.AttributeModifierOperation
 import commands.kill
 import commands.schedule

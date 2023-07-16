@@ -1,11 +1,11 @@
 package arguments.enums
 
-import arguments.Argument
+import arguments.types.resources.DimensionArgument
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
 
 @Serializable(Dimension.Companion.DimensionSerializer::class)
-enum class Dimension : Argument.Dimension {
+enum class Dimension : DimensionArgument {
 	OVERWORLD,
 	THE_NETHER,
 	THE_END;

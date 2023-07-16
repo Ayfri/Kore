@@ -1,6 +1,6 @@
 import annotations.FunctionsHolder
-import arguments.Argument
 import arguments.chatcomponents.textComponent
+import arguments.types.resources.FunctionArgument
 import features.advancements.Advancement
 import features.chattype.ChatType
 import features.damagetypes.DamageType
@@ -45,12 +45,12 @@ class DataPack(val name: String) {
 	var iconPath: Path? = null
 	var path = Path("out")
 
-	fun addFunction(function: Function): Argument.Function {
+	fun addFunction(function: Function): FunctionArgument {
 		functions += function
 		return function
 	}
 
-	fun addGeneratedFunction(function: Function): Argument.Function {
+	fun addGeneratedFunction(function: Function): FunctionArgument {
 		generatedFunctions.find { it.lines == function.lines }?.let {
 			return@addGeneratedFunction it
 		}

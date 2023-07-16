@@ -1,7 +1,7 @@
 package features.worldgen
 
 import DataPack
-import arguments.Color
+import arguments.colors.Color
 import commands.locateBiome
 import features.worldgen.biome.*
 import features.worldgen.biome.types.*

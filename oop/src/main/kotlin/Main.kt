@@ -1,6 +1,6 @@
-import arguments.Color
-import arguments.DisplaySlot
+import arguments.DisplaySlots
 import arguments.chatcomponents.textComponent
+import arguments.colors.Color
 import arguments.enums.Gamemode
 import arguments.numbers.rangeOrIntStart
 import commands.execute.execute
@@ -63,7 +63,7 @@ fun main() {
 
 			scoreboard("other.test") {
 				create()
-				setDisplaySlot(DisplaySlot.sidebar)
+				setDisplaySlot(DisplaySlots.sidebar)
 				setDisplayName("Test")
 			}
 

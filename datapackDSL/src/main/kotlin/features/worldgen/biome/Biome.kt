@@ -2,7 +2,8 @@ package features.worldgen.biome
 
 import DataPack
 import Generator
-import arguments.Argument
+import arguments.types.resources.BiomeArgument
+import arguments.types.resources.EntitySummonArgument
 import features.worldgen.biome.types.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -19,16 +20,16 @@ data class Biome(
 	var creatureSpawnProbability: Float? = null,
 	var effects: BiomeEffects = BiomeEffects(),
 	var spawners: Spawners = Spawners(),
-	var spawnCosts: Map<Argument.EntitySummon, SpawnCost> = mapOf(),
+	var spawnCosts: Map<EntitySummonArgument, SpawnCost> = mapOf(),
 	var carvers: Carvers = Carvers(),
 	var features: Features = Features(),
 ) : Generator {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
-fun DataPack.biome(fileName: String, init: Biome.() -> Unit = {}): Argument.Biome {
+fun DataPack.biome(fileName: String, init: Biome.() -> Unit = {}): BiomeArgument {
 	biomes += Biome(fileName).apply(init)
-	return Argument.Biome(fileName, name)
+	return BiomeArgument(fileName, name)
 }
 
 fun Biome.effects(init: BiomeEffects.() -> Unit) {
@@ -39,11 +40,11 @@ fun Biome.spawners(init: Spawners.() -> Unit) {
 	spawners = Spawners().apply(init)
 }
 
-fun Biome.spawnCosts(init: MutableMap<Argument.EntitySummon, SpawnCost>.() -> Unit) {
+fun Biome.spawnCosts(init: MutableMap<EntitySummonArgument, SpawnCost>.() -> Unit) {
 	spawnCosts = buildMap(init)
 }
 
-fun MutableMap<Argument.EntitySummon, SpawnCost>.spawnCost(type: Argument.EntitySummon, energyBudget: Float, charge: Float) {
+fun MutableMap<EntitySummonArgument, SpawnCost>.spawnCost(type: EntitySummonArgument, energyBudget: Float, charge: Float) {
 	this[type] = SpawnCost(energyBudget, charge)
 }
 

@@ -1,17 +1,16 @@
 package arguments.chatcomponents
 
-import arguments.ChatComponents
-import arguments.Color
 import arguments.chatcomponents.events.ClickAction
 import arguments.chatcomponents.events.ClickEvent
 import arguments.chatcomponents.events.HoverAction
 import arguments.chatcomponents.events.HoverEvent
-import arguments.nbt
-import arguments.set
+import arguments.colors.Color
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.buildNbtCompound
+import utils.nbt
+import utils.set
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable

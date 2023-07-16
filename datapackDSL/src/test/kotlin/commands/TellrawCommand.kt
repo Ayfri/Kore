@@ -1,7 +1,7 @@
 package commands
 
-import arguments.allPlayers
 import arguments.chatcomponents.textComponent
+import arguments.types.literals.allPlayers
 import functions.Function
 import utils.assertsIs
 

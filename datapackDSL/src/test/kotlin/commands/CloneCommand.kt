@@ -1,8 +1,8 @@
 package commands
 
 import arguments.enums.Dimension
+import arguments.maths.vec3
 import arguments.numbers.relativePos
-import arguments.vec3
 import functions.Function
 import generated.Tags
 import utils.assertsMatches

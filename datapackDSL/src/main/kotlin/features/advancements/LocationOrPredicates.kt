@@ -18,12 +18,10 @@ data class LocationOrPredicates(
 			override fun serialize(encoder: Encoder, value: LocationOrPredicates) {
 				when {
 					value.legacyLocation != null -> encoder.encodeSerializableValue(Location.serializer(), value.legacyLocation!!)
-					value.predicateConditions != null -> encoder.encodeSerializableValue(
+					else -> encoder.encodeSerializableValue(
 						ListSerializer(PredicateConditionSurrogate.Companion.PredicateConditionSerializer),
 						value.predicateConditions
 					)
-
-					else -> error("LocationOrPredicates must have either a Location or predicates")
 				}
 			}
 		}

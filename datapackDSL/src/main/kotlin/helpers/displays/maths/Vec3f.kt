@@ -1,6 +1,6 @@
 package helpers.displays.maths
 
-import arguments.Vec3
+import arguments.maths.Vec3
 import kotlinx.serialization.Serializable
 import org.joml.Vector3f
 import kotlin.math.absoluteValue

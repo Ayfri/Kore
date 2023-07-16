@@ -1,8 +1,8 @@
 package commands
 
-import arguments.int
-import arguments.literal
 import arguments.numbers.TimeNumber
+import arguments.types.literals.int
+import arguments.types.literals.literal
 import functions.Function
 
 fun Function.weatherClear(duration: Int? = null) = addLine(command("weather", literal("clear"), int(duration)))

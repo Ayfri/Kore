@@ -1,6 +1,6 @@
 package scoreboard
 
-import arguments.Argument
+import arguments.types.ScoreHolderArgument
 import commands.Operation
 import commands.scoreboard
 import entities.Entity
@@ -39,14 +39,14 @@ fun ScoreboardEntity.reset() = scoreboard {
 }
 
 context(Function)
-fun ScoreboardEntity.copyTo(target: Argument.ScoreHolder, sourceObjective: String) = scoreboard {
+fun ScoreboardEntity.copyTo(target: ScoreHolderArgument, sourceObjective: String) = scoreboard {
 	objective(entity.asSelector(), name) {
 		operation(Operation.SET, target, sourceObjective)
 	}
 }
 
 context(Function)
-fun ScoreboardEntity.copyFrom(source: Argument.ScoreHolder, sourceObjective: String) = scoreboard {
+fun ScoreboardEntity.copyFrom(source: ScoreHolderArgument, sourceObjective: String) = scoreboard {
 	objective(source, sourceObjective) {
 		operation(Operation.SET, entity.asSelector(), name)
 	}

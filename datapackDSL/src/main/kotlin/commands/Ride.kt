@@ -1,15 +1,15 @@
 package commands
 
-import arguments.Argument
-import arguments.literal
+import arguments.types.EntityArgument
+import arguments.types.literals.literal
 import functions.Function
 
-class Ride(private val fn: Function, private val selector: Argument.Entity) {
-	fun mount(vehicle: Argument.Entity) = fn.addLine(command("ride", selector, literal("mount"), vehicle))
+class Ride(private val fn: Function, private val selector: EntityArgument) {
+	fun mount(vehicle: EntityArgument) = fn.addLine(command("ride", selector, literal("mount"), vehicle))
 	fun dismount() = fn.addLine(command("ride", selector, literal("dismount")))
 }
 
-fun Function.rideMount(target: Argument.Entity, vehicle: Argument.Entity) = addLine(command("ride", target, literal("mount"), vehicle))
-fun Function.rideDismount(target: Argument.Entity) = addLine(command("ride", target, literal("dismount")))
+fun Function.rideMount(target: EntityArgument, vehicle: EntityArgument) = addLine(command("ride", target, literal("mount"), vehicle))
+fun Function.rideDismount(target: EntityArgument) = addLine(command("ride", target, literal("dismount")))
 
-fun Function.ride(target: Argument.Entity, block: Ride.() -> Command) = Ride(this, target).block()
+fun Function.ride(target: EntityArgument, block: Ride.() -> Command) = Ride(this, target).block()

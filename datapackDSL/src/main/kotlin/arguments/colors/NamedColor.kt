@@ -1,6 +1,5 @@
 package arguments.colors
 
-import arguments.Color
 import kotlinx.serialization.Serializable
 import serializers.ToStringSerializer
 

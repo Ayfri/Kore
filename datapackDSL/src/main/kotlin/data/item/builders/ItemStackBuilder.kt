@@ -1,7 +1,8 @@
 package data.item.builders
 
-import arguments.Argument
-import arguments.ChatComponents
+import arguments.chatcomponents.ChatComponents
+import arguments.types.resources.BlockArgument
+import arguments.types.resources.ItemArgument
 import data.item.AttributeModifier
 import data.item.Enchantment
 import data.item.HideFlags
@@ -10,11 +11,11 @@ import nbt.MutableNbtCompound
 import net.benwoodworth.knbt.StringifiedNbt
 import net.benwoodworth.knbt.encodeToNbtTag
 
-data class ItemStackBuilder(var id: Argument.Item, var count: Short = 1) {
+data class ItemStackBuilder(var id: ItemArgument, var count: Short = 1) {
 	var tag = MutableNbtCompound()
 
-	var canPlaceOn: List<Argument.Block>? = null
-	var canDestroy: List<Argument.Block>? = null
+	var canPlaceOn: List<BlockArgument>? = null
+	var canDestroy: List<BlockArgument>? = null
 	var customModelData: Int? = null
 	var enchantments: Set<Enchantment>? = null
 	var hideFlags: Set<HideFlags>? = null
@@ -25,8 +26,8 @@ data class ItemStackBuilder(var id: Argument.Item, var count: Short = 1) {
 		id = id.asId(),
 		count = count,
 		tag = tag.apply {
-			canPlaceOn?.let { this["CanPlaceOn"] = StringifiedNbt.encodeToNbtTag(it.map(Argument.Block::asId)) }
-			canDestroy?.let { this["CanDestroy"] = StringifiedNbt.encodeToNbtTag(it.map(Argument.Block::asId)) }
+			canPlaceOn?.let { this["CanPlaceOn"] = StringifiedNbt.encodeToNbtTag(it.map(BlockArgument::asId)) }
+			canDestroy?.let { this["CanDestroy"] = StringifiedNbt.encodeToNbtTag(it.map(BlockArgument::asId)) }
 			customModelData?.let { this["CustomModelData"] = it }
 			enchantments?.let { this["Enchantments"] = StringifiedNbt.encodeToNbtTag(it) }
 			hideFlags?.let { this["HideFlags"] = it.map(HideFlags::toBitFlag).sum() }
@@ -36,14 +37,14 @@ data class ItemStackBuilder(var id: Argument.Item, var count: Short = 1) {
 	)
 }
 
-fun itemStack(item: Argument.Item, count: Short = 1, init: ItemStackBuilder.() -> Unit = {}) =
+fun itemStack(item: ItemArgument, count: Short = 1, init: ItemStackBuilder.() -> Unit = {}) =
 	ItemStackBuilder(item, count).apply(init).build()
 
-fun ItemStackBuilder.canPlaceOn(vararg blocks: Argument.Block) {
+fun ItemStackBuilder.canPlaceOn(vararg blocks: BlockArgument) {
 	canPlaceOn = blocks.toList()
 }
 
-fun ItemStackBuilder.canDestroy(vararg blocks: Argument.Block) {
+fun ItemStackBuilder.canDestroy(vararg blocks: BlockArgument) {
 	canDestroy = blocks.toList()
 }
 

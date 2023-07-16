@@ -1,13 +1,14 @@
 package features.advancements.types
 
-import arguments.Argument
+import arguments.types.resources.EntitySummonArgument
+import arguments.types.resources.MobEffectArgument
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
 
 @Serializable
 data class Entity(
 	var distance: Distance? = null,
-	var effects: Map<Argument.MobEffect, Effect>? = null,
+	var effects: Map<MobEffectArgument, Effect>? = null,
 	var equipment: Equipment? = null,
 	var flags: EntityFlags? = null,
 	var location: Location? = null,
@@ -15,7 +16,7 @@ data class Entity(
 	var passenger: Entity? = null,
 	var steppingOn: Block? = null,
 	var team: String? = null,
-	var type: Argument.EntitySummon? = null,
+	var type: EntitySummonArgument? = null,
 	var targetedEntity: Entity? = null,
 	var vehicle: Entity? = null,
 	var typeSpecific: EntityTypeSpecific? = null,

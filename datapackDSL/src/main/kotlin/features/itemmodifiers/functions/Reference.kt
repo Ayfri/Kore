@@ -1,6 +1,6 @@
 package features.itemmodifiers.functions
 
-import arguments.Argument
+import arguments.types.resources.ItemModifierArgument
 import features.itemmodifiers.ItemModifier
 import kotlinx.serialization.Serializable
 
@@ -13,6 +13,6 @@ fun ItemModifier.reference(name: String, block: Reference.() -> Unit = {}) {
 	modifiers += Reference(name).apply(block)
 }
 
-fun ItemModifier.reference(itemModifier: Argument.ItemModifier, block: Reference.() -> Unit = {}) {
+fun ItemModifier.reference(itemModifier: ItemModifierArgument, block: Reference.() -> Unit = {}) {
 	modifiers += Reference(itemModifier.asString()).apply(block)
 }

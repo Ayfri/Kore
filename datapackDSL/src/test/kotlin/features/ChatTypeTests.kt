@@ -1,7 +1,7 @@
 package features
 
 import DataPack
-import arguments.Color
+import arguments.colors.Color
 import features.chattype.*
 import utils.assertsIs
 

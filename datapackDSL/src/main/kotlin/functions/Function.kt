@@ -1,13 +1,12 @@
 package functions
 
 import DataPack
-import arguments.Argument
-import arguments.ChatComponents
-import arguments.Color
-import arguments.allPlayers
 import arguments.chatcomponents.*
 import arguments.chatcomponents.events.ClickAction
 import arguments.chatcomponents.events.showText
+import arguments.colors.Color
+import arguments.types.literals.allPlayers
+import arguments.types.resources.FunctionArgument
 import commands.Command
 import commands.command
 import commands.tellraw
@@ -20,7 +19,7 @@ open class Function(
 	override val namespace: String = "minecraft",
 	override var directory: String = "",
 	val datapack: DataPack
-) : Argument.Function {
+) : FunctionArgument {
 	val lines = mutableListOf<String>()
 	private var debug = false
 
@@ -164,7 +163,7 @@ private fun DataPack.addToMinecraftTag(
 	functionName: String?,
 	block: Function.() -> Unit,
 	directory: String
-): Argument.Function {
+): FunctionArgument {
 	val name = functionName ?: "${fileName}_${block.hashCode()}"
 	val generatedFunction = generatedFunction(name, directory, block)
 	addToTag("minecraft", "functions", fileName) {

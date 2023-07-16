@@ -1,12 +1,17 @@
 package commands
 
-import arguments.*
+import arguments.colors.Color
+import arguments.colors.rgb
+import arguments.maths.vec3
+import arguments.types.literals.allEntities
 import functions.Function
 import generated.Blocks
 import generated.Items
 import generated.Particles
 import net.benwoodworth.knbt.addNbtCompound
 import utils.assertsIs
+import utils.nbtList
+import utils.set
 import kotlin.math.PI
 
 fun Function.particleTests() {

@@ -2,11 +2,11 @@ package commands
 
 import arguments.chatcomponents.scoreComponent
 import arguments.chatcomponents.textComponent
-import arguments.self
-import arguments.set
+import arguments.types.literals.self
 import functions.Function
 import net.benwoodworth.knbt.NbtInt
 import utils.assertsIs
+import utils.set
 
 fun Function.dataTests() {
 	data(self()) {

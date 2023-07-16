@@ -1,10 +1,10 @@
 package commands
 
-import arguments.Argument
-import arguments.ChatComponents
-import arguments.bool
+import arguments.chatcomponents.ChatComponents
 import arguments.colors.NamedColor
-import arguments.literal
+import arguments.types.ScoreHolderArgument
+import arguments.types.literals.bool
+import arguments.types.literals.literal
 import functions.Function
 import kotlinx.serialization.Serializable
 import serializers.CamelcaseSerializer
@@ -64,8 +64,8 @@ class Teams(private val fn: Function) {
 		fn.addLine(command("team", literal("add"), literal(team), displayName?.asJsonArg()))
 
 	fun empty(team: String) = fn.addLine(command("team", literal("empty"), literal(team)))
-	fun join(team: String, entity: Argument.ScoreHolder) = fn.addLine(command("team", literal("join"), literal(team), entity))
-	fun leave(entity: Argument.ScoreHolder) = fn.addLine(command("team", literal("leave"), entity))
+	fun join(team: String, entity: ScoreHolderArgument) = fn.addLine(command("team", literal("join"), literal(team), entity))
+	fun leave(entity: ScoreHolderArgument) = fn.addLine(command("team", literal("leave"), entity))
 	fun list(team: String? = null) = fn.addLine(command("team", literal("list"), literal(team)))
 	fun modify(team: String, block: Modify.() -> Command) = Modify(fn, team).block()
 	fun remove(team: String) = fn.addLine(command("team", literal("remove"), literal(team)))

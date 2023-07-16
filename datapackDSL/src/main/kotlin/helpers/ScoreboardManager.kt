@@ -1,8 +1,12 @@
 package helpers
 
-import arguments.*
+import arguments.DisplaySlot
+import arguments.DisplaySlots
+import arguments.chatcomponents.ChatComponents
 import arguments.chatcomponents.PlainTextComponent
 import arguments.chatcomponents.textComponent
+import arguments.colors.Color
+import arguments.types.literals.entity
 import commands.Command
 import commands.execute.ExecuteCondition
 import commands.execute.execute
@@ -31,14 +35,14 @@ data class ScoreboardDisplay(val name: String) {
 		appendLine(textComponent(text, color ?: Color.WHITE, componentBlock))
 
 	context(Function)
-	fun create(display: Boolean = true, slot: SetDisplaySlot = DisplaySlot.sidebar) {
+	fun create(display: Boolean = true, slot: DisplaySlot = DisplaySlots.sidebar) {
 		scoreboard.objectives.add(name, "dummy", displayName)
 		lines.forEach { it.create() }
 		if (display) display(slot)
 	}
 
 	context(Function)
-	fun display(slot: SetDisplaySlot = DisplaySlot.sidebar) {
+	fun display(slot: DisplaySlot = DisplaySlots.sidebar) {
 		scoreboard.objectives.setDisplay(slot, name)
 	}
 
@@ -77,7 +81,7 @@ data class ScoreboardDisplay(val name: String) {
 fun Function.scoreboardDisplay(
 	name: String,
 	display: Boolean = true,
-	displaySlot: SetDisplaySlot = DisplaySlot.sidebar,
+	displaySlot: DisplaySlot = DisplaySlots.sidebar,
 	init: ScoreboardDisplay.() -> Unit
 ): ScoreboardDisplay {
 	val scoreboardDisplay = ScoreboardDisplay(name)

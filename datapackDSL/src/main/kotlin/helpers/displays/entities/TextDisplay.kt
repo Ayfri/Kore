@@ -1,9 +1,8 @@
 package helpers.displays.entities
 
-import arguments.ChatComponents
+import arguments.chatcomponents.ChatComponents
 import arguments.chatcomponents.PlainTextComponent
 import arguments.colors.ARGB
-import arguments.stringifiedNbt
 import generated.Entities
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -12,6 +11,7 @@ import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.encodeStructure
+import utils.stringifiedNbt
 
 @Serializable(with = TextDisplay.Companion.DisplayEntitySerializer::class)
 data class TextDisplay(
