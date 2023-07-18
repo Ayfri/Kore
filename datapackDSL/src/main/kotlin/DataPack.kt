@@ -12,6 +12,7 @@ import features.tags.Tags
 import features.worldgen.biome.Biome
 import features.worldgen.dimension.Dimension
 import features.worldgen.dimensiontype.DimensionType
+import features.worldgen.flatlevelgeneratorpreset.FlatLevelGeneratorPreset
 import features.worldgen.noisesettings.NoiseSettings
 import functions.Function
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -34,6 +35,7 @@ class DataPack(val name: String) {
 	val damageTypes = mutableListOf<DamageType>()
 	val dimensions = mutableListOf<Dimension>()
 	val dimensionTypes = mutableListOf<DimensionType>()
+	val flatLevelGeneratorPresets = mutableListOf<FlatLevelGeneratorPreset>()
 	val itemModifiers = mutableListOf<ItemModifier>()
 	val lootTables = mutableListOf<LootTable>()
 	val noiseSettings = mutableListOf<NoiseSettings>()
@@ -85,6 +87,7 @@ class DataPack(val name: String) {
 		data.generateResources("recipes", recipes)
 		data.generateResources("tags", tags.groupBy(Tags::namespace))
 		data.generateResources("worldgen/biome", biomes)
+		data.generateResources("worldgen/flat_level_generator_preset", flatLevelGeneratorPresets)
 		data.generateResources("worldgen/noise_settings", noiseSettings)
 
 		data.generateFunctions("functions", functions.groupBy(Function::namespace))

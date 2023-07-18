@@ -2,10 +2,7 @@ package features
 
 import configuration
 import dataPack
-import features.worldgen.biomeTests
-import features.worldgen.dimensionTests
-import features.worldgen.dimensionTypeTests
-import features.worldgen.noiseSettingsTests
+import features.worldgen.*
 import setTestPath
 
 fun featuresTests() = dataPack("features_tests") {
@@ -22,6 +19,7 @@ fun featuresTests() = dataPack("features_tests") {
 	damageTypeTests()
 	dimensionTests()
 	dimensionTypeTests()
+	flatLevelGeneratorPresetTests()
 	itemModifierTests()
 	lootTableTests()
 	noiseSettingsTests()

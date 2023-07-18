@@ -64,6 +64,7 @@ suspend fun main(args: Array<String>) {
 	downloadEnchantments()
 	downloadEntities()
 	downloadFeatures()
+	downloadFlatLevelGeneratorPresets()
 	downloadFluids()
 	downloadFrogVariants()
 	downloadGamerules()
