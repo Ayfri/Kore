@@ -14,6 +14,7 @@ import features.worldgen.dimension.Dimension
 import features.worldgen.dimensiontype.DimensionType
 import features.worldgen.flatlevelgeneratorpreset.FlatLevelGeneratorPreset
 import features.worldgen.noisesettings.NoiseSettings
+import features.worldgen.worldpreset.WorldPreset
 import functions.Function
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
@@ -42,6 +43,7 @@ class DataPack(val name: String) {
 	val predicates = mutableListOf<Predicate>()
 	val recipes = mutableListOf<RecipeFile>()
 	val tags = mutableListOf<Tags>()
+	val worldPresets = mutableListOf<WorldPreset>()
 
 	var configuration: Configuration = Configuration.Default
 	var iconPath: Path? = null
@@ -89,6 +91,7 @@ class DataPack(val name: String) {
 		data.generateResources("worldgen/biome", biomes)
 		data.generateResources("worldgen/flat_level_generator_preset", flatLevelGeneratorPresets)
 		data.generateResources("worldgen/noise_settings", noiseSettings)
+		data.generateResources("worldgen/world_preset", worldPresets)
 
 		data.generateFunctions("functions", functions.groupBy(Function::namespace))
 		data.generateFunctions(
