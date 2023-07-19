@@ -1,15 +1,15 @@
 package features.itemmodifiers.functions
 
-import arguments.types.resources.BlockEntityType
+import arguments.types.resources.BlockEntityTypeArgument
 import features.itemmodifiers.ItemModifier
 import features.loottables.entries.Item
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class SetContents(
-	var type: BlockEntityType,
+	var type: BlockEntityTypeArgument,
 	var entries: List<Item>,
 ) : ItemFunction()
 
-fun ItemModifier.setContents(type: BlockEntityType, entries: MutableList<Item>.() -> Unit = {}) =
+fun ItemModifier.setContents(type: BlockEntityTypeArgument, entries: MutableList<Item>.() -> Unit = {}) =
 	SetContents(type, buildList(entries)).also { modifiers += it }

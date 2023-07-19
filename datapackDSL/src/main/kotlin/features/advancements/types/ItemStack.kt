@@ -1,7 +1,7 @@
 package features.advancements.types
 
+import arguments.types.resources.EffectArgument
 import arguments.types.resources.ItemArgument
-import arguments.types.resources.MobEffectArgument
 import features.advancements.serializers.IntRangeOrIntJson
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
@@ -16,7 +16,7 @@ data class ItemStack(
 	var storedEnchantments: List<Enchantment>? = null,
 	var items: List<ItemArgument>? = null,
 	var nbt: NbtCompound? = null,
-	var potion: MobEffectArgument? = null,
+	var potion: EffectArgument? = null,
 	var tag: String? = null,
 )
 

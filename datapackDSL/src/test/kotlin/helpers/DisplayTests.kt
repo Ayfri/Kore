@@ -14,7 +14,10 @@ import data.item.builders.enchantments
 import data.item.builders.modifiers
 import features.predicates.providers.constant
 import functions.Function
-import generated.*
+import generated.Attributes
+import generated.Blocks
+import generated.Enchantments
+import generated.Items
 import helpers.displays.*
 import helpers.displays.entities.ItemDisplayModelMode
 import helpers.displays.maths.*
@@ -82,9 +85,9 @@ fun Function.displayTests() {
 
 	summon(textDisplay.entityType, vec3(), textDisplay.toNbt())
 
-	kill(allEntities { type(itemDisplay.entityType) })
-	kill(allEntities { type(blockDisplay.entityType) })
-	kill(allEntities { type(textDisplay.entityType) })
+	kill(allEntities { type = itemDisplay.entityType })
+	kill(allEntities { type = blockDisplay.entityType })
+	kill(allEntities { type = textDisplay.entityType })
 
 	val simpleInterpolationEntity = blockDisplay {
 		blockState(Blocks.STONE)

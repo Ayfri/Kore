@@ -7,7 +7,7 @@ import arguments.selector.Sort
 import arguments.types.EntityArgument
 import arguments.types.literals.*
 import arguments.types.resources.DimensionArgument
-import arguments.types.resources.EntitySummonArgument
+import arguments.types.resources.EntityTypeArgument
 import arguments.types.resources.PredicateArgument
 import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
@@ -94,5 +94,5 @@ class Execute {
 	fun storeSuccess(block: ExecuteStore.() -> List<Argument>) =
 		array.addAll(literal("store"), literal("success"), *ExecuteStore(this).block().toTypedArray())
 
-	fun summon(entity: EntitySummonArgument) = array.addAll(literal("summon"), entity)
+	fun summon(entity: EntityTypeArgument) = array.addAll(literal("summon"), entity)
 }

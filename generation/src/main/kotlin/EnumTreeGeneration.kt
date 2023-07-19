@@ -5,17 +5,17 @@ fun generatePathEnumTree(
 	paths: List<String>,
 	name: String,
 	sourceUrl: String,
-	parentResourceType: String? = null,
+	parentArgumentType: String? = null,
 	tagsParents: Map<String, String>? = null
 ) {
 	val typeBuilders = MutableList(paths.maxOf { path -> path.count { it == '/' } }) {
 		mutableMapOf<String, TypeSpec.Builder>()
 	}
 
-	val hasParent = parentResourceType != null
+	val hasParent = parentArgumentType != null
 
 	val topLevel = TypeSpec.interfaceBuilder(name).apply {
-		parentResourceType?.let {
+		parentArgumentType?.let {
 			addSuperinterface(argumentClassName(it))
 		}
 

@@ -7,7 +7,7 @@ import features.worldgen.biome.*
 import features.worldgen.biome.types.*
 import functions.load
 import generated.Carvers
-import generated.Entities
+import generated.EntityTypes
 import generated.Features
 import utils.assertsIs
 
@@ -29,7 +29,7 @@ fun DataPack.biomeTests() {
 		}
 		spawners {
 			creature {
-				spawner(Entities.ZOMBIE) {
+				spawner(EntityTypes.ZOMBIE) {
 					weight = 1
 					minCount = 1
 					maxCount = 2
@@ -38,7 +38,7 @@ fun DataPack.biomeTests() {
 		}
 
 		spawnCosts {
-			spawnCost(Entities.ZOMBIE, 1f, 1f)
+			spawnCost(EntityTypes.ZOMBIE, 1f, 1f)
 		}
 
 		carvers {

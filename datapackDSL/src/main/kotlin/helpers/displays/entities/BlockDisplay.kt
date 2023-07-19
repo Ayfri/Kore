@@ -1,7 +1,7 @@
 package helpers.displays.entities
 
 import data.block.BlockState
-import generated.Entities
+import generated.EntityTypes
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
@@ -13,7 +13,7 @@ import kotlinx.serialization.encoding.encodeStructure
 data class BlockDisplay(
 	var blockState: BlockState? = null,
 ) : DisplayEntity() {
-	override val entityType = Entities.BLOCK_DISPLAY
+	override val entityType = EntityTypes.BLOCK_DISPLAY
 
 	override fun toString() =
 		"BlockDisplay(blockState='$blockState', billboardMode=$billboardMode, brightness=$brightness, glowColorOverride=$glowColorOverride, height=$height, interpolationDuration=$interpolationDuration, startInterpolation=$startInterpolation, shadowRadius=$shadowRadius, shadowStrength=$shadowStrength, transformation=$transformation, viewRange=$viewRange, width=$width)"

@@ -15,9 +15,8 @@ import commands.execute.run
 import commands.items
 import commands.kill
 import functions.Function
-import generated.Entities
+import generated.EntityTypes
 import generated.Items
-import generated.type
 import net.benwoodworth.knbt.addNbtCompound
 import utils.nbt
 import utils.nbtList
@@ -108,7 +107,7 @@ data class SlotEventListener(
 
 	context(Function)
 	fun killAllItemsNotInSlot() = kill(allEntities {
-		type(Entities.ITEM)
+		type = EntityTypes.ITEM
 
 		nbt = nbt {
 			this["Item"] = nbt {

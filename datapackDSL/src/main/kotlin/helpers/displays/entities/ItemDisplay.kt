@@ -1,7 +1,7 @@
 package helpers.displays.entities
 
 import data.item.ItemStack
-import generated.Entities
+import generated.EntityTypes
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -16,7 +16,7 @@ data class ItemDisplay(
 	@SerialName("item_display")
 	var displayMode: ItemDisplayModelMode? = null,
 ) : DisplayEntity() {
-	override val entityType = Entities.ITEM_DISPLAY
+	override val entityType = EntityTypes.ITEM_DISPLAY
 
 	override fun toString() =
 		"ItemDisplay(item=$item, displayMode=$displayMode, billboardMode=$billboardMode, brightness=$brightness, glowColorOverride=$glowColorOverride, height=$height, interpolationDuration=$interpolationDuration, startInterpolation=$startInterpolation, shadowRadius=$shadowRadius, shadowStrength=$shadowStrength, transformation=$transformation, viewRange=$viewRange, width=$width)"

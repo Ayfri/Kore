@@ -23,7 +23,7 @@ import commands.execute.run
 import functions.Function
 import functions.load
 import functions.tick
-import generated.Entities
+import generated.EntityTypes
 import generated.Items
 import net.benwoodworth.knbt.addNbtCompound
 import utils.nbt
@@ -109,7 +109,7 @@ fun InventoryManager<*>.generateSlotsListeners() {
 		scoreboard.objectives.add(scoreName, "dummy")
 		if (container is EntityArgument) scoreboard.players.set(container as ScoreHolderArgument, scoreName, 0)
 		else {
-			summon(Entities.MARKER) {
+			summon(EntityTypes.MARKER) {
 				this["Tags"] = nbtListOf(entityTag, InventoryManager.INVENTORY_MANAGER_ENTITY_TAG)
 			}
 			scoreboard.players.set(allEntities { nbt = nbt { this["Tags"] = nbtListOf(entityTag) } }, scoreName, 0)

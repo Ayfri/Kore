@@ -1,6 +1,6 @@
 package features.worldgen.biome.types
 
-import arguments.types.resources.EntitySummonArgument
+import arguments.types.resources.EntityTypeArgument
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -16,7 +16,7 @@ data class Spawners(
 
 @Serializable
 data class Spawn(
-	var type: EntitySummonArgument,
+	var type: EntityTypeArgument,
 	var weight: Int = 1,
 	var minCount: Int = 0,
 	var maxCount: Int = 0,
@@ -50,10 +50,10 @@ fun Spawners.undergroundWaterCreature(init: MutableList<Spawn>.() -> Unit) {
 	undergroundWaterCreature = buildList(init)
 }
 
-fun MutableList<Spawn>.spawner(type: EntitySummonArgument, weight: Int, minCount: Int = 0, maxCount: Int = 0) {
+fun MutableList<Spawn>.spawner(type: EntityTypeArgument, weight: Int, minCount: Int = 0, maxCount: Int = 0) {
 	add(Spawn(type, weight, minCount, maxCount))
 }
 
-fun MutableList<Spawn>.spawner(type: EntitySummonArgument, init: Spawn.() -> Unit = {}) {
+fun MutableList<Spawn>.spawner(type: EntityTypeArgument, init: Spawn.() -> Unit = {}) {
 	add(Spawn(type).apply(init))
 }

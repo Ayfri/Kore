@@ -5,9 +5,9 @@ import arguments.types.ResourceLocationArgument
 import kotlinx.serialization.Serializable
 
 @Serializable(with = Argument.ArgumentSerializer::class)
-interface MobEffectArgument : ResourceLocationArgument {
+interface EffectArgument : ResourceLocationArgument {
 	companion object {
-		operator fun invoke(name: String, namespace: String = "minecraft") = object : MobEffectArgument {
+		operator fun invoke(name: String, namespace: String = "minecraft") = object : EffectArgument {
 			override val name = name
 			override val namespace = namespace
 		}

@@ -3,7 +3,7 @@ package features.worldgen.biome
 import DataPack
 import Generator
 import arguments.types.resources.BiomeArgument
-import arguments.types.resources.EntitySummonArgument
+import arguments.types.resources.EntityTypeArgument
 import features.worldgen.biome.types.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -20,7 +20,7 @@ data class Biome(
 	var creatureSpawnProbability: Float? = null,
 	var effects: BiomeEffects = BiomeEffects(),
 	var spawners: Spawners = Spawners(),
-	var spawnCosts: Map<EntitySummonArgument, SpawnCost> = mapOf(),
+	var spawnCosts: Map<EntityTypeArgument, SpawnCost> = mapOf(),
 	var carvers: Carvers = Carvers(),
 	var features: Features = Features(),
 ) : Generator {
@@ -40,11 +40,11 @@ fun Biome.spawners(init: Spawners.() -> Unit) {
 	spawners = Spawners().apply(init)
 }
 
-fun Biome.spawnCosts(init: MutableMap<EntitySummonArgument, SpawnCost>.() -> Unit) {
+fun Biome.spawnCosts(init: MutableMap<EntityTypeArgument, SpawnCost>.() -> Unit) {
 	spawnCosts = buildMap(init)
 }
 
-fun MutableMap<EntitySummonArgument, SpawnCost>.spawnCost(type: EntitySummonArgument, energyBudget: Float, charge: Float) {
+fun MutableMap<EntityTypeArgument, SpawnCost>.spawnCost(type: EntityTypeArgument, energyBudget: Float, charge: Float) {
 	this[type] = SpawnCost(energyBudget, charge)
 }
 

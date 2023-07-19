@@ -1,5 +1,5 @@
-import generators.*
-import generators.worldgen.*
+import generators.downloadGamerules
+import generators.launchAllSimpleGenerators
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -49,36 +49,6 @@ suspend fun main(args: Array<String>) {
 
 	println("Generating assets from minecraft version: $minecraftVersion")
 
-	downloadAdvancements()
-	downloadAttributes()
-	downloadBannerPatterns()
-	downloadBiomes()
-	downloadBiomePresets()
-	downloadBlocks()
-	downloadCarvers()
-	downloadCatVariants()
-	downloadDamageTypes()
-	downloadDensityFunctions()
-	downloadDimensionTypes()
-	downloadEffects()
-	downloadEnchantments()
-	downloadEntities()
-	downloadFeatures()
-	downloadFlatLevelGeneratorPresets()
-	downloadFluids()
-	downloadFrogVariants()
+	launchAllSimpleGenerators()
 	downloadGamerules()
-	downloadInstruments()
-	downloadItems()
-	downloadLootTables()
-	downloadNoises()
-	downloadNoiseSettings()
-	downloadParticles()
-	downloadPotions()
-	downloadRecipes()
-	downloadSounds()
-	downloadStatisticTypes()
-	downloadStructures()
-	downloadStructureSets()
-	downloadTags()
 }

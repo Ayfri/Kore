@@ -14,7 +14,7 @@ import commands.*
 import commands.execute.execute
 import commands.execute.run
 import functions.Function
-import generated.Entities
+import generated.EntityTypes
 import net.benwoodworth.knbt.put
 import net.benwoodworth.knbt.putNbtCompound
 import net.benwoodworth.knbt.putNbtList
@@ -121,7 +121,7 @@ data class DebugEntity(val data: Map<String, String> = mutableMapOf()) {
 
 	context(Function)
 	fun summon(): DebugEntity {
-		summon(Entities.MARKER) {
+		summon(EntityTypes.MARKER) {
 			putNbtCompound("data") {
 				data.forEach { (key, value) ->
 					put(key, value)

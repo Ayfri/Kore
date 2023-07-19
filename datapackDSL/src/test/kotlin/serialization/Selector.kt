@@ -17,8 +17,7 @@ import features.advancements.types.block
 import features.predicates.conditions.entityProperties
 import features.predicates.predicate
 import generated.Blocks
-import generated.Entities
-import generated.type
+import generated.EntityTypes
 import setTestPath
 import utils.assertsIs
 import utils.nbt
@@ -109,7 +108,7 @@ fun selectorTests() = dataPack("selector_tests") {
 	} assertsIs "@e[team=!]"
 
 	allEntities {
-		type(Entities.MARKER)
+		type = EntityTypes.MARKER
 	} assertsIs "@e[type=minecraft:marker]"
 
 	allEntities {

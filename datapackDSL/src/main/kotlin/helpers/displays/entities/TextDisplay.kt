@@ -3,7 +3,7 @@ package helpers.displays.entities
 import arguments.chatcomponents.ChatComponents
 import arguments.chatcomponents.PlainTextComponent
 import arguments.colors.ARGB
-import generated.Entities
+import generated.EntityTypes
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
@@ -24,7 +24,7 @@ data class TextDisplay(
 	var text: PlainTextComponent? = null,
 	var textOpacity: Byte? = null,
 ) : DisplayEntity() {
-	override val entityType = Entities.TEXT_DISPLAY
+	override val entityType = EntityTypes.TEXT_DISPLAY
 
 	override fun toString() =
 		"TextDisplay(alignment=$alignment, background=$background, defaultBackground=$defaultBackground, lineWidth=$lineWidth, seeThrough=$seeThrough, shadow=$shadow, text=$text, textOpacity=$textOpacity, billboardMode=$billboardMode, brightness=$brightness, glowColorOverride=$glowColorOverride, height=$height, interpolationDuration=$interpolationDuration, startInterpolation=$startInterpolation, shadowRadius=$shadowRadius, shadowStrength=$shadowStrength, transformation=$transformation, viewRange=$viewRange, width=$width)"

@@ -119,7 +119,7 @@ fun main() {
 				}
 
 				gamemode = !Gamemode.SURVIVAL
-				type = "zombie"
+				type = EntityTypes.ZOMBIE
 			}) {
 				modify("Position") {
 					set(nbtListOf(0.0, 150.0, 0.0))
@@ -183,7 +183,7 @@ fun main() {
 			}, 20)
 
 			comment("Replacing head with dirt")
-			items.replace(nearestEntity { type = "minecraft:zombie" }, ARMOR.HEAD, Items.DIRT, 64)
+			items.replace(nearestEntity { type = EntityTypes.ZOMBIE }, ARMOR.HEAD, Items.DIRT, 64)
 			enchant(allPlayers(), Enchantments.FEATHER_FALLING, 3)
 
 			loot {
@@ -217,7 +217,7 @@ fun main() {
 				}
 			}
 
-			summon(Entities.ARROW)
+			summon(EntityTypes.ARROW)
 			locateBiome(Biomes.OLD_GROWTH_BIRCH_FOREST)
 			gamerule(Gamerules.DO_DAYLIGHT_CYCLE, false)
 			gamerule(Gamerules.RANDOM_TICK_SPEED, 12)

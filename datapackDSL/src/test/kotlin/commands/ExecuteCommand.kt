@@ -15,7 +15,7 @@ import commands.execute.*
 import functions.Function
 import functions.function
 import generated.Blocks
-import generated.Entities
+import generated.EntityTypes
 import generated.Tags
 import helpers.predicateRandomChance
 import utils.assertsIs
@@ -105,7 +105,7 @@ fun Function.executeTests() {
 
 	execute {
 		rotatedAs(testEntity.selector)
-		summon(Entities.BLOCK_DISPLAY)
+		summon(EntityTypes.BLOCK_DISPLAY)
 
 		run {
 			say("test")

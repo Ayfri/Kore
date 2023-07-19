@@ -9,7 +9,7 @@ import arguments.chatcomponents.text
 import arguments.chatcomponents.textComponent
 import arguments.types.EntityArgument
 import arguments.types.literals.UUIDArgument
-import arguments.types.resources.EntitySummonArgument
+import arguments.types.resources.EntityTypeArgument
 import arguments.types.resources.ItemArgument
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtTag
@@ -39,12 +39,12 @@ fun HoverEvent.showEntity(entity: EntityArgument) = apply {
 	value = entity.asString().nbt
 }
 
-fun HoverEvent.showEntity(type: EntitySummonArgument, name: ChatComponent? = null, id: UUIDArgument? = null) = apply {
+fun HoverEvent.showEntity(type: EntityTypeArgument, name: ChatComponent? = null, id: UUIDArgument? = null) = apply {
 	action = HoverAction.SHOW_ENTITY
 	contents = ContentsEntity(type.asString(), name, id?.asString())
 }
 
-fun HoverEvent.showEntity(type: EntitySummonArgument, name: String? = null, id: UUIDArgument? = null) = apply {
+fun HoverEvent.showEntity(type: EntityTypeArgument, name: String? = null, id: UUIDArgument? = null) = apply {
 	action = HoverAction.SHOW_ENTITY
 	contents = ContentsEntity(type.asString(), name?.let { text(it) }, id?.asString())
 }
