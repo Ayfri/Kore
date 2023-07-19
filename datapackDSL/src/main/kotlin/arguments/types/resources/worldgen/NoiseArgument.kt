@@ -1,14 +1,14 @@
-package arguments.types.resources
+package arguments.types.resources.worldgen
 
 import arguments.Argument
 import arguments.types.ResourceLocationArgument
 import kotlinx.serialization.Serializable
 
 @Serializable(with = Argument.ArgumentSerializer::class)
-interface CarverArgument : ResourceLocationArgument {
+interface NoiseArgument : ResourceLocationArgument {
 	companion object {
-		operator fun invoke(carver: String, namespace: String = "minecraft") = object : CarverArgument {
-			override val name = carver
+		operator fun invoke(name: String, namespace: String = "minecraft") = object : NoiseArgument {
+			override val name = name
 			override val namespace = namespace
 		}
 	}

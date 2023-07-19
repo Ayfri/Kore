@@ -1,6 +1,6 @@
 package features.worldgen.dimension.generator
 
-import arguments.types.resources.NoiseSettingsArgument
+import arguments.types.resources.worldgen.NoiseSettingsArgument
 import features.worldgen.dimension.Dimension
 import features.worldgen.dimension.biomesource.BiomeSource
 import kotlinx.serialization.Serializable

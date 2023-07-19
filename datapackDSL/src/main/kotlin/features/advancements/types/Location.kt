@@ -1,8 +1,8 @@
 package features.advancements.types
 
-import arguments.types.resources.BiomeArgument
 import arguments.types.resources.DimensionArgument
 import arguments.types.resources.StructureArgument
+import arguments.types.resources.worldgen.BiomeArgument
 import features.advancements.serializers.IntRangeOrIntJson
 import kotlinx.serialization.Serializable
 

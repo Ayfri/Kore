@@ -1,6 +1,6 @@
 package features.worldgen.biome.types
 
-import arguments.types.resources.CarverArgument
+import arguments.types.resources.worldgen.CarverArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

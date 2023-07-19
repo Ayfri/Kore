@@ -2,8 +2,8 @@ package features.worldgen.biome
 
 import DataPack
 import Generator
-import arguments.types.resources.BiomeArgument
 import arguments.types.resources.EntityTypeArgument
+import arguments.types.resources.worldgen.BiomeArgument
 import features.worldgen.biome.types.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient

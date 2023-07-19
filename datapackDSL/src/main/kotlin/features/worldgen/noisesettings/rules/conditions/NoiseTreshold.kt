@@ -1,6 +1,6 @@
 package features.worldgen.noisesettings.rules.conditions
 
-import arguments.types.resources.NoiseArgument
+import arguments.types.resources.worldgen.NoiseArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

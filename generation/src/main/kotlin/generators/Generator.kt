@@ -6,7 +6,7 @@ import url
 data class Generator(
 	var name: String,
 	var fileName: String,
-	var argumentName: String? = name.removeSuffix("s"),
+	var argumentName: String? = null,
 	var asString: String = "lowercase()",
 	var tagsParents: Map<String, String>? = null,
 	var transform: ((String) -> String)? = null,
@@ -14,6 +14,9 @@ data class Generator(
 ) {
 	init {
 		fileName = "${fileName.lowercase()}.txt"
+		if (argumentName == null) argumentName = name.removeSuffix("s")
+		if (argumentName == "") argumentName = null
+		if (fileName.startsWith("worldgen")) argumentName = "worldgen.$argumentName"
 	}
 
 	var url = ""
@@ -27,7 +30,7 @@ data class Generator(
 fun gen(
 	name: String,
 	fileName: String,
-	argName: String? = name.removeSuffix("s"),
+	argName: String? = null,
 	asString: String = "lowercase()",
 	tagsParents: Map<String, String>? = null,
 	additionalCode: TypeSpec.Builder.() -> Unit = {},

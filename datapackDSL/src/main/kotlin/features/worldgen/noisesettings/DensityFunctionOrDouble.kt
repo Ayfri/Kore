@@ -1,6 +1,6 @@
 package features.worldgen.noisesettings
 
-import arguments.types.resources.DensityFunctionArgument
+import arguments.types.resources.worldgen.DensityFunctionArgument
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor

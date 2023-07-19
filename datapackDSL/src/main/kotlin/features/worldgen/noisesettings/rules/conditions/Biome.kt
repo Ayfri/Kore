@@ -1,6 +1,6 @@
 package features.worldgen.noisesettings.rules.conditions
 
-import arguments.types.resources.BiomeArgument
+import arguments.types.resources.worldgen.BiomeArgument
 import kotlinx.serialization.Serializable
 import serializers.InlinableList
 

@@ -2,7 +2,7 @@ package features.worldgen.worldpreset
 
 import DataPack
 import Generator
-import arguments.types.resources.WorldPresetArgument
+import arguments.types.resources.worldgen.WorldPresetArgument
 import features.worldgen.dimension.Dimension
 import generated.DimensionTypes
 import kotlinx.serialization.Serializable

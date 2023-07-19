@@ -1,6 +1,6 @@
 package features.worldgen.dimension.generator
 
-import arguments.types.resources.BiomeArgument
+import arguments.types.resources.worldgen.BiomeArgument
 import features.worldgen.dimension.Dimension
 import kotlinx.serialization.Serializable
 

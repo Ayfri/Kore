@@ -3,7 +3,7 @@ package features.worldgen.noisesettings
 import DataPack
 import Generator
 import arguments.types.resources.BlockArgument
-import arguments.types.resources.NoiseSettingsArgument
+import arguments.types.resources.worldgen.NoiseSettingsArgument
 import data.block.BlockState
 import data.block.blockState
 import features.worldgen.dimension.biomesource.multinoise.MultiNoiseBiomeSourceParameters

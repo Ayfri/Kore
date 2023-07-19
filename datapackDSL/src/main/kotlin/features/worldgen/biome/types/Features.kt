@@ -1,6 +1,6 @@
 package features.worldgen.biome.types
 
-import arguments.types.resources.FeatureArgument
+import arguments.types.resources.worldgen.FeatureArgument
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer

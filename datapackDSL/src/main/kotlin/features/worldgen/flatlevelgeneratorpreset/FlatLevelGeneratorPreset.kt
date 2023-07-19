@@ -2,8 +2,8 @@ package features.worldgen.flatlevelgeneratorpreset
 
 import DataPack
 import Generator
-import arguments.types.resources.FlatLevelGeneratorPresetArgument
 import arguments.types.resources.ItemArgument
+import arguments.types.resources.worldgen.FlatLevelGeneratorPresetArgument
 import features.worldgen.dimension.generator.FlatGeneratorSettings
 import features.worldgen.dimension.generator.Layer
 import generated.Biomes

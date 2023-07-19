@@ -1,6 +1,6 @@
 package features.worldgen.dimension.biomesource.multinoise
 
-import arguments.types.resources.BiomeArgument
+import arguments.types.resources.worldgen.BiomeArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

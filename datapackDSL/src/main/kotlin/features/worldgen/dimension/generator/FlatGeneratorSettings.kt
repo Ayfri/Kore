@@ -1,8 +1,8 @@
 package features.worldgen.dimension.generator
 
-import arguments.types.resources.BiomeArgument
 import arguments.types.resources.BlockArgument
-import arguments.types.resources.StructureSetArgument
+import arguments.types.resources.worldgen.BiomeArgument
+import arguments.types.resources.worldgen.StructureSetArgument
 import kotlinx.serialization.Serializable
 import serializers.InlinableList
 
