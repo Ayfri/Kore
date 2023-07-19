@@ -21,6 +21,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("FlatLevelGeneratorPresets", "worldgen/flat_level_generator_preset"),
 		gen("Noises", "worldgen/noise"),
 		gen("NoiseSettings", "worldgen/noise_settings", "NoiseSettings"),
+		gen("ConfiguredStructures", "worldgen/structure"),
 		gen("StructureSets", "worldgen/structure_set"),
 	).transformRemoveJSONSuffix()
 
@@ -30,11 +31,12 @@ suspend fun launchAllSimpleGenerators() {
 		gen("Sounds", "sounds") { it.removeSuffix(".ogg") },
 		gen("Structures", "structures") { it.removeSuffix(".nbt") },
 		gen(
-			"Tags", "tags", argName = null, tagsParents = mapOf(
+			"Tags", "tags", argName = "", tagsParents = mapOf(
 				"blocks" to "BlockTag",
 				"instrument" to "InstrumentTag",
 				"items" to "ItemTag",
 				"worldgen/biome" to "BiomeTag",
+				"worldgen/structure" to "ConfiguredStructureTag",
 			)
 		),
 		gen("DensityFunctions", "worldgen/density_function"),
