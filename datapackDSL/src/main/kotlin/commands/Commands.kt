@@ -9,9 +9,12 @@ import arguments.maths.Vec2
 import arguments.maths.Vec3
 import arguments.maths.vec3
 import arguments.types.BiomeOrTagArgument
+import arguments.types.ConfiguredStructureOrTagArgument
 import arguments.types.EntityArgument
 import arguments.types.literals.*
 import arguments.types.resources.*
+import arguments.types.resources.worldgen.BiomeArgument
+import arguments.types.resources.worldgen.ConfiguredStructureArgument
 import commands.execute.Anchor
 import functions.Function
 import generated.Gamerules
@@ -94,9 +97,8 @@ fun Function.kill(targets: EntityArgument? = null) = addLine(command("kill", tar
 
 fun Function.list(uuids: Boolean = false) = addLine(command("list", literal(if (uuids) "uuids" else null)))
 
-fun Function.locateStructure(structure: String) = addLine(command("locate", literal("structure"), literal(structure)))
-fun Function.locateBiome(biome: String) = addLine(command("locate", literal("biome"), literal(biome)))
 fun Function.locateBiome(biome: BiomeOrTagArgument) = addLine(command("locate", literal("biome"), biome))
+fun Function.locateStructure(structure: ConfiguredStructureOrTagArgument) = addLine(command("locate", literal("structure"), structure))
 fun Function.locatePointOfInterest(pointOfInterest: String) = addLine(command("locate", literal("poi"), literal(pointOfInterest)))
 
 fun Function.me(message: String) = addLine(command("me", literal(message)))
@@ -114,7 +116,9 @@ fun Function.placeJigsaw(
 	pos: Vec3? = null,
 ) = addLine(command("place", literal("jigsaw"), literal(jigsaw), literal(target), int(maxDepth), pos))
 
-fun Function.placeStructure(structure: String, pos: Vec3) = addLine(command("place", literal("structure"), literal(structure), pos))
+fun Function.placeStructure(structure: ConfiguredStructureArgument, pos: Vec3) =
+	addLine(command("place", literal("structure"), structure, pos))
+
 fun Function.placeTemplate(
 	template: String,
 	pos: Vec3? = null,
