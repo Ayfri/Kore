@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SetInstrument(
-	val instrument: InstrumentTagArgument
+	val options: InstrumentTagArgument,
 ) : ItemFunction()
 
 fun ItemModifier.setInstrument(instrument: InstrumentTagArgument, block: SetInstrument.() -> Unit = {}) {

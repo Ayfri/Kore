@@ -7,6 +7,7 @@ import commands.items
 import features.itemmodifiers.functions.MapDecoration
 import features.itemmodifiers.functions.conditions
 import features.itemmodifiers.functions.explorationMap
+import features.itemmodifiers.functions.setInstrument
 import features.itemmodifiers.itemModifier
 import features.predicates.conditions.randomChance
 import features.predicates.conditions.weatherCheck
@@ -27,24 +28,32 @@ fun DataPack.itemModifierTests() {
 			}
 		}
 
+		setInstrument(Tags.Instrument.GOAT_HORNS)
 	}
+
 	itemModifiers.last() assertsIs """
-		{
-			"function": "minecraft:exploration_map",
-			"conditions": [
-				{
-					"condition": "minecraft:random_chance",
-					"chance": 0.5
-				},
-				{
-					"condition": "minecraft:weather_check",
-					"raining": true
-				}
-			],
-			"destination": "worldgen/structure/mineshaft",
-			"decoration": "banner_black",
-			"skip_existing_chunks": true
-		}
+		[
+			{
+				"function": "minecraft:exploration_map",
+				"conditions": [
+					{
+						"condition": "minecraft:random_chance",
+						"chance": 0.5
+					},
+					{
+						"condition": "minecraft:weather_check",
+						"raining": true
+					}
+				],
+				"destination": "worldgen/structure/mineshaft",
+				"decoration": "banner_black",
+				"skip_existing_chunks": true
+			},
+			{
+				"function": "minecraft:set_instrument",
+				"options": "#minecraft:goat_horns"
+			}
+		]
 	""".trimIndent()
 
 	load {
