@@ -1,6 +1,7 @@
 package entities
 
 import arguments.selector.SelectorNbtData
+import generated.EntityTypes
 
 class Player(name: String) : Entity() {
 	init {
@@ -13,7 +14,7 @@ class Player(name: String) : Entity() {
 			selector.name = value
 		}
 
-	override val type = "player"
+	override val type = EntityTypes.PLAYER
 }
 
 fun player(name: String, nbtData: SelectorNbtData.() -> Unit = {}) = Player(name).apply {

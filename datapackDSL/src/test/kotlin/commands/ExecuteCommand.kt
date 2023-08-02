@@ -11,6 +11,7 @@ import arguments.selector.Sort
 import arguments.types.literals.allEntities
 import arguments.types.literals.rotation
 import arguments.types.literals.self
+import arguments.types.resources.FunctionArgument
 import commands.execute.*
 import functions.Function
 import functions.function
@@ -121,6 +122,7 @@ fun Function.executeTests() {
 			blocks(vec3(PosNumber.Type.LOCAL), vec3(1, 2, 3), vec3(4, 5, 6), BlocksTestMode.MASKED)
 			data(self(), "test")
 			dimension(Dimension.THE_END)
+			function(FunctionArgument("test", datapack.name))
 			loaded(vec3(-2, -2, -2))
 			predicate("test")
 		}
@@ -137,8 +139,20 @@ fun Function.executeTests() {
 			say("test")
 		}
 	} assertsIs """
-		execute if biome ~ ~ ~ #minecraft:has_structure/ancient_city if block ~ ~ ~ minecraft:air if blocks ^ ^ ^ 1 2 3 4 5 6 masked if data entity @s test if dimension minecraft:the_end if loaded -2 -2 -2 if predicate test unless score $selectorAsString test matches ..1 store result block ~ ~ ~ test byte 1 run say test
-	""".trimIndent()
+		execute
+			if biome ~ ~ ~ #minecraft:has_structure/ancient_city
+			if block ~ ~ ~ minecraft:air
+			if blocks ^ ^ ^ 1 2 3 4 5 6 masked
+			if data entity @s test
+			if dimension minecraft:the_end
+			if function ${datapack.name}:test
+			if loaded -2 -2 -2
+			if predicate test
+			unless score $selectorAsString test matches ..1
+			store result block ~ ~ ~ test byte 1
+		run
+			say test
+	""".trimIndent().replace(Regex("\\s*\n\\s*"), " ")
 
 	val scoreName = "test"
 

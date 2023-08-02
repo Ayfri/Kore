@@ -21,8 +21,8 @@ import teams.Team
 import teams.addMembers
 
 open class Entity(val selector: SelectorNbtData = SelectorNbtData()) {
-	open val type: String = selector.type ?: "null"
-	open val isPlayer get() = type == "player"
+	open val type = selector.type
+	open val isPlayer get() = type?.name == "player"
 
 	fun asSelector(modification: SelectorNbtData.() -> Unit = {}) = allEntities(true) {
 		copyFrom(selector)

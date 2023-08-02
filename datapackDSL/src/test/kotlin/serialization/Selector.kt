@@ -112,6 +112,10 @@ fun selectorTests() = dataPack("selector_tests") {
 	} assertsIs "@e[type=minecraft:marker]"
 
 	allEntities {
+		type = !EntityTypes.MARKER
+	} assertsIs "@e[type=!minecraft:marker]"
+
+	allEntities {
 		xRotation = rangeOrDouble(1.5)
 		y = 5.0
 	} assertsIs "@e[x_rotation=1.5,y=5.0]"

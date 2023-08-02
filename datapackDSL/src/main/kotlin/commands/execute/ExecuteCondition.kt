@@ -13,10 +13,11 @@ import arguments.types.ScoreHolderArgument
 import arguments.types.literals.literal
 import arguments.types.resources.BlockArgument
 import arguments.types.resources.DimensionArgument
+import arguments.types.resources.FunctionArgument
 import arguments.types.resources.PredicateArgument
-import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
 import utils.asArg
+import kotlinx.serialization.Serializable
 
 @Serializable(BlocksTestMode.Companion.FillModeSerializer::class)
 enum class BlocksTestMode {
@@ -55,6 +56,8 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 
 	fun entity(target: EntityArgument) = addArguments(listOf(literal("entity"), ex.targetArg(target)))
 
+	fun function(function: FunctionArgument) = addArguments(listOf(literal("function"), function))
+
 	fun loaded(pos: Vec3) = addArguments(listOf(literal("loaded"), pos))
 
 	fun predicate(predicate: PredicateArgument) = addArguments(listOf(literal("predicate"), predicate))
@@ -65,7 +68,7 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 		objective: String,
 		source: ScoreHolderArgument,
 		sourceObjective: String,
-		relation: Relation
+		relation: Relation,
 	) = addArguments(
 		listOf(
 			literal("score"), ex.targetArg(target),
