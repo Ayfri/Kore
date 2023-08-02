@@ -18,13 +18,13 @@ import arguments.types.resources.worldgen.ConfiguredStructureArgument
 import commands.execute.Anchor
 import functions.Function
 import generated.Gamerules
-import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtCompoundBuilder
 import serializers.LowercaseSerializer
 import utils.asArg
 import utils.nbt
 import utils.nbtArg
+import kotlinx.serialization.Serializable
 
 fun Function.clear(targets: EntityArgument? = null, item: ItemArgument? = null, maxCount: Int? = null) =
 	addLine(command("clear", targets, item, int(maxCount)))
@@ -60,22 +60,6 @@ fun Function.fill(from: Vec3, to: Vec3, block: BlockArgument, filter: BlockArgum
 fun Function.fillbiome(from: Vec3, to: Vec3, biome: BiomeArgument) = addLine(command("fillbiome", from, to, biome))
 fun Function.fillbiome(from: Vec3, to: Vec3, biome: BiomeArgument, filter: BiomeArgument) =
 	addLine(command("fillbiome", from, to, biome, literal("replace"), filter))
-
-fun Function.function(name: String, group: Boolean = false) = addLine(
-	command(
-		"function",
-		tag(name, datapack.name, group)
-	)
-)
-
-fun Function.function(namespace: String, name: String, group: Boolean = false) = addLine(
-	command(
-		"function",
-		tag(name, namespace, group)
-	)
-)
-
-fun Function.function(function: FunctionArgument) = addLine(command("function", function))
 
 fun Function.gamemode(gamemode: Gamemode, target: EntityArgument? = null) =
 	addLine(command("gamemode", literal(gamemode.asArg()), target))

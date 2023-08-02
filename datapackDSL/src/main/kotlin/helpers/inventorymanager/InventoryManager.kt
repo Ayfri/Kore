@@ -93,7 +93,6 @@ fun InventoryManager<*>.generateSlotsListeners(dp: DataPack) = with(dp) { genera
 context(Function)
 fun InventoryManager<*>.generateSlotsListeners() = generateSlotsListeners(datapack)
 
-
 context(DataPack)
 fun InventoryManager<*>.generateSlotsListeners() {
 	val scoreName = getScoreName(this@DataPack)
@@ -119,7 +118,7 @@ fun InventoryManager<*>.generateSlotsListeners() {
 	tick("tick_inventory_manager_${hashCode()}") {
 		slotsListeners.forEach { slotListener ->
 			slotListener.onTick?.let(::apply)
-			slotListener.onTickFunction?.let(::function)
+			slotListener.onTickFunction?.let { function(it) }
 
 			val containerNbt = nbt {
 				when (slotListener.container) {
