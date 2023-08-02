@@ -14,16 +14,17 @@ import features.worldgen.dimension.Dimension
 import features.worldgen.dimensiontype.DimensionType
 import features.worldgen.flatlevelgeneratorpreset.FlatLevelGeneratorPreset
 import features.worldgen.noisesettings.NoiseSettings
+import features.worldgen.structures.Structure
 import features.worldgen.structureset.StructureSet
 import features.worldgen.worldpreset.WorldPreset
 import functions.Function
+import kotlin.io.path.Path
+import java.io.File
+import java.nio.file.Path
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNamingStrategy
-import java.io.File
-import java.nio.file.Path
-import kotlin.io.path.Path
 
 @FunctionsHolder
 class DataPack(val name: String) {
@@ -43,6 +44,7 @@ class DataPack(val name: String) {
 	val noiseSettings = mutableListOf<NoiseSettings>()
 	val predicates = mutableListOf<Predicate>()
 	val recipes = mutableListOf<RecipeFile>()
+	val structures = mutableListOf<Structure>()
 	val structureSets = mutableListOf<StructureSet>()
 	val tags = mutableListOf<Tags>()
 	val worldPresets = mutableListOf<WorldPreset>()
@@ -93,6 +95,7 @@ class DataPack(val name: String) {
 		data.generateResources("worldgen/biome", biomes)
 		data.generateResources("worldgen/flat_level_generator_preset", flatLevelGeneratorPresets)
 		data.generateResources("worldgen/noise_settings", noiseSettings)
+		data.generateResources("worldgen/structure", structures)
 		data.generateResources("worldgen/structure_set", structureSets)
 		data.generateResources("worldgen/world_preset", worldPresets)
 
@@ -112,7 +115,7 @@ class DataPack(val name: String) {
 	private fun File.generateFunctions(
 		dirName: String,
 		functionsMap: Map<String, List<Function>>,
-		deleteOldFiles: Boolean = false
+		deleteOldFiles: Boolean = false,
 	) =
 		functionsMap.forEach { (namespace, functions) ->
 			val namespaceDir = File(this, namespace)
@@ -126,11 +129,10 @@ class DataPack(val name: String) {
 			functions.forEach { it.generate(dir) }
 		}
 
-
 	private fun <T : Generator> File.generateResources(
 		dirName: String,
 		resources: Map<String, List<T>>,
-		deleteOldFiles: Boolean = false
+		deleteOldFiles: Boolean = false,
 	) =
 		resources.forEach { (namespace, resource) ->
 			val namespaceDir = File(this, namespace)
@@ -142,7 +144,7 @@ class DataPack(val name: String) {
 	private fun <T : Generator> File.generateResources(
 		dirName: String,
 		resources: List<T>,
-		deleteOldFiles: Boolean = false
+		deleteOldFiles: Boolean = false,
 	) {
 		if (resources.isEmpty()) return
 		val dir = File(let { if (it.name == "data") File(it, this@DataPack.name) else it }, dirName)

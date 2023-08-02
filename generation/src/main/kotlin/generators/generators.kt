@@ -40,6 +40,7 @@ suspend fun launchAllSimpleGenerators() {
 			)
 		),
 		gen("DensityFunctions", "worldgen/density_function"),
+		gen("TemplatePools", "worldgen/template_pool"),
 	).transformRemoveJSONSuffix().map { gen ->
 		gen.apply { enumTree = true }
 	}
@@ -89,8 +90,8 @@ suspend fun launchAllSimpleGenerators() {
 	)
 
 	val allListGenerators = txtListsListGenerators.setUrlWithType("lists") +
-			txtListsTreeGenerators.setUrlWithType("lists") +
-			txtRegistriesListGenerators.setUrlWithType("registries")
+		txtListsTreeGenerators.setUrlWithType("lists") +
+		txtRegistriesListGenerators.setUrlWithType("registries")
 
 	allListGenerators.sortedBy { it.fileName }.forEach { gen ->
 		val url = gen.url

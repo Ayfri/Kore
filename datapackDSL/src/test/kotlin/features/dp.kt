@@ -25,6 +25,7 @@ fun featuresTests() = dataPack("features_tests") {
 	noiseSettingsTests()
 	predicateTests()
 	recipeTest()
+	structureTests()
 	structureSetTests()
 	worldPresetTests()
 }.generate()

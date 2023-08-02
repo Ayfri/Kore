@@ -13,7 +13,7 @@ data class StructureSet(
 	@Transient
 	override var fileName: String = "structure_set",
 	var structures: List<Structure> = emptyList(),
-	var placement: Placement
+	var placement: Placement,
 ) : Generator {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
@@ -35,7 +35,7 @@ fun StructureSet.concentricRingsPlacement(
 	spread: Int = 0,
 	count: Int = 1,
 	block: ConcentricRingsPlacement.() -> Unit = {},
-) = apply {
+) = run {
 	placement = ConcentricRingsPlacement(
 		distance = distance,
 		spread = spread,
@@ -48,7 +48,7 @@ fun StructureSet.randomSpreadPlacement(
 	spacing: Int = 1,
 	separation: Int = 0,
 	block: RandomSpreadPlacement.() -> Unit = {},
-) = apply {
+) = run {
 	placement = RandomSpreadPlacement(
 		spreadType = spreadType,
 		spacing = spacing,

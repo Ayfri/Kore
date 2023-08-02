@@ -14,8 +14,7 @@ typealias InlinableList<T> = @Serializable(with = InlinableListSerializer::class
 open class InlinableListSerializer<T : Any>(private val kSerializer: KSerializer<T>) : KSerializer<List<T>> {
 	override val descriptor = ListSerializer(JsonElement.serializer()).descriptor
 
-	override fun deserialize(decoder: Decoder) =
-		error("List of ${kSerializer.descriptor.getElementDescriptor(0).serialName} cannot be deserialized")
+	override fun deserialize(decoder: Decoder) = error("List of ${kSerializer.descriptor.serialName} cannot be deserialized")
 
 	override fun serialize(encoder: Encoder, value: List<T>) = when (value.size) {
 		1 -> encoder.encodeSerializableValue(kSerializer, value[0])

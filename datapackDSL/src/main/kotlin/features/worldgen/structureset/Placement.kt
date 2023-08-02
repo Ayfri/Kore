@@ -2,10 +2,10 @@ package features.worldgen.structureset
 
 import arguments.types.resources.worldgen.BiomeArgument
 import arguments.types.resources.worldgen.StructureSetArgument
+import kotlin.random.Random
+import serializers.InlinableList
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import serializers.InlinableList
-import kotlin.random.Random
 
 @Serializable
 sealed interface Placement {

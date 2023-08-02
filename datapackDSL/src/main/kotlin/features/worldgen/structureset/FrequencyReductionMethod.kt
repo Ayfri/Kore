@@ -1,7 +1,7 @@
 package features.worldgen.structureset
 
-import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
+import kotlinx.serialization.Serializable
 
 @Serializable(FrequencyReductionMethod.Companion.FrequencyReductionMethodSerializer::class)
 enum class FrequencyReductionMethod {

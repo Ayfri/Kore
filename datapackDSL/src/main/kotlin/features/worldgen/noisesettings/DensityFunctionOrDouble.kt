@@ -8,6 +8,13 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.serializer
 
+/**
+ * This class represents a density function or a double value.
+ * Needed because of Minecraft [NoiseRouter] properties.
+ *
+ * @property double The double value. It can be null if the instance represents a density function.
+ * @property densityFunction The density function argument. It can be null if the instance represents a double value.
+ */
 @Serializable(with = DensityFunctionOrDouble.Companion.DensityFunctionOrDoubleSerializer::class)
 data class DensityFunctionOrDouble(
 	var double: Double? = null,
