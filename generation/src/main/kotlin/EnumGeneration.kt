@@ -7,7 +7,7 @@ fun generateEnum(
 	parentArgumentType: String? = null,
 	asString: String = "lowercase()",
 	additionalCode: FileSpec.Builder.(enumName: String) -> Unit = {},
-	additionalEnumCode: TypeSpec.Builder.() -> Unit = {}
+	additionalEnumCode: TypeSpec.Builder.() -> Unit = {},
 ) {
 	val enumType = TypeSpec.enumBuilder(name).apply {
 		addAnnotation(
@@ -26,23 +26,27 @@ fun generateEnum(
 			addEnumConstant(value.snakeCase().uppercase())
 		}
 
-		addProperty(
-			PropertySpec.builder("namespace", String::class)
-				.addModifiers(KModifier.OVERRIDE)
-				.getter(FunSpec.getterBuilder().addStatement("return \"minecraft\"").build())
-				.build()
-		)
+		if (parentArgumentType != null) {
+			addProperty(
+				PropertySpec.builder("namespace", String::class)
+					.addModifiers(KModifier.OVERRIDE)
+					.getter(FunSpec.getterBuilder().addStatement("return \"minecraft\"").build())
+					.build()
+			)
 
-		addFunction(
-			FunSpec.builder("asId")
-				.addStatement("return \"\$namespace:\${name.$asString}\"")
-				.addModifiers(KModifier.OVERRIDE)
-				.build()
-		)
+			addFunction(
+				FunSpec.builder("asId")
+					.addStatement("return \"\$namespace:\${name.$asString}\"")
+					.addModifiers(KModifier.OVERRIDE)
+					.build()
+			)
+		}
+
 
 		additionalEnumCode()
 
-		addType(generateCompanion(name, "minecraft:\${value.name.$asString}"))
+		val encoderValue = if (parentArgumentType != null) "\"minecraft:\${value.name.$asString}\"" else null
+		addType(generateCompanion(name, encoderValue))
 	}
 
 	generateFile(name, sourceUrl, enumType, additionalCode)

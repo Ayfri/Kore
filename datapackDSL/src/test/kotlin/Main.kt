@@ -33,10 +33,13 @@ import features.tags.tags
 import functions.function
 import generated.*
 import generated.Attributes
+import generated.DataPacks
 import helpers.helpersTests
 import io.github.cdimascio.dotenv.dotenv
 import kotlin.io.path.Path
 import net.benwoodworth.knbt.addNbtCompound
+import pack.features
+import pack.pack
 import serialization.selectorTests
 import utils.nbtList
 import utils.nbtListOf
@@ -292,6 +295,8 @@ fun main() {
 				bold = true
 			}
 		}
+
+		features(DataPacks.BUNDLE)
 	}
 
 //	dataPack.generate()

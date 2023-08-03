@@ -1,3 +1,4 @@
+import generators.downloadDataPacks
 import generators.downloadGamerules
 import generators.launchAllSimpleGenerators
 import io.ktor.client.*
@@ -5,11 +6,11 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
-import kotlinx.serialization.json.Json
+import kotlin.io.path.absolute
 import java.io.File
 import java.nio.file.Paths
 import java.util.*
-import kotlin.io.path.absolute
+import kotlinx.serialization.json.Json
 
 const val header = """// Automatically generated - do not modify!"""
 const val mainGitHubUrl = "https://raw.githubusercontent.com/PixiGeko/Minecraft-generated-data"
@@ -49,6 +50,7 @@ suspend fun main(args: Array<String>) {
 
 	println("Generating assets from minecraft version: $minecraftVersion")
 
-	launchAllSimpleGenerators()
+	downloadDataPacks()
 	downloadGamerules()
+	launchAllSimpleGenerators()
 }

@@ -6,7 +6,7 @@ fun generatePathEnumTree(
 	name: String,
 	sourceUrl: String,
 	parentArgumentType: String? = null,
-	tagsParents: Map<String, String>? = null
+	tagsParents: Map<String, String>? = null,
 ) {
 	val typeBuilders = MutableList(paths.maxOf { path -> path.count { it == '/' } }) {
 		mutableMapOf<String, TypeSpec.Builder>()
@@ -97,7 +97,7 @@ fun generatePathEnumTree(
 						.build()
 				)
 
-				addType(generateCompanion(enumName, "$parent/\${value.name.lowercase()}"))
+				addType(generateCompanion(enumName, "\"$parent/\${value.name.lowercase()}\""))
 			}
 		}.addEnumConstant(enumValue)
 	}
@@ -118,20 +118,26 @@ fun generatePathEnumTree(
 	generateFile(name, sourceUrl, topLevel)
 }
 
-fun generateCompanion(name: String, encoderValue: String = "minecraft:\${value.name.lowercase()}") =
+inline fun <T> T.letIf(
+	condition: Boolean,
+	block: (T) -> T,
+) = if (condition) block(this) else this
+
+fun generateCompanion(name: String, encoderValue: String? = "\"minecraft:\${value.name.lowercase()}\"") =
 	TypeSpec.companionObjectBuilder().apply {
 		addType(
 			TypeSpec.objectBuilder(name.asSerializer())
 				.superclass(ClassName("serializers", "LowercaseSerializer").parameterizedBy(ClassName("", name)))
 				.addSuperclassConstructorParameter("entries")
-				.addFunction(
-					FunSpec.builder("serialize")
-						.addModifiers(KModifier.OVERRIDE)
-						.addParameter("encoder", ClassName("kotlinx.serialization.encoding", "Encoder"))
-						.addParameter("value", ClassName("", name))
-						.addStatement("encoder.encodeString(\"$encoderValue\")")
-						.build()
-				)
-				.build()
+				.letIf(encoderValue != null) {
+					it.addFunction(
+						FunSpec.builder("serialize")
+							.addModifiers(KModifier.OVERRIDE)
+							.addParameter("encoder", ClassName("kotlinx.serialization.encoding", "Encoder"))
+							.addParameter("value", ClassName("", name))
+							.addStatement("encoder.encodeString($encoderValue)")
+							.build()
+					)
+				}.build()
 		)
 	}.build()
