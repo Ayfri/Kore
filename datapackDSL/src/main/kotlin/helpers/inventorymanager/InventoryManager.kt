@@ -4,7 +4,7 @@ import DataPack
 import arguments.CONTAINER
 import arguments.ItemSlotType
 import arguments.maths.Vec3
-import arguments.numbers.rangeOrInt
+import arguments.numbers.ranges.rangeOrInt
 import arguments.scores.score
 import arguments.selector.scores
 import arguments.types.ContainerArgument

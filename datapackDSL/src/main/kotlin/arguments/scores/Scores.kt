@@ -1,7 +1,7 @@
 package arguments.scores
 
 import arguments.enums.Relation
-import arguments.numbers.*
+import arguments.numbers.ranges.*
 import arguments.types.ScoreHolderArgument
 import kotlin.ranges.IntRange as KotlinIntRange
 

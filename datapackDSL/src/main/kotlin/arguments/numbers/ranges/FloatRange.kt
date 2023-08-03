@@ -1,35 +1,32 @@
-package arguments.numbers
+package arguments.numbers.ranges
 
+import arguments.Argument
+import arguments.numbers.str
 import kotlinx.serialization.Serializable
-import serializers.ToStringSerializer
 
 interface FloatingRange : Range
 
-@Serializable(FloatRange.Companion.FloatRangeSerializer::class)
+@Serializable(with = Argument.ArgumentSerializer::class)
 class FloatRange(val start: Double?, val end: Double?) : FloatingRange {
-	override fun toString() = when {
+	override fun asString() = when {
 		start == null && end == null -> ""
 		start == null -> "..${end?.str}"
 		end == null -> "${start.str}.."
 		else -> "${start.str}..${end.str}"
 	}
 
-	fun asRangeOrDouble() = FloatRangeOrFloat(this)
+	override fun toString() = asString()
 
-	companion object {
-		data object FloatRangeSerializer : ToStringSerializer<FloatRange>()
-	}
+	fun asRangeOrDouble() = FloatRangeOrFloat(this)
 }
 
-@Serializable(FloatRangeOrFloat.Companion.FloatRangeOrFloatSerializer::class)
+@Serializable(with = Argument.ArgumentSerializer::class)
 class FloatRangeOrFloat(val range: FloatRange? = null, val double: Double? = null) : FloatingRange {
-	override fun toString() = range?.toString() ?: double.toString()
+	override fun asString() = range?.toString() ?: double.toString()
+
+	override fun toString() = asString()
 
 	fun asRange() = range ?: FloatRange(double, double)
-
-	companion object {
-		data object FloatRangeOrFloatSerializer : ToStringSerializer<FloatRangeOrFloat>()
-	}
 }
 
 inline fun range(start: Double, end: Double) = FloatRange(start, end)

@@ -18,6 +18,7 @@ val dp = dataPack("unit_tests") {
 		lootTests()
 		particleTests()
 		placeTests()
+		randomTests()
 		recipeTests()
 		returnCommand()
 		rideTests()

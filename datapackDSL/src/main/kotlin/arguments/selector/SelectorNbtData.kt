@@ -1,13 +1,21 @@
 package arguments.selector
 
 import arguments.enums.Gamemode
-import arguments.numbers.FloatRangeOrFloat
-import arguments.numbers.IntRangeOrInt
-import arguments.numbers.Range
+import arguments.numbers.ranges.FloatRangeOrFloat
+import arguments.numbers.ranges.IntRangeOrInt
+import arguments.numbers.ranges.Range
 import arguments.scores.Scores
 import arguments.scores.SelectorScore
 import arguments.types.resources.EntityTypeArgument
 import arguments.types.resources.PredicateArgument
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.isAccessible
+import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.NbtTag
+import net.benwoodworth.knbt.StringifiedNbt
+import serializers.ToStringSerializer
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -16,14 +24,6 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonPrimitive
-import net.benwoodworth.knbt.NbtCompound
-import net.benwoodworth.knbt.NbtTag
-import net.benwoodworth.knbt.StringifiedNbt
-import serializers.ToStringSerializer
-import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.hasAnnotation
-import kotlin.reflect.full.memberProperties
-import kotlin.reflect.jvm.isAccessible
 
 sealed interface Invertable<T> {
 	var value: T?

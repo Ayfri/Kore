@@ -5,7 +5,11 @@ import arguments.enums.DataType
 import arguments.enums.Dimension
 import arguments.maths.Axes
 import arguments.maths.vec3
-import arguments.numbers.*
+import arguments.numbers.PosNumber
+import arguments.numbers.ranges.rangeOrInt
+import arguments.numbers.ranges.rangeOrIntEnd
+import arguments.numbers.relativeRot
+import arguments.numbers.rot
 import arguments.scores.score
 import arguments.selector.Sort
 import arguments.types.literals.allEntities

@@ -2,7 +2,7 @@ import arguments.DisplaySlots
 import arguments.chatcomponents.textComponent
 import arguments.colors.Color
 import arguments.enums.Gamemode
-import arguments.numbers.rangeOrIntStart
+import arguments.numbers.ranges.rangeOrIntStart
 import commands.execute.execute
 import commands.execute.run
 import commands.say

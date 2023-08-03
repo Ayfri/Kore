@@ -1,14 +1,14 @@
 package arguments.enums
 
 import arguments.Argument
-import arguments.numbers.IntRangeOrInt
-import arguments.numbers.rangeOrInt
-import arguments.numbers.rangeOrIntEnd
-import arguments.numbers.rangeOrIntStart
+import arguments.numbers.ranges.IntRangeOrInt
+import arguments.numbers.ranges.rangeOrInt
+import arguments.numbers.ranges.rangeOrIntEnd
+import arguments.numbers.ranges.rangeOrIntStart
+import serializers.LowercaseSerializer
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encoding.Encoder
-import serializers.LowercaseSerializer
 
 @Serializable(Relation.Companion.RelationSerializer::class)
 enum class Relation(val symbol: String) : Argument {

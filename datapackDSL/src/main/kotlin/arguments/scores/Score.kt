@@ -1,7 +1,7 @@
 package arguments.scores
 
 import arguments.enums.Relation
-import arguments.numbers.IntRangeOrInt
+import arguments.numbers.ranges.IntRangeOrInt
 import arguments.types.ScoreHolderArgument
 
 sealed interface Score {

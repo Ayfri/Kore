@@ -1,10 +1,10 @@
 package serialization
 
 import arguments.enums.Gamemode
-import arguments.numbers.rangeOrDouble
-import arguments.numbers.rangeOrDoubleEnd
-import arguments.numbers.rangeOrInt
-import arguments.numbers.rangeOrIntEnd
+import arguments.numbers.ranges.rangeOrDouble
+import arguments.numbers.ranges.rangeOrDoubleEnd
+import arguments.numbers.ranges.rangeOrInt
+import arguments.numbers.ranges.rangeOrIntEnd
 import arguments.scores.lessThan
 import arguments.scores.score
 import arguments.selector.SelectorType

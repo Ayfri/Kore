@@ -1,38 +1,32 @@
-package arguments.numbers
+package arguments.numbers.ranges
 
+import arguments.Argument
 import kotlinx.serialization.Serializable
-import serializers.ToStringSerializer
 import kotlin.ranges.IntRange as KotlinIntRange
-
-interface Range
 
 interface IntegerRange : Range
 
-@Serializable(IntRange.Companion.IntRangeSerializer::class)
+@Serializable(with = Argument.ArgumentSerializer::class)
 class IntRange(val start: Int?, val end: Int?) : IntegerRange {
-	override fun toString() = when {
+	override fun asString() = when {
 		start == null && end == null -> ""
 		start == null -> "..$end"
 		end == null -> "$start.."
 		else -> "$start..$end"
 	}
 
-	fun asRangeOrInt() = IntRangeOrInt(this)
+	override fun toString() = asString()
 
-	companion object {
-		data object IntRangeSerializer : ToStringSerializer<IntRange>()
-	}
+	fun asRangeOrInt() = IntRangeOrInt(this)
 }
 
-@Serializable(IntRangeOrInt.Companion.IntRangeOrIntSerializer::class)
+@Serializable(with = Argument.ArgumentSerializer::class)
 class IntRangeOrInt(val range: IntRange? = null, val int: Int? = null) : IntegerRange {
-	override fun toString() = range?.toString() ?: int.toString()
+	override fun asString() = range?.toString() ?: int.toString()
+
+	override fun toString() = asString()
 
 	fun asRange() = range ?: IntRange(int, int)
-
-	companion object {
-		data object IntRangeOrIntSerializer : ToStringSerializer<IntRangeOrInt>()
-	}
 }
 
 inline fun range(start: Int, end: Int) = IntRange(start, end)

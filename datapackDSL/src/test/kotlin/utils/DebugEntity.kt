@@ -5,7 +5,7 @@ import arguments.chatcomponents.*
 import arguments.chatcomponents.events.runCommand
 import arguments.chatcomponents.events.suggestCommand
 import arguments.colors.Color
-import arguments.numbers.rangeOrIntStart
+import arguments.numbers.ranges.rangeOrIntStart
 import arguments.selector.SelectorNbtData
 import arguments.types.literals.allEntities
 import arguments.types.literals.allPlayers
@@ -47,17 +47,19 @@ data class DebugEntity(val data: Map<String, String> = mutableMapOf()) {
 
 	context(Function)
 	fun assertData(
-		key: String, value: String, whenFalse: DebugCallback = { k, v ->
+		key: String, value: String,
+		whenFalse: DebugCallback = { k, v ->
 			debug("assertData failed: $k != $v") {
 				color = Color.RED
 				setupDisplay(k)
 			}
-		}, whenTrue: DebugCallback = { k, v ->
+		},
+		whenTrue: DebugCallback = { k, v ->
 			debug("assertData passed: $k == $v") {
 				color = Color.GREEN
 				setupDisplay(k)
 			}
-		}
+		},
 	) {
 		val target = selector { nbt = nbt { putNbtCompound("data") { put(key, value) } } }
 		execute {

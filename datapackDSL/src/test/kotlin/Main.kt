@@ -13,7 +13,11 @@ import arguments.enums.Gamemode
 import arguments.maths.Axes
 import arguments.maths.coordinate
 import arguments.maths.vec3
-import arguments.numbers.*
+import arguments.numbers.PosNumber
+import arguments.numbers.pos
+import arguments.numbers.ranges.rangeOrInt
+import arguments.numbers.relativePos
+import arguments.numbers.ticks
 import arguments.scores.score
 import arguments.selector.SelectorNbtData
 import arguments.selector.SelectorType
@@ -31,13 +35,13 @@ import generated.*
 import generated.Attributes
 import helpers.helpersTests
 import io.github.cdimascio.dotenv.dotenv
+import kotlin.io.path.Path
 import net.benwoodworth.knbt.addNbtCompound
 import serialization.selectorTests
 import utils.nbtList
 import utils.nbtListOf
 import utils.set
 import java.util.*
-import kotlin.io.path.Path
 
 val configuration = dotenv()
 val minecraftSaveTestPath = Path(configuration["TEST_FOLDER"])

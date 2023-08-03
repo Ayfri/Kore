@@ -3,7 +3,7 @@ package commands.execute
 import arguments.Argument
 import arguments.enums.Relation
 import arguments.maths.Vec3
-import arguments.numbers.IntRangeOrInt
+import arguments.numbers.ranges.IntRangeOrInt
 import arguments.scores.ExecuteScore
 import arguments.scores.Scores
 import arguments.types.BiomeOrTagArgument
