@@ -6,6 +6,8 @@ import arguments.types.literals.literal
 import arguments.types.literals.tag
 import arguments.types.resources.FunctionArgument
 import functions.Function
+import functions.FunctionWithMacros
+import functions.Macros
 import net.benwoodworth.knbt.NbtCompound
 
 fun Function.function(name: String, group: Boolean = false, arguments: NbtCompound? = null) = addLine(
@@ -64,3 +66,22 @@ fun Function.function(function: FunctionArgument, arguments: DataArgument, path:
 		literal(path)
 	)
 )
+
+fun verifyArguments(functionId: String, macros: List<String>, argumentList: List<String>) {
+	require(macros.size >= argumentList.size) { "Expected ${macros.size} arguments, but got ${argumentList.size} when calling function '$functionId'" }
+	require(macros.all { it in argumentList }) {
+		"Missing arguments '${macros.filter { it !in argumentList }.joinToString()}' when calling function '$functionId'"
+	}
+}
+
+inline fun <reified T : Macros> Function.function(function: FunctionWithMacros<T>, arguments: NbtCompound): Command {
+	verifyArguments(function.asId(), function.macros.args.toList(), arguments.keys.toList())
+
+	return addLine(
+		command(
+			"function",
+			function,
+			compound(arguments)
+		)
+	)
+}

@@ -1,5 +1,6 @@
 package commands
 
+import commands.special.testMacros
 import dataPack
 import functions.load
 
@@ -27,6 +28,8 @@ val dp = dataPack("unit_tests") {
 		titleTests()
 		weatherTests()
 	}
+
+	testMacros()
 }
 
 fun runUnitTests() = dp.generate()

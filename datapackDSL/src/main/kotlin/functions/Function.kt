@@ -18,35 +18,44 @@ open class Function(
 	override val name: String,
 	override val namespace: String = "minecraft",
 	override var directory: String = "",
-	val datapack: DataPack
+	val datapack: DataPack,
 ) : FunctionArgument {
-	val lines = mutableListOf<String>()
 	private var debug = false
+	internal var nextLineHasMacro = false
+	val lines = mutableListOf<String>()
 
 	fun addBlankLine() = lines.add("")
 
-	open fun addLine(line: String) {
-		lines.add(line)
+	private fun handleMacro(line: String): String {
+		if (nextLineHasMacro) {
+			if (Regex(Macros.MACRO_REGEX) in line && !line.startsWith('$')) return "$$line"
+			nextLineHasMacro = false
+		}
+
+		return line
 	}
 
-	open fun addLine(command: Command): Command {
-		lines.add(command.toString())
-		if (debug) lines.add(
-			"tellraw @a ${
-				textComponent("/$command") {
-					clickEvent(ClickAction.SUGGEST_COMMAND) {
-						value = "/$command"
-					}
+	open fun addLine(line: String) = handleMacro(line).also { lines += it }
 
-					hoverEvent {
-						showText("Click to copy command") {
-							italic = true
-							color = Color.GRAY
-						}
+	open fun addLine(command: Command): Command {
+		lines += handleMacro(command.toString())
+
+		if (nextLineHasMacro) command.hasMacro = true
+
+		if (debug) lines += "tellraw @a ${
+			textComponent("/$command") {
+				clickEvent(ClickAction.SUGGEST_COMMAND) {
+					value = "/$command"
+				}
+
+				hoverEvent {
+					showText("Click to copy command") {
+						italic = true
+						color = Color.GRAY
 					}
-				}.toJsonString()
-			}"
-		)
+				}
+			}.toJsonString()
+		}"
 
 		return command
 	}
@@ -129,7 +138,7 @@ open class Function(
 
 	companion object {
 		val EMPTY = object : Function("", datapack = DataPack("")) {
-			override fun addLine(line: String) {}
+			override fun addLine(line: String) = ""
 			override fun addLine(command: Command): Command {
 				lines.clear()
 				lines += command.toString()
@@ -162,7 +171,7 @@ private fun DataPack.addToMinecraftTag(
 	fileName: String,
 	functionName: String?,
 	block: Function.() -> Unit,
-	directory: String
+	directory: String,
 ): FunctionArgument {
 	val name = functionName ?: "${fileName}_${block.hashCode()}"
 	val generatedFunction = generatedFunction(name, directory, block)
@@ -178,7 +187,7 @@ fun Function.setTag(
 	tagNamespace: String = namespace,
 	entryNamespace: String = namespace,
 	group: Boolean = false,
-	required: Boolean? = null
+	required: Boolean? = null,
 ) {
 	datapack.addToTag(tagNamespace, "functions", tagFile) {
 		add(this@setTag.name, entryNamespace, group, required)
