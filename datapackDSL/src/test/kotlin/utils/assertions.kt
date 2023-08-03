@@ -16,6 +16,7 @@ infix fun Command.assertsIs(string: String) = also { assertsIs(toString(), strin
 infix fun Command.assertsMatches(regex: Regex) = also { assertsMatches(regex, toString()) }
 
 infix fun String.assertsIs(string: String) = also { assertsIs(this, string) }
+infix fun String.assertsIsJson(@Language("json") string: String) = also { assertsIsJson(this, string) }
 
 infix fun Argument.assertsIs(string: String) = assertsIs(asString(), string)
 
@@ -26,6 +27,17 @@ infix fun Generator.assertsIs(@Language("json") expected: String) {
 
 	val stack = Thread.currentThread().stackTrace
 	with(stack[2]) {
+		System.err.println("\nat $className.$methodName($fileName:$lineNumber)")
+	}
+
+	System.err.println(generateDiffStringJson(expected, result))
+}
+
+private fun <T : Any> T.assertsIsJson(result: String, expected: String) {
+	if (result == expected || !alreadyPrinted.add(hashCode())) return
+
+	val stack = Thread.currentThread().stackTrace
+	with(stack[3]) {
 		System.err.println("\nat $className.$methodName($fileName:$lineNumber)")
 	}
 

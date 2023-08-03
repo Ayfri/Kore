@@ -17,6 +17,27 @@ data class Pack(
 	var format: Int,
 	@Serializable
 	var description: ChatComponents,
+	var supportedFormats: SupportedFormats? = null,
 )
 
 fun DataPack.pack(block: Pack.() -> Unit) = pack.run(block)
+
+fun Pack.supportedFormat(constant: Int) {
+	supportedFormats = SupportedFormats(constant)
+}
+
+fun Pack.supportedFormat(values: Collection<Int>) {
+	supportedFormats = SupportedFormats(list = values.toList())
+}
+
+fun Pack.supportedFormat(vararg values: Int) {
+	supportedFormats = SupportedFormats(list = values.toList())
+}
+
+fun Pack.supportedFormat(range: IntRange) {
+	supportedFormats = SupportedFormats(minInclusive = range.first, maxInclusive = range.last)
+}
+
+fun Pack.supportedFormat(minInclusive: Int, maxInclusive: Int = Int.MAX_VALUE) {
+	supportedFormats = SupportedFormats(minInclusive = minInclusive, maxInclusive = maxInclusive)
+}

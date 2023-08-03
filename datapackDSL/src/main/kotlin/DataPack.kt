@@ -78,8 +78,8 @@ class DataPack(val name: String) {
 		val root = File("$path/$name")
 		root.mkdirs()
 
-		val packMCMeta = PackMCMeta(pack, features, filter)
-		File(root, "pack.mcmeta").writeText(jsonEncoder.encodeToString(packMCMeta))
+		val packMCMeta = generatePackMCMetaFile()
+		File(root, "pack.mcmeta").writeText(packMCMeta)
 		iconPath?.let { File(root, "pack.png").writeBytes(it.toFile().readBytes()) }
 
 		val data = File(root, "data")
@@ -114,6 +114,8 @@ class DataPack(val name: String) {
 		val end = System.currentTimeMillis()
 		println("Generated data pack '$name' in ${end - start}ms in: ${root.absolutePath}")
 	}
+
+	fun generatePackMCMetaFile() = jsonEncoder.encodeToString(PackMCMeta(pack, features, filter))
 
 	private fun File.generateFunctions(
 		dirName: String,
