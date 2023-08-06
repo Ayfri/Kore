@@ -11,7 +11,7 @@ data class TrapezoidHeightProvider(
 	var minInclusive: HeightConstant,
 	var maxInclusive: HeightConstant,
 	var plateau: Int? = null,
-) : HeightProvider()
+) : HeightProvider
 
 fun trapezoidHeightProvider(
 	minInclusive: HeightConstant,

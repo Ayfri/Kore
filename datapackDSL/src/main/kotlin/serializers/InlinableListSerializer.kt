@@ -10,6 +10,8 @@ import kotlinx.serialization.json.JsonElement
 
 typealias InlinableList<T> = @Serializable(with = InlinableListSerializer::class) List<T>
 
+fun InlinableListSerializer(kSerializer: KSerializer<*>): KSerializer<InlinableList<*>> = InlinableListSerializer(kSerializer)
+
 @OptIn(ExperimentalSerializationApi::class)
 open class InlinableListSerializer<T : Any>(private val kSerializer: KSerializer<T>) : KSerializer<List<T>> {
 	override val descriptor = ListSerializer(JsonElement.serializer()).descriptor

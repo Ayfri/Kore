@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 data class UniformHeightProvider(
 	var minInclusive: HeightConstant,
 	var maxInclusive: HeightConstant,
-) : HeightProvider()
+) : HeightProvider
 
 fun uniformHeightProvider(
 	minInclusive: HeightConstant,

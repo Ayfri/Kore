@@ -11,7 +11,7 @@ data class VeryBiasedToBottomHeightProvider(
 	var minInclusive: HeightConstant,
 	var maxInclusive: HeightConstant,
 	var inner: Int? = null,
-) : HeightProvider()
+) : HeightProvider
 
 fun veryBiasedToBottomHeightProvider(
 	minInclusive: HeightConstant,

@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @SerialName("minecraft:weighted_list")
 data class WeightedListHeightProvider(
 	var distribution: List<WeightedListHeightProviderEntry>,
-) : HeightProvider()
+) : HeightProvider
 
 @Serializable
 data class WeightedListHeightProviderEntry(

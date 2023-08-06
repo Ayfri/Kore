@@ -5,5 +5,4 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("minecraft:constant")
-//@JvmInline
-/* value */ class ConstantIntProvider(val value: Int) : IntProvider
+data class ConstantIntProvider(val value: Int) : IntProvider
