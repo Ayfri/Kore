@@ -1,13 +1,13 @@
 package data.item
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
+import serializers.JsonSerialName
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class ItemStack(
 	val id: String,
-	@SerialName("Count")
+	@JsonSerialName("Count")
 	val count: Short? = null,
 	val tag: NbtCompound? = null,
 )

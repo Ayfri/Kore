@@ -8,7 +8,8 @@ import kotlinx.serialization.json.jsonObject
 
 @Serializable
 data class TagEntry(
-	@SerialName("id") val name: String,
+	@SerialName("id")
+	val name: String,
 	val required: Boolean? = null,
 ) {
 	companion object {

@@ -24,12 +24,12 @@ import pack.Features
 import pack.Filter
 import pack.Pack
 import pack.PackMCMeta
+import serializers.JsonNamingSnakeCaseStrategy
 import java.io.File
 import java.nio.file.Path
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonNamingStrategy
 
 @FunctionsHolder
 class DataPack(val name: String) {
@@ -177,7 +177,7 @@ class DataPack(val name: String) {
 			encodeDefaults = true
 			explicitNulls = false
 			ignoreUnknownKeys = true
-			namingStrategy = JsonNamingStrategy.SnakeCase
+			namingStrategy = JsonNamingSnakeCaseStrategy
 			useAlternativeNames = false
 		}
 

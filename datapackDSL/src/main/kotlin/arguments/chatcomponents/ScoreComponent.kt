@@ -2,10 +2,10 @@ package arguments.chatcomponents
 
 import arguments.types.ScoreHolderArgument
 import arguments.types.literals.AllArgument
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.buildNbtCompound
 import utils.set
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class ScoreComponent(
@@ -19,7 +19,8 @@ data class ScoreComponent(
 
 @Serializable
 data class ScoreComponentEntry(
-	@SerialName("name") var entity: String,
+	@SerialName("name")
+	var entity: String,
 	var objective: String,
 	var value: String? = null,
 ) {
@@ -34,6 +35,6 @@ fun scoreComponent(
 	objective: String,
 	selector: ScoreHolderArgument = AllArgument,
 	value: String? = null,
-	block: ScoreComponent.() -> Unit = {}
+	block: ScoreComponent.() -> Unit = {},
 ) =
 	ChatComponents(ScoreComponent(ScoreComponentEntry(selector.asString(), objective, value)).apply(block))
