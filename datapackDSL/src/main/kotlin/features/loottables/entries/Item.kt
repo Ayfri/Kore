@@ -14,7 +14,7 @@ data class Item(
 	var functions: ItemModifierAsList? = null,
 	var weight: Int? = null,
 	var quality: Int? = null,
-) : LootEntry
+) : LootEntry()
 
 fun LootEntries.item(name: ItemArgument, block: Item.() -> Unit = {}) {
 	add(Item(name).apply(block))

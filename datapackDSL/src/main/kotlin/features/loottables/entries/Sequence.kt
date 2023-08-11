@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 data class Sequence(
 	var children: List<LootEntry>,
 	var conditions: PredicateAsList? = null,
-) : LootEntry
+) : LootEntry()
 
 fun LootEntries.sequence(children: List<LootEntry> = emptyList(), conditions: Predicate.() -> Unit = {}) {
 	add(Sequence(children, Predicate().apply(conditions)))

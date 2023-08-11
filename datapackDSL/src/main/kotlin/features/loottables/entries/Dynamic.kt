@@ -13,7 +13,7 @@ data class Dynamic(
 	var functions: ItemModifierAsList? = null,
 	var quality: Int? = null,
 	var weight: Int? = null,
-) : LootEntry
+) : LootEntry()
 
 fun LootEntries.dynamic(name: String, block: Dynamic.() -> Unit = {}) {
 	add(Dynamic(name).apply(block))

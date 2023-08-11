@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 data class Alternative(
 	var children: List<LootEntry>,
 	var conditions: PredicateAsList? = null,
-) : LootEntry
+) : LootEntry()
 
 fun LootEntries.alternative(children: List<LootEntry> = emptyList(), conditions: Predicate.() -> Unit = {}) {
 	add(Alternative(children, Predicate().apply(conditions)))

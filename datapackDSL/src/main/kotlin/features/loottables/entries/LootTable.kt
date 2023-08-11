@@ -13,7 +13,7 @@ data class LootTable(
 	var functions: ItemModifierAsList? = null,
 	var quality: Int? = null,
 	var weight: Int? = null,
-) : LootEntry
+) : LootEntry()
 
 fun LootEntries.lootTable(name: LootTableArgument, block: LootTable.() -> Unit = {}) {
 	add(LootTable(name).apply(block))

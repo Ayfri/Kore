@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 data class Group(
 	var children: List<LootEntry>,
 	var conditions: PredicateAsList? = null,
-) : LootEntry
+) : LootEntry()
 
 fun LootEntries.group(children: List<LootEntry> = emptyList(), conditions: Predicate.() -> Unit = {}) {
 	add(Group(children, Predicate().apply(conditions)))

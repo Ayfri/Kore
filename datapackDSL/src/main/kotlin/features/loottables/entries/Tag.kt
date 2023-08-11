@@ -15,7 +15,7 @@ data class Tag(
 	var functions: ItemModifierAsList? = null,
 	var quality: Int? = null,
 	var weight: Int? = null,
-) : LootEntry
+) : LootEntry()
 
 fun LootEntries.tag(name: TagArgument, block: Tag.() -> Unit = {}) {
 	add(Tag(name).apply(block))

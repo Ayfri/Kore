@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class Empty(
 	var quality: Int? = null,
 	var weight: Int? = null,
-) : LootEntry
+) : LootEntry()
 
 fun LootEntries.empty(quality: Int = 1, weight: Int = 1) {
 	add(Empty(quality, weight))
