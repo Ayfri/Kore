@@ -1,8 +1,8 @@
 package arguments
 
+import serializers.ToStringSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encoding.Encoder
-import serializers.ToStringSerializer
 
 @Serializable(Argument.ArgumentSerializer::class)
 interface Argument {

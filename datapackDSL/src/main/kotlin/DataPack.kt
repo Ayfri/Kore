@@ -11,6 +11,7 @@ import features.recipes.RecipeFile
 import features.tags.Tags
 import features.worldgen.biome.Biome
 import features.worldgen.configuredcarver.ConfiguredCarver
+import features.worldgen.configuredfeature.ConfiguredFeature
 import features.worldgen.dimension.Dimension
 import features.worldgen.dimensiontype.DimensionType
 import features.worldgen.flatlevelgeneratorpreset.FlatLevelGeneratorPreset
@@ -40,6 +41,7 @@ class DataPack(val name: String) {
 	val biomes = mutableListOf<Biome>()
 	val chatTypes = mutableListOf<ChatType>()
 	val configuredCarvers = mutableListOf<ConfiguredCarver>()
+	val configuredFeatures = mutableListOf<ConfiguredFeature>()
 	val damageTypes = mutableListOf<DamageType>()
 	val dimensions = mutableListOf<Dimension>()
 	val dimensionTypes = mutableListOf<DimensionType>()
@@ -89,7 +91,6 @@ class DataPack(val name: String) {
 
 		data.generateResources("advancements", advancements)
 		data.generateResources("chat_type", chatTypes)
-		data.generateResources("configured_carver", configuredCarvers)
 		data.generateResources("damage_type", damageTypes)
 		data.generateResources("dimensions", dimensions)
 		data.generateResources("dimension_type", dimensionTypes)
@@ -99,6 +100,8 @@ class DataPack(val name: String) {
 		data.generateResources("recipes", recipes)
 		data.generateResources("tags", tags.groupBy(Tags::namespace))
 		data.generateResources("worldgen/biome", biomes)
+		data.generateResources("worldgen/configured_carver", configuredCarvers)
+		data.generateResources("worldgen/configured_feature", configuredFeatures)
 		data.generateResources("worldgen/flat_level_generator_preset", flatLevelGeneratorPresets)
 		data.generateResources("worldgen/noise_settings", noiseSettings)
 		data.generateResources("worldgen/structure", structures)

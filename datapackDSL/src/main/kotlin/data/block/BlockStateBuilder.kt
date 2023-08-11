@@ -14,6 +14,9 @@ fun blockState(name: BlockArgument, properties: Map<String, String>) = BlockStat
 fun blockState(name: BlockArgument, vararg properties: Pair<String, String>) = BlockState(name, properties.toMap())
 fun blockState(name: BlockArgument, block: BlockStateBuilder.() -> Unit = {}) = BlockStateBuilder(name).apply(block).build()
 
+/** Creates a [BlockState] with the [Blocks.STONE] block and a lambda to edit it. */
+fun blockStateStone(block: BlockStateBuilder.() -> Unit = {}) = blockState(Blocks.STONE, block)
+
 fun BlockStateBuilder.properties(block: BlockStatePropertiesBuilder.() -> Unit) {
 	properties = BlockStatePropertiesBuilder().apply(block).properties
 }

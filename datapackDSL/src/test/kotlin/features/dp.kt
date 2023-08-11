@@ -17,6 +17,7 @@ fun featuresTests() = dataPack("features_tests") {
 	biomeTests()
 	chatTypeTests()
 	configuredCarverTests()
+	configuredFeatureTests()
 	damageTypeTests()
 	dimensionTests()
 	dimensionTypeTests()

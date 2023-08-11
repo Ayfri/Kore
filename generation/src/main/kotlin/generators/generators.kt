@@ -21,6 +21,8 @@ suspend fun launchAllSimpleGenerators() {
 		gen("FlatLevelGeneratorPresets", "worldgen/flat_level_generator_preset"),
 		gen("Noises", "worldgen/noise"),
 		gen("NoiseSettings", "worldgen/noise_settings", "NoiseSettings"),
+		gen("PlacedFeature", "worldgen/placed_feature"),
+		gen("Processor", "worldgen/processor_list"),
 		gen("ConfiguredStructures", "worldgen/structure"),
 		gen("PlacedFeatures", "worldgen/placed_feature"),
 		gen("StructureSets", "worldgen/structure_set"),
@@ -34,6 +36,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen(
 			"Tags", "tags", argName = "", tagsParents = mapOf(
 				"blocks" to "BlockTag",
+				"fluids" to "FluidTag",
 				"instrument" to "InstrumentTag",
 				"items" to "ItemTag",
 				"worldgen/biome" to "BiomeTag",
