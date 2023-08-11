@@ -3,17 +3,12 @@ package arguments.selector
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
-import kotlinx.serialization.modules.SerializersModule
 
 @OptIn(ExperimentalSerializationApi::class)
 internal val json = Json {
 	ignoreUnknownKeys = true
 	allowStructuredMapKeys = true
 	explicitNulls = false
-	serializersModule = SerializersModule {
-		contextual(Advancements::class, Advancements.Companion.AdvancementsSerializer)
-		contextual(Advancement::class, Advancement.Companion.AdvancementSerializer)
-	}
 }
 
 /**
@@ -25,7 +20,7 @@ internal val json = Json {
  */
 private fun String.unescape(): String {
 	var result = this
-	for (i in 0 until result.length - 2) {
+	for (i in 0..<result.length - 2) {
 		if (i in result.indices && result[i] == '\\') {
 			result = result.replaceRange(i, i + 2, result[i + 1].toString())
 		}

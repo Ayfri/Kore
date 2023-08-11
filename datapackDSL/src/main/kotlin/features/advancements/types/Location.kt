@@ -18,8 +18,4 @@ data class Location(
 	var structure: StructureArgument? = null,
 )
 
-fun location(init: Location.() -> Unit = {}): Location {
-	val location = Location()
-	location.init()
-	return location
-}
+fun location(init: Location.() -> Unit = {}) = Location().apply(init)

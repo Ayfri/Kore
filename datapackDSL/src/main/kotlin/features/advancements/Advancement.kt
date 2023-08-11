@@ -4,20 +4,16 @@ import DataPack
 import Generator
 import arguments.chatcomponents.ChatComponents
 import arguments.chatcomponents.textComponent
-import arguments.selector.Advancements
 import arguments.types.resources.*
 import features.advancements.triggers.AdvancementTriggerCondition
-import features.advancements.types.AdvancementsJSONSerializer
 import features.advancements.types.Entity
 import features.predicates.Predicate
 import features.predicates.conditions.PredicateCondition
-import kotlinx.serialization.ExperimentalSerializationApi
+import net.benwoodworth.knbt.NbtTag
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import net.benwoodworth.knbt.NbtTag
 
 @Serializable
 data class Advancement internal constructor(
@@ -33,23 +29,7 @@ data class Advancement internal constructor(
 	@Transient
 	private lateinit var jsonEncoder: Json
 
-	override fun generateJson(dataPack: DataPack) = getJsonEncoder(dataPack).encodeToString(this)
-
-	@OptIn(ExperimentalSerializationApi::class)
-	fun getJsonEncoder(dataPack: DataPack) = when {
-		::jsonEncoder.isInitialized -> jsonEncoder
-		else -> {
-			jsonEncoder = Json {
-				prettyPrint = dataPack.jsonEncoder.configuration.prettyPrint
-				if (prettyPrint) prettyPrintIndent = dataPack.jsonEncoder.configuration.prettyPrintIndent
-				serializersModule = SerializersModule {
-					contextual(Advancements::class, AdvancementsJSONSerializer)
-				}
-				namingStrategy = dataPack.jsonEncoder.configuration.namingStrategy
-			}
-			jsonEncoder
-		}
-	}
+	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
 fun DataPack.advancement(fileName: String, block: Advancement.() -> Unit = {}): AdvancementArgument {
@@ -65,7 +45,7 @@ fun Advancement.display(
 	icon: AdvancementIcon,
 	title: ChatComponents,
 	description: ChatComponents,
-	block: AdvancementDisplay.() -> Unit = {}
+	block: AdvancementDisplay.() -> Unit = {},
 ) {
 	display = AdvancementDisplay(icon, title, description).apply(block)
 }
@@ -78,7 +58,7 @@ fun Advancement.display(
 	icon: ItemArgument,
 	title: ChatComponents,
 	description: ChatComponents,
-	block: AdvancementDisplay.() -> Unit = {}
+	block: AdvancementDisplay.() -> Unit = {},
 ) {
 	display = AdvancementDisplay(AdvancementIcon(icon), title, description).apply(block)
 }
@@ -118,7 +98,7 @@ fun Advancement.rewards(
 	function: String? = null,
 	experience: Int? = null,
 	loot: List<LootTableArgument>? = null,
-	recipes: List<RecipeArgument>? = null
+	recipes: List<RecipeArgument>? = null,
 ) {
 	rewards = AdvancementReward(experience, function, loot, recipes)
 }
@@ -127,7 +107,7 @@ fun Advancement.rewards(
 	function: FunctionArgument? = null,
 	experience: Int? = null,
 	loot: List<LootTableArgument>? = null,
-	recipes: List<RecipeArgument>? = null
+	recipes: List<RecipeArgument>? = null,
 ) {
 	rewards = AdvancementReward(experience, function?.asString(), loot, recipes)
 }

@@ -1,34 +1,45 @@
 package features.predicates.providers
 
 import features.predicates.types.EntityType
+import serializers.LowercaseSerializer
+import serializers.ProviderSerializer
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
+import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.encodeStructure
-import serializers.LowercaseSerializer
-import serializers.ToStringSerializer
+
+typealias NumberProvider = @Serializable(with = NumberProviderSurrogate.Companion.NumberProviderSerializer::class) NumberProviderSurrogate
 
 @Serializable
-sealed interface NumberProvider
+sealed interface NumberProviderSurrogate {
+	companion object {
+		data object NumberProviderSerializer : ProviderSerializer<NumberProvider>(serializer())
+	}
+}
 
-@JvmInline
 @Serializable
-value class ConstantNumberProvider(
+@SerialName("minecraft:constant")
+data class ConstantNumberProvider(
 	val value: Float,
-) : NumberProvider
+) : NumberProviderSurrogate
 
 @Serializable
+@SerialName("minecraft:uniform")
 data class UniformNumberProvider(
 	var min: NumberProvider,
 	var max: NumberProvider,
-) : NumberProvider
+) : NumberProviderSurrogate
 
 @Serializable
+@SerialName("minecraft:binomial")
 data class BinomialNumberProvider(
 	var n: NumberProvider,
 	var p: NumberProvider,
-) : NumberProvider
+) : NumberProviderSurrogate
 
 @Serializable(ScoreTargetType.Companion.ScoreTargetTypeSerializer::class)
 enum class ScoreTargetType {
@@ -47,21 +58,24 @@ data class ScoreTargetNumberProvider(
 	var target: EntityType? = null,
 ) {
 	companion object {
-		object ScoreTargetNumberProviderSerializer : ToStringSerializer<ScoreTargetNumberProvider>() {
+		object ScoreTargetNumberProviderSerializer : KSerializer<ScoreTargetNumberProvider> {
 			override val descriptor = buildClassSerialDescriptor("ScoreTargetNumberProvider") {
 				element<String>("type")
 				element<String>("name")
 				element<String>("target")
 			}
 
+			override fun deserialize(decoder: Decoder) = error("ScoreTargetNumberProvider cannot be deserialized")
+
 			override fun serialize(encoder: Encoder, value: ScoreTargetNumberProvider) {
 				encoder.encodeStructure(descriptor) {
 					encodeStringElement(descriptor, 0, "minecraft:${value.type.name}")
-					if (value.type == ScoreTargetType.FIXED) {
-						encodeStringElement(descriptor, 1, value.name!!)
-					} else {
-						encodeStringElement(descriptor, 1, value.target!!.name)
+
+					val (position, targetValue) = when (value.type) {
+						ScoreTargetType.FIXED -> 1 to value.name!!
+						else -> 2 to value.target!!.name
 					}
+					encodeStringElement(descriptor, position, targetValue)
 				}
 			}
 		}
@@ -69,8 +83,9 @@ data class ScoreTargetNumberProvider(
 }
 
 @Serializable
+@SerialName("minecraft:score")
 data class ScoreNumberProvider(
 	var target: ScoreTargetNumberProvider,
 	var score: String,
 	var scale: Float? = null,
-) : NumberProvider
+) : NumberProviderSurrogate

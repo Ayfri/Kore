@@ -2,10 +2,10 @@ package features.advancements
 
 import arguments.chatcomponents.ChatComponents
 import arguments.types.resources.ItemArgument
-import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtTag
 import serializers.LowercaseSerializer
 import serializers.NbtAsJsonTextComponentSerializer
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class AdvancementDisplay(
@@ -16,9 +16,9 @@ data class AdvancementDisplay(
 	var description: ChatComponents,
 	var frame: AdvancementFrameType = AdvancementFrameType.TASK,
 	var background: String? = null,
-	var showToast: Boolean = true,
-	var announceToChat: Boolean = true,
-	var hidden: Boolean = false,
+	var showToast: Boolean? = null,
+	var announceToChat: Boolean? = null,
+	var hidden: Boolean? = null,
 )
 
 @Serializable(with = AdvancementFrameType.Companion.AdvancementFrameTypeSerializer::class)
@@ -35,5 +35,5 @@ enum class AdvancementFrameType {
 @Serializable
 data class AdvancementIcon(
 	var item: ItemArgument,
-	@Serializable(with = NbtAsJsonTextComponentSerializer::class) var nbtData: NbtTag? = null
+	@Serializable(with = NbtAsJsonTextComponentSerializer::class) var nbtData: NbtTag? = null,
 )

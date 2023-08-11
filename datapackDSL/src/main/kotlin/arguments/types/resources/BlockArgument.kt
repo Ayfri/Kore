@@ -2,12 +2,11 @@ package arguments.types.resources
 
 import arguments.types.BlockOrTagArgument
 import arguments.types.ResourceLocationArgument
-import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtCompoundBuilder
 import serializers.ToStringSerializer
 import utils.nbt
-
+import kotlinx.serialization.Serializable
 
 @Serializable(with = BlockArgument.Companion.DataArgumentSerializer::class)
 interface BlockArgument : ResourceLocationArgument, BlockOrTagArgument {
@@ -26,7 +25,7 @@ interface BlockArgument : ResourceLocationArgument, BlockOrTagArgument {
 			name: String,
 			namespace: String,
 			states: Map<String, String> = mutableMapOf(),
-			nbtData: NbtCompound? = null
+			nbtData: NbtCompound? = null,
 		) = object : BlockArgument {
 			override val name = name
 			override val namespace = namespace
@@ -34,7 +33,7 @@ interface BlockArgument : ResourceLocationArgument, BlockOrTagArgument {
 			override var nbtData = nbtData
 		}
 
-		data object DataArgumentSerializer : ToStringSerializer<BlockArgument>(BlockArgument::asString)
+		data object DataArgumentSerializer : ToStringSerializer<BlockArgument>({ asString() })
 	}
 }
 

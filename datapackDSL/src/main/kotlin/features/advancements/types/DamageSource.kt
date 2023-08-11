@@ -16,11 +16,7 @@ data class DamageSource(
 	var tags: MutableList<DamageTagEntry>? = null,
 )
 
-fun damageSource(init: DamageSource.() -> Unit = {}): DamageSource {
-	val damageSource = DamageSource()
-	damageSource.init()
-	return damageSource
-}
+fun damageSource(init: DamageSource.() -> Unit = {}) = DamageSource().apply(init)
 
 fun DamageSource.tag(id: String? = null, expected: Boolean? = null) {
 	tags = tags ?: mutableListOf()

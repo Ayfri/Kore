@@ -2,8 +2,8 @@ package features.advancements.types
 
 import arguments.types.resources.BlockArgument
 import features.advancements.states.State
-import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class Block(
@@ -13,8 +13,4 @@ data class Block(
 	var state: Map<String, State<*>>? = null,
 )
 
-fun block(block: BlockArgument, init: Block.() -> Unit = {}): Block {
-	val block = Block(blocks = listOf(block))
-	block.init()
-	return block
-}
+fun block(block: BlockArgument, init: Block.() -> Unit = {}) = Block(blocks = listOf(block)).apply(init)

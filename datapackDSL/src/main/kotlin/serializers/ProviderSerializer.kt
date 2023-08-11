@@ -2,13 +2,11 @@ package serializers
 
 import utils.copyAllFrom
 import utils.getPropertyContent
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.*
 
-@OptIn(InternalSerializationApi::class)
 open class ProviderSerializer<T : Any>(
-	private val kSerializer: KSerializer<T>,
+	kSerializer: KSerializer<T>,
 	private val constantName: String = "constant",
 	private val weightedListName: String = "weighted_list",
 	private val typePropertyName: String = "type",

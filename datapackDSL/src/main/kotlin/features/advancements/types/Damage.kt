@@ -12,8 +12,4 @@ data class Damage(
 	var type: DamageSource? = null,
 )
 
-fun damage(init: Damage.() -> Unit = {}): Damage {
-	val damage = Damage()
-	damage.init()
-	return damage
-}
+fun damage(init: Damage.() -> Unit = {}) = Damage().apply(init)

@@ -2,8 +2,8 @@ package features.advancements.types
 
 import arguments.types.resources.EffectArgument
 import arguments.types.resources.EntityTypeArgument
-import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class Entity(
@@ -31,11 +31,7 @@ data class EntityFlags(
 	var isSwimming: Boolean? = null,
 )
 
-fun entity(init: Entity.() -> Unit = {}): Entity {
-	val entity = Entity()
-	entity.init()
-	return entity
-}
+fun entity(init: Entity.() -> Unit = {}) = Entity().apply(init)
 
 fun Entity.flags(init: EntityFlags.() -> Unit = {}) {
 	flags = EntityFlags().apply(init)

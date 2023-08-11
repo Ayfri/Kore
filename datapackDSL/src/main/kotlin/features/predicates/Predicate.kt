@@ -2,18 +2,16 @@ package features.predicates
 
 import DataPack
 import Generator
-import arguments.selector.Advancements
 import arguments.types.resources.PredicateArgument
-import features.advancements.types.AdvancementsJSONSerializer
 import features.predicates.conditions.PredicateCondition
 import features.predicates.conditions.PredicateConditionSurrogate
-import kotlinx.serialization.*
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
 
 typealias PredicateAsList = @Serializable(Predicate.Companion.PredicateAsListSerializer::class) Predicate
 
@@ -22,25 +20,7 @@ data class Predicate(
 	override var fileName: String = "predicate",
 	var predicateConditions: List<PredicateCondition> = mutableListOf(),
 ) : Generator {
-	@Transient
-	private lateinit var json: Json
-
-	override fun generateJson(dataPack: DataPack) = getJsonEncoder(dataPack).encodeToString(this)
-
-	@OptIn(ExperimentalSerializationApi::class)
-	fun getJsonEncoder(dataPack: DataPack) = when {
-		::json.isInitialized -> json
-		else -> {
-			json = Json {
-				prettyPrint = dataPack.jsonEncoder.configuration.prettyPrint
-				if (prettyPrint) prettyPrintIndent = dataPack.jsonEncoder.configuration.prettyPrintIndent
-				serializersModule = SerializersModule {
-					contextual(Advancements::class, AdvancementsJSONSerializer)
-				}
-			}
-			json
-		}
-	}
+	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 
 	companion object {
 		object PredicateSerializer : KSerializer<Predicate> {

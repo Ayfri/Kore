@@ -15,8 +15,4 @@ data class Equipment(
 	var feet: ItemStack? = null,
 )
 
-fun equipment(init: Equipment.() -> Unit = {}): Equipment {
-	val equipment = Equipment()
-	equipment.init()
-	return equipment
-}
+fun equipment(init: Equipment.() -> Unit = {}) = Equipment().apply(init)

@@ -17,8 +17,4 @@ data class Distance(
 	var z: DistanceEntry? = null,
 )
 
-fun distance(init: Distance.() -> Unit = {}): Distance {
-	val distance = Distance()
-	distance.init()
-	return distance
-}
+fun distance(init: Distance.() -> Unit = {}) = Distance().apply(init)

@@ -83,7 +83,7 @@ data class SelectorNbtData(
 	var xRotation: FloatRangeOrFloat? = null,
 	@SerialName("y_rotation")
 	var yRotation: FloatRangeOrFloat? = null,
-	@Contextual var advancements: Advancements? = null,
+	@Contextual var advancements: SelectorAdvancements? = null,
 	var distance: Range? = null,
 	var limit: Int? = null,
 	var level: IntRangeOrInt? = null,
@@ -110,9 +110,7 @@ data class SelectorNbtData(
 	var type by _type::value
 
 	fun advancements(block: AdvancementBuilder.() -> Unit) {
-		val builder = AdvancementBuilder()
-		builder.block()
-		advancements = builder.build()
+		advancements = AdvancementBuilder().apply(block).build()
 	}
 
 	operator fun Gamemode.not() = apply { _gamemode.invert = true }
@@ -163,9 +161,9 @@ data class SelectorNbtData(
 
 				encoder.encodeString(map.filter { it.value != null }.mapNotNull { (key, value) ->
 					when (value) {
-						is Advancements -> "$key=${
+						is SelectorAdvancements -> "$key=${
 							json.encodeToJsonElement(
-								Advancements.Companion.AdvancementsSerializer,
+								SelectorAdvancements.Companion.SelectorAdvancementsSerializer,
 								value
 							).jsonPrimitive.content
 						}"

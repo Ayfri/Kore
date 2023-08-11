@@ -11,8 +11,4 @@ data class Effect(
 	var visible: Boolean? = null,
 )
 
-fun effect(init: Effect.() -> Unit = {}): Effect {
-	val effect = Effect()
-	effect.init()
-	return effect
-}
+fun effect(init: Effect.() -> Unit = {}) = Effect().apply(init)

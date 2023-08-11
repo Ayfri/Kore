@@ -3,10 +3,10 @@ package features.advancements.types
 import arguments.types.resources.EffectArgument
 import arguments.types.resources.ItemArgument
 import features.advancements.serializers.IntRangeOrIntJson
-import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtCompoundBuilder
 import net.benwoodworth.knbt.buildNbtCompound
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class ItemStack(
@@ -20,17 +20,9 @@ data class ItemStack(
 	var tag: String? = null,
 )
 
-fun itemStack(init: ItemStack.() -> Unit = {}): ItemStack {
-	val itemStack = ItemStack()
-	itemStack.init()
-	return itemStack
-}
+fun itemStack(init: ItemStack.() -> Unit = {}) = ItemStack().apply(init)
 
-fun itemStack(item: ItemArgument, init: ItemStack.() -> Unit = {}): ItemStack {
-	val itemStack = ItemStack(items = listOf(item))
-	itemStack.init()
-	return itemStack
-}
+fun itemStack(item: ItemArgument, init: ItemStack.() -> Unit = {}) = ItemStack(items = listOf(item)).apply(init)
 
 fun ItemStack.item(vararg items: ItemArgument) {
 	this.items = items.toList()
