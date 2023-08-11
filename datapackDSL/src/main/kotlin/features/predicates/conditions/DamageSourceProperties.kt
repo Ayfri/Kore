@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DamageSourceProperties(
 	var predicate: DamageSource,
-) : PredicateCondition
+) : PredicateCondition()
 
 fun Predicate.damageSourceProperties(block: DamageSource.() -> Unit = {}) {
 	predicateConditions += DamageSourceProperties(damageSource(block))

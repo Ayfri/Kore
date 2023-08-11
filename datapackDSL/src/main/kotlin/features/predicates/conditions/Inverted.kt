@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Inverted(
 	var term: PredicateCondition,
-) : PredicateCondition
+) : PredicateCondition()
 
 fun Predicate.inverted(term: Predicate.() -> Unit) {
 	predicateConditions += Inverted(Predicate().apply(term).predicateConditions.first())

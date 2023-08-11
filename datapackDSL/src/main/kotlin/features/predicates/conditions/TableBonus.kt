@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 data class TableBonus(
 	var enchantment: EnchantmentArgument,
 	var chances: List<Float>? = null,
-) : PredicateCondition
+) : PredicateCondition()
 
 fun Predicate.tableBonus(enchantment: EnchantmentArgument, chances: List<Float>) {
 	predicateConditions += TableBonus(enchantment, chances)

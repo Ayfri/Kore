@@ -10,8 +10,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TimeCheck(
 	var value: IntOrNumberProvidersRange,
-	var period: Int? = null
-) : PredicateCondition
+	var period: Int? = null,
+) : PredicateCondition()
 
 fun Predicate.timeCheck(value: IntOrNumberProvidersRange, period: Int? = null) {
 	predicateConditions += TimeCheck(value, period)

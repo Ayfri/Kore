@@ -10,10 +10,10 @@ import kotlinx.serialization.json.JsonElement
 
 typealias InlinableList<T> = @Serializable(with = InlinableListSerializer::class) List<T>
 
-fun InlinableListSerializer(kSerializer: KSerializer<*>): KSerializer<InlinableList<*>> = InlinableListSerializer(kSerializer)
+fun <T> inlinableListSerializer(kSerializer: KSerializer<T>): KSerializer<InlinableList<T>> = InlinableListSerializer(kSerializer)
 
 @OptIn(ExperimentalSerializationApi::class)
-open class InlinableListSerializer<T : Any>(private val kSerializer: KSerializer<T>) : KSerializer<List<T>> {
+open class InlinableListSerializer<T>(private val kSerializer: KSerializer<T>) : KSerializer<List<T>> {
 	override val descriptor = ListSerializer(JsonElement.serializer()).descriptor
 
 	override fun deserialize(decoder: Decoder) = error("List of ${kSerializer.descriptor.serialName} cannot be deserialized")

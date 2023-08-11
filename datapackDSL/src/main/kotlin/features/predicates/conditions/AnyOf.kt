@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AnyOf(
 	var terms: PredicateAsList? = null,
-) : PredicateCondition
+) : PredicateCondition()
 
 fun Predicate.anyOf(terms: Predicate.() -> Unit = {}) {
 	predicateConditions += AnyOf(Predicate().apply(terms))

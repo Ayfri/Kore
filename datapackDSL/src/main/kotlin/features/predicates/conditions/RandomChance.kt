@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RandomChance(
 	var chance: Float,
-) : PredicateCondition
+) : PredicateCondition()
 
 fun Predicate.randomChance(chance: Float) {
 	predicateConditions += RandomChance(chance)

@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 data class BlockStateProperty(
 	var block: BlockArgument,
 	var properties: Map<String, State<*>>? = null,
-) : PredicateCondition
+) : PredicateCondition()
 
 fun Predicate.blockStateProperty(block: BlockArgument, properties: Map<String, State<*>>? = null) {
 	predicateConditions += BlockStateProperty(block, properties)

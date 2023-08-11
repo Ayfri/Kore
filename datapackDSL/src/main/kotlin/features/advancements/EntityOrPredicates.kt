@@ -1,12 +1,13 @@
 package features.advancements
 
+// import features.predicates.conditions.PredicateConditionSurrogate
 import features.advancements.types.Entity
 import features.predicates.conditions.PredicateCondition
-import features.predicates.conditions.PredicateConditionSurrogate
+import serializers.ToStringSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.encoding.Encoder
-import serializers.ToStringSerializer
+import kotlinx.serialization.serializer
 
 @Serializable(with = EntityOrPredicates.Companion.EntityOrPredicatesSerializer::class)
 data class EntityOrPredicates(
@@ -19,7 +20,7 @@ data class EntityOrPredicates(
 				when {
 					value.legacyEntity != null -> encoder.encodeSerializableValue(Entity.serializer(), value.legacyEntity!!)
 					value.predicateConditions != null -> encoder.encodeSerializableValue(
-						ListSerializer(PredicateConditionSurrogate.Companion.PredicateConditionSerializer),
+						ListSerializer(serializer<PredicateCondition>()),
 						value.predicateConditions!!
 					)
 

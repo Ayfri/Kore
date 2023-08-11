@@ -24,6 +24,7 @@ fun DataPack.predicateTests() {
 			weatherCheck(raining = true, thundering = false)
 		}
 	}
+
 	predicates.last() assertsIs """
 		[
 			{

@@ -4,7 +4,7 @@ import features.predicates.Predicate
 import kotlinx.serialization.Serializable
 
 @Serializable
-object SurvivesExplosion : PredicateCondition
+data object SurvivesExplosion : PredicateCondition()
 
 fun Predicate.survivesExplosion() {
 	predicateConditions += SurvivesExplosion

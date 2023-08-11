@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class RandomChanceWithLooting(
 	var chance: Float,
 	var lootingMultiplier: Float,
-) : PredicateCondition
+) : PredicateCondition()
 
 fun Predicate.randomChanceWithLooting(chance: Float, lootingMultiplier: Float) {
 	predicateConditions += RandomChanceWithLooting(chance, lootingMultiplier)

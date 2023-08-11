@@ -10,7 +10,7 @@ data class LocationCheck(
 	var offsetY: Int? = null,
 	var offsetZ: Int? = null,
 	var predicate: Location? = null,
-) : PredicateCondition
+) : PredicateCondition()
 
 fun Predicate.locationCheck(offsetX: Int? = null, offsetY: Int? = null, offsetZ: Int? = null, predicate: Location? = null) {
 	predicateConditions += LocationCheck(offsetX, offsetY, offsetZ, predicate)

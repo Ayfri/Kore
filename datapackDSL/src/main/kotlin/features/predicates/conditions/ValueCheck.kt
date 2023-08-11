@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 data class ValueCheck(
 	var value: NumberProvider,
 	var range: IntOrNumberProvidersRange? = null,
-) : PredicateCondition
+) : PredicateCondition()
 
 fun Predicate.valueCheck(value: NumberProvider, range: IntOrNumberProvidersRange? = null) {
 	predicateConditions += ValueCheck(value, range)

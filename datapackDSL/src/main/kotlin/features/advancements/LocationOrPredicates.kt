@@ -2,16 +2,15 @@ package features.advancements
 
 import features.advancements.types.Location
 import features.predicates.conditions.PredicateCondition
-import features.predicates.conditions.PredicateConditionSurrogate
+import serializers.ToStringSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.encoding.Encoder
-import serializers.ToStringSerializer
 
 @Serializable(with = LocationOrPredicates.Companion.LocationOrPredicatesSerializer::class)
 data class LocationOrPredicates(
 	var legacyLocation: Location? = null,
-	var predicateConditions: List<PredicateCondition> = emptyList()
+	var predicateConditions: List<PredicateCondition> = emptyList(),
 ) {
 	companion object {
 		object LocationOrPredicatesSerializer : ToStringSerializer<LocationOrPredicates>() {
@@ -19,7 +18,7 @@ data class LocationOrPredicates(
 				when {
 					value.legacyLocation != null -> encoder.encodeSerializableValue(Location.serializer(), value.legacyLocation!!)
 					else -> encoder.encodeSerializableValue(
-						ListSerializer(PredicateConditionSurrogate.Companion.PredicateConditionSerializer),
+						ListSerializer(kotlinx.serialization.serializer<PredicateCondition>()),
 						value.predicateConditions
 					)
 				}

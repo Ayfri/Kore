@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MatchTool(
-	var predicate: ItemStack
-) : PredicateCondition
+	var predicate: ItemStack,
+) : PredicateCondition()
 
 fun Predicate.matchTool(predicate: ItemStack) {
 	predicateConditions += MatchTool(predicate)

@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Reference(
 	var name: String,
-) : PredicateCondition
+) : PredicateCondition()
 
 fun Predicate.reference(name: String) {
 	predicateConditions += Reference(name)

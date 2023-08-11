@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class WeatherCheck(
 	var raining: Boolean? = null,
 	var thundering: Boolean? = null,
-) : PredicateCondition
+) : PredicateCondition()
 
 fun Predicate.weatherCheck(raining: Boolean? = null, thundering: Boolean? = null) {
 	predicateConditions += WeatherCheck(raining, thundering)

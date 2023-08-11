@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 data class EntityScore(
 	var entity: EntityType,
 	var scores: Map<String, IntOrNumberProvidersRange>,
-) : PredicateCondition
+) : PredicateCondition()
 
 fun Predicate.entityScore(entity: EntityType, scores: Map<String, IntOrNumberProvidersRange>) {
 	predicateConditions += EntityScore(entity, scores)
