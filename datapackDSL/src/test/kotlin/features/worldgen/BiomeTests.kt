@@ -8,7 +8,7 @@ import features.worldgen.biome.types.*
 import functions.load
 import generated.Carvers
 import generated.EntityTypes
-import generated.Features
+import generated.PlacedFeatures
 import utils.assertsIs
 
 fun DataPack.biomeTests() {
@@ -50,7 +50,7 @@ fun DataPack.biomeTests() {
 		}
 
 		features {
-			rawGeneration = listOf(Features.ORE, Features.DISK)
+			rawGeneration = listOf(PlacedFeatures.ORE_DIAMOND, PlacedFeatures.ORE_DIAMOND_LARGE)
 		}
 	}
 	biomes.last() assertsIs """
@@ -94,8 +94,8 @@ fun DataPack.biomeTests() {
 			},
 			"features": [
 				[
-					"minecraft:ore",
-					"minecraft:disk"
+					"minecraft:ore_diamond",
+					"minecraft:ore_diamond_large"
 				]
 			]
 		}

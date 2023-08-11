@@ -22,6 +22,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("Noises", "worldgen/noise"),
 		gen("NoiseSettings", "worldgen/noise_settings", "NoiseSettings"),
 		gen("ConfiguredStructures", "worldgen/structure"),
+		gen("PlacedFeatures", "worldgen/placed_feature"),
 		gen("StructureSets", "worldgen/structure_set"),
 	).transformRemoveJSONSuffix()
 
@@ -86,7 +87,6 @@ suspend fun launchAllSimpleGenerators() {
 		gen("Potions", "potion"),
 		gen("StatisticTypes", "stat_type") { it.removePrefix("minecraft:") },
 		gen("Carvers", "worldgen/carver"),
-		gen("Features", "worldgen/feature"),
 	)
 
 	val allListGenerators = txtListsListGenerators.setUrlWithType("lists") +

@@ -31,7 +31,7 @@ fun BiomeEffects.moodSound(sound: SoundArgument, tickDelay: Int, blockSearchExte
 	moodSound = MoodSound(sound, tickDelay, blockSearchExtent, offset)
 }
 
-fun BiomeEffects.additionsSound(sound: SoundArgument, tickChance: Float) {
+fun BiomeEffects.additionalSound(sound: SoundArgument, tickChance: Float) {
 	additionsSound = AdditionalSound(sound, tickChance)
 }
 

@@ -1,6 +1,6 @@
 package features.worldgen.biome.types
 
-import arguments.types.resources.worldgen.FeatureArgument
+import arguments.types.resources.worldgen.PlacedFeatureArgument
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -16,21 +16,21 @@ import kotlinx.serialization.serializer
  */
 @Serializable(with = Features.Companion.FeaturesSerializer::class)
 data class Features(
-	var rawGeneration: List<FeatureArgument>? = null,
-	var lakes: List<FeatureArgument>? = null,
-	var localModifications: List<FeatureArgument>? = null,
-	var undergroundStructures: List<FeatureArgument>? = null,
-	var surfaceStructures: List<FeatureArgument>? = null,
-	var strongholds: List<FeatureArgument>? = null,
-	var undergroundOres: List<FeatureArgument>? = null,
-	var undergroundDecoration: List<FeatureArgument>? = null,
-	var fluidSprings: List<FeatureArgument>? = null,
-	var vegetalDecoration: List<FeatureArgument>? = null,
-	var topLayerModification: List<FeatureArgument>? = null
+	var rawGeneration: List<PlacedFeatureArgument>? = null,
+	var lakes: List<PlacedFeatureArgument>? = null,
+	var localModifications: List<PlacedFeatureArgument>? = null,
+	var undergroundStructures: List<PlacedFeatureArgument>? = null,
+	var surfaceStructures: List<PlacedFeatureArgument>? = null,
+	var strongholds: List<PlacedFeatureArgument>? = null,
+	var undergroundOres: List<PlacedFeatureArgument>? = null,
+	var undergroundDecoration: List<PlacedFeatureArgument>? = null,
+	var fluidSprings: List<PlacedFeatureArgument>? = null,
+	var vegetalDecoration: List<PlacedFeatureArgument>? = null,
+	var topLayerModification: List<PlacedFeatureArgument>? = null,
 ) {
 	companion object {
 		object FeaturesSerializer : KSerializer<Features> {
-			override val descriptor = ListSerializer(ListSerializer(serializer<FeatureArgument>())).descriptor
+			override val descriptor = ListSerializer(ListSerializer(serializer<PlacedFeatureArgument>())).descriptor
 
 			override fun deserialize(decoder: Decoder) = error("BiomeFeatures deserialization not supported")
 
@@ -49,7 +49,7 @@ data class Features(
 					value.topLayerModification
 				)
 
-				val elementSerializer = serializer<FeatureArgument>()
+				val elementSerializer = serializer<PlacedFeatureArgument>()
 				val listSerializer = ListSerializer(elementSerializer)
 
 				if (features.size == 1 && features[0].size == 1) {
