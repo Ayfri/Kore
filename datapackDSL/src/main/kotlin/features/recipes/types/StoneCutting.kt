@@ -8,13 +8,13 @@ import features.recipes.RecipeFile
 import features.recipes.RecipeTypes
 import features.recipes.Recipes
 import features.recipes.data.Ingredient
-import kotlinx.serialization.Serializable
 import serializers.InlinableList
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class StoneCutting(
 	override var group: String? = null,
-	var ingredient: InlinableList<Ingredient> = mutableListOf(),
+	var ingredient: InlinableList<Ingredient> = emptyList(),
 	var result: ItemArgument,
 	var count: Int,
 ) : Recipe() {
@@ -22,7 +22,7 @@ data class StoneCutting(
 }
 
 fun Recipes.stoneCutting(name: String, block: StoneCutting.() -> Unit): RecipeArgument {
-	dp.recipes.add(RecipeFile(name, StoneCutting(ingredient = mutableListOf(), result = item(""), count = 1).apply(block)))
+	dp.recipes += RecipeFile(name, StoneCutting(result = item(""), count = 1).apply(block))
 	return RecipeArgument(name, dp.name)
 }
 

@@ -7,6 +7,7 @@ import arguments.types.resources.tagged.ItemTagArgument
 import features.recipes.RecipeFile
 import features.recipes.RecipeTypes
 import features.recipes.Recipes
+import features.recipes.data.CraftingResult
 import features.recipes.data.Ingredient
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -16,7 +17,7 @@ data class SmithingTransform(
 	var template: Ingredient,
 	var base: Ingredient,
 	var addition: Ingredient,
-	var result: ItemArgument,
+	var result: CraftingResult,
 ) : Recipe() {
 	@Transient
 	@Deprecated("SmithingTransform does not have a group", level = DeprecationLevel.HIDDEN)
@@ -27,11 +28,14 @@ data class SmithingTransform(
 }
 
 fun Recipes.smithingTransform(name: String, block: SmithingTransform.() -> Unit): RecipeArgument {
-	dp.recipes.add(
-		RecipeFile(
-			name,
-			SmithingTransform(template = Ingredient(), base = Ingredient(), addition = Ingredient(), result = item("")).apply(block)
-		)
+	dp.recipes += RecipeFile(
+		name,
+		SmithingTransform(
+			template = Ingredient(),
+			base = Ingredient(),
+			addition = Ingredient(),
+			result = CraftingResult(item = item("")),
+		).apply(block)
 	)
 	return RecipeArgument(name, dp.name)
 }
@@ -54,4 +58,12 @@ fun SmithingTransform.addition(block: Ingredient.() -> Unit) {
 
 fun SmithingTransform.addition(item: ItemArgument? = null, tag: ItemTagArgument? = null) {
 	addition = Ingredient(item, tag)
+}
+
+fun SmithingTransform.result(block: CraftingResult.() -> Unit) {
+	result = CraftingResult(item = item("")).apply(block)
+}
+
+fun SmithingTransform.result(item: ItemArgument, count: Int? = null) {
+	result = CraftingResult(item, count)
 }

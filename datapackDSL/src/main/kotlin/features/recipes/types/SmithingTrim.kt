@@ -25,11 +25,9 @@ data class SmithingTrim(
 }
 
 fun Recipes.smithingTrim(name: String, block: SmithingTrim.() -> Unit): RecipeArgument {
-	dp.recipes.add(
-		RecipeFile(
-			name,
-			SmithingTrim(template = Ingredient(), base = Ingredient(), addition = Ingredient()).apply(block)
-		)
+	dp.recipes += RecipeFile(
+		name,
+		SmithingTrim(template = Ingredient(), base = Ingredient(), addition = Ingredient()).apply(block)
 	)
 	return RecipeArgument(name, dp.name)
 }

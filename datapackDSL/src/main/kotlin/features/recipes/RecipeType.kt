@@ -1,7 +1,7 @@
 package features.recipes
 
-import kotlinx.serialization.Serializable
 import serializers.ToStringSerializer
+import kotlinx.serialization.Serializable
 
 @Serializable(RecipeType.Companion.RecipeTypeSerializer::class)
 fun interface RecipeType {
@@ -12,7 +12,7 @@ fun interface RecipeType {
 	}
 }
 
-object CraftingSpecial {
+data object CraftingSpecial {
 	operator fun invoke(group: String) = CraftingSpecialEntry(group)
 }
 

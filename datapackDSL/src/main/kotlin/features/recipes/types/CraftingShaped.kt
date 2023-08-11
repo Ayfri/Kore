@@ -9,21 +9,21 @@ import features.recipes.RecipeTypes
 import features.recipes.Recipes
 import features.recipes.data.CraftingResult
 import features.recipes.data.Ingredient
-import kotlinx.serialization.Serializable
 import serializers.InlinableList
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class CraftingShaped(
 	override var group: String? = null,
-	val pattern: MutableList<String> = mutableListOf(),
-	val key: MutableMap<String, InlinableList<Ingredient>> = mutableMapOf(),
+	var pattern: List<String> = emptyList(),
+	var key: MutableMap<String, InlinableList<Ingredient>> = mutableMapOf(),
 	override var result: CraftingResult,
 ) : Recipe(), CraftingRecipe {
 	override val type = RecipeTypes.CRAFTING_SHAPED
 }
 
 fun Recipes.craftingShaped(name: String, block: CraftingShaped.() -> Unit): RecipeArgument {
-	dp.recipes.add(RecipeFile(name, CraftingShaped(result = CraftingResult(item = item(""))).apply(block)))
+	dp.recipes += RecipeFile(name, CraftingShaped(result = CraftingResult(item = item(""))).apply(block))
 	return RecipeArgument(name, dp.name)
 }
 
@@ -39,5 +39,10 @@ class Keys(val key: MutableMap<String, List<Ingredient>>) {
 }
 
 fun CraftingShaped.keys(block: Keys.() -> Unit) = Keys(key).apply(block)
-fun CraftingShaped.patternLine(line: String) = pattern.add(line)
-fun CraftingShaped.pattern(vararg lines: String) = pattern.addAll(lines.toList())
+fun CraftingShaped.patternLine(line: String) {
+	pattern += line
+}
+
+fun CraftingShaped.pattern(vararg lines: String) {
+	pattern += lines
+}

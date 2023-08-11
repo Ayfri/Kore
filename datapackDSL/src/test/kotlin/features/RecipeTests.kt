@@ -39,9 +39,26 @@ fun DataPack.recipeTest() {
 		smithingTransform("diamond_to_netherite") {
 			base(Items.DIAMOND_SWORD)
 			addition(Items.NETHERITE_INGOT)
-			result = Items.NETHERITE_SWORD
+			result(Items.NETHERITE_SWORD)
 		}
 	}
+
+	recipes.last() assertsIs """
+			{
+				"type": "minecraft:smithing_transform",
+				"template": {
+				},
+				"base": {
+					"item": "minecraft:diamond_sword"
+				},
+				"addition": {
+					"item": "minecraft:netherite_ingot"
+				},
+				"result": {
+					"item": "minecraft:netherite_sword"
+				}
+			}
+		""".trimIndent()
 
 	val bowsRecipe = recipesBuilder.craftingShaped("sowb") {
 		pattern(
@@ -60,6 +77,7 @@ fun DataPack.recipeTest() {
 
 	recipes.last() assertsIs """
 		{
+			"type": "minecraft:crafting_shaped",
 			"pattern": [
 				" ~|",
 				"~ |",
@@ -75,8 +93,7 @@ fun DataPack.recipeTest() {
 			},
 			"result": {
 				"item": "minecraft:bow"
-			},
-			"type": "minecraft:crafting_shaped"
+			}
 		}
 	""".trimIndent()
 
