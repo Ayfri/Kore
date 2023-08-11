@@ -12,6 +12,7 @@ import features.tags.Tags
 import features.worldgen.biome.Biome
 import features.worldgen.configuredcarver.ConfiguredCarver
 import features.worldgen.configuredfeature.ConfiguredFeature
+import features.worldgen.densityfunction.DensityFunction
 import features.worldgen.dimension.Dimension
 import features.worldgen.dimensiontype.DimensionType
 import features.worldgen.flatlevelgeneratorpreset.FlatLevelGeneratorPreset
@@ -43,6 +44,7 @@ class DataPack(val name: String) {
 	val configuredCarvers = mutableListOf<ConfiguredCarver>()
 	val configuredFeatures = mutableListOf<ConfiguredFeature>()
 	val damageTypes = mutableListOf<DamageType>()
+	val densityFunctions = mutableListOf<DensityFunction>()
 	val dimensions = mutableListOf<Dimension>()
 	val dimensionTypes = mutableListOf<DimensionType>()
 	val flatLevelGeneratorPresets = mutableListOf<FlatLevelGeneratorPreset>()
@@ -102,6 +104,7 @@ class DataPack(val name: String) {
 		data.generateResources("worldgen/biome", biomes)
 		data.generateResources("worldgen/configured_carver", configuredCarvers)
 		data.generateResources("worldgen/configured_feature", configuredFeatures)
+		data.generateResources("worldgen/density_function", densityFunctions)
 		data.generateResources("worldgen/flat_level_generator_preset", flatLevelGeneratorPresets)
 		data.generateResources("worldgen/noise_settings", noiseSettings)
 		data.generateResources("worldgen/structure", structures)

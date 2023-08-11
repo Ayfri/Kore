@@ -19,6 +19,7 @@ fun featuresTests() = dataPack("features_tests") {
 	configuredCarverTests()
 	configuredFeatureTests()
 	damageTypeTests()
+	densityFunctionTests()
 	dimensionTests()
 	dimensionTypeTests()
 	flatLevelGeneratorPresetTests()

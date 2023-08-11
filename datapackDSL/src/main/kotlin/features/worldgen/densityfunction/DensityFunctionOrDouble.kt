@@ -1,4 +1,4 @@
-package features.worldgen.noisesettings
+package features.worldgen.densityfunction
 
 import arguments.types.resources.worldgen.DensityFunctionArgument
 import kotlinx.serialization.KSerializer
