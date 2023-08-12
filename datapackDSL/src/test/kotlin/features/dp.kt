@@ -27,6 +27,7 @@ fun featuresTests() = dataPack("features_tests") {
 	lootTableTests()
 	noiseTests()
 	noiseSettingsTests()
+	placedFeatureTests()
 	predicateTests()
 	recipeTest()
 	structureTests()
