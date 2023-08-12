@@ -1,4 +1,4 @@
-package features.worldgen.configuredfeature.ruletest
+package features.worldgen.ruletest
 
 import arguments.types.resources.tagged.BlockTagArgument
 import kotlinx.serialization.Serializable

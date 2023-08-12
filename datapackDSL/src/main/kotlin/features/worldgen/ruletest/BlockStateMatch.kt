@@ -1,4 +1,4 @@
-package features.worldgen.configuredfeature.ruletest
+package features.worldgen.ruletest
 
 import data.block.BlockState
 import data.block.blockStateStone

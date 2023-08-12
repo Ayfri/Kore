@@ -1,4 +1,4 @@
-package features.worldgen.configuredfeature.ruletest
+package features.worldgen.ruletest
 
 import serializers.NamespacedPolymorphicSerializer
 import kotlinx.serialization.Serializable

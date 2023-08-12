@@ -16,8 +16,8 @@ import features.worldgen.configuredfeature.configurations.tree.layersfeaturesize
 import features.worldgen.configuredfeature.configurations.tree.treedecorator.attachedToLeaves
 import features.worldgen.configuredfeature.configurations.tree.trunkplacer.cherryTrunkPlacer
 import features.worldgen.configuredfeature.configuredFeature
-import features.worldgen.configuredfeature.ruletest.randomBlockMatch
 import features.worldgen.configuredfeature.target
+import features.worldgen.ruletest.randomBlockMatch
 import generated.Blocks
 import generated.Tags
 import utils.assertsIs

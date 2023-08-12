@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class HeightMap(
-	var height: HeightMap,
+	var heightmap: HeightMap,
 ) : PlacementModifier()
 
 fun heightMap(height: HeightMap) = HeightMap(height)

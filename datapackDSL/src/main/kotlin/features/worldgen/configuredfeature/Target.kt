@@ -2,8 +2,8 @@ package features.worldgen.configuredfeature
 
 import data.block.BlockState
 import data.block.blockStateStone
-import features.worldgen.configuredfeature.ruletest.AlwaysTrue
-import features.worldgen.configuredfeature.ruletest.RuleTest
+import features.worldgen.ruletest.AlwaysTrue
+import features.worldgen.ruletest.RuleTest
 import kotlinx.serialization.Serializable
 
 @Serializable
