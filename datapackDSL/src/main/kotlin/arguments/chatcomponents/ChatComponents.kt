@@ -2,6 +2,11 @@ package arguments.chatcomponents
 
 import arguments.Argument
 import arguments.types.literals.literal
+import net.benwoodworth.knbt.NbtString
+import net.benwoodworth.knbt.StringifiedNbt
+import net.benwoodworth.knbt.buildNbtList
+import serializers.NbtAsJsonSerializer
+import utils.plusAssign
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -11,11 +16,6 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.encodeCollection
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
-import net.benwoodworth.knbt.NbtString
-import net.benwoodworth.knbt.StringifiedNbt
-import net.benwoodworth.knbt.buildNbtList
-import serializers.NbtAsJsonTextComponentSerializer
-import utils.plusAssign
 
 @Serializable(with = ChatComponents.Companion.ChatComponentsSerializer::class)
 data class ChatComponents(val list: MutableList<ChatComponent> = mutableListOf(), var onlySimpleComponents: Boolean = false) : Argument {
@@ -45,7 +45,7 @@ data class ChatComponents(val list: MutableList<ChatComponent> = mutableListOf()
 		if (!containsOnlySimpleComponents) throw ONLY_SIMPLE_COMPONENTS_EXCEPTION
 	}
 
-	fun toJsonString() = Json.encodeToString(NbtAsJsonTextComponentSerializer, toNbtTag())
+	fun toJsonString() = Json.encodeToString(NbtAsJsonSerializer, toNbtTag())
 
 	fun toNbtTag() = when (list.size) {
 		0 -> NbtString("")

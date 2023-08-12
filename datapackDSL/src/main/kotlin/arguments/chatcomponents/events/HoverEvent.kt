@@ -11,20 +11,20 @@ import arguments.types.EntityArgument
 import arguments.types.literals.UUIDArgument
 import arguments.types.resources.EntityTypeArgument
 import arguments.types.resources.ItemArgument
-import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.buildNbtCompound
 import serializers.LowercaseSerializer
-import serializers.NbtAsJsonTextComponentSerializer
+import serializers.NbtAsJsonSerializer
 import utils.asArg
 import utils.nbt
 import utils.set
 import utils.stringifiedNbt
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class HoverEvent(
 	var action: HoverAction,
-	@Serializable(with = NbtAsJsonTextComponentSerializer::class) var value: NbtTag,
+	@Serializable(with = NbtAsJsonSerializer::class) var value: NbtTag,
 	var contents: Contents? = null,
 ) {
 	fun toNbtTag() = buildNbtCompound {

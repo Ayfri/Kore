@@ -1,11 +1,11 @@
 package utils
 
 import arguments.types.literals.literal
+import net.benwoodworth.knbt.*
+import serializers.NbtAsJsonSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import net.benwoodworth.knbt.*
-import serializers.NbtAsJsonTextComponentSerializer
 
 fun nbt(block: NbtCompoundBuilder.() -> Unit = {}) = buildNbtCompound(block)
 fun <T : NbtTag> nbtList(block: NbtListBuilder<T>.() -> Unit = {}) = buildNbtList(block)
@@ -23,7 +23,7 @@ fun stringifiedNbtList(block: NbtListBuilder<NbtCompound>.() -> Unit) = Stringif
 
 fun nbt(nbt: NbtTag) = literal(StringifiedNbt.encodeToString(nbt))
 fun nbtArg(nbt: NbtCompoundBuilder.() -> Unit) = literal(StringifiedNbt.encodeToString(buildNbtCompound(nbt)))
-fun nbtText(nbt: NbtTag) = literal(Json.encodeToString(NbtAsJsonTextComponentSerializer, nbt))
+fun nbtText(nbt: NbtTag) = literal(Json.encodeToString(NbtAsJsonSerializer, nbt))
 
 @JvmName("nbtNullable")
 internal fun nbt(nbt: NbtTag? = null) = nbt?.let { nbt(it) }
@@ -139,7 +139,6 @@ inline operator fun <reified T : @Serializable Any> NbtListBuilder<NbtString>.pl
 	add(Json.encodeToString(value))
 }
 
-
 operator fun NbtListBuilder<NbtByte>.plusAssign(tag: NbtByte) {
 	add(tag)
 }
@@ -188,7 +187,6 @@ operator fun NbtListBuilder<NbtString>.plusAssign(tag: NbtString) {
 	add(tag)
 }
 
-
 operator fun NbtListBuilder<NbtByte>.plusAssign(value: Byte) {
 	add(NbtByte(value))
 }
@@ -234,7 +232,6 @@ inline operator fun <reified T : @Serializable Any> NbtListBuilder<NbtString>.pl
 }
 
 val String.nbt get() = NbtString(this)
-
 
 fun nbtListOf(vararg elements: Byte) = nbtList<NbtByte> {
 	elements.forEach { add(it) }
