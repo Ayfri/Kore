@@ -1,8 +1,8 @@
 package features.worldgen.configuredfeature.configurations
 
+import features.worldgen.blockpredicate.BlockPredicate
+import features.worldgen.blockpredicate.True
 import features.worldgen.configuredfeature.Direction
-import features.worldgen.configuredfeature.blockpredicate.BlockPredicate
-import features.worldgen.configuredfeature.blockpredicate.True
 import features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import features.worldgen.intproviders.IntProvider

@@ -2,11 +2,11 @@ package features.worldgen
 
 import DataPack
 import data.block.blockState
+import features.worldgen.blockpredicate.allOf
+import features.worldgen.blockpredicate.matchingBlocks
+import features.worldgen.blockpredicate.not
+import features.worldgen.blockpredicate.solid
 import features.worldgen.configuredfeature.Direction
-import features.worldgen.configuredfeature.blockpredicate.allOf
-import features.worldgen.configuredfeature.blockpredicate.matchingBlocks
-import features.worldgen.configuredfeature.blockpredicate.not
-import features.worldgen.configuredfeature.blockpredicate.solid
 import features.worldgen.configuredfeature.blockstateprovider.dualNoiseProvider
 import features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import features.worldgen.configuredfeature.blockstateprovider.slowNoise
@@ -146,21 +146,14 @@ fun DataPack.configuredFeatureTests() {
 	""".trimIndent()
 
 	configuredFeature(
-		"test_triple_as_array", endGateway(
-			exit = Triple(0, 0, 0),
-		)
+		"test_triple_as_array", endGateway(exact = true)
 	)
 
 	configuredFeatures.last() assertsIs """
 		{
 			"type": "minecraft:end_gateway",
 			"config": {
-				"exact": false,
-				"exit": [
-					0,
-					0,
-					0
-				]
+				"exact": true
 			}
 		}
 	""".trimIndent()
@@ -209,11 +202,6 @@ fun DataPack.configuredFeatureTests() {
 							"type": "minecraft:not",
 							"predicate": {
 								"type": "minecraft:matching_blocks",
-								"offset": [
-									0,
-									0,
-									0
-								],
 								"blocks": [
 									"#minecraft:dirt",
 									"minecraft:dirt"

@@ -8,6 +8,6 @@ interface TaggedResourceLocationArgument : ResourceLocationArgument {
 
 	object TaggedResourceLocationWithoutPrefixSerializer : ToStringSerializer<TaggedResourceLocationArgument>() {
 		override fun serialize(encoder: Encoder, value: TaggedResourceLocationArgument) =
-			encoder.encodeString(value.asId().removePrefix("#"))
+			encoder.encodeString(value.asString().removePrefix("#"))
 	}
 }

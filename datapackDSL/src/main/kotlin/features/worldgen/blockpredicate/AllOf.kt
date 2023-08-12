@@ -1,4 +1,4 @@
-package features.worldgen.configuredfeature.blockpredicate
+package features.worldgen.blockpredicate
 
 import kotlinx.serialization.Serializable
 

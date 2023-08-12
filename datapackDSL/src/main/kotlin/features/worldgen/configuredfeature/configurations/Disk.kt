@@ -1,6 +1,6 @@
 package features.worldgen.configuredfeature.configurations
 
-import features.worldgen.configuredfeature.blockpredicate.BlockPredicate
+import features.worldgen.blockpredicate.BlockPredicate
 import features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import features.worldgen.intproviders.IntProvider
 import features.worldgen.intproviders.constant
