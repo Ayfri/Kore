@@ -29,6 +29,7 @@ fun featuresTests() = dataPack("features_tests") {
 	noiseSettingsTests()
 	placedFeatureTests()
 	predicateTests()
+	processorListTests()
 	recipeTest()
 	structureTests()
 	structureSetTests()

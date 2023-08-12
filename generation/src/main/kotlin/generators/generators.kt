@@ -23,7 +23,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("Noises", "worldgen/noise"),
 		gen("NoiseSettings", "worldgen/noise_settings", "NoiseSettings"),
 		gen("PlacedFeatures", "worldgen/placed_feature"),
-		gen("Processors", "worldgen/processor_list"),
+		gen("ProcessorLists", "worldgen/processor_list"),
 		gen("ConfiguredStructures", "worldgen/structure"),
 		gen("PlacedFeatures", "worldgen/placed_feature"),
 		gen("StructureSets", "worldgen/structure_set"),

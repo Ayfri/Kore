@@ -19,6 +19,7 @@ import features.worldgen.flatlevelgeneratorpreset.FlatLevelGeneratorPreset
 import features.worldgen.noise.Noise
 import features.worldgen.noisesettings.NoiseSettings
 import features.worldgen.placedfeature.PlacedFeature
+import features.worldgen.processorlist.ProcessorList
 import features.worldgen.structures.Structure
 import features.worldgen.structureset.StructureSet
 import features.worldgen.worldpreset.WorldPreset
@@ -56,6 +57,7 @@ class DataPack(val name: String) {
 	val noiseSettings = mutableListOf<NoiseSettings>()
 	val placedFeatures = mutableListOf<PlacedFeature>()
 	val predicates = mutableListOf<Predicate>()
+	val processorLists = mutableListOf<ProcessorList>()
 	val recipes = mutableListOf<RecipeFile>()
 	val structures = mutableListOf<Structure>()
 	val structureSets = mutableListOf<StructureSet>()
@@ -105,6 +107,7 @@ class DataPack(val name: String) {
 		data.generateResources("predicates", predicates)
 		data.generateResources("recipes", recipes)
 		data.generateResources("tags", tags.groupBy(Tags::namespace))
+
 		data.generateResources("worldgen/biome", biomes)
 		data.generateResources("worldgen/configured_carver", configuredCarvers)
 		data.generateResources("worldgen/configured_feature", configuredFeatures)
@@ -113,6 +116,7 @@ class DataPack(val name: String) {
 		data.generateResources("worldgen/noise", noises)
 		data.generateResources("worldgen/noise_settings", noiseSettings)
 		data.generateResources("worldgen/placed_feature", placedFeatures)
+		data.generateResources("worldgen/processor_list", processorLists)
 		data.generateResources("worldgen/structure", structures)
 		data.generateResources("worldgen/structure_set", structureSets)
 		data.generateResources("worldgen/world_preset", worldPresets)
