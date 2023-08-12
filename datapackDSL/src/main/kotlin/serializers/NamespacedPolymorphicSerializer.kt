@@ -5,6 +5,7 @@ import kotlin.reflect.full.createType
 import utils.snakeCase
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.descriptors.serialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
@@ -31,14 +32,20 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 			?: encoder.serializersModule.serializer(value::class.createType())
 
 		val valueJson = encoder.json.encodeToJsonElement(serializer as KSerializer<T>, value)
+		val valueClassName = value::class.simpleName!!.snakeCase()
+		val outputClassName = when {
+			value::class.annotations.any { it is SerialName } -> value::class.annotations.filterIsInstance<SerialName>().first().value
+			else -> valueClassName
+		}
+
 		val finalJson = when (moveIntoProperty) {
 			null -> buildJsonObject {
-				if (!skipOutputName) put(outputName, "minecraft:${value::class.simpleName!!.snakeCase()}")
+				if (!skipOutputName) put(outputName, "minecraft:$outputClassName")
 				valueJson.jsonObject.filterKeys { it != outputName }.forEach(::put)
 			}
 
 			else -> buildJsonObject {
-				if (!skipOutputName) put(outputName, "minecraft:${value::class.simpleName!!.snakeCase()}")
+				if (!skipOutputName) put(outputName, "minecraft:$outputClassName")
 
 				when (valueJson) {
 					is JsonObject -> putJsonObject(moveIntoProperty) {
