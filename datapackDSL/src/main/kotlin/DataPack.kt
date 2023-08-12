@@ -16,6 +16,7 @@ import features.worldgen.densityfunction.DensityFunction
 import features.worldgen.dimension.Dimension
 import features.worldgen.dimensiontype.DimensionType
 import features.worldgen.flatlevelgeneratorpreset.FlatLevelGeneratorPreset
+import features.worldgen.noise.Noise
 import features.worldgen.noisesettings.NoiseSettings
 import features.worldgen.structures.Structure
 import features.worldgen.structureset.StructureSet
@@ -50,6 +51,7 @@ class DataPack(val name: String) {
 	val flatLevelGeneratorPresets = mutableListOf<FlatLevelGeneratorPreset>()
 	val itemModifiers = mutableListOf<ItemModifier>()
 	val lootTables = mutableListOf<LootTable>()
+	val noises = mutableListOf<Noise>()
 	val noiseSettings = mutableListOf<NoiseSettings>()
 	val predicates = mutableListOf<Predicate>()
 	val recipes = mutableListOf<RecipeFile>()
@@ -106,6 +108,7 @@ class DataPack(val name: String) {
 		data.generateResources("worldgen/configured_feature", configuredFeatures)
 		data.generateResources("worldgen/density_function", densityFunctions)
 		data.generateResources("worldgen/flat_level_generator_preset", flatLevelGeneratorPresets)
+		data.generateResources("worldgen/noise", noises)
 		data.generateResources("worldgen/noise_settings", noiseSettings)
 		data.generateResources("worldgen/structure", structures)
 		data.generateResources("worldgen/structure_set", structureSets)

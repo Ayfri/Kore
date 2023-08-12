@@ -2,12 +2,14 @@ package features.worldgen
 
 import DataPack
 import features.worldgen.dimension.biomesource.multinoise.multiNoiseBiomeSourceParameters
+import features.worldgen.noise.noise
 import features.worldgen.noisesettings.*
 import features.worldgen.noisesettings.rules.Bandlands
 import features.worldgen.noisesettings.rules.block
 import features.worldgen.noisesettings.rules.condition
 import features.worldgen.noisesettings.rules.conditions.biomes
 import features.worldgen.noisesettings.rules.conditions.invert
+import features.worldgen.noisesettings.rules.conditions.noiseThreshold
 import features.worldgen.noisesettings.rules.surfaceRules
 import generated.Biomes
 import generated.Blocks
@@ -15,6 +17,11 @@ import generated.DensityFunctions
 import utils.assertsIs
 
 fun DataPack.noiseSettingsTests() {
+	val myNoise = noise("my_noise") {
+		firstOctave = 0
+		amplitudes = listOf(1.0, 1.0)
+	}
+
 	noiseSettings("my_noise_settings") {
 		defaultBlock(Blocks.REDSTONE_LAMP) {
 			this["lit"] = "true"
@@ -58,6 +65,8 @@ fun DataPack.noiseSettingsTests() {
 				this += block(Blocks.DIORITE)
 				this += block(Blocks.ANDESITE)
 			}
+
+			this += condition(noiseThreshold(myNoise))
 		}
 	}
 
@@ -175,6 +184,20 @@ fun DataPack.noiseSettingsTests() {
 										"Name": "minecraft:andesite"
 									}
 								}
+							]
+						}
+					},
+					{
+						"type": "minecraft:condition",
+						"if_true": {
+							"type": "minecraft:noise_threshold",
+							"noise": "$name:my_noise",
+							"min_threshold": 0.0,
+							"max_threshold": 0.0
+						},
+						"then_run": {
+							"type": "minecraft:sequence",
+							"sequence": [
 							]
 						}
 					}

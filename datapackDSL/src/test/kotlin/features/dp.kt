@@ -25,6 +25,7 @@ fun featuresTests() = dataPack("features_tests") {
 	flatLevelGeneratorPresetTests()
 	itemModifierTests()
 	lootTableTests()
+	noiseTests()
 	noiseSettingsTests()
 	predicateTests()
 	recipeTest()
