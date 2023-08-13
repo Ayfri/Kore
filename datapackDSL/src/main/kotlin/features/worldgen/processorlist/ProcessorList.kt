@@ -2,7 +2,7 @@ package features.worldgen.processorlist
 
 import DataPack
 import Generator
-import arguments.types.resources.worldgen.ProcessorArgument
+import arguments.types.resources.worldgen.ProcessorListArgument
 import features.worldgen.processorlist.types.ProcessorType
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -17,7 +17,7 @@ data class ProcessorList(
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
-fun DataPack.processorList(fileName: String = "processor_list", block: ProcessorList.() -> Unit): ProcessorArgument {
+fun DataPack.processorList(fileName: String = "processor_list", block: ProcessorList.() -> Unit): ProcessorListArgument {
 	processorLists += ProcessorList().apply(block)
-	return ProcessorArgument(fileName, name)
+	return ProcessorListArgument(fileName, name)
 }

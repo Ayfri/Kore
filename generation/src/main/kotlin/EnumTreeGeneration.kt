@@ -73,7 +73,7 @@ fun generatePathEnumTree(
 					)
 
 					val argumentType = tagsParents[tagParent]!!
-					addSuperinterface(argumentClassName("tagged.${argumentType}"))
+					addSuperinterface(argumentClassName("tagged.$argumentType"))
 				}
 
 				if (hasParent || tagParent != null) {

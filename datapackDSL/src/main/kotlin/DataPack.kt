@@ -22,6 +22,7 @@ import features.worldgen.placedfeature.PlacedFeature
 import features.worldgen.processorlist.ProcessorList
 import features.worldgen.structures.Structure
 import features.worldgen.structureset.StructureSet
+import features.worldgen.templatepool.TemplatePool
 import features.worldgen.worldpreset.WorldPreset
 import functions.Function
 import kotlin.io.path.Path
@@ -62,6 +63,7 @@ class DataPack(val name: String) {
 	val structures = mutableListOf<Structure>()
 	val structureSets = mutableListOf<StructureSet>()
 	val tags = mutableListOf<Tags>()
+	val templatePools = mutableListOf<TemplatePool>()
 	val worldPresets = mutableListOf<WorldPreset>()
 
 	var configuration: Configuration = Configuration.Default
@@ -119,6 +121,7 @@ class DataPack(val name: String) {
 		data.generateResources("worldgen/processor_list", processorLists)
 		data.generateResources("worldgen/structure", structures)
 		data.generateResources("worldgen/structure_set", structureSets)
+		data.generateResources("worldgen/template_pool", templatePools)
 		data.generateResources("worldgen/world_preset", worldPresets)
 
 		data.generateFunctions("functions", functions.groupBy(Function::namespace))

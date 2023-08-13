@@ -24,8 +24,8 @@ suspend fun launchAllSimpleGenerators() {
 		gen("NoiseSettings", "worldgen/noise_settings", "NoiseSettings"),
 		gen("PlacedFeatures", "worldgen/placed_feature"),
 		gen("ProcessorLists", "worldgen/processor_list"),
-		gen("ConfiguredStructures", "worldgen/structure"),
 		gen("PlacedFeatures", "worldgen/placed_feature"),
+		gen("ConfiguredStructures", "worldgen/structure"),
 		gen("StructureSets", "worldgen/structure_set"),
 	).transformRemoveJSONSuffix()
 

@@ -33,5 +33,6 @@ fun featuresTests() = dataPack("features_tests") {
 	recipeTest()
 	structureTests()
 	structureSetTests()
+	templatePoolTests()
 	worldPresetTests()
 }.generate()
