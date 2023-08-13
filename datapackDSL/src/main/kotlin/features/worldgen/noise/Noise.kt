@@ -19,12 +19,12 @@ data class Noise(
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
-fun DataPack.noise(fileName: String, block: Noise.() -> Unit = {}): NoiseArgument {
+fun DataPack.noise(fileName: String = "noise", block: Noise.() -> Unit = {}): NoiseArgument {
 	noises += Noise(fileName).apply(block)
 	return NoiseArgument(fileName, name)
 }
 
-fun DataPack.noise(fileName: String, firstOctave: Int = 0, amplitudes: List<Double> = emptyList()) = noise(fileName) {
+fun DataPack.noise(fileName: String = "noise", firstOctave: Int = 0, amplitudes: List<Double> = emptyList()) = noise(fileName) {
 	this.firstOctave = firstOctave
 	this.amplitudes = amplitudes
 }

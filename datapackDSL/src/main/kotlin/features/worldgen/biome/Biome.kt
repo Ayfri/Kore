@@ -27,7 +27,7 @@ data class Biome(
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
-fun DataPack.biome(fileName: String, init: Biome.() -> Unit = {}): BiomeArgument {
+fun DataPack.biome(fileName: String = "biome", init: Biome.() -> Unit = {}): BiomeArgument {
 	biomes += Biome(fileName).apply(init)
 	return BiomeArgument(fileName, name)
 }

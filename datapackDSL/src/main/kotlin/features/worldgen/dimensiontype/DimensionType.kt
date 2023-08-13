@@ -14,7 +14,6 @@ import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-
 /**
  * Creates a new DimensionType.
  * Values are the minimal values for a dimension type, booleans have the same values as overworld.
@@ -67,7 +66,7 @@ data class DimensionType(
  * Creates a new DimensionType.
  * Values are the minimal values for a dimension type, booleans have the same values as overworld.
  */
-fun DataPack.dimensionType(fileName: String, dimensionType: DimensionType.() -> Unit = {}): DimensionTypeArgument {
+fun DataPack.dimensionType(fileName: String = "dimension_type", dimensionType: DimensionType.() -> Unit = {}): DimensionTypeArgument {
 	dimensionTypes += DimensionType(fileName, infiniburn = Tags.Blocks.INFINIBURN_OVERWORLD).apply(dimensionType)
 	return DimensionTypeArgument(fileName, name)
 }
