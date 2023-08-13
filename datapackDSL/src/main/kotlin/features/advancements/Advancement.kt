@@ -13,7 +13,6 @@ import net.benwoodworth.knbt.NbtTag
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 @Serializable
 data class Advancement internal constructor(
@@ -25,10 +24,7 @@ data class Advancement internal constructor(
 	var requirements: List<List<String>>? = null,
 	var rewards: AdvancementReward? = null,
 	var sendsTelemetryEvent: Boolean? = null,
-) : Generator {
-	@Transient
-	private lateinit var jsonEncoder: Json
-
+) : Generator("advancements") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 

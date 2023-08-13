@@ -1,5 +1,6 @@
 package features.worldgen.placedfeature.modifiers
 
+import features.worldgen.placedfeature.PlacedFeature
 import serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
@@ -18,8 +19,6 @@ enum class Step {
 	}
 }
 
-fun carvingMask(step: Step) = CarvingMask(step)
-
-fun MutableList<PlacementModifier>.carvingMask(step: Step) {
-	this += CarvingMask(step)
+fun PlacedFeature.carvingMask(step: Step) {
+	placementModifiers += CarvingMask(step)
 }

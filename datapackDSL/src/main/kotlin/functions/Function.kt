@@ -175,7 +175,7 @@ private fun DataPack.addToMinecraftTag(
 ): FunctionArgument {
 	val name = functionName ?: "${fileName}_${block.hashCode()}"
 	val generatedFunction = generatedFunction(name, directory, block)
-	addToTag("minecraft", "functions", fileName) {
+	addToTag("functions", fileName) {
 		this += generatedFunction.asId()
 	}
 
@@ -186,10 +186,10 @@ fun Function.setTag(
 	tagFile: String,
 	tagNamespace: String = namespace,
 	entryNamespace: String = namespace,
-	group: Boolean = false,
-	required: Boolean? = null,
+	entryIsTag: Boolean = false,
+	entryIsRequired: Boolean? = null,
 ) {
-	datapack.addToTag(tagNamespace, "functions", tagFile) {
-		add(this@setTag.name, entryNamespace, group, required)
+	datapack.addToTag(type = "functions", fileName = tagFile, namespace = tagNamespace) {
+		add(name, entryNamespace, entryIsTag, entryIsRequired)
 	}
 }

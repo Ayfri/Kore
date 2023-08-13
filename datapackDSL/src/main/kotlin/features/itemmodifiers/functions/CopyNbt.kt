@@ -1,12 +1,14 @@
 package features.itemmodifiers.functions
 
 import features.itemmodifiers.ItemModifier
+import features.predicates.PredicateAsList
+import serializers.LowercaseSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import serializers.LowercaseSerializer
 
 @Serializable
 data class CopyNbt(
+	override var conditions: PredicateAsList? = null,
 	var source: NbtProvider,
 	var ops: List<CopyNbtOperation> = emptyList(),
 ) : ItemFunction()
@@ -42,8 +44,7 @@ enum class CopyNbtOperationType {
 }
 
 fun ItemModifier.copyNbt(source: Source, ops: MutableList<CopyNbtOperation>.() -> Unit = {}) =
-	CopyNbt(CopyNbtContext(source), buildList(ops)).also { modifiers += it }
-
+	CopyNbt(source = CopyNbtContext(source), ops = buildList(ops)).also { modifiers += it }
 
 fun ItemModifier.copyNbt(source: String, ops: MutableList<CopyNbtOperation>.() -> Unit = {}) =
-	CopyNbt(CopyNbtStorage(source), buildList(ops)).also { modifiers += it }
+	CopyNbt(source = CopyNbtStorage(source), ops = buildList(ops)).also { modifiers += it }

@@ -12,7 +12,7 @@ data class Structure(
 	@Transient
 	override var fileName: String = "structure",
 	var type: StructureType,
-) : Generator {
+) : Generator("worldgen/structure") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(type)
 }
 

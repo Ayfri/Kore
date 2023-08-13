@@ -1,11 +1,15 @@
 package features.itemmodifiers.functions
 
 import features.itemmodifiers.ItemModifier
-import kotlinx.serialization.Serializable
+import features.predicates.PredicateAsList
 import serializers.LowercaseSerializer
+import kotlinx.serialization.Serializable
 
 @Serializable
-data class CopyName(val source: Source) : ItemFunction()
+data class CopyName(
+	override var conditions: PredicateAsList? = null,
+	val source: Source,
+) : ItemFunction()
 
 @Serializable(with = Source.Companion.SourceSerializer::class)
 enum class Source {
@@ -20,5 +24,5 @@ enum class Source {
 }
 
 fun ItemModifier.copyName(source: Source, block: CopyName.() -> Unit = {}) {
-	modifiers += CopyName(source).apply(block)
+	modifiers += CopyName(source = source).apply(block)
 }

@@ -11,11 +11,15 @@ data class DensityFunction(
 	@Transient
 	override var fileName: String = "density_function",
 	var type: DensityFunctionType,
-) : Generator {
+) : Generator("worldgen/density_function") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(type)
 }
 
-fun DataPack.densityFunction(fileName: String, type: DensityFunctionType): DensityFunctionArgument {
-	densityFunctions += DensityFunction(fileName, type)
+fun DataPack.densityFunction(
+	fileName: String,
+	type: DensityFunctionType,
+	block: DensityFunction.() -> Unit = {},
+): DensityFunctionArgument {
+	densityFunctions += DensityFunction(fileName, type).apply(block)
 	return DensityFunctionArgument(fileName, name)
 }

@@ -1,6 +1,7 @@
 package features.worldgen.placedfeature.modifiers
 
 import features.worldgen.HeightMap
+import features.worldgen.placedfeature.PlacedFeature
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -10,18 +11,11 @@ data class SurfaceRelativeThresholdFilter(
 	var maxInclusive: Int? = null,
 ) : PlacementModifier()
 
-fun surfaceRelativeThresholdFilter(
-	heightMap: HeightMap,
-	minInclusive: Int? = null,
-	maxInclusive: Int? = null,
-	block: SurfaceRelativeThresholdFilter.() -> Unit = {},
-) = SurfaceRelativeThresholdFilter(heightMap, minInclusive, maxInclusive).apply(block)
-
-fun MutableList<PlacementModifier>.surfaceRelativeThresholdFilter(
+fun PlacedFeature.surfaceRelativeThresholdFilter(
 	heightMap: HeightMap,
 	minInclusive: Int? = null,
 	maxInclusive: Int? = null,
 	block: SurfaceRelativeThresholdFilter.() -> Unit = {},
 ) {
-	this += SurfaceRelativeThresholdFilter(heightMap, minInclusive, maxInclusive).apply(block)
+	placementModifiers += SurfaceRelativeThresholdFilter(heightMap, minInclusive, maxInclusive).apply(block)
 }

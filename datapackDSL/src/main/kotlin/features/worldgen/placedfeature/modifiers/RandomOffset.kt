@@ -2,6 +2,7 @@ package features.worldgen.placedfeature.modifiers
 
 import features.worldgen.intproviders.IntProvider
 import features.worldgen.intproviders.constant
+import features.worldgen.placedfeature.PlacedFeature
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -10,8 +11,6 @@ data class RandomOffset(
 	var ySpread: IntProvider = constant(0),
 ) : PlacementModifier()
 
-fun randomOffset(xzSpread: IntProvider = constant(0), ySpread: IntProvider = constant(0)) = RandomOffset(xzSpread, ySpread)
-
-fun MutableList<PlacementModifier>.randomOffset(xzSpread: IntProvider = constant(0), ySpread: IntProvider = constant(0)) {
-	this += RandomOffset(xzSpread, ySpread)
+fun PlacedFeature.randomOffset(xzSpread: IntProvider = constant(0), ySpread: IntProvider = constant(0)) {
+	placementModifiers += RandomOffset(xzSpread, ySpread)
 }

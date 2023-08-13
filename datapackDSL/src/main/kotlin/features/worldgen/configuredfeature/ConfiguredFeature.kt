@@ -13,11 +13,16 @@ data class ConfiguredFeature(
 	@Transient
 	override var fileName: String = "configured_feature",
 	val featureConfig: FeatureConfig,
-) : Generator {
+) : Generator("worldgen/configured_feature") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(featureConfig)
 }
 
-fun DataPack.configuredFeature(fileName: String = "configured_feature", featureConfig: FeatureConfig): ConfiguredFeatureArgument {
-	configuredFeatures += ConfiguredFeature(fileName, featureConfig)
+// TODO : #32
+fun DataPack.configuredFeature(
+	fileName: String = "configured_feature",
+	featureConfig: FeatureConfig,
+	block: ConfiguredFeature.() -> Unit = {},
+): ConfiguredFeatureArgument {
+	configuredFeatures += ConfiguredFeature(fileName, featureConfig).apply(block)
 	return ConfiguredFeatureArgument(fileName, name)
 }

@@ -14,7 +14,7 @@ data class StructureSet(
 	override var fileName: String = "structure_set",
 	var structures: List<Structure> = emptyList(),
 	var placement: Placement,
-) : Generator {
+) : Generator("worldgen/structure_set") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 

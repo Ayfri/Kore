@@ -15,8 +15,8 @@ data class Dimension(
 	@Transient
 	override var fileName: String = "dimension",
 	var type: DimensionTypeArgument,
-	var generator: DimensionGenerator = Debug
-) : Generator {
+	var generator: DimensionGenerator = Debug,
+) : Generator("dimension") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 

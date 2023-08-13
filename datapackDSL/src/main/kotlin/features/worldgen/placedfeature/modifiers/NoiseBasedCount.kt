@@ -1,5 +1,6 @@
 package features.worldgen.placedfeature.modifiers
 
+import features.worldgen.placedfeature.PlacedFeature
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -9,18 +10,11 @@ data class NoiseBasedCount(
 	var noiseOffset: Double? = null,
 ) : PlacementModifier()
 
-fun noiseBasedCount(
-	noiseToCountRatio: Int = 0,
-	noiseFactor: Double = 0.0,
-	noiseOffset: Double? = null,
-	block: NoiseBasedCount.() -> Unit = {},
-) = NoiseBasedCount(noiseToCountRatio, noiseFactor, noiseOffset).apply(block)
-
-fun MutableList<PlacementModifier>.noiseBasedCount(
+fun PlacedFeature.noiseBasedCount(
 	noiseToCountRatio: Int = 0,
 	noiseFactor: Double = 0.0,
 	noiseOffset: Double? = null,
 	block: NoiseBasedCount.() -> Unit = {},
 ) {
-	this += NoiseBasedCount(noiseToCountRatio, noiseFactor, noiseOffset).apply(block)
+	placementModifiers += NoiseBasedCount(noiseToCountRatio, noiseFactor, noiseOffset).apply(block)
 }

@@ -19,13 +19,12 @@ data class LootTable(
 	var functions: ItemModifierAsList? = null,
 	var pools: List<LootPool>? = null,
 	var randomSequence: RandomSequenceArgument? = null,
-) : Generator {
+) : Generator("loot_table") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
 fun DataPack.lootTable(fileName: String, block: LootTable.() -> Unit = {}): LootTableArgument {
-	val lootTable = LootTable(fileName).apply(block)
-	lootTables += lootTable
+	lootTables += LootTable(fileName).apply(block)
 	return LootTableArgument(fileName, name)
 }
 

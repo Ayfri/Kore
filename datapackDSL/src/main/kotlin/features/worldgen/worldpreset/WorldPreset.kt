@@ -14,7 +14,7 @@ data class WorldPreset(
 	@Transient
 	override var fileName: String = "world_preset",
 	var dimensions: Map<DimensionTypes, Dimension> = emptyMap(),
-) : Generator {
+) : Generator("worldgen/world_preset") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 

@@ -21,7 +21,7 @@ typealias PredicateAsList = @Serializable(Predicate.Companion.PredicateAsListSer
 data class Predicate(
 	override var fileName: String = "predicate",
 	var predicateConditions: InlinableList<PredicateCondition> = emptyList(),
-) : Generator {
+) : Generator("predicate") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(predicateConditions)
 
 	companion object {

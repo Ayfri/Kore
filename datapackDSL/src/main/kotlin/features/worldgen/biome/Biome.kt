@@ -23,7 +23,7 @@ data class Biome(
 	var spawnCosts: Map<EntityTypeArgument, SpawnCost> = mapOf(),
 	var carvers: Carvers = Carvers(),
 	var features: Features = Features(),
-) : Generator {
+) : Generator("biomes") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 

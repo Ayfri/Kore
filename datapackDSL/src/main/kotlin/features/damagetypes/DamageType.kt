@@ -19,7 +19,7 @@ data class DamageType(
 	var scaling: Scaling,
 	var effects: Effects? = null,
 	var deathMessageType: DeathMessageType? = null,
-) : Generator {
+) : Generator("damage_type") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
@@ -27,7 +27,7 @@ fun DataPack.damageType(
 	fileName: String = "damage_type",
 	messageId: String,
 	scaling: Scaling,
-	damageType: DamageType.() -> Unit = {}
+	damageType: DamageType.() -> Unit = {},
 ): DamageTypeArgument {
 	damageTypes += DamageType(fileName, messageId, scaling = scaling).apply(damageType)
 	return DamageTypeArgument(fileName, name)

@@ -48,7 +48,7 @@ data class NoiseSettings(
 	var noiseRouter: NoiseRouter = NoiseRouter(),
 	var spawnTarget: List<MultiNoiseBiomeSourceParameters> = emptyList(),
 	var surfaceRule: SurfaceRule = Bandlands,
-) : Generator {
+) : Generator("worldgen/noise_settings") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 

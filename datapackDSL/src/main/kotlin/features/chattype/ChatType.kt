@@ -13,7 +13,7 @@ data class ChatType(
 	override var fileName: String = "chat_type",
 	var chat: ChatTypeDecoration = ChatTypeDecoration("chat.type.text"),
 	var narration: ChatTypeDecoration = ChatTypeDecoration("chat.type.text.narrate"),
-) : Generator {
+) : Generator("chat_type") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 

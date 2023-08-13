@@ -13,7 +13,7 @@ data class ProcessorList(
 	@Transient
 	override var fileName: String = "processor_list",
 	var processors: List<ProcessorType> = emptyList(),
-) : Generator {
+) : Generator("worldgen/processor_list") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 

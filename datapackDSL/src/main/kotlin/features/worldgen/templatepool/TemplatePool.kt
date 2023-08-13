@@ -14,7 +14,7 @@ data class TemplatePool(
 	override var fileName: String = "template_pool",
 	var fallback: TemplatePoolArgument = TemplatePools.Empty,
 	var elements: List<TemplatePoolEntry> = emptyList(),
-) : Generator {
+) : Generator("worldgen/template_pool") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 

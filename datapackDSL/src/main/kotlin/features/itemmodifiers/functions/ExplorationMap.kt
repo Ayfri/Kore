@@ -1,12 +1,14 @@
 package features.itemmodifiers.functions
 
 import features.itemmodifiers.ItemModifier
+import features.predicates.PredicateAsList
 import generated.Tags
-import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class ExplorationMap(
+	override var conditions: PredicateAsList? = null,
 	var destination: Tags.Worldgen.Structure? = null,
 	var decoration: MapDecoration? = null,
 	var zoom: Int? = null,
@@ -57,7 +59,13 @@ fun ItemModifier.explorationMap(
 	skipExistingChunks: Boolean? = null,
 	block: ExplorationMap.() -> Unit = {},
 ) {
-	modifiers += ExplorationMap(destination, decoration, zoom, searchRadius, skipExistingChunks).apply(block)
+	modifiers += ExplorationMap(
+		destination = destination,
+		decoration = decoration,
+		zoom = zoom,
+		searchRadius = searchRadius,
+		skipExistingChunks = skipExistingChunks
+	).apply(block)
 }
 
 fun ItemModifier.explorationMap(block: ExplorationMap.() -> Unit) {

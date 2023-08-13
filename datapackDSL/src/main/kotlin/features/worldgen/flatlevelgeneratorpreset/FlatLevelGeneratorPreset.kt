@@ -28,7 +28,7 @@ data class FlatLevelGeneratorPreset(
 		),
 		structureOverrides = listOf(StructureSets.VILLAGES)
 	),
-) : Generator {
+) : Generator("worldgen/flat_level_generator_preset") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
@@ -37,10 +37,9 @@ data class FlatLevelGeneratorPreset(
  */
 fun DataPack.flatLevelGeneratorPreset(
 	fileName: String = "flat_level_generator_preset",
-	block: FlatLevelGeneratorPreset.() -> Unit
+	block: FlatLevelGeneratorPreset.() -> Unit = {},
 ): FlatLevelGeneratorPresetArgument {
-	val generatorPreset = FlatLevelGeneratorPreset(fileName).also(block)
-	flatLevelGeneratorPresets += generatorPreset
+	flatLevelGeneratorPresets += FlatLevelGeneratorPreset(fileName).apply(block)
 	return FlatLevelGeneratorPresetArgument(fileName, name)
 }
 
@@ -50,10 +49,9 @@ fun DataPack.flatLevelGeneratorPreset(
 fun DataPack.flatLevelGeneratorPreset(
 	fileName: String = "flat_level_generator_preset",
 	display: ItemArgument,
-	block: FlatGeneratorSettings.() -> Unit = {}
+	block: FlatGeneratorSettings.() -> Unit = {},
 ): FlatLevelGeneratorPresetArgument {
-	val generatorPreset = FlatLevelGeneratorPreset(fileName, display).also { it.settings.apply(block) }
-	flatLevelGeneratorPresets += generatorPreset
+	flatLevelGeneratorPresets += FlatLevelGeneratorPreset(fileName, display).also { it.settings.apply(block) }
 	return FlatLevelGeneratorPresetArgument(fileName, name)
 }
 

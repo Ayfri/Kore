@@ -1,5 +1,6 @@
 package features.worldgen.placedfeature.modifiers
 
+import features.worldgen.placedfeature.PlacedFeature
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -9,18 +10,11 @@ data class NoiseThresholdCount(
 	var aboveNoise: Int = 0,
 ) : PlacementModifier()
 
-fun noiseThresholdCount(
-	noiseLevel: Double = 0.0,
-	belowNoise: Int = 0,
-	aboveNoise: Int = 0,
-	block: NoiseThresholdCount.() -> Unit = {},
-) = NoiseThresholdCount(noiseLevel, belowNoise, aboveNoise).apply(block)
-
-fun MutableList<PlacementModifier>.noiseThresholdCount(
+fun PlacedFeature.noiseThresholdCount(
 	noiseLevel: Double = 0.0,
 	belowNoise: Int = 0,
 	aboveNoise: Int = 0,
 	block: NoiseThresholdCount.() -> Unit = {},
 ) {
-	this += NoiseThresholdCount(noiseLevel, belowNoise, aboveNoise).apply(block)
+	placementModifiers += NoiseThresholdCount(noiseLevel, belowNoise, aboveNoise).apply(block)
 }

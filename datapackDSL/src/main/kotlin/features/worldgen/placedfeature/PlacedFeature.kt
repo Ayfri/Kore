@@ -17,33 +17,15 @@ data class PlacedFeature(
 	var feature: ConfiguredFeatureArgument,
 	@SerialName("placement")
 	var placementModifiers: List<PlacementModifier> = emptyList(),
-) : Generator {
+) : Generator("worldgen/placed_feature") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
 fun DataPack.placedFeature(
 	fileName: String = "placed_feature",
 	feature: ConfiguredFeatureArgument,
-	placementModifiers: List<PlacementModifier> = emptyList(),
+	block: PlacedFeature.() -> Unit,
 ): PlacedFeatureArgument {
-	placedFeatures += PlacedFeature(fileName, feature, placementModifiers)
-	return PlacedFeatureArgument(fileName, name)
-}
-
-fun DataPack.placedFeature(
-	fileName: String = "placed_feature",
-	feature: ConfiguredFeatureArgument,
-	vararg placementModifiers: PlacementModifier,
-): PlacedFeatureArgument {
-	placedFeatures += PlacedFeature(fileName, feature, placementModifiers.toList())
-	return PlacedFeatureArgument(fileName, name)
-}
-
-fun DataPack.placedFeature(
-	fileName: String = "placed_feature",
-	feature: ConfiguredFeatureArgument,
-	placementModifiers: MutableList<PlacementModifier>.() -> Unit,
-): PlacedFeatureArgument {
-	placedFeatures += PlacedFeature(fileName, feature, buildList(placementModifiers))
+	placedFeatures += PlacedFeature(fileName, feature).apply(block)
 	return PlacedFeatureArgument(fileName, name)
 }
