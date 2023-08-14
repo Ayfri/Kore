@@ -10,6 +10,7 @@ import features.predicates.conditions.anyOf
 import features.predicates.conditions.randomChance
 import features.predicates.conditions.timeCheck
 import functions.load
+import generated.Advancements
 import generated.Items
 import generated.LootTables
 import generated.Recipes
@@ -21,7 +22,7 @@ fun DataPack.advancementTests() {
 			frame = AdvancementFrameType.CHALLENGE
 		}
 
-		parent = generated.Advancements.Story.ROOT
+		parent = Advancements.Story.ROOT
 
 		criteria(
 			name = "test",

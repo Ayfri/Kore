@@ -1,17 +1,12 @@
 package features
 
-import configuration
-import dataPack
 import features.worldgen.*
-import setTestPath
+import utils.assertGeneratorsGenerated
+import utils.pretty
+import utils.testDataPack
 
-fun featuresTests() = dataPack("features_tests") {
-	setTestPath()
-
-	configuration {
-		prettyPrint = true
-		prettyPrintIndent = "\t"
-	}
+fun featuresTests() = testDataPack("features_tests") {
+	pretty()
 
 	advancementTests()
 	biomeTests()
@@ -35,4 +30,7 @@ fun featuresTests() = dataPack("features_tests") {
 	structureSetTests()
 	templatePoolTests()
 	worldPresetTests()
-}.generate()
+}.apply {
+	assertGeneratorsGenerated()
+	generate()
+}

@@ -2,21 +2,19 @@ package serialization
 
 import arguments.chatcomponents.textComponent
 import arguments.colors.Color
-import configuration
-import dataPack
 import generated.DataPacks
 import kotlin.io.path.Path
 import pack.features
 import pack.filter
 import pack.pack
 import pack.supportedFormat
+import utils.assertFileGenerated
 import utils.assertsIsJson
+import utils.pretty
+import utils.testDataPack
 
-fun datapackTests() = dataPack("test") {
-	configuration {
-		prettyPrint = true
-		prettyPrintIndent = "\t"
-	}
+fun datapackTests() = testDataPack("test") {
+	pretty()
 
 	pack {
 		format = 16
@@ -31,7 +29,10 @@ fun datapackTests() = dataPack("test") {
 	features(DataPacks.BUNDLE)
 
 	iconPath = Path("datapackDSL", "src", "test", "resources", "Kotlin Full Color Logo Mark RGB.png")
-}.generatePackMCMetaFile() assertsIsJson """
+}.apply {
+	assertFileGenerated("pack.mcmeta")
+	assertFileGenerated("pack.png")
+}.dp.generatePackMCMetaFile() assertsIsJson """
 	{
 		"pack": {
 			"pack_format": 16,

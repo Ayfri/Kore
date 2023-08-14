@@ -4,6 +4,8 @@ import DataPack
 import Generator
 import arguments.Argument
 import commands.Command
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.exists
 import org.intellij.lang.annotations.Language
 import kotlinx.serialization.json.Json
 
@@ -31,6 +33,27 @@ infix fun Generator.assertsIs(@Language("json") expected: String) {
 	}
 
 	System.err.println(generateDiffStringJson(expected, result))
+}
+
+fun TestDataPack.assertFileGenerated(path: String) {
+	val file = dp.path.resolve(path)
+	callAfterGeneration {
+		if (!file.exists()) {
+			error("File for datapack '${dp.name}' at '${file.absolutePathString()}' was not found.")
+		}
+	}
+}
+
+fun TestDataPack.assertGeneratorsGenerated() {
+	callAfterGeneration {
+		val generators = dp.generators.flatten().sortedBy { it.getFinalPath(dp).toString() }
+		generators.forEach {
+			val file = it.getFinalPath(dp)
+			if (!file.exists()) {
+				error("File '${file.fileName}' for datapack '${dp.name}' for ${it.resourceFolder} generator '${it.namespace ?: dp.name}:${it.fileName}' at '${file.absolutePathString()}' was not found.")
+			}
+		}
+	}
 }
 
 private fun <T : Any> T.assertsIsJson(result: String, expected: String) {
