@@ -3,8 +3,8 @@ package features.advancements.serializers
 import arguments.numbers.ranges.IntRangeOrInt
 import arguments.numbers.ranges.range
 import arguments.numbers.ranges.rangeOrInt
-import serializers.ToStringSerializer
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.nullable
 import kotlinx.serialization.builtins.serializer
@@ -19,15 +19,14 @@ import kotlinx.serialization.encoding.encodeStructure
 
 typealias IntRangeOrIntJson = @Serializable(with = IntRangeOrIntJsonSerializer::class) IntRangeOrInt
 
-object IntRangeOrIntJsonSerializer : ToStringSerializer<IntRangeOrInt>() {
-	private val serialDescriptor =
-		buildClassSerialDescriptor("IntRangeOrInt") {
-			element<Int>("max")
-			element<Int>("min")
-		}
+object IntRangeOrIntJsonSerializer : KSerializer<IntRangeOrInt> {
+	override val descriptor = buildClassSerialDescriptor("IntRangeOrInt") {
+		element<Int>("max")
+		element<Int>("min")
+	}
 
 	override fun serialize(encoder: Encoder, value: IntRangeOrInt) = when {
-		value.range != null -> encoder.encodeStructure(serialDescriptor) {
+		value.range != null -> encoder.encodeStructure(descriptor) {
 			encodeIntElement(PrimitiveSerialDescriptor("min", PrimitiveKind.INT), 0, value.int!!)
 			encodeIntElement(PrimitiveSerialDescriptor("max", PrimitiveKind.INT), 1, value.int)
 		}
@@ -38,7 +37,7 @@ object IntRangeOrIntJsonSerializer : ToStringSerializer<IntRangeOrInt>() {
 	@OptIn(ExperimentalSerializationApi::class)
 	override fun deserialize(decoder: Decoder) = when {
 		decoder.decodeNullableSerializableValue(Int.serializer().nullable) != null -> {
-			decoder.decodeStructure(serialDescriptor) {
+			decoder.decodeStructure(descriptor) {
 				var min: Int? = null
 				var max: Int? = null
 

@@ -91,19 +91,10 @@ fun Advancement.rewards(block: AdvancementReward.() -> Unit) {
 }
 
 fun Advancement.rewards(
-	function: String? = null,
-	experience: Int? = null,
-	loot: List<LootTableArgument>? = null,
-	recipes: List<RecipeArgument>? = null,
-) {
-	rewards = AdvancementReward(experience, function, loot, recipes)
-}
-
-fun Advancement.rewards(
 	function: FunctionArgument? = null,
 	experience: Int? = null,
 	loot: List<LootTableArgument>? = null,
 	recipes: List<RecipeArgument>? = null,
 ) {
-	rewards = AdvancementReward(experience, function?.asString(), loot, recipes)
+	rewards = AdvancementReward(experience, function, loot, recipes)
 }

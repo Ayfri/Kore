@@ -3,12 +3,14 @@ package features
 import DataPack
 import arguments.types.literals.self
 import commands.advancement
+import commands.say
 import features.advancements.*
 import features.advancements.triggers.ConsumeItem
 import features.advancements.types.itemStack
 import features.predicates.conditions.anyOf
 import features.predicates.conditions.randomChance
 import features.predicates.conditions.timeCheck
+import functions.function
 import functions.load
 import generated.Advancements
 import generated.Items
@@ -39,7 +41,10 @@ fun DataPack.advancementTests() {
 		requirements("test")
 		rewards {
 			experience = 10
-			function = "test:gradient"
+			function = function("gradient") {
+				say("Yay !")
+			}
+
 			loot = listOf(LootTables.Chests.IGLOO_CHEST)
 			recipes = listOf(Recipes.POLISHED_BLACKSTONE_BRICK_STAIRS_FROM_POLISHED_BLACKSTONE_BRICKS_STONECUTTING)
 		}

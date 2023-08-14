@@ -3,8 +3,8 @@ package features.advancements.serializers
 import arguments.numbers.ranges.FloatRangeOrFloat
 import arguments.numbers.ranges.range
 import arguments.numbers.ranges.rangeOrDouble
-import serializers.ToStringSerializer
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.nullable
 import kotlinx.serialization.builtins.serializer
@@ -19,15 +19,14 @@ import kotlinx.serialization.encoding.encodeStructure
 
 typealias FloatRangeOrFloatJson = @Serializable(with = FloatRangeOrFloatJsonSerializer::class) FloatRangeOrFloat
 
-object FloatRangeOrFloatJsonSerializer : ToStringSerializer<FloatRangeOrFloat>() {
-	private val serialDescriptor =
-		buildClassSerialDescriptor("IntRangeOrInt") {
-			element<Double>("max")
-			element<Double>("min")
-		}
+object FloatRangeOrFloatJsonSerializer : KSerializer<FloatRangeOrFloat> {
+	override val descriptor = buildClassSerialDescriptor("IntRangeOrInt") {
+		element<Double>("max")
+		element<Double>("min")
+	}
 
 	override fun serialize(encoder: Encoder, value: FloatRangeOrFloat) = when {
-		value.range != null -> encoder.encodeStructure(serialDescriptor) {
+		value.range != null -> encoder.encodeStructure(descriptor) {
 			encodeDoubleElement(PrimitiveSerialDescriptor("min", PrimitiveKind.DOUBLE), 0, value.double!!)
 			encodeDoubleElement(PrimitiveSerialDescriptor("max", PrimitiveKind.DOUBLE), 1, value.double)
 		}
@@ -38,7 +37,7 @@ object FloatRangeOrFloatJsonSerializer : ToStringSerializer<FloatRangeOrFloat>()
 	@OptIn(ExperimentalSerializationApi::class)
 	override fun deserialize(decoder: Decoder) = when {
 		decoder.decodeNullableSerializableValue(Double.serializer().nullable) != null -> {
-			decoder.decodeStructure(serialDescriptor) {
+			decoder.decodeStructure(descriptor) {
 				var min: Double? = null
 				var max: Double? = null
 
