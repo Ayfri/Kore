@@ -1,7 +1,7 @@
-package commands.execute
+package arguments.enums
 
-import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
+import kotlinx.serialization.Serializable
 
 @Serializable(HeightMap.Companion.HeightMapSerializer::class)
 enum class HeightMap {

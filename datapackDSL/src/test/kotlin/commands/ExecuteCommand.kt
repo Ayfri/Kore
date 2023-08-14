@@ -3,6 +3,7 @@ package commands
 import arguments.colors.Color
 import arguments.enums.DataType
 import arguments.enums.Dimension
+import arguments.enums.HeightMap
 import arguments.maths.Axes
 import arguments.maths.vec3
 import arguments.numbers.PosNumber
