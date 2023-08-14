@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 interface FloatingRange : Range
 
 @Serializable(with = Argument.ArgumentSerializer::class)
-class FloatRange(val start: Double?, val end: Double?) : FloatingRange {
+data class FloatRange(val start: Double?, val end: Double?) : FloatingRange {
 	override fun asString() = when {
 		start == null && end == null -> ""
 		start == null -> "..${end?.str}"
@@ -21,7 +21,7 @@ class FloatRange(val start: Double?, val end: Double?) : FloatingRange {
 }
 
 @Serializable(with = Argument.ArgumentSerializer::class)
-class FloatRangeOrFloat(val range: FloatRange? = null, val double: Double? = null) : FloatingRange {
+data class FloatRangeOrFloat(val range: FloatRange? = null, val double: Double? = null) : FloatingRange {
 	override fun asString() = range?.toString() ?: double.toString()
 
 	override fun toString() = asString()

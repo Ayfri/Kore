@@ -2,11 +2,11 @@ package arguments.maths
 
 import arguments.Argument
 import arguments.enums.Axis
-import kotlinx.serialization.Serializable
 import serializers.ToStringSerializer
+import kotlinx.serialization.Serializable
 
 @Serializable(Axes.Companion.AxesRotationSerializer::class)
-class Axes(var x: Boolean = false, var y: Boolean = false, var z: Boolean = false) : Argument {
+data class Axes(var x: Boolean = false, var y: Boolean = false, var z: Boolean = false) : Argument {
 	override fun toString() = when {
 		x && y && z -> "xyz"
 		x && y -> "xy"

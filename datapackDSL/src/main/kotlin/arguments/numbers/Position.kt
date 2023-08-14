@@ -1,6 +1,6 @@
 package arguments.numbers
 
-class PosNumber(var value: Double, var type: Type = Type.WORLD) : Comparable<PosNumber> {
+data class PosNumber(var value: Double, var type: Type = Type.WORLD) : Comparable<PosNumber> {
 	enum class Type {
 		RELATIVE,
 		LOCAL,

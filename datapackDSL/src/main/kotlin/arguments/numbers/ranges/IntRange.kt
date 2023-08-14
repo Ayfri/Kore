@@ -7,7 +7,7 @@ import kotlin.ranges.IntRange as KotlinIntRange
 interface IntegerRange : Range
 
 @Serializable(with = Argument.ArgumentSerializer::class)
-class IntRange(val start: Int?, val end: Int?) : IntegerRange {
+data class IntRange(val start: Int?, val end: Int?) : IntegerRange {
 	override fun asString() = when {
 		start == null && end == null -> ""
 		start == null -> "..$end"
@@ -21,7 +21,7 @@ class IntRange(val start: Int?, val end: Int?) : IntegerRange {
 }
 
 @Serializable(with = Argument.ArgumentSerializer::class)
-class IntRangeOrInt(val range: IntRange? = null, val int: Int? = null) : IntegerRange {
+data class IntRangeOrInt(val range: IntRange? = null, val int: Int? = null) : IntegerRange {
 	override fun asString() = range?.toString() ?: int.toString()
 
 	override fun toString() = asString()

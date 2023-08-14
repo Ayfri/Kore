@@ -1,9 +1,9 @@
 package arguments.numbers
 
 import arguments.types.literals.literal
+import serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encoding.Encoder
-import serializers.LowercaseSerializer
 
 @Serializable(TimeType.Companion.TimeTypeSerializer::class)
 enum class TimeType(val unit: String) {
@@ -20,7 +20,7 @@ enum class TimeType(val unit: String) {
 	}
 }
 
-class TimeNumber(val value: Double, val type: TimeType = TimeType.TICKS) : Comparable<TimeNumber> {
+data class TimeNumber(val value: Double, val type: TimeType = TimeType.TICKS) : Comparable<TimeNumber> {
 	operator fun plus(other: TimeNumber) = TimeNumber(value + other.value, type)
 	operator fun minus(other: TimeNumber) = TimeNumber(value - other.value, type)
 	operator fun times(other: TimeNumber) = TimeNumber(value * other.value, type)
