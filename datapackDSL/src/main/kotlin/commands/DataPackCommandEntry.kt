@@ -2,9 +2,9 @@ package commands
 
 import arguments.types.literals.literal
 import functions.Function
-import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
 import utils.asArg
+import kotlinx.serialization.Serializable
 
 @Serializable(DatapackPriority.Companion.DatapackPrioritySerializer::class)
 enum class DatapackPriority {
@@ -16,22 +16,24 @@ enum class DatapackPriority {
 	}
 }
 
-class DataPack(private val fn: Function, val name: String) {
+class DataPackCommandEntry(private val fn: Function, val name: String) {
 	fun disable() = fn.addLine(command("datapack", literal("disable"), literal(name)))
 	fun enable(priority: DatapackPriority? = null) =
 		fn.addLine(command("datapack", literal("enable"), literal(name), literal(priority?.asArg())))
 
 	fun enableFirst() = fn.addLine(command("datapack", literal("enable"), literal("first"), literal(name)))
 	fun enableLast() = fn.addLine(command("datapack", literal("enable"), literal("last"), literal(name)))
-	fun enableBefore(name: String) = fn.addLine(command("datapack", literal("enable"), literal("before"), literal(name), literal(name)))
-	fun enableAfter(name: String) = fn.addLine(command("datapack", literal("enable"), literal("after"), literal(name), literal(name)))
+	fun enableBefore(name: String) =
+		fn.addLine(command("datapack", literal("enable"), literal(this.name), literal("before"), literal(name)))
+
+	fun enableAfter(name: String) = fn.addLine(command("datapack", literal("enable"), literal(this.name), literal("after"), literal(name)))
 }
 
-class DataPacks(private val fn: Function) {
-	fun available() = fn.addLine(command("datapack", literal("available")))
-	fun enabled() = fn.addLine(command("datapack", literal("enabled")))
+class DataPacksCommandEntries(private val fn: Function) {
+	fun available() = fn.addLine(command("datapack", literal("list"), literal("available")))
+	fun enabled() = fn.addLine(command("datapack", literal("list"), literal("enabled")))
 	fun list() = fn.addLine(command("datapack", literal("list")))
 }
 
-val Function.dataPacks get() = DataPacks(this)
-fun Function.dataPack(name: String, block: DataPack.() -> Command) = DataPack(this, name).block()
+val Function.dataPacks get() = DataPacksCommandEntries(this)
+fun Function.dataPack(name: String, block: DataPackCommandEntry.() -> Command) = DataPackCommandEntry(this, name).block()

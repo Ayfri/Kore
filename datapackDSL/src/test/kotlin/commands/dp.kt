@@ -12,6 +12,7 @@ fun runUnitTests() = dataPack("unit_tests") {
 		cloneTests()
 		damageTests()
 		dataTests()
+		dataPackTests()
 		effectTests()
 		executeTests()
 		forceLoadTests()

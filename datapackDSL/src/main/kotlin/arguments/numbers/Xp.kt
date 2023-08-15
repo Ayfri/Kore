@@ -26,7 +26,7 @@ data class Xp(val value: Long, val type: ExperienceType = ExperienceType.POINTS)
 	fun toPoints() = Xp(value, ExperienceType.POINTS)
 
 	override fun toString() = when (type) {
-		ExperienceType.LEVELS -> "${value}L"
+		ExperienceType.LEVELS -> "$value levels"
 		ExperienceType.POINTS -> value.toString()
 	}
 }
