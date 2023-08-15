@@ -67,7 +67,7 @@ class DataPack(val name: String) {
 	val templatePools = registerGenerator<TemplatePool>()
 	val worldPresets = registerGenerator<WorldPreset>()
 
-	var configuration: Configuration = Configuration.Default
+	var configuration = Configuration.DEFAULT
 	var features = Features()
 	var filter: Filter? = null
 	var iconPath: Path? = null
@@ -111,9 +111,9 @@ class DataPack(val name: String) {
 
 		data.generateFunctions("functions", functions.groupBy(Function::namespace))
 		data.generateFunctions(
-			dirName = "functions/$GENERATED_FUNCTIONS_FOLDER",
+			dirName = "functions/${configuration.generatedFunctionsFolder}",
 			functionsMap = generatedFunctions.map {
-				it.directory = it.directory.removePrefix(GENERATED_FUNCTIONS_FOLDER)
+				it.directory = it.directory.removePrefix(configuration.generatedFunctionsFolder)
 				it
 			}.groupBy(Function::namespace),
 			deleteOldFiles = true
@@ -162,12 +162,12 @@ class DataPack(val name: String) {
 		}
 
 	companion object {
-		const val GENERATED_FUNCTIONS_FOLDER = "generated_scopes"
+		const val DEFAULT_GENERATED_FUNCTIONS_FOLDER = "generated_scopes"
 	}
 }
 
 fun dataPack(name: String, block: DataPack.() -> Unit) = DataPack(name).apply(block)
 
-fun DataPack.configuration(block: ConfigurationBuilder.() -> Unit) {
-	configuration = Configuration(block)
+fun DataPack.configuration(block: Configuration.() -> Unit) {
+	configuration = Configuration().apply(block)
 }

@@ -158,7 +158,7 @@ fun DataPack.function(name: String, namespace: String = this.name, directory: St
 
 fun DataPack.generatedFunction(name: String, directory: String = "", block: Function.() -> Unit) =
 	addGeneratedFunction(
-		Function(name, this.name, "${DataPack.GENERATED_FUNCTIONS_FOLDER}${directory.ifNotEmpty { "/$it" }}", this).apply(block)
+		Function(name, this.name, "${configuration.generatedFunctionsFolder}${directory.ifNotEmpty { "/$it" }}", this).apply(block)
 	)
 
 fun DataPack.load(name: String? = null, directory: String = "", block: Function.() -> Unit) =
