@@ -1,14 +1,16 @@
 package commands
 
 import arguments.chatcomponents.ChatComponents
+import arguments.chatcomponents.PlainTextComponent
+import arguments.chatcomponents.textComponent
 import arguments.colors.NamedColor
 import arguments.types.ScoreHolderArgument
 import arguments.types.literals.bool
 import arguments.types.literals.literal
 import functions.Function
-import kotlinx.serialization.Serializable
 import serializers.CamelcaseSerializer
 import utils.asArg
+import kotlinx.serialization.Serializable
 
 @Serializable(Visibility.Companion.NametagVisibilitySerializer::class)
 enum class Visibility {
@@ -39,10 +41,15 @@ class Modify(private val fn: Function, val team: String) {
 		fn.addLine(command("team", literal("modify"), literal(team), literal("collisionRule"), literal(rule.asArg())))
 
 	fun color(color: NamedColor) = fn.addLine(command("team", literal("modify"), literal(team), literal("color"), color))
+
 	fun deathMessageVisibility(visibility: Visibility) =
 		fn.addLine(command("team", literal("modify"), literal(team), literal("deathMessageVisibility"), literal(visibility.asArg())))
 
 	fun displayName(name: ChatComponents) = fn.addLine(command("team", literal("modify"), literal(team), literal("displayName"), name))
+
+	fun displayName(name: String, color: NamedColor? = null, block: PlainTextComponent.() -> Unit = {}) =
+		fn.addLine(command("team", literal("modify"), literal(team), literal("displayName"), textComponent(name, color, block)))
+
 	fun friendlyFire(allowed: Boolean) =
 		fn.addLine(command("team", literal("modify"), literal(team), literal("friendlyFire"), bool(allowed)))
 
@@ -52,16 +59,25 @@ class Modify(private val fn: Function, val team: String) {
 	fun prefix(prefix: ChatComponents) =
 		fn.addLine(command("team", literal("modify"), literal(team), literal("prefix"), prefix.asJsonArg()))
 
+	fun prefix(prefix: String, color: NamedColor? = null, block: PlainTextComponent.() -> Unit = {}) =
+		fn.addLine(command("team", literal("modify"), literal(team), literal("prefix"), textComponent(prefix, color, block).asJsonArg()))
+
 	fun seeFriendlyInvisibles(allowed: Boolean) =
 		fn.addLine(command("team", literal("modify"), literal(team), literal("seeFriendlyInvisibles"), bool(allowed)))
 
 	fun suffix(suffix: ChatComponents) =
 		fn.addLine(command("team", literal("modify"), literal(team), literal("suffix"), suffix.asJsonArg()))
+
+	fun suffix(suffix: String, color: NamedColor? = null, block: PlainTextComponent.() -> Unit = {}) =
+		fn.addLine(command("team", literal("modify"), literal(team), literal("suffix"), textComponent(suffix, color, block).asJsonArg()))
 }
 
 class Teams(private val fn: Function) {
 	fun add(team: String, displayName: ChatComponents? = null) =
 		fn.addLine(command("team", literal("add"), literal(team), displayName?.asJsonArg()))
+
+	fun add(team: String, displayName: String, color: NamedColor? = null, block: PlainTextComponent.() -> Unit = {}) =
+		fn.addLine(command("team", literal("add"), literal(team), textComponent(displayName, color, block).asJsonArg()))
 
 	fun empty(team: String) = fn.addLine(command("team", literal("empty"), literal(team)))
 	fun join(team: String, entity: ScoreHolderArgument) = fn.addLine(command("team", literal("join"), literal(team), entity))

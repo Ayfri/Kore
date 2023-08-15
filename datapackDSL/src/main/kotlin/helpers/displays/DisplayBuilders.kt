@@ -23,11 +23,7 @@ fun BlockDisplay.blockState(block: BlockArgument, init: BlockStateBuilder.() -> 
 	blockState = data.block.blockState(block, init)
 }
 
-fun TextDisplay.text(text: String = "", init: PlainTextComponent.() -> Unit = {}) {
-	this.text = arguments.chatcomponents.text(text, init)
-}
-
-fun TextDisplay.text(text: String = "", color: Color, init: PlainTextComponent.() -> Unit = {}) {
+fun TextDisplay.text(text: String = "", color: Color? = null, init: PlainTextComponent.() -> Unit = {}) {
 	this.text = arguments.chatcomponents.text(text, color, init)
 }
 

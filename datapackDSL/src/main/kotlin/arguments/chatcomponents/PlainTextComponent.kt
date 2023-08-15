@@ -14,12 +14,8 @@ class PlainTextComponent : ChatComponent(), SimpleComponent {
 	override fun hashCode() = super.hashCode()
 }
 
-fun text(text: String = "", block: PlainTextComponent.() -> Unit = {}) = PlainTextComponent().apply {
+fun text(text: String = "", color: Color? = null, block: PlainTextComponent.() -> Unit = {}) = PlainTextComponent().apply {
 	this.text = text
-	block()
-}
-
-fun text(text: String = "", color: Color, block: PlainTextComponent.() -> Unit = {}) = text(text) {
 	this.color = color
 	block()
 }

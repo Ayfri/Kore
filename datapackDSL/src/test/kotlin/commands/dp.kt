@@ -28,10 +28,14 @@ fun runUnitTests() = dataPack("unit_tests") {
 		returnCommand()
 		rideTests()
 		scheduleTests()
+		scoreboardTests()
+		teamsTests()
 		tellrawTests()
 		titleTests()
 		timeTests()
+		triggerTests()
 		weatherTests()
+		worldBorderTests()
 	}
 
 	testMacros()

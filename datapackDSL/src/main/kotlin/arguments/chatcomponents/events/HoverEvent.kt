@@ -7,6 +7,7 @@ import arguments.chatcomponents.hover.ContentsEntity
 import arguments.chatcomponents.hover.ContentsItem
 import arguments.chatcomponents.text
 import arguments.chatcomponents.textComponent
+import arguments.colors.Color
 import arguments.types.EntityArgument
 import arguments.types.literals.UUIDArgument
 import arguments.types.resources.EntityTypeArgument
@@ -59,9 +60,9 @@ fun HoverEvent.showText(block: ChatComponents.() -> Unit) = apply {
 	value = ChatComponents().apply(block).toNbtTag()
 }
 
-fun HoverEvent.showText(text: String, block: ChatComponent.() -> Unit = {}) = apply {
+fun HoverEvent.showText(text: String, color: Color? = null, block: ChatComponent.() -> Unit = {}) = apply {
 	action = HoverAction.SHOW_TEXT
-	value = textComponent(text, block).toNbtTag()
+	value = textComponent(text, color, block).toNbtTag()
 }
 
 @Serializable(HoverAction.Companion.HoverActionSerializer::class)

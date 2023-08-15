@@ -5,12 +5,12 @@ import arguments.chatcomponents.events.ClickEvent
 import arguments.chatcomponents.events.HoverAction
 import arguments.chatcomponents.events.HoverEvent
 import arguments.colors.Color
-import kotlinx.serialization.EncodeDefault
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.buildNbtCompound
 import utils.nbt
 import utils.set
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
@@ -90,12 +90,8 @@ abstract class ChatComponent {
 	}
 }
 
-fun textComponent(text: String = "", block: PlainTextComponent.() -> Unit = {}) = ChatComponents(text(text, block))
-
-fun textComponent(text: String = "", color: Color, block: PlainTextComponent.() -> Unit = {}) = textComponent(text) {
-	this.color = color
-	block()
-}
+fun textComponent(text: String = "", color: Color? = null, block: PlainTextComponent.() -> Unit = {}) =
+	ChatComponents(text(text, color, block))
 
 fun ChatComponent.hoverEvent(action: HoverAction = HoverAction.SHOW_TEXT, block: HoverEvent.() -> Unit) =
 	apply { hoverEvent = HoverEvent(action, "".nbt).apply(block) }
@@ -103,5 +99,5 @@ fun ChatComponent.hoverEvent(action: HoverAction = HoverAction.SHOW_TEXT, block:
 fun ChatComponent.clickEvent(action: ClickAction = ClickAction.RUN_COMMAND, block: ClickEvent.() -> Unit) =
 	apply { clickEvent = ClickEvent(action, "").apply(block) }
 
-fun ChatComponent.hoverEvent(text: String, block: ChatComponent.() -> Unit = {}) =
-	apply { hoverEvent = HoverEvent(HoverAction.SHOW_TEXT, textComponent(text, block).toNbtTag()) }
+fun ChatComponent.hoverEvent(text: String, color: Color? = null, block: ChatComponent.() -> Unit = {}) =
+	apply { hoverEvent = HoverEvent(HoverAction.SHOW_TEXT, textComponent(text, color, block).toNbtTag()) }
