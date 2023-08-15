@@ -4,19 +4,19 @@ import arguments.numbers.TimeType
 import arguments.types.literals.int
 import arguments.types.literals.literal
 import functions.Function
-import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
 import utils.asArg
+import kotlinx.serialization.Serializable
 
-@Serializable(TimeSpec.Companion.TimeSpecSerializer::class)
-enum class TimeSpec {
+@Serializable(TimePeriod.Companion.TimeSpecSerializer::class)
+enum class TimePeriod {
 	DAY,
 	NOON,
 	NIGHT,
 	MIDNIGHT;
 
 	companion object {
-		data object TimeSpecSerializer : LowercaseSerializer<TimeSpec>(entries)
+		data object TimeSpecSerializer : LowercaseSerializer<TimePeriod>(entries)
 	}
 }
 
@@ -24,7 +24,7 @@ class Time(private val fn: Function) {
 	fun add(value: Int) = fn.addLine(command("time", literal("add"), int(value)))
 	fun query(type: TimeType) = fn.addLine(command("time", literal("query"), literal(type.asArg())))
 	fun set(value: Int) = fn.addLine(command("time", literal("set"), int(value)))
-	fun set(spec: TimeSpec) = fn.addLine(command("time", literal("set"), literal(spec.asArg())))
+	fun set(period: TimePeriod) = fn.addLine(command("time", literal("set"), literal(period.asArg())))
 }
 
 val Function.time get() = Time(this)

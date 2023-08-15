@@ -2,6 +2,7 @@ package commands
 
 import arguments.numbers.ranges.IntRange
 import arguments.numbers.ranges.asRange
+import arguments.types.literals.all
 import arguments.types.literals.bool
 import arguments.types.literals.int
 import arguments.types.literals.literal
@@ -30,4 +31,4 @@ fun Function.randomReset(
 	addLine(command("random", literal("reset"), sequenceId, int(seed), bool(includeWorldSeed), bool(includeSequenceId)))
 
 fun Function.randomResetAll(seed: Long? = null, includeWorldSeed: Boolean? = null, includeSequenceId: Boolean? = null) =
-	addLine(command("random", literal("reset"), literal("*"), int(seed), bool(includeWorldSeed), bool(includeSequenceId)))
+	addLine(command("random", literal("reset"), all(), int(seed), bool(includeWorldSeed), bool(includeSequenceId)))
