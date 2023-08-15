@@ -6,6 +6,8 @@ import functions.load
 
 fun runUnitTests() = dataPack("unit_tests") {
 	load {
+		advancementTests()
+		attributeTests()
 		cloneTests()
 		damageTests()
 		dataTests()

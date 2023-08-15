@@ -82,7 +82,7 @@ private fun <T : Any> T.assertsMatches(regex: Regex, expected: String) {
 	if (regex.matches(expected) || !alreadyPrinted.add(hashCode())) return
 
 	val stack = Thread.currentThread().stackTrace
-	with(stack[2]) {
+	with(stack[3]) {
 		System.err.println("\nat $className.$methodName($fileName:$lineNumber)")
 	}
 	System.err.println(generateDiffString(regex, expected))
