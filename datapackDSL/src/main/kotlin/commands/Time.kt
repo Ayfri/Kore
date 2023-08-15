@@ -22,7 +22,7 @@ enum class TimePeriod {
 
 class Time(private val fn: Function) {
 	fun add(value: Int) = fn.addLine(command("time", literal("add"), int(value)))
-	fun query(type: TimeType) = fn.addLine(command("time", literal("query"), literal(type.asArg())))
+	fun query(type: TimeType) = fn.addLine(command("time", literal("query"), literal(type.commandName)))
 	fun set(value: Int) = fn.addLine(command("time", literal("set"), int(value)))
 	fun set(period: TimePeriod) = fn.addLine(command("time", literal("set"), literal(period.asArg())))
 }

@@ -6,16 +6,14 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encoding.Encoder
 
 @Serializable(TimeType.Companion.TimeTypeSerializer::class)
-enum class TimeType(val unit: String) {
-	TICKS("t"),
-	SECONDS("s"),
-	DAYS("d");
+enum class TimeType(val unit: String, val commandName: String) {
+	TICKS("t", "tick"),
+	SECONDS("s", "second"),
+	DAYS("d", "day");
 
 	companion object {
 		data object TimeTypeSerializer : LowercaseSerializer<TimeType>(entries) {
-			override fun serialize(encoder: Encoder, value: TimeType) {
-				encoder.encodeString(value.unit)
-			}
+			override fun serialize(encoder: Encoder, value: TimeType) = encoder.encodeString(value.unit)
 		}
 	}
 }
