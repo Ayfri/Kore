@@ -4,7 +4,7 @@ import commands.special.testMacros
 import dataPack
 import functions.load
 
-val dp = dataPack("unit_tests") {
+fun runUnitTests() = dataPack("unit_tests") {
 	load {
 		cloneTests()
 		damageTests()
@@ -26,10 +26,9 @@ val dp = dataPack("unit_tests") {
 		scheduleTests()
 		tellrawTests()
 		titleTests()
+		timeTests()
 		weatherTests()
 	}
 
 	testMacros()
-}
-
-fun runUnitTests() = dp.generate()
+}.generate()
