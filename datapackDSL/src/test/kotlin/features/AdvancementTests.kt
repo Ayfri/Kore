@@ -107,7 +107,7 @@ fun DataPack.advancementTests() {
 			],
 			"rewards": {
 				"experience": 10,
-				"function": "test:gradient",
+				"function": "features_tests:gradient",
 				"loot": [
 					"minecraft:chests/igloo_chest"
 				],

@@ -2,11 +2,19 @@ package utils
 
 fun generateDiffString(expected: String, got: String): String {
 	val minLength = minOf(expected.length, got.length)
-	val firstDifferenceIndex = (0..<minLength).firstOrNull { expected[it] != got[it] } ?: -1
+	var firstDifferenceIndex = (0..<minLength).firstOrNull { expected[it] != got[it] } ?: -1
 
 	if (firstDifferenceIndex == -1 && expected.length > got.length) return "Expected: '$expected'\nGot     : '$got'\n" + " ".repeat("Expected: '".length + got.length) + "^".repeat(
 		expected.length - got.length
 	)
+
+	if (expected.length < got.length) {
+		firstDifferenceIndex = (0..<minLength).firstOrNull { expected[it] != got[it] } ?: -1
+		if (firstDifferenceIndex == -1) firstDifferenceIndex = minLength
+		return "Expected: '$expected'\nGot     : '$got'\n" + " ".repeat("Expected: '".length + firstDifferenceIndex) + "^".repeat(
+			got.length - expected.length
+		)
+	}
 
 	val lastDifferenceIndex = ((minLength - 1) downTo firstDifferenceIndex).firstOrNull { expected[it] != got[it] } ?: -1
 
@@ -29,7 +37,6 @@ fun generateDiffString(expected: String, got: String): String {
 }
 
 fun generateDiffString(expectedRegex: Regex, got: String) = "Expected: '$expectedRegex'\nGot     : '$got'\n"
-
 
 private const val reset = "\u001B[0m"
 private const val red = "\u001B[31m"

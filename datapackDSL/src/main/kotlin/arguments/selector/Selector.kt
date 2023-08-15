@@ -36,15 +36,8 @@ data class Selector(val base: SelectorType) {
 	val nbtData = SelectorNbtData()
 	val isPlayer get() = base.isPlayer
 
-	override fun toString(): String {
-		val builder = StringBuilder("@")
-		builder.append(base.value)
-		if (nbtData != SelectorNbtData()) {
-			builder.append("[")
-			builder.append(json.encodeToJsonElement(nbtData).toString().unescape())
-			builder.append("]")
-		}
-
-		return builder.toString()
+	override fun toString() = when {
+		nbtData == SelectorNbtData() -> "@${base.value}"
+		else -> "@${base.value}[${json.encodeToJsonElement<SelectorNbtData>(nbtData).toString().unescape()}]"
 	}
 }

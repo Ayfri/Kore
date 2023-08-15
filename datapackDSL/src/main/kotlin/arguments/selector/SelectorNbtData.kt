@@ -1,5 +1,6 @@
 package arguments.selector
 
+import arguments.Argument
 import arguments.enums.Gamemode
 import arguments.numbers.ranges.FloatRangeOrFloat
 import arguments.numbers.ranges.IntRangeOrInt
@@ -15,7 +16,6 @@ import kotlin.reflect.jvm.isAccessible
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.StringifiedNbt
-import serializers.ToStringSerializer
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -24,52 +24,6 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonPrimitive
-
-sealed interface Invertable<T> {
-	var value: T?
-	var invert: Boolean
-}
-
-@Serializable(GamemodeSelector.Companion.GamemodeSelectorSerializer::class)
-data class GamemodeSelector(override var value: Gamemode? = null, override var invert: Boolean = false) : Invertable<Gamemode> {
-	override fun toString() = when {
-		value == null -> ""
-		invert -> "!${json.encodeToJsonElement(value).jsonPrimitive.content}"
-		else -> json.encodeToJsonElement(value).jsonPrimitive.content
-	}
-
-	companion object {
-		data object GamemodeSelectorSerializer : ToStringSerializer<GamemodeSelector>()
-	}
-}
-
-@Serializable(NbtCompoundSelector.Companion.NbtDataSelectorSerializer::class)
-data class NbtCompoundSelector(override var value: NbtCompound? = null, override var invert: Boolean = false) :
-	Invertable<NbtCompound> {
-	override fun toString() = when {
-		value == null -> ""
-		invert -> "!${StringifiedNbt.encodeToString(value)}"
-		else -> StringifiedNbt.encodeToString(value)
-	}
-
-	companion object {
-		data object NbtDataSelectorSerializer : ToStringSerializer<NbtCompoundSelector>()
-	}
-}
-
-@Serializable(EntityTypeSelector.Companion.EntityTypeSelectorSerializer::class)
-data class EntityTypeSelector(override var value: EntityTypeArgument? = null, override var invert: Boolean = false) :
-	Invertable<EntityTypeArgument> {
-	override fun toString() = when {
-		value == null -> ""
-		invert -> "!${json.encodeToJsonElement(value).jsonPrimitive.content}"
-		else -> json.encodeToJsonElement(value).jsonPrimitive.content
-	}
-
-	companion object {
-		data object EntityTypeSelectorSerializer : ToStringSerializer<EntityTypeSelector>()
-	}
-}
 
 @Serializable(SelectorNbtData.Companion.SelectorNbtDataSerializer::class)
 data class SelectorNbtData(
@@ -88,23 +42,27 @@ data class SelectorNbtData(
 	var limit: Int? = null,
 	var level: IntRangeOrInt? = null,
 	var name: String? = null,
-	var predicate: PredicateArgument? = null,
 	var scores: Scores<SelectorScore>? = null,
 	var sort: Sort? = null,
 	var tag: String? = null,
 	var team: String? = null,
-	@SerialName("type")
-	private var _type: EntityTypeSelector = EntityTypeSelector(),
 	@SerialName("gamemode")
-	private var _gamemode: GamemodeSelector = GamemodeSelector(),
+	private var _gamemode: GamemodeOption = GamemodeOption(),
 	@SerialName("nbt")
-	private var _nbt: NbtCompoundSelector = NbtCompoundSelector(),
+	private var _nbt: NbtCompoundOption = NbtCompoundOption(),
+	@SerialName("predicate")
+	private var _predicate: PredicateOption = PredicateOption(),
+	@SerialName("type")
+	private var _type: EntityTypeOption = EntityTypeOption(),
 ) {
 	@Transient
 	var gamemode by _gamemode::value
 
 	@Transient
 	var nbt by _nbt::value
+
+	@Transient
+	var predicate by _predicate::value
 
 	@Transient
 	var type by _type::value
@@ -115,6 +73,7 @@ data class SelectorNbtData(
 
 	operator fun Gamemode.not() = apply { _gamemode.invert = true }
 	operator fun NbtCompound.not() = apply { _nbt.invert = true }
+	operator fun PredicateArgument.not() = apply { _predicate.invert = true }
 	operator fun EntityTypeArgument.not() = apply { _type.invert = true }
 
 	operator fun String.not() = "!$this"
@@ -133,14 +92,14 @@ data class SelectorNbtData(
 		level = other.level
 		team = other.team
 		name = other.name
-		type = other.type
 		tag = other.tag
 		advancements = other.advancements
 		scores = other.scores
 		sort = other.sort
-		predicate = other.predicate
 		_gamemode = other._gamemode
 		_nbt = other._nbt
+		_predicate = other._predicate
+		_type = other._type
 	}
 
 	companion object {
@@ -161,20 +120,14 @@ data class SelectorNbtData(
 
 				encoder.encodeString(map.filter { it.value != null }.mapNotNull { (key, value) ->
 					when (value) {
-						is SelectorAdvancements -> "$key=${
-							json.encodeToJsonElement(
-								SelectorAdvancements.Companion.SelectorAdvancementsSerializer,
-								value
-							).jsonPrimitive.content
-						}"
+						is SelectorAdvancements -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
 
-						is Invertable<*> -> when (value.value) {
+						is InvertableOption<*> -> when (value.value) {
 							null -> return@mapNotNull null
 							else -> "$key=$value"
 						}
 
-						is PredicateArgument -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
-						is EntityTypeArgument -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
+						is Argument -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
 
 						is Scores<*> -> "$key={${value.scores.joinToString(",")}}"
 						is Sort -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
