@@ -4,18 +4,18 @@ import arguments.types.literals.UUIDArgument
 import arguments.types.resources.AttributeArgument
 import commands.AttributeModifierOperation
 import features.predicates.providers.*
+import serializers.EnumOrdinalSerializer
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import serializers.EnumOrdinalSerializer
 
 @Serializable
 data class AttributeModifier(
 	val attribute: AttributeArgument,
 	@Serializable(NumberProviderSerializer::class) val amount: NumberProvider = constant(0f),
-	@Serializable(AttributeModifierOperationSerializer::class) val operation: AttributeModifierOperation = AttributeModifierOperation.ADDITION,
+	@Serializable(AttributeModifierOperationSerializer::class) val operation: AttributeModifierOperation = AttributeModifierOperation.ADD,
 	val slot: List<EquipmentSlot>? = null,
 	val uuid: UUIDArgument? = null,
 ) {

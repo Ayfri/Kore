@@ -1,19 +1,17 @@
 package commands
 
 import arguments.types.EntityArgument
-import arguments.types.literals.float
-import arguments.types.literals.literal
-import arguments.types.literals.uuid
+import arguments.types.literals.*
 import arguments.types.resources.AttributeArgument
 import functions.Function
-import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
 import utils.asArg
 import java.util.*
+import kotlinx.serialization.Serializable
 
 @Serializable(AttributeModifierOperation.Companion.AttributeModifierOperationSerializer::class)
 enum class AttributeModifierOperation {
-	ADDITION,
+	ADD,
 	MULTIPLY,
 	MULTIPLY_BASE;
 
@@ -43,6 +41,21 @@ class AttributeModifiers(private val fn: Function, private val target: EntityArg
 			)
 		)
 
+	fun add(id: UUIDArgument, name: String, value: Double, operation: AttributeModifierOperation) =
+		fn.addLine(
+			command(
+				"attribute",
+				target,
+				attribute,
+				literal("modifier"),
+				literal("add"),
+				id,
+				literal(name),
+				float(value),
+				literal(operation.asArg())
+			)
+		)
+
 	fun add(name: AttributeArgument, value: Double, operation: AttributeModifierOperation) =
 		fn.addLine(
 			command(
@@ -51,7 +64,7 @@ class AttributeModifiers(private val fn: Function, private val target: EntityArg
 				attribute,
 				literal("modifier"),
 				literal("add"),
-				uuid(UUID.randomUUID()),
+				randomUUID(),
 				name,
 				float(value),
 				literal(operation.asArg())
@@ -61,7 +74,11 @@ class AttributeModifiers(private val fn: Function, private val target: EntityArg
 	fun get(id: UUID, scale: Double? = null) =
 		fn.addLine(command("attribute", target, attribute, literal("modifier"), literal("value"), literal("get"), uuid(id), float(scale)))
 
+	fun get(id: UUIDArgument, scale: Double? = null) =
+		fn.addLine(command("attribute", target, attribute, literal("modifier"), literal("value"), literal("get"), id, float(scale)))
+
 	fun remove(id: UUID) = fn.addLine(command("attribute", target, attribute, literal("modifier"), literal("remove"), uuid(id)))
+	fun remove(id: UUIDArgument) = fn.addLine(command("attribute", target, attribute, literal("modifier"), literal("remove"), id))
 }
 
 class Attribute(private val fn: Function, private val target: EntityArgument, private val attribute: AttributeArgument) {
@@ -84,7 +101,12 @@ class AttributeTarget(private val fn: Function, private val target: EntityArgume
 }
 
 class Attributes(private val fn: Function) {
-	fun get(target: EntityArgument, attribute: AttributeArgument) = Attribute(fn, target, attribute)
+	fun get(target: EntityArgument, attribute: AttributeArgument, scale: Double? = null) =
+		fn.addLine(command("attribute", target, attribute, literal("get"), float(scale)))
+
+	fun get(target: EntityArgument, attribute: AttributeArgument, block: Attribute.() -> Command) =
+		Attribute(fn, target, attribute).run(block)
+
 	fun get(target: EntityArgument, block: AttributeTarget.() -> Command) = AttributeTarget(fn, target).run(block)
 }
 
