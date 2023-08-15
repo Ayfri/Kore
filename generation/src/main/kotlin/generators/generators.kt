@@ -51,7 +51,9 @@ suspend fun launchAllSimpleGenerators() {
 	}
 
 	val txtRegistriesListGenerators = listOf(
-		gen("Attributes", "attribute") { it.replaceFirst(".", "_") },
+		gen("Attributes", "attribute", asString = """replaceFirst("_", ".").lowercase()""") {
+			it.replaceFirst(".", "_")
+		},
 		gen("BannerPatterns", "banner_pattern"),
 		gen("BlockEntityTypes", "block_entity_type"),
 		gen("Blocks", "block", additionalCode = {
