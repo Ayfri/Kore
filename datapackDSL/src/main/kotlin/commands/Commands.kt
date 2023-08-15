@@ -1,23 +1,19 @@
 package commands
 
-import arguments.chatcomponents.ChatComponents
-import arguments.chatcomponents.PlainTextComponent
-import arguments.chatcomponents.textComponent
 import arguments.enums.Difficulty
 import arguments.enums.Gamemode
 import arguments.maths.Vec2
 import arguments.maths.Vec3
 import arguments.maths.vec3
-import arguments.types.BiomeOrTagArgument
-import arguments.types.ConfiguredStructureOrTagArgument
 import arguments.types.EntityArgument
 import arguments.types.literals.*
-import arguments.types.resources.*
+import arguments.types.resources.BlockArgument
+import arguments.types.resources.EnchantmentArgument
+import arguments.types.resources.EntityTypeArgument
+import arguments.types.resources.ItemArgument
 import arguments.types.resources.worldgen.BiomeArgument
-import arguments.types.resources.worldgen.ConfiguredStructureArgument
 import commands.execute.Anchor
 import functions.Function
-import generated.Gamerules
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtCompoundBuilder
 import serializers.LowercaseSerializer
@@ -64,11 +60,6 @@ fun Function.fillbiome(from: Vec3, to: Vec3, biome: BiomeArgument, filter: Biome
 fun Function.gamemode(gamemode: Gamemode, target: EntityArgument? = null) =
 	addLine(command("gamemode", literal(gamemode.asArg()), target))
 
-fun Function.gamerule(rule: String, value: Boolean? = null) = addLine(command("gamerule", literal(rule), bool(value)))
-fun Function.gamerule(rule: String, value: Int) = addLine(command("gamerule", literal(rule), int(value)))
-fun Function.gamerule(rule: Gamerules.Int, value: Int? = null) = addLine(command("gamerule", literal(rule.asArg()), int(value)))
-fun Function.gamerule(rule: Gamerules.Boolean, value: Boolean? = null) = addLine(command("gamerule", literal(rule.asArg()), bool(value)))
-
 fun Function.give(target: EntityArgument, item: ItemArgument, count: Int? = null) =
 	addLine(command("give", target, item, int(count)))
 
@@ -81,35 +72,12 @@ fun Function.kill(targets: EntityArgument? = null) = addLine(command("kill", tar
 
 fun Function.list(uuids: Boolean = false) = addLine(command("list", literal(if (uuids) "uuids" else null)))
 
-fun Function.locateBiome(biome: BiomeOrTagArgument) = addLine(command("locate", literal("biome"), biome))
-fun Function.locateStructure(structure: ConfiguredStructureOrTagArgument) = addLine(command("locate", literal("structure"), structure))
-fun Function.locatePointOfInterest(pointOfInterest: String) = addLine(command("locate", literal("poi"), literal(pointOfInterest)))
-
 fun Function.me(message: String) = addLine(command("me", literal(message)))
 
 fun Function.msg(target: EntityArgument, message: String) = addLine(command("msg", target, literal(message)))
 
 fun Function.perfStart() = addLine(command("perf", literal("start")))
 fun Function.perfStop() = addLine(command("perf", literal("stop")))
-
-fun Function.placeFeature(feature: String, pos: Vec3) = addLine(command("place", literal("feature"), literal(feature), pos))
-fun Function.placeJigsaw(
-	jigsaw: String,
-	target: String,
-	maxDepth: Int,
-	pos: Vec3? = null,
-) = addLine(command("place", literal("jigsaw"), literal(jigsaw), literal(target), int(maxDepth), pos))
-
-fun Function.placeStructure(structure: ConfiguredStructureArgument, pos: Vec3) =
-	addLine(command("place", literal("structure"), structure, pos))
-
-fun Function.placeTemplate(
-	template: String,
-	pos: Vec3? = null,
-	rotation: RotationArgument? = null,
-	mirror: Boolean? = null,
-	seed: Long? = null,
-) = addLine(command("place", literal("template"), literal(template), pos, rotation, literal(mirror?.asArg()), int(seed)))
 
 @Serializable(PlaySoundSource.Companion.PlaySoundSourceSerializer::class)
 enum class PlaySoundSource {
@@ -138,15 +106,6 @@ fun Function.playSound(
 	pitch: Double? = null,
 	minVolume: Double? = null,
 ) = addLine(command("playsound", literal(sound), literal(source.asArg()), target, pos, float(volume), float(pitch), float(minVolume)))
-
-fun Function.recipeGive(target: EntityArgument, recipe: RecipeArgument) =
-	addLine(command("recipe", literal("give"), target, recipe))
-
-fun Function.recipeGiveAll(target: EntityArgument) = addLine(command("recipe", literal("give"), target, literal("*")))
-fun Function.recipeTake(target: EntityArgument, recipe: RecipeArgument) =
-	addLine(command("recipe", literal("take"), target, recipe))
-
-fun Function.recipeTakeAll(target: EntityArgument) = addLine(command("recipe", literal("take"), target, literal("*")))
 
 fun Function.say(message: String) = addLine(command("say", literal(message)))
 
@@ -228,13 +187,6 @@ fun Function.teleport(
 ) = addLine(command("teleport", target, location, literal("facing"), facing, literal(facingAnchor.asArg())))
 
 fun Function.tell(targets: EntityArgument, message: String) = addLine(command("tell", targets, literal(message)))
-
-fun Function.tellraw(targets: EntityArgument, text: String = "", block: PlainTextComponent.() -> Unit) =
-	addLine(command("tellraw", targets, textComponent(text, block).asJsonArg()))
-
-fun Function.tellraw(targets: EntityArgument, message: ChatComponents) = addLine(command("tellraw", targets, message.asJsonArg()))
-fun Function.tellraw(targets: EntityArgument, message: String) =
-	addLine(command("tellraw", targets, textComponent(message).asJsonArg()))
 
 fun Function.tm(message: String) = addLine(command("tm", literal(message)))
 
