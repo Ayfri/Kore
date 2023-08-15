@@ -65,6 +65,12 @@ fun Function.give(target: EntityArgument, item: ItemArgument, count: Int? = null
 
 fun Function.help(command: String? = null) = addLine(command("help", literal(command)))
 
+fun Function.jfr(block: Function.() -> Unit) {
+	jfrStart()
+	block()
+	jfrStop()
+}
+
 fun Function.jfrStart() = addLine(command("jfr", literal("start")))
 fun Function.jfrStop() = addLine(command("jfr", literal("stop")))
 
@@ -75,6 +81,12 @@ fun Function.list(uuids: Boolean = false) = addLine(command("list", literal(if (
 fun Function.me(message: String) = addLine(command("me", literal(message)))
 
 fun Function.msg(target: EntityArgument, message: String) = addLine(command("msg", target, literal(message)))
+
+fun Function.perf(block: Function.() -> Unit) {
+	perfStart()
+	block()
+	perfStop()
+}
 
 fun Function.perfStart() = addLine(command("perf", literal("start")))
 fun Function.perfStop() = addLine(command("perf", literal("stop")))
