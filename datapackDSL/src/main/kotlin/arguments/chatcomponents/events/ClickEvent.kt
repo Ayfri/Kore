@@ -2,14 +2,15 @@ package arguments.chatcomponents.events
 
 import commands.Command
 import functions.Function
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import functions.emptyFunction
 import net.benwoodworth.knbt.buildNbtCompound
 import serializers.LowercaseSerializer
 import utils.asArg
 import utils.set
 import java.io.File
 import java.net.URL
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class ClickEvent(
@@ -54,12 +55,12 @@ fun ClickEvent.openUrl(url: URL) = apply {
 
 fun ClickEvent.runCommand(block: Function.() -> Command) = apply {
 	action = ClickAction.RUN_COMMAND
-	value = "/${Function.EMPTY.block()}"
+	value = "/${emptyFunction().block()}"
 }
 
 fun ClickEvent.suggestCommand(block: Function.() -> Command) = apply {
 	action = ClickAction.SUGGEST_COMMAND
-	value = "/${Function.EMPTY.block()}"
+	value = "/${emptyFunction().block()}"
 }
 
 @Serializable(ClickAction.Companion.ClickActionSerializer::class)

@@ -135,22 +135,6 @@ open class Function(
 	open fun debug(textComponent: ChatComponents) = tellraw(allPlayers(), textComponent)
 
 	override fun toString() = lines.joinToString("\n")
-
-	companion object {
-		val EMPTY = object : Function("", datapack = DataPack("")) {
-			override fun addLine(line: String) = ""
-			override fun addLine(command: Command): Command {
-				lines.clear()
-				lines += command.toString()
-				return command
-			}
-
-			override fun comment(comment: String) {}
-			override fun clear() {}
-			override fun toString() = ""
-			override fun asId() = lines.getOrElse(0) { "" }
-		}
-	}
 }
 
 fun DataPack.function(name: String, namespace: String = this.name, directory: String = "", block: Function.() -> Unit) =

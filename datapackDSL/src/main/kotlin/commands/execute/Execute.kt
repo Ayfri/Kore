@@ -6,6 +6,7 @@ import arguments.types.resources.FunctionArgument
 import commands.Command
 import commands.command
 import functions.Function
+import functions.emptyFunction
 import functions.generatedFunction
 
 context(Function)
@@ -14,8 +15,9 @@ fun Execute.run(name: String, directory: String = "", block: Function.() -> Unit
 context(Function)
 fun Execute.run(block: Function.() -> Command): FunctionArgument {
 	val function = Function("", "", "", datapack).apply { block() }
+	val nonCommentedLines = function.lines.filter { !it.startsWith("#") }
 
-	if (function.lines.size == 1) return Function.EMPTY.apply {
+	if (nonCommentedLines.size == 1) return emptyFunction(datapack) {
 		block().apply {
 			arguments.replaceAll {
 				when (it) {
@@ -24,6 +26,7 @@ fun Execute.run(block: Function.() -> Command): FunctionArgument {
 				}
 			}
 		}
+		lines.removeAll { it.startsWith("#") }
 	}
 
 	val name = "generated_${hashCode()}"

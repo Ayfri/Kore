@@ -1,19 +1,17 @@
 package nbt
 
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtInt
 import net.benwoodworth.knbt.NbtString
 import net.benwoodworth.knbt.NbtTag
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class MutableNbtCompound(
 	private val nbtData: MutableMap<String, NbtTag> = mutableMapOf(),
 ) : MutableMap<String, NbtTag> by nbtData {
-	override fun toString(): String {
-		return nbtData.toString()
-	}
+	override fun toString() = nbtData.toString()
 
 	fun toNbtCompound() = NbtCompound(nbtData.toMap())
 	fun toMutableNbtCompound() = MutableNbtCompound(nbtData.toMutableMap())

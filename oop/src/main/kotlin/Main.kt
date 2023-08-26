@@ -10,6 +10,7 @@ import entities.*
 import functions.function
 import items.itemStack
 import items.summon
+import pack.pack
 import scoreboard.*
 import teams.*
 

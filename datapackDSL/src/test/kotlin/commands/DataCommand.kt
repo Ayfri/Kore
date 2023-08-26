@@ -50,4 +50,6 @@ fun Function.dataTests() {
 
 		set("foo", "bar") assertsIs "data modify entity @s foo set value \"bar\""
 	}
+
+	data(self())["foo"] assertsIs "data get entity @s foo"
 }
