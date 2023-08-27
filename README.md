@@ -1,8 +1,10 @@
 # Datapack-DSL
 
-A Kotlin DSL to generate Datapacks for Minecraft Java.
+A Kotlin library to generate Datapacks for Minecraft Java.
 
-For now, this library is compatible and made for Minecraft 1.20.1, I don't think that I will support older versions nor Bedrock Edition.
+For now, this library is compatible and made for Minecraft Java 1.20.1, I don't think that I will support older versions nor Bedrock
+Edition.
+But you can still create your own functions and DSLs to support other versions.
 I have plans to maybe create an optional library to create Resource Packs too, but it's not my priority for now.
 You can't currently download the library because it's not finished yet, but you can still clone the repository and use it as a local
 library.
@@ -66,7 +68,7 @@ fun main() {
 }
 ```
 
-There are multiple other new features that I want to add to this project like :
+There are multiple other new features that I want to add to this project :
 
 - [X] Pre-generating the list of Blocks/Items/Entities/Advancements/... and a lot of other repositories.
 - [X] Pre-generating the list of Sounds/Tags & Advancements using the enum tree generation method.
@@ -80,6 +82,6 @@ There are multiple other new features that I want to add to this project like :
 ## How to run the project
 
 1. First, run gradle `generation:run` task to generate the auto-generated files.
-2. Finally, run gradle `datapackDSL:run` or `oop:run` to run the examples.
+2. Finally, run gradle `datapackDSL:run` to run the tests.
 
 > Note: OOP module is not finished yet and experimental, it might change a lot in the future.
