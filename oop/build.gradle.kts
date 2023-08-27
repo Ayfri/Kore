@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
 	kotlin("jvm")
 	application
+	`publish-conventions`
 }
 
 repositories {
@@ -20,5 +21,5 @@ tasks.withType<KotlinCompile> {
 }
 
 application {
-	mainClass.set("MainKt")
+	mainClass = "MainKt"
 }

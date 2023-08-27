@@ -117,7 +117,7 @@ inline fun DataPack.tag(
 	namespace: String = name,
 	replace: Boolean = false,
 	block: Tag<TaggedResourceLocationArgument>.() -> Unit = {},
-): TaggedResourceLocationArgument = tag<TaggedResourceLocationArgument>(fileName, type, namespace, replace, block)
+) = tag<TaggedResourceLocationArgument>(fileName, type, namespace, replace, block)
 
 inline fun <reified T : TaggedResourceLocationArgument> DataPack.addToTag(
 	fileName: String = "tag",
@@ -143,4 +143,4 @@ inline fun DataPack.addToTag(
 	type: String = "",
 	namespace: String = name,
 	block: Tag<TaggedResourceLocationArgument>.() -> Unit = {},
-): TaggedResourceLocationArgument = addToTag<TaggedResourceLocationArgument>(fileName, type, namespace, block)
+) = addToTag<TaggedResourceLocationArgument>(fileName, type, namespace, block)
