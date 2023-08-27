@@ -8,8 +8,8 @@ import kotlinx.serialization.Serializable
 @Serializable(with = Argument.ArgumentSerializer::class)
 interface ConfiguredStructureTagArgument : TaggedResourceLocationArgument, ConfiguredStructureOrTagArgument {
 	companion object {
-		operator fun invoke(name: String, namespace: String = "minecraft") = object : ConfiguredStructureTagArgument {
-			override val name = name
+		operator fun invoke(tagName: String, namespace: String = "minecraft") = object : ConfiguredStructureTagArgument {
+			override val name = tagName
 			override val namespace = namespace
 		}
 	}

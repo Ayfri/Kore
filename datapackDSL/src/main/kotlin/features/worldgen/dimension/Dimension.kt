@@ -2,8 +2,8 @@ package features.worldgen.dimension
 
 import DataPack
 import Generator
-import arguments.types.resources.DimensionArgument
-import arguments.types.resources.DimensionTypeArgument
+import arguments.types.resources.worldgen.DimensionArgument
+import arguments.types.resources.worldgen.DimensionTypeArgument
 import features.worldgen.dimension.generator.Debug
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient

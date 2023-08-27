@@ -12,9 +12,9 @@ import arguments.types.EntityArgument
 import arguments.types.ScoreHolderArgument
 import arguments.types.literals.literal
 import arguments.types.resources.BlockArgument
-import arguments.types.resources.DimensionArgument
 import arguments.types.resources.FunctionArgument
 import arguments.types.resources.PredicateArgument
+import arguments.types.resources.worldgen.DimensionArgument
 import serializers.LowercaseSerializer
 import utils.asArg
 import kotlinx.serialization.Serializable

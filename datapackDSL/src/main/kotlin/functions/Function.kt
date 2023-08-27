@@ -7,6 +7,7 @@ import arguments.chatcomponents.events.showText
 import arguments.colors.Color
 import arguments.types.literals.allPlayers
 import arguments.types.resources.FunctionArgument
+import arguments.types.resources.tagged.FunctionTagArgument
 import commands.Command
 import commands.command
 import commands.tellraw
@@ -159,7 +160,7 @@ private fun DataPack.addToMinecraftTag(
 ): FunctionArgument {
 	val name = functionName ?: "${fileName}_${block.hashCode()}"
 	val generatedFunction = generatedFunction(name, directory, block)
-	addToTag("functions", fileName) {
+	addToTag<FunctionTagArgument>(fileName, type = "functions", namespace = "minecraft") {
 		this += generatedFunction.asId()
 	}
 
@@ -173,7 +174,18 @@ fun Function.setTag(
 	entryIsTag: Boolean = false,
 	entryIsRequired: Boolean? = null,
 ) {
-	datapack.addToTag(type = "functions", fileName = tagFile, namespace = tagNamespace) {
+	datapack.addToTag<FunctionTagArgument>(fileName = tagFile, type = "functions", namespace = tagNamespace) {
+		add(name, entryNamespace, entryIsTag, entryIsRequired)
+	}
+}
+
+fun Function.setTag(
+	tag: FunctionTagArgument,
+	entryNamespace: String = namespace,
+	entryIsTag: Boolean = false,
+	entryIsRequired: Boolean? = null,
+) {
+	datapack.addToTag<FunctionTagArgument>(fileName = tag.name, type = "functions", namespace = tag.namespace) {
 		add(name, entryNamespace, entryIsTag, entryIsRequired)
 	}
 }

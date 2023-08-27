@@ -1,5 +1,5 @@
-import kotlin.io.path.Path
 import kotlin.io.path.createParentDirectories
+import java.nio.file.Path
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
@@ -12,10 +12,15 @@ abstract class Generator(@Transient val resourceFolder: String = error("Generato
 
 	abstract fun generateJson(dataPack: DataPack): String
 
-	fun generateFile(dataPack: DataPack) {
-		val dataFolder = Path(dataPack.path.toString(), dataPack.name, "data")
-		val file = Path(dataFolder.toString(), namespace ?: dataPack.name, resourceFolder, "$fileName.json")
-		file.createParentDirectories()
-		file.toFile().writeText(generateJson(dataPack))
+	open fun getFinalPath(dataPack: DataPack): Path {
+		val dataFolder = dataPack.path.resolve(dataPack.name).resolve("data")
+		val namespace = namespace ?: dataPack.name
+		return dataFolder.resolve(namespace).resolve(resourceFolder).resolve("$fileName.json")
+	}
+
+	open fun generateFile(dataPack: DataPack) {
+		val path = getFinalPath(dataPack)
+		path.createParentDirectories()
+		path.toFile().writeText(generateJson(dataPack))
 	}
 }

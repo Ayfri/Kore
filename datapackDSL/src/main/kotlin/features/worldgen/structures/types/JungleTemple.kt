@@ -1,7 +1,7 @@
 package features.worldgen.structures.types
 
 import arguments.types.BiomeOrTagArgument
-import arguments.types.resources.StructureArgument
+import arguments.types.resources.worldgen.StructureArgument
 import features.worldgen.biome.types.Spawners
 import features.worldgen.structures.GenerationStep
 import features.worldgen.structures.Structure

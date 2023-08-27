@@ -1,7 +1,7 @@
 package features.worldgen.templatepool.elements
 
-import arguments.types.resources.StructureArgument
 import arguments.types.resources.worldgen.ProcessorListArgument
+import arguments.types.resources.worldgen.StructureArgument
 import features.worldgen.templatepool.Projection
 import features.worldgen.templatepool.TemplatePoolEntry
 import kotlinx.serialization.Serializable

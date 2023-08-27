@@ -28,6 +28,7 @@ fun featuresTests() = testDataPack("features_tests") {
 	recipeTest()
 	structureTests()
 	structureSetTests()
+	tagTests()
 	templatePoolTests()
 	worldPresetTests()
 }.apply {

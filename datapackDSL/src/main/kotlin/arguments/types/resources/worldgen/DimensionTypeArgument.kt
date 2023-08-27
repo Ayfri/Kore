@@ -1,4 +1,4 @@
-package arguments.types.resources
+package arguments.types.resources.worldgen
 
 import arguments.Argument
 import arguments.types.ResourceLocationArgument

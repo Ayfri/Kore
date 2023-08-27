@@ -3,21 +3,46 @@ package features.tags
 import DataPack
 import Generator
 import arguments.types.ResourceLocationArgument
+import arguments.types.TaggedResourceLocationArgument
+import kotlin.io.path.Path
+import kotlin.reflect.KClass
+import kotlin.reflect.full.companionObject
+import kotlin.reflect.full.companionObjectInstance
+import kotlin.reflect.full.memberFunctions
+import java.nio.file.Path
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.encodeToString
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.descriptors.element
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.encoding.encodeStructure
 
-@Serializable
-data class Tag(
+@Serializable(with = Tag.Companion.TagSerializer::class)
+data class Tag<out T : TaggedResourceLocationArgument>(
 	@Transient
 	override var fileName: String = "tag",
 	@Transient
-	var type: String = "tag",
-	@Transient
+	var type: String = "",
 	var replace: Boolean = false,
 	var values: List<TagEntry> = emptyList(),
 ) : Generator("tags") {
-	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
+
+	@Transient
+	@PublishedApi
+	internal var tagClass: KClass<out TaggedResourceLocationArgument> = TaggedResourceLocationArgument::class
+
+	@PublishedApi
+	internal val invokeFunction get() = tagClass.companionObject!!.memberFunctions.first { it.name == "invoke" }
+
+	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(TagSerializer, this)
+
+	override fun getFinalPath(dataPack: DataPack): Path {
+		val dataFolder = Path(dataPack.path.toString(), dataPack.name, "data")
+		return Path(dataFolder.toString(), namespace ?: dataPack.name, resourceFolder, type, "$fileName.json")
+	}
 
 	operator fun plusAssign(value: TagEntry) {
 		values += value
@@ -35,7 +60,12 @@ data class Tag(
 		values += TagEntry(value.asString())
 	}
 
-	fun add(name: String, namespace: String = "minecraft", tag: Boolean = false, required: Boolean? = null) {
+	fun add(
+		name: String,
+		namespace: String = "minecraft",
+		tag: Boolean = false,
+		required: Boolean? = null,
+	) {
 		values += TagEntry("${if (tag) "#" else ""}$namespace:$name", required)
 	}
 
@@ -46,29 +76,71 @@ data class Tag(
 	fun add(value: ResourceLocationArgument, required: Boolean? = null) {
 		values += TagEntry(value.asString(), required)
 	}
+
+	companion object {
+		data object TagSerializer : KSerializer<Tag<*>> {
+			override val descriptor = buildClassSerialDescriptor("Tag") {
+				element<Boolean>("replace")
+				element<List<TagEntry>>("values")
+			}
+
+			override fun deserialize(decoder: Decoder) = error("Tag cannot be deserialized")
+
+			override fun serialize(encoder: Encoder, value: Tag<*>) = encoder.encodeStructure(descriptor) {
+				encodeBooleanElement(descriptor, 0, value.replace)
+				encodeSerializableElement(descriptor, 1, ListSerializer(TagEntry.serializer()), value.values)
+			}
+		}
+	}
 }
 
-fun DataPack.tag(
-	type: String,
+inline fun <reified T : TaggedResourceLocationArgument> DataPack.tag(
 	fileName: String = "tag",
+	type: String = "",
+	namespace: String = name,
 	replace: Boolean = false,
-	block: Tag.() -> Unit = {},
-) {
-	tags += Tag(fileName = fileName, type = type, replace = replace).apply(block)
+	block: Tag<T>.() -> Unit = {},
+): T {
+	val tag = Tag<T>(fileName = fileName, type = type, replace = replace).apply {
+		this.namespace = namespace
+		tagClass = T::class
+		block()
+	}
+	tags += tag
+	return tag.invokeFunction.call(tag.tagClass.companionObjectInstance, fileName, namespace) as T
 }
 
-fun DataPack.addToTag(
-	type: String,
+@JvmName("tagUntyped")
+inline fun DataPack.tag(
 	fileName: String = "tag",
-	namespace: String = "minecraft",
-	block: Tag.() -> Unit = {},
-) {
+	type: String = "",
+	namespace: String = name,
+	replace: Boolean = false,
+	block: Tag<TaggedResourceLocationArgument>.() -> Unit = {},
+): TaggedResourceLocationArgument = tag<TaggedResourceLocationArgument>(fileName, type, namespace, replace, block)
+
+inline fun <reified T : TaggedResourceLocationArgument> DataPack.addToTag(
+	fileName: String = "tag",
+	type: String = "",
+	namespace: String = name,
+	block: Tag<T>.() -> Unit = {},
+): T {
 	val tag = tags.find {
-		it.fileName == fileName && it.type == type && it.namespace == namespace
-	} ?: Tag(fileName = fileName, type = type).also {
+		it.fileName == fileName && it.type == type && it.namespace == namespace && it.tagClass == T::class
+	} as Tag<T>? ?: Tag<T>(fileName = fileName, type = type).also {
 		it.namespace = namespace
+		it.tagClass = T::class
 		tags += it
 	}
 
 	tag.apply(block)
+	return tag.invokeFunction.call(tag.tagClass.companionObjectInstance, fileName, namespace) as T
 }
+
+@JvmName("addToTagUntyped")
+inline fun DataPack.addToTag(
+	fileName: String = "tag",
+	type: String = "",
+	namespace: String = name,
+	block: Tag<TaggedResourceLocationArgument>.() -> Unit = {},
+): TaggedResourceLocationArgument = addToTag<TaggedResourceLocationArgument>(fileName, type, namespace, block)

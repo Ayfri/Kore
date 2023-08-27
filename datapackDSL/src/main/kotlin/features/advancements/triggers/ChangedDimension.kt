@@ -1,6 +1,6 @@
 package features.advancements.triggers
 
-import arguments.types.resources.DimensionArgument
+import arguments.types.resources.worldgen.DimensionArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

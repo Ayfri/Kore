@@ -1,10 +1,10 @@
 package commands
 
 import arguments.types.DataArgument
+import arguments.types.FunctionOrTagArgument
 import arguments.types.literals.compound
 import arguments.types.literals.literal
 import arguments.types.literals.tag
-import arguments.types.resources.FunctionArgument
 import functions.Function
 import functions.FunctionWithMacros
 import functions.Macros
@@ -48,7 +48,7 @@ fun Function.function(namespace: String, name: String, group: Boolean = false, a
 	)
 )
 
-fun Function.function(function: FunctionArgument, arguments: NbtCompound? = null) = addLine(
+fun Function.function(function: FunctionOrTagArgument, arguments: NbtCompound? = null) = addLine(
 	command(
 		"function",
 		function,
@@ -56,7 +56,7 @@ fun Function.function(function: FunctionArgument, arguments: NbtCompound? = null
 	)
 )
 
-fun Function.function(function: FunctionArgument, arguments: DataArgument, path: String? = null) = addLine(
+fun Function.function(function: FunctionOrTagArgument, arguments: DataArgument, path: String? = null) = addLine(
 	command(
 		"function",
 		function,

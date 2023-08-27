@@ -1,8 +1,8 @@
 package arguments.enums
 
-import arguments.types.resources.DimensionArgument
-import kotlinx.serialization.Serializable
+import arguments.types.resources.worldgen.DimensionArgument
 import serializers.LowercaseSerializer
+import kotlinx.serialization.Serializable
 
 @Serializable(Dimension.Companion.DimensionSerializer::class)
 enum class Dimension : DimensionArgument {

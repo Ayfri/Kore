@@ -5,10 +5,10 @@ import arguments.types.ResourceLocationArgument
 import kotlinx.serialization.Serializable
 
 @Serializable(with = Argument.ArgumentSerializer::class)
-interface DimensionGeneratorArgument : ResourceLocationArgument {
+interface PointOfInterestArgument : ResourceLocationArgument {
 	companion object {
-		operator fun invoke(dimension: String, namespace: String = "minecraft") = object : DimensionGeneratorArgument {
-			override val name = dimension
+		operator fun invoke(pointOfInterest: String, namespace: String = "minecraft") = object : PointOfInterestArgument {
+			override val name = pointOfInterest
 			override val namespace = namespace
 		}
 	}

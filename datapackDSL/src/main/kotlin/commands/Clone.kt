@@ -4,11 +4,11 @@ import arguments.maths.Vec3
 import arguments.maths.vec3
 import arguments.types.BlockOrTagArgument
 import arguments.types.literals.literal
-import arguments.types.resources.DimensionArgument
+import arguments.types.resources.worldgen.DimensionArgument
 import functions.Function
-import kotlinx.serialization.Serializable
 import serializers.LowercaseSerializer
 import utils.asArg
+import kotlinx.serialization.Serializable
 
 @Serializable(Type.Companion.TypeSerializer::class)
 private enum class Type {

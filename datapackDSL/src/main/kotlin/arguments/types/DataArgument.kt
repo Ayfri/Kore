@@ -5,7 +5,9 @@ import arguments.maths.Vec3
 import arguments.types.literals.SelectorArgument
 import arguments.types.literals.UUIDArgument
 import arguments.types.resources.StorageArgument
+import kotlinx.serialization.Serializable
 
+@Serializable(with = Argument.ArgumentSerializer::class)
 interface DataArgument : Argument {
 	val literalName
 		get() = when (this) {

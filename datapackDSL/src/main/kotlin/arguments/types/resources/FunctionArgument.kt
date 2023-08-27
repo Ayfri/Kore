@@ -1,12 +1,13 @@
 package arguments.types.resources
 
 import arguments.Argument
+import arguments.types.FunctionOrTagArgument
 import arguments.types.ResourceLocationArgument
-import kotlinx.serialization.Serializable
 import utils.ifNotEmpty
+import kotlinx.serialization.Serializable
 
 @Serializable(with = Argument.ArgumentSerializer::class)
-interface FunctionArgument : ResourceLocationArgument {
+interface FunctionArgument : ResourceLocationArgument, FunctionOrTagArgument {
 	var directory: String
 
 	override fun asId() = "$namespace:${directory.ifNotEmpty { "$it/" }}$name"

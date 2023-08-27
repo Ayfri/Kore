@@ -4,9 +4,9 @@ import arguments.maths.Vec3
 import arguments.types.literals.RotationArgument
 import arguments.types.literals.int
 import arguments.types.literals.literal
-import arguments.types.resources.StructureArgument
 import arguments.types.resources.worldgen.ConfiguredFeatureArgument
 import arguments.types.resources.worldgen.ConfiguredStructureArgument
+import arguments.types.resources.worldgen.StructureArgument
 import arguments.types.resources.worldgen.TemplatePoolArgument
 import functions.Function
 import utils.asArg

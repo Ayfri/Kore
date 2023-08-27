@@ -2,9 +2,9 @@ package features.worldgen.dimensiontype
 
 import DataPack
 import Generator
-import arguments.types.resources.DimensionArgument
-import arguments.types.resources.DimensionTypeArgument
 import arguments.types.resources.tagged.BlockTagArgument
+import arguments.types.resources.worldgen.DimensionArgument
+import arguments.types.resources.worldgen.DimensionTypeArgument
 import features.worldgen.intproviders.IntProvider
 import features.worldgen.intproviders.constant
 import generated.Tags

@@ -1,7 +1,7 @@
 package features.worldgen.configuredfeature.configurations
 
-import arguments.types.resources.StructureArgument
 import arguments.types.resources.worldgen.ProcessorListArgument
+import arguments.types.resources.worldgen.StructureArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

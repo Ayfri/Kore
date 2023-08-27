@@ -7,9 +7,9 @@ import arguments.maths.Vec3
 import arguments.selector.Sort
 import arguments.types.EntityArgument
 import arguments.types.literals.*
-import arguments.types.resources.DimensionArgument
 import arguments.types.resources.EntityTypeArgument
 import arguments.types.resources.PredicateArgument
+import arguments.types.resources.worldgen.DimensionArgument
 import serializers.LowercaseSerializer
 import utils.asArg
 import kotlinx.serialization.Serializable

@@ -63,7 +63,7 @@ class DataPack(val name: String) {
 	val recipes = registerGenerator<RecipeFile>()
 	val structures = registerGenerator<Structure>()
 	val structureSets = registerGenerator<StructureSet>()
-	val tags = registerGenerator<Tag>()
+	val tags = registerGenerator<Tag<*>>()
 	val templatePools = registerGenerator<TemplatePool>()
 	val worldPresets = registerGenerator<WorldPreset>()
 
