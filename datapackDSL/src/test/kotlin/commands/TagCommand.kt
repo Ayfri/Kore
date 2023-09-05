@@ -1,8 +1,8 @@
 package commands
 
 import arguments.types.literals.allPlayers
+import assertions.assertsIs
 import functions.Function
-import utils.assertsIs
 
 fun Function.tagTests() {
 	tag(allPlayers()) {

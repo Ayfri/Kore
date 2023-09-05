@@ -2,10 +2,10 @@ package commands
 
 import arguments.types.literals.randomUUID
 import arguments.types.literals.self
+import assertions.assertsIs
+import assertions.assertsMatches
 import functions.Function
 import generated.Attributes
-import utils.assertsIs
-import utils.assertsMatches
 
 fun Function.attributeTests() {
 	val attribute = Attributes.GENERIC_MAX_HEALTH

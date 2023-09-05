@@ -1,10 +1,10 @@
 package commands
 
 import arguments.maths.vec3
+import assertions.assertsIs
+import assertions.assertsMatches
 import functions.Function
 import generated.Blocks
-import utils.assertsIs
-import utils.assertsMatches
 
 fun Function.returnCommand() {
 	returnValue(0) assertsIs "return 0"

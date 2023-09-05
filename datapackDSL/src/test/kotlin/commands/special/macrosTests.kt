@@ -1,11 +1,11 @@
 package commands.special
 
 import DataPack
+import assertions.assertsIs
+import assertions.assertsThrows
 import commands.function
 import commands.say
 import functions.*
-import utils.assertsIs
-import utils.assertsThrows
 import utils.nbt
 import utils.set
 

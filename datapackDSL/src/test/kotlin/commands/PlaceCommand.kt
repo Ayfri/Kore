@@ -3,12 +3,12 @@ package commands
 import arguments.maths.vec3
 import arguments.numbers.rot
 import arguments.types.literals.rotation
+import assertions.assertsIs
 import functions.Function
 import generated.ConfiguredFeatures
 import generated.ConfiguredStructures
 import generated.Structures
 import generated.TemplatePools
-import utils.assertsIs
 
 fun Function.placeTests() {
 	placeFeature(ConfiguredFeatures.BONUS_CHEST, vec3()) assertsIs "place feature minecraft:bonus_chest ~ ~ ~"

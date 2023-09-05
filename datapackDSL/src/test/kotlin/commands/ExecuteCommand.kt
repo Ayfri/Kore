@@ -17,6 +17,7 @@ import arguments.types.literals.allEntities
 import arguments.types.literals.rotation
 import arguments.types.literals.self
 import arguments.types.resources.FunctionArgument
+import assertions.assertsIs
 import commands.execute.*
 import functions.Function
 import functions.function
@@ -24,7 +25,6 @@ import generated.Blocks
 import generated.EntityTypes
 import generated.Tags
 import helpers.predicateRandomChance
-import utils.assertsIs
 import utils.debugEntity
 
 fun Function.executeTests() {

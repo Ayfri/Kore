@@ -2,8 +2,8 @@ package features
 
 import DataPack
 import arguments.colors.Color
+import assertions.assertsIs
 import features.chattype.*
-import utils.assertsIs
 
 fun DataPack.chatTypeTests() {
 	chatType("test_chat_type") {

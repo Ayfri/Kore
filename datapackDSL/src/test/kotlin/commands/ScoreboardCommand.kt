@@ -2,8 +2,8 @@ package commands
 
 import arguments.DisplaySlots
 import arguments.types.literals.self
+import assertions.assertsIs
 import functions.Function
-import utils.assertsIs
 
 fun Function.scoreboardTests() {
 	scoreboard {

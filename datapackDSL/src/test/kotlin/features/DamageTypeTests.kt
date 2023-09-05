@@ -2,13 +2,13 @@ package features
 
 import DataPack
 import arguments.types.literals.self
+import assertions.assertsIs
 import commands.damage
 import features.damagetypes.damageType
 import features.damagetypes.types.DeathMessageType
 import features.damagetypes.types.Effects
 import features.damagetypes.types.Scaling
 import functions.load
-import utils.assertsIs
 
 fun DataPack.damageTypeTests() {
 	val damageType = damageType("test_damage_type", "test_message_id", Scaling.NEVER) {

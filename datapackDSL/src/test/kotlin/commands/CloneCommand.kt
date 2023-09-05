@@ -3,9 +3,9 @@ package commands
 import arguments.enums.Dimension
 import arguments.maths.vec3
 import arguments.numbers.relativePos
+import assertions.assertsMatches
 import functions.Function
 import generated.Tags
-import utils.assertsMatches
 import kotlin.random.Random
 
 private fun randomPos(from: Int = 0, to: Int = 100) = Random.nextInt(from, to).relativePos

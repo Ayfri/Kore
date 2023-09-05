@@ -1,8 +1,8 @@
 package commands
 
 import arguments.numbers.TimeType
+import assertions.assertsIs
 import functions.Function
-import utils.assertsIs
 
 fun Function.timeTests() {
 	time {

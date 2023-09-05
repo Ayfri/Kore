@@ -1,6 +1,7 @@
 package features.worldgen
 
 import DataPack
+import assertions.assertsIs
 import commands.execute.execute
 import commands.execute.run
 import commands.say
@@ -17,7 +18,6 @@ import generated.Biomes
 import generated.Blocks
 import generated.DimensionTypes
 import generated.StructureSets
-import utils.assertsIs
 
 fun DataPack.dimensionTests() {
 	val dimension = dimension("my_dimension", DimensionTypes.OVERWORLD) {

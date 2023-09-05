@@ -1,11 +1,11 @@
 package features.worldgen
 
 import DataPack
+import assertions.assertsIs
 import features.worldgen.densityfunction.densityFunction
 import features.worldgen.densityfunction.types.*
 import generated.DensityFunctions
 import generated.Noises
-import utils.assertsIs
 
 fun DataPack.densityFunctionTests() {
 	densityFunction(

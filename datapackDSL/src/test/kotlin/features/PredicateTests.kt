@@ -1,6 +1,7 @@
 package features
 
 import DataPack
+import assertions.assertsIs
 import commands.execute.execute
 import commands.execute.run
 import features.advancements.types.item
@@ -11,7 +12,6 @@ import features.predicates.conditions.weatherCheck
 import features.predicates.predicate
 import functions.function
 import generated.Items
-import utils.assertsIs
 
 fun DataPack.predicateTests() {
 	val myPredicate = predicate("test1") {

@@ -1,9 +1,9 @@
 package commands
 
-import arguments.colors.Color
+import arguments.colors.BossBarColor
 import arguments.types.literals.self
+import assertions.assertsIs
 import functions.Function
-import utils.assertsIs
 
 fun Function.bossBarTests() {
 	bossBars.add("bar", displayName = "foo") assertsIs "bossbar add minecraft:bar \"foo\""
@@ -18,7 +18,7 @@ fun Function.bossBarTests() {
 		getValue() assertsIs "bossbar get foo:bar value"
 		getVisible() assertsIs "bossbar get foo:bar visible"
 
-		setColor(Color.BLUE) assertsIs "bossbar set foo:bar color blue"
+		setColor(BossBarColor.BLUE) assertsIs "bossbar set foo:bar color blue"
 		setMax(1) assertsIs "bossbar set foo:bar max 1"
 		setName("bar") assertsIs "bossbar set foo:bar name bar"
 		setPlayers(self()) assertsIs "bossbar set foo:bar players @s"

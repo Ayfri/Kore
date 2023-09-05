@@ -1,6 +1,7 @@
 package features.worldgen
 
 import DataPack
+import assertions.assertsIs
 import features.worldgen.biome.types.monster
 import features.worldgen.biome.types.spawner
 import features.worldgen.structures.GenerationStep
@@ -12,7 +13,6 @@ import features.worldgen.structures.types.spawnOverrides
 import generated.Biomes
 import generated.EntityTypes
 import generated.Tags
-import utils.assertsIs
 
 fun DataPack.structureTests() {
 	structuresBuilder.desertPyramid {

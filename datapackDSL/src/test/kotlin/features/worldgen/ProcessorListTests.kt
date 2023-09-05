@@ -2,6 +2,7 @@ package features.worldgen
 
 import DataPack
 import arguments.enums.Axis
+import assertions.assertsIs
 import data.block.blockStateStone
 import features.worldgen.processorlist.processorList
 import features.worldgen.processorlist.types.Nop
@@ -12,7 +13,6 @@ import features.worldgen.processorlist.types.rule.positionpredicate.axisAlignedL
 import features.worldgen.processorlist.types.rule.rule
 import features.worldgen.processorlist.types.rules
 import features.worldgen.ruletest.randomBlockStateMatch
-import utils.assertsIs
 import utils.set
 
 fun DataPack.processorListTests() {

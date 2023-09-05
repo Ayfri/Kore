@@ -3,9 +3,9 @@ package commands
 import arguments.chatcomponents.scoreComponent
 import arguments.chatcomponents.textComponent
 import arguments.types.literals.self
+import assertions.assertsIs
 import functions.Function
 import net.benwoodworth.knbt.NbtInt
-import utils.assertsIs
 import utils.set
 
 fun Function.dataTests() {

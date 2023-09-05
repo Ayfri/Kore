@@ -1,6 +1,7 @@
 package features.worldgen
 
 import DataPack
+import assertions.assertsIs
 import data.block.blockState
 import features.worldgen.blockpredicate.allOf
 import features.worldgen.blockpredicate.matchingBlocks
@@ -20,7 +21,6 @@ import features.worldgen.configuredfeature.target
 import features.worldgen.ruletest.randomBlockMatch
 import generated.Blocks
 import generated.Tags
-import utils.assertsIs
 
 fun DataPack.configuredFeatureTests() {
 	configuredFeature("test_tree", tree {

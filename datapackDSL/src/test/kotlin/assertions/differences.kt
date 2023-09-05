@@ -1,4 +1,4 @@
-package utils
+package assertions
 
 fun generateDiffString(expected: String, got: String): String {
 	val minLength = minOf(expected.length, got.length)

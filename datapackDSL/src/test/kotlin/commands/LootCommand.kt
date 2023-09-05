@@ -5,10 +5,10 @@ import arguments.CONTAINER
 import arguments.maths.vec3
 import arguments.numbers.PosNumber
 import arguments.types.literals.self
+import assertions.assertsIs
 import functions.Function
 import generated.Items
 import generated.LootTables
-import utils.assertsIs
 
 fun Function.lootTests() {
 	loot(self()) {

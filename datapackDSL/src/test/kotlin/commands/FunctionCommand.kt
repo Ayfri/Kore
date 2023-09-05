@@ -1,10 +1,10 @@
 package commands
 
 import arguments.types.resources.storage
+import assertions.assertsIs
 import functions.Function
 import functions.function
 import net.benwoodworth.knbt.buildNbtCompound
-import utils.assertsIs
 import utils.set
 
 fun Function.functionTests() {

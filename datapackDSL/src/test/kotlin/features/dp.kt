@@ -1,7 +1,7 @@
 package features
 
+import assertions.assertGeneratorsGenerated
 import features.worldgen.*
-import utils.assertGeneratorsGenerated
 import utils.pretty
 import utils.testDataPack
 

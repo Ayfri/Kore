@@ -1,10 +1,10 @@
 package features.worldgen
 
 import DataPack
+import assertions.assertsIs
 import features.worldgen.structureset.*
 import generated.Biomes
 import generated.ConfiguredStructures
-import utils.assertsIs
 
 fun DataPack.structureSetTests() {
 	val set = structureSet("my_structure_set") {

@@ -1,6 +1,7 @@
 package features.worldgen
 
 import DataPack
+import assertions.assertsIs
 import features.worldgen.templatepool.Projection
 import features.worldgen.templatepool.elements
 import features.worldgen.templatepool.elements.empty
@@ -11,7 +12,6 @@ import features.worldgen.templatepool.templatePool
 import generated.PlacedFeatures
 import generated.ProcessorLists
 import generated.Structures
-import utils.assertsIs
 
 fun DataPack.templatePoolTests() {
 	templatePool("test") {

@@ -2,6 +2,7 @@ package features.worldgen
 
 import DataPack
 import arguments.colors.Color
+import assertions.assertsIs
 import commands.locateBiome
 import features.worldgen.biome.*
 import features.worldgen.biome.types.*
@@ -9,7 +10,6 @@ import functions.load
 import generated.Carvers
 import generated.EntityTypes
 import generated.PlacedFeatures
-import utils.assertsIs
 
 fun DataPack.biomeTests() {
 	val biome = biome("my_biome") {

@@ -3,8 +3,8 @@ package commands
 import arguments.numbers.days
 import arguments.numbers.seconds
 import arguments.numbers.ticks
+import assertions.assertsIs
 import functions.Function
-import utils.assertsIs
 
 fun Function.scheduleTests() {
 	schedule("test").append(1.seconds) assertsIs "schedule function test 1s append"

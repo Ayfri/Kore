@@ -1,9 +1,9 @@
 package commands
 
 import arguments.types.literals.self
+import assertions.assertsIs
 import functions.Function
 import generated.Advancements
-import utils.assertsIs
 
 fun Function.advancementTests() {
 	advancement {

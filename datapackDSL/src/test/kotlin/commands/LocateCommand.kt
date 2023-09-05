@@ -1,10 +1,10 @@
 package commands
 
+import assertions.assertsIs
 import functions.Function
 import generated.Biomes
 import generated.ConfiguredStructures
 import generated.Tags
-import utils.assertsIs
 
 fun Function.locateTests() {
 	locateBiome(Biomes.PLAINS) assertsIs "locate biome minecraft:plains"

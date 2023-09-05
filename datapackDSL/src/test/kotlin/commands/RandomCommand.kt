@@ -2,8 +2,8 @@ package commands
 
 import arguments.numbers.ranges.range
 import arguments.types.resources.RandomSequenceArgument
+import assertions.assertsIs
 import functions.Function
-import utils.assertsIs
 
 fun Function.randomTests() {
 	randomValue(1..6) assertsIs "random value 1..6"

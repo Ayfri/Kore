@@ -2,6 +2,7 @@ package features
 
 import DataPack
 import arguments.types.literals.self
+import assertions.assertsIs
 import commands.loot
 import features.itemmodifiers.functions.conditions
 import features.itemmodifiers.functions.enchantRandomly
@@ -15,7 +16,6 @@ import features.predicates.providers.constant
 import functions.load
 import generated.Enchantments
 import generated.LootTables
-import utils.assertsIs
 
 fun DataPack.lootTableTests() {
 	val lootTable = lootTable("loot_table") {

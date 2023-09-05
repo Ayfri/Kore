@@ -1,8 +1,8 @@
 package commands
 
+import assertions.assertsIs
 import functions.Function
 import generated.Gamerules
-import utils.assertsIs
 
 fun Function.gameruleTests() {
 	gamerule("doDaylightCycle", true) assertsIs "gamerule doDaylightCycle true"

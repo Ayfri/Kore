@@ -1,8 +1,8 @@
 package features.worldgen
 
 import DataPack
+import assertions.assertsIs
 import features.worldgen.noise.noise
-import utils.assertsIs
 
 fun DataPack.noiseTests() {
 	noise("noise_test") {

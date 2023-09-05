@@ -1,8 +1,8 @@
 package commands
 
 import arguments.maths.vec2
+import assertions.assertsIs
 import functions.Function
-import utils.assertsIs
 
 fun Function.forceLoadTests() {
 	forceLoad {

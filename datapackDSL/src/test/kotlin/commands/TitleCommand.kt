@@ -7,8 +7,8 @@ import arguments.numbers.seconds
 import arguments.numbers.ticks
 import arguments.types.literals.randomPlayer
 import arguments.types.literals.self
+import assertions.assertsIs
 import functions.Function
-import utils.assertsIs
 
 fun Function.titleTests() {
 	title(randomPlayer(), TitleAction.CLEAR) assertsIs "title @r clear"

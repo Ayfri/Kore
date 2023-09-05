@@ -7,9 +7,9 @@ import arguments.WEAPON
 import arguments.maths.vec3
 import arguments.types.literals.self
 import arguments.types.resources.ItemModifierArgument
+import assertions.assertsIs
 import functions.Function
 import generated.Items
-import utils.assertsIs
 
 fun Function.itemTests() {
 	items {

@@ -1,7 +1,7 @@
 package commands
 
+import assertions.assertsIs
 import functions.Function
-import utils.assertsIs
 
 fun Function.dataPackTests() {
 	dataPack("test") {

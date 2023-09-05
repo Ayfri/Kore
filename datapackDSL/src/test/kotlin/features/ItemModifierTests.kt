@@ -3,6 +3,7 @@ package features
 import DataPack
 import arguments.WEAPON
 import arguments.types.literals.self
+import assertions.assertsIs
 import commands.items
 import features.itemmodifiers.functions.MapDecoration
 import features.itemmodifiers.functions.conditions
@@ -13,7 +14,6 @@ import features.predicates.conditions.randomChance
 import features.predicates.conditions.weatherCheck
 import functions.load
 import generated.Tags
-import utils.assertsIs
 
 fun DataPack.itemModifierTests() {
 	val modifier = itemModifier("test_modifier") {

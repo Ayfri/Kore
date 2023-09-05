@@ -1,6 +1,7 @@
 package features.worldgen
 
 import DataPack
+import assertions.assertsIs
 import features.worldgen.dimension.biomesource.multinoise.multiNoiseBiomeSourceParameters
 import features.worldgen.noise.noise
 import features.worldgen.noisesettings.*
@@ -14,7 +15,6 @@ import features.worldgen.noisesettings.rules.surfaceRules
 import generated.Biomes
 import generated.Blocks
 import generated.DensityFunctions
-import utils.assertsIs
 
 fun DataPack.noiseSettingsTests() {
 	val myNoise = noise("my_noise") {

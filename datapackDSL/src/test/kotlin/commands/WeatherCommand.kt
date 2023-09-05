@@ -1,8 +1,8 @@
 package commands
 
 import arguments.numbers.days
+import assertions.assertsIs
 import functions.Function
-import utils.assertsIs
 
 fun Function.weatherTests() {
 	weatherClear() assertsIs "weather clear"

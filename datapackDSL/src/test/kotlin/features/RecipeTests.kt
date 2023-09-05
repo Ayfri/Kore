@@ -2,6 +2,7 @@ package features
 
 import DataPack
 import arguments.types.literals.allPlayers
+import assertions.assertsIs
 import commands.recipeGive
 import features.recipes.recipes
 import features.recipes.recipesBuilder
@@ -9,7 +10,6 @@ import features.recipes.types.*
 import functions.load
 import generated.Items
 import generated.Tags
-import utils.assertsIs
 
 fun DataPack.recipeTest() {
 	recipes {

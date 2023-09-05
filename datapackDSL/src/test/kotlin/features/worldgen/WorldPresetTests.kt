@@ -1,6 +1,7 @@
 package features.worldgen
 
 import DataPack
+import assertions.assertsIs
 import features.worldgen.dimension.biomesource.multiNoise
 import features.worldgen.dimension.biomesource.theEnd
 import features.worldgen.dimension.generator.noiseGenerator
@@ -9,7 +10,6 @@ import features.worldgen.worldpreset.worldPreset
 import generated.BiomePresets
 import generated.DimensionTypes
 import generated.NoiseSettings
-import utils.assertsIs
 
 fun DataPack.worldPresetTests() {
 	worldPreset("my_world_preset") {

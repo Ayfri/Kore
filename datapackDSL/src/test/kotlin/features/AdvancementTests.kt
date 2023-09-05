@@ -2,6 +2,7 @@ package features
 
 import DataPack
 import arguments.types.literals.self
+import assertions.assertsIs
 import commands.advancement
 import commands.say
 import features.advancements.*
@@ -16,7 +17,6 @@ import generated.Advancements
 import generated.Items
 import generated.LootTables
 import generated.Recipes
-import utils.assertsIs
 
 fun DataPack.advancementTests() {
 	val advancement = advancement("test") {

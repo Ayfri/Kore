@@ -1,6 +1,7 @@
 package features.worldgen
 
 import DataPack
+import assertions.assertsIs
 import features.worldgen.blockpredicate.allOf
 import features.worldgen.blockpredicate.matchingBlockTag
 import features.worldgen.blockpredicate.trueBlockPredicate
@@ -10,7 +11,6 @@ import features.worldgen.placedfeature.modifiers.rarityFilter
 import features.worldgen.placedfeature.placedFeature
 import generated.ConfiguredFeatures
 import generated.Tags
-import utils.assertsIs
 
 fun DataPack.placedFeatureTests() {
 	placedFeature("test", ConfiguredFeatures.ACACIA) {

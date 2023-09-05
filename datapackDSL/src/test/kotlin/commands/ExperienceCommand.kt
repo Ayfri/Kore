@@ -3,8 +3,8 @@ package commands
 import arguments.numbers.levels
 import arguments.numbers.points
 import arguments.types.literals.self
+import assertions.assertsIs
 import functions.Function
-import utils.assertsIs
 
 fun Function.experienceTests() {
 	experience(self()) {

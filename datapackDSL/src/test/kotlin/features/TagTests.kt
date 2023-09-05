@@ -1,13 +1,13 @@
 package features
 
 import DataPack
+import assertions.assertsIs
 import commands.function
 import commands.say
 import features.tags.functionTag
 import features.tags.tag
 import functions.function
 import functions.load
-import utils.assertsIs
 
 fun DataPack.tagTests() {
 	val myTag = functionTag(fileName = "shiny_functions") {

@@ -1,6 +1,7 @@
 package features.worldgen
 
 import DataPack
+import assertions.assertsIs
 import data.block.blockState
 import data.block.properties
 import features.worldgen.configuredcarver.canyonConfig
@@ -14,7 +15,6 @@ import features.worldgen.floatproviders.uniform
 import features.worldgen.heightproviders.constantAboveBottom
 import features.worldgen.noisesettings.rules.conditions.belowTop
 import generated.Blocks
-import utils.assertsIs
 
 fun DataPack.configuredCarverTests() {
 	configuredCarver("my_configured_carver", canyonConfig {

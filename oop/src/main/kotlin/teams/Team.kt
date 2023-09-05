@@ -1,7 +1,7 @@
 package teams
 
 import arguments.chatcomponents.ChatComponents
-import arguments.colors.NamedColor
+import arguments.colors.FormattingColor
 import arguments.types.ScoreHolderArgument
 import commands.CollisionRule
 import commands.Visibility
@@ -80,7 +80,7 @@ fun Team.setDeathMessageVisibility(visibility: Visibility) = teams {
 }
 
 context(Function)
-fun Team.setColor(color: NamedColor) = teams {
+fun Team.setColor(color: FormattingColor) = teams {
 	modify(name) {
 		color(color)
 	}

@@ -3,9 +3,9 @@ package commands
 import arguments.maths.Vec3
 import arguments.types.literals.allEntities
 import arguments.types.literals.self
+import assertions.assertsIs
 import functions.Function
 import generated.DamageTypes
-import utils.assertsIs
 
 fun Function.damageTests() {
 	damages(allEntities(true)) {

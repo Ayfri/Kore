@@ -14,6 +14,8 @@ fun DataPack.setTestPath() {
 }
 
 fun main() {
+	colorTests()
+
 	datapackTests()
 	featuresTests()
 	helpersTests()

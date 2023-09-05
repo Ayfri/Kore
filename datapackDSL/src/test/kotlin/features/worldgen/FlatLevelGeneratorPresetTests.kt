@@ -1,6 +1,7 @@
 package features.worldgen
 
 import DataPack
+import assertions.assertsIs
 import features.worldgen.dimension.generator.Layer
 import features.worldgen.flatlevelgeneratorpreset.flatLevelGeneratorPreset
 import features.worldgen.flatlevelgeneratorpreset.settings
@@ -8,7 +9,6 @@ import generated.Biomes
 import generated.Blocks
 import generated.Items
 import generated.StructureSets
-import utils.assertsIs
 
 fun DataPack.flatLevelGeneratorPresetTests() {
 	flatLevelGeneratorPreset("my_flat_level_generator_preset") {

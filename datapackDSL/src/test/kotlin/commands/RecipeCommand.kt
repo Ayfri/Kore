@@ -2,8 +2,8 @@ package commands
 
 import arguments.types.literals.self
 import arguments.types.resources.RecipeArgument
+import assertions.assertsIs
 import functions.Function
-import utils.assertsIs
 
 fun Function.recipeTests() {
 	val recipe = RecipeArgument("stone")

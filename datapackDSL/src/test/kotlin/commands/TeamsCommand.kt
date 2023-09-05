@@ -2,8 +2,8 @@ package commands
 
 import arguments.colors.Color
 import arguments.types.literals.self
+import assertions.assertsIs
 import functions.Function
-import utils.assertsIs
 
 fun Function.teamsTests() {
 	teams {

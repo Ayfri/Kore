@@ -15,6 +15,7 @@ import arguments.types.literals.allPlayers
 import arguments.types.literals.nearestPlayer
 import arguments.types.literals.self
 import arguments.types.resources.ItemModifierArgument
+import assertions.assertsIs
 import commands.TitleLocation
 import commands.execute.execute
 import commands.execute.run
@@ -26,7 +27,6 @@ import functions.load
 import generated.Blocks
 import generated.Items
 import helpers.inventorymanager.*
-import utils.assertsIs
 import utils.nbt
 import utils.set
 

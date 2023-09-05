@@ -1,9 +1,9 @@
 package commands
 
 import arguments.types.literals.self
+import assertions.assertsIs
 import functions.Function
 import generated.Effects
-import utils.assertsIs
 
 fun Function.effectTests() {
 	effect(self()) {
