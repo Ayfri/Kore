@@ -1,7 +1,7 @@
 package arguments.colors
 
-import kotlinx.serialization.Serializable
 import serializers.ToStringSerializer
+import kotlinx.serialization.Serializable
 
 @Serializable(ARGB.Companion.ARGBSerializer::class)
 data class ARGB(var alpha: Int, var red: Int, var green: Int, var blue: Int) : Color {
@@ -72,12 +72,19 @@ data class ARGB(var alpha: Int, var red: Int, var green: Int, var blue: Int) : C
 	fun greyscale() = ARGB(alpha, (red + green + blue) / 3, (red + green + blue) / 3, (red + green + blue) / 3)
 	fun invert() = ARGB(255 - alpha, 255 - red, 255 - green, 255 - blue)
 
-	fun mix(other: ARGB, ratio: Double) = ARGB(
-		(alpha * (1 - ratio) + other.alpha * ratio).toInt().coerceIn(0, 255),
-		(red * (1 - ratio) + other.red * ratio).toInt().coerceIn(0, 255),
-		(green * (1 - ratio) + other.green * ratio).toInt().coerceIn(0, 255),
-		(blue * (1 - ratio) + other.blue * ratio).toInt().coerceIn(0, 255),
+	infix fun mix(other: ARGB) = ARGB(
+		(alpha + other.alpha) / 2,
+		(red + other.red) / 2,
+		(green + other.green) / 2,
+		(blue + other.blue) / 2,
 	)
+
+	fun mix(other: ARGB, ratio: Double) = this * (1 - ratio) + other * ratio
+
+	fun mix(other: ARGB, count: Int): List<ARGB> {
+		val step = 1.0 / count
+		return List(count) { mix(other, it * step) }
+	}
 
 	fun toHex(withHash: Boolean = false) = if (withHash) hexWithHash else hex
 

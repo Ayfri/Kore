@@ -15,48 +15,44 @@ interface Color : Argument {
 
 	fun toRGB() = when (this) {
 		is NamedColor -> RGB.fromNamedColor(this)
-		is BossBarColor -> RGB.fromNamedColor(this)
 		is RGB -> this
 		is ARGB -> RGB(red, green, blue)
 		else -> error("Unknown color type: $this")
 	}
 
 	companion object {
-		val AQUA = NamedColor("aqua")
-		val BLACK = NamedColor("black")
-		val BLUE = BossBarColor("blue")
-		val DARK_AQUA = NamedColor("dark_aqua")
-		val DARK_BLUE = NamedColor("dark_blue")
-		val DARK_GRAY = NamedColor("dark_gray")
-		val DARK_GREEN = NamedColor("dark_green")
-		val DARK_PURPLE = NamedColor("dark_purple")
-		val DARK_RED = NamedColor("dark_red")
-		val GOLD = NamedColor("gold")
-		val GRAY = NamedColor("gray")
-		val GREEN = BossBarColor("green")
-		val LIGHT_PURPLE = NamedColor("light_purple")
-		val PINK = BossBarColor("pink")
-		val PURPLE = BossBarColor("purple")
-		val RED = BossBarColor("red")
-		val WHITE = BossBarColor("white")
-		val YELLOW = BossBarColor("yellow")
+		val AQUA = FormattingColor.AQUA
+		val BLACK = FormattingColor.BLACK
+		val BLUE = FormattingColor.BLUE
+		val DARK_AQUA = FormattingColor.DARK_AQUA
+		val DARK_BLUE = FormattingColor.DARK_BLUE
+		val DARK_GRAY = FormattingColor.DARK_GRAY
+		val DARK_GREEN = FormattingColor.DARK_GREEN
+		val DARK_PURPLE = FormattingColor.DARK_PURPLE
+		val DARK_RED = FormattingColor.DARK_RED
+		val GOLD = FormattingColor.GOLD
+		val GRAY = FormattingColor.GRAY
+		val GREEN = FormattingColor.GREEN
+		val LIGHT_PURPLE = FormattingColor.LIGHT_PURPLE
+		val PINK = BossBarColor.PINK
+		val PURPLE = BossBarColor.PURPLE
+		val RED = FormattingColor.RED
+		val WHITE = FormattingColor.WHITE
+		val YELLOW = FormattingColor.YELLOW
 
 		object ColorSerializer : KSerializer<Color> {
 			override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Color", PrimitiveKind.STRING)
 
-			override fun deserialize(decoder: Decoder) = NamedColor(decoder.decodeString())
+			override fun deserialize(decoder: Decoder) = FormattingColor(decoder.decodeString())
 
 			override fun serialize(encoder: Encoder, value: Color) = when (value) {
-				is BossBarColor -> BossBarColor.serializer().serialize(encoder, value)
-				is NamedColor -> NamedColor.serializer().serialize(encoder, value)
-				is RGB -> RGB.serializer().serialize(encoder, value)
-				is ARGB -> ARGB.serializer().serialize(encoder, value)
+				is NamedColor -> encoder.encodeSerializableValue(NamedColor.serializer(), value)
+				is RGB -> encoder.encodeSerializableValue(RGB.serializer(), value)
+				is ARGB -> encoder.encodeSerializableValue(ARGB.serializer(), value)
 				else -> error("Unknown color type: $value")
 			}
 		}
-
 	}
-
 }
 
 fun color(red: Int, green: Int, blue: Int) = RGB(red, green, blue)

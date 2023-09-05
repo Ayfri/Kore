@@ -3,7 +3,7 @@ package commands
 import arguments.chatcomponents.ChatComponents
 import arguments.chatcomponents.PlainTextComponent
 import arguments.chatcomponents.textComponent
-import arguments.colors.NamedColor
+import arguments.colors.FormattingColor
 import arguments.types.ScoreHolderArgument
 import arguments.types.literals.bool
 import arguments.types.literals.literal
@@ -40,14 +40,14 @@ class Modify(private val fn: Function, val team: String) {
 	fun collisionRule(rule: CollisionRule) =
 		fn.addLine(command("team", literal("modify"), literal(team), literal("collisionRule"), literal(rule.asArg())))
 
-	fun color(color: NamedColor) = fn.addLine(command("team", literal("modify"), literal(team), literal("color"), color))
+	fun color(color: FormattingColor) = fn.addLine(command("team", literal("modify"), literal(team), literal("color"), color))
 
 	fun deathMessageVisibility(visibility: Visibility) =
 		fn.addLine(command("team", literal("modify"), literal(team), literal("deathMessageVisibility"), literal(visibility.asArg())))
 
 	fun displayName(name: ChatComponents) = fn.addLine(command("team", literal("modify"), literal(team), literal("displayName"), name))
 
-	fun displayName(name: String, color: NamedColor? = null, block: PlainTextComponent.() -> Unit = {}) =
+	fun displayName(name: String, color: FormattingColor? = null, block: PlainTextComponent.() -> Unit = {}) =
 		fn.addLine(command("team", literal("modify"), literal(team), literal("displayName"), textComponent(name, color, block)))
 
 	fun friendlyFire(allowed: Boolean) =
@@ -59,7 +59,7 @@ class Modify(private val fn: Function, val team: String) {
 	fun prefix(prefix: ChatComponents) =
 		fn.addLine(command("team", literal("modify"), literal(team), literal("prefix"), prefix.asJsonArg()))
 
-	fun prefix(prefix: String, color: NamedColor? = null, block: PlainTextComponent.() -> Unit = {}) =
+	fun prefix(prefix: String, color: FormattingColor? = null, block: PlainTextComponent.() -> Unit = {}) =
 		fn.addLine(command("team", literal("modify"), literal(team), literal("prefix"), textComponent(prefix, color, block).asJsonArg()))
 
 	fun seeFriendlyInvisibles(allowed: Boolean) =
@@ -68,7 +68,7 @@ class Modify(private val fn: Function, val team: String) {
 	fun suffix(suffix: ChatComponents) =
 		fn.addLine(command("team", literal("modify"), literal(team), literal("suffix"), suffix.asJsonArg()))
 
-	fun suffix(suffix: String, color: NamedColor? = null, block: PlainTextComponent.() -> Unit = {}) =
+	fun suffix(suffix: String, color: FormattingColor? = null, block: PlainTextComponent.() -> Unit = {}) =
 		fn.addLine(command("team", literal("modify"), literal(team), literal("suffix"), textComponent(suffix, color, block).asJsonArg()))
 }
 
@@ -76,7 +76,7 @@ class Teams(private val fn: Function) {
 	fun add(team: String, displayName: ChatComponents? = null) =
 		fn.addLine(command("team", literal("add"), literal(team), displayName?.asJsonArg()))
 
-	fun add(team: String, displayName: String, color: NamedColor? = null, block: PlainTextComponent.() -> Unit = {}) =
+	fun add(team: String, displayName: String, color: FormattingColor? = null, block: PlainTextComponent.() -> Unit = {}) =
 		fn.addLine(command("team", literal("add"), literal(team), textComponent(displayName, color, block).asJsonArg()))
 
 	fun empty(team: String) = fn.addLine(command("team", literal("empty"), literal(team)))

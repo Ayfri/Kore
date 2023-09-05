@@ -1,10 +1,10 @@
 package arguments.colors
 
+import kotlin.math.roundToInt
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
@@ -39,15 +39,15 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 	)
 
 	operator fun times(quotient: Double) = RGB(
-		(red * quotient).toInt().coerceIn(0, 255),
-		(green * quotient).toInt().coerceIn(0, 255),
-		(blue * quotient).toInt().coerceIn(0, 255),
+		(red * quotient).roundToInt().coerceIn(0, 255),
+		(green * quotient).roundToInt().coerceIn(0, 255),
+		(blue * quotient).roundToInt().coerceIn(0, 255),
 	)
 
 	operator fun div(quotient: Double) = RGB(
-		(red / quotient).toInt().coerceIn(0, 255),
-		(green / quotient).toInt().coerceIn(0, 255),
-		(blue / quotient).toInt().coerceIn(0, 255),
+		(red / quotient).roundToInt().coerceIn(0, 255),
+		(green / quotient).roundToInt().coerceIn(0, 255),
+		(blue / quotient).roundToInt().coerceIn(0, 255),
 	)
 
 	@Throws(IndexOutOfBoundsException::class)
@@ -75,11 +75,11 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 		(blue + other.blue) / 2,
 	)
 
+	fun mix(other: RGB, weight: Double) = this * (1 - weight) + other * weight
+
 	fun mix(other: RGB, count: Int): List<RGB> {
-		val result = mutableListOf<RGB>()
 		val step = 1.0 / count
-		(0..<count).mapTo(result) { this * (1 - step * it) + other * (step * it) }
-		return result
+		return List(count) { mix(other, it * step) }
 	}
 
 	fun toARGB(alpha: Int = 255) = ARGB(alpha, red, green, blue)
@@ -88,53 +88,47 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 	override fun toString() = hexWithHash
 
 	companion object {
-		fun fromHex(hex: String) = RGB(hex.removePrefix("#"))
 		fun fromDecimal(decimal: Int): RGB {
 			val red = decimal shr 16 and 0xFF
 			val green = decimal shr 8 and 0xFF
 			val blue = decimal and 0xFF
+
 			return RGB(red, green, blue)
 		}
 
+		fun fromHex(hex: String) = RGB(hex.removePrefix("#"))
+
 		fun fromNamedColor(color: NamedColor) = when (color) {
-			Color.AQUA -> RGB(85, 255, 255)
-			Color.BLACK -> RGB(0, 0, 0)
-			Color.BLUE -> RGB(85, 85, 255)
-			Color.DARK_AQUA -> RGB(0, 170, 170)
-			Color.DARK_BLUE -> RGB(0, 0, 170)
-			Color.DARK_GRAY -> RGB(85, 85, 85)
-			Color.DARK_GREEN -> RGB(0, 170, 0)
-			Color.DARK_PURPLE -> RGB(170, 0, 170)
-			Color.DARK_RED -> RGB(170, 0, 0)
-			Color.GOLD -> RGB(255, 170, 0)
-			Color.GRAY -> RGB(170, 170, 170)
-			Color.GREEN -> RGB(85, 255, 85)
-			Color.LIGHT_PURPLE -> RGB(255, 85, 255)
-			Color.PINK -> RGB(255, 0, 255)
-			Color.PURPLE -> RGB(170, 0, 255)
-			Color.RED -> RGB(255, 85, 85)
-			Color.WHITE -> RGB(255, 255, 255)
-			Color.YELLOW -> RGB(255, 255, 85)
+			FormattingColor.AQUA -> RGB(85, 255, 255)
+			FormattingColor.BLACK -> RGB(0, 0, 0)
+			FormattingColor.BLUE, BossBarColor.BLUE -> RGB(85, 85, 255)
+			FormattingColor.DARK_AQUA -> RGB(0, 170, 170)
+			FormattingColor.DARK_BLUE -> RGB(0, 0, 170)
+			FormattingColor.DARK_GRAY -> RGB(85, 85, 85)
+			FormattingColor.DARK_GREEN -> RGB(0, 170, 0)
+			FormattingColor.DARK_PURPLE -> RGB(170, 0, 170)
+			FormattingColor.DARK_RED -> RGB(170, 0, 0)
+			FormattingColor.GOLD -> RGB(255, 170, 0)
+			FormattingColor.GRAY -> RGB(170, 170, 170)
+			FormattingColor.GREEN, BossBarColor.GREEN -> RGB(85, 255, 85)
+			FormattingColor.LIGHT_PURPLE -> RGB(255, 85, 255)
+			BossBarColor.PINK -> RGB(255, 0, 255)
+			BossBarColor.PURPLE -> RGB(170, 0, 255)
+			FormattingColor.RED, BossBarColor.RED -> RGB(255, 85, 85)
+			FormattingColor.WHITE, BossBarColor.WHITE -> RGB(255, 255, 255)
+			FormattingColor.YELLOW, BossBarColor.YELLOW -> RGB(255, 255, 85)
 			else -> RGB(0, 0, 0)
 		}
 
 		object ColorSerializer : KSerializer<RGB> {
-			override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("RGB", PrimitiveKind.STRING)
-
-			override fun serialize(encoder: Encoder, value: RGB) {
-				encoder.encodeString(value.hexWithHash)
-			}
-
+			override val descriptor = PrimitiveSerialDescriptor("RGB", PrimitiveKind.STRING)
+			override fun serialize(encoder: Encoder, value: RGB) = encoder.encodeString(value.hexWithHash)
 			override fun deserialize(decoder: Decoder) = fromHex(decoder.decodeString())
 		}
 
 		object ColorAsDecimalSerializer : KSerializer<RGB> {
-			override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("RGB", PrimitiveKind.INT)
-
-			override fun serialize(encoder: Encoder, value: RGB) {
-				encoder.encodeInt(value.red shl 16 or (value.green shl 8) or value.blue)
-			}
-
+			override val descriptor = PrimitiveSerialDescriptor("RGB", PrimitiveKind.INT)
+			override fun serialize(encoder: Encoder, value: RGB) = encoder.encodeInt(value.red shl 16 or (value.green shl 8) or value.blue)
 			override fun deserialize(decoder: Decoder) = fromDecimal(decoder.decodeInt())
 		}
 	}
