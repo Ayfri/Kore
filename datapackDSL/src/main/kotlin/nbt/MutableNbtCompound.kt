@@ -14,7 +14,6 @@ class MutableNbtCompound(
 	override fun toString() = nbtData.toString()
 
 	fun toNbtCompound() = NbtCompound(nbtData.toMap())
-	fun toMutableNbtCompound() = MutableNbtCompound(nbtData.toMutableMap())
 
 	fun nbtCompound(key: String, value: MutableNbtCompound.() -> Unit) {
 		nbtData[key] = MutableNbtCompound().apply(value).toNbtCompound()
@@ -78,3 +77,5 @@ class MutableNbtCompound(
 }
 
 fun mutableNbt(value: MutableNbtCompound.() -> Unit = {}) = MutableNbtCompound().apply(value)
+
+fun NbtCompound.toMutableNbtCompound() = MutableNbtCompound(toMutableMap())

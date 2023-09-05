@@ -38,6 +38,6 @@ data class Selector(val base: SelectorType) {
 
 	override fun toString() = when {
 		nbtData == SelectorNbtData() -> "@${base.value}"
-		else -> "@${base.value}[${json.encodeToJsonElement<SelectorNbtData>(nbtData).toString().unescape()}]"
+		else -> "@${base.value}[${json.encodeToJsonElement(nbtData).toString().unescape()}]"
 	}
 }

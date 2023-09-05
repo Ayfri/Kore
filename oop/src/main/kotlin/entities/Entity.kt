@@ -14,8 +14,8 @@ import arguments.types.resources.FunctionArgument
 import commands.*
 import commands.execute.Execute
 import commands.execute.execute
+import data.item.ItemStack
 import functions.Function
-import items.ItemStack
 import scoreboard.ScoreboardEntity
 import teams.Team
 import teams.addMembers
@@ -68,11 +68,11 @@ fun Entity.leaveAnyTeam() = teams {
 }.also { team = null }
 
 context(Function)
-fun Entity.giveItem(item: ItemStack) = give(asSelector(), item.asArgument(), item.count)
+fun Entity.giveItem(item: ItemStack) = give(asSelector(), item.toItemArgument(), item.count?.toInt())
 
 context(Function)
 fun Entity.replaceItem(slot: ItemSlotType, item: ItemStack) = items {
-	replace(asSelector(), slot, item.asArgument(), item.count)
+	replace(asSelector(), slot, item.toItemArgument(), item.count?.toInt())
 }
 
 context(Function)

@@ -2,7 +2,7 @@ import arguments.DisplaySlots
 import arguments.chatcomponents.textComponent
 import arguments.colors.Color
 import arguments.enums.Gamemode
-import arguments.numbers.ranges.rangeOrIntStart
+import arguments.scores.score
 import commands.execute.execute
 import commands.execute.run
 import commands.say
@@ -47,7 +47,7 @@ fun main() {
 
 			execute {
 				ifCondition {
-					score(player.asSelector(), "deathCount", rangeOrIntStart(2))
+					score(player.asSelector(), "deathCount") greaterThanOrEqualTo 2
 				}
 
 				run {
