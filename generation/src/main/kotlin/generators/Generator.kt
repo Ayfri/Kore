@@ -10,7 +10,7 @@ data class Generator(
 	var asString: String = "lowercase()",
 	var tagsParents: Map<String, String>? = null,
 	var transform: ((String) -> String)? = null,
-	var additionalCode: TypeSpec.Builder.() -> Unit = {}
+	var additionalCode: TypeSpec.Builder.() -> Unit = {},
 ) {
 	init {
 		fileName = "${fileName.lowercase()}.txt"
@@ -30,13 +30,13 @@ data class Generator(
 fun gen(
 	name: String,
 	fileName: String,
-	argName: String? = null,
+	argumentClassName: String? = null,
 	asString: String = "lowercase()",
 	tagsParents: Map<String, String>? = null,
 	additionalCode: TypeSpec.Builder.() -> Unit = {},
-	transform: ((String) -> String)? = null
+	transform: ((String) -> String)? = null,
 ) =
-	Generator(name, fileName, argName, asString, tagsParents, transform, additionalCode)
+	Generator(name, fileName, argumentClassName, asString, tagsParents, transform, additionalCode)
 
 fun List<Generator>.transformRemoveJSONSuffix() = map { gen ->
 	gen.apply {

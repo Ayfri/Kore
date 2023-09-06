@@ -13,7 +13,7 @@ import overrides
 suspend fun launchAllSimpleGenerators() {
 	val txtListsListGenerators = listOf(
 		gen("DamageTypes", "damage_types"),
-		gen("DimensionTypes", "dimension_types"),
+		gen("DimensionTypes", "dimension_types", "worldgen.DimensionType"),
 		gen("Particles", "particles"),
 		gen("Recipes", "recipes"),
 		gen("Biomes", "worldgen/biome"),
@@ -33,9 +33,9 @@ suspend fun launchAllSimpleGenerators() {
 		gen("Advancements", "advancements"),
 		gen("LootTables", "loot_tables"),
 		gen("Sounds", "sounds") { it.removeSuffix(".ogg") },
-		gen("Structures", "structures") { it.removeSuffix(".nbt") },
+		gen("Structures", "structures", "worldgen.Structure") { it.removeSuffix(".nbt") },
 		gen(
-			"Tags", "tags", argName = "", tagsParents = mapOf(
+			"Tags", "tags", argumentClassName = "", tagsParents = mapOf(
 				"blocks" to "BlockTag",
 				"fluids" to "FluidTag",
 				"instrument" to "InstrumentTag",
