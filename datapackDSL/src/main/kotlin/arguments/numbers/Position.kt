@@ -1,11 +1,17 @@
 package arguments.numbers
 
+import kotlin.math.absoluteValue
+
 data class PosNumber(var value: Double, var type: Type = Type.WORLD) : Comparable<PosNumber> {
 	enum class Type {
-		RELATIVE,
 		LOCAL,
+		RELATIVE,
 		WORLD
 	}
+
+	val local get() = PosNumber(value, Type.LOCAL)
+	val relative get() = PosNumber(value, Type.RELATIVE)
+	val world get() = PosNumber(value, Type.WORLD)
 
 	operator fun plus(other: PosNumber) = PosNumber(value + other.value, type)
 	operator fun plus(other: Number) = PosNumber(value + other.toDouble(), type)
@@ -18,12 +24,9 @@ data class PosNumber(var value: Double, var type: Type = Type.WORLD) : Comparabl
 	operator fun rem(other: PosNumber) = PosNumber(value % other.value, type)
 	operator fun rem(other: Number) = PosNumber(value % other.toDouble(), type)
 	operator fun unaryMinus() = PosNumber(-value, type)
-	operator fun unaryPlus() = PosNumber(+value, type)
-	override fun compareTo(other: PosNumber) = value.compareTo(other.value)
+	operator fun unaryPlus() = PosNumber(value.absoluteValue, type)
 
-	val relative get() = PosNumber(value, Type.RELATIVE)
-	val local get() = PosNumber(value, Type.LOCAL)
-	val world get() = PosNumber(value, Type.WORLD)
+	override fun compareTo(other: PosNumber) = value.compareTo(other.value)
 
 	override fun toString() = when (type) {
 		Type.RELATIVE -> "~${value.strUnlessZero}"
@@ -32,7 +35,9 @@ data class PosNumber(var value: Double, var type: Type = Type.WORLD) : Comparabl
 	}
 }
 
-val Number.pos get() = PosNumber(toDouble())
 val Number.localPos get() = PosNumber(toDouble(), PosNumber.Type.LOCAL)
 val Number.relativePos get() = PosNumber(toDouble(), PosNumber.Type.RELATIVE)
+val Number.pos get() = PosNumber(toDouble())
+val Number.worldPos get() = PosNumber(toDouble())
+
 fun pos(value: Number = 0, type: PosNumber.Type = PosNumber.Type.RELATIVE) = PosNumber(value.toDouble(), type)

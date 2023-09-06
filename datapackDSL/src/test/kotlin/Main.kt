@@ -15,6 +15,8 @@ fun DataPack.setTestPath() {
 
 fun main() {
 	colorTests()
+	vec2Tests()
+	vec3Tests()
 
 	datapackTests()
 	featuresTests()
