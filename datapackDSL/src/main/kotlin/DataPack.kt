@@ -162,7 +162,7 @@ class DataPack(val name: String) {
 		}
 
 	companion object {
-		const val DEFAULT_DATAPACK_FORMAT = 17
+		const val DEFAULT_DATAPACK_FORMAT = 18
 		const val DEFAULT_GENERATED_FUNCTIONS_FOLDER = "generated_scopes"
 	}
 }
