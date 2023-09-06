@@ -81,7 +81,7 @@ fun generatePathEnumTree(
 					var tagPath = if (tagParent != null) parent.substringAfter(tagParent).substringAfterLast("/") + "/" else ""
 					if (tagPath == "/") tagPath = ""
 
-					if (hasParent) tagPath = parent.substringAfterLast("/") + "/"
+					if (hasParent) tagPath = "$parent/"
 
 					addFunction(
 						FunSpec.builder("asString")
