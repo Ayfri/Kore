@@ -8,6 +8,8 @@ import generated.Blocks
 
 fun Function.returnCommand() {
 	returnValue(0) assertsIs "return 0"
+
+	@Suppress("DEPRECATION_ERROR")
 	returnRun {
 		function("test")
 	} assertsIs "return run function ${datapack.name}:test"
@@ -18,6 +20,7 @@ fun Function.returnCommand() {
 		execute if predicate test run return 0
 	""".trimIndent()
 
+	@Suppress("DEPRECATION_ERROR")
 	returnUnless({
 		block(vec3(0, 0, 0), Blocks.STONE)
 	}) {

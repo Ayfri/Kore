@@ -127,6 +127,7 @@ fun Function.executeTests() {
 			blocks(vec3(PosNumber.Type.LOCAL), vec3(1, 2, 3), vec3(4, 5, 6), BlocksTestMode.MASKED)
 			data(self(), "test")
 			dimension(Dimension.THE_END)
+			@Suppress("DEPRECATION_ERROR")
 			function(FunctionArgument("test", datapack.name))
 			loaded(vec3(-2, -2, -2))
 			predicate("test")
