@@ -19,7 +19,7 @@ class EmptyFunction internal constructor(datapack: DataPack = DataPack("")) : Fu
 	}
 
 	override fun comment(comment: String) {}
-	override fun clear() {}
+	override fun clearLines() {}
 	override fun toString() = ""
 	override fun asId() = lines.getOrElse(0) { "" }
 }

@@ -112,7 +112,7 @@ open class Function(
 		file.writeText(toString())
 	}
 
-	open fun clear() = lines.clear()
+	open fun clearLines() = lines.clear()
 
 	open fun startDebug() {
 		debug = true

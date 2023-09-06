@@ -5,12 +5,14 @@ import arguments.enums.Gamemode
 import arguments.maths.Vec3
 import arguments.types.EntityArgument
 import arguments.types.literals.RotationArgument
+import arguments.types.literals.all
 import arguments.types.literals.int
 import arguments.types.literals.literal
 import arguments.types.resources.EnchantmentArgument
 import arguments.types.resources.ItemArgument
 import arguments.types.resources.worldgen.BiomeArgument
 import functions.Function
+import generated.Sounds
 import utils.asArg
 
 fun Function.clear(targets: EntityArgument? = null, item: ItemArgument? = null, maxCount: Int? = null) =
@@ -55,6 +57,8 @@ fun Function.list(uuids: Boolean = false) = addLine(command("list", literal(if (
 fun Function.me(message: String) = addLine(command("me", literal(message)))
 
 fun Function.msg(target: EntityArgument, message: String) = addLine(command("msg", target, literal(message)))
+fun Function.tell(targets: EntityArgument, message: String) = msg(targets, message)
+fun Function.w(target: EntityArgument, message: String) = msg(target, message)
 
 fun Function.perf(block: Function.() -> Unit) {
 	perfStart()
@@ -69,27 +73,24 @@ fun Function.say(message: String) = addLine(command("say", literal(message)))
 
 fun Function.seed() = addLine(command("seed"))
 
-fun Function.setWorldSpawn(pos: Vec3? = null, angle: RotationArgument) = addLine(command("setworldspawn", pos, angle))
+fun Function.setWorldSpawn(pos: Vec3? = null, angle: RotationArgument? = null) = addLine(command("setworldspawn", pos, angle))
 
 fun Function.spawnPoint(target: EntityArgument? = null, pos: Vec3? = null, angle: RotationArgument? = null) =
 	addLine(command("spawnpoint", target, pos, angle))
 
-fun Function.spectate(target: EntityArgument, player: EntityArgument? = null) =
+fun Function.spectate(target: EntityArgument? = null, player: EntityArgument? = null) =
 	addLine(command("spectate", target, player))
-
-fun Function.spectate() = addLine(command("spectate"))
 
 fun Function.stopSound(
 	targets: EntityArgument,
 	source: PlaySoundSource? = null,
-	sound: String? = null,
-) = addLine(command("stopsound", targets, literal(source?.asArg()), literal(sound)))
+	sound: Sounds? = null,
+) = addLine(command("stopsound", targets, literal(source?.asArg()), sound))
+
+fun Function.stopSoundAllSources(
+	targets: EntityArgument,
+	sound: Sounds? = null,
+) = addLine(command("stopsound", targets, all(), sound))
 
 fun Function.teamMsg(message: String) = addLine(command("teammsg", literal(message)))
-fun Function.teamMessage(message: String) = teamMsg(message)
-
-fun Function.tell(targets: EntityArgument, message: String) = addLine(command("tell", targets, literal(message)))
-
-fun Function.tm(message: String) = addLine(command("tm", literal(message)))
-
-fun Function.w(message: String) = addLine(command("w", literal(message)))
+fun Function.tm(message: String) = teamMsg(message)
