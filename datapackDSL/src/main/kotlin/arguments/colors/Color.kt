@@ -43,10 +43,11 @@ interface Color : Argument {
 		object ColorSerializer : KSerializer<Color> {
 			override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Color", PrimitiveKind.STRING)
 
-			override fun deserialize(decoder: Decoder) = FormattingColor(decoder.decodeString())
+			override fun deserialize(decoder: Decoder) = error("Color deserialization is not supported")
 
 			override fun serialize(encoder: Encoder, value: Color) = when (value) {
-				is NamedColor -> encoder.encodeSerializableValue(NamedColor.serializer(), value)
+				is BossBarColor -> encoder.encodeSerializableValue(BossBarColor.serializer(), value)
+				is FormattingColor -> encoder.encodeSerializableValue(FormattingColor.serializer(), value)
 				is RGB -> encoder.encodeSerializableValue(RGB.serializer(), value)
 				is ARGB -> encoder.encodeSerializableValue(ARGB.serializer(), value)
 				else -> error("Unknown color type: $value")

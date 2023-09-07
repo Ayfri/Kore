@@ -117,7 +117,6 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 			FormattingColor.RED, BossBarColor.RED -> RGB(255, 85, 85)
 			FormattingColor.WHITE, BossBarColor.WHITE -> RGB(255, 255, 255)
 			FormattingColor.YELLOW, BossBarColor.YELLOW -> RGB(255, 255, 85)
-			else -> RGB(0, 0, 0)
 		}
 
 		object ColorSerializer : KSerializer<RGB> {

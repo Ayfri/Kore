@@ -1,25 +1,30 @@
 package arguments.colors
 
+import serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
-@Serializable(with = NamedColor.Companion.NamedColorSerializer::class)
-class FormattingColor internal constructor(name: String) : NamedColor(name) {
+@Serializable(with = FormattingColor.Companion.FormattingColorSerializer::class)
+enum class FormattingColor : NamedColor {
+	AQUA,
+	BLACK,
+	BLUE,
+	DARK_AQUA,
+	DARK_BLUE,
+	DARK_GRAY,
+	DARK_GREEN,
+	DARK_PURPLE,
+	DARK_RED,
+	GOLD,
+	GRAY,
+	GREEN,
+	LIGHT_PURPLE,
+	RED,
+	WHITE,
+	YELLOW;
+
+	override fun asString() = name.lowercase()
+
 	companion object {
-		val AQUA = FormattingColor("aqua")
-		val BLACK = FormattingColor("black")
-		val BLUE = FormattingColor("blue")
-		val DARK_AQUA = FormattingColor("dark_aqua")
-		val DARK_BLUE = FormattingColor("dark_blue")
-		val DARK_GRAY = FormattingColor("dark_gray")
-		val DARK_GREEN = FormattingColor("dark_green")
-		val DARK_PURPLE = FormattingColor("dark_purple")
-		val DARK_RED = FormattingColor("dark_red")
-		val GOLD = FormattingColor("gold")
-		val GRAY = FormattingColor("gray")
-		val GREEN = FormattingColor("green")
-		val LIGHT_PURPLE = FormattingColor("light_purple")
-		val RED = FormattingColor("red")
-		val WHITE = FormattingColor("white")
-		val YELLOW = FormattingColor("yellow")
+		data object FormattingColorSerializer : LowercaseSerializer<FormattingColor>(entries)
 	}
 }
