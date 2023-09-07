@@ -1,4 +1,4 @@
-# Datapack-DSL
+# Kore
 
 A Kotlin library to generate Datapacks for Minecraft Java.
 
