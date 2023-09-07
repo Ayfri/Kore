@@ -5,6 +5,8 @@ import arguments.chatcomponents.ChatComponents
 import arguments.chatcomponents.PlainTextComponent
 import arguments.chatcomponents.textComponent
 import arguments.colors.Color
+import arguments.scores.ScoreboardCriteria
+import arguments.scores.ScoreboardCriterion
 import arguments.types.ScoreHolderArgument
 import arguments.types.literals.int
 import arguments.types.literals.literal
@@ -25,19 +27,25 @@ enum class RenderType {
 }
 
 class Objectives(private val fn: Function) {
-	fun add(name: String, criteria: String, displayName: ChatComponents? = null) =
+	fun add(name: String, criteria: ScoreboardCriterion = ScoreboardCriteria.DUMMY, displayName: ChatComponents? = null) =
 		fn.addLine(
 			command(
 				"scoreboard",
 				literal("objectives"),
 				literal("add"),
 				literal(name),
-				literal(criteria),
+				criteria,
 				displayName?.asJsonArg()
 			)
 		)
 
-	fun add(name: String, criteria: String, displayName: String, color: Color? = null, block: PlainTextComponent.() -> Unit = {}) =
+	fun add(
+		name: String,
+		criteria: ScoreboardCriterion,
+		displayName: String,
+		color: Color? = null,
+		block: PlainTextComponent.() -> Unit = {},
+	) =
 		add(name, criteria, textComponent(displayName, color, block))
 
 	fun list() = fn.addLine(command("scoreboard", literal("objectives"), literal("list")))
@@ -87,22 +95,27 @@ class Objective(private val fn: Function, val objective: String) {
 	fun player(target: ScoreHolderArgument) = PlayerObjective(fn, target, objective)
 	fun player(target: ScoreHolderArgument, block: PlayerObjective.() -> Command) = PlayerObjective(fn, target, objective).block()
 
-	fun add(criteria: String, displayName: ChatComponents? = null) = create(criteria, displayName)
-	fun add(criteria: String, displayName: String, color: Color? = null, block: PlainTextComponent.() -> Unit = {}) =
+	fun add(criteria: ScoreboardCriterion = ScoreboardCriteria.DUMMY, displayName: ChatComponents? = null) = create(criteria, displayName)
+	fun add(
+		criteria: ScoreboardCriterion = ScoreboardCriteria.DUMMY,
+		displayName: String,
+		color: Color? = null,
+		block: PlainTextComponent.() -> Unit = {},
+	) =
 		create(criteria, textComponent(displayName, color, block))
 
-	fun create(criteria: String, displayName: ChatComponents? = null) = fn.addLine(
+	fun create(criteria: ScoreboardCriterion, displayName: ChatComponents? = null) = fn.addLine(
 		command(
 			"scoreboard",
 			literal("objectives"),
 			literal("add"),
 			literal(objective),
-			literal(criteria),
+			criteria,
 			displayName?.asJsonArg()
 		)
 	)
 
-	fun create(criteria: String, displayName: String, color: Color? = null, block: PlainTextComponent.() -> Unit = {}) =
+	fun create(criteria: ScoreboardCriterion, displayName: String, color: Color? = null, block: PlainTextComponent.() -> Unit = {}) =
 		create(criteria, textComponent(displayName, color, block))
 
 	fun modify(displayName: ChatComponents) = fn.addLine(

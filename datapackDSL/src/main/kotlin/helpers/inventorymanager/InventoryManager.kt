@@ -105,7 +105,7 @@ fun InventoryManager<*>.generateSlotsListeners() {
 			}
 		})
 
-		scoreboard.objectives.add(scoreName, "dummy")
+		scoreboard.objectives.add(scoreName)
 		if (container is EntityArgument) scoreboard.players.set(container as ScoreHolderArgument, scoreName, 0)
 		else {
 			summon(EntityTypes.MARKER) {

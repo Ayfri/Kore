@@ -36,7 +36,7 @@ data class ScoreboardDisplay(val name: String) {
 
 	context(Function)
 	fun create(display: Boolean = true, slot: DisplaySlot = DisplaySlots.sidebar) {
-		scoreboard.objectives.add(name, "dummy", displayName)
+		scoreboard.objectives.add(name, displayName = displayName)
 		lines.forEach { it.create() }
 		if (display) display(slot)
 	}
@@ -82,7 +82,7 @@ fun Function.scoreboardDisplay(
 	name: String,
 	display: Boolean = true,
 	displaySlot: DisplaySlot = DisplaySlots.sidebar,
-	init: ScoreboardDisplay.() -> Unit
+	init: ScoreboardDisplay.() -> Unit,
 ): ScoreboardDisplay {
 	val scoreboardDisplay = ScoreboardDisplay(name)
 	scoreboardDisplay.init()

@@ -31,7 +31,7 @@ fun Function.executeTests() {
 	val testEntity = debugEntity()
 	val scores = listOf("a", "b", "c")
 	scores.forEachIndexed { index, it ->
-		scoreboard.objectives.add(it, "dummy")
+		scoreboard.objectives.add(it)
 		scoreboard.players.set(testEntity.selector, it, index)
 	}
 

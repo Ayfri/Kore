@@ -1,14 +1,27 @@
 package commands
 
 import arguments.DisplaySlots
+import arguments.colors.Color
+import arguments.scores.ScoreboardCriteria
+import arguments.scores.criteriaCrafted
+import arguments.scores.criteriaCustom
+import arguments.scores.criteriaTeamKill
 import arguments.types.literals.self
 import assertions.assertsIs
 import functions.Function
+import generated.CustomStats
+import generated.Items
 
 fun Function.scoreboardTests() {
 	scoreboard {
 		objectives {
-			add("test", "dummy", "Test") assertsIs "scoreboard objectives add test dummy \"Test\""
+			add("test") assertsIs "scoreboard objectives add test dummy"
+			add("test", ScoreboardCriteria.DUMMY, "Test") assertsIs "scoreboard objectives add test dummy \"Test\""
+
+			add("test", criteriaCrafted(Items.STONE)) assertsIs "scoreboard objectives add test minecraft.crafted:minecraft.stone"
+			add("test", criteriaCustom(CustomStats.JUMP)) assertsIs "scoreboard objectives add test minecraft.custom:minecraft.jump"
+			add("test", criteriaTeamKill(Color.RED)) assertsIs "scoreboard objectives add test teamkill.red"
+
 			list() assertsIs "scoreboard objectives list"
 			modify("test", displayName = "Test") assertsIs "scoreboard objectives modify test displayname \"Test\""
 			modify("test", RenderType.HEARTS) assertsIs "scoreboard objectives modify test rendertype hearts"
@@ -30,8 +43,8 @@ fun Function.scoreboardTests() {
 		}
 
 		objective("test") {
-			add("dummy", "Test") assertsIs "scoreboard objectives add test dummy \"Test\""
-			create("dummy", "Test") assertsIs "scoreboard objectives add test dummy \"Test\""
+			add(ScoreboardCriteria.DUMMY, "Test") assertsIs "scoreboard objectives add test dummy \"Test\""
+			create(ScoreboardCriteria.DUMMY, "Test") assertsIs "scoreboard objectives add test dummy \"Test\""
 			modify(displayName = "Test") assertsIs "scoreboard objectives modify test displayname \"Test\""
 			modify(RenderType.HEARTS) assertsIs "scoreboard objectives modify test rendertype hearts"
 			remove() assertsIs "scoreboard objectives remove test"

@@ -136,7 +136,7 @@ data class DebugEntity(val data: Map<String, String> = mutableMapOf()) {
 		}
 
 		scoreboard.objectives.remove(scoreName)
-		scoreboard.objectives.add(scoreName, "dummy")
+		scoreboard.objectives.add(scoreName)
 
 		return this@DebugEntity
 	}

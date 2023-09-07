@@ -82,7 +82,7 @@ fun Function.inventoryManagerTests() {
 	playerInventory.generateSlotsListeners()
 
 	datapack.load {
-		scoreboard.objectives.add(counterScoreName, "dummy")
+		scoreboard.objectives.add(counterScoreName)
 		scoreboard.players.set(playerInventory.container as ScoreHolderArgument, counterScoreName, 0)
 	}
 
