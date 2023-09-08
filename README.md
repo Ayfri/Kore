@@ -1,9 +1,22 @@
-# Kore
+<h1 align="center"> Kore </h1>
+<p align="center">A Kotlin library to write Datapacks for Minecraft.</p>
+<p align="center">
+	<a href="https://github.com/Ayfri/Kore">
+		<img src="https://img.shields.io/github/stars/Ayfri/Kore?color=darkcyan&logo=github&style=flat-square" title="Stars" alt="Stars"/>
+		<img alt="GitHub" src="https://img.shields.io/github/license/Ayfri/Kore?style=flat-square">
+		<img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/Ayfri/Kore?color=dark_green&logo=github&style=flat-square">
+		<img alt="GitHub closed issues" src="https://img.shields.io/github/issues-closed-raw/Ayfri/Kore?color=blue&logo=github&style=flat-square">
+	</a>
+</p>
+<hr>
 
-A Kotlin library to generate Datapacks for Minecraft Java.
+<p align="center">
+	<img src="kore typography 1200x600.png" title="kore typography" alt="kore typography"/>
+</p>
 
-This library is compatible and made for Minecraft Java 1.20.2, I don't think I will support older versions nor Bedrock Edition.
-You can still create your own fork and make it compatible with older versions.
+
+This library is compatible and made for Minecraft Java 1.20.2, I don't think I will support older versions nor Bedrock Edition.<br>
+You can still create your own fork and make it compatible with older versions.<br>
 I will accept pull requests for older versions on a separate branch.
 
 ## Getting Started
