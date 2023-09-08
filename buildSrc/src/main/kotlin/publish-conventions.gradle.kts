@@ -10,14 +10,14 @@ repositories {
 publishing {
 	publications {
 		create<MavenPublication>("kotlin") {
-			groupId = "io.github.ayfri"
-			artifactId = "datapack-dsl"
-			version = "1.0.0"
+			groupId = Project.GROUP
+			artifactId = Project.NAME.lowercase()
+			version = Project.VERSION
 
 			pom {
-				name = "DataPack DSL"
-				description = "A Kotlin library to create Minecraft Datapacks."
-				url = "https://example.com/library"
+				name = Project.NAME
+				description = Project.DESCRIPTION
+				url = Project.URL
 
 				licenses {
 					license {
@@ -35,7 +35,7 @@ publishing {
 				}
 
 				scm {
-					val repositoryUrl = "github.com/Ayfri/Datapack-DSL"
+					val repositoryUrl = Project.URL
 
 					connection = "scm:git:git://$repositoryUrl.git"
 					developerConnection = "scm:git:ssh://$repositoryUrl.git"
@@ -48,7 +48,7 @@ publishing {
 	repositories {
 		maven {
 			name = "nexus"
-			url = uri("https://s01.oss.sonatype.org/service/local/")
+			url = uri(Project.PUBLISH_URL)
 
 			credentials {
 				username = System.getenv("NEXUS_USERNAME") ?: return@credentials
