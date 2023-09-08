@@ -104,7 +104,7 @@ class Objective(private val fn: Function, val objective: String) {
 	) =
 		create(criteria, textComponent(displayName, color, block))
 
-	fun create(criteria: ScoreboardCriterion, displayName: ChatComponents? = null) = fn.addLine(
+	fun create(criteria: ScoreboardCriterion = ScoreboardCriteria.DUMMY, displayName: ChatComponents? = null) = fn.addLine(
 		command(
 			"scoreboard",
 			literal("objectives"),
@@ -115,7 +115,12 @@ class Objective(private val fn: Function, val objective: String) {
 		)
 	)
 
-	fun create(criteria: ScoreboardCriterion, displayName: String, color: Color? = null, block: PlainTextComponent.() -> Unit = {}) =
+	fun create(
+		criteria: ScoreboardCriterion = ScoreboardCriteria.DUMMY,
+		displayName: String,
+		color: Color? = null,
+		block: PlainTextComponent.() -> Unit = {},
+	) =
 		create(criteria, textComponent(displayName, color, block))
 
 	fun modify(displayName: ChatComponents) = fn.addLine(
@@ -145,7 +150,7 @@ class Objective(private val fn: Function, val objective: String) {
 
 	fun remove() = fn.addLine(command("scoreboard", literal("objectives"), literal("remove"), literal(objective)))
 
-	fun setDisplay(slot: DisplaySlot) = fn.addLine(
+	fun setDisplaySlot(slot: DisplaySlot) = fn.addLine(
 		command(
 			"scoreboard",
 			literal("objectives"),
@@ -154,6 +159,8 @@ class Objective(private val fn: Function, val objective: String) {
 			literal(objective)
 		)
 	)
+
+	fun setRenderType(renderType: RenderType) = modify(renderType)
 
 	fun add(target: ScoreHolderArgument, amount: Int) =
 		fn.addLine(command("scoreboard", literal("players"), literal("add"), target, literal(objective), int(amount)))
@@ -268,6 +275,7 @@ class Players(private val fn: Function) {
 class Player(private val fn: Function, val target: ScoreHolderArgument) {
 	val players = Players(fn)
 	fun objective(name: String) = PlayerObjective(fn, target, name)
+	fun objective(name: String, block: PlayerObjective.() -> Command) = PlayerObjective(fn, target, name).block()
 
 	fun add(objective: String, score: Int) = players.add(target, objective, score)
 	fun enable(objective: String) = players.enable(target, objective)

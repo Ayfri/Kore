@@ -118,7 +118,7 @@ data class DebugEntity(val data: Map<String, String> = mutableMapOf()) {
 
 	context(Function)
 	fun displayDebugScore() {
-		scoreboard.objective(scoreName).setDisplay(DisplaySlots.sidebar)
+		scoreboard.objective(scoreName).setDisplaySlot(DisplaySlots.sidebar)
 	}
 
 	context(Function)

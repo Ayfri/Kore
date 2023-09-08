@@ -48,7 +48,7 @@ fun Function.scoreboardTests() {
 			modify(displayName = "Test") assertsIs "scoreboard objectives modify test displayname \"Test\""
 			modify(RenderType.HEARTS) assertsIs "scoreboard objectives modify test rendertype hearts"
 			remove() assertsIs "scoreboard objectives remove test"
-			setDisplay(DisplaySlots.list) assertsIs "scoreboard objectives setdisplay list test"
+			setDisplaySlot(DisplaySlots.list) assertsIs "scoreboard objectives setdisplay list test"
 
 			add(self(), 5) assertsIs "scoreboard players add @s test 5"
 			enable(self()) assertsIs "scoreboard players enable @s test"
@@ -89,6 +89,12 @@ fun Function.scoreboardTests() {
 
 	scoreboard.player(self()) {
 		get("test") assertsIs "scoreboard players get @s test"
+	}
+
+	scoreboard.player(self()) {
+		objective("test") {
+			get() assertsIs "scoreboard players get @s test"
+		}
 	}
 
 	scoreboard.players.get(self(), "test") assertsIs "scoreboard players get @s test"
