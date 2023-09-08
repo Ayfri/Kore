@@ -77,7 +77,7 @@ fun main() {
 		}
 
 		pack {
-			description = textComponent("Datapack test for ", Color.GOLD) + text("Datapack-DSL", Color.AQUA) { bold = true }
+			description = textComponent("Datapack test for ", Color.GOLD) + text("Kore", Color.AQUA) { bold = true }
 		}
 	}
 
