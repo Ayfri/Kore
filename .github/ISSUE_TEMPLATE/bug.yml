@@ -56,7 +56,7 @@ body:
   - type: textarea
     id: extra-info
     attributes:
-      label: extra-info
+      label: Extra information
       description: |
         Please provide any additional information that may be helpful in understanding the issue.
         You can also include screenshots or animated GIFs.

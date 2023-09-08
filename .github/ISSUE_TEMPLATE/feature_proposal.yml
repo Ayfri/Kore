@@ -26,15 +26,6 @@ body:
     validations:
       required: true
 
-  - type: input
-    id: title
-    attributes:
-      label: Feature title
-      description: A short title for this feature.
-      placeholder: "Add an inventory manager."
-    validations:
-      required: true
-
   - type: textarea
     id: description
     attributes:
