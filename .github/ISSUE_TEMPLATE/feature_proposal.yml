@@ -1,17 +1,54 @@
 name: Feature proposal
-description: Suggest a new feature for the documentation
-labels: [feature]
+description: Suggest a new feature or improvement for this project.
+title: "[FEATURE] "
+labels: [ feature ]
+assignees:
+  - Ayfri
 
 body:
   - type: markdown
     attributes:
       value: |
         Thanks for taking the time to fill out this feature request!
-  - type: input
-    id: idea
+
+  - type: dropdown
+    id: module
     attributes:
-      label: What is your idea?
-      description: A clear and concise description of what you want to happen.
+      label: What module does this feature apply to?
+      description: The module this feature applies to.
+      multiple: true
+      options:
+        - DSL
+        - Generation
+        - OOP
+        - Other
+      default: 0
     validations:
       required: true
-      
+
+  - type: input
+    id: title
+    attributes:
+      label: Feature title
+      description: A short title for this feature.
+      placeholder: "Add an inventory manager."
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Feature description
+      description: A detailed description of the feature you are proposing.
+      placeholder: "The inventory manager would allow users to add, remove, and add click events to items in a container."
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: duplication-validation
+    attributes:
+      label: My issue is not duplicated
+      description: I have searched the issues of this repository and believe that this is not a duplicate.
+      options:
+        - label: This is not a duplicate
+          required: true

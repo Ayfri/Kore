@@ -1,43 +1,58 @@
 name: Report a bug
-description: Report a bug in the documentation
-labels: [bug]
+description: Report a bug with the Project.
+title: "[BUG] "
+labels: [ bug ]
+assignees:
+  - Ayfri
 
 body:
   - type: markdown
     attributes:
       value: |
         Thanks for taking the time to fill out this bug report!
-  - type: textarea
-    id: minecraft-version
+
+  - type: input
+    id: library-version
     attributes:
-      label: Minecraft version
-      description: What version of Minecraft are you using?
-  - type: textarea
-    id: datapack-generator-version
+      label: Library version
+      description: What version of the library are you using?
+      placeholder: 1.0.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: module
     attributes:
-      label: Datapack Generator version
-      description: What version of the Datapack Generator are you using?
+      label: What module does this bug apply to?
+      description: The module this bug applies to.
+      multiple: true
+      options:
+        - DSL
+        - Generation
+        - OOP
+        - Other
+      default: 0
+    validations:
+      required: true
+
   - type: textarea
     id: what-happened
     attributes:
       label: What happened?
       description: A clear and concise description of what the issue is.
+      placeholder: "I tried to do X, but Y happened instead."
     validations:
       required: true
-  - type: textarea
-    id: what-should-happen
-    attributes:
-      label: What should have happened?
-      description: A clear and concise description of what you expected to happen.
-    validations:
-      required: true
+
   - type: textarea
     id: how-to-reproduce
     attributes:
       label: How can we reproduce this issue?
       description: Please provide a link to a live example, or an unambiguous set of steps to reproduce this issue. Include code to reproduce, if relevant.
+      placeholder: "1. Go to '...' \n2. Click on '....' \n3. Scroll down to '....' \n4. See error"
     validations:
       required: true
+
   - type: textarea
     id: extra-info
     attributes:
@@ -45,3 +60,13 @@ body:
       description: |
         Please provide any additional information that may be helpful in understanding the issue.
         You can also include screenshots or animated GIFs.
+      placeholder: "I'm using a more recent version of Minecraft than the one supported by the library."
+
+  - type: checkboxes
+    id: duplication-validation
+    attributes:
+      label: My issue is not duplicated
+      description: I have searched the issues of this repository and believe that this is not a duplicate.
+      options:
+        - label: This is not a duplicate
+          required: true
