@@ -10,12 +10,14 @@ repositories {
 publishing {
 	publications {
 		create<MavenPublication>("kotlin") {
+			from(components["kotlin"])
+
 			groupId = Project.GROUP
-			artifactId = Project.NAME.lowercase()
+			artifactId = "${Project.NAME.lowercase()}-${project.name}"
 			version = Project.VERSION
 
 			pom {
-				name = Project.NAME
+				name = project.name
 				description = Project.DESCRIPTION
 				url = Project.URL
 
@@ -59,10 +61,5 @@ publishing {
 }
 
 signing {
-	val key = System.getenv("SIGNING_KEY") ?: return@signing
-	val password = System.getenv("SIGNING_PASSWORD") ?: return@signing
-	val extension = extensions.getByName("publishing") as PublishingExtension
-
-	useInMemoryPgpKeys(key, password)
-	sign(extension.publications)
+	sign(publishing.publications["kotlin"])
 }

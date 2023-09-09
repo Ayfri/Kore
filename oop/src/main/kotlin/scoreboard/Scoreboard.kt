@@ -3,6 +3,7 @@ package scoreboard
 import arguments.DisplaySlot
 import arguments.chatcomponents.ChatComponents
 import arguments.chatcomponents.textComponent
+import arguments.scores.ScoreboardCriterion
 import commands.RenderType
 import commands.scoreboard
 import entities.Entity
@@ -16,7 +17,7 @@ context(Function)
 fun Scoreboard.getScore(entity: Entity) = ScoreboardEntity(name, entity)
 
 context(Function)
-fun Scoreboard.create(criteria: String = "dummy") = scoreboard {
+fun Scoreboard.create(criteria: ScoreboardCriterion) = scoreboard {
 	objectives {
 		add(name, criteria)
 	}
