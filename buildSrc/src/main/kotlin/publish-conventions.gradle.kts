@@ -7,19 +7,26 @@ repositories {
 	mavenCentral()
 }
 
+val kotlinSourcesJar: Task by tasks.getting
+val publicationName: String? by project.ext
+val publicationDescription: String? by project.ext
+
 publishing {
 	publications {
 		create<MavenPublication>("kotlin") {
 			from(components["kotlin"])
 
+			artifact(kotlinSourcesJar)
+
 			groupId = Project.GROUP
-			artifactId = "${Project.NAME.lowercase()}-${project.name}"
 			version = Project.VERSION
 
 			pom {
-				name = project.name
-				description = Project.DESCRIPTION
+				name = publicationName
+				description = publicationDescription
 				url = Project.URL
+
+				packaging = "jar"
 
 				licenses {
 					license {
@@ -50,7 +57,10 @@ publishing {
 	repositories {
 		maven {
 			name = "nexus"
-			url = uri(Project.PUBLISH_URL)
+			url = when {
+				project.version.toString().endsWith("SNAPSHOT") -> uri(Project.SNAPSHOT_PUBLISH_URL)
+				else -> uri(Project.PUBLISH_URL)
+			}
 
 			credentials {
 				username = System.getenv("NEXUS_USERNAME") ?: return@credentials

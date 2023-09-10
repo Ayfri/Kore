@@ -33,3 +33,8 @@ var runUnitTests = tasks.register<JavaExec>("runUnitTests") {
 tasks.test {
 	dependsOn(runUnitTests)
 }
+
+metadata {
+	name = "OOP"
+	description = "An OOP form of Kore, experimental and not complete."
+}
