@@ -72,8 +72,8 @@ fun DataPack.biomeTests() {
 					{
 						"type": "minecraft:zombie",
 						"weight": 1,
-						"min_count": 1,
-						"max_count": 2
+						"minCount": 1,
+						"maxCount": 2
 					}
 				]
 			},

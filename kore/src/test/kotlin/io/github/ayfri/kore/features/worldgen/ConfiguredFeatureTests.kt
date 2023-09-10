@@ -11,6 +11,7 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.Direction
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.dualNoiseProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.slowNoise
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.variety
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.*
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.cherryFoliagePlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.layersfeaturesize.threeLayersFeatureSize
@@ -18,9 +19,10 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.t
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.cherryTrunkPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.target
+import io.github.ayfri.kore.features.worldgen.intproviders.constant
+import io.github.ayfri.kore.features.worldgen.intproviders.uniform
 import io.github.ayfri.kore.features.worldgen.ruletest.randomBlockMatch
 import io.github.ayfri.kore.generated.Blocks
-import io.github.ayfri.kore.generated.Tags
 
 fun DataPack.configuredFeatureTests() {
 	configuredFeature("test_tree", tree {
@@ -32,12 +34,21 @@ fun DataPack.configuredFeatureTests() {
 			upperSize = 3
 		}
 
-		cherryTrunkPlacer()
-		cherryFoliagePlacer()
+		cherryTrunkPlacer {
+			branchCount = constant(2)
+			branchHorizontalLength = constant(6)
+			branchStartOffsetFromTop = uniform(-10, -5)
+		}
+
+		cherryFoliagePlacer {
+			height = constant(5)
+		}
+
 		decorators {
 			attachedToLeaves {
 				blockProvider = simpleStateProvider(Blocks.DIRT)
 				directions = listOf(Direction.DOWN)
+				requiredEmptyBlocks = 3
 			}
 		}
 	})
@@ -77,11 +88,11 @@ fun DataPack.configuredFeatureTests() {
 					"base_height": 0,
 					"height_rand_a": 0,
 					"height_rand_b": 0,
-					"branch_count": 0,
-					"branch_horizontal_length": 0,
+					"branch_count": 2,
+					"branch_horizontal_length": 6,
 					"branch_start_offset_from_top": {
-						"min_inclusive": 0,
-						"max_inclusive": 0
+						"min_inclusive": -10,
+						"max_inclusive": -5
 					},
 					"branch_end_offset_from_top": 0
 				},
@@ -89,7 +100,7 @@ fun DataPack.configuredFeatureTests() {
 					"type": "minecraft:cherry_foliage_placer",
 					"radius": 0,
 					"offset": 0,
-					"height": 0,
+					"height": 5,
 					"wide_bottom_layer_hole_chance": 0.0,
 					"corner_hole_chance": 0.0,
 					"hanging_leaves_chance": 0.0,
@@ -101,7 +112,7 @@ fun DataPack.configuredFeatureTests() {
 						"probability": 0.0,
 						"exclusion_radius_xz": 0,
 						"exclusion_radius_y": 0,
-						"required_empty_blocks": 0,
+						"required_empty_blocks": 3,
 						"block_provider": {
 							"type": "minecraft:simple_state_provider",
 							"state": {
@@ -165,8 +176,8 @@ fun DataPack.configuredFeatureTests() {
 				not {
 					matchingBlocks(
 						blocks = listOf(
-							Tags.Blocks.DIRT,
 							Blocks.DIRT,
+							Blocks.STONE
 						)
 					)
 				}
@@ -180,6 +191,10 @@ fun DataPack.configuredFeatureTests() {
 						firstOctave = 1
 						amplitudes = listOf(1.2)
 					}
+
+					variety(1, 2)
+					scale = 1.0
+					slowScale = 1.0
 
 					states = listOf(
 						blockState(Blocks.STONE),
@@ -203,8 +218,8 @@ fun DataPack.configuredFeatureTests() {
 							"predicate": {
 								"type": "minecraft:matching_blocks",
 								"blocks": [
-									"#minecraft:dirt",
-									"minecraft:dirt"
+									"minecraft:dirt",
+									"minecraft:stone"
 								]
 							}
 						},
@@ -225,10 +240,10 @@ fun DataPack.configuredFeatureTests() {
 								"amplitudes": [
 								]
 							},
-							"scale": 0.0,
+							"scale": 1.0,
 							"variety": {
-								"min_inclusive": 0,
-								"max_inclusive": 0
+								"min_inclusive": 1,
+								"max_inclusive": 2
 							},
 							"slow_noise": {
 								"firstOctave": 1,
@@ -236,7 +251,7 @@ fun DataPack.configuredFeatureTests() {
 									1.2
 								]
 							},
-							"slow_scale": 0.0,
+							"slow_scale": 1.0,
 							"states": [
 								{
 									"Name": "minecraft:stone"

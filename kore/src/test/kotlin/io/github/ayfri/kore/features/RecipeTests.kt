@@ -37,6 +37,7 @@ fun DataPack.recipeTest() {
 		}
 
 		smithingTransform("diamond_to_netherite") {
+			template(Items.DIAMOND_BLOCK)
 			base(Items.DIAMOND_SWORD)
 			addition(Items.NETHERITE_INGOT)
 			result(Items.NETHERITE_SWORD)
@@ -47,6 +48,7 @@ fun DataPack.recipeTest() {
 			{
 				"type": "minecraft:smithing_transform",
 				"template": {
+					"item": "minecraft:diamond_block"
 				},
 				"base": {
 					"item": "minecraft:diamond_sword"

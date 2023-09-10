@@ -29,9 +29,9 @@ data class CanyonShapeConfig(
 	var distanceFactor: FloatProvider = constant(0f),
 	var thickness: FloatProvider = constant(0f),
 	var widthSmoothness: Float = 0f,
-	var horizontalRadiusMultiplier: FloatProvider = constant(0f),
-	var verticalRadiusMultiplier: Float = 0f,
-	var floorLevel: Float = 0f,
+	var horizontalRadiusFactor: FloatProvider = constant(0f),
+	var verticalRadiusDefaultFactor: Float = 0f,
+	var verticalRadiusCenterFactor: Float = 0f,
 )
 
 fun canyonConfig(block: Canyon.() -> Unit = {}) = Canyon().apply(block)

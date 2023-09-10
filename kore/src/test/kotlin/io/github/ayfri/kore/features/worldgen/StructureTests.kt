@@ -2,22 +2,19 @@ package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
-import io.github.ayfri.kore.features.worldgen.biome.types.monster
 import io.github.ayfri.kore.features.worldgen.biome.types.spawner
-import io.github.ayfri.kore.features.worldgen.structures.GenerationStep
-import io.github.ayfri.kore.features.worldgen.structures.TerrainAdaptation
-import io.github.ayfri.kore.features.worldgen.structures.structuresBuilder
+import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.features.worldgen.structures.types.biomes
 import io.github.ayfri.kore.features.worldgen.structures.types.desertPyramid
 import io.github.ayfri.kore.features.worldgen.structures.types.spawnOverrides
+import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.EntityTypes
-import io.github.ayfri.kore.generated.Tags
 
 fun DataPack.structureTests() {
-	structuresBuilder.desertPyramid {
-		biomes(io.github.ayfri.kore.generated.Biomes.DESERT, Tags.Worldgen.Biome.IS_BEACH)
+	structuresBuilder.desertPyramid("my_desert_pyramid") {
+		biomes(Biomes.DESERT, Biomes.BADLANDS)
 		spawnOverrides {
-			monster {
+			monster(BoundingBox.FULL) {
 				spawner(EntityTypes.ZOMBIE, 1, 4, 4)
 			}
 		}
@@ -30,18 +27,21 @@ fun DataPack.structureTests() {
 			"type": "minecraft:desert_pyramid",
 			"biomes": [
 				"minecraft:desert",
-				"#minecraft:is_beach"
+				"minecraft:badlands"
 			],
 			"step": "top_layer_modification",
 			"spawn_overrides": {
-				"monster": [
-					{
-						"type": "minecraft:zombie",
-						"weight": 1,
-						"min_count": 4,
-						"max_count": 4
-					}
-				]
+				"monster": {
+					"bounding_box": "full",
+					"spawns": [
+						{
+							"type": "minecraft:zombie",
+							"weight": 1,
+							"minCount": 4,
+							"maxCount": 4
+						}
+					]
+				}
 			},
 			"terrain_adaptation": "beard_box"
 		}

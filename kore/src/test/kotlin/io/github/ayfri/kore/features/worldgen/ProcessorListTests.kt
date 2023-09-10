@@ -16,11 +16,12 @@ import io.github.ayfri.kore.features.worldgen.ruletest.randomBlockStateMatch
 import io.github.ayfri.kore.utils.set
 
 fun DataPack.processorListTests() {
-	processorList("test") {
+	processorList("my_processor_list") {
 		rules {
 			rule {
 				positionPredicate = axisAlignedLinearPos(axis = Axis.X) {
-					minDist = 1
+					minDist = 0
+					maxDist = 1
 				}
 
 				inputPredicate = randomBlockStateMatch()
@@ -47,7 +48,8 @@ fun DataPack.processorListTests() {
 							"position_predicate": {
 								"predicate_type": "minecraft:axis_aligned_linear_pos",
 								"axis": "x",
-								"min_dist": 1
+								"min_dist": 0,
+								"max_dist": 1
 							},
 							"location_predicate": {
 								"predicate_type": "minecraft:always_true"

@@ -18,6 +18,6 @@ data class ProcessorList(
 }
 
 fun DataPack.processorList(fileName: String = "processor_list", block: ProcessorList.() -> Unit): ProcessorListArgument {
-	processorLists += ProcessorList().apply(block)
+	processorLists += ProcessorList(fileName).apply(block)
 	return ProcessorListArgument(fileName, name)
 }

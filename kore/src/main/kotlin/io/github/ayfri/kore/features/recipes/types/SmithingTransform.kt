@@ -44,6 +44,10 @@ fun SmithingTransform.template(block: Ingredient.() -> Unit) {
 	template = Ingredient().apply(block)
 }
 
+fun SmithingTransform.template(item: ItemArgument? = null, tag: ItemTagArgument? = null) {
+	template = Ingredient(item, tag)
+}
+
 fun SmithingTransform.base(block: Ingredient.() -> Unit) {
 	base = Ingredient().apply(block)
 }

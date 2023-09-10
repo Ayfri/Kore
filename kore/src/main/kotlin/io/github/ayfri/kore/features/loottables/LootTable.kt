@@ -19,7 +19,7 @@ data class LootTable(
 	var functions: ItemModifierAsList? = null,
 	var pools: List<LootPool>? = null,
 	var randomSequence: RandomSequenceArgument? = null,
-) : Generator("loot_table") {
+) : Generator("loot_tables") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 

@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.worldgen.biome.types
 
 import io.github.ayfri.kore.arguments.types.resources.EntityTypeArgument
+import io.github.ayfri.kore.serializers.JsonSerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -18,8 +19,8 @@ data class Spawners(
 data class Spawn(
 	var type: EntityTypeArgument,
 	var weight: Int = 1,
-	var minCount: Int = 0,
-	var maxCount: Int = 0,
+	@JsonSerialName("minCount") var minCount: Int = 0,
+	@JsonSerialName("maxCount") var maxCount: Int = 0,
 )
 
 fun Spawners.axolotl(init: MutableList<Spawn>.() -> Unit) {

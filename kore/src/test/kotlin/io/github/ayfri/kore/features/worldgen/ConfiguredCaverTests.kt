@@ -39,9 +39,9 @@ fun DataPack.configuredCarverTests() {
 			distanceFactor = constant(0.5f)
 			thickness = trapezoid(0.0f, 1.0f, 0.5f)
 			widthSmoothness = 0.5f
-			horizontalRadiusMultiplier = uniform(0.5f, 1.0f)
-			verticalRadiusMultiplier = 0.5f
-			floorLevel = 0.5f
+			horizontalRadiusFactor = uniform(0.5f, 1.0f)
+			verticalRadiusDefaultFactor = 0.5f
+			verticalRadiusCenterFactor = 0.5f
 		}
 	})
 
@@ -87,15 +87,15 @@ fun DataPack.configuredCarverTests() {
 						}
 					},
 					"width_smoothness": 0.5,
-					"horizontal_radius_multiplier": {
+					"horizontal_radius_factor": {
 						"type": "minecraft:uniform",
 						"value": {
 							"min_inclusive": 0.5,
 							"max_exclusive": 1.0
 						}
 					},
-					"vertical_radius_multiplier": 0.5,
-					"floor_level": 0.5
+					"vertical_radius_default_factor": 0.5,
+					"vertical_radius_center_factor": 0.5
 				}
 			}
 		}

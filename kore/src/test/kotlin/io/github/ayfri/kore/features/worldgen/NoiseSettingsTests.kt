@@ -9,8 +9,8 @@ import io.github.ayfri.kore.features.worldgen.noisesettings.rules.Bandlands
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.block
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.condition
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.biomes
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.invert
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.noiseThreshold
+import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.not
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.surfaceRules
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.Blocks
@@ -52,7 +52,7 @@ fun DataPack.noiseSettingsTests() {
 			this += Bandlands
 			this += block(Blocks.STONE)
 			this += condition(
-				invert {
+				not {
 					biomes {
 						this += Biomes.BADLANDS
 					}
@@ -139,10 +139,12 @@ fun DataPack.noiseSettingsTests() {
 					{
 						"type": "minecraft:condition",
 						"if_true": {
-							"type": "minecraft:invert",
+							"type": "minecraft:not",
 							"invert": {
 								"type": "minecraft:biome",
-								"biome_is": "minecraft:badlands"
+								"biome_is": [
+									"minecraft:badlands"
+								]
 							}
 						},
 						"then_run": {
