@@ -1,5 +1,6 @@
 package generators
 
+import GENERATED_PACKAGE
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.MemberName.Companion.member
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
@@ -18,6 +19,7 @@ suspend fun downloadGamerules() {
 }
 
 private const val INTERFACE_NAME = "Gamerules"
+private val gamerulesClass = ClassName(GENERATED_PACKAGE, INTERFACE_NAME)
 
 private fun String.toGameruleName() = substringAfter("gamerule").substringBefore("<").snakeCase().trim().uppercase()
 
@@ -28,13 +30,13 @@ private fun addGameruleChild(name: String) = TypeSpec.interfaceBuilder(name).app
 			.build()
 	)
 
-	addSuperinterface(ClassName("generated", INTERFACE_NAME))
+	addSuperinterface(gamerulesClass)
 	setSealed()
 }.build()
 
 private fun addGamerule(name: String, parent: String) = TypeSpec.objectBuilder(name)
 	.addModifiers(KModifier.DATA)
-	.addSuperinterface(ClassName("generated", INTERFACE_NAME, parent))
+	.addSuperinterface(ClassName(GENERATED_PACKAGE, INTERFACE_NAME, parent))
 	.build()
 
 fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
@@ -65,12 +67,12 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 		addType(
 			TypeSpec.companionObjectBuilder().apply {
 				addProperty(
-					PropertySpec.builder("values", List::class.asClassName().parameterizedBy(ClassName("generated", INTERFACE_NAME)))
+					PropertySpec.builder("values", List::class.asClassName().parameterizedBy(gamerulesClass))
 						.getter(
 							FunSpec.getterBuilder()
 								.addStatement(
 									"return %T::class.sealedSubclasses.map { it.sealedSubclasses.map { it.objectInstance!! } }.flatten()",
-									ClassName("generated", INTERFACE_NAME)
+									gamerulesClass
 								)
 								.build()
 						)
@@ -80,7 +82,7 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 				addFunction(
 					FunSpec.builder("fromString")
 						.addParameter("name", String::class)
-						.returns(ClassName("generated", INTERFACE_NAME).copy(nullable = true))
+						.returns(gamerulesClass.copy(nullable = true))
 						.addStatement("return values.firstOrNull { it.name.equals(name, ignoreCase = true) }")
 						.build()
 				)
@@ -97,12 +99,7 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 				addType(
 					TypeSpec.classBuilder("Serializer").apply {
 						addSuperinterface(
-							ClassName("kotlinx.serialization", "KSerializer").parameterizedBy(
-								ClassName(
-									"generated",
-									INTERFACE_NAME
-								)
-							)
+							ClassName("kotlinx.serialization", "KSerializer").parameterizedBy(gamerulesClass)
 						)
 
 						addProperty(
@@ -124,7 +121,7 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 						addFunction(
 							FunSpec.builder("deserialize")
 								.addParameter("decoder", ClassName("kotlinx.serialization.encoding", "Decoder"))
-								.returns(ClassName("generated", INTERFACE_NAME))
+								.returns(gamerulesClass)
 								.addStatement(
 									"return fromString(decoder.decodeString()) ?: throw %T(%S)",
 									IllegalArgumentException::class,
@@ -137,7 +134,7 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 						addFunction(
 							FunSpec.builder("serialize")
 								.addParameter("encoder", ClassName("kotlinx.serialization.encoding", "Encoder"))
-								.addParameter("value", ClassName("generated", INTERFACE_NAME))
+								.addParameter("value", gamerulesClass)
 								.addStatement("encoder.encodeString(value.name.camelCase())")
 								.overrides()
 								.build()

@@ -6,12 +6,12 @@ fun generateFile(
 	name: String,
 	sourceUrl: String,
 	topLevel: TypeSpec.Builder,
-	additionalCode: FileSpec.Builder.(enumName: String) -> Unit = {}
+	additionalCode: FileSpec.Builder.(enumName: String) -> Unit = {},
 ) {
-	val fileBuilder = FileSpec.builder("generated", name).apply {
+	val fileBuilder = FileSpec.builder(GENERATED_PACKAGE, name).apply {
 		addFileComment(
 			"""
-			${header.removePrefix("// ")}
+			${HEADER.removePrefix("// ")}
 			Source: $sourceUrl
 			Minecraft version : $minecraftVersion
 		""".trimIndent()
@@ -21,10 +21,11 @@ fun generateFile(
 		additionalCode(name)
 	}
 
-	val packageDir = File(libDir, "src/main/kotlin")
-	val file = File(packageDir, "${fileBuilder.packageName}/${fileBuilder.name}.kt")
+	val packageDir = File(libDir, CODE_FOLDER)
+	val fileSpec = fileBuilder.build()
+	val file = File(packageDir, fileSpec.toJavaFileObject().toUri().path)
 
-	println("Generating ${file.canonicalFile}")
-	fileBuilder.build().writeTo(packageDir)
-	println("Generated ${file.canonicalFile}")
+	println("Generating $file")
+	fileSpec.writeTo(packageDir)
+	println("Generated $file")
 }

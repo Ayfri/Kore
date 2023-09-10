@@ -1,5 +1,5 @@
 object Project {
-	const val GROUP = "io.github.ayfri"
+	const val GROUP = "io.github.ayfri.kore"
 	const val PUBLISH_URL = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
 	const val SNAPSHOT_PUBLISH_URL = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
 	const val URL = "github.com/Ayfri/Kore"

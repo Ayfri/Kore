@@ -7,7 +7,7 @@ fun argumentClassName(argument: String): ClassName {
 	}
 
 	return ClassName(
-		packageName = "arguments.types.resources.$packageSuffix",
+		packageName = "$CODE_PACKAGE.arguments.types.resources.$packageSuffix",
 		"${argument.substringAfterLast(".")}Argument"
 	)
 }

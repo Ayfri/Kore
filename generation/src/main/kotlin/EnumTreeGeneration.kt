@@ -30,7 +30,7 @@ fun generatePathEnumTree(
 		}
 	}
 
-	val topLevelInterfaceClassName = ClassName("generated", name)
+	val topLevelInterfaceClassName = ClassName(GENERATED_PACKAGE, name)
 
 	for (path in paths) {
 		val parent = path.substringBeforeLast('/')
@@ -127,7 +127,7 @@ fun generateCompanion(name: String, encoderValue: String? = "\"minecraft:\${valu
 	TypeSpec.companionObjectBuilder().apply {
 		addType(
 			TypeSpec.objectBuilder(name.asSerializer())
-				.superclass(ClassName("serializers", "LowercaseSerializer").parameterizedBy(ClassName("", name)))
+				.superclass(ClassName("$CODE_PACKAGE.serializers", "LowercaseSerializer").parameterizedBy(ClassName("", name)))
 				.addSuperclassConstructorParameter("entries")
 				.letIf(encoderValue != null) {
 					it.addFunction(
