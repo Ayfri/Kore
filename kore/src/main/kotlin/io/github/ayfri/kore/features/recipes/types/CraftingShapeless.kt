@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CraftingShapeless(
 	override var group: String? = null,
-	var ingredient: List<Ingredient> = mutableListOf(),
+	var ingredients: List<Ingredient> = mutableListOf(),
 	override var result: CraftingResult,
 ) : Recipe(), CraftingRecipe {
 	override val type = RecipeTypes.CRAFTING_SHAPELESS
@@ -25,5 +25,6 @@ fun Recipes.craftingShapeless(name: String, block: CraftingShapeless.() -> Unit)
 	return RecipeArgument(name, dp.name)
 }
 
-fun CraftingShapeless.ingredient(block: Ingredient.() -> Unit) = Ingredient().apply(block).also { ingredient += it }
-fun CraftingShapeless.ingredient(item: ItemArgument? = null, tag: ItemTagArgument? = null) = Ingredient(item, tag).also { ingredient += it }
+fun CraftingShapeless.ingredient(block: Ingredient.() -> Unit) = Ingredient().apply(block).also { ingredients += it }
+fun CraftingShapeless.ingredient(item: ItemArgument? = null, tag: ItemTagArgument? = null) =
+	Ingredient(item, tag).also { ingredients += it }
