@@ -35,6 +35,8 @@ import io.github.ayfri.kore.serializers.JsonNamingSnakeCaseStrategy
 import kotlin.io.path.Path
 import java.io.File
 import java.nio.file.Path
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -128,12 +130,46 @@ class DataPack(val name: String) {
 
 	fun generatePackMCMetaFile() = jsonEncoder.encodeToString(PackMCMeta(pack, features, filter))
 
-	@Deprecated(
-		"Generation to zip is for now not working fine with Minecraft, please use generate() instead",
-		ReplaceWith("generate()"),
-		DeprecationLevel.WARNING
-	)
-	fun generateZip() = generate()
+	fun generateZip() {
+		// if (!generated) generate()
+		if (generated) return
+		val start = System.currentTimeMillis()
+
+		val zip = File("$path/$name.zip")
+		zip.delete()
+		zip.createNewFile()
+		zip.outputStream().use { outputStream ->
+			ZipOutputStream(outputStream).use { zipOutputStream ->
+				zipOutputStream.putNextEntry(ZipEntry("pack.mcmeta"))
+				zipOutputStream.write(generatePackMCMetaFile().toByteArray())
+				zipOutputStream.closeEntry()
+
+				iconPath?.let {
+					zipOutputStream.putNextEntry(ZipEntry("pack.png"))
+					zipOutputStream.write(it.toFile().readBytes())
+				}
+
+				functions.forEach { function ->
+					zipOutputStream.putNextEntry(ZipEntry("data/${function.namespace}/functions/${function.directory}${function.name}.mcfunction"))
+					zipOutputStream.write(function.lines.joinToString("\n").toByteArray())
+					zipOutputStream.closeEntry()
+				}
+
+				generatedFunctions.forEach { function ->
+					zipOutputStream.putNextEntry(ZipEntry("data/${function.namespace}/functions/${function.directory}${function.name}.mcfunction"))
+					zipOutputStream.write(function.lines.joinToString("\n").toByteArray())
+					zipOutputStream.closeEntry()
+				}
+
+				generators.forEach { generator ->
+					generator.forEach { it.generateZipEntry(this, zipOutputStream) }
+				}
+			}
+		}
+
+		val end = System.currentTimeMillis()
+		println("Generated data pack '$name' in ${end - start}ms in: ${zip.absolutePath}")
+	}
 
 	private fun File.generateFunctions(
 		dirName: String,
