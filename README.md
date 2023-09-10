@@ -21,10 +21,22 @@ I will accept pull requests for older versions on a separate branch.
 
 ## Getting Started
 
-You can't currently download the library because it's not finished yet, but you can still clone the repository and use it as a local
-library.
+Install the library with Gradle, with Kotlin DSL:
 
-Then, you can create a new project and add the library as a dependency.
+```kotlin
+implementation("io.github.ayfri.kore:kore:VERSION")
+```
+
+Or with Groovy DSL:
+
+```groovy
+implementation 'io.github.ayfri.kore:kore:VERSION'
+```
+
+> Note : You can't currently download the library because it's not published yet, but you can still clone the repository and use it as a
+> local dependency.
+
+Then create a `Main.kt` file and start writing your datapacks.
 
 ## Example
 
@@ -81,7 +93,7 @@ fun main() {
 		}
 	}
 
-	datapack.generate()
+	datapack.generateZip()
 }
 ```
 
