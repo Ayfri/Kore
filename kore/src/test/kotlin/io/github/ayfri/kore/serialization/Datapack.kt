@@ -28,7 +28,7 @@ fun datapackTests() = testDataPack("test") {
 
 	features(DataPacks.BUNDLE)
 
-	iconPath = Path("datapackDSL", "src", "test", "resources", "Kotlin Full Color Logo Mark RGB.png")
+	iconPath = Path("kore", "src", "test", "resources", "Kotlin Full Color Logo Mark RGB.png")
 }.apply {
 	assertFileGenerated("pack.mcmeta")
 	assertFileGenerated("pack.png")

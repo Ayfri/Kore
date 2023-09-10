@@ -24,7 +24,7 @@ val rootDir: File = Paths.get(".").absolute().normalize().let {
 	else it
 }.toFile()
 
-val libDir = File(rootDir, "datapackDSL")
+val libDir = File(rootDir, "kore")
 val cacheDir = File(rootDir, "generation/build/cache")
 
 val properties = Properties().apply { load(File(rootDir, "gradle.properties").inputStream()) }

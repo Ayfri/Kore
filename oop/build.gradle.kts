@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-	api(project(":datapackDSL"))
+	api(project(":kore"))
 	implementation(libs.kotlinx.serialization)
 }
 

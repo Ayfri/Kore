@@ -1,6 +1,6 @@
-rootProject.name = "DatapackDSL"
+rootProject.name = "Kore"
 
-include(":datapackDSL")
+include(":kore")
 include(":oop")
 include(":generation")
 
