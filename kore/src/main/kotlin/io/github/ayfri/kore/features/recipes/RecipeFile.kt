@@ -8,7 +8,7 @@ import kotlinx.serialization.encodeToString
 data class RecipeFile(
 	override var fileName: String = "recipe",
 	var recipe: Recipe,
-) : Generator("recipe") {
+) : Generator("recipes") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(recipe)
 }
 
