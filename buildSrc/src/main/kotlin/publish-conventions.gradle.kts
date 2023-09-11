@@ -19,7 +19,7 @@ publishing {
 			artifact(kotlinSourcesJar)
 
 			groupId = Project.GROUP
-			version = Project.VERSION
+			version = "${Project.VERSION}-${mainProjectProperty("minecraft.version")}"
 
 			pom {
 				name = publicationName
