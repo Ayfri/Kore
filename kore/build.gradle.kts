@@ -23,9 +23,15 @@ kotlin {
 	jvmToolchain(17)
 }
 
-tasks.withType<KotlinCompile> {
-	kotlinOptions {
-		freeCompilerArgs = listOf("-Xcontext-receivers")
+tasks {
+	withType<KotlinCompile> {
+		kotlinOptions {
+			freeCompilerArgs = listOf("-Xcontext-receivers")
+		}
+	}
+
+	jar {
+		dependsOn(":generation:run")
 	}
 }
 
