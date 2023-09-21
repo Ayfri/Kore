@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
 	kotlin("jvm")
 	kotlin("plugin.serialization")
@@ -21,15 +19,13 @@ dependencies {
 
 kotlin {
 	jvmToolchain(17)
+
+	compilerOptions {
+		freeCompilerArgs = listOf("-Xcontext-receivers")
+	}
 }
 
 tasks {
-	withType<KotlinCompile> {
-		kotlinOptions {
-			freeCompilerArgs = listOf("-Xcontext-receivers")
-		}
-	}
-
 	jar {
 		dependsOn(":generation:run")
 	}
