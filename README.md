@@ -6,6 +6,7 @@
 		<img alt="GitHub" src="https://img.shields.io/github/license/Ayfri/Kore?style=flat-square">
 		<img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/Ayfri/Kore?color=dark_green&logo=github&style=flat-square">
 		<img alt="GitHub closed issues" src="https://img.shields.io/github/issues-closed-raw/Ayfri/Kore?color=blue&logo=github&style=flat-square">
+		<img alt="Maven Central" src="https://img.shields.io/maven-central/v/io.github.ayfri.kore/kore?style=flat-square&logo=gradle&label=latest%20version">
 	</a>
 </p>
 <hr>
@@ -32,9 +33,6 @@ Or with Groovy DSL:
 ```groovy
 implementation 'io.github.ayfri.kore:kore:VERSION'
 ```
-
-> Note : You can't currently download the library because it's not published yet, but you can still clone the repository and use it as a
-> local dependency.
 
 Then create a `Main.kt` file and start writing your datapacks.
 
