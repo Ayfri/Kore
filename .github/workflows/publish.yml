@@ -20,16 +20,11 @@ jobs:
           java-version: 17
           distribution: temurin
 
-
-
-      - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
-
       - name: Grant execute permission for Gradle
-        run: chmod +x /home/runner/work/Kore/Kore/gradlew
+        run: chmod +x ./gradlew
 
       - name: Gradle (Publish)
-
+        uses: gradle/gradle-build-action@v2
         env:
           ORG_GRADLE_PROJECT_signingKey: "${{ secrets.GPG_KEY }}"
           ORG_GRADLE_PROJECT_signingPassword: "${{ secrets.GPG_PASSWORD }}"
@@ -37,7 +32,8 @@ jobs:
           NEXUS_USERNAME: "${{ secrets.NEXUS_USERNAME }}"
           NEXUS_PASSWORD: "${{ secrets.NEXUS_PASSWORD }}"
 
-        run: /home/runner/work/Kore/Kore/gradlew publish
+        with:
+          arguments: publish --no-parallel
 
       - name: Upload artifact (Main JARs)
         uses: actions/upload-artifact@v3
