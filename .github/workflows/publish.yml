@@ -37,7 +37,7 @@ jobs:
           NEXUS_USERNAME: "${{ secrets.NEXUS_USERNAME }}"
           NEXUS_PASSWORD: "${{ secrets.NEXUS_PASSWORD }}"
 
-        run: ./gradlew publish
+        run: /home/runner/work/Kore/Kore/gradlew publish
 
       - name: Upload artifact (Main JARs)
         uses: actions/upload-artifact@v3
