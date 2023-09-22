@@ -13,7 +13,6 @@ val javadocJar = task("javadocJar", Jar::class) {
 }
 
 val sourceJar = task("sourceJar", Jar::class) {
-	dependsOn(tasks["classes"])
 	if (isKore) dependsOn(":generation:run")
 	archiveClassifier.set("sources")
 	from(sourceSets["main"].allSource)
