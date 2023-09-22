@@ -1,4 +1,4 @@
-import gradle.kotlin.dsl.accessors._b6bea14fb88fd11e46d6fb1ebe601eab.ext
+import gradle.kotlin.dsl.accessors._81caac640344b8dd7f3b85b1b528aa4b.ext
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.extra
 
@@ -8,9 +8,11 @@ class ModuleMetadata {
 }
 
 fun Project.metadata(block: ModuleMetadata.() -> Unit) {
-	val metadata = ModuleMetadata().apply(block)
-	ext["publication-name"] = metadata.name
-	ext["publication-description"] = metadata.description
+	val metadata = ModuleMetadata()
+	block(metadata)
+
+	ext.set("publicationName", metadata.name)
+	ext.set("publicationDescription", metadata.description)
 }
 
 fun Project.mainProjectProperty(name: String) = rootProject.extra[name] as String

@@ -4,6 +4,11 @@ plugins {
 	`publish-conventions`
 }
 
+metadata {
+	name = "Kore"
+	description = "A Kotlin DSL to create Minecraft datapacks."
+}
+
 repositories {
 	mavenCentral()
 }
@@ -42,9 +47,4 @@ var runUnitTests = tasks.register<JavaExec>("runUnitTests") {
 
 tasks.test {
 	dependsOn(runUnitTests)
-}
-
-metadata {
-	name = "Kore"
-	description = "A Kotlin DSL to create Minecraft datapacks."
 }

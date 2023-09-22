@@ -4,6 +4,11 @@ plugins {
 	`publish-conventions`
 }
 
+metadata {
+	name = "OOP"
+	description = "An OOP form of Kore, experimental and not complete."
+}
+
 repositories {
 	mavenCentral()
 }
@@ -32,9 +37,4 @@ var runUnitTests = tasks.register<JavaExec>("runUnitTests") {
 
 tasks.test {
 	dependsOn(runUnitTests)
-}
-
-metadata {
-	name = "OOP"
-	description = "An OOP form of Kore, experimental and not complete."
 }

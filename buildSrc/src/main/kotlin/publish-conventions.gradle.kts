@@ -1,75 +1,98 @@
 plugins {
+	kotlin("jvm")
 	`maven-publish`
 	signing
 }
 
-repositories {
-	mavenCentral()
+val isKore get() = project.name == "kore"
+
+val javadocJar = task("javadocJar", Jar::class) {
+	if (isKore) dependsOn(":generation:run")
+	archiveClassifier.set("javadoc")
+	from(tasks.javadoc)
 }
 
-val kotlinSourcesJar: Task by tasks.getting
-val publicationName: String? by project.ext
-val publicationDescription: String? by project.ext
+val sourceJar = task("sourceJar", Jar::class) {
+	dependsOn(tasks["classes"])
+	if (isKore) dependsOn(":generation:run")
+	archiveClassifier.set("sources")
+	from(sourceSets["main"].allSource)
+}
 
-publishing {
-	publications {
-		create<MavenPublication>("kotlin") {
-			from(components["kotlin"])
+afterEvaluate {
+	publishing {
+		publications {
+			create<MavenPublication>("maven") {
+				from(components["java"])
 
-			artifact(kotlinSourcesJar)
+				artifact(sourceJar)
+				artifact(javadocJar)
 
-			groupId = Project.GROUP
-			version = "${Project.VERSION}-${mainProjectProperty("minecraft.version")}"
+				groupId = Project.GROUP
+				version = "${Project.VERSION}-${mainProjectProperty("minecraft.version")}"
 
-			pom {
-				name = publicationName
-				description = publicationDescription
-				url = Project.URL
+				pom {
+					val publicationName: String? by project.ext
+					val publicationDescription: String? by project.ext
 
-				packaging = "jar"
+					name = publicationName
+					description = publicationDescription
+					url = Project.URL
 
-				licenses {
-					license {
-						name = "GPLv3"
-						url = "https://www.gnu.org/licenses/gpl-3.0.en.html"
+					packaging = "jar"
+
+					licenses {
+						license {
+							name = "GPLv3"
+							url = "https://www.gnu.org/licenses/gpl-3.0.en.html"
+						}
+					}
+
+					developers {
+						developer {
+							id = "Ayfri"
+							name = "Roy Pierre"
+							email = "pierre.ayfri@gmail.com"
+						}
+					}
+
+					issueManagement {
+						system = "GitHub"
+						url = "${Project.URL}/issues"
+					}
+
+					scm {
+						val repositoryUrl = Project.URL
+
+						connection = "scm:git:git://$repositoryUrl.git"
+						developerConnection = "scm:git:ssh://$repositoryUrl.git"
+						url = "https://$repositoryUrl"
 					}
 				}
+			}
+		}
 
-				developers {
-					developer {
-						id = "Ayfri"
-						name = "Roy Pierre"
-						email = "pierre.ayfri@gmail.com"
-					}
+		repositories {
+			maven {
+				name = "nexus"
+				url = when {
+					project.version.toString().endsWith("SNAPSHOT") -> uri(Project.SNAPSHOT_PUBLISH_URL)
+					else -> uri(Project.PUBLISH_URL)
 				}
 
-				scm {
-					val repositoryUrl = Project.URL
-
-					connection = "scm:git:git://$repositoryUrl.git"
-					developerConnection = "scm:git:ssh://$repositoryUrl.git"
-					url = "https://$repositoryUrl"
+				credentials {
+					username = System.getenv("NEXUS_USERNAME") ?: return@credentials
+					password = System.getenv("NEXUS_PASSWORD") ?: return@credentials
 				}
 			}
 		}
 	}
 
-	repositories {
-		maven {
-			name = "nexus"
-			url = when {
-				project.version.toString().endsWith("SNAPSHOT") -> uri(Project.SNAPSHOT_PUBLISH_URL)
-				else -> uri(Project.PUBLISH_URL)
-			}
+	signing {
+		val signingKey: String? by project ?: return@signing
+		val signingPassword: String? by project ?: return@signing
 
-			credentials {
-				username = System.getenv("NEXUS_USERNAME") ?: return@credentials
-				password = System.getenv("NEXUS_PASSWORD") ?: return@credentials
-			}
-		}
+		useInMemoryPgpKeys(signingKey, signingPassword)
+		sign(publishing.publications["maven"])
 	}
-}
-
-signing {
-	sign(publishing.publications["kotlin"])
 }
