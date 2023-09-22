@@ -122,10 +122,9 @@ fun main() {
 If you want to contribute to this project, you can follow these steps:
 
 1. Fork the repository.
-2. Run gradle `generation:run` task to generate the auto-generated files.
-3. Run gradle `kore:run` to run the tests.
-4. Make your changes.
-5. Create a pull request and wait for it to be reviewed and merged.
+2. Run gradle `kore:run` to run the tests.
+3. Make your changes.
+4. Create a pull request and wait for it to be reviewed and merged.
 
 You can also create an issue if you find a bug or if you want to suggest a new feature.
 

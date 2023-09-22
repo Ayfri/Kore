@@ -4,16 +4,13 @@ plugins {
 	signing
 }
 
-val isKore get() = project.name == "kore"
-
 val javadocJar = task("javadocJar", Jar::class) {
-	if (isKore) dependsOn(":generation:run")
 	archiveClassifier.set("javadoc")
 	from(tasks.javadoc)
 }
 
 val sourceJar = task("sourceJar", Jar::class) {
-	if (isKore) dependsOn(":generation:run")
+	dependsOn(tasks["classes"])
 	archiveClassifier.set("sources")
 	from(sourceSets["main"].allSource)
 }

@@ -30,8 +30,9 @@ kotlin {
 	}
 }
 
-tasks {
-	jar {
+tasks.compileKotlin {
+	val generatedFolder = file("src/main/kotlin/io/github/ayfri/kore/generated")
+	if (!generatedFolder.exists()) {
 		dependsOn(":generation:run")
 	}
 }
