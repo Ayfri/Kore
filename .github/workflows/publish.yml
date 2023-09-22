@@ -1,0 +1,51 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+
+        with:
+          java-version: 17
+          distribution: temurin
+
+      - name: Set up Kotlin
+        uses: fwilhe2/setup-kotlin@main
+
+      - name: Gradle (Publish)
+        uses: gradle/gradle-build-action@v2
+
+        env:
+          ORG_GRADLE_PROJECT_signingKey: "${{ secrets.GPG_KEY }}"
+          ORG_GRADLE_PROJECT_signingPassword: "${{ secrets.GPG_PASSWORD }}"
+
+          NEXUS_USERNAME: "${{ secrets.NEXUS_USERNAME }}"
+          NEXUS_PASSWORD: "${{ secrets.NEXUS_PASSWORD }}"
+
+        with:
+          arguments: publish --no-parallel
+
+      - name: Upload artifact (Main JARs)
+        uses: actions/upload-artifact@v3
+
+        with:
+          name: JARs (Main)
+          path: kore/build/libs/*.jar
+
+      - name: Upload artifact (OOP JARs)
+        uses: actions/upload-artifact@v3
+
+        with:
+          name: JARs (Modules)
+          path: oop/*/build/libs/*.jar
