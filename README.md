@@ -35,6 +35,7 @@ implementation 'io.github.ayfri.kore:kore:VERSION'
 ```
 
 Then create a `Main.kt` file and start writing your datapacks.
+See the [documentation](https://github.com/Ayfri/Kore/wiki/Creating-a-Datapack) for more information.
 
 ## Example
 
