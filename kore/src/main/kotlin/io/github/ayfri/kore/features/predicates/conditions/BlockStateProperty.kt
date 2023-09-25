@@ -15,6 +15,6 @@ fun Predicate.blockStateProperty(block: BlockArgument, properties: Map<String, S
 	predicateConditions += BlockStateProperty(block, properties)
 }
 
-fun Predicate.blockStateProperty(block: BlockArgument, properties: Map<String, State<*>>.() -> Unit) {
+fun Predicate.blockStateProperty(block: BlockArgument, properties: MutableMap<String, State<*>>.() -> Unit) {
 	predicateConditions += BlockStateProperty(block, buildMap(properties))
 }
