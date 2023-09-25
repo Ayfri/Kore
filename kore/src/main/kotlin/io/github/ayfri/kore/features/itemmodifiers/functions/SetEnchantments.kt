@@ -13,5 +13,5 @@ data class SetEnchantments(
 	var add: Boolean? = null,
 ) : ItemFunction()
 
-fun ItemModifier.setEnchantments(add: Boolean? = null, enchantments: Map<EnchantmentArgument, NumberProvider>.() -> Unit = {}) =
+fun ItemModifier.setEnchantments(add: Boolean? = null, enchantments: MutableMap<EnchantmentArgument, NumberProvider>.() -> Unit = {}) =
 	SetEnchantments(enchantments = buildMap(enchantments), add = add).also { modifiers += it }
