@@ -6,7 +6,7 @@ import net.benwoodworth.knbt.buildNbtCompound
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ContentsEntity(
+data class ContentsEntityUUID(
 	var type: String,
 	var name: ChatComponent? = null,
 	var id: String? = null,
