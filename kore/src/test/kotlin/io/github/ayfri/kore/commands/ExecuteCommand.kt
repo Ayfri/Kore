@@ -45,7 +45,7 @@ fun Function.executeTests() {
 			debug("Validated ifCondition with multiple scores", Color.GREEN)
 		}
 	} assertsIs """
-		execute if score $selectorAsString a matches 0 if score $selectorAsString b matches 1 if score $selectorAsString c matches 2 run tellraw @a {"text":"Validated ifCondition with multiple scores","color":"green"}
+		execute if score $selectorAsString a matches 0 if score $selectorAsString b matches 1 if score $selectorAsString c matches 2 run tellraw @a {"type":"text","text":"Validated ifCondition with multiple scores","color":"green"}
 	""".trimIndent()
 
 	val testFunction = datapack.function("test_execute_direct_return") {

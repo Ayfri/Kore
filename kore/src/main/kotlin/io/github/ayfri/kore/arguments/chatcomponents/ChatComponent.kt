@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.chatcomponents.events.HoverAction
 import io.github.ayfri.kore.arguments.chatcomponents.events.HoverEvent
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.utils.nbt
+import io.github.ayfri.kore.utils.pascalCase
 import io.github.ayfri.kore.utils.set
 import net.benwoodworth.knbt.buildNbtCompound
 import kotlinx.serialization.EncodeDefault
@@ -15,6 +16,8 @@ import kotlinx.serialization.Serializable
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
 abstract class ChatComponent {
+	abstract val type: ChatComponentType
+
 	@EncodeDefault(EncodeDefault.Mode.NEVER)
 	var text = ""
 	var bold: Boolean? = null
@@ -33,6 +36,7 @@ abstract class ChatComponent {
 	open fun containsOnlyText() = text(text) == this
 
 	open fun toNbtTag() = buildNbtCompound {
+		this["type"] = type.name.lowercase()
 		if (extra == null) this["text"] = text
 		color?.let { this["color"] = it.asString() }
 		bold?.let { this["bold"] = it }
@@ -49,7 +53,7 @@ abstract class ChatComponent {
 	}
 
 	override fun toString() =
-		"TextComponent(text='$text', bold=$bold, clickEvent=$clickEvent, color=$color, extra=$extra, font=$font, hoverEvent=$hoverEvent, insertion=$insertion, italic=$italic, keybind=$keybind, obfuscated=$obfuscated, strikethrough=$strikethrough, underlined=$underlined)"
+		"${type.name.pascalCase()}(text='$text', bold=$bold, clickEvent=$clickEvent, color=$color, extra=$extra, font=$font, hoverEvent=$hoverEvent, insertion=$insertion, italic=$italic, keybind=$keybind, obfuscated=$obfuscated, strikethrough=$strikethrough, underlined=$underlined)"
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true

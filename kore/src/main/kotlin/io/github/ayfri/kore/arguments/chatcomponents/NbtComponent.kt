@@ -16,6 +16,8 @@ data class NbtComponent(
 	var storage: String? = null,
 	var separator: ChatComponent? = null,
 ) : ChatComponent() {
+	override val type = ChatComponentType.NBT
+
 	override fun toNbtTag() = buildNbtCompound {
 		super.toNbtTag().entries.forEach { (key, value) -> if (key != "text") this[key] = value }
 		this["nbt"] = nbt

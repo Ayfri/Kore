@@ -38,7 +38,8 @@ fun datapackTests() = testDataPack("test") {
 			"pack_format": 16,
 			"description": {
 				"text": "Test pack",
-				"color": "aqua"
+				"color": "aqua",
+				"type": "text"
 			},
 			"supported_formats": {
 				"min_inclusive": 16,

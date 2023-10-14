@@ -9,6 +9,8 @@ data class EntityComponent(
 	var selector: String,
 	var separator: String? = null,
 ) : ChatComponent() {
+	override val type = ChatComponentType.SELECTOR
+
 	override fun toNbtTag() = buildNbtCompound {
 		super.toNbtTag().entries.forEach { (key, value) -> if (key != "text") this[key] = value }
 		this["selector"] = selector

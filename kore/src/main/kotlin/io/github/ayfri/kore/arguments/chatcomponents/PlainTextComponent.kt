@@ -5,6 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class PlainTextComponent : ChatComponent(), SimpleComponent {
+	override val type = ChatComponentType.TEXT
+
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		if (javaClass != other?.javaClass) return false

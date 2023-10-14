@@ -11,6 +11,8 @@ import kotlinx.serialization.Serializable
 data class ScoreComponent(
 	var score: ScoreComponentEntry,
 ) : ChatComponent() {
+	override val type = ChatComponentType.SCORE
+
 	override fun toNbtTag() = buildNbtCompound {
 		super.toNbtTag().entries.forEach { (key, value) -> if (key != "text") this[key] = value }
 		this["score"] = score.toNbtTag()
