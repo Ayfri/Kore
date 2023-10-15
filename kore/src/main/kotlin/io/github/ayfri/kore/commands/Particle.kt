@@ -63,30 +63,6 @@ class Particles(private val fn: Function) {
 			)
 		)
 
-	fun fallingDust(block: BlockArgument, pos: Vec3? = null) = fn.addLine(command("particle", literal("falling_dust"), block, pos))
-	fun fallingDust(
-		block: BlockArgument,
-		pos: Vec3,
-		delta: Vec3,
-		speed: Double,
-		count: Int,
-		mode: ParticleMode? = null,
-		viewers: EntityArgument? = null,
-	) =
-		fn.addLine(
-			command(
-				"particle",
-				literal("falling_dust"),
-				block,
-				pos,
-				delta,
-				float(speed),
-				int(count),
-				literal(mode?.asArg()),
-				viewers
-			)
-		)
-
 	fun dust(color: Color, size: Double = 1.0, pos: Vec3? = null) =
 		fn.addLine(command("particle", literal("dust"), *color.asArgs(), float(size), pos))
 
@@ -136,6 +112,30 @@ class Particles(private val fn: Function) {
 				*color1.asArgs(),
 				float(size),
 				*color2.asArgs(),
+				pos,
+				delta,
+				float(speed),
+				int(count),
+				literal(mode?.asArg()),
+				viewers
+			)
+		)
+
+	fun fallingDust(block: BlockArgument, pos: Vec3? = null) = fn.addLine(command("particle", literal("falling_dust"), block, pos))
+	fun fallingDust(
+		block: BlockArgument,
+		pos: Vec3,
+		delta: Vec3,
+		speed: Double,
+		count: Int,
+		mode: ParticleMode? = null,
+		viewers: EntityArgument? = null,
+	) =
+		fn.addLine(
+			command(
+				"particle",
+				literal("falling_dust"),
+				block,
 				pos,
 				delta,
 				float(speed),
