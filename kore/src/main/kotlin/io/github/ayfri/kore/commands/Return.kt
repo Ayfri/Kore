@@ -10,8 +10,6 @@ import io.github.ayfri.kore.commands.execute.run
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.generatedFunction
 
-@Deprecated("This subcommand has been postponed to after 1.20.2.", level = DeprecationLevel.ERROR)
-@Suppress("DEPRECATION_ERROR")
 fun Function.returnIf(condition: ExecuteCondition.() -> Unit, block: Function.() -> Command) = execute {
 	ifCondition(condition)
 	run {
@@ -26,8 +24,6 @@ fun Function.returnIf(returnValue: Int, condition: ExecuteCondition.() -> Unit) 
 	}
 }
 
-@Deprecated("This subcommand has been postponed to after 1.20.2.", level = DeprecationLevel.ERROR)
-@Suppress("DEPRECATION_ERROR")
 fun Function.returnIf(vararg predicates: PredicateArgument, block: Function.() -> Command) = execute {
 	ifCondition {
 		predicates.forEach { predicate(it) }
@@ -46,8 +42,6 @@ fun Function.returnIf(returnValue: Int, vararg predicates: PredicateArgument) = 
 	}
 }
 
-@Deprecated("This subcommand has been postponed to after 1.20.2.", level = DeprecationLevel.ERROR)
-@Suppress("DEPRECATION_ERROR")
 fun Function.returnUnless(condition: ExecuteCondition.() -> Unit, block: Function.() -> Command) = execute {
 	unlessCondition(condition)
 	run {
@@ -62,8 +56,6 @@ fun Function.returnUnless(returnValue: Int, condition: ExecuteCondition.() -> Un
 	}
 }
 
-@Deprecated("This subcommand has been postponed to after 1.20.2.", level = DeprecationLevel.ERROR)
-@Suppress("DEPRECATION_ERROR")
 fun Function.returnUnless(vararg predicates: PredicateArgument, block: Function.() -> Command) = execute {
 	unlessCondition {
 		predicates.forEach { predicate(it) }
@@ -82,7 +74,6 @@ fun Function.returnUnless(returnValue: Int, vararg predicates: PredicateArgument
 	}
 }
 
-@Deprecated("This subcommand has been postponed to after 1.20.2.", level = DeprecationLevel.ERROR)
 fun Function.returnRun(block: Function.() -> Command): Command {
 	val function = Function("", "", "", datapack).apply { block() }
 
@@ -96,7 +87,6 @@ fun Function.returnRun(block: Function.() -> Command): Command {
 	return returnRun(generatedFunction)
 }
 
-@Deprecated("This subcommand has been postponed to after 1.20.2.", level = DeprecationLevel.ERROR)
 fun Function.returnRun(function: FunctionArgument) = addLine(command("return", literal("run"), literal("function"), function))
 
 fun Function.returnValue(value: Int) = addLine(command("return", int(value)))

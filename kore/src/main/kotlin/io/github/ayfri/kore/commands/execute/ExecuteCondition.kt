@@ -56,7 +56,6 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 
 	fun entity(target: EntityArgument) = addArguments(listOf(literal("entity"), ex.targetArg(target)))
 
-	@Deprecated("This subcommand has been postponed to after 1.20.2.", level = DeprecationLevel.ERROR)
 	fun function(function: FunctionArgument) = addArguments(listOf(literal("function"), function))
 
 	fun loaded(pos: Vec3) = addArguments(listOf(literal("loaded"), pos))
