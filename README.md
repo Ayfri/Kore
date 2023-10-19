@@ -34,6 +34,24 @@ Or with Groovy DSL:
 implementation 'io.github.ayfri.kore:kore:VERSION'
 ```
 
+Then activate the `-Xcontext-receivers` compiler option:
+
+```kotlin
+kotlin {
+	compilerOptions {
+		freeCompilerArgs.add("-Xcontext-receivers")
+	}
+}
+```
+
+You should also use Java 17 or higher:
+
+```kotlin
+kotlin {
+	jvmToolchain(17)
+}
+```
+
 Then create a `Main.kt` file and start writing your datapacks.
 See the [documentation](https://github.com/Ayfri/Kore/wiki/Creating-a-Datapack) for more information.
 
