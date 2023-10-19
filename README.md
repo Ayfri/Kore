@@ -61,7 +61,7 @@ See the [documentation](https://github.com/Ayfri/Kore/wiki/Creating-a-Datapack) 
 fun main() {
 	val datapack = dataPack("test") {
 		function("display_text") {
-			tellraw(allEntities(), textComponent("Hello World!"))
+			tellraw(allPlayers(), textComponent("Hello World!"))
 		}
 
 		recipes {
