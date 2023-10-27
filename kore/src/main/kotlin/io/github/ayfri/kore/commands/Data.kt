@@ -101,6 +101,7 @@ class Data(val fn: Function, val target: DataArgument) {
 			)
 		)
 
+	fun modify(path: String, from: DataArgument, fromPath: String) = modify(path) { set(from, fromPath) }
 	fun modify(path: String, value: NbtTag) = modify(path) { set(value) }
 	fun modify(path: String, value: Int) = modify(path) { set(value) }
 	fun modify(path: String, value: Float) = modify(path) { set(value) }
