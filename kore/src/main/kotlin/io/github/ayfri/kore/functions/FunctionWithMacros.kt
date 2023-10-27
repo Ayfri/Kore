@@ -29,7 +29,7 @@ class FunctionWithMacros<out T : Macros>(
 fun <T : Macros> DataPack.function(
 	name: String,
 	macros: () -> T,
-	namespace: String = "minecraft",
+	namespace: String = this.name,
 	directory: String = "",
 	function: FunctionWithMacros<T>.() -> Unit,
 ) = FunctionWithMacros(
