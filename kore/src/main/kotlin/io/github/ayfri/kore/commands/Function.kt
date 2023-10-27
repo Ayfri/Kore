@@ -8,7 +8,9 @@ import io.github.ayfri.kore.arguments.types.literals.tag
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.FunctionWithMacros
 import io.github.ayfri.kore.functions.Macros
+import io.github.ayfri.kore.utils.nbt
 import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.NbtCompoundBuilder
 
 fun Function.function(name: String, group: Boolean = false, arguments: NbtCompound? = null) = addLine(
 	command(
@@ -85,3 +87,8 @@ inline fun <reified T : Macros> Function.function(function: FunctionWithMacros<T
 		)
 	)
 }
+
+inline fun <reified T : Macros> Function.function(
+	function: FunctionWithMacros<T>,
+	noinline builder: NbtCompoundBuilder.() -> Unit,
+) = function(function, nbt(builder))
