@@ -45,7 +45,7 @@ data class ChatComponents(val list: MutableList<ChatComponent> = mutableListOf()
 		if (!containsOnlySimpleComponents) throw ONLY_SIMPLE_COMPONENTS_EXCEPTION
 	}
 
-	fun toJsonString() = Json.encodeToString(NbtAsJsonSerializer, toNbtTag())
+	fun toJsonString(json: Json = Json) = json.encodeToString(NbtAsJsonSerializer, toNbtTag())
 
 	fun toNbtTag() = when (list.size) {
 		0 -> NbtString("")

@@ -3,6 +3,7 @@ package io.github.ayfri.kore
 import io.github.ayfri.kore.commands.runUnitTests
 import io.github.ayfri.kore.features.featuresTests
 import io.github.ayfri.kore.helpers.helpersTests
+import io.github.ayfri.kore.serialization.chatComponentsTests
 import io.github.ayfri.kore.serialization.datapackTests
 import io.github.ayfri.kore.serialization.selectorTests
 import io.github.cdimascio.dotenv.dotenv
@@ -20,6 +21,7 @@ fun main() {
 	vec2Tests()
 	vec3Tests()
 
+	chatComponentsTests()
 	datapackTests()
 	featuresTests()
 	helpersTests()

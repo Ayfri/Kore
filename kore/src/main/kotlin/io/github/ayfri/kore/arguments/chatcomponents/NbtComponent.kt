@@ -3,9 +3,21 @@ package io.github.ayfri.kore.arguments.chatcomponents
 import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
 import io.github.ayfri.kore.arguments.types.resources.StorageArgument
+import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.set
 import net.benwoodworth.knbt.buildNbtCompound
 import kotlinx.serialization.Serializable
+
+@Serializable(with = NbtComponentSource.Companion.NbtComponentSourceSerializer::class)
+enum class NbtComponentSource {
+	BLOCK,
+	ENTITY,
+	STORAGE;
+
+	companion object {
+		data object NbtComponentSourceSerializer : LowercaseSerializer<NbtComponentSource>(entries)
+	}
+}
 
 @Serializable
 data class NbtComponent(
@@ -15,6 +27,7 @@ data class NbtComponent(
 	var entity: String? = null,
 	var storage: String? = null,
 	var separator: ChatComponent? = null,
+	var source: NbtComponentSource? = null,
 ) : ChatComponent() {
 	override val type = ChatComponentType.NBT
 
@@ -26,16 +39,17 @@ data class NbtComponent(
 		entity?.let { this["entity"] = it }
 		storage?.let { this["storage"] = it }
 		separator?.let { this["separator"] = it.toNbtTag() }
+		source?.let { this["source"] = it.name.lowercase() }
 	}
 }
 
 fun nbtComponent(path: String, block: NbtComponent.() -> Unit = {}) = ChatComponents(NbtComponent(path).apply(block))
 
 fun nbtComponent(path: String, block: BlockArgument, block2: NbtComponent.() -> Unit = {}) =
-	ChatComponents(NbtComponent(path, block = block.asString()).apply(block2))
+	ChatComponents(NbtComponent(path, block = block.asString(), source = NbtComponentSource.BLOCK).apply(block2))
 
 fun nbtComponent(path: String, entity: EntityArgument, block: NbtComponent.() -> Unit = {}) =
-	ChatComponents(NbtComponent(path, entity = entity.asString()).apply(block))
+	ChatComponents(NbtComponent(path, entity = entity.asString(), source = NbtComponentSource.ENTITY).apply(block))
 
 fun nbtComponent(path: String, storage: StorageArgument, block: NbtComponent.() -> Unit = {}) =
-	ChatComponents(NbtComponent(path, storage = storage.asString()).apply(block))
+	ChatComponents(NbtComponent(path, storage = storage.asString(), source = NbtComponentSource.STORAGE).apply(block))

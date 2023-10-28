@@ -3,11 +3,20 @@ package io.github.ayfri.kore.assertions
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.Argument
+import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.commands.Command
 import io.github.ayfri.kore.utils.TestDataPack
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 import org.intellij.lang.annotations.Language
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
+
+@OptIn(ExperimentalSerializationApi::class)
+private val jsonStringifier = Json {
+	prettyPrint = true
+	prettyPrintIndent = "\t"
+}
 
 private val alreadyPrinted = mutableSetOf<Int>()
 
@@ -16,6 +25,8 @@ infix fun Command.assertsMatches(regex: Regex) = also { assertsMatches(regex, to
 
 infix fun String.assertsIs(string: String) = also { assertsIs(this, string) }
 infix fun String.assertsIsJson(@Language("json") string: String) = also { assertsIsJson(this, string) }
+
+infix fun ChatComponents.assertsIsJson(@Language("json") string: String) = also { assertsIsJson(toJsonString(jsonStringifier), string) }
 
 infix fun <T : Any> T.assertsIs(expected: T) = also { assertsIs(toString(), expected.toString()) }
 
