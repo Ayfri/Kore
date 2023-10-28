@@ -27,6 +27,7 @@ import io.github.ayfri.kore.features.worldgen.structureset.StructureSet
 import io.github.ayfri.kore.features.worldgen.templatepool.TemplatePool
 import io.github.ayfri.kore.features.worldgen.worldpreset.WorldPreset
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.generated.DEFAULT_DATAPACK_FORMAT
 import io.github.ayfri.kore.pack.Features
 import io.github.ayfri.kore.pack.Filter
 import io.github.ayfri.kore.pack.Pack
@@ -200,7 +201,6 @@ class DataPack(val name: String) {
 		}
 
 	companion object {
-		const val DEFAULT_DATAPACK_FORMAT = 20
 		const val DEFAULT_GENERATED_FUNCTIONS_FOLDER = "generated_scopes"
 	}
 }

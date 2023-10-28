@@ -1,4 +1,5 @@
 import generators.downloadDataPacks
+import generators.downloadDefaultDatapackVersion
 import generators.downloadGamerules
 import generators.launchAllSimpleGenerators
 import io.ktor.client.*
@@ -55,6 +56,7 @@ suspend fun main(args: Array<String>) {
 	println("Generating assets from minecraft version: $minecraftVersion")
 
 	downloadDataPacks()
+	downloadDefaultDatapackVersion()
 	downloadGamerules()
 	launchAllSimpleGenerators()
 }

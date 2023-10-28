@@ -5,8 +5,8 @@ import java.io.File
 fun generateFile(
 	name: String,
 	sourceUrl: String,
-	topLevel: TypeSpec.Builder,
-	additionalCode: FileSpec.Builder.(enumName: String) -> Unit = {},
+	topLevel: TypeSpec.Builder? = null,
+	additionalCode: FileSpec.Builder.(name: String) -> Unit = {},
 ) {
 	val fileBuilder = FileSpec.builder(GENERATED_PACKAGE, name).apply {
 		addFileComment(
@@ -17,7 +17,7 @@ fun generateFile(
 		""".trimIndent()
 		)
 
-		addType(topLevel.build())
+		topLevel?.let { addType(it.build()) }
 		additionalCode(name)
 	}
 
