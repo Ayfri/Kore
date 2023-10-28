@@ -32,7 +32,7 @@ fun DataPack.testMacros() {
 		function(functionWithMacros, arguments = nbt { this["my_macro"] = "Hello world!" })
 		function(functionWithMacrosAndVerification, arguments = nbt { this["my_macro"] = "Hello world!" })
 
-		assertsThrows("Missing arguments 'my_macro' when calling function 'minecraft:function_with_macros_2'") {
+		assertsThrows("Missing arguments 'my_macro' when calling function 'unit_tests:function_with_macros_2'") {
 			function(functionWithMacrosAndVerification, arguments = nbt { this["my_bad_macro"] = "Hello world!" })
 		}
 	}
