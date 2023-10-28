@@ -7,6 +7,10 @@ import io.github.ayfri.kore.features.worldgen.HeightMap
 import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProvider
 import io.github.ayfri.kore.features.worldgen.heightproviders.constantAbsolute
 import io.github.ayfri.kore.features.worldgen.structures.*
+import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.Direct
+import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.PoolAlias
+import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.Random
+import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.RandomGroup
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -23,11 +27,12 @@ data class Jigsaw(
 	var projectStartToHeightmap: HeightMap? = null,
 	var maxDistanceFromCenter: Int = 80,
 	var useExpansionHack: Boolean = false,
+	var poolAliases: List<PoolAlias>? = null,
 ) : StructureType()
 
 fun StructuresBuilder.jigsaw(
 	filename: String = "jigsaw",
-	step: GenerationStep = io.github.ayfri.kore.features.worldgen.structures.GenerationStep.SURFACE_STRUCTURES,
+	step: GenerationStep = GenerationStep.SURFACE_STRUCTURES,
 	startPool: TemplatePoolArgument,
 	init: Jigsaw.() -> Unit = {},
 ): StructureArgument {
@@ -35,3 +40,22 @@ fun StructuresBuilder.jigsaw(
 	dp.structures += Structure(filename, jigsaw)
 	return StructureArgument(filename, dp.name)
 }
+
+fun Jigsaw.poolAliases(block: MutableList<PoolAlias>.() -> Unit = {}) {
+	poolAliases = buildList(block)
+}
+
+fun MutableList<PoolAlias>.directPoolAlias(
+	alias: TemplatePoolArgument,
+	target: TemplatePoolArgument,
+) = add(Direct(alias, target))
+
+fun MutableList<PoolAlias>.randomPoolAlias(
+	alias: TemplatePoolArgument,
+	targets: List<TemplatePoolArgument> = emptyList(),
+) = add(Random(alias, targets))
+
+fun MutableList<PoolAlias>.randomGroupPoolAlias(
+	alias: TemplatePoolArgument,
+	groups: MutableList<PoolAlias>.() -> Unit = {},
+) = add(RandomGroup(alias, buildList(groups)))
