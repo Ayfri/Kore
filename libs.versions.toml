@@ -4,7 +4,7 @@ knbt = "0.11.3"
 kotlin-dotenv = "6.4.1"
 kotlinpoet = "1.12.0"
 kotlinx-serialization = "1.6.0"
-ktor = "2.3.4"
+ktor = "2.3.5"
 
 [libraries]
 joml = { module = "org.joml:joml", version.ref = "joml" }
