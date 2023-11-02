@@ -1,4 +1,4 @@
-import gradle.kotlin.dsl.accessors._81caac640344b8dd7f3b85b1b528aa4b.ext
+import gradle.kotlin.dsl.accessors._649fc833518e3315c05e7edb233025f4.ext
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.extra
 
