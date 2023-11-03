@@ -37,6 +37,7 @@ fun runUnitTests() = dataPack("unit_tests") {
 		teamsTests()
 		teleportTests()
 		tellrawTests()
+		tickTests()
 		timeTests()
 		titleTests()
 		triggerTests()
@@ -44,7 +45,7 @@ fun runUnitTests() = dataPack("unit_tests") {
 		worldBorderTests()
 
 		addBlankLine()
-		comment("Very simple commands:")
+		comment("Basic commands:")
 		commandsTests()
 	}
 
