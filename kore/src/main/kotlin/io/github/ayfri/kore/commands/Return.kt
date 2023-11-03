@@ -10,6 +10,8 @@ import io.github.ayfri.kore.commands.execute.run
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.generatedFunction
 
+fun Function.returnFail() = addLine(command("return", literal("fail")))
+
 fun Function.returnIf(condition: ExecuteCondition.() -> Unit, block: Function.() -> Command) = execute {
 	ifCondition(condition)
 	run {

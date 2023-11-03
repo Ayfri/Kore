@@ -6,6 +6,7 @@ import io.github.ayfri.kore.assertions.assertsMatches
 import io.github.ayfri.kore.functions.Function
 
 fun Function.returnCommand() {
+	returnFail() assertsIs "return fail"
 	returnValue(0) assertsIs "return 0"
 
 	@Suppress("DEPRECATION_ERROR")
