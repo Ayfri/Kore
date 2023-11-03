@@ -13,6 +13,7 @@ fun Function.tickTests() {
 		sprint(1.days) assertsIs "tick sprint 1d"
 		sprintStop() assertsIs "tick sprint stop"
 		stepStop() assertsIs "tick step stop"
+		step() assertsIs "tick step"
 		step(1) assertsIs "tick step 1"
 		step(1.days) assertsIs "tick step 1d"
 		unfreeze() assertsIs "tick unfreeze"

@@ -15,6 +15,7 @@ class Tick(private val fn: Function) {
 	fun sprint(time: TimeNumber) = fn.addLine(command("tick", literal("sprint"), time(time)))
 	fun sprintStop() = fn.addLine(command("tick", literal("sprint"), literal("stop")))
 	fun stepStop() = fn.addLine(command("tick", literal("step"), literal("stop")))
+	fun step() = fn.addLine(command("tick", literal("step")))
 	fun step(time: Int) = fn.addLine(command("tick", literal("step"), int(time)))
 	fun step(time: TimeNumber) = fn.addLine(command("tick", literal("step"), time(time)))
 	fun unfreeze() = fn.addLine(command("tick", literal("unfreeze")))
