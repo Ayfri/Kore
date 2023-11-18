@@ -20,6 +20,7 @@ import io.github.ayfri.kore.arguments.types.resources.ItemModifierArgument
 import io.github.ayfri.kore.commands.*
 import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.execute.run
+import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.functions.tick

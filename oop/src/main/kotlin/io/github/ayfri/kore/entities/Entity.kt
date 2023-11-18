@@ -14,6 +14,7 @@ import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.commands.*
 import io.github.ayfri.kore.commands.execute.Execute
 import io.github.ayfri.kore.commands.execute.execute
+import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.scoreboard.ScoreboardEntity

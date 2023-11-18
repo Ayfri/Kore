@@ -8,6 +8,9 @@ import io.github.ayfri.kore.arguments.scores.criteriaCustom
 import io.github.ayfri.kore.arguments.scores.criteriaTeamKill
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.commands.scoreboard.Operation
+import io.github.ayfri.kore.commands.scoreboard.RenderType
+import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.CustomStats
 import io.github.ayfri.kore.generated.Items

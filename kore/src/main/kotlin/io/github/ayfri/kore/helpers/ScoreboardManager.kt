@@ -11,7 +11,7 @@ import io.github.ayfri.kore.commands.Command
 import io.github.ayfri.kore.commands.execute.ExecuteCondition
 import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.execute.run
-import io.github.ayfri.kore.commands.scoreboard
+import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.commands.teams
 import io.github.ayfri.kore.functions.Function
 import kotlin.math.abs

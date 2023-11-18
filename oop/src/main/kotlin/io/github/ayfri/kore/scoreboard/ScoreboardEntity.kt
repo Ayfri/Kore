@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.scoreboard
 
 import io.github.ayfri.kore.arguments.types.ScoreHolderArgument
-import io.github.ayfri.kore.commands.Operation
-import io.github.ayfri.kore.commands.scoreboard
+import io.github.ayfri.kore.commands.scoreboard.Operation
+import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.entities.Entity
 import io.github.ayfri.kore.functions.Function
 

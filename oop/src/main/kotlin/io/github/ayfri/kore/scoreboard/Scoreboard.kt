@@ -5,8 +5,8 @@ import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.scores.ScoreboardCriteria
 import io.github.ayfri.kore.arguments.scores.ScoreboardCriterion
-import io.github.ayfri.kore.commands.RenderType
-import io.github.ayfri.kore.commands.scoreboard
+import io.github.ayfri.kore.commands.scoreboard.RenderType
+import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.entities.Entity
 import io.github.ayfri.kore.functions.Function
 
