@@ -47,7 +47,7 @@ class Objective(private val fn: Function, val objective: String) {
 	) =
 		create(criteria, textComponent(displayName, color, block))
 
-	fun modify(displayName: ChatComponents) = fn.addLine(
+	fun modifyDisplayName(displayName: ChatComponents) = fn.addLine(
 		command(
 			"scoreboard",
 			literal("objectives"),
@@ -58,10 +58,10 @@ class Objective(private val fn: Function, val objective: String) {
 		)
 	)
 
-	fun modify(displayName: String, color: Color? = null, block: PlainTextComponent.() -> Unit = {}) =
-		modify(textComponent(displayName, color, block))
+	fun modifyDisplayName(displayName: String, color: Color? = null, block: PlainTextComponent.() -> Unit = {}) =
+		modifyDisplayName(textComponent(displayName, color, block))
 
-	fun modify(renderType: RenderType) = fn.addLine(
+	fun modifyRenderType(renderType: RenderType) = fn.addLine(
 		command(
 			"scoreboard",
 			literal("objectives"),
@@ -84,7 +84,7 @@ class Objective(private val fn: Function, val objective: String) {
 		)
 	)
 
-	fun setRenderType(renderType: RenderType) = modify(renderType)
+	fun setRenderType(renderType: RenderType) = modifyRenderType(renderType)
 
 	fun add(target: ScoreHolderArgument, amount: Int) =
 		fn.addLine(command("scoreboard", literal("players"), literal("add"), target, literal(objective), int(amount)))

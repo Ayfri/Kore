@@ -35,7 +35,7 @@ class Objectives(private val fn: Function) {
 		add(name, criteria, textComponent(displayName, color, block))
 
 	fun list() = fn.addLine(command("scoreboard", literal("objectives"), literal("list")))
-	fun modify(name: String, displayName: ChatComponents) =
+	fun modifyDisplayName(name: String, displayName: ChatComponents) =
 		fn.addLine(
 			command(
 				"scoreboard",
@@ -47,10 +47,10 @@ class Objectives(private val fn: Function) {
 			)
 		)
 
-	fun modify(name: String, displayName: String, color: Color? = null, block: PlainTextComponent.() -> Unit = {}) =
-		modify(name, textComponent(displayName, color, block))
+	fun modifyDisplayName(name: String, displayName: String, color: Color? = null, block: PlainTextComponent.() -> Unit = {}) =
+		modifyDisplayName(name, textComponent(displayName, color, block))
 
-	fun modify(name: String, renderType: RenderType) =
+	fun modifyRenderType(name: String, renderType: RenderType) =
 		fn.addLine(
 			command(
 				"scoreboard",

@@ -26,8 +26,8 @@ fun Function.scoreboardTests() {
 			add("test", criteriaTeamKill(Color.RED)) assertsIs "scoreboard objectives add test teamkill.red"
 
 			list() assertsIs "scoreboard objectives list"
-			modify("test", displayName = "Test") assertsIs "scoreboard objectives modify test displayname \"Test\""
-			modify("test", RenderType.HEARTS) assertsIs "scoreboard objectives modify test rendertype hearts"
+			modifyDisplayName("test", displayName = "Test") assertsIs "scoreboard objectives modify test displayname \"Test\""
+			modifyRenderType("test", RenderType.HEARTS) assertsIs "scoreboard objectives modify test rendertype hearts"
 			remove("test") assertsIs "scoreboard objectives remove test"
 			setDisplay(DisplaySlots.list, "test") assertsIs "scoreboard objectives setdisplay list test"
 		}
@@ -48,8 +48,8 @@ fun Function.scoreboardTests() {
 		objective("test") {
 			add(ScoreboardCriteria.DUMMY, "Test") assertsIs "scoreboard objectives add test dummy \"Test\""
 			create(ScoreboardCriteria.DUMMY, "Test") assertsIs "scoreboard objectives add test dummy \"Test\""
-			modify(displayName = "Test") assertsIs "scoreboard objectives modify test displayname \"Test\""
-			modify(RenderType.HEARTS) assertsIs "scoreboard objectives modify test rendertype hearts"
+			modifyDisplayName(displayName = "Test") assertsIs "scoreboard objectives modify test displayname \"Test\""
+			modifyRenderType(RenderType.HEARTS) assertsIs "scoreboard objectives modify test rendertype hearts"
 			remove() assertsIs "scoreboard objectives remove test"
 			setDisplaySlot(DisplaySlots.list) assertsIs "scoreboard objectives setdisplay list test"
 

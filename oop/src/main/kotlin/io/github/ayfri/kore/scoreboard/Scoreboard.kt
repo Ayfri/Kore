@@ -41,20 +41,20 @@ fun Scoreboard.setDisplaySlot(slot: DisplaySlot) = scoreboard {
 context(Function)
 fun Scoreboard.setRenderType(type: RenderType) = scoreboard {
 	objectives {
-		modify(name, type)
+		modifyRenderType(name, type)
 	}
 }
 
 context(Function)
 fun Scoreboard.setDisplayName(displayName: ChatComponents) = scoreboard {
 	objectives {
-		modify(name, displayName)
+		modifyDisplayName(name, displayName)
 	}
 }
 
 context(Function)
 fun Scoreboard.setDisplayName(displayName: String) = scoreboard {
 	objectives {
-		modify(name, textComponent(displayName))
+		modifyDisplayName(name, textComponent(displayName))
 	}
 }
