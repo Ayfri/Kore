@@ -47,6 +47,17 @@ class Objective(private val fn: Function, val objective: String) {
 	) =
 		create(criteria, textComponent(displayName, color, block))
 
+	fun modifyDisplayAutoUpdate(autoUpdate: Boolean) = fn.addLine(
+		command(
+			"scoreboard",
+			literal("objectives"),
+			literal("modify"),
+			literal(objective),
+			literal("displayautoupdate"),
+			literal(autoUpdate.asArg())
+		)
+	)
+
 	fun modifyDisplayName(displayName: ChatComponents) = fn.addLine(
 		command(
 			"scoreboard",
