@@ -58,6 +58,31 @@ fun Function.scoreboardTests() {
 
 		players {
 			add(self(), "test", 5) assertsIs "scoreboard players add @s test 5"
+
+			clearDisplayNumberFormat(self(), "test") assertsIs "scoreboard players display numberformat @s test"
+
+			displayNumberFormatBlank(self(), "test") assertsIs "scoreboard players display numberformat @s test blank"
+			displayNumberFormatFixed(
+				self(),
+				"test",
+				textComponent("test")
+			) assertsIs "scoreboard players display numberformat @s test fixed \"test\""
+			displayNumberFormatFixed(
+				self(),
+				"test",
+				"test",
+				color = Color.RED
+			) assertsIs "scoreboard players display numberformat @s test fixed {\"type\":\"text\",\"text\":\"test\",\"color\":\"red\"}"
+
+			displayNumberFormatStyled(self(), "test") {
+				bold = true
+				color = Color.RED
+				italic = true
+				obfuscated = true
+				strikethrough = true
+				underlined = true
+			} assertsIs "scoreboard players display numberformat @s test styled {\"bold\":true,\"color\":\"red\",\"italic\":true,\"obfuscated\":true,\"strikethrough\":true,\"underlined\":true}"
+
 			enable(self(), "test") assertsIs "scoreboard players enable @s test"
 			get(self(), "test") assertsIs "scoreboard players get @s test"
 			list() assertsIs "scoreboard players list"

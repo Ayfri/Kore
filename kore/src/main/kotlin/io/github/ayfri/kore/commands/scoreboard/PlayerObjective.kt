@@ -1,5 +1,9 @@
 package io.github.ayfri.kore.commands.scoreboard
 
+import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
+import io.github.ayfri.kore.arguments.chatcomponents.PlainTextComponent
+import io.github.ayfri.kore.arguments.chatcomponents.textComponent
+import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.types.ScoreHolderArgument
 import io.github.ayfri.kore.functions.Function
 
@@ -7,6 +11,19 @@ class PlayerObjective(fn: Function, val target: ScoreHolderArgument, val objecti
 	val players = Players(fn)
 
 	fun add(score: Int) = players.add(target, objective, score)
+
+	fun clearDisplayNumberFormat() = players.clearDisplayNumberFormat(target, objective)
+
+	fun displayNumberFormatBlank() = players.displayNumberFormatBlank(target, objective)
+	fun displayNumberFormatFixed(fixed: ChatComponents) =
+		players.displayNumberFormatFixed(target, objective, fixed)
+
+	fun displayNumberFormatFixed(fixed: String, color: Color? = null, block: PlainTextComponent.() -> Unit = {}) =
+		players.displayNumberFormatFixed(target, objective, textComponent(fixed, color, block))
+
+	fun displayNumberFormatStyled(style: Style) = players.displayNumberFormatStyled(target, objective, style)
+	fun displayNumberFormatStyled(block: Style.() -> Unit) = players.displayNumberFormatStyled(target, objective, block)
+
 	fun enable() = players.enable(target, objective)
 	fun get() = players.get(target, objective)
 	fun operation(operation: Operation, source: ScoreHolderArgument, sourceObjective: String) =
