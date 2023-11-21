@@ -14,6 +14,7 @@ import io.github.ayfri.kore.commands.Command
 import io.github.ayfri.kore.commands.command
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.utils.asArg
+import kotlinx.serialization.encodeToString
 
 class Objective(private val fn: Function, val objective: String) {
 	fun player(target: ScoreHolderArgument) = PlayerObjective(fn, target, objective)
@@ -27,6 +28,16 @@ class Objective(private val fn: Function, val objective: String) {
 		block: PlainTextComponent.() -> Unit = {},
 	) =
 		create(criteria, textComponent(displayName, color, block))
+
+	fun clearNumberFormat() = fn.addLine(
+		command(
+			"scoreboard",
+			literal("objectives"),
+			literal("modify"),
+			literal(objective),
+			literal("numberformat"),
+		)
+	)
 
 	fun create(criteria: ScoreboardCriterion = ScoreboardCriteria.DUMMY, displayName: ChatComponents? = null) = fn.addLine(
 		command(
@@ -71,6 +82,46 @@ class Objective(private val fn: Function, val objective: String) {
 
 	fun modifyDisplayName(displayName: String, color: Color? = null, block: PlainTextComponent.() -> Unit = {}) =
 		modifyDisplayName(textComponent(displayName, color, block))
+
+	fun modifyNumberFormatBlank() = fn.addLine(
+		command(
+			"scoreboard",
+			literal("objectives"),
+			literal("modify"),
+			literal(objective),
+			literal("numberformat"),
+			literal("blank")
+		)
+	)
+
+	fun modifyNumberFormatFixed(fixed: ChatComponents) = fn.addLine(
+		command(
+			"scoreboard",
+			literal("objectives"),
+			literal("modify"),
+			literal(objective),
+			literal("numberformat"),
+			literal("fixed"),
+			fixed.asJsonArg()
+		)
+	)
+
+	fun modifyNumberFormatFixed(fixed: String, color: Color? = null, block: PlainTextComponent.() -> Unit = {}) =
+		modifyNumberFormatFixed(textComponent(fixed, color, block))
+
+	fun modifyNumberFormatStyled(style: Style) = fn.addLine(
+		command(
+			"scoreboard",
+			literal("objectives"),
+			literal("modify"),
+			literal(objective),
+			literal("numberformat"),
+			literal("styled"),
+			literal(fn.datapack.jsonEncoder.encodeToString(style))
+		)
+	)
+
+	fun modifyNumberFormatStyled(block: Style.() -> Unit) = modifyNumberFormatStyled(Style().apply(block))
 
 	fun modifyRenderType(renderType: RenderType) = fn.addLine(
 		command(
