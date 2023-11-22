@@ -7,12 +7,10 @@ import io.github.ayfri.kore.arguments.chatcomponents.PlainTextComponent
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.types.literals.entity
-import io.github.ayfri.kore.commands.Command
 import io.github.ayfri.kore.commands.execute.ExecuteCondition
 import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.execute.run
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
-import io.github.ayfri.kore.commands.teams
 import io.github.ayfri.kore.functions.Function
 import kotlin.math.abs
 
@@ -71,7 +69,7 @@ data class ScoreboardDisplay(val name: String) {
 	companion object {
 		context(Function)
 		fun resetAll() {
-			for (i in -15..15) {
+			for (i in 0..15) {
 				scoreboard.players.reset(entity("§${i.toString(16)}"))
 			}
 		}
@@ -100,25 +98,11 @@ data class ScoreboardLine(private val sc: ScoreboardDisplay, val index: Int) {
 			field = value
 		}
 
-	var teamName: String? = null
-		private set
-
 	context(Function)
-	private fun setText(): Command {
+	private fun setText() = scoreboard.players.set(entity(fakePlayer), sc.name, index).let { command ->
 		text?.let {
-			val teamName = hashCode().toString()
-			teams {
-				add(teamName)
-				join(teamName, entity(fakePlayer))
-				modify(teamName) {
-					suffix(it)
-				}
-			}
-
-			this.teamName = teamName
-		}
-
-		return scoreboard.players.set(entity(fakePlayer), sc.name, index)
+			scoreboard.players.displayName(entity(fakePlayer), sc.name, it)
+		} ?: command
 	}
 
 	fun condition(condition: ExecuteCondition.() -> Unit) {
@@ -154,6 +138,6 @@ data class ScoreboardLine(private val sc: ScoreboardDisplay, val index: Int) {
 	context(Function)
 	fun remove() {
 		scoreboard.players.reset(entity(fakePlayer))
-		teamName?.let { teams.remove(it) }
+		scoreboard.players.clearDisplayName(entity(fakePlayer), sc.name)
 	}
 }
