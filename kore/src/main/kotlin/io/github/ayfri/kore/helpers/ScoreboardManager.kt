@@ -40,12 +40,13 @@ data class ScoreboardDisplay(val name: String) {
 	}
 
 	context(Function)
-	fun display(slot: DisplaySlot = DisplaySlots.sidebar) {
-		scoreboard.objectives.setDisplay(slot, name)
-	}
+	fun display(slot: DisplaySlot = DisplaySlots.sidebar) = scoreboard.objectives.setDisplay(slot, name)
 
 	context(Function)
 	fun emptyLine() = appendLine()
+
+	context(Function)
+	fun hideValues() = lines.forEach { it.hideValue = true }
 
 	context(Function)
 	fun setLine(index: Int, text: ChatComponents? = null, init: ScoreboardLine.() -> Unit = {}) {
@@ -62,9 +63,7 @@ data class ScoreboardDisplay(val name: String) {
 		setLine(index, textComponent(text, color ?: Color.WHITE, componentBlock))
 
 	context(Function)
-	fun remove() {
-		scoreboard.objectives.remove(name)
-	}
+	fun remove() = scoreboard.objectives.remove(name)
 
 	companion object {
 		context(Function)
@@ -91,7 +90,9 @@ fun Function.scoreboardDisplay(
 
 data class ScoreboardLine(private val sc: ScoreboardDisplay, val index: Int) {
 	val fakePlayer = "§${abs(index).toString(16)}"
+
 	var condition: (ExecuteCondition.() -> Unit)? = null
+	var hideValue = false
 	var text: ChatComponents? = null
 		set(value) {
 			value?.requireSimpleComponents()
@@ -100,6 +101,8 @@ data class ScoreboardLine(private val sc: ScoreboardDisplay, val index: Int) {
 
 	context(Function)
 	private fun setText() = scoreboard.players.set(entity(fakePlayer), sc.name, index).let { command ->
+		if (hideValue) scoreboard.players.displayNumberFormatBlank(entity(fakePlayer), sc.name)
+
 		text?.let {
 			scoreboard.players.displayName(entity(fakePlayer), sc.name, it)
 		} ?: command

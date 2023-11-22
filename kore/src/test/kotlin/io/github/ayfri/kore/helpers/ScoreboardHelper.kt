@@ -20,5 +20,7 @@ fun Function.scoreboardTests() {
 				predicate("stonks")
 			}
 		}
+
+		hideValues()
 	}
 }
