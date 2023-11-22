@@ -59,7 +59,10 @@ fun Function.scoreboardTests() {
 		players {
 			add(self(), "test", 5) assertsIs "scoreboard players add @s test 5"
 
+			clearDisplayName(self(), "test") assertsIs "scoreboard players display name @s test"
 			clearDisplayNumberFormat(self(), "test") assertsIs "scoreboard players display numberformat @s test"
+
+			displayName(self(), "test", textComponent("test")) assertsIs "scoreboard players display name @s test \"test\""
 
 			displayNumberFormatBlank(self(), "test") assertsIs "scoreboard players display numberformat @s test blank"
 			displayNumberFormatFixed(

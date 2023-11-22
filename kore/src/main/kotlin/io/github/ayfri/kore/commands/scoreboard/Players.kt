@@ -16,6 +16,17 @@ class Players(private val fn: Function) {
 	fun add(target: ScoreHolderArgument, objective: String, score: Int) =
 		fn.addLine(command("scoreboard", literal("players"), literal("add"), target, literal(objective), int(score)))
 
+	fun clearDisplayName(target: ScoreHolderArgument, objective: String) = fn.addLine(
+		command(
+			"scoreboard",
+			literal("players"),
+			literal("display"),
+			literal("name"),
+			target,
+			literal(objective),
+		)
+	)
+
 	fun clearDisplayNumberFormat(target: ScoreHolderArgument, objective: String) = fn.addLine(
 		command(
 			"scoreboard",
@@ -26,6 +37,27 @@ class Players(private val fn: Function) {
 			literal(objective),
 		)
 	)
+
+	fun displayName(target: ScoreHolderArgument, objective: String, displayName: ChatComponents) = fn.addLine(
+		command(
+			"scoreboard",
+			literal("players"),
+			literal("display"),
+			literal("name"),
+			target,
+			literal(objective),
+			displayName.asJsonArg()
+		)
+	)
+
+	fun displayName(
+		target: ScoreHolderArgument,
+		objective: String,
+		displayName: String,
+		color: Color? = null,
+		block: PlainTextComponent.() -> Unit = {},
+	) =
+		displayName(target, objective, textComponent(displayName, color, block))
 
 	fun displayNumberFormatBlank(target: ScoreHolderArgument, objective: String) = fn.addLine(
 		command(

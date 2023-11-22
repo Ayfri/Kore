@@ -14,6 +14,12 @@ class PlayerObjective(fn: Function, val target: ScoreHolderArgument, val objecti
 
 	fun clearDisplayNumberFormat() = players.clearDisplayNumberFormat(target, objective)
 
+	fun clearDisplayName() = players.clearDisplayName(target, objective)
+
+	fun displayName(displayName: ChatComponents) = players.displayName(target, objective, displayName)
+	fun displayName(displayName: String, color: Color? = null, block: PlainTextComponent.() -> Unit = {}) =
+		players.displayName(target, objective, textComponent(displayName, color, block))
+
 	fun displayNumberFormatBlank() = players.displayNumberFormatBlank(target, objective)
 	fun displayNumberFormatFixed(fixed: ChatComponents) =
 		players.displayNumberFormatFixed(target, objective, fixed)
