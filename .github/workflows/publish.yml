@@ -33,7 +33,7 @@ jobs:
           NEXUS_PASSWORD: "${{ secrets.NEXUS_PASSWORD }}"
 
         with:
-          arguments: publish --no-parallel
+          arguments: publishToSonatype closeSonatypeStagingRepository --no-parallel
 
       - name: Upload artifact (Main JARs)
         uses: actions/upload-artifact@v3
