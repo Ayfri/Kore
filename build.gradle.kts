@@ -10,6 +10,8 @@ nexusPublishing {
 			snapshotRepositoryUrl = uri(Project.SNAPSHOT_PUBLISH_URL)
 			username = System.getenv("NEXUS_USERNAME_TOKEN") ?: return@sonatype
 			password = System.getenv("NEXUS_PASSWORD_TOKEN") ?: return@sonatype
+			stagingProfileId =
+				properties["oss.stagingProfileId"]?.toString() ?: System.getenv("NEXUS_STAGING_PROFILE_ID") ?: return@sonatype
 		}
 	}
 }
