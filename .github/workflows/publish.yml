@@ -31,6 +31,8 @@ jobs:
 
           NEXUS_USERNAME: "${{ secrets.NEXUS_USERNAME }}"
           NEXUS_PASSWORD: "${{ secrets.NEXUS_PASSWORD }}"
+          NEXUS_USERNAME_TOKEN: "${{ secrets.NEXUS_USERNAME_TOKEN }}"
+          NEXUS_PASSWORD_TOKEN: "${{ secrets.NEXUS_PASSWORD_TOKEN }}"
 
         with:
           arguments: publishToSonatype closeSonatypeStagingRepository --no-parallel

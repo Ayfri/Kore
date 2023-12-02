@@ -8,8 +8,8 @@ nexusPublishing {
 		sonatype {
 			nexusUrl = uri(Project.PUBLISH_URL)
 			snapshotRepositoryUrl = uri(Project.SNAPSHOT_PUBLISH_URL)
-			username = System.getenv("NEXUS_USER") ?: return@sonatype
-			password = System.getenv("NEXUS_PASSWORD") ?: return@sonatype
+			username = System.getenv("NEXUS_USER_TOKEN") ?: return@sonatype
+			password = System.getenv("NEXUS_PASSWORD_TOKEN") ?: return@sonatype
 		}
 	}
 }
