@@ -15,7 +15,6 @@
 	<img src="kore typography 1200x600.png" title="kore typography" alt="kore typography"/>
 </p>
 
-
 This library is compatible and made for Minecraft Java 1.20.2, I don't think I will support older versions nor Bedrock Edition.<br>
 You can still create your own fork and make it compatible with older versions.<br>
 I will accept pull requests for older versions on a separate branch.
@@ -144,6 +143,13 @@ If you want to contribute to this project, you can follow these steps:
 4. Create a pull request and wait for it to be reviewed and merged.
 
 You can also create an issue if you find a bug or if you want to suggest a new feature.
+
+## Support
+
+If you want to support the project, please consider donating !
+
+<a href="https://www.buymeacoffee.com/gbraad" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
+
 
 ## License
 
