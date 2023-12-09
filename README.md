@@ -8,6 +8,9 @@
 		<img alt="GitHub closed issues" src="https://img.shields.io/github/issues-closed-raw/Ayfri/Kore?color=blue&logo=github&style=flat-square">
 		<img alt="Maven Central" src="https://img.shields.io/maven-central/v/io.github.ayfri.kore/kore?style=flat-square&logo=gradle&label=latest%20version">
 	</a>
+	<a href="https://kotlinlang.slack.com/archives/C066G9BF66A">
+		<img src="https://img.shields.io/badge/%23kore-4A154B?logo=slack&logoColor=white&style=flat-square" alt="Kotlin Slack">
+	</a>
 </p>
 <hr>
 
@@ -149,7 +152,6 @@ You can also create an issue if you find a bug or if you want to suggest a new f
 If you want to support the project, please consider donating !
 
 <a href="https://www.buymeacoffee.com/ayfri" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
-
 
 ## License
 
