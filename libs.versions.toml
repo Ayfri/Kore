@@ -1,6 +1,8 @@
 [versions]
+jetbrains-compose = "1.5.11"
 joml = "1.10.5"
 knbt = "0.11.3"
+kobweb = "0.15.3"
 kotlin-dotenv = "6.4.1"
 kotlinpoet = "1.12.0"
 kotlinx-serialization = "1.6.0"
@@ -10,6 +12,9 @@ nexus-publish = "1.3.0"
 [libraries]
 joml = { module = "org.joml:joml", version.ref = "joml" }
 knbt = { module = "net.benwoodworth.knbt:knbt", version.ref = "knbt" }
+kobweb-api = { module = "com.varabyte.kobweb:kobweb-api", version.ref = "kobweb" }
+kobweb-core = { module = "com.varabyte.kobweb:kobweb-core ", version.ref = "kobweb" }
+kobwebx-markdown = { module = "com.varabyte.kobwebx:kobwebx-markdown", version.ref = "kobweb" }
 kotlin-dotenv = { module = "io.github.cdimascio:dotenv-kotlin", version.ref = "kotlin-dotenv" }
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
@@ -20,4 +25,8 @@ ktor-serialization = { module = "io.ktor:ktor-serialization", version.ref = "kto
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 [plugins]
+jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
+kobweb-application = { id = "com.varabyte.kobweb.application", version.ref = "kobweb" }
+kobweb-library = { id = "com.varabyte.kobweb.library", version.ref = "kobweb" }
+kobwebx-markdown = { id = "com.varabyte.kobwebx.markdown", version.ref = "kobweb" }
 nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus-publish" }

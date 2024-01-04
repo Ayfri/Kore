@@ -13,3 +13,7 @@ out
 
 ### Tests configurations
 **/test/**/resources/**.env
+
+### Website
+website/.kobweb/*
+!website/.kobweb/conf.yaml
