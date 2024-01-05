@@ -11,7 +11,7 @@ import org.jetbrains.compose.web.dom.Text
 fun HomePage() {
 	PageLayout("Home") {
 		P {
-			Text("Welcome to Kobweb!")
+			Text("Welcome to Kore!")
 		}
 	}
 }
