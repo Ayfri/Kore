@@ -3,4 +3,4 @@ package io.github.ayfri.kore.features.advancements.triggers
 import kotlinx.serialization.Serializable
 
 @Serializable
-object AvoidVibrations : AdvancementTriggerCondition
+data object AvoidVibrations : AdvancementTriggerCondition
