@@ -40,6 +40,7 @@ fun runUnitTests() = dataPack("unit_tests") {
 		tickTests()
 		timeTests()
 		titleTests()
+		transferTests()
 		triggerTests()
 		weatherTests()
 		worldBorderTests()
