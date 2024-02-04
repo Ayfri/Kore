@@ -2,14 +2,13 @@ package io.github.ayfri.kore.website.components.sections
 
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.TextDecorationLine
-import com.varabyte.kobweb.compose.css.background
 import com.varabyte.kobweb.compose.css.textDecorationLine
 import io.github.ayfri.kore.website.GITHUB_LINK
 import io.github.ayfri.kore.website.GlobalStyle
+import io.github.ayfri.kore.website.components.common.LinkButton
 import io.github.ayfri.kore.website.utils.A
 import io.github.ayfri.kore.website.utils.transition
 import org.jetbrains.compose.web.attributes.ATarget
-import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Header
@@ -28,12 +27,7 @@ fun HeaderButton(name: String, link: String) = Div {
 }
 
 @Composable
-fun AltHeaderButton(name: String, link: String, target: ATarget? = null) = Div {
-	A(link, name) {
-		classes(HeaderStyle.altLink)
-		target?.let { target(it) }
-	}
-}
+fun AltHeaderButton(name: String, link: String, target: ATarget? = null) = LinkButton(name, link, target)
 
 @Composable
 fun Header() {
@@ -98,21 +92,5 @@ object HeaderStyle : StyleSheet() {
 	val logo by style {
 		marginRight(2.cssRem)
 		width(8.cssRem)
-	}
-
-	val altLink by style {
-		color(GlobalStyle.textColor)
-		background(GlobalStyle.tertiaryBackgroundColor)
-		borderRadius(GlobalStyle.roundingButton)
-		fontSize(1.5.cssRem)
-		fontWeight(700)
-		padding(0.5.cssRem, 1.cssRem)
-		textDecorationLine(TextDecorationLine.None)
-		transition(0.3.s, "background")
-
-		hover(self) style {
-			background(GlobalStyle.secondaryBackgroundColor)
-			color(GlobalStyle.textColor)
-		}
 	}
 }
