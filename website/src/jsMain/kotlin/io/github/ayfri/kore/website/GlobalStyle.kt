@@ -1,5 +1,8 @@
 package io.github.ayfri.kore.website
 
+import com.varabyte.kobweb.compose.css.TextDecorationLine
+import com.varabyte.kobweb.compose.css.textDecorationLine
+import io.github.ayfri.kore.website.utils.transition
 import org.jetbrains.compose.web.css.*
 
 object GlobalStyle : StyleSheet() {
@@ -7,7 +10,9 @@ object GlobalStyle : StyleSheet() {
 	val secondaryBackgroundColor = Color("#181a1f")
 	val tertiaryBackgroundColor = Color("#343a45")
 
-	val altTextColor = Color("#f0f0f0")
+	val altTextColor = Color("#e9e9e9")
+	val linkColor = Color("#0597ba")
+	val linkColorHover = Color("#23cae8")
 	val textColor = Color("#fff")
 
 	val roundingButton = 0.4.cssRem
@@ -35,6 +40,16 @@ object GlobalStyle : StyleSheet() {
 		"html, body" style {
 			margin(0.px)
 			padding(0.px)
+		}
+
+		"a" style {
+			color(linkColor)
+			textDecorationLine(TextDecorationLine.None)
+			transition(0.3.s, "color")
+
+			hover(type("a")) style {
+				color(linkColorHover)
+			}
 		}
 	}
 

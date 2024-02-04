@@ -8,7 +8,8 @@ import io.github.ayfri.kore.website.GITHUB_LINK
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.utils.A
 import io.github.ayfri.kore.website.utils.transition
-import org.jetbrains.compose.web.attributes.ButtonFormTarget
+import org.jetbrains.compose.web.attributes.ATarget
+import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Header
@@ -27,10 +28,10 @@ fun HeaderButton(name: String, link: String) = Div {
 }
 
 @Composable
-fun AltHeaderButton(name: String, link: String, target: ButtonFormTarget? = null) = Div {
+fun AltHeaderButton(name: String, link: String, target: ATarget? = null) = Div {
 	A(link, name) {
 		classes(HeaderStyle.altLink)
-		target?.let { attr("target", it.targetStr) }
+		target?.let { target(it) }
 	}
 }
 
@@ -54,7 +55,7 @@ fun Header() {
 		}
 
 		Div {
-			AltHeaderButton("GitHub", GITHUB_LINK, ButtonFormTarget.Blank)
+			AltHeaderButton("GitHub", GITHUB_LINK, ATarget.Blank)
 		}
 	}
 }
@@ -89,6 +90,7 @@ object HeaderStyle : StyleSheet() {
 		transition(0.3.s, "text-decoration-color")
 
 		hover(self) style {
+			color(GlobalStyle.textColor)
 			textDecorationColor(Color.currentColor)
 		}
 	}
@@ -110,6 +112,7 @@ object HeaderStyle : StyleSheet() {
 
 		hover(self) style {
 			background(GlobalStyle.secondaryBackgroundColor)
+			color(GlobalStyle.textColor)
 		}
 	}
 }
