@@ -23,8 +23,8 @@ fun generatePathEnumTree(
 		if (hasParent) {
 			addProperty(
 				PropertySpec.builder("namespace", String::class)
-					.addModifiers(KModifier.OVERRIDE)
 					.getter(FunSpec.getterBuilder().addStatement("return \"minecraft\"").build())
+					.overrides()
 					.build()
 			)
 		}
@@ -67,8 +67,8 @@ fun generatePathEnumTree(
 				if (tagParent != null) {
 					addProperty(
 						PropertySpec.builder("namespace", String::class)
-							.addModifiers(KModifier.OVERRIDE)
 							.getter(FunSpec.getterBuilder().addStatement("return \"minecraft\"").build())
+							.overrides()
 							.build()
 					)
 
@@ -86,6 +86,7 @@ fun generatePathEnumTree(
 					addFunction(
 						FunSpec.builder("asString")
 							.addStatement("return \"$hash\$namespace:$tagPath\${name.lowercase()}\"")
+							.returns(String::class)
 							.overrides()
 							.build()
 					)
@@ -132,10 +133,10 @@ fun generateCompanion(name: String, encoderValue: String? = "\"minecraft:\${valu
 				.letIf(encoderValue != null) {
 					it.addFunction(
 						FunSpec.builder("serialize")
-							.addModifiers(KModifier.OVERRIDE)
 							.addParameter("encoder", ClassName("kotlinx.serialization.encoding", "Encoder"))
 							.addParameter("value", ClassName("", name))
 							.addStatement("encoder.encodeString($encoderValue)")
+							.overrides()
 							.build()
 					)
 				}.build()

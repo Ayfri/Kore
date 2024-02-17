@@ -29,15 +29,16 @@ fun generateEnum(
 		if (parentArgumentType != null) {
 			addProperty(
 				PropertySpec.builder("namespace", String::class)
-					.addModifiers(KModifier.OVERRIDE)
 					.getter(FunSpec.getterBuilder().addStatement("return \"minecraft\"").build())
+					.overrides()
 					.build()
 			)
 
 			addFunction(
 				FunSpec.builder("asId")
 					.addStatement("return \"\$namespace:\${name.$asString}\"")
-					.addModifiers(KModifier.OVERRIDE)
+					.returns(String::class)
+					.overrides()
 					.build()
 			)
 		}
