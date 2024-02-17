@@ -5,7 +5,7 @@ knbt = "0.11.3"
 kobweb = "0.16.0"
 kotlin-dotenv = "6.4.1"
 kotlinpoet = "1.16.0"
-kotlinx-serialization = "1.6.0"
+kotlinx-serialization = "1.6.3"
 ktor = "2.3.5"
 nexus-publish = "1.3.0"
 
