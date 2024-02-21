@@ -199,8 +199,7 @@ fun DataPack.noiseSettingsTests() {
 						},
 						"then_run": {
 							"type": "minecraft:sequence",
-							"sequence": [
-							]
+							"sequence": []
 						}
 					}
 				]

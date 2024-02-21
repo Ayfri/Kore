@@ -237,8 +237,7 @@ fun DataPack.configuredFeatureTests() {
 							"seed": 0,
 							"noise": {
 								"firstOctave": 0,
-								"amplitudes": [
-								]
+								"amplitudes": []
 							},
 							"scale": 1.0,
 							"variety": {

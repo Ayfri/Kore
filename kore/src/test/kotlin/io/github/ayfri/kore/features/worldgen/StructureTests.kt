@@ -73,8 +73,7 @@ fun DataPack.structureTests() {
 				"minecraft:badlands"
 			],
 			"step": "top_layer_modification",
-			"spawn_overrides": {
-			},
+			"spawn_overrides": {},
 			"start_pool": "minecraft:empty",
 			"size": 0,
 			"start_height": {
