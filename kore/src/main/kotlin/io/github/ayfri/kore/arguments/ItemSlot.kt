@@ -25,10 +25,10 @@ interface ItemSlotType : ItemSlot {
 			101 -> ARMOR.LEGS
 			102 -> ARMOR.CHEST
 			103 -> ARMOR.HEAD
+			105 -> ARMOR.BODY
 			in 200..226 -> ENDERCHEST[index - 200]
 			in 300..307 -> VILLAGER[index - 300]
 			400 -> HORSE.SADDLE
-			401 -> HORSE.ARMOR
 			499 -> HORSE.CHEST
 			in 500..514 -> HORSE[index - 500]
 			else -> throw IllegalArgumentException("Invalid slot index: $index")
@@ -58,6 +58,7 @@ data object ARMOR : ItemSlot {
 	val LEGS = subType("legs", 101)
 	val CHEST = subType("chest", 102)
 	val HEAD = subType("head", 103)
+	val BODY = subType("body", 105)
 }
 
 val CONTAINER = IndexedItemSlot(0) { "container" }
@@ -68,7 +69,6 @@ data object HORSE : IndexedItemSlot {
 
 	override fun asString() = "horse"
 
-	val ARMOR = subType("armor", 401)
 	val CHEST = subType("chest", 499)
 	val SADDLE = subType("saddle", 400)
 }
