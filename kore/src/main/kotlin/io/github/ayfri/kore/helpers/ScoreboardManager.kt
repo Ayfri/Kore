@@ -9,7 +9,6 @@ import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.types.literals.entity
 import io.github.ayfri.kore.commands.execute.ExecuteCondition
 import io.github.ayfri.kore.commands.execute.execute
-import io.github.ayfri.kore.commands.execute.run
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.functions.Function
 import kotlin.math.abs
@@ -213,9 +212,7 @@ data class ScoreboardLine(private val sc: ScoreboardDisplay, val index: Int) {
 		execute {
 			unlessCondition(condition)
 
-			run {
-				setText()
-			}
+			run { setText() }
 		}
 	}
 

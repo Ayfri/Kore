@@ -8,8 +8,14 @@ import io.github.ayfri.kore.arguments.selector.Sort
 import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.literals.*
 import io.github.ayfri.kore.arguments.types.resources.EntityTypeArgument
+import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.arguments.types.resources.PredicateArgument
 import io.github.ayfri.kore.arguments.types.resources.worldgen.DimensionArgument
+import io.github.ayfri.kore.commands.Command
+import io.github.ayfri.kore.commands.function
+import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.emptyFunction
+import io.github.ayfri.kore.functions.generatedFunction
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
@@ -41,6 +47,7 @@ enum class Relation {
 
 class Execute {
 	private val array = mutableListOf<Argument>()
+	internal var run: FunctionArgument = emptyFunction()
 
 	private fun <T> MutableList<T>.addAll(vararg args: T?) = addAll(args.filterNotNull())
 
@@ -96,4 +103,38 @@ class Execute {
 		array.addAll(literal("store"), literal("success"), *ExecuteStore(this).block().toTypedArray())
 
 	fun summon(entity: EntityTypeArgument) = array.addAll(literal("summon"), entity)
+
+	context(Function)
+	fun run(block: Function.() -> Command): FunctionArgument {
+		val function = Function("", "", "", datapack).apply { block() }
+		val nonCommentedLines = function.lines.filter { !it.startsWith("#") }
+
+		if (nonCommentedLines.size == 1) return emptyFunction(datapack) {
+
+			block().apply {
+				arguments.replaceAll {
+					when (it) {
+						is EntityArgument -> targetArg(it)
+						else -> it
+					}
+				}
+			}
+			run = this
+			lines.removeAll { it.startsWith("#") }
+		}
+
+		val name = "generated_${hashCode()}"
+		val generatedFunction = datapack.generatedFunction(name) { block() }
+		if (generatedFunction.name == name) comment("Generated function ${asString()}")
+		run = generatedFunction
+
+		return generatedFunction
+	}
+
+	context(Function)
+	fun run(name: String, directory: String = "", block: Function.() -> Unit) = datapack.generatedFunction(name, directory, block)
+
+	fun run(function: FunctionArgument) {
+		run = emptyFunction { function(function) }
+	}
 }

@@ -18,7 +18,6 @@ import io.github.ayfri.kore.arguments.types.resources.ItemModifierArgument
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.TitleLocation
 import io.github.ayfri.kore.commands.execute.execute
-import io.github.ayfri.kore.commands.execute.run
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.commands.tellraw
 import io.github.ayfri.kore.commands.title

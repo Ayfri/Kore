@@ -3,7 +3,6 @@ package io.github.ayfri.kore.features
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.execute.execute
-import io.github.ayfri.kore.commands.execute.run
 import io.github.ayfri.kore.features.advancements.types.item
 import io.github.ayfri.kore.features.predicates.conditions.allOf
 import io.github.ayfri.kore.features.predicates.conditions.matchTool

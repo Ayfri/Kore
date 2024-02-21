@@ -13,12 +13,17 @@ import io.github.ayfri.kore.arguments.numbers.relativeRot
 import io.github.ayfri.kore.arguments.numbers.rot
 import io.github.ayfri.kore.arguments.scores.score
 import io.github.ayfri.kore.arguments.selector.Sort
+import io.github.ayfri.kore.arguments.selector.scores
 import io.github.ayfri.kore.arguments.types.literals.allEntities
+import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.literals.rotation
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.assertions.assertsIs
-import io.github.ayfri.kore.commands.execute.*
+import io.github.ayfri.kore.commands.execute.Anchor
+import io.github.ayfri.kore.commands.execute.BlocksTestMode
+import io.github.ayfri.kore.commands.execute.Relation
+import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.function
@@ -58,7 +63,7 @@ fun Function.executeTests() {
 			sort = Sort.RANDOM
 		})
 
-		testFunction
+		run(testFunction)
 	} assertsIs """
 		execute as @e[limit=1,sort=random] run function ${testFunction.namespace}:${testFunction.name}
 	""".trimIndent()
@@ -216,5 +221,37 @@ fun Function.executeTests() {
 		}
 	} assertsIs """
 		execute if predicate ${datapack.name}:random_chance run say Hello 50% of the time!
+	""".trimIndent()
+
+
+	execute {
+		storeResult {
+			score(literal("#temp"), "simplenergy.data")
+		}
+		ifCondition {
+			entity(allEntities {
+				scores {
+					score("energy.transfer_rate") greaterThanOrEqualTo 1
+				}
+			})
+		}
+	} assertsIs """
+		execute store result score #temp simplenergy.data if entity @e[scores={energy.transfer_rate=1..}]
+	""".trimIndent()
+
+	execute {
+		run(testFunction)
+
+		run {
+			say("hello")
+		}
+
+		asTarget(allEntities())
+
+		run {
+			say("hi")
+		}
+	} assertsIs """
+		execute as @e run say hi
 	""".trimIndent()
 }

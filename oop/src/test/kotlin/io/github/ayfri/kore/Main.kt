@@ -6,7 +6,6 @@ import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.scores.score
 import io.github.ayfri.kore.commands.execute.execute
-import io.github.ayfri.kore.commands.execute.run
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.entities.*
 import io.github.ayfri.kore.functions.function
