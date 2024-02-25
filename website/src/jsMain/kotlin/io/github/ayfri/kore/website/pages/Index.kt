@@ -84,6 +84,132 @@ fun main() {
 }
 """
 
+// language=kotlin
+const val PRESENTATION_CODE_HELPERS = """
+fun scoreboardDisplayDatapack() = dataPack("scoreboard_display") {
+	val randomEntityUUID = randomUUID()
+	val scoreName = "score"
+
+	// use a marker entity to hold the score
+	val scoreHolderEntity = allEntities(limitToOne = true) {
+		nbt = nbt {
+			putNbtCompound("data") {
+				this["UUID"] = randomEntityUUID.uuid.toString()
+			}
+		}
+	}
+
+	load {
+		ScoreboardDisplay.resetAll()
+
+		// create the entity
+		summon(EntityTypes.MARKER) {
+			putNbtCompound("data") {
+				this["UUID"] = randomEntityUUID.uuid.toString()
+			}
+		}
+
+		// create the score
+		scoreboard.objectives.add(scoreName)
+		scoreboard.player(scoreHolderEntity) {
+			set(scoreName, 0)
+		}
+	}
+
+	tick {
+		// recreate the scoreboard display each tick so that it's dynamic
+		scoreboardDisplay("minigame") {
+			displayName = textComponent("✪ Mini-game ✪", Color.GOLD)
+
+			// some fake lines for the example
+			appendLine("Game: Mini-game")
+			appendLine("IP: 127.0.0.1")
+			appendLine("Players: 10/20")
+
+			appendLine("------------------")
+
+			// display the score
+			appendLine(textComponent("Score: ")) {
+				customScoreEntity = scoreHolderEntity
+				customScoreObjective = scoreName
+			}
+
+			emptyLine()
+			appendLine("HyKore server 3.1.0")
+
+			// hide values except the score
+			hideValues(1..<5)
+			hideValues(6..lines.size)
+		}
+	}
+}
+"""
+
+/*
+"check_z.mcfunction"
+"config.mcfunction"
+"decrement_cooldown.mcfunction"
+"decrement_cooldowns.mcfunction"
+"go_to_spawn.mcfunction"
+"hide_command_feedback.mcfunction"
+"load.mcfunction"
+"offset_down.mcfunction"
+"offset_up.mcfunction"
+"restore_command_feedback.mcfunction"
+"start_to_go_to_spawn.mcfunction"
+"tick.mcfunction"
+"trigger_spawn.mcfunction"
+"try_to_go_to_spawn.mcfunction"
+"try_to_try_to_go_to_spawn.mcfunction"
+"uninstall.mcfunction"
+*/
+
+// language=kotlin
+const val PRESENTATION_CODE_EXTERNAL = """
+data object VanillaTweaksCreate {
+	val VANILLA_TWEAKS_SPAWN_NAMESPACE = "spawn"
+
+	context(Function)
+	fun checkX() = function(namespace = VANILLA_TWEAKS_SPAWN_NAMESPACE, "check_x")
+	context(Function)
+	fun checkZ() = function(namespace = VANILLA_TWEAKS_SPAWN_NAMESPACE, "check_z")
+	context(Function)
+	fun config() = function(namespace = VANILLA_TWEAKS_SPAWN_NAMESPACE, "config")
+	context(Function)
+	fun decrementCooldown() = function(namespace = VANILLA_TWEAKS_SPAWN_NAMESPACE, "decrement_cooldown")
+	context(Function)
+	fun decrementCooldowns() = function(namespace = VANILLA_TWEAKS_SPAWN_NAMESPACE, "decrement_cooldowns")
+
+	// ...
+	context(Function)
+	fun uninstall() = function(namespace = VANILLA_TWEAKS_SPAWN_NAMESPACE, "restore_command_feedback")
+
+	// Note : You could also use FunctionArgument instead, but you'll have instead to call the function explicitly.
+
+	fun loadedPredicate() = PredicateArgument.invoke(namespace = VANILLA_TWEAKS_SPAWN_NAMESPACE, name = "loaded")
+
+	fun validSpawnLocationTag() = TagArgument.invoke(namespace = VANILLA_TWEAKS_SPAWN_NAMESPACE, name = "blocks/valid_spawn_location")
+}
+
+fun main() {
+	val datapack = dataPack("vanilla_tweaks_spawn") {
+		function("check_coordinates") {
+			VanillaTweaksCreate.checkX()
+			VanillaTweaksCreate.checkZ()
+		}
+
+		function("config_if_loaded") {
+			execute {
+				ifCondition(VanillaTweaksCreate.loadedPredicate())
+				run {
+					VanillaTweaksCreate.config()
+				}
+			}
+		}
+	}
+}
+"""
+
 data class Feature(
 	val title: String,
 	val description: String,
@@ -126,9 +252,13 @@ fun HomePage() = PageLayout("Home") {
 				content = { CodeBlock(PRESENTATION_CODE.trimIndent(), "kotlin") }
 			),
 			Tab(
-				name = "test.tkt",
-				content = { CodeBlock("function test() { say Hello World! }", "mcfunction") }
-			)
+				name = "customScoreboard.kt",
+				content = { CodeBlock(PRESENTATION_CODE_HELPERS.trimIndent(), "kotlin") }
+			),
+			Tab(
+				name = "externalDatapack.kt",
+				content = { CodeBlock(PRESENTATION_CODE_EXTERNAL.trimIndent(), "kotlin") }
+			),
 		)
 
 		Tabs(tabs, className = HomePageStyle.tabs, contentClassName = HomePageStyle.tabContent)

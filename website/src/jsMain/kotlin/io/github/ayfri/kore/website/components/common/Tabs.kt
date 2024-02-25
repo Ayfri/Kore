@@ -83,10 +83,6 @@ object TabsStyle : StyleSheet() {
 		border(0.px, LineStyle.Solid, GlobalStyle.borderColor)
 
 		borderRight(1.px, LineStyle.Solid, GlobalStyle.borderColor)
-
-		self + firstOfType style {
-			borderTopLeftRadius(GlobalStyle.roundingSection)
-		}
 	}
 
 	val selected by style {
