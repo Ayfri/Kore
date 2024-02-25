@@ -31,7 +31,6 @@ kobweb {
 					attributes["crossorigin"] = "anonymous"
 				}
 				link("https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;500;900&display=swap", "stylesheet")
-
 			}
 		}
 
@@ -61,6 +60,7 @@ kotlin {
 				implementation(libs.kobweb.core)
 				implementation(compose.runtime)
 				implementation(libs.kobwebx.markdown)
+				implementation(libs.kobwebx.silk.icons.mdi)
 			}
 		}
 	}
