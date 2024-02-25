@@ -17,8 +17,11 @@ import io.github.ayfri.kore.website.components.index.Masonry
 import io.github.ayfri.kore.website.components.index.MasonryItem
 import io.github.ayfri.kore.website.components.layouts.PageLayout
 import io.github.ayfri.kore.website.utils.*
+import org.jetbrains.compose.web.attributes.InputType
+import org.jetbrains.compose.web.attributes.name
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
+import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.*
 
 // language=kotlin
@@ -259,6 +262,51 @@ fun HomePage() {
 		)
 
 		Masonry(masonryItems)
+
+		val questions = mapOf(
+			"Is Kore compatible with recent Minecraft versions?" to "Yes, Kore is compatible with all Minecraft versions from 1.20 to the latest version.",
+			"Can I use other datapacks with Kore?" to "Yes, you can use other datapacks with Kore. By providing bindings for your datapacks, you can use them in your Kore code.",
+			"Why would I use Kore?" to "Kore is a modern, open-source, and easy-to-use Kotlin library for Minecraft datapack development. You can use it to create your own Minecraft Datapacks, and without the need to write a single line of JSON or MCFunction. You'll have great, precise, and fast code completion, and you'll be able to use the full power of Kotlin to manage your code. Furthermore, you can even create libraries to help you or the others develop datapacks.",
+			"Are its APIs complete?" to "Yes, Kore's API is complete. It provides simple and intuitive APIs to create Minecraft datapacks and call commands. All the common lists from the game are available as enums, so you are always sure to use the right value.",
+			"Is it compatible with mods?" to "By providing APIs for creating your own commands/features, you can use Kore with mods. However, Kore is not compatible with mods directly.",
+		)
+
+		Div({
+			classes(HomePageStyle.faqContainer)
+		}) {
+			H2 {
+				Text("Frequently Asked Questions")
+			}
+
+			Div({
+				classes(HomePageStyle.faq)
+			}) {
+				questions.entries.forEachIndexed { index, (question, answer) ->
+					val inputName = "faq-entry-$index"
+
+					Input(type = InputType.Checkbox, attrs = {
+						hidden()
+						name(inputName)
+						id(inputName)
+					})
+
+					Details({
+						attr("open", "true")
+						style {
+							variable("--lines", (answer.length / 100f).toString())
+						}
+					}) {
+						Summary {
+							Label(forId = inputName) {
+								Text(question)
+							}
+						}
+
+						P(answer)
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -348,6 +396,76 @@ object HomePageStyle : StyleSheet() {
 
 		"p" {
 			marginBottom(0.px)
+		}
+	}
+
+	val faqContainer by style {
+		marginY(5.cssRem)
+
+		"h2" {
+			marginY(2.cssRem)
+
+			fontSize(3.cssRem)
+			textAlign(TextAlign.Center)
+		}
+	}
+
+	val faq by style {
+		backgroundColor(GlobalStyle.tertiaryBackgroundColor)
+		borderRadius(GlobalStyle.roundingSection)
+
+		marginX(auto)
+		maxWidth(80.percent)
+		padding(1.cssRem, 2.cssRem)
+
+		"details" {
+			val elementNameHeight = 4.cssRem
+
+			maxHeight(elementNameHeight)
+			transition(0.3.s, AnimationTimingFunction.EaseOut, "max-height")
+			overflow(Overflow.Hidden)
+			paddingY(1.2.cssRem)
+
+			fontSize(1.3.cssRem)
+			fontWeight(FontWeight.Bold)
+
+			self + not(lastOfType) style {
+				borderBottom(1.px, LineStyle.Solid, GlobalStyle.borderColor)
+			}
+
+			"summary" {
+				display(DisplayStyle.Block)
+				userSelect(UserSelect.None)
+
+				self + before style {
+					fontFamily("Material Icons Round")
+					content("\\e145")
+					marginRight(0.5.cssRem)
+					position(Position.Relative)
+					top(3.px)
+				}
+			}
+
+			"label" {
+				height(elementNameHeight)
+				cursor(Cursor.Pointer)
+			}
+
+			"p" {
+				fontSize(1.cssRem)
+				fontWeight(FontWeight.Normal)
+
+				paddingLeft(2.cssRem)
+				marginBottom(0.px)
+			}
+		}
+
+		adjacent(type("input") + checked, type("details")) style {
+			maxHeight("calc(var(--lines) * 1.2rem + 5.5rem)")
+		}
+
+		desc(adjacent(type("input") + checked, type("details")), type("summary") + before) style {
+			content("\\e15b")
 		}
 	}
 }
