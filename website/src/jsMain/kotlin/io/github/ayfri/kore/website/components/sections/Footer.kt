@@ -42,6 +42,7 @@ object FooterStyle : StyleSheet() {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
 		justifyContent(JustifyContent.Center)
+		paddingBottom(2.cssRem)
 		width(100.percent)
 
 		"hr" style {
