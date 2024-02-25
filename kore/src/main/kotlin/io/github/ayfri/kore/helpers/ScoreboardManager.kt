@@ -6,9 +6,11 @@ import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.PlainTextComponent
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
+import io.github.ayfri.kore.arguments.types.ScoreHolderArgument
 import io.github.ayfri.kore.arguments.types.literals.entity
 import io.github.ayfri.kore.commands.execute.ExecuteCondition
 import io.github.ayfri.kore.commands.execute.execute
+import io.github.ayfri.kore.commands.scoreboard.Operation
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.functions.Function
 import kotlin.math.abs
@@ -145,6 +147,10 @@ data class ScoreboardDisplay(val name: String) {
  * @property condition The condition to be checked before creating the line.
  * @property hideValue A flag indicating whether to hide the value of the line.
  * @property text The text to be displayed on the line.
+ * @property customScoreEntity The entity to use for displaying a custom score instead of the fake player index if specified.
+ * Shouldn't be used with [ScoreboardLine.hideValue].
+ * @property customScoreObjective The objective to use for displaying a custom score instead of the fake player index if specified.
+ * Shouldn't be used with [ScoreboardLine.hideValue].
  */
 data class ScoreboardLine(private val sc: ScoreboardDisplay, val index: Int) {
 	val fakePlayer = "§${abs(index).toString(16)}"
@@ -157,13 +163,32 @@ data class ScoreboardLine(private val sc: ScoreboardDisplay, val index: Int) {
 			field = value
 		}
 
-	context(Function)
-	private fun setText() = scoreboard.players.set(entity(fakePlayer), sc.name, index).let { command ->
-		if (hideValue) scoreboard.players.displayNumberFormatBlank(entity(fakePlayer), sc.name)
+	var customScoreEntity: ScoreHolderArgument? = null
+	var customScoreObjective: String? = null
 
-		text?.let {
-			scoreboard.players.displayName(entity(fakePlayer), sc.name, it)
-		} ?: command
+	context(Function)
+	private fun setText() = when {
+		customScoreEntity != null && customScoreObjective != null -> scoreboard.players.operation(
+			target = entity(fakePlayer),
+			objective = sc.name,
+			operation = Operation.SET,
+			source = customScoreEntity!!,
+			sourceObjective = customScoreObjective!!
+		).let { command ->
+			if (hideValue) scoreboard.players.displayNumberFormatBlank(customScoreEntity!!, customScoreObjective!!)
+
+			text?.let {
+				scoreboard.players.displayName(customScoreEntity!!, customScoreObjective!!, it)
+			} ?: command
+		}
+
+		else -> scoreboard.players.set(entity(fakePlayer), sc.name, index).let { command ->
+			if (hideValue) scoreboard.players.displayNumberFormatBlank(entity(fakePlayer), sc.name)
+
+			text?.let {
+				scoreboard.players.displayName(entity(fakePlayer), sc.name, it)
+			} ?: command
+		}
 	}
 
 	/**
