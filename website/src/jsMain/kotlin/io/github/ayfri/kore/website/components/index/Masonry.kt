@@ -72,7 +72,7 @@ object MasonryStyle : StyleSheet() {
 	val column by style {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
-		gap(1.5.cssRem)
+		gap(2.cssRem)
 		width(40.percent)
 	}
 

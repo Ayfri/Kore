@@ -107,9 +107,9 @@ fun HomePage() = PageLayout("Home") {
 
 		P(
 			"""
-					Kore is a modern, open-source, and easy-to-use Kotlin library for Minecraft datapack development.
-					You can use it to create your own Minecraft Datapacks, and without the need to write a single line of JSON or MCFunction.
-				""".trimIndent(),
+				Kore is a modern, open-source, and easy-to-use Kotlin library for Minecraft datapack development.
+				You can use it to create your own Minecraft Datapacks, and without the need to write a single line of JSON or MCFunction.
+			""".trimIndent(),
 			HomePageStyle.subTitle
 		)
 
@@ -265,7 +265,7 @@ fun HomePage() = PageLayout("Home") {
 	val questions = mapOf(
 		"Is Kore compatible with recent Minecraft versions?" to "Yes, Kore is compatible with all Minecraft versions from 1.20 to the latest version.",
 		"Can I use other datapacks with Kore?" to "Yes, you can use other datapacks with Kore. By providing bindings for your datapacks, you can use them in your Kore code.",
-		"Why would I use Kore?" to "Kore is a modern, open-source, and easy-to-use Kotlin library for Minecraft datapack development. You can use it to create your own Minecraft Datapacks, and without the need to write a single line of JSON or MCFunction. You'll have great, precise, and fast code completion, and you'll be able to use the full power of Kotlin to manage your code. Furthermore, you can even create libraries to help you or the others develop datapacks.",
+		"Why would I use Kore?" to "Kore is a modern, open-source, and easy-to-use Kotlin library for Minecraft datapack development. You can use it to create your own Minecraft Datapacks, and without the need to write a single line of JSON or MCFunction. You'll have great, precise, and fast code completion, and you'll be able to use the full power of Kotlin to manage your code. Furthermore, you can even create libraries to help you or others develop datapacks.",
 		"Are its APIs complete?" to "Yes, Kore's API is complete. It provides simple and intuitive APIs to create Minecraft datapacks and call commands. All the common lists from the game are available as enums, so you are always sure to use the right value.",
 		"Is it compatible with mods?" to "By providing APIs for creating your own commands/features, you can use Kore with mods. However, Kore is not compatible with mods directly.",
 	)
@@ -350,7 +350,7 @@ object HomePageStyle : StyleSheet() {
 	}
 
 	val subTitle by style {
-		maxWidth(90.percent)
+		maxWidth(85.percent)
 	}
 
 	val actions by style {
@@ -369,7 +369,7 @@ object HomePageStyle : StyleSheet() {
 
 	val tabs by style {
 		marginY(4.cssRem)
-		height(25.cssRem)
+		height(37.5.cssRem)
 		width(60.percent)
 	}
 
@@ -380,12 +380,17 @@ object HomePageStyle : StyleSheet() {
 	}
 
 	val featuresContainer by style {
+		backgroundColor(GlobalStyle.secondaryBackgroundColor)
+		paddingX(7.5.percent)
+		paddingY(5.cssRem)
+
+		marginY(7.cssRem)
+
 		display(DisplayStyle.Grid)
 		gridTemplateColumns {
 			repeat(3) { size(1.fr) }
 		}
 		justifyItems(JustifyItems.Center)
-		marginX(7.5.percent)
 	}
 
 	val feature by style {
@@ -410,10 +415,14 @@ object HomePageStyle : StyleSheet() {
 	}
 
 	val faqContainer by style {
-		marginY(5.cssRem)
+		backgroundColor(GlobalStyle.secondaryBackgroundColor)
+		paddingY(5.cssRem)
+
+		marginY(7.cssRem)
 
 		"h2" {
-			marginY(2.cssRem)
+			marginTop(0.px)
+			marginBottom(5.cssRem)
 
 			fontSize(3.cssRem)
 			textAlign(TextAlign.Center)
