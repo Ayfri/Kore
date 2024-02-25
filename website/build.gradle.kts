@@ -1,5 +1,6 @@
 import com.varabyte.kobweb.gradle.application.util.configAsKobwebApplication
 import kotlinx.html.link
+import kotlinx.html.script
 
 plugins {
 	kotlin("multiplatform")
@@ -16,12 +17,21 @@ kobweb {
 		index {
 			description = "Kore website"
 
+			head.apply {
+				add {
+					link("/prism.min.css", "stylesheet")
+					script("text/javascript", "/prism.min.js") {
+						attributes += "data-manual" to ""
+					}
+				}
+			}
 			head.add {
 				link("https://fonts.googleapis.com", "preconnect")
 				link("https://fonts.gstatic.com", "preconnect") {
 					attributes["crossorigin"] = "anonymous"
 				}
 				link("https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;500;900&display=swap", "stylesheet")
+
 			}
 		}
 

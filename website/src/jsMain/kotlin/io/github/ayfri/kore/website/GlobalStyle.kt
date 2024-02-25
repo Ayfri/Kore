@@ -21,6 +21,8 @@ object GlobalStyle : StyleSheet() {
 	val linkColorHover = Color("#23cae8")
 	val textColor = Color("#fff")
 
+	val borderColor = Color("#8c9ab1")
+
 	val roundingButton = 0.4.cssRem
 	val roundingSection = 0.8.cssRem
 
