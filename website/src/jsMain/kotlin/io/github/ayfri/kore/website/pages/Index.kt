@@ -306,6 +306,18 @@ fun HomePage() = PageLayout("Home") {
 			}
 		}
 	}
+
+	Div({
+		classes(HomePageStyle.cta)
+	}) {
+		H2 {
+			Text("Build your first datapack in Kotlin")
+		}
+
+		P("Craft your first datapack with Kore, and enjoy the power of Kotlin for Minecraft development.")
+
+		LinkButton("Get Started", GITHUB_LINK, classes = arrayOf("primary"))
+	}
 }
 
 object HomePageStyle : StyleSheet() {
@@ -464,6 +476,28 @@ object HomePageStyle : StyleSheet() {
 
 		desc(adjacent(type("input") + checked, type("details")), type("summary") + before) style {
 			content("\\e15b")
+		}
+	}
+
+	val cta by style {
+		marginY(8.cssRem)
+
+		display(DisplayStyle.Flex)
+		flexDirection(FlexDirection.Column)
+		alignItems(AlignItems.Center)
+		textAlign(TextAlign.Center)
+
+		"h2" style {
+			fontSize(3.2.cssRem)
+			marginY(2.5.cssRem)
+			width(40.cssRem)
+		}
+
+		"p" style {
+			color(GlobalStyle.altTextColor)
+			fontSize(1.2.cssRem)
+			marginY(3.cssRem)
+			width(30.cssRem)
 		}
 	}
 }
