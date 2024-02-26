@@ -92,3 +92,47 @@ fun StyleScope.textGradient(
 	backgroundClip(BackgroundClip.Text)
 	property("-webkit-text-fill-color", "transparent")
 }
+
+fun StyleScope.scrollbarColor(
+	thumbColor: CSSColorValue,
+	trackColor: CSSColorValue,
+) {
+	property("scrollbar-color", "$thumbColor $trackColor")
+	property("-webkit-scrollbar-color", "$thumbColor $trackColor")
+}
+
+enum class ScrollbarFaceColor {
+	AUTO,
+	DARK,
+	LIGHT,
+}
+
+fun StyleScope.scrollbarColor(
+	color: ScrollbarFaceColor,
+) {
+	property("scrollbar-color", color.name.lowercase())
+}
+
+enum class ScrollbarGutter {
+	AUTO,
+	STABLE,
+	BOTH_EDGES,
+}
+
+fun StyleScope.scrollbarGutter(
+	gutter: ScrollbarGutter,
+) {
+	property("scrollbar-gutter", gutter.name.lowercase())
+}
+
+enum class ScrollbarWidth {
+	AUTO,
+	THIN,
+	NONE,
+}
+
+fun StyleScope.scrollbarWidth(
+	width: ScrollbarWidth,
+) {
+	property("scrollbar-width", width.name.lowercase())
+}

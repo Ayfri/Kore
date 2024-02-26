@@ -3,6 +3,9 @@ package io.github.ayfri.kore.website
 import com.varabyte.kobweb.compose.css.TextDecorationLine
 import com.varabyte.kobweb.compose.css.background
 import com.varabyte.kobweb.compose.css.textDecorationLine
+import io.github.ayfri.kore.website.utils.ScrollbarWidth
+import io.github.ayfri.kore.website.utils.scrollbarColor
+import io.github.ayfri.kore.website.utils.scrollbarWidth
 import io.github.ayfri.kore.website.utils.transition
 import org.jetbrains.compose.web.css.*
 
@@ -21,12 +24,20 @@ object GlobalStyle : StyleSheet() {
 	val linkColorHover = Color("#23cae8")
 	val textColor = Color("#fff")
 
+	val scrollbarThumbColor = Color("#ffffff99")
+	val scrollbarBackgroundColor = Color("#181a1f")
+
 	val borderColor = Color("#8c9ab1")
 
 	val roundingButton = 0.4.cssRem
 	val roundingSection = 0.8.cssRem
 
 	init {
+		universal {
+			scrollbarColor(scrollbarThumbColor, scrollbarBackgroundColor)
+			scrollbarWidth(ScrollbarWidth.THIN)
+		}
+
 		"body" {
 			fontFamily(
 				"-apple-system",
@@ -41,6 +52,7 @@ object GlobalStyle : StyleSheet() {
 				"Helvetica Neue",
 				"sans-serif"
 			)
+
 			backgroundColor(backgroundColor)
 			color(textColor)
 		}
