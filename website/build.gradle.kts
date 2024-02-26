@@ -15,8 +15,6 @@ version = "1.0-SNAPSHOT"
 kobweb {
 	app {
 		index {
-			description = "Kore website"
-
 			head.apply {
 				add {
 					link("/prism.min.css", "stylesheet")
