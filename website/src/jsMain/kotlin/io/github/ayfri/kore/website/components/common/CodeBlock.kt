@@ -7,9 +7,11 @@ import org.jetbrains.compose.web.dom.Text
 
 @Composable
 fun CodeBlock(text: String, lang: String? = null, vararg classes: String) {
-	Pre {
+	Pre({
+		classes(*classes)
+	}) {
 		Code(attrs = {
-			classes(lang?.let { "language-$it" } ?: "nohighlight", "line-numbers", *classes)
+			classes(lang?.let { "language-$it" } ?: "nohighlight", "line-numbers")
 		}) {
 			Text(text)
 		}

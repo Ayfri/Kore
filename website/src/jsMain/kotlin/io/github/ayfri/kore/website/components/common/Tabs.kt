@@ -4,6 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import com.varabyte.kobweb.compose.css.*
 import io.github.ayfri.kore.website.GlobalStyle
+import io.github.ayfri.kore.website.utils.mdMax
+import io.github.ayfri.kore.website.utils.paddingX
+import io.github.ayfri.kore.website.utils.xsMax
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
@@ -72,6 +75,16 @@ object TabsStyle : StyleSheet() {
 		display(DisplayStyle.Flex)
 		backgroundColor(GlobalStyle.secondaryBackgroundColor)
 		borderBottom(1.px, LineStyle.Solid, GlobalStyle.borderColor)
+
+		mdMax(self) {
+			display(DisplayStyle.Grid)
+			gridTemplateColumns("repeat(auto-fit, minmax(0, 1fr))")
+		}
+
+		xsMax(self) {
+			display(DisplayStyle.Flex)
+			flexDirection(FlexDirection.Column)
+		}
 	}
 
 	val button by style {
@@ -83,6 +96,14 @@ object TabsStyle : StyleSheet() {
 		border(0.px, LineStyle.Solid, GlobalStyle.borderColor)
 
 		borderRight(1.px, LineStyle.Solid, GlobalStyle.borderColor)
+
+		mdMax(self) {
+			paddingX(0.8.cssRem)
+		}
+
+		xsMax(self) {
+			borderBottom(1.px, LineStyle.Solid, GlobalStyle.borderColor)
+		}
 	}
 
 	val selected by style {

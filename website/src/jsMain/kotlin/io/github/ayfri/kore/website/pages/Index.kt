@@ -22,6 +22,7 @@ import org.jetbrains.compose.web.attributes.name
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.keywords.auto
+import org.jetbrains.compose.web.css.selectors.Nth
 import org.jetbrains.compose.web.dom.*
 
 // language=kotlin
@@ -451,6 +452,12 @@ fun HomePage() = PageLayout("Home") {
 }
 
 object HomePageStyle : StyleSheet() {
+	init {
+		smMax(child(className("code-toolbar"), type("pre"))) {
+			fontSize(0.8.cssRem)
+		}
+	}
+
 	val titleFontSize = 4.cssRem
 
 	val heroSection by style {
@@ -463,24 +470,44 @@ object HomePageStyle : StyleSheet() {
 			color(GlobalStyle.altTextColor)
 			fontSize(1.2.cssRem)
 		}
+
+		mdMax(self) {
+			"p" style {
+				fontSize(1.05.cssRem)
+				marginBottom(2.cssRem)
+			}
+		}
 	}
 
 	val title by style {
 		fontSize(titleFontSize)
-		fontWeight(700)
+		fontWeight(FontWeight.Bold)
 		letterSpacing((-1.5).px)
 		maxWidth(80.percent)
 		marginY(4.cssRem)
 
 		"span" style {
-			fontWeight(900)
+			fontWeight(FontWeight.Black)
 			marginLeft(titleFontSize / 4)
 			textGradient(GlobalStyle.logoLeftColor, GlobalStyle.logoRightColor)
+		}
+
+		lgMax(self) {
+			fontSize(3.cssRem)
+		}
+
+		mdMax(self) {
+			fontSize(2.8.cssRem)
+			maxWidth(92.percent)
 		}
 	}
 
 	val subTitle by style {
 		maxWidth(85.percent)
+
+		mdMax(self) {
+			maxWidth(92.percent)
+		}
 	}
 
 	val actions by style {
@@ -495,12 +522,26 @@ object HomePageStyle : StyleSheet() {
 				backgroundColor(GlobalStyle.buttonBackgroundColorHover)
 			}
 		}
+
+		mdMax(child(self, type("a"))) {
+			fontSize(1.2.cssRem)
+		}
 	}
 
 	val tabs by style {
 		marginY(4.cssRem)
 		height(37.5.cssRem)
 		width(60.percent)
+
+		xlMax(self) {
+			height(32.cssRem)
+			width(85.percent)
+		}
+
+		mdMax(self) {
+			height(35.cssRem)
+			width(90.percent)
+		}
 	}
 
 	val tabContent by style {
@@ -521,6 +562,19 @@ object HomePageStyle : StyleSheet() {
 			repeat(3) { size(1.fr) }
 		}
 		justifyItems(JustifyItems.Center)
+
+		lgMax(self) {
+			paddingX(4.percent)
+			marginTop(4.cssRem)
+			marginBottom(6.cssRem)
+		}
+
+		mdMax(self) {
+			display(DisplayStyle.Flex)
+			flexDirection(FlexDirection.Column)
+			alignItems(AlignItems.Center)
+			gap(3.cssRem)
+		}
 	}
 
 	val feature by style {
@@ -542,6 +596,15 @@ object HomePageStyle : StyleSheet() {
 		"p" {
 			marginBottom(0.px)
 		}
+
+		lgMax(self) {
+			padding(1.25.cssRem)
+			width(28.vw)
+		}
+
+		mdMax(self) {
+			width(90.percent)
+		}
 	}
 
 	val faqContainer by style {
@@ -557,6 +620,15 @@ object HomePageStyle : StyleSheet() {
 			fontSize(3.cssRem)
 			textAlign(TextAlign.Center)
 		}
+
+		mdMax(type("h2")) {
+			fontSize(2.7.cssRem)
+			paddingX(1.cssRem)
+		}
+
+		xsMax(type("h2")) {
+			fontSize(2.2.cssRem)
+		}
 	}
 
 	val faq by style {
@@ -568,9 +640,26 @@ object HomePageStyle : StyleSheet() {
 		padding(1.cssRem, 2.cssRem)
 
 		"details" {
-			val elementNameHeight = 4.cssRem
+			val elementNameHeight by variable<CSSNumeric>()
+			elementNameHeight(4.cssRem)
 
-			maxHeight(elementNameHeight)
+			mdMax(self + firstOfType) {
+				elementNameHeight(5.5.cssRem)
+			}
+
+			maxWidthBreak(430.px, self + nthOfType(Nth.Functional(b = 2))) {
+				elementNameHeight(5.5.cssRem)
+			}
+
+			xxsMax(self + lastOfType) {
+				elementNameHeight(5.5.cssRem)
+			}
+
+			maxWidthBreak(305.px, self + firstOfType) {
+				elementNameHeight(7.cssRem)
+			}
+
+			maxHeight(elementNameHeight.value())
 			transition(0.3.s, AnimationTimingFunction.EaseOut, "max-height")
 			overflow(Overflow.Hidden)
 			paddingY(1.2.cssRem)
@@ -596,7 +685,6 @@ object HomePageStyle : StyleSheet() {
 			}
 
 			"label" {
-				height(elementNameHeight)
 				cursor(Cursor.Pointer)
 			}
 
@@ -609,8 +697,43 @@ object HomePageStyle : StyleSheet() {
 			}
 		}
 
+		xsMax(desc(type("div") + self, type("summary"))) {
+			fontSize(1.175.cssRem)
+		}
+
+		xsMax(desc(type("div") + self, type("p"))) {
+			paddingLeft(0.px)
+		}
+
+		smMax(type("div") + self) {
+			paddingX(1.25.cssRem)
+			maxWidth(90.percent)
+		}
+
 		adjacent(type("input") + checked, type("details")) style {
-			maxHeight("calc(var(--lines) * 1.2rem + 5.5rem)")
+			lgMin(self) {
+				maxHeight("calc(var(--lines) * 1.2rem + 6.5rem)")
+			}
+
+			lgMax(self) {
+				maxHeight("calc(var(--lines) * 1.8rem + 6.5rem)")
+			}
+
+			mdMax(self) {
+				this.maxHeight("calc(var(--lines) * 2.5rem + 6.5rem)")
+			}
+
+			smMax(self) {
+				maxHeight("calc(var(--lines) * 3.2rem + 6.5rem)")
+			}
+
+			maxWidthBreak(400.px, self) {
+				maxHeight("calc(var(--lines) * 4rem + 6.5rem)")
+			}
+
+			xxsMax(self) {
+				maxHeight("calc(var(--lines) * 5.5rem + 6.5rem)")
+			}
 		}
 
 		desc(adjacent(type("input") + checked, type("details")), type("summary") + before) style {
@@ -632,11 +755,20 @@ object HomePageStyle : StyleSheet() {
 			width(40.cssRem)
 		}
 
+		mdMax(type("h2")) {
+			fontSize(2.5.cssRem)
+			width(90.percent)
+		}
+
 		"p" style {
 			color(GlobalStyle.altTextColor)
 			fontSize(1.2.cssRem)
 			marginY(3.cssRem)
 			width(30.cssRem)
+		}
+
+		mdMax(type("p")) {
+			width(90.percent)
 		}
 	}
 }

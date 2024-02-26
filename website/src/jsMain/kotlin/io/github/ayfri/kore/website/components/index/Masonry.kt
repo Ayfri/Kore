@@ -3,10 +3,9 @@ package io.github.ayfri.kore.website.components.index
 import androidx.compose.runtime.Composable
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.CodeBlock
-import io.github.ayfri.kore.website.utils.P
-import io.github.ayfri.kore.website.utils.marginX
-import io.github.ayfri.kore.website.utils.marginY
+import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.selectors.Nth
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.H2
 import org.jetbrains.compose.web.dom.Text
@@ -34,10 +33,6 @@ fun Masonry(items: List<MasonryItem>) = Div({
 
 	Div({
 		classes(MasonryStyle.column)
-
-		style {
-			marginTop(3.cssRem)
-		}
 	}) {
 		rightItems.forEach { MasonryItemCard(it) }
 	}
@@ -47,7 +42,7 @@ fun Masonry(items: List<MasonryItem>) = Div({
 private fun MasonryItemCard(item: MasonryItem) = Div(attrs = {
 	classes(MasonryStyle.card)
 }) {
-	CodeBlock(item.code, "kotlin")
+	CodeBlock(item.code, "kotlin", MasonryStyle.code)
 
 	Div({
 		classes(MasonryStyle.cardContent)
@@ -67,6 +62,13 @@ object MasonryStyle : StyleSheet() {
 		gap(2.cssRem)
 		marginX(1.cssRem)
 		marginY(3.cssRem)
+
+		lgMax(self) {
+			alignItems(AlignItems.Center)
+			flexDirection(FlexDirection.Column)
+			gap(3.5.cssRem)
+			marginY(0.cssRem)
+		}
 	}
 
 	val column by style {
@@ -74,6 +76,27 @@ object MasonryStyle : StyleSheet() {
 		flexDirection(FlexDirection.Column)
 		gap(2.cssRem)
 		width(40.percent)
+
+		self + nthOfType(Nth.Even) style {
+			marginTop(3.cssRem)
+
+			lgMax(child(className(container), self)) {
+				marginTop(0.cssRem)
+			}
+		}
+
+		xlMax(self) {
+			width(47.5.percent)
+		}
+
+		lgMax(self) {
+			gap(3.5.cssRem)
+			width(85.percent)
+		}
+
+		xsMax(self) {
+			width(100.percent)
+		}
 	}
 
 	val card by style {
@@ -84,5 +107,9 @@ object MasonryStyle : StyleSheet() {
 
 	val cardContent by style {
 		marginX(1.cssRem)
+	}
+
+	val code by style {
+		borderRadius(GlobalStyle.roundingButton)
 	}
 }

@@ -1,6 +1,8 @@
 package io.github.ayfri.kore.website.components.sections
 
 import androidx.compose.runtime.Composable
+import com.varabyte.kobweb.compose.css.TextAlign
+import com.varabyte.kobweb.compose.css.textAlign
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.WEBSITE_GITHUB_LINK
 import io.github.ayfri.kore.website.utils.A
@@ -53,6 +55,7 @@ object FooterStyle : StyleSheet() {
 		}
 
 		"p" style {
+			textAlign(TextAlign.Center)
 			marginBottom(0.cssRem)
 		}
 	}
