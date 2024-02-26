@@ -92,6 +92,7 @@ object TabsStyle : StyleSheet() {
 		cursor(Cursor.Pointer)
 		color(GlobalStyle.textColor)
 		padding(0.6.cssRem, 1.4.cssRem)
+		fontFamily("inherit")
 
 		border(0.px, LineStyle.Solid, GlobalStyle.borderColor)
 
