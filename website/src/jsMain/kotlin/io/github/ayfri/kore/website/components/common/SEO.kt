@@ -72,9 +72,27 @@ fun setDescription(description: String) = renderComposable(document.head!!) {
 }
 
 fun setCanonical(url: String) = renderComposable(document.head!!) {
-	val cleanedURL = url.replace(Regex("/+$"), "/")
+	Link("canonical", url)
+	MetaProperty("og:url", url)
+	MetaProperty("twitter:url", url)
+}
 
-	Link("canonical", cleanedURL)
-	MetaProperty("og:url", cleanedURL)
-	MetaProperty("twitter:url", cleanedURL)
+fun setType(type: String) = renderComposable(document.head!!) {
+	MetaProperty("og:type", type)
+}
+
+fun setTwitterCard(card: String) = renderComposable(document.head!!) {
+	MetaName("twitter:card", card)
+}
+
+fun setTwitterCreator(creator: String) = renderComposable(document.head!!) {
+	MetaName("twitter:creator", creator)
+	MetaName("twitter:site", creator)
+}
+
+fun setImage(url: String) = renderComposable(document.head!!) {
+	selectAll("meta[property*=image]").forEach(HTMLElement::remove)
+
+	MetaProperty("og:image", url)
+	MetaProperty("twitter:image", url)
 }
