@@ -128,6 +128,10 @@ object HeaderStyle : StyleSheet() {
 			}
 			top(1.5.cssRem)
 		}
+
+		mdMin(type("div") + self) {
+			display(DisplayStyle.None)
+		}
 	}
 
 	val mobileMenuLabel by style {
