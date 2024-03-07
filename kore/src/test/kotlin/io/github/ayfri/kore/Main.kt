@@ -1,5 +1,6 @@
 package io.github.ayfri.kore
 
+import io.github.ayfri.kore.arguments.argumentsTests
 import io.github.ayfri.kore.commands.runUnitTests
 import io.github.ayfri.kore.features.featuresTests
 import io.github.ayfri.kore.helpers.helpersTests
@@ -18,6 +19,7 @@ fun DataPack.setTestPath() {
 
 fun main() {
 	colorTests()
+	argumentsTests()
 	vec2Tests()
 	vec3Tests()
 

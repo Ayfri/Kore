@@ -8,8 +8,6 @@ import io.github.ayfri.kore.data.item.Enchantment
 import io.github.ayfri.kore.data.item.HideFlags
 import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.nbt.MutableNbtCompound
-import net.benwoodworth.knbt.StringifiedNbt
-import net.benwoodworth.knbt.encodeToNbtTag
 
 data class ItemStackBuilder(var id: ItemArgument, var count: Short = 1) {
 	var tag = MutableNbtCompound()
@@ -25,15 +23,16 @@ data class ItemStackBuilder(var id: ItemArgument, var count: Short = 1) {
 	fun build() = ItemStack(
 		id = id.asId(),
 		count = count,
-		tag = tag.apply {
-			canPlaceOn?.let { this["CanPlaceOn"] = StringifiedNbt.encodeToNbtTag(it.map(BlockArgument::asId)) }
-			canDestroy?.let { this["CanDestroy"] = StringifiedNbt.encodeToNbtTag(it.map(BlockArgument::asId)) }
-			customModelData?.let { this["CustomModelData"] = it }
-			enchantments?.let { this["Enchantments"] = StringifiedNbt.encodeToNbtTag(it) }
-			hideFlags?.let { this["HideFlags"] = it.map(HideFlags::toBitFlag).sum() }
-			modifiers?.let { this["AttributeModifiers"] = StringifiedNbt.encodeToNbtTag(it) }
-			name?.let { this["Name"] = StringifiedNbt.encodeToNbtTag(it) }
-		}.toNbtCompound(),
+		// TODO: To update.
+		/* 		tag = tag.apply {
+					canPlaceOn?.let { this["CanPlaceOn"] = StringifiedNbt.encodeToNbtTag(it.map(BlockArgument::asId)) }
+					canDestroy?.let { this["CanDestroy"] = StringifiedNbt.encodeToNbtTag(it.map(BlockArgument::asId)) }
+					customModelData?.let { this["CustomModelData"] = it }
+					enchantments?.let { this["Enchantments"] = StringifiedNbt.encodeToNbtTag(it) }
+					hideFlags?.let { this["HideFlags"] = it.map(HideFlags::toBitFlag).sum() }
+					modifiers?.let { this["AttributeModifiers"] = StringifiedNbt.encodeToNbtTag(it) }
+					name?.let { this["Name"] = StringifiedNbt.encodeToNbtTag(it) }
+				}.toNbtCompound(), */
 	)
 }
 

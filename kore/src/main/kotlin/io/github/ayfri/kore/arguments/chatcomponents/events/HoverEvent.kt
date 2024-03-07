@@ -18,10 +18,9 @@ import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
 import io.github.ayfri.kore.utils.asArg
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
-import io.github.ayfri.kore.utils.stringifiedNbt
+import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.buildNbtCompound
-import kotlinx.serialization.Serializable
 
 @Serializable
 data class HoverEvent(
@@ -63,7 +62,7 @@ fun HoverEvent.showEntity(type: EntityTypeArgument, name: String? = null, id: In
 
 fun HoverEvent.showItem(item: ItemArgument, count: Int) = apply {
 	action = HoverAction.SHOW_ITEM
-	contents = ContentsItem(item.asId(), count, item.nbtData?.let { stringifiedNbt(it) })
+	contents = ContentsItem(item.asId(), count, item.components?.toString())
 }
 
 fun HoverEvent.showText(block: ChatComponents.() -> Unit) = apply {

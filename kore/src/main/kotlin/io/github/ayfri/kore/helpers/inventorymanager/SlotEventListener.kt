@@ -43,17 +43,18 @@ data class SlotEventListener(
 		}
 
 	init {
-		item.nbtData = nbt {
-			item.nbtData?.let {
-				it.forEach { (key, value) ->
-					this[key] = value
-				}
-			}
+		// TODO : To update.
+		/* 		item.components = nbt {
+					item.nbtData?.let {
+						it.forEach { (key, value) ->
+							this[key] = value
+						}
+					}
 
-			randomTagNbt.entries.forEach { (key, value) ->
-				this[key] = value
-			}
-		}
+					randomTagNbt.entries.forEach { (key, value) ->
+						this[key] = value
+					}
+				} */
 	}
 
 	fun onTick(block: Function.() -> Unit) {

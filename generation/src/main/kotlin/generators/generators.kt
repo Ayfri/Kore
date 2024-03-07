@@ -84,7 +84,10 @@ suspend fun launchAllSimpleGenerators() {
 		gen("Instruments", "instrument"),
 		gen("Items", "item", additionalCode = {
 			addProperty(
-				PropertySpec.builder("nbtData", ClassName("net.benwoodworth.knbt", "NbtCompound").copy(nullable = true))
+				PropertySpec.builder(
+					"components",
+					ClassName("io.github.ayfri.kore.arguments.components", "Components").copy(nullable = true)
+				)
 					.overrides()
 					.mutable()
 					.initializer("null")
