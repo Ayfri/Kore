@@ -6,7 +6,7 @@ import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.Items
-import io.github.ayfri.kore.utils.set
+import net.benwoodworth.knbt.NbtInt
 
 fun Function.commandsTests() {
 	clear() assertsIs "clear"
@@ -31,8 +31,8 @@ fun Function.commandsTests() {
 	give(self(), Items.STONE) assertsIs "give @s minecraft:stone"
 	give(self(), Items.STONE, 1) assertsIs "give @s minecraft:stone 1"
 	give(self(), Items.STONE {
-		this["test"] = 1
-	}) assertsIs "give @s minecraft:stone{test:1}"
+		addComponent("test", NbtInt(1))
+	}) assertsIs "give @s minecraft:stone[test=1]"
 
 	help() assertsIs "help"
 	help("test") assertsIs "help test"

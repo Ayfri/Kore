@@ -18,7 +18,10 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 
 @Serializable(with = ChatComponents.Companion.ChatComponentsSerializer::class)
-data class ChatComponents(val list: MutableList<ChatComponent> = mutableListOf(), var onlySimpleComponents: Boolean = false) : Argument {
+data class ChatComponents(
+	val list: MutableList<ChatComponent> = mutableListOf(),
+	var onlySimpleComponents: Boolean = false,
+) : Iterable<ChatComponent>, Argument {
 	constructor(vararg components: ChatComponent) : this(components.toMutableList())
 
 	val containsOnlySimpleComponents get() = list.all { it is SimpleComponent }
@@ -41,11 +44,20 @@ data class ChatComponents(val list: MutableList<ChatComponent> = mutableListOf()
 		return this
 	}
 
+	override fun iterator() = list.iterator()
+
 	fun requireSimpleComponents() {
 		if (!containsOnlySimpleComponents) throw ONLY_SIMPLE_COMPONENTS_EXCEPTION
 	}
 
 	fun toJsonString(json: Json = Json) = json.encodeToString(NbtAsJsonSerializer, toNbtTag())
+	fun toJsonListString(json: Json = Json) = json.encodeToString(NbtAsJsonSerializer, toNbtList())
+
+	fun toNbtList() = buildNbtList {
+		list.forEach {
+			this += it.toNbtTag()
+		}
+	}
 
 	fun toNbtTag() = when (list.size) {
 		0 -> NbtString("")
@@ -53,11 +65,7 @@ data class ChatComponents(val list: MutableList<ChatComponent> = mutableListOf()
 			if (it.containsOnlyText()) return NbtString(it.text)
 		}.toNbtTag()
 
-		else -> buildNbtList {
-			list.forEach {
-				this += it.toNbtTag()
-			}
-		}
+		else -> toNbtList()
 	}
 
 	override fun asString() = StringifiedNbt.encodeToString(toNbtTag())
@@ -104,6 +112,33 @@ data class ChatComponents(val list: MutableList<ChatComponent> = mutableListOf()
 									component
 								)
 							}
+						}
+					}
+				}
+			}
+		}
+
+		object ChatComponentsAsListSerializer : KSerializer<ChatComponents> {
+			override val descriptor = ListSerializer(JsonElement.serializer()).descriptor
+
+			override fun deserialize(decoder: Decoder) = ChatComponents()
+
+			override fun serialize(encoder: Encoder, value: ChatComponents) {
+				encoder.encodeCollection(descriptor, value.list.size) {
+					value.list.forEachIndexed { i, component ->
+						when (component) {
+							is EntityComponent -> encodeSerializableElement(descriptor, i, EntityComponent.serializer(), component)
+							is ScoreComponent -> encodeSerializableElement(descriptor, i, ScoreComponent.serializer(), component)
+							is NbtComponent -> encodeSerializableElement(descriptor, i, NbtComponent.serializer(), component)
+							is TranslatedTextComponent -> encodeSerializableElement(
+								descriptor,
+								i,
+								TranslatedTextComponent.serializer(),
+								component
+							)
+
+							is PlainTextComponent -> if (component.containsOnlyText()) encodeStringElement(descriptor, i, component.text)
+							else encodeSerializableElement(descriptor, i, PlainTextComponent.serializer(), component)
 						}
 					}
 				}

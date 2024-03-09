@@ -52,6 +52,8 @@ abstract class ChatComponent {
 		underlined?.let { this["underlined"] = it }
 	}
 
+	fun toNbt() = if (containsOnlyText()) text.nbt else toNbtTag()
+
 	override fun toString() =
 		"${type.name.pascalCase()}(text='$text', bold=$bold, clickEvent=$clickEvent, color=$color, extra=$extra, font=$font, hoverEvent=$hoverEvent, insertion=$insertion, italic=$italic, keybind=$keybind, obfuscated=$obfuscated, strikethrough=$strikethrough, underlined=$underlined)"
 

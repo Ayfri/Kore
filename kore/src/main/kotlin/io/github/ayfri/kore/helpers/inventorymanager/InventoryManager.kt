@@ -53,7 +53,7 @@ data class InventoryManager<T : ContainerArgument>(val container: T) {
 	context(Function)
 	fun clearAll(item: ItemArgument) = when (container) {
 		is EntityArgument -> clear(container, item)
-		is Vec3 -> data(container).remove("Items[{id:\"${item.asId()}\",${item.components?.let { "components:$it" } ?: ""}}]")
+		is Vec3 -> data(container).remove("Items[{id:\"${item.asId()}\",${item.components?.let { "components:${it.asJson()}" } ?: ""}}]")
 		else -> error("Cannot clear items from $container")
 	}
 

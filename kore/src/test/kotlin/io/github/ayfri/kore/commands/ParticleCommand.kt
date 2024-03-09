@@ -53,18 +53,20 @@ fun Function.particleTests() {
 		) assertsIs "particle dust_color_transition 0.3333333333333333 0.3333333333333333 1 2 1 0.3333333333333333 0.3333333333333333"
 
 		item(Items.DIAMOND_SWORD {
-			this["Enchantments"] = nbtList {
-				addNbtCompound {
-					this["id"] = "minecraft:sharpness"
-					this["lvl"] = 5
-				}
+			addComponent("enchantments") {
+				this["levels"] = nbtList {
+					addNbtCompound {
+						this["id"] = "minecraft:sharpness"
+						this["lvl"] = 5
+					}
 
-				addNbtCompound {
-					this["id"] = "minecraft:knockback"
-					this["lvl"] = 2
+					addNbtCompound {
+						this["id"] = "minecraft:knockback"
+						this["lvl"] = 2
+					}
 				}
 			}
-		}) assertsIs "particle item minecraft:diamond_sword{Enchantments:[{id:\"minecraft:sharpness\",lvl:5},{id:\"minecraft:knockback\",lvl:2}]}"
+		}) assertsIs "particle item minecraft:diamond_sword[enchantments=[levels:{id:\"minecraft:sharpness\",lvl:5},{id:\"minecraft:knockback\",lvl:2}]]"
 
 		particle(Particles.ASH) assertsIs "particle minecraft:ash"
 
