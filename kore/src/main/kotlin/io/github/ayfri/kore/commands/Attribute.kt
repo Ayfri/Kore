@@ -11,9 +11,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable(AttributeModifierOperation.Companion.AttributeModifierOperationSerializer::class)
 enum class AttributeModifierOperation {
-	ADD,
-	MULTIPLY,
-	MULTIPLY_BASE;
+	ADD_VALUE,
+	ADD_MULTIPLIED_TOTAL,
+	ADD_MULTIPLIED_BASE;
 
 	companion object {
 		data object AttributeModifierOperationSerializer : LowercaseSerializer<AttributeModifierOperation>(entries)

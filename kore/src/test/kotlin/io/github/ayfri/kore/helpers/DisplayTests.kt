@@ -33,7 +33,7 @@ fun Function.displayTests() {
 			}
 
 			modifiers {
-				modifier(Attributes.GENERIC_ATTACK_DAMAGE, constant(1f), AttributeModifierOperation.ADD)
+				modifier(Attributes.GENERIC_ATTACK_DAMAGE, constant(1f), AttributeModifierOperation.ADD_VALUE)
 			}
 
 			customModelData = 1

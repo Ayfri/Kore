@@ -15,7 +15,7 @@ import kotlinx.serialization.encoding.Encoder
 data class AttributeModifier(
 	val attribute: AttributeArgument,
 	@Serializable(NumberProviderSerializer::class) val amount: NumberProvider = constant(0f),
-	@Serializable(AttributeModifierOperationSerializer::class) val operation: AttributeModifierOperation = AttributeModifierOperation.ADD,
+	@Serializable(AttributeModifierOperationSerializer::class) val operation: AttributeModifierOperation = AttributeModifierOperation.ADD_VALUE,
 	val slot: List<EquipmentSlot>? = null,
 	val uuid: UUIDArgument? = null,
 ) {

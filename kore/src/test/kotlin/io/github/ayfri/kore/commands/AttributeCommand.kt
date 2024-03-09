@@ -24,20 +24,20 @@ fun Function.attributeTests() {
 				add(
 					attribute,
 					1.0,
-					AttributeModifierOperation.ADD
-				) assertsMatches Regex("attribute @s minecraft:generic.max_health modifier add $uuidRegex minecraft:generic.max_health 1 add")
+					AttributeModifierOperation.ADD_VALUE
+				) assertsMatches Regex("attribute @s minecraft:generic.max_health modifier add $uuidRegex minecraft:generic.max_health 1 add_value")
 
 				add(
 					attribute,
 					1.0,
-					AttributeModifierOperation.MULTIPLY
-				) assertsMatches Regex("attribute @s minecraft:generic.max_health modifier add $uuidRegex minecraft:generic.max_health 1 multiply")
+					AttributeModifierOperation.ADD_MULTIPLIED_TOTAL
+				) assertsMatches Regex("attribute @s minecraft:generic.max_health modifier add $uuidRegex minecraft:generic.max_health 1 add_multiplied_total")
 
 				add(
 					attribute,
 					1.0,
-					AttributeModifierOperation.MULTIPLY_BASE
-				) assertsMatches Regex("attribute @s minecraft:generic.max_health modifier add $uuidRegex minecraft:generic.max_health 1 multiply_base")
+					AttributeModifierOperation.ADD_MULTIPLIED_BASE
+				) assertsMatches Regex("attribute @s minecraft:generic.max_health modifier add $uuidRegex minecraft:generic.max_health 1 add_multiplied_base")
 
 				get(randomUUID()) assertsMatches Regex("attribute @s minecraft:generic.max_health modifier value get $uuidRegex")
 
