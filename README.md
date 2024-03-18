@@ -18,7 +18,8 @@
 	<img src="kore typography 1200x600.png" title="kore typography" alt="kore typography"/>
 </p>
 
-This library is compatible and made for Minecraft Java 1.20.2, I don't think I will support older versions nor Bedrock Edition.<br>
+This library is compatible and made for Minecraft Java 1.20 and later versions, I don't think I will support older versions nor Bedrock
+Edition.<br>
 You can still create your own fork and make it compatible with older versions.<br>
 I will accept pull requests for older versions on a separate branch.
 
@@ -115,6 +116,10 @@ fun main() {
 	datapack.generateZip()
 }
 ```
+
+## Community Creations
+
+- [SimplEnergyKore](https://github.com/e-psi-lon/SimplEnergyKore)
 
 ## Features
 
