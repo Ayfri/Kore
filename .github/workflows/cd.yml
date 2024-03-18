@@ -63,4 +63,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          command: pages deploy .kobweb/site/ --project-name=kore
+          command: pages deploy .kobweb/website/ --project-name=kore
