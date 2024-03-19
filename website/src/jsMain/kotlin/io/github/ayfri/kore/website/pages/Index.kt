@@ -146,25 +146,6 @@ fun scoreboardDisplayDatapack() = dataPack("scoreboard_display") {
 }
 """
 
-/*
-"check_z.mcfunction"
-"config.mcfunction"
-"decrement_cooldown.mcfunction"
-"decrement_cooldowns.mcfunction"
-"go_to_spawn.mcfunction"
-"hide_command_feedback.mcfunction"
-"load.mcfunction"
-"offset_down.mcfunction"
-"offset_up.mcfunction"
-"restore_command_feedback.mcfunction"
-"start_to_go_to_spawn.mcfunction"
-"tick.mcfunction"
-"trigger_spawn.mcfunction"
-"try_to_go_to_spawn.mcfunction"
-"try_to_try_to_go_to_spawn.mcfunction"
-"uninstall.mcfunction"
-*/
-
 // language=kotlin
 const val PRESENTATION_CODE_EXTERNAL = """
 data object VanillaTweaksCreate {
