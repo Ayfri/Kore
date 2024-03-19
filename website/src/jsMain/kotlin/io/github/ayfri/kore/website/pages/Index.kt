@@ -224,7 +224,7 @@ fun HomePage() = PageLayout("Home") {
 		Div({
 			classes(HomePageStyle.actions)
 		}) {
-			LinkButton("Get Started", "/docs/getting-started", classes = arrayOf("primary"))
+			LinkButton("Get Started", "https://ayfri.com/articles/kore-introduction/", classes = arrayOf("primary"))
 			LinkButton("GitHub", GITHUB_LINK)
 		}
 
@@ -428,7 +428,7 @@ fun HomePage() = PageLayout("Home") {
 
 		P("Craft your first datapack with Kore, and enjoy the power of Kotlin for Minecraft development.")
 
-		LinkButton("Get Started", GITHUB_LINK, classes = arrayOf("primary"))
+		LinkButton("Get Started", "https://ayfri.com/articles/kore-introduction/", classes = arrayOf("primary"))
 	}
 }
 
