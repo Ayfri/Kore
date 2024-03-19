@@ -9,6 +9,7 @@ import org.commonmark.node.CustomBlock
 import org.commonmark.node.Text
 import kotlinx.html.link
 import kotlinx.html.script
+import kotlinx.html.unsafe
 
 plugins {
 	kotlin("multiplatform")
@@ -39,6 +40,15 @@ kobweb {
 					attributes["crossorigin"] = "anonymous"
 				}
 				link("https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;500;900&display=swap", "stylesheet")
+
+				script("text/javascript", "https://www.googletagmanager.com/gtag/js?id=G-3ZXF56FSLH") {
+					async = true
+				}
+				script("text/javascript") {
+					unsafe {
+						+"""function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-3ZXF56FSLH")"""
+					}
+				}
 			}
 		}
 
