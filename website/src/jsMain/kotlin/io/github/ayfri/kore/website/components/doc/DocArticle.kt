@@ -8,4 +8,5 @@ data class DocArticle(
 	val navTitle: String,
 	val keywords: List<String>,
 	val dateModified: String,
+	val slugs: List<String>,
 )

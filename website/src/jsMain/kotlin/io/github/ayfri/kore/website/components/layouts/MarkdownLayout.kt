@@ -7,10 +7,14 @@ import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobwebx.markdown.markdown
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.setDescription
+import io.github.ayfri.kore.website.components.doc.DocTree
+import io.github.ayfri.kore.website.utils.marginX
 import io.github.ayfri.kore.website.utils.marginY
 import io.github.ayfri.kore.website.utils.paddingX
 import io.github.ayfri.kore.website.utils.smMax
 import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.keywords.auto
+import org.jetbrains.compose.web.dom.Div
 
 @Composable
 fun MarkdownLayout(content: @Composable () -> Unit) {
@@ -20,11 +24,17 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 	val markdownData = context.markdown!!.frontMatter
 
 	PageLayout(markdownData["nav-title"]?.get(0) ?: "Untitled") {
-		if (markdownData["description"] != null) {
-			setDescription(markdownData["description"]!![0])
-		}
+		DocTree()
 
-		content()
+		Div({
+			classes(MarkdownLayoutStyle.content)
+		}) {
+			if (markdownData["description"] != null) {
+				setDescription(markdownData["description"]!![0])
+			}
+
+			content()
+		}
 	}
 }
 
@@ -36,14 +46,8 @@ object MarkdownLayoutStyle : StyleSheet() {
 		}
 
 		"main" style {
-			alignSelf(AlignSelf.Center)
-
-			maxWidth(800.px)
-
-			smMax {
-				maxWidth(92.percent)
-				paddingX(0.cssRem)
-			}
+			display(DisplayStyle.Flex)
+			flexDirection(FlexDirection.Row)
 		}
 
 		"h1" style {
@@ -71,6 +75,20 @@ object MarkdownLayoutStyle : StyleSheet() {
 			"h2" {
 				fontSize(2.cssRem)
 			}
+		}
+	}
+
+	val content by style {
+		display(DisplayStyle.Flex)
+		flexDirection(FlexDirection.Column)
+		alignSelf(AlignSelf.Center)
+		marginX(auto)
+
+		maxWidth(800.px)
+
+		smMax {
+			maxWidth(92.percent)
+			paddingX(0.cssRem)
 		}
 	}
 }
