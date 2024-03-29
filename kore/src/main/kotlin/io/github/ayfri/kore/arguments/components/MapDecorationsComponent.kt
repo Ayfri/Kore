@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.arguments.components
 
+import io.github.ayfri.kore.generated.ComponentTypes
 import io.github.ayfri.kore.serializers.InlineSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.MapSerializer
@@ -28,13 +29,13 @@ data class MapDecorationsComponent(var decorations: Map<String, MapDecoration>) 
 }
 
 fun Components.mapDecorations(decorations: Map<String, MapDecoration>) =
-	apply { components["map_decorations"] = MapDecorationsComponent(decorations) }
+	apply { this[ComponentTypes.MAP_DECORATIONS] = MapDecorationsComponent(decorations) }
 
 fun Components.mapDecorations(vararg decorations: Pair<String, MapDecoration>) =
-	apply { components["map_decorations"] = MapDecorationsComponent(decorations.toMap()) }
+	apply { this[ComponentTypes.MAP_DECORATIONS] = MapDecorationsComponent(decorations.toMap()) }
 
 fun Components.mapDecorations(block: MapDecorationsComponent.() -> Unit) =
-	apply { components["map_decorations"] = MapDecorationsComponent(emptyMap()).apply(block) }
+	apply { this[ComponentTypes.MAP_DECORATIONS] = MapDecorationsComponent(emptyMap()).apply(block) }
 
 fun MapDecorationsComponent.decoration(
 	name: String,

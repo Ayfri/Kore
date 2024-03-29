@@ -2,6 +2,7 @@ package io.github.ayfri.kore.arguments.components
 
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.RGB
+import io.github.ayfri.kore.generated.ComponentTypes
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -13,4 +14,4 @@ data class DyedColorComponent(
 ) : Component()
 
 fun Components.dyedColor(rgb: Color, showInTooltip: Boolean? = null) =
-	apply { components["dyed_color"] = DyedColorComponent(rgb.toRGB(), showInTooltip) }
+	apply { this[ComponentTypes.DYED_COLOR] = DyedColorComponent(rgb.toRGB(), showInTooltip) }

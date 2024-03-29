@@ -74,6 +74,7 @@ suspend fun launchAllSimpleGenerators() {
 			)
 		}) { it.removePrefix("minecraft:") },
 		gen("CatVariants", "cat_variant"),
+		gen("ComponentTypes", "data_component_type", argumentClassName = ""),
 		gen("CustomStats", "custom_stat"),
 		gen("Effects", "mob_effect"),
 		gen("Enchantments", "enchantment"),

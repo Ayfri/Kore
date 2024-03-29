@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.arguments.components
 
+import io.github.ayfri.kore.generated.ComponentTypes
 import io.github.ayfri.kore.serializers.InlineSerializer
 import io.github.ayfri.kore.utils.nbt
 import net.benwoodworth.knbt.NbtCompound
@@ -17,9 +18,9 @@ data class EntityDataComponent(var data: NbtCompound) : Component() {
 }
 
 fun Components.entityData(data: NbtCompound) = apply {
-	components["entity_data"] = EntityDataComponent(data)
+	this[ComponentTypes.ENTITY_DATA] = EntityDataComponent(data)
 }
 
 fun Components.entityData(block: NbtCompoundBuilder.() -> Unit) = apply {
-	components["entity_data"] = EntityDataComponent(nbt(block))
+	this[ComponentTypes.ENTITY_DATA] = EntityDataComponent(nbt(block))
 }

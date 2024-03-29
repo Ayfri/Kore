@@ -362,11 +362,11 @@ fun itemsTests() {
 	storedEnchantmentsTest.asString() assertsIs """minecraft:stone_sword[stored_enchantments={levels:{"minecraft:looting":3},show_in_tooltip:1b}]"""
 
 	val suspiciousStewTest = Items.SUSPICIOUS_STEW {
-		suspiciousStewComponent {
+		suspiciousStewEffectsComponent {
 			effect(Effects.POISON, 100)
 		}
 	}
-	suspiciousStewTest.asString() assertsIs """minecraft:suspicious_stew[suspicious_stew=[{id:"minecraft:poison",duration:100}]]"""
+	suspiciousStewTest.asString() assertsIs """minecraft:suspicious_stew[suspicious_stew_effects=[{id:"minecraft:poison",duration:100}]]"""
 
 	val trimTest = Items.DIAMOND_CHESTPLATE {
 		trim(TrimPatterns.SHAPER, TrimMaterials.DIAMOND)

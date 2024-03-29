@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.arguments.components
 
+import io.github.ayfri.kore.generated.ComponentTypes
 import io.github.ayfri.kore.serializers.InlineSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
@@ -11,4 +12,4 @@ data class RepairCostComponent(var repairCost: Int) : Component() {
 	}
 }
 
-fun Components.repairCost(repairCost: Int) = apply { components["repair_cost"] = RepairCostComponent(repairCost) }
+fun Components.repairCost(repairCost: Int) = apply { this[ComponentTypes.REPAIR_COST] = RepairCostComponent(repairCost) }

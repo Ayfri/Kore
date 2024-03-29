@@ -2,6 +2,7 @@ package io.github.ayfri.kore.arguments.components
 
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.RGB
+import io.github.ayfri.kore.generated.ComponentTypes
 import io.github.ayfri.kore.serializers.ToStringSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -45,7 +46,7 @@ fun Components.fireworkExplosion(
 }
 
 fun Components.fireworkExplosion(shape: FireworkExplosionShape, block: FireworkExplosionComponent.() -> Unit) = apply {
-	components["firework_explosion"] = FireworkExplosionComponent(shape).apply(block)
+	this[ComponentTypes.FIREWORK_EXPLOSION] = FireworkExplosionComponent(shape).apply(block)
 }
 
 fun FireworkExplosionComponent.colors(vararg colors: Color) = apply {

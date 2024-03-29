@@ -4,6 +4,7 @@ import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
 import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
 import io.github.ayfri.kore.arguments.types.resources.AttributeArgument
 import io.github.ayfri.kore.commands.AttributeModifierOperation
+import io.github.ayfri.kore.generated.ComponentTypes
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -27,7 +28,7 @@ data class AttributeModifiersComponent(
 fun Components.attributeModifiers(
 	modifiers: List<AttributeModifier>,
 	showInTooltip: Boolean? = null,
-) = apply { components["attribute_modifiers"] = AttributeModifiersComponent(modifiers.toMutableList(), showInTooltip) }
+) = apply { this[ComponentTypes.ATTRIBUTE_MODIFIERS] = AttributeModifiersComponent(modifiers.toMutableList(), showInTooltip) }
 
 fun Components.attributeModifiers(
 	vararg modifiers: AttributeModifier,
@@ -35,7 +36,7 @@ fun Components.attributeModifiers(
 ) = attributeModifiers(modifiers.toList(), showInTooltip)
 
 fun Components.attributeModifiers(modifiers: AttributeModifiersComponent.() -> Unit) =
-	AttributeModifiersComponent(mutableListOf()).apply(modifiers).let { components["attribute_modifiers"] = it }
+	AttributeModifiersComponent(mutableListOf()).apply(modifiers).let { this[ComponentTypes.ATTRIBUTE_MODIFIERS] = it }
 
 fun AttributeModifiersComponent.modifier(
 	type: AttributeArgument,

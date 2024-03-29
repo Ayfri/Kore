@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.arguments.components
 
 import io.github.ayfri.kore.arguments.types.resources.RecipeArgument
+import io.github.ayfri.kore.generated.ComponentTypes
 import io.github.ayfri.kore.serializers.InlineSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -16,15 +17,15 @@ data class RecipesComponent(var recipes: List<RecipeArgument>) : Component() {
 }
 
 fun Components.recipes(recipes: List<RecipeArgument>) = apply {
-	components["recipes"] = RecipesComponent(recipes)
+	this[ComponentTypes.RECIPES] = RecipesComponent(recipes)
 }
 
 fun Components.recipes(vararg recipes: RecipeArgument) = apply {
-	components["recipes"] = RecipesComponent(recipes.toList())
+	this[ComponentTypes.RECIPES] = RecipesComponent(recipes.toList())
 }
 
 fun Components.recipes(block: RecipesComponent.() -> Unit) = apply {
-	components["recipes"] = RecipesComponent(mutableListOf()).apply(block)
+	this[ComponentTypes.RECIPES] = RecipesComponent(mutableListOf()).apply(block)
 }
 
 fun RecipesComponent.recipe(recipe: RecipeArgument) = apply {

@@ -3,6 +3,7 @@ package io.github.ayfri.kore.arguments.components
 import io.github.ayfri.kore.arguments.colors.RGB
 import io.github.ayfri.kore.arguments.types.resources.EffectArgument
 import io.github.ayfri.kore.arguments.types.resources.PotionArgument
+import io.github.ayfri.kore.generated.ComponentTypes
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -23,15 +24,15 @@ data class PotionContentsComponent(
 ) : Component()
 
 fun Components.potionContents(potion: PotionArgument, customColor: RGB, customEffects: List<Effect>) = apply {
-	components["potion_contents"] = PotionContentsComponent(potion, customColor, customEffects)
+	this[ComponentTypes.POTION_CONTENTS] = PotionContentsComponent(potion, customColor, customEffects)
 }
 
 fun Components.potionContents(potion: PotionArgument, customColor: RGB, vararg customEffects: Effect) = apply {
-	components["potion_contents"] = PotionContentsComponent(potion, customColor, customEffects.toList())
+	this[ComponentTypes.POTION_CONTENTS] = PotionContentsComponent(potion, customColor, customEffects.toList())
 }
 
 fun Components.potionContents(potion: PotionArgument, block: PotionContentsComponent.() -> Unit) = apply {
-	components["potion_contents"] = PotionContentsComponent(potion, RGB(0, 0, 0), emptyList()).apply(block)
+	this[ComponentTypes.POTION_CONTENTS] = PotionContentsComponent(potion, RGB(0, 0, 0), emptyList()).apply(block)
 }
 
 fun PotionContentsComponent.customEffect(

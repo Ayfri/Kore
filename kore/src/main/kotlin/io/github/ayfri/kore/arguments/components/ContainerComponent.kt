@@ -2,6 +2,7 @@ package io.github.ayfri.kore.arguments.components
 
 import io.github.ayfri.kore.arguments.ItemSlotType
 import io.github.ayfri.kore.data.item.ItemStack
+import io.github.ayfri.kore.generated.ComponentTypes
 import io.github.ayfri.kore.serializers.InlineSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -20,15 +21,15 @@ data class ContainerComponent(var slots: List<ContainerSlot>) : Component() {
 }
 
 fun Components.container(slots: List<ContainerSlot>) = apply {
-	components["container"] = ContainerComponent(slots)
+	this[ComponentTypes.CONTAINER] = ContainerComponent(slots)
 }
 
 fun Components.container(vararg slots: ContainerSlot) = apply {
-	components["container"] = ContainerComponent(slots.toList())
+	this[ComponentTypes.CONTAINER] = ContainerComponent(slots.toList())
 }
 
 fun Components.container(block: ContainerComponent.() -> Unit) = apply {
-	components["container"] = ContainerComponent(mutableListOf()).apply(block)
+	this[ComponentTypes.CONTAINER] = ContainerComponent(mutableListOf()).apply(block)
 }
 
 fun ContainerComponent.slot(slot: Int, item: ItemStack) = apply {

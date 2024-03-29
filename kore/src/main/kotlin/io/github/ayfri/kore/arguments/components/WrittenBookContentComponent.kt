@@ -2,6 +2,7 @@ package io.github.ayfri.kore.arguments.components
 
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
+import io.github.ayfri.kore.generated.ComponentTypes
 import net.benwoodworth.knbt.StringifiedNbt
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -79,7 +80,7 @@ fun Components.writtenBookContent(
 	author: String,
 	generation: Int,
 	resolved: Boolean,
-) = apply { components["written_book_content"] = WrittenBookContentsComponent(pages, title, author, generation, resolved) }
+) = apply { this[ComponentTypes.WRITTEN_BOOK_CONTENT] = WrittenBookContentsComponent(pages, title, author, generation, resolved) }
 
 fun Components.writtenBookContent(
 	title: WrittenPage,

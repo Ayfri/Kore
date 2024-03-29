@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.arguments.components
 
+import io.github.ayfri.kore.generated.ComponentTypes
 import io.github.ayfri.kore.serializers.InlineSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
@@ -11,4 +12,4 @@ data class MapIdComponent(var id: Int) : Component() {
 	}
 }
 
-fun Components.mapId(id: Int) = apply { components["map_id"] = MapIdComponent(id) }
+fun Components.mapId(id: Int) = apply { this[ComponentTypes.MAP_ID] = MapIdComponent(id) }

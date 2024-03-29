@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.arguments.components
 
+import io.github.ayfri.kore.generated.ComponentTypes
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -9,4 +10,5 @@ data class UnbreakableComponent(
 	var showInTooltip: Boolean? = null,
 ) : Component()
 
-fun Components.unbreakable(showInTooltip: Boolean? = null) = apply { components["unbreakable"] = UnbreakableComponent(showInTooltip) }
+fun Components.unbreakable(showInTooltip: Boolean? = null) =
+	apply { this[ComponentTypes.UNBREAKABLE] = UnbreakableComponent(showInTooltip) }

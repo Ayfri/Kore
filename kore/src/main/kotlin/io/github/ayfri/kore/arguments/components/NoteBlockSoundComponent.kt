@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.arguments.components
 
 import io.github.ayfri.kore.arguments.types.resources.SoundArgument
+import io.github.ayfri.kore.generated.ComponentTypes
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encoding.Decoder
@@ -22,5 +23,5 @@ data class NoteBlockSoundComponent(var blockSound: SoundArgument) : Component() 
 }
 
 fun Components.noteBlockSound(blockSound: SoundArgument) = apply {
-	components["note_block_sound"] = NoteBlockSoundComponent(blockSound)
+	this[ComponentTypes.NOTE_BLOCK_SOUND] = NoteBlockSoundComponent(blockSound)
 }

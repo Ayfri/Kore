@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.arguments.components
 
+import io.github.ayfri.kore.generated.ComponentTypes
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -55,13 +56,13 @@ object WritablePagesSerializer : KSerializer<List<WritablePage>> {
 data class WritableBookContentsComponent(@Serializable(WritablePagesSerializer::class) var pages: List<WritablePage>) : Component()
 
 fun Components.writableBookContent(pages: List<WritablePage>) =
-	apply { components["writable_book_content"] = WritableBookContentsComponent(pages) }
+	apply { this[ComponentTypes.WRITABLE_BOOK_CONTENT] = WritableBookContentsComponent(pages) }
 
 fun Components.writableBookContent(vararg pages: WritablePage) =
-	apply { components["writable_book_content"] = WritableBookContentsComponent(pages.toList()) }
+	apply { this[ComponentTypes.WRITABLE_BOOK_CONTENT] = WritableBookContentsComponent(pages.toList()) }
 
 fun Components.writableBookContent(block: WritableBookContentsComponent.() -> Unit) =
-	apply { components["writable_book_content"] = WritableBookContentsComponent(emptyList()).apply(block) }
+	apply { this[ComponentTypes.WRITABLE_BOOK_CONTENT] = WritableBookContentsComponent(emptyList()).apply(block) }
 
 fun WritableBookContentsComponent.page(text: String, filtered: String? = null) = apply {
 	pages += WritablePage(text, filtered)

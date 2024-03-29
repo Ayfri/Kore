@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.arguments.components
 
 import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
+import io.github.ayfri.kore.generated.ComponentTypes
 import java.util.*
 import kotlinx.serialization.Serializable
 
@@ -19,19 +20,19 @@ data class ProfileComponent(
 ) : Component()
 
 fun Components.profile(name: String, id: UUIDArgument? = null, properties: List<ProfileProperty>? = null) = apply {
-	components["profile"] = ProfileComponent(name, id, properties)
+	this[ComponentTypes.PROFILE] = ProfileComponent(name, id, properties)
 }
 
 fun Components.profile(name: String, id: UUID, properties: List<ProfileProperty>? = null) = apply {
-	components["profile"] = ProfileComponent(name, UUIDArgument(id), properties)
+	this[ComponentTypes.PROFILE] = ProfileComponent(name, UUIDArgument(id), properties)
 }
 
 fun Components.profile(name: String, id: UUIDArgument? = null, block: ProfileComponent.() -> Unit) = apply {
-	components["profile"] = ProfileComponent(name, id).apply(block)
+	this[ComponentTypes.PROFILE] = ProfileComponent(name, id).apply(block)
 }
 
 fun Components.profile(name: String, id: UUID, block: ProfileComponent.() -> Unit) = apply {
-	components["profile"] = ProfileComponent(name, UUIDArgument(id)).apply(block)
+	this[ComponentTypes.PROFILE] = ProfileComponent(name, UUIDArgument(id)).apply(block)
 }
 
 fun ProfileComponent.property(name: String, value: String, signature: String? = null) = apply {
