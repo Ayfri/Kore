@@ -3,6 +3,7 @@ package io.github.ayfri.kore.features.advancements.types
 import io.github.ayfri.kore.arguments.ItemSlot
 import io.github.ayfri.kore.arguments.types.EntityTypeOrTagArgument
 import io.github.ayfri.kore.arguments.types.resources.EffectArgument
+import io.github.ayfri.kore.features.advancements.types.entityspecific.EntityTypeSpecific
 import io.github.ayfri.kore.serializers.InlinableList
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
 import net.benwoodworth.knbt.NbtCompound

@@ -113,6 +113,7 @@ suspend fun launchAllSimpleGenerators() {
 		}),
 		gen("Potions", "potion"),
 		gen("StatisticTypes", "stat_type") { it.removePrefix("minecraft:") },
+		gen("VillagerTypes", "villager_type"),
 		gen("Carvers", "worldgen/carver"),
 	)
 

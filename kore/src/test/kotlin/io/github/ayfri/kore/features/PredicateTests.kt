@@ -7,6 +7,7 @@ import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.features.advancements.types.*
+import io.github.ayfri.kore.features.advancements.types.entityspecific.Player
 import io.github.ayfri.kore.features.predicates.conditions.*
 import io.github.ayfri.kore.features.predicates.predicate
 import io.github.ayfri.kore.functions.function
@@ -105,7 +106,7 @@ fun DataPack.predicateTests() {
 
 			type(EntityTypes.MARKER)
 
-			typeSpecific = PlayerTypeSpecific(gamemode = Gamemode.SURVIVAL)
+			typeSpecific = Player(gamemode = Gamemode.SURVIVAL)
 
 			vehicle {
 				distance {
