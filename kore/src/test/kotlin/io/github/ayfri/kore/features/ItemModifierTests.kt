@@ -5,18 +5,19 @@ import io.github.ayfri.kore.arguments.WEAPON
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.customName
 import io.github.ayfri.kore.arguments.components.damage
+import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
 import io.github.ayfri.kore.arguments.enums.MapDecoration
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.commands.items
-import io.github.ayfri.kore.features.itemmodifiers.functions.conditions
-import io.github.ayfri.kore.features.itemmodifiers.functions.explorationMap
-import io.github.ayfri.kore.features.itemmodifiers.functions.setComponents
-import io.github.ayfri.kore.features.itemmodifiers.functions.setInstrument
+import io.github.ayfri.kore.features.itemmodifiers.functions.*
 import io.github.ayfri.kore.features.itemmodifiers.itemModifier
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
 import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
+import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.generated.Attributes
 import io.github.ayfri.kore.generated.Tags
 
 fun DataPack.itemModifierTests() {
@@ -87,6 +88,28 @@ fun DataPack.itemModifierTests() {
 				"!test": {},
 				"!test2": {}
 			}
+		}
+	""".trimIndent()
+
+	itemModifier("set_attributes") {
+		setAttribute(Attributes.GENERIC_SCALE) {
+			amount = constant(0.5f)
+			operation = AttributeModifierOperation.ADD_VALUE
+			slot = listOf(EquipmentSlot.MAINHAND)
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:set_attributes",
+			"modifiers": [
+				{
+					"attribute": "minecraft:generic.scale",
+					"amount": 0.5,
+					"operation": "add_value",
+					"slot": "mainhand"
+				}
+			]
 		}
 	""".trimIndent()
 }
