@@ -1,16 +1,19 @@
-package io.github.ayfri.kore.data.item
+package io.github.ayfri.kore.arguments.components.data
 
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable(EquipmentSlot.Companion.EquipmentSlotSerializer::class)
 enum class EquipmentSlot {
+	ANY,
+	HAND,
+	ARMOR,
 	MAINHAND,
 	OFFHAND,
-	FEET,
-	LEGS,
+	HEAD,
 	CHEST,
-	HEAD;
+	LEGS,
+	FEET;
 
 	companion object {
 		data object EquipmentSlotSerializer : LowercaseSerializer<EquipmentSlot>(entries)

@@ -1,12 +1,17 @@
 package io.github.ayfri.kore.arguments.components
 
-import io.github.ayfri.kore.serializers.ToStringSerializer
 import io.github.ayfri.kore.utils.nbt
-import net.benwoodworth.knbt.NbtCompoundBuilder
-import net.benwoodworth.knbt.NbtTag
+import io.github.ayfri.kore.utils.unescape
+import net.benwoodworth.knbt.*
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.descriptors.element
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 
 @Serializable(with = Components.Companion.ComponentsSerializer::class)
@@ -26,6 +31,24 @@ data class Components(
 	}
 
 	operator fun set(name: String, nbt: NbtTag) = addComponent(name, nbt)
+
+	fun asNbt(): NbtCompound {
+		val classicComponents = components.filterValues { it !is CustomComponent }
+		val customComponents = components.filterValues { it is CustomComponent } as Map<String, CustomComponent>
+
+		val classicComponentsSerialized = nbt {
+			classicComponents.forEach { (key, value) -> put(key, nbtSerializer.encodeToNbtTag(value)) }
+		}
+
+		val customComponentsSerialized = nbt {
+			customComponents.forEach { (key, value) -> put(key, value.nbt) }
+		}
+
+		return nbt {
+			classicComponentsSerialized.forEach { (key, value) -> put(key, value) }
+			customComponentsSerialized.forEach { (key, value) -> put(key, value) }
+		}
+	}
 
 	fun asJson(): JsonObject {
 		val classicComponents = components.filterValues { it !is CustomComponent }
@@ -49,29 +72,53 @@ data class Components(
 		}
 	}
 
-	override fun toString() = asJson().entries
+	override fun toString() = asNbt().entries
 		.joinToString(separator = ",", prefix = "[", postfix = "]") { (key, value) ->
-			// adding quotes to the value if the value is an array as it's required by Minecraft.
-			if (value is JsonArray) {
-				val arrayAsString = when (value.size) {
-					0 -> "[]"
-					1 -> "['${value.first()}']"
-					else -> value.joinToString(",", prefix = "['[", postfix = "]']")
-				}
-
-				"$key=$arrayAsString"
-			} else {
-				"$key=$value"
-			}
+			// The quotes are added by the serializer, we just need to unescape the string.
+			if (key in CHAT_COMPONENTS_COMPONENTS_TYPES) {
+				val unescaped = value.toString().unescape()
+					// we also need a fix for JSON Components as they are serialized as JSON but single quoted.
+					.replace(Regex("\"\'\"(.+?)\"\'\"", RegexOption.DOT_MATCHES_ALL), "'\"$1\"'")
+					.replace(Regex("\"\'\\{(.+?)\\}\'\"", RegexOption.DOT_MATCHES_ALL), "'{$1}'")
+				"$key=$unescaped"
+			} else "$key=$value"
 		}
 
 	companion object {
+		@OptIn(ExperimentalSerializationApi::class)
 		val jsonSerializer = Json {
 			prettyPrint = false
 			encodeDefaults = false
 			classDiscriminatorMode = ClassDiscriminatorMode.NONE
+			namingStrategy = JsonNamingStrategy.SnakeCase
 		}
 
-		object ComponentsSerializer : ToStringSerializer<Components>()
+		val nbtSerializer = StringifiedNbt
+
+		/**
+		 * List of all the Components that are chat components and thus must be quoted.
+		 * Modify this list if you want to add a new chat component Component.
+		 *
+		 * See [ChatComponentsEscapedSerializer][io.github.ayfri.kore.arguments.chatcomponents.ChatComponents.Companion.ChatComponentsEscapedSerializer] for understanding how it's serialized.
+		 */
+		val CHAT_COMPONENTS_COMPONENTS_TYPES = mutableListOf(
+			"custom_name",
+			"lore",
+			"written_book_content",
+		)
+
+		object ComponentsSerializer : KSerializer<Components> {
+			override val descriptor = buildClassSerialDescriptor("Components") {
+				element<Map<String, Component>>("components")
+			}
+
+			override fun deserialize(decoder: Decoder) = error("Components deserialization is not supported.")
+
+			override fun serialize(encoder: Encoder, value: Components) = when (encoder) {
+				is NbtEncoder -> encoder.encodeNbtTag(value.asNbt())
+				is JsonEncoder -> encoder.encodeJsonElement(value.asJson())
+				else -> error("This serializer can only be used with Nbt or Json")
+			}
+		}
 	}
 }

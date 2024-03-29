@@ -39,7 +39,7 @@ interface ItemSlotType : ItemSlot {
 interface IndexedItemSlot : ItemSlot {
 	var startIndex: Int
 
-	operator fun get(index: Int) = ItemSlotType { "${asString()}.$index" }
+	operator fun get(index: Int) = ItemSlotType(index) { "${asString()}.$index" }
 
 	companion object {
 		operator fun invoke(startIndex: Int, block: () -> String) = object : IndexedItemSlot {

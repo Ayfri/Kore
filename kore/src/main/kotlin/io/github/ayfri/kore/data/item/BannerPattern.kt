@@ -9,5 +9,3 @@ data class BannerPattern(
 	val pattern: BannerPatternArgument,
 	val color: FormattingColor,
 )
-
-fun bannerPattern(pattern: BannerPatternArgument, color: FormattingColor) = BannerPattern(pattern, color)

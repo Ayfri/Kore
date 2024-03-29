@@ -1,0 +1,47 @@
+package io.github.ayfri.kore.arguments.components
+
+import io.github.ayfri.kore.serializers.InlineSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
+import io.github.ayfri.kore.arguments.enums.MapDecoration as MapDecorationIcon
+
+@Serializable
+data class MapDecoration(
+	var type: MapDecorationIcon,
+	var x: Double,
+	var z: Double,
+	var rotation: Float,
+)
+
+@Serializable(with = MapDecorationsComponent.Companion.MapDecorationsComponentSerializer::class)
+data class MapDecorationsComponent(var decorations: Map<String, MapDecoration>) : Component() {
+	companion object {
+		object MapDecorationsComponentSerializer : InlineSerializer<MapDecorationsComponent, Map<String, MapDecoration>>(
+			MapSerializer(
+				String.serializer(),
+				MapDecoration.serializer()
+			),
+			MapDecorationsComponent::decorations
+		)
+	}
+}
+
+fun Components.mapDecorations(decorations: Map<String, MapDecoration>) =
+	apply { components["map_decorations"] = MapDecorationsComponent(decorations) }
+
+fun Components.mapDecorations(vararg decorations: Pair<String, MapDecoration>) =
+	apply { components["map_decorations"] = MapDecorationsComponent(decorations.toMap()) }
+
+fun Components.mapDecorations(block: MapDecorationsComponent.() -> Unit) =
+	apply { components["map_decorations"] = MapDecorationsComponent(emptyMap()).apply(block) }
+
+fun MapDecorationsComponent.decoration(
+	name: String,
+	type: MapDecorationIcon,
+	x: Double,
+	z: Double,
+	rotation: Float,
+) = apply {
+	decorations += name to MapDecoration(type, x, z, rotation)
+}

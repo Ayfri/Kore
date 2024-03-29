@@ -1,10 +1,7 @@
 package generators
 
-import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.MUTABLE_MAP
+import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import com.squareup.kotlinpoet.PropertySpec
-import com.squareup.kotlinpoet.asTypeName
 import generateEnum
 import generatePathEnumTree
 import getFromCacheOrDownloadTxt
@@ -16,6 +13,8 @@ suspend fun launchAllSimpleGenerators() {
 		gen("DimensionTypes", "dimension_types", "worldgen.DimensionType"),
 		gen("Particles", "particles"),
 		gen("Recipes", "recipes"),
+		gen("TrimMaterials", "trim_materials"),
+		gen("TrimPatterns", "trim_patterns"),
 		gen("Biomes", "worldgen/biome"),
 		gen("BiomePresets", "worldgen/multi_noise_biome_source_parameter_list"),
 		gen("ConfiguredFeatures", "worldgen/configured_feature"),
@@ -91,6 +90,22 @@ suspend fun launchAllSimpleGenerators() {
 					.overrides()
 					.mutable()
 					.initializer("null")
+					.build()
+			)
+
+			addFunction(
+				FunSpec.builder(
+					"invoke",
+				)
+					.addParameter(
+						"block", LambdaTypeName.get(
+							receiver = ClassName("io.github.ayfri.kore.arguments.components", "Components"),
+							returnType = Unit::class.asTypeName()
+						)
+					)
+					.overrides()
+					.addStatement("return ItemArgument.invoke(name.lowercase(), namespace, Components().apply(block))")
+					.returns(ClassName("io.github.ayfri.kore.arguments.types.resources", "ItemArgument"))
 					.build()
 			)
 		}),

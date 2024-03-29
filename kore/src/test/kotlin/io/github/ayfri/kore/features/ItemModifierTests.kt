@@ -1,10 +1,10 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.arguments.enums.MapDecoration
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.items
-import io.github.ayfri.kore.features.itemmodifiers.functions.MapDecoration
 import io.github.ayfri.kore.features.itemmodifiers.functions.conditions
 import io.github.ayfri.kore.features.itemmodifiers.functions.explorationMap
 import io.github.ayfri.kore.features.itemmodifiers.functions.setInstrument

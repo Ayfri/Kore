@@ -1,13 +1,15 @@
 package io.github.ayfri.kore.arguments.components
 
 import kotlin.reflect.full.createType
+import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.NbtEncoder
+import net.benwoodworth.knbt.NbtTag
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.serialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.serializer
 
@@ -17,22 +19,39 @@ sealed class Component {
 		class ComponentSerializer : KSerializer<Component> {
 			val kClass = Component::class
 
-			override val descriptor = serialDescriptor<JsonElement>()
+			override val descriptor = serialDescriptor<NbtTag>()
 
 			override fun deserialize(decoder: Decoder) = error("${kClass.simpleName} cannot be deserialized")
 
 			@OptIn(ExperimentalSerializationApi::class)
 			override fun serialize(encoder: Encoder, value: Component) {
-				require(encoder is JsonEncoder) { "PolymorphicTypeSerializer can only be serialized to Json" }
 				require(kClass.isInstance(value) && value::class != kClass) { "Value must be instance of ${kClass.simpleName}" }
 
-				val serializer = encoder.serializersModule.getPolymorphic(kClass, value)
-					?: encoder.serializersModule.getContextual(value::class)
-					?: encoder.serializersModule.serializer(value::class.createType())
+				val defaultSerializer = encoder.serializersModule.serializer(value::class.createType())
+				val polymorphic = encoder.serializersModule.getPolymorphic(kClass, value)
+				val contextual = encoder.serializersModule.getContextual(value::class)
+				val serializer = polymorphic ?: contextual ?: defaultSerializer
 
-				val valueJson = encoder.json.encodeToJsonElement(serializer as KSerializer<Component>, value)
+				when (encoder) {
+					is NbtEncoder -> {
+						val valueNbt = encoder.nbt.encodeToNbtTag(serializer as KSerializer<Component>, value)
+						// When the NBT is serialized, it's sometimes wrapped in a compound tag with the class fqname as the key.
+						if (valueNbt is NbtCompound && valueNbt.isNotEmpty()) {
+							val firstKey = valueNbt.keys.first()
+							encoder.encodeSerializableValue(
+								NbtTag.serializer(),
+								if (firstKey == value::class.qualifiedName) valueNbt.values.first() else valueNbt
+							)
+						} else encoder.encodeSerializableValue(NbtTag.serializer(), valueNbt)
+					}
 
-				encoder.encodeJsonElement(valueJson)
+					is JsonEncoder -> {
+						val valueJson = encoder.json.encodeToJsonElement(serializer as KSerializer<Component>, value)
+						encoder.encodeJsonElement(valueJson)
+					}
+
+					else -> error("Components can only be serialized to NBT or Json")
+				}
 			}
 		}
 	}

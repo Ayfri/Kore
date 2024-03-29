@@ -2,17 +2,17 @@ package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.rgb
+import io.github.ayfri.kore.arguments.components.enchantment
+import io.github.ayfri.kore.arguments.components.enchantments
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.types.literals.allEntities
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.Blocks
+import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.Particles
-import io.github.ayfri.kore.utils.nbtList
-import io.github.ayfri.kore.utils.set
 import kotlin.math.PI
-import net.benwoodworth.knbt.addNbtCompound
 
 fun Function.particleTests() {
 	particle(Particles.ASH) assertsIs "particle minecraft:ash"
@@ -53,20 +53,11 @@ fun Function.particleTests() {
 		) assertsIs "particle dust_color_transition 0.3333333333333333 0.3333333333333333 1 2 1 0.3333333333333333 0.3333333333333333"
 
 		item(Items.DIAMOND_SWORD {
-			addComponent("enchantments") {
-				this["levels"] = nbtList {
-					addNbtCompound {
-						this["id"] = "minecraft:sharpness"
-						this["lvl"] = 5
-					}
-
-					addNbtCompound {
-						this["id"] = "minecraft:knockback"
-						this["lvl"] = 2
-					}
-				}
+			enchantments {
+				enchantment(Enchantments.SHARPNESS, 5)
+				enchantment(Enchantments.KNOCKBACK, 2)
 			}
-		}) assertsIs "particle item minecraft:diamond_sword[enchantments=[levels:{id:\"minecraft:sharpness\",lvl:5},{id:\"minecraft:knockback\",lvl:2}]]"
+		}) assertsIs """particle item minecraft:diamond_sword[enchantments={levels:{"minecraft:sharpness":5,"minecraft:knockback":2}}]"""
 
 		particle(Particles.ASH) assertsIs "particle minecraft:ash"
 

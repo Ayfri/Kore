@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.WEAPON
 import io.github.ayfri.kore.arguments.chatcomponents.scoreComponent
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
+import io.github.ayfri.kore.arguments.components.damage
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.scores.score
 import io.github.ayfri.kore.arguments.selector.scores
@@ -28,15 +29,14 @@ import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.helpers.inventorymanager.*
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
-import net.benwoodworth.knbt.NbtInt
 
 fun Function.inventoryManagerTests() {
 	val inventoryManager = inventoryManager(vec3(0, 0, 0))
 	inventoryManager.clear(WEAPON) assertsIs "item replace block 0 0 0 weapon with minecraft:air 1"
 	inventoryManager.clearAll() assertsIs "data remove block 0 0 0 Items"
 	inventoryManager.clearAll(Items.DIAMOND_SWORD {
-		this["damage"] = NbtInt(0)
-	}) assertsIs "data remove block 0 0 0 Items[{id:\"minecraft:diamond_sword\",components:{damage:0}}]"
+		damage(0)
+	}) assertsIs "data remove block 0 0 0 Items[{id:\"minecraft:diamond_sword\",components:{\"damage\":0}}]"
 	inventoryManager.modify(WEAPON, ItemModifierArgument("baz")) assertsIs "item modify block 0 0 0 weapon minecraft:baz"
 
 	val counterScoreName = "take_counter"

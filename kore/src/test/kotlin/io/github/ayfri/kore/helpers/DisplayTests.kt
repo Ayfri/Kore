@@ -1,18 +1,15 @@
 package io.github.ayfri.kore.helpers
 
-import io.github.ayfri.kore.arguments.chatcomponents.textComponent
+import io.github.ayfri.kore.arguments.components.*
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.numbers.seconds
 import io.github.ayfri.kore.arguments.types.literals.allEntities
+import io.github.ayfri.kore.arguments.types.literals.randomUUID
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.commands.kill
 import io.github.ayfri.kore.commands.schedule
 import io.github.ayfri.kore.commands.summon
 import io.github.ayfri.kore.data.block.properties
-import io.github.ayfri.kore.data.item.builders.canDestroy
-import io.github.ayfri.kore.data.item.builders.enchantments
-import io.github.ayfri.kore.data.item.builders.modifiers
-import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.Attributes
 import io.github.ayfri.kore.generated.Blocks
@@ -25,20 +22,26 @@ import io.github.ayfri.kore.helpers.displays.maths.*
 fun Function.displayTests() {
 	val itemDisplay = itemDisplay {
 		item(Items.DIAMOND_SWORD) {
-			name = textComponent("test")
+			customName("test")
 
 			enchantments {
-				Enchantments.SHARPNESS at 1
-				Enchantments.UNBREAKING at 3
+				enchantment(Enchantments.SHARPNESS, 1)
+				enchantment(Enchantments.UNBREAKING, 3)
 			}
 
-			modifiers {
-				modifier(Attributes.GENERIC_ATTACK_DAMAGE, constant(1f), AttributeModifierOperation.ADD_VALUE)
+			attributeModifiers {
+				modifier(
+					Attributes.GENERIC_ATTACK_DAMAGE,
+					name = "test",
+					amount = 1.0,
+					operation = AttributeModifierOperation.ADD_VALUE,
+					uuid = randomUUID()
+				)
 			}
 
-			customModelData = 1
+			// customModelData = 1
 
-			canDestroy(Blocks.DIRT)
+			canBreak(Blocks.DIRT)
 		}
 
 		displayMode = ItemDisplayModelMode.HEAD
