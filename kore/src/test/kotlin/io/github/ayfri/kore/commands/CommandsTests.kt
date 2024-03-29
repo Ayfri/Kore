@@ -74,10 +74,10 @@ fun Function.commandsTests() {
 	spectate(self(), self()) assertsIs "spectate @s @s"
 
 	stopSound(self()) assertsIs "stopsound @s"
-	stopSound(self(), PlaySoundSource.MASTER) assertsIs "stopsound @s master"
+	stopSound(self(), PlaySoundMixer.MASTER) assertsIs "stopsound @s master"
 	stopSound(
 		self(),
-		PlaySoundSource.MASTER,
+		PlaySoundMixer.MASTER,
 		io.github.ayfri.kore.generated.Sounds.Mob.Bat.TAKEOFF
 	) assertsIs "stopsound @s master minecraft:mob/bat/takeoff"
 	stopSoundAllSources(self()) assertsIs "stopsound @s *"

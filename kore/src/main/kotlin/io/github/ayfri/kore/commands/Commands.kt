@@ -83,7 +83,7 @@ fun Function.spectate(target: EntityArgument? = null, player: EntityArgument? = 
 
 fun Function.stopSound(
 	targets: EntityArgument,
-	source: PlaySoundSource? = null,
+	source: PlaySoundMixer? = null,
 	sound: Sounds? = null,
 ) = addLine(command("stopsound", targets, literal(source?.asArg()), sound))
 

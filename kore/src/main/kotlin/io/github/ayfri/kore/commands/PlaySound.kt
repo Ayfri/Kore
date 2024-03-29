@@ -10,8 +10,8 @@ import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
 
-@Serializable(PlaySoundSource.Companion.PlaySoundSourceSerializer::class)
-enum class PlaySoundSource {
+@Serializable(PlaySoundMixer.Companion.PlaySoundSourceSerializer::class)
+enum class PlaySoundMixer {
 	MASTER,
 	MUSIC,
 	RECORD,
@@ -24,16 +24,16 @@ enum class PlaySoundSource {
 	VOICE;
 
 	companion object {
-		data object PlaySoundSourceSerializer : LowercaseSerializer<PlaySoundSource>(entries)
+		data object PlaySoundSourceSerializer : LowercaseSerializer<PlaySoundMixer>(entries)
 	}
 }
 
 fun Function.playSound(
 	sound: Sounds,
-	source: PlaySoundSource,
-	target: EntityArgument,
+	source: PlaySoundMixer? = null,
+	target: EntityArgument? = null,
 	pos: Vec3? = null,
 	volume: Double? = null,
 	pitch: Double? = null,
 	minVolume: Double? = null,
-) = addLine(command("playsound", sound, literal(source.asArg()), target, pos, float(volume), float(pitch), float(minVolume)))
+) = addLine(command("playsound", sound, literal(source?.asArg()), target, pos, float(volume), float(pitch), float(minVolume)))

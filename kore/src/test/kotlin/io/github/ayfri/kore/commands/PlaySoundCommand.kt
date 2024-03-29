@@ -7,10 +7,10 @@ import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.Sounds
 
 fun Function.playSoundTests() {
-	playSound(Sounds.Mob.Bat.TAKEOFF, PlaySoundSource.MASTER, allEntities()) assertsIs "playsound minecraft:mob/bat/takeoff master @e"
+	playSound(Sounds.Mob.Bat.TAKEOFF) assertsIs "playsound minecraft:mob/bat/takeoff"
 	playSound(
 		sound = Sounds.Mob.Bat.TAKEOFF,
-		source = PlaySoundSource.MASTER,
+		source = PlaySoundMixer.MASTER,
 		target = allEntities(),
 		pos = vec3(),
 		volume = 1.0,
