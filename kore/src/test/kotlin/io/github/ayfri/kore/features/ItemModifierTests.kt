@@ -1,12 +1,17 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.arguments.WEAPON
+import io.github.ayfri.kore.arguments.colors.Color
+import io.github.ayfri.kore.arguments.components.customName
+import io.github.ayfri.kore.arguments.components.damage
 import io.github.ayfri.kore.arguments.enums.MapDecoration
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.items
 import io.github.ayfri.kore.features.itemmodifiers.functions.conditions
 import io.github.ayfri.kore.features.itemmodifiers.functions.explorationMap
+import io.github.ayfri.kore.features.itemmodifiers.functions.setComponents
 import io.github.ayfri.kore.features.itemmodifiers.functions.setInstrument
 import io.github.ayfri.kore.features.itemmodifiers.itemModifier
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
@@ -57,7 +62,31 @@ fun DataPack.itemModifierTests() {
 
 	load {
 		items {
-			modify(self(), io.github.ayfri.kore.arguments.WEAPON.MAINHAND, modifier)
+			modify(self(), WEAPON.MAINHAND, modifier)
 		}
 	}
+
+	itemModifier("set_components_modifier") {
+		setComponents {
+			customName("Test", color = Color.BLACK)
+			!damage(5)
+			!"test"
+			setToRemove("test2")
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:set_components",
+			"components": {
+				"custom_name": {
+					"text": "Test",
+					"color": "black"
+				},
+				"!damage": {},
+				"!test": {},
+				"!test2": {}
+			}
+		}
+	""".trimIndent()
 }

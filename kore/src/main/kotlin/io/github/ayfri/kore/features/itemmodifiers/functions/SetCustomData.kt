@@ -9,16 +9,16 @@ import net.benwoodworth.knbt.NbtTag
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SetNbt(
+data class SetCustomData(
 	override var conditions: PredicateAsList? = null,
 	val nbt: String,
 ) : ItemFunction() {
 	constructor(nbt: NbtTag) : this(nbt = stringifiedNbt(nbt))
 }
 
-fun ItemModifier.setNbt(nbt: NbtTag, block: SetNbt.() -> Unit = {}) {
-	modifiers += SetNbt(nbt).apply(block)
+fun ItemModifier.setCustomData(nbt: NbtTag, block: SetCustomData.() -> Unit = {}) {
+	modifiers += SetCustomData(nbt).apply(block)
 }
 
-fun ItemModifier.setNbt(block: NbtCompoundBuilder.() -> Unit) =
-	SetNbt(nbt(block)).also { modifiers += it }
+fun ItemModifier.setCustomData(block: NbtCompoundBuilder.() -> Unit) =
+	SetCustomData(nbt(block)).also { modifiers += it }

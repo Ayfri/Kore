@@ -29,6 +29,7 @@ fun ItemModifier.copyComponents(
 	modifiers += CopyComponents(source = source, components = components)
 }
 
+@JvmName("copyComponentTypes")
 fun ItemModifier.copyComponents(
 	components: List<ComponentTypes>,
 	source: CopyComponentsSource = CopyComponentsSource.BLOCK_ENTITY,
