@@ -25,6 +25,14 @@ fun Location.biomes(vararg biomes: BiomeOrTagArgument) {
 	this.biomes = biomes.toList()
 }
 
+fun Location.block(block: Block.() -> Unit = {}) {
+	this.block = Block().apply(block)
+}
+
+fun Location.position(init: Position.() -> Unit = {}) {
+	position = Position().apply(init)
+}
+
 fun Location.structures(vararg structures: StructureOrTagArgument) {
 	this.structures = structures.toList()
 }
