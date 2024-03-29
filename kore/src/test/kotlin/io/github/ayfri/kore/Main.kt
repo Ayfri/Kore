@@ -6,6 +6,7 @@ import io.github.ayfri.kore.features.featuresTests
 import io.github.ayfri.kore.helpers.helpersTests
 import io.github.ayfri.kore.serialization.chatComponentsTests
 import io.github.ayfri.kore.serialization.datapackTests
+import io.github.ayfri.kore.serialization.itemSlotTests
 import io.github.ayfri.kore.serialization.selectorTests
 import io.github.cdimascio.dotenv.dotenv
 import kotlin.io.path.Path
@@ -27,6 +28,7 @@ fun main() {
 	datapackTests()
 	featuresTests()
 	helpersTests()
+	itemSlotTests()
 	selectorTests()
 	runUnitTests()
 }
