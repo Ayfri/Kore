@@ -23,7 +23,9 @@ fun DataPack.recipeTest() {
 				tag = Tags.Items.STONE_CRAFTING_MATERIALS
 			}
 
-			result = Items.DIAMOND
+			result = itemStack(Items.DIAMOND) {
+				damage(4)
+			}
 			experience = 10.0
 			cookingTime = 2000
 		}
