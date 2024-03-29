@@ -29,9 +29,7 @@ fun DataPack.predicateTests() {
 			{
 				"condition": "minecraft:match_tool",
 				"predicate": {
-					"items": [
-						"minecraft:diamond_pickaxe"
-					]
+					"items": "minecraft:diamond_pickaxe"
 				}
 			},
 			{

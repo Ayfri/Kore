@@ -93,9 +93,7 @@ fun DataPack.advancementTests() {
 							}
 						],
 						"item": {
-							"items": [
-								"minecraft:enchanted_golden_apple"
-							]
+							"items": "minecraft:enchanted_golden_apple"
 						}
 					}
 				}
