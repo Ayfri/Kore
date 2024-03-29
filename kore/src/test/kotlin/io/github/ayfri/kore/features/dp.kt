@@ -9,6 +9,7 @@ fun featuresTests() = testDataPack("features_tests") {
 	pretty()
 
 	advancementTests()
+	bannerPatternTests()
 	biomeTests()
 	chatTypeTests()
 	configuredCarverTests()

@@ -4,6 +4,7 @@ import io.github.ayfri.kore.annotations.FunctionsHolder
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.features.advancements.Advancement
+import io.github.ayfri.kore.features.bannerpatterns.BannerPattern
 import io.github.ayfri.kore.features.chattype.ChatType
 import io.github.ayfri.kore.features.damagetypes.DamageType
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
@@ -50,6 +51,7 @@ class DataPack(val name: String) {
 	val generatedFunctions = mutableListOf<Function>()
 
 	val advancements = registerGenerator<Advancement>()
+	val bannerPatterns = registerGenerator<BannerPattern>()
 	val biomes = registerGenerator<Biome>()
 	val chatTypes = registerGenerator<ChatType>()
 	val configuredCarvers = registerGenerator<ConfiguredCarver>()
