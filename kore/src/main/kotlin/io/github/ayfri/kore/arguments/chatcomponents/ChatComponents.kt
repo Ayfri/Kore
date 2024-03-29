@@ -127,11 +127,7 @@ data class ChatComponents(
 					encoder.encodeNbtTag(NbtString("'$normalSerialized'"))
 				}
 
-				is JsonEncoder -> {
-					val normalSerialized = encoder.json.encodeToJsonElement(ChatComponentsSerializer, value)
-					encoder.encodeSerializableValue(String.serializer(), "'$normalSerialized'")
-				}
-
+				is JsonEncoder -> encoder.encodeSerializableValue(ChatComponentsSerializer, value)
 				else -> throw IllegalArgumentException("Unsupported encoder: $encoder")
 			}
 		}
@@ -147,11 +143,7 @@ data class ChatComponents(
 					encoder.encodeNbtTag(NbtString("['$normalSerialized']"))
 				}
 
-				is JsonEncoder -> {
-					val normalSerialized = encoder.json.encodeToJsonElement(ChatComponentsSerializer, value)
-					encoder.encodeSerializableValue(String.serializer(), "['$normalSerialized']")
-				}
-
+				is JsonEncoder -> encoder.encodeSerializableValue(ChatComponentsSerializer, value)
 				else -> throw IllegalArgumentException("Unsupported encoder: $encoder")
 			}
 		}
