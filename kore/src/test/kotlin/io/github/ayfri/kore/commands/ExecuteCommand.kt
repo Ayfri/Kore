@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.commands
 
+import io.github.ayfri.kore.arguments.PLAYER
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.enums.DataType
 import io.github.ayfri.kore.arguments.enums.Dimension
@@ -29,6 +30,7 @@ import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.EntityTypes
+import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.helpers.predicateRandomChance
 import io.github.ayfri.kore.utils.debugEntity
@@ -133,7 +135,8 @@ fun Function.executeTests() {
 			blocks(vec3(PosNumber.Type.LOCAL), vec3(1, 2, 3), vec3(4, 5, 6), BlocksTestMode.MASKED)
 			data(self(), "test")
 			dimension(Dimension.THE_END)
-			@Suppress("DEPRECATION_ERROR")
+			entity(testEntity.selector)
+			items(vec3(), PLAYER.CURSOR, Items.AIR)
 			function(FunctionArgument("test", datapack.name))
 			loaded(vec3(-2, -2, -2))
 			predicate("test")
@@ -157,6 +160,8 @@ fun Function.executeTests() {
 			if blocks ^ ^ ^ 1 2 3 4 5 6 masked
 			if data entity @s test
 			if dimension minecraft:the_end
+			if entity $selectorAsString
+			if items ~ ~ ~ player.cursor minecraft:air
 			if function ${datapack.name}:test
 			if loaded -2 -2 -2
 			if predicate test
