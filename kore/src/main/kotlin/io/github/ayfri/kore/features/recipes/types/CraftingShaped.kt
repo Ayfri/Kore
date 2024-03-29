@@ -23,7 +23,7 @@ data class CraftingShaped(
 }
 
 fun Recipes.craftingShaped(name: String, block: CraftingShaped.() -> Unit): RecipeArgument {
-	dp.recipes += RecipeFile(name, CraftingShaped(result = CraftingResult(item = item(""))).apply(block))
+	dp.recipes += RecipeFile(name, CraftingShaped(result = CraftingResult(id = item(""))).apply(block))
 	return RecipeArgument(name, dp.name)
 }
 

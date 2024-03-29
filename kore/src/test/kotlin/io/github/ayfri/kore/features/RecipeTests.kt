@@ -1,13 +1,18 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.arguments.components.damage
+import io.github.ayfri.kore.arguments.components.enchantment
+import io.github.ayfri.kore.arguments.components.enchantments
 import io.github.ayfri.kore.arguments.types.literals.allPlayers
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.recipeGive
+import io.github.ayfri.kore.data.item.builders.itemStack
 import io.github.ayfri.kore.features.recipes.recipes
 import io.github.ayfri.kore.features.recipes.recipesBuilder
 import io.github.ayfri.kore.features.recipes.types.*
 import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.Tags
 
@@ -57,7 +62,7 @@ fun DataPack.recipeTest() {
 					"item": "minecraft:netherite_ingot"
 				},
 				"result": {
-					"item": "minecraft:netherite_sword"
+					"id": "minecraft:netherite_sword"
 				}
 			}
 		""".trimIndent()
@@ -94,7 +99,7 @@ fun DataPack.recipeTest() {
 				}
 			},
 			"result": {
-				"item": "minecraft:bow"
+				"id": "minecraft:bow"
 			}
 		}
 	""".trimIndent()
@@ -102,4 +107,54 @@ fun DataPack.recipeTest() {
 	load {
 		recipeGive(allPlayers(), bowsRecipe)
 	}
+
+	recipes {
+		craftingShaped("sharpness_1") {
+			pattern(
+				"E E",
+				" B ",
+				"E E",
+			)
+
+			keys {
+				"E" to Items.EMERALD
+				"B" to Items.BOOK
+			}
+
+			result(Items.ENCHANTED_BOOK) {
+				enchantments {
+					enchantment(Enchantments.SHARPNESS, 1)
+				}
+			}
+		}
+	}
+
+	recipes.last() assertsIs """
+		{
+			"type": "minecraft:crafting_shaped",
+			"pattern": [
+				"E E",
+				" B ",
+				"E E"
+			],
+			"key": {
+				"E": {
+					"item": "minecraft:emerald"
+				},
+				"B": {
+					"item": "minecraft:book"
+				}
+			},
+			"result": {
+				"id": "minecraft:enchanted_book",
+				"components": {
+					"enchantments": {
+						"levels": {
+							"minecraft:sharpness": 1
+						}
+					}
+				}
+			}
+		}
+	""".trimIndent()
 }

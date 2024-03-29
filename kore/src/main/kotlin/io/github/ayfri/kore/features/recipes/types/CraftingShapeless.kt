@@ -21,7 +21,7 @@ data class CraftingShapeless(
 }
 
 fun Recipes.craftingShapeless(name: String, block: CraftingShapeless.() -> Unit): RecipeArgument {
-	dp.recipes += RecipeFile(name, CraftingShapeless(result = CraftingResult(item = item(""))).apply(block))
+	dp.recipes += RecipeFile(name, CraftingShapeless(result = CraftingResult(id = item(""))).apply(block))
 	return RecipeArgument(name, dp.name)
 }
 

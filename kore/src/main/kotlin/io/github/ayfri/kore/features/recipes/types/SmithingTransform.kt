@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.features.recipes.types
 
+import io.github.ayfri.kore.arguments.components.Components
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.arguments.types.resources.RecipeArgument
 import io.github.ayfri.kore.arguments.types.resources.item
@@ -34,7 +35,7 @@ fun Recipes.smithingTransform(name: String, block: SmithingTransform.() -> Unit)
 			template = Ingredient(),
 			base = Ingredient(),
 			addition = Ingredient(),
-			result = CraftingResult(item = item("")),
+			result = CraftingResult(id = item("")),
 		).apply(block)
 	)
 	return RecipeArgument(name, dp.name)
@@ -65,9 +66,9 @@ fun SmithingTransform.addition(item: ItemArgument? = null, tag: ItemTagArgument?
 }
 
 fun SmithingTransform.result(block: CraftingResult.() -> Unit) {
-	result = CraftingResult(item = item("")).apply(block)
+	result = CraftingResult(id = item("")).apply(block)
 }
 
-fun SmithingTransform.result(item: ItemArgument, count: Int? = null) {
-	result = CraftingResult(item, count)
+fun SmithingTransform.result(item: ItemArgument, count: Int? = null, block: (Components.() -> Unit)? = null) {
+	result = CraftingResult(item, count, block?.let { Components().apply(block) })
 }
