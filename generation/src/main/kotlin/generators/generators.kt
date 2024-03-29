@@ -36,6 +36,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen(
 			"Tags", "tags", argumentClassName = "", tagsParents = mapOf(
 				"blocks" to "BlockTag",
+				"effects" to "EffectTag",
 				"fluids" to "FluidTag",
 				"instrument" to "InstrumentTag",
 				"items" to "ItemTag",

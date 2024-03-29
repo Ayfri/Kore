@@ -25,7 +25,7 @@ private data class AdvancementTriggerConditionSerialized<T : AdvancementTriggerC
 	companion object {
 		class AdvancementTriggerConditionSerializedSerializer<T : AdvancementTriggerCondition>(
 			serializer: KSerializer<T>,
-		) : JsonTransformingSerializer<AdvancementTriggerConditionSerialized<T>>(Companion.serializer(serializer)) {
+		) : JsonTransformingSerializer<AdvancementTriggerConditionSerialized<T>>(serializer(serializer)) {
 			override fun transformSerialize(element: JsonElement) = buildJsonObject {
 				element.jsonObject.forEach { (topKey, topValue) ->
 					when (topKey) {

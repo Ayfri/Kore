@@ -1,7 +1,8 @@
 package io.github.ayfri.kore.features.advancements.types
 
+import io.github.ayfri.kore.arguments.types.EntityTypeOrTagArgument
 import io.github.ayfri.kore.arguments.types.resources.EffectArgument
-import io.github.ayfri.kore.arguments.types.resources.EntityTypeArgument
+import io.github.ayfri.kore.serializers.InlinableList
 import net.benwoodworth.knbt.NbtCompound
 import kotlinx.serialization.Serializable
 
@@ -16,7 +17,7 @@ data class Entity(
 	var passenger: Entity? = null,
 	var steppingOn: Block? = null,
 	var team: String? = null,
-	var type: EntityTypeArgument? = null,
+	var type: InlinableList<EntityTypeOrTagArgument>? = null,
 	var targetedEntity: Entity? = null,
 	var vehicle: Entity? = null,
 	var typeSpecific: EntityTypeSpecific? = null,
@@ -35,4 +36,16 @@ fun entity(init: Entity.() -> Unit = {}) = Entity().apply(init)
 
 fun Entity.flags(init: EntityFlags.() -> Unit = {}) {
 	flags = EntityFlags().apply(init)
+}
+
+fun Entity.effects(vararg effects: Pair<EffectArgument, Effect>) {
+	this.effects = effects.toMap()
+}
+
+fun Entity.effects(block: MutableMap<EffectArgument, Effect>.() -> Unit) {
+	effects = buildMap(block)
+}
+
+fun Entity.type(vararg types: EntityTypeOrTagArgument) {
+	type = types.toList()
 }

@@ -1,11 +1,12 @@
 package io.github.ayfri.kore.arguments.types.resources
 
 import io.github.ayfri.kore.arguments.Argument
+import io.github.ayfri.kore.arguments.types.EffectOrTagArgument
 import io.github.ayfri.kore.arguments.types.ResourceLocationArgument
 import kotlinx.serialization.Serializable
 
 @Serializable(with = Argument.ArgumentSerializer::class)
-interface EffectArgument : ResourceLocationArgument {
+interface EffectArgument : ResourceLocationArgument, EffectOrTagArgument {
 	companion object {
 		operator fun invoke(name: String, namespace: String = "minecraft") = object : EffectArgument {
 			override val name = name
