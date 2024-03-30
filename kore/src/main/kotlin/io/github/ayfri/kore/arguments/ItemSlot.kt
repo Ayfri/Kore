@@ -20,11 +20,17 @@ interface ItemSlotType : ItemSlot, ItemSlotWrapper {
 
 		/**
 		 * Get an [ItemSlotType] from an index.
-		 * Some slots can overlap so the [fromEntity] and [fromPlayer] parameters are used to differentiate them.
+		 * Some slots can overlap so the [fromEntity], [fromPlayer] and [fromItemEntity] parameters are used to differentiate them.
 		 */
-		fun fromIndex(index: Int, fromEntity: Boolean = false, fromPlayer: Boolean = false) = when (index) {
+		fun fromIndex(
+			index: Int,
+			fromEntity: Boolean = false,
+			fromPlayer: Boolean = false,
+			fromItemEntity: Boolean = false,
+		) = when (index) {
 			-106 -> WEAPON.OFFHAND
 			in CONTAINER -> when {
+				fromItemEntity -> CONTENTS
 				fromEntity && index in 0..8 -> HOTBAR[index]
 				fromEntity && index in 9..35 -> INVENTORY[index - INVENTORY.start]
 				else -> CONTAINER[index]
@@ -82,6 +88,7 @@ data object ARMOR : RangeItemSlot {
 }
 
 val CONTAINER = IndexedItemSlot(0, 53) { "container" }
+val CONTENTS = ItemSlotType(0) { "contents" }
 val ENDERCHEST = IndexedItemSlot(200, 226) { "enderchest" }
 
 data object HORSE : IndexedItemSlot {
