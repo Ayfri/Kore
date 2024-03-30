@@ -1,14 +1,14 @@
 import com.varabyte.kobweb.gradle.application.util.configAsKobwebApplication
 import com.varabyte.kobwebx.gradle.markdown.children
 import com.varabyte.kobwebx.gradle.markdown.yamlStringToKotlinString
-import kotlinx.html.link
-import kotlinx.html.script
-import kotlinx.html.unsafe
 import org.commonmark.ext.front.matter.YamlFrontMatterBlock
 import org.commonmark.ext.front.matter.YamlFrontMatterVisitor
 import org.commonmark.node.AbstractVisitor
 import org.commonmark.node.CustomBlock
 import org.commonmark.node.Text
+import kotlinx.html.link
+import kotlinx.html.script
+import kotlinx.html.unsafe
 
 plugins {
 	kotlin("multiplatform")
@@ -144,7 +144,7 @@ val generateDocSourceTask = task("generateDocSource") {
 		val routeOverride = fm["routeOverride"]?.firstOrNull()
 
 		if (title == null || desc == null || dateCreated == null || dateModified == null || navTitle == null || routeOverride == null) {
-			println("Skipping '${docArticle.name}', missing required fields in front matter of ${docArticle.name}: ${requiredFields.filter { fm[it] == null }}")
+			logger.warn("Skipping '${docArticle.name}', missing required fields in front matter of ${docArticle.name}: ${requiredFields.filter { fm[it] == null }}")
 			return@forEach
 		}
 
@@ -205,13 +205,13 @@ val generateDocSourceTask = task("generateDocSource") {
 					|   ),
 					""".trimMargin()
 				)
-				println("Generated entry for ${entry.file.name}")
+				logger.info("Generated entry for ${entry.file.name}")
 			}
 
 			appendLine(")")
 		})
 
-		println("Generated $absolutePath")
+		logger.info("Generated $absolutePath")
 	}
 }
 
