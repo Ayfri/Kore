@@ -6,13 +6,13 @@ import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.types.resources.*
 import io.github.ayfri.kore.features.advancements.triggers.AdvancementTriggerCondition
-import io.github.ayfri.kore.features.advancements.types.Entity
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
-import net.benwoodworth.knbt.NbtTag
+import io.github.ayfri.kore.features.predicates.sub.Entity
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString
+import net.benwoodworth.knbt.NbtTag
 
 @Serializable
 data class Advancement internal constructor(

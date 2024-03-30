@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.predicates.conditions
 
-import io.github.ayfri.kore.features.advancements.types.Location
 import io.github.ayfri.kore.features.predicates.Predicate
+import io.github.ayfri.kore.features.predicates.sub.Location
 import kotlinx.serialization.Serializable
 
 @Serializable

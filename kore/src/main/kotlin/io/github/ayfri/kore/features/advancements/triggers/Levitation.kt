@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.advancements.triggers
 
 import io.github.ayfri.kore.features.advancements.serializers.IntRangeOrIntJson
-import io.github.ayfri.kore.features.advancements.types.Distance
+import io.github.ayfri.kore.features.predicates.sub.Distance
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.features.advancements.triggers
 
-import io.github.ayfri.kore.features.advancements.types.Distance
-import io.github.ayfri.kore.features.advancements.types.Location
+import io.github.ayfri.kore.features.predicates.sub.Distance
 import kotlinx.serialization.Serializable
 
 @Serializable

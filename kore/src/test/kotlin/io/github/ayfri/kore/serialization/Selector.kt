@@ -14,9 +14,9 @@ import io.github.ayfri.kore.arguments.types.literals.*
 import io.github.ayfri.kore.arguments.types.resources.AdvancementArgument
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
-import io.github.ayfri.kore.features.advancements.types.block
 import io.github.ayfri.kore.features.predicates.conditions.entityProperties
 import io.github.ayfri.kore.features.predicates.predicate
+import io.github.ayfri.kore.features.predicates.sub.block
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.setTestPath

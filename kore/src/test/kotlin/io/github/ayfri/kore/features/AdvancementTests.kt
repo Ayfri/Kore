@@ -7,10 +7,10 @@ import io.github.ayfri.kore.commands.advancement
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.features.advancements.*
 import io.github.ayfri.kore.features.advancements.triggers.ConsumeItem
-import io.github.ayfri.kore.features.advancements.types.itemStack
 import io.github.ayfri.kore.features.predicates.conditions.anyOf
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
 import io.github.ayfri.kore.features.predicates.conditions.timeCheck
+import io.github.ayfri.kore.features.predicates.sub.itemStack
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Advancements

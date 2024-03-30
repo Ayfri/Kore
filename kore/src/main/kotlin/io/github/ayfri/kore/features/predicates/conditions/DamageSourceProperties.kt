@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.predicates.conditions
 
-import io.github.ayfri.kore.features.advancements.types.DamageSource
 import io.github.ayfri.kore.features.predicates.Predicate
+import io.github.ayfri.kore.features.predicates.sub.DamageSource
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -10,5 +10,5 @@ data class DamageSourceProperties(
 ) : PredicateCondition()
 
 fun Predicate.damageSourceProperties(block: DamageSource.() -> Unit = {}) {
-	predicateConditions += DamageSourceProperties(io.github.ayfri.kore.features.advancements.types.damageSource(block))
+	predicateConditions += DamageSourceProperties(DamageSource().apply(block))
 }

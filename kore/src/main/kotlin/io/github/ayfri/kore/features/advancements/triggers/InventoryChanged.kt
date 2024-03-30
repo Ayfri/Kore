@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.advancements.triggers
 
-import io.github.ayfri.kore.features.advancements.types.ItemStack
-import io.github.ayfri.kore.features.advancements.types.Slots
+import io.github.ayfri.kore.features.predicates.sub.ItemStack
+import io.github.ayfri.kore.features.predicates.sub.Slots
 import kotlinx.serialization.Serializable
 
 @Serializable

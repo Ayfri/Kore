@@ -6,10 +6,10 @@ import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.execute.execute
-import io.github.ayfri.kore.features.advancements.types.*
-import io.github.ayfri.kore.features.advancements.types.entityspecific.Player
 import io.github.ayfri.kore.features.predicates.conditions.*
 import io.github.ayfri.kore.features.predicates.predicate
+import io.github.ayfri.kore.features.predicates.sub.*
+import io.github.ayfri.kore.features.predicates.sub.entityspecific.Player
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Effects

@@ -1,8 +1,7 @@
 package io.github.ayfri.kore.features.advancements
 
-// import features.predicates.conditions.PredicateConditionSurrogate
-import io.github.ayfri.kore.features.advancements.types.Entity
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
+import io.github.ayfri.kore.features.predicates.sub.Entity
 import io.github.ayfri.kore.serializers.ToStringSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer

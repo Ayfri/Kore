@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.advancements.triggers
 
-import io.github.ayfri.kore.features.advancements.types.Damage
+import io.github.ayfri.kore.features.predicates.sub.Damage
 import kotlinx.serialization.Serializable
 
 @Serializable
