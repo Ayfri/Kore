@@ -27,8 +27,8 @@ object FloatRangeOrFloatJsonSerializer : KSerializer<FloatRangeOrFloat> {
 
 	override fun serialize(encoder: Encoder, value: FloatRangeOrFloat) = when {
 		value.range != null -> encoder.encodeStructure(descriptor) {
-			encodeDoubleElement(PrimitiveSerialDescriptor("min", PrimitiveKind.DOUBLE), 0, value.double!!)
-			encodeDoubleElement(PrimitiveSerialDescriptor("max", PrimitiveKind.DOUBLE), 1, value.double)
+			encodeDoubleElement(PrimitiveSerialDescriptor("min", PrimitiveKind.DOUBLE), 0, value.range.start!!)
+			encodeDoubleElement(PrimitiveSerialDescriptor("max", PrimitiveKind.DOUBLE), 1, value.range.end!!)
 		}
 
 		else -> encoder.encodeDouble(value.double!!)

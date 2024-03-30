@@ -27,8 +27,8 @@ object IntRangeOrIntJsonSerializer : KSerializer<IntRangeOrInt> {
 
 	override fun serialize(encoder: Encoder, value: IntRangeOrInt) = when {
 		value.range != null -> encoder.encodeStructure(descriptor) {
-			encodeIntElement(PrimitiveSerialDescriptor("min", PrimitiveKind.INT), 0, value.int!!)
-			encodeIntElement(PrimitiveSerialDescriptor("max", PrimitiveKind.INT), 1, value.int)
+			encodeIntElement(PrimitiveSerialDescriptor("min", PrimitiveKind.INT), 0, value.range.start!!)
+			encodeIntElement(PrimitiveSerialDescriptor("max", PrimitiveKind.INT), 1, value.range.end!!)
 		}
 
 		else -> encoder.encodeInt(value.int!!)
