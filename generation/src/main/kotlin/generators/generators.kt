@@ -9,6 +9,7 @@ import overrides
 
 suspend fun launchAllSimpleGenerators() {
 	val txtListsListGenerators = listOf(
+		gen("BannerPatterns", "banner_patterns"),
 		gen("DamageTypes", "damage_types"),
 		gen("DimensionTypes", "dimension_types", "worldgen.DimensionType"),
 		gen("Particles", "particles"),
@@ -54,7 +55,6 @@ suspend fun launchAllSimpleGenerators() {
 		gen("Attributes", "attribute", asString = """replaceFirst("_", ".").lowercase()""") {
 			it.replaceFirst(".", "_")
 		},
-		gen("BannerPatterns", "banner_pattern"),
 		gen("BlockEntityTypes", "block_entity_type"),
 		gen("Blocks", "block", additionalCode = {
 			addProperty(
