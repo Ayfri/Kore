@@ -1,15 +1,20 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.arguments.components.damage
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.advancement
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.features.advancements.*
 import io.github.ayfri.kore.features.advancements.triggers.ConsumeItem
+import io.github.ayfri.kore.features.advancements.triggers.conditions
+import io.github.ayfri.kore.features.advancements.triggers.consumeItem
+import io.github.ayfri.kore.features.advancements.triggers.item
 import io.github.ayfri.kore.features.predicates.conditions.anyOf
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
 import io.github.ayfri.kore.features.predicates.conditions.timeCheck
+import io.github.ayfri.kore.features.predicates.sub.components
 import io.github.ayfri.kore.features.predicates.sub.itemStack
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.functions.load
@@ -26,9 +31,10 @@ fun DataPack.advancementTests() {
 
 		parent = Advancements.Story.ROOT
 
+		@Suppress("DEPRECATION")
 		criteria(
 			name = "test",
-			triggerCondition = ConsumeItem(itemStack(Items.ENCHANTED_GOLDEN_APPLE))
+			triggerCondition = ConsumeItem("test", item = itemStack(Items.ENCHANTED_GOLDEN_APPLE))
 		) {
 			randomChance(chance = 0.5f)
 			timeCheck(10f..20f)
@@ -122,4 +128,53 @@ fun DataPack.advancementTests() {
 			grant(self(), advancement)
 		}
 	}
+
+	advancement("test2") {
+		criteria {
+			consumeItem("test2") {
+				item {
+					items = listOf(Items.ENCHANTED_GOLDEN_APPLE)
+					components {
+						damage(3)
+					}
+				}
+
+				conditions {
+					randomChance(0.5f)
+					timeCheck(10f..20f)
+				}
+			}
+		}
+	}
+
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"test2": {
+					"trigger": "minecraft:consume_item",
+					"conditions": {
+						"player": [
+							{
+								"condition": "minecraft:random_chance",
+								"chance": 0.5
+							},
+							{
+								"condition": "minecraft:time_check",
+								"value": {
+									"min": 10.0,
+									"max": 20.0
+								}
+							}
+						],
+						"item": {
+							"items": "minecraft:enchanted_golden_apple",
+							"components": {
+								"damage": 3
+							}
+						}
+					}
+				}
+			}
+		}
+	""".trimIndent()
 }

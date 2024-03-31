@@ -276,10 +276,10 @@ fun itemsTests() {
 	val lodeStoneTargetTest = Items.LODESTONE {
 		lodestoneTarget(10, 10, 10, Dimension.OVERWORLD)
 	}
-	lodeStoneTargetTest.asString() assertsIs """minecraft:lodestone[lodestone_target={pos:[10,10,10],dimension:"minecraft:overworld"}]"""
+	lodeStoneTargetTest.asString() assertsIs """minecraft:lodestone[lodestone_tracker={pos:[10,10,10],dimension:"minecraft:overworld"}]"""
 
 	lodeStoneTargetTest.components!!.lodestoneTarget(vec3(10.0, 10.0, 10.0), Dimension.OVERWORLD, tracked = true)
-	lodeStoneTargetTest.asString() assertsIs """minecraft:lodestone[lodestone_target={pos:[10,10,10],dimension:"minecraft:overworld",tracked:1b}]"""
+	lodeStoneTargetTest.asString() assertsIs """minecraft:lodestone[lodestone_tracker={pos:[10,10,10],dimension:"minecraft:overworld",tracked:1b}]"""
 
 	val loreTest = stoneSword {
 		lore("test")
