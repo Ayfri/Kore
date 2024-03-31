@@ -43,7 +43,7 @@ var runUnitTests = tasks.register<JavaExec>("runUnitTests") {
 	group = "verification"
 
 	classpath = sourceSets.test.get().runtimeClasspath
-	mainClass = "MainKt"
+	mainClass = "${Project.GROUP}.MainKt"
 	shouldRunAfter("test")
 }
 
