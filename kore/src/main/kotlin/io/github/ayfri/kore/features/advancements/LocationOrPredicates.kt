@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.features.advancements
 
+import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.sub.Location
 import io.github.ayfri.kore.serializers.ToStringSerializer
@@ -25,4 +26,16 @@ data class LocationOrPredicates(
 			}
 		}
 	}
+}
+
+fun LocationOrPredicates.location(block: Location.() -> Unit) {
+	legacyLocation = Location().apply(block)
+}
+
+fun LocationOrPredicates.predicate(block: Predicate.() -> Unit) {
+	predicateConditions += Predicate().apply(block).predicateConditions
+}
+
+fun LocationOrPredicates.predicate(predicate: Predicate) {
+	predicateConditions += predicate.predicateConditions
 }

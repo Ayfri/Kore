@@ -20,7 +20,7 @@ data class Advancement internal constructor(
 	override var fileName: String = "advancement",
 	var display: AdvancementDisplay? = null,
 	var parent: AdvancementArgument? = null,
-	var criteria: Map<String, AdvancementCriterion> = emptyMap(),
+	var criteria: AdvancementCriteria = AdvancementCriteria(),
 	var requirements: List<List<String>>? = null,
 	var rewards: AdvancementReward? = null,
 	var sendsTelemetryEvent: Boolean? = null,
@@ -63,19 +63,55 @@ fun AdvancementDisplay.icon(icon: ItemArgument, nbtData: NbtTag? = null) {
 	this.icon = AdvancementIcon(icon, nbtData)
 }
 
-fun Advancement.criteria(name: String, triggerCondition: AdvancementTriggerCondition, condition: Entity? = null) {
-	criteria += name to AdvancementCriterion(triggerCondition, EntityOrPredicates(condition))
-}
-
-fun Advancement.criteria(name: String, triggerCondition: AdvancementTriggerCondition, vararg conditions: PredicateCondition) {
-	criteria += name to AdvancementCriterion(triggerCondition, EntityOrPredicates(predicateConditions = listOf(*conditions)))
-}
-
-fun Advancement.criteria(name: String, triggerCondition: AdvancementTriggerCondition, block: Predicate.() -> Unit) {
-	criteria += name to AdvancementCriterion(
-		triggerCondition,
-		EntityOrPredicates(predicateConditions = Predicate().apply(block).predicateConditions)
+@Deprecated(
+	"Use AdvancementDisplay.criteria { ... } instead.",
+	ReplaceWith(
+		"criteria { this[name] = triggerCondition.apply { conditionEntity(condition) } }",
+		"io.github.ayfri.kore.features.advancements.triggers.conditions"
 	)
+)
+fun Advancement.criteria(
+	@Suppress("unused_parameter") name: String,
+	triggerCondition: AdvancementTriggerCondition,
+	condition: Entity? = null,
+) {
+	criteria += triggerCondition.apply { this.conditions = EntityOrPredicates(condition) }
+}
+
+@Deprecated(
+	"Use AdvancementDisplay.criteria { ... } instead.",
+	ReplaceWith(
+		"criteria { this[name] = triggerCondition.apply { conditions(conditions) }}",
+		"io.github.ayfri.kore.features.advancements.triggers.conditions"
+	)
+)
+fun Advancement.criteria(
+	@Suppress("unused_parameter") name: String,
+	triggerCondition: AdvancementTriggerCondition,
+	vararg conditions: PredicateCondition,
+) {
+	criteria += triggerCondition.apply { this.conditions = EntityOrPredicates(predicateConditions = conditions.toList()) }
+}
+
+@Deprecated(
+	"Use AdvancementDisplay.criteria { ... } instead.",
+	ReplaceWith(
+		"criteria { this[name] = triggerCondition.apply { conditions { block() } } }",
+		"io.github.ayfri.kore.features.advancements.triggers.conditions"
+	)
+)
+fun Advancement.criteria(
+	@Suppress("unused_parameter") name: String,
+	triggerCondition: AdvancementTriggerCondition,
+	block: Predicate.() -> Unit,
+) {
+	criteria += triggerCondition.apply {
+		this.conditions = EntityOrPredicates(predicateConditions = Predicate().apply(block).predicateConditions)
+	}
+}
+
+fun Advancement.criteria(block: AdvancementCriteria.() -> Unit) {
+	criteria = AdvancementCriteria().apply(block)
 }
 
 fun Advancement.requirements(vararg requirements: List<String>) {

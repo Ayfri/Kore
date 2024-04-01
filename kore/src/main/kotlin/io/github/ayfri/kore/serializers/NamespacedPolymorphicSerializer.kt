@@ -1,8 +1,6 @@
 package io.github.ayfri.kore.serializers
 
 import io.github.ayfri.kore.utils.snakeCase
-import kotlin.reflect.KClass
-import kotlin.reflect.full.createType
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
@@ -11,6 +9,8 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 import kotlinx.serialization.serializer
+import kotlin.reflect.KClass
+import kotlin.reflect.full.createType
 
 open class NamespacedPolymorphicSerializer<T : Any>(
 	private val kClass: KClass<T>,
