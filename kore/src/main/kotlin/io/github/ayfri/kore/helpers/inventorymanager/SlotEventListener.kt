@@ -1,12 +1,13 @@
 package io.github.ayfri.kore.helpers.inventorymanager
 
+import io.github.ayfri.kore.arguments.CONTAINER
 import io.github.ayfri.kore.arguments.ItemSlotType
+import io.github.ayfri.kore.arguments.components.customData
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.types.ContainerArgument
 import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.literals.allEntities
 import io.github.ayfri.kore.arguments.types.literals.randomUUID
-import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.commands.data
@@ -17,9 +18,8 @@ import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.utils.nbt
-import io.github.ayfri.kore.utils.nbtList
 import io.github.ayfri.kore.utils.set
-import net.benwoodworth.knbt.addNbtCompound
+import net.benwoodworth.knbt.buildNbtCompound
 
 enum class SlotEventType {
 	DURING_TAKEN,
@@ -39,22 +39,13 @@ data class SlotEventListener(
 
 	val randomTagNbt
 		get() = nbt {
-			this["SlotEventListener"] = randomTag
+			this["slot_event_listener"] = randomTag
 		}
 
 	init {
-		// TODO : To update.
-		/* 		item.components = nbt {
-					item.nbtData?.let {
-						it.forEach { (key, value) ->
-							this[key] = value
-						}
-					}
-
-					randomTagNbt.entries.forEach { (key, value) ->
-						this[key] = value
-					}
-				} */
+		item {
+			customData(randomTagNbt)
+		}
 	}
 
 	fun onTick(block: Function.() -> Unit) {
@@ -69,17 +60,9 @@ data class SlotEventListener(
 	fun clearAllItemsNotInSlot(fromContainer: ContainerArgument = container) = when (fromContainer) {
 		is EntityArgument -> items {
 			fun executeIfItem(index: Int) = execute {
-				asTarget(fromContainer)
-				asTarget(self {
-					nbt = nbt {
-						this["Inventory"] = nbtList {
-							addNbtCompound {
-								this["Slot"] = index.toByte()
-								this["tag"] = randomTagNbt
-							}
-						}
-					}
-				})
+				ifCondition {
+					items(fromContainer, ItemSlotType.fromIndex(index, true), item)
+				}
 
 				run {
 					items.replace(fromContainer, ItemSlotType.fromIndex(index, true), Items.AIR)
@@ -94,12 +77,12 @@ data class SlotEventListener(
 		}
 
 		is Vec3 -> data(fromContainer) {
-			val itemNbt = ",tag:$randomTagNbt"
-			repeat(52) { index ->
+			val itemNbt = ",components:{custom_data:$randomTagNbt}"
+			repeat(CONTAINER.endInclusive - 1) { index ->
 				if (fromContainer == container && index == slot.asIndex()) return@repeat
 				remove("Items[{Slot:${index}b$itemNbt}]")
 			}
-			remove("Items[{Slot:53b$itemNbt}]")
+			remove("Items[{Slot:${CONTAINER.endInclusive}b$itemNbt}]")
 		}
 
 		else -> error("Unsupported container type: $fromContainer")
@@ -111,7 +94,9 @@ data class SlotEventListener(
 
 		nbt = nbt {
 			this["Item"] = nbt {
-				this["tag"] = randomTagNbt
+				this["components"] = buildNbtCompound {
+					this["custom_data"] = randomTagNbt
+				}
 			}
 		}
 	})
