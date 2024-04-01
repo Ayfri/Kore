@@ -2,11 +2,27 @@ package io.github.ayfri.kore.arguments
 
 interface ItemSlot : Argument
 
-interface ItemSlotWrapper : Argument
+interface ItemSlotWrapper : Argument {
+	override fun asString() = name()
+	fun name(): String
+}
 
 interface RangeItemSlot : Argument, ClosedRange<Int>, ItemSlotWrapper {
-	fun all() = "${asString()}.*"
-	operator fun get(index: Int) = ItemSlotType(start + index) { "${asString()}.$index" }
+	fun all() = "${name()}.*"
+
+	/**
+	 * Get the range as an ItemSlot.
+	 * An alias for [asString] or just the object itself for clarity.
+	 *
+	 * Example :
+	 * ```
+	 * val range = ARMOR.range()
+	 * println(range) == "armor.*"
+	 * ```
+	 */
+	fun range() = this
+
+	operator fun get(index: Int) = ItemSlotType(start + index) { "${name()}.$index" }
 }
 
 interface ItemSlotType : ItemSlot, ItemSlotWrapper {
@@ -14,8 +30,8 @@ interface ItemSlotType : ItemSlot, ItemSlotWrapper {
 
 	companion object {
 		operator fun invoke(index: Int = 0, block: () -> String) = object : ItemSlotType {
-			override fun asString() = block()
 			override fun asIndex() = index
+			override fun name() = block()
 		}
 
 		/**
@@ -62,9 +78,12 @@ interface ItemSlotType : ItemSlot, ItemSlotWrapper {
 }
 
 interface IndexedItemSlot : ItemSlot, RangeItemSlot {
+	override fun asString() = all()
+	override fun range() = this
+
 	companion object {
 		operator fun invoke(start: Int, endInclusive: Int, block: () -> String) = object : IndexedItemSlot {
-			override fun asString() = block()
+			override fun name() = block()
 
 			override var start = start
 			override var endInclusive = endInclusive
@@ -75,7 +94,7 @@ interface IndexedItemSlot : ItemSlot, RangeItemSlot {
 private fun ItemSlotWrapper.subType(name: String, index: Int) = ItemSlotType(index) { "${asString()}.$name" }
 
 data object ARMOR : RangeItemSlot {
-	override fun asString() = "armor"
+	override fun name() = "armor"
 
 	override val start = 100
 	override val endInclusive = start + 5
@@ -95,7 +114,7 @@ data object HORSE : IndexedItemSlot {
 	override var start = 500
 	override val endInclusive = start + 14
 
-	override fun asString() = "horse"
+	override fun name() = "horse"
 
 	val CHEST = subType("chest", 499)
 	val SADDLE = subType("saddle", 400)
@@ -105,7 +124,7 @@ val HOTBAR = IndexedItemSlot(0, 8) { "hotbar" }
 val INVENTORY = IndexedItemSlot(9, 35) { "inventory" }
 
 data object PLAYER : ItemSlotWrapper {
-	override fun asString() = "player"
+	override fun name() = "player"
 
 	val CURSOR = subType("cursor", 499)
 	val CRAFTING = IndexedItemSlot(500, 504) { "${asString()}.crafting" }
@@ -114,7 +133,7 @@ data object PLAYER : ItemSlotWrapper {
 data object WEAPON : ItemSlotType, RangeItemSlot {
 	override fun asIndex() = 98
 
-	override fun asString() = "weapon"
+	override fun name() = "weapon"
 
 	override val start = 98
 	override val endInclusive = 9
