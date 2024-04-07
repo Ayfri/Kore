@@ -2,7 +2,9 @@ package io.github.ayfri.kore.website.components.doc
 
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.ListStyleType
+import com.varabyte.kobweb.compose.css.WhiteSpace
 import com.varabyte.kobweb.compose.css.listStyle
+import com.varabyte.kobweb.compose.css.whiteSpace
 import com.varabyte.kobweb.core.rememberPageContext
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.docEntries
@@ -13,7 +15,7 @@ import org.jetbrains.compose.web.dom.Li
 import org.jetbrains.compose.web.dom.Ul
 
 @Composable
-fun Entry(article: DocArticle, selected: Boolean = false) {
+fun Entry(article: DocArticle, selected: Boolean = false) = Li {
 	A(article.path, article.navTitle) {
 		classes(DocTreeStyle.entry)
 		if (selected) classes(DocTreeStyle.selected)
@@ -31,10 +33,8 @@ fun DocTree() {
 	Ul({
 		classes(DocTreeStyle.list)
 	}) {
-		Li {
-			entries.forEach { entry ->
-				Entry(entry, entry.path == currentURL)
-			}
+		entries.forEach { entry ->
+			Entry(entry, entry.path == currentURL)
 		}
 	}
 }
@@ -52,10 +52,10 @@ object DocTreeStyle : StyleSheet() {
 	}
 
 	val entry by style {
+		display(DisplayStyle.Block)
 		padding(0.5.cssRem)
 
 		borderRadius(GlobalStyle.roundingButton)
-		color(GlobalStyle.textColor)
 		fontSize(1.2.cssRem)
 
 		transition(0.2.s, "background-color")
@@ -63,6 +63,10 @@ object DocTreeStyle : StyleSheet() {
 		self + hover style {
 			backgroundColor(GlobalStyle.tertiaryBackgroundColor)
 		}
+
+		color(GlobalStyle.textColor)
+		whiteSpace(WhiteSpace.NoWrap)
+
 	}
 
 	val selected by style {
