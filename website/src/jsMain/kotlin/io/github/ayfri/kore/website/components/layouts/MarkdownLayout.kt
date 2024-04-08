@@ -1,7 +1,9 @@
 package io.github.ayfri.kore.website.components.layouts
 
 import androidx.compose.runtime.Composable
+import com.varabyte.kobweb.compose.css.Overflow
 import com.varabyte.kobweb.compose.css.TextAlign
+import com.varabyte.kobweb.compose.css.overflowX
 import com.varabyte.kobweb.compose.css.textAlign
 import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobwebx.markdown.markdown
@@ -10,10 +12,8 @@ import io.github.ayfri.kore.website.components.common.setDescription
 import io.github.ayfri.kore.website.components.doc.DocTree
 import io.github.ayfri.kore.website.utils.marginX
 import io.github.ayfri.kore.website.utils.marginY
-import io.github.ayfri.kore.website.utils.paddingX
 import io.github.ayfri.kore.website.utils.smMax
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.Div
 
 @Composable
@@ -81,14 +81,9 @@ object MarkdownLayoutStyle : StyleSheet() {
 	val content by style {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
-		alignSelf(AlignSelf.Center)
-		marginX(auto)
-
-		maxWidth(800.px)
-
-		smMax {
-			maxWidth(92.percent)
-			paddingX(0.cssRem)
-		}
+		marginX(3.vw)
+		marginBottom(2.cssRem)
+		width(100.percent)
+		overflowX(Overflow.Auto)
 	}
 }
