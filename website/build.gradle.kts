@@ -130,8 +130,6 @@ val generateDocSourceTask = task("generateDocSource") {
 		val rootNode = parser.parse(docArticle.readText())
 		val visitor = MarkdownVisitor()
 
-		println("Parsing ${docArticle.name}")
-
 		rootNode.accept(visitor)
 
 		val fm = visitor.frontMatter
