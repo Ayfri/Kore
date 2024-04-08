@@ -129,7 +129,7 @@ object DocTreeStyle : StyleSheet() {
 		padding(0.8.cssRem)
 		marginRight(1.cssRem)
 
-		height(100.vh)
+		height(100.percent)
 		position(Position.Sticky)
 		top(0.px)
 		left(0.px)

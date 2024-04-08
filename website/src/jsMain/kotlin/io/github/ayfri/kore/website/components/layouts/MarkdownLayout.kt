@@ -43,11 +43,13 @@ object MarkdownLayoutStyle : StyleSheet() {
 		id("root") style {
 			display(DisplayStyle.Flex)
 			flexDirection(FlexDirection.Column)
+			minHeight(100.vh)
 		}
 
 		"main" style {
 			display(DisplayStyle.Flex)
 			flexDirection(FlexDirection.Row)
+			flexGrow(1.0)
 		}
 
 		"h1" style {
@@ -83,6 +85,7 @@ object MarkdownLayoutStyle : StyleSheet() {
 		flexDirection(FlexDirection.Column)
 		marginX(3.vw)
 		marginBottom(2.cssRem)
+		minHeight(100.percent)
 		width(100.percent)
 		overflowX(Overflow.Auto)
 	}
