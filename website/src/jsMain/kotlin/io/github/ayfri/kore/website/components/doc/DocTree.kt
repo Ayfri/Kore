@@ -63,8 +63,7 @@ fun DocTree() {
 			onClick {
 				val docTree = document.querySelector("#doc-tree")
 				docTree?.classList?.toggle("reveal")
-				it.currentTarget.unsafeCast<HTMLButtonElement>().textContent =
-					if (docTree?.classList?.contains("reveal") == true) "<" else ">"
+				it.currentTarget.unsafeCast<HTMLButtonElement>().classList.toggle("reveal")
 			}
 		}) {
 			Text(">")
@@ -104,10 +103,10 @@ fun DocTree() {
 
 object DocTreeStyle : StyleSheet() {
 	val revealButton by style {
-		position(Position.Absolute)
+		position(Position.Fixed)
 		left(100.percent)
 		padding(0.4.cssRem, 0.8.cssRem)
-		top(0.px)
+		top(4.cssRem)
 
 		backgroundColor(GlobalStyle.secondaryBackgroundColor)
 		borderTopRightRadius(GlobalStyle.roundingButton)
@@ -117,9 +116,49 @@ object DocTreeStyle : StyleSheet() {
 		cursor(Cursor.Pointer)
 		fontSize(1.2.cssRem)
 		fontWeight(FontWeight.Bold)
+		transition(0.3.s, "background-color", "color")
 
 		smMin(self) {
 			display(DisplayStyle.None)
+		}
+
+		self + after style {
+			content("")
+			position(Position.Absolute)
+			width(100.vw)
+			height(100.vh)
+			left(0.px)
+			top((-4).cssRem)
+			transition(0.3.s, "background-color")
+			pointerEvents(PointerEvents.None)
+		}
+
+		self + before style {
+			content("x")
+			position(Position.Absolute)
+			property("right", "calc(-100vw + 17rem)")
+			top((-150).percent)
+
+			color(Color.transparent)
+			fontWeight(FontWeight.Normal)
+			transition(0.15.s, 0.s, "color")
+			zIndex(10)
+		}
+
+		self + className("reveal") style {
+			backgroundColor(BackgroundColor.Transparent)
+			color(Color.transparent)
+			property("-webkit-tap-highlight-color", "transparent")
+
+			self + before style {
+				color(GlobalStyle.altTextColor)
+				transition(0.3.s, 0.2.s, "color")
+			}
+
+			self + after style {
+				backgroundColor(GlobalStyle.shadowColor)
+				pointerEvents(PointerEvents.Auto)
+			}
 		}
 	}
 
@@ -131,18 +170,16 @@ object DocTreeStyle : StyleSheet() {
 
 		height(100.percent)
 		position(Position.Sticky)
-		top(0.px)
 		left(0.px)
 
 		smMax(self) {
 			position(Position.Fixed)
-			top(Top.Unset)
-			height(Height.FitContent)
+			top((-1).cssRem)
+			paddingTop(10.cssRem)
+			paddingBottom(100.vh)
 			zIndex(10)
 
 			backgroundColor(GlobalStyle.secondaryBackgroundColor)
-			borderRadius(GlobalStyle.roundingSection)
-			borderTopRightRadius(0.px)
 			transition(0.3.s, "transform")
 			transform {
 				translateX((-100).percent)

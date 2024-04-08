@@ -71,6 +71,17 @@ fun StyleScope.transition(
 	*properties
 )
 
+fun StyleScope.transition(
+	duration: CSSTimeValue,
+	delay: CSSTimeValue,
+	vararg properties: String,
+) = transition(
+	duration,
+	AnimationTimingFunction.EaseInOut,
+	delay,
+	*properties
+)
+
 @OptIn(ExperimentalComposeWebApi::class)
 fun StyleScope.transition(
 	duration: CSSTimeValue,

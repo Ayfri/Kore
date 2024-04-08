@@ -28,6 +28,7 @@ object GlobalStyle : StyleSheet() {
 	val scrollbarBackgroundColor = Color("#181a1f")
 
 	val borderColor = Color("#8c9ab1")
+	val shadowColor = rgba(0, 0, 0, 0.7)
 
 	val roundingButton = 0.4.cssRem
 	val roundingSection = 0.8.cssRem
