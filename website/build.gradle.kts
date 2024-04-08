@@ -193,6 +193,7 @@ val generateDocSourceTask = task("generateDocSource") {
 					|    DocArticle("/docs/${
 						entry.file.path.substringBeforeLast(".md")
 							.replace(Regex(" |_"), "-")
+							.replace("\\", "/")
 							.lowercase()
 					}",
 					|       "${entry.date}",
