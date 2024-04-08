@@ -6,12 +6,15 @@ import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.core.rememberPageContext
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.docEntries
-import io.github.ayfri.kore.website.utils.A
-import io.github.ayfri.kore.website.utils.Span
-import io.github.ayfri.kore.website.utils.transition
+import io.github.ayfri.kore.website.utils.*
+import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Li
+import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.dom.Ul
+import org.w3c.dom.HTMLButtonElement
+import kotlinx.browser.document
 
 private fun StyleScope.indentation(level: Int) = marginLeft(level * 2.cssRem)
 
@@ -49,9 +52,24 @@ fun DocTree() {
 	val entries = docEntries
 	val currentURL = context.path
 
+
 	Ul({
+		id("doc-tree")
 		classes(DocTreeStyle.list)
 	}) {
+		Button({
+			classes(DocTreeStyle.revealButton)
+
+			onClick {
+				val docTree = document.querySelector("#doc-tree")
+				docTree?.classList?.toggle("reveal")
+				it.currentTarget.unsafeCast<HTMLButtonElement>().textContent =
+					if (docTree?.classList?.contains("reveal") == true) "<" else ">"
+			}
+		}) {
+			Text(">")
+		}
+
 		// Separate the entries that are not in a group.
 		val (simpleEntriesWithoutGroup, otherEntries) = entries.partition {
 			it.middleSlugs.isEmpty() && entries.none { entry -> entry.middleSlugs.contains(it.slugs.last()) }
@@ -85,6 +103,27 @@ fun DocTree() {
 }
 
 object DocTreeStyle : StyleSheet() {
+	val revealButton by style {
+		position(Position.Absolute)
+		left(100.percent)
+		padding(0.4.cssRem, 0.8.cssRem)
+		top(0.px)
+
+		backgroundColor(GlobalStyle.secondaryBackgroundColor)
+		borderTopRightRadius(GlobalStyle.roundingButton)
+		borderBottomRightRadius(GlobalStyle.roundingButton)
+		borderStyle(LineStyle.None)
+		color(GlobalStyle.altTextColor)
+		cursor(Cursor.Pointer)
+		fontSize(1.2.cssRem)
+		fontWeight(FontWeight.Bold)
+
+		smMin(self) {
+			display(DisplayStyle.None)
+		}
+	}
+
+	@OptIn(ExperimentalComposeWebApi::class)
 	val list by style {
 		listStyle(ListStyleType.None)
 		padding(0.8.cssRem)
@@ -94,6 +133,27 @@ object DocTreeStyle : StyleSheet() {
 		position(Position.Sticky)
 		top(0.px)
 		left(0.px)
+
+		smMax(self) {
+			position(Position.Fixed)
+			top(Top.Unset)
+			height(Height.FitContent)
+			zIndex(10)
+
+			backgroundColor(GlobalStyle.secondaryBackgroundColor)
+			borderRadius(GlobalStyle.roundingSection)
+			borderTopRightRadius(0.px)
+			transition(0.3.s, "transform")
+			transform {
+				translateX((-100).percent)
+			}
+
+			self + className("reveal") style {
+				transform {
+					translateX(0.percent)
+				}
+			}
+		}
 	}
 
 	val entry by style {
@@ -104,6 +164,7 @@ object DocTreeStyle : StyleSheet() {
 		fontSize(1.2.cssRem)
 
 		color(GlobalStyle.textColor)
+		transition(0.2.s, "color", "background-color")
 		whiteSpace(WhiteSpace.NoWrap)
 	}
 
@@ -113,8 +174,6 @@ object DocTreeStyle : StyleSheet() {
 	}
 
 	val articleEntry by style {
-		transition(0.2.s, "background-color")
-
 		self + hover style {
 			backgroundColor(GlobalStyle.tertiaryBackgroundColor)
 		}
