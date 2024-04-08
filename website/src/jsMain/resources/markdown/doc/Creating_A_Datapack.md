@@ -2,10 +2,10 @@
 root: .components.layouts.MarkdownLayout
 title: Creating A Datapack
 nav-title: Creating A Datapack
-description: A guide to creating a Minecraft datapack using Kore.
+description: A guide for creating a Minecraft datapack using Kore.
 keywords: minecraft, datapack, kore, guide
 date-created: 2024-02-26
-date-modified: 2024-02-26
+date-modified: 2024-04-06
 routeOverride: /docs/creating-a-datapack
 ---
 
@@ -48,7 +48,7 @@ dataPack("my_datapack") {
 
 ## Configuration
 
-See [Configuration](./Configuration)
+See [Configuration](/docs/configuration)
 
 ## Pack Metadata
 
