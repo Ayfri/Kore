@@ -71,7 +71,7 @@ fun Function.lootTests() {
 		source {
 			loot(LootTables.Gameplay.CAT_MORNING_GIFT)
 		}
-	} assertsIs "loot replace ~ ~ ~ container.0 loot minecraft:gameplay/cat_morning_gift"
+	} assertsIs "loot replace block ~ ~ ~ container.0 loot minecraft:gameplay/cat_morning_gift"
 
 	loot {
 		target {
@@ -81,7 +81,7 @@ fun Function.lootTests() {
 		source {
 			loot(LootTables.Gameplay.CAT_MORNING_GIFT)
 		}
-	} assertsIs "loot replace ~ ~ ~ container.0 1 loot minecraft:gameplay/cat_morning_gift"
+	} assertsIs "loot replace block ~ ~ ~ container.0 1 loot minecraft:gameplay/cat_morning_gift"
 
 	loot {
 		target {
@@ -91,7 +91,7 @@ fun Function.lootTests() {
 		source {
 			loot(LootTables.Gameplay.CAT_MORNING_GIFT)
 		}
-	} assertsIs "loot replace @s armor.head loot minecraft:gameplay/cat_morning_gift"
+	} assertsIs "loot replace entity @s armor.head loot minecraft:gameplay/cat_morning_gift"
 
 	loot {
 		target {
@@ -101,5 +101,5 @@ fun Function.lootTests() {
 		source {
 			loot(LootTables.Gameplay.CAT_MORNING_GIFT)
 		}
-	} assertsIs "loot replace @s armor.head 1 loot minecraft:gameplay/cat_morning_gift"
+	} assertsIs "loot replace entity @s armor.head 1 loot minecraft:gameplay/cat_morning_gift"
 }
