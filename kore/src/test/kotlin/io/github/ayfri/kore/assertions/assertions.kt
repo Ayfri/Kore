@@ -25,6 +25,7 @@ infix fun Command.assertsMatches(regex: Regex) = also { assertsMatches(regex, to
 
 infix fun String.assertsIs(string: String) = also { assertsIs(this, string) }
 infix fun String.assertsIsJson(@Language("json") string: String) = also { assertsIsJson(this, string) }
+infix fun String.assertsIsNbt(@Language("NBTT") string: String) = also { assertsIsJson(this, string) }
 
 infix fun ChatComponents.assertsIsJson(@Language("json") string: String) = also { assertsIsJson(toJsonString(jsonStringifier), string) }
 
