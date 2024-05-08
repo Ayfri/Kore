@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
 import io.github.ayfri.kore.arguments.types.resources.AttributeArgument
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -18,12 +19,19 @@ data class AttributeModifier(
 	val operation: AttributeModifierOperation,
 )
 
-@Serializable
+@Serializable(with = AttributeModifiersComponent.Companion.AttributeModifiersComponentSerializer::class)
 data class AttributeModifiersComponent(
 	val modifiers: MutableList<AttributeModifier>,
 	@SerialName("show_in_tooltip")
 	var showInTooltip: Boolean? = null,
-) : Component()
+) : Component() {
+	companion object {
+		data object AttributeModifiersComponentSerializer : SinglePropertySimplifierSerializer<AttributeModifiersComponent, List<AttributeModifier>>(
+			AttributeModifiersComponent::class,
+			AttributeModifiersComponent::modifiers,
+		)
+	}
+}
 
 fun Components.attributeModifiers(
 	modifiers: List<AttributeModifier>,

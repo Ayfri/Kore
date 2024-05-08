@@ -57,7 +57,7 @@ fun Function.particleTests() {
 				enchantment(Enchantments.SHARPNESS, 5)
 				enchantment(Enchantments.KNOCKBACK, 2)
 			}
-		}) assertsIs """particle item minecraft:diamond_sword[enchantments={levels:{"minecraft:sharpness":5,"minecraft:knockback":2}}]"""
+		}) assertsIs """particle item minecraft:diamond_sword[enchantments={"minecraft:sharpness":5,"minecraft:knockback":2}]"""
 
 		particle(Particles.ASH) assertsIs "particle minecraft:ash"
 

@@ -2,6 +2,7 @@ package io.github.ayfri.kore.arguments.components
 
 import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
 import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
 import java.util.*
 import kotlinx.serialization.Serializable
 
@@ -12,12 +13,19 @@ data class ProfileProperty(
 	var signature: String? = null,
 )
 
-@Serializable
+@Serializable(with = ProfileComponent.Companion.ProfileComponentSerializer::class)
 data class ProfileComponent(
 	var name: String,
 	var id: UUIDArgument? = null,
 	var properties: List<ProfileProperty>? = null,
-) : Component()
+) : Component() {
+	companion object {
+		data object ProfileComponentSerializer : SinglePropertySimplifierSerializer<ProfileComponent, String>(
+			ProfileComponent::class,
+			ProfileComponent::name
+		)
+	}
+}
 
 fun Components.profile(name: String, id: UUIDArgument? = null, properties: List<ProfileProperty>? = null) = apply {
 	this[ComponentTypes.PROFILE] = ProfileComponent(name, id, properties)

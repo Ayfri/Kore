@@ -4,6 +4,8 @@ import io.github.ayfri.kore.arguments.colors.RGB
 import io.github.ayfri.kore.arguments.types.resources.EffectArgument
 import io.github.ayfri.kore.arguments.types.resources.PotionArgument
 import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -12,22 +14,34 @@ data class Effect(
 	val duration: Int,
 	val amplifier: Byte,
 	var ambient: Boolean,
+	@SerialName("show_particles")
 	var showParticles: Boolean,
+	@SerialName("show_icon")
 	var showIcon: Boolean,
 )
 
-@Serializable
+@Serializable(with = PotionContentsComponent.Companion.PotionContentsComponentSerializer::class)
 data class PotionContentsComponent(
 	var potion: PotionArgument,
-	@Serializable(RGB.Companion.ColorAsDecimalSerializer::class) var customColor: RGB,
-	var customEffects: List<Effect>,
-) : Component()
+	@SerialName("custom_color")
+	@Serializable(RGB.Companion.ColorAsDecimalSerializer::class)
+	var customColor: RGB? = null,
+	@SerialName("custom_effects")
+	var customEffects: List<Effect>? = null,
+) : Component() {
+	companion object {
+		data object PotionContentsComponentSerializer : SinglePropertySimplifierSerializer<PotionContentsComponent, PotionArgument>(
+			PotionContentsComponent::class,
+			PotionContentsComponent::potion,
+		)
+	}
+}
 
-fun Components.potionContents(potion: PotionArgument, customColor: RGB, customEffects: List<Effect>) = apply {
+fun Components.potionContents(potion: PotionArgument, customColor: RGB? = null, customEffects: List<Effect>? = null) = apply {
 	this[ComponentTypes.POTION_CONTENTS] = PotionContentsComponent(potion, customColor, customEffects)
 }
 
-fun Components.potionContents(potion: PotionArgument, customColor: RGB, vararg customEffects: Effect) = apply {
+fun Components.potionContents(potion: PotionArgument, customColor: RGB? = null, vararg customEffects: Effect) = apply {
 	this[ComponentTypes.POTION_CONTENTS] = PotionContentsComponent(potion, customColor, customEffects.toList())
 }
 
@@ -43,5 +57,5 @@ fun PotionContentsComponent.customEffect(
 	showParticles: Boolean,
 	showIcon: Boolean,
 ) = apply {
-	customEffects += Effect(id, duration, amplifier, ambient, showParticles, showIcon)
+	customEffects = (customEffects ?: listOf()) + Effect(id, duration, amplifier, ambient, showParticles, showIcon)
 }

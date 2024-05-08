@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.arguments.components
 
 import kotlin.reflect.full.createType
-import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtEncoder
 import net.benwoodworth.knbt.NbtTag
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -35,14 +34,7 @@ sealed class Component {
 				when (encoder) {
 					is NbtEncoder -> {
 						val valueNbt = encoder.nbt.encodeToNbtTag(serializer as KSerializer<Component>, value)
-						// When the NBT is serialized, it's sometimes wrapped in a compound tag with the class fqname as the key.
-						if (valueNbt is NbtCompound && valueNbt.isNotEmpty()) {
-							val firstKey = valueNbt.keys.first()
-							encoder.encodeSerializableValue(
-								NbtTag.serializer(),
-								if (firstKey == value::class.qualifiedName) valueNbt.values.first() else valueNbt
-							)
-						} else encoder.encodeSerializableValue(NbtTag.serializer(), valueNbt)
+						encoder.encodeSerializableValue(NbtTag.serializer(), valueNbt)
 					}
 
 					is JsonEncoder -> {

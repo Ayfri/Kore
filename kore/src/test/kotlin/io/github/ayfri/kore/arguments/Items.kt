@@ -34,7 +34,7 @@ fun itemsTests() {
 			)
 		}
 	}
-	attributeModifiersTest.asString() assertsIs """minecraft:stone_sword[attribute_modifiers={modifiers:[{type:"minecraft:generic.scale",uuid:"${uuid.asString()}",name:"Big!",amount:1.0d,operation:"add_value"}]}]"""
+	attributeModifiersTest.asString() assertsIs """minecraft:stone_sword[attribute_modifiers=[{type:"minecraft:generic.scale",uuid:"${uuid.asString()}",name:"Big!",amount:1.0d,operation:"add_value"}]]"""
 
 	attributeModifiersTest.components!!.attributeModifiers {
 		modifier(
@@ -196,7 +196,7 @@ fun itemsTests() {
 	val dyedColorTest = leatherHelmet {
 		dyedColor(Color.AQUA)
 	}
-	dyedColorTest.asString() assertsIs """minecraft:leather_helmet[dyed_color={rgb:5636095}]"""
+	dyedColorTest.asString() assertsIs """minecraft:leather_helmet[dyed_color=5636095]"""
 
 	dyedColorTest.components!!.dyedColor(Color.AQUA, showInTooltip = true)
 	dyedColorTest.asString() assertsIs """minecraft:leather_helmet[dyed_color={rgb:5636095,show_in_tooltip:1b}]"""
@@ -204,7 +204,7 @@ fun itemsTests() {
 	val enchantmentsTest = stoneSword {
 		enchantments(mapOf(Enchantments.SHARPNESS to 5))
 	}
-	enchantmentsTest.asString() assertsIs """minecraft:stone_sword[enchantments={levels:{"minecraft:sharpness":5}}]"""
+	enchantmentsTest.asString() assertsIs """minecraft:stone_sword[enchantments={"minecraft:sharpness":5}]"""
 
 	enchantmentsTest.components!!.enchantments {
 		enchantment(Enchantments.LOOTING, 3)
@@ -316,10 +316,31 @@ fun itemsTests() {
 	}
 	potDecorationsTest.asString() assertsIs """minecraft:stone[pot_decorations=["minecraft:arms_up_pottery_sherd","minecraft:skull_pottery_sherd","minecraft:friend_pottery_sherd","minecraft:brick"]]"""
 
+	val potionContentsTest = Items.POTION {
+		potionContents(
+			Potions.AWKWARD
+		) {
+			customColor = Color.AQUA.toRGB()
+			customEffect(
+				Effects.POISON,
+				100,
+				1,
+				true,
+				true,
+				true
+			)
+		}
+	}
+
+	potionContentsTest.asString() assertsIs """minecraft:potion[potion_contents={potion:"minecraft:awkward",custom_color:5636095,custom_effects:[{id:"minecraft:poison",duration:100,amplifier:1b,ambient:1b,show_particles:1b,show_icon:1b}]}]"""
+
+	potionContentsTest.components!!.potionContents(Potions.AWKWARD)
+	potionContentsTest.asString() assertsIs """minecraft:potion[potion_contents="minecraft:awkward"]"""
+
 	val profileTest = Items.PLAYER_HEAD {
 		profile("Notch")
 	}
-	profileTest.asString() assertsIs """minecraft:player_head[profile={name:"Notch"}]"""
+	profileTest.asString() assertsIs """minecraft:player_head[profile="Notch"]"""
 
 	val randomId = randomUUID()
 	profileTest.components!!.profile("Notch", id = randomId)
@@ -349,7 +370,7 @@ fun itemsTests() {
 	val storedEnchantmentsTest = stoneSword {
 		storedEnchantments(mapOf(Enchantments.SHARPNESS to 5))
 	}
-	storedEnchantmentsTest.asString() assertsIs """minecraft:stone_sword[stored_enchantments={levels:{"minecraft:sharpness":5}}]"""
+	storedEnchantmentsTest.asString() assertsIs """minecraft:stone_sword[stored_enchantments={"minecraft:sharpness":5}]"""
 
 	storedEnchantmentsTest.components!!.storedEnchantments {
 		enchantment(Enchantments.LOOTING, 3)

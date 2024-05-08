@@ -151,9 +151,7 @@ fun DataPack.recipeTest() {
 				"id": "minecraft:enchanted_book",
 				"components": {
 					"enchantments": {
-						"levels": {
-							"minecraft:sharpness": 1
-						}
+						"minecraft:sharpness": 1
 					}
 				}
 			}

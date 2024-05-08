@@ -132,7 +132,9 @@ data class Components(
 			namingStrategy = JsonNamingStrategy.SnakeCase
 		}
 
-		val nbtSerializer = StringifiedNbt
+		val nbtSerializer = StringifiedNbt {
+			nameRootClasses = false
+		}
 
 		/**
 		 * List of all the Components that are chat components and thus must be quoted.
