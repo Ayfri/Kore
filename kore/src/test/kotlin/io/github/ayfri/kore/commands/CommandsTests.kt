@@ -9,11 +9,6 @@ import io.github.ayfri.kore.generated.Items
 import net.benwoodworth.knbt.NbtInt
 
 fun Function.commandsTests() {
-	clear() assertsIs "clear"
-	clear(self()) assertsIs "clear @s"
-	clear(self(), Items.STONE) assertsIs "clear @s minecraft:stone"
-	clear(self(), Items.STONE, 1) assertsIs "clear @s minecraft:stone 1"
-
 	debugStart() assertsIs "debug start"
 	debugStop() assertsIs "debug stop"
 

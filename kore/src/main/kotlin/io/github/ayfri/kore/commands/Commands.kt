@@ -15,9 +15,6 @@ import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.Sounds
 import io.github.ayfri.kore.utils.asArg
 
-fun Function.clear(targets: EntityArgument? = null, item: ItemArgument? = null, maxCount: Int? = null) =
-	addLine(command("clear", targets, item, int(maxCount)))
-
 fun Function.debugStart() = addLine(command("debug", literal("start")))
 fun Function.debugStop() = addLine(command("debug", literal("stop")))
 

@@ -9,6 +9,7 @@ fun runUnitTests() = dataPack("unit_tests") {
 		advancementTests()
 		attributeTests()
 		bossBarTests()
+		clearTests()
 		cloneTests()
 		damageTests()
 		dataTests()
