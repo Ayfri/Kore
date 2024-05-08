@@ -12,6 +12,7 @@ import io.github.ayfri.kore.features.loottables.LootTable
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.recipes.RecipeFile
 import io.github.ayfri.kore.features.tags.Tag
+import io.github.ayfri.kore.features.wolfvariant.WolfVariant
 import io.github.ayfri.kore.features.worldgen.biome.Biome
 import io.github.ayfri.kore.features.worldgen.configuredcarver.ConfiguredCarver
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
@@ -34,14 +35,14 @@ import io.github.ayfri.kore.pack.Filter
 import io.github.ayfri.kore.pack.Pack
 import io.github.ayfri.kore.pack.PackMCMeta
 import io.github.ayfri.kore.serializers.JsonNamingSnakeCaseStrategy
-import kotlin.io.path.Path
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.io.File
 import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import kotlin.io.path.Path
 
 @FunctionsHolder
 class DataPack(val name: String) {
@@ -73,6 +74,7 @@ class DataPack(val name: String) {
 	val structureSets = registerGenerator<StructureSet>()
 	val tags = registerGenerator<Tag<*>>()
 	val templatePools = registerGenerator<TemplatePool>()
+	val wolfVariants = registerGenerator<WolfVariant>()
 	val worldPresets = registerGenerator<WorldPreset>()
 
 	var configuration = Configuration.DEFAULT
