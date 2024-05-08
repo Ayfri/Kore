@@ -38,7 +38,8 @@ enum class MapDecoration {
 	SWAMP_HUT,
 	TAIGA_VILLAGE,
 	TARGET_POINT,
-	TARGET_X;
+	TARGET_X,
+	TRIAL_CHAMBERS;
 
 	companion object {
 		data object MapDecorationSerializer : LowercaseSerializer<MapDecoration>(entries)
