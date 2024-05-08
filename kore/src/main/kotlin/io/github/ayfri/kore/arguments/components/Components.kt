@@ -3,7 +3,6 @@ package io.github.ayfri.kore.arguments.components
 import io.github.ayfri.kore.generated.ComponentTypes
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.unescape
-import net.benwoodworth.knbt.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -14,6 +13,7 @@ import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
+import net.benwoodworth.knbt.*
 
 @Serializable(with = Components.Companion.ComponentsSerializer::class)
 data class Components(

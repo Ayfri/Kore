@@ -10,11 +10,9 @@ import io.github.ayfri.kore.features.predicates.conditions.*
 import io.github.ayfri.kore.features.predicates.predicate
 import io.github.ayfri.kore.features.predicates.sub.*
 import io.github.ayfri.kore.features.predicates.sub.entityspecific.Player
+import io.github.ayfri.kore.features.predicates.sub.item.enchantment
 import io.github.ayfri.kore.functions.function
-import io.github.ayfri.kore.generated.Blocks
-import io.github.ayfri.kore.generated.Effects
-import io.github.ayfri.kore.generated.EntityTypes
-import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.utils.set
 
 fun DataPack.predicateTests() {
@@ -169,6 +167,31 @@ fun DataPack.predicateTests() {
 							"max": 1.0
 						}
 					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	predicate("test3") {
+		matchTool {
+			item(Items.DIAMOND_PICKAXE)
+			predicates {
+				enchantments = listOf(enchantment(Enchantments.EFFICIENCY))
+			}
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:match_tool",
+			"predicate": {
+				"items": "minecraft:diamond_pickaxe",
+				"predicates": {
+					"minecraft:enchantments": [
+						{
+							"enchantment": "minecraft:efficiency"
+						}
+					]
 				}
 			}
 		}

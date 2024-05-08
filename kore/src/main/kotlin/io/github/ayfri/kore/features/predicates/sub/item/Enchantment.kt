@@ -1,4 +1,4 @@
-package io.github.ayfri.kore.features.predicates.sub
+package io.github.ayfri.kore.features.predicates.sub.item
 
 import io.github.ayfri.kore.arguments.types.resources.EnchantmentArgument
 import io.github.ayfri.kore.features.advancements.serializers.IntRangeOrIntJson
