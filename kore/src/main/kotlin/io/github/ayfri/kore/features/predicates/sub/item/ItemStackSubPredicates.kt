@@ -12,6 +12,8 @@ import net.benwoodworth.knbt.buildNbtCompound
 data class ItemStackSubPredicates(
 	@SerialName("minecraft:custom_data")
 	var customData: NbtCompound? = null,
+	@SerialName("minecraft:damage")
+	var damage: Damage? = null,
 	@SerialName("minecraft:potion_contents")
 	var potionsContents: InlinableList<EffectOrTagArgument>? = null,
 	@SerialName("minecraft:enchantments")

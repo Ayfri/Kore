@@ -11,7 +11,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ItemStack(
 	var count: IntRangeOrIntJson? = null,
-	var durability: IntRangeOrIntJson? = null,
 	var items: InlinableList<ItemOrTagArgument>? = null,
 	var components: Components? = null,
 	var tag: String? = null,
