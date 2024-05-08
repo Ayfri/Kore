@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.features.predicates.sub
 
 import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
-import io.github.ayfri.kore.features.advancements.states.State
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
@@ -12,7 +11,7 @@ import net.benwoodworth.knbt.buildNbtCompound
 data class Block(
 	var blocks: InlinableList<BlockOrTagArgument>? = null,
 	var nbt: NbtCompound? = null,
-	var state: Map<String, State<*>>? = null,
+	var state: Map<String, String>? = null,
 )
 
 fun block(block: BlockOrTagArgument, init: Block.() -> Unit = {}) = Block(blocks = listOf(block)).apply(init)
@@ -27,10 +26,10 @@ fun Block.nbt(block: NbtCompoundBuilder.() -> Unit) {
 	nbt = buildNbtCompound(block)
 }
 
-fun Block.state(key: String, value: State<*>) {
+fun Block.state(key: String, value: String) {
 	state = mapOf(key to value)
 }
 
-fun Block.states(block: MutableMap<String, State<*>>.() -> Unit) {
+fun Block.states(block: MutableMap<String, String>.() -> Unit) {
 	state = buildMap(block)
 }

@@ -20,7 +20,7 @@ data class AdvancementCriteriaSurrogate(var criteria: List<AdvancementTriggerCon
 						val criterion = entry["conditions"]!!.jsonObject
 
 						val name = criterion["name"]!!.jsonPrimitive.content
-						val conditions = criterion["conditions"]!!.jsonArray
+						val conditions = criterion["conditions"]?.jsonArray
 						val objectWithoutNameAndConditions = criterion.toMutableMap().apply {
 							remove("name")
 							remove("conditions")
@@ -29,7 +29,7 @@ data class AdvancementCriteriaSurrogate(var criteria: List<AdvancementTriggerCon
 						put(name, buildJsonObject {
 							put("trigger", triggerName)
 							put("conditions", buildJsonObject {
-								put("player", conditions)
+								conditions?.let { put("player", it) }
 								objectWithoutNameAndConditions.forEach { (key, value) ->
 									put(key, value)
 								}
