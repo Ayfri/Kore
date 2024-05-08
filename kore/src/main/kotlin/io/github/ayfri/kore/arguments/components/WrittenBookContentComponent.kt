@@ -3,7 +3,6 @@ package io.github.ayfri.kore.arguments.components
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.generated.ComponentTypes
-import net.benwoodworth.knbt.StringifiedNbt
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -26,8 +25,6 @@ data class WrittenPage(
 
 			override fun deserialize(decoder: Decoder) = error("Page deserialization is not supported.")
 			override fun serialize(encoder: Encoder, value: WrittenPage) {
-				val textAsString = StringifiedNbt.encodeToString(ChatComponents.Companion.ChatComponentsEscapedSerializer, value.text)
-
 				if (value.filtered != null || !value.single) {
 					encoder.encodeStructure(descriptor) {
 						encodeSerializableElement(
