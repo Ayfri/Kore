@@ -6,10 +6,12 @@ import io.github.ayfri.kore.arguments.types.BiomeOrTagArgument
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString
 
 @Serializable
 data class WolfVariant(
+	@Transient
 	override var fileName: String = "wolf_variant",
 	var wildTexture: String = "minecraft:entity/wolf/wolf",
 	var angryTexture: String = "minecraft:entity/wolf/wolf_angry",
