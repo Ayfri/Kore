@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.itemmodifiers.functions
 
-import io.github.ayfri.kore.arguments.components.FireworkExplosionComponent
-import io.github.ayfri.kore.arguments.components.FireworkExplosionShape
+import io.github.ayfri.kore.arguments.components.types.FireworkExplosionComponent
+import io.github.ayfri.kore.arguments.components.types.FireworkExplosionShape
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.types.Mode
 import io.github.ayfri.kore.features.itemmodifiers.types.ModeHandler

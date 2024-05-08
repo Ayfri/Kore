@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
-import io.github.ayfri.kore.arguments.components.WrittenPage
+import io.github.ayfri.kore.arguments.components.types.WrittenPage
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.PredicateAsList
 

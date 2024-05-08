@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.helpers
 
-import io.github.ayfri.kore.arguments.components.*
+import io.github.ayfri.kore.arguments.components.types.*
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.numbers.seconds
 import io.github.ayfri.kore.arguments.types.literals.allEntities

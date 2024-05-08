@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.arguments.colors.RGB
-import io.github.ayfri.kore.arguments.components.FireworkExplosionShape
+import io.github.ayfri.kore.arguments.components.types.FireworkExplosionShape
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.PredicateAsList
 import kotlinx.serialization.Serializable

@@ -3,9 +3,9 @@ package io.github.ayfri.kore.features
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.WEAPON
 import io.github.ayfri.kore.arguments.colors.Color
-import io.github.ayfri.kore.arguments.components.customName
-import io.github.ayfri.kore.arguments.components.damage
 import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
+import io.github.ayfri.kore.arguments.components.types.customName
+import io.github.ayfri.kore.arguments.components.types.damage
 import io.github.ayfri.kore.arguments.enums.MapDecoration
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs

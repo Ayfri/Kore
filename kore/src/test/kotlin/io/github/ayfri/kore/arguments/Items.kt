@@ -3,7 +3,7 @@ package io.github.ayfri.kore.arguments
 import io.github.ayfri.kore.arguments.chatcomponents.text
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
-import io.github.ayfri.kore.arguments.components.*
+import io.github.ayfri.kore.arguments.components.types.*
 import io.github.ayfri.kore.arguments.enums.Dimension
 import io.github.ayfri.kore.arguments.enums.MapDecoration
 import io.github.ayfri.kore.arguments.maths.vec3

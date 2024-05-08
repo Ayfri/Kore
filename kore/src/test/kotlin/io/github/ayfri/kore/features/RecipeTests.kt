@@ -1,9 +1,9 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
-import io.github.ayfri.kore.arguments.components.damage
-import io.github.ayfri.kore.arguments.components.enchantment
-import io.github.ayfri.kore.arguments.components.enchantments
+import io.github.ayfri.kore.arguments.components.types.damage
+import io.github.ayfri.kore.arguments.components.types.enchantment
+import io.github.ayfri.kore.arguments.components.types.enchantments
 import io.github.ayfri.kore.arguments.types.literals.allPlayers
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.recipeGive
