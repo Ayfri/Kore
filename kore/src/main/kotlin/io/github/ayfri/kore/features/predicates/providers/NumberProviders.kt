@@ -89,3 +89,10 @@ data class ScoreNumberProvider(
 	var score: String,
 	var scale: Float? = null,
 ) : NumberProviderSurrogate
+
+@Serializable
+@SerialName("minecraft:storage")
+data class StorageNumberProvider(
+	var storage: String,
+	var path: String,
+) : NumberProviderSurrogate
