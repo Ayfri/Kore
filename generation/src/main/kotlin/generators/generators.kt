@@ -38,11 +38,14 @@ suspend fun launchAllSimpleGenerators() {
 		gen(
 			"Tags", "tags", argumentClassName = "", tagsParents = mapOf(
 				"blocks" to "BlockTag",
+				"cat_variant" to "CatVariantTag",
 				"effects" to "EffectTag",
 				"fluids" to "FluidTag",
+				"frog_variant" to "FrogVariantTag",
 				"instrument" to "InstrumentTag",
 				"items" to "ItemTag",
-				"wolf_variants" to "WolfVariantTag",
+				"painting_variant" to "PaintingVariantTag",
+				"wolf_variant" to "WolfVariantTag",
 				"worldgen/biome" to "BiomeTag",
 				"worldgen/structure" to "ConfiguredStructureTag",
 			)
@@ -113,6 +116,7 @@ suspend fun launchAllSimpleGenerators() {
 					.build()
 			)
 		}),
+		gen("PaintingVariants", "painting_variant"),
 		gen("Potions", "potion"),
 		gen("StatisticTypes", "stat_type") { it.removePrefix("minecraft:") },
 		gen("VillagerTypes", "villager_type"),
