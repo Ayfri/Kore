@@ -16,6 +16,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("Recipes", "recipes"),
 		gen("TrimMaterials", "trim_materials"),
 		gen("TrimPatterns", "trim_patterns"),
+		gen("WolfVariants", "wolf_variants"),
 		gen("Biomes", "worldgen/biome"),
 		gen("BiomePresets", "worldgen/multi_noise_biome_source_parameter_list"),
 		gen("ConfiguredFeatures", "worldgen/configured_feature"),
@@ -41,6 +42,7 @@ suspend fun launchAllSimpleGenerators() {
 				"fluids" to "FluidTag",
 				"instrument" to "InstrumentTag",
 				"items" to "ItemTag",
+				"wolf_variants" to "WolfVariantTag",
 				"worldgen/biome" to "BiomeTag",
 				"worldgen/structure" to "ConfiguredStructureTag",
 			)
