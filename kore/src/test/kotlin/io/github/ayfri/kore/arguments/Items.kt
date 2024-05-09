@@ -224,6 +224,11 @@ fun itemsTests() {
 	}
 	entityDataTest.asString() assertsIs """minecraft:stone_sword[entity_data={test:"test"}]"""
 
+	val fireResistantTest = stoneSword {
+		fireResistant()
+	}
+	fireResistantTest.asString() assertsIs """minecraft:stone_sword[fire_resistant={}]"""
+
 	val fireworksTest = Items.FIREWORK_ROCKET {
 		fireworks(flightDuration = 1) {
 			explosion(FireworkExplosionShape.BURST) {
@@ -253,6 +258,27 @@ fun itemsTests() {
 	}
 	fireworkExplosionTest.asString() assertsIs """minecraft:firework_star[firework_explosion={shape:"burst",colors:[5636095],fade_colors:[0,16777215],has_trail:1b,has_flicker:1b}]"""
 
+	val foodTest = Items.COOKED_BEEF {
+		food(
+			nutrition = 10,
+			saturationModifier = 1.0f,
+		) {
+			isMeat = true
+			eatSeconds = 0.5f
+
+			effect(
+				probability = 1f,
+				id = Effects.REGENERATION,
+				duration = 100,
+				amplifier = 1,
+				ambient = true,
+				showParticles = true,
+				showIcon = true
+			)
+		}
+	}
+	foodTest.asString() assertsIs """minecraft:cooked_beef[food={nutrition:10,saturation_modifier:1.0f,is_meat:1b,eat_seconds:0.5f,effects:[{effect:{id:"minecraft:regeneration",duration:100,amplifier:1b,ambient:1b,show_particles:1b,show_icon:1b},probability:1.0f}]}]"""
+
 	val instrumentTest = Items.GOAT_HORN {
 		instrument(Instruments.CALL_GOAT_HORN)
 	}
@@ -267,6 +293,11 @@ fun itemsTests() {
 		hideAdditionalTooltip()
 	}
 	hideAdditionalTooltipTest.asString() assertsIs """minecraft:stone_sword[hide_additional_tooltip={}]"""
+
+	val hideTooltipTest = stoneSword {
+		hideTooltip()
+	}
+	hideTooltipTest.asString() assertsIs """minecraft:stone_sword[hide_tooltip={}]"""
 
 	val lockTest = stoneSword {
 		lock("test")
@@ -305,6 +336,16 @@ fun itemsTests() {
 		mapId(5)
 	}
 	mapIdTest.asString() assertsIs """minecraft:stone[map_id=5]"""
+
+	val maxDamageTest = stoneSword {
+		maxDamage(5)
+	}
+	maxDamageTest.asString() assertsIs """minecraft:stone_sword[max_damage=5]"""
+
+	val maxStackSizeTest = stone {
+		maxStackSize(5)
+	}
+	maxStackSizeTest.asString() assertsIs """minecraft:stone[max_stack_size=5]"""
 
 	val noteBlockSoundTest = Items.PLAYER_HEAD {
 		noteBlockSound(Sounds.Mob.Cow.SAY1)
@@ -352,6 +393,11 @@ fun itemsTests() {
 	}
 	profileTest.asString() assertsIs """minecraft:player_head[profile={name:"Notch",properties:[{name:"test",value:"test"},{name:"test",value:"Kore"}]}]"""
 
+	val rarityTest = stone {
+		rarity(Rarities.EPIC)
+	}
+	rarityTest.asString() assertsIs """minecraft:stone[rarity="epic"]"""
+
 	val recipesTest = stone {
 		recipes(Recipes.CRAFTING_TABLE, Recipes.FURNACE)
 	}
@@ -384,6 +430,20 @@ fun itemsTests() {
 		}
 	}
 	suspiciousStewTest.asString() assertsIs """minecraft:suspicious_stew[suspicious_stew_effects=[{id:"minecraft:poison",duration:100}]]"""
+
+	val toolTest = stoneSword {
+		tool {
+			rule(
+				speed = 0.5f,
+				correctForDrops = true,
+				Tags.Blocks.BASE_STONE_OVERWORLD,
+				Tags.Blocks.OVERWORLD_CARVER_REPLACEABLES,
+				Blocks.HAY_BLOCK
+			)
+			defaultMiningSpeed = 2.0f
+		}
+	}
+	toolTest.asString() assertsIs """minecraft:stone_sword[tool={rules:[{blocks:["#minecraft:base_stone_overworld","#minecraft:overworld_carver_replaceables","minecraft:hay_block"],speed:0.5f,correct_for_drops:1b}],default_mining_speed:2.0f}]"""
 
 	val trimTest = Items.DIAMOND_CHESTPLATE {
 		trim(TrimPatterns.SHAPER, TrimMaterials.DIAMOND)
