@@ -67,6 +67,30 @@ fun DataPack.itemModifierTests() {
 		}
 	}
 
+
+
+	itemModifier("set_attributes") {
+		setAttribute(Attributes.GENERIC_SCALE) {
+			amount = constant(0.5f)
+			operation = AttributeModifierOperation.ADD_VALUE
+			slot = listOf(EquipmentSlot.MAINHAND)
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:set_attributes",
+			"modifiers": [
+				{
+					"attribute": "minecraft:generic.scale",
+					"amount": 0.5,
+					"operation": "add_value",
+					"slot": "mainhand"
+				}
+			]
+		}
+	""".trimIndent()
+
 	itemModifier("set_components_modifier") {
 		setComponents {
 			customName("Test", color = Color.BLACK)
@@ -91,25 +115,21 @@ fun DataPack.itemModifierTests() {
 		}
 	""".trimIndent()
 
-	itemModifier("set_attributes") {
-		setAttribute(Attributes.GENERIC_SCALE) {
-			amount = constant(0.5f)
-			operation = AttributeModifierOperation.ADD_VALUE
-			slot = listOf(EquipmentSlot.MAINHAND)
+	itemModifier("toggle_tooltips") {
+		toggleTooltips {
+			toggle(true, ToggleableComponents.TRIM, ToggleableComponents.CAN_PLACE_ON)
+			toggles(ToggleableComponents.DYED_COLOR to false)
 		}
 	}
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_attributes",
-			"modifiers": [
-				{
-					"attribute": "minecraft:generic.scale",
-					"amount": 0.5,
-					"operation": "add_value",
-					"slot": "mainhand"
-				}
-			]
+			"function": "minecraft:toggle_tooltips",
+			"toggles": {
+				"trim": true,
+				"can_place_on": true,
+				"dyed_color": false
+			}
 		}
 	""".trimIndent()
 }
