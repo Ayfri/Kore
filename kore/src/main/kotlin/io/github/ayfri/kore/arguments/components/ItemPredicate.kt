@@ -92,6 +92,13 @@ data class ItemPredicate(
 		}
 	}
 
+	fun setPartial(component: ComponentTypes) = setPartial(component.name.lowercase())
+	fun setPartial(name: String) {
+		val component = componentsAlternatives[name]?.lastOrNull() ?: error("The component '$name' is not present, can't make it partial.")
+		componentsAlternatives[name]?.removeLastOrNull()
+		componentsAlternatives.getOrPut("~$name", ::mutableListOf).add(component)
+	}
+
 	override fun asNbt(): NbtCompound {
 		val classicComponents = componentsAlternatives.filterValues { it !is CustomComponent }
 		val customComponents = componentsAlternatives.filterValues { it is CustomComponent } as Map<String, List<CustomComponent>>
@@ -141,9 +148,10 @@ data class ItemPredicate(
 
 		val entries = mutableListOf<ComponentEntry>()
 		for ((key, values) in validEntries) {
+			val keyName = key.removePrefix("~").removePrefix("!")
 			entries += values.nbtList.map {
 				val value = when {
-					key in CHAT_COMPONENTS_COMPONENTS_TYPES -> {
+					keyName in CHAT_COMPONENTS_COMPONENTS_TYPES -> {
 						val unescaped = it.toString().unescape()
 							// The quotes are added by the serializer, we just need to unescape the string.
 							.replace(Regex("\"\'\"(.+?)\"\'\"", RegexOption.DOT_MATCHES_ALL), "'\"$1\"'")
@@ -157,7 +165,7 @@ data class ItemPredicate(
 				}
 
 				ComponentEntry(
-					key = key.removePrefix("~").removePrefix("!"),
+					key = keyName,
 					negated = "!" in key,
 					sign = if ("~" in key) "~" else "=",
 					value = value
@@ -167,13 +175,13 @@ data class ItemPredicate(
 
 		if (entries.isEmpty()) return ""
 
-		return entries.groupBy(ComponentEntry::key).values.map { values ->
+		return entries.groupBy(ComponentEntry::key).values.joinToString(",", prefix = "[", postfix = "]") { values ->
 			values.joinToString("|") { (key, negated, sign, value) ->
 				val negation = if (negated) "!" else ""
 				val valueString = value?.let { "$sign$value" } ?: ""
 				"$negation$key$valueString"
 			}
-		}.joinToString(",", prefix = "[", postfix = "]")
+		}
 	}
 
 	override fun toString(): String {

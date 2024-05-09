@@ -4,7 +4,18 @@ import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
 import io.github.ayfri.kore.generated.ComponentTypes
+import net.benwoodworth.knbt.NbtCompoundBuilder
+import net.benwoodworth.knbt.buildNbtCompound
 import kotlin.reflect.full.memberProperties
+
+fun itemPredicate(block: ItemPredicate.() -> Unit) = ItemPredicate().apply(block)
+fun ItemArgument.predicate(block: ItemPredicate.() -> Unit) = ItemPredicate(this).apply(block)
+
+/**
+ * Just an infix method to make the code more readable and so you can use `or` instead of adding one line for each predicate.
+ */
+infix fun ItemPredicate.or(predicate: ItemPredicate) = this
+
 
 fun ItemPredicate.count(range: IntRange) = apply {
 	countSubPredicates += rangeOrInt(range) to false
@@ -130,8 +141,52 @@ fun ItemPredicate.subPredicates(block: ItemStackSubPredicates.() -> Unit) = appl
 }
 
 /**
- * Just an infix method to make the code more readable and so you can use `or` instead of adding one line for each predicate.
+ * Set the components as partial.
+ *
+ * Example:
+ * ```kotlin
+ * itemPredicate {
+ *   customData {
+ *     this["test"] = 1
+ *   }
+ *   partial(ComponentTypes.CUSTOM_DATA)
+ * }
+ * ```
+ * Will be serialized as: `*[custom_data~{test:1}]`
  */
-infix fun ItemPredicate.or(predicate: ItemPredicate) = this
-fun ItemArgument.predicate(block: ItemPredicate.() -> Unit) = ItemPredicate(this).apply(block)
-fun itemPredicate(block: ItemPredicate.() -> Unit) = ItemPredicate().apply(block)
+fun ItemPredicate.partial(vararg component: ComponentTypes) = component.forEach(::setPartial)
+
+/**
+ * Set the components as partial.
+ *
+ * Example:
+ * ```kotlin
+ * itemPredicate {
+ *   customData {
+ *     this["test"] = 1
+ *   }
+ *   partial("custom_data")
+ * }
+ * ```
+ * Will be serialized as: `*[custom_data~{test:1}]`
+ */
+fun ItemPredicate.partial(vararg component: String) = component.forEach(::setPartial)
+
+
+/**
+ * Create a custom component as a partial.
+ * This is useful when you want to match a classic component but skipping some required fields of the class.
+ *
+ * Example:
+ * ```kotlin
+ * itemPredicate {
+ *   buildPartial("my_data") {
+ *     this["test"] = 1
+ *   }
+ * }
+ * ```
+ * Will be serialized as: `*[my_data~{test:1}]`
+ */
+fun ItemPredicate.buildPartial(name: String, nbtBuilder: NbtCompoundBuilder.() -> Unit) = apply {
+	this["~$name"] = buildNbtCompound(nbtBuilder)
+}

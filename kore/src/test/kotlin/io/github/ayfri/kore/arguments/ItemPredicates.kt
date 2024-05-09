@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.arguments
 
 import io.github.ayfri.kore.arguments.components.*
+import io.github.ayfri.kore.arguments.components.types.customData
 import io.github.ayfri.kore.arguments.components.types.damage
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.assertions.assertsIs
@@ -9,6 +10,7 @@ import io.github.ayfri.kore.features.predicates.sub.item.potionsContents
 import io.github.ayfri.kore.generated.ComponentTypes
 import io.github.ayfri.kore.generated.Effects
 import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.utils.set
 
 fun itemPredicatesTests() {
 	val countTest = Items.STONE.predicate {
@@ -69,4 +71,22 @@ fun itemPredicatesTests() {
 	}
 
 	multipleComponentTest.toString() assertsIs """minecraft:stone[damage=1|damage=2|!damage=4]"""
+
+
+	val partialComponentTest = Items.STONE.predicate {
+		customData {
+			this["test"] = 1
+		}
+		partial(ComponentTypes.CUSTOM_DATA)
+	}
+
+	partialComponentTest.toString() assertsIs """minecraft:stone[custom_data~{test:1}]"""
+
+	val customPartialDataComponent = Items.STONE.predicate {
+		buildPartial("my_data") {
+			this["value"] = "test"
+		}
+	}
+
+	customPartialDataComponent.toString() assertsIs """minecraft:stone[my_data~{value:"test"}]"""
 }
