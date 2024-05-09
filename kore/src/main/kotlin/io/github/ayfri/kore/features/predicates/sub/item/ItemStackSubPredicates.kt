@@ -26,6 +26,10 @@ fun ItemStackSubPredicates.customData(block: NbtCompoundBuilder.() -> Unit) {
 	customData = buildNbtCompound(block)
 }
 
+fun ItemStackSubPredicates.damage(block: Damage.() -> Unit) {
+	damage = Damage().apply(block)
+}
+
 fun ItemStackSubPredicates.enchantments(vararg enchantments: Enchantment) {
 	this.enchantments = enchantments.toList()
 }

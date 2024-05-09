@@ -5,6 +5,4 @@ import io.github.ayfri.kore.utils.nbt
 import kotlinx.serialization.Serializable
 
 @Serializable(with = CustomComponent.Companion.CustomComponentSerializer::class)
-class EmptyComponent : CustomComponent() {
-	override val nbt = nbt {}
-}
+class EmptyComponent : CustomComponent(nbt {})

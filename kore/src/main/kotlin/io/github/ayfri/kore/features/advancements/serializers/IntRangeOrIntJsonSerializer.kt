@@ -21,14 +21,14 @@ typealias IntRangeOrIntJson = @Serializable(with = IntRangeOrIntJsonSerializer::
 
 object IntRangeOrIntJsonSerializer : KSerializer<IntRangeOrInt> {
 	override val descriptor = buildClassSerialDescriptor("IntRangeOrInt") {
-		element<Int>("max")
 		element<Int>("min")
+		element<Int>("max")
 	}
 
 	override fun serialize(encoder: Encoder, value: IntRangeOrInt) = when {
 		value.range != null -> encoder.encodeStructure(descriptor) {
-			encodeIntElement(PrimitiveSerialDescriptor("min", PrimitiveKind.INT), 0, value.range.start!!)
-			encodeIntElement(PrimitiveSerialDescriptor("max", PrimitiveKind.INT), 1, value.range.end!!)
+			encodeIntElement(descriptor, 0, value.range.start!!)
+			encodeIntElement(descriptor, 1, value.range.end!!)
 		}
 
 		else -> encoder.encodeInt(value.int!!)

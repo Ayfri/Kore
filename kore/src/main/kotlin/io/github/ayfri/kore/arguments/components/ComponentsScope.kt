@@ -7,39 +7,44 @@ import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.unescape
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonObject
-import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.NbtCompoundBuilder
+import net.benwoodworth.knbt.NbtTag
+import net.benwoodworth.knbt.encodeToNbtTag
 
 abstract class ComponentsScope {
-	val components: MutableMap<String, Component> = mutableMapOf()
+	open val components: MutableMap<String, Component> = mutableMapOf()
 
-	val lastAddedComponentName: String?
+	open val lastAddedComponentName: String?
 		get() = components.keys.lastOrNull()
 
-	val lastAddedComponent: Component?
+	open val lastAddedComponent: Component?
 		get() = components.values.lastOrNull()
 
-	fun addComponent(name: String, nbt: NbtTag) = components.set(name, object : CustomComponent() {
-		override val nbt = nbt
-		override fun toString() = StringifiedNbt.encodeToString(nbt)
-	})
+	fun addComponent(name: String, nbt: NbtTag) {
+		this[name] = CustomComponent(nbt)
+	}
 
 	fun addComponent(name: String, block: NbtCompoundBuilder.() -> Unit) = addComponent(name, nbt(block))
 
-	operator fun get(name: String) = components[name]
+	open operator fun get(name: String) = components[name]
 
-	operator fun set(name: String, component: Component) = run { components[name] = component }
+	open operator fun set(name: String, component: Component) = run { components[name] = component }
 	operator fun set(name: String, nbt: NbtTag) = addComponent(name, nbt)
 
-	operator fun set(name: ComponentTypes, component: Component) = run { components[name.name.lowercase()] = component }
-	operator fun set(name: ComponentTypes, nbt: NbtTag) = addComponent(name.name.lowercase(), nbt)
+	operator fun set(name: ComponentTypes, component: Component) {
+		this[name.name.lowercase()] = component
+	}
 
+	operator fun set(name: ComponentTypes, nbt: NbtTag) {
+		this[name.name.lowercase()] = nbt
+	}
 
-	fun asNbt(): NbtCompound {
+	open fun asNbt(): NbtCompound {
 		val classicComponents = components.filterValues { it !is CustomComponent }
 		val customComponents = components.filterValues { it is CustomComponent } as Map<String, CustomComponent>
 
@@ -57,7 +62,7 @@ abstract class ComponentsScope {
 		}
 	}
 
-	fun asJson(): JsonObject {
+	open fun asJson(): JsonObject {
 		val classicComponents = components.filterValues { it !is CustomComponent }
 		val customComponents = components.filterValues { it is CustomComponent } as Map<String, CustomComponent>
 
