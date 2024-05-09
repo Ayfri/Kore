@@ -2,6 +2,7 @@ package io.github.ayfri.kore.commands.execute
 
 import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.ItemSlot
+import io.github.ayfri.kore.arguments.components.ItemPredicate
 import io.github.ayfri.kore.arguments.enums.Relation
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.numbers.ranges.IntRangeOrInt
@@ -11,7 +12,6 @@ import io.github.ayfri.kore.arguments.types.*
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
-import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.arguments.types.resources.PredicateArgument
 import io.github.ayfri.kore.arguments.types.resources.worldgen.DimensionArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
@@ -55,8 +55,8 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 
 	fun entity(target: EntityArgument) = addArguments(listOf(literal("entity"), ex.targetArg(target)))
 
-	fun items(source: ContainerArgument, slots: ItemSlot, itemPredicate: ItemArgument) =
-		addArguments(listOf(literal("items"), source, slots, itemPredicate))
+	fun items(source: ContainerArgument, slots: ItemSlot, itemPredicate: ItemPredicate) =
+		addArguments(listOf(literal("items"), source, slots, literal(itemPredicate.toString())))
 
 	fun function(function: FunctionArgument) = addArguments(listOf(literal("function"), function))
 

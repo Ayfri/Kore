@@ -2,6 +2,7 @@ package io.github.ayfri.kore.helpers.inventorymanager
 
 import io.github.ayfri.kore.arguments.CONTAINER
 import io.github.ayfri.kore.arguments.ItemSlotType
+import io.github.ayfri.kore.arguments.components.predicate
 import io.github.ayfri.kore.arguments.components.types.customData
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.types.ContainerArgument
@@ -61,7 +62,7 @@ data class SlotEventListener(
 		is EntityArgument -> items {
 			fun executeIfItem(index: Int) = execute {
 				ifCondition {
-					items(fromContainer, ItemSlotType.fromIndex(index, true), item)
+					items(fromContainer, ItemSlotType.fromIndex(index, true), item.predicate())
 				}
 
 				run {

@@ -8,8 +8,8 @@ import net.benwoodworth.knbt.NbtCompoundBuilder
 import net.benwoodworth.knbt.buildNbtCompound
 import kotlin.reflect.full.memberProperties
 
-fun itemPredicate(block: ItemPredicate.() -> Unit) = ItemPredicate().apply(block)
-fun ItemArgument.predicate(block: ItemPredicate.() -> Unit) = ItemPredicate(this).apply(block)
+fun itemPredicate(block: ItemPredicate.() -> Unit = {}) = ItemPredicate().apply(block)
+fun ItemArgument.predicate(block: ItemPredicate.() -> Unit = {}) = ItemPredicate(this).apply(block)
 
 /**
  * Just an infix method to make the code more readable and so you can use `or` instead of adding one line for each predicate.

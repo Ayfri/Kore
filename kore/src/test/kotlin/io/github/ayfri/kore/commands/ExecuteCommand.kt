@@ -2,6 +2,7 @@ package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.PLAYER
 import io.github.ayfri.kore.arguments.colors.Color
+import io.github.ayfri.kore.arguments.components.predicate
 import io.github.ayfri.kore.arguments.enums.DataType
 import io.github.ayfri.kore.arguments.enums.Dimension
 import io.github.ayfri.kore.arguments.enums.HeightMap
@@ -136,7 +137,7 @@ fun Function.executeTests() {
 			data(self(), "test")
 			dimension(Dimension.THE_END)
 			entity(testEntity.selector)
-			items(vec3(), PLAYER.CURSOR, Items.AIR)
+			items(vec3(), PLAYER.CURSOR, Items.AIR.predicate())
 			function(FunctionArgument("test", datapack.name))
 			loaded(vec3(-2, -2, -2))
 			predicate("test")
