@@ -4,14 +4,13 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.wolfvariant.wolfVariant
 import io.github.ayfri.kore.generated.Biomes
-import io.github.ayfri.kore.generated.Tags
 
 fun DataPack.wolfVariantTests() {
 	wolfVariant("test_wolf_variant") {
 		wildTexture = "my_datapack:entity/cute_wolf/wolf"
 		angryTexture = "my_datapack:entity/cute_wolf/wolf_angry"
 		tameTexture = "my_datapack:entity/cute_wolf/wolf_tame"
-		biomes = listOf(Biomes.OCEAN, Tags.Worldgen.Biome.IS_MOUNTAIN)
+		biomes = listOf(Biomes.OCEAN, Biomes.SNOWY_SLOPES)
 	}
 
 	wolfVariants.last() assertsIs """
@@ -21,7 +20,7 @@ fun DataPack.wolfVariantTests() {
 			"tame_texture": "my_datapack:entity/cute_wolf/wolf_tame",
 			"biomes": [
 				"minecraft:ocean",
-				"#minecraft:worldgen/biome/is_mountain"
+				"minecraft:snowy_slopes"
 			]
 		}
 	""".trimIndent()

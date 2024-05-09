@@ -6,11 +6,11 @@ import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.commands.Command
 import io.github.ayfri.kore.utils.TestDataPack
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.exists
-import org.intellij.lang.annotations.Language
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import org.intellij.lang.annotations.Language
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.exists
 
 @OptIn(ExperimentalSerializationApi::class)
 private val jsonStringifier = Json {
