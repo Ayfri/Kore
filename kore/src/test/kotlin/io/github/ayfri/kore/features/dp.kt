@@ -25,6 +25,7 @@ fun featuresTests() = testDataPack("features_tests") {
 	noiseSettingsTests()
 	placedFeatureTests()
 	predicateTests()
+	predicateEntityTypeSpecificTests()
 	processorListTests()
 	recipeTest()
 	structureTests()
