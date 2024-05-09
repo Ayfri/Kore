@@ -15,7 +15,7 @@ data class SetFireworks(
 	var explosions: List<FireworkExplosionComponent> = emptyList(),
 ) : ItemFunction(), ModeHandler {
 	@Serializable
-	override lateinit var mode: Mode
+	override var mode: Mode = Mode.REPLACE_ALL
 
 	@Serializable
 	override var offset: Int? = null

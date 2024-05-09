@@ -13,6 +13,7 @@ import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.commands.items
 import io.github.ayfri.kore.features.itemmodifiers.functions.*
 import io.github.ayfri.kore.features.itemmodifiers.itemModifier
+import io.github.ayfri.kore.features.itemmodifiers.types.Mode
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
 import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
 import io.github.ayfri.kore.features.predicates.providers.constant
@@ -67,8 +68,6 @@ fun DataPack.itemModifierTests() {
 		}
 	}
 
-
-
 	itemModifier("set_attributes") {
 		setAttribute(Attributes.GENERIC_SCALE) {
 			amount = constant(0.5f)
@@ -112,6 +111,49 @@ fun DataPack.itemModifierTests() {
 				"!test": {},
 				"!test2": {}
 			}
+		}
+	""".trimIndent()
+
+	itemModifier("set_lore") {
+		setLore {
+			lore("Test", color = Color.BLACK)
+			lore("Test2")
+			mode(Mode.INSERT, 0)
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:set_lore",
+			"lore": [
+				{
+					"text": "Test",
+					"color": "black",
+					"type": "text"
+				},
+				"Test2"
+			],
+			"mode": "insert",
+			"offset": 0
+		}
+	""".trimIndent()
+
+	itemModifier("set_written_book_pages") {
+		setWrittenBookPages {
+			page("test", filtered = "test2")
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:set_written_book_pages",
+			"pages": [
+				{
+					"text": "test",
+					"filtered": "test2"
+				}
+			],
+			"mode": "replace_all"
 		}
 	""".trimIndent()
 

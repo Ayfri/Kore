@@ -9,7 +9,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
-import kotlinx.serialization.descriptors.serialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.encodeStructure
@@ -22,20 +21,23 @@ data class WrittenPage(
 ) {
 	companion object {
 		object WrittenPageSerializer : KSerializer<WrittenPage> {
-			override val descriptor = serialDescriptor<ChatComponents>()
+			override val descriptor = buildClassSerialDescriptor("WrittenPage") {
+				element<ChatComponents>("text")
+				element<ChatComponents?>("filtered")
+			}
 
 			override fun deserialize(decoder: Decoder) = error("Page deserialization is not supported.")
 			override fun serialize(encoder: Encoder, value: WrittenPage) {
 				if (value.filtered != null || !value.single) {
 					encoder.encodeStructure(descriptor) {
 						encodeSerializableElement(
-							serialDescriptor<ChatComponents>(),
+							descriptor,
 							0,
 							ChatComponents.Companion.ChatComponentsAsListEscapedSerializer,
 							value.text
 						)
 						if (value.filtered != null) encodeSerializableElement(
-							serialDescriptor<ChatComponents>(),
+							descriptor,
 							1,
 							ChatComponents.Companion.ChatComponentsAsListEscapedSerializer,
 							value.filtered!!

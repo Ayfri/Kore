@@ -14,7 +14,7 @@ data class SetWritableBookPages(
 	var generation: Int? = null,
 ) : ItemFunction(), ModeHandler {
 	@Serializable
-	override lateinit var mode: Mode
+	override var mode: Mode = Mode.REPLACE_ALL
 
 	@Serializable
 	override var offset: Int? = null
