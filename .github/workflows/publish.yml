@@ -14,17 +14,17 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Java
-        uses: actions/setup-java@v3
-
+        uses: actions/setup-java@v4
         with:
-          java-version: 17
-          distribution: temurin
+          cache: gradle
+          distribution: 'temurin'
+          java-version: 21
 
       - name: Grant execute permission for Gradle
         run: chmod +x ./gradlew
 
       - name: Gradle (Publish)
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/actions/setup-gradle@v3
         env:
           ORG_GRADLE_PROJECT_signingKey: "${{ secrets.GPG_KEY }}"
           ORG_GRADLE_PROJECT_signingPassword: "${{ secrets.GPG_PASSWORD }}"
@@ -38,15 +38,13 @@ jobs:
           arguments: publishToSonatype closeSonatypeStagingRepository --no-parallel
 
       - name: Upload artifact (Main JARs)
-        uses: actions/upload-artifact@v3
-
+        uses: actions/upload-artifact@v4
         with:
           name: JARs (Main)
           path: kore/build/libs/*.jar
 
       - name: Upload artifact (OOP JARs)
-        uses: actions/upload-artifact@v3
-
+        uses: actions/upload-artifact@v4
         with:
           name: JARs (Modules)
-          path: oop/*/build/libs/*.jar
+          path: oop/build/libs/*.jar
