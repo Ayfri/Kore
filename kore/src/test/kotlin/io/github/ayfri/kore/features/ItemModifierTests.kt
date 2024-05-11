@@ -9,14 +9,12 @@ import io.github.ayfri.kore.arguments.components.types.damage
 import io.github.ayfri.kore.arguments.enums.MapDecoration
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
-import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.commands.items
 import io.github.ayfri.kore.features.itemmodifiers.functions.*
 import io.github.ayfri.kore.features.itemmodifiers.itemModifier
 import io.github.ayfri.kore.features.itemmodifiers.types.Mode
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
 import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
-import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Attributes
 import io.github.ayfri.kore.generated.ComponentTypes
@@ -91,10 +89,9 @@ fun DataPack.itemModifierTests() {
 	""".trimIndent()
 
 	itemModifier("set_attributes") {
-		setAttribute(Attributes.GENERIC_SCALE) {
-			amount = constant(0.5f)
-			operation = AttributeModifierOperation.ADD_VALUE
-			slot = listOf(EquipmentSlot.MAINHAND)
+		setAttributes {
+			attribute(Attributes.GENERIC_SCALE, 0.5f, slot = listOf(EquipmentSlot.MAINHAND))
+			replace = false
 		}
 	}
 
@@ -108,7 +105,8 @@ fun DataPack.itemModifierTests() {
 					"operation": "add_value",
 					"slot": "mainhand"
 				}
-			]
+			],
+			"replace": false
 		}
 	""".trimIndent()
 
