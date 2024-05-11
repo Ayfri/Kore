@@ -138,6 +138,17 @@ fun DataPack.itemModifierTests() {
 		}
 	""".trimIndent()
 
+	itemModifier("set_ominous_bottle_amplifier") {
+		setOminousBottleAmplifier(5)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:set_ominous_bottle_amplifier",
+			"amplifier": 5
+		}
+	""".trimIndent()
+
 	itemModifier("set_written_book_pages") {
 		setWrittenBookPages {
 			page("test", filtered = "test2")
