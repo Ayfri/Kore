@@ -18,28 +18,44 @@ enum class CopyComponentsSource {
 @Serializable
 data class CopyComponents(
 	override var conditions: PredicateAsList? = null,
-	val source: CopyComponentsSource = CopyComponentsSource.BLOCK_ENTITY,
-	val components: List<String> = emptyList(),
+	var source: CopyComponentsSource = CopyComponentsSource.BLOCK_ENTITY,
+	var include: List<String> = emptyList(),
+	var exclude: List<String> = emptyList(),
 ) : ItemFunction()
 
 fun ItemModifier.copyComponents(
-	components: List<String> = emptyList(),
+	include: List<ComponentTypes> = emptyList(),
+	exclude: List<ComponentTypes> = emptyList(),
 	source: CopyComponentsSource = CopyComponentsSource.BLOCK_ENTITY,
+	block: CopyComponents.() -> Unit = {},
 ) {
-	modifiers += CopyComponents(source = source, components = components)
+	modifiers += CopyComponents(
+		source = source,
+		include = include.map { "minecraft:${it.name.lowercase()}" },
+		exclude = exclude.map { "minecraft:${it.name.lowercase()}" }
+	).apply(block)
 }
 
-@JvmName("copyComponentTypes")
-fun ItemModifier.copyComponents(
-	components: List<ComponentTypes>,
-	source: CopyComponentsSource = CopyComponentsSource.BLOCK_ENTITY,
-) {
-	modifiers += CopyComponents(source = source, components = components.map { it.name.lowercase() })
-}
-
-fun ItemModifier.copyComponents(
+fun ItemModifier.copyComponentsInclude(
 	vararg components: ComponentTypes,
 	source: CopyComponentsSource = CopyComponentsSource.BLOCK_ENTITY,
+	block: CopyComponents.() -> Unit = {},
 ) {
-	modifiers += CopyComponents(source = source, components = components.map { it.name.lowercase() })
+	modifiers += CopyComponents(source = source, include = components.map { "minecraft:${it.name.lowercase()}" }).apply(block)
+}
+
+fun ItemModifier.copyComponentsExclude(
+	vararg components: ComponentTypes,
+	source: CopyComponentsSource = CopyComponentsSource.BLOCK_ENTITY,
+	block: CopyComponents.() -> Unit = {},
+) {
+	modifiers += CopyComponents(source = source, exclude = components.map { "minecraft:${it.name.lowercase()}" }).apply(block)
+}
+
+fun CopyComponents.include(vararg components: ComponentTypes) {
+	include = components.map { "minecraft:${it.name.lowercase()}" }
+}
+
+fun CopyComponents.exclude(vararg components: ComponentTypes) {
+	exclude = components.map { "minecraft:${it.name.lowercase()}" }
 }

@@ -19,6 +19,7 @@ import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Attributes
+import io.github.ayfri.kore.generated.ComponentTypes
 import io.github.ayfri.kore.generated.Tags
 
 fun DataPack.itemModifierTests() {
@@ -67,6 +68,27 @@ fun DataPack.itemModifierTests() {
 			modify(self(), WEAPON.MAINHAND, modifier)
 		}
 	}
+
+	itemModifier("copy_components") {
+		copyComponents {
+			exclude(ComponentTypes.FOOD, ComponentTypes.FIREWORKS)
+			include(ComponentTypes.BLOCK_ENTITY_DATA)
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:copy_components",
+			"source": "block_entity",
+			"include": [
+				"minecraft:block_entity_data"
+			],
+			"exclude": [
+				"minecraft:food",
+				"minecraft:fireworks"
+			]
+		}
+	""".trimIndent()
 
 	itemModifier("set_attributes") {
 		setAttribute(Attributes.GENERIC_SCALE) {
@@ -135,6 +157,26 @@ fun DataPack.itemModifierTests() {
 			],
 			"mode": "insert",
 			"offset": 0
+		}
+	""".trimIndent()
+
+	itemModifier("set_name") {
+		setName("Test", color = Color.BLACK) {
+			target = SetNameTarget.CUSTOM_NAME
+			entity = Source.THIS
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:set_name",
+			"entity": "this",
+			"name": {
+				"text": "Test",
+				"color": "black",
+				"type": "text"
+			},
+			"target": "custom_name"
 		}
 	""".trimIndent()
 
