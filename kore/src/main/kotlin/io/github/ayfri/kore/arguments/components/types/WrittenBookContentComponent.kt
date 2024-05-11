@@ -15,14 +15,14 @@ import kotlinx.serialization.encoding.encodeStructure
 
 @Serializable(WrittenPage.Companion.WrittenPageSerializer::class)
 data class WrittenPage(
-	var text: ChatComponents,
+	var raw: ChatComponents,
 	var filtered: ChatComponents? = null,
 	var single: Boolean = true,
 ) {
 	companion object {
 		object WrittenPageSerializer : KSerializer<WrittenPage> {
 			override val descriptor = buildClassSerialDescriptor("WrittenPage") {
-				element<ChatComponents>("text")
+				element<ChatComponents>("raw")
 				element<ChatComponents?>("filtered")
 			}
 
@@ -34,7 +34,7 @@ data class WrittenPage(
 							descriptor,
 							0,
 							ChatComponents.Companion.ChatComponentsAsListEscapedSerializer,
-							value.text
+							value.raw
 						)
 						if (value.filtered != null) encodeSerializableElement(
 							descriptor,
@@ -44,7 +44,7 @@ data class WrittenPage(
 						)
 					}
 				} else {
-					encoder.encodeSerializableValue(ChatComponents.Companion.ChatComponentsEscapedSerializer, value.text)
+					encoder.encodeSerializableValue(ChatComponents.Companion.ChatComponentsEscapedSerializer, value.raw)
 				}
 			}
 		}

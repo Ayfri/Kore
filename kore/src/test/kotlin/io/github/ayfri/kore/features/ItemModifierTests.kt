@@ -200,7 +200,7 @@ fun DataPack.itemModifierTests() {
 			"function": "minecraft:set_written_book_pages",
 			"pages": [
 				{
-					"text": "test",
+					"raw": "test",
 					"filtered": "test2"
 				}
 			],

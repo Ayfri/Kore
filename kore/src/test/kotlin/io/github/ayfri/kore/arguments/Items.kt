@@ -476,7 +476,7 @@ fun itemsTests() {
 			page("test2", "test3")
 		}
 	}
-	writableBookTest.asString() assertsIs """minecraft:writable_book[writable_book_content={pages:[{text:"test"},{text:"test2",filtered:"test3"}]}]"""
+	writableBookTest.asString() assertsIs """minecraft:writable_book[writable_book_content={pages:[{raw:"test"},{raw:"test2",filtered:"test3"}]}]"""
 
 	val writtenBookTest = Items.WRITTEN_BOOK {
 		writtenBookContent(

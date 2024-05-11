@@ -13,14 +13,14 @@ import kotlinx.serialization.encoding.encodeStructure
 
 @Serializable(WritablePage.Companion.WritablePageSerializer::class)
 data class WritablePage(
-	var text: String,
+	var raw: String,
 	var filtered: String? = null,
 	var single: Boolean = true,
 ) {
 	companion object {
 		object WritablePageSerializer : KSerializer<WritablePage> {
 			override val descriptor = buildClassSerialDescriptor("Page") {
-				element<String>("text")
+				element<String>("raw")
 				element<String>("filtered")
 			}
 
@@ -28,11 +28,11 @@ data class WritablePage(
 			override fun serialize(encoder: Encoder, value: WritablePage) {
 				if (value.filtered != null || !value.single) {
 					encoder.encodeStructure(descriptor) {
-						encodeStringElement(descriptor, 0, value.text)
+						encodeStringElement(descriptor, 0, value.raw)
 						if (value.filtered != null) encodeStringElement(descriptor, 1, value.filtered!!)
 					}
 				} else {
-					encoder.encodeString(value.text)
+					encoder.encodeString(value.raw)
 				}
 			}
 		}
