@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.features.predicates.sub.entityspecific
 
+import io.github.ayfri.kore.features.predicates.sub.Entity
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
@@ -25,3 +26,7 @@ enum class TropicalFishVariants {
 
 @Serializable
 data class TropicalFish(var variant: TropicalFishVariants? = null) : EntityTypeSpecific()
+
+fun Entity.tropicalFishTypeSpecific(variant: TropicalFishVariants? = null, block: TropicalFish.() -> Unit = {}) = apply {
+	typeSpecific = TropicalFish(variant).apply(block)
+}

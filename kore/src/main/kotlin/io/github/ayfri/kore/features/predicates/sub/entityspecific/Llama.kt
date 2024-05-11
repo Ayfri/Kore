@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.features.predicates.sub.entityspecific
 
+import io.github.ayfri.kore.features.predicates.sub.Entity
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
@@ -17,3 +18,7 @@ enum class LlamaVariants {
 
 @Serializable
 data class Llama(var variant: LlamaVariants? = null) : EntityTypeSpecific()
+
+fun Entity.llamaTypeSpecific(variant: LlamaVariants? = null, block: Llama.() -> Unit = {}) = apply {
+	typeSpecific = Llama(variant).apply(block)
+}

@@ -11,5 +11,5 @@ data class Painting(
 ) : EntityTypeSpecific(), VariantEntityTypeSpecific<PaintingVariantOrTagArgument>
 
 fun Entity.paintingTypeSpecific(vararg variants: PaintingVariantOrTagArgument, block: Painting.() -> Unit = {}) = apply {
-	this.typeSpecific = Painting(variants.toList()).apply(block)
+	typeSpecific = Painting(variants.toList()).apply(block)
 }

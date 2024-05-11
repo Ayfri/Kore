@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.features.predicates.sub.entityspecific
 
+import io.github.ayfri.kore.features.predicates.sub.Entity
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
@@ -20,3 +21,7 @@ enum class RabbitVariants {
 
 @Serializable
 data class Rabbit(var variant: RabbitVariants? = null) : EntityTypeSpecific()
+
+fun Entity.rabbitTypeSpecific(variant: RabbitVariants? = null, block: Rabbit.() -> Unit = {}) = apply {
+	typeSpecific = Rabbit(variant).apply(block)
+}

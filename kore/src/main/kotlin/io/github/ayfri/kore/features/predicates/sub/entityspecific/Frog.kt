@@ -11,5 +11,5 @@ data class Frog(
 ) : EntityTypeSpecific(), VariantEntityTypeSpecific<FrogVariantOrTagArgument>
 
 fun Entity.frogTypeSpecific(vararg variants: FrogVariantOrTagArgument, block: Frog.() -> Unit = {}) = apply {
-	this.typeSpecific = Frog(variants.toList()).apply(block)
+	typeSpecific = Frog(variants.toList()).apply(block)
 }

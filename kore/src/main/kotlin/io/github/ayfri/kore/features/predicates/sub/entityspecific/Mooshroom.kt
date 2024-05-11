@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.features.predicates.sub.entityspecific
 
+import io.github.ayfri.kore.features.predicates.sub.Entity
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
@@ -17,3 +18,7 @@ enum class MooshroomVariants {
 
 @Serializable
 data class Mooshroom(var variant: MooshroomVariants? = null) : EntityTypeSpecific()
+
+fun Entity.mooshroomTypeSpecific(variant: MooshroomVariants? = null, block: Mooshroom.() -> Unit = {}) = apply {
+	typeSpecific = Mooshroom(variant).apply(block)
+}

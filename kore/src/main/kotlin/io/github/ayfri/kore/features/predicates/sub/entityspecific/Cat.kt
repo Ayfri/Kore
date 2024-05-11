@@ -11,5 +11,5 @@ data class Cat(
 ) : EntityTypeSpecific(), VariantEntityTypeSpecific<CatVariantOrTagArgument>
 
 fun Entity.catTypeSpecific(vararg variants: CatVariantOrTagArgument, block: Cat.() -> Unit = {}) = apply {
-	this.typeSpecific = Cat(variants.toList()).apply(block)
+	typeSpecific = Cat(variants.toList()).apply(block)
 }

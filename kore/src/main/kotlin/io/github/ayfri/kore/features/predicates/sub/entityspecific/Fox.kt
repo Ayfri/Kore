@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.features.predicates.sub.entityspecific
 
+import io.github.ayfri.kore.features.predicates.sub.Entity
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
@@ -15,3 +16,7 @@ enum class FoxVariants {
 
 @Serializable
 data class Fox(var variant: FoxVariants? = null) : EntityTypeSpecific()
+
+fun Entity.foxTypeSpecific(variant: FoxVariants? = null, block: Fox.() -> Unit = {}) = apply {
+	typeSpecific = Fox(variant).apply(block)
+}

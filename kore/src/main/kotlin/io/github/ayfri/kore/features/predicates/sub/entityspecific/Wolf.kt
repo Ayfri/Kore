@@ -11,5 +11,5 @@ data class Wolf(
 ) : EntityTypeSpecific(), VariantEntityTypeSpecific<WolfVariantOrTagArgument>
 
 fun Entity.wolfTypeSpecific(vararg variants: WolfVariantOrTagArgument, block: Wolf.() -> Unit = {}) = apply {
-	this.typeSpecific = Wolf(variants.toList()).apply(block)
+	typeSpecific = Wolf(variants.toList()).apply(block)
 }
