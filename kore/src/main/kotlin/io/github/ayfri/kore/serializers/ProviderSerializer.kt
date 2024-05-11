@@ -17,9 +17,7 @@ open class ProviderSerializer<T : Any>(
 		"minecraft:$weightedListName" -> element.jsonObject
 		else -> buildJsonObject {
 			put(typePropertyName, type)
-			putJsonObject(valuePropertyName) {
-				copyAllFrom(element.jsonObject, typePropertyName)
-			}
+			copyAllFrom(element.jsonObject, typePropertyName)
 		}
 	}
 }

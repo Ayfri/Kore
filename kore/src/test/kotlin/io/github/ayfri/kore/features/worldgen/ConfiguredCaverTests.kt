@@ -69,30 +69,24 @@ fun DataPack.configuredCarverTests() {
 				},
 				"vertical_rotation": {
 					"type": "minecraft:clamped_normal",
-					"value": {
-						"mean": 0.0,
-						"deviation": 1.0,
-						"min": 0.0,
-						"max": 1.0
-					}
+					"mean": 0.0,
+					"deviation": 1.0,
+					"min": 0.0,
+					"max": 1.0
 				},
 				"shape": {
 					"distance_factor": 0.5,
 					"thickness": {
 						"type": "minecraft:trapezoid",
-						"value": {
-							"min": 0.0,
-							"max": 1.0,
-							"plateau": 0.5
-						}
+						"min": 0.0,
+						"max": 1.0,
+						"plateau": 0.5
 					},
 					"width_smoothness": 0.5,
 					"horizontal_radius_factor": {
 						"type": "minecraft:uniform",
-						"value": {
-							"min_inclusive": 0.5,
-							"max_exclusive": 1.0
-						}
+						"min_inclusive": 0.5,
+						"max_exclusive": 1.0
 					},
 					"vertical_radius_default_factor": 0.5,
 					"vertical_radius_center_factor": 0.5

@@ -31,10 +31,8 @@ fun DataPack.dimensionTypeTests() {
 			"height": 512,
 			"monster_spawn_light_level": {
 				"type": "minecraft:uniform",
-				"value": {
-					"min_inclusive": 7,
-					"max_inclusive": 15
-				}
+				"min_inclusive": 7,
+				"max_inclusive": 15
 			},
 			"monster_spawn_block_light_limit": 0
 		}
