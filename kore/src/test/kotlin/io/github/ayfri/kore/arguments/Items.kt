@@ -289,6 +289,13 @@ fun itemsTests() {
 	}
 	intangibleProjectileTest.asString() assertsIs """minecraft:crossbow[intangible_projectile={}]"""
 
+	val itemNameTest = stoneSword {
+		itemName(textComponent("test"))
+	}
+	itemNameTest.asString() assertsIs """minecraft:stone_sword[item_name='"test"']"""
+	itemNameTest.components!!.itemName("test", Color.AQUA)
+	itemNameTest.asString() assertsIs """minecraft:stone_sword[item_name='{"text":"test","color":"aqua"}']"""
+
 	val hideAdditionalTooltipTest = stoneSword {
 		hideAdditionalTooltip()
 	}
@@ -351,6 +358,11 @@ fun itemsTests() {
 		noteBlockSound(Sounds.Mob.Cow.SAY1)
 	}
 	noteBlockSoundTest.asString() assertsIs """minecraft:player_head[note_block_sound="minecraft:mob.cow.say1"]"""
+
+	val ominousBottleAmplifierTest = Items.OMINOUS_BOTTLE {
+		ominousBottleAmplifier(5)
+	}
+	ominousBottleAmplifierTest.asString() assertsIs """minecraft:ominous_bottle[ominous_bottle_amplifier=5]"""
 
 	val potDecorationsTest = stone {
 		potDecorations(Items.ARMS_UP_POTTERY_SHERD, Items.SKULL_POTTERY_SHERD, Items.FRIEND_POTTERY_SHERD, Items.BRICK)

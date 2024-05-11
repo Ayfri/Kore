@@ -34,6 +34,7 @@ val nbtSerializer = StringifiedNbt {
  */
 val CHAT_COMPONENTS_COMPONENTS_TYPES = mutableListOf(
 	"custom_name",
+	"item_name",
 	"lore",
 	"written_book_content",
 )
