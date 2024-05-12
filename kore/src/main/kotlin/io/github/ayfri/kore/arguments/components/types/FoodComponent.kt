@@ -15,8 +15,7 @@ data class FoodEffect(
 @Serializable
 data class FoodComponent(
 	var nutrition: Int,
-	@SerialName("saturation_modifier")
-	var saturationModifier: Float,
+	var saturation: Float,
 	@SerialName("is_meat")
 	var isMeat: Boolean? = null,
 	@SerialName("can_always_eat")
@@ -28,25 +27,25 @@ data class FoodComponent(
 
 fun ComponentsScope.food(
 	nutrition: Int,
-	saturationModifier: Float,
+	saturation: Float,
 	isMeat: Boolean? = null,
 	canAlwaysEat: Boolean? = null,
 	eatSeconds: Float? = null,
 	effects: List<FoodEffect>,
 	block: FoodComponent.() -> Unit = {},
 ) = apply {
-	this[ComponentTypes.FOOD] = FoodComponent(nutrition, saturationModifier, isMeat, canAlwaysEat, eatSeconds, effects).apply(block)
+	this[ComponentTypes.FOOD] = FoodComponent(nutrition, saturation, isMeat, canAlwaysEat, eatSeconds, effects).apply(block)
 }
 
 fun ComponentsScope.food(
 	nutrition: Int,
-	saturationModifier: Float,
+	saturation: Float,
 	isMeat: Boolean? = null,
 	canAlwaysEat: Boolean? = null,
 	eatSeconds: Float? = null,
 	vararg effects: FoodEffect,
 	block: FoodComponent.() -> Unit = {},
-) = food(nutrition, saturationModifier, isMeat, canAlwaysEat, eatSeconds, effects.toList(), block)
+) = food(nutrition, saturation, isMeat, canAlwaysEat, eatSeconds, effects.toList(), block)
 
 fun FoodComponent.effect(probability: Float, effect: Effect) = apply {
 	effects = (effects ?: mutableListOf()) + FoodEffect(effect, probability)

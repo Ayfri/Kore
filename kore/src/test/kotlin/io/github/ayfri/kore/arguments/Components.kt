@@ -261,7 +261,7 @@ fun componentsTests() {
 	val foodTest = Items.COOKED_BEEF {
 		food(
 			nutrition = 10,
-			saturationModifier = 1.0f,
+			saturation = 1.0f,
 		) {
 			isMeat = true
 			eatSeconds = 0.5f
@@ -277,7 +277,7 @@ fun componentsTests() {
 			)
 		}
 	}
-	foodTest.asString() assertsIs """minecraft:cooked_beef[food={nutrition:10,saturation_modifier:1.0f,is_meat:1b,eat_seconds:0.5f,effects:[{effect:{id:"minecraft:regeneration",duration:100,amplifier:1b,ambient:1b,show_particles:1b,show_icon:1b},probability:1.0f}]}]"""
+	foodTest.asString() assertsIs """minecraft:cooked_beef[food={nutrition:10,saturation:1.0f,is_meat:1b,eat_seconds:0.5f,effects:[{effect:{id:"minecraft:regeneration",duration:100,amplifier:1b,ambient:1b,show_particles:1b,show_icon:1b},probability:1.0f}]}]"""
 
 	val instrumentTest = Items.GOAT_HORN {
 		instrument(Instruments.CALL_GOAT_HORN)
