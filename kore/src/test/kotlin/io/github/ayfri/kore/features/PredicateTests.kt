@@ -2,6 +2,7 @@ package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.WEAPON
+import io.github.ayfri.kore.arguments.components.matchers.enchantments
 import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.assertions.assertsIs
@@ -176,7 +177,7 @@ fun DataPack.predicateTests() {
 		matchTool {
 			item(Items.DIAMOND_PICKAXE)
 			predicates {
-				enchantments = listOf(enchantment(Enchantments.EFFICIENCY))
+				enchantments(enchantment(Enchantments.EFFICIENCY))
 			}
 		}
 	}

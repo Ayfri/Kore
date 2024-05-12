@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.arguments.components
 
+import io.github.ayfri.kore.arguments.components.matchers.ComponentMatcher
 import io.github.ayfri.kore.arguments.components.types.Component
 import io.github.ayfri.kore.arguments.components.types.CustomComponent
 import io.github.ayfri.kore.arguments.types.ItemOrTagArgument
@@ -12,7 +13,6 @@ import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.encodeToNbtTag
 import net.benwoodworth.knbt.nbtCompound
 import net.benwoodworth.knbt.nbtList
-import kotlin.reflect.full.memberProperties
 
 const val COUNT_ITEM_PREDICATE = "count"
 
@@ -29,7 +29,7 @@ data class ItemPredicate(
 	val componentsAlternatives = mutableMapOf<String, MutableList<Component>>()
 	var countSubPredicates = mutableListOf<Pair<IntRangeOrIntJson, Boolean>>()
 	var subPredicates = mutableListOf(ItemStackSubPredicates())
-	var subPredicatesKeys = ItemStackSubPredicates()::class.memberProperties.map { it.name }
+	var subPredicatesKeys = ComponentMatcher::class.sealedSubclasses.map(ComponentMatcher.Companion::getComponentName)
 
 	override val lastAddedComponent get() = componentsAlternatives.values.lastOrNull()?.lastOrNull()
 	override val lastAddedComponentName get() = componentsAlternatives.keys.lastOrNull()

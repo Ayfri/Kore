@@ -1,12 +1,12 @@
 package io.github.ayfri.kore.arguments
 
 import io.github.ayfri.kore.arguments.components.*
+import io.github.ayfri.kore.arguments.components.matchers.damage
+import io.github.ayfri.kore.arguments.components.matchers.potionContents
 import io.github.ayfri.kore.arguments.components.types.customData
 import io.github.ayfri.kore.arguments.components.types.damage
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.assertions.assertsIs
-import io.github.ayfri.kore.features.predicates.sub.item.damage
-import io.github.ayfri.kore.features.predicates.sub.item.potionsContents
 import io.github.ayfri.kore.generated.ComponentTypes
 import io.github.ayfri.kore.generated.Effects
 import io.github.ayfri.kore.generated.Items
@@ -33,7 +33,7 @@ fun itemPredicatesTests() {
 
 	val subPredicateTest = Items.STONE.predicate {
 		subPredicates {
-			damage {
+			this.damage {
 				durability = rangeOrInt(1..5)
 			}
 		}
@@ -54,10 +54,10 @@ fun itemPredicatesTests() {
 
 	val multipleSubPredicatesTest = Items.STONE.predicate {
 		subPredicates {
-			potionsContents(Effects.SPEED, Effects.SLOWNESS)
+			potionContents(Effects.SPEED, Effects.SLOWNESS)
 		}
 		subPredicates {
-			potionsContents(Effects.STRENGTH)
+			potionContents(Effects.STRENGTH)
 		}
 	}
 

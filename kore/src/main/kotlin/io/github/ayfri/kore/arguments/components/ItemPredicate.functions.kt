@@ -6,7 +6,6 @@ import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
 import io.github.ayfri.kore.generated.ComponentTypes
 import net.benwoodworth.knbt.NbtCompoundBuilder
 import net.benwoodworth.knbt.buildNbtCompound
-import kotlin.reflect.full.memberProperties
 
 fun itemPredicate(block: ItemPredicate.() -> Unit = {}) = ItemPredicate().apply(block)
 fun ItemArgument.predicate(block: ItemPredicate.() -> Unit = {}) = ItemPredicate(this).apply(block)
@@ -64,11 +63,9 @@ fun ItemPredicate.clearPredicate(component: String) {
 	componentsAlternatives.remove(component)
 	componentsAlternatives.remove("!$component")
 	if (component == COUNT_ITEM_PREDICATE) countSubPredicates.clear()
-	if (subPredicatesKeys.contains(component)) {
-		subPredicates.removeIf { subPredicate ->
-			subPredicate::class.memberProperties.any { member ->
-				member.getter.call(subPredicate) != null
-			}
+	if (component in subPredicatesKeys) {
+		subPredicates.removeIf { (matchers) ->
+			matchers.any { it.componentName == component }
 		}
 	}
 }
