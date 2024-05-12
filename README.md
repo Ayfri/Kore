@@ -25,13 +25,17 @@ I will accept pull requests for older versions on a separate branch.
 
 ## Getting Started
 
-Install the library with Gradle, with Kotlin DSL:
+You can use the [Kore Template](https://github.com/Ayfri/Kore-Template) to start a new project with Kore.
+
+Or install the library by hand with Gradle.
+
+With Kotlin DSL:
 
 ```kotlin
 implementation("io.github.ayfri.kore:kore:VERSION")
 ```
 
-Or with Groovy DSL:
+With Groovy DSL:
 
 ```groovy
 implementation 'io.github.ayfri.kore:kore:VERSION'
@@ -47,11 +51,11 @@ kotlin {
 }
 ```
 
-You should also use Java 17 or higher:
+You should also use Java 21 or higher:
 
 ```kotlin
 kotlin {
-	jvmToolchain(17)
+	jvmToolchain(21)
 }
 ```
 
