@@ -13,11 +13,13 @@ import io.github.ayfri.kore.commands.items
 import io.github.ayfri.kore.features.itemmodifiers.functions.*
 import io.github.ayfri.kore.features.itemmodifiers.itemModifier
 import io.github.ayfri.kore.features.itemmodifiers.types.Mode
+import io.github.ayfri.kore.features.loottables.entries.item
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
 import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Attributes
 import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.Tags
 
 fun DataPack.itemModifierTests() {
@@ -131,6 +133,30 @@ fun DataPack.itemModifierTests() {
 				"!test": {},
 				"!test2": {}
 			}
+		}
+	""".trimIndent()
+
+	itemModifier("set_contents") {
+		setContents(ContentComponentTypes.BUNDLE_CONTENTS) {
+			entries {
+				item(Items.APPLE) {
+					weight = 1
+				}
+			}
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:set_contents",
+			"component": "bundle_contents",
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:apple",
+					"weight": 1
+				}
+			]
 		}
 	""".trimIndent()
 
