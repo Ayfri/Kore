@@ -9,6 +9,7 @@ import io.github.ayfri.kore.utils.TestDataPack
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import org.intellij.lang.annotations.Language
+import java.util.zip.ZipInputStream
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 
@@ -47,6 +48,27 @@ fun TestDataPack.assertFileGenerated(path: String) {
 		if (!file.exists()) {
 			error("File for datapack '${dp.name}' at '${file.absolutePathString()}' was not found.")
 		}
+	}
+}
+
+fun TestDataPack.assertFileGeneratedInZip(path: String) {
+	val file = dp.path.resolve("${dp.name}.zip")
+	callAfterGeneration {
+		val zipFile = file.toFile()
+		val inputStream = zipFile.inputStream()
+		val zip = ZipInputStream(inputStream)
+		var entry = zip.nextEntry
+		while (entry != null) {
+			if (entry.name == path) {
+				inputStream.close()
+				zip.close()
+				return@callAfterGeneration
+			}
+			entry = zip.nextEntry
+		}
+		inputStream.close()
+		zip.close()
+		error("File for datapack '${dp.name}' at '$path' was not found in the zip file.")
 	}
 }
 

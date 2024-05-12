@@ -159,13 +159,14 @@ class DataPack(val name: String) {
 				}
 
 				functions.forEach { function ->
-					zipOutputStream.putNextEntry(ZipEntry("data/${function.namespace}/functions/${function.directory}${function.name}.mcfunction"))
+					zipOutputStream.putNextEntry(ZipEntry("data/${function.namespace}/functions/${function.directory}/${function.name}.mcfunction"))
 					zipOutputStream.write(function.lines.joinToString("\n").toByteArray())
 					zipOutputStream.closeEntry()
 				}
 
 				generatedFunctions.forEach { function ->
-					zipOutputStream.putNextEntry(ZipEntry("data/${function.namespace}/functions/${function.directory}${function.name}.mcfunction"))
+					function.directory = function.directory.removePrefix(configuration.generatedFunctionsFolder)
+					zipOutputStream.putNextEntry(ZipEntry("data/${function.namespace}/functions/${configuration.generatedFunctionsFolder}/${function.directory}/${function.name}.mcfunction"))
 					zipOutputStream.write(function.lines.joinToString("\n").toByteArray())
 					zipOutputStream.closeEntry()
 				}

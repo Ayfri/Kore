@@ -19,6 +19,11 @@ data class TestDataPack(internal val dp: DataPack) {
 		dp.generate()
 		calledAfterGeneration.forEach { it(dp) }
 	}
+
+	fun generateZip() {
+		dp.generateZip()
+		calledAfterGeneration.forEach { it(dp) }
+	}
 }
 
 internal fun testDataPack(name: String, block: DataPack.() -> Unit): TestDataPack {
