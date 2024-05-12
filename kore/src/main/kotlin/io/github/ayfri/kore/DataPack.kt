@@ -109,6 +109,7 @@ class DataPack(val name: String) {
 	fun generate() {
 		val start = System.currentTimeMillis()
 		val root = File("$cleanPath/$name")
+		root.mkdirs()
 
 		val packMCMeta = generatePackMCMetaFile()
 		File(root, "pack.mcmeta").writeText(packMCMeta)
