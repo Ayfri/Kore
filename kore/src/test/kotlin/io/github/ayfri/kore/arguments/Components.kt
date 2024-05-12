@@ -15,7 +15,7 @@ import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.utils.set
 
-fun itemsTests() {
+fun componentsTests() {
 	val stoneSword = Items.STONE_SWORD
 	val stone = Items.STONE
 	val leatherHelmet = Items.LEATHER_HELMET
