@@ -90,6 +90,48 @@ fun DataPack.itemModifierTests() {
 		}
 	""".trimIndent()
 
+	itemModifier("filtered") {
+		filtered {
+			itemFilter(Items.APPLE)
+
+			modifiers {
+				setName("Test")
+			}
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:filtered",
+			"item_filter": {
+				"items": "minecraft:apple"
+			},
+			"modifier": {
+				"function": "minecraft:set_name",
+				"name": "Test"
+			}
+		}
+	""".trimIndent()
+
+	itemModifier("modify_contents") {
+		modifyContents(ContentComponentTypes.BUNDLE_CONTENTS) {
+			modifiers {
+				setName("Test")
+			}
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:modify_contents",
+			"component": "bundle_contents",
+			"modifier": {
+				"function": "minecraft:set_name",
+				"name": "Test"
+			}
+		}
+	""".trimIndent()
+
 	itemModifier("set_attributes") {
 		setAttributes {
 			attribute(Attributes.GENERIC_SCALE, 0.5f, slot = listOf(EquipmentSlot.MAINHAND))
@@ -160,6 +202,17 @@ fun DataPack.itemModifierTests() {
 		}
 	""".trimIndent()
 
+	itemModifier("set_custom_model_data") {
+		setCustomModelData(5)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:set_custom_model_data",
+			"value": 5.0
+		}
+	""".trimIndent()
+
 	itemModifier("set_lore") {
 		setLore {
 			lore("Test", color = Color.BLACK)
@@ -181,6 +234,17 @@ fun DataPack.itemModifierTests() {
 			],
 			"mode": "insert",
 			"offset": 0
+		}
+	""".trimIndent()
+
+	itemModifier("set_item") {
+		setItem(Items.APPLE)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:set_item",
+			"item": "minecraft:apple"
 		}
 	""".trimIndent()
 
