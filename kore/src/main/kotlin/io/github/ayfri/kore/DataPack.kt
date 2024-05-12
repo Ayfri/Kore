@@ -43,6 +43,8 @@ import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.Path
+import kotlin.io.path.absolute
+import kotlin.io.path.createDirectories
 
 @FunctionsHolder
 class DataPack(val name: String) {
@@ -102,10 +104,11 @@ class DataPack(val name: String) {
 		return function
 	}
 
+	private val cleanPath get() = path.absolute().normalize().createDirectories()
+
 	fun generate() {
 		val start = System.currentTimeMillis()
-		val root = File("$path/$name")
-		root.mkdirs()
+		val root = File("$cleanPath/$name")
 
 		val packMCMeta = generatePackMCMetaFile()
 		File(root, "pack.mcmeta").writeText(packMCMeta)
@@ -140,7 +143,7 @@ class DataPack(val name: String) {
 		if (generated) return
 		val start = System.currentTimeMillis()
 
-		val zip = File("$path/$name.zip")
+		val zip = File("$cleanPath/$name.zip")
 		zip.delete()
 		zip.createNewFile()
 		zip.outputStream().use { outputStream ->
