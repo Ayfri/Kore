@@ -10,9 +10,9 @@ import io.github.ayfri.kore.arguments.types.literals.int
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.resources.EnchantmentArgument
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
+import io.github.ayfri.kore.arguments.types.resources.SoundArgument
 import io.github.ayfri.kore.arguments.types.resources.worldgen.BiomeArgument
 import io.github.ayfri.kore.functions.Function
-import io.github.ayfri.kore.generated.Sounds
 import io.github.ayfri.kore.utils.asArg
 
 fun Function.debugStart() = addLine(command("debug", literal("start")))
@@ -81,12 +81,12 @@ fun Function.spectate(target: EntityArgument? = null, player: EntityArgument? = 
 fun Function.stopSound(
 	targets: EntityArgument,
 	source: PlaySoundMixer? = null,
-	sound: Sounds? = null,
+	sound: SoundArgument? = null,
 ) = addLine(command("stopsound", targets, literal(source?.asArg()), sound))
 
 fun Function.stopSoundAllSources(
 	targets: EntityArgument,
-	sound: Sounds? = null,
+	sound: SoundArgument? = null,
 ) = addLine(command("stopsound", targets, all(), sound))
 
 fun Function.teamMsg(message: String) = addLine(command("teammsg", literal(message)))
