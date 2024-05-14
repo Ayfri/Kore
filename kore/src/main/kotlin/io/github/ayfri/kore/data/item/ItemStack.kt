@@ -12,6 +12,8 @@ data class ItemStack(
 	val count: Short? = null,
 	val components: Components? = null,
 ) {
+	constructor(itemArgument: ItemArgument, count: Short? = null) : this(itemArgument.asId(), count, itemArgument.components)
+
 	fun toItemArgument() = ItemArgument(id.substringBefore(":"), id.substringAfter(":"), components)
 
 	fun toItemStackSubPredicate() = ItemStackSubPredicate(

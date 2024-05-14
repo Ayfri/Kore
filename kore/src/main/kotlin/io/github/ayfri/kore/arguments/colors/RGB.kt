@@ -1,12 +1,12 @@
 package io.github.ayfri.kore.arguments.colors
 
-import kotlin.math.roundToInt
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlin.math.roundToInt
 
 @Serializable(RGB.Companion.ColorSerializer::class)
 data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
@@ -95,6 +95,12 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 
 			return RGB(red, green, blue)
 		}
+
+		fun fromDoubleArray(array: DoubleArray) = RGB(
+			(array[0] * 255).roundToInt().coerceIn(0, 255),
+			(array[1] * 255).roundToInt().coerceIn(0, 255),
+			(array[2] * 255).roundToInt().coerceIn(0, 255),
+		)
 
 		fun fromHex(hex: String) = RGB(hex.removePrefix("#"))
 
