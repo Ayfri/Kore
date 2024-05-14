@@ -5,4 +5,5 @@ fun argumentsTests() {
 	componentsTests()
 	itemPredicatesTests()
 	itemSlotTests()
+	resourceLiteralsTests()
 }

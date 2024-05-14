@@ -18,7 +18,7 @@ interface BlockArgument : ResourceLocationArgument, BlockOrTagArgument {
 			states.entries.isEmpty() -> ""
 			else -> states.entries.joinToString(",", prefix = "[", postfix = "]") { "${it.key}=${it.value}" }
 		}
-	}${nbtData?.toString() ?: ""}"
+	}${if (!nbtData.isNullOrEmpty()) nbtData.toString() else ""}"
 
 	operator fun invoke(states: Map<String, String> = mutableMapOf(), nbtData: (NbtCompoundBuilder.() -> Unit)? = null) = apply {
 		this.states = states.toMutableMap()
