@@ -5,10 +5,14 @@ import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.types.resources.ItemModifierArgument
 import io.github.ayfri.kore.features.itemmodifiers.functions.ItemFunction
 import io.github.ayfri.kore.serializers.InlinableList
-import kotlinx.serialization.*
+import io.github.ayfri.kore.serializers.inlinableListSerializer
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.serializer
 
 typealias ItemModifierAsList = @Serializable(with = ItemModifier.Companion.ItemModifierAsListSerializer::class) ItemModifier
 
@@ -18,7 +22,8 @@ data class ItemModifier(
 	override var fileName: String = "item_modifier",
 	var modifiers: InlinableList<ItemFunction> = emptyList(),
 ) : Generator("item_modifier") {
-	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(modifiers)
+	override fun generateJson(dataPack: DataPack) =
+		dataPack.jsonEncoder.encodeToString(inlinableListSerializer(ItemFunction.serializer()), modifiers)
 
 	companion object {
 		object ItemModifierAsListSerializer : KSerializer<ItemModifier> {

@@ -6,7 +6,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.JsonElement
 
 typealias InlinableList<T> = @Serializable(with = InlinableListSerializer::class) List<T>
 
@@ -14,7 +13,7 @@ fun <T> inlinableListSerializer(kSerializer: KSerializer<T>): KSerializer<Inlina
 
 @OptIn(ExperimentalSerializationApi::class)
 open class InlinableListSerializer<T>(private val kSerializer: KSerializer<T>) : KSerializer<List<T>> {
-	override val descriptor = ListSerializer(JsonElement.serializer()).descriptor
+	override val descriptor = ListSerializer(kSerializer).descriptor
 
 	override fun deserialize(decoder: Decoder) = error("List of ${kSerializer.descriptor.serialName} cannot be deserialized")
 
