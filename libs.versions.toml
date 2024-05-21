@@ -1,5 +1,4 @@
 [versions]
-jetbrains-compose = "1.6.0"
 jetbrains-compose = "1.6.10"
 joml = "1.10.5"
 knbt = "0.11.5"
