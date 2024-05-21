@@ -90,7 +90,7 @@ fun zipTests() = testDataPack("zip_tests") {
 		say("Hello, tick!")
 	}
 }.apply {
-	assertFileGenerated("test.zip")
+	assertFileGenerated("zip_tests.zip")
 
 	val myFunction = dp.functions[0]
 	assertFileGeneratedInZip("data/${myFunction.namespace}/functions/${myFunction.name}.mcfunction")
