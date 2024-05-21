@@ -1,17 +1,18 @@
 import com.varabyte.kobweb.gradle.application.util.configAsKobwebApplication
 import com.varabyte.kobwebx.gradle.markdown.children
 import com.varabyte.kobwebx.gradle.markdown.yamlStringToKotlinString
+import kotlinx.html.link
+import kotlinx.html.script
+import kotlinx.html.unsafe
 import org.commonmark.ext.front.matter.YamlFrontMatterBlock
 import org.commonmark.ext.front.matter.YamlFrontMatterVisitor
 import org.commonmark.node.AbstractVisitor
 import org.commonmark.node.CustomBlock
 import org.commonmark.node.Text
-import kotlinx.html.link
-import kotlinx.html.script
-import kotlinx.html.unsafe
 
 plugins {
 	kotlin("multiplatform")
+	kotlin("plugin.compose")
 	alias(libs.plugins.jetbrains.compose)
 	alias(libs.plugins.kobweb.application)
 	alias(libs.plugins.kobwebx.markdown)
@@ -217,7 +218,7 @@ val generateDocSourceTask = task("generateDocSource") {
 kotlin {
 	configAsKobwebApplication("website")
 
-	js(IR) {
+	js {
 		browser {
 			commonWebpackConfig {
 				devServer?.open = false
@@ -228,13 +229,13 @@ kotlin {
 	}
 
 	sourceSets {
-		jsMain {
+		commonMain {
 			kotlin.srcDir(generateDocSourceTask)
 
 			dependencies {
 				implementation(compose.html.core)
-				implementation(libs.kobweb.core)
 				implementation(compose.runtime)
+				implementation(libs.kobweb.core)
 				implementation(libs.kobwebx.markdown)
 				implementation(libs.kobwebx.silk.icons.mdi)
 			}
