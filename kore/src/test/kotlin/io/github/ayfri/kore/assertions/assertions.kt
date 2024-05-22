@@ -10,6 +10,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import org.intellij.lang.annotations.Language
 import java.util.zip.ZipInputStream
+import kotlin.io.path.absolute
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 
@@ -43,7 +44,7 @@ infix fun Generator.assertsIs(@Language("json") expected: String) {
 }
 
 fun TestDataPack.assertFileGenerated(path: String) {
-	val file = dp.path.resolve(path)
+	val file = dp.path.resolve(path).normalize().absolute()
 	callAfterGeneration {
 		if (!file.exists()) {
 			error("File for datapack '${dp.name}' at '${file.absolutePathString()}' was not found.")

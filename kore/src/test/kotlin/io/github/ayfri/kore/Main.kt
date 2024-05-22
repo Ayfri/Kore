@@ -12,7 +12,7 @@ import io.github.cdimascio.dotenv.dotenv
 import kotlin.io.path.Path
 
 val configuration = dotenv()
-val minecraftSaveTestPath = Path(configuration["TEST_FOLDER"])
+val minecraftSaveTestPath = Path(configuration["TEST_FOLDER", "out"])
 
 fun DataPack.setTestPath() {
 	path = minecraftSaveTestPath
