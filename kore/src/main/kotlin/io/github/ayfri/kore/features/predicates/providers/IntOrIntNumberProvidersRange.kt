@@ -29,10 +29,10 @@ class IntOrIntNumberProvidersRange internal constructor(
 	}
 }
 
-fun int(value: Int) = IntOrIntNumberProvidersRange(value)
-fun providersRange(min: NumberProvider, max: NumberProvider) = IntOrIntNumberProvidersRange(range = min to max)
-fun providersRange(min: Float, max: NumberProvider) = IntOrIntNumberProvidersRange(range = constant(min) to max)
-fun providersRange(min: NumberProvider, max: Float) = IntOrIntNumberProvidersRange(range = min to constant(max))
-fun intRange(min: Float, max: Float) = IntOrIntNumberProvidersRange(range = constant(min) to constant(max))
+fun int(value: Int) = IntOrNumberProvidersRange(value)
+fun providersRange(min: NumberProvider, max: NumberProvider) = IntOrNumberProvidersRange(range = min to max)
+fun providersRange(min: Float, max: NumberProvider) = IntOrNumberProvidersRange(range = constant(min) to max)
+fun providersRange(min: NumberProvider, max: Float) = IntOrNumberProvidersRange(range = min to constant(max))
+fun intRange(min: Float, max: Float) = IntOrNumberProvidersRange(range = constant(min) to constant(max))
 fun intRange(range: ClosedFloatingPointRange<Float>) =
-	IntOrIntNumberProvidersRange(range = constant(range.start) to constant(range.endInclusive))
+	IntOrNumberProvidersRange(range = constant(range.start) to constant(range.endInclusive))
