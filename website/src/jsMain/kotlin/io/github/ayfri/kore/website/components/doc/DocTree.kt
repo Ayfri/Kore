@@ -7,6 +7,7 @@ import com.varabyte.kobweb.core.rememberPageContext
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.docEntries
 import io.github.ayfri.kore.website.utils.*
+import kotlinx.browser.document
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Button
@@ -14,7 +15,6 @@ import org.jetbrains.compose.web.dom.Li
 import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.dom.Ul
 import org.w3c.dom.HTMLButtonElement
-import kotlinx.browser.document
 
 private fun StyleScope.indentation(level: Int) = marginLeft(level * 2.cssRem)
 

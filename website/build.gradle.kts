@@ -1,13 +1,8 @@
 import com.varabyte.kobweb.gradle.application.util.configAsKobwebApplication
 import com.varabyte.kobwebx.gradle.markdown.children
-import com.varabyte.kobwebx.gradle.markdown.yamlStringToKotlinString
 import kotlinx.html.link
 import kotlinx.html.script
 import kotlinx.html.unsafe
-import org.commonmark.ext.front.matter.YamlFrontMatterBlock
-import org.commonmark.ext.front.matter.YamlFrontMatterVisitor
-import org.commonmark.node.AbstractVisitor
-import org.commonmark.node.CustomBlock
 import org.commonmark.node.Text
 
 plugins {
@@ -80,23 +75,89 @@ kobweb {
 				"""io.github.ayfri.kore.website.components.common.CodeBlock($text, "${code.info.takeIf { it.isNotBlank() }}")"""
 			}
 		}
-	}
-}
 
-class MarkdownVisitor : AbstractVisitor() {
-	private val _frontMatter = mutableMapOf<String, List<String>>()
-	val frontMatter: Map<String, List<String>> = _frontMatter
+		process = { markdownFiles ->
+			val docEntries = mutableListOf<DocEntry>()
 
-	override fun visit(customBlock: CustomBlock) {
-		if (customBlock is YamlFrontMatterBlock) {
-			val yamlVisitor = YamlFrontMatterVisitor()
-			customBlock.accept(yamlVisitor)
-			_frontMatter.putAll(
-				yamlVisitor.data
-					.mapValues { (_, values) ->
-						values.map { it.yamlStringToKotlinString() }
-					}
-			)
+			markdownFiles.forEach { docArticle ->
+				val path = File(docArticle.filePath)
+				val fileName = path.name
+				val fm = docArticle.frontMatter
+				val requiredFields = listOf("title", "description", "date-created", "date-modified", "nav-title", "routeOverride")
+				val title = fm["title"]?.firstOrNull()
+				val desc = fm["description"]?.firstOrNull()
+				val dateCreated = fm["date-created"]?.firstOrNull()
+				val dateModified = fm["date-modified"]?.firstOrNull()
+				val navTitle = fm["nav-title"]?.firstOrNull()
+				val routeOverride = fm["routeOverride"]?.firstOrNull()
+
+				if (title == null || desc == null || dateCreated == null || dateModified == null || navTitle == null || routeOverride == null) {
+					logger.warn("Skipping '$fileName', missing required fields in front matter of $fileName: ${requiredFields.filter { fm[it] == null }}")
+					return@forEach
+				}
+
+				val keywords = fm["keywords"]?.firstOrNull()?.split(Regex(",\\s*")) ?: emptyList()
+				// Dates are only formatted in this format "2023-11-13"
+				val dateCreatedComplete = dateCreated.split("-").let { (year, month, day) ->
+					"$year-$month-${day}T00:00:00.000000000+01:00"
+				}
+				val dateModifiedComplete = dateModified.split("-").let { (year, month, day) ->
+					"$year-$month-${day}T00:00:00.000000000+01:00"
+				}
+				val slugs = routeOverride.split("/").drop(1)
+				val newEntry = DocEntry(
+					file = path,
+					date = dateCreatedComplete,
+					title = title,
+					desc = desc,
+					navTitle = navTitle,
+					keywords = keywords,
+					dateModified = dateModifiedComplete,
+					slugs = slugs
+				)
+				docEntries += newEntry
+			}
+
+			generateKotlin("$group/docEntries.kt", buildString {
+				appendLine(
+					"""
+				|// This file is generated. Modify the build script if you need to change it.
+				|
+				|package io.github.ayfri.kore.website
+				|
+				|import io.github.ayfri.kore.website.components.doc.DocArticle
+				|
+				|val docEntries = listOf${if (docEntries.isEmpty()) "<DocArticle>" else ""}(
+                """.trimMargin()
+				)
+
+				fun List<String>.asCode() = "listOf(${joinToString { "\"$it\"" }})"
+
+				docEntries.sortedByDescending(DocEntry::date).forEach { entry ->
+					appendLine(
+						"""
+					|    DocArticle("/docs/${
+							entry.file.path.substringBeforeLast(".md")
+								.replace(Regex(" |_"), "-")
+								.replace("\\", "/")
+								.lowercase()
+						}",
+					|       "${entry.date}",
+					|       "${entry.title.escapeQuotes()}",
+					|       "${entry.desc.escapeQuotes()}",
+					|       "${entry.navTitle.escapeQuotes()}",
+					|       ${entry.keywords.asCode()},
+					|       "${entry.dateModified}",
+					|       ${entry.slugs.asCode()}
+					|   ),
+					""".trimMargin()
+					)
+					logger.info("Generated entry for ${entry.file.name}")
+				}
+
+				appendLine(")")
+				logger.info("Generated ${docEntries.size} entries in docEntries.kt")
+			})
 		}
 	}
 }
@@ -114,107 +175,6 @@ data class DocEntry(
 
 fun String.escapeQuotes() = this.replace("\"", "\\\"")
 
-val generateDocSourceTask = task("generateDocSource") {
-	group = "io/github/ayfri/kore/website"
-	docInputDir.asFile.mkdirs()
-
-	inputs.dir(docInputDir)
-		.withPropertyName("docArticles")
-		.withPathSensitivity(PathSensitivity.RELATIVE)
-	outputs.dir(docGenDir)
-		.withPropertyName("docGeneratedSource")
-
-	val parser = kobweb.markdown.features.createParser()
-	val docEntries = mutableListOf<DocEntry>()
-
-	docInputDir.asFileTree.forEach { docArticle ->
-		val rootNode = parser.parse(docArticle.readText())
-		val visitor = MarkdownVisitor()
-
-		rootNode.accept(visitor)
-
-		val fm = visitor.frontMatter
-		val requiredFields = listOf("title", "description", "date-created", "date-modified", "nav-title", "routeOverride")
-		val title = fm["title"]?.firstOrNull()
-		val desc = fm["description"]?.firstOrNull()
-		val dateCreated = fm["date-created"]?.firstOrNull()
-		val dateModified = fm["date-modified"]?.firstOrNull()
-		val navTitle = fm["nav-title"]?.firstOrNull()
-		val routeOverride = fm["routeOverride"]?.firstOrNull()
-
-		if (title == null || desc == null || dateCreated == null || dateModified == null || navTitle == null || routeOverride == null) {
-			logger.warn("Skipping '${docArticle.name}', missing required fields in front matter of ${docArticle.name}: ${requiredFields.filter { fm[it] == null }}")
-			return@forEach
-		}
-
-		val keywords = fm["keywords"]?.firstOrNull()?.split(Regex(",\\s*")) ?: emptyList()
-		// Dates are only formatted in this format "2023-11-13"
-		val dateCreatedComplete = dateCreated.split("-").let { (year, month, day) ->
-			"$year-$month-${day}T00:00:00.000000000+01:00"
-		}
-		val dateModifiedComplete = dateModified.split("-").let { (year, month, day) ->
-			"$year-$month-${day}T00:00:00.000000000+01:00"
-		}
-		val slugs = routeOverride.split("/").drop(1)
-		val newEntry = DocEntry(
-			file = docArticle.relativeTo(docInputDir.asFile),
-			date = dateCreatedComplete,
-			title = title,
-			desc = desc,
-			navTitle = navTitle,
-			keywords = keywords,
-			dateModified = dateModifiedComplete,
-			slugs = slugs
-		)
-		docEntries += newEntry
-	}
-
-	docGenDir.file("$group/docEntries.kt").asFile.apply {
-		parentFile.mkdirs()
-		writeText(buildString {
-			appendLine(
-				"""
-					|// This file is generated. Modify the build script if you need to change it.
-					|
-					|package io.github.ayfri.kore.website
-					|
-					|import io.github.ayfri.kore.website.components.doc.DocArticle
-					|
-					|val docEntries = listOf${if (docEntries.isEmpty()) "<DocArticle>" else ""}(
-                    """.trimMargin()
-			)
-
-			fun List<String>.asCode() = "listOf(${joinToString { "\"$it\"" }})"
-
-			docEntries.sortedByDescending { it.date }.forEach { entry ->
-				appendLine(
-					"""
-					|    DocArticle("/docs/${
-						entry.file.path.substringBeforeLast(".md")
-							.replace(Regex(" |_"), "-")
-							.replace("\\", "/")
-							.lowercase()
-					}",
-					|       "${entry.date}",
-					|       "${entry.title.escapeQuotes()}",
-					|       "${entry.desc.escapeQuotes()}",
-					|       "${entry.navTitle.escapeQuotes()}",
-					|       ${entry.keywords.asCode()},
-					|       "${entry.dateModified}",
-					|       ${entry.slugs.asCode()}
-					|   ),
-					""".trimMargin()
-				)
-				logger.info("Generated entry for ${entry.file.name}")
-			}
-
-			appendLine(")")
-		})
-
-		logger.info("Generated $absolutePath")
-	}
-}
-
 kotlin {
 	configAsKobwebApplication("website")
 
@@ -230,7 +190,7 @@ kotlin {
 
 	sourceSets {
 		commonMain {
-			kotlin.srcDir(generateDocSourceTask)
+//			kotlin.srcDir(generateDocSourceTask)
 
 			dependencies {
 				implementation(compose.html.core)
