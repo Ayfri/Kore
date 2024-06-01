@@ -3,6 +3,7 @@ package io.github.ayfri.kore.website.pages
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.compose.css.AlignItems
+import com.varabyte.kobweb.core.Page
 import io.github.ayfri.kore.website.components.common.LinkButton
 import io.github.ayfri.kore.website.components.layouts.PageLayout
 import io.github.ayfri.kore.website.utils.P
@@ -15,6 +16,7 @@ import org.jetbrains.compose.web.dom.H1
 import org.jetbrains.compose.web.dom.Text
 
 @Composable
+@Page
 fun PageNotFound() = PageLayout("404") {
 	Style(PageNotFoundStyle)
 
