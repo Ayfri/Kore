@@ -1,5 +1,4 @@
 plugins {
-	kotlin("jvm") apply false
 	alias(libs.plugins.nexus.publish)
 }
 
