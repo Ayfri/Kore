@@ -5,7 +5,7 @@ package io.github.ayfri.kore.entities
 import io.github.ayfri.kore.arguments.ItemSlotType
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.maths.coordinate
-import io.github.ayfri.kore.arguments.selector.SelectorNbtData
+import io.github.ayfri.kore.arguments.selector.SelectorArguments
 import io.github.ayfri.kore.arguments.types.literals.RotationArgument
 import io.github.ayfri.kore.arguments.types.literals.allEntities
 import io.github.ayfri.kore.arguments.types.literals.rotation
@@ -21,11 +21,11 @@ import io.github.ayfri.kore.scoreboard.ScoreboardEntity
 import io.github.ayfri.kore.teams.Team
 import io.github.ayfri.kore.teams.addMembers
 
-open class Entity(val selector: SelectorNbtData = SelectorNbtData()) {
+open class Entity(val selector: SelectorArguments = SelectorArguments()) {
 	open val type = selector.type
 	open val isPlayer get() = type?.name == "player"
 
-	fun asSelector(modification: SelectorNbtData.() -> Unit = {}) = allEntities(true) {
+	fun asSelector(modification: SelectorArguments.() -> Unit = {}) = allEntities(true) {
 		copyFrom(selector)
 		modification()
 		type = this@Entity.type

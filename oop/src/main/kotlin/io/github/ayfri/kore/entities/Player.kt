@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.entities
 
-import io.github.ayfri.kore.arguments.selector.SelectorNbtData
+import io.github.ayfri.kore.arguments.selector.SelectorArguments
 import io.github.ayfri.kore.generated.EntityTypes
 
 class Player(name: String) : Entity() {
@@ -17,6 +17,6 @@ class Player(name: String) : Entity() {
 	override val type = EntityTypes.PLAYER
 }
 
-fun player(name: String, nbtData: SelectorNbtData.() -> Unit = {}) = Player(name).apply {
+fun player(name: String, nbtData: SelectorArguments.() -> Unit = {}) = Player(name).apply {
 	selector.nbtData()
 }

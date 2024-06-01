@@ -6,7 +6,7 @@ import io.github.ayfri.kore.arguments.chatcomponents.events.runCommand
 import io.github.ayfri.kore.arguments.chatcomponents.events.suggestCommand
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrIntStart
-import io.github.ayfri.kore.arguments.selector.SelectorNbtData
+import io.github.ayfri.kore.arguments.selector.SelectorArguments
 import io.github.ayfri.kore.arguments.types.literals.allEntities
 import io.github.ayfri.kore.arguments.types.literals.allPlayers
 import io.github.ayfri.kore.arguments.types.literals.self
@@ -32,7 +32,7 @@ data class DebugEntity(val data: Map<String, String> = mutableMapOf()) {
 	val scoreName get() = "$randomTag.score"
 	val scoreToValidateAllTests get() = data.size
 
-	fun selector(block: SelectorNbtData.() -> Unit = {}) = allEntities(true) {
+	fun selector(block: SelectorArguments.() -> Unit = {}) = allEntities(true) {
 		tag = randomTag
 		block()
 	}

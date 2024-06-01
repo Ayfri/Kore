@@ -9,13 +9,6 @@ import io.github.ayfri.kore.arguments.scores.Scores
 import io.github.ayfri.kore.arguments.scores.SelectorScore
 import io.github.ayfri.kore.arguments.types.resources.EntityTypeArgument
 import io.github.ayfri.kore.arguments.types.resources.PredicateArgument
-import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.hasAnnotation
-import kotlin.reflect.full.memberProperties
-import kotlin.reflect.jvm.isAccessible
-import net.benwoodworth.knbt.NbtCompound
-import net.benwoodworth.knbt.NbtTag
-import net.benwoodworth.knbt.StringifiedNbt
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -24,9 +17,16 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonPrimitive
+import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.NbtTag
+import net.benwoodworth.knbt.StringifiedNbt
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.isAccessible
 
-@Serializable(SelectorNbtData.Companion.SelectorNbtDataSerializer::class)
-data class SelectorNbtData(
+@Serializable(SelectorArguments.Companion.SelectorArgumentsSerializer::class)
+data class SelectorArguments(
 	var x: Double? = null,
 	var y: Double? = null,
 	var z: Double? = null,
@@ -78,7 +78,7 @@ data class SelectorNbtData(
 
 	operator fun String.not() = "!$this"
 
-	fun copyFrom(other: SelectorNbtData) {
+	fun copyFrom(other: SelectorArguments) {
 		x = other.x
 		y = other.y
 		z = other.z
@@ -103,12 +103,12 @@ data class SelectorNbtData(
 	}
 
 	companion object {
-		object SelectorNbtDataSerializer : KSerializer<SelectorNbtData> {
+		object SelectorArgumentsSerializer : KSerializer<SelectorArguments> {
 			override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("SelectorNbtData", PrimitiveKind.STRING)
 
-			override fun deserialize(decoder: Decoder) = SelectorNbtData()
+			override fun deserialize(decoder: Decoder) = SelectorArguments()
 
-			override fun serialize(encoder: Encoder, value: SelectorNbtData) {
+			override fun serialize(encoder: Encoder, value: SelectorArguments) {
 				val map = mutableMapOf<String, Any?>()
 				value::class.memberProperties.forEach {
 					it.isAccessible = true

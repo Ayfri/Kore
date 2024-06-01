@@ -13,11 +13,11 @@ internal val json = Json {
 }
 
 data class Selector(val base: SelectorType) {
-	val nbtData = SelectorNbtData()
+	val nbtData = SelectorArguments()
 	val isPlayer get() = base.isPlayer
 
 	override fun toString() = when {
-		nbtData == SelectorNbtData() -> "@${base.value}"
+		nbtData == SelectorArguments() -> "@${base.value}"
 		else -> "@${base.value}[${json.encodeToJsonElement(nbtData).toString().unescape()}]"
 	}
 }
