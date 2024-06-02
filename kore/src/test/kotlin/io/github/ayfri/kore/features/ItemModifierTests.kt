@@ -4,8 +4,7 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.WEAPON
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
-import io.github.ayfri.kore.arguments.components.types.customName
-import io.github.ayfri.kore.arguments.components.types.damage
+import io.github.ayfri.kore.arguments.components.types.*
 import io.github.ayfri.kore.arguments.enums.MapDecoration
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
@@ -210,6 +209,45 @@ fun DataPack.itemModifierTests() {
 		{
 			"function": "minecraft:set_custom_model_data",
 			"value": 5.0
+		}
+	""".trimIndent()
+
+	itemModifier("set_fireworks") {
+		setFireworks {
+			flightDuration = 5
+			explosions {
+				explosion(FireworkExplosionShape.BURST) {
+					colors(Color.RED)
+					fadeColors(Color.BLUE)
+					hasTrail = true
+					hasFlicker = true
+				}
+
+				mode(Mode.REPLACE_ALL)
+			}
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:set_fireworks",
+			"flight_duration": 5,
+			"explosions": {
+				"values": [
+					{
+						"shape": "burst",
+						"colors": [
+							16733525
+						],
+						"fade_colors": [
+							5592575
+						],
+						"has_trail": true,
+						"has_flicker": true
+					}
+				],
+				"mode": "replace_all"
+			}
 		}
 	""".trimIndent()
 

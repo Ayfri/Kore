@@ -9,11 +9,9 @@ import io.github.ayfri.kore.features.predicates.PredicateAsList
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SetFireworks(
-	override var conditions: PredicateAsList? = null,
-	var flightDuration: Int? = null,
-	var explosions: List<FireworkExplosionComponent> = emptyList(),
-) : ItemFunction(), ModeHandler {
+data class SetFireworksExplosions(
+	var values: List<FireworkExplosionComponent> = emptyList(),
+) : ModeHandler {
 	@Serializable
 	override var mode: Mode = Mode.REPLACE_ALL
 
@@ -24,14 +22,25 @@ data class SetFireworks(
 	override var size: Int? = null
 }
 
+@Serializable
+data class SetFireworks(
+	override var conditions: PredicateAsList? = null,
+	var flightDuration: Int? = null,
+	var explosions: SetFireworksExplosions? = null,
+) : ItemFunction()
+
 fun ItemModifier.setFireworks(
 	flightDuration: Int? = null,
-	explosions: List<FireworkExplosionComponent> = emptyList(),
+	explosions: List<FireworkExplosionComponent>? = null,
 	block: SetFireworks.() -> Unit = {},
-) = SetFireworks(flightDuration = flightDuration, explosions = explosions).also {
-	this.modifiers += it.apply(block)
+) = SetFireworks(flightDuration = flightDuration, explosions = explosions?.let(::SetFireworksExplosions)).apply(block).also {
+	modifiers += it.apply(block)
 }
 
-fun SetFireworks.explosion(shape: FireworkExplosionShape, block: FireworkExplosionComponent.() -> Unit) = apply {
-	explosions += FireworkExplosionComponent(shape).apply(block)
+fun SetFireworks.explosions(block: SetFireworksExplosions.() -> Unit) = apply {
+	explosions = SetFireworksExplosions().apply(block)
+}
+
+fun SetFireworksExplosions.explosion(shape: FireworkExplosionShape, block: FireworkExplosionComponent.() -> Unit) = apply {
+	values += FireworkExplosionComponent(shape).apply(block)
 }
