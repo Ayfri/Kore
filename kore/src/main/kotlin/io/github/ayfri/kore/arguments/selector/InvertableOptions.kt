@@ -4,15 +4,17 @@ import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.types.resources.EntityTypeArgument
 import io.github.ayfri.kore.arguments.types.resources.PredicateArgument
 import io.github.ayfri.kore.serializers.ToStringSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationStrategy
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.jsonPrimitive
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.StringifiedNbt
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.encodeToJsonElement
-import kotlinx.serialization.json.jsonPrimitive
 
 sealed class InvertableOption<T>(
-	val serializer: (T) -> String,
+	val kSerializer: SerializationStrategy<T>,
+	val serializer: (T) -> String = { json.encodeToJsonElement(kSerializer, it).jsonPrimitive.content },
 ) {
 	abstract var value: T?
 	abstract var invert: Boolean
@@ -47,24 +49,40 @@ sealed class InvertableOption<T>(
 }
 
 @Serializable(InvertableOption.Companion.InvertableOptionSerializer::class)
-class GamemodeOption(override var value: Gamemode? = null, override var invert: Boolean = false) : InvertableOption<Gamemode>(
-	{ json.encodeToJsonElement(it).jsonPrimitive.content }
-)
+class EntityTypeOption(
+	override var value: EntityTypeArgument? = null,
+	override var invert: Boolean = false,
+) : InvertableOption<EntityTypeArgument>(EntityTypeArgument.serializer())
+
+@Serializable(InvertableOption.Companion.InvertableOptionSerializer::class)
+class GamemodeOption(
+	override var value: Gamemode? = null,
+	override var invert: Boolean = false,
+) : InvertableOption<Gamemode>(Gamemode.serializer())
 
 @Serializable(InvertableOption.Companion.InvertableOptionSerializer::class)
 class NbtCompoundOption(
 	override var value: NbtCompound? = null,
 	override var invert: Boolean = false,
-) : InvertableOption<NbtCompound>(StringifiedNbt::encodeToString)
-
-@Serializable(InvertableOption.Companion.InvertableOptionSerializer::class)
-class EntityTypeOption(
-	override var value: EntityTypeArgument? = null,
-	override var invert: Boolean = false,
-) : InvertableOption<EntityTypeArgument>({ json.encodeToJsonElement(it).jsonPrimitive.content })
+) : InvertableOption<NbtCompound>(NbtCompound.serializer(), StringifiedNbt::encodeToString)
 
 @Serializable(InvertableOption.Companion.InvertableOptionSerializer::class)
 class PredicateOption(
 	override var value: PredicateArgument? = null,
 	override var invert: Boolean = false,
-) : InvertableOption<PredicateArgument>({ json.encodeToJsonElement(it).jsonPrimitive.content })
+) : InvertableOption<PredicateArgument>(PredicateArgument.serializer())
+
+@Serializable(InvertableOption.Companion.InvertableOptionSerializer::class)
+class StringOption(
+	override var value: String? = null,
+	override var invert: Boolean = false,
+) : InvertableOption<String>(String.serializer()) {
+	init {
+		value?.let {
+			if (it.startsWith("!")) {
+				value = it.substring(1)
+				invert = true
+			}
+		}
+	}
+}

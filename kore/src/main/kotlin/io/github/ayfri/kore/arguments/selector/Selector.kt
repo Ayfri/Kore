@@ -2,14 +2,18 @@ package io.github.ayfri.kore.arguments.selector
 
 import io.github.ayfri.kore.utils.unescape
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.ClassDiscriminatorMode
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNamingStrategy
 import kotlinx.serialization.json.encodeToJsonElement
 
 @OptIn(ExperimentalSerializationApi::class)
 internal val json = Json {
-	ignoreUnknownKeys = true
 	allowStructuredMapKeys = true
+	classDiscriminatorMode = ClassDiscriminatorMode.NONE
 	explicitNulls = false
+	ignoreUnknownKeys = true
+	namingStrategy = JsonNamingStrategy.SnakeCase
 }
 
 data class Selector(val base: SelectorType) {

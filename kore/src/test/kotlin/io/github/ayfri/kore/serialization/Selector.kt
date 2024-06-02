@@ -9,6 +9,7 @@ import io.github.ayfri.kore.arguments.scores.lessThan
 import io.github.ayfri.kore.arguments.scores.score
 import io.github.ayfri.kore.arguments.selector.SelectorType
 import io.github.ayfri.kore.arguments.selector.Sort
+import io.github.ayfri.kore.arguments.selector.advancements
 import io.github.ayfri.kore.arguments.selector.scores
 import io.github.ayfri.kore.arguments.types.literals.*
 import io.github.ayfri.kore.arguments.types.resources.AdvancementArgument
@@ -59,6 +60,11 @@ fun selectorTests() = dataPack("selector_tests") {
 	} assertsIs "@e[gamemode=!creative]"
 
 	allEntities {
+		gamemode = !Gamemode.CREATIVE
+		gamemode = !Gamemode.SURVIVAL
+	} assertsIs "@e[gamemode=!creative,gamemode=!survival]"
+
+	allEntities {
 		level = rangeOrIntEnd(1)
 	} assertsIs "@e[level=..1]"
 
@@ -74,10 +80,24 @@ fun selectorTests() = dataPack("selector_tests") {
 	} assertsIs "@e[name=foo]"
 
 	allEntities {
+		name = !"foo"
+		name = !"bar"
+	} assertsIs "@e[name=!foo,name=!bar]"
+
+	allEntities {
 		nbt = nbt {
 			this["foo"] = "bar"
 		}
 	} assertsIs "@e[nbt={foo:\"bar\"}]"
+
+	allEntities {
+		nbt = !nbt {
+			this["foo"] = "bar"
+		}
+		nbt = !nbt {
+			this["baz"] = "qux"
+		}
+	} assertsIs "@e[nbt=!{foo:\"bar\"},nbt=!{baz:\"qux\"}]"
 
 	allEntities {
 		predicate = predicate("foo") {
@@ -86,6 +106,20 @@ fun selectorTests() = dataPack("selector_tests") {
 			}
 		}
 	} assertsIs "@e[predicate=selector_tests:foo]"
+
+	allEntities {
+		predicate = !predicate("foo") {
+			entityProperties {
+				steppingOn = block(Blocks.STONE)
+			}
+		}
+
+		predicate = !predicate("bar") {
+			entityProperties {
+				steppingOn = block(Blocks.STONE)
+			}
+		}
+	} assertsIs "@e[predicate=!selector_tests:foo,predicate=!selector_tests:bar]"
 
 	allEntities {
 		scores {
@@ -104,8 +138,18 @@ fun selectorTests() = dataPack("selector_tests") {
 	} assertsIs "@e[tag=foo]"
 
 	allEntities {
+		tag = !"foo"
+		tag = !"bar"
+	} assertsIs "@e[tag=!foo,tag=!bar]"
+
+	allEntities {
 		team = !""
 	} assertsIs "@e[team=!]"
+
+	allEntities {
+		team = !"test"
+		team = !"foo"
+	} assertsIs "@e[team=!test,team=!foo]"
 
 	allEntities {
 		type = EntityTypes.MARKER
@@ -114,6 +158,11 @@ fun selectorTests() = dataPack("selector_tests") {
 	allEntities {
 		type = !EntityTypes.MARKER
 	} assertsIs "@e[type=!minecraft:marker]"
+
+	allEntities {
+		type = !EntityTypes.MARKER
+		type = !EntityTypes.PLAYER
+	} assertsIs "@e[type=!minecraft:marker,type=!minecraft:player]"
 
 	allEntities {
 		xRotation = rangeOrDouble(1.5)

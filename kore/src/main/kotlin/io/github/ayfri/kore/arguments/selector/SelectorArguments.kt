@@ -41,65 +41,108 @@ data class SelectorArguments(
 	var distance: Range? = null,
 	var limit: Int? = null,
 	var level: IntRangeOrInt? = null,
-	var name: String? = null,
 	var scores: Scores<SelectorScore>? = null,
 	var sort: Sort? = null,
-	var tag: String? = null,
-	var team: String? = null,
 	@SerialName("gamemode")
-	private var _gamemode: GamemodeOption = GamemodeOption(),
+	private var _gamemodes: MutableList<GamemodeOption> = mutableListOf(),
+	@SerialName("name")
+	private var _names: MutableList<StringOption> = mutableListOf(),
 	@SerialName("nbt")
-	private var _nbt: NbtCompoundOption = NbtCompoundOption(),
+	private var _nbt: MutableList<NbtCompoundOption> = mutableListOf(),
 	@SerialName("predicate")
-	private var _predicate: PredicateOption = PredicateOption(),
+	private var _predicates: MutableList<PredicateOption> = mutableListOf(),
+	@SerialName("tag")
+	private var _tags: MutableList<StringOption> = mutableListOf(),
+	@SerialName("team")
+	private var _teams: MutableList<StringOption> = mutableListOf(),
 	@SerialName("type")
-	private var _type: EntityTypeOption = EntityTypeOption(),
+	private var _types: MutableList<EntityTypeOption> = mutableListOf(),
 ) {
 	@Transient
-	var gamemode by _gamemode::value
+	var gamemode
+		get() = (_gamemodes.firstOrNull() ?: GamemodeOption()).value
+		set(value) {
+			if (_gamemodes.lastOrNull() != null && _gamemodes.lastOrNull()?.value == null) _gamemodes.last().value = value
+			else _gamemodes += GamemodeOption(value)
+		}
 
 	@Transient
-	var nbt by _nbt::value
+	var name
+		get() = (_names.firstOrNull() ?: StringOption()).value
+		set(value) {
+			if (_names.lastOrNull() != null && _names.lastOrNull()?.value == null) _names.last().value = value
+			else _names += StringOption(value)
+		}
 
 	@Transient
-	var predicate by _predicate::value
+	var nbt
+		get() = (_nbt.firstOrNull() ?: NbtCompoundOption()).value
+		set(value) {
+			if (_nbt.lastOrNull() != null && _nbt.lastOrNull()?.value == null) _nbt.last().value = value
+			else _nbt += NbtCompoundOption(value)
+		}
 
 	@Transient
-	var type by _type::value
+	var predicate
+		get() = (_predicates.firstOrNull() ?: PredicateOption()).value
+		set(value) {
+			if (_predicates.lastOrNull() != null && _predicates.lastOrNull()?.value == null) _predicates.last().value = value
+			else _predicates += PredicateOption(value)
+		}
 
-	fun advancements(block: AdvancementBuilder.() -> Unit) {
-		advancements = AdvancementBuilder().apply(block).build()
-	}
+	@Transient
+	var tag
+		get() = (_tags.firstOrNull() ?: StringOption()).value
+		set(value) {
+			if (_tags.lastOrNull() != null && _tags.lastOrNull()?.value == null) _tags.last().value = value
+			else _tags += StringOption(value)
+		}
 
-	operator fun Gamemode.not() = apply { _gamemode.invert = true }
-	operator fun NbtCompound.not() = apply { _nbt.invert = true }
-	operator fun PredicateArgument.not() = apply { _predicate.invert = true }
-	operator fun EntityTypeArgument.not() = apply { _type.invert = true }
+	@Transient
+	var team
+		get() = (_teams.firstOrNull() ?: StringOption()).value
+		set(value) {
+			if (_teams.lastOrNull() != null && _teams.lastOrNull()?.value == null) _teams.last().value = value
+			else _teams += StringOption(value)
+		}
+
+	@Transient
+	var type
+		get() = (_types.firstOrNull() ?: EntityTypeOption()).value
+		set(value) {
+			if (_types.lastOrNull() != null && _types.lastOrNull()?.value == null) _types.last().value = value
+			else _types += EntityTypeOption(value)
+		}
+
+	operator fun Gamemode.not() = apply { _gamemodes += GamemodeOption(null, true) }
+	operator fun NbtCompound.not() = apply { _nbt += NbtCompoundOption(null, true) }
+	operator fun PredicateArgument.not() = apply { _predicates += PredicateOption(null, true) }
+	operator fun EntityTypeArgument.not() = apply { _types += EntityTypeOption(null, true) }
 
 	operator fun String.not() = "!$this"
 
 	fun copyFrom(other: SelectorArguments) {
-		x = other.x
-		y = other.y
-		z = other.z
+		advancements = other.advancements
+		distance = other.distance
 		dx = other.dx
 		dy = other.dy
 		dz = other.dz
-		xRotation = other.xRotation
-		yRotation = other.yRotation
-		distance = other.distance
-		limit = other.limit
 		level = other.level
-		team = other.team
-		name = other.name
-		tag = other.tag
-		advancements = other.advancements
+		limit = other.limit
 		scores = other.scores
 		sort = other.sort
-		_gamemode = other._gamemode
+		x = other.x
+		xRotation = other.xRotation
+		y = other.y
+		yRotation = other.yRotation
+		z = other.z
+		_gamemodes = other._gamemodes
+		_names = other._names
 		_nbt = other._nbt
-		_predicate = other._predicate
-		_type = other._type
+		_predicates = other._predicates
+		_tags = other._tags
+		_teams = other._teams
+		_types = other._types
 	}
 
 	companion object {
@@ -109,22 +152,22 @@ data class SelectorArguments(
 			override fun deserialize(decoder: Decoder) = SelectorArguments()
 
 			override fun serialize(encoder: Encoder, value: SelectorArguments) {
-				val map = mutableMapOf<String, Any?>()
+				val argumentsMap = mutableMapOf<String, Any?>()
 				value::class.memberProperties.forEach {
 					it.isAccessible = true
 					if (it.hasAnnotation<Transient>()) return@forEach
 
 					val serialName = it.findAnnotation<SerialName>()?.value ?: it.name
-					map[serialName] = it.getter.call(value)
+					argumentsMap[serialName] = it.getter.call(value)
 				}
 
-				encoder.encodeString(map.filter { it.value != null }.mapNotNull { (key, value) ->
+				encoder.encodeString(argumentsMap.entries.filter { it.value != null }.sortedBy { it.key }.mapNotNull { (key, value) ->
 					when (value) {
 						is SelectorAdvancements -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
 
-						is InvertableOption<*> -> when (value.value) {
-							null -> return@mapNotNull null
-							else -> "$key=$value"
+						is List<*> -> when {
+							value.isEmpty() -> return@mapNotNull null
+							else -> value.joinToString(",") { "$key=$it" }
 						}
 
 						is Argument -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
