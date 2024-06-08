@@ -27,6 +27,7 @@ fun main() {
 	chatComponentsTests()
 	datapackTests()
 	featuresTests()
+	functionsTests()
 	helpersTests()
 	selectorTests()
 	serializersTests()
