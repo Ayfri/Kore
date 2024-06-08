@@ -185,15 +185,16 @@ class DataPack(val name: String) {
 		functionsMap: Map<String, List<Function>>,
 		deleteOldFiles: Boolean = false,
 	) = functionsMap.forEach { (namespace, functions) ->
+		if (functions.isEmpty()) return
+
 		val namespaceDir = File(this, namespace)
 		namespaceDir.mkdirs()
 
-		if (functions.isEmpty()) return
-		val dir = File(let { if (it.name == "data") File(it, this@DataPack.name) else it }, dirName)
-		if (deleteOldFiles) dir.deleteRecursively()
-		dir.mkdirs()
+		val functionsNamespacedDir = File(namespaceDir, dirName)
+		if (deleteOldFiles) functionsNamespacedDir.deleteRecursively()
+		functionsNamespacedDir.mkdirs()
 
-		functions.forEach { it.generate(dir) }
+		functions.forEach { it.generate(functionsNamespacedDir) }
 	}
 
 	@OptIn(ExperimentalSerializationApi::class)
