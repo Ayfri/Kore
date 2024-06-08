@@ -183,15 +183,16 @@ fun Function.generatedFunctionCall(
 ): Command {
 	val name = "${prefix}_${hashCode()}"
 	val function = Function("", "", "", datapack).apply { block() }
-	if (function.lines.size == 1) {
-		return command(function.lines.first())
+	val nonCommentedLines = function.lines.filter { !it.startsWith('#') }
+	if (nonCommentedLines.size == 1) {
+		return command(nonCommentedLines.first())
 	}
 
 	val generatedFunction = datapack.generatedFunction(name, namespace, directory) {
 		comment("Generated function ${asString()}")
 		block()
 	}
-	return Function("", "", "", datapack).function(generatedFunction.name)
+	return Function("", "", "", datapack).function(generatedFunction)
 }
 
 fun DataPack.load(name: String? = null, namespace: String = this.name, directory: String = "", block: Function.() -> Unit) =
