@@ -124,7 +124,7 @@ class Execute {
 
 		val name = "generated_${hashCode()}"
 		val generatedFunction = datapack.generatedFunction(name) { block() }
-		if (generatedFunction.name == name) comment("Generated function ${asString()}")
+		if (generatedFunction.name == name && datapack.configuration.generateCommentOfGeneratedFunctions) comment("Generated function ${asString()}")
 		run = generatedFunction
 
 		return generatedFunction
