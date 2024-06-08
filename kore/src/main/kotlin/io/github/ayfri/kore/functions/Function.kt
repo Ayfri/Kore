@@ -11,8 +11,6 @@ import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.arguments.types.resources.tagged.FunctionTagArgument
 import io.github.ayfri.kore.commands.Command
 import io.github.ayfri.kore.commands.command
-import io.github.ayfri.kore.commands.execute.execute
-import io.github.ayfri.kore.commands.function
 import io.github.ayfri.kore.commands.tellraw
 import io.github.ayfri.kore.features.tags.addToTag
 import io.github.ayfri.kore.utils.ifNotEmpty
@@ -27,6 +25,8 @@ open class Function(
 	private var debug = false
 	internal var nextLineHasMacro = false
 	val lines = mutableListOf<String>()
+	val commandLines get() = lines.filter { !it.startsWith('#') && it.isNotBlank() && it.isNotEmpty() }
+	val isInlinable get() = commandLines.size == 1
 
 	fun addBlankLine() = lines.add("")
 
@@ -160,40 +160,6 @@ fun DataPack.generatedFunction(name: String, namespace: String = this.name, dire
 	addGeneratedFunction(
 		Function(name, namespace, "${configuration.generatedFunctionsFolder}${directory.ifNotEmpty { "/$it" }}", this).apply(block)
 	)
-
-/**
- * Generates a function call with a prefix and a lambda block.
- * If the function has only one command, it will return the command itself.
- * Else if the function has more than one command, it will generate a new function with the block and return a function call to it.
- *
- * The generated name has the pattern:
- * ```kotlin
- * "${prefix}_${hashCode()}"
- * ```
- *
- * This functions is useful when you need to have a function call in a command or a command call like in the [Function.execute] command.
- *
- * **Note:** Generated functions with same content will be merged into one function, the first one will be used and the others will be ignored.
- */
-fun Function.generatedFunctionCall(
-	prefix: String,
-	namespace: String = datapack.name,
-	directory: String = "",
-	block: Function.() -> Unit,
-): Command {
-	val name = "${prefix}_${hashCode()}"
-	val function = Function("", "", "", datapack).apply { block() }
-	val nonCommentedLines = function.lines.filter { !it.startsWith('#') }
-	if (nonCommentedLines.size == 1) {
-		return command(nonCommentedLines.first())
-	}
-
-	val generatedFunction = datapack.generatedFunction(name, namespace, directory) {
-		comment("Generated function ${asString()}")
-		block()
-	}
-	return Function("", "", "", datapack).function(generatedFunction)
-}
 
 fun DataPack.load(name: String? = null, namespace: String = this.name, directory: String = "", block: Function.() -> Unit) =
 	addToMinecraftTag("load", name, block, namespace, directory)

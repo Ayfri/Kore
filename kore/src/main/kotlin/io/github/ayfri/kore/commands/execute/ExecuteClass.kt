@@ -107,9 +107,8 @@ class Execute {
 	context(Function)
 	fun run(block: Function.() -> Command): FunctionArgument {
 		val function = Function("", "", "", datapack).apply { block() }
-		val nonCommentedLines = function.lines.filter { !it.startsWith("#") }
 
-		if (nonCommentedLines.size == 1) return emptyFunction(datapack) {
+		if (function.isInlinable) return emptyFunction(datapack) {
 			block().apply {
 				arguments.replaceAll {
 					when (it) {
@@ -119,12 +118,12 @@ class Execute {
 				}
 			}
 			run = this
-			lines.removeAll { it.startsWith("#") }
+			lines.removeAll { it.startsWith("#") || it.isBlank() || it.isEmpty() }
 		}
 
 		val name = "generated_${hashCode()}"
 		val generatedFunction = datapack.generatedFunction(name) { block() }
-		if (generatedFunction.name == name && datapack.configuration.generateCommentOfGeneratedFunctions) comment("Generated function ${asString()}")
+		if (generatedFunction.name == name && datapack.configuration.generateCommentOfGeneratedFunctionCall) comment("Generated function ${asString()}")
 		run = generatedFunction
 
 		return generatedFunction
