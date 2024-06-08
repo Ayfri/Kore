@@ -132,7 +132,8 @@ class Execute {
 	}
 
 	context(Function)
-	fun run(name: String, directory: String = "", block: Function.() -> Unit) = datapack.generatedFunction(name, directory, block)
+	fun run(name: String, namespace: String = datapack.name, directory: String = "", block: Function.() -> Unit) =
+		datapack.generatedFunction(name, namespace, directory, block)
 
 	fun run(function: FunctionArgument) {
 		run = emptyFunction { function(function) }

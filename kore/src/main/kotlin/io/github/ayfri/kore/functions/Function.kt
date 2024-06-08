@@ -143,25 +143,26 @@ open class Function(
 fun DataPack.function(name: String, namespace: String = this.name, directory: String = "", block: Function.() -> Unit) =
 	addFunction(Function(name, namespace, directory, this).apply(block))
 
-fun DataPack.generatedFunction(name: String, directory: String = "", block: Function.() -> Unit) =
+fun DataPack.generatedFunction(name: String, namespace: String = this.name, directory: String = "", block: Function.() -> Unit) =
 	addGeneratedFunction(
-		Function(name, this.name, "${configuration.generatedFunctionsFolder}${directory.ifNotEmpty { "/$it" }}", this).apply(block)
+		Function(name, namespace, "${configuration.generatedFunctionsFolder}${directory.ifNotEmpty { "/$it" }}", this).apply(block)
 	)
 
-fun DataPack.load(name: String? = null, directory: String = "", block: Function.() -> Unit) =
-	addToMinecraftTag("load", name, block, directory)
+fun DataPack.load(name: String? = null, namespace: String = this.name, directory: String = "", block: Function.() -> Unit) =
+	addToMinecraftTag("load", name, block, namespace, directory)
 
-fun DataPack.tick(name: String? = null, directory: String = "", block: Function.() -> Unit) =
-	addToMinecraftTag("tick", name, block, directory)
+fun DataPack.tick(name: String? = null, namespace: String = this.name, directory: String = "", block: Function.() -> Unit) =
+	addToMinecraftTag("tick", name, block, namespace, directory)
 
 private fun DataPack.addToMinecraftTag(
 	fileName: String,
 	functionName: String?,
 	block: Function.() -> Unit,
+	namespace: String = this.name,
 	directory: String,
 ): FunctionArgument {
 	val name = functionName ?: "${fileName}_${block.hashCode()}"
-	val generatedFunction = generatedFunction(name, directory, block)
+	val generatedFunction = generatedFunction(name, namespace, directory, block)
 	addToTag<FunctionTagArgument>(fileName, type = "functions", namespace = "minecraft") {
 		this += generatedFunction.asId()
 	}
