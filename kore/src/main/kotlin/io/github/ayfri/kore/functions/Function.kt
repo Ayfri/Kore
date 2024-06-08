@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.functions
 
+import io.github.ayfri.kore.Configuration
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.chatcomponents.*
 import io.github.ayfri.kore.arguments.chatcomponents.events.ClickAction
@@ -10,6 +11,8 @@ import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.arguments.types.resources.tagged.FunctionTagArgument
 import io.github.ayfri.kore.commands.Command
 import io.github.ayfri.kore.commands.command
+import io.github.ayfri.kore.commands.execute.execute
+import io.github.ayfri.kore.commands.function
 import io.github.ayfri.kore.commands.tellraw
 import io.github.ayfri.kore.features.tags.addToTag
 import io.github.ayfri.kore.utils.ifNotEmpty
@@ -140,13 +143,56 @@ open class Function(
 	override fun toString() = lines.joinToString("\n")
 }
 
+/**
+ * Creates a new function with a name and a lambda block.
+ * You can also specify the namespace and the directory of the function.
+ */
 fun DataPack.function(name: String, namespace: String = this.name, directory: String = "", block: Function.() -> Unit) =
 	addFunction(Function(name, namespace, directory, this).apply(block))
 
+/**
+ * Generates a function with a name and a lambda block.
+ * The directory of the generated function is [Configuration.generatedFunctionsFolder] which by default is equal to [DataPack.DEFAULT_GENERATED_FUNCTIONS_FOLDER].
+ *
+ * **Note:** Generated functions with same content will be merged into one function, the first one will be used and the others will be ignored.
+ */
 fun DataPack.generatedFunction(name: String, namespace: String = this.name, directory: String = "", block: Function.() -> Unit) =
 	addGeneratedFunction(
 		Function(name, namespace, "${configuration.generatedFunctionsFolder}${directory.ifNotEmpty { "/$it" }}", this).apply(block)
 	)
+
+/**
+ * Generates a function call with a prefix and a lambda block.
+ * If the function has only one command, it will return the command itself.
+ * Else if the function has more than one command, it will generate a new function with the block and return a function call to it.
+ *
+ * The generated name has the pattern:
+ * ```kotlin
+ * "${prefix}_${hashCode()}"
+ * ```
+ *
+ * This functions is useful when you need to have a function call in a command or a command call like in the [Function.execute] command.
+ *
+ * **Note:** Generated functions with same content will be merged into one function, the first one will be used and the others will be ignored.
+ */
+fun Function.generatedFunctionCall(
+	prefix: String,
+	namespace: String = datapack.name,
+	directory: String = "",
+	block: Function.() -> Unit,
+): Command {
+	val name = "${prefix}_${hashCode()}"
+	val function = Function("", "", "", datapack).apply { block() }
+	if (function.lines.size == 1) {
+		return command(function.lines.first())
+	}
+
+	val generatedFunction = datapack.generatedFunction(name, namespace, directory) {
+		comment("Generated function ${asString()}")
+		block()
+	}
+	return Function("", "", "", datapack).function(generatedFunction.name)
+}
 
 fun DataPack.load(name: String? = null, namespace: String = this.name, directory: String = "", block: Function.() -> Unit) =
 	addToMinecraftTag("load", name, block, namespace, directory)

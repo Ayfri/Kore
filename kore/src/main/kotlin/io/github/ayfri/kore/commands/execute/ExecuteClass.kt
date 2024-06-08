@@ -110,7 +110,6 @@ class Execute {
 		val nonCommentedLines = function.lines.filter { !it.startsWith("#") }
 
 		if (nonCommentedLines.size == 1) return emptyFunction(datapack) {
-
 			block().apply {
 				arguments.replaceAll {
 					when (it) {
