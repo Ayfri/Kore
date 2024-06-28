@@ -1,0 +1,51 @@
+#Update to 1.20.5-pre1 #78
+#Closed
+#6 tasks done
+#opened this issue 0 comments
+#Comments
+#@Ayfri
+#Owner
+#Ayfri commented on May 11 •
+# Add component field to set_contents loot function, which can be equal to a value from an enum of some components.
+# Add filtered, modifiy_contents, set_custom_model_data, set_item loot functions.
+# Add components collection matcher system, add minecraft:attribute_modifiers, minecraft:bundle_contents, minecraft:container, minecraft:firework_explosion, minecraft:fireworks, minecraft:trim, minecraft:writable_book_content, minecraft:written_book_content ItemStackSubPredicates fields.
+# Remove type field to set_contents loot function.
+# Update minecraft:food component, rename saturation_modifier to saturation.
+# Update complex particles representations in particle command.
+
+name: Update proposal
+description: Propose to update the project to a new Minecraft version.
+title: "[UPDATE] "
+labels: [ update ]
+assignees:
+  - Ayfri
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this update proposal!
+
+  - type: input
+    id: version
+    attributes:
+      label: Minecraft version
+      description: The version of Minecraft you want to update the project to.
+      placeholder: 1.20.5-pre1
+    validations:
+      required: true
+
+  - type: textarea
+    id: changes
+    attributes:
+      label: Changes
+      description: A list of changes you want to make to the project.
+      placeholder: "- [ ] Add `component` field to `set_contents` loot function, which can be equal to a value from an enum of some components.\n- [ ] Add `filtered`, `modifiy_contents`, `set_custom_model_data`, `set_item` loot functions.\n..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: other
+    attributes:
+      label: Other
+      description: Any other information you want to provide.
