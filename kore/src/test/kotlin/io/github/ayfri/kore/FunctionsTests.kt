@@ -75,7 +75,7 @@ fun functionsTests() = testDataPack("function_tests") {
 			addLine("# This is a comment.")
 			say("hello")
 
-			commandLines assertsIs 1
+			commandLines.size assertsIs 1
 			isInlinable assertsIs true
 		}
 	}
