@@ -24,5 +24,9 @@ fun Function.itemTests() {
 		replace(Items.DIRT) assertsIs "item replace entity @s weapon with minecraft:dirt"
 		replace(Items.BOW, 3) assertsIs "item replace entity @s weapon with minecraft:bow 3"
 		replace(vec3(0, 0, 0), WEAPON) assertsIs "item replace entity @s weapon from block 0 0 0 weapon"
+
+		replace(Items.DIRT {
+			remove("foo")
+		}) assertsIs "item replace entity @s weapon with minecraft:dirt[!foo]"
 	}
 }

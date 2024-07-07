@@ -92,7 +92,7 @@ suspend fun launchAllSimpleGenerators() {
 			addProperty(
 				PropertySpec.builder(
 					"components",
-					ClassName("io.github.ayfri.kore.arguments.components", "Components").copy(nullable = true)
+					ClassName("io.github.ayfri.kore.arguments.components", "ComponentsRemovables").copy(nullable = true)
 				)
 					.overrides()
 					.mutable()
@@ -106,12 +106,12 @@ suspend fun launchAllSimpleGenerators() {
 				)
 					.addParameter(
 						"block", LambdaTypeName.get(
-							receiver = ClassName("io.github.ayfri.kore.arguments.components", "Components"),
+							receiver = ClassName("io.github.ayfri.kore.arguments.components", "ComponentsRemovables"),
 							returnType = Unit::class.asTypeName()
 						)
 					)
 					.overrides()
-					.addStatement("return ItemArgument.invoke(name.lowercase(), namespace, Components().apply(block))")
+					.addStatement("return ItemArgument.invoke(name.lowercase(), namespace, ComponentsRemovables().apply(block))")
 					.returns(ClassName("io.github.ayfri.kore.arguments.types.resources", "ItemArgument"))
 					.build()
 			)

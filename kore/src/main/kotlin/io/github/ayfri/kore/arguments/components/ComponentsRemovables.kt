@@ -1,12 +1,13 @@
 package io.github.ayfri.kore.arguments.components
 
+import io.github.ayfri.kore.arguments.components.types.Component
 import io.github.ayfri.kore.generated.ComponentTypes
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.unescape
 import kotlinx.serialization.Serializable
 
 @Serializable(with = ComponentsSerializer::class)
-open class ComponentsRemovables : ComponentsScope() {
+open class ComponentsRemovables(components: MutableMap<String, Component> = mutableMapOf()) : ComponentsScope(components) {
 	/**
 	 * Set the last added component to be removed.
 	 *
@@ -94,6 +95,8 @@ open class ComponentsRemovables : ComponentsScope() {
 	 */
 	fun remove(vararg components: String) = components.forEach(::setToRemove)
 
+	fun toComponents() = Components(components.mapKeys { it.key.removePrefix("!") }.toMutableMap())
+
 	override fun toString() = asNbt().entries
 		.joinToString(separator = ",", prefix = "[", postfix = "]") { (key, value) ->
 			// The quotes are added by the serializer, we just need to unescape the string.
@@ -103,7 +106,7 @@ open class ComponentsRemovables : ComponentsScope() {
 					.replace(Regex("\"\'\"(.+?)\"\'\"", RegexOption.DOT_MATCHES_ALL), "'\"$1\"'")
 					.replace(Regex("\"\'\\{(.+?)\\}\'\"", RegexOption.DOT_MATCHES_ALL), "'{$1}'")
 				"$key=$unescaped"
-			} else if (value == nbt {}) {
+			} else if (value == nbt {} && key.startsWith("!")) {
 				key
 			} else "$key=$value"
 		}

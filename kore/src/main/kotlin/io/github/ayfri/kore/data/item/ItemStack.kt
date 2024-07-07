@@ -12,9 +12,13 @@ data class ItemStack(
 	val count: Short? = null,
 	val components: Components? = null,
 ) {
-	constructor(itemArgument: ItemArgument, count: Short? = null) : this(itemArgument.asId(), count, itemArgument.components)
+	constructor(itemArgument: ItemArgument, count: Short? = null) : this(
+		itemArgument.asId(),
+		count,
+		itemArgument.components?.toComponents()
+	)
 
-	fun toItemArgument() = ItemArgument(id.substringBefore(":"), id.substringAfter(":"), components)
+	fun toItemArgument() = ItemArgument(id.substringBefore(":"), id.substringAfter(":"), components?.toRemovables())
 
 	fun toItemStackSubPredicate() = ItemStackSubPredicate(
 		count = count?.toInt()?.let { rangeOrInt(it) },

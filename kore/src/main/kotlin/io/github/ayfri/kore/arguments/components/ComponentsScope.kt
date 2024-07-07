@@ -16,9 +16,7 @@ import net.benwoodworth.knbt.NbtCompoundBuilder
 import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.encodeToNbtTag
 
-abstract class ComponentsScope {
-	open val components: MutableMap<String, Component> = mutableMapOf()
-
+abstract class ComponentsScope(open val components: MutableMap<String, Component> = mutableMapOf()) {
 	open val lastAddedComponentName: String?
 		get() = components.keys.lastOrNull()
 
@@ -95,5 +93,4 @@ abstract class ComponentsScope {
 				"$key=$unescaped"
 			} else "$key=$value"
 		}
-
 }
