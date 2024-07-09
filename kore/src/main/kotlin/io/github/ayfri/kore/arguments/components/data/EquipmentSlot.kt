@@ -6,14 +6,15 @@ import kotlinx.serialization.Serializable
 @Serializable(EquipmentSlot.Companion.EquipmentSlotSerializer::class)
 enum class EquipmentSlot {
 	ANY,
-	HAND,
-	ARMOR,
 	MAINHAND,
 	OFFHAND,
+	HAND,
 	HEAD,
 	CHEST,
 	LEGS,
-	FEET;
+	FEET,
+	ARMOR,
+	BODY;
 
 	companion object {
 		data object EquipmentSlotSerializer : LowercaseSerializer<EquipmentSlot>(entries)
