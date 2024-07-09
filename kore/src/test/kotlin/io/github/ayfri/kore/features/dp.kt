@@ -23,6 +23,7 @@ fun featuresTests() = testDataPack("features_tests") {
 	lootTableTests()
 	noiseTests()
 	noiseSettingsTests()
+	paintingVariantTests()
 	placedFeatureTests()
 	predicateTests()
 	predicateEntityTypeSpecificTests()
