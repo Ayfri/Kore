@@ -7,6 +7,7 @@ import io.github.ayfri.kore.features.advancements.Advancement
 import io.github.ayfri.kore.features.bannerpatterns.BannerPattern
 import io.github.ayfri.kore.features.chattype.ChatType
 import io.github.ayfri.kore.features.damagetypes.DamageType
+import io.github.ayfri.kore.features.enchantment.Enchantment
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.loottables.LootTable
 import io.github.ayfri.kore.features.paintingvariant.PaintingVariant
@@ -64,6 +65,7 @@ class DataPack(val name: String) {
 	val densityFunctions = registerGenerator<DensityFunction>()
 	val dimensions = registerGenerator<Dimension>()
 	val dimensionTypes = registerGenerator<DimensionType>()
+	val enchantments = registerGenerator<Enchantment>()
 	val flatLevelGeneratorPresets = registerGenerator<FlatLevelGeneratorPreset>()
 	val itemModifiers = registerGenerator<ItemModifier>()
 	val lootTables = registerGenerator<LootTable>()

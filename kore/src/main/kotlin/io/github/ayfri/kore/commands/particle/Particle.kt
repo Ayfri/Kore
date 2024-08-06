@@ -12,6 +12,7 @@ import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
+import io.github.ayfri.kore.generated.Particles as ParticlesNames
 
 @Serializable(ParticleMode.Companion.ParticleModeSerializer::class)
 enum class ParticleMode {
@@ -38,7 +39,7 @@ class Particles(internal val fn: Function) {
 	) =
 		fn.addLine(command("particle", particle, pos, delta, float(speed), int(count), literal(mode?.asArg()), viewers))
 
-	fun sculkCharge(angle: Double, pos: Vec3? = null) = fn.addLine(command("particle", literal("sculk_charge"), float(angle), pos))
+	fun sculkCharge(angle: Double, pos: Vec3? = null) = fn.addLine(command("particle", ParticlesNames.SCULK_CHARGE, float(angle), pos))
 	fun sculkCharge(
 		angle: Double,
 		pos: Vec3,
@@ -51,7 +52,7 @@ class Particles(internal val fn: Function) {
 		fn.addLine(
 			command(
 				"particle",
-				literal("sculk_charge"),
+				ParticlesNames.SCULK_CHARGE,
 				float(angle),
 				pos,
 				delta,
@@ -62,7 +63,7 @@ class Particles(internal val fn: Function) {
 			)
 		)
 
-	fun shriek(delay: Int, pos: Vec3? = null) = fn.addLine(command("particle", literal("shriek"), int(delay), pos))
+	fun shriek(delay: Int, pos: Vec3? = null) = fn.addLine(command("particle", ParticlesNames.SHRIEK, int(delay), pos))
 	fun shriek(
 		delay: Int,
 		pos: Vec3,
@@ -75,7 +76,7 @@ class Particles(internal val fn: Function) {
 		fn.addLine(
 			command(
 				"particle",
-				literal("shriek"),
+				ParticlesNames.SHRIEK,
 				int(delay),
 				pos,
 				delta,
@@ -87,7 +88,7 @@ class Particles(internal val fn: Function) {
 		)
 
 	fun vibration(destination: Vec3, duration: Int, pos: Vec3? = null) =
-		fn.addLine(command("particle", literal("vibration"), destination, int(duration), pos))
+		fn.addLine(command("particle", ParticlesNames.VIBRATION, destination, int(duration), pos))
 
 	fun vibration(
 		destination: Vec3,
@@ -102,7 +103,7 @@ class Particles(internal val fn: Function) {
 		fn.addLine(
 			command(
 				"particle",
-				literal("vibration"),
+				ParticlesNames.VIBRATION,
 				destination,
 				int(duration),
 				pos,

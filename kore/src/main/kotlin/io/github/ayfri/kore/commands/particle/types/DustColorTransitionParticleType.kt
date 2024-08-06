@@ -15,6 +15,7 @@ import io.github.ayfri.kore.commands.particle.asParticleArg
 import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import io.github.ayfri.kore.generated.Particles as ParticlesNames
 
 @Serializable
 data class DustColorTransition(
@@ -29,7 +30,7 @@ fun Particles.dustColorTransition(fromColor: Color, size: Double, toColor: Color
 	fn.addLine(
 		command(
 			"particle",
-			ParticleType("dust_color_transition", DustColorTransition(fromColor, toColor, size)).asParticleArg(),
+			ParticleType(ParticlesNames.DUST_COLOR_TRANSITION, DustColorTransition(fromColor, toColor, size)).asParticleArg(),
 			pos
 		)
 	)
@@ -48,7 +49,7 @@ fun Particles.dustColorTransition(
 	fn.addLine(
 		command(
 			"particle",
-			ParticleType("dust_color_transition", DustColorTransition(fromColor, toColor, scale)).asParticleArg(),
+			ParticleType(ParticlesNames.DUST_COLOR_TRANSITION, DustColorTransition(fromColor, toColor, scale)).asParticleArg(),
 			pos,
 			delta,
 			float(speed),

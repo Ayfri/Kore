@@ -12,7 +12,6 @@ suspend fun launchAllSimpleGenerators() {
 		gen("BannerPatterns", "banner_patterns"),
 		gen("DamageTypes", "damage_types"),
 		gen("DimensionTypes", "dimension_types", "worldgen.DimensionType"),
-		gen("Particles", "particles"),
 		gen("Recipes", "recipes"),
 		gen("TrimMaterials", "trim_materials"),
 		gen("TrimPatterns", "trim_patterns"),
@@ -117,6 +116,7 @@ suspend fun launchAllSimpleGenerators() {
 			)
 		}),
 		gen("PaintingVariants", "painting_variant"),
+		gen("Particles", "particle_type"),
 		gen("Potions", "potion"),
 		gen("StatisticTypes", "stat_type") { it.removePrefix("minecraft:") },
 		gen("VillagerTypes", "villager_type"),

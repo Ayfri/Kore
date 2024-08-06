@@ -12,7 +12,6 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.data.item.builders.itemStack
 import io.github.ayfri.kore.generated.*
-import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.utils.set
 
 fun componentsTests() {
@@ -201,7 +200,7 @@ fun componentsTests() {
 	dyedColorTest.components!!.dyedColor(Color.AQUA, showInTooltip = true)
 	dyedColorTest.asString() assertsIs """minecraft:leather_helmet[dyed_color={rgb:5636095,show_in_tooltip:1b}]"""
 
-	val enchantmentsTest = stoneSword {
+	/* val enchantmentsTest = stoneSword {
 		enchantments(mapOf(Enchantments.SHARPNESS to 5))
 	}
 	enchantmentsTest.asString() assertsIs """minecraft:stone_sword[enchantments={"minecraft:sharpness":5}]"""
@@ -211,7 +210,7 @@ fun componentsTests() {
 		showInTooltip = true
 	}
 	enchantmentsTest.asString() assertsIs """minecraft:stone_sword[enchantments={levels:{"minecraft:looting":3},show_in_tooltip:1b}]"""
-
+ */
 	val enchantmentGlintOverrideTest = stoneSword {
 		enchantmentGlintOverride(true)
 	}

@@ -14,6 +14,7 @@ import io.github.ayfri.kore.commands.particle.Particles
 import io.github.ayfri.kore.commands.particle.asParticleArg
 import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
+import io.github.ayfri.kore.generated.Particles as ParticlesNames
 
 @Serializable
 data class EntityEffect(
@@ -31,7 +32,7 @@ fun Particles.entityEffect(
 ) = fn.addLine(
 	command(
 		"particle",
-		ParticleType("entity_effect", EntityEffect(color)).asParticleArg(),
+		ParticleType(ParticlesNames.ENTITY_EFFECT, EntityEffect(color)).asParticleArg(),
 		pos,
 		delta,
 		float(speed),

@@ -14,6 +14,7 @@ import io.github.ayfri.kore.commands.particle.Particles
 import io.github.ayfri.kore.commands.particle.asParticleArg
 import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
+import io.github.ayfri.kore.generated.Particles as ParticlesNames
 
 @Serializable
 data class Dust(
@@ -22,7 +23,7 @@ data class Dust(
 ) : ParticleData()
 
 fun Particles.dust(color: Color, size: Double = 1.0, pos: Vec3? = null) =
-	fn.addLine(command("particle", ParticleType("dust", Dust(color, size)).asParticleArg(), pos))
+	fn.addLine(command("particle", ParticleType(ParticlesNames.DUST, Dust(color, size)).asParticleArg(), pos))
 
 fun Particles.dust(
 	color: Color,
@@ -37,7 +38,7 @@ fun Particles.dust(
 	fn.addLine(
 		command(
 			"particle",
-			ParticleType("dust", Dust(color, size)).asParticleArg(),
+			ParticleType(ParticlesNames.DUST, Dust(color, size)).asParticleArg(),
 			pos,
 			delta,
 			float(speed),

@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.types.literals.float
 import io.github.ayfri.kore.arguments.types.literals.int
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
+import io.github.ayfri.kore.arguments.types.resources.ParticleArgument
 import io.github.ayfri.kore.commands.command
 import io.github.ayfri.kore.commands.particle.ParticleMode
 import io.github.ayfri.kore.commands.particle.ParticleType
@@ -15,6 +16,7 @@ import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import io.github.ayfri.kore.generated.Particles as ParticlesNames
 
 @Serializable
 data class BlockParticleType(
@@ -27,7 +29,7 @@ fun BlockParticleType.blockState(block: BlockArgument, properties: Map<String, S
 }
 
 private fun Particles.blockParticleType(
-	name: String,
+	name: ParticleArgument,
 	blockState: BlockState,
 	pos: Vec3? = null,
 	delta: Vec3? = null,
@@ -49,7 +51,7 @@ private fun Particles.blockParticleType(
 		)
 	)
 
-fun Particles.block(block: BlockState, pos: Vec3? = null) = blockParticleType("block", block, pos)
+fun Particles.block(block: BlockState, pos: Vec3? = null) = blockParticleType(ParticlesNames.BLOCK, block, pos)
 fun Particles.block(block: BlockArgument, pos: Vec3? = null) = block(BlockState(block), pos)
 
 fun Particles.block(
@@ -60,7 +62,7 @@ fun Particles.block(
 	count: Int,
 	mode: ParticleMode? = null,
 	viewers: EntityArgument? = null,
-) = blockParticleType("block", block, pos, delta, speed, count, mode, viewers)
+) = blockParticleType(ParticlesNames.BLOCK, block, pos, delta, speed, count, mode, viewers)
 
 fun Particles.block(
 	block: BlockArgument,
@@ -73,7 +75,7 @@ fun Particles.block(
 ) = block(BlockState(block), pos, delta, speed, count, mode, viewers)
 
 
-fun Particles.blockMarker(block: BlockState, pos: Vec3? = null) = blockParticleType("block_marker", block, pos)
+fun Particles.blockMarker(block: BlockState, pos: Vec3? = null) = blockParticleType(ParticlesNames.BLOCK_MARKER, block, pos)
 fun Particles.blockMarker(block: BlockArgument, pos: Vec3? = null) = blockMarker(BlockState(block), pos)
 
 fun Particles.blockMarker(
@@ -84,7 +86,7 @@ fun Particles.blockMarker(
 	count: Int,
 	mode: ParticleMode? = null,
 	viewers: EntityArgument? = null,
-) = blockParticleType("block_marker", block, pos, delta, speed, count, mode, viewers)
+) = blockParticleType(ParticlesNames.BLOCK_MARKER, block, pos, delta, speed, count, mode, viewers)
 
 fun Particles.blockMarker(
 	block: BlockArgument,
@@ -97,10 +99,10 @@ fun Particles.blockMarker(
 ) = blockMarker(BlockState(block), pos, delta, speed, count, mode, viewers)
 
 
-fun Particles.dustPillard(block: BlockState, pos: Vec3? = null) = blockParticleType("dust_pillard", block, pos)
-fun Particles.dustPillard(block: BlockArgument, pos: Vec3? = null) = dustPillard(BlockState(block), pos)
+fun Particles.dustPillar(block: BlockState, pos: Vec3? = null) = blockParticleType(ParticlesNames.DUST_PILLAR, block, pos)
+fun Particles.dustPillar(block: BlockArgument, pos: Vec3? = null) = dustPillar(BlockState(block), pos)
 
-fun Particles.dustPillard(
+fun Particles.dustPillar(
 	block: BlockState,
 	pos: Vec3,
 	delta: Vec3,
@@ -108,9 +110,9 @@ fun Particles.dustPillard(
 	count: Int,
 	mode: ParticleMode? = null,
 	viewers: EntityArgument? = null,
-) = blockParticleType("dust_pillard", block, pos, delta, speed, count, mode, viewers)
+) = blockParticleType(ParticlesNames.DUST_PILLAR, block, pos, delta, speed, count, mode, viewers)
 
-fun Particles.dustPillard(
+fun Particles.dustPillar(
 	block: BlockArgument,
 	pos: Vec3,
 	delta: Vec3,
@@ -118,10 +120,10 @@ fun Particles.dustPillard(
 	count: Int,
 	mode: ParticleMode? = null,
 	viewers: EntityArgument? = null,
-) = dustPillard(BlockState(block), pos, delta, speed, count, mode, viewers)
+) = dustPillar(BlockState(block), pos, delta, speed, count, mode, viewers)
 
 
-fun Particles.fallingDust(block: BlockState, pos: Vec3? = null) = blockParticleType("falling_dust", block, pos)
+fun Particles.fallingDust(block: BlockState, pos: Vec3? = null) = blockParticleType(ParticlesNames.FALLING_DUST, block, pos)
 fun Particles.fallingDust(block: BlockArgument, pos: Vec3? = null) = fallingDust(BlockState(block), pos)
 
 fun Particles.fallingDust(
@@ -132,7 +134,7 @@ fun Particles.fallingDust(
 	count: Int,
 	mode: ParticleMode? = null,
 	viewers: EntityArgument? = null,
-) = blockParticleType("falling_dust", block, pos, delta, speed, count, mode, viewers)
+) = blockParticleType(ParticlesNames.FALLING_DUST, block, pos, delta, speed, count, mode, viewers)
 
 fun Particles.fallingDust(
 	block: BlockArgument,

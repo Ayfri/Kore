@@ -14,6 +14,7 @@ import io.github.ayfri.kore.commands.particle.asParticleArg
 import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
+import io.github.ayfri.kore.generated.Particles as ParticlesNames
 
 @Serializable
 data class ItemParticleType(
@@ -21,7 +22,7 @@ data class ItemParticleType(
 ) : ParticleData()
 
 fun Particles.item(item: ItemArgument, pos: Vec3? = null) =
-	fn.addLine(command("particle", ParticleType("item", ItemParticleType(ItemStack(item))).asParticleArg(), pos))
+	fn.addLine(command("particle", ParticleType(ParticlesNames.ITEM, ItemParticleType(ItemStack(item))).asParticleArg(), pos))
 
 fun Particles.item(
 	item: ItemArgument,
@@ -35,7 +36,7 @@ fun Particles.item(
 	fn.addLine(
 		command(
 			"particle",
-			ParticleType("item", ItemParticleType(ItemStack(item))).asParticleArg(),
+			ParticleType(ParticlesNames.ITEM, ItemParticleType(ItemStack(item))).asParticleArg(),
 			pos,
 			delta,
 			float(speed),

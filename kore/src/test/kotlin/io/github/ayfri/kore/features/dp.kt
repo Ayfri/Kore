@@ -18,6 +18,7 @@ fun featuresTests() = testDataPack("features_tests") {
 	densityFunctionTests()
 	dimensionTests()
 	dimensionTypeTests()
+	enchantmentTests()
 	flatLevelGeneratorPresetTests()
 	itemModifierTests()
 	lootTableTests()
