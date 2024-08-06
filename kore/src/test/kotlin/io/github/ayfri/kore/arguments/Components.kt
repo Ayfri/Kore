@@ -12,6 +12,7 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.data.item.builders.itemStack
 import io.github.ayfri.kore.generated.*
+import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.utils.set
 
 fun componentsTests() {
