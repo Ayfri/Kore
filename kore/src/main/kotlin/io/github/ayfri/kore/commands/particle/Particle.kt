@@ -39,7 +39,9 @@ class Particles(internal val fn: Function) {
 	) =
 		fn.addLine(command("particle", particle, pos, delta, float(speed), int(count), literal(mode?.asArg()), viewers))
 
-	fun sculkCharge(angle: Double, pos: Vec3? = null) = fn.addLine(command("particle", ParticlesNames.SCULK_CHARGE, float(angle), pos))
+	fun sculkCharge(angle: Double, pos: Vec3? = null) =
+		fn.addLine(command("particle", literal(ParticlesNames.SCULK_CHARGE.name.lowercase()), float(angle), pos))
+
 	fun sculkCharge(
 		angle: Double,
 		pos: Vec3,
@@ -63,7 +65,9 @@ class Particles(internal val fn: Function) {
 			)
 		)
 
-	fun shriek(delay: Int, pos: Vec3? = null) = fn.addLine(command("particle", ParticlesNames.SHRIEK, int(delay), pos))
+	fun shriek(delay: Int, pos: Vec3? = null) =
+		fn.addLine(command("particle", literal(ParticlesNames.SHRIEK.name.lowercase()), int(delay), pos))
+
 	fun shriek(
 		delay: Int,
 		pos: Vec3,
@@ -88,7 +92,7 @@ class Particles(internal val fn: Function) {
 		)
 
 	fun vibration(destination: Vec3, duration: Int, pos: Vec3? = null) =
-		fn.addLine(command("particle", ParticlesNames.VIBRATION, destination, int(duration), pos))
+		fn.addLine(command("particle", literal(ParticlesNames.VIBRATION.name.lowercase()), destination, int(duration), pos))
 
 	fun vibration(
 		destination: Vec3,
@@ -103,7 +107,7 @@ class Particles(internal val fn: Function) {
 		fn.addLine(
 			command(
 				"particle",
-				ParticlesNames.VIBRATION,
+				literal(ParticlesNames.VIBRATION.name.lowercase()),
 				destination,
 				int(duration),
 				pos,

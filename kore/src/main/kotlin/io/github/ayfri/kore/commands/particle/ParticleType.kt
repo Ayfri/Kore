@@ -10,7 +10,7 @@ private val nbtSerializer = StringifiedNbt {
 }
 
 data class ParticleType<T : ParticleData>(var particle: ParticleArgument, var data: T) {
-	override fun toString() = "$particle${nbtSerializer.encodeToString(ParticleData.serializer(), data)}"
+	override fun toString() = "${particle.name.lowercase()}${nbtSerializer.encodeToString(ParticleData.serializer(), data)}"
 }
 
 fun ParticleType<*>.asParticleArg() = literal(toString())
