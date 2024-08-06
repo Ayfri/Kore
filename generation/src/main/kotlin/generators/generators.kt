@@ -85,6 +85,14 @@ suspend fun launchAllSimpleGenerators() {
 		gen("ComponentTypes", "data_component_type", argumentClassName = ""),
 		gen("CustomStats", "custom_stat"),
 		gen("Effects", "mob_effect"),
+		gen("EnchantmentEffectComponents", "enchantment_effect_component_type", argumentClassName = "", additionalCode = {
+			addFunction(
+				FunSpec.builder("asId")
+					.addStatement("return \"minecraft:\" + name.lowercase()")
+					.returns(String::class)
+					.build()
+			)
+		}),
 		gen("EntityTypes", "entity_type"),
 		gen("Fluids", "fluid"),
 		gen("FrogVariants", "frog_variant"),
@@ -117,7 +125,6 @@ suspend fun launchAllSimpleGenerators() {
 					.build()
 			)
 		}),
-		gen("PaintingVariants", "painting_variant"),
 		gen("Particles", "particle_type"),
 		gen("Potions", "potion"),
 		gen("StatisticTypes", "stat_type") { it.removePrefix("minecraft:") },
