@@ -12,6 +12,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("BannerPatterns", "banner_patterns"),
 		gen("DamageTypes", "damage_types"),
 		gen("DimensionTypes", "dimension_types", "worldgen.DimensionType"),
+		gen("PaintingVariants", "painting_variants"),
 		gen("Recipes", "recipes"),
 		gen("TrimMaterials", "trim_materials"),
 		gen("TrimPatterns", "trim_patterns"),
