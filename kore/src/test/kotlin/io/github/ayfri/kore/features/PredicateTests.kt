@@ -98,6 +98,11 @@ fun DataPack.predicateTests() {
 				}
 			}
 
+			movement {
+				x(1.0, 4.0)
+				horizontalSpeed(1.0)
+			}
+
 			nbt {
 				this["foo"] = "bar"
 			}
@@ -148,6 +153,13 @@ fun DataPack.predicateTests() {
 					"block": {
 						"blocks": "minecraft:stone"
 					}
+				},
+				"movement": {
+					"x": {
+						"min": 1.0,
+						"max": 4.0
+					},
+					"horizontal_speed": 1.0
 				},
 				"nbt": {
 					"foo": "bar"

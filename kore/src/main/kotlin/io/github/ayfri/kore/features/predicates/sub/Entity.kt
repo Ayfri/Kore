@@ -21,6 +21,7 @@ data class Entity(
 	var equipment: Equipment? = null,
 	var flags: EntityFlags? = null,
 	var location: Location? = null,
+	var movement: Movement? = null,
 	@Serializable(NbtAsJsonSerializer::class) var nbt: NbtCompound? = null,
 	var passenger: Entity? = null,
 	@Serializable(EntitySlotsSerializer::class) var slots: Map<ItemSlot, ItemStack>? = null,
@@ -78,6 +79,10 @@ fun Entity.effects(vararg effects: Pair<EffectArgument, Effect>) {
 
 fun Entity.location(init: Location.() -> Unit = {}) {
 	location = Location().apply(init)
+}
+
+fun Entity.movement(init: Movement.() -> Unit = {}) {
+	movement = Movement().apply(init)
 }
 
 fun Entity.nbt(block: NbtCompoundBuilder.() -> Unit) {
