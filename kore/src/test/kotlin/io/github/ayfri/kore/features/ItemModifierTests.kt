@@ -88,6 +88,17 @@ fun DataPack.itemModifierTests() {
 		}
 	""".trimIndent()
 
+	itemModifier("copy_name") {
+		copyName(Source.LAST_DAMAGE_PLAYER)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:copy_name",
+			"source": "last_damage_player"
+		}
+	""".trimIndent()
+
 	itemModifier("enchanted_count_increase") {
 		enchantedCountIncrease(Enchantments.SHARPNESS, 1f, limit = 5)
 	}

@@ -14,8 +14,8 @@ data class CopyName(
 @Serializable(with = Source.Companion.SourceSerializer::class)
 enum class Source {
 	BLOCK_ENTITY,
-	KILLER,
-	KILLER_PLAYER,
+	ATTACKING_ENTITY,
+	LAST_DAMAGE_PLAYER,
 	THIS;
 
 	companion object {
