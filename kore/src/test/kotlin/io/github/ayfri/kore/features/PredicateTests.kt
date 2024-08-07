@@ -201,7 +201,7 @@ fun DataPack.predicateTests() {
 				"predicates": {
 					"minecraft:enchantments": [
 						{
-							"enchantment": "minecraft:efficiency"
+							"enchantments": "minecraft:efficiency"
 						}
 					]
 				}

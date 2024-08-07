@@ -156,7 +156,7 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 
 	val enchantment = ItemStackSubPredicates().apply {
 		enchantments {
-			enchantment(Enchantments.SHARPNESS, 3)
+			enchantment(Enchantments.SHARPNESS, level = 3)
 		}
 	}
 
@@ -164,7 +164,7 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 		{
 			"minecraft:enchantments": [
 				{
-					"enchantment": "minecraft:sharpness",
+					"enchantments": "minecraft:sharpness",
 					"levels": 3
 				}
 			]
@@ -236,7 +236,7 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 
 	val storedEnchantment = ItemStackSubPredicates().apply {
 		storedEnchantments {
-			enchantment(Enchantments.SHARPNESS, 3)
+			enchantment(Enchantments.SHARPNESS, level = 3)
 		}
 	}
 
@@ -244,7 +244,7 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 		{
 			"minecraft:stored_enchantments": [
 				{
-					"enchantment": "minecraft:sharpness",
+					"enchantments": "minecraft:sharpness",
 					"levels": 3
 				}
 			]
