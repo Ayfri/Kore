@@ -24,6 +24,7 @@ data class Entity(
 	var movement: Movement? = null,
 	@Serializable(NbtAsJsonSerializer::class) var nbt: NbtCompound? = null,
 	var passenger: Entity? = null,
+	var periodicTicks: Int? = null,
 	@Serializable(EntitySlotsSerializer::class) var slots: Map<ItemSlot, ItemStack>? = null,
 	var steppingOn: Block? = null,
 	var targetedEntity: Entity? = null,
