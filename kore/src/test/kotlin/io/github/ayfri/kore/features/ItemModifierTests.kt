@@ -15,6 +15,7 @@ import io.github.ayfri.kore.features.itemmodifiers.types.Mode
 import io.github.ayfri.kore.features.loottables.entries.item
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
 import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
+import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
@@ -97,6 +98,18 @@ fun DataPack.itemModifierTests() {
 			"enchantment": "minecraft:sharpness",
 			"count": 1.0,
 			"limit": 5
+		}
+	""".trimIndent()
+
+	itemModifier("enchant_with_levels") {
+		enchantWithLevels(Enchantments.SHARPNESS, levels = constant(5f))
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:enchant_with_levels",
+			"options": "minecraft:sharpness",
+			"levels": 5.0
 		}
 	""".trimIndent()
 
