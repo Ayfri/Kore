@@ -8,8 +8,6 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.nullable
 import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.Decoder
@@ -19,16 +17,16 @@ import kotlinx.serialization.encoding.encodeStructure
 
 typealias FloatRangeOrFloatJson = @Serializable(with = FloatRangeOrFloatJsonSerializer::class) FloatRangeOrFloat
 
-object FloatRangeOrFloatJsonSerializer : KSerializer<FloatRangeOrFloat> {
-	override val descriptor = buildClassSerialDescriptor("IntRangeOrInt") {
-		element<Double>("max")
+data object FloatRangeOrFloatJsonSerializer : KSerializer<FloatRangeOrFloat> {
+	override val descriptor = buildClassSerialDescriptor("FloatRangeOrFloat") {
 		element<Double>("min")
+		element<Double>("max")
 	}
 
 	override fun serialize(encoder: Encoder, value: FloatRangeOrFloat) = when {
 		value.range != null -> encoder.encodeStructure(descriptor) {
-			encodeDoubleElement(PrimitiveSerialDescriptor("min", PrimitiveKind.DOUBLE), 0, value.range.start!!)
-			encodeDoubleElement(PrimitiveSerialDescriptor("max", PrimitiveKind.DOUBLE), 1, value.range.end!!)
+			encodeDoubleElement(descriptor, 0, value.range.start!!)
+			encodeDoubleElement(descriptor, 1, value.range.end!!)
 		}
 
 		else -> encoder.encodeDouble(value.double!!)
@@ -43,8 +41,8 @@ object FloatRangeOrFloatJsonSerializer : KSerializer<FloatRangeOrFloat> {
 
 				while (true) {
 					when (val index = decodeElementIndex(descriptor)) {
-						0 -> min = decodeDoubleElement(PrimitiveSerialDescriptor("min", PrimitiveKind.DOUBLE), 0)
-						1 -> max = decodeDoubleElement(PrimitiveSerialDescriptor("max", PrimitiveKind.DOUBLE), 1)
+						0 -> min = decodeDoubleElement(descriptor, 0)
+						1 -> max = decodeDoubleElement(descriptor, 1)
 						-1 -> break
 						else -> error("Unexpected index: $index")
 					}
