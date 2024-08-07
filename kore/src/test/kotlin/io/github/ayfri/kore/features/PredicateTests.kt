@@ -23,6 +23,7 @@ fun DataPack.predicateTests() {
 		}
 
 		allOf {
+			enchantmentActiveCheck(true)
 			randomChance(0.5f)
 			weatherCheck(raining = true, thundering = false)
 		}
@@ -39,6 +40,10 @@ fun DataPack.predicateTests() {
 			{
 				"condition": "minecraft:all_of",
 				"terms": [
+					{
+						"condition": "minecraft:enchantment_active_check",
+						"active": true
+					},
 					{
 						"condition": "minecraft:random_chance",
 						"chance": 0.5
