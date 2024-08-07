@@ -128,6 +128,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("Particles", "particle_type"),
 		gen("Potions", "potion"),
 		gen("StatisticTypes", "stat_type") { it.removePrefix("minecraft:") },
+		gen("VillagerProfessions", "villager_profession"),
 		gen("VillagerTypes", "villager_type"),
 		gen("Carvers", "worldgen/carver"),
 	)
