@@ -101,6 +101,21 @@ fun DataPack.itemModifierTests() {
 		}
 	""".trimIndent()
 
+	itemModifier("enchant_randomly") {
+		enchantRandomly(Enchantments.SHARPNESS, Enchantments.LOOTING, onlyCompatible = true)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:enchant_randomly",
+			"options": [
+				"minecraft:sharpness",
+				"minecraft:looting"
+			],
+			"only_compatible": true
+		}
+	""".trimIndent()
+
 	itemModifier("enchant_with_levels") {
 		enchantWithLevels(Enchantments.SHARPNESS, levels = constant(5f))
 	}

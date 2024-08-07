@@ -21,7 +21,7 @@ fun DataPack.lootTableTests() {
 	val lootTable = lootTable("loot_table") {
 		functions {
 			enchantRandomly {
-				enchantments += Enchantments.LOOTING
+				options += Enchantments.LOOTING
 			}
 		}
 
@@ -59,9 +59,7 @@ fun DataPack.lootTableTests() {
 			"functions": [
 				{
 					"function": "minecraft:enchant_randomly",
-					"enchantments": [
-						"minecraft:looting"
-					]
+					"options": "minecraft:looting"
 				}
 			],
 			"pools": [

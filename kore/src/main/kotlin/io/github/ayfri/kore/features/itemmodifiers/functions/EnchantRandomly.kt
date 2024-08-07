@@ -1,24 +1,33 @@
 package io.github.ayfri.kore.features.itemmodifiers.functions
 
-import io.github.ayfri.kore.arguments.types.resources.EnchantmentArgument
+import io.github.ayfri.kore.arguments.types.EnchantmentOrTagArgument
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class EnchantRandomly(
 	override var conditions: PredicateAsList? = null,
-	var enchantments: List<EnchantmentArgument> = emptyList(),
+	var options: InlinableList<EnchantmentOrTagArgument> = emptyList(),
+	var onlyCompatible: Boolean? = null,
 ) : ItemFunction()
 
-fun ItemModifier.enchantRandomly(enchantments: List<EnchantmentArgument> = emptyList(), block: EnchantRandomly.() -> Unit = {}) {
-	modifiers += EnchantRandomly(enchantments = enchantments).apply(block)
+fun ItemModifier.enchantRandomly(
+	enchantments: List<EnchantmentOrTagArgument> = emptyList(),
+	onlyCompatible: Boolean? = null,
+	block: EnchantRandomly.() -> Unit = {},
+) {
+	modifiers += EnchantRandomly(options = enchantments, onlyCompatible = onlyCompatible).apply(block)
 }
 
-fun ItemModifier.enchantRandomly(vararg enchantments: EnchantmentArgument, block: EnchantRandomly.() -> Unit = {}) {
-	modifiers += EnchantRandomly(enchantments = enchantments.toList()).apply(block)
+fun ItemModifier.enchantRandomly(
+	vararg enchantments: EnchantmentOrTagArgument,
+	onlyCompatible: Boolean? = null, block: EnchantRandomly.() -> Unit = {},
+) {
+	modifiers += EnchantRandomly(options = enchantments.toList(), onlyCompatible = onlyCompatible).apply(block)
 }
 
-fun EnchantRandomly.enchantments(block: MutableList<EnchantmentArgument>.() -> Unit = {}) {
-	enchantments = buildList(block)
+fun EnchantRandomly.enchantments(block: MutableList<EnchantmentOrTagArgument>.() -> Unit = {}) {
+	options = buildList(block)
 }
