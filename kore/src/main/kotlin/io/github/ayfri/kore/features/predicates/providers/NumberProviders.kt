@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.features.predicates.providers
 
+import io.github.ayfri.kore.features.enchantment.values.LevelBased
 import io.github.ayfri.kore.features.predicates.types.EntityType
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.serializers.ProviderSerializer
@@ -95,4 +96,10 @@ data class ScoreNumberProvider(
 data class StorageNumberProvider(
 	var storage: String,
 	var path: String,
+) : NumberProviderSurrogate
+
+@Serializable
+@SerialName("minecraft:enchantment_level")
+data class EnchantmentLevelNumberProvider(
+	var amount: LevelBased,
 ) : NumberProviderSurrogate
