@@ -201,7 +201,7 @@ fun componentsTests() {
 	dyedColorTest.components!!.dyedColor(Color.AQUA, showInTooltip = true)
 	dyedColorTest.asString() assertsIs """minecraft:leather_helmet[dyed_color={rgb:5636095,show_in_tooltip:1b}]"""
 
-	/* val enchantmentsTest = stoneSword {
+	val enchantmentsTest = stoneSword {
 		enchantments(mapOf(Enchantments.SHARPNESS to 5))
 	}
 	enchantmentsTest.asString() assertsIs """minecraft:stone_sword[enchantments={"minecraft:sharpness":5}]"""
@@ -211,7 +211,7 @@ fun componentsTests() {
 		showInTooltip = true
 	}
 	enchantmentsTest.asString() assertsIs """minecraft:stone_sword[enchantments={levels:{"minecraft:looting":3},show_in_tooltip:1b}]"""
- */
+
 	val enchantmentGlintOverrideTest = stoneSword {
 		enchantmentGlintOverride(true)
 	}
