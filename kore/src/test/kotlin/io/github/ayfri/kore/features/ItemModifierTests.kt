@@ -16,10 +16,8 @@ import io.github.ayfri.kore.features.loottables.entries.item
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
 import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
 import io.github.ayfri.kore.functions.load
-import io.github.ayfri.kore.generated.Attributes
-import io.github.ayfri.kore.generated.ComponentTypes
-import io.github.ayfri.kore.generated.Items
-import io.github.ayfri.kore.generated.Tags
+import io.github.ayfri.kore.generated.*
+import io.github.ayfri.kore.generated.Enchantments
 
 fun DataPack.itemModifierTests() {
 	val modifier = itemModifier("test_modifier") {
@@ -86,6 +84,19 @@ fun DataPack.itemModifierTests() {
 				"minecraft:food",
 				"minecraft:fireworks"
 			]
+		}
+	""".trimIndent()
+
+	itemModifier("enchanted_count_increase") {
+		enchantedCountIncrease(Enchantments.SHARPNESS, 1f, limit = 5)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:enchanted_count_increase",
+			"enchantment": "minecraft:sharpness",
+			"count": 1.0,
+			"limit": 5
 		}
 	""".trimIndent()
 
