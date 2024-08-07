@@ -46,7 +46,9 @@ private object EntitySlotsSerializer : KSerializer<Map<ItemSlot, ItemStack>> {
 @Serializable
 data class EntityFlags(
 	var isBaby: Boolean? = null,
+	var isFlying: Boolean? = null,
 	var isOnFire: Boolean? = null,
+	var isOnGround: Boolean? = null,
 	var isSneaking: Boolean? = null,
 	var isSprinting: Boolean? = null,
 	var isSwimming: Boolean? = null,
