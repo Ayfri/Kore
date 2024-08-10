@@ -8,7 +8,6 @@ import org.commonmark.node.Text
 plugins {
 	kotlin("multiplatform")
 	kotlin("plugin.compose")
-	alias(libs.plugins.jetbrains.compose)
 	alias(libs.plugins.kobweb.application)
 	alias(libs.plugins.kobwebx.markdown)
 }
@@ -16,10 +15,10 @@ plugins {
 group = "io.github.ayfri.kore.website"
 version = "1.0-SNAPSHOT"
 
-val docInputDir = layout.projectDirectory.dir("src/jsMain/resources/markdown/doc")
-val docGenDir = layout.buildDirectory.dir("generated/ayfri/src/jsMain/kotlin").get()
-
 kobweb {
+	val projectGroup = group
+	val projectLogger = logger
+
 	app {
 		index {
 			head.apply {
@@ -92,7 +91,7 @@ kobweb {
 				val routeOverride = fm["routeOverride"]?.firstOrNull()
 
 				if (title == null || desc == null || dateCreated == null || dateModified == null || navTitle == null || routeOverride == null) {
-					logger.warn("Skipping '$fileName', missing required fields in front matter of $fileName: ${requiredFields.filter { fm[it] == null }}")
+					projectLogger.warn("Skipping '$fileName', missing required fields in front matter of $fileName: ${requiredFields.filter { fm[it] == null }}")
 					return@forEach
 				}
 
@@ -118,7 +117,7 @@ kobweb {
 				docEntries += newEntry
 			}
 
-			generateKotlin("$group/docEntries.kt", buildString {
+			generateKotlin("$projectGroup/docEntries.kt", buildString {
 				appendLine(
 					"""
 				|// This file is generated. Modify the build script if you need to change it.
@@ -132,31 +131,33 @@ kobweb {
 				)
 
 				fun List<String>.asCode() = "listOf(${joinToString { "\"$it\"" }})"
+				fun String.escapeQuotes() = replace("\"", "\\\"")
 
+				// THIS SEEMS TO FIX IT
 				docEntries.sortedByDescending(DocEntry::date).forEach { entry ->
 					appendLine(
 						"""
-					|    DocArticle("/docs/${
+						|    DocArticle("/docs/${
 							entry.file.path.substringBeforeLast(".md")
 								.replace(Regex(" |_"), "-")
 								.replace("\\", "/")
 								.lowercase()
 						}",
-					|       "${entry.date}",
-					|       "${entry.title.escapeQuotes()}",
-					|       "${entry.desc.escapeQuotes()}",
-					|       "${entry.navTitle.escapeQuotes()}",
-					|       ${entry.keywords.asCode()},
-					|       "${entry.dateModified}",
-					|       ${entry.slugs.asCode()}
-					|   ),
-					""".trimMargin()
+						|       "${entry.date}",
+						|       "${entry.title.escapeQuotes()}",
+						|       "${entry.desc.escapeQuotes()}",
+						|       "${entry.navTitle.escapeQuotes()}",
+						|       ${entry.keywords.asCode()},
+						|       "${entry.dateModified}",
+						|       ${entry.slugs.asCode()}
+						|   ),
+						""".trimMargin()
 					)
-					logger.info("Generated entry for ${entry.file.name}")
+					projectLogger.info("Generated entry for ${entry.file.name}")
 				}
 
 				appendLine(")")
-				logger.info("Generated ${docEntries.size} entries in docEntries.kt")
+				projectLogger.info("Generated ${docEntries.size} entries in docEntries.kt")
 			})
 		}
 	}
@@ -173,7 +174,6 @@ data class DocEntry(
 	val slugs: List<String>,
 )
 
-fun String.escapeQuotes() = this.replace("\"", "\\\"")
 
 kotlin {
 	configAsKobwebApplication("website")
@@ -190,11 +190,9 @@ kotlin {
 
 	sourceSets {
 		commonMain {
-//			kotlin.srcDir(generateDocSourceTask)
-
 			dependencies {
-				implementation(compose.html.core)
-				implementation(compose.runtime)
+				implementation(libs.compose.html.core)
+				implementation(libs.compose.runtime)
 				implementation(libs.kobweb.core)
 				implementation(libs.kobwebx.markdown)
 				implementation(libs.kobwebx.silk.icons.mdi)
