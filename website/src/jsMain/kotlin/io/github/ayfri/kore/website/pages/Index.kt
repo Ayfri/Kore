@@ -347,7 +347,7 @@ fun HomePage() = PageLayout("Home") {
 		),
 		MasonryItem(
 			"Type-safe",
-			"We crafted generators for douzens of Minecraft lists, so you can be sure to use the right value at the right place. No more typos in your commands, JSON files, or functions.",
+			"We crafted generators for dozens of Minecraft lists, so you can be sure to use the right value at the right place. No more typos in your commands, JSON files, or functions.",
 			// language=kotlin
 			"""
 				fun myDatapack() = dataPack("my_datapack") {
@@ -377,13 +377,13 @@ fun HomePage() = PageLayout("Home") {
 	val questions = mapOf(
 		"Is Kore compatible with recent Minecraft versions?" to "Yes, Kore is compatible with all Minecraft versions from 1.20 to the latest version.",
 		"Can I use other datapacks with Kore?" to "Yes, you can use other datapacks with Kore. By providing bindings for your datapacks, you can use them in your Kore code.",
-		"Why would I use Kore?" to "Kore is a modern, open-source, and easy-to-use Kotlin library for Minecraft datapack development. You can use it to create your own Minecraft Datapacks, and without the need to write a single line of JSON or MCFunction. You'll have great, precise, and fast code completion, and you'll be able to use the full power of Kotlin to manage your code. Furthermore, you can even create libraries to help you or others develop datapacks.",
-		"Are its APIs complete?" to "Yes, Kore's API is complete. It provides simple and intuitive APIs to create Minecraft datapacks and call commands. All the common lists from the game are available as enums, so you are always sure to use the right value.",
-		"Is it compatible with mods?" to "By providing APIs for creating your own commands/features, you can use Kore with mods. However, Kore is not compatible with mods directly.",
+		"Why would I use Kore?" to "Kore is a modern, open-source, and easy-to-use Kotlin library for Minecraft datapack development. You can use it to create your own Minecraft Datapacks, and without writing a single line of JSON or MCFunction. You'll have great, precise, and fast code completion, and you'll be able to use the full power of Kotlin to manage your code. Furthermore, you can even create libraries to help you or others develop datapacks.",
+		"Are its APIs complete?" to "Yes, Kore's API is complete. It provides simple and intuitive APIs to create Minecraft datapacks and call commands. All the common lists of the game are available as enums (like all the blocks, items, enchantments, etc.), you are always sure to use the right value.",
+		"Is Kore compatible with mods?" to "By providing APIs for creating your own commands/features, you can use Kore with mods. However, Kore is not compatible with mods directly.",
 	)
 
 	Div({
-		classes(HomePageStyle.faqContainer)
+		classes(HomePageStyle.faqContainer, "a")
 	}) {
 		H2 {
 			Text("Frequently Asked Questions")
@@ -426,7 +426,7 @@ fun HomePage() = PageLayout("Home") {
 			Text("Build your first datapack in Kotlin")
 		}
 
-		P("Craft your first datapack with Kore, and enjoy the power of Kotlin for Minecraft development.")
+		P("Craft your first datapack with Kore and enjoy the power of Kotlin for Minecraft development.")
 
 		LinkButton("Get Started", "https://ayfri.com/articles/kore-introduction/", classes = arrayOf("primary"))
 	}
