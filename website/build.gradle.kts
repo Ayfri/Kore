@@ -141,6 +141,7 @@ kobweb {
 							entry.file.path.substringBeforeLast(".md")
 								.replace(Regex(" |_"), "-")
 								.replace("\\", "/")
+								.substringAfter("doc/")
 								.lowercase()
 						}",
 						|       "${entry.date}",
