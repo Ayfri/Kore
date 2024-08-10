@@ -4,6 +4,7 @@ import kotlinx.html.link
 import kotlinx.html.script
 import kotlinx.html.unsafe
 import org.commonmark.node.Text
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
 	kotlin("multiplatform")
@@ -186,6 +187,11 @@ kotlin {
 			}
 		}
 
+		@OptIn(ExperimentalKotlinGradlePluginApi::class)
+		compilerOptions {
+			target = "es2015"
+		}
+		useEsModules()
 		binaries.executable()
 	}
 
