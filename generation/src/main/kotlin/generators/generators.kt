@@ -38,14 +38,13 @@ suspend fun launchAllSimpleGenerators() {
 		gen("Structures", "structures", "worldgen.Structure") { it.removeSuffix(".nbt") },
 		gen(
 			"Tags", "tags", argumentClassName = "", tagsParents = mapOf(
-				"blocks" to "BlockTag",
+				"block" to "BlockTag",
 				"cat_variant" to "CatVariantTag",
 				"enchantment" to "EnchantmentTag",
-				"effects" to "EffectTag",
-				"fluids" to "FluidTag",
+				"fluid" to "FluidTag",
 				"frog_variant" to "FrogVariantTag",
 				"instrument" to "InstrumentTag",
-				"items" to "ItemTag",
+				"item" to "ItemTag",
 				"painting_variant" to "PaintingVariantTag",
 				"wolf_variant" to "WolfVariantTag",
 				"worldgen/biome" to "BiomeTag",
