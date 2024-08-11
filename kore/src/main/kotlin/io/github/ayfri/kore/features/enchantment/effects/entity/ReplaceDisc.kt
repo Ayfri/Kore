@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.features.enchantment.effects.entity
 
+import io.github.ayfri.kore.arguments.types.resources.GameEventArgument
 import io.github.ayfri.kore.features.enchantment.values.LevelBased
 import io.github.ayfri.kore.features.enchantment.values.constantLevelBased
 import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicate
@@ -14,6 +15,7 @@ data class ReplaceDisc(
 	var height: LevelBased = constantLevelBased(0),
 	var offset: TripleAsArray<Int, Int, Int>? = null,
 	var predicate: BlockPredicate? = null,
+	var triggerGameEvent: GameEventArgument? = null,
 ) : EntityEffect()
 
 fun ReplaceDisc.radius(value: Int) {

@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.features.enchantment.effects.entity
 
+import io.github.ayfri.kore.arguments.types.resources.GameEventArgument
 import io.github.ayfri.kore.serializers.TripleAsArray
 import kotlinx.serialization.Serializable
 
@@ -7,6 +8,7 @@ import kotlinx.serialization.Serializable
 data class SetBlockProperties(
 	var properties: Map<String, String> = emptyMap(),
 	var offset: TripleAsArray<Int, Int, Int>? = null,
+	var triggerGameEvent: GameEventArgument? = null,
 ) : EntityEffect()
 
 fun SetBlockProperties.offset(x: Int, y: Int, z: Int) {

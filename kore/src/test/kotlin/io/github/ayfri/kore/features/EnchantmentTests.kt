@@ -452,6 +452,7 @@ fun DataPack.enchantmentTests() {
 				playSound(Sounds.Random.FUSE, 5f)
 				replaceBlock(simpleStateProvider(Blocks.DIAMOND_BLOCK)) {
 					offset(5, 5, 5)
+					triggerGameEvent = GameEvents.BLOCK_PLACE
 				}
 
 				replaceDisc(simpleStateProvider(Blocks.DIAMOND_BLOCK)) {
