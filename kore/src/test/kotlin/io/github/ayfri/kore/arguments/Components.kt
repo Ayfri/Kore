@@ -275,9 +275,11 @@ fun componentsTests() {
 				showParticles = true,
 				showIcon = true
 			)
+
+			convertsTo(Items.BONE)
 		}
 	}
-	foodTest.asString() assertsIs """minecraft:cooked_beef[food={nutrition:10,saturation:1.0f,is_meat:1b,eat_seconds:0.5f,effects:[{effect:{id:"minecraft:regeneration",duration:100,amplifier:1b,ambient:1b,show_particles:1b,show_icon:1b},probability:1.0f}]}]"""
+	foodTest.asString() assertsIs """minecraft:cooked_beef[food={nutrition:10,saturation:1.0f,is_meat:1b,eat_seconds:0.5f,effects:[{effect:{id:"minecraft:regeneration",duration:100,amplifier:1b,ambient:1b,show_particles:1b,show_icon:1b},probability:1.0f}],using_converts_to:{id:"minecraft:bone"}}]"""
 
 	val instrumentTest = Items.GOAT_HORN {
 		instrument(Instruments.CALL_GOAT_HORN)

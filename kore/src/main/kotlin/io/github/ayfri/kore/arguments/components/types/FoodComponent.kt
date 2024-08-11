@@ -2,6 +2,8 @@ package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.types.resources.EffectArgument
+import io.github.ayfri.kore.arguments.types.resources.ItemArgument
+import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.generated.ComponentTypes
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -23,6 +25,8 @@ data class FoodComponent(
 	@SerialName("eat_seconds")
 	var eatSeconds: Float? = null,
 	var effects: List<FoodEffect>? = null,
+	@SerialName("using_converts_to")
+	var usingConvertsTo: ItemStack? = null,
 ) : Component()
 
 fun ComponentsScope.food(
@@ -61,4 +65,8 @@ fun FoodComponent.effect(
 	showIcon: Boolean,
 ) = apply {
 	effects = (effects ?: mutableListOf()) + FoodEffect(Effect(id, duration, amplifier, ambient, showParticles, showIcon), probability)
+}
+
+fun FoodComponent.convertsTo(id: ItemArgument, block: ItemStack.() -> Unit = {}) = apply {
+	usingConvertsTo = ItemStack(id).apply(block)
 }
