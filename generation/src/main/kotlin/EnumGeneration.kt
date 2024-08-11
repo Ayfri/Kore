@@ -22,7 +22,7 @@ fun generateEnum(
 			addSuperinterface(argumentClassName(it))
 		}
 
-		values.removeMinecraftPrefix().forEach { value ->
+		values.filter(String::isNotBlank).removeMinecraftPrefix().forEach { value ->
 			addEnumConstant(value.snakeCase().uppercase())
 		}
 
@@ -42,7 +42,6 @@ fun generateEnum(
 					.build()
 			)
 		}
-
 
 		additionalEnumCode()
 
