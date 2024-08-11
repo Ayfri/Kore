@@ -96,6 +96,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("EntityTypes", "entity_type"),
 		gen("Fluids", "fluid"),
 		gen("FrogVariants", "frog_variant"),
+		gen("GameEvents", "game_event"),
 		gen("Instruments", "instrument"),
 		gen("Items", "item", additionalCode = {
 			addProperty(
