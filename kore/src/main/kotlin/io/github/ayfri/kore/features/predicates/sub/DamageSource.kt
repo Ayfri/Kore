@@ -10,8 +10,8 @@ data class DamageTagEntry(
 
 @Serializable
 data class DamageSource(
-	var bypassesArmor: Boolean? = null,
 	var directEntity: Entity? = null,
+	var isDirect: Boolean? = null,
 	var sourceEntity: Entity? = null,
 	var tags: MutableList<DamageTagEntry>? = null,
 )
