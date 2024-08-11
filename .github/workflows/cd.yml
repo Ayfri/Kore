@@ -40,7 +40,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Query Browser Cache ID
         id: browser-cache-id
