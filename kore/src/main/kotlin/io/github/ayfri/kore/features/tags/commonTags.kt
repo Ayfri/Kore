@@ -31,12 +31,26 @@ fun DataPack.catVariantTag(
 	block: Tag<CatVariantTagArgument>.() -> Unit = {},
 ) = tag(fileName, "cat_variant", namespace, replace, block)
 
+fun DataPack.configuredStructureTag(
+	fileName: String = "configured_structure_feature",
+	namespace: String = name,
+	replace: Boolean = false,
+	block: Tag<ConfiguredStructureTagArgument>.() -> Unit = {},
+) = tag(fileName, "configured_structure", namespace, replace, block)
+
 fun DataPack.damageTypeTag(
 	fileName: String = "damage_type",
 	namespace: String = name,
 	replace: Boolean = false,
 	block: Tag<DamageTypeTagArgument>.() -> Unit = {},
 ) = tag(fileName, "damage_type", namespace, replace, block)
+
+fun DataPack.enchantmentTag(
+	fileName: String = "enchantment",
+	namespace: String = name,
+	replace: Boolean = false,
+	block: Tag<EnchantmentTagArgument>.() -> Unit = {},
+) = tag(fileName, "enchantment", namespace, replace, block)
 
 fun DataPack.entityTypeTag(
 	fileName: String = "entity_type",
@@ -58,6 +72,13 @@ fun DataPack.fluidTag(
 	replace: Boolean = false,
 	block: Tag<FluidTagArgument>.() -> Unit = {},
 ) = tag(fileName, "fluid", namespace, replace, block)
+
+fun DataPack.frogVariantTag(
+	fileName: String = "frog_variant",
+	namespace: String = name,
+	replace: Boolean = false,
+	block: Tag<FrogVariantTagArgument>.() -> Unit = {},
+) = tag(fileName, "frog_variant", namespace, replace, block)
 
 fun DataPack.functionTag(
 	fileName: String = "function",
@@ -107,6 +128,27 @@ fun DataPack.structureTag(
 	replace: Boolean = false,
 	block: Tag<StructureTagArgument>.() -> Unit = {},
 ) = tag(fileName, "structure", namespace, replace, block)
+
+fun DataPack.trimMaterialTag(
+	fileName: String = "trim_material",
+	namespace: String = name,
+	replace: Boolean = false,
+	block: Tag<TrimMaterialTagArgument>.() -> Unit = {},
+) = tag(fileName, "trim_material", namespace, replace, block)
+
+fun DataPack.trimPatternTag(
+	fileName: String = "trim_pattern",
+	namespace: String = name,
+	replace: Boolean = false,
+	block: Tag<TrimPatternTagArgument>.() -> Unit = {},
+) = tag(fileName, "trim_pattern", namespace, replace, block)
+
+fun DataPack.wolfVariantTag(
+	fileName: String = "wolf_variant",
+	namespace: String = name,
+	replace: Boolean = false,
+	block: Tag<WolfVariantTagArgument>.() -> Unit = {},
+) = tag(fileName, "wolf_variant", namespace, replace, block)
 
 fun DataPack.worldPresetTag(
 	fileName: String = "world_preset",
