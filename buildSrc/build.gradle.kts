@@ -1,3 +1,5 @@
+val kotlinVersion = "2.0.10"
+
 plugins {
 	`kotlin-dsl`
 	kotlin("jvm") version embeddedKotlinVersion
@@ -9,7 +11,7 @@ repositories {
 }
 
 dependencies {
-	implementation(kotlin("gradle-plugin", embeddedKotlinVersion))
+	implementation(kotlin("gradle-plugin", kotlinVersion))
 	implementation(kotlin("script-runtime"))
 	implementation(kotlin("stdlib-jdk8"))
 }
