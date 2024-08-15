@@ -103,6 +103,10 @@ fun DataPack.predicateTests() {
 				horizontalSpeed(1.0)
 			}
 
+			movementAffectedBy {
+				canSeeSky = true
+			}
+
 			nbt {
 				this["foo"] = "bar"
 			}
@@ -160,6 +164,9 @@ fun DataPack.predicateTests() {
 						"max": 4.0
 					},
 					"horizontal_speed": 1.0
+				},
+				"movement_affected_by": {
+					"can_see_sky": true
 				},
 				"nbt": {
 					"foo": "bar"

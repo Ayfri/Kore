@@ -22,6 +22,7 @@ data class Entity(
 	var flags: EntityFlags? = null,
 	var location: Location? = null,
 	var movement: Movement? = null,
+	var movementAffectedBy: Location? = null,
 	@Serializable(NbtAsJsonSerializer::class) var nbt: NbtCompound? = null,
 	var passenger: Entity? = null,
 	var periodicTicks: Int? = null,
@@ -84,6 +85,10 @@ fun Entity.location(init: Location.() -> Unit = {}) {
 
 fun Entity.movement(init: Movement.() -> Unit = {}) {
 	movement = Movement().apply(init)
+}
+
+fun Entity.movementAffectedBy(init: Location.() -> Unit = {}) {
+	movementAffectedBy = Location().apply(init)
 }
 
 fun Entity.nbt(block: NbtCompoundBuilder.() -> Unit) {
