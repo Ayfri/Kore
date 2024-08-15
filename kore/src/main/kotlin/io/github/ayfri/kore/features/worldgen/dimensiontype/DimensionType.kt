@@ -49,6 +49,7 @@ data class DimensionType(
 	@OptIn(ExperimentalSerializationApi::class)
 	fun getJsonEncoder(dataPack: DataPack) = when {
 		::jsonEncoder.isInitialized -> jsonEncoder
+
 		else -> {
 			jsonEncoder = Json {
 				prettyPrint = dataPack.jsonEncoder.configuration.prettyPrint
@@ -67,6 +68,6 @@ data class DimensionType(
  * Values are the minimal values for a dimension type, booleans have the same values as overworld.
  */
 fun DataPack.dimensionType(fileName: String = "dimension_type", dimensionType: DimensionType.() -> Unit = {}): DimensionTypeArgument {
-	dimensionTypes += DimensionType(fileName, infiniburn = Tags.Blocks.INFINIBURN_OVERWORLD).apply(dimensionType)
+	dimensionTypes += DimensionType(fileName, infiniburn = Tags.Block.INFINIBURN_OVERWORLD).apply(dimensionType)
 	return DimensionTypeArgument(fileName, name)
 }

@@ -450,8 +450,8 @@ fun componentsTests() {
 			rule(
 				speed = 0.5f,
 				correctForDrops = true,
-				Tags.Blocks.BASE_STONE_OVERWORLD,
-				Tags.Blocks.OVERWORLD_CARVER_REPLACEABLES,
+				Tags.Block.BASE_STONE_OVERWORLD,
+				Tags.Block.OVERWORLD_CARVER_REPLACEABLES,
 				Blocks.HAY_BLOCK
 			)
 			defaultMiningSpeed = 2.0f

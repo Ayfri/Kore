@@ -37,7 +37,7 @@ fun DataPack.enchantmentTests() {
 		description("This is a test enchantment.")
 		exclusiveSet(Tags.Enchantment.IN_ENCHANTING_TABLE)
 		supportedItems(Items.DIAMOND_SWORD, Items.DIAMOND_AXE)
-		primaryItems(Tags.Items.AXES)
+		primaryItems(Tags.Item.AXES)
 		slots(EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND)
 	}
 
@@ -565,7 +565,8 @@ fun DataPack.enchantmentTests() {
 								5,
 								5,
 								5
-							]
+							],
+							"trigger_game_event": "minecraft:block_place"
 						}
 					},
 					{

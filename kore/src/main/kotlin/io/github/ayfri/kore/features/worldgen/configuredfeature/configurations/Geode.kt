@@ -33,8 +33,8 @@ data class GeodeBlocks(
 	var middleLayer: BlockStateProvider = simpleStateProvider(),
 	var outerLayer: BlockStateProvider = simpleStateProvider(),
 	var innerPlacements: List<BlockState> = emptyList(),
-	var cannotReplace: BlockTagArgument = Tags.Blocks.FEATURES_CANNOT_REPLACE,
-	var invalidBlocks: BlockTagArgument = Tags.Blocks.GEODE_INVALID_BLOCKS,
+	var cannotReplace: BlockTagArgument = Tags.Block.FEATURES_CANNOT_REPLACE,
+	var invalidBlocks: BlockTagArgument = Tags.Block.GEODE_INVALID_BLOCKS,
 )
 
 @Serializable

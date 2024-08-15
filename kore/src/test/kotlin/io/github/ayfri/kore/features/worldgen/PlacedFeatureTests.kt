@@ -23,7 +23,7 @@ fun DataPack.placedFeatureTests() {
 		rarityFilter(5)
 
 		blockPredicateFilter(allOf {
-			matchingBlockTag(tag = Tags.Blocks.DIRT)
+			matchingBlockTag(tag = Tags.Block.DIRT)
 			trueBlockPredicate()
 		})
 	}

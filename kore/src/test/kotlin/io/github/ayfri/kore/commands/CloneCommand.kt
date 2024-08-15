@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.numbers.relativePos
 import io.github.ayfri.kore.assertions.assertsMatches
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.generated.Tags
 import kotlin.random.Random
 
 private fun randomPos(from: Int = 0, to: Int = 100) = Random.nextInt(from, to).relativePos
@@ -34,6 +35,6 @@ fun Function.cloneTests() {
 
 	clone {
 		randomZoneAndDestination()
-		filter(io.github.ayfri.kore.generated.Tags.Blocks.BASE_STONE_OVERWORLD, CloneMode.FORCE)
+		filter(Tags.Block.BASE_STONE_OVERWORLD, CloneMode.FORCE)
 	} assertsMatches Regex("clone ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* filtered #minecraft:base_stone_overworld force")
 }

@@ -20,7 +20,7 @@ fun DataPack.recipeTest() {
 	recipes {
 		blasting("test_blasting") {
 			ingredient {
-				tag = Tags.Items.STONE_CRAFTING_MATERIALS
+				tag = Tags.Item.STONE_CRAFTING_MATERIALS
 			}
 
 			result = itemStack(Items.DIAMOND) {
