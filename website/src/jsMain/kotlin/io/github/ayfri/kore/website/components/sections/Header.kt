@@ -19,8 +19,8 @@ import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 
 val tabs = mapOf(
-	"Docs" to "/docs",
-	"About" to "/about"
+	"Docs" to "$GITHUB_LINK/wiki",
+	"About" to GITHUB_LINK
 )
 
 @Composable
