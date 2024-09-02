@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.serializers
 
-import net.benwoodworth.knbt.*
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
@@ -8,12 +7,17 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import net.benwoodworth.knbt.*
 
 object NbtAsJsonSerializer : KSerializer<NbtTag> {
 	override val descriptor = JsonElement.serializer().descriptor
 
-	override fun serialize(encoder: Encoder, value: NbtTag) =
-		encoder.encodeSerializableValue(JsonElement.serializer(), value.toJsonElement())
+	override fun serialize(encoder: Encoder, value: NbtTag) {
+		when (encoder) {
+			is NbtEncoder -> encoder.encodeNbtTag(value)
+			else -> encoder.encodeSerializableValue(JsonElement.serializer(), value.toJsonElement())
+		}
+	}
 
 	override fun deserialize(decoder: Decoder) = throw UnsupportedOperationException("Nbt Json deserialization is not supported")
 
