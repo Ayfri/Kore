@@ -66,9 +66,7 @@ abstract class ComponentsScope(open val components: MutableMap<String, Component
 
 		val classicComponentsSerialized = buildJsonObject {
 			classicComponents.map { (key, value) -> key to jsonSerializer.encodeToJsonElement(value) }
-				.forEach { (key, value) ->
-					put(key, value)
-				}
+				.forEach { (key, value) -> put(key, value) }
 		}
 
 		val customComponentsSerialized = jsonSerializer.encodeToJsonElement(
