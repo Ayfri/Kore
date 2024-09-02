@@ -176,9 +176,9 @@ class DataPack(val name: String) {
 					zipOutputStream.closeEntry()
 				}
 
-				generators.forEach { generator ->
-					generator.forEach { it.generateZipEntry(this, zipOutputStream) }
-				}
+				generators.flatten()
+					.distinctBy { it.getFinalPath(this) }
+					.forEach { generator -> generator.generateZipEntry(this, zipOutputStream) }
 			}
 		}
 
