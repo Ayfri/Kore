@@ -25,7 +25,7 @@ import kotlin.reflect.KProperty1
  * ```
  */
 open class InlineSerializer<T, P>(
-	private val kSerializer: KSerializer<P>,
+	private val kSerializer: KSerializer<in P>,
 	private val property: KProperty1<T, P>,
 ) : KSerializer<T> {
 	override val descriptor = NbtTag.serializer().descriptor
