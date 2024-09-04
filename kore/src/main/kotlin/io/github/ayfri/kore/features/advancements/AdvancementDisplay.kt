@@ -4,8 +4,8 @@ import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
-import net.benwoodworth.knbt.NbtTag
 import kotlinx.serialization.Serializable
+import net.benwoodworth.knbt.NbtTag
 
 @Serializable
 data class AdvancementDisplay(
@@ -34,6 +34,6 @@ enum class AdvancementFrameType {
 
 @Serializable
 data class AdvancementIcon(
-	var item: ItemArgument,
+	var id: ItemArgument,
 	@Serializable(with = NbtAsJsonSerializer::class) var nbtData: NbtTag? = null,
 )

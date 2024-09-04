@@ -57,7 +57,7 @@ fun DataPack.advancementTests() {
 		{
 			"display": {
 				"icon": {
-					"item": "minecraft:diamond_sword"
+					"id": "minecraft:diamond_sword"
 				},
 				"title": "Hello",
 				"description": "World",
