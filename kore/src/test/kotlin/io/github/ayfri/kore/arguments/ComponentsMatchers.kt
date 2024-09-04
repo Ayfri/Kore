@@ -119,18 +119,14 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 
 	val customData = ItemStackSubPredicates().apply {
 		customData {
-			data {
-				this["test"] = 1
-			}
+			this["test"] = 1
 		}
 	}
 
 	jsonEncoder.encodeToString(customData) assertsIsJson """
 		{
 			"minecraft:custom_data": {
-				"data": {
-					"test": 1
-				}
+				"test": 1
 			}
 		}
 	""".trimIndent()
