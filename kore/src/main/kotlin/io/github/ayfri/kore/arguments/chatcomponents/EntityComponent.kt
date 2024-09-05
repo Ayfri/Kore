@@ -1,8 +1,9 @@
 package io.github.ayfri.kore.arguments.chatcomponents
 
+import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.utils.set
-import net.benwoodworth.knbt.buildNbtCompound
 import kotlinx.serialization.Serializable
+import net.benwoodworth.knbt.buildNbtCompound
 
 @Serializable
 data class EntityComponent(
@@ -20,3 +21,6 @@ data class EntityComponent(
 
 fun entityComponent(selector: String, separator: String? = null, block: EntityComponent.() -> Unit = {}) =
 	ChatComponents(EntityComponent(selector, separator).apply(block))
+
+fun entityComponent(selector: EntityArgument, separator: String? = null, block: EntityComponent.() -> Unit = {}) =
+	entityComponent(selector.asString(), separator, block)

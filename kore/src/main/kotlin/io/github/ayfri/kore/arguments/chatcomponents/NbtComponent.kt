@@ -1,12 +1,12 @@
 package io.github.ayfri.kore.arguments.chatcomponents
 
+import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.types.EntityArgument
-import io.github.ayfri.kore.arguments.types.resources.BlockArgument
 import io.github.ayfri.kore.arguments.types.resources.StorageArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.set
-import net.benwoodworth.knbt.buildNbtCompound
 import kotlinx.serialization.Serializable
+import net.benwoodworth.knbt.buildNbtCompound
 
 @Serializable(with = NbtComponentSource.Companion.NbtComponentSourceSerializer::class)
 enum class NbtComponentSource {
@@ -45,7 +45,7 @@ data class NbtComponent(
 
 fun nbtComponent(path: String, block: NbtComponent.() -> Unit = {}) = ChatComponents(NbtComponent(path).apply(block))
 
-fun nbtComponent(path: String, block: BlockArgument, block2: NbtComponent.() -> Unit = {}) =
+fun nbtComponent(path: String, block: Vec3, block2: NbtComponent.() -> Unit = {}) =
 	ChatComponents(NbtComponent(path, block = block.asString(), source = NbtComponentSource.BLOCK).apply(block2))
 
 fun nbtComponent(path: String, entity: EntityArgument, block: NbtComponent.() -> Unit = {}) =

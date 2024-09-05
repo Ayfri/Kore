@@ -4,8 +4,6 @@ import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
 import io.github.ayfri.kore.utils.plusAssign
-import kotlin.reflect.full.createType
-import net.benwoodworth.knbt.*
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
@@ -16,6 +14,8 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.JsonNamingStrategy
+import net.benwoodworth.knbt.*
+import kotlin.reflect.full.createType
 
 @Serializable(with = ChatComponents.Companion.ChatComponentsSerializer::class)
 data class ChatComponents(

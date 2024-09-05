@@ -3,9 +3,9 @@ package io.github.ayfri.kore.arguments.chatcomponents
 import io.github.ayfri.kore.arguments.types.ScoreHolderArgument
 import io.github.ayfri.kore.arguments.types.literals.AllArgument
 import io.github.ayfri.kore.utils.set
-import net.benwoodworth.knbt.buildNbtCompound
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import net.benwoodworth.knbt.buildNbtCompound
 
 @Serializable
 data class ScoreComponent(

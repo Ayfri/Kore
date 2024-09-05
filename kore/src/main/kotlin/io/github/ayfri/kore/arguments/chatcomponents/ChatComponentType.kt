@@ -5,12 +5,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable(with = ChatComponentType.Companion.ChatComponentTypeSerializer::class)
 enum class ChatComponentType {
-	TEXT,
-	TRANSLATABLE,
+	KEYBIND,
+	NBT,
 	SCORE,
 	SELECTOR,
-	NBT,
-	KEYBIND;
+	TEXT,
+	TRANSLATABLE;
 
 	companion object {
 		data object ChatComponentTypeSerializer : LowercaseSerializer<ChatComponentType>(entries)
