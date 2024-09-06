@@ -133,9 +133,19 @@ suspend fun launchAllSimpleGenerators() {
 		gen("Carvers", "worldgen/carver"),
 	)
 
+	val txtRegistriesTreeGenerators = listOf(
+		gen("SoundEvents", "sound_event", "SoundEvent"),
+	).transformRemoveMinecraftPrefix().map { gen ->
+		gen.apply {
+			enumTree = true
+			separator = "."
+		}
+	}
+
 	val allListGenerators = txtListsListGenerators.setUrlWithType("lists") +
 		txtListsTreeGenerators.setUrlWithType("lists") +
-		txtRegistriesListGenerators.setUrlWithType("registries")
+		txtRegistriesListGenerators.setUrlWithType("registries") +
+		txtRegistriesTreeGenerators.setUrlWithType("registries")
 
 	allListGenerators.sortedBy { it.fileName }.forEach { gen ->
 		val url = gen.url
@@ -146,6 +156,7 @@ suspend fun launchAllSimpleGenerators() {
 				name = gen.name,
 				sourceUrl = url,
 				parentArgumentType = gen.argumentName,
+				separator = gen.separator,
 				tagsParents = gen.tagsParents
 			)
 
