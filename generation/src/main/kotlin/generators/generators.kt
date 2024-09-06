@@ -13,6 +13,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("DamageTypes", "damage_types"),
 		gen("DimensionTypes", "dimension_types", "worldgen.DimensionType"),
 		gen("Enchantments", "enchantments"),
+		gen("JukeboxSongs", "jukebox_songs"),
 		gen("PaintingVariants", "painting_variants"),
 		gen("Recipes", "recipes"),
 		gen("TrimMaterials", "trim_materials"),
