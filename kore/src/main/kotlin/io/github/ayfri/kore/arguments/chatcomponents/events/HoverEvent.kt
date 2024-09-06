@@ -52,17 +52,17 @@ fun HoverEvent.showEntity(type: EntityTypeArgument, name: ChatComponent? = null,
 
 fun HoverEvent.showEntity(type: EntityTypeArgument, name: String? = null, id: UUIDArgument) = apply {
 	action = HoverAction.SHOW_ENTITY
-	contents = ContentsEntityUUID(type.asString(), name?.let { text(it) }, id.asString())
+	contents = ContentsEntityUUID(type.asString(), name?.let(::text), id.asString())
 }
 
 fun HoverEvent.showEntity(type: EntityTypeArgument, name: String? = null, id: IntArray) = apply {
 	action = HoverAction.SHOW_ENTITY
-	contents = ContentsEntityIntArray(type.asString(), name?.let { text(it) }, id)
+	contents = ContentsEntityIntArray(type.asString(), name?.let(::text), id)
 }
 
 fun HoverEvent.showItem(item: ItemArgument, count: Int) = apply {
 	action = HoverAction.SHOW_ITEM
-	contents = ContentsItem(item.asId(), count, item.components?.toString())
+	contents = ContentsItem(item.asId(), count, item.components)
 }
 
 fun HoverEvent.showText(block: ChatComponents.() -> Unit) = apply {
