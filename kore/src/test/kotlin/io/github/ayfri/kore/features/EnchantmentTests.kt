@@ -2,7 +2,6 @@ package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
-import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.AttributeModifierOperation
@@ -150,11 +149,10 @@ fun DataPack.enchantmentTests() {
 		}
 	""".trimIndent()
 
-	val randomUUID = UUIDArgument.random()
 	enchantment("attributes") {
 		effects {
 			attributes {
-				attribute("my_modifier", Attributes.GENERIC_SCALE, AttributeModifierOperation.ADD_VALUE, 5, randomUUID)
+				attribute("my_modifier", name, Attributes.GENERIC_SCALE, AttributeModifierOperation.ADD_VALUE, 5)
 			}
 		}
 	}
@@ -165,11 +163,10 @@ fun DataPack.enchantmentTests() {
 			"effects": {
 				"minecraft:attributes": [
 					{
-						"name": "my_modifier",
+						"id": "$name:my_modifier",
 						"attribute": "minecraft:generic.scale",
 						"operation": "add_value",
-						"amount": 5,
-						"uuid": "${randomUUID.asString()}"
+						"amount": 5
 					}
 				]
 			}

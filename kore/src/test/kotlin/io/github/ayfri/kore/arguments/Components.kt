@@ -22,31 +22,29 @@ fun componentsTests() {
 	val crossbow = Items.CROSSBOW
 	val bundle = Items.BUNDLE
 
-	val uuid = randomUUID()
 	val attributeModifiersTest = stoneSword {
 		attributeModifiers {
 			modifier(
 				type = Attributes.GENERIC_SCALE,
 				amount = 1.0,
-				name = "Big!",
+				name = "big",
 				operation = AttributeModifierOperation.ADD_VALUE,
-				uuid = uuid,
 			)
 		}
 	}
-	attributeModifiersTest.asString() assertsIs """minecraft:stone_sword[attribute_modifiers=[{type:"minecraft:generic.scale",uuid:"${uuid.asString()}",name:"Big!",amount:1.0d,operation:"add_value"}]]"""
+	attributeModifiersTest.asString() assertsIs """minecraft:stone_sword[attribute_modifiers=[{type:"minecraft:generic.scale",id:"minecraft:big",amount:1.0d,operation:"add_value"}]]"""
 
 	attributeModifiersTest.components!!.attributeModifiers {
 		modifier(
 			type = Attributes.GENERIC_ATTACK_DAMAGE,
 			amount = 1.0,
-			name = "Big!",
+			name = "big",
+			namespace = "my_namespace",
 			operation = AttributeModifierOperation.ADD_VALUE,
-			uuid = uuid,
 		)
 		showInTooltip = true
 	}
-	attributeModifiersTest.asString() assertsIs """minecraft:stone_sword[attribute_modifiers={modifiers:[{type:"minecraft:generic.attack_damage",uuid:"${uuid.asString()}",name:"Big!",amount:1.0d,operation:"add_value"}],show_in_tooltip:1b}]"""
+	attributeModifiersTest.asString() assertsIs """minecraft:stone_sword[attribute_modifiers={modifiers:[{type:"minecraft:generic.attack_damage",id:"my_namespace:big",amount:1.0d,operation:"add_value"}],show_in_tooltip:1b}]"""
 
 	val bannerPatternsTest = Items.WHITE_BANNER {
 		bannerPatterns {

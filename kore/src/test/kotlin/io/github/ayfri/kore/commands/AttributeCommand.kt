@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.commands
 
-import io.github.ayfri.kore.arguments.types.literals.randomUUID
 import io.github.ayfri.kore.arguments.types.literals.self
+import io.github.ayfri.kore.arguments.types.resources.AttributeModifierArgument
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.assertions.assertsMatches
 import io.github.ayfri.kore.functions.Function
@@ -9,11 +9,7 @@ import io.github.ayfri.kore.generated.Attributes
 
 fun Function.attributeTests() {
 	val attribute = Attributes.GENERIC_MAX_HEALTH
-
-	// language=regexp
-	val charSet = "[0-9a-f]"
-	// language=regexp
-	val uuidRegex = "$charSet{8}-$charSet{4}-$charSet{4}-$charSet{4}-$charSet{12}"
+	val attributeName = AttributeModifierArgument("my_attribute", datapack.name)
 
 	attributes {
 		get(self()) {
@@ -22,26 +18,26 @@ fun Function.attributeTests() {
 
 			modifiers(attribute) {
 				add(
-					attribute,
+					attributeName,
 					1.0,
 					AttributeModifierOperation.ADD_VALUE
-				) assertsMatches Regex("attribute @s minecraft:generic.max_health modifier add $uuidRegex minecraft:generic.max_health 1 add_value")
+				) assertsMatches Regex("attribute @s minecraft:generic.max_health modifier add ${attributeName.asString()} 1 add_value")
 
 				add(
-					attribute,
+					attributeName,
 					1.0,
 					AttributeModifierOperation.ADD_MULTIPLIED_TOTAL
-				) assertsMatches Regex("attribute @s minecraft:generic.max_health modifier add $uuidRegex minecraft:generic.max_health 1 add_multiplied_total")
+				) assertsMatches Regex("attribute @s minecraft:generic.max_health modifier add ${attributeName.asString()} 1 add_multiplied_total")
 
 				add(
-					attribute,
+					attributeName,
 					1.0,
 					AttributeModifierOperation.ADD_MULTIPLIED_BASE
-				) assertsMatches Regex("attribute @s minecraft:generic.max_health modifier add $uuidRegex minecraft:generic.max_health 1 add_multiplied_base")
+				) assertsMatches Regex("attribute @s minecraft:generic.max_health modifier add ${attributeName.asString()} 1 add_multiplied_base")
 
-				get(randomUUID()) assertsMatches Regex("attribute @s minecraft:generic.max_health modifier value get $uuidRegex")
+				get(attributeName) assertsMatches Regex("attribute @s minecraft:generic.max_health modifier value get ${attributeName.asString()}")
 
-				remove(randomUUID()) assertsMatches Regex("attribute @s minecraft:generic.max_health modifier remove $uuidRegex")
+				remove(attributeName) assertsMatches Regex("attribute @s minecraft:generic.max_health modifier remove ${attributeName.asString()}")
 			}
 		}
 
@@ -56,7 +52,7 @@ fun Function.attributeTests() {
 			}
 
 			modifiers {
-				get(randomUUID()) assertsMatches Regex("attribute @s minecraft:generic.max_health modifier value get $uuidRegex")
+				get(attributeName) assertsMatches Regex("attribute @s minecraft:generic.max_health modifier value get ${attributeName.asString()}")
 			}
 		}
 	}
@@ -69,7 +65,7 @@ fun Function.attributeTests() {
 		}
 
 		modifiers(attribute) {
-			get(randomUUID()) assertsMatches Regex("attribute @s minecraft:generic.max_health modifier value get $uuidRegex")
+			get(attributeName) assertsMatches Regex("attribute @s minecraft:generic.max_health modifier value get ${attributeName.asString()}")
 		}
 	}
 

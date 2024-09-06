@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.enchantment.effects.builders
 
-import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
 import io.github.ayfri.kore.arguments.types.resources.AttributeArgument
+import io.github.ayfri.kore.arguments.types.resources.AttributeModifierArgument
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.features.enchantment.effects.AttributeEffect
 import io.github.ayfri.kore.features.enchantment.values.LevelBased
@@ -23,19 +23,37 @@ data class AttributeEffectBuilder(
 }
 
 fun AttributeEffectBuilder.attribute(
-	name: String,
+	id: AttributeModifierArgument,
 	attribute: AttributeArgument,
 	operation: AttributeModifierOperation,
 	amount: LevelBased,
-	uuid: UUIDArgument = UUIDArgument.random(),
 	block: AttributeEffect.() -> Unit = {},
-) = apply { effects += AttributeEffect(name, attribute, operation, amount, uuid).apply(block) }
+) = apply { effects += AttributeEffect(id, attribute, operation, amount).apply(block) }
 
 fun AttributeEffectBuilder.attribute(
 	name: String,
+	namespace: String = "minecraft",
+	attribute: AttributeArgument,
+	operation: AttributeModifierOperation,
+	amount: LevelBased,
+	block: AttributeEffect.() -> Unit = {},
+) = apply { effects += AttributeEffect(AttributeModifierArgument(name, namespace), attribute, operation, amount).apply(block) }
+
+fun AttributeEffectBuilder.attribute(
+	id: AttributeModifierArgument,
 	attribute: AttributeArgument,
 	operation: AttributeModifierOperation,
 	amount: Int,
-	uuid: UUIDArgument = UUIDArgument.random(),
 	block: AttributeEffect.() -> Unit = {},
-) = apply { effects += AttributeEffect(name, attribute, operation, constantLevelBased(amount), uuid).apply(block) }
+) = apply { effects += AttributeEffect(id, attribute, operation, constantLevelBased(amount)).apply(block) }
+
+fun AttributeEffectBuilder.attribute(
+	name: String,
+	namespace: String = "minecraft",
+	attribute: AttributeArgument,
+	operation: AttributeModifierOperation,
+	amount: Int,
+	block: AttributeEffect.() -> Unit = {},
+) = apply {
+	effects += AttributeEffect(AttributeModifierArgument(name, namespace), attribute, operation, constantLevelBased(amount)).apply(block)
+}

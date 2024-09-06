@@ -45,7 +45,7 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 						{
 							"type": "minecraft:generic.scale",
 							"slot": "any",
-							"name": "test",
+							"id": "minecraft:test",
 							"amount": 1.0,
 							"operation": "add_multiplied_base"
 						}

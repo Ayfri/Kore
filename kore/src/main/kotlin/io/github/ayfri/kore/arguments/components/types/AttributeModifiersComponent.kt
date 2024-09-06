@@ -2,8 +2,8 @@ package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
-import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
 import io.github.ayfri.kore.arguments.types.resources.AttributeArgument
+import io.github.ayfri.kore.arguments.types.resources.AttributeModifierArgument
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.generated.ComponentTypes
 import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
@@ -14,8 +14,7 @@ import kotlinx.serialization.Serializable
 data class AttributeModifier(
 	val type: AttributeArgument,
 	val slot: EquipmentSlot? = null,
-	val uuid: UUIDArgument,
-	val name: String,
+	val id: AttributeModifierArgument,
 	val amount: Double,
 	val operation: AttributeModifierOperation,
 )
@@ -50,8 +49,16 @@ fun ComponentsScope.attributeModifiers(modifiers: AttributeModifiersComponent.()
 fun AttributeModifiersComponent.modifier(
 	type: AttributeArgument,
 	slot: EquipmentSlot? = null,
-	uuid: UUIDArgument,
-	name: String,
+	id: AttributeModifierArgument,
 	amount: Double,
 	operation: AttributeModifierOperation,
-) = apply { modifiers += AttributeModifier(type, slot, uuid, name, amount, operation) }
+) = apply { modifiers += AttributeModifier(type, slot, id, amount, operation) }
+
+fun AttributeModifiersComponent.modifier(
+	type: AttributeArgument,
+	slot: EquipmentSlot? = null,
+	name: String,
+	namespace: String = "minecraft",
+	amount: Double,
+	operation: AttributeModifierOperation,
+) = apply { modifiers += AttributeModifier(type, slot, AttributeModifierArgument(name, namespace), amount, operation) }

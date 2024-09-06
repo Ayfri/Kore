@@ -4,7 +4,6 @@ import io.github.ayfri.kore.arguments.components.types.*
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.numbers.seconds
 import io.github.ayfri.kore.arguments.types.literals.allEntities
-import io.github.ayfri.kore.arguments.types.literals.randomUUID
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.commands.kill
 import io.github.ayfri.kore.commands.schedule
@@ -33,13 +32,11 @@ fun Function.displayTests() {
 				modifier(
 					Attributes.GENERIC_ATTACK_DAMAGE,
 					name = "test",
+					namespace = datapack.name,
 					amount = 1.0,
 					operation = AttributeModifierOperation.ADD_VALUE,
-					uuid = randomUUID()
 				)
 			}
-
-			// customModelData = 1
 
 			canBreak(Blocks.DIRT)
 		}

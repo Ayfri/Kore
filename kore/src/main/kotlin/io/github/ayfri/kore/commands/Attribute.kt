@@ -1,12 +1,13 @@
 package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.types.EntityArgument
-import io.github.ayfri.kore.arguments.types.literals.*
+import io.github.ayfri.kore.arguments.types.literals.float
+import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.resources.AttributeArgument
+import io.github.ayfri.kore.arguments.types.resources.AttributeModifierArgument
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.asArg
-import java.util.*
 import kotlinx.serialization.Serializable
 
 @Serializable(AttributeModifierOperation.Companion.AttributeModifierOperationSerializer::class)
@@ -26,7 +27,7 @@ class AttributeBase(private val fn: Function, private val target: EntityArgument
 }
 
 class AttributeModifiers(private val fn: Function, private val target: EntityArgument, private val attribute: AttributeArgument) {
-	fun add(id: UUID, name: String, value: Double, operation: AttributeModifierOperation) =
+	fun add(name: String, namespace: String = "minecraft", value: Double, operation: AttributeModifierOperation) =
 		fn.addLine(
 			command(
 				"attribute",
@@ -34,14 +35,13 @@ class AttributeModifiers(private val fn: Function, private val target: EntityArg
 				attribute,
 				literal("modifier"),
 				literal("add"),
-				uuid(id),
-				literal(name),
+				literal("$namespace:$name"),
 				float(value),
 				literal(operation.asArg())
 			)
 		)
 
-	fun add(id: UUIDArgument, name: String, value: Double, operation: AttributeModifierOperation) =
+	fun add(id: AttributeModifierArgument, value: Double, operation: AttributeModifierOperation) =
 		fn.addLine(
 			command(
 				"attribute",
@@ -50,35 +50,33 @@ class AttributeModifiers(private val fn: Function, private val target: EntityArg
 				literal("modifier"),
 				literal("add"),
 				id,
-				literal(name),
 				float(value),
 				literal(operation.asArg())
 			)
 		)
 
-	fun add(name: AttributeArgument, value: Double, operation: AttributeModifierOperation) =
+	fun get(name: String, namespace: String, scale: Double? = null) =
 		fn.addLine(
 			command(
 				"attribute",
 				target,
 				attribute,
 				literal("modifier"),
-				literal("add"),
-				randomUUID(),
-				name,
-				float(value),
-				literal(operation.asArg())
+				literal("value"),
+				literal("get"),
+				literal("$namespace:$name"),
+				float(scale)
 			)
 		)
 
-	fun get(id: UUID, scale: Double? = null) =
-		fn.addLine(command("attribute", target, attribute, literal("modifier"), literal("value"), literal("get"), uuid(id), float(scale)))
-
-	fun get(id: UUIDArgument, scale: Double? = null) =
+	fun get(id: AttributeModifierArgument, scale: Double? = null) =
 		fn.addLine(command("attribute", target, attribute, literal("modifier"), literal("value"), literal("get"), id, float(scale)))
 
-	fun remove(id: UUID) = fn.addLine(command("attribute", target, attribute, literal("modifier"), literal("remove"), uuid(id)))
-	fun remove(id: UUIDArgument) = fn.addLine(command("attribute", target, attribute, literal("modifier"), literal("remove"), id))
+	fun remove(name: String, namespace: String) =
+		fn.addLine(command("attribute", target, attribute, literal("modifier"), literal("remove"), literal("$namespace:$name")))
+
+	fun remove(id: AttributeModifierArgument) =
+		fn.addLine(command("attribute", target, attribute, literal("modifier"), literal("remove"), id))
 }
 
 class Attribute(private val fn: Function, private val target: EntityArgument, private val attribute: AttributeArgument) {
