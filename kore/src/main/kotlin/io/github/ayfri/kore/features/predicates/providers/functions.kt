@@ -2,8 +2,8 @@
 
 package io.github.ayfri.kore.features.predicates.providers
 
-import io.github.ayfri.kore.features.enchantment.values.LevelBased
-import io.github.ayfri.kore.features.enchantment.values.constantLevelBased
+import io.github.ayfri.kore.features.enchantments.values.LevelBased
+import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
 import io.github.ayfri.kore.features.predicates.types.EntityType
 
 fun constant(value: Float) = ConstantNumberProvider(value)

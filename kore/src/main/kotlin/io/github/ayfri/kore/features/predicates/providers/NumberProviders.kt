@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.predicates.providers
 
-import io.github.ayfri.kore.features.enchantment.values.LevelBased
+import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.predicates.types.EntityType
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.serializers.ProviderSerializer

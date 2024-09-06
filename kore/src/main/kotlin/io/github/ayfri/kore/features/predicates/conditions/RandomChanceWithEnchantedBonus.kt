@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.features.predicates.conditions
 
 import io.github.ayfri.kore.arguments.types.resources.EnchantmentArgument
-import io.github.ayfri.kore.features.enchantment.values.LevelBased
-import io.github.ayfri.kore.features.enchantment.values.constantLevelBased
+import io.github.ayfri.kore.features.enchantments.values.LevelBased
+import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
 import io.github.ayfri.kore.features.predicates.Predicate
 import kotlinx.serialization.Serializable
 

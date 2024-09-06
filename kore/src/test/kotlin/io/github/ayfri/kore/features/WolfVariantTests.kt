@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
-import io.github.ayfri.kore.features.wolfvariant.wolfVariant
+import io.github.ayfri.kore.features.wolfvariants.wolfVariant
 import io.github.ayfri.kore.generated.Biomes
 
 fun DataPack.wolfVariantTests() {

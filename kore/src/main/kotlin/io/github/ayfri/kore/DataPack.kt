@@ -5,10 +5,10 @@ import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.features.advancements.Advancement
 import io.github.ayfri.kore.features.bannerpatterns.BannerPattern
-import io.github.ayfri.kore.features.chattype.ChatType
+import io.github.ayfri.kore.features.chattypes.ChatType
 import io.github.ayfri.kore.features.damagetypes.DamageType
-import io.github.ayfri.kore.features.enchantment.Enchantment
-import io.github.ayfri.kore.features.enchantment.providers.EnchantmentProvider
+import io.github.ayfri.kore.features.enchantments.Enchantment
+import io.github.ayfri.kore.features.enchantments.providers.EnchantmentProvider
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.jukeboxsongs.JukeboxSong
 import io.github.ayfri.kore.features.loottables.LootTable
@@ -16,7 +16,7 @@ import io.github.ayfri.kore.features.paintingvariant.PaintingVariant
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.recipes.RecipeFile
 import io.github.ayfri.kore.features.tags.Tag
-import io.github.ayfri.kore.features.wolfvariant.WolfVariant
+import io.github.ayfri.kore.features.wolfvariants.WolfVariant
 import io.github.ayfri.kore.features.worldgen.biome.Biome
 import io.github.ayfri.kore.features.worldgen.configuredcarver.ConfiguredCarver
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature

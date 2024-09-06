@@ -3,7 +3,7 @@ package io.github.ayfri.kore.features
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.assertions.assertsIs
-import io.github.ayfri.kore.features.chattype.*
+import io.github.ayfri.kore.features.chattypes.*
 
 fun DataPack.chatTypeTests() {
 	chatType("test_chat_type") {

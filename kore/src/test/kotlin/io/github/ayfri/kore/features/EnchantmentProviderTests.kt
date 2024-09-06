@@ -2,10 +2,10 @@ package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
-import io.github.ayfri.kore.features.enchantment.providers.enchantmentProviders
-import io.github.ayfri.kore.features.enchantment.providers.types.byCostEnchantmentProvider
-import io.github.ayfri.kore.features.enchantment.providers.types.byCostWithDifficultyEnchantmentProvider
-import io.github.ayfri.kore.features.enchantment.providers.types.singleEnchantmentProvider
+import io.github.ayfri.kore.features.enchantments.providers.enchantmentProviders
+import io.github.ayfri.kore.features.enchantments.providers.types.byCostEnchantmentProvider
+import io.github.ayfri.kore.features.enchantments.providers.types.byCostWithDifficultyEnchantmentProvider
+import io.github.ayfri.kore.features.enchantments.providers.types.singleEnchantmentProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.uniform
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.Enchantments
