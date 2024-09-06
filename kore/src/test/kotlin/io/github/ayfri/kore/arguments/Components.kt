@@ -281,6 +281,16 @@ fun componentsTests() {
 	}
 	foodTest.asString() assertsIs """minecraft:cooked_beef[food={nutrition:10,saturation:1.0f,is_meat:1b,eat_seconds:0.5f,effects:[{effect:{id:"minecraft:regeneration",duration:100,amplifier:1b,ambient:1b,show_particles:1b,show_icon:1b},probability:1.0f}],using_converts_to:{id:"minecraft:bone"}}]"""
 
+	val hideAdditionalTooltipTest = stoneSword {
+		hideAdditionalTooltip()
+	}
+	hideAdditionalTooltipTest.asString() assertsIs """minecraft:stone_sword[hide_additional_tooltip={}]"""
+
+	val hideTooltipTest = stoneSword {
+		hideTooltip()
+	}
+	hideTooltipTest.asString() assertsIs """minecraft:stone_sword[hide_tooltip={}]"""
+
 	val instrumentTest = Items.GOAT_HORN {
 		instrument(Instruments.CALL_GOAT_HORN)
 	}
@@ -298,15 +308,10 @@ fun componentsTests() {
 	itemNameTest.components!!.itemName("test", Color.AQUA)
 	itemNameTest.asString() assertsIs """minecraft:stone_sword[item_name='{"text":"test","color":"aqua"}']"""
 
-	val hideAdditionalTooltipTest = stoneSword {
-		hideAdditionalTooltip()
+	val jukeboxPlayableTest = Items.JUKEBOX {
+		jukeboxPlayable(JukeboxSongs.OTHERSIDE)
 	}
-	hideAdditionalTooltipTest.asString() assertsIs """minecraft:stone_sword[hide_additional_tooltip={}]"""
-
-	val hideTooltipTest = stoneSword {
-		hideTooltip()
-	}
-	hideTooltipTest.asString() assertsIs """minecraft:stone_sword[hide_tooltip={}]"""
+	jukeboxPlayableTest.asString() assertsIs """minecraft:jukebox[jukebox_playable={song:"minecraft:otherside"}]"""
 
 	val lockTest = stoneSword {
 		lock("test")
