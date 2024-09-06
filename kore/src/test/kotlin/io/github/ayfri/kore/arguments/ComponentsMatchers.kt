@@ -217,6 +217,24 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 		}
 	""".trimIndent()
 
+	val jukeboxPlayable = ItemStackSubPredicates().apply {
+		jukeboxPlayable {
+			songs(JukeboxSongs.OTHERSIDE, JukeboxSongs.CREATOR)
+		}
+	}
+
+	jsonEncoder.encodeToString(jukeboxPlayable) assertsIsJson """
+		{
+			"minecraft:jukebox_playable": {
+				"song": [
+					"minecraft:otherside",
+					"minecraft:creator"
+				]
+			}
+		}
+	""".trimIndent()
+
+
 	val potionContents = ItemStackSubPredicates().apply {
 		potionContents(Effects.HASTE, Effects.SPEED)
 	}
