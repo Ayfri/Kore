@@ -28,6 +28,7 @@ fun allEntities(limitToOne: Boolean = false, data: SelectorArguments.() -> Unit 
 
 fun allEntities(limit: Int, data: SelectorArguments.() -> Unit = {}) = allEntities { this.limit = limit; data() }
 fun allEntitiesLimitToOne(data: SelectorArguments.() -> Unit = {}) = allEntities(true, data)
+fun nearestEntity(data: SelectorArguments.() -> Unit = {}) = selector(SelectorType.NEAREST_ENTITY, data = data)
 fun nearestPlayer(data: SelectorArguments.() -> Unit = {}) = selector(SelectorType.NEAREST_PLAYER, data = data)
 fun player(name: String, limitToOne: Boolean = true, data: SelectorArguments.() -> Unit = {}) =
 	allPlayers(limitToOne) { this.name = name; data() }

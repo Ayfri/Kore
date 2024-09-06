@@ -32,6 +32,7 @@ fun selectorTests() = dataPack("selector_tests") {
 	allEntities() assertsIs "@e"
 	allPlayers() assertsIs "@a"
 	randomPlayer() assertsIs "@r"
+	nearestEntity() assertsIs "@n"
 	nearestPlayer() assertsIs "@p"
 	self() assertsIs "@s"
 
