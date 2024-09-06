@@ -93,16 +93,16 @@ fun zipTests() = testDataPack("zip_tests") {
 	assertFileGenerated("zip_tests.zip")
 
 	val myFunction = dp.functions[0]
-	assertFileGeneratedInZip("data/${myFunction.namespace}/functions/${myFunction.name}.mcfunction")
+	assertFileGeneratedInZip("data/${myFunction.namespace}/function/${myFunction.name}.mcfunction")
 
 	val myFunction2 = dp.functions[1]
-	assertFileGeneratedInZip("data/${myFunction2.namespace}/functions/${myFunction2.directory}/${myFunction2.name}.mcfunction")
+	assertFileGeneratedInZip("data/${myFunction2.namespace}/function/${myFunction2.directory}/${myFunction2.name}.mcfunction")
 
 	val loadFunction = dp.generatedFunctions[0]
-	assertFileGeneratedInZip("data/${loadFunction.namespace}/functions/${dp.configuration.generatedFunctionsFolder}/${loadFunction.name}.mcfunction")
+	assertFileGeneratedInZip("data/${loadFunction.namespace}/function/${dp.configuration.generatedFunctionsFolder}/${loadFunction.name}.mcfunction")
 
 	val tickFunction = dp.generatedFunctions[1]
 	val tickDirectory = tickFunction.directory.removePrefix(dp.configuration.generatedFunctionsFolder + "/")
-	assertFileGeneratedInZip("data/${tickFunction.namespace}/functions/${dp.configuration.generatedFunctionsFolder}/${tickDirectory}/${tickFunction.name}.mcfunction")
+	assertFileGeneratedInZip("data/${tickFunction.namespace}/function/${dp.configuration.generatedFunctionsFolder}/${tickDirectory}/${tickFunction.name}.mcfunction")
 	generateZip()
 }

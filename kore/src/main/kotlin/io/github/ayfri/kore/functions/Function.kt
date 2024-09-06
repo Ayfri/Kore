@@ -68,7 +68,7 @@ open class Function(
 		lines.add("# $comment")
 	}
 
-	fun getFinalPath() = "data/$namespace/functions/${directory.ifNotEmpty { "$it/" }}$name.mcfunction"
+	fun getFinalPath() = "data/$namespace/function/${directory.ifNotEmpty { "$it/" }}$name.mcfunction"
 
 	fun generate(directory: File) {
 		val file = File(directory, "${this.directory}/$name.mcfunction")
