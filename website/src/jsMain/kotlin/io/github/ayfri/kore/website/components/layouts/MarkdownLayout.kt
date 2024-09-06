@@ -1,10 +1,7 @@
 package io.github.ayfri.kore.website.components.layouts
 
 import androidx.compose.runtime.Composable
-import com.varabyte.kobweb.compose.css.Overflow
-import com.varabyte.kobweb.compose.css.TextAlign
-import com.varabyte.kobweb.compose.css.overflowX
-import com.varabyte.kobweb.compose.css.textAlign
+import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobwebx.markdown.markdown
 import io.github.ayfri.kore.website.GlobalStyle
@@ -62,6 +59,12 @@ object MarkdownLayoutStyle : StyleSheet() {
 			fontSize(2.cssRem)
 			marginTop(2.5.cssRem)
 			marginBottom(1.5.cssRem)
+		}
+
+		"blockquote" style {
+			margin(0.px)
+			paddingLeft(0.5.cssRem)
+			borderLeft(3.px, LineStyle.Solid, rgba(1, 1, 1, 0.1))
 		}
 
 		child(type("div") + className("code-toolbar"), type("pre")) style {
