@@ -1,12 +1,16 @@
 package io.github.ayfri.kore.serialization
 
 import io.github.ayfri.kore.arguments.chatcomponents.*
+import io.github.ayfri.kore.arguments.chatcomponents.events.showItem
+import io.github.ayfri.kore.arguments.chatcomponents.events.showText
 import io.github.ayfri.kore.arguments.colors.Color
+import io.github.ayfri.kore.arguments.components.types.damage
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.types.literals.randomPlayer
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.arguments.types.resources.storage
 import io.github.ayfri.kore.assertions.assertsIsJson
+import io.github.ayfri.kore.generated.Items
 
 fun chatComponentsTests() {
 	val simplePlainText = textComponent("Hello, world!")
@@ -124,6 +128,49 @@ fun chatComponentsTests() {
 					"text": "The best library!"
 				}
 			]
+		}
+	""".trimIndent()
+
+	val hoverEventComponent = textComponent("Hover me!") {
+		hoverEvent {
+			showText("Hello, world!")
+		}
+	}
+
+	hoverEventComponent assertsIsJson """
+		{
+			"type": "text",
+			"text": "Hover me!",
+			"hoverEvent": {
+				"action": "show_text",
+				"value": "Hello, world!"
+			}
+		}
+	""".trimIndent()
+
+	val hoverEventComponentWithItem = textComponent("Hover me!") {
+		hoverEvent {
+			showItem(Items.DIAMOND_SWORD {
+				damage(5)
+			}, 5)
+		}
+	}
+
+	hoverEventComponentWithItem assertsIsJson """
+		{
+			"type": "text",
+			"text": "Hover me!",
+			"hoverEvent": {
+				"action": "show_item",
+				"value": "",
+				"contents": {
+					"id": "minecraft:diamond_sword",
+					"count": 5,
+					"components": {
+						"damage": 5
+					}
+				}
+			}
 		}
 	""".trimIndent()
 }
