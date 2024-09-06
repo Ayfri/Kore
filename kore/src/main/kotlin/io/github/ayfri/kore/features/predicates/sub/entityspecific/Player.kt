@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
 data class Player(
 	var lookingAt: Entity? = null,
 	var advancements: Advancements? = null,
-	var gamemode: Gamemode? = null,
+	var gamemode: List<Gamemode>? = null,
 	var level: IntRangeOrIntJson? = null,
 	var recipes: Map<RecipeArgument, Boolean>? = null,
 	var stats: Map<StatisticArgument, Statistic>? = null,
@@ -25,6 +25,10 @@ fun Entity.playerTypeSpecific(block: Player.() -> Unit = {}) = apply {
 
 fun Player.advancements(block: Advancements.() -> Unit) {
 	advancements = Advancements().apply(block)
+}
+
+fun Player.gamemodes(vararg gamemodes: Gamemode) {
+	gamemode = gamemodes.toList()
 }
 
 fun Player.lookingAt(block: Entity.() -> Unit = {}) {

@@ -10,7 +10,8 @@ import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.features.predicates.conditions.*
 import io.github.ayfri.kore.features.predicates.predicate
 import io.github.ayfri.kore.features.predicates.sub.*
-import io.github.ayfri.kore.features.predicates.sub.entityspecific.Player
+import io.github.ayfri.kore.features.predicates.sub.entityspecific.gamemodes
+import io.github.ayfri.kore.features.predicates.sub.entityspecific.playerTypeSpecific
 import io.github.ayfri.kore.features.predicates.sub.item.enchantment
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.*
@@ -125,7 +126,9 @@ fun DataPack.predicateTests() {
 
 			type(EntityTypes.MARKER)
 
-			typeSpecific = Player(gamemode = Gamemode.SURVIVAL)
+			playerTypeSpecific {
+				gamemodes(Gamemode.SURVIVAL)
+			}
 
 			vehicle {
 				distance {
@@ -185,7 +188,9 @@ fun DataPack.predicateTests() {
 				"type": "minecraft:marker",
 				"type_specific": {
 					"type": "minecraft:player",
-					"gamemode": "survival"
+					"gamemode": [
+						"survival"
+					]
 				},
 				"vehicle": {
 					"distance": {

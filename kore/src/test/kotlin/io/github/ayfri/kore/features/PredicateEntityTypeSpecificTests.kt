@@ -240,7 +240,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 	predicate("player_type_specific") {
 		entityProperties {
 			playerTypeSpecific {
-				gamemode = Gamemode.CREATIVE
+				gamemodes(Gamemode.CREATIVE)
 				recipes {
 					this[Recipes.BOW] = true
 				}
@@ -254,7 +254,9 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 			"predicate": {
 				"type_specific": {
 					"type": "minecraft:player",
-					"gamemode": "creative",
+					"gamemode": [
+						"creative"
+					],
 					"recipes": {
 						"minecraft:bow": true
 					}
