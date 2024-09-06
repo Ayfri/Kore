@@ -2,10 +2,7 @@ package io.github.ayfri.kore.features.enchantment.effects.builders
 
 import io.github.ayfri.kore.arguments.types.EffectOrTagArgument
 import io.github.ayfri.kore.arguments.types.EntityTypeOrTagArgument
-import io.github.ayfri.kore.arguments.types.resources.DamageTypeArgument
-import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
-import io.github.ayfri.kore.arguments.types.resources.ParticleArgument
-import io.github.ayfri.kore.arguments.types.resources.SoundArgument
+import io.github.ayfri.kore.arguments.types.resources.*
 import io.github.ayfri.kore.data.sound.SoundEvent
 import io.github.ayfri.kore.features.enchantment.effects.entity.*
 import io.github.ayfri.kore.features.enchantment.effects.entity.spawnparticles.ParticlePosition
@@ -135,7 +132,9 @@ fun PostAttackBuilder.ignite(
 fun PostAttackBuilder.playSound(
 	enchanted: PostAttackSpecifier,
 	affected: PostAttackSpecifier,
-	sound: SoundArgument, range: Float? = null, block: PlaySound.() -> Unit = {},
+	sound: SoundEventArgument,
+	range: Float? = null,
+	block: PlaySound.() -> Unit = {},
 ) =
 	apply {
 		val effect = PlaySound(SoundEvent(sound, range)).apply(block)
@@ -145,7 +144,11 @@ fun PostAttackBuilder.playSound(
 fun PostAttackBuilder.playSound(
 	enchanted: PostAttackSpecifier,
 	affected: PostAttackSpecifier,
-	sound: SoundArgument, range: Float? = null, volume: Float, pitch: Float, block: PlaySound.() -> Unit = {},
+	sound: SoundEventArgument,
+	range: Float? = null,
+	volume: Float,
+	pitch: Float,
+	block: PlaySound.() -> Unit = {},
 ) =
 	apply {
 		val effect = PlaySound(
@@ -159,7 +162,8 @@ fun PostAttackBuilder.playSound(
 fun PostAttackBuilder.replaceBlock(
 	enchanted: PostAttackSpecifier,
 	affected: PostAttackSpecifier,
-	blockState: BlockStateProvider = simpleStateProvider(), block: ReplaceBlock.() -> Unit = {},
+	blockState: BlockStateProvider = simpleStateProvider(),
+	block: ReplaceBlock.() -> Unit = {},
 ) =
 	apply {
 		val effect = ReplaceBlock(blockState).apply(block)
@@ -169,7 +173,8 @@ fun PostAttackBuilder.replaceBlock(
 fun PostAttackBuilder.replaceDisc(
 	enchanted: PostAttackSpecifier,
 	affected: PostAttackSpecifier,
-	blockState: BlockStateProvider = simpleStateProvider(), block: ReplaceDisc.() -> Unit = {},
+	blockState: BlockStateProvider = simpleStateProvider(),
+	block: ReplaceDisc.() -> Unit = {},
 ) =
 	apply {
 		val effect = ReplaceDisc(blockState).apply(block)
@@ -179,7 +184,8 @@ fun PostAttackBuilder.replaceDisc(
 fun PostAttackBuilder.runFunction(
 	enchanted: PostAttackSpecifier,
 	affected: PostAttackSpecifier,
-	function: FunctionArgument, block: RunFunction.() -> Unit = {},
+	function: FunctionArgument,
+	block: RunFunction.() -> Unit = {},
 ) =
 	apply {
 		val effect = RunFunction(function).apply(block)

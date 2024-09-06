@@ -208,7 +208,7 @@ fun DataPack.enchantmentTests() {
 		effects {
 			crossbowChargingSounds {
 				crossbowChargingSound {
-					start(Sounds.Random.FUSE)
+					start(SoundEvents.Item.Crossbow.QUICK_CHARGE_3)
 				}
 			}
 		}
@@ -220,7 +220,7 @@ fun DataPack.enchantmentTests() {
 			"effects": {
 				"minecraft:crossbow_charging_sounds": [
 					{
-						"start": "minecraft:random/fuse",
+						"start": "minecraft:item.crossbow.quick_charge_3",
 						"mid": ":",
 						"end": ":"
 					}
@@ -449,7 +449,7 @@ fun DataPack.enchantmentTests() {
 				}
 
 				ignite(2)
-				playSound(Sounds.Random.FUSE, 5f)
+				playSound(SoundEvents.Entity.FireworkRocket.LAUNCH, 5f)
 				replaceBlock(simpleStateProvider(Blocks.DIAMOND_BLOCK)) {
 					offset(5, 5, 5)
 					triggerGameEvent = GameEvents.BLOCK_PLACE
@@ -545,7 +545,7 @@ fun DataPack.enchantmentTests() {
 						"effect": {
 							"type": "minecraft:play_sound",
 							"sound": {
-								"sound_id": "minecraft:random/fuse",
+								"sound_id": "minecraft:entity.firework_rocket.launch",
 								"range": 5.0
 							},
 							"volume": 1.0E-5,
@@ -951,7 +951,7 @@ fun DataPack.enchantmentTests() {
 	enchantment("trident_sound") {
 		effects {
 			tridentSound {
-				sound(Sounds.Random.FUSE, 5f)
+				sound(SoundEvents.Entity.FireworkRocket.LAUNCH, 5f)
 			}
 		}
 	}
@@ -962,7 +962,7 @@ fun DataPack.enchantmentTests() {
 			"effects": {
 				"minecraft:trident_sound": [
 					{
-						"sound_id": "minecraft:random/fuse",
+						"sound_id": "minecraft:entity.firework_rocket.launch",
 						"range": 5.0
 					}
 				]

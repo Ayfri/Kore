@@ -22,6 +22,7 @@ fun featuresTests() = testDataPack("features_tests") {
 	enchantmentProviderTests()
 	flatLevelGeneratorPresetTests()
 	itemModifierTests()
+	jukeboxSongTests()
 	lootTableTests()
 	noiseTests()
 	noiseSettingsTests()

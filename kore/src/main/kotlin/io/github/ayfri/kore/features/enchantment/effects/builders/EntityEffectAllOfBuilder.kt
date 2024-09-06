@@ -2,10 +2,7 @@ package io.github.ayfri.kore.features.enchantment.effects.builders
 
 import io.github.ayfri.kore.arguments.types.EffectOrTagArgument
 import io.github.ayfri.kore.arguments.types.EntityTypeOrTagArgument
-import io.github.ayfri.kore.arguments.types.resources.DamageTypeArgument
-import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
-import io.github.ayfri.kore.arguments.types.resources.ParticleArgument
-import io.github.ayfri.kore.arguments.types.resources.SoundArgument
+import io.github.ayfri.kore.arguments.types.resources.*
 import io.github.ayfri.kore.data.sound.SoundEvent
 import io.github.ayfri.kore.features.enchantment.effects.entity.*
 import io.github.ayfri.kore.features.enchantment.effects.entity.spawnparticles.ParticlePosition
@@ -85,11 +82,11 @@ fun EntityEffectAllOfBuilder.explode(
 fun EntityEffectAllOfBuilder.ignite(duration: Int = 0, block: Ignite.() -> Unit = {}) =
 	apply { effects.effects += Ignite(constantLevelBased(duration)).apply(block) }
 
-fun EntityEffectAllOfBuilder.playSound(sound: SoundArgument, range: Float? = null, block: PlaySound.() -> Unit = {}) =
+fun EntityEffectAllOfBuilder.playSound(sound: SoundEventArgument, range: Float? = null, block: PlaySound.() -> Unit = {}) =
 	apply { effects.effects += PlaySound(SoundEvent(sound, range)).apply(block) }
 
 fun EntityEffectAllOfBuilder.playSound(
-	sound: SoundArgument,
+	sound: SoundEventArgument,
 	range: Float? = null,
 	volume: Float,
 	pitch: Float,

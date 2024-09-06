@@ -10,6 +10,7 @@ import io.github.ayfri.kore.features.damagetypes.DamageType
 import io.github.ayfri.kore.features.enchantment.Enchantment
 import io.github.ayfri.kore.features.enchantment.providers.EnchantmentProvider
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
+import io.github.ayfri.kore.features.jukeboxsongs.JukeboxSong
 import io.github.ayfri.kore.features.loottables.LootTable
 import io.github.ayfri.kore.features.paintingvariant.PaintingVariant
 import io.github.ayfri.kore.features.predicates.Predicate
@@ -70,6 +71,7 @@ class DataPack(val name: String) {
 	val enchantmentProviders = registerGenerator<EnchantmentProvider>()
 	val flatLevelGeneratorPresets = registerGenerator<FlatLevelGeneratorPreset>()
 	val itemModifiers = registerGenerator<ItemModifier>()
+	val jukeboxSongs = registerGenerator<JukeboxSong>()
 	val lootTables = registerGenerator<LootTable>()
 	val noises = registerGenerator<Noise>()
 	val noiseSettings = registerGenerator<NoiseSettings>()

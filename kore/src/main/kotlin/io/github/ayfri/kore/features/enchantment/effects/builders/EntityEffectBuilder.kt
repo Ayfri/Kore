@@ -2,10 +2,7 @@ package io.github.ayfri.kore.features.enchantment.effects.builders
 
 import io.github.ayfri.kore.arguments.types.EffectOrTagArgument
 import io.github.ayfri.kore.arguments.types.EntityTypeOrTagArgument
-import io.github.ayfri.kore.arguments.types.resources.DamageTypeArgument
-import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
-import io.github.ayfri.kore.arguments.types.resources.ParticleArgument
-import io.github.ayfri.kore.arguments.types.resources.SoundArgument
+import io.github.ayfri.kore.arguments.types.resources.*
 import io.github.ayfri.kore.data.sound.SoundEvent
 import io.github.ayfri.kore.features.enchantment.effects.entity.*
 import io.github.ayfri.kore.features.enchantment.effects.entity.spawnparticles.ParticlePosition
@@ -108,14 +105,14 @@ fun EntityEffectBuilder.ignite(duration: Int = 0, block: Ignite.() -> Unit = {})
 		effects += ConditionalEffect(effect, effect.requirements)
 	}
 
-fun EntityEffectBuilder.playSound(sound: SoundArgument, range: Float? = null, block: PlaySound.() -> Unit = {}) =
+fun EntityEffectBuilder.playSound(sound: SoundEventArgument, range: Float? = null, block: PlaySound.() -> Unit = {}) =
 	apply {
 		val effect = PlaySound(SoundEvent(sound, range)).apply(block)
 		effects += ConditionalEffect(effect, effect.requirements)
 	}
 
 fun EntityEffectBuilder.playSound(
-	sound: SoundArgument,
+	sound: SoundEventArgument,
 	range: Float? = null,
 	volume: Float,
 	pitch: Float,

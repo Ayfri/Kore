@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.data.sound
 
-import io.github.ayfri.kore.arguments.types.resources.SoundArgument
+import io.github.ayfri.kore.arguments.types.resources.SoundEventArgument
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
@@ -11,7 +11,7 @@ import kotlinx.serialization.encoding.encodeStructure
 
 @Serializable(with = SoundEvent.Companion.SoundEventSerializer::class)
 data class SoundEvent(
-	var soundId: SoundArgument = SoundArgument.invoke("", ""),
+	var soundId: SoundEventArgument = SoundEventArgument.invoke("", ""),
 	var range: Float? = null,
 ) {
 	companion object {
@@ -22,9 +22,9 @@ data class SoundEvent(
 			}
 
 			override fun serialize(encoder: Encoder, value: SoundEvent) = when (value.range) {
-				null -> encoder.encodeSerializableValue(SoundArgument.serializer(), value.soundId)
+				null -> encoder.encodeSerializableValue(SoundEventArgument.serializer(), value.soundId)
 				else -> encoder.encodeStructure(descriptor) {
-					encodeSerializableElement(descriptor, 0, SoundArgument.serializer(), value.soundId)
+					encodeSerializableElement(descriptor, 0, SoundEventArgument.serializer(), value.soundId)
 					encodeFloatElement(descriptor, 1, value.range!!)
 				}
 			}
