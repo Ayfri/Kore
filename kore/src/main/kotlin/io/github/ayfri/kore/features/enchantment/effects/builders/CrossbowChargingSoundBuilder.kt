@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.enchantment.effects.builders
 
 import io.github.ayfri.kore.arguments.types.resources.SoundArgument
-import io.github.ayfri.kore.features.enchantment.effects.SoundRangeable
+import io.github.ayfri.kore.data.sound.SoundEvent
 import io.github.ayfri.kore.features.enchantment.effects.special.CrossbowChargingSound
 import io.github.ayfri.kore.serializers.InlineSerializer
 import kotlinx.serialization.Serializable
@@ -20,9 +20,9 @@ data class CrossbowChargingSoundBuilder(
 }
 
 fun CrossbowChargingSoundBuilder.crossbowChargingSound(
-	start: SoundRangeable = SoundRangeable(),
-	mid: SoundRangeable = SoundRangeable(),
-	end: SoundRangeable = SoundRangeable(),
+	start: SoundEvent = SoundEvent(),
+	mid: SoundEvent = SoundEvent(),
+	end: SoundEvent = SoundEvent(),
 	block: CrossbowChargingSound.() -> Unit = {},
 ) = apply { effects += CrossbowChargingSound(start, mid, end).apply(block) }
 
@@ -31,4 +31,4 @@ fun CrossbowChargingSoundBuilder.crossbowChargingSound(
 	mid: SoundArgument,
 	end: SoundArgument,
 	block: CrossbowChargingSound.() -> Unit = {},
-) = apply { effects += CrossbowChargingSound(SoundRangeable(start), SoundRangeable(mid), SoundRangeable(end)).apply(block) }
+) = apply { effects += CrossbowChargingSound(SoundEvent(start), SoundEvent(mid), SoundEvent(end)).apply(block) }

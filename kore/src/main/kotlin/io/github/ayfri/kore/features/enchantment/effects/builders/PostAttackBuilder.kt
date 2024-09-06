@@ -6,7 +6,7 @@ import io.github.ayfri.kore.arguments.types.resources.DamageTypeArgument
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.arguments.types.resources.ParticleArgument
 import io.github.ayfri.kore.arguments.types.resources.SoundArgument
-import io.github.ayfri.kore.features.enchantment.effects.SoundRangeable
+import io.github.ayfri.kore.data.sound.SoundEvent
 import io.github.ayfri.kore.features.enchantment.effects.entity.*
 import io.github.ayfri.kore.features.enchantment.effects.entity.spawnparticles.ParticlePosition
 import io.github.ayfri.kore.features.enchantment.effects.entity.spawnparticles.ParticlePositionType
@@ -138,7 +138,7 @@ fun PostAttackBuilder.playSound(
 	sound: SoundArgument, range: Float? = null, block: PlaySound.() -> Unit = {},
 ) =
 	apply {
-		val effect = PlaySound(SoundRangeable(sound, range)).apply(block)
+		val effect = PlaySound(SoundEvent(sound, range)).apply(block)
 		effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
 	}
 
@@ -149,7 +149,7 @@ fun PostAttackBuilder.playSound(
 ) =
 	apply {
 		val effect = PlaySound(
-			SoundRangeable(sound, range),
+			SoundEvent(sound, range),
 			constantFloatProvider(volume),
 			constantFloatProvider(pitch)
 		).apply(block)

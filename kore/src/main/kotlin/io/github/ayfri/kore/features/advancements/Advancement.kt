@@ -24,7 +24,7 @@ data class Advancement internal constructor(
 	var requirements: List<List<String>>? = null,
 	var rewards: AdvancementReward? = null,
 	var sendsTelemetryEvent: Boolean? = null,
-) : Generator("advancements") {
+) : Generator("advancement") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 

@@ -1,36 +1,36 @@
 package io.github.ayfri.kore.features.enchantment.effects.special
 
 import io.github.ayfri.kore.arguments.types.resources.SoundArgument
-import io.github.ayfri.kore.features.enchantment.effects.SoundRangeable
+import io.github.ayfri.kore.data.sound.SoundEvent
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class CrossbowChargingSound(
-	var start: SoundRangeable = SoundRangeable(),
-	var mid: SoundRangeable = SoundRangeable(),
-	var end: SoundRangeable = SoundRangeable(),
+	var start: SoundEvent = SoundEvent(),
+	var mid: SoundEvent = SoundEvent(),
+	var end: SoundEvent = SoundEvent(),
 ) : SpecialEnchantmentEffect()
 
-fun CrossbowChargingSound.start(block: SoundRangeable.() -> Unit) {
+fun CrossbowChargingSound.start(block: SoundEvent.() -> Unit) {
 	start.apply(block)
 }
 
 fun CrossbowChargingSound.start(sound: SoundArgument, range: Float? = null) {
-	start = SoundRangeable(sound, range)
+	start = SoundEvent(sound, range)
 }
 
-fun CrossbowChargingSound.mid(block: SoundRangeable.() -> Unit) {
+fun CrossbowChargingSound.mid(block: SoundEvent.() -> Unit) {
 	mid.apply(block)
 }
 
 fun CrossbowChargingSound.mid(sound: SoundArgument, range: Float? = null) {
-	mid = SoundRangeable(sound, range)
+	mid = SoundEvent(sound, range)
 }
 
-fun CrossbowChargingSound.end(block: SoundRangeable.() -> Unit) {
+fun CrossbowChargingSound.end(block: SoundEvent.() -> Unit) {
 	end.apply(block)
 }
 
 fun CrossbowChargingSound.end(sound: SoundArgument, range: Float? = null) {
-	end = SoundRangeable(sound, range)
+	end = SoundEvent(sound, range)
 }
