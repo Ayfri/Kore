@@ -23,6 +23,7 @@ data class Generator(
 		private set
 
 	var enumTree = false
+	var separator = "/"
 
 	fun setUrlWithType(type: String) = url("custom-generated/$type/$fileName").let { url = it }
 }
@@ -41,6 +42,12 @@ fun gen(
 fun List<Generator>.transformRemoveJSONSuffix() = map { gen ->
 	gen.apply {
 		if (gen.transform == null) transform = { it.removeSuffix(".json") }
+	}
+}
+
+fun List<Generator>.transformRemoveMinecraftPrefix() = map { gen ->
+	gen.apply {
+		if (gen.transform == null) transform = { it.removePrefix("minecraft:") }
 	}
 }
 

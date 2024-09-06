@@ -6,9 +6,10 @@ fun generatePathEnumTree(
 	name: String,
 	sourceUrl: String,
 	parentArgumentType: String? = null,
+	separator: String = "/",
 	tagsParents: Map<String, String>? = null,
 ) {
-	val typeBuilders = MutableList(paths.maxOf { path -> path.count { it == '/' } }) {
+	val typeBuilders = MutableList(paths.maxOf { path -> path.countOccurrences(separator) }) {
 		mutableMapOf<String, TypeSpec.Builder>()
 	}
 
@@ -33,14 +34,14 @@ fun generatePathEnumTree(
 	val topLevelInterfaceClassName = ClassName(GENERATED_PACKAGE, name)
 
 	for (path in paths) {
-		val parent = path.substringBeforeLast('/')
-		val depth = parent.count { it == '/' }
+		val parent = path.substringBeforeLast(separator)
+		val depth = parent.countOccurrences(separator)
 
-		val enumValue = path.substringAfterLast('/').snakeCase().uppercase()
-		val enumName = parent.substringAfterLast('/').pascalCase()
+		val enumValue = path.substringAfterLast(separator).snakeCase().uppercase()
+		val enumName = parent.substringAfterLast(separator).pascalCase()
 		val tagParent = tagsParents?.keys?.firstOrNull { parent.startsWith(it) }
 
-		if ("/" !in path) {
+		if (separator !in path) {
 			topLevel.addType(
 				TypeSpec
 					.objectBuilder(enumName)
@@ -78,10 +79,10 @@ fun generatePathEnumTree(
 
 				if (hasParent || tagParent != null) {
 					val hash = if (tagParent != null) "#" else ""
-					var tagPath = if (tagParent != null) parent.substringAfter(tagParent).substringAfterLast("/") + "/" else ""
-					if (tagPath == "/") tagPath = ""
+					var tagPath = if (tagParent != null) parent.substringAfter(tagParent).substringAfterLast(separator) + separator else ""
+					if (tagPath == separator) tagPath = ""
 
-					if (hasParent) tagPath = "$parent/"
+					if (hasParent) tagPath = "$parent$separator"
 
 					addFunction(
 						FunSpec.builder("asString")
@@ -98,15 +99,15 @@ fun generatePathEnumTree(
 						.build()
 				)
 
-				addType(generateCompanion(enumName, "\"$parent/\${value.name.lowercase()}\""))
+				addType(generateCompanion(enumName, "\"$parent$separator\${value.name.lowercase()}\""))
 			}
 		}.addEnumConstant(enumValue)
 	}
 
 	for (depth in typeBuilders.lastIndex downTo 1) {
 		for ((path, typeBuilder) in typeBuilders[depth]) {
-			val parent = path.substringBeforeLast('/')
-			val objectName = parent.substringAfterLast('/').pascalCase()
+			val parent = path.substringBeforeLast(separator)
+			val objectName = parent.substringAfterLast(separator).pascalCase()
 
 			typeBuilders[depth - 1].getOrPut(parent) {
 				TypeSpec.objectBuilder(objectName)
