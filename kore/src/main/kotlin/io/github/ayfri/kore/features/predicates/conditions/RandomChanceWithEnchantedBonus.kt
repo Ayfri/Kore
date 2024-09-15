@@ -8,14 +8,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RandomChanceWithEnchantedBonus(
-	var chance: LevelBased,
+	var unenchantedChance: Float,
+	var enchantedChance: LevelBased,
 	var enchantment: EnchantmentArgument,
 ) : PredicateCondition()
 
-fun Predicate.randomChanceWithEnchantedBonus(chance: LevelBased, enchantment: EnchantmentArgument) {
-	predicateConditions += RandomChanceWithEnchantedBonus(chance, enchantment)
+fun Predicate.randomChanceWithEnchantedBonus(unenchantedChance: Float, enchantedChance: LevelBased, enchantment: EnchantmentArgument) {
+	predicateConditions += RandomChanceWithEnchantedBonus(unenchantedChance, enchantedChance, enchantment)
 }
 
-fun Predicate.randomChanceWithEnchantedBonus(chance: Int, enchantment: EnchantmentArgument) {
-	predicateConditions += RandomChanceWithEnchantedBonus(constantLevelBased(chance), enchantment)
+fun Predicate.randomChanceWithEnchantedBonus(unenchantedChance: Float, enchantedChance: Int, enchantment: EnchantmentArgument) {
+	predicateConditions += RandomChanceWithEnchantedBonus(unenchantedChance, constantLevelBased(enchantedChance), enchantment)
 }

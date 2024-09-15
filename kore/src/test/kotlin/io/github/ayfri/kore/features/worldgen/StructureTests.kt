@@ -6,6 +6,7 @@ import io.github.ayfri.kore.features.worldgen.biome.types.spawner
 import io.github.ayfri.kore.features.worldgen.heightproviders.constantAbsolute
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.features.worldgen.structures.types.*
+import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.LiquidSettings
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.TemplatePools
@@ -63,6 +64,8 @@ fun DataPack.structureTests() {
 				randomPoolAlias(TemplatePools.Empty, listOf(TemplatePools.Empty))
 			}
 		}
+		dimensionPadding(10, 20)
+		liquidSettings = LiquidSettings.IGNORE_WATERLOGGING
 	}
 
 	structures.last() assertsIs """
@@ -114,7 +117,12 @@ fun DataPack.structureTests() {
 						}
 					]
 				}
-			]
+			],
+			"dimension_padding": {
+				"top": 10,
+				"bottom": 20
+			},
+			"liquid_settings": "ignore_waterlogging"
 		}
 	""".trimIndent()
 }

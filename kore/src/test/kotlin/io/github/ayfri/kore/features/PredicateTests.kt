@@ -26,7 +26,7 @@ fun DataPack.predicateTests() {
 		allOf {
 			enchantmentActiveCheck(true)
 			randomChance(0.5f)
-			randomChanceWithEnchantedBonus(chance = 3, Enchantments.EFFICIENCY)
+			randomChanceWithEnchantedBonus(unenchantedChance = 3f, enchantedChance = 2, Enchantments.EFFICIENCY)
 			weatherCheck(raining = true, thundering = false)
 		}
 	}
@@ -52,7 +52,8 @@ fun DataPack.predicateTests() {
 					},
 					{
 						"condition": "minecraft:random_chance_with_enchanted_bonus",
-						"chance": 3,
+						"unenchanted_chance": 3.0,
+						"enchanted_chance": 2,
 						"enchantment": "minecraft:efficiency"
 					},
 					{

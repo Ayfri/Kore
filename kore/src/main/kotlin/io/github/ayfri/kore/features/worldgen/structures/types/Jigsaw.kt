@@ -7,10 +7,7 @@ import io.github.ayfri.kore.features.worldgen.HeightMap
 import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProvider
 import io.github.ayfri.kore.features.worldgen.heightproviders.constantAbsolute
 import io.github.ayfri.kore.features.worldgen.structures.*
-import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.Direct
-import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.PoolAlias
-import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.Random
-import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.RandomGroup
+import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.*
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -28,6 +25,8 @@ data class Jigsaw(
 	var maxDistanceFromCenter: Int = 80,
 	var useExpansionHack: Boolean = false,
 	var poolAliases: List<PoolAlias>? = null,
+	var dimensionPadding: DimensionPadding? = null,
+	var liquidSettings: LiquidSettings? = null,
 ) : StructureType()
 
 fun StructuresBuilder.jigsaw(
@@ -59,3 +58,11 @@ fun MutableList<PoolAlias>.randomGroupPoolAlias(
 	alias: TemplatePoolArgument,
 	groups: MutableList<PoolAlias>.() -> Unit = {},
 ) = add(RandomGroup(alias, buildList(groups)))
+
+fun Jigsaw.dimensionPadding(value: Int) {
+	dimensionPadding = DimensionPadding(value)
+}
+
+fun Jigsaw.dimensionPadding(top: Int, bottom: Int) {
+	dimensionPadding = DimensionPadding(top = top, bottom = bottom)
+}

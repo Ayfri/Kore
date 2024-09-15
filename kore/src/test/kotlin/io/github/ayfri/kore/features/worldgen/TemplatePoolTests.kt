@@ -2,6 +2,7 @@ package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.LiquidSettings
 import io.github.ayfri.kore.features.worldgen.templatepool.Projection
 import io.github.ayfri.kore.features.worldgen.templatepool.elements
 import io.github.ayfri.kore.features.worldgen.templatepool.elements.empty
@@ -18,7 +19,12 @@ fun DataPack.templatePoolTests() {
 		elements {
 			empty(2)
 			list(1) {
-				single(Projection.TERRAIN_MATCHING, Structures.EndCity.BRIDGE_END, ProcessorLists.HOUSING)
+				single(
+					Projection.TERRAIN_MATCHING,
+					Structures.EndCity.BRIDGE_END,
+					ProcessorLists.HOUSING,
+					LiquidSettings.IGNORE_WATERLOGGING
+				)
 				feature(feature = PlacedFeatures.ORE_DIAMOND)
 			}
 		}
@@ -44,7 +50,8 @@ fun DataPack.templatePoolTests() {
 								"element_type": "minecraft:single_pool_element",
 								"projection": "terrain_matching",
 								"location": "minecraft:end_city/bridge_end",
-								"processors": "minecraft:housing"
+								"processors": "minecraft:housing",
+								"override_liquid_settings": "ignore_waterlogging"
 							},
 							{
 								"element_type": "minecraft:feature_pool_element",

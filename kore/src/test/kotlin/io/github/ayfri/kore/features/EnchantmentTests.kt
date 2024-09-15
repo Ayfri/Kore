@@ -11,7 +11,7 @@ import io.github.ayfri.kore.features.enchantments.effects.entity.*
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticlePositionType
 import io.github.ayfri.kore.features.enchantments.effects.special.requirements
 import io.github.ayfri.kore.features.enchantments.effects.special.start
-import io.github.ayfri.kore.features.enchantments.values.linearLevelBased
+import io.github.ayfri.kore.features.enchantments.values.*
 import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.generated.*
@@ -176,7 +176,14 @@ fun DataPack.enchantmentTests() {
 	enchantment("block_experience") {
 		effects {
 			blockExperience {
-				add(linearLevelBased(2, 2))
+				allOf {
+					add(clampedLevelBased(5, 0.0, 10.0))
+					add(constantLevelBased(5))
+					add(fractionLevelBased(1, 5))
+					add(levelsSquaredLevelBased(2))
+					add(linearLevelBased(2, 2))
+					add(lookupLevelBased(2, 2, fallback = 2))
+				}
 			}
 		}
 	}
@@ -188,12 +195,56 @@ fun DataPack.enchantmentTests() {
 				"minecraft:block_experience": [
 					{
 						"effect": {
-							"type": "minecraft:add",
-							"value": {
-								"type": "minecraft:linear",
-								"base": 2,
-								"per_level_above_first": 2
-							}
+							"type": "minecraft:all_of",
+							"effects": [
+								{
+									"type": "minecraft:add",
+									"value": {
+										"type": "minecraft:clamped",
+										"value": 5,
+										"min": 0.0,
+										"max": 10.0
+									}
+								},
+								{
+									"type": "minecraft:add",
+									"value": 5
+								},
+								{
+									"type": "minecraft:add",
+									"value": {
+										"type": "minecraft:fraction",
+										"numerator": 1,
+										"denominator": 5
+									}
+								},
+								{
+									"type": "minecraft:add",
+									"value": {
+										"type": "minecraft:levels_squared",
+										"added": 2
+									}
+								},
+								{
+									"type": "minecraft:add",
+									"value": {
+										"type": "minecraft:linear",
+										"base": 2,
+										"per_level_above_first": 2
+									}
+								},
+								{
+									"type": "minecraft:add",
+									"value": {
+										"type": "minecraft:lookup",
+										"values": [
+											2,
+											2
+										],
+										"fallback": 2
+									}
+								}
+							]
 						}
 					}
 				]

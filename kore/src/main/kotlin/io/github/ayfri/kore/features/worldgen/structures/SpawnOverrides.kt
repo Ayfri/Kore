@@ -9,6 +9,7 @@ data class SpawnOverrides(
 	var axolotl: SpawnOverride? = null,
 	var ambiant: SpawnOverride? = null,
 	var creature: SpawnOverride? = null,
+	var misc: SpawnOverride? = null,
 	var monster: SpawnOverride? = null,
 	var waterCreature: SpawnOverride? = null,
 	var waterAmbiant: SpawnOverride? = null,
@@ -41,6 +42,10 @@ fun SpawnOverrides.ambiant(boundingBox: BoundingBox, init: MutableList<Spawn>.()
 
 fun SpawnOverrides.creature(boundingBox: BoundingBox, init: MutableList<Spawn>.() -> Unit) {
 	creature = SpawnOverride(boundingBox, buildList(init))
+}
+
+fun SpawnOverrides.misc(boundingBox: BoundingBox, init: MutableList<Spawn>.() -> Unit) {
+	misc = SpawnOverride(boundingBox, buildList(init))
 }
 
 fun SpawnOverrides.monster(boundingBox: BoundingBox, init: MutableList<Spawn>.() -> Unit) {
