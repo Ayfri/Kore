@@ -170,14 +170,14 @@ fun PostAttackBuilder.replaceBlock(
 		effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
 	}
 
-fun PostAttackBuilder.replaceDisc(
+fun PostAttackBuilder.replaceDisk(
 	enchanted: PostAttackSpecifier,
 	affected: PostAttackSpecifier,
 	blockState: BlockStateProvider = simpleStateProvider(),
-	block: ReplaceDisc.() -> Unit = {},
+	block: ReplaceDisk.() -> Unit = {},
 ) =
 	apply {
-		val effect = ReplaceDisc(blockState).apply(block)
+		val effect = ReplaceDisk(blockState).apply(block)
 		effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
 	}
 

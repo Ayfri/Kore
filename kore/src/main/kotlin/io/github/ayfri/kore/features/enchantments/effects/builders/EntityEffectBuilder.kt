@@ -133,9 +133,9 @@ fun EntityEffectBuilder.replaceBlock(blockState: BlockStateProvider = simpleStat
 		effects += ConditionalEffect(effect, effect.requirements)
 	}
 
-fun EntityEffectBuilder.replaceDisc(blockState: BlockStateProvider = simpleStateProvider(), block: ReplaceDisc.() -> Unit = {}) =
+fun EntityEffectBuilder.replaceDisk(blockState: BlockStateProvider = simpleStateProvider(), block: ReplaceDisk.() -> Unit = {}) =
 	apply {
-		val effect = ReplaceDisc(blockState).apply(block)
+		val effect = ReplaceDisk(blockState).apply(block)
 		effects += ConditionalEffect(effect, effect.requirements)
 	}
 

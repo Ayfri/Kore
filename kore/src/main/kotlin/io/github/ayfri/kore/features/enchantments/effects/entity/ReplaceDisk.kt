@@ -9,7 +9,7 @@ import io.github.ayfri.kore.serializers.TripleAsArray
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ReplaceDisc(
+data class ReplaceDisk(
 	var blockState: BlockStateProvider,
 	var radius: LevelBased = constantLevelBased(0),
 	var height: LevelBased = constantLevelBased(0),
@@ -18,18 +18,18 @@ data class ReplaceDisc(
 	var triggerGameEvent: GameEventArgument? = null,
 ) : EntityEffect()
 
-fun ReplaceDisc.radius(value: Int) {
+fun ReplaceDisk.radius(value: Int) {
 	radius = constantLevelBased(value)
 }
 
-fun ReplaceDisc.height(value: Int) {
+fun ReplaceDisk.height(value: Int) {
 	height = constantLevelBased(value)
 }
 
-fun ReplaceDisc.offset(x: Int, y: Int, z: Int) {
+fun ReplaceDisk.offset(x: Int, y: Int, z: Int) {
 	offset = Triple(x, y, z)
 }
 
-fun ReplaceDisc.predicate(predicate: BlockPredicate) {
+fun ReplaceDisk.predicate(predicate: BlockPredicate) {
 	this.predicate = predicate
 }

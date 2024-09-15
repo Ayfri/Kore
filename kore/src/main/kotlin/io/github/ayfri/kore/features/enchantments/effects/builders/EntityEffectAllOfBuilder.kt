@@ -101,8 +101,8 @@ fun EntityEffectAllOfBuilder.playSound(
 fun EntityEffectAllOfBuilder.replaceBlock(blockState: BlockStateProvider = simpleStateProvider(), block: ReplaceBlock.() -> Unit = {}) =
 	apply { effects.effects += ReplaceBlock(blockState).apply(block) }
 
-fun EntityEffectAllOfBuilder.replaceDisc(blockState: BlockStateProvider = simpleStateProvider(), block: ReplaceDisc.() -> Unit = {}) =
-	apply { effects.effects += ReplaceDisc(blockState).apply(block) }
+fun EntityEffectAllOfBuilder.replaceDisk(blockState: BlockStateProvider = simpleStateProvider(), block: ReplaceDisk.() -> Unit = {}) =
+	apply { effects.effects += ReplaceDisk(blockState).apply(block) }
 
 fun EntityEffectAllOfBuilder.runFunction(function: FunctionArgument, block: RunFunction.() -> Unit = {}) =
 	apply { effects.effects += RunFunction(function).apply(block) }

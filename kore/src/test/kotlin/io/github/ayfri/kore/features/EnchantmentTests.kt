@@ -503,7 +503,7 @@ fun DataPack.enchantmentTests() {
 					triggerGameEvent = GameEvents.BLOCK_PLACE
 				}
 
-				replaceDisc(simpleStateProvider(Blocks.DIAMOND_BLOCK)) {
+				replaceDisk(simpleStateProvider(Blocks.DIAMOND_BLOCK)) {
 					radius(5)
 					height(2)
 				}
@@ -619,7 +619,7 @@ fun DataPack.enchantmentTests() {
 					},
 					{
 						"effect": {
-							"type": "minecraft:replace_disc",
+							"type": "minecraft:replace_disk",
 							"block_state": {
 								"type": "minecraft:simple_state_provider",
 								"state": {
