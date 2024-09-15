@@ -265,4 +265,14 @@ fun DataPack.configuredFeatureTests() {
 			}
 		}
 	""".trimIndent()
+
+
+	configuredFeature("end_platform", EndPlatform)
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:end_platform",
+			"config": {}
+		}
+	""".trimIndent()
 }
