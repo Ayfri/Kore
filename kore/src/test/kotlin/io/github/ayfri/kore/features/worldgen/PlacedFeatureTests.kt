@@ -5,9 +5,7 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.worldgen.blockpredicate.allOf
 import io.github.ayfri.kore.features.worldgen.blockpredicate.matchingBlockTag
 import io.github.ayfri.kore.features.worldgen.blockpredicate.trueBlockPredicate
-import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.blockPredicateFilter
-import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.noiseThresholdCount
-import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.rarityFilter
+import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.*
 import io.github.ayfri.kore.features.worldgen.placedfeature.placedFeature
 import io.github.ayfri.kore.generated.ConfiguredFeatures
 import io.github.ayfri.kore.generated.Tags
@@ -56,6 +54,30 @@ fun DataPack.placedFeatureTests() {
 							}
 						]
 					}
+				}
+			]
+		}
+	""".trimIndent()
+
+	placedFeature("fixed_placement", ConfiguredFeatures.END_PLATFORM) {
+		fixedPlacement {
+			position(0, 0, 0)
+		}
+	}
+
+	placedFeatures.last() assertsIs """
+		{
+			"feature": "minecraft:end_platform",
+			"placement": [
+				{
+					"type": "minecraft:fixed_placement",
+					"positions": [
+						[
+							0,
+							0,
+							0
+						]
+					]
 				}
 			]
 		}
