@@ -12,7 +12,7 @@ import io.github.ayfri.kore.arguments.types.resources.tagged.FunctionTagArgument
 import io.github.ayfri.kore.commands.Command
 import io.github.ayfri.kore.commands.command
 import io.github.ayfri.kore.commands.tellraw
-import io.github.ayfri.kore.features.tags.addToTag
+import io.github.ayfri.kore.features.tags.functionTag
 import io.github.ayfri.kore.utils.ifNotEmpty
 import java.io.File
 
@@ -176,7 +176,7 @@ private fun DataPack.addToMinecraftTag(
 ): FunctionArgument {
 	val name = functionName ?: "${fileName}_${block.hashCode()}"
 	val generatedFunction = generatedFunction(name, namespace, directory, block)
-	addToTag<FunctionTagArgument>(fileName, type = "functions", namespace = "minecraft") {
+	functionTag(fileName, namespace = "minecraft") {
 		this += generatedFunction.asId()
 	}
 
@@ -189,10 +189,8 @@ fun Function.setTag(
 	entryNamespace: String = namespace,
 	entryIsTag: Boolean = false,
 	entryIsRequired: Boolean? = null,
-) {
-	datapack.addToTag<FunctionTagArgument>(fileName = tagFile, type = "functions", namespace = tagNamespace) {
-		add(name, entryNamespace, entryIsTag, entryIsRequired)
-	}
+) = datapack.functionTag(tagFile, tagNamespace) {
+	add(name, entryNamespace, entryIsTag, entryIsRequired)
 }
 
 fun Function.setTag(
@@ -200,8 +198,6 @@ fun Function.setTag(
 	entryNamespace: String = namespace,
 	entryIsTag: Boolean = false,
 	entryIsRequired: Boolean? = null,
-) {
-	datapack.addToTag<FunctionTagArgument>(fileName = tag.name, type = "functions", namespace = tag.namespace) {
-		add(name, entryNamespace, entryIsTag, entryIsRequired)
-	}
+) = datapack.functionTag(tag.name, tag.namespace) {
+	add(name, entryNamespace, entryIsTag, entryIsRequired)
 }

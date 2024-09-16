@@ -7,6 +7,7 @@ import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.functions.generatedFunction
 import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.functions.setTag
 import io.github.ayfri.kore.utils.testDataPack
 
 fun functionsTests() = testDataPack("function_tests") {
@@ -79,18 +80,27 @@ fun functionsTests() = testDataPack("function_tests") {
 			isInlinable assertsIs true
 		}
 	}
+
+	function("inside_tag") {
+		setTag("tick", "minecraft")
+		setTag("my_tag")
+		say("Hello, world!")
+	}
 }.apply {
 	val dpName = "function_tests"
 	val data = "$dpName/data"
 	val fnName = "test.mcfunction"
 	val generatedFolder = DataPack.DEFAULT_GENERATED_FUNCTIONS_FOLDER
-	assertFileGenerated("$data/$dpName/functions/$fnName")
-	assertFileGenerated("$data/$dpName/functions/my_functions/$fnName")
-	assertFileGenerated("$data/my_namespace/functions/$fnName")
-	assertFileGenerated("$data/my_namespace/functions/my_functions/$fnName")
-	assertFileGenerated("$data/$dpName/functions/$generatedFolder/$fnName")
-	assertFileGenerated("$data/$dpName/functions/$generatedFolder/my_functions/$fnName")
-	assertFileGenerated("$data/my_namespace/functions/$generatedFolder/$fnName")
-	assertFileGenerated("$data/my_namespace/functions/$generatedFolder/my_functions/$fnName")
+	assertFileGenerated("$data/$dpName/function/$fnName")
+	assertFileGenerated("$data/$dpName/function/my_functions/$fnName")
+	assertFileGenerated("$data/my_namespace/function/$fnName")
+	assertFileGenerated("$data/my_namespace/function/my_functions/$fnName")
+	assertFileGenerated("$data/$dpName/function/$generatedFolder/$fnName")
+	assertFileGenerated("$data/$dpName/function/$generatedFolder/my_functions/$fnName")
+	assertFileGenerated("$data/my_namespace/function/$generatedFolder/$fnName")
+	assertFileGenerated("$data/my_namespace/function/$generatedFolder/my_functions/$fnName")
+	assertFileGenerated("$data/minecraft/tags/function/load.json")
+	assertFileGenerated("$data/minecraft/tags/function/tick.json")
+	assertFileGenerated("$data/$dpName/tags/function/my_tag.json")
 	generate()
 }
