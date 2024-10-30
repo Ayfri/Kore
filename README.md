@@ -59,8 +59,8 @@ kotlin {
 }
 ```
 
-Then create a `Main.kt` file and start writing your datapacks.
-See the [documentation](https://github.com/Ayfri/Kore/wiki/Creating-a-Datapack) for more information.
+Then create a `Main.kt` file and start writing your datapacks. See
+the [documentation](https://github.com/Ayfri/Kore/wiki/Creating-a-Datapack) for more information.
 
 ## Example
 
@@ -124,11 +124,12 @@ fun main() {
 ## Community Creations
 
 - [SimplEnergyKore](https://github.com/e-psi-lon/SimplEnergyKore)
+- [Kore-Bindings](https://github.com/e-psi-lon/Kore-Bindings)
 - [realms-map](https://github.com/Aeltumn/realms-maps)
 
 ## Features
 
-- DataPack generation.
+- Datapack generation as files or zips.
 - Function generation.
 - All commands with all subcommands and multiple syntaxes.
 - Generation of all JSON-based features of Minecraft (Advancements, Loot Tables, Recipes, ...).
@@ -139,6 +140,7 @@ fun main() {
 - Colors/Vector/Rotation/... classes with common operations.
 - Macros support.
 - Inventory/Scheduler managers.
+- Merging datapacks, even with existing zips.
 - Scoreboard display manager (like on servers).
 - Debugging system inside commands or functions.
 - Common Nbt tags generation (blocks, items, entities, ...).
