@@ -2,6 +2,7 @@ package io.github.ayfri.kore
 
 import io.github.ayfri.kore.annotations.FunctionsHolder
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
+import io.github.ayfri.kore.arguments.types.TaggedResourceLocationArgument
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.features.advancements.Advancement
 import io.github.ayfri.kore.features.bannerpatterns.BannerPattern
@@ -43,12 +44,16 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
+import java.io.FileOutputStream
+import java.nio.file.Files
 import java.nio.file.Path
 import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.Path
 import kotlin.io.path.absolute
 import kotlin.io.path.createDirectories
+import kotlin.io.path.exists
 
 @FunctionsHolder
 class DataPack(val name: String) {
@@ -114,7 +119,8 @@ class DataPack(val name: String) {
 
 	private val cleanPath get() = path.absolute().normalize().createDirectories()
 
-	fun generate() {
+	fun generate(init: DataPackGenerationOptions.() -> Unit = {}) {
+		val options = DataPackGenerationOptions().apply(init)
 		val start = System.currentTimeMillis()
 		val root = File("$cleanPath/$name")
 		root.mkdirs()
@@ -142,49 +148,218 @@ class DataPack(val name: String) {
 		val end = System.currentTimeMillis()
 		println("Generated data pack '$name' in ${end - start}ms in: ${root.absolutePath}")
 
+		if (options.mergeWithPacks.isEmpty()) return
+
+		val mergeWithPacks = options.mergeWithPacks.sortedBy { it.fileName.toString() }
+		println("Merging with other packs: ${mergeWithPacks.joinToString(", ")}")
+
+		val tagsToMerge = listOf("minecraft/tags/function/load.json", "minecraft/tags/functions/tick.json")
+			.map { it.replace("/", File.separator) }
+		val foundTags = tagsToMerge.associateWith { mutableListOf<Tag<TaggedResourceLocationArgument>>() }
+
+		mergeWithPacks.forEach { otherPath ->
+			require(otherPath.exists()) { "The pack at '$otherPath' does not exist." }
+
+			var otherPackFile = otherPath.toFile()
+			if (otherPath.endsWith(".zip")) {
+				otherPackFile = unzip(otherPath.toFile())
+			}
+
+			if (otherPackFile == cleanPath) {
+				println("The pack at '$otherPath' is the same as the current one, skipping merge.")
+				return@forEach
+			}
+
+			val otherPackMCMetaFile = otherPackFile.resolve("pack.mcmeta")
+			require(otherPackMCMetaFile.exists()) { "The pack at '$otherPath' does not contain a pack.mcmeta file." }
+
+			val otherPackMCMeta = jsonEncoder.decodeFromString<PackMCMeta>(otherPackMCMetaFile.readText())
+			if (!versionsCompatibles(otherPackMCMeta)) return@forEach
+
+			val otherDataDir = otherPackFile.resolve("data")
+
+			if (!otherDataDir.exists()) {
+				println("The pack at '$otherPath' does not contain a data directory, skipping merge.")
+				return@forEach
+			}
+
+			// Merge the data directory
+			otherDataDir.walkTopDown().forEach copyFiles@{ file ->
+				val relativePath = file.relativeTo(otherDataDir).toString()
+				val targetFile = data.resolve(relativePath)
+				if (file.isFile) {
+					if (relativePath in tagsToMerge) {
+						val tag = jsonEncoder.decodeFromString<Tag<TaggedResourceLocationArgument>>(file.readText())
+						foundTags[relativePath]?.add(tag)
+					}
+
+					if (targetFile.exists()) {
+						// If the file already exists, skip it
+						return@copyFiles
+					}
+
+					file.copyTo(targetFile)
+				} else {
+					targetFile.mkdirs()
+				}
+			}
+
+			// Merge the tags
+			foundTags.forEach tags@{ (tagPath, tags) ->
+				if (tags.isEmpty()) return@tags
+
+				println("Merging tags of: $tagPath")
+
+				val targetFile = data.resolve(tagPath)
+				if (targetFile.exists()) {
+					val currentTagFile = jsonEncoder.decodeFromString<Tag<TaggedResourceLocationArgument>>(targetFile.readText())
+					val values = currentTagFile.values.toMutableList()
+					tags.forEach { tag ->
+						tag.values.forEach { value ->
+							if (value !in values) {
+								values += value
+							}
+						}
+					}
+					currentTagFile.values = values
+					targetFile.writeText(jsonEncoder.encodeToString(currentTagFile))
+				} else {
+					targetFile.writeText(jsonEncoder.encodeToString(tags))
+				}
+			}
+		}
+
 		generated = true
+	}
+
+	private fun versionsCompatibles(otherPack: PackMCMeta): Boolean {
+		val yellow = "\u001B[33m"
+		val reset = "\u001B[0m"
+		fun warn(message: String) = println("$yellow$message$reset")
+
+		if (otherPack.pack.format != pack.format) {
+			val packFormatPrint = "Format: current: ${pack.format} other: ${otherPack.pack.format}."
+			if (otherPack.pack.supportedFormats != null && pack.supportedFormats != null) {
+				if (otherPack.pack.supportedFormats!!.isCompatibleWith(pack.supportedFormats!!)) {
+					return true
+				}
+
+				warn("The pack format of the other pack is different from the current one and the supported formats are different. This may cause issues.")
+				warn(packFormatPrint)
+				warn("Supported Formats: current: ${pack.supportedFormats} other: ${otherPack.pack.supportedFormats}.")
+				return false
+			}
+
+			warn("The pack format of the other pack is different from the current one. This may cause issues.")
+			warn(packFormatPrint)
+			return false
+		}
+		return true
 	}
 
 	fun generatePackMCMetaFile() = jsonEncoder.encodeToString(PackMCMeta(pack, features, filter))
 
-	fun generateZip() {
+	fun generateZip(init: DataPackGenerationOptions.() -> Unit = {}) {
 		if (generated) return
+		val options = DataPackGenerationOptions().apply(init)
 		val start = System.currentTimeMillis()
 
 		val zip = File("$cleanPath/$name.zip")
 		zip.delete()
 		zip.createNewFile()
-		zip.outputStream().use { outputStream ->
-			ZipOutputStream(outputStream).use { zipOutputStream ->
-				zipOutputStream.putNextEntry(ZipEntry("pack.mcmeta"))
-				zipOutputStream.write(generatePackMCMetaFile().toByteArray())
+		ZipOutputStream(FileOutputStream(zip)).use { zipOutputStream ->
+			zipOutputStream.putNextEntry(ZipEntry("pack.mcmeta"))
+			zipOutputStream.write(generatePackMCMetaFile().toByteArray())
+			zipOutputStream.closeEntry()
+
+			iconPath?.let {
+				zipOutputStream.putNextEntry(ZipEntry("pack.png"))
+				zipOutputStream.write(it.toFile().readBytes())
+			}
+
+			functions.distinctBy(Function::getFinalPath).forEach { function ->
+				zipOutputStream.putNextEntry(ZipEntry(function.getFinalPath().replace("\\", "/")))
+				zipOutputStream.write(function.lines.joinToString("\n").toByteArray())
 				zipOutputStream.closeEntry()
+			}
 
-				iconPath?.let {
-					zipOutputStream.putNextEntry(ZipEntry("pack.png"))
-					zipOutputStream.write(it.toFile().readBytes())
+			generatedFunctions.distinctBy(Function::getFinalPath).forEach { function ->
+				zipOutputStream.putNextEntry(ZipEntry(function.getFinalPath().replace("\\", "/")))
+				zipOutputStream.write(function.lines.joinToString("\n").toByteArray())
+				zipOutputStream.closeEntry()
+			}
+
+			generators.flatten()
+				.distinctBy { it.getFinalPath(this) }
+				.forEach { generator -> generator.generateZipEntry(this, zipOutputStream) }
+
+
+			val end = System.currentTimeMillis()
+			println("Generated data pack '$name' in ${end - start}ms in: ${zip.absolutePath}")
+
+			if (options.mergeWithPacks.isEmpty()) return
+
+			val mergeWithPacks = options.mergeWithPacks.sortedBy { it.fileName.toString() }
+			println("Merging datapack '$name' with other packs: ${mergeWithPacks.joinToString(", ")}")
+			mergeWithPacks.forEach { otherPath ->
+				require(otherPath.exists()) { "The pack at '$otherPath' does not exist." }
+
+				var otherPackFile = otherPath.toFile()
+				if (otherPath.endsWith(".zip")) {
+					otherPackFile = unzip(otherPath.toFile())
 				}
 
-				functions.distinctBy(Function::getFinalPath).forEach { function ->
-					zipOutputStream.putNextEntry(ZipEntry(function.getFinalPath()))
-					zipOutputStream.write(function.lines.joinToString("\n").toByteArray())
+				if (otherPackFile == cleanPath) {
+					println("The pack at '$otherPath' is the same as the current one, skipping merge.")
+					return@forEach
+				}
+
+				val otherPackMCMetaFile = otherPackFile.resolve("pack.mcmeta")
+				require(otherPackMCMetaFile.exists()) { "The pack at '$otherPath' does not contain a pack.mcmeta file." }
+
+				val otherPackMCMeta = jsonEncoder.decodeFromString<PackMCMeta>(otherPackMCMetaFile.readText())
+				if (!versionsCompatibles(otherPackMCMeta)) return@forEach
+
+				val otherDataDir = otherPackFile.resolve("data")
+
+				if (!otherDataDir.exists()) {
+					println("The pack at '$otherPath' does not contain a data directory, skipping merge.")
+					return@forEach
+				}
+
+				// Merge the data directory
+				otherDataDir.walkTopDown().forEach copyFiles@{ file ->
+					val relativePath = file.relativeTo(otherDataDir).toString()
+					zipOutputStream.putNextEntry(ZipEntry("data/${relativePath.replace("\\", "/")}"))
+					if (file.isFile) {
+						file.inputStream().use { it.copyTo(zipOutputStream) }
+					}
 					zipOutputStream.closeEntry()
 				}
+			}
+		}
+	}
 
-				generatedFunctions.distinctBy(Function::getFinalPath).forEach { function ->
-					zipOutputStream.putNextEntry(ZipEntry(function.getFinalPath()))
-					zipOutputStream.write(function.lines.joinToString("\n").toByteArray())
-					zipOutputStream.closeEntry()
+	private fun unzip(zipFile: File): File {
+		val tempDir = Files.createTempDirectory("kore_datapacks_unzipped").toFile()
+		ZipInputStream(zipFile.inputStream()).use { zipInputStream ->
+			var entry = zipInputStream.nextEntry
+			while (entry != null) {
+				val filePath = File(tempDir, entry.name)
+				if (entry.isDirectory) {
+					filePath.mkdirs()
+				} else {
+					// Ensure parent directories exist
+					filePath.parentFile.mkdirs()
+					// Copy the file content
+					filePath.outputStream().use(zipInputStream::copyTo)
 				}
-
-				generators.flatten()
-					.distinctBy { it.getFinalPath(this) }
-					.forEach { generator -> generator.generateZipEntry(this, zipOutputStream) }
+				zipInputStream.closeEntry()
+				entry = zipInputStream.nextEntry
 			}
 		}
 
-		val end = System.currentTimeMillis()
-		println("Generated data pack '$name' in ${end - start}ms in: ${zip.absolutePath}")
+		return tempDir.resolve(zipFile.nameWithoutExtension)
 	}
 
 	private fun File.generateFunctions(

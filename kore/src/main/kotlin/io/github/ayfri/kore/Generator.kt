@@ -1,12 +1,12 @@
 package io.github.ayfri.kore
 
-import kotlin.io.path.createParentDirectories
-import kotlin.io.path.invariantSeparatorsPathString
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
+import kotlin.io.path.createParentDirectories
+import kotlin.io.path.invariantSeparatorsPathString
 
 @Serializable
 abstract class Generator(@Transient val resourceFolder: String = error("Generator must have a resource folder")) {
@@ -32,7 +32,7 @@ abstract class Generator(@Transient val resourceFolder: String = error("Generato
 	fun generateZipEntry(dataPack: DataPack, zipOutputStream: ZipOutputStream) {
 		val path = getFinalPath(dataPack)
 		val zippedPath = path.invariantSeparatorsPathString.removePrefix("${dataPack.path.invariantSeparatorsPathString}/${dataPack.name}/")
-		zipOutputStream.putNextEntry(ZipEntry(zippedPath))
+		zipOutputStream.putNextEntry(ZipEntry(zippedPath.replace("\\", "/")))
 		zipOutputStream.write(generateJson(dataPack).toByteArray())
 		zipOutputStream.closeEntry()
 	}

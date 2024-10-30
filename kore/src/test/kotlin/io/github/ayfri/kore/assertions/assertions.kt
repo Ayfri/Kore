@@ -52,6 +52,17 @@ fun TestDataPack.assertFileGenerated(path: String) {
 	}
 }
 
+fun TestDataPack.assertFileJsonContent(path: String, content: String) {
+	val file = dp.path.resolve(path).normalize().absolute()
+	callAfterGeneration {
+		if (!file.exists()) {
+			error("File for datapack '${dp.name}' at '${file.absolutePathString()}' was not found.")
+		}
+		val fileContent = file.toFile().readText()
+		fileContent.trimIndent() assertsIsJson content.trimIndent()
+	}
+}
+
 fun TestDataPack.assertFileGeneratedInZip(path: String) {
 	val file = dp.path.resolve("${dp.name}.zip")
 	callAfterGeneration {
