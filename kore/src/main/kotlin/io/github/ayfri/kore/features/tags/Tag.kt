@@ -4,21 +4,19 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.types.ResourceLocationArgument
 import io.github.ayfri.kore.arguments.types.TaggedResourceLocationArgument
-import kotlin.io.path.Path
-import kotlin.reflect.KClass
-import kotlin.reflect.full.companionObject
-import kotlin.reflect.full.companionObjectInstance
-import kotlin.reflect.full.memberFunctions
-import java.nio.file.Path
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.encodeStructure
+import kotlinx.serialization.encoding.*
+import java.nio.file.Path
+import kotlin.io.path.Path
+import kotlin.reflect.KClass
+import kotlin.reflect.full.companionObject
+import kotlin.reflect.full.companionObjectInstance
+import kotlin.reflect.full.memberFunctions
 
 @Serializable(with = Tag.Companion.TagSerializer::class)
 data class Tag<out T : TaggedResourceLocationArgument>(
@@ -84,7 +82,21 @@ data class Tag<out T : TaggedResourceLocationArgument>(
 				element<List<TagEntry>>("values")
 			}
 
-			override fun deserialize(decoder: Decoder) = error("Tag cannot be deserialized")
+			override fun deserialize(decoder: Decoder) = decoder.decodeStructure(descriptor) {
+				var replace = false
+				var values = emptyList<TagEntry>()
+
+				while (true) {
+					when (val index = decodeElementIndex(descriptor)) {
+						0 -> replace = decodeBooleanElement(descriptor, 0)
+						1 -> values = decodeSerializableElement(descriptor, 1, ListSerializer(TagEntry.serializer()))
+						CompositeDecoder.DECODE_DONE -> break
+						else -> error("Unexpected index: $index")
+					}
+				}
+
+				Tag<TaggedResourceLocationArgument>(replace = replace, values = values)
+			}
 
 			override fun serialize(encoder: Encoder, value: Tag<*>) = encoder.encodeStructure(descriptor) {
 				encodeBooleanElement(descriptor, 0, value.replace)
