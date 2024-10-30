@@ -10,10 +10,7 @@ import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.encodeCollection
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonEncoder
-import kotlinx.serialization.json.JsonNamingStrategy
+import kotlinx.serialization.json.*
 import net.benwoodworth.knbt.*
 import kotlin.reflect.full.createType
 
@@ -85,7 +82,28 @@ data class ChatComponents(
 		object ChatComponentsSerializer : KSerializer<ChatComponents> {
 			override val descriptor = ListSerializer(NbtTag.serializer()).descriptor
 
-			override fun deserialize(decoder: Decoder) = ChatComponents()
+			override fun deserialize(decoder: Decoder): ChatComponents {
+				return when (decoder) {
+					is JsonDecoder -> {
+						val list = mutableListOf<ChatComponent>()
+						val decodeJsonElement = decoder.decodeJsonElement()
+						try {
+							decodeJsonElement.jsonArray.forEach {
+								list += jsonSerializer.decodeFromJsonElement(ChatComponent.serializer(), it)
+							}
+						} catch (error: Exception) {
+							list += text(text = decodeJsonElement.jsonPrimitive.content)
+						}
+						ChatComponents(list)
+					}
+
+					is NbtDecoder -> {
+						throw UnsupportedOperationException("NBT decoding is not supported for ChatComponents.")
+					}
+
+					else -> throw IllegalArgumentException("Unsupported decoder: $decoder")
+				}
+			}
 
 			/* Encode each component, if there's only one, encode it as a single component, if the component only contains a text, encode it as a string. */
 			override fun serialize(encoder: Encoder, value: ChatComponents) {
