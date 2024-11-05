@@ -80,7 +80,7 @@ fun TestDataPack.assertFileGeneratedInZip(path: String) {
 		}
 		inputStream.close()
 		zip.close()
-		error("File for datapack '${dp.name}' at '$path' was not found in the zip file.")
+		error("File in datapack '${dp.name}.zip' at '$path' was not found in the zip file.")
 	}
 }
 

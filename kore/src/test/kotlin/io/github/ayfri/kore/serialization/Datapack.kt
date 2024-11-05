@@ -20,7 +20,7 @@ import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.functions.tick
 import io.github.ayfri.kore.generated.DataPacks
 import io.github.ayfri.kore.generated.Items
-import io.github.ayfri.kore.mergeWithPacks
+import io.github.ayfri.kore.generation.mergeWithPacks
 import io.github.ayfri.kore.pack.features
 import io.github.ayfri.kore.pack.filter
 import io.github.ayfri.kore.pack.pack

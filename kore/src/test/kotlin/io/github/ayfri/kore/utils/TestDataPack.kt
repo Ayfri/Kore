@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.utils
 
 import io.github.ayfri.kore.DataPack
-import io.github.ayfri.kore.DataPackGenerationOptions
 import io.github.ayfri.kore.configuration
+import io.github.ayfri.kore.generation.DataPackGenerationOptions
 import io.github.ayfri.kore.minecraftSaveTestPath
 
 data class TestDataPack(internal val dp: DataPack) {

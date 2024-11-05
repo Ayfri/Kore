@@ -38,8 +38,8 @@ data class Tag<out T : TaggedResourceLocationArgument>(
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(TagSerializer, this)
 
 	override fun getFinalPath(dataPack: DataPack): Path {
-		val dataFolder = Path(dataPack.path.toString(), dataPack.name, "data")
-		return Path(dataFolder.toString(), namespace ?: dataPack.name, resourceFolder, type, "$fileName.json")
+		val dataFolder = Path(dataPack.cleanPath.toString(), dataPack.name, "data")
+		return dataFolder.resolve(namespace ?: dataPack.name).resolve(resourceFolder).resolve(type).resolve("$fileName.json")
 	}
 
 	operator fun plusAssign(value: TagEntry) {

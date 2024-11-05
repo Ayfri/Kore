@@ -1,4 +1,4 @@
-package io.github.ayfri.kore
+package io.github.ayfri.kore.generation
 
 import java.nio.file.Files
 import java.nio.file.Path
