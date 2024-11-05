@@ -1,17 +1,14 @@
-import generators.downloadDataPacks
-import generators.downloadDefaultDatapackVersion
-import generators.downloadGamerules
-import generators.launchAllSimpleGenerators
+import generators.*
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
-import kotlin.io.path.absolute
+import kotlinx.serialization.json.Json
 import java.io.File
 import java.nio.file.Paths
 import java.util.*
-import kotlinx.serialization.json.Json
+import kotlin.io.path.absolute
 
 const val HEADER = """// Automatically generated - do not modify!"""
 const val MAIN_GITHUB_URL = "https://raw.githubusercontent.com/PixiGeko/Minecraft-generated-data"
@@ -59,4 +56,5 @@ suspend fun main(args: Array<String>) {
 	downloadDefaultDatapackVersion()
 	downloadGamerules()
 	launchAllSimpleGenerators()
+	writeMinecraftVersion()
 }
