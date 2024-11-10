@@ -35,13 +35,15 @@ import io.github.ayfri.kore.features.worldgen.worldpreset.WorldPreset
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.DEFAULT_DATAPACK_FORMAT
 import io.github.ayfri.kore.generation.DataPackGenerationOptions
+import io.github.ayfri.kore.generation.DataPackGenerator
+import io.github.ayfri.kore.generation.DataPackJarGenerationOptions
 import io.github.ayfri.kore.generation.DatapackGenerationMode
-import io.github.ayfri.kore.generation.DatapackGenerator
 import io.github.ayfri.kore.pack.Features
 import io.github.ayfri.kore.pack.Filter
 import io.github.ayfri.kore.pack.Pack
 import io.github.ayfri.kore.pack.PackMCMeta
 import io.github.ayfri.kore.serializers.JsonNamingSnakeCaseStrategy
+import io.github.ayfri.kore.utils.warn
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -118,21 +120,23 @@ class DataPack(val name: String) {
 
 	fun generate(init: DataPackGenerationOptions.() -> Unit = {}) {
 		val options = DataPackGenerationOptions().apply(init)
-		val datapackGenerator = DatapackGenerator(this, options)
+		val datapackGenerator = DataPackGenerator(this, options)
+		datapackGenerator.generate()
+	}
+
+	fun generateJar(init: DataPackJarGenerationOptions.() -> Unit = {}) {
+		val options = DataPackJarGenerationOptions(this).apply(init)
+		val datapackGenerator = DataPackGenerator(this, options, DatapackGenerationMode.JAR)
 		datapackGenerator.generate()
 	}
 
 	fun generateZip(init: DataPackGenerationOptions.() -> Unit = {}) {
 		val options = DataPackGenerationOptions().apply(init)
-		val datapackGenerator = DatapackGenerator(this, options, DatapackGenerationMode.ZIP)
+		val datapackGenerator = DataPackGenerator(this, options, DatapackGenerationMode.ZIP)
 		datapackGenerator.generate()
 	}
 
 	fun isCompatibleWith(otherPack: PackMCMeta): Boolean {
-		val yellow = "\u001B[33m"
-		val reset = "\u001B[0m"
-		fun warn(message: String) = println("$yellow$message$reset")
-
 		if (otherPack.pack.format != pack.format) {
 			val packFormatPrint = "Format: current: ${pack.format} other: ${otherPack.pack.format}."
 			if (otherPack.pack.supportedFormats != null && pack.supportedFormats != null) {

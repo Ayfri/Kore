@@ -1,12 +1,17 @@
 package io.github.ayfri.kore.generation
 
+import io.github.ayfri.kore.DataPack
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.absolute
 
+abstract class DataPackGenerationCommonOptions {
+	open var mergeWithPacks: List<Path> = emptyList()
+}
+
 data class DataPackGenerationOptions(
-	var mergeWithPacks: List<Path> = emptyList(),
-)
+	override var mergeWithPacks: List<Path> = emptyList(),
+) : DataPackGenerationCommonOptions()
 
 /**
  * Merge the current [DataPack] with the given [packs].

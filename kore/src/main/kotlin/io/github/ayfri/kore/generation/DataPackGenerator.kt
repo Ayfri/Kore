@@ -5,17 +5,18 @@ import io.github.ayfri.kore.arguments.types.TaggedResourceLocationArgument
 import io.github.ayfri.kore.features.tags.Tag
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.pack.PackMCMeta
+import io.github.ayfri.kore.utils.warn
 import kotlinx.serialization.encodeToString
 import java.io.File
 import java.io.FileOutputStream
+import java.nio.file.FileSystemException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.jar.JarOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
-import kotlin.io.path.createDirectory
-import kotlin.io.path.deleteIfExists
+import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
 import kotlin.io.path.invariantSeparatorsPathString
 
@@ -47,9 +48,9 @@ enum class DatapackGenerationMode {
 	ZIP,
 }
 
-data class DatapackGenerator(
+data class DataPackGenerator(
 	var datapack: DataPack,
-	var options: DataPackGenerationOptions = DataPackGenerationOptions(),
+	var options: DataPackGenerationCommonOptions = DataPackGenerationOptions(),
 	var mode: DatapackGenerationMode = DatapackGenerationMode.FOLDER,
 ) {
 	val outputPath = when (mode) {
@@ -68,14 +69,19 @@ data class DatapackGenerator(
 	}
 
 	fun generate() {
-		if (datapack.generated) return
+		if (datapack.generated) {
+			warn("Trying to generate the already generated datapack '${datapack.name}' in $dataPackPath.")
+			outputStream?.close()
+			return
+		}
 
 		val start = System.currentTimeMillis()
 		val packMCMeta = datapack.generatePackMCMetaFile()
 
+		init()
 		writeFile("pack.mcmeta", packMCMeta)
 
-		datapack.iconPath?.let { writeFile("pack.png", it.toFile().readBytes().toString(Charsets.ISO_8859_1)) }
+		datapack.iconPath?.let { writeFile("pack.png", it.toFile().readBytes()) }
 
 		datapack.functions.distinctBy(Function::getFinalPath).forEach {
 			val path = it.getFinalPath().replace("\\", "/")
@@ -90,14 +96,19 @@ data class DatapackGenerator(
 		datapack.generators.flatten()
 			.distinctBy { it.getFinalPath(datapack) }
 			.forEach { generator ->
-				val path = generator.getFinalPath(datapack)
-				writeFile(path.toString(), generator.generateJson(datapack), to = outputPath)
+				val namespace = generator.namespace ?: datapack.name
+				val path = outputDataPath.resolve(namespace).resolve(generator.resourceFolder).resolve("${generator.fileName}.json")
+				writeFile(path.toString(), generator.generateJson(datapack))
 			}
 
 		val end = System.currentTimeMillis()
 		println("Generated data pack '${datapack.name}' in ${end - start}ms in: $dataPackPath")
 
-		if (options.mergeWithPacks.isEmpty()) return
+		if (options.mergeWithPacks.isEmpty()) {
+			outputStream?.close()
+			datapack.generated = true
+			return
+		}
 
 		val mergeWithPacks = options.mergeWithPacks.sortedBy { it.fileName.toString() }
 		println("Merging datapack with other packs: ${mergeWithPacks.joinToString(", ")}")
@@ -167,17 +178,20 @@ data class DatapackGenerator(
 		datapack.generated = true
 	}
 
-	fun init() = when (mode) {
-		DatapackGenerationMode.FOLDER -> {
-			outputPath.createDirectory()
-		}
+	fun init() {
+		try {
+			when (mode) {
+				DatapackGenerationMode.FOLDER -> outputPath.createDirectories()
 
-		DatapackGenerationMode.JAR -> {
-			outputPath.deleteIfExists()
-		}
+				DatapackGenerationMode.JAR -> {
+					val options = options as? DataPackJarGenerationOptions ?: return
+					options.providers.forEach { it.generateAdditionalFiles(this, options) }
+				}
 
-		DatapackGenerationMode.ZIP -> {
-			outputPath.deleteIfExists()
+				DatapackGenerationMode.ZIP -> {}
+			}
+		} catch (e: FileSystemException) {
+			warn("An error occurred while trying to create the directory for the datapack '${datapack.name}': $e")
 		}
 	}
 
@@ -209,14 +223,16 @@ data class DatapackGenerator(
 		}
 	}
 
-	fun writeFile(path: String, content: String, to: Path = outputPath) {
+	fun writeFile(path: String, content: String, to: Path = outputPath) = writeFile(path, content.toByteArray(), to)
+
+	fun writeFile(path: String, content: ByteArray, to: Path = outputPath) {
 		val finalPath = to.resolve(path.replace("\\", "/"))
 
 		when (mode) {
 			DatapackGenerationMode.FOLDER -> {
 				val file = to.resolve(finalPath).toFile()
 				file.parentFile.mkdirs()
-				file.writeText(content)
+				file.writeBytes(content)
 			}
 
 			DatapackGenerationMode.JAR, DatapackGenerationMode.ZIP -> outputStream?.let {
@@ -224,7 +240,7 @@ data class DatapackGenerator(
 					finalPath.invariantSeparatorsPathString.removePrefix(outputPath.invariantSeparatorsPathString).removePrefix("/")
 
 				it.putNextEntry(ZipEntry(relativePath))
-				it.write(content.toByteArray())
+				it.write(content)
 				it.closeEntry()
 			}
 		}

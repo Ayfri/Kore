@@ -3,6 +3,7 @@ package io.github.ayfri.kore.utils
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.configuration
 import io.github.ayfri.kore.generation.DataPackGenerationOptions
+import io.github.ayfri.kore.generation.DataPackJarGenerationOptions
 import io.github.ayfri.kore.minecraftSaveTestPath
 
 data class TestDataPack(internal val dp: DataPack) {
@@ -18,6 +19,11 @@ data class TestDataPack(internal val dp: DataPack) {
 
 	fun generate(init: DataPackGenerationOptions.() -> Unit = {}) {
 		dp.generate(init)
+		calledAfterGeneration.forEach { it(dp) }
+	}
+
+	fun generateJar(init: DataPackJarGenerationOptions.() -> Unit = {}) {
+		dp.generateJar(init)
 		calledAfterGeneration.forEach { it(dp) }
 	}
 

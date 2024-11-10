@@ -1,13 +1,5 @@
 package io.github.ayfri.kore.serializers
 
-import kotlin.reflect.KClass
-import kotlin.reflect.KProperty1
-import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.memberProperties
-import kotlin.reflect.jvm.isAccessible
-import net.benwoodworth.knbt.NbtCompound
-import net.benwoodworth.knbt.NbtEncoder
-import net.benwoodworth.knbt.buildNbtCompound
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -18,7 +10,46 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.serializer
+import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.NbtEncoder
+import net.benwoodworth.knbt.buildNbtCompound
+import kotlin.reflect.KClass
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.isAccessible
 
+/**
+ * A serializer that serializes to a JSON object with only one property if all other properties are null.
+ *
+ * @param T The class that contains the property.
+ * @param P The type of the property.
+ * @param kClass The class of the object.
+ * @param property The property to serialize.
+ *
+ * Example:
+ * ```kotlin
+ * data object MyDataClassSerializer : SinglePropertySimplifierSerializer<MyDataClass, Int>(
+ *     kClass = MyDataClass::class,
+ *     property = MyDataClass::myProperty
+ * )
+ *
+ * @Serializable(with = MyDataClassSerializer::class)
+ * data class MyDataClass(var myProperty: Int = 0, var myOtherProperty: Int? = null)
+ *
+ * ```
+ * If myOtherProperty is null, the JSON will be:
+ * ```json
+ * 0
+ * ```
+ * If myOtherProperty is not null, the JSON will be:
+ * ```json
+ * {
+ *    "myProperty": 0,
+ *    "myOtherProperty": 0
+ * }
+ * ```
+ */
 open class SinglePropertySimplifierSerializer<T : Any, P : Any>(
 	private val kClass: KClass<T>,
 	private val property: KProperty1<T, P>,

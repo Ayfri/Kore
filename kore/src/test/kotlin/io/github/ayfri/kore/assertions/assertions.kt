@@ -63,8 +63,8 @@ fun TestDataPack.assertFileJsonContent(path: String, content: String) {
 	}
 }
 
-fun TestDataPack.assertFileGeneratedInZip(path: String) {
-	val file = dp.path.resolve("${dp.name}.zip")
+private fun TestDataPack.assertFileGeneratedInArchive(path: String, extension: String) {
+	val file = dp.path.resolve("${dp.name}.$extension")
 	callAfterGeneration {
 		val zipFile = file.toFile()
 		val inputStream = zipFile.inputStream()
@@ -82,6 +82,14 @@ fun TestDataPack.assertFileGeneratedInZip(path: String) {
 		zip.close()
 		error("File in datapack '${dp.name}.zip' at '$path' was not found in the zip file.")
 	}
+}
+
+fun TestDataPack.assertFileGeneratedInJar(path: String) {
+	assertFileGeneratedInArchive(path, "jar")
+}
+
+fun TestDataPack.assertFileGeneratedInZip(path: String) {
+	assertFileGeneratedInArchive(path, "zip")
 }
 
 fun TestDataPack.assertGeneratorsGenerated() {

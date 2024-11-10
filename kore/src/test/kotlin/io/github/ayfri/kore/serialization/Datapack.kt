@@ -3,10 +3,7 @@ package io.github.ayfri.kore.serialization
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
-import io.github.ayfri.kore.assertions.assertFileGenerated
-import io.github.ayfri.kore.assertions.assertFileGeneratedInZip
-import io.github.ayfri.kore.assertions.assertFileJsonContent
-import io.github.ayfri.kore.assertions.assertsIsJson
+import io.github.ayfri.kore.assertions.*
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.configuration
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
@@ -20,6 +17,9 @@ import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.functions.tick
 import io.github.ayfri.kore.generated.DataPacks
 import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.generation.fabric.author
+import io.github.ayfri.kore.generation.fabric.contact
+import io.github.ayfri.kore.generation.fabric.fabric
 import io.github.ayfri.kore.generation.mergeWithPacks
 import io.github.ayfri.kore.pack.features
 import io.github.ayfri.kore.pack.filter
@@ -30,6 +30,7 @@ import io.github.ayfri.kore.utils.testDataPack
 import kotlin.io.path.Path
 
 fun datapackTests() {
+	jarTests()
 	mergeDatapacksTests()
 	packMCMetaTests()
 	zipTests()
@@ -44,19 +45,30 @@ fun generatePack(name: String, init: DataPack.() -> Unit = {}) = testDataPack(na
 }
 
 fun mergeDatapacksTests() {
-	var dp1 = generatePack("dp1")
+	var dp1 = generatePack("dp1") {
+		function("test space") {
+			say("Hello, world!")
+		}
+	}
 	var dp2 = generatePack("dp2")
 
 	dp1.assertFileGenerated("dp1/data/dp1/function/test.mcfunction")
+	dp1.assertFileGenerated("dp1/data/dp1/function/test space.mcfunction")
 	dp1.assertFileGenerated("dp1/data/dp2/function/test.mcfunction")
 	dp1.generate {
 		mergeWithPacks(dp2.dp)
 	}
 
-	dp1 = generatePack("dp1")
+	dp1 = generatePack("dp1") {
+		function("test space") {
+			say("Hello, world!")
+		}
+	}
 	dp1.assertFileGeneratedInZip("data/dp1/function/test.mcfunction")
+	dp1.assertFileGeneratedInZip("data/dp1/function/test space.mcfunction")
 	dp1.assertFileGeneratedInZip("data/dp2/function/test.mcfunction")
 	dp1.generateZip {
+		dp2.dp.generated = false
 		mergeWithPacks(dp2.dp)
 	}
 
@@ -164,6 +176,24 @@ fun mergeDatapacksTests() {
 	}
 }
 
+fun jarTests() {
+	val dp1 = generatePack("jar_tests")
+
+	dp1.generateJar {
+		fabric {
+			version = "1.2.5"
+			contact {
+				email = "kore@kore.kore"
+				homepage = "https://kore.ayfri.com"
+			}
+
+			author("Ayfri")
+		}
+
+		dp1.assertFileGeneratedInJar("fabric.mod.json")
+	}
+}
+
 fun packMCMetaTests() = testDataPack("test") {
 	pretty()
 
@@ -215,11 +245,11 @@ fun packMCMetaTests() = testDataPack("test") {
 fun zipTests() = testDataPack("zip_tests") {
 	pretty()
 
-	function("my function") {
+	function("my_function") {
 		say("Hello, world!")
 	}
 
-	function("my function 2", directory = "subfolder") {
+	function("my_function_2", directory = "subfolder") {
 		say("Hello, world 2!")
 	}
 
