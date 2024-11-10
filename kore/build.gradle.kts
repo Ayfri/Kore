@@ -16,6 +16,7 @@ repositories {
 
 dependencies {
 	implementation(libs.kotlinx.serialization)
+	implementation(libs.ktoml)
 	implementation(kotlin("reflect"))
 	api(libs.knbt)
 	api(libs.joml)
