@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.generation.forge
 
+import com.akuleshov7.ktoml.annotations.TomlInlineTable
 import kotlinx.serialization.Serializable
 import java.nio.file.Path
 
@@ -12,7 +13,7 @@ enum class DisplayType {
 }
 
 @Serializable
-data class ModProperties(
+data class ForgeModProperties(
 	var authors: String? = null,
 	var credits: String? = null,
 	var description: String? = null,
@@ -22,12 +23,13 @@ data class ModProperties(
 	var logoBlur: Boolean? = null,
 	var logoFile: Path? = null,
 	var modId: String,
+	@TomlInlineTable
 	var modProperties: Map<String, String>? = null,
 	var namespace: String? = null,
 	var updateJSONURL: String? = null,
 	var version: String? = null,
 )
 
-fun ModProperties.modProperties(init: MutableMap<String, String>.() -> Unit) {
+fun ForgeModProperties.modProperties(init: MutableMap<String, String>.() -> Unit) {
 	modProperties = buildMap(init)
 }

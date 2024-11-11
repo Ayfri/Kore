@@ -1,4 +1,4 @@
-package io.github.ayfri.kore.generation.forge
+package io.github.ayfri.kore.generation.neoforge
 
 import com.akuleshov7.ktoml.annotations.TomlInlineTable
 import io.github.ayfri.kore.generation.DataPackGenerator
@@ -9,37 +9,39 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 
 @Serializable
-data class ForgeModGenerationOptions(
-	var dependencies: Map<String, List<ForgeDependency>>? = null,
+data class NeoForgeModGenerationOptions(
+	var dependencies: Map<String, List<NeoForgeDependency>>? = null,
 	var issueTrackerURL: String? = null,
 	var license: String = "All Rights Reserved",
 	var loaderVersion: String = "[0,)",
 	var modLoader: String = "lowcodefml",
-	var mods: List<ForgeModProperties>? = null,
+	var mods: List<NeoForgeModProperties>? = null,
 	@TomlInlineTable
 	var properties: Map<String, String>? = null,
 	var showAsResourcePack: Boolean = false,
+	var showAsDataPack: Boolean = false,
+	var services: List<String>? = null,
 ) : DataPackJarGenerationProvider() {
 	override fun generateAdditionalFiles(generator: DataPackGenerator, options: DataPackJarGenerationOptions) {
 		val tomlSerializer = tomlSerializer(generator)
 		val toml = tomlSerializer.encodeToString(this)
-		generator.writeFile("META-INF/mods.toml", toml)
+		generator.writeFile("META-INF/neoforge.mods.toml", toml)
 	}
 }
 
-fun ForgeModGenerationOptions.mod(modId: String, init: ForgeModProperties.() -> Unit) {
-	mods = (mods ?: emptyList()) + ForgeModProperties(modId = modId).apply(init)
+fun NeoForgeModGenerationOptions.mod(modId: String, init: NeoForgeModProperties.() -> Unit) {
+	mods = (mods ?: emptyList()) + NeoForgeModProperties(modId = modId).apply(init)
 }
 
 context(DataPackJarGenerationOptions)
-fun ForgeModGenerationOptions.mod(modId: String = datapack.name, init: ForgeModProperties.() -> Unit) {
-	mods = (mods ?: emptyList()) + ForgeModProperties(modId = modId).apply(init)
+fun NeoForgeModGenerationOptions.mod(modId: String = datapack.name, init: NeoForgeModProperties.() -> Unit) {
+	mods = (mods ?: emptyList()) + NeoForgeModProperties(modId = modId).apply(init)
 }
 
-fun ForgeModGenerationOptions.properties(init: MutableMap<String, String>.() -> Unit) {
+fun NeoForgeModGenerationOptions.properties(init: MutableMap<String, String>.() -> Unit) {
 	properties = buildMap(init)
 }
 
-fun DataPackJarGenerationOptions.forge(init: ForgeModGenerationOptions.() -> Unit) {
-	providers += ForgeModGenerationOptions().apply(init)
+fun DataPackJarGenerationOptions.neoForge(init: NeoForgeModGenerationOptions.() -> Unit) {
+	providers += NeoForgeModGenerationOptions().apply(init)
 }
