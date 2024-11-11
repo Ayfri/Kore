@@ -9,8 +9,8 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
-@Serializable(with = Contact.Companion.ContactSerializer::class)
-data class Contact(
+@Serializable(with = FabricContact.Companion.ContactSerializer::class)
+data class FabricContact(
 	var email: String? = null,
 	var irc: String? = null,
 	var homepage: String? = null,
@@ -19,12 +19,12 @@ data class Contact(
 	var additional: Map<String, String> = emptyMap(),
 ) {
 	companion object {
-		data object ContactSerializer : KSerializer<Contact> {
+		data object ContactSerializer : KSerializer<FabricContact> {
 			override val descriptor = JsonObject.serializer().descriptor
 
 			override fun deserialize(decoder: Decoder) = error("Contact cannot be deserialized")
 
-			override fun serialize(encoder: Encoder, value: Contact) {
+			override fun serialize(encoder: Encoder, value: FabricContact) {
 				if (encoder !is JsonEncoder) error("Contact can only be serialized as Json")
 
 				val json = buildJsonObject {

@@ -11,10 +11,10 @@ import java.nio.file.Path
 
 @Serializable
 data class FabricModGenerationOptions(
-	var authors: List<Author>? = null,
-	var contact: Contact? = null,
-	var contributors: List<Author>? = null,
-	var depends: Map<String, String> = mapOf("fabric-resource-loader-v0" to "*"),
+	var authors: List<FabricAuthor>? = null,
+	var contact: FabricContact? = null,
+	var contributors: List<FabricAuthor>? = null,
+	var depends: Map<String, String>? = mapOf("fabric-resource-loader-v0" to "*"),
 	var description: String? = null,
 	var environment: String = "*",
 	var icon: Path? = null,
@@ -35,24 +35,24 @@ data class FabricModGenerationOptions(
 	}
 }
 
-fun FabricModGenerationOptions.authors(vararg authors: Author) {
+fun FabricModGenerationOptions.authors(vararg authors: FabricAuthor) {
 	this.authors = authors.toList()
 }
 
-fun FabricModGenerationOptions.author(name: String, init: (Contact.() -> Unit)? = null) {
-	authors = listOf(Author(name, init?.let(Contact()::apply)))
+fun FabricModGenerationOptions.author(name: String, init: (FabricContact.() -> Unit)? = null) {
+	authors = listOf(FabricAuthor(name, init?.let(FabricContact()::apply)))
 }
 
-fun FabricModGenerationOptions.contact(init: Contact.() -> Unit) {
-	contact = Contact().apply(init)
+fun FabricModGenerationOptions.contact(init: FabricContact.() -> Unit) {
+	contact = FabricContact().apply(init)
 }
 
-fun FabricModGenerationOptions.contributors(vararg contributors: Author) {
+fun FabricModGenerationOptions.contributors(vararg contributors: FabricAuthor) {
 	this.contributors = contributors.toList()
 }
 
-fun FabricModGenerationOptions.contributor(name: String, init: Contact.() -> Unit = {}) {
-	contributors = listOf(Author(name, Contact().apply(init)))
+fun FabricModGenerationOptions.contributor(name: String, init: FabricContact.() -> Unit = {}) {
+	contributors = listOf(FabricAuthor(name, FabricContact().apply(init)))
 }
 
 fun FabricModGenerationOptions.depends(vararg dependencies: Pair<String, String>) {

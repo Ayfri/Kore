@@ -24,6 +24,10 @@ import io.github.ayfri.kore.generation.forge.dependency
 import io.github.ayfri.kore.generation.forge.forge
 import io.github.ayfri.kore.generation.forge.mod
 import io.github.ayfri.kore.generation.mergeWithPacks
+import io.github.ayfri.kore.generation.quilt.contact
+import io.github.ayfri.kore.generation.quilt.contributor
+import io.github.ayfri.kore.generation.quilt.metadata
+import io.github.ayfri.kore.generation.quilt.quilt
 import io.github.ayfri.kore.pack.features
 import io.github.ayfri.kore.pack.filter
 import io.github.ayfri.kore.pack.pack
@@ -205,8 +209,21 @@ fun jarTests() {
 			}
 		}
 
+		quilt("kore") {
+			metadata {
+				contact {
+					email = "kore@kore.kore"
+					homepage = "https://kore.ayfri.com"
+				}
+				contributor("Ayfri", "Author")
+			}
+
+			version = "1.2.5"
+		}
+
 		dp1.assertFileGeneratedInJar("fabric.mod.json")
 		dp1.assertFileGeneratedInJar("META-INF/mods.toml")
+		dp1.assertFileGeneratedInJar("quilt.mod.json")
 	}
 }
 
