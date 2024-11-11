@@ -2,14 +2,20 @@ package io.github.ayfri.kore.generation.neoforge
 
 import io.github.ayfri.kore.generation.forge.Ordering
 import io.github.ayfri.kore.generation.forge.Side
+import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
-@Serializable
+
+@Serializable(with = NeoForgeDependencyType.Companion.NeoForgeDependencyTypeSerializer::class)
 enum class NeoForgeDependencyType {
 	REQUIRED,
 	OPTIONAL,
 	INCOMPATIBLE,
-	DISCOURAGED,
+	DISCOURAGED;
+
+	companion object {
+		data object NeoForgeDependencyTypeSerializer : LowercaseSerializer<NeoForgeDependencyType>(entries)
+	}
 }
 
 @Serializable
