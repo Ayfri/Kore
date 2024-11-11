@@ -129,7 +129,7 @@ fun main() {
 
 ## Features
 
-- Datapack generation as files or zips.
+- Datapack generation as files or zips or jar files for mod-loaders.
 - Function generation.
 - All commands with all subcommands and multiple syntaxes.
 - Generation of all JSON-based features of Minecraft (Advancements, Loot Tables, Recipes, ...).
