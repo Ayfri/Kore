@@ -278,6 +278,33 @@ fun DataPack.advancementTests() {
 		}
 	""".trimIndent()
 
+	advancement("enter_block") {
+		criteria {
+			enterBlock("enter_block") {
+				block = Blocks.REDSTONE_LAMP
+				states {
+					this["lit"] = "true"
+				}
+			}
+		}
+	}
+
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"enter_block": {
+					"trigger": "minecraft:enter_block",
+					"conditions": {
+						"block": "minecraft:redstone_lamp",
+						"states": {
+							"lit": "true"
+						}
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
 	advancement("fall_after_explosion") {
 		criteria {
 			fallAfterExplosion("fall_after_explosion") {
