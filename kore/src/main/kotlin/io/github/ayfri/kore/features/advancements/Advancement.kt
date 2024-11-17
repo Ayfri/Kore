@@ -4,6 +4,7 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
+import io.github.ayfri.kore.arguments.components.Components
 import io.github.ayfri.kore.arguments.types.resources.*
 import io.github.ayfri.kore.features.advancements.triggers.AdvancementTriggerCondition
 import io.github.ayfri.kore.features.predicates.Predicate
@@ -12,7 +13,6 @@ import io.github.ayfri.kore.features.predicates.sub.Entity
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString
-import net.benwoodworth.knbt.NbtTag
 
 @Serializable
 data class Advancement internal constructor(
@@ -59,8 +59,8 @@ fun Advancement.display(
 	display = AdvancementDisplay(AdvancementIcon(icon), title, description).apply(block)
 }
 
-fun AdvancementDisplay.icon(icon: ItemArgument, nbtData: NbtTag? = null) {
-	this.icon = AdvancementIcon(icon, nbtData)
+fun AdvancementDisplay.icon(icon: ItemArgument, count: Int? = null, components: Components.() -> Unit = {}) {
+	this.icon = AdvancementIcon(icon, Components().apply(components), count)
 }
 
 @Deprecated(

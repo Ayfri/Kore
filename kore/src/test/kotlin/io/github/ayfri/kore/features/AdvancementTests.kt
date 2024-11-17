@@ -2,6 +2,8 @@ package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.components.types.damage
+import io.github.ayfri.kore.arguments.components.types.enchantment
+import io.github.ayfri.kore.arguments.components.types.enchantments
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
@@ -124,6 +126,36 @@ fun DataPack.advancementTests() {
 			grant(self(), advancement)
 		}
 	}
+
+	advancement("icon_components") {
+		display(Items.AIR, "Hello", "World") {
+			icon(Items.DIAMOND_SWORD, 10) {
+				enchantments {
+					enchantment(Enchantments.SHARPNESS, 5)
+				}
+			}
+		}
+	}
+
+	advancements.last() assertsIs """
+		{
+			"display": {
+				"icon": {
+					"id": "minecraft:diamond_sword",
+					"components": {
+						"enchantments": {
+							"minecraft:sharpness": 5
+						}
+					},
+					"count": 10
+				},
+				"title": "Hello",
+				"description": "World",
+				"frame": "task"
+			},
+			"criteria": {}
+		}
+	""".trimIndent()
 
 	advancement("consume_item") {
 		criteria {
