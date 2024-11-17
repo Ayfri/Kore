@@ -10,6 +10,7 @@ import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.features.advancements.*
 import io.github.ayfri.kore.features.advancements.triggers.*
 import io.github.ayfri.kore.features.predicates.conditions.anyOf
+import io.github.ayfri.kore.features.predicates.conditions.entityProperties
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
 import io.github.ayfri.kore.features.predicates.conditions.timeCheck
 import io.github.ayfri.kore.features.predicates.sub.*
@@ -222,6 +223,55 @@ fun DataPack.advancementTests() {
 							}
 						],
 						"recipe_id": "minecraft:polished_blackstone_brick_stairs_from_polished_blackstone_bricks_stonecutting"
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	advancement("effects_changed") {
+		criteria {
+			effectsChanged("effects_changed") {
+				effect(Effects.SPEED) {
+					amplifier = rangeOrInt(1..3)
+					duration = rangeOrInt(100..200)
+				}
+				source {
+					conditions {
+						entityProperties {
+							type(EntityTypes.WITCH)
+						}
+					}
+				}
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"effects_changed": {
+					"trigger": "minecraft:effects_changed",
+					"conditions": {
+						"effects": {
+							"minecraft:speed": {
+								"amplifier": {
+									"min": 1,
+									"max": 3
+								},
+								"duration": {
+									"min": 100,
+									"max": 200
+								}
+							}
+						},
+						"source": [
+							{
+								"condition": "minecraft:entity_properties",
+								"predicate": {
+									"type": "minecraft:witch"
+								}
+							}
+						]
 					}
 				}
 			}
