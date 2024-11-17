@@ -16,6 +16,10 @@ fun Predicate.locationCheck(offsetX: Int? = null, offsetY: Int? = null, offsetZ:
 	predicateConditions += LocationCheck(offsetX, offsetY, offsetZ, predicate)
 }
 
-fun Predicate.locationCheck(block: Location.() -> Unit = {}) {
-	predicateConditions += LocationCheck(predicate = Location().apply(block))
+fun Predicate.locationCheck(offsetX: Int? = null, offsetY: Int? = null, offsetZ: Int? = null, block: Location.() -> Unit = {}) {
+	predicateConditions += LocationCheck(offsetX, offsetY, offsetZ, Location().apply(block))
+}
+
+fun LocationCheck.predicate(block: Location.() -> Unit) {
+	predicate = Location().apply(block)
 }
