@@ -13,3 +13,11 @@ data class Damage(
 )
 
 fun damage(init: Damage.() -> Unit = {}) = Damage().apply(init)
+
+fun Damage.sourceEntity(init: Entity.() -> Unit) {
+	sourceEntity = Entity().apply(init)
+}
+
+fun Damage.type(init: DamageSource.() -> Unit) {
+	type = DamageSource().apply(init)
+}
