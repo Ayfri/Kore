@@ -10,7 +10,7 @@ data class VillagerTrade(
 	override var name: String,
 	override var conditions: EntityOrPredicates? = null,
 	var item: ItemStack? = null,
-	var zombie: EntityOrPredicates? = null,
+	var villager: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
 fun AdvancementCriteria.villagerTrade(name: String, block: VillagerTrade.() -> Unit = {}) {
@@ -21,6 +21,6 @@ fun VillagerTrade.item(block: ItemStack.() -> Unit) {
 	item = ItemStack().apply(block)
 }
 
-fun VillagerTrade.zombie(block: EntityOrPredicates.() -> Unit) {
-	zombie = EntityOrPredicates().apply(block)
+fun VillagerTrade.villager(block: EntityOrPredicates.() -> Unit) {
+	villager = EntityOrPredicates().apply(block)
 }
