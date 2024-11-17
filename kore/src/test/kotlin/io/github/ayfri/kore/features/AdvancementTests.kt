@@ -47,8 +47,8 @@ fun DataPack.advancementTests() {
 				say("Yay !")
 			}
 
-			loot = listOf(LootTables.Chests.IGLOO_CHEST)
-			recipes = listOf(Recipes.POLISHED_BLACKSTONE_BRICK_STAIRS_FROM_POLISHED_BLACKSTONE_BRICKS_STONECUTTING)
+			loots(LootTables.Chests.IGLOO_CHEST)
+			recipes(Recipes.POLISHED_BLACKSTONE_BRICK_STAIRS_FROM_POLISHED_BLACKSTONE_BRICKS_STONECUTTING)
 		}
 
 		sendsTelemetryEvent = false

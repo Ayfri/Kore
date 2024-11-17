@@ -12,3 +12,11 @@ data class AdvancementReward(
 	var loot: List<LootTableArgument>? = null,
 	var recipes: List<RecipeArgument>? = null,
 )
+
+fun AdvancementReward.loots(vararg loot: LootTableArgument) {
+	this.loot = loot.toList()
+}
+
+fun AdvancementReward.recipes(vararg recipe: RecipeArgument) {
+	recipes = recipe.toList()
+}
