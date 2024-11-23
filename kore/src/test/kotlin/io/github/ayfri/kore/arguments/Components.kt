@@ -3,6 +3,9 @@ package io.github.ayfri.kore.arguments
 import io.github.ayfri.kore.arguments.chatcomponents.text
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
+import io.github.ayfri.kore.arguments.components.consumable.applyEffects
+import io.github.ayfri.kore.arguments.components.consumable.playSound
+import io.github.ayfri.kore.arguments.components.consumable.teleportRandomly
 import io.github.ayfri.kore.arguments.components.types.*
 import io.github.ayfri.kore.arguments.enums.Dimension
 import io.github.ayfri.kore.arguments.enums.MapDecoration
@@ -135,6 +138,30 @@ fun componentsTests() {
 	chargedProjectilesTest.components!!.chargedProjectiles(Items.ARROW, Items.SPECTRAL_ARROW, Items.TIPPED_ARROW)
 	chargedProjectilesTest.asString() assertsIs """minecraft:crossbow[charged_projectiles=[{id:"minecraft:arrow"},{id:"minecraft:spectral_arrow"},{id:"minecraft:tipped_arrow"}]]"""
 
+	val consumableTest = Items.POTION {
+		consumable(
+			consumeSeconds = 1.5f,
+			animation = ConsumeAnimation.DRINK,
+			sound = SoundEvents.Item.Bottle.EMPTY,
+		) {
+			onConsumeEffects {
+				applyEffects(
+					probability = 1.0f, Effect(
+						id = Effects.POISON,
+						duration = 100,
+						amplifier = 1,
+						ambient = true,
+						showParticles = true,
+						showIcon = true
+					)
+				)
+				teleportRandomly(diameter = 2.5f)
+				playSound(SoundEvents.Entity.Cow.STEP)
+			}
+		}
+	}
+	consumableTest.asString() assertsIs """minecraft:potion[consumable={consume_seconds:1.5f,animation:"drink",sound:"minecraft:item.bottle.empty",has_consume_particles:1b,on_consume_effects:{"minecraft:apply_effects":{effects:[{id:"minecraft:poison",duration:100,amplifier:1b,ambient:1b,show_particles:1b,show_icon:1b}],probability:1.0f},"minecraft:teleport_randomly":{diameter:2.5f},"minecraft:play_sound":{sound:"minecraft:entity.cow.step"}}}]"""
+
 	val containerTest = stone {
 		container {
 			slot(0, itemStack(Items.DIAMOND))
@@ -263,26 +290,12 @@ fun componentsTests() {
 
 	val foodTest = Items.COOKED_BEEF {
 		food(
-			nutrition = 10,
+			nutrition = 10f,
 			saturation = 1.0f,
-		) {
-			isMeat = true
-			eatSeconds = 0.5f
-
-			effect(
-				probability = 1f,
-				id = Effects.REGENERATION,
-				duration = 100,
-				amplifier = 1,
-				ambient = true,
-				showParticles = true,
-				showIcon = true
-			)
-
-			convertsTo(Items.BONE)
-		}
+			canAlwaysEat = true
+		)
 	}
-	foodTest.asString() assertsIs """minecraft:cooked_beef[food={nutrition:10,saturation:1.0f,is_meat:1b,eat_seconds:0.5f,effects:[{effect:{id:"minecraft:regeneration",duration:100,amplifier:1b,ambient:1b,show_particles:1b,show_icon:1b},probability:1.0f}],using_converts_to:{id:"minecraft:bone"}}]"""
+	foodTest.asString() assertsIs """minecraft:cooked_beef[food={nutrition:10.0f,saturation:1.0f,can_always_eat:1b}]"""
 
 	val hideAdditionalTooltipTest = stoneSword {
 		hideAdditionalTooltip()
@@ -484,6 +497,19 @@ fun componentsTests() {
 
 	unbreakableTest.components!!.unbreakable(showInTooltip = true)
 	unbreakableTest.asString() assertsIs """minecraft:stone_sword[unbreakable={show_in_tooltip:1b}]"""
+
+	val useCooldownTest = Items.ENDER_PEARL {
+		useCooldown(
+			seconds = 2.0f,
+			cooldownGroup = "ender_pearl"
+		)
+	}
+	useCooldownTest.asString() assertsIs """minecraft:ender_pearl[use_cooldown={seconds:2.0f,cooldown_group:"minecraft:ender_pearl"}]"""
+
+	val useRemainderTest = Items.POTION {
+		useRemainder(itemStack(Items.GLASS_BOTTLE))
+	}
+	useRemainderTest.asString() assertsIs """minecraft:potion[use_remainder={item:{id:"minecraft:glass_bottle"}}]"""
 
 	val writableBookTest = Items.WRITABLE_BOOK {
 		writableBookContent {
