@@ -30,7 +30,7 @@ fun Function.displayTests() {
 
 			attributeModifiers {
 				modifier(
-					Attributes.GENERIC_ATTACK_DAMAGE,
+					Attributes.ATTACK_DAMAGE,
 					name = "test",
 					namespace = datapack.name,
 					amount = 1.0,

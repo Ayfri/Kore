@@ -2,6 +2,7 @@ package io.github.ayfri.kore.features.paintingvariant
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
+import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.types.resources.PaintingVariantArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -14,6 +15,8 @@ data class PaintingVariant(
 	var assetId: String,
 	var height: Int,
 	var width: Int,
+	var author: ChatComponents? = null,
+	var title: ChatComponents? = null,
 ) : Generator("painting_variant") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }

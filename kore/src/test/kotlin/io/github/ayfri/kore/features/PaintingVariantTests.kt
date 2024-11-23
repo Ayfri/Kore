@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.paintingvariant.paintingVariant
 
@@ -28,6 +29,23 @@ fun DataPack.paintingVariantTests() {
 			"asset_id": "minecraft:textures/painting/aztec.png",
 			"height": 1,
 			"width": 1
+		}
+	""".trimIndent()
+
+	paintingVariant(
+		assetId = "minecraft:textures/painting/aztec.png",
+	) {
+		author = textComponent("Ayfri")
+		title = textComponent("Aztec")
+	}
+
+	paintingVariants.last() assertsIs """
+		{
+			"asset_id": "minecraft:textures/painting/aztec.png",
+			"height": 1,
+			"width": 1,
+			"author": "Ayfri",
+			"title": "Aztec"
 		}
 	""".trimIndent()
 }

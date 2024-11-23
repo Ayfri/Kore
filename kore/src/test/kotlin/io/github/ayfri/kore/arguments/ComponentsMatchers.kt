@@ -26,7 +26,7 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 			modifiers {
 				contains {
 					modifier(
-						type = Attributes.GENERIC_SCALE,
+						type = Attributes.SCALE,
 						slot = EquipmentSlot.ANY,
 						name = "test",
 						amount = 1.0,
@@ -43,7 +43,7 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 				"modifiers": {
 					"contains": [
 						{
-							"type": "minecraft:generic.scale",
+							"type": "minecraft:scale",
 							"slot": "any",
 							"id": "minecraft:test",
 							"amount": 1.0,

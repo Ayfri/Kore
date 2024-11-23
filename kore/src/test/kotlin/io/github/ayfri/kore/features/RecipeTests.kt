@@ -42,30 +42,37 @@ fun DataPack.recipeTest() {
 
 			result(Items.DIAMOND_SWORD)
 		}
+	}
 
-		smithingTransform("diamond_to_netherite") {
-			template(Items.DIAMOND_BLOCK)
-			base(Items.DIAMOND_SWORD)
-			addition(Items.NETHERITE_INGOT)
-			result(Items.NETHERITE_SWORD)
-		}
+	recipesBuilder.smithingTransform("test_smithing_transform") {
+		template = Items.DIAMOND_BLOCK
+		base = Items.DIAMOND_SWORD
+		addition = Items.NETHERITE_INGOT
+		result = Items.NETHERITE_SWORD
 	}
 
 	recipes.last() assertsIs """
 			{
 				"type": "minecraft:smithing_transform",
-				"template": {
-					"item": "minecraft:diamond_block"
-				},
-				"base": {
-					"item": "minecraft:diamond_sword"
-				},
-				"addition": {
-					"item": "minecraft:netherite_ingot"
-				},
-				"result": {
-					"id": "minecraft:netherite_sword"
-				}
+				"template": "minecraft:diamond_block",
+				"base": "minecraft:diamond_sword",
+				"addition": "minecraft:netherite_ingot",
+				"result": "minecraft:netherite_sword"
+			}
+		""".trimIndent()
+
+	recipesBuilder.smithingTrim("test_smithing_trim") {
+		template = Items.DIAMOND_BLOCK
+		base = Items.DIAMOND_SWORD
+		addition = Items.NETHERITE_INGOT
+	}
+
+	recipes.last() assertsIs """
+			{
+				"type": "minecraft:smithing_trim",
+				"template": "minecraft:diamond_block",
+				"base": "minecraft:diamond_sword",
+				"addition": "minecraft:netherite_ingot"
 			}
 		""".trimIndent()
 

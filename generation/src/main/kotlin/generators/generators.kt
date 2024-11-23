@@ -13,6 +13,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("DamageTypes", "damage_types"),
 		gen("DimensionTypes", "dimension_types", "worldgen.DimensionType"),
 		gen("Enchantments", "enchantments"),
+		gen("Instruments", "instruments"),
 		gen("JukeboxSongs", "jukebox_songs"),
 		gen("PaintingVariants", "painting_variants"),
 		gen("Recipes", "recipes"),
@@ -58,9 +59,7 @@ suspend fun launchAllSimpleGenerators() {
 	}
 
 	val txtRegistriesListGenerators = listOf(
-		gen("Attributes", "attribute", asString = """replaceFirst("_", ".").lowercase()""") {
-			it.replaceFirst(".", "_")
-		},
+		gen("Attributes", "attribute"),
 		gen("BlockEntityTypes", "block_entity_type"),
 		gen("Blocks", "block", additionalCode = {
 			addProperty(
@@ -96,7 +95,6 @@ suspend fun launchAllSimpleGenerators() {
 		gen("Fluids", "fluid"),
 		gen("FrogVariants", "frog_variant"),
 		gen("GameEvents", "game_event"),
-		gen("Instruments", "instrument"),
 		gen("Items", "item", additionalCode = {
 			addProperty(
 				PropertySpec.builder(

@@ -183,7 +183,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifier("set_attributes") {
 		setAttributes {
-			attribute(Attributes.GENERIC_SCALE, 0.5f, slot = listOf(EquipmentSlot.MAINHAND))
+			attribute(Attributes.SCALE, 0.5f, slot = listOf(EquipmentSlot.MAINHAND))
 			replace = false
 		}
 	}
@@ -193,7 +193,7 @@ fun DataPack.itemModifierTests() {
 			"function": "minecraft:set_attributes",
 			"modifiers": [
 				{
-					"attribute": "minecraft:generic.scale",
+					"attribute": "minecraft:scale",
 					"amount": 0.5,
 					"operation": "add_value",
 					"slot": "mainhand"

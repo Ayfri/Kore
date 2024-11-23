@@ -152,7 +152,7 @@ fun DataPack.enchantmentTests() {
 	enchantment("attributes") {
 		effects {
 			attributes {
-				attribute("my_modifier", name, Attributes.GENERIC_SCALE, AttributeModifierOperation.ADD_VALUE, 5)
+				attribute("my_modifier", name, Attributes.SCALE, AttributeModifierOperation.ADD_VALUE, 5)
 			}
 		}
 	}
@@ -164,7 +164,7 @@ fun DataPack.enchantmentTests() {
 				"minecraft:attributes": [
 					{
 						"id": "$name:my_modifier",
-						"attribute": "minecraft:generic.scale",
+						"attribute": "minecraft:scale",
 						"operation": "add_value",
 						"amount": 5
 					}

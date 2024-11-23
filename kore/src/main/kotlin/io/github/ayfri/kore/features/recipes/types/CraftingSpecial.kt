@@ -29,7 +29,6 @@ val CraftingSpecialMapExtending = CraftingSpecial("mapextending")
 val CraftingSpecialRepairItem = CraftingSpecial("repairitem")
 val CraftingSpecialShieldDecoration = CraftingSpecial("shielddecoration")
 val CraftingSpecialShulkerBoxColoring = CraftingSpecial("shulkerboxcoloring")
-val CraftingSpecialSuspiciousStew = CraftingSpecial("suspiciousstew")
 val CraftingSpecialTippedArrow = CraftingSpecial("tippedarrow")
 
 fun Recipes.craftingSpecial(name: String, craftingTypeName: String, block: CraftingSpecial.() -> Unit) =

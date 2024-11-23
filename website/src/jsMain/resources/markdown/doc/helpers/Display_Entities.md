@@ -13,8 +13,8 @@ routeOverride: /docs/helpers/display-entities
 
 ## Entity Displays
 
-Entity displays are used to display blocks/items/text in the world.
-You can define multiple properties for the display, such as transformation, billboard mode, shadow etc.
+Entity displays are used to display blocks/items/text in the world. You can define multiple properties for the display, such as
+transformation, billboard mode, shadow etc.
 
 ```kotlin
 val entityDisplay = blockDisplay {
@@ -73,7 +73,7 @@ val itemDisplay = itemDisplay {
 		}
 
 		modifiers {
-			modifier(Attributes.GENERIC_ATTACK_DAMAGE, 1.0, AttributeModifierOperation.ADD)
+			modifier(Attributes.ATTACK_DAMAGE, 1.0, AttributeModifierOperation.ADD)
 		}
 	}
 }
@@ -94,8 +94,7 @@ val textDisplay = textDisplay {
 ## Transformations
 
 Transformations are used to modify the translation, left/right rotations and scale of displays. They are created by calling `transformation`
-DSL.
-You can also apply directly matrix transformations and use quaternions, axis angles or use Euler angles for rotations.
+DSL. You can also apply directly matrix transformations and use quaternions, axis angles or use Euler angles for rotations.
 
 ```kotlin
 transformation {
@@ -113,8 +112,8 @@ transformation {
 
 ## Interpolations
 
-You can convert your display entity into an "interpolable" display entity by calling `interpolable()` on it.
-This will allow you to interpolate between the current transformation and the target transformation in a given time.
+You can convert your display entity into an "interpolable" display entity by calling `interpolable()` on it. This will allow you to
+interpolate between the current transformation and the target transformation in a given time.
 
 ```kotlin
 val interpolableEntityDisplay = blockDisplay {

@@ -25,18 +25,18 @@ fun componentsTests() {
 	val attributeModifiersTest = stoneSword {
 		attributeModifiers {
 			modifier(
-				type = Attributes.GENERIC_SCALE,
+				type = Attributes.SCALE,
 				amount = 1.0,
 				name = "big",
 				operation = AttributeModifierOperation.ADD_VALUE,
 			)
 		}
 	}
-	attributeModifiersTest.asString() assertsIs """minecraft:stone_sword[attribute_modifiers=[{type:"minecraft:generic.scale",id:"minecraft:big",amount:1.0d,operation:"add_value"}]]"""
+	attributeModifiersTest.asString() assertsIs """minecraft:stone_sword[attribute_modifiers=[{type:"minecraft:scale",id:"minecraft:big",amount:1.0d,operation:"add_value"}]]"""
 
 	attributeModifiersTest.components!!.attributeModifiers {
 		modifier(
-			type = Attributes.GENERIC_ATTACK_DAMAGE,
+			type = Attributes.ATTACK_DAMAGE,
 			amount = 1.0,
 			name = "big",
 			namespace = "my_namespace",
@@ -44,7 +44,7 @@ fun componentsTests() {
 		)
 		showInTooltip = true
 	}
-	attributeModifiersTest.asString() assertsIs """minecraft:stone_sword[attribute_modifiers={modifiers:[{type:"minecraft:generic.attack_damage",id:"my_namespace:big",amount:1.0d,operation:"add_value"}],show_in_tooltip:1b}]"""
+	attributeModifiersTest.asString() assertsIs """minecraft:stone_sword[attribute_modifiers={modifiers:[{type:"minecraft:attack_damage",id:"my_namespace:big",amount:1.0d,operation:"add_value"}],show_in_tooltip:1b}]"""
 
 	val bannerPatternsTest = Items.WHITE_BANNER {
 		bannerPatterns {
@@ -198,6 +198,11 @@ fun componentsTests() {
 
 	dyedColorTest.components!!.dyedColor(Color.AQUA, showInTooltip = true)
 	dyedColorTest.asString() assertsIs """minecraft:leather_helmet[dyed_color={rgb:5636095,show_in_tooltip:1b}]"""
+
+	val enchantableTest = stoneSword {
+		enchantable(10)
+	}
+	enchantableTest.asString() assertsIs """minecraft:stone_sword[enchantable={value:10}]"""
 
 	val enchantmentsTest = stoneSword {
 		enchantments(mapOf(Enchantments.SHARPNESS to 5))
@@ -424,6 +429,11 @@ fun componentsTests() {
 		recipe(Recipes.BLAST_FURNACE)
 	}
 	recipesTest.asString() assertsIs """minecraft:stone[recipes=["minecraft:blast_furnace"]]"""
+
+	val repairableTest = stoneSword {
+		repairable(Items.DIAMOND)
+	}
+	repairableTest.asString() assertsIs """minecraft:stone_sword[repairable={items:"minecraft:diamond"}]"""
 
 	val repairCostTest = stoneSword {
 		repairCost(5)
