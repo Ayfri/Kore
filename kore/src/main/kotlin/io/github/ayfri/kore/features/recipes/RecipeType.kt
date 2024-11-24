@@ -22,12 +22,13 @@ class CraftingSpecialEntry(group: String) : RecipeType {
 	override fun toString() = "crafting_special_$group"
 }
 
-object RecipeTypes {
+data object RecipeTypes {
 	val BLASTING = RecipeType { "blasting" }
 	val CAMPFIRE_COOKING = RecipeType { "campfire_cooking" }
 	val CRAFTING_SHAPED = RecipeType { "crafting_shaped" }
 	val CRAFTING_SHAPELESS = RecipeType { "crafting_shapeless" }
 	val CRAFTING_SPECIAL = CraftingSpecial
+	val CRAFTING_TRANSMUTE = RecipeType { "crafting_transmute" }
 	val SMELTING = RecipeType { "smelting" }
 	val SMITHING_TRANSFORM = RecipeType { "smithing_transform" }
 	val SMITHING_TRIM = RecipeType { "smithing_trim" }
@@ -40,6 +41,7 @@ object RecipeTypes {
 		CRAFTING_SHAPED,
 		CRAFTING_SHAPELESS,
 		CRAFTING_SPECIAL,
+		CRAFTING_TRANSMUTE,
 		SMELTING,
 		SMITHING_TRANSFORM,
 		SMITHING_TRIM,
