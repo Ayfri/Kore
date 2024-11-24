@@ -29,24 +29,6 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 		}
 	""".trimIndent()
 
-	predicate("boat_type_specific") {
-		entityProperties {
-			boatTypeSpecific(BoatVariants.OAK)
-		}
-	}
-
-	predicates.last() assertsIs """
-		{
-			"condition": "minecraft:entity_properties",
-			"predicate": {
-				"type_specific": {
-					"type": "minecraft:boat",
-					"variant": "oak"
-				}
-			}
-		}
-	""".trimIndent()
-
 	predicate("cat_type_specific") {
 		entityProperties {
 			catTypeSpecific(CatVariants.WHITE)
