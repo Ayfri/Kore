@@ -11,12 +11,18 @@ enum class LootTableType {
 	SELECTOR,
 	FISHING,
 	ENTITY,
+	EQUIPMENT,
+	ARCHEOLOGY,
 	GIFT,
 	BARTER,
+	VAULT,
 	ADVANCEMENT_REWARD,
 	ADVANCEMENT_ENTITY,
+	ADVANCEMENT_LOCATION,
+	BLOCK_USE,
 	GENERIC,
-	BLOCK;
+	BLOCK,
+	SHEARING;
 
 	companion object {
 		data object LootTableTypeSerializer : LowercaseSerializer<LootTableType>(entries)
