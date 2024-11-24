@@ -13,12 +13,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class EquippableComponent(
 	var slot: EquipmentSlot,
-	@SerialName("equip_sound")
-	var equipSound: SoundEventArgument? = null,
 	var model: ModelArgument,
 	@SerialName("allowed_entities")
 	var allowedEntities: InlinableList<EntityTypeOrTagArgument>? = null,
+	@SerialName("damage_on_hurt")
+	var damageOnHurt: Boolean? = null,
 	var dispensable: Boolean? = null,
+	@SerialName("equip_sound")
+	var equipSound: SoundEventArgument? = null,
+	var swappable: Boolean? = null,
 ) : Component()
 
 fun ComponentsScope.equippable(

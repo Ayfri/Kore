@@ -211,6 +211,18 @@ fun componentsTests() {
 	}
 	damageTest.asString() assertsIs """minecraft:stone_sword[damage=5]"""
 
+	val damageResistantTest = stoneSword {
+		damageResistant(Tags.DamageType.DAMAGES_HELMET)
+	}
+	damageResistantTest.asString() assertsIs """minecraft:stone_sword[damage_resistant={types:"#minecraft:damages_helmet"}]"""
+
+	val deathProtectionTest = stoneSword {
+		deathProtection {
+			effects(Effect(Effects.POISON, 100, 1, ambient = true, showParticles = true, showIcon = true))
+		}
+	}
+	deathProtectionTest.asString() assertsIs """minecraft:stone_sword[death_protection={death_effects:[{id:"minecraft:poison",duration:100,amplifier:1b,ambient:1b,show_particles:1b,show_icon:1b}]}]"""
+
 	val debugStickStateTest = stone {
 		debugStickState {
 			this[Blocks.DIAMOND_BLOCK] = "test"
@@ -259,14 +271,10 @@ fun componentsTests() {
 			allowedEntities(EntityTypes.PLAYER)
 			dispensable = true
 			equipSound = SoundEvents.Item.Armor.EQUIP_IRON
+			damageOnHurt = true
 		}
 	}
-	equippableTest.asString() assertsIs """minecraft:stone_sword[equippable={slot:"head",equip_sound:"minecraft:item.armor.equip_iron",model:"minecraft:model",allowed_entities:"minecraft:player",dispensable:1b}]"""
-
-	val fireResistantTest = stoneSword {
-		fireResistant()
-	}
-	fireResistantTest.asString() assertsIs """minecraft:stone_sword[fire_resistant={}]"""
+	equippableTest.asString() assertsIs """minecraft:stone_sword[equippable={slot:"head",model:"minecraft:model",allowed_entities:"minecraft:player",damage_on_hurt:1b,dispensable:1b,equip_sound:"minecraft:item.armor.equip_iron"}]"""
 
 	val fireworksTest = Items.FIREWORK_ROCKET {
 		fireworks(flightDuration = 1) {
@@ -426,10 +434,10 @@ fun componentsTests() {
 				true,
 				true
 			)
+			customName = "test"
 		}
 	}
-
-	potionContentsTest.asString() assertsIs """minecraft:potion[potion_contents={potion:"minecraft:awkward",custom_color:5636095,custom_effects:[{id:"minecraft:poison",duration:100,amplifier:1b,ambient:1b,show_particles:1b,show_icon:1b}]}]"""
+	potionContentsTest.asString() assertsIs """minecraft:potion[potion_contents={potion:"minecraft:awkward",custom_color:5636095,custom_effects:[{id:"minecraft:poison",duration:100,amplifier:1b,ambient:1b,show_particles:1b,show_icon:1b}],custom_name:"test"}]"""
 
 	potionContentsTest.components!!.potionContents(Potions.AWKWARD)
 	potionContentsTest.asString() assertsIs """minecraft:potion[potion_contents="minecraft:awkward"]"""

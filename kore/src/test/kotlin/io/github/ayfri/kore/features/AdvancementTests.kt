@@ -157,6 +157,10 @@ fun DataPack.advancementTests() {
 		}
 	""".trimIndent()
 
+	allTriggersTests()
+}
+
+private fun DataPack.allTriggersTests() {
 	advancement("consume_item") {
 		criteria {
 			consumeItem("consume_item") {
@@ -174,7 +178,6 @@ fun DataPack.advancementTests() {
 			}
 		}
 	}
-
 	advancements.last() assertsIs """
 		{
 			"criteria": {
@@ -226,7 +229,6 @@ fun DataPack.advancementTests() {
 			}
 		}
 	}
-
 	advancements.last() assertsIs """
 		{
 			"criteria": {
@@ -320,7 +322,6 @@ fun DataPack.advancementTests() {
 			}
 		}
 	}
-
 	advancements.last() assertsIs """
 		{
 			"criteria": {
@@ -364,7 +365,6 @@ fun DataPack.advancementTests() {
 			}
 		}
 	}
-
 	advancements.last() assertsIs """
 		{
 			"criteria": {
@@ -393,6 +393,64 @@ fun DataPack.advancementTests() {
 						"cause": {
 							"type": "minecraft:player"
 						}
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	advancement("killed_by_arrow") {
+		criteria {
+			killedByArrow("killed_by_arrow") {
+				firedFromWeapon {
+					items = listOf(Items.BOW)
+					components {
+						enchantments {
+							enchantment(Enchantments.POWER, 5)
+						}
+					}
+				}
+
+				uniqueEntityTypes = rangeOrInt(1..5)
+
+				victim {
+					conditions {
+						entityProperties {
+							type(EntityTypes.PLAYER)
+						}
+					}
+				}
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"killed_by_arrow": {
+					"trigger": "minecraft:killed_by_arrow",
+					"conditions": {
+						"fired_from_weapon": {
+							"items": "minecraft:bow",
+							"components": {
+								"enchantments": {
+									"minecraft:power": 5
+								}
+							}
+						},
+						"unique_entity_types": {
+							"min": 1,
+							"max": 5
+						},
+						"victims": [
+							[
+								{
+									"condition": "minecraft:entity_properties",
+									"predicate": {
+										"type": "minecraft:player"
+									}
+								}
+							]
+						]
 					}
 				}
 			}

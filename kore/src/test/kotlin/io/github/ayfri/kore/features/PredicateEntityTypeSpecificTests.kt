@@ -321,6 +321,24 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 		}
 	""".trimIndent()
 
+	predicate("salmon_type_specific") {
+		entityProperties {
+			salmonTypeSpecific(SalmonVariants.MEDIUM)
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:entity_properties",
+			"predicate": {
+				"type_specific": {
+					"type": "minecraft:salmon",
+					"variant": "medium"
+				}
+			}
+		}
+	""".trimIndent()
+
 	predicate("sheep_type_specific") {
 		entityProperties {
 			sheepTypeSpecific(sheared = true, color = FormattingColor.AQUA)

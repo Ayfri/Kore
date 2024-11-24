@@ -29,6 +29,8 @@ data class PotionContentsComponent(
 	var customColor: RGB? = null,
 	@SerialName("custom_effects")
 	var customEffects: List<Effect>? = null,
+	@SerialName("custom_name")
+	var customName: String? = null,
 ) : Component() {
 	companion object {
 		data object PotionContentsComponentSerializer : SinglePropertySimplifierSerializer<PotionContentsComponent, PotionArgument>(
@@ -59,4 +61,8 @@ fun PotionContentsComponent.customEffect(
 	showIcon: Boolean,
 ) = apply {
 	customEffects = (customEffects ?: listOf()) + Effect(id, duration, amplifier, ambient, showParticles, showIcon)
+}
+
+fun PotionContentsComponent.customEffects(vararg effects: Effect) {
+	customEffects = effects.toList()
 }
