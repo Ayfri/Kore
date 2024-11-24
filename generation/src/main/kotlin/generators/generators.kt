@@ -41,6 +41,7 @@ suspend fun launchAllSimpleGenerators() {
 			"Tags", "tags", argumentClassName = "", tagsParents = mapOf(
 				"block" to "BlockTag",
 				"cat_variant" to "CatVariantTag",
+				"damage_type" to "DamageTypeTag",
 				"enchantment" to "EnchantmentTag",
 				"fluid" to "FluidTag",
 				"frog_variant" to "FrogVariantTag",
