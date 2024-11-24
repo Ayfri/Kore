@@ -245,6 +245,15 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 				recipes {
 					this[Recipes.BOW] = true
 				}
+				input {
+					forward = true
+					backward = false
+					left = true
+					right = false
+					jump = true
+					sneak = false
+					sprint = true
+				}
 			}
 		}
 	}
@@ -260,6 +269,15 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 					],
 					"recipes": {
 						"minecraft:bow": true
+					},
+					"input": {
+						"forward": true,
+						"backward": false,
+						"left": true,
+						"right": false,
+						"jump": true,
+						"sneak": false,
+						"sprint": true
 					}
 				}
 			}

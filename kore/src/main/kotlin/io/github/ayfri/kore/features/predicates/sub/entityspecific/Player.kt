@@ -9,6 +9,18 @@ import io.github.ayfri.kore.features.predicates.sub.Entity
 import io.github.ayfri.kore.features.predicates.sub.Statistic
 import kotlinx.serialization.Serializable
 
+
+@Serializable
+data class Input(
+	var forward: Boolean? = null,
+	var backward: Boolean? = null,
+	var left: Boolean? = null,
+	var right: Boolean? = null,
+	var jump: Boolean? = null,
+	var sneak: Boolean? = null,
+	var sprint: Boolean? = null,
+)
+
 @Serializable
 data class Player(
 	var lookingAt: Entity? = null,
@@ -17,6 +29,7 @@ data class Player(
 	var level: IntRangeOrIntJson? = null,
 	var recipes: Map<RecipeArgument, Boolean>? = null,
 	var stats: Map<StatisticArgument, Statistic>? = null,
+	var input: Input? = null,
 ) : EntityTypeSpecific()
 
 fun Entity.playerTypeSpecific(block: Player.() -> Unit = {}) = apply {
@@ -45,4 +58,8 @@ fun MutableMap<StatisticArgument, Statistic>.statistic(statistic: StatisticArgum
 
 fun Player.recipes(vararg recipes: RecipeArgument, block: MutableMap<RecipeArgument, Boolean>.() -> Unit = {}) {
 	this.recipes = (this.recipes ?: mutableMapOf()) + buildMap(block) + recipes.associateWith { true }
+}
+
+fun Player.input(block: Input.() -> Unit = {}) {
+	input = Input().apply(block)
 }

@@ -254,6 +254,15 @@ fun componentsTests() {
 	}
 	entityDataTest.asString() assertsIs """minecraft:stone_sword[entity_data={test:"test"}]"""
 
+	val equippableTest = stoneSword {
+		equippable(EquipmentSlot.HEAD, "model") {
+			allowedEntities(EntityTypes.PLAYER)
+			dispensable = true
+			equipSound = SoundEvents.Item.Armor.EQUIP_IRON
+		}
+	}
+	equippableTest.asString() assertsIs """minecraft:stone_sword[equippable={slot:"head",equip_sound:"minecraft:item.armor.equip_iron",model:"minecraft:model",allowed_entities:"minecraft:player",dispensable:1b}]"""
+
 	val fireResistantTest = stoneSword {
 		fireResistant()
 	}
@@ -297,6 +306,11 @@ fun componentsTests() {
 	}
 	foodTest.asString() assertsIs """minecraft:cooked_beef[food={nutrition:10.0f,saturation:1.0f,can_always_eat:1b}]"""
 
+	val gliderTest = Items.ELYTRA {
+		glider()
+	}
+	gliderTest.asString() assertsIs """minecraft:elytra[glider={}]"""
+
 	val hideAdditionalTooltipTest = stoneSword {
 		hideAdditionalTooltip()
 	}
@@ -316,6 +330,13 @@ fun componentsTests() {
 		intangibleProjectile()
 	}
 	intangibleProjectileTest.asString() assertsIs """minecraft:crossbow[intangible_projectile={}]"""
+
+	val itemModelTest = stone {
+		itemModel("test")
+	}
+	itemModelTest.asString() assertsIs """minecraft:stone[item_model="minecraft:test"]"""
+	itemModelTest.components!!.itemModel(Items.DIAMOND)
+	itemModelTest.asString() assertsIs """minecraft:stone[item_model="minecraft:diamond"]"""
 
 	val itemNameTest = stoneSword {
 		itemName(textComponent("test"))
@@ -484,6 +505,11 @@ fun componentsTests() {
 		}
 	}
 	toolTest.asString() assertsIs """minecraft:stone_sword[tool={rules:[{blocks:["#minecraft:base_stone_overworld","#minecraft:overworld_carver_replaceables","minecraft:hay_block"],speed:0.5f,correct_for_drops:1b}],default_mining_speed:2.0f}]"""
+
+	val tooltipStyleTest = stoneSword {
+		tooltipStyle("model")
+	}
+	tooltipStyleTest.asString() assertsIs """minecraft:stone_sword[tooltip_style="minecraft:model"]"""
 
 	val trimTest = Items.DIAMOND_CHESTPLATE {
 		trim(TrimPatterns.SHAPER, TrimMaterials.DIAMOND)
