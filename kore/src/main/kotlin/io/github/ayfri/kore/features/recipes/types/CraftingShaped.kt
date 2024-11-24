@@ -4,10 +4,10 @@ import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.arguments.types.resources.RecipeArgument
 import io.github.ayfri.kore.arguments.types.resources.item
 import io.github.ayfri.kore.arguments.types.resources.tagged.ItemTagArgument
+import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.features.recipes.RecipeFile
 import io.github.ayfri.kore.features.recipes.RecipeTypes
 import io.github.ayfri.kore.features.recipes.Recipes
-import io.github.ayfri.kore.features.recipes.data.CraftingResult
 import io.github.ayfri.kore.features.recipes.data.Ingredient
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
@@ -17,13 +17,13 @@ data class CraftingShaped(
 	override var group: String? = null,
 	var pattern: List<String> = emptyList(),
 	var key: MutableMap<String, InlinableList<Ingredient>> = mutableMapOf(),
-	override var result: CraftingResult,
+	override var result: ItemStack,
 ) : Recipe(), CraftingRecipe {
 	override val type = RecipeTypes.CRAFTING_SHAPED
 }
 
 fun Recipes.craftingShaped(name: String, block: CraftingShaped.() -> Unit): RecipeArgument {
-	dp.recipes += RecipeFile(name, CraftingShaped(result = CraftingResult(id = item(""))).apply(block))
+	dp.recipes += RecipeFile(name, CraftingShaped(result = ItemStack(item(""))).apply(block))
 	return RecipeArgument(name, dp.name)
 }
 

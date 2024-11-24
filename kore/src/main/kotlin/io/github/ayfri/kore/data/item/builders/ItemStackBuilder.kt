@@ -2,6 +2,7 @@ package io.github.ayfri.kore.data.item.builders
 
 import io.github.ayfri.kore.arguments.components.Components
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
+import io.github.ayfri.kore.arguments.types.resources.item
 import io.github.ayfri.kore.data.item.ItemStack
 
 data class ItemStackBuilder(var id: ItemArgument, var count: Short? = null) {
@@ -12,3 +13,5 @@ data class ItemStackBuilder(var id: ItemArgument, var count: Short? = null) {
 
 fun itemStack(item: ItemArgument, count: Short? = null, init: (Components.() -> Unit)? = null) =
 	ItemStackBuilder(item, count).apply { init?.let { components.it() } }.build()
+
+fun itemStack(block: ItemStackBuilder.() -> Unit) = ItemStackBuilder(item("")).apply(block).build()
