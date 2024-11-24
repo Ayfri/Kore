@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.arguments.colors.FormattingColor
 import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.assertions.assertsIs
@@ -297,6 +298,25 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 					"type": "minecraft:raider",
 					"has_raid": true,
 					"is_captain": false
+				}
+			}
+		}
+	""".trimIndent()
+
+	predicate("sheep_type_specific") {
+		entityProperties {
+			sheepTypeSpecific(sheared = true, color = FormattingColor.AQUA)
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:entity_properties",
+			"predicate": {
+				"type_specific": {
+					"type": "minecraft:sheep",
+					"sheared": true,
+					"color": "aqua"
 				}
 			}
 		}
