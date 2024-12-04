@@ -484,7 +484,7 @@ fun DataPack.enchantmentTests() {
 					}
 				}
 
-				damageItem(1)
+				changeItemDamage(1)
 				explode(
 					attributeToUser = true,
 					createFire = true,

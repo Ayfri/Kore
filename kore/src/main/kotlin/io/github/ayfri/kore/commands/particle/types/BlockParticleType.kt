@@ -74,6 +74,19 @@ fun Particles.block(
 	viewers: EntityArgument? = null,
 ) = block(BlockState(block), pos, delta, speed, count, mode, viewers)
 
+fun Particles.blockCrumble(block: BlockState, pos: Vec3? = null) = blockParticleType(ParticlesNames.BLOCK_CRUMBLE, block, pos)
+fun Particles.blockCrumble(block: BlockArgument, pos: Vec3? = null) = blockCrumble(BlockState(block), pos)
+
+fun Particles.blockCrumble(
+	block: BlockState,
+	pos: Vec3,
+	delta: Vec3,
+	speed: Double,
+	count: Int,
+	mode: ParticleMode? = null,
+	viewers: EntityArgument? = null,
+) = blockParticleType(ParticlesNames.BLOCK_CRUMBLE, block, pos, delta, speed, count, mode, viewers)
+
 
 fun Particles.blockMarker(block: BlockState, pos: Vec3? = null) = blockParticleType(ParticlesNames.BLOCK_MARKER, block, pos)
 fun Particles.blockMarker(block: BlockArgument, pos: Vec3? = null) = blockMarker(BlockState(block), pos)

@@ -45,6 +45,9 @@ fun Function.particleTests() {
 		// il faut fix la serialization, le naming, à voir pour refaire encore le sérialiseur, aussi les properties sont dans le Name
 		block(Blocks.STONE_SLAB(states = mapOf("half" to "top"))) assertsIs "particle block{block_state:{Name:\"minecraft:stone_slab\",Properties:{half:\"top\"}}}"
 
+		blockCrumble(Blocks.STONE) assertsIs "particle block_crumble{block_state:{Name:\"minecraft:stone\"}}"
+		blockCrumble(Blocks.STONE_SLAB(states = mapOf("half" to "top"))) assertsIs "particle block_crumble{block_state:{Name:\"minecraft:stone_slab\",Properties:{half:\"top\"}}}"
+
 		blockMarker(Blocks.STONE) assertsIs "particle block_marker{block_state:{Name:\"minecraft:stone\"}}"
 		fallingDust(Blocks.STONE) assertsIs "particle falling_dust{block_state:{Name:\"minecraft:stone\"}}"
 
@@ -70,6 +73,16 @@ fun Function.particleTests() {
 
 		sculkCharge(PI / 2) assertsIs "particle sculk_charge 1.5707963267948966"
 		shriek(100) assertsIs "particle shriek 100"
+
+		trail(
+			Color.RED,
+			Triple(1, 2, 3)
+		) assertsIs "particle trail{color:16733525,target:[1,2,3]}"
+		trail(
+			Color.BLUE,
+			Triple(0, 0, 0)
+		) assertsIs "particle trail{color:5592575,target:[0,0,0]}"
+
 		vibration(vec3(1, 2, 3), 10) assertsIs "particle vibration 1 2 3 10"
 	}
 }

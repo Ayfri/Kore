@@ -67,13 +67,13 @@ fun EntityEffectBuilder.damageEntity(
 		effects += ConditionalEffect(effect, effect.requirements)
 	}
 
-fun EntityEffectBuilder.damageItem(block: DamageItem.() -> Unit = {}) =
+fun EntityEffectBuilder.changeItemDamage(block: DamageItem.() -> Unit = {}) =
 	apply {
 		val effect = DamageItem().apply(block)
 		effects += ConditionalEffect(effect, effect.requirements)
 	}
 
-fun EntityEffectBuilder.damageItem(amount: Int, block: DamageItem.() -> Unit = {}) =
+fun EntityEffectBuilder.changeItemDamage(amount: Int, block: DamageItem.() -> Unit = {}) =
 	apply {
 		val effect = DamageItem(constantLevelBased(amount)).apply(block)
 		effects += ConditionalEffect(effect, effect.requirements)

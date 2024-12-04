@@ -45,6 +45,7 @@ fun runUnitTests() = dataPack("unit_tests") {
 		triggerTests()
 		weatherTests()
 		worldBorderTests()
+		rotateTests()
 
 		addBlankLine()
 		comment("Basic commands:")

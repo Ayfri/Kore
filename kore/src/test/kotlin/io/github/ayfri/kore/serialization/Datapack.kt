@@ -257,7 +257,7 @@ fun packMCMetaTests() = testDataPack("test") {
 		block(path = "stone*")
 	}
 
-	features(DataPacks.BUNDLE)
+	features(DataPacks.REDSTONE_EXPERIMENTS)
 
 	iconPath = Path("kore", "src", "test", "resources", "kore_icon.png")
 }.apply {
@@ -279,7 +279,7 @@ fun packMCMetaTests() = testDataPack("test") {
 		},
 		"features": {
 			"enabled": [
-				"bundle"
+				"redstone_experiments"
 			]
 		},
 		"filter": {
