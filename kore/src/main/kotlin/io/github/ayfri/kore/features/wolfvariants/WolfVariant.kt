@@ -2,6 +2,7 @@ package io.github.ayfri.kore.features.wolfvariants
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
+import io.github.ayfri.kore.arguments.types.resources.WolfVariantArgument
 import io.github.ayfri.kore.arguments.types.resources.worldgen.BiomeArgument
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.serializers.InlinableList
@@ -24,8 +25,8 @@ data class WolfVariant(
 fun DataPack.wolfVariant(
 	fileName: String = "wolf_variant",
 	block: WolfVariant.() -> Unit = {},
-): WolfVariant {
+): WolfVariantArgument {
 	val wolfVariant = WolfVariant(fileName).apply(block)
 	wolfVariants += wolfVariant
-	return wolfVariant
+	return WolfVariantArgument(fileName, wolfVariant.namespace ?: name)
 }

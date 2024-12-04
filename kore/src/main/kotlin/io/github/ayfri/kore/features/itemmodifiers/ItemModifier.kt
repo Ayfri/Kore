@@ -38,7 +38,8 @@ data class ItemModifier(
 	}
 }
 
-fun DataPack.itemModifier(fileName: String = "item_modifier", configure: ItemModifier.() -> Unit = {}): ItemModifierArgument {
-	itemModifiers += ItemModifier(fileName).apply(configure)
-	return ItemModifierArgument(fileName, name)
+fun DataPack.itemModifier(fileName: String = "item_modifier", init: ItemModifier.() -> Unit = {}): ItemModifierArgument {
+	val itemModifier = ItemModifier(fileName).apply(init)
+	itemModifiers += itemModifier
+	return ItemModifierArgument(fileName, itemModifier.namespace ?: name)
 }

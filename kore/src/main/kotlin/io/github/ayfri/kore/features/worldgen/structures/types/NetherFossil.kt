@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.worldgen.structures.types
 
 import io.github.ayfri.kore.arguments.types.BiomeOrTagArgument
+import io.github.ayfri.kore.arguments.types.resources.worldgen.StructureArgument
 import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProvider
 import io.github.ayfri.kore.features.worldgen.heightproviders.constantAbsolute
 import io.github.ayfri.kore.features.worldgen.structures.*
@@ -18,11 +19,11 @@ data class NetherFossil(
 
 fun StructuresBuilder.netherFossil(
 	filename: String = "nether_fossil",
-	step: GenerationStep = io.github.ayfri.kore.features.worldgen.structures.GenerationStep.UNDERGROUND_DECORATION,
+	step: GenerationStep = GenerationStep.UNDERGROUND_DECORATION,
 	height: HeightProvider = constantAbsolute(0),
 	init: NetherFossil.() -> Unit = {},
-): NetherFossil {
+): StructureArgument {
 	val netherFossil = NetherFossil(step = step, height = height).apply(init)
 	dp.structures += Structure(filename, netherFossil)
-	return netherFossil
+	return StructureArgument(filename, netherFossil.namespace ?: dp.name)
 }

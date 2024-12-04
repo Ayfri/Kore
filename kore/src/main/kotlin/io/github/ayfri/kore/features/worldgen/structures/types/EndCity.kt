@@ -16,10 +16,10 @@ data class EndCity(
 
 fun StructuresBuilder.endCity(
 	filename: String = "end_city",
-	step: GenerationStep = io.github.ayfri.kore.features.worldgen.structures.GenerationStep.SURFACE_STRUCTURES,
+	step: GenerationStep = GenerationStep.SURFACE_STRUCTURES,
 	init: EndCity.() -> Unit = {},
 ): StructureArgument {
 	val endCity = EndCity(step = step).apply(init)
 	dp.structures += Structure(filename, endCity)
-	return StructureArgument(filename, dp.name)
+	return StructureArgument(filename, endCity.namespace ?: dp.name)
 }

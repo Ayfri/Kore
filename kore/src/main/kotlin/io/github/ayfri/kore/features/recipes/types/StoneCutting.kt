@@ -22,8 +22,9 @@ data class StoneCutting(
 }
 
 fun Recipes.stoneCutting(name: String, block: StoneCutting.() -> Unit): RecipeArgument {
-	dp.recipes += RecipeFile(name, StoneCutting(result = item(""), count = 1).apply(block))
-	return RecipeArgument(name, dp.name)
+	val recipe = RecipeFile(name, StoneCutting(result = item(""), count = 1).apply(block))
+	dp.recipes += recipe
+	return RecipeArgument(name, recipe.namespace ?: dp.name)
 }
 
 fun StoneCutting.ingredient(block: Ingredient.() -> Unit) = Ingredient().apply(block).also { ingredient += it }

@@ -28,8 +28,9 @@ fun JukeboxSong.soundEvent(sound: SoundEventArgument, range: Float? = null) {
 }
 
 fun DataPack.jukeboxSong(fileName: String, init: JukeboxSong.() -> Unit): JukeboxSongArgument {
-	jukeboxSongs += JukeboxSong(fileName).apply(init)
-	return JukeboxSongArgument(fileName, name)
+	val jukeboxSong = JukeboxSong(fileName).apply(init)
+	jukeboxSongs += jukeboxSong
+	return JukeboxSongArgument(fileName, jukeboxSong.namespace ?: name)
 }
 
 fun DataPack.jukeboxSong(

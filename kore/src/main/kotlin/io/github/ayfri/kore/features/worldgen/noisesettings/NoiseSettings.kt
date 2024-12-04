@@ -55,9 +55,10 @@ data class NoiseSettings(
 /**
  * Creates a new instance of [NoiseSettings] with default options.
  */
-fun DataPack.noiseSettings(fileName: String = "noise_settings", block: NoiseSettings.() -> Unit = {}): NoiseSettingsArgument {
-	noiseSettings += NoiseSettings(fileName).apply(block)
-	return NoiseSettingsArgument(fileName, name)
+fun DataPack.noiseSettings(fileName: String = "noise_settings", init: NoiseSettings.() -> Unit = {}): NoiseSettingsArgument {
+	val settings = NoiseSettings(fileName).apply(init)
+	noiseSettings += settings
+	return NoiseSettingsArgument(fileName, settings.namespace ?: name)
 }
 
 /**

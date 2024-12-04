@@ -24,9 +24,10 @@ data class LootTable(
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
-fun DataPack.lootTable(fileName: String, block: LootTable.() -> Unit = {}): LootTableArgument {
-	lootTables += LootTable(fileName).apply(block)
-	return LootTableArgument(fileName, name)
+fun DataPack.lootTable(fileName: String = "loot_table", init: LootTable.() -> Unit = {}): LootTableArgument {
+	val lootTable = LootTable(fileName).apply(init)
+	lootTables += lootTable
+	return LootTableArgument(fileName, lootTable.namespace ?: name)
 }
 
 fun LootTable.functions(block: ItemModifier.() -> Unit) {

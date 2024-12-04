@@ -119,7 +119,7 @@ inline fun <reified T : TaggedResourceLocationArgument> DataPack.tag(
 		block()
 	}
 	tags += tag
-	return tag.invokeFunction.call(tag.tagClass.companionObjectInstance, fileName, namespace) as T
+	return tag.invokeFunction.call(tag.tagClass.companionObjectInstance, fileName, tag.namespace ?: namespace) as T
 }
 
 @JvmName("tagUntyped")
@@ -146,7 +146,7 @@ inline fun <reified T : TaggedResourceLocationArgument> DataPack.addToTag(
 	}
 
 	tag.apply(block)
-	return tag.invokeFunction.call(tag.tagClass.companionObjectInstance, fileName, namespace) as T
+	return tag.invokeFunction.call(tag.tagClass.companionObjectInstance, fileName, tag.namespace ?: namespace) as T
 }
 
 @JvmName("addToTagUntyped")

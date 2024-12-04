@@ -20,10 +20,11 @@ data class StructureSet(
 
 fun DataPack.structureSet(
 	fileName: String = "structure_set",
-	block: StructureSet.() -> Unit = {},
+	init: StructureSet.() -> Unit = {},
 ): StructureSetArgument {
-	structureSets += StructureSet(fileName, placement = RandomSpreadPlacement()).apply(block)
-	return StructureSetArgument(fileName, name)
+	val structureSet = StructureSet(fileName, placement = RandomSpreadPlacement()).apply(init)
+	structureSets += structureSet
+	return StructureSetArgument(fileName, structureSet.namespace ?: name)
 }
 
 fun StructureSet.structure(structure: ConfiguredStructureArgument, weight: Int = 1) = apply {

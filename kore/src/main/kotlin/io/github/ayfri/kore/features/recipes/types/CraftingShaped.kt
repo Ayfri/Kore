@@ -23,8 +23,9 @@ data class CraftingShaped(
 }
 
 fun Recipes.craftingShaped(name: String, block: CraftingShaped.() -> Unit): RecipeArgument {
-	dp.recipes += RecipeFile(name, CraftingShaped(result = ItemStack(item(""))).apply(block))
-	return RecipeArgument(name, dp.name)
+	val recipe = RecipeFile(name, CraftingShaped(result = ItemStack(item(""))).apply(block))
+	dp.recipes += recipe
+	return RecipeArgument(name, recipe.namespace ?: dp.name)
 }
 
 fun CraftingShaped.key(key: String, ingredients: List<Ingredient>) = this.key.put(key, ingredients.toMutableList())

@@ -23,9 +23,7 @@ data class SmithingTrim(
 }
 
 fun Recipes.smithingTrim(name: String, block: SmithingTrim.() -> Unit): RecipeArgument {
-	dp.recipes += RecipeFile(
-		name,
-		SmithingTrim().apply(block)
-	)
-	return RecipeArgument(name, dp.name)
+	val recipe = RecipeFile(name, SmithingTrim().apply(block))
+	dp.recipes += recipe
+	return RecipeArgument(name, recipe.namespace ?: dp.name)
 }

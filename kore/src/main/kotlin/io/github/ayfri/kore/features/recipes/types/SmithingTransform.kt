@@ -26,11 +26,7 @@ data class SmithingTransform(
 }
 
 fun Recipes.smithingTransform(name: String, block: SmithingTransform.() -> Unit): RecipeArgument {
-	dp.recipes += RecipeFile(
-		name,
-		SmithingTransform(
-			result = item("")
-		).apply(block)
-	)
-	return RecipeArgument(name, dp.name)
+	val recipe = RecipeFile(name, SmithingTransform(result = item("")).apply(block))
+	dp.recipes += recipe
+	return RecipeArgument(name, recipe.namespace ?: dp.name)
 }

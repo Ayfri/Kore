@@ -18,9 +18,10 @@ data class TemplatePool(
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
-fun DataPack.templatePool(fileName: String = "template_pool", block: TemplatePool.() -> Unit): TemplatePoolArgument {
-	templatePools += TemplatePool().apply(block)
-	return TemplatePoolArgument(fileName, name)
+fun DataPack.templatePool(fileName: String = "template_pool", init: TemplatePool.() -> Unit = {}): TemplatePoolArgument {
+	val templatePool = TemplatePool(fileName).apply(init)
+	templatePools += templatePool
+	return TemplatePoolArgument(fileName, templatePool.namespace ?: name)
 }
 
 fun TemplatePool.elements(block: MutableList<TemplatePoolEntry>.() -> Unit) {

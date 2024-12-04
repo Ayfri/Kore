@@ -37,7 +37,7 @@ fun StructuresBuilder.jigsaw(
 ): StructureArgument {
 	val jigsaw = Jigsaw(step = step, startPool = startPool).apply(init)
 	dp.structures += Structure(filename, jigsaw)
-	return StructureArgument(filename, dp.name)
+	return StructureArgument(filename, jigsaw.namespace ?: dp.name)
 }
 
 fun Jigsaw.poolAliases(block: MutableList<PoolAlias>.() -> Unit = {}) {

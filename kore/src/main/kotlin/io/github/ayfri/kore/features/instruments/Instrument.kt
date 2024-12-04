@@ -4,6 +4,7 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
+import io.github.ayfri.kore.arguments.types.resources.InstrumentArgument
 import io.github.ayfri.kore.arguments.types.resources.SoundEventArgument
 import io.github.ayfri.kore.generated.SoundEvents
 import kotlinx.serialization.Serializable
@@ -28,7 +29,9 @@ fun DataPack.instrument(
 	range: Float = 256f,
 	useDuration: Float = 7f,
 	description: ChatComponents = textComponent(),
-	block: Instrument.() -> Unit = {},
-) {
-	instruments += Instrument(fileName, soundEvent, range, useDuration, description).apply(block)
+	init: Instrument.() -> Unit = {},
+): InstrumentArgument {
+	val instrument = Instrument(fileName, soundEvent, range, useDuration, description).apply(init)
+	instruments += instrument
+	return InstrumentArgument(fileName, instrument.namespace ?: name)
 }

@@ -23,6 +23,7 @@ data class CampfireCooking(
 }
 
 fun Recipes.campfireCooking(name: String, block: CookingRecipe.() -> Unit): RecipeArgument {
-	dp.recipes += RecipeFile(name, CampfireCooking(result = itemStack(item(""))).apply(block))
-	return RecipeArgument(name, dp.name)
+	val recipe = RecipeFile(name, CampfireCooking(result = itemStack(item(""))).apply(block))
+	dp.recipes += recipe
+	return RecipeArgument(name, recipe.namespace ?: dp.name)
 }

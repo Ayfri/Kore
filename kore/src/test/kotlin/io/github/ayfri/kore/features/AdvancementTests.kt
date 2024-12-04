@@ -157,6 +157,13 @@ fun DataPack.advancementTests() {
 		}
 	""".trimIndent()
 
+
+	val namespacedAdvancement = advancement("test_namespaced") {
+		namespace = "advancements_tests"
+	}
+
+	namespacedAdvancement.asId() assertsIs "advancements_tests:test_namespaced"
+
 	allTriggersTests()
 }
 

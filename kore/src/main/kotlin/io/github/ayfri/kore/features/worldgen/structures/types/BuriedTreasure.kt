@@ -16,10 +16,10 @@ data class BuriedTreasure(
 
 fun StructuresBuilder.buriedTreasure(
 	fileName: String = "buried_treasure",
-	step: GenerationStep = io.github.ayfri.kore.features.worldgen.structures.GenerationStep.UNDERGROUND_STRUCTURES,
+	step: GenerationStep = GenerationStep.UNDERGROUND_STRUCTURES,
 	init: BuriedTreasure.() -> Unit = {},
 ): StructureArgument {
 	val buriedTreasure = BuriedTreasure(step = step).apply(init)
 	dp.structures += Structure(fileName, buriedTreasure)
-	return StructureArgument(fileName, dp.name)
+	return StructureArgument(fileName, buriedTreasure.namespace ?: dp.name)
 }

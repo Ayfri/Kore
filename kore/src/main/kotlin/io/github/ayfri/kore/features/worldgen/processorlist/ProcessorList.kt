@@ -17,7 +17,8 @@ data class ProcessorList(
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
-fun DataPack.processorList(fileName: String = "processor_list", block: ProcessorList.() -> Unit): ProcessorListArgument {
-	processorLists += ProcessorList(fileName).apply(block)
-	return ProcessorListArgument(fileName, name)
+fun DataPack.processorList(fileName: String = "processor_list", init: ProcessorList.() -> Unit = {}): ProcessorListArgument {
+	val processorList = ProcessorList(fileName).apply(init)
+	processorLists += processorList
+	return ProcessorListArgument(fileName, processorList.namespace ?: name)
 }

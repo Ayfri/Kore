@@ -23,6 +23,7 @@ data class Smoking(
 }
 
 fun Recipes.smoking(name: String, block: CookingRecipe.() -> Unit): RecipeArgument {
-	dp.recipes += RecipeFile(name, Smoking(result = itemStack(item(""))).apply(block))
-	return RecipeArgument(name, dp.name)
+	val recipe = RecipeFile(name, Smoking(result = itemStack(item(""))).apply(block))
+	dp.recipes += recipe
+	return RecipeArgument(name, recipe.namespace ?: dp.name)
 }

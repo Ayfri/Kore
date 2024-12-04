@@ -21,8 +21,9 @@ data class CraftingShapeless(
 }
 
 fun Recipes.craftingShapeless(name: String, block: CraftingShapeless.() -> Unit): RecipeArgument {
-	dp.recipes += RecipeFile(name, CraftingShapeless(result = ItemStack(item(""))).apply(block))
-	return RecipeArgument(name, dp.name)
+	val recipe = RecipeFile(name, CraftingShapeless(result = ItemStack(item(""))).apply(block))
+	dp.recipes += recipe
+	return RecipeArgument(name, recipe.namespace ?: dp.name)
 }
 
 fun CraftingShapeless.ingredient(block: Ingredient.() -> Unit) = Ingredient().apply(block).also { ingredients += it }

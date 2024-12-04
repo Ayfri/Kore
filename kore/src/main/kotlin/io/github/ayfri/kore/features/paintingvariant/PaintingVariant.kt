@@ -28,6 +28,7 @@ fun DataPack.paintingVariant(
 	width: Int = 1,
 	block: PaintingVariant.() -> Unit = {},
 ): PaintingVariantArgument {
-	paintingVariants += PaintingVariant(fileName, assetId, height, width).apply(block)
-	return PaintingVariantArgument(fileName, name)
+	val paintingVariant = PaintingVariant(fileName, assetId, height, width).apply(block)
+	paintingVariants += paintingVariant
+	return PaintingVariantArgument(fileName, paintingVariant.namespace ?: name)
 }

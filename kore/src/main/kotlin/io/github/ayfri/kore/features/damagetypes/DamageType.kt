@@ -27,10 +27,11 @@ fun DataPack.damageType(
 	fileName: String = "damage_type",
 	messageId: String,
 	scaling: Scaling,
-	damageType: DamageType.() -> Unit = {},
+	init: DamageType.() -> Unit = {},
 ): DamageTypeArgument {
-	damageTypes += DamageType(fileName, messageId, scaling = scaling).apply(damageType)
-	return DamageTypeArgument(fileName, name)
+	val damageType = DamageType(fileName, messageId, scaling = scaling).apply(init)
+	damageTypes += damageType
+	return DamageTypeArgument(fileName, damageType.namespace ?: name)
 }
 
 fun DataPack.damageType(
@@ -40,7 +41,10 @@ fun DataPack.damageType(
 	scaling: Scaling,
 	effects: Effects? = null,
 	deathMessageType: DeathMessageType? = null,
+	namespace: String? = null,
 ): DamageTypeArgument {
-	damageTypes += DamageType(fileName, messageId, exhaustion, scaling, effects, deathMessageType)
-	return DamageTypeArgument(fileName, name)
+	damageTypes += DamageType(fileName, messageId, exhaustion, scaling, effects, deathMessageType).apply {
+		this.namespace = namespace
+	}
+	return DamageTypeArgument(fileName, namespace ?: name)
 }

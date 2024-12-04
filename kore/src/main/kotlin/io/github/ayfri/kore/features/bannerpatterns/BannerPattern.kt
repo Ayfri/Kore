@@ -22,8 +22,9 @@ fun DataPack.bannerPattern(
 	translationKey: String,
 	assetId: BannerPatternArgument,
 ): BannerPatternArgument {
-	bannerPatterns += BannerPattern(fileName, assetId, translationKey)
-	return assetId
+	val bannerPattern = BannerPattern(fileName, assetId, translationKey)
+	bannerPatterns += bannerPattern
+	return BannerPatternArgument(fileName, bannerPattern.namespace ?: name)
 }
 
 fun DataPack.bannerPattern(
@@ -32,8 +33,9 @@ fun DataPack.bannerPattern(
 	assetNamespaced: String,
 	assetPath: String,
 ): BannerPatternArgument {
-	bannerPatterns += BannerPattern(fileName, BannerPatternArgument(assetPath, assetNamespaced), translationKey)
-	return BannerPatternArgument(assetPath, assetNamespaced)
+	val bannerPattern = BannerPattern(fileName, BannerPatternArgument(assetPath, assetNamespaced), translationKey)
+	bannerPatterns += bannerPattern
+	return BannerPatternArgument(fileName, bannerPattern.namespace ?: name)
 }
 
 fun DataPack.bannerPattern(

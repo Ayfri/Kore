@@ -23,6 +23,7 @@ data class Blasting(
 }
 
 fun Recipes.blasting(name: String, block: Blasting.() -> Unit): RecipeArgument {
-	dp.recipes += RecipeFile(name, Blasting(result = itemStack(item(""))).apply(block))
-	return RecipeArgument(name, dp.name)
+	val recipe = RecipeFile(name, Blasting(result = itemStack(item(""))).apply(block))
+	dp.recipes += recipe
+	return RecipeArgument(name, recipe.namespace ?: dp.name)
 }

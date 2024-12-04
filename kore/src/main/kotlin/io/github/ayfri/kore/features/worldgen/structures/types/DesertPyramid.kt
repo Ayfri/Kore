@@ -16,10 +16,10 @@ data class DesertPyramid(
 
 fun StructuresBuilder.desertPyramid(
 	fileName: String = "desert_pyramid",
-	step: GenerationStep = io.github.ayfri.kore.features.worldgen.structures.GenerationStep.SURFACE_STRUCTURES,
+	step: GenerationStep = GenerationStep.SURFACE_STRUCTURES,
 	init: DesertPyramid.() -> Unit = {},
 ): StructureArgument {
 	val desertPyramid = DesertPyramid(step = step).apply(init)
 	dp.structures += Structure(fileName, desertPyramid)
-	return StructureArgument(fileName, dp.name)
+	return StructureArgument(fileName, desertPyramid.namespace ?: dp.name)
 }

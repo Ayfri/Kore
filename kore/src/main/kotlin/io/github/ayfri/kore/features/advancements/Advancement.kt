@@ -29,8 +29,9 @@ data class Advancement internal constructor(
 }
 
 fun DataPack.advancement(fileName: String, block: Advancement.() -> Unit = {}): AdvancementArgument {
-	advancements += Advancement(fileName).apply(block)
-	return AdvancementArgument(fileName, name)
+	val advancement = Advancement(fileName)
+	advancements += advancement.apply(block)
+	return AdvancementArgument(fileName, advancement.namespace ?: name)
 }
 
 fun Advancement.display(icon: AdvancementIcon, title: String = "", description: String = "", block: AdvancementDisplay.() -> Unit = {}) {

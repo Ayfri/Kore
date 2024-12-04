@@ -16,10 +16,10 @@ data class Igloo(
 
 fun StructuresBuilder.igloo(
 	filename: String = "igloo",
-	step: GenerationStep = io.github.ayfri.kore.features.worldgen.structures.GenerationStep.SURFACE_STRUCTURES,
+	step: GenerationStep = GenerationStep.SURFACE_STRUCTURES,
 	init: Igloo.() -> Unit = {},
 ): StructureArgument {
 	val igloo = Igloo(step = step).apply(init)
 	dp.structures += Structure(filename, igloo)
-	return StructureArgument(filename, dp.name)
+	return StructureArgument(filename, igloo.namespace ?: dp.name)
 }

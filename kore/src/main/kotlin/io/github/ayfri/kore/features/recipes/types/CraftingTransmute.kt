@@ -22,14 +22,15 @@ data class CraftingTransmute(
 }
 
 fun Recipes.craftingTransmute(name: String, block: CraftingTransmute.() -> Unit): RecipeArgument {
-	dp.recipes += RecipeFile(
+	val recipe = RecipeFile(
 		name, CraftingTransmute(
 			input = Ingredient(),
 			material = Ingredient(),
 			result = itemStack(item = item("")),
 		).apply(block)
 	)
-	return RecipeArgument(name, dp.name)
+	dp.recipes += recipe
+	return RecipeArgument(name, recipe.namespace ?: dp.name)
 }
 
 fun CraftingTransmute.input(block: Ingredient.() -> Unit) = Ingredient().apply(block).also { input = it }

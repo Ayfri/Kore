@@ -16,6 +16,8 @@ sealed class StructureType {
 	abstract var spawnOverrides: SpawnOverrides
 	abstract var terrainAdaptation: TerrainAdaptation?
 
+	var namespace: String? = null
+
 	companion object {
 		data object StructureTypeSerializer : NamespacedPolymorphicSerializer<StructureType>(StructureType::class)
 	}

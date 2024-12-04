@@ -23,6 +23,7 @@ data class Smelting(
 }
 
 fun Recipes.smelting(name: String, block: CookingRecipe.() -> Unit): RecipeArgument {
-	dp.recipes += RecipeFile(name, Smelting(result = itemStack(item(""))).apply(block))
-	return RecipeArgument(name, dp.name)
+	val recipe = RecipeFile(name, Smelting(result = itemStack(item(""))).apply(block))
+	dp.recipes += recipe
+	return RecipeArgument(name, recipe.namespace ?: dp.name)
 }

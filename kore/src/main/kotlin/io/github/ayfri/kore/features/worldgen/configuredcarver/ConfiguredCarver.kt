@@ -22,6 +22,7 @@ fun DataPack.configuredCarver(
 	config: Config,
 	block: ConfiguredCarver. () -> Unit = {},
 ): CarverArgument {
-	configuredCarvers += ConfiguredCarver(fileName, config).apply(block)
-	return CarverArgument(fileName, name)
+	val configuredCarver = ConfiguredCarver(fileName, config).apply(block)
+	configuredCarvers += configuredCarver
+	return CarverArgument(fileName, configuredCarver.namespace ?: name)
 }

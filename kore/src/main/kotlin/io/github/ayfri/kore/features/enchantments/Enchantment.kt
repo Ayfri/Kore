@@ -36,9 +36,10 @@ data class Enchantment(
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
-fun DataPack.enchantment(fileName: String, enchantment: Enchantment.() -> Unit): EnchantmentArgument {
-	enchantments += Enchantment(fileName).apply(enchantment)
-	return EnchantmentArgument(fileName, name)
+fun DataPack.enchantment(fileName: String, init: Enchantment.() -> Unit): EnchantmentArgument {
+	val enchantment = Enchantment(fileName).apply(init)
+	enchantments += enchantment
+	return EnchantmentArgument(fileName, enchantment.namespace ?: name)
 }
 
 fun Enchantment.description(text: String, color: Color? = null, block: PlainTextComponent.() -> Unit = {}) {

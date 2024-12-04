@@ -21,8 +21,9 @@ fun DataPack.chatType(
 	fileName: String = "chat_type",
 	block: ChatType.() -> Unit = {},
 ): ChatTypeArgument {
-	chatTypes += ChatType(fileName).apply(block)
-	return ChatTypeArgument(fileName, name)
+	val chatType = ChatType(fileName).apply(block)
+	chatTypes += chatType
+	return ChatTypeArgument(fileName, chatType.namespace ?: name)
 }
 
 fun ChatType.chat(translationKey: String = "chat.type.text", block: ChatTypeDecoration.() -> Unit = {}) {

@@ -37,7 +37,8 @@ data class Predicate(
 	}
 }
 
-fun DataPack.predicate(fileName: String, predicate: Predicate.() -> Unit): PredicateArgument {
-	predicates += Predicate(fileName).apply(predicate)
-	return PredicateArgument(fileName, name)
+fun DataPack.predicate(fileName: String = "predicate", init: Predicate.() -> Unit = {}): PredicateArgument {
+	val predicate = Predicate(fileName).apply(init)
+	predicates += predicate
+	return PredicateArgument(fileName, predicate.namespace ?: name)
 }

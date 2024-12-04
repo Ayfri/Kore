@@ -26,6 +26,7 @@ fun DataPack.placedFeature(
 	feature: ConfiguredFeatureArgument,
 	block: PlacedFeature.() -> Unit,
 ): PlacedFeatureArgument {
-	placedFeatures += PlacedFeature(fileName, feature).apply(block)
-	return PlacedFeatureArgument(fileName, name)
+	val placedFeature = PlacedFeature(fileName, feature).apply(block)
+	placedFeatures += placedFeature
+	return PlacedFeatureArgument(fileName, placedFeature.namespace ?: name)
 }

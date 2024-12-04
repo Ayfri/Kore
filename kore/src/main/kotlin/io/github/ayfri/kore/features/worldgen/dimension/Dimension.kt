@@ -25,10 +25,11 @@ data class Dimension(
  * See [features.worldgen.dimension.generator.Noise] for using noise (overworld) generator.
  */
 fun DataPack.dimension(
-	fileName: String = "dimension",
+	fileName: String,
 	type: DimensionTypeArgument,
 	block: Dimension.() -> Unit = {},
 ): DimensionArgument {
-	dimensions += Dimension(fileName, type).apply(block)
-	return DimensionArgument(fileName, name)
+	val dimension = Dimension(fileName, type).apply(block)
+	dimensions += dimension
+	return DimensionArgument(fileName, dimension.namespace ?: name)
 }

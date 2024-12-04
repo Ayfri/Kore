@@ -20,6 +20,7 @@ fun DataPack.densityFunction(
 	type: DensityFunctionType,
 	block: DensityFunction.() -> Unit = {},
 ): DensityFunctionArgument {
-	densityFunctions += DensityFunction(fileName, type).apply(block)
-	return DensityFunctionArgument(fileName, name)
+	val densityFunction = DensityFunction(fileName, type).apply(block)
+	densityFunctions += densityFunction
+	return DensityFunctionArgument(fileName, densityFunction.namespace ?: name)
 }

@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.worldgen.structures.types
 
 import io.github.ayfri.kore.arguments.types.BiomeOrTagArgument
+import io.github.ayfri.kore.arguments.types.resources.worldgen.StructureArgument
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
@@ -15,10 +16,10 @@ data class Stronghold(
 
 fun StructuresBuilder.stronghold(
 	filename: String = "stronghold",
-	step: GenerationStep = io.github.ayfri.kore.features.worldgen.structures.GenerationStep.UNDERGROUND_STRUCTURES,
+	step: GenerationStep = GenerationStep.UNDERGROUND_STRUCTURES,
 	init: Stronghold.() -> Unit = {},
-): Stronghold {
+): StructureArgument {
 	val stronghold = Stronghold(step = step).apply(init)
 	dp.structures += Structure(filename, stronghold)
-	return stronghold
+	return StructureArgument(filename, stronghold.namespace ?: dp.name)
 }

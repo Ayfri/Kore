@@ -37,10 +37,11 @@ data class FlatLevelGeneratorPreset(
  */
 fun DataPack.flatLevelGeneratorPreset(
 	fileName: String = "flat_level_generator_preset",
-	block: FlatLevelGeneratorPreset.() -> Unit = {},
+	init: FlatLevelGeneratorPreset.() -> Unit = {},
 ): FlatLevelGeneratorPresetArgument {
-	flatLevelGeneratorPresets += FlatLevelGeneratorPreset(fileName).apply(block)
-	return FlatLevelGeneratorPresetArgument(fileName, name)
+	val preset = FlatLevelGeneratorPreset(fileName).apply(init)
+	flatLevelGeneratorPresets += preset
+	return FlatLevelGeneratorPresetArgument(fileName, preset.namespace ?: name)
 }
 
 /**

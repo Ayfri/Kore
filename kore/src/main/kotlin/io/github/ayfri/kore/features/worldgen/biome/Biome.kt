@@ -28,8 +28,9 @@ data class Biome(
 }
 
 fun DataPack.biome(fileName: String = "biome", init: Biome.() -> Unit = {}): BiomeArgument {
-	biomes += Biome(fileName).apply(init)
-	return BiomeArgument(fileName, name)
+	val biome = Biome(fileName).apply(init)
+	biomes += biome
+	return BiomeArgument(fileName, biome.namespace ?: name)
 }
 
 fun Biome.effects(init: BiomeEffects.() -> Unit) {

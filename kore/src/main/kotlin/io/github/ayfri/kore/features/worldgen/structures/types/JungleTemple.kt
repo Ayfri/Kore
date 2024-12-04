@@ -16,10 +16,10 @@ data class JungleTemple(
 
 fun StructuresBuilder.jungleTemple(
 	filename: String = "jungle_temple",
-	step: GenerationStep = io.github.ayfri.kore.features.worldgen.structures.GenerationStep.SURFACE_STRUCTURES,
+	step: GenerationStep = GenerationStep.SURFACE_STRUCTURES,
 	init: JungleTemple.() -> Unit = {},
 ): StructureArgument {
 	val jungleTemple = JungleTemple(step = step).apply(init)
 	dp.structures += Structure(filename, jungleTemple)
-	return StructureArgument(filename, dp.name)
+	return StructureArgument(filename, jungleTemple.namespace ?: dp.name)
 }

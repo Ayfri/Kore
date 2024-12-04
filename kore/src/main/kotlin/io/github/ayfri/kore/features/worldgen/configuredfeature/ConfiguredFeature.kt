@@ -21,8 +21,9 @@ data class ConfiguredFeature(
 fun DataPack.configuredFeature(
 	fileName: String = "configured_feature",
 	featureConfig: FeatureConfig,
-	block: ConfiguredFeature.() -> Unit = {},
+	init: ConfiguredFeature.() -> Unit = {},
 ): ConfiguredFeatureArgument {
-	configuredFeatures += ConfiguredFeature(fileName, featureConfig).apply(block)
-	return ConfiguredFeatureArgument(fileName, name)
+	val configuredFeature = ConfiguredFeature(fileName, featureConfig).apply(init)
+	configuredFeatures += configuredFeature
+	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: name)
 }

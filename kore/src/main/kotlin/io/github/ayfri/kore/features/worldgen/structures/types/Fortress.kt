@@ -16,10 +16,10 @@ data class Fortress(
 
 fun StructuresBuilder.fortress(
 	filename: String = "fortress",
-	step: GenerationStep = io.github.ayfri.kore.features.worldgen.structures.GenerationStep.UNDERGROUND_DECORATION,
+	step: GenerationStep = GenerationStep.UNDERGROUND_DECORATION,
 	init: Fortress.() -> Unit = {},
 ): StructureArgument {
 	val fortress = Fortress(step = step).apply(init)
 	dp.structures += Structure(filename, fortress)
-	return StructureArgument(filename, dp.name)
+	return StructureArgument(filename, fortress.namespace ?: dp.name)
 }
