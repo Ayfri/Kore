@@ -19,9 +19,11 @@ import java.util.zip.ZipOutputStream
 import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
 import kotlin.io.path.invariantSeparatorsPathString
+import kotlin.io.path.pathString
 
 internal fun unzip(zipFile: File): File {
-	val tempDir = Files.createTempDirectory("kore_datapacks_unzipped").toFile()
+	val cleanName = zipFile.nameWithoutExtension.replace("[\\\\/:*?\"<>|]".toRegex(), "_")
+	val tempDir = Files.createTempDirectory("kore_unzipped_datapack_$cleanName").toFile()
 	ZipInputStream(zipFile.inputStream()).use { zipInputStream ->
 		var entry = zipInputStream.nextEntry
 		while (entry != null) {
@@ -39,7 +41,7 @@ internal fun unzip(zipFile: File): File {
 		}
 	}
 
-	return tempDir.resolve(zipFile.nameWithoutExtension)
+	return tempDir
 }
 
 enum class DatapackGenerationMode {
@@ -120,8 +122,9 @@ data class DataPackGenerator(
 			require(otherPath.exists()) { "The pack at '$otherPath' does not exist." }
 
 			var otherPackFile = otherPath.toFile()
-			if (otherPath.endsWith(".zip")) {
+			if (otherPath.pathString.endsWith(".zip")) {
 				otherPackFile = unzip(otherPath.toFile())
+				println("Unzipped pack '$otherPath' to: ${otherPackFile.absolutePath}")
 			}
 
 			if (otherPackFile == dataPackPath) {
