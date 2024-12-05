@@ -1,6 +1,7 @@
 package generators
 
 import MAIN_GITHUB_URL
+import cacheDir
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.PropertySpec
@@ -13,6 +14,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNamingStrategy
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
+import java.io.File
 
 @Serializable
 data class VersionData(val dataPack: Int)
@@ -26,6 +28,11 @@ val jsonParser = Json {
 suspend fun downloadDefaultDatapackVersion() {
 	val url = "$MAIN_GITHUB_URL/master/versions_data.json"
 	val versions = getFromCacheOrDownloadJson("version_data.json", url).jsonObject
+	if (!versions.containsKey(minecraftVersion)) {
+		File(cacheDir, "version_data.json").delete()
+		downloadDefaultDatapackVersion()
+		return
+	}
 	val currentVersion = jsonParser.decodeFromJsonElement<VersionData>(versions[minecraftVersion]!!.jsonObject)
 	writeDefaultDatapackVersion(currentVersion.dataPack, url)
 }
