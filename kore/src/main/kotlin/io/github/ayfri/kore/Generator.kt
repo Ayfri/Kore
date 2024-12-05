@@ -13,9 +13,11 @@ abstract class Generator(@Transient val resourceFolder: String = error("Generato
 
 	abstract fun generateJson(dataPack: DataPack): String
 
-	open fun getFinalPath(dataPack: DataPack): Path {
+	fun getFinalPath(dataPack: DataPack): Path {
 		val dataFolder = dataPack.cleanPath.resolve(dataPack.name).resolve("data")
 		val namespace = namespace ?: dataPack.name
-		return dataFolder.resolve(namespace).resolve(resourceFolder).resolve("$fileName.json")
+		return getPathFromDataDir(dataFolder, namespace)
 	}
+
+	open fun getPathFromDataDir(dir: Path, namespace: String): Path = dir.resolve(namespace).resolve(resourceFolder).resolve("$fileName.json")
 }

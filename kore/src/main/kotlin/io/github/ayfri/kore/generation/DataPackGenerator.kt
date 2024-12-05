@@ -99,7 +99,7 @@ data class DataPackGenerator(
 			.distinctBy { it.getFinalPath(datapack) }
 			.forEach { generator ->
 				val namespace = generator.namespace ?: datapack.name
-				val path = outputDataPath.resolve(namespace).resolve(generator.resourceFolder).resolve("${generator.fileName}.json")
+				val path = generator.getPathFromDataDir(outputDataPath, namespace)
 				writeFile(path.toString(), generator.generateJson(datapack))
 			}
 
