@@ -19,6 +19,15 @@ import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.utils.set
 
 fun componentsTests() {
+	val a = Items.AIR {
+		itemName("a")
+	}
+
+	val b = Items.AIR {
+		copyFrom(a)
+	}
+	b.asString() assertsIs """minecraft:air[item_name='"a"']"""
+
 	val stoneSword = Items.STONE_SWORD
 	val stone = Items.STONE
 	val leatherHelmet = Items.LEATHER_HELMET

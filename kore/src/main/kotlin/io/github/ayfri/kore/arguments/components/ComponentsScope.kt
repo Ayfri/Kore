@@ -2,6 +2,8 @@ package io.github.ayfri.kore.arguments.components
 
 import io.github.ayfri.kore.arguments.components.types.Component
 import io.github.ayfri.kore.arguments.components.types.CustomComponent
+import io.github.ayfri.kore.arguments.types.resources.ItemArgument
+import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.generated.ComponentTypes
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.unescape
@@ -28,6 +30,10 @@ abstract class ComponentsScope(open val components: MutableMap<String, Component
 	}
 
 	fun addComponent(name: String, block: NbtCompoundBuilder.() -> Unit) = addComponent(name, nbt(block))
+
+	fun copyFrom(scope: ComponentsScope) = components.putAll(scope.components)
+	fun copyFrom(item: ItemArgument) = item.components?.let { copyFrom(it) }
+	fun copyFrom(item: ItemStack) = item.components?.let { copyFrom(it) }
 
 	open operator fun get(name: String) = components[name]
 
