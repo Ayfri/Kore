@@ -33,13 +33,13 @@ data class WrittenPage(
 						encodeSerializableElement(
 							descriptor,
 							0,
-							ChatComponents.Companion.ChatComponentsAsListEscapedSerializer,
+							ChatComponents.Companion.ChatComponentsEscapedSerializer,
 							value.raw
 						)
 						if (value.filtered != null) encodeSerializableElement(
 							descriptor,
 							1,
-							ChatComponents.Companion.ChatComponentsAsListEscapedSerializer,
+							ChatComponents.Companion.ChatComponentsEscapedSerializer,
 							value.filtered!!
 						)
 					}

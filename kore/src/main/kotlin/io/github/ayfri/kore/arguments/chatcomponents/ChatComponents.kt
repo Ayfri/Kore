@@ -6,7 +6,6 @@ import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
 import io.github.ayfri.kore.utils.plusAssign
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.encodeCollection
@@ -79,6 +78,40 @@ data class ChatComponents(
 			namingStrategy = JsonNamingStrategy.SnakeCase
 		}
 
+		private object ChatComponentSerializer : KSerializer<ChatComponent> {
+			override val descriptor = NbtTag.serializer().descriptor
+
+			override fun deserialize(decoder: Decoder) = when (decoder) {
+				is JsonDecoder -> {
+					val decodeJsonElement = decoder.decodeJsonElement()
+					try {
+						jsonSerializer.decodeFromJsonElement(ChatComponent.serializer(), decodeJsonElement)
+					} catch (error: Exception) {
+						text(text = decodeJsonElement.jsonPrimitive.content)
+					}
+				}
+
+				is NbtDecoder -> {
+					val tag = decoder.decodeNbtTag()
+					try {
+						decoder.nbt.decodeFromNbtTag(ChatComponent.serializer(), tag)
+					} catch (error: Exception) {
+						text(text = tag.toString())
+					}
+				}
+
+				else -> throw IllegalArgumentException("Unsupported decoder: $decoder")
+			}
+
+			override fun serialize(encoder: Encoder, value: ChatComponent) = when (value) {
+				is PlainTextComponent ->
+					if (value.containsOnlyText()) encoder.encodeString(value.text)
+					else encoder.encodeSerializableValue(PlainTextComponent.serializer(), value)
+
+				else -> encoder.encodeSerializableValue(serializer(value::class.createType()), value)
+			}
+		}
+
 		object ChatComponentsSerializer : KSerializer<ChatComponents> {
 			override val descriptor = ListSerializer(NbtTag.serializer()).descriptor
 
@@ -108,26 +141,11 @@ data class ChatComponents(
 			/* Encode each component, if there's only one, encode it as a single component, if the component only contains a text, encode it as a string. */
 			override fun serialize(encoder: Encoder, value: ChatComponents) {
 				if (value.list.size == 1) {
-					when (val component = value.list[0]) {
-						is PlainTextComponent -> if (component.containsOnlyText()) encoder.encodeSerializableValue(
-							String.serializer(),
-							component.text
-						) else encoder.encodeSerializableValue(PlainTextComponent.serializer(), component)
-
-						else -> encoder.encodeSerializableValue(serializer(component::class.createType()), component)
-					}
+					encoder.encodeSerializableValue(ChatComponentSerializer, value.list[0])
 				} else {
 					encoder.encodeCollection(descriptor, value.list.size) {
 						value.list.forEachIndexed { i, component ->
-							when (component) {
-								is PlainTextComponent -> if (component.containsOnlyText()) encodeStringElement(
-									descriptor,
-									i,
-									component.text
-								) else encodeSerializableElement(descriptor, i, PlainTextComponent.serializer(), component)
-
-								else -> encodeSerializableElement(descriptor, i, serializer(component::class.createType()), component)
-							}
+							encodeSerializableElement(descriptor, i, ChatComponentSerializer, component)
 						}
 					}
 				}
@@ -161,7 +179,13 @@ data class ChatComponents(
 					encoder.encodeNbtTag(NbtString("['$normalSerialized']"))
 				}
 
-				is JsonEncoder -> encoder.encodeSerializableValue(ChatComponentsSerializer, value)
+				is JsonEncoder -> encoder.encodeCollection(descriptor, value.list.size) {
+					value.list.forEachIndexed { i, component ->
+						val result = jsonSerializer.encodeToString(ChatComponentSerializer, component)
+						encodeStringElement(descriptor, i, result)
+					}
+				}
+
 				else -> throw IllegalArgumentException("Unsupported encoder: $encoder")
 			}
 		}

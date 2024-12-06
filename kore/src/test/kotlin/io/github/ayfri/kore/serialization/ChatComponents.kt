@@ -5,12 +5,19 @@ import io.github.ayfri.kore.arguments.chatcomponents.events.showItem
 import io.github.ayfri.kore.arguments.chatcomponents.events.showText
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.types.damage
+import io.github.ayfri.kore.arguments.components.types.lore
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.types.literals.randomPlayer
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.arguments.types.resources.storage
+import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.assertions.assertsIsJson
+import io.github.ayfri.kore.dataPack
+import io.github.ayfri.kore.features.predicates.conditions.matchTool
+import io.github.ayfri.kore.features.predicates.predicate
+import io.github.ayfri.kore.features.predicates.sub.components
 import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.utils.pretty
 
 fun chatComponentsTests() {
 	val simplePlainText = textComponent("Hello, world!")
@@ -173,4 +180,53 @@ fun chatComponentsTests() {
 			}
 		}
 	""".trimIndent()
+
+
+	dataPack("components_serialization") {
+		pretty()
+
+		predicate("escaped_list") {
+			matchTool {
+				components {
+					lore("test", Color.RED)
+				}
+			}
+		}
+
+		predicates.last() assertsIs """
+			{
+				"condition": "minecraft:match_tool",
+				"predicate": {
+					"components": {
+						"lore": [
+							"{\"text\":\"test\",\"color\":\"red\"}"
+						]
+					}
+				}
+			}
+		""".trimIndent()
+
+		predicate("escaped_list2") {
+			matchTool {
+				components {
+					lore(textComponent("text1") + text("text2") + text("text3"))
+				}
+			}
+		}
+
+		predicates.last() assertsIs """
+			{
+				"condition": "minecraft:match_tool",
+				"predicate": {
+					"components": {
+						"lore": [
+							"\"text1\"",
+							"\"text2\"",
+							"\"text3\""
+						]
+					}
+				}
+			}
+		""".trimIndent()
+	}
 }
