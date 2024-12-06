@@ -16,6 +16,8 @@ data class EquippableComponent(
 	var model: ModelArgument,
 	@SerialName("allowed_entities")
 	var allowedEntities: InlinableList<EntityTypeOrTagArgument>? = null,
+	@SerialName("camera_overlay")
+	var cameraOverlay: ModelArgument? = null,
 	@SerialName("damage_on_hurt")
 	var damageOnHurt: Boolean? = null,
 	var dispensable: Boolean? = null,

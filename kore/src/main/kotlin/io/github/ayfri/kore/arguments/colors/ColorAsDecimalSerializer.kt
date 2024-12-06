@@ -7,7 +7,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-object ColorAsDecimalSerializer : KSerializer<Color> {
+data object ColorAsDecimalSerializer : KSerializer<Color> {
 	override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Color", PrimitiveKind.STRING)
 
 	override fun deserialize(decoder: Decoder) = RGB.fromDecimal(decoder.decodeInt())

@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.commands.particle.types
 
 import io.github.ayfri.kore.arguments.colors.Color
-import io.github.ayfri.kore.arguments.colors.ColorAsDoubleArraySerializer
+import io.github.ayfri.kore.arguments.colors.ColorAsDecimalSerializer
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.literals.float
@@ -18,7 +18,7 @@ import io.github.ayfri.kore.generated.Particles as ParticlesNames
 
 @Serializable
 data class Dust(
-	var color: @Serializable(ColorAsDoubleArraySerializer::class) Color,
+	var color: @Serializable(ColorAsDecimalSerializer::class) Color,
 	var scale: Double,
 ) : ParticleData()
 

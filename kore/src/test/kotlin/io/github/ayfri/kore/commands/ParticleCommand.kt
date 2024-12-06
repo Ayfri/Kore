@@ -51,14 +51,15 @@ fun Function.particleTests() {
 		blockMarker(Blocks.STONE) assertsIs "particle block_marker{block_state:{Name:\"minecraft:stone\"}}"
 		fallingDust(Blocks.STONE) assertsIs "particle falling_dust{block_state:{Name:\"minecraft:stone\"}}"
 
-		dust(Color.PURPLE, 2.0) assertsIs "particle dust{color:[0.6666666666666666d,0.0d,1.0d],scale:2.0d}"
-		dust(rgb(0xabcdef), 2.0) assertsIs "particle dust{color:[0.6705882352941176d,0.803921568627451d,0.9372549019607843d],scale:2.0d}"
+		// encode color as decimal
+		dust(Color.PURPLE, 2.0) assertsIs "particle dust{color:11141375,scale:2.0d}"
+		dust(rgb(0xabcdef), 2.0) assertsIs "particle dust{color:11259375,scale:2.0d}"
 
 		dustColorTransition(
 			Color.BLUE,
 			2.0,
 			Color.RED
-		) assertsIs "particle dust_color_transition{from_color:[0.3333333333333333d,0.3333333333333333d,1.0d],to_color:[1.0d,0.3333333333333333d,0.3333333333333333d],scale:2.0d}"
+		) assertsIs "particle dust_color_transition{from_color:5592575,to_color:16733525,scale:2.0d}"
 
 		entityEffect(Color.GREEN) assertsIs "particle entity_effect{color:[0.3333333333333333d,1.0d,0.3333333333333333d]}"
 

@@ -5,7 +5,7 @@ import kotlinx.serialization.builtins.DoubleArraySerializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-object ColorAsDoubleArraySerializer : KSerializer<Color> {
+data object ColorAsDoubleArraySerializer : KSerializer<Color> {
 	override val descriptor = DoubleArraySerializer().descriptor
 
 	override fun deserialize(decoder: Decoder): Color {
