@@ -125,6 +125,7 @@ fun main() {
 
 - [SimplEnergyKore](https://github.com/e-psi-lon/SimplEnergyKore)
 - [Kore-Bindings](https://github.com/e-psi-lon/Kore-Bindings)
+- [OreCrops](https://github.com/e-psi-lon/OreCrops)
 - [realms-map](https://github.com/Aeltumn/realms-maps)
 
 ## Features
