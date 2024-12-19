@@ -26,7 +26,7 @@ val jsonParser = Json {
 }
 
 suspend fun downloadDefaultDatapackVersion() {
-	val url = "$MAIN_GITHUB_URL/master/version_data.json"
+	val url = "$MAIN_GITHUB_URL/master/versions_data.json"
 	val versions = getFromCacheOrDownloadJson("version_data.json", url).jsonObject
 	if (!versions.containsKey(minecraftVersion)) {
 		File(cacheDir, "version_data.json").delete()
