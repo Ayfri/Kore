@@ -28,12 +28,14 @@ data class AdvancementCriteriaSurrogate(var criteria: List<AdvancementTriggerCon
 
 						put(name, buildJsonObject {
 							put("trigger", triggerName)
-							put("conditions", buildJsonObject {
-								conditions?.let { put("player", it) }
-								objectWithoutNameAndConditions.forEach { (key, value) ->
-									put(key, value)
-								}
-							})
+							if (conditions != null || objectWithoutNameAndConditions.isNotEmpty()) {
+								put("conditions", buildJsonObject {
+									conditions?.let { put("player", it) }
+									objectWithoutNameAndConditions.forEach { (key, value) ->
+										put(key, value)
+									}
+								})
+							}
 						})
 					}
 				}

@@ -534,8 +534,7 @@ private fun DataPack.componentsDisplay() {
 			},
 			"criteria": {
 				"impossible": {
-					"trigger": "minecraft:impossible",
-					"conditions": {}
+					"trigger": "minecraft:impossible"
 				}
 			}
 		}
