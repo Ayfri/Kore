@@ -1,12 +1,13 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
-import io.github.ayfri.kore.arguments.components.types.damage
-import io.github.ayfri.kore.arguments.components.types.enchantment
-import io.github.ayfri.kore.arguments.components.types.enchantments
+import io.github.ayfri.kore.arguments.chatcomponents.textComponent
+import io.github.ayfri.kore.arguments.colors.Color
+import io.github.ayfri.kore.arguments.components.types.*
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.commands.advancement
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.features.advancements.*
@@ -20,6 +21,7 @@ import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Advancements
+import io.github.ayfri.kore.generated.Enchantments
 
 fun DataPack.advancementTests() {
 	val advancement = advancement("test") {
@@ -165,6 +167,7 @@ fun DataPack.advancementTests() {
 	namespacedAdvancement.asId() assertsIs "advancements_tests:test_namespaced"
 
 	allTriggersTests()
+	componentsDisplay()
 }
 
 private fun DataPack.allTriggersTests() {
@@ -459,6 +462,80 @@ private fun DataPack.allTriggersTests() {
 							]
 						]
 					}
+				}
+			}
+		}
+	""".trimIndent()
+}
+
+private fun DataPack.componentsDisplay() {
+	advancement("item_with_components_display") {
+		display(Items.DIAMOND_SWORD, "Legendary Sword", "A powerful enchanted blade") {
+			icon(Items.DIAMOND_SWORD) {
+				// Test multiple components
+				enchantments {
+					enchantment(Enchantments.SHARPNESS, 5)
+					enchantment(Enchantments.UNBREAKING, 3)
+				}
+
+				attributeModifiers {
+					modifier(
+						type = Attributes.ATTACK_DAMAGE,
+						amount = 10.0,
+						name = "extra_damage",
+						operation = AttributeModifierOperation.ADD_VALUE
+					)
+				}
+
+				customName("§6Legendary Diamond Sword")
+
+				lore(textComponent("A blade of immense power", Color.GOLD))
+			}
+
+			frame = AdvancementFrameType.CHALLENGE
+			showToast = true
+			announceToChat = true
+		}
+
+		criteria {
+			impossible("impossible")
+		}
+	}
+
+	advancements.last() assertsIs """
+		{
+			"display": {
+				"icon": {
+					"id": "minecraft:diamond_sword",
+					"components": {
+						"enchantments": {
+							"minecraft:sharpness": 5,
+							"minecraft:unbreaking": 3
+						},
+						"attribute_modifiers": [
+							{
+								"type": "minecraft:attack_damage",
+								"id": "minecraft:extra_damage",
+								"amount": 10.0,
+								"operation": "add_value"
+							}
+						],
+						"custom_name": "\"§6Legendary Diamond Sword\"",
+						"lore": [
+							"{\"text\":\"A blade of immense power\",\"color\":\"gold\"}"
+						]
+					}
+				},
+				"title": "Legendary Sword",
+				"description": "A powerful enchanted blade",
+				"frame": "challenge",
+				"show_toast": true,
+				"announce_to_chat": true
+			},
+			"criteria": {
+				"impossible": {
+					"trigger": "minecraft:impossible",
+					"conditions": {}
 				}
 			}
 		}

@@ -163,7 +163,11 @@ data class ChatComponents(
 					encoder.encodeNbtTag(NbtString("'$normalSerialized'"))
 				}
 
-				is JsonEncoder -> encoder.encodeSerializableValue(ChatComponentsSerializer, value)
+				is JsonEncoder -> {
+					val normalSerialized = jsonSerializer.encodeToString(ChatComponentsSerializer, value)
+					encoder.encodeJsonElement(JsonPrimitive(normalSerialized))
+				}
+
 				else -> throw IllegalArgumentException("Unsupported encoder: $encoder")
 			}
 		}

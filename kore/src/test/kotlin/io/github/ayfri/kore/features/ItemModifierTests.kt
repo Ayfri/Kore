@@ -216,10 +216,7 @@ fun DataPack.itemModifierTests() {
 		{
 			"function": "minecraft:set_components",
 			"components": {
-				"custom_name": {
-					"text": "Test",
-					"color": "black"
-				},
+				"custom_name": "{\"text\":\"Test\",\"color\":\"black\"}",
 				"!damage": {},
 				"!test": {},
 				"!test2": {}
@@ -378,8 +375,8 @@ fun DataPack.itemModifierTests() {
 			"function": "minecraft:set_written_book_pages",
 			"pages": [
 				{
-					"raw": "test",
-					"filtered": "test2"
+					"raw": "\"test\"",
+					"filtered": "\"test2\""
 				}
 			],
 			"mode": "replace_all"
