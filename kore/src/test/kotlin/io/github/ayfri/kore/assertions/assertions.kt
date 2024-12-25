@@ -8,6 +8,7 @@ import io.github.ayfri.kore.commands.Command
 import io.github.ayfri.kore.utils.TestDataPack
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNamingStrategy
 import org.intellij.lang.annotations.Language
 import java.util.zip.ZipInputStream
 import kotlin.io.path.absolute
@@ -18,6 +19,7 @@ import kotlin.io.path.exists
 private val jsonStringifier = Json {
 	prettyPrint = true
 	prettyPrintIndent = "\t"
+	namingStrategy = JsonNamingStrategy.SnakeCase
 }
 
 private val alreadyPrinted = mutableSetOf<Int>()

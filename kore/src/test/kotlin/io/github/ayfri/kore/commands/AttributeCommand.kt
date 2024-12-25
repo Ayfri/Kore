@@ -49,6 +49,7 @@ fun Function.attributeTests() {
 			base {
 				get() assertsIs "attribute @s minecraft:max_health base get"
 				set(1.0) assertsIs "attribute @s minecraft:max_health base set 1"
+				reset() assertsIs "attribute @s minecraft:max_health base reset"
 			}
 
 			modifiers {

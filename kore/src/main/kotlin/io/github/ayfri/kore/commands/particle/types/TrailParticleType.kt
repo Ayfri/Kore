@@ -20,15 +20,17 @@ import io.github.ayfri.kore.generated.Particles as ParticlesNames
 @Serializable
 data class TrailParticleType(
 	var color: @Serializable(ColorAsDecimalSerializer::class) Color,
+	var duration: Int,
 	var target: TripleAsArray<Int, Int, Int>,
 ) : ParticleData()
 
-fun Particles.trail(color: Color, target: TripleAsArray<Int, Int, Int>, pos: Vec3? = null) =
-	fn.addLine(command("particle", ParticleType(ParticlesNames.TRAIL, TrailParticleType(color, target)).asParticleArg(), pos))
+fun Particles.trail(color: Color, target: TripleAsArray<Int, Int, Int>, duration: Int, pos: Vec3? = null) =
+	fn.addLine(command("particle", ParticleType(ParticlesNames.TRAIL, TrailParticleType(color, duration, target)).asParticleArg(), pos))
 
 fun Particles.trail(
 	color: Color,
 	target: TripleAsArray<Int, Int, Int>,
+	duration: Int,
 	pos: Vec3,
 	delta: Vec3,
 	speed: Double,
@@ -38,7 +40,7 @@ fun Particles.trail(
 ) = fn.addLine(
 	command(
 		"particle",
-		ParticleType(ParticlesNames.TRAIL, TrailParticleType(color, target)).asParticleArg(),
+		ParticleType(ParticlesNames.TRAIL, TrailParticleType(color, duration, target)).asParticleArg(),
 		pos,
 		delta,
 		float(speed),

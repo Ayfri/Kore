@@ -25,6 +25,23 @@ import io.github.ayfri.kore.features.worldgen.ruletest.randomBlockMatch
 import io.github.ayfri.kore.generated.Blocks
 
 fun DataPack.configuredFeatureTests() {
+	configuredFeature("test_simple_block", simpleBlock(simpleStateProvider(Blocks.STONE), scheduleTick = true))
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:simple_block",
+			"config": {
+				"to_place": {
+					"type": "minecraft:simple_state_provider",
+					"state": {
+						"Name": "minecraft:stone"
+					}
+				},
+				"schedule_tick": true
+			}
+		}
+	""".trimIndent()
+
 	configuredFeature("test_tree", tree {
 		minimumSize = threeLayersFeatureSize {
 			limit = 5

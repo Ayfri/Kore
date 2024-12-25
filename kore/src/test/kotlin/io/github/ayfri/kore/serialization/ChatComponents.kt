@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.serialization
 
 import io.github.ayfri.kore.arguments.chatcomponents.*
+import io.github.ayfri.kore.arguments.chatcomponents.events.runCommand
 import io.github.ayfri.kore.arguments.chatcomponents.events.showItem
 import io.github.ayfri.kore.arguments.chatcomponents.events.showText
 import io.github.ayfri.kore.arguments.colors.Color
@@ -12,6 +13,7 @@ import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.arguments.types.resources.storage
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.assertions.assertsIsJson
+import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.predicates.conditions.matchTool
 import io.github.ayfri.kore.features.predicates.predicate
@@ -36,9 +38,9 @@ fun chatComponentsTests() {
 			},
 			{
 				"type": "text",
-				"text": "world!",
+				"bold": true,
 				"color": "red",
-				"bold": true
+				"text": "world!"
 			}
 		]
 	""".trimIndent()
@@ -64,8 +66,8 @@ fun chatComponentsTests() {
 	nbtComponentEntity assertsIsJson """
 		{
 			"type": "nbt",
-			"nbt": "test",
 			"entity": "@s",
+			"nbt": "test",
 			"source": "entity"
 		}
 	""".trimIndent()
@@ -74,8 +76,8 @@ fun chatComponentsTests() {
 	nbtComponentBlock assertsIsJson """
 		{
 			"type": "nbt",
-			"nbt": "test",
 			"block": "0 0 0",
+			"nbt": "test",
 			"source": "block"
 		}
 	""".trimIndent()
@@ -85,8 +87,8 @@ fun chatComponentsTests() {
 		{
 			"type": "nbt",
 			"nbt": "test",
-			"storage": "minecraft:my_storage",
-			"source": "storage"
+			"source": "storage",
+			"storage": "minecraft:my_storage"
 		}
 	""".trimIndent()
 
@@ -147,11 +149,11 @@ fun chatComponentsTests() {
 	hoverEventComponent assertsIsJson """
 		{
 			"type": "text",
-			"text": "Hover me!",
 			"hoverEvent": {
 				"action": "show_text",
 				"value": "Hello, world!"
-			}
+			},
+			"text": "Hover me!"
 		}
 	""".trimIndent()
 
@@ -166,7 +168,6 @@ fun chatComponentsTests() {
 	hoverEventComponentWithItem assertsIsJson """
 		{
 			"type": "text",
-			"text": "Hover me!",
 			"hoverEvent": {
 				"action": "show_item",
 				"value": "",
@@ -177,7 +178,8 @@ fun chatComponentsTests() {
 						"damage": 5
 					}
 				}
-			}
+			},
+			"text": "Hover me!"
 		}
 	""".trimIndent()
 
@@ -229,4 +231,50 @@ fun chatComponentsTests() {
 			}
 		""".trimIndent()
 	}
+
+	chatComponentAllFields()
+}
+
+private fun chatComponentAllFields() {
+	val component = textComponent("Hello, world!") {
+		bold = true
+		italic = true
+		underlined = true
+		strikethrough = true
+		obfuscated = true
+		color = Color.RED
+		shadowColor = Color.BLUE
+		insertion = "insertion"
+		clickEvent {
+			runCommand {
+				say("Run command")
+			}
+		}
+		hoverEvent {
+			showText("show_text")
+		}
+	}
+
+	component assertsIsJson """
+		{
+			"type": "text",
+			"bold": true,
+			"clickEvent": {
+				"action": "run_command",
+				"value": "/say Run command"
+			},
+			"color": "red",
+			"hoverEvent": {
+				"action": "show_text",
+				"value": "show_text"
+			},
+			"insertion": "insertion",
+			"italic": true,
+			"obfuscated": true,
+			"shadow_color": "blue",
+			"strikethrough": true,
+			"text": "Hello, world!",
+			"underlined": true
+		}
+	""".trimIndent()
 }

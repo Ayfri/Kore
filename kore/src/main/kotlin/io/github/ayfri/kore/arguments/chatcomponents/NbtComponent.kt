@@ -33,13 +33,13 @@ data class NbtComponent(
 
 	override fun toNbtTag() = buildNbtCompound {
 		super.toNbtTag().entries.forEach { (key, value) -> if (key != "text") this[key] = value }
-		this["nbt"] = nbt
-		interpret?.let { this["interpret"] = it }
 		block?.let { this["block"] = it }
 		entity?.let { this["entity"] = it }
-		storage?.let { this["storage"] = it }
+		interpret?.let { this["interpret"] = it }
+		this["nbt"] = nbt
 		separator?.let { this["separator"] = it.toNbtTag() }
 		source?.let { this["source"] = it.name.lowercase() }
+		storage?.let { this["storage"] = it }
 	}
 }
 

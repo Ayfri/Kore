@@ -42,7 +42,6 @@ fun Function.particleTests() {
 	) assertsIs "particle minecraft:ash ~ ~ ~ ~ ~ ~ 1 2 normal @e"
 
 	particles {
-		// il faut fix la serialization, le naming, à voir pour refaire encore le sérialiseur, aussi les properties sont dans le Name
 		block(Blocks.STONE_SLAB(states = mapOf("half" to "top"))) assertsIs "particle block{block_state:{Name:\"minecraft:stone_slab\",Properties:{half:\"top\"}}}"
 
 		blockCrumble(Blocks.STONE) assertsIs "particle block_crumble{block_state:{Name:\"minecraft:stone\"}}"
@@ -51,7 +50,6 @@ fun Function.particleTests() {
 		blockMarker(Blocks.STONE) assertsIs "particle block_marker{block_state:{Name:\"minecraft:stone\"}}"
 		fallingDust(Blocks.STONE) assertsIs "particle falling_dust{block_state:{Name:\"minecraft:stone\"}}"
 
-		// encode color as decimal
 		dust(Color.PURPLE, 2.0) assertsIs "particle dust{color:11141375,scale:2.0d}"
 		dust(rgb(0xabcdef), 2.0) assertsIs "particle dust{color:11259375,scale:2.0d}"
 
@@ -77,12 +75,14 @@ fun Function.particleTests() {
 
 		trail(
 			Color.RED,
-			Triple(1, 2, 3)
-		) assertsIs "particle trail{color:16733525,target:[1,2,3]}"
+			Triple(1, 2, 3),
+			10
+		) assertsIs "particle trail{color:16733525,duration:10,target:[1,2,3]}"
 		trail(
 			Color.BLUE,
-			Triple(0, 0, 0)
-		) assertsIs "particle trail{color:5592575,target:[0,0,0]}"
+			Triple(0, 0, 0),
+			20
+		) assertsIs "particle trail{color:5592575,duration:20,target:[0,0,0]}"
 
 		vibration(vec3(1, 2, 3), 10) assertsIs "particle vibration 1 2 3 10"
 	}

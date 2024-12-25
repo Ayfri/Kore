@@ -10,6 +10,7 @@ import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Carvers
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.PlacedFeatures
+import io.github.ayfri.kore.generated.Sounds
 
 fun DataPack.biomeTests() {
 	val biome = biome("my_biome") {
@@ -26,6 +27,16 @@ fun DataPack.biomeTests() {
 			waterFogColor = Color.YELLOW
 			foliageColor = Color.PURPLE
 			grassColor = Color.WHITE
+
+			music(Sounds.Music.Menu.MOOG_CITY_2, weight = 2) {
+				minDelay = 100
+				maxDelay = 200
+				replaceCurrentMusic = true
+			}
+
+			addMusic(Sounds.Music.Menu.FLOATING_TREES)
+
+			musicVolume = 1.5f
 		}
 		spawners {
 			creature {
@@ -65,7 +76,28 @@ fun DataPack.biomeTests() {
 				"water_color": 5635925,
 				"water_fog_color": 16777045,
 				"grass_color": 16777215,
-				"foliage_color": 11141375
+				"foliage_color": 11141375,
+				"music": [
+					{
+						"data": {
+							"sound": "minecraft:music/menu/moog_city_2",
+							"min_delay": 100,
+							"max_delay": 200,
+							"replace_current_music": true
+						},
+						"weight": 2
+					},
+					{
+						"data": {
+							"sound": "minecraft:music/menu/floating_trees",
+							"min_delay": 0,
+							"max_delay": 0,
+							"replace_current_music": false
+						},
+						"weight": 1
+					}
+				],
+				"music_volume": 1.5
 			},
 			"spawners": {
 				"creature": [

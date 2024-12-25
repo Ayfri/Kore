@@ -19,7 +19,8 @@ data class BiomeEffects(
 	var ambientSound: SoundArgument? = null,
 	var moodSound: MoodSound? = null,
 	var additionsSound: AdditionalSound? = null,
-	var music: Music? = null,
+	var music: List<WeightedMusic>? = null,
+	var musicVolume: Float = 1.0f,
 	var particle: Particle? = null,
 )
 
@@ -35,12 +36,20 @@ fun BiomeEffects.additionalSound(sound: SoundArgument, tickChance: Float) {
 	additionsSound = AdditionalSound(sound, tickChance)
 }
 
-fun BiomeEffects.music(sound: SoundArgument, init: Music.() -> Unit = {}) {
-	music = Music(sound).apply(init)
+fun BiomeEffects.music(sound: SoundArgument, weight: Int = 1, init: Music.() -> Unit = {}) {
+	music = listOf(WeightedMusic(Music(sound).apply(init), weight))
 }
 
-fun BiomeEffects.music(sound: SoundArgument, minDelay: Int, maxDelay: Int, replaceCurrentMusic: Boolean) {
-	music = Music(sound, minDelay, maxDelay, replaceCurrentMusic)
+fun BiomeEffects.music(sound: SoundArgument, weight: Int = 1, minDelay: Int, maxDelay: Int, replaceCurrentMusic: Boolean) {
+	music = listOf(WeightedMusic(Music(sound, minDelay, maxDelay, replaceCurrentMusic), weight))
+}
+
+fun BiomeEffects.addMusic(sound: SoundArgument, weight: Int = 1, init: Music.() -> Unit = {}) {
+	music = (music ?: emptyList()) + WeightedMusic(Music(sound).apply(init), weight)
+}
+
+fun BiomeEffects.addMusic(sound: SoundArgument, weight: Int = 1, minDelay: Int, maxDelay: Int, replaceCurrentMusic: Boolean) {
+	music = (music ?: emptyList()) + WeightedMusic(Music(sound, minDelay, maxDelay, replaceCurrentMusic), weight)
 }
 
 fun BiomeEffects.particle(type: ParticleArgument, probability: Float) {

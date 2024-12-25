@@ -29,6 +29,7 @@ abstract class ChatComponent {
 	var insertion: String? = null
 	var italic: Boolean? = null
 	var obfuscated: Boolean? = null
+	var shadowColor: Color? = null
 	var strikethrough: Boolean? = null
 	var underlined: Boolean? = null
 
@@ -36,24 +37,25 @@ abstract class ChatComponent {
 
 	open fun toNbtTag() = buildNbtCompound {
 		this["type"] = type.name.lowercase()
-		if (extra == null) this["text"] = text
-		color?.let { this["color"] = it.asString() }
 		bold?.let { this["bold"] = it }
 		clickEvent?.let { this["clickEvent"] = it.toNbtTag() }
+		color?.let { this["color"] = it.asString() }
+		extra?.let { this["extra"] = it }
 		font?.let { this["font"] = it }
 		hoverEvent?.let { this["hoverEvent"] = it.toNbtTag() }
 		insertion?.let { this["insertion"] = it }
 		italic?.let { this["italic"] = it }
 		obfuscated?.let { this["obfuscated"] = it }
-		extra?.let { this["extra"] = it }
+		shadowColor?.let { this["shadow_color"] = it.asString() }
 		strikethrough?.let { this["strikethrough"] = it }
+		if (extra == null) this["text"] = text
 		underlined?.let { this["underlined"] = it }
 	}
 
 	fun toNbt() = if (containsOnlyText()) text.nbt else toNbtTag()
 
 	override fun toString() =
-		"${type.name.pascalCase()}(text='$text', bold=$bold, clickEvent=$clickEvent, color=$color, extra=$extra, font=$font, hoverEvent=$hoverEvent, insertion=$insertion, italic=$italic, obfuscated=$obfuscated, strikethrough=$strikethrough, underlined=$underlined)"
+		"${type.name.pascalCase()}(text='$text', bold=$bold, clickEvent=$clickEvent, color=$color, extra=$extra, font=$font, hoverEvent=$hoverEvent, insertion=$insertion, italic=$italic, obfuscated=$obfuscated, shadowColor=$shadowColor, strikethrough=$strikethrough, underlined=$underlined)"
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
@@ -71,6 +73,7 @@ abstract class ChatComponent {
 		if (insertion != other.insertion) return false
 		if (italic != other.italic) return false
 		if (obfuscated != other.obfuscated) return false
+		if (shadowColor != other.shadowColor) return false
 		if (strikethrough != other.strikethrough) return false
 		return underlined == other.underlined
 	}
@@ -86,6 +89,7 @@ abstract class ChatComponent {
 		result = 31 * result + (insertion?.hashCode() ?: 0)
 		result = 31 * result + (italic?.hashCode() ?: 0)
 		result = 31 * result + (obfuscated?.hashCode() ?: 0)
+		result = 31 * result + (shadowColor?.hashCode() ?: 0)
 		result = 31 * result + (strikethrough?.hashCode() ?: 0)
 		result = 31 * result + (underlined?.hashCode() ?: 0)
 		return result

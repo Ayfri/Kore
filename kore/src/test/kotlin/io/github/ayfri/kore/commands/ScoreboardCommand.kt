@@ -39,7 +39,7 @@ fun Function.scoreboardTests() {
 				"test",
 				"test",
 				color = Color.RED
-			) assertsIs "scoreboard objectives modify test numberformat fixed {\"type\":\"text\",\"text\":\"test\",\"color\":\"red\"}"
+			) assertsIs "scoreboard objectives modify test numberformat fixed {\"type\":\"text\",\"color\":\"red\",\"text\":\"test\"}"
 
 			modifyNumberFormatStyled("test") {
 				bold = true
@@ -75,7 +75,7 @@ fun Function.scoreboardTests() {
 				"test",
 				"test",
 				color = Color.RED
-			) assertsIs "scoreboard players display numberformat @s test fixed {\"type\":\"text\",\"text\":\"test\",\"color\":\"red\"}"
+			) assertsIs "scoreboard players display numberformat @s test fixed {\"type\":\"text\",\"color\":\"red\",\"text\":\"test\"}"
 
 			displayNumberFormatStyled(self(), "test") {
 				bold = true
@@ -109,7 +109,7 @@ fun Function.scoreboardTests() {
 			modifyNumberFormatFixed(
 				"test",
 				color = Color.RED
-			) assertsIs "scoreboard objectives modify test numberformat fixed {\"type\":\"text\",\"text\":\"test\",\"color\":\"red\"}"
+			) assertsIs "scoreboard objectives modify test numberformat fixed {\"type\":\"text\",\"color\":\"red\",\"text\":\"test\"}"
 
 			modifyNumberFormatStyled {
 				bold = true

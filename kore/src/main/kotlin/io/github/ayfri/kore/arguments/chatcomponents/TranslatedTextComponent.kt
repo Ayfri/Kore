@@ -16,6 +16,7 @@ data class TranslatedTextComponent(
 
 	override fun toNbtTag() = buildNbtCompound {
 		super.toNbtTag().entries.forEach { (key, value) -> if (key != "text") this[key] = value }
+		fallback?.let { this["fallback"] = it }
 		this["translate"] = translate
 		with?.let {
 			this["with"] = buildNbtList {
@@ -24,7 +25,6 @@ data class TranslatedTextComponent(
 				}
 			}
 		}
-		fallback?.let { this["fallback"] = it }
 	}
 }
 

@@ -24,6 +24,7 @@ enum class AttributeModifierOperation {
 class AttributeBase(private val fn: Function, private val target: EntityArgument, private val attribute: AttributeArgument) {
 	fun get() = fn.addLine(command("attribute", target, attribute, literal("base"), literal("get")))
 	fun set(value: Double) = fn.addLine(command("attribute", target, attribute, literal("base"), literal("set"), float(value)))
+	fun reset() = fn.addLine(command("attribute", target, attribute, literal("base"), literal("reset")))
 }
 
 class AttributeModifiers(private val fn: Function, private val target: EntityArgument, private val attribute: AttributeArgument) {
