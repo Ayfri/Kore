@@ -13,7 +13,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class EquippableComponent(
 	var slot: EquipmentSlot,
-	var model: ModelArgument,
+	@SerialName("asset_id")
+	var assetId: ModelArgument,
 	@SerialName("allowed_entities")
 	var allowedEntities: InlinableList<EntityTypeOrTagArgument>? = null,
 	@SerialName("camera_overlay")
@@ -28,18 +29,18 @@ data class EquippableComponent(
 
 fun ComponentsScope.equippable(
 	slot: EquipmentSlot,
-	model: ModelArgument,
+	assetId: ModelArgument,
 	init: EquippableComponent.() -> Unit = {},
 ) = apply {
-	this[ComponentTypes.EQUIPPABLE] = EquippableComponent(slot, model = model).apply(init)
+	this[ComponentTypes.EQUIPPABLE] = EquippableComponent(slot, assetId = assetId).apply(init)
 }
 
 fun ComponentsScope.equippable(
 	slot: EquipmentSlot,
-	model: String,
+	assetId: String,
 	namespace: String = "minecraft",
 	init: EquippableComponent.() -> Unit = {},
-) = equippable(slot, ModelArgument(model, namespace), init)
+) = equippable(slot, ModelArgument(assetId, namespace), init)
 
 fun EquippableComponent.allowedEntities(vararg entities: EntityTypeOrTagArgument) = apply {
 	allowedEntities = entities.toList()

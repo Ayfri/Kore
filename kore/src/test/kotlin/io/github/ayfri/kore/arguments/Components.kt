@@ -203,9 +203,14 @@ fun componentsTests() {
 	customDataTest.asString() assertsIs """minecraft:stone_sword[custom_data={test:"test"}]"""
 
 	val customModelDataTest = stoneSword {
-		customModelData(5)
+		customModelData(
+			colors = listOf(Color.RED, Color.BLUE),
+			flags = listOf(true, false),
+			floats = listOf(1.0f, 2.0f),
+			strings = listOf("test1", "test2")
+		)
 	}
-	customModelDataTest.asString() assertsIs """minecraft:stone_sword[custom_model_data=5]"""
+	customModelDataTest.asString() assertsIs """minecraft:stone_sword[custom_model_data={colors:[16733525,5592575],flags:[1b,0b],floats:[1.0f,2.0f],strings:["test1","test2"]}]"""
 
 	val customNameTest = stoneSword {
 		customName(textComponent("test", Color.AQUA))
@@ -283,7 +288,7 @@ fun componentsTests() {
 			damageOnHurt = true
 		}
 	}
-	equippableTest.asString() assertsIs """minecraft:stone_sword[equippable={slot:"head",model:"minecraft:model",allowed_entities:"minecraft:player",damage_on_hurt:1b,dispensable:1b,equip_sound:"minecraft:item.armor.equip_iron"}]"""
+	equippableTest.asString() assertsIs """minecraft:stone_sword[equippable={slot:"head",asset_id:"minecraft:model",allowed_entities:"minecraft:player",damage_on_hurt:1b,dispensable:1b,equip_sound:"minecraft:item.armor.equip_iron"}]"""
 
 	val fireworksTest = Items.FIREWORK_ROCKET {
 		fireworks(flightDuration = 1) {

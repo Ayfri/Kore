@@ -249,13 +249,74 @@ fun DataPack.itemModifierTests() {
 	""".trimIndent()
 
 	itemModifier("set_custom_model_data") {
-		setCustomModelData(5)
+		setCustomModelData(
+			colors = listOf(Color.RED, Color.BLUE),
+			flags = listOf(true, false),
+			floats = listOf(1.0f, 2.0f),
+			strings = listOf("test1", "test2")
+		)
 	}
 
 	itemModifiers.last() assertsIs """
 		{
 			"function": "minecraft:set_custom_model_data",
-			"value": 5.0
+			"colors": {
+				"values": [
+					16733525,
+					5592575
+				],
+				"mode": "replace_all"
+			},
+			"flags": {
+				"values": [
+					true,
+					false
+				],
+				"mode": "replace_all"
+			},
+			"floats": {
+				"values": [
+					1.0,
+					2.0
+				],
+				"mode": "replace_all"
+			},
+			"strings": {
+				"values": [
+					"test1",
+					"test2"
+				],
+				"mode": "replace_all"
+			}
+		}
+	""".trimIndent()
+
+	itemModifier("set_custom_model_data_with_mode") {
+		setCustomModelData(
+			colors = listOf(Color.RED),
+			flags = listOf(true)
+		) {
+			colors?.mode(Mode.INSERT, 1)
+			flags?.mode(Mode.APPEND)
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:set_custom_model_data",
+			"colors": {
+				"values": [
+					16733525
+				],
+				"mode": "insert",
+				"offset": 1
+			},
+			"flags": {
+				"values": [
+					true
+				],
+				"mode": "append"
+			}
 		}
 	""".trimIndent()
 
