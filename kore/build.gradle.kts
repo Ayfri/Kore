@@ -28,7 +28,8 @@ kotlin {
 	jvmToolchain(17)
 
 	compilerOptions {
-		freeCompilerArgs = listOf("-Xcontext-receivers")
+		freeCompilerArgs =
+			listOf("-Xcontext-receivers", "-Xrender-internal-diagnostic-names", "-Xsuppress-warning=CONTEXT_RECEIVERS_DEPRECATED")
 	}
 }
 
