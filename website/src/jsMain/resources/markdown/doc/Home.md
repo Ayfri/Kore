@@ -7,6 +7,7 @@ keywords: minecraft, datapack, kore, guide
 date-created: 2024-04-06
 date-modified: 2024-04-06
 routeOverride: /docs/home
+position: 0
 ---
 
 # Kore

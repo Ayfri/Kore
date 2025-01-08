@@ -7,6 +7,7 @@ keywords: minecraft, datapack, kore, guide, configuration
 date-created: 2024-04-06
 date-modified: 2024-01-08
 routeOverride: /docs/configuration
+position: 1
 ---
 
 # DataPack Configuration

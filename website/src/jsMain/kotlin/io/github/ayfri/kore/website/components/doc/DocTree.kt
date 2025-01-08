@@ -15,8 +15,21 @@ import org.jetbrains.compose.web.dom.*
 
 private fun StyleScope.indentation(level: Int) = marginLeft(level * 2.cssRem)
 
+sealed class DocNode(val level: Int) {
+	class EntryNode(val entry: DocArticle, level: Int, val isGroup: Boolean = false) : DocNode(level)
+	class GroupNode(val name: String, level: Int, val hasEntry: Boolean = false) : DocNode(level)
+}
+
 @Composable
-fun Entry(article: DocArticle, selected: Boolean = false) = Li {
+private fun DocNode.Render(currentURL: String) {
+	when (this) {
+		is DocNode.EntryNode -> Entry(entry, entry.path == currentURL, isGroup)
+		is DocNode.GroupNode -> if (!hasEntry) GroupEntry(name, level - 1)
+	}
+}
+
+@Composable
+fun Entry(article: DocArticle, selected: Boolean = false, isGroup: Boolean = false) = Li {
 	A(article.path, article.navTitle) {
 		style {
 			if (article.slugs.size > 2) {
@@ -25,6 +38,7 @@ fun Entry(article: DocArticle, selected: Boolean = false) = Li {
 		}
 
 		classes(DocTreeStyle.entry, DocTreeStyle.articleEntry)
+		if (isGroup) classes(DocTreeStyle.groupArticleEntry)
 		title(article.navTitle)
 		if (selected) classes(DocTreeStyle.selected)
 	}
@@ -51,6 +65,46 @@ fun DocTree() {
 	val entries = docEntries
 	val currentURL = context.path
 
+	// Pre-compute the tree structure
+	val nodes = buildList {
+		// First sort all entries by position and title
+		val sortedEntries = entries.sortedWith(
+			compareBy<DocArticle> { it.position ?: Int.MAX_VALUE }
+				.thenBy { it.navTitle }
+		)
+
+		// Track groups we've already processed
+		val processedGroups = mutableSetOf<String>()
+
+		sortedEntries.forEach { entry ->
+			val slugs = entry.slugs.drop(1)
+			val level = slugs.size
+
+			// For entries with multiple slugs, add group nodes
+			if (slugs.size > 1) {
+				// Process all but the last slug as potential groups
+				for (i in 0 until slugs.size - 1) {
+					val groupPath = slugs.take(i + 1).joinToString("/")
+					if (groupPath !in processedGroups) {
+						processedGroups.add(groupPath)
+						val groupName = slugs[i].kebabCaseToTitleCamelCase()
+						// Check if this group has a corresponding entry
+						val hasEntry = entries.any { it.slugs.drop(1).last() == slugs[i] }
+						add(DocNode.GroupNode(groupName, i + 1, hasEntry))
+					}
+				}
+			}
+
+			// Add the entry node, checking if it's also a group
+			val isGroup = entries.any { other ->
+				other != entry &&
+					other.slugs.drop(1).size > slugs.size &&
+					other.slugs.drop(1).take(slugs.size) == slugs
+			}
+			add(DocNode.EntryNode(entry, level, isGroup))
+		}
+	}
+
 	Div({
 		id("doc-tree")
 	}) {
@@ -61,34 +115,8 @@ fun DocTree() {
 		Ul({
 			classes(DocTreeStyle.list)
 		}) {
-			// Separate the entries that are not in a group.
-			val (simpleEntriesWithoutGroup, otherEntries) = entries.partition {
-				it.middleSlugs.isEmpty() && entries.none { entry -> entry.middleSlugs.contains(it.slugs.last()) }
-			}
-			// Display these entries first.
-			simpleEntriesWithoutGroup.forEach { entry ->
-				Entry(entry, entry.path == currentURL)
-			}
-
-			// Then group the entries by their middle slugs.
-			val presentedGroups = mutableSetOf<String>()
-			otherEntries.groupBy { it.middleSlugs.joinToString("/") }.forEach { (slug, groupEntries) ->
-				if (slug in presentedGroups || slug.isEmpty()) return@forEach
-
-				presentedGroups += slug
-				val slugName = slug.split("/").last()
-				if (slugName in entries.map { it.slugs.last() }) {
-					entries.find { it.slugs.last() == slug }?.let { entry ->
-						Entry(entry, entry.path == currentURL)
-					}
-				} else {
-					GroupEntry(slugName.kebabCaseToTitleCamelCase(), slug.count { it == '/' })
-				}
-
-				val sortedEntries = groupEntries.sortedBy { it.slugs.size }.filter { it.slugs.last() != slugName }
-				sortedEntries.forEach { entry ->
-					Entry(entry, entry.path == currentURL)
-				}
+			nodes.forEach { node ->
+				node.Render(currentURL)
 			}
 		}
 	}
@@ -109,11 +137,10 @@ object DocTreeStyle : StyleSheet() {
 
 	val entry by style {
 		display(DisplayStyle.Block)
-		padding(0.5.cssRem)
+		padding(0.35.cssRem)
+		fontSize(1.15.cssRem)
 
 		borderRadius(GlobalStyle.roundingButton)
-		fontSize(1.2.cssRem)
-
 		color(GlobalStyle.textColor)
 		transition(0.2.s, "color", "background-color")
 		whiteSpace(WhiteSpace.NoWrap)
@@ -133,4 +160,6 @@ object DocTreeStyle : StyleSheet() {
 	val selected by style {
 		color(GlobalStyle.linkColor)
 	}
+
+	val groupArticleEntry by style {}
 }

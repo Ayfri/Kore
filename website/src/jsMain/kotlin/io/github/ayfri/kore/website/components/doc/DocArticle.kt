@@ -9,6 +9,7 @@ data class DocArticle(
 	val keywords: List<String>,
 	val dateModified: String,
 	val slugs: List<String>,
+	val position: Int? = null,
 )
 
 val DocArticle.middleSlugs get() = slugs.drop(1).dropLast(1)
