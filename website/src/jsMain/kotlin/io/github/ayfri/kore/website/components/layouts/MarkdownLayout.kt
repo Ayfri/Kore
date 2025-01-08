@@ -7,6 +7,7 @@ import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiChevronRight
 import com.varabyte.kobwebx.markdown.markdown
 import io.github.ayfri.kore.website.GlobalStyle
+import io.github.ayfri.kore.website.components.common.Meta
 import io.github.ayfri.kore.website.components.common.setDescription
 import io.github.ayfri.kore.website.components.doc.*
 import io.github.ayfri.kore.website.utils.*
@@ -25,6 +26,18 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 
 	val context = rememberPageContext()
 	val markdownData = context.markdown!!.frontMatter
+
+	// Format dates for SEO
+	val publishDate = markdownData["date-created"]?.get(0)?.let { date ->
+		date.split("-").let { (year, month, day) ->
+			"$year-${month.padStart(2, '0')}-${day.padStart(2, '0')}"
+		}
+	}
+	val modifiedDate = markdownData["date-modified"]?.get(0)?.let { date ->
+		date.split("-").let { (year, month, day) ->
+			"$year-${month.padStart(2, '0')}-${day.padStart(2, '0')}"
+		}
+	}
 
 	var onMobile by remember { mutableStateOf(false) }
 	var revealed by remember { mutableStateOf(false) }
@@ -45,8 +58,21 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 			name = "Kore"
 			url = "https://github.com/Ayfri/Kore"
 		}
-		datePublished = markdownData["date-created"]?.get(0) ?: ""
-		dateModified = markdownData["date-modified"]?.get(0) ?: ""
+		datePublished = publishDate
+		dateModified = modifiedDate
+		mainEntityOfPage = obj {
+			`@type` = "WebPage"
+			`@id` = "https://kore.ayfri.com${context.route.path}"
+		}
+		publisher = obj {
+			`@type` = "Organization"
+			name = "Kore"
+			url = "https://github.com/Ayfri/Kore"
+			logo = obj {
+				`@type` = "ImageObject"
+				url = "https://kore.ayfri.com/logo.png"
+			}
+		}
 		keywords = markdownData["keywords"]?.get(0) ?: ""
 		breadcrumb = obj {
 			`@type` = "BreadcrumbList"
@@ -72,6 +98,25 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 	}
 
 	PageLayout(markdownData["nav-title"]?.get(0) ?: "Untitled") {
+		// Add meta tags for dates
+		publishDate?.let {
+			Meta(attrs = {
+				attr("property", "publish_date")
+				attr("content", it)
+			})
+		}
+
+		modifiedDate?.let {
+			Meta(attrs = {
+				attr("property", "modified_date")
+				attr("content", it)
+			})
+			Meta(attrs = {
+				attr("name", "last-modified")
+				attr("content", it)
+			})
+		}
+
 		Script(type = "application/ld+json") {
 			Text(JSON.stringify(jsonLd))
 		}
@@ -112,12 +157,20 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 					Div({
 						classes(MarkdownLayoutStyle.metadata)
 					}) {
-						markdownData["date-created"]?.get(0)?.let { date ->
-							P { Text("Published: $date") }
+						publishDate?.let { date ->
+							P({
+								attr("datetime", date)
+							}) {
+								Text("Published: $date")
+							}
 						}
 
-						markdownData["date-modified"]?.get(0)?.let { date ->
-							P { Text("Last updated: $date") }
+						modifiedDate?.let { date ->
+							P({
+								attr("datetime", date)
+							}) {
+								Text("Last updated: $date")
+							}
 						}
 
 						A(
