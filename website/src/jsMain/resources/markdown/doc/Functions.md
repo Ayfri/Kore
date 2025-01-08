@@ -65,8 +65,8 @@ tick {
 }
 ```
 
-- `load` tag: `minecraft:load`
-- `tick` tag: `minecraft:tick`
+-   `load` tag: `minecraft:load`
+-   `tick` tag: `minecraft:tick`
 
 This will create functions with randomly generated names, but you can also specify the name of the function:
 
@@ -148,6 +148,7 @@ execute {
 
 	ifCondition {
 		score(self(), "test") lessThan 10
+		predicate(myPredicate)
 	}
 
 	run { // be sure to import the run function, do not use the one from kotlin.
@@ -156,9 +157,9 @@ execute {
 }
 ```
 
-You may also have commands where you can create "contexts", you only call once a function with a lambda, then inside the lambda, the context
-is
-reused for each call.
+You can use predicates in the `ifCondition` block to check complex conditions. See the [Predicates](./predicates) documentation for more details.
+
+You may also have commands where you can create "contexts".
 
 An example of the `data` command:
 

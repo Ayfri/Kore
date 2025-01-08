@@ -79,6 +79,7 @@ advancement("my_advancement") {
 
 Criteria define the conditions that must be met to earn the advancement.<br>
 Each criterion can have predicate conditions that must be met for the criterion to be completed on top of its properties.<br>
+For a complete guide on predicates and their conditions, see the [Predicates](./predicates) documentation.<br>
 You can add multiple criteria:
 
 ```kotlin
