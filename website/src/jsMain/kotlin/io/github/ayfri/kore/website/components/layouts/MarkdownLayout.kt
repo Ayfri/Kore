@@ -8,10 +8,7 @@ import com.varabyte.kobweb.silk.components.icons.mdi.MdiChevronRight
 import com.varabyte.kobwebx.markdown.markdown
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.setDescription
-import io.github.ayfri.kore.website.components.doc.DocSidebar
-import io.github.ayfri.kore.website.components.doc.GoToTopButton
-import io.github.ayfri.kore.website.components.doc.PageNavigation
-import io.github.ayfri.kore.website.components.doc.TableOfContents
+import io.github.ayfri.kore.website.components.doc.*
 import io.github.ayfri.kore.website.utils.*
 import kotlinx.browser.window
 import org.jetbrains.compose.web.css.*
@@ -37,7 +34,48 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 		onMobile = window.innerWidth < 768
 	}
 
+	val slugs = context.route.path.split("/").drop(1)
+	val jsonLd = obj {
+		`@context` = "https://schema.org"
+		`@type` = "TechArticle"
+		headline = markdownData["title"]?.get(0) ?: "Untitled"
+		description = markdownData["description"]?.get(0) ?: ""
+		author = obj {
+			`@type` = "Organization"
+			name = "Kore"
+			url = "https://github.com/Ayfri/Kore"
+		}
+		datePublished = markdownData["date-created"]?.get(0) ?: ""
+		dateModified = markdownData["date-modified"]?.get(0) ?: ""
+		keywords = markdownData["keywords"]?.get(0) ?: ""
+		breadcrumb = obj {
+			`@type` = "BreadcrumbList"
+			itemListElement = slugs.mapIndexed { index, slug ->
+				obj {
+					`@type` = "ListItem"
+					position = index + 2
+					name = slug.replace("-", " ").replaceFirstChar { it.uppercase() }
+					item = "https://kore.ayfri.com/${slugs.take(index + 1).joinToString("/")}"
+				}
+			}.toTypedArray().also {
+				arrayOf(
+					obj {
+						`@type` = "ListItem"
+						position = 1
+						name = "Home"
+						item = "https://kore.ayfri.com/"
+					},
+					*it
+				)
+			}
+		}
+	}
+
 	PageLayout(markdownData["nav-title"]?.get(0) ?: "Untitled") {
+		Script(type = "application/ld+json") {
+			Text(JSON.stringify(jsonLd))
+		}
+
 		Button({
 			classes(MarkdownLayoutStyle.revealButton)
 			onClick { revealed = !revealed }
@@ -53,6 +91,8 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 			if (markdownData["description"] != null) {
 				setDescription(markdownData["description"]!![0])
 			}
+
+			Breadcrumbs(slugs.drop(1))
 
 			if (onMobile) {
 				Div({
@@ -72,6 +112,10 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 					Div({
 						classes(MarkdownLayoutStyle.metadata)
 					}) {
+						markdownData["date-created"]?.get(0)?.let { date ->
+							P { Text("Published: $date") }
+						}
+
 						markdownData["date-modified"]?.get(0)?.let { date ->
 							P { Text("Last updated: $date") }
 						}
@@ -196,6 +240,7 @@ object MarkdownLayoutStyle : StyleSheet() {
 		height(100.percent)
 		left(0.px)
 		opacity(0)
+		pointerEvents(PointerEvents.None)
 		position(Position.Fixed)
 		top(0.px)
 		transition(0.2.s, "opacity")
@@ -226,6 +271,10 @@ object MarkdownLayoutStyle : StyleSheet() {
 		minHeight(100.percent)
 		width(100.percent)
 		overflowX(Overflow.Auto)
+
+		smMax(self) {
+			marginTop(2.cssRem)
+		}
 	}
 
 	val contentWrapper by style {
@@ -251,7 +300,10 @@ object MarkdownLayoutStyle : StyleSheet() {
 		paddingTop(1.cssRem)
 		borderTop(1.px, LineStyle.Solid, GlobalStyle.tertiaryBackgroundColor)
 		color(GlobalStyle.altTextColor)
+		display(DisplayStyle.Flex)
+		flexDirection(FlexDirection.Column)
 		fontSize(0.9.cssRem)
+		gap(0.5.cssRem)
 	}
 
 	val editLink by style {

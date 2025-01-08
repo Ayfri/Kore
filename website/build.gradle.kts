@@ -155,12 +155,12 @@ kobweb {
 
 				val keywords = fm["keywords"]?.firstOrNull()?.split(Regex(",\\s*")) ?: emptyList()
 				val position = fm["position"]?.firstOrNull()?.toIntOrNull()
-				// Dates are only formatted in this format "2023-11-13"
+				// Dates are formatted in ISO 8601 format
 				val dateCreatedComplete = dateCreated.split("-").let { (year, month, day) ->
-					"$year-$month-${day}T00:00:00.000000000+01:00"
+					"$year-${month.padStart(2, '0')}-${day.padStart(2, '0')}T00:00:00Z"
 				}
 				val dateModifiedComplete = dateModified.split("-").let { (year, month, day) ->
-					"$year-$month-${day}T00:00:00.000000000+01:00"
+					"$year-${month.padStart(2, '0')}-${day.padStart(2, '0')}T00:00:00Z"
 				}
 				val slugs = routeOverride.split("/").drop(1)
 				val newEntry = DocEntry(

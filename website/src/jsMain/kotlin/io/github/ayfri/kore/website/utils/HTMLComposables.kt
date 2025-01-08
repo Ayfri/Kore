@@ -7,6 +7,7 @@ import org.jetbrains.compose.web.dom.ElementBuilder
 import org.jetbrains.compose.web.dom.TagElement
 import org.w3c.dom.HTMLDetailsElement
 import org.w3c.dom.HTMLElement
+import org.w3c.dom.HTMLScriptElement
 
 @Composable
 fun Details(
@@ -40,6 +41,27 @@ fun Search(
 	TagElement(
 		elementBuilder = ElementBuilder.createBuilder("search"),
 		applyAttrs = attrs,
+		content = content
+	)
+}
+
+@Composable
+fun Script(
+	type: String,
+	src: String? = null,
+	attrs: AttrBuilderContext<HTMLScriptElement>? = null,
+	content: ContentBuilder<HTMLScriptElement>? = null,
+) {
+	TagElement(
+		elementBuilder = ElementBuilder.createBuilder("script"),
+		applyAttrs = {
+			if (src != null) {
+				attr("src", src)
+			}
+			attr("type", type)
+
+			attrs?.invoke(this)
+		},
 		content = content
 	)
 }
