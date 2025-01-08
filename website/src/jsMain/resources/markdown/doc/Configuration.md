@@ -5,7 +5,7 @@ nav-title: Configuration
 description: A guide for configuring the output of a generated Minecraft datapack.
 keywords: minecraft, datapack, kore, guide, configuration
 date-created: 2024-04-06
-date-modified: 2024-04-06
+date-modified: 2024-01-08
 routeOverride: /docs/configuration
 ---
 
@@ -30,9 +30,10 @@ This will configure the JSON output to be pretty printed with two spaces for ind
 
 The available configuration options are:
 
-- `prettyPrint` - Whether to pretty print the JSON. Default is `false`.
-- `prettyPrintIndent` - The string to use for indenting when pretty printing. Only whitespace characters are allowed. Default is empty
-  string.
-- `generatedFunctionsFolder` - The folder where the generated functions are stored. Defaults to `"generated_scopes"`.
+-   `prettyPrint` - Whether to pretty print the JSON. Default is `false`.
+-   `prettyPrintIndent` - The string to use for indenting when pretty printing. Only whitespace characters are allowed. Default is empty
+    string.
+-   `generatedFunctionsFolder` - The folder where the generated functions are stored. Defaults to `"generated_scopes"`.
+-   `generateCommentOfGeneratedFunctionCall` - Whether to generate a comment when an implicit generated function is called. Default is `true`.
 
 Configuring a datapack is pretty useful for debugging.
