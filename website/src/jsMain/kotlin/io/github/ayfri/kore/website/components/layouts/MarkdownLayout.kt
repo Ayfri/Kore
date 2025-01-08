@@ -5,118 +5,18 @@ import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.compose.css.functions.blur
 import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiChevronRight
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiKeyboardArrowUp
 import com.varabyte.kobwebx.markdown.markdown
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.setDescription
 import io.github.ayfri.kore.website.components.doc.DocSidebar
-import io.github.ayfri.kore.website.docEntries
+import io.github.ayfri.kore.website.components.doc.GoToTopButton
+import io.github.ayfri.kore.website.components.doc.PageNavigation
+import io.github.ayfri.kore.website.components.doc.TableOfContents
 import io.github.ayfri.kore.website.utils.*
-import kotlinx.browser.document
 import kotlinx.browser.window
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.dom.*
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.asList
-
-@Composable
-fun TableOfContents() {
-	var headings by remember { mutableStateOf(listOf<HTMLElement>()) }
-
-	LaunchedEffect(Unit) {
-		headings = document.querySelectorAll(".${MarkdownLayoutStyle.mainContent} .${MarkdownLayoutStyle.heading}")
-			.asList()
-			.map { it as HTMLElement }
-	}
-
-	LaunchedEffect(Unit) {
-		window.addEventListener("hashchange", {
-			val hash = window.location.hash
-			if (hash.isNotEmpty()) {
-				val element = document.querySelector(hash)
-				element?.classList?.remove(MarkdownLayoutStyle.highlight)
-				element?.classList?.add(MarkdownLayoutStyle.highlight)
-			}
-		})
-	}
-
-	Nav({
-		classes(MarkdownLayoutStyle.toc)
-	}) {
-		H3 { Text("On this page") }
-		Ul {
-			headings.forEach { heading ->
-				Li({
-					classes(MarkdownLayoutStyle.tocEntry)
-					style {
-						marginLeft((heading.tagName.last().toString().toInt() - 2) * 1.25.cssRem)
-					}
-					onClick {
-						val id = heading.id
-						if (id.isNotEmpty()) {
-							window.location.hash = "#$id"
-							heading.classList.remove(MarkdownLayoutStyle.highlight)
-							heading.offsetWidth
-							heading.classList.add(MarkdownLayoutStyle.highlight)
-						}
-					}
-				}) {
-					Text(heading.innerText.removePrefix("link").trim())
-				}
-			}
-		}
-	}
-}
-
-@Composable
-fun PageNavigation(currentPath: String) {
-	val currentIndex = docEntries.indexOfFirst { it.path == currentPath }
-	if (currentIndex == -1) return
-
-	Div({
-		classes(MarkdownLayoutStyle.pageNav)
-	}) {
-		if (currentIndex > 0) {
-			A(docEntries[currentIndex - 1].path, {
-				classes(MarkdownLayoutStyle.prevPage)
-			}) {
-				Text("← ${docEntries[currentIndex - 1].navTitle}")
-			}
-		}
-
-		if (currentIndex < docEntries.size - 1) {
-			A(docEntries[currentIndex + 1].path, {
-				classes(MarkdownLayoutStyle.nextPage)
-			}) {
-				Text("${docEntries[currentIndex + 1].navTitle} →")
-			}
-		}
-	}
-}
-
-@Composable
-fun GoToTopButton() {
-	var visible by remember { mutableStateOf(false) }
-
-	LaunchedEffect(Unit) {
-		window.onscroll = {
-			visible = window.scrollY > 300
-		}
-	}
-
-	Button(
-		{
-			classes(MarkdownLayoutStyle.goToTopButton)
-			if (visible) classes("visible")
-			title("Go to top")
-			onClick { window.scrollTo(0.0, 0.0) }
-		}
-	) {
-		MdiKeyboardArrowUp()
-	}
-}
 
 @Composable
 fun MarkdownLayout(content: @Composable () -> Unit) {
@@ -332,19 +232,6 @@ object MarkdownLayoutStyle : StyleSheet() {
 		}
 	}
 
-	val highlightAnimation by keyframes {
-		from { backgroundColor(rgba(0, 120, 215, 0.2)) }
-		to { backgroundColor(rgba(0, 120, 215, 0)) }
-	}
-
-	val highlight by style {
-		animation(highlightAnimation) {
-			delay(0.6.s)
-			duration(1.s)
-			timingFunction(AnimationTimingFunction.Ease)
-		}
-	}
-
 	val mainContent by style {
 		minWidth(0.px)
 
@@ -352,42 +239,6 @@ object MarkdownLayoutStyle : StyleSheet() {
 			borderRadius(GlobalStyle.roundingButton)
 			marginY(0.5.cssRem)
 			maxWidth(100.percent)
-		}
-	}
-
-	val toc by style {
-		backgroundColor(GlobalStyle.secondaryBackgroundColor)
-		borderRadius(GlobalStyle.roundingButton)
-		maxHeight(80.vh - 4.cssRem)
-		maxWidth(16.cssRem)
-		overflowY(Overflow.Auto)
-		padding(1.5.cssRem)
-		position(Position.Fixed)
-		right(1.cssRem)
-		top(15.vh)
-
-		smMax(self) {
-			display(DisplayStyle.None)
-		}
-
-		"ul" style {
-			paddingLeft(1.5.cssRem)
-		}
-	}
-
-	val tocEntry by style {
-		cursor(Cursor.Pointer)
-		padding(0.2.cssRem, 0.px)
-		color(GlobalStyle.textColor)
-		listStyle(ListStyleType.None)
-		transition(0.2.s, "color")
-		overflow(Overflow.Hidden)
-		textOverflow(TextOverflow.Ellipsis)
-		whiteSpace(WhiteSpace.NoWrap)
-		userSelect(UserSelect.None)
-
-		self + hover style {
-			color(GlobalStyle.linkColor)
 		}
 	}
 
@@ -402,32 +253,6 @@ object MarkdownLayoutStyle : StyleSheet() {
 	val editLink by style {
 		color(GlobalStyle.linkColor)
 		textDecorationLine(TextDecorationLine.None)
-
-		self + hover style {
-			textDecorationLine(TextDecorationLine.Underline)
-		}
-	}
-
-	val pageNav by style {
-		display(DisplayStyle.Flex)
-		justifyContent(JustifyContent.SpaceBetween)
-		marginTop(2.cssRem)
-		gap(1.cssRem)
-	}
-
-	val prevPage by style {
-		color(GlobalStyle.linkColor)
-		textDecorationLine(TextDecorationLine.None)
-
-		self + hover style {
-			textDecorationLine(TextDecorationLine.Underline)
-		}
-	}
-
-	val nextPage by style {
-		color(GlobalStyle.linkColor)
-		textDecorationLine(TextDecorationLine.None)
-		marginLeft(autoLength)
 
 		self + hover style {
 			textDecorationLine(TextDecorationLine.Underline)
@@ -452,37 +277,16 @@ object MarkdownLayoutStyle : StyleSheet() {
 		}
 	}
 
-	val goToTopButton by style {
-		alignItems(AlignItems.Center)
-		backgroundColor(GlobalStyle.secondaryBackgroundColor)
-		border(0.px)
-		borderRadius(GlobalStyle.roundingButton)
-		bottom(2.cssRem)
-		color(GlobalStyle.textColor)
-		cursor(Cursor.Pointer)
-		display(DisplayStyle.Flex)
-		height(3.cssRem)
-		justifyContent(JustifyContent.Center)
-		opacity(0)
-		padding(0.px)
-		position(Position.Fixed)
-		right(2.cssRem)
-		transition(0.3.s, "opacity", "translate")
-		translateY(100.percent)
-		width(3.cssRem)
-		zIndex(10)
+	val highlightAnimation by keyframes {
+		from { backgroundColor(rgba(0, 120, 215, 0.2)) }
+		to { backgroundColor(rgba(0, 120, 215, 0)) }
+	}
 
-		self + hover style {
-			backgroundColor(GlobalStyle.tertiaryBackgroundColor)
-		}
-
-		self + className("visible") style {
-			opacity(1)
-			translateY(0.percent)
-		}
-
-		child(self, type("span")) style {
-			fontSize(2.cssRem)
+	val highlight by style {
+		animation(highlightAnimation) {
+			delay(0.6.s)
+			duration(1.s)
+			timingFunction(AnimationTimingFunction.Ease)
 		}
 	}
 }

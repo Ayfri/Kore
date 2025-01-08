@@ -25,6 +25,7 @@ fun Entry(article: DocArticle, selected: Boolean = false) = Li {
 		}
 
 		classes(DocTreeStyle.entry, DocTreeStyle.articleEntry)
+		title(article.navTitle)
 		if (selected) classes(DocTreeStyle.selected)
 	}
 }
@@ -37,6 +38,7 @@ fun GroupEntry(name: String, level: Int) = Li({
 		}
 	}
 	classes(DocTreeStyle.entry, DocTreeStyle.groupEntry)
+	title(name)
 }) {
 	Span(name)
 }
