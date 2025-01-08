@@ -74,6 +74,36 @@ kobweb {
 
 				"""io.github.ayfri.kore.website.components.common.CodeBlock($text, "${code.info.takeIf { it.isNotBlank() }}")"""
 			}
+
+			heading.set { heading ->
+				val id = heading.children()
+					.filterIsInstance<Text>()
+					.map { it.literal.lowercase().replace(Regex("[^a-z0-9]+"), "-") }
+					.joinToString("")
+				val content = heading.children()
+					.filterIsInstance<Text>()
+					.map { it.literal.escapeSingleQuotedText() }
+					.joinToString("")
+				childrenOverride = emptyList()
+				val tag = "H${heading.level}"
+
+				val onSubtitles =
+					if (heading.level > 1) "classes(io.github.ayfri.kore.website.components.layouts.MarkdownLayoutStyle.heading)"
+					else ""
+
+				"""org.jetbrains.compose.web.dom.${tag.replaceFirstChar { it.uppercase() }}({
+					|   attr("id", "$id")
+					|   $onSubtitles
+					|}) {
+					|   org.jetbrains.compose.web.dom.A("#$id", {
+					|       classes(io.github.ayfri.kore.website.components.layouts.MarkdownLayoutStyle.anchor)
+					|   }) {
+					|       com.varabyte.kobweb.silk.components.icons.mdi.MdiLink()
+					|   }
+					|   org.jetbrains.compose.web.dom.Text("$content")
+					|}
+				""".trimMargin()
+			}
 		}
 
 		process = { markdownFiles ->

@@ -22,6 +22,7 @@ object GlobalStyle : StyleSheet() {
 	val buttonBackgroundColorHover = Color("#0597ba")
 	val linkColor = Color("#0597ba")
 	val linkColorHover = Color("#23cae8")
+	val inactiveLinkColor = Color("#a7b5bd")
 	val textColor = Color("#fff")
 
 	val scrollbarThumbColor = Color("#ffffff99")
