@@ -5,6 +5,7 @@ import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.compose.css.functions.blur
 import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiChevronRight
+import com.varabyte.kobweb.silk.components.icons.mdi.MdiKeyboardArrowUp
 import com.varabyte.kobwebx.markdown.markdown
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.setDescription
@@ -14,6 +15,7 @@ import io.github.ayfri.kore.website.utils.*
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.dom.*
 import org.w3c.dom.HTMLElement
@@ -95,6 +97,28 @@ fun PageNavigation(currentPath: String) {
 }
 
 @Composable
+fun GoToTopButton() {
+	var visible by remember { mutableStateOf(false) }
+
+	LaunchedEffect(Unit) {
+		window.onscroll = {
+			visible = window.scrollY > 300
+		}
+	}
+
+	Button(
+		{
+			classes(MarkdownLayoutStyle.goToTopButton)
+			if (visible) classes("visible")
+			title("Go to top")
+			onClick { window.scrollTo(0.0, 0.0) }
+		}
+	) {
+		MdiKeyboardArrowUp()
+	}
+}
+
+@Composable
 fun MarkdownLayout(content: @Composable () -> Unit) {
 	Style(MarkdownLayoutStyle)
 
@@ -163,6 +187,8 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 				TableOfContents()
 			}
 		}
+
+		GoToTopButton()
 	}
 }
 
@@ -423,6 +449,40 @@ object MarkdownLayoutStyle : StyleSheet() {
 
 		child(self + hover, className(anchor)) style {
 			opacity(1)
+		}
+	}
+
+	val goToTopButton by style {
+		alignItems(AlignItems.Center)
+		backgroundColor(GlobalStyle.secondaryBackgroundColor)
+		border(0.px)
+		borderRadius(GlobalStyle.roundingButton)
+		bottom(2.cssRem)
+		color(GlobalStyle.textColor)
+		cursor(Cursor.Pointer)
+		display(DisplayStyle.Flex)
+		height(3.cssRem)
+		justifyContent(JustifyContent.Center)
+		opacity(0)
+		padding(0.px)
+		position(Position.Fixed)
+		right(2.cssRem)
+		transition(0.3.s, "opacity", "translate")
+		translateY(100.percent)
+		width(3.cssRem)
+		zIndex(10)
+
+		self + hover style {
+			backgroundColor(GlobalStyle.tertiaryBackgroundColor)
+		}
+
+		self + className("visible") style {
+			opacity(1)
+			translateY(0.percent)
+		}
+
+		child(self, type("span")) style {
+			fontSize(2.cssRem)
 		}
 	}
 }
