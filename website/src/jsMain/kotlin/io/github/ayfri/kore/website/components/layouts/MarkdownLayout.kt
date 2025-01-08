@@ -22,6 +22,10 @@ import org.jetbrains.compose.web.dom.*
 fun MarkdownLayout(content: @Composable () -> Unit) {
 	Style(MarkdownLayoutStyle)
 
+	LaunchedEffect(Unit) {
+		initMCFunctionHighlighting()
+	}
+
 	val context = rememberPageContext()
 	val markdownData = context.markdown!!.frontMatter
 
