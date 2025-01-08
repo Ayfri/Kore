@@ -8,6 +8,7 @@ import com.varabyte.kobweb.silk.components.icons.mdi.MdiFunctions
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiSettings
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.utils.marginY
+import io.github.ayfri.kore.website.utils.mdMax
 import io.github.ayfri.kore.website.utils.transition
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.A
@@ -21,6 +22,11 @@ object FeatureStyle : StyleSheet() {
 		gridTemplateColumns("repeat(2, 1fr)")
 		gap(1.5.cssRem)
 		margin(1.5.cssRem, 0.cssRem)
+
+		mdMax(self) {
+			gridTemplateColumns("1fr")
+			gap(1.cssRem)
+		}
 	}
 
 	val card by style {
@@ -35,6 +41,11 @@ object FeatureStyle : StyleSheet() {
 		self + hover style {
 			translateY((-4).px)
 		}
+
+		mdMax(self) {
+			gap(1.5.cssRem)
+			padding(1.cssRem)
+		}
 	}
 
 	val icon by style {
@@ -46,6 +57,10 @@ object FeatureStyle : StyleSheet() {
 		"span" style {
 			fontSize(48.px)
 			opacity(0.8)
+
+			mdMax(self) {
+				fontSize(40.px)
+			}
 		}
 	}
 
@@ -56,6 +71,10 @@ object FeatureStyle : StyleSheet() {
 
 		"h3" style {
 			marginY(0.cssRem)
+		}
+
+		mdMax(self) {
+			gap(0.5.cssRem)
 		}
 	}
 
