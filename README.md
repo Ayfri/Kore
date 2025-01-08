@@ -59,8 +59,8 @@ kotlin {
 }
 ```
 
-Then create a `Main.kt` file and start writing your datapacks. See
-the [documentation](https://github.com/Ayfri/Kore/wiki/Creating-a-Datapack) for more information.
+Then create a `Main.kt` file and start writing your datapacks. See the [documentation](https://kore.ayfri.com/docs/home) for more
+information.
 
 ## Example
 
