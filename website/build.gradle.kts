@@ -3,6 +3,9 @@ import com.varabyte.kobwebx.gradle.markdown.children
 import kotlinx.html.link
 import kotlinx.html.script
 import kotlinx.html.unsafe
+import org.commonmark.node.Code
+import org.commonmark.node.Emphasis
+import org.commonmark.node.Link
 import org.commonmark.node.Text
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
@@ -77,30 +80,54 @@ kobweb {
 
 			heading.set { heading ->
 				val id = heading.children()
-					.filterIsInstance<Text>()
-					.map { it.literal.lowercase().replace(Regex("[^a-z0-9]+"), "-") }
+					.map {
+						val literal = when (it) {
+							is Text -> it.literal
+							is Code -> it.literal
+							is Link -> it.destination
+							is Emphasis -> (it.firstChild as Text).literal
+							else -> ""
+						}
+						if (literal.isBlank()) return@map ""
+						literal.lowercase().replace(Regex("[^a-z0-9]+"), "-")
+					}
 					.joinToString("")
 				val content = heading.children()
-					.filterIsInstance<Text>()
-					.map { it.literal.escapeSingleQuotedText() }
+					.map {
+						when (it) {
+							is Text -> "org.jetbrains.compose.web.dom.Text(\"${it.literal.escapeSingleQuotedText()}\")"
+							is Code -> "org.jetbrains.compose.web.dom.Code { org.jetbrains.compose.web.dom.Text(\"${it.literal.escapeTripleQuotedText()}\") }"
+							is Link -> "org.jetbrains.compose.web.dom.A(href = \"${it.destination}\") { org.jetbrains.compose.web.dom.Text(\"${
+								it.children().joinToString("") { (it as Text).literal.escapeSingleQuotedText() }
+							}\") }"
+
+							is Emphasis ->
+								if (it.firstChild is Text) "org.jetbrains.compose.web.dom.Span(classes(io.github.ayfri.kore.website.components.layouts.MarkdownLayoutStyle.italic)) { org.jetbrains.compose.web.dom.Text(\"${(it.firstChild as Text).literal.escapeSingleQuotedText()}\") }"
+								else ""
+
+							else -> ""
+						}
+					}
 					.joinToString("")
 				childrenOverride = emptyList()
 				val tag = "H${heading.level}"
 
-				val onSubtitles =
+				val onSubtitle =
 					if (heading.level > 1) "classes(io.github.ayfri.kore.website.components.layouts.MarkdownLayoutStyle.heading)"
 					else ""
+				
+				val idAttribute = if (id.isNotBlank()) """attr("id", "$id")""" else ""
 
 				"""org.jetbrains.compose.web.dom.${tag.replaceFirstChar { it.uppercase() }}({
-					|   attr("id", "$id")
-					|   $onSubtitles
+					|   $idAttribute
+					|   $onSubtitle
 					|}) {
 					|   org.jetbrains.compose.web.dom.A("#$id", {
 					|       classes(io.github.ayfri.kore.website.components.layouts.MarkdownLayoutStyle.anchor)
 					|   }) {
 					|       com.varabyte.kobweb.silk.components.icons.mdi.MdiLink()
 					|   }
-					|   org.jetbrains.compose.web.dom.Text("$content")
+					|   $content
 					|}
 				""".trimMargin()
 			}

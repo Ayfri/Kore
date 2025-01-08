@@ -275,6 +275,11 @@ object MarkdownLayoutStyle : StyleSheet() {
 		child(self + hover, className(anchor)) style {
 			opacity(1)
 		}
+
+		child(self, type("code")) style {
+			fontSize(1.1.em)
+			paddingX(0.3.cssRem)
+		}
 	}
 
 	val highlightAnimation by keyframes {
