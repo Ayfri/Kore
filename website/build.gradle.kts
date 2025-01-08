@@ -115,7 +115,7 @@ kobweb {
 				val onSubtitle =
 					if (heading.level > 1) "classes(io.github.ayfri.kore.website.components.layouts.MarkdownLayoutStyle.heading)"
 					else ""
-				
+
 				val idAttribute = if (id.isNotBlank()) """attr("id", "$id")""" else ""
 
 				"""org.jetbrains.compose.web.dom.${tag.replaceFirstChar { it.uppercase() }}({
@@ -154,6 +154,7 @@ kobweb {
 				}
 
 				val keywords = fm["keywords"]?.firstOrNull()?.split(Regex(",\\s*")) ?: emptyList()
+				val position = fm["position"]?.firstOrNull()?.toIntOrNull()
 				// Dates are only formatted in this format "2023-11-13"
 				val dateCreatedComplete = dateCreated.split("-").let { (year, month, day) ->
 					"$year-$month-${day}T00:00:00.000000000+01:00"
@@ -170,7 +171,8 @@ kobweb {
 					navTitle = navTitle,
 					keywords = keywords,
 					dateModified = dateModifiedComplete,
-					slugs = slugs
+					slugs = slugs,
+					position = position
 				)
 				docEntries += newEntry
 			}
@@ -208,7 +210,8 @@ kobweb {
 						|       "${entry.navTitle.escapeQuotes()}",
 						|       ${entry.keywords.asCode()},
 						|       "${entry.dateModified}",
-						|       ${entry.slugs.asCode()}
+						|       ${entry.slugs.asCode()},
+						|       ${entry.position ?: "null"}
 						|   ),
 						""".trimMargin()
 					)
@@ -231,6 +234,7 @@ data class DocEntry(
 	val keywords: List<String>,
 	val dateModified: String,
 	val slugs: List<String>,
+	val position: Int? = null,
 )
 
 

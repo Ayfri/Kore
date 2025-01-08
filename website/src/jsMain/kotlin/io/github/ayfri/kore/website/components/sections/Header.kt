@@ -31,9 +31,6 @@ fun HeaderButton(name: String, link: String) = Div {
 }
 
 @Composable
-fun AltHeaderButton(name: String, link: String, target: ATarget? = null) = LinkButton(name, link, target)
-
-@Composable
 fun Header() {
 	Style(HeaderStyle)
 
@@ -55,7 +52,11 @@ fun Header() {
 		Div({
 			classes(HeaderStyle.githubLink)
 		}) {
-			AltHeaderButton("GitHub", GITHUB_LINK, ATarget.Blank)
+			LinkButton("GitHub", GITHUB_LINK, ATarget.Blank, icon = {
+				Img(src = "/github-mark-white.svg", alt = "GitHub Logo") {
+					classes(HeaderStyle.githubLogo)
+				}
+			})
 		}
 
 		Div({
@@ -187,9 +188,21 @@ object HeaderStyle : StyleSheet() {
 	}
 
 	val githubLink by style {
+		"a" style {
+			display(DisplayStyle.Flex)
+			flexDirection(FlexDirection.Row)
+			gap(0.5.cssRem)
+			justifyContent(JustifyContent.Center)
+		}
+
 		mdMax(type("div") + self) {
 			display(DisplayStyle.None)
 		}
+	}
+
+	val githubLogo by style {
+		height(2.cssRem)
+		width(2.cssRem)
 	}
 
 	val logo by style {
