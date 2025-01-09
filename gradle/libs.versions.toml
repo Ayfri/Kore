@@ -2,7 +2,7 @@
 jetbrains-compose = "1.7.3"
 joml = "1.10.5"
 knbt = "0.11.5"
-kobweb = "0.20.0"
+kobweb = "0.20.1"
 kotlin-dotenv = "6.4.1"
 kotlinpoet = "1.16.0"
 kotlinx-serialization = "1.7.0-RC"

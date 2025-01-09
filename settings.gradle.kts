@@ -20,7 +20,6 @@ pluginManagement {
 	repositories {
 		mavenCentral()
 		gradlePluginPortal()
-		maven("https://us-central1-maven.pkg.dev/varabyte-repos/public")
 		maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 	}
 }
@@ -31,7 +30,6 @@ dependencyResolutionManagement {
 		mavenCentral()
 		gradlePluginPortal()
 		google()
-		maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 		maven("https://us-central1-maven.pkg.dev/varabyte-repos/public")
 	}
 }
