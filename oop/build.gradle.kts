@@ -22,7 +22,7 @@ kotlin {
 	jvmToolchain(17)
 
 	compilerOptions {
-		freeCompilerArgs = listOf("-Xcontext-parameters", "-Xsuppress-warning=CONTEXT_RECEIVERS_DEPRECATED")
+		freeCompilerArgs = listOf("-Xcontext-receivers", "-Xsuppress-warning=CONTEXT_RECEIVERS_DEPRECATED")
 	}
 }
 
