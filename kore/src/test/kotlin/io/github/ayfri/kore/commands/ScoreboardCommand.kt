@@ -21,6 +21,8 @@ fun Function.scoreboardTests() {
 		objectives {
 			add("test") assertsIs "scoreboard objectives add test dummy"
 			add("test", ScoreboardCriteria.DUMMY, "Test") assertsIs "scoreboard objectives add test dummy \"Test\""
+			add("test", ScoreboardCriteria.PLAYER_KILL_COUNT) assertsIs "scoreboard objectives add test playerKillCount"
+			add("test", ScoreboardCriteria.TOTAL_KILL_COUNT) assertsIs "scoreboard objectives add test totalKillCount"
 
 			add("test", criteriaCrafted(Items.STONE)) assertsIs "scoreboard objectives add test minecraft.crafted:minecraft.stone"
 			add("test", criteriaCustom(CustomStats.JUMP)) assertsIs "scoreboard objectives add test minecraft.custom:minecraft.jump"

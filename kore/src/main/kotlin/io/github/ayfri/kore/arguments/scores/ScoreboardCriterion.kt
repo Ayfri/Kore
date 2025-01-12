@@ -8,6 +8,7 @@ import io.github.ayfri.kore.arguments.types.resources.CustomStatArgument
 import io.github.ayfri.kore.arguments.types.resources.EntityTypeArgument
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.generated.StatisticTypes
+import io.github.ayfri.kore.utils.camelCase
 
 interface ScoreboardCriterion : Argument
 
@@ -24,7 +25,7 @@ enum class ScoreboardCriteria : ScoreboardCriterion {
 	TRIGGER,
 	XP;
 
-	override fun asString() = name.lowercase()
+	override fun asString() = name.camelCase()
 }
 
 data class StatScoreboardCriteria(val statType: StatisticTypes, val value: ResourceLocationArgument) : ScoreboardCriterion {
