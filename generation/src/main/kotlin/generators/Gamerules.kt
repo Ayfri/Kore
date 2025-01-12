@@ -87,15 +87,6 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 						.build()
 				)
 
-				addFunction(
-					FunSpec.builder("camelCase")
-						.receiver(String::class)
-						.returns(String::class)
-						.addStatement("val words = lowercase().split(\"_\")")
-						.addStatement("return words[0] + words.drop(1).joinToString(\"\") { word -> word.replaceFirstChar { it.titlecase(Locale.ENGLISH) } }")
-						.build()
-				)
-
 				addType(
 					TypeSpec.classBuilder("Serializer").apply {
 						addSuperinterface(
@@ -147,6 +138,7 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 
 	generateFile(INTERFACE_NAME, sourceUrl, topLevelInterface) {
 		addImport("java.util", "Locale")
+		addImport("io.github.ayfri.kore.utils", "camelCase")
 		addAnnotation(
 			AnnotationSpec.builder(Suppress::class)
 				.addMember("%S", "ClassName")

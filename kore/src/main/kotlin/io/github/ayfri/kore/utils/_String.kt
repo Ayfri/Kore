@@ -11,6 +11,13 @@ fun String.pascalCase() = split("_").joinToString("") { word ->
 	}
 }
 
+fun String.camelCase(separator: String = "_"): String {
+	val words = lowercase().split(separator)
+	return words[0] + words.drop(1).joinToString("") { word ->
+		word.replaceFirstChar { it.titlecase(Locale.ENGLISH) }
+	}
+}
+
 fun String.snakeCase() = replace(Regex("([a-z])([A-Z])"), "$1_$2").lowercase()
 
 /**
