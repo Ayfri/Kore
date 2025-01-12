@@ -66,14 +66,14 @@ advancement("my_advancement") {
 }
 ```
 
--   `icon`: The icon of the advancement, defined by an `AdvancementIcon` object which is an item + nbt data.
--   `title`: The title of the advancement, defined by a `ChatComponents` object.
--   `description`: The description of the advancement, defined by a `ChatComponents` object.
--   `frame`: The frame type of the advancement, which can be `CHALLENGE`, `GOAL`, or `TASK`, defaults to `TASK`.
--   `background`: The background texture of the advancement, specified as a string (optional).
--   `showToast`: Whether to show a toast notification when the advancement is achieved (optional).
--   `announceToChat`: Whether to announce the advancement in chat when it is achieved (optional).
--   `hidden`: Whether the advancement is hidden until it is achieved (optional).
+- `icon`: The icon of the advancement, defined by an `AdvancementIcon` object which is an item + nbt data.
+- `title`: The title of the advancement, defined by a `ChatComponents` object.
+- `description`: The description of the advancement, defined by a `ChatComponents` object.
+- `frame`: The frame type of the advancement, which can be `CHALLENGE`, `GOAL`, or `TASK`, defaults to `TASK`.
+- `background`: The background texture of the advancement, specified as a string (optional).
+- `showToast`: Whether to show a toast notification when the advancement is achieved (optional).
+- `announceToChat`: Whether to announce the advancement in chat when it is achieved (optional).
+- `hidden`: Whether the advancement is hidden until it is achieved (optional).
 
 ## Criteria
 
@@ -105,7 +105,7 @@ advancement("my_advancement") {
 
 ## Available Triggers
 
-Check the [Triggers](./advancements-triggers) page for a list of available triggers.
+Check the [Triggers](./advancements/triggers) page for a list of available triggers.
 
 ## Requirements
 
@@ -144,10 +144,10 @@ advancement("my_advancement") {
 }
 ```
 
--   `experience`: The amount of experience to give the player.
--   `function`: A function to run when the advancement is completed.
--   `loots`: A list of loot tables to give the player.
--   `recipes`: A list of recipes to unlock for the player.
+- `experience`: The amount of experience to give the player.
+- `function`: A function to run when the advancement is completed.
+- `loots`: A list of loot tables to give the player.
+- `recipes`: A list of recipes to unlock for the player.
 
 ## Telemetry
 

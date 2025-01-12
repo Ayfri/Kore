@@ -48,7 +48,7 @@ dataPack("my_datapack") {
 
 ## Configuration
 
-See [Configuration](./Configuration)
+See [Configuration](./configuration)
 
 ## Pack Metadata
 

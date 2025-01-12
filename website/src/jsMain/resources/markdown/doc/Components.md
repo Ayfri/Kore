@@ -243,7 +243,4 @@ provides a robust and intuitive API for enhancing your Minecraft experience.
 By following the examples and practices outlined in this article, you can leverage the full potential of components in your Minecraft
 projects, creating richer and more engaging content for players.
 
-For more detailed information on how to use Kore for other purposes, refer to
-the [official Kore documentation](https://github.com/Ayfri/Kore/wiki).
-
 Happy crafting!
