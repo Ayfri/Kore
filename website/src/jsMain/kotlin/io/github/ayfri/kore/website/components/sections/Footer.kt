@@ -30,7 +30,7 @@ fun Footer() {
 				A(GITHUB_LINK, "GitHub Repository", attrs = { target(ATarget.Blank) })
 				A("$GITHUB_LINK/releases", "Releases", attrs = { target(ATarget.Blank) })
 				A("$GITHUB_LINK/issues", "Issues", attrs = { target(ATarget.Blank) })
-				A(WEBSITE_GITHUB_LINK, "Website Repository", attrs = { target(ATarget.Blank) })
+				A(WEBSITE_GITHUB_LINK, "Website Code", attrs = { target(ATarget.Blank) })
 				A("https://github.com/Ayfri/Kore-Template", "Project Template", attrs = { target(ATarget.Blank) })
 			}
 
@@ -61,7 +61,7 @@ fun Footer() {
 				classes(FooterStyle.section)
 			}) {
 				H3 { Text("Legal") }
-				A("$GITHUB_LINK/blob/main/LICENSE", "GNU 3.0 License", attrs = {
+				A("$GITHUB_LINK/blob/master/LICENSE", "GNU 3.0 License", attrs = {
 					target(ATarget.Blank)
 				})
 			}
