@@ -11,6 +11,9 @@
 	<a href="https://kotlinlang.slack.com/archives/C066G9BF66A">
 		<img src="https://img.shields.io/badge/%23kore-4A154B?logo=slack&logoColor=white&style=flat-square" alt="Kotlin Slack">
 	</a>
+	<a href="https://discord.gg/BySjRNQ9Je">
+		<img src="https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white&style=flat-square" alt="Discord">
+	</a>
 </p>
 <hr>
 
@@ -123,29 +126,33 @@ fun main() {
 
 ## Community Creations
 
-- [SimplEnergyKore](https://github.com/e-psi-lon/SimplEnergyKore)
-- [Kore-Bindings](https://github.com/e-psi-lon/Kore-Bindings)
-- [OreCrops](https://github.com/e-psi-lon/OreCrops)
-- [realms-map](https://github.com/Aeltumn/realms-maps)
+-   [SimplEnergyKore](https://github.com/e-psi-lon/SimplEnergyKore)
+-   [Kore-Bindings](https://github.com/e-psi-lon/Kore-Bindings)
+-   [OreCrops](https://github.com/e-psi-lon/OreCrops)
+-   [realms-map](https://github.com/Aeltumn/realms-maps)
+
+_How to add your project to the list ?_
+
+-   Create an issue or contact me on [Discord](https://discord.gg/BySjRNQ9Je).
 
 ## Features
 
-- Datapack generation as files or zips or jar files for mod-loaders.
-- Function generation.
-- All commands with all subcommands and multiple syntaxes.
-- Generation of all JSON-based features of Minecraft (Advancements, Loot Tables, Recipes, ...).
-- Selectors.
-- NBT tags.
-- Chat components.
-- Lists for all registries (Blocks, Items, Entities, Advancements, ...).
-- Colors/Vector/Rotation/... classes with common operations.
-- Macros support.
-- Inventory/Scheduler managers.
-- Merging datapacks, even with existing zips.
-- Scoreboard display manager (like on servers).
-- Debugging system inside commands or functions.
-- Common Nbt tags generation (blocks, items, entities, ...).
-- OOP module (experimental).
+-   Datapack generation as files or zips or jar files for mod-loaders.
+-   Function generation.
+-   All commands with all subcommands and multiple syntaxes.
+-   Generation of all JSON-based features of Minecraft (Advancements, Loot Tables, Recipes, ...).
+-   Selectors.
+-   NBT tags.
+-   Chat components.
+-   Lists for all registries (Blocks, Items, Entities, Advancements, ...).
+-   Colors/Vector/Rotation/... classes with common operations.
+-   Macros support.
+-   Inventory/Scheduler managers.
+-   Merging datapacks, even with existing zips.
+-   Scoreboard display manager (like on servers).
+-   Debugging system inside commands or functions.
+-   Common Nbt tags generation (blocks, items, entities, ...).
+-   OOP module (experimental).
 
 > Note: All APIs for commands, selectors, NBT tags, ... are public, so you can use them to create your own features.
 
