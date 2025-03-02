@@ -55,6 +55,8 @@ val enchantmentsTest = Items.STONE_SWORD {
 }
 ```
 
+Check out the [Enchantments](./enchantments) article for more information on how to use enchantments with Kore.
+
 ### Custom Names and Lore
 
 Custom names and lore can be added to items to give them unique identifiers and background stories:

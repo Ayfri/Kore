@@ -172,6 +172,7 @@ fun FeatureGrid() {
 				classes(FeatureStyle.linkList)
 			}) {
 				FeatureLink("/docs/advancements", "Advancements")
+				FeatureLink("/docs/enchantments", "Enchantments")
 				FeatureLink("/docs/predicates", "Predicates")
 				FeatureLink("/docs/recipes", "Recipes")
 			}
