@@ -1,11 +1,11 @@
 package io.github.ayfri.kore.serializers
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SealedSerializationApi
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
 
-@OptIn(ExperimentalSerializationApi::class)
+@OptIn(SealedSerializationApi::class)
 data class MixedListSerialDescriptor(
 	private val elementTypes: List<KSerializer<*>>,
 ) : SerialDescriptor {
