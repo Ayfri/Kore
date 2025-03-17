@@ -56,7 +56,7 @@ fun Breadcrumbs(slugs: List<String>) {
 
 		slugs.forEachIndexed { index, slug ->
 			MdiChevronRight()
-			val path = "/${slugs.take(index + 1).joinToString("/")}"
+			val path = "/docs/${slugs.take(index + 1).joinToString("/")}"
 			A(path, {
 				classes(BreadCrumbsStyle.breadcrumbLink)
 			}) {
