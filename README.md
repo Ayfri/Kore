@@ -156,6 +156,11 @@ _How to add your project to the list ?_
 
 > Note: All APIs for commands, selectors, NBT tags, ... are public, so you can use them to create your own features.
 
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Ayfri/Kore&type=Date)](https://www.star-history.com/#Ayfri/Kore&Date)
+
 ## Contributing
 
 If you want to contribute to this project, you can follow these steps:
