@@ -8,6 +8,7 @@ kotlinpoet = "1.16.0"
 kotlinx-serialization = "1.8.0"
 ktoml = "0.5.2"
 ktor = "2.3.11"
+marked = "15.0.7"
 nexus-publish = "1.3.0"
 
 [libraries]

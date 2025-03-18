@@ -8,6 +8,10 @@ import org.commonmark.node.Emphasis
 import org.commonmark.node.Link
 import org.commonmark.node.Text
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import java.net.URL
+import java.net.HttpURLConnection
+import groovy.json.JsonSlurper
+import java.net.URI
 
 plugins {
 	kotlin("multiplatform")
@@ -225,6 +229,116 @@ kobweb {
 	}
 }
 
+// Task to fetch GitHub releases and generate Kotlin file
+task("fetchGitHubReleases") {
+	group = "kore"
+	description = "Fetches GitHub releases and generates a Kotlin file with the data"
+
+	val projectDir = projectDir
+
+	doLast {
+		val apiUrl = "https://api.github.com/repos/Ayfri/Kore/releases"
+		val connection = URI(apiUrl).toURL().openConnection() as HttpURLConnection
+		connection.requestMethod = "GET"
+		connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
+
+		// Optional: Add GitHub token if available in environment variables
+		val githubToken = System.getenv("GITHUB_TOKEN")
+		if (githubToken != null && githubToken.isNotBlank()) {
+			connection.setRequestProperty("Authorization", "token $githubToken")
+		}
+
+		val responseCode = connection.responseCode
+		if (responseCode != 200) {
+			logger.error("Failed to fetch GitHub releases. Response code: $responseCode")
+			return@doLast
+		}
+
+		val inputStream = connection.inputStream
+		val jsonResponse = inputStream.bufferedReader().use { it.readText() }
+		inputStream.close()
+
+		val jsonSlurper = JsonSlurper()
+		val releases = jsonSlurper.parseText(jsonResponse) as List<Map<*, *>>
+
+		// Generate Kotlin file with releases data
+		val outputDir = File(projectDir, "build/generated/kore/src/jsMain/kotlin/io/github/ayfri/kore/website")
+		outputDir.mkdirs()
+
+		val outputFile = File(outputDir, "gitHubReleases.kt")
+		outputFile.writeText(buildString {
+			appendLine("// This file is generated. Do not modify directly.")
+			appendLine("")
+			appendLine("package io.github.ayfri.kore.website")
+			appendLine("")
+			appendLine("import io.github.ayfri.kore.website.components.updates.GitHubAsset")
+			appendLine("import io.github.ayfri.kore.website.components.updates.GitHubRelease")
+			appendLine("")
+			appendLine("val gitHubReleases = listOf(")
+
+			releases.forEach { release ->
+				val id = release["id"] as Number
+				val name = (release["name"] as String).replace("\"", "\\\"")
+				val tagName = release["tag_name"] as String
+				val htmlUrl = release["html_url"] as String
+				val url = release["url"] as String
+				val createdAt = release["created_at"] as String
+				val publishedAt = release["published_at"] as String
+				val body = (release["body"] as String).replace("\"\"\"", "\\\"\\\"\\\"").replace("$", "\\$")
+				val isPrerelease = release["prerelease"] as Boolean
+
+				val assets = release["assets"] as List<Map<*, *>>
+
+				appendLine("    GitHubRelease(")
+				appendLine("        id = $id,")
+				appendLine("        name = \"$name\",")
+				appendLine("        tagName = \"$tagName\",")
+				appendLine("        htmlUrl = \"$htmlUrl\",")
+				appendLine("        url = \"$url\",")
+				appendLine("        createdAt = \"$createdAt\",")
+				appendLine("        publishedAt = \"$publishedAt\",")
+				appendLine("        body = \"\"\"$body\"\"\",")
+				appendLine("        isPrerelease = $isPrerelease,")
+
+				if (assets.isNotEmpty()) {
+					appendLine("        assets = listOf(")
+					assets.forEach { asset ->
+						val assetId = asset["id"] as Number
+						val assetName = (asset["name"] as String).replace("\"", "\\\"")
+						val browserDownloadUrl = asset["browser_download_url"] as String
+						val contentType = asset["content_type"] as String
+						val size = asset["size"] as Number
+						val downloadCount = asset["download_count"] as Number
+
+						appendLine("            GitHubAsset(")
+						appendLine("                id = $assetId,")
+						appendLine("                name = \"$assetName\",")
+						appendLine("                browserDownloadUrl = \"$browserDownloadUrl\",")
+						appendLine("                contentType = \"$contentType\",")
+						appendLine("                size = $size,")
+						appendLine("                downloadCount = $downloadCount")
+						appendLine("            ),")
+					}
+					appendLine("        )")
+				} else {
+					appendLine("        assets = emptyList()")
+				}
+
+				appendLine("    ),")
+			}
+
+			appendLine(")")
+		})
+
+		logger.lifecycle("Generated GitHub releases file with ${releases.size} releases")
+	}
+}
+
+// Make the kobwebExport task depend on fetchGitHubReleases
+tasks.named("kobwebExport") {
+	dependsOn("fetchGitHubReleases")
+}
+
 data class DocEntry(
 	val file: File,
 	val date: String,
@@ -257,6 +371,9 @@ kotlin {
 	}
 
 	sourceSets {
+		jsMain {
+			kotlin.srcDir("build/generated/kore/src/jsMain/kotlin")
+		}
 		commonMain {
 			dependencies {
 				implementation(libs.compose.html.core)
@@ -264,6 +381,7 @@ kotlin {
 				implementation(libs.kobweb.core)
 				implementation(libs.kobwebx.markdown)
 				implementation(libs.kobwebx.silk.icons.mdi)
+				implementation(npm("marked", libs.versions.marked.get()))
 			}
 		}
 	}
