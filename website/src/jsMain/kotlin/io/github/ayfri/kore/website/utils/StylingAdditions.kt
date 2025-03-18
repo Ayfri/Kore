@@ -1,12 +1,14 @@
 package io.github.ayfri.kore.website.utils
 
 import com.varabyte.kobweb.compose.css.BackgroundClip
+import com.varabyte.kobweb.compose.css.CSSColor
 import com.varabyte.kobweb.compose.css.backgroundClip
 import com.varabyte.kobweb.compose.css.backgroundImage
 import com.varabyte.kobweb.compose.css.functions.linearGradient
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.keywords.CSSAutoKeyword
+import org.jetbrains.compose.web.css.selectors.CSSSelector.PseudoElement.after
 
 typealias CSSTimeValue = CSSSizeValue<out CSSUnitTime>
 
@@ -147,3 +149,9 @@ fun StyleScope.scrollbarWidth(
 ) {
 	property("scrollbar-width", width.name.lowercase())
 }
+
+
+inline val SelectorsScope.placeholder get() = selector("::placeholder")
+
+fun CSSColorValue.alpha(alpha: String) = Color(toString() + alpha)
+fun CSSColorValue.alpha(alpha: Double) = Color(toString() + js("Math.floor(255 * alpha).toString(16).padStart(2, '0')"))

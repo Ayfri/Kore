@@ -18,6 +18,10 @@ fun A(href: String, content: String = "", vararg classes: String = arrayOf("link
 	}
 }
 
+fun AttrsScope<HTMLAnchorElement>.rel(vararg values: String) {
+    attr("rel", values.joinToString(" "))
+}
+
 @Composable
 fun Img(attrs: AttrsScope<HTMLImageElement>.() -> Unit = {}) {
 	TagElement<HTMLImageElement>(
