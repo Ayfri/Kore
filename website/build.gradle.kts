@@ -231,107 +231,120 @@ kobweb {
 
 // Task to fetch GitHub releases and generate Kotlin file
 task("fetchGitHubReleases") {
-	group = "kore"
-	description = "Fetches GitHub releases and generates a Kotlin file with the data"
+    group = "kore"
+    description = "Fetches GitHub releases and generates a Kotlin file with the data"
 
-	val projectDir = projectDir
+    val projectDir = projectDir
 
-	doLast {
-		val apiUrl = "https://api.github.com/repos/Ayfri/Kore/releases"
-		val connection = URI(apiUrl).toURL().openConnection() as HttpURLConnection
-		connection.requestMethod = "GET"
-		connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
+    doLast {
+        val allReleases = mutableListOf<Map<*, *>>()
+        var page = 1
+        var hasMorePages = true
 
-		// Optional: Add GitHub token if available in environment variables
-		val githubToken = System.getenv("GITHUB_TOKEN")
-		if (githubToken != null && githubToken.isNotBlank()) {
-			connection.setRequestProperty("Authorization", "token $githubToken")
-		}
+        // Fetch all pages of releases
+        while (hasMorePages) {
+            val apiUrl = "https://api.github.com/repos/Ayfri/Kore/releases?per_page=100&page=$page"
+            val connection = URI(apiUrl).toURL().openConnection() as HttpURLConnection
+            connection.requestMethod = "GET"
+            connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
 
-		val responseCode = connection.responseCode
-		if (responseCode != 200) {
-			logger.error("Failed to fetch GitHub releases. Response code: $responseCode")
-			return@doLast
-		}
+            // Optional: Add GitHub token if available in environment variables
+            val githubToken = System.getenv("GITHUB_TOKEN")
+            if (githubToken != null && githubToken.isNotBlank()) {
+                connection.setRequestProperty("Authorization", "token $githubToken")
+            }
 
-		val inputStream = connection.inputStream
-		val jsonResponse = inputStream.bufferedReader().use { it.readText() }
-		inputStream.close()
+            val responseCode = connection.responseCode
+            if (responseCode != 200) {
+                logger.error("Failed to fetch GitHub releases page $page. Response code: $responseCode")
+                break
+            }
 
-		val jsonSlurper = JsonSlurper()
-		val releases = jsonSlurper.parseText(jsonResponse) as List<Map<*, *>>
+            val inputStream = connection.inputStream
+            val jsonResponse = inputStream.bufferedReader().use { it.readText() }
+            inputStream.close()
 
-		// Generate Kotlin file with releases data
-		val outputDir = File(projectDir, "build/generated/kore/src/jsMain/kotlin/io/github/ayfri/kore/website")
-		outputDir.mkdirs()
+            val jsonSlurper = JsonSlurper()
+            val pageReleases = jsonSlurper.parseText(jsonResponse) as List<Map<*, *>>
 
-		val outputFile = File(outputDir, "gitHubReleases.kt")
-		outputFile.writeText(buildString {
-			appendLine("// This file is generated. Do not modify directly.")
-			appendLine("")
-			appendLine("package io.github.ayfri.kore.website")
-			appendLine("")
-			appendLine("import io.github.ayfri.kore.website.components.updates.GitHubAsset")
-			appendLine("import io.github.ayfri.kore.website.components.updates.GitHubRelease")
-			appendLine("")
-			appendLine("val gitHubReleases = listOf(")
+            allReleases.addAll(pageReleases)
 
-			releases.forEach { release ->
-				val id = release["id"] as Number
-				val name = (release["name"] as String).replace("\"", "\\\"")
-				val tagName = release["tag_name"] as String
-				val htmlUrl = release["html_url"] as String
-				val url = release["url"] as String
-				val createdAt = release["created_at"] as String
-				val publishedAt = release["published_at"] as String
-				val body = (release["body"] as String).replace("\"\"\"", "\\\"\\\"\\\"").replace("$", "\\$")
-				val isPrerelease = release["prerelease"] as Boolean
+            // Check if we should continue to the next page
+            hasMorePages = pageReleases.isNotEmpty() && pageReleases.size == 100
+            page++
+        }
 
-				val assets = release["assets"] as List<Map<*, *>>
+        // Generate Kotlin file with releases data
+        val outputDir = File(projectDir, "build/generated/kore/src/jsMain/kotlin/io/github/ayfri/kore/website")
+        outputDir.mkdirs()
 
-				appendLine("    GitHubRelease(")
-				appendLine("        id = $id,")
-				appendLine("        name = \"$name\",")
-				appendLine("        tagName = \"$tagName\",")
-				appendLine("        htmlUrl = \"$htmlUrl\",")
-				appendLine("        url = \"$url\",")
-				appendLine("        createdAt = \"$createdAt\",")
-				appendLine("        publishedAt = \"$publishedAt\",")
-				appendLine("        body = \"\"\"$body\"\"\",")
-				appendLine("        isPrerelease = $isPrerelease,")
+        val outputFile = File(outputDir, "gitHubReleases.kt")
+        outputFile.writeText(buildString {
+            appendLine("// This file is generated. Do not modify directly.")
+            appendLine("")
+            appendLine("package io.github.ayfri.kore.website")
+            appendLine("")
+            appendLine("import io.github.ayfri.kore.website.components.updates.GitHubAsset")
+            appendLine("import io.github.ayfri.kore.website.components.updates.GitHubRelease")
+            appendLine("")
+            appendLine("val gitHubReleases = listOf(")
 
-				if (assets.isNotEmpty()) {
-					appendLine("        assets = listOf(")
-					assets.forEach { asset ->
-						val assetId = asset["id"] as Number
-						val assetName = (asset["name"] as String).replace("\"", "\\\"")
-						val browserDownloadUrl = asset["browser_download_url"] as String
-						val contentType = asset["content_type"] as String
-						val size = asset["size"] as Number
-						val downloadCount = asset["download_count"] as Number
+            allReleases.forEach { release ->
+                val id = release["id"] as Number
+                val name = (release["name"] as String).replace("\"", "\\\"")
+                val tagName = release["tag_name"] as String
+                val htmlUrl = release["html_url"] as String
+                val url = release["url"] as String
+                val createdAt = release["created_at"] as String
+                val publishedAt = release["published_at"] as String
+                val body = (release["body"] as String).replace("\"\"\"", "\\\"\\\"\\\"").replace("$", "\\$")
+                val isPrerelease = release["prerelease"] as Boolean
 
-						appendLine("            GitHubAsset(")
-						appendLine("                id = $assetId,")
-						appendLine("                name = \"$assetName\",")
-						appendLine("                browserDownloadUrl = \"$browserDownloadUrl\",")
-						appendLine("                contentType = \"$contentType\",")
-						appendLine("                size = $size,")
-						appendLine("                downloadCount = $downloadCount")
-						appendLine("            ),")
-					}
-					appendLine("        )")
-				} else {
-					appendLine("        assets = emptyList()")
-				}
+                val assets = release["assets"] as List<Map<*, *>>
 
-				appendLine("    ),")
-			}
+                appendLine("    GitHubRelease(")
+                appendLine("        id = $id,")
+                appendLine("        name = \"$name\",")
+                appendLine("        tagName = \"$tagName\",")
+                appendLine("        htmlUrl = \"$htmlUrl\",")
+                appendLine("        url = \"$url\",")
+                appendLine("        createdAt = \"$createdAt\",")
+                appendLine("        publishedAt = \"$publishedAt\",")
+                appendLine("        body = \"\"\"$body\"\"\",")
+                appendLine("        isPrerelease = $isPrerelease,")
 
-			appendLine(")")
-		})
+                if (assets.isNotEmpty()) {
+                    appendLine("        assets = listOf(")
+                    assets.forEach { asset ->
+                        val assetId = asset["id"] as Number
+                        val assetName = (asset["name"] as String).replace("\"", "\\\"")
+                        val browserDownloadUrl = asset["browser_download_url"] as String
+                        val contentType = asset["content_type"] as String
+                        val size = asset["size"] as Number
+                        val downloadCount = asset["download_count"] as Number
 
-		logger.lifecycle("Generated GitHub releases file with ${releases.size} releases")
-	}
+                        appendLine("            GitHubAsset(")
+                        appendLine("                id = $assetId,")
+                        appendLine("                name = \"$assetName\",")
+                        appendLine("                browserDownloadUrl = \"$browserDownloadUrl\",")
+                        appendLine("                contentType = \"$contentType\",")
+                        appendLine("                size = $size,")
+                        appendLine("                downloadCount = $downloadCount")
+                        appendLine("            ),")
+                    }
+                    appendLine("        )")
+                } else {
+                    appendLine("        assets = emptyList()")
+                }
+
+                appendLine("    ),")
+            }
+
+            appendLine(")")
+        })
+
+        logger.lifecycle("Generated GitHub releases file with ${allReleases.size} releases")
+    }
 }
 
 // Make the kobwebExport task depend on fetchGitHubReleases
