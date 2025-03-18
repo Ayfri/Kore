@@ -25,7 +25,7 @@ jobs:
         shell: bash
 
     env:
-      KOBWEB_CLI_VERSION: 0.9.15
+      KOBWEB_CLI_VERSION: 0.9.18
 
     steps:
       - uses: actions/checkout@v4
