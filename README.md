@@ -159,7 +159,13 @@ _How to add your project to the list ?_
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=Ayfri/Kore&type=Date)](https://www.star-history.com/#Ayfri/Kore&Date)
+<a href="https://www.star-history.com/#Ayfri/Kore&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Ayfri/Kore&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Ayfri/Kore&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Ayfri/Kore&type=Date" />
+ </picture>
+</a>
 
 ## Contributing
 
