@@ -4,6 +4,7 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.types.ResourceLocationArgument
 import io.github.ayfri.kore.arguments.types.TaggedResourceLocationArgument
+import io.github.ayfri.kore.utils.resolve
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -11,8 +12,7 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.*
-import java.nio.file.Path
-import kotlin.io.path.Path
+import kotlinx.io.files.Path
 import kotlin.reflect.KClass
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
@@ -38,7 +38,7 @@ data class Tag<out T : TaggedResourceLocationArgument>(
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(TagSerializer, this)
 
 	override fun getPathFromDataDir(dir: Path, namespace: String): Path {
-		return dir.resolve(namespace).resolve(resourceFolder).resolve(type).resolve("$fileName.json")
+		return dir.resolve(namespace, resourceFolder, type, "$fileName.json")
 	}
 
 	operator fun plusAssign(value: TagEntry) {

@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.generation
 
 import io.github.ayfri.kore.DataPack
-import java.nio.file.Path
+import kotlinx.io.files.Path
 
 abstract class DataPackJarGenerationProvider {
 	abstract fun generateAdditionalFiles(generator: DataPackGenerator, options: DataPackJarGenerationOptions)

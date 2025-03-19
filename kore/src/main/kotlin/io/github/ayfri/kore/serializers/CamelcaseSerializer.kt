@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.serializers
 
 import kotlin.enums.EnumEntries
-import java.util.*
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -12,7 +11,7 @@ import kotlinx.serialization.encoding.Encoder
 private fun String.camelcase(): String {
 	val words = lowercase().split("_")
 	return words[0] + words.drop(1).joinToString("") { word ->
-		word.replaceFirstChar { it.titlecase(Locale.ENGLISH) }
+		word.replaceFirstChar { it.titlecase() }
 	}
 }
 

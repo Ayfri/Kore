@@ -5,36 +5,55 @@ import io.github.ayfri.kore.arguments.types.TaggedResourceLocationArgument
 import io.github.ayfri.kore.features.tags.Tag
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.pack.PackMCMeta
+import io.github.ayfri.kore.utils.Path
+import io.github.ayfri.kore.utils.SystemPathSeparatorString
+import io.github.ayfri.kore.utils.TemporaryFiles
+import io.github.ayfri.kore.utils.absolute
+import io.github.ayfri.kore.utils.asInvariantPathSeparator
+import io.github.ayfri.kore.utils.ensureParents
+import io.github.ayfri.kore.utils.exists
+import io.github.ayfri.kore.utils.isDirectory
+import io.github.ayfri.kore.utils.makeDirectories
+import io.github.ayfri.kore.utils.nameWithoutExtension
+import io.github.ayfri.kore.utils.readText
+import io.github.ayfri.kore.utils.relativeTo
+import io.github.ayfri.kore.utils.resolveSafe
+import io.github.ayfri.kore.utils.resolve
+import io.github.ayfri.kore.utils.toJavaFile
+import io.github.ayfri.kore.utils.toSink
+import io.github.ayfri.kore.utils.toSource
+import io.github.ayfri.kore.utils.toStringWithSeperator
 import io.github.ayfri.kore.utils.warn
-import kotlinx.serialization.encodeToString
+import io.github.ayfri.kore.utils.write
+import kotlinx.io.asInputStream
+import kotlinx.io.asOutputStream
+import kotlinx.io.buffered
+import kotlinx.io.files.SystemFileSystem
+import kotlinx.io.files.Path
+import kotlinx.io.readByteArray
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.FileSystemException
-import java.nio.file.Files
-import java.nio.file.Path
 import java.util.jar.JarOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
-import kotlin.io.path.createDirectories
-import kotlin.io.path.exists
-import kotlin.io.path.invariantSeparatorsPathString
-import kotlin.io.path.pathString
 
-internal fun unzip(zipFile: File): File {
+internal fun unzip(zipFile: Path): Path {
 	val cleanName = zipFile.nameWithoutExtension.replace("[\\\\/:*?\"<>|]".toRegex(), "_")
-	val tempDir = Files.createTempDirectory("kore_unzipped_datapack_$cleanName").toFile()
-	ZipInputStream(zipFile.inputStream()).use { zipInputStream ->
+	val tempDir = TemporaryFiles.createTempDirectory("kore_unzipped_datapack_$cleanName")
+	ZipInputStream(zipFile.toSource().buffered().asInputStream()).use { zipInputStream ->
 		var entry = zipInputStream.nextEntry
 		while (entry != null) {
-			val filePath = File(tempDir, entry.name)
+			val filePath = tempDir.resolveSafe(entry.name)
 			if (entry.isDirectory) {
-				filePath.mkdirs()
+				filePath.makeDirectories()
+				filePath
 			} else {
 				// Ensure parent directories exist
-				filePath.parentFile.mkdirs()
+				filePath.ensureParents()
 				// Copy the file content
-				filePath.outputStream().use(zipInputStream::copyTo)
+				filePath.toSink().buffered().asOutputStream().use(zipInputStream::copyTo)
 			}
 			zipInputStream.closeEntry()
 			entry = zipInputStream.nextEntry
@@ -65,8 +84,8 @@ data class DataPackGenerator(
 	val outputDataPath get() = outputPath.resolve("data")
 
 	private val outputStream = when (mode) {
-		DatapackGenerationMode.ZIP -> ZipOutputStream(FileOutputStream(outputPath.toFile()))
-		DatapackGenerationMode.JAR -> JarOutputStream(FileOutputStream(outputPath.toFile()))
+		DatapackGenerationMode.ZIP -> ZipOutputStream(FileOutputStream(outputPath.toJavaFile()))
+		DatapackGenerationMode.JAR -> JarOutputStream(FileOutputStream(outputPath.toJavaFile()))
 		else -> null
 	}
 
@@ -83,7 +102,7 @@ data class DataPackGenerator(
 		init()
 		writeFile("pack.mcmeta", packMCMeta)
 
-		datapack.iconPath?.let { writeFile("pack.png", it.toFile().readBytes()) }
+		datapack.iconPath?.let { writeFile("pack.png", SystemFileSystem.source(it).buffered().readByteArray()) }
 
 		datapack.functions.distinctBy(Function::getFinalPath).forEach {
 			val path = it.getFinalPath().replace("\\", "/")
@@ -112,7 +131,7 @@ data class DataPackGenerator(
 			return
 		}
 
-		val mergeWithPacks = options.mergeWithPacks.sortedBy { it.fileName.toString() }
+		val mergeWithPacks = options.mergeWithPacks.sortedBy { it.name.toString() }
 		println("Merging datapack with other packs: ${mergeWithPacks.joinToString(", ")}")
 
 		val tagsToMerge = listOf("minecraft/tags/function/load.json", "minecraft/tags/functions/tick.json")
@@ -121,10 +140,10 @@ data class DataPackGenerator(
 		mergeWithPacks.forEach { otherPath ->
 			require(otherPath.exists()) { "The pack at '$otherPath' does not exist." }
 
-			var otherPackFile = otherPath.toFile()
-			if (otherPath.pathString.endsWith(".zip")) {
-				otherPackFile = unzip(otherPath.toFile())
-				println("Unzipped pack '$otherPath' to: ${otherPackFile.absolutePath}")
+			var otherPackFile = otherPath
+			if (otherPath.toString().endsWith(".zip")) {
+				otherPackFile = unzip(otherPath)
+				println("Unzipped pack '$otherPath' to: ${otherPackFile.absolute()}")
 			}
 
 			if (otherPackFile == dataPackPath) {
@@ -145,14 +164,13 @@ data class DataPackGenerator(
 			}
 
 			// Merge the data directory
-			otherDataDir.walkTopDown().forEach copyFiles@{ file ->
-				val relativePath = file.relativeTo(otherDataDir).toPath().invariantSeparatorsPathString
+			otherDataDir.toJavaFile().walkTopDown().forEach copyFiles@{ file ->
+				val relativePath = Path(file).relativeTo(otherDataDir).asInvariantPathSeparator
 
 				if (relativePath in tagsToMerge) {
 					val tag = datapack.jsonEncoder.decodeFromString<Tag<TaggedResourceLocationArgument>>(file.readText())
 					foundTags[relativePath]?.add(tag)
 				}
-
 				copyFile(file, relativePath, to = outputDataPath)
 			}
 		}
@@ -184,7 +202,7 @@ data class DataPackGenerator(
 	fun init() {
 		try {
 			when (mode) {
-				DatapackGenerationMode.FOLDER -> outputPath.createDirectories()
+				DatapackGenerationMode.FOLDER -> SystemFileSystem.createDirectories(outputPath)
 
 				DatapackGenerationMode.JAR -> {
 					val options = options as? DataPackJarGenerationOptions ?: return
@@ -203,21 +221,25 @@ data class DataPackGenerator(
 
 		when (mode) {
 			DatapackGenerationMode.FOLDER -> {
-				val newFile = finalPath.toFile()
-				newFile.parentFile.mkdirs()
-				if (newFile.isDirectory) {
-					newFile.mkdir()
+				val newFile = finalPath
+				newFile.ensureParents()
+				if (newFile.isDirectory()) {
+					newFile.makeDirectories()
 					return
 				}
 
-				file.copyTo(newFile, overwrite = true)
+				val sourcePath = Path(file.absolutePath.toString())
+				val source = sourcePath.toSource().buffered()
+				val sink = newFile.toSink()
+				source.transferTo(sink)
+				sink.flush()
 			}
 
 			DatapackGenerationMode.JAR, DatapackGenerationMode.ZIP -> outputStream?.let {
 				if (file.isDirectory) return
 
 				val relativePath =
-					finalPath.invariantSeparatorsPathString.removePrefix(outputPath.invariantSeparatorsPathString).removePrefix("/")
+					finalPath.toString().removePrefix(outputPath.toString()).removePrefix("/")
 
 				it.putNextEntry(ZipEntry(relativePath))
 				file.inputStream().use { input -> input.copyTo(it) }
@@ -233,14 +255,13 @@ data class DataPackGenerator(
 
 		when (mode) {
 			DatapackGenerationMode.FOLDER -> {
-				val file = to.resolve(finalPath).toFile()
-				file.parentFile.mkdirs()
-				file.writeBytes(content)
+				val file = to.resolve(finalPath)
+				file.ensureParents()
+				file.write(content)
 			}
 
 			DatapackGenerationMode.JAR, DatapackGenerationMode.ZIP -> outputStream?.let {
-				val relativePath =
-					finalPath.invariantSeparatorsPathString.removePrefix(outputPath.invariantSeparatorsPathString).removePrefix("/")
+				val relativePath = finalPath.toString().removePrefix(outputPath.toString()).removePrefix("/")
 
 				it.putNextEntry(ZipEntry(relativePath))
 				it.write(content)

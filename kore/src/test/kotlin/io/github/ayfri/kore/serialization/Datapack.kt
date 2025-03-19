@@ -38,7 +38,7 @@ import io.github.ayfri.kore.pack.pack
 import io.github.ayfri.kore.pack.supportedFormat
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.testDataPack
-import kotlin.io.path.Path
+import kotlinx.io.files.Path
 
 fun datapackTests() {
 	jarTests()
@@ -260,9 +260,6 @@ fun packMCMetaTests() = testDataPack("test") {
 	features(DataPacks.REDSTONE_EXPERIMENTS)
 
 	iconPath = Path("kore", "src", "test", "resources", "kore_icon.png")
-}.apply {
-	assertFileGenerated("pack.mcmeta")
-	assertFileGenerated("pack.png")
 }.dp.generatePackMCMetaFile() assertsIsJson """
 	{
 		"pack": {

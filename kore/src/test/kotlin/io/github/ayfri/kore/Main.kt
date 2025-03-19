@@ -9,7 +9,7 @@ import io.github.ayfri.kore.serialization.datapackTests
 import io.github.ayfri.kore.serialization.selectorTests
 import io.github.ayfri.kore.serialization.serializersTests
 import io.github.cdimascio.dotenv.dotenv
-import kotlin.io.path.Path
+import kotlinx.io.files.Path
 
 val configuration = dotenv()
 val minecraftSaveTestPath = Path(configuration["TEST_FOLDER", "out"])

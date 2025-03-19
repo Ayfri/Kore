@@ -4,10 +4,13 @@ import io.github.ayfri.kore.generation.DataPackGenerator
 import io.github.ayfri.kore.generation.DataPackJarGenerationOptions
 import io.github.ayfri.kore.generation.DataPackJarGenerationProvider
 import io.github.ayfri.kore.serializers.InlinableList
+import io.github.ayfri.kore.serializers.PathSerializer
+import io.github.ayfri.kore.utils.absolute
+import io.github.ayfri.kore.utils.exists
+import io.github.ayfri.kore.utils.readText
 import io.github.ayfri.kore.utils.warn
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import java.nio.file.Path
+import kotlinx.io.files.Path
 
 @Serializable
 data class FabricModGenerationOptions(
@@ -17,7 +20,7 @@ data class FabricModGenerationOptions(
 	var depends: Map<String, String>? = mapOf("fabric-resource-loader-v0" to "*"),
 	var description: String? = null,
 	var environment: String = "*",
-	var icon: Path? = null,
+	var icon: @Serializable(PathSerializer::class) Path? = null,
 	var id: String,
 	var license: InlinableList<String>? = null,
 	var name: String? = null,
@@ -60,7 +63,7 @@ fun FabricModGenerationOptions.depends(vararg dependencies: Pair<String, String>
 }
 
 fun FabricModGenerationOptions.icon(path: Path) {
-	if (!path.toFile().exists()) warn("Icon file '${path.toFile().absolutePath}' not found.")
+	if (!path.exists()) warn("Icon file '${path.absolute()}' not found.")
 
 	icon = path
 }
@@ -70,9 +73,9 @@ fun FabricModGenerationOptions.license(vararg licences: String) {
 }
 
 fun FabricModGenerationOptions.license(path: Path) {
-	if (!path.toFile().exists()) warn("License file '${path.toFile().absolutePath}' not found.")
+	if (!path.exists()) warn("License file '${path.absolute()}' not found.")
 
-	license = listOf(path.toFile().readText())
+	license = listOf(path.readText())
 }
 
 fun DataPackJarGenerationOptions.fabric(init: FabricModGenerationOptions.() -> Unit = {}) {

@@ -1,9 +1,12 @@
 package io.github.ayfri.kore.generation
 
 import io.github.ayfri.kore.DataPack
-import java.nio.file.Files
-import java.nio.file.Path
-import kotlin.io.path.absolute
+import io.github.ayfri.kore.utils.absolute
+import io.github.ayfri.kore.utils.makeDirectories
+import io.github.ayfri.kore.utils.resolveSafe
+import io.github.ayfri.kore.utils.resolve
+import kotlinx.io.files.SystemTemporaryDirectory
+import kotlinx.io.files.Path
 
 abstract class DataPackGenerationCommonOptions {
 	open var mergeWithPacks: List<Path> = emptyList()
@@ -18,7 +21,7 @@ data class DataPackGenerationOptions(
  * Will unzip any zip files in the [packs] and merge them.
  */
 fun DataPackGenerationOptions.mergeWithPacks(vararg packs: Path) {
-	mergeWithPacks += packs.map { it.normalize().absolute() }
+	mergeWithPacks += packs.map { it.absolute() }
 }
 
 /**
@@ -30,10 +33,10 @@ fun DataPackGenerationOptions.mergeWithPacks(vararg packs: Path) {
 fun DataPackGenerationOptions.mergeWithPacks(vararg packs: DataPack) {
 	mergeWithPacks(*packs.map {
 		val previousPath = it.path
-		val tempPath = Files.createTempDirectory("datapack_${it.name}")
+		val tempPath = SystemTemporaryDirectory.resolve("datapack_${it.name}").apply { makeDirectories() }
 		it.path = tempPath
 		it.generate()
 		it.path = previousPath
-		tempPath.resolve(it.name).normalize().absolute()
+		tempPath.resolveSafe(it.name).absolute()
 	}.toTypedArray())
 }

@@ -5,15 +5,19 @@ import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.commands.Command
+import io.github.ayfri.kore.utils.SystemPathSeparatorString
 import io.github.ayfri.kore.utils.TestDataPack
+import io.github.ayfri.kore.utils.absolute
+import io.github.ayfri.kore.utils.exists
+import io.github.ayfri.kore.utils.readText
+import io.github.ayfri.kore.utils.resolveSafe
+import io.github.ayfri.kore.utils.resolve
+import io.github.ayfri.kore.utils.toJavaFile
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNamingStrategy
 import org.intellij.lang.annotations.Language
 import java.util.zip.ZipInputStream
-import kotlin.io.path.absolute
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.exists
 
 @OptIn(ExperimentalSerializationApi::class)
 private val jsonStringifier = Json {
@@ -46,34 +50,37 @@ infix fun Generator.assertsIs(@Language("json") expected: String) {
 }
 
 fun TestDataPack.assertFileGenerated(path: String) {
-	val file = dp.path.resolve(path).normalize().absolute()
+	val file = dp.cleanPath.resolveSafe(path.replace("/", SystemPathSeparatorString))
 	callAfterGeneration {
 		if (!file.exists()) {
-			error("File for datapack '${dp.name}' at '${file.absolutePathString()}' was not found.")
+			error("File for datapack '${dp.name}' at '$file' was not found.")
 		}
 	}
 }
 
 fun TestDataPack.assertFileJsonContent(path: String, content: String) {
-	val file = dp.path.resolve(path).normalize().absolute()
+	val file = dp.cleanPath.resolveSafe(path.replace("/", SystemPathSeparatorString))
 	callAfterGeneration {
 		if (!file.exists()) {
-			error("File for datapack '${dp.name}' at '${file.absolutePathString()}' was not found.")
+			error("File for datapack '${dp.name}' at '$file' was not found.")
 		}
-		val fileContent = file.toFile().readText()
+		val fileContent = file.readText()
 		fileContent.trimIndent() assertsIsJson content.trimIndent()
 	}
 }
 
 private fun TestDataPack.assertFileGeneratedInArchive(path: String, extension: String) {
-	val file = dp.path.resolve("${dp.name}.$extension")
+	val file = dp.cleanPath.resolve("${dp.name}.$extension")
+	var invariantPath = path.replace("\\", "/").replace("/", SystemPathSeparatorString)
+	if (!invariantPath.startsWith(SystemPathSeparatorString)) invariantPath = "$SystemPathSeparatorString$invariantPath"
+
 	callAfterGeneration {
-		val zipFile = file.toFile()
+		val zipFile = file.toJavaFile()
 		val inputStream = zipFile.inputStream()
 		val zip = ZipInputStream(inputStream)
 		var entry = zip.nextEntry
 		while (entry != null) {
-			if (entry.name == path) {
+			if (entry.name == invariantPath) {
 				inputStream.close()
 				zip.close()
 				return@callAfterGeneration
@@ -82,7 +89,7 @@ private fun TestDataPack.assertFileGeneratedInArchive(path: String, extension: S
 		}
 		inputStream.close()
 		zip.close()
-		error("File in datapack '${dp.name}.zip' at '$path' was not found in the zip file.")
+		error("File '$path' in datapack '$file' was not found.")
 	}
 }
 
@@ -100,7 +107,7 @@ fun TestDataPack.assertGeneratorsGenerated() {
 		generators.forEach {
 			val file = it.getFinalPath(dp)
 			if (!file.exists()) {
-				error("File '${file.fileName}' for datapack '${dp.name}' for ${it.resourceFolder} generator '${it.namespace ?: dp.name}:${it.fileName}' at '${file.absolutePathString()}' was not found.")
+				error("File '${file.name}' for datapack '${dp.name}' for ${it.resourceFolder} generator '${it.namespace ?: dp.name}:${it.fileName}' at '${file.absolute()}' was not found.")
 			}
 		}
 	}
