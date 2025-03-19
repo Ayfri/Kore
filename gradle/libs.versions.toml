@@ -6,6 +6,7 @@ kobweb = "0.20.2"
 kotlin-dotenv = "6.4.1"
 kotlinpoet = "1.16.0"
 kotlinx-serialization = "1.8.0"
+kotlinx-io = "0.7.0"
 ktoml = "0.5.2"
 ktor = "2.3.11"
 marked = "15.0.7"
@@ -22,6 +23,7 @@ kobwebx-silk-icons-mdi = { module = "com.varabyte.kobwebx:silk-icons-mdi", versi
 kotlin-dotenv = { module = "io.github.cdimascio:dotenv-kotlin", version.ref = "kotlin-dotenv" }
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+kotlinx-io = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinx-io"}
 ktoml = { module = "com.akuleshov7:ktoml-core", version.ref = "ktoml" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
