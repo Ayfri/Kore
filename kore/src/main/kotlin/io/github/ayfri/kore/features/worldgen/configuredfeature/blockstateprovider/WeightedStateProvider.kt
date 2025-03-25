@@ -4,8 +4,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class WeightedStateProvider(
-	var entries: List<BlockStateProvider> = emptyList(),
+	var entries: List<WeightedStateProviderValue> = emptyList(),
 ) : BlockStateProvider()
 
-fun weightedStateProvider(entries: List<BlockStateProvider> = emptyList()) = WeightedStateProvider(entries)
-fun weightedStateProvider(vararg entries: BlockStateProvider) = WeightedStateProvider(entries.toList())
+@Serializable
+data class WeightedStateProviderValue(
+	var weight: Int = 1,
+	var data: BlockStateProvider,
+)
+
+fun weightedStateProvider(entries: List<WeightedStateProviderValue> = emptyList()) = WeightedStateProvider(entries)
+fun weightedStateProvider(vararg entries: WeightedStateProviderValue) = WeightedStateProvider(entries.toList())
+fun weightedStateProvider(block: MutableList<WeightedStateProviderValue>.() -> Unit) = WeightedStateProvider(buildList(block))
