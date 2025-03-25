@@ -4,16 +4,16 @@ plugins {
 	signing
 }
 
-val javadocJar = task("javadocJar", Jar::class) {
+val javadocJar = tasks.register("javadocJar", Jar::class, fun Jar.() {
 	archiveClassifier.set("javadoc")
 	from(tasks.javadoc)
-}
+})
 
-val sourceJar = task("sourceJar", Jar::class) {
+val sourceJar = tasks.register("sourceJar", Jar::class, fun Jar.() {
 	dependsOn(tasks["classes"])
 	archiveClassifier.set("sources")
 	from(sourceSets["main"].allSource)
-}
+})
 
 afterEvaluate {
 	publishing {
