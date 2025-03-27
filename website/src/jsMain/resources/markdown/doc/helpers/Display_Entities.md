@@ -2,7 +2,7 @@
 root: .components.layouts.MarkdownLayout
 title: Display Entities
 nav-title: Display Entities
-description: A guide for creating Dispaly Entities in the world.
+description: A guide for creating Display Entities in the world.
 keywords: minecraft, datapack, kore, guide, display-entities
 date-created: 2024-04-06
 date-modified: 2024-04-06
@@ -13,8 +13,7 @@ routeOverride: /docs/helpers/display-entities
 
 ## Entity Displays
 
-Entity displays are used to display blocks/items/text in the world. You can define multiple properties for the display, such as
-transformation, billboard mode, shadow etc.
+Entity displays are used to display blocks/items/text in the world. You can define multiple properties for the display, such as transformation, billboard mode, shadow etc.
 
 ```kotlin
 val entityDisplay = blockDisplay {
@@ -112,8 +111,8 @@ transformation {
 
 ## Interpolations
 
-You can convert your display entity into an "interpolable" display entity by calling `interpolable()` on it. This will allow you to
-interpolate between the current transformation and the target transformation in a given time.
+You can convert your display entity into an "interpolable" display entity by calling
+`interpolable()` on it. This will allow you to interpolate between the current transformation and the target transformation in a given time.
 
 ```kotlin
 val interpolableEntityDisplay = blockDisplay {
