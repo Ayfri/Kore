@@ -13,27 +13,27 @@ import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 
-private fun StyleScope.indentation(level: Int) = marginLeft(level * 2.cssRem)
+private fun StyleScope.indentation(level: Int) = marginLeft(level * 1.5.cssRem)
 
 sealed class DocNode(val level: Int) {
 	class EntryNode(val entry: DocArticle, level: Int, val isGroup: Boolean = false) : DocNode(level)
-	class GroupNode(val name: String, level: Int, val hasEntry: Boolean = false) : DocNode(level)
+	class GroupNode(val name: String, level: Int) : DocNode(level)
 }
 
 @Composable
 private fun DocNode.Render(currentURL: String) {
 	when (this) {
-		is DocNode.EntryNode -> Entry(entry, entry.path == currentURL, isGroup)
-		is DocNode.GroupNode -> if (!hasEntry) GroupEntry(name, level - 1)
+		is DocNode.EntryNode -> Entry(entry, level, entry.path == currentURL, isGroup)
+		is DocNode.GroupNode -> GroupEntry(name, level)
 	}
 }
 
 @Composable
-fun Entry(article: DocArticle, selected: Boolean = false, isGroup: Boolean = false) = Li {
+fun Entry(article: DocArticle, level: Int, selected: Boolean = false, isGroup: Boolean = false) = Li {
 	A(article.path, article.navTitle) {
 		style {
-			if (article.slugs.size > 2) {
-				indentation(article.slugs.size - 2)
+			if (level > 1) {
+				indentation(level - 1)
 			}
 		}
 
@@ -47,8 +47,8 @@ fun Entry(article: DocArticle, selected: Boolean = false, isGroup: Boolean = fal
 @Composable
 fun GroupEntry(name: String, level: Int) = Li({
 	style {
-		if (level > 0) {
-			indentation(level)
+		if (level > 1) {
+			indentation(level - 1)
 		}
 	}
 	classes(DocTreeStyle.entry, DocTreeStyle.groupEntry)
@@ -65,43 +65,65 @@ fun DocTree() {
 	val entries = docEntries
 	val currentURL = context.path
 
-	// Pre-compute the tree structure
-	val nodes = buildList {
-		// First sort all entries by position and title
-		val sortedEntries = entries.sortedWith(
-			compareBy<DocArticle> { it.position ?: Int.MAX_VALUE }
-				.thenBy { it.navTitle }
-		)
+	val nodes = buildList<DocNode> {
+		val sortedEntries = entries.sortedWith(Comparator { a, b ->
+			val slugsA = a.slugs.drop(1)
+			val slugsB = b.slugs.drop(1)
+			val maxDepth = minOf(slugsA.size, slugsB.size)
 
-		// Track groups we've already processed
+			for (i in 0 until maxDepth) {
+				val slugA = slugsA[i]
+				val slugB = slugsB[i]
+
+				val posA = if (i == slugsA.lastIndex) a.position else null
+				val posB = if (i == slugsB.lastIndex) b.position else null
+
+				val posCompare = compareValues(posA ?: Int.MAX_VALUE, posB ?: Int.MAX_VALUE)
+				if (posCompare != 0) return@Comparator posCompare
+
+				val slugCompare = compareValues(slugA.lowercase(), slugB.lowercase())
+				if (slugCompare != 0) return@Comparator slugCompare
+			}
+
+			val lengthCompare = compareValues(slugsA.size, slugsB.size)
+			if (lengthCompare != 0) return@Comparator lengthCompare
+
+			return@Comparator compareValues(a.navTitle, b.navTitle)
+		})
+
 		val processedGroups = mutableSetOf<String>()
 
 		sortedEntries.forEach { entry ->
 			val slugs = entry.slugs.drop(1)
 			val level = slugs.size
 
-			// For entries with multiple slugs, add group nodes
 			if (slugs.size > 1) {
-				// Process all but the last slug as potential groups
 				for (i in 0 until slugs.size - 1) {
-					val groupPath = slugs.take(i + 1).joinToString("/")
+					val groupPathSlugs = slugs.take(i + 1)
+					val groupPath = groupPathSlugs.joinToString("/")
 					if (groupPath !in processedGroups) {
 						processedGroups.add(groupPath)
 						val groupName = slugs[i].kebabCaseToTitleCamelCase()
-						// Check if this group has a corresponding entry
-						val hasEntry = entries.any { it.slugs.drop(1).last() == slugs[i] }
-						add(DocNode.GroupNode(groupName, i + 1, hasEntry))
+
+						val groupHasDirectEntry = entries.any { e -> e.slugs.drop(1) == groupPathSlugs }
+
+						if (!groupHasDirectEntry) {
+							add(DocNode.GroupNode(groupName, i + 1))
+						}
 					}
 				}
 			}
 
-			// Add the entry node, checking if it's also a group
 			val isGroup = entries.any { other ->
 				other != entry &&
-					other.slugs.drop(1).size > slugs.size &&
+					other.slugs.size > slugs.size &&
 					other.slugs.drop(1).take(slugs.size) == slugs
 			}
 			add(DocNode.EntryNode(entry, level, isGroup))
+
+			if (isGroup) {
+				processedGroups.add(slugs.joinToString("/"))
+			}
 		}
 	}
 
@@ -126,22 +148,21 @@ object DocTreeStyle : StyleSheet() {
 	@OptIn(ExperimentalComposeWebApi::class)
 	val list by style {
 		listStyle(ListStyleType.None)
-		padding(0.8.cssRem)
-		marginTop(0.px)
 		marginRight(1.cssRem)
+		marginTop(0.px)
+		padding(0.8.cssRem)
 
 		height(100.percent)
-		position(Position.Sticky)
 		left(0.px)
+		position(Position.Sticky)
 	}
 
 	val entry by style {
-		display(DisplayStyle.Block)
-		padding(0.35.cssRem)
-		fontSize(1.15.cssRem)
-
 		borderRadius(GlobalStyle.roundingButton)
 		color(GlobalStyle.textColor)
+		display(DisplayStyle.Block)
+		fontSize(1.15.cssRem)
+		padding(0.35.cssRem)
 		transition(0.2.s, "color", "background-color")
 		whiteSpace(WhiteSpace.NoWrap)
 	}
