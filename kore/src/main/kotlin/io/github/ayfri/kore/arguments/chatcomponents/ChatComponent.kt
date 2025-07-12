@@ -42,7 +42,7 @@ abstract class ChatComponent {
 		color?.let { this["color"] = it.asString() }
 		extra?.let { this["extra"] = it }
 		font?.let { this["font"] = it }
-		hoverEvent?.let { this["hoverEvent"] = it.toNbtTag() }
+		hoverEvent?.let { this["hover_event"] = it.toNbtTag() }
 		insertion?.let { this["insertion"] = it }
 		italic?.let { this["italic"] = it }
 		obfuscated?.let { this["obfuscated"] = it }

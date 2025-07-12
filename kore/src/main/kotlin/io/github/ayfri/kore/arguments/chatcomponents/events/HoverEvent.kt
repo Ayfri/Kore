@@ -19,6 +19,7 @@ import io.github.ayfri.kore.utils.asArg
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import kotlinx.serialization.Serializable
+import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.buildNbtCompound
 
@@ -30,8 +31,36 @@ data class HoverEvent(
 ) {
 	fun toNbtTag() = buildNbtCompound {
 		this["action"] = action.asArg()
-		this["value"] = value
-		contents?.let { this["contents"] = it.toNbtTag() }
+
+		when (action) {
+			HoverAction.SHOW_TEXT -> {
+				this["text"] = value
+			}
+
+			HoverAction.SHOW_ITEM -> {
+				// Ignore this.value
+				contents?.let {
+					val contentsTag = it.toNbtTag()
+					if (contentsTag is NbtCompound) {
+						contentsTag.forEach { (key, value) ->
+							this[key] = value
+						}
+					}
+				}
+			}
+
+			HoverAction.SHOW_ENTITY -> {
+				// Ignore this.value
+				contents?.let {
+					val contentsTag = it.toNbtTag()
+					if (contentsTag is NbtCompound) {
+						contentsTag.forEach { (key, value) ->
+							this[key] = value
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -40,24 +69,24 @@ fun HoverEvent.showEntity(entity: EntityArgument) = apply {
 	value = entity.asString().nbt
 }
 
-fun HoverEvent.showEntity(type: EntityTypeArgument, name: ChatComponent? = null, id: UUIDArgument? = null) = apply {
+fun HoverEvent.showEntity(id: EntityTypeArgument, name: ChatComponent? = null, uuid: UUIDArgument? = null) = apply {
 	action = HoverAction.SHOW_ENTITY
-	contents = ContentsEntityUUID(type.asString(), name, id?.asString())
+	contents = ContentsEntityUUID(id.asString(), name, uuid?.asString())
 }
 
-fun HoverEvent.showEntity(type: EntityTypeArgument, name: ChatComponent? = null, id: IntArray? = null) = apply {
+fun HoverEvent.showEntity(id: EntityTypeArgument, name: ChatComponent? = null, uuid: IntArray? = null) = apply {
 	action = HoverAction.SHOW_ENTITY
-	contents = ContentsEntityIntArray(type.asString(), name, id)
+	contents = ContentsEntityIntArray(id.asString(), name, uuid)
 }
 
-fun HoverEvent.showEntity(type: EntityTypeArgument, name: String? = null, id: UUIDArgument) = apply {
+fun HoverEvent.showEntity(type: EntityTypeArgument, name: String? = null, uuid: UUIDArgument) = apply {
 	action = HoverAction.SHOW_ENTITY
-	contents = ContentsEntityUUID(type.asString(), name?.let(::text), id.asString())
+	contents = ContentsEntityUUID(type.asString(), name?.let(::text), uuid.asString())
 }
 
-fun HoverEvent.showEntity(type: EntityTypeArgument, name: String? = null, id: IntArray) = apply {
+fun HoverEvent.showEntity(type: EntityTypeArgument, name: String? = null, uuid: IntArray) = apply {
 	action = HoverAction.SHOW_ENTITY
-	contents = ContentsEntityIntArray(type.asString(), name?.let(::text), id)
+	contents = ContentsEntityIntArray(type.asString(), name?.let(::text), uuid)
 }
 
 fun HoverEvent.showItem(item: ItemArgument, count: Int) = apply {

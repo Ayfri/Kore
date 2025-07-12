@@ -2,18 +2,18 @@ package io.github.ayfri.kore.arguments.chatcomponents.hover
 
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponent
 import io.github.ayfri.kore.utils.set
-import net.benwoodworth.knbt.buildNbtCompound
 import kotlinx.serialization.Serializable
+import net.benwoodworth.knbt.buildNbtCompound
 
 @Serializable
 data class ContentsEntityUUID(
-	var type: String,
+	var id: String,
 	var name: ChatComponent? = null,
-	var id: String? = null,
+	var uuid: String? = null,
 ) : Contents {
 	override fun toNbtTag() = buildNbtCompound {
-		this["type"] = type
+		this["id"] = id
 		name?.let { this["name"] = it.toNbtTag() }
-		id?.let { this["id"] = it }
+		uuid?.let { this["uuid"] = it }
 	}
 }

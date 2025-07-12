@@ -149,9 +149,9 @@ fun chatComponentsTests() {
 	hoverEventComponent assertsIsJson """
 		{
 			"type": "text",
-			"hoverEvent": {
+			"hover_event": {
 				"action": "show_text",
-				"value": "Hello, world!"
+				"text": "Hello, world!"
 			},
 			"text": "Hover me!"
 		}
@@ -168,15 +168,12 @@ fun chatComponentsTests() {
 	hoverEventComponentWithItem assertsIsJson """
 		{
 			"type": "text",
-			"hoverEvent": {
+			"hover_event": {
 				"action": "show_item",
-				"value": "",
-				"contents": {
-					"id": "minecraft:diamond_sword",
-					"count": 5,
-					"components": {
-						"damage": 5
-					}
+				"id": "minecraft:diamond_sword",
+				"count": 5,
+				"components": {
+					"damage": 5
 				}
 			},
 			"text": "Hover me!"
@@ -258,9 +255,9 @@ private fun chatComponentAllFields() {
 				"value": "/say Run command"
 			},
 			"color": "red",
-			"hoverEvent": {
+			"hover_event": {
 				"action": "show_text",
-				"value": "show_text"
+				"text": "show_text"
 			},
 			"insertion": "insertion",
 			"italic": true,
