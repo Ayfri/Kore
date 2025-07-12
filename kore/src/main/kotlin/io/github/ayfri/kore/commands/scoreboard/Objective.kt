@@ -8,12 +8,14 @@ import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.scores.ScoreboardCriteria
 import io.github.ayfri.kore.arguments.scores.ScoreboardCriterion
 import io.github.ayfri.kore.arguments.types.ScoreHolderArgument
+import io.github.ayfri.kore.arguments.types.literals.bool
 import io.github.ayfri.kore.arguments.types.literals.int
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.commands.Command
 import io.github.ayfri.kore.commands.command
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.utils.asArg
+import io.github.ayfri.kore.utils.snbtSerializer
 import kotlinx.serialization.encodeToString
 
 class Objective(private val fn: Function, val objective: String) {
@@ -46,7 +48,7 @@ class Objective(private val fn: Function, val objective: String) {
 			literal("add"),
 			literal(objective),
 			criteria,
-			displayName?.asJsonArg()
+			displayName?.asSnbtArg()
 		)
 	)
 
@@ -65,7 +67,7 @@ class Objective(private val fn: Function, val objective: String) {
 			literal("modify"),
 			literal(objective),
 			literal("displayautoupdate"),
-			literal(autoUpdate.asArg())
+			bool(autoUpdate)
 		)
 	)
 
@@ -76,7 +78,7 @@ class Objective(private val fn: Function, val objective: String) {
 			literal("modify"),
 			literal(objective),
 			literal("displayname"),
-			displayName.asJsonArg()
+			displayName.asSnbtArg()
 		)
 	)
 
@@ -102,7 +104,7 @@ class Objective(private val fn: Function, val objective: String) {
 			literal(objective),
 			literal("numberformat"),
 			literal("fixed"),
-			fixed.asJsonArg()
+			fixed.asSnbtArg()
 		)
 	)
 
@@ -117,7 +119,7 @@ class Objective(private val fn: Function, val objective: String) {
 			literal(objective),
 			literal("numberformat"),
 			literal("styled"),
-			literal(fn.datapack.jsonEncoder.encodeToString(style))
+			literal(snbtSerializer.encodeToString(style))
 		)
 	)
 

@@ -12,7 +12,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.JsonNamingStrategy
 import net.benwoodworth.knbt.NbtEncoder
-import net.benwoodworth.knbt.StringifiedNbt
 
 @OptIn(ExperimentalSerializationApi::class)
 val jsonSerializer = Json {
@@ -20,10 +19,6 @@ val jsonSerializer = Json {
 	encodeDefaults = false
 	classDiscriminatorMode = ClassDiscriminatorMode.NONE
 	namingStrategy = JsonNamingStrategy.SnakeCase
-}
-
-val nbtSerializer = StringifiedNbt {
-	nameRootClasses = false
 }
 
 /**

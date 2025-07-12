@@ -13,7 +13,6 @@ class PlainTextComponent : ChatComponent(), SimpleComponent {
 		return super.equals(other)
 	}
 
-	override fun hashCode() = super.hashCode()
 }
 
 fun text(text: String = "", color: Color? = null, block: PlainTextComponent.() -> Unit = {}) = PlainTextComponent().apply {

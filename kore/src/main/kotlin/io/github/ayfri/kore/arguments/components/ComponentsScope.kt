@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.generated.ComponentTypes
 import io.github.ayfri.kore.utils.nbt
+import io.github.ayfri.kore.utils.snbtSerializer
 import io.github.ayfri.kore.utils.unescape
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
@@ -53,7 +54,7 @@ abstract class ComponentsScope(open val components: MutableMap<String, Component
 		val customComponents = components.filterValues { it is CustomComponent } as Map<String, CustomComponent>
 
 		val classicComponentsSerialized = nbt {
-			classicComponents.forEach { (key, value) -> put(key, nbtSerializer.encodeToNbtTag(value)) }
+			classicComponents.forEach { (key, value) -> put(key, snbtSerializer.encodeToNbtTag(value)) }
 		}
 
 		val customComponentsSerialized = nbt {

@@ -10,6 +10,7 @@ import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.commands.command
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.utils.asArg
+import io.github.ayfri.kore.utils.snbtSerializer
 import kotlinx.serialization.encodeToString
 
 class Players(private val fn: Function) {
@@ -46,7 +47,7 @@ class Players(private val fn: Function) {
 			literal("name"),
 			target,
 			literal(objective),
-			displayName.asJsonArg()
+			displayName.asSnbtArg()
 		)
 	)
 
@@ -80,7 +81,7 @@ class Players(private val fn: Function) {
 			target,
 			literal(objective),
 			literal("fixed"),
-			fixed.asJsonArg()
+			fixed.asSnbtArg()
 		)
 	)
 
@@ -101,7 +102,7 @@ class Players(private val fn: Function) {
 			target,
 			literal(objective),
 			literal("styled"),
-			literal(fn.datapack.jsonEncoder.encodeToString(style))
+			literal(snbtSerializer.encodeToString(style))
 		)
 	)
 

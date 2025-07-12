@@ -104,11 +104,11 @@ data class ItemPredicate(
 		val customComponents = componentsAlternatives.filterValues { it is CustomComponent } as Map<String, List<CustomComponent>>
 
 		val classicComponentsSerialized = nbt {
-			classicComponents.forEach { (key, value) -> put(key, nbtSerializer.encodeToNbtTag(value)) }
+			classicComponents.forEach { (key, value) -> put(key, snbtSerializer.encodeToNbtTag(value)) }
 		}
 
 		val customComponentsSerialized = nbt {
-			customComponents.forEach { (key, value) -> put(key, nbtSerializer.encodeToNbtTag(value.map { it.nbt })) }
+			customComponents.forEach { (key, value) -> put(key, snbtSerializer.encodeToNbtTag(value.map { it.nbt })) }
 		}
 
 		return nbt {
@@ -130,7 +130,7 @@ data class ItemPredicate(
 		countSubPredicateKeys.map { (value, key) ->
 			validEntries += if (value.range != null) {
 				"~${key}" to nbtList {
-					this += nbtSerializer.encodeToNbtTag(Range(value.range.start!!, value.range.end!!)).nbtCompound
+					this += snbtSerializer.encodeToNbtTag(Range(value.range.start!!, value.range.end!!)).nbtCompound
 				}
 			} else {
 				key to nbtListOf(value.int!!)
@@ -138,11 +138,11 @@ data class ItemPredicate(
 		}
 
 		subPredicates.forEach { subPredicate ->
-			val subPredicateEntries = nbtSerializer.encodeToNbtTag(subPredicate).nbtCompound
+			val subPredicateEntries = snbtSerializer.encodeToNbtTag(subPredicate).nbtCompound
 			for ((key, value) in subPredicateEntries) {
 				val keyName = key.removePrefix("minecraft:")
 				val prefix = if (value is NbtCompound) "~" else ""
-				validEntries += "$prefix$keyName" to nbtSerializer.encodeToNbtTag(listOf(value)).nbtList
+				validEntries += "$prefix$keyName" to snbtSerializer.encodeToNbtTag(listOf(value)).nbtList
 			}
 		}
 

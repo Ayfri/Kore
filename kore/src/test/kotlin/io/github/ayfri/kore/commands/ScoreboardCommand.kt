@@ -41,7 +41,7 @@ fun Function.scoreboardTests() {
 				"test",
 				"test",
 				color = Color.RED
-			) assertsIs "scoreboard objectives modify test numberformat fixed {\"type\":\"text\",\"color\":\"red\",\"text\":\"test\"}"
+			) assertsIs "scoreboard objectives modify test numberformat fixed {type:\"text\",color:\"red\",text:\"test\"}"
 
 			modifyNumberFormatStyled("test") {
 				bold = true
@@ -50,7 +50,7 @@ fun Function.scoreboardTests() {
 				obfuscated = true
 				strikethrough = true
 				underlined = true
-			} assertsIs "scoreboard objectives modify test numberformat styled {\"bold\":true,\"color\":\"red\",\"italic\":true,\"obfuscated\":true,\"strikethrough\":true,\"underlined\":true}"
+			} assertsIs "scoreboard objectives modify test numberformat styled {bold:1b,color:\"red\",italic:1b,obfuscated:1b,strikethrough:1b,underlined:1b}"
 
 			modifyRenderType("test", RenderType.HEARTS) assertsIs "scoreboard objectives modify test rendertype hearts"
 
@@ -77,7 +77,7 @@ fun Function.scoreboardTests() {
 				"test",
 				"test",
 				color = Color.RED
-			) assertsIs "scoreboard players display numberformat @s test fixed {\"type\":\"text\",\"color\":\"red\",\"text\":\"test\"}"
+			) assertsIs "scoreboard players display numberformat @s test fixed {type:\"text\",color:\"red\",text:\"test\"}"
 
 			displayNumberFormatStyled(self(), "test") {
 				bold = true
@@ -86,7 +86,7 @@ fun Function.scoreboardTests() {
 				obfuscated = true
 				strikethrough = true
 				underlined = true
-			} assertsIs "scoreboard players display numberformat @s test styled {\"bold\":true,\"color\":\"red\",\"italic\":true,\"obfuscated\":true,\"strikethrough\":true,\"underlined\":true}"
+			} assertsIs "scoreboard players display numberformat @s test styled {bold:1b,color:\"red\",italic:1b,obfuscated:1b,strikethrough:1b,underlined:1b}"
 
 			enable(self(), "test") assertsIs "scoreboard players enable @s test"
 			get(self(), "test") assertsIs "scoreboard players get @s test"
@@ -111,7 +111,7 @@ fun Function.scoreboardTests() {
 			modifyNumberFormatFixed(
 				"test",
 				color = Color.RED
-			) assertsIs "scoreboard objectives modify test numberformat fixed {\"type\":\"text\",\"color\":\"red\",\"text\":\"test\"}"
+			) assertsIs "scoreboard objectives modify test numberformat fixed {type:\"text\",color:\"red\",text:\"test\"}"
 
 			modifyNumberFormatStyled {
 				bold = true
@@ -120,7 +120,7 @@ fun Function.scoreboardTests() {
 				obfuscated = true
 				strikethrough = true
 				underlined = true
-			} assertsIs "scoreboard objectives modify test numberformat styled {\"bold\":true,\"color\":\"red\",\"italic\":true,\"obfuscated\":true,\"strikethrough\":true,\"underlined\":true}"
+			} assertsIs "scoreboard objectives modify test numberformat styled {bold:1b,color:\"red\",italic:1b,obfuscated:1b,strikethrough:1b,underlined:1b}"
 
 			modifyRenderType(RenderType.HEARTS) assertsIs "scoreboard objectives modify test rendertype hearts"
 			remove() assertsIs "scoreboard objectives remove test"

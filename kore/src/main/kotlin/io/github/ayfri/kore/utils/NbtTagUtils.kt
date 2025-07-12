@@ -2,10 +2,14 @@ package io.github.ayfri.kore.utils
 
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
-import net.benwoodworth.knbt.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import net.benwoodworth.knbt.*
+
+val snbtSerializer = StringifiedNbt {
+	nameRootClasses = false
+}
 
 fun nbt(block: NbtCompoundBuilder.() -> Unit = {}) = buildNbtCompound(block)
 fun <T : NbtTag> nbtList(block: NbtListBuilder<T>.() -> Unit = {}) = buildNbtList(block)
