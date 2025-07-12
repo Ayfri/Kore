@@ -7,6 +7,7 @@ import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ComponentTypes
 import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.ToStringSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable(with = LoreComponent.Companion.LoreComponentSerializer::class)
@@ -15,7 +16,7 @@ data class LoreComponent(
 ) : Component() {
 	companion object {
 		object LoreComponentSerializer : InlineSerializer<LoreComponent, ChatComponents>(
-			ChatComponents.Companion.ChatComponentsAsListEscapedSerializer,
+			ToStringSerializer { asString() },
 			LoreComponent::list
 		)
 	}

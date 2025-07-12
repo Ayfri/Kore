@@ -487,7 +487,7 @@ private fun DataPack.componentsDisplay() {
 					)
 				}
 
-				customName("§6Legendary Diamond Sword")
+				customName(textComponent("Legendary Diamond Sword", Color.GOLD))
 
 				lore(textComponent("A blade of immense power", Color.GOLD))
 			}
@@ -520,10 +520,8 @@ private fun DataPack.componentsDisplay() {
 								"operation": "add_value"
 							}
 						],
-						"custom_name": "\"§6Legendary Diamond Sword\"",
-						"lore": [
-							"{\"text\":\"A blade of immense power\",\"color\":\"gold\"}"
-						]
+						"custom_name": "{type:\"text\",color:\"gold\",text:\"Legendary Diamond Sword\"}",
+						"lore": "{type:\"text\",color:\"gold\",text:\"A blade of immense power\"}"
 					}
 				},
 				"title": "Legendary Sword",

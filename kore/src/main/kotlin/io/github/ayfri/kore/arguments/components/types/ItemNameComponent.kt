@@ -7,6 +7,7 @@ import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ComponentTypes
 import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.ToStringSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable(with = ItemNameComponent.Companion.ItemNameComponentSerializer::class)
@@ -15,7 +16,7 @@ data class ItemNameComponent(
 ) : Component() {
 	companion object {
 		object ItemNameComponentSerializer : InlineSerializer<ItemNameComponent, ChatComponents>(
-			ChatComponents.Companion.ChatComponentsEscapedSerializer,
+			ToStringSerializer { asString() },
 			ItemNameComponent::components
 		)
 	}

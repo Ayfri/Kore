@@ -200,9 +200,7 @@ fun chatComponentsTests() {
 				"condition": "minecraft:match_tool",
 				"predicate": {
 					"components": {
-						"lore": [
-							"{\"text\":\"test\",\"color\":\"red\"}"
-						]
+						"lore": "{type:\"text\",color:\"red\",text:\"test\"}"
 					}
 				}
 			}
@@ -221,11 +219,7 @@ fun chatComponentsTests() {
 				"condition": "minecraft:match_tool",
 				"predicate": {
 					"components": {
-						"lore": [
-							"\"text1\"",
-							"\"text2\"",
-							"\"text3\""
-						]
+						"lore": "[{type:\"text\",text:\"text1\"},{type:\"text\",text:\"text2\"},{type:\"text\",text:\"text3\"}]"
 					}
 				}
 			}

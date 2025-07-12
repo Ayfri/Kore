@@ -26,7 +26,7 @@ fun componentsTests() {
 	val b = Items.AIR {
 		copyFrom(a)
 	}
-	b.asString() assertsIs """minecraft:air[item_name='"a"']"""
+	b.asString() assertsIs "minecraft:air[item_name=\"a\"]"
 
 	val stoneSword = Items.STONE_SWORD
 	val stone = Items.STONE
@@ -215,10 +215,10 @@ fun componentsTests() {
 	val customNameTest = stoneSword {
 		customName(textComponent("test", Color.AQUA))
 	}
-	customNameTest.asString() assertsIs """minecraft:stone_sword[custom_name='{"text":"test","color":"aqua"}']"""
+	customNameTest.asString() assertsIs "minecraft:stone_sword[custom_name={type:\"text\",color:\"aqua\",text:\"test\"}]"
 
 	customNameTest.components!!.customName(textComponent("test"))
-	customNameTest.asString() assertsIs """minecraft:stone_sword[custom_name='"test"']"""
+	customNameTest.asString() assertsIs "minecraft:stone_sword[custom_name=\"test\"]"
 
 	val damageTest = stoneSword {
 		damage(5)
@@ -363,9 +363,9 @@ fun componentsTests() {
 	val itemNameTest = stoneSword {
 		itemName(textComponent("test"))
 	}
-	itemNameTest.asString() assertsIs """minecraft:stone_sword[item_name='"test"']"""
+	itemNameTest.asString() assertsIs "minecraft:stone_sword[item_name=\"test\"]"
 	itemNameTest.components!!.itemName("test", Color.AQUA)
-	itemNameTest.asString() assertsIs """minecraft:stone_sword[item_name='{"text":"test","color":"aqua"}']"""
+	itemNameTest.asString() assertsIs "minecraft:stone_sword[item_name={type:\"text\",color:\"aqua\",text:\"test\"}]"
 
 	val jukeboxPlayableTest = Items.JUKEBOX {
 		jukeboxPlayable(JukeboxSongs.OTHERSIDE)
@@ -388,10 +388,9 @@ fun componentsTests() {
 	val loreTest = stoneSword {
 		lore("test")
 	}
-	loreTest.asString() assertsIs """minecraft:stone_sword[lore=['"test"']]"""
-
+	loreTest.asString() assertsIs "minecraft:stone_sword[lore=\"test\"]"
 	loreTest.components!!.lore(textComponent("test", Color.AQUA) + text("test2", Color.BLACK) + text("a"))
-	loreTest.asString() assertsIs """minecraft:stone_sword[lore=['[{"text":"test","color":"aqua"},{"text":"test2","color":"black"},"a"]']]"""
+	loreTest.asString() assertsIs "minecraft:stone_sword[lore=[{type:\"text\",color:\"aqua\",text:\"test\"},{type:\"text\",color:\"black\",text:\"test2\"},{type:\"text\",text:\"a\"}]]"
 
 	val mapColorTest = stone {
 		mapColor(Color.AQUA.toRGB())
@@ -577,5 +576,5 @@ fun componentsTests() {
 			page(textComponent("test", Color.AQUA))
 		}
 	}
-	writtenBookTest.asString() assertsIs """minecraft:written_book[written_book_content={pages:['{"text":"test","color":"aqua"}'],title:'"test"',author:"test",generation:1,resolved:1b}]"""
+	writtenBookTest.asString() assertsIs "minecraft:written_book[written_book_content={pages:['{type:\"text\",color:\"aqua\",text:\"test\"}'],title:'\"test\"',author:\"test\",generation:1,resolved:1b}]"
 }

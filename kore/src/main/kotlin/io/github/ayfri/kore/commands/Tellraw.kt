@@ -8,8 +8,8 @@ import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.functions.Function
 
 fun Function.tellraw(targets: EntityArgument, text: String = "", block: PlainTextComponent.() -> Unit) =
-	addLine(command("tellraw", targets, textComponent(text, block = block).asJsonArg()))
+	addLine(command("tellraw", targets, textComponent(text, block = block).asSnbtArg()))
 
-fun Function.tellraw(targets: EntityArgument, message: ChatComponents) = addLine(command("tellraw", targets, message.asJsonArg()))
+fun Function.tellraw(targets: EntityArgument, message: ChatComponents) = addLine(command("tellraw", targets, message.asSnbtArg()))
 fun Function.tellraw(targets: EntityArgument, message: String, color: Color? = null, block: PlainTextComponent.() -> Unit = {}) =
-	addLine(command("tellraw", targets, textComponent(message, color, block).asJsonArg()))
+	addLine(command("tellraw", targets, textComponent(message, color, block).asSnbtArg()))

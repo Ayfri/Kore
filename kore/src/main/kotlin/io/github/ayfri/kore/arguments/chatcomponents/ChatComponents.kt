@@ -68,6 +68,8 @@ data class ChatComponents(
 
 	fun asJsonArg() = literal(toJsonString())
 
+	fun asSnbtArg() = literal(asString())
+
 	companion object {
 		val ONLY_SIMPLE_COMPONENTS_EXCEPTION = IllegalArgumentException("This ChatComponents should only contain simple components.")
 
@@ -152,6 +154,7 @@ data class ChatComponents(
 			}
 		}
 
+		/* Serializes ChatComponents to a string with escaped quotes for use in SNBT. */
 		object ChatComponentsEscapedSerializer : KSerializer<ChatComponents> {
 			override val descriptor = ListSerializer(JsonElement.serializer()).descriptor
 
@@ -159,35 +162,13 @@ data class ChatComponents(
 
 			override fun serialize(encoder: Encoder, value: ChatComponents) = when (encoder) {
 				is NbtEncoder -> {
-					val normalSerialized = jsonSerializer.encodeToString(ChatComponentsSerializer, value)
-					encoder.encodeNbtTag(NbtString("'$normalSerialized'"))
+					val snbtSerialized = value.asString()
+					encoder.encodeNbtTag(NbtString("'$snbtSerialized'"))
 				}
 
 				is JsonEncoder -> {
-					val normalSerialized = jsonSerializer.encodeToString(ChatComponentsSerializer, value)
-					encoder.encodeJsonElement(JsonPrimitive(normalSerialized))
-				}
-
-				else -> throw IllegalArgumentException("Unsupported encoder: $encoder")
-			}
-		}
-
-		object ChatComponentsAsListEscapedSerializer : KSerializer<ChatComponents> {
-			override val descriptor = ListSerializer(JsonElement.serializer()).descriptor
-
-			override fun deserialize(decoder: Decoder) = ChatComponents()
-
-			override fun serialize(encoder: Encoder, value: ChatComponents) = when (encoder) {
-				is NbtEncoder -> {
-					val normalSerialized = jsonSerializer.encodeToString(ChatComponentsSerializer, value)
-					encoder.encodeNbtTag(NbtString("['$normalSerialized']"))
-				}
-
-				is JsonEncoder -> encoder.encodeCollection(descriptor, value.list.size) {
-					value.list.forEachIndexed { i, component ->
-						val result = jsonSerializer.encodeToString(ChatComponentSerializer, component)
-						encodeStringElement(descriptor, i, result)
-					}
+					val snbtSerialized = value.asString()
+					encoder.encodeJsonElement(JsonPrimitive(snbtSerialized))
 				}
 
 				else -> throw IllegalArgumentException("Unsupported encoder: $encoder")

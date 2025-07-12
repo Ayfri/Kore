@@ -5,14 +5,7 @@ import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.commands.Command
-import io.github.ayfri.kore.utils.SystemPathSeparatorString
-import io.github.ayfri.kore.utils.TestDataPack
-import io.github.ayfri.kore.utils.absolute
-import io.github.ayfri.kore.utils.exists
-import io.github.ayfri.kore.utils.readText
-import io.github.ayfri.kore.utils.resolveSafe
-import io.github.ayfri.kore.utils.resolve
-import io.github.ayfri.kore.utils.toJavaFile
+import io.github.ayfri.kore.utils.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNamingStrategy

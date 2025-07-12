@@ -32,4 +32,6 @@ fun main() {
 	selectorTests()
 	serializersTests()
 	runUnitTests()
+
+	morpion()
 }
