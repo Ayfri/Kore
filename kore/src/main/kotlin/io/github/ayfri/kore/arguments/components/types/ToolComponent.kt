@@ -22,14 +22,17 @@ data class ToolComponent(
 	var defaultMiningSpeed: Float? = null,
 	@SerialName("damage_per_block")
 	var damagePerBlock: Int? = null,
+	@SerialName("can_destroy_blocks_in_creative")
+	var canDestroyBlocksInCreative: Boolean? = null,
 ) : Component()
 
 fun ComponentsScope.tool(
 	rules: List<ToolRule> = emptyList(),
 	defaultMiningSpeed: Float? = null,
 	damagePerBlock: Int? = null,
+	canDestroyBlocksInCreative: Boolean? = null,
 	block: ToolComponent.() -> Unit = {},
-) = apply { this[ComponentTypes.TOOL] = ToolComponent(rules, defaultMiningSpeed, damagePerBlock).apply(block) }
+) = apply { this[ComponentTypes.TOOL] = ToolComponent(rules, defaultMiningSpeed, damagePerBlock, canDestroyBlocksInCreative).apply(block) }
 
 fun ToolComponent.rule(
 	blocks: List<BlockOrTagArgument>,

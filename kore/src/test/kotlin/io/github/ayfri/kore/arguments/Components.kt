@@ -455,6 +455,11 @@ fun componentsTests() {
 	potionContentsTest.components!!.potionContents(Potions.AWKWARD)
 	potionContentsTest.asString() assertsIs """minecraft:potion[potion_contents="minecraft:awkward"]"""
 
+	val potionDurationScaleTest = Items.POTION {
+		potionDurationScale(0.5f)
+	}
+	potionDurationScaleTest.asString() assertsIs """minecraft:potion[potion_duration_scale=0.5f]"""
+
 	val profileTest = Items.PLAYER_HEAD {
 		profile("Notch")
 	}
@@ -577,4 +582,14 @@ fun componentsTests() {
 		}
 	}
 	writtenBookTest.asString() assertsIs "minecraft:written_book[written_book_content={pages:['{type:\"text\",color:\"aqua\",text:\"test\"}'],title:'\"test\"',author:\"test\",generation:1,resolved:1b}]"
+
+	val weaponTest = stoneSword {
+		weapon(damagePerAttack = 5, canDisableBlocking = true)
+	}
+	weaponTest.asString() assertsIs """minecraft:stone_sword[weapon={damage_per_attack:5,can_disable_blocking:1b}]"""
+
+	val weaponDefaultTest = stoneSword {
+		weapon()
+	}
+	weaponDefaultTest.asString() assertsIs """minecraft:stone_sword[weapon={}]"""
 }
