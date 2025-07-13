@@ -222,17 +222,17 @@ Example of what is generated:
 
 ```mcfunction
 say hello !
-tellraw @a {"text":"/say hello !","clickEvent":{"action":"suggest_command","value":"/say hello !"},"hoverEvent":{"action":"show_text","value":{"text":"Click to copy command","color":"gray","italic":true}}}
+tellraw @a {"text":"/say hello !","click_event":{"action":"suggest_command","command":"say hello !"},"hoverEvent":{"action":"show_text","value":{"text":"Click to copy command","color":"gray","italic":true}}}
 ```
 
 The last example is a function call to `startDebug()` (which is called by the `debug` block), this will add log messages to the start and
 the end of the function, plus a log message for each command called inside the function.
 
 ```mcfunction
-tellraw @a [{"text":"Running function ","color":"gray","italic":true},{"text":"my_datapack:my_function","color":"white","bold":true,"clickEvent":{"action":"run_command","value":"/function my_datapack:my_function"},"hoverEvent":{"action":"show_text","value":{"text":"Click to execute function","color":"gray","italic":true}},"italic":true}]
+tellraw @a [{"text":"Running function ","color":"gray","italic":true},{"text":"my_datapack:my_function","color":"white","bold":true,"click_event":{"action":"run_command","command":"function my_datapack:my_function"},"hoverEvent":{"action":"show_text","value":{"text":"Click to execute function","color":"gray","italic":true}},"italic":true}]
 say hello !
-tellraw @a {"text":"/say hello !","clickEvent":{"action":"suggest_command","value":"/say hello !"},"hoverEvent":{"action":"show_text","value":{"text":"Click to copy command","color":"gray","italic":true}}}
-tellraw @a [{"text":"Finished running function ","color":"gray","italic":true},{"text":"my_datapack:my_function","color":"white","bold":true,"clickEvent":{"action":"run_command","value":"/function my_datapack:my_function"},"hoverEvent":{"action":"show_text","value":{"text":"Click to execute function","color":"gray","italic":true}},"italic":true}]
+tellraw @a {"text":"/say hello !","click_event":{"action":"suggest_command","command":"say hello !"},"hoverEvent":{"action":"show_text","value":{"text":"Click to copy command","color":"gray","italic":true}}}
+tellraw @a [{"text":"Finished running function ","color":"gray","italic":true},{"text":"my_datapack:my_function","color":"white","bold":true,"click_event":{"action":"run_command","command":"function my_datapack:my_function"},"hoverEvent":{"action":"show_text","value":{"text":"Click to execute function","color":"gray","italic":true}},"italic":true}]
 ```
 
 You can call the command by clicking on the debug texts added.
