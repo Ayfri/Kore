@@ -7,7 +7,7 @@ import io.github.ayfri.kore.utils.unescape
 import kotlinx.serialization.Serializable
 
 @Serializable(with = ComponentsSerializer::class)
-open class ComponentsRemovables(components: MutableMap<String, Component> = mutableMapOf()) : ComponentsScope(components) {
+open class ComponentsPatch(components: MutableMap<String, Component> = mutableMapOf()) : ComponentsScope(components) {
 	/**
 	 * Set the last added component to be removed.
 	 *

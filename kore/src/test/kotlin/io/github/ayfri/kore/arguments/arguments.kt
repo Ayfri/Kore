@@ -2,7 +2,7 @@ package io.github.ayfri.kore.arguments
 
 fun argumentsTests() {
 	componentsMatchersTests()
-	componentsRemovablesTests()
+	componentsPatchsTests()
 	componentsTests()
 	itemPredicatesTests()
 	itemSlotTests()

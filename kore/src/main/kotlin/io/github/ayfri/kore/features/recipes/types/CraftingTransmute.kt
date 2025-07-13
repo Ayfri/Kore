@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.recipes.types
 
-import io.github.ayfri.kore.arguments.components.ComponentsRemovables
+import io.github.ayfri.kore.arguments.components.ComponentsPatch
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.arguments.types.resources.RecipeArgument
 import io.github.ayfri.kore.data.item.ItemStack
@@ -17,7 +17,7 @@ import kotlinx.serialization.Serializable
 data class CraftingTransmuteResult(
 	var id: String,
 	var count: Short? = null,
-	var components: ComponentsRemovables? = null,
+	var components: ComponentsPatch? = null,
 ) {
 	fun toItemStack() = ItemStack(id, count, components?.toComponents())
 
@@ -61,15 +61,15 @@ fun CraftingTransmute.result(block: ItemStackBuilder.() -> Unit) {
 		CraftingTransmuteResult(
 			id = it.id,
 			count = it.count,
-			components = it.components?.toRemovables()
+			components = it.components?.toPatch()
 		)
 	}
 }
 
-fun CraftingTransmute.result(id: ItemArgument, count: Short? = null, block: (ComponentsRemovables.() -> Unit)? = null) {
+fun CraftingTransmute.result(id: ItemArgument, count: Short? = null, block: (ComponentsPatch.() -> Unit)? = null) {
 	result = CraftingTransmuteResult(
 		id = id.asId(),
 		count = count,
-		components = block?.let { ComponentsRemovables().apply(it) }
+		components = block?.let { ComponentsPatch().apply(it) }
 	)
 }

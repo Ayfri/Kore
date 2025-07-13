@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.arguments.chatcomponents.hover
 
-import io.github.ayfri.kore.arguments.components.ComponentsRemovables
+import io.github.ayfri.kore.arguments.components.ComponentsPatch
 import io.github.ayfri.kore.utils.set
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.buildNbtCompound
@@ -9,7 +9,7 @@ import net.benwoodworth.knbt.buildNbtCompound
 data class ContentsItem(
 	var id: String,
 	var count: Int? = null,
-	var components: ComponentsRemovables? = null,
+	var components: ComponentsPatch? = null,
 ) : Contents {
 	override fun toNbtTag() = buildNbtCompound {
 		this["id"] = id

@@ -25,7 +25,7 @@ private data class ComponentEntry(val key: String, val negated: Boolean, val sig
 
 data class ItemPredicate(
 	var itemArgument: ItemOrTagArgument? = null,
-) : ComponentsRemovables() {
+) : ComponentsPatch() {
 	val componentsAlternatives = mutableMapOf<String, MutableList<Component>>()
 	var countSubPredicates = mutableListOf<Pair<IntRangeOrIntJson, Boolean>>()
 	var subPredicates = mutableListOf(ItemStackSubPredicates())
@@ -49,8 +49,7 @@ data class ItemPredicate(
 	}
 
 	/**
-	 * Set the last added component as negated.
-	 * **Negated isn't similar to removed
+	 * Set the last added component as negated. **Negated isn't similar to removed.**
 	 * - Negated means that the value should not be equal to the one set.
 	 * - Removed means that the component should not be present.
 	 *

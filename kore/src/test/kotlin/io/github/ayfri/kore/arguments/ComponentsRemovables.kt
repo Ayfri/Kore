@@ -4,7 +4,7 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.generated.ComponentTypes
 import io.github.ayfri.kore.generated.Items
 
-fun componentsRemovablesTests() {
+fun componentsPatchsTests() {
 	Items.DIRT {
 		remove("foo")
 		!"bar"

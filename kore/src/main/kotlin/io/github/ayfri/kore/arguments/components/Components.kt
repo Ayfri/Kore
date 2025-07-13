@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable(with = ComponentsSerializer::class)
 class Components(components: MutableMap<String, Component> = mutableMapOf()) : ComponentsScope(components) {
-	fun toRemovables() = ComponentsRemovables(components)
+	fun toPatch() = ComponentsPatch(components)
 }
