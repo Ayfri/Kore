@@ -250,9 +250,9 @@ private fun chatComponentAllFields() {
 		{
 			"type": "text",
 			"bold": true,
-			"clickEvent": {
+			"click_event": {
 				"action": "run_command",
-				"value": "/say Run command"
+				"command": "say Run command"
 			},
 			"color": "red",
 			"hover_event": {

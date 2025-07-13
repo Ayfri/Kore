@@ -38,7 +38,7 @@ abstract class ChatComponent {
 	open fun toNbtTag() = buildNbtCompound {
 		this["type"] = type.name.lowercase()
 		bold?.let { this["bold"] = it }
-		clickEvent?.let { this["clickEvent"] = it.toNbtTag() }
+		clickEvent?.let { this["click_event"] = it.toNbtTag() }
 		color?.let { this["color"] = it.asString() }
 		extra?.let { this["extra"] = it }
 		font?.let { this["font"] = it }
