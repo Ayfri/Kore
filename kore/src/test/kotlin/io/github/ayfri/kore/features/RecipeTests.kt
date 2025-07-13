@@ -148,6 +148,7 @@ private fun DataPack.allRecipeTypesTests() {
 
 		result(Items.DIAMOND) {
 			damage(4)
+			!enchantments {}
 		}
 	}
 	recipes.last() assertsIs """
@@ -162,7 +163,8 @@ private fun DataPack.allRecipeTypesTests() {
 			"result": {
 				"id": "minecraft:diamond",
 				"components": {
-					"damage": 4
+					"damage": 4,
+					"!enchantments": {}
 				}
 			}
 		}
