@@ -37,4 +37,21 @@ fun Function.cloneTests() {
 		randomZoneAndDestination()
 		filter(Tags.Block.BASE_STONE_OVERWORLD, CloneMode.FORCE)
 	} assertsMatches Regex("clone ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* filtered #minecraft:base_stone_overworld force")
+
+	clone {
+		randomZoneAndDestination()
+		strict = true
+	} assertsMatches Regex("clone ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* strict")
+
+	clone {
+		randomZoneAndDestination()
+		masked(CloneMode.MOVE)
+		strict = true
+	} assertsMatches Regex("clone ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* masked move strict")
+
+	clone {
+		randomZoneAndDestination()
+		filter(Tags.Block.BASE_STONE_OVERWORLD, CloneMode.FORCE)
+		strict = true
+	} assertsMatches Regex("clone ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* filtered #minecraft:base_stone_overworld force strict")
 }

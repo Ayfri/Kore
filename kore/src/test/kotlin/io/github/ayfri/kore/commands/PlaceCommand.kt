@@ -20,4 +20,16 @@ fun Function.placeTests() {
 		vec3(),
 		rotation(90.rot, 180.rot)
 	) assertsIs "place template minecraft:fossil/skull_1 ~ ~ ~ 90 180"
+
+	placeTemplate(
+		Structures.Fossil.SKULL_1,
+		vec3(),
+		rotation(90.rot, 180.rot),
+		strict = true
+	) assertsIs "place template minecraft:fossil/skull_1 ~ ~ ~ 90 180 strict"
+
+	placeTemplate(
+		Structures.Fossil.SKULL_1,
+		strict = true
+	) assertsIs "place template minecraft:fossil/skull_1 strict"
 }

@@ -20,8 +20,8 @@ enum class FillOption {
 	}
 }
 
-fun Function.fill(from: Vec3, to: Vec3, block: BlockArgument, fillOption: FillOption? = null) =
-	addLine(command("fill", from, to, block, literal(fillOption?.asArg())))
+fun Function.fill(from: Vec3, to: Vec3, block: BlockArgument, fillOption: FillOption? = null, strict: Boolean = false) =
+	addLine(command("fill", from, to, block, literal(fillOption?.asArg()), literal(if (strict) "strict" else null)))
 
-fun Function.fill(from: Vec3, to: Vec3, block: BlockArgument, filter: BlockArgument) =
-	addLine(command("fill", from, to, block, literal("replace"), filter))
+fun Function.fill(from: Vec3, to: Vec3, block: BlockArgument, filter: BlockArgument, strict: Boolean = false) =
+	addLine(command("fill", from, to, block, literal("replace"), filter, literal(if (strict) "strict" else null)))

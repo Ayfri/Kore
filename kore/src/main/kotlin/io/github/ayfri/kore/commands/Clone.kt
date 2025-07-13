@@ -40,6 +40,7 @@ class Clone(private val fn: Function) {
 	var destination = vec3()
 	var end = vec3()
 	var from: DimensionArgument? = null
+	var strict: Boolean = false
 	var to: DimensionArgument? = null
 
 	private val fromArgs get() = from?.let { arrayOf(literal("from"), it) } ?: emptyArray()
@@ -71,19 +72,20 @@ class Clone(private val fn: Function) {
 			destination,
 			literal(type?.asArg()),
 			filter,
-			literal(cloneMode?.asArg())
+			literal(cloneMode?.asArg()),
+			literal(if (strict) "strict" else null)
 		)
 	)
 }
 
-fun Function.clone(begin: Vec3, end: Vec3, destination: Vec3) = addLine(command("clone", begin, end, destination))
-fun Function.cloneFiltered(begin: Vec3, end: Vec3, destination: Vec3, filter: BlockOrTagArgument, mode: CloneMode? = null) =
-	addLine(command("clone", begin, end, destination, literal("filtered"), filter, literal(mode?.asArg())))
+fun Function.clone(begin: Vec3, end: Vec3, destination: Vec3, strict: Boolean = false) = addLine(command("clone", begin, end, destination, literal(if (strict) "strict" else null)))
+fun Function.cloneFiltered(begin: Vec3, end: Vec3, destination: Vec3, filter: BlockOrTagArgument, mode: CloneMode? = null, strict: Boolean = false) =
+	addLine(command("clone", begin, end, destination, literal("filtered"), filter, literal(mode?.asArg()), literal(if (strict) "strict" else null)))
 
-fun Function.cloneMasked(begin: Vec3, end: Vec3, destination: Vec3, mode: CloneMode? = null) =
-	addLine(command("clone", begin, end, destination, literal("masked"), literal(mode?.asArg())))
+fun Function.cloneMasked(begin: Vec3, end: Vec3, destination: Vec3, mode: CloneMode? = null, strict: Boolean = false) =
+	addLine(command("clone", begin, end, destination, literal("masked"), literal(mode?.asArg()), literal(if (strict) "strict" else null)))
 
-fun Function.cloneReplace(begin: Vec3, end: Vec3, destination: Vec3, mode: CloneMode? = null) =
-	addLine(command("clone", begin, end, destination, literal("replace"), literal(mode?.asArg())))
+fun Function.cloneReplace(begin: Vec3, end: Vec3, destination: Vec3, mode: CloneMode? = null, strict: Boolean = false) =
+	addLine(command("clone", begin, end, destination, literal("replace"), literal(mode?.asArg()), literal(if (strict) "strict" else null)))
 
 fun Function.clone(block: Clone.() -> Unit) = Clone(this).apply(block).build()

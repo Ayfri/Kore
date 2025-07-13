@@ -8,4 +8,6 @@ import io.github.ayfri.kore.generated.Blocks
 fun Function.setBlockTests() {
 	setBlock(vec3(), Blocks.AIR) assertsIs "setblock ~ ~ ~ minecraft:air"
 	setBlock(vec3(), Blocks.AIR, SetBlockMode.DESTROY) assertsIs "setblock ~ ~ ~ minecraft:air destroy"
+	setBlock(vec3(), Blocks.AIR, SetBlockMode.DESTROY, strict = true) assertsIs "setblock ~ ~ ~ minecraft:air destroy strict"
+	setBlock(vec3(), Blocks.AIR, strict = true) assertsIs "setblock ~ ~ ~ minecraft:air strict"
 }

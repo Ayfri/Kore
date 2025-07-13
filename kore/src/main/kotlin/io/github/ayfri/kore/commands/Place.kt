@@ -30,4 +30,5 @@ fun Function.placeTemplate(
 	rotation: RotationArgument? = null,
 	mirror: Boolean? = null,
 	seed: Long? = null,
-) = addLine(command("place", literal("template"), template, pos, rotation, literal(mirror?.asArg()), int(seed)))
+	strict: Boolean = false,
+) = addLine(command("place", literal("template"), template, pos, rotation, literal(mirror?.asArg()), int(seed), literal(if (strict) "strict" else null)))

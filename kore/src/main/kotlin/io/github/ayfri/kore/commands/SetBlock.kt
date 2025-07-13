@@ -19,5 +19,5 @@ enum class SetBlockMode {
 	}
 }
 
-fun Function.setBlock(pos: Vec3, block: BlockArgument, mode: SetBlockMode? = null) =
-	addLine(command("setblock", pos, block, literal(mode?.asArg())))
+fun Function.setBlock(pos: Vec3, block: BlockArgument, mode: SetBlockMode? = null, strict: Boolean = false) =
+	addLine(command("setblock", pos, block, literal(mode?.asArg()), literal(if (strict) "strict" else null)))
