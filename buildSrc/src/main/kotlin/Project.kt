@@ -7,7 +7,6 @@ object Project {
 
 	// Publishing constants
 	const val CENTRAL_PORTAL_URL = "https://central.sonatype.com/api/v1/publisher"
-	const val STAGING_REPO_NAME = "Staging"
 	const val MAVEN_PUBLICATION_NAME = "maven"
 	const val LICENSE_NAME = "MIT"
 	const val LICENSE_URL = "https://opensource.org/licenses/MIT"

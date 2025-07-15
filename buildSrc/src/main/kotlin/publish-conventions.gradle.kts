@@ -87,7 +87,6 @@ jreleaser {
 					url = Project.CENTRAL_PORTAL_URL
 					username = providers.environmentVariable("CENTRAL_USERNAME").orNull
 					password = providers.environmentVariable("CENTRAL_PASSWORD").orNull
-					stagingRepository(Project.STAGING_REPO_NAME)
 				}
 			}
 		}
