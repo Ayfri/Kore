@@ -143,6 +143,13 @@ fun DataPack.trimPatternTag(
 	block: Tag<TrimPatternTagArgument>.() -> Unit = {},
 ) = tag(fileName, "trim_pattern", namespace, replace, block)
 
+fun DataPack.pigVariantTag(
+	fileName: String = "pig_variant",
+	namespace: String = name,
+	replace: Boolean = false,
+	block: Tag<PigVariantTagArgument>.() -> Unit = {},
+) = tag(fileName, "pig_variant", namespace, replace, block)
+
 fun DataPack.wolfVariantTag(
 	fileName: String = "wolf_variant",
 	namespace: String = name,

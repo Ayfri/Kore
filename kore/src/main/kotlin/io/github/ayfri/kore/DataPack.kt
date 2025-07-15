@@ -14,6 +14,7 @@ import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.jukeboxsongs.JukeboxSong
 import io.github.ayfri.kore.features.loottables.LootTable
 import io.github.ayfri.kore.features.paintingvariant.PaintingVariant
+import io.github.ayfri.kore.features.pigvariants.PigVariant
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.recipes.RecipeFile
 import io.github.ayfri.kore.features.tags.Tag
@@ -78,6 +79,7 @@ class DataPack(val name: String) {
 	val noises = registerGenerator<Noise>()
 	val noiseSettings = registerGenerator<NoiseSettings>()
 	val paintingVariants = registerGenerator<PaintingVariant>()
+	val pigVariants = registerGenerator<PigVariant>()
 	val placedFeatures = registerGenerator<PlacedFeature>()
 	val predicates = registerGenerator<Predicate>()
 	val processorLists = registerGenerator<ProcessorList>()

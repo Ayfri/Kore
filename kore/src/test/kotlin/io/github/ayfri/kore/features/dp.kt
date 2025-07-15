@@ -27,6 +27,7 @@ fun featuresTests() = testDataPack("features_tests") {
 	noiseTests()
 	noiseSettingsTests()
 	paintingVariantTests()
+	pigVariantTests()
 	placedFeatureTests()
 	predicateTests()
 	predicateEntityTypeSpecificTests()

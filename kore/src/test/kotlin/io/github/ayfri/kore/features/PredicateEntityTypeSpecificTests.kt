@@ -220,6 +220,24 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 		}
 	""".trimIndent()
 
+	predicate("pig_type_specific") {
+		entityProperties {
+			pigTypeSpecific(PigVariants.COLD)
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:entity_properties",
+			"predicate": {
+				"type_specific": {
+					"type": "minecraft:pig",
+					"variant": "minecraft:cold"
+				}
+			}
+		}
+	""".trimIndent()
+
 	predicate("player_type_specific") {
 		entityProperties {
 			playerTypeSpecific {
