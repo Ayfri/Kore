@@ -1,7 +1,6 @@
 plugins {
 	kotlin("jvm")
 	`maven-publish`
-	signing
 	id("org.jreleaser")
 }
 
@@ -63,15 +62,6 @@ afterEvaluate {
 				url = uri(layout.buildDirectory.dir("staging-deploy"))
 			}
 		}
-	}
-
-	signing {
-		isRequired = providers.environmentVariable("CI").isPresent
-		useInMemoryPgpKeys(
-			providers.environmentVariable("GPG_PRIVATE_KEY").orNull,
-			providers.environmentVariable("GPG_PASSPHRASE").orNull
-		)
-		sign(publishing.publications[Project.MAVEN_PUBLICATION_NAME])
 	}
 }
 
