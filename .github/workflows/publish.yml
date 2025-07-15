@@ -30,12 +30,11 @@ jobs:
 
       - name: Publish to Central Portal
         env:
-          ORG_GRADLE_PROJECT_signingKey: "${{ secrets.GPG_KEY }}"
-          ORG_GRADLE_PROJECT_signingPassword: "${{ secrets.GPG_PASSWORD }}"
-
+          GPG_KEY_ID: "${{ secrets.GPG_KEY_ID }}"
+          GPG_PASSPHRASE: "${{ secrets.GPG_PASSPHRASE }}"
           CENTRAL_USERNAME: "${{ secrets.CENTRAL_USERNAME }}"
           CENTRAL_PASSWORD: "${{ secrets.CENTRAL_PASSWORD }}"
-        run: ./gradlew publishToSonatype --no-parallel --no-configuration-cache
+        run: ./gradlew publishToSonatype --no-configuration-cache
 
       - name: Upload artifact (Main JARs)
         uses: actions/upload-artifact@v4

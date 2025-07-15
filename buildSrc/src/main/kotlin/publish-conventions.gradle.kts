@@ -2,23 +2,24 @@ plugins {
 	kotlin("jvm")
 	`maven-publish`
 	signing
+	id("org.jreleaser")
 }
 
 val javadocJar = tasks.register("javadocJar", Jar::class, fun Jar.() {
-	archiveClassifier.set("javadoc")
+	archiveClassifier = "javadoc"
 	from(tasks.javadoc)
 })
 
 val sourceJar = tasks.register("sourceJar", Jar::class, fun Jar.() {
 	dependsOn(tasks["classes"])
-	archiveClassifier.set("sources")
+	archiveClassifier = "sources"
 	from(sourceSets["main"].allSource)
 })
 
 afterEvaluate {
 	publishing {
 		publications {
-			create<MavenPublication>("maven") {
+			create<MavenPublication>(Project.MAVEN_PUBLICATION_NAME) {
 				from(components["java"])
 
 				artifact(sourceJar)
@@ -28,41 +29,29 @@ afterEvaluate {
 				version = "${Project.VERSION}-${mainProjectProperty("minecraft.version")}"
 
 				pom {
-					val publicationName: String? by project.ext
-					val publicationDescription: String? by project.ext
-
-					name = publicationName
-					description = publicationDescription
-					url = Project.URL
-
-					packaging = "jar"
+					name = project.name
+					description = Project.PROJECT_DESCRIPTION
+					url = "https://${Project.URL}"
 
 					licenses {
 						license {
-							name = "GPLv3"
-							url = "https://www.gnu.org/licenses/gpl-3.0.en.html"
+							name = Project.LICENSE_NAME
+							url = Project.LICENSE_URL
 						}
 					}
 
 					developers {
 						developer {
-							id = "Ayfri"
-							name = "Roy Pierre"
-							email = "pierre.ayfri@gmail.com"
+							id = Project.DEVELOPER_ID
+							name = Project.DEVELOPER_NAME
+							email = Project.DEVELOPER_EMAIL
 						}
 					}
 
-					issueManagement {
-						system = "GitHub"
-						url = "${Project.URL}/issues"
-					}
-
 					scm {
-						val repositoryUrl = Project.URL
-
-						connection = "scm:git:git://$repositoryUrl.git"
-						developerConnection = "scm:git:ssh://$repositoryUrl.git"
-						url = "https://$repositoryUrl"
+						connection = "scm:git:https://${Project.URL}.git"
+						developerConnection = "scm:git:https://${Project.URL}.git"
+						url = "https://${Project.URL}"
 					}
 				}
 			}
@@ -70,22 +59,56 @@ afterEvaluate {
 
 		repositories {
 			maven {
-				name = "central"
-				url = uri(Project.PUBLISH_URL)
-
-				credentials {
-					username = System.getenv("CENTRAL_USERNAME") ?: return@credentials
-					password = System.getenv("CENTRAL_PASSWORD") ?: return@credentials
-				}
+				name = Project.STAGING_REPO_NAME
+				url = uri(layout.buildDirectory.dir("staging-deploy"))
 			}
 		}
 	}
 
 	signing {
-		val signingKey: String? by project ?: return@signing
-		val signingPassword: String? by project ?: return@signing
+		isRequired = providers.environmentVariable("CI").isPresent
+		useInMemoryPgpKeys(
+			providers.environmentVariable("GPG_PRIVATE_KEY").orNull,
+			providers.environmentVariable("GPG_PASSPHRASE").orNull
+		)
+		sign(publishing.publications[Project.MAVEN_PUBLICATION_NAME])
+	}
+}
 
-		useInMemoryPgpKeys(signingKey, signingPassword)
-		sign(publishing.publications["maven"])
+jreleaser {
+	project {
+		copyright = "${Project.COPYRIGHT_YEAR} ${Project.DEVELOPER_NAME}"
+		description = Project.PROJECT_DESCRIPTION
+	}
+
+	signing {
+		active = org.jreleaser.model.Active.ALWAYS
+		armored = true
+		mode = org.jreleaser.model.Signing.Mode.COMMAND
+
+		command {
+			keyName = providers.environmentVariable("GPG_KEY_ID").orNull
+			passphrase = providers.environmentVariable("GPG_PASSPHRASE").orNull
+		}
+	}
+
+	deploy {
+		maven {
+			mavenCentral {
+				create("sonatype") {
+					active = org.jreleaser.model.Active.ALWAYS
+					url = Project.CENTRAL_PORTAL_URL
+					username = providers.environmentVariable("CENTRAL_USERNAME").orNull
+					password = providers.environmentVariable("CENTRAL_PASSWORD").orNull
+					stagingRepository(layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath)
+				}
+			}
+		}
+	}
+
+	release {
+		github {
+			enabled = false
+		}
 	}
 }
