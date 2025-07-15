@@ -20,7 +20,7 @@ dependencies {
 	implementation(kotlin("gradle-plugin", version("kotlin")))
 	implementation(kotlin("script-runtime"))
 	implementation(kotlin("stdlib-jdk8"))
-	implementation("org.jreleaser:jreleaser-gradle-plugin:1.15.0")
+	implementation("org.jreleaser:jreleaser-gradle-plugin:1.19.0")
 }
 
 kotlin {

@@ -75,11 +75,8 @@ jreleaser {
 		active = org.jreleaser.model.Active.ALWAYS
 		armored = true
 		mode = org.jreleaser.model.Signing.Mode.MEMORY
-
-		memory {
-			keys = providers.environmentVariable("GPG_KEY").orNull
-			passphrase = providers.environmentVariable("GPG_PASSWORD").orNull
-		}
+		passphrase = providers.environmentVariable("GPG_PASSWORD").orNull
+		secretKey = providers.environmentVariable("GPG_KEY").orNull
 	}
 
 	deploy {
