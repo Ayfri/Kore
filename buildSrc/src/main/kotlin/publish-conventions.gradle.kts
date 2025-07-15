@@ -4,6 +4,9 @@ plugins {
 	id("org.jreleaser")
 }
 
+// Set project version for JReleaser
+project.version = "${Project.VERSION}-${mainProjectProperty("minecraft.version")}"
+
 val javadocJar = tasks.register("javadocJar", Jar::class, fun Jar.() {
 	archiveClassifier = "javadoc"
 	from(tasks.javadoc)
@@ -48,18 +51,11 @@ afterEvaluate {
 					}
 
 					scm {
-						connection = "scm:git:https://${Project.URL}.git"
-						developerConnection = "scm:git:https://${Project.URL}.git"
-						url = "https://${Project.URL}"
+						connection = "scm:git:git://github.com/${Project.URL}.git"
+						developerConnection = "scm:git:ssh://github.com:${Project.URL}.git"
+						url = "https://${Project.URL}/tree/master"
 					}
 				}
-			}
-		}
-
-		repositories {
-			maven {
-				name = Project.STAGING_REPO_NAME
-				url = uri(layout.buildDirectory.dir("staging-deploy"))
 			}
 		}
 	}
@@ -91,15 +87,13 @@ jreleaser {
 					url = Project.CENTRAL_PORTAL_URL
 					username = providers.environmentVariable("CENTRAL_USERNAME").orNull
 					password = providers.environmentVariable("CENTRAL_PASSWORD").orNull
-					stagingRepository(layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath)
+					stagingRepository(Project.STAGING_REPO_NAME)
 				}
 			}
 		}
 	}
+}
 
-	release {
-		github {
-			enabled = false
-		}
-	}
+fun mainProjectProperty(name: String): String {
+	return project.rootProject.property(name).toString()
 }
