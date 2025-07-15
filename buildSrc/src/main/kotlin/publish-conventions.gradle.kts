@@ -74,11 +74,11 @@ jreleaser {
 	signing {
 		active = org.jreleaser.model.Active.ALWAYS
 		armored = true
-		mode = org.jreleaser.model.Signing.Mode.COMMAND
+		mode = org.jreleaser.model.Signing.Mode.MEMORY
 
-		command {
-			keyName = providers.environmentVariable("GPG_KEY_ID").orNull
-			passphrase = providers.environmentVariable("GPG_PASSPHRASE").orNull
+		memory {
+			keys = providers.environmentVariable("GPG_KEY").orNull
+			passphrase = providers.environmentVariable("GPG_PASSWORD").orNull
 		}
 	}
 
