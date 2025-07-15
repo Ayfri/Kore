@@ -101,6 +101,11 @@ jreleaser {
 	}
 }
 
+// Make sure JReleaser deploy tasks depend on publishing tasks
+tasks.named("jreleaserDeploy") {
+	dependsOn("publishAllPublicationsToStagingRepository")
+}
+
 fun mainProjectProperty(name: String): String {
 	return project.rootProject.property(name).toString()
 }
