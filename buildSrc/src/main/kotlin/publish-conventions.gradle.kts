@@ -70,15 +70,12 @@ afterEvaluate {
 
 		repositories {
 			maven {
-				name = "nexus"
-				url = when {
-					project.version.toString().endsWith("SNAPSHOT") -> uri(Project.SNAPSHOT_PUBLISH_URL)
-					else -> uri(Project.PUBLISH_URL)
-				}
+				name = "central"
+				url = uri(Project.PUBLISH_URL)
 
 				credentials {
-					username = System.getenv("NEXUS_USERNAME") ?: return@credentials
-					password = System.getenv("NEXUS_PASSWORD") ?: return@credentials
+					username = System.getenv("CENTRAL_USERNAME") ?: return@credentials
+					password = System.getenv("CENTRAL_PASSWORD") ?: return@credentials
 				}
 			}
 		}

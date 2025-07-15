@@ -1,22 +1,10 @@
-plugins {
-	alias(libs.plugins.nexus.publish)
-}
+// Central Portal publishing configuration
+// Note: Individual modules are configured in publish-conventions.gradle.kts
 
-nexusPublishing {
-	repositories {
-		sonatype {
-			nexusUrl = uri(Project.PUBLISH_URL)
-			snapshotRepositoryUrl = uri(Project.SNAPSHOT_PUBLISH_URL)
-			username = System.getenv("NEXUS_USERNAME_TOKEN") ?: return@sonatype
-			password = System.getenv("NEXUS_PASSWORD_TOKEN") ?: return@sonatype
-			packageGroup = Project.GROUP
-		}
-	}
-}
+tasks.register("publishToSonatype") {
+	description = "Publishes all modules to Central Portal"
+	group = "publishing"
 
-val initializeSonatypeStagingRepository by tasks.existing
-subprojects {
-	initializeSonatypeStagingRepository {
-		shouldRunAfter(tasks.withType<Sign>())
-	}
+	dependsOn(gradle.includedBuilds.map { it.task(":publishAllPublicationsToCentralRepository") })
+	dependsOn(subprojects.map { "${it.path}:publishAllPublicationsToCentralRepository" })
 }

@@ -28,16 +28,14 @@ jobs:
         with:
           dependency-graph: generate-and-upload
 
-      - name: Publish to Nexus
+      - name: Publish to Central Portal
         env:
           ORG_GRADLE_PROJECT_signingKey: "${{ secrets.GPG_KEY }}"
           ORG_GRADLE_PROJECT_signingPassword: "${{ secrets.GPG_PASSWORD }}"
 
-          NEXUS_USERNAME: "${{ secrets.NEXUS_USERNAME }}"
-          NEXUS_PASSWORD: "${{ secrets.NEXUS_PASSWORD }}"
-          NEXUS_USERNAME_TOKEN: "${{ secrets.NEXUS_USERNAME_TOKEN }}"
-          NEXUS_PASSWORD_TOKEN: "${{ secrets.NEXUS_PASSWORD_TOKEN }}"
-        run: ./gradlew publishToSonatype closeSonatypeStagingRepository --no-parallel --no-configuration-cache
+          CENTRAL_USERNAME: "${{ secrets.CENTRAL_USERNAME }}"
+          CENTRAL_PASSWORD: "${{ secrets.CENTRAL_PASSWORD }}"
+        run: ./gradlew publishToSonatype --no-parallel --no-configuration-cache
 
       - name: Upload artifact (Main JARs)
         uses: actions/upload-artifact@v4
