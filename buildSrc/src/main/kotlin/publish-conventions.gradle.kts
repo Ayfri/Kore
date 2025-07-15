@@ -82,7 +82,7 @@ jreleaser {
 
 		command {
 			keyName = providers.environmentVariable("GPG_KEY_ID").orNull
-			passphrase = providers.environmentVariable("JRELEASER_GPG_PASSPHRASE").orElse(providers.environmentVariable("GPG_PASSWORD")).orNull
+			passphrase = providers.environmentVariable("GPG_PASSPHRASE").orNull
 		}
 	}
 
