@@ -10,13 +10,8 @@ tasks.register("publishToSonatype") {
 		subproject.plugins.hasPlugin("publish-conventions")
 	}
 
-	// Add dependencies for staging repositories
+	// JReleaser handles both publishing and deployment in one step
 	publishingProjects.forEach { project ->
-		dependsOn("${project.path}:publishAllPublicationsToStagingRepository")
-	}
-
-	// Add dependencies for JReleaser deployment
-	publishingProjects.forEach { project ->
-		finalizedBy("${project.path}:jreleaserDeploy")
+		dependsOn("${project.path}:jreleaserDeploy")
 	}
 }
