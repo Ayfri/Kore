@@ -58,6 +58,13 @@ afterEvaluate {
 				}
 			}
 		}
+
+		repositories {
+			maven {
+				name = "staging"
+				url = uri(layout.buildDirectory.dir("staging-deploy"))
+			}
+		}
 	}
 }
 
@@ -87,6 +94,7 @@ jreleaser {
 					url = Project.CENTRAL_PORTAL_URL
 					username = providers.environmentVariable("CENTRAL_USERNAME").orNull
 					password = providers.environmentVariable("CENTRAL_PASSWORD").orNull
+					stagingRepository("build/staging-deploy")
 				}
 			}
 		}
