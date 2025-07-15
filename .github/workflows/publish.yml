@@ -30,8 +30,9 @@ jobs:
 
       - name: Publish to Central Portal
         env:
-          GPG_KEY_ID: "${{ secrets.GPG_KEY_ID }}"
-          GPG_PASSPHRASE: "${{ secrets.GPG_PASSPHRASE }}"
+          JRELEASER_GPG_SECRET_KEY: "${{ secrets.JRELEASER_GPG_SECRET_KEY }}"
+          JRELEASER_GPG_PUBLIC_KEY: "${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}"
+          JRELEASER_GPG_PASSPHRASE: "${{ secrets.JRELEASER_GPG_PASSPHRASE }}"
           CENTRAL_USERNAME: "${{ secrets.CENTRAL_USERNAME }}"
           CENTRAL_PASSWORD: "${{ secrets.CENTRAL_PASSWORD }}"
         run: ./gradlew publishToSonatype --no-configuration-cache
