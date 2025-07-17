@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.dimension.biomesource
 
-import io.github.ayfri.kore.arguments.types.resources.worldgen.BiomeArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.BiomeArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 

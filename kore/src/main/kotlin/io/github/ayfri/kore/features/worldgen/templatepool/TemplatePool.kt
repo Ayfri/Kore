@@ -2,8 +2,8 @@ package io.github.ayfri.kore.features.worldgen.templatepool
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
-import io.github.ayfri.kore.arguments.types.resources.worldgen.TemplatePoolArgument
 import io.github.ayfri.kore.generated.TemplatePools
+import io.github.ayfri.kore.generated.arguments.worldgen.types.TemplatePoolArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString

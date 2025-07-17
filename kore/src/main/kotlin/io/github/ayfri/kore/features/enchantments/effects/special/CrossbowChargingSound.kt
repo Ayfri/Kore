@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.enchantments.effects.special
 
-import io.github.ayfri.kore.arguments.types.resources.SoundEventArgument
 import io.github.ayfri.kore.data.sound.SoundEvent
+import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -3,8 +3,8 @@ package io.github.ayfri.kore.arguments.components.types
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.components.consumable.ConsumeEffect
 import io.github.ayfri.kore.arguments.components.consumable.ConsumeEffects
-import io.github.ayfri.kore.arguments.types.resources.SoundEventArgument
 import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.snakeCase
 import kotlinx.serialization.SerialName

@@ -15,6 +15,8 @@ import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.features.worldgen.floatproviders.constantFloatProvider
+import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
+import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -63,8 +65,8 @@ fun EntityEffectAllOfBuilder.explode(
 	attributeToUser: Boolean,
 	createFire: Boolean,
 	blockInteraction: BlockInteraction,
-	smallParticle: ParticleArgument,
-	largeParticle: ParticleArgument,
+	smallParticle: ParticleTypeArgument,
+	largeParticle: ParticleTypeArgument,
 	sound: SoundArgument,
 	block: Explode.() -> Unit = {},
 ) =
@@ -125,7 +127,7 @@ fun EntityEffectAllOfBuilder.spawnParticles(
 	}
 
 fun EntityEffectAllOfBuilder.spawnParticles(
-	particle: ParticleArgument,
+	particle: ParticleTypeArgument,
 	horizontalPositionType: ParticlePositionType,
 	verticalPositionType: ParticlePositionType,
 	block: SpawnParticles.() -> Unit = {},
@@ -153,7 +155,7 @@ fun EntityEffectAllOfBuilder.spawnParticles(
 	}
 
 fun EntityEffectAllOfBuilder.spawnParticles(
-	particle: ParticleArgument,
+	particle: ParticleTypeArgument,
 	horizontalPosition: ParticlePosition,
 	verticalPosition: ParticlePosition,
 	block: SpawnParticles.() -> Unit = {},

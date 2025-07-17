@@ -2,6 +2,7 @@ package io.github.ayfri.kore.features.tags
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.types.resources.tagged.*
+import io.github.ayfri.kore.generated.arguments.worldgen.tagged.BiomeTagArgument
 
 fun DataPack.bannerPatternTag(
 	fileName: String = "banner_pattern",

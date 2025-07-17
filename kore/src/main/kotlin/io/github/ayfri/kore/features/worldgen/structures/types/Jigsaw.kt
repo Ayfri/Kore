@@ -1,13 +1,13 @@
 package io.github.ayfri.kore.features.worldgen.structures.types
 
-import io.github.ayfri.kore.arguments.types.BiomeOrTagArgument
 import io.github.ayfri.kore.arguments.types.resources.worldgen.StructureArgument
-import io.github.ayfri.kore.arguments.types.resources.worldgen.TemplatePoolArgument
 import io.github.ayfri.kore.features.worldgen.HeightMap
 import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProvider
 import io.github.ayfri.kore.features.worldgen.heightproviders.constantAbsolute
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.*
+import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.TemplatePoolArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 

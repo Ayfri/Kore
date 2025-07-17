@@ -74,7 +74,10 @@ fun generatePathEnumTree(
 					)
 
 					val argumentType = tagsParents[tagParent]!!
-					addSuperinterface(argumentClassName("tagged.$argumentType"))
+					// Make it work with `worldgen.` prefix
+					val prefix = if ("." in argumentType) argumentType.substringBeforeLast(".") + "." else ""
+					val argumentTypeName = argumentType.substringAfterLast(".")
+					addSuperinterface(argumentClassName("${prefix}tagged.$argumentTypeName"))
 				}
 
 				if (hasParent || tagParent != null) {

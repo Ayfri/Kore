@@ -6,9 +6,9 @@ import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.literals.float
 import io.github.ayfri.kore.arguments.types.literals.int
 import io.github.ayfri.kore.arguments.types.literals.literal
-import io.github.ayfri.kore.arguments.types.resources.ParticleArgument
 import io.github.ayfri.kore.commands.command
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
@@ -27,9 +27,9 @@ enum class ParticleMode {
 private fun Color.asArgs() = toRGB().normalizedArray.map { float(it) }.toTypedArray()
 
 class Particles(internal val fn: Function) {
-	fun particle(particle: ParticleArgument, pos: Vec3? = null) = fn.addLine(command("particle", particle, pos))
+	fun particle(particle: ParticleTypeArgument, pos: Vec3? = null) = fn.addLine(command("particle", particle, pos))
 	fun particle(
-		particle: ParticleArgument,
+		particle: ParticleTypeArgument,
 		pos: Vec3,
 		delta: Vec3,
 		speed: Double,
@@ -120,10 +120,10 @@ class Particles(internal val fn: Function) {
 		)
 }
 
-fun Function.particle(particle: ParticleArgument, pos: Vec3? = null) = addLine(command("particle", particle, pos))
+fun Function.particle(particle: ParticleTypeArgument, pos: Vec3? = null) = addLine(command("particle", particle, pos))
 
 fun Function.particle(
-	particle: ParticleArgument,
+	particle: ParticleTypeArgument,
 	pos: Vec3,
 	delta: Vec3,
 	speed: Double,

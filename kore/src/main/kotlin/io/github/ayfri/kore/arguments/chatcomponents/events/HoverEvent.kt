@@ -11,8 +11,8 @@ import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
-import io.github.ayfri.kore.arguments.types.resources.EntityTypeArgument
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
+import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
 import io.github.ayfri.kore.utils.asArg

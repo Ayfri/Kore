@@ -11,8 +11,8 @@ import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.resources.EnchantmentArgument
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.arguments.types.resources.SoundArgument
-import io.github.ayfri.kore.arguments.types.resources.worldgen.BiomeArgument
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.generated.arguments.worldgen.types.BiomeArgument
 import io.github.ayfri.kore.utils.asArg
 
 fun Function.debugStart() = addLine(command("debug", literal("start")))

@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.features.worldgen.dimension.generator
 
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
-import io.github.ayfri.kore.arguments.types.resources.worldgen.BiomeArgument
-import io.github.ayfri.kore.arguments.types.resources.worldgen.StructureSetArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.BiomeArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureSetArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 

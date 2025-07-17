@@ -7,8 +7,8 @@ import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.resources.worldgen.ConfiguredFeatureArgument
 import io.github.ayfri.kore.arguments.types.resources.worldgen.ConfiguredStructureArgument
 import io.github.ayfri.kore.arguments.types.resources.worldgen.StructureArgument
-import io.github.ayfri.kore.arguments.types.resources.worldgen.TemplatePoolArgument
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.generated.arguments.worldgen.types.TemplatePoolArgument
 import io.github.ayfri.kore.utils.asArg
 
 fun Function.placeFeature(feature: ConfiguredFeatureArgument, pos: Vec3) =

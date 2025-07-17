@@ -8,7 +8,7 @@ import kotlinx.serialization.encoding.Encoder
 interface Argument {
 	fun asString(): String
 
-	object ArgumentSerializer : ToStringSerializer<Argument>() {
+	data object ArgumentSerializer : ToStringSerializer<Argument>() {
 		override fun serialize(encoder: Encoder, value: Argument) = encoder.encodeString(value.asString())
 	}
 }

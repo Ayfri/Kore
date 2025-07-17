@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.helpers.displays.entities
 
 import io.github.ayfri.kore.arguments.colors.RGB
-import io.github.ayfri.kore.arguments.types.resources.EntityTypeArgument
+import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
 import io.github.ayfri.kore.helpers.displays.maths.Transformation
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import net.benwoodworth.knbt.StringifiedNbt

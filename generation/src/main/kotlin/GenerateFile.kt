@@ -6,9 +6,12 @@ fun generateFile(
 	name: String,
 	sourceUrl: String? = null,
 	topLevel: TypeSpec.Builder? = null,
+	subPackage: String? = null,
 	additionalCode: FileSpec.Builder.(name: String) -> Unit = {},
 ) {
-	val fileBuilder = FileSpec.builder(GENERATED_PACKAGE, name).apply {
+	var path = GENERATED_PACKAGE
+	if (subPackage != null) path += ".$subPackage"
+	val fileBuilder = FileSpec.builder(path, name).apply {
 		val sourceLine = sourceUrl?.let { "\nSource: $it" } ?: ""
 		addFileComment(
 			"""

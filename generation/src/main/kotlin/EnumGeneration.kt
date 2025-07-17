@@ -49,5 +49,5 @@ fun generateEnum(
 		addType(generateCompanion(name, encoderValue))
 	}
 
-	generateFile(name, sourceUrl, enumType, additionalCode)
+	generateFile(name, sourceUrl, enumType, additionalCode = additionalCode)
 }

@@ -7,7 +7,6 @@ import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.selector.Sort
 import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.literals.*
-import io.github.ayfri.kore.arguments.types.resources.EntityTypeArgument
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.arguments.types.resources.PredicateArgument
 import io.github.ayfri.kore.arguments.types.resources.worldgen.DimensionArgument
@@ -16,6 +15,7 @@ import io.github.ayfri.kore.commands.function
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.emptyFunction
 import io.github.ayfri.kore.functions.generatedFunction
+import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable

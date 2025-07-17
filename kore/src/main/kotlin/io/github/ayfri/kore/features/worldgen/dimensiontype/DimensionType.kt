@@ -4,10 +4,10 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.types.resources.tagged.BlockTagArgument
 import io.github.ayfri.kore.arguments.types.resources.worldgen.DimensionArgument
-import io.github.ayfri.kore.arguments.types.resources.worldgen.DimensionTypeArgument
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.generated.Tags
+import io.github.ayfri.kore.generated.arguments.types.DimensionTypeArgument
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
