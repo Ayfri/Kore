@@ -11,7 +11,7 @@ fun argumentClassName(argument: String): ClassName {
 
 	if (manual) {
 		return ClassName(
-			packageName = "$CODE_PACKAGE.arguments.types.resources",
+			packageName = "$CODE_PACKAGE.arguments.types.resources.$packageSuffix".removeSuffix(".types"),
 			"${argumentName.substringAfterLast(".")}Argument"
 		)
 	}

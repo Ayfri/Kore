@@ -76,13 +76,13 @@ fun processArgumentType(argumentType: ArgumentType): Map<String, TypeSpec.Builde
 							.addSuperinterface(ClassName("", "$className$classSuffix"))
 							.addProperty(
 								PropertySpec.builder("name", String::class)
-									.initializer("%S","name")
+									.initializer("%L","name")
 									.overrides()
 									.build()
 							)
 							.addProperty(
 								PropertySpec.builder("namespace", String::class)
-									.initializer("%S","namespace")
+									.initializer("%L","namespace")
 									.overrides()
 									.build()
 							)
