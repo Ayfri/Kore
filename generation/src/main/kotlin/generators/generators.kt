@@ -21,6 +21,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("TrimPatterns", "trim_patterns"),
 		gen("PigVariants", "pigs"),
 		gen("WolfVariants", "wolfs"),
+
 		gen("Biomes", "worldgen/biome"),
 		gen("BiomePresets", "worldgen/multi_noise_biome_source_parameter_list", "MultiNoiseBiomeSourceParameterList"),
 		gen("ConfiguredFeatures", "worldgen/configured_feature"),
@@ -40,19 +41,25 @@ suspend fun launchAllSimpleGenerators() {
 		gen("Structures", "structures", "worldgen.Structure") { it.removeSuffix(".nbt") },
 		gen(
 			"Tags", "tags", argumentClassName = "", tagsParents = mapOf(
+				"banner_pattern" to "BannerPatternTag",
 				"block" to "BlockTag M",
 				"cat_variant" to "CatVariantTag",
 				"damage_type" to "DamageTypeTag",
 				"enchantment" to "EnchantmentTag",
+				"entity_type" to "EntityTypeTag",
 				"fluid" to "FluidTag",
 				"frog_variant" to "FrogVariantTag",
+				"game_event" to "GameEventTag",
 				"instrument" to "InstrumentTag",
 				"item" to "ItemTag M",
 				"painting_variant" to "PaintingVariantTag",
+				"point_of_interest_type" to "PointOfInterestTypeTag",
 				"pig_variant" to "PigVariantTag",
 				"wolf_variant" to "WolfVariantTag",
 				"worldgen/biome" to "worldgen.BiomeTag",
+				"worldgen/flat_level_generator_preset" to "worldgen.FlatLevelGeneratorPresetTag",
 				"worldgen/structure" to "worldgen.ConfiguredStructureTag",
+				"worldgen/world_preset" to "worldgen.WorldPresetTag",
 			)
 		),
 		gen("DensityFunctions", "worldgen/density_function"),
