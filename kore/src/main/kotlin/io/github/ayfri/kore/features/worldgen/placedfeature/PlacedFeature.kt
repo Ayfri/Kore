@@ -2,13 +2,12 @@ package io.github.ayfri.kore.features.worldgen.placedfeature
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
-import io.github.ayfri.kore.arguments.types.resources.worldgen.ConfiguredFeatureArgument
-import io.github.ayfri.kore.arguments.types.resources.worldgen.PlacedFeatureArgument
 import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.PlacementModifier
+import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.PlacedFeatureArgument
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.encodeToString
 
 @Serializable
 data class PlacedFeature(

@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.predicates.sub.entityspecific
 
-import io.github.ayfri.kore.arguments.types.WolfVariantOrTagArgument
 import io.github.ayfri.kore.features.predicates.sub.Entity
+import io.github.ayfri.kore.generated.arguments.WolfVariantOrTagArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 

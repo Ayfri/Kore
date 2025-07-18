@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions
 
-import io.github.ayfri.kore.arguments.types.resources.worldgen.NoiseArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.NoiseArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

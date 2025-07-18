@@ -4,10 +4,10 @@ import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.types.literals.RotationArgument
 import io.github.ayfri.kore.arguments.types.literals.int
 import io.github.ayfri.kore.arguments.types.literals.literal
-import io.github.ayfri.kore.arguments.types.resources.worldgen.ConfiguredFeatureArgument
-import io.github.ayfri.kore.arguments.types.resources.worldgen.ConfiguredStructureArgument
-import io.github.ayfri.kore.arguments.types.resources.worldgen.StructureArgument
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.TemplatePoolArgument
 import io.github.ayfri.kore.utils.asArg
 

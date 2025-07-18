@@ -2,8 +2,8 @@ package io.github.ayfri.kore.features.worldgen.densityfunction
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
-import io.github.ayfri.kore.arguments.types.resources.worldgen.DensityFunctionArgument
 import io.github.ayfri.kore.features.worldgen.densityfunction.types.DensityFunctionType
+import io.github.ayfri.kore.generated.arguments.worldgen.types.DensityFunctionArgument
 import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString
 

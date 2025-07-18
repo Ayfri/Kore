@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.enchantments.effects.entity
 
-import io.github.ayfri.kore.arguments.types.EntityTypeOrTagArgument
+import io.github.ayfri.kore.generated.arguments.EntityTypeOrTagArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 

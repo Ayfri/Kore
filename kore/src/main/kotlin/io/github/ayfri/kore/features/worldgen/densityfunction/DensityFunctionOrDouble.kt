@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.densityfunction
 
-import io.github.ayfri.kore.arguments.types.resources.worldgen.DensityFunctionArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.DensityFunctionArgument
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor

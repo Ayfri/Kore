@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.predicates.sub.entityspecific
 
-import io.github.ayfri.kore.arguments.types.resources.VillagerTypeArgument
 import io.github.ayfri.kore.features.predicates.sub.Entity
+import io.github.ayfri.kore.generated.arguments.types.VillagerTypeArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

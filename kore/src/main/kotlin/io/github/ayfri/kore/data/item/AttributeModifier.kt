@@ -2,10 +2,10 @@ package io.github.ayfri.kore.data.item
 
 import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
 import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
-import io.github.ayfri.kore.arguments.types.resources.AttributeArgument
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.features.predicates.providers.NumberProvider
 import io.github.ayfri.kore.features.predicates.providers.constant
+import io.github.ayfri.kore.generated.arguments.types.AttributeArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 

@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.worldgen.structureset
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
-import io.github.ayfri.kore.arguments.types.resources.worldgen.ConfiguredStructureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureSetArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient

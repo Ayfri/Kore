@@ -1,13 +1,13 @@
 package io.github.ayfri.kore.features.recipes.types
 
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
-import io.github.ayfri.kore.arguments.types.resources.RecipeArgument
 import io.github.ayfri.kore.arguments.types.resources.item
 import io.github.ayfri.kore.arguments.types.resources.tagged.ItemTagArgument
 import io.github.ayfri.kore.features.recipes.RecipeFile
 import io.github.ayfri.kore.features.recipes.RecipeTypes
 import io.github.ayfri.kore.features.recipes.Recipes
 import io.github.ayfri.kore.features.recipes.data.Ingredient
+import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 

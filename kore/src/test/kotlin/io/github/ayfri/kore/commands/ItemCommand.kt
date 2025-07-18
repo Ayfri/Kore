@@ -6,10 +6,10 @@ import io.github.ayfri.kore.arguments.ENDERCHEST
 import io.github.ayfri.kore.arguments.WEAPON
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.types.literals.self
-import io.github.ayfri.kore.arguments.types.resources.ItemModifierArgument
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
 
 fun Function.itemTests() {
 	items {

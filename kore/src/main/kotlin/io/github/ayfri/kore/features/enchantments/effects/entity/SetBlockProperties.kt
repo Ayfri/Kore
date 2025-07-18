@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.enchantments.effects.entity
 
-import io.github.ayfri.kore.arguments.types.resources.GameEventArgument
+import io.github.ayfri.kore.generated.arguments.types.GameEventArgument
 import io.github.ayfri.kore.serializers.TripleAsArray
 import kotlinx.serialization.Serializable
 

@@ -12,14 +12,15 @@ import io.github.ayfri.kore.arguments.selector.Sort
 import io.github.ayfri.kore.arguments.selector.advancements
 import io.github.ayfri.kore.arguments.selector.scores
 import io.github.ayfri.kore.arguments.types.literals.*
-import io.github.ayfri.kore.arguments.types.resources.AdvancementArgument
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.predicates.conditions.entityProperties
 import io.github.ayfri.kore.features.predicates.predicate
 import io.github.ayfri.kore.features.predicates.sub.block
+import io.github.ayfri.kore.generated.Advancements
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.EntityTypes
+import io.github.ayfri.kore.generated.arguments.types.AdvancementArgument
 import io.github.ayfri.kore.setTestPath
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
@@ -40,11 +41,11 @@ fun selectorTests() = dataPack("selector_tests") {
 
 	allEntities {
 		advancements {
-			AdvancementArgument("foo", "test")() {
+			Advancements.Story.ENCHANT_ITEM {
 				this["bar"] = true
 			}
 		}
-	} assertsIs "@e[advancements={test:foo={bar=true}}]"
+	} assertsIs "@e[advancements={minecraft:story/enchant_item={bar=true}}]"
 
 	allEntities {
 		distance = rangeOrDoubleEnd(1.5)

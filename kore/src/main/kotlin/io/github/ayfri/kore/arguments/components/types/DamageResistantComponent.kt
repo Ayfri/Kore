@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.arguments.types.resources.tagged.DamageTypeTagArgument
 import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.arguments.tagged.DamageTypeTagArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

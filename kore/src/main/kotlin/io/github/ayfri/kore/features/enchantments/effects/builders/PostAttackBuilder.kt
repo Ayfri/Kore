@@ -1,7 +1,5 @@
 package io.github.ayfri.kore.features.enchantments.effects.builders
 
-import io.github.ayfri.kore.arguments.types.EffectOrTagArgument
-import io.github.ayfri.kore.arguments.types.EntityTypeOrTagArgument
 import io.github.ayfri.kore.arguments.types.resources.*
 import io.github.ayfri.kore.data.sound.SoundEvent
 import io.github.ayfri.kore.features.enchantments.effects.entity.*
@@ -13,6 +11,9 @@ import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.features.worldgen.floatproviders.constantFloatProvider
+import io.github.ayfri.kore.generated.arguments.EntityTypeOrTagArgument
+import io.github.ayfri.kore.generated.arguments.MobEffectOrTagArgument
+import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.serializers.InlineSerializer
@@ -50,7 +51,7 @@ fun PostAttackBuilder.applyMobEffect(enchanted: PostAttackSpecifier, affected: P
 fun PostAttackBuilder.applyMobEffect(
 	enchanted: PostAttackSpecifier,
 	affected: PostAttackSpecifier,
-	effect: EffectOrTagArgument, block: ApplyMobEffect.() -> Unit = {},
+	effect: MobEffectOrTagArgument, block: ApplyMobEffect.() -> Unit = {},
 ) =
 	apply {
 		val effect = ApplyMobEffect(listOf(effect)).apply(block)

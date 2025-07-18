@@ -3,7 +3,6 @@ package io.github.ayfri.kore.features.worldgen.noisesettings
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
-import io.github.ayfri.kore.arguments.types.resources.worldgen.NoiseSettingsArgument
 import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.data.block.blockState
 import io.github.ayfri.kore.features.worldgen.dimension.biomesource.multinoise.MultiNoiseBiomeSourceParameters
@@ -11,9 +10,9 @@ import io.github.ayfri.kore.features.worldgen.noisesettings.rules.Bandlands
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.Block
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.SurfaceRule
 import io.github.ayfri.kore.generated.Blocks
+import io.github.ayfri.kore.generated.arguments.worldgen.types.NoiseSettingsArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.encodeToString
 
 /**
  * Represents the settings for generating noise in a world.

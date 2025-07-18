@@ -1,9 +1,9 @@
 package io.github.ayfri.kore.features.itemmodifiers.functions
 
-import io.github.ayfri.kore.arguments.types.resources.BlockEntityTypeArgument
-import io.github.ayfri.kore.arguments.types.resources.LootTableArgument
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.generated.arguments.types.BlockEntityTypeArgument
+import io.github.ayfri.kore.generated.arguments.types.LootTableArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

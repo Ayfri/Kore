@@ -1,10 +1,10 @@
 package io.github.ayfri.kore.arguments.components.matchers
 
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
-import io.github.ayfri.kore.arguments.types.EnchantmentOrTagArgument
 import io.github.ayfri.kore.features.advancements.serializers.IntRangeOrIntJson
 import io.github.ayfri.kore.features.predicates.sub.item.Enchantment
 import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
+import io.github.ayfri.kore.generated.arguments.EnchantmentOrTagArgument
 import io.github.ayfri.kore.serializers.InlineSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer

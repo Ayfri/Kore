@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.arguments.selector
 
 import io.github.ayfri.kore.arguments.enums.Gamemode
-import io.github.ayfri.kore.arguments.types.resources.PredicateArgument
 import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
+import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.serializers.ToStringSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationStrategy

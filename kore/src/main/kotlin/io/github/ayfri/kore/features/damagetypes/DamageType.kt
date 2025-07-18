@@ -2,13 +2,12 @@ package io.github.ayfri.kore.features.damagetypes
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
-import io.github.ayfri.kore.arguments.types.resources.DamageTypeArgument
 import io.github.ayfri.kore.features.damagetypes.types.DeathMessageType
 import io.github.ayfri.kore.features.damagetypes.types.Effects
 import io.github.ayfri.kore.features.damagetypes.types.Scaling
+import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.encodeToString
 
 @Serializable
 data class DamageType(

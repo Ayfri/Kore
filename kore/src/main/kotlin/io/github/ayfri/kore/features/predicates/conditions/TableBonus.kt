@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.predicates.conditions
 
-import io.github.ayfri.kore.arguments.types.resources.EnchantmentArgument
 import io.github.ayfri.kore.features.predicates.Predicate
+import io.github.ayfri.kore.generated.arguments.types.EnchantmentArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

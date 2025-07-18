@@ -2,9 +2,9 @@ package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.EquipmentSlot
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.arguments.types.EntityTypeOrTagArgument
 import io.github.ayfri.kore.arguments.types.resources.ModelArgument
 import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.arguments.EntityTypeOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.SerialName

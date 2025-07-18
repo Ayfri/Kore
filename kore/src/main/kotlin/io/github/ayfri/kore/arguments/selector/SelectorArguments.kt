@@ -7,8 +7,8 @@ import io.github.ayfri.kore.arguments.numbers.ranges.IntRangeOrInt
 import io.github.ayfri.kore.arguments.numbers.ranges.Range
 import io.github.ayfri.kore.arguments.scores.Scores
 import io.github.ayfri.kore.arguments.scores.SelectorScore
-import io.github.ayfri.kore.arguments.types.resources.PredicateArgument
 import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
+import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor

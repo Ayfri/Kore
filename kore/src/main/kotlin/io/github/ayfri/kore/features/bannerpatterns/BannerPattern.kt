@@ -2,10 +2,9 @@ package io.github.ayfri.kore.features.bannerpatterns
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
-import io.github.ayfri.kore.arguments.types.resources.BannerPatternArgument
+import io.github.ayfri.kore.generated.arguments.types.BannerPatternArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.encodeToString
 
 @Serializable
 data class BannerPattern(

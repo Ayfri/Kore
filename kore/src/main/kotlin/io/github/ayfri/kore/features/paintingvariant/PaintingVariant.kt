@@ -3,10 +3,9 @@ package io.github.ayfri.kore.features.paintingvariant
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
-import io.github.ayfri.kore.arguments.types.resources.PaintingVariantArgument
+import io.github.ayfri.kore.generated.arguments.types.PaintingVariantArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.encodeToString
 
 @Serializable
 data class PaintingVariant(

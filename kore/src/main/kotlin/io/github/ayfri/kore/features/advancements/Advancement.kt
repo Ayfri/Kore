@@ -10,9 +10,11 @@ import io.github.ayfri.kore.features.advancements.triggers.AdvancementTriggerCon
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.sub.Entity
+import io.github.ayfri.kore.generated.arguments.types.AdvancementArgument
+import io.github.ayfri.kore.generated.arguments.types.LootTableArgument
+import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.encodeToString
 
 @Serializable
 data class Advancement internal constructor(

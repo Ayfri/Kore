@@ -1,7 +1,5 @@
 package io.github.ayfri.kore.features.enchantments.effects.builders
 
-import io.github.ayfri.kore.arguments.types.EffectOrTagArgument
-import io.github.ayfri.kore.arguments.types.EntityTypeOrTagArgument
 import io.github.ayfri.kore.arguments.types.resources.*
 import io.github.ayfri.kore.data.sound.SoundEvent
 import io.github.ayfri.kore.features.enchantments.effects.entity.*
@@ -15,6 +13,9 @@ import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.features.worldgen.floatproviders.constantFloatProvider
+import io.github.ayfri.kore.generated.arguments.EntityTypeOrTagArgument
+import io.github.ayfri.kore.generated.arguments.MobEffectOrTagArgument
+import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.serializers.InlinableList
@@ -41,7 +42,7 @@ fun EntityEffectAllOfSubBuilder.allOf(block: EntityEffectAllOfSubBuilder.() -> U
 fun EntityEffectAllOfBuilder.applyMobEffect(block: ApplyMobEffect.() -> Unit = {}) =
 	apply { effects.effects += ApplyMobEffect().apply(block) }
 
-fun EntityEffectAllOfBuilder.applyMobEffect(effect: EffectOrTagArgument, block: ApplyMobEffect.() -> Unit = {}) =
+fun EntityEffectAllOfBuilder.applyMobEffect(effect: MobEffectOrTagArgument, block: ApplyMobEffect.() -> Unit = {}) =
 	apply { effects.effects += ApplyMobEffect(listOf(effect)).apply(block) }
 
 fun EntityEffectAllOfBuilder.damageEntity(damageType: DamageTypeArgument, block: DamageEntity.() -> Unit = {}) =

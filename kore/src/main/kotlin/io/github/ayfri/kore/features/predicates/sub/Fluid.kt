@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.predicates.sub
 
-import io.github.ayfri.kore.arguments.types.FluidOrTagArgument
+import io.github.ayfri.kore.generated.arguments.FluidOrTagArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 

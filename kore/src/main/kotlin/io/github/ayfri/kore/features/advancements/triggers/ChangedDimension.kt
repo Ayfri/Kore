@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.features.advancements.triggers
 
-import io.github.ayfri.kore.arguments.types.resources.worldgen.DimensionArgument
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
+import io.github.ayfri.kore.generated.arguments.types.DimensionArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

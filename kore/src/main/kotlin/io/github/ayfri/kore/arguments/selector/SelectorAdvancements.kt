@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.arguments.selector
 
 import io.github.ayfri.kore.arguments.Advancement
-import io.github.ayfri.kore.arguments.types.resources.AdvancementArgument
+import io.github.ayfri.kore.generated.arguments.types.AdvancementArgument
 import io.github.ayfri.kore.serializers.ToStringSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonEncoder

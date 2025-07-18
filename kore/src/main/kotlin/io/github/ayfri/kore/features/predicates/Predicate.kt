@@ -2,8 +2,8 @@ package io.github.ayfri.kore.features.predicates
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
-import io.github.ayfri.kore.arguments.types.resources.PredicateArgument
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
+import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import io.github.ayfri.kore.serializers.inlinableListSerializer
 import kotlinx.serialization.KSerializer

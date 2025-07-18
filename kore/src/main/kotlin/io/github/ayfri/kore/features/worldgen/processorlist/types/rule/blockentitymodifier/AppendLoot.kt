@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.processorlist.types.rule.blockentitymodifier
 
-import io.github.ayfri.kore.arguments.types.resources.LootTableArgument
+import io.github.ayfri.kore.generated.arguments.types.LootTableArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

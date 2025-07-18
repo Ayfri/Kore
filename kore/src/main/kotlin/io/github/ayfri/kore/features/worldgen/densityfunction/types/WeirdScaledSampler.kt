@@ -1,9 +1,9 @@
 package io.github.ayfri.kore.features.worldgen.densityfunction.types
 
-import io.github.ayfri.kore.arguments.types.resources.worldgen.DensityFunctionArgument
-import io.github.ayfri.kore.arguments.types.resources.worldgen.NoiseArgument
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionOrDouble
 import io.github.ayfri.kore.features.worldgen.densityfunction.densityFunctionOrDouble
+import io.github.ayfri.kore.generated.arguments.worldgen.types.DensityFunctionArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.NoiseArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 

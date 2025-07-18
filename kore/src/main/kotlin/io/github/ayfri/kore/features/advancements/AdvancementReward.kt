@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.features.advancements
 
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
-import io.github.ayfri.kore.arguments.types.resources.LootTableArgument
-import io.github.ayfri.kore.arguments.types.resources.RecipeArgument
+import io.github.ayfri.kore.generated.arguments.types.LootTableArgument
+import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

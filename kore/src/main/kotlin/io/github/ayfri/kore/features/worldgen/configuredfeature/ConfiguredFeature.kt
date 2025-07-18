@@ -2,11 +2,10 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
-import io.github.ayfri.kore.arguments.types.resources.worldgen.ConfiguredFeatureArgument
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.FeatureConfig
+import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.encodeToString
 
 @Serializable
 data class ConfiguredFeature(

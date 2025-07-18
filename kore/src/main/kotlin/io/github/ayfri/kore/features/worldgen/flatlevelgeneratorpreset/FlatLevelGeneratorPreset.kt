@@ -3,16 +3,15 @@ package io.github.ayfri.kore.features.worldgen.flatlevelgeneratorpreset
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
-import io.github.ayfri.kore.arguments.types.resources.worldgen.FlatLevelGeneratorPresetArgument
 import io.github.ayfri.kore.features.worldgen.dimension.generator.FlatGeneratorSettings
 import io.github.ayfri.kore.features.worldgen.dimension.generator.Layer
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.StructureSets
+import io.github.ayfri.kore.generated.arguments.worldgen.types.FlatLevelGeneratorPresetArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.encodeToString
 
 @Serializable
 data class FlatLevelGeneratorPreset(

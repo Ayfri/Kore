@@ -2,12 +2,11 @@ package io.github.ayfri.kore.features.enchantments.providers
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
-import io.github.ayfri.kore.arguments.types.resources.VillagerProfessionArgument
 import io.github.ayfri.kore.features.enchantments.providers.types.EnchantmentProviderType
+import io.github.ayfri.kore.generated.arguments.types.VillagerProfessionArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.BiomeArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.encodeToString
 
 private fun String.removeNamespace() = replace(Regex("[a-z_-]+:"), "")
 
