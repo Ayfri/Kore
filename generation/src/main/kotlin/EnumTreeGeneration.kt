@@ -17,7 +17,10 @@ fun generatePathEnumTree(
 
 	val topLevel = TypeSpec.interfaceBuilder(name).apply {
 		parentArgumentType?.let {
-			addSuperinterface(argumentClassName(it))
+			// Make it work with `worldgen.` prefix
+			val prefix = if ("." in it) it.substringBeforeLast(".") + "." else ""
+			val argumentTypeName = it.substringAfterLast(".")
+			addSuperinterface(argumentClassName("${prefix}types.$argumentTypeName"))
 		}
 
 		addModifiers(KModifier.SEALED)
