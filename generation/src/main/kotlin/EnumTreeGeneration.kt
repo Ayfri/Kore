@@ -89,7 +89,7 @@ fun generatePathEnumTree(
 
 					addFunction(
 						FunSpec.builder("asString")
-							.addStatement("return \"$hash\$namespace:$tagPath\${name.lowercase()}\"")
+							.addStatement($$"return \"$$hash$namespace:$$tagPath${name.lowercase()}\"")
 							.returns(String::class)
 							.overrides()
 							.build()
@@ -102,7 +102,7 @@ fun generatePathEnumTree(
 						.build()
 				)
 
-				addType(generateCompanion(enumName, "\"$parent$separator\${value.name.lowercase()}\""))
+				addType(generateCompanion(enumName, $$"\"$$parent$$separator${value.name.lowercase()}\""))
 			}
 		}.addEnumConstant(enumValue)
 	}
@@ -128,7 +128,7 @@ inline fun <T> T.letIf(
 	block: (T) -> T,
 ) = if (condition) block(this) else this
 
-fun generateCompanion(name: String, encoderValue: String? = "\"minecraft:\${value.name.lowercase()}\"") =
+fun generateCompanion(name: String, encoderValue: String? = $$"\"minecraft:${value.name.lowercase()}\"") =
 	TypeSpec.companionObjectBuilder().apply {
 		addType(
 			TypeSpec.objectBuilder(name.asSerializer())

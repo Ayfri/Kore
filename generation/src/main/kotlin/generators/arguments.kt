@@ -40,7 +40,11 @@ suspend fun downloadRegistriesList(): Map<String, Registry> {
 	val registriesList = getFromCacheOrDownloadJson("registries.json", registriesListUrl)
 	val json = jsonDecoder.decodeFromJsonElement<Map<String, Map<String, Registry>>>(registriesList)
 
-	return json.getOrDefault("registries", emptyMap())
+	val additionalTypes = mapOf(
+		"minecraft:worldgen/configured_structure" to Registry(elements = false, stable = true, tags = true),
+	)
+
+	return json.getOrDefault("registries", emptyMap()) + additionalTypes
 }
 
 fun processArgumentType(argumentType: ArgumentType): Map<String, TypeSpec.Builder> {

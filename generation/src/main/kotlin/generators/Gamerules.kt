@@ -116,7 +116,7 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 								.addStatement(
 									"return fromString(decoder.decodeString()) ?: throw %T(%S)",
 									IllegalArgumentException::class,
-									"Unknown '\${name}' gamerule"
+									$$"Unknown '${name}' gamerule"
 								)
 								.overrides()
 								.build()
