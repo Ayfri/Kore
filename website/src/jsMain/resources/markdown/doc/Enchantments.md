@@ -39,6 +39,20 @@ This snippet creates a simple enchantment named “test” that can be applied t
 
 An enchantment’s power is defined in the `effects` block. Kore supports a wide range of effects – each affecting a different aspect of gameplay. You can combine multiple effects by using functions within the `effects { ... }` builder. Below is an exhaustive list of every supported enchantment effect along with a precise Kotlin example.
 
+### Ammo Use
+
+Sets the amount of ammunition used when firing a bow or crossbow.
+
+```kotlin
+enchantment("ammo_use") {
+    effects {
+        ammoUse {
+            add(5)
+        }
+    }
+}
+```
+
 ### Attributes
 
 Modifies or adds attribute modifiers to items. For example, increasing an item’s scale.
@@ -376,6 +390,37 @@ enchantment("projectile_count") {
 }
 ```
 
+### Projectile Piercing
+
+Sets the number of targets a projectile can pierce.
+
+```kotlin
+enchantment("projectile_piercing") {
+    effects {
+        projectilePiercing {
+            add(5)
+        }
+    }
+}
+```
+
+### Projectile Spawned
+
+Executes an effect when a projectile entity has been spawned from a bow, crossbow, snowball, trident, splash potion, lingering potion, ender pearl, firework rocket, wind charge, or egg.
+
+```kotlin
+enchantment("projectile_spawned") {
+    effects {
+        projectileSpawned {
+            applyMobEffect(Effects.SPEED) {
+                maxDuration(2)
+                minAmplifier(1)
+            }
+        }
+    }
+}
+```
+
 ### Projectile Spread
 
 Alters the spread angle of projectiles fired.
@@ -476,8 +521,8 @@ enchantment("trident_sound") {
 
 ## Further Reading
 
-• For more on item components and matchers, see [Components](./components).  
-• For advanced predicate conditions that may be used in requirements for enchantment effects, see [Predicates](./predicates).  
+• For more on item components and matchers, see [Components](./components).
+• For advanced predicate conditions that may be used in requirements for enchantment effects, see [Predicates](./predicates).
 • For complete source code examples and more detailed API information, visit the [Kore GitHub repository](https://github.com/Ayfri/Kore).
 
 Using Kore, you can create a nearly limitless variety of enchantments by mixing and matching these effects. The examples above illustrate each individual effect available in the library. Combine them as needed to design your custom gameplay mechanics with full type-safety and a clean, Kotlin-based DSL.

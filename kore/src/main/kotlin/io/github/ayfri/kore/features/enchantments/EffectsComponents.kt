@@ -3,6 +3,9 @@ package io.github.ayfri.kore.features.enchantments
 import io.github.ayfri.kore.features.enchantments.effects.builders.*
 import io.github.ayfri.kore.generated.EnchantmentEffectComponents
 
+fun EnchantmentEffects.ammoUse(block: ValueEffectBuilder.() -> Unit = {}) =
+	apply { this[EnchantmentEffectComponents.AMMO_USE] = ValueEffectBuilder().apply(block) }
+
 fun EnchantmentEffects.armorEffectiveness(block: ValueEffectBuilder.() -> Unit = {}) =
 	apply { this[EnchantmentEffectComponents.ARMOR_EFFECTIVENESS] = ValueEffectBuilder().apply(block) }
 
@@ -56,6 +59,12 @@ fun EnchantmentEffects.preventEquipmentDrop() =
 
 fun EnchantmentEffects.projectileCount(block: ValueEffectBuilder.() -> Unit = {}) =
 	apply { this[EnchantmentEffectComponents.PROJECTILE_COUNT] = ValueEffectBuilder().apply(block) }
+
+fun EnchantmentEffects.projectilePiercing(block: ValueEffectBuilder.() -> Unit = {}) =
+	apply { this[EnchantmentEffectComponents.PROJECTILE_PIERCING] = ValueEffectBuilder().apply(block) }
+
+fun EnchantmentEffects.projectileSpawned(block: EntityEffectBuilder.() -> Unit = {}) =
+	apply { this[EnchantmentEffectComponents.PROJECTILE_SPAWNED] = EntityEffectBuilder().apply(block) }
 
 fun EnchantmentEffects.projectileSpread(block: ValueEffectBuilder.() -> Unit = {}) =
 	apply { this[EnchantmentEffectComponents.PROJECTILE_SPREAD] = ValueEffectBuilder().apply(block) }

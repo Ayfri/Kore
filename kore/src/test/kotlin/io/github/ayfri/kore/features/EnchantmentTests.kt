@@ -67,6 +67,30 @@ fun DataPack.enchantmentTests() {
 		}
 	""".trimIndent()
 
+	enchantment("ammo_use") {
+		effects {
+			ammoUse {
+				add(5)
+			}
+		}
+	}
+
+	enchantments.last() assertsIs """
+		{
+			$DUMMY_ENCHANTMENT_CONTENT
+			"effects": {
+				"minecraft:ammo_use": [
+					{
+						"effect": {
+							"type": "minecraft:add",
+							"value": 5
+						}
+					}
+				]
+			}
+		}
+	""".trimIndent()
+
 	enchantment("armor_effectiveness") {
 		effects {
 			armorEffectiveness {
@@ -843,6 +867,61 @@ fun DataPack.enchantmentTests() {
 						"effect": {
 							"type": "minecraft:add",
 							"value": 5
+						}
+					}
+				]
+			}
+		}
+	""".trimIndent()
+
+	enchantment("projectile_piercing") {
+		effects {
+			projectilePiercing {
+				add(5)
+			}
+		}
+	}
+
+	enchantments.last() assertsIs """
+		{
+			$DUMMY_ENCHANTMENT_CONTENT
+			"effects": {
+				"minecraft:projectile_piercing": [
+					{
+						"effect": {
+							"type": "minecraft:add",
+							"value": 5
+						}
+					}
+				]
+			}
+		}
+	""".trimIndent()
+
+	enchantment("projectile_spawned") {
+		effects {
+			projectileSpawned {
+				applyMobEffect(Effects.SPEED) {
+					maxDuration(2)
+					minAmplifier(1)
+				}
+			}
+		}
+	}
+
+	enchantments.last() assertsIs """
+		{
+			$DUMMY_ENCHANTMENT_CONTENT
+			"effects": {
+				"minecraft:projectile_spawned": [
+					{
+						"effect": {
+							"type": "minecraft:apply_mob_effect",
+							"to_apply": "minecraft:speed",
+							"min_duration": 2,
+							"max_duration": 2,
+							"min_amplifier": 1,
+							"max_amplifier": 1
 						}
 					}
 				]
