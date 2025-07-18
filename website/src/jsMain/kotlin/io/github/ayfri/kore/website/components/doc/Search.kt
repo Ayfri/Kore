@@ -117,7 +117,7 @@ object SearchStyle : StyleSheet() {
 		border(0.px)
 		color(GlobalStyle.textColor)
 		fontSize(1.cssRem)
-		outline(0.px)
+		outlineWidth(0.px)
 		width(100.percent)
 	}
 

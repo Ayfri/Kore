@@ -15,7 +15,7 @@ fun clampedNormal(minInclusive: Int, maxInclusive: Int, mean: Float, deviation: 
 fun weightedList(weighted: Collection<WeightedEntryIntProvider>) = WeightedListIntProvider(weighted.toMutableList())
 fun weightedList(weighted: MutableList<WeightedEntryIntProvider>.() -> Unit) = WeightedListIntProvider(buildList(weighted).toMutableList())
 
-context(MutableList<WeightedEntryIntProvider>)
+context(list: MutableList<WeightedEntryIntProvider>)
 fun entry(weight: Int, data: IntProvider) = WeightedEntryIntProvider(weight, data)
 
 fun weightedEntry(weight: Int, data: IntProvider) = WeightedEntryIntProvider(weight, data)

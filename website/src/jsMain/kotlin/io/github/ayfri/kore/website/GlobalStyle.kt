@@ -81,7 +81,7 @@ object GlobalStyle : StyleSheet() {
 
 	val linkButton by style {
 		color(textColor)
-		background(tertiaryBackgroundColor)
+		backgroundColor(tertiaryBackgroundColor)
 		borderRadius(roundingButton)
 		fontSize(1.5.cssRem)
 		fontWeight(700)
@@ -90,7 +90,7 @@ object GlobalStyle : StyleSheet() {
 		transition(0.3.s, "background")
 
 		hover(self) style {
-			background(secondaryBackgroundColor)
+			backgroundColor(secondaryBackgroundColor)
 			color(textColor)
 		}
 	}

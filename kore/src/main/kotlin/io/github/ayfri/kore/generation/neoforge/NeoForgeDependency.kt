@@ -29,10 +29,10 @@ data class NeoForgeDependency(
 	var versionRange: String? = null,
 )
 
-context(NeoForgeModGenerationOptions)
+context(options: NeoForgeModGenerationOptions)
 fun NeoForgeModProperties.dependency(modId: String, init: NeoForgeDependency.() -> Unit = {}) {
-	val dependencies = (dependencies ?: emptyMap()).toMutableMap()
+	val dependencies = (options.dependencies ?: emptyMap()).toMutableMap()
 	dependencies[this.modId] = (dependencies[this.modId] ?: emptyList()) + NeoForgeDependency(modId).apply(init)
 
-	this@NeoForgeModGenerationOptions.dependencies = dependencies
+	options.dependencies = dependencies
 }

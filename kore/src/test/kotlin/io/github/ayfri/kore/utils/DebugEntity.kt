@@ -45,7 +45,7 @@ data class DebugEntity(val data: Map<String, String> = mutableMapOf()) {
 		whenAnyTestInvalid = block
 	}
 
-	context(Function)
+	context(fn: Function)
 	fun assertData(
 		key: String, value: String,
 		whenFalse: DebugCallback = { k, v ->
@@ -62,7 +62,7 @@ data class DebugEntity(val data: Map<String, String> = mutableMapOf()) {
 		},
 	) {
 		val target = selector { nbt = nbt { putNbtCompound("data") { put(key, value) } } }
-		execute {
+		fn.execute {
 			ifCondition {
 				entity(target)
 			}
@@ -73,7 +73,7 @@ data class DebugEntity(val data: Map<String, String> = mutableMapOf()) {
 			}
 		}
 
-		execute {
+		fn.execute {
 			unlessCondition {
 				entity(target)
 			}
@@ -84,7 +84,7 @@ data class DebugEntity(val data: Map<String, String> = mutableMapOf()) {
 		}
 	}
 
-	context(Function)
+	context(fn: Function)
 	fun assertAllData(whenFalse: DebugCallback? = null, whenTrue: DebugCallback? = null, data: MutableMap<String, String>.() -> Unit) {
 		buildMap(data).forEach { (key, value) ->
 			when {
@@ -95,7 +95,7 @@ data class DebugEntity(val data: Map<String, String> = mutableMapOf()) {
 			}
 		}
 
-		if (whenAllTestsValid != null) execute {
+		if (whenAllTestsValid != null) fn.execute {
 			ifCondition {
 				score(selector, scoreName, rangeOrIntStart(scoreToValidateAllTests))
 			}
@@ -105,7 +105,7 @@ data class DebugEntity(val data: Map<String, String> = mutableMapOf()) {
 			}
 		}
 
-		if (whenAnyTestInvalid != null) execute {
+		if (whenAnyTestInvalid != null) fn.execute {
 			unlessCondition {
 				score(selector, scoreName, rangeOrIntStart(scoreToValidateAllTests))
 			}
@@ -116,14 +116,14 @@ data class DebugEntity(val data: Map<String, String> = mutableMapOf()) {
 		}
 	}
 
-	context(Function)
+	context(fn: Function)
 	fun displayDebugScore() {
-		scoreboard.objective(scoreName).setDisplaySlot(DisplaySlots.sidebar)
+		fn.scoreboard.objective(scoreName).setDisplaySlot(DisplaySlots.sidebar)
 	}
 
-	context(Function)
+	context(fn: Function)
 	fun summon(): DebugEntity {
-		summon(EntityTypes.MARKER) {
+		fn.summon(EntityTypes.MARKER) {
 			putNbtCompound("data") {
 				data.forEach { (key, value) ->
 					put(key, value)
@@ -135,19 +135,19 @@ data class DebugEntity(val data: Map<String, String> = mutableMapOf()) {
 			}
 		}
 
-		scoreboard.objectives.remove(scoreName)
-		scoreboard.objectives.add(scoreName)
+		fn.scoreboard.objectives.remove(scoreName)
+		fn.scoreboard.objectives.add(scoreName)
 
 		return this@DebugEntity
 	}
 
-	context(Function)
+	context(fn: Function)
 	fun printTextToPrintData() {
-		tellraw(allPlayers(), "Click here to print data") {
+		fn.tellraw(allPlayers(), "Click here to print data") {
 			color = Color.GOLD
 			clickEvent {
 				suggestCommand {
-					execute {
+					fn.execute {
 						asTarget(self())
 						run { data(selector).get() }
 					}
@@ -155,28 +155,28 @@ data class DebugEntity(val data: Map<String, String> = mutableMapOf()) {
 			}
 		}
 
-		tellraw(allPlayers(), "Click here to kill entity") {
+		fn.tellraw(allPlayers(), "Click here to kill entity") {
 			color = Color.DARK_RED
 			clickEvent {
 				runCommand {
-					kill(selector)
+					fn.kill(selector)
 				}
 			}
 		}
 	}
 
-	context(Function)
+	context(fn: Function)
 	fun remove() {
-		kill(selector)
-		scoreboard.objectives.remove(scoreName)
+		fn.kill(selector)
+		fn.scoreboard.objectives.remove(scoreName)
 	}
 }
 
-context(DebugEntity)
+context(entity: DebugEntity)
 private fun ChatComponent.setupDisplay(k: String) {
 	clickEvent {
 		runCommand {
-			debug(textComponent("Real value: ") + nbtComponent("data.$k", selector) {
+			debug(textComponent("Real value: ") + nbtComponent("data.$k", entity.selector) {
 				color = Color.AQUA
 			})
 		}

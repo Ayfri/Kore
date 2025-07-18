@@ -13,81 +13,81 @@ data class Team(val name: String)
 
 fun team(name: String, init: Team.() -> Unit = {}) = Team(name).apply(init)
 
-context(Function)
-fun Team.ensureExists() = teams {
+context(fn: Function)
+fun Team.ensureExists() = fn.teams {
 	add(name)
 }
 
-context(Function)
-fun Team.delete() = teams {
+context(fn: Function)
+fun Team.delete() = fn.teams {
 	remove(name)
 }
 
-context(Function)
-fun Team.setDisplayName(displayName: ChatComponents) = teams {
+context(fn: Function)
+fun Team.setDisplayName(displayName: ChatComponents) = fn.teams {
 	modify(name) {
 		displayName(displayName)
 	}
 }
 
-context(Function)
-fun Team.setPrefix(prefix: ChatComponents) = teams {
+context(fn: Function)
+fun Team.setPrefix(prefix: ChatComponents) = fn.teams {
 	modify(name) {
 		prefix(prefix)
 	}
 }
 
-context(Function)
-fun Team.setSuffix(suffix: ChatComponents) = teams {
+context(fn: Function)
+fun Team.setSuffix(suffix: ChatComponents) = fn.teams {
 	modify(name) {
 		suffix(suffix)
 	}
 }
 
-context(Function)
-fun Team.setCollisionRule(rule: CollisionRule) = teams {
+context(fn: Function)
+fun Team.setCollisionRule(rule: CollisionRule) = fn.teams {
 	modify(name) {
 		collisionRule(rule)
 	}
 }
 
-context(Function)
-fun Team.setFriendlyFire(friendlyFire: Boolean) = teams {
+context(fn: Function)
+fun Team.setFriendlyFire(friendlyFire: Boolean) = fn.teams {
 	modify(name) {
 		friendlyFire(friendlyFire)
 	}
 }
 
-context(Function)
-fun Team.setSeeFriendlyInvisibles(seeFriendlyInvisibles: Boolean) = teams {
+context(fn: Function)
+fun Team.setSeeFriendlyInvisibles(seeFriendlyInvisibles: Boolean) = fn.teams {
 	modify(name) {
 		seeFriendlyInvisibles(seeFriendlyInvisibles)
 	}
 }
 
-context(Function)
-fun Team.setNametagVisibility(visibility: Visibility) = teams {
+context(fn: Function)
+fun Team.setNametagVisibility(visibility: Visibility) = fn.teams {
 	modify(name) {
 		nametagVisibility(visibility)
 	}
 }
 
-context(Function)
-fun Team.setDeathMessageVisibility(visibility: Visibility) = teams {
+context(fn: Function)
+fun Team.setDeathMessageVisibility(visibility: Visibility) = fn.teams {
 	modify(name) {
 		deathMessageVisibility(visibility)
 	}
 }
 
-context(Function)
-fun Team.setColor(color: FormattingColor) = teams {
+context(fn: Function)
+fun Team.setColor(color: FormattingColor) = fn.teams {
 	modify(name) {
 		color(color)
 	}
 }
 
-context(Function)
-fun Team.addMembers(vararg members: ScoreHolderArgument) = members.forEach { teams { join(name, it) } }
+context(fn: Function)
+fun Team.addMembers(vararg members: ScoreHolderArgument) = members.forEach { fn.teams { join(name, it) } }
 
-context(Function)
+context(fn: Function)
 fun Team.addMembers(vararg members: Entity) = addMembers(*members.map { it.asSelector { team = null } }.toTypedArray())

@@ -104,11 +104,11 @@ class Execute {
 
 	fun summon(entity: EntityTypeArgument) = array.addAll(literal("summon"), entity)
 
-	context(Function)
+	context(fn:Function)
 	fun run(block: Function.() -> Command): FunctionArgument {
-		val function = Function("", "", "", datapack).apply { block() }
+		val function = Function("", "", "", fn.datapack).apply { block() }
 
-		if (function.isInlinable) return emptyFunction(datapack) {
+		if (function.isInlinable) return emptyFunction(fn.datapack) {
 			block().apply {
 				arguments.replaceAll {
 					when (it) {
@@ -122,16 +122,16 @@ class Execute {
 		}
 
 		val name = "generated_${hashCode()}"
-		val generatedFunction = datapack.generatedFunction(name) { block() }
-		if (generatedFunction.name == name && datapack.configuration.generateCommentOfGeneratedFunctionCall) comment("Generated function ${asString()}")
+		val generatedFunction = fn.datapack.generatedFunction(name) { block() }
+		if (generatedFunction.name == name && fn.datapack.configuration.generateCommentOfGeneratedFunctionCall) fn.comment("Generated function ${fn.asString()}")
 		run = generatedFunction
 
 		return generatedFunction
 	}
 
-	context(Function)
-	fun run(name: String, namespace: String = datapack.name, directory: String = "", block: Function.() -> Unit) =
-		datapack.generatedFunction(name, namespace, directory, block)
+	context(fn: Function)
+	fun run(name: String, namespace: String = fn.datapack.name, directory: String = "", block: Function.() -> Unit) =
+		fn.datapack.generatedFunction(name, namespace, directory, block)
 
 	fun run(function: FunctionArgument) {
 		run = emptyFunction { function(function) }

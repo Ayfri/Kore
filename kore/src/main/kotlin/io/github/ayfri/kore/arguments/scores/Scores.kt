@@ -40,20 +40,20 @@ fun Scores<ExecuteScore>.score(holder: ScoreHolderArgument, name: String) = Exec
 fun Scores<ExecuteScore>.score(holder: ScoreHolderArgument, name: String, value: Int, relation: Relation) =
 	addScore(ExecuteScore(holder, name).asString(relation.applyAsRange(value)))
 
-context(Scores<SelectorScore>)
-infix fun String.lessThan(value: Int) = addScore("$this=${rangeOrIntEnd(value - 1)}")
+context(scores: Scores<SelectorScore>)
+infix fun String.lessThan(value: Int) = scores.addScore("$this=${rangeOrIntEnd(value - 1)}")
 
-context(Scores<SelectorScore>)
-infix fun String.lessThanOrEqualTo(value: Int) = addScore("$this=${rangeOrIntEnd(value)}")
+context(scores: Scores<SelectorScore>)
+infix fun String.lessThanOrEqualTo(value: Int) = scores.addScore("$this=${rangeOrIntEnd(value)}")
 
-context(Scores<SelectorScore>)
-infix fun String.equalTo(value: Int) = addScore("$this=${rangeOrInt(value)}")
+context(scores: Scores<SelectorScore>)
+infix fun String.equalTo(value: Int) = scores.addScore("$this=${rangeOrInt(value)}")
 
-context(Scores<SelectorScore>)
-infix fun String.greaterThanOrEqualTo(value: Int) = addScore("$this=${rangeOrIntStart(value)}")
+context(scores: Scores<SelectorScore>)
+infix fun String.greaterThanOrEqualTo(value: Int) = scores.addScore("$this=${rangeOrIntStart(value)}")
 
-context(Scores<SelectorScore>)
-infix fun String.greaterThan(value: Int) = addScore("$this=${rangeOrIntStart(value + 1)}")
+context(scores: Scores<SelectorScore>)
+infix fun String.greaterThan(value: Int) = scores.addScore("$this=${rangeOrIntStart(value + 1)}")
 
-context(Scores<SelectorScore>)
-infix fun String.matches(value: Int) = addScore("$this=$value")
+context(scores: Scores<SelectorScore>)
+infix fun String.matches(value: Int) = scores.addScore("$this=$value")

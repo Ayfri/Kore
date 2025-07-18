@@ -13,18 +13,18 @@ import io.github.ayfri.kore.functions.load
 data class Scheduler(val function: FunctionArgument, var delay: TimeNumber? = null, var period: TimeNumber? = null) {
 	internal var generatedFunction: FunctionArgument? = null
 
-	context(Function)
+	context(fn: Function)
 	fun execute() {
-		val generatedFunction = datapack.generatedFunction("scheduler_${hashCode()}") {
-			if (function is Function) lines += function.lines else function(function)
-			if (period != null) schedule(asId()).replace(period!!)
+		val generatedFunction = fn.datapack.generatedFunction("scheduler_${hashCode()}") {
+			if (function is Function) lines += function.lines else fn.function(function)
+			if (period != null) fn.schedule(asId()).replace(period!!)
 		}
 
 		when {
-			delay == null && period == null -> if (function is Function) lines += function.lines else function(function)
-			delay != null && period == null -> schedule(function).replace(delay!!)
-			delay == null && period != null -> function(generatedFunction)
-			else -> schedule(generatedFunction).replace(delay!!)
+			delay == null && period == null -> if (function is Function) fn.lines += function.lines else fn.function(function)
+			delay != null && period == null -> fn.schedule(function).replace(delay!!)
+			delay == null && period != null -> fn.function(generatedFunction)
+			else -> fn.schedule(generatedFunction).replace(delay!!)
 		}
 
 		if (period != null) this.generatedFunction = generatedFunction
@@ -32,10 +32,10 @@ data class Scheduler(val function: FunctionArgument, var delay: TimeNumber? = nu
 }
 
 data class UnScheduler(private val scheduler: Scheduler) {
-	context(Function)
+	context(fn: Function)
 	fun execute() {
 		if (scheduler.generatedFunction == null) return
-		schedule(scheduler.generatedFunction!!).clear()
+		fn.schedule(scheduler.generatedFunction!!).clear()
 	}
 }
 
@@ -69,14 +69,14 @@ data class SchedulerManager(private val dp: DataPack) {
 	fun removeScheduler(function: String, namespace: String = dp.name) =
 		schedulers.removeIf { it.function.asId() == FunctionArgument(function, namespace).asId() }
 
-	context(Function)
+	context(fn: Function)
 	fun unSchedule(function: FunctionArgument) =
 		schedulers.find { it.function.asId() == function.asId() }?.let { UnScheduler(it).execute() }
 
-	context(Function)
+	context(fn: Function)
 	fun unSchedule(function: String, namespace: String = dp.name) = unSchedule(FunctionArgument(function, namespace))
 
-	context(Function)
+	context(fn: Function)
 	fun unScheduleAll() = schedulers.filter { it.period != null }.forEach { UnScheduler(it).execute() }
 
 	fun run() = dp.load("scheduler_setup") {

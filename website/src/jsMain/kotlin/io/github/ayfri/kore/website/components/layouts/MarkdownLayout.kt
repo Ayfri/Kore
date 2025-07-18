@@ -2,6 +2,7 @@ package io.github.ayfri.kore.website.components.layouts
 
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.compose.css.BackdropFilter
 import com.varabyte.kobweb.compose.css.functions.blur
 import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiChevronRight
@@ -266,7 +267,7 @@ object MarkdownLayoutStyle : StyleSheet() {
 	}
 
 	val revealButton by style {
-		backdropFilter(blur(5.px))
+		backdropFilter(BackdropFilter.list(BackdropFilter.of(blur(5.px))))
 		backgroundColor(GlobalStyle.secondaryBackgroundColor)
 		border(0.px)
 		borderTopRightRadius(GlobalStyle.roundingButton)

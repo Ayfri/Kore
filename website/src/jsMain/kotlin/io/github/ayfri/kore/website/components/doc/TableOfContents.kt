@@ -38,7 +38,7 @@ object TableOfContentsStyle : StyleSheet() {
 		cursor(Cursor.Pointer)
 		padding(0.2.cssRem, 0.px)
 		color(GlobalStyle.textColor)
-		listStyle(ListStyleType.None)
+		listStyle(ListStyle.None)
 		transition(0.2.s, "color")
 		overflow(Overflow.Hidden)
 		textOverflow(TextOverflow.Ellipsis)

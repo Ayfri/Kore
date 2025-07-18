@@ -57,16 +57,16 @@ data class SlotEventListener(
 		onTickFunction = function
 	}
 
-	context(Function)
+	context(fn: Function)
 	fun clearAllItemsNotInSlot(fromContainer: ContainerArgument = container) = when (fromContainer) {
-		is EntityArgument -> items {
-			fun executeIfItem(index: Int) = execute {
+		is EntityArgument -> fn.items {
+			fun executeIfItem(index: Int) = fn.execute {
 				ifCondition {
 					items(fromContainer, ItemSlotType.fromIndex(index, true), item.predicate())
 				}
 
 				run {
-					items.replace(fromContainer, ItemSlotType.fromIndex(index, true), Items.AIR)
+					fn.items.replace(fromContainer, ItemSlotType.fromIndex(index, true), Items.AIR)
 				}
 			}
 
@@ -77,7 +77,7 @@ data class SlotEventListener(
 			executeIfItem(-106)
 		}
 
-		is Vec3 -> data(fromContainer) {
+		is Vec3 -> fn.data(fromContainer) {
 			val itemNbt = ",components:{custom_data:$randomTagNbt}"
 			repeat(CONTAINER.endInclusive - 1) { index ->
 				if (fromContainer == container && index == slot.asIndex()) return@repeat
@@ -89,8 +89,8 @@ data class SlotEventListener(
 		else -> error("Unsupported container type: $fromContainer")
 	}
 
-	context(Function)
-	fun killAllItemsNotInSlot() = kill(allEntities {
+	context(fn: Function)
+	fun killAllItemsNotInSlot() = fn.kill(allEntities {
 		type = EntityTypes.ITEM
 
 		nbt = nbt {
@@ -102,8 +102,8 @@ data class SlotEventListener(
 		}
 	})
 
-	context(Function)
-	fun setItemInSlot() = items.replace(container, slot, item)
+	context(fn: Function)
+	fun setItemInSlot() = fn.items.replace(container, slot, item)
 }
 
 fun InventoryManager<*>.slotEvent(

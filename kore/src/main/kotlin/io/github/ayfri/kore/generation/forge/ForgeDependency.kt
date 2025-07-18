@@ -25,10 +25,10 @@ data class ForgeDependency(
 	var side: Side? = null,
 )
 
-context(ForgeModGenerationOptions)
+context(options: ForgeModGenerationOptions)
 fun ForgeModProperties.dependency(modId: String, init: ForgeDependency.() -> Unit = {}) {
-	val dependencies = (dependencies ?: emptyMap()).toMutableMap()
+	val dependencies = (options.dependencies ?: emptyMap()).toMutableMap()
 	dependencies[this.modId] = (dependencies[this.modId] ?: emptyList()) + ForgeDependency(modId).apply(init)
 
-	this@ForgeModGenerationOptions.dependencies = dependencies
+	options.dependencies = dependencies
 }

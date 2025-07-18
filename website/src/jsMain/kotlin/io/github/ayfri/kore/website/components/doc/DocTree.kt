@@ -147,7 +147,7 @@ fun DocTree() {
 object DocTreeStyle : StyleSheet() {
 	@OptIn(ExperimentalComposeWebApi::class)
 	val list by style {
-		listStyle(ListStyleType.None)
+		listStyle(ListStyle.None)
 		marginRight(1.cssRem)
 		marginTop(0.px)
 		padding(0.8.cssRem)

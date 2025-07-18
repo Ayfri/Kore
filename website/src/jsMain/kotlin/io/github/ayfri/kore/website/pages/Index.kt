@@ -315,7 +315,7 @@ object HomePageStyle : StyleSheet() {
 	}
 
 	val tabContent by style {
-		background(GlobalStyle.secondaryBackgroundColor)
+		backgroundColor(GlobalStyle.secondaryBackgroundColor)
 		height(100.percent)
 		width(100.percent)
 	}

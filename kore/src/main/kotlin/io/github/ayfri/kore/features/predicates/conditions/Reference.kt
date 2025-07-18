@@ -13,7 +13,7 @@ fun Predicate.reference(name: String) {
 	predicateConditions += Reference(name)
 }
 
-context(DataPack)
+context(dp: DataPack)
 fun Predicate.reference(predicate: Predicate) {
-	predicateConditions += Reference("${this@DataPack.name}/${predicate.fileName}")
+	predicateConditions += Reference("${dp.name}/${predicate.fileName}")
 }

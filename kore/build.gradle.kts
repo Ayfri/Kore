@@ -29,7 +29,7 @@ kotlin {
 
 	compilerOptions {
 		freeCompilerArgs =
-			listOf("-Xcontext-receivers", "-Xrender-internal-diagnostic-names", "-Xsuppress-warning=CONTEXT_RECEIVERS_DEPRECATED")
+			listOf("-Xcontext-parameters", "-Xrender-internal-diagnostic-names")
 	}
 }
 

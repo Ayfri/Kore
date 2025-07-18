@@ -1,5 +1,3 @@
-@file:Suppress("UNSUPPORTED_FEATURE")
-
 package io.github.ayfri.kore.entities
 
 import io.github.ayfri.kore.arguments.ItemSlotType
@@ -49,60 +47,60 @@ inline fun <reified T : Entity> Entity.toEntityOrNull() = when (this) {
 inline fun <reified T : Entity> Entity.toEntity() =
 	toEntityOrNull<T>() ?: throw IllegalArgumentException("Cannot cast entity '$this' to type '${T::class.simpleName}'")
 
-context(Function)
-fun Entity.getScoreEntity(name: String) = ScoreboardEntity(name, this@Entity)
+context(fn: Function)
+fun Entity.getScoreEntity(name: String) = ScoreboardEntity(name, this)
 
-context(Function)
-fun Entity.setScore(name: String, value: Int) = scoreboard.players.set(asSelector(), name, value)
+context(fn: Function)
+fun Entity.setScore(name: String, value: Int) = fn.scoreboard.players.set(asSelector(), name, value)
 
-context(Function)
-fun Entity.joinTeam(team: String) = teams {
+context(fn: Function)
+fun Entity.joinTeam(team: String) = fn.teams {
 	join(team, asSelector { this.team = null })
 }.also { this.team = team }
 
-context(Function)
-fun Entity.joinTeam(team: Team) = team.addMembers(this@Entity.asSelector()).also { this.team = team.name }
+context(fn: Function)
+fun Entity.joinTeam(team: Team) = team.addMembers(asSelector()).also { this.team = team.name }
 
-context(Function)
-fun Entity.leaveAnyTeam() = teams {
+context(fn: Function)
+fun Entity.leaveAnyTeam() = fn.teams {
 	leave(asSelector())
 }.also { team = null }
 
-context(Function)
-fun Entity.giveItem(item: ItemStack) = give(asSelector(), item.toItemArgument(), item.count?.toInt())
+context(fn: Function)
+fun Entity.giveItem(item: ItemStack) = fn.give(asSelector(), item.toItemArgument(), item.count?.toInt())
 
-context(Function)
-fun Entity.replaceItem(slot: ItemSlotType, item: ItemStack) = items {
+context(fn: Function)
+fun Entity.replaceItem(slot: ItemSlotType, item: ItemStack) = fn.items {
 	replace(asSelector(), slot, item.toItemArgument(), item.count?.toInt())
 }
 
-context(Function)
-fun <T : Entity> T.executeAs(block: Execute.(T) -> FunctionArgument) = execute {
+context(fn: Function)
+fun <T : Entity> T.executeAs(block: Execute.(T) -> FunctionArgument) = fn.execute {
 	asTarget(asSelector())
 	block(this@executeAs)
 }
 
-context(Function)
-fun <T : Entity> T.executeAt(block: Execute.(T) -> FunctionArgument) = execute {
+context(fn: Function)
+fun <T : Entity> T.executeAt(block: Execute.(T) -> FunctionArgument) = fn.execute {
 	at(asSelector())
 	block(this@executeAt)
 }
 
-context(Function)
-fun <T : Entity> T.executeAsAt(block: Execute.(T) -> FunctionArgument) = execute {
+context(fn: Function)
+fun <T : Entity> T.executeAsAt(block: Execute.(T) -> FunctionArgument) = fn.execute {
 	asTarget(asSelector())
 	at(asSelector())
 	block(this@executeAsAt)
 }
 
-context(Function)
-fun Entity.teleportTo(entity: Entity) = teleport(asSelector(), if (entity == this) self() else entity.asSelector())
+context(fn: Function)
+fun Entity.teleportTo(entity: Entity) = fn.teleport(asSelector(), if (entity == this) self() else entity.asSelector())
 
-context(Function)
+context(fn: Function)
 fun Entity.teleportTo(x: Number, y: Number, z: Number, yaw: Number? = null, pitch: Number? = null): Command {
 	val rotation = if (yaw != null && pitch != null) rotation(yaw, pitch) else null
-	return teleport(asSelector(), coordinate(x, y, z), rotation)
+	return fn.teleport(asSelector(), coordinate(x, y, z), rotation)
 }
 
-context(Function)
-fun Entity.teleportTo(coordinate: Vec3, rotation: RotationArgument? = null) = teleport(asSelector(), coordinate, rotation)
+context(fn: Function)
+fun Entity.teleportTo(coordinate: Vec3, rotation: RotationArgument? = null) = fn.teleport(asSelector(), coordinate, rotation)

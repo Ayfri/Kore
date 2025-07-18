@@ -16,7 +16,7 @@ class DisplayEntityInterpolable(val entity: DisplayEntity, var lastPosition: Vec
 	val selector = randomUUID()
 	var isSummoned = false
 
-	context(Function)
+	context(fn: Function)
 	fun interpolateTo(
 		duration: Int = entity.interpolationDuration ?: 0,
 		start: Int = entity.startInterpolation ?: 0,
@@ -32,41 +32,41 @@ class DisplayEntityInterpolable(val entity: DisplayEntity, var lastPosition: Vec
 		entity.startInterpolation = start
 		entity.transformation = transformation
 
-		return data(selector).merge(nbtCompound)
+		return fn.data(selector).merge(nbtCompound)
 	}
 
-	context(Function)
+	context(fn: Function)
 	fun interpolateTo(
 		duration: TimeNumber,
 		start: Int = entity.startInterpolation ?: 0,
 		transformation: Transformation,
 	): Command = interpolateTo(duration.inTicks().value.toInt(), start, transformation)
 
-	context(Function)
+	context(fn: Function)
 	fun interpolateTo(
 		duration: Int = entity.interpolationDuration ?: 0,
 		start: Int = entity.startInterpolation ?: 0,
 		block: Transformation.() -> Unit,
 	) = interpolateTo(duration, start, Transformation().apply(block))
 
-	context(Function)
+	context(fn: Function)
 	fun interpolateTo(
 		duration: TimeNumber,
 		start: Int = entity.startInterpolation ?: 0,
 		block: Transformation.() -> Unit,
 	) = interpolateTo(duration, start, Transformation().apply(block))
 
-	context(Function)
+	context(fn: Function)
 	fun summon(position: Vec3 = lastPosition) {
 		if (isSummoned) error("Entity already summoned")
 
 		val nbt = entity.toNbt().toMutableMap()
 		nbt["UUID"] = selector.toNBTIntArray()
-		summon(entity.entityType, position, NbtCompound(nbt))
+		fn.summon(entity.entityType, position, NbtCompound(nbt))
 		lastPosition = position
 		isSummoned = true
 	}
 }
 
-context(Function)
+context(fn: Function)
 fun DisplayEntity.interpolable(position: Vec3) = DisplayEntityInterpolable(this, position)

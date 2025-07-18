@@ -101,7 +101,7 @@ fun StyleScope.textGradient(
 	color1: CSSColorValue,
 	color2: CSSColorValue,
 ) {
-	backgroundImage(linearGradient(90.deg, color1, color2))
+	backgroundImage(linearGradient(color1, color2, 90.deg))
 	backgroundClip(BackgroundClip.Text)
 	property("-webkit-text-fill-color", "transparent")
 }

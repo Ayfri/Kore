@@ -34,9 +34,9 @@ infix fun <T : Any> T.assertsIs(expected: T) = also { assertsIs(toString(), expe
 
 infix fun Argument.assertsIs(string: String) = assertsIs(asString(), string)
 
-context(DataPack)
+context(dp: DataPack)
 infix fun Generator.assertsIs(@Language("json") expected: String) {
-	val result = generateJson(this@DataPack)
+	val result = generateJson(dp)
 	if (result == expected || !alreadyPrinted.add(hashCode())) return
 
 	printStackTraceAndDiff(generateDiffStringJson(expected, result), 3)

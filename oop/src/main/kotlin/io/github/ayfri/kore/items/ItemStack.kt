@@ -20,8 +20,8 @@ fun itemStack(name: String, namespace: String = "minecraft", count: Int = 1, nbt
 		nbtData.toNbtCompound().forEach { (key, value) -> this[key] = value }
 	})
 
-context(Function)
-fun ItemStack.summon(position: Vec3 = coordinate()) = summon(EntityTypes.ITEM, position) {
+context(fn: Function)
+fun ItemStack.summon(position: Vec3 = coordinate()) = fn.summon(EntityTypes.ITEM, position) {
 	nbt {
 		this["Item"] = nbt {
 			this["components"] = components ?: Components()
@@ -29,8 +29,8 @@ fun ItemStack.summon(position: Vec3 = coordinate()) = summon(EntityTypes.ITEM, p
 	}
 }
 
-context(Function)
-fun ItemStack.summon(displayName: ChatComponents, visible: Boolean = true) = summon(
+context(fn: Function)
+fun ItemStack.summon(displayName: ChatComponents, visible: Boolean = true) = fn.summon(
 	EntityTypes.ITEM,
 	coordinate(),
 	nbt {
@@ -42,5 +42,5 @@ fun ItemStack.summon(displayName: ChatComponents, visible: Boolean = true) = sum
 	}
 )
 
-context(Function)
+context(fn: Function)
 fun ItemStack.summon(displayName: String, color: Color, visible: Boolean = true) = summon(textComponent(displayName, color), visible)

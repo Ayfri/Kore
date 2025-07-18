@@ -13,6 +13,7 @@ import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.scoreboard.Operation
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.functions.Function
+import jdk.javadoc.internal.tool.Main.execute
 import kotlin.math.abs
 
 /**
@@ -36,12 +37,12 @@ data class ScoreboardDisplay(val name: String) {
 	 * @param text The text to be displayed on the line (optional). If not provided, the line will be empty.
 	 * @param init A lambda expression to configure the line using the [ScoreboardLine] object.
 	 */
-	context(Function)
+	context(fn: Function)
 	fun appendLine(text: ChatComponents? = null, init: ScoreboardLine.() -> Unit = {}) {
 		val line = ScoreboardLine(this, startingScore + if (decreasing) -lines.size else lines.size)
 		line.text = text
 		line.init()
-		lines.add(line)
+		lines += line
 	}
 
 	/**
@@ -51,7 +52,7 @@ data class ScoreboardDisplay(val name: String) {
 	 * @param color The color of the appended text. If not specified, the default color is white.
 	 * @param componentBlock A lambda expression to configure the text using the [PlainTextComponent] object.
 	 */
-	context(Function)
+	context(fn: Function)
 	fun appendLine(text: String, color: Color? = null, componentBlock: PlainTextComponent.() -> Unit = {}) =
 		appendLine(textComponent(text, color ?: Color.WHITE, componentBlock))
 
@@ -61,9 +62,9 @@ data class ScoreboardDisplay(val name: String) {
 	 * @param display Determines whether the scoreboard should be displayed immediately. By default, it is set to true.
 	 * @param slot The display slot where the scoreboard should be shown. By default, it is set to DisplaySlot#sidebar.
 	 */
-	context(Function)
+	context(fn: Function)
 	fun create(display: Boolean = true, slot: DisplaySlot = DisplaySlots.sidebar) {
-		scoreboard.objectives.add(name, displayName = displayName)
+		fn.scoreboard.objectives.add(name, displayName = displayName)
 		lines.forEach { it.create() }
 		if (display) display(slot)
 	}
@@ -73,11 +74,11 @@ data class ScoreboardDisplay(val name: String) {
 	 *
 	 * @param slot The display slot to set. Defaults to [DisplaySlots.sidebar].
 	 */
-	context(Function)
-	fun display(slot: DisplaySlot = DisplaySlots.sidebar) = scoreboard.objectives.setDisplay(slot, name)
+	context(fn: Function)
+	fun display(slot: DisplaySlot = DisplaySlots.sidebar) = fn.scoreboard.objectives.setDisplay(slot, name)
 
 	/* Appends an empty line to the existing string. */
-	context(Function)
+	context(fn: Function)
 	fun emptyLine() = appendLine()
 
 	/**
@@ -86,7 +87,7 @@ data class ScoreboardDisplay(val name: String) {
 	 *
 	 * @param range The range of lines to hide. Defaults to all lines.
 	 */
-	context(Function)
+	context(fn: Function)
 	fun hideValues(range: IntRange = lines.indices) = lines.subList(range.first, range.last).forEach { it.hideValue = true }
 
 	/**
@@ -96,14 +97,14 @@ data class ScoreboardDisplay(val name: String) {
 	 * @param text The text to set for the line. Defaults to null.
 	 * @param init A lambda expression to configure the line using the [ScoreboardLine] object.
 	 */
-	context(Function)
+	context(fn: Function)
 	fun setLine(index: Int, text: ChatComponents? = null, init: ScoreboardLine.() -> Unit = {}) {
 		for (i in lines.size..abs(index)) emptyLine()
 
 		val line = ScoreboardLine(this, startingScore + if (decreasing) -index else index)
 		line.text = text
 		line.init()
-		lines.add(line)
+		lines += line
 	}
 
 	/**
@@ -114,7 +115,7 @@ data class ScoreboardDisplay(val name: String) {
 	 * @param color The color of the text. If null, the default color of Color.WHITE will be used.
 	 * @param componentBlock A lambda expression to configure the text using the [PlainTextComponent] object.
 	 */
-	context(Function)
+	context(fn: Function)
 	fun setLine(index: Int, text: String, color: Color? = null, componentBlock: PlainTextComponent.() -> Unit = {}) =
 		setLine(index, textComponent(text, color ?: Color.WHITE, componentBlock))
 
@@ -123,15 +124,15 @@ data class ScoreboardDisplay(val name: String) {
 	 *
 	 * @return true if the objective was successfully removed, false otherwise
 	 */
-	context(Function)
-	fun remove() = scoreboard.objectives.remove(name)
+	context(fn: Function)
+	fun remove() = fn.scoreboard.objectives.remove(name)
 
 	companion object {
 		/* Resets all scoreboard lines. */
-		context(Function)
+		context(fn: Function)
 		fun resetAll() {
 			for (i in 0..15) {
-				scoreboard.players.reset(entity("§${i.toString(16)}"))
+				fn.scoreboard.players.reset(entity("§${i.toString(16)}"))
 			}
 		}
 	}
@@ -166,27 +167,27 @@ data class ScoreboardLine(private val sc: ScoreboardDisplay, val index: Int) {
 	var customScoreEntity: ScoreHolderArgument? = null
 	var customScoreObjective: String? = null
 
-	context(Function)
+	context(fn: Function)
 	private fun setText() = when {
-		customScoreEntity != null && customScoreObjective != null -> scoreboard.players.operation(
+		customScoreEntity != null && customScoreObjective != null -> fn.scoreboard.players.operation(
 			target = entity(fakePlayer),
 			objective = sc.name,
 			operation = Operation.SET,
 			source = customScoreEntity!!,
 			sourceObjective = customScoreObjective!!
 		).let { command ->
-			if (hideValue) scoreboard.players.displayNumberFormatBlank(customScoreEntity!!, customScoreObjective!!)
+			if (hideValue) fn.scoreboard.players.displayNumberFormatBlank(customScoreEntity!!, customScoreObjective!!)
 
 			text?.let {
-				scoreboard.players.displayName(customScoreEntity!!, customScoreObjective!!, it)
+				fn.scoreboard.players.displayName(customScoreEntity!!, customScoreObjective!!, it)
 			} ?: command
 		}
 
-		else -> scoreboard.players.set(entity(fakePlayer), sc.name, index).let { command ->
-			if (hideValue) scoreboard.players.displayNumberFormatBlank(entity(fakePlayer), sc.name)
+		else -> fn.scoreboard.players.set(entity(fakePlayer), sc.name, index).let { command ->
+			if (hideValue) fn.scoreboard.players.displayNumberFormatBlank(entity(fakePlayer), sc.name)
 
 			text?.let {
-				scoreboard.players.displayName(entity(fakePlayer), sc.name, it)
+				fn.scoreboard.players.displayName(entity(fakePlayer), sc.name, it)
 			} ?: command
 		}
 	}
@@ -203,7 +204,7 @@ data class ScoreboardLine(private val sc: ScoreboardDisplay, val index: Int) {
 	}
 
 	/* Creates the scoreboard line. */
-	context(Function)
+	context(fn: Function)
 	fun create() {
 		if (condition != null) return createIf(condition!!)
 		setText()
@@ -216,9 +217,9 @@ data class ScoreboardLine(private val sc: ScoreboardDisplay, val index: Int) {
 	 * It is a lambda function that takes an instance of [ExecuteCondition] as a parameter.
 	 * It uses an execute command to check the condition.
 	 */
-	context(Function)
+	context(fn: Function)
 	fun createIf(condition: ExecuteCondition.() -> Unit) {
-		execute {
+		fn.execute {
 			ifCondition(condition)
 
 			run { setText() }
@@ -232,9 +233,9 @@ data class ScoreboardLine(private val sc: ScoreboardDisplay, val index: Int) {
 	 * It is a lambda function that takes an instance of [ExecuteCondition] as a parameter.
 	 * It uses an execute command to check the condition.
 	 */
-	context(Function)
+	context(fn: Function)
 	fun createUnless(condition: ExecuteCondition.() -> Unit) {
-		execute {
+		fn.execute {
 			unlessCondition(condition)
 
 			run { setText() }
@@ -245,9 +246,9 @@ data class ScoreboardLine(private val sc: ScoreboardDisplay, val index: Int) {
 	 * Removes a player from the scoreboard.
 	 * This method resets the player's score and clears their display name.
 	 */
-	context(Function)
+	context(fn: Function)
 	fun remove() {
-		scoreboard.players.reset(entity(fakePlayer))
+		fn.scoreboard.players.reset(entity(fakePlayer))
 	}
 }
 

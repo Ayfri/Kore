@@ -40,11 +40,7 @@ fun AppEntry(content: @Composable () -> Unit) {
 
 @InitKobweb
 fun initKobweb(context: InitKobwebContext) {
-	context.router.setErrorHandler {
-		if (it != 404) return@setErrorHandler
-
-		context.router.renderActivePage {
-			PageNotFound()
-		}
+	context.router.setErrorPage {
+		PageNotFound()
 	}
 }

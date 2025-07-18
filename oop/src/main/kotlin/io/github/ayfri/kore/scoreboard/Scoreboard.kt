@@ -14,46 +14,46 @@ open class Scoreboard(val name: String)
 
 fun scoreboard(name: String, init: Scoreboard.() -> Unit = {}) = Scoreboard(name).apply(init)
 
-context(Function)
+context(fn: Function)
 fun Scoreboard.getScore(entity: Entity) = ScoreboardEntity(name, entity)
 
-context(Function)
-fun Scoreboard.create(criteria: ScoreboardCriterion = ScoreboardCriteria.DUMMY) = scoreboard {
+context(fn: Function)
+fun Scoreboard.create(criteria: ScoreboardCriterion = ScoreboardCriteria.DUMMY) = fn.scoreboard {
 	objectives {
 		add(name, criteria)
 	}
 }
 
-context(Function)
-fun Scoreboard.remove() = scoreboard {
+context(fn: Function)
+fun Scoreboard.remove() = fn.scoreboard {
 	objectives {
 		remove(name)
 	}
 }
 
-context(Function)
-fun Scoreboard.setDisplaySlot(slot: DisplaySlot) = scoreboard {
+context(fn: Function)
+fun Scoreboard.setDisplaySlot(slot: DisplaySlot) = fn.scoreboard {
 	objectives {
 		setDisplay(slot, name)
 	}
 }
 
-context(Function)
-fun Scoreboard.setRenderType(type: RenderType) = scoreboard {
+context(fn: Function)
+fun Scoreboard.setRenderType(type: RenderType) = fn.scoreboard {
 	objectives {
 		modifyRenderType(name, type)
 	}
 }
 
-context(Function)
-fun Scoreboard.setDisplayName(displayName: ChatComponents) = scoreboard {
+context(fn: Function)
+fun Scoreboard.setDisplayName(displayName: ChatComponents) = fn.scoreboard {
 	objectives {
 		modifyDisplayName(name, displayName)
 	}
 }
 
-context(Function)
-fun Scoreboard.setDisplayName(displayName: String) = scoreboard {
+context(fn: Function)
+fun Scoreboard.setDisplayName(displayName: String) = fn.scoreboard {
 	objectives {
 		modifyDisplayName(name, textComponent(displayName))
 	}

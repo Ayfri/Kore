@@ -380,9 +380,9 @@ kotlin {
 			}
 		}
 
-		@OptIn(ExperimentalKotlinGradlePluginApi::class)
 		compilerOptions {
 			target = "es2015"
+			useEsClasses = true
 		}
 		useEsModules()
 		binaries.executable()

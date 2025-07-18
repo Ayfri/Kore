@@ -352,7 +352,7 @@ object ReleaseFiltersStyle : StyleSheet() {
 		flexGrow(1)
 		fontSize(1.cssRem)
 		height(2.5.cssRem)
-		outline(0.px)
+		outlineWidth(0.px)
 		width(100.percent)
 
 		self + placeholder style {

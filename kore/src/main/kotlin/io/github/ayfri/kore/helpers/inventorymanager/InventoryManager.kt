@@ -40,46 +40,46 @@ data class InventoryManager<T : ContainerArgument>(val container: T) {
 		counter++
 	}
 
-	context(Function)
-	fun clear(slot: ItemSlotType) = items.replace(container, slot, Items.AIR, 1)
+	context(fn: Function)
+	fun clear(slot: ItemSlotType) = fn.items.replace(container, slot, Items.AIR, 1)
 
-	context(Function)
+	context(fn: Function)
 	fun clearAll() = when (container) {
-		is EntityArgument -> clear(container)
-		is Vec3 -> data(container).remove("Items")
+		is EntityArgument -> fn.clear(container)
+		is Vec3 -> fn.data(container).remove("Items")
 		else -> error("Cannot clear items from $container")
 	}
 
-	context(Function)
+	context(fn: Function)
 	fun clearAll(item: ItemArgument) = when (container) {
-		is EntityArgument -> clear(container, item)
-		is Vec3 -> data(container).remove("Items[{id:\"${item.asId()}\",${item.components?.let { "components:${it.asJson()}" } ?: ""}}]")
+		is EntityArgument -> fn.clear(container, item)
+		is Vec3 -> fn.data(container).remove("Items[{id:\"${item.asId()}\",${item.components?.let { "components:${it.asJson()}" } ?: ""}}]")
 		else -> error("Cannot clear items from $container")
 	}
 
-	context(Function)
-	fun modify(slot: ItemSlotType, modifier: ItemModifierArgument) = items.modify(container, slot, modifier)
+	context(fn: Function)
+	fun modify(slot: ItemSlotType, modifier: ItemModifierArgument) = fn.items.modify(container, slot, modifier)
 
-	context(Function)
-	fun replace(slot: ItemSlotType, item: ItemArgument, count: Int? = null) = items.replace(container, slot, item, count)
+	context(fn: Function)
+	fun replace(slot: ItemSlotType, item: ItemArgument, count: Int? = null) = fn.items.replace(container, slot, item, count)
 
-	context(Function)
+	context(fn: Function)
 	fun replace(fromSlot: ItemSlotType, withSlot: ItemSlotType, modifier: ItemModifierArgument? = null) =
-		items.replace(container, fromSlot, container, withSlot, modifier)
+		fn.items.replace(container, fromSlot, container, withSlot, modifier)
 
-	context(Function)
+	context(fn: Function)
 	operator fun set(slot: ItemSlotType, item: ItemArgument) = replace(slot, item)
 
-	context(Function)
+	context(fn: Function)
 	operator fun set(slot: Int, item: ItemArgument) = replace(CONTAINER[slot], item)
 
 	companion object {
 		var INVENTORY_MANAGER_ENTITY_TAG = "inventory_manager"
 		var counter = 0
 
-		context(DataPack)
+		context(dp: DataPack)
 		fun removeClickDetectors() {
-			load("inventory_manager_${hashCode()}_remover") {
+			dp.load("inventory_manager_${hashCode()}_remover") {
 				repeat(counter) {
 					scoreboard.objectives.remove("_inventory_manager_${name}_click_detector_$it")
 				}
@@ -90,15 +90,15 @@ data class InventoryManager<T : ContainerArgument>(val container: T) {
 
 fun InventoryManager<*>.generateSlotsListeners(dp: DataPack) = with(dp) { generateSlotsListeners() }
 
-context(Function)
-fun InventoryManager<*>.generateSlotsListeners() = generateSlotsListeners(datapack)
+context(fn: Function)
+fun InventoryManager<*>.generateSlotsListeners() = generateSlotsListeners(fn.datapack)
 
-context(DataPack)
+context(dp: DataPack)
 fun InventoryManager<*>.generateSlotsListeners() {
-	val scoreName = getScoreName(this@DataPack)
+	val scoreName = getScoreName(dp)
 	val entityTag = randomUUID().asString()
 
-	load("load_inventory_manager_${hashCode()}") {
+	dp.load("load_inventory_manager_${hashCode()}") {
 		kill(allEntities {
 			nbt = nbt {
 				this["Tags"] = nbtListOf(InventoryManager.INVENTORY_MANAGER_ENTITY_TAG)
@@ -115,7 +115,7 @@ fun InventoryManager<*>.generateSlotsListeners() {
 		}
 	}
 
-	tick("tick_inventory_manager_${hashCode()}") {
+	dp.tick("tick_inventory_manager_${hashCode()}") {
 		slotsListeners.forEach { slotListener ->
 			slotListener.onTick?.let(::apply)
 			slotListener.onTickFunction?.let { function(it) }
@@ -212,15 +212,15 @@ fun InventoryManager<*>.generateSlotsListeners() {
 	}
 }
 
-context(Function)
-fun InventoryManager<Vec3>.setBlock(block: BlockArgument) = setBlock(container, block)
+context(fn: Function)
+fun InventoryManager<Vec3>.setBlock(block: BlockArgument) = fn.setBlock(container, block)
 
-fun <T : ContainerArgument> inventoryManager(container: T) = InventoryManager<T>(container)
+fun <T : ContainerArgument> inventoryManager(container: T) = InventoryManager(container)
 
-context(DataPack)
-fun <T : ContainerArgument> inventoryManager(container: T, block: InventoryManager<T>.() -> Unit): InventoryManager<T> =
-	InventoryManager<T>(container).apply(block).apply { generateSlotsListeners() }
-
-context(Function)
+context(fn: DataPack)
 fun <T : ContainerArgument> inventoryManager(container: T, block: InventoryManager<T>.() -> Unit) =
-	InventoryManager<T>(container).apply(block).apply { generateSlotsListeners(datapack) }
+	InventoryManager(container).apply(block).apply { generateSlotsListeners() }
+
+context(fn: Function)
+fun <T : ContainerArgument> inventoryManager(container: T, block: InventoryManager<T>.() -> Unit) =
+	InventoryManager(container).apply(block).apply { generateSlotsListeners(fn.datapack) }
