@@ -20,10 +20,12 @@ interface BlockArgument : ResourceLocationArgument, BlockOrTagArgument {
 		}
 	}${if (!nbtData.isNullOrEmpty()) nbtData.toString() else ""}"
 
-	operator fun invoke(states: Map<String, String> = mutableMapOf(), nbtData: (NbtCompoundBuilder.() -> Unit)? = null) = apply {
-		this.states = states.toMutableMap()
-		nbtData?.let { this.nbtData = nbt(it) }
-	}
+	operator fun invoke(states: Map<String, String> = mutableMapOf(), nbtData: NbtCompoundBuilder.() -> Unit = {}) = block(
+		block = asId().substringAfter(":"),
+		namespace = asId().substringBefore(":"),
+		states = states,
+		nbtData = nbtData
+	)
 
 	companion object {
 		operator fun invoke(

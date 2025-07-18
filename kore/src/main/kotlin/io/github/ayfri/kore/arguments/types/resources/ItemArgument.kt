@@ -12,7 +12,7 @@ interface ItemArgument : ResourceLocationArgument, ItemOrTagArgument {
 
 	override fun asString() = "${asId()}${components?.toString() ?: ""}"
 
-	operator fun invoke(block: ComponentsPatch.() -> Unit = {}) = apply { components = ComponentsPatch().apply(block) }
+	operator fun invoke(block: ComponentsPatch.() -> Unit = {}) = item(name, namespace, block)
 
 	companion object {
 		operator fun invoke(
