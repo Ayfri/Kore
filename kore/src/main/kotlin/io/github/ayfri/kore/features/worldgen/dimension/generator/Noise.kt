@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.features.worldgen.dimension.generator
 
-import io.github.ayfri.kore.arguments.types.resources.worldgen.NoiseSettingsArgument
 import io.github.ayfri.kore.features.worldgen.dimension.Dimension
 import io.github.ayfri.kore.features.worldgen.dimension.biomesource.BiomeSource
+import io.github.ayfri.kore.generated.arguments.worldgen.types.NoiseSettingsArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

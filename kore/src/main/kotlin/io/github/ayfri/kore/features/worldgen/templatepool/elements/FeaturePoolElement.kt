@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.features.worldgen.templatepool.elements
 
-import io.github.ayfri.kore.arguments.types.resources.worldgen.PlacedFeatureArgument
 import io.github.ayfri.kore.features.worldgen.templatepool.Projection
 import io.github.ayfri.kore.features.worldgen.templatepool.TemplatePoolEntry
+import io.github.ayfri.kore.generated.arguments.worldgen.types.PlacedFeatureArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

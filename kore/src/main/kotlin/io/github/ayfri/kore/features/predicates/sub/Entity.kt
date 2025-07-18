@@ -1,9 +1,9 @@
 package io.github.ayfri.kore.features.predicates.sub
 
 import io.github.ayfri.kore.arguments.ItemSlot
-import io.github.ayfri.kore.arguments.types.EntityTypeOrTagArgument
-import io.github.ayfri.kore.arguments.types.resources.EffectArgument
 import io.github.ayfri.kore.features.predicates.sub.entityspecific.EntityTypeSpecific
+import io.github.ayfri.kore.generated.arguments.EntityTypeOrTagArgument
+import io.github.ayfri.kore.generated.arguments.types.MobEffectArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
 import kotlinx.serialization.KSerializer
@@ -17,7 +17,7 @@ import net.benwoodworth.knbt.buildNbtCompound
 @Serializable
 data class Entity(
 	var distance: Distance? = null,
-	var effects: Map<EffectArgument, Effect>? = null,
+	var effects: Map<MobEffectArgument, Effect>? = null,
 	var equipment: Equipment? = null,
 	var flags: EntityFlags? = null,
 	var location: Location? = null,
@@ -71,11 +71,11 @@ fun Entity.equipment(init: Equipment.() -> Unit = {}) {
 	equipment = Equipment().apply(init)
 }
 
-fun Entity.effects(block: MutableMap<EffectArgument, Effect>.() -> Unit) {
+fun Entity.effects(block: MutableMap<MobEffectArgument, Effect>.() -> Unit) {
 	effects = buildMap(block)
 }
 
-fun Entity.effects(vararg effects: Pair<EffectArgument, Effect>) {
+fun Entity.effects(vararg effects: Pair<MobEffectArgument, Effect>) {
 	this.effects = effects.toMap()
 }
 

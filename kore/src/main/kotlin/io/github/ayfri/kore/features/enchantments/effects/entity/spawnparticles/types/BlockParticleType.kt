@@ -1,14 +1,14 @@
 package io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types
 
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
-import io.github.ayfri.kore.arguments.types.resources.ParticleArgument
 import io.github.ayfri.kore.commands.particle.types.BlockParticleType
 import io.github.ayfri.kore.data.block.BlockState
+import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class BlockParticleType(
-	override var type: ParticleArgument,
+	override var type: ParticleTypeArgument,
 	var blockState: BlockState,
 ) : ParticleType()
 

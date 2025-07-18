@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.biome.types
 
-import io.github.ayfri.kore.arguments.types.resources.EntityTypeArgument
+import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
 import io.github.ayfri.kore.serializers.JsonSerialName
 import kotlinx.serialization.Serializable
 

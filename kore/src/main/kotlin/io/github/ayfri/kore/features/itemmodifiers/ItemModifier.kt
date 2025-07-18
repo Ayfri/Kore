@@ -2,8 +2,8 @@ package io.github.ayfri.kore.features.itemmodifiers
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
-import io.github.ayfri.kore.arguments.types.resources.ItemModifierArgument
 import io.github.ayfri.kore.features.itemmodifiers.functions.ItemFunction
+import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import io.github.ayfri.kore.serializers.inlinableListSerializer
 import kotlinx.serialization.KSerializer

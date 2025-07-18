@@ -2,12 +2,11 @@ package io.github.ayfri.kore.features.worldgen.worldpreset
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
-import io.github.ayfri.kore.arguments.types.resources.worldgen.WorldPresetArgument
 import io.github.ayfri.kore.features.worldgen.dimension.Dimension
 import io.github.ayfri.kore.generated.DimensionTypes
+import io.github.ayfri.kore.generated.arguments.worldgen.types.WorldPresetArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.encodeToString
 
 @Serializable
 data class WorldPreset(

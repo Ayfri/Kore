@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.features.worldgen.structures.types
 
-import io.github.ayfri.kore.arguments.types.BiomeOrTagArgument
-import io.github.ayfri.kore.arguments.types.resources.worldgen.StructureArgument
 import io.github.ayfri.kore.features.worldgen.structures.*
+import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 

@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.features.enchantments.effects.entity
 
-import io.github.ayfri.kore.arguments.types.resources.DamageTypeArgument
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
+import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

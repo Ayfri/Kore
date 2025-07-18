@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.arguments.types.resources.JukeboxSongArgument
 import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.arguments.types.JukeboxSongArgument
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

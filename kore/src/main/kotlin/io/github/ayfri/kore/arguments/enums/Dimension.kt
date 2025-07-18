@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.arguments.enums
 
-import io.github.ayfri.kore.arguments.types.resources.worldgen.DimensionArgument
+import io.github.ayfri.kore.generated.arguments.types.DimensionArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 

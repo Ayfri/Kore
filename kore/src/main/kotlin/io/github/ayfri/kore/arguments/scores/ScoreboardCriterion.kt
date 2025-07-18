@@ -4,10 +4,10 @@ import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.colors.FormattingColor
 import io.github.ayfri.kore.arguments.types.ResourceLocationArgument
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
-import io.github.ayfri.kore.arguments.types.resources.CustomStatArgument
-import io.github.ayfri.kore.arguments.types.resources.EntityTypeArgument
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.generated.StatisticTypes
+import io.github.ayfri.kore.generated.arguments.types.CustomStatArgument
+import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
 import io.github.ayfri.kore.utils.camelCase
 
 interface ScoreboardCriterion : Argument

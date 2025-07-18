@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.arguments.components.matchers
 
-import io.github.ayfri.kore.arguments.types.TrimMaterialOrTagArgument
-import io.github.ayfri.kore.arguments.types.TrimPatternOrTagArgument
 import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
+import io.github.ayfri.kore.generated.arguments.TrimMaterialOrTagArgument
+import io.github.ayfri.kore.generated.arguments.TrimPatternOrTagArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 

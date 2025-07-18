@@ -2,11 +2,10 @@ package io.github.ayfri.kore.features.worldgen.noise
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
-import io.github.ayfri.kore.arguments.types.resources.worldgen.NoiseArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.NoiseArgument
 import io.github.ayfri.kore.serializers.JsonSerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.encodeToString
 
 @Serializable
 data class Noise(

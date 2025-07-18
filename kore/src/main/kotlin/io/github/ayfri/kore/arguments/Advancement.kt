@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.arguments
 
-import io.github.ayfri.kore.arguments.types.resources.AdvancementArgument
+import io.github.ayfri.kore.generated.arguments.types.AdvancementArgument
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor

@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.structureset
 
-import io.github.ayfri.kore.arguments.types.resources.worldgen.ConfiguredStructureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

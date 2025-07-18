@@ -1,7 +1,5 @@
 package io.github.ayfri.kore.features.enchantments.effects.builders
 
-import io.github.ayfri.kore.arguments.types.EffectOrTagArgument
-import io.github.ayfri.kore.arguments.types.EntityTypeOrTagArgument
 import io.github.ayfri.kore.arguments.types.resources.*
 import io.github.ayfri.kore.data.sound.SoundEvent
 import io.github.ayfri.kore.features.enchantments.effects.entity.*
@@ -13,6 +11,11 @@ import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.features.worldgen.floatproviders.constantFloatProvider
+import io.github.ayfri.kore.generated.arguments.EntityTypeOrTagArgument
+import io.github.ayfri.kore.generated.arguments.MobEffectOrTagArgument
+import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
+import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
+import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.serializers.InlineSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -40,7 +43,7 @@ fun EntityEffectBuilder.applyMobEffect(block: ApplyMobEffect.() -> Unit = {}) =
 		effects += ConditionalEffect(effect, effect.requirements)
 	}
 
-fun EntityEffectBuilder.applyMobEffect(effect: EffectOrTagArgument, block: ApplyMobEffect.() -> Unit = {}) =
+fun EntityEffectBuilder.applyMobEffect(effect: MobEffectOrTagArgument, block: ApplyMobEffect.() -> Unit = {}) =
 	apply {
 		val effect = ApplyMobEffect(listOf(effect)).apply(block)
 		effects += ConditionalEffect(effect, effect.requirements)
@@ -83,8 +86,8 @@ fun EntityEffectBuilder.explode(
 	attributeToUser: Boolean,
 	createFire: Boolean,
 	blockInteraction: BlockInteraction,
-	smallParticle: ParticleArgument,
-	largeParticle: ParticleArgument,
+	smallParticle: ParticleTypeArgument,
+	largeParticle: ParticleTypeArgument,
 	sound: SoundArgument,
 	block: Explode.() -> Unit = {},
 ) = apply {
@@ -166,7 +169,7 @@ fun EntityEffectBuilder.spawnParticles(
 }
 
 fun EntityEffectBuilder.spawnParticles(
-	particle: ParticleArgument,
+	particle: ParticleTypeArgument,
 	horizontalPositionType: ParticlePositionType,
 	verticalPositionType: ParticlePositionType,
 	block: SpawnParticles.() -> Unit = {},
@@ -194,7 +197,7 @@ fun EntityEffectBuilder.spawnParticles(
 }
 
 fun EntityEffectBuilder.spawnParticles(
-	particle: ParticleArgument,
+	particle: ParticleTypeArgument,
 	horizontalPosition: ParticlePosition,
 	verticalPosition: ParticlePosition,
 	block: SpawnParticles.() -> Unit = {},

@@ -6,13 +6,13 @@ import io.github.ayfri.kore.arguments.types.literals.float
 import io.github.ayfri.kore.arguments.types.literals.int
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
-import io.github.ayfri.kore.arguments.types.resources.ParticleArgument
 import io.github.ayfri.kore.commands.command
 import io.github.ayfri.kore.commands.particle.ParticleMode
 import io.github.ayfri.kore.commands.particle.ParticleType
 import io.github.ayfri.kore.commands.particle.Particles
 import io.github.ayfri.kore.commands.particle.asParticleArg
 import io.github.ayfri.kore.data.block.BlockState
+import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -29,7 +29,7 @@ fun BlockParticleType.blockState(block: BlockArgument, properties: Map<String, S
 }
 
 private fun Particles.blockParticleType(
-	name: ParticleArgument,
+	name: ParticleTypeArgument,
 	blockState: BlockState,
 	pos: Vec3? = null,
 	delta: Vec3? = null,

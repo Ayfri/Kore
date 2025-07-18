@@ -2,16 +2,16 @@ package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.colors.RGB
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.arguments.types.resources.EffectArgument
-import io.github.ayfri.kore.arguments.types.resources.PotionArgument
 import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.arguments.types.MobEffectArgument
+import io.github.ayfri.kore.generated.arguments.types.PotionArgument
 import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Effect(
-	val id: EffectArgument,
+	val id: MobEffectArgument,
 	val duration: Int,
 	val amplifier: Byte,
 	var ambient: Boolean,
@@ -53,7 +53,7 @@ fun ComponentsScope.potionContents(potion: PotionArgument, block: PotionContents
 }
 
 fun PotionContentsComponent.customEffect(
-	id: EffectArgument,
+	id: MobEffectArgument,
 	duration: Int,
 	amplifier: Byte,
 	ambient: Boolean,

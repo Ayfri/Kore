@@ -2,8 +2,8 @@ package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.maths.Vec3
-import io.github.ayfri.kore.arguments.types.resources.worldgen.DimensionArgument
 import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.arguments.types.DimensionArgument
 import kotlinx.serialization.Serializable
 import kotlin.math.roundToInt
 

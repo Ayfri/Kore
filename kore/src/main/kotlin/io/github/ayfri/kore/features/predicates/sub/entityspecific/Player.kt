@@ -1,12 +1,12 @@
 package io.github.ayfri.kore.features.predicates.sub.entityspecific
 
 import io.github.ayfri.kore.arguments.enums.Gamemode
-import io.github.ayfri.kore.arguments.types.resources.RecipeArgument
 import io.github.ayfri.kore.arguments.types.resources.StatisticArgument
 import io.github.ayfri.kore.features.advancements.serializers.IntRangeOrIntJson
 import io.github.ayfri.kore.features.predicates.sub.Advancements
 import io.github.ayfri.kore.features.predicates.sub.Entity
 import io.github.ayfri.kore.features.predicates.sub.Statistic
+import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import kotlinx.serialization.Serializable
 
 

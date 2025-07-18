@@ -16,7 +16,6 @@ import io.github.ayfri.kore.arguments.types.literals.randomUUID
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
-import io.github.ayfri.kore.arguments.types.resources.ItemModifierArgument
 import io.github.ayfri.kore.commands.*
 import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
@@ -25,6 +24,7 @@ import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.functions.tick
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.nbtList
 import io.github.ayfri.kore.utils.nbtListOf

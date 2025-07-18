@@ -2,13 +2,12 @@ package io.github.ayfri.kore.features.wolfvariants
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
-import io.github.ayfri.kore.arguments.types.resources.WolfVariantArgument
-import io.github.ayfri.kore.arguments.types.resources.worldgen.BiomeArgument
 import io.github.ayfri.kore.generated.Biomes
+import io.github.ayfri.kore.generated.arguments.types.WolfVariantArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.BiomeArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.encodeToString
 
 @Serializable
 data class WolfVariant(

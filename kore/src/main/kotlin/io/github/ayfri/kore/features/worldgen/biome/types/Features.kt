@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.biome.types
 
-import io.github.ayfri.kore.arguments.types.resources.worldgen.PlacedFeatureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.PlacedFeatureArgument
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer

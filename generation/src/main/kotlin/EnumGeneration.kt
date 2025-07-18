@@ -19,7 +19,10 @@ fun generateEnum(
 		)
 
 		parentArgumentType?.let {
-			addSuperinterface(argumentClassName(it))
+			// Make it work with `worldgen.` prefix
+			val prefix = if ("." in it) it.substringBeforeLast(".") + "." else ""
+			val argumentTypeName = it.substringAfterLast(".")
+			addSuperinterface(argumentClassName("${prefix}types.$argumentTypeName"))
 		}
 
 		values.filter(String::isNotBlank).removeMinecraftPrefix().forEach { value ->
@@ -36,7 +39,7 @@ fun generateEnum(
 
 			addFunction(
 				FunSpec.builder("asId")
-					.addStatement("return \"\$namespace:\${name.$asString}\"")
+					.addStatement($$"return \"$namespace:${name.$$asString}\"")
 					.returns(String::class)
 					.overrides()
 					.build()
@@ -45,9 +48,9 @@ fun generateEnum(
 
 		additionalEnumCode()
 
-		val encoderValue = if (parentArgumentType != null) "\"minecraft:\${value.name.$asString}\"" else null
+		val encoderValue = if (parentArgumentType != null) $$"\"minecraft:${value.name.$$asString}\"" else null
 		addType(generateCompanion(name, encoderValue))
 	}
 
-	generateFile(name, sourceUrl, enumType, additionalCode)
+	generateFile(name, sourceUrl, enumType, additionalCode = additionalCode)
 }

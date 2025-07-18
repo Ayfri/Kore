@@ -7,15 +7,14 @@ import io.github.ayfri.kore.arguments.chatcomponents.PlainTextComponent
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
-import io.github.ayfri.kore.arguments.types.EnchantmentOrTagArgument
 import io.github.ayfri.kore.arguments.types.ItemOrTagArgument
-import io.github.ayfri.kore.arguments.types.resources.EnchantmentArgument
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.features.enchantments.values.Linear
+import io.github.ayfri.kore.generated.arguments.EnchantmentOrTagArgument
+import io.github.ayfri.kore.generated.arguments.types.EnchantmentArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.encodeToString
 
 @Serializable
 data class Enchantment(

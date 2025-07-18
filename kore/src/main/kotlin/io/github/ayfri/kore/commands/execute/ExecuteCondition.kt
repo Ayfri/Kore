@@ -12,8 +12,9 @@ import io.github.ayfri.kore.arguments.types.*
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
-import io.github.ayfri.kore.arguments.types.resources.PredicateArgument
-import io.github.ayfri.kore.arguments.types.resources.worldgen.DimensionArgument
+import io.github.ayfri.kore.generated.arguments.types.DimensionArgument
+import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable

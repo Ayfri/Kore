@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.structures.types.jigsaw
 
-import io.github.ayfri.kore.arguments.types.resources.worldgen.TemplatePoolArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.TemplatePoolArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

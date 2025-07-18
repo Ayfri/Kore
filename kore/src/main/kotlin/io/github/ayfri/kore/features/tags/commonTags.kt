@@ -2,6 +2,26 @@ package io.github.ayfri.kore.features.tags
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.types.resources.tagged.*
+import io.github.ayfri.kore.generated.arguments.tagged.BannerPatternTagArgument
+import io.github.ayfri.kore.generated.arguments.tagged.CatVariantTagArgument
+import io.github.ayfri.kore.generated.arguments.tagged.DamageTypeTagArgument
+import io.github.ayfri.kore.generated.arguments.tagged.EnchantmentTagArgument
+import io.github.ayfri.kore.generated.arguments.tagged.EntityTypeTagArgument
+import io.github.ayfri.kore.generated.arguments.tagged.FluidTagArgument
+import io.github.ayfri.kore.generated.arguments.tagged.FrogVariantTagArgument
+import io.github.ayfri.kore.generated.arguments.tagged.GameEventTagArgument
+import io.github.ayfri.kore.generated.arguments.tagged.InstrumentTagArgument
+import io.github.ayfri.kore.generated.arguments.tagged.PaintingVariantTagArgument
+import io.github.ayfri.kore.generated.arguments.tagged.PigVariantTagArgument
+import io.github.ayfri.kore.generated.arguments.tagged.PointOfInterestTypeTagArgument
+import io.github.ayfri.kore.generated.arguments.tagged.TrimMaterialTagArgument
+import io.github.ayfri.kore.generated.arguments.tagged.TrimPatternTagArgument
+import io.github.ayfri.kore.generated.arguments.tagged.WolfVariantTagArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.tagged.BiomeTagArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.tagged.ConfiguredStructureTagArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.tagged.FlatLevelGeneratorPresetTagArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.tagged.StructureTagArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.tagged.WorldPresetTagArgument
 
 fun DataPack.bannerPatternTag(
 	fileName: String = "banner_pattern",
@@ -119,7 +139,7 @@ fun DataPack.pointOfInterestTypeTag(
 	fileName: String = "point_of_interest_type",
 	namespace: String = name,
 	replace: Boolean = false,
-	block: Tag<PointOfInterestTagArgument>.() -> Unit = {},
+	block: Tag<PointOfInterestTypeTagArgument>.() -> Unit = {},
 ) = tag(fileName, "point_of_interest_type", namespace, replace, block)
 
 fun DataPack.structureTag(

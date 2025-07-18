@@ -11,7 +11,7 @@ suspend fun launchAllSimpleGenerators() {
 	val txtListsListGenerators = listOf(
 		gen("BannerPatterns", "banner_patterns"),
 		gen("DamageTypes", "damage_types"),
-		gen("DimensionTypes", "dimension_types", "worldgen.DimensionType"),
+		gen("DimensionTypes", "dimension_types"),
 		gen("Enchantments", "enchantments"),
 		gen("Instruments", "instruments"),
 		gen("JukeboxSongs", "jukebox_songs"),
@@ -21,8 +21,9 @@ suspend fun launchAllSimpleGenerators() {
 		gen("TrimPatterns", "trim_patterns"),
 		gen("PigVariants", "pigs"),
 		gen("WolfVariants", "wolfs"),
+
 		gen("Biomes", "worldgen/biome"),
-		gen("BiomePresets", "worldgen/multi_noise_biome_source_parameter_list"),
+		gen("BiomePresets", "worldgen/multi_noise_biome_source_parameter_list", "MultiNoiseBiomeSourceParameterList"),
 		gen("ConfiguredFeatures", "worldgen/configured_feature"),
 		gen("FlatLevelGeneratorPresets", "worldgen/flat_level_generator_preset"),
 		gen("Noises", "worldgen/noise"),
@@ -36,23 +37,29 @@ suspend fun launchAllSimpleGenerators() {
 	val txtListsTreeGenerators = listOf(
 		gen("Advancements", "advancements"),
 		gen("LootTables", "loot_tables"),
-		gen("Sounds", "sounds") { it.removeSuffix(".ogg") },
+		gen("Sounds", "sounds", "Sound M") { it.removeSuffix(".ogg") },
 		gen("Structures", "structures", "worldgen.Structure") { it.removeSuffix(".nbt") },
 		gen(
 			"Tags", "tags", argumentClassName = "", tagsParents = mapOf(
-				"block" to "BlockTag",
+				"banner_pattern" to "BannerPatternTag",
+				"block" to "BlockTag M",
 				"cat_variant" to "CatVariantTag",
 				"damage_type" to "DamageTypeTag",
 				"enchantment" to "EnchantmentTag",
+				"entity_type" to "EntityTypeTag",
 				"fluid" to "FluidTag",
 				"frog_variant" to "FrogVariantTag",
+				"game_event" to "GameEventTag",
 				"instrument" to "InstrumentTag",
-				"item" to "ItemTag",
+				"item" to "ItemTag M",
 				"painting_variant" to "PaintingVariantTag",
+				"point_of_interest_type" to "PointOfInterestTypeTag",
 				"pig_variant" to "PigVariantTag",
 				"wolf_variant" to "WolfVariantTag",
-				"worldgen/biome" to "BiomeTag",
-				"worldgen/structure" to "ConfiguredStructureTag",
+				"worldgen/biome" to "worldgen.BiomeTag",
+				"worldgen/flat_level_generator_preset" to "worldgen.FlatLevelGeneratorPresetTag",
+				"worldgen/structure" to "worldgen.ConfiguredStructureTag",
+				"worldgen/world_preset" to "worldgen.WorldPresetTag",
 			)
 		),
 		gen("DensityFunctions", "worldgen/density_function"),
@@ -81,11 +88,11 @@ suspend fun launchAllSimpleGenerators() {
 					.initializer("mutableMapOf()")
 					.build()
 			)
-		}) { it.removePrefix("minecraft:") },
+		}, argumentClassName = "Block M") { it.removePrefix("minecraft:") },
 		gen("CatVariants", "cat_variant"),
 		gen("ComponentTypes", "data_component_type", argumentClassName = ""),
 		gen("CustomStats", "custom_stat"),
-		gen("Effects", "mob_effect"),
+		gen("Effects", "mob_effect", "MobEffect"),
 		gen("EnchantmentEffectComponents", "enchantment_effect_component_type", argumentClassName = "", additionalCode = {
 			addFunction(
 				FunSpec.builder("asId")
@@ -125,10 +132,10 @@ suspend fun launchAllSimpleGenerators() {
 					.returns(ClassName("io.github.ayfri.kore.arguments.types.resources", "ItemArgument"))
 					.build()
 			)
-		}),
-		gen("Particles", "particle_type"),
+		}, argumentClassName = "Item M"),
+		gen("Particles", "particle_type", argumentClassName = "ParticleType"),
 		gen("Potions", "potion"),
-		gen("StatisticTypes", "stat_type") { it.removePrefix("minecraft:") },
+		gen("StatisticTypes", "stat_type", "StatType") { it.removePrefix("minecraft:") },
 		gen("VillagerProfessions", "villager_profession"),
 		gen("VillagerTypes", "villager_type"),
 		gen("Carvers", "worldgen/carver"),

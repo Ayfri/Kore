@@ -3,8 +3,8 @@ package io.github.ayfri.kore.features.worldgen.biome.types
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.ColorAsDecimalSerializer
 import io.github.ayfri.kore.arguments.colors.color
-import io.github.ayfri.kore.arguments.types.resources.ParticleArgument
 import io.github.ayfri.kore.arguments.types.resources.SoundArgument
+import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -52,6 +52,6 @@ fun BiomeEffects.addMusic(sound: SoundArgument, weight: Int = 1, minDelay: Int, 
 	music = (music ?: emptyList()) + WeightedMusic(Music(sound, minDelay, maxDelay, replaceCurrentMusic), weight)
 }
 
-fun BiomeEffects.particle(type: ParticleArgument, probability: Float) {
+fun BiomeEffects.particle(type: ParticleTypeArgument, probability: Float) {
 	particle = Particle(ParticleOptions(type), probability)
 }

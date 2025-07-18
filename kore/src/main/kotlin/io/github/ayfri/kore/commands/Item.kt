@@ -6,8 +6,8 @@ import io.github.ayfri.kore.arguments.types.literalName
 import io.github.ayfri.kore.arguments.types.literals.int
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
-import io.github.ayfri.kore.arguments.types.resources.ItemModifierArgument
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
 
 class ItemSlot(private val fn: Function, val container: ContainerArgument, val slot: ItemSlotType) {
 	fun modify(modifier: ItemModifierArgument) = fn.items.modify(container, slot, modifier)

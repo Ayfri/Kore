@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.biome.types
 
-import io.github.ayfri.kore.arguments.types.resources.worldgen.CarverArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.CarverArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

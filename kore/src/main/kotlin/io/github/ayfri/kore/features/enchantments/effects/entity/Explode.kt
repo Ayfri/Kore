@@ -1,11 +1,11 @@
 package io.github.ayfri.kore.features.enchantments.effects.entity
 
 import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
-import io.github.ayfri.kore.arguments.types.resources.DamageTypeArgument
-import io.github.ayfri.kore.arguments.types.resources.ParticleArgument
 import io.github.ayfri.kore.arguments.types.resources.SoundArgument
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
+import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
+import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.serializers.TripleAsArray
@@ -34,8 +34,8 @@ data class Explode(
 	var radius: LevelBased = constantLevelBased(0),
 	var createFire: Boolean,
 	var blockInteraction: BlockInteraction,
-	var smallParticle: ParticleArgument,
-	var largeParticle: ParticleArgument,
+	var smallParticle: ParticleTypeArgument,
+	var largeParticle: ParticleTypeArgument,
 	var sound: SoundArgument,
 ) : EntityEffect()
 

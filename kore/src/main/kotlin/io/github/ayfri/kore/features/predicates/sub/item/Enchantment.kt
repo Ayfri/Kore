@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.predicates.sub.item
 
-import io.github.ayfri.kore.arguments.types.EnchantmentOrTagArgument
 import io.github.ayfri.kore.features.advancements.serializers.IntRangeOrIntJson
+import io.github.ayfri.kore.generated.arguments.EnchantmentOrTagArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 

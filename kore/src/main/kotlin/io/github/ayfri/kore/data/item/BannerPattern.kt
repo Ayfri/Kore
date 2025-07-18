@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.data.item
 
 import io.github.ayfri.kore.arguments.colors.FormattingColor
-import io.github.ayfri.kore.arguments.types.resources.BannerPatternArgument
+import io.github.ayfri.kore.generated.arguments.types.BannerPatternArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

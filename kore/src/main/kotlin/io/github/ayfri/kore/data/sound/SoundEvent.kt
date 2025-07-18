@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.data.sound
 
-import io.github.ayfri.kore.arguments.types.resources.SoundEventArgument
+import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
