@@ -918,10 +918,10 @@ fun DataPack.enchantmentTests() {
 						"effect": {
 							"type": "minecraft:apply_mob_effect",
 							"to_apply": "minecraft:speed",
-							"min_duration": 2,
+							"min_duration": 0,
 							"max_duration": 2,
 							"min_amplifier": 1,
-							"max_amplifier": 1
+							"max_amplifier": 0
 						}
 					}
 				]
