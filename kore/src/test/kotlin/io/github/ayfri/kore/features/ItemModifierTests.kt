@@ -50,7 +50,7 @@ fun DataPack.itemModifierTests() {
 						"raining": true
 					}
 				],
-				"destination": "worldgen/structure/mineshaft",
+				"destination": "minecraft:mineshaft",
 				"decoration": "banner_black",
 				"skip_existing_chunks": true
 			},

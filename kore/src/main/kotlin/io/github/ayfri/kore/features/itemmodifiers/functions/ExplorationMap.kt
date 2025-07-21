@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.arguments.enums.MapDecoration
+import io.github.ayfri.kore.arguments.types.TaggedResourceLocationArgument
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.PredicateAsList
 import io.github.ayfri.kore.generated.Tags
@@ -9,6 +10,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ExplorationMap(
 	override var conditions: PredicateAsList? = null,
+	@Serializable(TaggedResourceLocationArgument.TaggedResourceLocationUnPrefixedSerializer::class)
 	var destination: Tags.Worldgen.Structure? = null,
 	var decoration: MapDecoration? = null,
 	var zoom: Int? = null,
