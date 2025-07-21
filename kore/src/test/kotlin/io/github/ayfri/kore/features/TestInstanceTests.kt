@@ -3,19 +3,26 @@ package io.github.ayfri.kore.features
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.features.testinstances.*
 import io.github.ayfri.kore.features.testenvironments.enums.Weather
 import io.github.ayfri.kore.features.testenvironments.testEnvironmentsBuilder
+import io.github.ayfri.kore.functions.function
+import io.github.ayfri.kore.generated.Structures
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 
 fun DataPack.testInstanceTests() {
 	val environment = testEnvironmentsBuilder.weather("test_env", Weather.CLEAR)
 
+	val testFunction = function("test_function") {
+		say("test_function")
+	}
+
 	testInstances {
 		testInstance("basic_test") {
 			environment(environment)
 			maxTicks = 100
-			structure(StructureArgument("test_structure", "minecraft"))
+			structure(Structures.Village.Common.IRON_GOLEM)
 			blockBased()
 		}
 
@@ -23,7 +30,7 @@ fun DataPack.testInstanceTests() {
 			{
 				"environment": "features_tests:test_env",
 				"max_ticks": 100,
-				"structure": "minecraft:test_structure",
+				"structure": "minecraft:village/common/iron_golem",
 				"type": "block_based"
 			}
 		""".trimIndent()
@@ -31,11 +38,11 @@ fun DataPack.testInstanceTests() {
 		testInstance("full_test") {
 			environment(environment)
 			maxTicks = 200
-			structure(StructureArgument("complex_structure", "minecraft"))
+			structure(Structures.Igloo.TOP)
 			functionBased()
 			function {
-				setup(FunctionArgument("test_setup", "minecraft"))
-				teardown(FunctionArgument("test_teardown", "minecraft"))
+				setup(testFunction)
+				teardown(testFunction)
 			}
 			manualOnly = true
 			maxAttempts = 5
@@ -50,8 +57,8 @@ fun DataPack.testInstanceTests() {
 			{
 				"environment": "features_tests:test_env",
 				"function": {
-					"setup": "minecraft:test_setup",
-					"teardown": "minecraft:test_teardown"
+					"setup": "features_tests:test_function",
+					"teardown": "features_tests:test_function"
 				},
 				"manual_only": true,
 				"max_attempts": 5,
@@ -61,7 +68,7 @@ fun DataPack.testInstanceTests() {
 				"rotation": "clockwise_90",
 				"setup_ticks": 20,
 				"sky_access": false,
-				"structure": "minecraft:complex_structure",
+				"structure": "minecraft:igloo/top",
 				"type": "function"
 			}
 		""".trimIndent()
