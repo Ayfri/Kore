@@ -38,6 +38,7 @@ fun runUnitTests() = dataPack("unit_tests") {
 		teamsTests()
 		teleportTests()
 		tellrawTests()
+		testTests()
 		tickTests()
 		timeTests()
 		titleTests()

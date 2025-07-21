@@ -9,7 +9,7 @@ import io.github.ayfri.kore.features.testenvironments.testEnvironmentsBuilder
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 
 fun DataPack.testInstanceTests() {
-	val environment = testEnvironmentsBuilder.weatherEnvironment("test_env", Weather.CLEAR)
+	val environment = testEnvironmentsBuilder.weather("test_env", Weather.CLEAR)
 
 	testInstances {
 		testInstance("basic_test") {
