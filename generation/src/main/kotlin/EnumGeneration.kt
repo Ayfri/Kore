@@ -5,7 +5,7 @@ fun generateEnum(
 	name: String,
 	sourceUrl: String,
 	parentArgumentType: String? = null,
-	asString: String = "lowercase()",
+	asString: String = "\${name.lowercase()}",
 	additionalCode: FileSpec.Builder.(enumName: String) -> Unit = {},
 	additionalEnumCode: TypeSpec.Builder.() -> Unit = {},
 ) {
@@ -39,7 +39,7 @@ fun generateEnum(
 
 			addFunction(
 				FunSpec.builder("asId")
-					.addStatement($$"return \"$namespace:${name.$$asString}\"")
+					.addStatement($$"return \"$namespace:$$asString\"")
 					.returns(String::class)
 					.overrides()
 					.build()
@@ -48,7 +48,7 @@ fun generateEnum(
 
 		additionalEnumCode()
 
-		val encoderValue = if (parentArgumentType != null) $$"\"minecraft:${value.name.$$asString}\"" else null
+		val encoderValue = if (parentArgumentType != null) "value.asId()" else null
 		addType(generateCompanion(name, encoderValue))
 	}
 
