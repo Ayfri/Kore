@@ -7,15 +7,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class WeaponComponent(
-	@SerialName("damage_per_attack")
-	var damagePerAttack: Int = 1,
+	@SerialName("item_damage_per_attack")
+	var itemDamagePerAttack: Int = 1,
 	@SerialName("can_disable_blocking")
 	var canDisableBlocking: Boolean = false,
 ) : Component()
 
 fun ComponentsScope.weapon(
-	damagePerAttack: Int = 1,
+	itemDamagePerAttack: Int = 1,
 	canDisableBlocking: Boolean = false,
 ) = apply {
-	this[ItemComponentTypes.WEAPON] = WeaponComponent(damagePerAttack, canDisableBlocking)
+	this[ItemComponentTypes.WEAPON] = WeaponComponent(itemDamagePerAttack, canDisableBlocking)
 }
