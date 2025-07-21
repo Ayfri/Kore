@@ -180,28 +180,68 @@ structure(Structures.Village.Desert.Houses.DESERT_TEMPLE_1)
 structure(Structures.Village.Plains.Houses.PLAINS_SMALL_HOUSE_1)
 ```
 
+## Test Commands
+
+### Test Selectors
+
+```kotlin
+// Basic selectors
+allTests()                     // "*:*" - all tests
+minecraftTests()              // "minecraft:*" - minecraft tests
+testSelector("my_pack:*")     // All tests in namespace
+testSelector("*_combat")      // Tests ending with "_combat"
+testSelector("test_?")        // Single character wildcard
+```
+
+### Command Examples
+
+```kotlin
+function("test_example") {
+    test {
+        val selector = testSelector("my_pack:test_*")
+
+        // Basic usage
+        run(selector)
+        runClosest()
+        runMultiple(selector, 5)
+
+        // Management
+        create(TestInstanceArgument("test", "pack"))
+        locate(selector)
+        pos("variable")
+
+        // Cleanup
+        clearAll()
+        resetClosest()
+        stop()
+
+        // Verification
+        verify(TestInstanceArgument("test1", "pack"),
+               TestInstanceArgument("test2", "pack"))
+    }
+}
+```
+
 ## Test Execution
 
 ### Manual Commands
 
 ```mcfunction
-# Individual tests
+# Basic execution
 /test run my_datapack:basic_test
 /test runmultiple my_datapack:basic_test my_datapack:function_test
-
-# Location-based
 /test runclosest
-/test runthat
+/test runfailed
 
-# Reset
+# Management
+/test create my_datapack:new_test 16 16 16
+/test locate my_datapack:test_*
+/test pos test_position
+
+# Cleanup
+/test clearall 15
 /test resetclosest
-```
-
-### Automated Server
-
-```bash
-java -DbundlerMainClass="net.minecraft.gametest.Main" -jar server.jar \
-    --tests "my_datapack:*" --report results.xml
+/test stop
 ```
 
 ## Complete Example
@@ -295,24 +335,15 @@ fun DataPack.createTestSuite() {
 }
 ```
 
+
+
 ## Best Practices
 
-### Environment Design
 - **Combine environments** with `allOf` for complex scenarios
-- **Reuse environments** across multiple test instances
-- **Use controlled conditions** with game rules for predictable results
-
-### Test Instance Design
-- **Allow setup time** with `setupTicks`
 - **Mark critical tests** as `required = true`
 - **Set appropriate timeouts** with `maxTicks`
-- **Test rotations** for directional functionality
+- **Use controlled conditions** with game rules for predictable results
 - **Use predefined structures** from `Structures` constants
-
-### Test Execution Strategy
-- **Manual-only tests** for performance or unstable scenarios
-- **Retry logic** for tests with randomness
-- **Sky access control** for structure placement
 
 ## API Reference
 
@@ -353,4 +384,4 @@ gameRules("name") {
 }
 ```
 
-This DSL provides a clean, type-safe way to create automated tests for Minecraft datapacks using the GameTest framework. The generated JSON files integrate seamlessly with Minecraft's testing infrastructure for reliable continuous integration.
+This DSL provides a type-safe way to create automated tests for Minecraft datapacks using the GameTest framework introduced in snapshot 25w03a.
