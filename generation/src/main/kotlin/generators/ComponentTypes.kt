@@ -9,24 +9,24 @@ import removeMinecraftPrefix
 import snakeCase
 import url
 
-suspend fun downloadComponentTypes() {
+suspend fun downloadItemComponentTypes() {
 	val url = url("custom-generated/registries/data_component_type.txt")
-	val componentTypes = getFromCacheOrDownloadTxt("data_component_type.txt", url).lines()
+	val ItemComponentTypes = getFromCacheOrDownloadTxt("data_component_type.txt", url).lines()
 		.filter(String::isNotBlank)
 		.removeMinecraftPrefix()
 
-	val (itemComponents, entityComponents) = componentTypes.partition { "/" !in it }
+	val (itemComponents, entityComponents) = ItemComponentTypes.partition { "/" !in it }
 
 	generateEnum(
 		values = itemComponents,
-		name = "ItemComponentType",
+		name = "ItemComponentTypes",
 		sourceUrl = url,
 		parentArgumentType = "DataComponentType"
 	)
 
     generateEnum(
 		values = entityComponents.map { it.replace("/", "_") },
-		name = "EntityComponentType",
+		name = "EntityItemComponentTypes",
 		sourceUrl = url,
 		parentArgumentType = "DataComponentType",
 		asString = "\$originalName",

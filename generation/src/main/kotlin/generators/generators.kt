@@ -95,7 +95,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("EnchantmentEffectComponents", "enchantment_effect_component_type", argumentClassName = "", additionalCode = {
 			addFunction(
 				FunSpec.builder("asId")
-					.addStatement("return \"minecraft:\" + name.lowercase()")
+					.addStatement($"return \"minecraft:\${name.lowercase()}\"")
 					.returns(String::class)
 					.build()
 			)

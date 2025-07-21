@@ -91,7 +91,7 @@ fun generatePathEnumTree(
 					if (hasParent) tagPath = "$parent$separator"
 
 					addFunction(
-						FunSpec.builder("asString")
+						FunSpec.builder("asId")
 							.addStatement($$"return \"$$hash$namespace:$$tagPath${name.lowercase()}\"")
 							.returns(String::class)
 							.overrides()
@@ -105,7 +105,7 @@ fun generatePathEnumTree(
 						.build()
 				)
 
-				addType(generateCompanion(enumName, $$"\"$$parent$$separator${value.name.lowercase()}\""))
+				addType(generateCompanion(enumName, "value.asId()"))
 			}
 		}.addEnumConstant(enumValue)
 	}
@@ -131,7 +131,7 @@ inline fun <T> T.letIf(
 	block: (T) -> T,
 ) = if (condition) block(this) else this
 
-fun generateCompanion(name: String, encoderValue: String? = $$"\"minecraft:${value.name.lowercase()}\"") =
+fun generateCompanion(name: String, encoderValue: String? = "value.asId()") =
 	TypeSpec.companionObjectBuilder().apply {
 		addType(
 			TypeSpec.objectBuilder(name.asSerializer())
