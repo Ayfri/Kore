@@ -61,7 +61,7 @@ interface ItemSlotType : ItemSlot, ItemSlotWrapper {
 			105 -> ARMOR.BODY
 			in ENDERCHEST -> ENDERCHEST[index - ENDERCHEST.start]
 			in VILLAGER -> VILLAGER[index - VILLAGER.start]
-			400 -> HORSE.SADDLE
+			400 -> SADDLE
 			499 -> when {
 				fromPlayer -> PLAYER.CURSOR
 				else -> HORSE.CHEST
@@ -117,7 +117,6 @@ data object HORSE : IndexedItemSlot {
 	override fun name() = "horse"
 
 	val CHEST = subType("chest", 499)
-	val SADDLE = subType("saddle", 400)
 }
 
 val HOTBAR = IndexedItemSlot(0, 8) { "hotbar" }
@@ -129,6 +128,8 @@ data object PLAYER : ItemSlotWrapper {
 	val CURSOR = subType("cursor", 499)
 	val CRAFTING = IndexedItemSlot(500, 504) { "${asString()}.crafting" }
 }
+
+val SADDLE = ItemSlotType(400) { "saddle" }
 
 data object WEAPON : ItemSlotType, RangeItemSlot {
 	override fun asIndex() = 98
