@@ -4,7 +4,7 @@ import io.github.ayfri.kore.arguments.components.types.Component
 import io.github.ayfri.kore.arguments.components.types.CustomComponent
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.data.item.ItemStack
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.snbtSerializer
 import io.github.ayfri.kore.utils.unescape
@@ -41,11 +41,11 @@ abstract class ComponentsScope(open val components: MutableMap<String, Component
 	open operator fun set(name: String, component: Component) = run { components[name] = component }
 	operator fun set(name: String, nbt: NbtTag) = addComponent(name, nbt)
 
-	operator fun set(name: ComponentTypes, component: Component) {
+	operator fun set(name: ItemComponentTypes, component: Component) {
 		this[name.name.lowercase()] = component
 	}
 
-	operator fun set(name: ComponentTypes, nbt: NbtTag) {
+	operator fun set(name: ItemComponentTypes, nbt: NbtTag) {
 		this[name.name.lowercase()] = nbt
 	}
 

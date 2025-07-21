@@ -3,7 +3,7 @@ package io.github.ayfri.kore.arguments.components
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import net.benwoodworth.knbt.NbtCompoundBuilder
 import net.benwoodworth.knbt.buildNbtCompound
 
@@ -37,13 +37,13 @@ fun ItemPredicate.count(range: io.github.ayfri.kore.arguments.numbers.ranges.Int
  * itemPredicate {
  *   damage(4)
  *   damage(1)
- *   negate(ComponentTypes.DAMAGE)
- *   clearPredicate(ComponentTypes.DAMAGE)
+ *   negate(ItemComponentTypes.DAMAGE)
+ *   clearPredicate(ItemComponentTypes.DAMAGE)
  * }
  * ```
  * Will be serialized as: `*`
  */
-fun ItemPredicate.clearPredicate(component: ComponentTypes) = clearPredicate(component.name.lowercase())
+fun ItemPredicate.clearPredicate(component: ItemComponentTypes) = clearPredicate(component.name.lowercase())
 
 /**
  * Remove all the predicates of the given component.
@@ -76,12 +76,12 @@ fun ItemPredicate.clearPredicate(component: String) {
  * Example:
  * ```kotlin
  * itemPredicate {
- *   isPresent(ComponentTypes.DAMAGE)
+ *   isPresent(ItemComponentTypes.DAMAGE)
  * }
  * ```
  * Will be serialized as: `*[damage]`
  */
-fun ItemPredicate.isPresent(vararg component: ComponentTypes) = component.forEach(::setExpected)
+fun ItemPredicate.isPresent(vararg component: ItemComponentTypes) = component.forEach(::setExpected)
 
 /**
  * Add a check to see if the component is present.
@@ -111,7 +111,7 @@ fun ItemPredicate.isPresent(vararg component: String) = component.forEach(::setE
  *
  * // Will output: `*[!damage=1|damage=2]`
  */
-fun ItemPredicate.negate(vararg component: ComponentTypes) = component.forEach(::setNegated)
+fun ItemPredicate.negate(vararg component: ItemComponentTypes) = component.forEach(::setNegated)
 
 /**
  * Set the last added component as negated.
@@ -146,12 +146,12 @@ fun ItemPredicate.subPredicates(block: ItemStackSubPredicates.() -> Unit) = appl
  *   customData {
  *     this["test"] = 1
  *   }
- *   partial(ComponentTypes.CUSTOM_DATA)
+ *   partial(ItemComponentTypes.CUSTOM_DATA)
  * }
  * ```
  * Will be serialized as: `*[custom_data~{test:1}]`
  */
-fun ItemPredicate.partial(vararg component: ComponentTypes) = component.forEach(::setPartial)
+fun ItemPredicate.partial(vararg component: ItemComponentTypes) = component.forEach(::setPartial)
 
 /**
  * Set the components as partial.

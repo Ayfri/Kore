@@ -5,7 +5,7 @@ import io.github.ayfri.kore.arguments.chatcomponents.PlainTextComponent
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineSerializer
 import io.github.ayfri.kore.serializers.ToStringSerializer
 import kotlinx.serialization.Serializable
@@ -22,7 +22,7 @@ data class LoreComponent(
 	}
 }
 
-fun ComponentsScope.lore(chatComponents: ChatComponents) = apply { this[ComponentTypes.LORE] = LoreComponent(chatComponents) }
+fun ComponentsScope.lore(chatComponents: ChatComponents) = apply { this[ItemComponentTypes.LORE] = LoreComponent(chatComponents) }
 
 fun ComponentsScope.lore(text: String = "", color: Color? = null, block: PlainTextComponent.() -> Unit = {}) =
 	lore(textComponent(text, color, block))

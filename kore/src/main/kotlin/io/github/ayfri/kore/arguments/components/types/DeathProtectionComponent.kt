@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -12,15 +12,15 @@ data class DeathProtectionComponent(
 ) : Component()
 
 fun ComponentsScope.deathProtection(deathEffects: List<Effect>? = null) = apply {
-	this[ComponentTypes.DEATH_PROTECTION] = DeathProtectionComponent(deathEffects)
+	this[ItemComponentTypes.DEATH_PROTECTION] = DeathProtectionComponent(deathEffects)
 }
 
 fun ComponentsScope.deathProtection(vararg effects: Effect) = apply {
-	this[ComponentTypes.DEATH_PROTECTION] = DeathProtectionComponent(effects.toList())
+	this[ItemComponentTypes.DEATH_PROTECTION] = DeathProtectionComponent(effects.toList())
 }
 
 fun ComponentsScope.deathProtection(block: DeathProtectionComponent.() -> Unit) = apply {
-	this[ComponentTypes.DEATH_PROTECTION] = DeathProtectionComponent().apply(block)
+	this[ItemComponentTypes.DEATH_PROTECTION] = DeathProtectionComponent().apply(block)
 }
 
 fun DeathProtectionComponent.effects(vararg effects: Effect) {

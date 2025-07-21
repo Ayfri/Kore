@@ -2,7 +2,7 @@ package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.types.ConsumeCooldownGroupArgument
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -18,7 +18,7 @@ fun ComponentsScope.useCooldown(
 	cooldownGroup: ConsumeCooldownGroupArgument,
 	block: UseCooldownComponent.() -> Unit = {},
 ) = apply {
-	this[ComponentTypes.USE_COOLDOWN] = UseCooldownComponent(seconds, cooldownGroup).apply(block)
+	this[ItemComponentTypes.USE_COOLDOWN] = UseCooldownComponent(seconds, cooldownGroup).apply(block)
 }
 
 fun ComponentsScope.useCooldown(
@@ -26,5 +26,5 @@ fun ComponentsScope.useCooldown(
 	cooldownGroup: String,
 	block: UseCooldownComponent.() -> Unit = {},
 ) = apply {
-	this[ComponentTypes.USE_COOLDOWN] = UseCooldownComponent(seconds, ConsumeCooldownGroupArgument(cooldownGroup)).apply(block)
+	this[ItemComponentTypes.USE_COOLDOWN] = UseCooldownComponent(seconds, ConsumeCooldownGroupArgument(cooldownGroup)).apply(block)
 }

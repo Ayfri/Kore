@@ -3,7 +3,7 @@ package io.github.ayfri.kore.arguments.components.types
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.arguments.types.resources.ModelArgument
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineSerializer
 import kotlinx.serialization.Serializable
 
@@ -18,7 +18,7 @@ data class ItemModelComponent(var model: ModelArgument) : Component() {
 }
 
 fun ComponentsScope.itemModel(model: ModelArgument) = apply {
-	this[ComponentTypes.ITEM_MODEL] = ItemModelComponent(model)
+	this[ItemComponentTypes.ITEM_MODEL] = ItemModelComponent(model)
 }
 
 fun ComponentsScope.itemModel(model: String, namespace: String = "minecraft") = itemModel(ModelArgument(model, namespace))

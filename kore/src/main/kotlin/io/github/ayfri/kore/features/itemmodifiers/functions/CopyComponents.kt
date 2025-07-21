@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.PredicateAsList
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
@@ -24,8 +24,8 @@ data class CopyComponents(
 ) : ItemFunction()
 
 fun ItemModifier.copyComponents(
-	include: List<ComponentTypes> = emptyList(),
-	exclude: List<ComponentTypes> = emptyList(),
+	include: List<ItemComponentTypes> = emptyList(),
+	exclude: List<ItemComponentTypes> = emptyList(),
 	source: CopyComponentsSource = CopyComponentsSource.BLOCK_ENTITY,
 	block: CopyComponents.() -> Unit = {},
 ) {
@@ -37,7 +37,7 @@ fun ItemModifier.copyComponents(
 }
 
 fun ItemModifier.copyComponentsInclude(
-	vararg components: ComponentTypes,
+	vararg components: ItemComponentTypes,
 	source: CopyComponentsSource = CopyComponentsSource.BLOCK_ENTITY,
 	block: CopyComponents.() -> Unit = {},
 ) {
@@ -45,17 +45,17 @@ fun ItemModifier.copyComponentsInclude(
 }
 
 fun ItemModifier.copyComponentsExclude(
-	vararg components: ComponentTypes,
+	vararg components: ItemComponentTypes,
 	source: CopyComponentsSource = CopyComponentsSource.BLOCK_ENTITY,
 	block: CopyComponents.() -> Unit = {},
 ) {
 	modifiers += CopyComponents(source = source, exclude = components.map { "minecraft:${it.name.lowercase()}" }).apply(block)
 }
 
-fun CopyComponents.include(vararg components: ComponentTypes) {
+fun CopyComponents.include(vararg components: ItemComponentTypes) {
 	include = components.map { "minecraft:${it.name.lowercase()}" }
 }
 
-fun CopyComponents.exclude(vararg components: ComponentTypes) {
+fun CopyComponents.exclude(vararg components: ItemComponentTypes) {
 	exclude = components.map { "minecraft:${it.name.lowercase()}" }
 }

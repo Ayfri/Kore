@@ -2,7 +2,7 @@ package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
 import kotlinx.serialization.Serializable
 import java.util.*
@@ -29,19 +29,19 @@ data class ProfileComponent(
 }
 
 fun ComponentsScope.profile(name: String, id: UUIDArgument? = null, properties: List<ProfileProperty>? = null) = apply {
-	this[ComponentTypes.PROFILE] = ProfileComponent(name, id, properties)
+	this[ItemComponentTypes.PROFILE] = ProfileComponent(name, id, properties)
 }
 
 fun ComponentsScope.profile(name: String, id: UUID, properties: List<ProfileProperty>? = null) = apply {
-	this[ComponentTypes.PROFILE] = ProfileComponent(name, UUIDArgument(id), properties)
+	this[ItemComponentTypes.PROFILE] = ProfileComponent(name, UUIDArgument(id), properties)
 }
 
 fun ComponentsScope.profile(name: String, id: UUIDArgument? = null, block: ProfileComponent.() -> Unit) = apply {
-	this[ComponentTypes.PROFILE] = ProfileComponent(name, id).apply(block)
+	this[ItemComponentTypes.PROFILE] = ProfileComponent(name, id).apply(block)
 }
 
 fun ComponentsScope.profile(name: String, id: UUID, block: ProfileComponent.() -> Unit) = apply {
-	this[ComponentTypes.PROFILE] = ProfileComponent(name, UUIDArgument(id)).apply(block)
+	this[ItemComponentTypes.PROFILE] = ProfileComponent(name, UUIDArgument(id)).apply(block)
 }
 
 fun ProfileComponent.property(name: String, value: String, signature: String? = null) = apply {

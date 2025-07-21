@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -19,5 +19,5 @@ fun ComponentsScope.food(
 	canAlwaysEat: Boolean? = null,
 	block: FoodComponent.() -> Unit = {},
 ) = apply {
-	this[ComponentTypes.FOOD] = FoodComponent(nutrition, saturation, canAlwaysEat).apply(block)
+	this[ItemComponentTypes.FOOD] = FoodComponent(nutrition, saturation, canAlwaysEat).apply(block)
 }

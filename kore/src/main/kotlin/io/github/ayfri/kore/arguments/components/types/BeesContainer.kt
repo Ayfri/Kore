@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.serializers.InlineSerializer
 import kotlinx.serialization.SerialName
@@ -29,15 +29,15 @@ data class BeesContainer(var list: List<BeeData>) : Component() {
 }
 
 fun ComponentsScope.bees(bees: List<BeeData>) = apply {
-	this[ComponentTypes.BEES] = BeesContainer(bees)
+	this[ItemComponentTypes.BEES] = BeesContainer(bees)
 }
 
 fun ComponentsScope.bees(vararg bees: BeeData) = apply {
-	this[ComponentTypes.BEES] = BeesContainer(bees.toList())
+	this[ItemComponentTypes.BEES] = BeesContainer(bees.toList())
 }
 
 fun ComponentsScope.bees(block: BeesContainer.() -> Unit) = apply {
-	this[ComponentTypes.BEES] = BeesContainer(mutableListOf()).apply(block)
+	this[ItemComponentTypes.BEES] = BeesContainer(mutableListOf()).apply(block)
 }
 
 fun BeesContainer.bee(ticksInHive: Int, minTicksInHive: Int, entityData: Map<String, String>) = apply {

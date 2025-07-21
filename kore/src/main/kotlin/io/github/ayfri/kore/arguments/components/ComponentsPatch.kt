@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.arguments.components
 
 import io.github.ayfri.kore.arguments.components.types.Component
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.unescape
 import kotlinx.serialization.Serializable
@@ -33,12 +33,12 @@ open class ComponentsPatch(components: MutableMap<String, Component> = mutableMa
 	 * Example:
 	 * ```kotlin
 	 * components {
-	 *   !ComponentTypes.DAMAGE
+	 *   !ItemComponentTypes.DAMAGE
 	 * }
 	 * ```
 	 * Will be serialized as: `[!damage]`
 	 */
-	operator fun ComponentTypes.not() = setToRemove(this)
+	operator fun ItemComponentTypes.not() = setToRemove(this)
 
 	/**
 	 * Set the component to be removed.
@@ -62,12 +62,12 @@ open class ComponentsPatch(components: MutableMap<String, Component> = mutableMa
 	 * Example:
 	 * ```kotlin
 	 * components {
-	 *    setToRemove(ComponentTypes.DAMAGE)
+	 *    setToRemove(ItemComponentTypes.DAMAGE)
 	 * }
 	 * ```
 	 * Will be serialized as: `[!damage]`
 	 */
-	fun setToRemove(component: ComponentTypes) = setToRemove(component.name.lowercase())
+	fun setToRemove(component: ItemComponentTypes) = setToRemove(component.name.lowercase())
 
 	/**
 	 * Set the components to be removed.
@@ -80,7 +80,7 @@ open class ComponentsPatch(components: MutableMap<String, Component> = mutableMa
 	 * ```
 	 * Will be serialized as: `[!damage]`
 	 */
-	fun remove(vararg components: ComponentTypes) = components.forEach(::setToRemove)
+	fun remove(vararg components: ItemComponentTypes) = components.forEach(::setToRemove)
 
 	/**
 	 * Set the components to be removed.

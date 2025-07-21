@@ -2,7 +2,7 @@ package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.types.resources.ModelArgument
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineSerializer
 import kotlinx.serialization.Serializable
 
@@ -17,7 +17,7 @@ data class TooltipStyleComponent(var model: ModelArgument) : Component() {
 }
 
 fun ComponentsScope.tooltipStyle(model: ModelArgument) = apply {
-	this[ComponentTypes.TOOLTIP_STYLE] = TooltipStyleComponent(model)
+	this[ItemComponentTypes.TOOLTIP_STYLE] = TooltipStyleComponent(model)
 }
 
 fun ComponentsScope.tooltipStyle(model: String, namespace: String = "minecraft") = tooltipStyle(ModelArgument(model, namespace)) 

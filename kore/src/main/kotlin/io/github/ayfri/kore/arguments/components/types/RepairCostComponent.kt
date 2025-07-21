@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
@@ -13,4 +13,4 @@ data class RepairCostComponent(var repairCost: Int) : Component() {
 	}
 }
 
-fun ComponentsScope.repairCost(repairCost: Int) = apply { this[ComponentTypes.REPAIR_COST] = RepairCostComponent(repairCost) }
+fun ComponentsScope.repairCost(repairCost: Int) = apply { this[ItemComponentTypes.REPAIR_COST] = RepairCostComponent(repairCost) }

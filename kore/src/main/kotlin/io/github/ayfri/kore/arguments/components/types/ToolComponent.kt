@@ -2,7 +2,7 @@ package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -32,7 +32,7 @@ fun ComponentsScope.tool(
 	damagePerBlock: Int? = null,
 	canDestroyBlocksInCreative: Boolean? = null,
 	block: ToolComponent.() -> Unit = {},
-) = apply { this[ComponentTypes.TOOL] = ToolComponent(rules, defaultMiningSpeed, damagePerBlock, canDestroyBlocksInCreative).apply(block) }
+) = apply { this[ItemComponentTypes.TOOL] = ToolComponent(rules, defaultMiningSpeed, damagePerBlock, canDestroyBlocksInCreative).apply(block) }
 
 fun ToolComponent.rule(
 	blocks: List<BlockOrTagArgument>,

@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.TrimMaterialArgument
 import io.github.ayfri.kore.generated.arguments.types.TrimPatternArgument
 import kotlinx.serialization.SerialName
@@ -19,4 +19,4 @@ fun ComponentsScope.trim(
 	pattern: TrimPatternArgument,
 	material: TrimMaterialArgument,
 	showInTooltip: Boolean? = null,
-) = apply { this[ComponentTypes.TRIM] = TrimComponent(pattern, material, showInTooltip) }
+) = apply { this[ItemComponentTypes.TRIM] = TrimComponent(pattern, material, showInTooltip) }

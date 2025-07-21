@@ -2,7 +2,7 @@ package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -28,9 +28,9 @@ data class PotDecorationsComponent(var list: List<ItemArgument>) : Component() {
 }
 
 fun ComponentsScope.potDecorations(decorations: List<ItemArgument>) = apply {
-	this[ComponentTypes.POT_DECORATIONS] = PotDecorationsComponent(decorations)
+	this[ItemComponentTypes.POT_DECORATIONS] = PotDecorationsComponent(decorations)
 }
 
 fun ComponentsScope.potDecorations(vararg decorations: ItemArgument) = apply {
-	this[ComponentTypes.POT_DECORATIONS] = PotDecorationsComponent(decorations.toList())
+	this[ItemComponentTypes.POT_DECORATIONS] = PotDecorationsComponent(decorations.toList())
 }

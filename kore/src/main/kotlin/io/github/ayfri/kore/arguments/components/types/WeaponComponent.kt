@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -17,5 +17,5 @@ fun ComponentsScope.weapon(
 	damagePerAttack: Int = 1,
 	canDisableBlocking: Boolean = false,
 ) = apply {
-	this[ComponentTypes.WEAPON] = WeaponComponent(damagePerAttack, canDisableBlocking)
+	this[ItemComponentTypes.WEAPON] = WeaponComponent(damagePerAttack, canDisableBlocking)
 }

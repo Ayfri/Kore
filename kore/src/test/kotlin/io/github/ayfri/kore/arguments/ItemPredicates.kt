@@ -7,7 +7,7 @@ import io.github.ayfri.kore.arguments.components.types.customData
 import io.github.ayfri.kore.arguments.components.types.damage
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.assertions.assertsIs
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.Effects
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.utils.set
@@ -25,11 +25,11 @@ fun itemPredicatesTests() {
 	countTest.apply { negate("count") } assertsIs """minecraft:stone[!count=1]"""
 
 	val anyItemTest = itemPredicate {
-		isPresent(ComponentTypes.DAMAGE)
+		isPresent(ItemComponentTypes.DAMAGE)
 	}
 
 	anyItemTest.toString() assertsIs """*[damage]"""
-	anyItemTest.apply { clearPredicate(ComponentTypes.DAMAGE) } assertsIs """*"""
+	anyItemTest.apply { clearPredicate(ItemComponentTypes.DAMAGE) } assertsIs """*"""
 
 	val subPredicateTest = Items.STONE.predicate {
 		subPredicates {
@@ -77,7 +77,7 @@ fun itemPredicatesTests() {
 		customData {
 			this["test"] = 1
 		}
-		partial(ComponentTypes.CUSTOM_DATA)
+		partial(ItemComponentTypes.CUSTOM_DATA)
 	}
 
 	partialComponentTest.toString() assertsIs """minecraft:stone[custom_data~{test:1}]"""

@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.EnchantmentArgument
 import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
 import kotlinx.serialization.SerialName
@@ -22,8 +22,8 @@ data class Enchantments(
 }
 
 fun ComponentsScope.enchantments(levels: Map<EnchantmentArgument, Int>, showInTooltip: Boolean? = null) =
-	apply { this[ComponentTypes.ENCHANTMENTS] = Enchantments(levels.toMutableMap(), showInTooltip) }
+	apply { this[ItemComponentTypes.ENCHANTMENTS] = Enchantments(levels.toMutableMap(), showInTooltip) }
 
-fun ComponentsScope.enchantments(block: Enchantments.() -> Unit) = apply { this[ComponentTypes.ENCHANTMENTS] = Enchantments().apply(block) }
+fun ComponentsScope.enchantments(block: Enchantments.() -> Unit) = apply { this[ItemComponentTypes.ENCHANTMENTS] = Enchantments().apply(block) }
 
 fun Enchantments.enchantment(enchantment: EnchantmentArgument, level: Int) = apply { levels[enchantment] = level }

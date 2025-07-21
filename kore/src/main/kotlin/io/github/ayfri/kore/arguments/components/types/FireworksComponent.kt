@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -13,11 +13,11 @@ data class FireworksComponent(
 ) : Component()
 
 fun ComponentsScope.fireworks(explosions: List<FireworkExplosionComponent>, flightDuration: Int) = apply {
-	this[ComponentTypes.FIREWORKS] = FireworksComponent(explosions, flightDuration)
+	this[ItemComponentTypes.FIREWORKS] = FireworksComponent(explosions, flightDuration)
 }
 
 fun ComponentsScope.fireworks(flightDuration: Int, block: FireworksComponent.() -> Unit) = apply {
-	this[ComponentTypes.FIREWORKS] = FireworksComponent(mutableListOf(), flightDuration).apply(block)
+	this[ItemComponentTypes.FIREWORKS] = FireworksComponent(mutableListOf(), flightDuration).apply(block)
 }
 
 fun FireworksComponent.explosion(shape: FireworkExplosionShape, block: FireworkExplosionComponent.() -> Unit) = apply {

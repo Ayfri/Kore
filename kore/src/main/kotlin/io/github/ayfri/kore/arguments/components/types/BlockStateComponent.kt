@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.MapSerializer
@@ -18,9 +18,9 @@ data class BlockStateComponent(var states: Map<String, String>) : Component() {
 }
 
 fun ComponentsScope.blockState(states: Map<String, String>) = apply {
-	this[ComponentTypes.BLOCK_STATE] = BlockStateComponent(states)
+	this[ItemComponentTypes.BLOCK_STATE] = BlockStateComponent(states)
 }
 
 fun ComponentsScope.blockState(block: MutableMap<String, String>.() -> Unit) = apply {
-	this[ComponentTypes.BLOCK_STATE] = BlockStateComponent(buildMap(block))
+	this[ItemComponentTypes.BLOCK_STATE] = BlockStateComponent(buildMap(block))
 }

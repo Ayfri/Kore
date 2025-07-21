@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineSerializer
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
@@ -31,5 +31,5 @@ data class RarityComponent(
 }
 
 fun ComponentsScope.rarity(rarity: Rarities) = apply {
-	this[ComponentTypes.RARITY] = RarityComponent(rarity)
+	this[ItemComponentTypes.RARITY] = RarityComponent(rarity)
 }

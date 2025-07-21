@@ -3,7 +3,7 @@ package io.github.ayfri.kore.arguments.components.types
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.components.data.BlockPredicate
 import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
@@ -18,7 +18,7 @@ data class CanBreakComponent(
 fun ComponentsScope.canBreak(
 	predicates: List<BlockPredicate>,
 	showInTooltip: Boolean? = null,
-) = apply { this[ComponentTypes.CAN_BREAK] = CanBreakComponent(predicates.toMutableList(), showInTooltip) }
+) = apply { this[ItemComponentTypes.CAN_BREAK] = CanBreakComponent(predicates.toMutableList(), showInTooltip) }
 
 fun ComponentsScope.canBreak(
 	vararg predicates: BlockPredicate,
@@ -33,7 +33,7 @@ fun ComponentsScope.canBreak(
 ) = canBreak(listOf(BlockPredicate(mutableListOf(block), nbt, state?.toMutableMap())), showInTooltip)
 
 fun ComponentsScope.canBreak(block: CanBreakComponent.() -> Unit) =
-	CanBreakComponent(mutableListOf()).apply(block).let { this[ComponentTypes.CAN_BREAK] = it }
+	CanBreakComponent(mutableListOf()).apply(block).let { this[ItemComponentTypes.CAN_BREAK] = it }
 
 fun CanBreakComponent.predicate(vararg block: BlockOrTagArgument, nbt: NbtCompound? = null, state: Map<String, String>? = null) =
 	apply { predicates += BlockPredicate(mutableListOf(*block), nbt, state?.toMutableMap()) }

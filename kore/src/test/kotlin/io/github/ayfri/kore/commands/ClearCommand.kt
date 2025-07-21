@@ -4,7 +4,7 @@ import io.github.ayfri.kore.arguments.components.predicate
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.functions.Function
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.Items
 
 fun Function.clearTests() {
@@ -13,6 +13,6 @@ fun Function.clearTests() {
 	clear(self(), Items.STONE) assertsIs "clear @s minecraft:stone"
 	clear(self(), Items.STONE, 1) assertsIs "clear @s minecraft:stone 1"
 	clear(self(), Items.STONE.predicate {
-		!ComponentTypes.DAMAGE
+		!ItemComponentTypes.DAMAGE
 	}) assertsIs "clear @s minecraft:stone[!damage]"
 }

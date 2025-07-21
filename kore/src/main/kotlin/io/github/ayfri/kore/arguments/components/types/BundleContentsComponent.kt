@@ -4,7 +4,7 @@ import io.github.ayfri.kore.arguments.components.Components
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.data.item.ItemStack
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -22,23 +22,23 @@ data class BundleContentsComponent(
 }
 
 fun ComponentsScope.bundleContents(items: List<ItemStack>) = apply {
-	this[ComponentTypes.BUNDLE_CONTENTS] = BundleContentsComponent(items.toMutableList())
+	this[ItemComponentTypes.BUNDLE_CONTENTS] = BundleContentsComponent(items.toMutableList())
 }
 
 fun ComponentsScope.bundleContents(vararg items: ItemStack) = apply {
-	this[ComponentTypes.BUNDLE_CONTENTS] = BundleContentsComponent(items.toMutableList())
+	this[ItemComponentTypes.BUNDLE_CONTENTS] = BundleContentsComponent(items.toMutableList())
 }
 
 fun ComponentsScope.bundleContents(block: BundleContentsComponent.() -> Unit) = apply {
-	this[ComponentTypes.BUNDLE_CONTENTS] = BundleContentsComponent(mutableListOf()).apply(block)
+	this[ItemComponentTypes.BUNDLE_CONTENTS] = BundleContentsComponent(mutableListOf()).apply(block)
 }
 
 fun ComponentsScope.bundleContent(id: ItemArgument, count: Short? = null, itemComponents: Components? = null) = apply {
-	this[ComponentTypes.BUNDLE_CONTENTS] = BundleContentsComponent(mutableListOf(ItemStack(id.asId(), count, itemComponents)))
+	this[ItemComponentTypes.BUNDLE_CONTENTS] = BundleContentsComponent(mutableListOf(ItemStack(id.asId(), count, itemComponents)))
 }
 
 fun ComponentsScope.bundleContents(vararg id: ItemArgument) = apply {
-	this[ComponentTypes.BUNDLE_CONTENTS] = BundleContentsComponent(id.map { ItemStack(it.asId()) }.toMutableList())
+	this[ItemComponentTypes.BUNDLE_CONTENTS] = BundleContentsComponent(id.map { ItemStack(it.asId()) }.toMutableList())
 }
 
 fun BundleContentsComponent.item(item: ItemStack) = apply {

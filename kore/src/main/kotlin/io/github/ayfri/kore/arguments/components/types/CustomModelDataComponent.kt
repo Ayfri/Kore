@@ -3,7 +3,7 @@ package io.github.ayfri.kore.arguments.components.types
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.ColorAsDecimalSerializer
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -21,7 +21,7 @@ fun ComponentsScope.customModelData(
 	strings: List<String>? = null,
 	init: CustomModelDataComponent.() -> Unit = {},
 ) = apply {
-	this[ComponentTypes.CUSTOM_MODEL_DATA] = CustomModelDataComponent(
+	this[ItemComponentTypes.CUSTOM_MODEL_DATA] = CustomModelDataComponent(
 		colors,
 		flags,
 		floats,

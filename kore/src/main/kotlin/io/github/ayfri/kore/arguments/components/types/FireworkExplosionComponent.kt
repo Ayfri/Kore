@@ -3,7 +3,7 @@ package io.github.ayfri.kore.arguments.components.types
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.RGB
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.ToStringSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -47,7 +47,7 @@ fun ComponentsScope.fireworkExplosion(
 }
 
 fun ComponentsScope.fireworkExplosion(shape: FireworkExplosionShape, block: FireworkExplosionComponent.() -> Unit) = apply {
-	this[ComponentTypes.FIREWORK_EXPLOSION] = FireworkExplosionComponent(shape).apply(block)
+	this[ItemComponentTypes.FIREWORK_EXPLOSION] = FireworkExplosionComponent(shape).apply(block)
 }
 
 fun FireworkExplosionComponent.colors(vararg colors: Color) = apply {

@@ -69,8 +69,8 @@ fun DataPack.itemModifierTests() {
 
 	itemModifier("copy_components") {
 		copyComponents {
-			exclude(ComponentTypes.FOOD, ComponentTypes.FIREWORKS)
-			include(ComponentTypes.BLOCK_ENTITY_DATA)
+			exclude(ItemComponentTypes.FOOD, ItemComponentTypes.FIREWORKS)
+			include(ItemComponentTypes.BLOCK_ENTITY_DATA)
 		}
 	}
 

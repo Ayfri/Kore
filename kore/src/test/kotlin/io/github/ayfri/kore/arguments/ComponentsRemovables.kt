@@ -1,13 +1,13 @@
 package io.github.ayfri.kore.arguments
 
 import io.github.ayfri.kore.assertions.assertsIs
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.Items
 
 fun componentsPatchsTests() {
 	Items.DIRT {
 		remove("foo")
 		!"bar"
-		remove(ComponentTypes.FOOD, ComponentTypes.BANNER_PATTERNS)
+		remove(ItemComponentTypes.FOOD, ItemComponentTypes.BANNER_PATTERNS)
 	} assertsIs "minecraft:dirt[!foo,!bar,!food,!banner_patterns]"
 }

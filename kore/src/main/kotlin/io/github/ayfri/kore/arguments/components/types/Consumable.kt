@@ -3,7 +3,7 @@ package io.github.ayfri.kore.arguments.components.types
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.components.consumable.ConsumeEffect
 import io.github.ayfri.kore.arguments.components.consumable.ConsumeEffects
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.snakeCase
@@ -47,7 +47,7 @@ fun ComponentsScope.consumable(
 	hasConsumeParticles: Boolean = true,
 	block: ConsumableComponent.() -> Unit = {},
 ) = apply {
-	this[ComponentTypes.CONSUMABLE] = ConsumableComponent(
+	this[ItemComponentTypes.CONSUMABLE] = ConsumableComponent(
 		consumeSeconds,
 		animation,
 		sound,

@@ -4,7 +4,7 @@ import io.github.ayfri.kore.arguments.components.Components
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.data.item.ItemStack
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -22,23 +22,23 @@ data class ChargedProjectilesComponent(
 }
 
 fun ComponentsScope.chargedProjectiles(projectiles: List<ItemStack>) = apply {
-	this[ComponentTypes.CHARGED_PROJECTILES] = ChargedProjectilesComponent(projectiles.toMutableList())
+	this[ItemComponentTypes.CHARGED_PROJECTILES] = ChargedProjectilesComponent(projectiles.toMutableList())
 }
 
 fun ComponentsScope.chargedProjectiles(vararg projectiles: ItemStack) = apply {
-	this[ComponentTypes.CHARGED_PROJECTILES] = ChargedProjectilesComponent(projectiles.toMutableList())
+	this[ItemComponentTypes.CHARGED_PROJECTILES] = ChargedProjectilesComponent(projectiles.toMutableList())
 }
 
 fun ComponentsScope.chargedProjectiles(block: ChargedProjectilesComponent.() -> Unit) = apply {
-	this[ComponentTypes.CHARGED_PROJECTILES] = ChargedProjectilesComponent(mutableListOf()).apply(block)
+	this[ItemComponentTypes.CHARGED_PROJECTILES] = ChargedProjectilesComponent(mutableListOf()).apply(block)
 }
 
 fun ComponentsScope.chargedProjectile(id: ItemArgument, count: Short? = null, itemComponents: Components? = null) = apply {
-	this[ComponentTypes.CHARGED_PROJECTILES] = ChargedProjectilesComponent(mutableListOf(ItemStack(id.asId(), count, itemComponents)))
+	this[ItemComponentTypes.CHARGED_PROJECTILES] = ChargedProjectilesComponent(mutableListOf(ItemStack(id.asId(), count, itemComponents)))
 }
 
 fun ComponentsScope.chargedProjectiles(vararg id: ItemArgument) = apply {
-	this[ComponentTypes.CHARGED_PROJECTILES] = ChargedProjectilesComponent(id.map { ItemStack(it.asId()) }.toMutableList())
+	this[ItemComponentTypes.CHARGED_PROJECTILES] = ChargedProjectilesComponent(id.map { ItemStack(it.asId()) }.toMutableList())
 }
 
 fun ChargedProjectilesComponent.projectile(projectile: ItemStack) = apply {

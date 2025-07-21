@@ -2,7 +2,7 @@ package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
@@ -54,9 +54,9 @@ data class BlockEntityDataComponent(
 }
 
 fun ComponentsScope.blockEntityData(id: BlockArgument, data: NbtCompound? = null) = apply {
-	this[ComponentTypes.BLOCK_ENTITY_DATA] = BlockEntityDataComponent(id, data)
+	this[ItemComponentTypes.BLOCK_ENTITY_DATA] = BlockEntityDataComponent(id, data)
 }
 
 fun ComponentsScope.blockEntityData(id: BlockArgument, block: NbtCompoundBuilder.() -> Unit) = apply {
-	this[ComponentTypes.BLOCK_ENTITY_DATA] = BlockEntityDataComponent(id, nbt(block))
+	this[ItemComponentTypes.BLOCK_ENTITY_DATA] = BlockEntityDataComponent(id, nbt(block))
 }

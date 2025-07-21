@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
@@ -17,4 +17,4 @@ data class PotionDurationScaleComponent(var value: Float) : Component() {
 }
 
 fun ComponentsScope.potionDurationScale(value: Float) =
-	apply { this[ComponentTypes.POTION_DURATION_SCALE] = PotionDurationScaleComponent(value) }
+	apply { this[ItemComponentTypes.POTION_DURATION_SCALE] = PotionDurationScaleComponent(value) }

@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -57,13 +57,13 @@ object WritablePagesSerializer : KSerializer<List<WritablePage>> {
 data class WritableBookContentsComponent(@Serializable(WritablePagesSerializer::class) var pages: List<WritablePage>) : Component()
 
 fun ComponentsScope.writableBookContent(pages: List<WritablePage>) =
-	apply { this[ComponentTypes.WRITABLE_BOOK_CONTENT] = WritableBookContentsComponent(pages) }
+	apply { this[ItemComponentTypes.WRITABLE_BOOK_CONTENT] = WritableBookContentsComponent(pages) }
 
 fun ComponentsScope.writableBookContent(vararg pages: WritablePage) =
-	apply { this[ComponentTypes.WRITABLE_BOOK_CONTENT] = WritableBookContentsComponent(pages.toList()) }
+	apply { this[ItemComponentTypes.WRITABLE_BOOK_CONTENT] = WritableBookContentsComponent(pages.toList()) }
 
 fun ComponentsScope.writableBookContent(block: WritableBookContentsComponent.() -> Unit) =
-	apply { this[ComponentTypes.WRITABLE_BOOK_CONTENT] = WritableBookContentsComponent(emptyList()).apply(block) }
+	apply { this[ItemComponentTypes.WRITABLE_BOOK_CONTENT] = WritableBookContentsComponent(emptyList()).apply(block) }
 
 fun WritableBookContentsComponent.page(text: String, filtered: String? = null) = apply {
 	pages += WritablePage(text, filtered)

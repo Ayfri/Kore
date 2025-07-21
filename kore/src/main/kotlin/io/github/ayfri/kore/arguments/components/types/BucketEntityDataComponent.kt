@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineSerializer
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
 import io.github.ayfri.kore.utils.nbt
@@ -20,9 +20,9 @@ data class BucketEntityDataComponent(var data: NbtCompound) : Component() {
 }
 
 fun ComponentsScope.bucketEntityData(data: NbtCompound) = apply {
-	this[ComponentTypes.BUCKET_ENTITY_DATA] = BucketEntityDataComponent(data)
+	this[ItemComponentTypes.BUCKET_ENTITY_DATA] = BucketEntityDataComponent(data)
 }
 
 fun ComponentsScope.bucketEntityData(block: NbtCompoundBuilder.() -> Unit) = apply {
-	this[ComponentTypes.BUCKET_ENTITY_DATA] = BucketEntityDataComponent(nbt(block))
+	this[ItemComponentTypes.BUCKET_ENTITY_DATA] = BucketEntityDataComponent(nbt(block))
 }

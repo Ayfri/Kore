@@ -6,7 +6,7 @@ import io.github.ayfri.kore.arguments.components.types.CustomComponent
 import io.github.ayfri.kore.arguments.types.ItemOrTagArgument
 import io.github.ayfri.kore.features.advancements.serializers.IntRangeOrIntJson
 import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.utils.*
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
@@ -72,12 +72,12 @@ data class ItemPredicate(
 		)
 	}
 
-	fun setExpected(component: ComponentTypes) = setExpected(component.name.lowercase())
+	fun setExpected(component: ItemComponentTypes) = setExpected(component.name.lowercase())
 	fun setExpected(component: String) {
 		componentsAlternatives.getOrPut(component, ::mutableListOf).add(EmptyComponent())
 	}
 
-	fun setNegated(component: ComponentTypes) = setNegated(component.name.lowercase())
+	fun setNegated(component: ItemComponentTypes) = setNegated(component.name.lowercase())
 	fun setNegated(name: String) = when (name) {
 		COUNT_ITEM_PREDICATE -> {
 			countSubPredicates.removeLastOrNull()?.let { countSubPredicates.add(it.first to true) }
@@ -91,7 +91,7 @@ data class ItemPredicate(
 		}
 	}
 
-	fun setPartial(component: ComponentTypes) = setPartial(component.name.lowercase())
+	fun setPartial(component: ItemComponentTypes) = setPartial(component.name.lowercase())
 	fun setPartial(name: String) {
 		val component = componentsAlternatives[name]?.lastOrNull() ?: error("The component '$name' is not present, can't make it partial.")
 		componentsAlternatives[name]?.removeLastOrNull()

@@ -2,7 +2,7 @@ package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.colors.RGB
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.MobEffectArgument
 import io.github.ayfri.kore.generated.arguments.types.PotionArgument
 import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
@@ -41,15 +41,15 @@ data class PotionContentsComponent(
 }
 
 fun ComponentsScope.potionContents(potion: PotionArgument, customColor: RGB? = null, customEffects: List<Effect>? = null) = apply {
-	this[ComponentTypes.POTION_CONTENTS] = PotionContentsComponent(potion, customColor, customEffects)
+	this[ItemComponentTypes.POTION_CONTENTS] = PotionContentsComponent(potion, customColor, customEffects)
 }
 
 fun ComponentsScope.potionContents(potion: PotionArgument, customColor: RGB? = null, vararg customEffects: Effect) = apply {
-	this[ComponentTypes.POTION_CONTENTS] = PotionContentsComponent(potion, customColor, customEffects.toList())
+	this[ItemComponentTypes.POTION_CONTENTS] = PotionContentsComponent(potion, customColor, customEffects.toList())
 }
 
 fun ComponentsScope.potionContents(potion: PotionArgument, block: PotionContentsComponent.() -> Unit) = apply {
-	this[ComponentTypes.POTION_CONTENTS] = PotionContentsComponent(potion, RGB(0, 0, 0), emptyList()).apply(block)
+	this[ItemComponentTypes.POTION_CONTENTS] = PotionContentsComponent(potion, RGB(0, 0, 0), emptyList()).apply(block)
 }
 
 fun PotionContentsComponent.customEffect(

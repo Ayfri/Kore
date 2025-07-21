@@ -2,7 +2,7 @@ package io.github.ayfri.kore.arguments.components.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
-import io.github.ayfri.kore.generated.ComponentTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.MapSerializer
@@ -21,11 +21,11 @@ data class DebugStickStateComponent(
 }
 
 fun ComponentsScope.debugStickState(map: Map<BlockArgument, String>) = apply {
-	this[ComponentTypes.DEBUG_STICK_STATE] = DebugStickStateComponent(map.toMutableMap())
+	this[ItemComponentTypes.DEBUG_STICK_STATE] = DebugStickStateComponent(map.toMutableMap())
 }
 
 fun ComponentsScope.debugStickState(block: DebugStickStateComponent.() -> Unit) = apply {
-	this[ComponentTypes.DEBUG_STICK_STATE] = DebugStickStateComponent(mutableMapOf()).apply(block)
+	this[ItemComponentTypes.DEBUG_STICK_STATE] = DebugStickStateComponent(mutableMapOf()).apply(block)
 }
 
 fun DebugStickStateComponent.state(block: BlockArgument, state: String) {
