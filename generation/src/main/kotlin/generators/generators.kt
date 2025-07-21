@@ -40,7 +40,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("Sounds", "sounds", "Sound M") { it.removeSuffix(".ogg") },
 		gen("Structures", "structures", "worldgen.Structure") { it.removeSuffix(".nbt") },
 		gen(
-			"Tags", "tags", argumentClassName = "", tagsParents = mapOf(
+			"Tags", "tags", argumentClassName = "Tag M", tagsParents = mapOf(
 				"banner_pattern" to "BannerPatternTag",
 				"block" to "BlockTag M",
 				"cat_variant" to "CatVariantTag",

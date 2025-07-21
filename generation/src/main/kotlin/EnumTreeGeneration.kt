@@ -90,6 +90,14 @@ fun generatePathEnumTree(
 
 					if (hasParent) tagPath = "$parent$separator"
 
+					// For Tags specifically, don't include the path, only the name
+					if (name == "Tags") {
+						tagPath = tagPath.substringAfter(separator)
+						if ("worldgen" in parent) {
+							tagPath = tagPath.substringAfter(separator)
+						}
+					}
+
 					addFunction(
 						FunSpec.builder("asId")
 							.addStatement($$"return \"$$hash$namespace:$$tagPath${name.lowercase()}\"")
@@ -101,11 +109,9 @@ fun generatePathEnumTree(
 
 				addAnnotation(
 					AnnotationSpec.builder(ClassName("kotlinx.serialization", "Serializable"))
-						.addMember("with = $enumName.Companion.${enumName.asSerializer()}::class")
+						.addMember("with = %T::class", ClassName("io.github.ayfri.kore.arguments", "Argument", "ArgumentSerializer"))
 						.build()
 				)
-
-				addType(generateCompanion(enumName, "value.asId()"))
 			}
 		}.addEnumConstant(enumValue)
 	}
