@@ -26,7 +26,8 @@ import net.benwoodworth.knbt.buildNbtCompound
 @Serializable
 data class HoverEvent(
 	var action: HoverAction,
-	@Serializable(with = NbtAsJsonSerializer::class) var value: NbtTag,
+	@Serializable(with = NbtAsJsonSerializer::class)
+	var value: NbtTag,
 	var contents: Contents? = null,
 ) {
 	fun toNbtTag() = buildNbtCompound {
@@ -34,7 +35,7 @@ data class HoverEvent(
 
 		when (action) {
 			HoverAction.SHOW_TEXT -> {
-				this["text"] = value
+				this["value"] = value
 			}
 
 			HoverAction.SHOW_ITEM -> {
