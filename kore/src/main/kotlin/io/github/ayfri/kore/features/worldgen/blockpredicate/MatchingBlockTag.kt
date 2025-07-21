@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MatchingBlockTag(
 	var offset: TripleAsArray<Int, Int, Int>? = null,
-	@Serializable(TaggedResourceLocationArgument.TaggedResourceLocationWithoutPrefixSerializer::class)
+	@Serializable(TaggedResourceLocationArgument.TaggedResourceLocationUnPrefixedSerializer::class)
 	var tag: BlockTagArgument,
 ) : BlockPredicate()
 
