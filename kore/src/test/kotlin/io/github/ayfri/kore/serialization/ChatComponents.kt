@@ -151,7 +151,7 @@ fun chatComponentsTests() {
 			"type": "text",
 			"hover_event": {
 				"action": "show_text",
-				"text": "Hello, world!"
+				"value": "Hello, world!"
 			},
 			"text": "Hover me!"
 		}
@@ -257,7 +257,7 @@ private fun chatComponentAllFields() {
 			"color": "red",
 			"hover_event": {
 				"action": "show_text",
-				"text": "show_text"
+				"value": "show_text"
 			},
 			"insertion": "insertion",
 			"italic": true,
