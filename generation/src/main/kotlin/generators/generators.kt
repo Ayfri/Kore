@@ -90,7 +90,6 @@ suspend fun launchAllSimpleGenerators() {
 			)
 		}, argumentClassName = "Block M") { it.removePrefix("minecraft:") },
 		gen("CatVariants", "cat_variant"),
-		gen("ComponentTypes", "data_component_type", argumentClassName = ""),
 		gen("CustomStats", "custom_stat"),
 		gen("Effects", "mob_effect", "MobEffect"),
 		gen("EnchantmentEffectComponents", "enchantment_effect_component_type", argumentClassName = "", additionalCode = {

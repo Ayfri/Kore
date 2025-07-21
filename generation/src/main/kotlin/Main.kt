@@ -55,6 +55,7 @@ suspend fun main(args: Array<String>) {
 	downloadDataPacks()
 	downloadDefaultDatapackVersion()
 	downloadGamerules()
+	downloadComponentTypes()
 	launchAllSimpleGenerators()
 	launchArgumentTypeGenerators()
 	writeMinecraftVersion()
