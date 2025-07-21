@@ -22,6 +22,8 @@ data class EquippableComponent(
 	@SerialName("damage_on_hurt")
 	var damageOnHurt: Boolean? = null,
 	var dispensable: Boolean? = null,
+	@SerialName("equip_on_interact")
+	var equipOnInteract: Boolean? = null,
 	@SerialName("equip_sound")
 	var equipSound: SoundEventArgument? = null,
 	var swappable: Boolean? = null,

@@ -283,12 +283,13 @@ fun componentsTests() {
 	val equippableTest = stoneSword {
 		equippable(EquipmentSlot.HEAD, "model") {
 			allowedEntities(EntityTypes.PLAYER)
-			dispensable = true
-			equipSound = SoundEvents.Item.Armor.EQUIP_IRON
 			damageOnHurt = true
+			dispensable = true
+			equipOnInteract = true
+			equipSound = SoundEvents.Item.Armor.EQUIP_IRON
 		}
 	}
-	equippableTest.asString() assertsIs """minecraft:stone_sword[equippable={slot:"head",asset_id:"minecraft:model",allowed_entities:"minecraft:player",damage_on_hurt:1b,dispensable:1b,equip_sound:"minecraft:item.armor.equip_iron"}]"""
+	equippableTest.asString() assertsIs """minecraft:stone_sword[equippable={slot:"head",asset_id:"minecraft:model",allowed_entities:"minecraft:player",damage_on_hurt:1b,dispensable:1b,equip_sound:"minecraft:item.armor.equip_iron",equip_on_interact:1b}]"""
 
 	val fireworksTest = Items.FIREWORK_ROCKET {
 		fireworks(flightDuration = 1) {

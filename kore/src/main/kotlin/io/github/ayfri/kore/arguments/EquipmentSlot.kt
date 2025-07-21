@@ -11,9 +11,10 @@ enum class EquipmentSlot {
 	FEET,
 	BODY,
 	MAINHAND,
+	SADDLE,
 	OFFHAND;
 
 	companion object {
 		data object EquipmentSlotSerializer : LowercaseSerializer<EquipmentSlot>(entries)
 	}
-} 
+}
