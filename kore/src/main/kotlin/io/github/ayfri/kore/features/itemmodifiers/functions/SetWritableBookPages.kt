@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.itemmodifiers.functions
 
-import io.github.ayfri.kore.arguments.components.types.WritablePage
+import io.github.ayfri.kore.arguments.components.item.WritablePage
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.types.Mode
 import io.github.ayfri.kore.features.itemmodifiers.types.ModeHandler

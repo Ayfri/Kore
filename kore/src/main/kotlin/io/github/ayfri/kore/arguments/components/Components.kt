@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.arguments.components
 
-import io.github.ayfri.kore.arguments.components.types.Component
+import io.github.ayfri.kore.arguments.components.Component
 import kotlinx.serialization.Serializable
 
 @Serializable(with = ComponentsSerializer::class)

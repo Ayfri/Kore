@@ -3,8 +3,8 @@ package io.github.ayfri.kore.arguments
 import io.github.ayfri.kore.arguments.components.*
 import io.github.ayfri.kore.arguments.components.matchers.damage
 import io.github.ayfri.kore.arguments.components.matchers.potionContents
-import io.github.ayfri.kore.arguments.components.types.customData
-import io.github.ayfri.kore.arguments.components.types.damage
+import io.github.ayfri.kore.arguments.components.item.customData
+import io.github.ayfri.kore.arguments.components.item.damage
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.generated.ItemComponentTypes

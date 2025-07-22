@@ -6,7 +6,7 @@ import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.consumable.applyEffects
 import io.github.ayfri.kore.arguments.components.consumable.playSound
 import io.github.ayfri.kore.arguments.components.consumable.teleportRandomly
-import io.github.ayfri.kore.arguments.components.types.*
+import io.github.ayfri.kore.arguments.components.item.*
 import io.github.ayfri.kore.arguments.enums.Dimension
 import io.github.ayfri.kore.arguments.enums.MapDecoration
 import io.github.ayfri.kore.arguments.maths.vec3

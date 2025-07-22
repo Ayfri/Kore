@@ -4,7 +4,7 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.WEAPON
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
-import io.github.ayfri.kore.arguments.components.types.*
+import io.github.ayfri.kore.arguments.components.item.*
 import io.github.ayfri.kore.arguments.enums.MapDecoration
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs

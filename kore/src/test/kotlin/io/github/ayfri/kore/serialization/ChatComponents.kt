@@ -5,8 +5,8 @@ import io.github.ayfri.kore.arguments.chatcomponents.events.runCommand
 import io.github.ayfri.kore.arguments.chatcomponents.events.showItem
 import io.github.ayfri.kore.arguments.chatcomponents.events.showText
 import io.github.ayfri.kore.arguments.colors.Color
-import io.github.ayfri.kore.arguments.components.types.damage
-import io.github.ayfri.kore.arguments.components.types.lore
+import io.github.ayfri.kore.arguments.components.item.damage
+import io.github.ayfri.kore.arguments.components.item.lore
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.types.literals.randomPlayer
 import io.github.ayfri.kore.arguments.types.literals.self

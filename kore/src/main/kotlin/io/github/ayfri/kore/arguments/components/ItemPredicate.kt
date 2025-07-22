@@ -1,8 +1,7 @@
 package io.github.ayfri.kore.arguments.components
 
 import io.github.ayfri.kore.arguments.components.matchers.ComponentMatcher
-import io.github.ayfri.kore.arguments.components.types.Component
-import io.github.ayfri.kore.arguments.components.types.CustomComponent
+import io.github.ayfri.kore.arguments.components.item.CustomComponent
 import io.github.ayfri.kore.arguments.types.ItemOrTagArgument
 import io.github.ayfri.kore.features.advancements.serializers.IntRangeOrIntJson
 import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates

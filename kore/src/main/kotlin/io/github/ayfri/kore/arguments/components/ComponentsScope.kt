@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.arguments.components
 
-import io.github.ayfri.kore.arguments.components.types.Component
-import io.github.ayfri.kore.arguments.components.types.CustomComponent
+import io.github.ayfri.kore.arguments.components.item.CustomComponent
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.generated.ItemComponentTypes

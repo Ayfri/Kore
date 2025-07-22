@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.arguments.components.consumable
 
-import io.github.ayfri.kore.arguments.components.types.Effect
+import io.github.ayfri.kore.arguments.components.item.Effect
 import kotlinx.serialization.Serializable
 
 @Serializable

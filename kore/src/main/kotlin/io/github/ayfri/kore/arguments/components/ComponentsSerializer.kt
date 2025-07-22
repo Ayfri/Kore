@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.arguments.components
 
-import io.github.ayfri.kore.arguments.components.types.Component
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor

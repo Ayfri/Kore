@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.arguments.components
 
-import io.github.ayfri.kore.arguments.components.types.Component
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.unescape

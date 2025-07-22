@@ -4,7 +4,7 @@ import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.PlainTextComponent
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
-import io.github.ayfri.kore.arguments.components.types.WrittenPage
+import io.github.ayfri.kore.arguments.components.item.WrittenPage
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.types.Mode
 import io.github.ayfri.kore.features.itemmodifiers.types.ModeHandler

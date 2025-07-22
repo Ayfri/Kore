@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.arguments.components.matchers
 
-import io.github.ayfri.kore.arguments.components.types.FireworkExplosionShape
+import io.github.ayfri.kore.arguments.components.item.FireworkExplosionShape
 import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
 import kotlinx.serialization.Serializable
 

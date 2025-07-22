@@ -2,8 +2,8 @@ package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.rgb
-import io.github.ayfri.kore.arguments.components.types.enchantment
-import io.github.ayfri.kore.arguments.components.types.enchantments
+import io.github.ayfri.kore.arguments.components.item.enchantment
+import io.github.ayfri.kore.arguments.components.item.enchantments
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.types.literals.allEntities
 import io.github.ayfri.kore.assertions.assertsIs

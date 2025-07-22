@@ -5,7 +5,7 @@ import io.github.ayfri.kore.arguments.components.contains
 import io.github.ayfri.kore.arguments.components.countElement
 import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
 import io.github.ayfri.kore.arguments.components.matchers.*
-import io.github.ayfri.kore.arguments.components.types.FireworkExplosionShape
+import io.github.ayfri.kore.arguments.components.item.FireworkExplosionShape
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.assertions.assertsIsJson
 import io.github.ayfri.kore.commands.AttributeModifierOperation
@@ -16,7 +16,6 @@ import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.set
-import kotlinx.serialization.encodeToString
 
 fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 	pretty()

@@ -3,7 +3,7 @@ package io.github.ayfri.kore.features
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
-import io.github.ayfri.kore.arguments.components.types.*
+import io.github.ayfri.kore.arguments.components.item.*
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs

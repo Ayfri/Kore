@@ -3,7 +3,7 @@ package io.github.ayfri.kore.helpers.inventorymanager
 import io.github.ayfri.kore.arguments.CONTAINER
 import io.github.ayfri.kore.arguments.ItemSlotType
 import io.github.ayfri.kore.arguments.components.predicate
-import io.github.ayfri.kore.arguments.components.types.customData
+import io.github.ayfri.kore.arguments.components.item.customData
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.types.ContainerArgument
 import io.github.ayfri.kore.arguments.types.EntityArgument
