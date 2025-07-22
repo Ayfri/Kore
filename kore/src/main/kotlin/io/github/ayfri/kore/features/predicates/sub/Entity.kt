@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.predicates.sub
 
 import io.github.ayfri.kore.arguments.ItemSlot
+import io.github.ayfri.kore.arguments.components.ComponentsPatch
 import io.github.ayfri.kore.features.predicates.sub.entityspecific.EntityTypeSpecific
 import io.github.ayfri.kore.generated.arguments.EntityTypeOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.MobEffectArgument
@@ -17,6 +18,7 @@ import net.benwoodworth.knbt.buildNbtCompound
 @Serializable
 data class Entity(
 	var distance: Distance? = null,
+	var components: ComponentsPatch? = null,
 	var effects: Map<MobEffectArgument, Effect>? = null,
 	var equipment: Equipment? = null,
 	var flags: EntityFlags? = null,
@@ -58,6 +60,10 @@ data class EntityFlags(
 )
 
 fun entity(init: Entity.() -> Unit = {}) = Entity().apply(init)
+
+fun Entity.components(init: ComponentsPatch.() -> Unit) {
+	components = ComponentsPatch().apply(init)
+}
 
 fun Entity.distance(init: Distance.() -> Unit = {}) {
 	distance = Distance().apply(init)

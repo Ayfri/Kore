@@ -2,7 +2,11 @@ package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.WEAPON
+import io.github.ayfri.kore.arguments.components.entity.axolotlVariant
+import io.github.ayfri.kore.arguments.components.item.damage
+import io.github.ayfri.kore.arguments.components.item.hideTooltip
 import io.github.ayfri.kore.arguments.components.matchers.enchantments
+import io.github.ayfri.kore.arguments.enums.AxolotlVariants
 import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.assertions.assertsIs
@@ -80,6 +84,12 @@ fun DataPack.predicateTests() {
 
 	predicate("test2") {
 		entityProperties {
+			components {
+				axolotlVariant(AxolotlVariants.CYAN)
+				damage(12)
+				!hideTooltip()
+			}
+
 			effects {
 				this[Effects.INVISIBILITY] = effect {
 					amplifier = rangeOrInt(1)
@@ -144,6 +154,11 @@ fun DataPack.predicateTests() {
 		{
 			"condition": "minecraft:entity_properties",
 			"predicate": {
+				"components": {
+					"axolotl_variant": "cyan",
+					"damage": 12,
+					"!hide_tooltip": {}
+				},
 				"effects": {
 					"minecraft:invisibility": {
 						"amplifier": 1
