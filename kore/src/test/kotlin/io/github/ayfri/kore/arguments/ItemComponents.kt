@@ -18,7 +18,7 @@ import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.utils.set
 
-fun componentsTests() {
+fun itemComponentsTests() {
 	val a = Items.AIR {
 		itemName("a")
 	}
