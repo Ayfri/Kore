@@ -161,70 +161,35 @@ The `Entity` class will provide all the functions for these sub-predicates.
 
 ### Entity Type-Specific Properties
 
-Entities can have type-specific properties that can be checked using specialized sub-predicates. Here are some examples:
+Entities can still expose a handful of hard-coded type-specific predicates (mainly utility ones such as fishing hooks, lightning, player, raider, sheep and slime).  All the visual *variant* checks that existed before snapshot **25w04a** were migrated by Mojang to the new **components** system.  Kore therefore removed the dedicated helpers (`axolotlTypeSpecific`, `catTypeSpecific`, …) in favor of component matching.
+
+#### Component-based variant checks (25w04a +)
+You can now query an entity’s data components directly from `entityProperties` with the `components` block:
 
 ```kotlin
-// Check axolotl variant
-predicate("axolotl_check") {
-	entityProperties {
-		axolotlTypeSpecific(AxolotlVariants.LUCY)
-	}
-}
-
-// Check cat variant
-predicate("cat_check") {
-	entityProperties {
-		catTypeSpecific(CatVariants.WHITE)
-	}
-}
-
-// Check player properties
-predicate("player_check") {
-	entityProperties {
-		playerTypeSpecific {
-			gamemodes(Gamemode.CREATIVE)
-			recipes {
-				this[Recipes.BOW] = true
-			}
-			input {
-				forward = true
-				backward = false
-				sprint = true
-			}
-		}
-	}
-}
-
-// Check villager type
-predicate("villager_check") {
-	entityProperties {
-		villagerTypeSpecific(VillagerTypes.JUNGLE)
-	}
+// Check axolotl variant via its component
+predicate("axolotl_component_check") {
+    entityProperties {
+        components {
+            axolotlVariant(AxolotlVariants.LUCY)
+        }
+    }
 }
 ```
 
-Available type-specific checks include:
+Any component you can put on an **item** can be matched on an **entity** in exactly the same way – just call the corresponding extension inside the `components {}` scope.
 
--   `axolotlTypeSpecific` - Axolotl variants
--   `catTypeSpecific` - Cat variants
--   `fishingHookTypeSpecific` - Fishing hook properties
--   `foxTypeSpecific` - Fox variants
--   `frogTypeSpecific` - Frog variants
--   `horseTypeSpecific` - Horse variants
--   `lightningTypeSpecific` - Lightning properties
--   `llamaTypeSpecific` - Llama variants
--   `mooshroomTypeSpecific` - Mooshroom variants
--   `paintingTypeSpecific` - Painting variants
--   `parrotTypeSpecific` - Parrot variants
--   `playerTypeSpecific` - Player properties (gamemode, recipes, input)
--   `rabbitTypeSpecific` - Rabbit variants
--   `raiderTypeSpecific` - Raider properties
--   `salmonTypeSpecific` - Salmon variants
--   `sheepTypeSpecific` - Sheep properties
--   `slimeTypeSpecific` - Slime size
--   `tropicalFishTypeSpecific` - Tropical fish variants
--   `villagerTypeSpecific` - Villager types
--   `wolfTypeSpecific` - Wolf variants
+#### Remaining built-in `typeSpecific` helpers
+These helpers are still available because they cover information that is **not** represented by components:
+
+- `fishingHookTypeSpecific` – Fishing-hook properties
+- `lightningTypeSpecific` – Lightning bolt properties
+- `playerTypeSpecific` – Player properties (gamemode, recipes, input)
+- `raiderTypeSpecific` – Raider properties
+- `sheepTypeSpecific` – Sheep shear flag
+- `slimeTypeSpecific` – Slime size
+
+> **Note**   All former `*TypeSpecific` helpers that dealt with variants (axolotl, cat, fox, frog, horse, llama, mooshroom, painting, parrot, pig, rabbit, salmon, tropical fish, villager, wolf) have been removed.  Update your predicates to use component matching instead.
 
 ### Item Sub-Predicates
 

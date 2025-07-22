@@ -236,6 +236,87 @@ val customItem = Items.DIAMOND_SWORD {
 minecraft:diamond_sword[use_component ={ function:"datapack:use_weapon", damage:4, cooldown:1.5f, sound:"entity/player/attack/crit1" }]
 ```
 
+## Entity Variant Components (25w04a+)
+
+> *Introduced in snapshot [25w04a](https://www.minecraft.net/en-us/article/minecraft-snapshot-25w04a)*
+>
+> Entity variants such as axolotl colours, cat collars or tropical-fish patterns are now exposed as **data components** and can be used on entities, spawn-egg items, mob buckets and paintings.  This replaces the old `type_specific` NBT fields.
+
+Kore ships dedicated helpers for each of these components.  You can attach them to an `Items.*` builder the exact same way you attach any other component:
+
+```kotlin
+import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.arguments.enums.*
+
+// Axolotl bucket with the blue variant
+val blueAxolotlBucket = Items.AXOLOTL_BUCKET {
+    axolotlVariant(AxolotlVariants.BLUE)
+}
+
+// Cat spawn-egg with a red collar
+val redCollarCat = Items.CAT_SPAWN_EGG {
+    catCollar(DyeColors.RED)
+}
+
+// Painting item selecting the "kebab" variant (namespace implied)
+val kebabPainting = Items.PAINTING {
+    paintingVariant(PaintingVariants.KEBAB)
+}
+```
+
+These components can also be queried inside predicates:
+
+```kotlin
+predicate("only_blue_axolotls") {
+    entityProperties {
+        components {
+            axolotlVariant(AxolotlVariants.BLUE)
+        }
+    }
+}
+```
+
+The full list of variant helpers currently included in Kore is:
+
+- `axolotlVariant(..)`
+- `catCollar(..)` / `catVariant(..)`
+- `foxVariant(..)`
+- `frogVariant(..)`
+- `horseVariant(..)`
+- `llamaVariant(..)`
+- `mooshroomVariant(..)`
+- `paintingVariant(..)`
+- `parrotVariant(..)`
+- `pigVariant(..)`
+- `rabbitVariant(..)`
+- `salmonSize(..)`
+- `sheepColor(..)`
+- `shulkerColor(..)`
+- `tropicalFishBaseColor(..)` / `tropicalFishPattern(..)` / `tropicalFishPatternColor(..)`
+- `villagerVariant(..)`
+- `wolfCollar(..)` / `wolfVariant(..)`
+
+They follow the exact same naming and DSL pattern you already know:
+
+```kotlin
+fun ComponentsScope.wolfVariant(variant: WolfVariants) { /*…*/ }
+```
+
+Because the logic lives in regular data components, you automatically get:
+
+• Compatibility with `itemStack` / `Items.*` DSL
+• Predicate support through `components {}`
+• Correct serialisation back to the vanilla command-/NBT-syntax
+
+Feel free to mix several variant components on the same `ComponentsScope`:
+
+```kotlin
+Items.WOLF_SPAWN_EGG {
+    wolfCollar(DyeColors.BLACK)
+    wolfVariant(WolfVariants.SNOWY)
+}
+```
+
 ## Conclusion
 
 Components are a powerful tool for customizing Minecraft objects, and the Kore library makes it easier than ever to work with these
