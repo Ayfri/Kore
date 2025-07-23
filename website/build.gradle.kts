@@ -95,6 +95,7 @@ kobweb {
 						literal.lowercase().replace(Regex("[^a-z0-9]+"), "-")
 					}
 					.joinToString("")
+
 				val content = heading.children()
 					.map {
 						when (it) {
@@ -111,7 +112,8 @@ kobweb {
 							else -> ""
 						}
 					}
-					.joinToString("")
+					.joinToString("\n")
+
 				childrenOverride = emptyList()
 				val tag = "H${heading.level}"
 
