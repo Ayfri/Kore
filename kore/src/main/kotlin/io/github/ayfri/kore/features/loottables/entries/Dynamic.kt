@@ -6,6 +6,12 @@ import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.PredicateAsList
 import kotlinx.serialization.Serializable
 
+/**
+ * Loot entry that pulls items from a dynamic context (e.g., `minecraft:contents`).
+ *
+ * Docs: https://kore.ayfri.com/docs/loot-tables
+ * Minecraft Wiki: https://minecraft.wiki/w/Loot_table
+ */
 @Serializable
 data class Dynamic(
 	var name: String,
@@ -15,14 +21,17 @@ data class Dynamic(
 	var weight: Int? = null,
 ) : LootEntry()
 
+/** Add and configure a Dynamic entry. */
 fun LootEntries.dynamic(name: String, block: Dynamic.() -> Unit = {}) {
 	add(Dynamic(name).apply(block))
 }
 
+/** Set conditions, see [Predicates](https://kore.ayfri.com/docs/predicates). */
 fun Dynamic.conditions(block: Predicate.() -> Unit) {
 	conditions = Predicate().apply(block)
 }
 
+/** Set item modifier functions, see [ItemModifiers](https://kore.ayfri.com/docs/item-modifiers). */
 fun Dynamic.functions(block: ItemModifier.() -> Unit) {
 	functions = ItemModifier().apply(block)
 }
