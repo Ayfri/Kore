@@ -54,6 +54,15 @@ import kotlinx.io.files.SystemFileSystem
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 
+/**
+* Represents a datapack being built in memory. A [DataPack] collects
+* features such as functions, tags, recipes and worldgen resources and
+* can generate them on disk or package them into archives.
+*
+* Docs: https://kore.ayfri.com/docs/creating-a-datapack
+*
+* @param name the datapack identifier used as default namespace
+*/
 @FunctionsHolder
 class DataPack(val name: String) {
 	val generators = mutableListOf<MutableList<out Generator>>()
@@ -108,11 +117,19 @@ class DataPack(val name: String) {
 
 	private fun <T : Generator> registerGenerator() = mutableListOf<T>().also { generators += it }
 
+	/**
+	* Adds a user-defined function to the datapack.
+	* Returns the same function as a [FunctionArgument] for convenience.
+	*/
 	fun addFunction(function: Function): FunctionArgument {
 		functions += function
 		return function
 	}
 
+	/**
+	* Adds or reuses a generated function. Two generated functions with the
+	* exact same body will be merged and the first instance will be returned.
+	*/
 	fun addGeneratedFunction(function: Function): FunctionArgument {
 		generatedFunctions.find { it.lines == function.lines }?.let {
 			return@addGeneratedFunction it
@@ -122,26 +139,31 @@ class DataPack(val name: String) {
 		return function
 	}
 
+	/** Generates the `pack.mcmeta` file. */
 	fun generatePackMCMetaFile() = jsonEncoder.encodeToString(PackMCMeta(pack, features, filter))
 
+	/** Generates the datapack as raw files. */
 	fun generate(init: DataPackGenerationOptions.() -> Unit = {}) {
 		val options = DataPackGenerationOptions().apply(init)
 		val datapackGenerator = DataPackGenerator(this, options)
 		datapackGenerator.generate()
 	}
 
+	/** Generates the datapack as a jar file, must be used as a mod. */
 	fun generateJar(init: DataPackJarGenerationOptions.() -> Unit = {}) {
 		val options = DataPackJarGenerationOptions(this).apply(init)
 		val datapackGenerator = DataPackGenerator(this, options, DatapackGenerationMode.JAR)
 		datapackGenerator.generate()
 	}
 
+	/** Generates the datapack as a zip file for easy distribution and faster loading. */
 	fun generateZip(init: DataPackGenerationOptions.() -> Unit = {}) {
 		val options = DataPackGenerationOptions().apply(init)
 		val datapackGenerator = DataPackGenerator(this, options, DatapackGenerationMode.ZIP)
 		datapackGenerator.generate()
 	}
 
+	/** Checks if the datapack is compatible with the other pack by comparing the pack format. */
 	fun isCompatibleWith(otherPack: PackMCMeta): Boolean {
 		if (otherPack.pack.format != pack.format) {
 			val packFormatPrint = "Format: current: ${pack.format} other: ${otherPack.pack.format}."
@@ -176,12 +198,15 @@ class DataPack(val name: String) {
 		}
 
 	companion object {
+		/** The default folder where the generated functions are stored, can be changed with [Configuration.generatedFunctionsFolder]. */
 		const val DEFAULT_GENERATED_FUNCTIONS_FOLDER = "generated_scopes"
 	}
 }
 
+/** Creates a new [DataPack] and applies the provided configuration block. */
 fun dataPack(name: String, block: DataPack.() -> Unit) = DataPack(name).apply(block)
 
+/** Edits the datapack configuration with the result of the given block. */
 fun DataPack.configuration(block: Configuration.() -> Unit) {
 	configuration = Configuration().apply(block)
 }

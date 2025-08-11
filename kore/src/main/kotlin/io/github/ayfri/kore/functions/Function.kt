@@ -16,11 +16,26 @@ import io.github.ayfri.kore.features.tags.functionTag
 import io.github.ayfri.kore.utils.ifNotEmpty
 import java.io.File
 
+/**
+ * Represents a Minecraft function (.mcfunction) being built in memory.
+ *
+ * This class collects lines (commands and comments) and is able to write
+ * the final `.mcfunction` file when requested. It also supports a debug
+ * mode that injects `tellraw` commands showing the executed commands.
+ *
+ * Docs: https://kore.ayfri.com/docs/functions
+ * Macro reference: https://kore.ayfri.com/docs/functions/macros
+ *
+ * @param name the function name (without extension)
+ * @param namespace the function namespace, defaults to `minecraft`
+ * @param directory optional directory within `data/<namespace>/functions/`
+ * @param datapack the owning [DataPack] instance
+ */
 open class Function(
 	override val name: String,
 	override val namespace: String = "minecraft",
 	override var directory: String = "",
-	val datapack: DataPack,
+ 	val datapack: DataPack,
 ) : FunctionArgument {
 	private var debug = false
 	internal var nextLineHasMacro = false
@@ -28,6 +43,7 @@ open class Function(
 	val commandLines get() = lines.filter { !it.startsWith('#') && it.isNotBlank() && it.isNotEmpty() }
 	val isInlinable get() = commandLines.size == 1
 
+	/** Adds an empty blank line to the function. */
 	fun addBlankLine() = lines.add("")
 
 	private fun handleMacro(line: String): String {
@@ -39,8 +55,18 @@ open class Function(
 		return line
 	}
 
+	/**
+	 * Adds a raw line (usually a command or a comment) to the function.
+	 * The line will be processed to handle macros before being stored.
+	 */
 	open fun addLine(line: String) = handleMacro(line).also { lines += it }
 
+	/**
+	 * Adds a [Command] to the function and stores its string form.
+	 * When debug mode is enabled, a `tellraw` entry showing the command
+	 * will also be appended.
+	 * Returns the given [Command] for fluent usage.
+	 */
 	open fun addLine(command: Command): Command {
 		lines += handleMacro(command.toString())
 
@@ -64,12 +90,22 @@ open class Function(
 		return command
 	}
 
+	/** Adds a comment line (starts with '#'). */
 	open fun comment(comment: String) {
 		lines.add("# $comment")
 	}
 
+	/**
+	 * Returns the output path of this function inside the datapack (relative).
+	 * Example: `data/<namespace>/function/<directory>/<name>.mcfunction`.
+	 */
 	fun getFinalPath() = "data/$namespace/function/${directory.ifNotEmpty { "$it/" }}$name.mcfunction"
 
+	/**
+	 * Writes the function to disk under the given output directory.
+	 * Creates parent directories if required and injects debug markers
+	 * when debug mode is active.
+	 */
 	fun generate(directory: File) {
 		val file = File(directory, "${this.directory}/$name.mcfunction")
 		file.parentFile.mkdirs()
@@ -117,27 +153,36 @@ open class Function(
 		file.writeText(toString())
 	}
 
+	/** Clears all lines from the function. Useful for reusing the instance. */
 	open fun clearLines() = lines.clear()
 
+	/** Enable debug mode which augments the function with tellraw messages. */
 	open fun startDebug() {
 		debug = true
 	}
 
+	/** Disable debug mode. */
 	open fun endDebug() {
 		debug = false
 	}
 
+	/**
+	 * Runs the provided [block] with debug mode enabled for the duration
+	 * of the block, then disables debug mode.
+	 */
 	open fun debug(block: Function.() -> Unit) {
 		startDebug()
 		apply(block)
 		endDebug()
 	}
 
+	/** Convenience helper to send a debug chat message with optional color. */
 	open fun debug(text: String, color: Color? = null, options: ChatComponent.() -> Unit = {}) = debug(textComponent(text) {
 		color?.let { this.color = it }
 		options()
 	})
 
+	/** Sends a `tellraw` debug message to all players. */
 	open fun debug(textComponent: ChatComponents) = tellraw(allPlayers(), textComponent)
 
 	override fun toString() = lines.joinToString("\n")
@@ -161,12 +206,15 @@ fun DataPack.generatedFunction(name: String, namespace: String = this.name, dire
 		Function(name, namespace, "${configuration.generatedFunctionsFolder}${directory.ifNotEmpty { "/$it" }}", this).apply(block)
 	)
 
+/** Generate a function and register it in the load tag, executed once on world load, or when a `/reload` is executed. */
 fun DataPack.load(name: String? = null, namespace: String = this.name, directory: String = "", block: Function.() -> Unit) =
 	addToMinecraftTag("load", name, block, namespace, directory)
 
+/** Generate a function and register it in the tick tag, executed every tick, 20 times per second. */
 fun DataPack.tick(name: String? = null, namespace: String = this.name, directory: String = "", block: Function.() -> Unit) =
 	addToMinecraftTag("tick", name, block, namespace, directory)
 
+/** Generate a function and register it in a tag. */
 private fun DataPack.addToMinecraftTag(
 	fileName: String,
 	functionName: String?,
@@ -183,6 +231,7 @@ private fun DataPack.addToMinecraftTag(
 	return generatedFunction
 }
 
+/** Registers the function in a tag. */
 fun Function.setTag(
 	tagFile: String,
 	tagNamespace: String = namespace,
@@ -193,6 +242,7 @@ fun Function.setTag(
 	add(name, entryNamespace, entryIsTag, entryIsRequired)
 }
 
+/** Registers the function in a tag. */
 fun Function.setTag(
 	tag: FunctionTagArgument,
 	entryNamespace: String = namespace,

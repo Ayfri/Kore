@@ -25,8 +25,8 @@ typealias PredicateAsList = @Serializable(Predicate.Companion.PredicateAsListSer
  * Kore serializes predicates as either a single object or an array of conditions,
  * matching the vanilla format. See the Minecraft Wiki for the full JSON structure and usage.
  *
- * Docs: https://kore.ayfri.com/docs/Predicates.html
- * Minecraft Wiki: https://minecraft.wiki/w/Predicate
+ * Docs: https://kore.ayfri.com/docs/predicates
+ * JSON format reference: https://minecraft.wiki/w/Predicate
  */
 @Serializable
 data class Predicate(
@@ -55,8 +55,8 @@ data class Predicate(
  *
  * Produces `data/<namespace>/predicate/<fileName>.json`.
  *
- * Docs: https://kore.ayfri.com/docs/Predicates.html
- * Minecraft Wiki: https://minecraft.wiki/w/Predicate
+ * Docs: https://kore.ayfri.com/docs/predicates
+ * JSON format reference: https://minecraft.wiki/w/Predicate
  */
 fun DataPack.predicate(fileName: String = "predicate", init: Predicate.() -> Unit = {}): PredicateArgument {
 	val predicate = Predicate(fileName).apply(init)
