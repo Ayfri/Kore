@@ -31,6 +31,19 @@ import io.github.ayfri.kore.utils.nbtListOf
 import io.github.ayfri.kore.utils.set
 import net.benwoodworth.knbt.addNbtCompound
 
+/**
+ * Inventory Manager
+ *
+ * A high-level helper around Minecraft inventories that lets you:
+ * - Register slot listeners which react when a slot contents is taken/changed.
+ * - Enforce desired items in slots each tick (e.g. GUIs, kiosks, rule-based containers).
+ * - Operate on both entity inventories and block containers (`Vec3`).
+ *
+ * The manager wires the necessary scoreboard objective and, for block containers, a helper marker entity
+ * to detect state changes. It auto-generates minimal `load`/`tick` functions to run the listeners.
+ *
+ * See docs: https://kore.ayfri.com/docs/inventory-manager
+ */
 data class InventoryManager<T : ContainerArgument>(val container: T) {
 	val slotsListeners = mutableListOf<SlotEventListener>()
 
@@ -40,9 +53,11 @@ data class InventoryManager<T : ContainerArgument>(val container: T) {
 		counter++
 	}
 
+	/** Replace the given [slot] with air. */
 	context(fn: Function)
 	fun clear(slot: ItemSlotType) = fn.items.replace(container, slot, Items.AIR, 1)
 
+	/** Clear all items for this [container] (entity or block). */
 	context(fn: Function)
 	fun clearAll() = when (container) {
 		is EntityArgument -> fn.clear(container)
@@ -50,6 +65,7 @@ data class InventoryManager<T : ContainerArgument>(val container: T) {
 		else -> error("Cannot clear items from $container")
 	}
 
+	/** Clear all occurrences of a specific [item] in this [container]. */
 	context(fn: Function)
 	fun clearAll(item: ItemArgument) = when (container) {
 		is EntityArgument -> fn.clear(container, item)
@@ -57,26 +73,33 @@ data class InventoryManager<T : ContainerArgument>(val container: T) {
 		else -> error("Cannot clear items from $container")
 	}
 
+	/** Apply an item [modifier] to the given [slot]. */
 	context(fn: Function)
 	fun modify(slot: ItemSlotType, modifier: ItemModifierArgument) = fn.items.modify(container, slot, modifier)
 
+	/** Replace the given [slot] with an [item] and optional [count]. */
 	context(fn: Function)
 	fun replace(slot: ItemSlotType, item: ItemArgument, count: Int? = null) = fn.items.replace(container, slot, item, count)
 
+	/** Replace items by moving from [fromSlot] to [withSlot], optionally applying a [modifier]. */
 	context(fn: Function)
 	fun replace(fromSlot: ItemSlotType, withSlot: ItemSlotType, modifier: ItemModifierArgument? = null) =
 		fn.items.replace(container, fromSlot, container, withSlot, modifier)
 
+	/** Shortcut: assign an [item] into a typed [slot]. */
 	context(fn: Function)
 	operator fun set(slot: ItemSlotType, item: ItemArgument) = replace(slot, item)
 
+	/** Shortcut: assign an [item] into a numeric [slot] using `CONTAINER[index]`. */
 	context(fn: Function)
 	operator fun set(slot: Int, item: ItemArgument) = replace(CONTAINER[slot], item)
 
 	companion object {
+		/** Tag assigned to helper marker entities used for block containers. */
 		var INVENTORY_MANAGER_ENTITY_TAG = "inventory_manager"
 		var counter = 0
 
+		/** Remove scoreboard objectives created by Inventory Manager across runs. */
 		context(dp: DataPack)
 		fun removeClickDetectors() {
 			dp.load("inventory_manager_${hashCode()}_remover") {
@@ -88,11 +111,17 @@ data class InventoryManager<T : ContainerArgument>(val container: T) {
 	}
 }
 
+/** Generate load/tick wiring for all registered slot listeners on a specific [dp]. */
 fun InventoryManager<*>.generateSlotsListeners(dp: DataPack) = with(dp) { generateSlotsListeners() }
 
+/** Generate load/tick wiring using the current function’s datapack. */
 context(fn: Function)
 fun InventoryManager<*>.generateSlotsListeners() = generateSlotsListeners(fn.datapack)
 
+/**
+ * Emit the `load` and `tick` functions that power all registered slot listeners for this manager.
+ * Handles scoreboard set-up and entity scoping for both entity and block containers.
+ */
 context(dp: DataPack)
 fun InventoryManager<*>.generateSlotsListeners() {
 	val scoreName = getScoreName(dp)
@@ -212,15 +241,19 @@ fun InventoryManager<*>.generateSlotsListeners() {
 	}
 }
 
+/** For block containers, place a [block] at the managed position. */
 context(fn: Function)
 fun InventoryManager<Vec3>.setBlock(block: BlockArgument) = fn.setBlock(container, block)
 
+/** Create an Inventory Manager for the given [container]. */
 fun <T : ContainerArgument> inventoryManager(container: T) = InventoryManager(container)
 
+/** Create, configure via [block], then generate listeners using this datapack context. */
 context(fn: DataPack)
 fun <T : ContainerArgument> inventoryManager(container: T, block: InventoryManager<T>.() -> Unit) =
 	InventoryManager(container).apply(block).apply { generateSlotsListeners() }
 
+/** Create, configure via [block], then generate listeners using the current function’s datapack. */
 context(fn: Function)
 fun <T : ContainerArgument> inventoryManager(container: T, block: InventoryManager<T>.() -> Unit) =
 	InventoryManager(container).apply(block).apply { generateSlotsListeners(fn.datapack) }
