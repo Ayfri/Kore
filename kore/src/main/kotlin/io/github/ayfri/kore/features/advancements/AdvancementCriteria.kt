@@ -6,10 +6,17 @@ import kotlinx.serialization.json.*
 
 typealias AdvancementCriteria = @Serializable(with = AdvancementCriteriaSurrogate.Companion.AdvancementCriteriaSerializer::class) AdvancementCriteriaSurrogate
 
+/**
+ * Container used for serializing advancement criteria as a name->trigger map as in vanilla JSON.
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements
+ * Triggers: https://kore.ayfri.com/docs/advancements/triggers
+ * Minecraft Wiki: https://minecraft.wiki/w/Advancement#JSON_format
+ */
 @Serializable
 data class AdvancementCriteriaSurrogate(var criteria: List<AdvancementTriggerCondition> = emptyList()) {
 	companion object {
-		object AdvancementCriteriaSerializer : JsonTransformingSerializer<AdvancementCriteriaSurrogate>(serializer()) {
+		data object AdvancementCriteriaSerializer : JsonTransformingSerializer<AdvancementCriteriaSurrogate>(serializer()) {
 			override fun transformSerialize(element: JsonElement): JsonElement {
 				// elements are serialized as an array in an object named criteria, we instead want to only serialize an inline map with the element `name` as key
 				val entries = element.jsonObject["criteria"]!!.jsonArray.map { it.jsonObject }
@@ -46,10 +53,12 @@ data class AdvancementCriteriaSurrogate(var criteria: List<AdvancementTriggerCon
 	}
 }
 
+/** Append a trigger to the criteria. */
 operator fun AdvancementCriteria.plusAssign(trigger: AdvancementTriggerCondition) {
 	criteria += trigger
 }
 
+/** Set a trigger by name. */
 operator fun AdvancementCriteria.set(name: String, trigger: AdvancementTriggerCondition) {
 	criteria += trigger.apply { this.name = name }
 }

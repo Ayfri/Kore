@@ -6,6 +6,12 @@ import io.github.ayfri.kore.features.advancements.EntityOrPredicates
 import io.github.ayfri.kore.features.predicates.sub.ItemStack
 import kotlinx.serialization.Serializable
 
+/**
+ * Triggered when a player consumes an item.
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements/triggers#consumeitem
+ * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format#consume_item
+ */
 @Serializable
 data class ConsumeItem(
 	override var name: String,

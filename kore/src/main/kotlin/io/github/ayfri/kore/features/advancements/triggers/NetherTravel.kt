@@ -6,6 +6,12 @@ import io.github.ayfri.kore.features.predicates.sub.Distance
 import io.github.ayfri.kore.features.predicates.sub.Location
 import kotlinx.serialization.Serializable
 
+/**
+ * Triggered when a player travels through the Nether.
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements/triggers#nethertravel
+ * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
+ */
 @Serializable
 data class NetherTravel(
 	override var name: String,
@@ -14,14 +20,17 @@ data class NetherTravel(
 	var startPosition: Location? = null,
 ) : AdvancementTriggerCondition()
 
+/** Add a `netherTravel` criterion, triggered when a player travels through the Nether. */
 fun AdvancementCriteria.netherTravel(name: String, block: NetherTravel.() -> Unit = {}) {
 	criteria += NetherTravel(name).apply(block)
 }
 
+/** Set the distance constraints. */
 fun NetherTravel.distance(block: Distance.() -> Unit) {
 	distance = Distance().apply(block)
 }
 
+/** Set the start position constraints. */
 fun NetherTravel.startPosition(block: Location.() -> Unit) {
 	startPosition = Location().apply(block)
 }

@@ -5,6 +5,12 @@ import io.github.ayfri.kore.features.advancements.EntityOrPredicates
 import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import kotlinx.serialization.Serializable
 
+/**
+ * Triggered when a recipe is unlocked.
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements/triggers#recipeunlocked
+ * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
+ */
 @Serializable
 data class RecipeUnlocked(
 	override var name: String,
@@ -12,6 +18,7 @@ data class RecipeUnlocked(
 	var recipe: RecipeArgument,
 ) : AdvancementTriggerCondition()
 
+/** Add a `recipeUnlocked` criterion, triggered when a recipe is unlocked. */
 fun AdvancementCriteria.recipeUnlocked(name: String, recipe: RecipeArgument, block: RecipeUnlocked.() -> Unit) {
 	criteria += RecipeUnlocked(name, recipe = recipe).apply(block)
 }

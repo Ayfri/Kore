@@ -7,6 +7,12 @@ import io.github.ayfri.kore.features.advancements.serializers.IntRangeOrIntJson
 import io.github.ayfri.kore.features.predicates.sub.ItemStack
 import kotlinx.serialization.Serializable
 
+/**
+ * Triggered when a bee nest is destroyed.
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements/triggers#beeenestdestroyed
+ * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
+ */
 @Serializable
 data class BeeNestDestroyed(
 	override var name: String,
@@ -16,6 +22,7 @@ data class BeeNestDestroyed(
 	var numBeesInside: IntRangeOrIntJson? = null,
 ) : AdvancementTriggerCondition()
 
+/** Add a `beeNestDestroyed` criterion. */
 fun AdvancementCriteria.beeNestDestroyed(
 	name: String,
 	block: BlockArgument? = null,
@@ -26,6 +33,7 @@ fun AdvancementCriteria.beeNestDestroyed(
 	criteria += BeeNestDestroyed(name, block = block, item = item, numBeesInside = numBeesInside).apply(init)
 }
 
+/** Define the item used in the destruction. */
 fun BeeNestDestroyed.item(block: ItemStack.() -> Unit) {
 	item = ItemStack().apply(block)
 }

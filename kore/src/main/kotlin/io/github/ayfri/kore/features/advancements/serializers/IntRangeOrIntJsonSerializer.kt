@@ -19,7 +19,7 @@ import kotlinx.serialization.encoding.encodeStructure
 
 typealias IntRangeOrIntJson = @Serializable(with = IntRangeOrIntJsonSerializer::class) IntRangeOrInt
 
-object IntRangeOrIntJsonSerializer : KSerializer<IntRangeOrInt> {
+data object IntRangeOrIntJsonSerializer : KSerializer<IntRangeOrInt> {
 	override val descriptor = buildClassSerialDescriptor("IntRangeOrInt") {
 		element<Int>("min")
 		element<Int>("max")

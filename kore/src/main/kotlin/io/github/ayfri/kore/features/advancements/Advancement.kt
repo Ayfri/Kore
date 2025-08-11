@@ -16,6 +16,12 @@ import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
+/**
+ * Defines a Minecraft advancement and how it is serialized by Kore.
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements
+ * Minecraft Wiki: https://minecraft.wiki/w/Advancement
+ */
 @Serializable
 data class Advancement internal constructor(
 	@Transient
@@ -30,16 +36,31 @@ data class Advancement internal constructor(
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
+/**
+ * Create and register a new advancement in this [DataPack].
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements
+ */
 fun DataPack.advancement(fileName: String, block: Advancement.() -> Unit = {}): AdvancementArgument {
 	val advancement = Advancement(fileName)
 	advancements += advancement.apply(block)
 	return AdvancementArgument(fileName, advancement.namespace ?: name)
 }
 
+/**
+ * Configure the display of the advancement (icon, title, description, frame, etc.).
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements
+ */
 fun Advancement.display(icon: AdvancementIcon, title: String = "", description: String = "", block: AdvancementDisplay.() -> Unit = {}) {
 	display = AdvancementDisplay(icon, textComponent(title), textComponent(description)).apply(block)
 }
 
+/**
+ * Configure the display of the advancement (icon, title, description, frame, etc.).
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements
+ */
 fun Advancement.display(
 	icon: AdvancementIcon,
 	title: ChatComponents,
@@ -49,10 +70,20 @@ fun Advancement.display(
 	display = AdvancementDisplay(icon, title, description).apply(block)
 }
 
+/**
+ * Configure the display of the advancement (icon, title, description, frame, etc.).
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements
+ */
 fun Advancement.display(icon: ItemArgument, title: String = "", description: String = "", block: AdvancementDisplay.() -> Unit = {}) {
 	display = AdvancementDisplay(AdvancementIcon(icon), textComponent(title), textComponent(description)).apply(block)
 }
 
+/**
+ * Configure the display of the advancement (icon, title, description, frame, etc.).
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements
+ */
 fun Advancement.display(
 	icon: ItemArgument,
 	title: ChatComponents,
@@ -62,6 +93,11 @@ fun Advancement.display(
 	display = AdvancementDisplay(AdvancementIcon(icon), title, description).apply(block)
 }
 
+/**
+ * Configure the icon of the advancement display.
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements
+ */
 fun AdvancementDisplay.icon(icon: ItemArgument, count: Int? = null, components: Components.() -> Unit = {}) {
 	this.icon = AdvancementIcon(icon, Components().apply(components), count)
 }
@@ -113,22 +149,49 @@ fun Advancement.criteria(
 	}
 }
 
+/**
+ * Define criteria and triggers for this advancement.
+ *
+ * Triggers: https://kore.ayfri.com/docs/advancements/triggers
+ * Docs: https://kore.ayfri.com/docs/advancements
+ */
 fun Advancement.criteria(block: AdvancementCriteria.() -> Unit) {
 	criteria = AdvancementCriteria().apply(block)
 }
 
+/**
+ * Set the completion requirements for this advancement.
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements
+ */
 fun Advancement.requirements(vararg requirements: List<String>) {
 	this.requirements = listOf(*requirements)
 }
 
+/**
+ * Set the completion requirements for this advancement.
+ * Passing several names creates a single AND-group.
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements
+ */
 fun Advancement.requirements(vararg requirements: String) {
 	this.requirements = listOf(listOf(*requirements))
 }
 
+/**
+ * Configure the rewards granted when the advancement is completed.
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements
+ */
 fun Advancement.rewards(block: AdvancementReward.() -> Unit) {
 	rewards = AdvancementReward().apply(block)
 }
 
+/**
+ * Set rewards in a single call.
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements
+ */
 fun Advancement.rewards(
 	function: FunctionArgument? = null,
 	experience: Int? = null,

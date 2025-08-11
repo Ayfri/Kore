@@ -6,6 +6,11 @@ import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
+/**
+ * Display properties (icon, title, description, frame, etc.) for an advancement.
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements#display
+ */
 @Serializable
 data class AdvancementDisplay(
 	var icon: AdvancementIcon,
@@ -20,6 +25,12 @@ data class AdvancementDisplay(
 	var hidden: Boolean? = null,
 )
 
+/**
+ * Frame type for advancement display.
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements#display
+ * Minecraft Wiki: https://minecraft.wiki/w/Advancement#Display
+ */
 @Serializable(with = AdvancementFrameType.Companion.AdvancementFrameTypeSerializer::class)
 enum class AdvancementFrameType {
 	CHALLENGE,
@@ -31,6 +42,11 @@ enum class AdvancementFrameType {
 	}
 }
 
+/**
+ * Icon definition for an advancement.
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements#display
+ */
 @Serializable
 data class AdvancementIcon(
 	var id: ItemArgument,

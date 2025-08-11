@@ -8,6 +8,11 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.encoding.Encoder
 
+/**
+ * Container for either a location or predicate conditions.
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements
+ */
 @Serializable(with = LocationOrPredicates.Companion.LocationOrPredicatesSerializer::class)
 data class LocationOrPredicates(
 	var legacyLocation: Location? = null,
@@ -28,14 +33,17 @@ data class LocationOrPredicates(
 	}
 }
 
+/** Set the location condition. */
 fun LocationOrPredicates.location(block: Location.() -> Unit) {
 	legacyLocation = Location().apply(block)
 }
 
+/** Set the predicate conditions. */
 fun LocationOrPredicates.predicate(block: Predicate.() -> Unit) {
 	predicateConditions += Predicate().apply(block).predicateConditions
 }
 
+/** Set the predicate conditions. */
 fun LocationOrPredicates.predicate(predicate: Predicate) {
 	predicateConditions += predicate.predicateConditions
 }

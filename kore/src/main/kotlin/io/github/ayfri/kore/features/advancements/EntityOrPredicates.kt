@@ -9,13 +9,18 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.serializer
 
+/**
+ * Container for either an entity or predicate conditions.
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements
+ */
 @Serializable(with = EntityOrPredicates.Companion.EntityOrPredicatesSerializer::class)
 data class EntityOrPredicates(
 	var legacyEntity: Entity? = null,
 	var predicateConditions: List<PredicateCondition>? = null,
 ) {
 	companion object {
-		object EntityOrPredicatesSerializer : ToStringSerializer<EntityOrPredicates>() {
+		data object EntityOrPredicatesSerializer : ToStringSerializer<EntityOrPredicates>() {
 			override fun serialize(encoder: Encoder, value: EntityOrPredicates) = when {
 				value.legacyEntity != null -> encoder.encodeSerializableValue(Entity.serializer(), value.legacyEntity!!)
 				value.predicateConditions != null -> encoder.encodeSerializableValue(
@@ -29,18 +34,22 @@ data class EntityOrPredicates(
 	}
 }
 
+/** Set the entity condition, deprecated, prefer using [conditions] instead. */
 fun EntityOrPredicates.conditionEntity(entity: Entity) {
 	legacyEntity = entity
 }
 
+/** Set the entity condition, deprecated, prefer using [conditions] instead. */
 fun EntityOrPredicates.conditionEntity(entity: Entity.() -> Unit) {
 	legacyEntity = Entity().apply(entity)
 }
 
+/** Set the predicate conditions. */
 fun EntityOrPredicates.conditions(vararg conditions: PredicateCondition) {
 	predicateConditions = conditions.toList()
 }
 
+/** Set the predicate conditions. */
 fun EntityOrPredicates.conditions(conditions: Predicate.() -> Unit) {
 	predicateConditions = Predicate().apply(conditions).predicateConditions
 }

@@ -5,6 +5,12 @@ import io.github.ayfri.kore.features.advancements.EntityOrPredicates
 import io.github.ayfri.kore.generated.arguments.types.DimensionArgument
 import kotlinx.serialization.Serializable
 
+/**
+ * Triggered when a player changes dimension.
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements/triggers#changeddimension
+ * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
+ */
 @Serializable
 data class ChangedDimension(
 	override var name: String,
@@ -13,6 +19,7 @@ data class ChangedDimension(
 	var to: DimensionArgument? = null,
 ) : AdvancementTriggerCondition()
 
+/** Add a `changedDimension` criterion, triggered when a player changes dimension. */
 fun AdvancementCriteria.changedDimension(name: String, block: ChangedDimension.() -> Unit = {}) {
 	criteria += ChangedDimension(name).apply(block)
 }

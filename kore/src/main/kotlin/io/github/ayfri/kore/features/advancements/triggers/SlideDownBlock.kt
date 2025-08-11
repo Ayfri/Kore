@@ -5,6 +5,12 @@ import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
 import kotlinx.serialization.Serializable
 
+/**
+ * Triggered when sliding down a block.
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements/triggers#slidedownblock
+ * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
+ */
 @Serializable
 data class SlideDownBlock(
 	override var name: String,
@@ -12,6 +18,7 @@ data class SlideDownBlock(
 	var block: BlockArgument? = null,
 ) : AdvancementTriggerCondition()
 
+/** Add a `slideDownBlock` criterion, triggered when sliding down a block. */
 fun AdvancementCriteria.slideDownBlock(
 	name: String,
 	block: BlockArgument? = null,

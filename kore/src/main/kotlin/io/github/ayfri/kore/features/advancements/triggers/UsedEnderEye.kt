@@ -5,6 +5,12 @@ import io.github.ayfri.kore.features.advancements.EntityOrPredicates
 import io.github.ayfri.kore.features.advancements.serializers.FloatRangeOrFloatJson
 import kotlinx.serialization.Serializable
 
+/**
+ * Triggered when an ender eye is used.
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements/triggers#usedendereye
+ * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
+ */
 @Serializable
 data class UsedEnderEye(
 	override var name: String,
@@ -12,10 +18,12 @@ data class UsedEnderEye(
 	var distance: FloatRangeOrFloatJson? = null,
 ) : AdvancementTriggerCondition()
 
+/** Add a `usedEnderEye` criterion, triggered when an ender eye is used. */
 fun AdvancementCriteria.usedEnderEye(name: String, block: UsedEnderEye.() -> Unit = {}) {
 	criteria += UsedEnderEye(name).apply(block)
 }
 
+/** Set the distance constraints. */
 fun UsedEnderEye.distance(block: FloatRangeOrFloatJson.() -> Unit) {
 	distance = FloatRangeOrFloatJson().apply(block)
 }

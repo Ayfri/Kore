@@ -5,6 +5,12 @@ import io.github.ayfri.kore.features.advancements.EntityOrPredicates
 import io.github.ayfri.kore.features.predicates.sub.ItemStack
 import kotlinx.serialization.Serializable
 
+/**
+ * Triggered when a thrown item is picked up by an entity.
+ *
+ * Docs: https://kore.ayfri.com/docs/advancements/triggers#thrownitempickedupbyentity
+ * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
+ */
 @Serializable
 data class ThrownItemPickedUpByEntity(
 	override var name: String,
@@ -13,14 +19,17 @@ data class ThrownItemPickedUpByEntity(
 	var item: ItemStack? = null,
 ) : AdvancementTriggerCondition()
 
+/** Add a `thrownItemPickedUpByEntity` criterion, triggered when a thrown item is picked up by an entity. */
 fun AdvancementCriteria.thrownItemPickedUpByEntity(name: String, block: ThrownItemPickedUpByEntity.() -> Unit = {}) {
 	criteria += ThrownItemPickedUpByEntity(name).apply(block)
 }
 
+/** Set the picker entity constraints. */
 fun ThrownItemPickedUpByEntity.entity(block: EntityOrPredicates.() -> Unit) {
 	entity = EntityOrPredicates().apply(block)
 }
 
+/** Set the item constraints. */
 fun ThrownItemPickedUpByEntity.item(block: ItemStack.() -> Unit) {
 	item = ItemStack().apply(block)
 }
