@@ -9,13 +9,18 @@ date-modified: 2024-01-08
 routeOverride: /docs/components
 ---
 
-In Minecraft, components are a new tool to play with that have a crucial role in defining and manipulating the properties of in-game items.
-The Kore library provides a comprehensive and user-friendly way to work with these components, enabling you to create custom items with
-ease. This article will guide you through the process of using components with Kore, showcasing examples and best practices.
+In Minecraft, data components are structured key–value properties used to define and store behavior and attributes. They are attached to different things:
+
+- Item components: properties that live on item stacks (e.g., `enchantments`, `food`, `attribute_modifiers`). They affect how items behave in inventories, commands, containers, etc.
+- Entity variant components: properties exposed as components for certain entity variants when represented as items or spawn eggs (e.g., `wolf/variant`, `cat/collar`). These follow the same component mechanics but target entity-specific customization.
+
+This page focuses on using item components with Kore. For the vanilla reference and exhaustive definitions, see the Minecraft Wiki’s Data component format (`https://minecraft.wiki/w/Data_component_format`).
+
+The Kore library provides a comprehensive and user-friendly way to work with these components, enabling you to create custom items with ease. This article will guide you through the process of using components with Kore, showcasing examples and best practices.
 
 ## Creating Custom Items with Components
 
-Let's delve into creating custom items with various components using Kore. Below are examples of how to define and manipulate item
+Let's dive into creating custom items with various components using Kore. Below are examples of how to define and manipulate item
 properties such as attribute modifiers, enchantments, and more.
 
 ### Attribute Modifiers
@@ -167,6 +172,78 @@ give(self(), customStone)
 
 This example creates a custom stone item with a special name "Special Stone" in aqua color and gives it to the player using the `/give`
 command.
+
+### Full list of Item components
+
+Below is an alphabetical list of all item component helpers available in Kore. The names match the DSL functions you call inside an `Items.* { }` builder.
+
+- `attributeModifiers(..)`
+- `bannerPatterns(..)`
+- `baseColor(..)`
+- `bees { .. }`
+- `blockEntityData(..)`
+- `blockState(..)`
+- `bucketEntityData(..)`
+- `bundleContents(..)` / `bundleContent(..)`
+- `canBreak(..)`
+- `canPlaceOn(..)`
+- `chargedProjectiles(..)` / `chargedProjectile(..)`
+- `consumable(..) { .. }`
+- `container(..)` / `container { .. }`
+- `containerLoot(..)`
+- `customData(..)`
+- `customModelData(..)`
+- `customName(..)`
+- `damage(..)`
+- `damageResistant(..)`
+- `deathProtection(..)`
+- `debugStickState(..)`
+- `dyedColor(..)`
+- `enchantable(..)`
+- `enchantmentGlintOverride(..)`
+- `enchantments(..)`
+- `entityData(..)`
+- `equippable(..)`
+- `fireworkExplosion(..)`
+- `fireworks(..)`
+- `food(..)`
+- `glider()`
+- `hideAdditionalTooltip()`
+- `hideTooltip()`
+- `instrument(..)`
+- `intangibleProjectile()`
+- `itemModel(..)`
+- `itemName(..)`
+- `jukeboxPlayable(..)`
+- `lock(..)`
+- `lodestoneTarget(..)`
+- `lore(..)` / `lores { .. }`
+- `mapColor(..)`
+- `mapDecorations(..)`
+- `mapId(..)`
+- `maxDamage(..)`
+- `maxStackSize(..)`
+- `noteBlockSound(..)`
+- `ominousBottleAmplifier(..)`
+- `potDecorations(..)`
+- `potionContents(..)`
+- `potionDurationScale(..)`
+- `profile(..)`
+- `rarity(..)`
+- `recipes(..)`
+- `repairable(..)`
+- `repairCost(..)`
+- `storedEnchantments(..)`
+- `suspiciousStewEffectsComponent(..)`
+- `tool { .. }`
+- `tooltipStyle(..)`
+- `trim(..)`
+- `unbreakable(..)`
+- `useCooldown(..)`
+- `useRemainder(..)`
+- `weapon(..)`
+- `writableBookContent(..)`
+- `writtenBookContent(..)`
 
 ## Custom Component
 
