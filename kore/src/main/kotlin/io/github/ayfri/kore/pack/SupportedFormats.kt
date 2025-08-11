@@ -13,10 +13,14 @@ import kotlinx.serialization.encoding.encodeStructure
 import kotlinx.serialization.json.*
 
 /**
- * Serializes as follows:
- * If `number` is not null, serializes as `number`.
- * If `list` is not empty, serializes as `list`.
- * Else serializes as `{"min_inclusive": minInclusive, "max_inclusive": maxInclusive}`.
+ * Represents the supported pack formats for a Minecraft data pack or resource pack.
+ *
+ * Serialization rules:
+ * - If `number` is not null, serializes as a single integer (the pack format).
+ * - If `list` is not empty, serializes as a list of integers (multiple supported formats).
+ * - Otherwise, serializes as an object with `"min_inclusive"` and `"max_inclusive"` properties, representing a supported range.
+ *
+ * JSON format reference: https://minecraft.wiki/w/Pack_format
  */
 @Serializable(with = SupportedFormats.Companion.SupportedFormatsSerializer::class)
 data class SupportedFormats(
@@ -25,6 +29,7 @@ data class SupportedFormats(
 	var minInclusive: Int? = null,
 	var maxInclusive: Int? = null,
 ) {
+	/** Checks if the given value is in the supported formats. */
 	fun isInRange(value: Int) = when {
 		number != null -> value == number
 		list != null -> value in list!!
@@ -32,6 +37,7 @@ data class SupportedFormats(
 		else -> false
 	}
 
+	/** Checks if the given range is in the supported formats. */
 	fun isInRange(value: IntRange) = when {
 		number != null -> value.first == number && value.last == number
 		list != null -> value.all { it in list!! }
@@ -39,6 +45,7 @@ data class SupportedFormats(
 		else -> false
 	}
 
+	/** Checks if the given supported formats are compatible. */
 	fun isCompatibleWith(other: SupportedFormats) = when {
 		number != null && other.number != null -> number == other.number
 		list != null && other.list != null -> list!!.intersect(other.list!!.toSet()).isNotEmpty()

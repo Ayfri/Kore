@@ -5,8 +5,8 @@ import kotlinx.serialization.Serializable
 /**
  * Represents a filtered block.
  *
- * @param namespace The namespace of the filtered block.
- * @param path The path of the filtered block.
+ * @param namespace The namespace of the filtered block, can be a Regex or a string.
+ * @param path The path of the filtered block, can be a Regex or a string.
  */
 @Serializable
 data class FilteredBlock(
