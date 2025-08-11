@@ -12,7 +12,11 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
 /**
- * Defines a Minecraft loot table and how it is serialized by Kore.
+ * Data-driven loot table definition.
+ *
+ * Loot tables control what items are generated in contexts like chests, entities, fishing,
+ * and block drops. Configure pools, entries and conditions, and optionally apply global item
+ * modifier functions to post-process the generated items.
  *
  * Docs: https://kore.ayfri.com/docs/loot-tables
  * Minecraft Wiki: https://minecraft.wiki/w/Loot_table
@@ -30,9 +34,10 @@ data class LootTable(
 }
 
 /**
- * Create and register a new loot table in this [DataPack].
+ * Creates a loot table using a builder block.
  *
- * Docs: https://kore.ayfri.com/docs/loot-tables
+ * Produces `data/<namespace>/loot_table/<fileName>.json`. Use the DSL to add pools and
+ * table-wide item modifier functions.
  */
 fun DataPack.lootTable(fileName: String = "loot_table", init: LootTable.() -> Unit = {}): LootTableArgument {
 	val lootTable = LootTable(fileName).apply(init)

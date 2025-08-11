@@ -30,6 +30,11 @@ data class TestInstanceFeature(
  * The generated JSON file will be placed in the `test_instance` registry of the datapack,
  * making it available for execution via the `/test` command or automated test runs.
  *
+ * Produces `data/<namespace>/test_instance/<fileName>.json`.
+ *
+ * Docs: https://kore.ayfri.com/docs/test-features
+ * Minecraft Wiki: https://minecraft.wiki/w/GameTest
+ *
  * @param fileName The name of the test instance file (becomes the test identifier)
  * @param environment The test environment that provides execution context and preconditions
  * @param maxTicks Maximum number of game ticks before the test times out

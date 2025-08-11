@@ -24,13 +24,14 @@ import kotlinx.serialization.serializer
 typealias ItemModifierAsList = @Serializable(with = ItemModifier.Companion.ItemModifierAsListSerializer::class) ItemModifier
 
 /**
- * Container for a list of item functions (vanilla "loot functions").
+ * Data-driven container for loot/item functions applied to items.
  *
- * The instance serialises to a JSON array matching the vanilla item-modifier format. Each
- * entry is a distinct function (e.g. `set_components`, `set_lore`, `exploration_map`, …).
+ * Item modifiers are ordered lists of functions used by loot tables and commands to transform
+ * items (set components, set lore, enchant, map exploration data, etc.). Kore serializes this
+ * as the vanilla JSON array format expected by Minecraft.
  *
- * High-level overview and examples: https://kore.ayfri.com/docs/item-modifiers
- * See also: https://minecraft.wiki/w/Item_modifier
+ * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Minecraft Wiki: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable
 data class ItemModifier(

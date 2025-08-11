@@ -17,10 +17,21 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
 /**
- * Defines a Minecraft advancement and how it is serialized by Kore.
+ * Data-driven advancement definition.
  *
+ * Advancements are in-game goals with criteria and optional display properties. They can form trees
+ * (via `parent`), award rewards on completion, and control how progress is tracked (requirements).
+ * Use criteria to attach triggers and predicate conditions.
+ *
+ * JSON format reference: https://minecraft.wiki/w/Advancement_definition
  * Docs: https://kore.ayfri.com/docs/advancements
- * Minecraft Wiki: https://minecraft.wiki/w/Advancement
+ *
+ * @param display - The display properties for the advancement.
+ * @param parent - The parent advancement for this advancement.
+ * @param criteria - The criteria for the advancement.
+ * @param requirements - The requirements for the advancement.
+ * @param rewards - The rewards for the advancement.
+ * @param sendsTelemetryEvent - Whether to send a telemetry event when the advancement is completed.
  */
 @Serializable
 data class Advancement internal constructor(
@@ -37,7 +48,11 @@ data class Advancement internal constructor(
 }
 
 /**
- * Create and register a new advancement in this [DataPack].
+ * Creates an advancement using a builder block.
+ *
+ * Configure display, parent, criteria, requirements and rewards in the builder.
+ *
+ * Produces `data/<namespace>/advancement/<fileName>.json`.
  *
  * Docs: https://kore.ayfri.com/docs/advancements
  */

@@ -15,6 +15,19 @@ import kotlinx.serialization.serializer
 
 typealias PredicateAsList = @Serializable(Predicate.Companion.PredicateAsListSerializer::class) Predicate
 
+/**
+ * Data-driven predicate definition for Minecraft Java Edition.
+ *
+ * A predicate is a JSON structure used in data packs to check conditions in the world,
+ * returning pass or fail. Predicates are used in commands, loot tables, advancements,
+ * and other data-driven features to filter or trigger actions based on game state.
+ *
+ * Kore serializes predicates as either a single object or an array of conditions,
+ * matching the vanilla format. See the Minecraft Wiki for the full JSON structure and usage.
+ *
+ * Docs: https://kore.ayfri.com/docs/Predicates.html
+ * Minecraft Wiki: https://minecraft.wiki/w/Predicate
+ */
 @Serializable
 data class Predicate(
 	override var fileName: String = "predicate",
@@ -37,6 +50,14 @@ data class Predicate(
 	}
 }
 
+/**
+ * Create and register a predicate in this [DataPack].
+ *
+ * Produces `data/<namespace>/predicate/<fileName>.json`.
+ *
+ * Docs: https://kore.ayfri.com/docs/Predicates.html
+ * Minecraft Wiki: https://minecraft.wiki/w/Predicate
+ */
 fun DataPack.predicate(fileName: String = "predicate", init: Predicate.() -> Unit = {}): PredicateArgument {
 	val predicate = Predicate(fileName).apply(init)
 	predicates += predicate

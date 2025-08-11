@@ -18,6 +18,15 @@ import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.memberFunctions
 
+/**
+ * Data-driven tag definition for Minecraft Java Edition.
+ *
+ * A tag is a JSON structure used in data packs to group items, blocks, entities, etc.
+ * It can be used in commands, loot tables, advancements, and other data-driven features
+ * to filter or trigger actions based on game state.
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Tag
+ */
 @Serializable(with = Tag.Companion.TagSerializer::class)
 data class Tag<out T : TaggedResourceLocationArgument>(
 	@Transient
@@ -105,6 +114,14 @@ data class Tag<out T : TaggedResourceLocationArgument>(
 	}
 }
 
+/**
+ * Create and register a tag in this [DataPack]. The type parameter [T] selects the tag registry
+ * (e.g. `BlockTagArgument`, `ItemTagArgument`, etc.).
+ *
+ * Produces `data/<namespace>/tags/<type>/<fileName>.json`.
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Tag
+ */
 inline fun <reified T : TaggedResourceLocationArgument> DataPack.tag(
 	fileName: String = "tag",
 	type: String = "",
@@ -122,6 +139,13 @@ inline fun <reified T : TaggedResourceLocationArgument> DataPack.tag(
 }
 
 @JvmName("tagUntyped")
+/**
+ * Create and register a tag in this [DataPack].
+ *
+ * Untyped variant of [tag] when the registry type is decided at call site.
+ *
+ * Produces `data/<namespace>/tags/<type>/<fileName>.json`.
+ */
 inline fun DataPack.tag(
 	fileName: String = "tag",
 	type: String = "",
@@ -130,6 +154,9 @@ inline fun DataPack.tag(
 	block: Tag<TaggedResourceLocationArgument>.() -> Unit = {},
 ) = tag<TaggedResourceLocationArgument>(fileName, type, namespace, replace, block)
 
+/**
+ * Add entries to an existing tag, or create it if missing.
+ */
 inline fun <reified T : TaggedResourceLocationArgument> DataPack.addToTag(
 	fileName: String = "tag",
 	type: String = "",
@@ -149,6 +176,11 @@ inline fun <reified T : TaggedResourceLocationArgument> DataPack.addToTag(
 }
 
 @JvmName("addToTagUntyped")
+/**
+ * Untyped variant of [addToTag].
+ *
+ * Produces `data/<namespace>/tags/<type>/<fileName>.json`.
+ */
 inline fun DataPack.addToTag(
 	fileName: String = "tag",
 	type: String = "",
