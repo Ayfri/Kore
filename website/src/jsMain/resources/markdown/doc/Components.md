@@ -95,6 +95,8 @@ val fireworksTest = Items.FIREWORK_ROCKET {
 }
 ```
 
+See how to set custom colors in the [Colors](./colors) article.
+
 ### Custom Block Data
 
 You can define custom properties for blocks using block entity data. Here's an example of adding custom data to a bee nest block:

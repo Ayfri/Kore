@@ -54,6 +54,8 @@ val plainText = textComponent("Hello, world!") {
 In-game output:<br>
 ![Simple Hello World in bold red](/doc/chat-components/hello-world.png)
 
+See how to set custom colors in the [Colors](./colors) article.
+
 ### Combined Components
 
 Components can be combined using the `+` operator, use the `text` function to create a simple text component and not a `ChatComponents`.
