@@ -258,6 +258,10 @@ function("test") {
 }
 ```
 
+### Pairing with Inventory Manager
+
+Predicates excel at validating complex item properties. When you need to both validate and actively manage inventories (e.g., keep a GUI slot populated with an item matching specific components), use them alongside the [Inventory Manager](./helpers/inventory-manager).
+
 ## Item Predicates
 
 You can also create predicates for items with enchantments:

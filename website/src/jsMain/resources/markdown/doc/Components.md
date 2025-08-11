@@ -247,6 +247,10 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 - `writableBookContent(..)`
 - `writtenBookContent(..)`
 
+## Works great with Inventory Manager
+
+If you build rich items with components and want to enforce them in player GUIs or chest slots, pair them with the [Inventory Manager](./helpers/inventory-manager). It lets you keep specific items in slots, react to takes, and clean up other slots while preserving all component data.
+
 ## Custom Component
 
 You can create custom components by extending the `CustomComponent` class. Here's an example of a custom component that adds a custom
