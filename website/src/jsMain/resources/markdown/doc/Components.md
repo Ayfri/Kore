@@ -251,6 +251,10 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 
 If you build rich items with components and want to enforce them in player GUIs or chest slots, pair them with the [Inventory Manager](./helpers/inventory-manager). It lets you keep specific items in slots, react to takes, and clean up other slots while preserving all component data.
 
+## Patch items
+
+When you need to patch components on existing stacks (set name/lore, toggle tooltips, edit container contents, etc.) at runtime, use [Item Modifiers](./item-modifiers). Kore maps the vanilla functions like `set_components`, `set_contents`, `set_fireworks`, and more.
+
 ## Custom Component
 
 You can create custom components by extending the `CustomComponent` class. Here's an example of a custom component that adds a custom
