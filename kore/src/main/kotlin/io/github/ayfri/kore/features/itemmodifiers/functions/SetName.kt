@@ -9,6 +9,7 @@ import io.github.ayfri.kore.features.predicates.PredicateAsList
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
+/** Target for `set_name`: item display name or custom name. */
 @Serializable(with = SetNameTarget.Companion.SetNameTargetSerializer::class)
 enum class SetNameTarget {
 	CUSTOM_NAME,
@@ -19,6 +20,13 @@ enum class SetNameTarget {
 	}
 }
 
+/**
+ * Sets the item name. Mirrors `minecraft:set_name`. You can target the item display name
+ * or the `custom_name` component and optionally resolve from an entity context.
+ *
+ * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * See also: https://minecraft.wiki/w/Item_modifier
+ */
 @Serializable
 data class SetName(
 	override var conditions: PredicateAsList? = null,
@@ -27,6 +35,7 @@ data class SetName(
 	var target: SetNameTarget? = null,
 ) : ItemFunction()
 
+/** Add a `set_name` step with a plain string converted to chat components. */
 fun ItemModifier.setName(
 	name: String,
 	color: Color? = null,
@@ -36,6 +45,7 @@ fun ItemModifier.setName(
 ) =
 	SetName(entity = entity, name = textComponent(name, color, componentBlock)).apply(block).also { modifiers += it }
 
+/** Add a `set_name` step from an existing component. */
 fun ItemModifier.setName(name: ChatComponent, entity: Source? = null, block: SetName.() -> Unit = {}) {
 	modifiers += SetName(entity = entity, name = ChatComponents(name)).apply(block)
 }

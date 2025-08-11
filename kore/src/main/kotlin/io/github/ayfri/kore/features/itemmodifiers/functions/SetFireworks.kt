@@ -8,6 +8,7 @@ import io.github.ayfri.kore.features.itemmodifiers.types.ModeHandler
 import io.github.ayfri.kore.features.predicates.PredicateAsList
 import kotlinx.serialization.Serializable
 
+/** Holder for the explosion list with list-operation metadata (mode, offset, size). */
 @Serializable
 data class SetFireworksExplosions(
 	var values: List<FireworkExplosionComponent> = emptyList(),
@@ -22,6 +23,13 @@ data class SetFireworksExplosions(
 	override var size: Int? = null
 }
 
+/**
+ * Replaces/edits the firework explosions and flight duration on a firework item.
+ * Mirrors `minecraft:set_fireworks`.
+ *
+ * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * See also: https://minecraft.wiki/w/Item_modifier
+ */
 @Serializable
 data class SetFireworks(
 	override var conditions: PredicateAsList? = null,
@@ -29,6 +37,7 @@ data class SetFireworks(
 	var explosions: SetFireworksExplosions? = null,
 ) : ItemFunction()
 
+/** Add a `set_fireworks` step. */
 fun ItemModifier.setFireworks(
 	flightDuration: Int? = null,
 	explosions: List<FireworkExplosionComponent>? = null,
@@ -37,10 +46,12 @@ fun ItemModifier.setFireworks(
 	modifiers += it.apply(block)
 }
 
+/** Configure the explosions list and its mode/offset/size. */
 fun SetFireworks.explosions(block: SetFireworksExplosions.() -> Unit) = apply {
 	explosions = SetFireworksExplosions().apply(block)
 }
 
+/** Append one explosion entry. */
 fun SetFireworksExplosions.explosion(shape: FireworkExplosionShape, block: FireworkExplosionComponent.() -> Unit) = apply {
 	values += FireworkExplosionComponent(shape).apply(block)
 }

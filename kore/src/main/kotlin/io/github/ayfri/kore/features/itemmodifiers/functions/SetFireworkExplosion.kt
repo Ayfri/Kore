@@ -6,6 +6,12 @@ import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.PredicateAsList
 import kotlinx.serialization.Serializable
 
+/**
+ * Appends a single firework explosion to the item's firework component. Mirrors `minecraft:set_firework_explosion`.
+ *
+ * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * See also: https://minecraft.wiki/w/Item_modifier
+ */
 @Serializable
 data class SetFireworkExplosion(
 	override var conditions: PredicateAsList? = null,
@@ -16,6 +22,7 @@ data class SetFireworkExplosion(
 	var hasFlicker: Boolean? = null,
 ) : ItemFunction()
 
+/** Add a `set_firework_explosion` step. */
 fun ItemModifier.setFireworkExplosion(shape: FireworkExplosionShape, block: SetFireworkExplosion.() -> Unit = {}) {
 	modifiers += SetFireworkExplosion(shape = shape).apply(block)
 }

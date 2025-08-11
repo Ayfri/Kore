@@ -7,6 +7,15 @@ import io.github.ayfri.kore.features.itemmodifiers.types.ListOperation
 import io.github.ayfri.kore.features.predicates.PredicateAsList
 import kotlinx.serialization.Serializable
 
+/**
+ * Edits the `custom_model_data` lists on an item. Each list supports independent list operations
+ * via [ListOperation] with modes like REPLACE_ALL/APPEND/INSERT.
+ *
+ * Maps to vanilla `minecraft:set_custom_model_data`.
+ *
+ * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * See also: https://minecraft.wiki/w/Item_modifier
+ */
 @Serializable
 data class SetCustomModelData(
 	override var conditions: PredicateAsList? = null,
@@ -16,6 +25,7 @@ data class SetCustomModelData(
 	var strings: ListOperation<String>? = null,
 ) : ItemFunction()
 
+/** Add a `set_custom_model_data` step to this modifier. */
 fun ItemModifier.setCustomModelData(
 	colors: List<Color>? = null,
 	flags: List<Boolean>? = null,

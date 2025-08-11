@@ -11,6 +11,12 @@ import io.github.ayfri.kore.features.itemmodifiers.types.ModeHandler
 import io.github.ayfri.kore.features.predicates.PredicateAsList
 import kotlinx.serialization.Serializable
 
+/**
+ * Sets the pages of a written book. Mirrors `minecraft:set_written_book_pages`.
+ *
+ * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * See also: https://minecraft.wiki/w/Item_modifier
+ */
 @Serializable
 data class SetWrittenBookPages(
 	override var conditions: PredicateAsList? = null,
@@ -26,6 +32,7 @@ data class SetWrittenBookPages(
 	override var size: Int? = null
 }
 
+/** Add a `set_written_book_pages` step. */
 fun ItemModifier.setWrittenBookPages(
 	pages: List<WrittenPage> = emptyList(),
 	block: SetWrittenBookPages.() -> Unit = {},
@@ -33,10 +40,12 @@ fun ItemModifier.setWrittenBookPages(
 	this.modifiers += it.apply(block)
 }
 
+/** Append a single page to the builder list. */
 fun SetWrittenBookPages.page(text: ChatComponents, filtered: ChatComponents? = null) = apply {
 	pages += WrittenPage(text, filtered)
 }
 
+/** Append a single page to the builder list. */
 fun SetWrittenBookPages.page(text: String, color: Color? = null, filtered: String? = null, textBlock: PlainTextComponent.() -> Unit = {}) =
 	apply {
 		pages += WrittenPage(textComponent(text, color, textBlock), filtered?.let(::textComponent))

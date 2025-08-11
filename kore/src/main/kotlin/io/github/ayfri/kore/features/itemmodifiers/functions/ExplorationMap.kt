@@ -7,6 +7,12 @@ import io.github.ayfri.kore.features.predicates.PredicateAsList
 import io.github.ayfri.kore.generated.Tags
 import kotlinx.serialization.Serializable
 
+/**
+ * Converts an empty map into an explorer map leading to a nearby structure. Mirrors
+ * vanilla `minecraft:exploration_map`.
+ *
+ * Docs: https://kore.ayfri.com/docs/item-modifiers
+ */
 @Serializable
 data class ExplorationMap(
 	override var conditions: PredicateAsList? = null,
