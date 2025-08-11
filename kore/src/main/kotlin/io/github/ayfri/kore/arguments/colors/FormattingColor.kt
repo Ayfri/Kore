@@ -3,6 +3,12 @@ package io.github.ayfri.kore.arguments.colors
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
+/**
+ * Vanilla named chat/formatting colors. Serialized as lowercase strings (e.g. "red").
+ * Commonly used in chat components, teams, scoreboard criteria, and item base colors.
+ *
+ * See documentation: https://kore.ayfri.com/docs/colors
+ */
 @Serializable(with = FormattingColor.Companion.FormattingColorSerializer::class)
 enum class FormattingColor : NamedColor {
 	AQUA,

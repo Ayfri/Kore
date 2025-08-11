@@ -8,6 +8,14 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlin.math.roundToInt
 
+/**
+ * 24-bit color value (red/green/blue), commonly serialized as a string "#rrggbb".
+ *
+ * Alternate serializers:
+ * - [Companion.ColorAsDecimalSerializer] emits an `INT` 0xRRGGBB when Minecraft expects a decimal color.
+ *
+ * See documentation: https://kore.ayfri.com/docs/colors
+ */
 @Serializable(RGB.Companion.ColorSerializer::class)
 data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 	private constructor(hex: String) : this(
@@ -88,6 +96,7 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 	override fun toString() = hexWithHash
 
 	companion object {
+		/** Builds an [RGB] from a 0xRRGGBB decimal integer. */
 		fun fromDecimal(decimal: Int): RGB {
 			val red = decimal shr 16 and 0xFF
 			val green = decimal shr 8 and 0xFF
@@ -102,6 +111,7 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 			(array[2] * 255).roundToInt().coerceIn(0, 255),
 		)
 
+		/** Builds an [RGB] from a hex string with or without leading '#'. */
 		fun fromHex(hex: String) = RGB(hex.removePrefix("#"))
 
 		fun fromNamedColor(color: NamedColor) = when (color) {
@@ -125,13 +135,15 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 			FormattingColor.YELLOW, BossBarColor.YELLOW -> RGB(255, 255, 85)
 		}
 
-		object ColorSerializer : KSerializer<RGB> {
+		/** Serializer that encodes to a string "#rrggbb". */
+		data object ColorSerializer : KSerializer<RGB> {
 			override val descriptor = PrimitiveSerialDescriptor("RGB", PrimitiveKind.STRING)
 			override fun serialize(encoder: Encoder, value: RGB) = encoder.encodeString(value.hexWithHash)
 			override fun deserialize(decoder: Decoder) = fromHex(decoder.decodeString())
 		}
 
-		object ColorAsDecimalSerializer : KSerializer<RGB> {
+		/** Serializer that encodes to an INT 0xRRGGBB (used in components, particles, worldgen, etc.). */
+		data object ColorAsDecimalSerializer : KSerializer<RGB> {
 			override val descriptor = PrimitiveSerialDescriptor("RGB", PrimitiveKind.INT)
 			override fun serialize(encoder: Encoder, value: RGB) = encoder.encodeInt(value.red shl 16 or (value.green shl 8) or value.blue)
 			override fun deserialize(decoder: Decoder) = fromDecimal(decoder.decodeInt())

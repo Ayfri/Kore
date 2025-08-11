@@ -9,10 +9,22 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
+/**
+ * Unified color abstraction used throughout Kore.
+ *
+ * Implementations cover named colors (chat/UI), numeric colors (RGB/ARGB), and dye colors via helpers.
+ *
+ * See documentation: https://kore.ayfri.com/docs/colors
+ */
 @Serializable(Color.Companion.ColorSerializer::class)
 interface Color : Argument {
 	override fun asString() = toString()
 
+	/**
+	 * Converts any color to an [RGB] instance.
+	 * - [NamedColor] is mapped using vanilla-compatible tints.
+	 * - [ARGB] drops the alpha component.
+	 */
 	fun toRGB() = when (this) {
 		is NamedColor -> RGB.fromNamedColor(this)
 		is RGB -> this
@@ -40,7 +52,13 @@ interface Color : Argument {
 		val WHITE = FormattingColor.WHITE
 		val YELLOW = FormattingColor.YELLOW
 
-		object ColorSerializer : KSerializer<Color> {
+		/**
+		 * Variant serializer that emits the correct format automatically:
+		 * - [FormattingColor]/[BossBarColor] → lowercase name (e.g. "red").
+		 * - [RGB] → string "#rrggbb".
+		 * - [ARGB] → string "#aarrggbb".
+		 */
+		data object ColorSerializer : KSerializer<Color> {
 			override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Color", PrimitiveKind.STRING)
 
 			override fun deserialize(decoder: Decoder) = error("Color deserialization is not supported")
@@ -56,19 +74,28 @@ interface Color : Argument {
 	}
 }
 
+/** Creates an [RGB] from components 0..255. */
 fun color(red: Int, green: Int, blue: Int) = RGB(red, green, blue)
+/** Creates an [RGB] from a hex string, accepts with or without '#'. */
 fun color(hex: String) = RGB.fromHex(hex)
+/** Creates an [RGB] from a decimal 0xRRGGBB. */
 fun color(decimal: Int) = RGB.fromDecimal(decimal)
+/** Creates an [ARGB] from components 0..255. */
 fun color(red: Int, green: Int, blue: Int, alpha: Int) = ARGB(alpha, red, green, blue)
 
+/** Alias for [color] RGB factory. */
 fun rgb(red: Int, green: Int, blue: Int) = RGB(red, green, blue)
 fun rgb(hex: String) = RGB.fromHex(hex)
 fun rgb(decimal: Int) = RGB.fromDecimal(decimal)
 
+/** Alias for [color] ARGB factory. */
 fun argb(alpha: Int, red: Int, green: Int, blue: Int) = ARGB(alpha, red, green, blue)
 fun argb(hex: String) = ARGB.fromHex(hex)
 
+/** Weighted mix of two RGB colors. */
 fun mix(color1: RGB, weight1: Double, color2: RGB, weight2: Double) = color1 * weight1 + color2 * weight2
+/** Weighted mix of two ARGB colors. */
 fun mix(color1: ARGB, weight1: Double, color2: ARGB, weight2: Double) = color1 * weight1 + color2 * weight2
 
+/** Converts a [NamedColor] to [ARGB] with full alpha. */
 fun NamedColor.toARGB() = ARGB.fromNamedColor(this)

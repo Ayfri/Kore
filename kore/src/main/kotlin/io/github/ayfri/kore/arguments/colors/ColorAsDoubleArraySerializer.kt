@@ -5,6 +5,12 @@ import kotlinx.serialization.builtins.DoubleArraySerializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
+/**
+ * Serializes a [Color] as a `[r, g, b]` double-array with values in 0.0..1.0.
+ *
+ * Used by some particle effect payloads (e.g., enchantment-related) that expect normalized colors.
+ * See documentation: https://kore.ayfri.com/docs/colors
+ */
 data object ColorAsDoubleArraySerializer : KSerializer<Color> {
 	override val descriptor = DoubleArraySerializer().descriptor
 

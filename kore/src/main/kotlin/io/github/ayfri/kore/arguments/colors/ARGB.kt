@@ -3,6 +3,13 @@ package io.github.ayfri.kore.arguments.colors
 import io.github.ayfri.kore.serializers.ToStringSerializer
 import kotlinx.serialization.Serializable
 
+/**
+ * 32-bit color value with alpha (alpha/red/green/blue), string form "#aarrggbb".
+ *
+ * Encoded using [ToStringSerializer] (hex string). When alpha is not needed, prefer [RGB].
+ *
+ * See documentation: https://kore.ayfri.com/docs/colors
+ */
 @Serializable(ARGB.Companion.ARGBSerializer::class)
 data class ARGB(var alpha: Int, var red: Int, var green: Int, var blue: Int) : Color {
 	private constructor(hex: String) : this(
@@ -91,6 +98,7 @@ data class ARGB(var alpha: Int, var red: Int, var green: Int, var blue: Int) : C
 	override fun toString() = hexWithHash
 
 	companion object {
+		/** Builds an [ARGB] from a hex string with or without leading '#'. */
 		fun fromHex(hex: String) = ARGB(hex.removePrefix("#"))
 		fun fromNamedColor(color: NamedColor) = RGB.fromNamedColor(color).toARGB()
 

@@ -7,6 +7,12 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
+/**
+ * Serializes a [Color] as a decimal INT 0xRRGGBB.
+ *
+ * Used where Minecraft expects numeric colors (components like dyed color, fireworks, biome colors, particles via commands).
+ * See documentation: https://kore.ayfri.com/docs/colors
+ */
 data object ColorAsDecimalSerializer : KSerializer<Color> {
 	override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Color", PrimitiveKind.STRING)
 

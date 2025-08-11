@@ -3,6 +3,11 @@ package io.github.ayfri.kore.arguments.colors
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
+/**
+ * Named bossbar colors. Serialized as lowercase strings (e.g. "yellow").
+ *
+ * See documentation: https://kore.ayfri.com/docs/colors
+ */
 @Serializable(with = BossBarColor.Companion.BossBarColorSerializer::class)
 enum class BossBarColor : NamedColor {
 	BLUE,
