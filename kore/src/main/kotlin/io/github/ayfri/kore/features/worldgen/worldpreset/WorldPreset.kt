@@ -8,6 +8,14 @@ import io.github.ayfri.kore.generated.arguments.worldgen.types.WorldPresetArgume
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
+/**
+ * Data-driven world preset aggregating dimensions.
+ *
+ * A world preset defines the set of dimensions and their order for a single world creation option
+ * (e.g. Overworld/Nether/End trio), used by world creation UI and presets.
+ *
+ * JSON format reference: https://minecraft.wiki/w/World_preset_definition
+ */
 @Serializable
 data class WorldPreset(
 	@Transient
@@ -17,6 +25,15 @@ data class WorldPreset(
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
+/**
+ * Creates a world preset using a builder block.
+ *
+ * Use [dimension] or [dimensions] to populate the preset.
+ *
+ * Produces `data/<namespace>/worldgen/world_preset/<fileName>.json`.
+ *
+ * JSON format reference: https://minecraft.wiki/w/World_preset_definition
+ */
 fun DataPack.worldPreset(
 	fileName: String = "world_preset",
 	block: WorldPreset.() -> Unit = {},

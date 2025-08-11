@@ -7,6 +7,14 @@ import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureSetArgum
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
+/**
+ * Data-driven structure set controlling global structure placement.
+ *
+ * Groups configured structures with weights and defines high-level placement (random spread or
+ * concentric rings) across the world.
+ *
+ * JSON format reference: https://minecraft.wiki/w/Structure_set
+ */
 @Serializable
 data class StructureSet(
 	@Transient
@@ -17,6 +25,13 @@ data class StructureSet(
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
+/**
+ * Creates a structure set using a builder block (defaults to random-spread placement).
+ *
+ * Produces `data/<namespace>/worldgen/structure_set/<fileName>.json`.
+ *
+ * JSON format reference: https://minecraft.wiki/w/Structure_set
+ */
 fun DataPack.structureSet(
 	fileName: String = "structure_set",
 	init: StructureSet.() -> Unit = {},
@@ -26,10 +41,18 @@ fun DataPack.structureSet(
 	return StructureSetArgument(fileName, structureSet.namespace ?: name)
 }
 
+/** Adds a structure to the structure set. */
 fun StructureSet.structure(structure: ConfiguredStructureArgument, weight: Int = 1) = apply {
 	structures += Structure(structure, weight)
 }
 
+/**
+ * Sets the placement to concentric rings, aka rings with the same center but different radius.
+ *
+ * @param distance - The distance between the center and the first ring.
+ * @param spread - The spread of the rings.
+ * @param count - The number of rings.
+ */
 fun StructureSet.concentricRingsPlacement(
 	distance: Int = 0,
 	spread: Int = 0,
@@ -43,6 +66,13 @@ fun StructureSet.concentricRingsPlacement(
 	).apply(block)
 }
 
+/**
+ * Sets the placement to random spread.
+ *
+ * @param spreadType - The type of spread.
+ * @param spacing - The spacing between the structures.
+ * @param separation - The separation between the structures.
+ */
 fun StructureSet.randomSpreadPlacement(
 	spreadType: SpreadType? = null,
 	spacing: Int = 1,

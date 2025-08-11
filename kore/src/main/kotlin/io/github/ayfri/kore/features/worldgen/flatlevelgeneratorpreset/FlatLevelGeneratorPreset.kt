@@ -13,6 +13,14 @@ import io.github.ayfri.kore.generated.arguments.worldgen.types.FlatLevelGenerato
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
+/**
+ * Data-driven flat level generator preset.
+ *
+ * Defines the preset shown in the world creation UI for flat worlds: display item, biome,
+ * layer stack and structure overrides.
+ *
+ * JSON format reference: https://minecraft.wiki/w/World_preset_definition#Superflat_Level_Generation_Preset
+ */
 @Serializable
 data class FlatLevelGeneratorPreset(
 	@Transient
@@ -32,7 +40,11 @@ data class FlatLevelGeneratorPreset(
 }
 
 /**
- * Generates a [FlatLevelGeneratorPreset] with default values of from classic_flat preset.
+ * Creates a preset using a builder block. Defaults match the classic_flat preset.
+ *
+ * Produces `data/<namespace>/worldgen/flat_level_generator_preset/<fileName>.json`.
+ *
+ * JSON format reference: https://minecraft.wiki/w/World_preset_definition#Superflat_Level_Generation_Preset
  */
 fun DataPack.flatLevelGeneratorPreset(
 	fileName: String = "flat_level_generator_preset",
@@ -44,7 +56,11 @@ fun DataPack.flatLevelGeneratorPreset(
 }
 
 /**
- * Generates a [FlatLevelGeneratorPreset] with default values of from classic_flat preset.
+ * Creates a preset with an explicit display item; settings configured in the provided block.
+ *
+ * Produces `data/<namespace>/worldgen/flat_level_generator_preset/<fileName>.json`.
+ *
+ * JSON format reference: https://minecraft.wiki/w/World_preset_definition#Superflat_Level_Generation_Preset
  */
 fun DataPack.flatLevelGeneratorPreset(
 	fileName: String = "flat_level_generator_preset",
@@ -55,4 +71,5 @@ fun DataPack.flatLevelGeneratorPreset(
 	return FlatLevelGeneratorPresetArgument(fileName, name)
 }
 
+/** Configure the settings for the preset. */
 fun FlatLevelGeneratorPreset.settings(block: FlatGeneratorSettings.() -> Unit) = settings.apply(block)

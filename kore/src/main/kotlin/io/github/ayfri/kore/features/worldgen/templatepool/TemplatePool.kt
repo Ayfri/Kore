@@ -8,6 +8,14 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString
 
+/**
+ * Data-driven jigsaw template pool.
+ *
+ * Defines a set of structure pieces with weights and a fallback pool. Used by jigsaw placement
+ * to assemble villages, pillager outposts, and custom modular structures.
+ *
+ * JSON format reference: https://minecraft.wiki/w/Template_pool
+ */
 @Serializable
 data class TemplatePool(
 	@Transient
@@ -18,6 +26,13 @@ data class TemplatePool(
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
+/**
+ * Creates a template pool using a builder block.
+ *
+ * Produces `data/<namespace>/worldgen/template_pool/<fileName>.json`.
+ *
+ * JSON format reference: https://minecraft.wiki/w/Template_pool
+ */
 fun DataPack.templatePool(fileName: String = "template_pool", init: TemplatePool.() -> Unit = {}): TemplatePoolArgument {
 	val templatePool = TemplatePool(fileName).apply(init)
 	templatePools += templatePool

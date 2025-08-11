@@ -7,6 +7,14 @@ import io.github.ayfri.kore.generated.arguments.worldgen.types.DensityFunctionAr
 import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString
 
+/**
+ * Data-driven density function node.
+ *
+ * A density function is a composable expression graph used by the noise router to shape terrain
+ * (e.g. adding ridges, caves, erosion). This serializes the chosen function node.
+ *
+ * JSON format reference: https://minecraft.wiki/w/Density_function
+ */
 data class DensityFunction(
 	@Transient
 	override var fileName: String = "density_function",
@@ -15,6 +23,13 @@ data class DensityFunction(
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(type)
 }
 
+/**
+ * Creates a density function file wiring a specific function node.
+ *
+ * Produces `data/<namespace>/worldgen/density_function/<fileName>.json`.
+ *
+ * JSON format reference: https://minecraft.wiki/w/Density_function
+ */
 fun DataPack.densityFunction(
 	fileName: String,
 	type: DensityFunctionType,

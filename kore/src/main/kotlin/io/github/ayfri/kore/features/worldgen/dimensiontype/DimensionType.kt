@@ -14,8 +14,13 @@ import kotlinx.serialization.Transient
 import kotlinx.serialization.json.Json
 
 /**
- * Creates a new DimensionType.
- * Values are the minimal values for a dimension type, booleans have the same values as overworld.
+ * Data-driven dimension type definition.
+ *
+ * Controls fundamental world rules for a dimension: skylight, ceilings, piglin safety, respawn
+ * mechanics, coordinate scaling, ambient light, height range, infiniburn tag, and monster spawn
+ * light rules. This is referenced by a `dimension`.
+ *
+ * JSON format reference: https://minecraft.wiki/w/Dimension_type
  */
 @Serializable
 data class DimensionType(
@@ -63,8 +68,13 @@ data class DimensionType(
 }
 
 /**
- * Creates a new DimensionType.
- * Values are the minimal values for a dimension type, booleans have the same values as overworld.
+ * Creates a dimension type using a builder block.
+ *
+ * Pre-fills infiniburn with the Overworld tag; adjust fields as needed.
+ *
+ * Produces `data/<namespace>/dimension_type/<fileName>.json`.
+ *
+ * JSON format reference: https://minecraft.wiki/w/Dimension_type
  */
 fun DataPack.dimensionType(
 	fileName: String,

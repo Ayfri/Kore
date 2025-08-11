@@ -9,6 +9,14 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import io.github.ayfri.kore.features.worldgen.dimension.generator.Generator as DimensionGenerator
 
+/**
+ * Data-driven dimension definition.
+ *
+ * A dimension ties a dimension type (rules like skylight, respawn, height) to a world generator
+ * (noise/flat/debug). It represents one world (Overworld, Nether, End or a custom one).
+ *
+ * JSON format reference: https://minecraft.wiki/w/Dimension_definition
+ */
 @Serializable
 data class Dimension(
 	@Transient
@@ -20,8 +28,13 @@ data class Dimension(
 }
 
 /**
- * Creates a new Dimension with [Debug] world generator.
- * See [features.worldgen.dimension.generator.Noise] for using noise (overworld) generator.
+ * Creates a dimension using a builder block.
+ *
+ * Choose the generator with helpers like [debugGenerator], [noiseGenerator] or [flatGenerator].
+ *
+ * Produces `data/<namespace>/dimension/<fileName>.json`.
+ *
+ * JSON format reference: https://minecraft.wiki/w/Custom_dimension
  */
 fun DataPack.dimension(
 	fileName: String,
