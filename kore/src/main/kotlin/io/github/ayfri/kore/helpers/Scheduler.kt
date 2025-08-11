@@ -101,9 +101,7 @@ data class SchedulerManager(private val dp: DataPack) {
 
 	/**
 	* Add a scheduler backed by a newly generated function built from [block].
-	*
-	* The generated function is stored and scheduled according to [delay]
-	* and [period]. Returns the created [Scheduler].
+	* The generated function is stored and scheduled according to [delay] and [period]. Returns the created [Scheduler].
 	*/
 	fun addScheduler(delay: TimeNumber? = null, period: TimeNumber? = null, block: Function.() -> Command) =
 		Scheduler(dp.generatedFunction("scheduler_${block.hashCode()}") { block() }, delay, period).also {
@@ -178,7 +176,18 @@ data class SchedulerManager(private val dp: DataPack) {
 fun DataPack.schedulerManager() = SchedulerManager(this)
 
 /**
- * Create and configure a `SchedulerManager` for this `DataPack` and immediately
- * emit its setup function into the datapack load tag.
+ * Create and configure a `SchedulerManager` for this `DataPack` and immediately emit its setup function into the datapack load tag.
+ * Documentation: https://kore.ayfri.com/docs/helpers/scheduler
+ *
+ * Example:
+ * ```kotlin
+ * datapack {
+ *     schedulerManager {
+ *         addScheduler(period = 3.seconds) {
+ *             say("Hello")
+ *         }
+ *     }
+ * }
+ * ```
  */
 fun DataPack.schedulerManager(block: SchedulerManager.() -> Unit) = SchedulerManager(this).apply(block).run()
