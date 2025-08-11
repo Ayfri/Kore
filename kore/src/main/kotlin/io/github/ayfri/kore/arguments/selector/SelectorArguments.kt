@@ -25,23 +25,64 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
+/**
+ * Container for target selector arguments used to build Minecraft target selectors (e.g. `@p[distance=..]`).
+ * See: https://minecraft.wiki/w/Target_selectors
+ */
 @Serializable(SelectorArguments.Companion.SelectorArgumentsSerializer::class)
 data class SelectorArguments(
+	/** X coordinate for this selector. */
 	var x: Double? = null,
+	/** Y coordinate for this selector. */
 	var y: Double? = null,
+	/** Z coordinate for this selector. */
 	var z: Double? = null,
+	/**
+	 * X-axis delta for volume selection (dx).
+	 *
+	 * Selects entities whose hitboxes intersect the cuboid from (x, y, z) to (x + dx, y + dy, z + dz),
+	 * with the farthest corner offset by (1, 1, 1). If only dx is set, dy and dz default to 0.
+	 *
+	 * Example: @e[x=1,y=2,z=3,dx=4] selects entities in (1,2,3) to (5,2,3).
+	 */
 	var dx: Double? = null,
+
+	/**
+	 * Y-axis delta for volume selection (dy).
+	 *
+	 * Selects entities whose hitboxes intersect the cuboid from (x, y, z) to (x + dx, y + dy, z + dz),
+	 * with the farthest corner offset by (1, 1, 1). If only dy is set, dx and dz default to 0.
+	 *
+	 * Example: @e[x=1,y=2,z=3,dy=5] selects entities in (1,2,3) to (1,7,3).
+	 */
 	var dy: Double? = null,
+
+	/**
+	 * Z-axis delta for volume selection (dz).
+	 *
+	 * Selects entities whose hitboxes intersect the cuboid from (x, y, z) to (x + dx, y + dy, z + dz),
+	 * with the farthest corner offset by (1, 1, 1). If only dz is set, dx and dy default to 0.
+	 *
+	 * Example: @e[x=1,y=2,z=3,dz=-6] selects entities in (1,2,-3) to (1,2,4).
+	 */
 	var dz: Double? = null,
+	/** X rotation range for this selector. */
 	@SerialName("x_rotation")
 	var xRotation: FloatRangeOrFloat? = null,
+	/** Y rotation range for this selector. */
 	@SerialName("y_rotation")
 	var yRotation: FloatRangeOrFloat? = null,
+	/** Advancements filter for this selector. */
 	@Contextual var advancements: SelectorAdvancements? = null,
+	/** Distance range for this selector. */
 	var distance: Range? = null,
+	/** Limit for this selector. */
 	var limit: Int? = null,
+	/** Level range for this selector. */
 	var level: IntRangeOrInt? = null,
+	/** Scores filter for this selector. */
 	var scores: Scores<SelectorScore>? = null,
+	/** Sorting order for this selector. */
 	var sort: Sort? = null,
 	@SerialName("gamemode")
 	private var _gamemodes: MutableList<GamemodeOption> = mutableListOf(),
@@ -59,6 +100,7 @@ data class SelectorArguments(
 	private var _types: MutableList<EntityTypeOption> = mutableListOf(),
 ) {
 	@Transient
+	/** Selected `Gamemode` for this selector (maps to the `gamemode` argument). */
 	var gamemode
 		get() = (_gamemodes.firstOrNull() ?: GamemodeOption()).value
 		set(value) {
@@ -67,6 +109,7 @@ data class SelectorArguments(
 		}
 
 	@Transient
+	/** Filter by entity/player name for this selector (maps to the `name` argument). */
 	var name
 		get() = (_names.firstOrNull() ?: StringOption()).value
 		set(value) {
@@ -75,6 +118,7 @@ data class SelectorArguments(
 		}
 
 	@Transient
+	/** Filter by NBT data for this selector (maps to the `nbt` argument). */
 	var nbt
 		get() = (_nbt.firstOrNull() ?: NbtCompoundOption()).value
 		set(value) {
@@ -83,6 +127,7 @@ data class SelectorArguments(
 		}
 
 	@Transient
+	/** Filter by predicate for this selector (maps to the `predicate` argument). */
 	var predicate
 		get() = (_predicates.firstOrNull() ?: PredicateOption()).value
 		set(value) {
@@ -91,6 +136,7 @@ data class SelectorArguments(
 		}
 
 	@Transient
+	/** Filter by tag for this selector (maps to the `tag` argument). */
 	var tag
 		get() = (_tags.firstOrNull() ?: StringOption()).value
 		set(value) {
@@ -99,6 +145,7 @@ data class SelectorArguments(
 		}
 
 	@Transient
+	/** Filter by team name for this selector (maps to the `team` argument). */
 	var team
 		get() = (_teams.firstOrNull() ?: StringOption()).value
 		set(value) {
@@ -107,6 +154,7 @@ data class SelectorArguments(
 		}
 
 	@Transient
+	/** Filter by entity type for this selector (maps to the `type` argument). */
 	var type
 		get() = (_types.firstOrNull() ?: EntityTypeOption()).value
 		set(value) {
@@ -114,13 +162,19 @@ data class SelectorArguments(
 			else _types += EntityTypeOption(value)
 		}
 
+	/** Invert the next gamemode option (e.g. `!survival`). */
 	operator fun Gamemode.not() = apply { _gamemodes += GamemodeOption(null, true) }
+	/** Invert the next NBT option. */
 	operator fun NbtCompound.not() = apply { _nbt += NbtCompoundOption(null, true) }
+	/** Invert the next predicate option. */
 	operator fun PredicateArgument.not() = apply { _predicates += PredicateOption(null, true) }
+	/** Invert the next entity type option. */
 	operator fun EntityTypeArgument.not() = apply { _types += EntityTypeOption(null, true) }
 
+	/** Prefix a string with '!' to invert string-based options. */
 	operator fun String.not() = "!$this"
 
+	/** Copy all selector argument values from another instance. */
 	fun copyFrom(other: SelectorArguments) {
 		advancements = other.advancements
 		distance = other.distance
@@ -146,7 +200,7 @@ data class SelectorArguments(
 	}
 
 	companion object {
-		object SelectorArgumentsSerializer : KSerializer<SelectorArguments> {
+		data object SelectorArgumentsSerializer : KSerializer<SelectorArguments> {
 			override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("SelectorNbtData", PrimitiveKind.STRING)
 
 			override fun deserialize(decoder: Decoder) = SelectorArguments()

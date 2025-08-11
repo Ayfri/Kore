@@ -7,6 +7,11 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.jsonPrimitive
 
+/**
+ * Wrapper for advancement filters used in selectors (maps to the `advancements` selector argument).
+ *
+ * See the project documentation for advancements: [Advancements](https://kore.ayfri.com/docs/advancements).
+ */
 @Serializable(with = SelectorAdvancements.Companion.SelectorAdvancementsSerializer::class)
 data class SelectorAdvancements(val advancements: Set<Advancement> = emptySet()) {
 	companion object {
@@ -28,9 +33,13 @@ data class SelectorAdvancements(val advancements: Set<Advancement> = emptySet())
 	}
 }
 
+/**
+ * Builder helper for constructing `SelectorAdvancements` instances in a DSL style.
+ */
 class AdvancementBuilder {
 	private val advancements = mutableSetOf<Advancement>()
 
+	/** Add an advancement filter to this builder. */
 	fun advancement(
 		advancement: AdvancementArgument,
 		done: Boolean = true,
@@ -40,6 +49,7 @@ class AdvancementBuilder {
 		advancements.add(Advancement(advancement, done, criteria))
 	}
 
+	/** DSL-style invocation for an `AdvancementArgument`. */
 	operator fun <T : AdvancementArgument> T.invoke(
 		done: Boolean = true,
 		block: MutableMap<String, Boolean>.() -> Unit = {},
@@ -48,5 +58,6 @@ class AdvancementBuilder {
 		advancements.add(Advancement(this, done, criteria))
 	}
 
+	/** Build the immutable `SelectorAdvancements` value. */
 	fun build() = SelectorAdvancements(advancements)
 }

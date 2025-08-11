@@ -16,8 +16,16 @@ internal val json = Json {
 	namingStrategy = JsonNamingStrategy.SnakeCase
 }
 
+/**
+ * Represents a selector variable with optional selector arguments.
+ *
+ * Example: `Selector(SelectorType.NEAREST_PLAYER)` -> `@p`, or with arguments -> `@p[distance=..]`.
+ * See the Minecraft wiki on target selectors: [Target selectors](https://minecraft.wiki/w/Target_selectors).
+ */
 data class Selector(val base: SelectorType) {
+	/** Mutable container of selector arguments for this selector. */
 	val nbtData = SelectorArguments()
+	/** Whether this selector targets players. */
 	val isPlayer get() = base.isPlayer
 
 	override fun toString() = when {

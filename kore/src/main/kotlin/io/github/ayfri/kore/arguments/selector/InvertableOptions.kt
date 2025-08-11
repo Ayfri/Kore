@@ -12,11 +12,18 @@ import kotlinx.serialization.json.jsonPrimitive
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.StringifiedNbt
 
+/**
+ * Base class for selector options that can be inverted (prefixed with `!`).
+ *
+ * Provides consistent serialization and string rendering for inverted options.
+ */
 sealed class InvertableOption<T>(
 	val kSerializer: SerializationStrategy<T>,
 	val serializer: (T) -> String = { json.encodeToJsonElement(kSerializer, it).jsonPrimitive.content },
 ) {
+	/** The option value, or null when not set. */
 	abstract var value: T?
+	/** Whether this option is inverted (prefixed with `!`). */
 	abstract var invert: Boolean
 
 	override fun toString() = when {
