@@ -31,6 +31,7 @@ data class ProcessorList(
  * Produces `data/<namespace>/worldgen/processor_list/<fileName>.json`.
  *
  * JSON format reference: https://minecraft.wiki/w/Processor_list
+ * Docs: https://kore.ayfri.com/docs/worldgen
  */
 fun DataPack.processorList(fileName: String = "processor_list", init: ProcessorList.() -> Unit = {}): ProcessorListArgument {
 	val processorList = ProcessorList(fileName).apply(init)

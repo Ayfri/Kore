@@ -33,6 +33,7 @@ data class ConfiguredCarver(
  * Produces `data/<namespace>/worldgen/configured_carver/<fileName>.json`.
  *
  * JSON format reference: https://minecraft.wiki/w/Carver_definition
+ * Docs: https://kore.ayfri.com/docs/worldgen
  */
 fun DataPack.configuredCarver(
 	fileName: String = "configured_carver",

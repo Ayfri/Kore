@@ -45,6 +45,7 @@ data class FlatLevelGeneratorPreset(
  * Produces `data/<namespace>/worldgen/flat_level_generator_preset/<fileName>.json`.
  *
  * JSON format reference: https://minecraft.wiki/w/World_preset_definition#Superflat_Level_Generation_Preset
+ * Docs: https://kore.ayfri.com/docs/worldgen
  */
 fun DataPack.flatLevelGeneratorPreset(
 	fileName: String = "flat_level_generator_preset",

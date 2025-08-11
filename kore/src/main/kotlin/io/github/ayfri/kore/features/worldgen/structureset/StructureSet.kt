@@ -31,6 +31,7 @@ data class StructureSet(
  * Produces `data/<namespace>/worldgen/structure_set/<fileName>.json`.
  *
  * JSON format reference: https://minecraft.wiki/w/Structure_set
+ * Docs: https://kore.ayfri.com/docs/worldgen
  */
 fun DataPack.structureSet(
 	fileName: String = "structure_set",

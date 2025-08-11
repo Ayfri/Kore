@@ -29,6 +29,7 @@ data class DensityFunction(
  * Produces `data/<namespace>/worldgen/density_function/<fileName>.json`.
  *
  * JSON format reference: https://minecraft.wiki/w/Density_function
+ * Docs: https://kore.ayfri.com/docs/worldgen
  */
 fun DataPack.densityFunction(
 	fileName: String,

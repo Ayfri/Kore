@@ -14,6 +14,7 @@ import kotlinx.serialization.Transient
  * generation. Often referenced by noise settings/routers.
  *
  * JSON format reference: https://minecraft.wiki/w/Noise_router
+ * Docs: https://kore.ayfri.com/docs/worldgen
  */
 @Serializable
 data class Noise(

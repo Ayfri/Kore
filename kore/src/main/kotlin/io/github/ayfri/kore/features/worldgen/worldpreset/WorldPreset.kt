@@ -33,6 +33,7 @@ data class WorldPreset(
  * Produces `data/<namespace>/worldgen/world_preset/<fileName>.json`.
  *
  * JSON format reference: https://minecraft.wiki/w/World_preset_definition
+ * Docs: https://kore.ayfri.com/docs/worldgen
  */
 fun DataPack.worldPreset(
 	fileName: String = "world_preset",
