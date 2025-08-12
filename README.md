@@ -21,8 +21,9 @@
 	<img src="kore typography 1200x600.png" title="kore typography" alt="kore typography"/>
 </p>
 
-This library is compatible and made for Minecraft Java 1.20 and later versions, I don't think I will support older versions nor Bedrock
-Edition.<br>
+**Check the [website](https://kore.ayfri.com) for the latest documentation.**
+
+This library is compatible and made for Minecraft Java 1.20 and later versions, I don't think I will support older versions nor Bedrock Edition.<br>
 You can still create your own fork and make it compatible with older versions.<br>
 I will accept pull requests for older versions on a separate branch.
 
@@ -44,12 +45,12 @@ With Groovy DSL:
 implementation 'io.github.ayfri.kore:kore:VERSION'
 ```
 
-Then activate the `-Xcontext-receivers` compiler option:
+Then activate the `-Xcontext-parameters` compiler option:
 
 ```kotlin
 kotlin {
 	compilerOptions {
-		freeCompilerArgs.add("-Xcontext-receivers")
+		freeCompilerArgs.add("-Xcontext-parameters")
 	}
 }
 ```
@@ -140,22 +141,64 @@ _How to add your project to the list ?_
 -   Datapack generation as files or zips or jar files for mod-loaders.
 -   Function generation.
 -   All commands with all subcommands and multiple syntaxes.
--   Generation of all JSON-based features of Minecraft (Advancements, Loot Tables, Recipes, ...).
+-   Generation of all data-driven features of Minecraft (Advancements, Loot Tables, Recipes, ...).
 -   Selectors.
 -   NBT tags.
 -   Chat components.
+-   World generation.
 -   Lists for all registries (Blocks, Items, Entities, Advancements, ...).
--   Colors/Vector/Rotation/... classes with common operations.
+-   Colors/Vector/Rotation/... classes with common maths/conversion operations.
 -   Macros support.
 -   Inventory/Scheduler managers.
--   Merging datapacks, even with existing zips.
 -   Scoreboard display manager (like on servers).
+-   Merging datapacks, even with existing zips.
+-   Generation of datapacks as mods usable with mod-loaders (Fabric, NeoForge, ...).
 -   Debugging system inside commands or functions.
--   Common Nbt tags generation (blocks, items, entities, ...).
+-   Common NBT tags generation (blocks, items, entities, ...).
 -   OOP module (experimental).
 
 > Note: All APIs for commands, selectors, NBT tags, ... are public, so you can use them to create your own features.
 
+## Website
+
+### How the website works
+
+- **Location**: The website is a Kotlin Multiplatform subproject under `website/`.
+- **Frameworks & tools**: It uses [**Kobweb**](https://kobweb.varabyte.com/) (Kotlin/Compose for Web) with a Kotlin/JS target, Markdown processing, and small JS/npm deps exposed via the Gradle plugin. Generated Kotlin files are written to `build/generated/kore/src/jsMain/kotlin` during the build.
+- **Runtime**: [`AppEntry.kt`](./website/src/jsMain/kotlin/io/github/ayfri/kore/website/AppEntry.kt) initializes the Kobweb app, configures a custom Markdown renderer, and sets the site-wide error page via `InitKobweb`.
+- **Build output**: The static site export is produced by the `kobwebExport` Gradle task and placed under `website/.kobweb/site/` for deployment.
+
+### How to run the website
+
+- **Prerequisites**:
+  - Java 21 (JDK 21) installed and `JAVA_HOME` set.
+  - The project uses the Gradle wrapper (`gradlew`). Ensure it is executable on your platform.
+  - Node tooling for the Kotlin/JS parts. This repository prefers `pnpm`, but `npm`/`yarn` also work for installing JS dependencies.
+
+- **Run locally (development server)**:
+
+  ```bash
+  ./gradlew :website:kobwebRun
+  ```
+
+  This starts the Kobweb development server and serves the site locally with live reload.
+
+- **Export a static production build**:
+
+  ```bash
+  ./gradlew :website:kobwebExport -PkobwebExportLayout=STATIC -PkobwebBuildTarget=RELEASE
+  ```
+
+  The above produces a static export under `website/.kobweb/site/` ready for deployment.
+
+- **Continuous deployment**:
+  - The repository includes a GitHub Actions workflow at [`.github/workflows/cd.yml`](./.github/workflows/cd.yml) which runs `kobwebExport` and deploys the generated `website/.kobweb/site/` to Cloudflare Pages using the [cloudflare/wrangler-action](https://github.com/cloudflare/wrangler-action).
+  - Deployment is triggered on pushes to the `master` branch (see the workflow for details).
+
+### Notes for contributors
+
+- Generated Kotlin for docs and GitHub releases is written to `build/generated/kore/src/jsMain/kotlin` and is created by Gradle tasks during the build; you generally do not need to commit those generated files.
+- If you modify Markdown front-matter or layout logic, re-run the build/export tasks to regenerate the site artifacts.
 
 ## Star History
 
