@@ -178,7 +178,7 @@ _How to add your project to the list ?_
  - **Kobweb CLI (recommended for local dev)**:
   - The Kobweb CLI provides a convenient development workflow for Kotlin/Kobweb projects. It runs a dev server with live reload and can export a static build.
 
-  - **Install the Kobweb CLI**: See the official instructions on the Kobweb CLI repository: [Kobweb CLI - Installation](https://github.com/varabyte/kobweb-cli#installation).
+  - **Install the Kobweb CLI**: See the official instructions on the Kobweb website: [Kobweb CLI - Installation](https://kobweb.varabyte.com/docs/getting-started/getting-kobweb).
 
   - **Run the dev server (live reload)**:
 
@@ -201,8 +201,9 @@ _How to add your project to the list ?_
     - If you prefer not to install the CLI, the Gradle tasks are still available:
 
       ```bash
-      ./gradlew :website:kobwebRun
-      ./gradlew :website:kobwebExport -PkobwebExportLayout=STATIC -PkobwebBuildTarget=RELEASE
+      ./gradlew :website:kobwebStart -t # Run with live reload
+      ./gradlew :website:kobwebStop # Stop the server
+      ./gradlew :website:kobwebExport -PkobwebExportLayout=STATIC -PkobwebBuildTarget=RELEASE -PkobwebReuseServer=false
       ```
 
  - **Troubleshooting**:
