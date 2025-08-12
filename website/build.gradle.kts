@@ -60,6 +60,8 @@ kobweb {
 	}
 
 	markdown {
+		imports.add("com.varabyte.kobweb.compose.ui.modifiers.*")
+
 		handlers {
 			img.set { image ->
 				val altText = image.children()
@@ -130,7 +132,7 @@ kobweb {
 					|   org.jetbrains.compose.web.dom.A("#$id", {
 					|       classes(io.github.ayfri.kore.website.components.layouts.MarkdownLayoutStyle.anchor)
 					|   }) {
-					|       com.varabyte.kobweb.silk.components.icons.mdi.MdiLink()
+					|       com.varabyte.kobweb.silk.components.icons.mdi.MdiLink(modifier = com.varabyte.kobweb.compose.ui.Modifier.ariaHidden())
 					|   }
 					|   $content
 					|}
