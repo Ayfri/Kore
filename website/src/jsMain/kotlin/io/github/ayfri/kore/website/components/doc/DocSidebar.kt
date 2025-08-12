@@ -57,7 +57,7 @@ object DocSidebarStyle : StyleSheet() {
 			translateX((-100).percent)
 			transition(0.3.s, "translate")
 			width(100.percent)
-			zIndex(10)
+			zIndex(60)
 		}
 
 		self + className("reveal") style {
