@@ -5,7 +5,7 @@ nav-title: Home
 description: Welcome to the Kore wiki!
 keywords: minecraft, datapack, kore, guide
 date-created: 2024-04-06
-date-modified: 2025-01-08
+date-modified: 2025-08-12
 routeOverride: /docs/home
 position: 0
 ---
@@ -14,56 +14,50 @@ position: 0
 
 **Welcome to the Kore wiki!**
 
-Kore is a Kotlin library for creating Minecraft datapacks. It provides a type-safe and concise way to generate Minecraft datapacks using
-Kotlin DSL. The library is compatible with Minecraft Java 1.20 and later versions.
+Kore is a Kotlin library for building Minecraft datapacks with a concise, type-safe Kotlin DSL. It focuses on readable builders, stable
+generation of datapack JSON, and tight integration with vanilla concepts (functions, loot tables, predicates, worldgen, ...).
 
-## Getting Started
+## Quick start
 
-The easiest way to start with Kore is to use the [Kore Template](https://github.com/Ayfri/Kore-Template). This template repository provides a ready-to-use project structure with all the necessary configurations.
+- **Prerequisites**: Java 21+ and a Kotlin-capable build environment.
+- **Starter template**: use the `Kore Template` for a ready-to-run project: [`Kore Template`](https://github.com/Ayfri/Kore-Template).
+- **Create & generate**: see [Creating A Datapack](./creating-a-datapack) for lifecycle and output options (`.generate()`, `.generateZip()`, `.generateJar()`).
 
-### Prerequisites
 
--   Java Development Kit (JDK) version 21 or higher
-
-### Features
-
-Kore comes with a rich set of features:
-
--   Generate datapacks as files, zips, or jar files for mod-loaders
--   Create functions with a clean Kotlin DSL
--   Support for all Minecraft commands with their subcommands and syntaxes
--   Generate all JSON-based features (Advancements, Loot Tables, Recipes, etc.)
--   Work with Selectors, NBT tags, and Chat components
--   Access lists for all Minecraft registries (Blocks, Items, Entities, Advancements)
--   Use Colors, Vectors, Rotations with common operations
--   Support for Macros
--   Manage inventories and schedulers
--   Merge datapacks, even with existing zips
--   Manage scoreboard displays
--   Built-in debugging system
--   Common NBT tags generation
--   Experimental OOP module
-
-### Explore Kore
 
 {{{ .components.doc.FeatureGrid }}}
 
-### Quick Example
+### Minimal example
 
 ```kotlin
 fun main() {
-    val datapack = dataPack("test") {
-        function("display_text") {
-            tellraw(allPlayers(), textComponent("Hello World!"))
-        }
-
-        pack {
-            description = textComponent("My First ", Color.GOLD) + text("Kore", Color.AQUA) { bold = true }
-        }
-    }
-
-    datapack.generateZip()
+    dataPack("example") {
+        function("display_text") { tellraw(allPlayers(), textComponent("Hello World!")) }
+    }.generateZip()
 }
 ```
 
-For more detailed information, examples, and guides, explore our documentation sections.
+## Recommended reading (next steps)
+
+- **[Creating A Datapack](./creating-a-datapack)**: lifecycle, output paths, merging and mod‑loader jars.
+- **[Functions](./functions)**: building functions, tags, generated scopes and command helpers.
+- **[Configuration](./configuration)**: JSON formatting and generation options.
+- **[Components](./components)**: item/component builders and custom components.
+- **[Predicates](./predicates)**: reusable conditions used by loot tables, advancements and item modifiers.
+- **[Worldgen](./worldgen)**: biomes, features and dimension examples.
+- **[Loot Tables](./loot-tables)** & **[Item Modifiers](./item-modifiers)**: tables, pools and `/item modify` helpers.
+- **[Recipes](./recipes)** & **[Advancements](./advancements)**: crafting, rewards and integration.
+- **[Chat Components](./chat-components)** & **[Colors](./colors)**: formatted messages, chat colors and text components.
+
+## Short tips
+
+- Keep builders small and reusable; prefer extracting predicates and modifiers.
+- Enable `prettyPrint` in [`Configuration`](./configuration) during development for readable JSON.
+- Use [`Components`](./components) + [`Predicates`](./predicates) together for robust item checks and inventory management.
+
+## Community & source
+
+- **Repository**: [Kore](https://github.com/Ayfri/Kore)
+- **Starter template**: [Kore Template](https://github.com/Ayfri/Kore-Template)
+
+For hands-on examples, follow the doc pages above — most pages include runnable snippets and links to test cases in the repository.
