@@ -283,6 +283,11 @@ tasks.register("fetchGitHubReleases") {
 			page++
 		}
 
+		if (allReleases.isEmpty()) {
+			logger.warn("No Kore releases found on GitHub.")
+			return
+		}
+
 		// Generate Kotlin file with releases data
 		val outputDir = File(projectDir, "build/generated/kore/src/jsMain/kotlin/io/github/ayfri/kore/website")
 		outputDir.mkdirs()
