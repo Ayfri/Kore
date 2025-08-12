@@ -89,7 +89,6 @@ object SearchStyle : StyleSheet() {
 	val container by style {
 		position(Position.Relative)
 		width(100.percent)
-		marginBottom(1.cssRem)
 	}
 
 	val inputContainer by style {
@@ -99,7 +98,7 @@ object SearchStyle : StyleSheet() {
 		borderRadius(GlobalStyle.roundingButton)
 		display(DisplayStyle.Flex)
 		gap(0.5.cssRem)
-		padding(0.8.cssRem)
+		padding(0.75.cssRem)
 		transition(0.2.s, "border-color")
 
 		self + focus style {
@@ -108,7 +107,7 @@ object SearchStyle : StyleSheet() {
 
 		child(self, type("span")) style {
 			color(GlobalStyle.altTextColor)
-			fontSize(1.5.cssRem)
+			fontSize(1.25.cssRem)
 		}
 	}
 
@@ -127,7 +126,7 @@ object SearchStyle : StyleSheet() {
 		borderRadius(GlobalStyle.roundingButton)
 		boxShadow(0.px, 4.px, 12.px, 0.px, rgba(0, 0, 0, 0.1))
 		left(0.px)
-		marginTop(0.5.cssRem)
+		marginTop(0.25.cssRem)
 		maxHeight(400.px)
 		overflowY(Overflow.Auto)
 		position(Position.Absolute)

@@ -130,7 +130,9 @@ fun DocTree() {
 	Div({
 		id("doc-tree")
 	}) {
-		H2 {
+		P({
+			classes(DocTreeStyle.title)
+		}) {
 			Text("Pages")
 		}
 
@@ -145,12 +147,18 @@ fun DocTree() {
 }
 
 object DocTreeStyle : StyleSheet() {
+	val title by style {
+		fontSize(2.cssRem)
+		fontWeight(FontWeight.Bold)
+		marginBottom(1.cssRem)
+	}
+
 	@OptIn(ExperimentalComposeWebApi::class)
 	val list by style {
 		listStyle(ListStyle.None)
 		marginRight(1.cssRem)
 		marginTop(0.px)
-		padding(0.8.cssRem)
+		padding(0.5.cssRem)
 
 		height(100.percent)
 		left(0.px)
@@ -161,8 +169,8 @@ object DocTreeStyle : StyleSheet() {
 		borderRadius(GlobalStyle.roundingButton)
 		color(GlobalStyle.textColor)
 		display(DisplayStyle.Block)
-		fontSize(1.15.cssRem)
-		padding(0.35.cssRem)
+		fontSize(1.05.cssRem)
+		padding(0.3.cssRem, 0.4.cssRem)
 		transition(0.2.s, "color", "background-color")
 		whiteSpace(WhiteSpace.NoWrap)
 	}

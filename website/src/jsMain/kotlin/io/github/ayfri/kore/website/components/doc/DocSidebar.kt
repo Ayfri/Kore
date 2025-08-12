@@ -39,7 +39,7 @@ object DocSidebarStyle : StyleSheet() {
 		backgroundColor(GlobalStyle.secondaryBackgroundColor)
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
-		padding(1.cssRem)
+		padding(0.75.cssRem)
 		position(Position.Relative)
 
 		smMin(self) {
