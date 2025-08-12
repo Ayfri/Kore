@@ -173,27 +173,42 @@ _How to add your project to the list ?_
 - **Prerequisites**:
   - Java 21 (JDK 21) installed and `JAVA_HOME` set.
   - The project uses the Gradle wrapper (`gradlew`). Ensure it is executable on your platform.
-  - Node tooling for the Kotlin/JS parts. This repository prefers `pnpm`, but `npm`/`yarn` also work for installing JS dependencies.
+  - Node tooling for the Kotlin/JS parts (npm/yarn).
 
-- **Run locally (development server)**:
+ - **Kobweb CLI (recommended for local dev)**:
+  - The Kobweb CLI provides a convenient development workflow for Kotlin/Kobweb projects. It runs a dev server with live reload and can export a static build.
 
-  ```bash
-  ./gradlew :website:kobwebRun
-  ```
+  - **Install the Kobweb CLI**: See the official instructions on the Kobweb CLI repository: [Kobweb CLI - Installation](https://github.com/varabyte/kobweb-cli#installation).
 
-  This starts the Kobweb development server and serves the site locally with live reload.
+  - **Run the dev server (live reload)**:
 
-- **Export a static production build**:
+    ```bash
+    kobweb run
+    ```
 
-  ```bash
-  ./gradlew :website:kobwebExport -PkobwebExportLayout=STATIC -PkobwebBuildTarget=RELEASE
-  ```
+    - By default the dev server runs on `http://localhost:8080` and watches Kotlin sources, Markdown content under `website/src/jsMain/resources/markdown/`, and static resources. Changes trigger rebuilds and browser reloads.
+    - Configure server settings (port, logging, etc.) in `website/.kobweb/conf.yaml`.
 
-  The above produces a static export under `website/.kobweb/site/` ready for deployment.
+  - **Export a static site**:
 
-- **Continuous deployment**:
-  - The repository includes a GitHub Actions workflow at [`.github/workflows/cd.yml`](./.github/workflows/cd.yml) which runs `kobwebExport` and deploys the generated `website/.kobweb/site/` to Cloudflare Pages using the [cloudflare/wrangler-action](https://github.com/cloudflare/wrangler-action).
-  - Deployment is triggered on pushes to the `master` branch (see the workflow for details).
+    ```bash
+    kobweb export
+    ```
+
+    - The static output is written to `website/.kobweb/site/` and is suitable for deployment to static hosts.
+
+  - **Gradle tasks (alternative)**:
+    - If you prefer not to install the CLI, the Gradle tasks are still available:
+
+      ```bash
+      ./gradlew :website:kobwebRun
+      ./gradlew :website:kobwebExport -PkobwebExportLayout=STATIC -PkobwebBuildTarget=RELEASE
+      ```
+
+ - **Troubleshooting**:
+  - If the dev server doesn't pick up generated Kotlin or Gradle config changes, restart the server.
+  - To change the dev server port, edit `website/.kobweb/conf.yaml` or use the CLI configuration options.
+  - If you see stale files, run `./gradlew :website:clean :website:build` before restarting the dev server.
 
 ### Notes for contributors
 
