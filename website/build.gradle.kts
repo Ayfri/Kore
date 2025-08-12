@@ -1,3 +1,4 @@
+
 import com.varabyte.kobweb.gradle.application.util.configAsKobwebApplication
 import com.varabyte.kobwebx.gradle.markdown.children
 import groovy.json.JsonSlurper
@@ -8,7 +9,6 @@ import org.commonmark.node.Code
 import org.commonmark.node.Emphasis
 import org.commonmark.node.Link
 import org.commonmark.node.Text
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import java.net.HttpURLConnection
 import java.net.URI
 
@@ -285,7 +285,7 @@ tasks.register("fetchGitHubReleases") {
 
 		if (allReleases.isEmpty()) {
 			logger.warn("No Kore releases found on GitHub.")
-			return
+			return@doLast
 		}
 
 		// Generate Kotlin file with releases data
