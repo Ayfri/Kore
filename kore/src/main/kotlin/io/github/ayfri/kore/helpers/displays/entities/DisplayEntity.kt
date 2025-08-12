@@ -62,7 +62,6 @@ sealed class DisplayEntity(
 				is BlockDisplay -> encoder.encodeSerializableValue(BlockDisplay.serializer(), value)
 				is TextDisplay -> encoder.encodeSerializableValue(TextDisplay.serializer(), value)
 				is ItemDisplay -> encoder.encodeSerializableValue(ItemDisplay.serializer(), value)
-				else -> error("Unknown DisplayEntity type: $value")
 			}
 		}
 

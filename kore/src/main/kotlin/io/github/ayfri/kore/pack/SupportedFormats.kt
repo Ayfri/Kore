@@ -86,8 +86,6 @@ data class SupportedFormats(
 						val maxInclusive = element["max_inclusive"]?.jsonPrimitive?.int
 						SupportedFormats(minInclusive = minInclusive, maxInclusive = maxInclusive)
 					}
-
-					else -> throw SerializationException("Unknown SupportedFormats type")
 				}
 			}
 
