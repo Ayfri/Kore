@@ -329,6 +329,12 @@ object MarkdownLayoutStyle : StyleSheet() {
 		smMax(self) {
 			marginTop(2.cssRem)
 		}
+
+		"ul" style {
+			display(DisplayStyle.Flex)
+			flexDirection(FlexDirection.Column)
+			gap(0.25.cssRem)
+		}
 	}
 
 	val contentWrapper by style {
