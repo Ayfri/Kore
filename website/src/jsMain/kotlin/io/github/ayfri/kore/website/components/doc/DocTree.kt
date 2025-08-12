@@ -151,17 +151,15 @@ object DocTreeStyle : StyleSheet() {
 		fontSize(2.cssRem)
 		fontWeight(FontWeight.Bold)
 		marginBottom(1.cssRem)
+		marginTop(0.5.cssRem)
 	}
 
 	@OptIn(ExperimentalComposeWebApi::class)
 	val list by style {
 		listStyle(ListStyle.None)
-		marginRight(1.cssRem)
+		left(0.px)
 		marginTop(0.px)
 		padding(0.5.cssRem)
-
-		height(100.percent)
-		left(0.px)
 		position(Position.Sticky)
 	}
 

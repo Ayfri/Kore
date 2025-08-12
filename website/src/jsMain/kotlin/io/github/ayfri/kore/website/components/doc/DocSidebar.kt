@@ -1,16 +1,14 @@
 package io.github.ayfri.kore.website.components.doc
 
 import androidx.compose.runtime.Composable
-import com.varabyte.kobweb.compose.css.Cursor
-import com.varabyte.kobweb.compose.css.cursor
-import com.varabyte.kobweb.compose.css.translateX
-import com.varabyte.kobweb.compose.css.zIndex
+import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiClose
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.utils.smMax
-import io.github.ayfri.kore.website.utils.smMin
 import io.github.ayfri.kore.website.utils.transition
 import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.AlignSelf
+import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
 
@@ -22,47 +20,63 @@ fun DocSidebar(revealed: Boolean, onClose: () -> Unit) {
 		classes(DocSidebarStyle.sidebar)
 		if (revealed) classes("reveal")
 	}) {
-		Button({
-			classes(DocSidebarStyle.closeButton)
-			onClick { onClose() }
+		Div({
+			classes(DocSidebarStyle.sidebarHeader)
 		}) {
-			MdiClose()
+			Search()
+
+			Button({
+				classes(DocSidebarStyle.closeButton)
+				onClick { onClose() }
+			}) {
+				MdiClose()
+			}
 		}
 
-		Search()
 		DocTree()
 	}
 }
 
 object DocSidebarStyle : StyleSheet() {
 	val sidebar by style {
-		backgroundColor(GlobalStyle.secondaryBackgroundColor)
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Column)
-		padding(0.75.cssRem)
-		position(Position.Relative)
-
-		smMin(self) {
-			borderRadius(GlobalStyle.roundingButton)
-		}
+        alignSelf(AlignSelf.FlexStart)
+        backgroundColor(GlobalStyle.secondaryBackgroundColor)
+        border(1.px, LineStyle.Solid, GlobalStyle.tertiaryBackgroundColor)
+        borderRadius(GlobalStyle.roundingButton)
+        display(DisplayStyle.Flex)
+        flexDirection(FlexDirection.Column)
+        gap(0.75.cssRem)
+		marginBottom(0.5.cssRem)
+        overflowX(Overflow.Hidden)
+        overflowY(Overflow.Visible)
+        padding(0.9.cssRem)
+        position(Position.Sticky)
+        top(5.cssRem)
+        width(21.cssRem)
 
 		smMax(self) {
-			backgroundColor(GlobalStyle.backgroundColor)
-			height(100.vh)
-			left(0.px)
-			paddingBottom(100.vh)
-			paddingTop(4.cssRem)
-			position(Position.Fixed)
-			top(0.px)
-			translateX((-100).percent)
-			transition(0.3.s, "translate")
-			width(100.percent)
-			zIndex(60)
-		}
+            backgroundColor(rgba(24, 26, 31, 0.92))
+            height(100.vh)
+            left(0.px)
+            paddingTop(2.cssRem)
+            position(Position.Fixed)
+            top(0.px)
+            translateX((-100).percent)
+            transition(0.3.s, "translate")
+            width(100.percent)
+            zIndex(60)
+        }
 
 		self + className("reveal") style {
 			translateX(0.percent)
 		}
+	}
+
+	val sidebarHeader by style {
+		display(DisplayStyle.Flex)
+		flexDirection(FlexDirection.Row)
+		justifyContent(JustifyContent.SpaceBetween)
+		gap(0.5.cssRem)
 	}
 
 	val closeButton by style {
@@ -72,9 +86,6 @@ object DocSidebarStyle : StyleSheet() {
 		cursor(Cursor.Pointer)
 		display(DisplayStyle.None)
 		padding(0.5.cssRem)
-		position(Position.Absolute)
-		right(1.cssRem)
-		top(1.cssRem)
 
 		smMax(self) {
 			display(DisplayStyle.Block)
