@@ -158,8 +158,10 @@ fun FeatureGrid() {
 			Div({
 				classes(FeatureStyle.linkList)
 			}) {
+				FeatureLink("/docs/colors", "Colors")
 				FeatureLink("/docs/functions", "Functions")
 				FeatureLink("/docs/functions/macros", "Macro System")
+				FeatureLink("/docs/helpers/scheduler", "Scheduler")
 				FeatureLink("/docs/scoreboards", "Scoreboards")
 			}
 		}
@@ -173,6 +175,8 @@ fun FeatureGrid() {
 			}) {
 				FeatureLink("/docs/advancements", "Advancements")
 				FeatureLink("/docs/enchantments", "Enchantments")
+				FeatureLink("/docs/item-modifiers", "Item Modifiers")
+				FeatureLink("/docs/loot-tables", "Loot Tables")
 				FeatureLink("/docs/predicates", "Predicates")
 				FeatureLink("/docs/recipes", "Recipes")
 			}
@@ -185,9 +189,10 @@ fun FeatureGrid() {
 			Div({
 				classes(FeatureStyle.linkList)
 			}) {
-				FeatureLink("/docs/components", "Components")
 				FeatureLink("/docs/chat-components", "Chat Components")
+				FeatureLink("/docs/components", "Components")
 				FeatureLink("/docs/helpers/display-entities", "Display Entities")
+				FeatureLink("/docs/helpers/inventory-manager", "Inventory Manager")
 			}
 		}
 	}
