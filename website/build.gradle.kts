@@ -1,4 +1,3 @@
-
 import com.varabyte.kobweb.gradle.application.util.configAsKobwebApplication
 import com.varabyte.kobwebx.gradle.markdown.children
 import groovy.json.JsonSlurper
@@ -64,10 +63,7 @@ kobweb {
 
 		handlers {
 			img.set { image ->
-				val altText = image.children()
-					.filterIsInstance<Text>()
-					.map { it.literal.escapeSingleQuotedText() }
-					.joinToString("")
+				val altText = image.children().filterIsInstance<Text>().map { it.literal.escapeSingleQuotedText() }.joinToString("")
 				childrenOverride = emptyList()
 
 				"""org.jetbrains.compose.web.dom.Img(src="${image.destination}", alt="$altText") {
@@ -84,37 +80,32 @@ kobweb {
 			}
 
 			heading.set { heading ->
-				val id = heading.children()
-					.map {
-						val literal = when (it) {
-							is Text -> it.literal
-							is Code -> it.literal
-							is Link -> it.destination
-							is Emphasis -> (it.firstChild as Text).literal
-							else -> ""
-						}
-						if (literal.isBlank()) return@map ""
-						literal.lowercase().replace(Regex("[^a-z0-9]+"), "-")
+				val id = heading.children().map {
+					val literal = when (it) {
+						is Text -> it.literal
+						is Code -> it.literal
+						is Link -> it.destination
+						is Emphasis -> (it.firstChild as Text).literal
+						else -> ""
 					}
-					.joinToString("")
+					if (literal.isBlank()) return@map ""
+					literal.lowercase().replace(Regex("[^a-z0-9]+"), "-")
+				}.joinToString("")
 
-				val content = heading.children()
-					.map {
-						when (it) {
-							is Text -> "org.jetbrains.compose.web.dom.Text(\"${it.literal.escapeSingleQuotedText()}\")"
-							is Code -> "org.jetbrains.compose.web.dom.Code { org.jetbrains.compose.web.dom.Text(\"${it.literal.escapeTripleQuotedText()}\") }"
-							is Link -> "org.jetbrains.compose.web.dom.A(href = \"${it.destination}\") { org.jetbrains.compose.web.dom.Text(\"${
-								it.children().joinToString("") { (it as Text).literal.escapeSingleQuotedText() }
-							}\") }"
+				val content = heading.children().map {
+					when (it) {
+						is Text -> "org.jetbrains.compose.web.dom.Text(\"${it.literal.escapeSingleQuotedText()}\")"
+						is Code -> "org.jetbrains.compose.web.dom.Code { org.jetbrains.compose.web.dom.Text(\"${it.literal.escapeTripleQuotedText()}\") }"
+						is Link -> "org.jetbrains.compose.web.dom.A(href = \"${it.destination}\") { org.jetbrains.compose.web.dom.Text(\"${
+							it.children().joinToString("") { (it as Text).literal.escapeSingleQuotedText() }
+						}\") }"
 
-							is Emphasis ->
-								if (it.firstChild is Text) "org.jetbrains.compose.web.dom.Span(classes(io.github.ayfri.kore.website.components.layouts.MarkdownLayoutStyle.italic)) { org.jetbrains.compose.web.dom.Text(\"${(it.firstChild as Text).literal.escapeSingleQuotedText()}\") }"
-								else ""
+						is Emphasis -> if (it.firstChild is Text) "org.jetbrains.compose.web.dom.Span(classes(io.github.ayfri.kore.website.components.layouts.MarkdownLayoutStyle.italic)) { org.jetbrains.compose.web.dom.Text(\"${(it.firstChild as Text).literal.escapeSingleQuotedText()}\") }"
+						else ""
 
-							else -> ""
-						}
+						else -> ""
 					}
-					.joinToString("\n")
+				}.joinToString("\n")
 
 				childrenOverride = emptyList()
 				val tag = "H${heading.level}"
@@ -130,9 +121,9 @@ kobweb {
 					|   $onSubtitle
 					|}) {
 					|   org.jetbrains.compose.web.dom.A("#$id", {
-					|       classes(io.github.ayfri.kore.website.components.layouts.MarkdownLayoutStyle.anchor)
+					|	   classes(io.github.ayfri.kore.website.components.layouts.MarkdownLayoutStyle.anchor)
 					|   }) {
-					|       com.varabyte.kobweb.silk.components.icons.mdi.MdiLink(modifier = com.varabyte.kobweb.compose.ui.Modifier.ariaHidden())
+					|	   com.varabyte.kobweb.silk.components.icons.mdi.MdiLink(modifier = com.varabyte.kobweb.compose.ui.Modifier.ariaHidden())
 					|   }
 					|   $content
 					|}
@@ -194,7 +185,7 @@ kobweb {
 				|import io.github.ayfri.kore.website.components.doc.DocArticle
 				|
 				|val docEntries = listOf${if (docEntries.isEmpty()) "<DocArticle>" else ""}(
-                """.trimMargin()
+				""".trimMargin()
 				)
 
 				fun List<String>.asCode() = "listOf(${joinToString { "\"$it\"" }})"
@@ -204,21 +195,21 @@ kobweb {
 				docEntries.sortedByDescending(DocEntry::date).forEach { entry ->
 					appendLine(
 						"""
-						|    DocArticle("/docs/${
+						|	DocArticle("/docs/${
 							entry.file.path.substringBeforeLast(".md")
 								.replace(Regex(" |_"), "-")
 								.replace("\\", "/")
 								.substringAfter("doc/")
 								.lowercase()
 						}",
-						|       "${entry.date}",
-						|       "${entry.title.escapeQuotes()}",
-						|       "${entry.desc.escapeQuotes()}",
-						|       "${entry.navTitle.escapeQuotes()}",
-						|       ${entry.keywords.asCode()},
-						|       "${entry.dateModified}",
-						|       ${entry.slugs.asCode()},
-						|       ${entry.position ?: "null"}
+						|	    "${entry.date}",
+						|	    "${entry.title.escapeQuotes()}",
+						|	    "${entry.desc.escapeQuotes()}",
+						|	    "${entry.navTitle.escapeQuotes()}",
+						|	    ${entry.keywords.asCode()},
+						|	    "${entry.dateModified}",
+						|	    ${entry.slugs.asCode()},
+						|	    ${entry.position ?: "null"}
 						|   ),
 						""".trimMargin()
 					)
@@ -243,95 +234,83 @@ tasks.register("fetchGitHubReleases") {
 	group = "kore"
 	description = "Fetches GitHub releases and generates a Kotlin file with the data"
 
-	val projectDir = projectDir
+	val outFile = File(
+		project.projectDir, "build/generated/kore/src/jsMain/kotlin/io/github/ayfri/kore/website/gitHubReleases.kt"
+	)
+
+	outputs.file(outFile)
 
 	doLast {
 		val allReleases = mutableListOf<Map<*, *>>()
 		var page = 1
 		var hasMorePages = true
 
-		// Fetch all pages of releases
 		while (hasMorePages) {
 			val apiUrl = "https://api.github.com/repos/Ayfri/Kore/releases?per_page=100&page=$page"
-			val connection = URI(apiUrl).toURL().openConnection() as HttpURLConnection
-			connection.requestMethod = "GET"
-			connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
+			val conn = URI(apiUrl).toURL().openConnection() as HttpURLConnection
+			conn.requestMethod = "GET"
+			conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
+			conn.setRequestProperty("User-Agent", "KoreWebsite/1.0 (+https://kore.ayfri.com)")
 
-			// Optional: Add GitHub token if available in environment variables
-			val githubToken = System.getenv("GITHUB_TOKEN")
-			if (githubToken != null && githubToken.isNotBlank()) {
-				connection.setRequestProperty("Authorization", "token $githubToken")
-			}
+			System.getenv("GITHUB_TOKEN")?.takeIf { it.isNotBlank() }?.let { conn.setRequestProperty("Authorization", "token $it") }
 
-			val responseCode = connection.responseCode
-			if (responseCode != 200) {
-				logger.error("Failed to fetch GitHub releases page $page. Response code: $responseCode")
+			val code = conn.responseCode
+			if (code != 200) {
+				val err = conn.errorStream?.bufferedReader()?.use { it.readText() }
+				logger.error("GitHub API returned $code for page $page. Body: $err")
+				// We break the loop, but we will still write a file (possibly empty)
 				break
 			}
 
-			val inputStream = connection.inputStream
-			val jsonResponse = inputStream.bufferedReader().use { it.readText() }
-			inputStream.close()
+			val jsonResponse = conn.inputStream.bufferedReader().use { it.readText() }
+			val pageReleases = JsonSlurper().parseText(jsonResponse) as List<Map<*, *>>
+			allReleases += pageReleases
 
-			val jsonSlurper = JsonSlurper()
-			val pageReleases = jsonSlurper.parseText(jsonResponse) as List<Map<*, *>>
-
-			allReleases.addAll(pageReleases)
-
-			// Check if we should continue to the next page
 			hasMorePages = pageReleases.isNotEmpty() && pageReleases.size == 100
 			page++
 		}
 
-		if (allReleases.isEmpty()) {
-			logger.warn("No Kore releases found on GitHub.")
-			return@doLast
-		}
-
-		// Generate Kotlin file with releases data
-		val outputDir = File(projectDir, "build/generated/kore/src/jsMain/kotlin/io/github/ayfri/kore/website")
-		outputDir.mkdirs()
-
-		val outputFile = File(outputDir, "gitHubReleases.kt")
-		outputFile.writeText(buildString {
+		// Always write a file, even if it is empty
+		outFile.parentFile.mkdirs()
+		outFile.writeText(buildString {
 			appendLine("// This file is generated. Do not modify directly.")
-			appendLine("")
 			appendLine("package io.github.ayfri.kore.website")
 			appendLine("")
 			appendLine("import io.github.ayfri.kore.website.components.updates.GitHubAsset")
 			appendLine("import io.github.ayfri.kore.website.components.updates.GitHubRelease")
 			appendLine("")
+			if (allReleases.isEmpty()) {
+				appendLine("val gitHubReleases: List<GitHubRelease> = emptyList()")
+				return@buildString
+			}
 			appendLine("val gitHubReleases = listOf(")
-
 			allReleases.forEach { release ->
 				val id = release["id"] as Number
-				val name = (release["name"] as String).replace("\"", "\\\"")
+				val name = (release["name"] as? String ?: "").replace("\"", "\\\"")
 				val tagName = release["tag_name"] as String
 				val htmlUrl = release["html_url"] as String
 				val url = release["url"] as String
 				val createdAt = release["created_at"] as String
 				val publishedAt = release["published_at"] as String
-				val body = (release["body"] as String).replace("\"\"\"", "\\\"\\\"\\\"").replace("$", "\\$")
+				val body = (release["body"] as? String ?: "").replace("\"\"\"", "\\\"\\\"\\\"").replace("$", "\\$")
 				val isPrerelease = release["prerelease"] as Boolean
+				val assets = (release["assets"] as? List<Map<*, *>>).orEmpty()
 
-				val assets = release["assets"] as List<Map<*, *>>
-
-				appendLine("    GitHubRelease(")
-				appendLine("        id = $id,")
-				appendLine("        name = \"$name\",")
-				appendLine("        tagName = \"$tagName\",")
-				appendLine("        htmlUrl = \"$htmlUrl\",")
-				appendLine("        url = \"$url\",")
-				appendLine("        createdAt = \"$createdAt\",")
-				appendLine("        publishedAt = \"$publishedAt\",")
-				appendLine("        body = \"\"\"$body\"\"\",")
-				appendLine("        isPrerelease = $isPrerelease,")
-
+				appendLine("	GitHubRelease(")
+				appendLine("		id = $id,")
+				appendLine("		name = \"$name\",")
+				appendLine("		tagName = \"$tagName\",")
+				appendLine("		htmlUrl = \"$htmlUrl\",")
+				appendLine("		url = \"$url\",")
+				appendLine("		createdAt = \"$createdAt\",")
+				appendLine("		publishedAt = \"$publishedAt\",")
+				appendLine("		body = \"\"\"$body\"\"\",")
+				appendLine("		isPrerelease = $isPrerelease,")
 				if (assets.isNotEmpty()) {
-					appendLine("        assets = listOf(")
+					appendLine("		assets = listOf(")
 					assets.forEach { asset ->
 						val assetId = asset["id"] as Number
-						val assetName = (asset["name"] as String).replace("\"", "\\\"")
+						val assetName = (asset["name"] as? String ?: "").replace("\"", "\\\"")
 						val browserDownloadUrl = asset["browser_download_url"] as String
 						val contentType = asset["content_type"] as String
 						val size = asset["size"] as Number
@@ -350,16 +329,15 @@ tasks.register("fetchGitHubReleases") {
 				} else {
 					appendLine("        assets = emptyList()")
 				}
-
 				appendLine("    ),")
 			}
-
 			appendLine(")")
 		})
 
-		logger.lifecycle("Generated GitHub releases file with ${allReleases.size} releases")
+		logger.lifecycle("Generated GitHub releases file with ${allReleases.size} releases → ${outFile.relativeTo(project.projectDir)}")
 	}
 }
+
 
 // Make the kobwebExport task depend on fetchGitHubReleases
 tasks.named("kobwebExport") {
