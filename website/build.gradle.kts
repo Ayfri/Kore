@@ -1,3 +1,4 @@
+
 import com.varabyte.kobweb.gradle.application.util.configAsKobwebApplication
 import com.varabyte.kobwebx.gradle.markdown.children
 import groovy.json.JsonSlurper
@@ -234,11 +235,11 @@ tasks.register("fetchGitHubReleases") {
 	group = "kore"
 	description = "Fetches GitHub releases and generates a Kotlin file with the data"
 
-	val outFile = File(
-		project.projectDir, "build/generated/kore/src/jsMain/kotlin/io/github/ayfri/kore/website/gitHubReleases.kt"
-	)
-
+	// Generate into build/ to keep sources clean and align with configured source set
+	val outFile = layout.buildDirectory.file("generated/kore/src/jsMain/kotlin/io/github/ayfri/kore/website/gitHubReleases.kt")
 	outputs.file(outFile)
+
+	mustRunAfter("compileKotlinJs")
 
 	doLast {
 		val allReleases = mutableListOf<Map<*, *>>()
@@ -271,8 +272,9 @@ tasks.register("fetchGitHubReleases") {
 		}
 
 		// Always write a file, even if it is empty
-		outFile.parentFile.mkdirs()
-		outFile.writeText(buildString {
+		val targetFile = outFile.get().asFile
+		targetFile.parentFile.mkdirs()
+		targetFile.writeText(buildString {
 			appendLine("// This file is generated. Do not modify directly.")
 			appendLine("package io.github.ayfri.kore.website")
 			appendLine("")
@@ -334,15 +336,13 @@ tasks.register("fetchGitHubReleases") {
 			appendLine(")")
 		})
 
-		logger.lifecycle("Generated GitHub releases file with ${allReleases.size} releases → ${outFile.relativeTo(project.projectDir)}")
+		logger.lifecycle("Generated GitHub releases file with ${allReleases.size} releases → ${targetFile.path}")
 	}
 }
 
 
 // Make the kobwebExport task depend on fetchGitHubReleases
-tasks.named("kobwebExport") {
-	dependsOn("fetchGitHubReleases")
-}
+tasks.named("kobwebExport") { dependsOn("fetchGitHubReleases") }
 
 data class DocEntry(
 	val file: File,
