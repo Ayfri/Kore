@@ -239,7 +239,7 @@ tasks.register("fetchGitHubReleases") {
 	val outFile = layout.buildDirectory.file("generated/kore/src/jsMain/kotlin/io/github/ayfri/kore/website/gitHubReleases.kt")
 	outputs.file(outFile)
 
-	mustRunAfter("compileKotlinJs")
+	// Removed incorrect mustRunAfter; compileKotlinJs will depend on this task (see below)
 
 	doLast {
 		val allReleases = mutableListOf<Map<*, *>>()
@@ -343,6 +343,13 @@ tasks.register("fetchGitHubReleases") {
 
 // Make the kobwebExport task depend on fetchGitHubReleases
 tasks.named("kobwebExport") { dependsOn("fetchGitHubReleases") }
+
+// Ensure generated sources exist before KSP for JS runs
+// This fixes Gradle validation about implicit dependency on build/generated/kore/src/jsMain/kotlin
+// Use tasks.matching to avoid failing if the task is created later by plugins
+tasks.matching { it.name == "kspKotlinJs" }.configureEach { dependsOn("fetchGitHubReleases") }
+// Also ensure Kotlin JS compilation sees the generated sources
+tasks.matching { it.name == "compileKotlinJs" }.configureEach { dependsOn("fetchGitHubReleases") }
 
 data class DocEntry(
 	val file: File,
