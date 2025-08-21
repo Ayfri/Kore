@@ -29,6 +29,8 @@ I will accept pull requests for older versions on a separate branch.
 
 ## Getting Started
 
+New on Kore ? Read the [Getting Started](https://kore.ayfri.com/docs/getting-started) guide to learn how to create your first datapack.
+
 You can use the [Kore Template](https://github.com/Ayfri/Kore-Template) to start a new project with Kore.
 
 Or install the library by hand with Gradle.
