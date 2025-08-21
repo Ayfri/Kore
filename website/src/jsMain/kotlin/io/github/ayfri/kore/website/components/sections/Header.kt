@@ -21,7 +21,7 @@ import org.jetbrains.compose.web.dom.*
 
 val tabs = mapOf(
 	"Docs" to "/docs/home",
-	"About" to GITHUB_LINK,
+	"Getting Started" to "/docs/getting-started",
 	"Updates" to "/updates",
 )
 
