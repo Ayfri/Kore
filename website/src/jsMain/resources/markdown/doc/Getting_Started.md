@@ -88,13 +88,52 @@ fun main() {
 - A datapack archive is produced; put it into your Minecraft world's `datapacks/` folder.
 - In-game, run: `/function hello_kore:display_text`.
 
-## IntelliJ tips for Kotlin newcomers
+## Tips for Kotlin newcomers
+
+- **Null safety:** Kotlin's type system distinguishes nullable and non-nullable types. Use `?` for nullable types and prefer safe calls (
+  `?.`) and the Elvis operator (`?:`). See [Null Safety](https://kotlinlang.org/docs/null-safety.html).
+
+```kotlin
+val name: String? = System.getenv("USER")
+val length: Int = name?.length ?: 0 // safe call + default when null
+```
+
+- **Type inference:** You rarely need to specify types explicitly—Kotlin infers them for you. Use `val` for read-only variables and
+  `var` for mutable ones. Prefer `val` for immutability.
+
+```kotlin
+val count = 0 // Int inferred
+var title = "Hello" // String inferred
+// Prefer val; use var only when you need to reassign
+```
+
+- **Smart casts:** The compiler automatically casts types after checks (e.g., `if (x is String) { x.length }`).
+
+```kotlin
+fun lengthIfString(x: Any): Int = if (x is String) x.length else 0
+```
+
+- **Extension functions:
+  ** Add new functions to existing types without inheritance. Kore uses this for DSLs. See [Extensions](https://kotlinlang.org/docs/extensions.html).
+
+```kotlin
+fun String.titleCase(): String = replaceFirstChar { it.titlecase() }
+// Usage: "kore".titleCase() -> "Kore"
+```
+
+- **Standard library:
+  ** Kotlin's standard library is rich—explore [kotlinlang.org/api/latest/jvm/stdlib/](https://kotlinlang.org/api/latest/jvm/stdlib/).
+
+```kotlin
+val names = listOf("Alex", "Steve", "Sam")
+val shout = names.map { it.uppercase() }.filter { it.startsWith("S") }
+```
 
 - DSLs + context receivers: Inside `dataPack { ... }`, many builders are available without qualifiers. The compiler flag `-Xcontext-parameters` is required.
 - Extract helpers with extensions: Attach utilities to `DataPack` to keep code organized:
 
 ```kotlin
-fun DataPack.myBasics() = this.function("setup") {
+fun DataPack.myBasics() = function("setup") {
 	// your setup
 }
 
@@ -113,6 +152,9 @@ predicate("my_function") {
 Then just remove `this.` now that you know the import is correct.
 
 - Idempotency: Declaring the same record twice is safe, Kore only keeps the last one.
+
+- **Kotlin Playground:** Try out code online at [play.kotlinlang.org](https://play.kotlinlang.org/).
+- **Official docs:** The [Kotlin documentation](https://kotlinlang.org/docs/home.html) is excellent for learning language features and best practices.
 
 ## Project layout and outputs
 
