@@ -113,16 +113,14 @@ var title = "Hello" // String inferred
 fun lengthIfString(x: Any): Int = if (x is String) x.length else 0
 ```
 
-- **Extension functions:
-  ** Add new functions to existing types without inheritance. Kore uses this for DSLs. See [Extensions](https://kotlinlang.org/docs/extensions.html).
+- **Extension functions:** Add new functions to existing types without inheritance. Kore uses this for DSLs. See [Extensions](https://kotlinlang.org/docs/extensions.html).
 
 ```kotlin
 fun String.titleCase(): String = replaceFirstChar { it.titlecase() }
 // Usage: "kore".titleCase() -> "Kore"
 ```
 
-- **Standard library:
-  ** Kotlin's standard library is rich—explore [kotlinlang.org/api/latest/jvm/stdlib/](https://kotlinlang.org/api/latest/jvm/stdlib/).
+- **Standard library:** Kotlin's standard library is rich—explore [kotlinlang.org/api/latest/jvm/stdlib/](https://kotlinlang.org/api/latest/jvm/stdlib/).
 
 ```kotlin
 val names = listOf("Alex", "Steve", "Sam")
