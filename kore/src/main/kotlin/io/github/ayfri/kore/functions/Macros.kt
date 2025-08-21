@@ -17,7 +17,7 @@ open class Macros {
 
 	companion object {
 		/** Regex that matches a valid macro identifier. */
-		const val MACRO_NAME_REGEX = "[a-zA-Z0-9_]"+""
+		const val MACRO_NAME_REGEX = "[a-zA-Z0-9_]+"
 
 		/** Regex pattern used to find macro expressions like `$(name)`. */
 		const val MACRO_REGEX = "\\$\\($MACRO_NAME_REGEX\\)"
