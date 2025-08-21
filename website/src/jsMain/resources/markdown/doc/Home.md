@@ -19,11 +19,10 @@ generation of datapack JSON, and tight integration with vanilla concepts (functi
 
 ## Quick start
 
+- **Getting started**: Check out the [Getting Started](/docs/getting-started) guide for a step-by-step introduction to creating your first datapack.
 - **Prerequisites**: Java 21+ and a Kotlin-capable build environment.
 - **Starter template**: use the `Kore Template` for a ready-to-run project: [`Kore Template`](https://github.com/Ayfri/Kore-Template).
 - **Create & generate**: see [Creating A Datapack](./creating-a-datapack) for lifecycle and output options (`.generate()`, `.generateZip()`, `.generateJar()`).
-
-
 
 {{{ .components.doc.FeatureGrid }}}
 
