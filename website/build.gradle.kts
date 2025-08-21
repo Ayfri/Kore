@@ -179,25 +179,24 @@ kobweb {
 			generateKotlin("$projectGroup/docEntries.kt", buildString {
 				appendLine(
 					"""
-				|// This file is generated. Modify the build script if you need to change it.
-				|
-				|package io.github.ayfri.kore.website
-				|
-				|import io.github.ayfri.kore.website.components.doc.DocArticle
-				|
-				|val docEntries = listOf${if (docEntries.isEmpty()) "<DocArticle>" else ""}(
-				""".trimMargin()
+					|// This file is generated. Modify the build script if you need to change it.
+					|
+					|package io.github.ayfri.kore.website
+					|
+					|import io.github.ayfri.kore.website.components.doc.DocArticle
+					|
+					|val docEntries = listOf${if (docEntries.isEmpty()) "<DocArticle>" else ""}(
+					""".trimMargin()
 				)
 
 				fun List<String>.asCode() = "listOf(${joinToString { "\"$it\"" }})"
 				fun String.escapeQuotes() = replace("\"", "\\\"")
 
-				// THIS SEEMS TO FIX IT
 				docEntries.sortedByDescending(DocEntry::date).forEach { entry ->
 					appendLine(
 						"""
 						|	DocArticle("/docs/${
-							entry.file.path.substringBeforeLast(".md")
+							entry.file.nameWithoutExtension
 								.replace(Regex(" |_"), "-")
 								.replace("\\", "/")
 								.substringAfter("doc/")
