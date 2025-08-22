@@ -446,8 +446,8 @@ fun DataPack.itemModifierTests() {
 
 	itemModifier("toggle_tooltips") {
 		toggleTooltips {
-			toggle(true, ToggleableComponents.TRIM, ToggleableComponents.CAN_PLACE_ON)
-			toggles(ToggleableComponents.DYED_COLOR to false)
+			toggle(true, ItemComponentTypes.TRIM, ItemComponentTypes.CAN_PLACE_ON)
+			toggles(ItemComponentTypes.DYED_COLOR to false)
 		}
 	}
 
@@ -455,9 +455,9 @@ fun DataPack.itemModifierTests() {
 		{
 			"function": "minecraft:toggle_tooltips",
 			"toggles": {
-				"trim": true,
-				"can_place_on": true,
-				"dyed_color": false
+				"minecraft:trim": true,
+				"minecraft:can_place_on": true,
+				"minecraft:dyed_color": false
 			}
 		}
 	""".trimIndent()
