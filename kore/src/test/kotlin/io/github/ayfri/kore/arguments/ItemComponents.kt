@@ -472,6 +472,11 @@ fun itemComponentsTests() {
 	}
 	profileTest.asString() assertsIs """minecraft:player_head[profile={name:"Notch",properties:[{name:"test",value:"test"},{name:"test",value:"Kore"}]}]"""
 
+	val providesBannerPatternsTest = Items.PLAYER_HEAD {
+		providesBannerPatterns(Tags.BannerPattern.PatternItem.CREEPER)
+	}
+	providesBannerPatternsTest.asString() assertsIs """minecraft:player_head[provides_banner_patterns="#minecraft:pattern_item/creeper"]"""
+
 	val rarityTest = stone {
 		rarity(Rarities.EPIC)
 	}
