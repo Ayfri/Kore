@@ -32,6 +32,19 @@ interface Color : Argument {
 		else -> error("Unknown color type: $this")
 	}
 
+	/**
+	 * Converts any color to an [ARGB] instance, with an optional alpha value defaulting to 255 (so assuming a non-normalized color).
+	 *
+	 * - [NamedColor] is mapped using vanilla-compatible tints.
+	 * - [RGB] adds full alpha.
+	 */
+	fun toARGB(alpha: Int = 255): ARGB = when (this) {
+		is NamedColor -> ARGB.fromNamedColor(this, alpha)
+		is RGB -> ARGB(alpha, red, green, blue)
+		is ARGB -> this
+		else -> error("Unknown color type: $this")
+	}
+
 	companion object {
 		val AQUA = FormattingColor.AQUA
 		val BLACK = FormattingColor.BLACK

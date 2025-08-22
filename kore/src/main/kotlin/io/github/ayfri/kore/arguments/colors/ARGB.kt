@@ -28,7 +28,9 @@ data class ARGB(var alpha: Int, var red: Int, var green: Int, var blue: Int) : C
 	val b get() = blue
 
 	val array get() = intArrayOf(alpha, red, green, blue)
-	val normalizedArray get() = doubleArrayOf(red / 255.0, green / 255.0, blue / 255.0)
+	val normalizedArray get() = doubleArrayOf(alpha / 255.0, red / 255.0, green / 255.0, blue / 255.0)
+	val rgbaArray get() = intArrayOf(red, green, blue, alpha)
+	val rgbaNormalizedArray get() = doubleArrayOf(red / 255.0, green / 255.0, blue / 255.0, alpha / 255.0)
 
 	operator fun plus(other: ARGB) = ARGB(
 		(alpha + other.alpha).coerceIn(0, 255),
@@ -100,7 +102,23 @@ data class ARGB(var alpha: Int, var red: Int, var green: Int, var blue: Int) : C
 	companion object {
 		/** Builds an [ARGB] from a hex string with or without leading '#'. */
 		fun fromHex(hex: String) = ARGB(hex.removePrefix("#"))
-		fun fromNamedColor(color: NamedColor) = RGB.fromNamedColor(color).toARGB()
+
+		/** Builds an [ARGB] from a [NamedColor], sets alpha to 255. */
+		fun fromNamedColor(color: NamedColor, alpha: Int = 255) = RGB.fromNamedColor(color).toARGB(alpha)
+
+		/** Builds an [ARGB] from a 0xRRGGBB decimal integer. */
+		fun fromDecimal(decimal: Int) = ARGB(decimal shr 24 and 0xFF, decimal shr 16 and 0xFF, decimal shr 8 and 0xFF, decimal and 0xFF)
+
+		/** Builds an [ARGB] from components 0..255. */
+		fun fromRGBA(red: Int, green: Int, blue: Int, alpha: Int) = ARGB(alpha, red, green, blue)
+
+		/** Builds an [ARGB] from an array [R, G, B, A] from 0.0 to 1.0. */
+		fun fromRGBAArray(array: DoubleArray) = ARGB(
+			array[3].times(255).toInt(),
+			array[0].times(255).toInt(),
+			array[1].times(255).toInt(),
+			array[2].times(255).toInt()
+		)
 
 		data object ARGBSerializer : ToStringSerializer<ARGB>()
 	}

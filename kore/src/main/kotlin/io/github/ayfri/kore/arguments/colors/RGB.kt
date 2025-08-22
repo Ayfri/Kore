@@ -90,7 +90,6 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 		return List(count) { mix(other, it * step) }
 	}
 
-	fun toARGB(alpha: Int = 255) = ARGB(alpha, red, green, blue)
 	fun toHex(withHash: Boolean = false) = if (withHash) hexWithHash else hex
 
 	override fun toString() = hexWithHash
