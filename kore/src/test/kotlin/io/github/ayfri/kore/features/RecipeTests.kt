@@ -15,6 +15,7 @@ import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.Tags
+import io.github.ayfri.kore.generated.TrimPatterns
 
 fun DataPack.recipeTest() {
 	recipes {
@@ -190,13 +191,15 @@ private fun DataPack.allRecipeTypesTests() {
 		template = Items.DIAMOND_BLOCK
 		base = Items.DIAMOND_SWORD
 		addition = Items.NETHERITE_INGOT
+		pattern = TrimPatterns.SILENCE
 	}
 	recipes.last() assertsIs """
 		{
 			"type": "minecraft:smithing_trim",
 			"template": "minecraft:diamond_block",
 			"base": "minecraft:diamond_sword",
-			"addition": "minecraft:netherite_ingot"
+			"addition": "minecraft:netherite_ingot",
+			"pattern": "minecraft:silence"
 		}
 	""".trimIndent()
 }
