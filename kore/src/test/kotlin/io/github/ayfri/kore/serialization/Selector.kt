@@ -20,7 +20,6 @@ import io.github.ayfri.kore.features.predicates.sub.block
 import io.github.ayfri.kore.generated.Advancements
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.EntityTypes
-import io.github.ayfri.kore.generated.arguments.types.AdvancementArgument
 import io.github.ayfri.kore.setTestPath
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
