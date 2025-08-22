@@ -88,6 +88,14 @@ fun itemComponentsTests() {
 	}
 	blockEntityDataTest.asString() assertsIs """minecraft:bee_nest[block_entity_data={id:"minecraft:bee_nest",test:"test"}]"""
 
+	val blocksAttacksTest = Items.DIAMOND_SWORD {
+		blocksAttacks {
+			damageReduction(base = 0f, factor = 0.5f, Tags.DamageType.IS_PLAYER_ATTACK)
+			itemDamage(base = 1f, factor = 0f, threshold = 0f)
+		}
+	}
+	blocksAttacksTest.asString() assertsIs """minecraft:diamond_sword[blocks_attacks={damage_reductions:[{base:0.0f,factor:0.5f,type:"#minecraft:is_player_attack"}],item_damage:{base:1.0f,factor:0.0f,threshold:0.0f}}]"""
+
 	val blockStateTest = stone {
 		blockState {
 			this["test"] = "test"
