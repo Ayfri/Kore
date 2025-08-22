@@ -73,6 +73,8 @@ fun Function.particleTests() {
 		sculkCharge(PI / 2) assertsIs "particle sculk_charge 1.5707963267948966"
 		shriek(100) assertsIs "particle shriek 100"
 
+		tintedLeaves(Color.RED) assertsIs "particle tinted_leaves{color:[1.0d,0.3333333333333333d,0.3333333333333333d,1.0d]}"
+
 		trail(
 			Color.RED,
 			Triple(1, 2, 3),
