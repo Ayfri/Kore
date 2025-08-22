@@ -585,9 +585,9 @@ fun itemComponentsTests() {
 	writtenBookTest.asString() assertsIs "minecraft:written_book[written_book_content={pages:['{type:\"text\",color:\"aqua\",text:\"test\"}'],title:'\"test\"',author:\"test\",generation:1,resolved:1b}]"
 
 	val weaponTest = stoneSword {
-		weapon(itemDamagePerAttack = 5, canDisableBlocking = true)
+		weapon(itemDamagePerAttack = 5, disableBlockingForSeconds = 5f)
 	}
-	weaponTest.asString() assertsIs """minecraft:stone_sword[weapon={item_damage_per_attack:5,can_disable_blocking:1b}]"""
+	weaponTest.asString() assertsIs """minecraft:stone_sword[weapon={item_damage_per_attack:5,disable_blocking_for_seconds:5f}]"""
 
 	val weaponDefaultTest = stoneSword {
 		weapon()
