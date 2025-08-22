@@ -103,6 +103,11 @@ fun itemComponentsTests() {
 	}
 	blockStateTest.asString() assertsIs """minecraft:stone[block_state={test:"test"}]"""
 
+	val breakSoundTest = Items.DIAMOND_SWORD {
+		breakSound(SoundEvents.Ambient.CAVE)
+	}
+	breakSoundTest.asString() assertsIs """minecraft:diamond_sword[break_sound="minecraft:ambient.cave"]"""
+
 	val bucketEntityDataTest = Items.WATER_BUCKET {
 		bucketEntityData {
 			this["test"] = "test"
