@@ -62,6 +62,7 @@ suspend fun launchAllSimpleGenerators() {
 				"worldgen/world_preset" to "worldgen.WorldPresetTag",
 			)
 		),
+		gen("Textures", "textures", argumentClassName = "Model M") { it.removeSuffix(".png") },
 		gen("DensityFunctions", "worldgen/density_function"),
 		gen("TemplatePools", "worldgen/template_pool"),
 	).transformRemoveJSONSuffix().map { gen ->
