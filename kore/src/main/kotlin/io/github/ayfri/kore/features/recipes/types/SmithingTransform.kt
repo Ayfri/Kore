@@ -13,7 +13,7 @@ import kotlinx.serialization.Transient
 @Serializable
 data class SmithingTransform(
 	var template: ItemOrTagArgument? = null,
-	var base: ItemOrTagArgument? = null,
+	var base: ItemOrTagArgument,
 	var addition: ItemOrTagArgument? = null,
 	var result: ItemArgument,
 ) : Recipe() {
@@ -26,7 +26,7 @@ data class SmithingTransform(
 }
 
 fun Recipes.smithingTransform(name: String, block: SmithingTransform.() -> Unit): RecipeArgument {
-	val recipe = RecipeFile(name, SmithingTransform(result = item("")).apply(block))
+	val recipe = RecipeFile(name, SmithingTransform(result = item(""), base = item("")).apply(block))
 	dp.recipes += recipe
 	return RecipeArgument(name, recipe.namespace ?: dp.name)
 }
