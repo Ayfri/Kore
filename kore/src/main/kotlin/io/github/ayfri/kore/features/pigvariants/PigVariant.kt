@@ -2,10 +2,10 @@ package io.github.ayfri.kore.features.pigvariants
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
-import io.github.ayfri.kore.generated.Biomes
+import io.github.ayfri.kore.arguments.types.resources.ModelArgument
+import io.github.ayfri.kore.data.spawncondition.SpawnConditions
+import io.github.ayfri.kore.data.spawncondition.VariantSpawnEntry
 import io.github.ayfri.kore.generated.arguments.types.PigVariantArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.BiomeArgument
-import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
@@ -16,21 +16,22 @@ import kotlinx.serialization.Transient
  * and is used to create different colored pigs in the world.
  *
  * JSON format reference: https://minecraft.wiki/w/Mob_variant_definitions#Pig
- *
- * @param model - The model to use for the pig variant.
- * @param texture - The texture to use for the pig variant.
- * @param biome - The biome to associate with the pig variant.
  */
 @Serializable
 data class PigVariant(
 	@Transient
 	override var fileName: String = "pig_variant",
-	var model: PigModel = PigModel.NORMAL,
-	var texture: String = "minecraft:entity/pig/pig",
-	var biome: InlinableList<BiomeArgument> = listOf(Biomes.PLAINS),
+	/** The texture asset to use for the pig variant. */
+	var assetId: ModelArgument,
+	/** The spawn conditions for this pig variant. */
+	var spawnConditions: List<VariantSpawnEntry> = emptyList()
 ) : Generator("pig_variant") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
+
+/** Sets the spawn conditions for this pig variant. */
+fun PigVariant.spawnConditions(block: SpawnConditions.() -> Unit) = apply { spawnConditions = SpawnConditions().apply(block).entries }
+
 
 /**
  * Create and register a pig variant in this [DataPack].
@@ -41,9 +42,10 @@ data class PigVariant(
  */
 fun DataPack.pigVariant(
 	fileName: String = "pig_variant",
+	assetId: ModelArgument,
 	block: PigVariant.() -> Unit = {},
 ): PigVariantArgument {
-	val pigVariant = PigVariant(fileName).apply(block)
+	val pigVariant = PigVariant(fileName, assetId).apply(block)
 	pigVariants += pigVariant
 	return PigVariantArgument(fileName, pigVariant.namespace ?: name)
 }
