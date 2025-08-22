@@ -9,6 +9,7 @@ import io.github.ayfri.kore.features.chattypes.ChatType
 import io.github.ayfri.kore.features.damagetypes.DamageType
 import io.github.ayfri.kore.features.enchantments.Enchantment
 import io.github.ayfri.kore.features.enchantments.providers.EnchantmentProvider
+import io.github.ayfri.kore.features.frogvariants.FrogVariant
 import io.github.ayfri.kore.features.instruments.Instrument
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.jukeboxsongs.JukeboxSong
@@ -83,6 +84,7 @@ class DataPack(val name: String) {
 	val enchantments = registerGenerator<Enchantment>()
 	val enchantmentProviders = registerGenerator<EnchantmentProvider>()
 	val flatLevelGeneratorPresets = registerGenerator<FlatLevelGeneratorPreset>()
+	val frogVariants = registerGenerator<FrogVariant>()
 	val instruments = registerGenerator<Instrument>()
 	val itemModifiers = registerGenerator<ItemModifier>()
 	val jukeboxSongs = registerGenerator<JukeboxSong>()
