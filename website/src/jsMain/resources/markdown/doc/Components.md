@@ -184,7 +184,9 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 - `baseColor(..)`
 - `bees { .. }`
 - `blockEntityData(..)`
+- `blocksAttacks(..)` / `blocksAttacks { .. }`
 - `blockState(..)`
+- `breakSound(..)`
 - `bucketEntityData(..)`
 - `bundleContents(..)` / `bundleContent(..)`
 - `canBreak(..)`
@@ -210,8 +212,6 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 - `fireworks(..)`
 - `food(..)`
 - `glider()`
-- `hideAdditionalTooltip()`
-- `hideTooltip()`
 - `instrument(..)`
 - `intangibleProjectile()`
 - `itemModel(..)`
@@ -231,6 +231,8 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 - `potionContents(..)`
 - `potionDurationScale(..)`
 - `profile(..)`
+- `providesBannerPatterns(..)`
+- `providesTrimMaterial(..)`
 - `rarity(..)`
 - `recipes(..)`
 - `repairable(..)`
@@ -238,9 +240,10 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 - `storedEnchantments(..)`
 - `suspiciousStewEffectsComponent(..)`
 - `tool { .. }`
+- `tooltipDisplay(..)`
 - `tooltipStyle(..)`
 - `trim(..)`
-- `unbreakable(..)`
+- `unbreakable()`
 - `useCooldown(..)`
 - `useRemainder(..)`
 - `weapon(..)`
