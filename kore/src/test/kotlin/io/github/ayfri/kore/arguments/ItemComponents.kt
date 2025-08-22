@@ -54,9 +54,8 @@ fun itemComponentsTests() {
 			namespace = "my_namespace",
 			operation = AttributeModifierOperation.ADD_VALUE,
 		)
-		showInTooltip = true
 	}
-	attributeModifiersTest.asString() assertsIs """minecraft:stone_sword[attribute_modifiers={modifiers:[{type:"minecraft:attack_damage",id:"my_namespace:big",amount:1.0d,operation:"add_value"}],show_in_tooltip:1b}]"""
+	attributeModifiersTest.asString() assertsIs """minecraft:stone_sword[attribute_modifiers=[{type:"minecraft:attack_damage",id:"my_namespace:big",amount:1.0d,operation:"add_value"}]]"""
 
 	val bannerPatternsTest = Items.WHITE_BANNER {
 		bannerPatterns {
@@ -118,26 +117,24 @@ fun itemComponentsTests() {
 	val canBreakTest = stoneSword {
 		canBreak(Blocks.DIAMOND_BLOCK)
 	}
-	canBreakTest.asString() assertsIs """minecraft:stone_sword[can_break={predicates:[{blocks:"minecraft:diamond_block"}]}]"""
+	canBreakTest.asString() assertsIs """minecraft:stone_sword[can_break=[{blocks:"minecraft:diamond_block"}]]"""
 
 	canBreakTest.components!!.canBreak {
 		predicate(Blocks.DIAMOND_BLOCK, state = mapOf("test" to "test"))
 		predicate(Blocks.STONE, Blocks.ICE)
-		showInTooltip = true
 	}
-	canBreakTest.asString() assertsIs """minecraft:stone_sword[can_break={predicates:[{blocks:"minecraft:diamond_block",state:{test:"test"}},{blocks:["minecraft:stone","minecraft:ice"]}],show_in_tooltip:1b}]"""
+	canBreakTest.asString() assertsIs """minecraft:stone_sword[can_break=[{blocks:"minecraft:diamond_block",state:{test:"test"}},{blocks:["minecraft:stone","minecraft:ice"]}]]"""
 
 	val canPlaceOnTest = stone {
 		canPlaceOn(Blocks.DIAMOND_BLOCK)
 	}
-	canPlaceOnTest.asString() assertsIs """minecraft:stone[can_place_on={predicates:[{blocks:"minecraft:diamond_block"}]}]"""
+	canPlaceOnTest.asString() assertsIs """minecraft:stone[can_place_on=[{blocks:"minecraft:diamond_block"}]]"""
 
 	canPlaceOnTest.components!!.canPlaceOn {
 		predicate(Blocks.DIAMOND_BLOCK, state = mapOf("test" to "test"))
 		predicate(Blocks.STONE, Blocks.ICE)
-		showInTooltip = true
 	}
-	canPlaceOnTest.asString() assertsIs """minecraft:stone[can_place_on={predicates:[{blocks:"minecraft:diamond_block",state:{test:"test"}},{blocks:["minecraft:stone","minecraft:ice"]}],show_in_tooltip:1b}]"""
+	canPlaceOnTest.asString() assertsIs """minecraft:stone[can_place_on=[{blocks:"minecraft:diamond_block",state:{test:"test"}},{blocks:["minecraft:stone","minecraft:ice"]}]]"""
 
 	val chargedProjectilesTest = crossbow {
 		chargedProjectile(Items.ARROW)
@@ -249,9 +246,6 @@ fun itemComponentsTests() {
 	}
 	dyedColorTest.asString() assertsIs """minecraft:leather_helmet[dyed_color=5636095]"""
 
-	dyedColorTest.components!!.dyedColor(Color.AQUA, showInTooltip = true)
-	dyedColorTest.asString() assertsIs """minecraft:leather_helmet[dyed_color={rgb:5636095,show_in_tooltip:1b}]"""
-
 	val enchantableTest = stoneSword {
 		enchantable(10)
 	}
@@ -264,9 +258,8 @@ fun itemComponentsTests() {
 
 	enchantmentsTest.components!!.enchantments {
 		enchantment(Enchantments.LOOTING, 3)
-		showInTooltip = true
 	}
-	enchantmentsTest.asString() assertsIs """minecraft:stone_sword[enchantments={levels:{"minecraft:looting":3},show_in_tooltip:1b}]"""
+	enchantmentsTest.asString() assertsIs """minecraft:stone_sword[enchantments={"minecraft:looting":3}]"""
 
 	val enchantmentGlintOverrideTest = stoneSword {
 		enchantmentGlintOverride(true)
@@ -361,7 +354,7 @@ fun itemComponentsTests() {
 	val jukeboxPlayableTest = Items.JUKEBOX {
 		jukeboxPlayable(JukeboxSongs.OTHERSIDE)
 	}
-	jukeboxPlayableTest.asString() assertsIs """minecraft:jukebox[jukebox_playable={song:"minecraft:otherside"}]"""
+	jukeboxPlayableTest.asString() assertsIs """minecraft:jukebox[jukebox_playable="minecraft:otherside"]"""
 
 	val lockTest = stoneSword {
 		lock("test")
@@ -498,9 +491,8 @@ fun itemComponentsTests() {
 
 	storedEnchantmentsTest.components!!.storedEnchantments {
 		enchantment(Enchantments.LOOTING, 3)
-		showInTooltip = true
 	}
-	storedEnchantmentsTest.asString() assertsIs """minecraft:stone_sword[stored_enchantments={levels:{"minecraft:looting":3},show_in_tooltip:1b}]"""
+	storedEnchantmentsTest.asString() assertsIs """minecraft:stone_sword[stored_enchantments={"minecraft:looting":3}]"""
 
 	val suspiciousStewTest = Items.SUSPICIOUS_STEW {
 		suspiciousStewEffectsComponent {
@@ -543,8 +535,8 @@ fun itemComponentsTests() {
 	}
 	unbreakableTest.asString() assertsIs """minecraft:stone_sword[unbreakable={}]"""
 
-	unbreakableTest.components!!.unbreakable(showInTooltip = true)
-	unbreakableTest.asString() assertsIs """minecraft:stone_sword[unbreakable={show_in_tooltip:1b}]"""
+	unbreakableTest.components!!.unbreakable()
+	unbreakableTest.asString() assertsIs """minecraft:stone_sword[unbreakable={}]"""
 
 	val useCooldownTest = Items.ENDER_PEARL {
 		useCooldown(
@@ -582,7 +574,7 @@ fun itemComponentsTests() {
 	val weaponTest = stoneSword {
 		weapon(itemDamagePerAttack = 5, disableBlockingForSeconds = 5f)
 	}
-	weaponTest.asString() assertsIs """minecraft:stone_sword[weapon={item_damage_per_attack:5,disable_blocking_for_seconds:5f}]"""
+	weaponTest.asString() assertsIs """minecraft:stone_sword[weapon={item_damage_per_attack:5,disable_blocking_for_seconds:5.0f}]"""
 
 	val weaponDefaultTest = stoneSword {
 		weapon()

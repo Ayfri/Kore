@@ -5,23 +5,15 @@ import io.github.ayfri.kore.arguments.colors.RGB
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
-import kotlinx.serialization.SerialName
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable(with = DyedColorComponent.Companion.DyedColorComponentSerializer::class)
-data class DyedColorComponent(
-	@Serializable(RGB.Companion.ColorAsDecimalSerializer::class) var rgb: RGB,
-	@SerialName("show_in_tooltip")
-	val showInTooltip: Boolean? = null,
-) : Component() {
+data class DyedColorComponent(@Serializable(RGB.Companion.ColorAsDecimalSerializer::class) var rgb: RGB) : Component() {
 	companion object {
-		data object DyedColorComponentSerializer : SinglePropertySimplifierSerializer<DyedColorComponent, RGB>(
-			DyedColorComponent::class,
-			DyedColorComponent::rgb,
-		)
+		data object DyedColorComponentSerializer : InlineAutoSerializer<DyedColorComponent>(DyedColorComponent::class)
 	}
 }
 
-fun ComponentsScope.dyedColor(rgb: Color, showInTooltip: Boolean? = null) =
-	apply { this[ItemComponentTypes.DYED_COLOR] = DyedColorComponent(rgb.toRGB(), showInTooltip) }
+fun ComponentsScope.dyedColor(rgb: Color) =
+	apply { this[ItemComponentTypes.DYED_COLOR] = DyedColorComponent(rgb.toRGB()) }

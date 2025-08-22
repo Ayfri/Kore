@@ -7,8 +7,7 @@ import io.github.ayfri.kore.arguments.types.resources.AttributeModifierArgument
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.AttributeArgument
-import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
-import kotlinx.serialization.SerialName
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -23,26 +22,19 @@ data class AttributeModifier(
 @Serializable(with = AttributeModifiersComponent.Companion.AttributeModifiersComponentSerializer::class)
 data class AttributeModifiersComponent(
 	val modifiers: MutableList<AttributeModifier>,
-	@SerialName("show_in_tooltip")
-	var showInTooltip: Boolean? = null,
 ) : Component() {
 	companion object {
-		data object AttributeModifiersComponentSerializer : SinglePropertySimplifierSerializer<AttributeModifiersComponent, List<AttributeModifier>>(
-			AttributeModifiersComponent::class,
-			AttributeModifiersComponent::modifiers,
-		)
+		data object AttributeModifiersComponentSerializer : InlineAutoSerializer<AttributeModifiersComponent>(AttributeModifiersComponent::class)
 	}
 }
 
 fun ComponentsScope.attributeModifiers(
 	modifiers: List<AttributeModifier>,
-	showInTooltip: Boolean? = null,
-) = apply { this[ItemComponentTypes.ATTRIBUTE_MODIFIERS] = AttributeModifiersComponent(modifiers.toMutableList(), showInTooltip) }
+) = apply { this[ItemComponentTypes.ATTRIBUTE_MODIFIERS] = AttributeModifiersComponent(modifiers.toMutableList()) }
 
 fun ComponentsScope.attributeModifiers(
 	vararg modifiers: AttributeModifier,
-	showInTooltip: Boolean? = null,
-) = attributeModifiers(modifiers.toList(), showInTooltip)
+) = attributeModifiers(modifiers.toList())
 
 fun ComponentsScope.attributeModifiers(modifiers: AttributeModifiersComponent.() -> Unit) =
 	AttributeModifiersComponent(mutableListOf()).apply(modifiers).let { this[ItemComponentTypes.ATTRIBUTE_MODIFIERS] = it }

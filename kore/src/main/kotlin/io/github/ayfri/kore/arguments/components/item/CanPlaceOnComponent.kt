@@ -5,33 +5,28 @@ import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.components.data.BlockPredicate
 import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import kotlinx.serialization.SerialName
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
 
-@Serializable
-data class CanPlaceOnComponent(
-	var predicates: List<BlockPredicate>,
-	@SerialName("show_in_tooltip")
-	var showInTooltip: Boolean? = null,
-) : Component()
+@Serializable(with = CanPlaceOnComponent.Companion.CanPlaceOnComponentSerializer::class)
+data class CanPlaceOnComponent(var predicates: List<BlockPredicate>) : Component() {
+	companion object {
+		data object CanPlaceOnComponentSerializer : InlineAutoSerializer<CanPlaceOnComponent>(CanPlaceOnComponent::class)
+	}
+}
 
-fun ComponentsScope.canPlaceOn(
-	predicates: List<BlockPredicate>,
-	showInTooltip: Boolean? = null,
-) = apply { this[ItemComponentTypes.CAN_PLACE_ON] = CanPlaceOnComponent(predicates.toMutableList(), showInTooltip) }
+fun ComponentsScope.canPlaceOn(predicates: List<BlockPredicate>) = apply {
+	this[ItemComponentTypes.CAN_PLACE_ON] = CanPlaceOnComponent(predicates.toMutableList())
+}
 
-fun ComponentsScope.canPlaceOn(
-	vararg predicates: BlockPredicate,
-	showInTooltip: Boolean? = null,
-) = canPlaceOn(predicates.toList(), showInTooltip)
+fun ComponentsScope.canPlaceOn(vararg predicates: BlockPredicate) = canPlaceOn(predicates.toList())
 
 fun ComponentsScope.canPlaceOn(
 	block: BlockOrTagArgument,
 	nbt: NbtCompound? = null,
 	state: Map<String, String>? = null,
-	showInTooltip: Boolean? = null,
-) = canPlaceOn(listOf(BlockPredicate(mutableListOf(block), nbt, state?.toMutableMap())), showInTooltip)
+) = canPlaceOn(listOf(BlockPredicate(mutableListOf(block), nbt, state?.toMutableMap())))
 
 fun ComponentsScope.canPlaceOn(block: CanPlaceOnComponent.() -> Unit) =
 	CanPlaceOnComponent(mutableListOf()).apply(block).let { this[ItemComponentTypes.CAN_PLACE_ON] = it }
