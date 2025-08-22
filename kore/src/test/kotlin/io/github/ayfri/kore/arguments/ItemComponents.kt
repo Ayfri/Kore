@@ -334,16 +334,6 @@ fun itemComponentsTests() {
 	}
 	gliderTest.asString() assertsIs """minecraft:elytra[glider={}]"""
 
-	val hideAdditionalTooltipTest = stoneSword {
-		hideAdditionalTooltip()
-	}
-	hideAdditionalTooltipTest.asString() assertsIs """minecraft:stone_sword[hide_additional_tooltip={}]"""
-
-	val hideTooltipTest = stoneSword {
-		hideTooltip()
-	}
-	hideTooltipTest.asString() assertsIs """minecraft:stone_sword[hide_tooltip={}]"""
-
 	val instrumentTest = Items.GOAT_HORN {
 		instrument(Instruments.CALL_GOAT_HORN)
 	}
@@ -532,6 +522,11 @@ fun itemComponentsTests() {
 		}
 	}
 	toolTest.asString() assertsIs """minecraft:stone_sword[tool={rules:[{blocks:["#minecraft:base_stone_overworld","#minecraft:overworld_carver_replaceables","minecraft:hay_block"],speed:0.5f,correct_for_drops:1b}],default_mining_speed:2.0f}]"""
+
+	val tooltipDisplayTest = stoneSword {
+		tooltipDisplay(false, ItemComponentTypes.BANNER_PATTERNS, ItemComponentTypes.INSTRUMENT)
+	}
+	tooltipDisplayTest.asString() assertsIs """minecraft:stone_sword[tooltip_display={hidden_components:["minecraft:banner_patterns","minecraft:instrument"]}]"""
 
 	val tooltipStyleTest = stoneSword {
 		tooltipStyle("model")

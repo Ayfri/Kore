@@ -4,7 +4,7 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.WEAPON
 import io.github.ayfri.kore.arguments.components.entity.axolotlVariant
 import io.github.ayfri.kore.arguments.components.item.damage
-import io.github.ayfri.kore.arguments.components.item.hideTooltip
+import io.github.ayfri.kore.arguments.components.item.unbreakable
 import io.github.ayfri.kore.arguments.components.matchers.enchantments
 import io.github.ayfri.kore.arguments.enums.AxolotlVariants
 import io.github.ayfri.kore.arguments.enums.Gamemode
@@ -87,7 +87,7 @@ fun DataPack.predicateTests() {
 			components {
 				axolotlVariant(AxolotlVariants.CYAN)
 				damage(12)
-				!hideTooltip()
+				!unbreakable()
 			}
 
 			effects {
@@ -157,7 +157,7 @@ fun DataPack.predicateTests() {
 				"components": {
 					"axolotl_variant": "cyan",
 					"damage": 12,
-					"!hide_tooltip": {}
+					"!unbreakable": {}
 				},
 				"effects": {
 					"minecraft:invisibility": {
