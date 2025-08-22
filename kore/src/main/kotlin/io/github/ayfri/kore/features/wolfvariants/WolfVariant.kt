@@ -2,10 +2,11 @@ package io.github.ayfri.kore.features.wolfvariants
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
-import io.github.ayfri.kore.generated.Biomes
+import io.github.ayfri.kore.arguments.types.resources.ModelArgument
+import io.github.ayfri.kore.data.spawncondition.SpawnConditions
+import io.github.ayfri.kore.data.spawncondition.VariantSpawnEntry
+import io.github.ayfri.kore.generated.Textures
 import io.github.ayfri.kore.generated.arguments.types.WolfVariantArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.BiomeArgument
-import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
@@ -25,13 +26,31 @@ import kotlinx.serialization.Transient
 data class WolfVariant(
 	@Transient
 	override var fileName: String = "wolf_variant",
-	var wildTexture: String = "minecraft:entity/wolf/wolf",
-	var angryTexture: String = "minecraft:entity/wolf/wolf_angry",
-	var tameTexture: String = "minecraft:entity/wolf/wolf_tame",
-	var biomes: InlinableList<BiomeArgument> = listOf(Biomes.TAIGA),
+	/** The different textures for the wolf variant, defaulting to vanilla. */
+	var assets: Assets = Assets(),
+	var spawnConditions: List<VariantSpawnEntry> = emptyList()
 ) : Generator("wolf_variant") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
+
+/** The different textures for a wolf variant, defaulting to vanilla. */
+@Serializable
+data class Assets(
+	/** The texture for the angry state of the wolf variant. */
+	var angry: ModelArgument = Textures.Entity.Wolf.WOLF_ANGRY,
+	/** The texture for the tame state of the wolf variant. */
+	var tame: ModelArgument = Textures.Entity.Wolf.WOLF_TAME,
+	/** The texture for the wild state of the wolf variant. */
+	var wild: ModelArgument = Textures.Entity.Wolf.WOLF,
+)
+
+/** Sets the different textures for this wolf variant. */
+fun WolfVariant.assets(angry: ModelArgument, tame: ModelArgument, wild: ModelArgument) {
+	assets = Assets(angry, tame, wild)
+}
+
+/** Sets the spawn conditions for this wolf variant. */
+fun WolfVariant.spawnConditions(block: SpawnConditions.() -> Unit) = apply { spawnConditions = SpawnConditions().apply(block).entries }
 
 /**
  * Create and register a wolf variant in this [DataPack].
