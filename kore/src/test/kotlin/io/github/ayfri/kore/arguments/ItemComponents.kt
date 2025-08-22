@@ -477,6 +477,11 @@ fun itemComponentsTests() {
 	}
 	providesBannerPatternsTest.asString() assertsIs """minecraft:player_head[provides_banner_patterns="#minecraft:pattern_item/creeper"]"""
 
+	val providerTrimMaterialTest = Items.PLAYER_HEAD {
+		providesTrimMaterial(TrimMaterials.DIAMOND)
+	}
+	providerTrimMaterialTest.asString() assertsIs """minecraft:player_head[provides_trim_material="minecraft:diamond"]"""
+
 	val rarityTest = stone {
 		rarity(Rarities.EPIC)
 	}
