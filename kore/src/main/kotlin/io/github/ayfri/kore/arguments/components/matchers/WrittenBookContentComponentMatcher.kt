@@ -3,7 +3,7 @@ package io.github.ayfri.kore.arguments.components.matchers
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.components.CollectionMatcher
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
-import io.github.ayfri.kore.features.advancements.serializers.IntRangeOrIntJson
+import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
 import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
 import kotlinx.serialization.Serializable
 

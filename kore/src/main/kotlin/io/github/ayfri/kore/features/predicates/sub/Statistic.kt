@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.predicates.sub
 
 import io.github.ayfri.kore.arguments.types.resources.StatisticArgument
 import io.github.ayfri.kore.arguments.types.resources.StatisticTypeArgument
-import io.github.ayfri.kore.features.advancements.serializers.IntRangeOrIntJson
+import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
 import kotlinx.serialization.Serializable
 
 @Serializable

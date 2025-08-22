@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.predicates.sub
 
 import io.github.ayfri.kore.arguments.numbers.ranges.asRangeOrDouble
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrDouble
-import io.github.ayfri.kore.features.advancements.serializers.FloatRangeOrFloatJson
+import io.github.ayfri.kore.arguments.numbers.ranges.serializers.FloatRangeOrFloatJson
 import kotlinx.serialization.Serializable
 
 @Serializable

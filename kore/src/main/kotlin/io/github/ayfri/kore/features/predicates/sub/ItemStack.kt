@@ -3,7 +3,7 @@ package io.github.ayfri.kore.features.predicates.sub
 import io.github.ayfri.kore.arguments.components.Components
 import io.github.ayfri.kore.arguments.types.ItemOrTagArgument
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
-import io.github.ayfri.kore.features.advancements.serializers.IntRangeOrIntJson
+import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
 import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable

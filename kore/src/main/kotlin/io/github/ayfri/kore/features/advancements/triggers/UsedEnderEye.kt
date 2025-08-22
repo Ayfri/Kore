@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.advancements.triggers
 
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
-import io.github.ayfri.kore.features.advancements.serializers.FloatRangeOrFloatJson
+import io.github.ayfri.kore.arguments.numbers.ranges.serializers.FloatRangeOrFloatJson
 import kotlinx.serialization.Serializable
 
 /**

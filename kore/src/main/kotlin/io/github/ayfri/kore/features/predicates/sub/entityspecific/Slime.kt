@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.predicates.sub.entityspecific
 
-import io.github.ayfri.kore.features.advancements.serializers.IntRangeOrIntJson
+import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
 import io.github.ayfri.kore.features.predicates.sub.Entity
 import kotlinx.serialization.Serializable
 

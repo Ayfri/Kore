@@ -1,4 +1,4 @@
-package io.github.ayfri.kore.features.advancements.serializers
+package io.github.ayfri.kore.arguments.numbers.ranges.serializers
 
 import io.github.ayfri.kore.arguments.numbers.ranges.FloatRangeOrFloat
 import io.github.ayfri.kore.arguments.numbers.ranges.range

@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.arguments.components
 
-import io.github.ayfri.kore.features.advancements.serializers.IntRangeOrIntJson
+import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
 import kotlinx.serialization.Serializable
 
 @Serializable

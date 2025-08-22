@@ -5,7 +5,7 @@ import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrDouble
 import io.github.ayfri.kore.arguments.types.resources.AttributeModifierArgument
 import io.github.ayfri.kore.commands.AttributeModifierOperation
-import io.github.ayfri.kore.features.advancements.serializers.FloatRangeOrFloatJson
+import io.github.ayfri.kore.arguments.numbers.ranges.serializers.FloatRangeOrFloatJson
 import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
 import io.github.ayfri.kore.generated.arguments.types.AttributeArgument
 import kotlinx.serialization.Serializable
