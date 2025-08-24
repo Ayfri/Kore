@@ -3,14 +3,13 @@ package io.github.ayfri.kore.arguments.components.item
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.serializer
 
 @Serializable(with = MapIdComponent.Companion.MapIdComponentSerializer::class)
 data class MapIdComponent(var id: Int) : Component() {
 	companion object {
-		object MapIdComponentSerializer : InlineSerializer<MapIdComponent, Int>(Int.serializer(), MapIdComponent::id)
+		data object MapIdComponentSerializer : InlineAutoSerializer<MapIdComponent>(MapIdComponent::class)
 	}
 }
 

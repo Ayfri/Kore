@@ -5,9 +5,8 @@ import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.BannerPatterns
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
 
 @Serializable
 data class BannerPatternEntry(
@@ -18,9 +17,8 @@ data class BannerPatternEntry(
 @Serializable(with = BannerPatternsComponent.Companion.BannerPatternComponentSerializer::class)
 data class BannerPatternsComponent(var list: List<BannerPatternEntry>) : Component() {
 	companion object {
-		object BannerPatternComponentSerializer : InlineSerializer<BannerPatternsComponent, List<BannerPatternEntry>>(
-			ListSerializer(BannerPatternEntry.serializer()),
-			BannerPatternsComponent::list
+		data object BannerPatternComponentSerializer : InlineAutoSerializer<BannerPatternsComponent>(
+			BannerPatternsComponent::class
 		)
 	}
 }

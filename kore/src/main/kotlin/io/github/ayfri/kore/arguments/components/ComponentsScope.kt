@@ -3,7 +3,6 @@ package io.github.ayfri.kore.arguments.components
 import io.github.ayfri.kore.arguments.components.item.CustomComponent
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.data.item.ItemStack
-import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.DataComponentTypeArgument
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.snbtSerializer

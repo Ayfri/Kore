@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.enchantments.effects.builders
 
-import io.github.ayfri.kore.arguments.types.resources.*
+import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
+import io.github.ayfri.kore.arguments.types.resources.SoundArgument
 import io.github.ayfri.kore.data.sound.SoundEvent
 import io.github.ayfri.kore.features.enchantments.effects.entity.*
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticlePosition
@@ -16,19 +17,13 @@ import io.github.ayfri.kore.generated.arguments.MobEffectOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
 
 @Serializable(with = EntityEffectBuilder.Companion.EntityEffectBuilderSerializer::class)
-data class EntityEffectBuilder(
-	var effects: List<ConditionalEffect> = emptyList(),
-) : EffectBuilder() {
+data class EntityEffectBuilder(var effects: List<ConditionalEffect> = emptyList()) : EffectBuilder() {
 	companion object {
-		data object EntityEffectBuilderSerializer : InlineSerializer<EntityEffectBuilder, List<ConditionalEffect>>(
-			kSerializer = ListSerializer(ConditionalEffect.serializer()),
-			property = EntityEffectBuilder::effects
-		)
+		data object EntityEffectBuilderSerializer : InlineAutoSerializer<EntityEffectBuilder>(EntityEffectBuilder::class)
 	}
 }
 

@@ -20,7 +20,8 @@ data class ItemStackSubPredicates(
 			override fun serialize(encoder: Encoder, value: ItemStackSubPredicates) {
 				encoder.encodeSerializableValue(
 					matchersSerializer,
-					value.matchers.associateBy { "minecraft:${it.componentName}" })
+					value.matchers.associateBy { "minecraft:${it.componentName}" }
+				)
 			}
 
 			override fun deserialize(decoder: Decoder) = error("ItemComponentsMatchersHolder cannot be deserialized")

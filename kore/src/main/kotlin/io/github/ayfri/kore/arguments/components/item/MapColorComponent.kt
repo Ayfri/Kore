@@ -4,16 +4,15 @@ import io.github.ayfri.kore.arguments.colors.RGB
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable(with = MapColorComponent.Companion.MapColorComponentSerializer::class)
-data class MapColorComponent(var color: RGB) : Component() {
+data class MapColorComponent(
+	@Serializable(RGB.Companion.ColorAsDecimalSerializer::class) var color: RGB,
+) : Component() {
 	companion object {
-		object MapColorComponentSerializer : InlineSerializer<MapColorComponent, RGB>(
-			RGB.Companion.ColorAsDecimalSerializer,
-			MapColorComponent::color
-		)
+		data object MapColorComponentSerializer : InlineAutoSerializer<MapColorComponent>(MapColorComponent::class)
 	}
 }
 

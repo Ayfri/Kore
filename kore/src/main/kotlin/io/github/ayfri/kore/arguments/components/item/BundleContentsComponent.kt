@@ -6,19 +6,13 @@ import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
 
 @Serializable(BundleContentsComponent.Companion.BundleContentsSerializer::class)
-data class BundleContentsComponent(
-	val items: MutableList<ItemStack>,
-) : Component() {
+data class BundleContentsComponent(val items: MutableList<ItemStack>) : Component() {
 	companion object {
-		object BundleContentsSerializer : InlineSerializer<BundleContentsComponent, List<ItemStack>>(
-			ListSerializer(ItemStack.serializer()),
-			BundleContentsComponent::items
-		)
+		data object BundleContentsSerializer : InlineAutoSerializer<BundleContentsComponent>(BundleContentsComponent::class)
 	}
 }
 

@@ -6,19 +6,13 @@ import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
 
 @Serializable(with = ChargedProjectilesComponent.Companion.ChargedProjectilesSerializer::class)
-data class ChargedProjectilesComponent(
-	val projectiles: MutableList<ItemStack>,
-) : Component() {
+data class ChargedProjectilesComponent(val projectiles: MutableList<ItemStack>) : Component() {
 	companion object {
-		object ChargedProjectilesSerializer : InlineSerializer<ChargedProjectilesComponent, List<ItemStack>>(
-			ListSerializer(ItemStack.serializer()),
-			ChargedProjectilesComponent::projectiles
-		)
+		data object ChargedProjectilesSerializer : InlineAutoSerializer<ChargedProjectilesComponent>(ChargedProjectilesComponent::class)
 	}
 }
 

@@ -520,8 +520,11 @@ private fun DataPack.componentsDisplay() {
 								"operation": "add_value"
 							}
 						],
-						"custom_name": "{type:\"text\",color:\"gold\",text:\"Legendary Diamond Sword\"}",
-						"lore": "{type:\"text\",color:\"gold\",text:\"A blade of immense power\"}"
+						"custom_name": {
+							"text": "Legendary Diamond Sword",
+							"color": "gold"
+						},
+						"lore": "[{type:\"text\",color:\"gold\",text:\"A blade of immense power\"}]"
 					}
 				},
 				"title": "Legendary Sword",

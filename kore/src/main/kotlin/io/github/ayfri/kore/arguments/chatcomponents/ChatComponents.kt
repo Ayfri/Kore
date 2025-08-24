@@ -71,7 +71,7 @@ data class ChatComponents(
 	fun asSnbtArg() = literal(asString())
 
 	companion object {
-		val ONLY_SIMPLE_COMPONENTS_EXCEPTION = IllegalArgumentException("This ChatComponents should only contain simple components.")
+		val ONLY_SIMPLE_COMPONENTS_EXCEPTION = IllegalArgumentException("This ChatComponent should only contain simple components.")
 
 		@OptIn(ExperimentalSerializationApi::class)
 		val jsonSerializer = Json {
@@ -80,7 +80,7 @@ data class ChatComponents(
 			namingStrategy = JsonNamingStrategy.SnakeCase
 		}
 
-		private object ChatComponentSerializer : KSerializer<ChatComponent> {
+		private data object ChatComponentSerializer : KSerializer<ChatComponent> {
 			override val descriptor = NbtTag.serializer().descriptor
 
 			override fun deserialize(decoder: Decoder) = when (decoder) {
@@ -114,7 +114,7 @@ data class ChatComponents(
 			}
 		}
 
-		object ChatComponentsSerializer : KSerializer<ChatComponents> {
+		data object ChatComponentsSerializer : KSerializer<ChatComponents> {
 			override val descriptor = ListSerializer(NbtTag.serializer()).descriptor
 
 			override fun deserialize(decoder: Decoder): ChatComponents {
@@ -155,7 +155,7 @@ data class ChatComponents(
 		}
 
 		/* Serializes ChatComponents to a string with escaped quotes for use in SNBT. */
-		object ChatComponentsEscapedSerializer : KSerializer<ChatComponents> {
+		data object ChatComponentsEscapedSerializer : KSerializer<ChatComponents> {
 			override val descriptor = ListSerializer(JsonElement.serializer()).descriptor
 
 			override fun deserialize(decoder: Decoder) = ChatComponents()
@@ -169,6 +169,29 @@ data class ChatComponents(
 				is JsonEncoder -> {
 					val snbtSerialized = value.asString()
 					encoder.encodeJsonElement(JsonPrimitive(snbtSerialized))
+				}
+
+				else -> throw IllegalArgumentException("Unsupported encoder: $encoder")
+			}
+		}
+
+		/** Serializes a list of Chat Components as a list instead of inlining the first element if possible. **/
+		data object ChatComponentsAsListSerializer : KSerializer<ChatComponents> {
+			override val descriptor = ListSerializer(ChatComponent.serializer()).descriptor
+
+			override fun deserialize(decoder: Decoder) = ChatComponents()
+
+			override fun serialize(encoder: Encoder, value: ChatComponents) = when (encoder) {
+				is NbtEncoder -> encoder.encodeCollection(descriptor, value.list.size) {
+					value.list.forEachIndexed { i, component ->
+						encodeSerializableElement(descriptor, i, ChatComponentSerializer, component)
+					}
+				}
+
+				is JsonEncoder -> encoder.encodeCollection(descriptor, value.list.size) {
+					value.list.forEachIndexed { i, component ->
+						encodeSerializableElement(descriptor, i, ChatComponentSerializer, component)
+					}
 				}
 
 				else -> throw IllegalArgumentException("Unsupported encoder: $encoder")

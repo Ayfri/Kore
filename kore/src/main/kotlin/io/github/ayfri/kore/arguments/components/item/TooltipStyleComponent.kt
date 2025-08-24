@@ -4,16 +4,13 @@ import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.types.resources.ModelArgument
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable(with = TooltipStyleComponent.Companion.TooltipStyleComponentSerializer::class)
 data class TooltipStyleComponent(var model: ModelArgument) : Component() {
 	companion object {
-		object TooltipStyleComponentSerializer : InlineSerializer<TooltipStyleComponent, ModelArgument>(
-			ModelArgument.serializer(),
-			TooltipStyleComponent::model
-		)
+		data object TooltipStyleComponentSerializer : InlineAutoSerializer<TooltipStyleComponent>(TooltipStyleComponent::class)
 	}
 }
 

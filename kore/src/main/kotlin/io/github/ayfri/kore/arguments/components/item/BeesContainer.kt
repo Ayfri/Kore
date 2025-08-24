@@ -2,12 +2,11 @@ package io.github.ayfri.kore.arguments.components.item
 
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.EntityTypes
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.generated.ItemComponentTypes
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
 
 @Serializable
 data class BeeData(
@@ -22,10 +21,7 @@ data class BeeData(
 @Serializable(with = BeesContainer.Companion.BeesContainerSerializer::class)
 data class BeesContainer(var list: List<BeeData>) : Component() {
 	companion object {
-		object BeesContainerSerializer : InlineSerializer<BeesContainer, List<BeeData>>(
-			ListSerializer(BeeData.serializer()),
-			BeesContainer::list
-		)
+		data object BeesContainerSerializer : InlineAutoSerializer<BeesContainer>(BeesContainer::class)
 	}
 }
 

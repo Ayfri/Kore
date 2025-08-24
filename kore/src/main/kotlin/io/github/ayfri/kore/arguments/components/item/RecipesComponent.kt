@@ -4,17 +4,13 @@ import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
 
 @Serializable(with = RecipesComponent.Companion.RecipesComponentSerializer::class)
 data class RecipesComponent(var recipes: List<RecipeArgument>) : Component() {
 	companion object {
-		object RecipesComponentSerializer : InlineSerializer<RecipesComponent, List<RecipeArgument>>(
-			ListSerializer(RecipeArgument.serializer()),
-			RecipesComponent::recipes
-		)
+		data object RecipesComponentSerializer : InlineAutoSerializer<RecipesComponent>(RecipesComponent::class)
 	}
 }
 

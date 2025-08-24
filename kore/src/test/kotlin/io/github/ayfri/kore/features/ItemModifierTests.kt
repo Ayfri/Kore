@@ -216,7 +216,10 @@ fun DataPack.itemModifierTests() {
 		{
 			"function": "minecraft:set_components",
 			"components": {
-				"custom_name": "{type:\"text\",color:\"black\",text:\"Test\"}",
+				"custom_name": {
+					"text": "Test",
+					"color": "black"
+				},
 				"!damage": {},
 				"!test": {},
 				"!test2": {}

@@ -26,7 +26,7 @@ fun itemComponentsTests() {
 	val b = Items.AIR {
 		copyFrom(a)
 	}
-	b.asString() assertsIs "minecraft:air[item_name=\"a\"]"
+	b.asString() assertsIs "minecraft:air[item_name=a]"
 
 	val stoneSword = Items.STONE_SWORD
 	val stone = Items.STONE
@@ -225,10 +225,10 @@ fun itemComponentsTests() {
 	val customNameTest = stoneSword {
 		customName(textComponent("test", Color.AQUA))
 	}
-	customNameTest.asString() assertsIs "minecraft:stone_sword[custom_name={type:\"text\",color:\"aqua\",text:\"test\"}]"
+	customNameTest.asString() assertsIs "minecraft:stone_sword[custom_name={text:\"test\",color:\"aqua\"}]"
 
 	customNameTest.components!!.customName(textComponent("test"))
-	customNameTest.asString() assertsIs "minecraft:stone_sword[custom_name=\"test\"]"
+	customNameTest.asString() assertsIs "minecraft:stone_sword[custom_name=test]"
 
 	val damageTest = stoneSword {
 		damage(5)
@@ -360,9 +360,9 @@ fun itemComponentsTests() {
 	val itemNameTest = stoneSword {
 		itemName(textComponent("test"))
 	}
-	itemNameTest.asString() assertsIs "minecraft:stone_sword[item_name=\"test\"]"
+	itemNameTest.asString() assertsIs "minecraft:stone_sword[item_name=test]"
 	itemNameTest.components!!.itemName("test", Color.AQUA)
-	itemNameTest.asString() assertsIs "minecraft:stone_sword[item_name={type:\"text\",color:\"aqua\",text:\"test\"}]"
+	itemNameTest.asString() assertsIs "minecraft:stone_sword[item_name={text:\"test\",color:\"aqua\"}]"
 
 	val jukeboxPlayableTest = Items.JUKEBOX {
 		jukeboxPlayable(JukeboxSongs.OTHERSIDE)
@@ -385,7 +385,7 @@ fun itemComponentsTests() {
 	val loreTest = stoneSword {
 		lore("test")
 	}
-	loreTest.asString() assertsIs "minecraft:stone_sword[lore=\"test\"]"
+	loreTest.asString() assertsIs "minecraft:stone_sword[lore=[{type:\"text\",text:\"test\"}]]"
 	loreTest.components!!.lore(textComponent("test", Color.AQUA) + text("test2", Color.BLACK) + text("a"))
 	loreTest.asString() assertsIs "minecraft:stone_sword[lore=[{type:\"text\",color:\"aqua\",text:\"test\"},{type:\"text\",color:\"black\",text:\"test2\"},{type:\"text\",text:\"a\"}]]"
 

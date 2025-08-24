@@ -5,16 +5,13 @@ import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.arguments.types.resources.ModelArgument
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable(with = ItemModelComponent.Companion.ItemModelComponentSerializer::class)
 data class ItemModelComponent(var model: ModelArgument) : Component() {
 	companion object {
-		object ItemModelComponentSerializer : InlineSerializer<ItemModelComponent, ModelArgument>(
-			ModelArgument.serializer(),
-			ItemModelComponent::model
-		)
+		data object ItemModelComponentSerializer : InlineAutoSerializer<ItemModelComponent>(ItemModelComponent::class)
 	}
 }
 

@@ -5,19 +5,13 @@ import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJs
 import io.github.ayfri.kore.features.predicates.sub.item.Enchantment
 import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
 import io.github.ayfri.kore.generated.arguments.EnchantmentOrTagArgument
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
 
 @Serializable(with = Enchantments.Companion.EnchantmentsComponentMatcherSerializer::class)
-data class Enchantments(
-	var enchantments: List<Enchantment> = emptyList(),
-) : ComponentMatcher() {
+data class Enchantments(var enchantments: List<Enchantment> = emptyList()) : ComponentMatcher() {
 	companion object {
-		data object EnchantmentsComponentMatcherSerializer : InlineSerializer<Enchantments, List<Enchantment>>(
-			ListSerializer(Enchantment.serializer()),
-			Enchantments::enchantments
-		)
+		data object EnchantmentsComponentMatcherSerializer : InlineAutoSerializer<Enchantments>(Enchantments::class)
 	}
 }
 

@@ -4,16 +4,13 @@ import io.github.ayfri.kore.arguments.colors.FormattingColor
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable(with = BaseColorComponent.Companion.BaseColorComponentSerializer::class)
 data class BaseColorComponent(var color: FormattingColor) : Component() {
 	companion object {
-		object BaseColorComponentSerializer : InlineSerializer<BaseColorComponent, FormattingColor>(
-			FormattingColor.serializer(),
-			BaseColorComponent::color
-		)
+		data object BaseColorComponentSerializer : InlineAutoSerializer<BaseColorComponent>(BaseColorComponent::class)
 	}
 }
 

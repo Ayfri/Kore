@@ -6,19 +6,13 @@ import io.github.ayfri.kore.features.enchantments.effects.value.RemoveBinomial
 import io.github.ayfri.kore.features.enchantments.effects.value.Set
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
 
 @Serializable(with = ValueEffectBuilder.Companion.ValueEffectBuilderSerializer::class)
-data class ValueEffectBuilder(
-	var effects: List<ConditionalEffect> = emptyList(),
-) : EffectBuilder() {
+data class ValueEffectBuilder(var effects: List<ConditionalEffect> = emptyList()) : EffectBuilder() {
 	companion object {
-		data object ValueEffectBuilderSerializer : InlineSerializer<ValueEffectBuilder, List<ConditionalEffect>>(
-			kSerializer = ListSerializer(ConditionalEffect.serializer()),
-			property = ValueEffectBuilder::effects
-		)
+		data object ValueEffectBuilderSerializer : InlineAutoSerializer<ValueEffectBuilder>(ValueEffectBuilder::class)
 	}
 }
 

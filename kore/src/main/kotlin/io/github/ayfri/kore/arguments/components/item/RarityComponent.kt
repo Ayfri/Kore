@@ -3,7 +3,7 @@ package io.github.ayfri.kore.arguments.components.item
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
@@ -20,14 +20,9 @@ enum class Rarities {
 }
 
 @Serializable(with = RarityComponent.Companion.RarityComponentSerializer::class)
-data class RarityComponent(
-	val rarity: Rarities,
-) : Component() {
+data class RarityComponent(val rarity: Rarities) : Component() {
 	companion object {
-		object RarityComponentSerializer : InlineSerializer<RarityComponent, Rarities>(
-			Rarities.serializer(),
-			RarityComponent::rarity
-		)
+		data object RarityComponentSerializer : InlineAutoSerializer<RarityComponent>(RarityComponent::class)
 	}
 }
 

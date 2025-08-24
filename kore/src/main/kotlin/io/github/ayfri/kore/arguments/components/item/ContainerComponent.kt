@@ -5,9 +5,8 @@ import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
 
 @Serializable
 data class ContainerSlot(var slot: Int, var item: ItemStack)
@@ -15,10 +14,7 @@ data class ContainerSlot(var slot: Int, var item: ItemStack)
 @Serializable(with = ContainerComponent.Companion.ContainerComponentSerializer::class)
 data class ContainerComponent(var slots: List<ContainerSlot>) : Component() {
 	companion object {
-		object ContainerComponentSerializer : InlineSerializer<ContainerComponent, List<ContainerSlot>>(
-			ListSerializer(ContainerSlot.serializer()),
-			ContainerComponent::slots
-		)
+		data object ContainerComponentSerializer : InlineAutoSerializer<ContainerComponent>(ContainerComponent::class)
 	}
 }
 

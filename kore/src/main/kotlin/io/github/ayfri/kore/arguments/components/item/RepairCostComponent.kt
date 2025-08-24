@@ -3,14 +3,13 @@ package io.github.ayfri.kore.arguments.components.item
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.serializer
 
 @Serializable(with = RepairCostComponent.Companion.RepairCostComponentSerializer::class)
 data class RepairCostComponent(var repairCost: Int) : Component() {
 	companion object {
-		object RepairCostComponentSerializer : InlineSerializer<RepairCostComponent, Int>(Int.serializer(), RepairCostComponent::repairCost)
+		data object RepairCostComponentSerializer : InlineAutoSerializer<RepairCostComponent>(RepairCostComponent::class)
 	}
 }
 

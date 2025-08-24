@@ -1,15 +1,12 @@
 package io.github.ayfri.kore.features.enchantments.values
 
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.serializer
 
 @Serializable(with = Constant.Companion.ConstantSerializer::class)
-data class Constant(
-	var value: Int,
-) : LevelBased() {
+data class Constant(var value: Int) : LevelBased() {
 	companion object {
-		data object ConstantSerializer : InlineSerializer<Constant, Int>(Int.serializer(), Constant::value)
+		data object ConstantSerializer : InlineAutoSerializer<Constant>(Constant::class)
 	}
 }
 

@@ -6,19 +6,13 @@ import io.github.ayfri.kore.features.enchantments.effects.value.RemoveBinomial
 import io.github.ayfri.kore.features.enchantments.effects.value.Set
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
 
 @Serializable(with = EquipmentDropsBuilder.Companion.EquipmentDropsBuilderSerializer::class)
-data class EquipmentDropsBuilder(
-	var effects: List<EquipmentDropsConditionalEffect> = emptyList(),
-) : EffectBuilder() {
+data class EquipmentDropsBuilder(var effects: List<EquipmentDropsConditionalEffect> = emptyList()) : EffectBuilder() {
 	companion object {
-		data object EquipmentDropsBuilderSerializer : InlineSerializer<EquipmentDropsBuilder, List<EquipmentDropsConditionalEffect>>(
-			kSerializer = ListSerializer(EquipmentDropsConditionalEffect.serializer()),
-			property = EquipmentDropsBuilder::effects
-		)
+		data object EquipmentDropsBuilderSerializer : InlineAutoSerializer<EquipmentDropsBuilder>(EquipmentDropsBuilder::class)
 	}
 }
 

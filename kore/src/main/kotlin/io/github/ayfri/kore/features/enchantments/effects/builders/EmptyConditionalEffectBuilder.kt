@@ -1,18 +1,14 @@
 package io.github.ayfri.kore.features.enchantments.effects.builders
 
 import io.github.ayfri.kore.features.enchantments.effects.special.EmptyConditionalEffect
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
 
 @Serializable(with = EmptyConditionalEffectBuilder.Companion.EmptyConditionalEffectBuilderSerializer::class)
-data class EmptyConditionalEffectBuilder(
-	var effects: List<EmptyConditionalEffect> = emptyList(),
-) : EffectBuilder() {
+data class EmptyConditionalEffectBuilder(var effects: List<EmptyConditionalEffect> = emptyList()) : EffectBuilder() {
 	companion object {
-		data object EmptyConditionalEffectBuilderSerializer : InlineSerializer<EmptyConditionalEffectBuilder, List<EmptyConditionalEffect>>(
-			kSerializer = ListSerializer(EmptyConditionalEffect.serializer()),
-			property = EmptyConditionalEffectBuilder::effects
+		data object EmptyConditionalEffectBuilderSerializer : InlineAutoSerializer<EmptyConditionalEffectBuilder>(
+			EmptyConditionalEffectBuilder::class
 		)
 	}
 }

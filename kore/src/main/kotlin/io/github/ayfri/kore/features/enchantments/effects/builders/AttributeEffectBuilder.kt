@@ -6,19 +6,13 @@ import io.github.ayfri.kore.features.enchantments.effects.AttributeEffect
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
 import io.github.ayfri.kore.generated.arguments.types.AttributeArgument
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
 
 @Serializable(with = AttributeEffectBuilder.Companion.AttributeEffectBuilderSerializer::class)
-data class AttributeEffectBuilder(
-	var effects: List<AttributeEffect> = emptyList(),
-) : EffectBuilder() {
+data class AttributeEffectBuilder(var effects: List<AttributeEffect> = emptyList()) : EffectBuilder() {
 	companion object {
-		data object AttributeEffectBuilderSerializer : InlineSerializer<AttributeEffectBuilder, List<AttributeEffect>>(
-			kSerializer = ListSerializer(AttributeEffect.serializer()),
-			property = AttributeEffectBuilder::effects
-		)
+		data object AttributeEffectBuilderSerializer : InlineAutoSerializer<AttributeEffectBuilder>(AttributeEffectBuilder::class)
 	}
 }
 

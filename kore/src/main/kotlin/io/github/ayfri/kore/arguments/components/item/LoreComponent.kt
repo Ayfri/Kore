@@ -10,14 +10,18 @@ import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineSerializer
 import io.github.ayfri.kore.serializers.ToStringSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import net.benwoodworth.knbt.StringifiedNbt
 
 @Serializable(with = LoreComponent.Companion.LoreComponentSerializer::class)
 data class LoreComponent(
-	var list: ChatComponents = ChatComponents(),
+	@Serializable(ChatComponents.Companion.ChatComponentsAsListSerializer::class) var list: ChatComponents = ChatComponents(),
 ) : Component() {
 	companion object {
-		object LoreComponentSerializer : InlineSerializer<LoreComponent, ChatComponents>(
-			ToStringSerializer { asString() },
+		data object LoreComponentSerializer : InlineSerializer<LoreComponent, ChatComponents>(
+			ToStringSerializer {
+				StringifiedNbt.encodeToString(toNbtList())
+			},
 			LoreComponent::list
 		)
 	}

@@ -1,13 +1,10 @@
 package io.github.ayfri.kore.arguments.components
 
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.serialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonEncoder
-import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.NbtEncoder
 import net.benwoodworth.knbt.NbtTag
 import kotlin.reflect.full.createType
@@ -26,23 +23,23 @@ abstract class Component {
 			override fun serialize(encoder: Encoder, value: Component) {
 				require(kClass.isInstance(value) && value::class != kClass) { "Value must be instance of ${kClass.simpleName}" }
 
-				val defaultSerializer = encoder.serializersModule.serializer(value::class.createType())
+				val defaultSerializer = encoder.serializersModule.serializer(value::class.createType()) as SerializationStrategy<Component>
 				val polymorphic = encoder.serializersModule.getPolymorphic(kClass, value)
-				val contextual = encoder.serializersModule.getContextual(value::class)
+				val contextual = encoder.serializersModule.getContextual(value::class) as? KSerializer<Component>?
 				val serializer = polymorphic ?: contextual ?: defaultSerializer
 
 				when (encoder) {
 					is NbtEncoder -> {
-						val valueNbt = encoder.nbt.encodeToNbtTag(serializer as KSerializer<Component>, value)
-						encoder.encodeSerializableValue(NbtTag.Companion.serializer(), valueNbt)
+						val valueNbt = encoder.nbt.encodeToNbtTag(serializer, value)
+						encoder.encodeSerializableValue(NbtTag.serializer(), valueNbt)
 					}
 
 					is JsonEncoder -> {
-						val valueJson = encoder.json.encodeToJsonElement(serializer as KSerializer<Component>, value)
+						val valueJson = encoder.json.encodeToJsonElement(serializer, value)
 						encoder.encodeJsonElement(valueJson)
 					}
 
-					else -> error("Components can only be serialized to NBT or Json")
+					else -> error("Components can only be serialized to Nbt or Json")
 				}
 			}
 		}

@@ -3,14 +3,13 @@ package io.github.ayfri.kore.arguments.components.item
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.serializer
 
 @Serializable(with = DamageComponent.Companion.DamageComponentSerializer::class)
 data class DamageComponent(var damage: Int) : Component() {
 	companion object {
-		object DamageComponentSerializer : InlineSerializer<DamageComponent, Int>(Int.serializer(), DamageComponent::damage)
+		data object DamageComponentSerializer : InlineAutoSerializer<DamageComponent>(DamageComponent::class)
 	}
 }
 
