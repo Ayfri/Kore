@@ -9,7 +9,7 @@ import kotlinx.serialization.encoding.Encoder
 
 typealias InlinableList<T> = @Serializable(with = InlinableListSerializer::class) List<T>
 
-fun <T> inlinableListSerializer(kSerializer: KSerializer<T>): KSerializer<InlinableList<T>> = InlinableListSerializer(kSerializer)
+fun <T> inlinableListSerializer(kSerializer: KSerializer<T>) = InlinableListSerializer(kSerializer)
 
 @OptIn(ExperimentalSerializationApi::class)
 open class InlinableListSerializer<T>(private val kSerializer: KSerializer<T>) : KSerializer<List<T>> {

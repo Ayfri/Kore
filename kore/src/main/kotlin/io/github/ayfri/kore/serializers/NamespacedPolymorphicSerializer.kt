@@ -12,6 +12,8 @@ import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createType
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.hasAnnotation
 
 open class NamespacedPolymorphicSerializer<T : Any>(
 	private val kClass: KClass<T>,
@@ -88,7 +90,7 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 
 		val valueClassName = value::class.simpleName!!.snakeCase()
 		val outputClassName = when {
-			value::class.annotations.any { it is SerialName } -> value::class.annotations.filterIsInstance<SerialName>().first().value
+			value::class.hasAnnotation<SerialName>() -> value::class.findAnnotation<SerialName>()!!.value
 			else -> valueClassName
 		}
 

@@ -9,7 +9,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import net.benwoodworth.knbt.*
 
-object NbtAsJsonSerializer : KSerializer<NbtTag> {
+data object NbtAsJsonSerializer : KSerializer<NbtTag> {
 	override val descriptor = JsonElement.serializer().descriptor
 
 	override fun serialize(encoder: Encoder, value: NbtTag) {

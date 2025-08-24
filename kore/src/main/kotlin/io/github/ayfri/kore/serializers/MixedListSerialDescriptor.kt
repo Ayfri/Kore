@@ -6,9 +6,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
 
 @OptIn(SealedSerializationApi::class)
-data class MixedListSerialDescriptor(
-	private val elementTypes: List<KSerializer<*>>,
-) : SerialDescriptor {
+data class MixedListSerialDescriptor(private val elementTypes: List<KSerializer<*>>) : SerialDescriptor {
 	override val elementsCount = elementTypes.size
 
 	override val kind = StructureKind.LIST
@@ -25,8 +23,7 @@ data class MixedListSerialDescriptor(
 		return elementTypes[index].descriptor
 	}
 
-	override fun getElementIndex(name: String) =
-		name.toIntOrNull() ?: throw IllegalArgumentException("$name is not a valid list index")
+	override fun getElementIndex(name: String) = name.toIntOrNull() ?: throw IllegalArgumentException("$name is not a valid list index")
 
 	override fun getElementName(index: Int) = index.toString()
 
