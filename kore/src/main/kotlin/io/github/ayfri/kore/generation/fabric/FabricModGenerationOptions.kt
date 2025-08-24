@@ -9,8 +9,8 @@ import io.github.ayfri.kore.utils.absolute
 import io.github.ayfri.kore.utils.exists
 import io.github.ayfri.kore.utils.readText
 import io.github.ayfri.kore.utils.warn
-import kotlinx.serialization.Serializable
 import kotlinx.io.files.Path
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class FabricModGenerationOptions(
