@@ -102,7 +102,3 @@ jreleaser {
 tasks.named("jreleaserDeploy") {
 	dependsOn("publishAllPublicationsToStagingRepository")
 }
-
-fun mainProjectProperty(name: String): String {
-	return project.rootProject.property(name).toString()
-}
