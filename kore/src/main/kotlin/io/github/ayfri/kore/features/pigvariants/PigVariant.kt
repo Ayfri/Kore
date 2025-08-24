@@ -23,8 +23,10 @@ data class PigVariant(
 	override var fileName: String = "pig_variant",
 	/** The texture asset to use for the pig variant. */
 	var assetId: ModelArgument,
+	/** The model to use for the pig variant. */
+	var model: PigModel = PigModel.NORMAL,
 	/** The spawn conditions for this pig variant. */
-	var spawnConditions: List<VariantSpawnEntry> = emptyList()
+	var spawnConditions: List<VariantSpawnEntry> = emptyList(),
 ) : Generator("pig_variant") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
@@ -43,9 +45,10 @@ fun PigVariant.spawnConditions(block: SpawnConditions.() -> Unit) = apply { spaw
 fun DataPack.pigVariant(
 	fileName: String = "pig_variant",
 	assetId: ModelArgument,
+	model: PigModel = PigModel.NORMAL,
 	block: PigVariant.() -> Unit = {},
 ): PigVariantArgument {
-	val pigVariant = PigVariant(fileName, assetId).apply(block)
+	val pigVariant = PigVariant(fileName, assetId, model).apply(block)
 	pigVariants += pigVariant
 	return PigVariantArgument(fileName, pigVariant.namespace ?: name)
 }
