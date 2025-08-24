@@ -7,16 +7,16 @@ plugins {
 // Set project version for JReleaser
 project.version = "${Project.VERSION}-${mainProjectProperty("minecraft.version")}"
 
-val javadocJar = tasks.register("javadocJar", Jar::class, fun Jar.() {
+val javadocJar = tasks.register<Jar>("javadocJar") {
 	archiveClassifier = "javadoc"
 	from(tasks.javadoc)
-})
+}
 
-val sourceJar = tasks.register("sourceJar", Jar::class, fun Jar.() {
+val sourceJar = tasks.register<Jar>("sourceJar") {
 	dependsOn(tasks["classes"])
 	archiveClassifier = "sources"
 	from(sourceSets["main"].allSource)
-})
+}
 
 afterEvaluate {
 	publishing {
