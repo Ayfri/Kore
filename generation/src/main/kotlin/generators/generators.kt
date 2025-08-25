@@ -194,15 +194,31 @@ suspend fun launchAllSimpleGenerators() {
 		val url = gen.url
 		val list = getFromCacheOrDownloadTxt(gen.fileName, url).lines()
 		val parentArgumentType = gen.getParentArgumentType()
+
 		when {
-			gen.enumTree -> generatePathEnumTree(
-				paths = list.mapIfNotNull(gen.transform),
-				name = gen.name,
-				sourceUrl = url,
-				parentArgumentType = parentArgumentType,
-				separator = gen.separator,
-				tagsParents = gen.tagsParents
-			)
+			gen.enumTree -> {
+				generatePathEnumTree(
+					paths = list.mapIfNotNull(gen.transform),
+					name = gen.name,
+					sourceUrl = url,
+					parentArgumentType = parentArgumentType,
+					separator = gen.separator,
+					tagsParents = gen.tagsParents
+				)
+
+				gen.extractEnums?.forEach { (prefix, enumName) ->
+					// Get the values prefixed by it
+					val values = list.filter { it.startsWith(prefix) }
+					generateEnum(
+						values = values.map { it.removePrefix(prefix).removePrefix(gen.separator) }
+							.mapIfNotNull(gen.transform),
+						name = enumName,
+						sourceUrl = url,
+						asString = gen.asString,
+						additionalEnumCode = gen.additionalCode
+					)
+				}
+			}
 
 			else -> generateEnum(
 				values = list.mapIfNotNull(gen.transform),

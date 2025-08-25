@@ -10,6 +10,7 @@ data class Generator(
 	var argumentClassName: String? = null,
 	var asString: String = $$"${name.lowercase()}",
 	var enumTree: Boolean = false,
+	var extractEnums: Map<String, String>? = null,
 	var separator: String = "/",
 	var tagsParents: Map<String, String>? = null,
 	var transform: ((String) -> String)? = null,
@@ -31,6 +32,10 @@ data class Generator(
 
 fun Generator.additionalCode(block: TypeSpec.Builder.() -> Unit) {
 	additionalCode = block
+}
+
+fun Generator.extractEnums(vararg enums: Pair<String, String>) {
+	extractEnums = enums.toMap()
 }
 
 fun Generator.transform(transformFunction: (String) -> String) {
