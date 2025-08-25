@@ -6,11 +6,14 @@ import url
 data class Generator(
 	var name: String,
 	var fileName: String,
+	var additionalCode: TypeSpec.Builder.() -> Unit = {},
 	var argumentClassName: String? = null,
 	var asString: String = $$"${name.lowercase()}",
+	var enumTree: Boolean = false,
+	var separator: String = "/",
 	var tagsParents: Map<String, String>? = null,
 	var transform: ((String) -> String)? = null,
-	var additionalCode: TypeSpec.Builder.() -> Unit = {},
+	var url: String = "",
 ) {
 	init {
 		fileName = "${fileName.lowercase()}.txt"
@@ -22,12 +25,6 @@ data class Generator(
 		if (fileName.startsWith("worldgen")) argumentClassName = "worldgen.$argumentClassName"
 		return argumentClassName
 	}
-
-	var url = ""
-		private set
-
-	var enumTree = false
-	var separator = "/"
 
 	fun setUrlWithType(type: String) = url("custom-generated/$type/$fileName").let { url = it }
 }
