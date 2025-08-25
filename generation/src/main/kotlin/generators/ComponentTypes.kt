@@ -4,18 +4,17 @@ import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.PropertySpec
 import generateEnum
 import getFromCacheOrDownloadTxt
-import overrides
 import removeMinecraftPrefix
 import snakeCase
 import url
 
 suspend fun downloadItemComponentTypes() {
 	val url = url("custom-generated/registries/data_component_type.txt")
-	val ItemComponentTypes = getFromCacheOrDownloadTxt("data_component_type.txt", url).lines()
+	val components = getFromCacheOrDownloadTxt("data_component_type.txt", url).lines()
 		.filter(String::isNotBlank)
 		.removeMinecraftPrefix()
 
-	val (itemComponents, entityComponents) = ItemComponentTypes.partition { "/" !in it }
+	val (itemComponents, entityComponents) = components.partition { "/" !in it }
 
 	generateEnum(
 		values = itemComponents,

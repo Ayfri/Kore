@@ -199,11 +199,7 @@ suspend fun launchAllSimpleGenerators() {
 			gen.enumTree -> {
 				generatePathEnumTree(
 					paths = list.mapIfNotNull(gen.transform),
-					name = gen.name,
-					sourceUrl = url,
-					parentArgumentType = parentArgumentType,
-					separator = gen.separator,
-					tagsParents = gen.tagsParents
+					gen
 				)
 
 				gen.extractEnums?.forEach { (prefix, enumName) ->

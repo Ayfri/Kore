@@ -1,14 +1,14 @@
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import generators.Generator
 
-fun generatePathEnumTree(
-	paths: List<String>,
-	name: String,
-	sourceUrl: String,
-	parentArgumentType: String? = null,
-	separator: String = "/",
-	tagsParents: Map<String, String>? = null,
-) {
+fun generatePathEnumTree(paths: List<String>, generator: Generator) {
+	val name = generator.name
+	val sourceUrl = generator.url
+	val parentArgumentType = generator.getParentArgumentType()
+	val separator = generator.separator
+	val tagsParents = generator.tagsParents
+
 	val typeBuilders = MutableList(paths.maxOf { path -> path.countOccurrences(separator) }) {
 		mutableMapOf<String, TypeSpec.Builder>()
 	}
