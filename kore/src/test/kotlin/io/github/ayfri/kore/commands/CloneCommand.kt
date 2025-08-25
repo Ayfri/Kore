@@ -1,10 +1,10 @@
 package io.github.ayfri.kore.commands
 
-import io.github.ayfri.kore.arguments.enums.Dimension
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.numbers.relativePos
 import io.github.ayfri.kore.assertions.assertsMatches
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.generated.Dimensions
 import io.github.ayfri.kore.generated.Tags
 import kotlin.random.Random
 
@@ -24,8 +24,8 @@ fun Function.cloneTests() {
 	clone {
 		randomZoneAndDestination()
 
-		from = Dimension.THE_NETHER
-		to = Dimension.OVERWORLD
+		from = Dimensions.THE_NETHER
+		to = Dimensions.OVERWORLD
 	} assertsMatches Regex("clone from minecraft:the_nether ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* to minecraft:overworld ~\\d* ~\\d* ~\\d*")
 
 	clone {

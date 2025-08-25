@@ -4,7 +4,6 @@ import io.github.ayfri.kore.arguments.PLAYER
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.predicate
 import io.github.ayfri.kore.arguments.enums.DataType
-import io.github.ayfri.kore.arguments.enums.Dimension
 import io.github.ayfri.kore.arguments.enums.HeightMap
 import io.github.ayfri.kore.arguments.maths.Axes
 import io.github.ayfri.kore.arguments.maths.vec3
@@ -29,10 +28,7 @@ import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.function
-import io.github.ayfri.kore.generated.Blocks
-import io.github.ayfri.kore.generated.EntityTypes
-import io.github.ayfri.kore.generated.Items
-import io.github.ayfri.kore.generated.Tags
+import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.helpers.predicateRandomChance
 import io.github.ayfri.kore.utils.debugEntity
 
@@ -95,7 +91,7 @@ fun Function.executeTests() {
 
 	execute {
 		facingEntity(testEntity.selector, Anchor.FEET)
-		inDimension(Dimension.THE_END)
+		inDimension(Dimensions.THE_END)
 		on(Relation.ATTACKER)
 		positioned(vec3(1, 2, 3))
 
@@ -135,7 +131,7 @@ fun Function.executeTests() {
 			block(vec3(), Blocks.AIR)
 			blocks(vec3(PosNumber.Type.LOCAL), vec3(1, 2, 3), vec3(4, 5, 6), BlocksTestMode.MASKED)
 			data(self(), "test")
-			dimension(Dimension.THE_END)
+			dimension(Dimensions.THE_END)
 			entity(testEntity.selector)
 			items(vec3(), PLAYER.CURSOR, Items.AIR.predicate())
 			function(FunctionArgument("test", datapack.name))

@@ -7,7 +7,6 @@ import io.github.ayfri.kore.arguments.components.consumable.applyEffects
 import io.github.ayfri.kore.arguments.components.consumable.playSound
 import io.github.ayfri.kore.arguments.components.consumable.teleportRandomly
 import io.github.ayfri.kore.arguments.components.item.*
-import io.github.ayfri.kore.arguments.enums.Dimension
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.types.literals.randomUUID
 import io.github.ayfri.kore.assertions.assertsIs
@@ -374,11 +373,11 @@ fun itemComponentsTests() {
 	lockTest.asString() assertsIs """minecraft:stone_sword[lock="test"]"""
 
 	val lodeStoneTargetTest = Items.LODESTONE {
-		lodestoneTarget(10, 10, 10, Dimension.OVERWORLD)
+		lodestoneTarget(10, 10, 10, Dimensions.OVERWORLD)
 	}
 	lodeStoneTargetTest.asString() assertsIs """minecraft:lodestone[lodestone_tracker={pos:[10,10,10],dimension:"minecraft:overworld"}]"""
 
-	lodeStoneTargetTest.components!!.lodestoneTarget(vec3(10.0, 10.0, 10.0), Dimension.OVERWORLD, tracked = true)
+	lodeStoneTargetTest.components!!.lodestoneTarget(vec3(10.0, 10.0, 10.0), Dimensions.OVERWORLD, tracked = true)
 	lodeStoneTargetTest.asString() assertsIs """minecraft:lodestone[lodestone_tracker={pos:[10,10,10],dimension:"minecraft:overworld",tracked:1b}]"""
 
 	val loreTest = stoneSword {

@@ -13,6 +13,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("CatVariants", "cats"),
 		gen("DamageTypes", "damage_types"),
 		gen("DimensionTypes", "dimension_types"),
+		gen("Dimensions", "dimensions"),
 		gen("Enchantments", "enchantments"),
 		gen("FrogVariants", "frogs"),
 		gen("Instruments", "instruments"),
