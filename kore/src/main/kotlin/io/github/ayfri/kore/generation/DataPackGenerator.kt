@@ -5,31 +5,12 @@ import io.github.ayfri.kore.arguments.types.TaggedResourceLocationArgument
 import io.github.ayfri.kore.features.tags.Tag
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.pack.PackMCMeta
-import io.github.ayfri.kore.utils.Path
-import io.github.ayfri.kore.utils.SystemPathSeparatorString
-import io.github.ayfri.kore.utils.TemporaryFiles
-import io.github.ayfri.kore.utils.absolute
-import io.github.ayfri.kore.utils.asInvariantPathSeparator
-import io.github.ayfri.kore.utils.ensureParents
-import io.github.ayfri.kore.utils.exists
-import io.github.ayfri.kore.utils.isDirectory
-import io.github.ayfri.kore.utils.makeDirectories
-import io.github.ayfri.kore.utils.nameWithoutExtension
-import io.github.ayfri.kore.utils.readText
-import io.github.ayfri.kore.utils.relativeTo
-import io.github.ayfri.kore.utils.resolveSafe
-import io.github.ayfri.kore.utils.resolve
-import io.github.ayfri.kore.utils.toJavaFile
-import io.github.ayfri.kore.utils.toSink
-import io.github.ayfri.kore.utils.toSource
-import io.github.ayfri.kore.utils.toStringWithSeperator
-import io.github.ayfri.kore.utils.warn
-import io.github.ayfri.kore.utils.write
+import io.github.ayfri.kore.utils.*
 import kotlinx.io.asInputStream
 import kotlinx.io.asOutputStream
 import kotlinx.io.buffered
-import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.files.Path
+import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.readByteArray
 import java.io.File
 import java.io.FileOutputStream
@@ -186,7 +167,7 @@ data class DataPackGenerator(
 			val tagType = tagPath.substringAfter("/tags/").substringBefore("/")
 
 			val targetTag =
-				datapack.tags.find<Tag<TaggedResourceLocationArgument>> { it.namespace == namespace && it.fileName == tagFilename && it.type == tagType }
+				datapack.tags.find { it.namespace == namespace && it.fileName == tagFilename && it.type == tagType }
 
 			val newTag = Tag<TaggedResourceLocationArgument>(fileName = tagFilename, type = tagType)
 			newTag.namespace = namespace
@@ -221,16 +202,15 @@ data class DataPackGenerator(
 
 		when (mode) {
 			DatapackGenerationMode.FOLDER -> {
-				val newFile = finalPath
-				newFile.ensureParents()
-				if (newFile.isDirectory()) {
-					newFile.makeDirectories()
+				finalPath.ensureParents()
+				if (file.isDirectory) {
+					finalPath.makeDirectories()
 					return
 				}
 
 				val sourcePath = Path(file.absolutePath.toString())
 				val source = sourcePath.toSource().buffered()
-				val sink = newFile.toSink()
+				val sink = finalPath.toSink()
 				source.transferTo(sink)
 				sink.flush()
 			}
