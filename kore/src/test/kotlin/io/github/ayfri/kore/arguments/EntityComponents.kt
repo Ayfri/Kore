@@ -3,12 +3,7 @@ package io.github.ayfri.kore.arguments
 import io.github.ayfri.kore.arguments.components.entity.*
 import io.github.ayfri.kore.arguments.enums.*
 import io.github.ayfri.kore.assertions.assertsIs
-import io.github.ayfri.kore.generated.Items
-import io.github.ayfri.kore.generated.PaintingVariants
-import io.github.ayfri.kore.generated.PigVariants
-import io.github.ayfri.kore.generated.WolfVariants
-import io.github.ayfri.kore.generated.arguments.types.CatVariantArgument
-import io.github.ayfri.kore.generated.arguments.types.FrogVariantArgument
+import io.github.ayfri.kore.generated.*
 
 fun entityComponentsTests() {
 	Items.AXOLOTL_BUCKET {
@@ -20,7 +15,7 @@ fun entityComponentsTests() {
 	} assertsIs "minecraft:cat_spawn_egg[cat_collar=\"red\"]"
 
 	Items.CAT_SPAWN_EGG {
-		catVariant(CatVariantArgument("tabby")) // temporary fix until added into lists
+		catVariant(CatVariants.TABBY)
 	} assertsIs "minecraft:cat_spawn_egg[cat_variant=\"minecraft:tabby\"]"
 
 	Items.FOX_SPAWN_EGG {
@@ -28,7 +23,7 @@ fun entityComponentsTests() {
 	} assertsIs "minecraft:fox_spawn_egg[fox_variant=\"snow\"]"
 
 	Items.FROG_SPAWN_EGG {
-		frogVariant(FrogVariantArgument("cold")) // temporary fix until added into lists
+		frogVariant(FrogVariants.COLD)
 	} assertsIs "minecraft:frog_spawn_egg[frog_variant=\"minecraft:cold\"]"
 
 	Items.HORSE_SPAWN_EGG {
