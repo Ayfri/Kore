@@ -5,7 +5,6 @@ import io.github.ayfri.kore.arguments.WEAPON
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
 import io.github.ayfri.kore.arguments.components.item.*
-import io.github.ayfri.kore.arguments.enums.MapDecoration
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.items
@@ -23,7 +22,7 @@ import io.github.ayfri.kore.generated.Enchantments
 fun DataPack.itemModifierTests() {
 	val modifier = itemModifier("test_modifier") {
 		explorationMap {
-			decoration = MapDecoration.BANNER_BLACK
+			decoration = MapDecorationTypes.BANNER_BLACK
 			destination = Tags.Worldgen.Structure.MINESHAFT
 			skipExistingChunks = true
 
@@ -51,7 +50,7 @@ fun DataPack.itemModifierTests() {
 					}
 				],
 				"destination": "minecraft:mineshaft",
-				"decoration": "banner_black",
+				"decoration": "minecraft:banner_black",
 				"skip_existing_chunks": true
 			},
 			{

@@ -133,6 +133,7 @@ suspend fun launchAllSimpleGenerators() {
 					.build()
 			)
 		}, argumentClassName = "Item M"),
+		gen("MapDecorationTypes", "map_decoration_type"),
 		gen("Particles", "particle_type", argumentClassName = "ParticleType"),
 		gen("Potions", "potion"),
 		gen("StatisticTypes", "stat_type", "StatType") { it.removePrefix("minecraft:") },

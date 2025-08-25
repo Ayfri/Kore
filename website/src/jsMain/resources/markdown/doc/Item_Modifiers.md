@@ -21,19 +21,19 @@ Create a modifier and apply it with the `/item modify` command:
 
 ```kotlin
 import io.github.ayfri.kore.arguments.WEAPON
-import io.github.ayfri.kore.arguments.enums.MapDecoration
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.features.itemmodifiers.itemModifier
 import io.github.ayfri.kore.features.itemmodifiers.functions.*
 import io.github.ayfri.kore.features.predicates.conditions.*
 import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.generated.MapDecorationTypes
 import io.github.ayfri.kore.generated.Tags
 
 val modifier = itemModifier("explorer_horn") {
 	// Vanilla function: minecraft:exploration_map
 	explorationMap {
 		destination = Tags.Worldgen.Structure.MINESHAFT
-		decoration = MapDecoration.BANNER_BLACK
+		decoration = MapDecorationTypes.BANNER_BLACK
 		skipExistingChunks = true
 
 		// Predicates: only apply when raining and a coin-flip passes

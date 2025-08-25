@@ -8,7 +8,6 @@ import io.github.ayfri.kore.arguments.components.consumable.playSound
 import io.github.ayfri.kore.arguments.components.consumable.teleportRandomly
 import io.github.ayfri.kore.arguments.components.item.*
 import io.github.ayfri.kore.arguments.enums.Dimension
-import io.github.ayfri.kore.arguments.enums.MapDecoration
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.types.literals.randomUUID
 import io.github.ayfri.kore.assertions.assertsIs
@@ -396,10 +395,10 @@ fun itemComponentsTests() {
 
 	val mapDecorationsTest = stone {
 		mapDecorations {
-			decoration("here", MapDecoration.PLAYER, 10.0, 10.0, 5f)
+			decoration("here", MapDecorationTypes.PLAYER, 10.0, 10.0, 5f)
 		}
 	}
-	mapDecorationsTest.asString() assertsIs """minecraft:stone[map_decorations={here:{type:"player",x:10.0d,z:10.0d,rotation:5.0f}}]"""
+	mapDecorationsTest.asString() assertsIs """minecraft:stone[map_decorations={here:{type:"minecraft:player",x:10.0d,z:10.0d,rotation:5.0f}}]"""
 
 	val mapIdTest = stone {
 		mapId(5)

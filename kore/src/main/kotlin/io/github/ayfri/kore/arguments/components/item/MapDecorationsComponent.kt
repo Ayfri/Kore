@@ -3,13 +3,13 @@ package io.github.ayfri.kore.arguments.components.item
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
+import io.github.ayfri.kore.generated.arguments.types.MapDecorationTypeArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
-import io.github.ayfri.kore.arguments.enums.MapDecoration as MapDecorationIcon
 
 @Serializable
 data class MapDecoration(
-	var type: MapDecorationIcon,
+	var type: MapDecorationTypeArgument,
 	var x: Double,
 	var z: Double,
 	var rotation: Float,
@@ -33,7 +33,7 @@ fun ComponentsScope.mapDecorations(block: MapDecorationsComponent.() -> Unit) =
 
 fun MapDecorationsComponent.decoration(
 	name: String,
-	type: MapDecorationIcon,
+	type: MapDecorationTypeArgument,
 	x: Double,
 	z: Double,
 	rotation: Float,
