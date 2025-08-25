@@ -6,6 +6,7 @@ fun generatePathEnumTree(paths: List<String>, generator: Generator) {
 	val name = generator.name
 	val sourceUrl = generator.url
 	val parentArgumentType = generator.getParentArgumentType()
+	val subInterfacesParents = generator.subInterfacesParents.orEmpty()
 	val separator = generator.separator
 	val tagsParents = generator.tagsParents
 
@@ -67,6 +68,15 @@ fun generatePathEnumTree(paths: List<String>, generator: Generator) {
 		typeBuilders[depth].getOrPut(parent) {
 			TypeSpec.enumBuilder(enumName).apply {
 				addSuperinterface(topLevelInterfaceClassName)
+				if (enumName in subInterfacesParents) {
+					val additionalInterface = subInterfacesParents[enumName]!!
+					addSuperinterface(
+						ClassName(
+							GENERATED_PACKAGE + "." + additionalInterface.substringBeforeLast("."),
+							additionalInterface.substringAfterLast(".")
+						)
+					)
+				}
 
 				if (tagParent != null) {
 					addProperty(

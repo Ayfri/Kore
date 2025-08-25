@@ -12,6 +12,7 @@ data class Generator(
 	var enumTree: Boolean = false,
 	var extractEnums: Map<String, String>? = null,
 	var separator: String = "/",
+	var subInterfacesParents: Map<String, String>? = null,
 	var tagsParents: Map<String, String>? = null,
 	var transform: ((String) -> String)? = null,
 	var url: String = "",
@@ -21,10 +22,11 @@ data class Generator(
 	}
 
 	fun getParentArgumentType(): String? {
-		if (argumentClassName == null) argumentClassName = name.removeSuffix("s")
-		if (argumentClassName == "") argumentClassName = null
-		if (fileName.startsWith("worldgen")) argumentClassName = "worldgen.$argumentClassName"
-		return argumentClassName
+		var parentArgumentType = argumentClassName ?: name.removeSuffix("s")
+		if (parentArgumentType.isEmpty()) return null
+
+		if (fileName.startsWith("worldgen")) parentArgumentType = "worldgen.$parentArgumentType"
+		return parentArgumentType
 	}
 
 	fun setUrlWithType(type: String) = url("custom-generated/$type/$fileName").let { url = it }
@@ -36,6 +38,10 @@ fun Generator.additionalCode(block: TypeSpec.Builder.() -> Unit) {
 
 fun Generator.extractEnums(vararg enums: Pair<String, String>) {
 	extractEnums = enums.toMap()
+}
+
+fun Generator.subInterfacesParents(vararg interfaces: Pair<String, String>) {
+	subInterfacesParents = interfaces.toMap()
 }
 
 fun Generator.transform(transformFunction: (String) -> String) {

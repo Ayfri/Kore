@@ -1,13 +1,6 @@
 package generators
 
-import com.squareup.kotlinpoet.AnnotationSpec
-import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.CodeBlock
-import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.ParameterSpec
-import com.squareup.kotlinpoet.PropertySpec
-import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.*
 import generateFile
 import getFromCacheOrDownloadJson
 import kotlinx.serialization.Serializable
@@ -41,10 +34,14 @@ suspend fun downloadRegistriesList(): Map<String, Registry> {
 	val json = jsonDecoder.decodeFromJsonElement<Map<String, Map<String, Registry>>>(registriesList)
 
 	val additionalTypes = mapOf(
+		"minecraft:trim_color_palette" to Registry(elements = false, stable = true, tags = false),
 		"minecraft:worldgen/configured_structure" to Registry(elements = false, stable = true, tags = true),
 	)
 
-	return json.getOrDefault("registries", emptyMap()) + additionalTypes
+	val ignoreList = listOf("block", "item", "tag")
+
+	val completeMap = json.getOrDefault("registries", emptyMap()) + additionalTypes
+	return completeMap.filter { (key, _) -> "minecraft:$key" !in ignoreList }
 }
 
 fun processArgumentType(argumentType: ArgumentType): Map<String, TypeSpec.Builder> {
@@ -131,11 +128,7 @@ private fun String.prependIfNotEmpty(other: String) = if (this.isNotEmpty()) {
 suspend fun launchArgumentTypeGenerators() {
 	val registriesList = downloadRegistriesList()
 
-	val ignoreList = listOf("block", "item", "tag")
-
-	registriesList.filter {
-		it.key.removePrefix("minecraft:") !in ignoreList
-	}.map { entry ->
+	registriesList.map { entry ->
 		val argumentType = argumentTypeGen(entry.key, entry.value.tags)
 		val filesToCreate = processArgumentType(argumentType)
 
