@@ -32,6 +32,8 @@ data class BlocksAttacks(
 data class DamageReduction(
 	var base: Float,
 	var factor: Float,
+	@SerialName("horizontal_blocking_angle")
+	var horizontalBlockingAngle: Float? = null,
 	var type: InlinableList<DamageTypeOrTagArgument>? = null,
 )
 
@@ -46,11 +48,21 @@ fun ComponentsScope.blocksAttacks(block: BlocksAttacks.() -> Unit = {}) = apply 
 	this[ItemComponentTypes.BLOCKS_ATTACKS] = BlocksAttacks().apply(block)
 }
 
-fun BlocksAttacks.damageReduction(base: Float, factor: Float, type: List<DamageTypeOrTagArgument>? = null) = apply {
-	damageReductions = (damageReductions ?: mutableListOf()) + DamageReduction(base, factor, type)
+fun BlocksAttacks.damageReduction(
+	base: Float,
+	factor: Float,
+	horizontalBlockingAngle: Float? = null,
+	type: List<DamageTypeOrTagArgument>? = null,
+) = apply {
+	damageReductions = (damageReductions ?: mutableListOf()) + DamageReduction(base, factor, horizontalBlockingAngle, type = type)
 }
 
-fun BlocksAttacks.damageReduction(base: Float, factor: Float, vararg type: DamageTypeOrTagArgument) = damageReduction(base, factor, type.toList())
+fun BlocksAttacks.damageReduction(
+	base: Float,
+	factor: Float,
+	horizontalBlockingAngle: Float? = null,
+	vararg type: DamageTypeOrTagArgument,
+) = damageReduction(base, factor, horizontalBlockingAngle, type.toList())
 
 fun BlocksAttacks.itemDamage(base: Float, factor: Float, threshold: Float) = apply {
 	itemDamage = ItemDamage(base, factor, threshold)

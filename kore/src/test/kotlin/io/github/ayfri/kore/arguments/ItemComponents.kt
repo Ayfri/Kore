@@ -89,11 +89,11 @@ fun itemComponentsTests() {
 	val blocksAttacksTest = Items.DIAMOND_SWORD {
 		blocksAttacks {
 			bypassedBy = Tags.DamageType.DAMAGES_HELMET
-			damageReduction(base = 0f, factor = 0.5f, Tags.DamageType.IS_PLAYER_ATTACK)
+			damageReduction(base = 0f, factor = 0.5f, horizontalBlockingAngle = 120f, Tags.DamageType.IS_PLAYER_ATTACK)
 			itemDamage(base = 1f, factor = 0f, threshold = 0f)
 		}
 	}
-	blocksAttacksTest.asString() assertsIs """minecraft:diamond_sword[blocks_attacks={bypassed_by:"#minecraft:damages_helmet",damage_reductions:[{base:0.0f,factor:0.5f,type:"#minecraft:is_player_attack"}],item_damage:{base:1.0f,factor:0.0f,threshold:0.0f}}]"""
+	blocksAttacksTest.asString() assertsIs """minecraft:diamond_sword[blocks_attacks={bypassed_by:"#minecraft:damages_helmet",damage_reductions:[{base:0.0f,factor:0.5f,horizontal_blocking_angle:120.0f,type:"#minecraft:is_player_attack"}],item_damage:{base:1.0f,factor:0.0f,threshold:0.0f}}]"""
 
 	val blockStateTest = stone {
 		blockState {
