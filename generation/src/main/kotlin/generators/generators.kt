@@ -79,6 +79,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("Textures", "textures") {
 			argumentClassName = "Model M"
 			transform { it.removeSuffix(".png") }
+			subInterfacesParents("ColorPalettes" to "arguments.types.TrimColorPaletteArgument")
 		},
 		gen("DensityFunctions", "worldgen/density_function"),
 		gen("TemplatePools", "worldgen/template_pool"),
