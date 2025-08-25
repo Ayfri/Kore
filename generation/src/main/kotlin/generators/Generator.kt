@@ -6,17 +6,21 @@ import url
 data class Generator(
 	var name: String,
 	var fileName: String,
-	var argumentName: String? = null,
-	var asString: String = "name.lowercase()",
+	var argumentClassName: String? = null,
+	var asString: String = $$"${name.lowercase()}",
 	var tagsParents: Map<String, String>? = null,
 	var transform: ((String) -> String)? = null,
 	var additionalCode: TypeSpec.Builder.() -> Unit = {},
 ) {
 	init {
 		fileName = "${fileName.lowercase()}.txt"
-		if (argumentName == null) argumentName = name.removeSuffix("s")
-		if (argumentName == "") argumentName = null
-		if (fileName.startsWith("worldgen")) argumentName = "worldgen.$argumentName"
+	}
+
+	fun getParentArgumentType(): String? {
+		if (argumentClassName == null) argumentClassName = name.removeSuffix("s")
+		if (argumentClassName == "") argumentClassName = null
+		if (fileName.startsWith("worldgen")) argumentClassName = "worldgen.$argumentClassName"
+		return argumentClassName
 	}
 
 	var url = ""
@@ -28,31 +32,34 @@ data class Generator(
 	fun setUrlWithType(type: String) = url("custom-generated/$type/$fileName").let { url = it }
 }
 
+fun Generator.additionalCode(block: TypeSpec.Builder.() -> Unit) {
+	additionalCode = block
+}
+
+fun Generator.transform(transformFunction: (String) -> String) {
+	transform = transformFunction
+}
+
 fun gen(
 	name: String,
 	fileName: String,
-	argumentClassName: String? = null,
-	asString: String = "\${name.lowercase()}",
-	tagsParents: Map<String, String>? = null,
-	additionalCode: TypeSpec.Builder.() -> Unit = {},
-	transform: ((String) -> String)? = null,
-) =
-	Generator(name, fileName, argumentClassName, asString, tagsParents, transform, additionalCode)
+	block: Generator.() -> Unit = {}
+) = Generator(name, fileName).apply(block)
 
-fun List<Generator>.transformRemoveJSONSuffix() = map { gen ->
-	gen.apply {
-		if (gen.transform == null) transform = { it.removeSuffix(".json") }
+fun List<Generator>.transformRemoveJSONSuffix() = map { generator ->
+	generator.apply {
+		if (generator.transform == null) transform = { it.removeSuffix(".json") }
 	}
 }
 
-fun List<Generator>.transformRemoveMinecraftPrefix() = map { gen ->
-	gen.apply {
-		if (gen.transform == null) transform = { it.removePrefix("minecraft:") }
+fun List<Generator>.transformRemoveMinecraftPrefix() = map { generator ->
+	generator.apply {
+		if (generator.transform == null) transform = { it.removePrefix("minecraft:") }
 	}
 }
 
-fun List<Generator>.setUrlWithType(type: String) = map { gen ->
-	gen.apply { setUrlWithType(type) }
+fun List<Generator>.setUrlWithType(type: String) = map { generator ->
+	generator.apply { setUrlWithType(type) }
 }
 
 fun <T> List<T>.mapIfNotNull(transform: ((T) -> T)?) = if (transform != null) map(transform) else this

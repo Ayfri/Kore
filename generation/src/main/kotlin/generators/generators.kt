@@ -26,11 +26,15 @@ suspend fun launchAllSimpleGenerators() {
 		gen("WolfVariants", "wolfs"),
 
 		gen("Biomes", "worldgen/biome"),
-		gen("BiomePresets", "worldgen/multi_noise_biome_source_parameter_list", "MultiNoiseBiomeSourceParameterList"),
+		gen("BiomePresets", "worldgen/multi_noise_biome_source_parameter_list") {
+			argumentClassName = "MultiNoiseBiomeSourceParameterList"
+		},
 		gen("ConfiguredFeatures", "worldgen/configured_feature"),
 		gen("FlatLevelGeneratorPresets", "worldgen/flat_level_generator_preset"),
 		gen("Noises", "worldgen/noise"),
-		gen("NoiseSettings", "worldgen/noise_settings", "NoiseSettings"),
+		gen("NoiseSettings", "worldgen/noise_settings") {
+			argumentClassName = "NoiseSettings"
+		},
 		gen("PlacedFeatures", "worldgen/placed_feature"),
 		gen("ProcessorLists", "worldgen/processor_list"),
 		gen("ConfiguredStructures", "worldgen/structure"),
@@ -40,10 +44,17 @@ suspend fun launchAllSimpleGenerators() {
 	val txtListsTreeGenerators = listOf(
 		gen("Advancements", "advancements"),
 		gen("LootTables", "loot_tables"),
-		gen("Sounds", "sounds", "Sound M") { it.removeSuffix(".ogg") },
-		gen("Structures", "structures", "worldgen.Structure") { it.removeSuffix(".nbt") },
-		gen(
-			"Tags", "tags", argumentClassName = "Tag M", tagsParents = mapOf(
+		gen("Sounds", "sounds") {
+			argumentClassName = "Sound M"
+			transform { it.removeSuffix(".ogg") }
+		},
+		gen("Structures", "structures") {
+			argumentClassName = "worldgen.Structure"
+			transform { it.removeSuffix(".nbt") }
+		},
+		gen("Tags", "tags") {
+			argumentClassName = "Tag M"
+			tagsParents = mapOf(
 				"banner_pattern" to "BannerPatternTag",
 				"block" to "BlockTag M",
 				"cat_variant" to "CatVariantTag",
@@ -64,8 +75,11 @@ suspend fun launchAllSimpleGenerators() {
 				"worldgen/structure" to "worldgen.ConfiguredStructureTag",
 				"worldgen/world_preset" to "worldgen.WorldPresetTag",
 			)
-		),
-		gen("Textures", "textures", argumentClassName = "Model M") { it.removeSuffix(".png") },
+		},
+		gen("Textures", "textures") {
+			argumentClassName = "Model M"
+			transform { it.removeSuffix(".png") }
+		},
 		gen("DensityFunctions", "worldgen/density_function"),
 		gen("TemplatePools", "worldgen/template_pool"),
 	).transformRemoveJSONSuffix().map { gen ->
@@ -75,76 +89,95 @@ suspend fun launchAllSimpleGenerators() {
 	val txtRegistriesListGenerators = listOf(
 		gen("Attributes", "attribute"),
 		gen("BlockEntityTypes", "block_entity_type"),
-		gen("Blocks", "block", additionalCode = {
-			addProperty(
-				PropertySpec.builder("nbtData", ClassName("net.benwoodworth.knbt", "NbtCompound").copy(nullable = true))
-					.overrides()
-					.mutable()
-					.initializer("null")
-					.build()
-			)
+		gen("Blocks", "block") {
+			argumentClassName = "Block M"
+			transform { it.removePrefix("minecraft:") }
+			additionalCode {
+				addProperty(
+					PropertySpec.builder("nbtData", ClassName("net.benwoodworth.knbt", "NbtCompound").copy(nullable = true))
+						.overrides()
+						.mutable()
+						.initializer("null")
+						.build()
+				)
 
-			val stringTypeName = String::class.asTypeName()
-			addProperty(
-				PropertySpec.builder("states", MUTABLE_MAP.parameterizedBy(stringTypeName, stringTypeName))
-					.overrides()
-					.mutable()
-					.initializer("mutableMapOf()")
-					.build()
-			)
-		}, argumentClassName = "Block M") { it.removePrefix("minecraft:") },
+				val stringTypeName = String::class.asTypeName()
+				addProperty(
+					PropertySpec.builder("states", MUTABLE_MAP.parameterizedBy(stringTypeName, stringTypeName))
+						.overrides()
+						.mutable()
+						.initializer("mutableMapOf()")
+						.build()
+				)
+			}
+		},
 		gen("CustomStats", "custom_stat"),
-		gen("Effects", "mob_effect", "MobEffect"),
-		gen("EnchantmentEffectComponents", "enchantment_effect_component_type", argumentClassName = "", additionalCode = {
-			addFunction(
-				FunSpec.builder("asId")
-					.addStatement($"return \"minecraft:\${name.lowercase()}\"")
-					.returns(String::class)
-					.build()
-			)
-		}),
+		gen("Effects", "mob_effect") {
+			argumentClassName = "MobEffect"
+		},
+		gen("EnchantmentEffectComponents", "enchantment_effect_component_type") {
+			argumentClassName = ""
+			additionalCode {
+				addFunction(
+					FunSpec.builder("asId")
+						.addStatement($"return \"minecraft:\${name.lowercase()}\"")
+						.returns(String::class)
+						.build()
+				)
+			}
+		},
 		gen("EntityTypes", "entity_type"),
 		gen("Fluids", "fluid"),
 		gen("GameEvents", "game_event"),
-		gen("Items", "item", additionalCode = {
-			addProperty(
-				PropertySpec.builder(
-					"components",
-					ClassName("io.github.ayfri.kore.arguments.components", "ComponentsPatch").copy(nullable = true)
-				)
-					.overrides()
-					.mutable()
-					.initializer("null")
-					.build()
-			)
-
-			addFunction(
-				FunSpec.builder(
-					"invoke",
-				)
-					.addParameter(
-						"block", LambdaTypeName.get(
-							receiver = ClassName("io.github.ayfri.kore.arguments.components", "ComponentsPatch"),
-							returnType = Unit::class.asTypeName()
-						)
+		gen("Items", "item") {
+			argumentClassName = "Item M"
+			additionalCode {
+				addProperty(
+					PropertySpec.builder(
+						"components",
+						ClassName("io.github.ayfri.kore.arguments.components", "ComponentsPatch").copy(nullable = true)
 					)
-					.overrides()
-					.addStatement("return ItemArgument.invoke(name.lowercase(), namespace, ComponentsPatch().apply(block))")
-					.returns(ClassName("io.github.ayfri.kore.arguments.types.resources", "ItemArgument"))
-					.build()
-			)
-		}, argumentClassName = "Item M"),
+						.overrides()
+						.mutable()
+						.initializer("null")
+						.build()
+				)
+
+				addFunction(
+					FunSpec.builder(
+						"invoke",
+					)
+						.addParameter(
+							"block", LambdaTypeName.get(
+								receiver = ClassName("io.github.ayfri.kore.arguments.components", "ComponentsPatch"),
+								returnType = Unit::class.asTypeName()
+							)
+						)
+						.overrides()
+						.addStatement("return ItemArgument.invoke(name.lowercase(), namespace, ComponentsPatch().apply(block))")
+						.returns(ClassName("io.github.ayfri.kore.arguments.types.resources", "ItemArgument"))
+						.build()
+				)
+			}
+		},
 		gen("MapDecorationTypes", "map_decoration_type"),
-		gen("Particles", "particle_type", argumentClassName = "ParticleType"),
+		gen("Particles", "particle_type") {
+			argumentClassName = "ParticleType"
+		},
 		gen("Potions", "potion"),
-		gen("StatisticTypes", "stat_type", "StatType") { it.removePrefix("minecraft:") },
+		gen("StatisticTypes", "stat_type") {
+			argumentClassName = "StatType"
+			transform { it.removePrefix("minecraft:") }
+		},
 		gen("VillagerProfessions", "villager_profession"),
 		gen("VillagerTypes", "villager_type"),
 		gen("Carvers", "worldgen/carver"),
 	)
 
 	val txtRegistriesTreeGenerators = listOf(
-		gen("SoundEvents", "sound_event", "SoundEvent"),
+		gen("SoundEvents", "sound_event") {
+			argumentClassName = "SoundEvent"
+		},
 	).transformRemoveMinecraftPrefix().map { gen ->
 		gen.apply {
 			enumTree = true
@@ -160,12 +193,13 @@ suspend fun launchAllSimpleGenerators() {
 	allListGenerators.sortedBy { it.fileName }.forEach { gen ->
 		val url = gen.url
 		val list = getFromCacheOrDownloadTxt(gen.fileName, url).lines()
+		val parentArgumentType = gen.getParentArgumentType()
 		when {
 			gen.enumTree -> generatePathEnumTree(
 				paths = list.mapIfNotNull(gen.transform),
 				name = gen.name,
 				sourceUrl = url,
-				parentArgumentType = gen.argumentName,
+				parentArgumentType = parentArgumentType,
 				separator = gen.separator,
 				tagsParents = gen.tagsParents
 			)
@@ -174,7 +208,7 @@ suspend fun launchAllSimpleGenerators() {
 				values = list.mapIfNotNull(gen.transform),
 				name = gen.name,
 				sourceUrl = url,
-				parentArgumentType = gen.argumentName,
+				parentArgumentType = parentArgumentType,
 				asString = gen.asString,
 				additionalEnumCode = gen.additionalCode
 			)
