@@ -4,6 +4,7 @@ import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.DamageTypeOrTagArgument
+import io.github.ayfri.kore.generated.arguments.tagged.DamageTypeTagArgument
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.SerialName
@@ -15,6 +16,8 @@ data class BlocksAttacks(
 	var blockDelaySeconds: Float = 0f,
 	@SerialName("block_sound")
 	var blockSound: SoundEventArgument? = null,
+	@SerialName("bypassed_by")
+	var bypassedBy: DamageTypeTagArgument? = null,
 	@SerialName("damage_reductions")
 	var damageReductions: List<DamageReduction>? = null,
 	@SerialName("disable_cooldown_scale")
@@ -39,16 +42,8 @@ data class ItemDamage(
 	var threshold: Float,
 )
 
-fun ComponentsScope.blocksAttacks(
-	blockDelaySeconds: Float = 0f,
-	blockSound: SoundEventArgument? = null,
-	damageReductions: List<DamageReduction>? = null,
-	disableCooldownScale: Float = 1f,
-	disableSound: SoundEventArgument? = null,
-	itemDamage: ItemDamage? = null,
-	block: BlocksAttacks.() -> Unit = {},
-) = apply {
-	this[ItemComponentTypes.BLOCKS_ATTACKS] = BlocksAttacks(blockDelaySeconds, blockSound, damageReductions, disableCooldownScale, disableSound, itemDamage).apply(block)
+fun ComponentsScope.blocksAttacks(block: BlocksAttacks.() -> Unit = {}) = apply {
+	this[ItemComponentTypes.BLOCKS_ATTACKS] = BlocksAttacks().apply(block)
 }
 
 fun BlocksAttacks.damageReduction(base: Float, factor: Float, type: List<DamageTypeOrTagArgument>? = null) = apply {
