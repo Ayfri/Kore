@@ -13,6 +13,7 @@ fun featuresTests() = testDataPack("features_tests") {
 	biomeTests()
 	catVariantTests()
 	chatTypeTests()
+	chickenVariantTests()
 	configuredCarverTests()
 	configuredFeatureTests()
 	cowVariantTests()

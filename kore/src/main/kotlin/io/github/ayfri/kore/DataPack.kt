@@ -7,6 +7,7 @@ import io.github.ayfri.kore.features.advancements.Advancement
 import io.github.ayfri.kore.features.bannerpatterns.BannerPattern
 import io.github.ayfri.kore.features.catvariants.CatVariant
 import io.github.ayfri.kore.features.chattypes.ChatType
+import io.github.ayfri.kore.features.chickenvariants.ChickenVariant
 import io.github.ayfri.kore.features.cowvariants.CowVariant
 import io.github.ayfri.kore.features.damagetypes.DamageType
 import io.github.ayfri.kore.features.enchantments.Enchantment
@@ -81,6 +82,7 @@ class DataPack(val name: String) {
 	val biomes = registerGenerator<Biome>()
 	val catVariants = registerGenerator<CatVariant>()
 	val chatTypes = registerGenerator<ChatType>()
+	val chickenVariants = registerGenerator<ChickenVariant>()
 	val configuredCarvers = registerGenerator<ConfiguredCarver>()
 	val configuredFeatures = registerGenerator<ConfiguredFeature>()
 	val cowVariants = registerGenerator<CowVariant>()
