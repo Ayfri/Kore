@@ -7,7 +7,7 @@ import io.github.ayfri.kore.features.trimpattern.trimPattern
 import io.github.ayfri.kore.generated.Textures
 
 fun DataPack.trimPatternTests() {
-	val trimPattern = trimPattern("test_trim_pattern", Textures.Trims.Entity.Humanoid.SILENCE) {
+	trimPattern("test_trim_pattern", Textures.Trims.Entity.Humanoid.SILENCE) {
 		description("Test Trim Pattern")
 		decal = true
 	}

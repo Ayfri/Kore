@@ -15,6 +15,7 @@ fun featuresTests() = testDataPack("features_tests") {
 	chatTypeTests()
 	configuredCarverTests()
 	configuredFeatureTests()
+	cowVariantTests()
 	damageTypeTests()
 	densityFunctionTests()
 	dimensionTests()
