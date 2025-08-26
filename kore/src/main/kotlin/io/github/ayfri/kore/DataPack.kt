@@ -23,6 +23,7 @@ import io.github.ayfri.kore.features.tags.Tag
 import io.github.ayfri.kore.features.testenvironments.TestEnvironmentFeature
 import io.github.ayfri.kore.features.testinstances.TestInstanceFeature
 import io.github.ayfri.kore.features.trimmaterial.TrimMaterial
+import io.github.ayfri.kore.features.trimpattern.TrimPattern
 import io.github.ayfri.kore.features.wolfvariants.WolfVariant
 import io.github.ayfri.kore.features.worldgen.biome.Biome
 import io.github.ayfri.kore.features.worldgen.configuredcarver.ConfiguredCarver
@@ -108,6 +109,7 @@ class DataPack(val name: String) {
 	val testEnvironments = registerGenerator<TestEnvironmentFeature>()
 	val testInstances = registerGenerator<TestInstanceFeature>()
 	val trimMaterials = registerGenerator<TrimMaterial>()
+	val trimPatterns = registerGenerator<TrimPattern>()
 	val wolfVariants = registerGenerator<WolfVariant>()
 	val worldPresets = registerGenerator<WorldPreset>()
 

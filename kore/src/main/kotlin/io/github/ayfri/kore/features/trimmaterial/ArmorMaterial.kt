@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.trimmaterial
 
-import io.github.ayfri.kore.serializers.LowercaseSerializer
+import io.github.ayfri.kore.serializers.ToStringSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable(with = ArmorMaterial.Companion.ArmorMaterialSerializer::class)
@@ -16,6 +16,6 @@ enum class ArmorMaterial {
 	override fun toString() = "minecraft:${name.lowercase()}"
 
 	companion object {
-		data object ArmorMaterialSerializer : LowercaseSerializer<ArmorMaterial>(entries)
+		data object ArmorMaterialSerializer : ToStringSerializer<ArmorMaterial>()
 	}
 }

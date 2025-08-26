@@ -41,6 +41,11 @@ data class TrimMaterial(
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
+/** Set the description of the trim material. */
+fun TrimMaterial.description(text: String = "", color: Color? = null, block: PlainTextComponent.() -> Unit = {}) = apply {
+	description = textComponent(text, color, block)
+}
+
 /** Set the color palette for the specified [ArmorMaterial]. */
 fun TrimMaterial.overrideArmorMaterial(armorMaterial: ArmorMaterial, color: Color) = apply {
 	if (overrideArmorMaterials == null) overrideArmorMaterials = mutableMapOf()
@@ -70,9 +75,4 @@ fun DataPack.trimMaterial(
 	val trimMaterial = TrimMaterial(fileName, assetName, description).apply(block)
 	trimMaterials += trimMaterial
 	return TrimMaterialArgument(fileName, trimMaterials.last().namespace ?: name)
-}
-
-/** Set the description of the trim material. */
-fun TrimMaterial.description(text: String = "", color: Color? = null, block: PlainTextComponent.() -> Unit = {}) = apply {
-	description = textComponent(text, color, block)
 }
