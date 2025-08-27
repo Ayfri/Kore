@@ -11,6 +11,8 @@ suspend fun launchAllSimpleGenerators() {
 	val txtListsListGenerators = listOf(
 		gen("BannerPatterns", "banner_patterns"),
 		gen("CatVariants", "cats"),
+		gen("ChickenVariants", "chickens"),
+		gen("CowVariants", "cows"),
 		gen("DamageTypes", "damage_types"),
 		gen("DimensionTypes", "dimension_types"),
 		gen("Dimensions", "dimensions"),
@@ -19,6 +21,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("Instruments", "instruments"),
 		gen("JukeboxSongs", "jukebox_songs"),
 		gen("PaintingVariants", "paintings"),
+		gen("PigVariants", "pigs"),
 		gen("Recipes", "recipes"),
 		gen("TrimMaterials", "trim_materials"),
 		gen("TrimPatterns", "trim_patterns"),
