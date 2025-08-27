@@ -35,7 +35,7 @@ inline operator fun String.getValue(thisRef: Macros, property: KProperty<*>): St
 	}
 
 	thisRef.args += this
-	return "\$($this)"
+	return $$"$($$this)"
 }
 
 /**
