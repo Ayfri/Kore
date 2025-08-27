@@ -3,6 +3,7 @@ package io.github.ayfri.kore.features.predicates.sub
 import io.github.ayfri.kore.arguments.ItemSlot
 import io.github.ayfri.kore.arguments.components.ComponentsPatch
 import io.github.ayfri.kore.features.predicates.sub.entityspecific.EntityTypeSpecific
+import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
 import io.github.ayfri.kore.generated.arguments.EntityTypeOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.MobEffectArgument
 import io.github.ayfri.kore.serializers.InlinableList
@@ -28,6 +29,7 @@ data class Entity(
 	@Serializable(NbtAsJsonSerializer::class) var nbt: NbtCompound? = null,
 	var passenger: Entity? = null,
 	var periodicTicks: Int? = null,
+	var predicates: ItemStackSubPredicates? = null,
 	@Serializable(EntitySlotsSerializer::class) var slots: Map<ItemSlot, ItemStack>? = null,
 	var steppingOn: Block? = null,
 	var targetedEntity: Entity? = null,
@@ -103,6 +105,10 @@ fun Entity.nbt(block: NbtCompoundBuilder.() -> Unit) {
 
 fun Entity.passenger(init: Entity.() -> Unit = {}) {
 	passenger = Entity().apply(init)
+}
+
+fun Entity.predicates(block: ItemStackSubPredicates.() -> Unit) {
+	predicates = ItemStackSubPredicates().apply(block)
 }
 
 fun Entity.slots(init: MutableMap<ItemSlot, ItemStack>.() -> Unit) {

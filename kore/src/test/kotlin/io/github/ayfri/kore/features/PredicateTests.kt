@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.WEAPON
 import io.github.ayfri.kore.arguments.components.entity.axolotlVariant
 import io.github.ayfri.kore.arguments.components.item.damage
 import io.github.ayfri.kore.arguments.components.item.unbreakable
+import io.github.ayfri.kore.arguments.components.matchers.customData
 import io.github.ayfri.kore.arguments.components.matchers.enchantments
 import io.github.ayfri.kore.arguments.enums.AxolotlVariants
 import io.github.ayfri.kore.arguments.enums.Gamemode
@@ -127,6 +128,12 @@ fun DataPack.predicateTests() {
 				team = "foo"
 			}
 
+			predicates {
+				customData {
+					this["foo"] = "bar"
+				}
+			}
+
 			slots {
 				this[WEAPON.MAINHAND] = itemStack(Items.DIAMOND_SWORD)
 			}
@@ -192,6 +199,11 @@ fun DataPack.predicateTests() {
 				},
 				"passenger": {
 					"team": "foo"
+				},
+				"predicates": {
+					"minecraft:custom_data": {
+						"foo": "bar"
+					}
 				},
 				"slots": {
 					"weapon.mainhand": {
