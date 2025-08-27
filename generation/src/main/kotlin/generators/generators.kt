@@ -23,6 +23,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("TrimMaterials", "trim_materials"),
 		gen("TrimPatterns", "trim_patterns"),
 		gen("PigVariants", "pigs"),
+		gen("WolfSoundVariants", "wolf_sounds"),
 		gen("WolfVariants", "wolfs"),
 
 		gen("Biomes", "worldgen/biome"),
