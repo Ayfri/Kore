@@ -15,6 +15,7 @@ data class BiomeEffects(
 	@Serializable(ColorAsDecimalSerializer::class) var waterFogColor: Color = color(329011),
 	@Serializable(ColorAsDecimalSerializer::class) var grassColor: Color? = null,
 	@Serializable(ColorAsDecimalSerializer::class) var foliageColor: Color? = null,
+	@Serializable(ColorAsDecimalSerializer::class) var dryFoliageColor: Color? = null,
 	var grassColorModifier: GrassColorModifier? = null,
 	var ambientSound: SoundArgument? = null,
 	var moodSound: MoodSound? = null,

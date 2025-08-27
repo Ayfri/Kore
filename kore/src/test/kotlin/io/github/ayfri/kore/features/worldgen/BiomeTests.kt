@@ -27,6 +27,7 @@ fun DataPack.biomeTests() {
 			waterFogColor = Color.YELLOW
 			foliageColor = Color.PURPLE
 			grassColor = Color.WHITE
+			dryFoliageColor = Color.BLACK
 
 			music(Sounds.Music.Menu.MOOG_CITY_2, weight = 2) {
 				minDelay = 100
@@ -77,6 +78,7 @@ fun DataPack.biomeTests() {
 				"water_fog_color": 16777045,
 				"grass_color": 16777215,
 				"foliage_color": 11141375,
+				"dry_foliage_color": 0,
 				"music": [
 					{
 						"data": {
