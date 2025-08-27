@@ -97,16 +97,18 @@ fun ItemPredicate.isPresent(vararg component: ItemComponentTypes) = component.fo
 fun ItemPredicate.isPresent(vararg component: String) = component.forEach(::setExpected)
 
 /**
- * Set the last added component as negated.
- * **Negated isn't similar to removed
+ * Set one or multiple item components to be negated.
+ * **Negated isn't similar to removed**
  * - Negated means that the value should not be equal to the one set.
  * - Removed means that the component should not be present.
  *
  * Example:
  * ```kotlin
  * itemPredicate {
- *    !damage(1)
+ *    damage(1)
  *    damage(2)
+ *
+ *    negate(ItemComponentTypes.DAMAGE)
  * }
  *
  * // Will output: `*[!damage=1|damage=2]`
@@ -114,16 +116,18 @@ fun ItemPredicate.isPresent(vararg component: String) = component.forEach(::setE
 fun ItemPredicate.negate(vararg component: ItemComponentTypes) = component.forEach(::setNegated)
 
 /**
- * Set the last added component as negated.
- * **Negated isn't similar to removed
+ * Set one or multiple item components to be negated.
+ * **Negated isn't similar to removed**
  * - Negated means that the value should not be equal to the one set.
  * - Removed means that the component should not be present.
  *
  * Example:
  * ```kotlin
  * itemPredicate {
- *    !damage(1)
+ *    damage(1)
  *    damage(2)
+ *
+ *    negate("damage")
  * }
  *
  * // Will output: `*[!damage=1|damage=2]`
@@ -168,6 +172,23 @@ fun ItemPredicate.partial(vararg component: ItemComponentTypes) = component.forE
  * Will be serialized as: `*[custom_data~{test:1}]`
  */
 fun ItemPredicate.partial(vararg component: String) = component.forEach(::setPartial)
+
+/**
+ * Create a custom component as a partial.
+ * This is useful when you want to match a classic component but skipping some required fields of the class.
+ *
+ * Example:
+ * ```kotlin
+ * itemPredicate {
+ *   buildPartial(ItemComponentTypes.CUSTOM_DATA) {
+ *     this["test"] = 1
+ *   }
+ * }
+ * ```
+ * Will be serialized as: `*[custom_data~{test:1}]`
+ */
+fun ItemPredicate.buildPartial(component: ItemComponentTypes, nbtBuilder: NbtCompoundBuilder.() -> Unit) =
+	buildPartial(component.name.lowercase(), nbtBuilder)
 
 
 /**

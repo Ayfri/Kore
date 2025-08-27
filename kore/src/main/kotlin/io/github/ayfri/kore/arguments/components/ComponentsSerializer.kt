@@ -34,7 +34,7 @@ val CHAT_COMPONENTS_COMPONENTS_TYPES = mutableListOf(
 )
 
 
-object ComponentsSerializer : KSerializer<ComponentsScope> {
+data object ComponentsSerializer : KSerializer<ComponentsScope> {
 	override val descriptor = buildClassSerialDescriptor("Components") {
 		element<Map<String, Component>>("components")
 	}

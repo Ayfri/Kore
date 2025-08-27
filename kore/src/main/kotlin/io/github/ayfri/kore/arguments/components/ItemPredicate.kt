@@ -1,9 +1,9 @@
 package io.github.ayfri.kore.arguments.components
 
-import io.github.ayfri.kore.arguments.components.matchers.ComponentMatcher
 import io.github.ayfri.kore.arguments.components.item.CustomComponent
-import io.github.ayfri.kore.arguments.types.ItemOrTagArgument
+import io.github.ayfri.kore.arguments.components.matchers.ComponentMatcher
 import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
+import io.github.ayfri.kore.arguments.types.ItemOrTagArgument
 import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.utils.*
@@ -44,7 +44,7 @@ data class ItemPredicate(
 
 	override fun setToRemove(name: String) {
 		componentsAlternatives[name]?.removeLastOrNull()
-		componentsAlternatives.getOrPut("!$name", ::mutableListOf).add(EmptyComponent())
+		componentsAlternatives.getOrPut("!$name", ::mutableListOf).add(EmptyComponent)
 	}
 
 	/**
@@ -71,11 +71,33 @@ data class ItemPredicate(
 		)
 	}
 
+	/**
+	 * Set a component to be expected, meaning it should be present but without any specific value.
+	 *
+	 * Example:
+	 * ```kotlin
+	 * itemPredicate {
+	 *     setExpected(ItemComponentTypes.DAMAGE)
+	 * }
+	 * ```
+	 * Will output: `*[damage]`
+	 */
 	fun setExpected(component: ItemComponentTypes) = setExpected(component.name.lowercase())
 	fun setExpected(component: String) {
-		componentsAlternatives.getOrPut(component, ::mutableListOf).add(EmptyComponent())
+		componentsAlternatives.getOrPut(component, ::mutableListOf).add(EmptyComponent)
 	}
 
+	/**
+	 * Set a component to be negated, meaning it should not be present.
+	 *
+	 * Example:
+	 * ```kotlin
+	 * itemPredicate {
+	 * 	   setNegated(ItemComponentTypes.DAMAGE)
+	 * }
+	 * ```
+	 * Will output: `*[!damage]`
+	 */
 	fun setNegated(component: ItemComponentTypes) = setNegated(component.name.lowercase())
 	fun setNegated(name: String) = when (name) {
 		COUNT_ITEM_PREDICATE -> {
@@ -90,6 +112,20 @@ data class ItemPredicate(
 		}
 	}
 
+	/**
+	 * Set a component to be partial, meaning it should be present but with a specific value.
+	 *
+	 * Example:
+	 * ```kotlin
+	 * itemPredicate {
+	 *     customData {
+	 *         this["test"] = 1
+	 *     }
+	 * 	   setPartial(ItemComponentTypes.DAMAGE)
+	 * }
+	 *
+	 * Will output: `*[damage~{test:1}]`
+	 */
 	fun setPartial(component: ItemComponentTypes) = setPartial(component.name.lowercase())
 	fun setPartial(name: String) {
 		val component = componentsAlternatives[name]?.lastOrNull() ?: error("The component '$name' is not present, can't make it partial.")

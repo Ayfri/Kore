@@ -52,7 +52,7 @@ open class ComponentsPatch(components: MutableMap<String, Component> = mutableMa
 	 */
 	open fun setToRemove(name: String) {
 		components.remove(name)
-		this["!$name"] = EmptyComponent()
+		this["!$name"] = EmptyComponent
 	}
 
 	/**
@@ -74,7 +74,7 @@ open class ComponentsPatch(components: MutableMap<String, Component> = mutableMa
 	 * Example:
 	 * ```kotlin
 	 * components {
-	 *    !damage(1)
+	 *    remove(ItemComponentTypes.DAMAGE)
 	 * }
 	 * ```
 	 * Will be serialized as: `[!damage]`
@@ -87,13 +87,14 @@ open class ComponentsPatch(components: MutableMap<String, Component> = mutableMa
 	 * Example:
 	 * ```kotlin
 	 * components {
-	 *    !damage(1)
+	 *    remove("damage")
 	 * }
 	 * ```
 	 * Will be serialized as: `[!damage]`
 	 */
 	fun remove(vararg components: String) = components.forEach(::setToRemove)
 
+	/** Convert the components to a [Components] object. */
 	fun toComponents() = Components(components.mapKeys { it.key.removePrefix("!") }.toMutableMap())
 
 	override fun toString() = asNbt().entries

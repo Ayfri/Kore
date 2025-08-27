@@ -1,14 +1,14 @@
 package io.github.ayfri.kore.arguments
 
 import io.github.ayfri.kore.arguments.components.*
-import io.github.ayfri.kore.arguments.components.matchers.damage
-import io.github.ayfri.kore.arguments.components.matchers.potionContents
 import io.github.ayfri.kore.arguments.components.item.customData
 import io.github.ayfri.kore.arguments.components.item.damage
+import io.github.ayfri.kore.arguments.components.matchers.damage
+import io.github.ayfri.kore.arguments.components.matchers.potionContents
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.assertions.assertsIs
-import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.Effects
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.utils.set
 
@@ -86,7 +86,10 @@ fun itemPredicatesTests() {
 		buildPartial("my_data") {
 			this["value"] = "test"
 		}
+		buildPartial(ItemComponentTypes.TOOL) {
+			this["default_mining_speed"] = 10
+		}
 	}
 
-	customPartialDataComponent.toString() assertsIs """minecraft:stone[my_data~{value:"test"}]"""
+	customPartialDataComponent.toString() assertsIs """minecraft:stone[my_data~{value:"test"},tool~{default_mining_speed:10}]"""
 }
