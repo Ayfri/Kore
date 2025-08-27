@@ -18,6 +18,14 @@ fun entityComponentsTests() {
 		catVariant(CatVariants.TABBY)
 	} assertsIs "minecraft:cat_spawn_egg[cat_variant=\"minecraft:tabby\"]"
 
+	Items.CHICKEN_SPAWN_EGG {
+		chickenVariant(ChickenVariants.COLD)
+	} assertsIs "minecraft:chicken_spawn_egg[chicken_variant=\"minecraft:cold\"]"
+
+	Items.COW_SPAWN_EGG {
+		cowVariant(CowVariants.WARM)
+	} assertsIs "minecraft:cow_spawn_egg[cow_variant=\"minecraft:warm\"]"
+
 	Items.FOX_SPAWN_EGG {
 		foxVariant(FoxVariants.SNOW)
 	} assertsIs "minecraft:fox_spawn_egg[fox_variant=\"snow\"]"
@@ -85,6 +93,10 @@ fun entityComponentsTests() {
 	Items.WOLF_SPAWN_EGG {
 		wolfCollar(DyeColors.BLACK)
 	} assertsIs "minecraft:wolf_spawn_egg[wolf_collar=\"black\"]"
+
+	Items.WOLF_SPAWN_EGG {
+		wolfSoundVariant(WolfSoundVariants.CUTE)
+	} assertsIs "minecraft:wolf_spawn_egg[wolf_sound_variant=\"minecraft:cute\"]"
 
 	Items.WOLF_SPAWN_EGG {
 		wolfVariant(WolfVariants.SNOWY)
