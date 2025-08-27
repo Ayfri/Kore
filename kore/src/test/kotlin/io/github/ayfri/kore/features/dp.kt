@@ -45,6 +45,7 @@ fun featuresTests() = testDataPack("features_tests") {
 	testInstanceTests()
 	trimMaterialTests()
 	trimPatternTests()
+	wolfSoundVariantTests()
 	wolfVariantTests()
 	worldPresetTests()
 }.apply {

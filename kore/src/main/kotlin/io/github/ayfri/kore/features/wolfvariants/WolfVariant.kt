@@ -17,10 +17,6 @@ import kotlinx.serialization.Transient
  * and is used to create different colored wolves in the world.
  *
  * JSON format reference: https://minecraft.wiki/w/Mob_variant_definitions#Wolf
- *
- * @param model - The model to use for the wolf variant.
- * @param texture - The texture to use for the wolf variant.
- * @param biome - The biome to associate with the wolf variant.
  */
 @Serializable
 data class WolfVariant(
