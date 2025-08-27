@@ -140,6 +140,15 @@ fun DataPack.predicateTests() {
 
 			steppingOn {
 				blocks(Blocks.STONE)
+				components {
+					damage(5)
+				}
+				predicates {
+					customData {
+						this["foo"] = "bar"
+					}
+				}
+				state("up", "bottom")
 			}
 
 			type(EntityTypes.MARKER)
@@ -211,7 +220,18 @@ fun DataPack.predicateTests() {
 					}
 				},
 				"stepping_on": {
-					"blocks": "minecraft:stone"
+					"blocks": "minecraft:stone",
+					"components": {
+						"damage": 5
+					},
+					"predicates": {
+						"minecraft:custom_data": {
+							"foo": "bar"
+						}
+					},
+					"state": {
+						"up": "bottom"
+					}
 				},
 				"type": "minecraft:marker",
 				"type_specific": {
