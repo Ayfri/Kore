@@ -13,6 +13,7 @@ import io.github.ayfri.kore.features.loottables.entries.lootTable
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
 import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
 import io.github.ayfri.kore.features.predicates.providers.constant
+import io.github.ayfri.kore.features.predicates.providers.uniform
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.LootTables
@@ -104,4 +105,25 @@ fun DataPack.lootTableTests() {
 	load {
 		loot(self(), lootTable)
 	}
+
+	lootTable("test") {
+		pool {
+			rolls = uniform(5f, 2f)
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"rolls": {
+						"type": "minecraft:uniform",
+						"min": 5.0,
+						"max": 2.0
+					},
+					"entries": []
+				}
+			]
+		}
+	""".trimIndent()
 }
