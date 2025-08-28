@@ -17,18 +17,16 @@ import kotlinx.serialization.serializer
 @Serializable(with = EntityOrPredicates.Companion.EntityOrPredicatesSerializer::class)
 data class EntityOrPredicates(
 	var legacyEntity: Entity? = null,
-	var predicateConditions: List<PredicateCondition>? = null,
+	var predicateConditions: List<PredicateCondition> = emptyList(),
 ) {
 	companion object {
 		data object EntityOrPredicatesSerializer : ToStringSerializer<EntityOrPredicates>() {
 			override fun serialize(encoder: Encoder, value: EntityOrPredicates) = when {
 				value.legacyEntity != null -> encoder.encodeSerializableValue(Entity.serializer(), value.legacyEntity!!)
-				value.predicateConditions != null -> encoder.encodeSerializableValue(
+				else -> encoder.encodeSerializableValue(
 					ListSerializer(serializer<PredicateCondition>()),
-					value.predicateConditions!!
+					value.predicateConditions
 				)
-
-				else -> error("EntityOrPredicates must have either an Entity or predicates")
 			}
 		}
 	}

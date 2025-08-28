@@ -95,6 +95,7 @@ fun Enchantment.primaryItems(vararg items: ItemArgument) {
 	primaryItems = items.toList()
 }
 
+/** Prefer these items in enchanting tables and villager trades. */
 fun Enchantment.primaryItems(item: ItemOrTagArgument) {
 	primaryItems = listOf(item)
 }

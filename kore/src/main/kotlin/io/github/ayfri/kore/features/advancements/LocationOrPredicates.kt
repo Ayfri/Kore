@@ -7,6 +7,7 @@ import io.github.ayfri.kore.serializers.ToStringSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.serializer
 
 /**
  * Container for either a location or predicate conditions.
@@ -19,15 +20,13 @@ data class LocationOrPredicates(
 	var predicateConditions: List<PredicateCondition> = emptyList(),
 ) {
 	companion object {
-		object LocationOrPredicatesSerializer : ToStringSerializer<LocationOrPredicates>() {
-			override fun serialize(encoder: Encoder, value: LocationOrPredicates) {
-				when {
-					value.legacyLocation != null -> encoder.encodeSerializableValue(Location.serializer(), value.legacyLocation!!)
-					else -> encoder.encodeSerializableValue(
-						ListSerializer(kotlinx.serialization.serializer<PredicateCondition>()),
-						value.predicateConditions
-					)
-				}
+		data object LocationOrPredicatesSerializer : ToStringSerializer<LocationOrPredicates>() {
+			override fun serialize(encoder: Encoder, value: LocationOrPredicates) = when {
+				value.legacyLocation != null -> encoder.encodeSerializableValue(Location.serializer(), value.legacyLocation!!)
+				else -> encoder.encodeSerializableValue(
+					ListSerializer(serializer<PredicateCondition>()),
+					value.predicateConditions
+				)
 			}
 		}
 	}

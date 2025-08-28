@@ -5,7 +5,8 @@ import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.components.Components
-import io.github.ayfri.kore.arguments.types.resources.*
+import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
+import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.features.advancements.triggers.AdvancementTriggerCondition
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
@@ -34,7 +35,7 @@ import kotlinx.serialization.Transient
  * @param sendsTelemetryEvent - Whether to send a telemetry event when the advancement is completed.
  */
 @Serializable
-data class Advancement internal constructor(
+data class Advancement(
 	@Transient
 	override var fileName: String = "advancement",
 	var display: AdvancementDisplay? = null,
