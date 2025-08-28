@@ -253,7 +253,7 @@ fun Function.executeTests() {
 			say("Using inline predicate")
 		}
 	} assertsIs """
-		execute if predicate {"condition":"minecraft:random_chance","chance":0.5} run say Using inline predicate
+		execute if predicate {condition:"minecraft:random_chance",chance:0.5f} run say Using inline predicate
 	""".trimIndent()
 
 	execute {

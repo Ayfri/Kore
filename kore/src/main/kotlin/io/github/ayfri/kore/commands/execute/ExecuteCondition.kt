@@ -21,8 +21,9 @@ import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.asArg
+import io.github.ayfri.kore.utils.snbtSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.encodeToString
 
 @Serializable(BlocksTestMode.Companion.FillModeSerializer::class)
 enum class BlocksTestMode {
@@ -77,7 +78,7 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 		listOf(
 			literal("predicate"),
 			literal(
-				Json.encodeToString(Predicate().apply(block))
+				snbtSerializer.encodeToString(Predicate().apply(block))
 			),
 		)
 	)
