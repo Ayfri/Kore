@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.features.recipes.types
 
 import io.github.ayfri.kore.arguments.types.ItemOrTagArgument
-import io.github.ayfri.kore.arguments.types.resources.tagged.ItemTagArgument
 import io.github.ayfri.kore.features.recipes.RecipeFile
 import io.github.ayfri.kore.features.recipes.RecipeTypes
 import io.github.ayfri.kore.features.recipes.Recipes
@@ -13,18 +12,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class StoneCutting(
 	override var group: String? = null,
-	var ingredient: InlinableList<ItemOrTagArgument> = emptyList(),
-	var result: CraftingResult,
-	var count: Int,
-) : Recipe() {
+	override var ingredient: InlinableList<ItemOrTagArgument> = emptyList(),
+	override var result: CraftingResult,
+) : Recipe(), ResultedRecipe, IngredientsRecipe {
 	override val type = RecipeTypes.STONECUTTING
 }
 
 fun Recipes.stoneCutting(name: String, block: StoneCutting.() -> Unit): RecipeArgument {
-	val recipe = RecipeFile(name, StoneCutting(result = CraftingResult(""), count = 1).apply(block))
+	val recipe = RecipeFile(name, StoneCutting(result = CraftingResult("")).apply(block))
 	dp.recipes += recipe
 	return RecipeArgument(name, recipe.namespace ?: dp.name)
 }
-
-fun StoneCutting.ingredient(vararg items: ItemOrTagArgument) = apply { ingredient = items.toList() }
-fun StoneCutting.ingredient(tag: ItemTagArgument) = apply { ingredient = listOf(tag) }

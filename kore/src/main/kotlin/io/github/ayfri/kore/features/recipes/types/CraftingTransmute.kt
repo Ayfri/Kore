@@ -1,11 +1,8 @@
 package io.github.ayfri.kore.features.recipes.types
 
-import io.github.ayfri.kore.arguments.components.ComponentsPatch
 import io.github.ayfri.kore.arguments.types.ItemOrTagArgument
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.arguments.types.resources.tagged.ItemTagArgument
-import io.github.ayfri.kore.data.item.builders.ItemStackBuilder
-import io.github.ayfri.kore.data.item.builders.itemStack
 import io.github.ayfri.kore.features.recipes.RecipeFile
 import io.github.ayfri.kore.features.recipes.RecipeTypes
 import io.github.ayfri.kore.features.recipes.Recipes
@@ -20,8 +17,8 @@ data class CraftingTransmute(
 	var category: CraftingTransmuteCategory? = null,
 	var input: InlinableList<ItemOrTagArgument>,
 	var material: InlinableList<ItemOrTagArgument>,
-	var result: CraftingResult,
-) : Recipe() {
+	override var result: CraftingResult,
+) : Recipe(), ResultedRecipe {
 	override val type = RecipeTypes.CRAFTING_TRANSMUTE
 }
 
@@ -42,21 +39,3 @@ fun CraftingTransmute.input(tag: ItemTagArgument) = apply { input = listOf(tag) 
 
 fun CraftingTransmute.material(vararg items: ItemArgument) = apply { material = items.toList() }
 fun CraftingTransmute.material(tag: ItemTagArgument) = apply { material = listOf(tag) }
-
-fun CraftingTransmute.result(block: ItemStackBuilder.() -> Unit) {
-	result = itemStack(block = block).let {
-		CraftingResult(
-			id = it.id,
-			count = it.count,
-			components = it.components?.toPatch()
-		)
-	}
-}
-
-fun CraftingTransmute.result(id: ItemArgument, count: Short? = null, block: (ComponentsPatch.() -> Unit)? = null) {
-	result = CraftingResult(
-		id = id.asId(),
-		count = count,
-		components = block?.let { ComponentsPatch().apply(it) }
-	)
-}

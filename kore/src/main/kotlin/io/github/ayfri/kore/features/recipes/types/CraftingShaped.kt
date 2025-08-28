@@ -17,7 +17,7 @@ data class CraftingShaped(
 	var pattern: List<String> = emptyList(),
 	var key: MutableMap<String, InlinableList<ItemOrTagArgument>> = mutableMapOf(),
 	override var result: CraftingResult,
-) : Recipe(), CraftingRecipe {
+) : Recipe(), ResultedRecipe {
 	override val type = RecipeTypes.CRAFTING_SHAPED
 }
 
