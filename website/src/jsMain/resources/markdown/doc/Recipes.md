@@ -40,13 +40,11 @@ To create a blasting recipe, use the `blasting` function:
 
 ```kotlin
 blasting("unique_recipe_name") {
-    ingredient {
-        // Define the ingredient item or tag
-        item = Items.IRON_ORE
-        // or
-        tag = Tags.Item.ORES
-    }
-    result = itemStack(Items.IRON_INGOT) {
+    ingredient(Items.IRON_ORE)
+    // or
+    ingredient(tag = Tags.Item.ORES)
+
+    result(Items.IRON_INGOT) {
         // Optionally modify the result item (e.g., set damage)
         damage(0)
     }
@@ -65,6 +63,22 @@ For crafting recipes with a specific shape:
 craftingShaped("unique_recipe_name") {
     pattern(
         " A ", // It's a common pattern to format recipe patterns like this, to make them more readable
+        " B ",
+        " C "
+    )
+    key("A", Items.DIAMOND)
+    key("B", Items.STICK)
+    key("C", Items.GOLD_INGOT)
+    result(Items.DIAMOND_SWORD)
+}
+```
+
+You can also use a `keys` block for multiple keys:
+
+```kotlin
+craftingShaped("unique_recipe_name_2") {
+    pattern(
+        " A ",
         " B ",
         " C "
     )
@@ -128,6 +142,23 @@ of the special recipes:
 craftingSpecial("custom_armor_dye", CraftingSpecialArmorDye) {}
 ```
 
+## Crafting Transmute Recipes
+
+Transmutation recipes are used to change an item into another, by combining an input item with a material.
+They are useful for adding components to items, or for changing items into other items.
+
+```kotlin
+craftingTransmute("unique_recipe_name") {
+    input(Items.DIAMOND)
+    material(Items.AMETHYST_SHARD)
+    result(Items.DIAMOND_SWORD) {
+		enchantments {
+			enchantment(Enchantments.SHARPNESS, 5)
+		}
+    }
+}
+```
+
 ## Smithing Transform Recipes
 
 To create a smithing transformation recipe:
@@ -141,16 +172,27 @@ smithingTransform("unique_recipe_name") {
 }
 ```
 
+You can also specify multiple items for the addition:
+
+```kotlin
+smithingTransform("unique_recipe_name_2") {
+    template(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
+    base(Items.DIAMOND_SWORD)
+    addition(Items.NETHERITE_INGOT, Items.NETHERRACK)
+    result(Items.NETHERITE_SWORD)
+}
+```
+
 ## Smithing Trim Recipes
 
 For smithing trim recipes:
 
 ```kotlin
 smithingTrim("unique_recipe_name") {
-    template(Items.SMITHING_TEMPLATE)
+    template(Items.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE)
     base(Items.IRON_CHESTPLATE)
-
     addition(Items.GOLD_INGOT)
+    pattern = TrimPatterns.SENTRY
 }
 ```
 
@@ -162,7 +204,7 @@ To define a stonecutting recipe:
 stoneCutting("unique_recipe_name") {
     ingredient(Items.STONE)
 
-    result = Items.STONE_SLAB
+    result(Items.STONE_SLAB)
     count = 2
 }
 ```
@@ -170,16 +212,6 @@ stoneCutting("unique_recipe_name") {
 ## Defining Ingredients
 
 Ingredients can be items or tags, and you can define them as follows:
-
-```kotlin
-ingredient {
-    item = Items.COBBLESTONE
-    // or
-    tag = Tags.Item.COBBLESTONE
-}
-```
-
-You also have a shorter form for defining an ingredient:
 
 ```kotlin
 ingredient(Items.COBBLESTONE)
@@ -192,7 +224,7 @@ ingredient(tag = Tags.Item.COBBLESTONE)
 When specifying the result of a recipe:
 
 ```kotlin
-result = Items.ENCHANTED_BOOK {
+result(Items.ENCHANTED_BOOK) {
     enchantments {
         enchantment(Enchantments.SHARPNESS, 5)
     }
@@ -202,6 +234,13 @@ result = Items.ENCHANTED_BOOK {
 ## Using Keys in Shaped Recipes
 
 Map characters in your pattern to specific items:
+
+```kotlin
+key("S", Items.STICK)
+key("D", Items.DIAMOND)
+```
+
+Or using the `keys` block:
 
 ```kotlin
 keys {
@@ -233,16 +272,17 @@ load {
 
 Kore provides a variety of built-in recipe types through `RecipeTypes`:
 
--   `RecipeTypes.BLASTING`
--   `RecipeTypes.CAMPFIRE_COOKING`
--   `RecipeTypes.CRAFTING_SHAPED`
--   `RecipeTypes.CRAFTING_SHAPELESS`
--   `RecipeTypes.CRAFTING_SPECIAL`
--   `RecipeTypes.SMELTING`
--   `RecipeTypes.SMITHING_TRANSFORM`
--   `RecipeTypes.SMITHING_TRIM`
--   `RecipeTypes.SMOKING`
--   `RecipeTypes.STONECUTTING`
+- `RecipeTypes.BLASTING`
+- `RecipeTypes.CAMPFIRE_COOKING`
+- `RecipeTypes.CRAFTING_SHAPED`
+- `RecipeTypes.CRAFTING_SHAPELESS`
+- `RecipeTypes.CRAFTING_SPECIAL`
+- `RecipeTypes.CRAFTING_TRANSMUTE`
+- `RecipeTypes.SMELTING`
+- `RecipeTypes.SMITHING_TRANSFORM`
+- `RecipeTypes.SMITHING_TRIM`
+- `RecipeTypes.SMOKING`
+- `RecipeTypes.STONECUTTING`
 
 ## Custom Components
 
@@ -287,10 +327,10 @@ fun DataPack.createRecipes() {
 
 ## Reference Recipes in Commands
 
-To reference recipes in commands, you can use the `recipeBuilder` property and store the recipe inside a variable:
+To reference recipes in commands, you can use the `recipesBuilder` property and store the recipe inside a variable:
 
 ```kotlin
-val myRecipe = recipeBuilder.craftingShaped("experience_bottle") {
+val myRecipe = recipesBuilder.craftingShaped("experience_bottle") {
     pattern(
         " G ",
         "GBG",

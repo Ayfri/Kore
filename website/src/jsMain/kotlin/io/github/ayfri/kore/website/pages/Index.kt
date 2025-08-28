@@ -567,10 +567,10 @@ private const val JSON_LESS_CODE = """
 		val myRecipe = recipesBuilder.smithingTransform(
 			name = "diamond_to_netherite"
 		) {
-			template = Items.DIAMOND_BLOCK
-			base = Items.DIAMOND_SWORD
-			addition = Items.NETHERITE_INGOT
-			result = Items.NETHERITE_SWORD
+			template(Items.DIAMOND_BLOCK)
+			base(Items.DIAMOND_SWORD)
+			addition(Items.NETHERITE_INGOT)
+			result(Items.NETHERITE_SWORD)
 		}
 
 		function("give_recipe") {
