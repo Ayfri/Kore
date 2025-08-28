@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.advancements.triggers
 
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
+import io.github.ayfri.kore.features.advancements.conditions
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.sub.Entity
@@ -39,10 +40,10 @@ fun AdvancementTriggerCondition.conditionEntity(entity: Entity.() -> Unit) {
 
 /** Set the predicate conditions. */
 fun AdvancementTriggerCondition.conditions(vararg conditions: PredicateCondition) {
-	this.conditions = EntityOrPredicates(predicateConditions = conditions.toList())
+	this.conditions = EntityOrPredicates().conditions(*conditions)
 }
 
 /** Set the predicate conditions. */
-fun AdvancementTriggerCondition.conditions(conditions: Predicate.() -> Unit) {
-	this.conditions = EntityOrPredicates(predicateConditions = Predicate().apply(conditions).predicateConditions)
+fun AdvancementTriggerCondition.conditions(block: Predicate.() -> Unit) {
+	this.conditions = EntityOrPredicates().conditions(block)
 }

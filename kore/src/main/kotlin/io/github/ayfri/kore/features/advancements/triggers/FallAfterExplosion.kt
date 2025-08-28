@@ -49,6 +49,6 @@ fun FallAfterExplosion.cause(entity: Entity) {
 }
 
 /** Set the cause constraints, see [Predicates](https://kore.ayfri.com/docs/predicates). */
-fun FallAfterExplosion.cause(vararg predicates: Predicate) {
-	cause = EntityOrPredicates(predicateConditions = predicates.map { it.predicateConditions }.flatten())
+fun FallAfterExplosion.cause(predicate: Predicate) {
+	cause = EntityOrPredicates(predicateConditions = predicate)
 }

@@ -145,7 +145,7 @@ fun Advancement.criteria(
 	triggerCondition: AdvancementTriggerCondition,
 	vararg conditions: PredicateCondition,
 ) {
-	criteria += triggerCondition.apply { this.conditions = EntityOrPredicates(predicateConditions = conditions.toList()) }
+	criteria += triggerCondition.apply { this.conditions = EntityOrPredicates().conditions(*conditions) }
 }
 
 @Deprecated(
@@ -161,7 +161,7 @@ fun Advancement.criteria(
 	block: Predicate.() -> Unit,
 ) {
 	criteria += triggerCondition.apply {
-		this.conditions = EntityOrPredicates(predicateConditions = Predicate().apply(block).predicateConditions)
+		this.conditions = EntityOrPredicates(predicateConditions = Predicate().apply(block))
 	}
 }
 

@@ -36,5 +36,5 @@ fun ChanneledLightning.victims(vararg entities: Entity) {
 
 /** Add victims by predicate builders, see [Predicates](https://kore.ayfri.com/docs/predicates). */
 fun ChanneledLightning.victims(vararg predicates: Predicate) {
-	victims = predicates.map { EntityOrPredicates(predicateConditions = it.predicateConditions) }
+	victims = predicates.map { EntityOrPredicates(predicateConditions = it) }
 }

@@ -368,8 +368,10 @@ private fun DataPack.allTriggersTests() {
 				}
 
 				cause {
-					conditionEntity {
-						type(EntityTypes.PLAYER)
+					conditions {
+						entityProperties {
+							type(EntityTypes.PLAYER)
+						}
 					}
 				}
 			}
@@ -400,9 +402,14 @@ private fun DataPack.allTriggersTests() {
 								"max": 20.0
 							}
 						},
-						"cause": {
-							"type": "minecraft:player"
-						}
+						"cause": [
+							{
+								"condition": "minecraft:entity_properties",
+								"predicate": {
+									"type": "minecraft:player"
+								}
+							}
+						]
 					}
 				}
 			}
