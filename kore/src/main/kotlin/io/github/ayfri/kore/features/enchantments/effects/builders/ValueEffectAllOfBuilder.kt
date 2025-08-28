@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed class ValueEffectAllOfBuilder(var effects: AllOf = AllOf())
 
-class ValueEffectAllOfTopBuilder(var requirements: InlinableList<PredicateCondition>? = null) : ValueEffectAllOfBuilder()
+data class ValueEffectAllOfTopBuilder(var requirements: InlinableList<PredicateCondition>? = null) : ValueEffectAllOfBuilder()
 
 fun ValueEffectAllOfTopBuilder.allOf(block: ValueEffectAllOfSubBuilder.() -> Unit = {}) =
 	apply { effects.effects += ValueEffectAllOfSubBuilder().apply(block).effects }

@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.enchantments.effects.builders
 
-import io.github.ayfri.kore.arguments.types.resources.*
+import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
+import io.github.ayfri.kore.arguments.types.resources.SoundArgument
 import io.github.ayfri.kore.data.sound.SoundEvent
 import io.github.ayfri.kore.features.enchantments.effects.entity.*
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticlePosition
@@ -24,7 +25,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed class EntityEffectAllOfBuilder(var effects: AllOf = AllOf())
 
-class EntityEffectAllOfTopBuilder(var requirements: InlinableList<PredicateCondition>? = null) : EntityEffectAllOfBuilder()
+data class EntityEffectAllOfTopBuilder(var requirements: InlinableList<PredicateCondition>? = null) : EntityEffectAllOfBuilder()
 
 fun EntityEffectAllOfBuilder.allOf(block: EntityEffectAllOfSubBuilder.() -> Unit = {}) =
 	apply { effects.effects += EntityEffectAllOfSubBuilder().apply(block).effects }
