@@ -3,7 +3,7 @@ import java.time.Year
 object Project {
 	const val GROUP = "io.github.ayfri.kore"
 	const val URL = "github.com/Ayfri/Kore"
-	const val VERSION = "1.27.2"
+	const val VERSION = "1.27.3"
 
 	// Publishing constants
 	const val CENTRAL_PORTAL_URL = "https://central.sonatype.com/api/v1/publisher"
