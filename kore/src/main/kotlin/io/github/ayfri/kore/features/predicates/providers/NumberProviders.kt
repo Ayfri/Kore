@@ -3,8 +3,8 @@ package io.github.ayfri.kore.features.predicates.providers
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.predicates.types.EntityType
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
-import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
+import io.github.ayfri.kore.serializers.ToStringSerializer
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
@@ -39,7 +39,7 @@ enum class ScoreTargetType {
 	CONTEXT;
 
 	companion object {
-		data object ScoreTargetTypeSerializer : LowercaseSerializer<ScoreTargetType>(entries)
+		data object ScoreTargetTypeSerializer : ToStringSerializer<ScoreTargetType>({ "minecraft:${name.lowercase()}"})
 	}
 }
 
@@ -61,13 +61,12 @@ data class ScoreTargetNumberProvider(
 
 			override fun serialize(encoder: Encoder, value: ScoreTargetNumberProvider) {
 				encoder.encodeStructure(descriptor) {
-					encodeStringElement(descriptor, 0, "minecraft:${value.type.name}")
+					encodeSerializableElement(descriptor, 0, ScoreTargetType.serializer(), value.type)
 
-					val (position, targetValue) = when (value.type) {
-						ScoreTargetType.FIXED -> 1 to value.name!!
-						else -> 2 to value.target!!.name
+					when (value.type) {
+						ScoreTargetType.FIXED -> encodeStringElement(descriptor, 1, value.name!!)
+						else -> encodeSerializableElement(descriptor, 2, EntityType.serializer(), value.target!!)
 					}
-					encodeStringElement(descriptor, position, targetValue)
 				}
 			}
 		}
