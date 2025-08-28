@@ -14,7 +14,7 @@ data class StoneCutting(
 	override var group: String? = null,
 	override var ingredient: InlinableList<ItemOrTagArgument> = emptyList(),
 	override var result: CraftingResult,
-) : Recipe(), ResultedRecipe, IngredientsRecipe {
+) : Recipe(), IngredientsRecipe, ResultedRecipe {
 	override val type = RecipeTypes.STONECUTTING
 }
 
