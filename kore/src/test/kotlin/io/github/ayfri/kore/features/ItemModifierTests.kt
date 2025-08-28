@@ -15,6 +15,10 @@ import io.github.ayfri.kore.features.loottables.entries.item
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
 import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
 import io.github.ayfri.kore.features.predicates.providers.constant
+import io.github.ayfri.kore.features.predicates.providers.enchantmentLevel
+import io.github.ayfri.kore.features.predicates.providers.providersRange
+import io.github.ayfri.kore.features.predicates.providers.scoreNumber
+import io.github.ayfri.kore.features.predicates.types.EntityType
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
@@ -157,6 +161,36 @@ fun DataPack.itemModifierTests() {
 			"modifier": {
 				"function": "minecraft:set_name",
 				"name": "Test"
+			}
+		}
+	""".trimIndent()
+
+	itemModifier("limit_count") {
+		limitCount(
+			providersRange(
+				min = scoreNumber("my_score", EntityType.THIS, 4f),
+				max = enchantmentLevel(5)
+			)
+		)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:limit_count",
+			"limit": {
+				"min": {
+					"type": "minecraft:score",
+					"target": {
+						"type": "minecraft:context",
+						"target": "this"
+					},
+					"score": "my_score",
+					"scale": 4.0
+				},
+				"max": {
+					"type": "minecraft:enchantment",
+					"amount": 5
+				}
 			}
 		}
 	""".trimIndent()
