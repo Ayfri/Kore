@@ -2,10 +2,10 @@ package io.github.ayfri.kore.features.predicates.providers
 
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.predicates.types.EntityType
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.LowercaseSerializer
-import io.github.ayfri.kore.serializers.ProviderSerializer
+import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
@@ -13,34 +13,25 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.encodeStructure
 
-typealias NumberProvider = @Serializable(with = NumberProviderSurrogate.Companion.NumberProviderSerializer::class) NumberProviderSurrogate
-
-@Serializable
-sealed interface NumberProviderSurrogate {
+@Serializable(with = NumberProvider.Companion.NumberProviderSerializer::class)
+sealed class NumberProvider {
 	companion object {
-		data object NumberProviderSerializer : ProviderSerializer<NumberProvider>(serializer())
+		data object NumberProviderSerializer : NamespacedPolymorphicSerializer<NumberProvider>(NumberProvider::class)
+	}
+}
+
+@Serializable(with = Constant.Companion.ConstantNumberProviderSerializer::class)
+data class Constant(val value: Float) : NumberProvider() {
+	companion object {
+		data object ConstantNumberProviderSerializer : InlineAutoSerializer<Constant>(Constant::class)
 	}
 }
 
 @Serializable
-@SerialName("minecraft:constant")
-data class ConstantNumberProvider(
-	val value: Float,
-) : NumberProviderSurrogate
+data class Uniform(var min: NumberProvider, var max: NumberProvider) : NumberProvider()
 
 @Serializable
-@SerialName("minecraft:uniform")
-data class UniformNumberProvider(
-	var min: NumberProvider,
-	var max: NumberProvider,
-) : NumberProviderSurrogate
-
-@Serializable
-@SerialName("minecraft:binomial")
-data class BinomialNumberProvider(
-	var n: NumberProvider,
-	var p: NumberProvider,
-) : NumberProviderSurrogate
+data class Binomial(var n: NumberProvider, var p: NumberProvider) : NumberProvider()
 
 @Serializable(ScoreTargetType.Companion.ScoreTargetTypeSerializer::class)
 enum class ScoreTargetType {
@@ -59,7 +50,7 @@ data class ScoreTargetNumberProvider(
 	var target: EntityType? = null,
 ) {
 	companion object {
-		object ScoreTargetNumberProviderSerializer : KSerializer<ScoreTargetNumberProvider> {
+		data object ScoreTargetNumberProviderSerializer : KSerializer<ScoreTargetNumberProvider> {
 			override val descriptor = buildClassSerialDescriptor("ScoreTargetNumberProvider") {
 				element<String>("type")
 				element<String>("name")
@@ -84,22 +75,14 @@ data class ScoreTargetNumberProvider(
 }
 
 @Serializable
-@SerialName("minecraft:score")
-data class ScoreNumberProvider(
+data class Score(
 	var target: ScoreTargetNumberProvider,
 	var score: String,
 	var scale: Float? = null,
-) : NumberProviderSurrogate
+) : NumberProvider()
 
 @Serializable
-@SerialName("minecraft:storage")
-data class StorageNumberProvider(
-	var storage: String,
-	var path: String,
-) : NumberProviderSurrogate
+data class Storage(var storage: String, var path: String) : NumberProvider()
 
 @Serializable
-@SerialName("minecraft:enchantment_level")
-data class EnchantmentLevelNumberProvider(
-	var amount: LevelBased,
-) : NumberProviderSurrogate
+data class Enchantment(var amount: LevelBased) : NumberProvider()
