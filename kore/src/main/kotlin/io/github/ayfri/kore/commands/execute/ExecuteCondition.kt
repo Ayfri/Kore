@@ -8,16 +8,23 @@ import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.numbers.ranges.IntRangeOrInt
 import io.github.ayfri.kore.arguments.scores.ExecuteScore
 import io.github.ayfri.kore.arguments.scores.Scores
-import io.github.ayfri.kore.arguments.types.*
+import io.github.ayfri.kore.arguments.types.ContainerArgument
+import io.github.ayfri.kore.arguments.types.DataArgument
+import io.github.ayfri.kore.arguments.types.EntityArgument
+import io.github.ayfri.kore.arguments.types.ScoreHolderArgument
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
+import io.github.ayfri.kore.features.predicates.Predicate
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.generated.arguments.types.DimensionArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
+import io.github.ayfri.kore.serializers.inlinableListSerializer
 import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
 @Serializable(BlocksTestMode.Companion.FillModeSerializer::class)
 enum class BlocksTestMode {
@@ -63,8 +70,21 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 
 	fun loaded(pos: Vec3) = addArguments(listOf(literal("loaded"), pos))
 
+	/** References a predicate. */
 	fun predicate(predicate: PredicateArgument) = addArguments(listOf(literal("predicate"), predicate))
+	/** References a predicate. */
 	fun predicate(predicate: String) = addArguments(listOf(literal("predicate"), literal(predicate)))
+	/** Generates an inline predicate in the execute command. */
+	fun predicate(block: Predicate.() -> Unit) = addArguments(
+		listOf(
+			literal("predicate"),
+			literal(
+				Json.encodeToString(
+				inlinableListSerializer(PredicateCondition.serializer()), Predicate().apply(block).predicateConditions
+				)
+			),
+		)
+	)
 
 	fun score(
 		target: ScoreHolderArgument,

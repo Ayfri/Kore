@@ -26,6 +26,7 @@ import io.github.ayfri.kore.commands.execute.BlocksTestMode
 import io.github.ayfri.kore.commands.execute.Relation
 import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
+import io.github.ayfri.kore.features.predicates.conditions.randomChance
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.*
@@ -239,6 +240,20 @@ fun Function.executeTests() {
 		}
 	} assertsIs """
 		execute store result score #temp simplenergy.data if entity @e[scores={energy.transfer_rate=1..}]
+	""".trimIndent()
+
+	execute {
+		ifCondition {
+			predicate {
+				randomChance(0.5f)
+			}
+		}
+
+		run {
+			say("Using inline predicate")
+		}
+	} assertsIs """
+		execute if predicate {"condition":"minecraft:random_chance","chance":0.5} run say Using inline predicate
 	""".trimIndent()
 
 	execute {
