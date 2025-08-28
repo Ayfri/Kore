@@ -7,7 +7,6 @@ import io.github.ayfri.kore.arguments.components.item.enchantments
 import io.github.ayfri.kore.arguments.types.literals.allPlayers
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.recipeGive
-import io.github.ayfri.kore.data.item.builders.itemStack
 import io.github.ayfri.kore.features.recipes.recipes
 import io.github.ayfri.kore.features.recipes.recipesBuilder
 import io.github.ayfri.kore.features.recipes.types.*
@@ -20,11 +19,9 @@ import io.github.ayfri.kore.generated.TrimPatterns
 fun DataPack.recipeTest() {
 	recipes {
 		blasting("test_blasting") {
-			ingredient {
-				tag = Tags.Item.STONE_CRAFTING_MATERIALS
-			}
+			ingredient(Tags.Item.STONE_CRAFTING_MATERIALS)
 
-			result = itemStack(Items.DIAMOND) {
+			result(Items.DIAMOND) {
 				damage(4)
 			}
 			experience = 10.0
@@ -69,16 +66,10 @@ fun DataPack.recipeTest() {
 				" ~|"
 			],
 			"key": {
-				"~": {
-					"item": "minecraft:string"
-				},
-				"|": {
-					"item": "minecraft:stick"
-				}
+				"~": "minecraft:string",
+				"|": "minecraft:stick"
 			},
-			"result": {
-				"id": "minecraft:bow"
-			}
+			"result": "minecraft:bow"
 		}
 	""".trimIndent()
 
@@ -116,12 +107,8 @@ fun DataPack.recipeTest() {
 				"E E"
 			],
 			"key": {
-				"E": {
-					"item": "minecraft:emerald"
-				},
-				"B": {
-					"item": "minecraft:book"
-				}
+				"E": "minecraft:emerald",
+				"B": "minecraft:book"
 			},
 			"result": {
 				"id": "minecraft:enchanted_book",
@@ -139,13 +126,9 @@ fun DataPack.recipeTest() {
 
 private fun DataPack.allRecipeTypesTests() {
 	recipesBuilder.craftingTransmute("test_crafting_transmute") {
-		input {
-			tag = Tags.Item.STONE_CRAFTING_MATERIALS
-		}
+		input(Tags.Item.STONE_CRAFTING_MATERIALS)
 
-		material {
-			tag = Tags.Item.REPAIRS_DIAMOND_ARMOR
-		}
+		material(Tags.Item.REPAIRS_DIAMOND_ARMOR)
 
 		result(Items.DIAMOND) {
 			damage(4)
@@ -155,12 +138,8 @@ private fun DataPack.allRecipeTypesTests() {
 	recipes.last() assertsIs """
 		{
 			"type": "minecraft:crafting_transmute",
-			"input": {
-				"tag": "minecraft:stone_crafting_materials"
-			},
-			"material": {
-				"tag": "minecraft:repairs_diamond_armor"
-			},
+			"input": "#minecraft:stone_crafting_materials",
+			"material": "#minecraft:repairs_diamond_armor",
 			"result": {
 				"id": "minecraft:diamond",
 				"components": {
@@ -172,25 +151,28 @@ private fun DataPack.allRecipeTypesTests() {
 	""".trimIndent()
 
 	recipesBuilder.smithingTransform("test_smithing_transform") {
-		template = Items.DIAMOND_BLOCK
-		base = Items.DIAMOND_SWORD
-		addition = Items.NETHERITE_INGOT
-		result = Items.NETHERITE_SWORD
+		template(Items.DIAMOND_BLOCK)
+		base(Items.DIAMOND_SWORD)
+		addition(Items.NETHERITE_INGOT, Items.NETHERRACK)
+		result(Items.NETHERITE_SWORD)
 	}
 	recipes.last() assertsIs """
 		{
 			"type": "minecraft:smithing_transform",
 			"template": "minecraft:diamond_block",
 			"base": "minecraft:diamond_sword",
-			"addition": "minecraft:netherite_ingot",
+			"addition": [
+				"minecraft:netherite_ingot",
+				"minecraft:netherrack"
+			],
 			"result": "minecraft:netherite_sword"
 		}
 	""".trimIndent()
 
 	recipesBuilder.smithingTrim("test_smithing_trim") {
-		template = Items.DIAMOND_BLOCK
-		base = Items.DIAMOND_SWORD
-		addition = Items.NETHERITE_INGOT
+		template(Items.DIAMOND_BLOCK)
+		base(Items.DIAMOND_SWORD)
+		addition(Items.NETHERITE_INGOT)
 		pattern = TrimPatterns.SILENCE
 	}
 	recipes.last() assertsIs """
