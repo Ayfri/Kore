@@ -1,19 +1,17 @@
 package io.github.ayfri.kore.features.recipes.types
 
-import io.github.ayfri.kore.arguments.components.Components
+import io.github.ayfri.kore.arguments.components.ComponentsPatch
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
-import io.github.ayfri.kore.data.item.ItemStack
-import io.github.ayfri.kore.data.item.builders.ItemStackBuilder
-import io.github.ayfri.kore.data.item.builders.itemStack
+import io.github.ayfri.kore.features.recipes.data.CraftingResult
 
 interface CraftingRecipe {
-	var result: ItemStack
+	var result: CraftingResult
 }
 
-fun CraftingRecipe.result(block: ItemStackBuilder.() -> Unit) {
-	result = itemStack(block = block)
+fun CraftingRecipe.result(block: CraftingResult.() -> Unit) {
+	result = CraftingResult("").apply(block)
 }
 
-fun CraftingRecipe.result(item: ItemArgument, count: Short? = null, init: (Components.() -> Unit)? = null) {
-	result = itemStack(item, count, init)
+fun CraftingRecipe.result(item: ItemArgument, count: Short? = null, init: (ComponentsPatch.() -> Unit)? = null) {
+	result = CraftingResult(item.asId(), count,  init?.let { ComponentsPatch().apply(it) })
 }

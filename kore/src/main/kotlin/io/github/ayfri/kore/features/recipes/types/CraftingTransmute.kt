@@ -1,41 +1,26 @@
 package io.github.ayfri.kore.features.recipes.types
 
 import io.github.ayfri.kore.arguments.components.ComponentsPatch
+import io.github.ayfri.kore.arguments.types.ItemOrTagArgument
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
-import io.github.ayfri.kore.data.item.ItemStack
+import io.github.ayfri.kore.arguments.types.resources.tagged.ItemTagArgument
 import io.github.ayfri.kore.data.item.builders.ItemStackBuilder
 import io.github.ayfri.kore.data.item.builders.itemStack
 import io.github.ayfri.kore.features.recipes.RecipeFile
 import io.github.ayfri.kore.features.recipes.RecipeTypes
 import io.github.ayfri.kore.features.recipes.Recipes
-import io.github.ayfri.kore.features.recipes.data.Ingredient
+import io.github.ayfri.kore.features.recipes.data.CraftingResult
 import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
-import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
+import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
-
-@Serializable(with = CraftingTransmuteResult.Companion.CraftingTransmuteResultSerializer::class)
-data class CraftingTransmuteResult(
-	var id: String,
-	var count: Short? = null,
-	var components: ComponentsPatch? = null,
-) {
-	fun toItemStack() = ItemStack(id, count, components?.toComponents())
-
-	companion object {
-		data object CraftingTransmuteResultSerializer : SinglePropertySimplifierSerializer<CraftingTransmuteResult, String>(
-			kClass = CraftingTransmuteResult::class,
-			property = CraftingTransmuteResult::id
-		)
-	}
-}
 
 @Serializable
 data class CraftingTransmute(
 	override var group: String? = null,
 	var category: CraftingTransmuteCategory? = null,
-	var input: Ingredient,
-	var material: Ingredient,
-	var result: CraftingTransmuteResult,
+	var input: InlinableList<ItemOrTagArgument>,
+	var material: InlinableList<ItemOrTagArgument>,
+	var result: CraftingResult,
 ) : Recipe() {
 	override val type = RecipeTypes.CRAFTING_TRANSMUTE
 }
@@ -43,22 +28,24 @@ data class CraftingTransmute(
 fun Recipes.craftingTransmute(name: String, block: CraftingTransmute.() -> Unit): RecipeArgument {
 	val recipe = RecipeFile(
 		name, CraftingTransmute(
-			input = Ingredient(),
-			material = Ingredient(),
-			result = CraftingTransmuteResult(id = ""),
+			input = listOf(),
+			material = listOf(),
+			result = CraftingResult(id = ""),
 		).apply(block)
 	)
 	dp.recipes += recipe
 	return RecipeArgument(name, recipe.namespace ?: dp.name)
 }
 
-fun CraftingTransmute.input(block: Ingredient.() -> Unit) = Ingredient().apply(block).also { input = it }
+fun CraftingTransmute.input(vararg items: ItemArgument) = apply { input = items.toList() }
+fun CraftingTransmute.input(tag: ItemTagArgument) = apply { input = listOf(tag) }
 
-fun CraftingTransmute.material(block: Ingredient.() -> Unit) = Ingredient().apply(block).also { material = it }
+fun CraftingTransmute.material(vararg items: ItemArgument) = apply { material = items.toList() }
+fun CraftingTransmute.material(tag: ItemTagArgument) = apply { material = listOf(tag) }
 
 fun CraftingTransmute.result(block: ItemStackBuilder.() -> Unit) {
 	result = itemStack(block = block).let {
-		CraftingTransmuteResult(
+		CraftingResult(
 			id = it.id,
 			count = it.count,
 			components = it.components?.toPatch()
@@ -67,7 +54,7 @@ fun CraftingTransmute.result(block: ItemStackBuilder.() -> Unit) {
 }
 
 fun CraftingTransmute.result(id: ItemArgument, count: Short? = null, block: (ComponentsPatch.() -> Unit)? = null) {
-	result = CraftingTransmuteResult(
+	result = CraftingResult(
 		id = id.asId(),
 		count = count,
 		components = block?.let { ComponentsPatch().apply(it) }
