@@ -54,6 +54,10 @@ fun main() {
 - Enable `prettyPrint` in [`Configuration`](./configuration) during development for readable JSON.
 - Use [`Components`](./components) + [`Predicates`](./predicates) together for robust item checks and inventory management.
 
+## Known issues
+
+Check out the [Known Issues](/docs/known-issues) page for a list of known issues and workarounds.
+
 ## Community & source
 
 - **Repository**: [Kore](https://github.com/Ayfri/Kore)

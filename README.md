@@ -218,6 +218,10 @@ _How to add your project to the list ?_
 - Generated Kotlin for docs and GitHub releases is written to `build/generated/kore/src/jsMain/kotlin` and is created by Gradle tasks during the build; you generally do not need to commit those generated files.
 - If you modify Markdown front-matter or layout logic, re-run the build/export tasks to regenerate the site artifacts.
 
+## Known issues
+
+Check out the [Known Issues](https://kore.ayfri.com/docs/known-issues) page for a list of known issues and workarounds.
+
 ## Star History
 
 <a href="https://www.star-history.com/#Ayfri/Kore&Date">
