@@ -16,12 +16,10 @@ import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.features.predicates.Predicate
-import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.generated.arguments.types.DimensionArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
-import io.github.ayfri.kore.serializers.inlinableListSerializer
 import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -79,9 +77,7 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 		listOf(
 			literal("predicate"),
 			literal(
-				Json.encodeToString(
-				inlinableListSerializer(PredicateCondition.serializer()), Predicate().apply(block).predicateConditions
-				)
+				Json.encodeToString(Predicate().apply(block))
 			),
 		)
 	)

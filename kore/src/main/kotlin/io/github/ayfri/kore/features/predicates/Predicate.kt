@@ -10,8 +10,8 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.serializer
 
 typealias PredicateAsList = @Serializable(Predicate.Companion.PredicateAsListSerializer::class) Predicate
 
@@ -28,21 +28,31 @@ typealias PredicateAsList = @Serializable(Predicate.Companion.PredicateAsListSer
  * Docs: https://kore.ayfri.com/docs/predicates
  * JSON format reference: https://minecraft.wiki/w/Predicate
  */
-@Serializable
+@Serializable(with = Predicate.Companion.PredicateSerializer::class)
 data class Predicate(
 	override var fileName: String = "predicate",
 	var predicateConditions: InlinableList<PredicateCondition> = emptyList(),
 ) : Generator("predicate") {
-	override fun generateJson(dataPack: DataPack) =
-		dataPack.jsonEncoder.encodeToString(inlinableListSerializer(PredicateCondition.serializer()), predicateConditions)
+	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 
 	companion object {
-		object PredicateAsListSerializer : KSerializer<Predicate> by serializer() {
+		data object PredicateSerializer : KSerializer<Predicate> {
+			override val descriptor = buildClassSerialDescriptor("Predicate")
+
+			override fun deserialize(decoder: Decoder) = error("Predicate cannot be deserialized")
+
+			override fun serialize(encoder: Encoder, value: Predicate) = encoder.encodeSerializableValue(
+				inlinableListSerializer(PredicateCondition.serializer()),
+				value.predicateConditions
+			)
+		}
+
+		data object PredicateAsListSerializer : KSerializer<Predicate> by serializer() {
 			override val descriptor = buildClassSerialDescriptor("PredicateAsList")
 
 			override fun serialize(encoder: Encoder, value: Predicate) {
 				encoder.encodeSerializableValue(
-					ListSerializer(serializer<PredicateCondition>()),
+					ListSerializer(PredicateCondition.serializer()),
 					value.predicateConditions
 				)
 			}
