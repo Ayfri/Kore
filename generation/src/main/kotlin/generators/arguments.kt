@@ -38,10 +38,12 @@ suspend fun downloadRegistriesList(): Map<String, Registry> {
 		"minecraft:worldgen/configured_structure" to Registry(elements = false, stable = true, tags = true),
 	)
 
-	val ignoreList = listOf("block", "item", "tag")
+	val ignoreList = listOf("minecraft:block", "minecraft:item", "minecraft:tag")
 
 	val completeMap = json.getOrDefault("registries", emptyMap()) + additionalTypes
-	return completeMap.filter { (key, _) -> "minecraft:$key" !in ignoreList }
+	return completeMap.filterKeys { key ->
+		key !in ignoreList
+	}
 }
 
 fun processArgumentType(argumentType: ArgumentType): Map<String, TypeSpec.Builder> {
