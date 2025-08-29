@@ -52,6 +52,9 @@ data class GitHubRelease(
 		// Check the pre-release filter
 		if (!options.showPreReleases && isPreRelease()) return false
 
+		// Check the release candidate filter
+		if (!options.showReleaseCandidates && isReleaseCandidate()) return false
+
 		// Check the snapshot filter
 		if (!options.showSnapshots && isSnapshot()) return false
 

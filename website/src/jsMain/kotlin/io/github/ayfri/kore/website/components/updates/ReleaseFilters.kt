@@ -24,6 +24,7 @@ data class ReleaseFilterOptions(
 	val searchQuery: String = "",
 	val showPreReleases: Boolean = true,
 	val showSnapshots: Boolean = true,
+	val showReleaseCandidates: Boolean = true,
 	val selectedMinecraftVersions: Set<String> = emptySet(),
 	val sortOrder: SortOrder = SortOrder.NEWEST_FIRST
 )
@@ -55,8 +56,11 @@ fun ReleaseFilters(
 
 	// Count prereleases for badge display - using both GitHub flag and Minecraft patterns
 	val prereleaseCount = allReleases.count { release -> release.isPreRelease() }
+	// Count release candidates for badge display
+	val releaseCandidateCount = allReleases.count { release -> release.isReleaseCandidate() }
 
 	Div({
+
 		classes(ReleaseFiltersStyle.container)
 	}) {
 		// Search bar
@@ -122,6 +126,29 @@ fun ReleaseFilters(
 				Div({
 					classes(ReleaseFiltersStyle.checkboxGroup)
 				}) {
+					Div({
+						classes(ReleaseFiltersStyle.checkboxContainer)
+					}) {
+						Input(InputType.Checkbox) {
+							id("show-release-candidates")
+							checked(filterOptions.showReleaseCandidates)
+							onChange { event ->
+								onFilterChange(filterOptions.copy(showReleaseCandidates = event.value))
+							}
+						}
+
+						Label("show-release-candidates", {
+							classes(ReleaseFiltersStyle.checkboxLabel)
+						}) {
+							Text("Show Release Candidates")
+							Span({
+								classes(ReleaseFiltersStyle.badge)
+							}) {
+								Text(releaseCandidateCount.toString())
+							}
+						}
+					}
+
 					Div({
 						classes(ReleaseFiltersStyle.checkboxContainer)
 					}) {
