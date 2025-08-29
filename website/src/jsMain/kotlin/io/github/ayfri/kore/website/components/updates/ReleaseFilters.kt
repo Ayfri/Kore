@@ -6,14 +6,7 @@ import com.varabyte.kobweb.silk.components.icons.mdi.MdiFilter
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiRestartAlt
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiSearch
 import io.github.ayfri.kore.website.GlobalStyle
-import io.github.ayfri.kore.website.utils.alpha
-import io.github.ayfri.kore.website.utils.extractMainMinecraftVersion
-import io.github.ayfri.kore.website.utils.extractMinecraftVersion
-import io.github.ayfri.kore.website.utils.isSnapshotVersion
-import io.github.ayfri.kore.website.utils.mdMax
-import io.github.ayfri.kore.website.utils.placeholder
-import io.github.ayfri.kore.website.utils.smMax
-import io.github.ayfri.kore.website.utils.transition
+import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.attributes.name
@@ -52,20 +45,16 @@ fun ReleaseFilters(
 	var expanded by remember { mutableStateOf(false) }
 
 	// Extract all available Minecraft versions in the releases
-	val availableMinecraftVersions = allReleases.mapNotNull { release ->
-		extractMinecraftVersion(release.tagName)?.let { mcVersion ->
-			extractMainMinecraftVersion(mcVersion)
-		}
-	}.toSet().sortedByDescending { it }
+	val availableMinecraftVersions = allReleases.map { release ->
+		if (!release.isRelease()) release.findNextMinecraftReleaseVersion()
+		else release.getMinecraftVersion()
+	}.toSet().filterNotNull().sortedByDescending { it }
 
 	// Count snapshots for badge display
-	val snapshotCount = allReleases.count { release ->
-		val mcVersion = extractMinecraftVersion(release.tagName)
-		isSnapshotVersion(mcVersion)
-	}
+	val snapshotCount = allReleases.count { release -> release.isSnapshot() }
 
-	// Count prereleases for badge display
-	val prereleaseCount = allReleases.count { it.isPrerelease }
+	// Count prereleases for badge display - using both GitHub flag and Minecraft patterns
+	val prereleaseCount = allReleases.count { release -> release.isPreRelease() }
 
 	Div({
 		classes(ReleaseFiltersStyle.container)
@@ -246,7 +235,6 @@ fun ReleaseFilters(
 					}) {
 						availableMinecraftVersions.forEach { version ->
 							val isChecked = filterOptions.selectedMinecraftVersions.contains(version)
-							val versionId = "version-$version"
 
 							Div({
 								classes(ReleaseFiltersStyle.versionChip)

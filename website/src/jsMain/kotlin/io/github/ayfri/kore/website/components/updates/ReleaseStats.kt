@@ -1,47 +1,42 @@
 package io.github.ayfri.kore.website.components.updates
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiArchive
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiCalendarMonth
 import io.github.ayfri.kore.website.GlobalStyle
-import io.github.ayfri.kore.website.utils.alpha
-import io.github.ayfri.kore.website.utils.extractMainMinecraftVersion
-import io.github.ayfri.kore.website.utils.extractMinecraftVersion
-import io.github.ayfri.kore.website.utils.formatDate
-import io.github.ayfri.kore.website.utils.mdMax
-import io.github.ayfri.kore.website.utils.smMax
-import io.github.ayfri.kore.website.utils.transition
+import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
-import org.jetbrains.compose.web.dom.*
+import org.jetbrains.compose.web.dom.Div
+import org.jetbrains.compose.web.dom.H3
+import org.jetbrains.compose.web.dom.Text
 
 @Composable
 fun ReleaseStats(allReleases: List<GitHubRelease>, filteredReleases: List<GitHubRelease>) {
 	Style(ReleaseStatsStyle)
 
-	// Calculate the statistics
+	// Calculate basic statistics
 	val totalReleases = allReleases.size
 	val firstReleaseDate = allReleases.minByOrNull { it.publishedAt }?.publishedAt?.let { formatDate(it) } ?: "N/A"
 	val latestReleaseDate = allReleases.maxByOrNull { it.publishedAt }?.publishedAt?.let { formatDate(it) } ?: "N/A"
 
-	// Extract Minecraft version statistics
-	val minecraftVersionStats = allReleases.mapNotNull { release ->
-		extractMinecraftVersion(release.tagName)?.let { mcVersion ->
-			extractMainMinecraftVersion(mcVersion) to release
-		}
-	}.groupBy({ it.first }, { it.second })
+	// Extract Minecraft version statistics using effective versions
+	val minecraftVersionStats = allReleases.groupBy { release ->
+		release.getMainMinecraftVersion() ?: extractMainMinecraftVersion(release.findNextMinecraftReleaseVersion())
+	}
 	.map { (mcVersion, releases) ->
 		mcVersion to releases.size
 	}
-	.sortedByDescending { it.first }
-
-	// Filtered statistics
-	val filteredCount = filteredReleases.size
-	val percentageShown = if (totalReleases > 0) {
-		(filteredCount.toDouble() / totalReleases.toDouble() * 100).toInt()
-	} else 0
+	.sortedByDescending { (version, _) ->
+		// Sort by version number (newest first)
+		version?.split(".")?.let { parts ->
+			val major = parts.getOrNull(0)?.toIntOrNull() ?: 0
+			val minor = parts.getOrNull(1)?.toIntOrNull() ?: 0
+			major * 1000 + minor
+		} ?: 0
+	}
 
 	Div({
 		classes(ReleaseStatsStyle.container)
@@ -79,12 +74,12 @@ fun ReleaseStats(allReleases: List<GitHubRelease>, filteredReleases: List<GitHub
 					Div({
 						classes(ReleaseStatsStyle.statValue)
 					}) {
-						Text(latestReleaseDate)
+						Text(firstReleaseDate)
 					}
 					Div({
 						classes(ReleaseStatsStyle.statLabel)
 					}) {
-						Text("Latest Release")
+						Text("First Release")
 					}
 				}
 			}
@@ -99,12 +94,12 @@ fun ReleaseStats(allReleases: List<GitHubRelease>, filteredReleases: List<GitHub
 					Div({
 						classes(ReleaseStatsStyle.statValue)
 					}) {
-						Text(firstReleaseDate)
+						Text(latestReleaseDate)
 					}
 					Div({
 						classes(ReleaseStatsStyle.statLabel)
 					}) {
-						Text("First Release")
+						Text("Latest Release")
 					}
 				}
 			}

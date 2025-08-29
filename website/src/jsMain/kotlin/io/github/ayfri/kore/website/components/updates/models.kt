@@ -1,8 +1,10 @@
 package io.github.ayfri.kore.website.components.updates
 
+import io.github.ayfri.kore.website.utils.MinecraftVersionPattern
+import io.github.ayfri.kore.website.utils.extractKoreVersion
 import io.github.ayfri.kore.website.utils.extractMainMinecraftVersion
 import io.github.ayfri.kore.website.utils.extractMinecraftVersion
-import io.github.ayfri.kore.website.utils.isSnapshotVersion
+import kotlin.js.Date
 
 data class GitHubRelease(
 	val id: Int,
@@ -16,6 +18,31 @@ data class GitHubRelease(
 	val isPrerelease: Boolean,
 	val assets: List<GitHubAsset> = emptyList()
 ) {
+	val publishedDate get() = Date(publishedAt)
+
+	fun getKoreVersion() = extractKoreVersion(tagName)
+	fun getMinecraftVersion() = extractMinecraftVersion(tagName).takeIf { "-" in tagName }
+	fun getMainMinecraftVersion() = extractMainMinecraftVersion(getMinecraftVersion())
+
+	fun isPreRelease() = getMinecraftVersion()?.let { MinecraftVersionPattern.PRE_RELEASE.matches(it) } == true
+	fun isRelease() = getMinecraftVersion()?.let { MinecraftVersionPattern.RELEASE.matches(it) } == true
+	fun isReleaseCandidate() = getMinecraftVersion()?.let { MinecraftVersionPattern.RELEASE_CANDIDATE.matches(it) } == true
+	fun isSnapshot() = getMinecraftVersion()?.let { MinecraftVersionPattern.SNAPSHOT.matches(it) } == true
+
+	fun findNextMinecraftReleaseVersion(): String {
+		val allReleases = GitHubService.getReleases()
+		val releasesSortedByPublishDate = allReleases.sortedBy { it.publishedDate.getTime() }
+		val nextMainRelease = releasesSortedByPublishDate.reversed()
+			.firstOrNull { (it.publishedDate.getTime() > publishedDate.getTime()) && it.isRelease() }
+		if (nextMainRelease?.getMinecraftVersion() != null) return nextMainRelease.getMinecraftVersion()!!
+
+		// Gets the last main version and increments it, ex: 1.21.4 -> 1.21.5
+		val latestPreviousVersion = releasesSortedByPublishDate.first { it.isRelease() }
+		val mainVersion = latestPreviousVersion.getMinecraftVersion()!!.substringBeforeLast(".")
+		val minorPatch = latestPreviousVersion.getMinecraftVersion()!!.substringAfterLast(".").toIntOrNull() ?: -1
+		return "$mainVersion.${minorPatch + 1}"
+	}
+
 	/**
 	 * Checks if a release matches the specified filtering criteria.
 	 * @param options The filtering options
@@ -23,20 +50,13 @@ data class GitHubRelease(
 	 */
 	fun matchesFilters(options: ReleaseFilterOptions): Boolean {
 		// Check the pre-release filter
-		if (!options.showPreReleases && isPrerelease) {
-			return false
-		}
-		
+		if (!options.showPreReleases && isPreRelease()) return false
+
 		// Check the snapshot filter
-		val mcVersion = extractMinecraftVersion(tagName)
-		if (!options.showSnapshots && isSnapshotVersion(mcVersion)) {
-			return false
-		}
+		if (!options.showSnapshots && isSnapshot()) return false
 
-		// Check the selected Minecraft versions
 		if (options.selectedMinecraftVersions.isNotEmpty()) {
-			val mainVersion = extractMainMinecraftVersion(mcVersion)
-
+			val mainVersion = getMainMinecraftVersion()
 			if (mainVersion == null || !options.selectedMinecraftVersions.contains(mainVersion)) {
 				return false
 			}
@@ -45,9 +65,7 @@ data class GitHubRelease(
 		// Check the text search
 		if (options.searchQuery.isNotEmpty()) {
 			val query = options.searchQuery.lowercase()
-			return name.lowercase().contains(query) == true ||
-				tagName.lowercase().contains(query) ||
-				body.lowercase().contains(query)
+			return name.lowercase().contains(query) || tagName.lowercase().contains(query) || body.lowercase().contains(query)
 		}
 
 		return true

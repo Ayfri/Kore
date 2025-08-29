@@ -4,15 +4,7 @@ import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiCalendarMonth
 import io.github.ayfri.kore.website.GlobalStyle
-import io.github.ayfri.kore.website.utils.P
-import io.github.ayfri.kore.website.utils.alpha
-import io.github.ayfri.kore.website.utils.extractMinecraftVersion
-import io.github.ayfri.kore.website.utils.formatDate
-import io.github.ayfri.kore.website.utils.formatRelativeDate
-import io.github.ayfri.kore.website.utils.mdMax
-import io.github.ayfri.kore.website.utils.rel
-import io.github.ayfri.kore.website.utils.smMax
-import io.github.ayfri.kore.website.utils.transition
+import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.attributes.ATarget
 import org.jetbrains.compose.web.attributes.target
@@ -107,7 +99,7 @@ fun ReleaseCard(release: GitHubRelease) {
 					Text(release.tagName)
 				}
 
-				extractMinecraftVersion(release.tagName)?.let { mcVersion ->
+				release.getMinecraftVersion()?.let { mcVersion ->
 					Div({
 						classes(ReleasesListStyle.minecraftVersion)
 					}) {
