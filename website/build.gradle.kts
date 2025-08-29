@@ -196,7 +196,7 @@ kobweb {
 					appendLine(
 						"""
 						|	DocArticle("/docs/${
-							entry.file.nameWithoutExtension
+							entry.file.path.substringBeforeLast(".md")
 								.replace(Regex(" |_"), "-")
 								.replace("\\", "/")
 								.substringAfter("doc/")
