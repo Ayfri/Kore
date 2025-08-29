@@ -8,6 +8,7 @@ import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.PredicateAsList
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.NumberProvider
+import io.github.ayfri.kore.features.predicates.providers.constant
 import kotlinx.serialization.Serializable
 
 /**
@@ -30,10 +31,16 @@ fun LootPool.rolls(value: NumberProvider) {
 	rolls = value
 }
 
+/** Set the number of rolls as a constant. */
+fun LootPool.rolls(value: Float) = rolls(constant(value))
+
 /** Set the number of bonus rolls. */
 fun LootPool.bonusRolls(value: NumberProvider) {
 	bonusRolls = value
 }
+
+/** Set the number of bonus rolls as a constant. */
+fun LootPool.bonusRolls(value: Float) = bonusRolls(constant(value))
 
 /** Add predicate conditions. */
 fun LootPool.conditions(vararg value: PredicateCondition) {
