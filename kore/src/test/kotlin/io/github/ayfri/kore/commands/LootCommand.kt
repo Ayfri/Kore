@@ -4,6 +4,10 @@ import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.numbers.PosNumber
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.features.loottables.entries
+import io.github.ayfri.kore.features.loottables.entries.item
+import io.github.ayfri.kore.features.loottables.pool
+import io.github.ayfri.kore.features.loottables.rolls
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.LootTables
@@ -102,4 +106,22 @@ fun Function.lootTests() {
 			loot(LootTables.Gameplay.CAT_MORNING_GIFT)
 		}
 	} assertsIs "loot replace entity @s armor.head 1 loot minecraft:gameplay/cat_morning_gift"
+
+	loot {
+		target {
+			give(self())
+		}
+
+		source {
+			loot {
+				pool {
+					rolls(1f)
+
+					entries {
+						item(Items.ANVIL)
+					}
+				}
+			}
+		}
+	} assertsIs "loot give @s loot {pools:[{rolls:1.0f,entries:[{type:\"minecraft:item\",name:\"minecraft:anvil\"}]}]}"
 }
