@@ -1,12 +1,11 @@
 package io.github.ayfri.kore.commands
 
-import io.github.ayfri.kore.arguments.ARMOR
-import io.github.ayfri.kore.arguments.CONTAINER
-import io.github.ayfri.kore.arguments.ENDERCHEST
-import io.github.ayfri.kore.arguments.WEAPON
+import io.github.ayfri.kore.arguments.*
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.features.itemmodifiers.functions.Source
+import io.github.ayfri.kore.features.itemmodifiers.functions.setLore
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
@@ -28,5 +27,9 @@ fun Function.itemTests() {
 		replace(Items.DIRT {
 			remove("foo")
 		}) assertsIs "item replace entity @s weapon with minecraft:dirt[!foo]"
+
+		replace(self(), SADDLE) {
+			setLore(Source.THIS, "Inline Item Modifier")
+		} assertsIs "item replace entity @s weapon from entity @s saddle {modifiers:{function:\"minecraft:set_lore\",entity:\"this\",lore:\"Inline Item Modifier\"}}"
 	}
 }

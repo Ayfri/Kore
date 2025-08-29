@@ -6,22 +6,36 @@ import io.github.ayfri.kore.arguments.types.literalName
 import io.github.ayfri.kore.arguments.types.literals.int
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
+import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
+import io.github.ayfri.kore.utils.snbtSerializer
+import kotlinx.serialization.encodeToString
 
-class ItemSlot(private val fn: Function, val container: ContainerArgument, val slot: ItemSlotType) {
+data class ItemSlot(private val fn: Function, val container: ContainerArgument, val slot: ItemSlotType) {
 	fun modify(modifier: ItemModifierArgument) = fn.items.modify(container, slot, modifier)
+	fun modify(block: ItemModifier.() -> Unit) = fn.items.modify(container, slot, block)
+
 	fun replace(item: ItemArgument, count: Int? = null) = fn.items.replace(container, slot, item, count)
 	fun replace(with: ContainerArgument, withSlot: ItemSlotType, modifier: ItemModifierArgument? = null) =
 		fn.items.replace(container, slot, with, withSlot, modifier)
+
+	fun replace(
+		with: ContainerArgument,
+		withSlot: ItemSlotType,
+		block: ItemModifier.() -> Unit
+	) = fn.items.replace(container, slot, with, withSlot, block = block)
 }
 
-class Item(private val fn: Function) {
+data class Item(private val fn: Function) {
 	fun slot(container: ContainerArgument, slot: ItemSlotType) = ItemSlot(fn, container, slot)
 	fun slot(container: ContainerArgument, slot: ItemSlotType, block: ItemSlot.() -> Command) = ItemSlot(fn, container, slot).block()
 
 	fun modify(container: ContainerArgument, slot: ItemSlotType, modifier: ItemModifierArgument) =
 		fn.addLine(command("item", literal("modify"), literal(container.literalName), container, slot, literal(modifier.asString())))
+
+	fun modify(container: ContainerArgument, slot: ItemSlotType, block: ItemModifier.() -> Unit) =
+		fn.addLine(command("item", literal("modify"), literal(container.literalName), container, slot, literal(snbtSerializer.encodeToString(ItemModifier().apply(block)))))
 
 	fun replace(container: ContainerArgument, slot: ItemSlotType, item: ItemArgument, count: Int? = null) =
 		fn.addLine(command("item", literal("replace"), literal(container.literalName), container, slot, literal("with"), item, int(count)))
@@ -45,6 +59,28 @@ class Item(private val fn: Function) {
 				with,
 				withSlot,
 				literal(modifier?.asString())
+			)
+		)
+
+	fun replace(
+		container: ContainerArgument,
+		slot: ItemSlotType,
+		with: ContainerArgument,
+		withSlot: ItemSlotType,
+		block: ItemModifier.() -> Unit
+	) =
+		fn.addLine(
+			command(
+				"item",
+				literal("replace"),
+				literal(container.literalName),
+				container,
+				slot,
+				literal("from"),
+				literal(with.literalName),
+				with,
+				withSlot,
+				literal(snbtSerializer.encodeToString(ItemModifier().apply(block)))
 			)
 		)
 }
