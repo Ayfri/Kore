@@ -285,52 +285,58 @@ tasks.register("fetchGitHubReleases") {
 				return@buildString
 			}
 			appendLine("val gitHubReleases = listOf(")
-			allReleases.forEach { release ->
-				val id = release["id"] as Number
-				val name = (release["name"] as? String ?: "").replace("\"", "\\\"")
-				val tagName = release["tag_name"] as String
-				val htmlUrl = release["html_url"] as String
-				val url = release["url"] as String
-				val createdAt = release["created_at"] as String
-				val publishedAt = release["published_at"] as String
-				val body = (release["body"] as? String ?: "").replace("\"\"\"", "\\\"\\\"\\\"").replace("$", "\\$")
-				val isPrerelease = release["prerelease"] as Boolean
-				val assets = (release["assets"] as? List<Map<*, *>>).orEmpty()
 
-				appendLine("	GitHubRelease(")
-				appendLine("		id = $id,")
-				appendLine("		name = \"$name\",")
-				appendLine("		tagName = \"$tagName\",")
-				appendLine("		htmlUrl = \"$htmlUrl\",")
-				appendLine("		url = \"$url\",")
-				appendLine("		createdAt = \"$createdAt\",")
-				appendLine("		publishedAt = \"$publishedAt\",")
-				appendLine("		body = \"\"\"$body\"\"\",")
-				appendLine("		isPrerelease = $isPrerelease,")
-				if (assets.isNotEmpty()) {
-					appendLine("		assets = listOf(")
-					assets.forEach { asset ->
-						val assetId = asset["id"] as Number
-						val assetName = (asset["name"] as? String ?: "").replace("\"", "\\\"")
-						val browserDownloadUrl = asset["browser_download_url"] as String
-						val contentType = asset["content_type"] as String
-						val size = asset["size"] as Number
-						val downloadCount = asset["download_count"] as Number
+			try {
+				allReleases.forEach { release ->
+					val id = release["id"] as Number
+					val name = (release["name"] as? String ?: "").replace("\"", "\\\"")
+					val tagName = release["tag_name"] as String
+					val htmlUrl = release["html_url"] as String
+					val url = release["url"] as String
+					val createdAt = release["created_at"] as String
+					val publishedAt = release["published_at"] as String
+					val body = (release["body"] as? String ?: "").replace("\"\"\"", "\\\"\\\"\\\"").replace("$", "\\$")
+					val isPrerelease = release["prerelease"] as Boolean
+					val assets = (release["assets"] as? List<Map<*, *>>).orEmpty()
 
-						appendLine("            GitHubAsset(")
-						appendLine("                id = $assetId,")
-						appendLine("                name = \"$assetName\",")
-						appendLine("                browserDownloadUrl = \"$browserDownloadUrl\",")
-						appendLine("                contentType = \"$contentType\",")
-						appendLine("                size = $size,")
-						appendLine("                downloadCount = $downloadCount")
-						appendLine("            ),")
+					appendLine("	GitHubRelease(")
+					appendLine("		id = $id,")
+					appendLine("		name = \"$name\",")
+					appendLine("		tagName = \"$tagName\",")
+					appendLine("		htmlUrl = \"$htmlUrl\",")
+					appendLine("		url = \"$url\",")
+					appendLine("		createdAt = \"$createdAt\",")
+					appendLine("		publishedAt = \"$publishedAt\",")
+					appendLine("		body = \"\"\"$body\"\"\",")
+					appendLine("		isPrerelease = $isPrerelease,")
+					if (assets.isNotEmpty()) {
+						appendLine("		assets = listOf(")
+						assets.forEach { asset ->
+							val assetId = asset["id"] as Number
+							val assetName = (asset["name"] as? String ?: "").replace("\"", "\\\"")
+							val browserDownloadUrl = asset["browser_download_url"] as String
+							val contentType = asset["content_type"] as String
+							val size = asset["size"] as Number
+							val downloadCount = asset["download_count"] as Number
+
+							appendLine("            GitHubAsset(")
+							appendLine("                id = $assetId,")
+							appendLine("                name = \"$assetName\",")
+							appendLine("                browserDownloadUrl = \"$browserDownloadUrl\",")
+							appendLine("                contentType = \"$contentType\",")
+							appendLine("                size = $size,")
+							appendLine("                downloadCount = $downloadCount")
+							appendLine("            ),")
+						}
+						appendLine("        )")
+					} else {
+						appendLine("        assets = emptyList()")
 					}
-					appendLine("        )")
-				} else {
-					appendLine("        assets = emptyList()")
+					appendLine("    ),")
 				}
-				appendLine("    ),")
+			} catch (e: Exception) {
+				logger.error("Failed to generate GitHub releases file. Body: ${allReleases.joinToString("\n")}")
+				throw e
 			}
 			appendLine(")")
 		})
