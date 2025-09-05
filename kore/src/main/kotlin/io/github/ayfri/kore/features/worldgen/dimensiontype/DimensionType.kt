@@ -44,6 +44,7 @@ data class DimensionType(
 	var height: Int = 16,
 	var monsterSpawnLightLevel: IntProvider = constant(0),
 	var monsterSpawnBlockLightLimit: Int = 0,
+	var cloudHeight: Int? = null,
 ) : Generator("dimension_type") {
 	@Transient
 	private lateinit var jsonEncoder: Json
