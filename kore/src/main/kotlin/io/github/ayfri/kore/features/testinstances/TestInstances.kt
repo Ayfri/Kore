@@ -1,12 +1,12 @@
 package io.github.ayfri.kore.features.testinstances
 
 import io.github.ayfri.kore.DataPack
-import io.github.ayfri.kore.arguments.types.TestEnvironmentArgument
-import io.github.ayfri.kore.arguments.types.TestInstanceArgument
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
+import io.github.ayfri.kore.features.testenvironments.types.Function
 import io.github.ayfri.kore.features.testinstances.enums.TestRotation
 import io.github.ayfri.kore.features.testinstances.enums.TestType
-import io.github.ayfri.kore.features.testenvironments.types.Function
+import io.github.ayfri.kore.generated.arguments.types.TestEnvironmentArgument
+import io.github.ayfri.kore.generated.arguments.types.TestInstanceArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 
 /**

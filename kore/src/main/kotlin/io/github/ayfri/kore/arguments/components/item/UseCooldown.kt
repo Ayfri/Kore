@@ -2,8 +2,8 @@ package io.github.ayfri.kore.arguments.components.item
 
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.arguments.types.ConsumeCooldownGroupArgument
 import io.github.ayfri.kore.generated.ItemComponentTypes
+import io.github.ayfri.kore.generated.arguments.types.ConsumeCooldownGroupArgument
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

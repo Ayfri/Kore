@@ -1,11 +1,11 @@
 package io.github.ayfri.kore.commands
 
-import io.github.ayfri.kore.arguments.types.TestInstanceArgument
-import io.github.ayfri.kore.arguments.types.TestSelector
+import io.github.ayfri.kore.arguments.types.TestSelectorArgument
 import io.github.ayfri.kore.arguments.types.literals.bool
 import io.github.ayfri.kore.arguments.types.literals.int
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.generated.arguments.types.TestInstanceArgument
 
 class Test(val fn: Function) {
 
@@ -25,7 +25,7 @@ class Test(val fn: Function) {
 		depth: Int? = null,
 	) = fn.addLine(command("test", literal("create"), test, int(width), int(height), int(depth)))
 
-	fun locate(selector: TestSelector) =
+	fun locate(selector: TestSelectorArgument) =
 		fn.addLine(command("test", literal("locate"), selector))
 
 	fun pos(variable: String? = null) =
@@ -41,7 +41,7 @@ class Test(val fn: Function) {
 		fn.addLine(command("test", literal("resetthese")))
 
 	fun run(
-		selector: TestSelector,
+		selector: TestSelectorArgument,
 		numberOfTimes: Int? = null,
 		untilFailed: Boolean? = null,
 		rotationSteps: Int? = null,
@@ -90,7 +90,7 @@ class Test(val fn: Function) {
 		)
 	)
 
-	fun runMultiple(selector: TestSelector, amount: Int? = null) =
+	fun runMultiple(selector: TestSelectorArgument, amount: Int? = null) =
 		fn.addLine(command("test", literal("runmultiple"), selector, int(amount)))
 
 	fun runThat(numberOfTimes: Int? = null, untilFailed: Boolean? = null) =

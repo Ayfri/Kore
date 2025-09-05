@@ -3,9 +3,9 @@ package io.github.ayfri.kore.commands
 import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.literals.float
 import io.github.ayfri.kore.arguments.types.literals.literal
-import io.github.ayfri.kore.arguments.types.resources.AttributeModifierArgument
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.arguments.types.AttributeArgument
+import io.github.ayfri.kore.generated.arguments.types.AttributeModifierArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable

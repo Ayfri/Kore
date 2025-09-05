@@ -2,8 +2,8 @@ package io.github.ayfri.kore.features.testenvironments
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
-import io.github.ayfri.kore.arguments.types.TestEnvironmentArgument
 import io.github.ayfri.kore.features.testenvironments.types.TestEnvironment
+import io.github.ayfri.kore.generated.arguments.types.TestEnvironmentArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 

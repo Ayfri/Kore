@@ -1,13 +1,12 @@
 package io.github.ayfri.kore.commands
 
-import io.github.ayfri.kore.arguments.types.TestInstanceArgument
-import io.github.ayfri.kore.arguments.types.TestSelector
 import io.github.ayfri.kore.arguments.types.allTests
 import io.github.ayfri.kore.arguments.types.minecraftTests
 import io.github.ayfri.kore.arguments.types.testSelector
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.Blocks
+import io.github.ayfri.kore.generated.arguments.types.TestInstanceArgument
 
 fun Function.testTests() {
 	test {

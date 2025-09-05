@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.testenvironments.types
 
-import io.github.ayfri.kore.arguments.types.TestEnvironmentArgument
+import io.github.ayfri.kore.generated.arguments.types.TestEnvironmentArgument
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -1,12 +1,13 @@
 package io.github.ayfri.kore.features.testenvironments
 
 import io.github.ayfri.kore.DataPack
-import io.github.ayfri.kore.arguments.types.TestEnvironmentArgument
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
-import io.github.ayfri.kore.features.testenvironments.enums.Weather as WeatherEnum
 import io.github.ayfri.kore.features.testenvironments.types.*
+import io.github.ayfri.kore.features.testenvironments.types.Function
 import io.github.ayfri.kore.generated.Gamerules
+import io.github.ayfri.kore.generated.arguments.types.TestEnvironmentArgument
 import io.github.ayfri.kore.utils.camelCase
+import io.github.ayfri.kore.features.testenvironments.enums.Weather as WeatherEnum
 
 /**
  * DSL entry point for creating GameTest test environments.
