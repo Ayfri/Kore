@@ -51,10 +51,11 @@ fun itemComponentsTests() {
 			name = "big",
 			namespace = "my_namespace",
 			operation = AttributeModifierOperation.ADD_VALUE,
-		)
+		) {
+			displayOverride("test")
+		}
 	}
-	attributeModifiersTest.asString() assertsIs """minecraft:stone_sword[attribute_modifiers=[{type:"minecraft:attack_damage",id:"my_namespace:big",amount:1.0d,operation:"add_value"}]]"""
-
+	attributeModifiersTest.asString() assertsIs """minecraft:stone_sword[attribute_modifiers=[{type:"minecraft:attack_damage",id:"my_namespace:big",amount:1.0d,operation:"add_value",display:{type:"override",value:"test"}}]]"""
 	val bannerPatternsTest = Items.WHITE_BANNER {
 		bannerPatterns {
 			pattern(BannerPatterns.CIRCLE, Color.AQUA)

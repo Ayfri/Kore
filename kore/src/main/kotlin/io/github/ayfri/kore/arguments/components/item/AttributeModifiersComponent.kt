@@ -1,5 +1,9 @@
 package io.github.ayfri.kore.arguments.components.item
 
+import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
+import io.github.ayfri.kore.arguments.chatcomponents.PlainTextComponent
+import io.github.ayfri.kore.arguments.chatcomponents.textComponent
+import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
@@ -8,20 +12,42 @@ import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.AttributeArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
+import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import kotlinx.serialization.Serializable
+
+
+@Serializable(with = AttributeModifierDisplay.Companion.AttributeModifierDisplaySerializer::class)
+sealed class AttributeModifierDisplay {
+	companion object {
+		data object AttributeModifierDisplaySerializer : NamespacedPolymorphicSerializer<AttributeModifierDisplay>(
+			kClass = AttributeModifierDisplay::class,
+			useMinecraftPrefix = false
+		)
+	}
+}
+
+@Serializable
+data object Default : AttributeModifierDisplay()
+
+@Serializable
+data object Hidden : AttributeModifierDisplay()
+
+@Serializable
+data class Override(var value: ChatComponents) : AttributeModifierDisplay()
 
 @Serializable
 data class AttributeModifier(
-	val type: AttributeArgument,
-	val slot: EquipmentSlot? = null,
-	val id: AttributeModifierArgument,
-	val amount: Double,
-	val operation: AttributeModifierOperation,
+	var type: AttributeArgument,
+	var slot: EquipmentSlot? = null,
+	var id: AttributeModifierArgument,
+	var amount: Double,
+	var operation: AttributeModifierOperation,
+	var display: AttributeModifierDisplay? = null,
 )
 
 @Serializable(with = AttributeModifiersComponent.Companion.AttributeModifiersComponentSerializer::class)
 data class AttributeModifiersComponent(
-	val modifiers: MutableList<AttributeModifier>,
+	var modifiers: MutableList<AttributeModifier>,
 ) : Component() {
 	companion object {
 		data object AttributeModifiersComponentSerializer : InlineAutoSerializer<AttributeModifiersComponent>(AttributeModifiersComponent::class)
@@ -45,7 +71,8 @@ fun AttributeModifiersComponent.modifier(
 	id: AttributeModifierArgument,
 	amount: Double,
 	operation: AttributeModifierOperation,
-) = apply { modifiers += AttributeModifier(type, slot, id, amount, operation) }
+	block: AttributeModifier.() -> Unit = {},
+) = apply { modifiers += AttributeModifier(type, slot, id, amount, operation).apply(block) }
 
 fun AttributeModifiersComponent.modifier(
 	type: AttributeArgument,
@@ -54,4 +81,13 @@ fun AttributeModifiersComponent.modifier(
 	namespace: String = "minecraft",
 	amount: Double,
 	operation: AttributeModifierOperation,
-) = apply { modifiers += AttributeModifier(type, slot, AttributeModifierArgument(name, namespace), amount, operation) }
+	block: AttributeModifier.() -> Unit = {},
+) = apply { modifiers += AttributeModifier(type, slot, AttributeModifierArgument(name, namespace), amount, operation).apply(block) }
+
+
+fun AttributeModifier.displayDefault() = apply { display = Default }
+fun AttributeModifier.displayHidden() = apply { display = Hidden }
+fun AttributeModifier.displayOverride(value: ChatComponents) = apply { display = Override(value) }
+fun AttributeModifier.displayOverride(text: String, color: Color? = null, block: PlainTextComponent.() -> Unit = {}) = apply {
+	display = Override(textComponent(text, color, block))
+}
