@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.commands
 
+import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.serializers.LowercaseSerializer
@@ -17,6 +18,8 @@ enum class DatapackPriority {
 }
 
 class DataPackCommandEntry(private val fn: Function, val name: String) {
+	fun create(id: String, name: ChatComponents) =
+		fn.addLine(command("datapack", literal("create"), literal(id), name))
 	fun disable() = fn.addLine(command("datapack", literal("disable"), literal(name)))
 	fun enable(priority: DatapackPriority? = null) =
 		fn.addLine(command("datapack", literal("enable"), literal(name), literal(priority?.asArg())))
