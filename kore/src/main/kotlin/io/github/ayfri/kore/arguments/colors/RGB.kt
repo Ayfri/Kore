@@ -7,6 +7,7 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlin.math.roundToInt
+import kotlin.random.Random
 
 /**
  * 24-bit color value (red/green/blue), commonly serialized as a string "#rrggbb".
@@ -133,6 +134,12 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 			FormattingColor.WHITE, BossBarColor.WHITE -> RGB(255, 255, 255)
 			FormattingColor.YELLOW, BossBarColor.YELLOW -> RGB(255, 255, 85)
 		}
+
+		fun random(random: Random = Random) = RGB(
+			random.nextInt(0, 256),
+			random.nextInt(0, 256),
+			random.nextInt(0, 256),
+		)
 
 		/** Serializer that encodes to a string "#rrggbb". */
 		data object ColorSerializer : KSerializer<RGB> {

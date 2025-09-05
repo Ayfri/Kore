@@ -2,6 +2,7 @@ package io.github.ayfri.kore.arguments.colors
 
 import io.github.ayfri.kore.serializers.ToStringSerializer
 import kotlinx.serialization.Serializable
+import kotlin.random.Random
 
 /**
  * 32-bit color value with alpha (alpha/red/green/blue), string form "#aarrggbb".
@@ -118,6 +119,13 @@ data class ARGB(var alpha: Int, var red: Int, var green: Int, var blue: Int) : C
 			array[0].times(255).toInt(),
 			array[1].times(255).toInt(),
 			array[2].times(255).toInt()
+		)
+
+		fun random(random: Random = Random, alpha: Boolean = false) = ARGB(
+			if (alpha) random.nextInt(256) else 255,
+			random.nextInt(256),
+			random.nextInt(256),
+			random.nextInt(256)
 		)
 
 		data object ARGBSerializer : ToStringSerializer<ARGB>()
