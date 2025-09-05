@@ -91,3 +91,5 @@ fun Function.stopSoundAllSources(
 
 fun Function.teamMsg(message: String) = addLine(command("teammsg", literal(message)))
 fun Function.tm(message: String) = teamMsg(message)
+
+fun Function.version() = addLine(command("version"))

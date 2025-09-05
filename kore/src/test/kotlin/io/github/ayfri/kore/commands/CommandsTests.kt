@@ -80,4 +80,6 @@ fun Function.commandsTests() {
 
 	teamMsg("test") assertsIs "teammsg test"
 	tm("test") assertsIs "teammsg test"
+
+	version() assertsIs "version"
 }
