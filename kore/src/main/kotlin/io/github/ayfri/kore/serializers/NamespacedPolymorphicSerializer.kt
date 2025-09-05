@@ -20,6 +20,7 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 	private val outputName: String = "type",
 	private val skipOutputName: Boolean = false,
 	private val moveIntoProperty: String? = null,
+	private val useMinecraftPrefix: Boolean = true,
 ) : KSerializer<T> {
 	override val descriptor = serialDescriptor<JsonElement>()
 
@@ -34,12 +35,12 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 
 		val finalJson = when (moveIntoProperty) {
 			null -> buildJsonObject {
-				if (!skipOutputName) put(outputName, "minecraft:$outputClassName")
+				if (!skipOutputName) put(outputName, outputClassName)
 				valueJson.jsonObject.filterKeys { it != outputName }.forEach(::put)
 			}
 
 			else -> buildJsonObject {
-				if (!skipOutputName) put(outputName, "minecraft:$outputClassName")
+				if (!skipOutputName) put(outputName, outputClassName)
 
 				when (valueJson) {
 					is JsonObject -> putJsonObject(moveIntoProperty) {
@@ -63,12 +64,12 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 
 		val finalJson = when (moveIntoProperty) {
 			null -> buildNbtCompound {
-				if (!skipOutputName) put(outputName, NbtString("minecraft:$outputClassName"))
+				if (!skipOutputName) put(outputName, NbtString(outputClassName))
 				valueNbt.nbtCompound.filterKeys { it != outputName }.forEach(::put)
 			}
 
 			else -> buildNbtCompound {
-				if (!skipOutputName) put(outputName, NbtString("minecraft:$outputClassName"))
+				if (!skipOutputName) put(outputName, NbtString(outputClassName))
 
 				when (valueNbt) {
 					is NbtCompound -> putNbtCompound(moveIntoProperty) {
@@ -88,19 +89,19 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 		require(encoder is JsonEncoder || encoder is NbtEncoder) { "PolymorphicTypeSerializer can only be serialized to Json or Nbt." }
 		require(kClass.isInstance(value) && value::class != kClass) { "Value must be instance of ${kClass.simpleName}" }
 
-		val valueClassName = value::class.simpleName!!.snakeCase()
 		val outputClassName = when {
 			value::class.hasAnnotation<SerialName>() -> value::class.findAnnotation<SerialName>()!!.value
-			else -> valueClassName
+			else -> value::class.simpleName!!.snakeCase()
 		}
+		val namespacedOutputClassName = if (useMinecraftPrefix) "minecraft:$outputClassName" else outputClassName
 
 		val serializer = encoder.serializersModule.getPolymorphic(kClass, value)
 			?: encoder.serializersModule.getContextual(value::class)
 			?: encoder.serializersModule.serializer(value::class.createType())
 
 		when (encoder) {
-			is JsonEncoder -> serializeJson(outputClassName, serializer as KSerializer<T>, encoder, value)
-			is NbtEncoder -> serializeNbt(outputClassName, serializer as KSerializer<T>, encoder, value)
+			is JsonEncoder -> serializeJson(namespacedOutputClassName, serializer as KSerializer<T>, encoder, value)
+			is NbtEncoder -> serializeNbt(namespacedOutputClassName, serializer as KSerializer<T>, encoder, value)
 		}
 	}
 }
