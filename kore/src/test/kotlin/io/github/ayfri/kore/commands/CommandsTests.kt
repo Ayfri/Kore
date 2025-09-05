@@ -1,27 +1,31 @@
 package io.github.ayfri.kore.commands
 
+import io.github.ayfri.kore.arguments.enums.Difficulty
+import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.types.literals.rotation
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.generated.Sounds
 import net.benwoodworth.knbt.NbtInt
 
 fun Function.commandsTests() {
 	debugStart() assertsIs "debug start"
 	debugStop() assertsIs "debug stop"
 
-	defaultGamemode(io.github.ayfri.kore.arguments.enums.Gamemode.CREATIVE) assertsIs "defaultgamemode creative"
+	defaultGamemode(Gamemode.CREATIVE) assertsIs "defaultgamemode creative"
 
 	difficulty() assertsIs "difficulty"
-	difficulty(io.github.ayfri.kore.arguments.enums.Difficulty.EASY) assertsIs "difficulty easy"
+	difficulty(Difficulty.EASY) assertsIs "difficulty easy"
 
-	enchant(self(), io.github.ayfri.kore.generated.Enchantments.MENDING) assertsIs "enchant @s minecraft:mending"
-	enchant(self(), io.github.ayfri.kore.generated.Enchantments.MENDING, 1) assertsIs "enchant @s minecraft:mending 1"
+	enchant(self(), Enchantments.MENDING) assertsIs "enchant @s minecraft:mending"
+	enchant(self(), Enchantments.MENDING, 1) assertsIs "enchant @s minecraft:mending 1"
 
-	gamemode(io.github.ayfri.kore.arguments.enums.Gamemode.CREATIVE) assertsIs "gamemode creative"
-	gamemode(io.github.ayfri.kore.arguments.enums.Gamemode.CREATIVE, self()) assertsIs "gamemode creative @s"
+	gamemode(Gamemode.CREATIVE) assertsIs "gamemode creative"
+	gamemode(Gamemode.CREATIVE, self()) assertsIs "gamemode creative @s"
 
 	give(self(), Items.STONE) assertsIs "give @s minecraft:stone"
 	give(self(), Items.STONE, 1) assertsIs "give @s minecraft:stone 1"
@@ -73,10 +77,10 @@ fun Function.commandsTests() {
 	stopSound(
 		self(),
 		PlaySoundMixer.MASTER,
-		io.github.ayfri.kore.generated.Sounds.Mob.Bat.TAKEOFF
+		Sounds.Mob.Bat.TAKEOFF
 	) assertsIs "stopsound @s master minecraft:mob/bat/takeoff"
 	stopSoundAllSources(self()) assertsIs "stopsound @s *"
-	stopSoundAllSources(self(), io.github.ayfri.kore.generated.Sounds.Mob.Bat.TAKEOFF) assertsIs "stopsound @s * minecraft:mob/bat/takeoff"
+	stopSoundAllSources(self(), Sounds.Mob.Bat.TAKEOFF) assertsIs "stopsound @s * minecraft:mob/bat/takeoff"
 
 	teamMsg("test") assertsIs "teammsg test"
 	tm("test") assertsIs "teammsg test"
