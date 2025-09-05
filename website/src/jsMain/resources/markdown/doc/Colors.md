@@ -9,7 +9,7 @@ date-modified: 2025-08-11
 routeOverride: /docs/colors
 ---
 
-### Overview
+# Overview
 
 Kore provides a unified `Color` API that covers three families of colors used by Minecraft:
 
@@ -19,7 +19,7 @@ Kore provides a unified `Color` API that covers three families of colors used by
 
 For the vanilla reference on color behavior, see the Minecraft Wiki’s Color page (`https://minecraft.wiki/w/Color`).
 
-### Color types in Kore
+## Color types in Kore
 
 - `Color` (sealed interface): umbrella type accepted by most helpers.
 - `FormattingColor`: named chat/formatting colors (e.g. `Color.RED`, `Color.AQUA`).
@@ -47,7 +47,33 @@ val argb = rgb.toARGB(alpha = 200)
 val mixed = mix(rgb(255, 0, 0), 0.25, rgb(0, 0, 255), 0.75)
 ```
 
-### Serialization formats by context
+## Random colors
+
+Kore provides static `random()` helpers on the color classes to simplify testing and procedural generation.
+You can also use a `Random` instance to generate random colors with a specific seed.
+
+These helpers are available on:
+ - **`RGB`**: `RGB.random(random: Random = Random)`: returns a random RGB
+ - **`ARGB`**: `ARGB.random(random: Random = Random, alpha: Boolean = false)`: returns a random ARGB; set `alpha = true` to randomize the alpha channel
+ - **`FormattingColor`**: `FormattingColor.random(random: Random = Random)`: returns a random named formatting color
+ - **`BossBarColor`**: `BossBarColor.random(random: Random = Random)`: returns a random named bossbar color
+
+### Example usage:
+
+```kotlin
+import kotlin.random.Random
+import io.github.ayfri.kore.arguments.colors.*
+import io.github.ayfri.kore.arguments.enums.DyeColors
+
+val randomRgb = RGB.random()
+val randomArgb = ARGB.random(random = Random(12345))
+val randomArgbWithAlpha = ARGB.random(alpha = true)
+val randomFormatting = FormattingColor.random()
+```
+
+These helpers were added to make it easy to generate example content, tests, or procedurally-generated visuals.
+
+## Serialization formats by context
 
 Different Minecraft systems expect colors in different formats. Kore picks the right format automatically via serializers.
 
@@ -132,7 +158,7 @@ Different Minecraft systems expect colors in different formats. Kore picks the r
     fun setColor(color: BossBarColor) = fn.addLine(..., literal("color"), color)
     ```
 
-### Dye colors and where they’re used
+## Dye colors and where they’re used
 
 `DyeColors` are used for entity variants and certain item/entity data components:
 
@@ -162,7 +188,7 @@ Different Minecraft systems expect colors in different formats. Kore picks the r
   fun ComponentsScope.shulkerColor(color: DyeColors)
   ```
 
-### Practical examples
+## Practical examples
 
 Chat components (string serialization):
 
@@ -259,11 +285,11 @@ val cat = Items.CAT_SPAWN_EGG {
 }
 ```
 
-### Notes
+## Notes
 
 - Passing `Color` to component helpers that use decimal or double-array formats is safe: Kore converts automatically via `toRGB()`.
 - Use `DyeColors` when the game mechanic expects a dye color (collars, sheep, shulkers, tropical fish), and `FormattingColor`/`BossBarColor` for chat/UI tints.
 
-### Further reading
+## Further reading
 
 - Minecraft Wiki — Color: [`https://minecraft.wiki/w/Color`](https://minecraft.wiki/w/Color)
