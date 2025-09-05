@@ -45,6 +45,7 @@ fun runUnitTests() = dataPack("unit_tests") {
 		titleTests()
 		transferTests()
 		triggerTests()
+		waypointTests()
 		weatherTests()
 		worldBorderTests()
 
