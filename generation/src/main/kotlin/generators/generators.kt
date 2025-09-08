@@ -23,6 +23,8 @@ suspend fun launchAllSimpleGenerators() {
 		gen("PaintingVariants", "paintings"),
 		gen("PigVariants", "pigs"),
 		gen("Recipes", "recipes"),
+		gen("TestEnvironments", "test_environment"),
+		gen("TestInstances", "test_instance"),
 		gen("TrimMaterials", "trim_materials"),
 		gen("TrimPatterns", "trim_patterns"),
 		gen("PigVariants", "pigs"),

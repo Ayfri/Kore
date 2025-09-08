@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.types.testSelector
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.Blocks
+import io.github.ayfri.kore.generated.TestInstances
 import io.github.ayfri.kore.generated.arguments.types.TestInstanceArgument
 
 fun Function.testTests() {
@@ -16,14 +17,17 @@ fun Function.testTests() {
 		clearThat() assertsIs "test clearthat"
 		clearThese() assertsIs "test clearthese"
 
-		val testInstance = TestInstanceArgument("my_test", "my_datapack")
-		create(testInstance) assertsIs "test create my_datapack:my_test"
-		create(testInstance, 10) assertsIs "test create my_datapack:my_test 10"
-		create(testInstance, 10, 5) assertsIs "test create my_datapack:my_test 10 5"
-		create(testInstance, 10, 5, 8) assertsIs "test create my_datapack:my_test 10 5 8"
+		val testInstance = TestInstances.ALWAYS_PASS
+		create(testInstance) assertsIs "test create minecraft:always_pass"
+		create(testInstance, 10) assertsIs "test create minecraft:always_pass 10"
+		create(testInstance, 10, 5) assertsIs "test create minecraft:always_pass 10 5"
+		create(testInstance, 10, 5, 8) assertsIs "test create minecraft:always_pass 10 5 8"
 
 		val selector = testSelector("my_datapack:test_*")
 		locate(selector) assertsIs "test locate my_datapack:test_*"
+
+		val selector2 = testSelector(TestInstances.ALWAYS_PASS, suffix = "_*")
+		locate(selector2) assertsIs "test locate minecraft:always_pass_*"
 
 		pos() assertsIs "test pos"
 		pos("myvar") assertsIs "test pos myvar"
