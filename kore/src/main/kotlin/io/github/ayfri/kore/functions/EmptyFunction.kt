@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.functions
 
 import io.github.ayfri.kore.DataPack
-import io.github.ayfri.kore.arguments.chatcomponents.events.ClickEvent
-import io.github.ayfri.kore.arguments.chatcomponents.events.runCommand
+import io.github.ayfri.kore.arguments.chatcomponents.click.ClickEvent
+import io.github.ayfri.kore.arguments.chatcomponents.click.runCommand
 import io.github.ayfri.kore.commands.Command
 
 /**

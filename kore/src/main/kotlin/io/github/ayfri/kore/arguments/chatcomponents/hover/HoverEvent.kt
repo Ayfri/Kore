@@ -1,11 +1,7 @@
-package io.github.ayfri.kore.arguments.chatcomponents.events
+package io.github.ayfri.kore.arguments.chatcomponents.hover
 
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponent
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
-import io.github.ayfri.kore.arguments.chatcomponents.hover.Contents
-import io.github.ayfri.kore.arguments.chatcomponents.hover.ContentsEntityIntArray
-import io.github.ayfri.kore.arguments.chatcomponents.hover.ContentsEntityUUID
-import io.github.ayfri.kore.arguments.chatcomponents.hover.ContentsItem
 import io.github.ayfri.kore.arguments.chatcomponents.text
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color

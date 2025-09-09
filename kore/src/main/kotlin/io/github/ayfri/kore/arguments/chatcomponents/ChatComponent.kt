@@ -1,17 +1,18 @@
 package io.github.ayfri.kore.arguments.chatcomponents
 
-import io.github.ayfri.kore.arguments.chatcomponents.events.ClickAction
-import io.github.ayfri.kore.arguments.chatcomponents.events.ClickEvent
-import io.github.ayfri.kore.arguments.chatcomponents.events.HoverAction
-import io.github.ayfri.kore.arguments.chatcomponents.events.HoverEvent
+import io.github.ayfri.kore.arguments.chatcomponents.click.ClickEventContainer
+import io.github.ayfri.kore.arguments.chatcomponents.hover.HoverAction
+import io.github.ayfri.kore.arguments.chatcomponents.hover.HoverEvent
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.pascalCase
 import io.github.ayfri.kore.utils.set
+import io.github.ayfri.kore.utils.snbtSerializer
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.buildNbtCompound
+import net.benwoodworth.knbt.encodeToNbtTag
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
@@ -21,7 +22,7 @@ abstract class ChatComponent {
 	@EncodeDefault(EncodeDefault.Mode.NEVER)
 	var text = ""
 	var bold: Boolean? = null
-	var clickEvent: ClickEvent? = null
+	var clickEvent: ClickEventContainer? = null
 	var color: Color? = null
 	var extra: ChatComponents? = null
 	var font: String? = null
@@ -38,7 +39,7 @@ abstract class ChatComponent {
 	open fun toNbtTag() = buildNbtCompound {
 		this["type"] = type.name.lowercase()
 		bold?.let { this["bold"] = it }
-		clickEvent?.let { this["click_event"] = it.toNbtTag() }
+		clickEvent?.let { this["click_event"] = snbtSerializer.encodeToNbtTag(it.event) }
 		color?.let { this["color"] = it.asString() }
 		extra?.let { this["extra"] = it }
 		font?.let { this["font"] = it }
@@ -102,8 +103,8 @@ fun textComponent(text: String = "", color: Color? = null, block: PlainTextCompo
 fun ChatComponent.hoverEvent(action: HoverAction = HoverAction.SHOW_TEXT, block: HoverEvent.() -> Unit) =
 	apply { hoverEvent = HoverEvent(action, "".nbt).apply(block) }
 
-fun ChatComponent.clickEvent(action: ClickAction = ClickAction.RUN_COMMAND, block: ClickEvent.() -> Unit) =
-	apply { clickEvent = ClickEvent(action, "").apply(block) }
+fun ChatComponent.clickEvent(block: ClickEventContainer.() -> Unit) =
+	apply { clickEvent = ClickEventContainer().apply(block) }
 
 fun ChatComponent.hoverEvent(text: String, color: Color? = null, block: ChatComponent.() -> Unit = {}) =
 	apply { hoverEvent = HoverEvent(HoverAction.SHOW_TEXT, textComponent(text, color, block).toNbtTag()) }

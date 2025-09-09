@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.commands.scoreboard
 
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
-import io.github.ayfri.kore.arguments.chatcomponents.events.ClickEvent
-import io.github.ayfri.kore.arguments.chatcomponents.events.HoverEvent
+import io.github.ayfri.kore.arguments.chatcomponents.click.ClickEvent
+import io.github.ayfri.kore.arguments.chatcomponents.hover.HoverEvent
 import io.github.ayfri.kore.arguments.colors.Color
 import kotlinx.serialization.Serializable
 

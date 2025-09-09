@@ -3,14 +3,16 @@ package io.github.ayfri.kore.functions
 import io.github.ayfri.kore.Configuration
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.chatcomponents.*
-import io.github.ayfri.kore.arguments.chatcomponents.events.ClickAction
-import io.github.ayfri.kore.arguments.chatcomponents.events.showText
+import io.github.ayfri.kore.arguments.chatcomponents.click.runCommand
+import io.github.ayfri.kore.arguments.chatcomponents.click.suggestCommand
+import io.github.ayfri.kore.arguments.chatcomponents.hover.showText
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.types.literals.allPlayers
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.arguments.types.resources.tagged.FunctionTagArgument
 import io.github.ayfri.kore.commands.Command
 import io.github.ayfri.kore.commands.command
+import io.github.ayfri.kore.commands.function
 import io.github.ayfri.kore.commands.tellraw
 import io.github.ayfri.kore.features.tags.functionTag
 import io.github.ayfri.kore.utils.ifNotEmpty
@@ -74,8 +76,10 @@ open class Function(
 
 		if (debug) lines += "tellraw @a ${
 			textComponent("/$command") {
-				clickEvent(ClickAction.SUGGEST_COMMAND) {
-					value = "/$command"
+				clickEvent {
+					suggestCommand { 
+						command
+					}
 				}
 
 				hoverEvent {
@@ -119,8 +123,10 @@ open class Function(
 				bold = true
 				italic = true
 
-				clickEvent(ClickAction.RUN_COMMAND) {
-					value = "/function ${asId()}"
+				clickEvent {
+					runCommand {
+						function(asId())
+					}
 				}
 
 				hoverEvent {
@@ -137,8 +143,10 @@ open class Function(
 				bold = true
 				italic = true
 
-				clickEvent(ClickAction.RUN_COMMAND) {
-					value = "/function ${asId()}"
+				clickEvent {
+					runCommand {
+						function(asId())
+					}
 				}
 
 				hoverEvent {
