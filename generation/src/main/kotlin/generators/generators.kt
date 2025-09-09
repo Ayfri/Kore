@@ -50,6 +50,9 @@ suspend fun launchAllSimpleGenerators() {
 	val txtListsTreeGenerators = listOf(
 		gen("Advancements", "advancements"),
 		gen("LootTables", "loot_tables"),
+		gen("Models", "models") {
+			argumentClassName = "Model M"
+		},
 		gen("Sounds", "sounds") {
 			argumentClassName = "Sound M"
 			transform { it.removeSuffix(".ogg") }

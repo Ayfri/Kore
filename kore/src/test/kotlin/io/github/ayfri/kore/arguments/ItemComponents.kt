@@ -351,9 +351,9 @@ fun itemComponentsTests() {
 	intangibleProjectileTest.asString() assertsIs """minecraft:crossbow[intangible_projectile={}]"""
 
 	val itemModelTest = stone {
-		itemModel("test")
+		itemModel(Models.Item.BAMBOO_SIGN)
 	}
-	itemModelTest.asString() assertsIs """minecraft:stone[item_model="minecraft:test"]"""
+	itemModelTest.asString() assertsIs """minecraft:stone[item_model="minecraft:bamboo_sign"]"""
 	itemModelTest.components!!.itemModel(Items.DIAMOND)
 	itemModelTest.asString() assertsIs """minecraft:stone[item_model="minecraft:diamond"]"""
 
