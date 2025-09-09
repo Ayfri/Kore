@@ -5,6 +5,7 @@ package io.github.ayfri.kore.features.predicates.providers
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
 import io.github.ayfri.kore.features.predicates.types.EntityType
+import io.github.ayfri.kore.generated.LootScoreProviderTypes
 
 fun constant(value: Float) = Constant(value)
 
@@ -19,10 +20,10 @@ fun binomial(n: Float, p: NumberProvider) = Binomial(constant(n), p)
 fun binomial(n: NumberProvider, p: Float) = Binomial(n, constant(p))
 
 fun scoreNumber(score: String, target: EntityType? = null, scale: Float? = null) =
-	Score(ScoreTargetNumberProvider(ScoreTargetType.CONTEXT, target = target), score, scale)
+	Score(ScoreTargetNumberProvider(LootScoreProviderTypes.CONTEXT, target = target), score, scale)
 
 fun scoreNumber(score: String, name: String? = null, scale: Float? = null) =
-	Score(ScoreTargetNumberProvider(ScoreTargetType.FIXED, name), score, scale)
+	Score(ScoreTargetNumberProvider(LootScoreProviderTypes.FIXED, name), score, scale)
 
 fun storageNumber(storage: String, path: String) = Storage(storage, path)
 

@@ -171,6 +171,7 @@ suspend fun launchAllSimpleGenerators() {
 				)
 			}
 		},
+		gen("LootScoreProviderTypes", "loot_score_provider_type"),
 		gen("MapDecorationTypes", "map_decoration_type"),
 		gen("Particles", "particle_type") {
 			argumentClassName = "ParticleType"

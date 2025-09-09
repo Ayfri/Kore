@@ -2,9 +2,10 @@ package io.github.ayfri.kore.features.predicates.providers
 
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.predicates.types.EntityType
+import io.github.ayfri.kore.generated.LootScoreProviderTypes
+import io.github.ayfri.kore.generated.arguments.types.LootScoreProviderTypeArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import io.github.ayfri.kore.serializers.ToStringSerializer
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
@@ -33,19 +34,9 @@ data class Uniform(var min: NumberProvider, var max: NumberProvider) : NumberPro
 @Serializable
 data class Binomial(var n: NumberProvider, var p: NumberProvider) : NumberProvider()
 
-@Serializable(ScoreTargetType.Companion.ScoreTargetTypeSerializer::class)
-enum class ScoreTargetType {
-	FIXED,
-	CONTEXT;
-
-	companion object {
-		data object ScoreTargetTypeSerializer : ToStringSerializer<ScoreTargetType>({ "minecraft:${name.lowercase()}"})
-	}
-}
-
 @Serializable(ScoreTargetNumberProvider.Companion.ScoreTargetNumberProviderSerializer::class)
 data class ScoreTargetNumberProvider(
-	var type: ScoreTargetType,
+	var type: LootScoreProviderTypeArgument,
 	var name: String? = null,
 	var target: EntityType? = null,
 ) {
@@ -61,10 +52,10 @@ data class ScoreTargetNumberProvider(
 
 			override fun serialize(encoder: Encoder, value: ScoreTargetNumberProvider) {
 				encoder.encodeStructure(descriptor) {
-					encodeSerializableElement(descriptor, 0, ScoreTargetType.serializer(), value.type)
+					encodeSerializableElement(descriptor, 0, LootScoreProviderTypeArgument.serializer(), value.type)
 
 					when (value.type) {
-						ScoreTargetType.FIXED -> encodeStringElement(descriptor, 1, value.name!!)
+						LootScoreProviderTypes.FIXED -> encodeStringElement(descriptor, 1, value.name!!)
 						else -> encodeSerializableElement(descriptor, 2, EntityType.serializer(), value.target!!)
 					}
 				}
