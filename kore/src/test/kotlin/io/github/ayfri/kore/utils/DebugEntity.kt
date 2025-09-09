@@ -2,8 +2,8 @@ package io.github.ayfri.kore.utils
 
 import io.github.ayfri.kore.arguments.DisplaySlots
 import io.github.ayfri.kore.arguments.chatcomponents.*
-import io.github.ayfri.kore.arguments.chatcomponents.events.runCommand
-import io.github.ayfri.kore.arguments.chatcomponents.events.suggestCommand
+import io.github.ayfri.kore.arguments.chatcomponents.click.runCommand
+import io.github.ayfri.kore.arguments.chatcomponents.click.suggestCommand
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrIntStart
 import io.github.ayfri.kore.arguments.selector.SelectorArguments

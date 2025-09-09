@@ -1,9 +1,9 @@
 package io.github.ayfri.kore.serialization
 
 import io.github.ayfri.kore.arguments.chatcomponents.*
-import io.github.ayfri.kore.arguments.chatcomponents.events.runCommand
-import io.github.ayfri.kore.arguments.chatcomponents.events.showItem
-import io.github.ayfri.kore.arguments.chatcomponents.events.showText
+import io.github.ayfri.kore.arguments.chatcomponents.click.*
+import io.github.ayfri.kore.arguments.chatcomponents.hover.showItem
+import io.github.ayfri.kore.arguments.chatcomponents.hover.showText
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.item.damage
 import io.github.ayfri.kore.arguments.components.item.lore
@@ -223,7 +223,89 @@ fun chatComponentsTests() {
 		""".trimIndent()
 	}
 
+	chatComponentsOnClick()
 	chatComponentAllFields()
+}
+
+private fun chatComponentsOnClick() {
+	textComponent("change page") {
+		clickEvent {
+			changePage(2)
+		}
+	} assertsIsJson """
+		{
+			"type": "text",
+			"click_event": {
+				"action": "change_page",
+				"page": 2
+			},
+			"text": "change page"
+		}
+	""".trimIndent()
+
+	textComponent("copy to clipboard") {
+		clickEvent {
+			copyToClipboard("test")
+		}
+	} assertsIsJson """
+		{
+			"type": "text",
+			"click_event": {
+				"action": "copy_to_clipboard",
+				"value": "test"
+			},
+			"text": "copy to clipboard"
+		}
+	""".trimIndent()
+
+	textComponent("open url") {
+		clickEvent {
+			openUrl("https://www.google.com")
+		}
+	} assertsIsJson """
+		{
+			"type": "text",
+			"click_event": {
+				"action": "open_url",
+				"url": "https://www.google.com"
+			},
+			"text": "open url"
+		}
+	""".trimIndent()
+
+	textComponent("suggest command") {
+		clickEvent {
+			suggestCommand {
+				say("Suggest command")
+			}
+		}
+	} assertsIsJson """
+		{
+			"type": "text",
+			"click_event": {
+				"action": "suggest_command",
+				"command": "/say Suggest command"
+			},
+			"text": "suggest command"
+		}
+	""".trimIndent()
+
+	textComponent("run command") {
+		clickEvent {
+			runCommand {
+				say("Run command")
+			}
+		}
+	} assertsIsJson """
+		{
+			"type": "text",
+			"click_event": {
+				"action": "run_command",
+				"command": "say Run command"
+			},
+			"text": "run command"
+		}
+	""".trimIndent()
 }
 
 private fun chatComponentAllFields() {
