@@ -37,6 +37,7 @@ suspend fun downloadRegistriesList(): Map<String, Registry> {
 		"minecraft:attribute_modifier" to Registry(elements = false, stable = true, tags = false),
 		"minecraft:consume_cooldown_group" to Registry(elements = false, stable = true, tags = false),
 		"minecraft:trim_color_palette" to Registry(elements = false, stable = true, tags = false),
+		"minecraft:waypoint_style" to Registry(elements = false, stable = true, tags = false),
 		"minecraft:worldgen/configured_structure" to Registry(elements = false, stable = true, tags = true),
 	)
 

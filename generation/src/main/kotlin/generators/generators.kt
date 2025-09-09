@@ -28,6 +28,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("TrimMaterials", "trim_materials"),
 		gen("TrimPatterns", "trim_patterns"),
 		gen("PigVariants", "pigs"),
+		gen("WaypointStyles", "waypoint_style"),
 		gen("WolfSoundVariants", "wolf_sounds"),
 		gen("WolfVariants", "wolfs"),
 
