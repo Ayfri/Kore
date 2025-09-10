@@ -14,6 +14,7 @@ fun runUnitTests() = dataPack("unit_tests") {
 		damageTests()
 		dataPackTests()
 		dataTests()
+		dialogTests()
 		effectTests()
 		executeTests()
 		fillTests()

@@ -19,6 +19,7 @@ fun featuresTests() = testDataPack("features_tests") {
 	cowVariantTests()
 	damageTypeTests()
 	densityFunctionTests()
+	dialogTests()
 	dimensionTests()
 	dimensionTypeTests()
 	enchantmentTests()
