@@ -20,6 +20,8 @@ data class EquippableComponent(
 	var allowedEntities: InlinableList<EntityTypeOrTagArgument>? = null,
 	@SerialName("camera_overlay")
 	var cameraOverlay: ModelArgument? = null,
+	@SerialName("can_be_sheared")
+	var canBeSheared: Boolean? = null,
 	@SerialName("damage_on_hurt")
 	var damageOnHurt: Boolean? = null,
 	var dispensable: Boolean? = null,
@@ -27,6 +29,8 @@ data class EquippableComponent(
 	var equipOnInteract: Boolean? = null,
 	@SerialName("equip_sound")
 	var equipSound: SoundEventArgument? = null,
+	@SerialName("shearing_sound")
+	var shearingSound: SoundEventArgument? = null,
 	var swappable: Boolean? = null,
 ) : Component()
 
