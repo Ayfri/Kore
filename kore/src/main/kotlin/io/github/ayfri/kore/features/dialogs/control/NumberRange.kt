@@ -14,7 +14,7 @@ data class NumberRange(
 	var width: Int? = null,
 	var start: Float,
 	var end: Float,
-	var steps: Float? = null,
+	var step: Float? = null,
 	var initial: Float? = null,
 ) : DialogControl()
 

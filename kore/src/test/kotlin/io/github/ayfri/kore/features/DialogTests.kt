@@ -9,11 +9,13 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.features.dialogs.action.onClick
 import io.github.ayfri.kore.features.dialogs.action.onSubmit
+import io.github.ayfri.kore.features.dialogs.action.submit
 import io.github.ayfri.kore.features.dialogs.action.submit.commandTemplate
 import io.github.ayfri.kore.features.dialogs.action.tooltip
 import io.github.ayfri.kore.features.dialogs.body.item
 import io.github.ayfri.kore.features.dialogs.body.plainMessage
 import io.github.ayfri.kore.features.dialogs.control.boolean
+import io.github.ayfri.kore.features.dialogs.control.multiline
 import io.github.ayfri.kore.features.dialogs.control.numberRange
 import io.github.ayfri.kore.features.dialogs.control.text
 import io.github.ayfri.kore.features.dialogs.dialogBuilder
@@ -85,6 +87,76 @@ fun DataPack.dialogTests() {
 			},
 			"columns": 4,
 			"button_width": 100
+		}
+	""".trimIndent()
+
+	dialogBuilder.multiActionInputForm("test_multi_input_form", "Multi Input Form") {
+		columns = 3
+
+		inputs {
+			text("username", "Username") {
+				maxLength = 20
+			}
+			text("description", "Description") {
+				multiline(maxLines = 5, height = 100)
+			}
+			numberRange("level", "Level", range = 1..100, initial = 1) {
+				step = 1f
+			}
+		}
+
+		actions {
+			submit("My Submit", "my_submit") {
+				onSubmit {
+					commandTemplate {
+						say("Submitted!")
+					}
+				}
+			}
+		}
+	}
+
+	dialogs.last() assertsIs """
+		{
+			"type": "minecraft:multi_action_input_form",
+			"title": "Multi Input Form",
+			"inputs": [
+				{
+					"type": "minecraft:text",
+					"key": "username",
+					"label": "Username",
+					"max_length": 20
+				},
+				{
+					"type": "minecraft:text",
+					"key": "description",
+					"label": "Description",
+					"multiline": {
+						"max_lines": 5,
+						"height": 100
+					}
+				},
+				{
+					"type": "minecraft:number_range",
+					"key": "level",
+					"label": "Level",
+					"start": 1.0,
+					"end": 100.0,
+					"step": 1.0,
+					"initial": 1.0
+				}
+			],
+			"actions": [
+				{
+					"label": "My Submit",
+					"id": "my_submit",
+					"on_submit": {
+						"type": "minecraft:command_template",
+						"template": "say Submitted!"
+					}
+				}
+			],
+			"columns": 3
 		}
 	""".trimIndent()
 
@@ -162,8 +234,12 @@ fun DataPack.dialogTests() {
 		}
 
 		inputs {
-			text("text", "yes", initial = "no")
-			numberRange("range", "no", range = 1..10, initial = 4)
+			text("text", "yes", initial = "no") {
+				maxLength = 50
+			}
+			numberRange("range", "no", range = 1..10, initial = 4) {
+				step = 0.5f
+			}
 			boolean("bool", "maybe", onTrue = "lol")
 		}
 	}
@@ -177,7 +253,8 @@ fun DataPack.dialogTests() {
 					"type": "minecraft:text",
 					"key": "text",
 					"label": "yes",
-					"initial": "no"
+					"initial": "no",
+					"max_length": 50
 				},
 				{
 					"type": "minecraft:number_range",
@@ -185,6 +262,7 @@ fun DataPack.dialogTests() {
 					"label": "no",
 					"start": 1.0,
 					"end": 10.0,
+					"step": 0.5,
 					"initial": 4.0
 				},
 				{
