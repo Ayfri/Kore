@@ -18,6 +18,7 @@ import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.predicates.conditions.matchTool
 import io.github.ayfri.kore.features.predicates.predicate
 import io.github.ayfri.kore.features.predicates.sub.components
+import io.github.ayfri.kore.generated.Dialogs
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.utils.pretty
 
@@ -258,6 +259,22 @@ private fun chatComponentsOnClick() {
 		}
 	""".trimIndent()
 
+	textComponent("custom") {
+		clickEvent {
+			custom("test", payload = "thing")
+		}
+	} assertsIsJson """
+		{
+			"type": "text",
+			"click_event": {
+				"action": "custom",
+				"id": "test",
+				"payload": "thing"
+			},
+			"text": "custom"
+		}
+	""".trimIndent()
+
 	textComponent("open url") {
 		clickEvent {
 			openUrl("https://www.google.com")
@@ -270,6 +287,21 @@ private fun chatComponentsOnClick() {
 				"url": "https://www.google.com"
 			},
 			"text": "open url"
+		}
+	""".trimIndent()
+
+	textComponent("show dialog") {
+		clickEvent {
+			showDialog(Dialogs.CUSTOM_OPTIONS)
+		}
+	} assertsIsJson """
+		{
+			"type": "text",
+			"click_event": {
+				"action": "show_dialog",
+				"dialog": "minecraft:custom_options"
+			},
+			"text": "show dialog"
 		}
 	""".trimIndent()
 
