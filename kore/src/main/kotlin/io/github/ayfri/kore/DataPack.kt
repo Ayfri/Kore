@@ -10,6 +10,7 @@ import io.github.ayfri.kore.features.chattypes.ChatType
 import io.github.ayfri.kore.features.chickenvariants.ChickenVariant
 import io.github.ayfri.kore.features.cowvariants.CowVariant
 import io.github.ayfri.kore.features.damagetypes.DamageType
+import io.github.ayfri.kore.features.dialogs.Dialog
 import io.github.ayfri.kore.features.enchantments.Enchantment
 import io.github.ayfri.kore.features.enchantments.providers.EnchantmentProvider
 import io.github.ayfri.kore.features.frogvariants.FrogVariant
@@ -89,6 +90,7 @@ class DataPack(val name: String) {
 	val cowVariants = registerGenerator<CowVariant>()
 	val damageTypes = registerGenerator<DamageType>()
 	val densityFunctions = registerGenerator<DensityFunction>()
+	val dialogs = registerGenerator<Dialog>()
 	val dimensions = registerGenerator<Dimension>()
 	val dimensionTypes = registerGenerator<DimensionType>()
 	val enchantments = registerGenerator<Enchantment>()
