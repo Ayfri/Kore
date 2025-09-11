@@ -1,8 +1,6 @@
 package io.github.ayfri.kore.functions
 
 import io.github.ayfri.kore.DataPack
-import io.github.ayfri.kore.arguments.chatcomponents.click.ClickEvent
-import io.github.ayfri.kore.arguments.chatcomponents.click.runCommand
 import io.github.ayfri.kore.commands.Command
 
 /**
@@ -26,7 +24,7 @@ class EmptyFunction internal constructor(datapack: DataPack = DataPack("")) : Fu
 
 /**
  * Creates an empty function, without a datapack linked to it.
- * This is when you need to generate a command call without any context, like in a [ClickEvent.runCommand].
+ * This is when you need to generate a command call without any context, like in a [io.github.ayfri.kore.arguments.actions.RunCommand].
  * If you need this function to be public, please create an issue on the GitHub repository with your use case.
  */
 internal fun emptyFunction(block: Function.() -> Unit = {}) = EmptyFunction().apply(block)

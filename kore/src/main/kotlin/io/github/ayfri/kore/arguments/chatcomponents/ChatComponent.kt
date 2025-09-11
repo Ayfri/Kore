@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.arguments.chatcomponents
 
-import io.github.ayfri.kore.arguments.chatcomponents.click.ClickEventContainer
+import io.github.ayfri.kore.arguments.actions.ClickEventContainer
 import io.github.ayfri.kore.arguments.chatcomponents.hover.HoverAction
 import io.github.ayfri.kore.arguments.chatcomponents.hover.HoverEvent
 import io.github.ayfri.kore.arguments.colors.Color
@@ -39,7 +39,7 @@ abstract class ChatComponent {
 	open fun toNbtTag() = buildNbtCompound {
 		this["type"] = type.name.lowercase()
 		bold?.let { this["bold"] = it }
-		clickEvent?.let { this["click_event"] = snbtSerializer.encodeToNbtTag(it.event) }
+		clickEvent?.let { this["click_event"] = snbtSerializer.encodeToNbtTag(it.action) }
 		color?.let { this["color"] = it.asString() }
 		extra?.let { this["extra"] = it }
 		font?.let { this["font"] = it }

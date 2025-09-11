@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.features.dialogs.types
 
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
-import io.github.ayfri.kore.arguments.chatcomponents.click.ClickEvent
-import io.github.ayfri.kore.arguments.chatcomponents.click.ClickEventContainer
+import io.github.ayfri.kore.arguments.actions.Action
+import io.github.ayfri.kore.arguments.actions.ActionContainer
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.features.dialogs.Dialog
 import io.github.ayfri.kore.features.dialogs.Dialogs
@@ -17,7 +17,7 @@ data class ServerLinks(
 	override var externalTitle: ChatComponents? = null,
 	override var body: InlinableList<DialogBody>? = null,
 	override var canCloseWithEscape: Boolean? = null,
-	var onCancel: ClickEvent? = null,
+	var onCancel: Action? = null,
 	var columns: Int? = null,
 	var buttonWidth: Int? = null,
 ) : DialogData()
@@ -38,6 +38,6 @@ fun Dialogs.serverLinks(
 	block: ServerLinks.() -> Unit,
 ) = serverLinks(filename, textComponent(title), block)
 
-fun ServerLinks.onCancel(block: ClickEventContainer.() -> Unit) {
-	onCancel = ClickEventContainer().apply(block).event
+fun ServerLinks.onCancel(block: ActionContainer.() -> Unit) {
+	onCancel = ActionContainer().apply(block).action
 }

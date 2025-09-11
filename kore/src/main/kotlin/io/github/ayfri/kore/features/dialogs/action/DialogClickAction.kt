@@ -2,8 +2,8 @@ package io.github.ayfri.kore.features.dialogs.action
 
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.PlainTextComponent
-import io.github.ayfri.kore.arguments.chatcomponents.click.ClickEvent
-import io.github.ayfri.kore.arguments.chatcomponents.click.ClickEventContainer
+import io.github.ayfri.kore.arguments.actions.Action
+import io.github.ayfri.kore.arguments.actions.ActionContainer
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
 import kotlinx.serialization.Serializable
@@ -13,7 +13,7 @@ data class DialogClickAction(
 	override var label: ChatComponents,
 	override var tooltip: ChatComponents? = null,
 	override var width: Int? = null,
-	var onClick: ClickEvent? = null,
+	var onClick: Action? = null,
 ) : DialogButton()
 
 fun ActionsContainer<DialogClickAction>.click(label: ChatComponents, block: DialogClickAction.() -> Unit) {
@@ -33,6 +33,6 @@ fun DialogClickAction.tooltip(text: String, color: Color? = null, block: PlainTe
 	tooltip = textComponent(text, color, block)
 }
 
-fun DialogClickAction.onClick(block: ClickEventContainer.() -> Unit) {
-	onClick = ClickEventContainer().apply(block).event
+fun DialogClickAction.onClick(block: ActionContainer.() -> Unit) {
+	onClick = ActionContainer().apply(block).action
 }

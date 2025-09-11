@@ -1,9 +1,9 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
-import io.github.ayfri.kore.arguments.chatcomponents.click.openUrl
-import io.github.ayfri.kore.arguments.chatcomponents.click.runCommand
-import io.github.ayfri.kore.arguments.chatcomponents.click.suggestChatMessage
+import io.github.ayfri.kore.arguments.actions.openUrl
+import io.github.ayfri.kore.arguments.actions.runCommand
+import io.github.ayfri.kore.arguments.actions.suggestChatMessage
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.say
@@ -53,14 +53,14 @@ fun DataPack.dialogTests() {
 			"yes": {
 				"label": "yes",
 				"on_click": {
-					"action": "run_command",
+					"type": "minecraft:run_command",
 					"command": "say yay"
 				}
 			},
 			"no": {
 				"label": "no",
 				"on_click": {
-					"action": "suggest_command",
+					"type": "minecraft:suggest_command",
 					"command": "no"
 				}
 			}
@@ -82,7 +82,7 @@ fun DataPack.dialogTests() {
 			"title": "list",
 			"dialogs": "#minecraft:pause_screen_additions",
 			"on_cancel": {
-				"action": "open_url",
+				"type": "minecraft:open_url",
 				"url": "https://minecraft.net"
 			},
 			"columns": 4,
@@ -196,7 +196,7 @@ fun DataPack.dialogTests() {
 				"label": "lol",
 				"tooltip": "here",
 				"on_click": {
-					"action": "run_command",
+					"type": "minecraft:run_command",
 					"command": "say hihi"
 				}
 			}
@@ -216,7 +216,7 @@ fun DataPack.dialogTests() {
 			"type": "minecraft:server_links",
 			"title": "links",
 			"on_cancel": {
-				"action": "suggest_command",
+				"type": "minecraft:suggest_command",
 				"command": "cancelled"
 			},
 			"columns": 5,

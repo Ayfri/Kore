@@ -3,8 +3,8 @@ package io.github.ayfri.kore.functions
 import io.github.ayfri.kore.Configuration
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.chatcomponents.*
-import io.github.ayfri.kore.arguments.chatcomponents.click.runCommand
-import io.github.ayfri.kore.arguments.chatcomponents.click.suggestCommand
+import io.github.ayfri.kore.arguments.actions.runCommand
+import io.github.ayfri.kore.arguments.actions.suggestCommand
 import io.github.ayfri.kore.arguments.chatcomponents.hover.showText
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.types.literals.allPlayers

@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.serialization
 
+import io.github.ayfri.kore.arguments.actions.*
 import io.github.ayfri.kore.arguments.chatcomponents.*
-import io.github.ayfri.kore.arguments.chatcomponents.click.*
 import io.github.ayfri.kore.arguments.chatcomponents.hover.showItem
 import io.github.ayfri.kore.arguments.chatcomponents.hover.showText
 import io.github.ayfri.kore.arguments.colors.Color
