@@ -21,6 +21,7 @@ import io.github.ayfri.kore.features.predicates.sub.components
 import io.github.ayfri.kore.generated.Dialogs
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.set
 
 fun chatComponentsTests() {
 	val simplePlainText = textComponent("Hello, world!")
@@ -261,7 +262,9 @@ private fun chatComponentsOnClick() {
 
 	textComponent("custom") {
 		clickEvent {
-			custom("test", payload = "thing")
+			custom("test") {
+				this["data"] = "thing"
+			}
 		}
 	} assertsIsJson """
 		{
@@ -269,7 +272,9 @@ private fun chatComponentsOnClick() {
 			"click_event": {
 				"action": "custom",
 				"id": "test",
-				"payload": "thing"
+				"payload": {
+					"data": "thing"
+				}
 			},
 			"text": "custom"
 		}
