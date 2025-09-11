@@ -5,7 +5,7 @@ import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.features.dialogs.Dialog
 import io.github.ayfri.kore.features.dialogs.Dialogs
 import io.github.ayfri.kore.features.dialogs.action.AfterAction
-import io.github.ayfri.kore.features.dialogs.action.DialogAction
+import io.github.ayfri.kore.features.dialogs.action.DialogLabelledAction
 import io.github.ayfri.kore.features.dialogs.body.DialogBody
 import io.github.ayfri.kore.generated.arguments.types.DialogArgument
 import io.github.ayfri.kore.serializers.InlinableList
@@ -21,7 +21,7 @@ data class ServerLinks(
 	override var pause: Boolean? = null,
 	var buttonWidth: Int? = null,
 	var columns: Int? = null,
-	var exitAction: DialogAction? = null,
+	var exitAction: DialogLabelledAction? = null,
 ) : DialogData()
 
 fun Dialogs.serverLinks(
@@ -40,8 +40,8 @@ fun Dialogs.serverLinks(
 	block: ServerLinks.() -> Unit,
 ) = serverLinks(filename, textComponent(title), block)
 
-fun ServerLinks.exitAction(label: ChatComponents, block: DialogAction.() -> Unit) {
-	exitAction = DialogAction(label = label).apply(block)
+fun ServerLinks.exitAction(label: ChatComponents, block: DialogLabelledAction.() -> Unit) {
+	exitAction = DialogLabelledAction(label = label).apply(block)
 }
 
-fun ServerLinks.exitAction(label: String, block: DialogAction.() -> Unit) = exitAction(textComponent(label), block)
+fun ServerLinks.exitAction(label: String, block: DialogLabelledAction.() -> Unit) = exitAction(textComponent(label), block)

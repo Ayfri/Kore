@@ -8,9 +8,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RunCommand(
 	var command: String,
-) : ClickEvent()
+) : Action()
 
-fun ActionWrapper<*>.runCommand(command: String) = apply { action = RunCommand(command) }
-fun ActionWrapper<*>.runCommand(block: Function.() -> Command) = apply {
+fun ActionWrapper.runCommand(command: String) = apply { action = RunCommand(command) }
+fun ActionWrapper.runCommand(block: Function.() -> Command) = apply {
 	action = RunCommand(emptyFunction().block().toString())
 }

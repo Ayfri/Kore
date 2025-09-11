@@ -16,7 +16,10 @@ sealed class ClickEvent : Action() {
 }
 
 @Serializable(with = ClickEventContainer.Companion.ClickEventContainerSerializer::class)
-data class ClickEventContainer(override var action: ClickEvent? = null) : ActionWrapper<ClickEvent> {
+data class ClickEventContainer(
+	@Serializable(with = ClickEvent.Companion.ClickEventSerializer::class)
+	override var action: Action? = null
+) : ActionWrapper() {
 	companion object {
 		data object ClickEventContainerSerializer : InlineAutoSerializer<ClickEventContainer>(ClickEventContainer::class)
 	}

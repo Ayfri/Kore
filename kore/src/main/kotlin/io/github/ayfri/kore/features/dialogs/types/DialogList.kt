@@ -5,7 +5,7 @@ import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.features.dialogs.Dialog
 import io.github.ayfri.kore.features.dialogs.Dialogs
 import io.github.ayfri.kore.features.dialogs.action.AfterAction
-import io.github.ayfri.kore.features.dialogs.action.DialogAction
+import io.github.ayfri.kore.features.dialogs.action.DialogLabelledAction
 import io.github.ayfri.kore.features.dialogs.body.DialogBody
 import io.github.ayfri.kore.generated.arguments.DialogOrTagArgument
 import io.github.ayfri.kore.generated.arguments.tagged.DialogTagArgument
@@ -22,7 +22,7 @@ data class DialogList(
 	override var canCloseWithEscape: Boolean? = null,
 	override var pause: Boolean? = null,
 	var dialogs: InlinableList<DialogOrTagArgument>,
-	var exitAction: DialogAction? = null,
+	var exitAction: DialogLabelledAction? = null,
 	var columns: Int? = null,
 	var buttonWidth: Int? = null,
 ) : DialogData()
@@ -50,8 +50,8 @@ fun DialogList.dialogs(dialogs: DialogTagArgument) {
 	this.dialogs = listOf(dialogs)
 }
 
-fun DialogList.exitAction(label: ChatComponents, block: DialogAction.() -> Unit) {
-	exitAction = DialogAction(label = label).apply(block)
+fun DialogList.exitAction(label: ChatComponents, block: DialogLabelledAction.() -> Unit) {
+	exitAction = DialogLabelledAction(label = label).apply(block)
 }
 
-fun DialogList.exitAction(label: String, block: DialogAction.() -> Unit) = exitAction(textComponent(label), block)
+fun DialogList.exitAction(label: String, block: DialogLabelledAction.() -> Unit) = exitAction(textComponent(label), block)

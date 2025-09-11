@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CopyToClipboard(
 	var value: String,
-) : ClickEvent()
+) : Action()
 
-fun ActionWrapper<*>.copyToClipboard(value: String) = apply { action = CopyToClipboard(value)}
+fun ActionWrapper.copyToClipboard(value: String) = apply { action = CopyToClipboard(value)}

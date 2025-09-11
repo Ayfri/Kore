@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class OpenUrl(
 	var url: String,
-) : ClickEvent()
+) : Action()
 
-fun ActionWrapper<*>.openUrl(url: String) = apply { action = OpenUrl(url) }
+fun ActionWrapper.openUrl(url: String) = apply { action = OpenUrl(url) }

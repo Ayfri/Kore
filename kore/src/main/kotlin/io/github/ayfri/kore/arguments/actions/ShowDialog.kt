@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ShowDialog(
 	var dialog: DialogArgument,
-) : ClickEvent()
+) : Action()
 
-fun ActionWrapper<*>.showDialog(dialog: DialogArgument) = apply { action = ShowDialog(dialog) }
+fun ActionWrapper.showDialog(dialog: DialogArgument) = apply { action = ShowDialog(dialog) }

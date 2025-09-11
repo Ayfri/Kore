@@ -5,7 +5,7 @@ import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.features.dialogs.Dialog
 import io.github.ayfri.kore.features.dialogs.Dialogs
 import io.github.ayfri.kore.features.dialogs.action.AfterAction
-import io.github.ayfri.kore.features.dialogs.action.DialogAction
+import io.github.ayfri.kore.features.dialogs.action.DialogLabelledAction
 import io.github.ayfri.kore.features.dialogs.body.DialogBody
 import io.github.ayfri.kore.generated.arguments.types.DialogArgument
 import io.github.ayfri.kore.serializers.InlinableList
@@ -19,7 +19,7 @@ data class Notice(
 	override var body: InlinableList<DialogBody>? = null,
 	override var canCloseWithEscape: Boolean? = null,
 	override var pause: Boolean? = null,
-	var action: DialogAction? = null,
+	var action: DialogLabelledAction? = null,
 ) : DialogData()
 
 fun Dialogs.notice(
@@ -38,7 +38,7 @@ fun Dialogs.notice(
 	block: Notice.() -> Unit,
 ) = notice(filename, textComponent(title), block)
 
-fun Notice.action(label: ChatComponents, block: DialogAction.() -> Unit) {
-	action = DialogAction(label = label).apply(block)
+fun Notice.action(label: ChatComponents, block: DialogLabelledAction.() -> Unit) {
+	action = DialogLabelledAction(label = label).apply(block)
 }
-fun Notice.action(label: String, block: DialogAction.() -> Unit) = action(textComponent(label), block)
+fun Notice.action(label: String, block: DialogLabelledAction.() -> Unit) = action(textComponent(label), block)

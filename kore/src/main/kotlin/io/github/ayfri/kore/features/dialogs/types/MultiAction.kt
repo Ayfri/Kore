@@ -5,8 +5,8 @@ import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.features.dialogs.Dialog
 import io.github.ayfri.kore.features.dialogs.Dialogs
 import io.github.ayfri.kore.features.dialogs.action.AfterAction
-import io.github.ayfri.kore.features.dialogs.action.DialogAction
-import io.github.ayfri.kore.features.dialogs.action.DialogActionContainer
+import io.github.ayfri.kore.features.dialogs.action.DialogLabelledAction
+import io.github.ayfri.kore.features.dialogs.action.DialogLabelledActionsContainer
 import io.github.ayfri.kore.features.dialogs.body.DialogBody
 import io.github.ayfri.kore.features.dialogs.control.ControlContainer
 import io.github.ayfri.kore.features.dialogs.control.DialogControl
@@ -22,8 +22,8 @@ data class MultiAction(
 	override var body: InlinableList<DialogBody>? = null,
 	override var canCloseWithEscape: Boolean? = null,
 	override var pause: Boolean? = null,
-	var actions: List<DialogAction>? = null,
-	var exitAction: DialogAction? = null,
+	var actions: List<DialogLabelledAction>? = null,
+	var exitAction: DialogLabelledAction? = null,
 	var columns: Int? = null,
 	var inputs: List<DialogControl>,
 ) : DialogData()
@@ -44,15 +44,15 @@ fun Dialogs.multiAction(
 	block: MultiAction.() -> Unit,
 ) = multiAction(filename, textComponent(title), block)
 
-fun MultiAction.actions(block: DialogActionContainer.() -> Unit) {
-	actions = DialogActionContainer().apply(block).actions
+fun MultiAction.actions(block: DialogLabelledActionsContainer.() -> Unit) {
+	actions = DialogLabelledActionsContainer().apply(block).actions
 }
 
-fun MultiAction.exitAction(label: ChatComponents, block: DialogAction.() -> Unit) {
-	exitAction = DialogAction(label = label).apply(block)
+fun MultiAction.exitAction(label: ChatComponents, block: DialogLabelledAction.() -> Unit) {
+	exitAction = DialogLabelledAction(label = label).apply(block)
 }
 
-fun MultiAction.exitAction(label: String, block: DialogAction.() -> Unit) = exitAction(textComponent(label), block)
+fun MultiAction.exitAction(label: String, block: DialogLabelledAction.() -> Unit) = exitAction(textComponent(label), block)
 
 fun MultiAction.inputs(block: ControlContainer.() -> Unit) {
 	inputs = ControlContainer().apply(block).controls
