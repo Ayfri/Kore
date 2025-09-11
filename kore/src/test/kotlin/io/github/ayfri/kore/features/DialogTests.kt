@@ -7,6 +7,7 @@ import io.github.ayfri.kore.arguments.actions.suggestChatMessage
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.say
+import io.github.ayfri.kore.features.dialogs.action.AfterAction
 import io.github.ayfri.kore.features.dialogs.action.action
 import io.github.ayfri.kore.features.dialogs.action.tooltip
 import io.github.ayfri.kore.features.dialogs.body.item
@@ -21,7 +22,9 @@ import io.github.ayfri.kore.generated.Tags
 
 fun DataPack.dialogTests() {
 	dialogBuilder.confirmation("test", "title") {
+		afterAction = AfterAction.WAIT_FOR_RESPONSE
 		externalTitle("yop", Color.RED)
+		pause = true
 		yes("yes") {
 			action {
 				runCommand {
@@ -46,6 +49,8 @@ fun DataPack.dialogTests() {
 				"color": "red",
 				"type": "text"
 			},
+			"after_action": "wait_for_response",
+			"pause": true,
 			"yes": {
 				"action": {
 					"type": "minecraft:run_command",

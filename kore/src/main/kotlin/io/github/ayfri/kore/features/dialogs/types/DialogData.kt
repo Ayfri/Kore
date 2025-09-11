@@ -4,6 +4,7 @@ import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.PlainTextComponent
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
+import io.github.ayfri.kore.features.dialogs.action.AfterAction
 import io.github.ayfri.kore.features.dialogs.body.BodyContainer
 import io.github.ayfri.kore.features.dialogs.body.DialogBody
 import io.github.ayfri.kore.serializers.InlinableList
@@ -14,8 +15,10 @@ import kotlinx.serialization.Serializable
 sealed class DialogData {
 	abstract var title: ChatComponents
 	abstract var externalTitle: ChatComponents?
+	abstract var afterAction: AfterAction?
 	abstract var body: InlinableList<DialogBody>?
 	abstract var canCloseWithEscape: Boolean?
+	abstract var pause: Boolean?
 
 	companion object {
 		data object DialogDataSerializer : NamespacedPolymorphicSerializer<DialogData>(DialogData::class)

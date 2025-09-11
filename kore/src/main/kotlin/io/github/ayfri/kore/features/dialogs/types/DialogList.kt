@@ -4,6 +4,7 @@ import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.features.dialogs.Dialog
 import io.github.ayfri.kore.features.dialogs.Dialogs
+import io.github.ayfri.kore.features.dialogs.action.AfterAction
 import io.github.ayfri.kore.features.dialogs.action.DialogAction
 import io.github.ayfri.kore.features.dialogs.body.DialogBody
 import io.github.ayfri.kore.generated.arguments.DialogOrTagArgument
@@ -16,8 +17,10 @@ import kotlinx.serialization.Serializable
 data class DialogList(
 	override var title: ChatComponents,
 	override var externalTitle: ChatComponents? = null,
+	override var afterAction: AfterAction? = null,
 	override var body: InlinableList<DialogBody>? = null,
 	override var canCloseWithEscape: Boolean? = null,
+	override var pause: Boolean? = null,
 	var dialogs: InlinableList<DialogOrTagArgument>,
 	var exitAction: DialogAction? = null,
 	var columns: Int? = null,
