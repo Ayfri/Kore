@@ -14,7 +14,7 @@ import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class MultiActionInputForm(
+data class MultiAction(
 	override var title: ChatComponents,
 	override var externalTitle: ChatComponents? = null,
 	override var body: InlinableList<DialogBody>? = null,
@@ -24,26 +24,26 @@ data class MultiActionInputForm(
 	var columns: Int? = null,
 ) : DialogData()
 
-fun Dialogs.multiActionInputForm(
-	filename: String = "multi_action_input_form",
+fun Dialogs.multiAction(
+	filename: String = "multi_action",
 	title: ChatComponents,
-	block: MultiActionInputForm.() -> Unit,
+	block: MultiAction.() -> Unit,
 ): DialogArgument {
-	val dialog = Dialog(filename, MultiActionInputForm(title, inputs = emptyList()).apply(block))
+	val dialog = Dialog(filename, MultiAction(title, inputs = emptyList()).apply(block))
 	dp.dialogs += dialog
 	return DialogArgument(filename, dialog.namespace ?: dp.name)
 }
 
-fun Dialogs.multiActionInputForm(
-	filename: String = "multi_action_input_form",
+fun Dialogs.multiAction(
+	filename: String = "multi_action",
 	title: String,
-	block: MultiActionInputForm.() -> Unit,
-) = multiActionInputForm(filename, textComponent(title), block)
+	block: MultiAction.() -> Unit,
+) = multiAction(filename, textComponent(title), block)
 
-fun MultiActionInputForm.actions(block: ActionsContainer<DialogSubmitAction>.() -> Unit) {
+fun MultiAction.actions(block: ActionsContainer<DialogSubmitAction>.() -> Unit) {
 	actions = ActionsContainer<DialogSubmitAction>().apply(block).actions
 }
 
-fun MultiActionInputForm.inputs(block: ControlContainer.() -> Unit) {
+fun MultiAction.inputs(block: ControlContainer.() -> Unit) {
 	inputs = ControlContainer().apply(block).controls
 }

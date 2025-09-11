@@ -90,7 +90,7 @@ fun DataPack.dialogTests() {
 		}
 	""".trimIndent()
 
-	dialogBuilder.multiActionInputForm("test_multi_input_form", "Multi Input Form") {
+	dialogBuilder.multiAction("test_multi_action", "Multi Action") {
 		columns = 3
 
 		inputs {
@@ -118,8 +118,8 @@ fun DataPack.dialogTests() {
 
 	dialogs.last() assertsIs """
 		{
-			"type": "minecraft:multi_action_input_form",
-			"title": "Multi Input Form",
+			"type": "minecraft:multi_action",
+			"title": "Multi Action",
 			"inputs": [
 				{
 					"type": "minecraft:text",
