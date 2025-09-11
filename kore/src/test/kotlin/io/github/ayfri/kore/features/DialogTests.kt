@@ -7,10 +7,7 @@ import io.github.ayfri.kore.arguments.actions.suggestChatMessage
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.say
-import io.github.ayfri.kore.features.dialogs.action.onClick
-import io.github.ayfri.kore.features.dialogs.action.onSubmit
-import io.github.ayfri.kore.features.dialogs.action.submit
-import io.github.ayfri.kore.features.dialogs.action.submit.commandTemplate
+import io.github.ayfri.kore.features.dialogs.action.action
 import io.github.ayfri.kore.features.dialogs.action.tooltip
 import io.github.ayfri.kore.features.dialogs.body.item
 import io.github.ayfri.kore.features.dialogs.body.plainMessage
@@ -26,7 +23,7 @@ fun DataPack.dialogTests() {
 	dialogBuilder.confirmation("test", "title") {
 		externalTitle("yop", Color.RED)
 		yes("yes") {
-			onClick {
+			action {
 				runCommand {
 					say("yay")
 				}
@@ -34,7 +31,7 @@ fun DataPack.dialogTests() {
 		}
 
 		no("no") {
-			onClick {
+			action {
 				suggestChatMessage("no")
 			}
 		}
@@ -50,18 +47,18 @@ fun DataPack.dialogTests() {
 				"type": "text"
 			},
 			"yes": {
-				"label": "yes",
-				"on_click": {
+				"action": {
 					"type": "minecraft:run_command",
 					"command": "say yay"
-				}
+				},
+				"label": "yes"
 			},
 			"no": {
-				"label": "no",
-				"on_click": {
+				"action": {
 					"type": "minecraft:suggest_command",
 					"command": "no"
-				}
+				},
+				"label": "no"
 			}
 		}
 	""".trimIndent()
@@ -70,8 +67,10 @@ fun DataPack.dialogTests() {
 		dialogs(Tags.Dialog.PAUSE_SCREEN_ADDITIONS)
 		columns = 4
 		buttonWidth = 100
-		exitAction {
-			openUrl("https://minecraft.net")
+		exitAction("open_url") {
+			action {
+				openUrl("https://minecraft.net")
+			}
 		}
 	}
 
@@ -80,9 +79,12 @@ fun DataPack.dialogTests() {
 			"type": "minecraft:dialog_list",
 			"title": "list",
 			"dialogs": "#minecraft:pause_screen_additions",
-			"on_cancel": {
-				"type": "minecraft:open_url",
-				"url": "https://minecraft.net"
+			"exit_action": {
+				"action": {
+					"type": "minecraft:open_url",
+					"url": "https://minecraft.net"
+				},
+				"label": "open_url"
 			},
 			"columns": 4,
 			"button_width": 100
@@ -105,9 +107,9 @@ fun DataPack.dialogTests() {
 		}
 
 		actions {
-			submit("My Submit", "my_submit") {
-				onSubmit {
-					commandTemplate {
+			action("My Submit") {
+				action {
+					runCommand {
 						say("Submitted!")
 					}
 				}
@@ -119,6 +121,16 @@ fun DataPack.dialogTests() {
 		{
 			"type": "minecraft:multi_action",
 			"title": "Multi Action",
+			"actions": [
+				{
+					"action": {
+						"type": "minecraft:run_command",
+						"command": "say Submitted!"
+					},
+					"label": "My Submit"
+				}
+			],
+			"columns": 3,
 			"inputs": [
 				{
 					"type": "minecraft:text",
@@ -144,18 +156,7 @@ fun DataPack.dialogTests() {
 					"step": 1.0,
 					"initial": 1.0
 				}
-			],
-			"actions": [
-				{
-					"label": "My Submit",
-					"id": "my_submit",
-					"on_submit": {
-						"type": "minecraft:command_template",
-						"template": "say Submitted!"
-					}
-				}
-			],
-			"columns": 3
+			]
 		}
 	""".trimIndent()
 
@@ -167,7 +168,7 @@ fun DataPack.dialogTests() {
 
 		action("lol") {
 			tooltip("here")
-			onClick {
+			action {
 				runCommand {
 					say("hihi")
 				}
@@ -192,21 +193,23 @@ fun DataPack.dialogTests() {
 				}
 			],
 			"action": {
-				"label": "lol",
-				"tooltip": "here",
-				"on_click": {
+				"action": {
 					"type": "minecraft:run_command",
 					"command": "say hihi"
-				}
+				},
+				"label": "lol",
+				"tooltip": "here"
 			}
 		}
 	""".trimIndent()
 
 	dialogBuilder.serverLinks("test_links", "links") {
-		columns = 5
 		buttonWidth = 100
-		exitAction {
-			suggestChatMessage("cancelled")
+		columns = 5
+		exitAction("cancelled") {
+			action {
+				suggestChatMessage("cancelled")
+			}
 		}
 	}
 
@@ -214,12 +217,15 @@ fun DataPack.dialogTests() {
 		{
 			"type": "minecraft:server_links",
 			"title": "links",
-			"on_cancel": {
-				"type": "minecraft:suggest_command",
-				"command": "cancelled"
-			},
+			"button_width": 100,
 			"columns": 5,
-			"button_width": 100
+			"exit_action": {
+				"action": {
+					"type": "minecraft:suggest_command",
+					"command": "cancelled"
+				},
+				"label": "cancelled"
+			}
 		}
 	""".trimIndent()
 }

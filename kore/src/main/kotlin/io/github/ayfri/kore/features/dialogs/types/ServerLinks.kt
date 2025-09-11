@@ -1,11 +1,10 @@
 package io.github.ayfri.kore.features.dialogs.types
 
-import io.github.ayfri.kore.arguments.actions.Action
-import io.github.ayfri.kore.arguments.actions.ActionContainer
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.features.dialogs.Dialog
 import io.github.ayfri.kore.features.dialogs.Dialogs
+import io.github.ayfri.kore.features.dialogs.action.DialogAction
 import io.github.ayfri.kore.features.dialogs.body.DialogBody
 import io.github.ayfri.kore.generated.arguments.types.DialogArgument
 import io.github.ayfri.kore.serializers.InlinableList
@@ -17,9 +16,9 @@ data class ServerLinks(
 	override var externalTitle: ChatComponents? = null,
 	override var body: InlinableList<DialogBody>? = null,
 	override var canCloseWithEscape: Boolean? = null,
-	var columns: Int? = null,
-	var exitAction: Action? = null,
 	var buttonWidth: Int? = null,
+	var columns: Int? = null,
+	var exitAction: DialogAction? = null,
 ) : DialogData()
 
 fun Dialogs.serverLinks(
@@ -38,6 +37,8 @@ fun Dialogs.serverLinks(
 	block: ServerLinks.() -> Unit,
 ) = serverLinks(filename, textComponent(title), block)
 
-fun ServerLinks.exitAction(block: ActionContainer.() -> Unit) {
-	exitAction = ActionContainer().apply(block).action
+fun ServerLinks.exitAction(label: ChatComponents, block: DialogAction.() -> Unit) {
+	exitAction = DialogAction(label = label).apply(block)
 }
+
+fun ServerLinks.exitAction(label: String, block: DialogAction.() -> Unit) = exitAction(textComponent(label), block)
