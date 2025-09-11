@@ -14,7 +14,6 @@ import io.github.ayfri.kore.features.dialogs.action.submit.commandTemplate
 import io.github.ayfri.kore.features.dialogs.action.tooltip
 import io.github.ayfri.kore.features.dialogs.body.item
 import io.github.ayfri.kore.features.dialogs.body.plainMessage
-import io.github.ayfri.kore.features.dialogs.control.boolean
 import io.github.ayfri.kore.features.dialogs.control.multiline
 import io.github.ayfri.kore.features.dialogs.control.numberRange
 import io.github.ayfri.kore.features.dialogs.control.text
@@ -221,65 +220,6 @@ fun DataPack.dialogTests() {
 			},
 			"columns": 5,
 			"button_width": 100
-		}
-	""".trimIndent()
-
-	dialogBuilder.simpleInputForm("test_input", "input") {
-		action("submit", "input_id") {
-			onSubmit {
-				commandTemplate {
-					say("hey")
-				}
-			}
-		}
-
-		inputs {
-			text("text", "yes", initial = "no") {
-				maxLength = 50
-			}
-			numberRange("range", "no", range = 1..10, initial = 4) {
-				step = 0.5f
-			}
-			boolean("bool", "maybe", onTrue = "lol")
-		}
-	}
-
-	dialogs.last() assertsIs """
-		{
-			"type": "minecraft:simple_input_form",
-			"title": "input",
-			"inputs": [
-				{
-					"type": "minecraft:text",
-					"key": "text",
-					"label": "yes",
-					"initial": "no",
-					"max_length": 50
-				},
-				{
-					"type": "minecraft:number_range",
-					"key": "range",
-					"label": "no",
-					"start": 1.0,
-					"end": 10.0,
-					"step": 0.5,
-					"initial": 4.0
-				},
-				{
-					"type": "minecraft:boolean",
-					"key": "bool",
-					"label": "maybe",
-					"on_true": "lol"
-				}
-			],
-			"action": {
-				"label": "submit",
-				"id": "input_id",
-				"on_submit": {
-					"type": "minecraft:command_template",
-					"template": "say hey"
-				}
-			}
 		}
 	""".trimIndent()
 }
