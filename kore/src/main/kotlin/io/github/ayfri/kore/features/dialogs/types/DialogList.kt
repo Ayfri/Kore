@@ -20,7 +20,7 @@ data class DialogList(
 	override var body: InlinableList<DialogBody>? = null,
 	override var canCloseWithEscape: Boolean? = null,
 	var dialogs: InlinableList<DialogOrTagArgument>,
-	var onCancel: Action? = null,
+	var exitAction: Action? = null,
 	var columns: Int? = null,
 	var buttonWidth: Int? = null,
 ) : DialogData()
@@ -48,6 +48,6 @@ fun DialogList.dialogs(dialogs: DialogTagArgument) {
 	this.dialogs = listOf(dialogs)
 }
 
-fun DialogList.onCancel(block: ActionContainer.() -> Unit) {
-	onCancel = ActionContainer().apply(block).action
+fun DialogList.exitAction(block: ActionContainer.() -> Unit) {
+	exitAction = ActionContainer().apply(block).action
 }

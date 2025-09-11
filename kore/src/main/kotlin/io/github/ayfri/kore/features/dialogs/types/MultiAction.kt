@@ -1,11 +1,14 @@
 package io.github.ayfri.kore.features.dialogs.types
 
+import io.github.ayfri.kore.arguments.actions.Action
+import io.github.ayfri.kore.arguments.actions.ActionContainer
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.features.dialogs.Dialog
 import io.github.ayfri.kore.features.dialogs.Dialogs
 import io.github.ayfri.kore.features.dialogs.action.ActionsContainer
 import io.github.ayfri.kore.features.dialogs.action.DialogSubmitAction
+import io.github.ayfri.kore.features.dialogs.action.ExitAction
 import io.github.ayfri.kore.features.dialogs.body.DialogBody
 import io.github.ayfri.kore.features.dialogs.control.ControlContainer
 import io.github.ayfri.kore.features.dialogs.control.DialogControl
@@ -19,6 +22,7 @@ data class MultiAction(
 	override var externalTitle: ChatComponents? = null,
 	override var body: InlinableList<DialogBody>? = null,
 	override var canCloseWithEscape: Boolean? = null,
+	var exitAction: Action? = null,
 	var inputs: List<DialogControl>,
 	var actions: List<DialogSubmitAction>? = null,
 	var columns: Int? = null,
@@ -42,6 +46,10 @@ fun Dialogs.multiAction(
 
 fun MultiAction.actions(block: ActionsContainer<DialogSubmitAction>.() -> Unit) {
 	actions = ActionsContainer<DialogSubmitAction>().apply(block).actions
+}
+
+fun MultiAction.exitAction(block: ActionContainer.() -> Unit) {
+	exitAction = ActionContainer().apply(block).action
 }
 
 fun MultiAction.inputs(block: ControlContainer.() -> Unit) {

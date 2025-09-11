@@ -71,7 +71,7 @@ fun DataPack.dialogTests() {
 		dialogs(Tags.Dialog.PAUSE_SCREEN_ADDITIONS)
 		columns = 4
 		buttonWidth = 100
-		onCancel {
+		exitAction {
 			openUrl("https://minecraft.net")
 		}
 	}
@@ -206,7 +206,7 @@ fun DataPack.dialogTests() {
 	dialogBuilder.serverLinks("test_links", "links") {
 		columns = 5
 		buttonWidth = 100
-		onCancel {
+		exitAction {
 			suggestChatMessage("cancelled")
 		}
 	}
