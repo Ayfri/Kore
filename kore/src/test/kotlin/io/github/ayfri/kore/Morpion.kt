@@ -1,6 +1,6 @@
 package io.github.ayfri.kore
 
-import io.github.ayfri.kore.arguments.chatcomponents.click.runCommand
+import io.github.ayfri.kore.arguments.actions.runCommand
 import io.github.ayfri.kore.arguments.chatcomponents.clickEvent
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
