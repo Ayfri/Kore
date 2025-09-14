@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ChangePage(
 	var page: Int,
-) : Action()
+) : Action(), ClickEvent, DialogAction
 
-fun ActionWrapper.changePage(page: Int) = apply { action = ChangePage(page) }
+fun ActionWrapper<*>.changePage(page: Int) = apply { action = ChangePage(page) }

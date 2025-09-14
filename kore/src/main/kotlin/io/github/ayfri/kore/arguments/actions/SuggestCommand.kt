@@ -8,9 +8,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SuggestCommand(
 	var command: String,
-) : Action()
+) : Action(), ClickEvent, DialogAction
 
-fun ActionWrapper.suggestChatMessage(command: String) = apply { action = SuggestCommand(command) }
-fun ActionWrapper.suggestCommand(block: Function.() -> Command) = apply {
+fun ActionWrapper<*>.suggestChatMessage(command: String) = apply { action = SuggestCommand(command) }
+fun ActionWrapper<*>.suggestCommand(block: Function.() -> Command) = apply {
 	action = SuggestCommand("/${emptyFunction().block()}")
 }

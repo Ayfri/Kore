@@ -11,8 +11,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 @SerialName("dynamic/run_command")
 data class DynamicRunCommand(
-	var template: String
-) : DialogAction()
+	var template: String,
+) : Action(), DialogAction
 
 fun DialogActionContainer.dynamicRunCommand(template: String) = apply { action = DynamicRunCommand(template) }
 fun DialogActionContainer.dynamicRunCommand(block: Function.() -> Command) = apply {

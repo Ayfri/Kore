@@ -5,7 +5,7 @@ import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable(with = ClickEvent.Companion.ClickEventSerializer::class)
-sealed class ClickEvent : Action() {
+sealed interface ClickEvent : ActionType {
 	companion object {
 		data object ClickEventSerializer : NamespacedPolymorphicSerializer<ClickEvent>(
 			kClass = ClickEvent::class,
@@ -18,8 +18,8 @@ sealed class ClickEvent : Action() {
 @Serializable(with = ClickEventContainer.Companion.ClickEventContainerSerializer::class)
 data class ClickEventContainer(
 	@Serializable(with = ClickEvent.Companion.ClickEventSerializer::class)
-	override var action: Action? = null
-) : ActionWrapper() {
+	override var action: ClickEvent? = null,
+) : ActionWrapper<ClickEvent>() {
 	companion object {
 		data object ClickEventContainerSerializer : InlineAutoSerializer<ClickEventContainer>(ClickEventContainer::class)
 	}

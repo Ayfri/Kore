@@ -105,7 +105,7 @@ fun ChatComponent.hoverEvent(action: HoverAction = HoverAction.SHOW_TEXT, block:
 	apply { hoverEvent = HoverEvent(action, "".nbt).apply(block) }
 
 fun ChatComponent.clickEvent(block: ClickEventContainer.() -> Unit) =
-	apply { clickEvent = ClickEventContainer().apply(block).action as? ClickEvent }
+	apply { clickEvent = ClickEventContainer().apply(block).action }
 
 fun ChatComponent.hoverEvent(text: String, color: Color? = null, block: ChatComponent.() -> Unit = {}) =
 	apply { hoverEvent = HoverEvent(HoverAction.SHOW_TEXT, textComponent(text, color, block).toNbtTag()) }

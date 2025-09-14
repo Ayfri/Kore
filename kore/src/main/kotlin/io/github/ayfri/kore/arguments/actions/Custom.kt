@@ -9,8 +9,8 @@ import net.benwoodworth.knbt.NbtTag
 data class Custom(
 	var id: String,
 	var payload: NbtTag? = null,
-) : Action()
+) : Action(), ClickEvent, DialogAction
 
-fun ActionWrapper.custom(id: String, payload: NbtTag? = null) = apply { action = Custom(id, payload) }
-fun ActionWrapper.custom(id: String, payload: String? = null) = apply { action = Custom(id, payload?.nbt) }
-fun ActionWrapper.custom(id: String, payload: NbtCompoundBuilder.() -> Unit) = apply { action = Custom(id, nbt(payload)) }
+fun ActionWrapper<*>.custom(id: String, payload: NbtTag? = null) = apply { action = Custom(id, payload) }
+fun ActionWrapper<*>.custom(id: String, payload: String? = null) = apply { action = Custom(id, payload?.nbt) }
+fun ActionWrapper<*>.custom(id: String, payload: NbtCompoundBuilder.() -> Unit) = apply { action = Custom(id, nbt(payload)) }
