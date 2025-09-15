@@ -8,7 +8,6 @@ import io.github.ayfri.kore.features.dialogs.action.AfterAction
 import io.github.ayfri.kore.features.dialogs.action.DialogLabelledAction
 import io.github.ayfri.kore.features.dialogs.action.DialogLabelledActionsContainer
 import io.github.ayfri.kore.features.dialogs.body.DialogBody
-import io.github.ayfri.kore.features.dialogs.control.ControlContainer
 import io.github.ayfri.kore.features.dialogs.control.DialogControl
 import io.github.ayfri.kore.generated.arguments.types.DialogArgument
 import io.github.ayfri.kore.serializers.InlinableList
@@ -21,11 +20,11 @@ data class MultiAction(
 	override var afterAction: AfterAction? = null,
 	override var body: InlinableList<DialogBody>? = null,
 	override var canCloseWithEscape: Boolean? = null,
+	override var inputs: List<DialogControl> = emptyList(),
 	override var pause: Boolean? = null,
 	var actions: List<DialogLabelledAction>? = null,
 	var exitAction: DialogLabelledAction? = null,
 	var columns: Int? = null,
-	var inputs: List<DialogControl>,
 ) : DialogData()
 
 fun Dialogs.multiAction(
@@ -53,7 +52,3 @@ fun MultiAction.exitAction(label: ChatComponents, block: DialogLabelledAction.()
 }
 
 fun MultiAction.exitAction(label: String, block: DialogLabelledAction.() -> Unit) = exitAction(textComponent(label), block)
-
-fun MultiAction.inputs(block: ControlContainer.() -> Unit) {
-	inputs = ControlContainer().apply(block).controls
-}

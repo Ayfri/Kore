@@ -49,6 +49,7 @@ fun DataPack.dialogTests() {
 				"type": "text"
 			},
 			"after_action": "wait_for_response",
+			"inputs": [],
 			"pause": true,
 			"yes": {
 				"action": {
@@ -82,6 +83,7 @@ fun DataPack.dialogTests() {
 		{
 			"type": "minecraft:dialog_list",
 			"title": "list",
+			"inputs": [],
 			"dialogs": "#minecraft:pause_screen_additions",
 			"exit_action": {
 				"action": {
@@ -125,16 +127,6 @@ fun DataPack.dialogTests() {
 		{
 			"type": "minecraft:multi_action",
 			"title": "Multi Action",
-			"actions": [
-				{
-					"action": {
-						"type": "minecraft:run_command",
-						"command": "say Submitted!"
-					},
-					"label": "My Submit"
-				}
-			],
-			"columns": 3,
 			"inputs": [
 				{
 					"type": "minecraft:text",
@@ -160,7 +152,17 @@ fun DataPack.dialogTests() {
 					"step": 1.0,
 					"initial": 1.0
 				}
-			]
+			],
+			"actions": [
+				{
+					"action": {
+						"type": "minecraft:run_command",
+						"command": "say Submitted!"
+					},
+					"label": "My Submit"
+				}
+			],
+			"columns": 3
 		}
 	""".trimIndent()
 
@@ -196,6 +198,7 @@ fun DataPack.dialogTests() {
 					"contents": "yay"
 				}
 			],
+			"inputs": [],
 			"action": {
 				"action": {
 					"type": "minecraft:dynamic/custom",
@@ -226,6 +229,7 @@ fun DataPack.dialogTests() {
 		{
 			"type": "minecraft:server_links",
 			"title": "links",
+			"inputs": [],
 			"button_width": 100,
 			"columns": 5,
 			"exit_action": {

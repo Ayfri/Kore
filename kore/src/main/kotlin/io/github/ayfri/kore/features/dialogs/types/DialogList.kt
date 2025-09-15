@@ -7,6 +7,7 @@ import io.github.ayfri.kore.features.dialogs.Dialogs
 import io.github.ayfri.kore.features.dialogs.action.AfterAction
 import io.github.ayfri.kore.features.dialogs.action.DialogLabelledAction
 import io.github.ayfri.kore.features.dialogs.body.DialogBody
+import io.github.ayfri.kore.features.dialogs.control.DialogControl
 import io.github.ayfri.kore.generated.arguments.DialogOrTagArgument
 import io.github.ayfri.kore.generated.arguments.tagged.DialogTagArgument
 import io.github.ayfri.kore.generated.arguments.types.DialogArgument
@@ -19,6 +20,7 @@ data class DialogList(
 	override var externalTitle: ChatComponents? = null,
 	override var afterAction: AfterAction? = null,
 	override var body: InlinableList<DialogBody>? = null,
+	override var inputs: List<DialogControl> = emptyList(),
 	override var canCloseWithEscape: Boolean? = null,
 	override var pause: Boolean? = null,
 	var dialogs: InlinableList<DialogOrTagArgument>,
