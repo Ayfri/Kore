@@ -12,16 +12,17 @@ import kotlinx.serialization.Serializable
 
 @Serializable(PlaySoundMixer.Companion.PlaySoundSourceSerializer::class)
 enum class PlaySoundMixer {
-	MASTER,
-	MUSIC,
-	RECORD,
-	WEATHER,
+	AMBIENT,
 	BLOCK,
 	HOSTILE,
+	MASTER,
+	MUSIC,
 	NEUTRAL,
 	PLAYER,
-	AMBIENT,
-	VOICE;
+	RECORD,
+	UI,
+	VOICE,
+	WEATHER;
 
 	companion object {
 		data object PlaySoundSourceSerializer : LowercaseSerializer<PlaySoundMixer>(entries)
