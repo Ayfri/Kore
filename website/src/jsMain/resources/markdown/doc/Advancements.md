@@ -135,7 +135,7 @@ You can define rewards for completing the advancement:
 advancement("my_advancement") {
 	rewards {
 		experience = 10
-		function = function("reward_function") {
+		function("reward_function") {
 			say("Congratulations!")
 		}
 		loots(LootTables.Chests.IGLOO_CHEST)
@@ -148,6 +148,38 @@ advancement("my_advancement") {
 - `function`: A function to run when the advancement is completed.
 - `loots`: A list of loot tables to give the player.
 - `recipes`: A list of recipes to unlock for the player.
+
+### Reward function
+
+You can define a function to be executed when the advancement is completed in 3 ways:
+
+1. A generated function with a random name:
+
+```kotlin
+rewards {
+	function {
+		say("Congratulations!")
+	}
+}
+```
+
+2. A new function with a custom name:
+
+```kotlin
+rewards {
+	function("reward_function") {
+		say("Congratulations!")
+	}
+}
+```
+
+3. A referenced function
+
+```kotlin
+rewards {
+	function = myFunction
+}
+```
 
 ## Telemetry
 
@@ -186,7 +218,7 @@ advancement("complex_advancement") {
 
 	rewards {
 		experience = 100
-		function = function("reward") {
+		function("reward") {
 			say("Congratulations on becoming a Master Craftsman!")
 		}
 		loots(LootTables.Chests.IGLOO_CHEST)

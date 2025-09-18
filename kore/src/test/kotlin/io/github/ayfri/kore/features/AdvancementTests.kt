@@ -17,7 +17,6 @@ import io.github.ayfri.kore.features.predicates.conditions.entityProperties
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
 import io.github.ayfri.kore.features.predicates.conditions.timeCheck
 import io.github.ayfri.kore.features.predicates.sub.*
-import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Advancements
@@ -47,7 +46,7 @@ fun DataPack.advancementTests() {
 		requirements("test")
 		rewards {
 			experience = 10
-			function = function("gradient") {
+			function("gradient") {
 				say("Yay !")
 			}
 
