@@ -1,15 +1,14 @@
 package io.github.ayfri.kore.website.components.doc
 
 import androidx.compose.runtime.Composable
-import com.varabyte.kobweb.compose.css.Cursor
-import com.varabyte.kobweb.compose.css.cursor
-import com.varabyte.kobweb.compose.css.translateX
-import com.varabyte.kobweb.compose.css.zIndex
+import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiClose
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.utils.smMax
 import io.github.ayfri.kore.website.utils.transition
 import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.AlignSelf
+import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
 
@@ -18,7 +17,7 @@ fun DocSidebar(revealed: Boolean, onClose: () -> Unit) {
 	Style(DocSidebarStyle)
 
 	Div({
-		classes(DocSidebarStyle.sidebar)
+		classes(DocSidebarStyle.sidebar, "sidebar")
 		if (revealed) classes("reveal")
 	}) {
 		Div({
@@ -39,6 +38,12 @@ fun DocSidebar(revealed: Boolean, onClose: () -> Unit) {
 }
 
 object DocSidebarStyle : StyleSheet() {
+	init {
+		selector("body:has(.sidebar.reveal)") style {
+			overflow(Overflow.Hidden)
+		}
+	}
+
 	val sidebar by style {
         alignSelf(AlignSelf.FlexStart)
         backgroundColor(GlobalStyle.secondaryBackgroundColor)
