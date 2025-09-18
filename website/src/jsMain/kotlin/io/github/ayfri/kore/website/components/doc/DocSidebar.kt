@@ -1,14 +1,15 @@
 package io.github.ayfri.kore.website.components.doc
 
 import androidx.compose.runtime.Composable
-import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.compose.css.Cursor
+import com.varabyte.kobweb.compose.css.cursor
+import com.varabyte.kobweb.compose.css.translateX
+import com.varabyte.kobweb.compose.css.zIndex
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiClose
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.utils.smMax
 import io.github.ayfri.kore.website.utils.transition
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.css.AlignSelf
-import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
 
@@ -46,9 +47,6 @@ object DocSidebarStyle : StyleSheet() {
         display(DisplayStyle.Flex)
         flexDirection(FlexDirection.Column)
         gap(0.75.cssRem)
-		marginBottom(0.5.cssRem)
-        overflowX(Overflow.Hidden)
-        overflowY(Overflow.Visible)
         padding(0.9.cssRem)
         position(Position.Sticky)
         top(5.cssRem)

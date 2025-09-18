@@ -8,6 +8,7 @@ import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.docEntries
 import io.github.ayfri.kore.website.utils.A
 import io.github.ayfri.kore.website.utils.Span
+import io.github.ayfri.kore.website.utils.smMax
 import io.github.ayfri.kore.website.utils.transition
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
@@ -159,8 +160,14 @@ object DocTreeStyle : StyleSheet() {
 		listStyle(ListStyle.None)
 		left(0.px)
 		marginTop(0.px)
+		maxHeight(70.vh)
+		overflowY(Overflow.Auto)
 		padding(0.5.cssRem)
 		position(Position.Sticky)
+
+		smMax(self) {
+			maxHeight(75.vh)
+		}
 	}
 
 	val entry by style {
