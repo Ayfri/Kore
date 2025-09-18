@@ -146,6 +146,7 @@ fun FeatureGrid() {
 			Div({
 				classes(FeatureStyle.linkList)
 			}) {
+				FeatureLink("/docs/getting-started", "Getting Started")
 				FeatureLink("/docs/configuration", "Project Configuration")
 				FeatureLink("/docs/creating-a-datapack", "Your First Datapack")
 			}
@@ -174,6 +175,7 @@ fun FeatureGrid() {
 				classes(FeatureStyle.linkList)
 			}) {
 				FeatureLink("/docs/advancements", "Advancements")
+				FeatureLink("/docs/dialogs", "Dialogs")
 				FeatureLink("/docs/enchantments", "Enchantments")
 				FeatureLink("/docs/item-modifiers", "Item Modifiers")
 				FeatureLink("/docs/loot-tables", "Loot Tables")
@@ -193,6 +195,7 @@ fun FeatureGrid() {
 				FeatureLink("/docs/components", "Components")
 				FeatureLink("/docs/helpers/display-entities", "Display Entities")
 				FeatureLink("/docs/helpers/inventory-manager", "Inventory Manager")
+				FeatureLink("/docs/helpers/known-issues", "Known Issues")
 			}
 		}
 	}

@@ -158,7 +158,7 @@ Then just remove `this.` now that you know the import is correct.
 
 - Your code lives under `src/main/kotlin` (template already set).
 - Generated datapacks: `.generate()` writes a folder; `.generateZip()` writes a zip; `.generateJar()` targets mod loaders.
-- During development, enable pretty JSON in [Configuration](/docs/configuration) to inspect outputs.
+- During development, enable pretty JSON in [Configuration](./configuration) to inspect outputs.
 - Split your code into multiple files to keep things organized.
 
 ## Troubleshooting
@@ -170,29 +170,33 @@ Then just remove `this.` now that you know the import is correct.
 ## What to read next (Docs index)
 
 ### Core guides
-- [Home](/docs/home)
-- [Creating a Datapack](/docs/creating-a-datapack)
-- [Configuration](/docs/configuration)
+
+- [Home](./home)
+- [Creating a Datapack](./creating-a-datapack)
+- [Configuration](./configuration)
 
 ### Features
-- [Functions](/docs/functions)
-- [Predicates](/docs/predicates)
-- [Components](/docs/components)
-- [Chat Components](/docs/chat-components)
-- [Colors](/docs/colors)
-- [Enchantments](/docs/enchantments)
-- [Recipes](/docs/recipes)
-- [Loot Tables](/docs/loot-tables)
-- [Item Modifiers](/docs/item-modifiers)
-- [Advancements](/docs/advancements)
-- [Scoreboards](/docs/scoreboards)
-- [Worldgen](/docs/worldgen)
-- [Test Features \(GameTest\)](/docs/test-features)
+
+- [Functions](./functions)
+- [Predicates](./predicates)
+- [Components](./components)
+- [Chat Components](./chat-components)
+- [Colors](./colors)
+- [Enchantments](./enchantments)
+- [Dialogs](./dialogs)
+- [Recipes](./recipes)
+- [Loot Tables](./loot-tables)
+- [Item Modifiers](./item-modifiers)
+- [Advancements](./advancements)
+- [Scoreboards](./scoreboards)
+- [Worldgen](./worldgen)
+- [Test Features \(GameTest\)](./test-features)
 
 ### Helpers
-- [Display Entities](/docs/helpers/display-entities)
-- [Inventory Manager](/docs/helpers/inventory-manager)
-- [Scheduler](/docs/helpers/scheduler)
+
+- [Display Entities](./helpers/display-entities)
+- [Inventory Manager](./helpers/inventory-manager)
+- [Scheduler](./helpers/scheduler)
 
 ## See also
 
