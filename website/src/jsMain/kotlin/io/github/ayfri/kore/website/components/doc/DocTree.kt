@@ -174,8 +174,8 @@ object DocTreeStyle : StyleSheet() {
 		borderRadius(GlobalStyle.roundingButton)
 		color(GlobalStyle.textColor)
 		display(DisplayStyle.Block)
-		fontSize(1.05.cssRem)
-		padding(0.3.cssRem, 0.4.cssRem)
+		fontSize(1.cssRem)
+		padding(0.2.cssRem, 0.4.cssRem)
 		transition(0.2.s, "color", "background-color")
 		whiteSpace(WhiteSpace.NoWrap)
 	}
