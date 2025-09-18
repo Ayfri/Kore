@@ -8,4 +8,5 @@ data class ShowDialog(
 	var dialog: DialogArgument,
 ) : Action(), ClickEvent, DialogAction
 
+/** Shows a dialog. */
 fun ActionWrapper<*>.showDialog(dialog: DialogArgument) = apply { action = ShowDialog(dialog) }

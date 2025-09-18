@@ -11,6 +11,11 @@ data class Custom(
 	var payload: NbtTag? = null,
 ) : Action(), ClickEvent, DialogAction
 
+/** Sends a custom packet to the dedicated server, not useful for datapacks on vanilla servers. */
 fun ActionWrapper<*>.custom(id: String, payload: NbtTag? = null) = apply { action = Custom(id, payload) }
+
+/** Sends a custom packet to the dedicated server, not useful for datapacks on vanilla servers. */
 fun ActionWrapper<*>.custom(id: String, payload: String? = null) = apply { action = Custom(id, payload?.nbt) }
+
+/** Sends a custom packet to the dedicated server, not useful for datapacks on vanilla servers. */
 fun ActionWrapper<*>.custom(id: String, payload: NbtCompoundBuilder.() -> Unit) = apply { action = Custom(id, nbt(payload)) }

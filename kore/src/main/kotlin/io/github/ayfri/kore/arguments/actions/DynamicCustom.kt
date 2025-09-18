@@ -15,8 +15,19 @@ data class DynamicCustom(
 	var additions: NbtTag? = null,
 ) : Action(), DialogAction
 
+/** Sends a dynamically built custom packet to the dedicated server, not useful for datapacks on vanilla servers,
+ * you can use macros with the same names as the inputs for a custom payload,
+ * undefined macros will just be replaced with an empty string. */
 fun DialogActionContainer.dynamicCustom(id: String, additions: NbtTag? = null) = apply { action = DynamicCustom(id, additions) }
-fun DialogActionContainer.dynamicCustom(id: String, additions: String) = apply { action = DynamicCustom(id, additions?.nbt) }
+
+/** Sends a dynamically built custom packet to the dedicated server, not useful for datapacks on vanilla servers,
+ * you can use macros with the same names as the inputs for a custom payload,
+ * undefined macros will just be replaced with an empty string. */
+fun DialogActionContainer.dynamicCustom(id: String, additions: String) = apply { action = DynamicCustom(id, additions.nbt) }
+
+/** Sends a dynamically built custom packet to the dedicated server, not useful for datapacks on vanilla servers,
+ * you can use macros with the same names as the inputs for a custom payload,
+ * undefined macros will just be replaced with an empty string. */
 fun DialogActionContainer.dynamicCustom(id: String, additions: NbtCompoundBuilder.() -> Unit) = apply {
 	action = DynamicCustom(id, nbt(additions))
 }

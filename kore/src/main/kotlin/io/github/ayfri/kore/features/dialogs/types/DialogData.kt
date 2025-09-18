@@ -42,18 +42,22 @@ sealed class DialogData {
 	}
 }
 
+/** Sets the [DialogData.body] elements of the dialog, describing content between the title and actions or inputs. */
 fun DialogData.bodies(block: BodyContainer.() -> Unit) = apply {
-	this.body = BodyContainer().apply(block).bodies
+	body = BodyContainer().apply(block).bodies
 }
 
+/** Set the [DialogData.externalTitle] of the dialog, which is used as the button text leading to this dialog. */
 fun DialogData.externalTitle(text: String, color: Color? = null, block: PlainTextComponent.() -> Unit = {}) = apply {
 	externalTitle = textComponent(text, color, block)
 }
 
+/** Sets the [DialogData.inputs] elements of the dialog, describing input controls. */
 fun DialogData.inputs(block: ControlContainer.() -> Unit) = apply {
 	inputs = ControlContainer().apply(block).controls
 }
 
+/** Sets the [DialogData.title] of the dialog, which is visible on the dialog screen. */
 fun DialogData.title(text: String, color: Color? = null, block: PlainTextComponent.() -> Unit = {}) = apply {
 	title = textComponent(text, color, block)
 }

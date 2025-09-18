@@ -23,7 +23,7 @@ data class Dialog(
 }
 
 /** The builder for [Dialog]s. **/
-val DataPack.dialogBuilder get() = Dialogs(this)
+val DataPack.dialogBuilder get() = DialogContainer(this)
 
 /**
  * Declare [Dialog] files in this [DataPack].
@@ -32,4 +32,4 @@ val DataPack.dialogBuilder get() = Dialogs(this)
 
  * Docs: [https://minecraft.wiki/w/Dialog](https://minecraft.wiki/w/Dialog)
  */
-fun DataPack.dialogs(block: Dialogs.() -> Unit) = Dialogs(this).apply(block)
+fun DataPack.dialogs(block: DialogContainer.() -> Unit) = DialogContainer(this).apply(block)
