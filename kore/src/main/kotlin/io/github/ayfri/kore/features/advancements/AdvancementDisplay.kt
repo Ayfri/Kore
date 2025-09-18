@@ -13,12 +13,15 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class AdvancementDisplay(
+	/** The icon for the advancement. */
 	var icon: AdvancementIcon,
-	@Serializable
+	/** The title of the advancement. */
 	var title: ChatComponents,
-	@Serializable
+	/** The description of the advancement. */
 	var description: ChatComponents,
+	/** The frame type for the advancement. */
 	var frame: AdvancementFrameType = AdvancementFrameType.TASK,
+	/** The background texture for the advancement. */
 	var background: String? = null,
 	var showToast: Boolean? = null,
 	var announceToChat: Boolean? = null,

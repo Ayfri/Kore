@@ -18,9 +18,13 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class AdvancementReward(
+	/** The amount of experience granted when the advancement is completed. */
 	var experience: Int? = null,
+	/** The function to be called when the advancement is completed. */
 	var function: FunctionArgument? = null,
+	/** The loot table to be used when the advancement is completed. */
 	var loot: List<LootTableArgument>? = null,
+	/** The recipes to be unlocked when the advancement is completed. */
 	var recipes: List<RecipeArgument>? = null,
 )
 
