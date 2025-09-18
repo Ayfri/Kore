@@ -5,14 +5,23 @@ nav-title: Advancements
 description: A guide for using advancements in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, advancements
 date-created: 2024-01-08
-date-modified: 2024-01-08
+date-modified: 2025-18-09
 routeOverride: /docs/advancements
 ---
 
 # Advancements
 
-Advancements in Kore can be created using the `advancement` function. This documentation will show you how to create and customize
-advancements.
+Advancements in Minecraft are a way to gradually guide new players into the game and give them challenges to complete. In Kore, advancements can be created using the
+`advancement` builder.
+
+> **Note:
+** For more detailed information about advancements in Minecraft, see the [Minecraft Wiki - Advancement](https://minecraft.wiki/w/Advancement) page.
+
+Advancements can be completed in any game mode and are obtained and saved per world. They are independent of each other, an advancement can be completed without having completed the advancements "before" it. There are many advancements in vanilla Minecraft across 5 tabs: Minecraft, Nether, The End, Adventure, and Husbandry.
+
+## Advancement Structure
+
+Advancements are stored as JSON files in data packs. For the complete technical specification, see the [Minecraft Wiki - Advancement Definition](https://minecraft.wiki/w/Advancement_definition) page.
 
 ## Basic Usage
 
@@ -34,8 +43,10 @@ dataPack("my_datapack") {
 
 ## Parent Advancements
 
-You can specify a parent advancement for your advancement. This is done by setting the `parent` property to an `Advancement` object or an
-`AdvancementArgument` object. Here's an example:
+You can specify a parent advancement for your advancement. This is done by setting the `parent` property to an
+`Advancement` object or an `AdvancementArgument` object.
+
+Here's an example:
 
 ```kotlin
 advancement("my_advancement") {
@@ -47,7 +58,18 @@ advancement("my_advancement") {
 
 ## Display
 
-The display block allows you to customize how the advancement appears in-game:
+The display block allows you to customize how the advancement appears in-game. When an advancement is completed, a sliding toast notification appears in the top right corner, and a chat message is sent if the
+`announceAdvancements` game rule is enabled.
+
+### Frame Types and Notifications
+
+Different frame types produce different notification behaviors:
+
+- **`TASK`** (Normal): Shows "Advancement Made!" with yellow header text
+- **`GOAL`**: Shows "Goal Reached!" with yellow header text
+- **`CHALLENGE`**: Shows "Challenge Complete!" with pink header text and plays music
+
+> **Note:** Root advancements (the leftmost advancement in each tab) do not cause notifications or chat messages to appear.
 
 ```kotlin
 advancement("my_advancement") {
@@ -191,39 +213,153 @@ advancement("my_advancement") {
 }
 ```
 
-## Complete Example
+## Advancement Tabs and Organization
 
-Here's a complete example combining various features:
+Advancements in Minecraft are organized into 5 tabs, each with a specific theme:
+
+- **Minecraft**: Basic gameplay mechanics and progression (16 advancements)
+- **Nether**: Nether-related challenges and exploration (23 advancements)
+- **The End**: End dimension content and ender dragon (9 advancements)
+- **Adventure**: Combat, exploration, and interaction challenges (46 advancements)
+- **Husbandry**: Farming, breeding, and food-related tasks (30 advancements)
+
+When creating custom advancements, you can organize them into existing tabs by setting a parent advancement from that tab, or create entirely new tabs by making root advancements.
+
+### Creating a Root Advancement (New Tab)
+
+To create a new advancement tab, create an advancement without a parent and ensure it has display properties:
 
 ```kotlin
-advancement("complex_advancement") {
-	display(Items.DIAMOND_SWORD, "Master Craftsman", "Craft a special item") {
-		frame = AdvancementFrameType.CHALLENGE
-		announceToChat = true
+advancement("my_custom_tab") {
+	display(Items.COMPASS, "Custom Adventures", "A new set of challenges") {
+		frame = AdvancementFrameType.TASK
+		background = "minecraft:textures/gui/advancements/backgrounds/stone.png"
 	}
-
-	parent = Advancements.Story.ROOT
 
 	criteria {
-		crafterRecipeCrafted("craft_special", Recipes.SPECIAL_RECIPE) {
-			ingredient(Items.DIAMOND) {
-				components {
-					damage(0)
-				}
-			}
-		}
+		tick("start") // Simple tick trigger to auto-complete
 	}
-
-	requirements("craft_special")
-
-	rewards {
-		experience = 100
-		function("reward") {
-			say("Congratulations on becoming a Master Craftsman!")
-		}
-		loots(LootTables.Chests.IGLOO_CHEST)
-	}
-
-	sendsTelemetryEvent = false
 }
 ```
+
+## Managing Advancements with Commands
+
+Advancements can be granted, revoked, and tested using the
+`/advancement` command. For complete command documentation, see the [Minecraft Wiki - /advancement command](https://minecraft.wiki/w/Commands/advancement).
+
+In Kore, you can use advancement commands within functions in two ways:
+
+### Method 1: Using the `advancement` block
+
+```kotlin
+function("manage_advancements") {
+	advancement {
+		// Grant all advancements to a player
+		grantEverything(self())
+		revokeEverything(self())
+
+		// Grant/revoke specific advancements
+		grant(self(), AdvancementRoute.ONLY, Advancements.Adventure.KILL_A_MOB, "test")
+		revoke(self(), AdvancementRoute.ONLY, Advancements.Adventure.KILL_A_MOB)
+
+		// Simplified grant/revoke (defaults to ONLY route)
+		grant(self(), Advancements.Adventure.KILL_A_MOB)
+		revoke(self(), Advancements.Adventure.KILL_A_MOB)
+	}
+}
+```
+
+### Method 2: Using target-specific `advancement` blocks
+
+```kotlin
+function("manage_player_advancements") {
+	advancement(self()) {
+		// All operations target the specified player
+		grantEverything()
+		revokeEverything()
+
+		// Grant/revoke with specific routes
+		grant(AdvancementRoute.ONLY, Advancements.Adventure.KILL_A_MOB, "test")
+		grant(AdvancementRoute.ONLY, Advancements.Adventure.KILL_A_MOB)
+		
+		// Simplified operations (defaults to ONLY route)
+		revoke(Advancements.Adventure.KILL_A_MOB)
+	}
+}
+```
+
+### Available Routes
+
+Kore supports different advancement routes corresponding to the vanilla command options:
+
+- **`ONLY`**: Grant/revoke only the specified advancement
+- **`FROM`**: Grant/revoke advancement and all its children
+- **`THROUGH`**: Grant/revoke advancement, all parents, and all children
+- **`UNTIL`**: Grant/revoke advancement and all its parents
+
+## Best Practices
+
+### 1. Logical Progression
+
+Structure your advancements to follow a logical progression path, even though they're technically independent:
+
+```kotlin
+// Root advancement for your custom content
+val rootAdvancement = advancement("my_mod_root") {
+	display(Items.BOOK, "Getting Started", "Begin your custom journey") {
+		frame = AdvancementFrameType.TASK
+		background = "minecraft:textures/gui/advancements/backgrounds/adventure.png"
+	}
+	// ...criteria
+}
+
+// Child advancement that builds on the root
+advancement("my_mod_advanced") {
+	parent = rootAdvancement
+	display(Items.DIAMOND, "Advanced Techniques", "Master the advanced features") {
+		frame = AdvancementFrameType.GOAL
+	}
+	// ...criteria
+}
+```
+
+### 2. Meaningful Rewards
+
+Consider giving meaningful rewards for challenging advancements:
+
+```kotlin
+advancement("difficult_challenge") {
+	display(Items.NETHERITE_INGOT, "Ultimate Challenge", "Complete the impossible") {
+		frame = AdvancementFrameType.CHALLENGE
+	}
+
+	rewards {
+		experience = 500
+		function("give_special_items") {
+			give(self(), Items.DIAMOND, 64)
+			effect(self(), Effects.RESISTANCE, 6000, 4)
+		}
+		recipes(Recipes.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
+	}
+	// ...criteria
+}
+```
+
+### 3. Hidden Advancements
+
+Use hidden advancements for surprise discoveries or secret content:
+
+```kotlin
+advancement("secret_discovery") {
+	display(Items.ENDER_EYE, "???", "A mysterious discovery awaits") {
+		frame = AdvancementFrameType.CHALLENGE
+		hidden = true  // Won't show until completed
+	}
+	// ...criteria
+}
+```
+
+## See also
+
+- [Predicates](./predicates)
+- [Triggers](./advancements/triggers)
