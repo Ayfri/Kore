@@ -20,7 +20,7 @@ object TableOfContentsStyle : StyleSheet() {
 		maxHeight(80.vh - 4.cssRem)
 		maxWidth(16.cssRem)
 		overflowY(Overflow.Auto)
-		padding(1.5.cssRem)
+		padding(1.cssRem, 1.5.cssRem)
 		position(Position.Fixed)
 		right(1.cssRem)
 		top(15.vh)
@@ -35,13 +35,13 @@ object TableOfContentsStyle : StyleSheet() {
 	}
 
 	val entry by style {
-		cursor(Cursor.Pointer)
-		padding(0.2.cssRem, 0.px)
 		color(GlobalStyle.textColor)
+		cursor(Cursor.Pointer)
 		listStyle(ListStyle.None)
-		transition(0.2.s, "color")
 		overflow(Overflow.Hidden)
+		padding(0.1.cssRem, 0.px)
 		textOverflow(TextOverflow.Ellipsis)
+		transition(0.2.s, "color")
 		whiteSpace(WhiteSpace.NoWrap)
 		userSelect(UserSelect.None)
 
@@ -86,7 +86,7 @@ fun TableOfContents() {
 					classes(TableOfContentsStyle.entry)
 					title(headingName)
 					style {
-						marginLeft((heading.tagName.last().toString().toInt() - 2) * 1.25.cssRem)
+						marginLeft((heading.tagName.last().toString().toInt() - 2) * 1.cssRem)
 					}
 					onClick {
 						val id = heading.id
