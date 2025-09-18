@@ -2,6 +2,7 @@ package io.github.ayfri.kore.website.components.doc
 
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.compose.css.functions.blur
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiClose
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.utils.smMax
@@ -58,8 +59,9 @@ object DocSidebarStyle : StyleSheet() {
         width(21.cssRem)
 
 		smMax(self) {
-            backgroundColor(rgba(24, 26, 31, 0.92))
-            height(100.vh)
+			backgroundColor(rgba(24, 26, 31, 0.95))
+			backdropFilter(BackdropFilter.list(BackdropFilter.of(blur(4.px))))
+			height(100.vh)
             left(0.px)
             paddingTop(2.cssRem)
             position(Position.Fixed)
