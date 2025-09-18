@@ -294,7 +294,7 @@ tasks.register("fetchGitHubReleases") {
 					val htmlUrl = release["html_url"] as String
 					val url = release["url"] as String
 					val createdAt = release["created_at"] as String
-					val publishedAt = release["published_at"] as String
+					val publishedAt = release["published_at"] ?: return@forEach
 					val body = (release["body"] as? String ?: "").replace("\"\"\"", "\\\"\\\"\\\"").replace("$", "\\$")
 					val isPrerelease = release["prerelease"] as Boolean
 					val assets = (release["assets"] as? List<Map<*, *>>).orEmpty()
