@@ -472,6 +472,36 @@ private fun DataPack.allTriggersTests() {
 			}
 		}
 	""".trimIndent()
+
+	advancement("player_sheared_equipment") {
+		criteria {
+			playerShearedEquipment("player_sheared_equipment") {
+				entity {
+					type(EntityTypes.SHEEP)
+				}
+				item {
+					items = listOf(Items.WHITE_WOOL)
+				}
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"player_sheared_equipment": {
+					"trigger": "minecraft:player_sheared_equipment",
+					"conditions": {
+						"entity": {
+							"type": "minecraft:sheep"
+						},
+						"item": {
+							"items": "minecraft:white_wool"
+						}
+					}
+				}
+			}
+		}
+	"""
 }
 
 private fun DataPack.componentsDisplay() {

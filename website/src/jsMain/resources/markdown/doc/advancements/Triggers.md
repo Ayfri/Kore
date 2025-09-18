@@ -904,6 +904,29 @@ playerKilledEntity("kill_mob") {
 
 ---
 
+### `playerShearedEquipment`
+
+**Description:**  
+Triggers after a player shears equipment off of a mob, such as wolf armor.
+
+**Properties:**
+
+- `entity`: The entity whose equipment was sheared.
+- `item`: The item of equipment that was sheared off.
+
+**Example:**
+
+```kotlin
+playerShearedEquipment("shear_wolf_armor") {
+	entity {
+		type(EntityTypes.WOLF)
+	}
+	item {
+		item(Items.LEATHER)
+	}
+}
+```
+
 ### `recipeCrafted`
 
 **Description:**  
