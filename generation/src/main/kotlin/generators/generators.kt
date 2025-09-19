@@ -11,6 +11,7 @@ suspend fun launchAllSimpleGenerators() {
 	val txtListsListGenerators = listOf(
 		gen("BannerPatterns", "banner_pattern"),
 		gen("CatVariants", "cat_variant"),
+		gen("ChatTypes", "chat_type"),
 		gen("ChickenVariants", "chicken_variant"),
 		gen("CowVariants", "cow_variant"),
 		gen("DamageTypes", "damage_type"),
@@ -38,6 +39,7 @@ suspend fun launchAllSimpleGenerators() {
 		},
 		gen("ConfiguredFeatures", "worldgen/configured_feature"),
 		gen("FlatLevelGeneratorPresets", "worldgen/flat_level_generator_preset"),
+		gen("MultiNoiseBiomeSourceParameterLists", "worldgen/multi_noise_biome_source_parameter_list"),
 		gen("Noises", "worldgen/noise"),
 		gen("NoiseSettings", "worldgen/noise_settings") {
 			argumentClassName = "NoiseSettings"
@@ -46,6 +48,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("ProcessorLists", "worldgen/processor_list"),
 		gen("ConfiguredStructures", "worldgen/structure"),
 		gen("StructureSets", "worldgen/structure_set"),
+		gen("WorldPresets", "worldgen/world_preset")
 	).transformRemoveJSONSuffix()
 
 	val txtListsTreeGenerators = listOf(
