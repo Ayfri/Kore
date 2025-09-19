@@ -9,28 +9,28 @@ import overrides
 
 suspend fun launchAllSimpleGenerators() {
 	val txtListsListGenerators = listOf(
-		gen("BannerPatterns", "banner_patterns"),
-		gen("CatVariants", "cats"),
-		gen("ChickenVariants", "chickens"),
-		gen("CowVariants", "cows"),
-		gen("DamageTypes", "damage_types"),
+		gen("BannerPatterns", "banner_pattern"),
+		gen("CatVariants", "cat_variant"),
+		gen("ChickenVariants", "chicken_variant"),
+		gen("CowVariants", "cow_variant"),
+		gen("DamageTypes", "damage_type"),
 		gen("Dialogs", "dialog"),
-		gen("DimensionTypes", "dimension_types"),
+		gen("DimensionTypes", "dimension_type"),
 		gen("Dimensions", "dimensions"),
-		gen("Enchantments", "enchantments"),
-		gen("FrogVariants", "frogs"),
-		gen("Instruments", "instruments"),
-		gen("JukeboxSongs", "jukebox_songs"),
-		gen("PaintingVariants", "paintings"),
-		gen("PigVariants", "pigs"),
-		gen("Recipes", "recipes"),
+		gen("Enchantments", "enchantment"),
+		gen("FrogVariants", "frog_variant"),
+		gen("Instruments", "instrument"),
+		gen("JukeboxSongs", "jukebox_song"),
+		gen("PaintingVariants", "painting_variant"),
+		gen("PigVariants", "pig_variant"),
+		gen("Recipes", "recipe"),
 		gen("TestEnvironments", "test_environment"),
 		gen("TestInstances", "test_instance"),
-		gen("TrimMaterials", "trim_materials"),
-		gen("TrimPatterns", "trim_patterns"),
+		gen("TrimMaterials", "trim_material"),
+		gen("TrimPatterns", "trim_pattern"),
 		gen("WaypointStyles", "waypoint_style"),
-		gen("WolfSoundVariants", "wolf_sounds"),
-		gen("WolfVariants", "wolfs"),
+		gen("WolfSoundVariants", "wolf_sound_variant"),
+		gen("WolfVariants", "wolf_variant"),
 
 		gen("Biomes", "worldgen/biome"),
 		gen("BiomePresets", "worldgen/multi_noise_biome_source_parameter_list") {
@@ -49,8 +49,8 @@ suspend fun launchAllSimpleGenerators() {
 	).transformRemoveJSONSuffix()
 
 	val txtListsTreeGenerators = listOf(
-		gen("Advancements", "advancements"),
-		gen("LootTables", "loot_tables"),
+		gen("Advancements", "advancement"),
+		gen("LootTables", "loot_table"),
 		gen("Models", "models") {
 			argumentClassName = "Model M"
 		},
@@ -58,7 +58,7 @@ suspend fun launchAllSimpleGenerators() {
 			argumentClassName = "Sound M"
 			transform { it.removeSuffix(".ogg") }
 		},
-		gen("Structures", "structures") {
+		gen("Structures", "structure") {
 			argumentClassName = "worldgen.Structure"
 			transform { it.removeSuffix(".nbt") }
 		},
