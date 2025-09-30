@@ -15,7 +15,7 @@ fun DataPack.paintingVariantTests() {
 
 	paintingVariants.last() assertsIs """
 		{
-			"asset_id": "minecraft:textures/painting/kebab.png",
+			"asset_id": "minecraft:kebab",
 			"height": 16,
 			"width": 16
 		}
@@ -27,7 +27,7 @@ fun DataPack.paintingVariantTests() {
 
 	paintingVariants.last() assertsIs """
 		{
-			"asset_id": "minecraft:textures/painting/aztec.png",
+			"asset_id": "minecraft:aztec",
 			"height": 1,
 			"width": 1
 		}
@@ -42,7 +42,7 @@ fun DataPack.paintingVariantTests() {
 
 	paintingVariants.last() assertsIs """
 		{
-			"asset_id": "minecraft:textures/painting/aztec.png",
+			"asset_id": "minecraft:aztec",
 			"height": 1,
 			"width": 1,
 			"author": "Ayfri",

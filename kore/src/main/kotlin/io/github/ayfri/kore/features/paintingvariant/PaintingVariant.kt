@@ -3,7 +3,8 @@ package io.github.ayfri.kore.features.paintingvariant
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
-import io.github.ayfri.kore.arguments.types.resources.ModelArgument
+import io.github.ayfri.kore.arguments.types.ResourceLocationArgument
+import io.github.ayfri.kore.generated.arguments.types.PaintingAssetArgument
 import io.github.ayfri.kore.generated.arguments.types.PaintingVariantArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -27,7 +28,8 @@ import kotlinx.serialization.Transient
 data class PaintingVariant(
 	@Transient
 	override var fileName: String = "painting_variant",
-	var assetId: ModelArgument,
+	@Serializable(with = ResourceLocationArgument.Companion.ResourceLocationArgumentSimpleSerializer::class)
+	var assetId: PaintingAssetArgument,
 	var height: Int,
 	var width: Int,
 	var author: ChatComponents? = null,
@@ -45,7 +47,7 @@ data class PaintingVariant(
  */
 fun DataPack.paintingVariant(
 	fileName: String = "painting_variant",
-	assetId: ModelArgument,
+	assetId: PaintingAssetArgument,
 	height: Int = 1,
 	width: Int = 1,
 	block: PaintingVariant.() -> Unit = {},

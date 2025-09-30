@@ -501,7 +501,7 @@ private fun DataPack.allTriggersTests() {
 				}
 			}
 		}
-	"""
+	""".trimIndent()
 }
 
 private fun DataPack.componentsDisplay() {
