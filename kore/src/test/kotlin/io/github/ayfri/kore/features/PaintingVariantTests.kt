@@ -4,10 +4,11 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.paintingvariant.paintingVariant
+import io.github.ayfri.kore.generated.Textures
 
 fun DataPack.paintingVariantTests() {
 	paintingVariant(
-		assetId = "minecraft:textures/painting/kebab.png",
+		assetId = Textures.Painting.KEBAB,
 		height = 16,
 		width = 16
 	)
@@ -21,7 +22,7 @@ fun DataPack.paintingVariantTests() {
 	""".trimIndent()
 
 	paintingVariant(
-		assetId = "minecraft:textures/painting/aztec.png",
+		assetId = Textures.Painting.AZTEC
 	)
 
 	paintingVariants.last() assertsIs """
@@ -33,7 +34,7 @@ fun DataPack.paintingVariantTests() {
 	""".trimIndent()
 
 	paintingVariant(
-		assetId = "minecraft:textures/painting/aztec.png",
+		assetId = Textures.Painting.AZTEC,
 	) {
 		author = textComponent("Ayfri")
 		title = textComponent("Aztec")
