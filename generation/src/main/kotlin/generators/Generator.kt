@@ -44,6 +44,11 @@ fun Generator.subInterfacesParents(vararg interfaces: Pair<String, String>) {
 	subInterfacesParents = interfaces.toMap()
 }
 
+fun Generator.tagsParents(vararg interfaces: Pair<String, String>) {
+	tagsParents = interfaces.toMap()
+}
+
+
 fun Generator.transform(transformFunction: (String) -> String) {
 	transform = transformFunction
 }

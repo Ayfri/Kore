@@ -67,7 +67,7 @@ suspend fun launchAllSimpleGenerators() {
 		},
 		gen("Tags", "tags") {
 			argumentClassName = "Tag M"
-			tagsParents = mapOf(
+			tagsParents(
 				"banner_pattern" to "BannerPatternTag",
 				"block" to "BlockTag M",
 				"cat_variant" to "CatVariantTag",
@@ -93,7 +93,10 @@ suspend fun launchAllSimpleGenerators() {
 		gen("Textures", "textures") {
 			argumentClassName = "Model M"
 			transform { it.removeSuffix(".png") }
-			subInterfacesParents("ColorPalettes" to "arguments.types.TrimColorPaletteArgument")
+			subInterfacesParents(
+				"ColorPalettes" to "arguments.types.TrimColorPaletteArgument",
+				"Painting" to "arguments.types.PaintingAssetArgument"
+			)
 		},
 		gen("DensityFunctions", "worldgen/density_function"),
 		gen("TemplatePools", "worldgen/template_pool"),
