@@ -80,7 +80,7 @@ advancement("my_advancement") {
 		title = textComponent("Title")
 		description = textComponent("Description", Color.GRAY)
 		frame = AdvancementFrameType.TASK
-		background = "minecraft:textures/gui/advancements/backgrounds/adventure.png"
+		background = Textures.Gui.Advancements.Backgrounds.ADVENTURE
 		showToast = true
 		announceToChat = true
 		hidden = false
@@ -233,7 +233,7 @@ To create a new advancement tab, create an advancement without a parent and ensu
 advancement("my_custom_tab") {
 	display(Items.COMPASS, "Custom Adventures", "A new set of challenges") {
 		frame = AdvancementFrameType.TASK
-		background = "minecraft:textures/gui/advancements/backgrounds/stone.png"
+		background = Textures.Gui.Advancements.Backgrounds.STONE
 	}
 
 	criteria {
@@ -308,7 +308,7 @@ Structure your advancements to follow a logical progression path, even though th
 val rootAdvancement = advancement("my_mod_root") {
 	display(Items.BOOK, "Getting Started", "Begin your custom journey") {
 		frame = AdvancementFrameType.TASK
-		background = "minecraft:textures/gui/advancements/backgrounds/adventure.png"
+		background = Textures.Gui.Advancements.Backgrounds.ADVENTURE
 	}
 	// ...criteria
 }

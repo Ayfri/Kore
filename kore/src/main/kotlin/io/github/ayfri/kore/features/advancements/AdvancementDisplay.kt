@@ -3,6 +3,7 @@ package io.github.ayfri.kore.features.advancements
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.components.Components
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
+import io.github.ayfri.kore.arguments.types.resources.ModelArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
@@ -22,7 +23,7 @@ data class AdvancementDisplay(
 	/** The frame type for the advancement. */
 	var frame: AdvancementFrameType = AdvancementFrameType.TASK,
 	/** The background texture for the advancement. */
-	var background: String? = null,
+	var background: ModelArgument? = null,
 	var showToast: Boolean? = null,
 	var announceToChat: Boolean? = null,
 	var hidden: Boolean? = null,
