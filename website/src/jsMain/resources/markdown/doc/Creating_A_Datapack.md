@@ -317,6 +317,10 @@ Format: current: 40 other: 50.
 
 It also checks for `supportedFormats` and warns if the other pack is not supported.
 
+## Publishing and Distribution
+
+Once you've generated your datapack, you may want to distribute it to the community. For automated publishing to platforms like Modrinth, CurseForge, and GitHub Releases, see the [GitHub Actions Publishing](./github-actions-publishing) guide.
+
 #### Tags
 
 When merging with other datapacks, Kore will merge the tags `minecraft/tags/function/load.json` and `minecraft/tags/functions/tick.json`.

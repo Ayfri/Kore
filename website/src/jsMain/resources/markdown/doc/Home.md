@@ -41,6 +41,8 @@ fun main() {
 - **[Creating A Datapack](./creating-a-datapack)**: lifecycle, output paths, merging and mod‑loader jars.
 - **[Functions](./functions)**: building functions, tags, generated scopes and command helpers.
 - **[Configuration](./configuration)**: JSON formatting and generation options.
+- **[GitHub Actions Publishing](./github-actions-publishing)
+  **: automate datapack publishing to Modrinth, CurseForge, and GitHub Releases.
 - **[Components](./components)**: item/component builders and custom components.
 - **[Predicates](./predicates)**: reusable conditions used by loot tables, advancements and item modifiers.
 - **[Worldgen](./worldgen)**: biomes, features and dimension examples.
