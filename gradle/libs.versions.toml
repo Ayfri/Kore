@@ -1,7 +1,7 @@
 [versions]
 jetbrains-compose = "1.8.2"
 joml = "1.10.8"
-knbt = "0.11.8"
+knbt = "0.11.9"
 kobweb = "0.23.0"
 kotlin-dotenv = "6.5.1"
 kotlinpoet = "2.2.0"
