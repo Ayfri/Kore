@@ -2,26 +2,8 @@ package io.github.ayfri.kore.features.tags
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.types.resources.tagged.*
-import io.github.ayfri.kore.generated.arguments.tagged.BannerPatternTagArgument
-import io.github.ayfri.kore.generated.arguments.tagged.CatVariantTagArgument
-import io.github.ayfri.kore.generated.arguments.tagged.DamageTypeTagArgument
-import io.github.ayfri.kore.generated.arguments.tagged.EnchantmentTagArgument
-import io.github.ayfri.kore.generated.arguments.tagged.EntityTypeTagArgument
-import io.github.ayfri.kore.generated.arguments.tagged.FluidTagArgument
-import io.github.ayfri.kore.generated.arguments.tagged.FrogVariantTagArgument
-import io.github.ayfri.kore.generated.arguments.tagged.GameEventTagArgument
-import io.github.ayfri.kore.generated.arguments.tagged.InstrumentTagArgument
-import io.github.ayfri.kore.generated.arguments.tagged.PaintingVariantTagArgument
-import io.github.ayfri.kore.generated.arguments.tagged.PigVariantTagArgument
-import io.github.ayfri.kore.generated.arguments.tagged.PointOfInterestTypeTagArgument
-import io.github.ayfri.kore.generated.arguments.tagged.TrimMaterialTagArgument
-import io.github.ayfri.kore.generated.arguments.tagged.TrimPatternTagArgument
-import io.github.ayfri.kore.generated.arguments.tagged.WolfVariantTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.tagged.BiomeTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.tagged.ConfiguredStructureTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.tagged.FlatLevelGeneratorPresetTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.tagged.StructureTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.tagged.WorldPresetTagArgument
+import io.github.ayfri.kore.generated.arguments.tagged.*
+import io.github.ayfri.kore.generated.arguments.worldgen.tagged.*
 
 fun DataPack.bannerPatternTag(
 	fileName: String = "banner_pattern",
@@ -35,7 +17,7 @@ fun DataPack.biomeTag(
 	namespace: String = name,
 	replace: Boolean = false,
 	block: Tag<BiomeTagArgument>.() -> Unit = {},
-) = tag(fileName, "biome", namespace, replace, block)
+) = tag(fileName, "worldgen/biome", namespace, replace, block)
 
 fun DataPack.blockTag(
 	fileName: String = "block",
@@ -51,12 +33,26 @@ fun DataPack.catVariantTag(
 	block: Tag<CatVariantTagArgument>.() -> Unit = {},
 ) = tag(fileName, "cat_variant", namespace, replace, block)
 
+fun DataPack.configuredCarverTag(
+	fileName: String = "configured_carver",
+	namespace: String = name,
+	replace: Boolean = false,
+	block: Tag<ConfiguredCarverTagArgument>.() -> Unit = {},
+) = tag(fileName, "worldgen/configured_carver", namespace, replace, block)
+
+fun DataPack.configuredFeatureTag(
+	fileName: String = "configured_feature",
+	namespace: String = name,
+	replace: Boolean = false,
+	block: Tag<ConfiguredFeatureTagArgument>.() -> Unit = {},
+) = tag(fileName, "worldgen/configured_feature", namespace, replace, block)
+
 fun DataPack.configuredStructureTag(
 	fileName: String = "configured_structure_feature",
 	namespace: String = name,
 	replace: Boolean = false,
 	block: Tag<ConfiguredStructureTagArgument>.() -> Unit = {},
-) = tag(fileName, "configured_structure", namespace, replace, block)
+) = tag(fileName, "worldgen/structure", namespace, replace, block)
 
 fun DataPack.damageTypeTag(
 	fileName: String = "damage_type",
@@ -84,7 +80,42 @@ fun DataPack.flatLevelGeneratorPresetTag(
 	namespace: String = name,
 	replace: Boolean = false,
 	block: Tag<FlatLevelGeneratorPresetTagArgument>.() -> Unit = {},
-) = tag(fileName, "flat_level_generator_preset", namespace, replace, block)
+) = tag(fileName, "worldgen/flat_level_generator_preset", namespace, replace, block)
+
+fun DataPack.noiseTag(
+	fileName: String = "noise",
+	namespace: String = name,
+	replace: Boolean = false,
+	block: Tag<NoiseTagArgument>.() -> Unit = {},
+) = tag(fileName, "worldgen/noise", namespace, replace, block)
+
+fun DataPack.noiseSettingsTag(
+	fileName: String = "noise_settings",
+	namespace: String = name,
+	replace: Boolean = false,
+	block: Tag<NoiseSettingsTagArgument>.() -> Unit = {},
+) = tag(fileName, "worldgen/noise_settings", namespace, replace, block)
+
+fun DataPack.placedFeatureTag(
+	fileName: String = "placed_feature",
+	namespace: String = name,
+	replace: Boolean = false,
+	block: Tag<PlacedFeatureTagArgument>.() -> Unit = {},
+) = tag(fileName, "worldgen/placed_feature", namespace, replace, block)
+
+fun DataPack.processorListTag(
+	fileName: String = "processor_list",
+	namespace: String = name,
+	replace: Boolean = false,
+	block: Tag<ProcessorListTagArgument>.() -> Unit = {},
+) = tag(fileName, "worldgen/processor_list", namespace, replace, block)
+
+fun DataPack.templatePoolTag(
+	fileName: String = "template_pool",
+	namespace: String = name,
+	replace: Boolean = false,
+	block: Tag<TemplatePoolTagArgument>.() -> Unit = {},
+) = tag(fileName, "worldgen/template_pool", namespace, replace, block)
 
 fun DataPack.fluidTag(
 	fileName: String = "fluid",
@@ -147,7 +178,7 @@ fun DataPack.structureTag(
 	namespace: String = name,
 	replace: Boolean = false,
 	block: Tag<StructureTagArgument>.() -> Unit = {},
-) = tag(fileName, "structure", namespace, replace, block)
+) = tag(fileName, "worldgen/structure", namespace, replace, block)
 
 fun DataPack.trimMaterialTag(
 	fileName: String = "trim_material",
@@ -182,4 +213,4 @@ fun DataPack.worldPresetTag(
 	namespace: String = name,
 	replace: Boolean = false,
 	block: Tag<WorldPresetTagArgument>.() -> Unit = {},
-) = tag(fileName, "world_preset", namespace, replace, block)
+) = tag(fileName, "worldgen/world_preset", namespace, replace, block)
