@@ -82,6 +82,26 @@ Now you can access the macros on the `macros` property.
 
 This also allows validating macros that are required when calling the function with an NBT Compound.
 
+Exemple:
+
+```kotlin
+class TeleportMacros : Macros() {
+	val player by "player"
+}
+
+datapack {
+	val teleportToSpawn = function("teleport_to_spawn", ::TeleportMacros) {
+		teleport(player(macros.player), vec3())
+	}
+
+	load {
+		function(teleportToSpawn, arguments = nbt { this["name"] = "jeb_" }) // Will throw an error because function expects "player" macro
+
+		function(teleportToSpawn, arguments = nbt { this["player"] = "jeb_" }) // Works fine
+	}
+}
+```
+
 ## Best Practice
 
 When using macros, you can create a function with arguments that calls the function with the macros:
@@ -105,3 +125,10 @@ Then you can call this function with your argument as a macro:
 ```kotlin
 teleportToSpawn("jeb_")
 ```
+
+## Limitations
+
+- Macros can only be used in functions.
+- Macros aren't variables, they are just text substitutions, you can't do operations on them.
+- Macros are not type-checked.
+- It would be very difficult and long for Kore to allow macros as any argument of commands because of the wide variety of argument types and contexts in Minecraft commands.
