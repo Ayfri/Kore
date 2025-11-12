@@ -4,6 +4,8 @@ import MAIN_GITHUB_URL
 import cacheDir
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.MemberName.Companion.member
 import com.squareup.kotlinpoet.PropertySpec
 import generateFile
 import getFromCacheOrDownloadJson
@@ -41,7 +43,7 @@ fun writeDefaultDatapackVersion(version: Int, sourceUrl: String) = generateFile(
 	addProperty(
 		PropertySpec
 			.builder("DEFAULT_DATAPACK_FORMAT", Int::class)
-			.receiver(ClassName("io.github.ayfri.kore", "DataPack"))
+			.receiver(ClassName("io.github.ayfri.kore", "DataPack").nestedClass("Companion"))
 			.getter(FunSpec.getterBuilder().addStatement("return $version").build())
 			.build()
 	)
