@@ -195,7 +195,7 @@ fun FeatureGrid() {
 				FeatureLink("/docs/components", "Components")
 				FeatureLink("/docs/helpers/display-entities", "Display Entities")
 				FeatureLink("/docs/helpers/inventory-manager", "Inventory Manager")
-				FeatureLink("/docs/helpers/known-issues", "Known Issues")
+				FeatureLink("/docs/known-issues", "Known Issues")
 			}
 		}
 	}
