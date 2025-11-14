@@ -38,8 +38,8 @@ class FunctionWithMacros<out T : Macros>(
 	*/
 	val macros
 		get() = _macros.also {
-		nextLineHasMacro = true
-	}
+			nextLineHasMacro = true
+		}
 }
 
 /**

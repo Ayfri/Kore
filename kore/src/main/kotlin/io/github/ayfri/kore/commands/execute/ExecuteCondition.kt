@@ -12,6 +12,7 @@ import io.github.ayfri.kore.arguments.types.ContainerArgument
 import io.github.ayfri.kore.arguments.types.DataArgument
 import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.ScoreHolderArgument
+import io.github.ayfri.kore.arguments.types.literalName
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
@@ -63,7 +64,7 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 	fun entity(target: EntityArgument) = addArguments(listOf(literal("entity"), ex.targetArg(target)))
 
 	fun items(source: ContainerArgument, slots: ItemSlot, itemPredicate: ItemPredicate) =
-		addArguments(listOf(literal("items"), source, slots, literal(itemPredicate.toString())))
+		addArguments(listOf(literal("items"), literal(source.literalName), source, slots, literal(itemPredicate.toString())))
 
 	fun function(function: FunctionArgument) = addArguments(listOf(literal("function"), function))
 

@@ -159,7 +159,7 @@ fun Function.executeTests() {
 			if data entity @s test
 			if dimension minecraft:the_end
 			if entity $selectorAsString
-			if items ~ ~ ~ player.cursor minecraft:air
+			if items block ~ ~ ~ player.cursor minecraft:air
 			if function ${datapack.name}:test
 			if loaded -2 -2 -2
 			if predicate test
