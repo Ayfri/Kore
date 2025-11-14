@@ -78,9 +78,7 @@ jreleaser {
 		active = org.jreleaser.model.Active.ALWAYS
 		armored = true
 		verify = false
-		// Use default signing mode (MEMORY) which is more reliable in CI.
-		// It requires JRELEASER_GPG_SECRET_KEY and JRELEASER_GPG_PUBLIC_KEY env variables.
-		// JReleaser will automatically look for the JRELEASER_GPG_PASSPHRASE environment variable.
+		mode = org.jreleaser.model.Signing.Mode.COMMAND
 	}
 
 	deploy {
