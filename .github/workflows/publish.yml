@@ -13,6 +13,23 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Validate signing env vars
+        run: |
+          if [ -z "$JRELEASER_GPG_PUBLIC_KEY" ] || [ -z "$JRELEASER_GPG_SECRET_KEY" ]; then
+            echo "Missing public or secret key" && exit 1
+          fi
+          echo "Public key length: ${#JRELEASER_GPG_PUBLIC_KEY}"
+          echo "Secret key length: ${#JRELEASER_GPG_SECRET_KEY}"
+          head -n 1 <<<"$JRELEASER_GPG_PUBLIC_KEY"
+          tail -n 1 <<<"$JRELEASER_GPG_PUBLIC_KEY"
+          head -n 1 <<<"$JRELEASER_GPG_SECRET_KEY"
+          tail -n 1 <<<"$JRELEASER_GPG_SECRET_KEY"
+          echo "Passphrase length: ${#JRELEASER_GPG_PASSPHRASE}"
+        env:
+          JRELEASER_GPG_PUBLIC_KEY: "${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}"
+          JRELEASER_GPG_SECRET_KEY: "${{ secrets.JRELEASER_GPG_SECRET_KEY }}"
+          JRELEASER_GPG_PASSPHRASE: "${{ secrets.JRELEASER_GPG_PASSPHRASE }}"
+
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
