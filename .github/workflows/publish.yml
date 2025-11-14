@@ -13,15 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Check public key env (debug)
-        run: |
-          if [ -z "$JRELEASER_GPG_PUBLIC_KEY" ]; then
-            echo "JRELEASER_GPG_PUBLIC_KEY missing" && exit 1
-          fi
-          echo "Public key length: ${#JRELEASER_GPG_PUBLIC_KEY}"
-        env:
-          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
-
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
