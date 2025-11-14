@@ -76,9 +76,8 @@ jreleaser {
 
 	signing {
 		active = org.jreleaser.model.Active.ALWAYS
-		armored = true
-		verify = false
-		mode = org.jreleaser.model.Signing.Mode.COMMAND
+		// Use Sigstore/cosign instead of GPG (keyless signing)
+		mode = org.jreleaser.model.Signing.Mode.COSIGN
 	}
 
 	deploy {

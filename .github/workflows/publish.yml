@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  id-token: write
   contents: write
 
 jobs:
@@ -13,27 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Import GPG key
-        id: import-gpg
-        uses: crazy-max/ghaction-import-gpg@v6
-        with:
-          gpg_private_key: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
-          passphrase: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
-
-      - name: Prepare GPG env vars for JReleaser
-        env:
-          GPG_FINGERPRINT: ${{ steps.import-gpg.outputs.fingerprint }}
-          JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
-        run: |
-          set -euo pipefail
-          {
-            echo "JRELEASER_GPG_PUBLIC_KEY<<EOF"
-            gpg --batch --yes --armor --export "$GPG_FINGERPRINT"
-            echo "EOF"
-            echo "JRELEASER_GPG_SECRET_KEY<<EOF"
-            gpg --batch --yes --pinentry-mode loopback --passphrase "$JRELEASER_GPG_PASSPHRASE" --armor --export-secret-keys "$GPG_FINGERPRINT"
-            echo "EOF"
-          } >> "$GITHUB_ENV"
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
 
       - name: Set up Java
         uses: actions/setup-java@v5
@@ -52,7 +34,6 @@ jobs:
 
       - name: Publish to Central Portal
         env:
-          JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
           CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
         run: |
