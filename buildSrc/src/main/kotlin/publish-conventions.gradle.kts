@@ -89,6 +89,11 @@ jreleaser {
 					username = providers.environmentVariable("CENTRAL_USERNAME").orNull
 					password = providers.environmentVariable("CENTRAL_PASSWORD").orNull
 					stagingRepository("build/staging-deploy")
+
+					signing {
+						active = org.jreleaser.model.Active.ALWAYS
+						mode = org.jreleaser.model.Signing.Mode.COSIGN
+					}
 				}
 			}
 		}
