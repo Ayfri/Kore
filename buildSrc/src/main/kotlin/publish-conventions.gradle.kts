@@ -76,8 +76,11 @@ jreleaser {
 
 	signing {
 		active = org.jreleaser.model.Active.ALWAYS
-		// Use Sigstore/cosign instead of GPG (keyless signing)
-		mode = org.jreleaser.model.Signing.Mode.COSIGN
+		armor = true
+
+		publicKey = providers.environmentVariable("JRELEASER_GPG_PUBLIC_KEY").orNull
+		secretKey = providers.environmentVariable("JRELEASER_GPG_SECRET_KEY").orNull
+		passphrase = providers.environmentVariable("JRELEASER_GPG_PASSPHRASE").orNull
 	}
 
 	deploy {
@@ -89,11 +92,6 @@ jreleaser {
 					username = providers.environmentVariable("CENTRAL_USERNAME").orNull
 					password = providers.environmentVariable("CENTRAL_PASSWORD").orNull
 					stagingRepository("build/staging-deploy")
-
-					signing {
-						active = org.jreleaser.model.Active.ALWAYS
-						mode = org.jreleaser.model.Signing.Mode.COSIGN
-					}
 				}
 			}
 		}
