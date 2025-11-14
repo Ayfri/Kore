@@ -13,15 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Validate GPG keys from base64
-        run: |
-          PUBLIC_KEY=$(echo -n "${{ secrets.JRELEASER_GPG_PUBLIC_KEY_B64 }}" | base64 -d)
-          SECRET_KEY=$(echo -n "${{ secrets.JRELEASER_GPG_SECRET_KEY_B64 }}" | base64 -d)
-          echo "Public key lines: $(echo "$PUBLIC_KEY" | wc -l)"
-          echo "Secret key lines: $(echo "$SECRET_KEY" | wc -l)"
-          echo "First line: $(echo "$PUBLIC_KEY" | head -n 1)"
-          echo "Last line: $(echo "$PUBLIC_KEY" | tail -n 1)"
-
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
@@ -39,14 +30,12 @@ jobs:
 
       - name: Publish to Central Portal
         env:
-          JRELEASER_GPG_SECRET_KEY_B64: ${{ secrets.JRELEASER_GPG_SECRET_KEY_B64 }}
-          JRELEASER_GPG_PUBLIC_KEY_B64: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY_B64 }}
+          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
+          JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
           CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
         run: |
-          export JRELEASER_GPG_PUBLIC_KEY=$(echo -n "$JRELEASER_GPG_PUBLIC_KEY_B64" | base64 -d)
-          export JRELEASER_GPG_SECRET_KEY=$(echo -n "$JRELEASER_GPG_SECRET_KEY_B64" | base64 -d)
           ./gradlew publishToSonatype --no-configuration-cache --stacktrace
 
       - name: Upload artifact (Main JARs)
