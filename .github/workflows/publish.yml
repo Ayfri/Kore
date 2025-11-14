@@ -37,7 +37,7 @@ jobs:
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
           CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
         run: |
-          ./gradlew publishToSonatype --no-configuration-cache --stacktrace
+          ./gradlew jreleaserDeploy --no-configuration-cache --stacktrace
 
       - name: Upload artifact (Main JARs)
         uses: actions/upload-artifact@v4
