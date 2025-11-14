@@ -76,7 +76,7 @@ jreleaser {
 
 	signing {
 		active = org.jreleaser.model.Active.ALWAYS
-		armor = true
+		armored = true
 
 		publicKey = providers.environmentVariable("JRELEASER_GPG_PUBLIC_KEY").orNull
 		secretKey = providers.environmentVariable("JRELEASER_GPG_SECRET_KEY").orNull
