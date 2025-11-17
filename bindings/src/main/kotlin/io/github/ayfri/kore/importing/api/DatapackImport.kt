@@ -1,0 +1,156 @@
+package io.github.ayfri.kore.bindings.api
+
+import java.net.URL
+import java.nio.file.Path
+import java.nio.file.Paths
+
+
+/**
+ * DSL builder for configuring multiple datapack imports.
+ * Inspired by Gradle plugin syntax.
+ *
+ * Example:
+ * ```kotlin
+ * importDatapacks {
+ *     configuration {
+ *         outputPath("src/main/kotlin")
+ *         packagePrefix("com.example.datapacks")
+ *     }
+ *
+ *     url("my_datapack") {
+ *         packageName("com.example.custom")
+ *     }
+ *
+ *     url("https://example.com/other.zip") {
+ *         remapName("OtherPack")
+ *     }
+ * }
+ * ```
+ */
+class DatapackImportDsl {
+	private val globalConfig = ImportConfiguration()
+	private val datapacks = mutableListOf<Pair<String, DatapackConfiguration>>()
+
+	/**
+	 * Configure global import settings.
+	 */
+	fun configuration(block: ImportConfiguration.() -> Unit) {
+		globalConfig.apply(block)
+	}
+
+	/**
+	 * Add a datapack from CurseForge (future implementation).
+	 */
+	fun curseforge(id: String, block: DatapackConfiguration.() -> Unit = {}) {
+		// TODO: Implement CurseForge download
+		throw NotImplementedError("CurseForge download not yet implemented")
+	}
+
+	/**
+	 * Add a datapack from GitHub (future implementation).
+	 */
+	fun github(id: String, block: DatapackConfiguration.() -> Unit = {}) {
+		// TODO: Implement GitHub download
+		throw NotImplementedError("GitHub download not yet implemented")
+	}
+
+	/**
+	 * Add a datapack from Modrinth (future implementation).
+	 */
+	fun modrinth(id: String, block: DatapackConfiguration.() -> Unit = {}) {
+		// TODO: Implement Modrinth download
+		throw NotImplementedError("Modrinth download not yet implemented")
+	}
+
+	/**
+	 * Add a datapack to import from a URL or local path.
+	 */
+	fun url(source: String, block: DatapackConfiguration.() -> Unit = {}) {
+		val config = DatapackConfiguration().apply(block)
+		datapacks.add(source to config)
+	}
+
+	/**
+	 * Add a datapack to import from an URL or local path.
+	 */
+	fun url(source: URL, block: DatapackConfiguration.() -> Unit = {}) = url(Paths.get(source.toURI()).toString(), block)
+
+	/**
+	 * Add a datapack to import from a local file path.
+	 */
+	fun url(path: Path, block: DatapackConfiguration.() -> Unit = {}) = url(path.toString(), block)
+
+	/**
+	 * Execute the import process for all configured datapacks.
+	 */
+	internal fun execute() = datapacks.map { (source, datapackConfig) ->
+		val importer = DatapackImporter(source)
+		importer.outputPath(globalConfig.outputPath)
+		importer.skipCache = globalConfig.skipCache
+		importer.debug = globalConfig.debug
+
+		// Apply per-datapack overrides
+		if (datapackConfig.packageName != null) {
+			importer.packageNameOverride = datapackConfig.packageName!!
+		}
+		if (datapackConfig.remappedName != null) {
+			importer.remappedNameOverride = datapackConfig.remappedName!!
+		}
+
+		// If no custom package name, use global prefix with datapack name
+		if (datapackConfig.packageName == null) {
+			// Explore to get the actual datapack name
+			val datapack = importer.explore()
+			val baseName = datapack.name.removeSuffix(".zip").replace(".", "-")
+			val normalizedName = baseName.lowercase().replace(Regex("[^a-z0-9]"), "")
+			importer.packageNameOverride = "${globalConfig.packagePrefix}.$normalizedName"
+			// Write the already-explored datapack
+			importer.write(datapack)
+			return@map datapack
+		}
+
+		importer.import()
+	}
+
+	/**
+	 * Explore all configured datapacks without generating code.
+	 */
+	internal fun exploreAll() = datapacks.map { (source, _) ->
+		DatapackImporter(source).explore()
+	}
+}
+
+/**
+ * Main entry point for the DSL-based datapack importing.
+ *
+ * Example:
+ * ```kotlin
+ * importDatapacks {
+ *     configuration {
+ *         generateSingleFile = true
+ *         outputPath("src/main/kotlin")
+ *         packagePrefix("com.example.datapacks")
+ *     }
+ *
+ *     url("my_datapack")
+ *
+ *     url("https://example.com/pack.zip") {
+ *         remapName("CustomPack")
+ *     }
+ * }
+ * ```
+ */
+fun importDatapacks(block: DatapackImportDsl.() -> Unit) = DatapackImportDsl().apply(block).execute()
+
+/**
+ * Explore multiple datapacks without generating code.
+ *
+ * Example:
+ * ```kotlin
+ * val datapacks = exploreDatapacks {
+ *     url("my_datapack")
+ *     url("another_pack")
+ * }
+ * ```
+ */
+fun exploreDatapacks(block: DatapackImportDsl.() -> Unit) = DatapackImportDsl().apply(block).exploreAll()
