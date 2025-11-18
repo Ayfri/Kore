@@ -27,7 +27,10 @@ data class ImportConfiguration(
  * Per-datapack configuration.
  * Can override global configuration for specific datapacks.
  */
-data class DatapackConfiguration(
-	var packageName: String? = null,
-	var remappedName: String? = null,
-)
+class DatapackConfiguration {
+	var packageName: String? = null
+	var remappedName: String? = null
+	var subPath: String? = null
+	var includes: List<String> = emptyList()
+	var excludes: List<String> = emptyList()
+}

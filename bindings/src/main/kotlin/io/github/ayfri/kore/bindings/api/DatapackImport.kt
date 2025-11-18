@@ -47,11 +47,25 @@ class DatapackImportDsl {
 	}
 
 	/**
-	 * Add a datapack from GitHub (future implementation).
+	 * Add a datapack from GitHub.
+	 *
+	 * Patterns:
+	 * - Repository download: `user.repo:tag` (tag can be a release tag, commit, or branch)
+	 * - Release asset: `user.repo:tag:asset-name.zip`
+	 * - Default branch: `user.repo` (no tag specified)
+	 *
+	 * Examples:
+	 * ```
+	 * github("ayfri.my-datapack") // Downloads default branch
+	 * github("ayfri.my-datapack:v1.0.0") // Downloads release tag v1.0.0
+	 * github("ayfri.my-datapack:main") // Downloads main branch
+	 * github("ayfri.my-datapack:abc123") // Downloads specific commit
+	 * github("ayfri.my-datapack:v1.0.0:pack.zip") // Downloads specific asset from release
+	 * ```
 	 */
-	fun github(id: String, block: DatapackConfiguration.() -> Unit = {}) {
-		// TODO: Implement GitHub download
-		throw NotImplementedError("GitHub download not yet implemented")
+	fun github(reference: String, block: DatapackConfiguration.() -> Unit = {}) {
+		val config = DatapackConfiguration().apply(block)
+		datapacks.add("github:$reference" to config)
 	}
 
 	/**
@@ -89,12 +103,21 @@ class DatapackImportDsl {
 		importer.skipCache = globalConfig.skipCache
 		importer.debug = globalConfig.debug
 
-		// Apply per-datapack overrides
+		// Apply per-datapack configuration
 		if (datapackConfig.packageName != null) {
 			importer.packageNameOverride = datapackConfig.packageName!!
 		}
 		if (datapackConfig.remappedName != null) {
 			importer.remappedNameOverride = datapackConfig.remappedName!!
+		}
+		if (datapackConfig.subPath != null) {
+			importer.subPath = datapackConfig.subPath!!
+		}
+		if (datapackConfig.includes.isNotEmpty()) {
+			importer.includes = datapackConfig.includes
+		}
+		if (datapackConfig.excludes.isNotEmpty()) {
+			importer.excludes = datapackConfig.excludes
 		}
 
 		// If no custom package name, use global prefix with datapack name

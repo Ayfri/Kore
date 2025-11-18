@@ -4,8 +4,8 @@ import com.squareup.kotlinpoet.*
 import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.arguments.types.resources.TagArgument
-import io.github.ayfri.kore.bindings.Resource
 import io.github.ayfri.kore.bindings.Function
+import io.github.ayfri.kore.bindings.Resource
 import kotlinx.serialization.Serializable
 
 /**

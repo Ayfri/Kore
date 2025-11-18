@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.bindings
 
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
 
 private val jsonDecoder = Json { ignoreUnknownKeys = true }
 

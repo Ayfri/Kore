@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.bindings
 
-import io.github.ayfri.kore.bindings.generation.camelCase
 import java.nio.file.Path
 import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.io.path.isDirectory

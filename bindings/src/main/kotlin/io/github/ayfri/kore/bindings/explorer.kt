@@ -237,7 +237,7 @@ fun discoverResourceTypes(dataFiles: List<Path>, dataRootString: String): List<S
 		val parts = relativePath.split("/")
 		if (parts.size < 4) continue // Need at least: data, namespace, type, file
 
-		val namespace = parts[1]
+		parts[1]
 		val typeOrCategory = parts[2]
 
 		// Skip special directories

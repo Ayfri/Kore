@@ -163,6 +163,15 @@ importDatapacks {
     url("https://example.com/pack.zip")
 }
 
+// GitHub repository download
+importDatapacks {
+    github("ayfri.my-datapack") // Downloads default branch
+    github("ayfri.my-datapack:v1.0.0") // Downloads release tag
+    github("ayfri.my-datapack:main") // Downloads specific branch
+    github("ayfri.my-datapack:abc123def") // Downloads specific commit
+    github("ayfri.my-datapack:v1.0.0:pack.zip") // Downloads specific release asset
+}
+
 // With configuration
 importDatapacks {
     configuration {
@@ -177,6 +186,10 @@ importDatapacks {
     }
 
     url("another_pack")
+
+    github("user.repo:v1.0.0") {
+        remappedName = "GitHubPack"
+    }
 }
 ```
 
@@ -191,6 +204,74 @@ Global configuration:
 Per-datapack configuration:
 - `packageName: String`: Override package name for this datapack
 - `remappedName: String`: Override the generated Kotlin object name
+- `subPath: String`: Select a subfolder within the downloaded repository (e.g., "datapacks/my-pack")
+- `includes: List<String>`: Include only files matching these glob patterns (e.g., `includes("*.mcfunction", "advancements/**")`)
+- `excludes: List<String>`: Exclude files matching these glob patterns (e.g., `excludes("**/*.bak", "test/**")`)
+
+**GitHub Downloads**
+
+The module supports downloading datapacks directly from GitHub repositories with multiple pattern options:
+
+```kotlin
+importDatapacks {
+    // Repository patterns - no API key required
+    github("user.repo")                      // Default branch
+    github("user.repo:v1.0.0")               // Release tag
+    github("user.repo:main")                 // Specific branch
+    github("user.repo:abc123def")            // Specific commit hash
+    github("user.repo:v1.0.0:pack.zip")      // Specific release asset (ZIP only)
+}
+```
+
+**Pattern Format:** `user.repo:tag:asset-name`
+
+- `user` and `repo` are required (separated by `.`)
+- `tag` is optional - can be a release tag, branch name, or commit hash (defaults to repository's default branch)
+- `asset-name` is optional - only for release assets, must be a `.zip` file
+- When specifying an asset, you must also specify a tag
+
+**Examples:**
+
+```kotlin
+importDatapacks {
+	configuration {
+		outputPath("src/main/kotlin")
+	}
+
+	// Download latest default branch
+	github("ayfri.kore")
+
+	// Download specific release
+	github("ayfri.kore:v1.2.3")
+
+	// Download from specific branch
+	github("username.my-datapack:develop")
+
+	// Download specific commit
+	github("username.datapacks:a1b2c3d")
+
+	// Download release asset
+	github("ayfri.datapacks:v2.0.0:my-pack.zip") {
+		remappedName = "MyDatapack"
+	}
+
+	// Download from subfolder (useful for repos with multiple datapacks)
+	github("pixigeko.minecraft-default-data:1.21.8") {
+		subPath = "data"  // Only imports from the 'data' folder
+	}
+
+	// Selective file importing
+	github("user.mixed-repo:main") {
+		subPath = "datapacks/my-pack"
+		includes("*.mcfunction", "advancements/**")  // Only import functions and advancements
+	}
+
+	// Exclude certain files
+	github("user.repo:v1.0.0") {
+		excludes("**/*.bak", "test/**", "**/README.md")
+	}
+}
+```**Note:** GitHub downloading uses unauthenticated public API requests with a rate limit of 60 requests per hour. No API key is required for basic functionality. URLs are cached locally in `~/.kore/cache/datapacks/` by default.
 
 **Debug Option:**
 

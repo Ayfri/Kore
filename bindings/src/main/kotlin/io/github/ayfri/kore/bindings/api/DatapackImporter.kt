@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.bindings.api
 
 import io.github.ayfri.kore.bindings.*
+import io.github.ayfri.kore.bindings.download.GitHubDownloader
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -10,11 +11,14 @@ import kotlin.io.path.Path
  * Use the `importDatapacks {}` DSL for public API.
  */
 internal class DatapackImporter(val source: String) {
+	var debug: Boolean = false
+	var excludes: List<String> = emptyList()
+	var includes: List<String> = emptyList()
 	var outputDirectory: Path? = null
 	var packageNameOverride: String? = null
 	var remappedNameOverride: String? = null
 	var skipCache: Boolean = false
-	var debug: Boolean = false
+	var subPath: String? = null
 
 	/**
 	 * Sets the output directory for generated Kotlin code.
@@ -30,13 +34,20 @@ internal class DatapackImporter(val source: String) {
 
 	/**
 	 * Resolves the source to a local path and returns the actual filename.
-	 * Downloads the file if it's a URL, or locates it on the local filesystem.
+	 * Downloads the file if it's a URL or GitHub reference, or locates it on the local filesystem.
 	 */
-	private fun resolveSource(): Pair<Path, String> = if (isUrl(source)) {
-		downloadDatapack(source)
-	} else {
-		val path = locateLocalDatapack(source)
-		path to path.fileName.toString()
+	private fun resolveSource(): Pair<Path, String> = when {
+		isGitHub(source) -> {
+			val reference = source.removePrefix("github:")
+			GitHubDownloader.download(reference, skipCache)
+		}
+
+		isUrl(source) -> downloadDatapack(source)
+
+		else -> {
+			val path = locateLocalDatapack(source)
+			path to path.fileName.toString()
+		}
 	}
 
 	/**
@@ -72,6 +83,8 @@ internal class DatapackImporter(val source: String) {
 	}
 
 	private fun downloadDatapack(url: String) = getFromCacheOrDownload(url, skipCache)
+
+	private fun isGitHub(source: String) = source.startsWith("github:")
 
 	private fun isUrl(source: String) = source.startsWith("http://") || source.startsWith("https://")
 
