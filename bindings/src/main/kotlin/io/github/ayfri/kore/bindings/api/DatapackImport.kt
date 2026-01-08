@@ -39,11 +39,11 @@ class DatapackImportDsl {
 	}
 
 	/**
-	 * Add a datapack from CurseForge (future implementation).
+	 * Add a datapack from CurseForge.
 	 */
 	fun curseforge(id: String, block: DatapackConfiguration.() -> Unit = {}) {
-		// TODO: Implement CurseForge download
-		throw NotImplementedError("CurseForge download not yet implemented")
+		val config = DatapackConfiguration().apply(block)
+		datapacks.add("curseforge:$id" to config)
 	}
 
 	/**
@@ -69,11 +69,11 @@ class DatapackImportDsl {
 	}
 
 	/**
-	 * Add a datapack from Modrinth (future implementation).
+	 * Add a datapack from Modrinth.
 	 */
 	fun modrinth(id: String, block: DatapackConfiguration.() -> Unit = {}) {
-		// TODO: Implement Modrinth download
-		throw NotImplementedError("Modrinth download not yet implemented")
+		val config = DatapackConfiguration().apply(block)
+		datapacks.add("modrinth:$id" to config)
 	}
 
 	/**
