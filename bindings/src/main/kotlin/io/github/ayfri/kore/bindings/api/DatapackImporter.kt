@@ -1,8 +1,10 @@
 package io.github.ayfri.kore.bindings.api
 
-import io.github.ayfri.kore.bindings.*
-import io.github.ayfri.kore.bindings.download.GitHubDownloader
-import java.nio.file.Files
+import io.github.ayfri.kore.bindings.Datapack
+import io.github.ayfri.kore.bindings.debugEnabled
+import io.github.ayfri.kore.bindings.download.Downloaders
+import io.github.ayfri.kore.bindings.explore
+import io.github.ayfri.kore.bindings.generateDatapackFile
 import java.nio.file.Path
 import kotlin.io.path.Path
 
@@ -36,19 +38,7 @@ internal class DatapackImporter(val source: String) {
 	 * Resolves the source to a local path and returns the actual filename.
 	 * Downloads the file if it's a URL or GitHub reference, or locates it on the local filesystem.
 	 */
-	private fun resolveSource(): Pair<Path, String> = when {
-		isGitHub(source) -> {
-			val reference = source.removePrefix("github:")
-			GitHubDownloader.download(reference, skipCache)
-		}
-
-		isUrl(source) -> downloadDatapack(source)
-
-		else -> {
-			val path = locateLocalDatapack(source)
-			path to path.fileName.toString()
-		}
-	}
+	private fun resolveSource() = Downloaders.download(source, skipCache)
 
 	/**
 	 * Explores the datapack structure and returns metadata without generating code.
@@ -80,41 +70,5 @@ internal class DatapackImporter(val source: String) {
 	fun write(datapack: Datapack) {
 		val outputPath = outputDirectory ?: Path("src/main/kotlin")
 		generateDatapackFile(datapack, outputPath, packageNameOverride, remappedNameOverride)
-	}
-
-	private fun downloadDatapack(url: String) = getFromCacheOrDownload(url, skipCache)
-
-	private fun isGitHub(source: String) = source.startsWith("github:")
-
-	private fun isUrl(source: String) = source.startsWith("http://") || source.startsWith("https://")
-
-	private fun locateLocalDatapack(source: String): Path {
-		// Try direct path first
-		var path = Path(source)
-		if (Files.exists(path)) return path
-
-		// Try with .zip extension
-		val withZip = Path("$source.zip")
-		if (Files.exists(withZip)) return withZip
-
-		// Try looking in common datapack locations
-		val commonLocations = listOf(
-			Path("./$source"),
-			Path("./$source.zip"),
-		)
-
-		for (location in commonLocations) {
-			if (Files.exists(location)) {
-				println("Found datapack at: $location")
-				return location
-			}
-		}
-
-		throw IllegalArgumentException(
-			"Could not locate datapack '$source'. Tried:\n" +
-			"  - $path\n" +
-			"  - $withZip\n" +
-			commonLocations.joinToString("\n") { "  - $it" }
-		)
 	}
 }

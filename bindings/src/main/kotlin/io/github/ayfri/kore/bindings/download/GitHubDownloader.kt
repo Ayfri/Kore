@@ -1,8 +1,6 @@
 package io.github.ayfri.kore.bindings.download
 
 import io.github.ayfri.kore.bindings.getFromCacheOrDownload
-import java.net.HttpURLConnection
-import java.net.URI
 import java.nio.file.Path
 
 /**
@@ -15,9 +13,21 @@ import java.nio.file.Path
  *
  * No API key required - uses public GitHub APIs with standard rate limiting.
  */
-data object GitHubDownloader {
+data object GitHubDownloader : Downloader {
 	private const val GITHUB_API_BASE = "https://api.github.com"
 	private const val GITHUB_ARCHIVE = "https://github.com"
+
+	override fun match(source: String) = source.startsWith("github:")
+
+	override fun download(reference: String, skipCache: Boolean): Pair<Path, String> {
+		val ref = parseReference(reference.removePrefix("github:"))
+
+		return when {
+			ref.assetName != null -> downloadReleaseAsset(ref, skipCache)
+			ref.tag != null -> downloadArchive(ref, skipCache)
+			else -> downloadDefaultBranch(ref, skipCache)
+		}
+	}
 
 	/**
 	 * Represents a parsed GitHub reference.
@@ -60,30 +70,12 @@ data object GitHubDownloader {
 		val assetName = parts.getOrNull(2)?.ifEmpty { null }
 
 		// Validate asset name if provided
-		require(assetName?.endsWith(".zip") != true) { "Asset name must be a .zip file. Got: '$assetName'" }
-
-		// Ensure tag is provided if asset is specified
-		require(assetName == null && tag != null) { "Tag must be specified when downloading release assets" }
+		if (assetName != null) {
+			require(assetName.endsWith(".zip")) { "Asset name must be a .zip file. Got: '$assetName'" }
+			require(tag != null) { "Tag must be specified when downloading release assets" }
+		}
 
 		return GitHubRef(owner, repo, tag, assetName)
-	}
-
-	/**
-	 * Downloads a GitHub repository or release asset.
-	 * Uses the cache system for storing downloaded files.
-	 *
-	 * @param reference GitHub reference in format: `user.repo:tag:asset-name`
-	 * @param skipCache If true, force redownload
-	 * @return Pair of (local path to file, filename)
-	 */
-	fun download(reference: String, skipCache: Boolean = false): Pair<Path, String> {
-		val ref = parseReference(reference)
-
-		return when {
-			ref.assetName != null -> downloadReleaseAsset(ref, skipCache)
-			ref.tag != null -> downloadArchive(ref, skipCache)
-			else -> downloadDefaultBranch(ref, skipCache)
-		}
 	}
 
 	/**
@@ -155,42 +147,5 @@ data object GitHubDownloader {
 
 		val downloadUrl = "$GITHUB_ARCHIVE/${ref.owner}/${ref.repo}/archive/refs/heads/$defaultBranch.zip"
 		return getFromCacheOrDownload(downloadUrl, skipCache)
-	}
-
-	/**
-	 * Checks if a URL is accessible (returns 200 OK).
-	 */
-	private fun urlExists(url: String) = try {
-		val connection = URI.create(url).toURL().openConnection() as HttpURLConnection
-		connection.requestMethod = "HEAD"
-		connection.connectTimeout = 3000
-		connection.readTimeout = 3000
-		connection.responseCode == 200
-	} catch (e: Exception) {
-		false
-	}
-
-	/**
-	 * Fetches JSON data from a GitHub API endpoint as a raw string.
-	 * Handles common errors gracefully.
-	 */
-	private fun fetchJsonString(url: String): String {
-		return try {
-			val connection = URI.create(url).toURL().openConnection()
-			connection.connectTimeout = 5000
-			connection.readTimeout = 5000
-			connection.connect()
-
-			val responseCode = (connection as HttpURLConnection).responseCode
-			require(responseCode != 404) { "GitHub resource not found: $url (404)" }
-			require(responseCode == 200) { "GitHub API error: $url (HTTP $responseCode)" }
-
-			connection.getInputStream().use { input ->
-				input.bufferedReader().readText()
-			}
-		} catch (e: Exception) {
-			if (e is IllegalArgumentException) throw e
-			throw IllegalArgumentException("Failed to fetch from GitHub API: ${e.message}", e)
-		}
 	}
 }
