@@ -34,12 +34,19 @@ class DatapackImportDsl {
 	/**
 	 * Configure global import settings.
 	 */
-	fun configuration(block: ImportConfiguration.() -> Unit) {
-		globalConfig.apply(block)
-	}
+	fun configuration(block: ImportConfiguration.() -> Unit) = globalConfig.apply(block)
 
 	/**
 	 * Add a datapack from CurseForge.
+	 *
+	 * Patterns:
+	 * - Project ID: `curseforge:123456`
+	 * - Project ID + File ID: `curseforge:123456:789`
+	 * - Slug: `curseforge:my-pack`
+	 * - Slug + File ID: `curseforge:my-pack:789`
+	 * - URL: `curseforge:https://www.curseforge.com/minecraft/data-packs/my-pack`
+	 *
+	 * Requires `CURSEFORGE_API_KEY` environment variable.
 	 */
 	fun curseforge(id: String, block: DatapackConfiguration.() -> Unit = {}) {
 		val config = DatapackConfiguration().apply(block)
@@ -70,6 +77,10 @@ class DatapackImportDsl {
 
 	/**
 	 * Add a datapack from Modrinth.
+	 *
+	 * Patterns:
+	 * - Latest version: `modrinth:slug`
+	 * - Specific version: `modrinth:slug:version`
 	 */
 	fun modrinth(id: String, block: DatapackConfiguration.() -> Unit = {}) {
 		val config = DatapackConfiguration().apply(block)

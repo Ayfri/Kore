@@ -1,5 +1,9 @@
 # Kore Bindings Module
 
+> [!WARNING]
+> This module is **experimental**. APIs and generated output may change without notice.
+> Use with caution and expect breaking changes.
+
 ## Overview
 
 The bindings module imports existing Minecraft datapacks and generates Kotlin code to use them type-safely within your Kore project.
