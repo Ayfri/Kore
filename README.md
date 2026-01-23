@@ -68,6 +68,18 @@ kotlin {
 Then create a `Main.kt` file and start writing your datapacks. See the [documentation](https://kore.ayfri.com/docs/home) for more
 information.
 
+## Modules
+
+- [**Kore (core DSL)**](https://github.com/Ayfri/Kore/tree/main/kore)
+	- The core module with the DSL to create Minecraft datapacks.
+	- Coordinates: `io.github.ayfri.kore:kore:VERSION`
+- [**Bindings (experimental importer)**](https://github.com/Ayfri/Kore/tree/main/bindings)
+	- Imports existing datapacks and generates type-safe Kotlin bindings.
+	- Coordinates: `io.github.ayfri.kore:bindings:VERSION`
+- [**OOP (experimental)**](https://github.com/Ayfri/Kore/tree/main/oop)
+	- An experimental module to write Minecraft datapacks with Object-Oriented Programming concepts.
+	- Coordinates: `io.github.ayfri.kore:oop:VERSION`
+
 ## Example
 
 ```kotlin

@@ -1,6 +1,12 @@
 plugins {
 	kotlin("jvm")
 	kotlin("plugin.serialization")
+	`publish-conventions`
+}
+
+metadata {
+	name = "Kore Bindings"
+	description = "Imports existing Minecraft datapacks and generates type-safe Kotlin bindings."
 }
 
 repositories {
@@ -18,11 +24,11 @@ kotlin {
 
 dependencies {
 	implementation(libs.kotlinpoet)
-	testImplementation(libs.kotlinx.io)
 	implementation(libs.kotlinx.serialization)
 	implementation(project(":kore"))
 
 	testImplementation(libs.kotlin.dotenv)
+	testImplementation(libs.kotlinx.io)
 }
 
 
