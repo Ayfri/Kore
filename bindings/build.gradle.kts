@@ -21,6 +21,8 @@ dependencies {
 	testImplementation(libs.kotlinx.io)
 	implementation(libs.kotlinx.serialization)
 	implementation(project(":kore"))
+
+	testImplementation(libs.kotlin.dotenv)
 }
 
 
