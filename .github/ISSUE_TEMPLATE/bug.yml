@@ -27,6 +27,7 @@ body:
       description: The module this bug applies to.
       multiple: true
       options:
+        - Bindings
         - DSL
         - Generation
         - OOP

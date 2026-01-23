@@ -18,6 +18,7 @@ body:
       description: The module this feature applies to.
       multiple: true
       options:
+        - Bindings
         - DSL
         - Generation
         - OOP
