@@ -2,6 +2,7 @@ rootProject.name = "Kore"
 
 include(":kore")
 include(":oop")
+include(":bindings")
 include(":generation")
 include(":website")
 
