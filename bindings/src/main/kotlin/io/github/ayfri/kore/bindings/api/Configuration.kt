@@ -8,11 +8,11 @@ import kotlin.io.path.Path
  * This will be the default configuration unless overridden per datapack.
  */
 data class ImportConfiguration(
+	var debug: Boolean = false,
+	var generateSingleFile: Boolean = true,
 	var outputPath: Path = Path("build/generated/kore/imported"),
 	var packagePrefix: String = "kore.dependencies",
-	var generateSingleFile: Boolean = true,
 	var skipCache: Boolean = false,
-	var debug: Boolean = false,
 ) {
 	/**
 	 * Sets the output path for generated Kotlin files.
@@ -35,6 +35,14 @@ data class ImportConfiguration(
  */
 class DatapackConfiguration {
 	/**
+	 * Exclude files matching these glob patterns.
+	 */
+	var excludes: List<String> = emptyList()
+	/**
+	 * Include only files matching these glob patterns.
+	 */
+	var includes: List<String> = emptyList()
+	/**
 	 * Override the package name for a specific datapack.
 	 */
 	var packageName: String? = null
@@ -46,12 +54,4 @@ class DatapackConfiguration {
 	 * Select a subfolder within the downloaded datapack.
 	 */
 	var subPath: String? = null
-	/**
-	 * Include only files matching these glob patterns.
-	 */
-	var includes: List<String> = emptyList()
-	/**
-	 * Exclude files matching these glob patterns.
-	 */
-	var excludes: List<String> = emptyList()
 }

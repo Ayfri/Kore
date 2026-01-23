@@ -6,16 +6,16 @@ package io.github.ayfri.kore
 *
 * Docs: https://kore.ayfri.com/docs/configuration
 *
+* @property generateCommentOfGeneratedFunctionCall - Whether to include a comment when an implicit generated function is called
+* @property generatedFunctionsFolder - The folder where the generated functions are stored. Defaults to "generated_scopes".
 * @property prettyPrint - Whether to pretty print generated JSON
 * @property prettyPrintIndent - String used for indentation when pretty printing
-* @property generatedFunctionsFolder - The folder where the generated functions are stored. Defaults to "generated_scopes".
-* @property generateCommentOfGeneratedFunctionCall - Whether to include a comment when an implicit generated function is called
 */
 data class Configuration(
+	var generateCommentOfGeneratedFunctionCall: Boolean = DEFAULT.generateCommentOfGeneratedFunctionCall,
+	var generatedFunctionsFolder: String = DEFAULT.generatedFunctionsFolder,
 	var prettyPrint: Boolean = DEFAULT.prettyPrint,
 	var prettyPrintIndent: String = DEFAULT.prettyPrintIndent,
-	var generatedFunctionsFolder: String = DEFAULT.generatedFunctionsFolder,
-	var generateCommentOfGeneratedFunctionCall: Boolean = DEFAULT.generateCommentOfGeneratedFunctionCall,
 ) {
 	companion object {
 		/** Default configuration instance. */
