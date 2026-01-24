@@ -19,6 +19,11 @@ data class Configuration(
 ) {
 	companion object {
 		/** Default configuration instance. */
-		val DEFAULT = Configuration(false, "", DataPack.DEFAULT_GENERATED_FUNCTIONS_FOLDER, true)
+		val DEFAULT = Configuration(
+			generateCommentOfGeneratedFunctionCall = false,
+			generatedFunctionsFolder = DataPack.DEFAULT_GENERATED_FUNCTIONS_FOLDER,
+			prettyPrint = false,
+			prettyPrintIndent = "\t",
+		)
 	}
 }
