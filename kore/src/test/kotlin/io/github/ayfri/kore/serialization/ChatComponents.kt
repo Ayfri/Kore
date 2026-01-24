@@ -18,8 +18,10 @@ import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.predicates.conditions.matchTool
 import io.github.ayfri.kore.features.predicates.predicate
 import io.github.ayfri.kore.features.predicates.sub.components
+import io.github.ayfri.kore.generated.Atlases
 import io.github.ayfri.kore.generated.Dialogs
 import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.generated.Textures
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.set
 
@@ -91,6 +93,23 @@ fun chatComponentsTests() {
 			"nbt": "test",
 			"source": "storage",
 			"storage": "minecraft:my_storage"
+		}
+	""".trimIndent()
+
+	val objectComponent = objectComponent(Textures.Block.ACACIA_LOG, Atlases.BLOCKS)
+	objectComponent assertsIsJson """
+		{
+			"type": "object",
+			"atlas": "minecraft:blocks",
+			"sprite": "minecraft:block/acacia_log"
+		}
+	""".trimIndent()
+
+	val objectComponentNoAtlas = objectComponent(Textures.Block.ACACIA_LOG)
+	objectComponentNoAtlas assertsIsJson """
+		{
+			"type": "object",
+			"sprite": "minecraft:block/acacia_log"
 		}
 	""".trimIndent()
 
