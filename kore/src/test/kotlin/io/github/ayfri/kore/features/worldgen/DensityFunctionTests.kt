@@ -72,4 +72,36 @@ fun DataPack.densityFunctionTests() {
 			"type": "minecraft:beardifier"
 		}
 	""".trimIndent()
+
+	densityFunction(
+		"find_top_surface",
+		findTopSurface(
+			DensityFunctions.Overworld.BASE_3D_NOISE,
+			DensityFunctions.Nether.BASE_3D_NOISE,
+			lowerBound = 0,
+			cellHeight = 2
+		)
+	)
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:find_top_surface",
+			"density": "minecraft:overworld/base_3d_noise",
+			"upper_bound": "minecraft:nether/base_3d_noise",
+			"lower_bound": 0,
+			"cell_height": 2
+		}
+	""".trimIndent()
+
+	densityFunction(
+		"invert",
+		invert(DensityFunctions.Overworld.BASE_3D_NOISE)
+	)
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:invert",
+			"argument": "minecraft:overworld/base_3d_noise"
+		}
+	""".trimIndent()
 }
