@@ -2,7 +2,6 @@ package io.github.ayfri.kore.website.components.layouts
 
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
-import com.varabyte.kobweb.compose.css.BackdropFilter
 import com.varabyte.kobweb.compose.css.functions.blur
 import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiChevronRight
@@ -334,6 +333,39 @@ object MarkdownLayoutStyle : StyleSheet() {
 			display(DisplayStyle.Flex)
 			flexDirection(FlexDirection.Column)
 			gap(0.25.cssRem)
+		}
+
+		"table" style {
+			borderCollapse(BorderCollapse.Separate)
+			borderRadius(GlobalStyle.roundingButton)
+			border(1.px, LineStyle.Solid, GlobalStyle.tertiaryBackgroundColor)
+			property("border-spacing", "0")
+			marginY(1.cssRem)
+			overflow(Overflow.Hidden)
+			width(100.percent)
+		}
+
+		"thead" style {
+			backgroundColor(GlobalStyle.secondaryBackgroundColor)
+		}
+
+		"th, td" style {
+			borderBottom(1.px, LineStyle.Solid, GlobalStyle.tertiaryBackgroundColor)
+			borderRight(1.px, LineStyle.Solid, GlobalStyle.tertiaryBackgroundColor)
+			padding(0.75.cssRem)
+			textAlign(TextAlign.Left)
+		}
+
+		"th:last-child, td:last-child" style {
+			borderRight(0.px)
+		}
+
+		"tr:last-child td" style {
+			borderBottom(0.px)
+		}
+
+		"tr:nth-child(even)" style {
+			backgroundColor(rgba(255, 255, 255, 0.05))
 		}
 	}
 
