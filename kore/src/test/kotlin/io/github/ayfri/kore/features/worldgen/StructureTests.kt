@@ -54,7 +54,7 @@ fun DataPack.structureTests() {
 		startHeight = constantAbsolute(10)
 		startJigsawName = "minecraft:empty_pool"
 		projectStartToHeightmap = HeightMap.WORLD_SURFACE_WG
-		maxDistanceFromCenter = 80
+		maxDistanceFromCenter(80)
 		useExpansionHack = false
 		poolAliases {
 			directPoolAlias(TemplatePools.Empty, TemplatePools.Empty)
