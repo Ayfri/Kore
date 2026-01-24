@@ -8,6 +8,8 @@ enum class EntityType {
 	ATTACKER,
 	ATTACKING_PLAYER,
 	DIRECT_ATTACKER,
+	INTERACTING_ENTITY,
+	TARGET_ENTITY,
 	THIS;
 
 	companion object {
