@@ -5,10 +5,7 @@ import groovy.json.JsonSlurper
 import kotlinx.html.link
 import kotlinx.html.script
 import kotlinx.html.unsafe
-import org.commonmark.node.Code
-import org.commonmark.node.Emphasis
-import org.commonmark.node.Link
-import org.commonmark.node.Text
+import org.commonmark.node.*
 import java.net.HttpURLConnection
 import java.net.URI
 
@@ -64,7 +61,7 @@ kobweb {
 
 		handlers {
 			img.set { image ->
-				val altText = image.children().filterIsInstance<Text>().map { it.literal.escapeSingleQuotedText() }.joinToString("")
+				val altText = image.children().filterIsInstance<Text>().joinToString("") { it.literal.escapeSingleQuotedText() }
 				childrenOverride = emptyList()
 
 				"""org.jetbrains.compose.web.dom.Img(src="${image.destination}", alt="$altText") {
@@ -80,8 +77,29 @@ kobweb {
 				"""io.github.ayfri.kore.website.components.common.CodeBlock($text, "${code.info.takeIf { it.isNotBlank() }}")"""
 			}
 
+			blockquote.set { blockquote ->
+				val firstChild = blockquote.firstChild
+				if (firstChild is Paragraph) {
+					val firstText = firstChild.firstChild as? Text
+					if (firstText?.literal?.startsWith("[!") == true) {
+						val calloutType = firstText.literal.substringAfter("[!").substringBefore("]").uppercase()
+						val remainingText = firstText.literal.substringAfter("]").trim()
+
+						if (remainingText.isEmpty()) {
+							firstText.unlink()
+						} else {
+							firstText.literal = remainingText
+						}
+
+						return@set "io.github.ayfri.kore.website.components.common.Callout(\"$calloutType\")"
+					}
+				}
+
+				"""org.jetbrains.compose.web.dom.Blockquote"""
+			}
+
 			heading.set { heading ->
-				val id = heading.children().map {
+				val id = heading.children().joinToString("") {
 					val literal = when (it) {
 						is Text -> it.literal
 						is Code -> it.literal
@@ -89,11 +107,11 @@ kobweb {
 						is Emphasis -> (it.firstChild as Text).literal
 						else -> ""
 					}
-					if (literal.isBlank()) return@map ""
+					if (literal.isBlank()) return@joinToString ""
 					literal.lowercase().replace(Regex("[^a-z0-9]+"), "-")
-				}.joinToString("")
+				}
 
-				val content = heading.children().map {
+				val content = heading.children().joinToString("\n") {
 					when (it) {
 						is Text -> "org.jetbrains.compose.web.dom.Text(\"${it.literal.escapeSingleQuotedText()}\")"
 						is Code -> "org.jetbrains.compose.web.dom.Code { org.jetbrains.compose.web.dom.Text(\"${it.literal.escapeTripleQuotedText()}\") }"
@@ -106,7 +124,7 @@ kobweb {
 
 						else -> ""
 					}
-				}.joinToString("\n")
+				}
 
 				childrenOverride = emptyList()
 				val tag = "H${heading.level}"
