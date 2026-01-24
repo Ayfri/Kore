@@ -35,7 +35,7 @@ import io.github.ayfri.kore.generation.quilt.quilt
 import io.github.ayfri.kore.pack.features
 import io.github.ayfri.kore.pack.filter
 import io.github.ayfri.kore.pack.pack
-import io.github.ayfri.kore.pack.supportedFormat
+import io.github.ayfri.kore.pack.packFormat
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.testDataPack
 import kotlinx.io.files.Path
@@ -85,12 +85,16 @@ fun mergeDatapacksTests() {
 
 	val dp3 = generatePack("dp3") {
 		pack {
-			format = 10
+			minFormat = packFormat(10)
+			maxFormat = packFormat(10)
+			packFormat = packFormat(10)
 		}
 	}
 	val dp4 = generatePack("dp4") {
 		pack {
-			format = 11
+			minFormat = packFormat(11)
+			maxFormat = packFormat(11)
+			packFormat = packFormat(11)
 		}
 	}
 
@@ -101,15 +105,17 @@ fun mergeDatapacksTests() {
 
 	val dp5 = generatePack("dp5") {
 		pack {
-			format = 10
-			supportedFormat(10..12)
+			minFormat = packFormat(10)
+			maxFormat = packFormat(12)
+			packFormat = packFormat(10)
 		}
 	}
 
 	val dp6 = generatePack("dp6") {
 		pack {
-			format = 11
-			supportedFormat(11..13)
+			minFormat = packFormat(11)
+			maxFormat = packFormat(13)
+			packFormat = packFormat(11)
 		}
 	}
 
@@ -120,15 +126,17 @@ fun mergeDatapacksTests() {
 
 	val dp7 = generatePack("dp7") {
 		pack {
-			format = 10
-			supportedFormat(10..<12)
+			minFormat = packFormat(10)
+			maxFormat = packFormat(11)
+			packFormat = packFormat(10)
 		}
 	}
 
 	val dp8 = generatePack("dp8") {
 		pack {
-			format = 12
-			supportedFormat(12..13)
+			minFormat = packFormat(12)
+			maxFormat = packFormat(13)
+			packFormat = packFormat(12)
 		}
 	}
 
@@ -156,7 +164,7 @@ fun mergeDatapacksTests() {
 	}
 
 	val dp10 = generatePack("dp10") {
-		predicate("predicate") {
+		predicate() {
 			namespace = "minecraft"
 
 			randomChance(0.5f)
@@ -248,9 +256,10 @@ fun packMCMetaTests() = testDataPack("test") {
 	pretty()
 
 	pack {
-		format = 16
+		minFormat = packFormat(16)
+		maxFormat = packFormat(18)
+		packFormat = packFormat(16)
 		description = textComponent("Test pack", color = Color.AQUA)
-		supportedFormat(16..18)
 	}
 
 	filter {
@@ -263,12 +272,14 @@ fun packMCMetaTests() = testDataPack("test") {
 }.dp.generatePackMCMetaFile() assertsIsJson """
 	{
 		"pack": {
-			"pack_format": 16,
 			"description": {
 				"text": "Test pack",
 				"color": "aqua",
 				"type": "text"
 			},
+			"min_format": 16,
+			"max_format": 18,
+			"pack_format": 16,
 			"supported_formats": {
 				"min_inclusive": 16,
 				"max_inclusive": 18

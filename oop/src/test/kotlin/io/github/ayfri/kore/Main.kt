@@ -12,6 +12,7 @@ import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.items.itemStack
 import io.github.ayfri.kore.items.summon
 import io.github.ayfri.kore.pack.pack
+import io.github.ayfri.kore.pack.packFormat
 import io.github.ayfri.kore.scoreboard.*
 import io.github.ayfri.kore.teams.*
 
@@ -25,7 +26,9 @@ fun main() {
 
 		pack {
 			description = textComponent("This is a test")
-			format = 10
+			minFormat = packFormat(10)
+			maxFormat = packFormat(10)
+			packFormat = packFormat(10)
 		}
 
 		function("main") {

@@ -59,16 +59,41 @@ Configure this metadata using the `pack` block:
 ```kotlin
 dataPack("mydatapack") {
 	pack {
-		format = 15
+		minFormat = packFormat(15)
+		maxFormat = packFormat(20)
 		description = textComponent("My Datapack")
-		supportedFormat(15..20)
 	}
 }
 ```
 
-- `format` - The datapack format version.
+- `minFormat` - The minimum supported pack format version.
+- `maxFormat` - The maximum supported pack format version.
+- `packFormat` - The explicit pack format version (optional).
 - `description` - A text component for the datapack description.
-- `supportedFormats` - The supported format versions.
+- `supportedFormats` - The supported format versions (optional, automatically generated from range if needed).
+
+Kore automatically handles backward compatibility for older game versions. If your
+`minFormat` is below the threshold (82 for DataPacks, 65 for ResourcePacks), Kore will automatically include the legacy
+`pack_format` and `supported_formats` fields in the generated
+`pack.mcmeta` file to ensure compatibility with older versions of Minecraft.
+
+### Targeting Minecraft 1.21.9+
+
+Starting with Minecraft 1.21.9 (25w02a), the
+`pack_format` can be a decimal value to represent snapshots or minor versions. You can set this using `packFormat(Double)`:
+
+```kotlin
+dataPack("my_1.21.9_datapack") {
+	pack {
+		minFormat = packFormat(94)
+		maxFormat = packFormat(94)
+		packFormat = packFormat(94.1)
+		description = textComponent("Targeting 1.21.9")
+	}
+}
+```
+
+Note that `minFormat` and `maxFormat` still only accept integer values (or full format `[major, minor]`).
 
 ## Filters
 
@@ -283,7 +308,7 @@ folder.
 
 #### Checking for compatibility
 
-When merging with other datapacks, Kore will check if the pack format is the same. If it is not, it will print a warning message.
+When merging with other datapacks, Kore will check if the pack format range overlaps. If it does not, it will print a warning message.
 
 Example:
 
@@ -292,14 +317,16 @@ val myDatapack1 = dataPack("my_datapack 1") {
 	// datapack code here
 
 	pack {
-		format = 40
+		minFormat = packFormat(40)
+		maxFormat = packFormat(40)
 	}
 }
 
 val myDatapack2 = dataPack("my_datapack 2") {
 	// datapack code here
 	pack {
-		format = 50
+		minFormat = packFormat(50)
+		maxFormat = packFormat(50)
 	}
 }
 
@@ -311,8 +338,8 @@ myDatapack1.generate {
 This will print out the following message:
 
 ```
-The pack format of the other pack is different from the current one. This may cause issues.
-Format: current: 40 other: 50.
+The pack format range of the other pack is different from the current one. This may cause issues.
+Format range: current: 40..40 other: 50..50.
 ```
 
 It also checks for `supportedFormats` and warns if the other pack is not supported.
