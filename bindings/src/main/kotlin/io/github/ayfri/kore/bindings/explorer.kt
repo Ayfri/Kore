@@ -205,6 +205,7 @@ fun explore(inputPath: String): Datapack {
 			parsedPack
 		} else {
 			warn("[WARNING]: pack.mcmeta not found at root")
+			warn("pack.mcmeta not found at root")
 			null
 		}
 	} catch (e: Exception) {
@@ -283,7 +284,7 @@ fun exploreFunction(rootPath: Path, dataRootString: String, functionFile: Path, 
 		Regex("^${dataPrefix}data/.+?/function/(.+)\\.mcfunction\$").find(functionFile.pathInvariant)?.groupValues?.get(
 			1
 		) ?: run {
-			println("[WARNING] Function file $functionFile doesn't match the expected pattern - skipping")
+			warn("Function file $functionFile doesn't match the expected pattern - skipping")
 			return null
 		}
 	// For namespace extraction, match only up to the first directory after data/
@@ -292,13 +293,13 @@ fun exploreFunction(rootPath: Path, dataRootString: String, functionFile: Path, 
 		Regex("^${dataPrefix}data/([^/\\\\]+)/function/.+\\.mcfunction\$").find(functionFile.pathInvariant)?.let {
 			it.groupValues[1]
 		} ?: run {
-			println("[WARNING] Could not extract namespace from function $functionFile - skipping")
+			warn("Could not extract namespace from function $functionFile - skipping")
 			return null
 		}
 
 	// Validate that namespace doesn't contain invalid characters (should be impossible now with [^/\\\\]+ pattern)
 	if ('/' in namespace || '\\' in namespace) {
-		println("[WARNING] Invalid namespace '$namespace' extracted from $functionFile - skipping")
+		warn("Invalid namespace '$namespace' extracted from $functionFile - skipping")
 		return null
 	}
 
@@ -394,7 +395,8 @@ fun parsePackMcMeta(rootPath: Path, packMcMetaFile: Path, isZip: Boolean): PackM
 	val pack = Pack(format, description, supportedFormats)
 	PackMCMeta(pack)
 } catch (e: Exception) {
-	println("Error parsing pack.mcmeta: ${e.message}")
+	warn("Error parsing pack.mcmeta")
+	e.printStackTrace()
 	null
 }
 
