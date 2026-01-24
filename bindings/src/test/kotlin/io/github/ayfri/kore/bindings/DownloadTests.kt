@@ -72,8 +72,8 @@ private fun runDownloadTest(
 }
 
 fun testGitHubMinecraftDefaultData() = newTest("github-minecraft-default-data") {
-	runDownloadTest("pixigeko.minecraft-default-data:1.21.8", {
-		github("pixigeko.minecraft-default-data:1.21.8")
+	runDownloadTest("pixigeko.minecraft-default-data:${MINECRAFT_VERSION}", {
+		github("pixigeko.minecraft-default-data:${MINECRAFT_VERSION}")
 	}, { datapacks ->
 		println("Explored datapacks: ${datapacks.size}")
 		datapacks.forEach { pack ->
