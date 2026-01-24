@@ -5,15 +5,17 @@ import kotlinx.serialization.Serializable
 
 @Serializable(ItemDisplayModelMode.Companion.ItemDisplayModelModeSerializer::class)
 enum class ItemDisplayModelMode {
-	NONE,
-	THIRDPERSON_LEFTHAND,
-	THIRDPERSON_RIGHTHAND,
 	FIRSTPERSON_LEFTHAND,
 	FIRSTPERSON_RIGHTHAND,
-	HEAD,
-	GUI,
+	FIXED,
 	GROUND,
-	FIXED;
+	GUI,
+	HEAD,
+	NONE,
+	ON_SHELF,
+	THIRDPERSON_LEFTHAND,
+	THIRDPERSON_RIGHTHAND,
+	;
 
 	companion object {
 		data object ItemDisplayModelModeSerializer : LowercaseSerializer<ItemDisplayModelMode>(entries)
