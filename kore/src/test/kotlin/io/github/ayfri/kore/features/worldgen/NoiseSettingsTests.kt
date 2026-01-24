@@ -107,7 +107,7 @@ fun DataPack.noiseSettingsTests() {
 				"erosion": 0.0,
 				"depth": 0.0,
 				"ridges": 0.0,
-				"initial_density_without_jaggedness": 0.0,
+				"preliminary_surface_level": 0.0,
 				"final_density": 0.0,
 				"vein_toggle": 0.0,
 				"vein_ridged": 0.0,

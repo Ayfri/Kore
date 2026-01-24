@@ -20,7 +20,7 @@ import kotlinx.serialization.Serializable
  * @property erosion The density function or double for erosion.
  * @property depth The density function or double for depth.
  * @property ridges The density function or double for ridges.
- * @property initialDensityWithoutJaggedness The density function or double for initial density without jaggedness.
+ * @property preliminarySurfaceLevel The density function or double for preliminary surface level.
  * @property finalDensity The density function or double for final density.
  * @property veinToggle The density function or double for vein toggle.
  * @property veinRidged The density function or double for vein ridged.
@@ -38,7 +38,7 @@ data class NoiseRouter(
 	var erosion: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
 	var depth: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
 	var ridges: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
-	var initialDensityWithoutJaggedness: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
+	var preliminarySurfaceLevel: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
 	var finalDensity: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
 	var veinToggle: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
 	var veinRidged: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
@@ -150,16 +150,16 @@ fun NoiseRouter.ridges(ridges: DensityFunctionArgument) = run { this.ridges = de
 fun NoiseRouter.ridges(ridges: Double) = run { this.ridges = densityFunctionOrDouble(ridges) }
 
 /**
- * Sets the initial density without jaggedness for the NoiseRouter.
+ * Sets the preliminary surface level for the NoiseRouter.
  */
-fun NoiseRouter.initialDensityWithoutJaggedness(initialDensityWithoutJaggedness: DensityFunctionArgument) =
-	run { this.initialDensityWithoutJaggedness = densityFunctionOrDouble(initialDensityWithoutJaggedness) }
+fun NoiseRouter.preliminarySurfaceLevel(preliminarySurfaceLevel: DensityFunctionArgument) =
+	run { this.preliminarySurfaceLevel = densityFunctionOrDouble(preliminarySurfaceLevel) }
 
 /**
- * Sets the initial density without jaggedness value.
+ * Sets the preliminary surface level value.
  */
-fun NoiseRouter.initialDensityWithoutJaggedness(initialDensityWithoutJaggedness: Double) =
-	run { this.initialDensityWithoutJaggedness = densityFunctionOrDouble(initialDensityWithoutJaggedness) }
+fun NoiseRouter.preliminarySurfaceLevel(preliminarySurfaceLevel: Double) =
+	run { this.preliminarySurfaceLevel = densityFunctionOrDouble(preliminarySurfaceLevel) }
 
 /**
  * Sets the final density for the NoiseRouter.
