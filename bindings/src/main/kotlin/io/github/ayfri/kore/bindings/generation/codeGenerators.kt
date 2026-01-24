@@ -2,49 +2,43 @@ package io.github.ayfri.kore.bindings.generation
 
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.asClassName
-import io.github.ayfri.kore.pack.Pack
-import io.github.ayfri.kore.pack.PackMCMeta
+import io.github.ayfri.kore.pack.*
 
 /**
  * Generates the pack property from PackMCMeta.
  * Uses the Pack object directly from Kore.
  */
 fun generatePackProperty(packMeta: PackMCMeta): PropertySpec {
-	val packClassName = Pack::class.asClassName()
+	val packClassName = PackSection::class.asClassName()
+
+	fun packFormatInitializer(format: PackFormat) = when (format) {
+		is PackFormatMajor -> "packFormat(${format.major})"
+		is PackFormatFull -> "packFormat(${format.major}, ${format.minor})"
+		is PackFormatDecimal -> "packFormat(${format.value})"
+	}
+
+	fun supportedFormatsInitializer(sf: SupportedFormats) = when {
+		sf.number != null -> "SupportedFormats(number = ${sf.number})"
+		sf.list != null -> "SupportedFormats(list = listOf(${sf.list!!.joinToString(", ")}))"
+		else -> "SupportedFormats(minInclusive = ${sf.minInclusive}, maxInclusive = ${sf.maxInclusive})"
+	}
 
 	// Build the initializer code
 	val initializerCode = buildString {
-		append("Pack(\n")
-		append("    format = FORMAT,\n")
+		append("PackSection(\n")
 
 		// For description, we'll generate a simple textComponent call
 		// The actual description will be preserved through the Pack object
-		append("    description = textComponent(\"Imported datapack\")")
-
-		// Handle supportedFormats if present
+		append("    description = textComponent(\"Imported datapack\"),\n")
+		append("    minFormat = ${packFormatInitializer(packMeta.pack.minFormat)},\n")
+		append("    maxFormat = ${packFormatInitializer(packMeta.pack.maxFormat)}")
+		packMeta.pack.packFormat?.let { format ->
+			append(",\n")
+			append("    packFormat = ${packFormatInitializer(format)}")
+		}
 		packMeta.pack.supportedFormats?.let { sf ->
 			append(",\n")
-			append("    supportedFormats = ")
-
-			when {
-				sf.number != null -> {
-					append("SupportedFormats(number = ${sf.number})")
-				}
-				sf.list != null && sf.list!!.isNotEmpty() -> {
-					append("SupportedFormats(list = listOf(${sf.list!!.joinToString(", ")}))")
-				}
-				sf.minInclusive != null || sf.maxInclusive != null -> {
-					append("SupportedFormats(")
-					if (sf.minInclusive != null) {
-						append("minInclusive = ${sf.minInclusive}")
-					}
-					if (sf.maxInclusive != null) {
-						if (sf.minInclusive != null) append(", ")
-						append("maxInclusive = ${sf.maxInclusive}")
-					}
-					append(")")
-				}
-			}
+			append("    supportedFormats = ${supportedFormatsInitializer(sf)}")
 		}
 
 		append("\n)")

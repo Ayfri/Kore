@@ -2,10 +2,8 @@ package io.github.ayfri.kore.bindings
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
-import io.github.ayfri.kore.generated.DEFAULT_DATAPACK_FORMAT
-import io.github.ayfri.kore.pack.Pack
-import io.github.ayfri.kore.pack.PackMCMeta
-import io.github.ayfri.kore.pack.SupportedFormats
+import io.github.ayfri.kore.generated.DEFAULT_PACK_FORMAT
+import io.github.ayfri.kore.pack.*
 import kotlinx.serialization.json.*
 import java.io.FileNotFoundException
 import java.nio.file.Files
@@ -204,12 +202,11 @@ fun explore(inputPath: String): Datapack {
 
 			parsedPack
 		} else {
-			warn("[WARNING]: pack.mcmeta not found at root")
 			warn("pack.mcmeta not found at root")
 			null
 		}
 	} catch (e: Exception) {
-		warn("[WARNING]: Could not parse pack.mcmeta: ${e.message}")
+		warn("Could not parse pack.mcmeta: ${e.message}")
 		null
 	}
 
@@ -367,7 +364,6 @@ fun parsePackMcMeta(rootPath: Path, packMcMetaFile: Path, isZip: Boolean): PackM
 	val json = jsonDecoder.parseToJsonElement(content).jsonObject
 	val packObj = json["pack"]?.jsonObject ?: return null
 
-	val format = packObj["pack_format"]?.jsonPrimitive?.intOrNull ?: return null
 	val description = packObj["description"]?.let { desc ->
 		// Parse description as plain text for simplicity
 		when (desc) {
@@ -376,24 +372,27 @@ fun parsePackMcMeta(rootPath: Path, packMcMetaFile: Path, isZip: Boolean): PackM
 		}
 	} ?: textComponent("Imported datapack")
 
-	val supportedFormats = packObj["supported_formats"]?.let { sf ->
-		when (sf) {
-			is JsonPrimitive -> {
-				sf.intOrNull?.let { SupportedFormats(number = it) }
-			}
-			is JsonArray -> {
-				SupportedFormats(list = sf.map { it.jsonPrimitive.int })
-			}
-			is JsonObject -> {
-				val minInclusive = sf["min_inclusive"]?.jsonPrimitive?.intOrNull
-				val maxInclusive = sf["max_inclusive"]?.jsonPrimitive?.intOrNull
-				SupportedFormats(minInclusive = minInclusive, maxInclusive = maxInclusive)
-			}
-		}
+	val minFormat = packObj["min_format"]?.let { jsonDecoder.decodeFromJsonElement<PackFormat>(it) } ?: return null
+	val maxFormat = packObj["max_format"]?.let { jsonDecoder.decodeFromJsonElement<PackFormat>(it) } ?: return null
+	val packFormat = packObj["pack_format"]?.let { jsonDecoder.decodeFromJsonElement<PackFormat>(it) }
+	val supportedFormats = packObj["supported_formats"]?.let { jsonDecoder.decodeFromJsonElement<SupportedFormats>(it) }
+
+	val overlays = json["overlays"]?.jsonObject?.let { overlaysObj ->
+		val entries = overlaysObj["entries"]?.jsonArray?.mapNotNull { entry ->
+			val entryObj = entry.jsonObject
+			val directory = entryObj["directory"]?.jsonPrimitive?.content ?: return@mapNotNull null
+			val entryMin =
+				entryObj["min_format"]?.let { jsonDecoder.decodeFromJsonElement<PackFormat>(it) } ?: return@mapNotNull null
+			val entryMax =
+				entryObj["max_format"]?.let { jsonDecoder.decodeFromJsonElement<PackFormat>(it) } ?: return@mapNotNull null
+			val entryFormats = entryObj["formats"]?.let { jsonDecoder.decodeFromJsonElement<SupportedFormats>(it) }
+			PackOverlayEntry(directory, entryMin, entryMax, entryFormats)
+		} ?: emptyList()
+		entries.takeIf { it.isNotEmpty() }?.let { PackOverlays(it) }
 	}
 
-	val pack = Pack(format, description, supportedFormats)
-	PackMCMeta(pack)
+	val pack = PackSection(description, minFormat, maxFormat, packFormat, supportedFormats)
+	PackMCMeta(pack, overlays)
 } catch (e: Exception) {
 	warn("Error parsing pack.mcmeta")
 	e.printStackTrace()

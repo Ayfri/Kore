@@ -79,19 +79,8 @@ fun generateDatapackFile(datapack: Datapack, outputDir: Path, packageNameOverrid
 
 			// Add pack metadata
 			datapack.pack?.let { packMeta ->
-				addImport("io.github.ayfri.kore.pack", "Pack")
+				addImport("io.github.ayfri.kore.pack", "PackSection", "packFormat")
 				addImport("io.github.ayfri.kore.arguments.chatcomponents", "textComponent")
-
-				if (packMeta.pack.supportedFormats != null) {
-					addImport("io.github.ayfri.kore.pack", "SupportedFormats")
-				}
-
-				dataObject.addProperty(
-					PropertySpec.builder("FORMAT", Int::class)
-						.addModifiers(KModifier.CONST)
-						.initializer("%L", packMeta.pack.format)
-						.build()
-				)
 
 				dataObject.addProperty(generatePackProperty(packMeta))
 			}
