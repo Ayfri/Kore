@@ -34,6 +34,7 @@ suspend fun downloadRegistriesList(): Map<String, Registry> {
 	val json = jsonDecoder.decodeFromJsonElement<Map<String, Map<String, Registry>>>(registriesList)
 
 	val additionalTypes = mapOf(
+		"minecraft:atlas" to Registry(elements = false, stable = true, tags = false),
 		"minecraft:attribute_modifier" to Registry(elements = false, stable = true, tags = false),
 		"minecraft:consume_cooldown_group" to Registry(elements = false, stable = true, tags = false),
 		"minecraft:painting_asset" to Registry(elements = false, stable = true, tags = false),

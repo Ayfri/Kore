@@ -9,6 +9,9 @@ import overrides
 
 suspend fun launchAllSimpleGenerators() {
 	val txtListsListGenerators = listOf(
+		gen("Atlases", "atlases") {
+			argumentClassName = "Atlas"
+		},
 		gen("BannerPatterns", "banner_pattern"),
 		gen("CatVariants", "cat_variant"),
 		gen("ChatTypes", "chat_type"),
