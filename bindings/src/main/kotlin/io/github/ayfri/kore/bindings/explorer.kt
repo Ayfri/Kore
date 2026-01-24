@@ -404,27 +404,17 @@ fun parsePackMcMeta(rootPath: Path, packMcMetaFile: Path, isZip: Boolean): PackM
  * Uses the same logic as DataPack.isCompatibleWith().
  */
 fun checkPackCompatibility(importedPack: PackMCMeta): Boolean {
-	val currentFormat = DataPack.DEFAULT_DATAPACK_FORMAT
+	val currentPack = PackSection(
+		description = textComponent("Current pack"),
+		minFormat = DataPack.DEFAULT_PACK_FORMAT,
+		maxFormat = DataPack.DEFAULT_PACK_FORMAT,
+	)
 
-	if (importedPack.pack.format != currentFormat) {
-		val packFormatPrint = "Format: current: $currentFormat imported: ${importedPack.pack.format}."
+	if (importedPack.pack.isCompatibleWith(currentPack)) return true
 
-		if (importedPack.pack.supportedFormats != null) {
-			// Check if the current format is in the supported formats range
-			if (importedPack.pack.supportedFormats!!.isInRange(currentFormat)) {
-				return true
-			}
-
-			println("[WARNING]: The pack format of the imported datapack is different from the current one and not in supported range. This may cause issues.")
-			println("[WARNING]: $packFormatPrint")
-			println("[WARNING]: Supported Formats: ${importedPack.pack.supportedFormats}.")
-			return false
-		}
-
-		println("[WARNING]: The pack format of the imported datapack is different from the current one. This may cause issues.")
-		println("[WARNING]: $packFormatPrint")
-		return false
-	}
-
-	return true
+	val packFormatPrint =
+		"Format range: current: ${currentPack.minFormat.asFormatString()}..${currentPack.maxFormat.asFormatString()} imported: ${importedPack.pack.minFormat.asFormatString()}..${importedPack.pack.maxFormat.asFormatString()}."
+	warn("The pack format range of the imported datapack is different from the current one. This may cause issues.")
+	warn(packFormatPrint)
+	return false
 }

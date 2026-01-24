@@ -186,26 +186,14 @@ class DataPack(val name: String) {
 		datapackGenerator.generate()
 	}
 
-	/** Checks if the datapack is compatible with the other pack by comparing the pack format. */
+	/** Checks if the datapack is compatible with the other pack by comparing pack format ranges. */
 	fun isCompatibleWith(otherPack: PackMCMeta): Boolean {
-		if (otherPack.pack.format != pack.format) {
-			val packFormatPrint = "Format: current: ${pack.format} other: ${otherPack.pack.format}."
-			if (otherPack.pack.supportedFormats != null && pack.supportedFormats != null) {
-				if (otherPack.pack.supportedFormats!!.isCompatibleWith(pack.supportedFormats!!)) {
-					return true
-				}
+		if (pack.isCompatibleWith(otherPack.pack)) return true
 
-				warn("The pack format of the other pack is different from the current one and the supported formats are different. This may cause issues.")
-				warn(packFormatPrint)
-				warn("Supported Formats: current: ${pack.supportedFormats} other: ${otherPack.pack.supportedFormats}.")
-				return false
-			}
-
-			warn("The pack format of the other pack is different from the current one. This may cause issues.")
-			warn(packFormatPrint)
-			return false
-		}
-		return true
+		val packFormatPrint = "Format range: current: ${pack.formatRangeString()} other: ${otherPack.pack.formatRangeString()}."
+		warn("The pack format range of the other pack is different from the current one. This may cause issues.")
+		warn(packFormatPrint)
+		return false
 	}
 
 	@OptIn(ExperimentalSerializationApi::class)
