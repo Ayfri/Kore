@@ -22,7 +22,7 @@ data class Jigsaw(
 	var startHeight: HeightProvider = constantAbsolute(0),
 	var startJigsawName: String? = null,
 	var projectStartToHeightmap: HeightMap? = null,
-	var maxDistanceFromCenter: MaxDistanceFromCenter = UniformMaxDistanceFromCenter(80),
+	var maxDistanceFromCenter: MaxDistanceFromCenter = MaxDistanceFromCenter(80),
 	var useExpansionHack: Boolean = false,
 	var poolAliases: List<PoolAlias>? = null,
 	var dimensionPadding: DimensionPadding? = null,
@@ -68,9 +68,9 @@ fun Jigsaw.dimensionPadding(top: Int, bottom: Int) {
 }
 
 fun Jigsaw.maxDistanceFromCenter(value: Int) {
-	maxDistanceFromCenter = UniformMaxDistanceFromCenter(value)
+	maxDistanceFromCenter = MaxDistanceFromCenter(value)
 }
 
 fun Jigsaw.maxDistanceFromCenter(horizontal: Int, vertical: Int? = null) {
-	maxDistanceFromCenter = AxisMaxDistanceFromCenter(horizontal, vertical)
+	maxDistanceFromCenter = MaxDistanceFromCenter(horizontal, vertical)
 }
