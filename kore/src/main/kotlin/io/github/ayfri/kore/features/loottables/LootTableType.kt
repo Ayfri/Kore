@@ -11,24 +11,27 @@ import kotlinx.serialization.Serializable
  */
 @Serializable(with = LootTableType.Companion.LootTableTypeSerializer::class)
 enum class LootTableType {
-	EMPTY,
-	CHEST,
-	COMMAND,
-	SELECTOR,
-	FISHING,
-	ENTITY,
-	EQUIPMENT,
-	ARCHEOLOGY,
-	GIFT,
-	BARTER,
-	VAULT,
-	ADVANCEMENT_REWARD,
 	ADVANCEMENT_ENTITY,
 	ADVANCEMENT_LOCATION,
-	BLOCK_USE,
-	GENERIC,
+	ADVANCEMENT_REWARD,
+	ARCHEOLOGY,
+	BARTER,
 	BLOCK,
-	SHEARING;
+	BLOCK_INTERACT,
+	BLOCK_USE,
+	CHEST,
+	COMMAND,
+	EMPTY,
+	ENTITY,
+	ENTITY_INTERACT,
+	EQUIPMENT,
+	FISHING,
+	GENERIC,
+	GIFT,
+	SELECTOR,
+	SHEARING,
+	VAULT,
+	;
 
 	companion object {
 		data object LootTableTypeSerializer : LowercaseSerializer<LootTableType>(entries)
