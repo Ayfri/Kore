@@ -23,7 +23,7 @@ If you are working in a multi-module setup:
 
 ```kotlin
 dependencies {
-	implementation(project(":bindings"))
+	implementation("io.github.ayfri.kore:bindings:<VERSION>")
 }
 ```
 
