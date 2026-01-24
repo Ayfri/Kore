@@ -190,6 +190,7 @@ Then just remove `this.` now that you know the import is correct.
 - [Advancements](./advancements)
 - [Scoreboards](./scoreboards)
 - [Worldgen](./worldgen)
+- [Bindings](./bindings)
 - [Test Features \(GameTest\)](./test-features)
 
 ### Helpers

@@ -23,6 +23,8 @@ function("my_function") {
 
 Then in game, call the function with `/function my_datapack:my_function`.
 
+To call functions from other datapacks, see [Bindings](./bindings).
+
 The `function` builder returns a `FunctionArgument` object that you can reuse to call the function from other functions:
 
 ```kotlin

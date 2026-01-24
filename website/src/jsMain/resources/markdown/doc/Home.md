@@ -41,6 +41,7 @@ fun main() {
 - **[Creating A Datapack](./creating-a-datapack)**: lifecycle, output paths, merging and mod‑loader jars.
 - **[Functions](./functions)**: building functions, tags, generated scopes and command helpers.
 - **[Configuration](./configuration)**: JSON formatting and generation options.
+- **[Bindings](./bindings)**: Import existing datapacks and generate Kotlin bindings (experimental).
 - **[GitHub Actions Publishing](./github-actions-publishing)
   **: automate datapack publishing to Modrinth, CurseForge, and GitHub Releases.
 - **[Components](./components)**: item/component builders and custom components.
