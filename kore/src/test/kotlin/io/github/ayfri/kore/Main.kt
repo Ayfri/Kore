@@ -4,6 +4,7 @@ import io.github.ayfri.kore.arguments.argumentsTests
 import io.github.ayfri.kore.commands.runUnitTests
 import io.github.ayfri.kore.features.featuresTests
 import io.github.ayfri.kore.helpers.helpersTests
+import io.github.ayfri.kore.pack.packFormatTests
 import io.github.ayfri.kore.serialization.chatComponentsTests
 import io.github.ayfri.kore.serialization.datapackTests
 import io.github.ayfri.kore.serialization.selectorTests
@@ -29,6 +30,7 @@ fun main() {
 	featuresTests()
 	functionsTests()
 	helpersTests()
+	packFormatTests()
 	selectorTests()
 	serializersTests()
 	runUnitTests()
