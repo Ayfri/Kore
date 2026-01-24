@@ -8,8 +8,7 @@ import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiChevronRight
 import com.varabyte.kobwebx.markdown.markdown
 import io.github.ayfri.kore.website.GlobalStyle
-import io.github.ayfri.kore.website.components.common.Meta
-import io.github.ayfri.kore.website.components.common.setDescription
+import io.github.ayfri.kore.website.components.common.*
 import io.github.ayfri.kore.website.components.doc.*
 import io.github.ayfri.kore.website.utils.*
 import kotlinx.browser.window
@@ -19,6 +18,7 @@ import org.jetbrains.compose.web.dom.*
 
 @Composable
 fun MarkdownLayout(content: @Composable () -> Unit) {
+	Style(CalloutStyle)
 	Style(MarkdownLayoutStyle)
 
 	LaunchedEffect(Unit) {
