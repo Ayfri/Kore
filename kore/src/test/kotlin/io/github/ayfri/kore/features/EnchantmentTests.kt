@@ -599,11 +599,11 @@ fun DataPack.enchantmentTests() {
 						"effect": {
 							"type": "minecraft:explode",
 							"attribute_to_user": true,
-							"radius": 2,
-							"create_fire": true,
 							"block_interaction": "tnt",
-							"small_particle": "minecraft:angry_villager",
+							"create_fire": true,
 							"large_particle": "minecraft:angry_villager",
+							"radius": 2,
+							"small_particle": "minecraft:angry_villager",
 							"sound": "minecraft:random/fuse"
 						}
 					},
