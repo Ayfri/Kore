@@ -11,6 +11,7 @@ fun helpersTests() = dataPack("helpers_tests") {
 	load {
 		displayTests()
 		inventoryManagerTests()
+		mannequinTests()
 		scoreboardTests()
 	}
 }.generate()
