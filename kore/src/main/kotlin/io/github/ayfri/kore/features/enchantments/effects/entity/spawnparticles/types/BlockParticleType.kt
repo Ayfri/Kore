@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types
 
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
-import io.github.ayfri.kore.commands.particle.types.BlockParticleType
 import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import kotlinx.serialization.Serializable
@@ -12,6 +11,7 @@ data class BlockParticleType(
 	var blockState: BlockState,
 ) : ParticleType()
 
-fun BlockParticleType.blockState(block: BlockArgument, properties: Map<String, String>? = null) = apply {
-	blockState = BlockState(name = block, properties = properties)
-}
+fun blockParticleType(type: ParticleTypeArgument, block: BlockArgument, properties: Map<String, String>? = null) =
+	BlockParticleType(type, BlockState(block, properties))
+
+fun blockParticleType(type: ParticleTypeArgument, blockState: BlockState) = BlockParticleType(type, blockState)

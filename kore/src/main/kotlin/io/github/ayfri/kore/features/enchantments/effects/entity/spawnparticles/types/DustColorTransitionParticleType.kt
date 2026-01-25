@@ -15,5 +15,9 @@ data class DustColorTransitionParticleType(
 	var scale: Double,
 ) : ParticleType()
 
-fun dustColorTransitionParticleType(type: ParticleTypeArgument, fromColor: Color, toColor: Color, scale: Double) =
-	DustColorTransitionParticleType(type, fromColor, toColor, scale)
+fun dustColorTransitionParticleType(
+	type: ParticleTypeArgument,
+	fromColor: Color,
+	toColor: Color,
+	scale: Double,
+) = DustColorTransitionParticleType(type, fromColor, toColor, scale)

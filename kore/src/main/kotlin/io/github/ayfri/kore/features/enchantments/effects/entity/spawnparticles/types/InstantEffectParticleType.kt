@@ -6,9 +6,11 @@ import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class EntityEffectParticleType(
+data class InstantEffectParticleType(
 	override var type: ParticleTypeArgument,
-	var color: @Serializable(ColorAsDoubleArraySerializer::class) Color,
+	var color: @Serializable(ColorAsDoubleArraySerializer::class) Color? = null,
+	var power: Float? = null,
 ) : ParticleType()
 
-fun entityEffectParticleType(type: ParticleTypeArgument, color: Color) = EntityEffectParticleType(type, color)
+fun instantEffectParticleType(type: ParticleTypeArgument, color: Color? = null, power: Float? = null) =
+	InstantEffectParticleType(type, color, power)

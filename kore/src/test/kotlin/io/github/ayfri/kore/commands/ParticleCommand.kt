@@ -1,3 +1,4 @@
+@file:JvmName("ParticleCommand")
 package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.colors.Color
@@ -59,7 +60,10 @@ fun Function.particleTests() {
 			Color.RED
 		) assertsIs "particle dust_color_transition{from_color:5592575,to_color:16733525,scale:2.0d}"
 
-		entityEffect(Color.GREEN) assertsIs "particle entity_effect{color:[0.3333333333333333d,1.0d,0.3333333333333333d]}"
+		dragonBreath(0.5f) assertsIs "particle dragon_breath{power:0.5f}"
+		entityEffect(color = Color.GREEN) assertsIs "particle entity_effect{color:[0.3333333333333333d,1.0d,0.3333333333333333d]}"
+		flash(Color.WHITE.toARGB()) assertsIs "particle flash{color:\"#ffffffff\"}"
+		instantEffect(color = Color.GREEN) assertsIs "particle instant_effect{color:[0.3333333333333333d,1.0d,0.3333333333333333d]}"
 
 		item(Items.DIAMOND_SWORD {
 			enchantments {
