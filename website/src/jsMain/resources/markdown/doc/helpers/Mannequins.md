@@ -29,7 +29,7 @@ summon(myMannequin.entityType, vec3(), myMannequin.toNbt())
 
 ## Profiles
 
-Mannequins can have two types of profiles: `PlayerMannequinProfile` and `TextureMannequinProfile`.
+Mannequins can have two types of profiles: `PlayerProfile` and `TextureProfile`.
 
 ### Player Profile
 
@@ -43,16 +43,39 @@ mannequin {
 
 ### Texture Profile
 
-A texture profile allows you to specify a direct texture URL, and optionally a cape, elytra, and model type.
+A texture profile allows you to specify a direct texture, and optionally a cape, elytra, and model type.
 
 ```kotlin
 mannequin {
-	textureProfile(texture = "https://textures.minecraft.net/texture/...") {
-		cape = "https://textures.minecraft.net/texture/..."
+	textureProfile(texture = "tex") {
+		cape = model("cape")
 		model = MannequinModel.SLIM
 	}
 }
 ```
+
+## Customization
+
+Mannequins support additional fields for further customization:
+
+```kotlin
+mannequin {
+	description = textComponent("Test")
+	hideDescription = false
+	immovable = true
+	pose = MannequinPose.CROUCHING
+}
+```
+
+### Pose
+
+The `pose` field allows you to set the mannequin's pose. Available poses are:
+
+- `STANDING`
+- `CROUCHING`
+- `SWIMMING`
+- `FALL_FLYING`
+- `SLEEPING`
 
 ## Hidden Layers
 
