@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.types.literals.rotation
 import io.github.ayfri.kore.arguments.types.literals.self
+import io.github.ayfri.kore.arguments.types.literals.uuid
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.Enchantments
@@ -23,6 +24,9 @@ fun Function.commandsTests() {
 
 	enchant(self(), Enchantments.MENDING) assertsIs "enchant @s minecraft:mending"
 	enchant(self(), Enchantments.MENDING, 1) assertsIs "enchant @s minecraft:mending 1"
+
+	fetchprofile("Ayfri") assertsIs "fetchprofile name Ayfri"
+	fetchprofile(uuid("00000000-0000-0000-0000-000000000000")) assertsIs "fetchprofile id 00000000-0000-0000-0000-000000000000"
 
 	gamemode(Gamemode.CREATIVE) assertsIs "gamemode creative"
 	gamemode(Gamemode.CREATIVE, self()) assertsIs "gamemode creative @s"

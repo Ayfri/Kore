@@ -4,10 +4,7 @@ import io.github.ayfri.kore.arguments.enums.Difficulty
 import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.types.EntityArgument
-import io.github.ayfri.kore.arguments.types.literals.RotationArgument
-import io.github.ayfri.kore.arguments.types.literals.all
-import io.github.ayfri.kore.arguments.types.literals.int
-import io.github.ayfri.kore.arguments.types.literals.literal
+import io.github.ayfri.kore.arguments.types.literals.*
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.arguments.types.resources.SoundArgument
 import io.github.ayfri.kore.functions.Function
@@ -24,6 +21,9 @@ fun Function.difficulty(difficulty: Difficulty? = null) = addLine(command("diffi
 
 fun Function.enchant(target: EntityArgument, enchantment: EnchantmentArgument, level: Int? = null) =
 	addLine(command("enchant", target, enchantment, int(level)))
+
+fun Function.fetchprofile(name: String) = addLine(command("fetchprofile", literal("name"), literal(name)))
+fun Function.fetchprofile(id: UUIDArgument) = addLine(command("fetchprofile", literal("id"), id))
 
 fun Function.fillbiome(from: Vec3, to: Vec3, biome: BiomeArgument) = addLine(command("fillbiome", from, to, biome))
 fun Function.fillbiome(from: Vec3, to: Vec3, biome: BiomeArgument, filter: BiomeArgument) =
