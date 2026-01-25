@@ -1,8 +1,6 @@
 package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.maths.vec3
-import io.github.ayfri.kore.arguments.numbers.rot
-import io.github.ayfri.kore.arguments.types.literals.rotation
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.ConfiguredFeatures
@@ -18,15 +16,15 @@ fun Function.placeTests() {
 	placeTemplate(
 		Structures.Fossil.SKULL_1,
 		vec3(),
-		rotation(90.rot, 180.rot)
-	) assertsIs "place template minecraft:fossil/skull_1 ~ ~ ~ 90 180"
+		TemplateRotation.CLOCKWISE_90
+	) assertsIs "place template minecraft:fossil/skull_1 ~ ~ ~ clockwise_90"
 
 	placeTemplate(
 		Structures.Fossil.SKULL_1,
 		vec3(),
-		rotation(90.rot, 180.rot),
+		TemplateRotation.NONE,
 		strict = true
-	) assertsIs "place template minecraft:fossil/skull_1 ~ ~ ~ 90 180 strict"
+	) assertsIs "place template minecraft:fossil/skull_1 ~ ~ ~ none strict"
 
 	placeTemplate(
 		Structures.Fossil.SKULL_1,
