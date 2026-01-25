@@ -5,7 +5,7 @@ nav-title: Components
 description: A guide for using components in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, components
 date-created: 2024-01-08
-date-modified: 2024-01-08
+date-modified: 2026-01-25
 routeOverride: /docs/components
 ---
 
@@ -108,6 +108,32 @@ import io.github.ayfri.kore.generated.Items
 val blockEntityDataTest = Items.BEE_NEST {
 	blockEntityData(Blocks.BEE_NEST) {
 		this["test"] = "test"
+	}
+}
+```
+
+### Profile
+
+The profile component can be either a player profile or a texture-based profile.
+
+#### Player Profile
+
+A player profile uses a player's name or UUID:
+
+```kotlin
+Items.PLAYER_HEAD {
+	playerProfile("Notch")
+}
+```
+
+#### Texture Profile
+
+A texture profile allows you to specify textures and models:
+
+```kotlin
+Items.PLAYER_HEAD {
+	textureProfile(texture = "tex") {
+		model = MannequinModel.SLIM
 	}
 }
 ```
@@ -230,7 +256,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 - `potDecorations(..)`
 - `potionContents(..)`
 - `potionDurationScale(..)`
-- `profile(..)`
+- `playerProfile(..)` / `textureProfile(..)`
 - `providesBannerPatterns(..)`
 - `providesTrimMaterial(..)`
 - `rarity(..)`
