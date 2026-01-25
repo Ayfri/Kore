@@ -9,11 +9,13 @@ import io.github.ayfri.kore.arguments.components.consumable.teleportRandomly
 import io.github.ayfri.kore.arguments.components.item.*
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.types.literals.randomUUID
+import io.github.ayfri.kore.arguments.types.resources.model
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.data.item.builders.itemStack
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
+import io.github.ayfri.kore.helpers.mannequins.MannequinModel
 import io.github.ayfri.kore.utils.set
 
 fun itemComponentsTests() {
@@ -459,19 +461,29 @@ fun itemComponentsTests() {
 	potionDurationScaleTest.asString() assertsIs """minecraft:potion[potion_duration_scale=0.5f]"""
 
 	val profileTest = Items.PLAYER_HEAD {
-		profile("Notch")
+		playerProfile("Notch")
 	}
-	profileTest.asString() assertsIs """minecraft:player_head[profile="Notch"]"""
+	profileTest.asString() assertsIs """minecraft:player_head[profile={name:"Notch"}]"""
 
 	val randomId = randomUUID()
-	profileTest.components!!.profile("Notch", id = randomId)
+	profileTest.components!!.playerProfile("Notch", id = randomId)
 	profileTest.asString() assertsIs """minecraft:player_head[profile={name:"Notch",id:"${randomId.asString()}"}]"""
 
-	profileTest.components!!.profile("Notch") {
+	profileTest.components!!.playerProfile("Notch") {
 		property("test", "test")
 		property("test", byteArrayOf('K'.code.toByte(), 'o'.code.toByte(), 'r'.code.toByte(), 'e'.code.toByte()))
 	}
 	profileTest.asString() assertsIs """minecraft:player_head[profile={name:"Notch",properties:[{name:"test",value:"test"},{name:"test",value:"Kore"}]}]"""
+
+	profileTest.components!!.textureProfile(texture = "tex", model = MannequinModel.SLIM)
+	profileTest.asString() assertsIs """minecraft:player_head[profile={model:"slim",texture:"minecraft:tex"}]"""
+
+	profileTest.components!!.textureProfile {
+		texture = model("tex2")
+		cape = model("cape")
+		elytra = model("elytra")
+	}
+	profileTest.asString() assertsIs """minecraft:player_head[profile={cape:"minecraft:cape",elytra:"minecraft:elytra",texture:"minecraft:tex2"}]"""
 
 	val providesBannerPatternsTest = Items.PLAYER_HEAD {
 		providesBannerPatterns(Tags.BannerPattern.PatternItem.CREEPER)
