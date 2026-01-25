@@ -1,6 +1,9 @@
 package io.github.ayfri.kore.helpers.mannequins
 
+import io.github.ayfri.kore.arguments.components.item.PlayerProfile
+import io.github.ayfri.kore.arguments.components.item.TextureProfile
 import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
+import io.github.ayfri.kore.arguments.types.resources.model
 import java.util.*
 
 /**
@@ -27,8 +30,8 @@ fun Mannequin.hiddenLayers(vararg layers: MannequinLayer) {
  * @param id The UUID of the player.
  * @param block The builder block for the profile.
  */
-fun Mannequin.playerProfile(name: String? = null, id: UUIDArgument? = null, block: PlayerMannequinProfile.() -> Unit = {}) {
-	profile = PlayerMannequinProfile(id = id, name = name).apply(block)
+fun Mannequin.playerProfile(name: String? = null, id: UUIDArgument? = null, block: PlayerProfile.() -> Unit = {}) {
+	profile = PlayerProfile(name = name, id = id).apply(block)
 }
 
 /**
@@ -38,7 +41,7 @@ fun Mannequin.playerProfile(name: String? = null, id: UUIDArgument? = null, bloc
  * @param id The UUID of the player.
  * @param block The builder block for the profile.
  */
-fun Mannequin.playerProfile(name: String? = null, id: UUID, block: PlayerMannequinProfile.() -> Unit = {}) =
+fun Mannequin.playerProfile(name: String? = null, id: UUID, block: PlayerProfile.() -> Unit = {}) =
 	playerProfile(name, UUIDArgument(id), block)
 
 /**
@@ -47,6 +50,6 @@ fun Mannequin.playerProfile(name: String? = null, id: UUID, block: PlayerMannequ
  * @param texture The main texture.
  * @param block The builder block for the profile.
  */
-fun Mannequin.textureProfile(texture: String, block: TextureMannequinProfile.() -> Unit = {}) {
-	profile = TextureMannequinProfile(texture = texture).apply(block)
+fun Mannequin.textureProfile(texture: String, block: TextureProfile.() -> Unit = {}) {
+	profile = TextureProfile(texture = model(texture)).apply(block)
 }
