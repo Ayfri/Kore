@@ -89,11 +89,7 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 		require(encoder is JsonEncoder || encoder is NbtEncoder) { "PolymorphicTypeSerializer can only be serialized to Json or Nbt." }
 		require(kClass.isInstance(value) && value::class != kClass) { "Value must be instance of ${kClass.simpleName}" }
 
-		val outputClassName = when {
-			value::class.hasAnnotation<SerialName>() -> value::class.findAnnotation<SerialName>()!!.value
-			else -> value::class.simpleName!!.snakeCase()
-		}
-		val namespacedOutputClassName = if (useMinecraftPrefix) "minecraft:$outputClassName" else outputClassName
+		val namespacedOutputClassName = getContentName(value)
 
 		val serializer = encoder.serializersModule.getPolymorphic(kClass, value)
 			?: encoder.serializersModule.getContextual(value::class)
@@ -103,5 +99,13 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 			is JsonEncoder -> serializeJson(namespacedOutputClassName, serializer as KSerializer<T>, encoder, value)
 			is NbtEncoder -> serializeNbt(namespacedOutputClassName, serializer as KSerializer<T>, encoder, value)
 		}
+	}
+
+	fun getContentName(value: T): String {
+		val outputClassName = when {
+			value::class.hasAnnotation<SerialName>() -> value::class.findAnnotation<SerialName>()!!.value
+			else -> value::class.simpleName!!.snakeCase()
+		}
+		return if (useMinecraftPrefix) "minecraft:$outputClassName" else outputClassName
 	}
 }
