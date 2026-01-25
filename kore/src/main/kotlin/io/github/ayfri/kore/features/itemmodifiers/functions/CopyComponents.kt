@@ -9,10 +9,18 @@ import kotlinx.serialization.Serializable
 /** Source of components to copy for `copy_components`. */
 @Serializable(with = CopyComponentsSource.Companion.CopyComponentsSourceSerializer::class)
 enum class CopyComponentsSource {
-	BLOCK_ENTITY;
+	ATTACKER,
+	ATTACKING_PLAYER,
+	BLOCK_ENTITY,
+	DIRECT_ATTACKER,
+	INTERACTING_ENTITY,
+	TARGET_ENTITY,
+	THIS,
+	TOOL,
+	;
 
 	companion object {
-		object CopyComponentsSourceSerializer : LowercaseSerializer<CopyComponentsSource>(entries)
+		data object CopyComponentsSourceSerializer : LowercaseSerializer<CopyComponentsSource>(entries)
 	}
 }
 
