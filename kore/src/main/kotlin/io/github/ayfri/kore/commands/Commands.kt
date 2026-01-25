@@ -70,10 +70,11 @@ fun Function.say(message: String) = addLine(command("say", literal(message)))
 
 fun Function.seed() = addLine(command("seed"))
 
-fun Function.setWorldSpawn(pos: Vec3? = null, angle: RotationArgument? = null) = addLine(command("setworldspawn", pos, angle))
+fun Function.setWorldSpawn(pos: Vec3? = null, rotation: RotationArgument? = null) =
+	addLine(command("setworldspawn", pos, rotation))
 
-fun Function.spawnPoint(target: EntityArgument? = null, pos: Vec3? = null, angle: RotationArgument? = null) =
-	addLine(command("spawnpoint", target, pos, angle))
+fun Function.spawnPoint(target: EntityArgument? = null, pos: Vec3? = null, rotation: RotationArgument? = null) =
+	addLine(command("spawnpoint", target, pos, rotation))
 
 fun Function.spectate(target: EntityArgument? = null, player: EntityArgument? = null) =
 	addLine(command("spectate", target, player))

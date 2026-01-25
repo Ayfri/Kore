@@ -11,5 +11,5 @@ data class RotationArgument(val yaw: RotNumber, val pitch: RotNumber) : Argument
 	override fun asString() = "$yaw $pitch"
 }
 
-fun rotation(yaw: Number, pitch: Number) = RotationArgument(yaw.rot, pitch.rot)
+fun rotation(yaw: Number, pitch: Number = 0) = RotationArgument(yaw.rot, pitch.rot)
 fun rotation(hor: RotNumber = 0.relativeRot, ver: RotNumber = 0.relativeRot) = RotationArgument(hor, ver)
