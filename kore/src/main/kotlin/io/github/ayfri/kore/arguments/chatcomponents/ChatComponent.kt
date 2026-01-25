@@ -11,6 +11,7 @@ import io.github.ayfri.kore.utils.set
 import io.github.ayfri.kore.utils.snbtSerializer
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.buildNbtCompound
 import net.benwoodworth.knbt.encodeToNbtTag
@@ -21,16 +22,22 @@ abstract class ChatComponent {
 	abstract val type: ChatComponentType
 
 	@EncodeDefault(EncodeDefault.Mode.NEVER)
-	var text = ""
+	open var text = ""
 	var bold: Boolean? = null
+
+	@SerialName("click_event")
 	var clickEvent: ClickEvent? = null
 	var color: Color? = null
 	var extra: ChatComponents? = null
 	var font: String? = null
+
+	@SerialName("hover_event")
 	var hoverEvent: HoverEvent? = null
 	var insertion: String? = null
 	var italic: Boolean? = null
 	var obfuscated: Boolean? = null
+
+	@SerialName("shadow_color")
 	var shadowColor: Color? = null
 	var strikethrough: Boolean? = null
 	var underlined: Boolean? = null

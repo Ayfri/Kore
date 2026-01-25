@@ -100,6 +100,7 @@ fun chatComponentsTests() {
 	objectComponent assertsIsJson """
 		{
 			"type": "object",
+			"object": "atlas",
 			"atlas": "minecraft:blocks",
 			"sprite": "minecraft:block/acacia_log"
 		}
@@ -109,7 +110,30 @@ fun chatComponentsTests() {
 	objectComponentNoAtlas assertsIsJson """
 		{
 			"type": "object",
+			"object": "atlas",
 			"sprite": "minecraft:block/acacia_log"
+		}
+	""".trimIndent()
+
+	val playerObject = playerObjectComponent("ayfri", hat = true) {
+		player {
+			property("textures", "base64_encoded_texture_data")
+		}
+	}
+	playerObject assertsIsJson """
+		{
+			"type": "object",
+			"object": "player",
+			"player": {
+				"name": "ayfri",
+				"properties": [
+					{
+						"name": "textures",
+						"value": "base64_encoded_texture_data"
+					}
+				]
+			},
+			"hat": true
 		}
 	""".trimIndent()
 
