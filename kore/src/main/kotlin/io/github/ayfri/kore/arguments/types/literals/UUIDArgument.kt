@@ -3,9 +3,9 @@ package io.github.ayfri.kore.arguments.types.literals
 import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.ScoreHolderArgument
+import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtIntArray
 import java.util.*
-import kotlinx.serialization.Serializable
 
 @Serializable(with = Argument.ArgumentSerializer::class)
 data class UUIDArgument(val uuid: UUID) : EntityArgument, ScoreHolderArgument {
@@ -27,3 +27,4 @@ data class UUIDArgument(val uuid: UUID) : EntityArgument, ScoreHolderArgument {
 
 fun randomUUID() = UUIDArgument.random()
 fun uuid(uuid: UUID) = UUIDArgument(uuid)
+fun uuid(uuid: String) = UUIDArgument(UUID.fromString(uuid))
