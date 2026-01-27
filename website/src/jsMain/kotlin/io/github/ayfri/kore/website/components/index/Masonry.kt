@@ -61,7 +61,7 @@ object MasonryStyle : StyleSheet() {
 		justifyContent(JustifyContent.Center)
 		gap(2.cssRem)
 		marginX(1.cssRem)
-		marginY(3.cssRem)
+		marginY(2.cssRem)
 
 		lgMax(self) {
 			alignItems(AlignItems.Center)

@@ -64,78 +64,85 @@ fun FaqSection() {
 object FaqSectionStyle : StyleSheet() {
 	val faqContainer by style {
 		backgroundColor(GlobalStyle.secondaryBackgroundColor)
-		paddingY(5.cssRem)
+		paddingY(3.cssRem)
 
-		marginY(7.cssRem)
+		marginTop(3.cssRem)
 
 		"h2" {
 			marginTop(0.px)
-			marginBottom(5.cssRem)
+			marginBottom(2.cssRem)
 
-			fontSize(3.cssRem)
+			fontSize(2.2.cssRem)
 			textAlign(TextAlign.Center)
 		}
 
 		mdMax(type("h2")) {
-			fontSize(2.7.cssRem)
+			fontSize(2.1.cssRem)
 			paddingX(1.cssRem)
 		}
 
 		xsMax(type("h2")) {
-			fontSize(2.2.cssRem)
+			fontSize(1.7.cssRem)
 		}
 	}
 
 	val faq by style {
-		backgroundColor(GlobalStyle.tertiaryBackgroundColor)
+		backgroundColor(GlobalStyle.tertiaryBackgroundColor.alpha(0.2))
+		border(1.px, LineStyle.Solid, GlobalStyle.borderColor.alpha(0.1))
 		borderRadius(GlobalStyle.roundingSection)
 
 		marginX(auto)
 		maxWidth(80.percent)
-		padding(1.cssRem, 2.cssRem)
+		padding(1.5.cssRem, 2.5.cssRem)
 
 		"details" {
 			val elementNameHeight by variable<CSSNumeric>()
 			elementNameHeight(4.cssRem)
 
 			mdMax(self + firstOfType) {
-				elementNameHeight(5.5.cssRem)
+				elementNameHeight(5.cssRem)
 			}
 
 			maxWidthBreak(430.px, self + nthOfType(Nth.Functional(b = 2))) {
-				elementNameHeight(5.5.cssRem)
+				elementNameHeight(5.cssRem)
 			}
 
 			xxsMax(self + lastOfType) {
-				elementNameHeight(5.5.cssRem)
+				elementNameHeight(5.cssRem)
 			}
 
 			maxWidthBreak(305.px, self + firstOfType) {
-				elementNameHeight(7.cssRem)
+				elementNameHeight(6.5.cssRem)
 			}
 
 			maxHeight(elementNameHeight.value())
-			transition(0.3.s, AnimationTimingFunction.EaseOut, "max-height")
+			transition(0.4.s, AnimationTimingFunction.EaseOut, "max-height")
 			overflow(Overflow.Hidden)
 			paddingY(1.2.cssRem)
 
-			fontSize(1.3.cssRem)
+			fontSize(1.2.cssRem)
 			fontWeight(FontWeight.Bold)
 
 			self + not(lastOfType) style {
-				borderBottom(1.px, LineStyle.Solid, GlobalStyle.borderColor)
+				borderBottom(1.px, LineStyle.Solid, GlobalStyle.borderColor.alpha(0.15))
 			}
 
 			"summary" {
 				display(DisplayStyle.Block)
 				userSelect(UserSelect.None)
+				transition(0.3.s, "color")
+
+				hover(self) style {
+					color(GlobalStyle.logoRightColor)
+				}
 
 				self + before style {
 					fontFamily("Material Icons Round")
 					content("\\e145")
-					marginRight(0.5.cssRem)
+					marginRight(0.8.cssRem)
 					position(Position.Relative)
 					top(3.px)
+					color(GlobalStyle.logoRightColor)
 				}
 			}
 
@@ -144,10 +151,13 @@ object FaqSectionStyle : StyleSheet() {
 			}
 
 			"p" {
-				fontSize(1.cssRem)
+				fontSize(1.05.cssRem)
 				fontWeight(FontWeight.Normal)
+				color(GlobalStyle.altTextColor)
+				property("line-height", "1.6")
 
-				paddingLeft(2.cssRem)
+				paddingLeft(2.3.cssRem)
+				marginTop(1.cssRem)
 				marginBottom(0.px)
 			}
 		}

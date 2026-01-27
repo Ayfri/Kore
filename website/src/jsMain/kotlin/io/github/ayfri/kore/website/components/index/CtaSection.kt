@@ -4,9 +4,10 @@ import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.TextAlign
 import com.varabyte.kobweb.compose.css.textAlign
 import io.github.ayfri.kore.website.GlobalStyle
+import io.github.ayfri.kore.website.components.common.ButtonColor
 import io.github.ayfri.kore.website.components.common.LinkButton
 import io.github.ayfri.kore.website.utils.P
-import io.github.ayfri.kore.website.utils.marginY
+import io.github.ayfri.kore.website.utils.alpha
 import io.github.ayfri.kore.website.utils.mdMax
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
@@ -26,13 +27,18 @@ fun CtaSection() {
 
 		P("Craft your first datapack with Kore and enjoy the power of Kotlin for Minecraft development.")
 
-		LinkButton("Get Started", "https://ayfri.com/articles/kore-introduction/", classes = arrayOf("primary"))
+		LinkButton("Get Started", "https://ayfri.com/articles/kore-introduction/", color = ButtonColor.PRIMARY)
 	}
 }
 
 object CtaSectionStyle : StyleSheet() {
 	val cta by style {
-		marginY(8.cssRem)
+		padding(12.cssRem, 2.cssRem)
+		property(
+			"background",
+			"linear-gradient(135deg, ${GlobalStyle.logoRightColor.alpha(0.15)} 0%, ${GlobalStyle.logoLeftColor.alpha(0.05)} 100%)"
+		)
+		border(1.px, LineStyle.Solid, GlobalStyle.logoRightColor.alpha(0.2))
 
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
@@ -40,25 +46,27 @@ object CtaSectionStyle : StyleSheet() {
 		textAlign(TextAlign.Center)
 
 		"h2" style {
-			fontSize(3.2.cssRem)
-			marginY(2.5.cssRem)
-			width(40.cssRem)
+			fontSize(2.4.cssRem)
+			lineHeight(1.1.number)
+			marginTop(0.px)
+			marginBottom(1.5.cssRem)
+			maxWidth(45.cssRem)
 		}
 
 		mdMax(type("h2")) {
-			fontSize(2.5.cssRem)
-			width(90.percent)
+			fontSize(2.1.cssRem)
+			width(95.percent)
 		}
 
 		"p" style {
 			color(GlobalStyle.altTextColor)
-			fontSize(1.2.cssRem)
-			marginY(3.cssRem)
-			width(30.cssRem)
+			fontSize(1.1.cssRem)
+			marginBottom(2.5.cssRem)
+			maxWidth(35.cssRem)
 		}
 
 		mdMax(type("p")) {
-			width(90.percent)
+			width(95.percent)
 		}
 	}
 }

@@ -5,10 +5,8 @@ import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.silk.components.icons.mdi.IconStyle
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiDiscord
 import io.github.ayfri.kore.website.GlobalStyle
-import io.github.ayfri.kore.website.utils.marginX
-import io.github.ayfri.kore.website.utils.mdMax
-import io.github.ayfri.kore.website.utils.paddingY
-import io.github.ayfri.kore.website.utils.transition
+import io.github.ayfri.kore.website.utils.*
+import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
@@ -89,23 +87,23 @@ fun CommunitySection() {
 
 object CommunitySectionStyle : StyleSheet() {
 	val communitySection by style {
-		paddingY(6.cssRem)
+		paddingY(2.5.cssRem)
 		textAlign(TextAlign.Center)
 
 		"h2" style {
-			fontSize(3.cssRem)
+			fontSize(2.2.cssRem)
 			marginBottom(1.cssRem)
 		}
 
 		mdMax(type("h2")) {
-			fontSize(2.5.cssRem)
+			fontSize(2.1.cssRem)
 		}
 	}
 
 	val subtitle by style {
 		color(GlobalStyle.altTextColor)
-		fontSize(1.2.cssRem)
-		marginBottom(4.cssRem)
+		fontSize(1.1.cssRem)
+		marginBottom(2.5.cssRem)
 	}
 
 	val platformsContainer by style {
@@ -122,8 +120,10 @@ object CommunitySectionStyle : StyleSheet() {
 		}
 	}
 
+	@OptIn(ExperimentalComposeWebApi::class)
 	val platformCard by style {
-		backgroundColor(GlobalStyle.secondaryBackgroundColor)
+		backgroundColor(GlobalStyle.secondaryBackgroundColor.alpha(0.5))
+		border(1.px, LineStyle.Solid, GlobalStyle.borderColor.alpha(0.2))
 		borderRadius(GlobalStyle.roundingSection)
 		color(GlobalStyle.textColor)
 		display(DisplayStyle.Flex)
@@ -131,16 +131,17 @@ object CommunitySectionStyle : StyleSheet() {
 		padding(2.cssRem)
 		textAlign(TextAlign.Center)
 		textDecorationLine(TextDecorationLine.None)
-		transition(0.3.s, "translate", "background-color")
+		transition(0.3.s, "transform", "background-color", "border-color")
 		width(30.percent)
 
 		hover(self) style {
+			transform { translateY((-8).px) }
 			backgroundColor(GlobalStyle.tertiaryBackgroundColor)
-			translateY((-5).px)
+			borderColor(GlobalStyle.logoRightColor.alpha(0.5))
 		}
 
 		"h3" style {
-			fontSize(1.5.cssRem)
+			fontSize(1.6.cssRem)
 			marginBottom(1.cssRem)
 			marginTop(1.cssRem)
 		}
@@ -148,7 +149,7 @@ object CommunitySectionStyle : StyleSheet() {
 		"p" style {
 			color(GlobalStyle.altTextColor)
 			fontSize(1.cssRem)
-			lineHeight(1.6.number)
+			property("line-height", "1.6")
 		}
 
 		mdMax(self) {
