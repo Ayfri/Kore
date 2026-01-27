@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.serializers
 
+import io.github.ayfri.kore.utils.createInstance
 import io.github.ayfri.kore.utils.getSerialName
 import io.github.ayfri.kore.utils.getSerializer
 import kotlinx.serialization.KSerializer
@@ -16,10 +17,8 @@ import net.benwoodworth.knbt.NbtDecoder
 import net.benwoodworth.knbt.NbtEncoder
 import net.benwoodworth.knbt.buildNbtCompound
 import kotlin.reflect.KClass
-import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
-import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 /**
@@ -171,29 +170,5 @@ open class SinglePropertySimplifierSerializer<T : Any, P : Any>(
 	}
 
 	@Suppress("UNCHECKED_CAST")
-	private fun createInstance(values: Map<String, Any?>): T {
-		val constructor = kClass.primaryConstructor ?: kClass.constructors.first()
-		constructor.isAccessible = true
-		val params = constructor.parameters.mapNotNull { param ->
-			if (values.containsKey(param.name)) {
-				param to values[param.name]
-			} else if (param.isOptional) {
-				null
-			} else {
-				param to null
-			}
-		}.toMap()
-
-		val instance = constructor.callBy(params)
-
-		values.forEach { (name, value) ->
-			val property = kClass.memberProperties.find { it.name == name }
-			if (property is KMutableProperty1<*, *> && constructor.parameters.none { it.name == name }) {
-				property.isAccessible = true
-				(property as KMutableProperty1<Any, Any?>).set(instance, value)
-			}
-		}
-
-		return instance
-	}
+	private fun createInstance(values: Map<String, Any?>): T = kClass.createInstance(values)
 }
