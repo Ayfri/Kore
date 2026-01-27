@@ -5,7 +5,7 @@ nav-title: Chat Components
 description: A guide for creating Chat Components in a Minecraft datapack using Kore.
 keywords: minecraft, datapack, kore, guide, chat-components
 date-created: 2024-09-05
-date-modified: 2024-09-05
+date-modified: 2026-01-27
 routeOverride: /docs/chat-components
 ---
 
@@ -24,7 +24,6 @@ You also have a `containsOnlyText()` function to check if a `ChatComponents` onl
 
 ### Common Properties
 
-- `text` - The text to display.
 - `bold` - Whether the text is bold.
 - `clickEvent` - The action to perform when the text is clicked.
 - `color` - The color of the text.
@@ -35,6 +34,7 @@ You also have a `containsOnlyText()` function to check if a `ChatComponents` onl
 - `italic` - Whether the text is italic.
 - `obfuscated` - Whether the text is obfuscated.
 - `strikethrough` - Whether the text is strikethrough.
+- `text` - The text to display.
 - `underlined` - Whether the text is underlined.
 
 ## PlainTextComponent
@@ -207,3 +207,61 @@ val clickEventComponent = textComponent("Click me!") {
 	}
 }
 ```
+
+## Object Components
+
+Object components render atlas sprites or player skins inside chat. They require the
+`ObjectTextComponent` family and can be built via
+`objectComponent` or `playerObjectComponent` depending on the source.
+
+### AtlasObjectTextComponent
+
+-
+`atlas` - The atlas that contains the sprite. Optional when the sprite already resolves to an atlas entry, otherwise provide an explicit
+`AtlasArgument`.
+- `sprite` - The `ModelArgument` that identifies the sprite to render and is required.
+
+Use `objectComponent` to construct atlas objects, optionally passing an atlas override.
+
+```kotlin
+val atlasObject = objectComponent(
+  sprite = Textures.Block.COMMAND_BLOCK_BACK,
+  atlas = Atlases.BLOCKS
+)
+```
+
+In-game output:<br>
+![object-command-block.png](/doc/chat-components/object-command-block.png)
+
+### PlayerObjectTextComponent
+
+- `hat` - Whether to display the player's hat layer (true/false) or leave it untouched when null.
+- `player` - A `PlayerProfile` describing the skin whose head should render; provide either a name, UUID, or both plus properties.
+
+`playerObjectComponent` accepts a `PlayerProfile`, name, or `UUIDArgument`, and the nested `player` block lets you add
+`PlayerProperty`
+estimations.
+
+```kotlin
+val playerObject = playerObjectComponent("ayfri") {
+  player {
+    property("textures", "base64_encoded_texture_data")
+  }
+}
+```
+
+In-game output:<br>
+![player.png](/doc/chat-components/player.png)
+
+Notice that there is a shadow on the player's head, you can disable it by setting `shadowColor` to 0.
+
+```kotlin
+val playerObject = playerObjectComponent("ayfri") {
+  shadowColor = argb(0, 0, 0, 0)
+}
+```
+
+In-game output:<br>
+![player-no-shadow.png](/doc/chat-components/player-no-shadow.png)
+
+These components respect the same formatting as any other chat component, so you can still chain them, color them, or attach hover and click behaviors.
