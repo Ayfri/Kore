@@ -1,10 +1,7 @@
 package io.github.ayfri.kore.features.predicates.providers
 
-import kotlinx.serialization.KSerializer
+import io.github.ayfri.kore.serializers.EitherInlineSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
 
 @Serializable(with = IntOrNumberProvidersRange.Companion.IntOrNumberProviderRangeSerializer::class)
 data class IntOrNumberProvidersRange(
@@ -12,17 +9,11 @@ data class IntOrNumberProvidersRange(
 	var range: Uniform? = null,
 ) {
 	companion object {
-		data object IntOrNumberProviderRangeSerializer : KSerializer<IntOrNumberProvidersRange> {
-			override val descriptor = buildClassSerialDescriptor("IntOrIntNumberProvidersRange")
-
-			override fun deserialize(decoder: Decoder) = error("IntOrIntNumberProvidersRange cannot be deserialized")
-
-			override fun serialize(encoder: Encoder, value: IntOrNumberProvidersRange) = when {
-				value.value != null -> encoder.encodeInt(value.value!!)
-				value.range != null -> encoder.encodeSerializableValue(Uniform.serializer(), value.range!!)
-				else -> error("IntOrIntNumberProvidersRange is empty")
-			}
-		}
+		data object IntOrNumberProviderRangeSerializer : EitherInlineSerializer<IntOrNumberProvidersRange>(
+			IntOrNumberProvidersRange::class,
+			IntOrNumberProvidersRange::value,
+			IntOrNumberProvidersRange::range,
+		)
 	}
 }
 

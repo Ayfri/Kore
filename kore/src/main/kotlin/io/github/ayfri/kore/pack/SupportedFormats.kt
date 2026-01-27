@@ -1,16 +1,8 @@
 package io.github.ayfri.kore.pack
 
-import kotlinx.serialization.KSerializer
+import io.github.ayfri.kore.serializers.EitherInlineSerializer
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.descriptors.element
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.encodeStructure
-import kotlinx.serialization.json.*
 
 /**
  * Represents the supported pack formats for a Minecraft data pack or resource pack.
@@ -26,7 +18,9 @@ import kotlinx.serialization.json.*
 data class SupportedFormats(
 	var number: Int? = null,
 	var list: List<Int>? = null,
+	@SerialName("min_inclusive")
 	var minInclusive: Int? = null,
+	@SerialName("max_inclusive")
 	var maxInclusive: Int? = null,
 ) {
 	/** Checks if the given value is in the supported formats. */
@@ -61,42 +55,10 @@ data class SupportedFormats(
 	}
 
 	companion object {
-		data object SupportedFormatsSerializer : KSerializer<SupportedFormats> {
-			override val descriptor = buildClassSerialDescriptor("SupportedFormats") {
-				element<Int>("min_inclusive")
-				element<Int>("max_inclusive")
-			}
-
-			override fun deserialize(decoder: Decoder): SupportedFormats {
-				require(decoder is JsonDecoder) { "SupportedFormats can only be deserialized by JSON" }
-				return when (val element = decoder.decodeJsonElement()) {
-					is JsonPrimitive -> when {
-						element.intOrNull != null -> SupportedFormats(number = element.int)
-						else -> throw SerializationException("Expected integer for SupportedFormats")
-					}
-
-					is JsonArray -> {
-						SupportedFormats(list = element.jsonArray.map {
-							it.jsonPrimitive.int
-						})
-					}
-
-					is JsonObject -> {
-						val minInclusive = element["min_inclusive"]?.jsonPrimitive?.int
-						val maxInclusive = element["max_inclusive"]?.jsonPrimitive?.int
-						SupportedFormats(minInclusive = minInclusive, maxInclusive = maxInclusive)
-					}
-				}
-			}
-
-			override fun serialize(encoder: Encoder, value: SupportedFormats) = when {
-				value.number != null -> encoder.encodeInt(value.number!!)
-				value.list != null -> encoder.encodeSerializableValue(ListSerializer(Int.serializer()), value.list!!)
-				else -> encoder.encodeStructure(descriptor) {
-					if (value.minInclusive != null) encodeIntElement(descriptor, 0, value.minInclusive!!)
-					if (value.maxInclusive != null) encodeIntElement(descriptor, 1, value.maxInclusive!!)
-				}
-			}
-		}
+		data object SupportedFormatsSerializer : EitherInlineSerializer<SupportedFormats>(
+			SupportedFormats::class,
+			SupportedFormats::number,
+			SupportedFormats::list
+		)
 	}
 }

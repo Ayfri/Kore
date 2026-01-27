@@ -1,12 +1,8 @@
 package io.github.ayfri.kore.features.worldgen.densityfunction
 
 import io.github.ayfri.kore.generated.arguments.worldgen.types.DensityFunctionArgument
-import kotlinx.serialization.KSerializer
+import io.github.ayfri.kore.serializers.EitherInlineSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.serializer
 
 /**
  * This class represents a density function or a double value.
@@ -21,21 +17,11 @@ data class DensityFunctionOrDouble(
 	var densityFunction: DensityFunctionArgument? = null,
 ) {
 	companion object {
-		object DensityFunctionOrDoubleSerializer : KSerializer<DensityFunctionOrDouble> {
-			override val descriptor = buildClassSerialDescriptor("DensityFunctionOrDouble")
-
-			override fun deserialize(decoder: Decoder) = error("DensityFunctionOrDouble is not deserializable")
-
-			override fun serialize(encoder: Encoder, value: DensityFunctionOrDouble) = when {
-				value.double != null -> encoder.encodeDouble(value.double!!)
-				value.densityFunction != null -> encoder.encodeSerializableValue(
-					serializer<DensityFunctionArgument>(),
-					value.densityFunction!!
-				)
-
-				else -> error("DensityFunctionOrDouble must have either a reference or an inline value")
-			}
-		}
+		data object DensityFunctionOrDoubleSerializer : EitherInlineSerializer<DensityFunctionOrDouble>(
+			DensityFunctionOrDouble::class,
+			DensityFunctionOrDouble::double,
+			DensityFunctionOrDouble::densityFunction
+		)
 	}
 }
 

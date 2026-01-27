@@ -1,10 +1,7 @@
 package io.github.ayfri.kore.features.worldgen.dimension.biomesource.multinoise
 
+import io.github.ayfri.kore.serializers.EitherInlineSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.serializer
 
 @Serializable(with = DoubleOrDoublePair.Companion.DoubleOrDoublePairSerializer::class)
 data class DoubleOrDoublePair(
@@ -12,21 +9,11 @@ data class DoubleOrDoublePair(
 	val pair: Pair<Double, Double>? = null
 ) {
 	companion object {
-		object DoubleOrDoublePairSerializer : kotlinx.serialization.KSerializer<DoubleOrDoublePair> {
-			override val descriptor = buildClassSerialDescriptor("DoubleOrDoublePair")
-
-			override fun deserialize(decoder: Decoder) = error("DoubleOrDoublePair is not deserializable")
-
-			override fun serialize(encoder: Encoder, value: DoubleOrDoublePair) = when {
-				value.number != null -> encoder.encodeDouble(value.number)
-				value.pair != null -> encoder.encodeSerializableValue(
-					serializer<Pair<Double, Double>>(),
-					value.pair
-				)
-
-				else -> error("DoubleOrDoublePair must have either a number or a pair")
-			}
-		}
+		data object DoubleOrDoublePairSerializer : EitherInlineSerializer<DoubleOrDoublePair>(
+			DoubleOrDoublePair::class,
+			DoubleOrDoublePair::number,
+			DoubleOrDoublePair::pair
+		)
 	}
 }
 
