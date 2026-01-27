@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.website
 
 import com.varabyte.kobweb.compose.css.TextDecorationLine
-import com.varabyte.kobweb.compose.css.background
 import com.varabyte.kobweb.compose.css.textDecorationLine
 import io.github.ayfri.kore.website.utils.ScrollbarWidth
 import io.github.ayfri.kore.website.utils.scrollbarColor
@@ -77,21 +76,5 @@ object GlobalStyle : StyleSheet() {
 
 	val altText by style {
 		color(altTextColor)
-	}
-
-	val linkButton by style {
-		color(textColor)
-		backgroundColor(tertiaryBackgroundColor)
-		borderRadius(roundingButton)
-		fontSize(1.5.cssRem)
-		fontWeight(700)
-		padding(0.5.cssRem, 1.cssRem)
-		textDecorationLine(TextDecorationLine.None)
-		transition(0.3.s, "background")
-
-		hover(self) style {
-			backgroundColor(secondaryBackgroundColor)
-			color(textColor)
-		}
 	}
 }
