@@ -9,14 +9,12 @@ import com.varabyte.kobweb.silk.components.icons.mdi.MdiMenu
 import io.github.ayfri.kore.website.GITHUB_LINK
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.LinkButton
-import io.github.ayfri.kore.website.utils.A
-import io.github.ayfri.kore.website.utils.mdMax
-import io.github.ayfri.kore.website.utils.mdMin
-import io.github.ayfri.kore.website.utils.transition
+import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.attributes.ATarget
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.*
 
 val tabs = mapOf(
@@ -55,7 +53,7 @@ fun Header() {
 			Div({
 				classes(HeaderStyle.githubLink)
 			}) {
-				LinkButton("GitHub", GITHUB_LINK, ATarget.Blank, icon = {
+				LinkButton("GitHub", GITHUB_LINK, target = ATarget.Blank, icon = {
 					Img(src = "/github-mark-white.svg", alt = "GitHub Logo") {
 						classes(HeaderStyle.githubLogo)
 					}
@@ -112,7 +110,7 @@ object HeaderStyle : StyleSheet() {
 		zIndex(50)
 
 		"div" style {
-			alignItems("center")
+			alignItems(AlignItems.Center)
 			display(DisplayStyle.Flex)
 		}
 	}
@@ -122,8 +120,7 @@ object HeaderStyle : StyleSheet() {
 		display(DisplayStyle.Flex)
 		gap(1.cssRem)
 		justifyContent(JustifyContent.SpaceBetween)
-		property("margin-left", "auto")
-		property("margin-right", "auto")
+		marginX(auto)
 		width(calc { 55.vw + 30.cssRem })
 
 		maxWidth(100.percent)
@@ -132,7 +129,7 @@ object HeaderStyle : StyleSheet() {
 	val linksListDesktop by style {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Row)
-		gap(1.cssRem)
+		gap(1.5.cssRem)
 
 		mdMax(type("div") + self) {
 			display(DisplayStyle.None)
@@ -176,9 +173,6 @@ object HeaderStyle : StyleSheet() {
 		adjacent(self + checked, type("div")) style {
 			display(DisplayStyle.Flex)
 			top(0.cssRem)
-		}
-
-		adjacent(self + not(checked), type("div")) style {
 		}
 	}
 
