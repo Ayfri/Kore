@@ -34,23 +34,47 @@ The fastest way to start is the Kore Template repository. It's preconfigured and
 
 The template already sets Java 21 and enables the required Kotlin options.
 
-## Option B — Add Kore to an existing Gradle project
+## Option B — Add Kore to an existing project
 
-Add the dependency.
+Add the dependency to your build file.
 
-Kotlin DSL:
+### Gradle (Kotlin)
 
 ```kotlin
-implementation("io.github.ayfri.kore:kore:VERSION")
+dependencies {
+  implementation("io.github.ayfri.kore:kore:VERSION")
+}
 ```
 
-Groovy DSL:
+### Gradle (Groovy)
 
 ```groovy
-implementation 'io.github.ayfri.kore:kore:VERSION'
+dependencies {
+  implementation 'io.github.ayfri.kore:kore:VERSION'
+}
 ```
 
-Enable context receivers and set Java toolchain:
+### Maven
+
+```xml
+
+<dependency>
+  <groupId>io.github.ayfri.kore</groupId>
+  <artifactId>kore</artifactId>
+  <version>VERSION</version>
+</dependency>
+```
+
+### Amper
+
+```yaml
+dependencies:
+  - io.github.ayfri.kore:kore:VERSION
+```
+
+### Kotlin configuration
+
+Enable context receivers (parameters) and set Java toolchain in your `build.gradle.kts`:
 
 ```kotlin
 kotlin {
