@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.serializers
 
+import io.github.ayfri.kore.utils.getSerialName
 import io.github.ayfri.kore.utils.snakeCase
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -12,7 +13,6 @@ import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createType
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 
 open class NamespacedPolymorphicSerializer<T : Any>(
@@ -102,9 +102,8 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 	}
 
 	fun getContentName(value: T): String {
-		val outputClassName = when {
-			value::class.hasAnnotation<SerialName>() -> value::class.findAnnotation<SerialName>()!!.value
-			else -> value::class.simpleName!!.snakeCase()
+		val outputClassName = value::class.getSerialName().let {
+			if (value::class.hasAnnotation<SerialName>()) it else it.snakeCase()
 		}
 		return if (useMinecraftPrefix) "minecraft:$outputClassName" else outputClassName
 	}
