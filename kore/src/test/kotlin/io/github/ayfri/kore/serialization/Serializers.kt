@@ -28,6 +28,7 @@ val snbt = StringifiedNbt {
 fun serializersTests() {
 	singlePropertySimplifierSerializer()
 	eitherInlineSerializer()
+	eitherInlineSerializerInlined()
 }
 
 @Serializable(with = Data.Companion.DataSerializer::class)
@@ -106,7 +107,8 @@ private class EitherData(
 		data object EitherDataSerializer : EitherInlineSerializer<EitherData>(
 			EitherData::class,
 			EitherData::p1,
-			EitherData::p2
+			EitherData::p2,
+			inline = false
 		)
 	}
 }
@@ -152,6 +154,57 @@ fun eitherInlineSerializer() {
 	assert(decoded1Snbt.p2 == null)
 
 	val decoded2Snbt = snbt.decodeFromString(EitherData.serializer(), "{p2: 42}")
+	assert(decoded2Snbt.p1 == null)
+	assert(decoded2Snbt.p2 == 42)
+}
+
+@Serializable(with = InlineEitherData.Companion.InlineEitherDataSerializer::class)
+private class InlineEitherData(
+	val p1: String? = null,
+	val p2: Int? = null,
+) {
+	companion object {
+		data object InlineEitherDataSerializer : EitherInlineSerializer<InlineEitherData>(
+			InlineEitherData::class,
+			InlineEitherData::p1,
+			InlineEitherData::p2
+		)
+	}
+}
+
+fun eitherInlineSerializerInlined() {
+	val data1 = InlineEitherData(p1 = "hello")
+	val data2 = InlineEitherData(p2 = 42)
+
+	json.encodeToString(InlineEitherData.serializer(), data1) assertsIsJson """
+		"hello"
+	""".trimIndent()
+
+	json.encodeToString(InlineEitherData.serializer(), data2) assertsIsJson """
+		42
+	""".trimIndent()
+
+	snbt.encodeToString(InlineEitherData.serializer(), data1) assertsIsNbt """
+		"hello"
+	""".trimIndent()
+
+	snbt.encodeToString(InlineEitherData.serializer(), data2) assertsIsNbt """
+		42
+	""".trimIndent()
+
+	val decoded1 = json.decodeFromString(InlineEitherData.serializer(), "\"hello\"")
+	assert(decoded1.p1 == "hello")
+	assert(decoded1.p2 == null)
+
+	val decoded2 = json.decodeFromString(InlineEitherData.serializer(), "42")
+	assert(decoded2.p1 == null)
+	assert(decoded2.p2 == 42)
+
+	val decoded1Snbt = snbt.decodeFromString(InlineEitherData.serializer(), "\"hello\"")
+	assert(decoded1Snbt.p1 == "hello")
+	assert(decoded1Snbt.p2 == null)
+
+	val decoded2Snbt = snbt.decodeFromString(InlineEitherData.serializer(), "42")
 	assert(decoded2Snbt.p1 == null)
 	assert(decoded2Snbt.p2 == 42)
 }
