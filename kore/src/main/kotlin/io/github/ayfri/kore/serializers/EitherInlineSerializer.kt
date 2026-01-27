@@ -9,27 +9,21 @@ import kotlinx.serialization.descriptors.serialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.encodeStructure
-import kotlinx.serialization.json.JsonDecoder
-import kotlinx.serialization.json.JsonEncoder
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.buildJsonObject
-import net.benwoodworth.knbt.NbtCompound
-import net.benwoodworth.knbt.NbtDecoder
-import net.benwoodworth.knbt.NbtEncoder
-import net.benwoodworth.knbt.buildNbtCompound
+import kotlinx.serialization.json.*
+import net.benwoodworth.knbt.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
 /**
- * A serializer that inlines either of 2 properties where they are both nullable but at least one is required.
+ * A serializer that inlines one of the specified properties if it's non-null.
+ * If none of the specified properties are present (or if [inline] is false), it serializes as an object.
  *
  * @param T The target class type.
  * @param kClass The class of the object.
- * @param property1 The first property to check.
- * @param property2 The second property to check.
- * @param inline Whether to inline the property value or wrap it in an object with the property name, `true` by default.
+ * @param propertiesToInline The properties to check for inlining.
+ * @param inline Whether to attempt to inline the first non-null property from [propertiesToInline].
  *
  * Example:
  * ```kotlin
@@ -45,8 +39,7 @@ import kotlin.reflect.jvm.isAccessible
  */
 open class EitherInlineSerializer<T : Any>(
 	private val kClass: KClass<T>,
-	private val property1: KProperty1<T, *>,
-	private val property2: KProperty1<T, *>,
+	private vararg val propertiesToInline: KProperty1<T, *>,
 	private val inline: Boolean = true,
 ) : KSerializer<T> {
 	private val properties by lazy {
@@ -64,54 +57,52 @@ open class EitherInlineSerializer<T : Any>(
 	override fun serialize(encoder: Encoder, value: T) {
 		require(kClass.isInstance(value)) { "Value must be instance of ${kClass.simpleName}" }
 
-		property1.getter.isAccessible = true
-		val v1 = property1.getter.call(value)
-		property2.getter.isAccessible = true
-		val v2 = property2.getter.call(value)
-
-		require(v1 != null || v2 != null) { "At least one of ${property1.name} or ${property2.name} must be non-null in ${kClass.simpleName}" }
-
 		if (inline) {
-			val (property, propertyValue) = if (v1 != null) property1 to v1 else property2 to v2!!
-			val serializer = property.getSerializer(encoder.serializersModule) as KSerializer<Any>
+			for (prop in propertiesToInline) {
+				prop.getter.isAccessible = true
+				val propValue = prop.getter.call(value)
+				if (propValue != null) {
+					val serializer = prop.getSerializer(encoder.serializersModule) as KSerializer<Any>
+					encoder.encodeSerializableValue(serializer, propValue)
+					return
+				}
+			}
+		}
 
-			encoder.encodeSerializableValue(serializer, propertyValue)
-		} else {
-			when (encoder) {
-				is JsonEncoder -> encoder.encodeJsonElement(buildJsonObject {
+		when (encoder) {
+			is JsonEncoder -> encoder.encodeJsonElement(buildJsonObject {
+				properties.forEach { (_, property) ->
+					property.getter.isAccessible = true
+					val propertyValue = property.getter.call(value)
+					if (propertyValue != null) {
+						val serialName = property.getSerialName()
+						val serializer = property.getSerializer(encoder.serializersModule) as KSerializer<Any>
+						put(serialName, encoder.json.encodeToJsonElement(serializer, propertyValue))
+					}
+				}
+			})
+
+			is NbtEncoder -> encoder.encodeInline(descriptor).encodeSerializableValue(
+				NbtCompound.serializer(),
+				buildNbtCompound {
 					properties.forEach { (_, property) ->
 						property.getter.isAccessible = true
 						val propertyValue = property.getter.call(value)
 						if (propertyValue != null) {
 							val serialName = property.getSerialName()
 							val serializer = property.getSerializer(encoder.serializersModule) as KSerializer<Any>
-							put(serialName, encoder.json.encodeToJsonElement(serializer, propertyValue))
+							put(serialName, encoder.nbt.encodeToNbtTag(serializer, propertyValue))
 						}
 					}
 				})
 
-				is NbtEncoder -> encoder.encodeInline(descriptor).encodeSerializableValue(
-					NbtCompound.serializer(),
-					buildNbtCompound {
-						properties.forEach { (_, property) ->
-							property.getter.isAccessible = true
-							val propertyValue = property.getter.call(value)
-							if (propertyValue != null) {
-								val serialName = property.getSerialName()
-								val serializer = property.getSerializer(encoder.serializersModule) as KSerializer<Any>
-								put(serialName, encoder.nbt.encodeToNbtTag(serializer, propertyValue))
-							}
-						}
-					})
-
-				else -> encoder.encodeStructure(descriptor) {
-					properties.values.forEachIndexed { index, property ->
-						property.getter.isAccessible = true
-						val propertyValue = property.getter.call(value)
-						if (propertyValue != null) {
-							val serializer = property.getSerializer(encoder.serializersModule) as KSerializer<Any>
-							encodeSerializableElement(descriptor, index, serializer, propertyValue)
-						}
+			else -> encoder.encodeStructure(descriptor) {
+				properties.values.forEachIndexed { index, property ->
+					property.getter.isAccessible = true
+					val propertyValue = property.getter.call(value)
+					if (propertyValue != null) {
+						val serializer = property.getSerializer(encoder.serializersModule) as KSerializer<Any>
+						encodeSerializableElement(descriptor, index, serializer, propertyValue)
 					}
 				}
 			}
@@ -120,89 +111,59 @@ open class EitherInlineSerializer<T : Any>(
 
 	@Suppress("UNCHECKED_CAST")
 	override fun deserialize(decoder: Decoder): T {
-		if (inline) {
-			val property1Serializer = property1.getSerializer(decoder.serializersModule) as KSerializer<Any>
-			val property2Serializer = property2.getSerializer(decoder.serializersModule) as KSerializer<Any>
-
-			return when (decoder) {
-				is JsonDecoder -> {
-					val element = decoder.decodeJsonElement()
-					val v1 = runCatching {
-						decoder.json.decodeFromJsonElement(property1Serializer, element)
-					}.getOrNull()
-
-					if (v1 != null) {
-						kClass.createInstance(mapOf(property1.name to v1))
-					} else {
-						val v2 = runCatching {
-							decoder.json.decodeFromJsonElement(property2Serializer, element)
-						}.getOrNull()
-						if (v2 != null) {
-							kClass.createInstance(mapOf(property2.name to v2))
-						} else {
-							error("Could not deserialize either ${property1.name} or ${property2.name} from $element")
-						}
-					}
-				}
-
-				is NbtDecoder -> {
-					val tag = decoder.decodeNbtTag()
-					val v1 = runCatching {
-						decoder.nbt.decodeFromNbtTag(property1Serializer, tag)
-					}.getOrNull()
-
-					if (v1 != null) {
-						kClass.createInstance(mapOf(property1.name to v1))
-					} else {
-						val v2 = runCatching {
-							decoder.nbt.decodeFromNbtTag(property2Serializer, tag)
-						}.getOrNull()
-						if (v2 != null) {
-							kClass.createInstance(mapOf(property2.name to v2))
-						} else {
-							error("Could not deserialize either ${property1.name} or ${property2.name} from $tag")
-						}
-					}
-				}
-
-				else -> error("Unsupported decoder type: ${decoder::class.simpleName}")
-			}
-		} else {
-			val values = when (decoder) {
-				is JsonDecoder -> {
-					val element = decoder.decodeJsonElement() as? JsonObject ?: error("Expected JsonObject")
-					properties.mapValues { (_, prop) ->
-						val serialName = prop.getSerialName()
-						element[serialName]?.let {
-							decoder.json.decodeFromJsonElement(
-								prop.getSerializer(decoder.serializersModule) as KSerializer<Any>,
-								it
-							)
-						}
-					}
-				}
-
-				is NbtDecoder -> {
-					val tag = decoder.decodeNbtTag() as? NbtCompound ?: error("Expected NbtCompound")
-					properties.mapValues { (_, prop) ->
-						val serialName = prop.getSerialName()
-						tag[serialName]?.let {
-							decoder.nbt.decodeFromNbtTag(
-								prop.getSerializer(decoder.serializersModule) as KSerializer<Any>,
-								it
-							)
-						}
-					}
-				}
-
-				else -> error("Unsupported decoder type: ${decoder::class.simpleName}")
-			}
-
-			require(values[property1.name] != null || values[property2.name] != null) {
-				"At least one of ${property1.getSerialName()} or ${property2.getSerialName()} must be present"
-			}
-
-			return kClass.createInstance(values)
+		val element: Any = when (decoder) {
+			is JsonDecoder -> decoder.decodeJsonElement()
+			is NbtDecoder -> decoder.decodeNbtTag()
+			else -> error("Unsupported decoder type: ${decoder::class.simpleName}")
 		}
+
+		if (inline) {
+			for (prop in propertiesToInline) {
+				val serializer = prop.getSerializer(decoder.serializersModule) as KSerializer<Any>
+				val value = runCatching {
+					when (decoder) {
+						is JsonDecoder -> decoder.json.decodeFromJsonElement(serializer, element as JsonElement)
+						is NbtDecoder -> decoder.nbt.decodeFromNbtTag(serializer, element as NbtTag)
+						else -> null
+					}
+				}.getOrNull()
+
+				if (value != null) {
+					return kClass.createInstance(mapOf(prop.name to value))
+				}
+			}
+		}
+
+		val values = when (decoder) {
+			is JsonDecoder -> {
+				val jsonObject = element as? JsonObject ?: error("Expected JsonObject for $kClass but got $element")
+				properties.mapValues { (_, prop) ->
+					val serialName = prop.getSerialName()
+					jsonObject[serialName]?.let {
+						decoder.json.decodeFromJsonElement(
+							prop.getSerializer(decoder.serializersModule) as KSerializer<Any>,
+							it
+						)
+					}
+				}
+			}
+
+			is NbtDecoder -> {
+				val nbtCompound = element as? NbtCompound ?: error("Expected NbtCompound for $kClass but got $element")
+				properties.mapValues { (_, prop) ->
+					val serialName = prop.getSerialName()
+					nbtCompound[serialName]?.let {
+						decoder.nbt.decodeFromNbtTag(
+							prop.getSerializer(decoder.serializersModule) as KSerializer<Any>,
+							it
+						)
+					}
+				}
+			}
+
+			else -> error("Unsupported decoder type: ${decoder::class.simpleName}")
+		}
+
+		return kClass.createInstance(values)
 	}
 }
