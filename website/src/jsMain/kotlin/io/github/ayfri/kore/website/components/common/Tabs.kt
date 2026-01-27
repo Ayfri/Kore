@@ -1,12 +1,9 @@
 package io.github.ayfri.kore.website.components.common
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import io.github.ayfri.kore.website.GlobalStyle
-import io.github.ayfri.kore.website.utils.mdMax
-import io.github.ayfri.kore.website.utils.paddingX
-import io.github.ayfri.kore.website.utils.xsMax
+import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
@@ -21,7 +18,7 @@ data class Tab(
 fun Tabs(tabs: List<Tab>, className: String? = null, contentClassName: String? = null) {
 	Style(TabsStyle)
 
-	val selectedTab = mutableStateOf(0)
+	var selectedTab by remember { mutableStateOf(0) }
 
 	Div({
 		classes(TabsStyle.container)
@@ -33,12 +30,12 @@ fun Tabs(tabs: List<Tab>, className: String? = null, contentClassName: String? =
 			tabs.forEachIndexed { index, tab ->
 				Button({
 					classes(TabsStyle.button)
-					if (index == selectedTab.value) {
+					if (index == selectedTab) {
 						classes(TabsStyle.selected)
 					}
 
 					onClick {
-						selectedTab.value = index
+						selectedTab = index
 					}
 				}) {
 					Text(tab.name)
@@ -49,13 +46,15 @@ fun Tabs(tabs: List<Tab>, className: String? = null, contentClassName: String? =
 		Div({
 			classes(TabsStyle.contentContainer)
 		}) {
-			tabs.mapIndexed { index, tab ->
-				Div({
-					if (index != selectedTab.value) hidden()
-					classes(TabsStyle.content)
-					contentClassName?.let { classes(it) }
-				}) {
-					tab.content()
+			tabs.forEachIndexed { index, tab ->
+				key(index) {
+					Div({
+						if (index != selectedTab) hidden()
+						classes(TabsStyle.content)
+						contentClassName?.let { classes(it) }
+					}) {
+						tab.content()
+					}
 				}
 			}
 		}
@@ -66,15 +65,19 @@ object TabsStyle : StyleSheet() {
 	val container by style {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
-		border(1.px, LineStyle.Solid, GlobalStyle.borderColor)
+		border(1.px, LineStyle.Solid, GlobalStyle.borderColor.alpha(0.3))
 		borderRadius(GlobalStyle.roundingSection)
 		overflow(Overflow.Hidden)
+		backgroundColor(GlobalStyle.secondaryBackgroundColor)
+		property("box-shadow", "0 20px 50px ${GlobalStyle.shadowColor.alpha(0.5)}")
 	}
 
 	val buttons by style {
 		display(DisplayStyle.Flex)
-		backgroundColor(GlobalStyle.secondaryBackgroundColor)
-		borderBottom(1.px, LineStyle.Solid, GlobalStyle.borderColor)
+		backgroundColor(Color("#1e2227"))
+		borderBottom(1.px, LineStyle.Solid, GlobalStyle.borderColor.alpha(0.2))
+		padding(0.5.cssRem)
+		gap(0.5.cssRem)
 
 		mdMax(self) {
 			display(DisplayStyle.Grid)
@@ -88,33 +91,36 @@ object TabsStyle : StyleSheet() {
 	}
 
 	val button by style {
-		backgroundColor(GlobalStyle.buttonBackgroundColor)
+		backgroundColor(Color.transparent)
 		cursor(Cursor.Pointer)
-		color(GlobalStyle.textColor)
-		padding(0.6.cssRem, 1.4.cssRem)
+		color(GlobalStyle.altTextColor)
+		padding(0.4.cssRem, 1.2.cssRem)
 		fontFamily("inherit")
+		borderRadius(0.4.cssRem)
+		fontWeight(500)
+		transition(0.2.s, "background-color", "color")
 
-		border(0.px, LineStyle.Solid, GlobalStyle.borderColor)
+		border(0.px, LineStyle.Solid, Color.transparent)
 
-		borderRight(1.px, LineStyle.Solid, GlobalStyle.borderColor)
+		hover(self) style {
+			backgroundColor(GlobalStyle.tertiaryBackgroundColor.alpha(0.5))
+			color(GlobalStyle.textColor)
+		}
 
 		mdMax(self) {
 			paddingX(0.8.cssRem)
 		}
-
-		xsMax(self) {
-			borderBottom(1.px, LineStyle.Solid, GlobalStyle.borderColor)
-		}
 	}
 
 	val selected by style {
-		backgroundColor(GlobalStyle.buttonBackgroundColorHover)
+		backgroundColor(GlobalStyle.tertiaryBackgroundColor)
+		color(GlobalStyle.textColor)
 	}
 
 	val contentContainer by style {
 		display(DisplayStyle.Flex)
 		height(100.percent)
-		overflowY(Overflow.Scroll)
+		overflowY(Overflow.Auto)
 		width(100.percent)
 	}
 
