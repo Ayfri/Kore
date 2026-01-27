@@ -16,7 +16,7 @@ Some SNBT features are not supported yet. Kore depends on another library for wr
 The main features that are not supported are:
 - Heterogeneous lists (e.g. `[1, "string", {key: "value"}]`)
 - SNBT operations (`bool(arg)`, `uuid(arg)`)
-- 
+
 Such features would be very hard to implement just in Kore, but if you really need them, maybe we could consider creating our own SNBT library.
 
 ## Resource Packs
