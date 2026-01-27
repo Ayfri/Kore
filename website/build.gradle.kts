@@ -24,6 +24,16 @@ kobweb {
 	val projectLogger = logger
 
 	app {
+		globals.set(
+			mapOf(
+			"minecraftVersion" to rootProject.file("gradle.properties").readLines()
+				.firstOrNull { it.startsWith("minecraft.version=") }
+				?.substringAfter('=')
+				?.trim()
+				.orEmpty(),
+			"projectVersion" to Project.VERSION
+		))
+
 		index {
 			head.apply {
 				add {
@@ -241,22 +251,12 @@ kobweb {
 	}
 }
 
-// Task to fetch GitHub releases and generate Kotlin file
-// Optional: Add GitHub token if available in environment variables
-
-// Check if we should continue to the next page
-
-// Generate Kotlin file with releases data
-// Fetch all pages of releases
 tasks.register("fetchGitHubReleases") {
 	group = "kore"
 	description = "Fetches GitHub releases and generates a Kotlin file with the data"
 
-	// Generate into build/ to keep sources clean and align with configured source set
 	val outFile = layout.buildDirectory.file("generated/kore/src/jsMain/kotlin/io/github/ayfri/kore/website/gitHubReleases.kt")
 	outputs.file(outFile)
-
-	// Removed incorrect mustRunAfter; compileKotlinJs will depend on this task (see below)
 
 	doLast {
 		val allReleases = mutableListOf<Map<*, *>>()
@@ -363,16 +363,18 @@ tasks.register("fetchGitHubReleases") {
 	}
 }
 
-
-// Make the kobwebExport task depend on fetchGitHubReleases
-tasks.named("kobwebExport") { dependsOn("fetchGitHubReleases") }
+tasks.named("kobwebExport") {
+	dependsOn("fetchGitHubReleases")
+}
 
 // Ensure generated sources exist before KSP for JS runs
-// This fixes Gradle validation about implicit dependency on build/generated/kore/src/jsMain/kotlin
-// Use tasks.matching to avoid failing if the task is created later by plugins
-tasks.matching { it.name == "kspKotlinJs" }.configureEach { dependsOn("fetchGitHubReleases") }
-// Also ensure Kotlin JS compilation sees the generated sources
-tasks.matching { it.name == "compileKotlinJs" }.configureEach { dependsOn("fetchGitHubReleases") }
+tasks.matching { it.name == "kspKotlinJs" }.configureEach {
+	dependsOn("fetchGitHubReleases")
+}
+
+tasks.matching { it.name == "compileKotlinJs" }.configureEach {
+	dependsOn("fetchGitHubReleases")
+}
 
 data class DocEntry(
 	val file: File,
