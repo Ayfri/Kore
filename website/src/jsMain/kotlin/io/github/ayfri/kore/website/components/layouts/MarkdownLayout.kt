@@ -12,6 +12,7 @@ import io.github.ayfri.kore.website.components.doc.*
 import io.github.ayfri.kore.website.utils.*
 import kotlinx.browser.window
 import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
@@ -236,8 +237,8 @@ object MarkdownLayoutStyle : StyleSheet() {
 		marginX(3.vw)
 		marginBottom(2.cssRem)
 		minHeight(100.percent)
+		overflowX(Overflow.Visible)
 		width(100.percent)
-		overflowX(Overflow.Auto)
 
 		smMax(self) {
 			marginTop(2.cssRem)
@@ -284,14 +285,18 @@ object MarkdownLayoutStyle : StyleSheet() {
 	}
 
 	val contentWrapper by style {
-		marginRight(16.cssRem)
+		alignItems(AlignItems.FlexStart)
+		display(DisplayStyle.Flex)
+		flexDirection(FlexDirection.Row)
+		gap(2.cssRem)
 
 		smMax(self) {
-			marginRight(0.px)
+			flexDirection(FlexDirection.Column)
 		}
 	}
 
 	val mainContent by style {
+		flex(1)
 		minWidth(0.px)
 
 		"img" style {

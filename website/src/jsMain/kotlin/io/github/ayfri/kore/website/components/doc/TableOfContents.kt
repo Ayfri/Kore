@@ -17,43 +17,58 @@ object TableOfContentsStyle : StyleSheet() {
 	val container by style {
 		backgroundColor(GlobalStyle.secondaryBackgroundColor)
 		borderRadius(GlobalStyle.roundingButton)
-		maxHeight(80.vh - 4.cssRem)
-		maxWidth(16.cssRem)
+		maxHeight(72.5.vh)
+		maxWidth(14.cssRem)
 		overflowY(Overflow.Auto)
-		padding(1.cssRem, 1.5.cssRem)
-		position(Position.Fixed)
-		right(1.cssRem)
-		top(15.vh)
+		padding(0.75.cssRem, 1.cssRem)
+		position(Position.Sticky)
+		top(10.vh)
 
 		smMax(self) {
 			display(DisplayStyle.None)
 		}
 
 		"ul" style {
-			paddingLeft(1.5.cssRem)
+			paddingLeft(1.cssRem)
 		}
+	}
+
+	val title by style {
+		fontSize(1.1.cssRem)
+		fontWeight(FontWeight.Bold)
+		marginTop(0.px)
+		marginBottom(0.5.cssRem)
 	}
 
 	val entry by style {
 		color(GlobalStyle.textColor)
 		cursor(Cursor.Pointer)
+		fontSize(0.875.cssRem)
 		listStyle(ListStyle.None)
 		overflow(Overflow.Hidden)
-		padding(0.1.cssRem, 0.px)
+		padding(0.15.cssRem, 0.3.cssRem)
+		borderRadius(GlobalStyle.roundingButton)
 		textOverflow(TextOverflow.Ellipsis)
-		transition(0.2.s, "color")
+		transition(0.2.s, "color", "background-color")
 		whiteSpace(WhiteSpace.NoWrap)
 		userSelect(UserSelect.None)
 
 		self + hover style {
 			color(GlobalStyle.linkColor)
+			backgroundColor(GlobalStyle.tertiaryBackgroundColor)
 		}
+	}
+
+	val activeEntry by style {
+		color(GlobalStyle.linkColor)
+		backgroundColor(GlobalStyle.tertiaryBackgroundColor)
 	}
 }
 
 @Composable
 fun TableOfContents() {
 	var headings by remember { mutableStateOf(listOf<HTMLElement>()) }
+	var activeHeadingId by remember { mutableStateOf<String?>(null) }
 
 	LaunchedEffect(Unit) {
 		headings = document.querySelectorAll(".${MarkdownLayoutStyle.mainContent} .${MarkdownLayoutStyle.heading}")
@@ -72,21 +87,44 @@ fun TableOfContents() {
 		})
 	}
 
+	LaunchedEffect(Unit) {
+		window.addEventListener("scroll", {
+			val scrollPosition = window.scrollY + 100
+			val currentHeadings = document.querySelectorAll(".${MarkdownLayoutStyle.mainContent} .${MarkdownLayoutStyle.heading}")
+				.asList()
+				.map { it as HTMLElement }
+
+			var currentActive: String? = null
+			for (heading in currentHeadings) {
+				if (heading.offsetTop <= scrollPosition) {
+					currentActive = heading.id
+				} else {
+					break
+				}
+			}
+			activeHeadingId = currentActive
+		})
+	}
+
 	Style(TableOfContentsStyle)
 
 	Nav({
 		classes(TableOfContentsStyle.container)
 	}) {
-		H3 { Text("On this page") }
+		H4({
+			classes(TableOfContentsStyle.title)
+		}) { Text("On this page") }
 		Ul {
 			headings.forEach { heading ->
 				val headingName = heading.innerText.removePrefix("link").trim()
+				val isActive = heading.id == activeHeadingId
 
 				Li({
 					classes(TableOfContentsStyle.entry)
+					if (isActive) classes(TableOfContentsStyle.activeEntry)
 					title(headingName)
 					style {
-						marginLeft((heading.tagName.last().toString().toInt() - 2) * 1.cssRem)
+						marginLeft((heading.tagName.last().toString().toInt() - 2) * 0.75.cssRem)
 					}
 					onClick {
 						val id = heading.id
