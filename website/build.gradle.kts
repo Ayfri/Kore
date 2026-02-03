@@ -160,11 +160,17 @@ kobweb {
 			}
 		}
 
-		process = { markdownFiles ->
+		// Capture values outside the callback for configuration cache compatibility
+		val projectName = project.name
+		val projectDir = project.projectDir
+		val markdownDir = projectDir.resolve("src/jsMain/resources/markdown")
+		val publicDir = projectDir.resolve("src/jsMain/resources/public")
+
+		process.set { markdownFiles ->
 			val docEntries = mutableListOf<DocEntry>()
 
 			markdownFiles.forEach { docArticle ->
-				val path = File(docArticle.filePath)
+				val path = markdownDir.resolve(docArticle.filePath)
 				val fileName = path.name
 				val fm = docArticle.frontMatter
 				val requiredFields = listOf("title", "description", "date-created", "date-modified", "nav-title", "routeOverride")
@@ -203,6 +209,96 @@ kobweb {
 				)
 				docEntries += newEntry
 			}
+
+			// Group order matching DocTree.kt
+			val groupOrder = listOf("guides", "commands", "data-driven", "concepts", "helpers", "advanced")
+			fun getGroupPriority(slug: String) = groupOrder.indexOf(slug.lowercase()).takeIf { it >= 0 } ?: groupOrder.size
+
+			// Sort entries by group priority, then position, then title
+			val sortedEntries = docEntries.sortedWith(Comparator { a, b ->
+				val slugsA = a.slugs.drop(1)
+				val slugsB = b.slugs.drop(1)
+				val maxDepth = minOf(slugsA.size, slugsB.size)
+
+				for (i in 0 until maxDepth) {
+					val slugA = slugsA[i]
+					val slugB = slugsB[i]
+
+					val posA = if (i == slugsA.lastIndex) a.position else null
+					val posB = if (i == slugsB.lastIndex) b.position else null
+
+					val posCompare = compareValues(posA ?: Int.MAX_VALUE, posB ?: Int.MAX_VALUE)
+					if (posCompare != 0) return@Comparator posCompare
+
+					if (i == 0 && slugsA.size > 1 && slugsB.size > 1) {
+						val groupCompare = compareValues(getGroupPriority(slugA), getGroupPriority(slugB))
+						if (groupCompare != 0) return@Comparator groupCompare
+					}
+
+					val slugCompare = compareValues(slugA.lowercase(), slugB.lowercase())
+					if (slugCompare != 0) return@Comparator slugCompare
+				}
+
+				val lengthCompare = compareValues(slugsA.size, slugsB.size)
+				if (lengthCompare != 0) return@Comparator lengthCompare
+
+				return@Comparator compareValues(a.navTitle, b.navTitle)
+			})
+
+			// Generate llms.txt (documentation index for LLMs) grouped by sections
+			val baseUrl = Project.WEBSITE_URL
+			val llmsContent = buildString {
+				appendLine("# $projectName Documentation")
+				appendLine("> Documentation index generated for LLMs.")
+				appendLine("Complete llms-full.txt available at: $baseUrl/llms-full.txt")
+				appendLine()
+
+				// Group entries by their first slug (section)
+				val groupedEntries = sortedEntries.groupBy { it.slugs.getOrNull(1) ?: "other" }
+				val orderedGroups = groupedEntries.keys.sortedBy { getGroupPriority(it) }
+
+				orderedGroups.forEach { group ->
+					val groupTitle = group.replace("-", " ").replaceFirstChar { it.uppercase() }
+					appendLine("## $groupTitle")
+					appendLine()
+
+					groupedEntries[group]?.forEach { entry ->
+						val route = entry.slugs.joinToString("/")
+						append("- [${entry.title}]($baseUrl/$route)")
+						if (entry.desc.isNotBlank()) append(": ${entry.desc}")
+						appendLine()
+					}
+					appendLine()
+				}
+			}
+
+			// Generate llms-full.txt (full raw content for LLMs) grouped by sections
+			val llmsFullContent = buildString {
+				appendLine("# $projectName Full Documentation")
+				appendLine()
+
+				val groupedEntries = sortedEntries.groupBy { it.slugs.getOrNull(1) ?: "other" }
+				val orderedGroups = groupedEntries.keys.sortedBy { getGroupPriority(it) }
+
+				orderedGroups.forEach { group ->
+					val groupTitle = group.replace("-", " ").replaceFirstChar { it.uppercase() }
+					appendLine("# $groupTitle")
+					appendLine()
+
+					groupedEntries[group]?.forEach { entry ->
+						appendLine("## ${entry.title}")
+						appendLine(entry.file.readText())
+						appendLine("\n---\n")
+					}
+				}
+			}
+
+			// Write files to public resources directory
+			publicDir.mkdirs()
+			File(publicDir, "llms.txt").writeText(llmsContent)
+			File(publicDir, "llms-full.txt").writeText(llmsFullContent)
+
+			println("LLMs.txt generated -> ${publicDir.absolutePath}")
 
 			generateKotlin("$projectGroup/docEntries.kt", buildString {
 				appendLine(
