@@ -2,217 +2,834 @@
 root: .components.layouts.MarkdownLayout
 title: Item Modifiers
 nav-title: Item Modifiers
-description: Apply loot functions to items using Kore’s DSL, with predicates and components support.
-keywords: minecraft, datapack, kore, item modifiers, loot functions, /item modify, components, predicates
+description: Transform item stacks using Kore's type-safe DSL for loot functions - set counts, add enchantments, copy data, and more.
+keywords: minecraft, datapack, kore, item modifiers, loot functions, /item modify, components
 date-created: 2025-08-11
-date-modified: 2025-08-11
+date-modified: 2026-02-03
 routeOverride: /docs/data-driven/item-modifiers
 ---
 
 # Item Modifiers
 
-Item modifiers (also called loot functions) let you transform item stacks: change counts, add components, set names/lore, copy data, and more. Kore exposes a concise DSL over the vanilla format so you can define modifiers in code and use them in commands and loot tables.
+Item modifiers (also called loot functions) transform item stacks by adjusting counts, adding enchantments, copying data, setting components, and more. They can be defined as standalone JSON files referenced by commands, or used inline within loot tables.
 
-For the vanilla reference, see the [Minecraft Wiki: Item modifier](https://minecraft.wiki/w/Item_modifier).
+## Overview
 
-## Quick start
+Item modifiers have several key characteristics:
 
-Create a modifier and apply it with the `/item modify` command:
+- **Composable**: Chain multiple functions together for complex transformations
+- **Conditional**: Each function can have predicate conditions
+- **Context-aware**: Access loot context for killer, tool, block entity, etc.
+- **Reusable**: Define once as a file, reference anywhere
+
+### Common Use Cases
+
+| Use Case             | Functions                                                 |
+|----------------------|-----------------------------------------------------------|
+| Set stack count      | `setCount`                                                |
+| Add enchantments     | `enchantRandomly`, `enchantWithLevels`, `setEnchantments` |
+| Modify durability    | `setDamage`                                               |
+| Copy NBT/components  | `copyComponents`, `copyCustomData`, `copyName`            |
+| Set name/lore        | `setName`, `setLore`                                      |
+| Create explorer maps | `explorationMap`                                          |
+| Fill containers      | `setContents`, `setLootTable`                             |
+| Apply formulas       | `applyBonus`, `enchantedCountIncrease`                    |
+
+## File Structure
+
+Item modifiers are stored as JSON files in data packs at:
+
+```
+data/<namespace>/item_modifier/<name>.json
+```
+
+For complete JSON specification, see the [Minecraft Wiki - Item modifier](https://minecraft.wiki/w/Item_modifier).
+
+## Creating Item Modifiers
+
+Use the `itemModifier` builder function to create item modifiers in Kore:
 
 ```kotlin
-import io.github.ayfri.kore.arguments.WEAPON
-import io.github.ayfri.kore.arguments.types.literals.self
-import io.github.ayfri.kore.features.itemmodifiers.itemModifier
-import io.github.ayfri.kore.features.itemmodifiers.functions.*
-import io.github.ayfri.kore.features.predicates.conditions.*
-import io.github.ayfri.kore.functions.load
-import io.github.ayfri.kore.generated.MapDecorationTypes
-import io.github.ayfri.kore.generated.Tags
-
-val modifier = itemModifier("explorer_horn") {
-	// Vanilla function: minecraft:exploration_map
-	explorationMap {
-		destination = Tags.Worldgen.Structure.MINESHAFT
-		decoration = MapDecorationTypes.BANNER_BLACK
-		skipExistingChunks = true
-
-		// Predicates: only apply when raining and a coin-flip passes
-		conditions {
-			randomChance(0.5f)
-			weatherCheck(raining = true)
+dataPack("my_datapack") {
+	val modifier = itemModifier("fortune_bonus") {
+		enchantRandomly {
+			options += Enchantments.FORTUNE
 		}
-	}
-
-	// Vanilla function: minecraft:set_instrument
-	setInstrument(Tags.Instrument.GOAT_HORNS)
-}
-
-load {
-	items {
-		modify(self(), WEAPON.MAINHAND, modifier)
+		setCount(uniform(1f, 5f))
 	}
 }
 ```
 
-This produces the exact JSON the game expects, while keeping everything type-safe and composable in Kotlin.
+This generates `data/my_datapack/item_modifier/fortune_bonus.json`.
 
-## Where modifiers live in Kore
+## Using Item Modifiers
 
-- Builder entry-point: `dataPack.itemModifier(..)` returns an `ItemModifierArgument` you can reference elsewhere.
-- Internal data: `ItemModifier` stores an inlinable list of
-  `ItemFunction` objects and serialises directly to a JSON array when saved.
-- Each `ItemFunction` accepts optional `conditions { .. }`, which are regular Predicates.
+### With Commands
 
-See `kore/features/itemmodifiers/ItemModifier.kt` for the container type and
-`kore/features/itemmodifiers/functions/*` for all functions.
-
-## Working with components
-
-Many transformations map 1:1 to item components. A few common examples:
+Apply modifiers to items using the `/item modify` command:
 
 ```kotlin
-import io.github.ayfri.kore.arguments.chatcomponents.textComponent
-import io.github.ayfri.kore.arguments.colors.Color
+load {
+	items {
+		// Modify item in player's mainhand
+		modify(self(), WEAPON.MAINHAND, modifier)
 
-// Add or remove components atomically
-itemModifier("components_patch") {
-	setComponents {
-		customName(textComponent("Legendary", Color.AQUA))
-		!damage(5)          // remove the damage component
-		setToRemove("foo")  // remove custom component by id
+		// Modify item in container
+		modify(block(0, 64, 0), slot(0), modifier)
 	}
 }
+```
 
-// Replace or edit contents (bundles, containers, charged projectiles)
-itemModifier("contents") {
-	setContents(ContentComponentTypes.BUNDLE_CONTENTS) {
+### In Loot Tables
+
+Use functions directly in loot tables at table, pool, or entry level:
+
+```kotlin
+lootTable("treasure") {
+	// Table-level functions (applied to all drops)
+	functions {
+		enchantRandomly()
+	}
+
+	pool {
+		// Pool-level functions
+		functions {
+			setCount(uniform(1f, 3f))
+		}
+
 		entries {
-			// full Loot Table entry DSL
+			item(Items.DIAMOND) {
+				// Entry-level functions
+				functions {
+					setName("Lucky Diamond")
+				}
+			}
 		}
 	}
 }
+```
 
-// Lore with insert/append/replace modes
+## Function Reference
+
+### Count and Damage
+
+#### setCount
+
+Sets or modifies the stack count:
+
+```kotlin
+itemModifier("set_count") {
+	// Exact count
+	setCount(5f)
+
+	// Random range
+	setCount(uniform(1f, 10f))
+
+	// Add to current count
+	setCount(5f, add = true)
+
+	// With condition
+	setCount(10f) {
+		conditions {
+			killedByPlayer()
+		}
+	}
+}
+```
+
+#### setDamage
+
+Sets item durability (1.0 = full, 0.0 = broken):
+
+```kotlin
+itemModifier("damage") {
+	// Set to 80% durability
+	setDamage(0.8f)
+
+	// Random damage
+	setDamage(uniform(0.5f, 1.0f))
+
+	// Add to current damage
+	setDamage(-0.1f, add = true)  // Repair 10%
+}
+```
+
+#### limitCount
+
+Clamps stack count to a range:
+
+```kotlin
+itemModifier("limit") {
+	// Exact limit
+	limitCount(64)
+
+	// Range
+	limitCount(providersRange(min = constant(1f), max = constant(32f)))
+}
+```
+
+### Enchantments
+
+#### enchantRandomly
+
+Adds a random enchantment:
+
+```kotlin
+itemModifier("random_enchant") {
+	// Any enchantment
+	enchantRandomly()
+
+	// From specific list
+	enchantRandomly {
+		options += Enchantments.SHARPNESS
+		options += Enchantments.SMITE
+		options += Enchantments.BANE_OF_ARTHROPODS
+	}
+
+	// Only compatible enchantments
+	enchantRandomly(onlyCompatible = true)
+}
+```
+
+#### enchantWithLevels
+
+Enchants as if using an enchanting table:
+
+```kotlin
+itemModifier("table_enchant") {
+	// Fixed level
+	enchantWithLevels(levels = constant(30f))
+
+	// Random level range
+	enchantWithLevels(levels = uniform(20f, 39f))
+
+	// Limit to specific enchantments
+	enchantWithLevels(Enchantments.PROTECTION, levels = constant(30f))
+}
+```
+
+#### setEnchantments
+
+Sets specific enchantments and levels:
+
+```kotlin
+itemModifier("specific_enchants") {
+	setEnchantments {
+		enchantment(Enchantments.SHARPNESS, 5)
+		enchantment(Enchantments.UNBREAKING, 3)
+		enchantment(Enchantments.MENDING, 1)
+	}
+}
+```
+
+#### enchantedCountIncrease
+
+Increases count based on enchantment level (like Looting):
+
+```kotlin
+itemModifier("looting_bonus") {
+	enchantedCountIncrease(Enchantments.LOOTING, count = 1f, limit = 5)
+}
+```
+
+### Names and Lore
+
+#### setName
+
+Sets the item's display name:
+
+```kotlin
+itemModifier("named") {
+	// Simple string
+	setName("Legendary Sword")
+
+	// Text component with formatting
+	setName(textComponent("Legendary Sword") {
+		color = Color.GOLD
+		bold = true
+	})
+
+	// Set item name vs custom name
+	setName("Base Name") {
+		target = SetNameTarget.ITEM_NAME  // or CUSTOM_NAME
+	}
+}
+```
+
+#### setLore
+
+Sets or modifies item lore:
+
+```kotlin
 itemModifier("lore") {
 	setLore {
-		lore("Line 1", Color.BLACK)
-		lore("Line 2")
+		lore("First line", Color.GRAY)
+		lore("Second line", Color.DARK_GRAY)
+
+		// Insert at specific position
 		mode(Mode.INSERT, offset = 0)
 	}
 }
+```
 
-// Custom-model-data lists, with per-list modes
-itemModifier("cmd") {
-	setCustomModelData(
-		colors = listOf(Color.RED, Color.BLUE),
-		flags = listOf(true, false)
-	) {
-		colors?.mode(Mode.REPLACE_ALL)
-		flags?.mode(Mode.APPEND)
+### Components
+
+#### setComponents
+
+Directly set item components:
+
+```kotlin
+itemModifier("components") {
+	setComponents {
+		customName(textComponent("Custom Item", Color.GOLD))
+		damage(10)
+		unbreakable(showInTooltip = false)
+
+		// Remove component with !
+		!food {}
 	}
 }
 ```
 
-For a general overview of item components and their builders, see [Components](/docs/concepts/components).
+#### copyComponents
 
-## Conditions on functions (Predicates)
+Copy components from a source:
 
-Every item function can define
-`conditions { .. }`. These are standard Kore Predicates and support all the same helpers (random chance, weather, scores, entity checks, etc.). This mirrors the vanilla “conditions” array on loot functions.
+```kotlin
+itemModifier("copy_from_block") {
+	copyComponents {
+		source = Source.BLOCK_ENTITY
+
+		// Include specific components
+		include(ItemComponentTypes.CUSTOM_NAME, ItemComponentTypes.LORE)
+
+		// Or exclude specific components
+		exclude(ItemComponentTypes.DAMAGE)
+	}
+}
+```
+
+#### copyName
+
+Copy entity/block name to item:
+
+```kotlin
+itemModifier("named_drop") {
+	copyName(Source.BLOCK_ENTITY)
+	// Or from entity
+	copyName(Source.THIS)
+	copyName(Source.KILLER)
+}
+```
+
+#### copyCustomData
+
+Copy NBT data to custom_data component:
+
+```kotlin
+itemModifier("copy_nbt") {
+	copyCustomData {
+		source(Source.BLOCK_ENTITY)
+
+		operations {
+			operation("Items", "BlockItems", CopyOperation.REPLACE)
+			operation("Lock", "OriginalLock", CopyOperation.MERGE)
+		}
+	}
+}
+```
+
+### Container Contents
+
+#### setContents
+
+Fill container items (bundles, shulker boxes):
+
+```kotlin
+itemModifier("filled_bundle") {
+	setContents(ContentComponentTypes.BUNDLE_CONTENTS) {
+		entries {
+			item(Items.DIAMOND) {
+				functions {
+					setCount(16f)
+				}
+			}
+			item(Items.EMERALD) {
+				functions {
+					setCount(32f)
+				}
+			}
+		}
+	}
+}
+```
+
+#### setLootTable
+
+Set a container's loot table:
+
+```kotlin
+itemModifier("chest_loot") {
+	setLootTable(
+		LootTableType.CHEST,
+		LootTables.Chests.SIMPLE_DUNGEON,
+		seed = 12345L
+	)
+}
+```
+
+#### modifyContents
+
+Apply modifiers to items inside a container:
+
+```kotlin
+itemModifier("enchant_bundle_contents") {
+	modifyContents(ContentComponentTypes.BUNDLE_CONTENTS) {
+		modifiers {
+			enchantRandomly()
+		}
+	}
+}
+```
+
+### Maps and Exploration
+
+#### explorationMap
+
+Convert empty map to explorer map:
+
+```kotlin
+itemModifier("treasure_map") {
+	explorationMap {
+		destination = Tags.Worldgen.Structure.BURIED_TREASURE
+		decoration = MapDecorationTypes.RED_X
+		zoom = 2
+		searchRadius = 50
+		skipExistingChunks = true
+	}
+}
+```
+
+### Special Items
+
+#### setInstrument
+
+Set goat horn instrument:
+
+```kotlin
+itemModifier("horn") {
+	setInstrument(Tags.Instrument.GOAT_HORNS)
+}
+```
+
+#### setPotion
+
+Set potion type:
+
+```kotlin
+itemModifier("potion") {
+	setPotion(Potions.STRONG_HEALING)
+}
+```
+
+#### setStewEffect
+
+Set suspicious stew effects:
+
+```kotlin
+itemModifier("stew") {
+	setStewEffect {
+		potionEffect(Effects.REGENERATION, duration = 100)
+		potionEffect(Effects.SATURATION, duration = 200)
+	}
+}
+```
+
+#### setFireworks
+
+Configure firework rocket:
+
+```kotlin
+itemModifier("firework") {
+	setFireworks(flightDuration = 2) {
+		explosions {
+			explosion(FireworkExplosionShape.LARGE_BALL) {
+				colors(Color.RED, Color.ORANGE)
+				fadeColors(Color.YELLOW)
+				hasTrail = true
+				hasTwinkle = true
+			}
+		}
+	}
+}
+```
+
+#### setBookCover
+
+Set written book cover:
+
+```kotlin
+itemModifier("book") {
+	setBookCover(
+		title = "Adventure Log",
+		author = "Player",
+		generation = 0
+	)
+}
+```
+
+### Attributes
+
+#### setAttributes
+
+Add attribute modifiers:
+
+```kotlin
+itemModifier("buffed") {
+	setAttributes {
+		attribute(
+			attribute = Attributes.ATTACK_DAMAGE,
+			operation = AttributeModifierOperation.ADD_VALUE,
+			amount = constant(5f),
+			id = "bonus_damage",
+			slot = EquipmentSlot.MAINHAND
+		)
+		attribute(
+			attribute = Attributes.MOVEMENT_SPEED,
+			operation = AttributeModifierOperation.ADD_MULTIPLIED_BASE,
+			amount = constant(0.1f),
+			id = "speed_boost",
+			slot = EquipmentSlot.FEET
+		)
+	}
+}
+```
+
+### Banners and Patterns
+
+#### setBannerPattern
+
+Add banner patterns:
+
+```kotlin
+itemModifier("banner") {
+	setBannerPattern(append = true) {
+		pattern(BannerPatterns.STRIPE_TOP, DyeColors.RED)
+		pattern(BannerPatterns.STRIPE_BOTTOM, DyeColors.BLUE)
+	}
+}
+```
+
+### Block State
+
+#### copyState
+
+Copy block state to item:
+
+```kotlin
+itemModifier("block_state") {
+	copyState(Blocks.FURNACE) {
+		properties("facing", "lit")
+	}
+}
+```
+
+### Bonus Formulas
+
+#### applyBonus
+
+Apply enchantment-based bonus formulas:
+
+```kotlin
+itemModifier("fortune") {
+	// Ore drops formula
+	applyBonus(Enchantments.FORTUNE) {
+		formula = OreDrops()
+	}
+
+	// Uniform bonus
+	applyBonus(Enchantments.FORTUNE) {
+		formula = UniformBonusCount(bonusMultiplier = 1f)
+	}
+
+	// Binomial distribution
+	applyBonus(Enchantments.FORTUNE) {
+		formula = BinomialWithBonusCount(extra = 3, probability = 0.5f)
+	}
+}
+```
+
+### Smelting and Decay
+
+#### furnaceSmelt
+
+Smelt the item as if in a furnace:
+
+```kotlin
+itemModifier("auto_smelt") {
+	furnaceSmelt()
+}
+```
+
+#### explosionDecay
+
+Random chance to destroy items based on explosion:
+
+```kotlin
+itemModifier("explosion") {
+	explosionDecay()
+}
+```
+
+### Player Heads
+
+#### fillPlayerHead
+
+Set player head skin:
+
+```kotlin
+itemModifier("head") {
+	fillPlayerHead(Source.KILLER)
+}
+```
+
+### Tooltips
+
+#### toggleTooltips
+
+Show/hide tooltip sections:
+
+```kotlin
+itemModifier("clean_tooltip") {
+	toggleTooltips {
+		enchantments = false
+		modifiers = false
+		canBreak = false
+		canPlaceOn = false
+	}
+}
+```
+
+### Composition
+
+#### sequence
+
+Run multiple functions in sequence:
+
+```kotlin
+itemModifier("complex") {
+	sequence {
+		setCount(1f)
+		enchantRandomly()
+		setName("Mystery Item")
+	}
+}
+```
+
+#### filtered
+
+Apply functions only to matching items:
+
+```kotlin
+itemModifier("filter") {
+	filtered {
+		itemFilter(Items.DIAMOND, Items.EMERALD)
+
+		modifiers {
+			setCount(uniform(1f, 5f))
+		}
+	}
+}
+```
+
+#### reference
+
+Reference another item modifier:
+
+```kotlin
+val baseModifier = itemModifier("base") {
+	setCount(1f)
+}
+
+itemModifier("extended") {
+	reference(baseModifier)
+	enchantRandomly()
+}
+```
+
+## Conditions
+
+Every function can have conditions that must pass:
 
 ```kotlin
 itemModifier("conditional") {
-	setName("Storm Blade") {
-		target = SetNameTarget.ITEM_NAME
-		conditions { weatherCheck(raining = true) }
+	setCount(10f) {
+		conditions {
+			// Multiple conditions are AND-ed
+			killedByPlayer()
+			randomChance(0.5f)
+		}
+	}
+
+	enchantRandomly {
+		conditions {
+			weatherCheck(raining = true)
+		}
 	}
 }
 ```
 
-Learn more in [Predicates](/docs/data-driven/predicates).
+See [Predicates](./predicates) for all available conditions.
 
-## Composition and nesting
-
-- `filtered { itemFilter { .. } modifiers { .. } }` – Run nested modifier list if the item matches an `ItemStack` filter.
-- `modifyContents(..) { modifiers { .. } }` – Apply nested modifiers to items inside a component (e.g., bundle contents).
-- `sequence { .. }` – Inline a sequence of functions as a single step.
-- `reference(myModifier)` – Reuse another item modifier by name.
-
-## Selected function examples
-
-Alphabetical sampling of common functions. All names match vanilla functions and are available in the `functions` package.
-
-- `applyBonus(enchantment, formula)`
-- `copyComponents(include/exclude, source)`
-- `copyCustomData(source, ops)`
-- `copyName(source)`
-- `copyState(block, properties)`
-- `enchantRandomly(options, onlyCompatible)`
-- `enchantWithLevels(options, levels)`
-- `enchantedCountIncrease(enchantment, count, limit)`
-- `explorationMap(destination, decoration, zoom, searchRadius, skipExistingChunks)`
-- `explosionDecay()`
-- `fillPlayerHead(entity)`
-- `filtered { .. }`
-- `furnaceSmelt()`
-- `limitCount(limit)`
-- `modifyContents(component) { modifiers { .. } }`
-- `reference(name | ItemModifierArgument)`
-- `sequence { .. }`
-- `setAttributes { attribute(..) }`
-- `setBannerPattern(patterns, append)`
-- `setBookCover(title, author, generation)`
-- `setComponents { .. }`
-- `setContents(component) { entries { .. } }`
-- `setCount(count, add)`
-- `setCustomData(nbt)`
-- `setCustomModelData(colors | flags | floats | strings)`
-- `setDamage(damage, add)`
-- `setEnchantments { map }`
-- `setFireworkExplosion(shape) { .. }`
-- `setFireworks(flightDuration) { explosions { explosion(..) } }`
-- `setInstrument(tag)`
-- `setItem(item)`
-- `setLore(..)`
-- `setLootTable(type, name | LootTableArgument, seed)`
-- `setOminousBottleAmplifier(amplifier)`
-- `setPotion(potion)`
-- `setStewEffect { potionEffect(..) }`
-- `setWritableBookPages(pages, generation)`
-- `setWrittenBookPages(pages)`
-- `toggleTooltips(toggles)`
-
-See the test suite [
-`ItemModifierTests.kt`](https://github.com/Ayfri/Kore/blob/master/kore/src/test/kotlin/io/github/ayfri/kore/features/ItemModifierTests.kt) for end-to-end JSON expectations that mirror vanilla.
-
-## Using modifiers in commands
-
-Use inside a function (e.g., in your load/setup) and call `/item modify` via the DSL:
+## Full Example
 
 ```kotlin
-import io.github.ayfri.kore.commands.items
-import io.github.ayfri.kore.arguments.types.literals.self
+dataPack("legendary_items") {
+	val legendaryModifier = itemModifier("legendary_weapon") {
+		// High-level enchantments
+		enchantWithLevels(levels = constant(30f)) {
+			conditions {
+				randomChance(0.3f)
+			}
+		}
 
-load {
-	items {
-		modify(self(), WEAPON.MAINHAND, modifier)
+		// Guaranteed enchantments
+		setEnchantments {
+			enchantment(Enchantments.UNBREAKING, 3)
+		}
+
+		// Custom name with formatting
+		setName(textComponent("Legendary Weapon") {
+			color = Color.GOLD
+			bold = true
+		})
+
+		// Lore
+		setLore {
+			lore("Forged in ancient flames", Color.GRAY)
+			lore("", Color.WHITE)
+			lore("▸ +5 Attack Damage", Color.GREEN)
+			mode(Mode.REPLACE_ALL)
+		}
+
+		// Attributes
+		setAttributes(replace = false) {
+			attribute(
+				attribute = Attributes.ATTACK_DAMAGE,
+				operation = AttributeModifierOperation.ADD_VALUE,
+				amount = constant(5f),
+				id = "legendary_damage",
+				slot = EquipmentSlot.MAINHAND
+			)
+		}
+
+		// Full durability
+		setDamage(1.0f)
+	}
+
+	// Use in loot table
+	lootTable("boss_weapon") {
+		pool {
+			rolls = constant(1f)
+
+			entries {
+				item(Items.DIAMOND_SWORD) {
+					functions {
+						reference(legendaryModifier)
+					}
+				}
+			}
+		}
+	}
+
+	// Use with command
+	load {
+		items {
+			modify(self(), WEAPON.MAINHAND, legendaryModifier)
+		}
 	}
 }
 ```
 
-## Tips and best practices
+### Generated JSON
 
-1. Keep modifiers focused and reusable; prefer composing small helpers with `reference(..)`.
-2. Use `conditions { .. }` to guard expensive or situational changes.
-3. Prefer component-based edits (`setComponents`, `setContents`, `setFireworks`, etc.) for clarity and future-proofing.
-4. When editing lists, pick the right mode: `REPLACE_ALL`, `APPEND`, or `INSERT` with offsets.
+```json
+[
+	{
+		"function": "minecraft:enchant_with_levels",
+		"levels": 30.0,
+		"conditions": [
+			{
+				"condition": "minecraft:random_chance",
+				"chance": 0.3
+			}
+		]
+	},
+	{
+		"function": "minecraft:set_enchantments",
+		"enchantments": {
+			"minecraft:unbreaking": 3
+		}
+	},
+	{
+		"function": "minecraft:set_name",
+		"name": {
+			"text": "Legendary Weapon",
+			"color": "gold",
+			"bold": true
+		}
+	},
+	{
+		"function": "minecraft:set_lore",
+		"lore": [
+			{
+				"text": "Forged in ancient flames",
+				"color": "gray"
+			},
+			{
+				"text": ""
+			},
+			{
+				"text": "▸ +5 Attack Damage",
+				"color": "green"
+			}
+		],
+		"mode": "replace_all"
+	},
+	{
+		"function": "minecraft:set_attributes",
+		"modifiers": [
+			{
+				"attribute": "minecraft:attack_damage",
+				"id": "minecraft:legendary_damage",
+				"amount": 5.0,
+				"operation": "add_value",
+				"slot": "mainhand"
+			}
+		],
+		"replace": false
+	},
+	{
+		"function": "minecraft:set_damage",
+		"damage": 1.0
+	}
+]
+```
+
+## Best Practices
+
+1. **Keep modifiers focused** - Create small, reusable modifiers and compose with `reference()`
+2. **Use conditions wisely** - Guard expensive operations with appropriate conditions
+3. **Prefer components** - Use `setComponents` for direct component manipulation when possible
+4. **Consider context** - Some functions require specific loot contexts (killer, tool, etc.)
+5. **Test thoroughly** - Verify modifiers work in all intended contexts (loot, commands, etc.)
 
 ## See Also
 
 - [Predicates](./predicates) - Conditions for item functions
-- [Components](../concepts/components) - Building and understanding item components
+- [Components](../concepts/components) - Understanding item components
 - [Loot Tables](./loot-tables) - Use item modifiers in loot tables
-- [Inventory Manager](../helpers/inventory-manager) - Maintain item states in GUIs/slots
+- [Commands](../commands/commands) - Using the `/item` command
 
 ### External Resources
 
