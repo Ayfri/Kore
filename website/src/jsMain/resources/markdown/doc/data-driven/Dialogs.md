@@ -11,9 +11,10 @@ routeOverride: /docs/data-driven/dialogs
 
 # Dialogs
 
-Minecraft includes a powerful dialog system that allows creating interactive modal windows for displaying information and receiving player input. Dialogs are native Minecraft features introduced in Java Edition 1.21.6 that enable sophisticated user interfaces within the game. With
-**Kore
-**, you can easily create and manage these dialogs using a comprehensive Kotlin DSL that maps directly to Minecraft's dialog format.
+Minecraft includes a powerful dialog system that allows creating interactive modal windows for displaying information and receiving player
+input. Dialogs are native Minecraft features introduced in Java Edition 1.21.6 that enable sophisticated user interfaces within the game.
+With **Kore**, you can easily create and manage these dialogs using a comprehensive Kotlin DSL that maps directly to Minecraft's dialog
+format.
 
 Minecraft's dialog system supports various interaction types including:
 
@@ -23,7 +24,8 @@ Minecraft's dialog system supports various interaction types including:
 - Navigating between multiple dialogs using nested structures
 - Integration with the pause menu and quick actions hotkey
 
-For the vanilla reference, see the [Minecraft Wiki – Dialog](https://minecraft.wiki/w/Dialog) and [Commands/dialog](https://minecraft.wiki/w/Commands/dialog).
+For the vanilla reference, see the [Minecraft Wiki – Dialog](https://minecraft.wiki/w/Dialog)
+and [Commands/dialog](https://minecraft.wiki/w/Commands/dialog).
 
 ## Minecraft Dialog System Overview
 
@@ -33,7 +35,8 @@ Minecraft dialogs consist of three main elements:
 - **Body elements**: Labels, inputs, buttons, and submit actions (scrollable if needed)
 - **Optional footer**: Confirmation buttons and submit actions
 
-When a dialog opens, player controls are temporarily disabled until the user exits through an action button, the Escape key, or the warning button. In single-player mode, dialogs can be configured to pause the game and trigger an autosave.
+When a dialog opens, player controls are temporarily disabled until the user exits through an action button, the Escape key, or the warning
+button. In single-player mode, dialogs can be configured to pause the game and trigger an autosave.
 
 ## Set Up Your Data Pack Function
 
@@ -41,7 +44,7 @@ Begin by creating a function within your `DataPack` where you'll define your dia
 
 ```kotlin
 fun DataPack.createDialogs() {
-    // Your dialog definitions will go here
+	// Your dialog definitions will go here
 }
 ```
 
@@ -51,7 +54,7 @@ Use the `dialogBuilder` to start defining your dialogs:
 
 ```kotlin
 val myDialog = dialogBuilder.confirmation("welcome", "Welcome!") {
-    // Define dialog properties here
+	// Define dialog properties here
 }
 ```
 
@@ -75,27 +78,27 @@ A dialog with two action buttons (yes/no) for binary choices:
 
 ```kotlin
 val confirmDialog = dialogBuilder.confirmation("delete_world", "Delete World?") {
-    afterAction = AfterAction.WAIT_FOR_RESPONSE
-    externalTitle("Delete", Color.RED)
-    pause = true
-    
-    bodies {
-        plainMessage("Are you sure you want to delete this world? This action cannot be undone.")
-    }
-    
-    yes("Delete") {
-        action {
-            runCommand {
-                say("World deleted!")
-            }
-        }
-    }
-    
-    no("Cancel") {
-        action {
-            suggestChatMessage("Cancelled deletion")
-        }
-    }
+	afterAction = AfterAction.WAIT_FOR_RESPONSE
+	externalTitle("Delete", Color.RED)
+	pause = true
+
+	bodies {
+		plainMessage("Are you sure you want to delete this world? This action cannot be undone.")
+	}
+
+	yes("Delete") {
+		action {
+			runCommand {
+				say("World deleted!")
+			}
+		}
+	}
+
+	no("Cancel") {
+		action {
+			suggestChatMessage("Cancelled deletion")
+		}
+	}
 }
 ```
 
@@ -105,22 +108,22 @@ A simple dialog with a single action button for displaying information:
 
 ```kotlin
 val noticeDialog = dialogBuilder.notice("achievement", "Achievement Unlocked!") {
-    bodies {
-        item(Items.DIAMOND_SWORD) {
-            description = ItemDescription(textComponent("Your first diamond tool!"))
-            showTooltip = true
-        }
-        plainMessage("You've crafted your first diamond sword!")
-    }
-    
-    action("Awesome!") {
-        tooltip("Click to continue")
-        action {
-            dynamicCustom("celebrate") {
-                this["achievement"] = "first_diamond_tool"
-            }
-        }
-    }
+	bodies {
+		item(Items.DIAMOND_SWORD) {
+			description = ItemDescription(textComponent("Your first diamond tool!"))
+			showTooltip = true
+		}
+		plainMessage("You've crafted your first diamond sword!")
+	}
+
+	action("Awesome!") {
+		tooltip("Click to continue")
+		action {
+			dynamicCustom("celebrate") {
+				this["achievement"] = "first_diamond_tool"
+			}
+		}
+	}
 }
 ```
 
@@ -130,48 +133,48 @@ A dialog with multiple action buttons arranged in columns, perfect for menus:
 
 ```kotlin
 val menuDialog = dialogBuilder.multiAction("main_menu", "Server Menu") {
-    columns = 3
-    
-    inputs {
-        text("player_name", "Your Name") {
-            maxLength = 16
-            initial = "Steve"
-        }
-        
-        numberRange("difficulty", "Difficulty", range = 1..10, initial = 5) {
-            step = 1f
-        }
-        
-        boolean("pvp_enabled", "Enable PVP") {
-            initial = false
-            onTrue = "PVP On"
-            onFalse = "PVP Off"
-        }
-    }
-    
-    actions {
-        action("Start Game") {
-            action {
-                runCommand {
-                    say("Game starting with settings!")
-                }
-            }
-        }
-        
-        action("Settings") {
-            action {
-                openUrl("https://example.com/settings")
-            }
-        }
-        
-        action("Quit") {
-            action {
-                dynamicRunCommand {
-                    kick(allPlayers(), textComponent("Thanks for playing!"))
-                }
-            }
-        }
-    }
+	columns = 3
+
+	inputs {
+		text("player_name", "Your Name") {
+			maxLength = 16
+			initial = "Steve"
+		}
+
+		numberRange("difficulty", "Difficulty", range = 1..10, initial = 5) {
+			step = 1f
+		}
+
+		boolean("pvp_enabled", "Enable PVP") {
+			initial = false
+			onTrue = "PVP On"
+			onFalse = "PVP Off"
+		}
+	}
+
+	actions {
+		action("Start Game") {
+			action {
+				runCommand {
+					say("Game starting with settings!")
+				}
+			}
+		}
+
+		action("Settings") {
+			action {
+				openUrl("https://example.com/settings")
+			}
+		}
+
+		action("Quit") {
+			action {
+				dynamicRunCommand {
+					kick(allPlayers(), textComponent("Thanks for playing!"))
+				}
+			}
+		}
+	}
 }
 ```
 
@@ -181,20 +184,20 @@ A dialog that displays a scrollable list of other dialogs:
 
 ```kotlin
 val listDialog = dialogBuilder.dialogList("dialog_menu", "Available Dialogs") {
-    columns = 2
-    buttonWidth = 200
-    
-    dialogs(confirmDialog, noticeDialog, menuDialog)
-    // or use a tag:
-    // dialogs(Tags.Dialog.PAUSE_SCREEN_ADDITIONS)
-    
-    exitAction("Back to Game") {
-        action {
-            dynamicRunCommand {
-                say("Returning to game...")
-            }
-        }
-    }
+	columns = 2
+	buttonWidth = 200
+
+	dialogs(confirmDialog, noticeDialog, menuDialog)
+	// or use a tag:
+	// dialogs(Tags.Dialog.PAUSE_SCREEN_ADDITIONS)
+
+	exitAction("Back to Game") {
+		action {
+			dynamicRunCommand {
+				say("Returning to game...")
+			}
+		}
+	}
 }
 ```
 
@@ -204,16 +207,16 @@ A specialized dialog for displaying server links (configured server-side):
 
 ```kotlin
 val linksDialog = dialogBuilder.serverLinks("server_links", "Server Links") {
-    buttonWidth = 150
-    columns = 3
-    
-    exitAction("Close") {
-        action {
-            dynamicRunCommand {
-                say("Links closed")
-            }
-        }
-    }
+	buttonWidth = 150
+	columns = 3
+
+	exitAction("Close") {
+		action {
+			dynamicRunCommand {
+				say("Links closed")
+			}
+		}
+	}
 }
 ```
 
@@ -225,17 +228,17 @@ All dialogs share common properties that can be customized:
 
 ```kotlin
 dialogBuilder.confirmation("example", "Title") {
-    // External title shown on buttons leading to this dialog
-    externalTitle("Custom Button Text", Color.AQUA)
-    
-    // Action performed after dialog interactions
-    afterAction = AfterAction.WAIT_FOR_RESPONSE // or CLOSE
-    
-    // Whether dialog can be dismissed with Escape key
-    canCloseWithEscape = true
-    
-    // Whether to pause the game in single-player
-    pause = true
+	// External title shown on buttons leading to this dialog
+	externalTitle("Custom Button Text", Color.AQUA)
+
+	// Action performed after dialog interactions
+	afterAction = AfterAction.WAIT_FOR_RESPONSE // or CLOSE
+
+	// Whether dialog can be dismissed with Escape key
+	canCloseWithEscape = true
+
+	// Whether to pause the game in single-player
+	pause = true
 }
 ```
 
@@ -257,11 +260,11 @@ Display text content:
 
 ```kotlin
 bodies {
-    plainMessage("Welcome to our server!") {
-        width = 300
-    }
-    
-    plainMessage(textComponent("Colored text", Color.GREEN))
+	plainMessage("Welcome to our server!") {
+		width = 300
+	}
+
+	plainMessage(textComponent("Colored text", Color.GREEN))
 }
 ```
 
@@ -271,13 +274,13 @@ Display items with descriptions:
 
 ```kotlin
 bodies {
-    item(Items.ENCHANTED_BOOK) {
-        description = ItemDescription(textComponent("A mysterious tome"))
-        showTooltip = true
-        showDecorations = false
-        height = 64
-        width = 64
-    }
+	item(Items.ENCHANTED_BOOK) {
+		description = ItemDescription(textComponent("A mysterious tome"))
+		showTooltip = true
+		showDecorations = false
+		height = 64
+		width = 64
+	}
 }
 ```
 
@@ -291,17 +294,17 @@ Single-line or multi-line text input:
 
 ```kotlin
 inputs {
-    text("username", "Username") {
-        maxLength = 20
-        initial = "Player"
-        width = 200
-        labelVisible = true
-    }
-    
-    text("bio", "Biography") {
-        multiline(maxLines = 5, height = 100)
-        maxLength = 500
-    }
+	text("username", "Username") {
+		maxLength = 20
+		initial = "Player"
+		width = 200
+		labelVisible = true
+	}
+
+	text("bio", "Biography") {
+		multiline(maxLines = 5, height = 100)
+		maxLength = 500
+	}
 }
 ```
 
@@ -311,16 +314,16 @@ Slider controls for numeric input:
 
 ```kotlin
 inputs {
-    numberRange("volume", "Volume", range = 0..100, initial = 50) {
-        step = 5f
-        labelFormat = "Volume: %d%%"
-        width = 250
-    }
-    
-    // Float ranges also supported
-    numberRange("speed", "Speed", range = 0.1f..2.0f, initial = 1.0f) {
-        step = 0.1f
-    }
+	numberRange("volume", "Volume", range = 0..100, initial = 50) {
+		step = 5f
+		labelFormat = "Volume: %d%%"
+		width = 250
+	}
+
+	// Float ranges also supported
+	numberRange("speed", "Speed", range = 0.1f..2.0f, initial = 1.0f) {
+		step = 0.1f
+	}
 }
 ```
 
@@ -330,11 +333,11 @@ Checkbox-style boolean input:
 
 ```kotlin
 inputs {
-    boolean("notifications", "Enable Notifications") {
-        initial = true
-        onTrue = "✓ Enabled"
-        onFalse = "✗ Disabled"
-    }
+	boolean("notifications", "Enable Notifications") {
+		initial = true
+		onTrue = "✓ Enabled"
+		onFalse = "✗ Disabled"
+	}
 }
 ```
 
@@ -344,15 +347,15 @@ Dropdown-style selection:
 
 ```kotlin
 inputs {
-    singleOption("gamemode", "Game Mode") {
-        width = 200
-        labelVisible = true
-        
-        option("survival", "Survival", initial = true)
-        option("creative", "Creative")
-        option("adventure", "Adventure")
-        option("spectator", "Spectator")
-    }
+	singleOption("gamemode", "Game Mode") {
+		width = 200
+		labelVisible = true
+
+		option("survival", "Survival", initial = true)
+		option("creative", "Creative")
+		option("adventure", "Adventure")
+		option("spectator", "Spectator")
+	}
 }
 ```
 
@@ -364,33 +367,33 @@ Dialog actions define what happens when buttons are clicked:
 
 ```kotlin
 action {
-    // Run a command
-    runCommand {
-        say("Hello world!")
-    }
-    
-    // Suggest a chat message
-    suggestChatMessage("/gamemode creative")
-    
-    // Open a URL
-    openUrl("https://minecraft.net")
-    
-    // Copy text to clipboard  
-    copyToClipboard("Server IP: mc.example.com")
-    
-    // Change page in a book
-    changePage(5)
-    
-    // Dynamic commands with macros named after the inputs
-    dynamicRunCommand {
-        say("Player name is ${macro('username')}")
-    }
-    
-    // Custom dynamic actions, for sending custom packets for server plugins/mods
-    dynamicCustom("custom_action") {
-        this["data"] = "value"
-        this["count"] = 42
-    }
+	// Run a command
+	runCommand {
+		say("Hello world!")
+	}
+
+	// Suggest a chat message
+	suggestChatMessage("/gamemode creative")
+
+	// Open a URL
+	openUrl("https://minecraft.net")
+
+	// Copy text to clipboard  
+	copyToClipboard("Server IP: mc.example.com")
+
+	// Change page in a book
+	changePage(5)
+
+	// Dynamic commands with macros named after the inputs
+	dynamicRunCommand {
+		say("Player name is ${macro('username')}")
+	}
+
+	// Custom dynamic actions, for sending custom packets for server plugins/mods
+	dynamicCustom("custom_action") {
+		this["data"] = "value"
+		this["count"] = 42
+	}
 }
 ```
 
@@ -400,12 +403,12 @@ Enhance actions with labels, tooltips, and sizing:
 
 ```kotlin
 action("My Button") {
-    tooltip("Click me for awesome results!")
-    width = 150
-    
-    action {
-        runCommand { say("Button clicked!") }
-    }
+	tooltip("Click me for awesome results!")
+	width = 150
+
+	action {
+		runCommand { say("Button clicked!") }
+	}
 }
 ```
 
@@ -415,23 +418,23 @@ Commands can show and clear dialogs to players, using a reference or an inline d
 
 ```kotlin
 load {
-    // Show dialog to specific players
-    dialogShow(allPlayers(), myDialog)
-    
-    // Create and show dialog inline
-    dialogShow(allPlayers()) {
-        confirmation("inline_dialog", "Quick Confirmation") {
-            yes("Yes") {
-                action { runCommand { say("Yes selected") } }
-            }
-            no("No") {
-                action { runCommand { say("No selected") } }
-            }
-        }
-    }
-    
-    // Clear dialogs
-    dialogClear(allPlayers())
+	// Show dialog to specific players
+	dialogShow(allPlayers(), myDialog)
+
+	// Create and show dialog inline
+	dialogShow(allPlayers()) {
+		confirmation("inline_dialog", "Quick Confirmation") {
+			yes("Yes") {
+				action { runCommand { say("Yes selected") } }
+			}
+			no("No") {
+				action { runCommand { say("No selected") } }
+			}
+		}
+	}
+
+	// Clear dialogs
+	dialogClear(allPlayers())
 }
 ```
 
@@ -441,59 +444,59 @@ load {
 
 ```kotlin
 val registrationForm = dialogBuilder.multiAction("register", "Player Registration") {
-    columns = 1
-    
-    bodies {
-        plainMessage("Welcome! Please fill out your information:")
-    }
-    
-    inputs {
-        text("display_name", "Display Name") {
-            maxLength = 32
-            labelVisible = true
-        }
-        
-        text("email", "Email Address") {
-            maxLength = 100
-        }
-        
-        numberRange("age", "Age", range = 13..99, initial = 18) {
-            step = 1f
-        }
-        
-        singleOption("region", "Region") {
-            option("na", "North America")
-            option("eu", "Europe") 
-            option("as", "Asia")
-            option("other", "Other")
-        }
-        
-        boolean("newsletter", "Subscribe to Newsletter") {
-            initial = false
-        }
-        
-        text("comments", "Additional Comments") {
-            multiline(maxLines = 3, height = 80)
-            maxLength = 200
-        }
-    }
-    
-    actions {
-        action("Register") {
-            action {
-                dynamicRunCommand {
-                    say("Registration submitted!")
-                    give(allPlayers(), Items.WRITTEN_BOOK)
-                }
-            }
-        }
-        
-        action("Cancel") {
-            action {
-                suggestChatMessage("Registration cancelled")
-            }
-        }
-    }
+	columns = 1
+
+	bodies {
+		plainMessage("Welcome! Please fill out your information:")
+	}
+
+	inputs {
+		text("display_name", "Display Name") {
+			maxLength = 32
+			labelVisible = true
+		}
+
+		text("email", "Email Address") {
+			maxLength = 100
+		}
+
+		numberRange("age", "Age", range = 13..99, initial = 18) {
+			step = 1f
+		}
+
+		singleOption("region", "Region") {
+			option("na", "North America")
+			option("eu", "Europe")
+			option("as", "Asia")
+			option("other", "Other")
+		}
+
+		boolean("newsletter", "Subscribe to Newsletter") {
+			initial = false
+		}
+
+		text("comments", "Additional Comments") {
+			multiline(maxLines = 3, height = 80)
+			maxLength = 200
+		}
+	}
+
+	actions {
+		action("Register") {
+			action {
+				dynamicRunCommand {
+					say("Registration submitted!")
+					give(allPlayers(), Items.WRITTEN_BOOK)
+				}
+			}
+		}
+
+		action("Cancel") {
+			action {
+				suggestChatMessage("Registration cancelled")
+			}
+		}
+	}
 }
 ```
 
@@ -501,30 +504,30 @@ val registrationForm = dialogBuilder.multiAction("register", "Player Registratio
 
 ```kotlin
 val tutorialDialog = dialogBuilder.dialogList("tutorials", "Tutorial Menu") {
-    columns = 2
-    buttonWidth = 180
-    
-    bodies {
-        plainMessage("Choose a tutorial to begin:")
-        item(Items.BOOK) {
-            description = ItemDescription(textComponent("Learn the basics"))
-        }
-    }
-    
-    // Reference other tutorial dialogs
-    dialogs(
-        basicTutorial,
-        advancedTutorial,
-        pvpTutorial
-    )
-    
-    exitAction("Skip Tutorials") {
-        action {
-            runCommand {
-                advancement.grant(allPlayers(), AdvancementArgument("tutorial:skipped"))
-            }
-        }
-    }
+	columns = 2
+	buttonWidth = 180
+
+	bodies {
+		plainMessage("Choose a tutorial to begin:")
+		item(Items.BOOK) {
+			description = ItemDescription(textComponent("Learn the basics"))
+		}
+	}
+
+	// Reference other tutorial dialogs
+	dialogs(
+		basicTutorial,
+		advancedTutorial,
+		pvpTutorial
+	)
+
+	exitAction("Skip Tutorials") {
+		action {
+			runCommand {
+				advancement.grant(allPlayers(), AdvancementArgument("tutorial:skipped"))
+			}
+		}
+	}
 }
 ```
 
