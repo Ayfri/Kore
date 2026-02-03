@@ -53,10 +53,6 @@ fun main() {
 
 - [Macros](./commands/macros) - dynamic command arguments for reusable functions.
 
-### Advanced
-
-- [Bindings](./advanced/bindings) - import existing datapacks and generate Kotlin bindings (experimental).
-
 ### Concepts
 
 - [Components](./concepts/components) - item/component builders and custom components.
@@ -84,6 +80,7 @@ fun main() {
 
 ### Advanced
 
+- [Bindings](./advanced/bindings) - import existing datapacks and generate Kotlin bindings (experimental).
 - [GitHub Actions Publishing](./advanced/github-actions-publishing) - automate datapack publishing.
 - [Test Features (GameTest)](./advanced/test-features) - testing datapacks with GameTest.
 - [Known Issues](./advanced/known-issues) - workarounds and limitations.
