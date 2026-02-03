@@ -87,7 +87,7 @@ fun EntityEffectAllOfBuilder.ignite(duration: Int = 0, block: Ignite.() -> Unit 
 	apply { effects.effects += Ignite(constantLevelBased(duration)).apply(block) }
 
 fun EntityEffectAllOfBuilder.playSound(sound: SoundEventArgument, range: Float? = null, block: PlaySound.() -> Unit = {}) =
-	apply { effects.effects += PlaySound(SoundEvent(sound, range)).apply(block) }
+	apply { effects.effects += PlaySound(listOf(SoundEvent(sound, range))).apply(block) }
 
 fun EntityEffectAllOfBuilder.playSound(
 	sound: SoundEventArgument,
@@ -97,7 +97,11 @@ fun EntityEffectAllOfBuilder.playSound(
 	block: PlaySound.() -> Unit = {},
 ) =
 	apply {
-		effects.effects += PlaySound(SoundEvent(sound, range), constantFloatProvider(volume), constantFloatProvider(pitch)).apply(
+		effects.effects += PlaySound(
+			listOf(SoundEvent(sound, range)),
+			constantFloatProvider(volume),
+			constantFloatProvider(pitch)
+		).apply(
 			block
 		)
 	}

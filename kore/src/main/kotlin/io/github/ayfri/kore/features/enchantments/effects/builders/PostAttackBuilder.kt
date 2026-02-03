@@ -135,7 +135,7 @@ fun PostAttackBuilder.playSound(
 	block: PlaySound.() -> Unit = {},
 ) =
 	apply {
-		val effect = PlaySound(SoundEvent(sound, range)).apply(block)
+		val effect = PlaySound(listOf(SoundEvent(sound, range))).apply(block)
 		effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
 	}
 
@@ -150,7 +150,7 @@ fun PostAttackBuilder.playSound(
 ) =
 	apply {
 		val effect = PlaySound(
-			SoundEvent(sound, range),
+			listOf(SoundEvent(sound, range)),
 			constantFloatProvider(volume),
 			constantFloatProvider(pitch)
 		).apply(block)

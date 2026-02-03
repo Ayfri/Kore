@@ -105,7 +105,7 @@ fun EntityEffectBuilder.ignite(duration: Int = 0, block: Ignite.() -> Unit = {})
 
 fun EntityEffectBuilder.playSound(sound: SoundEventArgument, range: Float? = null, block: PlaySound.() -> Unit = {}) =
 	apply {
-		val effect = PlaySound(SoundEvent(sound, range)).apply(block)
+		val effect = PlaySound(listOf(SoundEvent(sound, range))).apply(block)
 		effects += ConditionalEffect(effect, effect.requirements)
 	}
 
@@ -118,7 +118,7 @@ fun EntityEffectBuilder.playSound(
 ) =
 	apply {
 		val effect = PlaySound(
-			SoundEvent(sound, range),
+			listOf(SoundEvent(sound, range)),
 			constantFloatProvider(volume),
 			constantFloatProvider(pitch)
 		).apply(block)
