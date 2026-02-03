@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.website.components.common
 
 import androidx.compose.runtime.Composable
+import com.varabyte.kobweb.core.AppGlobals
 import io.github.ayfri.kore.website.utils.Script
 import io.github.ayfri.kore.website.utils.obj
 import kotlinx.browser.document
@@ -101,16 +102,17 @@ fun setImage(url: String) = renderComposable(document.head!!) {
 
 fun setHrefLang(path: String) = renderComposable(document.head!!) {
 	selectAll("meta[hreflang]").forEach(HTMLElement::remove)
+	val baseUrl = AppGlobals["websiteUrl"] ?: "https://kore.ayfri.com"
 
 	Meta {
 		attr("rel", "alternate")
 		attr("hreflang", "en")
-		attr("href", "https://kore.ayfri.com$path")
+		attr("href", "$baseUrl$path")
 	}
 	Meta {
 		attr("rel", "alternate")
 		attr("hreflang", "x-default")
-		attr("href", "https://kore.ayfri.com$path")
+		attr("href", "$baseUrl$path")
 	}
 }
 
@@ -138,6 +140,7 @@ fun setJsonLd(
 	slugs: List<String>,
 ) = renderComposable(document.head!!) {
 	selectAll("script[type='application/ld+json']").forEach(HTMLElement::remove)
+	val baseUrl = AppGlobals["websiteUrl"] ?: "https://kore.ayfri.com"
 
 	val jsonLd = obj {
 		`@context` = "https://schema.org"
@@ -153,7 +156,7 @@ fun setJsonLd(
 		dateModified = modifiedDate
 		mainEntityOfPage = obj {
 			`@type` = "WebPage"
-			`@id` = "https://kore.ayfri.com$path"
+			`@id` = "$baseUrl$path"
 		}
 		publisher = obj {
 			`@type` = "Organization"
@@ -161,7 +164,7 @@ fun setJsonLd(
 			url = "https://github.com/Ayfri/Kore"
 			logo = obj {
 				`@type` = "ImageObject"
-				url = "https://kore.ayfri.com/logo.png"
+				url = "$baseUrl/logo.png"
 			}
 		}
 		this["keywords"] = keywords
@@ -172,7 +175,7 @@ fun setJsonLd(
 					`@type` = "ListItem"
 					position = index + 2
 					name = slug.replace("-", " ").replaceFirstChar { it.uppercase() }
-					item = "https://kore.ayfri.com/${slugs.take(index + 1).joinToString("/")}"
+					item = "$baseUrl/${slugs.take(index + 1).joinToString("/")}"
 				}
 			}.toTypedArray().also {
 				arrayOf(
@@ -180,7 +183,7 @@ fun setJsonLd(
 						`@type` = "ListItem"
 						position = 1
 						name = "Home"
-						item = "https://kore.ayfri.com/"
+						item = "$baseUrl/"
 					},
 					*it
 				)

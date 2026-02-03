@@ -1,9 +1,9 @@
 package io.github.ayfri.kore.website.components.layouts
 
 import androidx.compose.runtime.Composable
+import com.varabyte.kobweb.core.AppGlobals
 import com.varabyte.kobweb.core.rememberPageContext
 import io.github.ayfri.kore.website.CodeThemeStyle
-import io.github.ayfri.kore.website.PUBLIC_URL
 import io.github.ayfri.kore.website.components.common.*
 import io.github.ayfri.kore.website.components.sections.Footer
 import io.github.ayfri.kore.website.components.sections.Header
@@ -19,7 +19,8 @@ fun PageLayout(title: String, content: @Composable () -> Unit) {
 	Style(CodeThemeStyle)
 
 	val route = rememberPageContext().route
-	val url = URL(PUBLIC_URL.removeSuffix("/") + route.path)
+	val baseUrl = AppGlobals["websiteUrl"] ?: "https://kore.ayfri.com"
+	val url = URL(baseUrl + route.path)
 	url.search = ""
 	url.hash = ""
 
@@ -31,7 +32,7 @@ fun PageLayout(title: String, content: @Composable () -> Unit) {
 	setTwitterCard("summary_large_image")
 	setTwitterCreator("@Ayfri_")
 
-	setImage("${PUBLIC_URL}logo.png")
+	setImage("$baseUrl/logo.png")
 
 	Header()
 
