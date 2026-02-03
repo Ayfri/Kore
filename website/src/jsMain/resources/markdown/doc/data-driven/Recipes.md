@@ -6,13 +6,13 @@ description: A guide for using recipes in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, recipes
 date-created: 2024-01-08
 date-modified: 2024-01-08
-routeOverride: /docs/recipes
+routeOverride: /docs/data-driven/recipes
 ---
 
 # Recipes
 
-To create recipes with **Kore**, you can utilize the framework's built-in functions to define various types of recipes for your Minecraft data packs. Here's a
-comprehensive guide on how to create different recipes using Kore:
+To create recipes with **Kore
+**, you can utilize the framework's built-in functions to define various types of recipes for your Minecraft data packs. Here's a comprehensive guide on how to create different recipes using Kore:
 
 ## Set Up Your Data Pack Function
 
@@ -110,33 +110,29 @@ craftingShapeless("unique_recipe_name") {
 
 ## Special Crafting Recipes
 
-In addition to standard crafting recipes, crafting special recipes leverage built-in game logic to handle complex crafting operations that regular
-data-driven recipes cannot manage. These special recipes are essential for functionalities that require handling NBT (Named Binary Tag) data, multiple
-inputs, or specific item interactions. They are particularly useful when the "vanilla" data pack is disabled, allowing you to re-enable and customize desired
-built-in crafting behaviors.
+In addition to standard crafting recipes, crafting special recipes leverage built-in game logic to handle complex crafting operations that regular data-driven recipes cannot manage. These special recipes are essential for functionalities that require handling NBT (Named Binary Tag) data, multiple inputs, or specific item interactions. They are particularly useful when the "vanilla" data pack is disabled, allowing you to re-enable and customize desired built-in crafting behaviors.
 
 ### Available Special Recipe Types
 
 Here is a list of available special recipe types and their functionalities:
 
--   `armordye`: Dyeing armor with multiple dyes.
--   `bannerduplicate`: Copying NBT data from one banner to another.
--   `bookcloning`: Cloning written books, including their NBT data.
--   `firework_rocket`: Crafting firework rockets with flexible inputs and NBT data from firework stars.
--   `firework_star`: Crafting firework stars and adding fade colors.
--   `firework_star_fade`: Adding fade colors to firework stars.
--   `mapcloning`: Copying maps along with their NBT data.
--   `mapextending`: Zooming maps by updating their NBT data.
--   `repairitem`: Repairing items by updating their damage data.
--   `shielddecoration`: Applying shield patterns using banner NBT data.
--   `shulkerboxcoloring`: Dyeing shulker boxes while preserving their NBT data.
--   `tippedarrow`: Crafting tipped arrows with NBT data from lingering potions.
--   `suspiciousstew`: Creating suspicious stew with specific status effects based on flower types.
+- `armordye`: Dyeing armor with multiple dyes.
+- `bannerduplicate`: Copying NBT data from one banner to another.
+- `bookcloning`: Cloning written books, including their NBT data.
+- `firework_rocket`: Crafting firework rockets with flexible inputs and NBT data from firework stars.
+- `firework_star`: Crafting firework stars and adding fade colors.
+- `firework_star_fade`: Adding fade colors to firework stars.
+- `mapcloning`: Copying maps along with their NBT data.
+- `mapextending`: Zooming maps by updating their NBT data.
+- `repairitem`: Repairing items by updating their damage data.
+- `shielddecoration`: Applying shield patterns using banner NBT data.
+- `shulkerboxcoloring`: Dyeing shulker boxes while preserving their NBT data.
+- `tippedarrow`: Crafting tipped arrows with NBT data from lingering potions.
+- `suspiciousstew`: Creating suspicious stew with specific status effects based on flower types.
 
 ### Defining a Special Recipe
 
-To define a special crafting recipe, use the craftingSpecial function with the specific type and relevant parameters. Below are examples of how to define some
-of the special recipes:
+To define a special crafting recipe, use the craftingSpecial function with the specific type and relevant parameters. Below are examples of how to define some of the special recipes:
 
 ```kotlin
 craftingSpecial("custom_armor_dye", CraftingSpecialArmorDye) {}
@@ -144,8 +140,7 @@ craftingSpecial("custom_armor_dye", CraftingSpecialArmorDye) {}
 
 ## Crafting Transmute Recipes
 
-Transmutation recipes are used to change an item into another, by combining an input item with a material.
-They are useful for adding components to items, or for changing items into other items.
+Transmutation recipes are used to change an item into another, by combining an input item with a material. They are useful for adding components to items, or for changing items into other items.
 
 ```kotlin
 craftingTransmute("unique_recipe_name") {
@@ -351,11 +346,10 @@ load {
 
 ## Additional Tips
 
--   **Grouping Recipes**: You can assign a group to recipes, prefer using it when recipes have the same result.
--   **Tags**: Use tags to reference multiple items sharing the same tag.
--   **Components**: Modify result items with components like `damage`, `enchantments`, etc.
+- **Grouping Recipes**: You can assign a group to recipes, prefer using it when recipes have the same result.
+- **Tags**: Use tags to reference multiple items sharing the same tag.
+- **Components**: Modify result items with components like `damage`, `enchantments`, etc.
 
 All recipes are stored inside `Datapack.recipes` list, if you ever need to access them programmatically.
 
-By following this guide, you can create complex and customized recipes in your Minecraft data pack using the Kore framework. Be sure to explore the Kore
-documentation and source code further to take full advantage of its capabilities.
+By following this guide, you can create complex and customized recipes in your Minecraft data pack using the Kore framework. Be sure to explore the Kore documentation and source code further to take full advantage of its capabilities.

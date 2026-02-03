@@ -32,7 +32,7 @@ data class TestInstanceFeature(
  *
  * Produces `data/<namespace>/test_instance/<fileName>.json`.
  *
- * Docs: https://kore.ayfri.com/docs/test-features
+ * Docs: https://kore.ayfri.com/docs/advanced/test-features
  * Minecraft Wiki: https://minecraft.wiki/w/GameTest
  *
  * @param fileName The name of the test instance file (becomes the test identifier)

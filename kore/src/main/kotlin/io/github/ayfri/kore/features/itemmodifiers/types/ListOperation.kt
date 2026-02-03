@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
  * Generic list operation wrapper used by several item functions to control how lists are edited
  * (replace all, insert at offset, replace section, append).
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  */
 @Serializable
 data class ListOperation<T>(

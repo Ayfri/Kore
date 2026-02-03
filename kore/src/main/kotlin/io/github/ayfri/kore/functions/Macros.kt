@@ -9,7 +9,7 @@ import kotlin.reflect.KProperty
 * into generated command lines. The [args] set contains every macro name
 * that has been declared for this scope.
 *
-* Docs: https://kore.ayfri.com/docs/functions/macros
+ * Docs: https://kore.ayfri.com/docs/commands/macros
 */
 open class Macros {
 	/** Set of declared macro names for this macro holder. */

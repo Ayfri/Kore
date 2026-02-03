@@ -6,7 +6,7 @@ description: A guide for using macros in Minecraft functions.
 keywords: minecraft, datapack, kore, guide, macros, functions
 date-created: 2024-04-06
 date-modified: 2024-04-06
-routeOverride: /docs/functions/macros
+routeOverride: /docs/commands/macros
 ---
 
 # Macros

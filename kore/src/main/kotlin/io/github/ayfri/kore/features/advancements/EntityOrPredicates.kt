@@ -11,7 +11,7 @@ import kotlinx.serialization.encoding.Encoder
 /**
  * Container for either an entity or predicate conditions.
  *
- * Docs: https://kore.ayfri.com/docs/advancements
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements
  */
 @Serializable(with = EntityOrPredicates.Companion.EntityOrPredicatesSerializer::class)
 data class EntityOrPredicates(

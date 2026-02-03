@@ -65,7 +65,7 @@ import kotlinx.serialization.json.Json
 * features such as functions, tags, recipes and worldgen resources and
 * can generate them on disk or package them into archives.
 *
-* Docs: https://kore.ayfri.com/docs/creating-a-datapack
+ * Docs: https://kore.ayfri.com/docs/guides/creating-a-datapack
 *
 * @param name the datapack identifier used as default namespace
 */

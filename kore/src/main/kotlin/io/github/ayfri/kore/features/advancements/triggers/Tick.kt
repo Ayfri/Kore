@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered every tick (20 times per second) while conditions hold.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#tick
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#tick
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 /**
  * Appends a single firework explosion to the item's firework component. Mirrors `minecraft:set_firework_explosion`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

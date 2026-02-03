@@ -8,7 +8,7 @@ import kotlin.random.Random
  * Vanilla named chat/formatting colors. Serialized as lowercase strings (e.g. "red").
  * Commonly used in chat components, teams, scoreboard criteria, and item base colors.
  *
- * See documentation: https://kore.ayfri.com/docs/colors
+ * See documentation: https://kore.ayfri.com/docs/concepts/colors
  */
 @Serializable(with = FormattingColor.Companion.FormattingColorSerializer::class)
 enum class FormattingColor : NamedColor {

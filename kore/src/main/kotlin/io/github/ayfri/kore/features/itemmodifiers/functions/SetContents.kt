@@ -23,7 +23,7 @@ enum class ContentComponentTypes {
  * Replaces the contents of a component (bundle/container/charged projectiles) with loot entries.
  * Mirrors vanilla `minecraft:set_contents`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

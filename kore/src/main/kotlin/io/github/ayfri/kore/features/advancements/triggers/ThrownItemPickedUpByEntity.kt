@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a thrown item is picked up by an entity.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#thrownitempickedupbyentity
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#thrownitempickedupbyentity
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

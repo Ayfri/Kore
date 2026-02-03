@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
 /**
  * Rewards granted when an advancement is completed.
  *
- * Docs: https://kore.ayfri.com/docs/advancements#rewards
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements#rewards
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement#JSON_format
  */
 @Serializable

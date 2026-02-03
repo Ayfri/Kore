@@ -36,7 +36,7 @@ data class PlacedFeature(
  * Produces `data/<namespace>/worldgen/placed_feature/<fileName>.json`.
  *
  * JSON format reference: https://minecraft.wiki/w/Placed_feature
- * Docs: https://kore.ayfri.com/docs/worldgen
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  */
 fun DataPack.placedFeature(
 	fileName: String = "placed_feature",

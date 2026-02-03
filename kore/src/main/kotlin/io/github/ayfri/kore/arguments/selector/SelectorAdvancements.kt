@@ -10,7 +10,7 @@ import kotlinx.serialization.json.jsonPrimitive
 /**
  * Wrapper for advancement filters used in selectors (maps to the `advancements` selector argument).
  *
- * See the project documentation for advancements: [Advancements](https://kore.ayfri.com/docs/advancements).
+ * See the project documentation for advancements: [Advancements](https://kore.ayfri.com/docs/data-driven/advancements).
  */
 @Serializable(with = SelectorAdvancements.Companion.SelectorAdvancementsSerializer::class)
 data class SelectorAdvancements(val advancements: Set<Advancement> = emptySet()) {

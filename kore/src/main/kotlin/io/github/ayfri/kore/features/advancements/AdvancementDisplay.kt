@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 /**
  * Display properties (icon, title, description, frame, etc.) for an advancement.
  *
- * Docs: https://kore.ayfri.com/docs/advancements#display
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements#display
  */
 @Serializable
 data class AdvancementDisplay(
@@ -32,7 +32,7 @@ data class AdvancementDisplay(
 /**
  * Frame type for advancement display.
  *
- * Docs: https://kore.ayfri.com/docs/advancements#display
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements#display
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement#Display
  */
 @Serializable(with = AdvancementFrameType.Companion.AdvancementFrameTypeSerializer::class)
@@ -49,7 +49,7 @@ enum class AdvancementFrameType {
 /**
  * Icon definition for an advancement.
  *
- * Docs: https://kore.ayfri.com/docs/advancements#display
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements#display
  */
 @Serializable
 data class AdvancementIcon(

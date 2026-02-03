@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when the player levitates.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#levitation
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#levitation
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

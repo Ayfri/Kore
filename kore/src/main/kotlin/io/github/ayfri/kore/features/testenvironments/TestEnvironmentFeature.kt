@@ -13,7 +13,7 @@ import kotlinx.serialization.Transient
  * A test environment is a JSON structure used in data packs to configure the test environment
  * for GameTest features. It specifies the world type, seed, and other settings.
  *
- * Docs: https://kore.ayfri.com/docs/test-features
+ * Docs: https://kore.ayfri.com/docs/advanced/test-features
  * Minecraft Wiki: https://minecraft.wiki/w/GameTest
  */
 @Serializable
@@ -29,7 +29,7 @@ data class TestEnvironmentFeature(
  * Creates a test environment with the specified configuration.
  *
  * Produces `data/<namespace>/test_environment/<fileName>.json`.
- * Docs: https://kore.ayfri.com/docs/test-features
+ * Docs: https://kore.ayfri.com/docs/advanced/test-features
  *
  * @param fileName The name of the test environment file
  * @param environment The test environment configuration

@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 /**
  * Loot entry that rolls all children as a group.
  *
- * Docs: https://kore.ayfri.com/docs/loot-tables
+ * Docs: https://kore.ayfri.com/docs/data-driven/loot-tables
  * Minecraft Wiki: https://minecraft.wiki/w/Loot_table
  */
 @Serializable
@@ -31,7 +31,7 @@ fun Group.children(block: LootEntries.() -> Unit) {
 	children = buildList(block)
 }
 
-/** Set conditions for this entry, see [Predicates](https://kore.ayfri.com/docs/predicates). */
+/** Set conditions for this entry, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
 fun Group.conditions(block: Predicate.() -> Unit) {
 	conditions = Predicate().apply(block)
 }

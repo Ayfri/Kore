@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
  * Applies explosion decay to reduce stack size based on explosion radius in the loot context.
  * Mirrors vanilla `minecraft:explosion_decay`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

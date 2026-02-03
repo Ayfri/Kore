@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a player enters a specific location.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#location
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#location
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

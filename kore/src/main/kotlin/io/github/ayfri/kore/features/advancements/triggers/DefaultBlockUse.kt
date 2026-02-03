@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a block is used with default interaction.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#defaultblockuse
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#defaultblockuse
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

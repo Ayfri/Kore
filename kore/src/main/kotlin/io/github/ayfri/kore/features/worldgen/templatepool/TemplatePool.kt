@@ -32,7 +32,7 @@ data class TemplatePool(
  * Produces `data/<namespace>/worldgen/template_pool/<fileName>.json`.
  *
  * JSON format reference: https://minecraft.wiki/w/Template_pool
- * Docs: https://kore.ayfri.com/docs/worldgen
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  */
 fun DataPack.templatePool(fileName: String = "template_pool", init: TemplatePool.() -> Unit = {}): TemplatePoolArgument {
 	val templatePool = TemplatePool(fileName).apply(init)

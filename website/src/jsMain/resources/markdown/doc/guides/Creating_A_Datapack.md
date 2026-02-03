@@ -6,7 +6,7 @@ description: A guide for creating a Minecraft datapack using Kore.
 keywords: minecraft, datapack, kore, guide
 date-created: 2024-02-26
 date-modified: 2024-01-08
-routeOverride: /docs/creating-a-datapack
+routeOverride: /docs/guides/creating-a-datapack
 ---
 
 # Creating a DataPack
@@ -21,8 +21,8 @@ dataPack("my_datapack") {
 }.generate()
 ```
 
-This will generate the datapack with the given name in the `out` folder by default. If `generate()` is not called, the datapack will not be
-generated.
+This will generate the datapack with the given name in the `out` folder by default. If
+`generate()` is not called, the datapack will not be generated.
 
 Check the [Generation](#generation) section for more information.
 
@@ -172,8 +172,8 @@ dataPack("my_datapack") {
 
 ### Jar Generation
 
-To generate a JAR file for your datapack, use the `generateJar` function. This function packages the datapack into a JAR file which can then
-be used directly with your Minecraft installation or distributed for others to use.
+To generate a JAR file for your datapack, use the
+`generateJar` function. This function packages the datapack into a JAR file which can then be used directly with your Minecraft installation or distributed for others to use.
 
 ```kotlin
 dataPack("my_datapack") {
@@ -181,8 +181,9 @@ dataPack("my_datapack") {
 }.generateJar()
 ```
 
-By calling `generateJar()`, the generated JAR file will be placed in the default output folder. If you wish to specify a different location,
-use the `path` property:
+By calling
+`generateJar()`, the generated JAR file will be placed in the default output folder. If you wish to specify a different location, use the
+`path` property:
 
 ```kotlin
 dataPack("my_datapack") {
@@ -303,8 +304,7 @@ dataPack("my_datapack") {
 ```
 
 If a zip is provided, it will be considered as a datapack and merged with the generated datapack.<br>
-It will unzip the zip in a temporary folder of your system and merge it with the generated datapack, this will not remove the temporary
-folder.
+It will unzip the zip in a temporary folder of your system and merge it with the generated datapack, this will not remove the temporary folder.
 
 #### Checking for compatibility
 
@@ -350,7 +350,8 @@ Once you've generated your datapack, you may want to distribute it to the commun
 
 #### Tags
 
-When merging with other datapacks, Kore will merge the tags `minecraft/tags/function/load.json` and `minecraft/tags/functions/tick.json`.
+When merging with other datapacks, Kore will merge the tags `minecraft/tags/function/load.json` and
+`minecraft/tags/functions/tick.json`.
 
 Example:
 

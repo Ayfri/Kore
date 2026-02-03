@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
  * Converts an empty map into an explorer map leading to a nearby structure. Mirrors
  * vanilla `minecraft:exploration_map`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  */
 @Serializable
 data class ExplorationMap(

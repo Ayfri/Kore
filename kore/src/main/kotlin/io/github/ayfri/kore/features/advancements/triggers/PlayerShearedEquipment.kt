@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a player shears equipment off of an Entity such as wolf armor.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#playershearedequipment
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#playershearedequipment
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

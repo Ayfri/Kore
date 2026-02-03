@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a player starts riding an entity.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#startedriding
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#startedriding
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

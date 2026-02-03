@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
  * Sets suspicious-stew effects. Mirrors `minecraft:set_stew_effect`.
  * Each entry defines an effect id and a duration as a number provider.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

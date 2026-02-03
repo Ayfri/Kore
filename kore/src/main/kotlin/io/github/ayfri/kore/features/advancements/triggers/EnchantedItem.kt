@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when an item is enchanted.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#enchanteditem
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#enchanteditem
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

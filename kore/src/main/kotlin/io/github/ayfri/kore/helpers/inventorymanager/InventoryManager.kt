@@ -42,7 +42,7 @@ import net.benwoodworth.knbt.addNbtCompound
  * The manager wires the necessary scoreboard objective and, for block containers, a helper marker entity
  * to detect state changes. It auto-generates minimal `load`/`tick` functions to run the listeners.
  *
- * See docs: https://kore.ayfri.com/docs/inventory-manager
+ * See docs: https://kore.ayfri.com/docs/helpers/inventory-manager
  */
 data class InventoryManager<T : ContainerArgument>(val container: T) {
 	val slotsListeners = mutableListOf<SlotEventListener>()

@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a villager trade occurs.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#villagertrade
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#villagertrade
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

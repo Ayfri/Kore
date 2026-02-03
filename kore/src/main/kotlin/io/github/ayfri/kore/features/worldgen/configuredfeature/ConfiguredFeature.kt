@@ -34,7 +34,7 @@ data class ConfiguredFeature(
  * Produces `data/<namespace>/worldgen/configured_feature/<fileName>.json`.
  *
  * JSON format reference: https://minecraft.wiki/w/Configured_feature
- * Docs: https://kore.ayfri.com/docs/worldgen
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  */
 fun DataPack.configuredFeature(
 	fileName: String = "configured_feature",

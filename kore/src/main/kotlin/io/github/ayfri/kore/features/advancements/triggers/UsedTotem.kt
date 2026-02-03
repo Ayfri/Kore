@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a totem of undying is used.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#usedtotem
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#usedtotem
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

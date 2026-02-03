@@ -19,7 +19,7 @@ import kotlinx.serialization.serializer
  * (e.g. inside the `sequence` or `filtered` function payloads). It serializes only the
  * underlying list of item functions.
  *
- * See docs: https://kore.ayfri.com/docs/item-modifiers
+ * See docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  */
 typealias ItemModifierAsList = @Serializable(with = ItemModifier.Companion.ItemModifierAsListSerializer::class) ItemModifier
 
@@ -30,7 +30,7 @@ typealias ItemModifierAsList = @Serializable(with = ItemModifier.Companion.ItemM
  * items (set components, set lore, enchant, map exploration data, etc.). Kore serializes this
  * as the vanilla JSON array format expected by Minecraft.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * Minecraft Wiki: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable
@@ -65,7 +65,7 @@ data class ItemModifier(
  * @param init builder to populate the list of item functions
  * @return an [ItemModifierArgument] you can pass to commands or other features
  *
- * See docs and examples: https://kore.ayfri.com/docs/item-modifiers
+ * See docs and examples: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 fun DataPack.itemModifier(fileName: String = "item_modifier", init: ItemModifier.() -> Unit = {}): ItemModifierArgument {

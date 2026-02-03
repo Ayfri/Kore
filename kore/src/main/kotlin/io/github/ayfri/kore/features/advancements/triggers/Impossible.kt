@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 /**
  * Prevents the advancement from being achieved. Useful for creating advancements that should only trigger functions.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#impossible
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#impossible
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

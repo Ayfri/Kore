@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a player's inventory contents change.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#inventorychanged
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#inventorychanged
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

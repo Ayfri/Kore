@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
  * Conditional wrapper that applies nested item functions only if the item matches the provided
  * [itemFilter]. Equivalent to vanilla `minecraft:filtered`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
  * Fills a player head item with the profile of an entity source.
  * Mirrors vanilla `minecraft:fill_player_head`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

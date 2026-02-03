@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when an animal is tamed.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#tameanimal
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#tameanimal
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

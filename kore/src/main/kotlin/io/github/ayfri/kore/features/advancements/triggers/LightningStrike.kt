@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when lightning strikes.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#lightningstrike
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#lightningstrike
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

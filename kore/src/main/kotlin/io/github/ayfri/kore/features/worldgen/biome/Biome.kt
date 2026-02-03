@@ -43,7 +43,7 @@ data class Biome(
  * Produces `data/<namespace>/worldgen/biome/<fileName>.json`.
  *
  * JSON format reference: https://minecraft.wiki/w/Biome_definition
- * Docs: https://kore.ayfri.com/docs/worldgen
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  */
 fun DataPack.biome(fileName: String = "biome", init: Biome.() -> Unit = {}): BiomeArgument {
 	val biome = Biome(fileName).apply(init)

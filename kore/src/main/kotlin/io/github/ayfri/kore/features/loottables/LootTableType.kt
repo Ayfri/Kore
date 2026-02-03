@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 /**
  * Loot table type identifiers matching vanilla categories.
  *
- * Docs: https://kore.ayfri.com/docs/loot-tables
+ * Docs: https://kore.ayfri.com/docs/data-driven/loot-tables
  * Minecraft Wiki: https://minecraft.wiki/w/Loot_table
  */
 @Serializable(with = LootTableType.Companion.LootTableTypeSerializer::class)

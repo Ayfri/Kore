@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
  * Copies block state properties from the loot context into the item's `block_state` component.
  * Mirrors vanilla `minecraft:copy_state`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

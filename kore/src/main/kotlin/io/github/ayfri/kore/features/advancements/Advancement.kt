@@ -25,7 +25,7 @@ import kotlinx.serialization.Transient
  * Use criteria to attach triggers and predicate conditions.
  *
  * JSON format reference: https://minecraft.wiki/w/Advancement_definition
- * Docs: https://kore.ayfri.com/docs/advancements
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements
  *
  * @param display - The display properties for the advancement.
  * @param parent - The parent advancement for this advancement.
@@ -55,7 +55,7 @@ data class Advancement(
  *
  * Produces `data/<namespace>/advancement/<fileName>.json`.
  *
- * Docs: https://kore.ayfri.com/docs/advancements
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements
  */
 fun DataPack.advancement(fileName: String, block: Advancement.() -> Unit = {}): AdvancementArgument {
 	val advancement = Advancement(fileName)
@@ -66,7 +66,7 @@ fun DataPack.advancement(fileName: String, block: Advancement.() -> Unit = {}): 
 /**
  * Configure the display of the advancement (icon, title, description, frame, etc.).
  *
- * Docs: https://kore.ayfri.com/docs/advancements
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements
  */
 fun Advancement.display(icon: AdvancementIcon, title: String = "", description: String = "", block: AdvancementDisplay.() -> Unit = {}) {
 	display = AdvancementDisplay(icon, textComponent(title), textComponent(description)).apply(block)
@@ -75,7 +75,7 @@ fun Advancement.display(icon: AdvancementIcon, title: String = "", description: 
 /**
  * Configure the display of the advancement (icon, title, description, frame, etc.).
  *
- * Docs: https://kore.ayfri.com/docs/advancements
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements
  */
 fun Advancement.display(
 	icon: AdvancementIcon,
@@ -89,7 +89,7 @@ fun Advancement.display(
 /**
  * Configure the display of the advancement (icon, title, description, frame, etc.).
  *
- * Docs: https://kore.ayfri.com/docs/advancements
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements
  */
 fun Advancement.display(icon: ItemArgument, title: String = "", description: String = "", block: AdvancementDisplay.() -> Unit = {}) {
 	display = AdvancementDisplay(AdvancementIcon(icon), textComponent(title), textComponent(description)).apply(block)
@@ -98,7 +98,7 @@ fun Advancement.display(icon: ItemArgument, title: String = "", description: Str
 /**
  * Configure the display of the advancement (icon, title, description, frame, etc.).
  *
- * Docs: https://kore.ayfri.com/docs/advancements
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements
  */
 fun Advancement.display(
 	icon: ItemArgument,
@@ -112,7 +112,7 @@ fun Advancement.display(
 /**
  * Configure the icon of the advancement display.
  *
- * Docs: https://kore.ayfri.com/docs/advancements
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements
  */
 fun AdvancementDisplay.icon(icon: ItemArgument, count: Int? = null, components: Components.() -> Unit = {}) {
 	this.icon = AdvancementIcon(icon, Components().apply(components), count)
@@ -168,8 +168,8 @@ fun Advancement.criteria(
 /**
  * Define criteria and triggers for this advancement.
  *
- * Triggers: https://kore.ayfri.com/docs/advancements/triggers
- * Docs: https://kore.ayfri.com/docs/advancements
+ * Triggers: https://kore.ayfri.com/docs/data-driven/advancements/triggers
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements
  */
 fun Advancement.criteria(block: AdvancementCriteria.() -> Unit) {
 	criteria = AdvancementCriteria().apply(block)
@@ -178,7 +178,7 @@ fun Advancement.criteria(block: AdvancementCriteria.() -> Unit) {
 /**
  * Set the completion requirements for this advancement.
  *
- * Docs: https://kore.ayfri.com/docs/advancements
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements
  */
 fun Advancement.requirements(vararg requirements: List<String>) {
 	this.requirements = listOf(*requirements)
@@ -188,7 +188,7 @@ fun Advancement.requirements(vararg requirements: List<String>) {
  * Set the completion requirements for this advancement.
  * Passing several names creates a single AND-group.
  *
- * Docs: https://kore.ayfri.com/docs/advancements
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements
  */
 fun Advancement.requirements(vararg requirements: String) {
 	this.requirements = listOf(listOf(*requirements))
@@ -197,7 +197,7 @@ fun Advancement.requirements(vararg requirements: String) {
 /**
  * Configure the rewards granted when the advancement is completed.
  *
- * Docs: https://kore.ayfri.com/docs/advancements
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements
  */
 fun Advancement.rewards(block: AdvancementReward.() -> Unit) {
 	rewards = AdvancementReward().apply(block)
@@ -206,7 +206,7 @@ fun Advancement.rewards(block: AdvancementReward.() -> Unit) {
 /**
  * Set rewards in a single call.
  *
- * Docs: https://kore.ayfri.com/docs/advancements
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements
  */
 fun Advancement.rewards(
 	function: FunctionArgument? = null,

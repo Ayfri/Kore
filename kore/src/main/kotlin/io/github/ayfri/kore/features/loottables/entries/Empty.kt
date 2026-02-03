@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 /**
  * Loot entry that yields nothing; useful for weight balancing.
  *
- * Docs: https://kore.ayfri.com/docs/loot-tables
+ * Docs: https://kore.ayfri.com/docs/data-driven/loot-tables
  * Minecraft Wiki: https://minecraft.wiki/w/Loot_table
  */
 @Serializable

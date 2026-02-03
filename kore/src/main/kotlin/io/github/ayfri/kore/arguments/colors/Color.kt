@@ -14,7 +14,7 @@ import kotlinx.serialization.encoding.Encoder
  *
  * Implementations cover named colors (chat/UI), numeric colors (RGB/ARGB), and dye colors via helpers.
  *
- * See documentation: https://kore.ayfri.com/docs/colors
+ * See documentation: https://kore.ayfri.com/docs/concepts/colors
  */
 @Serializable(Color.Companion.ColorSerializer::class)
 interface Color : Argument {

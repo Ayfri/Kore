@@ -6,7 +6,7 @@ description: A guide for using advancements in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, advancements
 date-created: 2024-01-08
 date-modified: 2025-18-09
-routeOverride: /docs/advancements
+routeOverride: /docs/data-driven/advancements
 ---
 
 # Advancements

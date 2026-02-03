@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
 /**
  * A pool of rolls that yields entries, optionally guarded by conditions and modified by functions.
  *
- * Docs: https://kore.ayfri.com/docs/loot-tables
+ * Docs: https://kore.ayfri.com/docs/data-driven/loot-tables
  * Minecraft Wiki: https://minecraft.wiki/w/Loot_table
  */
 @Serializable
@@ -49,7 +49,7 @@ fun LootPool.conditions(vararg value: PredicateCondition) {
 	} ?: Predicate(predicateConditions = value.toList())
 }
 
-/** Define predicate conditions via a builder, see [Predicates](https://kore.ayfri.com/docs/predicates). */
+/** Define predicate conditions via a builder, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
 fun LootPool.conditions(block: Predicate.() -> Unit) {
 	conditions = Predicate().apply(block)
 }
@@ -64,7 +64,7 @@ fun LootPool.entries(block: LootEntries.() -> Unit) {
 	entries = buildList(block)
 }
 
-/** Set item modifier functions applied to the pool outputs, see [ItemModifiers](https://kore.ayfri.com/docs/item-modifiers). */
+/** Set item modifier functions applied to the pool outputs, see [ItemModifiers](https://kore.ayfri.com/docs/data-driven/item-modifiers). */
 fun LootPool.functions(block: ItemModifier.() -> Unit) {
 	functions = ItemModifierAsList().apply(block)
 }

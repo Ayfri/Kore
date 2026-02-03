@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
  * Sets enchantments on the item, optionally adding to existing ones. Mirrors `minecraft:set_enchantments`.
  * Keys are enchantments, values are number providers for the level.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

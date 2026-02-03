@@ -6,7 +6,7 @@ description: A guide for managing scoreboards in a Minecraft datapack using Kore
 keywords: minecraft, datapack, kore, guide, scoreboards
 date-created: 2024-04-06
 date-modified: 2024-04-06
-routeOverride: /docs/scoreboards
+routeOverride: /docs/concepts/scoreboards
 ---
 
 # Scoreboards
@@ -111,8 +111,7 @@ scoreboard {
 }
 ```
 
-These methods offer a more readable way to manage objectives, and avoid repetition operations invoking multiple times the same
-selector/objective.
+These methods offer a more readable way to manage objectives, and avoid repetition operations invoking multiple times the same selector/objective.
 
 ## Scoreboard Displays
 
@@ -163,8 +162,8 @@ scoreboardDisplay("my_display") {
 }
 ```
 
-Feel free to add feedback if you have any idea to improve this or to use other features from
-the new `scoreboard players display numberformat` subcommand.
+Feel free to add feedback if you have any idea to improve this or to use other features from the new
+`scoreboard players display numberformat` subcommand.
 
 ### Resetting Scoreboard Displays
 
@@ -176,24 +175,16 @@ ScoreboardDisplay.resetAll()
 
 ### Limitations
 
-Scoreboard Displays are displayed the same way to everyone, so you can't have different displays for different players.
-You can at least have different displays for different team colors, but that's all (so there's a property to set the display slot).
-The sidebar is limited to 15 lines, so you can't have more than 15 lines in a display.
+Scoreboard Displays are displayed the same way to everyone, so you can't have different displays for different players. You can at least have different displays for different team colors, but that's all (so there's a property to set the display slot). The sidebar is limited to 15 lines, so you can't have more than 15 lines in a display.
 
 ### How it works
 
-Scoreboard Displays are generated using fake players and teams, it will create teams with randomized numbers as name to avoid conflicts.
-Each line = 1 team, and each team has a suffix with the line text, then a fake player is added to the team with the score of the line
-number.
-For dynamic animations of displays, there aren't any solution for that currently.
-The only way to do that is to use a binary tree of functions, checking the score of the player between 0 and the middle of the maximum
-score, then between the middle and the maximum, and split the function in two, and so on.
-Then, when you arrive to the last function, you can call the `setLine` function to set the line text.
-And you repeat this for each line.
+Scoreboard Displays are generated using fake players and teams, it will create teams with randomized numbers as name to avoid conflicts. Each line = 1 team, and each team has a suffix with the line text, then a fake player is added to the team with the score of the line number. For dynamic animations of displays, there aren't any solution for that currently. The only way to do that is to use a binary tree of functions, checking the score of the player between 0 and the middle of the maximum score, then between the middle and the maximum, and split the function in two, and so on. Then, when you arrive to the last function, you can call the
+`setLine` function to set the line text. And you repeat this for each line.
 
 If you have a better solution, maybe using macros, feel free to create functions for that and create a pull request.
 
 #### New since 1.20.3
 
-Now scoreboard displays can be created more easily as you can now customize the display of each player as a text component.
-No teams are created anymore, and the display is generated using the `scoreboard players display name` command, achieving the same result.
+Now scoreboard displays can be created more easily as you can now customize the display of each player as a text component. No teams are created anymore, and the display is generated using the
+`scoreboard players display name` command, achieving the same result.

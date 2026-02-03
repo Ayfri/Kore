@@ -50,7 +50,7 @@ data class NoiseSettings(
  * Produces `data/<namespace>/worldgen/noise_settings/<fileName>.json`.
  *
  * JSON format reference: https://minecraft.wiki/w/Noise_settings
- * Docs: https://kore.ayfri.com/docs/worldgen
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  */
 fun DataPack.noiseSettings(fileName: String = "noise_settings", init: NoiseSettings.() -> Unit = {}): NoiseSettingsArgument {
 	val settings = NoiseSettings(fileName).apply(init)

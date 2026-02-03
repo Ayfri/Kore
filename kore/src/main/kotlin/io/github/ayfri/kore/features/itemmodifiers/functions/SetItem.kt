@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 /**
  * Replaces the current item with the specified item id. Mirrors `minecraft:set_item`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

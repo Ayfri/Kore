@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when lightning is channeled (e.g., via a trident with Channeling).
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#channeledlightning
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#channeledlightning
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable
@@ -34,7 +34,7 @@ fun ChanneledLightning.victims(vararg entities: Entity) {
 	victims = entities.map { EntityOrPredicates(legacyEntity = it) }
 }
 
-/** Add victims by predicate builders, see [Predicates](https://kore.ayfri.com/docs/predicates). */
+/** Add victims by predicate builders, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
 fun ChanneledLightning.victims(vararg predicates: Predicate) {
 	victims = predicates.map { EntityOrPredicates(predicateConditions = it) }
 }

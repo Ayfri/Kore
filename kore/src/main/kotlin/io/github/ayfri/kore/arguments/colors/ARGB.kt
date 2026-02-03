@@ -9,7 +9,7 @@ import kotlin.random.Random
  *
  * Encoded using [ToStringSerializer] (hex string). When alpha is not needed, prefer [RGB].
  *
- * See documentation: https://kore.ayfri.com/docs/colors
+ * See documentation: https://kore.ayfri.com/docs/concepts/colors
  */
 @Serializable(ARGB.Companion.ARGBSerializer::class)
 data class ARGB(var alpha: Int, var red: Int, var green: Int, var blue: Int) : Color {

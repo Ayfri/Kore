@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a player falls from a height.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#fallfromheight
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#fallfromheight
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

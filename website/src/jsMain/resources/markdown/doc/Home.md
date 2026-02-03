@@ -39,9 +39,9 @@ fun main() {
 ## Recommended reading (next steps)
 
 - **[Creating A Datapack](./creating-a-datapack)**: lifecycle, output paths, merging and mod‑loader jars.
-- **[Functions](./functions)**: building functions, tags, generated scopes and command helpers.
+- **[Functions](./commands/functions)**: building functions, tags, generated scopes and command helpers.
 - **[Configuration](./configuration)**: JSON formatting and generation options.
-- **[Bindings](./bindings)**: Import existing datapacks and generate Kotlin bindings (experimental).
+- **[Bindings](./commands/bindings)**: Import existing datapacks and generate Kotlin bindings (experimental).
 - **[GitHub Actions Publishing](./github-actions-publishing)
   **: automate datapack publishing to Modrinth, CurseForge, and GitHub Releases.
 - **[Components](./components)**: item/component builders and custom components.
@@ -59,7 +59,7 @@ fun main() {
 
 ## Known issues
 
-Check out the [Known Issues](/docs/known-issues) page for a list of known issues and workarounds.
+Check out the [Known Issues](/docs/advanced/known-issues) page for a list of known issues and workarounds.
 
 ## Community & source
 

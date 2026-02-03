@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a player travels through the Nether.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#nethertravel
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#nethertravel
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

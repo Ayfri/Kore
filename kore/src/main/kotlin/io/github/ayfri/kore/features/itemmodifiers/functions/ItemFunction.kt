@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
  * predicate conditions. Functions are collected by [ItemModifier] and serialised to the
  * vanilla JSON format.
  *
- * Documentation: https://kore.ayfri.com/docs/item-modifiers
+ * Documentation: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable(with = ItemFunction.Companion.ItemFunctionSerializer::class)
@@ -28,7 +28,7 @@ sealed class ItemFunction {
 /**
  * Define the predicate conditions that must pass for this item function to apply.
  *
- * See Predicates in the docs page: https://kore.ayfri.com/docs/item-modifiers
+ * See Predicates in the docs page: https://kore.ayfri.com/docs/data-driven/item-modifiers
  */
 fun ItemFunction.conditions(block: Predicate.() -> Unit) {
 	conditions = Predicate().apply(block)

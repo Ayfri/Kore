@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
  * Adds or replaces attribute modifiers on an item. Mirrors vanilla `minecraft:set_attributes`.
  * Use [replace] to control whether existing modifiers are replaced.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

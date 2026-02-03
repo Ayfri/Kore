@@ -12,7 +12,7 @@ import kotlinx.serialization.encodeToString
  * crafting tables, smelters, and other crafting stations.
  *
  * JSON format reference: https://minecraft.wiki/w/Recipe
- * Docs: https://kore.ayfri.com/docs/recipes
+ * Docs: https://kore.ayfri.com/docs/data-driven/recipes
  *
  * @param recipe - The recipe to be defined.
  */
@@ -30,6 +30,6 @@ val DataPack.recipesBuilder get() = Recipes(this)
  *
  * Produces `data/<namespace>/recipe/<fileName>.json`.
  *
- * Docs: https://kore.ayfri.com/docs/recipes
+ * Docs: https://kore.ayfri.com/docs/data-driven/recipes
  */
 fun DataPack.recipes(block: Recipes.() -> Unit) = recipesBuilder.apply(block)

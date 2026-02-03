@@ -33,6 +33,6 @@ val DataPack.structuresBuilder get() = StructuresBuilder(this)
  * Produces `data/<namespace>/worldgen/structure/<fileName>.json`.
  *
  * JSON format reference: https://minecraft.wiki/w/Structure#Data-driven
- * Docs: https://kore.ayfri.com/docs/worldgen
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  */
 fun DataPack.structures(block: StructuresBuilder.() -> Unit = {}) = StructuresBuilder(this).apply(block)

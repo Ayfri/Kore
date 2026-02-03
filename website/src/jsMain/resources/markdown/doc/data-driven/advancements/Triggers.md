@@ -6,13 +6,12 @@ description: A guide for using advancements triggers in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, advancements, triggers
 date-created: 2024-08-01
 date-modified: 2024-08-01
-routeOverride: /docs/advancements/triggers
+routeOverride: /docs/data-driven/advancements/triggers
 ---
 
 ## Available Triggers
 
-Below is the comprehensive list of available trigger types. Each trigger includes a description, its properties with explanations, and an
-example usage in Kotlin.
+Below is the comprehensive list of available trigger types. Each trigger includes a description, its properties with explanations, and an example usage in Kotlin.
 
 ---
 
@@ -23,7 +22,7 @@ Triggers when an allay drops an item on a block.
 
 **Properties:**
 
--   `location`: The location where the item is dropped.
+- `location`: The location where the item is dropped.
 
 **Example:**
 
@@ -68,7 +67,7 @@ Triggers when a player avoids vibrations.
 
 **Properties:**
 
--   `location`: The location where vibrations are avoided.
+- `location`: The location where vibrations are avoided.
 
 **Example:**
 
@@ -91,9 +90,9 @@ Triggers when a bee nest is destroyed.
 
 **Properties:**
 
--   `block`: The type of block that was destroyed.
--   `item`: The item involved in the destruction.
--   `numBeesInside`: The number of bees that were inside the nest.
+- `block`: The type of block that was destroyed.
+- `item`: The item involved in the destruction.
+- `numBeesInside`: The number of bees that were inside the nest.
 
 **Example:**
 
@@ -116,9 +115,9 @@ Triggers when animals are bred.
 
 **Properties:**
 
--   `child`: The child animal resulting from the breeding.
--   `parent`: One of the parent animals.
--   `partner`: The other parent animal.
+- `child`: The child animal resulting from the breeding.
+- `parent`: One of the parent animals.
+- `partner`: The other parent animal.
 
 **Example:**
 
@@ -157,8 +156,8 @@ Triggers when a player changes dimension.
 
 **Properties:**
 
--   `from`: The original dimension.
--   `to`: The new dimension.
+- `from`: The original dimension.
+- `to`: The new dimension.
 
 **Example:**
 
@@ -178,7 +177,7 @@ Triggers when lightning is channeled.
 
 **Properties:**
 
--   `victims`: A list of entities affected by the lightning.
+- `victims`: A list of entities affected by the lightning.
 
 **Example:**
 
@@ -203,7 +202,7 @@ Triggers when a beacon is constructed.
 
 **Properties:**
 
--   `level`: The level of the beacon.
+- `level`: The level of the beacon.
 
 **Example:**
 
@@ -222,7 +221,7 @@ Triggers when an item is consumed.
 
 **Properties:**
 
--   `item`: The item that was consumed.
+- `item`: The item that was consumed.
 
 **Example:**
 
@@ -243,8 +242,8 @@ Triggers when a recipe is crafted.
 
 **Properties:**
 
--   `recipeId`: The ID of the crafted recipe.
--   `ingredients`: The ingredients used in the recipe.
+- `recipeId`: The ID of the crafted recipe.
+- `ingredients`: The ingredients used in the recipe.
 
 **Example:**
 
@@ -268,8 +267,8 @@ Triggers when a zombie villager is cured.
 
 **Properties:**
 
--   `villager`: The villager involved in the curing.
--   `zombie`: The zombie involved in the curing.
+- `villager`: The villager involved in the curing.
+- `zombie`: The zombie involved in the curing.
 
 **Example:**
 
@@ -323,8 +322,8 @@ Triggers when a player's effects change.
 
 **Properties:**
 
--   `effects`: The effects that have changed.
--   `source`: The source of the effect changes.
+- `effects`: The effects that have changed.
+- `source`: The source of the effect changes.
 
 **Example:**
 
@@ -353,8 +352,8 @@ Triggers when an item is enchanted.
 
 **Properties:**
 
--   `item`: The item that was enchanted.
--   `levels`: The levels of enchantment applied.
+- `item`: The item that was enchanted.
+- `levels`: The levels of enchantment applied.
 
 **Example:**
 
@@ -376,8 +375,8 @@ Triggers when a player enters a specific block.
 
 **Properties:**
 
--   `block`: The block being entered.
--   `states`: The state properties of the block.
+- `block`: The block being entered.
+- `states`: The state properties of the block.
 
 **Example:**
 
@@ -399,7 +398,7 @@ Triggers when an entity hurts a player.
 
 **Properties:**
 
--   `damage`: Details about the damage inflicted.
+- `damage`: Details about the damage inflicted.
 
 **Example:**
 
@@ -426,8 +425,8 @@ Triggers when an entity kills a player.
 
 **Properties:**
 
--   `entity`: The entity that killed the player.
--   `killingBlow`: Details about the killing blow.
+- `entity`: The entity that killed the player.
+- `killingBlow`: Details about the killing blow.
 
 **Example:**
 _Not provided in the original examples._
@@ -441,9 +440,9 @@ Triggers after falling from an explosion.
 
 **Properties:**
 
--   `startPosition`: The starting position of the fall.
--   `distance`: The distance fallen.
--   `cause`: The cause of the fall.
+- `startPosition`: The starting position of the fall.
+- `distance`: The distance fallen.
+- `cause`: The cause of the fall.
 
 **Example:**
 
@@ -469,8 +468,8 @@ Triggers when falling from a height.
 
 **Properties:**
 
--   `startPosition`: The starting position of the fall.
--   `distance`: The distance fallen.
+- `startPosition`: The starting position of the fall.
+- `distance`: The distance fallen.
 
 **Example:**
 
@@ -491,7 +490,7 @@ Triggers when a bucket is filled.
 
 **Properties:**
 
--   `item`: The bucket item that was filled.
+- `item`: The bucket item that was filled.
 
 **Example:**
 
@@ -512,9 +511,9 @@ Triggers when a fishing rod hooks something.
 
 **Properties:**
 
--   `entity`: The entity hooked by the fishing rod.
--   `item`: The item used as the fishing rod.
--   `rod`: Details about the fishing rod.
+- `entity`: The entity hooked by the fishing rod.
+- `item`: The item used as the fishing rod.
+- `rod`: Details about the fishing rod.
 
 **Example:**
 
@@ -580,8 +579,8 @@ Triggers when inventory contents change.
 
 **Properties:**
 
--   `items`: The items involved in the inventory change.
--   `slots`: The inventory slots affected.
+- `items`: The items involved in the inventory change.
+- `slots`: The inventory slots affected.
 
 **Example:**
 
@@ -605,9 +604,9 @@ Triggers when item durability changes.
 
 **Properties:**
 
--   `delta`: The change in durability.
--   `durability`: The current durability of the item.
--   `item`: The item whose durability changed.
+- `delta`: The change in durability.
+- `durability`: The current durability of the item.
+- `item`: The item whose durability changed.
 
 **Example:**
 
@@ -629,7 +628,7 @@ Triggers when an item is used on a block.
 
 **Properties:**
 
--   `location`: The location where the item was used.
+- `location`: The location where the item was used.
 
 **Example:**
 
@@ -656,9 +655,9 @@ Triggers when killed by a crossbow.
 
 **Properties:**
 
--   `firedFromWeapon`: The weapon used to fire the arrow.
--   `uniqueEntityTypes`: The number of unique entity types involved.
--   `victims`: The entities that were killed.
+- `firedFromWeapon`: The weapon used to fire the arrow.
+- `uniqueEntityTypes`: The number of unique entity types involved.
+- `victims`: The entities that were killed.
 
 **Example:**
 
@@ -694,8 +693,8 @@ Triggers when a mob is killed near a sculk catalyst.
 
 **Properties:**
 
--   `entity`: The entity that was killed.
--   `killingBlow`: Details about the killing blow.
+- `entity`: The entity that was killed.
+- `killingBlow`: Details about the killing blow.
 
 **Example:**
 
@@ -721,8 +720,8 @@ Triggers during levitation.
 
 **Properties:**
 
--   `distance`: The distance of levitation.
--   `duration`: The duration of levitation.
+- `distance`: The distance of levitation.
+- `duration`: The duration of levitation.
 
 **Example:**
 
@@ -744,8 +743,8 @@ Triggers on a lightning strike.
 
 **Properties:**
 
--   `bystander`: The bystanders affected by the lightning.
--   `lightning`: Details about the lightning strike.
+- `bystander`: The bystanders affected by the lightning.
+- `lightning`: Details about the lightning strike.
 
 **Example:**
 
@@ -772,7 +771,7 @@ Triggers every second based on location conditions.
 
 **Properties:**
 
--   `location`: The specific location conditions for the trigger.
+- `location`: The specific location conditions for the trigger.
 
 **Example:**
 
@@ -795,8 +794,8 @@ Triggers when a player enters or exits the Nether.
 
 **Properties:**
 
--   `distance`: The distance traveled during the dimension change.
--   `startPosition`: The starting position before the change.
+- `distance`: The distance traveled during the dimension change.
+- `startPosition`: The starting position before the change.
 
 **Example:**
 
@@ -823,7 +822,7 @@ Triggers when a block is placed.
 
 **Properties:**
 
--   `location`: The location where the block was placed.
+- `location`: The location where the block was placed.
 
 **Example:**
 
@@ -846,7 +845,7 @@ Triggers when container loot is generated.
 
 **Properties:**
 
--   `lootTable`: The loot table used to generate the container loot.
+- `lootTable`: The loot table used to generate the container loot.
 
 **Example:**
 
@@ -863,8 +862,8 @@ Triggers when a player hurts an entity.
 
 **Properties:**
 
--   `damage`: Details about the damage inflicted.
--   `entity`: The entity that was hurt.
+- `damage`: Details about the damage inflicted.
+- `entity`: The entity that was hurt.
 
 **Example:**
 
@@ -885,8 +884,8 @@ Triggers when a player kills an entity.
 
 **Properties:**
 
--   `entity`: The entity that was killed.
--   `killingBlow`: Details about the killing blow.
+- `entity`: The entity that was killed.
+- `killingBlow`: Details about the killing blow.
 
 **Example:**
 
@@ -934,8 +933,8 @@ Triggers when a recipe is crafted.
 
 **Properties:**
 
--   `recipeId`: The ID of the crafted recipe.
--   `ingredients`: The ingredients used in the recipe.
+- `recipeId`: The ID of the crafted recipe.
+- `ingredients`: The ingredients used in the recipe.
 
 **Example:**
 
@@ -959,7 +958,7 @@ Triggers when a recipe is unlocked.
 
 **Properties:**
 
--   `recipe`: The recipe that was unlocked.
+- `recipe`: The recipe that was unlocked.
 
 **Example:**
 
@@ -976,8 +975,8 @@ Triggers when riding an entity in lava.
 
 **Properties:**
 
--   `distance`: The distance traveled while riding in lava.
--   `startPosition`: The starting position before riding.
+- `distance`: The distance traveled while riding in lava.
+- `startPosition`: The starting position before riding.
 
 **Example:**
 
@@ -1003,7 +1002,7 @@ Triggers when shooting a crossbow.
 
 **Properties:**
 
--   `item`: The crossbow item that was shot.
+- `item`: The crossbow item that was shot.
 
 **Example:**
 
@@ -1043,7 +1042,7 @@ Triggers when sliding down a block.
 
 **Properties:**
 
--   `block`: The block being slid down.
+- `block`: The block being slid down.
 
 **Example:**
 
@@ -1086,7 +1085,7 @@ Triggers when an entity is summoned.
 
 **Properties:**
 
--   `entity`: The entity that was summoned.
+- `entity`: The entity that was summoned.
 
 **Example:**
 
@@ -1107,7 +1106,7 @@ Triggers when an animal is tamed.
 
 **Properties:**
 
--   `entity`: The animal that was tamed.
+- `entity`: The animal that was tamed.
 
 **Example:**
 
@@ -1128,8 +1127,8 @@ Triggers when a target block is hit.
 
 **Properties:**
 
--   `signalStrength`: The strength of the signal when the target is hit.
--   `projectile`: The projectile used to hit the target.
+- `signalStrength`: The strength of the signal when the target is hit.
+- `projectile`: The projectile used to hit the target.
 
 **Example:**
 
@@ -1155,8 +1154,8 @@ Triggers when a thrown item is picked up by an entity.
 
 **Properties:**
 
--   `entity`: The entity that picked up the item.
--   `item`: The item that was picked up.
+- `entity`: The entity that picked up the item.
+- `item`: The item that was picked up.
 
 **Example:**
 
@@ -1180,8 +1179,8 @@ Triggers when a thrown item is picked up by a player.
 
 **Properties:**
 
--   `entity`: The entity that picked up the item.
--   `item`: The item that was picked up.
+- `entity`: The entity that picked up the item.
+- `item`: The item that was picked up.
 
 **Example:**
 
@@ -1202,7 +1201,7 @@ Triggers every tick (20 times per second).
 
 **Properties:**
 
--   `conditions`: Conditions that must be met for the trigger to activate.
+- `conditions`: Conditions that must be met for the trigger to activate.
 
 **Example:**
 
@@ -1223,7 +1222,7 @@ Triggers when an ender eye is used.
 
 **Properties:**
 
--   `distance`: The distance traveled using the ender eye.
+- `distance`: The distance traveled using the ender eye.
 
 **Example:**
 
@@ -1244,7 +1243,7 @@ Triggers when a totem is used.
 
 **Properties:**
 
--   `item`: The totem item that was used.
+- `item`: The totem item that was used.
 
 **Example:**
 
@@ -1265,7 +1264,7 @@ Triggers while using an item.
 
 **Properties:**
 
--   `item`: The item being used.
+- `item`: The item being used.
 
 **Example:**
 
@@ -1286,8 +1285,8 @@ Triggers when a villager trades.
 
 **Properties:**
 
--   `item`: The item involved in the trade.
--   `villager`: The villager involved in the trade.
+- `item`: The item involved in the trade.
+- `villager`: The villager involved in the trade.
 
 **Example:**
 
@@ -1315,7 +1314,7 @@ Triggers when a player causes a raid in a village.
 
 **Properties:**
 
--   `location`: The location where the raid occurred.
+- `location`: The location where the raid occurred.
 
 **Example:**
 
@@ -1331,5 +1330,4 @@ voluntaryExile("raid_village") {
 
 ---
 
-Each trigger example demonstrates the basic usage with common properties and conditions. You can customize these triggers by adding more
-conditions and requirements to suit your specific advancement needs.
+Each trigger example demonstrates the basic usage with common properties and conditions. You can customize these triggers by adding more conditions and requirements to suit your specific advancement needs.

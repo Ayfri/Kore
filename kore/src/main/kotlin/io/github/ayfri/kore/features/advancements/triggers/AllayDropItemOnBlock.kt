@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when an allay drops an item on a block.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#allaydropitemonblock
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#allaydropitemonblock
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable
@@ -38,12 +38,12 @@ fun AdvancementCriteria.allayDropItemOnBlock(name: String, block: AllayDropItemO
 	criteria += AllayDropItemOnBlock(name).apply(block)
 }
 
-/** Set the location condition, see [Predicates](https://kore.ayfri.com/docs/predicates). */
+/** Set the location condition, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
 fun AllayDropItemOnBlock.location(block: Location.() -> Unit) {
 	location = LocationOrPredicates(Location().apply(block))
 }
 
-/** Set the predicate conditions, see [Predicates](https://kore.ayfri.com/docs/predicates). */
+/** Set the predicate conditions, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
 fun AllayDropItemOnBlock.predicate(predicate: Predicate.() -> Unit) {
 	location = LocationOrPredicates(predicateConditions = Predicate().apply(predicate).predicateConditions)
 }

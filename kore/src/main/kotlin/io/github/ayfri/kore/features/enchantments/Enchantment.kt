@@ -24,7 +24,7 @@ import kotlinx.serialization.Transient
  * applicable equipment slots, and effect components.
  *
  * JSON format reference: https://minecraft.wiki/w/Enchantment_definition
- * Docs: https://kore.ayfri.com/docs/enchantments
+ * Docs: https://kore.ayfri.com/docs/data-driven/enchantments
  *
  * @param description - The text component used as a description in tooltips.
  * @param exclusiveSet - The list of enchantments that are mutually exclusive with this enchantment.
@@ -65,7 +65,7 @@ data class Enchantment(
  *
  * Produces `data/<namespace>/enchantment/<fileName>.json`.
  *
- * Docs: https://kore.ayfri.com/docs/enchantments
+ * Docs: https://kore.ayfri.com/docs/data-driven/enchantments
  */
 fun DataPack.enchantment(fileName: String, init: Enchantment.() -> Unit): EnchantmentArgument {
 	val enchantment = Enchantment(fileName).apply(init)

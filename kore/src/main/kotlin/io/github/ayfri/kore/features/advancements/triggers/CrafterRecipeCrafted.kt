@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a crafter crafts a recipe.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#crafterrecipecrafted
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#crafterrecipecrafted
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

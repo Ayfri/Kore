@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a potion is brewed.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#brewedpotion
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#brewedpotion
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

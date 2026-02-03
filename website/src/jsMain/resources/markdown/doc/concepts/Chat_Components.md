@@ -6,21 +6,22 @@ description: A guide for creating Chat Components in a Minecraft datapack using 
 keywords: minecraft, datapack, kore, guide, chat-components
 date-created: 2024-09-05
 date-modified: 2026-01-27
-routeOverride: /docs/chat-components
+routeOverride: /docs/concepts/chat-components
 ---
 
 # Chat Components
 
-Chat Components are used to create rich text messages in Minecraft. They can include formatting, interactivity, and nested components. Kore
-has functions to create and manipulate Chat Components in a datapack.<br>
-Note that they always works by groups named `ChatComponents`, whenever you create a chat component, you actually create a `ChatComponents`,
-and you can chain multiple components together using the `+` operator.
+Chat Components are used to create rich text messages in Minecraft. They can include formatting, interactivity, and nested components. Kore has functions to create and manipulate Chat Components in a datapack.<br>
+Note that they always works by groups named `ChatComponents`, whenever you create a chat component, you actually create a
+`ChatComponents`, and you can chain multiple components together using the `+` operator.
 
-Minecraft sometimes does not allow "complex" chat components with data resolving (`score`, `nbt` and `entity` chat components), if you use
-them, you'll get an empty text component. Simple chat components are inheriting the `SimpleComponent` interface, and you have a
+Minecraft sometimes does not allow "complex" chat components with data resolving (`score`, `nbt` and
+`entity` chat components), if you use them, you'll get an empty text component. Simple chat components are inheriting the
+`SimpleComponent` interface, and you have a
 `containsOnlySimpleComponents` property to check if a `ChatComponents` only contains simple components.
 
-You also have a `containsOnlyText()` function to check if a `ChatComponents` only contains plain text components with no formatting.
+You also have a `containsOnlyText()` function to check if a
+`ChatComponents` only contains plain text components with no formatting.
 
 ### Common Properties
 
@@ -58,7 +59,8 @@ See how to set custom colors in the [Colors](./colors) article.
 
 ### Combined Components
 
-Components can be combined using the `+` operator, use the `text` function to create a simple text component and not a `ChatComponents`.
+Components can be combined using the `+` operator, use the `text` function to create a simple text component and not a
+`ChatComponents`.
 
 ```kotlin
 val combinedComponents = textComponent("Hello, ") + text("world!") {
@@ -73,8 +75,9 @@ In-game output:<br>
 
 ## EntityComponent
 
-The `EntityComponent` displays the name of an entity selected by a selector. If multiple entities are found, their names are displayed in
-the form `Name1, Name2` etc.<br>
+The
+`EntityComponent` displays the name of an entity selected by a selector. If multiple entities are found, their names are displayed in the form
+`Name1, Name2` etc.<br>
 The `separator` property can be used to change the separator between the names of the entities.<br>
 If no entities are found, the component displays nothing.
 
@@ -102,8 +105,8 @@ In-game example:<br>
 
 ## NbtComponent
 
-The `NbtComponent` displays NBT data from a block, an entity, or a storage. The `interpret` property can be used to interpret the NBT data
-as a text component, if the parsing fails, nothing is displayed.<br>
+The `NbtComponent` displays NBT data from a block, an entity, or a storage. The
+`interpret` property can be used to interpret the NBT data as a text component, if the parsing fails, nothing is displayed.<br>
 The `nbt` property can be used to specify the path to the NBT data.<br>
 If `nbt` points to an array, then it will display all the elements joined in the form `Element1, Element2` etc.<br>
 The `separator` property can be used to change the separator between the elements of the array.
@@ -121,9 +124,9 @@ In-game output:<br>
 
 ## ScoreComponent
 
-The `ScoreComponent` displays the score of an entity for a specific objective. The `name` property can be used to specify the name of the
-entity whose score to display, it can be a selector or a literal name (will use the player with that name). It can also be `*` to select the
-entity seeing the text component.<br>
+The `ScoreComponent` displays the score of an entity for a specific objective. The
+`name` property can be used to specify the name of the entity whose score to display, it can be a selector or a literal name (will use the player with that name). It can also be
+`*` to select the entity seeing the text component.<br>
 The `objective` property can be used to specify the name of the objective to display the score of.<br>
 A `value` property can be used to specify a fixed value to display regardless of the score.
 
@@ -138,7 +141,8 @@ In-game output:<br>
 
 ## TranslatedTextComponent
 
-The `TranslatedTextComponent` displays translated text using translation keys. You can also pass arguments to the translation key with the
+The
+`TranslatedTextComponent` displays translated text using translation keys. You can also pass arguments to the translation key with the
 `with` argument, which should be a list of text components or strings.<br>
 A `fallback` property can be used to specify a fallback text if the translation key is not found.
 
@@ -153,8 +157,8 @@ In-game output:<br>
 
 ## Hover Event
 
-Hover events display extra information when the text is hovered over, it can be either text, an item, or an entity. Use `showText` to
-display text, `showItem` to display an item, and `showEntity` to display an entity.<br>
+Hover events display extra information when the text is hovered over, it can be either text, an item, or an entity. Use
+`showText` to display text, `showItem` to display an item, and `showEntity` to display an entity.<br>
 Note that to show an entity, you have to have its UUID as a string.
 
 ### Hover Event Example
@@ -217,8 +221,10 @@ Object components render atlas sprites or player skins inside chat. They require
 ### AtlasObjectTextComponent
 
 -
+
 `atlas` - The atlas that contains the sprite. Optional when the sprite already resolves to an atlas entry, otherwise provide an explicit
 `AtlasArgument`.
+
 - `sprite` - The `ModelArgument` that identifies the sprite to render and is required.
 
 Use `objectComponent` to construct atlas objects, optionally passing an atlas override.

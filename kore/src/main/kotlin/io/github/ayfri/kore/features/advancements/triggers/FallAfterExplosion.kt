@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a player falls after an explosion.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#fallafterexplosion
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#fallafterexplosion
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable
@@ -48,7 +48,7 @@ fun FallAfterExplosion.cause(entity: Entity) {
 	cause = EntityOrPredicates(legacyEntity = entity)
 }
 
-/** Set the cause constraints, see [Predicates](https://kore.ayfri.com/docs/predicates). */
+/** Set the cause constraints, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
 fun FallAfterExplosion.cause(predicate: Predicate) {
 	cause = EntityOrPredicates(predicateConditions = predicate)
 }

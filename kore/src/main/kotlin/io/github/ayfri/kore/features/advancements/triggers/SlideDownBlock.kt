@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when sliding down a block.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#slidedownblock
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#slidedownblock
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

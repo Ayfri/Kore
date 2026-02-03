@@ -6,15 +6,16 @@ description: A complete guide to custom world generation (1.21+) with Kore’s K
 keywords: minecraft, datapack, kore, worldgen, dimension, biome, features, structures, noise
 date-created: 2025-08-11
 date-modified: 2025-08-11
-routeOverride: /docs/worldgen
+routeOverride: /docs/data-driven/worldgen
 ---
 
 # World generation
 
 This guide shows how to build custom world generation using Kore’s Kotlin DSL. It maps the common datapack JSON files described on the Minecraft Wiki to concise Kotlin builders, and links to authoritative references for each concept.
 
-- **What worldgen is**: terrain, biomes, carvers, features, and structures placed procedurally per chunk. See [World generation](https://minecraft.wiki/w/World_generation).
-- Cross‑references: see [Predicates](/docs/predicates) for condition logic in other features, and [Test Features](/docs/test-features) to automate validation with GameTest.
+- **What worldgen is
+  **: terrain, biomes, carvers, features, and structures placed procedurally per chunk. See [World generation](https://minecraft.wiki/w/World_generation).
+- Cross‑references: see [Predicates](/docs/data-driven/predicates) for condition logic in other features, and [Test Features](/docs/advanced/test-features) to automate validation with GameTest.
 
 ## Biomes
 
@@ -271,19 +272,19 @@ dp.worldPreset("example_preset") {
 ## Tips, validation, and testing
 
 - Validate your concepts against the Wiki JSON schemas and pages:
-  - Dimension: [Dimension definition](https://minecraft.wiki/w/Dimension_definition), [Custom dimension](https://minecraft.wiki/w/Custom_dimension)
-  - Dimension type: [Dimension type](https://minecraft.wiki/w/Dimension_type)
-  - Noise settings: [Noise settings](https://minecraft.wiki/w/Noise_settings), [World generation](https://minecraft.wiki/w/World_generation)
-  - Biome: [Biome definition](https://minecraft.wiki/w/Biome_definition)
-  - Features: [Configured feature](https://minecraft.wiki/w/Configured_feature), [Placed feature](https://minecraft.wiki/w/Placed_feature)
-  - Carvers: [Carver definition](https://minecraft.wiki/w/Carver_definition)
-  - Structures: [Template pool](https://minecraft.wiki/w/Template_pool), [Processor list](https://minecraft.wiki/w/Processor_list), [Structure definition](https://minecraft.wiki/w/Structure_definition), [Structure set](https://minecraft.wiki/w/Structure_set)
-  - World preset: [World preset definition](https://minecraft.wiki/w/World_preset_definition)
+	- Dimension: [Dimension definition](https://minecraft.wiki/w/Dimension_definition), [Custom dimension](https://minecraft.wiki/w/Custom_dimension)
+	- Dimension type: [Dimension type](https://minecraft.wiki/w/Dimension_type)
+	- Noise settings: [Noise settings](https://minecraft.wiki/w/Noise_settings), [World generation](https://minecraft.wiki/w/World_generation)
+	- Biome: [Biome definition](https://minecraft.wiki/w/Biome_definition)
+	- Features: [Configured feature](https://minecraft.wiki/w/Configured_feature), [Placed feature](https://minecraft.wiki/w/Placed_feature)
+	- Carvers: [Carver definition](https://minecraft.wiki/w/Carver_definition)
+	- Structures: [Template pool](https://minecraft.wiki/w/Template_pool), [Processor list](https://minecraft.wiki/w/Processor_list), [Structure definition](https://minecraft.wiki/w/Structure_definition), [Structure set](https://minecraft.wiki/w/Structure_set)
+	- World preset: [World preset definition](https://minecraft.wiki/w/World_preset_definition)
 
 - Test quickly in‑game:
-  - Teleport into a dimension: `/execute in <ns>:<dimension> run tp @s 0 200 0`
-  - Locate a structure: `/locate structure <ns>:<structure_name>`
-  - Reload datapacks: `/reload`
+	- Teleport into a dimension: `/execute in <ns>:<dimension> run tp @s 0 200 0`
+	- Locate a structure: `/locate structure <ns>:<structure_name>`
+	- Reload datapacks: `/reload`
 
 - Keep placed features and structure placement reasonable to avoid performance issues.
 
@@ -542,4 +543,4 @@ Tips:
 
 - Validate each JSON via the Wiki pages linked above as you fill in real configs.
 - Keep feature counts and structure spacing reasonable for performance.
-- Use GameTest to validate worldgen deterministically; see [Test Features](/docs/test-features).
+- Use GameTest to validate worldgen deterministically; see [Test Features](/docs/advanced/test-features).

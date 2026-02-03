@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a bee nest is destroyed.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#beeenestdestroyed
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#beeenestdestroyed
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

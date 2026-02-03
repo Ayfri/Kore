@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a block is placed.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#placedblock
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#placedblock
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

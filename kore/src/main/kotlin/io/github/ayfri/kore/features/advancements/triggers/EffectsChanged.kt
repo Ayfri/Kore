@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a player's effects change.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#effectschanged
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#effectschanged
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

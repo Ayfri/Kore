@@ -6,7 +6,7 @@ description: Apply loot functions to items using Kore’s DSL, with predicates a
 keywords: minecraft, datapack, kore, item modifiers, loot functions, /item modify, components, predicates
 date-created: 2025-08-11
 date-modified: 2025-08-11
-routeOverride: /docs/item-modifiers
+routeOverride: /docs/data-driven/item-modifiers
 ---
 
 # Item Modifiers
@@ -59,10 +59,12 @@ This produces the exact JSON the game expects, while keeping everything type-saf
 ## Where modifiers live in Kore
 
 - Builder entry-point: `dataPack.itemModifier(..)` returns an `ItemModifierArgument` you can reference elsewhere.
-- Internal data: `ItemModifier` stores an inlinable list of `ItemFunction` objects and serialises directly to a JSON array when saved.
+- Internal data: `ItemModifier` stores an inlinable list of
+  `ItemFunction` objects and serialises directly to a JSON array when saved.
 - Each `ItemFunction` accepts optional `conditions { .. }`, which are regular Predicates.
 
-See `kore/features/itemmodifiers/ItemModifier.kt` for the container type and `kore/features/itemmodifiers/functions/*` for all functions.
+See `kore/features/itemmodifiers/ItemModifier.kt` for the container type and
+`kore/features/itemmodifiers/functions/*` for all functions.
 
 ## Working with components
 
@@ -111,11 +113,12 @@ itemModifier("cmd") {
 }
 ```
 
-For a general overview of item components and their builders, see [Components](/docs/components).
+For a general overview of item components and their builders, see [Components](/docs/concepts/components).
 
 ## Conditions on functions (Predicates)
 
-Every item function can define `conditions { .. }`. These are standard Kore Predicates and support all the same helpers (random chance, weather, scores, entity checks, etc.). This mirrors the vanilla “conditions” array on loot functions.
+Every item function can define
+`conditions { .. }`. These are standard Kore Predicates and support all the same helpers (random chance, weather, scores, entity checks, etc.). This mirrors the vanilla “conditions” array on loot functions.
 
 ```kotlin
 itemModifier("conditional") {
@@ -126,7 +129,7 @@ itemModifier("conditional") {
 }
 ```
 
-Learn more in [Predicates](/docs/predicates).
+Learn more in [Predicates](/docs/data-driven/predicates).
 
 ## Composition and nesting
 
@@ -179,7 +182,8 @@ Alphabetical sampling of common functions. All names match vanilla functions and
 - `setWrittenBookPages(pages)`
 - `toggleTooltips(toggles)`
 
-See the test suite [`ItemModifierTests.kt`](https://github.com/Ayfri/Kore/blob/master/kore/src/test/kotlin/io/github/ayfri/kore/features/ItemModifierTests.kt) for end-to-end JSON expectations that mirror vanilla.
+See the test suite [
+`ItemModifierTests.kt`](https://github.com/Ayfri/Kore/blob/master/kore/src/test/kotlin/io/github/ayfri/kore/features/ItemModifierTests.kt) for end-to-end JSON expectations that mirror vanilla.
 
 ## Using modifiers in commands
 
@@ -205,7 +209,7 @@ load {
 
 ## See also
 
-- [Predicates](/docs/predicates) – conditions for item functions
-- [Components](/docs/components) – building and understanding item components
+- [Predicates](/docs/data-driven/predicates) – conditions for item functions
+- [Components](/docs/concepts/components) – building and understanding item components
 - [Inventory Manager](/docs/helpers/inventory-manager) – maintain item states in GUIs/slots
 - Vanilla reference: [Minecraft Wiki – Item modifier](https://minecraft.wiki/w/Item_modifier)

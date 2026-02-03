@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 /**
  * Base sealed class for all advancement trigger conditions (one per vanilla trigger type).
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement#JSON_format
  */
 @Serializable(AdvancementTriggerCondition.Companion.AdvancementTriggerConditionSerializer::class)

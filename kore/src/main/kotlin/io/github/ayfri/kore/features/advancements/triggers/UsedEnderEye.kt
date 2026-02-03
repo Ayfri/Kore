@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when an ender eye is used.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#usedendereye
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#usedendereye
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

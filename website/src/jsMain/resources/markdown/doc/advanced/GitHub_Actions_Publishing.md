@@ -6,7 +6,7 @@ description: Automatically publish your Kore datapacks using GitHub Actions with
 keywords: minecraft, datapack, kore, github actions, publishing, automation, ci/cd
 date-created: 2025-09-30
 date-modified: 2025-09-30
-routeOverride: /docs/github-actions-publishing
+routeOverride: /docs/advanced/github-actions-publishing
 ---
 
 # GitHub Actions Publishing

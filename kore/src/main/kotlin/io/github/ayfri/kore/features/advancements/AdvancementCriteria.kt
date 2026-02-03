@@ -9,8 +9,8 @@ typealias AdvancementCriteria = @Serializable(with = AdvancementCriteriaSurrogat
 /**
  * Container used for serializing advancement criteria as a name->trigger map as in vanilla JSON.
  *
- * Docs: https://kore.ayfri.com/docs/advancements
- * Triggers: https://kore.ayfri.com/docs/advancements/triggers
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements
+ * Triggers: https://kore.ayfri.com/docs/data-driven/advancements/triggers
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement#JSON_format
  */
 @Serializable

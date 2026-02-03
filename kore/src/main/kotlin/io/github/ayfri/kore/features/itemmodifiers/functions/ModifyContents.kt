@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
  * (e.g., bundle contents, container, charged projectiles). Equivalent to vanilla
  * `minecraft:modify_contents`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

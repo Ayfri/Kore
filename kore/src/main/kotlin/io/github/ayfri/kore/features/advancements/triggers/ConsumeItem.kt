@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a player consumes an item.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#consumeitem
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#consumeitem
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format#consume_item
  */
 @Serializable

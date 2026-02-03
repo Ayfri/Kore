@@ -6,7 +6,7 @@ description: Import existing datapacks and generate Kotlin bindings.
 keywords: kore, bindings, import, datapack, github, modrinth, curseforge
 date-created: 2026-01-23
 date-modified: 2026-01-24
-routeOverride: /docs/bindings
+routeOverride: /docs/commands/bindings
 position: 3
 ---
 
@@ -177,6 +177,7 @@ curseforge("418120") // Project ID
 ### URL / local path
 
 Patterns:
+
 - `https://example.com/pack.zip`
 - `./path/to/pack` (Local folder)
 - `./path/to/pack.zip` (Local zip)

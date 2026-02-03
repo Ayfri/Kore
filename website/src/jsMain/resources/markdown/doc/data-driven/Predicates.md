@@ -6,13 +6,12 @@ description: Learn how to use predicates in your Kore datapacks
 keywords: minecraft, datapack, kore, predicates, conditions, entity properties
 date-created: 2024-01-08
 date-modified: 2024-01-08
-routeOverride: /docs/predicates
+routeOverride: /docs/data-driven/predicates
 ---
 
 # Predicates
 
-Predicates in Minecraft are used to check if certain conditions are met. They can be used in various features like advancements, loot
-tables, and commands. Kore provides a type-safe way to create predicates with a simple DSL.
+Predicates in Minecraft are used to check if certain conditions are met. They can be used in various features like advancements, loot tables, and commands. Kore provides a type-safe way to create predicates with a simple DSL.
 
 ## Basic Usage
 
@@ -57,25 +56,25 @@ predicate("inverted_test") {
 
 ### Available Conditions
 
--   `allOf` - Evaluates a list of predicates and passes if all of them pass
--   `anyOf` - Evaluates a list of predicates and passes if any one of them passes
--   `blockStateProperty` - Checks the mined block and its block states
--   `damageSourceProperties` - Checks properties of the damage source
--   `enchantmentActiveCheck` - Checks if an enchantment is active
--   `entityProperties` - Checks properties of an entity
--   `entityScores` - Checks the scoreboard scores of an entity
--   `inverted` - Inverts another predicate condition
--   `killedByPlayer` - Checks if there is an attacking player entity
--   `locationCheck` - Checks the current location against location criteria
--   `matchTool` - Checks tool used to mine the block
--   `randomChance` - Generates a random number between 0.0 and 1.0
--   `randomChanceWithEnchantedBonus` - Random chance with enchantment bonus
--   `reference` - Invokes another predicate file and returns its result
--   `survivesExplosion` - Returns success with probability based on explosion radius
--   `tableBonus` - Passes with probability picked from a list, indexed by enchantment power
--   `timeCheck` - Compares the current day time against given values
--   `valueCheck` - Compares a number against another number or range of numbers
--   `weatherCheck` - Checks the current game weather
+- `allOf` - Evaluates a list of predicates and passes if all of them pass
+- `anyOf` - Evaluates a list of predicates and passes if any one of them passes
+- `blockStateProperty` - Checks the mined block and its block states
+- `damageSourceProperties` - Checks properties of the damage source
+- `enchantmentActiveCheck` - Checks if an enchantment is active
+- `entityProperties` - Checks properties of an entity
+- `entityScores` - Checks the scoreboard scores of an entity
+- `inverted` - Inverts another predicate condition
+- `killedByPlayer` - Checks if there is an attacking player entity
+- `locationCheck` - Checks the current location against location criteria
+- `matchTool` - Checks tool used to mine the block
+- `randomChance` - Generates a random number between 0.0 and 1.0
+- `randomChanceWithEnchantedBonus` - Random chance with enchantment bonus
+- `reference` - Invokes another predicate file and returns its result
+- `survivesExplosion` - Returns success with probability based on explosion radius
+- `tableBonus` - Passes with probability picked from a list, indexed by enchantment power
+- `timeCheck` - Compares the current day time against given values
+- `valueCheck` - Compares a number against another number or range of numbers
+- `weatherCheck` - Checks the current game weather
 
 Each condition has specific requirements and contexts where it can be used. Some conditions require specific loot context data to be available, while others can be invoked from any context.
 
@@ -139,31 +138,35 @@ Sub-predicates are nested data structures that allow you to define specific prop
 
 The `entityProperties` condition supports various sub-predicates to check different aspects of an entity:
 
--   `distance` - Check distance between entities
--   `effects` - Check potion effects
--   `equipment` - Check equipped items
--   `flags` - Check entity flags (baby, on fire, etc.)
--   `location` - Check entity location
--   `movement` - Check entity movement
--   `movementAffectedBy` - Check what affects entity movement
--   `nbt` - Check entity NBT data
--   `passenger` - Check entity passenger
--   `periodicTicks` - Check entity periodic ticks
--   `slots` - Check specific inventory slots
--   `steppingOn` - Check block the entity is standing on
--   `targetedEntity` - Check entity being targeted
--   `team` - Check entity team
--   `type` - Check entity type
--   `typeSpecific` - Check type-specific properties
--   `vehicle` - Check entity vehicle
+- `distance` - Check distance between entities
+- `effects` - Check potion effects
+- `equipment` - Check equipped items
+- `flags` - Check entity flags (baby, on fire, etc.)
+- `location` - Check entity location
+- `movement` - Check entity movement
+- `movementAffectedBy` - Check what affects entity movement
+- `nbt` - Check entity NBT data
+- `passenger` - Check entity passenger
+- `periodicTicks` - Check entity periodic ticks
+- `slots` - Check specific inventory slots
+- `steppingOn` - Check block the entity is standing on
+- `targetedEntity` - Check entity being targeted
+- `team` - Check entity team
+- `type` - Check entity type
+- `typeSpecific` - Check type-specific properties
+- `vehicle` - Check entity vehicle
 
 The `Entity` class will provide all the functions for these sub-predicates.
 
 ### Entity Type-Specific Properties
 
-Entities can still expose a handful of hard-coded type-specific predicates (mainly utility ones such as fishing hooks, lightning, player, raider, sheep and slime).  All the visual *variant* checks that existed before snapshot **25w04a** were migrated by Mojang to the new **components** system.  Kore therefore removed the dedicated helpers (`axolotlTypeSpecific`, `catTypeSpecific`, …) in favor of component matching.
+Entities can still expose a handful of hard-coded type-specific predicates (mainly utility ones such as fishing hooks, lightning, player, raider, sheep and slime). All the visual
+*variant* checks that existed before snapshot **25w04a** were migrated by Mojang to the new **components
+** system. Kore therefore removed the dedicated helpers (`axolotlTypeSpecific`,
+`catTypeSpecific`, …) in favor of component matching.
 
 #### Component-based variant checks (25w04a +)
+
 You can now query an entity’s data components directly from `entityProperties` with the `components` block:
 
 ```kotlin
@@ -177,9 +180,11 @@ predicate("axolotl_component_check") {
 }
 ```
 
-Any component you can put on an **item** can be matched on an **entity** in exactly the same way – just call the corresponding extension inside the `components {}` scope.
+Any component you can put on an **item** can be matched on an **entity
+** in exactly the same way – just call the corresponding extension inside the `components {}` scope.
 
 #### Remaining built-in `typeSpecific` helpers
+
 These helpers are still available because they cover information that is **not** represented by components:
 
 - `fishingHookTypeSpecific` – Fishing-hook properties
@@ -189,7 +194,8 @@ These helpers are still available because they cover information that is **not**
 - `sheepTypeSpecific` – Sheep shear flag
 - `slimeTypeSpecific` – Slime size
 
-> **Note**   All former `*TypeSpecific` helpers that dealt with variants (axolotl, cat, fox, frog, horse, llama, mooshroom, painting, parrot, pig, rabbit, salmon, tropical fish, villager, wolf) have been removed.  Update your predicates to use component matching instead.
+> **Note**   All former
+`*TypeSpecific` helpers that dealt with variants (axolotl, cat, fox, frog, horse, llama, mooshroom, painting, parrot, pig, rabbit, salmon, tropical fish, villager, wolf) have been removed. Update your predicates to use component matching instead.
 
 ### Item Sub-Predicates
 
@@ -231,15 +237,16 @@ predicate("component_check") {
 
 Component Matchers allow you to check various item components like:
 
--   Attribute modifiers
--   Container contents (bundles, shulker boxes)
--   Damage and durability
--   Enchantments
--   Firework properties
--   Book contents
--   And many more
+- Attribute modifiers
+- Container contents (bundles, shulker boxes)
+- Damage and durability
+- Enchantments
+- Firework properties
+- Book contents
+- And many more
 
-Each matcher corresponds to a component type in Minecraft and provides type-safe ways to check their properties. For a complete list of available matchers, refer to the `arguments.components.matchers` package in the source code.
+Each matcher corresponds to a component type in Minecraft and provides type-safe ways to check their properties. For a complete list of available matchers, refer to the
+`arguments.components.matchers` package in the source code.
 
 ## Using Predicates in Commands
 
@@ -284,5 +291,4 @@ predicate("enchanted_tool") {
 3. Keep predicates focused and reusable
 4. Test your predicates in-game to ensure they work as expected
 
-Remember that predicates are powerful tools for creating complex conditions in your datapack. They can be used to create sophisticated game
-mechanics and enhance player experience.
+Remember that predicates are powerful tools for creating complex conditions in your datapack. They can be used to create sophisticated game mechanics and enhance player experience.

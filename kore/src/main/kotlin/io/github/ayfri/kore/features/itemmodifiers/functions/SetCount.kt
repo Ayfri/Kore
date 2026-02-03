@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
  * Sets the item stack count (optionally adding to the existing count). Mirrors `minecraft:set_count`.
  * Accepts a number provider for dynamic values.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

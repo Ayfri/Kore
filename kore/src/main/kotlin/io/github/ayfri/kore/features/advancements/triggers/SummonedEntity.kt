@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when an entity is summoned.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#summonedentity
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#summonedentity
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

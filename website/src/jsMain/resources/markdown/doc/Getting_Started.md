@@ -201,7 +201,7 @@ Then just remove `this.` now that you know the import is correct.
 
 ### Features
 
-- [Functions](./functions)
+- [Functions](./commands/functions)
 - [Predicates](./predicates)
 - [Components](./components)
 - [Chat Components](./chat-components)
@@ -214,7 +214,7 @@ Then just remove `this.` now that you know the import is correct.
 - [Advancements](./advancements)
 - [Scoreboards](./scoreboards)
 - [Worldgen](./worldgen)
-- [Bindings](./bindings)
+- [Bindings](./commands/bindings)
 - [Test Features \(GameTest\)](./test-features)
 
 ### Helpers

@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
  * Adjusts stack size based on the level of a specific enchantment on the killer entity.
  * Mirrors vanilla `minecraft:enchanted_count_increase`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

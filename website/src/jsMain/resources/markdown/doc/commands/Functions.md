@@ -6,7 +6,7 @@ description: A guide for creating functions in a datapack using Kore.
 keywords: minecraft, datapack, kore, guide, functions
 date-created: 2024-04-06
 date-modified: 2024-04-06
-routeOverride: /docs/functions
+routeOverride: /docs/commands/functions
 ---
 
 # Functions
@@ -97,7 +97,7 @@ You can also build raw command strings and execute them:
 addLine("say Hello from raw command!")
 ```
 
-> Note: This is not recommended, but can be useful for commands not yet supported by the DSL, or if you use [Macros](./functions/macros).
+> Note: This is not recommended, but can be useful for commands not yet supported by the DSL, or if you use [Macros](./macros).
 
 ## Available Commands
 
@@ -124,8 +124,8 @@ function("my_function") {
 }
 ```
 
-For commands that take complex types as arguments, you should use the `.asArg()` function inside `literal()` function. For Argument types,
-you don't have to use this.
+For commands that take complex types as arguments, you should use the `.asArg()` function inside
+`literal()` function. For Argument types, you don't have to use this.
 
 See the code of the repository for more examples.<br>
 [Link to `time` command.](https://github.com/Ayfri/Kore/blob/master/kore/src/main/kotlin/commands/Time.kt)<br>
@@ -135,8 +135,7 @@ See the code of the repository for more examples.<br>
 
 Some commands are more complex and require more than just a few arguments. For example, the `execute` or `data` commands.
 
-In that case, you can use complex builders that includes all the arguments of the command. But the syntax may vary depending on the command
-and you should definitely check the tests to see how to use them.
+In that case, you can use complex builders that includes all the arguments of the command. But the syntax may vary depending on the command and you should definitely check the tests to see how to use them.
 
 An example of the `execute` command:
 
@@ -158,8 +157,8 @@ execute {
 }
 ```
 
-You can use predicates in the `ifCondition` block to check complex conditions. See the [Predicates](./predicates) documentation for more
-details.
+You can use predicates in the
+`ifCondition` block to check complex conditions. See the [Predicates](./predicates) documentation for more details.
 
 You may also have commands where you can create "contexts".
 
@@ -174,12 +173,12 @@ data(self()) {
 
 # Macros
 
-See [Macros](./functions/macros).
+See [Macros](./macros).
 
 # Generated Functions
 
-The same way the `load` and `tick` builders generate functions with random names, the `execute` builder also generates a function with a
-random name if you call multiple commands inside the `run` block.
+The same way the `load` and `tick` builders generate functions with random names, the
+`execute` builder also generates a function with a random name if you call multiple commands inside the `run` block.
 
 ```kotlin
 execute {
@@ -196,12 +195,13 @@ This will generate a function with a random name that will be called by the `exe
 > You can change the folder to whatever you want in [Configuration](./configuration).
 
 > Note: The generated name will have this pattern `generated_${hashCode()}`, where `hashCode()` is the hash code of the function.
-> This means that if you use the same `execute` builder multiple times, it will generate the same function name and reuse the same function.
+> This means that if you use the same
+`execute` builder multiple times, it will generate the same function name and reuse the same function.
 
 # Debugging
 
-You have multiple ways to debug your functions. First, a `debug` function is available, it is pretty much the same as `tellraw` but always
-displaying the message to everyone.
+You have multiple ways to debug your functions. First, a `debug` function is available, it is pretty much the same as
+`tellraw` but always displaying the message to everyone.
 
 ```kotlin
 function("my_function") {
@@ -219,16 +219,16 @@ function("my_function") {
 }
 ```
 
-This will add a command call to `tellraw` command, writing the exact command generated, clicking on the text will also call the command.
-Example of what is generated:
+This will add a command call to
+`tellraw` command, writing the exact command generated, clicking on the text will also call the command. Example of what is generated:
 
 ```mcfunction
 say hello !
 tellraw @a {"text":"/say hello !","click_event":{"action":"suggest_command","command":"say hello !"},"hoverEvent":{"action":"show_text","value":{"text":"Click to copy command","color":"gray","italic":true}}}
 ```
 
-The last example is a function call to `startDebug()` (which is called by the `debug` block), this will add log messages to the start and
-the end of the function, plus a log message for each command called inside the function.
+The last example is a function call to `startDebug()` (which is called by the
+`debug` block), this will add log messages to the start and the end of the function, plus a log message for each command called inside the function.
 
 ```mcfunction
 tellraw @a [{"text":"Running function ","color":"gray","italic":true},{"text":"my_datapack:my_function","color":"white","bold":true,"click_event":{"action":"run_command","command":"function my_datapack:my_function"},"hoverEvent":{"action":"show_text","value":{"text":"Click to execute function","color":"gray","italic":true}},"italic":true}]

@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
  * Copies NBT to the item's `minecraft:custom_data` component from a loot-context source or a storage.
  * Mirrors vanilla `minecraft:copy_custom_data`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

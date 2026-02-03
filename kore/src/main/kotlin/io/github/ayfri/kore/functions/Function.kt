@@ -25,8 +25,8 @@ import java.io.File
  * the final `.mcfunction` file when requested. It also supports a debug
  * mode that injects `tellraw` commands showing the executed commands.
  *
- * Docs: https://kore.ayfri.com/docs/functions
- * Macro reference: https://kore.ayfri.com/docs/functions/macros
+ * Docs: https://kore.ayfri.com/docs/commands/functions
+ * Macro reference: https://kore.ayfri.com/docs/commands/macros
  *
  * @param name the function name (without extension)
  * @param namespace the function namespace, defaults to `minecraft`

@@ -28,7 +28,7 @@ enum class CopyComponentsSource {
  * Copies components from a source (currently block entity) onto the target item.
  * Mirrors vanilla `minecraft:copy_components`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

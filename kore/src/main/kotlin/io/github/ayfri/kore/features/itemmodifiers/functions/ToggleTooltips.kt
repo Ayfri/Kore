@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 /**
  * Toggles item tooltip components. Mirrors `minecraft:toggle_tooltip_components`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

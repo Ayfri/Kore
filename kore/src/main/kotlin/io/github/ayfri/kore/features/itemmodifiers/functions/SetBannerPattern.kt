@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 /**
  * Sets or appends banner patterns on a banner item. Mirrors `minecraft:set_banner_pattern`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

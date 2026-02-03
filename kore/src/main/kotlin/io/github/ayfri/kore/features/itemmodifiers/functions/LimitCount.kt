@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
  * Clamps the item stack size to a range or maximum value.
  * Mirrors vanilla `minecraft:limit_count`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

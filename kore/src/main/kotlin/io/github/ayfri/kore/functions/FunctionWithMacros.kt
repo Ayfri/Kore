@@ -9,8 +9,8 @@ import io.github.ayfri.kore.DataPack
 * identifiers (subclass of [Macros]). Accessing `macros` marks the next
 * added line as containing macros so the function generation can handle it.
 *
-* Docs: https://kore.ayfri.com/docs/functions
-* Macro reference: https://kore.ayfri.com/docs/functions/macros
+ * Docs: https://kore.ayfri.com/docs/commands/functions
+ * Macro reference: https://kore.ayfri.com/docs/commands/macros
 *
 * @param name function name
 * @param macros instance providing macro identifiers
@@ -65,6 +65,6 @@ fun <T : Macros> DataPack.function(
 * Adds a line to the function that contains the given macro usages.
 * Each provided name will be expanded to the `$(name)` macro form.
 *
-* Docs: https://kore.ayfri.com/docs/functions/macros
+ * Docs: https://kore.ayfri.com/docs/commands/macros
  */
 fun Function.eval(vararg macroNames: String) = addLine("$${macroNames.joinToString(" ") { "$($it)" }}")

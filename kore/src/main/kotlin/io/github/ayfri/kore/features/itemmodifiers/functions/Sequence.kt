@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 /**
  * Groups a nested list of functions to run in order. Mirrors vanilla `minecraft:sequence`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

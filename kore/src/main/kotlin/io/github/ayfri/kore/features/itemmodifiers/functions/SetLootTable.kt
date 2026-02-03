@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
  * Sets a container block-entity's loot table on the item, including an optional seed.
  * Mirrors `minecraft:set_loot_table`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

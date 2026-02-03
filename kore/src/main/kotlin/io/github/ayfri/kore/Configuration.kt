@@ -4,7 +4,7 @@ package io.github.ayfri.kore
 * Global configuration options used when serializing and generating
 * datapack content.
 *
-* Docs: https://kore.ayfri.com/docs/configuration
+ * Docs: https://kore.ayfri.com/docs/guides/configuration
 *
 * @property generateCommentOfGeneratedFunctionCall - Whether to include a comment when an implicit generated function is called
 * @property generatedFunctionsFolder - The folder where the generated functions are stored. Defaults to "generated_scopes".

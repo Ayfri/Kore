@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
  * Implemented by item functions that support list-operation semantics (mode/offset/size).
  * Provides a convenient `mode(..)` helper to configure all three in one call.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  */
 interface ModeHandler {
 	@Serializable

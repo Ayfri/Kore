@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when an item is used on a block.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#itemusedonblock
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#itemusedonblock
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a zombie villager is cured.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#curedzombievillager
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#curedzombievillager
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

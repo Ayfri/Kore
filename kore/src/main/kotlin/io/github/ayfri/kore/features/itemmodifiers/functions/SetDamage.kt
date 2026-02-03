@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
  * Sets or adds to the damage value of a damageable item. Mirrors `minecraft:set_damage`.
  * Accepts a number provider for dynamic damage values.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

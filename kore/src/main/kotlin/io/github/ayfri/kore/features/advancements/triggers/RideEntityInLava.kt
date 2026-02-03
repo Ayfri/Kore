@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when riding an entity in lava.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#rideentityinlava
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#rideentityinlava
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

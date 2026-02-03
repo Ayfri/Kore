@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
  * Enchants an item with one randomly selected enchantment, optionally constrained to a set
  * or a tag, and optionally only compatible ones. Mirrors `minecraft:enchant_randomly`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

@@ -12,7 +12,7 @@ import kotlinx.serialization.serializer
 /**
  * Container for either a location or predicate conditions.
  *
- * Docs: https://kore.ayfri.com/docs/advancements
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements
  */
 @Serializable(with = LocationOrPredicates.Companion.LocationOrPredicatesSerializer::class)
 data class LocationOrPredicates(

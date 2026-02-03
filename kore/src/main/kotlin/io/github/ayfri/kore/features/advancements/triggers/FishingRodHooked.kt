@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a fishing rod is hooked.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#fishingrodhooked
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#fishingrodhooked
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

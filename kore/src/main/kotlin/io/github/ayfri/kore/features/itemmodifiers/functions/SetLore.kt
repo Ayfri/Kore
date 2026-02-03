@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
  * Sets or edits item lore with list-operation support (mode/offset/size). Mirrors `minecraft:set_lore`.
  * The `entity` source can be used to resolve text from an entity context.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

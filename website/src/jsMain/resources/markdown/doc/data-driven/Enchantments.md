@@ -6,7 +6,7 @@ description: Learn how to create custom Minecraft enchantments using Kore – an
 keywords: minecraft, datapack, kore, enchantments, effects, customization
 date-created: 2025-03-02
 date-modified: 2025-03-02
-routeOverride: /docs/enchantments
+routeOverride: /docs/data-driven/enchantments
 ---
 
 # Enchantments
@@ -17,7 +17,8 @@ For general concepts on creating datapacks with Kore, please refer to the other 
 
 ## Basic Enchantment Creation
 
-Creating an enchantment in Kore is as simple as calling the `enchantment` function inside a data pack. A basic enchantment is defined by its description, what items it supports, and additional properties such as exclusive sets, primary items, and equipment slots.
+Creating an enchantment in Kore is as simple as calling the
+`enchantment` function inside a data pack. A basic enchantment is defined by its description, what items it supports, and additional properties such as exclusive sets, primary items, and equipment slots.
 
 For example:
 
@@ -37,7 +38,9 @@ This snippet creates a simple enchantment named “test” that can be applied t
 
 ## Enchantment Effects
 
-An enchantment’s power is defined in the `effects` block. Kore supports a wide range of effects – each affecting a different aspect of gameplay. You can combine multiple effects by using functions within the `effects { ... }` builder. Below is an exhaustive list of every supported enchantment effect along with a precise Kotlin example.
+An enchantment’s power is defined in the
+`effects` block. Kore supports a wide range of effects – each affecting a different aspect of gameplay. You can combine multiple effects by using functions within the
+`effects { ... }` builder. Below is an exhaustive list of every supported enchantment effect along with a precise Kotlin example.
 
 ### Ammo Use
 
@@ -521,9 +524,7 @@ enchantment("trident_sound") {
 
 ## Further Reading
 
-• For more on item components and matchers, see [Components](./components).
-• For advanced predicate conditions that may be used in requirements for enchantment effects, see [Predicates](./predicates).
-• For complete source code examples and more detailed API information, visit the [Kore GitHub repository](https://github.com/Ayfri/Kore).
+• For more on item components and matchers, see [Components](./components). • For advanced predicate conditions that may be used in requirements for enchantment effects, see [Predicates](./predicates). • For complete source code examples and more detailed API information, visit the [Kore GitHub repository](https://github.com/Ayfri/Kore).
 
 Using Kore, you can create a nearly limitless variety of enchantments by mixing and matching these effects. The examples above illustrate each individual effect available in the library. Combine them as needed to design your custom gameplay mechanics with full type-safety and a clean, Kotlin-based DSL.
 

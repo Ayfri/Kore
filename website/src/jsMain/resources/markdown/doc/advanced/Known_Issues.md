@@ -6,14 +6,16 @@ description: A list of known issues and limitations in Kore.
 keywords: kore, guide, documentation, known issues
 date-created: 2025-08-27
 date-modified: 2025-08-27
-routeOverride: /docs/known-issues
+routeOverride: /docs/advanced/known-issues
 ---
+
 # Missing features
 
 ## SNBT
 
 Some SNBT features are not supported yet. Kore depends on another library for writing SNBT which does not support them yet. <br>
 The main features that are not supported are:
+
 - Heterogeneous lists (e.g. `[1, "string", {key: "value"}]`)
 - SNBT operations (`bool(arg)`, `uuid(arg)`)
 

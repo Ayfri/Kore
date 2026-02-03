@@ -13,7 +13,7 @@ import kotlinx.serialization.Transient
  * narration. By declaring custom chat types you can control how messages appear in the chat HUD and
  * how they are narrated to players who enabled narration.
  *
- * Docs: https://kore.ayfri.com/docs/Chat_Components.html#chat-types
+ * Docs: https://kore.ayfri.com/docs/concepts/chat-components#chat-types
  * Minecraft Wiki: https://minecraft.wiki/w/Chat#Chat_types
  */
 @Serializable

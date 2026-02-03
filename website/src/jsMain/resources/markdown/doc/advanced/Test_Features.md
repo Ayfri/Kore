@@ -6,12 +6,14 @@ description: A comprehensive guide for creating test instances and test environm
 keywords: minecraft, datapack, kore, guide, test, testing, environment, instance, gametest, automation
 date-created: 2025-01-08
 date-modified: 2025-01-08
-routeOverride: /docs/test-features
+routeOverride: /docs/advanced/test-features
 ---
 
 # Test Features
 
-Minecraft 1.21.5 (Snapshot 25w03a) introduced a major overhaul to the **GameTest framework** - an automated end-to-end testing system for datapack functionality. Kore provides comprehensive support using a type-safe Kotlin DSL that generates JSON files for the `test_instance` and `test_environment` registries.
+Minecraft 1.21.5 (Snapshot 25w03a) introduced a major overhaul to the **GameTest framework
+** - an automated end-to-end testing system for datapack functionality. Kore provides comprehensive support using a type-safe Kotlin DSL that generates JSON files for the
+`test_instance` and `test_environment` registries.
 
 ## Test Environments
 
@@ -30,6 +32,7 @@ dataPack("my_datapack") {
 ### Environment Types
 
 #### Combined Environments
+
 Combine multiple conditions using `allOf`:
 
 ```kotlin
@@ -45,6 +48,7 @@ testEnvironments {
 ```
 
 #### Function Environment
+
 Execute setup and teardown functions:
 
 ```kotlin
@@ -61,6 +65,7 @@ testEnvironments {
 ```
 
 #### Game Rules Environment
+
 Create controlled testing conditions:
 
 ```kotlin
@@ -76,6 +81,7 @@ testEnvironments {
 ```
 
 #### Time Environment
+
 Ensure consistent timing:
 
 ```kotlin
@@ -87,6 +93,7 @@ testEnvironments {
 ```
 
 #### Weather Environment
+
 Control weather conditions:
 
 ```kotlin
@@ -335,8 +342,6 @@ fun DataPack.createTestSuite() {
 }
 ```
 
-
-
 ## Best Practices
 
 - **Combine environments** with `allOf` for complex scenarios
@@ -348,6 +353,7 @@ fun DataPack.createTestSuite() {
 ## API Reference
 
 ### Test Environment Functions
+
 ```kotlin
 testEnvironments {
     allOf(name, ...environments)
@@ -359,6 +365,7 @@ testEnvironments {
 ```
 
 ### Test Instance Functions
+
 ```kotlin
 testInstances {
     testInstance(name) {
@@ -374,6 +381,7 @@ testInstances {
 ```
 
 ### Game Rules Configuration
+
 ```kotlin
 gameRules("name") {
     this[Gamerules.DO_DAYLIGHT_CYCLE] = false

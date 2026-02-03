@@ -43,7 +43,7 @@ data class WolfSoundVariant(
  *
  * Produces `data/<namespace>/wolf_sound_variant/<fileName>.json`.
  *
- * Docs: https://kore.ayfri.com/docs/wolf_sound_variants
+ * Docs: https://kore.ayfri.com/docs/data-driven/wolf-sound-variants
  */
 fun DataPack.wolfSoundVariant(
 	fileName: String = "wolf_sound_variant",

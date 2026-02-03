@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a player sleeps in a bed.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#sleptinbed
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#sleptinbed
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

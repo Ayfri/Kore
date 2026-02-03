@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 /**
  * Sets the amplifier for ominous bottles. Mirrors `minecraft:set_ominous_bottle_amplifier`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

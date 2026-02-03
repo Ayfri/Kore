@@ -6,7 +6,7 @@ description: Create interactive dialog screens in Minecraft with Kore's comprehe
 keywords: minecraft, datapack, kore, dialogs, ui, interactive, forms, confirmation, notice
 date-created: 2025-09-18
 date-modified: 2025-09-18
-routeOverride: /docs/dialogs
+routeOverride: /docs/data-driven/dialogs
 ---
 
 # Dialogs

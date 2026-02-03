@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a player avoids vibrations.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#avoidvibrations
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#avoidvibrations
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

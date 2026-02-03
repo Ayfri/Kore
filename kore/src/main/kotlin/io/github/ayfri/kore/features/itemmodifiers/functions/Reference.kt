@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 /**
  * References another item modifier by name. Mirrors `minecraft:reference`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

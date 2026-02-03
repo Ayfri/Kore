@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
  * This maps to the vanilla `minecraft:set_components` function and accepts a [ComponentsPatch]
  * containing additions and removals (`!component`) to apply atomically.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

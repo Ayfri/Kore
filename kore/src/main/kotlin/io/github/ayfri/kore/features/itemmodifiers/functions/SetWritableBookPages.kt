@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 /**
  * Sets the pages of a writable book. Mirrors `minecraft:set_writable_book_pages`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

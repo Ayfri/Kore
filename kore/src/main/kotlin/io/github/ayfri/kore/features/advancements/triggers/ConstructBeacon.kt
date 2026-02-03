@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a beacon is constructed.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#constructbeacon
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#constructbeacon
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

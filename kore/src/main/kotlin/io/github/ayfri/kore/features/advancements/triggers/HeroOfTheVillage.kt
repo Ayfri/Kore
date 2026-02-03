@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a player is the hero of the village.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#heroofthevillage
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#heroofthevillage
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

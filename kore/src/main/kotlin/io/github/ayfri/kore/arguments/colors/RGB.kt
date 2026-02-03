@@ -15,7 +15,7 @@ import kotlin.random.Random
  * Alternate serializers:
  * - [Companion.ColorAsDecimalSerializer] emits an `INT` 0xRRGGBB when Minecraft expects a decimal color.
  *
- * See documentation: https://kore.ayfri.com/docs/colors
+ * See documentation: https://kore.ayfri.com/docs/concepts/colors
  */
 @Serializable(RGB.Companion.ColorSerializer::class)
 data class RGB(var red: Int, var green: Int, var blue: Int) : Color {

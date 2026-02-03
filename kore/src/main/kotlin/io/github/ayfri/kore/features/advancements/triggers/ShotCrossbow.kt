@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a crossbow is shot.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#shotcrossbow
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#shotcrossbow
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

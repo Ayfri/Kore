@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when a player generates loot from a container.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#playergeneratescontainerloot
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#playergeneratescontainerloot
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable

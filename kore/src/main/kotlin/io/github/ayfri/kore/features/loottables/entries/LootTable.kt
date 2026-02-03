@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 /**
  * Loot entry that includes another loot table.
  *
- * Docs: https://kore.ayfri.com/docs/loot-tables
+ * Docs: https://kore.ayfri.com/docs/data-driven/loot-tables
  * Minecraft Wiki: https://minecraft.wiki/w/Loot_table
  */
 @Serializable
@@ -26,12 +26,12 @@ fun LootEntries.lootTable(name: LootTableArgument, block: LootTable.() -> Unit =
 	add(LootTable(name).apply(block))
 }
 
-/** Set conditions, see [Predicates](https://kore.ayfri.com/docs/predicates). */
+/** Set conditions, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
 fun LootTable.conditions(block: PredicateAsList.() -> Unit) {
 	conditions = PredicateAsList().apply(block)
 }
 
-/** Set item modifier functions, see [ItemModifiers](https://kore.ayfri.com/docs/item-modifiers). */
+/** Set item modifier functions, see [ItemModifiers](https://kore.ayfri.com/docs/data-driven/item-modifiers). */
 fun LootTable.functions(block: ItemModifier.() -> Unit) {
 	functions = ItemModifier().apply(block)
 }

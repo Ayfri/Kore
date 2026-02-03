@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 /**
  * Writes an SNBT blob to the item's `custom_data` component. Mirrors `minecraft:set_custom_data`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

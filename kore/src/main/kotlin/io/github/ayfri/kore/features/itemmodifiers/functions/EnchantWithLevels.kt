@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
  * Enchants the item with the specified enchantment level, optionally constrained to a set or tag.
  * Mirrors `minecraft:enchant_with_levels` and accepts a number provider for the level.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

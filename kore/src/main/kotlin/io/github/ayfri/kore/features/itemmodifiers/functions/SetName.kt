@@ -24,7 +24,7 @@ enum class SetNameTarget {
  * Sets the item name. Mirrors `minecraft:set_name`. You can target the item display name
  * or the `custom_name` component and optionally resolve from an entity context.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

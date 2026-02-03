@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 /**
  * Sets the potion id on potion-like items. Mirrors `minecraft:set_potion`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

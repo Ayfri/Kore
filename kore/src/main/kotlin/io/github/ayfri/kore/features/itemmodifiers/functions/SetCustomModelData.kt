@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
  *
  * Maps to vanilla `minecraft:set_custom_model_data`.
  *
- * Docs: https://kore.ayfri.com/docs/item-modifiers
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable

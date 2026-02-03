@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 /**
  * Triggered when an entity kills a player.
  *
- * Docs: https://kore.ayfri.com/docs/advancements/triggers#entitykilledplayer
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers#entitykilledplayer
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable
