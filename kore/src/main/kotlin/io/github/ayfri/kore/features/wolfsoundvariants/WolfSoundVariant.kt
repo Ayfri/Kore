@@ -16,7 +16,8 @@ import kotlinx.serialization.Transient
  * Wolves will make the sounds associated with their variant when they make bark, pant, whine, growl, death or hurt sounds.
  * Sound variants are unrelated to color variants. Similarly, the angry sound variant is unrelated to the angry wolf state.
  *
- * Documentation: https://minecraft.wiki/w/Wolf#Sound_variants, https://minecraft.wiki/w/Wolf#Sound_variants_2
+ * Docs: https://kore.ayfri.com/docs/data-driven/variants
+ * JSON format reference: https://minecraft.wiki/w/Wolf#Sound_variants
  */
 @Serializable
 data class WolfSoundVariant(

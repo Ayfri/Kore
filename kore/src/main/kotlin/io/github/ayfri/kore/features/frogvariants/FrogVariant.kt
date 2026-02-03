@@ -14,6 +14,7 @@ import kotlinx.serialization.Transient
  * Frog variants are used to define the appearance of frogs in the world.
  * They can be associated with a biome and are used to create different colored frogs in the world.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/variants
  * JSON format reference: https://minecraft.wiki/w/Mob_variant_definitions#Frog
  */
 @Serializable
@@ -36,7 +37,8 @@ fun FrogVariant.spawnConditions(block: SpawnConditions.() -> Unit) = apply { spa
  *
  * Produces `data/<namespace>/frog_variant/<fileName>.json`.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Frog#Variants
+ * Docs: https://kore.ayfri.com/docs/data-driven/variants
+ * JSON format reference: https://minecraft.wiki/w/Frog#Variants
  */
 fun DataPack.frogVariant(
 	fileName: String = "frog_variant",

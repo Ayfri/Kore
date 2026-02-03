@@ -15,6 +15,7 @@ import kotlinx.serialization.Transient
  * Cat variants are used to define the appearance of cats in the world.
  * They can be associated with a biome and are used to create different colored cats in the world.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/variants
  * JSON format reference: https://minecraft.wiki/w/Mob_variant_definitions#Cat
  */
 @Serializable
@@ -37,7 +38,8 @@ fun CatVariant.spawnConditions(block: SpawnConditions.() -> Unit) = apply { spaw
  *
  * Produces `data/<namespace>/cat_variant/<fileName>.json`.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Cat#Variants
+ * Docs: https://kore.ayfri.com/docs/data-driven/variants
+ * JSON format reference: https://minecraft.wiki/w/Cat#Variants
  */
 fun DataPack.catVariant(
 	fileName: String = "cat_variant",

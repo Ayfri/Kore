@@ -15,6 +15,7 @@ import kotlinx.serialization.Transient
  * A pig variant specifies a unique model and texture for pigs. It can be associated with a biome
  * and is used to create different colored pigs in the world.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/variants
  * JSON format reference: https://minecraft.wiki/w/Mob_variant_definitions#Pig
  */
 @Serializable
@@ -40,7 +41,8 @@ fun PigVariant.spawnConditions(block: SpawnConditions.() -> Unit) = apply { spaw
  *
  * Produces `data/<namespace>/pig_variant/<fileName>.json`.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Pig#Variants
+ * Docs: https://kore.ayfri.com/docs/data-driven/variants
+ * JSON format reference: https://minecraft.wiki/w/Pig#Variants
  */
 fun DataPack.pigVariant(
 	fileName: String = "pig_variant",

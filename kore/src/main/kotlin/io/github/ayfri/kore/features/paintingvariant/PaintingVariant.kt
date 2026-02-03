@@ -16,6 +16,7 @@ import kotlinx.serialization.Transient
  * in the `painting` atlas via `assetId`, and defines its size in blocks (`width`, `height`).
  * Optionally, it can include a `title` and `author` as text components, which are shown in the creative menu tooltip.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/variants
  * JSON format reference: https://minecraft.wiki/w/Painting_variant_definition
  *
  * @param assetId - Resource location of the sprite in the painting atlas.
@@ -43,7 +44,8 @@ data class PaintingVariant(
  *
  * Produces `data/<namespace>/painting_variant/<fileName>.json`.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Painting#Variants
+ * Docs: https://kore.ayfri.com/docs/data-driven/variants
+ * JSON format reference: https://minecraft.wiki/w/Painting#Variants
  */
 fun DataPack.paintingVariant(
 	fileName: String = "painting_variant",

@@ -15,6 +15,7 @@ import kotlinx.serialization.Transient
  * A cow variant specifies a unique model and texture for cows. It can be associated with a biome
  * and is used to create different colored cows in the world.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/variants
  * JSON format reference: https://minecraft.wiki/w/Mob_variant_definitions#Cow
  */
 @Serializable
@@ -43,7 +44,8 @@ fun CowVariant.spawnConditions(block: SpawnConditions.() -> Unit) = apply {
  *
  * Produces `data/<namespace>/cow_variant/<fileName>.json`.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Cow#Variants
+ * Docs: https://kore.ayfri.com/docs/data-driven/variants
+ * JSON format reference: https://minecraft.wiki/w/Cow#Variants
  */
 fun DataPack.cowVariant(
 	fileName: String = "cow_variant",

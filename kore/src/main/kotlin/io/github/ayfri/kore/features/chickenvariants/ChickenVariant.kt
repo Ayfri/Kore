@@ -15,6 +15,7 @@ import kotlinx.serialization.Transient
  * A chicken variant specifies a unique model and texture for chickens. It can be associated with a biome
  * and is used to create different colored chickens in the world.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/variants
  * JSON format reference: https://minecraft.wiki/w/Mob_variant_definitions#Chicken
  */
 @Serializable
@@ -43,7 +44,8 @@ fun ChickenVariant.spawnConditions(block: SpawnConditions.() -> Unit) = apply {
  *
  * Produces `data/<namespace>/chicken_variant/<fileName>.json`.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Chicken#Variants
+ * Docs: https://kore.ayfri.com/docs/data-driven/variants
+ * JSON format reference: https://minecraft.wiki/w/Chicken#Variants
  */
 fun DataPack.chickenVariant(
 	fileName: String = "chicken_variant",

@@ -16,6 +16,7 @@ import kotlinx.serialization.Transient
  * A wolf variant specifies a unique model and texture for wolves. It can be associated with a biome
  * and is used to create different colored wolves in the world.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/variants
  * JSON format reference: https://minecraft.wiki/w/Mob_variant_definitions#Wolf
  */
 @Serializable
@@ -53,7 +54,8 @@ fun WolfVariant.spawnConditions(block: SpawnConditions.() -> Unit) = apply { spa
  *
  * Produces `data/<namespace>/wolf_variant/<fileName>.json`.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Wolf#Variants
+ * Docs: https://kore.ayfri.com/docs/data-driven/variants
+ * JSON format reference: https://minecraft.wiki/w/Wolf#Variants
  */
 fun DataPack.wolfVariant(
 	fileName: String = "wolf_variant",
