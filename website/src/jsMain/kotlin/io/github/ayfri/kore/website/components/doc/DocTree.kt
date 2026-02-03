@@ -8,6 +8,7 @@ import com.varabyte.kobweb.silk.components.icons.mdi.MdiChevronRight
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.docEntries
 import io.github.ayfri.kore.website.utils.A
+import io.github.ayfri.kore.website.utils.marginY
 import io.github.ayfri.kore.website.utils.smMax
 import io.github.ayfri.kore.website.utils.transition
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
@@ -257,10 +258,9 @@ fun DocTree() {
 
 object DocTreeStyle : StyleSheet() {
 	val title by style {
-		fontSize(2.cssRem)
+		fontSize(1.5.cssRem)
 		fontWeight(FontWeight.Bold)
-		marginBottom(1.cssRem)
-		marginTop(0.5.cssRem)
+		marginY(0.5.cssRem)
 	}
 
 	@OptIn(ExperimentalComposeWebApi::class)
@@ -268,7 +268,7 @@ object DocTreeStyle : StyleSheet() {
 		listStyle(ListStyle.None)
 		left(0.px)
 		marginTop(0.px)
-		maxHeight(70.vh)
+		maxHeight(72.5.vh)
 		overflowY(Overflow.Auto)
 		padding(0.5.cssRem)
 		position(Position.Sticky)
