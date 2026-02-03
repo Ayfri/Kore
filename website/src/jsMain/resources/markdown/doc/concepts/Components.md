@@ -446,6 +446,228 @@ Items.WOLF_SPAWN_EGG {
 }
 ```
 
+## Component Matchers & Item Predicates
+
+Kore provides powerful tools for matching and filtering items based on their components. This is useful in predicates, execute conditions,
+and loot tables.
+
+### Complete Example: Custom Tool Upgrade System
+
+Here's a practical example showing how to use item predicates to create a tool upgrade system that detects enchanted, damaged tools and
+replaces them with upgraded versions:
+
+```kotlin
+dataPack("tool_upgrades") {
+  // Predicate to find diamond swords that need upgrading
+  predicate("upgradeable_sword") {
+    matchTool {
+      items(Items.DIAMOND_SWORD)
+      predicates {
+        // Must have Sharpness enchantment
+        enchantments {
+          enchantment(Enchantments.SHARPNESS, level = rangeOrInt(1..4))
+        }
+        // Must be damaged (durability used)
+        damage {
+          damage = rangeOrInt(1..1000)
+        }
+      }
+    }
+  }
+
+  // Function to check player's held item and upgrade it
+  function("check_upgrade") {
+    // Check if holding an upgradeable sword
+    execute {
+      ifCondition {
+        items(
+          self(),
+          ItemSlot.WEAPON_MAINHAND,
+          Items.DIAMOND_SWORD.predicate {
+            subPredicates {
+              enchantments {
+                enchantment(Enchantments.SHARPNESS, level = rangeOrInt(3..4))
+              }
+            }
+          }
+        )
+      }
+      run {
+        // Replace with netherite sword keeping enchantments
+        items.modify(self(), ItemSlot.WEAPON_MAINHAND, itemModifier("upgrade_to_netherite"))
+        tellraw(self(), textComponent("Your sword has been upgraded!", Color.GOLD))
+      }
+    }
+  }
+
+  // Clear specific items from inventory using predicates
+  function("clear_broken_tools") {
+    // Clear any tool with 1 durability left
+    clear(allPlayers(), itemPredicate {
+      subPredicates {
+        damage {
+          durability = rangeOrInt(1)
+        }
+      }
+    })
+  }
+
+  // Give reward only if player has specific item combination
+  function("check_collection") {
+    execute {
+      // Check for a goat horn (any variant)
+      ifCondition {
+        items(
+          self(),
+          ItemSlot.INVENTORY,
+          itemPredicate {
+            isPresent(ItemComponentTypes.INSTRUMENT)
+          }
+        )
+      }
+      // Check for enchanted book with Mending
+      ifCondition {
+        items(
+          self(),
+          ItemSlot.INVENTORY,
+          Items.ENCHANTED_BOOK.predicate {
+            subPredicates {
+              storedEnchantments {
+                enchantment(Enchantments.MENDING)
+              }
+            }
+          }
+        )
+      }
+      run {
+        give(self(), Items.NETHER_STAR)
+      }
+    }
+  }
+}
+```
+
+### Item Predicates
+
+Item predicates let you filter items by their components using the command syntax `<item>[predicate]`:
+
+```kotlin
+import io.github.ayfri.kore.arguments.components.*
+import io.github.ayfri.kore.arguments.components.item.*
+import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.generated.ItemComponentTypes
+
+// Match items with specific component values
+val damagedSword = Items.DIAMOND_SWORD.predicate {
+  damage(10)
+}
+// Result: minecraft:diamond_sword[damage=10]
+
+// Match any item with a component present (existence check)
+val hasInstrument = itemPredicate {
+  isPresent(ItemComponentTypes.INSTRUMENT)
+}
+// Result: *[instrument]
+
+// Partial matching with ~ syntax
+val customDataMatch = Items.STONE.predicate {
+  customData {
+    this["myKey"] = "myValue"
+  }
+  partial(ItemComponentTypes.CUSTOM_DATA)
+}
+// Result: minecraft:stone[custom_data~{myKey:"myValue"}]
+
+// Negated predicates (component must NOT have this value)
+val notDamaged = Items.DIAMOND_SWORD.predicate {
+  !damage(0)
+}
+// Result: minecraft:diamond_sword[!damage=0]
+
+// Multiple alternatives with OR
+val multipleValues = Items.STONE.predicate {
+  damage(1) or damage(2) or damage(3)
+}
+// Result: minecraft:stone[damage=1|damage=2|damage=3]
+
+// Count predicate
+val stackOf10 = Items.DIAMOND.predicate {
+  count(10)
+}
+// Result: minecraft:diamond[count=10]
+```
+
+### Component Matchers (Sub-Predicates)
+
+For more complex matching logic, use `subPredicates` with component matchers. These serialize to JSON format for use in predicate files:
+
+```kotlin
+import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
+import io.github.ayfri.kore.arguments.components.matchers.*
+import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
+
+val subPredicate = ItemStackSubPredicates().apply {
+  // Match damage component with range
+  damage {
+    durability = rangeOrInt(1..100)
+    damage = rangeOrInt(0..10)
+  }
+
+  // Match enchantments
+  enchantments {
+    enchantment(Enchantments.SHARPNESS, level = 3)
+  }
+
+  // Match potion contents
+  potionContents(Effects.SPEED, Effects.STRENGTH)
+}
+```
+
+### Existence Checks
+
+You can check if a component exists on an item without matching a specific value:
+
+```kotlin
+// In item predicates (command form)
+val hasInstrument = itemPredicate {
+  isPresent(ItemComponentTypes.INSTRUMENT)
+}
+// Result: *[instrument]
+
+// In sub-predicates (JSON form for predicate files)
+val existsCheck = ItemStackSubPredicates().apply {
+  exists(ItemComponentTypes.INSTRUMENT)
+}
+// Result: {"minecraft:instrument": {}}
+
+// Multiple existence checks
+val multipleExists = ItemStackSubPredicates().apply {
+  exists(ItemComponentTypes.INSTRUMENT)
+  exists(ItemComponentTypes.DAMAGE)
+}
+// Result: {"minecraft:instrument": {}, "minecraft:damage": {}}
+```
+
+### Available Component Matchers
+
+| Matcher                   | Description                                    |
+|---------------------------|------------------------------------------------|
+| `attributeModifiers { }`  | Match attribute modifier properties            |
+| `bundlerContents { }`     | Match bundle contents                          |
+| `container { }`           | Match container slot contents                  |
+| `customData { }`          | Match custom NBT data                          |
+| `damage { }`              | Match damage/durability values                 |
+| `enchantments { }`        | Match enchantment types and levels             |
+| `exists(component)`       | Check if component exists (empty `{}` matcher) |
+| `fireworkExplosion { }`   | Match firework star properties                 |
+| `fireworks { }`           | Match firework rocket properties               |
+| `jukeboxPlayable { }`     | Match jukebox song                             |
+| `potionContents(..)`      | Match potion effects                           |
+| `storedEnchantments { }`  | Match stored enchantments (enchanted books)    |
+| `trim { }`                | Match armor trim pattern/material              |
+| `writableBookContent { }` | Match book pages                               |
+| `writtenBookContent { }`  | Match signed book content                      |
+
 ## Conclusion
 
 Components are a powerful tool for customizing Minecraft objects, and the Kore library makes it easier than ever to work with these components programmatically. Whether you're adding custom attributes, enchantments, or creating complex items with multiple components, Kore provides a robust and intuitive API for enhancing your Minecraft experience.
