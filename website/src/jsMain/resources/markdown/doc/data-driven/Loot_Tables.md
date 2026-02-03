@@ -247,7 +247,14 @@ Below is an alphabetical list of DSL helpers related to loot tables. Names match
 - Prefer explicit `conditions` over embedding probabilities solely in functions for clarity.
 - Reuse common entry/function fragments by extracting helpers into functions to keep files short and readable.
 
-### Related docs
+## See Also
 
-- Predicates: `/docs/predicates`
-- Advancements (rewards can point to loot tables): `/docs/advancements`
+- [Predicates](./predicates) - Conditions used in loot table pools and entries
+- [Item Modifiers](./item-modifiers) - Functions applied to loot table items
+- [Advancements](./advancements) - Rewards can point to loot tables
+- [Commands](../commands/commands) - Using the `/loot` command
+
+### External Resources
+
+- [Minecraft Wiki: Loot table](https://minecraft.wiki/w/Loot_table) - Official JSON format reference
+- [Minecraft Wiki: Loot context](https://minecraft.wiki/w/Loot_context) - Understanding loot contexts

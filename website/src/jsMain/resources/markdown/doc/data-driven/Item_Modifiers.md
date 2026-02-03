@@ -13,7 +13,7 @@ routeOverride: /docs/data-driven/item-modifiers
 
 Item modifiers (also called loot functions) let you transform item stacks: change counts, add components, set names/lore, copy data, and more. Kore exposes a concise DSL over the vanilla format so you can define modifiers in code and use them in commands and loot tables.
 
-For the vanilla reference, see the [Minecraft Wiki – Item modifier](https://minecraft.wiki/w/Item_modifier).
+For the vanilla reference, see the [Minecraft Wiki: Item modifier](https://minecraft.wiki/w/Item_modifier).
 
 ## Quick start
 
@@ -207,9 +207,13 @@ load {
 3. Prefer component-based edits (`setComponents`, `setContents`, `setFireworks`, etc.) for clarity and future-proofing.
 4. When editing lists, pick the right mode: `REPLACE_ALL`, `APPEND`, or `INSERT` with offsets.
 
-## See also
+## See Also
 
-- [Predicates](/docs/data-driven/predicates) – conditions for item functions
-- [Components](/docs/concepts/components) – building and understanding item components
-- [Inventory Manager](/docs/helpers/inventory-manager) – maintain item states in GUIs/slots
-- Vanilla reference: [Minecraft Wiki – Item modifier](https://minecraft.wiki/w/Item_modifier)
+- [Predicates](./predicates) - Conditions for item functions
+- [Components](../concepts/components) - Building and understanding item components
+- [Loot Tables](./loot-tables) - Use item modifiers in loot tables
+- [Inventory Manager](../helpers/inventory-manager) - Maintain item states in GUIs/slots
+
+### External Resources
+
+- [Minecraft Wiki: Item modifier](https://minecraft.wiki/w/Item_modifier) - Official JSON format reference

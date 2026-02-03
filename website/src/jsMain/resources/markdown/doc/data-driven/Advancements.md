@@ -5,7 +5,7 @@ nav-title: Advancements
 description: A guide for using advancements in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, advancements
 date-created: 2024-01-08
-date-modified: 2025-18-09
+date-modified: 2026-02-03
 routeOverride: /docs/data-driven/advancements
 ---
 
@@ -359,7 +359,14 @@ advancement("secret_discovery") {
 }
 ```
 
-## See also
+## See Also
 
-- [Predicates](./predicates)
-- [Triggers](./advancements/triggers)
+- [Predicates](./predicates) - Conditions used in advancement criteria
+- [Triggers](./advancements/triggers) - Complete list of available triggers
+- [Loot Tables](./loot-tables) - Loot rewards for advancements
+- [Functions](../commands/functions) - Run functions as advancement rewards
+
+### External Resources
+
+- [Minecraft Wiki: Advancement](https://minecraft.wiki/w/Advancement) - Overview of advancements
+- [Minecraft Wiki: Advancement definition](https://minecraft.wiki/w/Advancement_definition) - Technical JSON specification

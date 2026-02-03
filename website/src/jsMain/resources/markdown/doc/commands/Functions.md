@@ -159,7 +159,7 @@ execute {
 ```
 
 You can use predicates in the
-`ifCondition` block to check complex conditions. See the [Predicates](./predicates) documentation for more details.
+`ifCondition` block to check complex conditions. See the [Predicates](../data-driven/predicates) documentation for more details.
 
 You may also have commands where you can create "contexts".
 
@@ -241,3 +241,14 @@ tellraw @a [{"text":"Finished running function ","color":"gray","italic":true},{
 You can call the command by clicking on the debug texts added.
 
 Also running `toString()` in a function will return the generated function as a string, so you can manipulate it as you want.
+
+## See Also
+
+- [Commands](./commands) - Complete command reference
+- [Macros](./macros) - Dynamic command arguments
+- [Predicates](../data-driven/predicates) - Conditions in execute blocks
+- [Advancements](../data-driven/advancements) - Reward functions
+
+### External Resources
+
+- [Minecraft Wiki: Function](https://minecraft.wiki/w/Function_(Java_Edition)) - Official function format

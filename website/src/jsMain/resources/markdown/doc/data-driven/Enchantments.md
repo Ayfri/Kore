@@ -5,13 +5,13 @@ nav-title: Enchantments
 description: Learn how to create custom Minecraft enchantments using Kore – an exhaustive guide covering every available enchantment effect with detailed Kotlin examples.
 keywords: minecraft, datapack, kore, enchantments, effects, customization
 date-created: 2025-03-02
-date-modified: 2025-03-02
+date-modified: 2026-02-03
 routeOverride: /docs/data-driven/enchantments
 ---
 
 # Enchantments
 
-Minecraft enchantments modify game mechanics by altering item behavior, applying effects or changing damage calculations. Kore provides a fully type‐safe, Kotlin-based DSL for creating custom enchantments that can be used in datapacks. This documentation explains how to create enchantments in Kore, and presents a detailed example for every available enchantment effect.
+Minecraft enchantments modify game mechanics by altering item behavior, applying effects or changing damage calculations. Kore provides a fully type-safe, Kotlin-based DSL for creating custom enchantments that can be used in datapacks. This documentation explains how to create enchantments in Kore, and presents a detailed example for every available enchantment effect.
 
 For general concepts on creating datapacks with Kore, please refer to the other documentation pages (e.g. [Predicates](./predicates), [Components](./components)). This article is dedicated exclusively to creating enchantments.
 
@@ -522,10 +522,18 @@ enchantment("trident_sound") {
 }
 ```
 
-## Further Reading
-
-• For more on item components and matchers, see [Components](./components). • For advanced predicate conditions that may be used in requirements for enchantment effects, see [Predicates](./predicates). • For complete source code examples and more detailed API information, visit the [Kore GitHub repository](https://github.com/Ayfri/Kore).
-
 Using Kore, you can create a nearly limitless variety of enchantments by mixing and matching these effects. The examples above illustrate each individual effect available in the library. Combine them as needed to design your custom gameplay mechanics with full type-safety and a clean, Kotlin-based DSL.
 
 Happy enchanting!
+
+## See Also
+
+- [Predicates](./predicates) - Predicate conditions for enchantment effect requirements
+- [Components](../concepts/components) - Item components and matchers
+- [Loot Tables](./loot-tables) - Apply enchantments via loot functions
+- [Item Modifiers](./item-modifiers) - Add enchantments at runtime
+
+### External Resources
+
+- [Minecraft Wiki: Enchantment definition](https://minecraft.wiki/w/Enchantment_definition) - Official JSON format reference
+- [Minecraft Wiki: Enchanting](https://minecraft.wiki/w/Enchanting) - Enchanting mechanics overview

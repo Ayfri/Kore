@@ -5,7 +5,7 @@ nav-title: Recipes
 description: A guide for using recipes in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, recipes
 date-created: 2024-01-08
-date-modified: 2024-01-08
+date-modified: 2026-02-03
 routeOverride: /docs/data-driven/recipes
 ---
 
@@ -353,3 +353,14 @@ load {
 All recipes are stored inside `Datapack.recipes` list, if you ever need to access them programmatically.
 
 By following this guide, you can create complex and customized recipes in your Minecraft data pack using the Kore framework. Be sure to explore the Kore documentation and source code further to take full advantage of its capabilities.
+
+## See Also
+
+- [Advancements](./advancements) - Unlock recipes as advancement rewards
+- [Components](../concepts/components) - Customize recipe result items
+- [Commands](../commands/commands) - Give or take recipes with commands
+
+### External Resources
+
+- [Minecraft Wiki: Recipe](https://minecraft.wiki/w/Recipe) - Official JSON format reference
+- [Minecraft Wiki: Crafting](https://minecraft.wiki/w/Crafting) - Crafting mechanics overview
