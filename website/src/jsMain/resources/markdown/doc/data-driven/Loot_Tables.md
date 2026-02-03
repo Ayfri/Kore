@@ -5,13 +5,15 @@ nav-title: Loot Tables
 description: Define and use loot tables with Kore's type-safe DSL
 keywords: minecraft, datapack, kore, loot tables, pools, entries, item modifiers
 date-created: 2025-08-11
-date-modified: 2025-08-11
+date-modified: 2026-02-03
 routeOverride: /docs/data-driven/loot-tables
 ---
 
 ## Loot Tables
 
 Loot tables are JSON files that define what items should generate in many situations (container contents, mob/block drops, fishing, the loot command, and more). Kore provides a concise, type-safe DSL to build those tables programmatically.
+
+To spawn loot from tables in-game, use the [loot command](../commands/commands#loot-command).
 
 > For an introduction to the vanilla format, see the Minecraft Wiki entry [Loot table](https://minecraft.wiki/w/Loot_table).
 

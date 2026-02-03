@@ -5,11 +5,13 @@ nav-title: Scoreboards
 description: A guide for managing scoreboards in a Minecraft datapack using Kore.
 keywords: minecraft, datapack, kore, guide, scoreboards
 date-created: 2024-04-06
-date-modified: 2024-04-06
+date-modified: 2026-02-03
 routeOverride: /docs/concepts/scoreboards
 ---
 
 # Scoreboards
+
+Scoreboards track numeric values for players and entities. They're essential for game mechanics, timers, and storing data. For the full scoreboard command reference, see [Commands](../commands/commands#scoreboard-command).
 
 You can manage scoreboards with the `scoreboard` command:
 

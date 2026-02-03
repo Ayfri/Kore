@@ -5,13 +5,15 @@ nav-title: Predicates
 description: Learn how to use predicates in your Kore datapacks
 keywords: minecraft, datapack, kore, predicates, conditions, entity properties
 date-created: 2024-01-08
-date-modified: 2024-01-08
+date-modified: 2026-02-03
 routeOverride: /docs/data-driven/predicates
 ---
 
 # Predicates
 
 Predicates in Minecraft are used to check if certain conditions are met. They can be used in various features like advancements, loot tables, and commands. Kore provides a type-safe way to create predicates with a simple DSL.
+
+Predicates are commonly used with the [execute command](../commands/commands#execute-command) for conditional logic.
 
 ## Basic Usage
 

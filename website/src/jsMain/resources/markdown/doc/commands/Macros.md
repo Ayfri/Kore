@@ -5,13 +5,13 @@ nav-title: Macros
 description: A guide for using macros in Minecraft functions.
 keywords: minecraft, datapack, kore, guide, macros, functions
 date-created: 2024-04-06
-date-modified: 2024-04-06
+date-modified: 2026-02-03
 routeOverride: /docs/commands/macros
 ---
 
 # Macros
 
-Macros recently added support for macros inside functions in Minecraft 1.20.2.
+Macros allow dynamic command arguments that are substituted at runtime. Added in Minecraft 1.20.2, they enable creating reusable functions with parameters. For basic command usage, see [Commands](./commands).
 
 ## Using Macros
 

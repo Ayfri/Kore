@@ -5,7 +5,7 @@ nav-title: Functions
 description: A guide for creating functions in a datapack using Kore.
 keywords: minecraft, datapack, kore, guide, functions
 date-created: 2024-04-06
-date-modified: 2024-04-06
+date-modified: 2026-02-03
 routeOverride: /docs/commands/functions
 ---
 
@@ -23,7 +23,7 @@ function("my_function") {
 
 Then in game, call the function with `/function my_datapack:my_function`.
 
-To call functions from other datapacks, see [Bindings](./bindings).
+To call functions from other datapacks, see [Bindings](../advanced/bindings).
 
 The `function` builder returns a `FunctionArgument` object that you can reuse to call the function from other functions:
 
@@ -80,7 +80,8 @@ load("my_load_function") {
 
 # Commands
 
-Many common commands have convenience builders like `say`, `teleport`, etc.
+Many common commands have convenience builders like `say`,
+`teleport`, etc. See the [Commands](./commands) page for a comprehensive guide with examples.
 
 For example:
 
@@ -101,7 +102,7 @@ addLine("say Hello from raw command!")
 
 ## Available Commands
 
-All commands from the version cited in the [README](https://github.com/Ayfri/Kore/README.md) are available.
+All commands from the version cited in the [README](https://github.com/Ayfri/Kore/README.md) are available. For detailed documentation on each command, see [Commands](./commands).
 
 ## Custom Commands
 
