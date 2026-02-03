@@ -5,6 +5,7 @@ import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.types.ResourceLocationArgument
 import io.github.ayfri.kore.arguments.types.TaggedResourceLocationArgument
 import io.github.ayfri.kore.utils.resolve
+import kotlinx.io.files.Path
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -12,7 +13,6 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.*
-import kotlinx.io.files.Path
 import kotlin.reflect.KClass
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
@@ -25,7 +25,8 @@ import kotlin.reflect.full.memberFunctions
  * It can be used in commands, loot tables, advancements, and other data-driven features
  * to filter or trigger actions based on game state.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Tag
+ * Docs: https://kore.ayfri.com/docs/data-driven/tags
+ * JSON format reference: https://minecraft.wiki/w/Tag_(Java_Edition)
  */
 @Serializable(with = Tag.Companion.TagSerializer::class)
 data class Tag<out T : TaggedResourceLocationArgument>(
@@ -120,7 +121,8 @@ data class Tag<out T : TaggedResourceLocationArgument>(
  *
  * Produces `data/<namespace>/tags/<type>/<fileName>.json`.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Tag
+ * Docs: https://kore.ayfri.com/docs/data-driven/tags
+ * JSON format reference: https://minecraft.wiki/w/Tag_(Java_Edition)
  */
 inline fun <reified T : TaggedResourceLocationArgument> DataPack.tag(
 	fileName: String = "tag",
