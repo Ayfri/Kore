@@ -532,6 +532,7 @@ Happy enchanting!
 - [Components](../concepts/components) - Item components and matchers
 - [Loot Tables](./loot-tables) - Apply enchantments via loot functions
 - [Item Modifiers](./item-modifiers) - Add enchantments at runtime
+- [Tags](./tags) - Use enchantment tags
 
 ### External Resources
 

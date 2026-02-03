@@ -248,6 +248,7 @@ Also running `toString()` in a function will return the generated function as a 
 - [Macros](./macros) - Dynamic command arguments
 - [Predicates](../data-driven/predicates) - Conditions in execute blocks
 - [Advancements](../data-driven/advancements) - Reward functions
+- [Tags](../data-driven/tags) - Function tags for load and tick events
 
 ### External Resources
 

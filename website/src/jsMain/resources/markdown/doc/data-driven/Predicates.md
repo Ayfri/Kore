@@ -513,6 +513,7 @@ Predicates are powerful tools for creating complex conditions in your datapack. 
 - [Components](../concepts/components) - Item and entity data components used in predicate checks
 - [Commands](../commands/commands) - Using predicates with `/execute if predicate`
 - [Inventory Manager](./helpers/inventory-manager) - Pair predicates with inventory management
+- [Tags](./tags) - Use tags in predicate conditions
 
 ### External Resources
 

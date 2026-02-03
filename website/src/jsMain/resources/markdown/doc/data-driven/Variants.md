@@ -388,6 +388,7 @@ Produces JSON:
 }
 ```
 
-### See also
+### See Also
 
 - [Chat Components](../concepts/chat_components) - For painting title and author text formatting
+- [Tags](./tags) - Use variant tags for spawn conditions

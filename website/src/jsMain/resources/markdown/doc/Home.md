@@ -73,6 +73,7 @@ fun main() {
 - [Enchantments](./data-driven/enchantments) - custom enchantment definitions.
 - [Dialogs](./data-driven/dialogs) - NPC dialog systems.
 - [Worldgen](./data-driven/worldgen) - biomes, features and dimension examples.
+- [Tags](./data-driven/tags) - custom tag definitions for grouping items, blocks, entities, etc.
 
 ### Helpers
 

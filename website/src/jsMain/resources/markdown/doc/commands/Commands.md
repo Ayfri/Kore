@@ -1120,6 +1120,7 @@ mymod @s 42
 - [Macros](./macros) - Dynamic command arguments
 - [Predicates](../data-driven/predicates) - Conditions for execute if predicate
 - [Chat Components](../concepts/chat-components) - Formatted text in commands
+- [Tags](../data-driven/tags) - Use tags in commands and selectors
 
 ### External Resources
 

@@ -359,6 +359,7 @@ By following this guide, you can create complex and customized recipes in your M
 - [Advancements](./advancements) - Unlock recipes as advancement rewards
 - [Components](../concepts/components) - Customize recipe result items
 - [Commands](../commands/commands) - Give or take recipes with commands
+- [Tags](./tags) - Use item tags for flexible ingredient matching
 
 ### External Resources
 

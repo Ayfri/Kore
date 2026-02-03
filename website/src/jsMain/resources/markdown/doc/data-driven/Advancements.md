@@ -365,6 +365,7 @@ advancement("secret_discovery") {
 - [Triggers](./advancements/triggers) - Complete list of available triggers
 - [Loot Tables](./loot-tables) - Loot rewards for advancements
 - [Functions](../commands/functions) - Run functions as advancement rewards
+- [Tags](./tags) - Use tags in advancement conditions
 
 ### External Resources
 

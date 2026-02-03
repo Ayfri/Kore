@@ -253,6 +253,7 @@ Below is an alphabetical list of DSL helpers related to loot tables. Names match
 - [Item Modifiers](./item-modifiers) - Functions applied to loot table items
 - [Advancements](./advancements) - Rewards can point to loot tables
 - [Commands](../commands/commands) - Using the `/loot` command
+- [Tags](./tags) - Use tags for loot table conditions
 
 ### External Resources
 
