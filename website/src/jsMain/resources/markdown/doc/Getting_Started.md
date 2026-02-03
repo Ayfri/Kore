@@ -5,7 +5,7 @@ nav-title: Getting Started
 description: Step-by-step guide to create your first Minecraft datapack with Kore.
 keywords: minecraft, datapack, kore, getting started, quickstart, kotlin
 date-created: 2025-08-21
-date-modified: 2025-08-21
+date-modified: 2026-02-03
 routeOverride: /docs/getting-started
 position: 1
 ---
@@ -21,7 +21,7 @@ This guide takes you from zero to a working datapack using Kore and Kotlin. It a
 - An IDE with Kotlin support (IntelliJ IDEA recommended)
 - Basic knowledge of Minecraft datapacks will help you.
 
-## Option A — Use the Kore Template (recommended)
+## Option A: Use the Kore Template (recommended)
 
 The fastest way to start is the Kore Template repository. It's preconfigured and ready to run.
 
@@ -34,7 +34,7 @@ The fastest way to start is the Kore Template repository. It's preconfigured and
 
 The template already sets Java 21 and enables the required Kotlin options.
 
-## Option B — Add Kore to an existing project
+## Option B: Add Kore to an existing project
 
 Add the dependency to your build file.
 
@@ -57,7 +57,6 @@ dependencies {
 ### Maven
 
 ```xml
-
 <dependency>
   <groupId>io.github.ayfri.kore</groupId>
   <artifactId>kore</artifactId>
@@ -122,7 +121,8 @@ val name: String? = System.getenv("USER")
 val length: Int = name?.length ?: 0 // safe call + default when null
 ```
 
-- **Type inference:** You rarely need to specify types explicitly—Kotlin infers them for you. Use `val` for read-only variables and
+- **Type inference:** You rarely need to specify types explicitly-Kotlin infers them for you. Use
+  `val` for read-only variables and
   `var` for mutable ones. Prefer `val` for immutability.
 
 ```kotlin
@@ -144,7 +144,8 @@ fun String.titleCase(): String = replaceFirstChar { it.titlecase() }
 // Usage: "kore".titleCase() -> "Kore"
 ```
 
-- **Standard library:** Kotlin's standard library is rich—explore [kotlinlang.org/api/latest/jvm/stdlib/](https://kotlinlang.org/api/latest/jvm/stdlib/).
+- **Standard library:
+  ** Kotlin's standard library is rich-explore [kotlinlang.org/api/latest/jvm/stdlib/](https://kotlinlang.org/api/latest/jvm/stdlib/).
 
 ```kotlin
 val names = listOf("Alex", "Steve", "Sam")
@@ -191,37 +192,17 @@ Then just remove `this.` now that you know the import is correct.
 - Java version errors: Verify `jvmToolchain(21)` and that your JDK is 21.
 - Dev loop: Re-run your program after edits to regenerate the datapack.
 
-## What to read next (Docs index)
+## What to read next
 
-### Core guides
+Essential pages for new users:
 
-- [Home](./home)
-- [Creating a Datapack](./creating-a-datapack)
-- [Configuration](./configuration)
+- [Creating a Datapack](./guides/creating-a-datapack) - lifecycle and output options
+- [Commands](./commands/commands) - comprehensive guide to all Minecraft commands
+- [Functions](./commands/functions) - building functions and command helpers
+- [Recipes](./data-driven/recipes) - how to create recipes
+- [Bindings](./advanced/bindings) - import existing datapacks (experimental)
 
-### Features
-
-- [Functions](./commands/functions)
-- [Predicates](./predicates)
-- [Components](./components)
-- [Chat Components](./chat-components)
-- [Colors](./colors)
-- [Enchantments](./enchantments)
-- [Dialogs](./dialogs)
-- [Recipes](./recipes)
-- [Loot Tables](./loot-tables)
-- [Item Modifiers](./item-modifiers)
-- [Advancements](./advancements)
-- [Scoreboards](./scoreboards)
-- [Worldgen](./worldgen)
-- [Bindings](./commands/bindings)
-- [Test Features \(GameTest\)](./test-features)
-
-### Helpers
-
-- [Display Entities](./helpers/display-entities)
-- [Inventory Manager](./helpers/inventory-manager)
-- [Scheduler](./helpers/scheduler)
+For the full documentation index, see [Home](./home).
 
 ## See also
 

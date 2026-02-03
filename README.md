@@ -65,8 +65,7 @@ kotlin {
 }
 ```
 
-Then create a `Main.kt` file and start writing your datapacks. See the [documentation](https://kore.ayfri.com/docs/home) for more
-information.
+Then create a `Main.kt` file and start writing your datapacks. See the [documentation](https://kore.ayfri.com/docs/home) for more information, including the [Commands guide](https://kore.ayfri.com/docs/commands/commands) for all available commands.
 
 ## Modules
 
@@ -232,7 +231,7 @@ _How to add your project to the list ?_
 
 ## Known issues
 
-Check out the [Known Issues](https://kore.ayfri.com/docs/known-issues) page for a list of known issues and workarounds.
+Check out the [Known Issues](https://kore.ayfri.com/docs/advanced/known-issues) page for a list of known issues and workarounds.
 
 ## Star History
 

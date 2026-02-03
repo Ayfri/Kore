@@ -147,8 +147,8 @@ fun FeatureGrid() {
 				classes(FeatureStyle.linkList)
 			}) {
 				FeatureLink("/docs/getting-started", "Getting Started")
-				FeatureLink("/docs/configuration", "Project Configuration")
-				FeatureLink("/docs/creating-a-datapack", "Your First Datapack")
+				FeatureLink("/docs/guides/creating-a-datapack", "Creating a Datapack")
+				FeatureLink("/docs/guides/configuration", "Configuration")
 			}
 		}
 
@@ -159,11 +159,10 @@ fun FeatureGrid() {
 			Div({
 				classes(FeatureStyle.linkList)
 			}) {
-				FeatureLink("/docs/colors", "Colors")
-				FeatureLink("/docs/functions", "Functions")
-				FeatureLink("/docs/functions/macros", "Macro System")
+				FeatureLink("/docs/commands/", "Commands")
+				FeatureLink("/docs/commands/functions", "Functions")
+				FeatureLink("/docs/commands/macros", "Macros")
 				FeatureLink("/docs/helpers/scheduler", "Scheduler")
-				FeatureLink("/docs/scoreboards", "Scoreboards")
 			}
 		}
 
@@ -174,29 +173,28 @@ fun FeatureGrid() {
 			Div({
 				classes(FeatureStyle.linkList)
 			}) {
-				FeatureLink("/docs/advancements", "Advancements")
-				FeatureLink("/docs/dialogs", "Dialogs")
-				FeatureLink("/docs/enchantments", "Enchantments")
-				FeatureLink("/docs/item-modifiers", "Item Modifiers")
-				FeatureLink("/docs/loot-tables", "Loot Tables")
-				FeatureLink("/docs/predicates", "Predicates")
-				FeatureLink("/docs/recipes", "Recipes")
+				FeatureLink("/docs/data-driven/predicates", "Predicates")
+				FeatureLink("/docs/data-driven/loot-tables", "Loot Tables")
+				FeatureLink("/docs/data-driven/recipes", "Recipes")
+				FeatureLink("/docs/data-driven/advancements", "Advancements")
+				FeatureLink("/docs/data-driven/enchantments", "Enchantments")
+				FeatureLink("/docs/data-driven/dialogs", "Dialogs")
 			}
 		}
 
 		FeatureCard(
-			title = "Miscellaneous",
+			title = "Concepts & Helpers",
 			icon = { MdiSettings() }
 		) {
 			Div({
 				classes(FeatureStyle.linkList)
 			}) {
-				FeatureLink("/docs/chat-components", "Chat Components")
-				FeatureLink("/docs/components", "Components")
+				FeatureLink("/docs/concepts/components", "Components")
+				FeatureLink("/docs/concepts/chat-components", "Chat Components")
+				FeatureLink("/docs/concepts/scoreboards", "Scoreboards")
 				FeatureLink("/docs/helpers/display-entities", "Display Entities")
-				FeatureLink("/docs/helpers/inventory-manager", "Inventory Manager")
 				FeatureLink("/docs/helpers/mannequins", "Mannequins")
-				FeatureLink("/docs/known-issues", "Known Issues")
+				FeatureLink("/docs/advanced/known-issues", "Known Issues")
 			}
 		}
 	}

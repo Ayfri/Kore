@@ -6,7 +6,7 @@ description: A comprehensive guide for using commands in Kore datapacks.
 keywords: minecraft, datapack, kore, guide, commands, execute, data, teleport
 date-created: 2026-02-03
 date-modified: 2026-02-03
-routeOverride: /docs/commands/
+routeOverride: /docs/commands/commands
 ---
 
 # Commands
