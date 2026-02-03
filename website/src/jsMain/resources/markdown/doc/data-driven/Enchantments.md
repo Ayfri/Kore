@@ -212,12 +212,13 @@ effects {
 
 These components trigger actions on entities:
 
-| Component           | Description                                   |
-|---------------------|-----------------------------------------------|
-| `hitBlock`          | After hitting a block with the enchanted item |
-| `tick`              | Every game tick while equipped                |
-| `projectileSpawned` | When a projectile is created                  |
-| `postAttack`        | After damaging an entity                      |
+| Component            | Description                                   |
+|----------------------|-----------------------------------------------|
+| `hitBlock`           | After hitting a block with the enchanted item |
+| `postAttack`         | After damaging an entity                      |
+| `postPiercingAttack` | After a piercing attack with an item          |
+| `projectileSpawned`  | When a projectile is created                  |
+| `tick`               | Every game tick while equipped                |
 
 ```kotlin
 effects {

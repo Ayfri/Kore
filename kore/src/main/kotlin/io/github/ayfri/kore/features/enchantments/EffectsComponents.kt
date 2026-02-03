@@ -51,6 +51,9 @@ fun EnchantmentEffects.mobExperience(block: ValueEffectBuilder.() -> Unit = {}) 
 fun EnchantmentEffects.postAttack(block: PostAttackBuilder.() -> Unit = {}) =
 	apply { this[EnchantmentEffectComponents.POST_ATTACK] = PostAttackBuilder().apply(block) }
 
+fun EnchantmentEffects.postPiercingAttack(block: PostAttackBuilder.() -> Unit = {}) =
+	apply { this[EnchantmentEffectComponents.POST_PIERCING_ATTACK] = PostAttackBuilder().apply(block) }
+
 fun EnchantmentEffects.preventArmorChange() =
 	apply { this[EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE] = EmptyEffectBuilder }
 

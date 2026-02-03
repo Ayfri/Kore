@@ -820,6 +820,39 @@ fun DataPack.enchantmentTests() {
 		}
 	""".trimIndent()
 
+	enchantment("post_piercing_attack") {
+		effects {
+			postPiercingAttack {
+				applyMobEffect(PostAttackSpecifier.ATTACKER, PostAttackSpecifier.VICTIM, Effects.SLOWNESS) {
+					minDuration(2)
+					maxDuration(4)
+				}
+			}
+		}
+	}
+
+	enchantments.last() assertsIs """
+		{
+			$DUMMY_ENCHANTMENT_CONTENT
+			"effects": {
+				"minecraft:post_piercing_attack": [
+					{
+						"enchanted": "attacker",
+						"affected": "victim",
+						"effect": {
+							"type": "minecraft:apply_mob_effect",
+							"to_apply": "minecraft:slowness",
+							"min_duration": 2,
+							"max_duration": 4,
+							"min_amplifier": 0,
+							"max_amplifier": 0
+						}
+					}
+				]
+			}
+		}
+	""".trimIndent()
+
 	enchantment("prevent_armor_change") {
 		effects {
 			preventArmorChange()
