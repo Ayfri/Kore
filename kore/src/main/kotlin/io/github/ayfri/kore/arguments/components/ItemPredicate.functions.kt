@@ -208,3 +208,33 @@ fun ItemPredicate.buildPartial(component: ItemComponentTypes, nbtBuilder: NbtCom
 fun ItemPredicate.buildPartial(name: String, nbtBuilder: NbtCompoundBuilder.() -> Unit) = apply {
 	this["~$name"] = buildNbtCompound(nbtBuilder)
 }
+
+/**
+ * Alias for [isPresent] - check if a component exists on an item.
+ * Both `*[component]` and `*[component~{}]` are equivalent in Minecraft,
+ * so this serializes as `*[component]` for brevity.
+ *
+ * Example:
+ * ```kotlin
+ * itemPredicate {
+ *   existsPartial(ItemComponentTypes.INSTRUMENT)
+ * }
+ * ```
+ * Will be serialized as: `*[instrument]`
+ */
+fun ItemPredicate.existsPartial(component: ItemComponentTypes) = isPresent(component)
+
+/**
+ * Alias for [isPresent] - check if a component exists on an item.
+ * Both `*[component]` and `*[component~{}]` are equivalent in Minecraft,
+ * so this serializes as `*[component]` for brevity.
+ *
+ * Example:
+ * ```kotlin
+ * itemPredicate {
+ *   existsPartial("instrument")
+ * }
+ * ```
+ * Will be serialized as: `*[instrument]`
+ */
+fun ItemPredicate.existsPartial(name: String) = isPresent(name)

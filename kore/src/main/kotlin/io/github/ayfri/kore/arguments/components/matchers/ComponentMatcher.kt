@@ -7,7 +7,7 @@ import kotlin.reflect.KClass
 
 @Serializable(with = ComponentMatcher.Companion.ComponentMatcherSerializer::class)
 sealed class ComponentMatcher {
-	internal val componentName get() = getComponentName(this::class)
+	internal open val componentName get() = getComponentName(this::class)
 
 	companion object {
 		fun <T : ComponentMatcher> getComponentName(kClass: KClass<out T>) =

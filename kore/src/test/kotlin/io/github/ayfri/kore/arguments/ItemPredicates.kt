@@ -92,4 +92,22 @@ fun itemPredicatesTests() {
 	}
 
 	customPartialDataComponent.toString() assertsIs """minecraft:stone[my_data~{value:"test"},tool~{default_mining_speed:10}]"""
+
+	// Test existence check with isPresent (outputs *[component])
+	val existenceTest = itemPredicate {
+		isPresent(ItemComponentTypes.INSTRUMENT)
+	}
+	existenceTest.toString() assertsIs """*[instrument]"""
+
+	// Test existence check with existsPartial (alias for isPresent, outputs *[component])
+	val existsPartialTest = itemPredicate {
+		existsPartial(ItemComponentTypes.INSTRUMENT)
+	}
+	existsPartialTest.toString() assertsIs """*[instrument]"""
+
+	// Test multiple existence checks
+	val multipleExistenceTest = itemPredicate {
+		isPresent(ItemComponentTypes.INSTRUMENT, ItemComponentTypes.DAMAGE)
+	}
+	multipleExistenceTest.toString() assertsIs """*[instrument,damage]"""
 }

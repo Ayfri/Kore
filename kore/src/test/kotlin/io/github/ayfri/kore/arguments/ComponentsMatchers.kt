@@ -4,8 +4,8 @@ import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.components.contains
 import io.github.ayfri.kore.arguments.components.countElement
 import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
-import io.github.ayfri.kore.arguments.components.matchers.*
 import io.github.ayfri.kore.arguments.components.item.FireworkExplosionShape
+import io.github.ayfri.kore.arguments.components.matchers.*
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.assertions.assertsIsJson
 import io.github.ayfri.kore.commands.AttributeModifierOperation
@@ -328,6 +328,30 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 				"generation": 1,
 				"resolved": true
 			}
+		}
+	""".trimIndent()
+
+	// Test empty component matcher for existence checks
+	val existsInstrument = ItemStackSubPredicates().apply {
+		exists(ItemComponentTypes.INSTRUMENT)
+	}
+
+	jsonEncoder.encodeToString(existsInstrument) assertsIsJson """
+		{
+			"minecraft:instrument": {}
+		}
+	""".trimIndent()
+
+	// Test multiple existence checks
+	val existsMultiple = ItemStackSubPredicates().apply {
+		exists(ItemComponentTypes.INSTRUMENT)
+		exists(ItemComponentTypes.DAMAGE)
+	}
+
+	jsonEncoder.encodeToString(existsMultiple) assertsIsJson """
+		{
+			"minecraft:instrument": {},
+			"minecraft:damage": {}
 		}
 	""".trimIndent()
 }
