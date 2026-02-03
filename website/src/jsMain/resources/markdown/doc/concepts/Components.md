@@ -261,6 +261,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `minimumAttackCharge(..)`            | Sets the minimum attack charge (0.0-1.0) required for full damage.                                |
 | `noteBlockSound(..)`                 | Specifies the sound a note block plays when this player head is above it.                         |
 | `ominousBottleAmplifier(..)`         | Sets the Bad Omen effect amplifier (0-4) when consuming an ominous bottle.                        |
+| `piercingWeapon(..) { .. }`          | Configures piercing weapon properties (reach, knockback, dismount behavior).                      |
 | `playerProfile(..)`                  | Sets the player skin displayed on a player head item.                                             |
 | `potDecorations(..)`                 | Defines the pottery sherds or bricks on each face of a decorated pot.                             |
 | `potionContents(..)`                 | Configures potion color, effects, and custom potion mixtures.                                     |

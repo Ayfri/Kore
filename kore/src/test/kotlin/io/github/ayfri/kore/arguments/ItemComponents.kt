@@ -449,6 +449,16 @@ fun itemComponentsTests() {
 	}
 	ominousBottleAmplifierTest.asString() assertsIs """minecraft:ominous_bottle[ominous_bottle_amplifier=5]"""
 
+	val piercingWeaponTest = stoneSword {
+		piercingWeapon {
+			dealsKnockback = true
+			dismounts = false
+			maxReach = 3.0f
+			minReach = 1.0f
+		}
+	}
+	piercingWeaponTest.asString() assertsIs """minecraft:stone_sword[piercing_weapon={deals_knockback:1b,dismounts:0b,max_reach:3.0f,min_reach:1.0f}]"""
+
 	val potDecorationsTest = stone {
 		potDecorations(Items.ARMS_UP_POTTERY_SHERD, Items.SKULL_POTTERY_SHERD, Items.FRIEND_POTTERY_SHERD, Items.BRICK)
 	}
