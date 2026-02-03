@@ -13,16 +13,18 @@ import kotlinx.serialization.Serializable
 
 @Serializable(with = ConsumeAnimation.Companion.ConsumeAnimationSerializer::class)
 enum class ConsumeAnimation {
-	NONE,
-	EAT,
-	DRINK,
 	BLOCK,
 	BOW,
-	SPEAR,
+	BRUSH,
 	CROSSBOW,
+	DRINK,
+	EAT,
+	NONE,
+	SPEAR,
 	SPYGLASS,
 	TOOT_HORN,
-	BRUSH;
+	TRIDENT,
+	;
 
 	companion object {
 		data object ConsumeAnimationSerializer : LowercaseSerializer<ConsumeAnimation>(entries)
