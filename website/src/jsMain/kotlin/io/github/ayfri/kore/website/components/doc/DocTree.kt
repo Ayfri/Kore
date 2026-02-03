@@ -100,6 +100,7 @@ fun GroupEntry(
 	val isCollapsed = groupPath in collapsedGroups
 	Div({
 		classes(DocTreeStyle.entryRow, DocTreeStyle.collapsibleRow)
+		if (level == 1) classes(DocTreeStyle.topLevelGroup)
 		style {
 			if (level > 1) {
 				indentation(level - 1)
@@ -130,6 +131,14 @@ fun DocTree() {
 	val entries = docEntries
 	val currentURL = context.path
 
+	// Define the order of top-level groups
+	val groupOrder = listOf("guides", "commands", "data-driven", "concepts", "helpers", "advanced")
+
+	fun getGroupPriority(slug: String): Int {
+		val index = groupOrder.indexOf(slug.lowercase())
+		return if (index >= 0) index else groupOrder.size
+	}
+
 	val nodes = buildList<DocNode> {
 		val sortedEntries = entries.sortedWith(Comparator { a, b ->
 			val slugsA = a.slugs.drop(1)
@@ -145,6 +154,12 @@ fun DocTree() {
 
 				val posCompare = compareValues(posA ?: Int.MAX_VALUE, posB ?: Int.MAX_VALUE)
 				if (posCompare != 0) return@Comparator posCompare
+
+				// Apply group priority for top-level groups
+				if (i == 0 && slugsA.size > 1 && slugsB.size > 1) {
+					val groupCompare = compareValues(getGroupPriority(slugA), getGroupPriority(slugB))
+					if (groupCompare != 0) return@Comparator groupCompare
+				}
 
 				val slugCompare = compareValues(slugA.lowercase(), slugB.lowercase())
 				if (slugCompare != 0) return@Comparator slugCompare
@@ -223,15 +238,17 @@ fun DocTree() {
 		Ul({
 			classes(DocTreeStyle.list)
 		}) {
+			var seenFirstTopLevelGroup = false
 			nodes.forEach { node ->
 				if (isNodeVisible(node)) {
-					node.Render(currentURL, collapsedGroups) { path ->
+					if (node is DocNode.GroupNode && node.level == 1) seenFirstTopLevelGroup = true
+					node.Render(currentURL, collapsedGroups, { path ->
 						collapsedGroups = if (path in collapsedGroups) {
 							collapsedGroups - path
 						} else {
 							collapsedGroups + path
 						}
-					}
+					})
 				}
 			}
 		}
@@ -317,5 +334,9 @@ object DocTreeStyle : StyleSheet() {
 	@OptIn(ExperimentalComposeWebApi::class)
 	val collapsed by style {
 		transform { rotate(0.deg) }
+	}
+
+	val topLevelGroup by style {
+		marginTop(0.75.cssRem)
 	}
 }
