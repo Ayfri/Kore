@@ -407,11 +407,12 @@ Level-based values allow effects to scale with enchantment level:
 
 | Type                                 | Description       | Example                                     |
 |--------------------------------------|-------------------|---------------------------------------------|
-| `constantLevelBased(value)`          | Fixed value       | `constantLevelBased(5)`                     |
-| `linearLevelBased(base, perLevel)`   | Linear scaling    | `linearLevelBased(2, 0.5)` → 2, 2.5, 3...   |
-| `levelsSquaredLevelBased(base)`      | Quadratic scaling | `levelsSquaredLevelBased(1)` → 1, 4, 9...   |
 | `clampedLevelBased(value, min, max)` | Clamped range     | `clampedLevelBased(linear, 1.0, 10.0)`      |
+| `constantLevelBased(value)`          | Fixed value       | `constantLevelBased(5)`                     |
+| `exponentLevelBased(base, power)`    | Exponential       | `exponentLevelBased(1, 5)` → 1, 5, 25...    |
 | `fractionLevelBased(num, denom)`     | Fractional        | `fractionLevelBased(1, 2)` → 0.5, 1, 1.5... |
+| `levelsSquaredLevelBased(base)`      | Quadratic scaling | `levelsSquaredLevelBased(1)` → 1, 4, 9...   |
+| `linearLevelBased(base, perLevel)`   | Linear scaling    | `linearLevelBased(2, 0.5)` → 2, 2.5, 3...   |
 | `lookupLevelBased(list, fallback)`   | Lookup table      | `lookupLevelBased(listOf(1, 3, 7), 10)`     |
 
 ```kotlin

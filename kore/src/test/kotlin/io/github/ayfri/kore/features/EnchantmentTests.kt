@@ -204,6 +204,7 @@ fun DataPack.enchantmentTests() {
 				allOf {
 					add(clampedLevelBased(5, 0.0, 10.0))
 					add(constantLevelBased(5))
+					add(exponentLevelBased(1, 5))
 					add(fractionLevelBased(1, 5))
 					add(levelsSquaredLevelBased(2))
 					add(linearLevelBased(2, 2))
@@ -234,6 +235,14 @@ fun DataPack.enchantmentTests() {
 								{
 									"type": "minecraft:add",
 									"value": 5
+								},
+								{
+									"type": "minecraft:add",
+									"value": {
+										"type": "minecraft:exponent",
+										"base": 1,
+										"power": 5
+									}
 								},
 								{
 									"type": "minecraft:add",
