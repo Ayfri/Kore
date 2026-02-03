@@ -100,5 +100,6 @@ Check out the [Known Issues](/docs/advanced/known-issues) page for a list of kno
 
 - **Repository**: [Kore](https://github.com/Ayfri/Kore)
 - **Starter template**: [Kore Template](https://github.com/Ayfri/Kore-Template)
+- **LLM-friendly documentation**: [llms.txt](https://kore.ayfri.com/llms.txt) | [llms-full.txt](https://kore.ayfri.com/llms-full.txt)
 
-For hands-on examples, follow the doc pages above — most pages include runnable snippets and links to test cases in the repository.
+For hands-on examples, follow the doc pages above - most pages include runnable snippets and links to test cases in the repository.

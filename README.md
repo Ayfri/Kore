@@ -23,6 +23,8 @@
 
 **Check the [website](https://kore.ayfri.com) for the latest documentation.**
 
+**LLM-friendly documentation**: [llms.txt](https://kore.ayfri.com/llms.txt) | [llms-full.txt](https://kore.ayfri.com/llms-full.txt)
+
 This library is compatible and made for Minecraft Java 1.20 and later versions, I don't think I will support older versions nor Bedrock Edition.<br>
 You can still create your own fork and make it compatible with older versions.<br>
 I will accept pull requests for older versions on a separate branch.
