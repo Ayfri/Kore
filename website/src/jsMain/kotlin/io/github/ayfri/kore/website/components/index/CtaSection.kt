@@ -27,7 +27,7 @@ fun CtaSection() {
 
 		P("Craft your first datapack with Kore and enjoy the power of Kotlin for Minecraft development.")
 
-		LinkButton("Get Started", "https://ayfri.com/articles/kore-introduction/", color = ButtonColor.PRIMARY)
+		LinkButton("Get Started", "/docs/getting-started", color = ButtonColor.PRIMARY)
 	}
 }
 

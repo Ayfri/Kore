@@ -221,7 +221,7 @@ fun HeroSection() {
 		Div({
 			classes(HeroSectionStyle.actions)
 		}) {
-			LinkButton("Get Started", "https://ayfri.com/articles/kore-introduction/", color = ButtonColor.PRIMARY)
+			LinkButton("Get Started", "/docs/getting-started", color = ButtonColor.PRIMARY)
 			LinkButton("GitHub", GITHUB_LINK, variant = ButtonVariant.OUTLINE)
 		}
 
