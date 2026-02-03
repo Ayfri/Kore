@@ -2,8 +2,8 @@
 root: .components.layouts.MarkdownLayout
 title: Enchantments
 nav-title: Enchantments
-description: Learn how to create custom Minecraft enchantments using Kore – an exhaustive guide covering every available enchantment effect with detailed Kotlin examples.
-keywords: minecraft, datapack, kore, enchantments, effects, customization
+description: Create custom Minecraft enchantments using Kore's type-safe Kotlin DSL with support for all vanilla effect components and level-based values.
+keywords: minecraft, datapack, kore, enchantments, effects, custom enchantments
 date-created: 2025-03-02
 date-modified: 2026-02-03
 routeOverride: /docs/data-driven/enchantments
@@ -11,528 +11,621 @@ routeOverride: /docs/data-driven/enchantments
 
 # Enchantments
 
-Minecraft enchantments modify game mechanics by altering item behavior, applying effects or changing damage calculations. Kore provides a fully type-safe, Kotlin-based DSL for creating custom enchantments that can be used in datapacks. This documentation explains how to create enchantments in Kore, and presents a detailed example for every available enchantment effect.
+Enchantments are data-driven definitions that modify item behavior, apply effects, change damage calculations, and alter various game mechanics. In Minecraft Java Edition 1.21+, enchantments are fully customizable through data packs, allowing you to create entirely new enchantments with unique effects.
 
-For general concepts on creating datapacks with Kore, please refer to the other documentation pages (e.g. [Predicates](./predicates), [Components](./components)). This article is dedicated exclusively to creating enchantments.
+## Overview
 
-## Basic Enchantment Creation
+Custom enchantments have several key characteristics:
 
-Creating an enchantment in Kore is as simple as calling the
-`enchantment` function inside a data pack. A basic enchantment is defined by its description, what items it supports, and additional properties such as exclusive sets, primary items, and equipment slots.
+- **Data-driven**: Defined as JSON files in data packs, not hardcoded
+- **Effect components**: Modular system of 30+ effect types
+- **Level-based scaling**: Values can scale with enchantment level
+- **Slot-aware**: Effects apply based on equipment slot configuration
+- **Conditional**: Effects can have predicate requirements
 
-For example:
+### Enchantment Properties
+
+Every enchantment defines these core properties:
+
+| Property                | Description                                         |
+|-------------------------|-----------------------------------------------------|
+| `description`           | Text component displayed on items                   |
+| `supported_items`       | Items that can receive the enchantment              |
+| `primary_items`         | Items where enchantment appears in enchanting table |
+| `exclusive_set`         | Incompatible enchantments                           |
+| `weight`                | Probability weight (1-1024)                         |
+| `max_level`             | Maximum level (1-255)                               |
+| `min_cost` / `max_cost` | Enchanting table level requirements                 |
+| `anvil_cost`            | Base cost for anvil application                     |
+| `slots`                 | Equipment slots where effects apply                 |
+| `effects`               | Effect components that define behavior              |
+
+## File Structure
+
+Enchantments are stored as JSON files in data packs at:
+
+```
+data/<namespace>/enchantment/<name>.json
+```
+
+For complete JSON specification, see the [Minecraft Wiki - Enchantment definition](https://minecraft.wiki/w/Enchantment_definition).
+
+## Creating Enchantments
+
+Use the `enchantment` builder function to create enchantments in Kore:
 
 ```kotlin
 dataPack("my_datapack") {
-    enchantment("test") {
-        description("This is a test enchantment.")
-        exclusiveSet(Tags.Enchantment.IN_ENCHANTING_TABLE)
-        supportedItems(Items.DIAMOND_SWORD, Items.DIAMOND_AXE)
-        primaryItems(Tags.Item.AXES)
-        slots(EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND)
-    }
-}
-```
+	enchantment("fire_aspect_plus") {
+		description("Fire Aspect+")
+		supportedItems(Items.DIAMOND_SWORD, Items.NETHERITE_SWORD)
+		primaryItems(Tags.Item.SWORDS)
+		exclusiveSet(Enchantments.FIRE_ASPECT)
+		weight = 2
+		maxLevel = 3
+		minCost(15, 10)  // base 15, +10 per level
+		maxCost(65, 10)
+		anvilCost = 4
+		slots(EquipmentSlot.MAINHAND)
 
-This snippet creates a simple enchantment named “test” that can be applied to a diamond sword or axe, with additional restrictions on the type of items and slots.
-
-## Enchantment Effects
-
-An enchantment’s power is defined in the
-`effects` block. Kore supports a wide range of effects – each affecting a different aspect of gameplay. You can combine multiple effects by using functions within the
-`effects { ... }` builder. Below is an exhaustive list of every supported enchantment effect along with a precise Kotlin example.
-
-### Ammo Use
-
-Sets the amount of ammunition used when firing a bow or crossbow.
-
-```kotlin
-enchantment("ammo_use") {
-    effects {
-        ammoUse {
-            add(5)
+		effects {
+			// Define effects here
         }
     }
 }
 ```
 
-### Attributes
+This generates `data/my_datapack/enchantment/fire_aspect_plus.json`.
 
-Modifies or adds attribute modifiers to items. For example, increasing an item’s scale.
+## Basic Properties
+
+### Description
+
+The text shown on enchanted items:
 
 ```kotlin
-enchantment("attributes") {
-    effects {
-        attributes {
-            attribute("my_modifier", name, Attributes.SCALE, AttributeModifierOperation.ADD_VALUE, 5)
+enchantment("test") {
+	// Simple string
+	description("Test Enchantment")
+
+	// Or with text component for formatting
+	description(textComponent("Test") { color = Color.GOLD })
+}
+```
+
+### Supported and Primary Items
+
+```kotlin
+enchantment("bow_enchant") {
+	// Items that can have this enchantment (anvil/commands)
+	supportedItems(Items.BOW, Items.CROSSBOW)
+
+	// Items where it appears in enchanting table (subset of supported)
+	primaryItems(Tags.Item.BOW_ENCHANTABLE)
+}
+```
+
+### Exclusive Set
+
+Enchantments that cannot coexist:
+
+```kotlin
+enchantment("protection_variant") {
+	exclusiveSet(Tags.Enchantment.ARMOR_EXCLUSIVE)
+	// Or individual enchantments
+	exclusiveSet(Enchantments.PROTECTION, Enchantments.FIRE_PROTECTION)
+}
+```
+
+### Cost and Weight
+
+```kotlin
+enchantment("rare_enchant") {
+	weight = 1  // Very rare (compare to Mending: 2, Unbreaking: 5)
+	maxLevel = 5
+
+	// Level cost formula: base + (level - 1) * per_level_above_first
+	minCost(base = 1, perLevelAboveFirst = 11)   // 1, 12, 23, 34, 45
+	maxCost(base = 21, perLevelAboveFirst = 11)  // 21, 32, 43, 54, 65
+
+	anvilCost = 8  // Expensive to combine
+}
+```
+
+### Equipment Slots
+
+Where the enchantment's effects apply:
+
+```kotlin
+enchantment("armor_enchant") {
+	slots(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)
+}
+
+enchantment("weapon_enchant") {
+	slots(EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND)
+}
+```
+
+Available slots: `ANY`, `HAND`, `MAINHAND`, `OFFHAND`, `ARMOR`, `FEET`, `LEGS`, `CHEST`, `HEAD`, `BODY`, `SADDLE`.
+
+## Effect Components
+
+Effects define what the enchantment actually does. Kore supports all vanilla effect components.
+
+### Value Effect Components
+
+These components modify numeric values with level-based scaling:
+
+| Component                   | Description                        |
+|-----------------------------|------------------------------------|
+| `ammoUse`                   | Ammunition consumption             |
+| `armorEffectiveness`        | Armor effectiveness multiplier     |
+| `blockExperience`           | XP from breaking blocks            |
+| `crossbowChargeTime`        | Crossbow charge time               |
+| `damage`                    | Bonus attack damage                |
+| `damageProtection`          | Damage reduction (max 80% total)   |
+| `equipmentDrops`            | Equipment drop chance              |
+| `fishingLuckBonus`          | Fishing luck bonus                 |
+| `fishingTimeReduction`      | Fishing speed bonus                |
+| `itemDamage`                | Durability loss multiplier         |
+| `knockback`                 | Knockback strength                 |
+| `mobExperience`             | XP from killing mobs               |
+| `projectileCount`           | Projectiles fired                  |
+| `projectilePiercing`        | Targets pierced                    |
+| `projectileSpread`          | Accuracy spread in degrees         |
+| `repairWithXp`              | Durability repaired per XP         |
+| `smashDamagePerFallenBlock` | Mace bonus damage per block fallen |
+| `tridentReturnAcceleration` | Trident return speed               |
+| `tridentSpinAttackStrength` | Riptide attack strength            |
+
+```kotlin
+effects {
+	// Simple damage bonus
+	damage {
+		add(linearLevelBased(2, 0.5))  // +2 base, +0.5 per level
+	}
+
+	// Protection with conditions
+	damageProtection {
+		add(constantLevelBased(4)) {
+			requirements {
+				damageType(DamageTypes.IN_FIRE)
+			}
+		}
+	}
+
+	// Multiple value modifications
+	armorEffectiveness {
+		add(5)
+		multiply(1.5)
+		set(10)
+		removeBinomial(0.5)  // 50% chance to remove 1
+		allOf {
+			add(2)
+			multiply(1.2)
         }
     }
 }
 ```
 
-### Armor Effectiveness
+### Entity Effect Components
 
-Modifies the effectiveness of armor when the enchantment is active.
+These components trigger actions on entities:
+
+| Component           | Description                                   |
+|---------------------|-----------------------------------------------|
+| `hitBlock`          | After hitting a block with the enchanted item |
+| `tick`              | Every game tick while equipped                |
+| `projectileSpawned` | When a projectile is created                  |
+| `postAttack`        | After damaging an entity                      |
 
 ```kotlin
-enchantment("armor_effectiveness") {
-    effects {
-        armorEffectiveness {
-            add(5) {
-                requirements {
-                    weatherCheck(raining = true)
-                }
-            }
-            allOf {
-                add(5)
-                allOf {
-                    add(5)
-                }
-            }
-            multiply(2)
-            removeBinomial(2)
-            set(2)
+effects {
+	// Apply effects when hitting blocks
+	hitBlock {
+		applyMobEffect(Effects.SPEED) {
+			minDuration(5)
+			maxDuration(10)
+			minAmplifier(0)
+			maxAmplifier(2)
+		}
+	}
+
+	// Periodic effects
+	tick {
+		damageEntity(DamageTypes.MAGIC, 0.5, 1.0)
+	}
+
+	// Post-attack effects (like Thorns)
+	postAttack {
+		damageEntity(
+			PostAttackSpecifier.ATTACKER,
+			PostAttackSpecifier.VICTIM,
+			DamageTypes.THORNS,
+			1, 3
+		)
+    }
+}
+```
+
+### Special Effect Components
+
+| Component                | Description                          |
+|--------------------------|--------------------------------------|
+| `attributes`             | Applies attribute modifiers          |
+| `crossbowChargingSounds` | Custom crossbow sounds               |
+| `damageImmunity`         | Grants immunity to damage types      |
+| `preventArmorChange`     | Prevents removing from armor slot    |
+| `preventEquipmentDrop`   | Prevents item from dropping on death |
+| `tridentSound`           | Custom trident sounds                |
+
+```kotlin
+effects {
+	// Damage immunity (like totems)
+	damageImmunity {
+		sound {
+			requirements {
+				damageType(DamageTypes.FALLING_BLOCK)
+			}
+		}
+	}
+
+	// Curse-like effects
+	preventEquipmentDrop()
+	preventArmorChange()
+
+	// Attribute modifiers
+	attributes {
+		attribute(
+			"bonus_speed",
+			name,
+			Attributes.MOVEMENT_SPEED,
+			AttributeModifierOperation.ADD_MULTIPLIED_BASE,
+			0.1  // +10% speed
+		)
+	}
+
+	// Custom sounds
+	crossbowChargingSounds {
+		crossbowChargingSound {
+			start(SoundEvents.Item.Crossbow.QUICK_CHARGE_1)
+			mid(SoundEvents.Item.Crossbow.QUICK_CHARGE_2)
+			end(SoundEvents.Item.Crossbow.QUICK_CHARGE_3)
         }
     }
 }
 ```
 
-### Block Experience
+## Entity Effects
 
-Calculates and awards experience based on block-related factors using a combination of level-based providers. This effect demonstrates the DSL’s advanced capabilities by combining several sub-effects:
+Entity effects are actions that can be triggered by effect components:
+
+### Apply Mob Effect
 
 ```kotlin
-enchantment("block_experience") {
-    effects {
-        blockExperience {
-            allOf {
-                add(clampedLevelBased(5, 0.0, 10.0))
-                add(constantLevelBased(5))
-                add(fractionLevelBased(1, 5))
-                add(levelsSquaredLevelBased(2))
-                add(linearLevelBased(2, 2))
-                add(lookupLevelBased(2, 2, fallback = 2))
-            }
+applyMobEffect(Effects.SLOWNESS, Effects.WEAKNESS) {
+	minDuration(5)
+	maxDuration(linearLevelBased(5, 5))
+	minAmplifier(0)
+	maxAmplifier(constantLevelBased(1))
+}
+```
+
+### Damage Entity
+
+```kotlin
+damageEntity(DamageTypes.MAGIC, minDamage = 1, maxDamage = 5)
+```
+
+### Explode
+
+```kotlin
+explode(
+	attributeToUser = true,
+	createFire = false,
+	blockInteraction = BlockInteraction.TNT,
+	smallParticle = Particles.EXPLOSION,
+	largeParticle = Particles.EXPLOSION_EMITTER,
+	sound = Sounds.Entity.Generic.EXPLODE
+) {
+	radius(linearLevelBased(2, 1))
+}
+```
+
+### Ignite
+
+```kotlin
+ignite(duration = linearLevelBased(4, 4))  // seconds
+```
+
+### Play Sound
+
+```kotlin
+playSound(SoundEvents.Entity.Firework.LAUNCH, volume = 1f)
+```
+
+### Replace Block/Disk
+
+```kotlin
+replaceBlock(simpleStateProvider(Blocks.FIRE)) {
+	offset(0, 1, 0)
+	triggerGameEvent = GameEvents.BLOCK_PLACE
+}
+
+replaceDisk(simpleStateProvider(Blocks.ICE)) {
+	radius(linearLevelBased(2, 1))
+	height(1)
+}
+```
+
+### Spawn Particles
+
+```kotlin
+spawnParticles(
+	Particles.FLAME,
+	horizontalPositionType = ParticlePositionType.IN_BOUNDING_BOX,
+	verticalPositionType = ParticlePositionType.IN_BOUNDING_BOX
+) {
+	horizontalVelocity(base = 0.1f, movementScale = 0f)
+	verticalVelocity(base = 0.5f, movementScale = 0f)
+	speed(0.5f)
+}
+```
+
+### Run Function
+
+```kotlin
+runFunction(FunctionArgument("on_hit", "my_datapack"))
+```
+
+### Summon Entity
+
+```kotlin
+summonEntity(EntityTypes.LIGHTNING_BOLT)
+```
+
+### Change Item Damage
+
+```kotlin
+changeItemDamage(linearLevelBased(1, 1))  // Durability consumed
+```
+
+## Level-Based Values
+
+Level-based values allow effects to scale with enchantment level:
+
+| Type                                 | Description       | Example                                     |
+|--------------------------------------|-------------------|---------------------------------------------|
+| `constantLevelBased(value)`          | Fixed value       | `constantLevelBased(5)`                     |
+| `linearLevelBased(base, perLevel)`   | Linear scaling    | `linearLevelBased(2, 0.5)` → 2, 2.5, 3...   |
+| `levelsSquaredLevelBased(base)`      | Quadratic scaling | `levelsSquaredLevelBased(1)` → 1, 4, 9...   |
+| `clampedLevelBased(value, min, max)` | Clamped range     | `clampedLevelBased(linear, 1.0, 10.0)`      |
+| `fractionLevelBased(num, denom)`     | Fractional        | `fractionLevelBased(1, 2)` → 0.5, 1, 1.5... |
+| `lookupLevelBased(list, fallback)`   | Lookup table      | `lookupLevelBased(listOf(1, 3, 7), 10)`     |
+
+```kotlin
+effects {
+	damage {
+		// Linear: 2 + 0.5 per level → 2, 2.5, 3, 3.5, 4 for levels 1-5
+		add(linearLevelBased(2, 0.5))
+	}
+
+	blockExperience {
+		// Complex combination
+		allOf {
+			add(clampedLevelBased(linearLevelBased(1, 2), 0.0, 10.0))
+			multiply(levelsSquaredLevelBased(0.1))
         }
     }
 }
 ```
 
-### Crossbow Charging Sounds
+## Requirements (Conditions)
 
-Changes the sounds produced when a crossbow is charged.
+Effect components can have requirements that must be met:
 
 ```kotlin
-enchantment("crossbow_charging_sounds") {
-    effects {
-        crossbowChargingSounds {
-            crossbowChargingSound {
-                start(SoundEvents.Item.Crossbow.QUICK_CHARGE_3)
-            }
-        }
+effects {
+	damage {
+		add(5) {
+			requirements {
+				// Only in rain
+				weatherCheck(raining = true)
+			}
+		}
+	}
+
+	damageProtection {
+		add(4) {
+			requirements {
+				// Only against fire damage
+				damageType(DamageTypes.IN_FIRE, DamageTypes.ON_FIRE)
+			}
+		}
+	}
+
+	postAttack {
+		applyMobEffect(
+			PostAttackSpecifier.ATTACKER,
+			PostAttackSpecifier.VICTIM,
+			Effects.POISON
+		) {
+			requirements {
+				// Only against undead
+				entityProperties {
+					type(EntityTypes.ZOMBIE, EntityTypes.SKELETON)
+				}
+			}
+		}
     }
 }
 ```
 
-### Crossbow Charge Time
-
-Alters the time required to charge a crossbow.
+## Full Example
 
 ```kotlin
-enchantment("crossbow_charge_time") {
-    effects {
-        crossbowChargeTime {
-            add(5)
-        }
+dataPack("custom_enchants") {
+	enchantment("vampiric") {
+		description(textComponent("Vampiric") { color = Color.DARK_RED })
+		supportedItems(Tags.Item.SWORDS)
+		primaryItems(Tags.Item.SWORD_ENCHANTABLE)
+		exclusiveSet(Enchantments.MENDING)
+		weight = 2
+		maxLevel = 3
+		minCost(20, 15)
+		maxCost(50, 15)
+		anvilCost = 8
+		slots(EquipmentSlot.MAINHAND)
+
+		effects {
+			// Lifesteal on hit
+			postAttack {
+				applyMobEffect(
+					PostAttackSpecifier.ATTACKER,
+					PostAttackSpecifier.ATTACKER,
+					Effects.INSTANT_HEALTH
+				) {
+					minAmplifier(0)
+					maxAmplifier(0)
+					minDuration(1)
+					maxDuration(1)
+
+					requirements {
+						randomChance(linearLevelBased(0.1, 0.1))  // 10/20/30% chance
+					}
+				}
+			}
+
+			// Bonus damage to undead
+			damage {
+				add(linearLevelBased(2, 1)) {
+					requirements {
+						entityProperties {
+							type(Tags.EntityType.UNDEAD)
+						}
+					}
+				}
+			}
+
+			// Visual feedback
+			hitBlock {
+				spawnParticles(
+					Particles.CRIMSON_SPORE,
+					horizontalPositionType = ParticlePositionType.ENTITY_POSITION,
+					verticalPositionType = ParticlePositionType.ENTITY_POSITION
+				) {
+					speed(0.2f)
+				}
+			}
+		}
     }
 }
 ```
 
-### Damage
+### Generated JSON
 
-Applies an additional damage effect when the enchanted item is used.
+```json
+{
+	"description": {
+		"text": "Vampiric",
+		"color": "dark_red"
+	},
+	"supported_items": "#minecraft:swords",
+	"primary_items": "#minecraft:sword_enchantable",
+	"exclusive_set": "minecraft:mending",
+	"weight": 2,
+	"max_level": 3,
+	"min_cost": {
+		"base": 20,
+		"per_level_above_first": 15
+	},
+	"max_cost": {
+		"base": 50,
+		"per_level_above_first": 15
+	},
+	"anvil_cost": 8,
+	"slots": [
+		"mainhand"
+	],
+	"effects": {
+		"minecraft:post_attack": [
+			{
+				"enchanted": "attacker",
+				"affected": "attacker",
+				"effect": {
+					"type": "minecraft:apply_mob_effect",
+					"to_apply": "minecraft:instant_health",
+					"min_amplifier": 0,
+					"max_amplifier": 0,
+					"min_duration": 1,
+					"max_duration": 1
+				},
+				"requirements": {
+					"condition": "minecraft:random_chance",
+					"chance": {
+						"type": "minecraft:linear",
+						"base": 0.1,
+						"per_level_above_first": 0.1
+					}
+				}
+			}
+		],
+		"minecraft:damage": [
+			{
+				"effect": {
+					"type": "minecraft:add",
+					"value": {
+						"type": "minecraft:linear",
+						"base": 2,
+						"per_level_above_first": 1
+					}
+				},
+				"requirements": {
+					"condition": "minecraft:entity_properties",
+					"predicate": {
+						"type": "#minecraft:undead"
+					}
+				}
+			}
+		]
+	}
+}
+```
+
+## Enchantment Providers
+
+Enchantment providers are used by enchanting tables and loot functions to select enchantments:
 
 ```kotlin
-enchantment("damage") {
-    effects {
-        damage {
-            add(5)
-        }
+enchantmentProvider("custom_table") {
+	single {
+		enchantment = Enchantments.SHARPNESS
+    }
+}
+
+enchantmentProvider("cost_based") {
+	byCost {
+		// Configuration for cost-based selection
     }
 }
 ```
 
-### Damage Immunity
-
-Gives temporary immunity from damage; can also trigger a sound effect when activated.
-
-```kotlin
-enchantment("damage_immunity") {
-    effects {
-        damageImmunity {
-            sound {
-                requirements {
-                    weatherCheck(raining = true)
-                }
-            }
-        }
-    }
-}
-```
-
-### Equipment Drops
-
-Modifies the probability and quantity of equipment drops when an entity is defeated.
-
-```kotlin
-enchantment("equipment_drops") {
-    effects {
-        equipmentDrops {
-            add(EquipmentDropsSpecifier.ATTACKER, 5) {
-                requirements {
-                    weatherCheck(raining = true)
-                }
-            }
-            allOf(EquipmentDropsSpecifier.VICTIM) {
-                add(5)
-                allOf {
-                    add(5)
-                }
-            }
-        }
-    }
-}
-```
-
-### Fishing Luck Bonus
-
-Increases luck when fishing.
-
-```kotlin
-enchantment("fishing_luck_bonus") {
-    effects {
-        fishingLuckBonus {
-            add(5)
-        }
-    }
-}
-```
-
-### Fishing Time Reduction
-
-Reduces the time required to catch fish.
-
-```kotlin
-enchantment("fishing_time_reduction") {
-    effects {
-        fishingTimeReduction {
-            add(5)
-        }
-    }
-}
-```
-
-### Hit Block
-
-A multifaceted effect triggered when the enchanted item is used to hit a block. It supports many sub-effects including applying mob effects, damaging entities, modifying item durability, explosions, igniting blocks, playing sounds, changing block states, and summoning particles or entities.
-
-```kotlin
-enchantment("hit_block") {
-    effects {
-        hitBlock {
-            allOf {
-                applyMobEffect(Effects.SPEED) {
-                    maxDuration(2)
-                    minAmplifier(1)
-                }
-                requirements {
-                    weatherCheck(raining = true)
-                }
-            }
-            damageEntity(DamageTypes.IN_FIRE, 1, 2) {
-                requirements {
-                    weatherCheck(raining = false)
-                }
-            }
-            changeItemDamage(1)
-            explode(
-                attributeToUser = true,
-                createFire = true,
-                blockInteraction = BlockInteraction.TNT,
-                smallParticle = Particles.ANGRY_VILLAGER,
-                largeParticle = Particles.ANGRY_VILLAGER,
-                sound = Sounds.Random.FUSE
-            ) {
-                radius(2)
-            }
-            ignite(2)
-            playSound(SoundEvents.Entity.FireworkRocket.LAUNCH, 5f)
-            replaceBlock(simpleStateProvider(Blocks.DIAMOND_BLOCK)) {
-                offset(5, 5, 5)
-                triggerGameEvent = GameEvents.BLOCK_PLACE
-            }
-            replaceDisk(simpleStateProvider(Blocks.DIAMOND_BLOCK)) {
-                radius(5)
-                height(2)
-            }
-            runFunction(FunctionArgument("function", "namespace"))
-            setBlockProperties {
-                properties {
-                    this["test"] = "test"
-                }
-            }
-            spawnParticles(
-                Particles.ANGRY_VILLAGER,
-                horizontalPositionType = ParticlePositionType.IN_BOUNDING_BOX,
-                verticalPositionType = ParticlePositionType.IN_BOUNDING_BOX,
-            ) {
-                horizontalVelocity(base = 2.5f, movementScale = 1.2f)
-            }
-            summonEntity(EntityTypes.AREA_EFFECT_CLOUD)
-        }
-    }
-}
-```
-
-### Item Damage
-
-Inflicts additional damage (i.e. worsening the item's condition).
-
-```kotlin
-enchantment("item_damage") {
-    effects {
-        itemDamage {
-            add(5)
-        }
-    }
-}
-```
-
-### Knockback
-
-Applies extra knockback to the target when attacking.
-
-```kotlin
-enchantment("knockback") {
-    effects {
-        knockback {
-            add(5)
-        }
-    }
-}
-```
-
-### Mob Experience
-
-Increases the experience dropped by mobs upon death.
-
-```kotlin
-enchantment("mob_experience") {
-    effects {
-        mobExperience {
-            add(5)
-        }
-    }
-}
-```
-
-### Post Attack
-
-Executes effects immediately after an attack is completed. This effect can both apply a mob effect and cause damage.
-
-```kotlin
-enchantment("post_attack") {
-    effects {
-        postAttack {
-            applyMobEffect(PostAttackSpecifier.ATTACKER, PostAttackSpecifier.DAMAGING_ENTITY, Effects.SPEED) {
-                requirements {
-                    weatherCheck(raining = true)
-                }
-            }
-            damageEntity(PostAttackSpecifier.VICTIM, PostAttackSpecifier.DAMAGING_ENTITY, DamageTypes.IN_FIRE, 1, 2)
-        }
-    }
-}
-```
-
-### Prevent Armor Change
-
-Prevents armor slots from being modified.
-
-```kotlin
-enchantment("prevent_armor_change") {
-    effects {
-        preventArmorChange()
-    }
-}
-```
-
-### Prevent Equipment Drop
-
-Stops equipment from being dropped on death.
-
-```kotlin
-enchantment("prevent_equipment_drop") {
-    effects {
-        preventEquipmentDrop()
-    }
-}
-```
-
-### Projectile Count
-
-Modifies the number of projectiles produced (for example, by a crossbow).
-
-```kotlin
-enchantment("projectile_count") {
-    effects {
-        projectileCount {
-            add(5)
-        }
-    }
-}
-```
-
-### Projectile Piercing
-
-Sets the number of targets a projectile can pierce.
-
-```kotlin
-enchantment("projectile_piercing") {
-    effects {
-        projectilePiercing {
-            add(5)
-        }
-    }
-}
-```
-
-### Projectile Spawned
-
-Executes an effect when a projectile entity has been spawned from a bow, crossbow, snowball, trident, splash potion, lingering potion, ender pearl, firework rocket, wind charge, or egg.
-
-```kotlin
-enchantment("projectile_spawned") {
-    effects {
-        projectileSpawned {
-            applyMobEffect(Effects.SPEED) {
-                maxDuration(2)
-                minAmplifier(1)
-            }
-        }
-    }
-}
-```
-
-### Projectile Spread
-
-Alters the spread angle of projectiles fired.
-
-```kotlin
-enchantment("projectile_spread") {
-    effects {
-        projectileSpread {
-            add(5)
-        }
-    }
-}
-```
-
-### Repair with XP
-
-Repairs an item using player experience when the item is used.
-
-```kotlin
-enchantment("repair_with_xp") {
-    effects {
-        repairWithXp {
-            add(5)
-        }
-    }
-}
-```
-
-### Smash Damage Per Fallen Block
-
-Increases damage based on the number of blocks fallen before impact.
-
-```kotlin
-enchantment("smash_damage_per_fallen_block") {
-    effects {
-        smashDamagePerFallenBlock {
-            add(5)
-        }
-    }
-}
-```
-
-### Tick
-
-Executes an effect periodically (every game tick). For example, dealing damage over time.
-
-```kotlin
-enchantment("tick") {
-    effects {
-        tick {
-            damageEntity(DamageTypes.IN_FIRE, 1, 2)
-        }
-    }
-}
-```
-
-### Trident Return Acceleration
-
-Accelerates the return speed of a thrown trident.
-
-```kotlin
-enchantment("trident_return_acceleration") {
-    effects {
-        tridentReturnAcceleration {
-            add(5)
-        }
-    }
-}
-```
-
-### Trident Spin Attack Strength
-
-Boosts the strength of a trident’s spin attack.
-
-```kotlin
-enchantment("trident_spin_attack_strength") {
-    effects {
-        tridentSpinAttackStrength {
-            add(5)
-        }
-    }
-}
-```
-
-### Trident Sound
-
-Modifies the sound played when a trident is thrown or returns.
-
-```kotlin
-enchantment("trident_sound") {
-    effects {
-        tridentSound {
-            sound(SoundEvents.Entity.FireworkRocket.LAUNCH, 5f)
-        }
-    }
-}
-```
-
-Using Kore, you can create a nearly limitless variety of enchantments by mixing and matching these effects. The examples above illustrate each individual effect available in the library. Combine them as needed to design your custom gameplay mechanics with full type-safety and a clean, Kotlin-based DSL.
-
-Happy enchanting!
+## Best Practices
+
+1. **Balance carefully** - Test enchantment power at all levels; use appropriate weights
+2. **Use exclusive sets** - Prevent overpowered combinations with incompatible enchantments
+3. **Scale appropriately** - Use level-based values that provide meaningful progression
+4. **Add requirements** - Use conditions to create situational bonuses
+5. **Consider slots** - Ensure effects only apply in appropriate equipment slots
+6. **Test thoroughly** - Verify effects work correctly in all contexts (PvP, PvE, etc.)
 
 ## See Also
 
-- [Predicates](./predicates) - Predicate conditions for enchantment effect requirements
+- [Predicates](./predicates) - Conditions for enchantment effect requirements
 - [Components](../concepts/components) - Item components and matchers
 - [Loot Tables](./loot-tables) - Apply enchantments via loot functions
 - [Item Modifiers](./item-modifiers) - Add enchantments at runtime
-- [Tags](./tags) - Use enchantment tags
+- [Tags](./tags) - Use enchantment and item tags
 
 ### External Resources
 
