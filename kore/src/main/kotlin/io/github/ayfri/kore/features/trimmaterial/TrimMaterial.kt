@@ -25,6 +25,7 @@ data object TrimColorPaletteShortSerializer : ToStringSerializer<TrimColorPalett
  * - A description that appears in-game when hovering over trimmed armor
  * - Whether it should render as a decal (true for netherrite-like overlays)
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/trims
  * JSON format reference: https://minecraft.wiki/w/Tutorial:Adding_custom_trims
  */
 @Serializable
@@ -63,13 +64,13 @@ fun TrimMaterial.overrideArmorMaterials(vararg armorMaterials: Pair<ArmorMateria
  *
  * Produces `data/<namespace>/trim_material/<fileName>.json`.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Tutorial:Adding_custom_trims
- * https://minecraft.wiki/w/Armor#Trimming
+ * Docs: https://kore.ayfri.com/docs/data-driven/trims
+ * JSON format reference: https://minecraft.wiki/w/Tutorial:Adding_custom_trims
  */
 fun DataPack.trimMaterial(
 	fileName: String = "trim_material",
 	assetName: TrimColorPaletteArgument,
-	description: ChatComponents = textComponent(""),
+	description: ChatComponents = textComponent(),
 	block: TrimMaterial.() -> Unit
 ): TrimMaterialArgument {
 	val trimMaterial = TrimMaterial(fileName, assetName, description).apply(block)

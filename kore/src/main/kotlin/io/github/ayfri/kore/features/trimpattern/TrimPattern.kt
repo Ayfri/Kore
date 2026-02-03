@@ -21,6 +21,7 @@ import kotlinx.serialization.Transient
  * - A description that appears in-game when hovering over trimmed armor
  * - Whether it should render as a decal (true for netherrite-like overlays)
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/trims
  * JSON format reference: https://minecraft.wiki/w/Tutorial:Adding_custom_trims
  */
 @Serializable
@@ -48,8 +49,8 @@ fun TrimPattern.description(text: String = "", color: Color? = null, block: Plai
  *
  * Produces `data/<namespace>/trim_pattern/<fileName>.json`.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Tutorial:Adding_custom_trims
- * https://minecraft.wiki/w/Armor#Trimming
+ * Docs: https://kore.ayfri.com/docs/data-driven/trims
+ * JSON format reference: https://minecraft.wiki/w/Tutorial:Adding_custom_trims
  */
 fun DataPack.trimPattern(
 	fileName: String = "trim_pattern",
