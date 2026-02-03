@@ -26,6 +26,8 @@ import java.nio.file.Paths
  *     }
  * }
  * ```
+ *
+ * Docs: [Bindings](https://kore.ayfri.com/docs/advanced/bindings)
  */
 class DatapackImportDsl {
 	private val globalConfig = ImportConfiguration()
@@ -173,6 +175,8 @@ class DatapackImportDsl {
  *     }
  * }
  * ```
+ *
+ *  Docs: [Bindings](https://kore.ayfri.com/docs/advanced/bindings)
  */
 fun importDatapacks(block: DatapackImportDsl.() -> Unit) = DatapackImportDsl().apply(block).execute()
 
@@ -186,5 +190,7 @@ fun importDatapacks(block: DatapackImportDsl.() -> Unit) = DatapackImportDsl().a
  *     url("another_pack")
  * }
  * ```
+ *
+ *  Docs: [Bindings](https://kore.ayfri.com/docs/advanced/bindings)
  */
 fun exploreDatapacks(block: DatapackImportDsl.() -> Unit) = DatapackImportDsl().apply(block).exploreAll()

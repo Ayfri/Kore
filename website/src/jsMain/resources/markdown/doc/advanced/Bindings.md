@@ -5,8 +5,8 @@ nav-title: Bindings
 description: Import existing datapacks and generate Kotlin bindings.
 keywords: kore, bindings, import, datapack, github, modrinth, curseforge
 date-created: 2026-01-23
-date-modified: 2026-01-24
-routeOverride: /docs/commands/bindings
+date-modified: 2026-02-03
+routeOverride: /docs/advanced/bindings
 position: 3
 ---
 
@@ -63,10 +63,12 @@ function("my_function") {
 	// Call a function from the imported datapack
 	function(VanillaRefresh.Functions.MAIN_TICK)
 
-	// Reference a loot table
+	// Reference a loot table (see Commands for loot usage)
 	loot(VanillaRefresh.LootTables.BLOCKS.IRON_ORE)
 }
 ```
+
+For more on using commands with imported resources, see [Commands](../commands/commands).
 
 If the datapack uses multiple namespaces, they are nested:
 
