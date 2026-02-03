@@ -18,6 +18,7 @@ out
 **/test/**/resources/**.env
 
 ### Website
+website/**/public/llms*.txt
 website/.kobweb/*
 !website/.kobweb/conf.yaml
 
