@@ -208,76 +208,79 @@ command.
 Below is an alphabetical list of all item component helpers available in Kore. The names match the DSL functions you call inside an
 `Items.* { }` builder.
 
-- `attributeModifiers(..)`
-- `bannerPatterns(..)`
-- `baseColor(..)`
-- `bees { .. }`
-- `blockEntityData(..)`
-- `blocksAttacks(..)` / `blocksAttacks { .. }`
-- `blockState(..)`
-- `breakSound(..)`
-- `bucketEntityData(..)`
-- `bundleContents(..)` / `bundleContent(..)`
-- `canBreak(..)`
-- `canPlaceOn(..)`
-- `chargedProjectiles(..)` / `chargedProjectile(..)`
-- `consumable(..) { .. }`
-- `container(..)` / `container { .. }`
-- `containerLoot(..)`
-- `customData(..)`
-- `customModelData(..)`
-- `customName(..)`
-- `damage(..)`
-- `damageResistant(..)`
-- `deathProtection(..)`
-- `debugStickState(..)`
-- `dyedColor(..)`
-- `enchantable(..)`
-- `enchantmentGlintOverride(..)`
-- `enchantments(..)`
-- `entityData(..)`
-- `equippable(..)`
-- `fireworkExplosion(..)`
-- `fireworks(..)`
-- `food(..)`
-- `glider()`
-- `instrument(..)`
-- `intangibleProjectile()`
-- `itemModel(..)`
-- `itemName(..)`
-- `jukeboxPlayable(..)`
-- `lock(..)`
-- `lodestoneTarget(..)`
-- `lore(..)` / `lores { .. }`
-- `mapColor(..)`
-- `mapDecorations(..)`
-- `mapId(..)`
-- `maxDamage(..)`
-- `maxStackSize(..)`
-- `noteBlockSound(..)`
-- `ominousBottleAmplifier(..)`
-- `potDecorations(..)`
-- `potionContents(..)`
-- `potionDurationScale(..)`
-- `playerProfile(..)` / `textureProfile(..)`
-- `providesBannerPatterns(..)`
-- `providesTrimMaterial(..)`
-- `rarity(..)`
-- `recipes(..)`
-- `repairable(..)`
-- `repairCost(..)`
-- `storedEnchantments(..)`
-- `suspiciousStewEffectsComponent(..)`
-- `tool { .. }`
-- `tooltipDisplay(..)`
-- `tooltipStyle(..)`
-- `trim(..)`
-- `unbreakable()`
-- `useCooldown(..)`
-- `useRemainder(..)`
-- `weapon(..)`
-- `writableBookContent(..)`
-- `writtenBookContent(..)`
+| Helper                               | Description                                                                                       |
+|--------------------------------------|---------------------------------------------------------------------------------------------------|
+| `attributeModifiers(..)`             | Modifies entity attributes (e.g., attack damage, speed, armor) when the item is equipped or held. |
+| `bannerPatterns(..)`                 | Defines the layered patterns displayed on a banner or shield.                                     |
+| `baseColor(..)`                      | Sets the base color of a banner before patterns are applied.                                      |
+| `bees { .. }`                        | Stores bee entities inside a beehive or bee nest item.                                            |
+| `blockEntityData(..)`                | Attaches custom NBT data to a block entity when the item is placed.                               |
+| `blocksAttacks(..)`                  | Configures how the item blocks incoming attacks when used (like a shield).                        |
+| `blockState(..)`                     | Sets block state properties (e.g., facing, powered) when the item is placed.                      |
+| `breakSound(..)`                     | Specifies the sound played when the item breaks from durability loss.                             |
+| `bucketEntityData(..)`               | Stores entity data for mobs captured in buckets (e.g., fish, axolotl).                            |
+| `bundleContents(..)`                 | Defines the items stored inside a bundle.                                                         |
+| `canBreak(..)`                       | Restricts which blocks this item can break in Adventure mode.                                     |
+| `canPlaceOn(..)`                     | Restricts which blocks this item can be placed on in Adventure mode.                              |
+| `chargedProjectiles(..)`             | Stores projectiles loaded into a crossbow.                                                        |
+| `consumable(..) { .. }`              | Makes the item consumable with configurable eating time, animation, sound, and effects.           |
+| `container(..)`                      | Stores items inside a container item (e.g., shulker box).                                         |
+| `containerLoot(..)`                  | References a loot table to generate container contents when opened.                               |
+| `customData(..)`                     | Attaches arbitrary custom NBT data for use by datapacks or mods.                                  |
+| `customModelData(..)`                | Provides numeric values for custom item model selection in resource packs.                        |
+| `customName(..)`                     | Sets a custom display name for the item (supports text components).                               |
+| `damage(..)`                         | Sets the current damage/durability consumed on a damageable item.                                 |
+| `damageResistant(..)`                | Makes the item entity resistant to specific damage types (e.g., fire, explosions).                |
+| `damageType(..)`                     | Specifies the damage type dealt when attacking with this item.                                    |
+| `deathProtection(..)`                | Prevents death and applies effects when the holder would die (like a totem).                      |
+| `debugStickState(..)`                | Stores the selected block state property for the debug stick per block type.                      |
+| `dyedColor(..)`                      | Sets the dye color for leather armor or other dyeable items.                                      |
+| `enchantable(..)`                    | Defines the enchantability value affecting enchantment quality at enchanting tables.              |
+| `enchantmentGlintOverride(..)`       | Forces the enchantment glint on or off regardless of enchantments.                                |
+| `enchantments(..)`                   | Applies enchantments with their levels to the item.                                               |
+| `entityData(..)`                     | Stores entity NBT data for spawn eggs or items that spawn entities.                               |
+| `equippable(..)`                     | Configures equipment slot, sounds, and model when the item is worn.                               |
+| `fireworkExplosion(..)`              | Defines a single firework star explosion shape, colors, and effects.                              |
+| `fireworks(..)`                      | Configures firework rocket flight duration and explosion effects.                                 |
+| `food(..)`                           | Makes the item edible with nutrition, saturation, and optional effects.                           |
+| `glider()`                           | Enables elytra-like gliding when equipped in the chest slot.                                      |
+| `instrument(..)`                     | Specifies the goat horn sound variant when the item is used.                                      |
+| `intangibleProjectile()`             | Makes projectiles from this item pass through entities without collision.                         |
+| `itemModel(..)`                      | Overrides the item's model with a custom model resource location.                                 |
+| `itemName(..)`                       | Sets the item's base name (different from custom name; not italicized).                           |
+| `jukeboxPlayable(..)`                | Allows the item to be played in a jukebox with a specified music disc track.                      |
+| `lock(..)`                           | Requires a matching item predicate (key) to open this container.                                  |
+| `lodestoneTarget(..)`                | Makes a compass point to specific coordinates in a dimension.                                     |
+| `lore(..)`                           | Adds tooltip lines below the item name for descriptions or flavor text.                           |
+| `mapColor(..)`                       | Sets the color tint for filled map item textures.                                                 |
+| `mapDecorations(..)`                 | Adds custom icons/markers displayed on a filled map.                                              |
+| `mapId(..)`                          | Links the item to a specific map data ID for filled maps.                                         |
+| `maxDamage(..)`                      | Sets the maximum durability before the item breaks.                                               |
+| `maxStackSize(..)`                   | Overrides how many items can stack in a single inventory slot (1-99).                             |
+| `noteBlockSound(..)`                 | Specifies the sound a note block plays when this player head is above it.                         |
+| `ominousBottleAmplifier(..)`         | Sets the Bad Omen effect amplifier (0-4) when consuming an ominous bottle.                        |
+| `playerProfile(..)`                  | Sets the player skin displayed on a player head item.                                             |
+| `potDecorations(..)`                 | Defines the pottery sherds or bricks on each face of a decorated pot.                             |
+| `potionContents(..)`                 | Configures potion color, effects, and custom potion mixtures.                                     |
+| `potionDurationScale(..)`            | Multiplies the duration of potion effects from this item.                                         |
+| `providesBannerPatterns(..)`         | Registers this item as a banner pattern source for the loom.                                      |
+| `providesTrimMaterial(..)`           | Registers this item as an armor trim material for the smithing table.                             |
+| `rarity(..)`                         | Sets the item name color tier (common, uncommon, rare, epic).                                     |
+| `recipes(..)`                        | Unlocks specified recipes when this knowledge book is used.                                       |
+| `repairable(..)`                     | Defines which items can repair this item on an anvil.                                             |
+| `repairCost(..)`                     | Sets the anvil repair cost penalty for combining or renaming.                                     |
+| `storedEnchantments(..)`             | Stores enchantments in an enchanted book for anvil application.                                   |
+| `suspiciousStewEffectsComponent(..)` | Defines the status effects applied when consuming suspicious stew.                                |
+| `tool { .. }`                        | Configures mining speeds, suitable blocks, and durability cost for tools.                         |
+| `tooltipDisplay(..)`                 | Controls which tooltip sections are shown or hidden.                                              |
+| `tooltipStyle(..)`                   | Applies a custom tooltip background/border style from a resource pack.                            |
+| `trim(..)`                           | Applies an armor trim pattern and material to armor items.                                        |
+| `unbreakable()`                      | Prevents the item from taking durability damage.                                                  |
+| `useCooldown(..)`                    | Applies a cooldown period after using this item.                                                  |
+| `useRemainder(..)`                   | Specifies an item left behind after this item is fully consumed.                                  |
+| `weapon(..)`                         | Configures melee weapon properties like damage and attack speed.                                  |
+| `writableBookContent(..)`            | Stores editable pages in a book and quill.                                                        |
+| `writtenBookContent(..)`             | Stores signed book content including title, author, and pages.                                    |
 
 ## Works great with Inventory Manager
 

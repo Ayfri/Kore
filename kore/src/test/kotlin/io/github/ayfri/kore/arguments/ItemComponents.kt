@@ -242,6 +242,11 @@ fun itemComponentsTests() {
 	}
 	damageResistantTest.asString() assertsIs """minecraft:stone_sword[damage_resistant={types:"#minecraft:damages_helmet"}]"""
 
+	val damageTypeTest = stoneSword {
+		damageType(DamageTypes.PLAYER_ATTACK)
+	}
+	damageTypeTest.asString() assertsIs """minecraft:stone_sword[damage_type="minecraft:player_attack"]"""
+
 	val deathProtectionTest = stoneSword {
 		deathProtection {
 			effects(Effect(Effects.POISON, 100, 1, ambient = true, showParticles = true, showIcon = true))
