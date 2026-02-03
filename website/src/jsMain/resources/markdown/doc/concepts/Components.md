@@ -249,6 +249,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `itemModel(..)`                      | Overrides the item's model with a custom model resource location.                                 |
 | `itemName(..)`                       | Sets the item's base name (different from custom name; not italicized).                           |
 | `jukeboxPlayable(..)`                | Allows the item to be played in a jukebox with a specified music disc track.                      |
+| `kineticWeapon(..) { .. }`           | Configures kinetic weapon properties for mounted combat (reach, damage multiplier, conditions).   |
 | `lock(..)`                           | Requires a matching item predicate (key) to open this container.                                  |
 | `lodestoneTarget(..)`                | Makes a compass point to specific coordinates in a dimension.                                     |
 | `lore(..)`                           | Adds tooltip lines below the item name for descriptions or flavor text.                           |

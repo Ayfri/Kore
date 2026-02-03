@@ -358,6 +358,16 @@ fun itemComponentsTests() {
 	}
 	intangibleProjectileTest.asString() assertsIs """minecraft:crossbow[intangible_projectile={}]"""
 
+	val kineticWeaponTest = stoneSword {
+		kineticWeapon {
+			damageMultiplier = 2.0f
+			maxReach = 3.0f
+			minReach = 1.0f
+			dismountConditions(maxDurationTicks = 100, minSpeed = 0.5f)
+		}
+	}
+	kineticWeaponTest.asString() assertsIs """minecraft:stone_sword[kinetic_weapon={damage_multiplier:2.0f,dismount_conditions:{max_duration_ticks:100,min_speed:0.5f},max_reach:3.0f,min_reach:1.0f}]"""
+
 	val itemModelTest = stone {
 		itemModel(Models.Item.BAMBOO_SIGN)
 	}
