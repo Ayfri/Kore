@@ -35,6 +35,7 @@ You also have a `containsOnlyText()` function to check if a
 - `insertion` - The text to insert into the chat when the text is shift-clicked.
 - `italic` - Whether the text is italic.
 - `obfuscated` - Whether the text is obfuscated.
+- `shadowColor` - The color of the shadow behind the text.
 - `strikethrough` - Whether the text is strikethrough.
 - `text` - The text to display.
 - `underlined` - Whether the text is underlined.
