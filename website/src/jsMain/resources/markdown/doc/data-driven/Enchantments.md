@@ -301,6 +301,16 @@ effects {
 
 Entity effects are actions that can be triggered by effect components:
 
+### Apply Impulse
+
+```kotlin
+applyImpulse(
+	direction = Vec3f(0f, 1f, 0f),      // local coordinates applied to entity look vector
+	coordinateScale = Vec3f(1f, 1f, 1f), // world-space scaling per axis
+	magnitude = constantLevelBased(2)    // final scaling
+)
+```
+
 ### Apply Mob Effect
 
 ```kotlin

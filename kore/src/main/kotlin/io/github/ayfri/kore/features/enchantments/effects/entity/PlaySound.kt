@@ -13,10 +13,14 @@ data class PlaySound(
 	var pitch: FloatProvider = constantFloatProvider(0.000_01f),
 ) : EntityEffect()
 
-fun PlaySound.volume(value: Float) {
-	volume = constantFloatProvider(value)
+fun PlaySound.sound(vararg sounds: SoundEvent) {
+	sound = sounds.toList()
 }
 
 fun PlaySound.pitch(value: Float) {
 	pitch = constantFloatProvider(value)
+}
+
+fun PlaySound.volume(value: Float) {
+	volume = constantFloatProvider(value)
 }

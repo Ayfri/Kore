@@ -8,6 +8,7 @@ import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticlePositionType
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.ParticleType
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.particleType
+import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
@@ -17,6 +18,7 @@ import io.github.ayfri.kore.generated.arguments.MobEffectOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
+import io.github.ayfri.kore.helpers.displays.maths.Vec3f
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 
@@ -30,6 +32,16 @@ data class EntityEffectBuilder(var effects: List<ConditionalEffect> = emptyList(
 fun EntityEffectBuilder.allOf(block: EntityEffectAllOfTopBuilder.() -> Unit = {}) = apply {
 	val effect = EntityEffectAllOfTopBuilder().apply(block)
 	effects += ConditionalEffect(effect.effects, effect.requirements)
+}
+
+fun EntityEffectBuilder.applyImpulse(
+	coordinateScale: Vec3f,
+	direction: Vec3f,
+	magnitude: LevelBased,
+	block: ApplyImpulse.() -> Unit = {},
+) = apply {
+	val effect = ApplyImpulse(coordinateScale, direction, magnitude).apply(block)
+	effects += ConditionalEffect(effect, effect.requirements)
 }
 
 fun EntityEffectBuilder.applyMobEffect(block: ApplyMobEffect.() -> Unit = {}) =

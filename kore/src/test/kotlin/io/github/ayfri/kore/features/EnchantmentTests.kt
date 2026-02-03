@@ -15,6 +15,7 @@ import io.github.ayfri.kore.features.enchantments.values.*
 import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.generated.*
+import io.github.ayfri.kore.helpers.displays.maths.Vec3f
 
 private const val DUMMY_ENCHANTMENT_CONTENT = """"description": "",
 			"supported_items": [],
@@ -846,6 +847,44 @@ fun DataPack.enchantmentTests() {
 							"max_duration": 4,
 							"min_amplifier": 0,
 							"max_amplifier": 0
+						}
+					}
+				]
+			}
+		}
+	""".trimIndent()
+
+	enchantment("apply_impulse") {
+		effects {
+			hitBlock {
+				applyImpulse(
+					coordinateScale = Vec3f(1f, 1f, 1f),
+					direction = Vec3f(y = 1f),
+					magnitude = constantLevelBased(2)
+				)
+			}
+		}
+	}
+
+	enchantments.last() assertsIs """
+		{
+			$DUMMY_ENCHANTMENT_CONTENT
+			"effects": {
+				"minecraft:hit_block": [
+					{
+						"effect": {
+							"type": "minecraft:apply_impulse",
+							"coordinate_scale": [
+								1.0,
+								1.0,
+								1.0
+							],
+							"direction": [
+								0.0,
+								1.0,
+								0.0
+							],
+							"magnitude": 2
 						}
 					}
 				]

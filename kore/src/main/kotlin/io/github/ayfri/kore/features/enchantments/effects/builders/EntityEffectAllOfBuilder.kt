@@ -8,6 +8,7 @@ import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticlePositionType
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.ParticleType
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.particleType
+import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
@@ -19,6 +20,7 @@ import io.github.ayfri.kore.generated.arguments.MobEffectOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
+import io.github.ayfri.kore.helpers.displays.maths.Vec3f
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -39,6 +41,13 @@ class EntityEffectAllOfSubBuilder : EntityEffectAllOfBuilder()
 fun EntityEffectAllOfSubBuilder.allOf(block: EntityEffectAllOfSubBuilder.() -> Unit = {}) =
 	apply { effects.effects += EntityEffectAllOfSubBuilder().apply(block).effects }
 
+
+fun EntityEffectAllOfBuilder.applyImpulse(
+	coordinateScale: Vec3f,
+	direction: Vec3f,
+	magnitude: LevelBased,
+	block: ApplyImpulse.() -> Unit = {},
+) = apply { effects.effects += ApplyImpulse(coordinateScale, direction, magnitude).apply(block) }
 
 fun EntityEffectAllOfBuilder.applyMobEffect(block: ApplyMobEffect.() -> Unit = {}) =
 	apply { effects.effects += ApplyMobEffect().apply(block) }

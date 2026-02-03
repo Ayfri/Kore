@@ -1,10 +1,17 @@
 package io.github.ayfri.kore.helpers.displays.maths
 
 import io.github.ayfri.kore.arguments.maths.Vec3
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.FloatArraySerializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import org.joml.Vector3f
 import kotlin.math.absoluteValue
 import kotlin.math.sqrt
-import org.joml.Vector3f
-import kotlinx.serialization.Serializable
+
+typealias Vec3fAsArray = @Serializable(Vec3f.Companion.Vec3fAsArraySerializer::class) Vec3f
 
 @Serializable
 data class Vec3f(var x: Float = 0f, var y: Float = 0f, var z: Float = 0f) {
@@ -46,10 +53,10 @@ data class Vec3f(var x: Float = 0f, var y: Float = 0f, var z: Float = 0f) {
 	fun reciprocal() = Vec3f(1f / x, 1f / y, 1f / z)
 
 	companion object {
-		val ZERO = Vec3f(0f, 0f, 0f)
-		val X_AXIS = Vec3f(1f, 0f, 0f)
-		val Y_AXIS = Vec3f(0f, 1f, 0f)
-		val Z_AXIS = Vec3f(0f, 0f, 1f)
+		val ZERO = Vec3f()
+		val X_AXIS = Vec3f(1f)
+		val Y_AXIS = Vec3f(y = 1f)
+		val Z_AXIS = Vec3f(z = 1f)
 
 		val LEFT = X_AXIS
 		val RIGHT = -X_AXIS
@@ -57,5 +64,16 @@ data class Vec3f(var x: Float = 0f, var y: Float = 0f, var z: Float = 0f) {
 		val DOWN = -Y_AXIS
 		val FORWARD = Z_AXIS
 		val BACKWARD = -Z_AXIS
+
+		data object Vec3fAsArraySerializer : KSerializer<Vec3f> {
+			private val delegateSerializer = FloatArraySerializer()
+			override val descriptor: SerialDescriptor = delegateSerializer.descriptor
+
+			override fun deserialize(decoder: Decoder) = error("Vec3fAsArray is not meant to be deserialized")
+
+			override fun serialize(encoder: Encoder, value: Vec3f) {
+				encoder.encodeSerializableValue(delegateSerializer, floatArrayOf(value.x, value.y, value.z))
+			}
+		}
 	}
 }

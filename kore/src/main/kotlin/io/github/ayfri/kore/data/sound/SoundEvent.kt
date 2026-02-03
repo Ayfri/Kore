@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 @Serializable(with = SoundEvent.Companion.SoundEventSerializer::class)
 data class SoundEvent(
 	@SerialName("sound_id")
-	var soundId: SoundEventArgument = SoundEventArgument.invoke("", ""),
+	var soundId: SoundEventArgument = SoundEventArgument("", ""),
 	var range: Float? = null,
 ) {
 	companion object {
