@@ -263,7 +263,8 @@ object MarkdownLayoutStyle : StyleSheet() {
 			property("border-spacing", "0")
 			marginY(1.cssRem)
 			overflow(Overflow.Hidden)
-			width(100.percent)
+			width(Width.FitContent)
+			maxWidth(100.percent)
 			display(DisplayStyle.Block)
 			overflowX(Overflow.Auto)
 		}
