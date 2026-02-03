@@ -434,6 +434,11 @@ fun itemComponentsTests() {
 	}
 	maxStackSizeTest.asString() assertsIs """minecraft:stone[max_stack_size=5]"""
 
+	val minimumAttackChargeTest = stoneSword {
+		minimumAttackCharge(0.5f)
+	}
+	minimumAttackChargeTest.asString() assertsIs """minecraft:stone_sword[minimum_attack_charge=0.5f]"""
+
 	val noteBlockSoundTest = Items.PLAYER_HEAD {
 		noteBlockSound(Sounds.Mob.Cow.SAY1)
 	}
@@ -552,6 +557,11 @@ fun itemComponentsTests() {
 	}
 	suspiciousStewTest.asString() assertsIs """minecraft:suspicious_stew[suspicious_stew_effects=[{id:"minecraft:poison",duration:100}]]"""
 
+	val swingAnimationTest = stoneSword {
+		swingAnimation(SwingAnimationType.STAB, duration = 10)
+	}
+	swingAnimationTest.asString() assertsIs """minecraft:stone_sword[swing_animation={duration:10,type:"stab"}]"""
+
 	val toolTest = stoneSword {
 		tool {
 			rule(
@@ -596,6 +606,11 @@ fun itemComponentsTests() {
 		)
 	}
 	useCooldownTest.asString() assertsIs """minecraft:ender_pearl[use_cooldown={seconds:2.0f,cooldown_group:"minecraft:ender_pearl"}]"""
+
+	val useEffectsTest = stoneSword {
+		useEffects(canSprint = true, speedMultiplier = 0.5f)
+	}
+	useEffectsTest.asString() assertsIs """minecraft:stone_sword[use_effects={can_sprint:1b,speed_multiplier:0.5f}]"""
 
 	val useRemainderTest = Items.POTION {
 		useRemainder(itemStack(Items.GLASS_BOTTLE))

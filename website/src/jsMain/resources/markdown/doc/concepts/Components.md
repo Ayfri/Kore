@@ -258,6 +258,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `mapId(..)`                          | Links the item to a specific map data ID for filled maps.                                         |
 | `maxDamage(..)`                      | Sets the maximum durability before the item breaks.                                               |
 | `maxStackSize(..)`                   | Overrides how many items can stack in a single inventory slot (1-99).                             |
+| `minimumAttackCharge(..)`            | Sets the minimum attack charge (0.0-1.0) required for full damage.                                |
 | `noteBlockSound(..)`                 | Specifies the sound a note block plays when this player head is above it.                         |
 | `ominousBottleAmplifier(..)`         | Sets the Bad Omen effect amplifier (0-4) when consuming an ominous bottle.                        |
 | `playerProfile(..)`                  | Sets the player skin displayed on a player head item.                                             |
@@ -272,12 +273,14 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `repairCost(..)`                     | Sets the anvil repair cost penalty for combining or renaming.                                     |
 | `storedEnchantments(..)`             | Stores enchantments in an enchanted book for anvil application.                                   |
 | `suspiciousStewEffectsComponent(..)` | Defines the status effects applied when consuming suspicious stew.                                |
+| `swingAnimation(..)`                 | Configures the swing animation type (none, stab, whack) and duration.                             |
 | `tool { .. }`                        | Configures mining speeds, suitable blocks, and durability cost for tools.                         |
 | `tooltipDisplay(..)`                 | Controls which tooltip sections are shown or hidden.                                              |
 | `tooltipStyle(..)`                   | Applies a custom tooltip background/border style from a resource pack.                            |
 | `trim(..)`                           | Applies an armor trim pattern and material to armor items.                                        |
 | `unbreakable()`                      | Prevents the item from taking durability damage.                                                  |
 | `useCooldown(..)`                    | Applies a cooldown period after using this item.                                                  |
+| `useEffects(..)`                     | Configures use effects like allowing sprinting and speed multiplier while using.                  |
 | `useRemainder(..)`                   | Specifies an item left behind after this item is fully consumed.                                  |
 | `weapon(..)`                         | Configures melee weapon properties like damage and attack speed.                                  |
 | `writableBookContent(..)`            | Stores editable pages in a book and quill.                                                        |
