@@ -31,7 +31,8 @@ kobweb {
 				?.substringAfter('=')
 				?.trim()
 				.orEmpty(),
-			"projectVersion" to Project.VERSION
+				"projectVersion" to Project.VERSION,
+				"websiteUrl" to Project.WEBSITE_URL
 		))
 
 		index {
@@ -246,7 +247,7 @@ kobweb {
 			})
 
 			// Generate llms.txt (documentation index for LLMs) grouped by sections
-			val baseUrl = Project.WEBSITE_URL
+			val baseUrl = Project.WEBSITE_URL // Also available as AppGlobals["websiteUrl"]
 			val llmsContent = buildString {
 				appendLine("# $projectName Documentation")
 				appendLine("> Documentation index generated for LLMs.")
