@@ -26,15 +26,15 @@ fun PageNotFound() {
 	val context = rememberPageContext()
 	val currentPath = context.route.path
 
-	// Redirect to docs home if the path starts with /docs/
+	// Redirect to docs home if the path is /docs or /docs/ or starts with /docs/
 	LaunchedEffect(currentPath) {
-		if (currentPath.startsWith("/docs/")) {
+		if (currentPath == "/docs" || currentPath == "/docs/" || currentPath.startsWith("/docs/")) {
 			context.router.navigateTo("/docs/home")
 		}
 	}
 
 	// If redirecting to docs, don't show the 404 page
-	if (currentPath.startsWith("/docs/")) return
+	if (currentPath == "/docs" || currentPath == "/docs/" || currentPath.startsWith("/docs/")) return
 
 	PageLayout("404 - Page Not Found") {
 		Style(PageNotFoundStyle)
