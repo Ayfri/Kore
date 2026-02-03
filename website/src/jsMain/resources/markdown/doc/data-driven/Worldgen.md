@@ -57,17 +57,17 @@ val caves = dp.configuredCarver("my_caves", config = /* ConfiguredCarver.Config 
 
 Minecraft runs 11 decoration steps in order for each chunk; structures of a step place before features in that step.
 
-1. `raw_generation` — small end islands
-2. `lakes` — lava lakes
-3. `local_modifications` — geodes, icebergs
-4. `underground_structures` — trial chambers, mineshafts, etc.
-5. `surface_structures` — other structures, desert wells, blue ice patches
-6. `strongholds` — unused (strongholds use surface_structures)
-7. `underground_ores` — ore blobs, sand/gravel/clay disks
-8. `underground_decoration` — infested blobs, nether gravel/blackstone, nether ores
-9. `fluid_springs` — water/lava springs
-10. `vegetal_decoration` — trees, cacti, kelp, vegetation
-11. `top_layer_modification` — freeze top layer
+1. `raw_generation` - small end islands
+2. `lakes` - lava lakes
+3. `local_modifications` - geodes, icebergs
+4. `underground_structures` - trial chambers, mineshafts, etc.
+5. `surface_structures` - other structures, desert wells, blue ice patches
+6. `strongholds` - unused (strongholds use surface_structures)
+7. `underground_ores` - ore blobs, sand/gravel/clay disks
+8. `underground_decoration` - infested blobs, nether gravel/blackstone, nether ores
+9. `fluid_springs` - water/lava springs
+10. `vegetal_decoration` - trees, cacti, kelp, vegetation
+11. `top_layer_modification` - freeze top layer
 
 Reference: [Decoration steps](https://minecraft.wiki/w/World_Generation#Decoration_steps)
 
@@ -180,10 +180,11 @@ Kore APIs generate JSON under standard datapack directories (replace `<ns>` with
 
 ## Structures (processors, pools, configured, global placement)
 
-- Processor list: per‑piece processing (rules, integrity, gravity, etc.) — [Processor list](https://minecraft.wiki/w/Processor_list)
-- Template pool: weighted jigsaw pieces and fallback — [Template pool](https://minecraft.wiki/w/Template_pool)
-- Configured structure: structure type config (biomes, step, adaptations) — [Structure definition](https://minecraft.wiki/w/Structure_definition)
-- Structure set: world‑scale placement and spacing — [Structure set](https://minecraft.wiki/w/Structure_set)
+- Processor list: per‑piece processing (rules, integrity, gravity, etc.) - [Processor list](https://minecraft.wiki/w/Processor_list)
+- Template pool: weighted jigsaw pieces and fallback - [Template pool](https://minecraft.wiki/w/Template_pool)
+- Configured structure: structure type config (biomes, step,
+  adaptations) - [Structure definition](https://minecraft.wiki/w/Structure_definition)
+- Structure set: world‑scale placement and spacing - [Structure set](https://minecraft.wiki/w/Structure_set)
 
 ```kotlin
 val pool = dp.templatePool("my_pool") {
@@ -436,7 +437,7 @@ fun DataPack.createAetherDimension() {
 	}
 	val cave = configuredCarver("aether_cave", caveCfg) {}
 
-	// 10) Biome: Aether Highlands — rolling terrain with moderate trees and flowers
+	// 10) Biome: Aether Highlands - rolling terrain with moderate trees and flowers
 	val highlands = biome("aether_highlands") {
 		downfall = 0.3f
 		hasPrecipitation = true
@@ -470,7 +471,7 @@ fun DataPack.createAetherDimension() {
 		}
 	}
 
-	// 11) Biome: Aether Forest — denser canopy and richer mob spawns
+	// 11) Biome: Aether Forest - denser canopy and richer mob spawns
 	val forest = biome("aether_forest") {
 		downfall = 0.5f
 		hasPrecipitation = true
@@ -500,7 +501,7 @@ fun DataPack.createAetherDimension() {
 		}
 	}
 
-	// 12) Biome: Aether Shores — lower elevation edges with sparse trees and flowers
+	// 12) Biome: Aether Shores - lower elevation edges with sparse trees and flowers
 	val shores = biome("aether_shores") {
 		downfall = 0.2f
 		hasPrecipitation = false

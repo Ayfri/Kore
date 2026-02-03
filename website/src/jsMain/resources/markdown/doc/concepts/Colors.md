@@ -296,4 +296,4 @@ val cat = Items.CAT_SPAWN_EGG {
 
 ## Further reading
 
-- Minecraft Wiki — Color: [`https://minecraft.wiki/w/Color`](https://minecraft.wiki/w/Color)
+- Minecraft Wiki - Color: [`https://minecraft.wiki/w/Color`](https://minecraft.wiki/w/Color)
