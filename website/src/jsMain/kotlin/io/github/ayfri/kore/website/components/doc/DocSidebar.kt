@@ -52,7 +52,6 @@ object DocSidebarStyle : StyleSheet() {
         borderRadius(GlobalStyle.roundingButton)
         display(DisplayStyle.Flex)
         flexDirection(FlexDirection.Column)
-        gap(0.75.cssRem)
         padding(0.9.cssRem)
         position(Position.Sticky)
         top(5.cssRem)

@@ -184,7 +184,7 @@ fun DocTree() {
 		return if (index >= 0) index else groupOrder.size
 	}
 
-	val nodes = buildList<DocNode> {
+	val nodes = buildList {
 		val sortedEntries = entries.sortedWith(Comparator { a, b ->
 			val slugsA = a.slugs.drop(1)
 			val slugsB = b.slugs.drop(1)
@@ -273,6 +273,7 @@ fun DocTree() {
 
 	Div({
 		id("doc-tree")
+		classes(DocTreeStyle.container)
 	}) {
 		P({
 			classes(DocTreeStyle.title)
@@ -283,10 +284,8 @@ fun DocTree() {
 		Ul({
 			classes(DocTreeStyle.list)
 		}) {
-			var seenFirstTopLevelGroup = false
 			nodes.forEach { node ->
 				if (isNodeVisible(node)) {
-					if (node is DocNode.GroupNode && node.level == 1) seenFirstTopLevelGroup = true
 					node.Render(currentURL, collapsedGroups, { path ->
 						collapsedGroups = if (path in collapsedGroups) {
 							collapsedGroups - path
@@ -301,10 +300,21 @@ fun DocTree() {
 }
 
 object DocTreeStyle : StyleSheet() {
+	val container by style {
+		smMax(self) {
+			flex(1)
+			minHeight(0.px)
+			display(DisplayStyle.Flex)
+			flexDirection(FlexDirection.Column)
+			overflow(Overflow.Hidden)
+		}
+	}
+
 	val title by style {
 		fontSize(1.5.cssRem)
 		fontWeight(FontWeight.Bold)
-		marginY(0.5.cssRem)
+		marginY(0.75.cssRem)
+		flexShrink(0)
 	}
 
 	@OptIn(ExperimentalComposeWebApi::class)
@@ -318,7 +328,8 @@ object DocTreeStyle : StyleSheet() {
 		position(Position.Sticky)
 
 		smMax(self) {
-			maxHeight(75.vh)
+			marginBottom(0.px)
+			maxHeight(MaxHeight.Unset)
 		}
 	}
 

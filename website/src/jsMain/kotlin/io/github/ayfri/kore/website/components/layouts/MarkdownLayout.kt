@@ -160,6 +160,11 @@ object MarkdownLayoutStyle : StyleSheet() {
 			borderRadius(GlobalStyle.roundingButton)
 		}
 
+		"pre" style {
+			maxWidth(100.percent)
+			overflowX(Overflow.Auto)
+		}
+
 		smMax {
 			"h1" {
 				fontSize(2.5.cssRem)
@@ -234,8 +239,9 @@ object MarkdownLayoutStyle : StyleSheet() {
 	val content by style {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
-		marginX(3.vw)
+		paddingX(3.vw)
 		marginBottom(2.cssRem)
+		maxWidth(100.vw)
 		minHeight(100.percent)
 		overflowX(Overflow.Visible)
 		width(100.percent)
@@ -258,6 +264,8 @@ object MarkdownLayoutStyle : StyleSheet() {
 			marginY(1.cssRem)
 			overflow(Overflow.Hidden)
 			width(100.percent)
+			display(DisplayStyle.Block)
+			overflowX(Overflow.Auto)
 		}
 
 		"thead" style {
@@ -298,6 +306,7 @@ object MarkdownLayoutStyle : StyleSheet() {
 	val mainContent by style {
 		flex(1)
 		minWidth(0.px)
+		maxWidth(100.percent)
 
 		"img" style {
 			borderRadius(GlobalStyle.roundingButton)
