@@ -2,8 +2,8 @@
 root: .components.layouts.MarkdownLayout
 title: Recipes
 nav-title: Recipes
-description: A guide for using recipes in Minecraft with Kore.
-keywords: minecraft, datapack, kore, guide, recipes
+description: Create custom Minecraft recipes using Kore's type-safe Kotlin DSL for crafting, smelting, smithing, and more.
+keywords: minecraft, datapack, kore, recipes, crafting, smelting, smithing, stonecutting
 date-created: 2024-01-08
 date-modified: 2026-02-03
 routeOverride: /docs/data-driven/recipes
@@ -11,348 +11,682 @@ routeOverride: /docs/data-driven/recipes
 
 # Recipes
 
-To create recipes with **Kore
-**, you can utilize the framework's built-in functions to define various types of recipes for your Minecraft data packs. Here's a comprehensive guide on how to create different recipes using Kore:
+Recipes define how items are transformed through crafting tables, furnaces, smithing tables, stonecutters, and other workstations. Kore provides a type-safe DSL to create all vanilla recipe types programmatically.
 
-## Set Up Your Data Pack Function
+## Overview
 
-Begin by creating a function within your `DataPack` where you'll define your recipes:
+Recipes have several key characteristics:
+
+- **Type-specific**: Each workstation has its own recipe format
+- **Discoverable**: Recipes can be unlocked via advancements
+- **Customizable results**: Output items can have custom components
+- **Tag-based ingredients**: Use item tags for flexible ingredient matching
+
+### Recipe Types
+
+| Type                 | Workstation    | Description                  |
+|----------------------|----------------|------------------------------|
+| `crafting_shaped`    | Crafting Table | Pattern-based crafting       |
+| `crafting_shapeless` | Crafting Table | Order-independent crafting   |
+| `crafting_transmute` | Crafting Table | Transform item with material |
+| `crafting_special_*` | Crafting Table | Built-in special recipes     |
+| `smelting`           | Furnace        | Standard smelting            |
+| `blasting`           | Blast Furnace  | Faster ore smelting          |
+| `smoking`            | Smoker         | Faster food cooking          |
+| `campfire_cooking`   | Campfire       | Slow food cooking            |
+| `smithing_transform` | Smithing Table | Upgrade items                |
+| `smithing_trim`      | Smithing Table | Apply armor trims            |
+| `stonecutting`       | Stonecutter    | Cut blocks                   |
+
+## File Structure
+
+Recipes are stored as JSON files in data packs at:
+
+```
+data/<namespace>/recipe/<name>.json
+```
+
+For complete JSON specification, see the [Minecraft Wiki - Recipe](https://minecraft.wiki/w/Recipe).
+
+## Creating Recipes
+
+Use the `recipes` block inside a data pack to define recipes:
 
 ```kotlin
-fun DataPack.createRecipes() {
-    // Your recipe definitions will go here
+dataPack("my_datapack") {
+	recipes {
+		craftingShaped("diamond_sword_upgrade") {
+			pattern(
+				" E ",
+				" D ",
+				" S "
+			)
+			keys {
+				"E" to Items.EMERALD
+				"D" to Items.DIAMOND_SWORD
+				"S" to Items.STICK
+			}
+			result(Items.DIAMOND_SWORD) {
+				enchantments {
+					enchantment(Enchantments.SHARPNESS, 5)
+				}
+			}
+		}
+	}
 }
 ```
 
-## Initialize the Recipes Block
+This generates `data/my_datapack/recipe/diamond_sword_upgrade.json`.
 
-Use the `recipes` block to start defining your recipes:
+## Crafting Recipes
+
+### Shaped Crafting
+
+Pattern-based recipes where ingredient positions matter:
 
 ```kotlin
 recipes {
-    // Define individual recipes here
+	craftingShaped("my_pickaxe") {
+		// Define the pattern (up to 3x3)
+		pattern(
+			"DDD",
+			" S ",
+			" S "
+		)
+
+		// Map characters to items
+		key("D", Items.DIAMOND)
+		key("S", Items.STICK)
+
+		// Or use keys block
+		keys {
+			"D" to Items.DIAMOND
+			"S" to Items.STICK
+		}
+
+		// Set the result
+		result(Items.DIAMOND_PICKAXE)
+
+		// Optional: set category for recipe book
+		category = CraftingCategory.EQUIPMENT
+	}
 }
 ```
 
-## Creating a Blasting Recipe
+#### Pattern Rules
 
-To create a blasting recipe, use the `blasting` function:
-
-```kotlin
-blasting("unique_recipe_name") {
-    ingredient(Items.IRON_ORE)
-    // or
-    ingredient(tag = Tags.Item.ORES)
-
-    result(Items.IRON_INGOT) {
-        // Optionally modify the result item (e.g., set damage)
-        damage(0)
-    }
-    experience = 0.7  // Set the experience rewarded
-    cookingTime = 100 // Set the cooking time in ticks
-}
-```
-
-Note that `campfire`, `smelting`, and `smoking` recipes can be defined similarly using the respective functions.
-
-## Crafting Shaped Recipes
-
-For crafting recipes with a specific shape:
+- Patterns can be 1x1 to 3x3
+- Use space ` ` for empty slots
+- Each character must be mapped in `key()` or `keys {}`
+- Patterns are automatically trimmed (no need for padding)
 
 ```kotlin
-craftingShaped("unique_recipe_name") {
+// 2x2 recipe
+craftingShaped("torch") {
     pattern(
-        " A ", // It's a common pattern to format recipe patterns like this, to make them more readable
-        " B ",
-        " C "
-    )
-    key("A", Items.DIAMOND)
-    key("B", Items.STICK)
-    key("C", Items.GOLD_INGOT)
-    result(Items.DIAMOND_SWORD)
-}
-```
-
-You can also use a `keys` block for multiple keys:
-
-```kotlin
-craftingShaped("unique_recipe_name_2") {
-    pattern(
-        " A ",
-        " B ",
-        " C "
+	    "C",
+	    "S"
     )
     keys {
-        "A" to Items.DIAMOND
-        "B" to Items.STICK
-        "C" to Items.GOLD_INGOT
+	    "C" to Items.COAL
+	    "S" to Items.STICK
     }
-    result(Items.DIAMOND_SWORD)
+	result(Items.TORCH)
+	count = 4
+}
+
+// Using tags as ingredients
+craftingShaped("planks") {
+	pattern("L")
+	key("L", Tags.Item.LOGS)
+	result(Items.OAK_PLANKS)
+	count = 4
 }
 ```
 
-## Crafting Shapeless Recipes
+### Shapeless Crafting
 
-For recipes where the arrangement doesn't matter:
+Order-independent recipes:
 
 ```kotlin
-craftingShapeless("unique_recipe_name") {
-    ingredient(Items.WHEAT)
-    ingredient(Items.WHEAT)
-    ingredient(Items.WHEAT)
-    ingredient(Items.SUGAR)
-    ingredient(Items.EGG)
-    ingredient(Items.EGG)
+recipes {
+	craftingShapeless("mushroom_stew") {
+		ingredient(Items.BOWL)
+		ingredient(Items.BROWN_MUSHROOM)
+		ingredient(Items.RED_MUSHROOM)
 
-    result(Items.CAKE)
+		result(Items.MUSHROOM_STEW)
+	}
 }
 ```
 
-## Special Crafting Recipes
-
-In addition to standard crafting recipes, crafting special recipes leverage built-in game logic to handle complex crafting operations that regular data-driven recipes cannot manage. These special recipes are essential for functionalities that require handling NBT (Named Binary Tag) data, multiple inputs, or specific item interactions. They are particularly useful when the "vanilla" data pack is disabled, allowing you to re-enable and customize desired built-in crafting behaviors.
-
-### Available Special Recipe Types
-
-Here is a list of available special recipe types and their functionalities:
-
-- `armordye`: Dyeing armor with multiple dyes.
-- `bannerduplicate`: Copying NBT data from one banner to another.
-- `bookcloning`: Cloning written books, including their NBT data.
-- `firework_rocket`: Crafting firework rockets with flexible inputs and NBT data from firework stars.
-- `firework_star`: Crafting firework stars and adding fade colors.
-- `firework_star_fade`: Adding fade colors to firework stars.
-- `mapcloning`: Copying maps along with their NBT data.
-- `mapextending`: Zooming maps by updating their NBT data.
-- `repairitem`: Repairing items by updating their damage data.
-- `shielddecoration`: Applying shield patterns using banner NBT data.
-- `shulkerboxcoloring`: Dyeing shulker boxes while preserving their NBT data.
-- `tippedarrow`: Crafting tipped arrows with NBT data from lingering potions.
-- `suspiciousstew`: Creating suspicious stew with specific status effects based on flower types.
-
-### Defining a Special Recipe
-
-To define a special crafting recipe, use the craftingSpecial function with the specific type and relevant parameters. Below are examples of how to define some of the special recipes:
+#### Multiple of Same Ingredient
 
 ```kotlin
-craftingSpecial("custom_armor_dye", CraftingSpecialArmorDye) {}
+craftingShapeless("book") {
+	ingredient(Items.PAPER)
+	ingredient(Items.PAPER)
+	ingredient(Items.PAPER)
+	ingredient(Items.LEATHER)
+
+	result(Items.BOOK)
+}
 ```
 
-## Crafting Transmute Recipes
-
-Transmutation recipes are used to change an item into another, by combining an input item with a material. They are useful for adding components to items, or for changing items into other items.
+#### Using Tags
 
 ```kotlin
-craftingTransmute("unique_recipe_name") {
-    input(Items.DIAMOND)
-    material(Items.AMETHYST_SHARD)
-    result(Items.DIAMOND_SWORD) {
-		enchantments {
-			enchantment(Enchantments.SHARPNESS, 5)
+craftingShapeless("dye_mix") {
+	ingredient(Tags.Item.DYES)
+	ingredient(Tags.Item.DYES)
+
+	result(Items.MAGENTA_DYE)
+	count = 2
+}
+```
+
+### Transmute Crafting
+
+Transform an item while preserving its components:
+
+```kotlin
+recipes {
+	craftingTransmute("dye_shulker") {
+		input(Tags.Item.SHULKER_BOXES)
+		material(Items.BLUE_DYE)
+		result(Items.BLUE_SHULKER_BOX)
+    }
+}
+```
+
+The result item copies all components from the input item.
+
+### Special Crafting
+
+Special recipes use built-in game logic for complex crafting that can't be data-driven:
+
+```kotlin
+recipes {
+	craftingSpecial("armor_dye", CraftingSpecialArmorDye)
+	craftingSpecial("banner_copy", CraftingSpecialBannerDuplicate)
+	craftingSpecial("book_clone", CraftingSpecialBookCloning)
+	craftingSpecial("firework_rocket", CraftingSpecialFireworkRocket)
+	craftingSpecial("firework_star", CraftingSpecialFireworkStar)
+	craftingSpecial("map_clone", CraftingSpecialMapCloning)
+	craftingSpecial("map_extend", CraftingSpecialMapExtending)
+	craftingSpecial("repair", CraftingSpecialRepairItem)
+	craftingSpecial("shield_decor", CraftingSpecialShieldDecoration)
+	craftingSpecial("shulker_color", CraftingSpecialShulkerboxColoring)
+	craftingSpecial("tipped_arrow", CraftingSpecialTippedArrow)
+	craftingSpecial("suspicious_stew", CraftingSpecialSuspiciousStew)
+}
+```
+
+These are useful when the vanilla datapack is disabled and you need to re-enable specific special recipes.
+
+## Cooking Recipes
+
+All cooking recipes share a similar structure:
+
+| Property      | Description                       |
+|---------------|-----------------------------------|
+| `ingredient`  | Input item or tag                 |
+| `result`      | Output item                       |
+| `experience`  | XP awarded when collecting output |
+| `cookingTime` | Time in ticks                     |
+
+### Smelting (Furnace)
+
+```kotlin
+recipes {
+	smelting("iron_ingot") {
+		ingredient(Items.RAW_IRON)
+		result(Items.IRON_INGOT)
+		experience = 0.7
+		cookingTime = 200  // 10 seconds (default)
+	}
+
+	// Using tags
+	smelting("glass") {
+		ingredient(Tags.Item.SMELTS_TO_GLASS)
+		result(Items.GLASS)
+		experience = 0.1
+	}
+}
+```
+
+### Blasting (Blast Furnace)
+
+Twice as fast as smelting (100 ticks default):
+
+```kotlin
+recipes {
+	blasting("iron_ingot_fast") {
+		ingredient(Items.RAW_IRON)
+		result(Items.IRON_INGOT)
+		experience = 0.7
+		cookingTime = 100  // 5 seconds (default)
+	}
+}
+```
+
+### Smoking (Smoker)
+
+For food items, twice as fast as furnace:
+
+```kotlin
+recipes {
+	smoking("cooked_beef") {
+		ingredient(Items.BEEF)
+		result(Items.COOKED_BEEF)
+		experience = 0.35
+		cookingTime = 100
+	}
+}
+```
+
+### Campfire Cooking
+
+Slow cooking without fuel:
+
+```kotlin
+recipes {
+	campfireCooking("baked_potato") {
+		ingredient(Items.POTATO)
+		result(Items.BAKED_POTATO)
+		experience = 0.35
+		cookingTime = 600  // 30 seconds (default)
+	}
+}
+```
+
+## Smithing Recipes
+
+### Smithing Transform
+
+Upgrade items at the smithing table:
+
+```kotlin
+recipes {
+	smithingTransform("netherite_sword") {
+		template(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
+		base(Items.DIAMOND_SWORD)
+		addition(Items.NETHERITE_INGOT)
+		result(Items.NETHERITE_SWORD)
+	}
+}
+```
+
+The result item copies components from the base item.
+
+#### Multiple Addition Options
+
+```kotlin
+smithingTransform("custom_upgrade") {
+    template(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
+    base(Items.DIAMOND_SWORD)
+	addition(Items.NETHERITE_INGOT, Items.NETHERITE_SCRAP)  // Either works
+    result(Items.NETHERITE_SWORD)
+}
+```
+
+### Smithing Trim
+
+Apply armor trims:
+
+```kotlin
+recipes {
+	smithingTrim("sentry_trim") {
+		template(Items.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE)
+		base(Tags.Item.TRIMMABLE_ARMOR)
+		addition(Tags.Item.TRIM_MATERIALS)
+		pattern = TrimPatterns.SENTRY
+	}
+}
+```
+
+## Stonecutting
+
+Single-item recipes for the stonecutter:
+
+```kotlin
+recipes {
+	stoneCutting("stone_slab") {
+		ingredient(Items.STONE)
+		result(Items.STONE_SLAB)
+		count = 2
+	}
+
+	stoneCutting("stone_stairs") {
+		ingredient(Items.STONE)
+		result(Items.STONE_STAIRS)
+	}
+
+	// Multiple outputs from same ingredient (separate recipes)
+	stoneCutting("stone_bricks") {
+		ingredient(Items.STONE)
+		result(Items.STONE_BRICKS)
+	}
+}
+```
+
+## Result Items with Components
+
+Add custom components to recipe results:
+
+```kotlin
+recipes {
+	craftingShaped("enchanted_book") {
+		pattern(
+			"E E",
+			" B ",
+			"E E"
+		)
+		keys {
+			"E" to Items.EMERALD
+			"B" to Items.BOOK
 		}
-    }
+
+		result(Items.ENCHANTED_BOOK) {
+			enchantments {
+				enchantment(Enchantments.SHARPNESS, 5)
+			}
+		}
+	}
+
+	craftingShaped("damaged_sword") {
+		pattern(
+			" D",
+			" D",
+			" S"
+		)
+		keys {
+			"D" to Items.DAMAGED_DIAMOND
+			"S" to Items.STICK
+		}
+
+		result(Items.DIAMOND_SWORD) {
+			damage(100)  // Partially damaged
+		}
+	}
+
+	craftingShapeless("named_diamond") {
+		ingredient(Items.DIAMOND)
+		ingredient(Items.PAPER)
+
+		result(Items.DIAMOND) {
+			customName(textComponent("Certified Diamond", Color.AQUA))
+			lore(textComponent("100% Genuine", Color.GRAY))
+		}
+	}
 }
 ```
 
-## Smithing Transform Recipes
+## Recipe Categories
 
-To create a smithing transformation recipe:
+Organize recipes in the recipe book:
 
 ```kotlin
-smithingTransform("unique_recipe_name") {
-    template(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
-    base(Items.DIAMOND_SWORD)
-    addition(Items.NETHERITE_INGOT)
-    result(Items.NETHERITE_SWORD)
+craftingShaped("tool") {
+	// ... pattern and keys
+	result(Items.DIAMOND_PICKAXE)
+	category = CraftingCategory.EQUIPMENT
+}
+
+smelting("food") {
+	// ... ingredient and result
+	category = SmeltingCategory.FOOD
 }
 ```
 
-You can also specify multiple items for the addition:
+### Crafting Categories
+
+- `BUILDING` - Building blocks
+- `REDSTONE` - Redstone components
+- `EQUIPMENT` - Tools, weapons, armor
+- `MISC` - Everything else
+
+### Cooking Categories
+
+- `FOOD` - Food items
+- `BLOCKS` - Block transformations (sand → glass)
+- `MISC` - Everything else
+
+## Recipe Groups
+
+Group similar recipes in the recipe book:
 
 ```kotlin
-smithingTransform("unique_recipe_name_2") {
-    template(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
-    base(Items.DIAMOND_SWORD)
-    addition(Items.NETHERITE_INGOT, Items.NETHERRACK)
-    result(Items.NETHERITE_SWORD)
+recipes {
+	craftingShaped("oak_planks") {
+		pattern("L")
+		key("L", Items.OAK_LOG)
+		result(Items.OAK_PLANKS)
+		count = 4
+		group = "planks"
+	}
+
+	craftingShaped("birch_planks") {
+		pattern("L")
+		key("L", Items.BIRCH_LOG)
+		result(Items.BIRCH_PLANKS)
+		count = 4
+		group = "planks"
+	}
 }
 ```
 
-## Smithing Trim Recipes
+Recipes with the same group appear together in the recipe book.
 
-For smithing trim recipes:
+## Using Recipes in Commands
+
+### Reference Recipes
+
+Store a recipe reference for use in commands:
 
 ```kotlin
-smithingTrim("unique_recipe_name") {
-    template(Items.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE)
-    base(Items.IRON_CHESTPLATE)
-    addition(Items.GOLD_INGOT)
-    pattern = TrimPatterns.SENTRY
+val myRecipe = recipesBuilder.craftingShaped("special_item") {
+	pattern(
+		" G ",
+		"GBG",
+		" G "
+	)
+	keys {
+		"G" to Items.GOLD_BLOCK
+		"B" to Items.DIAMOND_BLOCK
+	}
+	result(Items.BEACON)
+}
+
+load {
+	// Give recipe to all players
+	recipeGive(allPlayers(), myRecipe)
 }
 ```
 
-## Stonecutting Recipes
-
-To define a stonecutting recipe:
-
-```kotlin
-stoneCutting("unique_recipe_name") {
-    ingredient(Items.STONE)
-
-    result(Items.STONE_SLAB)
-    count = 2
-}
-```
-
-## Defining Ingredients
-
-Ingredients can be items or tags, and you can define them as follows:
-
-```kotlin
-ingredient(Items.COBBLESTONE)
-// or
-ingredient(tag = Tags.Item.COBBLESTONE)
-```
-
-## Setting the Result
-
-When specifying the result of a recipe:
-
-```kotlin
-result(Items.ENCHANTED_BOOK) {
-    enchantments {
-        enchantment(Enchantments.SHARPNESS, 5)
-    }
-}
-```
-
-## Using Keys in Shaped Recipes
-
-Map characters in your pattern to specific items:
-
-```kotlin
-key("S", Items.STICK)
-key("D", Items.DIAMOND)
-```
-
-Or using the `keys` block:
-
-```kotlin
-keys {
-    "S" to Items.STICK
-    "D" to Items.DIAMOND
-}
-```
-
-## Adding Experience and Cooking Time
-
-For recipes that require cooking:
-
-```kotlin
-experience = 0.35  // The amount of experience the recipe yields
-cookingTime = 200  // The time in ticks it takes to cook
-```
-
-## Loading and Giving Recipes
-
-To load the recipes and make them available:
+### Give/Take Recipes
 
 ```kotlin
 load {
-    recipeGive(allPlayers(), yourRecipeArgument)
+	// Give specific recipe
+	recipeGive(self(), myRecipe)
+
+	// Take recipe
+	recipeTake(self(), myRecipe)
+
+	// Give all recipes
+	recipeGive(allPlayers(), "*")
 }
 ```
 
-## Utilizing Built-in Recipe Types
+## Overriding Vanilla Recipes
 
-Kore provides a variety of built-in recipe types through `RecipeTypes`:
-
-- `RecipeTypes.BLASTING`
-- `RecipeTypes.CAMPFIRE_COOKING`
-- `RecipeTypes.CRAFTING_SHAPED`
-- `RecipeTypes.CRAFTING_SHAPELESS`
-- `RecipeTypes.CRAFTING_SPECIAL`
-- `RecipeTypes.CRAFTING_TRANSMUTE`
-- `RecipeTypes.SMELTING`
-- `RecipeTypes.SMITHING_TRANSFORM`
-- `RecipeTypes.SMITHING_TRIM`
-- `RecipeTypes.SMOKING`
-- `RecipeTypes.STONECUTTING`
-
-## Custom Components
-
-You can customize items using components, but for now Minecraft only allows components on results:
+Override vanilla recipes by using the minecraft namespace:
 
 ```kotlin
-Items.DIAMOND_SWORD {
-    damage(10)
-    enchantments {
-        enchantment(Enchantments.UNBREAKING, 3)
+dataPack("better_recipes") {
+	recipes {
+		// Override vanilla diamond sword recipe
+		craftingShaped("diamond_sword") {
+			namespace = "minecraft"
+
+			pattern(
+				" D ",
+				" D ",
+				" S "
+			)
+			keys {
+				"D" to Items.DIAMOND
+				"S" to Items.STICK
+			}
+			result(Items.DIAMOND_SWORD) {
+				enchantments {
+					enchantment(Enchantments.UNBREAKING, 1)
+				}
+			}
+		}
     }
 }
 ```
 
 ## Full Example
 
-Here's a full example putting it all together:
-
 ```kotlin
-fun DataPack.createRecipes() {
+dataPack("custom_recipes") {
     recipes {
-        craftingShaped("diamond_sword_upgrade") {
+	    // Shaped crafting with components
+	    craftingShaped("legendary_sword") {
             pattern(
-                " E ",
-                " D ",
-                " S "
+	            " N ",
+	            " N ",
+	            " B "
             )
             keys {
-                "E" to Items.EMERALD
-                "D" to Items.DIAMOND_SWORD
-                "S" to Items.NETHERITE_INGOT
+	            "N" to Items.NETHERITE_INGOT
+	            "B" to Items.BLAZE_ROD
             }
-            result = Items.NETHERITE_SWORD {
+		    result(Items.NETHERITE_SWORD) {
+			    customName(textComponent("Blade of Flames", Color.GOLD))
                 enchantments {
+	                enchantment(Enchantments.FIRE_ASPECT, 2)
                     enchantment(Enchantments.SHARPNESS, 5)
                 }
+			    unbreakable()
             }
+		    category = CraftingCategory.EQUIPMENT
         }
+
+	    // Shapeless recipe
+	    craftingShapeless("quick_tnt") {
+		    ingredient(Items.GUNPOWDER)
+		    ingredient(Items.GUNPOWDER)
+		    ingredient(Items.GUNPOWDER)
+		    ingredient(Items.GUNPOWDER)
+		    ingredient(Tags.Item.SAND)
+		    result(Items.TNT)
+	    }
+
+	    // Transmute recipe
+	    craftingTransmute("repaint_bed") {
+		    input(Tags.Item.BEDS)
+		    material(Items.WHITE_DYE)
+		    result(Items.WHITE_BED)
+	    }
+
+	    // Smelting with experience
+	    smelting("ancient_debris") {
+		    ingredient(Items.ANCIENT_DEBRIS)
+		    result(Items.NETHERITE_SCRAP)
+		    experience = 2.0
+		    cookingTime = 200
+		    category = SmeltingCategory.MISC
+	    }
+
+	    // Smithing upgrade
+	    smithingTransform("netherite_boots") {
+		    template(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
+		    base(Items.DIAMOND_BOOTS)
+		    addition(Items.NETHERITE_INGOT)
+		    result(Items.NETHERITE_BOOTS)
+	    }
+
+	    // Smithing trim
+	    smithingTrim("ward_trim") {
+		    template(Items.WARD_ARMOR_TRIM_SMITHING_TEMPLATE)
+		    base(Tags.Item.TRIMMABLE_ARMOR)
+		    addition(Tags.Item.TRIM_MATERIALS)
+		    pattern = TrimPatterns.WARD
+	    }
+
+	    // Stonecutting variants
+	    stoneCutting("cut_copper_slab") {
+		    ingredient(Items.COPPER_BLOCK)
+		    result(Items.CUT_COPPER_SLAB)
+		    count = 8
+	    }
     }
+
+	// Reference recipe in function
+	val beaconRecipe = recipesBuilder.craftingShaped("easy_beacon") {
+		pattern(
+			"GGG",
+			"GSG",
+			"OOO"
+		)
+		keys {
+			"G" to Items.GLASS
+			"S" to Items.NETHER_STAR
+			"O" to Items.OBSIDIAN
+		}
+		result(Items.BEACON)
+	}
+
+	load {
+		recipeGive(allPlayers(), beaconRecipe)
+	}
 }
 ```
 
-## Reference Recipes in Commands
+### Generated JSON (Shaped Recipe)
 
-To reference recipes in commands, you can use the `recipesBuilder` property and store the recipe inside a variable:
-
-```kotlin
-val myRecipe = recipesBuilder.craftingShaped("experience_bottle") {
-    pattern(
-        " G ",
-        "GBG",
-        " G "
-    )
-    keys {
-        "G" to Items.GOLD_BLOCK
-        "B" to Items.GLASS_BOTTLE
-    }
-    result(Items.EXPERIENCE_BOTTLE)
-}
-
-load {
-    // Give the recipe to all players
-    recipeGive(allPlayers(), myRecipe)
+```json
+{
+	"type": "minecraft:crafting_shaped",
+	"category": "equipment",
+	"pattern": [
+		" N ",
+		" N ",
+		" B "
+	],
+	"key": {
+		"N": "minecraft:netherite_ingot",
+		"B": "minecraft:blaze_rod"
+	},
+	"result": {
+		"id": "minecraft:netherite_sword",
+		"components": {
+			"custom_name": {
+				"text": "Blade of Flames",
+				"color": "gold"
+			},
+			"enchantments": {
+				"minecraft:fire_aspect": 2,
+				"minecraft:sharpness": 5
+			},
+			"unbreakable": {}
+		}
+	}
 }
 ```
 
-## Additional Tips
+## Best Practices
 
-- **Grouping Recipes**: You can assign a group to recipes, prefer using it when recipes have the same result.
-- **Tags**: Use tags to reference multiple items sharing the same tag.
-- **Components**: Modify result items with components like `damage`, `enchantments`, etc.
-
-All recipes are stored inside `Datapack.recipes` list, if you ever need to access them programmatically.
-
-By following this guide, you can create complex and customized recipes in your Minecraft data pack using the Kore framework. Be sure to explore the Kore documentation and source code further to take full advantage of its capabilities.
+1. **Use meaningful names** - Recipe file names should describe the output
+2. **Group related recipes** - Use the `group` field for recipe book organization
+3. **Prefer tags** - Use item tags for flexible ingredient matching
+4. **Set categories** - Help players find recipes in the recipe book
+5. **Test in-game** - Verify recipes work as expected in all crafting interfaces
+6. **Consider balance** - Ensure custom recipes maintain game balance
 
 ## See Also
 

@@ -11,7 +11,8 @@ routeOverride: /docs/concepts/chat-components
 
 # Chat Components
 
-Chat Components are used to create rich text messages in Minecraft. They can include formatting, interactivity, and nested components. Kore has functions to create and manipulate Chat Components in a datapack.<br>
+Chat Components are used to create rich text messages in Minecraft. They can include formatting, interactivity, and nested components. Kore
+has functions to create and manipulate Chat Components in a datapack.<br>
 Note that they always works by groups named `ChatComponents`, whenever you create a chat component, you actually create a
 `ChatComponents`, and you can chain multiple components together using the `+` operator.
 
@@ -75,9 +76,8 @@ In-game output:<br>
 
 ## EntityComponent
 
-The
-`EntityComponent` displays the name of an entity selected by a selector. If multiple entities are found, their names are displayed in the form
-`Name1, Name2` etc.<br>
+The `EntityComponent` displays the name of an entity selected by a selector. If multiple entities are found, their names are displayed in
+the form `Name1, Name2` etc.<br>
 The `separator` property can be used to change the separator between the names of the entities.<br>
 If no entities are found, the component displays nothing.
 
@@ -125,8 +125,8 @@ In-game output:<br>
 ## ScoreComponent
 
 The `ScoreComponent` displays the score of an entity for a specific objective. The
-`name` property can be used to specify the name of the entity whose score to display, it can be a selector or a literal name (will use the player with that name). It can also be
-`*` to select the entity seeing the text component.<br>
+`name` property can be used to specify the name of the entity whose score to display, it can be a selector or a literal name (will use the
+player with that name). It can also be `*` to select the entity seeing the text component.<br>
 The `objective` property can be used to specify the name of the objective to display the score of.<br>
 A `value` property can be used to specify a fixed value to display regardless of the score.
 
@@ -220,19 +220,16 @@ Object components render atlas sprites or player skins inside chat. They require
 
 ### AtlasObjectTextComponent
 
--
-
-`atlas` - The atlas that contains the sprite. Optional when the sprite already resolves to an atlas entry, otherwise provide an explicit
-`AtlasArgument`.
-
+- `atlas` - The atlas that contains the sprite. Optional when the sprite already resolves to an atlas entry, otherwise provide an explicit
+  `AtlasArgument`.
 - `sprite` - The `ModelArgument` that identifies the sprite to render and is required.
 
 Use `objectComponent` to construct atlas objects, optionally passing an atlas override.
 
 ```kotlin
 val atlasObject = objectComponent(
-  sprite = Textures.Block.COMMAND_BLOCK_BACK,
-  atlas = Atlases.BLOCKS
+	sprite = Textures.Block.COMMAND_BLOCK_BACK,
+	atlas = Atlases.BLOCKS
 )
 ```
 
@@ -250,9 +247,9 @@ estimations.
 
 ```kotlin
 val playerObject = playerObjectComponent("ayfri") {
-  player {
-    property("textures", "base64_encoded_texture_data")
-  }
+	player {
+		property("textures", "base64_encoded_texture_data")
+	}
 }
 ```
 
@@ -263,11 +260,12 @@ Notice that there is a shadow on the player's head, you can disable it by settin
 
 ```kotlin
 val playerObject = playerObjectComponent("ayfri") {
-  shadowColor = argb(0, 0, 0, 0)
+	shadowColor = argb(0, 0, 0, 0)
 }
 ```
 
 In-game output:<br>
 ![player-no-shadow.png](/doc/chat-components/player-no-shadow.png)
 
-These components respect the same formatting as any other chat component, so you can still chain them, color them, or attach hover and click behaviors.
+These components respect the same formatting as any other chat component, so you can still chain them, color them, or attach hover and click
+behaviors.
