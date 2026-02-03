@@ -4,7 +4,7 @@ object Project {
 	const val GROUP = "io.github.ayfri.kore"
 	const val URL = "github.com/Ayfri/Kore"
 	const val WEBSITE_URL = "https://kore.ayfri.com"
-	const val VERSION = "1.37.0"
+	const val VERSION = "1.38.0"
 
 	// Publishing constants
 	const val CENTRAL_PORTAL_URL = "https://central.sonatype.com/api/v1/publisher"
