@@ -35,6 +35,7 @@ fun runUnitTests() = dataPack("unit_tests") {
 		scheduleTests()
 		scoreboardTests()
 		setBlockTests()
+		stopwatchTests()
 		spreadPlayersTests()
 		summonTests()
 		teamsTests()

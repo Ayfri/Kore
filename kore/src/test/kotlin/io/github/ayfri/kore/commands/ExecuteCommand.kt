@@ -271,4 +271,16 @@ fun Function.executeTests() {
 	} assertsIs """
 		execute as @e run say hi
 	""".trimIndent()
+
+	execute {
+		ifCondition {
+			stopwatch(stopWatch("my_timer"), rangeOrInt(100))
+		}
+
+		run {
+			say("stopwatch reached 100")
+		}
+	} assertsIs """
+		execute if stopwatch unit_tests:my_timer 100 run say stopwatch reached 100
+	""".trimIndent()
 }

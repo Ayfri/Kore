@@ -8,17 +8,14 @@ import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.numbers.ranges.IntRangeOrInt
 import io.github.ayfri.kore.arguments.scores.ExecuteScore
 import io.github.ayfri.kore.arguments.scores.Scores
-import io.github.ayfri.kore.arguments.types.ContainerArgument
-import io.github.ayfri.kore.arguments.types.DataArgument
-import io.github.ayfri.kore.arguments.types.EntityArgument
-import io.github.ayfri.kore.arguments.types.ScoreHolderArgument
-import io.github.ayfri.kore.arguments.types.literalName
+import io.github.ayfri.kore.arguments.types.*
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.generated.arguments.types.DimensionArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
+import io.github.ayfri.kore.generated.arguments.types.StopwatchArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.asArg
@@ -102,4 +99,8 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 
 	fun score(target: ScoreHolderArgument, objective: String, range: IntRangeOrInt) =
 		addArguments(listOf(literal("score"), ex.targetArg(target), literal(objective), literal("matches"), literal(range.asArg())))
+
+	/** Checks if the given stopwatch is running and has elapsed the given range, the range is in milliseconds. */
+	fun stopwatch(id: StopwatchArgument, range: IntRangeOrInt) =
+		addArguments(listOf(literal("stopwatch"), id, literal(range.asArg())))
 }

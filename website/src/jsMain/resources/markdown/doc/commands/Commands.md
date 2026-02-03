@@ -359,6 +359,51 @@ stopsound @s *
 stopsound @s * minecraft:mob/bat/takeoff
 ```
 
+### Stopwatch Command
+
+The `stopwatch` command manages server-side timers that count game ticks. Stopwatches persist across sessions and can be queried in execute
+conditions. Useful for cooldowns, timed events, and measuring durations.
+
+```kotlin
+function("stopwatch_examples") {
+	val myStopwatch = stopwatch("my_timer")
+	stopwatchCreate(myStopwatch)
+	stopwatchQuery(myStopwatch)
+	stopwatchRestart(myStopwatch)
+	stopwatchRemove(myStopwatch)
+}
+```
+
+Generated output:
+
+```mcfunction
+stopwatch my_datapack:my_timer create
+stopwatch my_datapack:my_timer query
+stopwatch my_datapack:my_timer restart
+stopwatch my_datapack:my_timer remove
+```
+
+You can also use stopwatches in execute conditions:
+
+```kotlin
+function("stopwatch_condition") {
+	execute {
+		ifCondition {
+			stopwatch(stopWatch("my_timer"), rangeOrInt(100))
+		}
+		run {
+			say("Timer reached 100 ticks!")
+		}
+	}
+}
+```
+
+Generated output:
+
+```mcfunction
+execute if stopwatch my_datapack:my_timer 100 run say Timer reached 100 ticks!
+```
+
 ### Message Commands
 
 The `msg` command (aliases: `tell`, `w`) sends a private message to a specific player. The `teammsg` command (alias:
