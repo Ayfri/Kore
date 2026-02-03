@@ -1,6 +1,9 @@
 package io.github.ayfri.kore.website.components.common
 
 import androidx.compose.runtime.Composable
+import io.github.ayfri.kore.website.utils.Script
+import io.github.ayfri.kore.website.utils.obj
+import kotlinx.browser.document
 import org.jetbrains.compose.web.attributes.AttrsScope
 import org.jetbrains.compose.web.dom.ElementBuilder
 import org.jetbrains.compose.web.dom.TagElement
@@ -10,7 +13,6 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLImageElement
 import org.w3c.dom.HTMLTitleElement
 import org.w3c.dom.asList
-import kotlinx.browser.document
 
 @Composable
 fun Title(text: String) = TagElement<HTMLTitleElement>(
@@ -95,4 +97,98 @@ fun setImage(url: String) = renderComposable(document.head!!) {
 
 	MetaProperty("og:image", url)
 	MetaProperty("twitter:image", url)
+}
+
+fun setHrefLang(path: String) = renderComposable(document.head!!) {
+	selectAll("meta[hreflang]").forEach(HTMLElement::remove)
+
+	Meta {
+		attr("rel", "alternate")
+		attr("hreflang", "en")
+		attr("href", "https://kore.ayfri.com$path")
+	}
+	Meta {
+		attr("rel", "alternate")
+		attr("hreflang", "x-default")
+		attr("href", "https://kore.ayfri.com$path")
+	}
+}
+
+fun setDates(publishDate: String?, modifiedDate: String?) = renderComposable(document.head!!) {
+	selectAll("meta[property*=date], meta[name*=date]").forEach(HTMLElement::remove)
+
+	publishDate?.let {
+		MetaProperty("article:published_time", it)
+		MetaName("date", it)
+	}
+
+	modifiedDate?.let {
+		MetaProperty("article:modified_time", it)
+		MetaName("last-modified", it)
+	}
+}
+
+fun setJsonLd(
+	title: String,
+	description: String,
+	publishDate: String?,
+	modifiedDate: String?,
+	keywords: String,
+	path: String,
+	slugs: List<String>,
+) = renderComposable(document.head!!) {
+	selectAll("script[type='application/ld+json']").forEach(HTMLElement::remove)
+
+	val jsonLd = obj {
+		`@context` = "https://schema.org"
+		`@type` = "TechArticle"
+		headline = title
+		this["description"] = description
+		author = obj {
+			`@type` = "Organization"
+			name = "Kore"
+			url = "https://github.com/Ayfri/Kore"
+		}
+		datePublished = publishDate
+		dateModified = modifiedDate
+		mainEntityOfPage = obj {
+			`@type` = "WebPage"
+			`@id` = "https://kore.ayfri.com$path"
+		}
+		publisher = obj {
+			`@type` = "Organization"
+			name = "Kore"
+			url = "https://github.com/Ayfri/Kore"
+			logo = obj {
+				`@type` = "ImageObject"
+				url = "https://kore.ayfri.com/logo.png"
+			}
+		}
+		this["keywords"] = keywords
+		breadcrumb = obj {
+			`@type` = "BreadcrumbList"
+			itemListElement = slugs.mapIndexed { index, slug ->
+				obj {
+					`@type` = "ListItem"
+					position = index + 2
+					name = slug.replace("-", " ").replaceFirstChar { it.uppercase() }
+					item = "https://kore.ayfri.com/${slugs.take(index + 1).joinToString("/")}"
+				}
+			}.toTypedArray().also {
+				arrayOf(
+					obj {
+						`@type` = "ListItem"
+						position = 1
+						name = "Home"
+						item = "https://kore.ayfri.com/"
+					},
+					*it
+				)
+			}
+		}
+	}
+
+	Script(type = "application/ld+json") {
+		Text(JSON.stringify(jsonLd))
+	}
 }

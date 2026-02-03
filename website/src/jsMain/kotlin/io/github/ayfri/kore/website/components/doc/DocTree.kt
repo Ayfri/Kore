@@ -19,6 +19,50 @@ import org.jetbrains.compose.web.dom.*
 
 private fun StyleScope.indentation(level: Int) = marginLeft(level * 1.5.cssRem)
 
+// Define the order of top-level groups
+private val groupOrder = listOf("guides", "commands", "data-driven", "concepts", "helpers", "advanced")
+
+private fun getGroupPriority(slug: String): Int {
+	val index = groupOrder.indexOf(slug.lowercase())
+	return if (index >= 0) index else groupOrder.size
+}
+
+/**
+ * Returns the ordered list of DocArticle entries as they appear in the DocTree.
+ * This is used by PageNavigation to determine previous/next pages.
+ */
+fun getOrderedDocEntries(): List<DocArticle> {
+	return docEntries.sortedWith(Comparator { a, b ->
+		val slugsA = a.slugs.drop(1)
+		val slugsB = b.slugs.drop(1)
+		val maxDepth = minOf(slugsA.size, slugsB.size)
+
+		for (i in 0 until maxDepth) {
+			val slugA = slugsA[i]
+			val slugB = slugsB[i]
+
+			val posA = if (i == slugsA.lastIndex) a.position else null
+			val posB = if (i == slugsB.lastIndex) b.position else null
+
+			val posCompare = compareValues(posA ?: Int.MAX_VALUE, posB ?: Int.MAX_VALUE)
+			if (posCompare != 0) return@Comparator posCompare
+
+			if (i == 0 && slugsA.size > 1 && slugsB.size > 1) {
+				val groupCompare = compareValues(getGroupPriority(slugA), getGroupPriority(slugB))
+				if (groupCompare != 0) return@Comparator groupCompare
+			}
+
+			val slugCompare = compareValues(slugA.lowercase(), slugB.lowercase())
+			if (slugCompare != 0) return@Comparator slugCompare
+		}
+
+		val lengthCompare = compareValues(slugsA.size, slugsB.size)
+		if (lengthCompare != 0) return@Comparator lengthCompare
+
+		return@Comparator compareValues(a.navTitle, b.navTitle)
+	})
+}
+
 sealed class DocNode(val level: Int, val groupPath: String) {
 	class EntryNode(val entry: DocArticle, level: Int, val isGroup: Boolean = false, groupPath: String) : DocNode(
 		level,

@@ -13,7 +13,8 @@ import io.github.ayfri.kore.website.utils.*
 import kotlinx.browser.window
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.JustifyContent
-import org.jetbrains.compose.web.dom.*
+import org.jetbrains.compose.web.dom.Button
+import org.jetbrains.compose.web.dom.Div
 
 @Composable
 fun MarkdownLayout(content: @Composable () -> Unit) {
@@ -28,16 +29,8 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 	val markdownData = context.markdown!!.frontMatter
 
 	// Format dates for SEO
-	val publishDate = markdownData["date-created"]?.get(0)?.let { date ->
-		date.split("-").let { (year, month, day) ->
-			"$year-${month.padStart(2, '0')}-${day.padStart(2, '0')}"
-		}
-	}
-	val modifiedDate = markdownData["date-modified"]?.get(0)?.let { date ->
-		date.split("-").let { (year, month, day) ->
-			"$year-${month.padStart(2, '0')}-${day.padStart(2, '0')}"
-		}
-	}
+	val publishDate = markdownData["date-created"]?.get(0)?.let(::formatDate)
+	val modifiedDate = markdownData["date-modified"]?.get(0)?.let(::formatDate)
 
 	var onMobile by remember { mutableStateOf(false) }
 	var revealed by remember { mutableStateOf(false) }
@@ -48,79 +41,23 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 	}
 
 	val slugs = context.route.path.split("/").drop(1)
-	val jsonLd = obj {
-		`@context` = "https://schema.org"
-		`@type` = "TechArticle"
-		headline = markdownData["title"]?.get(0) ?: "Untitled"
-		description = markdownData["description"]?.get(0) ?: ""
-		author = obj {
-			`@type` = "Organization"
-			name = "Kore"
-			url = "https://github.com/Ayfri/Kore"
-		}
-		datePublished = publishDate
-		dateModified = modifiedDate
-		mainEntityOfPage = obj {
-			`@type` = "WebPage"
-			`@id` = "https://kore.ayfri.com${context.route.path}"
-		}
-		publisher = obj {
-			`@type` = "Organization"
-			name = "Kore"
-			url = "https://github.com/Ayfri/Kore"
-			logo = obj {
-				`@type` = "ImageObject"
-				url = "https://kore.ayfri.com/logo.png"
-			}
-		}
-		keywords = markdownData["keywords"]?.get(0) ?: ""
-		breadcrumb = obj {
-			`@type` = "BreadcrumbList"
-			itemListElement = slugs.mapIndexed { index, slug ->
-				obj {
-					`@type` = "ListItem"
-					position = index + 2
-					name = slug.replace("-", " ").replaceFirstChar { it.uppercase() }
-					item = "https://kore.ayfri.com/${slugs.take(index + 1).joinToString("/")}"
-				}
-			}.toTypedArray().also {
-				arrayOf(
-					obj {
-						`@type` = "ListItem"
-						position = 1
-						name = "Home"
-						item = "https://kore.ayfri.com/"
-					},
-					*it
-				)
-			}
-		}
+
+	// Set SEO metadata
+	LaunchedEffect(Unit) {
+		setHrefLang(context.route.path)
+		setDates(publishDate, modifiedDate)
+		setJsonLd(
+			title = markdownData["title"]?.get(0) ?: "Untitled",
+			description = markdownData["description"]?.get(0) ?: "",
+			publishDate = publishDate,
+			modifiedDate = modifiedDate,
+			keywords = markdownData["keywords"]?.get(0) ?: "",
+			path = context.route.path,
+			slugs = slugs
+		)
 	}
 
 	PageLayout(markdownData["nav-title"]?.get(0) ?: "Untitled") {
-		// Add meta tags for dates
-		publishDate?.let {
-			Meta(attrs = {
-				attr("property", "publish_date")
-				attr("content", it)
-			})
-		}
-
-		modifiedDate?.let {
-			Meta(attrs = {
-				attr("property", "modified_date")
-				attr("content", it)
-			})
-			Meta(attrs = {
-				attr("name", "last-modified")
-				attr("content", it)
-			})
-		}
-
-		Script(type = "application/ld+json") {
-			Text(JSON.stringify(jsonLd))
-		}
-
 		Button({
 			classes(MarkdownLayoutStyle.revealButton)
 			onClick { revealed = !revealed }
@@ -154,35 +91,12 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 				}) {
 					content()
 
-					Div({
-						classes(MarkdownLayoutStyle.metadata)
-					}) {
-						publishDate?.let { date ->
-							P({
-								attr("datetime", date)
-							}) {
-								Text("Published: $date")
-							}
-						}
-
-						modifiedDate?.let { date ->
-							P({
-								attr("datetime", date)
-							}) {
-								Text("Last updated: $date")
-							}
-						}
-
-						A(
-							"https://github.com/Ayfri/Kore/edit/master/website/src/jsMain/resources/markdown/${context.markdown!!.path}",
-							{
-								classes(MarkdownLayoutStyle.editLink)
-							}) {
-							Text("Edit this page on GitHub")
-						}
-					}
-
-					PageNavigation(context.route.path)
+					PageNavigation(
+						currentPath = context.route.path,
+						publishDate = publishDate,
+						modifiedDate = modifiedDate,
+						editUrl = "https://github.com/Ayfri/Kore/edit/master/website/src/jsMain/resources/markdown/${context.markdown!!.path}"
+					)
 				}
 
 				TableOfContents()
@@ -387,25 +301,6 @@ object MarkdownLayoutStyle : StyleSheet() {
 		}
 	}
 
-	val metadata by style {
-		marginTop(4.cssRem)
-		paddingTop(1.cssRem)
-		borderTop(1.px, LineStyle.Solid, GlobalStyle.tertiaryBackgroundColor)
-		color(GlobalStyle.altTextColor)
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Column)
-		fontSize(0.9.cssRem)
-		gap(0.5.cssRem)
-	}
-
-	val editLink by style {
-		color(GlobalStyle.linkColor)
-		textDecorationLine(TextDecorationLine.None)
-
-		self + hover style {
-			textDecorationLine(TextDecorationLine.Underline)
-		}
-	}
 
 	val heading by style {
 		borderRadius(GlobalStyle.roundingButton)

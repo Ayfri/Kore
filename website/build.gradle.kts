@@ -220,7 +220,12 @@ kobweb {
 				fun List<String>.asCode() = "listOf(${joinToString { "\"$it\"" }})"
 				fun String.escapeQuotes() = replace("\"", "\\\"")
 
-				docEntries.sortedByDescending(DocEntry::date).forEach { entry ->
+				docEntries.sortedWith(
+					compareBy(
+						{ it.slugs.firstOrNull() ?: "" },
+						{ it.position ?: Int.MAX_VALUE },
+						{ it.navTitle })
+				).forEach { entry ->
 					appendLine(
 						"""
 						|	DocArticle("/docs/${
