@@ -149,7 +149,7 @@ fun Function.inventoryManagerTests() {
 
 ## See also
 
-- [Scheduler](./scheduler) – Run repeated or delayed logic that complements inventory policies.
-- [Components](../components) – Define complex items (names, lore, enchantments) you can enforce in slots.
-- [Predicates](../predicates) – Validate component-based item properties in other contexts.
-- [Scoreboards](../scoreboards) – Background knowledge on objectives used under the hood.
+- [Scheduler](/docs/helpers/scheduler) – Run repeated or delayed logic that complements inventory policies.
+- [Components](/docs/concepts/components) – Define complex items (names, lore, enchantments) you can enforce in slots.
+- [Predicates](/docs/data-driven/predicates) – Validate component-based item properties in other contexts.
+- [Scoreboards](/docs/concepts/scoreboards) – Background knowledge on objectives used under the hood.

@@ -352,7 +352,7 @@ jobs:
 
 ## See Also
 
-- [Creating a Datapack](./creating-a-datapack)
-- [Configuration](./configuration)
+- [Creating a Datapack](/docs/guides/creating-a-datapack)
+- [Configuration](/docs/guides/configuration)
 - [mc-publish Documentation](https://github.com/Kir-Antipov/mc-publish)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)

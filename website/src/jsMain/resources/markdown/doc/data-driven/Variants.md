@@ -390,5 +390,5 @@ Produces JSON:
 
 ### See Also
 
-- [Chat Components](../concepts/chat_components) - For painting title and author text formatting
-- [Tags](./tags) - Use variant tags for spawn conditions
+- [Chat Components](/docs/concepts/chat-components) - For painting title and author text formatting
+- [Tags](/docs/data-driven/tags) - Use variant tags for spawn conditions

@@ -838,7 +838,8 @@ function("schedule_examples") {
 ### Loot Command
 
 The
-`loot` command generates items from [Loot Tables](../data-driven/loot_tables) and distributes them to players, containers, or the world. Sources include fishing, killing entities, mining blocks, or direct loot table references.
+`loot` command generates items from [Loot Tables](/docs/data-driven/loot-tables) and distributes them to players, containers, or the world.
+Sources include fishing, killing entities, mining blocks, or direct loot table references.
 
 ```kotlin
 function("loot_examples") {
@@ -1141,7 +1142,8 @@ function("raw_commands") {
 
 ## Custom Commands
 
-Create your own command builders for mods or custom functionality. See [Functions](./functions) for more details on the Function context:
+Create your own command builders for mods or custom functionality. See [Functions](/docs/commands/functions) for more details on the
+Function context:
 
 ```kotlin
 fun Function.myModCommand(target: EntityArgument, value: Int) =
@@ -1161,11 +1163,11 @@ mymod @s 42
 
 ## See Also
 
-- [Functions](./functions) - Create and organize command functions
-- [Macros](./macros) - Dynamic command arguments
-- [Predicates](../data-driven/predicates) - Conditions for execute if predicate
-- [Chat Components](../concepts/chat-components) - Formatted text in commands
-- [Tags](../data-driven/tags) - Use tags in commands and selectors
+- [Functions](/docs/commands/functions) - Create and organize command functions
+- [Macros](/docs/commands/macros) - Dynamic command arguments
+- [Predicates](/docs/data-driven/predicates) - Conditions for execute if predicate
+- [Chat Components](/docs/concepts/chat-components) - Formatted text in commands
+- [Tags](/docs/data-driven/tags) - Use tags in commands and selectors
 
 ### External Resources
 

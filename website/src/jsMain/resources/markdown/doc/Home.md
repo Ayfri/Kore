@@ -22,7 +22,8 @@ generation of datapack JSON, and tight integration with vanilla concepts (functi
 - **Getting started**: Check out the [Getting Started](/docs/getting-started) guide for a step-by-step introduction to creating your first datapack.
 - **Prerequisites**: Java 21+ and a Kotlin-capable build environment.
 - **Starter template**: use the `Kore Template` for a ready-to-run project: [`Kore Template`](https://github.com/Ayfri/Kore-Template).
-- **Create & generate**: see [Creating A Datapack](./creating-a-datapack) for lifecycle and output options (`.generate()`, `.generateZip()`, `.generateJar()`).
+- **Create & generate**: see [Creating A Datapack](/docs/guides/creating-a-datapack) for lifecycle and output options (`.generate()`,
+  `.generateZip()`, `.generateJar()`).
 
 {{{ .components.doc.FeatureGrid }}}
 
@@ -38,59 +39,58 @@ fun main() {
 
 ## Essential reading
 
-- **[Getting Started](./getting-started)**: step-by-step guide to create your first datapack.
-- **[Creating A Datapack](./guides/creating-a-datapack)**: lifecycle, output paths, and generation options.
-- **[Commands](./commands/commands)**: comprehensive guide to all Minecraft commands with examples.
-- **[Functions](./commands/functions)**: building functions, tags, and command helpers.
+- **[Getting Started](/docs/getting-started)**: step-by-step guide to create your first datapack.
+- **[Creating A Datapack](/docs/guides/creating-a-datapack)**: lifecycle, output paths, and generation options.
+- **[Commands](/docs/commands/commands)**: comprehensive guide to all Minecraft commands with examples.
+- **[Functions](/docs/commands/functions)**: building functions, tags, and command helpers.
 
 ## Full documentation index
 
 ### Core Guides
 
-- [Configuration](./guides/configuration) - JSON formatting and generation options.
+- [Configuration](/docs/guides/configuration) - JSON formatting and generation options.
 
 ### Commands
 
-- [Macros](./commands/macros) - dynamic command arguments for reusable functions.
-
+- [Macros](/docs/commands/macros) - dynamic command arguments for reusable functions.
 ### Concepts
 
-- [Components](./concepts/components) - item/component builders and custom components.
-- [Chat Components](./concepts/chat-components) - formatted messages and text components.
-- [Colors](./concepts/colors) - chat colors and formatting options.
-- [Scoreboards](./concepts/scoreboards) - objectives, teams, and scoreboard displays.
+- [Components](/docs/concepts/components) - item/component builders and custom components.
+- [Chat Components](/docs/concepts/chat-components) - formatted messages and text components.
+- [Colors](/docs/concepts/colors) - chat colors and formatting options.
+- [Scoreboards](/docs/concepts/scoreboards) - objectives, teams, and scoreboard displays.
 
 ### Data-Driven
 
-- [Predicates](./data-driven/predicates) - reusable conditions used by loot tables, advancements and item modifiers.
-- [Loot Tables](./data-driven/loot-tables) & [Item Modifiers](./data-driven/item-modifiers) - tables, pools and
+- [Predicates](/docs/data-driven/predicates) - reusable conditions used by loot tables, advancements and item modifiers.
+- [Loot Tables](/docs/data-driven/loot-tables) & [Item Modifiers](/docs/data-driven/item-modifiers) - tables, pools and
   `/item modify` helpers.
-- [Recipes](./data-driven/recipes) & [Advancements](./data-driven/advancements) - crafting, rewards and integration.
-- [Enchantments](./data-driven/enchantments) - custom enchantment definitions.
-- [Dialogs](./data-driven/dialogs) - NPC dialog systems.
-- [Worldgen](./data-driven/worldgen) - biomes, features and dimension examples.
-- [Tags](./data-driven/tags) - custom tag definitions for grouping items, blocks, entities, etc.
+- [Recipes](/docs/data-driven/recipes) & [Advancements](/docs/data-driven/advancements) - crafting, rewards and integration.
+- [Enchantments](/docs/data-driven/enchantments) - custom enchantment definitions.
+- [Dialogs](/docs/data-driven/dialogs) - NPC dialog systems.
+- [Worldgen](/docs/data-driven/worldgen) - biomes, features and dimension examples.
+- [Tags](/docs/data-driven/tags) - custom tag definitions for grouping items, blocks, entities, etc.
 
 ### Helpers
 
-- [Display Entities](./helpers/display-entities) - text, block, and item displays.
-- [Inventory Manager](./helpers/inventory-manager) - inventory manipulation helpers.
-- [Mannequins](./helpers/mannequins) - armor stand helpers.
-- [Scheduler](./helpers/scheduler) - delayed function execution patterns.
+- [Display Entities](/docs/helpers/display-entities) - text, block, and item displays.
+- [Inventory Manager](/docs/helpers/inventory-manager) - inventory manipulation helpers.
+- [Mannequins](/docs/helpers/mannequins) - armor stand helpers.
+- [Scheduler](/docs/helpers/scheduler) - delayed function execution patterns.
 
 ### Advanced
 
-- [Bindings](./advanced/bindings) - import existing datapacks and generate Kotlin bindings (experimental).
-- [GitHub Actions Publishing](./advanced/github-actions-publishing) - automate datapack publishing.
-- [Test Features (GameTest)](./advanced/test-features) - testing datapacks with GameTest.
-- [Known Issues](./advanced/known-issues) - workarounds and limitations.
+- [Bindings](/docs/advanced/bindings) - import existing datapacks and generate Kotlin bindings (experimental).
+- [GitHub Actions Publishing](/docs/advanced/github-actions-publishing) - automate datapack publishing.
+- [Test Features (GameTest)](/docs/advanced/test-features) - testing datapacks with GameTest.
+- [Known Issues](/docs/advanced/known-issues) - workarounds and limitations.
 
 ## Short tips
 
 - Keep builders small and reusable; prefer extracting predicates and modifiers.
-- Enable `prettyPrint` in [`Configuration`](./guides/configuration) during development for readable JSON.
-- Use [`Components`](./concepts/components) + [
-  `Predicates`](./data-driven/predicates) together for robust item checks and inventory management.
+- Enable `prettyPrint` in [`Configuration`](/docs/guides/configuration) during development for readable JSON.
+- Use [`Components`](/docs/concepts/components) + [`Predicates`](/docs/data-driven/predicates) together for robust item checks and inventory
+  management.
 
 ## Known issues
 

@@ -608,6 +608,6 @@ load {
 
 ## See also
 
-- [Advancements](./advancements)
-- [Components](./components)
-- [Predicates](./predicates)
+- [Advancements](/docs/data-driven/advancements) - Create custom conditions and rewards for dialogs
+- [Components](/docs/concepts/components) - Learn about the component system used in Kore
+- [Predicates](/docs/data-driven/predicates) - Create custom conditions for dialogs

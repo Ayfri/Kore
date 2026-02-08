@@ -678,10 +678,10 @@ Happy crafting!
 
 ## See Also
 
-- [Predicates](../data-driven/predicates) - Use components in predicate conditions
-- [Item Modifiers](../data-driven/item-modifiers) - Patch components at runtime
-- [Recipes](../data-driven/recipes) - Use components in recipe results
-- [Inventory Manager](../helpers/inventory-manager) - Enforce component-rich items in slots
+- [Predicates](/docs/data-driven/predicates) - Use components in predicate conditions
+- [Item Modifiers](/docs/data-driven/item-modifiers) - Patch components at runtime
+- [Recipes](/docs/data-driven/recipes) - Use components in recipe results
+- [Inventory Manager](/docs/helpers/inventory-manager) - Enforce component-rich items in slots
 
 ### External Resources
 
