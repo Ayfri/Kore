@@ -1064,6 +1064,54 @@ clone 0 64 0 10 74 10 100 64 100 filtered #minecraft:base_stone_overworld force
 clone 0 64 0 10 74 10 5 64 5 strict
 ```
 
+### WorldBorder Command
+
+The `worldborder` command controls the world border size, position, damage, and warning settings. The time parameter for `add` and `set` is
+specified in ticks.
+
+```kotlin
+function("worldborder_examples") {
+	worldBorder {
+		// Expand border by 10 blocks over 200 ticks (10 seconds)
+		add(10.0, time = 200)
+
+		// Set border to 1000 blocks instantly
+		set(1000.0)
+
+		// Set border to 500 blocks over 6000 ticks (5 minutes)
+		set(500.0, time = 6000)
+
+		// Set center
+		center(0.0, 0.0)
+
+		// Damage settings
+		damageAmount(0.2f)
+		damageBuffer(5.0)
+
+		// Warning settings
+		setWarningDistance(10)
+		setWarningTime(15)
+
+		// Query current size
+		get()
+	}
+}
+```
+
+Generated output:
+
+```mcfunction
+worldborder add 10 200
+worldborder set 1000
+worldborder set 500 6000
+worldborder center 0 0
+worldborder damage amount 0.2
+worldborder damage buffer 5
+worldborder warning distance 10
+worldborder warning time 15
+worldborder get
+```
+
 ## Selectors
 
 Selectors target entities in the world. Kore provides type-safe selector builders with filters for entity type, distance, scores, NBT, and more:
