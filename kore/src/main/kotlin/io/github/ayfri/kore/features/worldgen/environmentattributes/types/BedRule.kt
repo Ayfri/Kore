@@ -11,6 +11,7 @@ import io.github.ayfri.kore.generated.EnvironmentAttributes
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
+/** Defines when a Bed can be used to sleep or set a respawn point. */
 @Serializable(with = BedSleepRule.Companion.BedSleepRuleSerializer::class)
 enum class BedSleepRule {
 	ALWAYS,
@@ -23,6 +24,7 @@ enum class BedSleepRule {
 	}
 }
 
+/** Controls Bed behavior: sleeping, respawn point setting, explosion, and error messages. */
 @Serializable
 data class BedRule(
 	var canSleep: BedSleepRule,
@@ -31,17 +33,23 @@ data class BedRule(
 	var errorMessage: ChatComponents? = null,
 ) : EnvironmentAttributesType()
 
-fun EnvironmentAttributesScope.bedRule(rule: BedRule, mod: EnvironmentAttributeModifier? = null, block: BedRule.() -> Unit = {}) =
+/** Sets the bed rule attribute from an existing [BedRule] instance. */
+fun EnvironmentAttributesScope.bedRule(
+	rule: BedRule,
+	mod: EnvironmentAttributeModifier.OVERRIDE? = null,
+	block: BedRule.() -> Unit = {},
+) =
 	apply {
 		this[EnvironmentAttributes.Gameplay.BED_RULE] = environmentAttributeValue(rule.apply(block), mod)
 	}
 
+/** Sets the bed rule attribute, controlling sleep, respawn, and explosion behavior. */
 fun EnvironmentAttributesScope.bedRule(
 	canSleep: BedSleepRule = BedSleepRule.WHEN_DARK,
 	canSetSpawn: BedSleepRule = BedSleepRule.WHEN_DARK,
 	explodes: Boolean? = null,
 	errorMessage: ChatComponents? = null,
-	mod: EnvironmentAttributeModifier? = null,
+	mod: EnvironmentAttributeModifier.OVERRIDE? = null,
 	block: BedRule.() -> Unit = {},
 ) = apply {
 	this[EnvironmentAttributes.Gameplay.BED_RULE] = environmentAttributeValue(

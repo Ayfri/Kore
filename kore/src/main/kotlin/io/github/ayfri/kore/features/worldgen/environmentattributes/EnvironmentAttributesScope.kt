@@ -4,6 +4,7 @@ import io.github.ayfri.kore.generated.arguments.types.EnvironmentAttributeArgume
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 
+/** Scope for defining environment attributes on dimension types and biomes, mapping attribute IDs to their values. */
 @Serializable(EnvironmentAttributesScope.Companion.EnvironmentAttributesScopeSerializer::class)
 data class EnvironmentAttributesScope(
 	val attributes: MutableMap<EnvironmentAttributeArgument, EnvironmentAttributeValue> = mutableMapOf(),

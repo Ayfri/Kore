@@ -9,6 +9,7 @@ import io.github.ayfri.kore.generated.EnvironmentAttributes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 
+/** Represents an RGB color environment attribute value, used for visual color settings. */
 @Serializable(with = ColorValue.Companion.ColorValueSerializer::class)
 data class ColorValue(
 	@Serializable(with = ColorAsDecimalSerializer::class)
@@ -19,14 +20,17 @@ data class ColorValue(
 	}
 }
 
-fun EnvironmentAttributesScope.fogColor(color: Color, mod: EnvironmentAttributeModifier? = null) = apply {
+/** The color of fog when the camera is not submerged. Also affected by time of day, weather, and potion effects. */
+fun EnvironmentAttributesScope.fogColor(color: Color, mod: EnvironmentAttributeModifier.Color? = null) = apply {
 	this[EnvironmentAttributes.Visual.FOG_COLOR] = environmentAttributeValue(ColorValue(color), mod)
 }
 
-fun EnvironmentAttributesScope.skyColor(color: Color, mod: EnvironmentAttributeModifier? = null) = apply {
+/** The color of the sky, only visible for the overworld sky. Also affected by time of day and weather. */
+fun EnvironmentAttributesScope.skyColor(color: Color, mod: EnvironmentAttributeModifier.Color? = null) = apply {
 	this[EnvironmentAttributes.Visual.SKY_COLOR] = environmentAttributeValue(ColorValue(color), mod)
 }
 
-fun EnvironmentAttributesScope.waterFogColor(color: Color, mod: EnvironmentAttributeModifier? = null) = apply {
+/** The color of fog when submerged in water. Also affected by time of day, weather, and potion effects. */
+fun EnvironmentAttributesScope.waterFogColor(color: Color, mod: EnvironmentAttributeModifier.Color? = null) = apply {
 	this[EnvironmentAttributes.Visual.WATER_FOG_COLOR] = environmentAttributeValue(ColorValue(color), mod)
 }

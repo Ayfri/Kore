@@ -8,7 +8,8 @@ sealed class EnvironmentAttributesType {
 	companion object {
 		data object EnvironmentAttributesTypeSerializer : NamespacedPolymorphicSerializer<EnvironmentAttributesType>(
 			EnvironmentAttributesType::class,
-			skipOutputName = true
+			skipOutputName = true,
+			outputName = "__type__",
 		)
 	}
 }

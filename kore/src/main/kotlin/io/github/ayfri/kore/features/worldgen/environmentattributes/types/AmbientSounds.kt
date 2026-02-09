@@ -1,35 +1,39 @@
 package io.github.ayfri.kore.features.worldgen.environmentattributes.types
 
-import io.github.ayfri.kore.arguments.types.resources.SoundArgument
 import io.github.ayfri.kore.features.worldgen.environmentattributes.EnvironmentAttributeModifier
 import io.github.ayfri.kore.features.worldgen.environmentattributes.EnvironmentAttributesScope
 import io.github.ayfri.kore.features.worldgen.environmentattributes.environmentAttributeValue
 import io.github.ayfri.kore.generated.EnvironmentAttributes
+import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import kotlinx.serialization.Serializable
 
+/** A sound that will be randomly played around the camera based on tick chance. */
 @Serializable
-data class AdditionalSound(var sound: SoundArgument, var tickChance: Float)
+data class AdditionalSound(var sound: SoundEventArgument, var tickChance: Float)
 
+/** A mood sound that plays randomly based on surrounding darkness levels. */
 @Serializable
 data class MoodSound(
-	var sound: SoundArgument? = null,
+	var sound: SoundEventArgument? = null,
 	var tickDelay: Int = 6000,
 	var blockSearchExtent: Int = 8,
 	var offset: Float = 2f,
 )
 
+/** Controls ambient sounds played around the camera: looping, mood-based, and additional random sounds. */
 @Serializable
 data class AmbientSounds(
 	var additions: List<AdditionalSound>? = null,
-	var loop: SoundArgument? = null,
+	var loop: SoundEventArgument? = null,
 	var mood: MoodSound? = null,
 ) : EnvironmentAttributesType()
 
+/** Sets the ambient sounds attribute, controlling looping, mood, and additional sounds. */
 fun EnvironmentAttributesScope.ambientSounds(
 	additions: List<AdditionalSound>? = null,
-	loop: SoundArgument? = null,
+	loop: SoundEventArgument? = null,
 	mood: MoodSound? = null,
-	mod: EnvironmentAttributeModifier? = null,
+	mod: EnvironmentAttributeModifier.OVERRIDE? = null,
 	block: AmbientSounds.() -> Unit = {},
 ) = apply {
 	this[EnvironmentAttributes.Audio.AMBIENT_SOUNDS] =
@@ -40,10 +44,10 @@ fun AmbientSounds.additions(vararg list: AdditionalSound) = apply {
 	additions = (additions ?: listOf()) + list
 }
 
-fun AmbientSounds.addition(sound: SoundArgument, tickChance: Float) = additions(AdditionalSound(sound, tickChance))
+fun AmbientSounds.addition(sound: SoundEventArgument, tickChance: Float) = additions(AdditionalSound(sound, tickChance))
 
 fun AmbientSounds.mood(
-	sound: SoundArgument? = null,
+	sound: SoundEventArgument? = null,
 	tickDelay: Int = 6000,
 	blockSearchExtent: Int = 8,
 	offset: Float = 2f,

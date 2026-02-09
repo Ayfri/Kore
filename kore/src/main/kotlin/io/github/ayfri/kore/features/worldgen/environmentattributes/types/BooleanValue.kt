@@ -7,6 +7,7 @@ import io.github.ayfri.kore.generated.EnvironmentAttributes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 
+/** Represents a boolean environment attribute value, used for toggling gameplay or visual features. */
 @Serializable(with = BooleanValue.Companion.BooleanValueSerializer::class)
 data class BooleanValue(var value: Boolean) : EnvironmentAttributesType() {
 	companion object {
@@ -14,38 +15,48 @@ data class BooleanValue(var value: Boolean) : EnvironmentAttributesType() {
 	}
 }
 
-fun EnvironmentAttributesScope.canStartRaid(value: Boolean, mod: EnvironmentAttributeModifier? = null) = apply {
+/** Controls whether a Raid can be started by a player with Raid Omen. */
+fun EnvironmentAttributesScope.canStartRaid(value: Boolean, mod: EnvironmentAttributeModifier.Boolean? = null) = apply {
 	this[EnvironmentAttributes.Gameplay.CAN_START_RAID] = environmentAttributeValue(BooleanValue(value), mod)
 }
 
-fun EnvironmentAttributesScope.extraFog(value: Boolean, mod: EnvironmentAttributeModifier? = null) = apply {
+/** Controls whether dense fog (like that of the Nether) should be used. */
+fun EnvironmentAttributesScope.extraFog(value: Boolean, mod: EnvironmentAttributeModifier.Boolean? = null) = apply {
 	this[EnvironmentAttributes.Visual.EXTRA_FOG] = environmentAttributeValue(BooleanValue(value), mod)
 }
 
-fun EnvironmentAttributesScope.fastLava(value: Boolean, mod: EnvironmentAttributeModifier? = null) = apply {
+/** Controls whether Lava should spread faster and further, with stronger pushing force. */
+fun EnvironmentAttributesScope.fastLava(value: Boolean, mod: EnvironmentAttributeModifier.Boolean? = null) = apply {
 	this[EnvironmentAttributes.Gameplay.FAST_LAVA] = environmentAttributeValue(BooleanValue(value), mod)
 }
 
-fun EnvironmentAttributesScope.increasedFireBurnout(value: Boolean, mod: EnvironmentAttributeModifier? = null) = apply {
+/** Controls whether Fire blocks burn out more rapidly than normal. */
+fun EnvironmentAttributesScope.increasedFireBurnout(value: Boolean, mod: EnvironmentAttributeModifier.Boolean? = null) = apply {
 	this[EnvironmentAttributes.Gameplay.INCREASED_FIRE_BURNOUT] = environmentAttributeValue(BooleanValue(value), mod)
 }
 
-fun EnvironmentAttributesScope.netherPortalSpawnsPiglin(value: Boolean, mod: EnvironmentAttributeModifier? = null) = apply {
+/** Controls whether Nether Portal blocks can spawn Piglins. */
+fun EnvironmentAttributesScope.netherPortalSpawnsPiglin(value: Boolean, mod: EnvironmentAttributeModifier.Boolean? = null) =
+	apply {
 	this[EnvironmentAttributes.Gameplay.NETHER_PORTAL_SPAWNS_PIGLIN] = environmentAttributeValue(BooleanValue(value), mod)
 }
 
-fun EnvironmentAttributesScope.piglinsZombify(value: Boolean, mod: EnvironmentAttributeModifier? = null) = apply {
+/** Controls whether Piglins and Hoglins should zombify. */
+fun EnvironmentAttributesScope.piglinsZombify(value: Boolean, mod: EnvironmentAttributeModifier.Boolean? = null) = apply {
 	this[EnvironmentAttributes.Gameplay.PIGLINS_ZOMBIFY] = environmentAttributeValue(BooleanValue(value), mod)
 }
 
-fun EnvironmentAttributesScope.respawnAnchorWorks(value: Boolean, mod: EnvironmentAttributeModifier? = null) = apply {
+/** Controls whether Respawn Anchors can be used to set spawn. If false, the Respawn Anchor will explode once charged. */
+fun EnvironmentAttributesScope.respawnAnchorWorks(value: Boolean, mod: EnvironmentAttributeModifier.Boolean? = null) = apply {
 	this[EnvironmentAttributes.Gameplay.RESPAWN_ANCHOR_WORKS] = environmentAttributeValue(BooleanValue(value), mod)
 }
 
-fun EnvironmentAttributesScope.snowGolemMelts(value: Boolean, mod: EnvironmentAttributeModifier? = null) = apply {
+/** Controls whether a Snow Golem should be damaged. */
+fun EnvironmentAttributesScope.snowGolemMelts(value: Boolean, mod: EnvironmentAttributeModifier.Boolean? = null) = apply {
 	this[EnvironmentAttributes.Gameplay.SNOW_GOLEM_MELTS] = environmentAttributeValue(BooleanValue(value), mod)
 }
 
-fun EnvironmentAttributesScope.waterEvaporates(value: Boolean, mod: EnvironmentAttributeModifier? = null) = apply {
+/** Controls whether Water evaporates when placed, Ice doesn't produce water, and Wet Sponge dries out. */
+fun EnvironmentAttributesScope.waterEvaporates(value: Boolean, mod: EnvironmentAttributeModifier.Boolean? = null) = apply {
 	this[EnvironmentAttributes.Gameplay.WATER_EVAPORATES] = environmentAttributeValue(BooleanValue(value), mod)
 }
