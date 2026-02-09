@@ -8,8 +8,7 @@ import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
 /**
- * Conditional wrapper that applies nested item functions only if the item matches the provided
- * [itemFilter]. Equivalent to vanilla `minecraft:filtered`.
+ * Conditional wrapper that applies nested item functions depending on whether the item matches the provided [itemFilter].
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
@@ -18,7 +17,8 @@ import kotlinx.serialization.Serializable
 data class Filtered(
 	override var conditions: PredicateAsList? = null,
 	var itemFilter: ItemStack = ItemStack(),
-	var modifier: InlinableList<ItemFunction> = emptyList(),
+	var onFail: InlinableList<ItemFunction>? = null,
+	var onPass: InlinableList<ItemFunction>? = null,
 ) : ItemFunction()
 
 /** Add a `filtered` step to this modifier. */
@@ -36,6 +36,11 @@ fun Filtered.itemFilter(vararg items: ItemOrTagArgument, block: ItemStack.() -> 
 }
 
 /** Append nested item functions that will run when the [itemFilter] matches. */
-fun Filtered.modifiers(block: ItemModifier.() -> Unit) {
-	modifier += ItemModifier().apply(block).modifiers
+fun Filtered.onPass(block: ItemModifier.() -> Unit) {
+	onPass = (onPass ?: emptyList()) + ItemModifier().apply(block).modifiers
+}
+
+/** Append nested item functions that will run when the [itemFilter] does not match. */
+fun Filtered.onFail(block: ItemModifier.() -> Unit) {
+	onFail = (onFail ?: emptyList()) + ItemModifier().apply(block).modifiers
 }

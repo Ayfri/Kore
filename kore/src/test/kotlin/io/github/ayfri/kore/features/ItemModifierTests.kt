@@ -102,6 +102,16 @@ fun DataPack.itemModifierTests() {
 		}
 	""".trimIndent()
 
+	itemModifier("discard") {
+		discard()
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:discard"
+		}
+	""".trimIndent()
+
 	itemModifier("enchanted_count_increase") {
 		enchantedCountIncrease(Enchantments.SHARPNESS, 1f, limit = 5)
 	}
@@ -146,8 +156,12 @@ fun DataPack.itemModifierTests() {
 		filtered {
 			itemFilter(Items.APPLE)
 
-			modifiers {
+			onPass {
 				setName("Test")
+			}
+
+			onFail {
+				discard()
 			}
 		}
 	}
@@ -158,7 +172,10 @@ fun DataPack.itemModifierTests() {
 			"item_filter": {
 				"items": "minecraft:apple"
 			},
-			"modifier": {
+			"on_fail": {
+				"function": "minecraft:discard"
+			},
+			"on_pass": {
 				"function": "minecraft:set_name",
 				"name": "Test"
 			}

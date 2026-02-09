@@ -626,16 +626,30 @@ itemModifier("complex") {
 }
 ```
 
+#### discard
+
+Replaces the produced item stack with an empty one:
+
+```kotlin
+itemModifier("discard_example") {
+	discard()
+}
+```
+
 #### filtered
 
-Apply functions only to matching items:
+Apply functions depending on whether the item matches a filter:
 
 ```kotlin
 itemModifier("filter") {
 	filtered {
 		itemFilter(Items.DIAMOND, Items.EMERALD)
 
-		modifiers {
+		onFail {
+			discard()
+		}
+
+		onPass {
 			setCount(uniform(1f, 5f))
 		}
 	}
@@ -826,10 +840,10 @@ dataPack("legendary_items") {
 
 ## See Also
 
-- [Predicates](./predicates) - Conditions for item functions
-- [Components](../concepts/components) - Understanding item components
-- [Loot Tables](./loot-tables) - Use item modifiers in loot tables
-- [Commands](../commands/commands) - Using the `/item` command
+- [Predicates](/docs/data-driven/predicates) - Conditions for item functions
+- [Components](/docs/concepts/components) - Understanding item components
+- [Loot Tables](/docs/data-driven/loot-tables) - Use item modifiers in loot tables
+- [Commands](/docs/data-driven/commands/commands) - Using the `/item` command
 
 ### External Resources
 
