@@ -19,6 +19,8 @@ data class KineticWeaponEffectCondition(
 
 @Serializable
 data class KineticWeaponComponent(
+	@SerialName("contact_cooldown_ticks")
+	var contactCooldownTicks: Int? = null,
 	@SerialName("damage_conditions")
 	var damageConditions: KineticWeaponEffectCondition? = null,
 	@SerialName("damage_multiplier")
