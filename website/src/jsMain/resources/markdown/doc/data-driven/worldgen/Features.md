@@ -5,7 +5,7 @@ nav-title: Features
 description: Create configured and placed features (trees, ores, vegetation) with Kore's DSL.
 keywords: minecraft, datapack, kore, worldgen, configured feature, placed feature, tree, ore
 date-created: 2026-02-03
-date-modified: 2026-02-03
+date-modified: 2026-02-04
 routeOverride: /docs/data-driven/worldgen/features
 ---
 
@@ -215,11 +215,15 @@ fun DataPack.createForestFeatures() {
 		temperature = 0.7f
 		downfall = 0.8f
 		hasPrecipitation = true
+
+		attributes {
+			skyColor(0x78A7FF)
+			fogColor(0xC0D8FF)
+			waterFogColor(0x050533)
+		}
+
 		effects {
-			skyColor = 0x78A7FF
-			fogColor = 0xC0D8FF
-			waterColor = 0x3F76E4
-			waterFogColor = 0x050533
+			waterColor = color(0x3F76E4)
 		}
 		features {
 			undergroundOres = listOf(ironOrePlaced)

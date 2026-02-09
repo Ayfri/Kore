@@ -5,7 +5,7 @@ nav-title: Biomes
 description: Define biomes with climate, effects, spawns, carvers, and features using Kore's DSL.
 keywords: minecraft, datapack, kore, worldgen, biome, carver, spawner, effects
 date-created: 2026-02-03
-date-modified: 2026-02-03
+date-modified: 2026-02-04
 routeOverride: /docs/data-driven/worldgen/biomes
 ---
 
@@ -38,40 +38,49 @@ val myBiome = dp.biome("my_biome") {
 	downfall = 0.4f
 	hasPrecipitation = true
 
-	effects {
-		skyColor = 0x78A7FF
-		fogColor = 0xC0D8FF
-		waterColor = 0x3F76E4
-		waterFogColor = 0x050533
+	attributes {
+		skyColor(0x78A7FF)
+		fogColor(0xC0D8FF)
+		waterFogColor(0x050533)
 	}
+
+	effects {
+		waterColor = color(0x3F76E4)
+	}
+}
+```
+
+## Environment Attributes
+
+Biome visuals/audio/gameplay are partially controlled by **environment attributes** (`attributes`), a shared system used by both biomes and
+dimension types. See the [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) page for the full list of attributes,
+modifiers, and interpolation rules.
+
+```kotlin
+attributes {
+	// Simple values serialize as a raw JSON value (equivalent to "minecraft:override")
+	skyColor(0x78A7FF)
+
+	// Expanded form when a modifier is provided
+	fogColor(0xC0D8FF, AttributeModifier.ADD)
 }
 ```
 
 ## Effects
 
-The `effects` block controls visual and audio aspects of the biome. These settings define the atmosphere players experience, from sky color
-to ambient sounds.
+The `effects` block controls biome-specific colors like water/foliage/grass. Visual sky/fog/water fog, particles and sounds are handled by
+`attributes`.
 
 Reference: [Biome definition - Effects](https://minecraft.wiki/w/Biome_definition#Effects)
 
 ```kotlin
 effects {
-	// Required colors
-	skyColor = 0x78A7FF
-	fogColor = 0xC0D8FF
-	waterColor = 0x3F76E4
-	waterFogColor = 0x050533
+	// Water color (serialized as a decimal int in JSON)
+	waterColor = color(0x3F76E4)
 
 	// Optional colors
-	foliageColor = 0x59AE30
-	grassColor = 0x79C05A
-
-	// Optional ambient effects
-	// ambientSound = ...
-	// moodSound { ... }
-	// additionsSound { ... }
-	// music { ... }
-	// particle { ... }
+	foliageColor = color(0x59AE30)
+	grassColor = color(0x79C05A)
 }
 ```
 
@@ -223,11 +232,14 @@ fun DataPack.createHighlandsBiome() {
 			downfall = 0.3f
 			hasPrecipitation = true
 
+			attributes {
+				fogColor(0xBFEFFF)
+				skyColor(0x99D9FF)
+				waterFogColor(0x0A2C4F)
+			}
+
 			effects {
-				fogColor = 0xBFEFFF
-				skyColor = 0x99D9FF
-				waterColor = 0x34A7F0
-				waterFogColor = 0x0A2C4F
+				waterColor = color(0x34A7F0)
 			}
 
 			spawners {
@@ -254,4 +266,11 @@ fun DataPack.createHighlandsBiome() {
 			}
 		}
 }
-```
+ ```
+
+## See Also
+
+- [Dimensions](/docs/data-driven/worldgen/dimensions) - Dimension types and generators
+- [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) - Full reference for visual, audio, and gameplay attributes
+- [Features](/docs/data-driven/worldgen/features) - Configured and placed features
+- [World Generation](/docs/data-driven/worldgen) - Overview of the worldgen system

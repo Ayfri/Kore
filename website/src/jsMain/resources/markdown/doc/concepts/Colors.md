@@ -5,7 +5,7 @@ nav-title: Colors
 description: Guide to using colors in Kore, including named colors, RGB/ARGB, dye colors, and how different contexts serialize them.
 keywords: minecraft, kore, colors, rgb, argb, dyes, components, particles
 date-created: 2025-08-11
-date-modified: 2025-08-11
+date-modified: 2026-02-04
 routeOverride: /docs/concepts/colors
 ---
 
@@ -109,14 +109,22 @@ Different Minecraft systems expect colors in different formats. Kore picks the r
 	  ```
 
 - Worldgen Biomes (decimal ints):
-  [See on GitHub](https://github.com/Ayfri/Kore/tree/master/kore/src/main/kotlin/io/github/ayfri/kore/features/worldgen/biome/types/BiomeEffects.kt#L12-L17)
+	- `effects.waterColor`, `effects.grassColor`, `effects.foliageColor`, etc. use decimal ints.
+	- Sky/fog/water fog colors are now set via **environment attributes** (`attributes`).
+	  [See on GitHub](https://github.com/Ayfri/Kore/tree/master/kore/src/main/kotlin/io/github/ayfri/kore/features/worldgen/biome/types/BiomeEffects.kt)
   ```kotlin
-  @Serializable(ColorAsDecimalSerializer::class) var skyColor: Color = color(7907327)
-  @Serializable(ColorAsDecimalSerializer::class) var fogColor: Color = color(12638463)
+  // BiomeEffects (decimal ints in JSON)
   @Serializable(ColorAsDecimalSerializer::class) var waterColor: Color = color(4159204)
-  @Serializable(ColorAsDecimalSerializer::class) var waterFogColor: Color = color(329011)
   @Serializable(ColorAsDecimalSerializer::class) var grassColor: Color? = null
   @Serializable(ColorAsDecimalSerializer::class) var foliageColor: Color? = null
+  @Serializable(ColorAsDecimalSerializer::class) var dryFoliageColor: Color? = null
+
+  // Environment attributes (also typically decimal ints for worldgen colors)
+  attributes {
+  	skyColor(0x78A7FF)
+  	fogColor(0xC0D8FF)
+  	waterFogColor(0x050533)
+  }
   ```
 
 - Particles:
@@ -249,8 +257,8 @@ import io.github.ayfri.kore.features.worldgen.biome.types.BiomeEffects
 import io.github.ayfri.kore.arguments.colors.color
 
 val effects = BiomeEffects(
-    skyColor = color(7907327),
-    waterColor = color(4159204)
+	waterColor = color(4159204),
+	grassColor = color(0x79C05A)
 )
 ```
 
@@ -296,4 +304,5 @@ val cat = Items.CAT_SPAWN_EGG {
 
 ## Further reading
 
+- [Chat Components](/docs/concepts/chat-components) - Use colors in chat components
 - Minecraft Wiki - Color: [`https://minecraft.wiki/w/Color`](https://minecraft.wiki/w/Color)

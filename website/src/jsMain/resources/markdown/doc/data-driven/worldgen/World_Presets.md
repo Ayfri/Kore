@@ -5,7 +5,7 @@ nav-title: World Presets
 description: Create world presets and flat level generator presets with Kore's DSL.
 keywords: minecraft, datapack, kore, worldgen, world preset, flat, superflat
 date-created: 2026-02-03
-date-modified: 2026-02-03
+date-modified: 2026-02-04
 routeOverride: /docs/data-driven/worldgen/world-presets
 ---
 
@@ -133,9 +133,18 @@ fun DataPack.createSkylandsPreset() {
 		hasSkylight = true
 		hasCeiling = false
 		natural = true
-		bedWorks = true
-		hasRaids = true
 		ambientLight = 0.1f
+
+		attributes {
+			canStartRaid(true)
+			bedRule(
+				BedRule(
+					canSleep = BedSleepRule.ALWAYS,
+					canSetSpawn = BedSleepRule.ALWAYS,
+					explodes = false,
+				)
+			)
+		}
 	}
 
 	// 2) Noise settings
@@ -150,11 +159,15 @@ fun DataPack.createSkylandsPreset() {
 		temperature = 0.5f
 		downfall = 0.5f
 		hasPrecipitation = true
+
+		attributes {
+			skyColor(0x87CEEB)
+			fogColor(0xC0D8FF)
+			waterFogColor(0x050533)
+		}
+
 		effects {
-			skyColor = 0x87CEEB
-			fogColor = 0xC0D8FF
-			waterColor = 0x3F76E4
-			waterFogColor = 0x050533
+			waterColor = color(0x3F76E4)
 		}
 	}
 
@@ -170,3 +183,11 @@ fun DataPack.createSkylandsPreset() {
 	}
 }
 ```
+
+## See Also
+
+- [Biomes](/docs/data-driven/worldgen/biomes) - Climate, visuals, mob spawns, and features
+- [Dimensions](/docs/data-driven/worldgen/dimensions) - Dimension types and generators
+- [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) - Visual, audio, and gameplay attributes for biomes and
+  dimensions
+- [World Generation](/docs/data-driven/worldgen) - Overview of the worldgen system

@@ -5,7 +5,7 @@ nav-title: Worldgen
 description: Overview of custom world generation (1.21+) with Kore's Kotlin DSL.
 keywords: minecraft, datapack, kore, worldgen, dimension, biome, features, structures, noise
 date-created: 2025-08-11
-date-modified: 2026-02-03
+date-modified: 2026-02-04
 routeOverride: /docs/data-driven/worldgen
 ---
 
@@ -47,12 +47,14 @@ Reference: [World generation steps](https://minecraft.wiki/w/World_generation#St
 
 World generation is split into focused pages:
 
-- [**Biomes**](./worldgen/biomes) - Climate, visuals, mob spawns, carvers, and feature lists
-- [**Features**](./worldgen/features) - Configured and placed features (trees, ores, vegetation)
-- [**Noise & Terrain**](./worldgen/noise) - Density functions, noise definitions, and noise settings
-- [**Dimensions**](./worldgen/dimensions) - Dimensions and dimension types
-- [**Structures**](./worldgen/structures) - Structures, template pools, processors, and structure sets
-- [**World Presets**](./worldgen/world-presets) - World presets and flat level generator presets
+- [**Biomes**](/docs/data-driven/worldgen/biomes) - Climate, visuals, mob spawns, carvers, and feature lists
+- [**Dimensions**](/docs/data-driven/worldgen/dimensions) - Dimensions and dimension types
+- [**Environment Attributes**](/docs/data-driven/worldgen/environment-attributes) - Visual, audio, and gameplay attributes for biomes and
+  dimensions
+- [**Features**](/docs/data-driven/worldgen/features) - Configured and placed features (trees, ores, vegetation)
+- [**Noise & Terrain**](/docs/data-driven/worldgen/noise) - Density functions, noise definitions, and noise settings
+- [**Structures**](/docs/data-driven/worldgen/structures) - Structures, template pools, processors, and structure sets
+- [**World Presets**](/docs/data-driven/worldgen/world-presets) - World presets and flat level generator presets
 
 ## Decoration Steps
 
@@ -95,6 +97,22 @@ Kore APIs generate JSON under standard datapack directories (replace `<ns>` with
 | `templatePool(...)`             | `data/<ns>/worldgen/template_pool/<name>.json`               |
 | `worldPreset(...)`              | `data/<ns>/worldgen/world_preset/<name>.json`                |
 
+## Environment Attributes
+
+Biomes and dimension types support a flexible `attributes` map for visuals, audio, and gameplay rules shared across environments.
+
+```kotlin
+import io.github.ayfri.kore.features.worldgen.AttributeModifier
+import io.github.ayfri.kore.features.worldgen.environmentattributes.*
+
+attributes {
+	skyColor(0x78A7FF)
+
+	// When a modifier is set, the value expands to { "argument": ..., "modifier": ... }
+	fogColor(0xC0D8FF, AttributeModifier.ADD)
+}
+```
+
 ## Quick Start Example
 
 ```kotlin
@@ -117,11 +135,15 @@ val plains = dp.biome("example_plains") {
 	temperature = 0.8f
 	downfall = 0.4f
 	hasPrecipitation = true
+
+	attributes {
+		skyColor(0x78A7FF)
+		fogColor(0xC0D8FF)
+		waterFogColor(0x050533)
+	}
+
 	effects {
-		skyColor = 0x78A7FF
-		fogColor = 0xC0D8FF
-		waterColor = 0x3F76E4
-		waterFogColor = 0x050533
+		waterColor = color(0x3F76E4)
 	}
 }
 
@@ -153,5 +175,7 @@ dp.worldPreset("example_preset") {
 
 ## Cross-References
 
-- [Predicates](../data-driven/predicates) - Condition logic for features
-- [Test Features](../advanced/test-features) - Automated validation with GameTest
+- [Colors](/docs/concepts/colors) - RGB and ARGB color formats used in environment attributes
+- [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) - Full reference for visual, audio, and gameplay attributes
+- [Predicates](/docs/data-driven/predicates) - Condition logic for features
+- [Test Features](/docs/advanced/test-features) - Automated validation with GameTest

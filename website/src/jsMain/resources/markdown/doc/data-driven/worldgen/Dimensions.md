@@ -5,7 +5,7 @@ nav-title: Dimensions
 description: Create custom dimensions and dimension types with Kore's DSL.
 keywords: minecraft, datapack, kore, worldgen, dimension, dimension type, generator
 date-created: 2026-02-03
-date-modified: 2026-02-03
+date-modified: 2026-02-04
 routeOverride: /docs/data-driven/worldgen/dimensions
 ---
 
@@ -24,45 +24,53 @@ References: [Dimension](https://minecraft.wiki/w/Dimension), [Dimension definiti
 ## Dimension Type
 
 Dimension types define the fundamental rules of a world: vertical bounds, lighting behavior, time flow, and special mechanics. These
-settings affect gameplay significantly-for example, `ultrawarm` dimensions evaporate water and make lava flow faster (like the Nether).
+settings affect gameplay significantly-for example, use environment attributes like `waterEvaporates` and `fastLava` to make a Nether-like
+environment. See [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) for the full list of attributes and modifiers.
 
 Reference: [Dimension type](https://minecraft.wiki/w/Dimension_type)
 
 ```kotlin
 val myDimType = dp.dimensionType("my_dim_type") {
 	ambientLight = 0f
-	bedWorks = true
 	hasCeiling = false
-	hasRaids = true
 	hasSkylight = true
 	height = 384
 	logicalHeight = 384
 	minY = -64
 	natural = true
-	piglinSafe = false
-	respawnAnchorWorks = false
-	ultrawarm = false
+
+	attributes {
+		canStartRaid(true)
+		respawnAnchorWorks(false)
+		piglinsZombify(true)
+		waterEvaporates(false)
+		fastLava(false)
+		increasedFireBurnout(false)
+		bedRule(
+			BedRule(
+				canSleep = BedSleepRule.ALWAYS,
+				canSetSpawn = BedSleepRule.ALWAYS,
+				explodes = false,
+			)
+		)
+	}
 }
 ```
 
 ### Dimension Type Properties
 
-| Property             | Description                             |
-|----------------------|-----------------------------------------|
-| `ambientLight`       | Base light level (0.0 to 1.0)           |
-| `bedWorks`           | Beds can set spawn point                |
-| `effects`            | Visual effects (overworld/nether/end)   |
-| `hasCeiling`         | Whether dimension has bedrock ceiling   |
-| `hasRaids`           | Raids can occur                         |
-| `hasSkylight`        | Whether sky provides light              |
-| `height`             | Total height (multiple of 16, max 4064) |
-| `infiniburn`         | Block tag for infinite burning          |
-| `logicalHeight`      | Max height for teleportation/portals    |
-| `minY`               | Minimum Y coordinate (multiple of 16)   |
-| `natural`            | Compasses/clocks work normally          |
-| `piglinSafe`         | Piglins don't zombify                   |
-| `respawnAnchorWorks` | Respawn anchors can be used             |
-| `ultrawarm`          | Water evaporates, lava flows faster     |
+| Property        | Description                                          |
+|-----------------|------------------------------------------------------|
+| `ambientLight`  | Base light level (0.0 to 1.0)                        |
+| `attributes`    | Environment attributes (visual/audio/gameplay rules) |
+| `effects`       | Visual effects (overworld/nether/end)                |
+| `hasCeiling`    | Whether dimension has bedrock ceiling                |
+| `hasSkylight`   | Whether sky provides light                           |
+| `height`        | Total height (multiple of 16, max 4064)              |
+| `infiniburn`    | Block tag for infinite burning                       |
+| `logicalHeight` | Max height for teleportation/portals                 |
+| `minY`          | Minimum Y coordinate (multiple of 16)                |
+| `natural`       | Compasses/clocks work normally                       |
 
 ---
 
@@ -167,17 +175,28 @@ fun DataPack.createSkyDimension() {
 	// 1) Dimension type with high ambient light
 	val skyType = dimensionType("sky_type") {
 		ambientLight = 0.5f
-		bedWorks = true
 		hasCeiling = false
-		hasRaids = false
 		hasSkylight = true
 		height = 256
 		logicalHeight = 256
 		minY = 0
 		natural = true
-		piglinSafe = false
-		respawnAnchorWorks = false
-		ultrawarm = false
+
+		attributes {
+			canStartRaid(false)
+			respawnAnchorWorks(false)
+			piglinsZombify(true)
+			waterEvaporates(false)
+			fastLava(false)
+			increasedFireBurnout(false)
+			bedRule(
+				BedRule(
+					canSleep = BedSleepRule.ALWAYS,
+					canSetSpawn = BedSleepRule.ALWAYS,
+					explodes = false,
+				)
+			)
+		}
 	}
 
 	// 2) Simple noise settings
@@ -192,20 +211,31 @@ fun DataPack.createSkyDimension() {
 		temperature = 0.5f
 		downfall = 0.0f
 		hasPrecipitation = false
+
+		attributes {
+			skyColor(0xFFFFFF)
+			fogColor(0xFFFFFF)
+			waterFogColor(0x050533)
+		}
+
 		effects {
-			skyColor = 0xFFFFFF
-			fogColor = 0xFFFFFF
-			waterColor = 0x3F76E4
-			waterFogColor = 0x050533
+			waterColor = color(0x3F76E4)
 		}
 	}
 
 	// 4) Create the dimension
 	dimension("sky", type = skyType) {
 		noiseGenerator(
+			biomeSource = fixed(skyBiome),
 			settings = skyTerrain,
-			biomeSource = fixed(skyBiome)
 		)
 	}
 }
 ```
+
+## See Also
+
+- [Biomes](/docs/data-driven/worldgen/biomes) - Climate, visuals, mob spawns, and features
+- [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) - Full reference for visual, audio, and gameplay attributes
+- [World Presets](/docs/data-driven/worldgen/world-presets) - World presets and flat level generator presets
+- [World Generation](/docs/data-driven/worldgen) - Overview of the worldgen system
