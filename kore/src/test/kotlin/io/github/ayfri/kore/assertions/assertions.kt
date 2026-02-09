@@ -37,7 +37,7 @@ infix fun Argument.assertsIs(string: String) = assertsIs(asString(), string)
 context(dp: DataPack)
 infix fun Generator.assertsIs(@Language("json") expected: String) {
 	val result = generateJson(dp)
-	if (result == expected || !alreadyPrinted.add(hashCode())) return
+	if (result == expected || !alreadyPrinted.add(this.hashCode())) return
 
 	printStackTraceAndDiff(generateDiffStringJson(expected, result), 3)
 }
