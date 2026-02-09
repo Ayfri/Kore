@@ -9,7 +9,7 @@ group = Project.GROUP
 mavenPublishing {
 	publishToMavenCentral(automaticRelease = true)
 
-	if (System.getenv("CI") != null) {
+	if (providers.environmentVariable("CI").isPresent) {
 		signAllPublications()
 	}
 
