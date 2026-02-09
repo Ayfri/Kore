@@ -34,6 +34,12 @@ fun EntityEffectBuilder.allOf(block: EntityEffectAllOfTopBuilder.() -> Unit = {}
 	effects += ConditionalEffect(effect.effects, effect.requirements)
 }
 
+fun EntityEffectBuilder.applyExhaustion(amount: Int, block: ApplyExhaustion.() -> Unit = {}) =
+	apply {
+		val effect = ApplyExhaustion(constantLevelBased(amount)).apply(block)
+		effects += ConditionalEffect(effect, effect.requirements)
+	}
+
 fun EntityEffectBuilder.applyImpulse(
 	coordinateScale: Vec3f,
 	direction: Vec3f,

@@ -39,6 +39,16 @@ fun PostAttackBuilder.allOf(
 	effects += PostAttackConditionalEffect(enchanted, affected, effect.effects, effect.requirements)
 }
 
+fun PostAttackBuilder.applyExhaustion(
+	enchanted: PostAttackSpecifier,
+	affected: PostAttackSpecifier,
+	amount: Int,
+	block: ApplyExhaustion.() -> Unit = {},
+) = apply {
+	val effect = ApplyExhaustion(constantLevelBased(amount)).apply(block)
+	effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
+}
+
 fun PostAttackBuilder.applyImpulse(
 	enchanted: PostAttackSpecifier,
 	affected: PostAttackSpecifier,

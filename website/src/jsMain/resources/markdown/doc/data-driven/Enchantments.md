@@ -301,6 +301,12 @@ effects {
 
 Entity effects are actions that can be triggered by effect components:
 
+### Apply Exhaustion
+
+```kotlin
+applyExhaustion(amount = 5)
+```
+
 ### Apply Impulse
 
 ```kotlin

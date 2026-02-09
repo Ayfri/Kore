@@ -42,6 +42,9 @@ fun EntityEffectAllOfSubBuilder.allOf(block: EntityEffectAllOfSubBuilder.() -> U
 	apply { effects.effects += EntityEffectAllOfSubBuilder().apply(block).effects }
 
 
+fun EntityEffectAllOfBuilder.applyExhaustion(amount: Int, block: ApplyExhaustion.() -> Unit = {}) =
+	apply { effects.effects += ApplyExhaustion(constantLevelBased(amount)).apply(block) }
+
 fun EntityEffectAllOfBuilder.applyImpulse(
 	coordinateScale: Vec3f,
 	direction: Vec3f,

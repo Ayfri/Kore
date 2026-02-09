@@ -512,6 +512,8 @@ fun DataPack.enchantmentTests() {
 					}
 				}
 
+				applyExhaustion(5)
+
 				damageEntity(DamageTypes.IN_FIRE, 1, 2) {
 					requirements {
 						weatherCheck(raining = false)
@@ -585,6 +587,12 @@ fun DataPack.enchantmentTests() {
 						"requirements": {
 							"condition": "minecraft:weather_check",
 							"raining": true
+						}
+					},
+					{
+						"effect": {
+							"type": "minecraft:apply_exhaustion",
+							"amount": 5
 						}
 					},
 					{
