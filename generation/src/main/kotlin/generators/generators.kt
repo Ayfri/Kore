@@ -112,8 +112,8 @@ suspend fun launchAllSimpleGenerators() {
 		},
 		gen("DensityFunctions", "worldgen/density_function"),
 		gen("TemplatePools", "worldgen/template_pool"),
-	).transformRemoveJSONSuffix().map { gen ->
-		gen.apply { enumTree = true }
+	).transformRemoveJSONSuffix().onEach { gen ->
+		gen.enumTree = true
 	}
 
 	val txtRegistriesListGenerators = listOf(
@@ -206,14 +206,15 @@ suspend fun launchAllSimpleGenerators() {
 	)
 
 	val txtRegistriesTreeGenerators = listOf(
+		gen("EnvironmentAttributes", "environment_attribute") {
+			separator = "/"
+		},
 		gen("SoundEvents", "sound_event") {
 			argumentClassName = "SoundEvent"
-		},
-	).transformRemoveMinecraftPrefix().map { gen ->
-		gen.apply {
-			enumTree = true
 			separator = "."
-		}
+		},
+	).transformRemoveMinecraftPrefix().onEach { gen ->
+		gen.enumTree = true
 	}
 
 	val allListGenerators = txtListsListGenerators.setUrlWithType("lists") +
