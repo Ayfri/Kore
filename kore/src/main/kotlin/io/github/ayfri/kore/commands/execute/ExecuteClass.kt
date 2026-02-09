@@ -106,7 +106,7 @@ class Execute {
 
 	context(fn:Function)
 	fun run(block: Function.() -> Command): FunctionArgument {
-		val function = Function("", "", "", fn.datapack).apply { block() }
+		val function = Function("", "", datapack = fn.datapack).apply { block() }
 
 		if (function.isInlinable) return emptyFunction(fn.datapack) {
 			block().apply {
@@ -121,7 +121,7 @@ class Execute {
 			lines.removeAll { it.startsWith("#") || it.isBlank() || it.isEmpty() }
 		}
 
-		val name = "generated_${hashCode()}"
+		val name = "generated_${this.hashCode()}"
 		val generatedFunction = fn.datapack.generatedFunction(name) { block() }
 		if (generatedFunction.name == name && fn.datapack.configuration.generateCommentOfGeneratedFunctionCall) fn.comment("Generated function ${fn.asString()}")
 		run = generatedFunction

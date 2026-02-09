@@ -2,12 +2,16 @@ package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.features.worldgen.dimensiontype.attributes
 import io.github.ayfri.kore.features.worldgen.dimensiontype.dimensionType
+import io.github.ayfri.kore.features.worldgen.environmentattributes.types.cloudHeight
 import io.github.ayfri.kore.features.worldgen.intproviders.*
 
 fun DataPack.dimensionTypeTests() {
 	dimensionType("my_dimension") {
-		cloudHeight = 128
+		attributes {
+			cloudHeight(128f)
+		}
 		height = 512
 		logicalHeight = 512
 		minY = 0
@@ -16,12 +20,10 @@ fun DataPack.dimensionTypeTests() {
 
 	dimensionTypes.last() assertsIs """
 		{
-			"ultrawarm": false,
+			"attributes": {
+				"minecraft:visual/cloud_height": 128.0
+			},
 			"natural": true,
-			"piglin_safe": false,
-			"respawn_anchor_works": false,
-			"bed_works": true,
-			"has_raids": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
@@ -35,8 +37,7 @@ fun DataPack.dimensionTypeTests() {
 				"min_inclusive": 7,
 				"max_inclusive": 15
 			},
-			"monster_spawn_block_light_limit": 0,
-			"cloud_height": 128
+			"monster_spawn_block_light_limit": 0
 		}
 		""".trimIndent()
 
@@ -46,12 +47,7 @@ fun DataPack.dimensionTypeTests() {
 
 	dimensionTypes.last() assertsIs """
 		{
-			"ultrawarm": false,
 			"natural": true,
-			"piglin_safe": false,
-			"respawn_anchor_works": false,
-			"bed_works": true,
-			"has_raids": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,

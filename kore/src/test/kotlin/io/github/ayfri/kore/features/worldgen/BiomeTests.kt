@@ -2,15 +2,18 @@ package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.colors.Color
+import io.github.ayfri.kore.arguments.colors.rgb
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.locateBiome
 import io.github.ayfri.kore.features.worldgen.biome.*
 import io.github.ayfri.kore.features.worldgen.biome.types.*
+import io.github.ayfri.kore.features.worldgen.environmentattributes.EnvironmentAttributeModifier
+import io.github.ayfri.kore.features.worldgen.environmentattributes.types.fogColor
+import io.github.ayfri.kore.features.worldgen.environmentattributes.types.skyColor
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Carvers
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.PlacedFeatures
-import io.github.ayfri.kore.generated.Sounds
 
 fun DataPack.biomeTests() {
 	val biome = biome("my_biome") {
@@ -20,24 +23,16 @@ fun DataPack.biomeTests() {
 		temperatureModifier = TemperatureModifier.NONE
 		creatureSpawnProbability = null
 
+		attributes {
+			fogColor(rgb(255, 255, 0), EnvironmentAttributeModifier.ADD)
+			skyColor(Color.RED)
+		}
+
 		effects {
-			skyColor = Color.RED
-			fogColor = Color.BLUE
 			waterColor = Color.GREEN
-			waterFogColor = Color.YELLOW
 			foliageColor = Color.PURPLE
 			grassColor = Color.WHITE
 			dryFoliageColor = Color.BLACK
-
-			music(Sounds.Music.Menu.MOOG_CITY_2, weight = 2) {
-				minDelay = 100
-				maxDelay = 200
-				replaceCurrentMusic = true
-			}
-
-			addMusic(Sounds.Music.Menu.FLOATING_TREES)
-
-			musicVolume = 1.5f
 		}
 		spawners {
 			creature {
@@ -67,39 +62,22 @@ fun DataPack.biomeTests() {
 	}
 	biomes.last() assertsIs """
 		{
+			"attributes": {
+				"minecraft:visual/fog_color": {
+					"argument": 16776960,
+					"modifier": "add"
+				},
+				"minecraft:visual/sky_color": 16733525
+			},
 			"temperature": 0.8,
 			"downfall": 0.4,
 			"has_precipitation": true,
 			"temperature_modifier": "none",
 			"effects": {
-				"sky_color": 16733525,
-				"fog_color": 5592575,
 				"water_color": 5635925,
-				"water_fog_color": 16777045,
 				"grass_color": 16777215,
 				"foliage_color": 11141375,
-				"dry_foliage_color": 0,
-				"music": [
-					{
-						"data": {
-							"sound": "minecraft:music/menu/moog_city_2",
-							"min_delay": 100,
-							"max_delay": 200,
-							"replace_current_music": true
-						},
-						"weight": 2
-					},
-					{
-						"data": {
-							"sound": "minecraft:music/menu/floating_trees",
-							"min_delay": 0,
-							"max_delay": 0,
-							"replace_current_music": false
-						},
-						"weight": 1
-					}
-				],
-				"music_volume": 1.5
+				"dry_foliage_color": 0
 			},
 			"spawners": {
 				"creature": [

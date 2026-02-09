@@ -24,6 +24,7 @@ fun featuresTests() = testDataPack("features_tests") {
 	dimensionTypeTests()
 	enchantmentTests()
 	enchantmentProviderTests()
+	environmentAttributesTests()
 	flatLevelGeneratorPresetTests()
 	frogVariantTests()
 	itemModifierTests()
