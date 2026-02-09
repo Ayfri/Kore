@@ -26,7 +26,7 @@ data class ServerLinks(
 	override var canCloseWithEscape: Boolean? = null,
 	override var inputs: List<DialogControl> = emptyList(),
 	override var pause: Boolean? = null,
-	/** Value between 1 and 1024 — Width of the button. Defaults to 150. */
+	/** Value between 1 and 1024 - Width of the button. Defaults to 150. */
 	var buttonWidth: Int? = null,
 	/** Positive integer describing the number of columns. Defaults to 2. */
 	var columns: Int? = null,

@@ -12,7 +12,7 @@ routeOverride: /docs/data-driven/worldgen/environment-attributes
 # Environment Attributes
 
 Environment Attributes provide a data-driven way to control a variety of visual, audio, and gameplay systems. Each attribute controls a
-specific effect: for example, `minecraft:visual/sky_color` controls the color of the sky, and `minecraft:gameplay/water_evaporates` controls
+specific effect: for example, `visual/sky_color` controls the color of the sky, and `gameplay/water_evaporates` controls
 whether water can be placed at a given location.
 
 Both **biomes** and **dimension types** can define environment attributes via the `attributes` block.
@@ -25,8 +25,8 @@ References: [Biome definition](https://minecraft.wiki/w/Biome_definition), [Dime
 
 Environment Attribute values can be provided by the following sources (low → high priority):
 
-1. **Dimensions** — base values for the entire dimension
-2. **Biomes** — override or modify per-biome
+1. **Dimensions** - base values for the entire dimension
+2. **Biomes** - override or modify per-biome
 
 When a biome provides an attribute, it takes priority over the dimension value. For example, if the overworld dimension sets
 `sky_color = green` and the plains biome sets `sky_color = red`, a player in the plains biome will see a red sky.
@@ -41,7 +41,7 @@ attributes {
 	// Simple override (default modifier)
 	skyColor(0x78A7FF)
 
-	// Explicit modifier — multiplies the preceding value
+	// Explicit modifier - multiplies the preceding value
 	waterFogRadius(0.85f, EnvironmentAttributeModifier.MULTIPLY)
 }
 ```
@@ -100,7 +100,7 @@ All attributes are listed below in alphabetical order by their Minecraft ID.
 
 ---
 
-### `minecraft:audio/ambient_sounds`
+### `audio/ambient_sounds`
 
 Controls which ambient sounds are played around the camera: looping sounds, mood-based sounds, and additional random sounds.
 
@@ -115,15 +115,15 @@ Controls which ambient sounds are played around the camera: looping sounds, mood
 
 **Fields:**
 
-- `loop` — optional Sound Event, continually looped sound
-- `mood` — optional object for mood sounds:
-	- `sound` — Sound Event to play
-	- `tickDelay` — ticks between mood sounds (default: `6000`)
-	- `blockSearchExtent` — radius for light level sampling (default: `8`)
-	- `offset` — distance offset for produced sounds (default: `2.0`)
-- `additions` — list of additional random sounds:
-	- `sound` — Sound Event to play
-	- `tickChance` — probability within a tick to play the sound
+- `loop` - optional Sound Event, continually looped sound
+- `mood` - optional object for mood sounds:
+	- `sound` - Sound Event to play
+	- `tickDelay` - ticks between mood sounds (default: `6000`)
+	- `blockSearchExtent` - radius for light level sampling (default: `8`)
+	- `offset` - distance offset for produced sounds (default: `2.0`)
+- `additions` - list of additional random sounds:
+	- `sound` - Sound Event to play
+	- `tickChance` - probability within a tick to play the sound
 
 ```kotlin
 attributes {
@@ -136,7 +136,7 @@ attributes {
 
 ---
 
-### `minecraft:audio/background_music`
+### `audio/background_music`
 
 Controls how and which background music is played.
 
@@ -151,13 +151,13 @@ Controls how and which background music is played.
 
 **Fields:**
 
-- `default` — optional music track with:
-	- `sound` — Sound Event to play
-	- `minDelay` — minimum delay in ticks between tracks
-	- `maxDelay` — maximum delay in ticks between tracks
-	- `replaceCurrentMusic` — optional boolean (default: `false`)
-- `creative` — optional track, overrides `default` when in Creative Mode
-- `underwater` — optional track, overrides `default` when underwater
+- `default` - optional music track with:
+	- `sound` - Sound Event to play
+	- `minDelay` - minimum delay in ticks between tracks
+	- `maxDelay` - maximum delay in ticks between tracks
+	- `replaceCurrentMusic` - optional boolean (default: `false`)
+- `creative` - optional track, overrides `default` when in Creative Mode
+- `underwater` - optional track, overrides `default` when underwater
 
 ```kotlin
 attributes {
@@ -174,7 +174,7 @@ attributes {
 
 ---
 
-### `minecraft:audio/music_volume`
+### `audio/music_volume`
 
 The volume at which music should play. Any music playing will fade over time to this value.
 
@@ -195,7 +195,7 @@ attributes {
 
 ---
 
-### `minecraft:gameplay/bed_rule`
+### `gameplay/bed_rule`
 
 Controls whether a Bed can be used to sleep, set a respawn point, or whether it explodes.
 
@@ -210,10 +210,10 @@ Controls whether a Bed can be used to sleep, set a respawn point, or whether it 
 
 **Fields:**
 
-- `canSleep` — one of `ALWAYS`, `WHEN_DARK`, `NEVER`
-- `canSetSpawn` — one of `ALWAYS`, `WHEN_DARK`, `NEVER`
-- `explodes` — optional boolean, if `true` the Bed explodes when interacted with (default: `false`)
-- `errorMessage` — optional Text Component shown when unable to sleep
+- `canSleep` - one of `ALWAYS`, `WHEN_DARK`, `NEVER`
+- `canSetSpawn` - one of `ALWAYS`, `WHEN_DARK`, `NEVER`
+- `explodes` - optional boolean, if `true` the Bed explodes when interacted with (default: `false`)
+- `errorMessage` - optional Text Component shown when unable to sleep
 
 ```kotlin
 attributes {
@@ -228,7 +228,7 @@ attributes {
 
 ---
 
-### `minecraft:gameplay/can_start_raid`
+### `gameplay/can_start_raid`
 
 If `false`, a Raid cannot be started by a player with Raid Omen.
 
@@ -249,7 +249,7 @@ attributes {
 
 ---
 
-### `minecraft:gameplay/fast_lava`
+### `gameplay/fast_lava`
 
 Controls whether Lava should spread faster and further, as well as have a stronger pushing force on entities when flowing.
 
@@ -270,7 +270,7 @@ attributes {
 
 ---
 
-### `minecraft:gameplay/increased_fire_burnout`
+### `gameplay/increased_fire_burnout`
 
 Controls whether Fire blocks burn out more rapidly than normal.
 
@@ -291,7 +291,7 @@ attributes {
 
 ---
 
-### `minecraft:gameplay/nether_portal_spawns_piglin`
+### `gameplay/nether_portal_spawns_piglin`
 
 Controls whether Nether Portal blocks can spawn Piglins.
 
@@ -312,7 +312,7 @@ attributes {
 
 ---
 
-### `minecraft:gameplay/piglins_zombify`
+### `gameplay/piglins_zombify`
 
 Controls whether Piglins and Hoglins should zombify.
 
@@ -333,7 +333,7 @@ attributes {
 
 ---
 
-### `minecraft:gameplay/respawn_anchor_works`
+### `gameplay/respawn_anchor_works`
 
 Controls whether Respawn Anchors can be used to set spawn. If `false`, the Respawn Anchor will explode once charged.
 
@@ -354,7 +354,7 @@ attributes {
 
 ---
 
-### `minecraft:gameplay/snow_golem_melts`
+### `gameplay/snow_golem_melts`
 
 Controls whether a Snow Golem should be damaged.
 
@@ -375,7 +375,7 @@ attributes {
 
 ---
 
-### `minecraft:gameplay/water_evaporates`
+### `gameplay/water_evaporates`
 
 If `true`, Water cannot be placed with a Bucket, melting Ice will not produce water, Wet Sponge will dry out when placed, and Dripstone will
 not produce water from Mud blocks.
@@ -400,7 +400,7 @@ attributes {
 
 ---
 
-### `minecraft:visual/ambient_particles`
+### `visual/ambient_particles`
 
 Controls ambient particles that randomly spawn around the camera.
 
@@ -415,8 +415,8 @@ Controls ambient particles that randomly spawn around the camera.
 
 Each entry has:
 
-- `options` — a particle type (e.g. `Particles.ASH`)
-- `probability` — float between 0 and 1, the chance to spawn in an empty space
+- `options` - a particle type (e.g. `Particles.ASH`)
+- `probability` - float between 0 and 1, the chance to spawn in an empty space
 
 ```kotlin
 attributes {
@@ -428,7 +428,7 @@ attributes {
 
 ---
 
-### `minecraft:visual/cloud_height`
+### `visual/cloud_height`
 
 The height at which all clouds appear.
 
@@ -449,7 +449,7 @@ attributes {
 
 ---
 
-### `minecraft:visual/cloud_opacity`
+### `visual/cloud_opacity`
 
 The opacity of clouds. If `0`, clouds are entirely disabled and Happy Ghasts will not regenerate health faster when at cloud height.
 
@@ -469,18 +469,18 @@ attributes {
 
 ---
 
-### `minecraft:visual/default_dripstone_particle`
+### `visual/default_dripstone_particle`
 
 The default particle to be dripped from Dripstone blocks when no fluid is placed above.
 
-| Property      | Value                                          |
-|---------------|------------------------------------------------|
-| Value type    | Particle Options                               |
-| Default value | `{type: "minecraft:dripping_dripstone_water"}` |
-| Modifiers     | `override` only                                |
-| Interpolated  | No                                             |
-| Resolved at   | Position of the Dripstone block                |
-| Replaces      | Dimension Type `ultrawarm`                     |
+| Property      | Value                                |
+|---------------|--------------------------------------|
+| Value type    | Particle Options                     |
+| Default value | `{type: "dripping_dripstone_water"}` |
+| Modifiers     | `override` only                      |
+| Interpolated  | No                                   |
+| Resolved at   | Position of the Dripstone block      |
+| Replaces      | Dimension Type `ultrawarm`           |
 
 ```kotlin
 attributes {
@@ -490,7 +490,7 @@ attributes {
 
 ---
 
-### `minecraft:visual/extra_fog`
+### `visual/extra_fog`
 
 Controls whether dense fog (like that of the Nether) should be used when the camera is not submerged in another substance.
 
@@ -510,7 +510,7 @@ attributes {
 
 ---
 
-### `minecraft:visual/fog_color`
+### `visual/fog_color`
 
 The color of fog when the camera is not submerged in another substance. The final value is also affected by the time of day, weather, and
 potion effects.
@@ -535,7 +535,7 @@ attributes {
 
 ---
 
-### `minecraft:visual/sky_color`
+### `visual/sky_color`
 
 The color of the sky. This color is only visible for the overworld sky. The final value is also affected by the time of day and weather.
 
@@ -558,7 +558,7 @@ attributes {
 
 ---
 
-### `minecraft:visual/water_fog_color`
+### `visual/water_fog_color`
 
 The color of fog when submerged in water. The final value is also affected by the time of day, weather, and potion effects.
 
@@ -579,7 +579,7 @@ attributes {
 
 ---
 
-### `minecraft:visual/water_fog_radius`
+### `visual/water_fog_radius`
 
 The distance in blocks from the camera at which underwater fog reaches its maximum density. The final value is also modified by how long the
 player has been underwater.
