@@ -3,11 +3,11 @@ package io.github.ayfri.kore.features.worldgen.biome
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.features.worldgen.biome.types.*
+import io.github.ayfri.kore.features.worldgen.environmentattributes.EnvironmentAttributesScope
 import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.BiomeArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.encodeToString
 
 /**
  * Data-driven biome definition.
@@ -21,6 +21,7 @@ import kotlinx.serialization.encodeToString
 data class Biome(
 	@Transient
 	override var fileName: String = "biome",
+	var attributes: EnvironmentAttributesScope? = null,
 	var temperature: Float = 0.8f,
 	var downfall: Float = 0.4f,
 	var hasPrecipitation: Boolean = true,
@@ -51,12 +52,20 @@ fun DataPack.biome(fileName: String = "biome", init: Biome.() -> Unit = {}): Bio
 	return BiomeArgument(fileName, biome.namespace ?: name)
 }
 
+fun Biome.attributes(init: EnvironmentAttributesScope.() -> Unit) {
+	attributes = EnvironmentAttributesScope().apply(init)
+}
+
+fun Biome.carvers(init: Carvers.() -> Unit) {
+	carvers = Carvers().apply(init)
+}
+
 fun Biome.effects(init: BiomeEffects.() -> Unit) {
 	effects = BiomeEffects().apply(init)
 }
 
-fun Biome.spawners(init: Spawners.() -> Unit) {
-	spawners = Spawners().apply(init)
+fun Biome.features(init: Features.() -> Unit) {
+	features = Features().apply(init)
 }
 
 fun Biome.spawnCosts(init: MutableMap<EntityTypeArgument, SpawnCost>.() -> Unit) {
@@ -67,10 +76,6 @@ fun MutableMap<EntityTypeArgument, SpawnCost>.spawnCost(type: EntityTypeArgument
 	this[type] = SpawnCost(energyBudget, charge)
 }
 
-fun Biome.carvers(init: Carvers.() -> Unit) {
-	carvers = Carvers().apply(init)
-}
-
-fun Biome.features(init: Features.() -> Unit) {
-	features = Features().apply(init)
+fun Biome.spawners(init: Spawners.() -> Unit) {
+	spawners = Spawners().apply(init)
 }

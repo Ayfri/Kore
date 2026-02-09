@@ -3,6 +3,7 @@ package io.github.ayfri.kore.features.worldgen.dimensiontype
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.types.resources.tagged.BlockTagArgument
+import io.github.ayfri.kore.features.worldgen.environmentattributes.EnvironmentAttributesScope
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.generated.Tags
@@ -26,12 +27,8 @@ import kotlinx.serialization.json.Json
 data class DimensionType(
 	@Transient
 	override var fileName: String = "dimension_type",
-	var ultrawarm: Boolean = false,
+	var attributes: EnvironmentAttributesScope? = null,
 	var natural: Boolean = true,
-	var piglinSafe: Boolean = false,
-	var respawnAnchorWorks: Boolean = false,
-	var bedWorks: Boolean = true,
-	var hasRaids: Boolean = true,
 	var hasSkylight: Boolean = true,
 	var hasCeiling: Boolean = false,
 	var coordinateScale: Double = 1.0,
@@ -44,7 +41,6 @@ data class DimensionType(
 	var height: Int = 16,
 	var monsterSpawnLightLevel: IntProvider = constant(0),
 	var monsterSpawnBlockLightLimit: Int = 0,
-	var cloudHeight: Int? = null,
 ) : Generator("dimension_type") {
 	@Transient
 	private lateinit var jsonEncoder: Json
@@ -84,4 +80,8 @@ fun DataPack.dimensionType(
 	val dimensionType = DimensionType(fileName, infiniburn = Tags.Block.INFINIBURN_OVERWORLD).apply(block)
 	dimensionTypes += dimensionType
 	return DimensionTypeArgument(fileName, dimensionType.namespace ?: name)
+}
+
+fun DimensionType.attributes(init: EnvironmentAttributesScope.() -> Unit) {
+	attributes = EnvironmentAttributesScope().apply(init)
 }
