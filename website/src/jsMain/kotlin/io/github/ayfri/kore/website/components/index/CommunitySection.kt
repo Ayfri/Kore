@@ -163,7 +163,7 @@ object CommunitySectionStyle : StyleSheet() {
 		justifyContent(JustifyContent.Center)
 
 		className("material-icons-round") style {
-			color("white")
+			color(GlobalStyle.textColor)
 			fontSize(3.cssRem)
 		}
 
