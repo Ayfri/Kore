@@ -1,19 +1,22 @@
 import java.time.Year
 
-object Project {
+data object Project {
 	const val GROUP = "io.github.ayfri.kore"
-	const val URL = "github.com/Ayfri/Kore"
-	const val WEBSITE_URL = "https://kore.ayfri.com"
 	const val VERSION = "1.39.0"
 
-	// Publishing constants
-	const val CENTRAL_PORTAL_URL = "https://central.sonatype.com/api/v1/publisher"
-	const val MAVEN_PUBLICATION_NAME = "maven"
-	const val LICENSE_NAME = "MIT"
-	const val LICENSE_URL = "https://opensource.org/licenses/MIT"
+	// URLS
+	const val GITHUB_URL = "github.com/Ayfri/Kore"
+	const val WEBSITE_URL = "https://kore.ayfri.com"
+
+	// Developer constants
 	const val DEVELOPER_ID = "Ayfri"
 	const val DEVELOPER_NAME = "Roy Pierre"
 	const val DEVELOPER_EMAIL = "pierre.ayfri@gmail.com"
-	const val PROJECT_DESCRIPTION = "A Kotlin DSL to create Minecraft datapacks."
+	const val DEVELOPER_URL = "https://ayfri.com"
+
+	// Meta
+	const val DESCRIPTION = "A Kotlin DSL to create Minecraft datapacks."
 	val COPYRIGHT_YEAR = Year.now().value.toString()
+	const val LICENSE = "MIT"
+	const val LICENSE_URL = "https://opensource.org/licenses/MIT"
 }

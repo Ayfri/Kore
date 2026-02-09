@@ -1,104 +1,53 @@
 plugins {
 	kotlin("jvm")
-	`maven-publish`
-	id("org.jreleaser")
+	id("com.vanniktech.maven.publish")
 }
 
-// Set project version for JReleaser
-project.version = "${Project.VERSION}-${mainProjectProperty("minecraft.version")}"
+version = "${Project.VERSION}-${mainProjectProperty("minecraft.version")}"
+group = Project.GROUP
 
-val javadocJar = tasks.register<Jar>("javadocJar") {
-	archiveClassifier = "javadoc"
-	from(tasks.javadoc)
-}
+mavenPublishing {
+	publishToMavenCentral(automaticRelease = true)
 
-val sourceJar = tasks.register<Jar>("sourceJar") {
-	dependsOn(tasks["classes"])
-	archiveClassifier = "sources"
-	from(sourceSets["main"].allSource)
-}
+	if (System.getenv("CI") != null) {
+		signAllPublications()
+	}
 
-afterEvaluate {
-	publishing {
-		publications {
-			create<MavenPublication>(Project.MAVEN_PUBLICATION_NAME) {
-				from(components["java"])
+	coordinates(Project.GROUP, project.name, version.toString())
 
-				artifact(sourceJar)
-				artifact(javadocJar)
+	pom {
+		name = project.name
+		description = Project.DESCRIPTION
+		url = Project.WEBSITE_URL
 
-				groupId = Project.GROUP
-				version = "${Project.VERSION}-${mainProjectProperty("minecraft.version")}"
+		inceptionYear = Project.COPYRIGHT_YEAR
 
-				pom {
-					name = project.name
-					description = Project.PROJECT_DESCRIPTION
-					url = "https://${Project.URL}"
+		issueManagement {
+			system = "GitHub"
+			url = "https://${Project.GITHUB_URL}/issues"
+		}
 
-					licenses {
-						license {
-							name = Project.LICENSE_NAME
-							url = Project.LICENSE_URL
-						}
-					}
-
-					developers {
-						developer {
-							id = Project.DEVELOPER_ID
-							name = Project.DEVELOPER_NAME
-							email = Project.DEVELOPER_EMAIL
-						}
-					}
-
-					scm {
-						connection = "scm:git:git://github.com/${Project.URL}.git"
-						developerConnection = "scm:git:ssh://github.com:${Project.URL}.git"
-						url = "https://${Project.URL}/tree/master"
-					}
-				}
+		licenses {
+			license {
+				name = Project.LICENSE
+				url = Project.LICENSE_URL
+				distribution = "repo"
 			}
 		}
 
-		repositories {
-			maven {
-				name = "staging"
-				url = uri(layout.buildDirectory.dir("staging-deploy"))
+		developers {
+			developer {
+				id = Project.DEVELOPER_ID
+				name = Project.DEVELOPER_NAME
+				email = Project.DEVELOPER_EMAIL
+				url = Project.DEVELOPER_URL
 			}
 		}
-	}
-}
 
-jreleaser {
-	project {
-		copyright = "${Project.COPYRIGHT_YEAR} ${Project.DEVELOPER_NAME}"
-		description = Project.PROJECT_DESCRIPTION
-	}
-
-	signing {
-		active = org.jreleaser.model.Active.ALWAYS
-		armored = true
-
-		publicKey = providers.environmentVariable("JRELEASER_GPG_PUBLIC_KEY").orNull
-		secretKey = providers.environmentVariable("JRELEASER_GPG_SECRET_KEY").orNull
-		passphrase = providers.environmentVariable("JRELEASER_GPG_PASSPHRASE").orNull
-	}
-
-	deploy {
-		maven {
-			mavenCentral {
-				create("sonatype") {
-					active = org.jreleaser.model.Active.ALWAYS
-					url = Project.CENTRAL_PORTAL_URL
-					username = providers.environmentVariable("CENTRAL_USERNAME").orNull
-					password = providers.environmentVariable("CENTRAL_PASSWORD").orNull
-					stagingRepository("build/staging-deploy")
-				}
-			}
+		scm {
+			connection = "scm:git:git://${Project.GITHUB_URL}.git"
+			developerConnection = "scm:git:ssh://git@${Project.GITHUB_URL}.git"
+			url = "https://${Project.GITHUB_URL}"
 		}
 	}
-}
-
-// Make sure JReleaser deploy tasks depend on publishing tasks
-tasks.named("jreleaserDeploy") {
-	dependsOn("publishAllPublicationsToStagingRepository")
 }
