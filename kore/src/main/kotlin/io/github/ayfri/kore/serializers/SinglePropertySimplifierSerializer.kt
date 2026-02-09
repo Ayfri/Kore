@@ -56,8 +56,10 @@ open class SinglePropertySimplifierSerializer<T : Any, P : Any>(
 	private val kClass: KClass<T>,
 	private val property: KProperty1<T, P>,
 ) : KSerializer<T> {
-	override val descriptor = buildClassSerialDescriptor("${kClass.simpleName!!}SimplifiableSerializer") {
-		element(property.name, serialDescriptor(property.returnType))
+	override val descriptor by lazy {
+		buildClassSerialDescriptor("${kClass.simpleName!!}SimplifiableSerializer") {
+			element(property.name, serialDescriptor(property.returnType))
+		}
 	}
 
 	private val properties by lazy {

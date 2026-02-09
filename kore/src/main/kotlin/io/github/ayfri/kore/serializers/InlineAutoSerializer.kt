@@ -3,9 +3,9 @@ package io.github.ayfri.kore.serializers
 import io.github.ayfri.kore.utils.getSerializer
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import net.benwoodworth.knbt.NbtTag
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberProperties
 
@@ -26,7 +26,7 @@ open class InlineAutoSerializer<T : Any>(val klass: KClass<T>) : KSerializer<T> 
 	private val firstProperty =
 		klass.declaredMemberProperties.firstOrNull() ?: error("No properties found for class ${klass.simpleName}")
 
-	override val descriptor = NbtTag.serializer().descriptor
+	override val descriptor by lazy { buildClassSerialDescriptor(klass.qualifiedName ?: "Unknown") }
 
 	override fun deserialize(decoder: Decoder): T = error("InlineAutoSerializer cannot be deserialized")
 
