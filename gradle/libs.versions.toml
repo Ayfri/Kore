@@ -1,15 +1,15 @@
 [versions]
-jetbrains-compose = "1.8.2"
+jetbrains-compose = "1.9.2"
 joml = "1.10.8"
 knbt = "0.11.9"
-kobweb = "0.23.0"
+kobweb = "0.23.3"
 kotlin-dotenv = "6.5.1"
 kotlinpoet = "2.2.0"
 kotlinx-serialization = "1.9.0"
-kotlinx-io = "0.8.0"
-ktoml = "0.7.0"
-ktor = "3.2.2"
-marked = "16.0.0"
+kotlinx-io = "0.8.2"
+ktoml = "0.7.1"
+ktor = "3.3.1"
+marked = "17.0.1"
 
 [libraries]
 compose-html-core = { module = "org.jetbrains.compose.html:html-core", version.ref = "jetbrains-compose" }
