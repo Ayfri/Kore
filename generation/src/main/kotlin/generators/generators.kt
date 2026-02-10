@@ -108,6 +108,7 @@ suspend fun launchAllSimpleGenerators() {
 			transform { it.removeSuffix(".png") }
 			subInterfacesParents(
 				"ColorPalettes" to "arguments.types.TrimColorPaletteArgument",
+				"Moon" to "arguments.types.MoonPhaseArgument",
 				"Painting" to "arguments.types.PaintingAssetArgument"
 			)
 		},
