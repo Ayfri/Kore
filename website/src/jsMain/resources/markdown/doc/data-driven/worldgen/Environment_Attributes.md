@@ -86,6 +86,7 @@ Applicable to color attributes. Argument format: RGB color (except `ALPHA_BLEND`
 | `SUBTRACT`    | Component-wise subtractive color blending                            |
 | `MULTIPLY`    | Component-wise multiplicative color blending                         |
 | `ALPHA_BLEND` | Traditional alpha blending (ARGB argument; alpha=1 acts as override) |
+| `BlendToGray` | Blends toward gray with configurable `brightness` and `factor`       |
 
 ## Interpolation
 
@@ -674,6 +675,35 @@ The distance in blocks from the camera at which underwater fog starts.
 ```kotlin
 attributes {
 	waterFogStartDistance(0.0f)
+}
+```
+
+---
+
+## Blend To Gray Modifier
+
+The `BlendToGray` modifier is a special color modifier that blends the preceding color toward gray. Unlike other modifiers which are simple
+constants, `BlendToGray` is a data class with two parameters:
+
+- `brightness` - controls the brightness of the gray target
+- `factor` - controls the blending factor (0 = no change, 1 = fully gray)
+
+```kotlin
+attributes {
+	fogColor(rgb(255, 170, 0), EnvironmentAttributeModifier.BlendToGray(brightness = 0.5f, factor = 0.8f))
+}
+```
+
+This serializes to:
+
+```json
+{
+	"argument": 16755200,
+	"modifier": {
+		"type": "blend_to_gray",
+		"brightness": 0.5,
+		"factor": 0.8
+	}
 }
 ```
 

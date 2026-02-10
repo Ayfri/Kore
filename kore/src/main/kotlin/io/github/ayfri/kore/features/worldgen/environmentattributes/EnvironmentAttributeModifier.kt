@@ -1,7 +1,14 @@
 package io.github.ayfri.kore.features.worldgen.environmentattributes
 
-import io.github.ayfri.kore.serializers.ToStringSerializer
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.JsonEncoder
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 
 /**
  * Sealed interface representing all available modifiers for Environment Attributes.
@@ -62,9 +69,35 @@ sealed interface EnvironmentAttributeModifier {
 	/** Traditional alpha blending on the preceding color value. Argument format is ARGB. */
 	data object ALPHA_BLEND : Color
 
+	/** Blends the preceding color value toward gray with the given brightness and factor. */
+	data class BlendToGray(
+		var brightness: kotlin.Float,
+		var factor: kotlin.Float,
+	) : Color {
+		override val name get() = "BlendToGray"
+	}
+
 	companion object {
-		data object EnvironmentAttributeModifierSerializer : ToStringSerializer<EnvironmentAttributeModifier>({
-			name.lowercase()
-		})
+		data object EnvironmentAttributeModifierSerializer : KSerializer<EnvironmentAttributeModifier> {
+			override val descriptor = PrimitiveSerialDescriptor("EnvironmentAttributeModifier", PrimitiveKind.STRING)
+
+			override fun deserialize(decoder: Decoder): EnvironmentAttributeModifier =
+				error("EnvironmentAttributeModifierSerializer is not meant to be deserialized")
+
+			override fun serialize(encoder: Encoder, value: EnvironmentAttributeModifier) {
+				when {
+					// TODO: Find a better way to serialize these types of objects, aka enum-likes but with some configurable values
+					value is BlendToGray && encoder is JsonEncoder -> encoder.encodeJsonElement(
+						buildJsonObject {
+							put("type", "blend_to_gray")
+							put("brightness", value.brightness)
+							put("factor", value.factor)
+						}
+					)
+
+					else -> encoder.encodeString(value.name.lowercase())
+				}
+			}
+		}
 	}
 }

@@ -387,6 +387,39 @@ fun DataPack.environmentAttributesTests() {
 		}
 	""".trimIndent()
 
+	dimensionType("env_attr_blend_to_gray") {
+		attributes {
+			fogColor(rgb(255, 170, 0), EnvironmentAttributeModifier.BlendToGray(brightness = 0.5f, factor = 0.8f))
+		}
+		monsterSpawnLightLevel = constant(0)
+	}
+
+	dimensionTypes.last() assertsIs """
+		{
+			"attributes": {
+				"minecraft:visual/fog_color": {
+					"argument": 16755200,
+					"modifier": {
+						"type": "blend_to_gray",
+						"brightness": 0.5,
+						"factor": 0.8
+					}
+				}
+			},
+			"natural": true,
+			"has_skylight": true,
+			"has_ceiling": false,
+			"coordinate_scale": 1.0,
+			"ambient_light": 0.0,
+			"logical_height": 0,
+			"infiniburn": "#minecraft:infiniburn_overworld",
+			"min_y": 0,
+			"height": 16,
+			"monster_spawn_light_level": 0,
+			"monster_spawn_block_light_limit": 0
+		}
+	""".trimIndent()
+
 	dimensionType("env_attr_distance_floats") {
 		attributes {
 			cloudFogEndDistance(256.0f)
