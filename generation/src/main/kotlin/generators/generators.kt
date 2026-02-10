@@ -117,6 +117,9 @@ suspend fun launchAllSimpleGenerators() {
 	}
 
 	val txtRegistriesListGenerators = listOf(
+		gen("Activities", "activity") {
+			argumentClassName = "Activity"
+		},
 		gen("Attributes", "attribute"),
 		gen("BlockEntityTypes", "block_entity_type"),
 		gen("Blocks", "block") {
