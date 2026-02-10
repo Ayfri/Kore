@@ -43,6 +43,7 @@ fun featuresTests() = testDataPack("features_tests") {
 	structureSetTests()
 	tagTests()
 	templatePoolTests()
+	timelineTests()
 	testEnvironmentTests()
 	testInstanceTests()
 	trimMaterialTests()
