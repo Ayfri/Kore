@@ -4,9 +4,8 @@ import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.PredicateAsList
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.sub.Entity
-import io.github.ayfri.kore.serializers.ToStringSerializer
+import io.github.ayfri.kore.serializers.EitherInlineSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encoding.Encoder
 
 /**
  * Container for either an entity or predicate conditions.
@@ -16,18 +15,15 @@ import kotlinx.serialization.encoding.Encoder
 @Serializable(with = EntityOrPredicates.Companion.EntityOrPredicatesSerializer::class)
 data class EntityOrPredicates(
 	var legacyEntity: Entity? = null,
+	@Serializable(with = Predicate.Companion.PredicateAsListSerializer::class)
 	var predicateConditions: PredicateAsList = Predicate(),
 ) {
 	companion object {
-		data object EntityOrPredicatesSerializer : ToStringSerializer<EntityOrPredicates>() {
-			override fun serialize(encoder: Encoder, value: EntityOrPredicates) = when {
-				value.legacyEntity != null -> encoder.encodeSerializableValue(Entity.serializer(), value.legacyEntity!!)
-				else -> encoder.encodeSerializableValue(
-					Predicate.Companion.PredicateAsListSerializer,
-					value.predicateConditions
-				)
-			}
-		}
+		data object EntityOrPredicatesSerializer : EitherInlineSerializer<EntityOrPredicates>(
+			EntityOrPredicates::class,
+			EntityOrPredicates::legacyEntity,
+			EntityOrPredicates::predicateConditions,
+		)
 	}
 }
 
