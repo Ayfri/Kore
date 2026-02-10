@@ -31,16 +31,10 @@ data class KineticWeaponComponent(
 	var dismountConditions: KineticWeaponEffectCondition? = null,
 	@SerialName("forward_movement")
 	var forwardMovement: Float? = null,
-	@SerialName("hitbox_margin")
-	var hitboxMargin: Float? = null,
 	@SerialName("hit_sound")
 	var hitSound: SoundEventArgument? = null,
 	@SerialName("knockback_conditions")
 	var knockbackConditions: KineticWeaponEffectCondition? = null,
-	@SerialName("max_reach")
-	var maxReach: Float? = null,
-	@SerialName("min_reach")
-	var minReach: Float? = null,
 	var sound: SoundEventArgument? = null,
 ) : Component()
 

@@ -34,6 +34,11 @@ fun itemComponentsTests() {
 	val crossbow = Items.CROSSBOW
 	val bundle = Items.BUNDLE
 
+	val attackRangeTest = stoneSword {
+		attackRange(minRange = 1.0f, maxRange = 3.0f, hitboxMargin = 0.5f, mobFactor = 0.8f)
+	}
+	attackRangeTest.asString() assertsIs """minecraft:stone_sword[attack_range={hitbox_margin:0.5f,max_range:3.0f,min_range:1.0f,mob_factor:0.8f}]"""
+
 	val attributeModifiersTest = stoneSword {
 		attributeModifiers {
 			modifier(
@@ -361,12 +366,10 @@ fun itemComponentsTests() {
 	val kineticWeaponTest = stoneSword {
 		kineticWeapon {
 			damageMultiplier = 2.0f
-			maxReach = 3.0f
-			minReach = 1.0f
 			dismountConditions(maxDurationTicks = 100, minSpeed = 0.5f)
 		}
 	}
-	kineticWeaponTest.asString() assertsIs """minecraft:stone_sword[kinetic_weapon={damage_multiplier:2.0f,dismount_conditions:{max_duration_ticks:100,min_speed:0.5f},max_reach:3.0f,min_reach:1.0f}]"""
+	kineticWeaponTest.asString() assertsIs """minecraft:stone_sword[kinetic_weapon={damage_multiplier:2.0f,dismount_conditions:{max_duration_ticks:100,min_speed:0.5f}}]"""
 
 	val itemModelTest = stone {
 		itemModel(Models.Item.BAMBOO_SIGN)
@@ -453,11 +456,9 @@ fun itemComponentsTests() {
 		piercingWeapon {
 			dealsKnockback = true
 			dismounts = false
-			maxReach = 3.0f
-			minReach = 1.0f
 		}
 	}
-	piercingWeaponTest.asString() assertsIs """minecraft:stone_sword[piercing_weapon={deals_knockback:1b,dismounts:0b,max_reach:3.0f,min_reach:1.0f}]"""
+	piercingWeaponTest.asString() assertsIs """minecraft:stone_sword[piercing_weapon={deals_knockback:1b,dismounts:0b}]"""
 
 	val potDecorationsTest = stone {
 		potDecorations(Items.ARMS_UP_POTTERY_SHERD, Items.SKULL_POTTERY_SHERD, Items.FRIEND_POTTERY_SHERD, Items.BRICK)

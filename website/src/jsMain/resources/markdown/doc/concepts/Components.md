@@ -5,7 +5,7 @@ nav-title: Components
 description: A guide for using components in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, components
 date-created: 2024-01-08
-date-modified: 2026-02-03
+date-modified: 2026-02-10
 routeOverride: /docs/concepts/components
 ---
 
@@ -210,6 +210,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 
 | Helper                               | Description                                                                                              |
 |--------------------------------------|----------------------------------------------------------------------------------------------------------|
+| `attackRange(..)`                    | Configures the attack range of an item (min/max range, hitbox margin, mob factor).                       |
 | `attributeModifiers(..)`             | Modifies entity attributes (e.g., attack damage, speed, armor) when the item is equipped or held.        |
 | `bannerPatterns(..)`                 | Defines the layered patterns displayed on a banner or shield.                                            |
 | `baseColor(..)`                      | Sets the base color of a banner before patterns are applied.                                             |
@@ -249,7 +250,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `itemModel(..)`                      | Overrides the item's model with a custom model resource location.                                        |
 | `itemName(..)`                       | Sets the item's base name (different from custom name; not italicized).                                  |
 | `jukeboxPlayable(..)`                | Allows the item to be played in a jukebox with a specified music disc track.                             |
-| `kineticWeapon(..) { .. }`           | Configures kinetic weapon properties for mounted combat (reach, damage multiplier, conditions).          |
+| `kineticWeapon(..) { .. }`           | Configures kinetic weapon properties for mounted combat (damage multiplier, conditions).                 |
 | `lock(..)`                           | Requires a matching item predicate (key) to open this container.                                         |
 | `lodestoneTarget(..)`                | Makes a compass point to specific coordinates in a dimension.                                            |
 | `lore(..)`                           | Adds tooltip lines below the item name for descriptions or flavor text.                                  |
@@ -261,7 +262,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `minimumAttackCharge(..)`            | Sets the minimum attack charge (0.0-1.0) required for full damage.                                       |
 | `noteBlockSound(..)`                 | Specifies the sound a note block plays when this player head is above it.                                |
 | `ominousBottleAmplifier(..)`         | Sets the Bad Omen effect amplifier (0-4) when consuming an ominous bottle.                               |
-| `piercingWeapon(..) { .. }`          | Configures piercing weapon properties (reach, knockback, dismount behavior).                             |
+| `piercingWeapon(..) { .. }`          | Configures piercing weapon properties (knockback, dismount behavior).                                    |
 | `playerProfile(..)`                  | Sets the player skin displayed on a player head item.                                                    |
 | `potDecorations(..)`                 | Defines the pottery sherds or bricks on each face of a decorated pot.                                    |
 | `potionContents(..)`                 | Configures potion color, effects, and custom potion mixtures.                                            |

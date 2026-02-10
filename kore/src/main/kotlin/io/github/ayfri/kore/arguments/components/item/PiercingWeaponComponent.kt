@@ -12,14 +12,8 @@ data class PiercingWeaponComponent(
 	@SerialName("deals_knockback")
 	var dealsKnockback: Boolean? = null,
 	var dismounts: Boolean? = null,
-	@SerialName("hitbox_margin")
-	var hitboxMargin: Float? = null,
 	@SerialName("hit_sound")
 	var hitSound: SoundEventArgument? = null,
-	@SerialName("max_reach")
-	var maxReach: Float? = null,
-	@SerialName("min_reach")
-	var minReach: Float? = null,
 	var sound: SoundEventArgument? = null,
 ) : Component()
 
