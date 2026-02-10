@@ -179,3 +179,4 @@ dp.worldPreset("example_preset") {
 - [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) - Full reference for visual, audio, and gameplay attributes
 - [Predicates](/docs/data-driven/predicates) - Condition logic for features
 - [Test Features](/docs/advanced/test-features) - Automated validation with GameTest
+- [Timelines](/docs/data-driven/timelines) - Animate environment attributes over time using keyframes and easing functions

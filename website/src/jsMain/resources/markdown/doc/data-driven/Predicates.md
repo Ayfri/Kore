@@ -507,13 +507,13 @@ Predicates are powerful tools for creating complex conditions in your datapack. 
 
 ## See Also
 
-- [Loot Tables](./loot-tables) - Use predicates as conditions for loot entries
-- [Advancements](./advancements) - Use predicates as trigger conditions
-- [Item Modifiers](./item-modifiers) - Modify items conditionally with predicates
-- [Components](../concepts/components) - Item and entity data components used in predicate checks
-- [Commands](../commands/commands) - Using predicates with `/execute if predicate`
-- [Inventory Manager](./helpers/inventory-manager) - Pair predicates with inventory management
-- [Tags](./tags) - Use tags in predicate conditions
+- [Loot Tables](/docs/data-driven/loot-tables) - Use predicates as conditions for loot entries
+- [Advancements](/docs/data-driven/advancements) - Use predicates as trigger conditions
+- [Item Modifiers](/docs/data-driven/item-modifiers) - Modify items conditionally with predicates
+- [Components](/docs/concepts/components) - Item and entity data components used in predicate checks
+- [Commands](/docs/commands/commands) - Using predicates with `/execute if predicate`
+- [Inventory Manager](/docs/helpers/inventory-manager) - Pair predicates with inventory management
+- [Tags](/docs/data-driven/tags) - Use tags in predicate conditions
 
 ### External Resources
 

@@ -758,4 +758,5 @@ fun DataPack.createCustomDimensionWithAttributes() {
 - [Biomes](/docs/data-driven/worldgen/biomes) - Biomes can define environment attributes to control per-biome visuals and audio
 - [Colors](/docs/concepts/colors) - RGB and ARGB color formats used by color attributes
 - [Dimensions](/docs/data-driven/worldgen/dimensions) - Dimension types can define base environment attributes for the entire dimension
+- [Timelines](/docs/data-driven/timelines) - Animate environment attributes over time using keyframes and easing functions
 - [World Generation](/docs/data-driven/worldgen) - Overview of the worldgen system

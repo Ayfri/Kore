@@ -690,10 +690,10 @@ dataPack("custom_recipes") {
 
 ## See Also
 
-- [Advancements](./advancements) - Unlock recipes as advancement rewards
-- [Components](../concepts/components) - Customize recipe result items
-- [Commands](../commands/commands) - Give or take recipes with commands
-- [Tags](./tags) - Use item tags for flexible ingredient matching
+- [Advancements](/docs/data-driven/advancements) - Unlock recipes as advancement rewards
+- [Components](/docs/concepts/components) - Customize recipe result items
+- [Commands](/docs/commands/commands) - Give or take recipes with commands
+- [Tags](/docs/data-driven/tags) - Use item tags for flexible ingredient matching
 
 ### External Resources
 
