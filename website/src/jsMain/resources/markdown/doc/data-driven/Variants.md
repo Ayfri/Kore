@@ -254,36 +254,6 @@ Produces JSON:
 }
 ```
 
-### Zombie Nautilus Variants
-
-Zombie nautilus variants define the texture, model, and spawn conditions for zombie nautiluses.
-
-```kotlin
-zombieNautilusVariant("test_zombie_nautilus_variant", Textures.Entity.Nautilus.ZOMBIE_NAUTILUS_CORAL, ZombieNautilusModel.WARM) {
-	spawnConditions {
-		structures(0, Tags.Worldgen.Structure.ON_TREASURE_MAPS)
-	}
-}
-```
-
-Produces JSON:
-
-```json
-{
-	"asset_id": "minecraft:entity/nautilus/zombie_nautilus_coral",
-	"model": "warm",
-	"spawn_conditions": [
-		{
-			"priority": 0,
-			"condition": {
-				"type": "minecraft:structure",
-				"structures": "#minecraft:on_treasure_maps"
-			}
-		}
-	]
-}
-```
-
 ### Wolf Variants
 
 Wolf variants define separate textures for angry, tame, and wild states, along with spawn conditions.
@@ -350,6 +320,36 @@ Produces JSON:
 	"hurt_sound": "minecraft:entity.zombie.hurt",
 	"pant_sound": "minecraft:entity.ender_dragon.flap",
 	"whine_sound": "minecraft:entity.cat.purr"
+}
+```
+
+### Zombie Nautilus Variants
+
+Zombie nautilus variants define the texture, model, and spawn conditions for zombie nautiluses.
+
+```kotlin
+zombieNautilusVariant("test_zombie_nautilus_variant", Textures.Entity.Nautilus.ZOMBIE_NAUTILUS_CORAL, ZombieNautilusModel.WARM) {
+	spawnConditions {
+		structures(0, Tags.Worldgen.Structure.ON_TREASURE_MAPS)
+	}
+}
+```
+
+Produces JSON:
+
+```json
+{
+	"asset_id": "minecraft:entity/nautilus/zombie_nautilus_coral",
+	"model": "warm",
+	"spawn_conditions": [
+		{
+			"priority": 0,
+			"condition": {
+				"type": "minecraft:structure",
+				"structures": "#minecraft:on_treasure_maps"
+			}
+		}
+	]
 }
 ```
 
