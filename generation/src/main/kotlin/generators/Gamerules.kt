@@ -83,7 +83,10 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 					FunSpec.builder("fromString")
 						.addParameter("name", String::class)
 						.returns(gamerulesClass.copy(nullable = true))
-						.addStatement("return values.firstOrNull { it.name.equals(name, ignoreCase = true) }")
+						.addStatement(
+							"return values.firstOrNull { (%S + it.name.snakeCase()).equals(name, ignoreCase = true) }",
+							"minecraft:"
+						)
 						.build()
 				)
 
@@ -126,7 +129,7 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 							FunSpec.builder("serialize")
 								.addParameter("encoder", ClassName("kotlinx.serialization.encoding", "Encoder"))
 								.addParameter("value", gamerulesClass)
-								.addStatement("encoder.encodeString(value.name.camelCase())")
+								.addStatement("encoder.encodeString(%S + value.name.snakeCase())", "minecraft:")
 								.overrides()
 								.build()
 						)
@@ -138,7 +141,7 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 
 	generateFile(INTERFACE_NAME, sourceUrl, topLevelInterface) {
 		addImport("java.util", "Locale")
-		addImport("io.github.ayfri.kore.utils", "camelCase")
+		addImport("io.github.ayfri.kore.utils", "snakeCase")
 		addAnnotation(
 			AnnotationSpec.builder(Suppress::class)
 				.addMember("%S", "ClassName")

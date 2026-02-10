@@ -5,10 +5,10 @@ import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.Gamerules
 
 fun Function.gameruleTests() {
-	gamerule("doDaylightCycle", true) assertsIs "gamerule doDaylightCycle true"
-	gamerule("randomTickSpeed") assertsIs "gamerule randomTickSpeed"
+	gamerule("minecraft:do_daylight_cycle", true) assertsIs "gamerule minecraft:do_daylight_cycle true"
+	gamerule("minecraft:random_tick_speed") assertsIs "gamerule minecraft:random_tick_speed"
 
-	gamerule(Gamerules.DO_DAYLIGHT_CYCLE, true) assertsIs "gamerule doDaylightCycle true"
-	gamerule(Gamerules.RANDOM_TICK_SPEED, 3) assertsIs "gamerule randomTickSpeed 3"
-	gamerule(Gamerules.RANDOM_TICK_SPEED) assertsIs "gamerule randomTickSpeed"
+	gamerule(Gamerules.ADVANCE_TIME, true) assertsIs "gamerule minecraft:advance_time true"
+	gamerule(Gamerules.RANDOM_TICK_SPEED, 3) assertsIs "gamerule minecraft:random_tick_speed 3"
+	gamerule(Gamerules.RANDOM_TICK_SPEED) assertsIs "gamerule minecraft:random_tick_speed"
 }
