@@ -17,7 +17,6 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
-          cache: gradle
           distribution: 'temurin'
           java-version: 21
 
@@ -28,6 +27,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           dependency-graph: generate-and-upload
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
       - name: Publish to Central Portal
         run: ./gradlew publishToMavenCentral --stacktrace
