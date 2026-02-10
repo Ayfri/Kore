@@ -8,6 +8,8 @@ import io.github.ayfri.kore.features.itemmodifiers.functions.conditions
 import io.github.ayfri.kore.features.itemmodifiers.functions.enchantRandomly
 import io.github.ayfri.kore.features.itemmodifiers.functions.setCount
 import io.github.ayfri.kore.features.loottables.*
+import io.github.ayfri.kore.features.loottables.entries.LootEntryDynamicName
+import io.github.ayfri.kore.features.loottables.entries.dynamic
 import io.github.ayfri.kore.features.loottables.entries.functions
 import io.github.ayfri.kore.features.loottables.entries.lootTable
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
@@ -19,7 +21,7 @@ import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.LootTables
 
 fun DataPack.lootTableTests() {
-	val lootTable = lootTable("loot_table") {
+	val lootTable = lootTable {
 		functions {
 			enchantRandomly {
 				options += Enchantments.LOOTING
@@ -34,6 +36,8 @@ fun DataPack.lootTableTests() {
 			}
 
 			entries {
+				dynamic(LootEntryDynamicName.SHERDS)
+
 				lootTable(LootTables.Gameplay.PIGLIN_BARTERING) {
 					conditions {
 						weatherCheck(true)
@@ -74,6 +78,10 @@ fun DataPack.lootTableTests() {
 						}
 					],
 					"entries": [
+						{
+							"type": "minecraft:dynamic",
+							"name": "minecraft:sherds"
+						},
 						{
 							"type": "minecraft:loot_table",
 							"name": "minecraft:gameplay/piglin_bartering",

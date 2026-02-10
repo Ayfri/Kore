@@ -253,12 +253,12 @@ entries {
 
 #### Dynamic Entry
 
-For block-specific drops (shulker box contents, decorated pot sherds):
+For block-specific drops (decorated pot sherds):
 
 ```kotlin
 entries {
-	dynamic("contents") {
-		// Drops contents of shulker boxes
+	dynamic(LootEntryDynamicName.SHERDS) {
+		// Drops contents of decorated pot sherds
 	}
 }
 ```

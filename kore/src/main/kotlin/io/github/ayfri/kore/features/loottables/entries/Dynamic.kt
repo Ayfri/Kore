@@ -4,7 +4,21 @@ import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifierAsList
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
+
+
+@Serializable(with = LootEntryDynamicName.Companion.LootEntryDynamicNameSerializer::class)
+enum class LootEntryDynamicName {
+	SHERDS,
+	;
+
+	companion object {
+		data object LootEntryDynamicNameSerializer : LowercaseSerializer<LootEntryDynamicName>(entries, {
+			"minecraft:${name.lowercase()}"
+		})
+	}
+}
 
 /**
  * Loot entry that pulls items from a dynamic context (e.g., `minecraft:contents`).
@@ -14,7 +28,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Dynamic(
-	var name: String,
+	var name: LootEntryDynamicName,
 	var conditions: PredicateAsList? = null,
 	var functions: ItemModifierAsList? = null,
 	var quality: Int? = null,
@@ -22,7 +36,7 @@ data class Dynamic(
 ) : LootEntry()
 
 /** Add and configure a Dynamic entry. */
-fun LootEntries.dynamic(name: String, block: Dynamic.() -> Unit = {}) {
+fun LootEntries.dynamic(name: LootEntryDynamicName, block: Dynamic.() -> Unit = {}) {
 	add(Dynamic(name).apply(block))
 }
 
