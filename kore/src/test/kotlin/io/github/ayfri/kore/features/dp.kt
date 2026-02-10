@@ -50,6 +50,7 @@ fun featuresTests() = testDataPack("features_tests") {
 	trimPatternTests()
 	wolfSoundVariantTests()
 	wolfVariantTests()
+	zombieNautilusVariantTests()
 	worldPresetTests()
 }.apply {
 	assertGeneratorsGenerated()

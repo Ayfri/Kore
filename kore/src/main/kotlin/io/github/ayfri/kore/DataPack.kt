@@ -45,6 +45,7 @@ import io.github.ayfri.kore.features.worldgen.structures.Structure
 import io.github.ayfri.kore.features.worldgen.structureset.StructureSet
 import io.github.ayfri.kore.features.worldgen.templatepool.TemplatePool
 import io.github.ayfri.kore.features.worldgen.worldpreset.WorldPreset
+import io.github.ayfri.kore.features.zombienautilusvariants.ZombieNautilusVariant
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.DEFAULT_PACK_FORMAT
 import io.github.ayfri.kore.generation.DataPackGenerationOptions
@@ -119,6 +120,7 @@ class DataPack(val name: String) {
 	val wolfSoundVariants = registerGenerator<WolfSoundVariant>()
 	val wolfVariants = registerGenerator<WolfVariant>()
 	val worldPresets = registerGenerator<WorldPreset>()
+	val zombieNautilusVariants = registerGenerator<ZombieNautilusVariant>()
 
 	var configuration = Configuration.DEFAULT
 	var features = Features()

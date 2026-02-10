@@ -3,15 +3,16 @@ root: .components.layouts.MarkdownLayout
 title: Variants
 nav-title: Variants
 description: Define entity and painting variants with Kore's type-safe DSL
-keywords: minecraft, datapack, kore, variants, cat, cow, chicken, frog, pig, wolf, painting
+keywords: minecraft, datapack, kore, variants, cat, cow, chicken, frog, pig, wolf, zombie nautilus, painting
 date-created: 2026-02-03
-date-modified: 2026-02-03
+date-modified: 2026-02-10
 routeOverride: /docs/data-driven/variants
 ---
 
 # Variants
 
-Variants allow you to customize the appearance and spawn conditions of various entities and paintings in Minecraft. Kore provides type-safe DSL builders for creating custom variants for cats, cows, chickens, frogs, pigs, wolves, and paintings.
+Variants allow you to customize the appearance and spawn conditions of various entities and paintings in Minecraft. Kore provides type-safe
+DSL builders for creating custom variants for cats, cows, chickens, frogs, pigs, wolves, zombie nautiluses, and paintings.
 
 ## Entity Variants
 
@@ -241,6 +242,36 @@ Produces JSON:
 {
 	"asset_id": "minecraft:entity/pig/cold_pig",
 	"model": "cold",
+	"spawn_conditions": [
+		{
+			"priority": 0,
+			"condition": {
+				"type": "minecraft:structure",
+				"structures": "#minecraft:on_treasure_maps"
+			}
+		}
+	]
+}
+```
+
+### Zombie Nautilus Variants
+
+Zombie nautilus variants define the texture, model, and spawn conditions for zombie nautiluses.
+
+```kotlin
+zombieNautilusVariant("test_zombie_nautilus_variant", Textures.Entity.Nautilus.ZOMBIE_NAUTILUS_CORAL, ZombieNautilusModel.WARM) {
+	spawnConditions {
+		structures(0, Tags.Worldgen.Structure.ON_TREASURE_MAPS)
+	}
+}
+```
+
+Produces JSON:
+
+```json
+{
+	"asset_id": "minecraft:entity/nautilus/zombie_nautilus_coral",
+	"model": "warm",
 	"spawn_conditions": [
 		{
 			"priority": 0,

@@ -101,4 +101,8 @@ fun entityComponentsTests() {
 	Items.WOLF_SPAWN_EGG {
 		wolfVariant(WolfVariants.SNOWY)
 	} assertsIs "minecraft:wolf_spawn_egg[wolf_variant=\"minecraft:snowy\"]"
+
+	Items.ZOMBIE_NAUTILUS_SPAWN_EGG {
+		zombieNautilusVariant(ZombieNautilusVariants.WARM)
+	} assertsIs "minecraft:zombie_nautilus_spawn_egg[zombie_nautilus_variant=\"minecraft:warm\"]"
 }
