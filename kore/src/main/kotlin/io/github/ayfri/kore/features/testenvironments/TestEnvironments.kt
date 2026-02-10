@@ -6,7 +6,6 @@ import io.github.ayfri.kore.features.testenvironments.types.*
 import io.github.ayfri.kore.features.testenvironments.types.Function
 import io.github.ayfri.kore.generated.Gamerules
 import io.github.ayfri.kore.generated.arguments.types.TestEnvironmentArgument
-import io.github.ayfri.kore.utils.camelCase
 import io.github.ayfri.kore.features.testenvironments.enums.Weather as WeatherEnum
 
 /**
@@ -150,19 +149,17 @@ class FunctionEnvironmentBuilder {
  * for consistent output.
  */
 class GameRulesBuilder {
-	private val boolRules = mutableMapOf<Gamerules.Boolean, Boolean>()
-	private val intRules = mutableMapOf<Gamerules.Int, Int>()
+	private val rules = mutableMapOf<Gamerules, GameRuleValue>()
 
 	operator fun set(rule: Gamerules.Boolean, value: Boolean) {
-		boolRules[rule] = value
+		rules[rule] = GameRuleBool(value)
 	}
 
 	operator fun set(rule: Gamerules.Int, value: Int) {
-		intRules[rule] = value
+		rules[rule] = GameRuleInt(value)
 	}
 
 	internal fun build() = GameRules(
-		boolRules = boolRules.map { (rule, value) -> GameRuleEntry(rule.name.camelCase(), value) }.sortedBy { it.rule },
-		intRules = intRules.map { (rule, value) -> GameRuleIntEntry(rule.name.camelCase(), value) }.sortedBy { it.rule }
+		rules = rules.toSortedMap(compareBy { it.name })
 	)
 }

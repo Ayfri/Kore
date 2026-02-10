@@ -3,8 +3,8 @@ package io.github.ayfri.kore.features
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.say
-import io.github.ayfri.kore.features.testenvironments.*
 import io.github.ayfri.kore.features.testenvironments.enums.Weather
+import io.github.ayfri.kore.features.testenvironments.testEnvironments
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.Gamerules
 
@@ -53,18 +53,10 @@ fun DataPack.testEnvironmentTests() {
 		testEnvironments.last() assertsIs """
 			{
 				"type": "minecraft:game_rules",
-				"bool_rules": [
-					{
-						"rule": "keepInventory",
-						"value": false
-					}
-				],
-				"int_rules": [
-					{
-						"rule": "randomTickSpeed",
-						"value": 0
-					}
-				]
+				"rules": {
+					"minecraft:keep_inventory": false,
+					"minecraft:random_tick_speed": 0
+				}
 			}
 		""".trimIndent()
 	}
