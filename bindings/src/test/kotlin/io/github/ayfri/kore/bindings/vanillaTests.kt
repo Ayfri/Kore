@@ -2,7 +2,7 @@ package io.github.ayfri.kore.bindings
 
 import io.github.ayfri.kore.bindings.api.importDatapacks
 
-const val vanillaDatapackName = "vanilla-data-1.21.8.zip"
+const val vanillaDatapackName = "Minecraft-default-data-1.21.11.zip"
 
 fun importingVanilla() = newTest("vanilla") {
     importDatapacks {
