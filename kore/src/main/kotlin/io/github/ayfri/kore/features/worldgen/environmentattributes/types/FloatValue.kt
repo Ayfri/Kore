@@ -20,9 +20,19 @@ fun EnvironmentAttributesScope.cloudHeight(value: Float, mod: EnvironmentAttribu
 	this[EnvironmentAttributes.Visual.CLOUD_HEIGHT] = environmentAttributeValue(FloatValue(value), mod)
 }
 
-/** The opacity of clouds. If 0, clouds are entirely disabled. */
-fun EnvironmentAttributesScope.cloudOpacity(value: Float, mod: EnvironmentAttributeModifier.Float? = null) = apply {
-	this[EnvironmentAttributes.Visual.CLOUD_OPACITY] = environmentAttributeValue(FloatValue(value), mod)
+/** The distance in blocks from the camera at which cloud fog ends. */
+fun EnvironmentAttributesScope.cloudFogEndDistance(value: Float, mod: EnvironmentAttributeModifier.Float? = null) = apply {
+	this[EnvironmentAttributes.Visual.CLOUD_FOG_END_DISTANCE] = environmentAttributeValue(FloatValue(value), mod)
+}
+
+/** The distance in blocks from the camera at which fog ends. */
+fun EnvironmentAttributesScope.fogEndDistance(value: Float, mod: EnvironmentAttributeModifier.Float? = null) = apply {
+	this[EnvironmentAttributes.Visual.FOG_END_DISTANCE] = environmentAttributeValue(FloatValue(value), mod)
+}
+
+/** The distance in blocks from the camera at which fog starts. */
+fun EnvironmentAttributesScope.fogStartDistance(value: Float, mod: EnvironmentAttributeModifier.Float? = null) = apply {
+	this[EnvironmentAttributes.Visual.FOG_START_DISTANCE] = environmentAttributeValue(FloatValue(value), mod)
 }
 
 /** The volume at which music should play. Any music playing will fade over time to this value. */
@@ -30,7 +40,17 @@ fun EnvironmentAttributesScope.musicVolume(value: Float, mod: EnvironmentAttribu
 	this[EnvironmentAttributes.Audio.MUSIC_VOLUME] = environmentAttributeValue(FloatValue(value), mod)
 }
 
-/** The distance in blocks from the camera at which underwater fog reaches its maximum density. */
-fun EnvironmentAttributesScope.waterFogRadius(value: Float, mod: EnvironmentAttributeModifier.Float? = null) = apply {
-	this[EnvironmentAttributes.Visual.WATER_FOG_RADIUS] = environmentAttributeValue(FloatValue(value), mod)
+/** The distance in blocks from the camera at which sky fog ends. */
+fun EnvironmentAttributesScope.skyFogEndDistance(value: Float, mod: EnvironmentAttributeModifier.Float? = null) = apply {
+	this[EnvironmentAttributes.Visual.SKY_FOG_END_DISTANCE] = environmentAttributeValue(FloatValue(value), mod)
+}
+
+/** The distance in blocks from the camera at which underwater fog ends. */
+fun EnvironmentAttributesScope.waterFogEndDistance(value: Float, mod: EnvironmentAttributeModifier.Float? = null) = apply {
+	this[EnvironmentAttributes.Visual.WATER_FOG_END_DISTANCE] = environmentAttributeValue(FloatValue(value), mod)
+}
+
+/** The distance in blocks from the camera at which underwater fog starts. */
+fun EnvironmentAttributesScope.waterFogStartDistance(value: Float, mod: EnvironmentAttributeModifier.Float? = null) = apply {
+	this[EnvironmentAttributes.Visual.WATER_FOG_START_DISTANCE] = environmentAttributeValue(FloatValue(value), mod)
 }

@@ -5,7 +5,7 @@ nav-title: Environment Attributes
 description: Data-driven environment attributes to control visual, audio, and gameplay systems in biomes and dimensions.
 keywords: minecraft, datapack, kore, worldgen, environment attributes, biome, dimension type, fog, sky, music
 date-created: 2026-02-09
-date-modified: 2026-02-09
+date-modified: 2026-02-10
 routeOverride: /docs/data-driven/worldgen/environment-attributes
 ---
 
@@ -42,7 +42,7 @@ attributes {
 	skyColor(0x78A7FF)
 
 	// Explicit modifier - multiplies the preceding value
-	waterFogRadius(0.85f, EnvironmentAttributeModifier.MULTIPLY)
+	fogEndDistance(0.85f, EnvironmentAttributeModifier.MULTIPLY)
 }
 ```
 
@@ -428,6 +428,46 @@ attributes {
 
 ---
 
+### `visual/cloud_color`
+
+The color of clouds, expressed as an ARGB hex string.
+
+| Property      | Value           |
+|---------------|-----------------|
+| Value type    | ARGB Color      |
+| Default value | `#00000000`     |
+| Modifiers     | Color Modifiers |
+| Interpolated  | Yes             |
+| Resolved at   | Camera position |
+
+```kotlin
+attributes {
+	cloudColor(ARGB(255, 128, 64, 32))
+}
+```
+
+---
+
+### `visual/cloud_fog_end_distance`
+
+The distance in blocks from the camera at which cloud fog ends.
+
+| Property      | Value              |
+|---------------|--------------------|
+| Value type    | Non-negative float |
+| Default value | `1024.0`           |
+| Modifiers     | Float Modifiers    |
+| Interpolated  | Yes                |
+| Resolved at   | Camera position    |
+
+```kotlin
+attributes {
+	cloudFogEndDistance(256.0f)
+}
+```
+
+---
+
 ### `visual/cloud_height`
 
 The height at which all clouds appear.
@@ -449,26 +489,6 @@ attributes {
 
 ---
 
-### `visual/cloud_opacity`
-
-The opacity of clouds. If `0`, clouds are entirely disabled and Happy Ghasts will not regenerate health faster when at cloud height.
-
-| Property      | Value                                                                   |
-|---------------|-------------------------------------------------------------------------|
-| Value type    | Float (0 to 1)                                                          |
-| Default value | `0.0`                                                                   |
-| Modifiers     | Float Modifiers                                                         |
-| Interpolated  | Yes                                                                     |
-| Resolved at   | Camera position for rendering, or Happy Ghast position for regeneration |
-
-```kotlin
-attributes {
-	cloudOpacity(0.5f)
-}
-```
-
----
-
 ### `visual/default_dripstone_particle`
 
 The default particle to be dripped from Dripstone blocks when no fluid is placed above.
@@ -485,26 +505,6 @@ The default particle to be dripped from Dripstone blocks when no fluid is placed
 ```kotlin
 attributes {
 	defaultDripstoneParticle(Particles.DRIPPING_DRIPSTONE_WATER)
-}
-```
-
----
-
-### `visual/extra_fog`
-
-Controls whether dense fog (like that of the Nether) should be used when the camera is not submerged in another substance.
-
-| Property      | Value             |
-|---------------|-------------------|
-| Value type    | Boolean           |
-| Default value | `false`           |
-| Modifiers     | Boolean Modifiers |
-| Interpolated  | No                |
-| Resolved at   | Camera position   |
-
-```kotlin
-attributes {
-	extraFog(true)
 }
 ```
 
@@ -535,6 +535,46 @@ attributes {
 
 ---
 
+### `visual/fog_end_distance`
+
+The distance in blocks from the camera at which fog ends.
+
+| Property      | Value              |
+|---------------|--------------------|
+| Value type    | Non-negative float |
+| Default value | `1024.0`           |
+| Modifiers     | Float Modifiers    |
+| Interpolated  | Yes                |
+| Resolved at   | Camera position    |
+
+```kotlin
+attributes {
+	fogEndDistance(192.0f)
+}
+```
+
+---
+
+### `visual/fog_start_distance`
+
+The distance in blocks from the camera at which fog starts.
+
+| Property      | Value              |
+|---------------|--------------------|
+| Value type    | Non-negative float |
+| Default value | `0.0`              |
+| Modifiers     | Float Modifiers    |
+| Interpolated  | Yes                |
+| Resolved at   | Camera position    |
+
+```kotlin
+attributes {
+	fogStartDistance(0.0f)
+}
+```
+
+---
+
 ### `visual/sky_color`
 
 The color of the sky. This color is only visible for the overworld sky. The final value is also affected by the time of day and weather.
@@ -553,6 +593,26 @@ attributes {
 	skyColor(Color.RED)
 	// or
 	skyColor(0x78A7FF)
+}
+```
+
+---
+
+### `visual/sky_fog_end_distance`
+
+The distance in blocks from the camera at which sky fog ends.
+
+| Property      | Value              |
+|---------------|--------------------|
+| Value type    | Non-negative float |
+| Default value | `512.0`            |
+| Modifiers     | Float Modifiers    |
+| Interpolated  | Yes                |
+| Resolved at   | Camera position    |
+
+```kotlin
+attributes {
+	skyFogEndDistance(320.0f)
 }
 ```
 
@@ -579,26 +639,41 @@ attributes {
 
 ---
 
-### `visual/water_fog_radius`
+### `visual/water_fog_end_distance`
 
-The distance in blocks from the camera at which underwater fog reaches its maximum density. The final value is also modified by how long the
-player has been underwater.
+The distance in blocks from the camera at which underwater fog ends.
 
-| Property      | Value                             |
-|---------------|-----------------------------------|
-| Value type    | Non-negative float                |
-| Default value | `96.0`                            |
-| Modifiers     | Float Modifiers                   |
-| Interpolated  | Yes                               |
-| Resolved at   | Camera position                   |
-| Replaces      | `#has_closer_water_fog` Biome Tag |
+| Property      | Value           |
+|---------------|-----------------|
+| Value type    | float           |
+| Default value | `-8.0`          |
+| Modifiers     | Float Modifiers |
+| Interpolated  | Yes             |
+| Resolved at   | Camera position |
 
 ```kotlin
 attributes {
-	waterFogRadius(96.0f)
+	waterFogEndDistance(96.0f)
+}
+```
 
-	// With a modifier
-	waterFogRadius(0.85f, EnvironmentAttributeModifier.MULTIPLY)
+---
+
+### `visual/water_fog_start_distance`
+
+The distance in blocks from the camera at which underwater fog starts.
+
+| Property      | Value           |
+|---------------|-----------------|
+| Value type    | Float           |
+| Default value | `0.0`           |
+| Modifiers     | Float Modifiers |
+| Interpolated  | Yes             |
+| Resolved at   | Camera position |
+
+```kotlin
+attributes {
+	waterFogStartDistance(0.0f)
 }
 ```
 
@@ -633,9 +708,11 @@ fun DataPack.createCustomDimensionWithAttributes() {
 			)
 
 			// Visual
+			cloudColor(ARGB(255, 255, 255, 255))
 			cloudHeight(192.33f)
-			cloudOpacity(0.5f)
-			extraFog(false)
+			fogStartDistance(0.0f)
+			fogEndDistance(192.0f)
+			skyFogEndDistance(320.0f)
 
 			// Audio
 			musicVolume(0.8f)
@@ -658,7 +735,8 @@ fun DataPack.createCustomDimensionWithAttributes() {
 			skyColor(0x78A7FF)
 			fogColor(0xC0D8FF)
 			waterFogColor(0x050533)
-			waterFogRadius(96.0f)
+			waterFogEndDistance(96.0f)
+			waterFogStartDistance(0.0f)
 			ambientParticles(
 				Particle(ParticleOptions(Particles.ASH), 0.01f),
 			)

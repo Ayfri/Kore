@@ -2,6 +2,7 @@ package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
+import io.github.ayfri.kore.arguments.colors.ARGB
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.rgb
 import io.github.ayfri.kore.assertions.assertsIs
@@ -208,7 +209,6 @@ fun DataPack.environmentAttributesTests() {
 	dimensionType("env_attr_booleans") {
 		attributes {
 			canStartRaid(false)
-			extraFog(true)
 			fastLava(true)
 			increasedFireBurnout(true)
 			netherPortalSpawnsPiglin(true)
@@ -224,7 +224,6 @@ fun DataPack.environmentAttributesTests() {
 		{
 			"attributes": {
 				"minecraft:gameplay/can_start_raid": false,
-				"minecraft:visual/extra_fog": true,
 				"minecraft:gameplay/fast_lava": true,
 				"minecraft:gameplay/increased_fire_burnout": true,
 				"minecraft:gameplay/nether_portal_spawns_piglin": true,
@@ -334,9 +333,10 @@ fun DataPack.environmentAttributesTests() {
 		}
 	""".trimIndent()
 
-	dimensionType("env_attr_float_modifier") {
+	dimensionType("env_attr_floats") {
 		attributes {
-			waterFogRadius(0.85f, EnvironmentAttributeModifier.MULTIPLY)
+			cloudHeight(192.33f)
+			musicVolume(0.8f)
 		}
 		monsterSpawnLightLevel = constant(0)
 	}
@@ -344,10 +344,8 @@ fun DataPack.environmentAttributesTests() {
 	dimensionTypes.last() assertsIs """
 		{
 			"attributes": {
-				"minecraft:visual/water_fog_radius": {
-					"argument": 0.85,
-					"modifier": "multiply"
-				}
+				"minecraft:visual/cloud_height": 192.33,
+				"minecraft:audio/music_volume": 0.8
 			},
 			"natural": true,
 			"has_skylight": true,
@@ -363,12 +361,9 @@ fun DataPack.environmentAttributesTests() {
 		}
 	""".trimIndent()
 
-	dimensionType("env_attr_floats") {
+	dimensionType("env_attr_cloud_color") {
 		attributes {
-			cloudHeight(192.33f)
-			cloudOpacity(0.5f)
-			musicVolume(0.8f)
-			waterFogRadius(96.0f)
+			cloudColor(ARGB(255, 128, 64, 32))
 		}
 		monsterSpawnLightLevel = constant(0)
 	}
@@ -376,10 +371,43 @@ fun DataPack.environmentAttributesTests() {
 	dimensionTypes.last() assertsIs """
 		{
 			"attributes": {
-				"minecraft:visual/cloud_height": 192.33,
-				"minecraft:visual/cloud_opacity": 0.5,
-				"minecraft:audio/music_volume": 0.8,
-				"minecraft:visual/water_fog_radius": 96.0
+				"minecraft:visual/cloud_color": "#ff804020"
+			},
+			"natural": true,
+			"has_skylight": true,
+			"has_ceiling": false,
+			"coordinate_scale": 1.0,
+			"ambient_light": 0.0,
+			"logical_height": 0,
+			"infiniburn": "#minecraft:infiniburn_overworld",
+			"min_y": 0,
+			"height": 16,
+			"monster_spawn_light_level": 0,
+			"monster_spawn_block_light_limit": 0
+		}
+	""".trimIndent()
+
+	dimensionType("env_attr_distance_floats") {
+		attributes {
+			cloudFogEndDistance(256.0f)
+			fogEndDistance(192.0f)
+			fogStartDistance(0.0f)
+			skyFogEndDistance(320.0f)
+			waterFogEndDistance(96.0f)
+			waterFogStartDistance(0.0f)
+		}
+		monsterSpawnLightLevel = constant(0)
+	}
+
+	dimensionTypes.last() assertsIs """
+		{
+			"attributes": {
+				"minecraft:visual/cloud_fog_end_distance": 256.0,
+				"minecraft:visual/fog_end_distance": 192.0,
+				"minecraft:visual/fog_start_distance": 0.0,
+				"minecraft:visual/sky_fog_end_distance": 320.0,
+				"minecraft:visual/water_fog_end_distance": 96.0,
+				"minecraft:visual/water_fog_start_distance": 0.0
 			},
 			"natural": true,
 			"has_skylight": true,

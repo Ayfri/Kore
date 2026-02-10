@@ -20,11 +20,6 @@ fun EnvironmentAttributesScope.canStartRaid(value: Boolean, mod: EnvironmentAttr
 	this[EnvironmentAttributes.Gameplay.CAN_START_RAID] = environmentAttributeValue(BooleanValue(value), mod)
 }
 
-/** Controls whether dense fog (like that of the Nether) should be used. */
-fun EnvironmentAttributesScope.extraFog(value: Boolean, mod: EnvironmentAttributeModifier.Boolean? = null) = apply {
-	this[EnvironmentAttributes.Visual.EXTRA_FOG] = environmentAttributeValue(BooleanValue(value), mod)
-}
-
 /** Controls whether Lava should spread faster and further, with stronger pushing force. */
 fun EnvironmentAttributesScope.fastLava(value: Boolean, mod: EnvironmentAttributeModifier.Boolean? = null) = apply {
 	this[EnvironmentAttributes.Gameplay.FAST_LAVA] = environmentAttributeValue(BooleanValue(value), mod)
