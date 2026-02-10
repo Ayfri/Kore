@@ -30,6 +30,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("Recipes", "recipe"),
 		gen("TestEnvironments", "test_environment"),
 		gen("TestInstances", "test_instance"),
+		gen("Timelines", "timeline"),
 		gen("TrimMaterials", "trim_material"),
 		gen("TrimPatterns", "trim_pattern"),
 		gen("WaypointStyles", "waypoint_style"),
