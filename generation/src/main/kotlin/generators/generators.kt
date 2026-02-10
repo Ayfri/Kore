@@ -36,6 +36,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("WaypointStyles", "waypoint_style"),
 		gen("WolfSoundVariants", "wolf_sound_variant"),
 		gen("WolfVariants", "wolf_variant"),
+		gen("ZombieNautilusVariants", "zombie_nautilus_variant"),
 
 		gen("Biomes", "worldgen/biome"),
 		gen("BiomePresets", "worldgen/multi_noise_biome_source_parameter_list") {
@@ -89,6 +90,7 @@ suspend fun launchAllSimpleGenerators() {
 				"pig_variant" to "PigVariantTag",
 				"timeline" to "TimelineTag",
 				"wolf_variant" to "WolfVariantTag",
+				"zombie_nautilus_variant" to "ZombieNautilusVariantTag",
 				"worldgen/biome" to "worldgen.BiomeTag",
 				"worldgen/configured_carver" to "worldgen.ConfiguredCarverTag",
 				"worldgen/configured_feature" to "worldgen.ConfiguredFeatureTag",
