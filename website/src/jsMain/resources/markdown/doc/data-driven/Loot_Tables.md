@@ -5,7 +5,7 @@ nav-title: Loot Tables
 description: Create and customize Minecraft loot tables using Kore's type-safe Kotlin DSL for drops, container contents, fishing, and more.
 keywords: minecraft, datapack, kore, loot tables, pools, entries, item modifiers, drops
 date-created: 2025-08-11
-date-modified: 2026-02-03
+date-modified: 2026-02-10
 routeOverride: /docs/data-driven/loot-tables
 ---
 
@@ -338,6 +338,117 @@ entries {
 	}
 }
 ```
+
+#### Slots Entry
+
+Selects items from inventory slots specified by a slot source:
+
+```kotlin
+entries {
+	slots {
+		slotSources {
+			slotRange(SlotSourceOrigin.THIS, HOTBAR)
+		}
+	}
+}
+```
+
+### Slot Sources
+
+Slot sources specify which inventory slots to select from. They can be combined — when multiple sources are provided, they serialize as an
+`InlinableList` (single element as object, multiple as array).
+
+#### Contents
+
+Selects all non-empty slots from the inventory component of items:
+
+```kotlin
+slotSources {
+	contents(InventoryComponentType.CONTAINER) {
+		slotSource {
+			slotRange(SlotSourceOrigin.BLOCK_ENTITY, "container.*")
+		}
+	}
+}
+```
+
+Available component types: `BUNDLE_CONTENTS`, `CHARGED_PROJECTILES`, `CONTAINER`.
+
+#### Empty
+
+An empty selection containing no slots:
+
+```kotlin
+slotSources {
+	empty()
+}
+```
+
+#### Filtered
+
+Applies an item filter to the selected slots, excluding non-matching ones:
+
+```kotlin
+slotSources {
+	filtered {
+		slotSource {
+			slotRange(SlotSourceOrigin.THIS, HOTBAR.all())
+			empty()
+		}
+
+		itemFilter {
+			count = rangeOrInt(16..64)
+		}
+	}
+}
+```
+
+#### Group
+
+Merges several slot sources into one:
+
+```kotlin
+slotSources {
+	group {
+		slotRange(SlotSourceOrigin.THIS, HOTBAR.all())
+		empty()
+	}
+}
+```
+
+#### Limit Slots
+
+Limits the number of slots provided:
+
+```kotlin
+slotSources {
+	limitSlots(5) {
+		slotSource {
+			slotRange(SlotSourceOrigin.THIS, HOTBAR.all())
+		}
+	}
+}
+```
+
+#### Slot Range
+
+Selects slots within a range from an entity or block entity inventory:
+
+```kotlin
+slotSources {
+	// Using a RangeItemSlot (e.g., HOTBAR, ARMOR)
+	slotRange(SlotSourceOrigin.THIS, HOTBAR)
+
+	// Using a specific ItemSlotWrapper
+	slotRange(SlotSourceOrigin.BLOCK_ENTITY, ARMOR.HEAD)
+
+	// Using a raw slot string
+	slotRange(SlotSourceOrigin.THIS, "container.*")
+}
+```
+
+Available origins: `ATTACKING_ENTITY`, `BLOCK_ENTITY`, `DIRECT_ATTACKER`, `INTERACTING_ENTITY`, `LAST_DAMAGE_PLAYER`, `TARGET_ENTITY`,
+`THIS`.
 
 ### Entry Properties
 
