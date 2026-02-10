@@ -191,6 +191,14 @@ fun DataPack.paintingVariantTag(
 	block: Tag<PaintingVariantTagArgument>.() -> Unit = {},
 ) = tag(fileName, "painting_variant", namespace, replace, block)
 
+/** Create a pig variant tag. Produces `data/<namespace>/tags/pig_variant/<fileName>.json`. */
+fun DataPack.pigVariantTag(
+	fileName: String = "pig_variant",
+	namespace: String = name,
+	replace: Boolean = false,
+	block: Tag<PigVariantTagArgument>.() -> Unit = {},
+) = tag(fileName, "pig_variant", namespace, replace, block)
+
 /** Create a point of interest type tag. Produces `data/<namespace>/tags/point_of_interest_type/<fileName>.json`. */
 fun DataPack.pointOfInterestTypeTag(
 	fileName: String = "point_of_interest_type",
@@ -207,6 +215,14 @@ fun DataPack.structureTag(
 	block: Tag<StructureTagArgument>.() -> Unit = {},
 ) = tag(fileName, "worldgen/structure", namespace, replace, block)
 
+/** Creates a timeline tag. Produces `data/<namespace>/tags/timeline/<fileName>.json`. */
+fun DataPack.timelineTag(
+	fileName: String = "timeline",
+	namespace: String = name,
+	replace: Boolean = false,
+	block: Tag<TimelineTagArgument>.() -> Unit = {},
+) = tag(fileName, "timeline", namespace, replace, block)
+
 /** Create a trim material tag. Produces `data/<namespace>/tags/trim_material/<fileName>.json`. */
 fun DataPack.trimMaterialTag(
 	fileName: String = "trim_material",
@@ -222,14 +238,6 @@ fun DataPack.trimPatternTag(
 	replace: Boolean = false,
 	block: Tag<TrimPatternTagArgument>.() -> Unit = {},
 ) = tag(fileName, "trim_pattern", namespace, replace, block)
-
-/** Create a pig variant tag. Produces `data/<namespace>/tags/pig_variant/<fileName>.json`. */
-fun DataPack.pigVariantTag(
-	fileName: String = "pig_variant",
-	namespace: String = name,
-	replace: Boolean = false,
-	block: Tag<PigVariantTagArgument>.() -> Unit = {},
-) = tag(fileName, "pig_variant", namespace, replace, block)
 
 /** Create a wolf variant tag. Produces `data/<namespace>/tags/wolf_variant/<fileName>.json`. */
 fun DataPack.wolfVariantTag(

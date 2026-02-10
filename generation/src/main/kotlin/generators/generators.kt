@@ -86,6 +86,7 @@ suspend fun launchAllSimpleGenerators() {
 				"painting_variant" to "PaintingVariantTag",
 				"point_of_interest_type" to "PointOfInterestTypeTag",
 				"pig_variant" to "PigVariantTag",
+				"timeline" to "TimelineTag",
 				"wolf_variant" to "WolfVariantTag",
 				"worldgen/biome" to "worldgen.BiomeTag",
 				"worldgen/configured_carver" to "worldgen.ConfiguredCarverTag",
