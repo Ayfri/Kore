@@ -618,9 +618,9 @@ fun itemComponentsTests() {
 	useCooldownTest.asString() assertsIs """minecraft:ender_pearl[use_cooldown={seconds:2.0f,cooldown_group:"minecraft:ender_pearl"}]"""
 
 	val useEffectsTest = stoneSword {
-		useEffects(canSprint = true, speedMultiplier = 0.5f)
+		useEffects(canSprint = true, interactVibrations = false, speedMultiplier = 0.5f)
 	}
-	useEffectsTest.asString() assertsIs """minecraft:stone_sword[use_effects={can_sprint:1b,speed_multiplier:0.5f}]"""
+	useEffectsTest.asString() assertsIs """minecraft:stone_sword[use_effects={can_sprint:1b,interact_vibrations:0b,speed_multiplier:0.5f}]"""
 
 	val useRemainderTest = Items.POTION {
 		useRemainder(itemStack(Items.GLASS_BOTTLE))

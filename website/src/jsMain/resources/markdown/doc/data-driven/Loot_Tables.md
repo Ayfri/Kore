@@ -253,7 +253,7 @@ entries {
 
 #### Dynamic Entry
 
-For block-specific drops (decorated pot sherds):
+For block-specific drops (decorated pot sherds or shulkers contents):
 
 ```kotlin
 entries {

@@ -10,6 +10,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable(with = LootEntryDynamicName.Companion.LootEntryDynamicNameSerializer::class)
 enum class LootEntryDynamicName {
+	CONTENTS,
 	SHERDS,
 	;
 
