@@ -10,6 +10,8 @@ import kotlinx.serialization.Serializable
 data class UseEffectsComponent(
 	@SerialName("can_sprint")
 	var canSprint: Boolean? = null,
+	@SerialName("interact_vibrations")
+	var interactVibrations: Boolean? = null,
 	@SerialName("speed_multiplier")
 	var speedMultiplier: Float? = null,
 ) : Component()
@@ -18,6 +20,7 @@ fun ComponentsScope.useEffects(block: UseEffectsComponent.() -> Unit = {}) = app
 	this[ItemComponentTypes.USE_EFFECTS] = UseEffectsComponent().apply(block)
 }
 
-fun ComponentsScope.useEffects(canSprint: Boolean? = null, speedMultiplier: Float? = null) = apply {
-	this[ItemComponentTypes.USE_EFFECTS] = UseEffectsComponent(canSprint, speedMultiplier)
+fun ComponentsScope.useEffects(canSprint: Boolean? = null, interactVibrations: Boolean? = null, speedMultiplier: Float? = null) =
+	apply {
+		this[ItemComponentTypes.USE_EFFECTS] = UseEffectsComponent(canSprint, interactVibrations, speedMultiplier)
 }
