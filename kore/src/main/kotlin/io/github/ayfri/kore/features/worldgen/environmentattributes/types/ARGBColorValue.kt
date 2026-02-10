@@ -11,7 +11,6 @@ import kotlinx.serialization.Serializable
 /** Represents an ARGB color environment attribute value, used for cloud color settings. */
 @Serializable(with = CloudColorValue.Companion.CloudColorValueSerializer::class)
 data class CloudColorValue(
-	@Serializable(with = ARGB.Companion.ARGBSerializer::class)
 	var value: ARGB,
 ) : EnvironmentAttributesType() {
 	companion object {
@@ -22,4 +21,9 @@ data class CloudColorValue(
 /** The color of clouds, expressed as an ARGB hex string. */
 fun EnvironmentAttributesScope.cloudColor(color: ARGB, modifier: EnvironmentAttributeModifier.Color? = null) = apply {
 	this[EnvironmentAttributes.Visual.CLOUD_COLOR] = environmentAttributeValue(CloudColorValue(color), modifier)
+}
+
+/** The color of the sunrise/sunset, expressed as an ARGB hex string. Interpolated. */
+fun EnvironmentAttributesScope.sunriseSunsetColor(color: ARGB, modifier: EnvironmentAttributeModifier.Color? = null) = apply {
+	this[EnvironmentAttributes.Visual.SUNRISE_SUNSET_COLOR] = environmentAttributeValue(CloudColorValue(color), modifier)
 }

@@ -15,6 +15,11 @@ data class FloatValue(var value: Float) : EnvironmentAttributesType() {
 	}
 }
 
+/** The chance for a cat to give a waking up gift. Interpolated. */
+fun EnvironmentAttributesScope.catWakingUpGiftChance(value: Float, mod: EnvironmentAttributeModifier.Float? = null) = apply {
+	this[EnvironmentAttributes.Gameplay.CAT_WAKING_UP_GIFT_CHANCE] = environmentAttributeValue(FloatValue(value), mod)
+}
+
 /** The height at which all clouds appear. */
 fun EnvironmentAttributesScope.cloudHeight(value: Float, mod: EnvironmentAttributeModifier.Float? = null) = apply {
 	this[EnvironmentAttributes.Visual.CLOUD_HEIGHT] = environmentAttributeValue(FloatValue(value), mod)
@@ -35,6 +40,11 @@ fun EnvironmentAttributesScope.fogStartDistance(value: Float, mod: EnvironmentAt
 	this[EnvironmentAttributes.Visual.FOG_START_DISTANCE] = environmentAttributeValue(FloatValue(value), mod)
 }
 
+/** The angle of the moon in degrees. Interpolated. */
+fun EnvironmentAttributesScope.moonAngle(value: Float, mod: EnvironmentAttributeModifier.Float? = null) = apply {
+	this[EnvironmentAttributes.Visual.MOON_ANGLE] = environmentAttributeValue(FloatValue(value), mod)
+}
+
 /** The volume at which music should play. Any music playing will fade over time to this value. */
 fun EnvironmentAttributesScope.musicVolume(value: Float, mod: EnvironmentAttributeModifier.Float? = null) = apply {
 	this[EnvironmentAttributes.Audio.MUSIC_VOLUME] = environmentAttributeValue(FloatValue(value), mod)
@@ -43,6 +53,41 @@ fun EnvironmentAttributesScope.musicVolume(value: Float, mod: EnvironmentAttribu
 /** The distance in blocks from the camera at which sky fog ends. */
 fun EnvironmentAttributesScope.skyFogEndDistance(value: Float, mod: EnvironmentAttributeModifier.Float? = null) = apply {
 	this[EnvironmentAttributes.Visual.SKY_FOG_END_DISTANCE] = environmentAttributeValue(FloatValue(value), mod)
+}
+
+/** The sky light factor. Interpolated. */
+fun EnvironmentAttributesScope.skyLightFactor(value: Float, mod: EnvironmentAttributeModifier.Float? = null) = apply {
+	this[EnvironmentAttributes.Visual.SKY_LIGHT_FACTOR] = environmentAttributeValue(FloatValue(value), mod)
+}
+
+/** The sky light level for the dimension. */
+fun EnvironmentAttributesScope.skyLightLevel(value: Float, mod: EnvironmentAttributeModifier.Float? = null) = apply {
+	this[EnvironmentAttributes.Gameplay.SKY_LIGHT_LEVEL] = environmentAttributeValue(FloatValue(value), mod)
+}
+
+/** The angle of the stars in degrees. Interpolated. */
+fun EnvironmentAttributesScope.starAngle(value: Float, mod: EnvironmentAttributeModifier.Float? = null) = apply {
+	this[EnvironmentAttributes.Visual.STAR_ANGLE] = environmentAttributeValue(FloatValue(value), mod)
+}
+
+/** The brightness of the stars. Interpolated. */
+fun EnvironmentAttributesScope.starBrightness(value: Float, mod: EnvironmentAttributeModifier.Float? = null) = apply {
+	this[EnvironmentAttributes.Visual.STAR_BRIGHTNESS] = environmentAttributeValue(FloatValue(value), mod)
+}
+
+/** The angle of the sun in degrees. Interpolated. */
+fun EnvironmentAttributesScope.sunAngle(value: Float, mod: EnvironmentAttributeModifier.Float? = null) = apply {
+	this[EnvironmentAttributes.Visual.SUN_ANGLE] = environmentAttributeValue(FloatValue(value), mod)
+}
+
+/** The chance for surface slime to spawn. Interpolated. */
+fun EnvironmentAttributesScope.surfaceSlimeSpawnChance(value: Float, mod: EnvironmentAttributeModifier.Float? = null) = apply {
+	this[EnvironmentAttributes.Gameplay.SURFACE_SLIME_SPAWN_CHANCE] = environmentAttributeValue(FloatValue(value), mod)
+}
+
+/** The chance for turtle eggs to hatch. Interpolated. */
+fun EnvironmentAttributesScope.turtleEggHatchChance(value: Float, mod: EnvironmentAttributeModifier.Float? = null) = apply {
+	this[EnvironmentAttributes.Gameplay.TURTLE_EGG_HATCH_CHANCE] = environmentAttributeValue(FloatValue(value), mod)
 }
 
 /** The distance in blocks from the camera at which underwater fog ends. */

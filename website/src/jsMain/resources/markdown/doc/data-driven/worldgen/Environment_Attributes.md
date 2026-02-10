@@ -175,6 +175,26 @@ attributes {
 
 ---
 
+### `audio/firefly_bush_sounds`
+
+Controls whether firefly bush sounds are played.
+
+| Property      | Value             |
+|---------------|-------------------|
+| Value type    | Boolean           |
+| Default value | `false`           |
+| Modifiers     | Boolean Modifiers |
+| Interpolated  | No                |
+| Resolved at   | Firefly bush      |
+
+```kotlin
+attributes {
+	fireflyBushSounds(true)
+}
+```
+
+---
+
 ### `audio/music_volume`
 
 The volume at which music should play. Any music playing will fade over time to this value.
@@ -229,6 +249,67 @@ attributes {
 
 ---
 
+### `gameplay/baby_villager_activity`
+
+Controls the activity of baby villagers.
+
+| Property      | Value                    |
+|---------------|--------------------------|
+| Value type    | Mob Activity enum        |
+| Default value | `minecraft:idle`         |
+| Modifiers     | `override` only          |
+| Interpolated  | No                       |
+| Resolved at   | Position of the villager |
+
+```kotlin
+attributes {
+	babyVillagerActivity(Activities.PLAY, EnvironmentAttributeModifier.OVERRIDE)
+}
+```
+
+---
+
+### `gameplay/bees_stay_in_hive`
+
+Controls whether bees stay in their hive.
+
+| Property      | Value             |
+|---------------|-------------------|
+| Value type    | Boolean           |
+| Default value | `false`           |
+| Modifiers     | Boolean Modifiers |
+| Interpolated  | No                |
+| Resolved at   | Position of hive  |
+
+```kotlin
+attributes {
+	beesStayInHive(true)
+}
+```
+
+---
+
+### `gameplay/can_pillager_patrol_spawn`
+
+Controls whether Pillager patrols can spawn. Replaces `#without_patrol_spawns`.
+
+| Property      | Value                              |
+|---------------|------------------------------------|
+| Value type    | Boolean                            |
+| Default value | `true`                             |
+| Modifiers     | Boolean Modifiers                  |
+| Interpolated  | No                                 |
+| Resolved at   | Position of the patrol spawn       |
+| Replaces      | `#without_patrol_spawns` Biome Tag |
+
+```kotlin
+attributes {
+	canPillagerPatrolSpawn(false)
+}
+```
+
+---
+
 ### `gameplay/can_start_raid`
 
 If `false`, a Raid cannot be started by a player with Raid Omen.
@@ -245,6 +326,69 @@ If `false`, a Raid cannot be started by a player with Raid Omen.
 ```kotlin
 attributes {
 	canStartRaid(false)
+}
+```
+
+---
+
+### `gameplay/cat_waking_up_gift_chance`
+
+The chance for a cat to give a waking up gift. Interpolated.
+
+| Property      | Value           |
+|---------------|-----------------|
+| Value type    | Float           |
+| Default value | `0.0`           |
+| Modifiers     | Float Modifiers |
+| Interpolated  | Yes             |
+| Resolved at   | Position of cat |
+
+```kotlin
+attributes {
+	catWakingUpGiftChance(0.5f)
+}
+```
+
+---
+
+### `gameplay/creaking_active`
+
+Controls whether the Creaking is active.
+
+| Property      | Value                    |
+|---------------|--------------------------|
+| Value type    | Boolean                  |
+| Default value | `false`                  |
+| Modifiers     | Boolean Modifiers        |
+| Interpolated  | No                       |
+| Resolved at   | Position of the Creaking |
+
+```kotlin
+attributes {
+	creakingActive(true)
+}
+```
+
+---
+
+### `gameplay/eyeblossom_open`
+
+Controls whether Eyeblossoms are open. Can be `true`, `false`, or `"default"`.
+
+| Property      | Value                           |
+|---------------|---------------------------------|
+| Value type    | Enum (`true`/`false`/`default`) |
+| Default value | `"default"`                     |
+| Modifiers     | `override` only                 |
+| Interpolated  | No                              |
+| Resolved at   | Position of the Eyeblossom      |
+
+```kotlin
+attributes {
+	eyeblossomOpen(EyeblossomOpenState.TRUE)
+
+	// With a modifier
+	eyeblossomOpen(EyeblossomOpenState.DEFAULT, EnvironmentAttributeModifier.OVERRIDE)
 }
 ```
 
@@ -287,6 +431,26 @@ Controls whether Fire blocks burn out more rapidly than normal.
 ```kotlin
 attributes {
 	increasedFireBurnout(true)
+}
+```
+
+---
+
+### `gameplay/monsters_burn`
+
+Controls whether monsters burn in sunlight.
+
+| Property      | Value             |
+|---------------|-------------------|
+| Value type    | Boolean           |
+| Default value | `false`           |
+| Modifiers     | Boolean Modifiers |
+| Interpolated  | No                |
+| Resolved at   | Position of mob   |
+
+```kotlin
+attributes {
+	monstersBurn(true)
 }
 ```
 
@@ -371,6 +535,86 @@ Controls whether a Snow Golem should be damaged.
 ```kotlin
 attributes {
 	snowGolemMelts(true)
+}
+```
+
+---
+
+### `gameplay/sky_light_level`
+
+The sky light level for the dimension.
+
+| Property      | Value                                      |
+|---------------|--------------------------------------------|
+| Value type    | Float                                      |
+| Default value | `15.0`                                     |
+| Modifiers     | Float Modifiers                            |
+| Interpolated  | No                                         |
+| Resolved at   | Whole dimension (cannot be set on a Biome) |
+
+```kotlin
+attributes {
+	skyLightLevel(15.0f)
+}
+```
+
+---
+
+### `gameplay/surface_slime_spawn_chance`
+
+The chance for surface slime to spawn. Interpolated.
+
+| Property      | Value             |
+|---------------|-------------------|
+| Value type    | Float             |
+| Default value | `0.0`             |
+| Modifiers     | Float Modifiers   |
+| Interpolated  | Yes               |
+| Resolved at   | Position of spawn |
+
+```kotlin
+attributes {
+	surfaceSlimeSpawnChance(0.1f)
+}
+```
+
+---
+
+### `gameplay/turtle_egg_hatch_chance`
+
+The chance for turtle eggs to hatch. Interpolated.
+
+| Property      | Value                      |
+|---------------|----------------------------|
+| Value type    | Float                      |
+| Default value | `0.0`                      |
+| Modifiers     | Float Modifiers            |
+| Interpolated  | Yes                        |
+| Resolved at   | Position of the turtle egg |
+
+```kotlin
+attributes {
+	turtleEggHatchChance(0.05f)
+}
+```
+
+---
+
+### `gameplay/villager_activity`
+
+Controls the activity of villagers.
+
+| Property      | Value                    |
+|---------------|--------------------------|
+| Value type    | Mob Activity enum        |
+| Default value | `minecraft:idle`         |
+| Modifiers     | `override` only          |
+| Interpolated  | No                       |
+| Resolved at   | Position of the villager |
+
+```kotlin
+attributes {
+	villagerActivity(Activities.WORK, EnvironmentAttributeModifier.OVERRIDE)
 }
 ```
 
@@ -506,6 +750,46 @@ The default particle to be dripped from Dripstone blocks when no fluid is placed
 ```kotlin
 attributes {
 	defaultDripstoneParticle(Particles.DRIPPING_DRIPSTONE_WATER)
+}
+```
+
+---
+
+### `visual/moon_angle`
+
+The angle of the moon in degrees. Interpolated.
+
+| Property      | Value            |
+|---------------|------------------|
+| Value type    | Float            |
+| Default value | `0.0`            |
+| Modifiers     | Float Modifiers  |
+| Interpolated  | Yes              |
+| Resolved at   | Overworld camera |
+
+```kotlin
+attributes {
+	moonAngle(45.0f)
+}
+```
+
+---
+
+### `visual/moon_phase`
+
+Controls the moon phase.
+
+| Property      | Value            |
+|---------------|------------------|
+| Value type    | MoonPhase        |
+| Default value | `full_moon`      |
+| Modifiers     | `override` only  |
+| Interpolated  | No               |
+| Resolved at   | Overworld camera |
+
+```kotlin
+attributes {
+	moonPhase(Textures.Environment.Celestial.Moon.FULL_MOON, EnvironmentAttributeModifier.OVERRIDE)
 }
 ```
 

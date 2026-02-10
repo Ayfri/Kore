@@ -30,6 +30,11 @@ fun EnvironmentAttributesScope.skyColor(color: Color, mod: EnvironmentAttributeM
 	this[EnvironmentAttributes.Visual.SKY_COLOR] = environmentAttributeValue(ColorValue(color), mod)
 }
 
+/** The color of sky light. Interpolated. */
+fun EnvironmentAttributesScope.skyLightColor(color: Color, mod: EnvironmentAttributeModifier.Color? = null) = apply {
+	this[EnvironmentAttributes.Visual.SKY_LIGHT_COLOR] = environmentAttributeValue(ColorValue(color), mod)
+}
+
 /** The color of fog when submerged in water. Also affected by time of day, weather, and potion effects. */
 fun EnvironmentAttributesScope.waterFogColor(color: Color, mod: EnvironmentAttributeModifier.Color? = null) = apply {
 	this[EnvironmentAttributes.Visual.WATER_FOG_COLOR] = environmentAttributeValue(ColorValue(color), mod)

@@ -15,9 +15,24 @@ data class BooleanValue(var value: Boolean) : EnvironmentAttributesType() {
 	}
 }
 
+/** Controls whether bees stay in their hive. */
+fun EnvironmentAttributesScope.beesStayInHive(value: Boolean, mod: EnvironmentAttributeModifier.Boolean? = null) = apply {
+	this[EnvironmentAttributes.Gameplay.BEES_STAY_IN_HIVE] = environmentAttributeValue(BooleanValue(value), mod)
+}
+
+/** Controls whether Pillager patrols can spawn. Replaces #without_patrol_spawns. */
+fun EnvironmentAttributesScope.canPillagerPatrolSpawn(value: Boolean, mod: EnvironmentAttributeModifier.Boolean? = null) = apply {
+	this[EnvironmentAttributes.Gameplay.CAN_PILLAGER_PATROL_SPAWN] = environmentAttributeValue(BooleanValue(value), mod)
+}
+
 /** Controls whether a Raid can be started by a player with Raid Omen. */
 fun EnvironmentAttributesScope.canStartRaid(value: Boolean, mod: EnvironmentAttributeModifier.Boolean? = null) = apply {
 	this[EnvironmentAttributes.Gameplay.CAN_START_RAID] = environmentAttributeValue(BooleanValue(value), mod)
+}
+
+/** Controls whether the Creaking is active. */
+fun EnvironmentAttributesScope.creakingActive(value: Boolean, mod: EnvironmentAttributeModifier.Boolean? = null) = apply {
+	this[EnvironmentAttributes.Gameplay.CREAKING_ACTIVE] = environmentAttributeValue(BooleanValue(value), mod)
 }
 
 /** Controls whether Lava should spread faster and further, with stronger pushing force. */
@@ -25,9 +40,19 @@ fun EnvironmentAttributesScope.fastLava(value: Boolean, mod: EnvironmentAttribut
 	this[EnvironmentAttributes.Gameplay.FAST_LAVA] = environmentAttributeValue(BooleanValue(value), mod)
 }
 
+/** Controls whether firefly bush sounds are played. */
+fun EnvironmentAttributesScope.fireflyBushSounds(value: Boolean, mod: EnvironmentAttributeModifier.Boolean? = null) = apply {
+	this[EnvironmentAttributes.Audio.FIREFLY_BUSH_SOUNDS] = environmentAttributeValue(BooleanValue(value), mod)
+}
+
 /** Controls whether Fire blocks burn out more rapidly than normal. */
 fun EnvironmentAttributesScope.increasedFireBurnout(value: Boolean, mod: EnvironmentAttributeModifier.Boolean? = null) = apply {
 	this[EnvironmentAttributes.Gameplay.INCREASED_FIRE_BURNOUT] = environmentAttributeValue(BooleanValue(value), mod)
+}
+
+/** Controls whether monsters burn in sunlight. */
+fun EnvironmentAttributesScope.monstersBurn(value: Boolean, mod: EnvironmentAttributeModifier.Boolean? = null) = apply {
+	this[EnvironmentAttributes.Gameplay.MONSTERS_BURN] = environmentAttributeValue(BooleanValue(value), mod)
 }
 
 /** Controls whether Nether Portal blocks can spawn Piglins. */
