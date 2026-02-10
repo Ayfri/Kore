@@ -5,7 +5,7 @@ nav-title: Dimensions
 description: Create custom dimensions and dimension types with Kore's DSL.
 keywords: minecraft, datapack, kore, worldgen, dimension, dimension type, generator
 date-created: 2026-02-03
-date-modified: 2026-02-04
+date-modified: 2026-02-10
 routeOverride: /docs/data-driven/worldgen/dimensions
 ---
 
@@ -59,18 +59,21 @@ val myDimType = dp.dimensionType("my_dim_type") {
 
 ### Dimension Type Properties
 
-| Property        | Description                                          |
-|-----------------|------------------------------------------------------|
-| `ambientLight`  | Base light level (0.0 to 1.0)                        |
-| `attributes`    | Environment attributes (visual/audio/gameplay rules) |
-| `effects`       | Visual effects (overworld/nether/end)                |
-| `hasCeiling`    | Whether dimension has bedrock ceiling                |
-| `hasSkylight`   | Whether sky provides light                           |
-| `height`        | Total height (multiple of 16, max 4064)              |
-| `infiniburn`    | Block tag for infinite burning                       |
-| `logicalHeight` | Max height for teleportation/portals                 |
-| `minY`          | Minimum Y coordinate (multiple of 16)                |
-| `natural`       | Compasses/clocks work normally                       |
+| Property        | Description                                                       |
+|-----------------|-------------------------------------------------------------------|
+| `ambientLight`  | Base light level (0.0 to 1.0)                                     |
+| `attributes`    | Environment attributes (visual/audio/gameplay rules)              |
+| `cardinalLight` | Cardinal light type (`CardinalLight.DEFAULT` or `NETHER`)         |
+| `hasCeiling`    | Whether dimension has bedrock ceiling                             |
+| `hasFixedTime`  | Whether the day-night cycle is frozen                             |
+| `hasSkylight`   | Whether sky provides light                                        |
+| `height`        | Total height (multiple of 16, max 4064)                           |
+| `infiniburn`    | Block tag for infinite burning                                    |
+| `logicalHeight` | Max height for teleportation/portals                              |
+| `minY`          | Minimum Y coordinate (multiple of 16)                             |
+| `natural`       | Compasses/clocks work normally                                    |
+| `skybox`        | Skybox type (`SkyboxType.NONE`, `OVERWORLD`, or `END`)            |
+| `timelines`     | List of [timelines](/docs/data-driven/timelines) or timeline tags |
 
 ---
 

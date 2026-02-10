@@ -2,10 +2,14 @@ package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.features.worldgen.dimensiontype.CardinalLight
+import io.github.ayfri.kore.features.worldgen.dimensiontype.SkyboxType
 import io.github.ayfri.kore.features.worldgen.dimensiontype.attributes
 import io.github.ayfri.kore.features.worldgen.dimensiontype.dimensionType
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.cloudHeight
 import io.github.ayfri.kore.features.worldgen.intproviders.*
+import io.github.ayfri.kore.generated.Tags
+import io.github.ayfri.kore.generated.Timelines
 
 fun DataPack.dimensionTypeTests() {
 	dimensionType("my_dimension") {
@@ -67,4 +71,35 @@ fun DataPack.dimensionTypeTests() {
 			add(entry(1, clampedNormal(0, 10, 5f, 2f)))
 		}
 	}
+
+	dimensionType("my_dimension4") {
+		cardinalLight = CardinalLight.NETHER
+		hasFixedTime = true
+		skybox = SkyboxType.END
+		timelines = listOf(Timelines.DAY, Tags.Timeline.IN_OVERWORLD)
+		monsterSpawnLightLevel = constant(0)
+	}
+
+	dimensionTypes.last() assertsIs """
+		{
+			"natural": true,
+			"has_skylight": true,
+			"has_ceiling": false,
+			"coordinate_scale": 1.0,
+			"ambient_light": 0.0,
+			"cardinal_light": "nether",
+			"has_fixed_time": true,
+			"logical_height": 0,
+			"infiniburn": "#minecraft:infiniburn_overworld",
+			"min_y": 0,
+			"height": 16,
+			"monster_spawn_light_level": 0,
+			"monster_spawn_block_light_limit": 0,
+			"skybox": "end",
+			"timelines": [
+				"minecraft:day",
+				"#minecraft:in_overworld"
+			]
+		}
+	""".trimIndent()
 }

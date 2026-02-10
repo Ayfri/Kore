@@ -7,8 +7,9 @@ import io.github.ayfri.kore.features.worldgen.environmentattributes.EnvironmentA
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.generated.Tags
-import io.github.ayfri.kore.generated.arguments.types.DimensionArgument
+import io.github.ayfri.kore.generated.arguments.TimelineOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.DimensionTypeArgument
+import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -33,14 +34,16 @@ data class DimensionType(
 	var hasCeiling: Boolean = false,
 	var coordinateScale: Double = 1.0,
 	var ambientLight: Float = 0f,
+	var cardinalLight: CardinalLight? = null,
+	var hasFixedTime: Boolean? = null,
 	var logicalHeight: Int = 0,
-	var fixedTime: Long? = null,
-	var effects: DimensionArgument? = null,
 	var infiniburn: BlockTagArgument,
 	var minY: Int = 0,
 	var height: Int = 16,
 	var monsterSpawnLightLevel: IntProvider = constant(0),
 	var monsterSpawnBlockLightLimit: Int = 0,
+	var skybox: SkyboxType? = null,
+	var timelines: InlinableList<TimelineOrTagArgument>? = null,
 ) : Generator("dimension_type") {
 	@Transient
 	private lateinit var jsonEncoder: Json
