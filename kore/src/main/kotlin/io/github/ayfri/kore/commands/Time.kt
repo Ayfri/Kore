@@ -1,8 +1,10 @@
 package io.github.ayfri.kore.commands
 
+import io.github.ayfri.kore.arguments.numbers.TimeNumber
 import io.github.ayfri.kore.arguments.numbers.TimeType
 import io.github.ayfri.kore.arguments.types.literals.int
 import io.github.ayfri.kore.arguments.types.literals.literal
+import io.github.ayfri.kore.arguments.types.literals.time
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.asArg
@@ -20,10 +22,12 @@ enum class TimePeriod {
 	}
 }
 
-class Time(private val fn: Function) {
+data class Time(private val fn: Function) {
 	fun add(value: Int) = fn.addLine(command("time", literal("add"), int(value)))
+	fun add(value: TimeNumber) = fn.addLine(command("time", literal("add"), time(value)))
 	fun query(type: TimeType) = fn.addLine(command("time", literal("query"), literal(type.commandName)))
 	fun set(value: Int) = fn.addLine(command("time", literal("set"), int(value)))
+	fun set(value: TimeNumber) = fn.addLine(command("time", literal("set"), time(value)))
 	fun set(period: TimePeriod) = fn.addLine(command("time", literal("set"), literal(period.asArg())))
 }
 

@@ -1,14 +1,19 @@
 package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.numbers.TimeType
+import io.github.ayfri.kore.arguments.numbers.days
+import io.github.ayfri.kore.arguments.numbers.seconds
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.functions.Function
 
 fun Function.timeTests() {
 	time {
 		add(1) assertsIs "time add 1"
+		add(1.seconds) assertsIs "time add 1s"
 		query(TimeType.DAYS) assertsIs "time query day"
 		set(1) assertsIs "time set 1"
 		set(TimePeriod.DAY) assertsIs "time set day"
 	}
+
+	time.set(1.days) assertsIs "time set 1d"
 }
