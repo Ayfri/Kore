@@ -40,8 +40,10 @@ private fun addGamerule(name: String, parent: String) = TypeSpec.objectBuilder(n
 	.build()
 
 fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
-	val booleanGamerules = gamerules.filter { it.endsWith("<value: bool>") }.map(String::toGameruleName)
-	val integerGamerules = gamerules.filter { it.endsWith("<value: integer>") }.map(String::toGameruleName)
+	val validGamerules = gamerules.filter { "minecraft:" !in it }
+
+	val booleanGamerules = validGamerules.filter { it.endsWith("<value: bool>") }.map(String::toGameruleName)
+	val integerGamerules = validGamerules.filter { it.endsWith("<value: integer>") }.map(String::toGameruleName)
 
 	val topLevelInterface = TypeSpec.interfaceBuilder(INTERFACE_NAME).apply {
 		addAnnotation(
