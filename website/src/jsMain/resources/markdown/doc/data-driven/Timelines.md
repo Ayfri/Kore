@@ -14,7 +14,7 @@ routeOverride: /docs/data-driven/timelines
 Timelines control game behavior and visuals based on the absolute day time through environment attributes. They allow you to define tracks
 that animate environment attributes over time using keyframes and easing functions.
 
-Timelines were added in snapshot **25w45a** (Minecraft 1.21.11).
+Timelines were added in snapshot [**25w45a**](https://minecraft.wiki/w/Java_Edition_25w45a) (Minecraft 1.21.11).
 
 ## Basic Usage
 
@@ -73,11 +73,11 @@ timeline("multi_track") {
 
 ### Track Properties
 
-| Property    | Type         | Description                                                          |
-|-------------|--------------|----------------------------------------------------------------------|
-| `ease`      | `EasingType` | The easing type for interpolation between keyframes. Default: linear |
-| `modifier`  | `String`     | The environment attribute modifier ID. Default: "override"           |
-| `keyframes` | `List`       | A list of keyframes defining values at specific ticks                |
+| Property    | Type                           | Description                                                          |
+|-------------|--------------------------------|----------------------------------------------------------------------|
+| `ease`      | `EasingType`                   | The easing type for interpolation between keyframes. Default: linear |
+| `modifier`  | `EnvironmentAttributeModifier` | The environment attribute modifier ID. Default: `OVERRIDE`           |
+| `keyframes` | `List`                         | A list of keyframes defining values at specific ticks                |
 
 ## Keyframes
 
@@ -186,7 +186,7 @@ timeline("day_night_cycle") {
 
 	track(EnvironmentAttributes.Visual.FOG_START_DISTANCE) {
 		ease = InOutSine
-		modifier = "override"
+		modifier = EnvironmentAttributeModifier.ADD
 
 		keyframe(0) { value(10.0f) }
 		keyframe(6000) { value(100.0f) }
