@@ -5,7 +5,7 @@ nav-title: Advancements Triggers
 description: A guide for using advancements triggers in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, advancements, triggers
 date-created: 2024-08-01
-date-modified: 2024-08-01
+date-modified: 2026-02-10
 routeOverride: /docs/data-driven/advancements/triggers
 ---
 
@@ -1051,6 +1051,25 @@ slideDownBlock("slide_down") {
 	block {
 		blocks(Blocks.SNOW_BLOCK)
 	}
+}
+```
+
+---
+
+### `spearMobs`
+
+**Description:**  
+Triggers when a player spears mobs.
+
+**Properties:**
+
+- `count`: The number of mobs speared.
+
+**Example:**
+
+```kotlin
+spearMobs("spear_mobs") {
+	count = 3
 }
 ```
 

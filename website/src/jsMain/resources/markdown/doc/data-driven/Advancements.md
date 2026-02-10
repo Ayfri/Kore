@@ -5,7 +5,7 @@ nav-title: Advancements
 description: A comprehensive guide for creating and managing advancements in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, advancements, triggers, criteria, rewards
 date-created: 2024-01-08
-date-modified: 2026-02-03
+date-modified: 2026-02-10
 routeOverride: /docs/data-driven/advancements
 ---
 
@@ -287,6 +287,7 @@ Triggers are the events that activate criteria. Kore supports all vanilla trigge
 | `shotCrossbow`                 | Player shoots a crossbow                  |
 | `sleptInBed`                   | Player sleeps in bed                      |
 | `slideDownBlock`               | Player slides down a block                |
+| `spearMobs`                    | Player spears mobs                        |
 | `startedRiding`                | Player starts riding                      |
 | `summonedEntity`               | Player summons an entity                  |
 | `tameAnimal`                   | Player tames an animal                    |

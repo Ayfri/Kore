@@ -502,6 +502,26 @@ private fun DataPack.allTriggersTests() {
 			}
 		}
 	""".trimIndent()
+
+	advancement("spear_mobs") {
+		criteria {
+			spearMobs("spear_mobs") {
+				count = 3
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"spear_mobs": {
+					"trigger": "minecraft:spear_mobs",
+					"conditions": {
+						"count": 3
+					}
+				}
+			}
+		}
+	""".trimIndent()
 }
 
 private fun DataPack.componentsDisplay() {
