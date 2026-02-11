@@ -2,9 +2,9 @@ package io.github.ayfri.kore.functions
 
 import io.github.ayfri.kore.Configuration
 import io.github.ayfri.kore.DataPack
-import io.github.ayfri.kore.arguments.chatcomponents.*
 import io.github.ayfri.kore.arguments.actions.runCommand
 import io.github.ayfri.kore.arguments.actions.suggestCommand
+import io.github.ayfri.kore.arguments.chatcomponents.*
 import io.github.ayfri.kore.arguments.chatcomponents.hover.showText
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.types.literals.allPlayers
@@ -61,7 +61,7 @@ open class Function(
 	 * Adds a raw line (usually a command or a comment) to the function.
 	 * The line will be processed to handle macros before being stored.
 	 */
-	open fun addLine(line: String) = handleMacro(line).also { lines += it }
+	open fun addLine(line: String) = handleMacro(line).also { lines += it.split("\n") }
 
 	/**
 	 * Adds a [Command] to the function and stores its string form.
