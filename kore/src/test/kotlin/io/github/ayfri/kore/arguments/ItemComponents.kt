@@ -35,7 +35,7 @@ fun itemComponentsTests() {
 	val bundle = Items.BUNDLE
 
 	val attackRangeTest = stoneSword {
-		attackRange(minRange = 1.0f, maxRange = 3.0f, hitboxMargin = 0.5f, mobFactor = 0.8f)
+		attackRange(hitboxMargin = 0.5f, maxRange = 3.0f, minRange = 1.0f, mobFactor = 0.8f)
 	}
 	attackRangeTest.asString() assertsIs """minecraft:stone_sword[attack_range={hitbox_margin:0.5f,max_range:3.0f,min_range:1.0f,mob_factor:0.8f}]"""
 
