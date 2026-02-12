@@ -314,15 +314,14 @@ object ReleaseFiltersStyle : StyleSheet() {
 	val container by style {
 		backgroundColor(GlobalStyle.secondaryBackgroundColor)
 		borderRadius(GlobalStyle.roundingButton)
+		boxShadow(0.px, 2.px, 6.px, 0.px, rgba(0, 0, 0, 0.1))
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
-		gap(1.cssRem)
 		marginBottom(1.6.cssRem)
 		padding(1.3.cssRem)
 		transition(0.3.s, "padding")
+		scrollMarginTop(6.cssRem)
 		width(100.percent)
-		boxShadow(0.px, 2.px, 6.px, 0.px, rgba(0, 0, 0, 0.1))
-		property("scroll-margin-top", "6rem")
 
 		mdMax(self) {
 			padding(1.1.cssRem)
@@ -347,17 +346,6 @@ object ReleaseFiltersStyle : StyleSheet() {
 			flexDirection(FlexDirection.Column)
 			alignItems(AlignItems.Stretch)
 			gap(0.8.cssRem)
-		}
-	}
-
-	val searchLabel by style {
-		fontWeight(600)
-		whiteSpace(WhiteSpace.NoWrap)
-		color(GlobalStyle.altTextColor)
-		fontSize(0.95.cssRem)
-
-		mdMax(self) {
-			alignSelf(AlignSelf.FlexStart)
 		}
 	}
 
@@ -469,7 +457,6 @@ object ReleaseFiltersStyle : StyleSheet() {
 	}
 
 	val filters by style {
-		borderTop(1.px, LineStyle.Solid, rgba(255, 255, 255, 0.1))
 		display(DisplayStyle.Grid)
 		gap(1.5.cssRem)
 		gridTemplateColumns { repeat(3) { size(1.fr) } }

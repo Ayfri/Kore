@@ -1,10 +1,15 @@
 package io.github.ayfri.kore.website.components.updates
 
 import androidx.compose.runtime.*
+import com.varabyte.kobweb.browser.storage.BooleanStorageKey
+import com.varabyte.kobweb.browser.storage.getItem
+import com.varabyte.kobweb.browser.storage.setItem
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiCalendarMonth
+import com.varabyte.kobweb.silk.components.icons.mdi.MdiOpenInNew
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.utils.*
+import kotlinx.browser.localStorage
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.attributes.ATarget
 import org.jetbrains.compose.web.attributes.target
@@ -13,17 +18,28 @@ import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.dom.*
 
+private val ShowPreReleasesStorageKey = BooleanStorageKey("kore.releases.showPreReleases", defaultValue = false)
+private val ShowSnapshotsStorageKey = BooleanStorageKey("kore.releases.showSnapshots", defaultValue = false)
+private val ShowReleaseCandidatesStorageKey = BooleanStorageKey("kore.releases.showReleaseCandidates", defaultValue = false)
+
 @Composable
 fun ReleasesList(releases: List<GitHubRelease>) {
 	Style(ReleasesListStyle)
 
 	val allReleases = releases.sortedByDescending { it.publishedAt }
+	val initialFilterOptions = remember {
+		ReleaseFilterOptions(
+			showPreReleases = localStorage.getItem(ShowPreReleasesStorageKey) ?: false,
+			showSnapshots = localStorage.getItem(ShowSnapshotsStorageKey) ?: false,
+			showReleaseCandidates = localStorage.getItem(ShowReleaseCandidatesStorageKey) ?: false
+		)
+	}
+	var filterOptions by remember { mutableStateOf(initialFilterOptions) }
 
-	var filterOptions by remember { mutableStateOf(ReleaseFilterOptions()) }
-
-	val sortComparator by mutableStateOf(when (filterOptions.sortOrder) {
+	val sortComparator by mutableStateOf(
+		when (filterOptions.sortOrder) {
 		SortOrder.NEWEST_FIRST -> compareByDescending<GitHubRelease> { it.publishedAt }
-		SortOrder.OLDEST_FIRST -> compareBy<GitHubRelease> { it.publishedAt }
+			SortOrder.OLDEST_FIRST -> compareBy { it.publishedAt }
 	})
 	// Apply the filters
 	val filteredReleases = allReleases.filter { release ->
@@ -33,20 +49,35 @@ fun ReleasesList(releases: List<GitHubRelease>) {
 	Div({
 		classes(ReleasesListStyle.container)
 	}) {
-		// Add the statistics
-		ReleaseStats(allReleases, filteredReleases)
-
 		// Add the filters
 		ReleaseFilters(
-			allReleases = allReleases,
-			filterOptions = filterOptions,
-			onFilterChange = { filterOptions = it }
-		)
+			allReleases = allReleases, filterOptions = filterOptions, onFilterChange = { newOptions ->
+				if (newOptions.showPreReleases != filterOptions.showPreReleases) {
+					localStorage.setItem(ShowPreReleasesStorageKey, newOptions.showPreReleases)
+				}
+				if (newOptions.showSnapshots != filterOptions.showSnapshots) {
+					localStorage.setItem(ShowSnapshotsStorageKey, newOptions.showSnapshots)
+				}
+				if (newOptions.showReleaseCandidates != filterOptions.showReleaseCandidates) {
+					localStorage.setItem(ShowReleaseCandidatesStorageKey, newOptions.showReleaseCandidates)
+				}
+				filterOptions = newOptions
+			})
 
 		Div({
+			id("changelogs")
 			classes(ReleasesListStyle.releasesHeader)
 		}) {
-			P("Showing ${filteredReleases.size} out of ${allReleases.size} releases")
+			H2({
+				classes(ReleasesListStyle.releasesTitle)
+			}) {
+				Text("Changelogs")
+			}
+			P({
+				classes(ReleasesListStyle.releasesCount)
+			}) {
+				Text("Showing ${filteredReleases.size} out of ${allReleases.size} releases")
+			}
 		}
 
 		if (filteredReleases.isEmpty()) {
@@ -69,6 +100,9 @@ fun ReleasesList(releases: List<GitHubRelease>) {
 				}
 			}
 		}
+
+		// Add the statistics
+		ReleaseStats(allReleases, filteredReleases)
 	}
 }
 
@@ -80,48 +114,55 @@ fun ReleaseCard(release: GitHubRelease) {
 		Div({
 			classes(ReleasesListStyle.releaseHeader)
 		}) {
-			A(release.htmlUrl, {
-				target(ATarget.Blank)
-				rel("noopener", "noreferrer")
-				classes(ReleasesListStyle.releaseLink)
+			Div({
+				classes(ReleasesListStyle.releaseHeaderMain)
 			}) {
-				H3({
-					classes(ReleasesListStyle.releaseTitle)
+				A(release.htmlUrl, {
+					target(ATarget.Blank)
+					rel("noopener", "noreferrer")
+					classes(ReleasesListStyle.releaseLink)
 				}) {
-					Text(release.name)
+					H3({
+						classes(ReleasesListStyle.releaseTitle)
+					}) {
+						Text(release.name)
+					}
+				}
+
+				Div({
+					classes(ReleasesListStyle.releaseMetadata)
+				}) {
+					Span {
+						Text(release.tagName)
+					}
+
+					Span({
+						classes(ReleasesListStyle.releaseDate)
+					}) {
+						MdiCalendarMonth()
+						Text("Published ${formatDate(release.publishedAt)}")
+						Text(" • ")
+						Text("(${formatRelativeDate(release.publishedAt)})")
+					}
+
+					if (release.isPrerelease) {
+						Div({
+							classes(ReleasesListStyle.preReleaseTag)
+						}) {
+							Text("Pre-Release")
+						}
+					}
 				}
 			}
 
-			Div({
-				classes(ReleasesListStyle.releaseMetadata)
-			}) {
-				Span {
-					Text(release.tagName)
-				}
-
-				release.getMinecraftVersion()?.let { mcVersion ->
-					Div({
-						classes(ReleasesListStyle.minecraftVersion)
-					}) {
-						Text("MC $mcVersion")
-					}
-				}
-
-				Span({
-					classes(ReleasesListStyle.releaseDate)
+			buildMinecraftChangelogUrl(release)?.let { changelogUrl ->
+				A(changelogUrl, {
+					classes(ReleasesListStyle.minecraftChangelogLink)
+					target(ATarget.Blank)
+					rel("noopener", "noreferrer")
 				}) {
-					MdiCalendarMonth()
-					Text("Published ${formatDate(release.publishedAt)}")
-					Text(" • ")
-					Text("(${formatRelativeDate(release.publishedAt)})")
-				}
-
-				if (release.isPrerelease) {
-					Div({
-						classes(ReleasesListStyle.preReleaseTag)
-					}) {
-						Text("Pre-Release")
-					}
+					MdiOpenInNew()
+					Text("Minecraft changelog")
 				}
 			}
 		}
@@ -160,6 +201,31 @@ fun ReleaseCard(release: GitHubRelease) {
 	}
 }
 
+private fun buildMinecraftChangelogUrl(release: GitHubRelease): String? {
+	val mcVersion = release.getMinecraftVersion() ?: return null
+	val baseVersion = mcVersion.substringBefore("-")
+	val normalizedBase = baseVersion.replace(".", "-")
+
+	return when {
+		release.isSnapshot() -> "https://www.minecraft.net/en-us/article/minecraft-snapshot-$mcVersion"
+
+		release.isPreRelease() -> {
+			val preNumber = mcVersion.substringAfter("-pre", "")
+			if (preNumber.isEmpty()) null
+			else "https://www.minecraft.net/en-us/article/minecraft-$normalizedBase-pre-release-$preNumber"
+		}
+
+		release.isReleaseCandidate() -> {
+			val rcNumber = mcVersion.substringAfter("-rc", "")
+			if (rcNumber.isEmpty()) null
+			else "https://www.minecraft.net/en-us/article/minecraft-$normalizedBase-release-candidate-$rcNumber"
+		}
+
+		release.isRelease() -> "https://www.minecraft.net/en-us/article/minecraft-java-edition-$normalizedBase"
+		else -> null
+	}
+}
+
 object ReleasesListStyle : StyleSheet() {
 	val container by style {
 		display(DisplayStyle.Flex)
@@ -168,11 +234,31 @@ object ReleasesListStyle : StyleSheet() {
 	}
 
 	val releasesHeader by style {
-		color(GlobalStyle.altTextColor)
+		alignItems(AlignItems.Center)
 		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.RowReverse)
+		flexDirection(FlexDirection.Row)
+		justifyContent(JustifyContent.SpaceBetween)
+		marginBottom(1.2.cssRem)
+		scrollMarginTop(6.cssRem)
+
+		mdMax(self) {
+			alignItems(AlignItems.FlexStart)
+			flexDirection(FlexDirection.Column)
+			gap(0.4.cssRem)
+		}
+	}
+
+	val releasesTitle by style {
+		fontSize(1.5.cssRem)
+		margin(0.px)
+		fontWeight(700)
+	}
+
+	val releasesCount by style {
+		color(GlobalStyle.altTextColor)
 		fontSize(0.9.cssRem)
 		fontStyle(FontStyle.Italic)
+		margin(0.px)
 	}
 
 	val releasesGrid by style {
@@ -213,8 +299,24 @@ object ReleasesListStyle : StyleSheet() {
 	}
 
 	val releaseHeader by style {
+		alignItems(AlignItems.FlexStart)
+		display(DisplayStyle.Flex)
+		flexDirection(FlexDirection.Row)
+		justifyContent(JustifyContent.SpaceBetween)
+		gap(1.cssRem)
 		borderBottom(1.px, LineStyle.Solid, rgba(255, 255, 255, 0.1))
 		paddingBottom(0.8.cssRem)
+
+		mdMax(self) {
+			alignItems(AlignItems.FlexStart)
+			flexDirection(FlexDirection.Column)
+		}
+	}
+
+	val releaseHeaderMain by style {
+		display(DisplayStyle.Flex)
+		flexDirection(FlexDirection.Column)
+		gap(0.6.cssRem)
 	}
 
 	val releaseTitle by style {
@@ -262,16 +364,26 @@ object ReleasesListStyle : StyleSheet() {
 		}
 	}
 
-	val minecraftVersion by style {
-		backgroundColor(rgba(80, 175, 80, 0.2))
-		borderRadius(GlobalStyle.roundingButton)
-		color(rgb(80, 205, 80))
-		fontSize(0.8.cssRem)
+	val minecraftChangelogLink by style {
+		alignItems(AlignItems.Center)
+		color(GlobalStyle.linkColor)
+		display(DisplayStyle.Flex)
+		fontSize(0.85.cssRem)
 		fontWeight(600)
-		padding(0.25.cssRem, 0.5.cssRem)
+		gap(0.35.cssRem)
+		textDecorationLine(TextDecorationLine.None)
+		padding(0.1.cssRem, 0.4.cssRem)
+		borderRadius(GlobalStyle.roundingButton)
+		backgroundColor(GlobalStyle.buttonBackgroundColor.alpha(0.12))
+		transition(0.2.s, "background-color", "color")
+
+		"span.material-icons" style {
+			fontSize(1.05.cssRem)
+		}
 
 		hover(self) style {
-			backgroundColor(rgba(80, 175, 80, 0.3))
+			backgroundColor(GlobalStyle.buttonBackgroundColor.alpha(0.25))
+			color(GlobalStyle.linkColorHover)
 		}
 	}
 
@@ -307,7 +419,7 @@ object ReleasesListStyle : StyleSheet() {
 		color(GlobalStyle.textColor)
 		display(DisplayStyle.Block)
 		padding(0.5.cssRem, 0.8.cssRem)
-		textDecoration("none")
+		textDecorationLine(TextDecorationLine.None)
 		transition(0.2.s, "background-color", "box-shadow")
 
 		hover(self) style {
@@ -351,7 +463,7 @@ object ReleasesListStyle : StyleSheet() {
 
 	val releaseLink by style {
 		color(GlobalStyle.textColor)
-		textDecoration("none")
+		textDecorationLine(TextDecorationLine.None)
 		transition(0.2.s, "color")
 
 		hover(self) style {
