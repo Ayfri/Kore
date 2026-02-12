@@ -20,9 +20,11 @@ fun ItemStackSubPredicates.enchantments(block: MutableList<Enchantment>.() -> Un
 }
 
 fun ItemStackSubPredicates.enchantments(vararg enchantments: Enchantment) = enchantments { addAll(enchantments) }
+fun ItemStackSubPredicates.enchantments(vararg enchantments: EnchantmentOrTagArgument, level: IntRangeOrIntJson = rangeOrInt(1)) =
+	enchantments { addAll(enchantments.map { Enchantment(listOf(it), level) }) }
 
 fun MutableList<Enchantment>.enchantment(init: Enchantment.() -> Unit) = add(Enchantment().apply(init))
-fun MutableList<Enchantment>.enchantment(vararg type: EnchantmentOrTagArgument, level: IntRangeOrIntJson) =
+fun MutableList<Enchantment>.enchantment(vararg type: EnchantmentOrTagArgument, level: IntRangeOrIntJson = rangeOrInt(1)) =
 	add(Enchantment(type.toList(), level))
 
 fun MutableList<Enchantment>.enchantment(vararg type: EnchantmentOrTagArgument, level: Int) =
