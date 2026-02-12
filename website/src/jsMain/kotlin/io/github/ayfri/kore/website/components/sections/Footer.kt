@@ -2,6 +2,7 @@ package io.github.ayfri.kore.website.components.sections
 
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
+import io.github.ayfri.kore.website.DISCORD_LINK
 import io.github.ayfri.kore.website.GITHUB_LINK
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.WEBSITE_GITHUB_LINK
@@ -38,7 +39,7 @@ fun Footer() {
 				classes(FooterStyle.section)
 			}) {
 				H3 { Text("Community") }
-				A("https://discord.gg/BySjRNQ9Je", "Discord", attrs = { target(ATarget.Blank) })
+				A(DISCORD_LINK, "Discord", attrs = { target(ATarget.Blank) })
 				A("https://kotlinlang.slack.com/archives/C066G9BF66A", "Slack #kore", attrs = { target(ATarget.Blank) })
 				A("mailto:pierre.ayfri@gmail.com", "Contact", attrs = { target(ATarget.Blank) })
 			}
@@ -75,7 +76,11 @@ fun Footer() {
 			classes(FooterStyle.copyright)
 		}) {
 			val currentYear = Date().getFullYear()
-			Text("Copyright © $currentYear - Ayfri. All rights reserved.")
+			Text("Copyright © $currentYear - ")
+			A("https://ayfri.com", "Ayfri") {
+				title("Hello :)")
+			}
+			Text(". All rights reserved.")
 		}
 	}
 }
@@ -179,6 +184,13 @@ object FooterStyle : StyleSheet() {
 		smMax(self) {
 			fontSize(0.8.cssRem)
 			marginY(1.cssRem)
+		}
+
+		type("a") style {
+			color(GlobalStyle.altTextColor)
+			hover(self) style {
+				color(GlobalStyle.textColor)
+			}
 		}
 	}
 }
