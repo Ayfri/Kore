@@ -45,6 +45,19 @@ fun extractMainMinecraftVersion(version: String?): String? {
 }
 
 /**
+ * Extracts the base Minecraft version (major.minor.patch) from a version string.
+ * Example: "1.21.4-rc3" becomes "1.21.4"
+ * @param version The complete version string
+ * @return The major.minor.patch version or null if the version is null or invalid
+ */
+fun extractBaseMinecraftVersion(version: String?): String? {
+	if (version == null) return null
+
+	val baseVersionRegex = Regex("""(\d+\.\d+(?:\.\d+)?)""")
+	return baseVersionRegex.find(version)?.groupValues?.get(1)
+}
+
+/**
  * Extracts the Kore version from a release tag.
  * @param tagName The tag of the release
  * @return The Kore version or null if it cannot be extracted
@@ -52,4 +65,43 @@ fun extractMainMinecraftVersion(version: String?): String? {
 fun extractKoreVersion(tagName: String): String? {
 	val versionRegex = Regex("""v?(\d+\.\d+\.\d+)(?:-.+)?$""")
 	return versionRegex.find(tagName)?.groupValues?.get(1)
+}
+
+data class MinecraftVersionKey(
+	val numbers: List<Int>,
+	val suffixRank: Int,
+	val suffixNumber: Int,
+)
+
+fun compareMinecraftVersions(left: String, right: String): Int {
+	val leftKey = buildMinecraftVersionKey(left)
+	val rightKey = buildMinecraftVersionKey(right)
+
+	val maxSize = maxOf(leftKey.numbers.size, rightKey.numbers.size, 3)
+	val leftNumbers = leftKey.numbers + List(maxSize - leftKey.numbers.size) { 0 }
+	val rightNumbers = rightKey.numbers + List(maxSize - rightKey.numbers.size) { 0 }
+
+	for (index in 0 until maxSize) {
+		val comparison = leftNumbers[index].compareTo(rightNumbers[index])
+		if (comparison != 0) return comparison
+	}
+
+	val suffixComparison = leftKey.suffixRank.compareTo(rightKey.suffixRank)
+	if (suffixComparison != 0) return suffixComparison
+
+	return leftKey.suffixNumber.compareTo(rightKey.suffixNumber)
+}
+
+private fun buildMinecraftVersionKey(version: String): MinecraftVersionKey {
+	val numbers = Regex("\\d+").findAll(version).mapNotNull { it.value.toIntOrNull() }.toList()
+	val suffixRank = when {
+		MinecraftVersionPattern.RELEASE.matches(version) -> 3
+		MinecraftVersionPattern.RELEASE_CANDIDATE.matches(version) -> 2
+		MinecraftVersionPattern.PRE_RELEASE.matches(version) -> 1
+		MinecraftVersionPattern.SNAPSHOT.matches(version) -> 0
+		else -> 0
+	}
+	val suffixNumber = Regex("""-(?:pre|rc)(\d+)""").find(version)?.groupValues?.get(1)?.toIntOrNull() ?: 0
+
+	return MinecraftVersionKey(numbers, suffixRank, suffixNumber)
 }

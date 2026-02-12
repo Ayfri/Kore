@@ -1,9 +1,6 @@
 package io.github.ayfri.kore.website.components.updates
 
-import io.github.ayfri.kore.website.utils.MinecraftVersionPattern
-import io.github.ayfri.kore.website.utils.extractKoreVersion
-import io.github.ayfri.kore.website.utils.extractMainMinecraftVersion
-import io.github.ayfri.kore.website.utils.extractMinecraftVersion
+import io.github.ayfri.kore.website.utils.*
 import kotlin.js.Date
 
 data class GitHubRelease(
@@ -32,7 +29,7 @@ data class GitHubRelease(
 	fun findNextMinecraftReleaseVersion(): String {
 		val allReleases = GitHubService.getReleases()
 		val releasesSortedByPublishDate = allReleases.sortedBy { it.publishedDate.getTime() }
-		val nextMainRelease = releasesSortedByPublishDate.reversed()
+		val nextMainRelease = releasesSortedByPublishDate
 			.firstOrNull { (it.publishedDate.getTime() > publishedDate.getTime()) && it.isRelease() }
 		if (nextMainRelease?.getMinecraftVersion() != null) return nextMainRelease.getMinecraftVersion()!!
 
@@ -59,10 +56,17 @@ data class GitHubRelease(
 		if (!options.showSnapshots && isSnapshot()) return false
 
 		if (options.selectedMinecraftVersions.isNotEmpty()) {
-			val mainVersion = getMainMinecraftVersion()
-			if (mainVersion == null || !options.selectedMinecraftVersions.contains(mainVersion)) {
-				return false
+			val effectiveVersion = getMinecraftVersion()?.takeIf { !isSnapshot() } ?: findNextMinecraftReleaseVersion()
+			val baseVersion = extractBaseMinecraftVersion(effectiveVersion) ?: return false
+			val matchesSelected = options.selectedMinecraftVersions.any { selectedVersion ->
+				val isMainVersion = selectedVersion.split(".").size == 2
+				if (isMainVersion) {
+					baseVersion == selectedVersion || baseVersion.startsWith("$selectedVersion.")
+				} else {
+					baseVersion == selectedVersion
+				}
 			}
+			if (!matchesSelected) return false
 		}
 
 		// Check the text search
