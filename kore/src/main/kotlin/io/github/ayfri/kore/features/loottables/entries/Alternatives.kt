@@ -11,27 +11,21 @@ import kotlinx.serialization.Serializable
  * Minecraft Wiki: https://minecraft.wiki/w/Loot_table
  */
 @Serializable
-data class Alternative(
+data class Alternatives(
 	var children: List<LootEntry>,
 	var conditions: PredicateAsList? = null,
 ) : LootEntry()
 
-/** Add an Alternative entry with optional conditions. */
-fun LootEntries.alternative(children: List<LootEntry> = emptyList(), conditions: Predicate.() -> Unit = {}) {
-	add(Alternative(children, Predicate().apply(conditions)))
+/** Add an Alternatives entry with optional conditions. */
+fun LootEntries.alternatives(children: List<LootEntry> = emptyList(), conditions: Alternatives.() -> Unit = {}) {
+	add(Alternatives(children).apply(conditions))
 }
-
-/** Add and configure an Alternative entry. */
-fun LootEntries.alternate(alternative: Alternative.() -> Unit = {}) {
-	add(Alternative(emptyList()).apply(alternative))
-}
-
 /** Configure child entries. */
-fun Alternative.children(block: LootEntries.() -> Unit) {
+fun Alternatives.children(block: LootEntries.() -> Unit) {
 	children = buildList(block)
 }
 
 /** Set conditions for this entry, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
-fun Alternative.conditions(block: Predicate.() -> Unit) {
+fun Alternatives.conditions(block: Predicate.() -> Unit) {
 	conditions = Predicate().apply(block)
 }

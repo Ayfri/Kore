@@ -18,6 +18,7 @@ import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.features.predicates.providers.uniform
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Enchantments
+import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.LootTables
 
 fun DataPack.lootTableTests() {
@@ -246,6 +247,38 @@ fun DataPack.lootTableTests() {
 									"type": "minecraft:slot_range",
 									"source": "this",
 									"slots": "hotbar.*"
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	""".trimIndent()
+
+	lootTable("alternatives") {
+		pool {
+			entries {
+				alternatives {
+					children {
+						item(Items.ANDESITE_WALL)
+					}
+				}
+			}
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"entries": [
+						{
+							"type": "minecraft:alternatives",
+							"children": [
+								{
+									"type": "minecraft:item",
+									"name": "minecraft:andesite_wall"
 								}
 							]
 						}
