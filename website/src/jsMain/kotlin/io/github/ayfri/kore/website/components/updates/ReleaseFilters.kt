@@ -22,11 +22,11 @@ import org.jetbrains.compose.web.dom.*
  */
 data class ReleaseFilterOptions(
 	val searchQuery: String = "",
-	val showPreReleases: Boolean = true,
-	val showSnapshots: Boolean = true,
-	val showReleaseCandidates: Boolean = true,
+	val showPreReleases: Boolean = false,
+	val showSnapshots: Boolean = false,
+	val showReleaseCandidates: Boolean = false,
 	val selectedMinecraftVersions: Set<String> = emptySet(),
-	val sortOrder: SortOrder = SortOrder.NEWEST_FIRST
+	val sortOrder: SortOrder = SortOrder.NEWEST_FIRST,
 )
 
 enum class SortOrder {
@@ -46,10 +46,25 @@ fun ReleaseFilters(
 	var expanded by remember { mutableStateOf(false) }
 
 	// Extract all available Minecraft versions in the releases
-	val availableMinecraftVersions = allReleases.map { release ->
-		if (!release.isRelease()) release.findNextMinecraftReleaseVersion()
-		else release.getMinecraftVersion()
-	}.toSet().filterNotNull().sortedByDescending { it }
+	val effectiveReleaseVersions = allReleases.mapNotNull { release ->
+		val effectiveVersion = release.getMinecraftVersion()?.takeIf { !release.isSnapshot() }
+			?: release.findNextMinecraftReleaseVersion()
+		extractBaseMinecraftVersion(effectiveVersion)
+	}
+	val baseVersionCounts = effectiveReleaseVersions.groupingBy { it }.eachCount()
+	val mainVersionCounts = effectiveReleaseVersions
+		.mapNotNull { extractMainMinecraftVersion(it) }
+		.groupingBy { it }
+		.eachCount()
+	val availableMinecraftVersions = baseVersionCounts.keys
+		.groupBy { extractMainMinecraftVersion(it) }
+		.filterKeys { it != null }
+		.mapValues { (mainVersion, versions) ->
+			val sortedVersions = versions.sortedWith { left, right -> compareMinecraftVersions(right, left) }
+			listOf(mainVersion!!) + sortedVersions.filterNot { it == mainVersion }
+		}
+		.toList()
+		.sortedWith { (leftVersion), (rightVersion) -> compareMinecraftVersions(rightVersion!!, leftVersion!!) }
 
 	// Count snapshots for badge display
 	val snapshotCount = allReleases.count { release -> release.isSnapshot() }
@@ -60,19 +75,13 @@ fun ReleaseFilters(
 	val releaseCandidateCount = allReleases.count { release -> release.isReleaseCandidate() }
 
 	Div({
-
+		id("filters")
 		classes(ReleaseFiltersStyle.container)
 	}) {
 		// Search bar
 		Div({
 			classes(ReleaseFiltersStyle.searchBar)
 		}) {
-			Label("release-search", {
-				classes(ReleaseFiltersStyle.searchLabel)
-			}) {
-				Text("Search releases:")
-			}
-
 			Div({
 				classes(ReleaseFiltersStyle.searchInputContainer)
 			}) {
@@ -258,24 +267,40 @@ fun ReleaseFilters(
 					}
 
 					Div({
-						classes(ReleaseFiltersStyle.versionsGrid)
+						classes(ReleaseFiltersStyle.versionsList)
 					}) {
-						availableMinecraftVersions.forEach { version ->
-							val isChecked = filterOptions.selectedMinecraftVersions.contains(version)
-
+						availableMinecraftVersions.forEach { (mainVersion, versions) ->
 							Div({
-								classes(ReleaseFiltersStyle.versionChip)
-								if (isChecked) classes(ReleaseFiltersStyle.versionChipSelected)
-								onClick {
-									val newSelectedVersions = if (isChecked) {
-										filterOptions.selectedMinecraftVersions - version
-									} else {
-										filterOptions.selectedMinecraftVersions + version
-									}
-									onFilterChange(filterOptions.copy(selectedMinecraftVersions = newSelectedVersions))
-								}
+								classes(ReleaseFiltersStyle.versionsRow)
 							}) {
-								Text(version)
+								versions.forEach { version ->
+									val isChecked = filterOptions.selectedMinecraftVersions.contains(version)
+									val count = if (version == mainVersion) {
+										mainVersionCounts[mainVersion] ?: 0
+									} else {
+										baseVersionCounts[version] ?: 0
+									}
+
+									Div({
+										classes(ReleaseFiltersStyle.versionChip)
+										if (isChecked) classes(ReleaseFiltersStyle.versionChipSelected)
+										onClick {
+											val newSelectedVersions = if (isChecked) {
+												filterOptions.selectedMinecraftVersions - version
+											} else {
+												filterOptions.selectedMinecraftVersions + version
+											}
+											onFilterChange(filterOptions.copy(selectedMinecraftVersions = newSelectedVersions))
+										}
+									}) {
+										Text(version)
+										Span({
+											classes(ReleaseFiltersStyle.versionChipCount)
+										}) {
+											Text("($count)")
+										}
+									}
+								}
 							}
 						}
 					}
@@ -291,21 +316,22 @@ object ReleaseFiltersStyle : StyleSheet() {
 		borderRadius(GlobalStyle.roundingButton)
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
-		gap(1.2.cssRem)
-		marginBottom(2.cssRem)
-		padding(1.5.cssRem)
+		gap(1.cssRem)
+		marginBottom(1.6.cssRem)
+		padding(1.3.cssRem)
 		transition(0.3.s, "padding")
 		width(100.percent)
 		boxShadow(0.px, 2.px, 6.px, 0.px, rgba(0, 0, 0, 0.1))
+		property("scroll-margin-top", "6rem")
 
 		mdMax(self) {
-			padding(1.2.cssRem)
-			gap(1.cssRem)
+			padding(1.1.cssRem)
+			gap(0.9.cssRem)
 		}
 
 		smMax(self) {
-			padding(1.cssRem)
-			gap(0.8.cssRem)
+			padding(0.95.cssRem)
+			gap(0.75.cssRem)
 		}
 	}
 
@@ -331,7 +357,7 @@ object ReleaseFiltersStyle : StyleSheet() {
 		fontSize(0.95.cssRem)
 
 		mdMax(self) {
-			alignSelf(org.jetbrains.compose.web.css.AlignSelf.FlexStart)
+			alignSelf(AlignSelf.FlexStart)
 		}
 	}
 
@@ -447,11 +473,11 @@ object ReleaseFiltersStyle : StyleSheet() {
 		display(DisplayStyle.Grid)
 		gap(1.5.cssRem)
 		gridTemplateColumns { repeat(3) { size(1.fr) } }
-		marginTop(0.8.cssRem)
+		marginTop(0.6.cssRem)
 		maxHeight(500.px)
 		opacity(1)
 		overflow(Overflow.Hidden)
-		paddingTop(1.5.cssRem)
+		paddingTop(1.2.cssRem)
 		transition(0.5.s, "max-height", "opacity", "padding-top", "margin-top", "border-top")
 
 		mdMax(self) {
@@ -462,7 +488,7 @@ object ReleaseFiltersStyle : StyleSheet() {
 		smMax(self) {
 			gridTemplateColumns { size(1.fr) }
 			gap(1.cssRem)
-			paddingTop(1.2.cssRem)
+			paddingTop(1.cssRem)
 		}
 	}
 
@@ -566,7 +592,13 @@ object ReleaseFiltersStyle : StyleSheet() {
 		}
 	}
 
-	val versionsGrid by style {
+	val versionsList by style {
+		display(DisplayStyle.Flex)
+		flexDirection(FlexDirection.Column)
+		gap(0.8.cssRem)
+	}
+
+	val versionsRow by style {
 		display(DisplayStyle.Flex)
 		flexWrap(FlexWrap.Wrap)
 		gap(0.6.cssRem)
@@ -592,6 +624,13 @@ object ReleaseFiltersStyle : StyleSheet() {
 			transform { translateY((-1).px) }
 			boxShadow(0.px, 2.px, 4.px, 0.px, rgba(0, 0, 0, 0.2))
 		}
+	}
+
+	val versionChipCount by style {
+		color(GlobalStyle.altTextColor)
+		fontSize(0.7.cssRem)
+		fontWeight(500)
+		marginLeft(0.35.cssRem)
 	}
 
 	val versionChipSelected by style {
