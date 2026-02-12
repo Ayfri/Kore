@@ -2,6 +2,11 @@ package io.github.ayfri.kore.website.components.sections
 
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.compose.ui.Modifier
+import com.varabyte.kobweb.compose.ui.modifiers.color
+import com.varabyte.kobweb.compose.ui.modifiers.fontSize
+import com.varabyte.kobweb.compose.ui.modifiers.verticalAlign
+import com.varabyte.kobweb.silk.components.icons.mdi.MdiFavorite
 import io.github.ayfri.kore.website.DISCORD_LINK
 import io.github.ayfri.kore.website.GITHUB_LINK
 import io.github.ayfri.kore.website.GlobalStyle
@@ -81,6 +86,12 @@ fun Footer() {
 				title("Hello :)")
 			}
 			Text(". All rights reserved.")
+			Br()
+			Text("Built with ")
+			MdiFavorite(Modifier.color(Color("#cf3f3f")).fontSize(0.9.cssRem).verticalAlign(VerticalAlign.Middle))
+			Text(" with ")
+			A("https://kobweb.varabyte.com/", "Kobweb", attrs = { target(ATarget.Blank) })
+			Text(".")
 		}
 	}
 }
