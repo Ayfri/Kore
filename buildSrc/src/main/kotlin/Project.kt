@@ -2,7 +2,7 @@ import java.time.Year
 
 data object Project {
 	const val GROUP = "io.github.ayfri.kore"
-	const val VERSION = "1.41.1"
+	const val VERSION = "1.41.2"
 
 	// URLS
 	const val GITHUB_URL = "github.com/Ayfri/Kore"
