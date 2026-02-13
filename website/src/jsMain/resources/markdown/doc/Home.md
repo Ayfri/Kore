@@ -21,7 +21,8 @@ generation of datapack JSON, and tight integration with vanilla concepts (functi
 
 - **Getting started**: Check out the [Getting Started](/docs/getting-started) guide for a step-by-step introduction to creating your first datapack.
 - **Prerequisites**: Java 21+ and a Kotlin-capable build environment.
-- **Starter template**: use the `Kore Template` for a ready-to-run project: [`Kore Template`](https://github.com/Ayfri/Kore-Template).
+- **Starter template**: use the `Kore Template` for a ready-to-run project: [
+  `Kore Template`](https://github.com/Kore-Minecraft/Kore-Template).
 - **Create & generate**: see [Creating A Datapack](/docs/guides/creating-a-datapack) for lifecycle and output options (`.generate()`,
   `.generateZip()`, `.generateJar()`).
 
@@ -99,7 +100,7 @@ Check out the [Known Issues](/docs/advanced/known-issues) page for a list of kno
 ## Community & source
 
 - **Repository**: [Kore](https://github.com/Ayfri/Kore)
-- **Starter template**: [Kore Template](https://github.com/Ayfri/Kore-Template)
+- **Starter template**: [Kore Template](https://github.com/Kore-Minecraft/Kore-Template)
 - **LLM-friendly documentation**: [llms.txt](https://kore.ayfri.com/llms.txt) | [llms-full.txt](https://kore.ayfri.com/llms-full.txt)
 
 For hands-on examples, follow the doc pages above - most pages include runnable snippets and links to test cases in the repository.

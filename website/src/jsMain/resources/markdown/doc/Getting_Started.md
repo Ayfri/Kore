@@ -25,10 +25,10 @@ This guide takes you from zero to a working datapack using Kore and Kotlin. It a
 
 The fastest way to start is the Kore Template repository. It's preconfigured and ready to run.
 
-- On GitHub: open https://github.com/Ayfri/Kore-Template and click “Use this template” to create your repo, or clone it directly.
+- On GitHub: open https://github.com/Kore-Minecraft/Kore-Template and click “Use this template” to create your repo, or clone it directly.
 - In IntelliJ IDEA:
   1) File > New > Project from Version Control
-  2) Enter URL: https://github.com/Ayfri/Kore-Template and choose a directory
+  2) Enter URL: https://github.com/Kore-Minecraft/Kore-Template and choose a directory
   3) Open the project, trust it, let Gradle import/sync
   4) In the `src/main/kotlin` folder, open `Main.kt` and run the `main` function
 

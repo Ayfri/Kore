@@ -37,7 +37,7 @@ fun Footer() {
 				A("$GITHUB_LINK/releases", "Releases", attrs = { target(ATarget.Blank) })
 				A("$GITHUB_LINK/issues", "Issues", attrs = { target(ATarget.Blank) })
 				A(WEBSITE_GITHUB_LINK, "Website Code", attrs = { target(ATarget.Blank) })
-				A("https://github.com/Ayfri/Kore-Template", "Project Template", attrs = { target(ATarget.Blank) })
+				A("https://github.com/Kore-Minecraft/Kore-Template", "Project Template", attrs = { target(ATarget.Blank) })
 			}
 
 			Div({
