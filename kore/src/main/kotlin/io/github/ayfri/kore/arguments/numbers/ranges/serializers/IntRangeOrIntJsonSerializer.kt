@@ -1,21 +1,18 @@
 package io.github.ayfri.kore.arguments.numbers.ranges.serializers
 
+import io.github.ayfri.kore.arguments.numbers.ranges.IntRange
 import io.github.ayfri.kore.arguments.numbers.ranges.IntRangeOrInt
-import io.github.ayfri.kore.arguments.numbers.ranges.range
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.nullable
-import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 
 typealias IntRangeOrIntJson = @Serializable(with = IntRangeOrIntJsonSerializer::class) IntRangeOrInt
 
@@ -27,33 +24,29 @@ data object IntRangeOrIntJsonSerializer : KSerializer<IntRangeOrInt> {
 
 	override fun serialize(encoder: Encoder, value: IntRangeOrInt) = when {
 		value.range != null -> encoder.encodeStructure(descriptor) {
-			encodeIntElement(descriptor, 0, value.range.start!!)
-			encodeIntElement(descriptor, 1, value.range.end!!)
+			value.range.start?.let { encodeIntElement(descriptor, 0, it) }
+			value.range.end?.let { encodeIntElement(descriptor, 1, it) }
 		}
 
 		else -> encoder.encodeInt(value.int!!)
 	}
 
 	@OptIn(ExperimentalSerializationApi::class)
-	override fun deserialize(decoder: Decoder) = when {
-		decoder.decodeNullableSerializableValue(Int.serializer().nullable) != null -> {
-			decoder.decodeStructure(descriptor) {
-				var min: Int? = null
-				var max: Int? = null
-
-				while (true) {
-					when (val index = decodeElementIndex(descriptor)) {
-						0 -> min = decodeIntElement(PrimitiveSerialDescriptor("min", PrimitiveKind.INT), 0)
-						1 -> max = decodeIntElement(PrimitiveSerialDescriptor("max", PrimitiveKind.INT), 1)
-						-1 -> break
-						else -> error("Unexpected index: $index")
-					}
-				}
-
-				rangeOrInt(range(min!!, max!!))
+	override fun deserialize(decoder: Decoder): IntRangeOrInt {
+		val jsonDecoder =
+			decoder as? kotlinx.serialization.json.JsonDecoder ?: error("This serializer can only be used with JSON")
+		return when (val element = jsonDecoder.decodeJsonElement()) {
+			is JsonPrimitive -> {
+				rangeOrInt(element.content.toInt())
 			}
-		}
 
-		else -> rangeOrInt(decoder.decodeInt())
+			is JsonObject -> {
+				val min = element["min"]?.let { (it as JsonPrimitive).content.toInt() }
+				val max = element["max"]?.let { (it as JsonPrimitive).content.toInt() }
+				IntRangeOrInt(IntRange(min, max))
+			}
+
+			else -> error("Unexpected JSON element: $element")
+		}
 	}
 }
