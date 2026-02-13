@@ -4,6 +4,7 @@ fun argumentsTests() {
 	componentsMatchersTests()
 	componentsPatchsTests()
 	entityComponentsTests()
+	intRangeOrIntJsonSerializerTests()
 	itemComponentsTests()
 	itemPredicatesTests()
 	itemSlotTests()
