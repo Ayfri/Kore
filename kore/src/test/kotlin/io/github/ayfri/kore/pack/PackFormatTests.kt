@@ -29,6 +29,7 @@ fun packFormatTests() {
 	testPackSectionCompatibility()
 	testPackSectionValidation()
 	testSupportedFormatsSerialization()
+	testSupportedFormatsDsl()
 	testPackSectionConditionalFields()
 }
 
@@ -88,6 +89,35 @@ private fun testSupportedFormatsSerialization() {
 			"max_inclusive": 20
 		}
 	""".trimIndent()
+}
+
+private fun testSupportedFormatsDsl() {
+	val sectionRange = PackSection(
+		description = textComponent("Test"),
+		minFormat = packFormat(91),
+		maxFormat = packFormat(99)
+	).apply {
+		supportedFormats(91..99)
+	}
+	requireNotNull(sectionRange.supportedFormats) assertsIs SupportedFormats(minInclusive = 91, maxInclusive = 99)
+
+	val sectionMinOnly = PackSection(
+		description = textComponent("Test"),
+		minFormat = packFormat(91),
+		maxFormat = packFormat(99)
+	).apply {
+		supportedFormats(min = 91)
+	}
+	requireNotNull(sectionMinOnly.supportedFormats) assertsIs SupportedFormats(number = 91)
+
+	val sectionMinMax = PackSection(
+		description = textComponent("Test"),
+		minFormat = packFormat(91),
+		maxFormat = packFormat(99)
+	).apply {
+		supportedFormats(min = 91, max = 99)
+	}
+	requireNotNull(sectionMinMax.supportedFormats) assertsIs SupportedFormats(minInclusive = 91, maxInclusive = 99)
 }
 
 private fun testPackFormatMajorCreation() {

@@ -47,9 +47,30 @@ data class PackSection(
 			warn("maxFormat (${maxFormat.asFormatString()}) cannot be a decimal")
 		}
 		packFormat?.let {
-			if (it < minFormat || it > maxFormat) {
+			if (it !in minFormat..maxFormat) {
 				warn("packFormat (${it.asFormatString()}) is outside the range [${minFormat.asFormatString()}, ${maxFormat.asFormatString()}]")
 			}
+		}
+	}
+
+	fun supportedFormats(range: IntRange) {
+		if (range.isEmpty()) {
+			warn("supportedFormats range is empty")
+		}
+		supportedFormats = SupportedFormats(
+			minInclusive = range.first,
+			maxInclusive = range.last
+		)
+	}
+
+	fun supportedFormats(min: Int, max: Int? = null) {
+		if (max != null && min > max) {
+			warn("supportedFormats min ($min) is greater than max ($max)")
+		}
+		supportedFormats = if (max == null || min == max) {
+			SupportedFormats(number = min)
+		} else {
+			SupportedFormats(minInclusive = min, maxInclusive = max)
 		}
 	}
 

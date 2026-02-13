@@ -5,7 +5,7 @@ nav-title: Creating A Datapack
 description: A guide for creating a Minecraft datapack using Kore.
 keywords: minecraft, datapack, kore, guide
 date-created: 2024-02-26
-date-modified: 2024-01-08
+date-modified: 2026-02-13
 routeOverride: /docs/guides/creating-a-datapack
 ---
 
@@ -71,6 +71,21 @@ dataPack("mydatapack") {
 - `packFormat` - The explicit pack format version (optional).
 - `description` - A text component for the datapack description.
 - `supportedFormats` - The supported format versions (optional, automatically generated from range if needed).
+
+You can also set `supportedFormats` with a small DSL:
+
+```kotlin
+dataPack("mydatapack") {
+	pack {
+		minFormat = packFormat(91)
+		maxFormat = packFormat(99)
+		description = textComponent("My Datapack")
+
+		supportedFormats(91..99)
+		supportedFormats(min = 91) // max is optional
+	}
+}
+```
 
 Kore automatically handles backward compatibility for older game versions. If your
 `minFormat` is below the threshold (82 for DataPacks, 65 for ResourcePacks), Kore will automatically include the legacy
