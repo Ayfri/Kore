@@ -2,6 +2,8 @@ name: CD
 
 on:
   release:
+    types:
+      - released
   push:
     branches:
       - master
