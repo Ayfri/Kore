@@ -6,15 +6,15 @@ import io.github.ayfri.kore.features.predicates.types.EntityType
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class EntityScore(
+data class EntityScores(
 	var entity: EntityType,
 	var scores: Map<String, IntOrNumberProvidersRange>,
 ) : PredicateCondition()
 
-fun Predicate.entityScore(entity: EntityType, scores: Map<String, IntOrNumberProvidersRange>) {
-	predicateConditions += EntityScore(entity, scores)
+fun Predicate.entityScores(entity: EntityType, scores: Map<String, IntOrNumberProvidersRange>) {
+	predicateConditions += EntityScores(entity, scores)
 }
 
-fun Predicate.entityScore(entity: EntityType, scores: MutableMap<String, IntOrNumberProvidersRange>.() -> Unit) {
-	predicateConditions += EntityScore(entity, buildMap(scores))
+fun Predicate.entityScores(entity: EntityType, scores: MutableMap<String, IntOrNumberProvidersRange>.() -> Unit) {
+	predicateConditions += EntityScores(entity, buildMap(scores))
 }
