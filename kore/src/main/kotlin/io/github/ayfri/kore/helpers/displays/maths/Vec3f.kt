@@ -49,8 +49,10 @@ data class Vec3f(var x: Float = 0f, var y: Float = 0f, var z: Float = 0f) {
 		else -> this / length
 	}
 
-	fun toQuaternion() = Quaternion.fromEulerAngles(this)
 	fun reciprocal() = Vec3f(1f / x, 1f / y, 1f / z)
+
+	fun toArray() = floatArrayOf(x, y, z)
+	fun toQuaternion() = Quaternion.fromEulerAngles(this)
 
 	companion object {
 		val ZERO = Vec3f()
@@ -65,15 +67,16 @@ data class Vec3f(var x: Float = 0f, var y: Float = 0f, var z: Float = 0f) {
 		val FORWARD = Z_AXIS
 		val BACKWARD = -Z_AXIS
 
+		fun fromArray(array: FloatArray) = Vec3f(array[0], array[1], array[2])
+
 		data object Vec3fAsArraySerializer : KSerializer<Vec3f> {
 			private val delegateSerializer = FloatArraySerializer()
 			override val descriptor: SerialDescriptor = delegateSerializer.descriptor
 
-			override fun deserialize(decoder: Decoder) = error("Vec3fAsArray is not meant to be deserialized")
+			override fun deserialize(decoder: Decoder) = fromArray(decoder.decodeSerializableValue(delegateSerializer))
 
-			override fun serialize(encoder: Encoder, value: Vec3f) {
-				encoder.encodeSerializableValue(delegateSerializer, floatArrayOf(value.x, value.y, value.z))
-			}
+			override fun serialize(encoder: Encoder, value: Vec3f) =
+				encoder.encodeSerializableValue(delegateSerializer, value.toArray())
 		}
 	}
 }
