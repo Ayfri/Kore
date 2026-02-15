@@ -31,7 +31,7 @@ data class Entity(
 	var periodicTicks: Int? = null,
 	var predicates: ItemStackSubPredicates? = null,
 	@Serializable(EntitySlotsSerializer::class) var slots: Map<ItemSlot, ItemStack>? = null,
-	var steppingOn: Block? = null,
+	var steppingOn: Location? = null,
 	var targetedEntity: Entity? = null,
 	var team: String? = null,
 	var type: InlinableList<EntityTypeOrTagArgument>? = null,
@@ -121,8 +121,8 @@ fun Entity.slots(vararg slots: Pair<ItemSlot, ItemStack>) {
 	this.slots = slots.toMap()
 }
 
-fun Entity.steppingOn(init: Block.() -> Unit = {}) {
-	steppingOn = Block().apply(init)
+fun Entity.steppingOn(init: Location.() -> Unit = {}) {
+	steppingOn = Location().apply(init)
 }
 
 fun Entity.targetedEntity(init: Entity.() -> Unit = {}) {

@@ -17,8 +17,6 @@ data class DamageSource(
 	var tags: List<DamageTagEntry>? = null,
 )
 
-fun damageSource(init: DamageSource.() -> Unit = {}) = DamageSource().apply(init)
-
 fun DamageSource.tag(id: Tags.DamageType? = null, expected: Boolean? = null) {
 	tags = (tags ?: mutableListOf()) + DamageTagEntry(id, expected)
 }
