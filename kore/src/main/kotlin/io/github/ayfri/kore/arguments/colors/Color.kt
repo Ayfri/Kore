@@ -66,7 +66,7 @@ interface Color : Argument {
 		val YELLOW = FormattingColor.YELLOW
 
 		/**
-		 * Variant serializer that emits the correct format automatically:
+		 * Variant serializer that emits and parses the correct format automatically:
 		 * - [FormattingColor]/[BossBarColor] → lowercase name (e.g. "red").
 		 * - [RGB] → string "#rrggbb".
 		 * - [ARGB] → string "#aarrggbb".
@@ -74,7 +74,21 @@ interface Color : Argument {
 		data object ColorSerializer : KSerializer<Color> {
 			override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Color", PrimitiveKind.STRING)
 
-			override fun deserialize(decoder: Decoder) = error("Color deserialization is not supported")
+			override fun deserialize(decoder: Decoder): Color {
+				val string = decoder.decodeString()
+				if (string.startsWith("#")) {
+					val hex = string.removePrefix("#")
+					return when (hex.length) {
+						6 -> RGB.fromHex(hex)
+						8 -> ARGB.fromHex(hex)
+						else -> error("Invalid hex color: $string")
+					}
+				}
+
+				return FormattingColor.entries.find { it.name.lowercase() == string }
+					?: BossBarColor.entries.find { it.name.lowercase() == string }
+					?: error("Unknown color name: $string")
+			}
 
 			override fun serialize(encoder: Encoder, value: Color) = when (value) {
 				is BossBarColor -> encoder.encodeSerializableValue(BossBarColor.serializer(), value)
