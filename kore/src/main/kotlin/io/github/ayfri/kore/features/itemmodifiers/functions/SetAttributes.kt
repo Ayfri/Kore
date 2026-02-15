@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
-import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.data.item.AttributeModifier
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
@@ -39,20 +38,20 @@ fun ItemModifier.setAttributes(modifier: AttributeModifier, replace: Boolean? = 
 /** Append one attribute modifier entry. */
 fun SetAttributes.attribute(
 	attribute: AttributeArgument,
+	id: String,
 	amount: NumberProvider = constant(0f),
 	operation: AttributeModifierOperation = AttributeModifierOperation.ADD_VALUE,
 	slot: List<EquipmentSlot>? = null,
-	uuid: UUIDArgument? = null,
 	block: AttributeModifier.() -> Unit = {},
 ) = apply {
-	modifiers += AttributeModifier(attribute, amount, operation, slot, uuid).apply(block)
+	modifiers += AttributeModifier(attribute, amount, id, operation, slot).apply(block)
 }
 
 fun SetAttributes.attribute(
 	attribute: AttributeArgument,
+	id: String,
 	amount: Float,
 	operation: AttributeModifierOperation = AttributeModifierOperation.ADD_VALUE,
 	slot: List<EquipmentSlot>? = null,
-	uuid: UUIDArgument? = null,
 	block: AttributeModifier.() -> Unit = {},
-) = attribute(attribute, constant(amount), operation, slot, uuid, block)
+) = attribute(attribute, id, constant(amount), operation, slot, block)
