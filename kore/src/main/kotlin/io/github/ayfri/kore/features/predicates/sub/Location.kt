@@ -1,5 +1,7 @@
 package io.github.ayfri.kore.features.predicates.sub
 
+import io.github.ayfri.kore.arguments.numbers.ranges.IntRangeOrInt
+import io.github.ayfri.kore.arguments.numbers.ranges.asRangeOrInt
 import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
 import io.github.ayfri.kore.generated.arguments.types.DimensionArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
@@ -20,13 +22,18 @@ enum class Weather {
 }
 
 @Serializable
+data class Light(
+	var light: IntRangeOrIntJson,
+)
+
+@Serializable
 data class Location(
 	var biomes: InlinableList<BiomeOrTagArgument>? = null,
 	var block: Block? = null,
 	var canSeeSky: Boolean? = null,
 	var dimension: DimensionArgument? = null,
 	var fluid: Fluid? = null,
-	var light: IntRangeOrIntJson? = null,
+	var light: Light? = null,
 	var position: Position? = null,
 	var smokey: Boolean? = null,
 	var structures: InlinableList<StructureOrTagArgument>? = null,
@@ -41,6 +48,18 @@ fun Location.biomes(vararg biomes: BiomeOrTagArgument) {
 
 fun Location.block(block: Block.() -> Unit = {}) {
 	this.block = Block().apply(block)
+}
+
+fun Location.light(value: IntRangeOrInt, init: Light.() -> Unit = {}) {
+	light = Light(value).apply(init)
+}
+
+fun Location.light(min: Int, max: Int, init: Light.() -> Unit = {}) {
+	light = Light((min..max).asRangeOrInt()).apply(init)
+}
+
+fun Location.light(value: Int, init: Light.() -> Unit = {}) {
+	light = Light(value.asRangeOrInt()).apply(init)
 }
 
 fun Location.position(init: Position.() -> Unit = {}) {
