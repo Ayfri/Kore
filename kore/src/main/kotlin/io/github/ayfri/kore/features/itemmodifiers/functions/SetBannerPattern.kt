@@ -1,8 +1,10 @@
 package io.github.ayfri.kore.features.itemmodifiers.functions
 
+import io.github.ayfri.kore.arguments.colors.FormattingColor
 import io.github.ayfri.kore.data.item.BannerPattern
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.generated.arguments.types.BannerPatternArgument
 import kotlinx.serialization.Serializable
 
 /**
@@ -21,3 +23,9 @@ data class SetBannerPattern(
 /** Add a `set_banner_pattern` step. */
 fun ItemModifier.setBannerPattern(append: Boolean? = null, patterns: MutableList<BannerPattern>.() -> Unit = {}) =
 	SetBannerPattern(patterns = buildList(patterns), append = append).also { modifiers += it }
+
+fun MutableList<BannerPattern>.bannerPattern(
+	type: BannerPatternArgument,
+	color: FormattingColor,
+	block: BannerPattern.() -> Unit = {},
+) = apply { add(BannerPattern(type, color).apply(block)) }
