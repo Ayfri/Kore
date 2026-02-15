@@ -14,10 +14,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SetPotion(
 	override var conditions: PredicateAsList? = null,
-	val potion: PotionArgument,
+	val id: PotionArgument,
 ) : ItemFunction()
 
 /** Add a `set_potion` step. */
-fun ItemModifier.setPotion(potion: PotionArgument, block: SetPotion.() -> Unit = {}) {
-	modifiers += SetPotion(potion = potion).apply(block)
+fun ItemModifier.setPotion(id: PotionArgument, block: SetPotion.() -> Unit = {}) {
+	modifiers += SetPotion(id = id).apply(block)
 }
