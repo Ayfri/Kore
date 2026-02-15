@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.testinstances
 
-import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.features.testinstances.enums.TestRotation
 import io.github.ayfri.kore.features.testinstances.enums.TestType
 import io.github.ayfri.kore.generated.arguments.types.TestEnvironmentArgument
@@ -16,12 +15,12 @@ import kotlinx.serialization.Serializable
  *
  * Test instances can be either:
  * - **Block-based**: Use test blocks (Start, Log, Fail, Accept) inside structures to control logic via redstone
- * - **Function-based**: Rely on built-in test functions with setup/teardown capabilities
+ * - **Function-based**: Rely on a Java method reference to control test logic programmatically
  *
  * Introduced in Minecraft snapshot 25w03a as part of the GameTest framework overhaul.
  *
  * @param environment The test environment that provides execution context and preconditions
- * @param function Optional function configuration for function-based tests (setup/teardown)
+ * @param function Optional fully qualified Java method reference for function-based tests (e.g., "com.example.MyMod::myTest")
  * @param manualOnly Whether this test should only be run when manually triggered
  * @param maxAttempts Maximum number of attempts before the test fails (for retry logic)
  * @param maxTicks Maximum number of game ticks the test can run before timing out
@@ -36,7 +35,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TestInstance(
 	val environment: TestEnvironmentArgument,
-	val function: FunctionArgument? = null,
+	val function: String? = null,
 	val manualOnly: Boolean? = null,
 	val maxAttempts: Int? = null,
 	val maxTicks: Int,

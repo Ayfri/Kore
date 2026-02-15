@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.features.testinstances
 
 import io.github.ayfri.kore.DataPack
-import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.features.testinstances.enums.TestRotation
 import io.github.ayfri.kore.features.testinstances.enums.TestType
 import io.github.ayfri.kore.generated.arguments.types.TestEnvironmentArgument
@@ -48,7 +47,7 @@ data class TestInstancesBuilder(private val dataPack: DataPack) {
  */
 class TestInstanceDSLBuilder {
 	var environment: TestEnvironmentArgument? = null
-	var function: FunctionArgument? = null
+	var function: String? = null
 	var manualOnly: Boolean? = null
 	var maxAttempts: Int? = null
 	var maxTicks: Int = 100
@@ -72,8 +71,9 @@ class TestInstanceDSLBuilder {
 		environment = env
 	}
 
-	fun function(function: FunctionArgument) {
-		this.function = function
+	/** Java Function to execute. */
+	fun function(fullyQualifiedName: String) {
+		function = fullyQualifiedName
 	}
 
 	fun functionBased() {

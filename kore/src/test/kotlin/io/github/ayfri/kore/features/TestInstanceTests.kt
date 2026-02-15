@@ -1,20 +1,18 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
-import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.say
-import io.github.ayfri.kore.features.testinstances.*
 import io.github.ayfri.kore.features.testenvironments.enums.Weather
 import io.github.ayfri.kore.features.testenvironments.testEnvironmentsBuilder
+import io.github.ayfri.kore.features.testinstances.testInstances
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.Structures
-import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 
 fun DataPack.testInstanceTests() {
 	val environment = testEnvironmentsBuilder.weather("test_env", Weather.CLEAR)
 
-	val testFunction = function("test_function") {
+	function("test_function") {
 		say("test_function")
 	}
 
@@ -40,10 +38,7 @@ fun DataPack.testInstanceTests() {
 			maxTicks = 200
 			structure(Structures.Igloo.TOP)
 			functionBased()
-			function {
-				setup(testFunction)
-				teardown(testFunction)
-			}
+			function("io.ayfri.kore.mod.MyMod::my_function")
 			manualOnly = true
 			maxAttempts = 5
 			required = true
@@ -56,10 +51,7 @@ fun DataPack.testInstanceTests() {
 		testInstances.last() assertsIs """
 			{
 				"environment": "features_tests:test_env",
-				"function": {
-					"setup": "features_tests:test_function",
-					"teardown": "features_tests:test_function"
-				},
+				"function": "io.ayfri.kore.mod.MyMod::my_function",
 				"manual_only": true,
 				"max_attempts": 5,
 				"max_ticks": 200,
