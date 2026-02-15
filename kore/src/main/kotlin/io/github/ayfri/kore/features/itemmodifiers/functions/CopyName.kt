@@ -21,11 +21,11 @@ data class CopyName(
 /** Loot-context entity/block source specifier. */
 @Serializable(with = Source.Companion.SourceSerializer::class)
 enum class Source {
-	ATTACKING_ENTITY,
+	ATTACKER,
+	ATTACKING_PLAYER,
 	BLOCK_ENTITY,
 	DIRECT_ATTACKER,
 	INTERACTING_ENTITY,
-	LAST_DAMAGE_PLAYER,
 	TARGET_ENTITY,
 	THIS,
 	;

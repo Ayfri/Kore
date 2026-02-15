@@ -59,5 +59,15 @@ fun ItemModifier.copyCustomData(source: Source, ops: MutableList<CopyNbtOperatio
 	CopyCustomData(source = CopyNbtContext(source), ops = buildList(ops)).also { modifiers += it }
 
 /** Add a `copy_custom_data` step from a storage id (e.g. `namespace:storage`). */
-fun ItemModifier.copyCustomData(source: String, ops: MutableList<CopyNbtOperation>.() -> Unit = {}) =
-	CopyCustomData(source = CopyCustomDataStorage(source), ops = buildList(ops)).also { modifiers += it }
+fun ItemModifier.copyCustomData(sourceStorage: String, ops: MutableList<CopyNbtOperation>.() -> Unit = {}) =
+	CopyCustomData(source = CopyCustomDataStorage(sourceStorage), ops = buildList(ops)).also { modifiers += it }
+
+
+fun MutableList<CopyNbtOperation>.append(source: String, target: String) =
+	add(CopyNbtOperation(CopyCustomDataOperationType.APPEND, source, target))
+
+fun MutableList<CopyNbtOperation>.merge(source: String, target: String) =
+	add(CopyNbtOperation(CopyCustomDataOperationType.MERGE, source, target))
+
+fun MutableList<CopyNbtOperation>.replace(source: String, target: String) =
+	add(CopyNbtOperation(CopyCustomDataOperationType.REPLACE, source, target))
