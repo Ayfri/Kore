@@ -58,10 +58,16 @@ fun DataPack.structureTests() {
 		useExpansionHack = false
 		poolAliases {
 			directPoolAlias(TemplatePools.Empty, TemplatePools.Empty)
-			randomPoolAlias(TemplatePools.Empty, listOf(TemplatePools.Empty))
-			randomGroupPoolAlias(TemplatePools.Empty) {
-				directPoolAlias(TemplatePools.Empty, TemplatePools.Empty)
-				randomPoolAlias(TemplatePools.Empty, listOf(TemplatePools.Empty))
+			randomPoolAlias(TemplatePools.Empty) {
+				weightedPoolEntry(1, TemplatePools.Empty)
+			}
+			randomGroupPoolAlias {
+				weightedGroupEntry(1) {
+					directPoolAlias(TemplatePools.Empty, TemplatePools.Empty)
+					randomPoolAlias(TemplatePools.Empty) {
+						weightedPoolEntry(1, TemplatePools.Empty)
+					}
+				}
 			}
 		}
 		dimensionPadding(10, 20)
@@ -96,23 +102,33 @@ fun DataPack.structureTests() {
 					"type": "minecraft:random",
 					"alias": "minecraft:empty",
 					"targets": [
-						"minecraft:empty"
+						{
+							"weight": 1,
+							"data": "minecraft:empty"
+						}
 					]
 				},
 				{
 					"type": "minecraft:random_group",
-					"alias": "minecraft:empty",
 					"groups": [
 						{
-							"type": "minecraft:direct",
-							"alias": "minecraft:empty",
-							"target": "minecraft:empty"
-						},
-						{
-							"type": "minecraft:random",
-							"alias": "minecraft:empty",
-							"targets": [
-								"minecraft:empty"
+							"weight": 1,
+							"data": [
+								{
+									"type": "minecraft:direct",
+									"alias": "minecraft:empty",
+									"target": "minecraft:empty"
+								},
+								{
+									"type": "minecraft:random",
+									"alias": "minecraft:empty",
+									"targets": [
+										{
+											"weight": 1,
+											"data": "minecraft:empty"
+										}
+									]
+								}
 							]
 						}
 					]

@@ -5,7 +5,7 @@ nav-title: Structures
 description: Create structures with template pools, processors, and structure sets using Kore's DSL.
 keywords: minecraft, datapack, kore, worldgen, structure, template pool, processor, jigsaw
 date-created: 2026-02-03
-date-modified: 2026-02-03
+date-modified: 2026-02-15
 routeOverride: /docs/data-driven/worldgen/structures
 ---
 
@@ -149,6 +149,43 @@ Common structure types include:
 - `stronghold` - Stronghold
 - `swamp_hut` - Witch hut
 - `woodland_mansion` - Woodland mansion
+
+### Terrain Adaptation
+
+| Value         | Description                                                   |
+|---------------|---------------------------------------------------------------|
+| `NONE`        | No adaptation                                                 |
+| `BEARD_THIN`  | Generates terrain under the structure, removes terrain inside |
+| `BEARD_BOX`   | Advanced alternative of beard_thin                            |
+| `BURY`        | Generates terrain surrounding the structure to make it buried |
+| `ENCAPSULATE` | Advanced alternative of bury (used by Trial Chambers)         |
+
+### Pool Aliases
+
+Pool aliases rewire jigsaw pool connections by redirecting pool references on individual structure instances.
+
+```kotlin
+poolAliases {
+	// Direct: rewire alias to a specific target
+	directPoolAlias(TemplatePools.Empty, TemplatePools.Empty)
+
+	// Random: rewire alias to a randomly selected weighted target
+	randomPoolAlias(TemplatePools.Empty) {
+		weightedPoolEntry(1, myPool)
+		weightedPoolEntry(2, otherPool)
+	}
+
+	// Random group: select a weighted group of pool aliases
+	randomGroupPoolAlias {
+		weightedGroupEntry(1) {
+			directPoolAlias(TemplatePools.Empty, myPool)
+			randomPoolAlias(TemplatePools.Empty) {
+				weightedPoolEntry(1, otherPool)
+			}
+		}
+	}
+}
+```
 
 ---
 
