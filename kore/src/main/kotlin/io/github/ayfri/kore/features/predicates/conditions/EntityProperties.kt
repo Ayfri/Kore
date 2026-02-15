@@ -7,14 +7,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class EntityProperties(
-	var entity: EntityType? = null,
+	var entity: EntityType = EntityType.THIS,
 	var predicate: Entity? = null,
 ) : PredicateCondition()
 
-fun Predicate.entityProperties(entity: EntityType? = null, predicate: Entity? = null) {
+fun Predicate.entityProperties(entity: EntityType = EntityType.THIS, predicate: Entity? = null) {
 	predicateConditions += EntityProperties(entity, predicate)
 }
 
-fun Predicate.entityProperties(entity: EntityType? = null, predicate: Entity.() -> Unit) {
+fun Predicate.entityProperties(entity: EntityType = EntityType.THIS, predicate: Entity.() -> Unit) {
 	predicateConditions += EntityProperties(entity, Entity().apply(predicate))
 }
