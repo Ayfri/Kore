@@ -5,7 +5,7 @@ nav-title: Item Modifiers
 description: Transform item stacks using Kore's type-safe DSL for loot functions - set counts, add enchantments, copy data, and more.
 keywords: minecraft, datapack, kore, item modifiers, loot functions, /item modify, components
 date-created: 2025-08-11
-date-modified: 2026-02-03
+date-modified: 2026-02-15
 routeOverride: /docs/data-driven/item-modifiers
 ---
 
@@ -322,6 +322,33 @@ itemModifier("named_drop") {
 }
 ```
 
+#### setCustomData
+
+Set custom NBT data on an item:
+
+```kotlin
+itemModifier("custom_data") {
+	setCustomData {
+		this["test"] = 1
+	}
+}
+```
+
+#### setCustomModelData
+
+Set custom model data on an item:
+
+```kotlin
+itemModifier("custom_model") {
+	setCustomModelData(
+		colors = listOf(Color.RED, Color.BLUE),
+		flags = listOf(true, false),
+		floats = listOf(1.0f, 2.0f),
+		strings = listOf("test1", "test2")
+	)
+}
+```
+
 #### copyCustomData
 
 Copy NBT data to custom_data component:
@@ -370,11 +397,7 @@ Set a container's loot table:
 
 ```kotlin
 itemModifier("chest_loot") {
-	setLootTable(
-		LootTableType.CHEST,
-		LootTables.Chests.SIMPLE_DUNGEON,
-		seed = 12345L
-	)
+	setLootTable(BlockEntityTypes.CHEST, LootTables.Chests.SIMPLE_DUNGEON, seed = 42)
 }
 ```
 
@@ -422,13 +445,33 @@ itemModifier("horn") {
 }
 ```
 
+#### setItem
+
+Change the item type:
+
+```kotlin
+itemModifier("change_item") {
+	setItem(Items.APPLE)
+}
+```
+
+#### setOminousBottleAmplifier
+
+Set the amplifier of an ominous bottle:
+
+```kotlin
+itemModifier("ominous_bottle") {
+	setOminousBottleAmplifier(5)
+}
+```
+
 #### setPotion
 
 Set potion type:
 
 ```kotlin
 itemModifier("potion") {
-	setPotion(Potions.STRONG_HEALING)
+	setPotion(Potions.HEALING)
 }
 ```
 
@@ -439,8 +482,22 @@ Set suspicious stew effects:
 ```kotlin
 itemModifier("stew") {
 	setStewEffect {
-		potionEffect(Effects.REGENERATION, duration = 100)
-		potionEffect(Effects.SATURATION, duration = 200)
+		potionEffect(Potions.NIGHT_VISION, constant(200f))
+	}
+}
+```
+
+#### setFireworkExplosion
+
+Set a single firework explosion:
+
+```kotlin
+itemModifier("firework_explosion") {
+	setFireworkExplosion(FireworkExplosionShape.STAR) {
+		colors = listOf(Color.RED.toRGB())
+		fadeColors = listOf(Color.BLUE.toRGB())
+		hasFlicker = true
+		hasTrail = true
 	}
 }
 ```
@@ -451,14 +508,17 @@ Configure firework rocket:
 
 ```kotlin
 itemModifier("firework") {
-	setFireworks(flightDuration = 2) {
+	setFireworks {
+		flightDuration = 5
 		explosions {
-			explosion(FireworkExplosionShape.LARGE_BALL) {
-				colors(Color.RED, Color.ORANGE)
-				fadeColors(Color.YELLOW)
+			explosion(FireworkExplosionShape.BURST) {
+				colors(Color.RED)
+				fadeColors(Color.BLUE)
 				hasTrail = true
-				hasTwinkle = true
+				hasFlicker = true
 			}
+
+			mode(Mode.REPLACE_ALL)
 		}
 	}
 }
@@ -475,6 +535,31 @@ itemModifier("book") {
 		author = "Player",
 		generation = 0
 	)
+}
+```
+
+#### setWritableBookPages
+
+Set pages of a writable book:
+
+```kotlin
+itemModifier("writable_book") {
+	setWritableBookPages {
+		page("test", filtered = "filtered")
+		mode(Mode.INSERT, 1)
+	}
+}
+```
+
+#### setWrittenBookPages
+
+Set pages of a written book:
+
+```kotlin
+itemModifier("written_book") {
+	setWrittenBookPages {
+		page("test", filtered = "test2")
+	}
 }
 ```
 
@@ -514,8 +599,7 @@ Add banner patterns:
 ```kotlin
 itemModifier("banner") {
 	setBannerPattern(append = true) {
-		pattern(BannerPatterns.STRIPE_TOP, DyeColors.RED)
-		pattern(BannerPatterns.STRIPE_BOTTOM, DyeColors.BLUE)
+		bannerPattern(BannerPatterns.CREEPER, FormattingColor.BLACK)
 	}
 }
 ```
@@ -602,10 +686,8 @@ Show/hide tooltip sections:
 ```kotlin
 itemModifier("clean_tooltip") {
 	toggleTooltips {
-		enchantments = false
-		modifiers = false
-		canBreak = false
-		canPlaceOn = false
+		toggle(true, ItemComponentTypes.TRIM, ItemComponentTypes.CAN_PLACE_ON)
+		toggles(ItemComponentTypes.DYED_COLOR to false)
 	}
 }
 ```

@@ -5,7 +5,7 @@ nav-title: Advancements Triggers
 description: A guide for using advancements triggers in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, advancements, triggers
 date-created: 2024-08-01
-date-modified: 2026-02-10
+date-modified: 2026-02-15
 routeOverride: /docs/data-driven/advancements/triggers
 ---
 
@@ -145,6 +145,23 @@ bredAnimals("breed_animals") {
 		}
 	}
 }
+```
+
+---
+
+### `brewedPotion`
+
+**Description:**  
+Triggers when a potion is brewed (player takes item from brewing stand).
+
+**Properties:**
+
+- `potion`: The potion that was brewed.
+
+**Example:**
+
+```kotlin
+brewedPotion("brewed_potion")
 ```
 
 ---

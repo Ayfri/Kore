@@ -5,7 +5,7 @@ nav-title: Advancements
 description: A comprehensive guide for creating and managing advancements in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, advancements, triggers, criteria, rewards
 date-created: 2024-01-08
-date-modified: 2026-02-10
+date-modified: 2026-02-15
 routeOverride: /docs/data-driven/advancements
 ---
 
@@ -244,7 +244,7 @@ Triggers are the events that activate criteria. Kore supports all vanilla trigge
 |--------------------------------|-------------------------------------------|
 | `allayDropItemOnBlock`         | Allay drops an item on a block            |
 | `anyBlockUse`                  | Player uses any block                     |
-| `avoidVibration`               | Player avoids a vibration while sneaking  |
+| `avoidVibrations`              | Player avoids a vibration while sneaking  |
 | `beeNestDestroyed`             | Player breaks a bee nest/beehive          |
 | `bredAnimals`                  | Player breeds two animals                 |
 | `brewedPotion`                 | Player takes item from brewing stand      |
