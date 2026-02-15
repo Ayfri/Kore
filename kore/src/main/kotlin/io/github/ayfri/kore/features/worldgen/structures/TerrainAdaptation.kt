@@ -8,7 +8,8 @@ enum class TerrainAdaptation {
 	NONE,
 	BEARD_THIN,
 	BEARD_BOX,
-	BURY;
+	BURY,
+	ENCAPSULATE;
 
 	companion object {
 		data object TerrainAdaptationSerializer : LowercaseSerializer<TerrainAdaptation>(entries)

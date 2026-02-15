@@ -51,13 +51,31 @@ fun MutableList<PoolAlias>.directPoolAlias(
 
 fun MutableList<PoolAlias>.randomPoolAlias(
 	alias: TemplatePoolArgument,
-	targets: List<TemplatePoolArgument> = emptyList(),
+	targets: List<WeightedPoolEntry> = emptyList(),
 ) = add(Random(alias, targets))
 
-fun MutableList<PoolAlias>.randomGroupPoolAlias(
+fun MutableList<PoolAlias>.randomPoolAlias(
 	alias: TemplatePoolArgument,
-	groups: MutableList<PoolAlias>.() -> Unit = {},
-) = add(RandomGroup(alias, buildList(groups)))
+	block: MutableList<WeightedPoolEntry>.() -> Unit,
+) = add(Random(alias, buildList(block)))
+
+fun MutableList<PoolAlias>.randomGroupPoolAlias(
+	groups: List<WeightedGroupEntry> = emptyList(),
+) = add(RandomGroup(groups))
+
+fun MutableList<PoolAlias>.randomGroupPoolAlias(
+	block: MutableList<WeightedGroupEntry>.() -> Unit,
+) = add(RandomGroup(buildList(block)))
+
+fun MutableList<WeightedPoolEntry>.weightedPoolEntry(
+	weight: Int,
+	data: TemplatePoolArgument,
+) = add(WeightedPoolEntry(weight, data))
+
+fun MutableList<WeightedGroupEntry>.weightedGroupEntry(
+	weight: Int,
+	block: MutableList<PoolAlias>.() -> Unit,
+) = add(WeightedGroupEntry(weight, buildList(block)))
 
 fun Jigsaw.dimensionPadding(value: Int) {
 	dimensionPadding = DimensionPadding(value)

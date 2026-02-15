@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Random(
 	var alias: TemplatePoolArgument,
-	var targets: List<TemplatePoolArgument> = emptyList(),
+	var targets: List<WeightedPoolEntry> = emptyList(),
 ) : PoolAlias()
