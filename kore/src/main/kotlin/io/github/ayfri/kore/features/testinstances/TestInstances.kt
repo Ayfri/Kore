@@ -2,7 +2,6 @@ package io.github.ayfri.kore.features.testinstances
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
-import io.github.ayfri.kore.features.testenvironments.types.Function
 import io.github.ayfri.kore.features.testinstances.enums.TestRotation
 import io.github.ayfri.kore.features.testinstances.enums.TestType
 import io.github.ayfri.kore.generated.arguments.types.TestEnvironmentArgument
@@ -24,7 +23,7 @@ val DataPack.testInstancesBuilder get() = TestInstancesBuilder(this)
 /**
  * Builder class for creating test instances using DSL syntax.
  */
-class TestInstancesBuilder(private val dataPack: DataPack) {
+data class TestInstancesBuilder(private val dataPack: DataPack) {
 
 	/**
 	 * Creates a test instance using DSL configuration.
@@ -49,7 +48,7 @@ class TestInstancesBuilder(private val dataPack: DataPack) {
  */
 class TestInstanceDSLBuilder {
 	var environment: TestEnvironmentArgument? = null
-	var function: Function? = null
+	var function: FunctionArgument? = null
 	var manualOnly: Boolean? = null
 	var maxAttempts: Int? = null
 	var maxTicks: Int = 100
@@ -73,9 +72,8 @@ class TestInstanceDSLBuilder {
 		environment = env
 	}
 
-	fun function(init: FunctionDSLBuilder.() -> Unit) {
-		val builder = FunctionDSLBuilder().apply(init)
-		function = builder.build()
+	fun function(function: FunctionArgument) {
+		this.function = function
 	}
 
 	fun functionBased() {
@@ -117,22 +115,4 @@ class TestInstanceDSLBuilder {
 			type = type
 		)
 	}
-}
-
-/**
- * DSL builder for configuring function environments in test instances.
- */
-class FunctionDSLBuilder {
-	var setup: FunctionArgument? = null
-	var teardown: FunctionArgument? = null
-
-	fun setup(function: FunctionArgument) {
-		setup = function
-	}
-
-	fun teardown(function: FunctionArgument) {
-		teardown = function
-	}
-
-	internal fun build() = Function(setup, teardown)
 }
