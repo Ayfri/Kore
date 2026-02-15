@@ -27,5 +27,5 @@ fun scoreNumber(score: String, name: String? = null, scale: Float? = null) =
 
 fun storageNumber(storage: String, path: String) = Storage(storage, path)
 
-fun enchantmentLevel(amount: Int) = Enchantment(constantLevelBased(amount))
-fun enchantmentLevel(amount: LevelBased) = Enchantment(amount)
+fun enchantmentLevel(amount: Int) = EnchantmentLevel(constantLevelBased(amount))
+fun enchantmentLevel(amount: LevelBased) = EnchantmentLevel(amount)

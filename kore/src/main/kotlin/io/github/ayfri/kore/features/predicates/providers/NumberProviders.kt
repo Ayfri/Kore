@@ -75,4 +75,4 @@ data class Score(
 data class Storage(var storage: String, var path: String) : NumberProvider()
 
 @Serializable
-data class Enchantment(var amount: LevelBased) : NumberProvider()
+data class EnchantmentLevel(var amount: LevelBased) : NumberProvider()
