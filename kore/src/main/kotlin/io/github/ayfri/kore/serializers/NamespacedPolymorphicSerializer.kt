@@ -21,6 +21,7 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 	private val skipOutputName: Boolean = false,
 	private val moveIntoProperty: String? = null,
 	private val useMinecraftPrefix: Boolean = true,
+	private val skipEmptyOutput: Boolean = true,
 ) : KSerializer<T> {
 	override val descriptor = serialDescriptor<JsonElement>()
 
@@ -43,6 +44,7 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 				if (!skipOutputName) put(outputName, outputClassName)
 
 				when (valueJson) {
+					is JsonObject if skipEmptyOutput && valueJson.isEmpty() -> Unit
 					is JsonObject -> putJsonObject(moveIntoProperty) {
 						valueJson.jsonObject.filterKeys { it != outputName }.forEach(::put)
 					}
@@ -72,10 +74,10 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 				if (!skipOutputName) put(outputName, NbtString(outputClassName))
 
 				when (valueNbt) {
+					is NbtCompound if skipEmptyOutput && valueNbt.isEmpty() -> Unit
 					is NbtCompound -> putNbtCompound(moveIntoProperty) {
 						valueNbt.nbtCompound.filterKeys { it != outputName }.forEach(::put)
 					}
-
 					else -> put(moveIntoProperty, valueNbt)
 				}
 			}
