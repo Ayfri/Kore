@@ -17,6 +17,7 @@ import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.predicates.conditions.entityProperties
 import io.github.ayfri.kore.features.predicates.predicate
 import io.github.ayfri.kore.features.predicates.sub.block
+import io.github.ayfri.kore.features.predicates.sub.steppingOn
 import io.github.ayfri.kore.generated.Advancements
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.EntityTypes
@@ -103,7 +104,9 @@ fun selectorTests() = dataPack("selector_tests") {
 	allEntities {
 		predicate = predicate("foo") {
 			entityProperties {
-				steppingOn = block(Blocks.STONE)
+				steppingOn {
+					block(Blocks.STONE)
+				}
 			}
 		}
 	} assertsIs "@e[predicate=selector_tests:foo]"
@@ -111,13 +114,17 @@ fun selectorTests() = dataPack("selector_tests") {
 	allEntities {
 		predicate = !predicate("foo") {
 			entityProperties {
-				steppingOn = block(Blocks.STONE)
+				steppingOn {
+					block(Blocks.STONE)
+				}
 			}
 		}
 
 		predicate = !predicate("bar") {
 			entityProperties {
-				steppingOn = block(Blocks.STONE)
+				steppingOn {
+					block(Blocks.DIRT)
+				}
 			}
 		}
 	} assertsIs "@e[predicate=!selector_tests:foo,predicate=!selector_tests:bar]"

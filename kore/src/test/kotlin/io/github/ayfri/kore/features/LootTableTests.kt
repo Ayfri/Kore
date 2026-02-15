@@ -123,7 +123,7 @@ fun DataPack.lootTableTests() {
 						},
 						{
 							"type": "minecraft:loot_table",
-							"name": "minecraft:gameplay/piglin_bartering",
+							"value": "minecraft:gameplay/piglin_bartering",
 							"conditions": [
 								{
 									"condition": "minecraft:weather_check",

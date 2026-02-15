@@ -205,16 +205,18 @@ fun DataPack.predicateTests() {
 			}
 
 			steppingOn {
-				blocks(Blocks.STONE)
-				components {
-					damage(5)
-				}
-				predicates {
-					customData {
-						this["foo"] = "bar"
+				block {
+					blocks(Blocks.STONE)
+					components {
+						damage(5)
 					}
+					predicates {
+						customData {
+							this["foo"] = "bar"
+						}
+					}
+					state("up", "bottom")
 				}
-				state("up", "bottom")
 			}
 
 			team = "alpha"
@@ -236,6 +238,7 @@ fun DataPack.predicateTests() {
 	predicates.last() assertsIs """
 		{
 			"condition": "minecraft:entity_properties",
+			"entity": "this",
 			"predicate": {
 				"components": {
 					"axolotl_variant": "cyan",
@@ -288,17 +291,19 @@ fun DataPack.predicateTests() {
 					}
 				},
 				"stepping_on": {
-					"blocks": "minecraft:stone",
-					"components": {
-						"damage": 5
-					},
-					"predicates": {
-						"minecraft:custom_data": {
-							"foo": "bar"
+					"block": {
+						"blocks": "minecraft:stone",
+						"components": {
+							"damage": 5
+						},
+						"predicates": {
+							"minecraft:custom_data": {
+								"foo": "bar"
+							}
+						},
+						"state": {
+							"up": "bottom"
 						}
-					},
-					"state": {
-						"up": "bottom"
 					}
 				},
 				"team": "alpha",
@@ -384,10 +389,12 @@ fun DataPack.predicateTests() {
 			}
 			canSeeSky = true
 			dimension = Dimensions.OVERWORLD
-			fluid = fluids(Fluids.WATER) {
-				this["level"] = "0"
+			fluids(Fluids.WATER) {
+				states {
+					this["level"] = "0"
+				}
 			}
-			light = rangeOrInt(7)
+			light(7)
 			position {
 				x = rangeOrInt(1)
 				y = rangeOrInt(2..4)
@@ -423,7 +430,9 @@ fun DataPack.predicateTests() {
 						"level": "0"
 					}
 				},
-				"light": 7,
+				"light": {
+					"light": 7
+				},
 				"position": {
 					"x": 1,
 					"y": {
@@ -494,13 +503,13 @@ fun DataPack.predicateTests() {
 	""".trimIndent()
 
 	predicate("random_chance_with_enchanted_bonus") {
-		randomChanceWithEnchantedBonus(unenchantedChance = 1.5f, enchantedChance = 2, Enchantments.FORTUNE)
+		randomChanceWithEnchantedBonus(unenchantedChance = 1f, enchantedChance = 2, Enchantments.FORTUNE)
 	}
 
 	predicates.last() assertsIs """
 		{
 			"condition": "minecraft:random_chance_with_enchanted_bonus",
-			"unenchanted_chance": 1.5,
+			"unenchanted_chance": 1,
 			"enchanted_chance": 2,
 			"enchantment": "minecraft:fortune"
 		}

@@ -461,6 +461,7 @@ private fun DataPack.allTriggersTests() {
 						"source": [
 							{
 								"condition": "minecraft:entity_properties",
+								"entity": "this",
 								"predicate": {
 									"type": "minecraft:witch"
 								}
@@ -559,7 +560,7 @@ private fun DataPack.allTriggersTests() {
 						}
 					}
 
-					light = rangeOrInt(10)
+					light(10)
 				}
 
 				cause {
@@ -585,7 +586,9 @@ private fun DataPack.allTriggersTests() {
 									"lit": "true"
 								}
 							},
-							"light": 10
+							"light": {
+								"light": 10
+							}
 						},
 						"distance": {
 							"absolute": {
@@ -600,6 +603,7 @@ private fun DataPack.allTriggersTests() {
 						"cause": [
 							{
 								"condition": "minecraft:entity_properties",
+								"entity": "this",
 								"predicate": {
 									"type": "minecraft:player"
 								}
@@ -777,6 +781,7 @@ private fun DataPack.allTriggersTests() {
 							[
 								{
 									"condition": "minecraft:entity_properties",
+									"entity": "this",
 									"predicate": {
 										"type": "minecraft:player"
 									}
@@ -962,7 +967,7 @@ private fun DataPack.allTriggersTests() {
 			recipeCrafted(
 				"recipe_crafted",
 				Recipes.POLISHED_BLACKSTONE_BRICK_STAIRS_FROM_POLISHED_BLACKSTONE_BRICKS_STONECUTTING
-			) {}
+			)
 		}
 	}
 	advancements.last() assertsIs """
@@ -983,7 +988,7 @@ private fun DataPack.allTriggersTests() {
 			recipeUnlocked(
 				"recipe_unlocked",
 				Recipes.POLISHED_BLACKSTONE_BRICK_STAIRS_FROM_POLISHED_BLACKSTONE_BRICKS_STONECUTTING
-			) {}
+			)
 		}
 	}
 	advancements.last() assertsIs """

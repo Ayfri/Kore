@@ -7,7 +7,7 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.predicates.conditions.entityProperties
 import io.github.ayfri.kore.features.predicates.predicate
 import io.github.ayfri.kore.features.predicates.sub.entityspecific.*
-import io.github.ayfri.kore.generated.*
+import io.github.ayfri.kore.generated.Recipes
 
 fun DataPack.predicateEntityTypeSpecificTests() {
 	predicate("fishing_hook_type_specific") {
@@ -19,6 +19,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 	predicates.last() assertsIs """
 		{
 			"condition": "minecraft:entity_properties",
+			"entity": "this",
 			"predicate": {
 				"type_specific": {
 					"type": "minecraft:fishing_hook",
@@ -39,6 +40,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 	predicates.last() assertsIs """
 		{
 			"condition": "minecraft:entity_properties",
+			"entity": "this",
 			"predicate": {
 				"type_specific": {
 					"type": "minecraft:lightning",
@@ -74,6 +76,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 	predicates.last() assertsIs """
 		{
 			"condition": "minecraft:entity_properties",
+			"entity": "this",
 			"predicate": {
 				"type_specific": {
 					"type": "minecraft:player",
@@ -106,6 +109,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 	predicates.last() assertsIs """
 		{
 			"condition": "minecraft:entity_properties",
+			"entity": "this",
 			"predicate": {
 				"type_specific": {
 					"type": "minecraft:raider",
@@ -125,6 +129,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 	predicates.last() assertsIs """
 		{
 			"condition": "minecraft:entity_properties",
+			"entity": "this",
 			"predicate": {
 				"type_specific": {
 					"type": "minecraft:sheep",
@@ -143,6 +148,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 	predicates.last() assertsIs """
 		{
 			"condition": "minecraft:entity_properties",
+			"entity": "this",
 			"predicate": {
 				"type_specific": {
 					"type": "minecraft:slime",
