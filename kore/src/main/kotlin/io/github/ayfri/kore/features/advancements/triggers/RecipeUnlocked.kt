@@ -18,6 +18,6 @@ data class RecipeUnlocked(
 ) : AdvancementTriggerCondition()
 
 /** Add a `recipeUnlocked` criterion, triggered when a recipe is unlocked. */
-fun AdvancementCriteria.recipeUnlocked(name: String, recipe: RecipeArgument, block: RecipeUnlocked.() -> Unit) {
+fun AdvancementCriteria.recipeUnlocked(name: String, recipe: RecipeArgument, block: RecipeUnlocked.() -> Unit = {}) {
 	criteria[name] = RecipeUnlocked(recipe = recipe).apply(block)
 }

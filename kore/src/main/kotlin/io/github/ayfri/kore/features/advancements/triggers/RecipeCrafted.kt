@@ -20,7 +20,7 @@ data class RecipeCrafted(
 ) : AdvancementTriggerCondition()
 
 /** Add a `recipeCrafted` criterion, triggered when a recipe is crafted. */
-fun AdvancementCriteria.recipeCrafted(name: String, recipeId: RecipeArgument, block: RecipeCrafted.() -> Unit) {
+fun AdvancementCriteria.recipeCrafted(name: String, recipeId: RecipeArgument, block: RecipeCrafted.() -> Unit = {}) {
 	criteria[name] = RecipeCrafted(recipeId = recipeId).apply(block)
 }
 
