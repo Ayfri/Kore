@@ -3,6 +3,7 @@ package io.github.ayfri.kore.features.predicates.sub
 import io.github.ayfri.kore.arguments.numbers.ranges.IntRangeOrInt
 import io.github.ayfri.kore.arguments.numbers.ranges.asRangeOrInt
 import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
+import io.github.ayfri.kore.generated.arguments.FluidOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.DimensionArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.StructureOrTagArgument
@@ -48,6 +49,10 @@ fun Location.biomes(vararg biomes: BiomeOrTagArgument) {
 
 fun Location.block(block: Block.() -> Unit = {}) {
 	this.block = Block().apply(block)
+}
+
+fun Location.fluids(vararg fluids: FluidOrTagArgument, state: Map<String, String>? = null, init: Fluid.() -> Unit) {
+	fluid = Fluid(fluids.toList(), state).apply(init)
 }
 
 fun Location.light(value: IntRangeOrInt, init: Light.() -> Unit = {}) {

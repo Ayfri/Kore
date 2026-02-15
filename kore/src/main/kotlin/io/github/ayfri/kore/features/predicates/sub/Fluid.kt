@@ -10,8 +10,14 @@ data class Fluid(
 	var state: Map<String, String>? = null,
 )
 
-fun fluid(fluid: FluidOrTagArgument, state: Map<String, String>? = null) = Fluid(listOf(fluid), state)
-fun fluid(fluids: FluidOrTagArgument, states: MutableMap<String, String>.() -> Unit) = Fluid(listOf(fluids), buildMap(states))
+fun Fluid.states(vararg states: Pair<String, String>) {
+	state = states.toMap()
+}
 
-fun fluids(vararg fluids: FluidOrTagArgument, state: Map<String, String>? = null) = Fluid(fluids.toList(), state)
-fun fluids(vararg fluids: FluidOrTagArgument, states: MutableMap<String, String>.() -> Unit) = Fluid(fluids.toList(), buildMap(states))
+fun Fluid.states(states: Map<String, String>) {
+	state = states
+}
+
+fun Fluid.states(states: MutableMap<String, String>.() -> Unit) {
+	state = buildMap(states)
+}
