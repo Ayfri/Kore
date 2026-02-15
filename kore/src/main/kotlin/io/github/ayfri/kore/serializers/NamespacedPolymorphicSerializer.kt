@@ -2,14 +2,11 @@ package io.github.ayfri.kore.serializers
 
 import io.github.ayfri.kore.utils.getSerialName
 import io.github.ayfri.kore.utils.snakeCase
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.SerialName
+import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.serialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
-import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createType
@@ -27,7 +24,7 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 
 	override fun deserialize(decoder: Decoder) = error("${kClass.simpleName} cannot be deserialized")
 
-	private fun serializeJson(outputClassName: String, serializer: KSerializer<T>, encoder: JsonEncoder, value: T) {
+	private fun serializeJson(outputClassName: String, serializer: SerializationStrategy<T>, encoder: JsonEncoder, value: T) {
 		val valueJson = encoder.json.encodeToJsonElement(serializer, value)
 		if (runCatching { valueJson.jsonObject }.isFailure) {
 			encoder.encodeJsonElement(valueJson)
@@ -57,7 +54,7 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 		encoder.encodeJsonElement(finalJson)
 	}
 
-	private fun serializeNbt(outputClassName: String, serializer: KSerializer<T>, encoder: NbtEncoder, value: T) {
+	private fun serializeNbt(outputClassName: String, serializer: SerializationStrategy<T>, encoder: NbtEncoder, value: T) {
 		val valueNbt = encoder.nbt.encodeToNbtTag(serializer, value)
 		if (runCatching { valueNbt.nbtCompound }.isFailure) {
 			encoder.encodeNbtTag(valueNbt)
@@ -94,12 +91,11 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 		val namespacedOutputClassName = getContentName(value)
 
 		val serializer = encoder.serializersModule.getPolymorphic(kClass, value)
-			?: encoder.serializersModule.getContextual(value::class)
 			?: encoder.serializersModule.serializer(value::class.createType())
 
 		when (encoder) {
-			is JsonEncoder -> serializeJson(namespacedOutputClassName, serializer as KSerializer<T>, encoder, value)
-			is NbtEncoder -> serializeNbt(namespacedOutputClassName, serializer as KSerializer<T>, encoder, value)
+			is JsonEncoder -> serializeJson(namespacedOutputClassName, serializer, encoder, value)
+			is NbtEncoder -> serializeNbt(namespacedOutputClassName, serializer, encoder, value)
 		}
 	}
 
