@@ -12,11 +12,10 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class AvoidVibrations(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add an `avoidVibrations` criterion, triggered when a player avoids vibrations. */
 fun AdvancementCriteria.avoidVibrations(name: String, block: AvoidVibrations.() -> Unit = {}) {
-	criteria += AvoidVibrations(name).apply(block)
+	criteria[name] = AvoidVibrations().apply(block)
 }

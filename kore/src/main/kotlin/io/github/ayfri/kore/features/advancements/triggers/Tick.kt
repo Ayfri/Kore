@@ -12,11 +12,10 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Tick(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `tick` criterion, triggered every tick (20 times per second) while conditions hold. */
 fun AdvancementCriteria.tick(name: String, block: Tick.() -> Unit = {}) {
-	criteria += Tick(name).apply(block)
+	criteria[name] = Tick().apply(block)
 }

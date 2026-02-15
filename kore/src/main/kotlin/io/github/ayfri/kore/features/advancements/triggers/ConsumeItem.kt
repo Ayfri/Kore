@@ -14,19 +14,22 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class ConsumeItem(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var item: ItemStack? = null,
 ) : AdvancementTriggerCondition()
 
 fun AdvancementCriteria.consumeItem(name: String, item: ItemStack? = null, block: ConsumeItem.() -> Unit = {}) {
-	criteria += ConsumeItem(name, item = item).apply(block)
+	criteria[name] = ConsumeItem(item = item).apply(block)
 }
 
 fun AdvancementCriteria.consumeItem(name: String, vararg item: ItemArgument, block: ConsumeItem.() -> Unit = {}) {
-	criteria += ConsumeItem(name, item = ItemStack(items = item.toList())).apply(block)
+	criteria[name] = ConsumeItem(item = ItemStack(items = item.toList())).apply(block)
 }
 
 fun ConsumeItem.item(block: ItemStack.() -> Unit) {
 	item = ItemStack().apply(block)
+}
+
+fun ConsumeItem.item(vararg items: ItemArgument) {
+	item = ItemStack(items = items.toList())
 }

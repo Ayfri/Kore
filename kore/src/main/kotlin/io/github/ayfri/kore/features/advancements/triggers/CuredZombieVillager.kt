@@ -12,15 +12,14 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class CuredZombieVillager(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var villager: EntityOrPredicates? = null,
 	var zombie: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `curedZombieVillager` criterion, triggered when a zombie villager is cured. */
 fun AdvancementCriteria.curedZombieVillager(name: String, block: CuredZombieVillager.() -> Unit = {}) {
-	criteria += CuredZombieVillager(name).apply(block)
+	criteria[name] = CuredZombieVillager().apply(block)
 }
 
 /** Set the villager constraints. */

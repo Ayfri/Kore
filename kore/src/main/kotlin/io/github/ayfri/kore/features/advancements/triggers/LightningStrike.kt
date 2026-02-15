@@ -12,15 +12,14 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class LightningStrike(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var bystander: EntityOrPredicates? = null,
 	var lightning: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `lightningStrike` criterion, triggered when lightning strikes. */
 fun AdvancementCriteria.lightningStrike(name: String, block: LightningStrike.() -> Unit = {}) {
-	criteria += LightningStrike(name).apply(block)
+	criteria[name] = LightningStrike().apply(block)
 }
 
 /** Set the bystander constraints. */

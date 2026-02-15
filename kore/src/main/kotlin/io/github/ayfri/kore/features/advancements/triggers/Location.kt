@@ -12,11 +12,10 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Location(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `location` criterion, triggered when a player enters a specific location. */
 fun AdvancementCriteria.location(name: String, block: Location.() -> Unit = {}) {
-	criteria += Location(name).apply(block)
+	criteria[name] = Location().apply(block)
 }

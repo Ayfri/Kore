@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.features.advancements.triggers
 
+import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
-import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
 import io.github.ayfri.kore.features.predicates.sub.ItemStack
 import kotlinx.serialization.Serializable
 
@@ -14,8 +14,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class KilledByArrow(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var firedFromWeapon: ItemStack? = null,
 	var uniqueEntityTypes: IntRangeOrIntJson? = null,
 	var victims: List<EntityOrPredicates>? = null,
@@ -23,7 +22,7 @@ data class KilledByArrow(
 
 /** Add a `killedByArrow` criterion, triggered when a player is killed by an arrow. */
 fun AdvancementCriteria.killedByArrow(name: String, block: KilledByArrow.() -> Unit = {}) {
-	criteria += KilledByArrow(name).apply(block)
+	criteria[name] = KilledByArrow().apply(block)
 }
 
 /** Set the weapon constraints. */

@@ -6,6 +6,7 @@ import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.sub.Entity
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -14,14 +15,14 @@ import kotlinx.serialization.Serializable
  * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement#JSON_format
  */
-@Serializable(AdvancementTriggerCondition.Companion.AdvancementTriggerConditionSerializer::class)
+@Serializable(AdvancementTriggerCondition.Companion.AdvancementTriggerConditionDefaultSerializer::class)
 sealed class AdvancementTriggerCondition {
-	abstract var name: String
-	abstract var conditions: EntityOrPredicates?
+	@SerialName("player")
+	abstract var player: EntityOrPredicates?
 
 	companion object {
-		data object AdvancementTriggerConditionSerializer : NamespacedPolymorphicSerializer<AdvancementTriggerCondition>(
-			AdvancementTriggerCondition::class,
+		data object AdvancementTriggerConditionDefaultSerializer : NamespacedPolymorphicSerializer<AdvancementTriggerCondition>(
+			kClass = AdvancementTriggerCondition::class,
 			outputName = "trigger",
 			moveIntoProperty = "conditions"
 		)
@@ -30,20 +31,20 @@ sealed class AdvancementTriggerCondition {
 
 /** Set the entity condition, deprecated, prefer using [conditions] instead. */
 fun AdvancementTriggerCondition.conditionEntity(entity: Entity) {
-	this.conditions = EntityOrPredicates(legacyEntity = entity)
+	player = EntityOrPredicates(legacyEntity = entity)
 }
 
 /** Set the entity condition, deprecated, prefer using [conditions] instead. */
 fun AdvancementTriggerCondition.conditionEntity(entity: Entity.() -> Unit) {
-	this.conditions = EntityOrPredicates(legacyEntity = Entity().apply(entity))
+	player = EntityOrPredicates(legacyEntity = Entity().apply(entity))
 }
 
 /** Set the predicate conditions. */
 fun AdvancementTriggerCondition.conditions(vararg conditions: PredicateCondition) {
-	this.conditions = EntityOrPredicates().conditions(*conditions)
+	this.player = EntityOrPredicates().conditions(*conditions)
 }
 
 /** Set the predicate conditions. */
 fun AdvancementTriggerCondition.conditions(block: Predicate.() -> Unit) {
-	this.conditions = EntityOrPredicates().conditions(block)
+	player = EntityOrPredicates().conditions(block)
 }

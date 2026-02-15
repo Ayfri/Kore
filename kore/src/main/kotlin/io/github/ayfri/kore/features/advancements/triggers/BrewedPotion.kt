@@ -13,12 +13,11 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class BrewedPotion(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var potion: PotionArgument? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `brewedPotion` criterion, triggered when a potion is brewed. */
 fun AdvancementCriteria.brewedPotion(name: String, block: BrewedPotion.() -> Unit = {}) {
-	criteria += BrewedPotion(name).apply(block)
+	criteria[name] = BrewedPotion().apply(block)
 }

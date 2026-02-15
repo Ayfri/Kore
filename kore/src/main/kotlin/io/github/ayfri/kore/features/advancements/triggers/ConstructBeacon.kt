@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.features.advancements.triggers
 
+import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
-import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
 import kotlinx.serialization.Serializable
 
 /**
@@ -13,12 +13,11 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class ConstructBeacon(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var level: IntRangeOrIntJson? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `constructBeacon` criterion, triggered when a beacon is constructed. */
 fun AdvancementCriteria.constructBeacon(name: String, block: ConstructBeacon.() -> Unit = {}) {
-	criteria += ConstructBeacon(name).apply(block)
+	criteria[name] = ConstructBeacon().apply(block)
 }

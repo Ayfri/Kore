@@ -3,11 +3,8 @@ package io.github.ayfri.kore.features.advancements
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.sub.Location
-import io.github.ayfri.kore.serializers.ToStringSerializer
+import io.github.ayfri.kore.serializers.EitherInlineSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.serializer
 
 /**
  * Container for either a location or predicate conditions.
@@ -17,18 +14,14 @@ import kotlinx.serialization.serializer
 @Serializable(with = LocationOrPredicates.Companion.LocationOrPredicatesSerializer::class)
 data class LocationOrPredicates(
 	var legacyLocation: Location? = null,
-	var predicateConditions: List<PredicateCondition> = emptyList(),
+	var predicateConditions: List<PredicateCondition>? = null,
 ) {
 	companion object {
-		data object LocationOrPredicatesSerializer : ToStringSerializer<LocationOrPredicates>() {
-			override fun serialize(encoder: Encoder, value: LocationOrPredicates) = when {
-				value.legacyLocation != null -> encoder.encodeSerializableValue(Location.serializer(), value.legacyLocation!!)
-				else -> encoder.encodeSerializableValue(
-					ListSerializer(serializer<PredicateCondition>()),
-					value.predicateConditions
-				)
-			}
-		}
+		data object LocationOrPredicatesSerializer : EitherInlineSerializer<LocationOrPredicates>(
+			LocationOrPredicates::class,
+			LocationOrPredicates::legacyLocation,
+			LocationOrPredicates::predicateConditions,
+		)
 	}
 }
 
@@ -39,10 +32,10 @@ fun LocationOrPredicates.location(block: Location.() -> Unit) {
 
 /** Set the predicate conditions. */
 fun LocationOrPredicates.predicate(block: Predicate.() -> Unit) {
-	predicateConditions += Predicate().apply(block).predicateConditions
+	predicateConditions = (predicateConditions ?: emptyList()) + Predicate().apply(block).predicateConditions
 }
 
 /** Set the predicate conditions. */
 fun LocationOrPredicates.predicate(predicate: Predicate) {
-	predicateConditions += predicate.predicateConditions
+	predicateConditions = (predicateConditions ?: emptyList()) + predicate.predicateConditions
 }

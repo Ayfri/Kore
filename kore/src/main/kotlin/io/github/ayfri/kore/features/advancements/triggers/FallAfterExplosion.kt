@@ -16,8 +16,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class FallAfterExplosion(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var startPosition: Location = Location(),
 	var distance: Distance = Distance(),
 	var cause: EntityOrPredicates? = null,
@@ -25,7 +24,7 @@ data class FallAfterExplosion(
 
 /** Add a `fallAfterExplosion` criterion, triggered when a player falls after an explosion. */
 fun AdvancementCriteria.fallAfterExplosion(name: String, block: FallAfterExplosion.() -> Unit = {}) {
-	criteria += FallAfterExplosion(name).apply(block)
+	criteria[name] = FallAfterExplosion().apply(block)
 }
 
 /** Set the start position constraints. */

@@ -14,15 +14,14 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class EffectsChanged(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var effects: Map<Effects, Effect>? = null,
 	var source: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add an `effectsChanged` criterion, triggered when a player's effects change. */
 fun AdvancementCriteria.effectsChanged(name: String, block: EffectsChanged.() -> Unit = {}) {
-	criteria += EffectsChanged(name).apply(block)
+	criteria[name] = EffectsChanged().apply(block)
 }
 
 /** Set the effects map constraints. */

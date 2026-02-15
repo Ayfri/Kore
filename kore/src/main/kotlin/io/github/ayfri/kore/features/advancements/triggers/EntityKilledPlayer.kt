@@ -13,15 +13,14 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class EntityKilledPlayer(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var entity: EntityOrPredicates? = null,
 	var killingBlow: DamageSource? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add an `entityKilledPlayer` criterion, triggered when an entity kills a player. */
 fun AdvancementCriteria.entityKilledPlayer(name: String, block: EntityKilledPlayer.() -> Unit = {}) {
-	criteria += EntityKilledPlayer(name).apply(block)
+	criteria[name] = EntityKilledPlayer().apply(block)
 }
 
 /** Set the killer entity constraints. */

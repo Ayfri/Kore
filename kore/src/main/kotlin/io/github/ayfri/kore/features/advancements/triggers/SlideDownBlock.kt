@@ -13,8 +13,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class SlideDownBlock(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var block: BlockArgument? = null,
 ) : AdvancementTriggerCondition()
 
@@ -24,5 +23,5 @@ fun AdvancementCriteria.slideDownBlock(
 	block: BlockArgument? = null,
 	init: SlideDownBlock.() -> Unit,
 ) {
-	criteria += SlideDownBlock(name, block = block).apply(init)
+	criteria[name] = SlideDownBlock(block = block).apply(init)
 }

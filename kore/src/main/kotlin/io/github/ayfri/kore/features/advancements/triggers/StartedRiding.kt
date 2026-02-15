@@ -12,11 +12,10 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class StartedRiding(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `startedRiding` criterion. */
 fun AdvancementCriteria.startedRiding(name: String, block: StartedRiding.() -> Unit = {}) {
-	criteria += StartedRiding(name).apply(block)
+	criteria[name] = StartedRiding().apply(block)
 }

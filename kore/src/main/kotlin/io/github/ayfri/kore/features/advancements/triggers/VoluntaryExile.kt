@@ -12,11 +12,10 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class VoluntaryExile(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `voluntaryExile` criterion, triggered when a player causes a raid in a village (voluntary exile). */
 fun AdvancementCriteria.voluntaryExile(name: String, block: VoluntaryExile.() -> Unit = {}) {
-	criteria += VoluntaryExile(name).apply(block)
+	criteria[name] = VoluntaryExile().apply(block)
 }

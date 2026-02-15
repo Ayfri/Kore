@@ -14,15 +14,14 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class KillMobNearSculkCatalyst(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var entity: Entity? = null,
 	var killingBlow: DamageSource? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `killMobNearSculkCatalyst` criterion. */
 fun AdvancementCriteria.killMobNearSculkCatalyst(name: String, block: KillMobNearSculkCatalyst.() -> Unit = {}) {
-	criteria += KillMobNearSculkCatalyst(name).apply(block)
+	criteria[name] = KillMobNearSculkCatalyst().apply(block)
 }
 
 /** Set the killed entity constraints. */

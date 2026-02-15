@@ -126,11 +126,11 @@ fun AdvancementDisplay.icon(icon: ItemArgument, count: Int? = null, components: 
 	)
 )
 fun Advancement.criteria(
-	@Suppress("unused_parameter") name: String,
+	name: String,
 	triggerCondition: AdvancementTriggerCondition,
 	condition: Entity? = null,
 ) {
-	criteria += triggerCondition.apply { this.conditions = EntityOrPredicates(condition) }
+	criteria.criteria[name] = triggerCondition.apply { this.player = EntityOrPredicates(condition) }
 }
 
 @Deprecated(
@@ -141,11 +141,11 @@ fun Advancement.criteria(
 	)
 )
 fun Advancement.criteria(
-	@Suppress("unused_parameter") name: String,
+	name: String,
 	triggerCondition: AdvancementTriggerCondition,
 	vararg conditions: PredicateCondition,
 ) {
-	criteria += triggerCondition.apply { this.conditions = EntityOrPredicates().conditions(*conditions) }
+	criteria.criteria[name] = triggerCondition.apply { this.player = EntityOrPredicates().conditions(*conditions) }
 }
 
 @Deprecated(
@@ -156,12 +156,12 @@ fun Advancement.criteria(
 	)
 )
 fun Advancement.criteria(
-	@Suppress("unused_parameter") name: String,
+	name: String,
 	triggerCondition: AdvancementTriggerCondition,
 	block: Predicate.() -> Unit,
 ) {
-	criteria += triggerCondition.apply {
-		this.conditions = EntityOrPredicates(predicateConditions = Predicate().apply(block))
+	criteria.criteria[name] = triggerCondition.apply {
+		player = EntityOrPredicates(predicateConditions = Predicate().apply(block))
 	}
 }
 

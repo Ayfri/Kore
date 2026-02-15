@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.features.advancements.triggers
 
+import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
-import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
 import io.github.ayfri.kore.features.predicates.sub.ItemStack
 import kotlinx.serialization.Serializable
 
@@ -14,8 +14,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class ItemDurabilityChanged(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var delta: IntRangeOrIntJson? = null,
 	var durability: IntRangeOrIntJson? = null,
 	var item: ItemStack? = null,
@@ -23,7 +22,7 @@ data class ItemDurabilityChanged(
 
 /** Add an `itemDurabilityChanged` criterion, triggered when an item's durability changes. */
 fun AdvancementCriteria.itemDurabilityChanged(name: String, block: ItemDurabilityChanged.() -> Unit = {}) {
-	criteria += ItemDurabilityChanged(name).apply(block)
+	criteria[name] = ItemDurabilityChanged().apply(block)
 }
 
 /** Set the durability delta constraints. */

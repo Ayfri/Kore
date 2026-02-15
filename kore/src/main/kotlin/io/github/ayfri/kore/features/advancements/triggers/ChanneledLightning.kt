@@ -14,14 +14,13 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class ChanneledLightning(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var victims: List<EntityOrPredicates>? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `channeledLightning` criterion, triggered when lightning is channeled. */
 fun AdvancementCriteria.channeledLightning(name: String, block: ChanneledLightning.() -> Unit = {}) {
-	criteria += ChanneledLightning(name).apply(block)
+	criteria[name] = ChanneledLightning().apply(block)
 }
 
 /** Add one victim predicate. */

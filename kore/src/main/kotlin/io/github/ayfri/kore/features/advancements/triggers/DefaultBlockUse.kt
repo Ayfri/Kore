@@ -12,11 +12,10 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class DefaultBlockUse(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `defaultBlockUse` criterion, triggered when a block is used with default interaction. */
 fun AdvancementCriteria.defaultBlockUse(name: String, block: DefaultBlockUse.() -> Unit = {}) {
-	criteria += DefaultBlockUse(name).apply(block)
+	criteria[name] = DefaultBlockUse().apply(block)
 }

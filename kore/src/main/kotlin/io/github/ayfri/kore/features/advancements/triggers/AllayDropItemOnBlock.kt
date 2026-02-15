@@ -15,27 +15,24 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class AllayDropItemOnBlock(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
-	var location: LocationOrPredicates = LocationOrPredicates(),
+	override var player: EntityOrPredicates? = null,
+	var location: LocationOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add an `allayDropItemOnBlock` criterion, triggered when an allay drops an item on a block. */
 fun AdvancementCriteria.allayDropItemOnBlock(name: String, location: Location, block: AllayDropItemOnBlock.() -> Unit) {
-	criteria += AllayDropItemOnBlock(name, location = LocationOrPredicates(location)).apply(block)
+	criteria[name] = AllayDropItemOnBlock(location = LocationOrPredicates(location)).apply(block)
 }
 
 /** Add an `allayDropItemOnBlock` criterion, triggered when an allay drops an item on a block. */
 fun AdvancementCriteria.allayDropItemOnBlock(name: String, predicate: Predicate, block: AllayDropItemOnBlock.() -> Unit) {
-	criteria += AllayDropItemOnBlock(
-		name,
-		location = LocationOrPredicates(predicateConditions = predicate.predicateConditions)
-	).apply(block)
+	criteria[name] =
+		AllayDropItemOnBlock(location = LocationOrPredicates(predicateConditions = predicate.predicateConditions)).apply(block)
 }
 
 /** Add an `allayDropItemOnBlock` criterion, triggered when an allay drops an item on a block. */
 fun AdvancementCriteria.allayDropItemOnBlock(name: String, block: AllayDropItemOnBlock.() -> Unit = {}) {
-	criteria += AllayDropItemOnBlock(name).apply(block)
+	criteria[name] = AllayDropItemOnBlock().apply(block)
 }
 
 /** Set the location condition, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */

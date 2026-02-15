@@ -14,8 +14,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class PlayerShearedEquipment(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	/** The entity that was sheared. */
 	var entity: Entity? = null,
 	/** The sheared item. */
@@ -24,7 +23,7 @@ data class PlayerShearedEquipment(
 
 /** Add a [`playerShearedEquipment`][PlayerShearedEquipment] criterion */
 fun AdvancementCriteria.playerShearedEquipment(name: String, block: PlayerShearedEquipment.() -> Unit = {}) {
-	criteria += PlayerShearedEquipment(name).apply(block)
+	criteria[name] = PlayerShearedEquipment().apply(block)
 }
 
 /** Set the sheared entity whose quipment was sheared constraints. */

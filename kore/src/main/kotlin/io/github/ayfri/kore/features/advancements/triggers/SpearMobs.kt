@@ -12,12 +12,11 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class SpearMobs(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var count: Int? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `spearMobs` criterion, triggered when a player spears mobs. */
 fun AdvancementCriteria.spearMobs(name: String, block: SpearMobs.() -> Unit = {}) {
-	criteria += SpearMobs(name).apply(block)
+	criteria[name] = SpearMobs().apply(block)
 }

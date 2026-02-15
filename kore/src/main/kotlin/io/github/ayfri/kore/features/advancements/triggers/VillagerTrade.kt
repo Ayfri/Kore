@@ -13,15 +13,14 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class VillagerTrade(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var item: ItemStack? = null,
 	var villager: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `villagerTrade` criterion, triggered when a villager trade occurs. */
 fun AdvancementCriteria.villagerTrade(name: String, block: VillagerTrade.() -> Unit = {}) {
-	criteria += VillagerTrade(name).apply(block)
+	criteria[name] = VillagerTrade().apply(block)
 }
 
 /** Set the item constraints. */

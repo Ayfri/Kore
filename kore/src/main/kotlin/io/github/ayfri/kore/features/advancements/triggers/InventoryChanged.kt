@@ -14,15 +14,14 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class InventoryChanged(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var items: List<ItemStack>? = null,
 	var slots: Slots? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add an `inventoryChanged` criterion, triggered when a player's inventory changes. */
 fun AdvancementCriteria.inventoryChanged(name: String, block: InventoryChanged.() -> Unit = {}) {
-	criteria += InventoryChanged(name).apply(block)
+	criteria[name] = InventoryChanged().apply(block)
 }
 
 /** Add one item constraint. */

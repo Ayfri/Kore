@@ -12,11 +12,10 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Impossible(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add an `impossible` criterion, prevents the advancement from being achieved. */
 fun AdvancementCriteria.impossible(name: String, block: Impossible.() -> Unit = {}) {
-	criteria += Impossible(name).apply(block)
+	criteria[name] = Impossible().apply(block)
 }

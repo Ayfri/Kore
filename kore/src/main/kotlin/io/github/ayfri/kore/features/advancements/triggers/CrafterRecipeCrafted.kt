@@ -14,15 +14,14 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class CrafterRecipeCrafted(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var ingredients: List<ItemStack>? = null,
 	var recipeId: RecipeArgument,
 ) : AdvancementTriggerCondition()
 
 /** Add a `crafterRecipeCrafted` criterion, triggered when a crafter crafts a recipe. */
 fun AdvancementCriteria.crafterRecipeCrafted(name: String, recipeId: RecipeArgument, block: CrafterRecipeCrafted.() -> Unit = {}) {
-	criteria += CrafterRecipeCrafted(name, recipeId = recipeId).apply(block)
+	criteria[name] = CrafterRecipeCrafted(recipeId = recipeId).apply(block)
 }
 
 /** Add an ingredient to the recipe. */

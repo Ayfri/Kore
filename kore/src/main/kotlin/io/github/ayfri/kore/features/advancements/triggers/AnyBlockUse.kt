@@ -12,11 +12,10 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class AnyBlockUse(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add an `anyBlockUse` criterion, triggered when a player uses any block. */
 fun AdvancementCriteria.anyBlockUse(name: String, block: AnyBlockUse.() -> Unit = {}) {
-	criteria += AnyBlockUse(name).apply(block)
+	criteria[name] = AnyBlockUse().apply(block)
 }

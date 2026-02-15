@@ -12,14 +12,13 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class SummonedEntity(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var entity: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `summonedEntity` criterion, triggered when an entity is summoned. */
 fun AdvancementCriteria.summonedEntity(name: String, block: SummonedEntity.() -> Unit = {}) {
-	criteria += SummonedEntity(name).apply(block)
+	criteria[name] = SummonedEntity().apply(block)
 }
 
 /** Set the summoned entity constraints. */

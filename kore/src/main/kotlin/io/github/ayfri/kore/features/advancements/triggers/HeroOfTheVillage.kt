@@ -12,11 +12,10 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class HeroOfTheVillage(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `heroOfTheVillage` criterion, triggered when a player is the hero of the village. */
 fun AdvancementCriteria.heroOfTheVillage(name: String, block: HeroOfTheVillage.() -> Unit = {}) {
-	criteria += HeroOfTheVillage(name).apply(block)
+	criteria[name] = HeroOfTheVillage().apply(block)
 }

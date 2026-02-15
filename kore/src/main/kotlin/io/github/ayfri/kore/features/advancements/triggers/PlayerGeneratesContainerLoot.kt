@@ -13,8 +13,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class PlayerGeneratesContainerLoot(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var lootTable: LootTableArgument,
 ) : AdvancementTriggerCondition()
 
@@ -24,5 +23,5 @@ fun AdvancementCriteria.playerGeneratesContainerLoot(
 	lootTable: LootTableArgument,
 	block: PlayerGeneratesContainerLoot.() -> Unit,
 ) {
-	criteria += PlayerGeneratesContainerLoot(name, lootTable = lootTable).apply(block)
+	criteria[name] = PlayerGeneratesContainerLoot(lootTable = lootTable).apply(block)
 }

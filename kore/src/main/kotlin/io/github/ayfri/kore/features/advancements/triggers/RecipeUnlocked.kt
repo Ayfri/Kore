@@ -13,12 +13,11 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class RecipeUnlocked(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var recipe: RecipeArgument,
 ) : AdvancementTriggerCondition()
 
 /** Add a `recipeUnlocked` criterion, triggered when a recipe is unlocked. */
 fun AdvancementCriteria.recipeUnlocked(name: String, recipe: RecipeArgument, block: RecipeUnlocked.() -> Unit) {
-	criteria += RecipeUnlocked(name, recipe = recipe).apply(block)
+	criteria[name] = RecipeUnlocked(recipe = recipe).apply(block)
 }

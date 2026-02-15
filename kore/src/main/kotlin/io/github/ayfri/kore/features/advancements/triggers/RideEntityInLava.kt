@@ -14,15 +14,14 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class RideEntityInLava(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var distance: Distance? = null,
 	var startPosition: Location? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `rideEntityInLava` criterion, triggered when riding an entity in lava. */
 fun AdvancementCriteria.rideEntityInLava(name: String, block: RideEntityInLava.() -> Unit = {}) {
-	criteria += RideEntityInLava(name).apply(block)
+	criteria[name] = RideEntityInLava().apply(block)
 }
 
 /** Set the distance constraints. */

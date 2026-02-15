@@ -13,13 +13,12 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class ChangedDimension(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var from: DimensionArgument? = null,
 	var to: DimensionArgument? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `changedDimension` criterion, triggered when a player changes dimension. */
 fun AdvancementCriteria.changedDimension(name: String, block: ChangedDimension.() -> Unit = {}) {
-	criteria += ChangedDimension(name).apply(block)
+	criteria[name] = ChangedDimension().apply(block)
 }

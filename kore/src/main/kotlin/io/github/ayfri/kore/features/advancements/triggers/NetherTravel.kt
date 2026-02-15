@@ -14,15 +14,14 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class NetherTravel(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var distance: Distance? = null,
 	var startPosition: Location? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `netherTravel` criterion, triggered when a player travels through the Nether. */
 fun AdvancementCriteria.netherTravel(name: String, block: NetherTravel.() -> Unit = {}) {
-	criteria += NetherTravel(name).apply(block)
+	criteria[name] = NetherTravel().apply(block)
 }
 
 /** Set the distance constraints. */

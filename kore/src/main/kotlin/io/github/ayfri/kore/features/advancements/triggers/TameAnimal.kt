@@ -12,14 +12,13 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class TameAnimal(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var entity: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `tameAnimal` criterion, triggered when an animal is tamed. */
 fun AdvancementCriteria.tameAnimal(name: String, block: TameAnimal.() -> Unit = {}) {
-	criteria += TameAnimal(name).apply(block)
+	criteria[name] = TameAnimal().apply(block)
 }
 
 /** Set the animal entity constraints. */

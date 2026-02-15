@@ -14,15 +14,14 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class FallFromHeight(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var startPosition: Location? = null,
 	var distance: Distance? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `fallFromHeight` criterion, triggered when a player falls from a height. */
 fun AdvancementCriteria.fallFromHeight(name: String, block: FallFromHeight.() -> Unit = {}) {
-	criteria += FallFromHeight(name).apply(block)
+	criteria[name] = FallFromHeight().apply(block)
 }
 
 /** Set the start position constraints. */

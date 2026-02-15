@@ -12,8 +12,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class BredAnimals(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var child: EntityOrPredicates? = null,
 	var parent: EntityOrPredicates? = null,
 	var partner: EntityOrPredicates? = null,
@@ -21,7 +20,7 @@ data class BredAnimals(
 
 /** Add a `bredAnimals` criterion, triggered when two animals breed. */
 fun AdvancementCriteria.bredAnimals(name: String, block: BredAnimals.() -> Unit = {}) {
-	criteria += BredAnimals(name).apply(block)
+	criteria[name] = BredAnimals().apply(block)
 }
 
 /** Set the child entity constraints. */

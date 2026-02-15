@@ -13,14 +13,13 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class FilledBucket(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 	var item: ItemStack? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `filledBucket` criterion, triggered when a player fills a bucket. */
 fun AdvancementCriteria.filledBucket(name: String, block: FilledBucket.() -> Unit = {}) {
-	criteria += FilledBucket(name).apply(block)
+	criteria[name] = FilledBucket().apply(block)
 }
 
 /** Set the item constraints. */

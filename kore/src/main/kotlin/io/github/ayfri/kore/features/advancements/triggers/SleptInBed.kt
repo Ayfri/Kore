@@ -12,11 +12,10 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class SleptInBed(
-	override var name: String,
-	override var conditions: EntityOrPredicates? = null,
+	override var player: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `sleptInBed` criterion, triggered when a player sleeps in a bed. */
 fun AdvancementCriteria.sleptInBed(name: String, block: SleptInBed.() -> Unit = {}) {
-	criteria += SleptInBed(name).apply(block)
+	criteria[name] = SleptInBed().apply(block)
 }
