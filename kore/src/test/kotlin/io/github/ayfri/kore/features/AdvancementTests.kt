@@ -184,14 +184,14 @@ private fun DataPack.allTriggersTests() {
 
 	advancement("avoid_vibrations") {
 		criteria {
-			avoidVibrations("avoid_vibrations")
+			avoidVibration("avoid_vibration")
 		}
 	}
 	advancements.last() assertsIs """
 		{
 			"criteria": {
-				"avoid_vibrations": {
-					"trigger": "minecraft:avoid_vibrations"
+				"avoid_vibration": {
+					"trigger": "minecraft:avoid_vibration"
 				}
 			}
 		}

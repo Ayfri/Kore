@@ -11,11 +11,11 @@ import kotlinx.serialization.Serializable
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement/JSON_format
  */
 @Serializable
-data class AvoidVibrations(
+data class AvoidVibration(
 	override var player: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
-/** Add an `avoidVibrations` criterion, triggered when a player avoids vibrations. */
-fun AdvancementCriteria.avoidVibrations(name: String, block: AvoidVibrations.() -> Unit = {}) {
-	criteria[name] = AvoidVibrations().apply(block)
+/** Add an `avoidVibration` criterion, triggered when a player avoids vibrations. */
+fun AdvancementCriteria.avoidVibration(name: String, block: AvoidVibration.() -> Unit = {}) {
+	criteria[name] = AvoidVibration().apply(block)
 }
