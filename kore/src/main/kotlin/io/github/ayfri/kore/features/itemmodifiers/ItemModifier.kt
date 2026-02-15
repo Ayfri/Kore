@@ -5,14 +5,11 @@ import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.features.itemmodifiers.functions.ItemFunction
 import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
 import io.github.ayfri.kore.serializers.InlinableList
+import io.github.ayfri.kore.serializers.InlineSerializer
 import io.github.ayfri.kore.serializers.inlinableListSerializer
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.serializer
+import kotlinx.serialization.builtins.ListSerializer
 
 /**
  * Inline serializer alias used when an item-modifier must be embedded as a raw JSON array
@@ -43,15 +40,10 @@ data class ItemModifier(
 		dataPack.jsonEncoder.encodeToString(inlinableListSerializer(ItemFunction.serializer()), modifiers)
 
     companion object {
-		data object ItemModifierAsListSerializer : KSerializer<ItemModifier> {
-			override val descriptor = buildClassSerialDescriptor("ItemModifierAsList")
-
-			override fun deserialize(decoder: Decoder) = error("ItemModifierAsList cannot be deserialized")
-
-            override fun serialize(encoder: Encoder, value: ItemModifier) {
-				encoder.encodeSerializableValue(serializer<List<ItemFunction>>(), value.modifiers)
-			}
-		}
+	    data object ItemModifierAsListSerializer : InlineSerializer<ItemModifier, InlinableList<ItemFunction>>(
+		    ListSerializer(ItemFunction.serializer()),
+		    ItemModifier::modifiers
+	    )
 	}
 }
 
