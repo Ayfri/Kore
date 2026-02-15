@@ -5,13 +5,14 @@ import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.components.item.WrittenPage
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.PredicateAsList
-
+import kotlinx.serialization.Serializable
 /**
  * Sets title/author/generation for written books. Mirrors `minecraft:set_book_cover`.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
  */
+@Serializable
 data class SetBookCover(
 	override var conditions: PredicateAsList? = null,
 	var title: WrittenPage? = null,
