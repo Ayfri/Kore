@@ -20,9 +20,10 @@ import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.LootTables
+import io.github.ayfri.kore.generated.Tags
 
 fun DataPack.lootTableTests() {
-	val lootTable = lootTable {
+	val lootTable = lootTable("all_entry_types") {
 		functions {
 			enchantRandomly {
 				options += Enchantments.LOOTING
@@ -37,7 +38,19 @@ fun DataPack.lootTableTests() {
 			}
 
 			entries {
+				alternatives {
+					children {
+						empty(quality = 2, weight = 3)
+					}
+				}
+
 				dynamic(LootEntryDynamicName.SHERDS)
+
+				group(group = {
+					children {
+						item(Items.DIAMOND)
+					}
+				})
 
 				lootTable(LootTables.Gameplay.PIGLIN_BARTERING) {
 					conditions {
@@ -52,6 +65,12 @@ fun DataPack.lootTableTests() {
 						}
 					}
 				}
+
+				sequence(sequence = {
+					children {
+						tag(Tags.Item.BOATS, expand = true)
+					}
+				})
 			}
 
 			functions {
@@ -80,8 +99,27 @@ fun DataPack.lootTableTests() {
 					],
 					"entries": [
 						{
+							"type": "minecraft:alternatives",
+							"children": [
+								{
+									"type": "minecraft:empty",
+									"quality": 2,
+									"weight": 3
+								}
+							]
+						},
+						{
 							"type": "minecraft:dynamic",
 							"name": "minecraft:sherds"
+						},
+						{
+							"type": "minecraft:group",
+							"children": [
+								{
+									"type": "minecraft:item",
+									"name": "minecraft:diamond"
+								}
+							]
 						},
 						{
 							"type": "minecraft:loot_table",
@@ -104,6 +142,16 @@ fun DataPack.lootTableTests() {
 									"count": 1.0
 								}
 							]
+						},
+						{
+							"type": "minecraft:sequence",
+							"children": [
+								{
+									"type": "minecraft:tag",
+									"expand": true,
+									"name": "minecraft:boats"
+								}
+							]
 						}
 					],
 					"functions": [
@@ -120,27 +168,6 @@ fun DataPack.lootTableTests() {
 	load {
 		loot(self(), lootTable)
 	}
-
-	lootTable("test") {
-		pool {
-			rolls = uniform(5f, 2f)
-		}
-	}
-
-	lootTables.last() assertsIs """
-		{
-			"pools": [
-				{
-					"rolls": {
-						"type": "minecraft:uniform",
-						"min": 5.0,
-						"max": 2.0
-					},
-					"entries": []
-				}
-			]
-		}
-	""".trimIndent()
 
 	lootTable("all_slot_sources_test") {
 		pool {
@@ -256,15 +283,9 @@ fun DataPack.lootTableTests() {
 		}
 	""".trimIndent()
 
-	lootTable("alternatives") {
+	lootTable("uniform_rolls_test") {
 		pool {
-			entries {
-				alternatives {
-					children {
-						item(Items.ANDESITE_WALL)
-					}
-				}
-			}
+			rolls = uniform(5f, 2f)
 		}
 	}
 
@@ -272,17 +293,12 @@ fun DataPack.lootTableTests() {
 		{
 			"pools": [
 				{
-					"entries": [
-						{
-							"type": "minecraft:alternatives",
-							"children": [
-								{
-									"type": "minecraft:item",
-									"name": "minecraft:andesite_wall"
-								}
-							]
-						}
-					]
+					"rolls": {
+						"type": "minecraft:uniform",
+						"min": 5.0,
+						"max": 2.0
+					},
+					"entries": []
 				}
 			]
 		}
