@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class LootTable(
-	var name: LootTableArgument,
+	var value: LootTableArgument,
 	var conditions: PredicateAsList? = null,
 	var functions: ItemModifierAsList? = null,
 	var quality: Int? = null,
@@ -22,8 +22,8 @@ data class LootTable(
 ) : LootEntry()
 
 /** Add and configure a nested loot table entry. */
-fun LootEntries.lootTable(name: LootTableArgument, block: LootTable.() -> Unit = {}) {
-	add(LootTable(name).apply(block))
+fun LootEntries.lootTable(value: LootTableArgument, block: LootTable.() -> Unit = {}) {
+	add(LootTable(value).apply(block))
 }
 
 /** Set conditions, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
