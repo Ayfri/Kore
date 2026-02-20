@@ -123,7 +123,7 @@ class DataPack(val name: String) {
 	val zombieNautilusVariants = registerGenerator<ZombieNautilusVariant>()
 
 	var configuration = Configuration.DEFAULT
-	var features = Features()
+	var features: Features? = null
 	var filter: Filter? = null
 	var overlays: PackOverlays? = null
 	var generated = false

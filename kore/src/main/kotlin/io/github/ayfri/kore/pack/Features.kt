@@ -17,5 +17,6 @@ data class Features(
 
 /** Enables the given features. */
 fun DataPack.features(vararg enabled: DataPacks) {
-	features.enabled += enabled
+	if (features == null) features = Features()
+	features!!.enabled += enabled
 }
