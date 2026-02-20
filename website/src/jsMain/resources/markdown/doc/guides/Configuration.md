@@ -31,12 +31,11 @@ This will configure the JSON output to be pretty printed with two spaces for ind
 
 The available configuration options are:
 
-- `prettyPrint` - Whether to pretty print the JSON. Default is `false`.
--
-`prettyPrintIndent` - The string to use for indenting when pretty printing. Only whitespace characters are allowed. Default is empty string.
-- `generatedFunctionsFolder` - The folder where the generated functions are stored. Defaults to `"generated_scopes"`.
--
-`generateCommentOfGeneratedFunctionCall` - Whether to generate a comment when an implicit generated function is called. Default is
-`true`.
+| Option                                   | Description                                                                                   | Default              |
+|------------------------------------------|-----------------------------------------------------------------------------------------------|----------------------|
+| `prettyPrint`                            | Whether to pretty print the JSON.                                                             | `false`              |
+| `prettyPrintIndent`                      | The string to use for indenting when pretty printing. Only whitespace characters are allowed. | `\t`                 |
+| `generatedFunctionsFolder`               | The folder where the generated functions are stored.                                          | `"generated_scopes"` |
+| `generateCommentOfGeneratedFunctionCall` | Whether to generate a comment when an implicit generated function is called.                  | `true`               |
 
 Configuring a datapack is pretty useful for debugging.

@@ -5,7 +5,7 @@ nav-title: Creating A Datapack
 description: A guide for creating a Minecraft datapack using Kore.
 keywords: minecraft, datapack, kore, guide
 date-created: 2024-02-26
-date-modified: 2026-02-13
+date-modified: 2026-02-20
 routeOverride: /docs/guides/creating-a-datapack
 ---
 
@@ -59,8 +59,8 @@ Configure this metadata using the `pack` block:
 ```kotlin
 dataPack("mydatapack") {
 	pack {
-		minFormat = packFormat(15)
-		maxFormat = packFormat(20)
+		minFormat(94)
+		maxFormat(94)
 		description = textComponent("My Datapack")
 	}
 }
@@ -68,47 +68,85 @@ dataPack("mydatapack") {
 
 - `minFormat` - The minimum supported pack format version.
 - `maxFormat` - The maximum supported pack format version.
-- `packFormat` - The explicit pack format version (optional).
 - `description` - A text component for the datapack description.
-- `supportedFormats` - The supported format versions (optional, automatically generated from range if needed).
 
-You can also set `supportedFormats` with a small DSL:
+`minFormat` and `maxFormat` are shortcut functions that accept the same arguments as `packFormat()`:
 
 ```kotlin
-dataPack("mydatapack") {
-	pack {
-		minFormat = packFormat(91)
-		maxFormat = packFormat(99)
-		description = textComponent("My Datapack")
-
-		supportedFormats(91..99)
-		supportedFormats(min = 91) // max is optional
-	}
+pack {
+	minFormat(94)        // plain integer
+	minFormat(94, 0)     // [major, minor] pair
+	maxFormat(94)
 }
 ```
+
+You can also assign a `PackFormat` value directly:
+
+```kotlin
+pack {
+	minFormat = packFormat(94)
+	maxFormat = packFormat(94)
+}
+```
+
+### Legacy `supportedFormats`
 
 Kore automatically handles backward compatibility for older game versions. If your
 `minFormat` is below the threshold (82 for DataPacks, 65 for ResourcePacks), Kore will automatically include the legacy
 `pack_format` and `supported_formats` fields in the generated
 `pack.mcmeta` file to ensure compatibility with older versions of Minecraft.
 
-### Targeting Minecraft 1.21.9+
-
-Starting with Minecraft 1.21.9 (25w02a), the
-`pack_format` can be a decimal value to represent snapshots or minor versions. You can set this using `packFormat(Double)`:
+You can also set `supportedFormats` explicitly with a small DSL:
 
 ```kotlin
-dataPack("my_1.21.9_datapack") {
+dataPack("mydatapack") {
 	pack {
-		minFormat = packFormat(94)
-		maxFormat = packFormat(94)
+		minFormat(48)
+		maxFormat(60)
+		description = textComponent("My Datapack")
+
+		supportedFormats(48..60)
+		supportedFormats(min = 48) // max is optional
+	}
+}
+```
+
+### Targeting Minecraft 1.21.9+
+
+Starting with Minecraft 1.21.9 (25w31a), `min_format` and `max_format` are the primary fields in `pack.mcmeta`. The `pack_format` field can
+be a decimal value to represent snapshots or minor versions. You can set this using `packFormat(Double)`:
+
+```kotlin
+dataPack("my_datapack") {
+	pack {
+		minFormat(94)
+		maxFormat(94)
 		packFormat = packFormat(94.1)
 		description = textComponent("Targeting 1.21.9")
 	}
 }
 ```
 
-Note that `minFormat` and `maxFormat` still only accept integer values (or full format `[major, minor]`).
+Note that `minFormat` and `maxFormat` do not accept decimal values — use a plain integer or a `[major, minor]` pair.
+
+## Overlays
+
+Overlays allow you to apply different resources depending on the pack format version of the client. Use the `overlays` DSL to declare
+overlay entries:
+
+```kotlin
+dataPack("my_datapack") {
+	overlays {
+		entry("my_overlay") {
+			minFormat(82)
+			maxFormat(93)
+		}
+	}
+}
+```
+
+Each `entry` takes a directory name and a block where you configure `minFormat` and `maxFormat` using the same shortcut functions as in the
+`pack` block.
 
 ## Filters
 
@@ -332,16 +370,16 @@ val myDatapack1 = dataPack("my_datapack 1") {
 	// datapack code here
 
 	pack {
-		minFormat = packFormat(40)
-		maxFormat = packFormat(40)
+		minFormat(40)
+		maxFormat(40)
 	}
 }
 
 val myDatapack2 = dataPack("my_datapack 2") {
 	// datapack code here
 	pack {
-		minFormat = packFormat(50)
-		maxFormat = packFormat(50)
+		minFormat(50)
+		maxFormat(50)
 	}
 }
 
