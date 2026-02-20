@@ -5,14 +5,30 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Represents the supported pack formats for a Minecraft data pack or resource pack.
+ * Represents the `supported_formats` (or `formats` in overlays) value in a `pack.mcmeta` file.
  *
- * Serialization rules:
- * - If `number` is not null, serializes as a single integer (the pack format).
- * - If `list` is not empty, serializes as a list of integers (multiple supported formats).
- * - Otherwise, serializes as an object with `"min_inclusive"` and `"max_inclusive"` properties, representing a supported range.
+ * This is a **legacy field** kept for backwards compatibility with old game versions
+ * (data pack format < 82, resource pack format < 65). It was introduced in Minecraft 1.20.2 (23w31a)
+ * and became conditional in Minecraft 1.21.9 (25w31a): it must be absent for modern packs and
+ * present only when the pack covers old game versions.
  *
- * JSON format reference: https://minecraft.wiki/w/Pack_format
+ * The value can take three forms in JSON:
+ * - A single integer, e.g. `42` — use [number].
+ * - A list of integers, e.g. `[42, 45]` — use [list].
+ * - An object with a range, e.g. `{ "min_inclusive": 42, "max_inclusive": 45 }` — use [minInclusive] and [maxInclusive].
+ *
+ * JSON format reference: [Pack.mcmeta – Minecraft Wiki](https://minecraft.wiki/w/Pack.mcmeta)
+ *
+ * @property number A single supported major pack format version. Serialized as a plain integer.
+ *   Mutually exclusive with [list], [minInclusive], and [maxInclusive].
+ * @property list An explicit list of supported major pack format versions. Serialized as an integer array.
+ *   Mutually exclusive with [number], [minInclusive], and [maxInclusive].
+ * @property minInclusive The minimum major pack format version in the supported range (inclusive).
+ *   Must be used together with [maxInclusive]. Serialized as the `min_inclusive` object field.
+ *   Mutually exclusive with [number] and [list].
+ * @property maxInclusive The maximum major pack format version in the supported range (inclusive).
+ *   Must be used together with [minInclusive]. Serialized as the `max_inclusive` object field.
+ *   Mutually exclusive with [number] and [list].
  */
 @Serializable(with = SupportedFormats.Companion.SupportedFormatsSerializer::class)
 data class SupportedFormats(

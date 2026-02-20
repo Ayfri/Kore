@@ -11,12 +11,15 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 
 /**
- * Represents a pack format value.
+ * Represents a pack format version used in `pack.mcmeta`.
  *
- * Encoded as either a single integer (`major`) or a 2-int list `[major, minor]`.
+ * Three forms: a plain integer ([PackFormatMajor]), a `[major, minor]` array ([PackFormatFull]),
+ * or a legacy decimal ([PackFormatDecimal]).
+ * Since Minecraft 1.21.9 (25w31a), `min_format`/`max_format` are the primary fields.
  */
 @Serializable(with = PackFormat.Companion.PackFormatSerializer::class)
 sealed class PackFormat : Comparable<PackFormat> {
+	/** The major (pack) version number. */
 	abstract val major: Int
 
 	companion object {
@@ -61,24 +64,22 @@ sealed class PackFormat : Comparable<PackFormat> {
 }
 
 /**
- * Encoded as a single integer in JSON.
- * Interpretation differs for min/max in vanilla:
- * - min_format: major == [major, 0]
- * - max_format: major == [major, 0x7fffffff]
+ * A pack format as a plain integer. Serialized as `82`.
+ * As `min_format` means `[N, 0]`; as `max_format` means `[N, 0x7fffffff]`.
  */
 @Serializable
 data class PackFormatMajor(
 	override var major: Int,
 ) : PackFormat()
 
-/** Encoded as a 2-int list `[major, minor]` in JSON. */
+/** A pack format as a `[major, minor]` pair. Serialized as `[82, 1]`. */
 @Serializable
 data class PackFormatFull(
 	override var major: Int,
 	var minor: Int,
 ) : PackFormat()
 
-/** Encoded as a decimal in JSON. */
+/** A pack format as a legacy decimal. Not valid for `min_format`/`max_format` since Minecraft 1.21.9. */
 @Serializable
 data class PackFormatDecimal(
 	var value: Double,
@@ -87,18 +88,45 @@ data class PackFormatDecimal(
 	val minor get() = ((value - major) * 10 + 0.5).toInt()
 }
 
+/** Creates a [PackFormatMajor]. */
 fun packFormat(major: Int) = PackFormatMajor(major)
+
+/** Creates a [PackFormatFull]. */
 fun packFormat(major: Int, minor: Int) = PackFormatFull(major, minor)
+
+/** Creates a [PackFormatDecimal] (legacy). */
 fun packFormat(value: Double) = PackFormatDecimal(value)
 
+/** Returns a human-readable string: `"82"`, `"82.1"`, or the decimal value. */
 fun PackFormat.asFormatString() = when (this) {
 	is PackFormatMajor -> major.toString()
 	is PackFormatFull -> "$major.$minor"
 	is PackFormatDecimal -> value.toString()
 }
 
+/** Returns `true` if this is a [PackFormatMajor]. */
+fun PackFormat.isMajorOnly() = this is PackFormatMajor
+
+/** Returns `true` if this is a [PackFormatFull]. */
+fun PackFormat.hasMajorMinor() = this is PackFormatFull
+
+/** Returns the minor version, or `null` for [PackFormatMajor]. */
+fun PackFormat.minorOrNull(): Int? = when (this) {
+	is PackFormatMajor -> null
+	is PackFormatFull -> minor
+	is PackFormatDecimal -> minor
+}
+
+/** Returns a [PackFormatFull] with the given [minor], replacing any existing minor. */
+fun PackFormat.withMinor(minor: Int) = PackFormatFull(major, minor)
+
+/** Returns a [PackFormatMajor] dropping any minor version. */
+fun PackFormat.toMajorOnly() = PackFormatMajor(major)
+
+/** Returns a string describing the format range, e.g. `"80..84"`. */
 fun PackSection.formatRangeString() = "${minFormat.asFormatString()}..${maxFormat.asFormatString()}"
 
+/** Returns `true` if this pack's format range overlaps with [other]'s. */
 fun PackSection.isCompatibleWith(other: PackSection): Boolean {
 	val current = formatRange()
 	val incoming = other.formatRange()
