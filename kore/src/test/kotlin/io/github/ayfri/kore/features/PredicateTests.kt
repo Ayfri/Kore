@@ -509,7 +509,7 @@ fun DataPack.predicateTests() {
 	predicates.last() assertsIs """
 		{
 			"condition": "minecraft:random_chance_with_enchanted_bonus",
-			"unenchanted_chance": 1,
+			"unenchanted_chance": 1.0,
 			"enchanted_chance": 2,
 			"enchantment": "minecraft:fortune"
 		}
