@@ -15,6 +15,7 @@ repositories {
 
 dependencies {
 	api(project(":kore"))
+	implementation(libs.kotlinx.io)
 	implementation(libs.kotlinx.serialization)
 }
 
@@ -31,7 +32,7 @@ var runUnitTests = tasks.register<JavaExec>("runUnitTests") {
 	group = "verification"
 
 	classpath = sourceSets.test.get().runtimeClasspath
-	mainClass = "MainKt"
+	mainClass = "io.github.ayfri.kore.MainKt"
 	shouldRunAfter("test")
 }
 
