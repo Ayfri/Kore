@@ -113,8 +113,9 @@ dataPack("mydatapack") {
 
 ### Targeting Minecraft 1.21.9+
 
-Starting with Minecraft 1.21.9 (25w31a), `min_format` and `max_format` are the primary fields in `pack.mcmeta`. The `pack_format` field can
-be a decimal value to represent snapshots or minor versions. You can set this using `packFormat(Double)`:
+Starting with Minecraft 1.21.9 (25w31a), `min_format` and `max_format` are the primary fields in `pack.mcmeta`.
+The`pack_format` field can be a decimal value to represent snapshots or minor versions.
+You can set this using `packFormat(Double)`:
 
 ```kotlin
 dataPack("my_datapack") {
@@ -127,11 +128,12 @@ dataPack("my_datapack") {
 }
 ```
 
-Note that `minFormat` and `maxFormat` do not accept decimal values — use a plain integer or a `[major, minor]` pair.
+Note that `minFormat` and `maxFormat` do not accept decimal values - use a plain integer or a `[major, minor]` pair.
 
 ## Overlays
 
-Overlays allow you to apply different resources depending on the pack format version of the client. Use the `overlays` DSL to declare
+Overlays allow you to apply different resources depending on the pack format version of the client. Use the `overlays`
+DSL to declare
 overlay entries:
 
 ```kotlin
@@ -145,8 +147,8 @@ dataPack("my_datapack") {
 }
 ```
 
-Each `entry` takes a directory name and a block where you configure `minFormat` and `maxFormat` using the same shortcut functions as in the
-`pack` block.
+Each `entry` takes a directory name and a block where you configure `minFormat` and `maxFormat` using the same shortcut
+functions as in the `pack` block.
 
 ## Filters
 
@@ -225,8 +227,9 @@ dataPack("my_datapack") {
 
 ### Jar Generation
 
-To generate a JAR file for your datapack, use the
-`generateJar` function. This function packages the datapack into a JAR file which can then be used directly with your Minecraft installation or distributed for others to use.
+To generate a JAR file for your datapack, use the `generateJar` function.
+This function packages the datapack into a JAR file which can then be used directly with your Minecraft installation or
+distributed for others to use.
 
 ```kotlin
 dataPack("my_datapack") {
@@ -234,9 +237,8 @@ dataPack("my_datapack") {
 }.generateJar()
 ```
 
-By calling
-`generateJar()`, the generated JAR file will be placed in the default output folder. If you wish to specify a different location, use the
-`path` property:
+By calling `generateJar()`, the generated JAR file will be placed in the default output folder.
+If you wish to specify a different location, use the `path` property:
 
 ```kotlin
 dataPack("my_datapack") {
@@ -357,11 +359,13 @@ dataPack("my_datapack") {
 ```
 
 If a zip is provided, it will be considered as a datapack and merged with the generated datapack.<br>
-It will unzip the zip in a temporary folder of your system and merge it with the generated datapack, this will not remove the temporary folder.
+It will unzip the zip in a temporary folder of your system and merge it with the generated datapack, this will not
+remove the temporary folder.
 
 #### Checking for compatibility
 
-When merging with other datapacks, Kore will check if the pack format range overlaps. If it does not, it will print a warning message.
+When merging with other datapacks, Kore will check if the pack format range overlaps. If it does not,
+it will print a warning message.
 
 Example:
 
@@ -399,8 +403,9 @@ It also checks for `supportedFormats` and warns if the other pack is not support
 
 ## Publishing and Distribution
 
-Once you've generated your datapack, you may want to distribute it to the community. For automated publishing to platforms like Modrinth,
-CurseForge, and GitHub Releases, see the [GitHub Actions Publishing](/docs/advanced/github-actions-publishing) guide.
+Once you've generated your datapack, you may want to distribute it to the community.
+For automated publishing to platforms like Modrinth, CurseForge, and GitHub Releases,
+see the [GitHub Actions Publishing](/docs/advanced/github-actions-publishing) guide.
 
 #### Tags
 

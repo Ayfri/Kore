@@ -11,8 +11,8 @@ routeOverride: /docs/data-driven/timelines
 
 # Timelines
 
-Timelines control game behavior and visuals based on the absolute day time through environment attributes. They allow you to define tracks
-that animate environment attributes over time using keyframes and easing functions.
+Timelines control game behavior and visuals based on the absolute day time through environment attributes.
+They allow you to define tracks that animate environment attributes over time using keyframes and easing functions.
 
 Timelines were added in snapshot [**25w45a**](https://minecraft.wiki/w/Java_Edition_25w45a) (Minecraft 1.21.11).
 
@@ -39,8 +39,8 @@ val myTimeline = timeline("day_fog") {
 }
 ```
 
-The `timeline` function creates and registers a timeline in your DataPack. It produces a file at `data/<namespace>/timeline/<fileName>.json`
-and returns a `TimelineArgument`.
+The `timeline` function creates and registers a timeline in your DataPack. It produces a file at
+`data/<namespace>/timeline/<fileName>.json` and returns a `TimelineArgument`.
 
 ## Timeline Properties
 
@@ -50,8 +50,8 @@ and returns a `TimelineArgument`.
 
 ## Tracks
 
-Tracks map environment attributes to keyframe-based animations. Each track specifies an easing type, an optional modifier, and a list of
-keyframes.
+Tracks map environment attributes to keyframe-based animations. Each track specifies an easing type,
+an optional modifier, and a list of keyframes.
 
 ```kotlin
 timeline("multi_track") {
@@ -93,8 +93,8 @@ keyframe(12000) {
 }
 ```
 
-The `value` function accepts `Float`, `Int`, `Boolean`, `String`, `Color`, or any `EnvironmentAttributesType` (e.g., `FloatValue`,
-`BooleanValue`, `ColorValue`).
+The `value` function accepts `Float`, `Int`, `Boolean`, `String`, `Color`, or any `EnvironmentAttributesType`
+(e.g., `FloatValue`, `BooleanValue`, `ColorValue`).
 
 Using typed values with `EnvironmentAttributesType`:
 
@@ -172,9 +172,9 @@ This serializes as:
 
 Tracks reference environment attributes from the `EnvironmentAttributes` sealed interface, organized into categories:
 
-- **`EnvironmentAttributes.Audio`** — Sound-related attributes (ambient sounds, music volume, etc.)
-- **`EnvironmentAttributes.Gameplay`** — Gameplay mechanics (monster burning, bed rules, sky light level, etc.)
-- **`EnvironmentAttributes.Visual`** — Visual effects (fog, clouds, sky color, particles, etc.)
+- **`EnvironmentAttributes.Audio`** - Sound-related attributes (ambient sounds, music volume, etc.)
+- **`EnvironmentAttributes.Gameplay`** - Gameplay mechanics (monster burning, bed rules, sky light level, etc.)
+- **`EnvironmentAttributes.Visual`** - Visual effects (fog, clouds, sky color, particles, etc.)
 
 ## Complete Example
 
@@ -212,7 +212,8 @@ timeline("day_night_cycle") {
 
 ## See Also
 
-- [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) - Environment attributes used in timeline tracks
+- [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) - Environment attributes used in timeline
+  tracks
 - [Tags](/docs/data-driven/tags) - Use tags to group timelines
 
 ### External Resources

@@ -11,7 +11,9 @@ routeOverride: /docs/data-driven/loot-tables
 
 # Loot Tables
 
-Loot tables are JSON files that dictate what items should generate in various game situations. They control drops from mobs and blocks, contents of naturally generated containers (chests, barrels, dispensers), fishing rewards, archaeology brushing results, bartering exchanges, and more.
+Loot tables are JSON files that dictate what items should generate in various game situations.
+They control drops from mobs and blocks, contents of naturally generated containers (chests, barrels, dispensers),
+fishing rewards, archaeology brushing results, bartering exchanges, and more.
 
 ## Overview
 
@@ -86,8 +88,9 @@ lootTable("entity_drops") {
 }
 ```
 
-Available types: `ADVANCEMENT_ENTITY`, `ADVANCEMENT_LOCATION`, `ADVANCEMENT_REWARD`, `ARCHEOLOGY`, `BARTER`, `BLOCK`, `BLOCK_USE`,
-`CHEST`, `COMMAND`, `EMPTY`, `ENTITY`, `EQUIPMENT`, `FISHING`, `GIFT`, `GENERIC`, `SELECTOR`, `SHEARING`, `VAULT`.
+Available types: `ADVANCEMENT_ENTITY`, `ADVANCEMENT_LOCATION`, `ADVANCEMENT_REWARD`, `ARCHEOLOGY`, `BARTER`, `BLOCK`,
+`BLOCK_USE`, `CHEST`, `COMMAND`, `EMPTY`, `ENTITY`, `EQUIPMENT`, `FISHING`, `GIFT`, `GENERIC`, `SELECTOR`, `SHEARING`,
+`VAULT`.
 
 ### Global Functions
 
@@ -200,7 +203,8 @@ pool {
 
 ## Entries
 
-Entries define what can be selected during a pool roll. There are singleton entries (yield items) and composite entries (combine other entries).
+Entries define what can be selected during a pool roll.
+There are singleton entries (yield items) and composite entries (combine other entries).
 
 ### Singleton Entries
 
@@ -355,8 +359,8 @@ entries {
 
 ### Slot Sources
 
-Slot sources specify which inventory slots to select from. They can be combined — when multiple sources are provided, they serialize as an
-`InlinableList` (single element as object, multiple as array).
+Slot sources specify which inventory slots to select from. They can be combined - when multiple sources are provided,
+they serialize as an `InlinableList` (single element as object, multiple as array).
 
 #### Contents
 
@@ -447,8 +451,8 @@ slotSources {
 }
 ```
 
-Available origins: `ATTACKING_ENTITY`, `BLOCK_ENTITY`, `DIRECT_ATTACKER`, `INTERACTING_ENTITY`, `LAST_DAMAGE_PLAYER`, `TARGET_ENTITY`,
-`THIS`.
+Available origins: `ATTACKING_ENTITY`, `BLOCK_ENTITY`, `DIRECT_ATTACKER`, `INTERACTING_ENTITY`, `LAST_DAMAGE_PLAYER`,
+`TARGET_ENTITY`, `THIS`.
 
 ### Entry Properties
 
@@ -591,80 +595,80 @@ dataPack("treasure_hunt") {
 ```json
 {
 	"type": "minecraft:entity",
-  "functions": [
-	  {
-		  "function": "minecraft:enchant_randomly"
-	  }
-  ],
-  "pools": [
-    {
-	    "rolls": 1.0,
-	    "entries": [
-		    {
-			    "type": "minecraft:item",
-			    "name": "minecraft:nether_star"
-		    }
-	    ]
-    },
-	  {
-		  "rolls": 1.0,
-		  "bonus_rolls": 0.5,
-      "conditions": [
-	      {
-		      "condition": "minecraft:killed_by_player"
-	      }
-      ],
-      "entries": [
-        {
-	        "type": "minecraft:item",
-	        "name": "minecraft:netherite_sword",
-	        "weight": 1,
-          "functions": [
-	          {
-		          "function": "minecraft:enchant_with_levels",
-		          "levels": 30.0
-	          },
-	          {
-		          "function": "minecraft:set_name",
-		          "name": "Boss Slayer"
-	          }
-          ]
-        },
-	      {
-		      "type": "minecraft:item",
-		      "name": "minecraft:diamond_sword",
-		      "weight": 5,
-		      "functions": [
-			      {
-				      "function": "minecraft:enchant_with_levels",
-				      "levels": {
-					      "type": "minecraft:uniform",
-					      "min": 15.0,
-					      "max": 25.0
-				      }
-			      }
-		      ]
-	      },
-	      {
-		      "type": "minecraft:empty",
-		      "weight": 10
-	      }
-      ]
-	  },
-	  {
-		  "rolls": {
-			  "type": "minecraft:uniform",
-			  "min": 1.0,
-			  "max": 3.0
-		  },
-		  "entries": [
-			  {
-				  "type": "minecraft:loot_table",
-				  "name": "minecraft:chests/end_city_treasure"
-			  }
-      ]
-    }
-  ]
+	"functions": [
+		{
+			"function": "minecraft:enchant_randomly"
+		}
+	],
+	"pools": [
+		{
+			"rolls": 1.0,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:nether_star"
+				}
+			]
+		},
+		{
+			"rolls": 1.0,
+			"bonus_rolls": 0.5,
+			"conditions": [
+				{
+					"condition": "minecraft:killed_by_player"
+				}
+			],
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:netherite_sword",
+					"weight": 1,
+					"functions": [
+						{
+							"function": "minecraft:enchant_with_levels",
+							"levels": 30.0
+						},
+						{
+							"function": "minecraft:set_name",
+							"name": "Boss Slayer"
+						}
+					]
+				},
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:diamond_sword",
+					"weight": 5,
+					"functions": [
+						{
+							"function": "minecraft:enchant_with_levels",
+							"levels": {
+								"type": "minecraft:uniform",
+								"min": 15.0,
+								"max": 25.0
+							}
+						}
+					]
+				},
+				{
+					"type": "minecraft:empty",
+					"weight": 10
+				}
+			]
+		},
+		{
+			"rolls": {
+				"type": "minecraft:uniform",
+				"min": 1.0,
+				"max": 3.0
+			},
+			"entries": [
+				{
+					"type": "minecraft:loot_table",
+					"name": "minecraft:chests/end_city_treasure"
+				}
+			]
+		}
+	]
 }
 ```
 
