@@ -13,6 +13,7 @@ import io.github.ayfri.kore.arguments.types.literals.allPlayers
 import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.entities.Entity
+import io.github.ayfri.kore.features.tags.functionTag
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.generatedFunction
 import io.github.ayfri.kore.functions.load
@@ -21,38 +22,16 @@ import io.github.ayfri.kore.commands.function as functionCommand
 
 private val initializedCooldowns = mutableSetOf<String>()
 
-/** A scoreboard-based cooldown identified by [name] with the given [duration]. */
 data class Cooldown(
-	val name: String,
 	val duration: TimeNumber = 20.ticks,
+    val name: String,
 )
 
-fun cooldown(name: String, duration: TimeNumber = 20.ticks) = Cooldown(name, duration)
-
-/** Handle returned by [registerCooldown] that provides start/reset/ifReady operations. */
-class CooldownHandle(val cooldown: Cooldown) {
-	context(fn: Function)
-	fun start(entity: Entity) {
-		fn.scoreboard {
-			players {
-				set(entity.asSelector(), cooldown.name, cooldown.duration.value.toInt())
-			}
-		}
-	}
-
-	context(fn: Function)
-	fun reset(entity: Entity) {
-		fn.scoreboard {
-			players {
-				set(entity.asSelector(), cooldown.name, 0)
-			}
-		}
-	}
-
+data class CooldownHandle(val cooldown: Cooldown) {
 	context(fn: Function)
 	fun ifReady(entity: Entity, block: Function.() -> Unit) {
 		val generated = fn.datapack.generatedFunction(
-			OopConstants.Cooldown.readyHandlerName(cooldown.name, block.hashCode())
+            OopConstants.cooldownReadyHandlerName(cooldown.name, block.hashCode())
 		) {
 			block()
 			scoreboard {
@@ -62,6 +41,10 @@ class CooldownHandle(val cooldown: Cooldown) {
 			}
 		}
 
+        fn.datapack.functionTag(OopConstants.cooldownReadyHandlersTag, namespace = OopConstants.namespace) {
+            this += generated.asId()
+        }
+
 		fn.execute {
 			ifCondition {
 				score(entity.asSelector(), cooldown.name, rangeOrInt(0))
@@ -69,19 +52,28 @@ class CooldownHandle(val cooldown: Cooldown) {
 			run { functionCommand(generated) }
 		}
 	}
+
+    context(fn: Function)
+    fun reset(entity: Entity) = fn.scoreboard {
+        players {
+            set(entity.asSelector(), cooldown.name, 0)
+        }
+    }
+
+    context(fn: Function)
+    fun start(entity: Entity) = fn.scoreboard {
+        players {
+            set(entity.asSelector(), cooldown.name, cooldown.duration.value.toInt())
+        }
+    }
 }
 
-/**
- * Registers a cooldown and returns a [CooldownHandle].
- *
- * Generates a load function (objective creation) and a tick function (decrement every tick).
- */
 fun DataPack.registerCooldown(cooldown: Cooldown): CooldownHandle {
 	val key = "$name:${cooldown.name}"
 	if (key !in initializedCooldowns) {
 		initializedCooldowns += key
 
-		load(OopConstants.Cooldown.initFunctionName(cooldown.name)) {
+        load(OopConstants.cooldownInitFunctionName(cooldown.name)) {
 			scoreboard {
 				objectives {
 					add(cooldown.name, ScoreboardCriteria.DUMMY)
@@ -89,7 +81,7 @@ fun DataPack.registerCooldown(cooldown: Cooldown): CooldownHandle {
 			}
 		}
 
-		tick(OopConstants.Cooldown.tickFunctionName(cooldown.name)) {
+        tick(OopConstants.cooldownTickFunctionName(cooldown.name)) {
 			scoreboard {
 				players {
 					remove(allPlayers {
@@ -106,4 +98,4 @@ fun DataPack.registerCooldown(cooldown: Cooldown): CooldownHandle {
 }
 
 fun DataPack.registerCooldown(name: String, duration: TimeNumber = 20.ticks) =
-	registerCooldown(Cooldown(name, duration))
+    registerCooldown(Cooldown(name = name, duration = duration))

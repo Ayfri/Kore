@@ -13,17 +13,21 @@ fun entityEffectsTests() = testDataPack("effects_tests") {
 	val nightVision = MobEffectArgument("night_vision")
 
 	function("test_effects") {
-		player.giveEffect(speed, duration = 200, amplifier = 1)
-		player.giveEffect(regen, duration = 100)
-		player.giveInfiniteEffect(nightVision, hideParticles = true)
-		player.clearEffect(speed)
-		player.clearAllEffects()
-
-		lines.any { it.contains("effect give") && it.contains("speed") } assertsIs true
-		lines.any { it.contains("effect give") && it.contains("regeneration") } assertsIs true
-		lines.any { it.contains("effect give") && it.contains("night_vision") && it.contains("infinite") } assertsIs true
-		lines.any { it.contains("effect clear") && it.contains("speed") } assertsIs true
-		lines.any { it.contains("effect clear") && !it.contains("speed") } assertsIs true
+		player.giveEffect(
+			speed,
+			duration = 200,
+			amplifier = 1
+		) assertsIs "effect give @e[limit=1,name=TestPlayer,type=minecraft:player] minecraft:speed 200 1"
+		player.giveEffect(
+			regen,
+			duration = 100
+		) assertsIs "effect give @e[limit=1,name=TestPlayer,type=minecraft:player] minecraft:regeneration 100"
+		player.giveInfiniteEffect(
+			nightVision,
+			hideParticles = true
+		) assertsIs "effect give @e[limit=1,name=TestPlayer,type=minecraft:player] minecraft:night_vision infinite true"
+		player.clearEffect(speed) assertsIs "effect clear @e[limit=1,name=TestPlayer,type=minecraft:player] minecraft:speed"
+		player.clearAllEffects() assertsIs "effect clear @e[limit=1,name=TestPlayer,type=minecraft:player]"
 		lines.size assertsIs 5
 	}
 }.apply {

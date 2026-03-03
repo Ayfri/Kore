@@ -1,64 +1,71 @@
 package io.github.ayfri.kore
 
-data object OopConstants {
-	const val ADVANCEMENT_PREFIX = "kore_oop"
-	const val LOOT_TABLE_PREFIX = "kore_oop"
+object OopConstants {
+    var advancementPrefix = "kore_oop"
+    var namespace = "kore"
 
-	data object Cooldown {
-		fun initFunctionName(name: String) = "cooldown_${name}_init"
-		fun readyHandlerName(name: String, hashCode: Int) = "cooldown_${name}_ready_$hashCode"
-		fun tickFunctionName(name: String) = "cooldown_${name}_tick"
-	}
+    var blockUseEvent = "on_block_use"
+    var changeDimensionEvent = "on_change_dimension"
+    var consumeItemEvent = "on_consume_item"
+    var cooldownReadyHandlersTag = "cooldown_ready_handlers"
+    var deathEvent = "on_death"
+    var deathDispatcherFunction = "kore_oop_death_dispatcher"
+    var deathHandlersTag = "on_death_handlers"
+    var deathTriggerKey = "kore_oop_death"
+    var effectsChangedEvent = "on_effects_changed"
+    var enchantItemEvent = "on_enchant_item"
+    var entityHurtPlayerEvent = "on_entity_hurt_player"
+    var fallFromHeightEvent = "on_fall_from_height"
+    var hurtEntityEvent = "on_hurt_entity"
+    var inventoryChangeEvent = "on_inventory_change"
+    var itemUsedOnBlockEvent = "on_item_used_on_block"
+    var killEvent = "on_kill"
+    var lootTablePrefix = "kore_oop"
+    var mathConst2 = "#2"
+    var mathConst360 = "#360"
+    var mathConstScale = "#scale"
+    var mathInitFunction = "kore_math_init"
+    var mathObjective = "kore_math"
+    var mathSqrtIterations = 8
+    var placeBlockEvent = "on_place_block"
+    var playerTag = "kore_player"
+    var raycastInitFunction = "kore_raycast_init"
+    var raycastObjective = "kore_raycast"
+    var raycastTag = "kore_raycasting"
+    var recipeCraftedEvent = "on_recipe_crafted"
+    var rightClickEvent = "on_right_click"
+    var sleptInBedEvent = "on_slept_in_bed"
+    var startRidingEvent = "on_start_riding"
+    var stateHolder = "#game_state"
+    var stateInitFunction = "kore_state_init"
+    var stateObjective = "kore_state"
+    var stateWhenHandlersTag = "state_when_handlers"
+    var tameAnimalEvent = "on_tame_animal"
+    var targetHitEvent = "on_target_hit"
+    var timerCompleteHandlersTag = "timer_complete_handlers"
 
-	data object Events {
-		const val BLOCK_USE = "on_block_use"
-		const val CONSUME_ITEM = "on_consume_item"
-		const val DEATH = "on_death"
-		const val DEATH_DISPATCHER = "kore_oop_death_dispatcher"
-		const val DEATH_HANDLERS_TAG = "on_death_handlers"
-		const val DEATH_TRIGGER_KEY = "kore_oop_death"
-		const val HURT_ENTITY = "on_hurt_entity"
-		const val INVENTORY_CHANGE = "on_inventory_change"
-		const val ITEM_USED_ON_BLOCK = "on_item_used_on_block"
-		const val KILL = "on_kill"
-		const val PLACE_BLOCK = "on_place_block"
-		const val RIGHT_CLICK = "on_right_click"
+    fun advancementName(event: String) = "$advancementPrefix/$event"
+    fun advancementNameForItem(event: String, itemName: String) = "$advancementPrefix/${event}_$itemName"
+    fun cooldownInitFunctionName(name: String) = "cooldown_${name}_init"
+    fun cooldownReadyHandlerName(name: String, hashCode: Int) = "cooldown_${name}_ready_$hashCode"
+    fun cooldownTickFunctionName(name: String) = "cooldown_${name}_tick"
+    fun deathTriggerLootTable(entityTypeName: String) = "$lootTablePrefix/death_trigger_$entityTypeName"
+    fun dispatchFunctionName(event: String) = "dispatch_$event"
+    fun dispatchFunctionNameForItem(event: String, itemName: String) = "dispatch_${event}_$itemName"
+    fun eventHandlerName(event: String, hashCode: Int) = "${event}_handler_$hashCode"
+    fun eventHandlerNameForItem(event: String, itemName: String, hashCode: Int) =
+        "${event}_${itemName}_handler_$hashCode"
 
-		fun advancementName(event: String) = "$ADVANCEMENT_PREFIX/$event"
-		fun advancementNameForItem(event: String, itemName: String) = "$ADVANCEMENT_PREFIX/${event}_$itemName"
-		fun deathTriggerLootTable(entityTypeName: String) = "$LOOT_TABLE_PREFIX/death_trigger_$entityTypeName"
-		fun dispatchFunctionName(event: String) = "dispatch_$event"
-		fun dispatchFunctionNameForItem(event: String, itemName: String) = "dispatch_${event}_$itemName"
-		fun handlerName(event: String, hashCode: Int) = "${event}_handler_$hashCode"
-		fun handlerNameForItem(event: String, itemName: String, hashCode: Int) =
-			"${event}_${itemName}_handler_$hashCode"
-
-		fun tagName(event: String) = event
-		fun tagNameForItem(event: String, itemName: String) = "${event}_$itemName"
-	}
-
-	data object Math {
-		const val INIT_FUNCTION = "kore_math_init"
-		const val OBJECTIVE = "kore_math"
-		const val CONST_2 = "#2"
-		const val CONST_360 = "#360"
-		const val CONST_SCALE = "#scale"
-		const val SQRT_ITERATIONS = 8
-	}
-
-	data object Vfx {
-		fun shapeFunctionName(name: String) = "vfx_${name}"
-	}
-
-	data object Raycast {
-		const val INIT_FUNCTION = "kore_raycast_init"
-		const val OBJECTIVE = "kore_raycast"
-		const val TAG = "kore_raycasting"
-
-		fun hitFunctionName(name: String) = "raycast_${name}_hit"
-		fun maxFunctionName(name: String) = "raycast_${name}_max"
-		fun startFunctionName(name: String) = "raycast_${name}_start"
-		fun stepFunctionName(name: String) = "raycast_${name}_step"
-	}
-
+    fun eventTagName(event: String) = event
+    fun eventTagNameForItem(event: String, itemName: String) = "${event}_$itemName"
+    fun raycastHitFunctionName(name: String) = "raycast_${name}_hit"
+    fun raycastMaxFunctionName(name: String) = "raycast_${name}_max"
+    fun raycastStartFunctionName(name: String) = "raycast_${name}_start"
+    fun raycastStepFunctionName(name: String) = "raycast_${name}_step"
+    fun spawnerSpawnFunctionName(name: String) = "spawner_${name}_spawn"
+    fun stateHandlerName(stateName: String, hashCode: Int) = "state_${stateName}_handler_$hashCode"
+    fun timerCompleteFunctionName(name: String, hashCode: Int) = "timer_${name}_complete_$hashCode"
+    fun timerInitFunctionName(name: String) = "timer_${name}_init"
+    fun timerTickFunctionName(name: String) = "timer_${name}_tick"
+    fun vfxShapeFunctionName(name: String) = "vfx_$name"
 }

@@ -1,14 +1,24 @@
 package io.github.ayfri.kore
 
+import io.github.ayfri.kore.minigames.captureTheFlagTest
+import io.github.ayfri.kore.minigames.kingOfTheHillTest
+
 fun main() {
-	oopTests()
+	asciiRendererTests()
 	bossBarTests()
 	cooldownTests()
+	entityCommandsTests()
 	entityEffectsTests()
 	eventsTests()
-	raycastTests()
-	mathTests()
-	vfxTests()
-	asciiRendererTests()
+	gameStateTests()
 	markdownRendererTests()
+	mathTests()
+	oopTests()
+	raycastTests()
+	spawnerTests()
+	timerTests()
+	vfxTests()
+
+	captureTheFlagTest()
+	kingOfTheHillTest()
 }

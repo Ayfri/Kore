@@ -37,11 +37,9 @@ data class ScoreboardDelegate(
 
 	private fun ensureObjective() {
 		if (!initialized) {
-			with(fn) {
-				scoreboard {
-					objectives {
-						add(objectiveName, criterion)
-					}
+			fn.scoreboard {
+				objectives {
+					add(objectiveName, criterion)
 				}
 			}
 			initialized = true

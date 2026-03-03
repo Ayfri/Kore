@@ -14,30 +14,30 @@ import kotlin.math.sin
 /** Geometric shapes supported by the VFX engine. */
 enum class Shape {
 	CIRCLE,
+    HELIX,
 	LINE,
 	SPHERE,
 	SPIRAL,
-	HELIX,
 }
 
 /** Configuration for a geometric particle shape emitted by [drawShape]. */
 class VfxShape {
-	var shape: Shape = Shape.CIRCLE
-	lateinit var particle: ParticleTypeArgument
-	var radius: Double = 1.0
-	var points: Int = 20
-	var height: Double = 3.0
-	var length: Double = 5.0
 	var dx: Double = 1.0
 	var dy: Double = 0.0
 	var dz: Double = 0.0
+    var height: Double = 3.0
+    var length: Double = 5.0
+    lateinit var particle: ParticleTypeArgument
+    var points: Int = 20
+    var radius: Double = 1.0
+    var shape: Shape = Shape.CIRCLE
 	var turns: Int = 3
 }
 
 /** Generates a function containing pre-computed `particle` commands for the configured shape. */
 fun DataPack.drawShape(name: String, block: VfxShape.() -> Unit) =
 	VfxShape().apply(block).let { cfg ->
-		generatedFunction(OopConstants.Vfx.shapeFunctionName(name)) {
+        generatedFunction(OopConstants.vfxShapeFunctionName(name)) {
 			when (cfg.shape) {
 				Shape.CIRCLE -> drawCircle(cfg)
 				Shape.LINE -> drawLine(cfg)

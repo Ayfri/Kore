@@ -1,7 +1,5 @@
 package io.github.ayfri.kore
 
-import io.github.ayfri.kore.assertions.assertFileGenerated
-import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.functions.function
@@ -29,35 +27,54 @@ fun raycastTests() = testDataPack("raycast_tests") {
 	function("use_raycast") {
 		with(basicRay) { cast() }
 		with(fullRay) { cast() }
+        lines[0] assertsIs "function raycast_tests:raycast_tests:generated_scopes/raycast_basic_start"
+        lines[1] assertsIs "function raycast_tests:raycast_tests:generated_scopes/raycast_full_start"
+        lines.size assertsIs 2
 	}
 
-	generatedFunctions.any { it.name == OopConstants.Raycast.startFunctionName("basic") } assertsIs true
-	generatedFunctions.any { it.name == OopConstants.Raycast.stepFunctionName("basic") } assertsIs true
-	generatedFunctions.any { it.name == OopConstants.Raycast.hitFunctionName("basic") } assertsIs true
+    val basicStart = generatedFunctions.first { it.name == OopConstants.raycastStartFunctionName("basic") }
+    basicStart.lines[0] assertsIs "tag @s add kore_raycasting"
+    basicStart.lines[1] assertsIs "scoreboard players set @s kore_raycast 0"
+    basicStart.lines[2] assertsIs "execute anchored eyes positioned ^ ^ ^0.5 run function raycast_tests:generated_scopes/raycast_basic_step"
+    basicStart.lines.size assertsIs 3
 
-	generatedFunctions.any { it.name == OopConstants.Raycast.startFunctionName("full") } assertsIs true
-	generatedFunctions.any { it.name == OopConstants.Raycast.stepFunctionName("full") } assertsIs true
-	generatedFunctions.any { it.name == OopConstants.Raycast.hitFunctionName("full") } assertsIs true
-	generatedFunctions.any { it.name == OopConstants.Raycast.maxFunctionName("full") } assertsIs true
+    val basicStep = generatedFunctions.first { it.name == OopConstants.raycastStepFunctionName("basic") }
+    basicStep.lines[0] assertsIs "scoreboard players add @s kore_raycast 1"
+    basicStep.lines[1] assertsIs "execute unless block ~ ~ ~ minecraft:air run function raycast_tests:generated_scopes/raycast_basic_hit"
+    basicStep.lines[2] assertsIs "execute if score @s kore_raycast matches 50 run tag @s remove kore_raycasting"
+    basicStep.lines[3].startsWith("execute if entity @s[tag=kore_raycasting] positioned ^ ^ ^0.5 run function raycast_tests:") assertsIs true
+    basicStep.lines.size assertsIs 4
 
-	generatedFunctions.any { it.name == OopConstants.Raycast.INIT_FUNCTION } assertsIs true
+    val basicHit = generatedFunctions.first { it.name == OopConstants.raycastHitFunctionName("basic") }
+    basicHit.lines[0] assertsIs "say Hit a block!"
+    basicHit.lines[1] assertsIs "tag @s remove kore_raycasting"
+    basicHit.lines.size assertsIs 2
 
-	basicRay.config.name assertsIs "basic"
-	basicRay.config.maxDistance assertsIs 50
-	fullRay.config.step assertsIs 0.25
+    val fullStart = generatedFunctions.first { it.name == OopConstants.raycastStartFunctionName("full") }
+    fullStart.lines[0] assertsIs "tag @s add kore_raycasting"
+    fullStart.lines[1] assertsIs "scoreboard players set @s kore_raycast 0"
+    fullStart.lines[2] assertsIs "execute anchored eyes positioned ^ ^ ^0.25 run function raycast_tests:generated_scopes/raycast_full_step"
+    fullStart.lines.size assertsIs 3
+
+    val fullStep = generatedFunctions.first { it.name == OopConstants.raycastStepFunctionName("full") }
+    fullStep.lines[0] assertsIs "say Step..."
+    fullStep.lines[1] assertsIs "scoreboard players add @s kore_raycast 1"
+    fullStep.lines[2] assertsIs "execute unless block ~ ~ ~ minecraft:air run function raycast_tests:generated_scopes/raycast_full_hit"
+    fullStep.lines[3] assertsIs "execute if score @s kore_raycast matches 100 run function raycast_tests:generated_scopes/raycast_full_max"
+    fullStep.lines[4].startsWith("execute if entity @s[tag=kore_raycasting] positioned ^ ^ ^0.25 run function raycast_tests:") assertsIs true
+    fullStep.lines.size assertsIs 5
+
+    val fullHit = generatedFunctions.first { it.name == OopConstants.raycastHitFunctionName("full") }
+    fullHit.lines[0] assertsIs "say Hit!"
+    fullHit.lines[1] assertsIs "tag @s remove kore_raycasting"
+    fullHit.lines.size assertsIs 2
+
+    val fullMax = generatedFunctions.first { it.name == OopConstants.raycastMaxFunctionName("full") }
+    fullMax.lines[0] assertsIs "say Too far!"
+    fullMax.lines[1] assertsIs "tag @s remove kore_raycasting"
+    fullMax.lines.size assertsIs 2
+
+    generatedFunctions.any { it.name == OopConstants.raycastInitFunction } assertsIs true
 }.apply {
-	val n = "raycast_tests"
-	val d = "$n/data/$n"
-	val g = DataPack.DEFAULT_GENERATED_FUNCTIONS_FOLDER
-
-	assertFileGenerated("$d/function/use_raycast.mcfunction")
-	assertFileGenerated("$d/function/$g/raycast_basic_start.mcfunction")
-	assertFileGenerated("$d/function/$g/raycast_basic_step.mcfunction")
-	assertFileGenerated("$d/function/$g/raycast_basic_hit.mcfunction")
-	assertFileGenerated("$d/function/$g/raycast_full_start.mcfunction")
-	assertFileGenerated("$d/function/$g/raycast_full_step.mcfunction")
-	assertFileGenerated("$d/function/$g/raycast_full_hit.mcfunction")
-	assertFileGenerated("$d/function/$g/raycast_full_max.mcfunction")
-	assertGeneratorsGenerated()
 	generate()
 }

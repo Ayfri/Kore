@@ -15,43 +15,62 @@ import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.generatedFunction
 import io.github.ayfri.kore.scoreboard.ScoreboardEntity
 import io.github.ayfri.kore.teams.Team
 import io.github.ayfri.kore.teams.addMembers
+import io.github.ayfri.kore.commands.function as functionCommand
 
 open class Entity(val selector: SelectorArguments = SelectorArguments()) {
-	open val type = selector.type
 	open val isPlayer get() = type?.name == "player"
-
-	fun asSelector(modification: SelectorArguments.() -> Unit = {}) = allEntities(true) {
-		copyFrom(selector)
-		modification()
-		type = this@Entity.type
-	}
+	open val type = selector.type
 
 	var team: String?
 		get() = selector.team
 		set(value) {
 			selector.team = value
 		}
+
+	fun asSelector(modification: SelectorArguments.() -> Unit = {}) = allEntities(true) {
+		copyFrom(selector)
+		modification()
+	}
 }
 
-inline fun <reified T : Entity> Entity.toEntityOrNull() = when (this) {
-	is T -> this
-	else -> when (T::class) {
-		Player::class -> selector.name?.let { Player(it) }
-		else -> null
-	} as T?
+context(fn: Function)
+fun <T : Entity> T.executeAs(block: Execute.(T) -> FunctionArgument) = fn.execute {
+	asTarget(asSelector())
+	block(this@executeAs)
 }
 
-inline fun <reified T : Entity> Entity.toEntity() =
-	toEntityOrNull<T>() ?: throw IllegalArgumentException("Cannot cast entity '$this' to type '${T::class.simpleName}'")
+context(fn: Function)
+fun <T : Entity> T.executeAsAt(block: Execute.(T) -> FunctionArgument) = fn.execute {
+	asTarget(asSelector())
+	at(asSelector())
+	block(this@executeAsAt)
+}
+
+context(fn: Function)
+fun <T : Entity> T.executeAt(block: Execute.(T) -> FunctionArgument) = fn.execute {
+	at(asSelector())
+	block(this@executeAt)
+}
+
+context(fn: Function)
+fun Entity.batch(name: String, block: Function.() -> Unit): FunctionArgument {
+	val batchFn = fn.datapack.generatedFunction("batch_$name", block = block)
+	fn.execute {
+		asTarget(asSelector())
+		run { functionCommand(batchFn) }
+	}
+	return batchFn
+}
 
 context(fn: Function)
 fun Entity.getScoreEntity(name: String) = ScoreboardEntity(name, this)
 
 context(fn: Function)
-fun Entity.setScore(name: String, value: Int) = fn.scoreboard.players.set(asSelector(), name, value)
+fun Entity.giveItem(item: ItemStack) = fn.give(asSelector(), item.toItemArgument(), item.count?.toInt())
 
 context(fn: Function)
 fun Entity.joinTeam(team: String) = fn.teams {
@@ -67,31 +86,16 @@ fun Entity.leaveAnyTeam() = fn.teams {
 }.also { team = null }
 
 context(fn: Function)
-fun Entity.giveItem(item: ItemStack) = fn.give(asSelector(), item.toItemArgument(), item.count?.toInt())
-
-context(fn: Function)
 fun Entity.replaceItem(slot: ItemSlotType, item: ItemStack) = fn.items {
 	replace(asSelector(), slot, item.toItemArgument(), item.count?.toInt())
 }
 
 context(fn: Function)
-fun <T : Entity> T.executeAs(block: Execute.(T) -> FunctionArgument) = fn.execute {
-	asTarget(asSelector())
-	block(this@executeAs)
-}
+fun Entity.setScore(name: String, value: Int) = fn.scoreboard.players.set(asSelector(), name, value)
 
 context(fn: Function)
-fun <T : Entity> T.executeAt(block: Execute.(T) -> FunctionArgument) = fn.execute {
-	at(asSelector())
-	block(this@executeAt)
-}
-
-context(fn: Function)
-fun <T : Entity> T.executeAsAt(block: Execute.(T) -> FunctionArgument) = fn.execute {
-	asTarget(asSelector())
-	at(asSelector())
-	block(this@executeAsAt)
-}
+fun Entity.teleportTo(coordinate: Vec3, rotation: RotationArgument? = null) =
+	fn.teleport(asSelector(), coordinate, rotation)
 
 context(fn: Function)
 fun Entity.teleportTo(entity: Entity) = fn.teleport(asSelector(), if (entity == this) self() else entity.asSelector())
@@ -102,5 +106,13 @@ fun Entity.teleportTo(x: Number, y: Number, z: Number, yaw: Number? = null, pitc
 	return fn.teleport(asSelector(), coordinate(x, y, z), rotation)
 }
 
-context(fn: Function)
-fun Entity.teleportTo(coordinate: Vec3, rotation: RotationArgument? = null) = fn.teleport(asSelector(), coordinate, rotation)
+inline fun <reified T : Entity> Entity.toEntity() =
+	toEntityOrNull<T>() ?: throw IllegalArgumentException("Cannot cast entity '$this' to type '${T::class.simpleName}'")
+
+inline fun <reified T : Entity> Entity.toEntityOrNull() = when (this) {
+	is T -> this
+	else -> when (T::class) {
+		Player::class -> selector.name?.let { Player(it) }
+		else -> null
+	} as T?
+}

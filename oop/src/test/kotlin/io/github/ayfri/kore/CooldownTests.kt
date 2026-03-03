@@ -1,8 +1,6 @@
 package io.github.ayfri.kore
 
 import io.github.ayfri.kore.arguments.numbers.seconds
-import io.github.ayfri.kore.assertions.assertFileGenerated
-import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.cooldown.registerCooldown
@@ -15,29 +13,22 @@ fun cooldownTests() = testDataPack("cooldown_tests") {
 	val cd = registerCooldown("attack_cd", 2.seconds)
 
 	function("test_cooldown") {
-		cd.apply {
-			start(player)
-			ifReady(player) {
-				say("Cooldown ready!")
-			}
-			reset(player)
-		}
-	}
+        cd.start(player)
+        lines[0] assertsIs "scoreboard players set @e[limit=1,name=TestPlayer,type=minecraft:player] attack_cd 2"
 
-	cd.cooldown.name assertsIs "attack_cd"
-	cd.cooldown.duration.value.toInt() assertsIs 2
+        cd.ifReady(player) {
+            say("Cooldown ready!")
+        }
+        lines[1].startsWith("execute if score @e[limit=1,name=TestPlayer,type=minecraft:player] attack_cd matches 0 run function cooldown_tests:generated_scopes/cooldown_attack_cd_ready_") assertsIs true
 
-	generatedFunctions.any { it.name.contains("cooldown_attack_cd_init") } assertsIs true
-	generatedFunctions.any { it.name.contains("cooldown_attack_cd_tick") } assertsIs true
-	generatedFunctions.any { it.name.contains("cooldown_attack_cd_ready") } assertsIs true
+        cd.reset(player)
+        lines[2] assertsIs "scoreboard players set @e[limit=1,name=TestPlayer,type=minecraft:player] attack_cd 0"
+
+        lines.size assertsIs 3
+    }
+
+    generatedFunctions.any { it.name == OopConstants.cooldownInitFunctionName("attack_cd") } assertsIs true
+    generatedFunctions.any { it.name == OopConstants.cooldownTickFunctionName("attack_cd") } assertsIs true
 }.apply {
-	val n = "cooldown_tests"
-	val d = "$n/data/$n"
-	val g = DataPack.DEFAULT_GENERATED_FUNCTIONS_FOLDER
-
-	assertFileGenerated("$d/function/test_cooldown.mcfunction")
-	assertFileGenerated("$d/function/$g/cooldown_attack_cd_init.mcfunction")
-	assertFileGenerated("$d/function/$g/cooldown_attack_cd_tick.mcfunction")
-	assertGeneratorsGenerated()
 	generate()
 }

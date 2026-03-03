@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.raycast
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.OopConstants
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.numbers.PosNumber
@@ -15,41 +16,23 @@ import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.generatedFunction
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Blocks
-import io.github.ayfri.kore.OopConstants.Raycast as C
 import io.github.ayfri.kore.commands.function as functionCommand
 
 private val initializedRaycastObjective = mutableSetOf<String>()
 
-/**
- * Configuration for a raycast.
- *
- * @property name unique identifier, used to derive generated function names.
- * @property maxDistance maximum number of steps before giving up.
- * @property step distance (in blocks) per step along the local Z axis.
- * @property onHitBlock called when the ray hits a non-air block.
- * @property onMaxDistance called when [maxDistance] is reached without a hit (optional).
- * @property onStep called at every step - useful for particles (optional).
- */
 data class RaycastConfig(
-	var name: String = "raycast",
 	var maxDistance: Int = 100,
-	var step: Double = 0.5,
+    var name: String = "raycast",
 	var onHitBlock: Function.() -> Unit = {},
 	var onMaxDistance: (Function.() -> Unit)? = null,
 	var onStep: (Function.() -> Unit)? = null,
+    var step: Double = 0.5,
 )
 
-/** DSL builder - configures a [RaycastConfig]. */
-inline fun raycastConfig(block: RaycastConfig.() -> Unit) = RaycastConfig().apply(block)
-
-/**
- * Handle returned by [raycast] to fire the ray from any function context.
- */
-class RaycastHandle(
+data class RaycastHandle(
 	val config: RaycastConfig,
-	private val startFunctionId: String,
+    val startFunctionId: String,
 ) {
-	/** Emits the `function` command to start the raycast from the executing entity's eyes. */
 	context(fn: Function)
 	fun cast() {
 		fn.functionCommand(startFunctionId)
@@ -61,26 +44,15 @@ private fun DataPack.ensureRaycastObjective() {
 	if (key in initializedRaycastObjective) return
 	initializedRaycastObjective += key
 
-	load(C.INIT_FUNCTION) {
+    load(OopConstants.raycastInitFunction) {
 		scoreboard {
 			objectives {
-				add(C.OBJECTIVE)
+                add(OopConstants.raycastObjective)
 			}
 		}
 	}
 }
 
-/**
- * Registers a raycast in the datapack.
- *
- * The generated functions work by:
- * 1. Tagging the executing entity and resetting a scoreboard counter.
- * 2. From the entity's eyes, stepping forward in local coordinates.
- * 3. At each step checking for a non-air block (hit) or max distance.
- * 4. Recursively calling the step function until a termination condition is met.
- *
- * @return a [RaycastHandle] to fire the ray from any function context.
- */
 fun DataPack.raycast(config: RaycastConfig): RaycastHandle {
 	ensureRaycastObjective()
 
@@ -91,24 +63,24 @@ fun DataPack.raycast(config: RaycastConfig): RaycastHandle {
 	)
 	val here = vec3(PosNumber.Type.RELATIVE)
 
-	val onHitFn = generatedFunction(C.hitFunctionName(config.name)) {
+    val onHitFn = generatedFunction(OopConstants.raycastHitFunctionName(config.name)) {
 		config.onHitBlock.invoke(this)
-		tag(self()) { remove(C.TAG) }
+        tag(self()) { remove(OopConstants.raycastTag) }
 	}
 
 	val onMaxFn = config.onMaxDistance?.let { callback ->
-		generatedFunction(C.maxFunctionName(config.name)) {
+        generatedFunction(OopConstants.raycastMaxFunctionName(config.name)) {
 			callback.invoke(this)
-			tag(self()) { remove(C.TAG) }
+            tag(self()) { remove(OopConstants.raycastTag) }
 		}
 	}
 
-	val stepFn = generatedFunction(C.stepFunctionName(config.name)) {
+    val stepFn = generatedFunction(OopConstants.raycastStepFunctionName(config.name)) {
 		config.onStep?.invoke(this)
 
 		scoreboard {
 			players {
-				add(self(), C.OBJECTIVE, 1)
+                add(self(), OopConstants.raycastObjective, 1)
 			}
 		}
 
@@ -118,25 +90,25 @@ fun DataPack.raycast(config: RaycastConfig): RaycastHandle {
 		}
 
 		execute {
-			ifCondition { score(self(), C.OBJECTIVE, rangeOrInt(config.maxDistance)) }
+            ifCondition { score(self(), OopConstants.raycastObjective, rangeOrInt(config.maxDistance)) }
 			run {
 				if (onMaxFn != null) functionCommand(onMaxFn)
-				else tag(self()) { remove(C.TAG) }
+                else tag(self()) { remove(OopConstants.raycastTag) }
 			}
 		}
 
 		execute {
-			ifCondition { entity(self { tag = C.TAG }) }
+            ifCondition { entity(self { tag = OopConstants.raycastTag }) }
 			positioned(stepVec)
 			run { functionCommand(asId()) }
 		}
 	}
 
-	val startFn = generatedFunction(C.startFunctionName(config.name)) {
-		tag(self()) { add(C.TAG) }
+    val startFn = generatedFunction(OopConstants.raycastStartFunctionName(config.name)) {
+        tag(self()) { add(OopConstants.raycastTag) }
 		scoreboard {
 			players {
-				set(self(), C.OBJECTIVE, 0)
+                set(self(), OopConstants.raycastObjective, 0)
 			}
 		}
 		execute {
@@ -149,5 +121,4 @@ fun DataPack.raycast(config: RaycastConfig): RaycastHandle {
 	return RaycastHandle(config, startFn.asId())
 }
 
-/** DSL shorthand - configures and registers a raycast in one call. */
 inline fun DataPack.raycast(block: RaycastConfig.() -> Unit) = raycast(RaycastConfig().apply(block))

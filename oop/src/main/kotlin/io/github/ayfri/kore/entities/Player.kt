@@ -6,6 +6,7 @@ import io.github.ayfri.kore.generated.EntityTypes
 class Player(name: String) : Entity() {
 	init {
 		selector.name = name
+		selector.type = EntityTypes.PLAYER
 	}
 
 	var name: String
@@ -20,3 +21,5 @@ class Player(name: String) : Entity() {
 fun player(name: String, nbtData: SelectorArguments.() -> Unit = {}) = Player(name).apply {
 	selector.nbtData()
 }
+
+fun entity(nbtData: SelectorArguments.() -> Unit = {}) = Entity(SelectorArguments().apply(nbtData))
