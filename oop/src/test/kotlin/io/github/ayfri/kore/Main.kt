@@ -12,6 +12,7 @@ fun main() {
 	eventsTests()
 	gameStateTests()
 	markdownRendererTests()
+	miniMessageRendererTests()
 	mathTests()
 	oopTests()
 	raycastTests()
