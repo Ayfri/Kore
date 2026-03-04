@@ -23,19 +23,19 @@ fun writeFiles(datapack: Datapack, outputPath: Path, remappings: RemappingState 
 		.replace(".", "-")
 		.replace(Regex("[^a-zA-Z0-9_-]"), "")
 	val packageName = "kore.dependencies.${normalizedName.lowercase().replace(Regex("[^a-z0-9]"), "")}"
-	val remappings = RemappingState(
+	val actualRemappings = RemappingState(
 		namespaces = remappings.namespaces,
 		objectName = remappings.objectName ?: normalizedName
 	)
 
-	generateDatapackFile(datapack, outputPath, packageName, remappings)
+	generateDatapackFile(datapack, outputPath, packageName, actualRemappings)
 }
 
 /**
  * Generates the main datapack Kotlin file with all resources.
  * Creates a single data object containing all functions, resources, and pack metadata.
  */
-fun generateDatapackFile(datapack: Datapack, outputDir: Path, packageNameOverride: String? = null, remappings: RemappingState) {
+fun generateDatapackFile(datapack: Datapack, outputDir: Path, packageNameOverride: String? = null, remappings: RemappingState = RemappingState()) {
 	// Decode and normalize the datapack name
 	val baseName = datapack.name.removeSuffix(".zip")
 	val decodedName = try {

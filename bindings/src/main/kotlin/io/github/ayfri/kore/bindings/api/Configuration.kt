@@ -54,15 +54,13 @@ class DatapackConfiguration {
 		get() = remappings.objectName
 		set(value) = if (value != null) remappings.objectName(value) else Unit
 	/**
-	 * Select a subfolder within the downloaded datapack.
-	 */
-	var subPath: String? = null
-
-	/**
 	 * Configuration for remapping namespaces within this datapack.
 	 */
 	internal val remappings = RemappingConfiguration()
-
+	/**
+	 * Select a subfolder within the downloaded datapack.
+	 */
+	var subPath: String? = null
 	/**
 	 * Configures namespace remappings for this datapack.
 	 */
@@ -89,13 +87,6 @@ class RemappingConfiguration {
 	fun hasRemappings() = namespaces.isNotEmpty() || objectName != null
 
 	/**
-	 * Renames the generated Kotlin object.
-	 */
-	fun objectName(name: String) {
-		objectName = name
-	}
-
-	/**
 	 * Remaps a namespace to a new name.
 	 */
 	fun namespace(namespace: String, remappedName: String) {
@@ -103,11 +94,10 @@ class RemappingConfiguration {
 	}
 
 	/**
-	 * Infix function to remap a namespace to a new name.
-	 * Usage: `"old_namespace" namespaceRemapTo "new_namespace"`
+	 * Renames the generated Kotlin object.
 	 */
-	infix fun String.namespaceRemapTo(remappedName: String) {
-		namespaces[this] = remappedName
+	fun objectName(name: String) {
+		objectName = name
 	}
 
 	internal fun toState() = RemappingState(namespaces.toMap(), objectName)

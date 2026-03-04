@@ -5,7 +5,7 @@ nav-title: Bindings
 description: Import existing datapacks and generate Kotlin bindings.
 keywords: kore, bindings, import, datapack, github, modrinth, curseforge
 date-created: 2026-01-23
-date-modified: 2026-02-25
+date-modified: 2026-03-04
 routeOverride: /docs/advanced/bindings
 position: 3
 ---
@@ -212,7 +212,6 @@ github("user.repo") {
 	remappings {
 		objectName("MyPack")                           // Change the generated object name
 		namespace("old_namespace", "NewNamespace")     // Rename a specific namespace object
-		"another_ns" namespaceRemapTo "BetterName"     // Infix syntax for namespace renaming
 	}
 }
 ```
@@ -224,7 +223,7 @@ github("user.repo") {
 
 Namespace names are automatically normalized when generating Kotlin object names: dots (`.`) and other
 non-alphanumeric characters are replaced with underscores, then converted to PascalCase. For example,
-`my.namespace` becomes `MyNamespace`. You can override this behaviour for any namespace using the
+`my.namespace` becomes `MyNamespace`. You can override this behavior for any namespace using the
 `remappings {}` block described above.
 
 ## Cache

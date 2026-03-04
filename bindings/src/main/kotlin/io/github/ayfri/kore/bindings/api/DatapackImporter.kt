@@ -18,9 +18,9 @@ internal class DatapackImporter(val source: String) {
 	var includes: List<String> = emptyList()
 	var outputDirectory: Path? = null
 	var packageNameOverride: String? = null
+	var remappings: RemappingState = RemappingState(emptyMap(), null)
 	var skipCache: Boolean = false
 	var subPath: String? = null
-	var remappings: RemappingState = RemappingState(emptyMap(), null)
 
 	/**
 	 * Sets the output directory for generated Kotlin code.
