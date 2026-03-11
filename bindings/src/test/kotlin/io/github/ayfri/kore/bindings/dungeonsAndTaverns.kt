@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.bindings
 
-import io.github.ayfri.kore.bindings.*
 import io.github.ayfri.kore.bindings.api.importDatapacks
 
 fun dungeonsAndTavernsTests() = newTest("dungeonsAndTaverns") {

@@ -15,5 +15,6 @@ fun main() {
 	dungeonsAndTavernsTests()
 	tagsTests()
 	downloadTests()
+	writerTests()
 	println("All tests passed!")
 }

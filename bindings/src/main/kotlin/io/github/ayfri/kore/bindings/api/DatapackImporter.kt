@@ -18,7 +18,7 @@ internal class DatapackImporter(val source: String) {
 	var includes: List<String> = emptyList()
 	var outputDirectory: Path? = null
 	var packageNameOverride: String? = null
-	var remappedNameOverride: String? = null
+	var remappings: RemappingState = RemappingState(emptyMap(), null)
 	var skipCache: Boolean = false
 	var subPath: String? = null
 
@@ -69,6 +69,11 @@ internal class DatapackImporter(val source: String) {
 	 */
 	fun write(datapack: Datapack) {
 		val outputPath = outputDirectory ?: Path("src/main/kotlin")
-		generateDatapackFile(datapack, outputPath, packageNameOverride, remappedNameOverride)
+		generateDatapackFile(datapack, outputPath, packageNameOverride, remappings)
 	}
 }
+
+class RemappingState(
+	val namespaces: Map<String, String> = emptyMap(),
+	val objectName: String? = null
+)

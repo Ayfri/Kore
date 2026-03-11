@@ -4,6 +4,7 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
+import io.github.ayfri.kore.bindings.api.RemappingState
 import io.github.ayfri.kore.bindings.generation.*
 import java.net.URLDecoder
 import java.nio.file.Files
@@ -14,7 +15,7 @@ import kotlin.io.path.absolute
  * Main entry point for generating Kotlin bindings from a datapack.
  * Normalizes the datapack name and delegates to generateDatapackFile.
  */
-fun writeFiles(datapack: Datapack, outputPath: Path) {
+fun writeFiles(datapack: Datapack, outputPath: Path, remappings: RemappingState = RemappingState()) {
 	val baseName = datapack.name.removeSuffix(".zip")
 	// Decode URL-encoded characters and remove invalid characters
 	val decodedName = URLDecoder.decode(baseName, "UTF-8")
@@ -22,15 +23,19 @@ fun writeFiles(datapack: Datapack, outputPath: Path) {
 		.replace(".", "-")
 		.replace(Regex("[^a-zA-Z0-9_-]"), "")
 	val packageName = "kore.dependencies.${normalizedName.lowercase().replace(Regex("[^a-z0-9]"), "")}"
+	val actualRemappings = RemappingState(
+		namespaces = remappings.namespaces,
+		objectName = remappings.objectName ?: normalizedName
+	)
 
-	generateDatapackFile(datapack, outputPath, packageName, normalizedName)
+	generateDatapackFile(datapack, outputPath, packageName, actualRemappings)
 }
 
 /**
  * Generates the main datapack Kotlin file with all resources.
  * Creates a single data object containing all functions, resources, and pack metadata.
  */
-fun generateDatapackFile(datapack: Datapack, outputDir: Path, packageNameOverride: String? = null, normalizedNameOverride: String? = null) {
+fun generateDatapackFile(datapack: Datapack, outputDir: Path, packageNameOverride: String? = null, remappings: RemappingState = RemappingState()) {
 	// Decode and normalize the datapack name
 	val baseName = datapack.name.removeSuffix(".zip")
 	val decodedName = try {
@@ -39,7 +44,7 @@ fun generateDatapackFile(datapack: Datapack, outputDir: Path, packageNameOverrid
 		baseName // If decoding fails, use the original name
 	}
 
-	val normalizedName = normalizedNameOverride ?: decodedName
+	val normalizedName = remappings.objectName ?: decodedName
 		.replace(".", "-")
 		.replace(Regex("[^a-zA-Z0-9_-]"), "")
 
@@ -143,7 +148,9 @@ fun generateDatapackFile(datapack: Datapack, outputDir: Path, packageNameOverrid
 			} else {
 				// Multiple namespaces - create intermediate objects for each namespace
 				allNamespaces.forEach { namespace ->
-					val namespaceObjectName = namespace.pascalCase()
+					val namespaceObjectName = remappings.namespaces[namespace] ?: namespace
+						.replace(Regex("[^a-zA-Z0-9_]"), "_")
+						.pascalCase()
 					val namespaceObject = TypeSpec.objectBuilder(namespaceObjectName)
 						.addModifiers(KModifier.DATA)
 						.addProperty(

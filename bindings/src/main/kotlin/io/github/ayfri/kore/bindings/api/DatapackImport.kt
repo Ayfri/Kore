@@ -120,9 +120,6 @@ class DatapackImportDsl {
 		if (datapackConfig.packageName != null) {
 			importer.packageNameOverride = datapackConfig.packageName!!
 		}
-		if (datapackConfig.remappedName != null) {
-			importer.remappedNameOverride = datapackConfig.remappedName!!
-		}
 		if (datapackConfig.subPath != null) {
 			importer.subPath = datapackConfig.subPath!!
 		}
@@ -131,6 +128,9 @@ class DatapackImportDsl {
 		}
 		if (datapackConfig.excludes.isNotEmpty()) {
 			importer.excludes = datapackConfig.excludes
+		}
+		if (datapackConfig.remappings.hasRemappings()) {
+			importer.remappings = datapackConfig.remappings.toState()
 		}
 
 		// If no custom package name, use global prefix with datapack name

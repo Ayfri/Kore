@@ -119,7 +119,7 @@ fun testCustomRemapName() = newTest("custom_remap") {
 		}
 
 		url(pack.path.toString()) {
-			remappedName = "MyCustomName"
+			remappings { objectName("MyCustomName") }
 		}
 	}
 
@@ -219,7 +219,7 @@ fun testMixedConfiguration() = newTest("mixed_config") {
 		}
 
 		url(pack1.path.toString()) {
-			remappedName = "FirstPack"
+			remappings { objectName("FirstPack") }
 		}
 
 		url(pack2.path.toString()) {
