@@ -29,7 +29,6 @@ internal fun unzip(zipFile: Path): Path {
 			val filePath = tempDir.resolveSafe(entry.name)
 			if (entry.isDirectory) {
 				filePath.makeDirectories()
-				filePath
 			} else {
 				// Ensure parent directories exist
 				filePath.ensureParents()
@@ -55,6 +54,10 @@ data class DataPackGenerator(
 	var options: DataPackGenerationCommonOptions = DataPackGenerationOptions(),
 	var mode: DatapackGenerationMode = DatapackGenerationMode.FOLDER,
 ) {
+	private companion object {
+		val tagsToMerge = setOf("minecraft/tags/function/load.json", "minecraft/tags/functions/tick.json")
+	}
+
 	val outputPath = when (mode) {
 		DatapackGenerationMode.FOLDER -> dataPackPath.resolve(datapack.name)
 		DatapackGenerationMode.JAR -> dataPackPath.resolve("${datapack.name}.jar")
@@ -69,6 +72,7 @@ data class DataPackGenerator(
 		DatapackGenerationMode.JAR -> JarOutputStream(FileOutputStream(outputPath.toJavaFile()))
 		else -> null
 	}
+	private val writtenArchiveEntries = mutableSetOf<String>()
 
 	fun generate() {
 		if (datapack.generated) {
@@ -100,6 +104,7 @@ data class DataPackGenerator(
 			.forEach { generator ->
 				val namespace = generator.namespace ?: datapack.name
 				val path = generator.getPathFromDataDir(outputDataPath, namespace)
+				if (options.mergeWithPacks.isNotEmpty() && path.dataRelativePath() in tagsToMerge) return@forEach
 				writeFile(path.toString(), generator.generateJson(datapack))
 			}
 
@@ -112,10 +117,9 @@ data class DataPackGenerator(
 			return
 		}
 
-		val mergeWithPacks = options.mergeWithPacks.sortedBy { it.name.toString() }
+		val mergeWithPacks = options.mergeWithPacks.sortedBy { it.name }
 		println("Merging datapack with other packs: ${mergeWithPacks.joinToString(", ")}")
 
-		val tagsToMerge = listOf("minecraft/tags/function/load.json", "minecraft/tags/functions/tick.json")
 		val foundTags = tagsToMerge.associateWith { mutableListOf<Tag<TaggedResourceLocationArgument>>() }
 
 		mergeWithPacks.forEach { otherPath ->
@@ -151,6 +155,7 @@ data class DataPackGenerator(
 				if (relativePath in tagsToMerge) {
 					val tag = datapack.jsonEncoder.decodeFromString<Tag<TaggedResourceLocationArgument>>(file.readText())
 					foundTags[relativePath]?.add(tag)
+					return@copyFiles
 				}
 				copyFile(file, relativePath, to = outputDataPath)
 			}
@@ -198,7 +203,7 @@ data class DataPackGenerator(
 	}
 
 	fun copyFile(file: File, path: String, to: Path = outputDataPath) {
-		val finalPath = to.resolve(path.replace("\\", "/"))
+		val finalPath = to.resolve(path.normalizePath())
 
 		when (mode) {
 			DatapackGenerationMode.FOLDER -> {
@@ -218,12 +223,9 @@ data class DataPackGenerator(
 			DatapackGenerationMode.JAR, DatapackGenerationMode.ZIP -> outputStream?.let {
 				if (file.isDirectory) return
 
-				val relativePath =
-					finalPath.toString().removePrefix(outputPath.toString()).removePrefix("/")
-
-				it.putNextEntry(ZipEntry(relativePath))
-				file.inputStream().use { input -> input.copyTo(it) }
-				it.closeEntry()
+				writeArchiveEntry(finalPath.archiveRelativePath()) {
+					file.inputStream().use { input -> input.copyTo(it) }
+				}
 			}
 		}
 	}
@@ -231,22 +233,39 @@ data class DataPackGenerator(
 	fun writeFile(path: String, content: String, to: Path = outputPath) = writeFile(path, content.toByteArray(), to)
 
 	fun writeFile(path: String, content: ByteArray, to: Path = outputPath) {
-		val finalPath = to.resolve(path.replace("\\", "/"))
+		val finalPath = to.resolve(path.normalizePath())
 
 		when (mode) {
 			DatapackGenerationMode.FOLDER -> {
-				val file = to.resolve(finalPath)
-				file.ensureParents()
-				file.write(content)
+				finalPath.ensureParents()
+				finalPath.write(content)
 			}
 
 			DatapackGenerationMode.JAR, DatapackGenerationMode.ZIP -> outputStream?.let {
-				val relativePath = finalPath.toString().removePrefix(outputPath.toString()).removePrefix("/")
-
-				it.putNextEntry(ZipEntry(relativePath))
-				it.write(content)
-				it.closeEntry()
+				writeArchiveEntry(finalPath.archiveRelativePath()) { write(content) }
 			}
+		}
+	}
+
+	private fun String.normalizePath() = replace("\\", "/")
+
+	private fun Path.dataRelativePath() =
+		toString().normalizePath().removePrefix(outputDataPath.toString().normalizePath()).removePrefix("/")
+
+	private fun Path.archiveRelativePath() = toString()
+		.removePrefix(outputPath.toString())
+		.replace("\\", "/")
+		.removePrefix("/")
+
+	private fun writeArchiveEntry(path: String, block: ZipOutputStream.() -> Unit) {
+		outputStream?.let {
+			check(writtenArchiveEntries.add(path)) {
+				"Cannot write duplicate archive entry '$path' while generating datapack '${datapack.name}'."
+			}
+
+			it.putNextEntry(ZipEntry(path))
+			it.block()
+			it.closeEntry()
 		}
 	}
 }

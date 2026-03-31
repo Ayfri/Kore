@@ -164,7 +164,7 @@ fun mergeDatapacksTests() {
 	}
 
 	val dp10 = generatePack("dp10") {
-		predicate() {
+		predicate {
 			namespace = "minecraft"
 
 			randomChance(0.5f)
@@ -192,6 +192,23 @@ fun mergeDatapacksTests() {
 
 	dp9.generate {
 		mergeWithPacks(dp10.dp)
+	}
+
+	val dp11 = generatePack("dp11") {
+		load("my_load_1") {
+			say("Hello, load 1!")
+		}
+	}
+
+	val dp12 = generatePack("dp12") {
+		load("my_load_2") {
+			say("Hello, load 2!")
+		}
+	}
+
+	dp11.assertFileGeneratedInZip("data/minecraft/tags/function/load.json")
+	dp11.generateZip {
+		mergeWithPacks(dp12.dp)
 	}
 }
 

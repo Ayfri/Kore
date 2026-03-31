@@ -5,7 +5,7 @@ nav-title: Creating A Datapack
 description: A guide for creating a Minecraft datapack using Kore.
 keywords: minecraft, datapack, kore, guide
 date-created: 2024-02-26
-date-modified: 2026-02-20
+date-modified: 2026-03-31
 routeOverride: /docs/guides/creating-a-datapack
 ---
 
@@ -224,6 +224,10 @@ dataPack("my_datapack") {
 	// datapack code here
 }.generateZip()
 ```
+
+Generated ZIP entries follow the ZIP specification and always use forward slashes (`/`) internally.
+This keeps the archive compatible with strict tools such as Windows Explorer in addition to WinRAR and other archive
+managers.
 
 ### Jar Generation
 
