@@ -19,9 +19,9 @@ dependencies {
 }
 
 kotlin {
-	jvmToolchain(17)
+	jvmToolchain(21)
 }
 
 application {
-	mainClass.set("MainKt")
+	mainClass = "MainKt"
 }

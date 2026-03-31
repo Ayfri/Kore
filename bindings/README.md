@@ -344,7 +344,6 @@ datapacks.forEach { pack ->
 
 ## Implementation Notes
 
-- **Kotlin 2.2.0** with JVM toolchain 17
 - **KotlinPoet** for code generation
 - **Clikt** for CLI support (future use)
 - **kotlinx-serialization** for JSON parsing
