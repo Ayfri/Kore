@@ -32,10 +32,12 @@ fun generatePackProperty(packMeta: PackMCMeta): PropertySpec {
 		append("    description = textComponent(\"Imported datapack\"),\n")
 		append("    minFormat = ${packFormatInitializer(packMeta.pack.minFormat)},\n")
 		append("    maxFormat = ${packFormatInitializer(packMeta.pack.maxFormat)}")
+		@Suppress("DEPRECATION")
 		packMeta.pack.packFormat?.let { format ->
 			append(",\n")
 			append("    packFormat = ${packFormatInitializer(format)}")
 		}
+		@Suppress("DEPRECATION")
 		packMeta.pack.supportedFormats?.let { sf ->
 			append(",\n")
 			append("    supportedFormats = ${supportedFormatsInitializer(sf)}")
