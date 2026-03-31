@@ -1,13 +1,18 @@
 package io.github.ayfri.kore.arguments.numbers
 
-internal val Double.str
-	get() = when {
-		this.rem(1) == 0.0 -> this.toInt().toString()
-		else -> toString()
-	}
+import kotlin.math.truncate
 
-internal val Double.strUnlessZero
+val Double.truncated get() = truncate(this)
+
+fun Double.toStringTruncatedIfRound() = when {
+	this % 1 == 0.0 -> toLong().toString()
+	else -> toString()
+}
+
+fun Double.toStringTruncated() = toLong().toString()
+
+internal val Double.truncateIfRoundEmptyIfZero
 	get() = when {
 		this == 0.0 -> ""
-		else -> str
+		else -> toLong().toString()
 	}

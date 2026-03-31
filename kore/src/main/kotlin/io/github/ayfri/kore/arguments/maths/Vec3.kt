@@ -23,6 +23,10 @@ data class Vec3(val x: PosNumber, val y: PosNumber, val z: PosNumber) : Argument
 	val relative get() = Vec3(x.relative, y.relative, z.relative)
 	val world get() = Vec3(x.world, y.world, z.world)
 
+	val isLocal get() = x.isLocal && y.isLocal && z.isLocal
+	val isRelative get() = x.isRelative && y.isRelative && z.isRelative
+	val isWorld get() = x.isWorld && y.isWorld && z.isWorld
+
 	operator fun plus(other: Vec3) = Vec3(x + other.x, y + other.y, z + other.z)
 	operator fun plus(quotient: Number) = Vec3(x + quotient, y + quotient, z + quotient)
 	operator fun minus(other: Vec3) = Vec3(x - other.x, y - other.y, z - other.z)
@@ -84,9 +88,21 @@ data class Vec3(val x: PosNumber, val y: PosNumber, val z: PosNumber) : Argument
 	fun negate() = Vec3(-x, -y, -z)
 	fun normalize() = this / length
 	fun round() = Vec3(x.value.roundToInt(), y.value.roundToInt(), z.value.roundToInt())
+	fun truncate() = Vec3(x.truncate(), y.truncate(), z.truncate())
 
+	fun toStringTruncatedIfZero() =
+		"${x.toStringTruncatedIfZero()} ${y.toStringTruncatedIfZero()} ${z.toStringTruncatedIfZero()}"
+
+	fun toStringTruncated() = "${x.toStringTruncated()} ${y.toStringTruncated()} ${z.toStringTruncated()}"
 	fun toStringValues() = "${x.value} ${y.value} ${z.value}"
 	fun toVec2() = Vec2(x, y)
+
+	companion object {
+		fun fromString(string: String) = string.split(' ').let {
+			require(it.size == 3) { "Vec3 string must have exactly 3 components" }
+			Vec3(it[0].toDouble(), it[1].toDouble(), it[2].toDouble())
+		}
+	}
 }
 
 fun vec3(x: Number, y: Number, z: Number) = Vec3(x, y, z)

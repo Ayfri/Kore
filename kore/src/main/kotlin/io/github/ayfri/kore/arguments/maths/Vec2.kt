@@ -82,10 +82,20 @@ data class Vec2(val x: PosNumber, val y: PosNumber) : Argument {
 	fun negate() = Vec2(-x, -y)
 	fun normalize() = this / length
 	fun round() = Vec2(x.value.roundToInt(), y.value.roundToInt())
+	fun truncate() = Vec2(x.truncate(), y.truncate())
 
+	fun toStringTruncatedIfZero() = "${x.toStringTruncatedIfZero()} ${y.toStringTruncatedIfZero()}"
+	fun toStringTruncated() = "${x.toStringTruncated()} ${y.toStringTruncated()}"
 	fun toStringValues() = "${x.value} ${y.value}"
 	fun toVec3(z: PosNumber) = Vec3(x, y, z)
 	fun toVec3(z: Number = 0, type: PosNumber.Type = PosNumber.Type.WORLD) = Vec3(x, y, pos(z, type))
+
+	companion object {
+		fun fromString(string: String) = string.split(' ').let {
+			require(it.size == 2) { "Invalid Vec2 string: $string" }
+			Vec2(it[0].toDouble(), it[1].toDouble())
+		}
+	}
 }
 
 fun vec2(x: Number, y: Number) = Vec2(x, y)

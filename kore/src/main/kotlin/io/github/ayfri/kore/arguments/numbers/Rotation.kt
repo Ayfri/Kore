@@ -5,10 +5,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable(with = RotNumber.Companion.RotNumberSerializer::class)
 data class RotNumber(val value: Double, val type: Type = Type.WORLD) : Comparable<RotNumber> {
-	enum class Type {
-		RELATIVE,
+	enum class Type(val prefix: String = "") {
+		RELATIVE("~"),
 		WORLD
 	}
+
+	val prefix get() = type.prefix
+
+	val isRelative get() = type == Type.RELATIVE
+	val isWorld get() = type == Type.WORLD
 
 	operator fun plus(other: RotNumber) = RotNumber(value + other.value, type)
 	operator fun plus(other: Number) = RotNumber(value + other.toDouble(), type)
@@ -28,9 +33,18 @@ data class RotNumber(val value: Double, val type: Type = Type.WORLD) : Comparabl
 	fun toWorld() = RotNumber(value, Type.WORLD)
 
 	override fun toString() = when (type) {
-		Type.RELATIVE -> "~${value.strUnlessZero}"
-		Type.WORLD -> value.str
+		Type.RELATIVE -> "$prefix${value.truncateIfRoundEmptyIfZero}"
+		Type.WORLD -> value.toString()
 	}
+
+	fun stripTrailingNumbers() = copy(value = value.toLong().toDouble())
+
+	fun toStringTruncatedIfZero() = when (type) {
+		Type.RELATIVE -> "$prefix${value.truncateIfRoundEmptyIfZero}"
+		Type.WORLD -> value.toStringTruncatedIfRound()
+	}
+
+	fun toStringTruncated() = prefix + value.toStringTruncated()
 
 	companion object {
 		data object RotNumberSerializer : ToStringSerializer<RotNumber>()
