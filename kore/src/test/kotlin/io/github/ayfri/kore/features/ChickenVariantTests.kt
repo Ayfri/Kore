@@ -31,4 +31,6 @@ fun DataPack.chickenVariantTests() {
 			]
 		}
 	""".trimIndent()
+
+	roundTrip(chickenVariants.last())
 }

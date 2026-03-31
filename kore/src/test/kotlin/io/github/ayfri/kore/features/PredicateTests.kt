@@ -600,4 +600,9 @@ fun DataPack.predicateTests() {
 			"thundering": false
 		}
 	""".trimIndent()
+
+	predicate("round_trip_random_chance") {
+		randomChance(0.4f)
+	}
+	roundTrip(predicates.last())
 }

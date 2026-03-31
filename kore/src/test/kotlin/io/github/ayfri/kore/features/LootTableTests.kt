@@ -303,4 +303,13 @@ fun DataPack.lootTableTests() {
 			]
 		}
 	""".trimIndent()
+
+	lootTable("round_trip_simple_pool") {
+		pool {
+			entries {
+				item(Items.DIAMOND)
+			}
+		}
+	}
+	roundTrip(lootTables.last())
 }

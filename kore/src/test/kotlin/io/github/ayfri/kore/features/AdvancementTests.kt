@@ -1263,6 +1263,19 @@ private fun DataPack.allTriggersTests() {
 			}
 		}
 	""".trimIndent()
+
+	advancement("round_trip_simple_advancement") {
+		display(Items.DIAMOND_SWORD, "Legendary Sword", "A powerful enchanted blade") {
+			frame = AdvancementFrameType.CHALLENGE
+			showToast = true
+			announceToChat = true
+		}
+
+		criteria {
+			impossible("impossible")
+		}
+	}
+	roundTrip(advancements.last())
 }
 
 private fun DataPack.componentsDisplay() {

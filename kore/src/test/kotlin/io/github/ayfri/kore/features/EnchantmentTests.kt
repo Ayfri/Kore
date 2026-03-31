@@ -1185,4 +1185,12 @@ fun DataPack.enchantmentTests() {
 			}
 		}
 	""".trimIndent()
+
+	enchantment("round_trip_simple_enchantment") {
+		supportedItems(Items.DIAMOND_SWORD)
+		slots(EquipmentSlot.MAINHAND)
+		minCost(1, 10)
+		maxCost(21, 10)
+	}
+	roundTrip(enchantments.last())
 }

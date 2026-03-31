@@ -4,6 +4,7 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.say
+import io.github.ayfri.kore.features.roundTrip
 import io.github.ayfri.kore.features.worldgen.dimension.biomesource.multiNoise
 import io.github.ayfri.kore.features.worldgen.dimension.biomesource.multinoise.doubleOrPair
 import io.github.ayfri.kore.features.worldgen.dimension.biomesource.multinoise.multiNoiseEntry
@@ -58,7 +59,7 @@ fun DataPack.dimensionTests() {
 	""".trimIndent()
 
 	dimension("my_flat_nether_dimension", DimensionTypes.THE_NETHER) {
-		flatGenerator(io.github.ayfri.kore.generated.Biomes.NETHER_WASTES) {
+		flatGenerator(Biomes.NETHER_WASTES) {
 			features = true
 			structureOverrides = listOf(StructureSets.NETHER_COMPLEXES)
 
@@ -105,4 +106,6 @@ fun DataPack.dimensionTests() {
 			}
 		}
 	}
+
+	roundTrip(dimensions.last())
 }

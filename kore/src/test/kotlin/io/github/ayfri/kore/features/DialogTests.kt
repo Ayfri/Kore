@@ -241,4 +241,7 @@ fun DataPack.dialogTests() {
 			}
 		}
 	""".trimIndent()
+
+	dialogBuilder.notice("round_trip_notice", "Welcome!") {}
+	roundTrip(dialogs.last().data)
 }

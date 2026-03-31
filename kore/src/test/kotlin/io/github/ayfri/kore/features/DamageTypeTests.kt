@@ -29,4 +29,6 @@ fun DataPack.damageTypeTests() {
 	load {
 		damage(self(), 1f, damageType)
 	}
+
+	roundTrip(damageTypes.last())
 }
