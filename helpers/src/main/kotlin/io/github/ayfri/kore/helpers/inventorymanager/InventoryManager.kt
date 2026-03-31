@@ -105,7 +105,7 @@ data class InventoryManager<T : ContainerArgument>(val container: T) {
 		/** Remove scoreboard objectives created by Inventory Manager across runs. */
 		context(dp: DataPack)
 		fun removeClickDetectors() {
-			dp.load("inventory_manager_${hashCode()}_remover") {
+			dp.load("inventory_manager_${this.hashCode()}_remover") {
 				repeat(counter) {
 					scoreboard.objectives.remove("_inventory_manager_${name}_click_detector_$it")
 				}

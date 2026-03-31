@@ -18,8 +18,8 @@ fun formatRelativeDate(isoDateString: String): String {
 
 	val diffMs = now.getTime() - date.getTime()
 	val diffDays = (diffMs / (1000 * 60 * 60 * 24)).toInt()
-	val diffMonths = (diffDays / 30).toInt()
-	val diffYears = (diffDays / 365).toInt()
+	val diffMonths = diffDays / 30
+	val diffYears = diffDays / 365
 
 	return when {
 		diffDays < 1 -> "today"

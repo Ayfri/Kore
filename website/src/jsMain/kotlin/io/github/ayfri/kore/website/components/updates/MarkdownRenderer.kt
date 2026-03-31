@@ -4,21 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.varabyte.kobweb.compose.css.*
 import io.github.ayfri.kore.website.GlobalStyle
-import io.github.ayfri.kore.website.utils.alpha
-import io.github.ayfri.kore.website.utils.loadPrism
-import io.github.ayfri.kore.website.utils.marginY
-import io.github.ayfri.kore.website.utils.mdMax
-import io.github.ayfri.kore.website.utils.paddingY
-import io.github.ayfri.kore.website.utils.smMax
-import io.github.ayfri.kore.website.utils.transition
+import io.github.ayfri.kore.website.utils.*
+import kotlinx.browser.document
+import kotlinx.dom.clear
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
-import org.w3c.dom.HTMLElement
-import kotlinx.browser.document
-import kotlinx.browser.window
-import kotlinx.dom.clear
-import org.w3c.dom.Element
 import org.w3c.dom.HTMLDivElement
+import org.w3c.dom.HTMLElement
 import org.w3c.dom.get
 
 @Composable
@@ -48,7 +40,7 @@ fun MarkdownRenderer(markdown: String, id: String) {
 				val codeBlocks = container.querySelectorAll("pre code")
 				for (i in 0 until codeBlocks.length) {
 					val codeBlock = codeBlocks[i] as? HTMLElement ?: continue
-					val parent = codeBlock.parentElement as? Element ?: continue
+					val parent = codeBlock.parentElement ?: continue
 
 					// Add language class for Prism
 					val language = codeBlock.className.split("-").getOrNull(1)
