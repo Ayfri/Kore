@@ -1,8 +1,13 @@
 package io.github.ayfri.kore.bindings.generation
 
+import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.asClassName
 import io.github.ayfri.kore.pack.*
+
+private val packFormatMember = MemberName("io.github.ayfri.kore.pack", "packFormat")
+private val textComponentMember = MemberName("io.github.ayfri.kore.arguments.chatcomponents", "textComponent")
 
 /**
  * Generates the pack property from PackMCMeta.
@@ -12,39 +17,54 @@ fun generatePackProperty(packMeta: PackMCMeta): PropertySpec {
 	val packClassName = PackSection::class.asClassName()
 
 	fun packFormatInitializer(format: PackFormat) = when (format) {
-		is PackFormatMajor -> "packFormat(${format.major})"
-		is PackFormatFull -> "packFormat(${format.major}, ${format.minor})"
-		is PackFormatDecimal -> "packFormat(${format.value})"
+		is PackFormatMajor -> CodeBlock.of("%M(%L)", packFormatMember, format.major)
+		is PackFormatFull -> CodeBlock.of("%M(%L, %L)", packFormatMember, format.major, format.minor)
+		is PackFormatDecimal -> CodeBlock.of("%M(%L)", packFormatMember, format.value)
 	}
 
 	fun supportedFormatsInitializer(sf: SupportedFormats) = when {
-		sf.number != null -> "SupportedFormats(number = ${sf.number})"
-		sf.list != null -> "SupportedFormats(list = listOf(${sf.list!!.joinToString(", ")}))"
-		else -> "SupportedFormats(minInclusive = ${sf.minInclusive}, maxInclusive = ${sf.maxInclusive})"
+		sf.number != null -> CodeBlock.of("%T(number = %L)", SupportedFormats::class, sf.number)
+		sf.list != null -> CodeBlock.builder()
+			.add("%T(list = listOf(", SupportedFormats::class)
+			.apply {
+				sf.list!!.forEachIndexed { index, value ->
+					if (index > 0) add(", ")
+					add("%L", value)
+				}
+			}
+			.add("))")
+			.build()
+
+		else -> CodeBlock.of(
+			"%T(minInclusive = %L, maxInclusive = %L)",
+			SupportedFormats::class,
+			sf.minInclusive,
+			sf.maxInclusive
+		)
 	}
 
-	// Build the initializer code
-	val initializerCode = buildString {
-		append("PackSection(\n")
-
-		// For description, we'll generate a simple textComponent call
-		// The actual description will be preserved through the Pack object
-		append("    description = textComponent(\"Imported datapack\"),\n")
-		append("    minFormat = ${packFormatInitializer(packMeta.pack.minFormat)},\n")
-		append("    maxFormat = ${packFormatInitializer(packMeta.pack.maxFormat)}")
-		@Suppress("DEPRECATION")
-		packMeta.pack.packFormat?.let { format ->
-			append(",\n")
-			append("    packFormat = ${packFormatInitializer(format)}")
+	val initializerCode = CodeBlock.builder()
+		.add("%T(\n", packClassName)
+		.indent()
+		.add("description = %M(%S),\n", textComponentMember, "Imported datapack")
+		.add("minFormat = %L,\n", packFormatInitializer(packMeta.pack.minFormat))
+		.add("maxFormat = %L", packFormatInitializer(packMeta.pack.maxFormat))
+		.apply {
+			@Suppress("DEPRECATION")
+			packMeta.pack.packFormat?.let { format ->
+				add(",\n")
+				add("packFormat = %L", packFormatInitializer(format))
+			}
+			@Suppress("DEPRECATION")
+			packMeta.pack.supportedFormats?.let { supportedFormats ->
+				add(",\n")
+				add("supportedFormats = %L", supportedFormatsInitializer(supportedFormats))
+			}
 		}
-		@Suppress("DEPRECATION")
-		packMeta.pack.supportedFormats?.let { sf ->
-			append(",\n")
-			append("    supportedFormats = ${supportedFormatsInitializer(sf)}")
-		}
-
-		append("\n)")
-	}
+		.add("\n")
+		.unindent()
+		.add(")")
+		.build()
 
 	return PropertySpec.builder("pack", packClassName)
 		.initializer(initializerCode)

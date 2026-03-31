@@ -6,14 +6,48 @@ import io.github.ayfri.kore.features.advancements.advancement
 import io.github.ayfri.kore.features.advancements.criteria
 import io.github.ayfri.kore.features.advancements.triggers.tick
 import io.github.ayfri.kore.functions.function
+import io.github.ayfri.kore.pack.packFormat
 import kotlin.io.path.readText
 
 fun writerTests() {
+	testPackMetadataGenerationUsesPackHelpers()
 	testNamespaceWithDotsInMultiNamespace()
 	testNamespaceWithHyphensInMultiNamespace()
 	testNamespaceWithMixedSpecialCharsInMultiNamespace()
 	testNamespaceRemappingRenamesObject()
 	testObjectNameAndNamespaceRemappingCombined()
+}
+
+fun testPackMetadataGenerationUsesPackHelpers() = newTest("pack_metadata_generation") {
+	val pack = createDataPack("pack_metadata_generation") {
+		function("fn", namespace = "packmeta") { say("metadata") }
+
+		pack.apply {
+			minFormat = packFormat(95)
+			maxFormat = packFormat(95, 1)
+			@Suppress("DEPRECATION")
+			run {
+				packFormat = packFormat(90)
+			}
+		}
+	}
+
+	pack.generate()
+
+	val explored = explore(pack.path.toString())
+	val srcDir = srcDir()
+	writeFiles(explored, srcDir)
+
+	val content = srcDir.resolve("PackMetadataGeneration.kt").readText()
+
+	content.contains("import io.github.ayfri.kore.arguments.chatcomponents.textComponent") assertsIs true
+	content.contains("import io.github.ayfri.kore.pack.packFormat") assertsIs true
+	content.contains("val pack: PackSection = PackSection(") assertsIs true
+	content.contains("description = textComponent(\"Imported datapack\")") assertsIs true
+	content.contains("minFormat = packFormat(95)") assertsIs true
+	content.contains("maxFormat = packFormat(95, 1)") assertsIs true
+	content.contains("packFormat = packFormat(90)") assertsIs true
+	content.contains("supportedFormats =") assertsIs false
 }
 
 fun testNamespaceWithDotsInMultiNamespace() = newTest("ns_normalize_dots") {

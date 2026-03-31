@@ -84,9 +84,6 @@ fun generateDatapackFile(datapack: Datapack, outputDir: Path, packageNameOverrid
 
 			// Add pack metadata
 			datapack.pack?.let { packMeta ->
-				addImport("io.github.ayfri.kore.pack", "PackSection", "packFormat")
-				addImport("io.github.ayfri.kore.arguments.chatcomponents", "textComponent")
-
 				dataObject.addProperty(generatePackProperty(packMeta))
 			}
 

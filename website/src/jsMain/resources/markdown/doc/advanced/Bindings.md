@@ -106,6 +106,10 @@ val path = VanillaRefresh.PATH // Path to the source file/folder
 val packMeta = VanillaRefresh.pack // PackSection object from pack.mcmeta
 ```
 
+When pack metadata is reconstructed in generated bindings, Kore emits the `PackSection` using the same helpers as
+handwritten code, including `packFormat(...)` for version formats and `SupportedFormats(...)` when legacy supported
+formats are present.
+
 ## Generated structure
 
 For each imported datapack, a Kotlin file is generated containing:
