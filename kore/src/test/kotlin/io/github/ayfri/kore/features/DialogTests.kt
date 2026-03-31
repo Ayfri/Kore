@@ -218,7 +218,7 @@ fun DataPack.dialogTests() {
 		columns = 5
 		exitAction("cancelled") {
 			action {
-				dynamicRunCommand {
+				dynamicRunCommand(this@dialogTests) {
 					say("cancelled")
 				}
 			}

@@ -36,7 +36,3 @@ fun DialogActionContainer.dynamicRunCommand(dp: DataPack, block: Function.() -> 
 	}
 	action = DynamicRunCommand("function ${newFunction.name}")
 }
-
-/** Dynamically build a command to run, you can use macros with the same names as the inputs. */
-context(dp: DataPack)
-fun DialogActionContainer.dynamicRunCommand(block: Function.() -> Command) = apply { dynamicRunCommand(dp, block) }

@@ -11,7 +11,7 @@ import java.io.File
 
 val SystemPathSeparatorString = SystemPathSeparator.toString()
 
-val Path.asInvariantPathSeparator get() = this.toStringWithSeperator("/")
+val Path.asInvariantPathSeparator get() = this.toStringWithSeparator("/")
 val Path.nameWithoutExtension get() = this.name.substringBeforeLast('.')
 
 fun Path(file: File) = Path(file.absolutePath)
@@ -29,8 +29,8 @@ fun Path.resolve(vararg paths: String) = Path(paths.fold(this.toJavaFile()) { ac
 fun Path.toJavaFile() = File(this.toString())
 fun Path.toSink() = SystemFileSystem.sink(this)
 fun Path.toSource() = SystemFileSystem.source(this)
-fun Path.toStringWithSeperator(seperator: String = SystemPathSeparatorString) =
-	this.toString().replace(SystemPathSeparatorString, seperator)
+fun Path.toStringWithSeparator(separator: String = SystemPathSeparatorString) =
+	this.toString().replace(SystemPathSeparatorString, separator)
 
 fun Path.readText() = if (!this.isDirectory()) this.toSource().buffered().run {
 	readString()
@@ -65,9 +65,8 @@ fun Path.relativeTo(base: Path): Path {
 	val pathParts = normPath.split(sep).filter { it.isNotEmpty() }
 	val baseParts = normBase.split(sep).filter { it.isNotEmpty() }
 
-	val common = pathParts.zip(baseParts).takeWhile { it.first == it.second }.count()
-	if (common == 0)
-		throw IllegalArgumentException("Paths have no common root:\nPath: $normPath\nBase: $normBase")
+	val common = pathParts.zip(baseParts).takeWhile { it.first == it.second }.size
+	require(common != 0) { "Paths have no common root:\nPath: $normPath\nBase: $normBase" }
 
 	val ups = List(baseParts.size - common) { ".." }
 	val relative = (ups + pathParts.drop(common)).joinToString(sep.toString())

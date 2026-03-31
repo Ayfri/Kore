@@ -10,13 +10,11 @@ import io.github.ayfri.kore.utils.pascalCase
 import io.github.ayfri.kore.utils.set
 import io.github.ayfri.kore.utils.snbtSerializer
 import kotlinx.serialization.EncodeDefault
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.buildNbtCompound
 import net.benwoodworth.knbt.encodeToNbtTag
 
-@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 abstract class ChatComponent {
 	abstract val type: ChatComponentType

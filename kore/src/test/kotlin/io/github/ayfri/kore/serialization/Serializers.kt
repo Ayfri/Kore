@@ -5,13 +5,11 @@ import io.github.ayfri.kore.assertions.assertsIsJson
 import io.github.ayfri.kore.assertions.assertsIsNbt
 import io.github.ayfri.kore.serializers.EitherInlineSerializer
 import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import net.benwoodworth.knbt.ExperimentalNbtApi
 import net.benwoodworth.knbt.StringifiedNbt
 
-@OptIn(ExperimentalSerializationApi::class)
 val json = Json {
 	prettyPrint = true
 	encodeDefaults = false
