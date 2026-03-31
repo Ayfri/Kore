@@ -12,6 +12,7 @@ import java.net.URI
 plugins {
 	kotlin("multiplatform")
 	kotlin("plugin.compose")
+	id("publish-conventions") apply false
 	alias(libs.plugins.kobweb.application)
 	alias(libs.plugins.kobwebx.markdown)
 }

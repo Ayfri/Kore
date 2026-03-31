@@ -1,7 +1,7 @@
 plugins {
 	kotlin("jvm")
 	kotlin("plugin.serialization")
-	`publish-conventions`
+	id("publish-conventions")
 }
 
 metadata {

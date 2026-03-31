@@ -1,14 +1,6 @@
-rootProject.name = "Kore"
-
-include(":generation")
-include(":kore")
-include(":helpers")
-include(":oop")
-include(":bindings")
-include(":website")
-
-
 pluginManagement {
+	includeBuild("build-logic")
+
 	resolutionStrategy {
 		plugins {
 			val kotlinVersion = extra["kotlin.version"] as String
@@ -25,6 +17,15 @@ pluginManagement {
 		maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 	}
 }
+
+rootProject.name = "Kore"
+
+include(":generation")
+include(":kore")
+include(":helpers")
+include(":oop")
+include(":bindings")
+include(":website")
 
 @Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
