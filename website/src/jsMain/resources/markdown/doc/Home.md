@@ -74,10 +74,33 @@ fun main() {
 
 ### Helpers
 
+- [Helpers Utilities](/docs/helpers/utilities) - overview of helper-focused utilities extracted from the OOP module.
 - [Display Entities](/docs/helpers/display-entities) - text, block, and item displays.
 - [Inventory Manager](/docs/helpers/inventory-manager) - inventory manipulation helpers.
 - [Mannequins](/docs/helpers/mannequins) - armor stand helpers.
+- [ANSI Renderer](/docs/helpers/ansi-renderer) - ANSI escape codes to text components.
+- [Area](/docs/helpers/area) - 3D bounding box geometry.
+- [Markdown Renderer](/docs/helpers/markdown-renderer) - Markdown to text components.
+- [MiniMessage Renderer](/docs/helpers/minimessage-renderer) - Adventure MiniMessage to text components.
+- [Raycasts](/docs/helpers/raycasts) - recursive step-based raycasting.
 - [Scheduler](/docs/helpers/scheduler) - delayed function execution patterns.
+- [Scoreboard Math](/docs/helpers/scoreboard-math) - trigonometry and algebra via scoreboards.
+- [State Delegates](/docs/helpers/state-delegates) - Kotlin property delegates for scoreboards/storage.
+- [VFX Particles](/docs/helpers/vfx-particles) - geometric particle shapes.
+
+### OOP
+
+- [OOP Utilities](/docs/oop/utilities) - overview of all OOP module features.
+- [Entities & Players](/docs/oop/entities-and-players) - entity/player management, commands, and effects.
+- [Teams](/docs/oop/teams) - object-oriented team management.
+- [Scoreboards](/docs/oop/scoreboards) - objective and score operations.
+- [Items](/docs/oop/items) - item creation and spawning.
+- [Events](/docs/oop/events) - advancement-based event system.
+- [Cooldowns](/docs/oop/cooldowns) - scoreboard-based cooldowns.
+- [Boss Bars](/docs/oop/boss-bars) - boss bar management.
+- [Timers](/docs/oop/timers) - scoreboard-based timers with optional boss bar.
+- [Spawners](/docs/oop/spawners) - reusable entity spawner handles.
+- [Game State Machine](/docs/oop/game-state-machine) - scoreboard-based state machine.
 
 ### Advanced
 
