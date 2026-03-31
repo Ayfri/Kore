@@ -22,7 +22,105 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 ) : KSerializer<T> {
 	override val descriptor = serialDescriptor<JsonElement>()
 
-	override fun deserialize(decoder: Decoder) = error("${kClass.simpleName} cannot be deserialized")
+	@OptIn(ExperimentalSerializationApi::class)
+	override fun deserialize(decoder: Decoder): T {
+		require(decoder is JsonDecoder || decoder is NbtDecoder) { "NamespacedPolymorphicSerializer can only be deserialized from Json or Nbt." }
+
+		when (decoder) {
+			is JsonDecoder -> {
+				val jsonElement = decoder.decodeJsonElement()
+				if (jsonElement !is JsonObject) {
+					val result = kClass.sealedSubclasses.firstNotNullOfOrNull { subclass ->
+						val serializer = decoder.json.serializersModule.getPolymorphic(kClass, subclass.simpleName!!)
+							?: runCatching { decoder.json.serializersModule.serializer(subclass.createType()) }.getOrNull()
+
+						@Suppress("UNCHECKED_CAST")
+						serializer?.let {
+							runCatching {
+								decoder.json.decodeFromJsonElement(
+									it as DeserializationStrategy<T>,
+									jsonElement
+								)
+							}.getOrNull()
+						}
+					}
+					return result
+						?: error("No subclass of ${kClass.simpleName} can deserialize non-object JSON element: $jsonElement")
+				}
+				val jsonObject = jsonElement.jsonObject
+				val typeName = jsonObject[outputName]?.jsonPrimitive?.content
+					?: error("Missing '$outputName' field in JSON object for ${kClass.simpleName}")
+
+				val subclass = findSubclass(typeName)
+				val serializer = decoder.json.serializersModule.getPolymorphic(kClass, typeName)
+					?: decoder.json.serializersModule.serializer(subclass.createType()) as DeserializationStrategy<T>
+
+				val contentJson = when (moveIntoProperty) {
+					null -> buildJsonObject {
+						jsonObject.filterKeys { it != outputName }.forEach(::put)
+					}
+
+					else -> jsonObject[moveIntoProperty]?.jsonObject ?: buildJsonObject {}
+				}
+
+				@Suppress("UNCHECKED_CAST")
+				return decoder.json.decodeFromJsonElement(serializer, contentJson) as T
+			}
+
+			is NbtDecoder -> {
+				val nbtTag = decoder.decodeNbtTag()
+				if (nbtTag !is NbtCompound) {
+					val result = kClass.sealedSubclasses.firstNotNullOfOrNull { subclass ->
+						val serializer = decoder.nbt.serializersModule.getPolymorphic(kClass, subclass.simpleName!!)
+							?: runCatching { decoder.nbt.serializersModule.serializer(subclass.createType()) }.getOrNull()
+
+						@Suppress("UNCHECKED_CAST")
+						serializer?.let {
+							runCatching {
+								decoder.nbt.decodeFromNbtTag(
+									it as DeserializationStrategy<T>,
+									nbtTag
+								)
+							}.getOrNull()
+						}
+					}
+					return result
+						?: error("No subclass of ${kClass.simpleName} can deserialize non-compound NBT element: $nbtTag")
+				}
+				val nbtCompound = nbtTag.nbtCompound
+				val typeName = nbtCompound[outputName]?.let { (it as NbtString).value }
+					?: error("Missing '$outputName' field in NBT compound for ${kClass.simpleName}")
+
+				val subclass = findSubclass(typeName)
+				val serializer = decoder.nbt.serializersModule.getPolymorphic(kClass, typeName)
+					?: decoder.nbt.serializersModule.serializer(subclass.createType()) as DeserializationStrategy<T>
+
+				val contentNbt = when (moveIntoProperty) {
+					null -> buildNbtCompound {
+						nbtCompound.filterKeys { it != outputName }.forEach(::put)
+					}
+
+					else -> nbtCompound[moveIntoProperty]?.nbtCompound ?: buildNbtCompound {}
+				}
+
+				return decoder.nbt.decodeFromNbtTag(serializer, contentNbt)
+			}
+
+			else -> error("Unsupported decoder type")
+		}
+	}
+
+	private fun findSubclass(typeName: String): KClass<out T> {
+		val name =
+			if (useMinecraftPrefix && typeName.startsWith("minecraft:")) typeName.removePrefix("minecraft:") else typeName
+
+		return kClass.sealedSubclasses.firstOrNull { subclass ->
+			val serialName = subclass.getSerialName().let {
+				if (subclass.hasAnnotation<SerialName>()) it else it.snakeCase()
+			}
+			serialName == name
+		} ?: error("No subclass of ${kClass.simpleName} found for type '$typeName'")
+	}
 
 	private fun serializeJson(outputClassName: String, serializer: SerializationStrategy<T>, encoder: JsonEncoder, value: T) {
 		val valueJson = encoder.json.encodeToJsonElement(serializer, value)
@@ -91,7 +189,7 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 		val namespacedOutputClassName = getContentName(value)
 
 		val serializer = encoder.serializersModule.getPolymorphic(kClass, value)
-			?: encoder.serializersModule.serializer(value::class.createType())
+			?: encoder.serializersModule.serializer(value::class.createType()) as SerializationStrategy<T>
 
 		when (encoder) {
 			is JsonEncoder -> serializeJson(namespacedOutputClassName, serializer, encoder, value)

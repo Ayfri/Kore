@@ -3,6 +3,7 @@ package io.github.ayfri.kore.serializers
 import io.github.ayfri.kore.utils.createInstance
 import io.github.ayfri.kore.utils.getSerialName
 import io.github.ayfri.kore.utils.getSerializer
+import io.github.ayfri.kore.utils.orderedMemberProperties
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.serialDescriptor
@@ -18,7 +19,6 @@ import net.benwoodworth.knbt.NbtEncoder
 import net.benwoodworth.knbt.buildNbtCompound
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
 /**
@@ -62,10 +62,7 @@ open class SinglePropertySimplifierSerializer<T : Any, P : Any>(
 		}
 	}
 
-	private val properties by lazy {
-		val propertiesOrder = kClass.java.declaredFields.withIndex().associate { it.value.name to it.index }
-		kClass.memberProperties.associateBy { it.name }.toSortedMap(compareBy { propertiesOrder[it] })
-	}
+	private val properties by lazy { kClass.orderedMemberProperties() }
 
 	@Suppress("UNCHECKED_CAST")
 	override fun serialize(encoder: Encoder, value: T) {

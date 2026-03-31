@@ -1,12 +1,7 @@
 package io.github.ayfri.kore.serializers
 
+import io.github.ayfri.kore.utils.EnumStringSerializer
 import kotlin.enums.EnumEntries
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
 
 private fun String.camelcase(): String {
 	val words = lowercase().split("_")
@@ -15,15 +10,8 @@ private fun String.camelcase(): String {
 	}
 }
 
-open class CamelcaseSerializer<T>(private val values: EnumEntries<T>) : KSerializer<T> where T : Enum<T> {
-	override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("CamelcaseSerializer", PrimitiveKind.STRING)
-
-	override fun deserialize(decoder: Decoder): T {
-		val value = decoder.decodeString()
-		return values.first { it.name.camelcase() == value }
-	}
-
-	override fun serialize(encoder: Encoder, value: T) {
-		encoder.encodeString(value.name.camelcase())
-	}
-}
+open class CamelcaseSerializer<T : Enum<T>>(values: EnumEntries<T>) : EnumStringSerializer<T>(
+	values,
+	encode = { name.camelcase() },
+	decode = { str -> values.first { it.name.camelcase() == str } },
+)

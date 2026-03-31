@@ -3,6 +3,7 @@ package io.github.ayfri.kore.serializers
 import io.github.ayfri.kore.utils.createInstance
 import io.github.ayfri.kore.utils.getSerialName
 import io.github.ayfri.kore.utils.getSerializer
+import io.github.ayfri.kore.utils.orderedMemberProperties
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.serialDescriptor
@@ -13,7 +14,6 @@ import kotlinx.serialization.json.*
 import net.benwoodworth.knbt.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
 /**
@@ -42,10 +42,7 @@ open class EitherInlineSerializer<T : Any>(
 	private vararg val propertiesToInline: KProperty1<T, *>,
 	private val inline: Boolean = true,
 ) : KSerializer<T> {
-	private val properties by lazy {
-		val propertiesOrder = kClass.java.declaredFields.withIndex().associate { it.value.name to it.index }
-		kClass.memberProperties.associateBy { it.name }.toSortedMap(compareBy { propertiesOrder[it] })
-	}
+	private val properties by lazy { kClass.orderedMemberProperties() }
 
 	override val descriptor = buildClassSerialDescriptor("${kClass.simpleName!!}EitherInlineSerializer") {
 		properties.forEach { (_, prop) ->

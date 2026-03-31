@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.serializers
 
+import io.github.ayfri.kore.utils.createInstance
 import io.github.ayfri.kore.utils.getSerializer
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -8,6 +9,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.jvm.isAccessible
 
 /**
  * A serializer that serializes the first property of a class automatically.
@@ -24,11 +26,19 @@ import kotlin.reflect.full.declaredMemberProperties
  */
 open class InlineAutoSerializer<T : Any>(val klass: KClass<T>) : KSerializer<T> {
 	private val firstProperty =
-		klass.declaredMemberProperties.firstOrNull() ?: error("No properties found for class ${klass.simpleName}")
+		(klass.declaredMemberProperties.firstOrNull()
+			?: error("No properties found for class ${klass.simpleName}")).also {
+			it.isAccessible = true
+		}
 
 	override val descriptor by lazy { buildClassSerialDescriptor(klass.qualifiedName ?: "Unknown") }
 
-	override fun deserialize(decoder: Decoder): T = error("InlineAutoSerializer cannot be deserialized")
+	override fun deserialize(decoder: Decoder): T {
+		val serializer = firstProperty.getSerializer(decoder.serializersModule)
+		val value = decoder.decodeSerializableValue(serializer)
+
+		return klass.createInstance(mapOf(firstProperty.name to value))
+	}
 
 	@OptIn(ExperimentalSerializationApi::class)
 	override fun serialize(encoder: Encoder, value: T) {
