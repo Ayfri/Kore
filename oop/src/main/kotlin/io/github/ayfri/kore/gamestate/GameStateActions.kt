@@ -8,20 +8,20 @@ import io.github.ayfri.kore.timer.TimerHandle
 
 context(fn: Function)
 fun GameStateManager.transitionWithCooldown(stateName: String, cooldown: CooldownHandle, entity: Entity) {
-    transitionTo(stateName)
-    cooldown.start(entity)
+	transitionTo(stateName)
+	cooldown.start(entity)
 }
 
 context(fn: Function)
 fun GameStateManager.whenStateSpawn(stateName: String, spawner: SpawnerHandle, count: Int = 1) {
-    whenState(stateName) {
-        spawner.spawnMultiple(count)
-    }
+	whenState(stateName) {
+		spawner.spawnMultiple(count)
+	}
 }
 
 context(fn: Function)
 fun GameStateManager.whenStateStartTimer(stateName: String, timer: TimerHandle, entity: Entity) {
-    whenState(stateName) {
-        timer.start(entity)
-    }
+	whenState(stateName) {
+		timer.start(entity)
+	}
 }

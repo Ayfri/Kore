@@ -9,6 +9,8 @@ import io.github.ayfri.kore.commands.scoreboard.RenderType
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.entities.Entity
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.teams.Team
+import io.github.ayfri.kore.teams.members
 
 /** Represents a scoreboard objective that can later be created or configured. */
 open class Scoreboard(val name: String)
@@ -19,6 +21,10 @@ fun scoreboard(name: String, init: Scoreboard.() -> Unit = {}) = Scoreboard(name
 /** Returns a score handle scoped to [entity] for this scoreboard objective. */
 context(fn: Function)
 fun Scoreboard.getScore(entity: Entity) = ScoreboardEntity(name, entity)
+
+/** Returns a score handle scoped to all current members of [team]. */
+context(fn: Function)
+fun Scoreboard.getScore(team: Team) = getScore(team.members())
 
 /** Emits the command that creates this objective. */
 context(fn: Function)

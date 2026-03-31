@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.entities
 
 import io.github.ayfri.kore.arguments.ItemSlotType
+import io.github.ayfri.kore.arguments.enums.DataType
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.maths.coordinate
 import io.github.ayfri.kore.arguments.selector.SelectorArguments
@@ -8,6 +9,7 @@ import io.github.ayfri.kore.arguments.types.literals.RotationArgument
 import io.github.ayfri.kore.arguments.types.literals.allEntities
 import io.github.ayfri.kore.arguments.types.literals.rotation
 import io.github.ayfri.kore.arguments.types.literals.self
+import io.github.ayfri.kore.arguments.types.resources.StorageArgument
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.commands.*
 import io.github.ayfri.kore.commands.execute.Execute
@@ -22,7 +24,10 @@ import io.github.ayfri.kore.teams.addMembers
 import io.github.ayfri.kore.commands.function as functionCommand
 
 /** Wraps a selector into an object-oriented entity handle with helper extensions. */
-open class Entity(val selector: SelectorArguments = SelectorArguments()) {
+open class Entity(
+	val selector: SelectorArguments = SelectorArguments(),
+	open val limitToOne: Boolean = true,
+) {
 	/** Whether this entity currently resolves to a player selector. */
 	open val isPlayer get() = type?.name == "player"
 
@@ -37,10 +42,11 @@ open class Entity(val selector: SelectorArguments = SelectorArguments()) {
 		}
 
 	/** Builds an `@e` selector mirroring this entity, with optional extra modifications. */
-	fun asSelector(modification: SelectorArguments.() -> Unit = {}) = allEntities(true) {
-		copyFrom(selector)
-		modification()
-	}
+	fun asSelector(limitToOne: Boolean = this.limitToOne, modification: SelectorArguments.() -> Unit = {}) =
+		allEntities(limitToOne) {
+			copyFrom(selector)
+			modification()
+		}
 }
 
 /** Executes a block as this entity. */
@@ -79,6 +85,46 @@ fun Entity.batch(name: String, block: Function.() -> Unit): FunctionArgument {
 /** Returns a scoreboard handle tied to this entity. */
 context(fn: Function)
 fun Entity.getScoreEntity(name: String) = ScoreboardEntity(name, this)
+
+/** Stores how many entities currently match this selector into [score]. */
+context(fn: Function)
+fun Entity.storeCountIn(score: ScoreboardEntity) = fn.execute {
+	storeResult { score(score.entity.asSelector(), score.name) }
+	run {
+		execute {
+			ifCondition {
+				entity(this@storeCountIn.asSelector(limitToOne = false))
+			}
+		}
+	}
+}
+
+/** Stores how many entities currently match this selector into an entity NBT path. */
+context(fn: Function)
+fun Entity.storeCountIn(target: Entity, path: String, type: DataType = DataType.INT, scale: Double = 1.0) = fn.execute {
+	storeResult { entity(target.asSelector(), path, type, scale) }
+	run {
+		execute {
+			ifCondition {
+				entity(this@storeCountIn.asSelector(limitToOne = false))
+			}
+		}
+	}
+}
+
+/** Stores how many entities currently match this selector into a storage NBT path. */
+context(fn: Function)
+fun Entity.storeCountIn(target: StorageArgument, path: String, type: DataType = DataType.INT, scale: Double = 1.0) =
+	fn.execute {
+		storeResult { storage(target, path, type, scale) }
+		run {
+			execute {
+				ifCondition {
+					entity(this@storeCountIn.asSelector(limitToOne = false))
+				}
+			}
+		}
+	}
 
 /** Gives an item stack to this entity. */
 context(fn: Function)

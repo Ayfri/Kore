@@ -25,7 +25,7 @@ private val initializedCooldowns = mutableSetOf<String>()
 /** Describes a scoreboard-backed cooldown identified by [name] and measured with [duration]. */
 data class Cooldown(
 	val duration: TimeNumber = 20.ticks,
-    val name: String,
+	val name: String,
 )
 
 /** Exposes helper operations for a registered [Cooldown]. */
@@ -34,7 +34,7 @@ data class CooldownHandle(val cooldown: Cooldown) {
 	context(fn: Function)
 	fun ifReady(entity: Entity, block: Function.() -> Unit) {
 		val generated = fn.datapack.generatedFunction(
-            OopConstants.cooldownReadyHandlerName(cooldown.name, block.hashCode())
+			OopConstants.cooldownReadyHandlerName(cooldown.name, block.hashCode())
 		) {
 			block()
 			scoreboard {
@@ -44,9 +44,9 @@ data class CooldownHandle(val cooldown: Cooldown) {
 			}
 		}
 
-        fn.datapack.functionTag(OopConstants.cooldownReadyHandlersTag, namespace = OopConstants.namespace) {
-            this += generated.asId()
-        }
+		fn.datapack.functionTag(OopConstants.cooldownReadyHandlersTag, namespace = OopConstants.namespace) {
+			this += generated.asId()
+		}
 
 		fn.execute {
 			ifCondition {
@@ -57,20 +57,20 @@ data class CooldownHandle(val cooldown: Cooldown) {
 	}
 
 	/** Forces the cooldown score back to `0` for [entity]. */
-    context(fn: Function)
-    fun reset(entity: Entity) = fn.scoreboard {
-        players {
-            set(entity.asSelector(), cooldown.name, 0)
-        }
-    }
+	context(fn: Function)
+	fun reset(entity: Entity) = fn.scoreboard {
+		players {
+			set(entity.asSelector(), cooldown.name, 0)
+		}
+	}
 
 	/** Starts the cooldown immediately for [entity]. */
-    context(fn: Function)
-    fun start(entity: Entity) = fn.scoreboard {
-        players {
-            set(entity.asSelector(), cooldown.name, cooldown.duration.value.toInt())
-        }
-    }
+	context(fn: Function)
+	fun start(entity: Entity) = fn.scoreboard {
+		players {
+			set(entity.asSelector(), cooldown.name, cooldown.duration.value.toInt())
+		}
+	}
 }
 
 /** Registers a cooldown and its init/tick plumbing once per datapack. */
@@ -79,7 +79,7 @@ fun DataPack.registerCooldown(cooldown: Cooldown): CooldownHandle {
 	if (key !in initializedCooldowns) {
 		initializedCooldowns += key
 
-        load(OopConstants.cooldownInitFunctionName(cooldown.name)) {
+		load(OopConstants.cooldownInitFunctionName(cooldown.name)) {
 			scoreboard {
 				objectives {
 					add(cooldown.name, ScoreboardCriteria.DUMMY)
@@ -87,7 +87,7 @@ fun DataPack.registerCooldown(cooldown: Cooldown): CooldownHandle {
 			}
 		}
 
-        tick(OopConstants.cooldownTickFunctionName(cooldown.name)) {
+		tick(OopConstants.cooldownTickFunctionName(cooldown.name)) {
 			scoreboard {
 				players {
 					remove(allPlayers {
@@ -105,4 +105,4 @@ fun DataPack.registerCooldown(cooldown: Cooldown): CooldownHandle {
 
 /** Creates and registers a cooldown from a name and duration. */
 fun DataPack.registerCooldown(name: String, duration: TimeNumber = 20.ticks) =
-    registerCooldown(Cooldown(name = name, duration = duration))
+	registerCooldown(Cooldown(name = name, duration = duration))

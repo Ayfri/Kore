@@ -15,7 +15,12 @@ import io.github.ayfri.kore.nbt.mutableNbt
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 
-fun itemStack(name: String, namespace: String = "minecraft", count: Int = 1, nbtData: MutableNbtCompound = mutableNbt()) =
+fun itemStack(
+	name: String,
+	namespace: String = "minecraft",
+	count: Int = 1,
+	nbtData: MutableNbtCompound = mutableNbt()
+) =
 	ItemStack("$namespace:$name", count.toShort(), Components().apply {
 		nbtData.toNbtCompound().forEach { (key, value) -> this[key] = value }
 	})
@@ -43,4 +48,5 @@ fun ItemStack.summon(displayName: ChatComponents, visible: Boolean = true) = fn.
 )
 
 context(fn: Function)
-fun ItemStack.summon(displayName: String, color: Color, visible: Boolean = true) = summon(textComponent(displayName, color), visible)
+fun ItemStack.summon(displayName: String, color: Color, visible: Boolean = true) =
+	summon(textComponent(displayName, color), visible)

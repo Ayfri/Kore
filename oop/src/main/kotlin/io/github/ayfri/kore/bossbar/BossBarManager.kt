@@ -10,6 +10,8 @@ import io.github.ayfri.kore.commands.bossBar
 import io.github.ayfri.kore.entities.Entity
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.teams.Team
+import io.github.ayfri.kore.teams.members
 
 /** Configures a boss bar before it is registered into the datapack. */
 data class BossBarConfig(
@@ -17,7 +19,7 @@ data class BossBarConfig(
 	var color: BossBarColor = BossBarColor.WHITE,
 	var displayName: ChatComponents = textComponent(id),
 	var max: Int = 100,
-    val namespace: String = "minecraft",
+	val namespace: String = "minecraft",
 	var style: BossBarStyle = BossBarStyle.PROGRESS,
 	var value: Int = 0,
 	var visible: Boolean = true,
@@ -29,12 +31,12 @@ data class BossBarHandle(val config: BossBarConfig) {
 	val argument get() = BossBarArgument(config.id, config.namespace)
 
 	/** Hides the boss bar from players without deleting it. */
-    context(fn: Function)
-    fun hide() = fn.bossBar(argument) { setVisible(false) }
+	context(fn: Function)
+	fun hide() = fn.bossBar(argument) { setVisible(false) }
 
 	/** Removes the boss bar entirely. */
-    context(fn: Function)
-    fun remove() = fn.bossBar(argument) { remove() }
+	context(fn: Function)
+	fun remove() = fn.bossBar(argument) { remove() }
 
 	/** Updates the boss bar color. */
 	context(fn: Function)
@@ -51,6 +53,10 @@ data class BossBarHandle(val config: BossBarConfig) {
 	/** Sets the players that should currently see this boss bar. */
 	context(fn: Function)
 	fun setPlayers(entity: Entity) = fn.bossBar(argument) { setPlayers(entity.asSelector()) }
+
+	/** Sets the players that should currently see this boss bar from all members of [team]. */
+	context(fn: Function)
+	fun setPlayers(team: Team) = setPlayers(team.members())
 
 	/** Changes the vanilla boss bar rendering style. */
 	context(fn: Function)

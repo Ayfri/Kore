@@ -34,13 +34,13 @@ fun Entity.mount(vehicle: Entity) = fn.rideMount(asSelector(), vehicle.asSelecto
 
 context(fn: Function)
 fun Entity.playSound(
-    sound: SoundArgument,
-    source: PlaySoundMixer? = null,
-    pos: Vec3? = null,
-    volume: Double? = null,
-    pitch: Double? = null
+	sound: SoundArgument,
+	source: PlaySoundMixer? = null,
+	pos: Vec3? = null,
+	volume: Double? = null,
+	pitch: Double? = null
 ) =
-    fn.playSound(sound, source, asSelector(), pos, volume, pitch)
+	fn.playSound(sound, source, asSelector(), pos, volume, pitch)
 
 context(fn: Function)
 fun Entity.removeTag(tag: String) = fn.tag(asSelector()) { remove(tag) }
@@ -65,11 +65,11 @@ fun Entity.showActionBar(message: String) = showActionBar(textComponent(message)
 
 context(fn: Function)
 fun Entity.showTitle(title: ChatComponents, subtitle: ChatComponents? = null) {
-    fn.title(asSelector(), TitleLocation.TITLE, title)
-    if (subtitle != null) fn.title(asSelector(), TitleLocation.SUBTITLE, subtitle)
+	fn.title(asSelector(), TitleLocation.TITLE, title)
+	if (subtitle != null) fn.title(asSelector(), TitleLocation.SUBTITLE, subtitle)
 }
 
 context(fn: Function)
 fun Entity.showTitle(title: String, subtitle: String? = null) {
-    showTitle(textComponent(title), subtitle?.let { textComponent(it) })
+	showTitle(textComponent(title), subtitle?.let { textComponent(it) })
 }

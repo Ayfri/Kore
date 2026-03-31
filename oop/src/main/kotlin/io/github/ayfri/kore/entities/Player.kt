@@ -26,4 +26,12 @@ fun player(name: String, nbtData: SelectorArguments.() -> Unit = {}) = Player(na
 }
 
 /** Creates a generic [Entity] handle from selector arguments. */
-fun entity(nbtData: SelectorArguments.() -> Unit = {}) = Entity(SelectorArguments().apply(nbtData))
+fun entity(limitToOne: Boolean = true, nbtData: SelectorArguments.() -> Unit = {}) =
+	Entity(SelectorArguments().apply(nbtData), limitToOne)
+
+/** Creates a generic [Entity] handle for the entity named [name] and optionally refines its selector arguments. */
+fun entity(name: String, limitToOne: Boolean = true, nbtData: SelectorArguments.() -> Unit = {}) =
+	entity(limitToOne) {
+		this.name = name
+		nbtData()
+	}

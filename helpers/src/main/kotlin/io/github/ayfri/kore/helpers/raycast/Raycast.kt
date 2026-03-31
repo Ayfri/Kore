@@ -23,17 +23,17 @@ private val initializedRaycastObjective = mutableSetOf<String>()
 /** Configures how a generated raycast behaves and which callbacks it should trigger. */
 data class RaycastConfig(
 	var maxDistance: Int = 100,
-    var name: String = "raycast",
+	var name: String = "raycast",
 	var onHitBlock: Function.() -> Unit = {},
 	var onMaxDistance: (Function.() -> Unit)? = null,
 	var onStep: (Function.() -> Unit)? = null,
-    var step: Double = 0.5,
+	var step: Double = 0.5,
 )
 
 /** Holds the generated entry point used to launch a configured raycast. */
 data class RaycastHandle(
 	val config: RaycastConfig,
-    val startFunctionId: String,
+	val startFunctionId: String,
 ) {
 	/** Calls the generated start function that begins stepping the ray forward. */
 	context(fn: Function)

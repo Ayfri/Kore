@@ -22,16 +22,22 @@ val player = player("Steve") {
 	team = "red"
 }
 
+val arenaMobs = entity("ArenaMob", limitToOne = false) {
+	tag = "arena"
+}
+
 val zombie = entity {
 	type = EntityTypes.ZOMBIE
 }
 ```
 
 `player()` creates a `Player` instance (subclass of `Entity`) with `type = minecraft:player`, `limit = 1`,
-and the given name. `entity()` creates a generic `Entity` with custom selector arguments.
+and the given name. `entity()` creates a generic `Entity` with custom selector arguments, and can also start from a
+named entity selector when you already know the exact entity name to target.
 
 Use `player(...)` when you want a selector already scoped to players, and `entity { ... }` when you need a reusable
-selector for mobs, armor stands, projectiles, or a more generic execute target.
+selector for mobs, armor stands, projectiles, or a more generic execute target. Use `entity("Name", ...)` when you
+want the same convenience as `player("Name")` without forcing the selector to `minecraft:player`.
 
 ## Execute helpers
 

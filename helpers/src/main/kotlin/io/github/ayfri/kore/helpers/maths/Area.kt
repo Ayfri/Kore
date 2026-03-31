@@ -5,7 +5,11 @@ import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.numbers.PosNumber
 
 data class Area(var first: Vec3, var second: Vec3 = first) {
-	constructor(x1: Number, y1: Number, z1: Number, x2: Number, y2: Number, z2: Number) : this(Vec3(x1, y1, z1), Vec3(x2, y2, z2))
+	constructor(x1: Number, y1: Number, z1: Number, x2: Number, y2: Number, z2: Number) : this(
+		Vec3(x1, y1, z1),
+		Vec3(x2, y2, z2)
+	)
+
 	constructor(x1: PosNumber, y1: PosNumber, z1: PosNumber, x2: PosNumber, y2: PosNumber, z2: PosNumber) : this(
 		Vec3(x1, y1, z1),
 		Vec3(x2, y2, z2)

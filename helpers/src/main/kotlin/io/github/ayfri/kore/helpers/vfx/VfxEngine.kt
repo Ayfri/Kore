@@ -15,7 +15,7 @@ import kotlin.math.sqrt
 /** Geometric shapes supported by the VFX engine. */
 enum class Shape {
 	CIRCLE,
-    HELIX,
+	HELIX,
 	LINE,
 	SPHERE,
 	SPIRAL,
@@ -26,12 +26,12 @@ class VfxShape {
 	var dx: Double = 1.0
 	var dy: Double = 0.0
 	var dz: Double = 0.0
-    var height: Double = 3.0
-    var length: Double = 5.0
-    lateinit var particle: ParticleTypeArgument
-    var points: Int = 20
-    var radius: Double = 1.0
-    var shape: Shape = Shape.CIRCLE
+	var height: Double = 3.0
+	var length: Double = 5.0
+	lateinit var particle: ParticleTypeArgument
+	var points: Int = 20
+	var radius: Double = 1.0
+	var shape: Shape = Shape.CIRCLE
 	var turns: Int = 3
 }
 

@@ -2,11 +2,15 @@ package io.github.ayfri.kore.teams
 
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.colors.FormattingColor
+import io.github.ayfri.kore.arguments.numbers.ranges.IntRangeOrInt
+import io.github.ayfri.kore.arguments.selector.SelectorArguments
 import io.github.ayfri.kore.arguments.types.ScoreHolderArgument
 import io.github.ayfri.kore.commands.CollisionRule
 import io.github.ayfri.kore.commands.Visibility
+import io.github.ayfri.kore.commands.execute.ExecuteCondition
 import io.github.ayfri.kore.commands.teams
 import io.github.ayfri.kore.entities.Entity
+import io.github.ayfri.kore.entities.Player
 import io.github.ayfri.kore.functions.Function
 
 /** Wraps a Minecraft team name and exposes convenience helpers around `/team`. */
@@ -17,6 +21,13 @@ data class Team(
 
 /** Creates a [Team] and lets you configure it inline before reuse. */
 fun team(name: String, init: Team.() -> Unit = {}) = Team(name).apply(init)
+
+
+/** Removes every member currently assigned to this team. */
+context(fn: Function)
+fun Team.clearMembers() = fn.teams {
+	empty(name)
+}
 
 /** Ensures the team exists before applying other team-related commands. */
 context(fn: Function)
@@ -29,6 +40,34 @@ context(fn: Function)
 fun Team.delete() = fn.teams {
 	remove(name)
 }
+
+/** Returns an [Entity] selector matching the current members of this team. */
+fun Team.members() = object : Entity(SelectorArguments().apply {
+	team = this@members.name
+}) {
+	override val limitToOne = false
+}
+
+/** Checks whether this team currently has at least one member. */
+fun ExecuteCondition.hasMembers(team: Team) = entity(team.members().asSelector(limitToOne = false))
+
+/** Checks whether this team currently has a member matching [entity]. */
+fun ExecuteCondition.hasMember(team: Team, entity: Entity) = entity(entity.asSelector(limitToOne = false) {
+	this.team = team.name
+})
+
+/** Checks whether this team currently has a member named [name]. */
+fun ExecuteCondition.hasPlayer(team: Team, name: String) = hasPlayer(team, Player(name))
+
+/** Checks whether this team currently has [player] as a member. */
+fun ExecuteCondition.hasPlayer(team: Team, player: Player) = hasMember(team, player)
+
+/** Checks whether this team currently has a member whose [objective] score matches [range]. */
+fun ExecuteCondition.hasScore(team: Team, objective: String, range: IntRangeOrInt) = score(
+	team.members().asSelector(limitToOne = false),
+	objective,
+	range,
+)
 
 /** Updates the display name shown for this team. */
 context(fn: Function)

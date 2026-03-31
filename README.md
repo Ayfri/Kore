@@ -98,13 +98,19 @@ abstractions or tooling.
 ### Gameplay abstractions - `oop`
 
 - Docs: [OOP Utilities](https://kore.ayfri.com/docs/oop/utilities)
-- Adds object-oriented wrappers for entities, teams, scoreboards, timers, and related gameplay systems.
+- Adds object-oriented wrappers for entities, teams, scoreboards, timers, boss bars, spawners, and related gameplay
+  systems.
+- Especially useful when several gameplay features need to exchange state, for example wiring teams into boss bars,
+  scoreboards, timers, or entity handles.
 - Coordinates: `io.github.ayfri.kore:oop:VERSION`
 
 ### Helper utilities - `helpers`
 
 - Docs: [Helpers Utilities](https://kore.ayfri.com/docs/helpers/utilities)
-- Adds utility-focused features such as renderers, raycasts, scoreboard math, state delegates, and VFX helpers.
+- Adds utility-focused features such as renderers, raycasts, scheduler utilities, scoreboard math, state delegates, and
+  VFX helpers.
+- Great for filling gaps around the core DSL, like rich text rendering, reusable state access, particle shapes, or
+  math-heavy scoreboard workflows.
 - Coordinates: `io.github.ayfri.kore:helpers:VERSION`
 
 ### Datapack importer - `bindings` (experimental)
@@ -197,6 +203,8 @@ _How to add your project to the list ?_
 -   Colors/Vector/Rotation/... classes with common maths/conversion operations.
 -   Macros support.
 -   Inventory/Scheduler managers.
+- Helper modules for raycasts, text renderers, scoreboard math, delegates, and VFX pipelines.
+- OOP gameplay helpers for boss bars, cooldowns, entities, scoreboards, spawners, teams, and timers.
 -   Scoreboard display manager (like on servers).
 -   Merging datapacks, even with existing zips.
 -   Generation of datapacks as mods usable with mod-loaders (Fabric, NeoForge, ...).

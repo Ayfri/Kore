@@ -41,13 +41,21 @@ you need.
 
 ### `oop` - Object-oriented gameplay utilities
 
-- Add higher-level abstractions for entities, teams, scoreboards, timers, and gameplay state.
+- Add higher-level abstractions for boss bars, cooldowns, entities, game states, scoreboards, spawners, teams, and
+  timers.
+- Especially useful when several gameplay systems need to exchange data cleanly, such as syncing a `Team` with a boss
+  bar or reusing an `Entity`
+  handle across scoreboards and commands.
 - Artifact: `io.github.ayfri.kore:oop:VERSION`
 - Explore: [OOP Utilities](/docs/oop/utilities)
 
 ### `helpers` - Utility-focused helpers
 
-- Add renderers, raycasts, scoreboard math, state delegates, particle helpers, and related utilities.
+- Add renderers, raycasts, scheduler utilities, scoreboard math, state delegates, particle helpers, and related
+  utilities.
+- These helpers complement the core DSL well for advanced text pipelines, reusable state access, geometric particles, or
+  command-heavy math
+  routines.
 - Artifact: `io.github.ayfri.kore:helpers:VERSION`
 - Explore: [Helpers Utilities](/docs/helpers/utilities)
 
@@ -144,8 +152,14 @@ fun main() {
 
 - Keep builders small and reusable; prefer extracting predicates and modifiers.
 - Enable `prettyPrint` in [`Configuration`](/docs/guides/configuration) during development for readable JSON.
+- Reach for [`OOP Utilities`](/docs/oop/utilities) when multiple gameplay features should share the same handles instead
+  of re-building
+  selectors and score names manually.
 - Use [`Components`](/docs/concepts/components) + [`Predicates`](/docs/data-driven/predicates) together for robust item checks and inventory
   management.
+- Use [`Helpers Utilities`](/docs/helpers/utilities) to avoid reimplementing common glue code such as renderers,
+  scheduler patterns, raycasts,
+  or scoreboard-based maths.
 
 ## Known issues
 
