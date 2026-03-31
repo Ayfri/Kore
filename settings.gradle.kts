@@ -1,9 +1,10 @@
 rootProject.name = "Kore"
 
+include(":generation")
 include(":kore")
+include(":helpers")
 include(":oop")
 include(":bindings")
-include(":generation")
 include(":website")
 
 
