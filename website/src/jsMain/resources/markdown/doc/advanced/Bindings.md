@@ -228,7 +228,10 @@ non-alphanumeric characters are replaced with underscores, then converted to Pas
 
 ## Cache
 
-Downloaded files are cached in the XDG cache directory or fallback to `~/.cache/kore/datapacks` to speed up subsequent runs.
+Downloaded files are cached to speed up subsequent runs in a different directory depending on your OS:
+- On Windows, `LOCALAPPDATA` or `~/AppData/Local/kore`.
+- On macOS, `~/Library/Caches`.
+- On Linux, XDG cache directory or fallback to `~/.cache/kore/datapacks`.
 This can be overridden by the `KORE_CACHE_HOME` environment variable or the `kore.cache.home` system property.
 Use `skipCache = true` in the global configuration or delete the cache folder to force a re-download.
 

@@ -12,11 +12,16 @@ import kotlin.io.path.fileSize
 import kotlin.io.path.Path
 
 private val cacheDir: Path by lazy {
+	val os = System.getProperty("os.name").lowercase()
+	val platformCacheBase = when {
+		os.contains("win") -> System.getenv("LOCALAPPDATA") ?: (System.getProperty("user.home") + "/AppData/Local")
+		os.contains("mac") -> System.getProperty("user.home") + "/Library/Caches"
+		else -> System.getenv("XDG_CACHE_HOME") ?: (System.getProperty("user.home") + "/.cache")
+	}
 	Path(
 		System.getenv("KORE_CACHE_HOME")
-			?: System.getProperty("kore.cache.home")
-			?: System.getenv("XDG_CACHE_HOME")
-			?: (System.getProperty("user.home") + "/.cache/kore"),
+		?: System.getProperty("kore.cache.home")
+		?: "$platformCacheBase/kore",
 		"datapacks"
 	).also { it.createDirectories() }
 }
