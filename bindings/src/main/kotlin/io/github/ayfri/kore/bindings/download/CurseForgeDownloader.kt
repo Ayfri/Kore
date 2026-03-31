@@ -10,13 +10,14 @@ import java.nio.file.Path
  * - Specific file: `curseforge:projectId:fileId` or `curseforge:slug:fileId`
  * - URL: `curseforge:https://www.curseforge.com/...`
  *
- * Requires `CURSEFORGE_API_KEY` environment variable or system property.
+ * Requires `CURSEFORGE_API_KEY` environment variable
+ * or `curseforge.api.key` system property
  */
 data object CurseForgeDownloader : Downloader {
 	private const val API_BASE = "https://api.curseforge.com/v1"
 	private val apiKey by lazy {
-		System.getenv("CURSEFORGE_API_KEY") ?: System.getProperty("CURSEFORGE_API_KEY")
-		?: throw IllegalStateException("CURSEFORGE_API_KEY environment variable or system property is required for CurseForge downloads")
+		System.getenv("CURSEFORGE_API_KEY") ?: System.getProperty("curseforge.api.key")
+		?: throw IllegalStateException("CURSEFORGE_API_KEY environment variable or curseforge.api.key system property is required for CurseForge downloads")
 	}
 
 	override fun match(source: String) = source.startsWith("curseforge:")

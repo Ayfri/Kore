@@ -1,17 +1,29 @@
 package io.github.ayfri.kore.bindings
 
-import java.io.File
 import java.net.URI
 import java.net.URLDecoder
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.createDirectories
+import kotlin.io.path.exists
+import kotlin.io.path.fileSize
 import kotlin.io.path.Path
 
-private val cacheDir: File by lazy {
-	val dir = Path(System.getProperty("user.home"), ".kore", "cache", "datapacks").toFile()
-	if (!dir.exists()) dir.mkdirs()
-	dir
+private val cacheDir: Path by lazy {
+	val os = System.getProperty("os.name").lowercase()
+	val platformCacheBase = when {
+		os.contains("win") -> System.getenv("LOCALAPPDATA") ?: (System.getProperty("user.home") + "/AppData/Local")
+		os.contains("mac") -> System.getProperty("user.home") + "/Library/Caches"
+		else -> System.getenv("XDG_CACHE_HOME") ?: (System.getProperty("user.home") + "/.cache")
+	}
+	Path(
+		System.getenv("KORE_CACHE_HOME")
+		?: System.getProperty("kore.cache.home")
+		?: "$platformCacheBase/kore",
+		"datapacks"
+	).also { it.createDirectories() }
 }
 
 /**
@@ -28,13 +40,13 @@ fun getFromCacheOrDownload(url: String, skipCache: Boolean = false): Pair<Path, 
 
 	// Use a hash of the URL as cache key to handle different URLs with same filename
 	val cacheKey = url.hashCode().toString(16)
-	val cachedFile = File(cacheDir, "$cacheKey-$decodedFileName")
+	val cachedFile = cacheDir.resolve("$cacheKey-$decodedFileName")
 
 	if (cachedFile.exists() && !skipCache) {
-        val sizeInBytes = cachedFile.length()
+        val sizeInBytes = cachedFile.fileSize()
         val sizeInMB = sizeInBytes / (1024.0 * 1024.0)
-        println("Using cached datapack: ${cachedFile.absolutePath} (%.2f MB)".format(sizeInMB))
-		return cachedFile.toPath() to decodedFileName
+        println("Using cached datapack: ${cachedFile.absolutePathString()} (%.2f MB)".format(sizeInMB))
+		return cachedFile to decodedFileName
 	}
 
 	if (skipCache && cachedFile.exists()) {
@@ -47,12 +59,12 @@ fun getFromCacheOrDownload(url: String, skipCache: Boolean = false): Pair<Path, 
 		val connection = URI.create(url).toURL().openConnection()
 		connection.connect()
 		connection.getInputStream().use { input ->
-			Files.copy(input, cachedFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+			Files.copy(input, cachedFile, StandardCopyOption.REPLACE_EXISTING)
 		}
-		val sizeInBytes = cachedFile.length()
+		val sizeInBytes = cachedFile.fileSize()
 		val sizeInMB = sizeInBytes / (1024.0 * 1024.0)
-		println("Downloaded and cached: ${cachedFile.absolutePath} (%.2f MB)".format(sizeInMB))
-		return cachedFile.toPath() to decodedFileName
+		println("Downloaded and cached: ${cachedFile.absolutePathString()} (%.2f MB)".format(sizeInMB))
+		return cachedFile to decodedFileName
 	} catch (e: Exception) {
 		throw IllegalArgumentException("Failed to download datapack from $url: ${e.message}", e)
 	}
