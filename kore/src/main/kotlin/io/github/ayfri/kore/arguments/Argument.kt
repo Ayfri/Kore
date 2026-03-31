@@ -7,5 +7,14 @@ import kotlinx.serialization.Serializable
 interface Argument {
 	fun asString(): String
 
-	data object ArgumentSerializer : ToStringSerializer<Argument>({ asString() } )
+	data object ArgumentSerializer : ToStringSerializer<Argument>(
+		transform = { asString() },
+		fromString = ::createArgumentProxy
+	)
+
+	companion object {
+		fun createArgumentProxy(value: String) = createArgumentProxyInternal(value)
+
+		internal fun parse(value: String) = parseArgument(value)
+	}
 }

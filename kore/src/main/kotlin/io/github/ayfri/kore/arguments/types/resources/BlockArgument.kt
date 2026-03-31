@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.arguments.types.resources
 
+import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
 import io.github.ayfri.kore.arguments.types.ResourceLocationArgument
 import io.github.ayfri.kore.serializers.ToStringSerializer
@@ -40,7 +41,13 @@ interface BlockArgument : ResourceLocationArgument, BlockOrTagArgument {
 			override var nbtData = nbtData
 		}
 
-		data object DataArgumentSerializer : ToStringSerializer<BlockArgument>({ asString() })
+		data object DataArgumentSerializer : ToStringSerializer<BlockArgument>(
+			transform = { asString() },
+			fromString = {
+				val parsed = Argument.parse(it)
+				BlockArgument(parsed.name, parsed.namespace, parsed.states, parsed.nbtData)
+			}
+		)
 	}
 }
 
