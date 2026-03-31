@@ -27,10 +27,10 @@ import io.github.ayfri.kore.commands.execute.Relation
 import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
+import io.github.ayfri.kore.features.predicates.predicate
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.*
-import io.github.ayfri.kore.helpers.predicateRandomChance
 import io.github.ayfri.kore.utils.debugEntity
 
 fun Function.executeTests() {
@@ -217,7 +217,9 @@ fun Function.executeTests() {
 	""".trimIndent()
 
 	execute {
-		ifCondition(datapack.predicateRandomChance(0.5f))
+		ifCondition(datapack.predicate("random_chance") {
+			randomChance(0.5f)
+		})
 
 		run {
 			say("Hello 50% of the time!")

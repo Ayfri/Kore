@@ -2,6 +2,7 @@ package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
+import io.github.ayfri.kore.arguments.maths.Vec3f
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.AttributeModifierOperation
@@ -15,7 +16,6 @@ import io.github.ayfri.kore.features.enchantments.values.*
 import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.generated.*
-import io.github.ayfri.kore.helpers.displays.maths.Vec3f
 
 private const val DUMMY_ENCHANTMENT_CONTENT = """"description": "",
 			"supported_items": [],

@@ -15,7 +15,6 @@ import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.data.item.builders.itemStack
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
-import io.github.ayfri.kore.helpers.mannequins.MannequinModel
 import io.github.ayfri.kore.utils.set
 
 fun itemComponentsTests() {

@@ -6,7 +6,6 @@ import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
 import io.github.ayfri.kore.arguments.types.resources.ModelArgument
 import io.github.ayfri.kore.arguments.types.resources.model
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import io.github.ayfri.kore.helpers.mannequins.MannequinModel
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

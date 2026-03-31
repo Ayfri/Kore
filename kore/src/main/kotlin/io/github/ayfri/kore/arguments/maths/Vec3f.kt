@@ -1,6 +1,5 @@
-package io.github.ayfri.kore.helpers.displays.maths
+package io.github.ayfri.kore.arguments.maths
 
-import io.github.ayfri.kore.arguments.maths.Vec3
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.FloatArraySerializer
@@ -52,7 +51,6 @@ data class Vec3f(var x: Float = 0f, var y: Float = 0f, var z: Float = 0f) {
 	fun reciprocal() = Vec3f(1f / x, 1f / y, 1f / z)
 
 	fun toArray() = floatArrayOf(x, y, z)
-	fun toQuaternion() = Quaternion.fromEulerAngles(this)
 
 	companion object {
 		val ZERO = Vec3f()

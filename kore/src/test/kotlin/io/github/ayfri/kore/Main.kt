@@ -3,7 +3,6 @@ package io.github.ayfri.kore
 import io.github.ayfri.kore.arguments.argumentsTests
 import io.github.ayfri.kore.commands.runUnitTests
 import io.github.ayfri.kore.features.featuresTests
-import io.github.ayfri.kore.helpers.helpersTests
 import io.github.ayfri.kore.pack.packFormatTests
 import io.github.ayfri.kore.pack.packMCMetaTests
 import io.github.ayfri.kore.serialization.*
@@ -27,7 +26,6 @@ fun main() {
 	datapackTests()
 	featuresTests()
 	functionsTests()
-	helpersTests()
 	packFormatTests()
 	packMCMetaTests()
 	selectorTests()

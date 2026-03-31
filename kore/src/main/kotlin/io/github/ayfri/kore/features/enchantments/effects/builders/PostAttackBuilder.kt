@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.features.enchantments.effects.builders
 
+import io.github.ayfri.kore.arguments.maths.Vec3f
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.arguments.types.resources.SoundArgument
 import io.github.ayfri.kore.data.sound.SoundEvent
@@ -18,7 +19,6 @@ import io.github.ayfri.kore.generated.arguments.MobEffectOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
-import io.github.ayfri.kore.helpers.displays.maths.Vec3f
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 
