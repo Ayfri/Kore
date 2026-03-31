@@ -1,6 +1,7 @@
 package io.github.ayfri.kore
 
 import io.github.ayfri.kore.arguments.enums.Axis
+import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.maths.vec2
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.numbers.PosNumber
@@ -49,7 +50,7 @@ fun vec3Tests() {
 	point5.abs() assertsIs vec3(1.5, 0, 0)
 	point5.ceil() assertsIs vec3(-1, 0, 0)
 	point5.floor() assertsIs vec3(-2, 0, 0)
-	point5.negate() assertsIs vec3(1.5, 0, 0)
+	point5.negate() assertsIs vec3(1.5, -0.0, -0.0)
 	point5.normalize() assertsIs vec3(-1, 0, 0)
 	point5.round() assertsIs vec3(-1, 0, 0)
 
@@ -60,10 +61,19 @@ fun vec3Tests() {
 	point3.cross(point4) assertsIs vec3(25, -40, 15)
 	point1.distanceTo(point2) assertsIs sqrt(12.0)
 	point1.distanceSquaredTo(point2) assertsIs 12.0
-	point2.dot(point3) assertsIs 30
+	point2.dot(point3) assertsIs 30.0
 	point1.manhattanDistanceTo(point2) assertsIs -6.0
 	point3.max(point4) assertsIs vec3(5, 5, 10)
 	point3.min(point4) assertsIs vec3(2, 5, 5)
 
 	point3.toVec2() assertsIs vec2(5, 5)
+
+	val point6 = vec3(1.2, 2.4, 3.0)
+
+	point6.toStringValues() assertsIs "1.2 2.4 3.0"
+	point6.truncate() assertsIs vec3(1, 2, 3)
+	point6.toStringTruncatedIfZero() assertsIs "1.2 2.4 3"
+	point6.toStringTruncated() assertsIs "1 2 3"
+
+	Vec3.fromString("1.5 2.5 3") assertsIs vec3(1.5, 2.5, 3)
 }

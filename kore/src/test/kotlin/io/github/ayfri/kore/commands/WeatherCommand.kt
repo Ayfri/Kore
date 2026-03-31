@@ -11,7 +11,7 @@ fun Function.weatherTests() {
 	weatherClear(100) assertsIs "weather clear 100"
 	weatherRain(100) assertsIs "weather rain 100"
 	weatherThunder(100) assertsIs "weather thunder 100"
-	weatherClear(1.0.days) assertsIs "weather clear 1d"
-	weatherRain(1.0.days) assertsIs "weather rain 1d"
-	weatherThunder(1.0.days) assertsIs "weather thunder 1d"
+	weatherClear(1.days) assertsIs "weather clear 1d"
+	weatherRain(1.days) assertsIs "weather rain 1d"
+	weatherThunder(1.days) assertsIs "weather thunder 1d"
 }

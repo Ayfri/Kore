@@ -90,6 +90,6 @@ fun Function.particleTests() {
 			20
 		) assertsIs "particle trail{color:5592575,duration:20,target:[0,0,0]}"
 
-		vibration(vec3(1, 2, 3), 10) assertsIs "particle vibration 1 2 3 10"
+		vibration(vec3(1, 2, 3), 10) assertsIs "particle vibration 1.0 2.0 3.0 10"
 	}
 }

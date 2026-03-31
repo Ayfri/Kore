@@ -64,12 +64,12 @@ fun Function.commandsTests() {
 	seed() assertsIs "seed"
 
 	setWorldSpawn() assertsIs "setworldspawn"
-	setWorldSpawn(vec3(1, 2, 3)) assertsIs "setworldspawn 1 2 3"
+	setWorldSpawn(vec3(1, 2, 3)) assertsIs "setworldspawn 1.0 2.0 3.0"
 	setWorldSpawn(vec3(), rotation()) assertsIs "setworldspawn ~ ~ ~ ~ ~"
 
 	spawnPoint() assertsIs "spawnpoint"
 	spawnPoint(self()) assertsIs "spawnpoint @s"
-	spawnPoint(self(), vec3(1, 2, 3)) assertsIs "spawnpoint @s 1 2 3"
+	spawnPoint(self(), vec3(1, 2, 3)) assertsIs "spawnpoint @s 1.0 2.0 3.0"
 	spawnPoint(self(), vec3(), rotation(90, 50)) assertsIs "spawnpoint @s ~ ~ ~ 90 50"
 
 	spectate() assertsIs "spectate"

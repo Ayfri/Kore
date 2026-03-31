@@ -65,7 +65,7 @@ fun Function.lootTests() {
 		source {
 			loot(LootTables.Gameplay.CAT_MORNING_GIFT)
 		}
-	} assertsIs "loot spawn 0 0 0 loot minecraft:gameplay/cat_morning_gift"
+	} assertsIs "loot spawn 0.0 0.0 0.0 loot minecraft:gameplay/cat_morning_gift"
 
 	loot {
 		target {

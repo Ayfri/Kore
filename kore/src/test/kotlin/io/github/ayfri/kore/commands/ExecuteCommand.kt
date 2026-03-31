@@ -100,7 +100,7 @@ fun Function.executeTests() {
 			say("test")
 		}
 	} assertsIs """
-		execute facing entity $selectorAsString feet in minecraft:the_end on attacker positioned 1 2 3 run say test
+		execute facing entity $selectorAsString feet in minecraft:the_end on attacker positioned 1.0 2.0 3.0 run say test
 	""".trimIndent()
 
 	execute {

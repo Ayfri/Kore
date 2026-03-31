@@ -10,7 +10,7 @@ import io.github.ayfri.kore.functions.Function
 fun Function.rotateTests() {
 	rotate(self(), rotation(90, 45)) assertsIs "rotate @s 90 45"
 
-	rotateFacing(self(), vec3(1, 2, 3)) assertsIs "rotate @s facing 1 2 3"
+	rotateFacing(self(), vec3(1, 2, 3)) assertsIs "rotate @s facing 1.0 2.0 3.0"
 	rotateFacing(self(), vec3()) assertsIs "rotate @s facing ~ ~ ~"
 
 	rotateFacingEntity(self(), self()) assertsIs "rotate @s facing entity @s"

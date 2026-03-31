@@ -9,7 +9,7 @@ import io.github.ayfri.kore.functions.Function
 
 fun Function.teleportTests() {
 	teleport(vec3()) assertsIs "teleport ~ ~ ~"
-	teleport(vec3(1, 2, 3)) assertsIs "teleport 1 2 3"
+	teleport(vec3(1, 2, 3)) assertsIs "teleport 1.0 2.0 3.0"
 	teleport(self()) assertsIs "teleport @s"
 	teleport(self(), vec3()) assertsIs "teleport @s ~ ~ ~"
 	teleport(self(), self()) assertsIs "teleport @s @s"
