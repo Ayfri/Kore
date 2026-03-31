@@ -20,6 +20,7 @@ import io.github.ayfri.kore.commands.function as functionCommand
 
 private val initializedRaycastObjective = mutableSetOf<String>()
 
+/** Configures how a generated raycast behaves and which callbacks it should trigger. */
 data class RaycastConfig(
 	var maxDistance: Int = 100,
     var name: String = "raycast",
@@ -29,16 +30,19 @@ data class RaycastConfig(
     var step: Double = 0.5,
 )
 
+/** Holds the generated entry point used to launch a configured raycast. */
 data class RaycastHandle(
 	val config: RaycastConfig,
     val startFunctionId: String,
 ) {
+	/** Calls the generated start function that begins stepping the ray forward. */
 	context(fn: Function)
 	fun cast() {
 		fn.functionCommand(startFunctionId)
 	}
 }
 
+/** Ensures the shared scoreboard objective required by raycasts exists once per datapack. */
 private fun DataPack.ensureRaycastObjective() {
 	val key = name
 	if (key in initializedRaycastObjective) return
@@ -53,6 +57,7 @@ private fun DataPack.ensureRaycastObjective() {
 	}
 }
 
+/** Registers a raycast from a fully built [RaycastConfig]. */
 fun DataPack.raycast(config: RaycastConfig): RaycastHandle {
 	ensureRaycastObjective()
 
@@ -121,4 +126,5 @@ fun DataPack.raycast(config: RaycastConfig): RaycastHandle {
 	return RaycastHandle(config, startFn.asId())
 }
 
+/** Registers a raycast by configuring a fresh [RaycastConfig] inline. */
 inline fun DataPack.raycast(block: RaycastConfig.() -> Unit) = raycast(RaycastConfig().apply(block))

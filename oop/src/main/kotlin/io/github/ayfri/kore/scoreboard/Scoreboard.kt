@@ -10,13 +10,17 @@ import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.entities.Entity
 import io.github.ayfri.kore.functions.Function
 
+/** Represents a scoreboard objective that can later be created or configured. */
 open class Scoreboard(val name: String)
 
+/** Creates a scoreboard wrapper and optionally configures it inline. */
 fun scoreboard(name: String, init: Scoreboard.() -> Unit = {}) = Scoreboard(name).apply(init)
 
+/** Returns a score handle scoped to [entity] for this scoreboard objective. */
 context(fn: Function)
 fun Scoreboard.getScore(entity: Entity) = ScoreboardEntity(name, entity)
 
+/** Emits the command that creates this objective. */
 context(fn: Function)
 fun Scoreboard.create(criteria: ScoreboardCriterion = ScoreboardCriteria.DUMMY) = fn.scoreboard {
 	objectives {
@@ -24,6 +28,7 @@ fun Scoreboard.create(criteria: ScoreboardCriterion = ScoreboardCriteria.DUMMY) 
 	}
 }
 
+/** Removes this objective from the scoreboard system. */
 context(fn: Function)
 fun Scoreboard.remove() = fn.scoreboard {
 	objectives {
@@ -31,6 +36,7 @@ fun Scoreboard.remove() = fn.scoreboard {
 	}
 }
 
+/** Displays this objective in the requested [slot]. */
 context(fn: Function)
 fun Scoreboard.setDisplaySlot(slot: DisplaySlot) = fn.scoreboard {
 	objectives {
@@ -38,6 +44,7 @@ fun Scoreboard.setDisplaySlot(slot: DisplaySlot) = fn.scoreboard {
 	}
 }
 
+/** Changes how scores are rendered for this objective. */
 context(fn: Function)
 fun Scoreboard.setRenderType(type: RenderType) = fn.scoreboard {
 	objectives {
@@ -45,6 +52,7 @@ fun Scoreboard.setRenderType(type: RenderType) = fn.scoreboard {
 	}
 }
 
+/** Sets the display name from chat components. */
 context(fn: Function)
 fun Scoreboard.setDisplayName(displayName: ChatComponents) = fn.scoreboard {
 	objectives {
@@ -52,6 +60,7 @@ fun Scoreboard.setDisplayName(displayName: ChatComponents) = fn.scoreboard {
 	}
 }
 
+/** Sets the display name from a plain string. */
 context(fn: Function)
 fun Scoreboard.setDisplayName(displayName: String) = fn.scoreboard {
 	objectives {

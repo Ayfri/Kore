@@ -22,12 +22,15 @@ import io.github.ayfri.kore.commands.function as functionCommand
 
 private val initializedTimers = mutableSetOf<String>()
 
+/** Describes a timer that counts upward until it reaches [duration]. */
 data class Timer(
     val duration: TimeNumber = 100.ticks,
     val name: String,
 )
 
+/** Exposes helper operations for a registered [Timer]. */
 data class TimerHandle(val timer: Timer) {
+	/** Runs [block] once [entity] reaches the configured timer duration, then stops the timer. */
     context(fn: Function)
     fun onComplete(entity: Entity, block: Function.() -> Unit) {
         val generated = fn.datapack.generatedFunction(
@@ -53,6 +56,7 @@ data class TimerHandle(val timer: Timer) {
         }
     }
 
+	/** Starts counting this timer from `0` for [entity]. */
     context(fn: Function)
     fun start(entity: Entity) = fn.scoreboard {
         players {
@@ -60,6 +64,7 @@ data class TimerHandle(val timer: Timer) {
         }
     }
 
+	/** Stops this timer for [entity] by setting its score to `-1`. */
     context(fn: Function)
     fun stop(entity: Entity) = fn.scoreboard {
         players {
@@ -68,6 +73,7 @@ data class TimerHandle(val timer: Timer) {
     }
 }
 
+/** Registers a timer and its init/tick plumbing once per datapack. */
 fun DataPack.registerTimer(timer: Timer): TimerHandle {
     val key = "$name:${timer.name}"
     if (key !in initializedTimers) {
@@ -97,5 +103,6 @@ fun DataPack.registerTimer(timer: Timer): TimerHandle {
     return TimerHandle(timer)
 }
 
+/** Creates and registers a timer from a name and duration. */
 fun DataPack.registerTimer(name: String, duration: TimeNumber = 100.ticks) =
     registerTimer(Timer(name = name, duration = duration))

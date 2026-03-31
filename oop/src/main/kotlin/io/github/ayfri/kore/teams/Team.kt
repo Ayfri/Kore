@@ -9,20 +9,28 @@ import io.github.ayfri.kore.commands.teams
 import io.github.ayfri.kore.entities.Entity
 import io.github.ayfri.kore.functions.Function
 
-data class Team(val name: String)
+/** Wraps a Minecraft team name and exposes convenience helpers around `/team`. */
+data class Team(
+	/** The team identifier used in commands. */
+	val name: String,
+)
 
+/** Creates a [Team] and lets you configure it inline before reuse. */
 fun team(name: String, init: Team.() -> Unit = {}) = Team(name).apply(init)
 
+/** Ensures the team exists before applying other team-related commands. */
 context(fn: Function)
 fun Team.ensureExists() = fn.teams {
 	add(name)
 }
 
+/** Deletes the team and removes all of its members. */
 context(fn: Function)
 fun Team.delete() = fn.teams {
 	remove(name)
 }
 
+/** Updates the display name shown for this team. */
 context(fn: Function)
 fun Team.setDisplayName(displayName: ChatComponents) = fn.teams {
 	modify(name) {
@@ -30,6 +38,7 @@ fun Team.setDisplayName(displayName: ChatComponents) = fn.teams {
 	}
 }
 
+/** Sets the prefix applied before member names. */
 context(fn: Function)
 fun Team.setPrefix(prefix: ChatComponents) = fn.teams {
 	modify(name) {
@@ -37,6 +46,7 @@ fun Team.setPrefix(prefix: ChatComponents) = fn.teams {
 	}
 }
 
+/** Sets the suffix applied after member names. */
 context(fn: Function)
 fun Team.setSuffix(suffix: ChatComponents) = fn.teams {
 	modify(name) {
@@ -44,6 +54,7 @@ fun Team.setSuffix(suffix: ChatComponents) = fn.teams {
 	}
 }
 
+/** Changes how members of this team collide with other entities. */
 context(fn: Function)
 fun Team.setCollisionRule(rule: CollisionRule) = fn.teams {
 	modify(name) {
@@ -51,6 +62,7 @@ fun Team.setCollisionRule(rule: CollisionRule) = fn.teams {
 	}
 }
 
+/** Enables or disables friendly fire between members of the team. */
 context(fn: Function)
 fun Team.setFriendlyFire(friendlyFire: Boolean) = fn.teams {
 	modify(name) {
@@ -58,6 +70,7 @@ fun Team.setFriendlyFire(friendlyFire: Boolean) = fn.teams {
 	}
 }
 
+/** Controls whether invisible teammates remain visible to one another. */
 context(fn: Function)
 fun Team.setSeeFriendlyInvisibles(seeFriendlyInvisibles: Boolean) = fn.teams {
 	modify(name) {
@@ -65,6 +78,7 @@ fun Team.setSeeFriendlyInvisibles(seeFriendlyInvisibles: Boolean) = fn.teams {
 	}
 }
 
+/** Controls how player nametags are rendered for this team. */
 context(fn: Function)
 fun Team.setNametagVisibility(visibility: Visibility) = fn.teams {
 	modify(name) {
@@ -72,6 +86,7 @@ fun Team.setNametagVisibility(visibility: Visibility) = fn.teams {
 	}
 }
 
+/** Controls who can see death messages involving this team. */
 context(fn: Function)
 fun Team.setDeathMessageVisibility(visibility: Visibility) = fn.teams {
 	modify(name) {
@@ -79,6 +94,7 @@ fun Team.setDeathMessageVisibility(visibility: Visibility) = fn.teams {
 	}
 }
 
+/** Sets the formatting color used for the team and its chat display. */
 context(fn: Function)
 fun Team.setColor(color: FormattingColor) = fn.teams {
 	modify(name) {
@@ -86,8 +102,10 @@ fun Team.setColor(color: FormattingColor) = fn.teams {
 	}
 }
 
+/** Adds raw score holders to this team. */
 context(fn: Function)
 fun Team.addMembers(vararg members: ScoreHolderArgument) = members.forEach { fn.teams { join(name, it) } }
 
+/** Adds entity selectors to this team, clearing their previous team first. */
 context(fn: Function)
 fun Team.addMembers(vararg members: Entity) = addMembers(*members.map { it.asSelector { team = null } }.toTypedArray())

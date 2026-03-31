@@ -62,12 +62,7 @@ data class Scheduler(
 	}
 }
 
-/**
- * Cancels a repeating `Scheduler` by clearing its scheduled generated function.
- *
- * This is executed in the context of a `Function` so it can emit the required
- * `schedule ... clear` game command.
- */
+/** Wraps a [Scheduler] when you want to stop one of its repeating schedules. */
 data class UnScheduler(private val scheduler: Scheduler) {
 	/**
 	 * Clear the generated schedule for the provided `Scheduler` if present.
@@ -97,7 +92,7 @@ data class SchedulerManager(private val dp: DataPack) {
 	/** When true the generated load function will include debug markers. */
 	var debug = false
 
-	/** The list of currently configured schedulers for this DataPack. */
+	/** The list of currently configured schedulers for this datapack. */
 	val schedulers = mutableListOf<Scheduler>()
 
 	private val fn = object : Function("", "", datapack = dp) {}
@@ -180,7 +175,7 @@ data class SchedulerManager(private val dp: DataPack) {
 }
 
 
-/** Convenience factory returning a `SchedulerManager` bound to this `DataPack`. */
+/** Returns a scheduler manager bound to this datapack. */
 fun DataPack.schedulerManager() = SchedulerManager(this)
 
 /**

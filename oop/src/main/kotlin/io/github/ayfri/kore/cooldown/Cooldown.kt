@@ -22,12 +22,15 @@ import io.github.ayfri.kore.commands.function as functionCommand
 
 private val initializedCooldowns = mutableSetOf<String>()
 
+/** Describes a scoreboard-backed cooldown identified by [name] and measured with [duration]. */
 data class Cooldown(
 	val duration: TimeNumber = 20.ticks,
     val name: String,
 )
 
+/** Exposes helper operations for a registered [Cooldown]. */
 data class CooldownHandle(val cooldown: Cooldown) {
+	/** Runs [block] only when the cooldown is ready, then restarts it automatically. */
 	context(fn: Function)
 	fun ifReady(entity: Entity, block: Function.() -> Unit) {
 		val generated = fn.datapack.generatedFunction(
@@ -53,6 +56,7 @@ data class CooldownHandle(val cooldown: Cooldown) {
 		}
 	}
 
+	/** Forces the cooldown score back to `0` for [entity]. */
     context(fn: Function)
     fun reset(entity: Entity) = fn.scoreboard {
         players {
@@ -60,6 +64,7 @@ data class CooldownHandle(val cooldown: Cooldown) {
         }
     }
 
+	/** Starts the cooldown immediately for [entity]. */
     context(fn: Function)
     fun start(entity: Entity) = fn.scoreboard {
         players {
@@ -68,6 +73,7 @@ data class CooldownHandle(val cooldown: Cooldown) {
     }
 }
 
+/** Registers a cooldown and its init/tick plumbing once per datapack. */
 fun DataPack.registerCooldown(cooldown: Cooldown): CooldownHandle {
 	val key = "$name:${cooldown.name}"
 	if (key !in initializedCooldowns) {
@@ -97,5 +103,6 @@ fun DataPack.registerCooldown(cooldown: Cooldown): CooldownHandle {
 	return CooldownHandle(cooldown)
 }
 
+/** Creates and registers a cooldown from a name and duration. */
 fun DataPack.registerCooldown(name: String, duration: TimeNumber = 20.ticks) =
     registerCooldown(Cooldown(name = name, duration = duration))

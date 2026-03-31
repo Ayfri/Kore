@@ -15,11 +15,15 @@ import io.github.ayfri.kore.commands.function as functionCommand
 
 private val initializedStates = mutableSetOf<String>()
 
+/** Represents one logical gameplay state stored in the shared state objective. */
 data class GameState(val id: Int, val name: String)
 
+/** Coordinates state transitions and per-state handlers. */
 data class GameStateManager(val states: List<GameState>) {
+	/** Returns the registered state matching [name]. */
     fun stateByName(name: String) = states.first { it.name == name }
 
+	/** Switches the global game state to [state]. */
     context(fn: Function)
     fun transitionTo(state: GameState) = fn.scoreboard {
         players {
@@ -27,9 +31,11 @@ data class GameStateManager(val states: List<GameState>) {
         }
     }
 
+	/** Switches the global game state by looking it up from [stateName]. */
     context(fn: Function)
     fun transitionTo(stateName: String) = transitionTo(stateByName(stateName))
 
+	/** Runs [block] only when the current global state matches [state]. */
     context(fn: Function)
     fun whenState(state: GameState, block: Function.() -> Unit) {
         val generated = fn.datapack.generatedFunction(
@@ -50,16 +56,20 @@ data class GameStateManager(val states: List<GameState>) {
         }
     }
 
+	/** Runs [block] only when the current global state matches [stateName]. */
     context(fn: Function)
     fun whenState(stateName: String, block: Function.() -> Unit) = whenState(stateByName(stateName), block)
 }
 
+/** Builder used to declare ordered game states. */
 class GameStateManagerBuilder {
     private val states = mutableListOf<GameState>()
     private var nextId = 0
 
+	/** Builds an immutable [GameStateManager] from the collected states. */
     fun build() = GameStateManager(states.toList())
 
+	/** Registers a new state and returns its handle. */
     fun state(name: String, id: Int = nextId): GameState {
         val state = GameState(id, name)
         states += state
@@ -68,6 +78,7 @@ class GameStateManagerBuilder {
     }
 }
 
+/** Registers game states and initializes the shared state objective once per datapack. */
 fun DataPack.registerGameStates(block: GameStateManagerBuilder.() -> Unit): GameStateManager {
     val manager = GameStateManagerBuilder().apply(block).build()
 
