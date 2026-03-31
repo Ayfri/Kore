@@ -46,7 +46,13 @@ data class NbtComponent(
 fun nbtComponent(path: String, block: NbtComponent.() -> Unit = {}) = ChatComponents(NbtComponent(path).apply(block))
 
 fun nbtComponent(path: String, block: Vec3, block2: NbtComponent.() -> Unit = {}) =
-	ChatComponents(NbtComponent(path, block = block.asString(), source = NbtComponentSource.BLOCK).apply(block2))
+	ChatComponents(
+		NbtComponent(
+			path,
+			block = block.toStringTruncated(),
+			source = NbtComponentSource.BLOCK
+		).apply(block2)
+	)
 
 fun nbtComponent(path: String, entity: EntityArgument, block: NbtComponent.() -> Unit = {}) =
 	ChatComponents(NbtComponent(path, entity = entity.asString(), source = NbtComponentSource.ENTITY).apply(block))

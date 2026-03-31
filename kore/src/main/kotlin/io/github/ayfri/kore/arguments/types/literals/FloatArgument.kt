@@ -1,12 +1,12 @@
 package io.github.ayfri.kore.arguments.types.literals
 
 import io.github.ayfri.kore.arguments.Argument
-import io.github.ayfri.kore.arguments.numbers.str
+import io.github.ayfri.kore.arguments.numbers.toStringTruncatedIfRound
 import kotlinx.serialization.Serializable
 
 @Serializable(with = Argument.ArgumentSerializer::class)
 data class FloatArgument(val value: Double) : Argument {
-	override fun asString() = value.str
+	override fun asString() = value.toStringTruncatedIfRound()
 }
 
 fun float(value: Double) = FloatArgument(value)

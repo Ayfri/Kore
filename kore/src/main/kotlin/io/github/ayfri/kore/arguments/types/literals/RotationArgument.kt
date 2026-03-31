@@ -8,7 +8,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable(with = Argument.ArgumentSerializer::class)
 data class RotationArgument(val yaw: RotNumber, val pitch: RotNumber) : Argument {
-	override fun asString() = "$yaw $pitch"
+	override fun asString() = toStringStrippingTrailingZero()
+
+	fun toStringStrippingTrailingZero() = "${yaw.toStringTruncatedIfZero()} ${pitch.toStringTruncatedIfZero()}"
+	fun toStringStrippingTrailingNumbers() = "${yaw.toStringTruncated()} ${pitch.toStringTruncated()}"
 }
 
 fun rotation(yaw: Number, pitch: Number = 0) = RotationArgument(yaw.rot, pitch.rot)

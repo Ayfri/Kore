@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.ItemSlotType
+import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.types.ContainerArgument
 import io.github.ayfri.kore.arguments.types.literalName
 import io.github.ayfri.kore.arguments.types.literals.int
@@ -52,11 +53,11 @@ data class Item(private val fn: Function) {
 				"item",
 				literal("replace"),
 				literal(container.literalName),
-				container,
+				if (container is Vec3) literal(container.toStringTruncated()) else container,
 				slot,
 				literal("from"),
 				literal(with.literalName),
-				with,
+				if (with is Vec3) literal(with.toStringTruncated()) else with,
 				withSlot,
 				literal(modifier?.asString())
 			)
@@ -74,11 +75,11 @@ data class Item(private val fn: Function) {
 				"item",
 				literal("replace"),
 				literal(container.literalName),
-				container,
+				if (container is Vec3) literal(container.toStringTruncated()) else container,
 				slot,
 				literal("from"),
 				literal(with.literalName),
-				with,
+				if (with is Vec3) literal(with.toStringTruncated()) else with,
 				withSlot,
 				literal(snbtSerializer.encodeToString(ItemModifier().apply(block)))
 			)

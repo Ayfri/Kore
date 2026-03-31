@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.arguments.numbers.ranges
 
 import io.github.ayfri.kore.arguments.Argument
-import io.github.ayfri.kore.arguments.numbers.str
+import io.github.ayfri.kore.arguments.numbers.toStringTruncatedIfRound
 import kotlinx.serialization.Serializable
 
 interface FloatingRange : Range
@@ -10,9 +10,9 @@ interface FloatingRange : Range
 data class FloatRange(val start: Double?, val end: Double?) : FloatingRange {
 	override fun asString() = when {
 		start == null && end == null -> ""
-		start == null -> "..${end?.str}"
-		end == null -> "${start.str}.."
-		else -> "${start.str}..${end.str}"
+		start == null -> "..${end?.toStringTruncatedIfRound()}"
+		end == null -> "${start.toStringTruncatedIfRound()}.."
+		else -> "${start.toStringTruncatedIfRound()}..${end.toStringTruncatedIfRound()}"
 	}
 
 	override fun toString() = asString()

@@ -55,7 +55,7 @@ data class ChatComponents(
 		}
 	}
 
-	fun toNbtTag() = when (list.size) {
+	fun toNbtTag(): NbtTag = when (list.size) {
 		0 -> NbtString("")
 		1 -> list[0].also {
 			if (it.containsOnlyText()) return NbtString(it.text)

@@ -66,10 +66,10 @@ class Clone(private val fn: Function) {
 		command(
 			"clone",
 			*fromArgs,
-			begin,
-			end,
+			begin.truncate(),
+			end.truncate(),
 			*toArgs,
-			destination,
+			destination.truncate(),
 			literal(type?.asArg()),
 			filter,
 			literal(cloneMode?.asArg()),
@@ -80,12 +80,43 @@ class Clone(private val fn: Function) {
 
 fun Function.clone(begin: Vec3, end: Vec3, destination: Vec3, strict: Boolean = false) = addLine(command("clone", begin, end, destination, literal(if (strict) "strict" else null)))
 fun Function.cloneFiltered(begin: Vec3, end: Vec3, destination: Vec3, filter: BlockOrTagArgument, mode: CloneMode? = null, strict: Boolean = false) =
-	addLine(command("clone", begin, end, destination, literal("filtered"), filter, literal(mode?.asArg()), literal(if (strict) "strict" else null)))
+	addLine(
+		command(
+			"clone",
+			begin.truncate(),
+			end.truncate(),
+			destination.truncate(),
+			literal("filtered"),
+			filter,
+			literal(mode?.asArg()),
+			literal(if (strict) "strict" else null)
+		)
+	)
 
 fun Function.cloneMasked(begin: Vec3, end: Vec3, destination: Vec3, mode: CloneMode? = null, strict: Boolean = false) =
-	addLine(command("clone", begin, end, destination, literal("masked"), literal(mode?.asArg()), literal(if (strict) "strict" else null)))
+	addLine(
+		command(
+			"clone",
+			begin.truncate(),
+			end.truncate(),
+			destination.truncate(),
+			literal("masked"),
+			literal(mode?.asArg()),
+			literal(if (strict) "strict" else null)
+		)
+	)
 
 fun Function.cloneReplace(begin: Vec3, end: Vec3, destination: Vec3, mode: CloneMode? = null, strict: Boolean = false) =
-	addLine(command("clone", begin, end, destination, literal("replace"), literal(mode?.asArg()), literal(if (strict) "strict" else null)))
+	addLine(
+		command(
+			"clone",
+			begin.truncate(),
+			end.truncate(),
+			destination.truncate(),
+			literal("replace"),
+			literal(mode?.asArg()),
+			literal(if (strict) "strict" else null)
+		)
+	)
 
 fun Function.clone(block: Clone.() -> Unit) = Clone(this).apply(block).build()

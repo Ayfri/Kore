@@ -41,12 +41,22 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 		this.arguments += listOf(literal(prefix), *arguments.toTypedArray())
 	}
 
-	fun biome(pos: Vec3, biome: BiomeOrTagArgument) = addArguments(listOf(literal("biome"), pos, biome))
+	fun biome(pos: Vec3, biome: BiomeOrTagArgument) =
+		addArguments(listOf(literal("biome"), literal(pos.toStringTruncated()), biome))
 
-	fun block(pos: Vec3, block: BlockArgument) = addArguments(listOf(literal("block"), pos, block))
+	fun block(pos: Vec3, block: BlockArgument) =
+		addArguments(listOf(literal("block"), literal(pos.toStringTruncated()), block))
 
 	fun blocks(start: Vec3, end: Vec3, destination: Vec3, mode: BlocksTestMode) =
-		addArguments(listOf(literal("blocks"), start, end, destination, literal(mode.asArg())))
+		addArguments(
+			listOf(
+				literal("blocks"),
+				literal(start.toStringTruncated()),
+				literal(end.toStringTruncated()),
+				literal(destination.toStringTruncated()),
+				literal(mode.asArg())
+			)
+		)
 
 	fun data(target: DataArgument, path: String) = addArguments(
 		listOf(
@@ -65,7 +75,7 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 
 	fun function(function: FunctionArgument) = addArguments(listOf(literal("function"), function))
 
-	fun loaded(pos: Vec3) = addArguments(listOf(literal("loaded"), pos))
+	fun loaded(pos: Vec3) = addArguments(listOf(literal("loaded"), literal(pos.toStringTruncatedIfZero())))
 
 	/** References a predicate. */
 	fun predicate(predicate: PredicateArgument) = addArguments(listOf(literal("predicate"), predicate))
