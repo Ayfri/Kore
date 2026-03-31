@@ -5,7 +5,7 @@ nav-title: Bindings
 description: Import existing datapacks and generate Kotlin bindings.
 keywords: kore, bindings, import, datapack, github, modrinth, curseforge
 date-created: 2026-01-23
-date-modified: 2026-03-04
+date-modified: 2026-03-31
 routeOverride: /docs/advanced/bindings
 position: 3
 ---
@@ -162,7 +162,7 @@ modrinth("vanilla-refresh")
 
 ### CurseForge
 
-Downloads from CurseForge. Requires the `CURSEFORGE_API_KEY` environment variable.
+Downloads from CurseForge. Requires the `CURSEFORGE_API_KEY` environment variable or the `curseforge.api.key` system property
 
 Patterns:
 
@@ -228,8 +228,9 @@ non-alphanumeric characters are replaced with underscores, then converted to Pas
 
 ## Cache
 
-Downloaded files are cached in `~/.kore/cache/datapacks` to speed up subsequent runs. Use
-`skipCache = true` in the global configuration or delete the cache folder to force a re-download.
+Downloaded files are cached in the XDG cache directory or fallback to `~/.cache/kore/datapacks` to speed up subsequent runs.
+This can be overridden by the `KORE_CACHE_HOME` environment variable or the `kore.cache.home` system property.
+Use `skipCache = true` in the global configuration or delete the cache folder to force a re-download.
 
 ## Troubleshooting
 
