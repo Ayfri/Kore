@@ -13,9 +13,9 @@ import kotlinx.serialization.Serializable
  * present only when the pack covers old game versions.
  *
  * The value can take three forms in JSON:
- * - A single integer, e.g. `42` — use [number].
- * - A list of integers, e.g. `[42, 45]` — use [list].
- * - An object with a range, e.g. `{ "min_inclusive": 42, "max_inclusive": 45 }` — use [minInclusive] and [maxInclusive].
+ * - A single integer, e.g. `42` - use [number].
+ * - A list of integers, e.g. `[42, 45]` - use [list].
+ * - An object with a range, e.g. `{ "min_inclusive": 42, "max_inclusive": 45 }` - use [minInclusive] and [maxInclusive].
  *
  * JSON format reference: [Pack.mcmeta – Minecraft Wiki](https://minecraft.wiki/w/Pack.mcmeta)
  *

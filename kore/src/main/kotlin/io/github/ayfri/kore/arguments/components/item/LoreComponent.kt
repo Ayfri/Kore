@@ -19,9 +19,9 @@ data class LoreComponent(
 ) : Component() {
 	companion object {
 		data object LoreComponentSerializer : InlineSerializer<LoreComponent, ChatComponents>(
-			ToStringSerializer {
+			ToStringSerializer(transform = {
 				StringifiedNbt.encodeToString(toNbtList())
-			},
+			}),
 			LoreComponent::list
 		)
 	}

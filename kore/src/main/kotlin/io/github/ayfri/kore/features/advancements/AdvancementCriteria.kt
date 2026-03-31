@@ -14,7 +14,7 @@ import kotlinx.serialization.builtins.serializer
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement#JSON_format
  */
 @Serializable(with = AdvancementCriteria.Companion.AdvancementCriteriaSerializer::class)
-data class AdvancementCriteria(var criteria: AdvancementCriteriaMap = AdvancementCriteriaMap()) {
+data class AdvancementCriteria(var criteria: AdvancementCriteriaMap = mutableMapOf()) {
 	companion object {
 		data object AdvancementCriteriaSerializer : InlineSerializer<AdvancementCriteria, Map<String, AdvancementTriggerCondition>>(
 			MapSerializer(String.serializer(), AdvancementTriggerCondition.serializer()),
@@ -24,4 +24,4 @@ data class AdvancementCriteria(var criteria: AdvancementCriteriaMap = Advancemen
 }
 
 /** Map wrapper for advancement criteria. */
-class AdvancementCriteriaMap : LinkedHashMap<String, AdvancementTriggerCondition>()
+typealias AdvancementCriteriaMap = MutableMap<String, AdvancementTriggerCondition>

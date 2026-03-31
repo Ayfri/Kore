@@ -1,6 +1,5 @@
 package io.github.ayfri.kore
 
-import io.github.ayfri.kore.utils.resolveSafe
 import io.github.ayfri.kore.utils.resolve
 import kotlinx.io.files.Path
 import kotlinx.serialization.Serializable
@@ -14,7 +13,7 @@ import kotlinx.serialization.Transient
 * @param resourceFolder the folder where the generated file is stored
 */
 @Serializable
-abstract class Generator(@Transient val resourceFolder: String = error("Generator must have a resource folder")) {
+abstract class Generator(@Transient val resourceFolder: String = "") {
 	@Transient
 	var namespace: String? = null
 

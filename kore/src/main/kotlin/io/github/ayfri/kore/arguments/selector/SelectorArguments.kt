@@ -163,13 +163,13 @@ data class SelectorArguments(
 		}
 
 	/** Invert the next gamemode option (e.g. `!survival`). */
-	operator fun Gamemode.not() = apply { _gamemodes += GamemodeOption(null, true) }
+	operator fun Gamemode.not() = apply { _gamemodes += GamemodeOption(invert = true) }
 	/** Invert the next NBT option. */
-	operator fun NbtCompound.not() = apply { _nbt += NbtCompoundOption(null, true) }
+	operator fun NbtCompound.not() = apply { _nbt += NbtCompoundOption(invert = true) }
 	/** Invert the next predicate option. */
-	operator fun PredicateArgument.not() = apply { _predicates += PredicateOption(null, true) }
+	operator fun PredicateArgument.not() = apply { _predicates += PredicateOption(invert = true) }
 	/** Invert the next entity type option. */
-	operator fun EntityTypeArgument.not() = apply { _types += EntityTypeOption(null, true) }
+	operator fun EntityTypeArgument.not() = apply { _types += EntityTypeOption(invert = true) }
 
 	/** Prefix a string with '!' to invert string-based options. */
 	operator fun String.not() = "!$this"
@@ -190,13 +190,13 @@ data class SelectorArguments(
 		y = other.y
 		yRotation = other.yRotation
 		z = other.z
-		_gamemodes = other._gamemodes
-		_names = other._names
-		_nbt = other._nbt
-		_predicates = other._predicates
-		_tags = other._tags
-		_teams = other._teams
-		_types = other._types
+		_gamemodes = other._gamemodes.toMutableList()
+		_names = other._names.toMutableList()
+		_nbt = other._nbt.toMutableList()
+		_predicates = other._predicates.toMutableList()
+		_tags = other._tags.toMutableList()
+		_teams = other._teams.toMutableList()
+		_types = other._types.toMutableList()
 	}
 
 	companion object {

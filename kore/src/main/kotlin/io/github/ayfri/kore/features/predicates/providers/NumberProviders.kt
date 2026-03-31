@@ -10,9 +10,7 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.encodeStructure
+import kotlinx.serialization.encoding.*
 
 @Serializable(with = NumberProvider.Companion.NumberProviderSerializer::class)
 sealed class NumberProvider {
@@ -48,7 +46,23 @@ data class ScoreTargetNumberProvider(
 				element<String>("target")
 			}
 
-			override fun deserialize(decoder: Decoder) = error("ScoreTargetNumberProvider cannot be deserialized")
+			override fun deserialize(decoder: Decoder) = decoder.decodeStructure(descriptor) {
+				var type: LootScoreProviderTypeArgument? = null
+				var name: String? = null
+				var target: EntityType? = null
+
+				while (true) {
+					when (val index = decodeElementIndex(descriptor)) {
+						0 -> type = decodeSerializableElement(descriptor, 0, LootScoreProviderTypeArgument.serializer())
+						1 -> name = decodeStringElement(descriptor, 1)
+						2 -> target = decodeSerializableElement(descriptor, 2, EntityType.serializer())
+						CompositeDecoder.DECODE_DONE -> break
+						else -> error("Unexpected index: $index")
+					}
+				}
+				requireNotNull(type) { "type is required" }
+				ScoreTargetNumberProvider(type, name, target)
+			}
 
 			override fun serialize(encoder: Encoder, value: ScoreTargetNumberProvider) {
 				encoder.encodeStructure(descriptor) {
