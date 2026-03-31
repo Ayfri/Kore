@@ -5,7 +5,7 @@ nav-title: Getting Started
 description: Step-by-step guide to create your first Minecraft datapack with Kore.
 keywords: minecraft, datapack, kore, getting started, quickstart, kotlin
 date-created: 2025-08-21
-date-modified: 2026-02-03
+date-modified: 2026-03-31
 routeOverride: /docs/getting-started
 position: 1
 ---
@@ -36,9 +36,18 @@ The template already sets Java 21 and enables the required Kotlin options.
 
 ## Option B: Add Kore to an existing project
 
-Add the dependency to your build file.
+Choose the module(s) you want, then add the corresponding dependency to your build file.
 
-### Gradle (Kotlin)
+### Installable modules
+
+- `kore` - core DSL for creating datapacks - `io.github.ayfri.kore:kore:VERSION`
+- `oop` - object-oriented gameplay abstractions - `io.github.ayfri.kore:oop:VERSION`
+- `helpers` - utility-focused helpers on top of Kore - `io.github.ayfri.kore:helpers:VERSION`
+- `bindings` - experimental datapack importer - `io.github.ayfri.kore:bindings:VERSION`
+
+For a first datapack, start with `kore`.
+
+### Install the core module with Gradle (Kotlin)
 
 ```kotlin
 dependencies {
@@ -46,7 +55,7 @@ dependencies {
 }
 ```
 
-### Gradle (Groovy)
+### Install the core module with Gradle (Groovy)
 
 ```groovy
 dependencies {
@@ -54,7 +63,7 @@ dependencies {
 }
 ```
 
-### Maven
+### Install the core module with Maven
 
 ```xml
 <dependency>
@@ -64,7 +73,7 @@ dependencies {
 </dependency>
 ```
 
-### Amper
+### Install the core module with Amper
 
 ```yaml
 dependencies:

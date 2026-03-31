@@ -2,7 +2,7 @@
 root: .components.layouts.MarkdownLayout
 title: Spawners
 nav-title: Spawners
-description: Reusable entity spawner handles with the Kore OOP module — register, spawn, and batch-summon entities.
+description: Reusable entity spawner handles with the Kore OOP module - register, spawn, and batch-summon entities.
 keywords: minecraft, datapack, kore, oop, spawner, summon, entity, mob, wave
 date-created: 2026-03-03
 date-modified: 2026-03-03

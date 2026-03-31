@@ -2,7 +2,7 @@
 root: .components.layouts.MarkdownLayout
 title: Geometric Particle VFX Engine
 nav-title: VFX Particles
-description: Generate particle commands for geometric shapes with the Kore helpers module — circles, lines, spheres, spirals, and helixes.
+description: Generate particle commands for geometric shapes with the Kore helpers module - circles, lines, spheres, spirals, and helixes.
 keywords: minecraft, datapack, kore, helpers, vfx, particles, shape, circle, line, sphere, spiral, helix, geometry
 date-created: 2026-03-03
 date-modified: 2026-03-31

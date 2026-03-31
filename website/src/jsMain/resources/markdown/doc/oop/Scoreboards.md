@@ -2,7 +2,7 @@
 root: .components.layouts.MarkdownLayout
 title: Scoreboards
 nav-title: Scoreboards
-description: Object-oriented scoreboard management with the Kore OOP module — objectives, display slots, and per-entity score operations.
+description: Object-oriented scoreboard management with the Kore OOP module - objectives, display slots, and per-entity score operations.
 keywords: minecraft, datapack, kore, oop, scoreboard, objective, score, display slot
 date-created: 2026-03-03
 date-modified: 2026-03-03

@@ -2,7 +2,7 @@
 root: .components.layouts.MarkdownLayout
 title: Raycasts
 nav-title: Raycasts
-description: Recursive raycast system with the Kore helpers module — step-based raycasting with block hit, max distance, and per-step callbacks.
+description: Recursive raycast system with the Kore helpers module - step-based raycasting with block hit, max distance, and per-step callbacks.
 keywords: minecraft, datapack, kore, helpers, raycast, ray, block, hit, step, recursive
 date-created: 2026-03-03
 date-modified: 2026-03-31

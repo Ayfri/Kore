@@ -35,7 +35,8 @@ New on Kore ? Read the [Getting Started](https://kore.ayfri.com/docs/getting-sta
 
 You can use the [Kore Template](https://github.com/Kore-Minecraft/Kore-Template) to start a new project with Kore.
 
-Or install the library by hand with Gradle.
+Or install one or more Kore modules by hand with Gradle. If you're starting a new datapack project, begin with the core
+`kore` module.
 
 With Kotlin DSL:
 
@@ -69,17 +70,34 @@ kotlin {
 
 Then create a `Main.kt` file and start writing your datapacks. See the [documentation](https://kore.ayfri.com/docs/home) for more information, including the [Commands guide](https://kore.ayfri.com/docs/commands/commands) for all available commands.
 
-## Modules
+## Installable Modules
 
-- [**Kore (core DSL)**](https://github.com/Ayfri/Kore/tree/main/kore)
-	- The core module with the DSL to create Minecraft datapacks.
-	- Coordinates: `io.github.ayfri.kore:kore:VERSION`
-- [**Bindings (experimental importer)**](https://github.com/Ayfri/Kore/tree/main/bindings)
-	- Imports existing datapacks and generates type-safe Kotlin bindings.
-	- Coordinates: `io.github.ayfri.kore:bindings:VERSION`
-- [**OOP (experimental)**](https://github.com/Ayfri/Kore/tree/main/oop)
-	- An experimental module to write Minecraft datapacks with Object-Oriented Programming concepts.
-	- Coordinates: `io.github.ayfri.kore:oop:VERSION`
+Kore is split into installable modules. Start with `kore`, then add the others only when you need their extra
+abstractions or tooling.
+
+### Core DSL - `kore`
+
+- Docs: [Getting Started](https://kore.ayfri.com/docs/getting-started)
+- Use it to create Minecraft datapacks with the main Kore DSL.
+- Coordinates: `io.github.ayfri.kore:kore:VERSION`
+
+### Gameplay abstractions - `oop`
+
+- Docs: [OOP Utilities](https://kore.ayfri.com/docs/oop/utilities)
+- Adds object-oriented wrappers for entities, teams, scoreboards, timers, and related gameplay systems.
+- Coordinates: `io.github.ayfri.kore:oop:VERSION`
+
+### Helper utilities - `helpers`
+
+- Docs: [Helpers Utilities](https://kore.ayfri.com/docs/helpers/utilities)
+- Adds utility-focused features such as renderers, raycasts, scoreboard math, state delegates, and VFX helpers.
+- Coordinates: `io.github.ayfri.kore:helpers:VERSION`
+
+### Datapack importer - `bindings` (experimental)
+
+- Docs: [Bindings](https://kore.ayfri.com/docs/advanced/bindings)
+- Imports existing datapacks and generates type-safe Kotlin bindings for their resources.
+- Coordinates: `io.github.ayfri.kore:bindings:VERSION`
 
 ## Example
 

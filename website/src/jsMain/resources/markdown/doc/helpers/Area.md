@@ -2,7 +2,7 @@
 root: .components.layouts.MarkdownLayout
 title: Area
 nav-title: Area
-description: Axis-aligned 3D bounding box with the Kore helpers module — geometric operations, containment checks, and spatial queries.
+description: Axis-aligned 3D bounding box with the Kore helpers module - geometric operations, containment checks, and spatial queries.
 keywords: minecraft, datapack, kore, helpers, area, bounding box, vec3, intersect, union, contains
 date-created: 2026-03-03
 date-modified: 2026-03-31

@@ -2,7 +2,7 @@
 root: .components.layouts.MarkdownLayout
 title: Entities & Players
 nav-title: Entities & Players
-description: Create and manage entities and players with the Kore OOP module — selectors, execute helpers, batch commands, entity commands, and entity effects.
+description: Create and manage entities and players with the Kore OOP module - selectors, execute helpers, batch commands, entity commands, and entity effects.
 keywords: minecraft, datapack, kore, oop, entity, player, commands, execute, batch, effects, teleport, kill, damage
 date-created: 2026-03-03
 date-modified: 2026-03-03

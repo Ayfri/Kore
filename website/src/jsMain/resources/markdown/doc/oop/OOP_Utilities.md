@@ -2,7 +2,7 @@
 root: .components.layouts.MarkdownLayout
 title: OOP Utilities
 nav-title: OOP Utilities
-description: Overview of object-oriented gameplay utilities in the Kore OOP module — entities, teams, scoreboards, items, events, timers, spawners, and state machines.
+description: Overview of object-oriented gameplay utilities in the Kore OOP module - entities, teams, scoreboards, items, events, timers, spawners, and state machines.
 keywords: minecraft, datapack, kore, oop, entity, player, commands, teams, scoreboard, items, events, cooldown, bossbar, effects, timer, spawner, gamestate
 date-created: 2026-02-21
 date-modified: 2026-03-31
@@ -14,7 +14,17 @@ position: 0
 
 The OOP module provides high-level, object-oriented wrappers around Minecraft systems such as entities, teams,
 scoreboards, timers, and gameplay state.
-Each feature is documented on its own page — see the links below.
+Each feature is documented on its own page - see the links below.
+
+## Install this module
+
+Add the `oop` artifact when you want object-oriented gameplay abstractions on top of the core Kore DSL.
+
+```kotlin
+dependencies {
+  implementation("io.github.ayfri.kore:oop:VERSION")
+}
+```
 
 Generated resource names for OOP-specific features are centralized in `OopConstants` so they're easy to find and
 override.
@@ -25,17 +35,17 @@ Utility-style features such as renderers, math helpers, raycasts, areas, state d
 
 ## All Features
 
-- **[Boss Bars](/docs/oop/boss-bars)** — Register, configure, and manage boss bars.
-- **[Cooldowns](/docs/oop/cooldowns)** — Scoreboard-based cooldown system that decrements every tick.
-- **[Entities & Players](/docs/oop/entities-and-players)** — Create entities and players, execute helpers, batch
+- **[Boss Bars](/docs/oop/boss-bars)** - Register, configure, and manage boss bars.
+- **[Cooldowns](/docs/oop/cooldowns)** - Scoreboard-based cooldown system that decrements every tick.
+- **[Entities & Players](/docs/oop/entities-and-players)** - Create entities and players, execute helpers, batch
   commands, entity commands, and entity effects.
-- **[Events](/docs/oop/events)** — Advancement-based event system for player and entity actions.
-- **[Game State Machine](/docs/oop/game-state-machine)** — Scoreboard-based state machine with transition helpers.
-- **[Items](/docs/oop/items)** — Object-oriented item creation and spawning.
-- **[Scoreboards](/docs/oop/scoreboards)** — Objective management and per-entity score operations.
-- **[Spawners](/docs/oop/spawners)** — Reusable entity spawner handles for summoning mobs.
-- **[Teams](/docs/oop/teams)** — Object-oriented team management with colors, collision rules, and nametag visibility.
-- **[Timers](/docs/oop/timers)** — Scoreboard-based timers with optional boss bar integration.
+- **[Events](/docs/oop/events)** - Advancement-based event system for player and entity actions.
+- **[Game State Machine](/docs/oop/game-state-machine)** - Scoreboard-based state machine with transition helpers.
+- **[Items](/docs/oop/items)** - Object-oriented item creation and spawning.
+- **[Scoreboards](/docs/oop/scoreboards)** - Objective management and per-entity score operations.
+- **[Spawners](/docs/oop/spawners)** - Reusable entity spawner handles for summoning mobs.
+- **[Teams](/docs/oop/teams)** - Object-oriented team management with colors, collision rules, and nametag visibility.
+- **[Timers](/docs/oop/timers)** - Scoreboard-based timers with optional boss bar integration.
 
 ## Vanilla Kore vs OOP Kore
 
@@ -203,10 +213,10 @@ dataPack("arena") {
 | **Entity references** | Manual selectors (`allPlayers { ... }`) repeated everywhere            | Named objects (`player("RedPlayer")`) reused across functions                |
 | **Commands**          | Low-level calls like `scoreboard.players.set(...)`, `effect.give(...)` | Method calls on entities: `player.giveEffect(...)`, `player.joinTeam(...)`   |
 | **Game state**        | Manual scoreboard objectives and raw `set` calls                       | `registerGameStates { state("running") }` + `states.transitionTo("running")` |
-| **Cooldowns**         | Manual scoreboard decrement loops                                      | `registerCooldown("dash", 3.seconds)` — tick function auto-generated         |
+| **Cooldowns**         | Manual scoreboard decrement loops                                      | `registerCooldown("dash", 3.seconds)` - tick function auto-generated         |
 | **Spawning**          | Raw `summon(EntityTypes.X, pos)`                                       | `registerSpawner(...)` + `spawner.spawn()`                                   |
 | **Boilerplate**       | Selector construction, objective registration, execute blocks          | Handled internally by the OOP abstractions                                   |
 
-The OOP module doesn't replace vanilla Kore — it builds on top of it.
+The OOP module doesn't replace vanilla Kore - it builds on top of it.
 You can freely mix both styles, using OOP utilities where they simplify your code and dropping to vanilla commands when
 you need fine-grained control.

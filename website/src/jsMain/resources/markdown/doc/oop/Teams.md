@@ -2,7 +2,7 @@
 root: .components.layouts.MarkdownLayout
 title: Teams
 nav-title: Teams
-description: Object-oriented team management with the Kore OOP module — create, configure, and manage Minecraft teams.
+description: Object-oriented team management with the Kore OOP module - create, configure, and manage Minecraft teams.
 keywords: minecraft, datapack, kore, oop, teams, scoreboard, collision, nametag, friendly fire
 date-created: 2026-03-03
 date-modified: 2026-03-03

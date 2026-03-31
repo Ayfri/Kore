@@ -17,15 +17,23 @@ position: 3
 
 The bindings module lets you import existing datapacks and generates Kotlin types so you can reference functions, resources, and tags safely in your code.
 
-## Add the module
+## Install this module
 
-If you are working in a multi-module setup:
+Add the `bindings` artifact when you want to import an existing datapack and generate Kotlin bindings from it.
+
+### Artifact
 
 ```kotlin
 dependencies {
-	implementation("io.github.ayfri.kore:bindings:<VERSION>")
+	implementation("io.github.ayfri.kore:bindings:VERSION")
 }
 ```
+
+### Best fit
+
+- Use `kore` for the main DSL.
+- Add `bindings` when you want type-safe access to resources coming from an external datapack.
+- Combine it with `oop` or `helpers` only if your project also needs those higher-level utilities.
 
 ## Quick start
 

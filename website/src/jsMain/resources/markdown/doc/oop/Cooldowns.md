@@ -2,7 +2,7 @@
 root: .components.layouts.MarkdownLayout
 title: Cooldowns
 nav-title: Cooldowns
-description: Scoreboard-based cooldown system with the Kore OOP module — register, start, check, and reset cooldowns.
+description: Scoreboard-based cooldown system with the Kore OOP module - register, start, check, and reset cooldowns.
 keywords: minecraft, datapack, kore, oop, cooldown, scoreboard, timer, tick
 date-created: 2026-03-03
 date-modified: 2026-03-03

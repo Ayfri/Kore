@@ -14,7 +14,7 @@ position: 6
 
 Events use [advancements](https://minecraft.wiki/w/Advancement/JSON_format) to detect player/entity actions
 and dispatch them to [function tags](https://minecraft.wiki/w/Tag#Function_tags). Multiple handlers can be
-registered for the same event — they all fire together.
+registered for the same event - they all fire together.
 
 ## Player events
 

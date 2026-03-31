@@ -5,7 +5,7 @@ nav-title: Home
 description: Welcome to the Kore wiki!
 keywords: minecraft, datapack, kore, guide
 date-created: 2024-04-06
-date-modified: 2026-02-03
+date-modified: 2026-03-31
 routeOverride: /docs/home
 position: 0
 ---
@@ -25,6 +25,35 @@ generation of datapack JSON, and tight integration with vanilla concepts (functi
   `Kore Template`](https://github.com/Kore-Minecraft/Kore-Template).
 - **Create & generate**: see [Creating A Datapack](/docs/guides/creating-a-datapack) for lifecycle and output options (`.generate()`,
   `.generateZip()`, `.generateJar()`).
+
+## Installable modules
+
+Kore is split into installable modules. Start with `kore`, then add the others depending on the abstractions or tooling
+you need.
+
+### `kore` - Core DSL
+
+- Build datapacks with the main Kore DSL.
+- Artifact: `io.github.ayfri.kore:kore:VERSION`
+- Start here: [Getting Started](/docs/getting-started)
+
+### `oop` - Object-oriented gameplay utilities
+
+- Add higher-level abstractions for entities, teams, scoreboards, timers, and gameplay state.
+- Artifact: `io.github.ayfri.kore:oop:VERSION`
+- Explore: [OOP Utilities](/docs/oop/utilities)
+
+### `helpers` - Utility-focused helpers
+
+- Add renderers, raycasts, scoreboard math, state delegates, particle helpers, and related utilities.
+- Artifact: `io.github.ayfri.kore:helpers:VERSION`
+- Explore: [Helpers Utilities](/docs/helpers/utilities)
+
+### `bindings` - Datapack importer
+
+- Import existing datapacks and generate type-safe Kotlin bindings for their functions, resources, and tags.
+- Artifact: `io.github.ayfri.kore:bindings:VERSION`
+- Explore: [Bindings](/docs/advanced/bindings)
 
 {{{ .components.doc.FeatureGrid }}}
 
