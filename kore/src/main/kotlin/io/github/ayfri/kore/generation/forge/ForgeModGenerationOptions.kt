@@ -32,8 +32,8 @@ fun ForgeModGenerationOptions.mod(modId: String, init: ForgeModProperties.() -> 
 }
 
 context(options: DataPackJarGenerationOptions)
-fun ForgeModGenerationOptions.mod(modId: String = options.datapack.name, init: ForgeModProperties.() -> Unit) {
-	mods = (mods ?: emptyList()) + ForgeModProperties(modId = modId).apply(init)
+fun ForgeModGenerationOptions.mod(init: ForgeModProperties.() -> Unit) {
+	mods = (mods ?: emptyList()) + ForgeModProperties(modId = options.datapack.name).apply(init)
 }
 
 fun ForgeModGenerationOptions.properties(init: MutableMap<String, String>.() -> Unit) {

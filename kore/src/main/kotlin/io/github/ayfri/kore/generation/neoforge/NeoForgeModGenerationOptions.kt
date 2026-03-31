@@ -34,8 +34,8 @@ fun NeoForgeModGenerationOptions.mod(modId: String, init: NeoForgeModProperties.
 }
 
 context(options: DataPackJarGenerationOptions)
-fun NeoForgeModGenerationOptions.mod(modId: String = options.datapack.name, init: NeoForgeModProperties.() -> Unit) {
-	mods = (mods ?: emptyList()) + NeoForgeModProperties(modId = modId).apply(init)
+fun NeoForgeModGenerationOptions.mod(init: NeoForgeModProperties.() -> Unit) {
+	mods = (mods ?: emptyList()) + NeoForgeModProperties(modId = options.datapack.name).apply(init)
 }
 
 fun NeoForgeModGenerationOptions.properties(init: MutableMap<String, String>.() -> Unit) {
