@@ -1,6 +1,6 @@
 package io.github.ayfri.kore
 
-object OopConstants {
+data object OopConstants {
     var advancementPrefix = "kore_oop"
     var namespace = "kore"
 
@@ -21,17 +21,7 @@ object OopConstants {
     var itemUsedOnBlockEvent = "on_item_used_on_block"
     var killEvent = "on_kill"
     var lootTablePrefix = "kore_oop"
-    var mathConst2 = "#2"
-    var mathConst360 = "#360"
-    var mathConstScale = "#scale"
-    var mathInitFunction = "kore_math_init"
-    var mathObjective = "kore_math"
-    var mathSqrtIterations = 8
     var placeBlockEvent = "on_place_block"
-    var playerTag = "kore_player"
-    var raycastInitFunction = "kore_raycast_init"
-    var raycastObjective = "kore_raycast"
-    var raycastTag = "kore_raycasting"
     var recipeCraftedEvent = "on_recipe_crafted"
     var rightClickEvent = "on_right_click"
     var sleptInBedEvent = "on_slept_in_bed"
@@ -58,14 +48,9 @@ object OopConstants {
 
     fun eventTagName(event: String) = event
     fun eventTagNameForItem(event: String, itemName: String) = "${event}_$itemName"
-    fun raycastHitFunctionName(name: String) = "raycast_${name}_hit"
-    fun raycastMaxFunctionName(name: String) = "raycast_${name}_max"
-    fun raycastStartFunctionName(name: String) = "raycast_${name}_start"
-    fun raycastStepFunctionName(name: String) = "raycast_${name}_step"
     fun spawnerSpawnFunctionName(name: String) = "spawner_${name}_spawn"
     fun stateHandlerName(stateName: String, hashCode: Int) = "state_${stateName}_handler_$hashCode"
     fun timerCompleteFunctionName(name: String, hashCode: Int) = "timer_${name}_complete_$hashCode"
     fun timerInitFunctionName(name: String) = "timer_${name}_init"
     fun timerTickFunctionName(name: String) = "timer_${name}_tick"
-    fun vfxShapeFunctionName(name: String) = "vfx_$name"
 }
