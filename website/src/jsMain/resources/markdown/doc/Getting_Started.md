@@ -63,6 +63,38 @@ dependencies {
 }
 ```
 
+### Use snapshot builds published from `master`
+
+If you want the latest unreleased changes, add the Sonatype snapshots repository and use the same artifact version with
+the
+`-SNAPSHOT` suffix.
+
+With Kotlin DSL:
+
+```kotlin
+repositories {
+  mavenCentral()
+  maven("https://central.sonatype.com/repository/maven-snapshots/")
+}
+
+dependencies {
+  implementation("io.github.ayfri.kore:kore:VERSION-SNAPSHOT")
+}
+```
+
+With Groovy DSL:
+
+```groovy
+repositories {
+  mavenCentral()
+  maven { url 'https://central.sonatype.com/repository/maven-snapshots/' }
+}
+
+dependencies {
+  implementation 'io.github.ayfri.kore:kore:VERSION-SNAPSHOT'
+}
+```
+
 ### Install the core module with Maven
 
 ```xml

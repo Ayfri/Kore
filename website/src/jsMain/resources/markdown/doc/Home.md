@@ -35,6 +35,8 @@ you need.
 
 - Build datapacks with the main Kore DSL.
 - Artifact: `io.github.ayfri.kore:kore:VERSION`
+- Snapshot builds from each commit on `master`: add `https://central.sonatype.com/repository/maven-snapshots/` and use
+  `VERSION-SNAPSHOT`
 - Start here: [Getting Started](/docs/getting-started)
 
 ### `oop` - Object-oriented gameplay utilities

@@ -3,13 +3,24 @@ plugins {
 	id("com.vanniktech.maven.publish")
 }
 
-version = "${Project.VERSION}-${mainProjectProperty("minecraft.version")}"
+val isSnapshotBuild = providers.gradleProperty("kore.publish.snapshot")
+	.map(String::toBoolean)
+	.orElse(false)
+	.get()
+
+version = buildString {
+	append(Project.VERSION)
+	append("-")
+	append(mainProjectProperty("minecraft.version"))
+
+	if (isSnapshotBuild) append("-SNAPSHOT")
+}
 group = Project.GROUP
 
 mavenPublishing {
-	publishToMavenCentral(automaticRelease = true)
+	publishToMavenCentral(automaticRelease = !isSnapshotBuild)
 
-	if (providers.environmentVariable("CI").isPresent) {
+	if (providers.environmentVariable("CI").isPresent && !isSnapshotBuild) {
 		signAllPublications()
 	}
 

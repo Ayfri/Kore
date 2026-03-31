@@ -50,6 +50,20 @@ With Groovy DSL:
 implementation 'io.github.ayfri.kore:kore:VERSION'
 ```
 
+For builds published automatically from every commit on `master`, add the Sonatype snapshots repository and use the same
+version with the `-SNAPSHOT` suffix:
+
+```kotlin
+repositories {
+  mavenCentral()
+  maven("https://central.sonatype.com/repository/maven-snapshots/")
+}
+
+dependencies {
+  implementation("io.github.ayfri.kore:kore:VERSION-SNAPSHOT")
+}
+```
+
 Then activate the `-Xcontext-parameters` compiler option:
 
 ```kotlin
