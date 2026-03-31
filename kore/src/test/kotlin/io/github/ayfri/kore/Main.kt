@@ -31,6 +31,7 @@ fun main() {
 	packFormatTests()
 	packMCMetaTests()
 	selectorTests()
+	deserializersTests()
 	serializersTests()
 	runUnitTests()
 
