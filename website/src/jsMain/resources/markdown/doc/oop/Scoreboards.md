@@ -5,15 +5,17 @@ nav-title: Scoreboards
 description: Object-oriented scoreboard management with the Kore OOP module - objectives, display slots, and per-entity score operations.
 keywords: minecraft, datapack, kore, oop, scoreboard, objective, score, display slot
 date-created: 2026-03-03
-date-modified: 2026-03-03
+date-modified: 2026-03-31
 routeOverride: /docs/oop/scoreboards
-position: 13
 ---
 
 # Scoreboards
 
 Wraps [Minecraft scoreboards](https://minecraft.wiki/w/Scoreboard) with objective management and per-entity score
 operations.
+
+This split between objective handles and per-entity score handles maps well to how vanilla scoreboards already work,
+but with a more readable API.
 
 ## Objectives
 
@@ -34,6 +36,22 @@ function("scoreboard_setup") {
 | `setDisplaySlot` | Assign a display slot |
 | `setDisplayName` | Set the display name  |
 | `setRenderType`  | Set the render type   |
+
+## Practical pattern
+
+```kotlin
+function("match_setup") {
+	val kills = scoreboard("kills")
+	kills.create()
+	kills.setDisplaySlot(DisplaySlots.sidebar)
+
+	val playerKills = player.getScoreEntity("kills")
+	playerKills.set(0)
+}
+```
+
+The usual pattern is to configure the objective once, then retrieve entity-specific score handles wherever gameplay code
+needs to increment, reset, or copy values.
 
 ## Per-entity scores
 

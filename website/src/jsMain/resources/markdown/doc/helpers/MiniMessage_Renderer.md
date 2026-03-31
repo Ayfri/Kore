@@ -7,12 +7,11 @@ keywords: minecraft, datapack, kore, helpers, minimessage, adventure, text, comp
 date-created: 2026-03-03
 date-modified: 2026-03-31
 routeOverride: /docs/helpers/minimessage-renderer
-position: 10
 ---
 
 # MiniMessage Renderer
 
-The OOP module includes a MiniMessage renderer that
+The `helpers` module includes a MiniMessage renderer that
 parses [Adventure MiniMessage](https://docs.advntr.dev/minimessage/format.html)
 format strings into Kore `ChatComponents`. This lets you write human-readable styled text that compiles into Minecraft's
 JSON text component format.

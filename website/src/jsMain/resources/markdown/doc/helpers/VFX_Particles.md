@@ -7,13 +7,15 @@ keywords: minecraft, datapack, kore, helpers, vfx, particles, shape, circle, lin
 date-created: 2026-03-03
 date-modified: 2026-03-31
 routeOverride: /docs/helpers/vfx-particles
-position: 18
 ---
 
 # Geometric Particle VFX Engine
 
 The VFX engine generates [particle](https://minecraft.wiki/w/Commands/particle) commands for geometric shapes.
 Each shape is emitted as a generated function containing pre-computed positions.
+
+This is especially useful when you want repeatable visual effects without manually writing dozens of particle commands.
+You describe the geometry once and then call the generated function wherever you need it.
 
 ## Drawing shapes
 
@@ -29,6 +31,14 @@ drawShape("soul_helix") {
 	turns = 4
 }
 ```
+
+## Choosing between helpers
+
+- Use `drawCircle(...)` when you only need a quick single-purpose helper.
+- Use `drawShape(...)` when you want one DSL entry point that can switch shape types or expose more parameters.
+
+Both approaches generate reusable functions, so you can keep expensive geometry decisions at generation time rather than
+recomputing them mentally for every particle command.
 
 ## Available shapes
 
@@ -51,3 +61,18 @@ drawShape("soul_helix") {
 | `length`   | `5.0`   | LINE                          |
 | `dx/dy/dz` | `1,0,0` | LINE direction                |
 | `turns`    | `3`     | SPIRAL, HELIX                 |
+
+## Example: arena intro effect
+
+```kotlin
+drawShape("arena_intro") {
+	shape = Shape.SPIRAL
+	particle = Particles.HAPPY_VILLAGER
+	radius = 4.0
+	points = 60
+	height = 6.0
+	turns = 5
+}
+```
+
+This kind of effect works well for spawn platforms, ritual circles, victory moments, or waypoint markers.

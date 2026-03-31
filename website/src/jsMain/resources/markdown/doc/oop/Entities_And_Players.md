@@ -5,9 +5,8 @@ nav-title: Entities & Players
 description: Create and manage entities and players with the Kore OOP module - selectors, execute helpers, batch commands, entity commands, and entity effects.
 keywords: minecraft, datapack, kore, oop, entity, player, commands, execute, batch, effects, teleport, kill, damage
 date-created: 2026-03-03
-date-modified: 2026-03-03
+date-modified: 2026-03-31
 routeOverride: /docs/oop/entities-and-players
-position: 5
 ---
 
 # Entities & Players
@@ -31,6 +30,9 @@ val zombie = entity {
 `player()` creates a `Player` instance (subclass of `Entity`) with `type = minecraft:player`, `limit = 1`,
 and the given name. `entity()` creates a generic `Entity` with custom selector arguments.
 
+Use `player(...)` when you want a selector already scoped to players, and `entity { ... }` when you need a reusable
+selector for mobs, armor stands, projectiles, or a more generic execute target.
+
 ## Execute helpers
 
 Entity-scoped execute shortcuts emit `/execute as`, `/execute at`, or both:
@@ -51,6 +53,9 @@ function("teleport_self") {
 }
 ```
 
+These helpers are especially valuable when you would otherwise repeat the same `execute as`, `execute at`, or
+`execute as ... at ...` boilerplate around several commands.
+
 ## Batch
 
 `batch()` creates a named sub-function that groups multiple commands under a single entity context:
@@ -64,6 +69,9 @@ function("setup") {
 	}
 }
 ```
+
+`batch()` is a good fit for onboarding flows, class kits, respawn setup, or any repeated multi-command routine that
+should stay grouped under one entity context.
 
 ## Entity Commands
 
@@ -110,6 +118,21 @@ function("commands_demo") {
 | `showTitle`     | Display a title and optional subtitle     |
 | `teleportTo`    | Teleport to coordinates or another entity |
 
+## Practical pattern
+
+```kotlin
+function("round_start") {
+	player.batch("round_start_player") {
+		giveItem(itemStack("diamond"))
+		giveEffect(Effects.SPEED, duration = 200)
+		showActionBar(textComponent("Fight!"))
+	}
+}
+```
+
+This combines one reusable player selector with several entity-scoped actions, which is the core value of the OOP
+entity API.
+
 ## Entity Effects
 
 Extension functions on `Entity` for giving, clearing, and managing
@@ -131,3 +154,9 @@ function("buff_player") {
 | `clearEffect`        | Remove a specific effect              |
 | `clearAllEffects`    | Remove all effects                    |
 | `effects { ... }`    | Builder block for multiple operations |
+
+## See also
+
+- [Items](/docs/oop/items) – Reuse item stacks with `giveItem`, `replaceItem`, or summon-based reward flows.
+- [Events](/docs/oop/events) – Attach gameplay reactions directly to the entity and player handles you define here.
+- [Spawners](/docs/oop/spawners) – Pair selectors and entity utilities with reusable spawning entry points.

@@ -7,7 +7,6 @@ keywords: minecraft, datapack, kore, helpers, math, scoreboard, trigonometry, si
 date-created: 2026-03-03
 date-modified: 2026-03-31
 routeOverride: /docs/helpers/scoreboard-math
-position: 12
 ---
 
 # Scoreboard Math Engine
@@ -24,6 +23,17 @@ val math = registerMath()
 This generates a **load function** that creates the `kore_math` objective and sets useful constants (`#2`, `#360`,
 `#scale`).
 
+## Reading the results
+
+Because scoreboards only store integers, every result is scaled by `1000`:
+
+- `1000` means `1.0`
+- `500` means `0.5`
+- `-707` means approximately `-0.707`
+
+That convention stays consistent across trigonometric helpers and formulas, which makes it easier to combine several
+math operations in the same datapack.
+
 ## Trigonometric functions
 
 Sine and cosine use a pre-computed 360-entry lookup table (one entry per degree). The input score holds an angle in
@@ -38,6 +48,9 @@ function("trig_demo") {
 }
 ```
 
+This is particularly handy for scoreboard-driven movement systems, orbiting particles, or knockback calculations where
+the input angle is already tracked as an integer.
+
 ## Square root
 
 An iterative Babylonian / Newton approximation (8 iterations by default):
@@ -47,6 +60,9 @@ function("sqrt_demo") {
 	math.sqrt(player, "input_val", "sqrt_result")
 }
 ```
+
+Use `sqrt` when you need a real distance magnitude from squared values, or when another formula requires a root instead
+of a squared distance.
 
 ## Euclidean distance (squared)
 
@@ -58,6 +74,9 @@ function("distance_demo") {
 }
 ```
 
+Computing the squared distance is often enough for range checks and is cheaper to chain with threshold comparisons than
+an actual square root.
+
 ## Parabolic trajectory
 
 Computes `Y = v0 × t − (g × t²) / 2` for projectile simulation:
@@ -68,6 +87,21 @@ function("parabola_demo") {
 }
 ```
 
+## Example: projectile preview
+
+```kotlin
+function("projectile_preview") {
+	math.apply {
+		sin(player, "launch_angle", "sin_angle")
+		cos(player, "launch_angle", "cos_angle")
+		parabola(player, "travel_time", "#launch_speed", "#gravity", "height_offset")
+	}
+}
+```
+
+The helpers are intentionally small and composable: you can build a more complex simulation by combining multiple
+scoreboard operations rather than relying on one giant black-box function.
+
 ## Function reference
 
 | Function          | Description                                  |
@@ -77,3 +111,10 @@ function("parabola_demo") {
 | `sqrt`            | Integer square root (Newton's method)        |
 | `distanceSquared` | Squared 3D Euclidean distance                |
 | `parabola`        | Parabolic Y from time, velocity, and gravity |
+
+## See also
+
+- [State Delegates](/docs/helpers/state-delegates) – Write scoreboard-backed values with less boilerplate before feeding
+  them into math helpers.
+- [Cooldowns](/docs/oop/cooldowns) – Pair time-based gameplay gates with scoreboard-driven calculations.
+- [Scoreboards](/docs/oop/scoreboards) – Higher-level scoreboard utilities that fit naturally around these formulas.

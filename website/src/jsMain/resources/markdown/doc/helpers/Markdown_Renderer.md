@@ -7,7 +7,6 @@ keywords: minecraft, datapack, kore, helpers, markdown, text, renderer, bold, it
 date-created: 2026-03-03
 date-modified: 2026-03-31
 routeOverride: /docs/helpers/markdown-renderer
-position: 9
 ---
 
 # Markdown Text Renderer

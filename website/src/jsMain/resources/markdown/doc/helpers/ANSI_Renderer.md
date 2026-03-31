@@ -7,7 +7,6 @@ keywords: minecraft, datapack, kore, helpers, ansi, sgr, escape, text, renderer,
 date-created: 2026-03-03
 date-modified: 2026-03-31
 routeOverride: /docs/helpers/ansi-renderer
-position: 1
 ---
 
 # ANSI Text Renderer

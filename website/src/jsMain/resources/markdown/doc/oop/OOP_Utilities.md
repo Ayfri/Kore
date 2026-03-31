@@ -47,6 +47,29 @@ Utility-style features such as renderers, math helpers, raycasts, areas, state d
 - **[Teams](/docs/oop/teams)** - Object-oriented team management with colors, collision rules, and nametag visibility.
 - **[Timers](/docs/oop/timers)** - Scoreboard-based timers with optional boss bar integration.
 
+## Why use `oop`
+
+Choose the `oop` module when your datapack starts to revolve around reusable gameplay concepts rather than isolated
+commands.
+
+- **Entities and players** become named handles instead of repeated selectors.
+- **Systems such as timers, cooldowns, boss bars, and spawners** generate their own supporting commands and objectives.
+- **Your Kotlin code reads closer to gameplay intent**, which makes larger datapacks easier to maintain.
+
+You do not have to go “all in”: the OOP layer is meant to sit on top of Kore, not replace it.
+
+## Typical workflow
+
+Most OOP utilities follow a common structure:
+
+1. **Register or declare** the gameplay object once (`team(...)`, `registerCooldown(...)`, `registerSpawner(...)`,
+   etc.).
+2. **Let Kore generate** the supporting commands, objectives, or load/tick handlers.
+3. **Use the handle in functions** with concise methods such as `player.giveEffect(...)`, `cooldown.start(...)`, or
+   `spawner.spawn()`.
+
+That workflow keeps setup centralized while leaving your gameplay functions focused on intent.
+
 ## Vanilla Kore vs OOP Kore
 
 The OOP module wraps the low-level command DSL into object-oriented abstractions.
