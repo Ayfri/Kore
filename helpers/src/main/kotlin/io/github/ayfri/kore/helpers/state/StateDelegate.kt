@@ -15,8 +15,7 @@ import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.entities.Entity
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.generatedFunction
-import io.github.ayfri.kore.scoreboard.ScoreboardEntity
-import io.github.ayfri.kore.scoreboard.minusAssign
+import io.github.ayfri.kore.scoreboard.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -144,6 +143,10 @@ infix fun ScoreboardDelegate.greaterThanOrEqualTo(other: ScoreboardDelegate) =
  *
  * This is a small convenience wrapper over `execute { ifCondition { ... }; run(...) }`
  * that keeps state delegate conditions close to the delegated score definitions.
+ *
+ * @param condition The delegated score condition to evaluate.
+ * @param name The generated function name used for the conditional branch.
+ * @param block The commands emitted when [condition] matches.
  */
 context(fn: Function)
 fun runIf(
@@ -164,6 +167,10 @@ fun runIf(
  *
  * The returned [FunctionArgument] points to the generated loop body, which can be reused
  * elsewhere if needed.
+ *
+ * @param condition The delegated score condition that keeps the loop alive.
+ * @param name The generated function name used for the loop body.
+ * @param block The commands emitted on each iteration while [condition] stays true.
  */
 context(fn: Function)
 fun runWhile(
@@ -193,21 +200,39 @@ fun runWhile(
 }
 
 /**
- * Repeats [block] while [counter] stays above `0`.
+ * Repeats [block] while a loop counter stays above `0`.
  *
- * By default, [counter] is [times], which means the main score is decremented directly.
- * Pass a separate scoreboard delegate when the source score should remain untouched.
+ * By default, a dedicated internal counter score is generated from [name] and initialized from [times],
+ * so the source score is left untouched. Pass [counter] when you want to reuse an existing delegated
+ * score as the loop counter instead.
+ *
+ * The lambda parameter exposes the current iteration index as another [ScoreboardDelegate],
+ * which makes it easy to write `repeat(times) { iteration -> ... }` and delegate it with
+ * `var index by iteration` if needed.
+ *
+ * @param times The delegated score representing how many iterations should run.
+ * @param counter The delegated score decremented after each iteration. If omitted, an internal counter is generated and initialized from [times].
+ * @param name The generated function name used for the loop body and iteration score.
+ * @param block The commands emitted on each iteration, receiving a delegate for the current iteration index.
  */
 context(fn: Function)
-fun repeatScore(
+fun repeat(
 	times: ScoreboardDelegate,
-	counter: ScoreboardDelegate = times,
+	counter: ScoreboardDelegate? = null,
 	name: String = "state_delegate_repeat_${fn.name}_${fn.lines.size}",
-	block: Function.() -> Unit,
+	block: Function.(ScoreboardDelegate) -> Unit,
 ): FunctionArgument {
-	val counterScore = counter.scoreboardEntity()
-	return runWhile(counter greaterThan 0, name) {
-		block()
+	val effectiveCounter = counter ?: ScoreboardDelegate("${name}_counter", times.entity, fn)
+	val counterScore = effectiveCounter.scoreboardEntity()
+	val iteration = ScoreboardDelegate("${name}_iteration", times.entity, fn)
+	val iterationScore = iteration.scoreboardEntity()
+	if (counter == null) {
+		counterScore.copyFrom(times.entity.asSelector(), times.objectiveName)
+	}
+	iterationScore.set(0)
+	return runWhile(effectiveCounter greaterThan 0, name) {
+		block(iteration)
+		iterationScore += 1
 		counterScore -= 1
 	}
 }
@@ -279,6 +304,8 @@ fun Entity.scoreboard(
  * manaObj += 10   // emits: /scoreboard players add <player> mana_obj 10
  * manaObj -= 20   // emits: /scoreboard players remove <player> mana_obj 20
  * ```
+ *
+ * @param objectiveName The name of the scoreboard objective to manipulate.
  */
 context(fn: Function)
 fun Entity.scoreboardEntity(objectiveName: String) = ScoreboardEntity(objectiveName, this)

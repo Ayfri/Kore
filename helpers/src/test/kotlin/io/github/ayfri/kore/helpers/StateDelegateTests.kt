@@ -63,17 +63,15 @@ class StateDelegateTests : FunSpec({
 		""".trimIndent()
 	}
 
-	test("scoreboard delegates expose runIf, runWhile and repeatScore helpers with correct syntax") {
+	test("scoreboard delegates expose runIf, runWhile and repeat helpers with correct syntax") {
 		val datapack = dataPack("helpers_tests") {}
 
 		val stateFunction = datapack.function("state_delegate_control_flow") {
 			val player = entity()
 			val combo = player.scoreboard("combo")
 			val threshold = player.scoreboard("threshold")
-			val repeats = player.scoreboard("repeats")
 			var comboValue by combo
 			var thresholdValue by threshold
-			var repeatCount by repeats
 
 			comboValue = 45
 			thresholdValue = 45
@@ -92,24 +90,28 @@ class StateDelegateTests : FunSpec({
 			}
 
 			comboValue = 9
-			repeatCount = 3
-			repeatScore(combo, counter = repeats, name = "combo_repeat") {
+			repeat(combo, name = "combo_repeat") { iteration ->
+				runIf(iteration equalTo 1, name = "combo_repeat_iteration") {
+					say("Second tick")
+				}
 				say("Repeat tick")
 			}
 		}
 
 		stateFunction.toString() assertsIs """
 			scoreboard objectives add combo dummy
-			scoreboard objectives add threshold dummy
-			scoreboard objectives add repeats dummy
 			scoreboard players set @e[limit=1] combo 45
+			scoreboard objectives add threshold dummy
 			scoreboard players set @e[limit=1] threshold 45
 			execute if score @e[limit=1] combo matches 45 run function helpers_tests:generated_scopes/combo_ready_if
 			execute if score @e[limit=1] combo = @e[limit=1] threshold run function helpers_tests:generated_scopes/combo_equals_threshold
 			execute if score @e[limit=1] combo matches 1.. run function helpers_tests:generated_scopes/combo_while
 			scoreboard players set @e[limit=1] combo 9
-			scoreboard players set @e[limit=1] repeats 3
-			execute if score @e[limit=1] repeats matches 1.. run function helpers_tests:generated_scopes/combo_repeat
+			scoreboard objectives add combo_repeat_counter dummy
+			scoreboard objectives add combo_repeat_iteration dummy
+			scoreboard players operation @e[limit=1] combo = @e[limit=1] combo_repeat_counter
+			scoreboard players set @e[limit=1] combo_repeat_iteration 0
+			execute if score @e[limit=1] combo_repeat_counter matches 1.. run function helpers_tests:generated_scopes/combo_repeat
 		""".trimIndent()
 
 		datapack.generatedFunctions.map { it.toString() } shouldBe listOf(
@@ -125,9 +127,14 @@ class StateDelegateTests : FunSpec({
 				execute if score @e[limit=1] combo matches 1.. run function helpers_tests:generated_scopes/combo_while
 			""".trimIndent(),
 			"""
+				say Second tick
+			""".trimIndent(),
+			"""
+				execute if score @e[limit=1] combo_repeat_iteration matches 1 run function helpers_tests:generated_scopes/combo_repeat_iteration
 				say Repeat tick
-				scoreboard players remove @e[limit=1] repeats 1
-				execute if score @e[limit=1] repeats matches 1.. run function helpers_tests:generated_scopes/combo_repeat
+				scoreboard players add @e[limit=1] combo_repeat_iteration 1
+				scoreboard players remove @e[limit=1] combo_repeat_counter 1
+				execute if score @e[limit=1] combo_repeat_counter matches 1.. run function helpers_tests:generated_scopes/combo_repeat
 			""".trimIndent(),
 		)
 	}

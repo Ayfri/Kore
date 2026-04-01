@@ -176,9 +176,7 @@ For repeated checks, the same delegate can drive higher-level control flow helpe
 function("combo_loops") {
 	val player = entity()
 	val combo = player.scoreboard("combo", default = 0)
-	val repeats = player.scoreboard("repeats", default = 0)
 	var comboValue by combo
-	var repeatCount by repeats
 
 	comboValue = 3
 
@@ -188,18 +186,24 @@ function("combo_loops") {
 	}
 
 	comboValue = 9
-	repeatCount = 2
-	repeatScore(combo, counter = repeats, name = "combo_repeat") {
-		say("Repeat once per score point")
+  repeat(combo, name = "combo_repeat") { i ->
+    runIf(i equalTo 1) {
+      say("Second iteration")
+    }
+
+    say("Repeat once per score point")
 	}
 }
 ```
 
 - `runIf(...)` wraps a single `execute if score ... run function ...` call.
 - `runWhile(...)` generates a recursive helper function that reruns itself while the score condition stays true.
-- `repeatScore(...)` is a small `for`-style helper built on top of `runWhile(...)`: by default it decrements the same
-  delegated score, but you can pass `counter = ...` to keep the main score intact and consume another delegated score as
-  the loop counter instead.
+- `repeat(...)` is a small `for`-style helper built on top of `runWhile(...)`: by default it creates an internal
+  counter score with a generated unique name, copies the input score into it, and decrements that internal counter so
+  the main delegated score stays intact. You can still pass `counter = ...` to reuse an existing delegated score as the
+  loop counter instead.
+- The lambda parameter (`it`) is itself a `ScoreboardDelegate` for the current iteration index, so you can compare it,
+  pass it to `runIf(...)`, or even delegate it again with `var iteration by it`.
 
 ## When to use which delegate
 
@@ -211,16 +215,16 @@ function("combo_loops") {
 
 ## API summary
 
-| Function / type         | Purpose                                                                    |
-|-------------------------|----------------------------------------------------------------------------|
-| `scoreboard(...)`       | Create a scoreboard-backed delegate for an entity.                         |
-| `scoreboardEntity(...)` | Create a score handle for relative arithmetic.                             |
-| `runIf(...)`            | Run a block when a delegated score condition matches.                      |
-| `runWhile(...)`         | Re-run a block while a delegated score condition stays true.               |
-| `repeatScore(...)`      | Run a block once per score point, with an optional separate counter score. |
-| `storage(...)`          | Create an NBT storage-backed delegate.                                     |
-| `ScoreboardDelegate`    | Lazy scoreboard delegate implementation plus score conditions.             |
-| `StorageDelegate<T>`    | Generic storage delegate implementation.                                   |
+| Function / type         | Purpose                                                                                           |
+|-------------------------|---------------------------------------------------------------------------------------------------|
+| `scoreboard(...)`       | Create a scoreboard-backed delegate for an entity.                                                |
+| `scoreboardEntity(...)` | Create a score handle for relative arithmetic.                                                    |
+| `runIf(...)`            | Run a block when a delegated score condition matches.                                             |
+| `runWhile(...)`         | Re-run a block while a delegated score condition stays true.                                      |
+| `repeat(...)`           | Run a block once per score point, with an optional separate counter score and iteration delegate. |
+| `storage(...)`          | Create an NBT storage-backed delegate.                                                            |
+| `ScoreboardDelegate`    | Lazy scoreboard delegate implementation plus score conditions.                                    |
+| `StorageDelegate<T>`    | Generic storage delegate implementation.                                                          |
 
 ## See also
 
