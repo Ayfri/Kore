@@ -3,8 +3,8 @@ package io.github.ayfri.kore.helpers
 import io.github.ayfri.kore.entities.player
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.helpers.assertions.assertsIs
-import io.github.ayfri.kore.helpers.maths.MATH_TABLE_SIZE
-import io.github.ayfri.kore.helpers.maths.registerMath
+import io.github.ayfri.kore.helpers.maths.*
+import io.github.ayfri.kore.helpers.state.scoreboard
 import io.github.ayfri.kore.helpers.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
 
@@ -18,7 +18,9 @@ fun mathTests() = testDataPack("math_tests") {
 		}
 		lines[0] assertsIs "scoreboard players operation @e[limit=1,name=TestPlayer,type=minecraft:player] cos_result = @e[limit=1,name=TestPlayer,type=minecraft:player] angle"
 		lines[1] assertsIs "scoreboard players operation @e[limit=1,name=TestPlayer,type=minecraft:player] cos_result %= #360 kore_math"
-		lines.size assertsIs 2 + MATH_TABLE_SIZE
+		lines[2] assertsIs "scoreboard players operation @e[limit=1,name=TestPlayer,type=minecraft:player] cos_result += #360 kore_math"
+		lines[3] assertsIs "scoreboard players operation @e[limit=1,name=TestPlayer,type=minecraft:player] cos_result %= #360 kore_math"
+		lines.size assertsIs 4 + MATH_TABLE_SIZE
 	}
 
 	function("test_sin") {
@@ -27,8 +29,10 @@ fun mathTests() = testDataPack("math_tests") {
 		}
 		lines[0] assertsIs "scoreboard players operation @e[limit=1,name=TestPlayer,type=minecraft:player] sin_result = @e[limit=1,name=TestPlayer,type=minecraft:player] angle"
 		lines[1] assertsIs "scoreboard players operation @e[limit=1,name=TestPlayer,type=minecraft:player] sin_result %= #360 kore_math"
-		lines[2] assertsIs "execute if score @e[limit=1,name=TestPlayer,type=minecraft:player] sin_result matches 0 run scoreboard players set @e[limit=1,name=TestPlayer,type=minecraft:player] sin_result 0"
-		lines.size assertsIs 2 + MATH_TABLE_SIZE
+		lines[2] assertsIs "scoreboard players operation @e[limit=1,name=TestPlayer,type=minecraft:player] sin_result += #360 kore_math"
+		lines[3] assertsIs "scoreboard players operation @e[limit=1,name=TestPlayer,type=minecraft:player] sin_result %= #360 kore_math"
+		lines[4] assertsIs "execute if score @e[limit=1,name=TestPlayer,type=minecraft:player] sin_result matches 0 run scoreboard players set @e[limit=1,name=TestPlayer,type=minecraft:player] sin_result 0"
+		lines.size assertsIs 4 + MATH_TABLE_SIZE
 	}
 
 	function("test_sqrt") {
@@ -38,7 +42,42 @@ fun mathTests() = testDataPack("math_tests") {
 		lines[0] assertsIs "scoreboard players operation @e[limit=1,name=TestPlayer,type=minecraft:player] _sqrt_x = @e[limit=1,name=TestPlayer,type=minecraft:player] input_val"
 		lines[1] assertsIs "scoreboard players operation @e[limit=1,name=TestPlayer,type=minecraft:player] _sqrt_g = @e[limit=1,name=TestPlayer,type=minecraft:player] input_val"
 		lines[2] assertsIs "scoreboard players operation @e[limit=1,name=TestPlayer,type=minecraft:player] _sqrt_g /= #2 kore_math"
-		lines.size assertsIs 3 + HelpersConstants.mathSqrtIterations * 5
+		lines[3] assertsIs "scoreboard players add @e[limit=1,name=TestPlayer,type=minecraft:player] _sqrt_g 1"
+		lines.size assertsIs 4 + HelpersConstants.mathSqrtIterations * 5
+	}
+
+	function("test_delegate_math_helpers") {
+		val angle = player.scoreboard("launch_angle")
+		val sinAngle = player.scoreboard("sin_angle")
+		val cosAngle = player.scoreboard("cos_angle")
+		val distanceX1 = player.scoreboard("x1")
+		val distanceY1 = player.scoreboard("y1")
+		val distanceZ1 = player.scoreboard("z1")
+		val distanceX2 = player.scoreboard("x2")
+		val distanceY2 = player.scoreboard("y2")
+		val distanceZ2 = player.scoreboard("z2")
+		val distanceOutput = player.scoreboard("dist_sq")
+		val sqrtInput = player.scoreboard("sqrt_input")
+		val sqrtOutput = player.scoreboard("sqrt_output")
+		val time = player.scoreboard("time")
+		val velocity = player.scoreboard("v0")
+		val gravity = player.scoreboard("gravity")
+		val parabolaOutput = player.scoreboard("parabola_y")
+
+		math.apply {
+			angle cosTo cosAngle
+			angle sinTo sinAngle
+			sqrtInput sqrtTo sqrtOutput
+			distanceSquared(
+				Triple(distanceX1, distanceY1, distanceZ1),
+				Triple(distanceX2, distanceY2, distanceZ2),
+				distanceOutput
+			)
+			parabola(time, velocity, gravity, parabolaOutput)
+		}
+
+		lines[0] assertsIs "scoreboard players operation @e[limit=1,name=TestPlayer,type=minecraft:player] cos_angle = @e[limit=1,name=TestPlayer,type=minecraft:player] launch_angle"
+		lines[4 + MATH_TABLE_SIZE] assertsIs "scoreboard players operation @e[limit=1,name=TestPlayer,type=minecraft:player] sin_angle = @e[limit=1,name=TestPlayer,type=minecraft:player] launch_angle"
 	}
 
 	function("test_distance_squared") {

@@ -11,6 +11,7 @@ import io.github.ayfri.kore.entities.Entity
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.helpers.HelpersConstants
+import io.github.ayfri.kore.helpers.state.ScoreboardDelegate
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.roundToInt
@@ -21,7 +22,20 @@ private val initializedMathModules = mutableSetOf<String>()
 const val MATH_SCALE = 1000
 const val MATH_TABLE_SIZE = 360
 
-class MathHandle(val objective: String) {
+data class MathHandle(val objective: String) {
+	context(fn: Function)
+	private fun normalizeAngle(entity: Entity, score: String) {
+		val sel = entity.asSelector()
+
+		fn.scoreboard {
+			players {
+				operation(sel, score, Operation.MODULO, literal(HelpersConstants.mathConst360), objective)
+				operation(sel, score, Operation.ADD, literal(HelpersConstants.mathConst360), objective)
+				operation(sel, score, Operation.MODULO, literal(HelpersConstants.mathConst360), objective)
+			}
+		}
+	}
+
 	context(fn: Function)
 	fun cos(entity: Entity, inputScore: String, outputScore: String) {
 		val sel = entity.asSelector()
@@ -29,9 +43,10 @@ class MathHandle(val objective: String) {
 		fn.scoreboard {
 			players {
 				operation(sel, outputScore, Operation.SET, sel, inputScore)
-				operation(sel, outputScore, Operation.MODULO, literal(HelpersConstants.mathConst360), objective)
 			}
 		}
+
+		normalizeAngle(entity, outputScore)
 
 		for (deg in 0 until MATH_TABLE_SIZE) {
 			val cosVal = (cos(PI * deg / 180.0) * MATH_SCALE).roundToInt()
@@ -48,6 +63,11 @@ class MathHandle(val objective: String) {
 				}
 			}
 		}
+	}
+
+	context(fn: Function)
+	fun cos(input: ScoreboardDelegate, output: ScoreboardDelegate) {
+		cos(input.entity, input.objectiveName, output.objectiveName)
 	}
 
 	context(fn: Function)
@@ -86,6 +106,24 @@ class MathHandle(val objective: String) {
 	}
 
 	context(fn: Function)
+	fun distanceSquared(
+		first: Triple<ScoreboardDelegate, ScoreboardDelegate, ScoreboardDelegate>,
+		second: Triple<ScoreboardDelegate, ScoreboardDelegate, ScoreboardDelegate>,
+		output: ScoreboardDelegate,
+	) {
+		distanceSquared(
+			output.entity,
+			first.first.objectiveName,
+			first.second.objectiveName,
+			first.third.objectiveName,
+			second.first.objectiveName,
+			second.second.objectiveName,
+			second.third.objectiveName,
+			output.objectiveName,
+		)
+	}
+
+	context(fn: Function)
 	fun parabola(
 		entity: Entity,
 		tScore: String,
@@ -116,15 +154,48 @@ class MathHandle(val objective: String) {
 	}
 
 	context(fn: Function)
+	fun parabola(
+		time: ScoreboardDelegate,
+		initialVelocity: ScoreboardDelegate,
+		gravity: ScoreboardDelegate,
+		output: ScoreboardDelegate,
+	) {
+		val outputSelector = output.entity.asSelector()
+		val timeSelector = time.entity.asSelector()
+		val velocitySelector = initialVelocity.entity.asSelector()
+		val gravitySelector = gravity.entity.asSelector()
+		val tempA = "_para_a"
+		val tempB = "_para_b"
+		val two = HelpersConstants.mathConst2
+
+		fn.scoreboard {
+			players {
+				operation(outputSelector, tempA, Operation.SET, velocitySelector, initialVelocity.objectiveName)
+				operation(outputSelector, tempA, Operation.MULTIPLY, timeSelector, time.objectiveName)
+
+				operation(outputSelector, tempB, Operation.SET, gravitySelector, gravity.objectiveName)
+				operation(outputSelector, tempB, Operation.MULTIPLY, timeSelector, time.objectiveName)
+				operation(outputSelector, tempB, Operation.MULTIPLY, timeSelector, time.objectiveName)
+
+				operation(outputSelector, tempB, Operation.DIVIDE, literal(two), objective)
+
+				operation(outputSelector, output.objectiveName, Operation.SET, outputSelector, tempA)
+				operation(outputSelector, output.objectiveName, Operation.REMOVE, outputSelector, tempB)
+			}
+		}
+	}
+
+	context(fn: Function)
 	fun sin(entity: Entity, inputScore: String, outputScore: String) {
 		val sel = entity.asSelector()
 
 		fn.scoreboard {
 			players {
 				operation(sel, outputScore, Operation.SET, sel, inputScore)
-				operation(sel, outputScore, Operation.MODULO, literal(HelpersConstants.mathConst360), objective)
 			}
 		}
+
+		normalizeAngle(entity, outputScore)
 
 		for (deg in 0 until MATH_TABLE_SIZE) {
 			val sinVal = (sin(PI * deg / 180.0) * MATH_SCALE).roundToInt()
@@ -144,6 +215,11 @@ class MathHandle(val objective: String) {
 	}
 
 	context(fn: Function)
+	fun sin(input: ScoreboardDelegate, output: ScoreboardDelegate) {
+		sin(input.entity, input.objectiveName, output.objectiveName)
+	}
+
+	context(fn: Function)
 	fun sqrt(entity: Entity, inputScore: String, outputScore: String) {
 		val sel = entity.asSelector()
 		val tempX = "_sqrt_x"
@@ -155,6 +231,7 @@ class MathHandle(val objective: String) {
 				operation(sel, tempX, Operation.SET, sel, inputScore)
 				operation(sel, tempG, Operation.SET, sel, inputScore)
 				operation(sel, tempG, Operation.DIVIDE, literal(two), objective)
+				add(sel, tempG, 1)
 			}
 		}
 
@@ -170,6 +247,26 @@ class MathHandle(val objective: String) {
 			}
 		}
 	}
+
+	context(fn: Function)
+	fun sqrt(input: ScoreboardDelegate, output: ScoreboardDelegate) {
+		sqrt(input.entity, input.objectiveName, output.objectiveName)
+	}
+}
+
+context(_: Function, math: MathHandle)
+infix fun ScoreboardDelegate.cosTo(output: ScoreboardDelegate) {
+	math.cos(this, output)
+}
+
+context(_: Function, math: MathHandle)
+infix fun ScoreboardDelegate.sinTo(output: ScoreboardDelegate) {
+	math.sin(this, output)
+}
+
+context(_: Function, math: MathHandle)
+infix fun ScoreboardDelegate.sqrtTo(output: ScoreboardDelegate) {
+	math.sqrt(this, output)
 }
 
 fun DataPack.registerMath(objective: String = HelpersConstants.mathObjective): MathHandle {
