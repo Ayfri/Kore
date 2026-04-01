@@ -1,14 +1,22 @@
 package io.github.ayfri.kore.helpers.state
 
+import io.github.ayfri.kore.arguments.enums.Relation
+import io.github.ayfri.kore.arguments.numbers.ranges.IntRangeOrInt
+import io.github.ayfri.kore.arguments.scores.ExecuteScore
 import io.github.ayfri.kore.arguments.scores.ScoreboardCriteria
 import io.github.ayfri.kore.arguments.scores.ScoreboardCriterion
+import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.arguments.types.resources.StorageArgument
 import io.github.ayfri.kore.commands.Data
 import io.github.ayfri.kore.commands.data
+import io.github.ayfri.kore.commands.execute.ExecuteCondition
+import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.entities.Entity
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.generatedFunction
 import io.github.ayfri.kore.scoreboard.ScoreboardEntity
+import io.github.ayfri.kore.scoreboard.minusAssign
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -63,6 +71,144 @@ data class ScoreboardDelegate(
 				set(entity.asSelector(), objectiveName, value)
 			}
 		}
+	}
+
+	fun asExecuteScore(): ExecuteScore {
+		ensureObjective()
+		return ExecuteScore(entity.asSelector(), objectiveName)
+	}
+
+	fun scoreboardEntity(): ScoreboardEntity {
+		ensureObjective()
+		return ScoreboardEntity(objectiveName, entity)
+	}
+}
+
+typealias ScoreRunCondition = ExecuteCondition.() -> Unit
+
+private fun scoreRelationCondition(left: ExecuteScore, relation: Relation, right: ExecuteScore): ScoreRunCondition = {
+	score(left.target, left.objective, right.target, right.objective, relation)
+}
+
+private fun scoreValueCondition(left: ExecuteScore, relation: Relation, value: Int): ScoreRunCondition = {
+	score(left.target, left.objective, relation.applyAsRange(value))
+}
+
+private fun scoreRangeCondition(left: ExecuteScore, value: IntRangeOrInt): ScoreRunCondition = {
+	score(left.target, left.objective, value)
+}
+
+/** Builds an `execute if score ... = <value>` style condition from a scoreboard delegate. */
+infix fun ScoreboardDelegate.equalTo(value: Int) = scoreValueCondition(asExecuteScore(), Relation.EQUAL_TO, value)
+
+/** Builds an `execute if score ... < <value>` style condition from a scoreboard delegate. */
+infix fun ScoreboardDelegate.lessThan(value: Int) = scoreValueCondition(asExecuteScore(), Relation.LESS_THAN, value)
+
+/** Builds an `execute if score ... <= <value>` style condition from a scoreboard delegate. */
+infix fun ScoreboardDelegate.lessThanOrEqualTo(value: Int) =
+	scoreValueCondition(asExecuteScore(), Relation.LESS_THAN_OR_EQUAL_TO, value)
+
+/** Builds an `execute if score ... > <value>` style condition from a scoreboard delegate. */
+infix fun ScoreboardDelegate.greaterThan(value: Int) =
+	scoreValueCondition(asExecuteScore(), Relation.GREATER_THAN, value)
+
+/** Builds an `execute if score ... >= <value>` style condition from a scoreboard delegate. */
+infix fun ScoreboardDelegate.greaterThanOrEqualTo(value: Int) =
+	scoreValueCondition(asExecuteScore(), Relation.GREATER_THAN_OR_EQUAL_TO, value)
+
+/** Builds an `execute if score ... matches <range>` condition from a scoreboard delegate. */
+infix fun ScoreboardDelegate.matches(value: IntRangeOrInt) = scoreRangeCondition(asExecuteScore(), value)
+
+/** Builds an `execute if score <left> = <right>` condition between two scoreboard delegates. */
+infix fun ScoreboardDelegate.equalTo(other: ScoreboardDelegate) =
+	scoreRelationCondition(asExecuteScore(), Relation.EQUAL_TO, other.asExecuteScore())
+
+/** Builds an `execute if score <left> < <right>` condition between two scoreboard delegates. */
+infix fun ScoreboardDelegate.lessThan(other: ScoreboardDelegate) =
+	scoreRelationCondition(asExecuteScore(), Relation.LESS_THAN, other.asExecuteScore())
+
+/** Builds an `execute if score <left> <= <right>` condition between two scoreboard delegates. */
+infix fun ScoreboardDelegate.lessThanOrEqualTo(other: ScoreboardDelegate) =
+	scoreRelationCondition(asExecuteScore(), Relation.LESS_THAN_OR_EQUAL_TO, other.asExecuteScore())
+
+/** Builds an `execute if score <left> > <right>` condition between two scoreboard delegates. */
+infix fun ScoreboardDelegate.greaterThan(other: ScoreboardDelegate) =
+	scoreRelationCondition(asExecuteScore(), Relation.GREATER_THAN, other.asExecuteScore())
+
+/** Builds an `execute if score <left> >= <right>` condition between two scoreboard delegates. */
+infix fun ScoreboardDelegate.greaterThanOrEqualTo(other: ScoreboardDelegate) =
+	scoreRelationCondition(asExecuteScore(), Relation.GREATER_THAN_OR_EQUAL_TO, other.asExecuteScore())
+
+/**
+ * Runs [block] inside a generated function only if [condition] matches.
+ *
+ * This is a small convenience wrapper over `execute { ifCondition { ... }; run(...) }`
+ * that keeps state delegate conditions close to the delegated score definitions.
+ */
+context(fn: Function)
+fun runIf(
+	condition: ScoreRunCondition,
+	name: String = "state_delegate_if_${fn.name}_${fn.lines.size}",
+	block: Function.() -> Unit,
+) = fn.execute {
+	val runFunction = fn.datapack.generatedFunction(name, namespace = fn.namespace, block = block)
+	ifCondition {
+		condition()
+	}
+
+	run(runFunction)
+}
+
+/**
+ * Re-runs a generated function while [condition] remains true.
+ *
+ * The returned [FunctionArgument] points to the generated loop body, which can be reused
+ * elsewhere if needed.
+ */
+context(fn: Function)
+fun runWhile(
+	condition: ScoreRunCondition,
+	name: String = "state_delegate_while_${fn.name}_${fn.lines.size}",
+	block: Function.() -> Unit,
+): FunctionArgument {
+	val loopFunction = FunctionArgument(name, fn.namespace, fn.datapack.configuration.generatedFunctionsFolder)
+	fn.execute {
+		ifCondition {
+			condition()
+		}
+
+		run(loopFunction)
+	}
+
+	return fn.datapack.generatedFunction(name, namespace = fn.namespace) {
+		block()
+		execute {
+			ifCondition {
+				condition()
+			}
+
+			run(loopFunction)
+		}
+	}
+}
+
+/**
+ * Repeats [block] while [counter] stays above `0`.
+ *
+ * By default, [counter] is [times], which means the main score is decremented directly.
+ * Pass a separate scoreboard delegate when the source score should remain untouched.
+ */
+context(fn: Function)
+fun repeatScore(
+	times: ScoreboardDelegate,
+	counter: ScoreboardDelegate = times,
+	name: String = "state_delegate_repeat_${fn.name}_${fn.lines.size}",
+	block: Function.() -> Unit,
+): FunctionArgument {
+	val counterScore = counter.scoreboardEntity()
+	return runWhile(counter greaterThan 0, name) {
+		block()
+		counterScore -= 1
 	}
 }
 
