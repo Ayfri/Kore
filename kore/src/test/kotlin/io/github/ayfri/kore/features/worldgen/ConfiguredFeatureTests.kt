@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.data.block.blockState
 import io.github.ayfri.kore.features.worldgen.blockpredicate.allOf
@@ -23,6 +24,9 @@ import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.features.worldgen.intproviders.uniform
 import io.github.ayfri.kore.features.worldgen.ruletest.randomBlockMatch
 import io.github.ayfri.kore.generated.Blocks
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.configuredFeatureTests() {
 	configuredFeature("test_simple_block", simpleBlock(simpleStateProvider(Blocks.STONE), scheduleTick = true))
@@ -293,3 +297,15 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 }
+
+class ConfiguredFeatureTests : FunSpec({
+	test("configured feature") {
+		testDataPack("configuredFeature") {
+			pretty()
+			configuredFeatureTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

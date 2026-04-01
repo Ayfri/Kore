@@ -3,11 +3,15 @@ package io.github.ayfri.kore.features
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.predicates.conditions.entityProperties
 import io.github.ayfri.kore.features.predicates.predicate
 import io.github.ayfri.kore.features.predicates.sub.entityspecific.*
 import io.github.ayfri.kore.generated.Recipes
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.predicateEntityTypeSpecificTests() {
 	predicate("fishing_hook_type_specific") {
@@ -158,3 +162,15 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 		}
 	""".trimIndent()
 }
+
+class PredicateEntityTypeSpecificTests : FunSpec({
+	test("predicate entity type specific") {
+		testDataPack("predicateEntityTypeSpecific") {
+			pretty()
+			predicateEntityTypeSpecificTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

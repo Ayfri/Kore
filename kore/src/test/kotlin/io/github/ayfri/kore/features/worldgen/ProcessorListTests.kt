@@ -2,6 +2,7 @@ package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.enums.Axis
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.data.block.blockStateStone
 import io.github.ayfri.kore.features.worldgen.processorlist.processorList
@@ -13,7 +14,10 @@ import io.github.ayfri.kore.features.worldgen.processorlist.types.rule.positionp
 import io.github.ayfri.kore.features.worldgen.processorlist.types.rule.rule
 import io.github.ayfri.kore.features.worldgen.processorlist.types.rules
 import io.github.ayfri.kore.features.worldgen.ruletest.randomBlockStateMatch
+import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.set
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.processorListTests() {
 	processorList("my_processor_list") {
@@ -89,3 +93,15 @@ fun DataPack.processorListTests() {
 		}
 	""".trimIndent()
 }
+
+class ProcessorListTests : FunSpec({
+	test("processor list") {
+		testDataPack("processorList") {
+			pretty()
+			processorListTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.data.spawncondition.structures
 import io.github.ayfri.kore.features.cowvariants.CowModel
@@ -8,6 +9,9 @@ import io.github.ayfri.kore.features.cowvariants.cowVariant
 import io.github.ayfri.kore.features.cowvariants.spawnConditions
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.generated.Textures
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.cowVariantTests() {
 	cowVariant("test_cow_variant", Textures.Entity.Cow.COLD_COW, CowModel.COLD) {
@@ -32,3 +36,15 @@ fun DataPack.cowVariantTests() {
 		}
 	""".trimIndent()
 }
+
+class CowVariantTests : FunSpec({
+	test("cow variant") {
+		testDataPack("cowVariant") {
+			pretty()
+			cowVariantTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

@@ -6,6 +6,8 @@ import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.commands.Command
 import io.github.ayfri.kore.utils.TestDataPack
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldMatch
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNamingStrategy
@@ -19,26 +21,24 @@ private val jsonStringifier = Json {
 	namingStrategy = JsonNamingStrategy.SnakeCase
 }
 
-private val alreadyPrinted = mutableSetOf<Int>()
+infix fun Command.assertsIs(string: String) = also { toString() shouldBe string }
+infix fun Command.assertsMatches(regex: Regex) = also { toString() shouldMatch regex }
 
-infix fun Command.assertsIs(string: String) = also { assertsIs(toString(), string) }
-infix fun Command.assertsMatches(regex: Regex) = also { assertsMatches(regex, toString()) }
-
-infix fun String.assertsIs(string: String) = also { assertsIs(this, string) }
-infix fun String.assertsIsJson(@Language("json") string: String) = also { assertsIsJson(this, string) }
+infix fun String.assertsIs(string: String) = also { this shouldBe string }
+infix fun String.assertsIsJson(@Language("json") string: String) = also { this shouldBe string }
 
 infix fun ChatComponents.assertsIsJson(@Language("json") string: String) =
-	also { assertsIsJson(toJsonString(jsonStringifier), string) }
+	also { toJsonString(jsonStringifier) shouldBe string }
 
-infix fun <T : Any> T.assertsIs(expected: T) = also { assertsIs(toString(), expected.toString()) }
+infix fun <T : Any> T.assertsIs(expected: T) = also { toString() shouldBe expected.toString() }
 
-infix fun Argument.assertsIs(string: String) = assertsIs(asString(), string)
+infix fun Argument.assertsIs(string: String) {
+	asString() shouldBe string
+}
 
 context(dp: DataPack)
 infix fun Generator.assertsIs(@Language("json") expected: String) {
-	val result = generateJson(dp)
-	if (result == expected || !alreadyPrinted.add(this.hashCode())) return
-	printStackTraceAndDiff(generateDiffStringJson(expected, result), 3)
+	generateJson(dp) shouldBe expected
 }
 
 fun TestDataPack.assertFileGenerated(path: String) = callAfterGeneration {
@@ -59,8 +59,6 @@ fun TestDataPack.assertGeneratorsGenerated() = callAfterGeneration {
 }
 
 fun assertsThrows(message: String, function: () -> Any) {
-	if (!alreadyPrinted.add(function.hashCode())) return
-
 	val errorMessage = try {
 		function()
 		"No exception was thrown."
@@ -69,20 +67,5 @@ fun assertsThrows(message: String, function: () -> Any) {
 		e.message ?: "Exception thrown without message"
 	}
 
-	printStackTraceAndDiff(generateDiffString(message, errorMessage), 3)
-}
-
-private fun <T : Any> T.assertsIsJson(result: String, expected: String) {
-	if (result == expected || !alreadyPrinted.add(hashCode())) return
-	printStackTraceAndDiff(generateDiffStringJson(expected, result), 4)
-}
-
-private fun <T : Any> T.assertsIs(result: String, expected: String) {
-	if (result == expected || !alreadyPrinted.add(hashCode())) return
-	printStackTraceAndDiff(generateDiffString(expected, result), 4)
-}
-
-private fun <T : Any> T.assertsMatches(regex: Regex, expected: String) {
-	if (regex.matches(expected) || !alreadyPrinted.add(hashCode())) return
-	printStackTraceAndDiff(generateDiffString(regex, expected), 4)
+	errorMessage shouldBe message
 }

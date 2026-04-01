@@ -3,7 +3,10 @@ package io.github.ayfri.kore.commands
 import io.github.ayfri.kore.arguments.numbers.ranges.range
 import io.github.ayfri.kore.arguments.types.resources.RandomSequenceArgument
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.randomTests() {
 	randomValue(1..6) assertsIs "random value 1..6"
@@ -22,3 +25,11 @@ fun Function.randomTests() {
 	randomResetAll(includeSequenceId = false) assertsIs "random reset * false"
 	randomResetAll(1234, includeWorldSeed = false, includeSequenceId = false) assertsIs "random reset * 1234 false false"
 }
+
+class RandomCommandTests : FunSpec({
+	test("random") {
+		dataPack("unit_tests") {
+			load { randomTests() }
+		}.generate()
+	}
+})

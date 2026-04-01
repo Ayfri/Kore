@@ -12,6 +12,7 @@ import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.commands.tellraw
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.functions.load
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.resetScoreboard() = function("reset_scoreboard") {
 	scoreboard.objectives.remove("morpion")
@@ -59,3 +60,9 @@ fun morpion() {
 		generateZip()
 	}
 }
+
+class MorpionTests : FunSpec({
+	test("morpion") {
+		morpion()
+	}
+})

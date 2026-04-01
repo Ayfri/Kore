@@ -1,10 +1,14 @@
 package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.worldgen.structureset.*
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.ConfiguredStructures
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.structureSetTests() {
 	val set = structureSet("my_structure_set") {
@@ -54,3 +58,15 @@ fun DataPack.structureSetTests() {
 		}
 	""".trimIndent()
 }
+
+class StructureSetTests : FunSpec({
+	test("structure set") {
+		testDataPack("structureSet") {
+			pretty()
+			structureSetTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

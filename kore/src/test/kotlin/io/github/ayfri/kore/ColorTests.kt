@@ -3,6 +3,7 @@ package io.github.ayfri.kore
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.color
 import io.github.ayfri.kore.assertions.assertsIs
+import io.kotest.core.spec.style.FunSpec
 
 fun colorTests() {
 	val red = Color.RED.toRGB()
@@ -36,3 +37,9 @@ fun colorTests() {
 
 	red.toARGB(100).hex assertsIs "64ff5555"
 }
+
+class ColorTests : FunSpec({
+	test("color") {
+		colorTests()
+	}
+})

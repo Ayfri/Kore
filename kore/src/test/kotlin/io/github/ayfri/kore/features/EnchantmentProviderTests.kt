@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.enchantments.providers.enchantmentProviders
 import io.github.ayfri.kore.features.enchantments.providers.types.byCostEnchantmentProvider
@@ -10,6 +11,9 @@ import io.github.ayfri.kore.features.worldgen.intproviders.uniform
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.VillagerProfessions
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.enchantmentProviderTests() {
 	val biome = Biomes.BADLANDS
@@ -56,3 +60,15 @@ fun DataPack.enchantmentProviderTests() {
 		}
 	""".trimIndent()
 }
+
+class EnchantmentProviderTests : FunSpec({
+	test("enchantment provider") {
+		testDataPack("enchantmentProvider") {
+			pretty()
+			enchantmentProviderTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

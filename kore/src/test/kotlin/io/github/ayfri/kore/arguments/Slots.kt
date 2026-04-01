@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.arguments
 
 import io.github.ayfri.kore.assertions.assertsIs
+import io.kotest.core.spec.style.FunSpec
 
 fun itemSlotTests() {
 	ARMOR.BODY.asString() assertsIs "armor.body"
@@ -21,3 +22,9 @@ fun itemSlotTests() {
 	ItemSlotType.fromIndex(7, fromEntity = true).asString() assertsIs HOTBAR[7].asString()
 	ItemSlotType.fromIndex(503, fromPlayer = true).asString() assertsIs PLAYER.CRAFTING[3].asString()
 }
+
+class ItemSlotTests : FunSpec({
+	test("item slot") {
+		itemSlotTests()
+	}
+})

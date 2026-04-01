@@ -18,6 +18,7 @@ import io.github.ayfri.kore.features.worldgen.dimension.dimension
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.DimensionTypes
 import io.github.ayfri.kore.generated.Items
+import io.kotest.core.spec.style.FunSpec
 import java.nio.file.Files
 import kotlin.io.path.Path
 import kotlin.io.path.readText
@@ -437,3 +438,14 @@ fun testAutoDiscoveryAndWorldgen() = newTest("autodiscovery") {
 	content.contains("data object Worldgen") assertsIs true
 	content.contains("Biomes : BiomeArgument") assertsIs true
 }
+
+class ImportingTests : FunSpec({
+	test("basic function exploration") { testBasicFunctionExploration() }
+	test("macro function detection") { testMacroFunctionDetection() }
+	test("code generation") { testCodeGeneration() }
+	test("zip import") { testZipImport() }
+	test("multiple namespaces") { testMultipleNamespaces() }
+	test("nested directories") { testNestedDirectories() }
+	test("data driven resources") { testDataDrivenResources() }
+	test("auto discovery and worldgen") { testAutoDiscoveryAndWorldgen() }
+})

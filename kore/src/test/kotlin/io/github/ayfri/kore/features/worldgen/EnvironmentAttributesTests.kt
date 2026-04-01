@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.ARGB
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.rgb
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.worldgen.dimensiontype.attributes
 import io.github.ayfri.kore.features.worldgen.dimensiontype.dimensionType
@@ -15,6 +16,9 @@ import io.github.ayfri.kore.generated.Activities
 import io.github.ayfri.kore.generated.Particles
 import io.github.ayfri.kore.generated.SoundEvents
 import io.github.ayfri.kore.generated.Textures
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.environmentAttributesTests() {
 	dimensionType("env_attr_ambient_particles") {
@@ -605,3 +609,15 @@ fun DataPack.environmentAttributesTests() {
 		}
 	""".trimIndent()
 }
+
+class EnvironmentAttributesTests : FunSpec({
+	test("environment attributes") {
+		testDataPack("environmentAttributes") {
+			pretty()
+			environmentAttributesTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

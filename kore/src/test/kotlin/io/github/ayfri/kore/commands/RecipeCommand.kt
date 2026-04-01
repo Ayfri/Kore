@@ -2,9 +2,11 @@ package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Recipes
-import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.recipeTests() {
 	val recipe = Recipes.STONE
@@ -20,3 +22,11 @@ fun Function.recipeTests() {
 		takeAll() assertsIs "recipe take @s *"
 	}
 }
+
+class RecipeCommandTests : FunSpec({
+	test("recipe") {
+		dataPack("unit_tests") {
+			load { recipeTests() }
+		}.generate()
+	}
+})

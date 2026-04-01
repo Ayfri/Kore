@@ -2,9 +2,12 @@ package io.github.ayfri.kore.helpers
 
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.components.item.MannequinModel
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.helpers.assertions.assertsIs
 import io.github.ayfri.kore.helpers.mannequins.*
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.mannequinTests() {
 	val m = mannequin {
@@ -32,3 +35,12 @@ fun Function.mannequinTests() {
 
 	m3.toNbt().toString() assertsIs "{description:\"Test\",hide_description:0b,immovable:1b,pose:\"crouching\"}"
 }
+
+class MannequinTests : FunSpec({
+	test("mannequin") {
+		dataPack("helpers_tests") {
+			path = kotlinx.io.files.Path("out")
+			load { mannequinTests() }
+		}.generate()
+	}
+})

@@ -2,9 +2,13 @@ package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.instruments.instrument
 import io.github.ayfri.kore.generated.SoundEvents
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.instrumentTests() {
 	instrument("test_horn") {
@@ -19,9 +23,19 @@ fun DataPack.instrumentTests() {
 			"sound_event": "minecraft:item.goat_horn.sound.0",
 			"range": 64.0,
 			"use_duration": 14.0,
-			"description": {
-				"text": "A mighty horn!"
-			}
+			"description": "A mighty horn!"
 		}
 	""".trimIndent()
 }
+
+class InstrumentTests : FunSpec({
+	test("instrument") {
+		testDataPack("instrument") {
+			pretty()
+			instrumentTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

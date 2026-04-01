@@ -4,8 +4,11 @@ import io.github.ayfri.kore.arguments.chatcomponents.scoreComponent
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.utils.set
+import io.kotest.core.spec.style.FunSpec
 import net.benwoodworth.knbt.NbtInt
 
 fun Function.dataTests() {
@@ -53,3 +56,11 @@ fun Function.dataTests() {
 
 	data(self())["foo"] assertsIs "data get entity @s foo"
 }
+
+class DataCommandTests : FunSpec({
+	test("data") {
+		dataPack("unit_tests") {
+			load { dataTests() }
+		}.generate()
+	}
+})

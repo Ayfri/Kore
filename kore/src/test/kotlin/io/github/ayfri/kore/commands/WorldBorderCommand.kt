@@ -3,7 +3,10 @@ package io.github.ayfri.kore.commands
 import io.github.ayfri.kore.arguments.numbers.days
 import io.github.ayfri.kore.arguments.numbers.ticks
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.worldBorderTests() {
 	worldBorder {
@@ -24,3 +27,11 @@ fun Function.worldBorderTests() {
 	worldBorder.get() assertsIs "worldborder get"
 	worldBorder() assertsIs "worldborder get"
 }
+
+class WorldBorderCommandTests : FunSpec({
+	test("world border") {
+		dataPack("unit_tests") {
+			load { worldBorderTests() }
+		}.generate()
+	}
+})

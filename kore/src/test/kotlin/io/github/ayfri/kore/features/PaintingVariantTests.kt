@@ -2,9 +2,13 @@ package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.paintingvariant.paintingVariant
 import io.github.ayfri.kore.generated.Textures
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.paintingVariantTests() {
 	paintingVariant(
@@ -50,3 +54,15 @@ fun DataPack.paintingVariantTests() {
 		}
 	""".trimIndent()
 }
+
+class PaintingVariantTests : FunSpec({
+	test("painting variant") {
+		testDataPack("paintingVariant") {
+			pretty()
+			paintingVariantTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

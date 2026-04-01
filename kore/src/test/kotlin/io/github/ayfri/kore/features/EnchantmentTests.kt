@@ -4,6 +4,7 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
 import io.github.ayfri.kore.arguments.maths.Vec3f
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.features.enchantments.*
@@ -16,6 +17,9 @@ import io.github.ayfri.kore.features.enchantments.values.*
 import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.generated.*
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 private const val DUMMY_ENCHANTMENT_CONTENT = """"description": "",
 			"supported_items": [],
@@ -1194,3 +1198,15 @@ fun DataPack.enchantmentTests() {
 	}
 	roundTrip(enchantments.last())
 }
+
+class EnchantmentTests : FunSpec({
+	test("enchantment") {
+		testDataPack("enchantment") {
+			pretty()
+			enchantmentTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

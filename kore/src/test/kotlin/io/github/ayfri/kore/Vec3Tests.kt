@@ -8,6 +8,7 @@ import io.github.ayfri.kore.arguments.numbers.PosNumber
 import io.github.ayfri.kore.arguments.numbers.pos
 import io.github.ayfri.kore.arguments.numbers.relativePos
 import io.github.ayfri.kore.assertions.assertsIs
+import io.kotest.core.spec.style.FunSpec
 import kotlin.math.sqrt
 
 fun vec3Tests() {
@@ -77,3 +78,9 @@ fun vec3Tests() {
 
 	Vec3.fromString("1.5 2.5 3") assertsIs vec3(1.5, 2.5, 3)
 }
+
+class Vec3Tests : FunSpec({
+	test("vec3") {
+		vec3Tests()
+	}
+})

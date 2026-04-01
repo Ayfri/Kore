@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.LiquidSettings
 import io.github.ayfri.kore.features.worldgen.templatepool.Projection
@@ -13,6 +14,9 @@ import io.github.ayfri.kore.features.worldgen.templatepool.templatePool
 import io.github.ayfri.kore.generated.PlacedFeatures
 import io.github.ayfri.kore.generated.ProcessorLists
 import io.github.ayfri.kore.generated.Structures
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.templatePoolTests() {
 	templatePool("test") {
@@ -65,3 +69,15 @@ fun DataPack.templatePoolTests() {
 		}
 	""".trimIndent()
 }
+
+class TemplatePoolTests : FunSpec({
+	test("template pool") {
+		testDataPack("templatePool") {
+			pretty()
+			templatePoolTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

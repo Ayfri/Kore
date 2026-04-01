@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.RGB
 import io.github.ayfri.kore.helpers.assertions.assertsIs
 import io.github.ayfri.kore.helpers.text.markdownToTextComponents
+import io.kotest.core.spec.style.FunSpec
 
 fun markdownRendererTests() {
 	val bold = markdownToTextComponents("**hello**")
@@ -144,3 +145,9 @@ fun markdownRendererTests() {
 	olSerialized[0].asString() assertsIs """[{type:"text",text:"1. "},{type:"text",text:"first"}]"""
 
 }
+
+class MarkdownRendererTests : FunSpec({
+	test("markdown renderer") {
+		markdownRendererTests()
+	}
+})

@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrIntEnd
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrIntStart
 import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJsonSerializer
 import io.github.ayfri.kore.assertions.assertsIs
+import io.kotest.core.spec.style.FunSpec
 import kotlinx.serialization.json.Json
 
 fun intRangeOrIntJsonSerializerTests() {
@@ -23,3 +24,9 @@ fun intRangeOrIntJsonSerializerTests() {
 	json.decodeFromString(IntRangeOrIntJsonSerializer, "{\"min\":1,\"max\":5}").range!!.end.toString() assertsIs "5"
 	json.decodeFromString(IntRangeOrIntJsonSerializer, "10").int.toString() assertsIs "10"
 }
+
+class IntRangeOrIntJsonSerializerTests : FunSpec({
+	test("int range or int json serializer") {
+		intRangeOrIntJsonSerializerTests()
+	}
+})

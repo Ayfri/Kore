@@ -20,6 +20,7 @@ import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.commands.tellraw
 import io.github.ayfri.kore.commands.title
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Blocks
@@ -29,18 +30,19 @@ import io.github.ayfri.kore.helpers.assertions.assertsIs
 import io.github.ayfri.kore.helpers.inventorymanager.*
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.inventoryManagerTests() {
 	val inventoryManager = inventoryManager(vec3(0, 0, 0))
-	inventoryManager.clear(WEAPON) assertsIs "item replace block 0 0 0 weapon with minecraft:air 1"
-	inventoryManager.clearAll() assertsIs "data remove block 0 0 0 Items"
+	inventoryManager.clear(WEAPON) assertsIs "item replace block 0.0 0.0 0.0 weapon with minecraft:air 1"
+	inventoryManager.clearAll() assertsIs "data remove block 0.0 0.0 0.0 Items"
 	inventoryManager.clearAll(Items.DIAMOND_SWORD {
 		damage(0)
-	}) assertsIs "data remove block 0 0 0 Items[{id:\"minecraft:diamond_sword\",components:{\"damage\":0}}]"
+	}) assertsIs "data remove block 0.0 0.0 0.0 Items[{id:\"minecraft:diamond_sword\",components:{\"damage\":0}}]"
 	inventoryManager.modify(
 		WEAPON,
 		ItemModifierArgument("baz")
-	) assertsIs "item modify block 0 0 0 weapon minecraft:baz"
+	) assertsIs "item modify block 0.0 0.0 0.0 weapon minecraft:baz"
 
 	val counterScoreName = "take_counter"
 	val playerInventory = inventoryManager(nearestPlayer())
@@ -113,3 +115,12 @@ fun Function.inventoryManagerTests() {
 		generateSlotsListeners()
 	}
 }
+
+class InventoryManagerTests : FunSpec({
+	test("inventory manager") {
+		dataPack("helpers_tests") {
+			path = kotlinx.io.files.Path("out")
+			load { inventoryManagerTests() }
+		}.generate()
+	}
+})

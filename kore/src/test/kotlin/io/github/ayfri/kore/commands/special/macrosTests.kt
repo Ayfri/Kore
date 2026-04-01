@@ -5,10 +5,12 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.assertions.assertsThrows
 import io.github.ayfri.kore.commands.function
 import io.github.ayfri.kore.commands.say
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.*
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.teleportToSpawn(player: String) {
 	function(
@@ -50,3 +52,11 @@ fun DataPack.testMacros() {
 		}
 	}
 }
+
+class MacrosTests : FunSpec({
+	test("macros") {
+		dataPack("unit_tests") {
+			testMacros()
+		}.generate()
+	}
+})

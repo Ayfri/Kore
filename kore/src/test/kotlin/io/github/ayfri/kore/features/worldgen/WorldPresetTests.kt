@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.worldgen.dimension.biomesource.multiNoise
 import io.github.ayfri.kore.features.worldgen.dimension.biomesource.theEnd
@@ -10,6 +11,9 @@ import io.github.ayfri.kore.features.worldgen.worldpreset.worldPreset
 import io.github.ayfri.kore.generated.BiomePresets
 import io.github.ayfri.kore.generated.DimensionTypes
 import io.github.ayfri.kore.generated.NoiseSettings
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.worldPresetTests() {
 	worldPreset("my_world_preset") {
@@ -63,3 +67,15 @@ fun DataPack.worldPresetTests() {
 		}
 	""".trimIndent()
 }
+
+class WorldPresetTests : FunSpec({
+	test("world preset") {
+		testDataPack("worldPreset") {
+			pretty()
+			worldPresetTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

@@ -6,6 +6,7 @@ import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.spawner.registerSpawner
 import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun spawnerTests() = testDataPack("spawner_tests") {
 	val zombieSpawner = registerSpawner("zombie_wave", EntityTypes.ZOMBIE) {
@@ -34,3 +35,9 @@ fun spawnerTests() = testDataPack("spawner_tests") {
 }.apply {
 	generate()
 }
+
+class SpawnerTests : FunSpec({
+	test("spawner") {
+		spawnerTests()
+	}
+})

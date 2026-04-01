@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.worldgen.biome.types.spawner
 import io.github.ayfri.kore.features.worldgen.heightproviders.constantAbsolute
@@ -10,6 +11,9 @@ import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.LiquidSett
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.TemplatePools
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.structureTests() {
 	structuresBuilder.desertPyramid("my_desert_pyramid") {
@@ -142,3 +146,15 @@ fun DataPack.structureTests() {
 		}
 	""".trimIndent()
 }
+
+class StructureTests : FunSpec({
+	test("structure") {
+		testDataPack("structure") {
+			pretty()
+			structureTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

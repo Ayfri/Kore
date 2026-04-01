@@ -5,7 +5,10 @@ import io.github.ayfri.kore.arguments.types.literals.rotation
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.execute.Anchor
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.teleportTests() {
 	teleport(vec3()) assertsIs "teleport ~ ~ ~"
@@ -18,3 +21,11 @@ fun Function.teleportTests() {
 	teleport(self(), vec3(), vec3()) assertsIs "teleport @s ~ ~ ~ facing ~ ~ ~"
 	teleport(self(), vec3(), self(), Anchor.EYES) assertsIs "teleport @s ~ ~ ~ facing @s eyes"
 }
+
+class TeleportCommandTests : FunSpec({
+	test("teleport") {
+		dataPack("unit_tests") {
+			load { teleportTests() }
+		}.generate()
+	}
+})

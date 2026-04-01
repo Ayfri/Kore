@@ -20,6 +20,7 @@ import io.github.ayfri.kore.items.summon
 import io.github.ayfri.kore.scoreboard.*
 import io.github.ayfri.kore.teams.*
 import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun oopTests() = testDataPack("oop") {
 	val teamBar = registerBossBar("team_bar", name) {
@@ -206,3 +207,9 @@ fun oopTests() = testDataPack("oop") {
 }.apply {
 	generate()
 }
+
+class OopTests : FunSpec({
+	test("oop") {
+		oopTests()
+	}
+})

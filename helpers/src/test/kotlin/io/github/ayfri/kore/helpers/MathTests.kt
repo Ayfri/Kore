@@ -6,6 +6,7 @@ import io.github.ayfri.kore.helpers.assertions.assertsIs
 import io.github.ayfri.kore.helpers.maths.MATH_TABLE_SIZE
 import io.github.ayfri.kore.helpers.maths.registerMath
 import io.github.ayfri.kore.helpers.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun mathTests() = testDataPack("math_tests") {
 	val player = player("TestPlayer")
@@ -67,3 +68,9 @@ fun mathTests() = testDataPack("math_tests") {
 }.apply {
 	generate()
 }
+
+class MathTests : FunSpec({
+	test("math") {
+		mathTests()
+	}
+})

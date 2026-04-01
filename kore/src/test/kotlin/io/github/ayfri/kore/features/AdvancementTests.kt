@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.item.*
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.arguments.types.literals.self
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.commands.advancement
@@ -21,6 +22,9 @@ import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Advancements
 import io.github.ayfri.kore.generated.Enchantments
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.advancementTests() {
 	val advancement = advancement("test") {
@@ -1351,3 +1355,15 @@ private fun DataPack.componentsDisplay() {
 		}
 	""".trimIndent()
 }
+
+class AdvancementTests : FunSpec({
+	test("advancement") {
+		testDataPack("features_tests") {
+			pretty()
+			advancementTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.components.item.damage
 import io.github.ayfri.kore.arguments.components.item.enchantment
 import io.github.ayfri.kore.arguments.components.item.enchantments
 import io.github.ayfri.kore.arguments.types.literals.allPlayers
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.recipeGive
 import io.github.ayfri.kore.features.recipes.recipes
@@ -15,6 +16,9 @@ import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.generated.TrimPatterns
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.recipeTest() {
 	recipes {
@@ -185,3 +189,15 @@ private fun DataPack.allRecipeTypesTests() {
 		}
 	""".trimIndent()
 }
+
+class RecipeTests : FunSpec({
+	test("recipe") {
+		testDataPack("recipe") {
+			pretty()
+			recipeTest()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

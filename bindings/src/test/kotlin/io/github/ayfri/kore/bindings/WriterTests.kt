@@ -7,6 +7,7 @@ import io.github.ayfri.kore.features.advancements.criteria
 import io.github.ayfri.kore.features.advancements.triggers.tick
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.pack.packFormat
+import io.kotest.core.spec.style.FunSpec
 import kotlin.io.path.readText
 
 fun writerTests() {
@@ -195,3 +196,9 @@ fun testObjectNameAndNamespaceRemappingCombined() = newTest("remapping_combined"
 	val compatLayerSection = content.substringAfter("data object CompatLayer")
 	compatLayerSection.contains("const val NAMESPACE: String = \"ns_b\"") assertsIs true
 }
+
+class WriterTests : FunSpec({
+	test("writer") {
+		writerTests()
+	}
+})

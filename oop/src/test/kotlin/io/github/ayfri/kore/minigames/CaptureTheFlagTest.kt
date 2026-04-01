@@ -22,6 +22,7 @@ import io.github.ayfri.kore.scoreboard.scoreboard
 import io.github.ayfri.kore.spawner.registerSpawner
 import io.github.ayfri.kore.timer.registerTimer
 import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun captureTheFlagTest() = testDataPack("ctf") {
 	val attacker = player("Attacker")
@@ -149,3 +150,9 @@ fun captureTheFlagTest() = testDataPack("ctf") {
 }.apply {
 	generate()
 }
+
+class CaptureTheFlagTests : FunSpec({
+	test("capture the flag") {
+		captureTheFlagTest()
+	}
+})

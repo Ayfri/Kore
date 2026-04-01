@@ -12,6 +12,7 @@ import io.github.ayfri.kore.helpers.assertions.assertsIs
 import io.github.ayfri.kore.helpers.assertions.assertsThrows
 import io.github.ayfri.kore.helpers.text.TagResolver
 import io.github.ayfri.kore.helpers.text.miniMessageToTextComponents
+import io.kotest.core.spec.style.FunSpec
 
 fun miniMessageRendererTests() {
     // Plain text
@@ -268,3 +269,9 @@ fun miniMessageRendererTests() {
     val multiSerialized = miniMessageToTextComponents("<bold>Hello</bold> world")
     multiSerialized.asString() assertsIs """[{type:"text",bold:1b,text:"Hello"},{type:"text",text:" world"}]"""
 }
+
+class MiniMessageRendererTests : FunSpec({
+    test("mini message renderer") {
+        miniMessageRendererTests()
+    }
+})

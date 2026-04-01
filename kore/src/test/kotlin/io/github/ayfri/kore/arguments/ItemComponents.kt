@@ -16,6 +16,7 @@ import io.github.ayfri.kore.data.item.builders.itemStack
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.utils.set
+import io.kotest.core.spec.style.FunSpec
 
 fun itemComponentsTests() {
 	val a = Items.AIR {
@@ -657,3 +658,9 @@ fun itemComponentsTests() {
 	}
 	weaponDefaultTest.asString() assertsIs """minecraft:stone_sword[weapon={}]"""
 }
+
+class ItemComponentsTests : FunSpec({
+	test("item components") {
+		itemComponentsTests()
+	}
+})

@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.data.block.blockState
 import io.github.ayfri.kore.data.block.properties
@@ -15,6 +16,9 @@ import io.github.ayfri.kore.features.worldgen.floatproviders.uniform
 import io.github.ayfri.kore.features.worldgen.heightproviders.constantAboveBottom
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.belowTop
 import io.github.ayfri.kore.generated.Blocks
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.configuredCarverTests() {
 	configuredCarver("my_configured_carver", canyonConfig {
@@ -95,3 +99,15 @@ fun DataPack.configuredCarverTests() {
 		}
 	""".trimIndent()
 }
+
+class ConfiguredCaverTests : FunSpec({
+	test("configured carver") {
+		testDataPack("configuredCarver") {
+			pretty()
+			configuredCarverTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

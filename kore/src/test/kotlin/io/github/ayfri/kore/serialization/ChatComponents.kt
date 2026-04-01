@@ -24,6 +24,7 @@ import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.Textures
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.set
+import io.kotest.core.spec.style.FunSpec
 
 fun chatComponentsTests() {
 	val simplePlainText = textComponent("Hello, world!")
@@ -431,3 +432,9 @@ private fun chatComponentAllFields() {
 		}
 	""".trimIndent()
 }
+
+class ChatComponentsSerializationTests : FunSpec({
+	test("chat components") {
+		chatComponentsTests()
+	}
+})

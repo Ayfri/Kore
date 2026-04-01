@@ -7,10 +7,13 @@ import io.github.ayfri.kore.arguments.types.literals.rotation
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.arguments.types.literals.uuid
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.Sounds
+import io.kotest.core.spec.style.FunSpec
 import net.benwoodworth.knbt.NbtInt
 
 fun Function.commandsTests() {
@@ -91,3 +94,11 @@ fun Function.commandsTests() {
 
 	version() assertsIs "version"
 }
+
+class CommandsTests : FunSpec({
+	test("commands") {
+		dataPack("unit_tests") {
+			load { commandsTests() }
+		}.generate()
+	}
+})

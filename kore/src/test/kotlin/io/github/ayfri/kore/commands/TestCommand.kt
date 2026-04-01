@@ -4,10 +4,13 @@ import io.github.ayfri.kore.arguments.types.allTests
 import io.github.ayfri.kore.arguments.types.minecraftTests
 import io.github.ayfri.kore.arguments.types.testSelector
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.TestInstances
 import io.github.ayfri.kore.generated.arguments.types.TestInstanceArgument
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.testTests() {
 	test {
@@ -81,3 +84,11 @@ fun Function.testTests() {
 	testSelector(Blocks.STONE) assertsIs "minecraft:stone"
 	testSelector(Blocks.STONE, suffix = "*") assertsIs "minecraft:stone*"
 }
+
+class TestCommandTests : FunSpec({
+	test("test command") {
+		dataPack("unit_tests") {
+			load { testTests() }
+		}.generate()
+	}
+})

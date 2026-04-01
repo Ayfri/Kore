@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.worldgen.blockpredicate.allOf
 import io.github.ayfri.kore.features.worldgen.blockpredicate.matchingBlockTag
@@ -9,6 +10,9 @@ import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.*
 import io.github.ayfri.kore.features.worldgen.placedfeature.placedFeature
 import io.github.ayfri.kore.generated.ConfiguredFeatures
 import io.github.ayfri.kore.generated.Tags
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.placedFeatureTests() {
 	placedFeature("test", ConfiguredFeatures.ACACIA) {
@@ -83,3 +87,15 @@ fun DataPack.placedFeatureTests() {
 		}
 	""".trimIndent()
 }
+
+class PlacedFeatureTests : FunSpec({
+	test("placed feature") {
+		testDataPack("placedFeature") {
+			pretty()
+			placedFeatureTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

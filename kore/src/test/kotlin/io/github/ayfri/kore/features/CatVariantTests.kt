@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.data.spawncondition.add
 import io.github.ayfri.kore.data.spawncondition.biome
@@ -12,6 +13,9 @@ import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.ConfiguredStructures
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.generated.Textures
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.catVariantTests() {
 	catVariant("test_cat_variant", Textures.Entity.Cat.TABBY) {
@@ -74,3 +78,15 @@ fun DataPack.catVariantTests() {
 		}
 	""".trimIndent()
 }
+
+class CatVariantTests : FunSpec({
+	test("cat variant") {
+		testDataPack("catVariant") {
+			pretty()
+			catVariantTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

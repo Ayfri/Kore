@@ -2,11 +2,15 @@ package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.colors.RGB
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.timelines.*
 import io.github.ayfri.kore.features.worldgen.environmentattributes.EnvironmentAttributeModifier
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.FloatValue
 import io.github.ayfri.kore.generated.EnvironmentAttributes
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.timelineTests() {
 	timeline("test_timeline") {
@@ -177,3 +181,15 @@ fun DataPack.timelineTests() {
 		}
 	""".trimIndent()
 }
+
+class TimelineTests : FunSpec({
+	test("timeline") {
+		testDataPack("timeline") {
+			pretty()
+			timelineTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

@@ -4,6 +4,7 @@ import io.github.ayfri.kore.arguments.components.entity.*
 import io.github.ayfri.kore.arguments.enums.*
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.generated.*
+import io.kotest.core.spec.style.FunSpec
 
 fun entityComponentsTests() {
 	Items.AXOLOTL_BUCKET {
@@ -106,3 +107,9 @@ fun entityComponentsTests() {
 		zombieNautilusVariant(ZombieNautilusVariants.WARM)
 	} assertsIs "minecraft:zombie_nautilus_spawn_egg[zombie_nautilus_variant=\"minecraft:warm\"]"
 }
+
+class EntityComponentsTests : FunSpec({
+	test("entity components") {
+		entityComponentsTests()
+	}
+})

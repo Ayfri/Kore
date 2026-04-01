@@ -6,6 +6,7 @@ import io.github.ayfri.kore.helpers.utils.testDataPack
 import io.github.ayfri.kore.helpers.vfx.Shape
 import io.github.ayfri.kore.helpers.vfx.drawCircle
 import io.github.ayfri.kore.helpers.vfx.drawShape
+import io.kotest.core.spec.style.FunSpec
 
 fun vfxTests() = testDataPack("vfx_tests") {
 	drawCircle("fire_circle", Particles.FLAME, radius = 5.0, points = 16)
@@ -51,3 +52,9 @@ fun vfxTests() = testDataPack("vfx_tests") {
 }.apply {
 	generate()
 }
+
+class VfxTests : FunSpec({
+	test("vfx") {
+		vfxTests()
+	}
+})

@@ -3,6 +3,7 @@ package io.github.ayfri.kore.helpers
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.helpers.assertions.assertsIs
 import io.github.ayfri.kore.helpers.text.ansiToTextComponents
+import io.kotest.core.spec.style.FunSpec
 
 fun asciiRendererTests() {
 	ansiToTextComponents("Hello world")[0].asString() assertsIs """
@@ -120,3 +121,9 @@ fun asciiRendererTests() {
 		"Reset shorthand"
 	""".trimIndent()
 }
+
+class AsciiRendererTests : FunSpec({
+	test("ascii renderer") {
+		asciiRendererTests()
+	}
+})

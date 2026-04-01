@@ -3,9 +3,12 @@ package io.github.ayfri.kore.commands
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.assertions.assertsMatches
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Attributes
 import io.github.ayfri.kore.generated.arguments.types.AttributeModifierArgument
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.attributeTests() {
 	val attribute = Attributes.MAX_HEALTH
@@ -72,3 +75,11 @@ fun Function.attributeTests() {
 
 	attributes.get(self(), attribute) assertsIs "attribute @s minecraft:max_health get"
 }
+
+class AttributeCommandTests : FunSpec({
+	test("attribute") {
+		dataPack("unit_tests") {
+			load { attributeTests() }
+		}.generate()
+	}
+})

@@ -4,7 +4,11 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.configuration
 import io.github.ayfri.kore.generation.DataPackGenerationOptions
 import io.github.ayfri.kore.generation.DataPackJarGenerationOptions
-import io.github.ayfri.kore.minecraftSaveTestPath
+import io.github.cdimascio.dotenv.dotenv
+import kotlinx.io.files.Path
+
+private val testConfiguration = dotenv()
+val minecraftSaveTestPath = Path(testConfiguration["TEST_FOLDER", "out"])
 
 data class TestDataPack(internal val dp: DataPack) {
 	private val calledAfterGeneration = mutableListOf<DataPack.() -> Unit>()

@@ -7,6 +7,7 @@ import io.github.ayfri.kore.commands.BossBarStyle
 import io.github.ayfri.kore.entities.player
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun bossBarTests() = testDataPack("bossbar_tests") {
 	val player = player("TestPlayer")
@@ -32,3 +33,9 @@ fun bossBarTests() = testDataPack("bossbar_tests") {
 }.apply {
 	generate()
 }
+
+class BossBarTests : FunSpec({
+	test("boss bar") {
+		bossBarTests()
+	}
+})

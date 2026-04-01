@@ -15,6 +15,7 @@ import io.github.ayfri.kore.generated.StructureSets
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import io.github.ayfri.kore.utils.set
+import io.kotest.core.spec.style.FunSpec
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -232,3 +233,9 @@ fun generatorFeatureDeserializer() {
 	(decodedLayer.block.nbtData?.toString() ?: "") assertsIs (expectedLayer.block.nbtData?.toString() ?: "")
 	decoded.settings.structureOverrides.single().asString() assertsIs StructureSets.VILLAGES.asString()
 }
+
+class DeserializersTests : FunSpec({
+	test("deserializers") {
+		deserializersTests()
+	}
+})

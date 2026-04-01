@@ -2,7 +2,10 @@ package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.types.literals.allPlayers
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.tagTests() {
 	tag(allPlayers()) {
@@ -11,3 +14,11 @@ fun Function.tagTests() {
 		remove("test") assertsIs "tag @a remove test"
 	}
 }
+
+class TagCommandTests : FunSpec({
+	test("tag") {
+		dataPack("unit_tests") {
+			load { tagTests() }
+		}.generate()
+	}
+})

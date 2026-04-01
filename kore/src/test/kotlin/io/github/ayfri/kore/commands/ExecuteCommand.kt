@@ -26,12 +26,15 @@ import io.github.ayfri.kore.commands.execute.BlocksTestMode
 import io.github.ayfri.kore.commands.execute.Relation
 import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
 import io.github.ayfri.kore.features.predicates.predicate
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.function
+import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.utils.debugEntity
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.executeTests() {
 	val testEntity = debugEntity()
@@ -286,3 +289,11 @@ fun Function.executeTests() {
 		execute if stopwatch unit_tests:my_timer 100 run say stopwatch reached 100
 	""".trimIndent()
 }
+
+class ExecuteCommandTests : FunSpec({
+	test("execute") {
+		dataPack("unit_tests") {
+			load { executeTests() }
+		}.generate()
+	}
+})

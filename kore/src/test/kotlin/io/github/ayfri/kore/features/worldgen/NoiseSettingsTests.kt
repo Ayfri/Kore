@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.worldgen.dimension.biomesource.multinoise.multiNoiseBiomeSourceParameters
 import io.github.ayfri.kore.features.worldgen.noise.noise
@@ -15,6 +16,9 @@ import io.github.ayfri.kore.features.worldgen.noisesettings.rules.surfaceRules
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.DensityFunctions
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.noiseSettingsTests() {
 	val myNoise = noise("my_noise") {
@@ -207,3 +211,15 @@ fun DataPack.noiseSettingsTests() {
 		}
 	""".trimIndent()
 }
+
+class NoiseSettingsTests : FunSpec({
+	test("noise settings") {
+		testDataPack("noiseSettings") {
+			pretty()
+			noiseSettingsTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

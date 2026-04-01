@@ -16,6 +16,7 @@ import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.set
+import io.kotest.core.spec.style.FunSpec
 
 fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 	pretty()
@@ -355,3 +356,9 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 		}
 	""".trimIndent()
 }
+
+class ComponentsMatchersTests : FunSpec({
+	test("components matchers") {
+		componentsMatchersTests()
+	}
+})

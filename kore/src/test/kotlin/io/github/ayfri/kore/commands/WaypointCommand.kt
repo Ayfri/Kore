@@ -3,8 +3,11 @@ package io.github.ayfri.kore.commands
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.WaypointStyles
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.waypointTests() {
 	waypointList() assertsIs "waypoint list"
@@ -16,3 +19,11 @@ fun Function.waypointTests() {
 		styleReset() assertsIs "waypoint modify @s style reset"
 	}
 }
+
+class WaypointCommandTests : FunSpec({
+	test("waypoint") {
+		dataPack("unit_tests") {
+			load { waypointTests() }
+		}.generate()
+	}
+})

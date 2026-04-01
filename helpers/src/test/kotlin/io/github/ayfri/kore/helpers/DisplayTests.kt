@@ -9,7 +9,9 @@ import io.github.ayfri.kore.commands.kill
 import io.github.ayfri.kore.commands.schedule
 import io.github.ayfri.kore.commands.summon
 import io.github.ayfri.kore.data.block.properties
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Attributes
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Enchantments
@@ -17,6 +19,7 @@ import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.helpers.displays.*
 import io.github.ayfri.kore.helpers.displays.entities.ItemDisplayModelMode
 import io.github.ayfri.kore.helpers.displays.maths.*
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.displayTests() {
 	val itemDisplay = itemDisplay {
@@ -109,3 +112,12 @@ fun Function.displayTests() {
 		schedule(this).replace(6.seconds)
 	}
 }
+
+class DisplayTests : FunSpec({
+	test("display") {
+		dataPack("helpers_tests") {
+			path = kotlinx.io.files.Path("out")
+			load { displayTests() }
+		}.generate()
+	}
+})

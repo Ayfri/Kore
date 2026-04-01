@@ -6,6 +6,7 @@ import io.github.ayfri.kore.features.tags.enchantmentTag
 import io.github.ayfri.kore.features.tags.itemTag
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Items
+import io.kotest.core.spec.style.FunSpec
 import kotlin.io.path.readText
 
 fun tagsTests() {
@@ -149,3 +150,9 @@ fun testTagCodeGeneration() = newTest("tag_codegen") {
 	// Verify asId() uses # prefix for tags
 	content.contains("#\$NAMESPACE:") assertsIs true
 }
+
+class TagsTests : FunSpec({
+	test("tags") {
+		tagsTests()
+	}
+})

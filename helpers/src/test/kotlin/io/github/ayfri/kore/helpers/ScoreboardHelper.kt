@@ -3,7 +3,10 @@ package io.github.ayfri.kore.helpers
 import io.github.ayfri.kore.arguments.chatcomponents.text
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.scoreboardTests() {
 	ScoreboardDisplay.resetAll()
@@ -24,3 +27,12 @@ fun Function.scoreboardTests() {
 		hideValues()
 	}
 }
+
+class ScoreboardHelperTests : FunSpec({
+	test("scoreboard") {
+		dataPack("helpers_tests") {
+			path = kotlinx.io.files.Path("out")
+			load { scoreboardTests() }
+		}.generate()
+	}
+})

@@ -2,6 +2,7 @@ package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.types.literals.self
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.damage
 import io.github.ayfri.kore.features.damagetypes.damageType
@@ -9,6 +10,9 @@ import io.github.ayfri.kore.features.damagetypes.types.DeathMessageType
 import io.github.ayfri.kore.features.damagetypes.types.Effects
 import io.github.ayfri.kore.features.damagetypes.types.Scaling
 import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.damageTypeTests() {
 	val damageType = damageType("test_damage_type", "test_message_id", Scaling.NEVER) {
@@ -32,3 +36,15 @@ fun DataPack.damageTypeTests() {
 
 	roundTrip(damageTypes.last())
 }
+
+class DamageTypeTests : FunSpec({
+	test("damage type") {
+		testDataPack("damageType") {
+			pretty()
+			damageTypeTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

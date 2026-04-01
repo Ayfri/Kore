@@ -1,13 +1,11 @@
 package io.github.ayfri.kore.bindings
 
+import io.kotest.matchers.shouldBe
+
 infix fun <T> T.assertsIs(expected: T) {
-	if (this != expected) {
-		error("Expected '$expected' but got '$this'")
-	}
+	this shouldBe expected
 }
 
 infix fun String.assertsIs(expected: String) {
-	if (this != expected) {
-		error("Expected:\n$expected\n\nBut got:\n$this")
-	}
+	this shouldBe expected
 }

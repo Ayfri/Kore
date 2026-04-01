@@ -10,6 +10,7 @@ import io.github.ayfri.kore.arguments.components.matchers.enchantments
 import io.github.ayfri.kore.arguments.enums.AxolotlVariants
 import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.predicates.conditions.*
 import io.github.ayfri.kore.features.predicates.predicate
@@ -22,7 +23,10 @@ import io.github.ayfri.kore.features.predicates.sub.entityspecific.playerTypeSpe
 import io.github.ayfri.kore.features.predicates.sub.item.enchantment
 import io.github.ayfri.kore.features.predicates.types.EntityType
 import io.github.ayfri.kore.generated.*
+import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.set
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.predicateTests() {
 	predicate("all_of") {
@@ -606,3 +610,15 @@ fun DataPack.predicateTests() {
 	}
 	roundTrip(predicates.last())
 }
+
+class PredicateTests : FunSpec({
+	test("predicate") {
+		testDataPack("predicate") {
+			pretty()
+			predicateTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

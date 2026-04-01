@@ -3,6 +3,7 @@ package io.github.ayfri.kore.features
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.actions.*
 import io.github.ayfri.kore.arguments.colors.Color
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.features.dialogs.action.AfterAction
@@ -17,7 +18,10 @@ import io.github.ayfri.kore.features.dialogs.dialogBuilder
 import io.github.ayfri.kore.features.dialogs.types.*
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.Tags
+import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.set
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.dialogTests() {
 	dialogBuilder.confirmation("test", "title") {
@@ -245,3 +249,15 @@ fun DataPack.dialogTests() {
 	dialogBuilder.notice("round_trip_notice", "Welcome!") {}
 	roundTrip(dialogs.last().data)
 }
+
+class DialogTests : FunSpec({
+	test("dialog") {
+		testDataPack("dialog") {
+			pretty()
+			dialogTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

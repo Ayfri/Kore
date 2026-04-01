@@ -11,6 +11,7 @@ import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
 import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun entityCommandsTests() = testDataPack("entity_commands_tests") {
 	val player = player("TestPlayer")
@@ -123,3 +124,9 @@ fun entityCommandsTests() = testDataPack("entity_commands_tests") {
 }.apply {
 	generate()
 }
+
+class EntityCommandsTests : FunSpec({
+	test("entity commands") {
+		entityCommandsTests()
+	}
+})

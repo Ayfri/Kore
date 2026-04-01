@@ -1,10 +1,13 @@
 package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.ConfiguredStructures
 import io.github.ayfri.kore.generated.Tags
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.locateTests() {
 	locateBiome(Biomes.PLAINS) assertsIs "locate biome minecraft:plains"
@@ -12,3 +15,11 @@ fun Function.locateTests() {
 	locateStructure(Tags.Worldgen.Structure.VILLAGE) assertsIs "locate structure #minecraft:village"
 	locatePointOfInterest("minecraft:village/plains/houses") assertsIs "locate poi minecraft:village/plains/houses"
 }
+
+class LocateCommandTests : FunSpec({
+	test("locate") {
+		dataPack("unit_tests") {
+			load { locateTests() }
+		}.generate()
+	}
+})

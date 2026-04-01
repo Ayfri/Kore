@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.function
 import io.github.ayfri.kore.commands.say
@@ -8,6 +9,9 @@ import io.github.ayfri.kore.features.tags.functionTag
 import io.github.ayfri.kore.features.tags.tag
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.tagTests() {
 	val myTag = functionTag(fileName = "shiny_functions") {
@@ -47,3 +51,15 @@ fun DataPack.tagTests() {
 		function(myTag) assertsIs "function #features_tests:shiny_functions"
 	}
 }
+
+class TagTests : FunSpec({
+	test("tag") {
+		testDataPack("features_tests") {
+			pretty()
+			tagTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

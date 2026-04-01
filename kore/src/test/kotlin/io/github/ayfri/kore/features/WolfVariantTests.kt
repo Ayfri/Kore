@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.data.spawncondition.biome
 import io.github.ayfri.kore.features.wolfvariants.assets
@@ -8,6 +9,9 @@ import io.github.ayfri.kore.features.wolfvariants.spawnConditions
 import io.github.ayfri.kore.features.wolfvariants.wolfVariant
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.Textures
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.wolfVariantTests() {
 	wolfVariant("test_wolf_variant") {
@@ -43,3 +47,15 @@ fun DataPack.wolfVariantTests() {
 		}
 	""".trimIndent()
 }
+
+class WolfVariantTests : FunSpec({
+	test("wolf variant") {
+		testDataPack("wolfVariant") {
+			pretty()
+			wolfVariantTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

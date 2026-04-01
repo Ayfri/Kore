@@ -18,6 +18,7 @@ import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.spawner.registerSpawner
 import io.github.ayfri.kore.timer.registerTimer
 import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun kingOfTheHillTest() = testDataPack("koth") {
 	val player = player("Fighter")
@@ -97,3 +98,9 @@ fun kingOfTheHillTest() = testDataPack("koth") {
 }.apply {
 	generate()
 }
+
+class KingOfTheHillTests : FunSpec({
+	test("king of the hill") {
+		kingOfTheHillTest()
+	}
+})

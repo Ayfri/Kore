@@ -1,6 +1,8 @@
 package io.github.ayfri.kore.bindings.api
 
 import io.github.ayfri.kore.arguments.types.literals.allPlayers
+import io.github.ayfri.kore.bindings.assertsIs
+import io.github.ayfri.kore.bindings.newTest
 import io.github.ayfri.kore.commands.give
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.features.advancements.advancement
@@ -8,10 +10,7 @@ import io.github.ayfri.kore.features.advancements.criteria
 import io.github.ayfri.kore.features.advancements.triggers.tick
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.Items
-import io.github.ayfri.kore.bindings.assertsIs
-import io.github.ayfri.kore.bindings.newTest
-import io.github.ayfri.kore.bindings.api.importDatapacks
-import io.github.ayfri.kore.bindings.api.exploreDatapacks
+import io.kotest.core.spec.style.FunSpec
 import kotlin.io.path.readText
 
 fun apiTests() {
@@ -302,3 +301,9 @@ fun testMultipleNamespacesInSinglePack() = newTest("multi_ns_single") {
 	val mainObject = content.substringBefore("data object Ns1")
 	mainObject.contains("const val NAMESPACE: String") assertsIs false
 }
+
+class ApiTests : FunSpec({
+	test("api") {
+		apiTests()
+	}
+})

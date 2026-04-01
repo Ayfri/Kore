@@ -5,6 +5,7 @@ import io.github.ayfri.kore.entities.*
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.arguments.types.MobEffectArgument
 import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun entityEffectsTests() = testDataPack("effects_tests") {
 	val player = player("TestPlayer")
@@ -33,3 +34,9 @@ fun entityEffectsTests() = testDataPack("effects_tests") {
 }.apply {
 	generate()
 }
+
+class EntityEffectsTests : FunSpec({
+	test("entity effects") {
+		entityEffectsTests()
+	}
+})

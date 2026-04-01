@@ -21,12 +21,12 @@ import io.github.ayfri.kore.features.predicates.sub.steppingOn
 import io.github.ayfri.kore.generated.Advancements
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.EntityTypes
-import io.github.ayfri.kore.setTestPath
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
+import io.kotest.core.spec.style.FunSpec
 
 fun selectorTests() = dataPack("selector_tests") {
-	setTestPath()
+	path = kotlinx.io.files.Path("out")
 
 	selector(SelectorType.ALL_ENTITIES) assertsIs "@e"
 
@@ -177,3 +177,9 @@ fun selectorTests() = dataPack("selector_tests") {
 		y = 5.0
 	} assertsIs "@e[x_rotation=1.5,y=5.0]"
 }.generate()
+
+class SelectorSerializationTests : FunSpec({
+	test("selector") {
+		selectorTests()
+	}
+})

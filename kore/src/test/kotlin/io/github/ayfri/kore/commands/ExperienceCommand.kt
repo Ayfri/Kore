@@ -4,7 +4,10 @@ import io.github.ayfri.kore.arguments.numbers.levels
 import io.github.ayfri.kore.arguments.numbers.points
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.experienceTests() {
 	experience(self()) {
@@ -23,3 +26,11 @@ fun Function.experienceTests() {
 		add(1.levels) assertsIs "experience add @s 1 levels"
 	}
 }
+
+class ExperienceCommandTests : FunSpec({
+	test("experience") {
+		dataPack("unit_tests") {
+			load { experienceTests() }
+		}.generate()
+	}
+})

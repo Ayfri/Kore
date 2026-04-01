@@ -38,6 +38,7 @@ import io.github.ayfri.kore.pack.pack
 import io.github.ayfri.kore.pack.packFormat
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 import kotlinx.io.files.Path
 
 fun datapackTests() {
@@ -352,3 +353,9 @@ fun zipTests() = testDataPack("zip_tests") {
 	assertFileGeneratedInZip("data/${tickFunction.namespace}/function/${dp.configuration.generatedFunctionsFolder}/${tickDirectory}/${tickFunction.name}.mcfunction")
 	generateZip()
 }
+
+class DatapackSerializationTests : FunSpec({
+	test("datapack") {
+		datapackTests()
+	}
+})

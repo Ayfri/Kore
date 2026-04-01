@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.worldgen.dimension.generator.Layer
 import io.github.ayfri.kore.features.worldgen.flatlevelgeneratorpreset.flatLevelGeneratorPreset
@@ -9,6 +10,9 @@ import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.StructureSets
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.flatLevelGeneratorPresetTests() {
 	flatLevelGeneratorPreset("my_flat_level_generator_preset") {
@@ -55,3 +59,15 @@ fun DataPack.flatLevelGeneratorPresetTests() {
 		}
 	""".trimIndent()
 }
+
+class FlatLevelGeneratorPresetTests : FunSpec({
+	test("flat level generator preset") {
+		testDataPack("flatLevelGeneratorPreset") {
+			pretty()
+			flatLevelGeneratorPresetTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

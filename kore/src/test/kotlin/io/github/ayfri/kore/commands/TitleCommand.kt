@@ -8,7 +8,10 @@ import io.github.ayfri.kore.arguments.numbers.ticks
 import io.github.ayfri.kore.arguments.types.literals.randomPlayer
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.titleTests() {
 	title(randomPlayer(), TitleAction.CLEAR) assertsIs "title @r clear"
@@ -21,3 +24,11 @@ fun Function.titleTests() {
 	title(self(), 1.0, 2.0, 3.0) assertsIs "title @s times 1 2 3"
 	title(self(), 0.2.days, 1.seconds, 1.ticks) assertsIs "title @s times 0.2d 1s 1"
 }
+
+class TitleCommandTests : FunSpec({
+	test("title") {
+		dataPack("unit_tests") {
+			load { titleTests() }
+		}.generate()
+	}
+})

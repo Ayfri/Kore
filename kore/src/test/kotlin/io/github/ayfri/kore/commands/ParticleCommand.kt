@@ -12,11 +12,14 @@ import io.github.ayfri.kore.commands.particle.ParticleMode
 import io.github.ayfri.kore.commands.particle.particle
 import io.github.ayfri.kore.commands.particle.particles
 import io.github.ayfri.kore.commands.particle.types.*
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.Particles
+import io.kotest.core.spec.style.FunSpec
 import kotlin.math.PI
 
 fun Function.particleTests() {
@@ -93,3 +96,11 @@ fun Function.particleTests() {
 		vibration(vec3(1, 2, 3), 10) assertsIs "particle vibration 1.0 2.0 3.0 10"
 	}
 }
+
+class ParticleCommandTests : FunSpec({
+	test("particle") {
+		dataPack("unit_tests") {
+			load { particleTests() }
+		}.generate()
+	}
+})

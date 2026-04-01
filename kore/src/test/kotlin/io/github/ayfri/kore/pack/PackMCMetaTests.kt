@@ -5,6 +5,7 @@ import io.github.ayfri.kore.assertions.assertsIsJson
 import io.github.ayfri.kore.generated.DataPacks
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun packMCMetaTests() {
 	testEmptyDatapackMCMeta()
@@ -191,3 +192,9 @@ private fun testPackMCMetaWithOverlays() = testDataPack("overlays_pack") {
 		}
 	}
 """.trimIndent()
+
+class PackMCMetaTests : FunSpec({
+	test("pack mcmeta") {
+		packMCMetaTests()
+	}
+})

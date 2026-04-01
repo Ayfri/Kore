@@ -3,6 +3,7 @@ package io.github.ayfri.kore.arguments
 import io.github.ayfri.kore.arguments.types.resources.block
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.utils.set
+import io.kotest.core.spec.style.FunSpec
 
 fun resourceLiteralsTests() {
 	blockTests()
@@ -26,3 +27,9 @@ fun blockTests() {
 	val blockWithEmptyNbt = block("test") {}
 	blockWithEmptyNbt.asString() assertsIs "minecraft:test"
 }
+
+class ResourceLiteralsTests : FunSpec({
+	test("resource literals") {
+		resourceLiteralsTests()
+	}
+})

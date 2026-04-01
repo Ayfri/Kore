@@ -3,6 +3,7 @@ package io.github.ayfri.kore.features.worldgen
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.rgb
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.locateBiome
 import io.github.ayfri.kore.features.worldgen.biome.*
@@ -14,6 +15,9 @@ import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Carvers
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.PlacedFeatures
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.biomeTests() {
 	val biome = biome("my_biome") {
@@ -117,3 +121,15 @@ fun DataPack.biomeTests() {
 		locateBiome(biome)
 	}
 }
+
+class BiomeTests : FunSpec({
+	test("biome") {
+		testDataPack("biome") {
+			pretty()
+			biomeTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

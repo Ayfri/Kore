@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.features.testenvironments.enums.Weather
@@ -8,6 +9,9 @@ import io.github.ayfri.kore.features.testenvironments.testEnvironmentsBuilder
 import io.github.ayfri.kore.features.testinstances.testInstances
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.Structures
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.testInstanceTests() {
 	val environment = testEnvironmentsBuilder.weather("test_env", Weather.CLEAR)
@@ -66,3 +70,15 @@ fun DataPack.testInstanceTests() {
 		""".trimIndent()
 	}
 }
+
+class TestInstanceTests : FunSpec({
+	test("test instance") {
+		testDataPack("features_tests") {
+			pretty()
+			testInstanceTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

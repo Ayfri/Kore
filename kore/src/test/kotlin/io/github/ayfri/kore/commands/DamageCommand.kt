@@ -5,8 +5,11 @@ import io.github.ayfri.kore.arguments.numbers.PosNumber
 import io.github.ayfri.kore.arguments.types.literals.allEntities
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.DamageTypes
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.damageTests() {
 	damages(allEntities(true)) {
@@ -21,3 +24,11 @@ fun Function.damageTests() {
 		applyBy(1f, DamageTypes.EXPLOSION, self(), self()) assertsIs "damage @e[limit=1] 1 minecraft:explosion by @s from @s"
 	}
 }
+
+class DamageCommandTests : FunSpec({
+	test("damage") {
+		dataPack("unit_tests") {
+			load { damageTests() }
+		}.generate()
+	}
+})

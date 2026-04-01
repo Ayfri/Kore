@@ -2,7 +2,10 @@ package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.numbers.days
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.weatherTests() {
 	weatherClear() assertsIs "weather clear"
@@ -15,3 +18,11 @@ fun Function.weatherTests() {
 	weatherRain(1.days) assertsIs "weather rain 1d"
 	weatherThunder(1.days) assertsIs "weather thunder 1d"
 }
+
+class WeatherCommandTests : FunSpec({
+	test("weather") {
+		dataPack("unit_tests") {
+			load { weatherTests() }
+		}.generate()
+	}
+})

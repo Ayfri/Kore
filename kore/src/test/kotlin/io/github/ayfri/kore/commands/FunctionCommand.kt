@@ -2,9 +2,12 @@ package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.types.resources.storage
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.function
+import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.utils.set
+import io.kotest.core.spec.style.FunSpec
 import net.benwoodworth.knbt.buildNbtCompound
 
 fun Function.functionTests() {
@@ -31,3 +34,11 @@ fun Function.functionTests() {
 	function(otherFunction, arguments = arguments) assertsIs "function ${otherFunction.asId()} {foo:1}"
 	function(otherFunction, arguments = storage, path = "test") assertsIs "function ${otherFunction.asId()} with storage minecraft:foo test"
 }
+
+class FunctionCommandTests : FunSpec({
+	test("function") {
+		dataPack("unit_tests") {
+			load { functionTests() }
+		}.generate()
+	}
+})

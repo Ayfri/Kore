@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.say
@@ -18,6 +19,9 @@ import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.DimensionTypes
 import io.github.ayfri.kore.generated.StructureSets
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.dimensionTests() {
 	val dimension = dimension("my_dimension", DimensionTypes.OVERWORLD) {
@@ -109,3 +113,15 @@ fun DataPack.dimensionTests() {
 
 	roundTrip(dimensions.last())
 }
+
+class DimensionTests : FunSpec({
+	test("dimension") {
+		testDataPack("dimension") {
+			pretty()
+			dimensionTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

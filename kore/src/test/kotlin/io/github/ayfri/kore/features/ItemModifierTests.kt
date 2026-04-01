@@ -7,6 +7,7 @@ import io.github.ayfri.kore.arguments.colors.FormattingColor
 import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
 import io.github.ayfri.kore.arguments.components.item.*
 import io.github.ayfri.kore.arguments.types.literals.self
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.items
 import io.github.ayfri.kore.features.itemmodifiers.formulas.BinomialWithBonusCount
@@ -24,7 +25,10 @@ import io.github.ayfri.kore.features.predicates.types.EntityType
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
+import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.set
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.itemModifierTests() {
 	itemModifier("apply_bonus") {
@@ -849,3 +853,15 @@ fun DataPack.itemModifierTests() {
 		}
 	""".trimIndent()
 }
+
+class ItemModifierTests : FunSpec({
+	test("item modifier") {
+		testDataPack("itemModifier") {
+			pretty()
+			itemModifierTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

@@ -11,6 +11,7 @@ import io.github.ayfri.kore.generated.Effects
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.utils.set
+import io.kotest.core.spec.style.FunSpec
 
 fun itemPredicatesTests() {
 	val countTest = Items.STONE.predicate {
@@ -111,3 +112,9 @@ fun itemPredicatesTests() {
 	}
 	multipleExistenceTest.toString() assertsIs """*[instrument,damage]"""
 }
+
+class ItemPredicatesTests : FunSpec({
+	test("item predicates") {
+		itemPredicatesTests()
+	}
+})

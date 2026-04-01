@@ -4,13 +4,16 @@ import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.numbers.PosNumber
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.loottables.entries
 import io.github.ayfri.kore.features.loottables.entries.item
 import io.github.ayfri.kore.features.loottables.pool
 import io.github.ayfri.kore.features.loottables.rolls
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.LootTables
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.lootTests() {
 	loot(self()) {
@@ -125,3 +128,11 @@ fun Function.lootTests() {
 		}
 	} assertsIs "loot give @s loot {pools:[{rolls:1.0f,entries:[{type:\"minecraft:item\",name:\"minecraft:anvil\"}]}]}"
 }
+
+class LootCommandTests : FunSpec({
+	test("loot") {
+		dataPack("unit_tests") {
+			load { lootTests() }
+		}.generate()
+	}
+})

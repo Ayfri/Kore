@@ -3,9 +3,12 @@ package io.github.ayfri.kore.commands
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.numbers.relativePos
 import io.github.ayfri.kore.assertions.assertsMatches
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Dimensions
 import io.github.ayfri.kore.generated.Tags
+import io.kotest.core.spec.style.FunSpec
 import kotlin.random.Random
 
 private fun randomPos(from: Int = 0, to: Int = 100) = Random.nextInt(from, to).relativePos
@@ -13,7 +16,7 @@ private fun randomPos(from: Int = 0, to: Int = 100) = Random.nextInt(from, to).r
 private fun Clone.randomZoneAndDestination() {
 	begin = vec3(randomPos(0, 9), randomPos(0, 9), randomPos(0, 9))
 	end = vec3(randomPos(10, 20), randomPos(10, 20), randomPos(10, 20))
-	destination = vec3(randomPos(0, 100), randomPos(0, 100), randomPos(0, 100))
+	destination = vec3(randomPos(0, 100), randomPos(0), randomPos())
 }
 
 fun Function.cloneTests() {
@@ -55,3 +58,11 @@ fun Function.cloneTests() {
 		strict = true
 	} assertsMatches Regex("clone ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* filtered #minecraft:base_stone_overworld force strict")
 }
+
+class CloneCommandTests : FunSpec({
+	test("clone") {
+		dataPack("unit_tests") {
+			load { cloneTests() }
+		}.generate()
+	}
+})

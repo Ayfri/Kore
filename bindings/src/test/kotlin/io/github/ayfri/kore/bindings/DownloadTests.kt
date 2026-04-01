@@ -8,6 +8,10 @@ import io.github.ayfri.kore.bindings.download.ModrinthDownloader
 import io.github.ayfri.kore.generated.CatVariants
 import io.github.ayfri.kore.generated.JukeboxSongs
 import io.github.ayfri.kore.generated.WolfVariants
+import io.github.cdimascio.dotenv.dotenv
+import io.kotest.core.spec.style.FunSpec
+
+private val configuration = dotenv { systemProperties = true }
 
 fun downloadTests() {
 	testParsingLogic()
@@ -106,3 +110,10 @@ fun testModrinthDownload() = newTest("terralith-download") {
 		modrinth("terralith")
 	})
 }
+
+class DownloadTests : FunSpec({
+	test("parsing logic") { testParsingLogic() }
+	test("curseforge download") { testCurseForgeDownload() }
+	test("github minecraft default data") { testGitHubMinecraftDefaultData() }
+	test("modrinth download") { testModrinthDownload() }
+})

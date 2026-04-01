@@ -9,6 +9,7 @@ import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun eventsTests() = testDataPack("events_tests") {
 	val player = player("TestPlayer")
@@ -70,3 +71,9 @@ fun eventsTests() = testDataPack("events_tests") {
 }.apply {
 	generate()
 }
+
+class EventsTests : FunSpec({
+	test("events") {
+		eventsTests()
+	}
+})

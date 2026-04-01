@@ -3,6 +3,7 @@ package io.github.ayfri.kore.pack
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.assertions.assertsIsJson
+import io.kotest.core.spec.style.FunSpec
 import kotlinx.serialization.json.Json
 
 private val json = Json {
@@ -287,3 +288,9 @@ private fun testPackFormatSerializationDecimal() {
 	val format = packFormat(94.1)
 	json.encodeToString(PackFormat.serializer(), format) assertsIsJson "94.1"
 }
+
+class PackFormatTests : FunSpec({
+	test("pack format") {
+		packFormatTests()
+	}
+})

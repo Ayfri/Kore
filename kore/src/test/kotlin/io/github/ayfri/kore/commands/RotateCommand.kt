@@ -5,7 +5,10 @@ import io.github.ayfri.kore.arguments.types.literals.rotation
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.execute.Anchor
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.rotateTests() {
 	rotate(self(), rotation(90, 45)) assertsIs "rotate @s 90 45"
@@ -17,3 +20,11 @@ fun Function.rotateTests() {
 	rotateFacingEntity(self(), self(), Anchor.EYES) assertsIs "rotate @s facing entity @s eyes"
 	rotateFacingEntity(self(), self(), Anchor.FEET) assertsIs "rotate @s facing entity @s feet"
 }
+
+class RotateCommandTests : FunSpec({
+	test("rotate") {
+		dataPack("unit_tests") {
+			load { rotateTests() }
+		}.generate()
+	}
+})

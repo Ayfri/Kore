@@ -12,9 +12,12 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.scoreboard.Operation
 import io.github.ayfri.kore.commands.scoreboard.RenderType
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.CustomStats
 import io.github.ayfri.kore.generated.Items
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.scoreboardTests() {
 	scoreboard {
@@ -176,3 +179,11 @@ fun Function.scoreboardTests() {
 	scoreboard.players.get(self(), "test") assertsIs "scoreboard players get @s test"
 	scoreboard.objectives.list() assertsIs "scoreboard objectives list"
 }
+
+class ScoreboardCommandTests : FunSpec({
+	test("scoreboard") {
+		dataPack("unit_tests") {
+			load { scoreboardTests() }
+		}.generate()
+	}
+})

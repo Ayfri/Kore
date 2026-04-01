@@ -2,8 +2,11 @@ package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Blocks
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.fillTests() {
 	fill(vec3(), vec3(), Blocks.AIR) assertsIs "fill ~ ~ ~ ~ ~ ~ minecraft:air"
@@ -13,3 +16,11 @@ fun Function.fillTests() {
 	fill(vec3(), vec3(), Blocks.AIR, Blocks.STONE) assertsIs "fill ~ ~ ~ ~ ~ ~ minecraft:air replace minecraft:stone"
 	fill(vec3(), vec3(), Blocks.AIR, Blocks.STONE, strict = true) assertsIs "fill ~ ~ ~ ~ ~ ~ minecraft:air replace minecraft:stone strict"
 }
+
+class FillCommandTests : FunSpec({
+	test("fill") {
+		dataPack("unit_tests") {
+			load { fillTests() }
+		}.generate()
+	}
+})

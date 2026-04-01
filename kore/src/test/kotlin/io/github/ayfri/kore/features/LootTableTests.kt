@@ -4,6 +4,7 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.HOTBAR
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.arguments.types.literals.self
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.loot
 import io.github.ayfri.kore.features.itemmodifiers.functions.conditions
@@ -21,6 +22,9 @@ import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.LootTables
 import io.github.ayfri.kore.generated.Tags
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.lootTableTests() {
 	val lootTable = lootTable("all_entry_types") {
@@ -313,3 +317,15 @@ fun DataPack.lootTableTests() {
 	}
 	roundTrip(lootTables.last())
 }
+
+class LootTableTests : FunSpec({
+	test("loot table") {
+		testDataPack("lootTable") {
+			pretty()
+			lootTableTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

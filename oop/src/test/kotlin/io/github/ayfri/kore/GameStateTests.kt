@@ -5,6 +5,7 @@ import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.gamestate.registerGameStates
 import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun gameStateTests() = testDataPack("game_state_tests") {
 	val states = registerGameStates {
@@ -41,3 +42,9 @@ fun gameStateTests() = testDataPack("game_state_tests") {
 }.apply {
 	generate()
 }
+
+class GameStateTests : FunSpec({
+	test("game state") {
+		gameStateTests()
+	}
+})

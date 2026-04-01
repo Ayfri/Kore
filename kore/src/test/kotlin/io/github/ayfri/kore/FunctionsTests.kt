@@ -10,6 +10,7 @@ import io.github.ayfri.kore.functions.generatedFunction
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.functions.setTag
 import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun functionsTests() = testDataPack("function_tests") {
 	function("test") {
@@ -179,3 +180,9 @@ fun functionsTests() = testDataPack("function_tests") {
 	assertFileGenerated("$data/$dpName/tags/function/tag_entry_tag.json")
 	generate()
 }
+
+class FunctionsTests : FunSpec({
+	test("functions") {
+		functionsTests()
+	}
+})

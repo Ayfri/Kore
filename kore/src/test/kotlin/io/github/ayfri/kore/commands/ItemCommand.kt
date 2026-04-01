@@ -4,11 +4,14 @@ import io.github.ayfri.kore.arguments.*
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.itemmodifiers.functions.Source
 import io.github.ayfri.kore.features.itemmodifiers.functions.setLore
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.itemTests() {
 	items {
@@ -33,3 +36,11 @@ fun Function.itemTests() {
 		} assertsIs "item replace entity @s weapon from entity @s saddle {modifiers:{function:\"minecraft:set_lore\",entity:\"this\",lore:\"Inline Item Modifier\"}}"
 	}
 }
+
+class ItemCommandTests : FunSpec({
+	test("item") {
+		dataPack("unit_tests") {
+			load { itemTests() }
+		}.generate()
+	}
+})

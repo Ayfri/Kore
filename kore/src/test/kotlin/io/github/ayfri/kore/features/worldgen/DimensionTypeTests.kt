@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.worldgen.dimensiontype.CardinalLight
 import io.github.ayfri.kore.features.worldgen.dimensiontype.SkyboxType
@@ -10,6 +11,9 @@ import io.github.ayfri.kore.features.worldgen.environmentattributes.types.cloudH
 import io.github.ayfri.kore.features.worldgen.intproviders.*
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.generated.Timelines
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.dimensionTypeTests() {
 	dimensionType("my_dimension") {
@@ -103,3 +107,15 @@ fun DataPack.dimensionTypeTests() {
 		}
 	""".trimIndent()
 }
+
+class DimensionTypeTests : FunSpec({
+	test("dimension type") {
+		testDataPack("dimensionType") {
+			pretty()
+			dimensionTypeTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

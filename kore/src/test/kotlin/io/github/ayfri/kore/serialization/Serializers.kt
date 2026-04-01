@@ -5,6 +5,7 @@ import io.github.ayfri.kore.assertions.assertsIsJson
 import io.github.ayfri.kore.assertions.assertsIsNbt
 import io.github.ayfri.kore.serializers.EitherInlineSerializer
 import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
+import io.kotest.core.spec.style.FunSpec
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import net.benwoodworth.knbt.ExperimentalNbtApi
@@ -219,3 +220,9 @@ fun eitherInlineSerializerInlined() {
 	(decoded2Snbt.p1 == null) assertsIs true
 	(decoded2Snbt.p2 ?: 0) assertsIs 42
 }
+
+class SerializersTests : FunSpec({
+	test("serializers") {
+		serializersTests()
+	}
+})

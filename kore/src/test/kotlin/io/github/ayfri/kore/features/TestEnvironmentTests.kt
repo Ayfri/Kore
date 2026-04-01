@@ -1,12 +1,16 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.features.testenvironments.enums.Weather
 import io.github.ayfri.kore.features.testenvironments.testEnvironments
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.Gamerules
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.testEnvironmentTests() {
 	val testFunction = function("test_environments") {
@@ -61,3 +65,15 @@ fun DataPack.testEnvironmentTests() {
 		""".trimIndent()
 	}
 }
+
+class TestEnvironmentTests : FunSpec({
+	test("test environment") {
+		testDataPack("features_tests") {
+			pretty()
+			testEnvironmentTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})

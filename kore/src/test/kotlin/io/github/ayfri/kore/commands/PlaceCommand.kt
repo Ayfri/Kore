@@ -2,11 +2,14 @@ package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.ConfiguredFeatures
 import io.github.ayfri.kore.generated.ConfiguredStructures
 import io.github.ayfri.kore.generated.Structures
 import io.github.ayfri.kore.generated.TemplatePools
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.placeTests() {
 	placeFeature(ConfiguredFeatures.BONUS_CHEST, vec3()) assertsIs "place feature minecraft:bonus_chest ~ ~ ~"
@@ -31,3 +34,11 @@ fun Function.placeTests() {
 		strict = true
 	) assertsIs "place template minecraft:fossil/skull_1 strict"
 }
+
+class PlaceCommandTests : FunSpec({
+	test("place") {
+		dataPack("unit_tests") {
+			load { placeTests() }
+		}.generate()
+	}
+})

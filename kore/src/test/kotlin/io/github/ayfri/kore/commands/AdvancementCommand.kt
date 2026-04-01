@@ -2,8 +2,11 @@ package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Advancements
+import io.kotest.core.spec.style.FunSpec
 
 fun Function.advancementTests() {
 	advancement {
@@ -42,3 +45,11 @@ fun Function.advancementTests() {
 		revoke(Advancements.Adventure.KILL_A_MOB) assertsIs "advancement revoke @s only minecraft:adventure/kill_a_mob"
 	}
 }
+
+class AdvancementCommandTests : FunSpec({
+	test("advancement") {
+		dataPack("unit_tests") {
+			load { advancementTests() }
+		}.generate()
+	}
+})

@@ -1,11 +1,15 @@
 package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.worldgen.densityfunction.densityFunction
 import io.github.ayfri.kore.features.worldgen.densityfunction.types.*
 import io.github.ayfri.kore.generated.DensityFunctions
 import io.github.ayfri.kore.generated.Noises
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.testDataPack
+import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.densityFunctionTests() {
 	densityFunction(
@@ -105,3 +109,15 @@ fun DataPack.densityFunctionTests() {
 		}
 	""".trimIndent()
 }
+
+class DensityFunctionTests : FunSpec({
+	test("density function") {
+		testDataPack("densityFunction") {
+			pretty()
+			densityFunctionTests()
+		}.apply {
+			assertGeneratorsGenerated()
+			generate()
+		}
+	}
+})
