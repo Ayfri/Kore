@@ -1,6 +1,7 @@
 plugins {
 	kotlin("jvm")
 	kotlin("plugin.serialization")
+	id("kotest-conventions")
 	id("publish-conventions")
 }
 
@@ -25,17 +26,4 @@ kotlin {
 	compilerOptions {
 		freeCompilerArgs = listOf("-Xcontext-parameters")
 	}
-}
-
-var runUnitTests = tasks.register<JavaExec>("runUnitTests") {
-	description = "Runs the unit tests."
-	group = "verification"
-
-	classpath = sourceSets.test.get().runtimeClasspath
-	mainClass = "io.github.ayfri.kore.MainKt"
-	shouldRunAfter("test")
-}
-
-tasks.test {
-	dependsOn(runUnitTests)
 }

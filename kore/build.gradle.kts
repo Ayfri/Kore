@@ -1,6 +1,7 @@
 plugins {
 	kotlin("jvm")
 	kotlin("plugin.serialization")
+	id("kotest-conventions")
 	id("publish-conventions")
 }
 
@@ -38,17 +39,4 @@ tasks.compileKotlin {
 	if (!generatedFolder.exists()) {
 		dependsOn(":generation:run")
 	}
-}
-
-var runUnitTests = tasks.register<JavaExec>("runUnitTests") {
-	description = "Runs the unit tests."
-	group = "verification"
-
-	classpath = sourceSets.test.get().runtimeClasspath
-	mainClass = "${Project.GROUP}.MainKt"
-	shouldRunAfter("test")
-}
-
-tasks.test {
-	dependsOn(runUnitTests)
 }
