@@ -119,6 +119,35 @@ function("combo_ready") {
 This still generates an `execute if score <target> combo matches 45 run ...` command, but without manually opening an
 `execute` block every time. In practice, `equalTo(45)` is the most readable way to express an exact score check.
 
+If you want a quick reference for every comparison helper available with delegated scores, they map directly to the
+same scoreboard comparisons as the `execute` DSL:
+
+| Kotlin helper               | Generated score comparison                                     |
+|-----------------------------|----------------------------------------------------------------|
+| `equalTo(...)`              | `matches <value>` for literal values, or `=` for another score |
+| `notEqualTo(...)`           | `unless score ... matches <value>` style negation              |
+| `greaterThan(...)`          | `>`                                                            |
+| `greaterThanOrEqualTo(...)` | `>=`                                                           |
+| `lessThan(...)`             | `<`                                                            |
+| `lessThanOrEqualTo(...)`    | `<=`                                                           |
+
+```kotlin
+function("combo_comparisons") {
+  val player = entity()
+  val combo = player.scoreboard("combo", default = 0)
+  val threshold = player.scoreboard("threshold", default = 10)
+
+  runIf(combo equalTo 10) { say("combo == 10") }
+  runIf(combo notEqualTo 10) { say("combo != 10") }
+  runIf(combo greaterThan 10) { say("combo > 10") }
+  runIf(combo greaterThanOrEqualTo 10) { say("combo >= 10") }
+  runIf(combo lessThan 10) { say("combo < 10") }
+  runIf(combo lessThanOrEqualTo 10) { say("combo <= 10") }
+
+  runIf(combo greaterThan threshold) { say("combo > threshold") }
+}
+```
+
 You can also compare two delegated scores directly:
 
 ```kotlin

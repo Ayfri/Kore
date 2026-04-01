@@ -539,6 +539,38 @@ Generated output:
 execute as @e[limit=3,sort=random] if score @s points >= 10 run say You have enough points!
 ```
 
+For `execute if score`, Kore exposes the full set of scoreboard comparisons:
+
+| Kotlin DSL                                                | Generated syntax                    |
+|-----------------------------------------------------------|-------------------------------------|
+| `score(self(), "points") equalTo 10`                      | `if score @s points matches 10`     |
+| `score(self(), "points") notEqualTo 10`                   | `unless score @s points matches 10` |
+| `score(self(), "points") greaterThan 10`                  | `if score @s points > 10`           |
+| `score(self(), "points") greaterThanOrEqualTo 10`         | `if score @s points >= 10`          |
+| `score(self(), "points") lessThan 10`                     | `if score @s points < 10`           |
+| `score(self(), "points") lessThanOrEqualTo 10`            | `if score @s points <= 10`          |
+| `score(self(), "points") equalTo score(self(), "target")` | `if score @s points = @s target`    |
+
+```kotlin
+function("execute_score_comparisons") {
+	execute {
+		ifCondition {
+			score(self(), "points") equalTo 10
+			score(self(), "points") notEqualTo 11
+			score(self(), "points") greaterThan 5
+			score(self(), "points") greaterThanOrEqualTo 10
+			score(self(), "points") lessThan 20
+			score(self(), "points") lessThanOrEqualTo 15
+			score(self(), "points") equalTo score(self(), "target")
+		}
+
+		run {
+			say("Score comparisons matched")
+		}
+	}
+}
+```
+
 #### Execute with Multiple Conditions
 
 ```kotlin
