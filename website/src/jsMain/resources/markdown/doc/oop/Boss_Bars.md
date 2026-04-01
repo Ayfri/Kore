@@ -3,9 +3,9 @@ root: .components.layouts.MarkdownLayout
 title: Boss Bars
 nav-title: Boss Bars
 description: Object-oriented boss bar management with the Kore OOP module - register, configure, show, hide, and update boss bars.
-keywords: minecraft, datapack, kore, oop, bossbar, boss bar, color, style, notched
+keywords: minecraft, datapack, kore, oop, bossbar, boss bar, color, style, notched, team, handle, config
 date-created: 2026-03-03
-date-modified: 2026-03-31
+date-modified: 2026-04-01
 routeOverride: /docs/oop/boss-bars
 ---
 
@@ -15,6 +15,9 @@ The OOP module wraps [Minecraft boss bars](https://minecraft.wiki/w/Commands/bos
 config + handle pattern.
 
 This is useful when you want one place to configure a bar and then reuse it across multiple gameplay functions.
+
+`BossBarConfig` stores the initial registration settings, while `BossBarHandle` exposes the runtime commands you call
+from functions.
 
 ## Registering a boss bar
 
@@ -63,13 +66,39 @@ function("boss_fight") {
 }
 ```
 
+You can also target all members of a team:
+
+```kotlin
+bar.apply {
+	setPlayers(team)
+	setStyle(BossBarStyle.NOTCHED_12)
+}
+```
+
+## Configuration vs handle methods
+
+`BossBarConfig` controls the values that are written when the bar is registered:
+
+- `color`
+- `displayName`
+- `max`
+- `style`
+- `value`
+- `visible`
+
+`BossBarHandle` exposes the runtime methods listed below.
+
 ## Function reference
 
-| Function     | Description                                     |
-|--------------|-------------------------------------------------|
-| `setValue`   | Update the current boss bar value               |
-| `setColor`   | Change the boss bar color                       |
-| `setPlayers` | Control which players currently see the bar     |
-| `show`       | Make the bar visible to the assigned players    |
-| `hide`       | Hide the bar without deleting its configuration |
-| `remove`     | Remove the boss bar entirely                    |
+| Function             | Description                                      |
+|----------------------|--------------------------------------------------|
+| `hide`               | Hide the bar without deleting its configuration  |
+| `remove`             | Remove the boss bar entirely                     |
+| `setColor`           | Change the boss bar color                        |
+| `setMax`             | Update the maximum value used to render progress |
+| `setName`            | Change the displayed boss bar name               |
+| `setPlayers(entity)` | Control which players currently see the bar      |
+| `setPlayers(team)`   | Show the bar to every member of a team           |
+| `setStyle`           | Change the boss bar rendering style              |
+| `setValue`           | Update the current boss bar value                |
+| `show`               | Make the bar visible to the assigned players     |

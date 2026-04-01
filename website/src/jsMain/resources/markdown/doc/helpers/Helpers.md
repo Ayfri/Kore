@@ -2,10 +2,10 @@
 root: .components.layouts.MarkdownLayout
 title: Helpers Utilities
 nav-title: Helpers Utilities
-description: Overview of helper-focused utilities in Kore - renderers, math, raycasts, areas, state delegates, and particle helpers.
-keywords: minecraft, datapack, kore, helpers, ansi, markdown, minimessage, raycast, math, area, state, vfx, particles, text
+description: Overview of helper-focused utilities in Kore - renderers, display entities, inventories, mannequins, math, raycasts, scheduling, state delegates, and particle helpers.
+keywords: minecraft, datapack, kore, helpers, ansi, markdown, minimessage, raycast, math, area, state, vfx, particles, text, display, inventory, mannequin, scheduler
 date-created: 2026-03-31
-date-modified: 2026-03-31
+date-modified: 2026-04-01
 routeOverride: /docs/helpers/utilities
 position: 0
 ---
@@ -21,8 +21,9 @@ Use `helpers` when you want higher-level building blocks without introducing gam
 entity wrappers.
 
 - **Rendering helpers** convert human-friendly text formats into Minecraft text components.
-- **Math and geometry helpers** pre-generate command logic for raycasts, particle shapes, spatial zones, or fixed-point
-  math.
+- **Display and entity helpers** cover display entities, mannequins, and other world-facing utility objects.
+- **Math, scheduling, and geometry helpers** pre-generate command logic for raycasts, particle shapes, spatial zones,
+  delayed execution, or fixed-point math.
 - **State helpers** let you write concise Kotlin that still compiles to vanilla-friendly scoreboard and storage
   commands.
 
@@ -31,7 +32,8 @@ The module is designed to stay composable: you can use it with plain Kore functi
 
 ## Install this module
 
-Add the `helpers` artifact when you want renderer, math, raycast, delegate, or particle utilities on top of Kore.
+Add the `helpers` artifact when you want renderer, display, inventory, mannequin, math, raycast, scheduler, delegate, or
+particle utilities on top of Kore.
 
 ```kotlin
 dependencies {
@@ -56,12 +58,20 @@ That makes helpers a good fit for packs that start simple and progressively adop
   when your source text already contains terminal-style formatting.
 - **[Area](/docs/helpers/area)** - Work with axis-aligned 3D regions for containment checks, intersections, unions,
   and coordinate transforms.
+- **[Display Entities](/docs/helpers/display-entities)** - Configure block, item, and text display entities with shared
+  transformations, billboards, brightness, and interpolation settings.
+- **[Inventory Manager](/docs/helpers/inventory-manager)** - Register slot listeners and container policies for player,
+  entity, or block inventories.
+- **[Mannequins](/docs/helpers/mannequins)** - Build mannequin entities with profiles, hidden layers, poses, and hand
+  selection.
 - **[Markdown Renderer](/docs/helpers/markdown-renderer)** - Turn Markdown snippets into rich Minecraft text for chat,
   titles, signs, or boss bars.
 - **[MiniMessage Renderer](/docs/helpers/minimessage-renderer)** - Parse Adventure MiniMessage tags into Minecraft
   text components while keeping authoring ergonomic.
 - **[Raycasts](/docs/helpers/raycasts)** - Generate recursive step-based raycasts with callbacks for hits, misses, and
   per-step side effects.
+- **[Scheduler](/docs/helpers/scheduler)** - Schedule delayed or repeating functions with load-time registration and
+  cancelation helpers.
 - **[Scoreboard Math](/docs/helpers/scoreboard-math)** - Reuse fixed-point math routines such as trigonometry,
   square-root, distance, and projectile formulas.
 - **[State Delegates](/docs/helpers/state-delegates)** - Map scoreboard objectives or NBT storage paths to Kotlin
@@ -74,7 +84,9 @@ That makes helpers a good fit for packs that start simple and progressively adop
 Choose the `helpers` module when you mainly need:
 
 - data conversion and rendering,
+- world-facing utility objects such as displays, mannequins, and inventory controllers,
 - geometry or math utilities,
+- scheduling helpers,
 - lightweight compile-time sugar over vanilla commands.
 
 Choose the [`oop` module](/docs/oop/utilities) when you need named gameplay objects such as players, teams,

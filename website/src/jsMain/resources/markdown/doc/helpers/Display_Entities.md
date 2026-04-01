@@ -5,11 +5,27 @@ nav-title: Display Entities
 description: A guide for creating Display Entities in the world.
 keywords: minecraft, datapack, kore, guide, display-entities
 date-created: 2024-04-06
-date-modified: 2024-04-06
+date-modified: 2026-04-01
 routeOverride: /docs/helpers/display-entities
 ---
 
 # Display Entities
+
+Display entities share a common set of world-rendering options and then add a few type-specific fields for blocks,
+items, or text.
+
+## Shared display settings
+
+All display entities inherit these properties from the shared `DisplayEntity` base type:
+
+- `billboardMode` - how the display faces the camera (`FIXED`, `VERTICAL`, `HORIZONTAL`, `CENTER`).
+- `brightness` - optional block and light overrides for rendering.
+- `glowColorOverride` - replace the outline color with a custom RGB value.
+- `height` / `width` - resize the display bounds.
+- `interpolationDuration` / `startInterpolation` - animate transformation changes over time.
+- `shadowRadius` / `shadowStrength` - control the projected shadow.
+- `transformation` - combine translation, rotation, scale, or custom matrices.
+- `viewRange` - control when the entity is rendered from a distance.
 
 ## Entity Displays
 
@@ -45,7 +61,7 @@ summon(entity = entityDisplay.entityType, pos = vec3(0, 0, 0), nbt = entityDispl
 
 ## Block Displays
 
-Block displays are used to display blocks in the world. They are created by calling `blockDiplay()` DSL.
+Block displays are used to display blocks in the world. They are created by calling the `blockDisplay()` DSL.
 
 ```kotlin
 val blockDisplay = blockDisplay {
@@ -60,6 +76,20 @@ val blockDisplay = blockDisplay {
 ## Item Displays
 
 Item displays are used to display items in the world. They are created by calling `itemDisplay()` DSL.
+
+The optional `displayMode` property uses `ItemDisplayModelMode`, which serializes to the lowercase values Minecraft
+expects:
+
+- `FIRSTPERSON_LEFTHAND`
+- `FIRSTPERSON_RIGHTHAND`
+- `FIXED`
+- `GROUND`
+- `GUI`
+- `HEAD`
+- `NONE`
+- `ON_SHELF`
+- `THIRDPERSON_LEFTHAND`
+- `THIRDPERSON_RIGHTHAND`
 
 ```kotlin
 val itemDisplay = itemDisplay {
@@ -81,6 +111,12 @@ val itemDisplay = itemDisplay {
 ## Text Displays
 
 Text displays are used to display text in the world. They are created by calling `textDisplay()` DSL.
+
+`alignment` uses `TextAlignment`, which currently supports:
+
+- `LEFT`
+- `CENTER`
+- `RIGHT`
 
 ```kotlin
 val textDisplay = textDisplay {
@@ -128,4 +164,5 @@ interpolableEntityDisplay.interpolateTo(duration = 2.seconds) {
 }
 ```
 
-I will later add more methods and maybe a complete DSL for making full animations.
+Interpolation is especially useful when you want display entities to move or morph smoothly between ticks without
+rebuilding the entity from scratch.

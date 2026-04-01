@@ -3,9 +3,9 @@ root: .components.layouts.MarkdownLayout
 title: Events
 nav-title: Events
 description: Advancement-based event system for player and entity actions with the Kore OOP module.
-keywords: minecraft, datapack, kore, oop, events, advancement, player, entity, death, click, consume, kill
+keywords: minecraft, datapack, kore, oop, events, advancement, player, entity, death, click, consume, kill, recipe, dimension, riding, tame, bed, target
 date-created: 2026-03-03
-date-modified: 2026-03-31
+date-modified: 2026-04-01
 routeOverride: /docs/oop/events
 ---
 
@@ -25,14 +25,19 @@ val player = player("Steve")
 
 function("my_events") {
 	player.onBlockUse { say("Interacted with a block!") }
+  player.onChangeDimension { say("Changed dimension!") }
 	player.onConsumeItem { say("Consumed something!") }
 	player.onConsumeItem(Items.GOLDEN_APPLE) { say("Golden apple!") }
+  player.onEffectsChanged { say("Effects changed!") }
+  player.onEnchantItem { say("Enchanted an item!") }
 	player.onHurtEntity { say("Hit!") }
+  player.onRecipeCrafted(Recipes.CRAFTING_TABLE) { say("Crafted a recipe!") }
 	player.onInventoryChange { say("Inventory changed!") }
 	player.onItemUsedOnBlock { say("Used item on block!") }
 	player.onKill { say("Kill!") }
 	player.onPlaceBlock { say("Placed a block!") }
 	player.onRightClick(Items.STICK) { say("Right click with stick!") }
+  player.onStartRiding { say("Started riding!") }
 }
 ```
 
@@ -41,14 +46,24 @@ Available player events (alphabetical):
 | Function              | Trigger                               |
 |-----------------------|---------------------------------------|
 | `onBlockUse`          | Right-click any block                 |
+| `onChangeDimension`   | Change dimension                      |
 | `onConsumeItem`       | Consume any item (food, potion, etc.) |
 | `onConsumeItem(item)` | Consume a specific item               |
+| `onEffectsChanged`    | Effects on the player change          |
+| `onEnchantItem`       | Enchant an item                       |
+| `onEntityHurtPlayer`  | A player is hurt by an entity         |
+| `onFallFromHeight`    | Fall from a height                    |
 | `onHurtEntity`        | Deal damage to an entity              |
 | `onInventoryChange`   | Inventory contents change             |
 | `onItemUsedOnBlock`   | Use an item on a block                |
 | `onKill`              | Kill an entity                        |
 | `onPlaceBlock`        | Place a block                         |
+| `onRecipeCrafted`     | Craft a recipe                        |
 | `onRightClick(item)`  | Right-click while holding an item     |
+| `onSleptInBed`        | Sleep in a bed                        |
+| `onStartRiding`       | Start riding an entity                |
+| `onTameAnimal`        | Tame an animal                        |
+| `onTargetHit`         | Hit a target block                    |
 
 ## Typical workflow
 

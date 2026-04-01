@@ -70,14 +70,14 @@ layout and the derived areas stay consistent even if the original dimensions cha
 | Function / Property | Description                        |
 |---------------------|------------------------------------|
 | `center`            | Center point of the area           |
-| `size`              | Dimensions (x, y, z)               |
-| `radius`            | Half-dimensions                    |
-| `move`              | Translate the area by a vector     |
-| `expand`            | Grow the area outward              |
-| `contract`          | Shrink the area inward             |
-| `intersect`         | Intersection with another area     |
-| `union`             | Union with another area            |
 | `contains` (`in`)   | Check if a point or area is inside |
+| `contract`          | Shrink the area inward             |
+| `expand`            | Grow the area outward              |
+| `intersect`         | Intersection with another area     |
+| `move`              | Translate the area by a vector     |
+| `radius`            | Half-dimensions                    |
+| `size`              | Dimensions (x, y, z)               |
+| `union`             | Union with another area            |
 
 ## See also
 
