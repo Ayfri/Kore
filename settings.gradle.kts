@@ -1,14 +1,15 @@
 pluginManagement {
 	includeBuild("build-logic")
 
-	resolutionStrategy {
-		plugins {
-			val kotlinVersion = extra["kotlin.version"] as String
-			kotlin("jvm") version kotlinVersion
-			kotlin("multiplatform") version kotlinVersion
-			kotlin("plugin.serialization") version kotlinVersion
-			kotlin("plugin.compose") version kotlinVersion
-		}
+	val kotlinVersion = file("gradle/libs.versions.toml").readLines()
+		.first { it.startsWith("kotlin =") || it.startsWith("kotlin=") }
+		.substringAfter("\"").substringBefore("\"")
+
+	plugins {
+		kotlin("jvm") version kotlinVersion
+		kotlin("multiplatform") version kotlinVersion
+		kotlin("plugin.serialization") version kotlinVersion
+		kotlin("plugin.compose") version kotlinVersion
 	}
 
 	repositories {
