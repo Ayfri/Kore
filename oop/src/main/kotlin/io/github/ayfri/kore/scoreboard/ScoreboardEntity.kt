@@ -65,7 +65,7 @@ context(fn: Function)
 fun ScoreboardEntity.copyDataFrom(source: Entity, path: String, scale: Double = 1.0) = fn.execute {
 	storeResult { score(entity.asSelector(), name) }
 	run {
-		fn.data(source.asSelector()) {
+		data(source.asSelector()) {
 			get(path, scale)
 		}
 	}
@@ -76,7 +76,7 @@ context(fn: Function)
 fun ScoreboardEntity.copyDataFrom(source: StorageArgument, path: String, scale: Double = 1.0) = fn.execute {
 	storeResult { score(entity.asSelector(), name) }
 	run {
-		fn.data(source) {
+		data(source) {
 			get(path, scale)
 		}
 	}
@@ -96,9 +96,9 @@ fun ScoreboardEntity.copyTo(target: Entity, path: String, type: DataType = DataT
 	fn.execute {
 		storeResult { entity(target.asSelector(), path, type, scale) }
 		run {
-			fn.scoreboard {
+			scoreboard {
 				players {
-					get(entity.asSelector(), name)
+					get(entity.asSelector(), this@copyTo.name)
 				}
 			}
 		}
@@ -110,9 +110,9 @@ fun ScoreboardEntity.copyTo(target: StorageArgument, path: String, type: DataTyp
 	fn.execute {
 		storeResult { storage(target, path, type, scale) }
 		run {
-			fn.scoreboard {
+			scoreboard {
 				players {
-					get(entity.asSelector(), name)
+					get(entity.asSelector(), this@copyTo.name)
 				}
 			}
 		}

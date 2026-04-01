@@ -8,6 +8,7 @@ import io.github.ayfri.kore.arguments.enums.DataType
 import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.arguments.scores.score
+import io.github.ayfri.kore.arguments.types.resources.storage
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.bossbar.registerBossBar
 import io.github.ayfri.kore.commands.execute.execute
@@ -19,7 +20,6 @@ import io.github.ayfri.kore.items.summon
 import io.github.ayfri.kore.scoreboard.*
 import io.github.ayfri.kore.teams.*
 import io.github.ayfri.kore.utils.testDataPack
-import io.github.ayfri.kore.arguments.types.resources.storage
 
 fun oopTests() = testDataPack("oop") {
 	val teamBar = registerBossBar("team_bar", name) {
@@ -159,7 +159,7 @@ fun oopTests() = testDataPack("oop") {
 			run {
 				say("Team ready")
 			}
-		} assertsIs "execute if entity @e[team=red] if entity @e[limit=1,name=Ayfri,team=red,type=minecraft:player] if entity @e[limit=1,name=Ayfri,team=red,type=minecraft:player] if score @e[team=red] round.points matches 3 run say Team ready"
+		} assertsIs "execute if entity @e[team=red] if entity @e[name=Ayfri,team=red,type=minecraft:player] if entity @e[name=Ayfri,team=red,type=minecraft:player] if score @e[team=red] round.points matches 3 run say Team ready"
 
 		lines.size assertsIs 1
 	}
@@ -185,21 +185,21 @@ fun oopTests() = testDataPack("oop") {
 		tracker.copyDataFrom(
 			counter,
 			"Inventory[0].count"
-		) assertsIs "execute store result score @e[limit=1,name=Counter,type=minecraft:player] team.count run data get entity @e[limit=1,name=Counter,type=minecraft:player] Inventory[0].count 1.0"
+		) assertsIs "execute store result score @e[limit=1,name=Counter,type=minecraft:player] team.count run data get entity @e[limit=1,name=Counter,type=minecraft:player] Inventory[0].count 1"
 		tracker.copyDataFrom(
 			storage("kore", "oop"),
 			"stats.red"
-		) assertsIs "execute store result score @e[limit=1,name=Counter,type=minecraft:player] team.count run data get storage oop:kore stats.red 1.0"
+		) assertsIs "execute store result score @e[limit=1,name=Counter,type=minecraft:player] team.count run data get storage oop:kore stats.red 1"
 		tracker.copyTo(
 			counter,
 			"kore.team_count",
 			DataType.INT
-		) assertsIs "execute store result entity @e[limit=1,name=Counter,type=minecraft:player] kore.team_count int 1.0 run scoreboard players get @e[limit=1,name=Counter,type=minecraft:player] team.count"
+		) assertsIs "execute store result entity @e[limit=1,name=Counter,type=minecraft:player] kore.team_count int 1 run scoreboard players get @e[limit=1,name=Counter,type=minecraft:player] team.count"
 		tracker.copyTo(
 			storage("kore", "oop"),
 			"stats.cached",
 			DataType.INT
-		) assertsIs "execute store result storage oop:kore stats.cached int 1.0 run scoreboard players get @e[limit=1,name=Counter,type=minecraft:player] team.count"
+		) assertsIs "execute store result storage oop:kore stats.cached int 1 run scoreboard players get @e[limit=1,name=Counter,type=minecraft:player] team.count"
 
 		lines.size assertsIs 5
 	}
