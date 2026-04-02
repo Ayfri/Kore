@@ -36,9 +36,9 @@ import io.github.ayfri.kore.pack.features
 import io.github.ayfri.kore.pack.filter
 import io.github.ayfri.kore.pack.pack
 import io.github.ayfri.kore.pack.packFormat
-import io.github.ayfri.kore.utils.pretty
-import io.github.ayfri.kore.utils.testDataPack
+import io.github.ayfri.kore.utils.*
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import kotlinx.io.files.Path
 
 fun datapackTests() {
@@ -357,5 +357,12 @@ fun zipTests() = testDataPack("zip_tests") {
 class DatapackSerializationTests : FunSpec({
 	test("datapack") {
 		datapackTests()
+	}
+
+	test("createTempDirectory should create the directory on disk") {
+		val tempDir = TemporaryFiles.createTempDirectory("kore_temp_dir_test_${System.nanoTime()}")
+
+		tempDir.exists() shouldBe true
+		tempDir.isDirectory() shouldBe true
 	}
 })

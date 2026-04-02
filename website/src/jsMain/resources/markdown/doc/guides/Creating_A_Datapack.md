@@ -363,8 +363,8 @@ dataPack("my_datapack") {
 ```
 
 If a zip is provided, it will be considered as a datapack and merged with the generated datapack.<br>
-It will unzip the zip in a temporary folder of your system and merge it with the generated datapack, this will not
-remove the temporary folder.
+Kore creates the temporary directory used for extraction automatically before unzipping, then merges the extracted
+files with the generated datapack. This temporary folder is not removed automatically.
 
 #### Checking for compatibility
 

@@ -18,9 +18,12 @@ fun Path(file: File) = Path(file.absolutePath)
 
 fun Path.absolute() = SystemFileSystem.resolve(this)
 fun Path.delete() = SystemFileSystem.delete(this)
+fun Path.create() = this.toSink().buffered().close()
+fun Path.createIfNotExists() = if (!this.exists()) this.create() else Unit
 fun Path.ensureParents() = this.parent?.makeDirectories()
 fun Path.exists() = SystemFileSystem.metadataOrNull(this) != null
 fun Path.isDirectory() = SystemFileSystem.metadataOrNull(this)?.isDirectory == true
+fun Path.isRegularFile() = SystemFileSystem.metadataOrNull(this)?.isRegularFile == true
 fun Path.makeDirectories(force: Boolean = false) = SystemFileSystem.createDirectories(this, force)
 fun Path.resolveSafe(vararg paths: Path) = SystemFileSystem.resolve(Path(this.toString(), *paths.map { it.toString() }.toTypedArray()))
 fun Path.resolveSafe(vararg paths: String) = SystemFileSystem.resolve(Path(this.toString(), *paths))
@@ -47,12 +50,15 @@ fun Path.write(array: ByteArray) = if (!this.isDirectory()) this.toSink().buffer
 data object TemporaryFiles {
 	fun createTempFile(suffix: String = ".tmp"): Path {
 		val tempDir = SystemTemporaryDirectory
-		return tempDir.resolveSafe(System.nanoTime().toString() + suffix)
+		val tempFile = tempDir.resolve(System.nanoTime().toString() + suffix)
+		tempFile.ensureParents()
+		tempFile.createIfNotExists()
+		return tempFile
 	}
 
 	fun createTempDirectory(name: String): Path {
 		val tempDir = SystemTemporaryDirectory
-		return tempDir.resolveSafe(name)
+		return tempDir.resolve(name).apply { makeDirectories() }
 	}
 }
 
