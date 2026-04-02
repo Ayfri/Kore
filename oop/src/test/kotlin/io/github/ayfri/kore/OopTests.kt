@@ -13,9 +13,10 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.bossbar.registerBossBar
 import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.say
+import io.github.ayfri.kore.data.item.builders.itemStack
 import io.github.ayfri.kore.entities.*
 import io.github.ayfri.kore.functions.function
-import io.github.ayfri.kore.items.itemStack
+import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.items.summon
 import io.github.ayfri.kore.scoreboard.*
 import io.github.ayfri.kore.teams.*
@@ -33,9 +34,9 @@ fun oopTests() = testDataPack("oop") {
 			gamemode = Gamemode.SURVIVAL
 			team = "red"
 		}
-		val item = itemStack("diamond_sword")
+		val item = Items.DIAMOND_SWORD
 
-		player.giveItem(item) assertsIs "give @e[gamemode=survival,limit=1,name=Ayfri,team=red,type=minecraft:player] diamond_sword:minecraft[] 1"
+		player.giveItem(item) assertsIs "give @e[gamemode=survival,limit=1,name=Ayfri,team=red,type=minecraft:player] minecraft:diamond_sword 1"
 		lines.size assertsIs 1
 	}
 
@@ -44,7 +45,7 @@ fun oopTests() = testDataPack("oop") {
 			gamemode = Gamemode.SURVIVAL
 			team = "red"
 		}
-		val item = itemStack("diamond_sword")
+		val item = itemStack(Items.DIAMOND_SWORD)
 
 		player.executeAt {
 			run {

@@ -10,20 +10,8 @@ import io.github.ayfri.kore.commands.summon
 import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.EntityTypes
-import io.github.ayfri.kore.nbt.MutableNbtCompound
-import io.github.ayfri.kore.nbt.mutableNbt
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
-
-fun itemStack(
-	name: String,
-	namespace: String = "minecraft",
-	count: Int = 1,
-	nbtData: MutableNbtCompound = mutableNbt()
-) =
-	ItemStack("$namespace:$name", count.toShort(), Components().apply {
-		nbtData.toNbtCompound().forEach { (key, value) -> this[key] = value }
-	})
 
 context(fn: Function)
 fun ItemStack.summon(position: Vec3 = coordinate()) = fn.summon(EntityTypes.ITEM, position) {

@@ -9,8 +9,9 @@ import io.github.ayfri.kore.arguments.types.literals.RotationArgument
 import io.github.ayfri.kore.arguments.types.literals.allEntities
 import io.github.ayfri.kore.arguments.types.literals.rotation
 import io.github.ayfri.kore.arguments.types.literals.self
-import io.github.ayfri.kore.arguments.types.resources.StorageArgument
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
+import io.github.ayfri.kore.arguments.types.resources.ItemArgument
+import io.github.ayfri.kore.arguments.types.resources.StorageArgument
 import io.github.ayfri.kore.commands.*
 import io.github.ayfri.kore.commands.execute.Execute
 import io.github.ayfri.kore.commands.execute.execute
@@ -130,6 +131,10 @@ fun Entity.storeCountIn(target: StorageArgument, path: String, type: DataType = 
 context(fn: Function)
 fun Entity.giveItem(item: ItemStack) = fn.give(asSelector(), item.toItemArgument(), item.count?.toInt())
 
+/** Gives an item to this entity. */
+context(fn: Function)
+fun Entity.giveItem(item: ItemArgument, count: Int = 1) = fn.give(asSelector(), item, count)
+
 /** Adds this entity to the team named [team]. */
 context(fn: Function)
 fun Entity.joinTeam(team: String) = fn.teams {
@@ -150,6 +155,12 @@ fun Entity.leaveAnyTeam() = fn.teams {
 context(fn: Function)
 fun Entity.replaceItem(slot: ItemSlotType, item: ItemStack) = fn.items {
 	replace(asSelector(), slot, item.toItemArgument(), item.count?.toInt())
+}
+
+/** Replaces the item in [slot] for this entity. */
+context(fn: Function)
+fun Entity.replaceItem(slot: ItemSlotType, item: ItemArgument, count: Int = 1) = fn.items {
+	replace(asSelector(), slot, item, count)
 }
 
 /** Sets this entity's score in the objective named [name]. */
