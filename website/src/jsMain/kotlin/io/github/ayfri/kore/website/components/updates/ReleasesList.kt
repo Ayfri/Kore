@@ -109,6 +109,7 @@ fun ReleasesList(releases: List<GitHubRelease>) {
 @Composable
 fun ReleaseCard(release: GitHubRelease) {
 	Div({
+		id("release-${release.id}")
 		classes(ReleasesListStyle.releaseCard)
 	}) {
 		Div({

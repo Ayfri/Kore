@@ -9,6 +9,7 @@ import com.varabyte.kobweb.silk.components.icons.mdi.MdiMenu
 import io.github.ayfri.kore.website.GITHUB_LINK
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.LinkButton
+import io.github.ayfri.kore.website.components.updates.GitHubRelease
 import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.attributes.ATarget
@@ -30,8 +31,10 @@ fun HeaderButton(name: String, link: String) = Div {
 	}
 }
 
+private fun latestReleaseAnchor(release: GitHubRelease) = "/updates#release-${release.id}"
+
 @Composable
-fun Header() {
+fun Header(latestRelease: GitHubRelease? = null) {
 	Style(HeaderStyle)
 
 	Header({
@@ -48,6 +51,14 @@ fun Header() {
 				}
 
 				tabs.forEach { (name, link) -> HeaderButton(name, link) }
+
+				latestRelease?.let { release ->
+					A(latestReleaseAnchor(release), {
+						classes(HeaderStyle.releaseBadge)
+					}) {
+						Text("New ${release.getKoreVersion()} release!")
+					}
+				}
 			}
 
 			Div({
@@ -81,6 +92,14 @@ fun Header() {
 					classes(HeaderStyle.linksListMobile)
 				}) {
 					tabs.forEach { (name, link) -> HeaderButton(name, link) }
+
+					latestRelease?.let { release ->
+						A(latestReleaseAnchor(release), {
+							classes(HeaderStyle.releaseBadge, HeaderStyle.releaseBadgeMobile)
+						}) {
+							Text("New ${release.getKoreVersion()} release!")
+						}
+					}
 				}
 
 				org.jetbrains.compose.web.dom.A("/") {
@@ -129,6 +148,7 @@ object HeaderStyle : StyleSheet() {
 	val linksListDesktop by style {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Row)
+		flexWrap(FlexWrap.Wrap)
 		gap(1.5.cssRem)
 
 		mdMax(type("div") + self) {
@@ -212,6 +232,30 @@ object HeaderStyle : StyleSheet() {
 			color(GlobalStyle.textColor)
 			textDecorationColor(GlobalStyle.linkColorHover)
 		}
+	}
+
+	val releaseBadge by style {
+		alignItems(AlignItems.Center)
+		backgroundColor(GlobalStyle.linkColor.alpha(0.3))
+		borderRadius(999.px)
+		color(Color.white)
+		display(DisplayStyle.Flex)
+		fontSize(0.9.cssRem)
+		fontWeight(700)
+		lineHeight(1.2.number)
+		padding(0.35.cssRem, 0.7.cssRem)
+		textDecorationLine(TextDecorationLine.None)
+		transition(0.2.s, "background-color")
+
+		hover(self) style {
+			backgroundColor(GlobalStyle.linkColorHover.alpha(0.5))
+			color(Color.white)
+		}
+	}
+
+	val releaseBadgeMobile by style {
+		justifyContent(JustifyContent.Center)
+		marginX(1.cssRem)
 	}
 
 	val githubLink by style {

@@ -7,6 +7,7 @@ import io.github.ayfri.kore.website.CodeThemeStyle
 import io.github.ayfri.kore.website.components.common.*
 import io.github.ayfri.kore.website.components.sections.Footer
 import io.github.ayfri.kore.website.components.sections.Header
+import io.github.ayfri.kore.website.components.updates.GitHubService
 import io.github.ayfri.kore.website.utils.loadPrism
 import org.jetbrains.compose.web.css.Style
 import org.jetbrains.compose.web.css.StyleSheet
@@ -34,7 +35,9 @@ fun PageLayout(title: String, content: @Composable () -> Unit) {
 
 	setImage("$baseUrl/logo.png")
 
-	Header()
+	val latestRelease = GitHubService.getReleases().maxByOrNull { it.publishedAt }
+
+	Header(latestRelease)
 
 	Main({
 		classes(PageLayoutStyle.main)
