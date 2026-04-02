@@ -8,6 +8,7 @@ import io.github.ayfri.kore.website.utils.*
 import kotlinx.browser.document
 import kotlinx.dom.clear
 import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.Div
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
@@ -156,9 +157,10 @@ object MarkdownRendererStyle : StyleSheet() {
 		}
 
 		"img" style {
-			maxWidth(100.percent)
 			borderRadius(GlobalStyle.roundingButton)
 			boxShadow(0.px, 2.px, 6.px, 0.px, rgba(0, 0, 0, 0.2))
+			height(auto)
+			maxWidth(100.percent)
 		}
 
 		"table" style {
