@@ -362,6 +362,8 @@ tasks.register("fetchGitHubReleases") {
 	outputs.file(outFile)
 
 	doLast {
+		fun String.escapeForKotlinRawString() = replace("\"\"\"", "\\\"\\\"\\\"").replace("$", "${'$'}{'$'}")
+
 		val allReleases = mutableListOf<Map<*, *>>()
 		var page = 1
 		var hasMorePages = true
@@ -416,7 +418,7 @@ tasks.register("fetchGitHubReleases") {
 					val url = release["url"] as String
 					val createdAt = release["created_at"] as String
 					val publishedAt = release["published_at"] ?: return@forEach
-					val body = (release["body"] as? String ?: "").replace("\"\"\"", "\\\"\\\"\\\"").replace("$", "\\$")
+					val body = (release["body"] as? String ?: "").escapeForKotlinRawString()
 					val isPrerelease = release["prerelease"] as Boolean
 					val assets = (release["assets"] as? List<Map<*, *>>).orEmpty()
 
