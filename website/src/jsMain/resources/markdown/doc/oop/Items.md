@@ -18,7 +18,12 @@ spawning, or embedding it in wider entity workflows.
 
 ```kotlin
 function("item_demo") {
-	val sword = itemStack("diamond_sword")
+	val sword = itemStack(Items.DIAMOND_SWORD) {
+		enchantments {
+			sharpness(5)
+			unbreaking(3)
+		}
+	}
 	player.giveItem(sword)
 
 	sword.summon()                                    // summon as item entity at 0 0 0
@@ -30,7 +35,9 @@ function("item_demo") {
 
 ```kotlin
 function("reward_drop") {
-	val reward = itemStack("diamond_sword")
+	val reward = itemStack(Items.NETHERITE_INGOT) {
+		lore(textComponent("A rare reward dropped by the champion", Color.GRAY))
+	}
 
 	player.executeAt {
 		run {

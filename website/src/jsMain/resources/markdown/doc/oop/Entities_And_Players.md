@@ -50,7 +50,7 @@ function("teleport_self") {
 	}
 
 	player.executeAt {
-		run { it.giveItem(itemStack("diamond")) }
+		run { it.giveItem(Items.DIAMOND) }
 	}
 
 	player.executeAsAt {
@@ -69,7 +69,7 @@ These helpers are especially valuable when you would otherwise repeat the same `
 ```kotlin
 function("setup") {
 	player.batch("init_player") {
-		giveItem(itemStack("diamond_sword"))
+		giveItem(Items.DIAMOND)
 		giveEffect(Effects.SPEED, duration = 200)
 		sendMessage("Welcome!")
 	}
@@ -99,8 +99,8 @@ function("commands_demo") {
 	player.mount(zombie)
 	player.dismount()
 	player.clearItems()
-	player.giveItem(itemStack("diamond"))
-	player.replaceItem(ItemSlotType.MAINHAND, itemStack("netherite_sword"))
+	player.giveItem(Items.DIAMOND)
+	player.replaceItem(ItemSlotType.MAINHAND, itemStack(Items.NETHERITE_SWORD))
 }
 ```
 
@@ -129,7 +129,7 @@ function("commands_demo") {
 ```kotlin
 function("round_start") {
 	player.batch("round_start_player") {
-		giveItem(itemStack("diamond"))
+		giveItem(Items.DIAMOND)
 		giveEffect(Effects.SPEED, duration = 200)
 		showActionBar(textComponent("Fight!"))
 	}
