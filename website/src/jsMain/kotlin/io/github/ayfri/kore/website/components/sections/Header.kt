@@ -17,6 +17,7 @@ import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.*
+import kotlin.js.Date
 
 val tabs = mapOf(
 	"Docs" to "/docs/home",
@@ -33,8 +34,15 @@ fun HeaderButton(name: String, link: String) = Div {
 
 private fun latestReleaseAnchor(release: GitHubRelease) = "/updates#release-${release.id}"
 
+private fun GitHubRelease.isRecent(days: Int): Boolean {
+	val millisecondsPerDay = 24 * 60 * 60 * 1000
+	return Date.now() - publishedDate.getTime() <= days * millisecondsPerDay
+}
+
 @Composable
 fun Header(latestRelease: GitHubRelease? = null) {
+	val recentLatestRelease = latestRelease?.takeIf { it.isRecent(10) }
+
 	Style(HeaderStyle)
 
 	Header({
@@ -52,7 +60,7 @@ fun Header(latestRelease: GitHubRelease? = null) {
 
 				tabs.forEach { (name, link) -> HeaderButton(name, link) }
 
-				latestRelease?.let { release ->
+				recentLatestRelease?.let { release ->
 					A(latestReleaseAnchor(release), {
 						classes(HeaderStyle.releaseBadge)
 					}) {
@@ -93,7 +101,7 @@ fun Header(latestRelease: GitHubRelease? = null) {
 				}) {
 					tabs.forEach { (name, link) -> HeaderButton(name, link) }
 
-					latestRelease?.let { release ->
+					recentLatestRelease?.let { release ->
 						A(latestReleaseAnchor(release), {
 							classes(HeaderStyle.releaseBadge, HeaderStyle.releaseBadgeMobile)
 						}) {
