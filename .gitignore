@@ -1,5 +1,6 @@
-### Intellij
+### Editors
 .idea
+.vscode
 
 ### Gradle
 .gradle
