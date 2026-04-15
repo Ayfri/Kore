@@ -228,6 +228,7 @@ object MarkdownLayoutStyle : StyleSheet() {
 	val anchor by style {
 		color(GlobalStyle.inactiveLinkColor)
 		opacity(0.2)
+		order(1000)
 		textDecorationLine(TextDecorationLine.None)
 		transition(0.2.s, "opacity", "color")
 
@@ -320,8 +321,7 @@ object MarkdownLayoutStyle : StyleSheet() {
 	val heading by style {
 		borderRadius(GlobalStyle.roundingButton)
 		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.RowReverse)
-		justifyContent(JustifyContent.FlexEnd)
+		justifyContent(JustifyContent.FlexStart)
 		gap(0.5.cssRem)
 		padding(0.5.cssRem)
 		scrollMarginTop(1.5.cssRem)
