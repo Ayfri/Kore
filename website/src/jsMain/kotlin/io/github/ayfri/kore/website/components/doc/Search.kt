@@ -85,10 +85,14 @@ fun Search() {
 	}
 }
 
-object SearchStyle : StyleSheet() {
+data object SearchStyle : StyleSheet() {
 	val container by style {
 		position(Position.Relative)
 		width(100.percent)
+
+		self + focus style {
+			borderColor(GlobalStyle.linkColor)
+		}
 	}
 
 	val inputContainer by style {
@@ -97,13 +101,9 @@ object SearchStyle : StyleSheet() {
 		border(1.px, LineStyle.Solid, GlobalStyle.tertiaryBackgroundColor)
 		borderRadius(GlobalStyle.roundingButton)
 		display(DisplayStyle.Flex)
-		gap(0.5.cssRem)
-		padding(0.75.cssRem)
+		gap(0.4.cssRem)
+		padding(0.5.cssRem)
 		transition(0.2.s, "border-color")
-
-		self + focus style {
-			borderColor(GlobalStyle.linkColor)
-		}
 
 		child(self, type("span")) style {
 			color(GlobalStyle.altTextColor)
@@ -140,7 +140,7 @@ object SearchStyle : StyleSheet() {
 		color(GlobalStyle.textColor)
 		cursor(Cursor.Pointer)
 		display(DisplayStyle.Block)
-		padding(1.cssRem)
+		padding(0.6.cssRem)
 		textDecorationLine(TextDecorationLine.None)
 		transition(0.2.s, "background-color")
 
@@ -150,13 +150,14 @@ object SearchStyle : StyleSheet() {
 
 		child(self, type("h4")) style {
 			color(GlobalStyle.linkColor)
+			fontSize(0.95.cssRem)
 			margin(0.px)
 			marginBottom(0.2.cssRem)
 		}
 
 		child(self, type("p")) style {
 			color(GlobalStyle.altTextColor)
-			fontSize(0.9.cssRem)
+			fontSize(0.85.cssRem)
 			margin(0.px)
 		}
 	}

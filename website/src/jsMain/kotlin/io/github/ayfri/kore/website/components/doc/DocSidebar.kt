@@ -38,7 +38,7 @@ fun DocSidebar(revealed: Boolean, onClose: () -> Unit) {
 	}
 }
 
-object DocSidebarStyle : StyleSheet() {
+data object DocSidebarStyle : StyleSheet() {
 	init {
 		selector("body:has(.sidebar.reveal)") style {
 			overflow(Overflow.Hidden)
@@ -52,10 +52,11 @@ object DocSidebarStyle : StyleSheet() {
         borderRadius(GlobalStyle.roundingButton)
         display(DisplayStyle.Flex)
         flexDirection(FlexDirection.Column)
-        padding(0.9.cssRem)
+		marginLeft(0.25.cssRem)
+		padding(0.5.cssRem)
         position(Position.Sticky)
         top(5.cssRem)
-        width(21.cssRem)
+		width(22.cssRem)
 
 		smMax(self) {
 			backgroundColor(rgba(24, 26, 31, 0.95))

@@ -296,8 +296,10 @@ fun DocTree() {
 	}
 }
 
-object DocTreeStyle : StyleSheet() {
+data object DocTreeStyle : StyleSheet() {
 	val container by style {
+		marginLeft(0.25.cssRem)
+
 		smMax(self) {
 			flex(1)
 			minHeight(0.px)
@@ -308,9 +310,9 @@ object DocTreeStyle : StyleSheet() {
 	}
 
 	val title by style {
-		fontSize(1.5.cssRem)
+		fontSize(1.25.cssRem)
 		fontWeight(FontWeight.Bold)
-		marginY(0.75.cssRem)
+		marginY(0.6.cssRem)
 		flexShrink(0)
 	}
 
@@ -318,10 +320,10 @@ object DocTreeStyle : StyleSheet() {
 	val list by style {
 		listStyle(ListStyle.None)
 		left(0.px)
-		marginTop(0.px)
-		maxHeight(72.5.vh)
+		marginY(0.2.cssRem)
+		maxHeight(75.vh)
 		overflowY(Overflow.Auto)
-		padding(0.5.cssRem)
+		padding(0.4.cssRem)
 		position(Position.Sticky)
 
 		smMax(self) {
@@ -334,8 +336,8 @@ object DocTreeStyle : StyleSheet() {
 		borderRadius(GlobalStyle.roundingButton)
 		color(GlobalStyle.textColor)
 		display(DisplayStyle.Block)
-		fontSize(1.cssRem)
-		padding(0.2.cssRem, 0.4.cssRem)
+		fontSize(0.95.cssRem)
+		padding(0.15.cssRem, 0.3.cssRem)
 		transition(0.2.s, "color", "background-color")
 		whiteSpace(WhiteSpace.NoWrap)
 	}
@@ -372,14 +374,14 @@ object DocTreeStyle : StyleSheet() {
 		display(DisplayStyle.Flex)
 		alignItems(AlignItems.Center)
 		justifyContent(JustifyContent.Center)
-		width(1.cssRem)
-		height(1.cssRem)
+		width(0.9.cssRem)
+		height(0.9.cssRem)
 		transition(0.2.s, "transform")
 		transform { rotate(90.deg) }
 		userSelect(UserSelect.None)
 
 		self + className("material-icons") style {
-			fontSize(1.2.cssRem)
+			fontSize(1.1.cssRem)
 		}
 	}
 
@@ -389,6 +391,6 @@ object DocTreeStyle : StyleSheet() {
 	}
 
 	val topLevelGroup by style {
-		marginTop(0.75.cssRem)
+		marginTop(0.5.cssRem)
 	}
 }
