@@ -1,20 +1,53 @@
 # Contribution guidelines
 
-## How to contribute
+## Start here
 
-1. Fork the repository
-2. Create a new branch
-3. Make your changes
-4. Commit your changes
-5. Push your changes
-6. Submit a pull request
+Read the contributor docs before opening a PR:
 
-## How to write a commit message
+- [Contributing][contributing-docs]
+- [Architecture and Patterns][architecture-docs]
+- [Workflow][workflow-docs]
 
-We follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
+If you are adding a new data-driven resource in `kore`, also read [Creating a New Generator][new-generator-docs].
 
-## How to write a pull request
+## Basic workflow
 
-We also follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specification for the title of the pull request.
+1. Start from a scoped issue or proposal.
+2. Create a branch focused on one behavior change.
+3. Make the smallest relevant module change.
+4. Add or update tests in the touched module.
+5. Update documentation when behavior or API changes.
+6. Open a pull request that links the issue, tests, and docs.
 
-And write a description of the changes you made.
+Detailed issue and pull-request expectations live in [Workflow][workflow-docs].
+
+For CI and release details, read:
+
+- [CI/CD and Releases][releases-docs]
+
+## Commit and PR title conventions
+
+We follow conventional commits style for commit messages and PR titles.
+
+Examples:
+
+- `chore(minecraft): Increase Minecraft version to X.Y.Z.`
+- `chore(project): Increase project version to X.Y.Z.`
+- `feat(achievements): Add new \`test\` achievement trigger`.
+
+## See also
+
+- [README][readme]
+- [Workflow][workflow-docs]
+
+[architecture-docs]: https://kore.ayfri.com/docs/contributing/architecture-and-patterns
+
+[contributing-docs]: https://kore.ayfri.com/docs/contributing/contributing
+
+[new-generator-docs]: https://kore.ayfri.com/docs/contributing/creating-a-new-generator
+
+[readme]: https://github.com/ayfri/kore/blob/master/README.md
+
+[releases-docs]: https://kore.ayfri.com/docs/contributing/ci-cd-and-releases
+
+[workflow-docs]: https://kore.ayfri.com/docs/contributing/contributing-workflow

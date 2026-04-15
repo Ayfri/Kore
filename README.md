@@ -287,14 +287,8 @@ Check out the [Known Issues](https://kore.ayfri.com/docs/advanced/known-issues) 
 
 ## Contributing
 
-If you want to contribute to this project, you can follow these steps:
-
-1. Fork the repository.
-2. Run gradle `kore:run` to run the tests.
-3. Make your changes.
-4. Create a pull request and wait for it to be reviewed and merged.
-
-You can also create an issue if you find a bug or if you want to suggest a new feature.
+Want to contribute to Kore? Start with the [Contributing to Kore](https://kore.ayfri.com/docs/contributing/contributing)
+guide and the repository-level [Contribution guidelines](CONTRIBUTING.md).
 
 ## Support
 

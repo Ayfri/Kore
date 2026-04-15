@@ -5,7 +5,7 @@ nav-title: Home
 description: Welcome to the Kore wiki!
 keywords: minecraft, datapack, kore, guide
 date-created: 2024-04-06
-date-modified: 2026-03-31
+date-modified: 2026-04-15
 routeOverride: /docs/home
 position: 0
 ---
@@ -147,6 +147,11 @@ fun main() {
 - [GitHub Actions Publishing](/docs/advanced/github-actions-publishing) - automate datapack publishing.
 - [Test Features (GameTest)](/docs/advanced/test-features) - testing datapacks with GameTest.
 - [Known Issues](/docs/advanced/known-issues) - workarounds and limitations.
+
+## Contributing to Kore
+
+If you want to contribute to Kore itself, start with [Contributing to Kore](/docs/contributing/contributing), the hub
+for architecture, workflow, issue/PR, and maintainer docs.
 
 ## Short tips
 
