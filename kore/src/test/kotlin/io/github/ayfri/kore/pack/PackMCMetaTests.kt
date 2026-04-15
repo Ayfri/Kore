@@ -57,8 +57,8 @@ private fun testPackMCMetaMinMaxFormat() = testDataPack("minmax_pack") {
 				0
 			],
 			"pack_format": [
-				94,
-				0
+				${DataPack.DEFAULT_PACK_FORMAT.major},
+				${DataPack.DEFAULT_PACK_FORMAT.minorOrNull() ?: 0}
 			]
 		}
 	}
