@@ -6,7 +6,7 @@ description: Overview of object-oriented gameplay utilities in the Kore OOP modu
 keywords: minecraft, datapack, kore, oop, entity, player, commands, teams, scoreboard, items, events, cooldown, bossbar, effects, timer, spawner, gamestate
 date-created: 2026-02-21
 date-modified: 2026-03-31
-routeOverride: /docs/oop/utilities
+routeOverride: /docs/oop/oop-utilities
 position: 0
 ---
 
