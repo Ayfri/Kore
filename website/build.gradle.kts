@@ -1,4 +1,3 @@
-
 import com.varabyte.kobweb.gradle.application.util.configAsKobwebApplication
 import com.varabyte.kobwebx.gradle.markdown.children
 import groovy.json.JsonSlurper
@@ -20,21 +19,27 @@ plugins {
 group = "io.github.ayfri.kore.website"
 version = "1.0-SNAPSHOT"
 
+val docGroupOrder =
+	listOf("guides", "commands", "data-driven", "concepts", "helpers", "oop", "advanced", "contributing")
+
 kobweb {
 	val projectGroup = group
 	val projectLogger = logger
+	val docGroupOrderCopy = docGroupOrder
 
 	app {
 		globals.set(
 			mapOf(
-			"minecraftVersion" to rootProject.file("gradle.properties").readLines()
-				.firstOrNull { it.startsWith("minecraft.version=") }
-				?.substringAfter('=')
-				?.trim()
-				.orEmpty(),
+				"docGroupOrder" to docGroupOrderCopy.joinToString(","),
+				"minecraftVersion" to rootProject.file("gradle.properties").readLines()
+					.firstOrNull { it.startsWith("minecraft.version=") }
+					?.substringAfter('=')
+					?.trim()
+					.orEmpty(),
 				"projectVersion" to Project.VERSION,
-				"websiteUrl" to Project.WEBSITE_URL
-		))
+				"websiteUrl" to Project.WEBSITE_URL,
+			)
+		)
 
 		index {
 			head.apply {
@@ -111,32 +116,40 @@ kobweb {
 			}
 
 			heading.set { heading ->
-				val id = heading.children().joinToString("") {
-					val literal = when (it) {
-						is Text -> it.literal
-						is Code -> it.literal
-						is Link -> it.destination
-						is Emphasis -> (it.firstChild as Text).literal
-						else -> ""
+				fun Node.plainText(): String = when (this) {
+					is Text -> literal
+					is Code -> literal
+					is Link, is Emphasis, is StrongEmphasis -> children().joinToString("") { it.plainText() }
+					else -> ""
+				}
+
+				fun Node.composeText(): String = when (this) {
+					is Text -> "org.jetbrains.compose.web.dom.Text(\"${literal.escapeSingleQuotedText()}\")"
+					is Code -> "org.jetbrains.compose.web.dom.Code { org.jetbrains.compose.web.dom.Text(\"${literal.escapeTripleQuotedText()}\") }"
+					is Link -> {
+						val linkContent = children().joinToString("\n") { child -> child.composeText() }
+						"""org.jetbrains.compose.web.dom.A(href = "$destination") {
+							|   $linkContent
+							|}""".trimMargin()
 					}
+
+					is Emphasis -> {
+						val emphasisContent = children().joinToString("\n") { child -> child.composeText() }
+						"""org.jetbrains.compose.web.dom.Span(classes(io.github.ayfri.kore.website.components.layouts.MarkdownLayoutStyle.italic)) {
+							|   $emphasisContent
+							|}""".trimMargin()
+					}
+
+					else -> ""
+				}
+
+				val id = heading.children().joinToString("") {
+					val literal = it.plainText()
 					if (literal.isBlank()) return@joinToString ""
 					literal.lowercase().replace(Regex("[^a-z0-9]+"), "-")
 				}
 
-				val content = heading.children().joinToString("\n") {
-					when (it) {
-						is Text -> "org.jetbrains.compose.web.dom.Text(\"${it.literal.escapeSingleQuotedText()}\")"
-						is Code -> "org.jetbrains.compose.web.dom.Code { org.jetbrains.compose.web.dom.Text(\"${it.literal.escapeTripleQuotedText()}\") }"
-						is Link -> "org.jetbrains.compose.web.dom.A(href = \"${it.destination}\") { org.jetbrains.compose.web.dom.Text(\"${
-							it.children().joinToString("") { (it as Text).literal.escapeSingleQuotedText() }
-						}\") }"
-
-						is Emphasis -> if (it.firstChild is Text) "org.jetbrains.compose.web.dom.Span(classes(io.github.ayfri.kore.website.components.layouts.MarkdownLayoutStyle.italic)) { org.jetbrains.compose.web.dom.Text(\"${(it.firstChild as Text).literal.escapeSingleQuotedText()}\") }"
-						else ""
-
-						else -> ""
-					}
-				}
+				val content = heading.children().joinToString("\n") { it.composeText() }
 
 				childrenOverride = emptyList()
 				val tag = "H${heading.level}"
@@ -212,11 +225,10 @@ kobweb {
 				docEntries += newEntry
 			}
 
-			// Group order matching DocTree.kt
-			val groupOrder = listOf("guides", "commands", "data-driven", "concepts", "helpers", "advanced")
-			fun getGroupPriority(slug: String) = groupOrder.indexOf(slug.lowercase()).takeIf { it >= 0 } ?: groupOrder.size
+			fun getGroupPriority(slug: String) =
+				docGroupOrderCopy.indexOf(slug.lowercase()).takeIf { it >= 0 } ?: docGroupOrderCopy.size
 
-			// Sort entries by group priority, then position, then title
+			// Sort entries by group priority, then optional position, then slug/title names.
 			val sortedEntries = docEntries.sortedWith(Comparator { a, b ->
 				val slugsA = a.slugs.drop(1)
 				val slugsB = b.slugs.drop(1)
@@ -226,6 +238,7 @@ kobweb {
 					val slugA = slugsA[i]
 					val slugB = slugsB[i]
 
+					// Apply fixed position only on leaf entries where explicitly set.
 					val posA = if (i == slugsA.lastIndex) a.position else null
 					val posB = if (i == slugsB.lastIndex) b.position else null
 

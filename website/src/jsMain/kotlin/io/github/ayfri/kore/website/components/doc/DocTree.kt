@@ -3,6 +3,7 @@ package io.github.ayfri.kore.website.components.doc
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.browser.util.kebabCaseToTitleCamelCase
 import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.core.AppGlobals
 import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiChevronRight
 import io.github.ayfri.kore.website.GlobalStyle
@@ -19,12 +20,16 @@ import org.jetbrains.compose.web.dom.*
 
 private fun StyleScope.indentation(level: Int) = marginLeft(level * 1.5.cssRem)
 
-// Define the order of top-level groups
-private val groupOrder = listOf("guides", "commands", "data-driven", "concepts", "helpers", "advanced")
+private val docGroupOrder
+	get() = AppGlobals["docGroupOrder"]
+		?.split(',')
+		?.map(String::trim)
+		?.filter(String::isNotEmpty)
+		.orEmpty()
 
 private fun getGroupPriority(slug: String): Int {
-	val index = groupOrder.indexOf(slug.lowercase())
-	return if (index >= 0) index else groupOrder.size
+	val index = docGroupOrder.indexOf(slug.lowercase())
+	return if (index >= 0) index else docGroupOrder.size
 }
 
 /**
@@ -175,14 +180,6 @@ fun DocTree() {
 	val context = rememberPageContext().route
 	val entries = docEntries
 	val currentURL = context.path
-
-	// Define the order of top-level groups
-	val groupOrder = listOf("guides", "commands", "data-driven", "concepts", "helpers", "advanced")
-
-	fun getGroupPriority(slug: String): Int {
-		val index = groupOrder.indexOf(slug.lowercase())
-		return if (index >= 0) index else groupOrder.size
-	}
 
 	val nodes = buildList {
 		val sortedEntries = entries.sortedWith(Comparator { a, b ->
