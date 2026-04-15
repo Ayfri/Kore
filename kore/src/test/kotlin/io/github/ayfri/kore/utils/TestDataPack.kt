@@ -7,7 +7,11 @@ import io.github.ayfri.kore.generation.DataPackJarGenerationOptions
 import io.github.cdimascio.dotenv.dotenv
 import kotlinx.io.files.Path
 
-private val testConfiguration = dotenv()
+private val testConfiguration = dotenv {
+	ignoreIfMalformed = true
+	ignoreIfMissing = true
+	systemProperties = true
+}
 val minecraftSaveTestPath = Path(testConfiguration["TEST_FOLDER", "out"])
 
 data class TestDataPack(internal val dp: DataPack) {
