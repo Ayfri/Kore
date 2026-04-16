@@ -163,7 +163,9 @@ enum class HeroTab(val tabName: String, val language: String) {
 					
 					function("spawn_at_valid_location") {
 						execute {
-							ifCondition(block(vec3(0, -1, 0)).`is`(VanillaTweaks.Spawn.Tags.Blocks.VALID_SPAWN_LOCATION))
+							ifCondition {
+								block(vec3(0, -1, 0), VanillaTweaks.Spawn.Tags.Blocks.VALID_SPAWN_LOCATION)
+							}
 							run {
 								say("Spawning at valid location!")
 							}
