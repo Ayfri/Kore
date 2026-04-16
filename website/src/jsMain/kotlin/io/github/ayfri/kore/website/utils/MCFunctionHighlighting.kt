@@ -2,9 +2,7 @@ package io.github.ayfri.kore.website.utils
 
 external class Object
 
-fun obj(init: dynamic.() -> Unit): dynamic {
-	return (Object()).apply(init)
-}
+fun obj(init: dynamic.() -> Unit) = (Object()).apply(init)
 
 fun initMCFunctionHighlighting() {
 	val prism = js("window.Prism")

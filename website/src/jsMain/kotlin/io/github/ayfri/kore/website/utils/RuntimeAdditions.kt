@@ -5,5 +5,6 @@ import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun loadPrism() = LaunchedEffect(Unit) {
+	initKotlinHighlighting()
 	js("window.Prism.highlightAll()").unsafeCast<Unit>()
 }
