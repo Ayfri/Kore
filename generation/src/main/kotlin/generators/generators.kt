@@ -203,6 +203,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("Particles", "particle_type") {
 			argumentClassName = "ParticleType"
 		},
+		gen("PointOfInterestTypes", "point_of_interest_type"),
 		gen("Potions", "potion"),
 		gen("StatisticTypes", "stat_type") {
 			argumentClassName = "StatType"
