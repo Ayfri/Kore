@@ -10,7 +10,6 @@ import io.github.ayfri.kore.arguments.scores.ExecuteScore
 import io.github.ayfri.kore.arguments.scores.Scores
 import io.github.ayfri.kore.arguments.types.*
 import io.github.ayfri.kore.arguments.types.literals.literal
-import io.github.ayfri.kore.arguments.types.resources.BlockArgument
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.generated.arguments.types.DimensionArgument
@@ -45,8 +44,8 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 	fun biome(pos: Vec3, biome: BiomeOrTagArgument) =
 		addArguments(listOf(literal("biome"), literal(pos.toStringTruncated()), biome))
 
-	/** Checks if the block at the given position matches the given block. */
-	fun block(pos: Vec3, block: BlockArgument) =
+	/** Checks if the block at the given position matches the given block or block tag. */
+	fun block(pos: Vec3, block: BlockOrTagArgument) =
 		addArguments(listOf(literal("block"), literal(pos.toStringTruncated()), block))
 
 	/** Checks if the region between [start] and [end] matches the region starting at [destination], using the given [mode]. */

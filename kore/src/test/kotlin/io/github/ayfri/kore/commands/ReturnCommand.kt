@@ -6,6 +6,7 @@ import io.github.ayfri.kore.assertions.assertsMatches
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.generated.Blocks
 import io.kotest.core.spec.style.FunSpec
 
 fun Function.returnCommand() {
@@ -25,7 +26,7 @@ fun Function.returnCommand() {
 
 	@Suppress("DEPRECATION_ERROR")
 	returnUnless({
-		block(vec3(0, 0, 0), io.github.ayfri.kore.generated.Blocks.STONE)
+		block(vec3(0, 0, 0), Blocks.STONE)
 	}) {
 		say("test")
 		returnValue(0)

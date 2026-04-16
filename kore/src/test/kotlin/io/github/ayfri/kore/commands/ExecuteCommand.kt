@@ -133,6 +133,7 @@ fun Function.executeTests() {
 		ifCondition {
 			biome(vec3(), Tags.Worldgen.Biome.HasStructure.ANCIENT_CITY)
 			block(vec3(), Blocks.AIR)
+			block(vec3(), Tags.Block.CORAL_BLOCKS)
 			blocks(vec3(PosNumber.Type.LOCAL), vec3(1, 2, 3), vec3(4, 5, 6), BlocksTestMode.MASKED)
 			data(self(), "test")
 			dimension(Dimensions.THE_END)
@@ -158,6 +159,7 @@ fun Function.executeTests() {
 		execute
 			if biome ~ ~ ~ #minecraft:has_structure/ancient_city
 			if block ~ ~ ~ minecraft:air
+			if block ~ ~ ~ #minecraft:coral_blocks
 			if blocks ^ ^ ^ 1 2 3 4 5 6 masked
 			if data entity @s test
 			if dimension minecraft:the_end
