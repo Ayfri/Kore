@@ -9,10 +9,17 @@ import io.github.ayfri.kore.generated.ConfiguredFeatures
 import io.github.ayfri.kore.generated.ConfiguredStructures
 import io.github.ayfri.kore.generated.Structures
 import io.github.ayfri.kore.generated.TemplatePools
+import io.github.ayfri.kore.generated.arguments.types.JigsawArgument
 import io.kotest.core.spec.style.FunSpec
 
 fun Function.placeTests() {
 	placeFeature(ConfiguredFeatures.BONUS_CHEST, vec3()) assertsIs "place feature minecraft:bonus_chest ~ ~ ~"
+	placeJigsaw(
+		TemplatePools.AncientCity.SCULK,
+		JigsawArgument("baz"),
+		5,
+		vec3()
+	) assertsIs "place jigsaw minecraft:ancient_city/sculk minecraft:baz 5 ~ ~ ~"
 	placeJigsaw(TemplatePools.AncientCity.SCULK, "baz", 5, vec3()) assertsIs "place jigsaw minecraft:ancient_city/sculk baz 5 ~ ~ ~"
 	placeStructure(ConfiguredStructures.MINESHAFT, vec3()) assertsIs "place structure minecraft:mineshaft ~ ~ ~"
 
