@@ -400,8 +400,8 @@ fun DataPack.predicateTests() {
 			}
 			light(7)
 			position {
-				x = rangeOrInt(1)
-				y = rangeOrInt(2..4)
+				x(1)
+				y(2..4)
 				z = rangeOrInt(3)
 			}
 			smokey = true
