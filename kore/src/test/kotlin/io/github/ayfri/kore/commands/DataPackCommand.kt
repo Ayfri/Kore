@@ -12,8 +12,8 @@ fun Function.dataPackTests() {
 		create("id", textComponent("name")) assertsIs "datapack create id \"name\""
 		disable() assertsIs "datapack disable test"
 		enable() assertsIs "datapack enable test"
-		enableFirst() assertsIs "datapack enable first test"
-		enableLast() assertsIs "datapack enable last test"
+		enable(DatapackPriority.FIRST) assertsIs "datapack enable test first"
+		enableLast() assertsIs "datapack enable test last"
 		enableBefore("foo") assertsIs "datapack enable test before foo"
 		enableAfter("foo") assertsIs "datapack enable test after foo"
 	}
