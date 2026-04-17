@@ -12,7 +12,8 @@ fun Function.stopwatchTests() {
 
 	stopwatchCreate(stopwatchId) assertsIs "stopwatch create minecraft:my_stopwatch"
 	stopwatchQuery(stopwatchId) assertsIs "stopwatch query minecraft:my_stopwatch"
-	stopwatchQuery(stopwatchId, 20) assertsIs "stopwatch query minecraft:my_stopwatch 20"
+	stopwatchQuery(stopwatchId, 20.0) assertsIs "stopwatch query minecraft:my_stopwatch 20"
+	stopwatchQuery(stopwatchId, 0.5) assertsIs "stopwatch query minecraft:my_stopwatch 0.5"
 	stopwatchRestart(stopwatchId) assertsIs "stopwatch restart minecraft:my_stopwatch"
 	stopwatchRemove(stopwatchId) assertsIs "stopwatch remove minecraft:my_stopwatch"
 

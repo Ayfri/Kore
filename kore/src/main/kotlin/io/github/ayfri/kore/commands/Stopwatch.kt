@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.DataPack
-import io.github.ayfri.kore.arguments.types.literals.int
+import io.github.ayfri.kore.arguments.types.literals.float
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.arguments.types.StopwatchArgument
@@ -20,9 +20,13 @@ fun stopWatch(id: String, namespace: String = "minecraft") = StopwatchArgument(i
 /** Registers a stopwatch with the given id. */
 fun Function.stopwatchCreate(id: StopwatchArgument) = addLine(command("stopwatch", literal("create"), id))
 
-/** Shows the elapsed time in seconds of the given stopwatch in chat. */
-fun Function.stopwatchQuery(id: StopwatchArgument, scale: Int? = null) =
-	addLine(command("stopwatch", literal("query"), id, int(scale)))
+/**
+ * Shows the elapsed time of the given stopwatch in chat.
+ *
+ * @param scale Optional multiplier applied to the displayed value (1.0 keeps seconds, 20.0 converts to ticks, etc.).
+ */
+fun Function.stopwatchQuery(id: StopwatchArgument, scale: Double? = null) =
+	addLine(command("stopwatch", literal("query"), id, float(scale)))
 
 /** Restarts a stopwatch with the given id. */
 fun Function.stopwatchRestart(id: StopwatchArgument) = addLine(command("stopwatch", literal("restart"), id))
