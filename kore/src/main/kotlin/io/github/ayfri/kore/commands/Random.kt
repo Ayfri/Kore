@@ -10,25 +10,41 @@ import io.github.ayfri.kore.arguments.types.resources.RandomSequenceArgument
 import io.github.ayfri.kore.functions.Function
 import kotlin.ranges.IntRange as KotlinIntRange
 
-fun Function.randomValue(range: KotlinIntRange, sequenceId: String? = null) =
-	addLine(command("random", literal("value"), range.asRange(), literal(sequenceId)))
+/**
+ * Draws a random integer in [range], optionally using the named random [sequence].
+ *
+ * Identical to [randomRoll] but broadcasts the result to everyone.
+ */
+fun Function.randomValue(range: KotlinIntRange, sequence: RandomSequenceArgument? = null) =
+	addLine(command("random", literal("value"), range.asRange(), sequence))
 
-fun Function.randomValue(range: IntRange, sequenceId: String? = null) =
-	addLine(command("random", literal("value"), range, literal(sequenceId)))
+/** Convenience overload accepting a Kore [IntRange]. */
+fun Function.randomValue(range: IntRange, sequence: RandomSequenceArgument? = null) =
+	addLine(command("random", literal("value"), range, sequence))
 
-fun Function.randomRoll(range: KotlinIntRange, sequenceId: String? = null) =
-	addLine(command("random", literal("roll"), range.asRange(), literal(sequenceId)))
+/**
+ * Rolls a random integer in [range] and whispers the result privately to the executor.
+ */
+fun Function.randomRoll(range: KotlinIntRange, sequence: RandomSequenceArgument? = null) =
+	addLine(command("random", literal("roll"), range.asRange(), sequence))
 
-fun Function.randomRoll(range: IntRange, sequenceId: String? = null) =
-	addLine(command("random", literal("roll"), range, literal(sequenceId)))
+/** Convenience overload accepting a Kore [IntRange]. */
+fun Function.randomRoll(range: IntRange, sequence: RandomSequenceArgument? = null) =
+	addLine(command("random", literal("roll"), range, sequence))
 
+/**
+ * Resets the random [sequence] using an optional [seed].
+ *
+ * @param includeWorldSeed When true, the world seed is mixed into the sequence.
+ * @param includeSequenceId When true, the sequence id is mixed into the sequence.
+ */
 fun Function.randomReset(
-	sequenceId: RandomSequenceArgument,
+	sequence: RandomSequenceArgument,
 	seed: Long? = null,
 	includeWorldSeed: Boolean? = null,
 	includeSequenceId: Boolean? = null,
-) =
-	addLine(command("random", literal("reset"), sequenceId, int(seed), bool(includeWorldSeed), bool(includeSequenceId)))
+) = addLine(command("random", literal("reset"), sequence, int(seed), bool(includeWorldSeed), bool(includeSequenceId)))
 
+/** Resets every random sequence at once (`random reset *`). */
 fun Function.randomResetAll(seed: Long? = null, includeWorldSeed: Boolean? = null, includeSequenceId: Boolean? = null) =
 	addLine(command("random", literal("reset"), all(), int(seed), bool(includeWorldSeed), bool(includeSequenceId)))

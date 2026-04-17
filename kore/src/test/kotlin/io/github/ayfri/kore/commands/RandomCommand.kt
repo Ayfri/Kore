@@ -10,14 +10,15 @@ import io.kotest.core.spec.style.FunSpec
 
 fun Function.randomTests() {
 	randomValue(1..6) assertsIs "random value 1..6"
-	randomValue(1..6, "mySequence") assertsIs "random value 1..6 mySequence"
 	randomValue(range(10, 20)) assertsIs "random value 10..20"
 	randomValue(1..<6) assertsIs "random value 1..5"
 
 	randomRoll(1..20) assertsIs "random roll 1..20"
-	randomRoll(0..100, "sequence1") assertsIs "random roll 0..100 sequence1"
 
 	val randomSequenceId = RandomSequenceArgument("sequence1")
+	randomValue(1..6, randomSequenceId) assertsIs "random value 1..6 minecraft:sequence1"
+	randomRoll(1..20, randomSequenceId) assertsIs "random roll 1..20 minecraft:sequence1"
+
 	randomReset(randomSequenceId) assertsIs "random reset minecraft:sequence1"
 	randomReset(randomSequenceId, 1234) assertsIs "random reset minecraft:sequence1 1234"
 	randomReset(randomSequenceId, includeWorldSeed = false) assertsIs "random reset minecraft:sequence1 false"
