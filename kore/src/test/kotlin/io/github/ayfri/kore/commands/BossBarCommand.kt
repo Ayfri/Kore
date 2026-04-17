@@ -23,7 +23,8 @@ fun Function.bossBarTests() {
 
 		setColor(BossBarColor.BLUE) assertsIs "bossbar set foo:bar color blue"
 		setMax(1) assertsIs "bossbar set foo:bar max 1"
-		setName("bar") assertsIs "bossbar set foo:bar name bar"
+		setName("bar") assertsIs "bossbar set foo:bar name \"bar\""
+		setPlayers() assertsIs "bossbar set foo:bar players"
 		setPlayers(self()) assertsIs "bossbar set foo:bar players @s"
 		setStyle(BossBarStyle.NOTCHED_6) assertsIs "bossbar set foo:bar style notched_6"
 		setValue(1) assertsIs "bossbar set foo:bar value 1"
