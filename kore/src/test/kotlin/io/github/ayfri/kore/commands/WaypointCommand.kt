@@ -15,7 +15,7 @@ fun Function.waypointTests() {
 		color(Color.RED) assertsIs "waypoint modify @s color red"
 		colorHex(Color.DARK_PURPLE) assertsIs "waypoint modify @s color hex aa00aa"
 		colorReset() assertsIs "waypoint modify @s color reset"
-		style(WaypointStyles.DEFAULT) assertsIs "waypoint modify @s style minecraft:default"
+		style(WaypointStyles.DEFAULT) assertsIs "waypoint modify @s style set minecraft:default"
 		styleReset() assertsIs "waypoint modify @s style reset"
 	}
 }
