@@ -2,13 +2,13 @@ package io.github.ayfri.kore
 
 import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.numbers.Xp
-import io.github.ayfri.kore.arguments.types.resources.SoundArgument
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.entities.*
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.generated.SoundEvents
 import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
 import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
@@ -85,7 +85,7 @@ fun entityCommandsTests() = testDataPack("entity_commands_tests") {
 	}
 
 	function("test_play_sound") {
-		player.playSound(SoundArgument("entity.experience_orb.pickup")) assertsIs "playsound minecraft:entity.experience_orb.pickup @e[limit=1,name=TestPlayer,type=minecraft:player]"
+		player.playSound(SoundEvents.Entity.ExperienceOrb.PICKUP) assertsIs "playsound minecraft:entity.experience_orb.pickup @e[limit=1,name=TestPlayer,type=minecraft:player]"
 		lines.size assertsIs 1
 	}
 

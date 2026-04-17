@@ -6,10 +6,10 @@ import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.numbers.Xp
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
-import io.github.ayfri.kore.arguments.types.resources.SoundArgument
 import io.github.ayfri.kore.commands.*
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
+import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 
 context(fn: Function)
 fun Entity.addTag(tag: String) = fn.tag(asSelector()) { add(tag) }
@@ -34,7 +34,7 @@ fun Entity.mount(vehicle: Entity) = fn.rideMount(asSelector(), vehicle.asSelecto
 
 context(fn: Function)
 fun Entity.playSound(
-	sound: SoundArgument,
+	sound: SoundEventArgument,
 	source: PlaySoundMixer? = null,
 	pos: Vec3? = null,
 	volume: Double? = null,
