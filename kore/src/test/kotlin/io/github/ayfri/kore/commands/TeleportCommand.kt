@@ -19,7 +19,8 @@ fun Function.teleportTests() {
 	teleport(self(), vec3(), rotation()) assertsIs "teleport @s ~ ~ ~ ~ ~"
 	teleport(self(), vec3(), rotation(1, 2)) assertsIs "teleport @s ~ ~ ~ 1 2"
 	teleport(self(), vec3(), vec3()) assertsIs "teleport @s ~ ~ ~ facing ~ ~ ~"
-	teleport(self(), vec3(), self(), Anchor.EYES) assertsIs "teleport @s ~ ~ ~ facing @s eyes"
+	teleport(self(), vec3(), self()) assertsIs "teleport @s ~ ~ ~ facing entity @s"
+	teleport(self(), vec3(), self(), Anchor.EYES) assertsIs "teleport @s ~ ~ ~ facing entity @s eyes"
 }
 
 class TeleportCommandTests : FunSpec({
