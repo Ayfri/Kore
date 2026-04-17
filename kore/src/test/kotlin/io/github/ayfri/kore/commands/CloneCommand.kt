@@ -14,9 +14,9 @@ import kotlin.random.Random
 private fun randomPos(from: Int = 0, to: Int = 100) = Random.nextInt(from, to).relativePos
 
 private fun Clone.randomZoneAndDestination() {
-	begin = vec3(randomPos(0, 9), randomPos(0, 9), randomPos(0, 9))
+	begin = vec3(randomPos(to = 9), randomPos(to = 9), randomPos(to = 9))
 	end = vec3(randomPos(10, 20), randomPos(10, 20), randomPos(10, 20))
-	destination = vec3(randomPos(0, 100), randomPos(0), randomPos())
+	destination = vec3(randomPos(), randomPos(), randomPos())
 }
 
 fun Function.cloneTests() {
@@ -50,13 +50,24 @@ fun Function.cloneTests() {
 		randomZoneAndDestination()
 		masked(CloneMode.MOVE)
 		strict = true
-	} assertsMatches Regex("clone ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* masked move strict")
+	} assertsMatches Regex("clone ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* strict masked move")
 
 	clone {
 		randomZoneAndDestination()
 		filter(Tags.Block.BASE_STONE_OVERWORLD, CloneMode.FORCE)
 		strict = true
-	} assertsMatches Regex("clone ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* filtered #minecraft:base_stone_overworld force strict")
+	} assertsMatches Regex("clone ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* strict filtered #minecraft:base_stone_overworld force")
+
+	clone {
+		randomZoneAndDestination()
+		replace(CloneMode.NORMAL)
+	} assertsMatches Regex("clone ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* ~\\d* replace normal")
+
+	cloneFiltered(vec3(), vec3(), vec3(), Tags.Block.BASE_STONE_OVERWORLD, CloneMode.MOVE, strict = true) assertsMatches
+		Regex("clone ~ ~ ~ ~ ~ ~ ~ ~ ~ strict filtered #minecraft:base_stone_overworld move")
+	cloneMasked(vec3(), vec3(), vec3(), CloneMode.NORMAL, strict = true) assertsMatches
+		Regex("clone ~ ~ ~ ~ ~ ~ ~ ~ ~ strict masked normal")
+	cloneReplace(vec3(), vec3(), vec3()) assertsMatches Regex("clone ~ ~ ~ ~ ~ ~ ~ ~ ~ replace")
 }
 
 class CloneCommandTests : FunSpec({
