@@ -15,6 +15,27 @@ fun Function.fillTests() {
 	fill(vec3(), vec3(), Blocks.AIR, strict = true) assertsIs "fill ~ ~ ~ ~ ~ ~ minecraft:air strict"
 	fill(vec3(), vec3(), Blocks.AIR, Blocks.STONE) assertsIs "fill ~ ~ ~ ~ ~ ~ minecraft:air replace minecraft:stone"
 	fill(vec3(), vec3(), Blocks.AIR, Blocks.STONE, strict = true) assertsIs "fill ~ ~ ~ ~ ~ ~ minecraft:air replace minecraft:stone strict"
+	fill(
+		vec3(),
+		vec3(),
+		Blocks.AIR,
+		Blocks.STONE,
+		FillOption.DESTROY
+	) assertsIs "fill ~ ~ ~ ~ ~ ~ minecraft:air replace minecraft:stone destroy"
+	fill(
+		vec3(),
+		vec3(),
+		Blocks.AIR,
+		Blocks.STONE,
+		FillOption.HOLLOW
+	) assertsIs "fill ~ ~ ~ ~ ~ ~ minecraft:air replace minecraft:stone hollow"
+	fill(
+		vec3(),
+		vec3(),
+		Blocks.AIR,
+		Blocks.STONE,
+		FillOption.OUTLINE
+	) assertsIs "fill ~ ~ ~ ~ ~ ~ minecraft:air replace minecraft:stone outline"
 }
 
 class FillCommandTests : FunSpec({
