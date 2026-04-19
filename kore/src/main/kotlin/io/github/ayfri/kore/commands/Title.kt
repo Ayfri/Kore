@@ -31,12 +31,33 @@ enum class TitleLocation {
 	}
 }
 
+/**
+ * Sends a title control action such as clear or reset to [targets].
+ *
+ * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/title)
+ */
 fun Function.title(targets: EntityArgument, action: TitleAction) = addLine(command("title", targets, literal(action.asArg())))
+
+/**
+ * Sends a title, subtitle, or action bar message to [targets].
+ *
+ * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/title)
+ */
 fun Function.title(targets: EntityArgument, location: TitleLocation, message: ChatComponents) =
 	addLine(command("title", targets, literal(location.asArg()), message.asSnbtArg()))
 
+/**
+ * Sets the title fade timings for [targets] in ticks.
+ *
+ * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/title)
+ */
 fun Function.title(targets: EntityArgument, fadeIn: Double, stay: Double, fadeOut: Double) =
 	addLine(command("title", targets, literal("times"), float(fadeIn), float(stay), float(fadeOut)))
 
+/**
+ * Sets the title fade timings for [targets] using duration values.
+ *
+ * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/title)
+ */
 fun Function.title(targets: EntityArgument, fadeIn: TimeNumber, stay: TimeNumber, fadeOut: TimeNumber) =
 	addLine(command("title", targets, literal("times"), fadeIn.asArg(), stay.asArg(), fadeOut.asArg()))

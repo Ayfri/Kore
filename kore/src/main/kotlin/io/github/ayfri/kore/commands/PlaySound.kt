@@ -29,7 +29,12 @@ enum class PlaySoundMixer {
 	}
 }
 
-/** Plays a sound event in the world with the given [source], [target], [pos], [volume], [pitch], and [minVolume]. */
+/**
+ * Plays a sound event in the world with the given [source], [target], [pos], [volume], [pitch],
+ * and [minVolume].
+ *
+ * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/playsound)
+ */
 fun Function.playSound(
 	sound: SoundEventArgument,
 	source: PlaySoundMixer? = null,

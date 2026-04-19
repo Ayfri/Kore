@@ -17,6 +17,14 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.encoding.Encoder
 
+/**
+ * Target clause for the `/loot` command.
+ *
+ * This clause describes where the generated loot should go: a player inventory, a block slot,
+ * an entity slot, or the world itself.
+ *
+ * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/loot)
+ */
 data object LootTarget {
 	fun give(targets: EntityArgument) = listOf(literal("give"), targets)
 	fun insert(pos: Vec3) = listOf(literal("insert"), pos)
@@ -26,6 +34,7 @@ data object LootTarget {
 		listOfNotNull(literal("replace"), literal("entity"), entity, slot, int(count))
 }
 
+/** Hand selection used by loot and fishing sources. */
 @Serializable(Hand.Companion.HandSerializer::class)
 enum class Hand {
 	MAIN_HAND,
@@ -40,6 +49,14 @@ enum class Hand {
 	}
 }
 
+/**
+ * Source clause for the `/loot` command.
+ *
+ * The source determines how loot is generated: fishing, looting a loot table, killing an entity,
+ * or mining a block.
+ *
+ * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/loot)
+ */
 data object LootSource {
 	fun fish(lootTable: LootTableArgument, pos: Vec3, tool: ItemArgument? = null) = listOfNotNull(literal("fish"), lootTable, pos, tool)
 	fun fish(pos: Vec3, tool: ItemArgument? = null, lootTable: LootTable.() -> Unit) = listOf(literal("fish"), literal(snbtSerializer.encodeToString(lootTable)), pos, tool)
@@ -55,6 +72,14 @@ data object LootSource {
 	fun mine(pos: Vec3, hand: Hand) = listOf(literal("mine"), pos, literal(hand.asArg()))
 }
 
+/**
+ * Builder for the `/loot` command.
+ *
+ * Use the builder when you want to assemble a source and target clause explicitly. The common
+ * overloads below cover the typical `give` and loot table flows.
+ *
+ * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/loot)
+ */
 class Loot {
 	lateinit var target: List<Argument?>
 	lateinit var source: List<Argument?>
@@ -68,14 +93,21 @@ class Loot {
 	}
 }
 
+/**
+ * Builds a `/loot` command from explicit target and source clauses.
+ *
+ * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/loot)
+ */
 fun Function.loot(block: Loot.() -> Unit) = Loot().let { loot ->
 	loot.block()
 	addLine(command("loot", *loot.target.toTypedArray(), *loot.source.toTypedArray()))
 }
 
+/** Gives loot to [target] using the provided source builder. */
 fun Function.loot(target: EntityArgument, source: LootSource.() -> List<Argument>) = loot {
 	target { give(target) }
 	source { source() }
 }
 
+/** Gives loot to [target] from [lootTable]. */
 fun Function.loot(target: EntityArgument, lootTable: LootTableArgument) = loot(target) { loot(lootTable) }

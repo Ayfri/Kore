@@ -5,5 +5,6 @@ import io.github.ayfri.kore.arguments.types.literals.int
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.functions.Function
 
+/** Transfers [players] to another server at [hostname], optionally on [port]. @see [Minecraft wiki](https://minecraft.wiki/w/Commands/transfer) */
 fun Function.transfer(hostname: String, port: Int? = null, players: EntityArgument? = null) =
 	addLine(command("transfer", literal(hostname), int(port), players))

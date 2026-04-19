@@ -8,7 +8,7 @@ import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
 
-/** Behavior of the `fill` command on existing blocks in the region. */
+/** Behavior of the `/fill` command on existing blocks in the region. */
 @Serializable(FillOption.Companion.FillOptionSerializer::class)
 enum class FillOption {
 	DESTROY,
@@ -24,10 +24,10 @@ enum class FillOption {
 /**
  * Fills the cuboid region between [from] and [to] with [block].
  *
- * See the [Minecraft wiki](https://minecraft.wiki/w/Commands/fill).
+ * The optional [fillOption] selects how the command handles existing blocks, and [strict] makes
+ * the command fail instead of skipping invalid placements.
  *
- * @param fillOption Optional mode controlling how existing blocks are treated.
- * @param strict When true, the command fails hard instead of silently skipping invalid placements.
+ * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/fill)
  */
 fun Function.fill(from: Vec3, to: Vec3, block: BlockArgument, fillOption: FillOption? = null, strict: Boolean = false) =
 	addLine(command("fill", from, to, block, literal(fillOption?.asArg()), literal(if (strict) "strict" else null)))
@@ -35,8 +35,10 @@ fun Function.fill(from: Vec3, to: Vec3, block: BlockArgument, fillOption: FillOp
 /**
  * Fills the cuboid region [[from], [to]] with [block], only replacing blocks matching [filter].
  *
- * @param fillOption Optional `destroy`, `hollow` or `outline` post-processing mode.
- * @param strict When true, fails hard on invalid block states.
+ * This is the filtered `/fill` form; [fillOption] controls the post-processing mode and [strict]
+ * makes the command fail instead of skipping invalid placements.
+ *
+ * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/fill)
  */
 fun Function.fill(
 	from: Vec3,

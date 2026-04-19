@@ -12,6 +12,7 @@ import io.github.ayfri.kore.utils.nbt
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtCompoundBuilder
 
+/** Calls a function in the current datapack by [name], optionally passing NBT [arguments]. */
 fun Function.function(name: String, group: Boolean = false, arguments: NbtCompound? = null) = addLine(
 	command(
 		"function",
@@ -20,6 +21,7 @@ fun Function.function(name: String, group: Boolean = false, arguments: NbtCompou
 	)
 )
 
+/** Calls a function in the current datapack by [name], passing data from [arguments] at [path]. */
 fun Function.function(name: String, group: Boolean = false, arguments: DataArgument, path: String? = null) = addLine(
 	command(
 		"function",
@@ -31,6 +33,7 @@ fun Function.function(name: String, group: Boolean = false, arguments: DataArgum
 	)
 )
 
+/** Calls a function in [namespace] using [name], optionally passing NBT [arguments]. */
 fun Function.function(namespace: String, name: String, group: Boolean = false, arguments: NbtCompound? = null) = addLine(
 	command(
 		"function",
@@ -39,6 +42,7 @@ fun Function.function(namespace: String, name: String, group: Boolean = false, a
 	)
 )
 
+/** Calls a function in [namespace] using [name], passing data from [arguments] at [path]. */
 fun Function.function(namespace: String, name: String, group: Boolean = false, arguments: DataArgument, path: String? = null) = addLine(
 	command(
 		"function",
@@ -50,6 +54,7 @@ fun Function.function(namespace: String, name: String, group: Boolean = false, a
 	)
 )
 
+/** Calls [function], optionally passing NBT [arguments]. */
 fun Function.function(function: FunctionOrTagArgument, arguments: NbtCompound? = null) = addLine(
 	command(
 		"function",
@@ -58,6 +63,7 @@ fun Function.function(function: FunctionOrTagArgument, arguments: NbtCompound? =
 	)
 )
 
+/** Calls [function], passing data from [arguments] at [path]. */
 fun Function.function(function: FunctionOrTagArgument, arguments: DataArgument, path: String? = null) = addLine(
 	command(
 		"function",
@@ -69,6 +75,7 @@ fun Function.function(function: FunctionOrTagArgument, arguments: DataArgument, 
 	)
 )
 
+/** Validates that a macro call provides the required [macros] in [argumentList]. */
 fun verifyArguments(functionId: String, macros: List<String>, argumentList: List<String>) {
 	require(macros.size >= argumentList.size) { "Expected ${macros.size} arguments, but got ${argumentList.size} when calling function '$functionId'" }
 	require(macros.all { it in argumentList }) {
@@ -76,6 +83,7 @@ fun verifyArguments(functionId: String, macros: List<String>, argumentList: List
 	}
 }
 
+/** Calls a macro-enabled [function] with the given NBT [arguments]. */
 inline fun <reified T : Macros> Function.function(function: FunctionWithMacros<T>, arguments: NbtCompound): Command {
 	verifyArguments(function.asId(), function.macros.args.toList(), arguments.keys.toList())
 
@@ -88,6 +96,7 @@ inline fun <reified T : Macros> Function.function(function: FunctionWithMacros<T
 	)
 }
 
+/** Calls a macro-enabled [function] using the provided NBT [builder]. */
 inline fun <reified T : Macros> Function.function(
 	function: FunctionWithMacros<T>,
 	noinline builder: NbtCompoundBuilder.() -> Unit,

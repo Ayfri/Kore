@@ -19,5 +19,13 @@ enum class SetBlockMode {
 	}
 }
 
+/**
+ * Places [block] at [pos].
+ *
+ * The optional [mode] controls what happens when a block is already present, and [strict] makes
+ * the command fail on invalid placements instead of silently ignoring them.
+ *
+ * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/setblock)
+ */
 fun Function.setBlock(pos: Vec3, block: BlockArgument, mode: SetBlockMode? = null, strict: Boolean = false) =
 	addLine(command("setblock", pos, block, literal(mode?.asArg()), literal(if (strict) "strict" else null)))

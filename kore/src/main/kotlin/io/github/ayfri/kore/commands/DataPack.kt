@@ -61,5 +61,8 @@ class DataPacksCommandEntries(private val fn: Function) {
 	fun list() = fn.addLine(command("datapack", literal("list")))
 }
 
+/** Returns the `datapack list` DSL. */
 val Function.dataPacks get() = DataPacksCommandEntries(this)
+
+/** Opens the datapack DSL for the datapack named [name]. */
 fun Function.dataPack(name: String, block: DataPackCommandEntry.() -> Command) = DataPackCommandEntry(this, name).block()

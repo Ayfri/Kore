@@ -9,9 +9,11 @@ import io.github.ayfri.kore.utils.snbtSerializer
 import kotlinx.serialization.encodeToString
 import io.github.ayfri.kore.dataPack as dpFunction
 
+/** Shows [dialog] to [targets]. @see [Minecraft wiki](https://minecraft.wiki/w/Commands/dialog) */
 fun Function.dialogShow(targets: EntityArgument, dialog: DialogArgument) =
 	addLine(command("dialog", literal("show"), targets, dialog))
 
+/** Builds a dialog with [block] and shows its first entry to [targets]. @see [Minecraft wiki](https://minecraft.wiki/w/Commands/dialog) */
 fun Function.dialogShow(targets: EntityArgument, block: DialogContainer.() -> DialogArgument): Command {
 	val tempDp = dpFunction( "") {}
 	DialogContainer(tempDp).block()
@@ -19,4 +21,5 @@ fun Function.dialogShow(targets: EntityArgument, block: DialogContainer.() -> Di
 	return addLine(command("dialog", literal("show"), targets, literal(snbtSerializer.encodeToString(tempDp.dialogs.first()))))
 }
 
+/** Clears any dialog currently shown to [targets]. @see [Minecraft wiki](https://minecraft.wiki/w/Commands/dialog) */
 fun Function.dialogClear(targets: EntityArgument) = addLine(command("dialog", literal("clear"), targets))

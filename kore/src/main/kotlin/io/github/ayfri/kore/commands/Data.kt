@@ -15,6 +15,15 @@ import net.benwoodworth.knbt.StringifiedNbt
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 
+/**
+ * Helpers that build the low-level `/data` subcommands used throughout Kore.
+ *
+ * This file is the bridge between the high-level DSL and the raw Minecraft data command:
+ * read a value with `get`, copy data with `merge` or `modify`, and update NBT paths with the
+ * various `set` / `append` / `insert` helpers.
+ *
+ * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/data)
+ */
 object DataModifyOperation {
 	fun append(from: DataArgument, path: String) =
 		listOf(literal("append"), literal("from"), literal(from.literalName), from, literal(path))
@@ -77,18 +86,50 @@ object DataModifyOperation {
 		listOf(literal("set"), literal("value"), literal(StringifiedNbt.encodeToString(value)))
 }
 
+/**
+ * Builder bound to a single `/data` target.
+ *
+ * Use this when several data operations should target the same storage, block, or entity path.
+ *
+ * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/data)
+ */
 class Data(val fn: Function, val target: DataArgument) {
+	/**
+	 * Reads the value stored at [path] and optionally scales numeric output.
+	 *
+	 * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/data)
+	 */
 	operator fun get(path: String? = null, scale: Double? = null) =
 		fn.addLine(command("data", literal("get"), literal(target.literalName), target, literal(path), float(scale)))
 
+	/**
+	 * Merges [data] into the bound target.
+	 *
+	 * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/data)
+	 */
 	fun merge(data: NbtTag) =
 		fn.addLine(command("data", literal("merge"), literal(target.literalName), target, literal(StringifiedNbt.encodeToString(data))))
 
+	/**
+	 * Merges the compound built by [block] into the bound target.
+	 *
+	 * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/data)
+	 */
 	fun merge(block: NbtCompoundBuilder.() -> Unit) = merge(nbt(block))
 
+	/**
+	 * Merges a serializable value into the bound target.
+	 *
+	 * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/data)
+	 */
 	inline fun <reified T : Any> merge(data: @Serializable T) =
 		fn.addLine(command("data", literal("merge"), literal(target.literalName), target, literal(StringifiedNbt.encodeToString(data))))
 
+	/**
+	 * Applies a `/data modify` operation to the bound target at [path].
+	 *
+	 * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/data)
+	 */
 	fun modify(path: String, value: DataModifyOperation.() -> List<Argument>) =
 		fn.addLine(
 			command(
@@ -101,23 +142,40 @@ class Data(val fn: Function, val target: DataArgument) {
 			)
 		)
 
+	/** Copies the value from [from]/[fromPath] into [path]. */
 	fun modify(path: String, from: DataArgument, fromPath: String) = modify(path) { set(from, fromPath) }
+	/** Writes [value] into [path]. */
 	fun modify(path: String, value: NbtTag) = modify(path) { set(value) }
+	/** Writes [value] into [path]. */
 	fun modify(path: String, value: Int) = modify(path) { set(value) }
+	/** Writes [value] into [path]. */
 	fun modify(path: String, value: Float) = modify(path) { set(value) }
+	/** Writes [value] into [path]. */
 	fun modify(path: String, value: String) = modify(path) { set(value) }
+	/** Writes [value] into [path]. */
 	fun modify(path: String, value: Boolean) = modify(path) { set(value) }
+	/** Writes [value] into [path]. */
 	inline fun <reified T : Any> modify(path: String, value: @Serializable T) = modify(path) { set(value) }
 
+	/** Removes the value stored at [path]. */
 	fun remove(path: String) = fn.addLine(command("data", literal("remove"), literal(target.literalName), target, literal(path)))
 
+	/** Copies [value] into [path]. */
 	operator fun set(path: String, value: NbtTag) = modify(path) { set(value) }
+	/** Copies [value] into [path]. */
 	operator fun set(path: String, value: Int) = modify(path) { set(value) }
+	/** Copies [value] into [path]. */
 	operator fun set(path: String, value: Float) = modify(path) { set(value) }
+	/** Copies [value] into [path]. */
 	operator fun set(path: String, value: String) = modify(path) { set(value) }
+	/** Copies [value] into [path]. */
 	operator fun set(path: String, value: Boolean) = modify(path) { set(value) }
+	/** Copies [value] into [path]. */
 	inline operator fun <reified T : Any> set(path: String, value: @Serializable T) = modify(path) { set(value) }
 }
 
+/** Opens the reusable [/data](https://minecraft.wiki/w/Commands/data) DSL bound to [target]. */
 fun Function.data(target: DataArgument, block: Data.() -> Command) = Data(this, target).block()
+
+/** Returns the reusable [/data](https://minecraft.wiki/w/Commands/data) DSL bound to [target]. */
 fun Function.data(target: DataArgument) = Data(this, target)
