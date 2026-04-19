@@ -191,7 +191,7 @@ in [Contributing: Architecture and Patterns][architecture].
 For `kore` changes, the baseline check is:
 
 ```bash
-./gradlew :kore:runUnitTests
+./gradlew :kore:test
 ```
 
 Before opening the PR, verify that:

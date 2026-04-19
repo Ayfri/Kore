@@ -86,8 +86,10 @@ Run the checks that match the modules you changed.
 
 Typical commands:
 
-- `./gradlew :bindings:runUnitTests` for `bindings` changes.
-- `./gradlew :kore:runUnitTests` for core DSL changes.
+- `./gradlew :bindings:test` for `bindings` changes.
+- `./gradlew :kore:test` for core DSL changes.
+- `./gradlew :oop:test` for OOP module changes.
+- `./gradlew :helpers:test` for helpers module changes.
 - Your local website workflow when you touched docs navigation or page structure.
 
 Validation checklist:

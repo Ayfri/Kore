@@ -339,7 +339,7 @@ datapacks.forEach { pack ->
 ### Testing
 
 ```bash
-./gradlew :bindings:runUnitTests
+./gradlew :bindings:test
 ```
 
 ## Implementation Notes
