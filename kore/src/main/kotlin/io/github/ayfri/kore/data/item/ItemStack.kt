@@ -18,7 +18,7 @@ data class ItemStack(
 		itemArgument.components?.toComponents()
 	)
 
-	fun toItemArgument() = ItemArgument(id.substringBefore(":"), id.substringAfter(":"), components?.toPatch())
+	fun toItemArgument() = ItemArgument(id.substringAfter(":"), id.substringBefore(":"), components?.toPatch())
 
 	fun toItemStackSubPredicate() = ItemStackSubPredicate(
 		count = count?.toInt()?.let { rangeOrInt(it) },

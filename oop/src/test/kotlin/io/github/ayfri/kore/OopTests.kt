@@ -59,6 +59,12 @@ fun oopTests() = testDataPack("oop") {
 		lines.size assertsIs 1
 	}
 
+	function("item_stack_roundtrip") {
+		val item = itemStack(Items.DIAMOND_SWORD)
+
+		item.toItemArgument().asId() assertsIs "minecraft:diamond_sword"
+	}
+
 	function("execute_as") {
 		val player = player("Ayfri") {
 			gamemode = Gamemode.SURVIVAL
