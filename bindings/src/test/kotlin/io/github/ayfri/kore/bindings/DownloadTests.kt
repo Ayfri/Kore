@@ -24,6 +24,8 @@ fun testParsingLogic() = newTest("parsing-logic") {
 	ghRef.repo assertsIs "repo"
 	ghRef.tag assertsIs "tag"
 	ghRef.assetName assertsIs "asset.zip"
+	GitHubDownloader.buildApiHeaders(null).isEmpty() assertsIs true
+	GitHubDownloader.buildApiHeaders("token_123")["Authorization"] assertsIs "Bearer token_123"
 
 	// Modrinth
 	val mrRef = ModrinthDownloader.parseReference("slug:version")

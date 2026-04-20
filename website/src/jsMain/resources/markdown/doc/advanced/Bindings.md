@@ -5,7 +5,7 @@ nav-title: Bindings
 description: Import existing datapacks and generate Kotlin bindings.
 keywords: kore, bindings, import, datapack, github, modrinth, curseforge
 date-created: 2026-01-23
-date-modified: 2026-04-20
+date-modified: 2026-04-21
 routeOverride: /docs/advanced/bindings
 position: 3
 ---
@@ -158,6 +158,9 @@ pack.functions.forEach { println(" - ${it.id}") }
 ### GitHub
 
 Downloads a repository or a specific asset from a release.
+
+For higher API rate limits (or when your environment requires authenticated GitHub API access), set
+`GITHUB_API_KEY` as an environment variable or `github.api.key` as a system property.
 
 Patterns:
 

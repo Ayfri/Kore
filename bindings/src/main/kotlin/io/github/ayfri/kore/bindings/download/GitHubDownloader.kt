@@ -11,7 +11,11 @@ import java.nio.file.Path
  *
  * Tag parameter is optional. If omitted, uses the default branch (usually main/master).
  *
- * No API key required - uses public GitHub APIs with standard rate limiting.
+ * Optional authentication can be provided through:
+ * - `GITHUB_API_KEY` environment variable
+ * - `github.api.key` system property
+ *
+ * Without a key, public GitHub APIs are still used with standard rate limiting.
  */
 data object GitHubDownloader : Downloader {
 	private const val GITHUB_API_BASE = "https://api.github.com"
@@ -28,6 +32,13 @@ data object GitHubDownloader : Downloader {
 			else -> downloadDefaultBranch(ref, skipCache)
 		}
 	}
+
+	internal fun buildApiHeaders(apiKey: String?) = apiKey
+		?.takeIf { it.isNotBlank() }
+		?.let { mapOf("Authorization" to "Bearer $it") }
+		?: emptyMap()
+
+	private fun apiHeaders() = buildApiHeaders(System.getenv("GITHUB_API_KEY") ?: System.getProperty("github.api.key"))
 
 	/**
 	 * Represents a parsed GitHub reference.
@@ -85,7 +96,7 @@ data object GitHubDownloader : Downloader {
 	private fun downloadReleaseAsset(ref: GitHubRef, skipCache: Boolean): Pair<Path, String> {
 		// Get release data from API
 		val releaseUrl = "$GITHUB_API_BASE/repos/${ref.owner}/${ref.repo}/releases/tags/${ref.tag}"
-		val releaseJson = fetchJsonString(releaseUrl)
+		val releaseJson = fetchJsonString(releaseUrl, apiHeaders())
 
 		// Parse out the browser_download_url field for the matching asset
 		val assetNameEscaped = ref.assetName!!.replace(".", "\\.")
@@ -135,7 +146,7 @@ data object GitHubDownloader : Downloader {
 	private fun downloadDefaultBranch(ref: GitHubRef, skipCache: Boolean): Pair<Path, String> {
 		// Get repository info to find default branch
 		val repoUrl = "$GITHUB_API_BASE/repos/${ref.owner}/${ref.repo}"
-		val repoJson = fetchJsonString(repoUrl)
+		val repoJson = fetchJsonString(repoUrl, apiHeaders())
 
 		// Extract default_branch from JSON
 		val branchPattern = """"default_branch"\s*:\s*"([^"]+)"""".toRegex()
