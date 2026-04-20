@@ -5,7 +5,7 @@ nav-title: Commands
 description: A comprehensive guide for using commands in Kore datapacks.
 keywords: minecraft, datapack, kore, guide, commands, execute, data, teleport
 date-created: 2026-02-03
-date-modified: 2026-02-03
+date-modified: 2026-04-19
 routeOverride: /docs/commands/commands
 ---
 
@@ -46,7 +46,7 @@ The `teleport` (or
 ```kotlin
 function("teleport_examples") {
 	// Teleport to coordinates
-	teleport(allPlayers(), 100.0, 64.0, 100.0)
+	teleport(allPlayers(), vec3(100, 64, 100))
 
 	// Teleport to another entity
 	teleport(allPlayers(), self())
@@ -153,10 +153,9 @@ The
 
 ```kotlin
 function("time_control") {
-	time.set(TimeType.DAY)
-	time.set(6000)
-	time.add(1000)
-	time.query(TimeQuery.DAYTIME)
+	time.add(1.days)
+	time.set(TimePeriod.DAY)
+	time.query(TimeType.DAYS)
 }
 ```
 
@@ -176,9 +175,9 @@ The
 
 ```kotlin
 function("weather_control") {
-	weather.clear()
-	weather.rain(6000)
-	weather.thunder()
+	weatherClear()
+	weatherRain(6000)
+	weatherThunder()
 }
 ```
 
