@@ -47,6 +47,16 @@ class DatapackConfiguration {
 	 */
 	var packageName: String? = null
 	/**
+	 * Optional request body used for HTTP(S) `url(...)` sources.
+	 */
+	var requestBody: String? = null
+
+	/**
+	 * Extra request headers used for HTTP(S) `url(...)` sources.
+	 */
+	var requestHeaders: Map<String, String> = emptyMap()
+
+	/**
 	 * Override the generated Kotlin object name.
 	 */
 	@Deprecated("Use remappings { objectName(...) } instead", level = DeprecationLevel.WARNING)
@@ -61,6 +71,28 @@ class DatapackConfiguration {
 	 * Select a subfolder within the downloaded datapack.
 	 */
 	var subPath: String? = null
+
+	/**
+	 * Sets the request body for HTTP(S) `url(...)` sources.
+	 */
+	fun body(value: String) {
+		requestBody = value
+	}
+
+	/**
+	 * Adds one request header for HTTP(S) `url(...)` sources.
+	 */
+	fun header(key: String, value: String) {
+		requestHeaders = requestHeaders + (key to value)
+	}
+
+	/**
+	 * Replaces all request headers for HTTP(S) `url(...)` sources.
+	 */
+	fun headers(values: Map<String, String>) {
+		requestHeaders = values
+	}
+
 	/**
 	 * Configures namespace remappings for this datapack.
 	 */

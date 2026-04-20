@@ -100,7 +100,10 @@ class DatapackImportDsl {
 	/**
 	 * Add a datapack to import from an URL or local path.
 	 */
-	fun url(source: URL, block: DatapackConfiguration.() -> Unit = {}) = url(Paths.get(source.toURI()).toString(), block)
+	fun url(source: URL, block: DatapackConfiguration.() -> Unit = {}) {
+		val value = if (source.protocol == "file") Paths.get(source.toURI()).toString() else source.toExternalForm()
+		url(value, block)
+	}
 
 	/**
 	 * Add a datapack to import from a local file path.
@@ -115,6 +118,8 @@ class DatapackImportDsl {
 		importer.outputPath(globalConfig.outputPath)
 		importer.skipCache = globalConfig.skipCache
 		importer.debug = globalConfig.debug
+		importer.requestBody = datapackConfig.requestBody
+		importer.requestHeaders = datapackConfig.requestHeaders
 
 		// Apply per-datapack configuration
 		if (datapackConfig.packageName != null) {
@@ -151,8 +156,11 @@ class DatapackImportDsl {
 	/**
 	 * Explore all configured datapacks without generating code.
 	 */
-	internal fun exploreAll() = datapacks.map { (source, _) ->
-		DatapackImporter(source).explore()
+	internal fun exploreAll() = datapacks.map { (source, datapackConfig) ->
+		DatapackImporter(source).apply {
+			requestBody = datapackConfig.requestBody
+			requestHeaders = datapackConfig.requestHeaders
+		}.explore()
 	}
 }
 

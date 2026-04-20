@@ -18,7 +18,9 @@ internal class DatapackImporter(val source: String) {
 	var includes: List<String> = emptyList()
 	var outputDirectory: Path? = null
 	var packageNameOverride: String? = null
-	var remappings: RemappingState = RemappingState(emptyMap(), null)
+	var remappings: RemappingState = RemappingState(emptyMap())
+	var requestBody: String? = null
+	var requestHeaders: Map<String, String> = emptyMap()
 	var skipCache: Boolean = false
 	var subPath: String? = null
 
@@ -38,7 +40,7 @@ internal class DatapackImporter(val source: String) {
 	 * Resolves the source to a local path and returns the actual filename.
 	 * Downloads the file if it's a URL or GitHub reference, or locates it on the local filesystem.
 	 */
-	private fun resolveSource() = Downloaders.download(source, skipCache)
+	private fun resolveSource() = Downloaders.download(source, skipCache, requestBody, requestHeaders)
 
 	/**
 	 * Explores the datapack structure and returns metadata without generating code.

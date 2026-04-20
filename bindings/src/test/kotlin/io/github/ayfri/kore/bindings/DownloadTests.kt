@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.bindings
 
+import io.github.ayfri.kore.bindings.api.DatapackConfiguration
 import io.github.ayfri.kore.bindings.api.DatapackImportDsl
 import io.github.ayfri.kore.bindings.api.exploreDatapacks
 import io.github.ayfri.kore.bindings.download.CurseForgeDownloader
@@ -26,6 +27,13 @@ fun testParsingLogic() = newTest("parsing-logic") {
 	ghRef.assetName assertsIs "asset.zip"
 	GitHubDownloader.buildApiHeaders(null).isEmpty() assertsIs true
 	GitHubDownloader.buildApiHeaders("token_123")["Authorization"] assertsIs "Bearer token_123"
+	val config = DatapackConfiguration().apply {
+		body("{\"hello\":\"world\"}")
+		header("Authorization", "Bearer token")
+		headers(mapOf("Accept" to "application/json"))
+	}
+	config.requestBody assertsIs "{\"hello\":\"world\"}"
+	config.requestHeaders["Accept"] assertsIs "application/json"
 
 	// Modrinth
 	val mrRef = ModrinthDownloader.parseReference("slug:version")

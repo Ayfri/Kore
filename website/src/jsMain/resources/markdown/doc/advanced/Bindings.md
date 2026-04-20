@@ -237,6 +237,9 @@ github("user.repo") {
 	subPath = "datapacks/main"    // Only import from this subfolder
 	includes = listOf("data/**")  // Only include files matching these patterns
 	excludes = listOf("**/test/**") // Exclude files matching these patterns
+	body("{\"token\":\"abc123\"}") // Optional HTTP request body for url("https://...") sources
+	header("Authorization", "Bearer your-token") // Add one request header for url("https://...")
+	headers(mapOf("Accept" to "application/zip")) // Replace all request headers for url("https://...")
 
 	remappings {
 		objectName("MyPack")                           // Change the generated object name
@@ -247,6 +250,9 @@ github("user.repo") {
 
 > [!NOTE]
 > The `remappedName` property is deprecated. Use `remappings { objectName("...") }` instead.
+
+For HTTP(S) sources declared with `url("https://...")`, you can customize request payload and headers from the
+per-datapack block with `body("...")`, `header("key", "value")`, and `headers(mapOf(...))`.
 
 ### Namespace normalization
 

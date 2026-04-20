@@ -1,15 +1,13 @@
 package io.github.ayfri.kore.bindings
 
+import java.net.HttpURLConnection
 import java.net.URI
 import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.createDirectories
-import kotlin.io.path.exists
-import kotlin.io.path.fileSize
-import kotlin.io.path.Path
+import kotlin.io.path.*
 
 private val cacheDir: Path by lazy {
 	val os = System.getProperty("os.name").lowercase()
@@ -33,13 +31,33 @@ private val cacheDir: Path by lazy {
  * @param url The URL to download from
  * @param skipCache If true, always redownload the file even if cached
  */
-fun getFromCacheOrDownload(url: String, skipCache: Boolean = false): Pair<Path, String> {
+fun getFromCacheOrDownload(url: String, skipCache: Boolean = false) =
+	getFromCacheOrDownload(url, null, emptyMap(), skipCache)
+
+fun getFromCacheOrDownload(
+	url: String,
+	requestBody: String?,
+	requestHeaders: Map<String, String>,
+	skipCache: Boolean = false,
+): Pair<Path, String> {
 	// Extract filename from URL and decode it
 	val encodedFileName = url.substringAfterLast('/').ifEmpty { "datapack.zip" }
 	val decodedFileName = URLDecoder.decode(encodedFileName, "UTF-8")
 
-	// Use a hash of the URL as cache key to handle different URLs with same filename
-	val cacheKey = url.hashCode().toString(16)
+	// Include request options in cache key so different authenticated/custom payload downloads don't collide.
+	val cacheFingerprint = buildString {
+		append(url)
+		append('|')
+		append(requestBody ?: "")
+		append('|')
+		append(
+			requestHeaders
+				.entries
+				.sortedBy { it.key }
+				.joinToString("&") { (key, value) -> "$key=$value" }
+		)
+	}
+	val cacheKey = cacheFingerprint.hashCode().toString(16)
 	val cachedFile = cacheDir.resolve("$cacheKey-$decodedFileName")
 
 	if (cachedFile.exists() && !skipCache) {
@@ -56,7 +74,20 @@ fun getFromCacheOrDownload(url: String, skipCache: Boolean = false): Pair<Path, 
 	}
 
 	try {
-		val connection = URI.create(url).toURL().openConnection()
+		val connection = URI.create(url).toURL().openConnection() as HttpURLConnection
+		requestHeaders.forEach { (key, value) -> connection.setRequestProperty(key, value) }
+
+		if (requestBody != null) {
+			val bodyBytes = requestBody.toByteArray(StandardCharsets.UTF_8)
+			connection.requestMethod = "POST"
+			connection.doOutput = true
+			connection.setRequestProperty("Content-Length", bodyBytes.size.toString())
+			if (!requestHeaders.keys.any { it.equals("Content-Type", ignoreCase = true) }) {
+				connection.setRequestProperty("Content-Type", "application/json; charset=utf-8")
+			}
+			connection.outputStream.use { output -> output.write(bodyBytes) }
+		}
+
 		connection.connect()
 		connection.getInputStream().use { input ->
 			Files.copy(input, cachedFile, StandardCopyOption.REPLACE_EXISTING)

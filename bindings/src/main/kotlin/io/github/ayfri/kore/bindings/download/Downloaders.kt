@@ -23,9 +23,18 @@ data object Downloaders {
 		}
 	}
 
-	fun download(source: String, skipCache: Boolean = false): Pair<Path, String> {
+	fun download(
+		source: String,
+		skipCache: Boolean = false,
+		requestBody: String? = null,
+		requestHeaders: Map<String, String> = emptyMap(),
+	): Pair<Path, String> {
 		val downloader = downloaders.find { it.match(source) }
 			?: throw IllegalArgumentException("No downloader found for source: $source")
-		return downloader.download(source, skipCache)
+		return if (downloader == UrlDownloader) {
+			UrlDownloader.download(source, skipCache, requestBody, requestHeaders)
+		} else {
+			downloader.download(source, skipCache)
+		}
 	}
 }
