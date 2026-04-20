@@ -5,7 +5,7 @@ nav-title: Bindings
 description: Import existing datapacks and generate Kotlin bindings.
 keywords: kore, bindings, import, datapack, github, modrinth, curseforge
 date-created: 2026-01-23
-date-modified: 2026-03-31
+date-modified: 2026-04-20
 routeOverride: /docs/advanced/bindings
 position: 3
 ---
@@ -37,6 +37,11 @@ dependencies {
 
 ## Quick start
 
+1. Add the dependency.
+2. Import `importDatapacks`.
+3. Configure the output directory and package prefix.
+4. Declare at least one source pack.
+
 ```kotlin
 import io.github.ayfri.kore.bindings.api.importDatapacks
 
@@ -49,12 +54,12 @@ importDatapacks {
 	github("pixigeko.minecraft-default-data:1.21.8") {
 		subPath = "data"
 	}
-
-	modrinth("vanilla-refresh")
-	curseforge("repurposed-structures-illager-invasion-compat")
-	url("https://example.com/pack.zip")
 }
 ```
+
+This example generates bindings into `src/main/kotlin` under the `kore.dependencies` package. If you need another
+source, replace `github(...)` with `modrinth(...)`, `curseforge(...)`, or `url(...)`.
+Those are explained below in the [Download sources](#download-sources) section.
 
 ## Using generated bindings
 
@@ -90,9 +95,14 @@ Tags are also imported and can be used wherever a tag of that type is expected:
 
 ```kotlin
 function("my_function") {
-	// Check if the item is in an imported item tag
+	// Wrap the imported tag in an item predicate so `execute` can read it.
 	execute {
-		`if`(entity(self), items(VanillaRefresh.Tags.Items.MY_CUSTOM_TAG))
+		ifCondition {
+			// Check if the nearest player has the tagged item in their cursor.
+			items(nearestPlayer(), PLAYER.CURSOR, itemPredicate {
+				itemArgument = VanillaRefresh.Tags.Items.MY_CUSTOM_TAG
+			})
+		}
 	}
 }
 ```
@@ -195,6 +205,10 @@ Patterns:
 - `https://example.com/pack.zip`
 - `./path/to/pack` (Local folder)
 - `./path/to/pack.zip` (Local zip)
+
+```kotlin
+url("https://example.com/pack.zip")
+```
 
 ## Configuration
 
