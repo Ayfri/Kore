@@ -36,7 +36,7 @@ fun getCacheDir(): File {
 		}
 		current ?: it
 	}
-	return rootDir.resolve("importing/build/cache").toFile().apply { mkdirs() }
+	return rootDir.resolve("bindings/build/cache").toFile().apply { mkdirs() }
 }
 
 /**
