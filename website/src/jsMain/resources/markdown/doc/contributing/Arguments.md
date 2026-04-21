@@ -1,12 +1,12 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Contributing: Arguments Internals
+title: "Contributing: Arguments Internals"
 nav-title: Arguments Internals
 description: Contributor-facing overview of Kore's argument system, including Argument, literals, resource-location wrappers, and tag-aware abstractions.
 keywords: minecraft, datapack, kore, arguments, internals, contributors, resources, tags, commands
 date-created: 2026-04-21
 date-modified: 2026-04-21
-routeOverride: /docs/concepts/arguments
+routeOverride: /docs/contributing/arguments
 ---
 
 # Contributing: Arguments Internals
