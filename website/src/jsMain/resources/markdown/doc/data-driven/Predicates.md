@@ -430,7 +430,8 @@ Predicates can be invoked in commands in two ways:
 
 ### Execute If Predicate
 
-Use `/execute if predicate` to conditionally run commands:
+Use `/execute if predicate` to conditionally run commands. If you need a refresher on the surrounding execution DSL,
+the [Commands](/docs/commands/commands) page covers the broader command surface:
 
 ```kotlin
 function("test") {
@@ -447,7 +448,8 @@ function("test") {
 
 ### Target Selector Argument
 
-Use the `predicate=` selector argument to filter entities:
+Use the `predicate=` selector argument to filter entities. This pairs naturally with Kore's
+typed [Selectors](/docs/concepts/selectors):
 
 ```kotlin
 function("filter_entities") {
@@ -458,7 +460,9 @@ function("filter_entities") {
 
 ### Pairing with Inventory Manager
 
-Predicates excel at validating complex item properties. When you need to both validate and actively manage inventories (e.g., keep a GUI slot populated with an item matching specific components), use them alongside the [Inventory Manager](./helpers/inventory-manager).
+Predicates excel at validating complex item properties. When you need to both validate and actively manage inventories (
+e.g., keep a GUI slot populated with an item matching specific [Components](/docs/concepts/components)), use them
+alongside the [Inventory Manager](/docs/helpers/inventory-manager).
 
 ## Item Predicates
 
@@ -477,7 +481,8 @@ predicate("enchanted_tool") {
 
 ## Referencing Other Predicates
 
-Use the `reference` condition to invoke another predicate file:
+Use the `reference` condition to invoke another predicate file, which keeps larger predicate sets composable in the same
+spirit as helper extraction in the [Cookbook](/docs/guides/cookbook):
 
 ```kotlin
 val basePredicate = predicate("base_check") {
@@ -510,12 +515,10 @@ Predicates are powerful tools for creating complex conditions in your datapack. 
 - [Loot Tables](/docs/data-driven/loot-tables) - Use predicates as conditions for loot entries
 - [Advancements](/docs/data-driven/advancements) - Use predicates as trigger conditions
 - [Item Modifiers](/docs/data-driven/item-modifiers) - Modify items conditionally with predicates
-- [Components](/docs/concepts/components) - Item and entity data components used in predicate checks
-- [Commands](/docs/commands/commands) - Using predicates with `/execute if predicate`
 - [Inventory Manager](/docs/helpers/inventory-manager) - Pair predicates with inventory management
-- [Tags](/docs/data-driven/tags) - Use tags in predicate conditions
 
 ### External Resources
 
 - [Minecraft Wiki: Predicate](https://minecraft.wiki/w/Predicate) - Official JSON format reference
 - [Minecraft Wiki: Loot context](https://minecraft.wiki/w/Loot_context) - Understanding loot contexts for conditions
+

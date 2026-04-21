@@ -5,7 +5,7 @@ nav-title: Commands
 description: A comprehensive guide for using commands in Kore datapacks.
 keywords: minecraft, datapack, kore, guide, commands, execute, data, teleport
 date-created: 2026-02-03
-date-modified: 2026-04-19
+date-modified: 2026-04-21
 routeOverride: /docs/commands/commands
 ---
 
@@ -13,7 +13,8 @@ routeOverride: /docs/commands/commands
 
 Kore provides type-safe builders for all Minecraft commands. This page covers both simple and complex command usage with examples.
 
-Commands are used inside [Functions](./functions) to perform actions in the game. For dynamic command arguments, see [Macros](./macros).
+Commands are used inside [Functions](/docs/commands/functions) to perform actions in the game. For dynamic command
+arguments, see [Macros](/docs/commands/macros).
 
 ## Simple Commands
 
@@ -22,7 +23,8 @@ Simple commands are straightforward and take basic arguments like strings, numbe
 ### Say Command
 
 The
-`say` command broadcasts a message to all players in the chat. The message appears with the sender's name (the entity executing the command). For more advanced chat formatting, see [Chat Components](../concepts/chat_components).
+`say` command broadcasts a message to all players in the chat. The message appears with the sender's name (the entity
+executing the command). For more advanced chat formatting, see [Chat Components](/docs/concepts/chat-components).
 
 ```kotlin
 function("greetings") {
@@ -67,7 +69,8 @@ tp @s 0 100 0 0 90
 ### Give Command
 
 The
-`give` command adds items directly to a player's inventory. If the inventory is full, items drop on the ground. You can specify item count and use [Components](../concepts/components) for custom item data.
+`give` command adds items directly to a player's inventory. If the inventory is full, items drop on the ground. You can
+specify item count and use [Components](/docs/concepts/components) for custom item data.
 
 ```kotlin
 function("give_items") {
@@ -253,8 +256,9 @@ fill 0 64 0 10 70 10 minecraft:glass hollow
 
 ### Enchant Command
 
-The
-`enchant` command adds an enchantment to the item held by the target entity. The enchantment must be compatible with the item type. For more control over enchantments, see [Enchantments](../data-driven/enchantments).
+The `enchant` command adds an enchantment to the item held by the target entity.
+The enchantment must be compatible with the item type. For more control over enchantments,
+see [Enchantments](/docs/data-driven/enchantments).
 
 ```kotlin
 function("enchant_examples") {
@@ -406,7 +410,8 @@ execute if stopwatch my_datapack:my_timer 100 run say Timer reached 100 ticks!
 ### Message Commands
 
 The `msg` command (aliases: `tell`, `w`) sends a private message to a specific player. The `teammsg` command (alias:
-`tm`) sends a message to all members of the sender's team. See [Scoreboards](../concepts/scoreboards) for team management.
+`tm`) sends a message to all members of the sender's team. See [Scoreboards](/docs/concepts/scoreboards) for team
+management.
 
 ```kotlin
 function("message_examples") {
@@ -489,7 +494,7 @@ The `execute` command is one of the most powerful commands in Minecraft. It allo
 - Store command results in scores or NBT
 - Chain multiple modifiers together
 
-Use `execute` with [Predicates](../data-driven/predicates) for complex conditions.
+Use `execute` with [Predicates](/docs/data-driven/predicates) for complex conditions.
 
 #### Basic Execute
 
@@ -771,7 +776,9 @@ data remove entity @s Tags[0]
 ### Scoreboard Command
 
 The
-`scoreboard` command manages objectives (score types) and player/entity scores. Scoreboards are essential for tracking game state, creating timers, and building game mechanics. See [Scoreboards](../concepts/scoreboards) for detailed usage.
+`scoreboard` command manages objectives (score types) and player/entity scores. Scoreboards are essential for tracking
+game state, creating timers, and building game mechanics. See [Scoreboards](/docs/concepts/scoreboards) for detailed
+usage.
 
 ```kotlin
 function("scoreboard_examples") {
@@ -814,7 +821,8 @@ function("bossbar_examples") {
 ### Team Command
 
 The
-`team` command creates and manages teams for players and entities. Teams control PvP (friendly fire), name tag visibility, collision, and chat colors. See [Scoreboards](../concepts/scoreboards) for more on teams.
+`team` command creates and manages teams for players and entities. Teams control PvP (friendly fire), name tag
+visibility, collision, and chat colors. See [Scoreboards](/docs/concepts/scoreboards) for more on teams.
 
 ```kotlin
 function("team_examples") {
@@ -852,7 +860,9 @@ function("attribute_examples") {
 ### Schedule Command
 
 The
-`schedule` command delays function execution by a specified time. Useful for timers, cooldowns, and delayed effects. Time can be specified in ticks, seconds, or days. See [Scheduler Helper](../helpers/scheduler) for advanced scheduling patterns.
+`schedule` command delays function execution by a specified time. Useful for timers, cooldowns, and delayed effects.
+Time can be specified in ticks, seconds, or days. See [Scheduler Helper](/docs/helpers/scheduler) for advanced
+scheduling patterns.
 
 ```kotlin
 function("schedule_examples") {
@@ -1145,7 +1155,10 @@ worldborder get
 
 ## Selectors
 
-Selectors target entities in the world. Kore provides type-safe selector builders with filters for entity type, distance, scores, NBT, and more:
+Selectors target entities in the world.
+Kore provides type-safe selector builders with filters for entity type, distance, scores, NBT, and more.
+If you want a selector-focused walkthrough beyond the command examples below, read
+the [Selectors](/docs/concepts/selectors) page alongside this reference:
 
 ```kotlin
 function("selector_examples") {
@@ -1203,12 +1216,12 @@ Generated output:
 $say Hello, $(player_name)!
 ```
 
-For detailed macro usage including macro classes and validation, see [Macros](./macros).
+For detailed macro usage including macro classes and validation, see [Macros](/docs/commands/macros).
 
 ## Raw Commands
 
 For commands not yet supported by Kore or for special cases, use
-`addLine`. This is also useful when working with [Macros](./macros) for fully dynamic commands:
+`addLine`. This is also useful when working with [Macros](/docs/commands/macros) for fully dynamic commands:
 
 ```kotlin
 function("raw_commands") {
@@ -1240,13 +1253,15 @@ Generated output:
 mymod @s 42
 ```
 
+For broader composition patterns such as extracting reusable wrappers around commands,
+the [Cookbook](/docs/guides/cookbook) gives more realistic project-scale examples.
+
 ## See Also
 
 - [Functions](/docs/commands/functions) - Create and organize command functions
 - [Macros](/docs/commands/macros) - Dynamic command arguments
-- [Predicates](/docs/data-driven/predicates) - Conditions for execute if predicate
 - [Chat Components](/docs/concepts/chat-components) - Formatted text in commands
-- [Tags](/docs/data-driven/tags) - Use tags in commands and selectors
+- [Cookbook](/docs/guides/cookbook) - Practical command composition patterns in real datapacks
 
 ### External Resources
 

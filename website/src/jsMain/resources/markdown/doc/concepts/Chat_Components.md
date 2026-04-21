@@ -13,7 +13,7 @@ routeOverride: /docs/concepts/chat-components
 
 Chat Components are used to create rich text messages in Minecraft. They can include formatting, interactivity, and nested components. Kore
 has functions to create and manipulate Chat Components in a datapack.<br>
-Note that they always works by groups named `ChatComponents`, whenever you create a chat component, you actually create a
+Note that they always work by groups named `ChatComponents`, whenever you create a chat component, you actually create a
 `ChatComponents`, and you can chain multiple components together using the `+` operator.
 
 Minecraft sometimes does not allow "complex" chat components with data resolving (`score`, `nbt` and
@@ -57,7 +57,7 @@ val plainText = textComponent("Hello, world!") {
 In-game output:<br>
 ![Simple Hello World in bold red](/doc/chat-components/hello-world.png)
 
-See how to set custom colors in the [Colors](./colors) article.
+See how to set custom colors in the [Colors](/docs/concepts/colors) article.
 
 ### Combined Components
 
@@ -270,3 +270,4 @@ In-game output:<br>
 
 These components respect the same formatting as any other chat component, so you can still chain them, color them, or attach hover and click
 behaviors.
+

@@ -234,7 +234,7 @@ advancement("conditional_criteria") {
 }
 ```
 
-For a complete guide on predicates, see the [Predicates](./predicates) documentation.
+For a complete guide on predicates, see the [Predicates](/docs/data-driven/predicates) documentation.
 
 ## Triggers
 
@@ -301,7 +301,7 @@ Triggers are the events that activate criteria. Kore supports all vanilla trigge
 | `villagerTrade`                | Player trades with villager               |
 | `voluntaryExile`               | Player gets Bad Omen                      |
 
-For detailed trigger documentation, see the [Triggers](./advancements/triggers) page.
+For detailed trigger documentation, see the [Triggers](/docs/data-driven/advancements/triggers) page.
 
 ### Trigger Examples
 
@@ -639,13 +639,14 @@ Verify criteria trigger correctly in-game before releasing your data pack.
 
 ## See Also
 
-- [Triggers](./advancements/triggers) - Complete trigger reference
-- [Predicates](./predicates) - Conditions for advancement criteria
-- [Loot Tables](./loot-tables) - Loot rewards
-- [Functions](../commands/functions) - Function rewards
-- [Tags](./tags) - Use tags in conditions
+- [Triggers](/docs/data-driven/advancements/triggers) - Complete trigger reference
+- [Predicates](/docs/data-driven/predicates) - Conditions for advancement criteria
+- [Loot Tables](/docs/data-driven/loot-tables) - Loot rewards
+- [Functions](/docs/commands/functions) - Function rewards
+- [Tags](/docs/data-driven/tags) - Use tags in conditions
 
 ## External Resources
 
 - [Minecraft Wiki: Advancement](https://minecraft.wiki/w/Advancement) - Game mechanics overview
 - [Minecraft Wiki: Advancement Definition](https://minecraft.wiki/w/Advancement_definition) - JSON format specification
+

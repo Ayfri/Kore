@@ -48,7 +48,7 @@ dataPack("my_datapack") {
 
 ## Configuration
 
-See [Configuration](./configuration)
+See [Configuration](/docs/guides/configuration)
 
 ## Pack Metadata
 
@@ -405,6 +405,13 @@ Format range: current: 40..40 other: 50..50.
 
 It also checks for `supportedFormats` and warns if the other pack is not supported.
 
+## What to read next
+
+- [Cookbook](/docs/guides/cookbook) - practical patterns once your pack structure is in place
+- [Functions](/docs/commands/functions) - reusable logic, tags, and generated functions
+- [Selectors](/docs/concepts/selectors) - target entities and players with typed filters
+- [Configuration](/docs/guides/configuration) - tune JSON formatting and generation behavior
+
 ## Publishing and Distribution
 
 Once you've generated your datapack, you may want to distribute it to the community.
@@ -450,3 +457,4 @@ The resulting `load.json` file will contain:
 	]
 }
 ```
+

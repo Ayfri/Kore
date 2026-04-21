@@ -5,7 +5,7 @@ nav-title: Home
 description: Welcome to the Kore wiki!
 keywords: minecraft, datapack, kore, guide
 date-created: 2024-04-06
-date-modified: 2026-04-15
+date-modified: 2026-04-21
 routeOverride: /docs/home
 position: 0
 ---
@@ -25,6 +25,7 @@ generation of datapack JSON, and tight integration with vanilla concepts (functi
   `Kore Template`](https://github.com/Kore-Minecraft/Kore-Template).
 - **Create & generate**: see [Creating A Datapack](/docs/guides/creating-a-datapack) for lifecycle and output options (`.generate()`,
   `.generateZip()`, `.generateJar()`).
+- **Build faster**: browse the [Cookbook](/docs/guides/cookbook) for practical patterns you can reuse.
 
 ## Installable modules
 
@@ -47,7 +48,7 @@ you need.
   bar or reusing an `Entity`
   handle across scoreboards and commands.
 - Artifact: `io.github.ayfri.kore:oop:VERSION`
-- Explore: [OOP Utilities](/docs/oop/utilities)
+- Explore: [OOP Utilities](/docs/oop/oop-utilities)
 
 ### `helpers` - Utility-focused helpers
 
@@ -81,6 +82,7 @@ fun main() {
 
 - **[Getting Started](/docs/getting-started)**: step-by-step guide to create your first datapack.
 - **[Creating A Datapack](/docs/guides/creating-a-datapack)**: lifecycle, output paths, and generation options.
+- **[Cookbook](/docs/guides/cookbook)**: practical recipes combining multiple Kore features.
 - **[Commands](/docs/commands/commands)**: comprehensive guide to all Minecraft commands with examples.
 - **[Functions](/docs/commands/functions)**: building functions, tags, and command helpers.
 
@@ -89,6 +91,7 @@ fun main() {
 ### Core Guides
 
 - [Configuration](/docs/guides/configuration) - JSON formatting and generation options.
+- [Cookbook](/docs/guides/cookbook) - practical patterns for common datapack workflows.
 
 ### Commands
 
@@ -98,6 +101,7 @@ fun main() {
 - [Components](/docs/concepts/components) - item/component builders and custom components.
 - [Chat Components](/docs/concepts/chat-components) - formatted messages and text components.
 - [Colors](/docs/concepts/colors) - chat colors and formatting options.
+- [Selectors](/docs/concepts/selectors) - entity and player targeting with typed filters.
 - [Scoreboards](/docs/concepts/scoreboards) - objectives, teams, and scoreboard displays.
 
 ### Data-Driven
@@ -129,7 +133,7 @@ fun main() {
 
 ### OOP
 
-- [OOP Utilities](/docs/oop/utilities) - overview of all OOP module features.
+- [OOP Utilities](/docs/oop/oop-utilities) - overview of all OOP module features.
 - [Entities & Players](/docs/oop/entities-and-players) - entity/player management, commands, and effects.
 - [Teams](/docs/oop/teams) - object-oriented team management.
 - [Scoreboards](/docs/oop/scoreboards) - objective and score operations.
@@ -153,11 +157,19 @@ fun main() {
 If you want to contribute to Kore itself, start with [Contributing to Kore](/docs/contributing/contributing), the hub
 for architecture, workflow, issue/PR, and maintainer docs.
 
+Useful contributor-facing internals:
+
+- [Architecture and Patterns](/docs/contributing/architecture-and-patterns) - module boundaries and recurring
+  implementation patterns.
+- [Arguments Internals](/docs/concepts/arguments) - how the typed argument layer, resource wrappers, and literals fit
+  together.
+
 ## Short tips
 
 - Keep builders small and reusable; prefer extracting predicates and modifiers.
 - Enable `prettyPrint` in [`Configuration`](/docs/guides/configuration) during development for readable JSON.
-- Reach for [`OOP Utilities`](/docs/oop/utilities) when multiple gameplay features should share the same handles instead
+- Reach for [`OOP Utilities`](/docs/oop/oop-utilities) when multiple gameplay features should share the same handles
+  instead
   of re-building
   selectors and score names manually.
 - Use [`Components`](/docs/concepts/components) + [`Predicates`](/docs/data-driven/predicates) together for robust item checks and inventory
@@ -177,3 +189,4 @@ Check out the [Known Issues](/docs/advanced/known-issues) page for a list of kno
 - **LLM-friendly documentation**: [llms.txt](https://kore.ayfri.com/llms.txt) | [llms-full.txt](https://kore.ayfri.com/llms-full.txt)
 
 For hands-on examples, follow the doc pages above - most pages include runnable snippets and links to test cases in the repository.
+

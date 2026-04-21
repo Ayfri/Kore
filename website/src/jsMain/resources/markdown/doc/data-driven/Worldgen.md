@@ -171,7 +171,7 @@ dp.worldPreset("example_preset") {
 
 - **Performance:** Keep feature counts and structure spacing reasonable.
 
-- **Testing:** Use GameTest for deterministic validation; see [Test Features](../advanced/test-features).
+- **Testing:** Use GameTest for deterministic validation; see [Test Features](/docs/advanced/test-features).
 
 ## Cross-References
 
@@ -180,3 +180,4 @@ dp.worldPreset("example_preset") {
 - [Predicates](/docs/data-driven/predicates) - Condition logic for features
 - [Test Features](/docs/advanced/test-features) - Automated validation with GameTest
 - [Timelines](/docs/data-driven/timelines) - Animate environment attributes over time using keyframes and easing functions
+

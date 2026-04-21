@@ -11,7 +11,8 @@ routeOverride: /docs/concepts/scoreboards
 
 # Scoreboards
 
-Scoreboards track numeric values for players and entities. They're essential for game mechanics, timers, and storing data. For the full scoreboard command reference, see [Commands](../commands/commands#scoreboard-command).
+Scoreboards track numeric values for players and entities. They're essential for game mechanics, timers, and storing
+data. For the full scoreboard command reference, see [Commands](/docs/commands/commands#scoreboard-command).
 
 You can manage scoreboards with the `scoreboard` command:
 

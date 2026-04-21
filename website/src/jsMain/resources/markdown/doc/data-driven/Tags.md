@@ -252,7 +252,8 @@ addToTag<BlockTagArgument>("my_ores", "block") {
 
 ## Using Tags in Commands
 
-Tags can be referenced in commands with the `#` prefix:
+Tags can be referenced in commands with the `#` prefix, so they appear naturally across
+the [Commands](/docs/commands/commands) API surface:
 
 ```kotlin
 function("clear_valuables") {
@@ -270,7 +271,7 @@ function("kill_hostiles") {
 
 ## Using Tags in Predicates
 
-Tags work seamlessly with [Predicates](./predicates):
+Tags work seamlessly with [Predicates](/docs/data-driven/predicates):
 
 ```kotlin
 predicate("holding_tool") {
@@ -288,7 +289,7 @@ predicate("in_hot_biome") {
 
 ## Using Tags in Recipes
 
-Tags are commonly used in [Recipes](./recipes) for flexible ingredient matching:
+Tags are commonly used in [Recipes](/docs/data-driven/recipes) for flexible ingredient matching:
 
 ```kotlin
 craftingShapeless("any_planks_to_sticks") {
@@ -350,12 +351,12 @@ With tag references:
 
 ## See Also
 
-- [Predicates](./predicates) - Use tags in predicate conditions
-- [Recipes](./recipes) - Use tags for flexible recipe ingredients
-- [Loot Tables](./loot-tables) - Use tags in loot conditions
-- [Functions](../commands/functions) - Creating functions to use with function tags
-- [Trims](./trims) - Trim material and pattern tags
+- [Predicates](/docs/data-driven/predicates) - Use tags in predicate conditions
+- [Recipes](/docs/data-driven/recipes) - Use tags for flexible recipe ingredients
+- [Loot Tables](/docs/data-driven/loot-tables) - Use tags in loot conditions
+- [Trims](/docs/data-driven/trims) - Trim material and pattern tags
 
 ### External Resources
 
 - [Minecraft Wiki: Tag (Java Edition)](https://minecraft.wiki/w/Tag_(Java_Edition)) - Complete reference for all tag types and vanilla tags
+

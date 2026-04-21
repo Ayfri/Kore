@@ -5,7 +5,7 @@ nav-title: Functions
 description: A guide for creating functions in a datapack using Kore.
 keywords: minecraft, datapack, kore, guide, functions
 date-created: 2024-04-06
-date-modified: 2026-02-03
+date-modified: 2026-04-21
 routeOverride: /docs/commands/functions
 ---
 
@@ -23,7 +23,7 @@ function("my_function") {
 
 Then in game, call the function with `/function my_datapack:my_function`.
 
-To call functions from other datapacks, see [Bindings](../advanced/bindings).
+To call functions from other datapacks, see [Bindings](/docs/advanced/bindings).
 
 The `function` builder returns a `FunctionArgument` object that you can reuse to call the function from other functions:
 
@@ -34,6 +34,35 @@ val myFunction = function("my_function") {
 
 function("my_second_function") {
 	function(myFunction)
+}
+```
+
+You can also package this pattern into reusable `Function` extensions:
+
+```kotlin
+fun Function.myFunction() = function("my_function") {
+	say("Hello world!")
+}
+
+load {
+	function(myFunction())
+}
+```
+
+That helper may be called from several places without worry. Kore is optimized for recreating the same named function,
+so using this pattern stays effectively instant while keeping your code easy to organize.
+
+If you only want to reuse a small block of commands without generating a separate `/function`, prefer a regular
+extension instead:
+
+```kotlin
+fun Function.saySomething() {
+	say("yay")
+	say("also, yay")
+}
+
+load {
+	saySomething()
 }
 ```
 
@@ -81,7 +110,7 @@ load("my_load_function") {
 # Commands
 
 Many common commands have convenience builders like `say`,
-`teleport`, etc. See the [Commands](./commands) page for a comprehensive guide with examples.
+`teleport`, etc. See the [Commands](/docs/commands/commands) page for a comprehensive guide with examples.
 
 For example:
 
@@ -98,11 +127,13 @@ You can also build raw command strings and execute them:
 addLine("say Hello from raw command!")
 ```
 
-> Note: This is not recommended, but can be useful for commands not yet supported by the DSL, or if you use [Macros](./macros).
+> Note: This is not recommended, but can be useful for commands not yet supported by the DSL, or if you
+> use [Macros](/docs/commands/macros).
 
 ## Available Commands
 
-All commands from the version cited in the [README](https://github.com/Ayfri/Kore/README.md) are available. For detailed documentation on each command, see [Commands](./commands).
+All commands from the version cited in the [README](https://github.com/Ayfri/Kore/README.md) are available. For detailed
+documentation on each command, see [Commands](/docs/commands/commands).
 
 ## Custom Commands
 
@@ -136,7 +167,9 @@ See the code of the repository for more examples.<br>
 
 Some commands are more complex and require more than just a few arguments. For example, the `execute` or `data` commands.
 
-In that case, you can use complex builders that includes all the arguments of the command. But the syntax may vary depending on the command and you should definitely check the tests to see how to use them.
+In that case, you can use complex builders that includes all the arguments of the command. But the syntax may vary
+depending on the command, so pairing this page with the broader [Commands](/docs/commands/commands) reference and
+selector-heavy examples from [Selectors](/docs/concepts/selectors) is often helpful.
 
 An example of the `execute` command:
 
@@ -159,7 +192,8 @@ execute {
 ```
 
 You can use predicates in the
-`ifCondition` block to check complex conditions. See the [Predicates](../data-driven/predicates) documentation for more details.
+`ifCondition` block to check complex conditions. See the [Predicates](/docs/data-driven/predicates) documentation for
+more details.
 
 You may also have commands where you can create "contexts".
 
@@ -174,7 +208,7 @@ data(self()) {
 
 # Macros
 
-See [Macros](./macros).
+See [Macros](/docs/commands/macros).
 
 # Generated Functions
 
@@ -193,11 +227,14 @@ execute {
 This will generate a function with a random name that will be called by the `execute` command.
 
 > Note: The generated functions will be generated inside a folder named `generated_scopes` in the `functions` folder.
-> You can change the folder to whatever you want in [Configuration](./configuration).
+> You can change the folder to whatever you want in [Configuration](/docs/guides/configuration).
 
 > Note: The generated name will have this pattern `generated_${hashCode()}`, where `hashCode()` is the hash code of the function.
 > This means that if you use the same
 `execute` builder multiple times, it will generate the same function name and reuse the same function.
+
+If you want to turn that into an explicit project pattern, the [Cookbook](/docs/guides/cookbook) shows how to wrap
+reusable logic in `Function` extensions with or without dedicated generated functions.
 
 # Debugging
 
@@ -244,11 +281,10 @@ Also running `toString()` in a function will return the generated function as a 
 
 ## See Also
 
-- [Commands](./commands) - Complete command reference
-- [Macros](./macros) - Dynamic command arguments
-- [Predicates](../data-driven/predicates) - Conditions in execute blocks
-- [Advancements](../data-driven/advancements) - Reward functions
-- [Tags](../data-driven/tags) - Function tags for load and tick events
+- [Commands](/docs/commands/commands) - Complete command reference
+- [Macros](/docs/commands/macros) - Dynamic command arguments
+- [Tags](/docs/data-driven/tags) - Function tags for load and tick events
+- [Cookbook](/docs/guides/cookbook) - Practical patterns for reusable function helpers
 
 ### External Resources
 

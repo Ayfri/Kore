@@ -27,4 +27,5 @@ Kore is only designed to create Data Packs, not Resource Packs, but it could be 
 
 ## Updates
 
-Kore is sometimes a little bit outdated, and some features may not work as expected. I am working on my free time to keep it up to date, so fill free to help me update it by contributing to the project.
+Kore is sometimes a little bit outdated, and some features may not work as expected. I am working on my free time to
+keep it up to date, so feel free to help me update it by contributing to the project.

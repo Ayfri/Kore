@@ -83,7 +83,7 @@ val entitiesInRoom = allEntities {
 
 ## Score-based filtering
 
-Selectors integrate nicely with scoreboard-driven logic.
+Selectors integrate nicely with [Scoreboards](/docs/concepts/scoreboards) and other scoreboard-driven logic.
 
 ```kotlin
 val activePlayers = allPlayers {
@@ -94,7 +94,7 @@ val activePlayers = allPlayers {
 }
 ```
 
-That is especially useful in `execute`, timers, game loops, and mini-game state tracking.
+That is especially useful in [`execute`](/docs/commands/commands), timers, game loops, and mini-game state tracking.
 
 ## Inverting filters
 
@@ -130,7 +130,8 @@ Use `limitToOne = true` when you want a concise single-target selector without r
 ## Using selectors in commands
 
 Selectors can be reused anywhere an `EntityArgument`, `DataArgument`, `PossessorArgument`, or `ScoreHolderArgument` is
-accepted.
+accepted, so they show up naturally across the [Commands](/docs/commands/commands)
+and [Functions](/docs/commands/functions) APIs.
 
 ```kotlin
 val fighters = allPlayers {
@@ -149,12 +150,13 @@ function("round_start") {
 - Prefer reusable selector values when the same filter appears in several functions.
 - Use `self()` when logic should apply to the current execution context.
 - Use generated entity types and predicates instead of raw strings whenever possible.
-- Keep complex filters readable by assigning them to `val`s before entering large command blocks.
+- Keep complex filters readable by assigning them to `val`s before entering large command blocks, and check
+  the [Cookbook](/docs/guides/cookbook) if you want to turn those values into reusable helpers.
 
 ## See also
 
-- [Arguments](/docs/concepts/arguments) - the broader typed argument model in Kore
-- [Commands](/docs/commands/commands) - command builders that consume selectors everywhere
 - [Functions](/docs/commands/functions) - organizing selector-heavy logic into reusable functions
+- [Commands](/docs/commands/commands) - command builders that consume selectors everywhere
 - [Scoreboards](/docs/concepts/scoreboards) - selectors often pair with scoreboard state
+- [Arguments Internals](/docs/concepts/arguments) - contributor-facing details about Kore's broader argument system
 - [Minecraft Wiki: Target selectors](https://minecraft.wiki/w/Target_selectors) - vanilla syntax and semantics

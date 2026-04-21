@@ -138,7 +138,8 @@ See [Carvers](#carvers-cavescanyons) below for creating configured carvers.
 ## Features
 
 Features are attached to biomes via decoration steps. Each step runs in order during chunk generation, with structures placing before
-features within the same step. See the [main worldgen page](../worldgen#decoration-steps) for the full step list.
+features within the same step. See the [main worldgen page](/docs/data-driven/worldgen#decoration-steps) for the full
+step list.
 
 Reference: [Biome definition - Features](https://minecraft.wiki/w/Biome_definition#Features)
 
@@ -158,7 +159,7 @@ features {
 }
 ```
 
-See [Features](./features) for creating configured and placed features.
+See [Features](/docs/data-driven/worldgen/features) for creating configured and placed features.
 
 ---
 
@@ -274,3 +275,4 @@ fun DataPack.createHighlandsBiome() {
 - [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) - Full reference for visual, audio, and gameplay attributes
 - [Features](/docs/data-driven/worldgen/features) - Configured and placed features
 - [World Generation](/docs/data-driven/worldgen) - Overview of the worldgen system
+

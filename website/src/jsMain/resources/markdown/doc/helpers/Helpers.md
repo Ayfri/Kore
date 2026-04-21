@@ -28,7 +28,7 @@ entity wrappers.
   commands.
 
 The module is designed to stay composable: you can use it with plain Kore functions or mix it with the
-[`oop` module](/docs/oop/utilities) when a system grows beyond a few stateless helpers.
+[`oop` module](/docs/oop/oop-utilities) when a system grows beyond a few stateless helpers.
 
 ## Install this module
 
@@ -89,8 +89,8 @@ Choose the `helpers` module when you mainly need:
 - scheduling helpers,
 - lightweight compile-time sugar over vanilla commands.
 
-Choose the [`oop` module](/docs/oop/utilities) when you need named gameplay objects such as players, teams,
+Choose the [`oop` module](/docs/oop/oop-utilities) when you need named gameplay objects such as players, teams,
 scoreboards, timers, spawners, or state machines.
 
 If you need entities, teams, scoreboards, items, timers, or other object-oriented gameplay abstractions, see the
-[OOP Utilities](/docs/oop/utilities) page.
+[OOP Utilities](/docs/oop/oop-utilities) page.

@@ -145,10 +145,11 @@ With decal enabled:
 
 ## See Also
 
-- [Chat Components](../concepts/chat_components) - For trim description text formatting
-- [Tags](./tags) - Organize trim materials and patterns into groups
+- [Chat Components](/docs/concepts/chat-components) - For trim description text formatting
+- [Tags](/docs/data-driven/tags) - Organize trim materials and patterns into groups
 
 ### External Resources
 
 - [Minecraft Wiki: Tutorial - Adding custom trims](https://minecraft.wiki/w/Tutorial:Adding_custom_trims) - Official guide for creating custom trims
 - [Minecraft Wiki: Armor - Trimming](https://minecraft.wiki/w/Armor#Trimming) - Information about armor trimming mechanics
+

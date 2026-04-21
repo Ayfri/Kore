@@ -5,7 +5,7 @@ nav-title: Getting Started
 description: Step-by-step guide to create your first Minecraft datapack with Kore.
 keywords: minecraft, datapack, kore, getting started, quickstart, kotlin
 date-created: 2025-08-21
-date-modified: 2026-03-31
+date-modified: 2026-04-21
 routeOverride: /docs/getting-started
 position: 1
 ---
@@ -224,7 +224,7 @@ Then just remove `this.` now that you know the import is correct.
 
 - Your code lives under `src/main/kotlin` (template already set).
 - Generated datapacks: `.generate()` writes a folder; `.generateZip()` writes a zip; `.generateJar()` targets mod loaders.
-- During development, enable pretty JSON in [Configuration](./configuration) to inspect outputs.
+- During development, enable pretty JSON in [Configuration](/docs/guides/configuration) to inspect outputs.
 - Split your code into multiple files to keep things organized.
 
 ## Troubleshooting
@@ -237,13 +237,15 @@ Then just remove `this.` now that you know the import is correct.
 
 Essential pages for new users:
 
-- [Creating a Datapack](./guides/creating-a-datapack) - lifecycle and output options
-- [Commands](./commands/commands) - comprehensive guide to all Minecraft commands
-- [Functions](./commands/functions) - building functions and command helpers
-- [Recipes](./data-driven/recipes) - how to create recipes
-- [Bindings](./advanced/bindings) - import existing datapacks (experimental)
+- [Creating a Datapack](/docs/guides/creating-a-datapack) - lifecycle and output options
+- [Cookbook](/docs/guides/cookbook) - practical recipes once you know the basics
+- [Commands](/docs/commands/commands) - comprehensive guide to all Minecraft commands
+- [Functions](/docs/commands/functions) - building functions and command helpers
+- [Selectors](/docs/concepts/selectors) - entity and player targeting patterns
+- [Recipes](/docs/data-driven/recipes) - how to create recipes
+- [Bindings](/docs/advanced/bindings) - import existing datapacks (experimental)
 
-For the full documentation index, see [Home](./home).
+For the full documentation index, see [Home](/docs/home).
 
 ## See also
 
@@ -252,3 +254,4 @@ For the full documentation index, see [Home](./home).
 - [Kore on GitHub](https://github.com/Ayfri/Kore)
 - [Kore on Maven Central](https://central.sonatype.com/search?q=io.github.ayfri.kore)
 - [Kore on Discord](https://discord.ayfri.com)
+

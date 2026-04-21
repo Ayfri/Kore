@@ -81,7 +81,7 @@ function("my_function") {
 }
 ```
 
-For more on using commands with imported resources, see [Commands](../commands/commands).
+For more on using commands with imported resources, see [Commands](/docs/commands/commands).
 
 If the datapack uses multiple namespaces, they are nested:
 

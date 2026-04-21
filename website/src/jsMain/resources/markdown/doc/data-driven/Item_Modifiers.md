@@ -775,7 +775,7 @@ itemModifier("conditional") {
 }
 ```
 
-See [Predicates](./predicates) for all available conditions.
+See [Predicates](/docs/data-driven/predicates) for all available conditions.
 
 ## Full Example
 
@@ -925,8 +925,9 @@ dataPack("legendary_items") {
 - [Predicates](/docs/data-driven/predicates) - Conditions for item functions
 - [Components](/docs/concepts/components) - Understanding item components
 - [Loot Tables](/docs/data-driven/loot-tables) - Use item modifiers in loot tables
-- [Commands](/docs/data-driven/commands/commands) - Using the `/item` command
+- [Commands](/docs/commands/commands) - Using the `/item` command
 
 ### External Resources
 
 - [Minecraft Wiki: Item modifier](https://minecraft.wiki/w/Item_modifier) - Official JSON format reference
+

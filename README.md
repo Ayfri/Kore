@@ -97,7 +97,7 @@ abstractions or tooling.
 
 ### Gameplay abstractions - `oop`
 
-- Docs: [OOP Utilities](https://kore.ayfri.com/docs/oop/utilities)
+- Docs: [OOP Utilities](https://kore.ayfri.com/docs/oop/oop-utilities)
 - Adds object-oriented wrappers for entities, teams, scoreboards, timers, boss bars, spawners, and related gameplay
   systems.
 - Especially useful when several gameplay features need to exchange state, for example wiring teams into boss bars,
@@ -299,3 +299,4 @@ If you want to support the project, please consider donating !
 ## License
 
 This project is licensed under the GNU 3.0 License – see the [LICENSE](LICENSE) file for details.
+

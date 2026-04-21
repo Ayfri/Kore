@@ -61,7 +61,8 @@ val enchantmentsTest = Items.STONE_SWORD {
 }
 ```
 
-Check out the [Enchantments](./enchantments) article for more information on how to use enchantments with Kore.
+Check out the [Enchantments](/docs/data-driven/enchantments) article for more information on how to use enchantments
+with Kore.
 
 ### Custom Names and Lore
 
@@ -96,7 +97,7 @@ val fireworksTest = Items.FIREWORK_ROCKET {
 }
 ```
 
-See how to set custom colors in the [Colors](./colors) article.
+See how to set custom colors in the [Colors](/docs/concepts/colors) article.
 
 ### Custom Block Data
 
@@ -290,11 +291,14 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 
 ## Works great with Inventory Manager
 
-If you build rich items with components and want to enforce them in player GUIs or chest slots, pair them with the [Inventory Manager](./helpers/inventory-manager). It lets you keep specific items in slots, react to takes, and clean up other slots while preserving all component data.
+If you build rich items with components and want to enforce them in player GUIs or chest slots, pair them with
+the [Inventory Manager](/docs/helpers/inventory-manager). It lets you keep specific items in slots, react to takes, and
+clean up other slots while preserving all component data.
 
 ## Patch items
 
-When you need to patch components on existing stacks (set name/lore, toggle tooltips, edit container contents, etc.) at runtime, use [Item Modifiers](./item-modifiers). Kore maps the vanilla functions like
+When you need to patch components on existing stacks (set name/lore, toggle tooltips, edit container contents, etc.) at
+runtime, use [Item Modifiers](/docs/data-driven/item-modifiers). Kore maps the vanilla functions like
 `set_components`, `set_contents`, `set_fireworks`, and more.
 
 ## Custom Component
@@ -687,3 +691,4 @@ Happy crafting!
 ### External Resources
 
 - [Minecraft Wiki: Data component format](https://minecraft.wiki/w/Data_component_format) - Official component reference
+

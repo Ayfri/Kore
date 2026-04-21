@@ -5,7 +5,7 @@ nav-title: Configuration
 description: A guide for configuring the output of a generated Minecraft datapack.
 keywords: minecraft, datapack, kore, guide, configuration
 date-created: 2024-04-06
-date-modified: 2024-01-08
+date-modified: 2025-01-08
 routeOverride: /docs/guides/configuration
 position: 2
 ---

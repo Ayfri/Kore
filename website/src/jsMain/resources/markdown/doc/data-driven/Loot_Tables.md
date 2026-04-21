@@ -492,7 +492,7 @@ pool {
 }
 ```
 
-See [Predicates](./predicates) for the complete list of available conditions.
+See [Predicates](/docs/data-driven/predicates) for the complete list of available conditions.
 
 ## Functions (Item Modifiers)
 
@@ -525,7 +525,7 @@ functions {
 }
 ```
 
-See [Item Modifiers](./item-modifiers) for the complete list of available functions.
+See [Item Modifiers](/docs/data-driven/item-modifiers) for the complete list of available functions.
 
 ## Full Example
 
@@ -674,7 +674,9 @@ dataPack("treasure_hunt") {
 
 ## Using with Commands
 
-Spawn loot from a table using the `/loot` command:
+Spawn loot from a table using the `/loot` command. The surrounding command builders are documented
+in [Commands](/docs/commands/commands), while reusable conditions usually come
+from [Predicates](/docs/data-driven/predicates):
 
 ```kotlin
 load {
@@ -691,7 +693,9 @@ load {
 
 ## Overriding Vanilla Tables
 
-To modify vanilla loot tables, create a file with the same path in your datapack:
+To modify vanilla loot tables, create a file with the same path in your datapack. You can combine that
+with [Item Modifiers](/docs/data-driven/item-modifiers) when you want reusable post-processing logic instead of
+duplicating functions inside every pool:
 
 ```kotlin
 dataPack("better_zombies") {
@@ -738,13 +742,12 @@ dataPack("better_zombies") {
 
 ## See Also
 
-- [Predicates](./predicates) - Conditions used in loot table pools and entries
-- [Item Modifiers](./item-modifiers) - Functions applied to loot table items
-- [Advancements](./advancements) - Rewards can reference loot tables
-- [Commands](../commands/commands) - Using the `/loot` command
-- [Tags](./tags) - Use item tags for tag entries
+- [Item Modifiers](/docs/data-driven/item-modifiers) - Functions applied to loot table items
+- [Advancements](/docs/data-driven/advancements) - Rewards can reference loot tables
+- [Tags](/docs/data-driven/tags) - Use item tags for tag entries
 
 ### External Resources
 
 - [Minecraft Wiki: Loot table](https://minecraft.wiki/w/Loot_table) - Official JSON format reference
 - [Minecraft Wiki: Loot context](https://minecraft.wiki/w/Loot_context) - Understanding loot contexts
+

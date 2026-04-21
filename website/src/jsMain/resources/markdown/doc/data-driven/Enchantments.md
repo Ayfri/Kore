@@ -612,7 +612,8 @@ dataPack("custom_enchants") {
 
 ## Enchantment Providers
 
-Enchantment providers are used by enchanting tables and loot functions to select enchantments:
+Enchantment providers are used by enchanting tables and loot functions to select enchantments, so they often appear next
+to [Loot Tables](/docs/data-driven/loot-tables) and runtime [Item Modifiers](/docs/data-driven/item-modifiers):
 
 ```kotlin
 enchantmentProvider("custom_table") {
@@ -639,13 +640,12 @@ enchantmentProvider("cost_based") {
 
 ## See Also
 
-- [Predicates](./predicates) - Conditions for enchantment effect requirements
-- [Components](../concepts/components) - Item components and matchers
-- [Loot Tables](./loot-tables) - Apply enchantments via loot functions
-- [Item Modifiers](./item-modifiers) - Add enchantments at runtime
-- [Tags](./tags) - Use enchantment and item tags
+- [Predicates](/docs/data-driven/predicates) - Conditions for enchantment effect requirements
+- [Components](/docs/concepts/components) - Item components and matchers
+- [Tags](/docs/data-driven/tags) - Use enchantment and item tags
 
 ### External Resources
 
 - [Minecraft Wiki: Enchantment definition](https://minecraft.wiki/w/Enchantment_definition) - Official JSON format reference
 - [Minecraft Wiki: Enchanting](https://minecraft.wiki/w/Enchanting) - Enchanting mechanics overview
+
