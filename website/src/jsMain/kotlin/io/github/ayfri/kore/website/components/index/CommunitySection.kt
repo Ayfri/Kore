@@ -2,10 +2,11 @@ package io.github.ayfri.kore.website.components.index
 
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
-import com.varabyte.kobweb.silk.components.icons.mdi.IconStyle
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiDiscord
-import io.github.ayfri.kore.website.GlobalStyle
-import io.github.ayfri.kore.website.utils.*
+import com.varabyte.kobweb.silk.components.icons.mdi.*
+import io.github.ayfri.kore.website.utils.lgMax
+import io.github.ayfri.kore.website.utils.marginX
+import io.github.ayfri.kore.website.utils.mdMax
+import io.github.ayfri.kore.website.utils.transition
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
@@ -34,29 +35,34 @@ fun CommunitySection() {
 			"GitHub",
 			"Contribute to Kore, report issues, or explore the source code on our GitHub repository.",
 			"https://github.com/Ayfri/Kore",
-		) {
-			Img(src = "/github-mark-white.svg", alt = "GitHub Logo")
-		},
+		) { MdiDataObject(style = IconStyle.ROUNDED) },
 		CommunityPlatform(
-			"Slack",
-			"Connect with us on the Kotlin Slack in the #kore channel for more technical discussions.",
-			"https://kotlinlang.slack.com/archives/C066G9BF66A",
-		) {
-			Img(src = "/slack-logo.svg", alt = "Slack Logo")
-		},
+			"Docs",
+			"Browse guided documentation, API references, and practical examples to ship faster with Kore.",
+			"/docs/getting-started",
+		) { MdiBook(style = IconStyle.ROUNDED) },
+		CommunityPlatform(
+			"Examples",
+			"Explore real Kotlin datapack snippets and ready-to-adapt examples directly from the project.",
+			"https://github.com/Ayfri/Kore/tree/master/examples",
+		) { MdiFunctions(style = IconStyle.ROUNDED) },
 	)
 
 	Section({
 		classes(CommunitySectionStyle.communitySection)
 	}) {
-		H2 {
-			Text("Join Our Community")
-		}
-
-		P({
-			classes(CommunitySectionStyle.subtitle)
+		Div({
+			classes(CommunitySectionStyle.header)
 		}) {
-			Text("Connect with other Kore developers and get involved")
+			H2 {
+				Text("Join Our Community")
+			}
+
+			P({
+				classes(CommunitySectionStyle.subtitle)
+			}) {
+				Text("Connect with other Kore developers and get involved")
+			}
 		}
 
 		Div({
@@ -87,73 +93,85 @@ fun CommunitySection() {
 
 object CommunitySectionStyle : StyleSheet() {
 	val communitySection by style {
-		paddingY(2.5.cssRem)
-		textAlign(TextAlign.Center)
+		padding(3.cssRem, 5.vw)
+		marginX(auto)
+		maxWidth(90.cssRem)
+		position(Position.Relative)
+	}
+
+	val header by style {
+		textAlign(TextAlign.Left)
+		marginBottom(2.cssRem)
 
 		"h2" style {
-			fontSize(2.2.cssRem)
-			marginBottom(1.cssRem)
+			fontSize(2.6.cssRem)
+			marginBottom(0.6.cssRem)
 		}
 
-		mdMax(type("h2")) {
-			fontSize(2.1.cssRem)
+		mdMax(self) {
+			textAlign(TextAlign.Center)
 		}
 	}
 
 	val subtitle by style {
-		color(GlobalStyle.altTextColor)
+		color(Color("var(--landing-muted)"))
 		fontSize(1.1.cssRem)
-		marginBottom(2.5.cssRem)
 	}
 
 	val platformsContainer by style {
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Row)
-		gap(2.cssRem)
+		display(DisplayStyle.Grid)
+		gridTemplateColumns("repeat(auto-fit, minmax(16rem, 1fr))")
+		gap(1.5.cssRem)
 		justifyContent(JustifyContent.Center)
 		marginX(auto)
-		maxWidth(90.percent)
+		maxWidth(72.cssRem)
+
+		lgMax(self) {
+			gap(1.5.cssRem)
+		}
 
 		mdMax(self) {
-			flexDirection(FlexDirection.Column)
-			alignItems(AlignItems.Center)
+			gridTemplateColumns("1fr")
 		}
 	}
 
 	@OptIn(ExperimentalComposeWebApi::class)
 	val platformCard by style {
-		backgroundColor(GlobalStyle.secondaryBackgroundColor.alpha(0.5))
-		border(1.px, LineStyle.Solid, GlobalStyle.borderColor.alpha(0.2))
-		borderRadius(GlobalStyle.roundingSection)
-		color(GlobalStyle.textColor)
+		backgroundColor(Color("var(--landing-card)"))
+		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		borderRadius(1.2.cssRem)
+		color(Color("var(--landing-text)"))
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
-		padding(2.cssRem)
-		textAlign(TextAlign.Center)
+		gap(1.cssRem)
+		padding(1.9.cssRem)
+		textAlign(TextAlign.Left)
 		textDecorationLine(TextDecorationLine.None)
-		transition(0.3.s, "transform", "background-color", "border-color")
-		width(30.percent)
+		transition(0.35.s, "transform", "border-color", "box-shadow")
+		property("box-shadow", "0 18px 40px rgba(5, 12, 20, 0.35)")
 
 		hover(self) style {
 			transform { translateY((-8).px) }
-			backgroundColor(GlobalStyle.tertiaryBackgroundColor)
-			borderColor(GlobalStyle.logoRightColor.alpha(0.5))
+			borderColor(Color("rgba(8, 182, 214, 0.6)"))
+			property("box-shadow", "0 26px 65px rgba(5, 12, 20, 0.5)")
 		}
 
 		"h3" style {
 			fontSize(1.6.cssRem)
-			marginBottom(1.cssRem)
-			marginTop(1.cssRem)
+			marginBottom(0.4.cssRem)
+			marginTop(0.px)
 		}
 
 		"p" style {
-			color(GlobalStyle.altTextColor)
-			fontSize(1.cssRem)
+			color(Color("var(--landing-muted)"))
+			fontSize(1.02.cssRem)
 			property("line-height", "1.6")
+			marginBottom(0.px)
 		}
 
 		mdMax(self) {
-			width(90.percent)
+			textAlign(TextAlign.Center)
+			alignItems(AlignItems.Center)
 		}
 	}
 
@@ -161,15 +179,19 @@ object CommunitySectionStyle : StyleSheet() {
 		alignItems(AlignItems.Center)
 		display(DisplayStyle.Flex)
 		justifyContent(JustifyContent.Center)
+		width(3.4.cssRem)
+		height(3.4.cssRem)
+		borderRadius(1.1.cssRem)
+		backgroundColor(Color("rgba(8, 182, 214, 0.14)"))
 
-		className("material-icons-round") style {
-			color(GlobalStyle.textColor)
-			fontSize(3.cssRem)
+		"i" {
+			color(Color("var(--landing-text)"))
+			fontSize(1.6.cssRem)
 		}
 
-		"img" {
-			height(3.cssRem)
-			width(3.cssRem)
+		className("material-icons-round") style {
+			color(Color("var(--landing-text)"))
+			fontSize(2.4.cssRem)
 		}
 	}
 }

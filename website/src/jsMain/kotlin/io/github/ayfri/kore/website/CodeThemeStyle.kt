@@ -1,10 +1,8 @@
 package io.github.ayfri.kore.website
 
-import com.varabyte.kobweb.compose.css.Cursor
-import com.varabyte.kobweb.compose.css.FontStyle
-import com.varabyte.kobweb.compose.css.cursor
-import com.varabyte.kobweb.compose.css.fontStyle
+import com.varabyte.kobweb.compose.css.*
 import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.selectors.CSSSelector
 
 object CodeThemeStyle : StyleSheet() {
@@ -25,18 +23,26 @@ object CodeThemeStyle : StyleSheet() {
 
 	init {
 		val toolbarSelector = child(type("div") + className("code-toolbar"), className("toolbar"))
+		(type("div") + className("code-toolbar")) style {
+			position(Position.Relative)
+		}
 
 		toolbarSelector style {
 			display(DisplayStyle.Flex)
 			gap(0.5.cssRem)
 			alignItems(AlignItems.Center)
+			position(Position.Absolute)
+			top(0.85.cssRem)
+			right(0.85.cssRem)
+			zIndex(1)
 
 			fun buttonType(type: String) = child(toolbarSelector, child(className("toolbar-item"), type(type)))
 
 			group(buttonType("button"), buttonType("a"), buttonType("span")) style {
 				backgroundColor(Color("#333339"))
+				borderRadius(0.6.cssRem)
 				cursor(Cursor.Default)
-				padding(0.5.cssRem, 1.cssRem)
+				padding(0.35.cssRem, 0.75.cssRem)
 			}
 
 			buttonType("button") style {

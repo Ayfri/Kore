@@ -1,145 +1,139 @@
 package io.github.ayfri.kore.website.pages
 
 import androidx.compose.runtime.Composable
+import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.core.Page
 import io.github.ayfri.kore.website.components.index.*
 import io.github.ayfri.kore.website.components.layouts.PageLayout
 import io.github.ayfri.kore.website.utils.smMax
-import org.jetbrains.compose.web.css.Style
-import org.jetbrains.compose.web.css.StyleSheet
-import org.jetbrains.compose.web.css.cssRem
-import org.jetbrains.compose.web.css.fontSize
+import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.keywords.auto
+import org.jetbrains.compose.web.dom.Div
 
 @Page
 @Composable
 fun HomePage() = PageLayout("Home") {
 	Style(HomePageStyle)
 
-	// Hero section with code examples
-	HeroSection()
+	Div({
+		classes(HomePageStyle.page)
+	}) {
+		Div({ classes(HomePageStyle.glow, HomePageStyle.glowTop) })
+		Div({ classes(HomePageStyle.glow, HomePageStyle.glowBottom) })
 
-	// Quick installation guide
-	InstallationSection()
+		Div({
+			classes(HomePageStyle.content)
+		}) {
+			// Hero section with code examples
+			HeroSection()
 
-	// Core features section
-	FeaturesSection()
+			// Quick installation guide
+			InstallationSection()
 
-	// Masonry grid with code examples
-	Masonry(masonryItems)
+			// Core features section
+			FeaturesSection()
 
-	// Community platforms section
-	CommunitySection()
+			// Masonry grid with code examples
+			Masonry(masonryItems)
 
-	// FAQ section
-	FaqSection()
+			// Community platforms section
+			CommunitySection()
 
-	// Call to action section
-	CtaSection()
+			// FAQ section
+			FaqSection()
+
+			// Call to action section
+			CtaSection()
+		}
+	}
 }
 
 object HomePageStyle : StyleSheet() {
 	init {
 		smMax(child(className("code-toolbar"), type("pre"))) {
-			fontSize(0.8.cssRem)
+			fontSize(0.82.cssRem)
 		}
+	}
+
+	val page by style {
+		position(Position.Relative)
+		overflow(Overflow.Hidden)
+		paddingBottom(2.5.cssRem)
+
+		property("--landing-accent", "#08b6d6")
+		property("--landing-accent-strong", "#1fd2f2")
+		property("--landing-gold", "#fec907")
+		property("--landing-surface", "#0f141b")
+		property("--landing-surface-2", "#141c26")
+		property("--landing-card", "#151c26")
+		property("--landing-border", "rgba(151, 176, 202, 0.18)")
+		property("--landing-muted", "#a6b4bd")
+		property("--landing-text", "#f7f9fc")
+		property("--landing-radius", "20px")
+
+		fontFamily("IBM Plex Sans", "Inter", "Segoe UI", "sans-serif")
+		property("color", "var(--landing-text)")
+
+		property(
+			"background",
+			"radial-gradient(circle at 12% 8%, rgba(8, 182, 214, 0.18) 0%, transparent 40%), " +
+				"radial-gradient(circle at 88% 12%, rgba(254, 201, 7, 0.12) 0%, transparent 38%)"
+		)
+
+		"h1" style {
+			fontFamily("Sora", "Space Grotesk", "Segoe UI", "sans-serif")
+			fontWeight(700)
+		}
+
+		"h2" style {
+			fontFamily("JetBrains Mono", "IBM Plex Mono", "Consolas", "monospace")
+			fontWeight(700)
+			letterSpacing((-0.5).px)
+		}
+
+		"h3" style {
+			fontFamily("JetBrains Mono", "IBM Plex Mono", "Consolas", "monospace")
+			fontWeight(700)
+		}
+
+		"p" style {
+			lineHeight(1.7.number)
+		}
+	}
+
+	val content by style {
+		position(Position.Relative)
+		zIndex(1)
+		display(DisplayStyle.Flex)
+		flexDirection(FlexDirection.Column)
+		gap(0.75.cssRem)
+		height(auto)
+		overflow(Overflow.Visible)
+	}
+
+	val glow by style {
+		position(Position.Absolute)
+		borderRadius(999.px)
+		property("filter", "blur(120px)")
+		opacity(0.55)
+		pointerEvents(PointerEvents.None)
+		zIndex(0)
+	}
+
+	val glowTop by style {
+		top((-12).cssRem)
+		left((-10).cssRem)
+		width(30.cssRem)
+		height(30.cssRem)
+		property("background", "radial-gradient(circle, rgba(8, 182, 214, 0.65) 0%, rgba(8, 182, 214, 0) 70%)")
+	}
+
+	val glowBottom by style {
+		bottom((-16).cssRem)
+		right((-8).cssRem)
+		width(34.cssRem)
+		height(34.cssRem)
+		property("background", "radial-gradient(circle, rgba(254, 201, 7, 0.55) 0%, rgba(254, 201, 7, 0) 72%)")
 	}
 }
 
-// language=kotlin
-private const val SIMPLE_API_CODE = """
-	fun myDatapack() = dataPack("my_datapack") {
-		function("test") {
-			say("Hello World!")
-		}
-
-		function("gamemode_creative") {
-			gamemode(Gamemode.CREATIVE)
-			tellraw(
-				targets = allPlayers(),
-				message = "You are now in creative mode!",
-				color = Color.GREEN
-			)
-		}
-	}
-"""
-
-// language=kotlin
-private const val JSON_LESS_CODE = """
-	fun myDatapack() = dataPack("my_datapack") {
-		val myRecipe = recipesBuilder.smithingTransform(
-			name = "diamond_to_netherite"
-		) {
-			template(Items.DIAMOND_BLOCK)
-			base(Items.DIAMOND_SWORD)
-			addition(Items.NETHERITE_INGOT)
-			result(Items.NETHERITE_SWORD)
-		}
-
-		function("give_recipe") {
-			recipe(allPlayers()).give(myRecipe)
-		}
-	}
-"""
-
-// language=kotlin
-private const val BIG_PROJECTS_CODE = """
-	fun myDatapack() = dataPack("my_datapack") {
-		function("execute_my_function") {
-			execute {
-				ifCondition(myPredicate)
-
-				run {
-					function(myFunction)
-					scoreboard.player(self()) {
-						add(myScore, 1)
-					}
-				}
-			}
-		}
-	}
-"""
-
-// language=kotlin
-private const val TYPE_SAFE_CODE = """
-	fun myDatapack() = dataPack("my_datapack") {
-		function("kore_is_great") {
-			advancement(allPlayers {
-				gamemode = !Gamemode.CREATIVE
-				nbt = nbt {
-					this["using_kore"] = true
-				}
-			}) {
-				grant(Advancements.Story.SHINY_GEAR)
-			}
-
-			playSound(
-				sound = Sounds.Block.EnchantmentTable,
-				source = PlaySoundSource.MASTER,
-				target = allEntities()
-			)
-		}
-	}
-"""
-
-private val masonryItems = listOf(
-	MasonryItem(
-		"Simple APIs",
-		"Kore provides simple and intuitive APIs to create Minecraft datapacks and call commands. Almost all the lists from the game are available as enums, so you are always sure to use the right value.",
-		SIMPLE_API_CODE.trimIndent()
-	),
-	MasonryItem(
-		"JSON-less",
-		"By using Kore, you don't have to write a single line of JSON ever. You only have one language to learn and maintain. Feature-complete code completion and documentation are available in your IDE.",
-		JSON_LESS_CODE.trimIndent()
-	),
-	MasonryItem(
-		"Perfect for big projects",
-		"Kore is perfect for big projects, as it allows you to split your code into multiple files and use the full power of Kotlin to manage your code.",
-		BIG_PROJECTS_CODE.trimIndent()
-	),
-	MasonryItem(
-		"Type-safe",
-		"We crafted generators for dozens of Minecraft lists, so you can be sure to use the right value at the right place. No more typos in your commands, JSON files, or functions.",
-		TYPE_SAFE_CODE.trimIndent()
-	),
-)
