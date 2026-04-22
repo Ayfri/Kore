@@ -219,6 +219,8 @@ Then just remove `this.` now that you know the import is correct.
 
 - **Kotlin Playground:** Try out code online at [play.kotlinlang.org](https://play.kotlinlang.org/).
 - **Official docs:** The [Kotlin documentation](https://kotlinlang.org/docs/home.html) is excellent for learning language features and best practices.
+- **Quick syntax refresher:** [Learn X in Y Minutes - Kotlin](https://learnxinyminutes.com/kotlin/) is great for quickly
+  grasping core concepts and syntax.
 
 ## Project layout and outputs
 
