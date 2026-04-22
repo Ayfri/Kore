@@ -13,6 +13,9 @@ routeOverride: /docs/guides/creating-a-datapack
 
 A DataPack in Kore represents a Minecraft datapack that contains custom game data and resources.
 
+If you already maintain large hand-written datapacks and want migration/architecture patterns rather than basics, read
+[From Datapacks to Kore](/docs/guides/from-datapacks-to-kore).
+
 To create a DataPack, use the `dataPack` function:
 
 ```kotlin
@@ -407,6 +410,8 @@ It also checks for `supportedFormats` and warns if the other pack is not support
 
 ## What to read next
 
+- [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore) - migration strategy, architecture choices, and
+  production workflow for advanced authors
 - [Cookbook](/docs/guides/cookbook) - practical patterns once your pack structure is in place
 - [Functions](/docs/commands/functions) - reusable logic, tags, and generated functions
 - [Selectors](/docs/concepts/selectors) - target entities and players with typed filters

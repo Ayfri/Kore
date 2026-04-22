@@ -15,6 +15,9 @@ position: 1
 This guide takes you from zero to a real development workflow with Kore. Instead of stopping at a minimal "hello world,"
 you will build a small but structured datapack, run it in-game, iterate quickly, and learn how to scale your project.
 
+If you already have solid datapack experience and want an architecture-first migration guide, jump to
+[From Datapacks to Kore](/docs/guides/from-datapacks-to-kore).
+
 ## What you will build
 
 By the end of this page, you will have:
@@ -470,7 +473,6 @@ Start here next:
 5. [Cookbook](/docs/guides/cookbook)
 6. [Recipes](/docs/data-driven/recipes)
 7. [Enchantments](/docs/data-driven/enchantments)
-8. [Bindings](/docs/advanced/bindings) (experimental)
 
 For the full index, see [Home](/docs/home).
 

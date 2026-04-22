@@ -90,6 +90,8 @@ fun main() {
 
 ### Core Guides
 
+- [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore) - advanced guide for migrating established datapacks to
+  a Kotlin/Kore architecture.
 - [Configuration](/docs/guides/configuration) - JSON formatting and generation options.
 - [Cookbook](/docs/guides/cookbook) - practical patterns for common datapack workflows.
 

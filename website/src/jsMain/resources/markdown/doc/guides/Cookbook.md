@@ -15,6 +15,9 @@ position: 3
 This page collects practical patterns you can lift into a real Kore datapack. It does not try to replace the full
 reference pages; instead, it shows how several documented features fit together.
 
+If your main goal is migrating an already mature datapack architecture, pair this page with
+[From Datapacks to Kore](/docs/guides/from-datapacks-to-kore).
+
 ## Recipe 1 - A clean pack bootstrap
 
 Use a dedicated setup function for one-time registration and a tick function for recurring gameplay logic.
