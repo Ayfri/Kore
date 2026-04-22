@@ -32,6 +32,72 @@ By the end of this page, you will have:
 - IntelliJ IDEA (recommended) or another IDE with Kotlin support.
 - Basic understanding of Minecraft datapacks (helpful but not required).
 
+## Kotlin basics you need before Kore
+
+If you are new to Kotlin, do not worry. You only need a small subset to be productive with Kore.
+
+### `val` and `var`
+
+- `val` means read-only reference (preferred by default).
+- `var` means mutable reference (use only when reassignment is needed).
+
+```kotlin
+val packName = "starter_kore"
+var buildNumber = 1
+buildNumber += 1
+```
+
+### Functions
+
+You declare functions with `fun`. Kore code is mostly function calls inside builders.
+
+```kotlin
+fun greet(name: String): String {
+	return "Hello, $name"
+}
+```
+
+### Null safety
+
+Kotlin distinguishes nullable (`String?`) and non-null (`String`) types.
+
+```kotlin
+val maybePlayer: String? = System.getenv("PLAYER_NAME")
+val displayName = maybePlayer ?: "Player"
+```
+
+Use:
+
+- `?.` for safe calls,
+- `?:` for fallback values (Elvis operator).
+
+### Lambdas and builder blocks
+
+Kore uses Kotlin lambdas heavily:
+
+```kotlin
+function("hello") {
+	tellraw(allPlayers(), textComponent("Hello"))
+}
+```
+
+The `{ ... }` block is a lambda, and inside it Kore exposes a DSL context with helper functions.
+
+### Extension functions (very important in Kore projects)
+
+Kotlin lets you add functions to existing types without inheritance.
+This is ideal for structuring large datapacks.
+
+```kotlin
+fun DataPack.registerWelcome() {
+	function("feature/welcome") {
+		tellraw(allPlayers(), textComponent("Welcome"))
+	}
+}
+```
+
+You can then call `registerWelcome()` inside your `dataPack {}` builder.
+
 ## Step 1: Create your project
 
 You have two ways to start.
@@ -111,6 +177,12 @@ Instead of a single command, create a tiny but realistic pack with:
 - metadata (`pack`),
 - one function for player feedback,
 - one function for setup behavior.
+
+If you are new to Kotlin syntax, read the code like this:
+
+- `val datapack = ...` stores the generated datapack object.
+- `dataPack("starter_kore") { ... }` creates a builder context.
+- each `function("...") { ... }` block writes one generated `.mcfunction` file.
 
 Create `Main.kt`:
 
@@ -358,6 +430,14 @@ Good expansion ideas after the custom enchantment:
 - Keep function names and file-like paths consistent (`feature/x`, `system/y`) to keep generated output predictable.
 - Re-declaring the same logical entry in Kore is idempotent: the last declaration wins.
 - Prefer `load {}` and `tick {}` builders over manual tag wiring for standard lifecycle hooks.
+
+### Quick Kotlin learning resources
+
+- [Kotlin documentation](https://kotlinlang.org/docs/home.html)
+- [Kotlin null safety](https://kotlinlang.org/docs/null-safety.html)
+- [Kotlin extensions](https://kotlinlang.org/docs/extensions.html)
+- [Learn X in Y Minutes - Kotlin](https://learnxinyminutes.com/kotlin/)
+- [Kotlin Playground](https://play.kotlinlang.org/)
 
 ## Troubleshooting
 
