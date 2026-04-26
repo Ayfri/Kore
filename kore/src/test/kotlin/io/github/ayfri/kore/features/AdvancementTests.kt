@@ -921,6 +921,38 @@ private fun DataPack.allTriggersTests() {
 		}
 	""".trimIndent()
 
+	advancement("player_interacted_with_entity") {
+		criteria {
+			playerInteractedWithEntity("example") {
+				item {
+					items = listOf(Items.IRON_INGOT)
+				}
+				entity {
+					conditionEntity {
+						type(EntityTypes.IRON_GOLEM)
+					}
+				}
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"example": {
+					"trigger": "minecraft:player_interacted_with_entity",
+					"conditions": {
+						"item": {
+							"items": "minecraft:iron_ingot"
+						},
+						"entity": {
+							"type": "minecraft:iron_golem"
+						}
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
 	advancement("player_killed_entity") {
 		criteria {
 			playerKilledEntity("player_killed_entity")
