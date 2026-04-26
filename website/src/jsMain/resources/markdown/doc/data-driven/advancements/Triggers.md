@@ -5,7 +5,7 @@ nav-title: Advancements Triggers
 description: A guide for using advancements triggers in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, advancements, triggers
 date-created: 2024-08-01
-date-modified: 2026-02-15
+date-modified: 2026-04-25
 routeOverride: /docs/data-driven/advancements/triggers
 ---
 
@@ -888,6 +888,33 @@ Triggers when a player hurts an entity.
 playerHurtEntity("hurt_mob") {
 	damage {
 		taken = rangeOrDouble(5.0..10.0)
+	}
+}
+```
+
+---
+
+### `playerInteractedWithEntity`
+
+**Description:**  
+Triggers when a player interacts with an entity.
+
+**Properties:**
+
+- `item`: The item used during the interaction.
+- `entity`: The entity that was interacted with.
+
+**Example:**
+
+```kotlin
+playerInteractedWithEntity("interact_with_golem") {
+	item {
+		items = listOf(Items.IRON_INGOT)
+	}
+	entity {
+		conditionEntity {
+			type(EntityTypes.IRON_GOLEM)
+		}
 	}
 }
 ```
