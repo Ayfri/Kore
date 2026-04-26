@@ -36,6 +36,7 @@ enum class Relation {
 	CONTROLLER,
 	LEASHER,
 	OWNER,
+	ORIGIN,
 	PASSENGERS,
 	TARGET,
 	VEHICLE;
