@@ -132,7 +132,8 @@ addLine("say Hello from raw command!")
 
 ## Available Commands
 
-All commands from the version cited in the [README](https://github.com/Ayfri/Kore/README.md) are available. For detailed
+All commands from the version cited in the [README](https://github.com/Ayfri/Kore/blob/master/README.md) are available.
+For detailed
 documentation on each command, see [Commands](/docs/commands/commands).
 
 ## Custom Commands
