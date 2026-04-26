@@ -5,7 +5,7 @@ nav-title: Home
 description: Welcome to the Kore wiki!
 keywords: minecraft, datapack, kore, guide
 date-created: 2024-04-06
-date-modified: 2026-04-21
+date-modified: 2026-04-26
 routeOverride: /docs/home
 position: 0
 ---
@@ -189,6 +189,8 @@ Check out the [Known Issues](/docs/advanced/known-issues) page for a list of kno
 - **Repository**: [Kore](https://github.com/Ayfri/Kore)
 - **Starter template**: [Kore Template](https://github.com/Kore-Minecraft/Kore-Template)
 - **LLM-friendly documentation**: [llms.txt](https://kore.ayfri.com/llms.txt) | [llms-full.txt](https://kore.ayfri.com/llms-full.txt)
+- **AI Agents skills**: [Kore-Skill](https://github.com/Kore-Minecraft/Kore-Skill) (optional skills pack for AI-assisted
+  Kore work)
 
 For hands-on examples, follow the doc pages above - most pages include runnable snippets and links to test cases in the repository.
 

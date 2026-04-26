@@ -24,6 +24,8 @@
 **Check the [website](https://kore.ayfri.com) for the latest documentation.**
 
 **LLM-friendly documentation**: [llms.txt](https://kore.ayfri.com/llms.txt) | [llms-full.txt](https://kore.ayfri.com/llms-full.txt)
+**AI Agents skills**: [Kore-Skill](https://github.com/Kore-Minecraft/Kore-Skill) (optional skills pack for AI-assisted
+Kore work)
 
 This library is compatible and made for Minecraft Java 1.20 and later versions, I don't think I will support older versions nor Bedrock Edition.<br>
 You can still create your own fork and make it compatible with older versions.<br>
@@ -289,6 +291,10 @@ Check out the [Known Issues](https://kore.ayfri.com/docs/advanced/known-issues) 
 
 Want to contribute to Kore? Start with the [Contributing to Kore](https://kore.ayfri.com/docs/contributing/contributing)
 guide and the repository-level [Contribution guidelines](CONTRIBUTING.md).
+
+If you use Cursor or similar tools, you can install the
+optional [Kore-Skill](https://github.com/Kore-Minecraft/Kore-Skill) skills pack for contributor- and user-focused
+guidance.
 
 ## Support
 
