@@ -1,5 +1,6 @@
 import com.varabyte.kobweb.gradle.application.util.configAsKobwebApplication
 import com.varabyte.kobwebx.gradle.markdown.children
+import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import kotlinx.html.link
 import kotlinx.html.script
@@ -313,7 +314,13 @@ kobweb {
 			File(publicDir, "llms.txt").writeText(llmsContent)
 			File(publicDir, "llms-full.txt").writeText(llmsFullContent)
 
+			val markdownSources = markdownFiles.associate { docArticle ->
+				docArticle.filePath.replace('\\', '/') to markdownDir.resolve(docArticle.filePath).readText()
+			}
+			File(publicDir, "markdown-sources.json").writeText(JsonOutput.toJson(markdownSources))
+
 			println("LLMs.txt generated -> ${publicDir.absolutePath}")
+			projectLogger.info("markdown-sources.json written (${markdownSources.size} files)")
 
 			generateKotlin("$projectGroup/docEntries.kt", buildString {
 				appendLine(

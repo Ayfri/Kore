@@ -20,6 +20,7 @@ out
 
 ### Website
 website/**/public/llms*.txt
+website/**/public/markdown-sources.json
 website/.kobweb/*
 !website/.kobweb/conf.yaml
 
