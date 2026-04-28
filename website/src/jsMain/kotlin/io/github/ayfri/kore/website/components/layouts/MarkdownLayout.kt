@@ -5,15 +5,19 @@ import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.compose.css.functions.blur
 import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiChevronRight
+import com.varabyte.kobweb.silk.components.icons.mdi.MdiContentCopy
 import com.varabyte.kobwebx.markdown.markdown
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.*
 import io.github.ayfri.kore.website.components.doc.*
 import io.github.ayfri.kore.website.utils.*
 import kotlinx.browser.window
+import kotlinx.coroutines.await
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
+import org.jetbrains.compose.web.dom.Article
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
 
@@ -41,6 +45,8 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 		onMobile = window.innerWidth < 768
 	}
 
+	val copyMarkdownScope = rememberCoroutineScope()
+	val markdownResourcePath = context.markdown!!.path
 	val slugs = context.route.path.split("/").drop(1)
 
 	// Set SEO metadata
@@ -75,7 +81,29 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 				setDescription(markdownData["description"]!![0])
 			}
 
-			Breadcrumbs(slugs.drop(1))
+			Div({
+				classes(MarkdownLayoutStyle.breadcrumbRow)
+			}) {
+				Breadcrumbs(slugs.drop(1))
+
+				Button({
+					attr("aria-label", "Copy Page")
+					attr("title", "Copy Page")
+					classes(MarkdownLayoutStyle.copyMarkdownButton)
+					onClick {
+						copyMarkdownScope.launch {
+							runCatching {
+								val sources = loadMarkdownSources()
+								val text = sources[markdownResourcePath]
+									?: error("No markdown for path: $markdownResourcePath")
+								window.navigator.clipboard.writeText(text).await()
+							}.onFailure { console.error(it) }
+						}
+					}
+				}) {
+					MdiContentCopy()
+				}
+			}
 
 			if (onMobile) {
 				Div({
@@ -84,7 +112,7 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 				}) {}
 			}
 
-			Div({
+			Article({
 				classes(MarkdownLayoutStyle.contentWrapper)
 			}) {
 				Div({
@@ -96,7 +124,7 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 						currentPath = context.route.path,
 						publishDate = publishDate,
 						modifiedDate = modifiedDate,
-						editUrl = "https://github.com/Ayfri/Kore/edit/master/website/src/jsMain/resources/markdown/${context.markdown!!.path}"
+						editUrl = "https://github.com/Ayfri/Kore/edit/master/website/src/jsMain/resources/markdown/$markdownResourcePath"
 					)
 				}
 
@@ -205,6 +233,45 @@ object MarkdownLayoutStyle : StyleSheet() {
 
 		child(self, type("span")) style {
 			fontSize(2.cssRem)
+		}
+	}
+
+	val breadcrumbRow by style {
+		alignItems(AlignItems.Center)
+		display(DisplayStyle.Flex)
+		flexDirection(FlexDirection.Row)
+		gap(0.5.cssRem)
+		justifyContent(JustifyContent.SpaceBetween)
+		marginY(1.cssRem)
+		width(100.percent)
+
+		child(self, className(BreadCrumbsStyle.breadcrumbs)) style {
+			flex(1)
+			marginY(0.px)
+			minWidth(0.px)
+		}
+	}
+
+	val copyMarkdownButton by style {
+		alignItems(AlignItems.Center)
+		backgroundColor(GlobalStyle.secondaryBackgroundColor)
+		border(1.px, LineStyle.Solid, rgba(255, 255, 255, 0.28))
+		borderRadius(GlobalStyle.roundingButton)
+		color(GlobalStyle.textColor)
+		cursor(Cursor.Pointer)
+		display(DisplayStyle.Flex)
+		flexShrink(0)
+		justifyContent(JustifyContent.Center)
+		marginRight(25.percent)
+		padding(0.25.cssRem)
+
+		child(self, type("span")) style {
+			fontSize(1.cssRem)
+		}
+
+		self + hover style {
+			backgroundColor(GlobalStyle.tertiaryBackgroundColor)
+			border(1.px, LineStyle.Solid, rgba(255, 255, 255, 0.42))
 		}
 	}
 
