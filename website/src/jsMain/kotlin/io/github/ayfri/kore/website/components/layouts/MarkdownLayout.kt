@@ -13,6 +13,7 @@ import io.github.ayfri.kore.website.components.doc.*
 import io.github.ayfri.kore.website.utils.*
 import kotlinx.browser.window
 import kotlinx.coroutines.await
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
@@ -20,6 +21,8 @@ import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.dom.Article
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
+import org.jetbrains.compose.web.dom.Text
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun MarkdownLayout(content: @Composable () -> Unit) {
@@ -48,6 +51,15 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 	val copyMarkdownScope = rememberCoroutineScope()
 	val markdownResourcePath = context.markdown!!.path
 	val slugs = context.route.path.split("/").drop(1)
+
+	var copyToastRevision by remember { mutableIntStateOf(0) }
+	var copyToastVisible by remember { mutableStateOf(false) }
+
+	LaunchedEffect(copyToastRevision) {
+		if (copyToastRevision == 0) return@LaunchedEffect
+		delay(2.seconds)
+		copyToastVisible = false
+	}
 
 	// Set SEO metadata
 	LaunchedEffect(Unit) {
@@ -86,22 +98,38 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 			}) {
 				Breadcrumbs(slugs.drop(1))
 
-				Button({
-					attr("aria-label", "Copy Page")
-					attr("title", "Copy Page")
-					classes(MarkdownLayoutStyle.copyMarkdownButton)
-					onClick {
-						copyMarkdownScope.launch {
-							runCatching {
-								val sources = loadMarkdownSources()
-								val text = sources[markdownResourcePath]
-									?: error("No markdown for path: $markdownResourcePath")
-								window.navigator.clipboard.writeText(text).await()
-							}.onFailure { console.error(it) }
+				Div({
+					classes(MarkdownLayoutStyle.copyButtonWrap)
+				}) {
+					if (copyToastVisible) {
+						Div({
+							attr("aria-live", "polite")
+							attr("role", "status")
+							classes(MarkdownLayoutStyle.copyToast)
+						}) {
+							Text("Copied")
 						}
 					}
-				}) {
-					MdiContentCopy()
+
+					Button({
+						attr("aria-label", "Copy Page")
+						attr("title", "Copy Page")
+						classes(MarkdownLayoutStyle.copyMarkdownButton)
+						onClick {
+							copyMarkdownScope.launch {
+								runCatching {
+									val sources = loadMarkdownSources()
+									val text = sources[markdownResourcePath]
+										?: error("No markdown for path: $markdownResourcePath")
+									window.navigator.clipboard.writeText(text).await()
+									copyToastVisible = true
+									copyToastRevision++
+								}.onFailure { console.error(it) }
+							}
+						}
+					}) {
+						MdiContentCopy()
+					}
 				}
 			}
 
@@ -252,6 +280,12 @@ object MarkdownLayoutStyle : StyleSheet() {
 		}
 	}
 
+	val copyButtonWrap by style {
+		display(DisplayStyle.InlineBlock)
+		marginRight(22.percent)
+		position(Position.Relative)
+	}
+
 	val copyMarkdownButton by style {
 		alignItems(AlignItems.Center)
 		backgroundColor(GlobalStyle.secondaryBackgroundColor)
@@ -262,17 +296,34 @@ object MarkdownLayoutStyle : StyleSheet() {
 		display(DisplayStyle.Flex)
 		flexShrink(0)
 		justifyContent(JustifyContent.Center)
-		marginRight(25.percent)
 		padding(0.25.cssRem)
 
 		child(self, type("span")) style {
-			fontSize(1.cssRem)
+			fontSize(0.95.cssRem)
 		}
 
 		self + hover style {
 			backgroundColor(GlobalStyle.tertiaryBackgroundColor)
 			border(1.px, LineStyle.Solid, rgba(255, 255, 255, 0.42))
 		}
+	}
+
+	val copyToast by style {
+		backgroundColor(GlobalStyle.tertiaryBackgroundColor)
+		border(1.px, LineStyle.Solid, rgba(255, 255, 255, 0.35))
+		borderRadius(GlobalStyle.roundingButton)
+		bottom(100.percent)
+		color(GlobalStyle.textColor)
+		fontSize(0.75.cssRem)
+		left(50.percent)
+		marginBottom(0.35.cssRem)
+		paddingX(0.5.cssRem)
+		paddingY(0.2.cssRem)
+		pointerEvents(PointerEvents.None)
+		position(Position.Absolute)
+		property("transform", "translateX(-50%)")
+		whiteSpace(WhiteSpace.NoWrap)
+		zIndex(1)
 	}
 
 	val overlay by style {

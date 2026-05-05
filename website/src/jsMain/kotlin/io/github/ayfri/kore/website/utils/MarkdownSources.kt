@@ -2,6 +2,7 @@ package io.github.ayfri.kore.website.utils
 
 import kotlinx.browser.window
 import kotlinx.coroutines.await
+import kotlin.js.Json
 
 private var cachedMarkdownSources: Map<String, String>? = null
 
@@ -16,7 +17,7 @@ suspend fun loadMarkdownSources(): Map<String, String> {
 }
 
 private fun parseMarkdownSourcesJson(jsonText: String): Map<String, String> {
-	val obj = JSON.parse<Map<String, String>>(jsonText)
-	val keys = obj.keys
-	return keys.associateWith { key -> obj[key] ?: error("Missing value for key '$key' in markdown-sources.json") }
+	val obj = JSON.parse<Json>(jsonText)
+	val keys = Object.keys(obj)
+	return keys.associateWith { key -> obj[key] as String }
 }
