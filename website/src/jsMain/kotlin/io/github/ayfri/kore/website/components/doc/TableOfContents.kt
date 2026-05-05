@@ -4,66 +4,14 @@ import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.layouts.MarkdownLayoutStyle
-import io.github.ayfri.kore.website.utils.smMax
 import io.github.ayfri.kore.website.utils.transition
+import io.github.ayfri.kore.website.utils.xlMax
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.asList
-
-object TableOfContentsStyle : StyleSheet() {
-	val container by style {
-		backgroundColor(GlobalStyle.secondaryBackgroundColor)
-		borderRadius(GlobalStyle.roundingButton)
-		maxHeight(72.5.vh)
-		maxWidth(14.cssRem)
-		overflowY(Overflow.Auto)
-		padding(0.75.cssRem, 1.cssRem)
-		position(Position.Sticky)
-		top(10.vh)
-
-		smMax(self) {
-			display(DisplayStyle.None)
-		}
-
-		"ul" style {
-			paddingLeft(1.cssRem)
-		}
-	}
-
-	val title by style {
-		fontSize(1.1.cssRem)
-		fontWeight(FontWeight.Bold)
-		marginTop(0.px)
-		marginBottom(0.5.cssRem)
-	}
-
-	val entry by style {
-		color(GlobalStyle.textColor)
-		cursor(Cursor.Pointer)
-		fontSize(0.875.cssRem)
-		listStyle(ListStyle.None)
-		overflow(Overflow.Hidden)
-		padding(0.15.cssRem, 0.3.cssRem)
-		borderRadius(GlobalStyle.roundingButton)
-		textOverflow(TextOverflow.Ellipsis)
-		transition(0.2.s, "color", "background-color")
-		whiteSpace(WhiteSpace.NoWrap)
-		userSelect(UserSelect.None)
-
-		self + hover style {
-			color(GlobalStyle.linkColor)
-			backgroundColor(GlobalStyle.tertiaryBackgroundColor)
-		}
-	}
-
-	val activeEntry by style {
-		color(GlobalStyle.linkColor)
-		backgroundColor(GlobalStyle.tertiaryBackgroundColor)
-	}
-}
 
 @Composable
 fun TableOfContents() {
@@ -114,6 +62,7 @@ fun TableOfContents() {
 		H4({
 			classes(TableOfContentsStyle.title)
 		}) { Text("On this page") }
+
 		Ul {
 			headings.forEach { heading ->
 				val headingName = heading.innerText.removePrefix("link").trim()
@@ -140,5 +89,60 @@ fun TableOfContents() {
 				}
 			}
 		}
+	}
+}
+
+data object TableOfContentsStyle : StyleSheet() {
+	val container by style {
+		backgroundColor(GlobalStyle.secondaryBackgroundColor)
+		borderRadius(GlobalStyle.roundingButton)
+		maxHeight(72.5.vh)
+		maxWidth(13.cssRem)
+		overflowY(Overflow.Auto)
+		padding(0.5.cssRem, 0.75.cssRem)
+		position(Position.Sticky)
+		top(10.vh)
+
+		xlMax(self) {
+			display(DisplayStyle.None)
+		}
+
+		"ul" style {
+			display(DisplayStyle.Flex)
+			flexDirection(FlexDirection.Column)
+			gap(1.px)
+			paddingLeft(0.75.cssRem)
+		}
+	}
+
+	val title by style {
+		fontSize(1.cssRem)
+		fontWeight(FontWeight.Bold)
+		marginTop(0.px)
+		marginBottom(0.5.cssRem)
+	}
+
+	val entry by style {
+		color(GlobalStyle.textColor)
+		cursor(Cursor.Pointer)
+		fontSize(0.8.cssRem)
+		listStyle(ListStyle.None)
+		overflow(Overflow.Hidden)
+		padding(0.15.cssRem, 0.3.cssRem)
+		borderRadius(GlobalStyle.roundingButton)
+		textOverflow(TextOverflow.Ellipsis)
+		transition(0.2.s, "color", "background-color")
+		whiteSpace(WhiteSpace.NoWrap)
+		userSelect(UserSelect.None)
+
+		self + hover style {
+			color(GlobalStyle.linkColor)
+			backgroundColor(GlobalStyle.tertiaryBackgroundColor)
+		}
+	}
+
+	val activeEntry by style {
+		color(GlobalStyle.linkColor)
+		backgroundColor(GlobalStyle.tertiaryBackgroundColor)
 	}
 }
