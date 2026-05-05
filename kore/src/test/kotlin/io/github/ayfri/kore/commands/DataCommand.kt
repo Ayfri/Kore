@@ -20,21 +20,65 @@ fun Function.dataTests() {
 		merge { this["foo"] = "bar" } assertsIs "data merge entity @s {foo:\"bar\"}"
 
 		modify("foo") { append(self(), "bar") } assertsIs "data modify entity @s foo append from entity @s bar"
+		modify("foo") { append(self(), "bar", 1) } assertsIs "data modify entity @s foo append string entity @s bar 1"
+		modify("foo") {
+			append(
+				self(),
+				"bar",
+				0,
+				1
+			)
+		} assertsIs "data modify entity @s foo append string entity @s bar 0 1"
 		modify("foo") { append(NbtInt(1)) } assertsIs "data modify entity @s foo append value 1"
 		modify("foo") { append(true) } assertsIs "data modify entity @s foo append value true"
 		modify("foo") { append(textComponent("bar")) } assertsIs "data modify entity @s foo append value \"bar\""
 
 		modify("foo") { insert(0, self(), "bar") } assertsIs "data modify entity @s foo insert 0 from entity @s bar"
+		modify("foo") {
+			insert(
+				0,
+				self(),
+				"bar",
+				1
+			)
+		} assertsIs "data modify entity @s foo insert 0 string entity @s bar 1"
+		modify("foo") {
+			insert(
+				0,
+				self(),
+				"bar",
+				0,
+				1
+			)
+		} assertsIs "data modify entity @s foo insert 0 string entity @s bar 0 1"
 		modify("foo") { insert(0, NbtInt(1)) } assertsIs "data modify entity @s foo insert 0 value 1"
 		modify("foo") { insert(0, true) } assertsIs "data modify entity @s foo insert 0 value true"
 		modify("foo") { insert(0, textComponent("bar")) } assertsIs "data modify entity @s foo insert 0 value \"bar\""
 
 		modify("foo") { merge(1) } assertsIs "data modify entity @s foo merge value 1"
+		modify("foo") { merge(self(), "bar", 1) } assertsIs "data modify entity @s foo merge string entity @s bar 1"
+		modify("foo") {
+			merge(
+				self(),
+				"bar",
+				0,
+				1
+			)
+		} assertsIs "data modify entity @s foo merge string entity @s bar 0 1"
 		modify("foo") {
 			merge(scoreComponent("foo", self()))
 		} assertsIs "data modify entity @s foo merge value {score:{name:\"@s\",objective:\"foo\"}}"
 
 		modify("foo") { prepend(self(), "bar") } assertsIs "data modify entity @s foo prepend from entity @s bar"
+		modify("foo") { prepend(self(), "bar", 1) } assertsIs "data modify entity @s foo prepend string entity @s bar 1"
+		modify("foo") {
+			prepend(
+				self(),
+				"bar",
+				0,
+				1
+			)
+		} assertsIs "data modify entity @s foo prepend string entity @s bar 0 1"
 		modify("foo") { prepend(NbtInt(1)) } assertsIs "data modify entity @s foo prepend value 1"
 		modify("foo") { prepend(true) } assertsIs "data modify entity @s foo prepend value true"
 		modify("foo") { prepend(textComponent("bar")) } assertsIs "data modify entity @s foo prepend value \"bar\""

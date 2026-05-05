@@ -755,6 +755,31 @@ data modify entity @s Health set value 20
 data modify entity @s Pos[0] set from entity @s Pos[0]
 ```
 
+`data modify ... <op> string ... [start] [end]` is also supported for every string-capable operation (`set`, `append`,
+`insert`, `merge`, `prepend`):
+
+```kotlin
+function("data_modify_string_ranges") {
+	data(self()) {
+		modify("foo") { append(self(), "name", 1) }
+		modify("foo") { insert(0, self(), "name", 0, 4) }
+		modify("foo") { merge(self(), "name", -5) }
+		modify("foo") { prepend(self(), "name", 0, 2) }
+		modify("foo") { set(self(), "name", 0, 3) }
+	}
+}
+```
+
+Generated output:
+
+```mcfunction
+data modify entity @s foo append string entity @s name 1
+data modify entity @s foo insert 0 string entity @s name 0 4
+data modify entity @s foo merge string entity @s name -5
+data modify entity @s foo prepend string entity @s name 0 2
+data modify entity @s foo set string entity @s name 0 3
+```
+
 #### Data Remove
 
 ```kotlin

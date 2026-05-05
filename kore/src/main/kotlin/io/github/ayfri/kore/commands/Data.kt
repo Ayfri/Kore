@@ -9,11 +9,11 @@ import io.github.ayfri.kore.arguments.types.literals.int
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.utils.nbt
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 import net.benwoodworth.knbt.NbtCompoundBuilder
 import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.StringifiedNbt
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 
 /**
  * Helpers that build the low-level `/data` subcommands used throughout Kore.
@@ -28,6 +28,17 @@ object DataModifyOperation {
 	fun append(from: DataArgument, path: String) =
 		listOf(literal("append"), literal("from"), literal(from.literalName), from, literal(path))
 
+	fun append(string: DataArgument, path: String, start: Int? = null, end: Int? = null) =
+		listOfNotNull(
+			literal("append"),
+			literal("string"),
+			literal(string.literalName),
+			string,
+			literal(path),
+			int(start),
+			int(end)
+		)
+
 	fun append(value: NbtTag) = listOf(literal("append"), literal("value"), literal(StringifiedNbt.encodeToString(value)))
 	fun append(value: Int) = listOf(literal("append"), literal("value"), int(value))
 	fun append(value: Float) = listOf(literal("append"), literal("value"), float(value))
@@ -38,6 +49,18 @@ object DataModifyOperation {
 
 	fun insert(index: Int, from: DataArgument, path: String) =
 		listOf(literal("insert"), int(index), literal("from"), literal(from.literalName), from, literal(path))
+
+	fun insert(index: Int, string: DataArgument, path: String, start: Int? = null, end: Int? = null) =
+		listOfNotNull(
+			literal("insert"),
+			int(index),
+			literal("string"),
+			literal(string.literalName),
+			string,
+			literal(path),
+			int(start),
+			int(end),
+		)
 
 	fun insert(index: Int, value: NbtTag) =
 		listOf(literal("insert"), int(index), literal("value"), literal(StringifiedNbt.encodeToString(value)))
@@ -52,6 +75,17 @@ object DataModifyOperation {
 	fun merge(from: DataArgument, path: String) =
 		listOf(literal("merge"), literal("from"), literal(from.literalName), from, literal(path))
 
+	fun merge(string: DataArgument, path: String, start: Int? = null, end: Int? = null) =
+		listOfNotNull(
+			literal("merge"),
+			literal("string"),
+			literal(string.literalName),
+			string,
+			literal(path),
+			int(start),
+			int(end)
+		)
+
 	fun merge(value: NbtTag) = listOf(literal("merge"), literal("value"), literal(StringifiedNbt.encodeToString(value)))
 	fun merge(value: Int) = listOf(literal("merge"), literal("value"), int(value))
 	fun merge(value: Float) = listOf(literal("merge"), literal("value"), float(value))
@@ -62,6 +96,17 @@ object DataModifyOperation {
 
 	fun prepend(from: DataArgument, path: String) =
 		listOf(literal("prepend"), literal("from"), literal(from.literalName), from, literal(path))
+
+	fun prepend(string: DataArgument, path: String, start: Int? = null, end: Int? = null) =
+		listOfNotNull(
+			literal("prepend"),
+			literal("string"),
+			literal(string.literalName),
+			string,
+			literal(path),
+			int(start),
+			int(end)
+		)
 
 	fun prepend(value: NbtTag) = listOf(literal("prepend"), literal("value"), literal(StringifiedNbt.encodeToString(value)))
 	fun prepend(value: Int) = listOf(literal("prepend"), literal("value"), int(value))
