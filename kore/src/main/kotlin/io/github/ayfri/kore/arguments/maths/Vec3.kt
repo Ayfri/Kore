@@ -6,11 +6,24 @@ import io.github.ayfri.kore.arguments.numbers.PosNumber
 import io.github.ayfri.kore.arguments.numbers.pos
 import io.github.ayfri.kore.arguments.types.ContainerArgument
 import io.github.ayfri.kore.arguments.types.DataArgument
+import kotlinx.serialization.Serializable
 import kotlin.math.acos
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
-data class Vec3(val x: PosNumber, val y: PosNumber, val z: PosNumber) : Argument, ContainerArgument, DataArgument {
+/**
+ * Three [PosNumber] components in command order: x, y, z. Used for positions, motion vectors, and other triples in
+ * Minecraft command syntax.
+ */
+@Serializable
+data class Vec3(
+	/** X axis component. */
+	val x: PosNumber,
+	/** Y axis component. */
+	val y: PosNumber,
+	/** Z axis component. */
+	val z: PosNumber,
+) : Argument, ContainerArgument, DataArgument {
 	constructor(x: Number = 0, y: Number = 0, z: Number = 0) : this(x.pos, y.pos, z.pos)
 
 	val array get() = doubleArrayOf(x.value, y.value, z.value)

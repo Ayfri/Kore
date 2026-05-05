@@ -1,12 +1,29 @@
 package io.github.ayfri.kore.arguments.numbers
 
+import kotlinx.serialization.Serializable
 import kotlin.math.absoluteValue
 
-data class PosNumber(var value: Double, var type: Type = Type.WORLD) : Comparable<PosNumber> {
+/**
+ * One axis of a [io.github.ayfri.kore.arguments.maths.Vec3] or other command position component: a numeric value plus
+ * whether it is world-absolute, tilde-relative, or caret-local.
+ */
+@Serializable
+data class PosNumber(
+	/** Numeric magnitude before any `~` / `^` prefix is applied in command text. */
+	var value: Double,
+	/** How this component is formatted and interpreted in Minecraft commands. */
+	var type: Type = Type.WORLD,
+) : Comparable<PosNumber> {
+	@Serializable
 	enum class Type(val prefix: String = "") {
+		/** Caret/local axis (`^`) for `facing`/`rotation`-relative coordinates. */
 		LOCAL("^"),
+
+		/** Tilde-relative offset (`~`) from the execution position. */
 		RELATIVE("~"),
-		WORLD
+
+		/** Absolute world coordinate (no prefix). */
+		WORLD,
 	}
 
 	val prefix get() = type.prefix
