@@ -4,6 +4,8 @@ import io.github.ayfri.kore.arguments.DisplaySlots
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.BossBarColor
 import io.github.ayfri.kore.arguments.colors.Color
+import io.github.ayfri.kore.arguments.components.item.customName
+import io.github.ayfri.kore.arguments.components.item.damage
 import io.github.ayfri.kore.arguments.enums.DataType
 import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
@@ -55,7 +57,26 @@ fun oopTests() = testDataPack("oop") {
 					bold = true
 				})
 			}
-		} assertsIs """execute at @e[gamemode=survival,limit=1,name=Ayfri,team=red,type=minecraft:player] run summon minecraft:item 0.0 0.0 0.0 {Item:{components:"{}",CustomName:"{\"text\":\"MY ITEM\",\"bold\":true,\"color\":\"red\"}",CustomNameVisible:1b}}"""
+		} assertsIs """execute at @e[gamemode=survival,limit=1,name=Ayfri,team=red,type=minecraft:player] run summon minecraft:item 0.0 0.0 0.0 {CustomName:{type:"text",bold:1b,color:"red",text:"MY ITEM"},CustomNameVisible:1b,Item:{id:"minecraft:diamond_sword"}}"""
+		lines.size assertsIs 1
+	}
+
+	function("summon_item_entity_components") {
+		val item = itemStack(Items.DIAMOND_SWORD) {
+			damage(10)
+		}
+		item.summon() assertsIs """summon minecraft:item 0.0 0.0 0.0 {Item:{id:"minecraft:diamond_sword",components:{damage:10}}}"""
+		lines.size assertsIs 1
+	}
+
+	function("summon_item_entity_showcase_tags") {
+		val item = itemStack(Items.DIAMOND_SWORD) {
+			customName(textComponent("Shop", Color.GOLD))
+		}
+		item.summon {
+			showcase = true
+			tags = listOf("display")
+		} assertsIs """summon minecraft:item 0.0 0.0 0.0 {Invulnerable:1b,NoGravity:1b,Tags:["display"],Item:{id:"minecraft:diamond_sword",components:{custom_name:{text:"Shop",color:"gold"}}},PickupDelay:32767s,Age:-32768s,CustomName:{type:"text",color:"gold",text:"Shop"},CustomNameVisible:1b}"""
 		lines.size assertsIs 1
 	}
 
