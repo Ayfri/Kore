@@ -116,7 +116,6 @@ fun Function.displayTests() {
 class DisplayTests : FunSpec({
 	test("display") {
 		dataPack("helpers_tests") {
-			path = kotlinx.io.files.Path("out")
 			load { displayTests() }
 		}.generate()
 	}

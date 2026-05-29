@@ -119,7 +119,6 @@ fun Function.inventoryManagerTests() {
 class InventoryManagerTests : FunSpec({
 	test("inventory manager") {
 		dataPack("helpers_tests") {
-			path = kotlinx.io.files.Path("out")
 			load { inventoryManagerTests() }
 		}.generate()
 	}

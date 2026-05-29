@@ -26,8 +26,6 @@ import io.github.ayfri.kore.utils.set
 import io.kotest.core.spec.style.FunSpec
 
 fun selectorTests() = dataPack("selector_tests") {
-	path = kotlinx.io.files.Path("out")
-
 	selector(SelectorType.ALL_ENTITIES) assertsIs "@e"
 
 	allEntities() assertsIs "@e"

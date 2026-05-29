@@ -39,7 +39,6 @@ fun Function.mannequinTests() {
 class MannequinTests : FunSpec({
 	test("mannequin") {
 		dataPack("helpers_tests") {
-			path = kotlinx.io.files.Path("out")
 			load { mannequinTests() }
 		}.generate()
 	}

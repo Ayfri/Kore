@@ -31,7 +31,6 @@ fun Function.scoreboardTests() {
 class ScoreboardHelperTests : FunSpec({
 	test("scoreboard") {
 		dataPack("helpers_tests") {
-			path = kotlinx.io.files.Path("out")
 			load { scoreboardTests() }
 		}.generate()
 	}

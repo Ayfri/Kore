@@ -27,7 +27,6 @@ fun DataPack.schedulerTest() {
 class SchedulerTests : FunSpec({
 	test("scheduler") {
 		dataPack("helpers_tests") {
-			path = kotlinx.io.files.Path("out")
 			schedulerTest()
 		}.generate()
 	}

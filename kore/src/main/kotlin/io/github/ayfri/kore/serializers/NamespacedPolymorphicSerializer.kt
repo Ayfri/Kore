@@ -65,7 +65,7 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 				}
 
 				@Suppress("UNCHECKED_CAST")
-				return decoder.json.decodeFromJsonElement(serializer, contentJson) as T
+				return decoder.json.decodeFromJsonElement(serializer, contentJson)
 			}
 
 			is NbtDecoder -> {
