@@ -20,7 +20,6 @@ import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
-import net.benwoodworth.knbt.buildNbtCompound
 
 enum class SlotEventType {
 	DURING_TAKEN,
@@ -95,7 +94,7 @@ data class SlotEventListener(
 
 		nbt = nbt {
 			this["Item"] = nbt {
-				this["components"] = buildNbtCompound {
+				this["components"] = nbt {
 					this["custom_data"] = randomTagNbt
 				}
 			}

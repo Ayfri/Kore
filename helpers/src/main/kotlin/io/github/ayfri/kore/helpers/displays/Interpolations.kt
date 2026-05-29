@@ -9,8 +9,12 @@ import io.github.ayfri.kore.commands.summon
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.helpers.displays.entities.DisplayEntity
 import io.github.ayfri.kore.helpers.displays.maths.Transformation
+import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
-import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.StringifiedNbt
+import net.benwoodworth.knbt.encodeToNbtTag
+import net.benwoodworth.knbt.nbtList
 
 data class DisplayEntityInterpolable(val entity: DisplayEntity, var lastPosition: Vec3) {
 	val selector = randomUUID()
@@ -22,7 +26,7 @@ data class DisplayEntityInterpolable(val entity: DisplayEntity, var lastPosition
 		start: Int = entity.startInterpolation ?: 0,
 		transformation: Transformation,
 	): Command {
-		val nbtCompound = buildNbtCompound {
+		val nbtCompound = nbt {
 			if (entity.interpolationDuration != duration) this["interpolation_duration"] = duration
 			this["start_interpolation"] = start
 			this["transformation"] = StringifiedNbt.encodeToNbtTag(transformation).nbtList
