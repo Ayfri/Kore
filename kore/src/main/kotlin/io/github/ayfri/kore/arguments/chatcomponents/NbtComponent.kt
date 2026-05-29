@@ -4,9 +4,9 @@ import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.resources.StorageArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
+import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import kotlinx.serialization.Serializable
-import net.benwoodworth.knbt.buildNbtCompound
 
 @Serializable(with = NbtComponentSource.Companion.NbtComponentSourceSerializer::class)
 enum class NbtComponentSource {
@@ -31,7 +31,7 @@ data class NbtComponent(
 ) : ChatComponent() {
 	override val type = ChatComponentType.NBT
 
-	override fun toNbtTag() = buildNbtCompound {
+	override fun toNbtTag() = nbt {
 		super.toNbtTag().entries.forEach { (key, value) -> if (key != "text") this[key] = value }
 		block?.let { this["block"] = it }
 		entity?.let { this["entity"] = it }

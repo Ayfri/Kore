@@ -4,8 +4,8 @@ import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
 import io.github.ayfri.kore.generated.ItemComponentTypes
+import io.github.ayfri.kore.utils.nbt
 import net.benwoodworth.knbt.NbtCompoundBuilder
-import net.benwoodworth.knbt.buildNbtCompound
 
 fun itemPredicate(block: ItemPredicate.() -> Unit = {}) = ItemPredicate().apply(block)
 fun ItemArgument.predicate(block: ItemPredicate.() -> Unit = {}) = ItemPredicate(this).apply(block)
@@ -206,7 +206,7 @@ fun ItemPredicate.buildPartial(component: ItemComponentTypes, nbtBuilder: NbtCom
  * Will be serialized as: `*[my_data~{test:1}]`
  */
 fun ItemPredicate.buildPartial(name: String, nbtBuilder: NbtCompoundBuilder.() -> Unit) = apply {
-	this["~$name"] = buildNbtCompound(nbtBuilder)
+	this["~$name"] = nbt(nbtBuilder)
 }
 
 /**

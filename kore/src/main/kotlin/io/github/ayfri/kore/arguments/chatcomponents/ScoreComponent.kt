@@ -2,10 +2,10 @@ package io.github.ayfri.kore.arguments.chatcomponents
 
 import io.github.ayfri.kore.arguments.types.ScoreHolderArgument
 import io.github.ayfri.kore.arguments.types.literals.AllArgument
+import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import net.benwoodworth.knbt.buildNbtCompound
 
 @Serializable
 data class ScoreComponent(
@@ -13,7 +13,7 @@ data class ScoreComponent(
 ) : ChatComponent() {
 	override val type = ChatComponentType.SCORE
 
-	override fun toNbtTag() = buildNbtCompound {
+	override fun toNbtTag() = nbt {
 		super.toNbtTag().entries.forEach { (key, value) -> if (key != "text") this[key] = value }
 		this["score"] = score.toNbtTag()
 	}
@@ -26,7 +26,7 @@ data class ScoreComponentEntry(
 	var objective: String,
 	var value: String? = null,
 ) {
-	fun toNbtTag() = buildNbtCompound {
+	fun toNbtTag() = nbt {
 		this["name"] = entity
 		this["objective"] = objective
 		value?.let { this["value"] = it }

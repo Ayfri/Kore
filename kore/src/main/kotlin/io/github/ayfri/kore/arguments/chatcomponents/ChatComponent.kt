@@ -12,7 +12,6 @@ import io.github.ayfri.kore.utils.snbtSerializer
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import net.benwoodworth.knbt.buildNbtCompound
 import net.benwoodworth.knbt.encodeToNbtTag
 
 @Serializable
@@ -42,7 +41,7 @@ abstract class ChatComponent {
 
 	open fun containsOnlyText() = text(text) == this
 
-	open fun toNbtTag() = buildNbtCompound {
+	open fun toNbtTag() = nbt {
 		this["type"] = type.name.lowercase()
 		bold?.let { this["bold"] = it }
 		clickEvent?.let { this["click_event"] = snbtSerializer.encodeToNbtTag(it) }

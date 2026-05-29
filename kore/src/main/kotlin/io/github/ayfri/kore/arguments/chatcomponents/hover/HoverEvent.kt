@@ -17,7 +17,6 @@ import io.github.ayfri.kore.utils.set
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtTag
-import net.benwoodworth.knbt.buildNbtCompound
 
 @Serializable
 data class HoverEvent(
@@ -26,7 +25,7 @@ data class HoverEvent(
 	var value: NbtTag,
 	var contents: Contents? = null,
 ) {
-	fun toNbtTag() = buildNbtCompound {
+	fun toNbtTag() = nbt {
 		this["action"] = action.asArg()
 
 		when (action) {

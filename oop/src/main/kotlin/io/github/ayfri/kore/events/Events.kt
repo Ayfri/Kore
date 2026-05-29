@@ -20,6 +20,9 @@ import io.github.ayfri.kore.features.advancements.advancement
 import io.github.ayfri.kore.features.advancements.criteria
 import io.github.ayfri.kore.features.advancements.rewards
 import io.github.ayfri.kore.features.advancements.triggers.*
+import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
+import io.github.ayfri.kore.features.itemmodifiers.functions.SetCustomData
+import io.github.ayfri.kore.features.loottables.entries.Item
 import io.github.ayfri.kore.features.loottables.lootTable
 import io.github.ayfri.kore.features.loottables.pool
 import io.github.ayfri.kore.features.predicates.sub.itemStack
@@ -30,6 +33,7 @@ import io.github.ayfri.kore.functions.tick
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
+import io.github.ayfri.kore.utils.nbt
 import net.benwoodworth.knbt.NbtByte
 import io.github.ayfri.kore.commands.function as functionCommand
 import io.github.ayfri.kore.functions.function as dpFunction
@@ -177,12 +181,12 @@ fun Entity.onDeath(block: Function.() -> Unit) {
 	if (dp.lootTables.none { it.fileName == lootTableName }) {
 		dp.lootTable(lootTableName) {
 			pool {
-				val itemEntry = io.github.ayfri.kore.features.loottables.entries.Item(
+				val itemEntry = Item(
 					name = Items.STRUCTURE_VOID,
-					functions = io.github.ayfri.kore.features.itemmodifiers.ItemModifier(
+					functions = ItemModifier(
 						modifiers = listOf(
-							io.github.ayfri.kore.features.itemmodifiers.functions.SetCustomData(
-								tag = net.benwoodworth.knbt.buildNbtCompound {
+							SetCustomData(
+								tag = nbt {
 									put(OopConstants.deathTriggerKey, NbtByte(1))
 								}
 							)

@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.arguments.chatcomponents
 
+import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import kotlinx.serialization.Serializable
-import net.benwoodworth.knbt.buildNbtCompound
 
 @Serializable
 data class KeybindComponent(
@@ -10,7 +10,7 @@ data class KeybindComponent(
 ) : ChatComponent() {
 	override val type = ChatComponentType.KEYBIND
 
-	override fun toNbtTag() = buildNbtCompound {
+	override fun toNbtTag() = nbt {
 		super.toNbtTag().entries.forEach { (key, value) -> if (key != "text") this[key] = value }
 		this["keybind"] = keybind
 	}

@@ -1,9 +1,6 @@
 package io.github.ayfri.kore.serializers
 
-import io.github.ayfri.kore.utils.createInstance
-import io.github.ayfri.kore.utils.getSerialName
-import io.github.ayfri.kore.utils.getSerializer
-import io.github.ayfri.kore.utils.orderedMemberProperties
+import io.github.ayfri.kore.utils.*
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.serialDescriptor
@@ -11,7 +8,10 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.encodeStructure
 import kotlinx.serialization.json.*
-import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.NbtDecoder
+import net.benwoodworth.knbt.NbtEncoder
+import net.benwoodworth.knbt.NbtTag
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.jvm.isAccessible
@@ -81,7 +81,7 @@ open class EitherInlineSerializer<T : Any>(
 
 			is NbtEncoder -> encoder.encodeInline(descriptor).encodeSerializableValue(
 				NbtCompound.serializer(),
-				buildNbtCompound {
+				nbt {
 					properties.forEach { (_, property) ->
 						property.getter.isAccessible = true
 						val propertyValue = property.getter.call(value)

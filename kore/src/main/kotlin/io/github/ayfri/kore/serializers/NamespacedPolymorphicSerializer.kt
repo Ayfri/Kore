@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.serializers
 
 import io.github.ayfri.kore.utils.getSerialName
+import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.snakeCase
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.serialDescriptor
@@ -96,11 +97,11 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 					?: decoder.nbt.serializersModule.serializer(subclass.createType()) as DeserializationStrategy<T>
 
 				val contentNbt = when (moveIntoProperty) {
-					null -> buildNbtCompound {
+					null -> nbt {
 						nbtCompound.filterKeys { it != outputName }.forEach(::put)
 					}
 
-					else -> nbtCompound[moveIntoProperty]?.nbtCompound ?: buildNbtCompound {}
+					else -> nbtCompound[moveIntoProperty]?.nbtCompound ?: nbt {}
 				}
 
 				return decoder.nbt.decodeFromNbtTag(serializer, contentNbt)
@@ -160,12 +161,12 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 		}
 
 		val finalJson = when (moveIntoProperty) {
-			null -> buildNbtCompound {
+			null -> nbt {
 				if (!skipOutputName) put(outputName, NbtString(outputClassName))
 				valueNbt.nbtCompound.filterKeys { it != outputName }.forEach(::put)
 			}
 
-			else -> buildNbtCompound {
+			else -> nbt {
 				if (!skipOutputName) put(outputName, NbtString(outputClassName))
 
 				when (valueNbt) {

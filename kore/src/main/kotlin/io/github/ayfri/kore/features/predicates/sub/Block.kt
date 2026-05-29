@@ -7,7 +7,6 @@ import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtCompoundBuilder
-import net.benwoodworth.knbt.buildNbtCompound
 
 @Serializable
 data class Block(
@@ -31,7 +30,7 @@ fun Block.components(block: ComponentsPatch.() -> Unit) {
 }
 
 fun Block.nbt(block: NbtCompoundBuilder.() -> Unit) {
-	nbt = buildNbtCompound(block)
+	nbt = io.github.ayfri.kore.utils.nbt(block)
 }
 
 fun Block.predicates(block: ItemStackSubPredicates.() -> Unit) {

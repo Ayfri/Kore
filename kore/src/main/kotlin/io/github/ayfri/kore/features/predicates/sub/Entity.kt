@@ -14,7 +14,6 @@ import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtCompoundBuilder
-import net.benwoodworth.knbt.buildNbtCompound
 
 @Serializable
 data class Entity(
@@ -102,7 +101,7 @@ fun Entity.movementAffectedBy(init: Location.() -> Unit = {}) {
 }
 
 fun Entity.nbt(block: NbtCompoundBuilder.() -> Unit) {
-	nbt = buildNbtCompound(block)
+	nbt = io.github.ayfri.kore.utils.nbt(block)
 }
 
 fun Entity.passenger(init: Entity.() -> Unit = {}) {

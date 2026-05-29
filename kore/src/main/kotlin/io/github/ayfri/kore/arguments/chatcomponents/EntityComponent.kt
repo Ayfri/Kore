@@ -1,9 +1,9 @@
 package io.github.ayfri.kore.arguments.chatcomponents
 
 import io.github.ayfri.kore.arguments.types.EntityArgument
+import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import kotlinx.serialization.Serializable
-import net.benwoodworth.knbt.buildNbtCompound
 
 @Serializable
 data class EntityComponent(
@@ -12,7 +12,7 @@ data class EntityComponent(
 ) : ChatComponent() {
 	override val type = ChatComponentType.SELECTOR
 
-	override fun toNbtTag() = buildNbtCompound {
+	override fun toNbtTag() = nbt {
 		super.toNbtTag().entries.forEach { (key, value) -> if (key != "text") this[key] = value }
 		this["selector"] = selector
 		separator?.let { this["separator"] = it }

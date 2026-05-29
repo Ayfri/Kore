@@ -1,10 +1,9 @@
 package io.github.ayfri.kore.arguments.chatcomponents
 
+import io.github.ayfri.kore.utils.nbt
+import io.github.ayfri.kore.utils.nbtListOf
 import io.github.ayfri.kore.utils.set
 import kotlinx.serialization.Serializable
-import net.benwoodworth.knbt.add
-import net.benwoodworth.knbt.buildNbtCompound
-import net.benwoodworth.knbt.buildNbtList
 
 @Serializable
 data class TranslatedTextComponent(
@@ -14,16 +13,12 @@ data class TranslatedTextComponent(
 ) : ChatComponent(), SimpleComponent {
 	override val type = ChatComponentType.TRANSLATABLE
 
-	override fun toNbtTag() = buildNbtCompound {
+	override fun toNbtTag() = nbt {
 		super.toNbtTag().entries.forEach { (key, value) -> if (key != "text") this[key] = value }
 		fallback?.let { this["fallback"] = it }
 		this["translate"] = translate
 		with?.let {
-			this["with"] = buildNbtList {
-				it.forEach {
-					add(it.toNbtTag())
-				}
-			}
+			this["with"] = nbtListOf(it.map { it.toNbtTag() })
 		}
 	}
 }

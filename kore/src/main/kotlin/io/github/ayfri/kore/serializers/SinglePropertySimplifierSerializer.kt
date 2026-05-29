@@ -1,9 +1,6 @@
 package io.github.ayfri.kore.serializers
 
-import io.github.ayfri.kore.utils.createInstance
-import io.github.ayfri.kore.utils.getSerialName
-import io.github.ayfri.kore.utils.getSerializer
-import io.github.ayfri.kore.utils.orderedMemberProperties
+import io.github.ayfri.kore.utils.*
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.serialDescriptor
@@ -16,7 +13,6 @@ import kotlinx.serialization.json.buildJsonObject
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtDecoder
 import net.benwoodworth.knbt.NbtEncoder
-import net.benwoodworth.knbt.buildNbtCompound
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.jvm.isAccessible
@@ -101,7 +97,8 @@ open class SinglePropertySimplifierSerializer<T : Any, P : Any>(
 					}
 				})
 
-				is NbtEncoder -> encoder.encodeInline(descriptor).encodeSerializableValue(NbtCompound.serializer(), buildNbtCompound {
+				is NbtEncoder -> encoder.encodeInline(descriptor)
+					.encodeSerializableValue(NbtCompound.serializer(), nbt {
 					properties.forEach { (name, property) ->
 						property.getter.isAccessible = true
 						val propertyValue = property.getter.call(value)

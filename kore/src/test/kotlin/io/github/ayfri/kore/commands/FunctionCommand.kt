@@ -6,12 +6,12 @@ import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import io.kotest.core.spec.style.FunSpec
-import net.benwoodworth.knbt.buildNbtCompound
 
 fun Function.functionTests() {
-	val arguments = buildNbtCompound { this["foo"] = 1 }
+	val arguments = nbt { this["foo"] = 1 }
 	val storage = storage("foo")
 
 	function("tests") assertsIs "function ${datapack.name}:tests"

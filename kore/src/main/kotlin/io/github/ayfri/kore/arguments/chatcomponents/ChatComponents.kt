@@ -3,6 +3,7 @@ package io.github.ayfri.kore.arguments.chatcomponents
 import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
+import io.github.ayfri.kore.utils.nbtList
 import io.github.ayfri.kore.utils.plusAssign
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.ListSerializer
@@ -49,7 +50,7 @@ data class ChatComponents(
 	fun toJsonString(json: Json = Json) = json.encodeToString(NbtAsJsonSerializer, toNbtTag())
 	fun toJsonListString(json: Json = Json) = json.encodeToString(NbtAsJsonSerializer, toNbtList())
 
-	fun toNbtList() = buildNbtList {
+	fun toNbtList() = nbtList {
 		list.forEach {
 			this += it.toNbtTag()
 		}
