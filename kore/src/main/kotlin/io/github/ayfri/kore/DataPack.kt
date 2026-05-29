@@ -225,3 +225,33 @@ fun dataPack(name: String, block: DataPack.() -> Unit) = DataPack(name).apply(bl
 fun DataPack.configuration(block: Configuration.() -> Unit) {
 	configuration = Configuration().apply(block)
 }
+
+/** Sets the icon path of the pack displayed in-game. */
+fun DataPack.iconPath(path: String) {
+	iconPath = Path(path)
+}
+
+/** Sets the icon path of the pack displayed in-game. */
+fun DataPack.iconPath(path: java.nio.file.Path) {
+	iconPath = Path(path.toAbsolutePath().toFile().absolutePath)
+}
+
+/** Sets the icon path of the pack displayed in-game. */
+fun DataPack.iconPath(path: Path) {
+	iconPath = path
+}
+
+/** Sets the output path of the pack. */
+fun DataPack.path(path: String) {
+	this.path = Path(path)
+}
+
+/** Sets the output path of the pack. */
+fun DataPack.path(path: java.nio.file.Path) {
+	this.path = Path(path.toAbsolutePath().toFile().absolutePath)
+}
+
+/** Sets the output path of the pack. */
+fun DataPack.path(path: Path) {
+	this.path = path
+}

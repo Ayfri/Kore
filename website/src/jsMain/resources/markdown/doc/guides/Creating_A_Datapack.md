@@ -35,17 +35,17 @@ To change the output folder, use the `path` property:
 
 ```kotlin
 dataPack("my_datapack") {
-	path = Path("%appdata%/.minecraft/saves/my_world/datapacks")
+  path("%appdata%/.minecraft/saves/my_world/datapacks")
 }
 ```
 
 ## Adding Icon
 
-To add an icon to the datapack, use the `iconPath` property:
+To add an icon to the datapack, use the `iconPath` function:
 
 ```kotlin
 dataPack("my_datapack") {
-	iconPath = Path("icon.png")
+  iconPath("icon.png")
 }
 ```
 
@@ -210,11 +210,11 @@ dataPack("my_datapack") {
 ```
 
 This will generate the datapack with the given name in the `out` folder by default.<br>
-To change the output folder, use the `path` property:
+To change the output folder, use the `path` function:
 
 ```kotlin
 dataPack("my_datapack") {
-	path = Path("%appdata%/.minecraft/saves/my_world/datapacks")
+  path("%appdata%/.minecraft/saves/my_world/datapacks")
 }.generate()
 ```
 
@@ -245,11 +245,11 @@ dataPack("my_datapack") {
 ```
 
 By calling `generateJar()`, the generated JAR file will be placed in the default output folder.
-If you wish to specify a different location, use the `path` property:
+If you wish to specify a different location, use the `path` function:
 
 ```kotlin
 dataPack("my_datapack") {
-	path = Path("path/to/output/folder")
+  path("path/to/output/folder")
 }.generateJar()
 ```
 
