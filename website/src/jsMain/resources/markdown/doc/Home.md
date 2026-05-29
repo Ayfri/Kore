@@ -5,7 +5,7 @@ nav-title: Home
 description: Welcome to the Kore wiki!
 keywords: minecraft, datapack, kore, guide
 date-created: 2024-04-06
-date-modified: 2026-04-26
+date-modified: 2026-05-29
 routeOverride: /docs/home
 position: 0
 ---
@@ -98,11 +98,13 @@ fun main() {
 ### Commands
 
 - [Macros](/docs/commands/macros) - dynamic command arguments for reusable functions.
+
 ### Concepts
 
 - [Components](/docs/concepts/components) - item/component builders and custom components.
 - [Chat Components](/docs/concepts/chat-components) - formatted messages and text components.
 - [Colors](/docs/concepts/colors) - chat colors and formatting options.
+- [NBTs](/docs/concepts/nbts) - the shared NBT builder DSL used across commands and data-driven APIs.
 - [Selectors](/docs/concepts/selectors) - entity and player targeting with typed filters.
 - [Scoreboards](/docs/concepts/scoreboards) - objectives, teams, and scoreboard displays.
 
@@ -176,6 +178,8 @@ Useful contributor-facing internals:
   selectors and score names manually.
 - Use [`Components`](/docs/concepts/components) + [`Predicates`](/docs/data-driven/predicates) together for robust item checks and inventory
   management.
+- Reach for [`NBTs`](/docs/concepts/nbts) when you need to build a payload once and reuse it across commands, chat, or
+  predicates.
 - Use [`Helpers Utilities`](/docs/helpers/utilities) to avoid reimplementing common glue code such as renderers,
   scheduler patterns, raycasts,
   or scoreboard-based maths.

@@ -84,7 +84,9 @@ kotlin {
 }
 ```
 
-Then create a `Main.kt` file and start writing your datapacks. See the [documentation](https://kore.ayfri.com/docs/home) for more information, including the [Commands guide](https://kore.ayfri.com/docs/commands/commands) for all available commands.
+Then create a `Main.kt` file and start writing your datapacks. See the [documentation](https://kore.ayfri.com/docs/home)
+for more information, including the [Commands guide](https://kore.ayfri.com/docs/commands/commands) for all available
+commands and the [NBTs guide](https://kore.ayfri.com/docs/concepts/nbts) for the shared NBT builder DSL.
 
 ## Installable Modules
 

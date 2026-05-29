@@ -38,6 +38,10 @@ points include [
 `NbtTagUtils.kt`](https://github.com/Ayfri/Kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/utils/NbtTagUtils.kt)
 and the `nbt { }` / `stringifiedNbt(...)` helpers used across commands and components.
 
+For normal day-to-day usage and examples, start with [NBTs](/docs/concepts/nbts); this section focuses on limitations
+and
+workarounds.
+
 Implications:
 
 - **Typed NBT lists:** In knbt, `NbtList` is **homogeneous** (one element type per list). That matches Java edition NBT,

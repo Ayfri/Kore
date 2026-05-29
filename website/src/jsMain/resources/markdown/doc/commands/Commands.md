@@ -5,7 +5,7 @@ nav-title: Commands
 description: A comprehensive guide for using commands in Kore datapacks.
 keywords: minecraft, datapack, kore, guide, commands, execute, data, teleport
 date-created: 2026-02-03
-date-modified: 2026-04-21
+date-modified: 2026-05-29
 routeOverride: /docs/commands/commands
 ---
 
@@ -726,6 +726,9 @@ function("data_merge") {
 	}
 }
 ```
+
+This `merge { ... }` block uses the same NBT builder described in [NBTs](/docs/concepts/nbts), so you can reuse the same
+assignment patterns in commands, predicates, and chat-related APIs.
 
 Generated output:
 

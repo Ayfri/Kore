@@ -5,7 +5,7 @@ nav-title: Chat Components
 description: A guide for creating Chat Components in a Minecraft datapack using Kore.
 keywords: minecraft, datapack, kore, guide, chat-components
 date-created: 2024-09-05
-date-modified: 2026-01-27
+date-modified: 2026-05-29
 routeOverride: /docs/concepts/chat-components
 ---
 
@@ -112,6 +112,9 @@ The `nbt` property can be used to specify the path to the NBT data.<br>
 If `nbt` points to an array, then it will display all the elements joined in the form `Element1, Element2` etc.<br>
 The `separator` property can be used to change the separator between the elements of the array.
 
+If you need a refresher on how Kore builds NBT in general, see [NBTs](/docs/concepts/nbts) for the shared builder DSL,
+common helpers, and other contexts that use the same patterns.
+
 ### Example
 
 ```kotlin
@@ -119,6 +122,8 @@ val nbtComponent = nbtComponent("Health", entity = nearestEntity {
 	type = EntityType.CREEPER
 })
 ```
+
+You can also point it at block positions or storages depending on the source you want to read from.
 
 In-game output:<br>
 ![NBT Component Example](/doc/chat-components/nbt-health.png)
