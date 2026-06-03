@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.maths.vec2
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.numbers.PosNumber
+import io.github.ayfri.kore.arguments.numbers.localPos
 import io.github.ayfri.kore.arguments.numbers.pos
 import io.github.ayfri.kore.arguments.numbers.relativePos
 import io.github.ayfri.kore.assertions.assertsIs
@@ -79,8 +80,50 @@ fun vec3Tests() {
 	Vec3.fromString("1.5 2.5 3") assertsIs vec3(1.5, 2.5, 3)
 }
 
+fun posNumberToStringTests() {
+	0.0.pos.toString() assertsIs "0.0"
+	1.0.pos.toString() assertsIs "1.0"
+	0.25.pos.toString() assertsIs "0.25"
+	3.8.pos.toString() assertsIs "3.8"
+	(-1.5).pos.toString() assertsIs "-1.5"
+
+	0.0.relativePos.toString() assertsIs "~"
+	1.0.relativePos.toString() assertsIs "~1"
+	0.25.relativePos.toString() assertsIs "~0.25"
+	3.8.relativePos.toString() assertsIs "~3.8"
+	(-1.5).relativePos.toString() assertsIs "~-1.5"
+
+	0.0.localPos.toString() assertsIs "^"
+	1.0.localPos.toString() assertsIs "^1"
+	0.25.localPos.toString() assertsIs "^0.25"
+	3.8.localPos.toString() assertsIs "^3.8"
+	(-1.5).localPos.toString() assertsIs "^-1.5"
+}
+
+fun vec3TypeConversionToStringTests() {
+	vec3(0.25, 3.8, 0.0).relative.asString() assertsIs "~0.25 ~3.8 ~"
+
+	vec3(0.25, 3.8, 0.0).local.asString() assertsIs "^0.25 ^3.8 ^"
+
+	vec3(0.25, 3.8, 0.0).world.asString() assertsIs "0.25 3.8 0.0"
+
+	vec3(1.0, 2.0, 3.0).relative.asString() assertsIs "~1 ~2 ~3"
+	vec3(1.0, 2.0, 3.0).local.asString() assertsIs "^1 ^2 ^3"
+
+	vec3(PosNumber.Type.RELATIVE).asString() assertsIs "~ ~ ~"
+	vec3(PosNumber.Type.LOCAL).asString() assertsIs "^ ^ ^"
+}
+
 class Vec3Tests : FunSpec({
 	test("vec3") {
 		vec3Tests()
+	}
+
+	test("posNumber toString") {
+		posNumberToStringTests()
+	}
+
+	test("vec3 type conversion toString") {
+		vec3TypeConversionToStringTests()
 	}
 })

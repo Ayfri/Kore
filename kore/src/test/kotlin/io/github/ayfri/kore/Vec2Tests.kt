@@ -76,8 +76,31 @@ fun vec2Tests() {
 	Vec2.fromString("1.5 2") assertsIs vec2(1.5, 2)
 }
 
+fun vec2TypeConversionToStringTests() {
+	vec2(0.25, 3.8).relative.asString() assertsIs "~0.25 ~3.8"
+
+	vec2(0.25, 3.8).local.asString() assertsIs "^0.25 ^3.8"
+
+	vec2(0.25, 3.8).world.asString() assertsIs "0.25 3.8"
+
+	vec2(0.0, 0.0).relative.asString() assertsIs "~ ~"
+	vec2(0.0, 0.0).local.asString() assertsIs "^ ^"
+
+	vec2(1.0, 2.0).relative.asString() assertsIs "~1 ~2"
+	vec2(1.0, 2.0).local.asString() assertsIs "^1 ^2"
+
+	vec2(PosNumber.Type.RELATIVE).asString() assertsIs "~ ~"
+	vec2(PosNumber.Type.LOCAL).asString() assertsIs "^ ^"
+
+	vec2(-1.5, 0.0).relative.asString() assertsIs "~-1.5 ~"
+}
+
 class Vec2Tests : FunSpec({
 	test("vec2") {
 		vec2Tests()
+	}
+
+	test("vec2 type conversion toString") {
+		vec2TypeConversionToStringTests()
 	}
 })

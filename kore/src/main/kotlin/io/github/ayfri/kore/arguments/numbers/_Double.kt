@@ -14,5 +14,6 @@ fun Double.toStringTruncated() = toLong().toString()
 internal val Double.truncateIfRoundEmptyIfZero
 	get() = when {
 		this == 0.0 -> ""
-		else -> toLong().toString()
+		this % 1 == 0.0 -> toLong().toString()
+		else -> toString()
 	}
