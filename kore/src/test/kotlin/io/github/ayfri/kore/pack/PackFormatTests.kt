@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package io.github.ayfri.kore.pack
 
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent

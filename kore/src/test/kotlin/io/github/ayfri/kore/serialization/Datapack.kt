@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package io.github.ayfri.kore.serialization
 
 import io.github.ayfri.kore.DataPack
