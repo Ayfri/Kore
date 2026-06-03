@@ -12,7 +12,6 @@ import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.commands.tag
 import io.github.ayfri.kore.functions.Function
-import io.github.ayfri.kore.functions.generatedFunction
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.helpers.HelpersConstants
@@ -33,13 +32,27 @@ data class RaycastConfig(
 /** Holds the generated entry point used to launch a configured raycast. */
 data class RaycastHandle(
 	val config: RaycastConfig,
-	val startFunctionId: String,
+	val startFunction: Function,
 ) {
+	/** The fully-qualified ID of the start function (e.g. `namespace:generated_scopes/raycast_foo_start`). */
+	val startFunctionId: String get() = startFunction.asId()
+
 	/** Calls the generated start function that begins stepping the ray forward. */
 	context(fn: Function)
 	fun cast() {
-		fn.functionCommand(startFunctionId)
+		fn.functionCommand(startFunction)
 	}
+}
+
+/**
+ * Adds a named generated function bypassing content-based deduplication.
+ * Two functions with the same name and namespace are treated as one (idempotent re-registration),
+ * but two functions that share body content but differ in name are kept separate.
+ */
+private fun DataPack.raycastFunction(name: String, block: Function.() -> Unit): Function {
+	generatedFunctions.find { it.name == name && it.namespace == this.name }?.let { return it }
+	return Function(name, this.name, configuration.generatedFunctionsFolder, this).apply(block)
+		.also { generatedFunctions += it }
 }
 
 /** Ensures the shared scoreboard objective required by raycasts exists once per datapack. */
@@ -68,19 +81,25 @@ fun DataPack.raycast(config: RaycastConfig): RaycastHandle {
 	)
 	val here = vec3(PosNumber.Type.RELATIVE)
 
-	val onHitFn = generatedFunction(HelpersConstants.raycastHitFunctionName(config.name)) {
+	val onHitFn = raycastFunction(HelpersConstants.raycastHitFunctionName(config.name)) {
 		config.onHitBlock.invoke(this)
 		tag(self()) { remove(HelpersConstants.raycastTag) }
 	}
 
 	val onMaxFn = config.onMaxDistance?.let { callback ->
-		generatedFunction(HelpersConstants.raycastMaxFunctionName(config.name)) {
+		raycastFunction(HelpersConstants.raycastMaxFunctionName(config.name)) {
 			callback.invoke(this)
 			tag(self()) { remove(HelpersConstants.raycastTag) }
 		}
 	}
 
-	val stepFn = generatedFunction(HelpersConstants.raycastStepFunctionName(config.name)) {
+	// Pre-computed path (without namespace) used for self-recursion inside the step function.
+	// Using the FunctionOrTagArgument overload of `function` would require a forward reference
+	// to stepFn, which isn't available while its body is being built.
+	val stepFnPath =
+		"${configuration.generatedFunctionsFolder}/${HelpersConstants.raycastStepFunctionName(config.name)}"
+
+	val stepFn = raycastFunction(HelpersConstants.raycastStepFunctionName(config.name)) {
 		config.onStep?.invoke(this)
 
 		scoreboard {
@@ -105,11 +124,11 @@ fun DataPack.raycast(config: RaycastConfig): RaycastHandle {
 		execute {
 			ifCondition { entity(self { tag = HelpersConstants.raycastTag }) }
 			positioned(stepVec)
-			run { functionCommand(asId()) }
+			run { functionCommand(stepFnPath) }
 		}
 	}
 
-	val startFn = generatedFunction(HelpersConstants.raycastStartFunctionName(config.name)) {
+	val startFn = raycastFunction(HelpersConstants.raycastStartFunctionName(config.name)) {
 		tag(self()) { add(HelpersConstants.raycastTag) }
 		scoreboard {
 			players {
@@ -123,7 +142,7 @@ fun DataPack.raycast(config: RaycastConfig): RaycastHandle {
 		}
 	}
 
-	return RaycastHandle(config, startFn.asId())
+	return RaycastHandle(config, startFn)
 }
 
 /** Registers a raycast by configuring a fresh [RaycastConfig] inline. */

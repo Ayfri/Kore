@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.helpers
 
 import io.github.ayfri.kore.commands.say
+import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.helpers.assertions.assertsIs
 import io.github.ayfri.kore.helpers.raycast.RaycastConfig
@@ -28,8 +29,8 @@ fun raycastTests() = testDataPack("raycast_tests") {
 	function("use_raycast") {
 		with(basicRay) { cast() }
 		with(fullRay) { cast() }
-		lines[0] assertsIs "function raycast_tests:raycast_tests:generated_scopes/raycast_basic_start"
-		lines[1] assertsIs "function raycast_tests:raycast_tests:generated_scopes/raycast_full_start"
+		lines[0] assertsIs "function raycast_tests:generated_scopes/raycast_basic_start"
+		lines[1] assertsIs "function raycast_tests:generated_scopes/raycast_full_start"
 		lines.size assertsIs 2
 	}
 
@@ -43,7 +44,7 @@ fun raycastTests() = testDataPack("raycast_tests") {
 	basicStep.lines[0] assertsIs "scoreboard players add @s kore_raycast 1"
 	basicStep.lines[1] assertsIs "execute unless block ~ ~ ~ minecraft:air run function raycast_tests:generated_scopes/raycast_basic_hit"
 	basicStep.lines[2] assertsIs "execute if score @s kore_raycast matches 50 run tag @s remove kore_raycasting"
-	basicStep.lines[3].startsWith("execute if entity @s[tag=kore_raycasting] positioned ^ ^ ^0 run function raycast_tests:") assertsIs true
+	basicStep.lines[3] assertsIs "execute if entity @s[tag=kore_raycasting] positioned ^ ^ ^0 run function raycast_tests:generated_scopes/raycast_basic_step"
 	basicStep.lines.size assertsIs 4
 
 	val basicHit = generatedFunctions.first { it.name == HelpersConstants.raycastHitFunctionName("basic") }
@@ -62,7 +63,7 @@ fun raycastTests() = testDataPack("raycast_tests") {
 	fullStep.lines[1] assertsIs "scoreboard players add @s kore_raycast 1"
 	fullStep.lines[2] assertsIs "execute unless block ~ ~ ~ minecraft:air run function raycast_tests:generated_scopes/raycast_full_hit"
 	fullStep.lines[3] assertsIs "execute if score @s kore_raycast matches 100 run function raycast_tests:generated_scopes/raycast_full_max"
-	fullStep.lines[4].startsWith("execute if entity @s[tag=kore_raycasting] positioned ^ ^ ^0 run function raycast_tests:") assertsIs true
+	fullStep.lines[4] assertsIs "execute if entity @s[tag=kore_raycasting] positioned ^ ^ ^0 run function raycast_tests:generated_scopes/raycast_full_step"
 	fullStep.lines.size assertsIs 5
 
 	val fullHit = generatedFunctions.first { it.name == HelpersConstants.raycastHitFunctionName("full") }
@@ -76,6 +77,18 @@ fun raycastTests() = testDataPack("raycast_tests") {
 	fullMax.lines.size assertsIs 2
 
 	generatedFunctions.any { it.name == HelpersConstants.raycastInitFunction } assertsIs true
+
+	val sharedCallback: Function.() -> Unit = { say("Shared") }
+	raycast(RaycastConfig(name = "dedup", onHitBlock = sharedCallback, onMaxDistance = sharedCallback))
+
+	val dedupHit = generatedFunctions.first { it.name == HelpersConstants.raycastHitFunctionName("dedup") }
+	val dedupMax = generatedFunctions.first { it.name == HelpersConstants.raycastMaxFunctionName("dedup") }
+	(dedupHit === dedupMax) assertsIs false
+	dedupHit.name assertsIs HelpersConstants.raycastHitFunctionName("dedup")
+	dedupMax.name assertsIs HelpersConstants.raycastMaxFunctionName("dedup")
+
+	val dedupStep = generatedFunctions.first { it.name == HelpersConstants.raycastStepFunctionName("dedup") }
+	dedupStep.lines.any { it.contains("raycast_dedup_max") } assertsIs true
 }.apply {
 	generate()
 }
