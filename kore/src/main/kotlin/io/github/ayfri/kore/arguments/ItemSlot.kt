@@ -74,6 +74,7 @@ interface ItemSlotType : ItemSlot, ItemSlotWrapper {
 			103 -> ARMOR.HEAD
 			105 -> ARMOR.BODY
 			in ENDERCHEST -> ENDERCHEST[index - ENDERCHEST.start]
+			in PIGLIN -> PIGLIN[index - PIGLIN.start]
 			in VILLAGER -> VILLAGER[index - VILLAGER.start]
 			400 -> SADDLE
 			499 -> when {
@@ -130,16 +131,16 @@ data object ARMOR : RangeItemSlot {
 	val BODY = subType("body", 105)
 }
 
-/** General container slots (0–53). See: https://minecraft.wiki/w/Slot */
+/** General container slots (0-53). See: https://minecraft.wiki/w/Slot */
 val CONTAINER = IndexedItemSlot(0, 53) { "container" }
 
 /** Used for item entities. */
-val CONTENTS = ItemSlotType(0) { "contents" }
+val CONTENTS = ItemSlotType() { "contents" }
 
-/** Ender chest slots (200–226). */
+/** Ender chest slots (200-226). */
 val ENDERCHEST = IndexedItemSlot(200, 226) { "enderchest" }
 
-/** Horse inventory slots (500–514). */
+/** Horse inventory slots (500-514). */
 data object HORSE : IndexedItemSlot {
 	override var start = 500
 	override val endInclusive = start + 14
@@ -150,10 +151,10 @@ data object HORSE : IndexedItemSlot {
 	val CHEST = subType("chest", 499)
 }
 
-/** Hotbar slots (0–8). */
+/** Hotbar slots (0-8). */
 val HOTBAR = IndexedItemSlot(0, 8) { "hotbar" }
 
-/** Player inventory slots (9–35). */
+/** Player inventory slots (9-35). */
 val INVENTORY = IndexedItemSlot(9, 35) { "inventory" }
 
 /** Player-specific slots. */
@@ -166,6 +167,9 @@ data object PLAYER : ItemSlotWrapper {
 	/** The crafting slots of the player inventory. */
 	val CRAFTING = IndexedItemSlot(500, 504) { "${asString()}.crafting" }
 }
+
+/** Piglin inventory slots (300-307). */
+val PIGLIN = IndexedItemSlot(300, 307) { "piglin" }
 
 /** Saddle slot (400). */
 val SADDLE = ItemSlotType(400) { "saddle" }
@@ -185,5 +189,5 @@ data object WEAPON : ItemSlotType, RangeItemSlot {
 	val OFFHAND = subType("offhand", 99)
 }
 
-/** Villager inventory slots (300–307). */
+/** Villager inventory slots (300-307). */
 val VILLAGER = IndexedItemSlot(300, 307) { "villager" }
