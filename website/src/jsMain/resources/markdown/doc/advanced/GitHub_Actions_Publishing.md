@@ -63,7 +63,7 @@ jobs:
         with:
           cache: gradle
           distribution: 'temurin'
-          java-version: 21
+          java-version: 25
 
       - name: Ensure Gradle is executable
         run: chmod +x gradlew
@@ -312,7 +312,7 @@ jobs:
         with:
           cache: gradle
           distribution: 'temurin'
-          java-version: 21
+          java-version: 25
 
       - name: Ensure Gradle is executable
         run: chmod +x gradlew

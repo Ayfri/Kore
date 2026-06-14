@@ -36,7 +36,7 @@ jobs:
       - uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: 21
+          java-version: 25
 
       # When projects are created on Windows, the executable bit is sometimes lost. So set it back just in case.
       - name: Ensure Gradle is executable
