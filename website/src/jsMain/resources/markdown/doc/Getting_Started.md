@@ -169,7 +169,7 @@ kotlin {
 		freeCompilerArgs.add("-Xcontext-parameters")
 	}
 
-	jvmToolchain(21)
+	jvmToolchain(25)
 }
 ```
 
@@ -452,8 +452,8 @@ Good expansion ideas after the custom enchantment:
 
 ### Java/Kotlin toolchain errors
 
-- Confirm JDK 21 is installed and selected by Gradle.
-- Confirm `jvmToolchain(21)` is configured.
+- Confirm JDK 25 is installed and selected by Gradle.
+- Confirm `jvmToolchain(25)` is configured.
 
 ### Datapack generates but does not work in-game
 

@@ -76,11 +76,11 @@ kotlin {
 }
 ```
 
-You should also use Java 21 or higher:
+You should also use Java 25 or higher:
 
 ```kotlin
 kotlin {
-	jvmToolchain(21)
+  jvmToolchain(25)
 }
 ```
 
