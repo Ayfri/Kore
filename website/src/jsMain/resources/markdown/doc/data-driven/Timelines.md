@@ -3,38 +3,39 @@ root: .components.layouts.MarkdownLayout
 title: Timelines
 nav-title: Timelines
 description: Learn how to use timelines in your Kore datapacks
-keywords: minecraft, datapack, kore, timelines, environment attributes, easing, keyframes
+keywords: minecraft, datapack, kore, timelines, environment attributes, easing, keyframes, time markers, world clock
 date-created: 2026-02-10
-date-modified: 2026-02-10
+date-modified: 2026-06-16
 routeOverride: /docs/data-driven/timelines
 ---
 
 # Timelines
 
-Timelines control game behavior and visuals based on the absolute day time through environment attributes.
-They allow you to define tracks that animate environment attributes over time using keyframes and easing functions.
+Timelines control game behaviour and visuals based on a world clock through environment attributes.
+They define tracks that animate environment attributes over time using keyframes and easing functions.
+Optional named **time markers** act as labelled tick positions inside a timeline.
 
 Timelines were added in snapshot [**25w45a**](https://minecraft.wiki/w/Java_Edition_25w45a) (Minecraft 1.21.11).
 
+For a broader overview that covers world clocks, the `/time` command, and the `timeCheck` predicate
+condition together, see [World Clocks](/docs/data-driven/world-clocks).
+
 ## Basic Usage
 
-Here's a simple example of creating a timeline that controls fog distance over a day cycle:
+Every timeline must be bound to a `WorldClockArgument`. Register a clock first, then pass it when
+creating the timeline:
 
 ```kotlin
-val myTimeline = timeline("day_fog") {
+val dayClock = dataPack.worldClock("day")
+
+val myTimeline = dataPack.timeline("day_fog", clock = dayClock) {
 	periodTicks = 24000
 
 	track(EnvironmentAttributes.Visual.FOG_START_DISTANCE) {
 		ease = Linear
-		modifier = "override"
 
-		keyframe(0) {
-			value(0.0f)
-		}
-
-		keyframe(12000) {
-			value(100.0f)
-		}
+		keyframe(0) { value(0.0f) }
+		keyframe(12000) { value(100.0f) }
 	}
 }
 ```
@@ -44,9 +45,11 @@ The `timeline` function creates and registers a timeline in your DataPack. It pr
 
 ## Timeline Properties
 
-| Property      | Type  | Description                                                                                     |
-|---------------|-------|-------------------------------------------------------------------------------------------------|
-| `periodTicks` | `Int` | Optional. Defines the duration in ticks over which the timeline repeats. Omit for no repetition |
+| Property      | Type                           | Description                                                                   |
+|---------------|--------------------------------|-------------------------------------------------------------------------------|
+| `clock`       | `WorldClockArgument`           | **Required.** The world clock this timeline reads from.                       |
+| `periodTicks` | `Int?`                         | Duration in ticks before the timeline loops. Omit for a one-shot timeline.    |
+| `timeMarkers` | `Map<String, TimelineMarker>?` | Named tick positions inside this timeline. See [Time Markers](#time-markers). |
 
 ## Tracks
 
@@ -54,7 +57,7 @@ Tracks map environment attributes to keyframe-based animations. Each track speci
 an optional modifier, and a list of keyframes.
 
 ```kotlin
-timeline("multi_track") {
+dataPack.timeline("multi_track", clock = dayClock) {
 	periodTicks = 24000
 
 	track(EnvironmentAttributes.Visual.FOG_START_DISTANCE) {
@@ -108,6 +111,33 @@ keyframe(12000) {
 }
 ```
 
+## Time Markers
+
+Time markers are named tick positions inside a timeline. Commands can jump a clock to a marker
+position via `/time set <timeMarker>`, and they appear in command auto-complete when
+`showInCommands` is `true`.
+
+```kotlin
+dataPack.timeline("seasons", clock = seasonClock) {
+	periodTicks = 96000
+
+	timeMarker("spring", ticks = 0, showInCommands = true)
+	timeMarker("summer", ticks = 24000, showInCommands = true)
+	timeMarker("autumn", ticks = 48000, showInCommands = true)
+	timeMarker("winter", ticks = 72000, showInCommands = true)
+}
+```
+
+Reference a marker in a function using `TimeMarkerArgument`:
+
+```kotlin
+function("skip_to_summer") {
+	time.set(timeMarker("summer", "mymod"))
+}
+```
+
+See [World Clocks - Time Markers](/docs/data-driven/world-clocks#time-markers) for the full command usage.
+
 ## Easing Types
 
 Easing types control how values are interpolated between keyframes.
@@ -141,7 +171,7 @@ Each interpolation kind is available in three forms: `In*`, `Out*`, and `InOut*`
 For custom easing curves, use `CubicBezier` with two control points:
 
 ```kotlin
-timeline("bezier_example") {
+dataPack.timeline("bezier_example", clock = dayClock) {
 	periodTicks = 12000
 
 	track(EnvironmentAttributes.Gameplay.SKY_LIGHT_LEVEL) {
@@ -157,14 +187,14 @@ This serializes as:
 
 ```json
 {
-	"ease": {
-		"cubic_bezier": [
-			0.25,
-			0.1,
-			0.25,
-			1.0
-		]
-	}
+  "ease": {
+    "cubic_bezier": [
+      0.25,
+      0.1,
+      0.25,
+      1.0
+    ]
+  }
 }
 ```
 
@@ -181,8 +211,13 @@ Tracks reference environment attributes from the `EnvironmentAttributes` sealed 
 Here's a complete example of a day/night cycle timeline:
 
 ```kotlin
-timeline("day_night_cycle") {
+val dayClock = dataPack.worldClock("day")
+
+dataPack.timeline("day_night_cycle", clock = dayClock) {
 	periodTicks = 24000
+
+	timeMarker("noon", ticks = 6000, showInCommands = true)
+	timeMarker("midnight", ticks = 18000, showInCommands = true)
 
 	track(EnvironmentAttributes.Visual.FOG_START_DISTANCE) {
 		ease = InOutSine
@@ -212,6 +247,7 @@ timeline("day_night_cycle") {
 
 ## See Also
 
+- [World Clocks](/docs/data-driven/world-clocks) - Clocks, time markers, the `/time` command, and `timeCheck`
 - [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) - Environment attributes used in timeline
   tracks
 - [Tags](/docs/data-driven/tags) - Use tags to group timelines
