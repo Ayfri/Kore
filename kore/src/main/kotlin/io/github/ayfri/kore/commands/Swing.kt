@@ -17,6 +17,14 @@ enum class SwingHand {
 	}
 }
 
+/** Makes the executing entity swing their mainhand. @see [Minecraft wiki](https://minecraft.wiki/w/Commands/swing) */
+fun Function.swing() =
+	addLine(command("swing"))
+
+/** Makes [targets] swing their mainhand. @see [Minecraft wiki](https://minecraft.wiki/w/Commands/swing) */
+fun Function.swing(targets: EntityArgument) =
+	addLine(command("swing", targets))
+
 /** Makes [targets] swing their [hand]. @see [Minecraft wiki](https://minecraft.wiki/w/Commands/swing) */
 fun Function.swing(targets: EntityArgument, hand: SwingHand) =
 	addLine(command("swing", targets, literal(hand.asArg())))

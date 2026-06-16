@@ -9,6 +9,8 @@ import io.github.ayfri.kore.functions.load
 import io.kotest.core.spec.style.FunSpec
 
 fun Function.swingTests() {
+	swing() assertsIs "swing"
+	swing(allEntities()) assertsIs "swing @e"
 	swing(self(), SwingHand.MAINHAND) assertsIs "swing @s mainhand"
 	swing(self(), SwingHand.OFFHAND) assertsIs "swing @s offhand"
 	swing(allEntities(), SwingHand.MAINHAND) assertsIs "swing @e mainhand"
