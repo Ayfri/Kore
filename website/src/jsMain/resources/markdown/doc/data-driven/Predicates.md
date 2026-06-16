@@ -73,17 +73,17 @@ Conditions are categorized by their **loot context requirements
 
 #### Universal Conditions (invokable from any context)
 
-| Condition          | Description                                                                        |
-|--------------------|------------------------------------------------------------------------------------|
-| `allOf`            | Evaluates a list of predicates and passes if **all** of them pass                  |
-| `anyOf`            | Evaluates a list of predicates and passes if **any one** of them passes            |
-| `entityProperties` | Checks properties of an entity                                                     |
-| `inverted`         | Inverts another predicate condition                                                |
-| `randomChance`     | Generates a random number between 0.0 and 1.0, passes if less than specified value |
-| `reference`        | Invokes another predicate file and returns its result (cannot be cyclic)           |
-| `timeCheck`        | Compares the current day time against given values (supports `period` for modulo)  |
-| `valueCheck`       | Compares a number against another number or range                                  |
-| `weatherCheck`     | Checks the current game weather (raining, thundering)                              |
+| Condition          | Description                                                                                                                                                                                           |
+|--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `allOf`            | Evaluates a list of predicates and passes if **all** of them pass                                                                                                                                     |
+| `anyOf`            | Evaluates a list of predicates and passes if **any one** of them passes                                                                                                                               |
+| `entityProperties` | Checks properties of an entity                                                                                                                                                                        |
+| `inverted`         | Inverts another predicate condition                                                                                                                                                                   |
+| `randomChance`     | Generates a random number between 0.0 and 1.0, passes if less than specified value                                                                                                                    |
+| `reference`        | Invokes another predicate file and returns its result (cannot be cyclic)                                                                                                                              |
+| `timeCheck`        | Compares a world clock's time against a range (optional `period` for modulo, optional `clock` to select which clock) - see [World Clocks](/docs/data-driven/world-clocks#timecheckpredicatecondition) |
+| `valueCheck`       | Compares a number against another number or range                                                                                                                                                     |
+| `weatherCheck`     | Checks the current game weather (raining, thundering)                                                                                                                                                 |
 
 #### Context-Dependent Conditions
 

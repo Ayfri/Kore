@@ -569,6 +569,37 @@ fun DataPack.predicateTests() {
 		}
 	""".trimIndent()
 
+	predicate("time_check_with_clock") {
+		timeCheck(0f..12000f, clock = WorldClocks.OVERWORLD)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:time_check",
+			"value": {
+				"min": 0.0,
+				"max": 12000.0
+			},
+			"clock": "minecraft:overworld"
+		}
+	""".trimIndent()
+
+	predicate("time_check_clock_and_period") {
+		timeCheck(0f..6000f, period = 24000, clock = WorldClocks.OVERWORLD)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:time_check",
+			"value": {
+				"min": 0.0,
+				"max": 6000.0
+			},
+			"period": 24000,
+			"clock": "minecraft:overworld"
+		}
+	""".trimIndent()
+
 	predicate("value_check") {
 		valueCheck(scoreNumber("kills", target = EntityType.THIS), intRange(0f, 10f))
 	}
