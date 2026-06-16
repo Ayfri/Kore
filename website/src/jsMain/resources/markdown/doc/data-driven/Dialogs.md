@@ -24,7 +24,7 @@ Minecraft's dialog system supports various interaction types including:
 - Navigating between multiple dialogs using nested structures
 - Integration with the pause menu and quick actions hotkey
 
-For the vanilla reference, see the [Minecraft Wiki – Dialog](https://minecraft.wiki/w/Dialog)
+For the vanilla reference, see the [Minecraft Wiki - Dialog](https://minecraft.wiki/w/Dialog)
 and [Commands/dialog](https://minecraft.wiki/w/Commands/dialog).
 
 ## Minecraft Dialog System Overview

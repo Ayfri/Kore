@@ -49,8 +49,8 @@ val lines = ansiToTextComponents("\u001B[32mGreen\u001B[0m rest") {
 | `\x1B[24m`            | `underlined = null`    | Underline off            |
 | `\x1B[28m`            | `obfuscated = null`    | Obfuscated off           |
 | `\x1B[29m`            | `strikethrough = null` | Strikethrough off        |
-| `\x1B[30m`–`\x1B[37m` | `color`                | Standard foreground      |
-| `\x1B[90m`–`\x1B[97m` | `color`                | Bright foreground        |
+| `\x1B[30m`-`\x1B[37m` | `color`                | Standard foreground      |
+| `\x1B[90m`-`\x1B[97m` | `color`                | Bright foreground        |
 | `\x1B[38;5;Nm`        | `color` (RGB)          | 256-color palette        |
 | `\x1B[38;2;R;G;Bm`    | `color` (RGB)          | 24-bit RGB color         |
 | `\x1B[39m`            | `color = null`         | Default foreground color |

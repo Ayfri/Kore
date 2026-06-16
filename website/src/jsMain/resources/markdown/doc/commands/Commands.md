@@ -18,7 +18,8 @@ arguments, see [Macros](/docs/commands/macros).
 
 ## Simple Commands
 
-Simple commands are straightforward and take basic arguments like strings, numbers, or [selectors](#selectors).
+Simple commands are straightforward and take basic arguments like strings, numbers,
+or [selectors](/docs/concepts/selectors).
 
 ### Say Command
 
@@ -152,7 +153,8 @@ gamemode survival Steve
 ### Time Command
 
 The
-`time` command controls the world's day/night cycle. Time is measured in ticks (20 ticks = 1 second, 24000 ticks = 1 Minecraft day). Day starts at 1000, noon at 6000, night at 13000.
+`time` command controls the world's day/night cycle. Time is measured in [ticks](/docs/concepts/time) (20 ticks = 1
+second, 24 000 ticks = 1 Minecraft day). Day starts at 1000, noon at 6000, night at 13000.
 
 ```kotlin
 function("time_control") {
@@ -889,7 +891,8 @@ function("attribute_examples") {
 
 The
 `schedule` command delays function execution by a specified time. Useful for timers, cooldowns, and delayed effects.
-Time can be specified in ticks, seconds, or days. See [Scheduler Helper](/docs/helpers/scheduler) for advanced
+Time can be specified in [ticks, seconds, or days](/docs/concepts/time). See [Scheduler Helper](/docs/helpers/scheduler)
+for advanced
 scheduling patterns.
 
 ```kotlin

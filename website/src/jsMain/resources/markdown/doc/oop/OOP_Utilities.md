@@ -36,7 +36,8 @@ Utility-style features such as renderers, math helpers, raycasts, areas, state d
 ## All Features
 
 - **[Boss Bars](/docs/oop/boss-bars)** - Register, configure, and manage boss bars.
-- **[Cooldowns](/docs/oop/cooldowns)** - Scoreboard-based cooldown system that decrements every tick.
+- **[Cooldowns](/docs/oop/cooldowns)** - Scoreboard-based cooldown system that decrements
+  every [tick](/docs/concepts/time).
 - **[Entities & Players](/docs/oop/entities-and-players)** - Create entities and players, execute helpers, batch
   commands, entity commands, and entity effects.
 - **[Events](/docs/oop/events)** - Advancement-based event system for player and entity actions.
@@ -56,7 +57,7 @@ commands.
 - **Systems such as timers, cooldowns, boss bars, and spawners** generate their own supporting commands and objectives.
 - **Your Kotlin code reads closer to gameplay intent**, which makes larger datapacks easier to maintain.
 
-You do not have to go “all in”: the OOP layer is meant to sit on top of Kore, not replace it.
+You do not have to go "all in": the OOP layer is meant to sit on top of Kore, not replace it.
 
 ## Typical workflow
 

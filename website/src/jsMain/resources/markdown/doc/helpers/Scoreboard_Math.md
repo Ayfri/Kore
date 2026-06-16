@@ -56,7 +56,8 @@ the input angle is already tracked as an integer.
 
 ### Delegate-based syntax
 
-If you already use scoreboard delegates, the math helpers also expose infix wrappers that preserve the same runtime
+If you already use [scoreboard delegates](/docs/helpers/state-delegates), the math helpers also expose infix wrappers
+that preserve the same runtime
 behavior while removing string boilerplate:
 
 ```kotlin
@@ -157,7 +158,7 @@ scoreboard operations rather than relying on one giant black-box function.
 
 ## See also
 
-- [State Delegates](/docs/helpers/state-delegates) – Write scoreboard-backed values with less boilerplate before feeding
+- [State Delegates](/docs/helpers/state-delegates) - Write scoreboard-backed values with less boilerplate before feeding
   them into math helpers.
-- [Cooldowns](/docs/oop/cooldowns) – Pair time-based gameplay gates with scoreboard-driven calculations.
-- [Scoreboards](/docs/oop/scoreboards) – Higher-level scoreboard utilities that fit naturally around these formulas.
+- [Cooldowns](/docs/oop/cooldowns) - Pair time-based gameplay gates with scoreboard-driven calculations.
+- [Scoreboards](/docs/oop/scoreboards) - Higher-level scoreboard utilities that fit naturally around these formulas.

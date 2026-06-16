@@ -58,7 +58,7 @@ This makes spawners a natural fit for waves, encounter scripts, arena refills, o
 
 ## See also
 
-- [Entities & Players](/docs/oop/entities-and-players) – Operate on the spawned entities afterwards with higher-level
+- [Entities & Players](/docs/oop/entities-and-players) - Operate on the spawned entities afterwards with higher-level
   helpers.
-- [Teams](/docs/oop/teams) – Assign spawned waves to teams when organizing PvE or faction-based encounters.
-- [Events](/docs/oop/events) – React to deaths or interactions involving spawned entities.
+- [Teams](/docs/oop/teams) - Assign spawned waves to teams when organizing PvE or faction-based encounters.
+- [Events](/docs/oop/events) - React to deaths or interactions involving spawned entities.

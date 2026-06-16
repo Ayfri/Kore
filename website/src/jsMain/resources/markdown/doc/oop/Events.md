@@ -88,7 +88,7 @@ runs all death handlers then removes the item.
 
 ## See also
 
-- [Cooldowns](/docs/oop/cooldowns) – Gate event-driven abilities or interactions so players cannot spam them.
-- [Entities & Players](/docs/oop/entities-and-players) – Build the selectors and entity handles that receive these event
+- [Cooldowns](/docs/oop/cooldowns) - Gate event-driven abilities or interactions so players cannot spam them.
+- [Entities & Players](/docs/oop/entities-and-players) - Build the selectors and entity handles that receive these event
   helpers.
-- [Items](/docs/oop/items) – React to item usage or rewards with reusable item stacks.
+- [Items](/docs/oop/items) - React to item usage or rewards with reusable item stacks.

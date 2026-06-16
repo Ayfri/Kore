@@ -12,17 +12,18 @@ routeOverride: /docs/helpers/raycasts
 # Raycasts
 
 Raycasts generate a set of recursive functions that step forward from the entity's eyes until they hit a block or reach
-max distance.
+max distance. Each step is a local-coordinate [`execute positioned`](https://minecraft.wiki/w/Commands/execute) call, so
+precision scales with the step size.
 
-They are ideal for “look at” interactions, custom tools, line-of-sight checks, or visual debugging because the helper
+They are ideal for "look at" interactions, custom tools, line-of-sight checks, or visual debugging because the helper
 pre-builds the recursive command chain for you.
 
 ## API overview
 
 The helper is centered around two entry points:
 
-- `raycast { ... }` – builds a fresh `RaycastConfig` inline.
-- `raycast(config)` – reuses an already configured `RaycastConfig` instance.
+- `raycast { ... }` - builds a fresh `RaycastConfig` inline.
+- `raycast(config)` - reuses an already configured `RaycastConfig` instance.
 
 The generated `RaycastHandle` exposes a single `cast()` method that launches the raycast from the current function
 context.
@@ -82,14 +83,14 @@ function("scan_once") {
 }
 ```
 
-For precise interaction beams, prefer a smaller `step`; for cheaper “good enough” scans, use a larger one.
+For precise interaction beams, prefer a smaller `step`; for cheaper "good enough" scans, use a larger one.
 
 The step value is measured in blocks and is applied through a local-position offset, so smaller values increase
 precision while also generating more recursive calls.
 
 ## See also
 
-- [Area](/docs/helpers/area) – Define spatial zones that complement what a ray can detect or trigger.
-- [VFX Particles](/docs/helpers/vfx-particles) – Use particles inside `onStep` for visual debugging or beam effects.
-- [Entities & Players](/docs/oop/entities-and-players) – Execute raycasts from player or mob contexts with reusable
+- [Area](/docs/helpers/area) - Define spatial zones that complement what a ray can detect or trigger.
+- [VFX Particles](/docs/helpers/vfx-particles) - Use particles inside `onStep` for visual debugging or beam effects.
+- [Entities & Players](/docs/oop/entities-and-players) - Execute raycasts from player or mob contexts with reusable
   selectors.

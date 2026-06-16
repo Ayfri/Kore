@@ -16,8 +16,8 @@ In Minecraft, data components are structured key-value properties used to define
 - Entity variant components: properties exposed as components for certain entity variants when represented as items or spawn eggs (e.g.,
   `wolf/variant`, `cat/collar`). These follow the same component mechanics but target entity-specific customization.
 
-This page focuses on using item components with Kore. For the vanilla reference and exhaustive definitions, see the Minecraft Wiki’s Data component format (
-`https://minecraft.wiki/w/Data_component_format`).
+This page focuses on using item components with Kore. For the vanilla reference and exhaustive definitions, see
+the [Minecraft Wiki - Data component format](https://minecraft.wiki/w/Data_component_format).
 
 The Kore library provides a comprehensive and user-friendly way to work with these components, enabling you to create custom items with ease. This article will guide you through the process of using components with Kore, showcasing examples and best practices.
 

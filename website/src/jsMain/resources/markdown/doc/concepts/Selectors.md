@@ -155,8 +155,5 @@ function("round_start") {
 
 ## See also
 
-- [Functions](/docs/commands/functions) - organizing selector-heavy logic into reusable functions
-- [Commands](/docs/commands/commands) - command builders that consume selectors everywhere
-- [Scoreboards](/docs/concepts/scoreboards) - selectors often pair with scoreboard state
 - [Arguments Internals](/docs/concepts/arguments) - contributor-facing details about Kore's broader argument system
 - [Minecraft Wiki: Target selectors](https://minecraft.wiki/w/Target_selectors) - vanilla syntax and semantics

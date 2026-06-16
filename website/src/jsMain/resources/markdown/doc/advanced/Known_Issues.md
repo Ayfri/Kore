@@ -22,7 +22,7 @@ Each item is tagged:
 | **Documented DSL / helper cap** | Behavior is spelled out in Kore’s own command or helper docs (often because the vanilla command format or text API is narrow).           |
 | **Generation rough edge**       | `generate()` / `generateZip()` / merge paths behave as implemented; surprising until you read the generation docs.                       |
 
-For the high-level “what Kore does not include,”
+For the high-level "what Kore does not include,"
 see [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore#what-kore-does-not-give-you-or-not-yet).
 
 ---
@@ -90,8 +90,8 @@ Notable constraints from Kore’s own docs and README:
 **Category:** Kore limitation
 
 Many serializers are **write-only** for Kore’s use case: they **encode** what you build in Kotlin and **refuse to decode
-** from arbitrary vanilla JSON/SNBT. Examples in the codebase include **`ComponentsSerializer`** (“deserialization is
-not supported”), **`NbtAsJsonSerializer`**, book **page** serializers, and **chat component** decode paths that throw.
+** from arbitrary vanilla JSON/SNBT. Examples in the codebase include **`ComponentsSerializer`** ("deserialization is
+not supported"), **`NbtAsJsonSerializer`**, book **page** serializers, and **chat component** decode paths that throw.
 
 **Workaround:** Treat your Kotlin project as the **source of truth**; inspect **generated files** under `path` / zip.
 For contributors extending serializers, see [Arguments](/docs/contributing/arguments) and the relevant feature docs.
@@ -140,7 +140,7 @@ in [Not supported (Minecraft limitations)](/docs/helpers/markdown-renderer#not-s
 | Need                  | Where to look                                                                            |
 |-----------------------|------------------------------------------------------------------------------------------|
 | Tune JSON output      | [Configuration](/docs/guides/configuration) (`prettyPrint`, comments, paths)             |
-| Folder vs zip vs jar  | [Creating A Datapack — Generation](/docs/guides/creating-a-datapack#generation)          |
+| Folder vs zip vs jar  | [Creating A Datapack - Generation](/docs/guides/creating-a-datapack#generation)          |
 | Import external packs | [Bindings](/docs/advanced/bindings)                                                      |
 | Module layout         | [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore)                            |
 | Report a bug or gap   | [Kore on GitHub](https://github.com/Ayfri/Kore/issues) with pack format and Kore version |

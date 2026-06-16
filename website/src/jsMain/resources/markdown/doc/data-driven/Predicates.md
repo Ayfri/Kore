@@ -276,7 +276,7 @@ predicate("axolotl_component_check") {
 ```
 
 Any component you can put on an **item** can be matched on an **entity
-** in exactly the same way – just call the corresponding extension inside the `components {}` scope.
+** in exactly the same way - just call the corresponding extension inside the `components {}` scope.
 
 #### Remaining built-in `typeSpecific` helpers
 

@@ -228,8 +228,8 @@ function("combo_loops") {
 
 ## See also
 
-- [Scoreboard Math](/docs/helpers/scoreboard-math) – Feed delegated scoreboard values into trigonometric or algebraic
+- [Scoreboard Math](/docs/helpers/scoreboard-math) - Feed delegated scoreboard values into trigonometric or algebraic
   helpers.
-- [Scheduler](/docs/helpers/scheduler) – Pair delegated state with delayed or repeating helper callbacks.
-- [Cooldowns](/docs/oop/cooldowns) – A concrete scoreboard-based gameplay system where delegated state can stay concise.
-- [Scoreboards](/docs/oop/scoreboards) – Broader patterns for organizing objectives and player state.
+- [Scheduler](/docs/helpers/scheduler) - Pair delegated state with delayed or repeating helper callbacks.
+- [Cooldowns](/docs/oop/cooldowns) - A concrete scoreboard-based gameplay system where delegated state can stay concise.
+- [Scoreboards](/docs/oop/scoreboards) - Broader patterns for organizing objectives and player state.

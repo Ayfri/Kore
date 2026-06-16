@@ -107,6 +107,7 @@ fun main() {
 - [NBTs](/docs/concepts/nbts) - the shared NBT builder DSL used across commands and data-driven APIs.
 - [Selectors](/docs/concepts/selectors) - entity and player targeting with typed filters.
 - [Scoreboards](/docs/concepts/scoreboards) - objectives, teams, and scoreboard displays.
+- [Time](/docs/concepts/time) - `TimeNumber` and the `.ticks`, `.seconds`, `.days` extensions for command durations.
 
 ### Data-Driven
 

@@ -14,15 +14,15 @@ routeOverride: /docs/data-driven/villager-trades
 Villager trades are data-driven JSON files introduced in Minecraft Java Edition 1.21.5 that define
 what individual trades a villager can offer and how they are grouped into trade sets per profession level.
 This system fully replaces the old hardcoded trade lists and lets data packs control everything about
-villager economies — what items are bought and sold, at what quantities, for how many uses, with what
+villager economies - what items are bought and sold, at what quantities, for how many uses, with what
 item modifier functions applied to the output, and under what conditions.
 
 ## Overview
 
 The trade system uses two file types that work together:
 
-- **`villager_trade`** — a single trade offer: inputs the villager wants, the output it gives, limits, and rewards.
-- **`trade_set`** — a pool of `villager_trade` references that Minecraft samples from when a villager gains a level.
+- **`villager_trade`** - a single trade offer: inputs the villager wants, the output it gives, limits, and rewards.
+- **`trade_set`** - a pool of `villager_trade` references that Minecraft samples from when a villager gains a level.
 
 A villager profession's trade list is built from a stack of trade sets, one per level. Each time a
 villager levels up, Minecraft draws `amount` trades at random from the appropriate trade set.
@@ -46,7 +46,7 @@ For the full JSON specification see:
 ### Creating a Trade
 
 Use `villagerTrade` on your `DataPack`. Call `wants` and `gives` inside the block to set the required
-items — both accept an `ItemArgument`, an optional fixed `count`, and an optional component builder.
+items - both accept an `ItemArgument`, an optional fixed `count`, and an optional component builder.
 
 ```kotlin
 datapack.villagerTrade("wheat_for_emerald") {
@@ -126,7 +126,7 @@ See [Item Modifiers](/docs/data-driven/item-modifiers) for all available functio
 ### Gating a Trade with a Predicate
 
 `merchantPredicate` is a condition evaluated against the villager entity. The trade only appears in
-the merchant's offer list when the condition passes — useful for biome-locked or NBT-gated trades.
+the merchant's offer list when the condition passes - useful for biome-locked or NBT-gated trades.
 
 ```kotlin
 datapack.villagerTrade("desert_trade") {

@@ -11,7 +11,8 @@ routeOverride: /docs/oop/items
 
 # Items
 
-The OOP module keeps item usage concise by letting you build an item stack once and then reuse it for giving,
+The OOP module keeps item usage concise by letting you build an [item stack](https://minecraft.wiki/w/Item) once and
+then reuse it for giving,
 spawning, or embedding it in wider entity workflows.
 
 ## Basic usage
@@ -52,6 +53,6 @@ another.
 
 ## See also
 
-- [Entities & Players](/docs/oop/entities-and-players) – Give, replace, or spawn item stacks from entity-scoped helpers.
-- [Events](/docs/oop/events) – React to item use or consumption with event-driven logic.
-- [Components](/docs/concepts/components) – Define richer custom names, lore, and metadata for the items you build.
+- [Entities & Players](/docs/oop/entities-and-players) - Give, replace, or spawn item stacks from entity-scoped helpers.
+- [Events](/docs/oop/events) - React to item use or consumption with event-driven logic.
+- [Components](/docs/concepts/components) - Define richer custom names, lore, and metadata for the items you build.

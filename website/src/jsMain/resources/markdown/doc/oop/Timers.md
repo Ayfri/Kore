@@ -11,11 +11,13 @@ routeOverride: /docs/oop/timers
 
 # Timers
 
-Timers use a [scoreboard objective](https://minecraft.wiki/w/Scoreboard) that increments every tick.
+Timers use a [scoreboard objective](https://minecraft.wiki/w/Scoreboard) that increments
+every [tick](/docs/concepts/time).
 When the score reaches the configured duration, completion handlers fire.
 
 This is a strong fit for round timers, capture phases, delayed rewards, warmups, or any mechanic that should complete
-after a predictable amount of ticks.
+after a predictable amount of [ticks](/docs/concepts/time). Durations are expressed as [
+`TimeNumber`](/docs/concepts/time) values - `5.seconds`, `200.ticks`, etc.
 
 ## Registering a timer
 

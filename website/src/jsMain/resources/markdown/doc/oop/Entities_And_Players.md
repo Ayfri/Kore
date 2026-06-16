@@ -45,11 +45,11 @@ You can also construct an `Entity` handle directly from an `EntityTypes` value u
 overload of `entity()`:
 
 ```kotlin
-// Extension on EntityTypeArgument — the type is set automatically
+// Extension on EntityTypeArgument - the type is set automatically
 val creeper = EntityTypes.CREEPER.toEntity()
 val skeletons = EntityTypes.SKELETON.toEntity(limitToOne = false) { team = "arena" }
 
-// Named factory overload — equivalent, mirrors entity("Name", ...) style
+// Named factory overload - equivalent, mirrors entity("Name", ...) style
 val spider = entity(EntityTypes.SPIDER)
 val endermen = entity(EntityTypes.ENDERMAN, limitToOne = false) { tag = "target" }
 ```
@@ -182,6 +182,6 @@ function("buff_player") {
 
 ## See also
 
-- [Items](/docs/oop/items) – Reuse item stacks with `giveItem`, `replaceItem`, or summon-based reward flows.
-- [Events](/docs/oop/events) – Attach gameplay reactions directly to the entity and player handles you define here.
-- [Spawners](/docs/oop/spawners) – Pair selectors and entity utilities with reusable spawning entry points.
+- [Items](/docs/oop/items) - Reuse item stacks with `giveItem`, `replaceItem`, or summon-based reward flows.
+- [Events](/docs/oop/events) - Attach gameplay reactions directly to the entity and player handles you define here.
+- [Spawners](/docs/oop/spawners) - Pair selectors and entity utilities with reusable spawning entry points.

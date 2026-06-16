@@ -17,7 +17,7 @@ Kore provides a unified `Color` API that covers three families of colors used by
 - `RGB` and `ARGB` (numeric colors)
 - `DyeColors` (the 16 dye colors used by entities and items)
 
-For the vanilla reference on color behavior, see the Minecraft Wiki’s Color page (`https://minecraft.wiki/w/Color`).
+For the vanilla reference on color behavior, see the [Minecraft Wiki - Color](https://minecraft.wiki/w/Color).
 
 ## Color types in Kore
 
@@ -305,4 +305,4 @@ val cat = Items.CAT_SPAWN_EGG {
 ## Further reading
 
 - [Chat Components](/docs/concepts/chat-components) - Use colors in chat components
-- Minecraft Wiki - Color: [`https://minecraft.wiki/w/Color`](https://minecraft.wiki/w/Color)
+- [Minecraft Wiki - Color](https://minecraft.wiki/w/Color)

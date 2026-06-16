@@ -23,9 +23,12 @@ A "Scheduler" in Kore lets you:
 
 All scheduling logic revolves around three core classes:
 
-1. [Scheduler](https://github.com/Ayfri/Kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/helpers/Scheduler.kt#L34) – Represents a single scheduled task (with optional delay and period).
-2. [UnScheduler](https://github.com/Ayfri/Kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/helpers/UnScheduler.kt#L34) – Cancels, or clears, repeating tasks.
-3. [SchedulerManager](https://github.com/Ayfri/Kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/helpers/SchedulerManager.kt#L42) – Maintains a list of schedulers for a given DataPack and offers convenience methods to add or remove them.
+1. [Scheduler](https://github.com/Ayfri/Kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/helpers/Scheduler.kt#L34) -
+   Represents a single scheduled task (with optional delay and period).
+2. [UnScheduler](https://github.com/Ayfri/Kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/helpers/UnScheduler.kt#L34) -
+   Cancels, or clears, repeating tasks.
+3. [SchedulerManager](https://github.com/Ayfri/Kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/helpers/SchedulerManager.kt#L42) -
+   Maintains a list of schedulers for a given DataPack and offers convenience methods to add or remove them.
 
 **Note:**
 **Schedulers are saved and loaded from a `scheduler_setup` function that is added to the `minecraft/load.json` tag.**
@@ -46,9 +49,9 @@ val datapack = dataPack("my_datapack") {
 
 Inside the schedulerManager block, you can add schedulers with different behaviors by calling addScheduler. Common calls are:
 
-- `addScheduler(delay)` – Executes once after a given delay.
-- `addScheduler(delay, period)` – Executes once after delay, then repeats every period.
-- `addScheduler(block)` – Executes right away if no delay or period is specified.
+- `addScheduler(delay)` - Executes once after a given delay ([`TimeNumber`](/docs/concepts/time)).
+- `addScheduler(delay, period)` - Executes once after delay, then repeats every period.
+- `addScheduler(block)` - Executes right away if no delay or period is specified.
 
 In many cases, you'll pass a function block (Function.() -> Command) so you can include DSL commands:
 
