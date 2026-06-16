@@ -89,7 +89,9 @@ suspend fun launchAllSimpleGenerators() {
 				"point_of_interest_type" to "PointOfInterestTypeTag",
 				"pig_variant" to "PigVariantTag",
 				"timeline" to "TimelineTag",
+				"trade_set" to "TradeSetTag",
 				"wolf_variant" to "WolfVariantTag",
+				"villager_trade" to "VillagerTradeTag",
 				"zombie_nautilus_variant" to "ZombieNautilusVariantTag",
 				"worldgen/biome" to "worldgen.BiomeTag",
 				"worldgen/configured_carver" to "worldgen.ConfiguredCarverTag",
@@ -115,6 +117,9 @@ suspend fun launchAllSimpleGenerators() {
 				"Painting" to "arguments.types.PaintingAssetArgument"
 			)
 		},
+		gen("TradeSets", "trade_set"),
+		gen("VillagerTrades", "villager_trade"),
+
 		gen("DensityFunctions", "worldgen/density_function"),
 		gen("TemplatePools", "worldgen/template_pool"),
 	).transformRemoveJSONSuffix().onEach { gen ->
