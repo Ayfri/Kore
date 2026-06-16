@@ -19,6 +19,30 @@ fun entityCommandsTests() = testDataPack("entity_commands_tests") {
 		type = EntityTypes.ZOMBIE
 	}
 
+	function("entity_type_to_entity") {
+		val creeper = EntityTypes.CREEPER.toEntity()
+		creeper.kill() assertsIs "kill @e[limit=1,type=minecraft:creeper]"
+		lines.size assertsIs 1
+	}
+
+	function("entity_type_to_entity_multiple_with_selector") {
+		val skeletons = EntityTypes.SKELETON.toEntity(limitToOne = false) { team = "arena" }
+		skeletons.kill() assertsIs "kill @e[team=arena,type=minecraft:skeleton]"
+		lines.size assertsIs 1
+	}
+
+	function("entity_factory_with_type_arg") {
+		val spider = entity(EntityTypes.SPIDER)
+		spider.addTag("boss") assertsIs "tag @e[limit=1,type=minecraft:spider] add boss"
+		lines.size assertsIs 1
+	}
+
+	function("entity_factory_with_type_arg_multiple") {
+		val endermen = entity(EntityTypes.ENDERMAN, limitToOne = false) { tag = "target" }
+		endermen.damage(10f) assertsIs "damage @e[tag=target,type=minecraft:enderman] 10"
+		lines.size assertsIs 1
+	}
+
 	function("test_add_tag") {
 		player.addTag("vip") assertsIs "tag @e[limit=1,name=TestPlayer,type=minecraft:player] add vip"
 		lines.size assertsIs 1

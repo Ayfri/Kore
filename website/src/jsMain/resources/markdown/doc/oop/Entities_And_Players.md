@@ -5,7 +5,7 @@ nav-title: Entities & Players
 description: Create and manage entities and players with the Kore OOP module - selectors, execute helpers, batch commands, entity commands, and entity effects.
 keywords: minecraft, datapack, kore, oop, entity, player, commands, execute, batch, effects, teleport, kill, damage
 date-created: 2026-03-03
-date-modified: 2026-03-31
+date-modified: 2026-06-16
 routeOverride: /docs/oop/entities-and-players
 ---
 
@@ -38,6 +38,25 @@ named entity selector when you already know the exact entity name to target.
 Use `player(...)` when you want a selector already scoped to players, and `entity { ... }` when you need a reusable
 selector for mobs, armor stands, projectiles, or a more generic execute target. Use `entity("Name", ...)` when you
 want the same convenience as `player("Name")` without forcing the selector to `minecraft:player`.
+
+### Creating entities from an EntityType
+
+You can also construct an `Entity` handle directly from an `EntityTypes` value using `toEntity()` or the typed
+overload of `entity()`:
+
+```kotlin
+// Extension on EntityTypeArgument — the type is set automatically
+val creeper = EntityTypes.CREEPER.toEntity()
+val skeletons = EntityTypes.SKELETON.toEntity(limitToOne = false) { team = "arena" }
+
+// Named factory overload — equivalent, mirrors entity("Name", ...) style
+val spider = entity(EntityTypes.SPIDER)
+val endermen = entity(EntityTypes.ENDERMAN, limitToOne = false) { tag = "target" }
+```
+
+Both forms set `selector.type` automatically so you never need to write `type = EntityTypes.X` by hand.
+Use `toEntity()` when calling from an `EntityTypeArgument` receiver; use `entity(type, ...)` when you want a form
+that reads like the other `entity(...)` overloads.
 
 ## Execute helpers
 
