@@ -180,4 +180,6 @@ dp.worldPreset("example_preset") {
 - [Predicates](/docs/data-driven/predicates) - Condition logic for features
 - [Test Features](/docs/advanced/test-features) - Automated validation with GameTest
 - [Timelines](/docs/data-driven/timelines) - Animate environment attributes over time using keyframes and easing functions
+- [World Clocks](/docs/data-driven/world-clocks) - World clocks, time markers, the `/time` command, and `timeCheck` -
+  used by `DimensionType.defaultClock`
 

@@ -9,6 +9,7 @@ import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.generated.arguments.TimelineOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.DimensionTypeArgument
+import io.github.ayfri.kore.generated.arguments.types.WorldClockArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
@@ -35,6 +36,7 @@ data class DimensionType(
 	var coordinateScale: Double = 1.0,
 	var ambientLight: Float = 0f,
 	var cardinalLight: CardinalLight? = null,
+	var defaultClock: WorldClockArgument? = null,
 	var hasFixedTime: Boolean? = null,
 	var logicalHeight: Int = 0,
 	var infiniburn: BlockTagArgument,

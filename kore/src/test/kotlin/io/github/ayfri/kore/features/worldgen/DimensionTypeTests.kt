@@ -11,6 +11,7 @@ import io.github.ayfri.kore.features.worldgen.environmentattributes.types.cloudH
 import io.github.ayfri.kore.features.worldgen.intproviders.*
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.generated.Timelines
+import io.github.ayfri.kore.generated.WorldClocks
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
@@ -104,6 +105,28 @@ fun DataPack.dimensionTypeTests() {
 				"minecraft:day",
 				"#minecraft:in_overworld"
 			]
+		}
+	""".trimIndent()
+
+	dimensionType("my_dimension5") {
+		defaultClock = WorldClocks.OVERWORLD
+		monsterSpawnLightLevel = constant(0)
+	}
+
+	dimensionTypes.last() assertsIs """
+		{
+			"natural": true,
+			"has_skylight": true,
+			"has_ceiling": false,
+			"coordinate_scale": 1.0,
+			"ambient_light": 0.0,
+			"default_clock": "minecraft:overworld",
+			"logical_height": 0,
+			"infiniburn": "#minecraft:infiniburn_overworld",
+			"min_y": 0,
+			"height": 16,
+			"monster_spawn_light_level": 0,
+			"monster_spawn_block_light_limit": 0
 		}
 	""".trimIndent()
 }
