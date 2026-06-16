@@ -11,7 +11,7 @@ routeOverride: /docs/data-driven/villager-trades
 
 # Villager Trades
 
-Villager trades are data-driven JSON files introduced in Minecraft Java Edition 1.21.5 that define
+Villager trades are data-driven JSON files introduced in Minecraft Java Edition 26.1 that define
 what individual trades a villager can offer and how they are grouped into trade sets per profession level.
 This system fully replaces the old hardcoded trade lists and lets data packs control everything about
 villager economies - what items are bought and sold, at what quantities, for how many uses, with what

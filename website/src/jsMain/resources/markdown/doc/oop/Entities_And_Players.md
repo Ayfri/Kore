@@ -142,6 +142,7 @@ function("commands_demo") {
 | `showActionBar` | Display text on the action bar            |
 | `showTitle`     | Display a title and optional subtitle     |
 | `teleportTo`    | Teleport to coordinates or another entity |
+| `swing`         | Swing the left or right hand              |
 
 ## Practical pattern
 

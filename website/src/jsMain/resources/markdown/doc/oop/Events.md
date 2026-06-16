@@ -25,19 +25,19 @@ val player = player("Steve")
 
 function("my_events") {
 	player.onBlockUse { say("Interacted with a block!") }
-  player.onChangeDimension { say("Changed dimension!") }
+	player.onChangeDimension { say("Changed dimension!") }
 	player.onConsumeItem { say("Consumed something!") }
 	player.onConsumeItem(Items.GOLDEN_APPLE) { say("Golden apple!") }
-  player.onEffectsChanged { say("Effects changed!") }
-  player.onEnchantItem { say("Enchanted an item!") }
+	player.onEffectsChanged { say("Effects changed!") }
+	player.onEnchantItem { say("Enchanted an item!") }
 	player.onHurtEntity { say("Hit!") }
-  player.onRecipeCrafted(Recipes.CRAFTING_TABLE) { say("Crafted a recipe!") }
+	player.onRecipeCrafted(Recipes.CRAFTING_TABLE) { say("Crafted a recipe!") }
 	player.onInventoryChange { say("Inventory changed!") }
 	player.onItemUsedOnBlock { say("Used item on block!") }
 	player.onKill { say("Kill!") }
 	player.onPlaceBlock { say("Placed a block!") }
 	player.onRightClick(Items.STICK) { say("Right click with stick!") }
-  player.onStartRiding { say("Started riding!") }
+	player.onStartRiding { say("Started riding!") }
 }
 ```
 
