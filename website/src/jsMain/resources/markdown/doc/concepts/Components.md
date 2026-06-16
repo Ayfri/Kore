@@ -5,7 +5,7 @@ nav-title: Components
 description: A guide for using components in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, components
 date-created: 2024-01-08
-date-modified: 2026-02-10
+date-modified: 2026-06-16
 routeOverride: /docs/concepts/components
 ---
 
@@ -211,6 +211,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 
 | Helper                               | Description                                                                                              |
 |--------------------------------------|----------------------------------------------------------------------------------------------------------|
+| `additionalTradeCost(..)`            | Sets an extra emerald cost added on top of the base price for villager trades.                           |
 | `attackRange(..)`                    | Configures the attack range of an item (min/max range, hitbox margin, mob factor).                       |
 | `attributeModifiers(..)`             | Modifies entity attributes (e.g., attack damage, speed, armor) when the item is equipped or held.        |
 | `bannerPatterns(..)`                 | Defines the layered patterns displayed on a banner or shield.                                            |

@@ -34,6 +34,11 @@ fun itemComponentsTests() {
 	val crossbow = Items.CROSSBOW
 	val bundle = Items.BUNDLE
 
+	val additionalTradeCostTest = Items.EMERALD {
+		additionalTradeCost(3)
+	}
+	additionalTradeCostTest.asString() assertsIs """minecraft:emerald[additional_trade_cost=3]"""
+
 	val attackRangeTest = stoneSword {
 		attackRange(hitboxMargin = 0.5f, maxRange = 3.0f, minRange = 1.0f, mobFactor = 0.8f)
 	}
