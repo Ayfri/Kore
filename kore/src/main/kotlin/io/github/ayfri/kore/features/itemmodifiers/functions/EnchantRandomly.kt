@@ -16,7 +16,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class EnchantRandomly(
 	override var conditions: PredicateAsList? = null,
-	var options: InlinableList<EnchantmentOrTagArgument> = emptyList(),
+	var includeAdditionalCostComponent: Boolean? = null,
+	var options: InlinableList<EnchantmentOrTagArgument>? = null,
 	var onlyCompatible: Boolean? = null,
 ) : ItemFunction()
 
@@ -39,5 +40,5 @@ fun ItemModifier.enchantRandomly(
 
 /** Configure the candidate enchantments list. */
 fun EnchantRandomly.enchantments(block: MutableList<EnchantmentOrTagArgument>.() -> Unit = {}) {
-	options = buildList(block)
+	options = buildList(block).ifEmpty { null }
 }

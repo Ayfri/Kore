@@ -18,13 +18,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class EnchantWithLevels(
 	override var conditions: PredicateAsList? = null,
-	var options: InlinableList<EnchantmentOrTagArgument> = emptyList(),
 	var levels: NumberProvider,
+	var includeAdditionalCostComponent: Boolean? = null,
+	var options: InlinableList<EnchantmentOrTagArgument>? = null,
 ) : ItemFunction()
 
 /** Add an `enchant_with_levels` step. */
 fun ItemModifier.enchantWithLevels(
-	enchantments: List<EnchantmentOrTagArgument> = emptyList(),
+	enchantments: List<EnchantmentOrTagArgument>? = null,
 	levels: NumberProvider = constant(0f),
 	block: EnchantWithLevels.() -> Unit = {},
 ) {
@@ -37,10 +38,10 @@ fun ItemModifier.enchantWithLevels(
 	levels: NumberProvider = constant(0f),
 	block: EnchantWithLevels.() -> Unit = {},
 ) {
-	modifiers += EnchantWithLevels(options = enchantments.toList(), levels = levels).apply(block)
+	modifiers += EnchantWithLevels(options = enchantments.toList().ifEmpty { null }, levels = levels).apply(block)
 }
 
 /** Configure the candidate enchantments list. */
 fun EnchantWithLevels.enchantments(block: MutableList<EnchantmentOrTagArgument>.() -> Unit = {}) {
-	options = buildList(block)
+	options = buildList(block).ifEmpty { null }
 }

@@ -167,6 +167,20 @@ fun DataPack.itemModifierTests() {
 		}
 	""".trimIndent()
 
+	itemModifier("enchant_randomly_with_additional_cost") {
+		enchantRandomly(Enchantments.SHARPNESS) {
+			includeAdditionalCostComponent = true
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:enchant_randomly",
+			"include_additional_cost_component": true,
+			"options": "minecraft:sharpness"
+		}
+	""".trimIndent()
+
 	itemModifier("enchant_with_levels") {
 		enchantWithLevels(Enchantments.SHARPNESS, levels = constant(5f))
 	}
@@ -174,8 +188,22 @@ fun DataPack.itemModifierTests() {
 	itemModifiers.last() assertsIs """
 		{
 			"function": "minecraft:enchant_with_levels",
-			"options": "minecraft:sharpness",
-			"levels": 5.0
+			"levels": 5.0,
+			"options": "minecraft:sharpness"
+		}
+	""".trimIndent()
+
+	itemModifier("enchant_with_levels_with_additional_cost") {
+		enchantWithLevels(levels = constant(30f)) {
+			includeAdditionalCostComponent = false
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:enchant_with_levels",
+			"levels": 30.0,
+			"include_additional_cost_component": false
 		}
 	""".trimIndent()
 
@@ -728,6 +756,31 @@ fun DataPack.itemModifierTests() {
 		{
 			"function": "minecraft:set_potion",
 			"id": "minecraft:healing"
+		}
+	""".trimIndent()
+
+	itemModifier("set_random_dyes") {
+		setRandomDyes(3f)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:set_random_dyes",
+			"number_of_dyes": 3.0
+		}
+	""".trimIndent()
+
+	itemModifier("set_random_potion") {
+		setRandomPotion(Potions.HEALING, Potions.SWIFTNESS)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:set_random_potion",
+			"options": [
+				"minecraft:healing",
+				"minecraft:swiftness"
+			]
 		}
 	""".trimIndent()
 

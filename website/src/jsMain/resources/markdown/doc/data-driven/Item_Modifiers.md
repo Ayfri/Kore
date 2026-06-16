@@ -5,7 +5,7 @@ nav-title: Item Modifiers
 description: Transform item stacks using Kore's type-safe DSL for loot functions - set counts, add enchantments, copy data, and more.
 keywords: minecraft, datapack, kore, item modifiers, loot functions, /item modify, components
 date-created: 2025-08-11
-date-modified: 2026-02-15
+date-modified: 2026-06-16
 routeOverride: /docs/data-driven/item-modifiers
 ---
 
@@ -188,6 +188,11 @@ itemModifier("random_enchant") {
 
 	// Only compatible enchantments
 	enchantRandomly(onlyCompatible = true)
+
+  // Include the additional cost component from trade costs
+  enchantRandomly(Enchantments.SHARPNESS) {
+    includeAdditionalCostComponent = true
+  }
 }
 ```
 
@@ -205,6 +210,11 @@ itemModifier("table_enchant") {
 
 	// Limit to specific enchantments
 	enchantWithLevels(Enchantments.PROTECTION, levels = constant(30f))
+
+  // Include the additional cost component from trade costs
+  enchantWithLevels(levels = constant(30f)) {
+    includeAdditionalCostComponent = true
+  }
 }
 ```
 
