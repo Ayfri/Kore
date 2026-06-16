@@ -1,14 +1,21 @@
 package io.github.ayfri.kore.features.predicates.sub.entityspecific
 
 import io.github.ayfri.kore.arguments.enums.Gamemode
-import io.github.ayfri.kore.arguments.types.resources.StatisticArgument
+import io.github.ayfri.kore.arguments.numbers.ranges.serializers.FloatRangeOrFloatJson
 import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
+import io.github.ayfri.kore.arguments.types.resources.StatisticArgument
 import io.github.ayfri.kore.features.predicates.sub.Advancements
 import io.github.ayfri.kore.features.predicates.sub.Entity
 import io.github.ayfri.kore.features.predicates.sub.Statistic
 import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import kotlinx.serialization.Serializable
 
+
+@Serializable
+data class PlayerFoodPredicate(
+	var level: IntRangeOrIntJson? = null,
+	var saturation: FloatRangeOrFloatJson? = null,
+)
 
 @Serializable
 data class Input(
@@ -25,6 +32,7 @@ data class Input(
 data class Player(
 	var lookingAt: Entity? = null,
 	var advancements: Advancements? = null,
+	var food: PlayerFoodPredicate? = null,
 	var gamemode: List<Gamemode>? = null,
 	var level: IntRangeOrIntJson? = null,
 	var recipes: Map<RecipeArgument, Boolean>? = null,
@@ -58,6 +66,10 @@ fun MutableMap<StatisticArgument, Statistic>.statistic(statistic: StatisticArgum
 
 fun Player.recipes(vararg recipes: RecipeArgument, block: MutableMap<RecipeArgument, Boolean>.() -> Unit = {}) {
 	this.recipes = (this.recipes ?: mutableMapOf()) + buildMap(block) + recipes.associateWith { true }
+}
+
+fun Player.food(block: PlayerFoodPredicate.() -> Unit = {}) {
+	food = PlayerFoodPredicate().apply(block)
 }
 
 fun Player.input(block: Input.() -> Unit = {}) {

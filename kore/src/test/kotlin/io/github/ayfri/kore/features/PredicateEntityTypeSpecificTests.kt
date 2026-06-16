@@ -2,6 +2,7 @@ package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.enums.Gamemode
+import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrDouble
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
@@ -98,6 +99,39 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 						"jump": true,
 						"sneak": false,
 						"sprint": true
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	predicate("player_food_type_specific") {
+		entityProperties {
+			playerTypeSpecific {
+				food {
+					level = rangeOrInt(5..15)
+					saturation = rangeOrDouble(1.0, 10.0)
+				}
+			}
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:entity_properties",
+			"entity": "this",
+			"predicate": {
+				"type_specific": {
+					"type": "minecraft:player",
+					"food": {
+						"level": {
+							"min": 5,
+							"max": 15
+						},
+						"saturation": {
+							"min": 1.0,
+							"max": 10.0
+						}
 					}
 				}
 			}

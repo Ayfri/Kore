@@ -5,7 +5,7 @@ nav-title: Predicates
 description: Learn how to use predicates in your Kore datapacks
 keywords: minecraft, datapack, kore, predicates, conditions, entity properties
 date-created: 2024-01-08
-date-modified: 2026-02-03
+date-modified: 2026-06-16
 routeOverride: /docs/data-driven/predicates
 ---
 
@@ -310,13 +310,17 @@ predicate("lightning_check") {
 
 ##### Player
 
-Check player-specific properties including gamemode, unlocked recipes, and input state:
+Check player-specific properties including gamemode, food stats, unlocked recipes, and input state:
 
 ```kotlin
 predicate("player_check") {
 	entityProperties {
 		playerTypeSpecific {
 			gamemodes(Gamemode.CREATIVE)
+           food {
+              level = rangeOrInt(5..15)
+              saturation = rangeOrDouble(1.0, 10.0)
+           }
 			recipes {
 				this[Recipes.BOW] = true
 			}
