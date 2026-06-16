@@ -8,12 +8,15 @@ import io.github.ayfri.kore.features.timelines.*
 import io.github.ayfri.kore.features.worldgen.environmentattributes.EnvironmentAttributeModifier
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.FloatValue
 import io.github.ayfri.kore.generated.EnvironmentAttributes
+import io.github.ayfri.kore.generated.arguments.types.WorldClockArgument
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.timelineTests() {
-	timeline("test_timeline") {
+	val overworldClock = WorldClockArgument("overworld")
+
+	timeline("test_timeline", overworldClock) {
 		periodTicks = 24000
 
 		track(EnvironmentAttributes.Visual.FOG_START_DISTANCE, Linear, EnvironmentAttributeModifier.OVERRIDE) {
@@ -41,6 +44,7 @@ fun DataPack.timelineTests() {
 
 	timelines.last() assertsIs """
 		{
+			"clock": "minecraft:overworld",
 			"period_ticks": 24000,
 			"tracks": {
 				"minecraft:visual/fog_start_distance": {
@@ -74,7 +78,7 @@ fun DataPack.timelineTests() {
 		}
 	""".trimIndent()
 
-	timeline("bezier_timeline") {
+	timeline("bezier_timeline", overworldClock) {
 		periodTicks = 12000
 
 		track(EnvironmentAttributes.Gameplay.SKY_LIGHT_LEVEL) {
@@ -92,6 +96,7 @@ fun DataPack.timelineTests() {
 
 	timelines.last() assertsIs """
 		{
+			"clock": "minecraft:overworld",
 			"period_ticks": 12000,
 			"tracks": {
 				"minecraft:gameplay/sky_light_level": {
@@ -118,7 +123,7 @@ fun DataPack.timelineTests() {
 		}
 	""".trimIndent()
 
-	timeline("constant_timeline") {
+	timeline("constant_timeline", overworldClock) {
 		track(EnvironmentAttributes.Gameplay.MONSTERS_BURN) {
 			ease = Constant
 
@@ -130,6 +135,7 @@ fun DataPack.timelineTests() {
 
 	timelines.last() assertsIs """
 		{
+			"clock": "minecraft:overworld",
 			"tracks": {
 				"minecraft:gameplay/monsters_burn": {
 					"ease": "constant",
@@ -144,7 +150,7 @@ fun DataPack.timelineTests() {
 		}
 	""".trimIndent()
 
-	timeline("typed_timeline") {
+	timeline("typed_timeline", overworldClock) {
 		periodTicks = 24000
 
 		track(EnvironmentAttributes.Visual.FOG_COLOR) {
@@ -162,6 +168,7 @@ fun DataPack.timelineTests() {
 
 	timelines.last() assertsIs """
 		{
+			"clock": "minecraft:overworld",
 			"period_ticks": 24000,
 			"tracks": {
 				"minecraft:visual/fog_color": {
@@ -177,6 +184,29 @@ fun DataPack.timelineTests() {
 						}
 					]
 				}
+			}
+		}
+	""".trimIndent()
+
+	timeline("markers_timeline", overworldClock) {
+		periodTicks = 24000
+
+		timeMarker("dawn", 0)
+		timeMarker("noon", 6000, showInCommands = true)
+		timeMarker("dusk", 12000)
+	}
+
+	timelines.last() assertsIs """
+		{
+			"clock": "minecraft:overworld",
+			"period_ticks": 24000,
+			"time_markers": {
+				"dawn": 0,
+				"noon": {
+					"show_in_commands": true,
+					"ticks": 6000
+				},
+				"dusk": 12000
 			}
 		}
 	""".trimIndent()
