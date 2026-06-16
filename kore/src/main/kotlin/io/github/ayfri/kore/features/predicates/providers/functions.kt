@@ -29,3 +29,6 @@ fun storageNumber(storage: String, path: String) = Storage(storage, path)
 
 fun enchantmentLevel(amount: Int) = EnchantmentLevel(constantLevelBased(amount))
 fun enchantmentLevel(amount: LevelBased) = EnchantmentLevel(amount)
+
+fun sum(vararg summands: NumberProvider) = Sum(summands.toList())
+fun sum(summands: List<NumberProvider>) = Sum(summands)

@@ -14,9 +14,7 @@ import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.predicates.conditions.*
 import io.github.ayfri.kore.features.predicates.predicate
-import io.github.ayfri.kore.features.predicates.providers.int
-import io.github.ayfri.kore.features.predicates.providers.intRange
-import io.github.ayfri.kore.features.predicates.providers.scoreNumber
+import io.github.ayfri.kore.features.predicates.providers.*
 import io.github.ayfri.kore.features.predicates.sub.*
 import io.github.ayfri.kore.features.predicates.sub.entityspecific.gamemodes
 import io.github.ayfri.kore.features.predicates.sub.entityspecific.playerTypeSpecific
@@ -585,6 +583,32 @@ fun DataPack.predicateTests() {
 					"target": "this"
 				},
 				"score": "kills"
+			},
+			"range": {
+				"min": 0.0,
+				"max": 10.0
+			}
+		}
+	""".trimIndent()
+
+	predicate("value_check_sum") {
+		valueCheck(sum(constant(1f), constant(2f), uniform(3f, 5f)), intRange(0f, 10f))
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:value_check",
+			"value": {
+				"type": "minecraft:sum",
+				"summands": [
+					1.0,
+					2.0,
+					{
+						"type": "minecraft:uniform",
+						"min": 3.0,
+						"max": 5.0
+					}
+				]
 			},
 			"range": {
 				"min": 0.0,

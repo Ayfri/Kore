@@ -189,6 +189,7 @@ Number providers determine dynamic numeric values for rolls, counts, and other q
 | `binomial(n, p)`        | Binomial distribution      | `binomial(5, 0.5f)`                     |
 | `scoreNumber(...)`      | Value from scoreboard      | `scoreNumber("kills", EntityType.THIS)` |
 | `enchantmentLevel(...)` | Based on enchantment level | `enchantmentLevel(5)`                   |
+| `sum(...)`              | Sum of multiple providers  | `sum(constant(1f), uniform(1f, 3f))`    |
 
 ```kotlin
 pool {

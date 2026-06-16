@@ -90,3 +90,6 @@ data class Storage(var storage: String, var path: String) : NumberProvider()
 
 @Serializable
 data class EnchantmentLevel(var amount: LevelBased) : NumberProvider()
+
+@Serializable
+data class Sum(var summands: List<NumberProvider>) : NumberProvider()
