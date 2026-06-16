@@ -5,7 +5,7 @@ nav-title: Display Entities
 description: A guide for creating Display Entities in the world.
 keywords: minecraft, datapack, kore, guide, display-entities
 date-created: 2024-04-06
-date-modified: 2026-04-01
+date-modified: 2026-06-16
 routeOverride: /docs/helpers/display-entities
 ---
 
@@ -166,3 +166,35 @@ interpolableEntityDisplay.interpolateTo(duration = 2.seconds) {
 
 Interpolation is especially useful when you want display entities to move or morph smoothly between ticks without
 rebuilding the entity from scratch.
+
+## OOP Entity Handles
+
+After creating an interpolable, call `toEntity()` to get a typed OOP entity handle (`BlockDisplayEntity`,
+`ItemDisplayEntity`, or `TextDisplayEntity`). This gives access to all `Entity` extension functions such as `kill`,
+`teleportTo`, `addTag`, and more.
+
+```kotlin
+val display = blockDisplay {
+	blockState(Blocks.STONE)
+}.interpolable(vec3(0, 64, 0))
+
+display.summon()
+
+val entity: BlockDisplayEntity = display.toEntity() as BlockDisplayEntity
+
+// use any Entity OOP extension
+entity.addTag("my_display")
+entity.teleportTo(0, 65, 0)
+entity.kill()
+```
+
+You can also construct the typed entity handles directly when you already have a UUID:
+
+```kotlin
+val uuid = uuid("12345678-1234-1234-1234-123456789012")
+val block = BlockDisplayEntity(uuid)
+val item  = ItemDisplayEntity(uuid)
+val text  = TextDisplayEntity(uuid)
+```
+
+All three target their entity with `@e[type=minecraft:<type>,nbt={UUID:[I;...]}]`.
