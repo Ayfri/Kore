@@ -54,8 +54,8 @@ data class TimeNumber(val value: Double, val type: TimeType = TimeType.TICKS) : 
 	fun toDays() = TimeNumber(value, TimeType.DAYS)
 
 	override fun toString() = when (type) {
-		TimeType.TICKS -> value.toStringTruncated()
-		TimeType.SECONDS -> "${value.toStringTruncated()}s"
+		TimeType.TICKS -> value.toStringTruncatedIfRound()
+		TimeType.SECONDS -> "${value.toStringTruncatedIfRound()}s"
 		TimeType.DAYS -> "${value.toStringTruncatedIfRound()}d"
 	}
 }

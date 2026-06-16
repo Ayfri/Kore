@@ -23,6 +23,7 @@ fun Function.titleTests() {
 	}) assertsIs "title @s actionbar {type:\"text\",color:\"aqua\",text:\"test\"}"
 	title(self(), 1.0, 2.0, 3.0) assertsIs "title @s times 1 2 3"
 	title(self(), 0.2.days, 1.seconds, 1.ticks) assertsIs "title @s times 0.2d 1s 1"
+	title(self(), 1.5.days, 1.5.seconds, 1.5.ticks) assertsIs "title @s times 1.5d 1.5s 1.5"
 }
 
 class TitleCommandTests : FunSpec({
