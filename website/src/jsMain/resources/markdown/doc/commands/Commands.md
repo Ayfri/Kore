@@ -5,7 +5,7 @@ nav-title: Commands
 description: A comprehensive guide for using commands in Kore datapacks.
 keywords: minecraft, datapack, kore, guide, commands, execute, data, teleport
 date-created: 2026-02-03
-date-modified: 2026-05-29
+date-modified: 2026-06-16
 routeOverride: /docs/commands/commands
 ---
 
@@ -152,25 +152,109 @@ gamemode survival Steve
 
 ### Time Command
 
-The
-`time` command controls the world's day/night cycle. Time is measured in [ticks](/docs/concepts/time) (20 ticks = 1
-second, 24 000 ticks = 1 Minecraft day). Day starts at 1000, noon at 6000, night at 13000.
+The `time` command controls world clocks. Time is measured in [ticks](/docs/concepts/time) (20 ticks = 1 second,
+24 000 ticks = 1 Minecraft day). The `time` property on a `Function` returns a `Time` DSL scope.
+
+For a full reference covering world clocks, timelines, time markers, and the `timeCheck` predicate, see
+[World Clocks](/docs/data-driven/world-clocks).
+
+#### Basic Time Operations
 
 ```kotlin
 function("time_control") {
-	time.add(1.days)
-	time.set(TimePeriod.DAY)
-	time.query(TimeType.DAYS)
+	time.add(6000)           // advance by 6000 ticks
+	time.add(1.days)         // advance by one full day
+	time.pause()             // freeze the clock
+	time.resume()            // unfreeze the clock
+	time.set(TimePeriod.DAY) // jump to a named period
+	time.set(6000)           // jump to an exact tick
+	time.query(TimeType.DAYTIME)
+	time.queryTime()         // absolute game time as integer
 }
 ```
 
 Generated output:
 
 ```mcfunction
+time add 6000
+time add 1d
+time pause
+time resume
 time set day
 time set 6000
-time add 1000
 time query daytime
+time query time
+```
+
+#### Querying Timelines
+
+Use `query(timeline)` to read a timeline's progress, and `queryRepetitions(timeline)` to read how many times
+it has looped:
+
+```kotlin
+function("time_query_timeline") {
+	time.query(Timelines.DAY)
+	time.queryRepetitions(Timelines.DAY)
+}
+```
+
+Generated output:
+
+```mcfunction
+time query minecraft:day
+time query minecraft:day repetitions
+```
+
+#### Setting to a Time Marker
+
+`TimeMarkerArgument` (created with the `timeMarker()` factory) references a named tick position defined inside
+a timeline. Pass it to `time.set()` to jump the clock to that position:
+
+```kotlin
+function("skip_to_noon") {
+	time.set(timeMarker("noon", "mymod"))
+}
+```
+
+Generated output:
+
+```mcfunction
+time set mymod:noon
+```
+
+#### Targeting a Specific Clock with `time.of(clock)`
+
+When your datapack defines multiple [world clocks](/docs/data-driven/world-clocks), use `time.of(clock)` to
+scope every subcommand to that clock. It returns a `TimeWithClock` instance that mirrors the full `Time` API:
+
+```kotlin
+val seasonClock = worldClock("season")
+
+function("season_control") {
+	time.of(seasonClock).add(6000)
+	time.of(seasonClock).pause()
+	time.of(seasonClock).resume()
+	time.of(seasonClock).set(TimePeriod.DAY)
+	time.of(seasonClock).set(timeMarker("summer", "mymod"))
+	time.of(seasonClock).query(TimeType.DAYTIME)
+	time.of(seasonClock).query(Timelines.DAY)
+	time.of(seasonClock).queryRepetitions(Timelines.DAY)
+	time.of(seasonClock).queryTime()
+}
+```
+
+Generated output:
+
+```mcfunction
+time of mymod:season add 6000
+time of mymod:season pause
+time of mymod:season resume
+time of mymod:season set day
+time of mymod:season set mymod:summer
+time of mymod:season query daytime
+time of mymod:season query minecraft:day
+time of mymod:season query minecraft:day repetitions
+time of mymod:season query time
 ```
 
 ### Weather Command
@@ -1293,6 +1377,7 @@ the [Cookbook](/docs/guides/cookbook) gives more realistic project-scale example
 - [Macros](/docs/commands/macros) - Dynamic command arguments
 - [Chat Components](/docs/concepts/chat-components) - Formatted text in commands
 - [Cookbook](/docs/guides/cookbook) - Practical command composition patterns in real datapacks
+- [World Clocks](/docs/data-driven/world-clocks) - World clocks, timelines, time markers, and `timeCheck`
 
 ### External Resources
 
