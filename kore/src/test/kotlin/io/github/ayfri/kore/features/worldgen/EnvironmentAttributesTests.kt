@@ -583,6 +583,87 @@ fun DataPack.environmentAttributesTests() {
 		}
 	""".trimIndent()
 
+	dimensionType("env_attr_ambient_light_color") {
+		attributes {
+			ambientLightColor(rgb(20, 20, 20))
+		}
+		monsterSpawnLightLevel = constant(0)
+	}
+
+	dimensionTypes.last() assertsIs """
+		{
+			"attributes": {
+				"minecraft:visual/ambient_light_color": 1315860
+			},
+			"natural": true,
+			"has_skylight": true,
+			"has_ceiling": false,
+			"coordinate_scale": 1.0,
+			"ambient_light": 0.0,
+			"logical_height": 0,
+			"infiniburn": "#minecraft:infiniburn_overworld",
+			"min_y": 0,
+			"height": 16,
+			"monster_spawn_light_level": 0,
+			"monster_spawn_block_light_limit": 0
+		}
+	""".trimIndent()
+
+	dimensionType("env_attr_block_light_tint") {
+		attributes {
+			blockLightTint(rgb(255, 180, 80), EnvironmentAttributeModifier.MULTIPLY)
+		}
+		monsterSpawnLightLevel = constant(0)
+	}
+
+	dimensionTypes.last() assertsIs """
+		{
+			"attributes": {
+				"minecraft:visual/block_light_tint": {
+					"argument": 16757840,
+					"modifier": "multiply"
+				}
+			},
+			"natural": true,
+			"has_skylight": true,
+			"has_ceiling": false,
+			"coordinate_scale": 1.0,
+			"ambient_light": 0.0,
+			"logical_height": 0,
+			"infiniburn": "#minecraft:infiniburn_overworld",
+			"min_y": 0,
+			"height": 16,
+			"monster_spawn_light_level": 0,
+			"monster_spawn_block_light_limit": 0
+		}
+	""".trimIndent()
+
+	dimensionType("env_attr_night_vision_color") {
+		attributes {
+			nightVisionColor(rgb(0, 255, 128))
+		}
+		monsterSpawnLightLevel = constant(0)
+	}
+
+	dimensionTypes.last() assertsIs """
+		{
+			"attributes": {
+				"minecraft:visual/night_vision_color": 65408
+			},
+			"natural": true,
+			"has_skylight": true,
+			"has_ceiling": false,
+			"coordinate_scale": 1.0,
+			"ambient_light": 0.0,
+			"logical_height": 0,
+			"infiniburn": "#minecraft:infiniburn_overworld",
+			"min_y": 0,
+			"height": 16,
+			"monster_spawn_light_level": 0,
+			"monster_spawn_block_light_limit": 0
+		}
+	""".trimIndent()
+
 	dimensionType("env_attr_sunrise_sunset_color") {
 		attributes {
 			sunriseSunsetColor(ARGB(128, 255, 128, 0))

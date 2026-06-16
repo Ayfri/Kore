@@ -5,7 +5,7 @@ nav-title: Environment Attributes
 description: Data-driven environment attributes to control visual, audio, and gameplay systems in biomes and dimensions.
 keywords: minecraft, datapack, kore, worldgen, environment attributes, biome, dimension type, fog, sky, music
 date-created: 2026-02-09
-date-modified: 2026-02-10
+date-modified: 2026-06-16
 routeOverride: /docs/data-driven/worldgen/environment-attributes
 ---
 
@@ -645,6 +645,26 @@ attributes {
 
 ---
 
+### `visual/ambient_light_color`
+
+The ambient light color used to tint the scene's ambient illumination. Interpolated.
+
+| Property      | Value           |
+|---------------|-----------------|
+| Value type    | RGB Color       |
+| Default value | `#000000`       |
+| Modifiers     | Color Modifiers |
+| Interpolated  | Yes             |
+| Resolved at   | Camera position |
+
+```kotlin
+attributes {
+	ambientLightColor(rgb(20, 20, 20))
+}
+```
+
+---
+
 ### `visual/ambient_particles`
 
 Controls ambient particles that randomly spawn around the camera.
@@ -668,6 +688,29 @@ attributes {
 	ambientParticles(
 		Particle(ParticleOptions(Particles.ASH), 0.01f),
 	)
+}
+```
+
+---
+
+### `visual/block_light_tint`
+
+The tint color applied to block-emitted light. Interpolated.
+
+| Property      | Value           |
+|---------------|-----------------|
+| Value type    | RGB Color       |
+| Default value | `#000000`       |
+| Modifiers     | Color Modifiers |
+| Interpolated  | Yes             |
+| Resolved at   | Camera position |
+
+```kotlin
+attributes {
+	blockLightTint(rgb(255, 180, 80))
+
+	// With a modifier
+	blockLightTint(rgb(255, 180, 80), EnvironmentAttributeModifier.MULTIPLY)
 }
 ```
 
@@ -855,6 +898,26 @@ The distance in blocks from the camera at which fog starts.
 ```kotlin
 attributes {
 	fogStartDistance(0.0f)
+}
+```
+
+---
+
+### `visual/night_vision_color`
+
+The tint color applied to the player's vision while under the Night Vision effect. Interpolated.
+
+| Property      | Value           |
+|---------------|-----------------|
+| Value type    | RGB Color       |
+| Default value | `#000000`       |
+| Modifiers     | Color Modifiers |
+| Interpolated  | Yes             |
+| Resolved at   | Camera position |
+
+```kotlin
+attributes {
+	nightVisionColor(rgb(0, 255, 128))
 }
 ```
 

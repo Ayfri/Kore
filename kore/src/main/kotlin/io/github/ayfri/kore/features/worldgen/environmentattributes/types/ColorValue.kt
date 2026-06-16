@@ -20,9 +20,25 @@ data class ColorValue(
 	}
 }
 
+/** The ambient light color used to tint the scene's ambient illumination. */
+fun EnvironmentAttributesScope.ambientLightColor(color: Color, mod: EnvironmentAttributeModifier.Color? = null) =
+	apply {
+		this[EnvironmentAttributes.Visual.AMBIENT_LIGHT_COLOR] = environmentAttributeValue(ColorValue(color), mod)
+	}
+
+/** The tint color applied to block-emitted light. */
+fun EnvironmentAttributesScope.blockLightTint(color: Color, mod: EnvironmentAttributeModifier.Color? = null) = apply {
+	this[EnvironmentAttributes.Visual.BLOCK_LIGHT_TINT] = environmentAttributeValue(ColorValue(color), mod)
+}
+
 /** The color of fog when the camera is not submerged. Also affected by time of day, weather, and potion effects. */
 fun EnvironmentAttributesScope.fogColor(color: Color, mod: EnvironmentAttributeModifier.Color? = null) = apply {
 	this[EnvironmentAttributes.Visual.FOG_COLOR] = environmentAttributeValue(ColorValue(color), mod)
+}
+
+/** The tint color applied to the player's vision while under Night Vision effect. */
+fun EnvironmentAttributesScope.nightVisionColor(color: Color, mod: EnvironmentAttributeModifier.Color? = null) = apply {
+	this[EnvironmentAttributes.Visual.NIGHT_VISION_COLOR] = environmentAttributeValue(ColorValue(color), mod)
 }
 
 /** The color of the sky, only visible for the overworld sky. Also affected by time of day and weather. */
