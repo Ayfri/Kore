@@ -125,6 +125,52 @@ enum class HeroTab(val tabName: String, val language: String) {
 				datapack.generateZip()
 			}
 		""".trimIndent()
+	},
+	OOP_AND_HELPERS("arena.kt", "kotlin") {
+		override val code = """
+			fun arenaDatapack() = dataPack("arena") {
+				val redTeam = team("red") {
+					color = FormattingColor.RED
+					collisionRule = CollisionRule.PUSH_OTHER_TEAMS
+				}
+
+				val dashCooldown = registerCooldown("dash", 3.seconds)
+				val golem = registerSpawner("golem", EntityTypes.IRON_GOLEM) {
+					position = vec3(0, 64, 0)
+				}
+				val roundTimer = registerTimerWithBossBar("round", 60.seconds) {
+					color = BossBarColor.GREEN
+					style = BossBarStyle.NOTCHED_20
+				}
+
+				drawShape("spawn_ring") {
+					shape = Shape.CIRCLE
+					particle = Particles.FLAME
+					radius = 5.0
+					points = 32
+				}
+
+				val scanner = raycast {
+					name = "scanner"
+					maxDistance = 24
+					step = 0.25
+					onStep = { particle(Particles.END_ROD, vec3()) }
+					onHitBlock = { say("Target acquired!") }
+				}
+
+				function("start_round") {
+					val nearest = allPlayers(limitToOne = true) { sort = Sort.NEAREST }
+					redTeam.join(nearest)
+					nearest.giveEffect(Effects.SPEED, amplifier = 1)
+					dashCooldown.start(nearest)
+					golem.spawn()
+
+					roundTimer.start(nearest)
+					roundTimer.onComplete(nearest) { say("Round over!") }
+					scanner.cast()
+				}
+			}
+		""".trimIndent()
 	};
 
 	abstract val code: String

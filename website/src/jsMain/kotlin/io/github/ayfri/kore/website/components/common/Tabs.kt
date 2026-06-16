@@ -2,6 +2,7 @@ package io.github.ayfri.kore.website.components.common
 
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.compose.css.functions.colorMix
 import io.github.ayfri.kore.website.utils.mdMax
 import io.github.ayfri.kore.website.utils.paddingX
 import io.github.ayfri.kore.website.utils.transition
@@ -77,10 +78,16 @@ object TabsStyle : StyleSheet() {
 
 	val buttons by style {
 		display(DisplayStyle.Flex)
-		backgroundColor(Color("rgba(9, 14, 20, 0.9)"))
+		backgroundColor(
+			colorMix(
+				ColorInterpolationMethod.Srgb,
+				Color("var(--landing-surface)") to 55.percent,
+				Color.transparent
+			)
+		)
 		borderBottom(1.px, LineStyle.Solid, Color("var(--landing-border)"))
-		padding(0.5.cssRem)
-		gap(0.5.cssRem)
+		padding(0.35.cssRem)
+		gap(0.35.cssRem)
 
 		mdMax(self) {
 			display(DisplayStyle.Grid)
@@ -94,31 +101,48 @@ object TabsStyle : StyleSheet() {
 	}
 
 	val button by style {
-		backgroundColor(Color.transparent)
-		cursor(Cursor.Pointer)
+		backgroundColor(
+			colorMix(
+				ColorInterpolationMethod.Srgb,
+				Color("var(--landing-text)") to 4.percent,
+				Color.transparent
+			)
+		)
+		borderRadius(0.4.cssRem)
+		border(0.px)
 		color(Color("var(--landing-muted)"))
-		padding(0.4.cssRem, 1.2.cssRem)
+		cursor(Cursor.Pointer)
 		fontFamily("JetBrains Mono", "IBM Plex Mono", "Consolas", "monospace")
 		fontSize(0.88.cssRem)
-		borderRadius(0.4.cssRem)
 		fontWeight(500)
-		letterSpacing(0.8.px)
+		letterSpacing(0.2.px)
+		padding(0.4.cssRem, 0.85.cssRem)
 		transition(0.2.s, "background-color", "color")
 
-		border(0.px, LineStyle.Solid, Color.transparent)
-
 		hover(self) style {
-			backgroundColor(Color("rgba(8, 182, 214, 0.2)"))
+			backgroundColor(
+				colorMix(
+					ColorInterpolationMethod.Srgb,
+					Color("var(--landing-accent)") to 20.percent,
+					Color.transparent
+				)
+			)
 			color(Color("var(--landing-text)"))
 		}
 
 		mdMax(self) {
-			paddingX(0.8.cssRem)
+			paddingX(0.55.cssRem)
 		}
 	}
 
 	val selected by style {
-		backgroundColor(Color("rgba(8, 182, 214, 0.3)"))
+		backgroundColor(
+			colorMix(
+				ColorInterpolationMethod.Srgb,
+				Color("var(--landing-accent)") to 30.percent,
+				Color.transparent
+			)
+		)
 		color(Color("var(--landing-text)"))
 	}
 
