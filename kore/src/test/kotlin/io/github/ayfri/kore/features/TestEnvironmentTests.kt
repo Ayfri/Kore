@@ -8,6 +8,7 @@ import io.github.ayfri.kore.features.testenvironments.enums.Weather
 import io.github.ayfri.kore.features.testenvironments.testEnvironments
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.Gamerules
+import io.github.ayfri.kore.generated.WorldClocks
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
@@ -40,11 +41,12 @@ fun DataPack.testEnvironmentTests() {
 			}
 		""".trimIndent()
 
-		timeOfDay("time_env", 1000)
+		clockTime("clock_time_env", WorldClocks.OVERWORLD, 1000)
 
 		testEnvironments.last() assertsIs """
 			{
-				"type": "minecraft:time_of_day",
+				"type": "minecraft:clock_time",
+				"clock": "minecraft:overworld",
 				"time": 1000
 			}
 		""".trimIndent()

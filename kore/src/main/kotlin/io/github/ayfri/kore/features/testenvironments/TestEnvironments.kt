@@ -6,6 +6,7 @@ import io.github.ayfri.kore.features.testenvironments.types.*
 import io.github.ayfri.kore.features.testenvironments.types.Function
 import io.github.ayfri.kore.generated.Gamerules
 import io.github.ayfri.kore.generated.arguments.types.TestEnvironmentArgument
+import io.github.ayfri.kore.generated.arguments.types.WorldClockArgument
 import io.github.ayfri.kore.features.testenvironments.enums.Weather as WeatherEnum
 
 /**
@@ -88,20 +89,21 @@ class TestEnvironmentsBuilder(private val dataPack: DataPack) {
 	}
 
 	/**
-	 * Creates a time-based test environment with a specific time of day.
+	 * Creates a clock-time test environment that sets a specific world clock to a given tick value.
 	 *
-	 * Time environments ensure tests run at consistent times, which is crucial
-	 * for testing time-dependent mechanics like mob spawning, solar panels,
-	 * or daylight sensor behavior.
+	 * Clock-time environments ensure tests run at a consistent time on the specified world clock,
+	 * important for testing time-dependent mechanics like mob spawning or daylight sensor behaviour.
 	 *
-	 * @param fileName The name of the time environment file
-	 * @param time The time of day in game ticks (0-24000, where 6000 = noon, 18000 = midnight)
-	 * @return TestEnvironmentArgument representing the time environment
+	 * @param fileName The name of the clock-time environment file
+	 * @param clock The world clock resource to set
+	 * @param time The time in ticks to set on the clock (0–24000, where 6000 = noon, 18000 = midnight)
+	 * @return TestEnvironmentArgument representing the clock-time environment
 	 */
-	fun timeOfDay(
-		fileName: String = "time_environment",
-		time: Int
-	): TestEnvironmentArgument = dataPack.testEnvironment(fileName, TimeOfDay(time))
+	fun clockTime(
+		fileName: String = "clock_time_environment",
+		clock: WorldClockArgument,
+		time: Int,
+	): TestEnvironmentArgument = dataPack.testEnvironment(fileName, ClockTimeEnvironment(clock, time))
 
 	/**
 	 * Creates a weather-based test environment with specific weather conditions.
