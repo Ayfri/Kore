@@ -222,12 +222,6 @@ object HeroSectionStyle : StyleSheet() {
 		}
 	}
 
-	@OptIn(ExperimentalComposeWebApi::class)
-	val panelFloat by keyframes {
-		from { transform { translateY(0.px) } }
-		to { transform { translateY((-12).px) } }
-	}
-
 	val heroSection by style {
 		boxSizing(BoxSizing.BorderBox)
 		position(Position.Relative)
@@ -304,12 +298,6 @@ object HeroSectionStyle : StyleSheet() {
 		padding(0.65.cssRem)
 		boxShadow(0.px, 30.px, 80.px, 0.px, rgba(5, 14, 23, 0.55))
 		property("backdrop-filter", "blur(14px)")
-		animation(panelFloat) {
-			duration(8.s)
-			timingFunction(AnimationTimingFunction.EaseInOut)
-			direction(AnimationDirection.Alternate)
-		}
-		property("animation-iteration-count", "infinite")
 
 		mdMax(self) {
 			padding(0.45.cssRem)
