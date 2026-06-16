@@ -2,12 +2,20 @@ package io.github.ayfri.kore.helpers
 
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.components.item.MannequinModel
+import io.github.ayfri.kore.arguments.maths.vec3
+import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
+import io.github.ayfri.kore.commands.SwingHand
 import io.github.ayfri.kore.dataPack
+import io.github.ayfri.kore.entities.MannequinEntity
+import io.github.ayfri.kore.entities.kill
+import io.github.ayfri.kore.entities.swing
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.helpers.assertions.assertsIs
 import io.github.ayfri.kore.helpers.mannequins.*
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.string.shouldMatch
+import java.util.*
 
 fun Function.mannequinTests() {
 	val m = mannequin {
@@ -36,10 +44,40 @@ fun Function.mannequinTests() {
 	m3.toNbt().toString() assertsIs "{description:\"Test\",hide_description:0b,immovable:1b,pose:\"crouching\"}"
 }
 
+fun Function.mannequinEntityTests() {
+	val uuid = UUIDArgument(UUID.fromString("00000000-0000-0000-0000-000000000001"))
+	val entity = MannequinEntity(uuid)
+
+	entity.kill() assertsIs "kill @e[limit=1,nbt={UUID:[I;0,0,0,1]},type=minecraft:mannequin]"
+	entity.swing(SwingHand.MAINHAND) assertsIs "swing @e[limit=1,nbt={UUID:[I;0,0,0,1]},type=minecraft:mannequin] mainhand"
+	entity.swing(SwingHand.OFFHAND) assertsIs "swing @e[limit=1,nbt={UUID:[I;0,0,0,1]},type=minecraft:mannequin] offhand"
+}
+
+fun Function.mannequinSummonTests() {
+	val m = mannequin { pose = MannequinPose.STANDING }
+	val entity = m.summon(vec3(0, 0, 0))
+
+	lines[0] shouldMatch Regex("""summon minecraft:mannequin 0\.0 0\.0 0\.0 \{pose:"standing",UUID:\[I;.*?\]\}""")
+	entity.kill()
+	lines[1] shouldMatch Regex("""kill @e\[limit=1,nbt=\{UUID:\[I;.*?\]\},type=minecraft:mannequin\]""")
+}
+
 class MannequinTests : FunSpec({
-	test("mannequin") {
+	test("mannequin nbt") {
 		dataPack("helpers_tests") {
 			load { mannequinTests() }
+		}.generate()
+	}
+
+	test("mannequin entity selector") {
+		dataPack("helpers_tests") {
+			load { mannequinEntityTests() }
+		}.generate()
+	}
+
+	test("mannequin summon") {
+		dataPack("helpers_tests") {
+			load { mannequinSummonTests() }
 		}.generate()
 	}
 })

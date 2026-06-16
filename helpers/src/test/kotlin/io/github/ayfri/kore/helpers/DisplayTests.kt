@@ -3,6 +3,7 @@ package io.github.ayfri.kore.helpers
 import io.github.ayfri.kore.arguments.components.item.*
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.numbers.seconds
+import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
 import io.github.ayfri.kore.arguments.types.literals.allEntities
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.commands.kill
@@ -10,16 +11,23 @@ import io.github.ayfri.kore.commands.schedule
 import io.github.ayfri.kore.commands.summon
 import io.github.ayfri.kore.data.block.properties
 import io.github.ayfri.kore.dataPack
+import io.github.ayfri.kore.entities.display.BlockDisplayEntity
+import io.github.ayfri.kore.entities.display.ItemDisplayEntity
+import io.github.ayfri.kore.entities.display.TextDisplayEntity
+import io.github.ayfri.kore.entities.kill
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Attributes
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.helpers.assertions.assertsIs
 import io.github.ayfri.kore.helpers.displays.*
 import io.github.ayfri.kore.helpers.displays.entities.ItemDisplayModelMode
 import io.github.ayfri.kore.helpers.displays.maths.*
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.string.shouldMatch
+import java.util.*
 
 fun Function.displayTests() {
 	val itemDisplay = itemDisplay {
@@ -113,10 +121,61 @@ fun Function.displayTests() {
 	}
 }
 
+fun Function.displayEntitySelectorTests() {
+	val uuid = UUIDArgument(UUID.fromString("00000000-0000-0000-0000-000000000001"))
+
+	val blockEntity = BlockDisplayEntity(uuid)
+	blockEntity.kill() assertsIs "kill @e[limit=1,nbt={UUID:[I;0,0,0,1]},type=minecraft:block_display]"
+
+	val itemEntity = ItemDisplayEntity(uuid)
+	itemEntity.kill() assertsIs "kill @e[limit=1,nbt={UUID:[I;0,0,0,1]},type=minecraft:item_display]"
+
+	val textEntity = TextDisplayEntity(uuid)
+	textEntity.kill() assertsIs "kill @e[limit=1,nbt={UUID:[I;0,0,0,1]},type=minecraft:text_display]"
+}
+
+fun Function.displayToEntityTests() {
+	val blockInterpolable = blockDisplay {
+		blockState(Blocks.STONE)
+	}.interpolable(vec3(0, 0, 0))
+
+	blockInterpolable.summon()
+	blockInterpolable.toEntity().kill()
+	lines[1] shouldMatch Regex("""kill @e\[limit=1,nbt=\{UUID:\[I;.*?\]\},type=minecraft:block_display\]""")
+
+	val itemInterpolable = itemDisplay {
+		item(Items.DIAMOND)
+	}.interpolable(vec3(0, 0, 0))
+
+	itemInterpolable.summon()
+	itemInterpolable.toEntity().kill()
+	lines[3] shouldMatch Regex("""kill @e\[limit=1,nbt=\{UUID:\[I;.*?\]\},type=minecraft:item_display\]""")
+
+	val textInterpolable = textDisplay {
+		text("hello")
+	}.interpolable(vec3(0, 0, 0))
+
+	textInterpolable.summon()
+	textInterpolable.toEntity().kill()
+	lines[5] shouldMatch Regex("""kill @e\[limit=1,nbt=\{UUID:\[I;.*?\]\},type=minecraft:text_display\]""")
+}
+
 class DisplayTests : FunSpec({
 	test("display") {
 		dataPack("helpers_tests") {
 			load { displayTests() }
+		}.generate()
+	}
+
+	test("display entity selectors") {
+		dataPack("helpers_tests") {
+			load { displayEntitySelectorTests() }
+		}.generate()
+	}
+
+	test("display to entity") {
+		dataPack("helpers_tests") {
+			load { displayToEntityTests() }
 		}.generate()
 	}
 })

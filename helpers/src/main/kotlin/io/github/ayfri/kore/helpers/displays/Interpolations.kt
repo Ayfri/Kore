@@ -6,8 +6,15 @@ import io.github.ayfri.kore.arguments.types.literals.randomUUID
 import io.github.ayfri.kore.commands.Command
 import io.github.ayfri.kore.commands.data
 import io.github.ayfri.kore.commands.summon
+import io.github.ayfri.kore.entities.Entity
+import io.github.ayfri.kore.entities.display.BlockDisplayEntity
+import io.github.ayfri.kore.entities.display.ItemDisplayEntity
+import io.github.ayfri.kore.entities.display.TextDisplayEntity
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.helpers.displays.entities.BlockDisplay
 import io.github.ayfri.kore.helpers.displays.entities.DisplayEntity
+import io.github.ayfri.kore.helpers.displays.entities.ItemDisplay
+import io.github.ayfri.kore.helpers.displays.entities.TextDisplay
 import io.github.ayfri.kore.helpers.displays.maths.Transformation
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
@@ -72,5 +79,15 @@ data class DisplayEntityInterpolable(val entity: DisplayEntity, var lastPosition
 	}
 }
 
-context(fn: Function)
 fun DisplayEntity.interpolable(position: Vec3) = DisplayEntityInterpolable(this, position)
+
+/**
+ * Returns a typed OOP entity handle for this interpolable.
+ *
+ * The returned entity targets this specific spawned instance by UUID, giving access to all [Entity] extension functions.
+ */
+fun DisplayEntityInterpolable.toEntity(): Entity = when (entity) {
+	is BlockDisplay -> BlockDisplayEntity(selector)
+	is ItemDisplay -> ItemDisplayEntity(selector)
+	is TextDisplay -> TextDisplayEntity(selector)
+}

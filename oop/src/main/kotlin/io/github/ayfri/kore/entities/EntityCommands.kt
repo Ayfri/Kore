@@ -73,3 +73,6 @@ context(fn: Function)
 fun Entity.showTitle(title: String, subtitle: String? = null) {
 	showTitle(textComponent(title), subtitle?.let { textComponent(it) })
 }
+
+context(fn: Function)
+fun Entity.swing(hand: SwingHand) = fn.swing(asSelector(), hand)
