@@ -18,7 +18,7 @@ import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.catVariantTests() {
-	catVariant("test_cat_variant", Textures.Entity.Cat.TABBY) {
+	catVariant("test_cat_variant", Textures.Entity.Cat.CAT_TABBY) {
 		spawnConditions {
 			add(10)
 			biome(5, Biomes.PLAINS)
@@ -31,7 +31,7 @@ fun DataPack.catVariantTests() {
 
 	catVariants.last() assertsIs """
 		{
-			"asset_id": "minecraft:entity/cat/tabby",
+			"asset_id": "minecraft:entity/cat/cat_tabby",
 			"spawn_conditions": [
 				{
 					"priority": 10

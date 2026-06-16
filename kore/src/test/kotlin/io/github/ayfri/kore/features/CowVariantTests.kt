@@ -14,7 +14,7 @@ import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.cowVariantTests() {
-	cowVariant("test_cow_variant", Textures.Entity.Cow.COLD_COW, CowModel.COLD) {
+	cowVariant("test_cow_variant", Textures.Entity.Cow.COW_COLD, CowModel.COLD) {
 		spawnConditions {
 			structures(0, Tags.Worldgen.Structure.MINESHAFT)
 		}
@@ -22,7 +22,7 @@ fun DataPack.cowVariantTests() {
 
 	cowVariants.last() assertsIs """
 		{
-			"asset_id": "minecraft:entity/cow/cold_cow",
+			"asset_id": "minecraft:entity/cow/cow_cold",
 			"model": "cold",
 			"spawn_conditions": [
 				{

@@ -14,7 +14,7 @@ import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.chickenVariantTests() {
-	chickenVariant("test_chicken_variant", Textures.Entity.Chicken.TEMPERATE_CHICKEN, ChickenModel.NORMAL) {
+	chickenVariant("test_chicken_variant", Textures.Entity.Chicken.CHICKEN_TEMPERATE, ChickenModel.NORMAL) {
 		spawnConditions {
 			structures(0, Tags.Worldgen.Structure.VILLAGE)
 		}
@@ -22,7 +22,7 @@ fun DataPack.chickenVariantTests() {
 
 	chickenVariants.last() assertsIs """
 		{
-			"asset_id": "minecraft:entity/chicken/temperate_chicken",
+			"asset_id": "minecraft:entity/chicken/chicken_temperate",
 			"model": "normal",
 			"spawn_conditions": [
 				{

@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.timelines
 
 import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -17,7 +18,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable(with = TimelineMarker.Companion.TimelineMarkerSerializer::class)
 data class TimelineMarker(
-	var showInCommands: Boolean? = null,
+	@SerialName("show_in_commands") var showInCommands: Boolean? = null,
 	var ticks: Int,
 ) {
 	companion object {

@@ -14,7 +14,7 @@ import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.pigVariantTests() {
-	pigVariant("test_pig_variant", Textures.Entity.Pig.COLD_PIG, PigModel.COLD) {
+	pigVariant("test_pig_variant", Textures.Entity.Pig.PIG_COLD, PigModel.COLD) {
 		spawnConditions {
 			structures(0, Tags.Worldgen.Structure.ON_TREASURE_MAPS)
 		}
@@ -22,7 +22,7 @@ fun DataPack.pigVariantTests() {
 
 	pigVariants.last() assertsIs """
 		{
-			"asset_id": "minecraft:entity/pig/cold_pig",
+			"asset_id": "minecraft:entity/pig/pig_cold",
 			"model": "cold",
 			"spawn_conditions": [
 				{
