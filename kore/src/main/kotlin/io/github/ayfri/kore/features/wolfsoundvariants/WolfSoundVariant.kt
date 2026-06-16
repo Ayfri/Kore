@@ -9,6 +9,27 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
 /**
+ * Sound set used by one age group within a [WolfSoundVariant].
+ *
+ * JSON format reference: https://minecraft.wiki/w/Wolf#Sound_variants
+ */
+@Serializable
+data class WolfSoundVariantSounds(
+	/** The ambient sound. */
+	var ambientSound: SoundEventArgument,
+	/** The death sound. */
+	var deathSound: SoundEventArgument,
+	/** The growl sound. */
+	var growlSound: SoundEventArgument,
+	/** The hurt sound. */
+	var hurtSound: SoundEventArgument,
+	/** The pant sound. */
+	var pantSound: SoundEventArgument,
+	/** The whine sound. */
+	var whineSound: SoundEventArgument,
+)
+
+/**
  * Data-driven wolf sound variant definition.
  *
  * Wolf can have sound variants, these variants are meant to reflect a wolf's personality but have no effect on the wolf's behavior.
@@ -23,18 +44,10 @@ import kotlinx.serialization.Transient
 data class WolfSoundVariant(
 	@Transient
 	override var fileName: String = "wolf_sound_variant",
-	/** The ambient sound for this wolf sound variant. */
-	var ambientSound: SoundEventArgument,
-	/** The death sound for this wolf sound variant. */
-	var deathSound: SoundEventArgument,
-	/** The growl sound for this wolf sound variant. */
-	var growlSound: SoundEventArgument,
-	/** The hurt sound for this wolf sound variant. */
-	var hurtSound: SoundEventArgument,
-	/** The pant sound for this wolf sound variant. */
-	var pantSound: SoundEventArgument,
-	/** The whine sound for this wolf sound variant. */
-	var whineSound: SoundEventArgument,
+	/** The sounds used by adult wolves. */
+	var adultSounds: WolfSoundVariantSounds,
+	/** The sounds used by baby wolves. Defaults to [adultSounds] when null. */
+	var babySounds: WolfSoundVariantSounds? = null,
 ) : Generator("wolf_sound_variant") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
@@ -48,23 +61,18 @@ data class WolfSoundVariant(
  */
 fun DataPack.wolfSoundVariant(
 	fileName: String = "wolf_sound_variant",
-	ambientSound: SoundEventArgument = SoundEvents.Entity.Wolf.AMBIENT,
-	deathSound: SoundEventArgument = SoundEvents.Entity.Wolf.DEATH,
-	growlSound: SoundEventArgument = SoundEvents.Entity.Wolf.GROWL,
-	hurtSound: SoundEventArgument = SoundEvents.Entity.Wolf.HURT,
-	pantSound: SoundEventArgument = SoundEvents.Entity.Wolf.PANT,
-	whineSound: SoundEventArgument = SoundEvents.Entity.Wolf.WHINE,
+	adultSounds: WolfSoundVariantSounds = WolfSoundVariantSounds(
+		ambientSound = SoundEvents.Entity.Wolf.AMBIENT,
+		deathSound = SoundEvents.Entity.Wolf.DEATH,
+		growlSound = SoundEvents.Entity.Wolf.GROWL,
+		hurtSound = SoundEvents.Entity.Wolf.HURT,
+		pantSound = SoundEvents.Entity.Wolf.PANT,
+		whineSound = SoundEvents.Entity.Wolf.WHINE,
+	),
+	babySounds: WolfSoundVariantSounds? = null,
 	block: WolfSoundVariant.() -> Unit = {}
 ): WolfSoundVariantArgument {
-	val wolfSoundVariant = WolfSoundVariant(
-		fileName,
-		ambientSound,
-		deathSound,
-		growlSound,
-		hurtSound,
-		pantSound,
-		whineSound
-	).apply(block)
+	val wolfSoundVariant = WolfSoundVariant(fileName, adultSounds, babySounds).apply(block)
 	wolfSoundVariants += wolfSoundVariant
 	return WolfSoundVariantArgument(fileName, wolfSoundVariant.namespace ?: name)
 }

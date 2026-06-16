@@ -5,7 +5,7 @@ nav-title: Variants
 description: Define entity and painting variants with Kore's type-safe DSL
 keywords: minecraft, datapack, kore, variants, cat, cow, chicken, frog, pig, wolf, zombie nautilus, painting
 date-created: 2026-02-03
-date-modified: 2026-02-10
+date-modified: 2026-06-16
 routeOverride: /docs/data-driven/variants
 ---
 
@@ -299,14 +299,19 @@ Produces JSON:
 
 Wolf sound variants define custom sounds for wolves. Sound variants are independent of color variants and spawning biome. Wolves will make the sounds associated with their variant when they bark, pant, whine, growl, die, or get hurt.
 
+Sounds are split into two groups: `adultSounds` (required) and `babySounds` (optional - falls back to `adultSounds` when
+absent).
+
 ```kotlin
 wolfSoundVariant("funny") {
-	ambientSound = SoundEvents.Entity.Pig.AMBIENT
-	deathSound = SoundEvents.Entity.Creeper.DEATH
-	growlSound = SoundEvents.Entity.Player.LEVELUP
-	hurtSound = SoundEvents.Entity.Zombie.HURT
-	pantSound = SoundEvents.Entity.EnderDragon.FLAP
-	whineSound = SoundEvents.Entity.Cat.PURR
+	adultSounds = WolfSoundVariantSounds(
+		ambientSound = SoundEvents.Entity.Pig.AMBIENT,
+		deathSound = SoundEvents.Entity.Creeper.DEATH,
+		growlSound = SoundEvents.Entity.Player.LEVELUP,
+		hurtSound = SoundEvents.Entity.Zombie.HURT,
+		pantSound = SoundEvents.Entity.EnderDragon.FLAP,
+		whineSound = SoundEvents.Entity.Cat.PURR,
+	)
 }
 ```
 
@@ -314,12 +319,60 @@ Produces JSON:
 
 ```json
 {
-	"ambient_sound": "minecraft:entity.pig.ambient",
-	"death_sound": "minecraft:entity.creeper.death",
-	"growl_sound": "minecraft:entity.player.levelup",
-	"hurt_sound": "minecraft:entity.zombie.hurt",
-	"pant_sound": "minecraft:entity.ender_dragon.flap",
-	"whine_sound": "minecraft:entity.cat.purr"
+  "adult_sounds": {
+    "ambient_sound": "minecraft:entity.pig.ambient",
+    "death_sound": "minecraft:entity.creeper.death",
+    "growl_sound": "minecraft:entity.player.levelup",
+    "hurt_sound": "minecraft:entity.zombie.hurt",
+    "pant_sound": "minecraft:entity.ender_dragon.flap",
+    "whine_sound": "minecraft:entity.cat.purr"
+  }
+}
+```
+
+With separate baby sounds:
+
+```kotlin
+wolfSoundVariant("funny") {
+	adultSounds = WolfSoundVariantSounds(
+		ambientSound = SoundEvents.Entity.Wolf.AMBIENT,
+		deathSound = SoundEvents.Entity.Wolf.DEATH,
+		growlSound = SoundEvents.Entity.Wolf.GROWL,
+		hurtSound = SoundEvents.Entity.Wolf.HURT,
+		pantSound = SoundEvents.Entity.Wolf.PANT,
+		whineSound = SoundEvents.Entity.Wolf.WHINE,
+	)
+	babySounds = WolfSoundVariantSounds(
+		ambientSound = SoundEvents.Entity.Pig.AMBIENT,
+		deathSound = SoundEvents.Entity.Pig.DEATH,
+		growlSound = SoundEvents.Entity.Wolf.GROWL,
+		hurtSound = SoundEvents.Entity.Pig.HURT,
+		pantSound = SoundEvents.Entity.Wolf.PANT,
+		whineSound = SoundEvents.Entity.Wolf.WHINE,
+	)
+}
+```
+
+Produces JSON:
+
+```json
+{
+  "adult_sounds": {
+    "ambient_sound": "minecraft:entity.wolf.ambient",
+    "death_sound": "minecraft:entity.wolf.death",
+    "growl_sound": "minecraft:entity.wolf.growl",
+    "hurt_sound": "minecraft:entity.wolf.hurt",
+    "pant_sound": "minecraft:entity.wolf.pant",
+    "whine_sound": "minecraft:entity.wolf.whine"
+  },
+  "baby_sounds": {
+    "ambient_sound": "minecraft:entity.pig.ambient",
+    "death_sound": "minecraft:entity.pig.death",
+    "growl_sound": "minecraft:entity.wolf.growl",
+    "hurt_sound": "minecraft:entity.pig.hurt",
+    "pant_sound": "minecraft:entity.wolf.pant",
+    "whine_sound": "minecraft:entity.wolf.whine"
+  }
 }
 ```
 
