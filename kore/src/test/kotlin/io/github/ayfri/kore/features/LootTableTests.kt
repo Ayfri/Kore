@@ -30,7 +30,7 @@ fun DataPack.lootTableTests() {
 	val lootTable = lootTable("all_entry_types") {
 		functions {
 			enchantRandomly {
-				options += Enchantments.LOOTING
+				options = listOf(Enchantments.LOOTING)
 			}
 		}
 

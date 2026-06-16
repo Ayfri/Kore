@@ -31,6 +31,7 @@ enum class LootTableType {
 	SELECTOR,
 	SHEARING,
 	VAULT,
+	VILLAGER_TRADE,
 	;
 
 	companion object {

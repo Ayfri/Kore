@@ -485,6 +485,31 @@ itemModifier("potion") {
 }
 ```
 
+#### setRandomPotion
+
+Set a random potion from a list of options (or tags):
+
+```kotlin
+itemModifier("random_potion") {
+  // Random from specific list
+  setRandomPotion(Potions.HEALING, Potions.SWIFTNESS)
+}
+```
+
+#### setRandomDyes
+
+Set a random number of dyes on the item using a number provider:
+
+```kotlin
+itemModifier("random_dyes") {
+  // Fixed count
+  setRandomDyes(3f)
+
+  // Dynamic count
+  setRandomDyes(uniform(1f, 5f))
+}
+```
+
 #### setStewEffect
 
 Set suspicious stew effects:
