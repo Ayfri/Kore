@@ -32,6 +32,7 @@ import io.github.ayfri.kore.features.trimpattern.TrimPattern
 import io.github.ayfri.kore.features.villagertrades.VillagerTrade
 import io.github.ayfri.kore.features.wolfsoundvariants.WolfSoundVariant
 import io.github.ayfri.kore.features.wolfvariants.WolfVariant
+import io.github.ayfri.kore.features.worldclock.WorldClock
 import io.github.ayfri.kore.features.worldgen.biome.Biome
 import io.github.ayfri.kore.features.worldgen.configuredcarver.ConfiguredCarver
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
@@ -123,6 +124,7 @@ class DataPack(val name: String) {
 	val villagerTrades = registerGenerator<VillagerTrade>()
 	val wolfSoundVariants = registerGenerator<WolfSoundVariant>()
 	val wolfVariants = registerGenerator<WolfVariant>()
+	val worldClocks = registerGenerator<WorldClock>()
 	val worldPresets = registerGenerator<WorldPreset>()
 	val zombieNautilusVariants = registerGenerator<ZombieNautilusVariant>()
 

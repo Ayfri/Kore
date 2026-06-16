@@ -36,6 +36,7 @@ suspend fun launchAllSimpleGenerators() {
 		gen("WaypointStyles", "waypoint_style"),
 		gen("WolfSoundVariants", "wolf_sound_variant"),
 		gen("WolfVariants", "wolf_variant"),
+		gen("WorldClocks", "world_clock"),
 		gen("ZombieNautilusVariants", "zombie_nautilus_variant"),
 
 		gen("Biomes", "worldgen/biome"),
