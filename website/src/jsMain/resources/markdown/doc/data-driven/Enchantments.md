@@ -643,6 +643,8 @@ enchantmentProvider("cost_based") {
 - [Predicates](/docs/data-driven/predicates) - Conditions for enchantment effect requirements
 - [Components](/docs/concepts/components) - Item components and matchers
 - [Tags](/docs/data-driven/tags) - Use enchantment and item tags
+- [Villager Trades](/docs/data-driven/villager-trades) - `doubleTradePriceEnchantments` and enchanting villager trade
+  outputs
 
 ### External Resources
 

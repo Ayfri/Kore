@@ -516,6 +516,7 @@ Predicates are powerful tools for creating complex conditions in your datapack. 
 - [Advancements](/docs/data-driven/advancements) - Use predicates as trigger conditions
 - [Item Modifiers](/docs/data-driven/item-modifiers) - Modify items conditionally with predicates
 - [Inventory Manager](/docs/helpers/inventory-manager) - Pair predicates with inventory management
+- [Villager Trades](/docs/data-driven/villager-trades) - Gate trade availability via `merchantPredicate`
 
 ### External Resources
 
