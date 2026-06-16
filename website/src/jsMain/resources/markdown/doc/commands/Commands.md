@@ -1049,6 +1049,16 @@ function("loot_examples") {
 		}
 	}
 
+	// Replace a mob inventory slot (villager / piglin use mob.inventory.*)
+	loot {
+		target {
+			replaceEntity(self(), MOB.INVENTORY[0])
+		}
+		source {
+			loot(LootTables.Gameplay.CAT_MORNING_GIFT)
+		}
+	}
+
 	// Inline loot table definition
 	loot {
 		target {
@@ -1078,6 +1088,7 @@ loot give @s mine ~ ~ ~ minecraft:diamond_pickaxe
 loot insert ~ ~ ~ kill @s
 loot replace block ~ ~ ~ container.0 loot minecraft:gameplay/cat_morning_gift
 loot replace entity @s armor.head loot minecraft:gameplay/cat_morning_gift
+loot replace entity @s mob.inventory.0 loot minecraft:gameplay/cat_morning_gift
 loot give @s loot {pools:[{rolls:1.0f,entries:[{type:"minecraft:item",name:"minecraft:anvil"}]}]}
 ```
 
