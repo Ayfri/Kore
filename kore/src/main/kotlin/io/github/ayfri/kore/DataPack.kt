@@ -26,8 +26,10 @@ import io.github.ayfri.kore.features.tags.Tag
 import io.github.ayfri.kore.features.testenvironments.TestEnvironmentFeature
 import io.github.ayfri.kore.features.testinstances.TestInstanceFeature
 import io.github.ayfri.kore.features.timelines.Timeline
+import io.github.ayfri.kore.features.tradesets.TradeSet
 import io.github.ayfri.kore.features.trimmaterial.TrimMaterial
 import io.github.ayfri.kore.features.trimpattern.TrimPattern
+import io.github.ayfri.kore.features.villagertrades.VillagerTrade
 import io.github.ayfri.kore.features.wolfsoundvariants.WolfSoundVariant
 import io.github.ayfri.kore.features.wolfvariants.WolfVariant
 import io.github.ayfri.kore.features.worldgen.biome.Biome
@@ -112,11 +114,13 @@ class DataPack(val name: String) {
 	val structureSets = registerGenerator<StructureSet>()
 	val tags = registerGenerator<Tag<*>>()
 	val templatePools = registerGenerator<TemplatePool>()
-	val timelines = registerGenerator<Timeline>()
 	val testEnvironments = registerGenerator<TestEnvironmentFeature>()
 	val testInstances = registerGenerator<TestInstanceFeature>()
+	val timelines = registerGenerator<Timeline>()
+	val tradeSets = registerGenerator<TradeSet>()
 	val trimMaterials = registerGenerator<TrimMaterial>()
 	val trimPatterns = registerGenerator<TrimPattern>()
+	val villagerTrades = registerGenerator<VillagerTrade>()
 	val wolfSoundVariants = registerGenerator<WolfSoundVariant>()
 	val wolfVariants = registerGenerator<WolfVariant>()
 	val worldPresets = registerGenerator<WorldPreset>()
