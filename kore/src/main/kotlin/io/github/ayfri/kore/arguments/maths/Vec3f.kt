@@ -6,7 +6,6 @@ import kotlinx.serialization.builtins.FloatArraySerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import org.joml.Vector3f
 import kotlin.math.absoluteValue
 import kotlin.math.sqrt
 
@@ -16,7 +15,6 @@ typealias Vec3fAsArray = @Serializable(Vec3f.Companion.Vec3fAsArraySerializer::c
 data class Vec3f(var x: Float = 0f, var y: Float = 0f, var z: Float = 0f) {
 	constructor(x: Number, y: Number, z: Number) : this(x.toFloat(), y.toFloat(), z.toFloat())
 	constructor(vec3: Vec3) : this(vec3.x.value, vec3.y.value, vec3.z.value)
-	constructor(vec3: Vector3f) : this(vec3.x, vec3.y, vec3.z)
 
 	val length get() = sqrt(x * x + y * y + z * z)
 	val lengthSquared get() = x * x + y * y + z * z

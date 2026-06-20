@@ -20,7 +20,6 @@ dependencies {
 	implementation(libs.ktoml)
 	implementation(kotlin("reflect"))
 	api(libs.knbt)
-	api(libs.joml)
 
 	testImplementation(libs.kotlin.dotenv)
 }

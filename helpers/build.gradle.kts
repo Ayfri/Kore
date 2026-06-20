@@ -16,6 +16,7 @@ repositories {
 
 dependencies {
 	api(project(":oop"))
+	api(libs.joml)
 	implementation(libs.kotlinx.io)
 	implementation(libs.kotlinx.serialization)
 }
