@@ -24,7 +24,7 @@ import kotlinx.serialization.Serializable
 data class CraftingTransmute(
 	override var group: String? = null,
 	/** Optional recipe book category. */
-	var category: CraftingTransmuteCategory? = null,
+	var category: RecipeCategory? = null,
 	/** The item to be transformed; its components are copied to the result. */
 	var input: InlinableList<ItemOrTagArgument>,
 	/** The catalyst item consumed alongside the input. */
