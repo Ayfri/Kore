@@ -24,21 +24,29 @@ Recipes have several key characteristics:
 
 ### Recipe Types
 
-| Type                 | Workstation    | Description                   |
-|----------------------|----------------|-------------------------------|
-| `crafting_shaped`    | Crafting Table | Pattern-based crafting        |
-| `crafting_shapeless` | Crafting Table | Order-independent crafting    |
-| `crafting_transmute` | Crafting Table | Transform item with material  |
-| `crafting_dye`       | Crafting Table | Dye an item with a dye        |
-| `crafting_imbue`     | Crafting Table | Imbue items (e.g. tip arrows) |
-| `crafting_special_*` | Crafting Table | Built-in special recipes      |
-| `smelting`           | Furnace        | Standard smelting             |
-| `blasting`           | Blast Furnace  | Faster ore smelting           |
-| `smoking`            | Smoker         | Faster food cooking           |
-| `campfire_cooking`   | Campfire       | Slow food cooking             |
-| `smithing_transform` | Smithing Table | Upgrade items                 |
-| `smithing_trim`      | Smithing Table | Apply armor trims             |
-| `stonecutting`       | Stonecutter    | Cut blocks                    |
+| Type                                  | Workstation    | Description                         |
+|---------------------------------------|----------------|-------------------------------------|
+| `blasting`                            | Blast Furnace  | Faster ore smelting                 |
+| `campfire_cooking`                    | Campfire       | Slow food cooking                   |
+| `crafting_decorated_pot`              | Crafting Table | Craft a decorated pot from sherds   |
+| `crafting_dye`                        | Crafting Table | Dye an item with a dye              |
+| `crafting_imbue`                      | Crafting Table | Imbue items (e.g. tip arrows)       |
+| `crafting_shaped`                     | Crafting Table | Pattern-based crafting              |
+| `crafting_shapeless`                  | Crafting Table | Order-independent crafting          |
+| `crafting_special_bannerduplicate`    | Crafting Table | Copy a banner pattern               |
+| `crafting_special_bookcloning`        | Crafting Table | Copy a written book                 |
+| `crafting_special_firework_rocket`    | Crafting Table | Craft a firework rocket             |
+| `crafting_special_firework_star`      | Crafting Table | Craft a firework star               |
+| `crafting_special_firework_star_fade` | Crafting Table | Add a fade colour to a star         |
+| `crafting_special_mapextending`       | Crafting Table | Extend a map with paper             |
+| `crafting_special_shielddecoration`   | Crafting Table | Apply a banner to a shield          |
+| `crafting_special_*`                  | Crafting Table | Remaining hardcoded special recipes |
+| `crafting_transmute`                  | Crafting Table | Transform item with material        |
+| `smelting`                            | Furnace        | Standard smelting                   |
+| `smithing_transform`                  | Smithing Table | Upgrade items                       |
+| `smithing_trim`                       | Smithing Table | Apply armor trims                   |
+| `smoking`                             | Smoker         | Faster food cooking                 |
+| `stonecutting`                        | Stonecutter    | Cut blocks                          |
 
 ## File Structure
 
@@ -81,6 +89,139 @@ dataPack("my_datapack") {
 This generates `data/my_datapack/recipe/diamond_sword_upgrade.json`.
 
 ## Crafting Recipes
+
+### Banner Duplicate
+
+Copy a banner's pattern onto a blank banner:
+
+```kotlin
+recipes {
+	craftingSpecialBannerDuplicate("banner_copy") {
+		banner(Tags.Item.BANNERS)
+		result(Items.WHITE_BANNER)
+	}
+}
+```
+
+### Book Cloning
+
+Copy a written book, with an optional generation limit:
+
+```kotlin
+recipes {
+	craftingSpecialBookCloning("book_clone") {
+		source(Items.WRITTEN_BOOK)
+		material(Items.WRITABLE_BOOK)
+		result(Items.WRITTEN_BOOK)
+		allowedGenerations = rangeOrInt(0, 2)
+	}
+}
+```
+
+### Decorated Pot
+
+Craft a decorated pot from sherds:
+
+```kotlin
+recipes {
+	craftingDecoratedPot("decorated_pot") {
+		back(Tags.Item.DECORATED_POT_INGREDIENTS)
+		front(Tags.Item.DECORATED_POT_INGREDIENTS)
+		left(Tags.Item.DECORATED_POT_INGREDIENTS)
+		right(Tags.Item.DECORATED_POT_INGREDIENTS)
+		result(Items.DECORATED_POT)
+	}
+}
+```
+
+### Dye Crafting
+
+Dye an item using a dye ingredient. _Replaces the old `crafting_special_armordye` recipe_:
+
+```kotlin
+recipes {
+	craftingDye("red_wool_dye") {
+		dye(Items.RED_DYE)
+		target(Tags.Item.WOOL)
+		result(Items.RED_WOOL)
+	}
+}
+```
+
+### Firework Rocket
+
+Craft a firework rocket from its component ingredients:
+
+```kotlin
+recipes {
+	craftingSpecialFireworkRocket("firework_rocket") {
+		fuel(Items.GUNPOWDER)
+		shell(Items.PAPER)
+		star(Items.FIREWORK_STAR)
+		result(Items.FIREWORK_ROCKET)
+	}
+}
+```
+
+### Firework Star
+
+Craft a firework star with dye, fuel, optional shape modifiers, trail, and twinkle effects:
+
+```kotlin
+recipes {
+	craftingSpecialFireworkStar("red_burst_star") {
+		dye(Items.RED_DYE)
+		fuel(Items.GUNPOWDER)
+		shape("burst", Items.FIRE_CHARGE)
+		trail(Items.DIAMOND)
+		twinkle(Items.GLOWSTONE_DUST)
+		result(Items.FIREWORK_STAR)
+	}
+}
+```
+
+### Firework Star Fade
+
+Add a fade colour to an existing firework star:
+
+```kotlin
+recipes {
+	craftingSpecialFireworkStarFade("blue_fade_star") {
+		dye(Items.BLUE_DYE)
+		target(Items.FIREWORK_STAR)
+		result(Items.FIREWORK_STAR)
+	}
+}
+```
+
+### Imbue Crafting
+
+Imbue items with properties from a source (e.g. tip arrows with lingering potions). _Replaces the
+old `crafting_special_tippedarrow` recipe_:
+
+```kotlin
+recipes {
+	craftingImbue("tipped_arrow") {
+		material(Tags.Item.ARROWS)
+		source(Items.LINGERING_POTION)
+		result(Items.TIPPED_ARROW)
+	}
+}
+```
+
+### Map Extending
+
+Extend a map by combining it with paper:
+
+```kotlin
+recipes {
+	craftingSpecialMapExtending("extended_map") {
+		map(Items.FILLED_MAP)
+		material(Items.PAPER)
+		result(Items.FILLED_MAP)
+	}
+}
+```
 
 ### Shaped Crafting
 
@@ -187,6 +328,33 @@ craftingShapeless("dye_mix") {
 }
 ```
 
+### Shield Decoration
+
+Apply a banner pattern to a shield:
+
+```kotlin
+recipes {
+	craftingSpecialShieldDecoration("shield_decor") {
+		banner(Tags.Item.BANNERS)
+		target(Items.SHIELD)
+		result(Items.SHIELD)
+	}
+}
+```
+
+### Special Crafting
+
+Remaining hardcoded special recipes with no configurable ingredients:
+
+```kotlin
+recipes {
+	craftingSpecial("repair", CraftingSpecialRepairItem)
+	craftingSpecial("shulker_color", CraftingSpecialShulkerBoxColoring)
+}
+```
+
+These are useful when the vanilla datapack is disabled and you need to re-enable specific special recipes.
+
 ### Transmute Crafting
 
 Transform an item while preserving its components:
@@ -197,60 +365,11 @@ recipes {
 		input(Tags.Item.SHULKER_BOXES)
 		material(Items.BLUE_DYE)
 		result(Items.BLUE_SHULKER_BOX)
-    }
+	}
 }
 ```
 
 The result item copies all components from the input item.
-
-### Dye Crafting
-
-Dye an item using a dye ingredient. _Replaces the old `crafting_special_armordye` recipe_:
-
-```kotlin
-recipes {
-	craftingDye("red_wool_dye") {
-		dye(Items.RED_DYE)
-		target(Tags.Item.WOOL)
-		result(Items.RED_WOOL)
-	}
-}
-```
-
-### Imbue Crafting
-
-Imbue items with properties from a source (e.g. tip arrows with lingering potions). _Replaces the
-old `crafting_special_tippedarrow` recipe_:
-
-```kotlin
-recipes {
-	craftingImbue("tipped_arrow") {
-		material(Tags.Item.ARROWS)
-		source(Items.LINGERING_POTION)
-		result(Items.TIPPED_ARROW)
-	}
-}
-```
-
-### Special Crafting
-
-Special recipes use built-in game logic for complex crafting that can't be data-driven:
-
-```kotlin
-recipes {
-	craftingSpecial("banner_copy", CraftingSpecialBannerDuplicate)
-	craftingSpecial("book_clone", CraftingSpecialBookCloning)
-	craftingSpecial("firework_rocket", CraftingSpecialFireworkRocket)
-	craftingSpecial("firework_star", CraftingSpecialFireworkStar)
-	craftingSpecial("map_extend", CraftingSpecialMapExtending)
-	craftingSpecial("repair", CraftingSpecialRepairItem)
-	craftingSpecial("shield_decor", CraftingSpecialShieldDecoration)
-	craftingSpecial("shulker_color", CraftingSpecialShulkerboxColoring)
-	craftingSpecial("suspicious_stew", CraftingSpecialSuspiciousStew)
-}
-```
-
-These are useful when the vanilla datapack is disabled and you need to re-enable specific special recipes.
 
 ## Cooking Recipes
 
@@ -262,6 +381,36 @@ All cooking recipes share a similar structure:
 | `result`      | Output item                       |
 | `experience`  | XP awarded when collecting output |
 | `cookingTime` | Time in ticks                     |
+
+### Blasting (Blast Furnace)
+
+Twice as fast as smelting (100 ticks default):
+
+```kotlin
+recipes {
+	blasting("iron_ingot_fast") {
+		ingredient(Items.RAW_IRON)
+		result(Items.IRON_INGOT)
+		experience = 0.7
+		cookingTime = 100  // 5 seconds (default)
+	}
+}
+```
+
+### Campfire Cooking
+
+Slow cooking without fuel:
+
+```kotlin
+recipes {
+	campfireCooking("baked_potato") {
+		ingredient(Items.POTATO)
+		result(Items.BAKED_POTATO)
+		experience = 0.35
+		cookingTime = 600  // 30 seconds (default)
+	}
+}
+```
 
 ### Smelting (Furnace)
 
@@ -283,21 +432,6 @@ recipes {
 }
 ```
 
-### Blasting (Blast Furnace)
-
-Twice as fast as smelting (100 ticks default):
-
-```kotlin
-recipes {
-	blasting("iron_ingot_fast") {
-		ingredient(Items.RAW_IRON)
-		result(Items.IRON_INGOT)
-		experience = 0.7
-		cookingTime = 100  // 5 seconds (default)
-	}
-}
-```
-
 ### Smoking (Smoker)
 
 For food items, twice as fast as furnace:
@@ -309,21 +443,6 @@ recipes {
 		result(Items.COOKED_BEEF)
 		experience = 0.35
 		cookingTime = 100
-	}
-}
-```
-
-### Campfire Cooking
-
-Slow cooking without fuel:
-
-```kotlin
-recipes {
-	campfireCooking("baked_potato") {
-		ingredient(Items.POTATO)
-		result(Items.BAKED_POTATO)
-		experience = 0.35
-		cookingTime = 600  // 30 seconds (default)
 	}
 }
 ```
