@@ -182,6 +182,130 @@ private fun DataPack.allRecipeTypesTests() {
 		}
 	""".trimIndent()
 
+	recipesBuilder.craftingDecoratedPot("test_crafting_decorated_pot") {
+		back(Tags.Item.DECORATED_POT_INGREDIENTS)
+		front(Tags.Item.DECORATED_POT_INGREDIENTS)
+		left(Tags.Item.DECORATED_POT_INGREDIENTS)
+		right(Tags.Item.DECORATED_POT_INGREDIENTS)
+		result(Items.DECORATED_POT)
+	}
+	recipes.last() assertsIs """
+		{
+			"type": "minecraft:crafting_decorated_pot",
+			"back": "#minecraft:decorated_pot_ingredients",
+			"front": "#minecraft:decorated_pot_ingredients",
+			"left": "#minecraft:decorated_pot_ingredients",
+			"result": "minecraft:decorated_pot",
+			"right": "#minecraft:decorated_pot_ingredients"
+		}
+	""".trimIndent()
+
+	recipesBuilder.craftingSpecialBannerDuplicate("test_crafting_special_bannerduplicate") {
+		banner(Tags.Item.BANNERS)
+		result(Items.WHITE_BANNER)
+	}
+	recipes.last() assertsIs """
+		{
+			"type": "minecraft:crafting_special_bannerduplicate",
+			"banner": "#minecraft:banners",
+			"result": "minecraft:white_banner"
+		}
+	""".trimIndent()
+
+	recipesBuilder.craftingSpecialBookCloning("test_crafting_special_bookcloning") {
+		source(Items.WRITTEN_BOOK)
+		material(Items.WRITABLE_BOOK)
+		result(Items.WRITTEN_BOOK)
+	}
+	recipes.last() assertsIs """
+		{
+			"type": "minecraft:crafting_special_bookcloning",
+			"material": "minecraft:writable_book",
+			"result": "minecraft:written_book",
+			"source": "minecraft:written_book"
+		}
+	""".trimIndent()
+
+	recipesBuilder.craftingSpecialFireworkRocket("test_crafting_special_firework_rocket") {
+		fuel(Items.GUNPOWDER)
+		shell(Items.PAPER)
+		star(Items.FIREWORK_STAR)
+		result(Items.FIREWORK_ROCKET)
+	}
+	recipes.last() assertsIs """
+		{
+			"type": "minecraft:crafting_special_firework_rocket",
+			"fuel": "minecraft:gunpowder",
+			"result": "minecraft:firework_rocket",
+			"shell": "minecraft:paper",
+			"star": "minecraft:firework_star"
+		}
+	""".trimIndent()
+
+	recipesBuilder.craftingSpecialFireworkStar("test_crafting_special_firework_star") {
+		dye(Items.RED_DYE)
+		fuel(Items.GUNPOWDER)
+		shape("burst", Items.FIRE_CHARGE)
+		trail(Items.DIAMOND)
+		twinkle(Items.GLOWSTONE_DUST)
+		result(Items.FIREWORK_STAR)
+	}
+	recipes.last() assertsIs """
+		{
+			"type": "minecraft:crafting_special_firework_star",
+			"dye": "minecraft:red_dye",
+			"fuel": "minecraft:gunpowder",
+			"result": "minecraft:firework_star",
+			"shapes": {
+				"burst": "minecraft:fire_charge"
+			},
+			"trail": "minecraft:diamond",
+			"twinkle": "minecraft:glowstone_dust"
+		}
+	""".trimIndent()
+
+	recipesBuilder.craftingSpecialFireworkStarFade("test_crafting_special_firework_star_fade") {
+		dye(Items.BLUE_DYE)
+		target(Items.FIREWORK_STAR)
+		result(Items.FIREWORK_STAR)
+	}
+	recipes.last() assertsIs """
+		{
+			"type": "minecraft:crafting_special_firework_star_fade",
+			"dye": "minecraft:blue_dye",
+			"result": "minecraft:firework_star",
+			"target": "minecraft:firework_star"
+		}
+	""".trimIndent()
+
+	recipesBuilder.craftingSpecialMapExtending("test_crafting_special_mapextending") {
+		map(Items.FILLED_MAP)
+		material(Items.PAPER)
+		result(Items.FILLED_MAP)
+	}
+	recipes.last() assertsIs """
+		{
+			"type": "minecraft:crafting_special_mapextending",
+			"map": "minecraft:filled_map",
+			"material": "minecraft:paper",
+			"result": "minecraft:filled_map"
+		}
+	""".trimIndent()
+
+	recipesBuilder.craftingSpecialShieldDecoration("test_crafting_special_shielddecoration") {
+		banner(Tags.Item.BANNERS)
+		target(Items.SHIELD)
+		result(Items.SHIELD)
+	}
+	recipes.last() assertsIs """
+		{
+			"type": "minecraft:crafting_special_shielddecoration",
+			"banner": "#minecraft:banners",
+			"result": "minecraft:shield",
+			"target": "minecraft:shield"
+		}
+	""".trimIndent()
+
 	recipesBuilder.smithingTransform("test_smithing_transform") {
 		template(Items.DIAMOND_BLOCK)
 		base(Items.DIAMOND_SWORD)
