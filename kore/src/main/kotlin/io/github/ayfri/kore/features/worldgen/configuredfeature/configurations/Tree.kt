@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.RuleBasedBlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.FancyFoliagePlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.FoliagePlacer
@@ -11,12 +12,19 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.t
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.TrunkPlacer
 import kotlinx.serialization.Serializable
 
+/**
+ * Configuration for the `tree` feature.
+ *
+ * [belowTrunkProvider] is a [RuleBasedBlockStateProvider] that controls which block (if any) is
+ * placed beneath the trunk. When `null`, no block is placed below.
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
+ */
 @Serializable
 data class Tree(
 	var ignoreVines: Boolean? = null,
-	var forceDirt: Boolean? = null,
+	var belowTrunkProvider: RuleBasedBlockStateProvider? = null,
 	var minimumSize: LayersFeatureSize = TwoLayersFeatureSize(),
-	var dirtProvider: BlockStateProvider = simpleStateProvider(),
 	var trunkProvider: BlockStateProvider = simpleStateProvider(),
 	var foliageProvider: BlockStateProvider = simpleStateProvider(),
 	var trunkPlacer: TrunkPlacer,

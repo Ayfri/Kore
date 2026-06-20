@@ -7,11 +7,11 @@ import kotlinx.serialization.Serializable
 data class EndSpike(
 	var crystalInvulnerable: Boolean? = null,
 	var crystalBeamTarget: TripleAsArray<Int, Int, Int> = TripleAsArray(0, 0, 0),
-	var spikes: List<Spike> = emptyList(),
+	var spikes: List<EndSpikeEntry> = emptyList(),
 ) : FeatureConfig()
 
 @Serializable
-data class Spike(
+data class EndSpikeEntry(
 	var centerX: Int? = null,
 	var centerZ: Int? = null,
 	var radius: Int? = null,

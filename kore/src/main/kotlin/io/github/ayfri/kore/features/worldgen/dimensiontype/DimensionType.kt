@@ -20,8 +20,9 @@ import kotlinx.serialization.json.Json
  * Data-driven dimension type definition.
  *
  * Controls fundamental world rules for a dimension: skylight, ceilings, piglin safety, respawn
- * mechanics, coordinate scaling, ambient light, height range, infiniburn tag, and monster spawn
- * light rules. This is referenced by a `dimension`.
+ * mechanics, coordinate scaling, ambient light, height range, infiniburn tag, monster spawn light
+ * rules, and whether the Ender Dragon fight is enabled ([hasEnderDragonFight]). This is referenced
+ * by a `dimension`.
  *
  * JSON format reference: https://minecraft.wiki/w/Dimension_type
  */
@@ -33,6 +34,7 @@ data class DimensionType(
 	var natural: Boolean = true,
 	var hasSkylight: Boolean = true,
 	var hasCeiling: Boolean = false,
+	var hasEnderDragonFight: Boolean? = null,
 	var coordinateScale: Double = 1.0,
 	var ambientLight: Float = 0f,
 	var cardinalLight: CardinalLight? = null,
