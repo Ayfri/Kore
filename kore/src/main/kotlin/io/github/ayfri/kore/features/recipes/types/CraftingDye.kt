@@ -9,7 +9,6 @@ import io.github.ayfri.kore.features.recipes.Recipes
 import io.github.ayfri.kore.features.recipes.data.CraftingResult
 import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import io.github.ayfri.kore.serializers.InlinableList
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -33,7 +32,7 @@ data class CraftingDye(
 	/** The output item. */
 	override var result: CraftingResult,
 	/** Whether to show the recipe unlock notification. */
-	@SerialName("show_notification") var showNotification: Boolean? = null,
+	var showNotification: Boolean? = null,
 	/** The item(s) to be dyed. */
 	var target: InlinableList<ItemOrTagArgument>,
 ) : Recipe(), ResultedRecipe {

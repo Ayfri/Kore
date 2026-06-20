@@ -11,17 +11,39 @@ import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
+/**
+ * Crafting table recipe that transforms an item while preserving its data components.
+ *
+ * The `input` item is combined with a `material` to produce `result`, copying components from the input.
+ * Produces `data/<namespace>/recipe/<fileName>.json`.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/recipes
+ * Minecraft Wiki: https://minecraft.wiki/w/Recipe#crafting_transmute
+ */
 @Serializable
 data class CraftingTransmute(
 	override var group: String? = null,
+	/** Optional recipe book category. */
 	var category: CraftingTransmuteCategory? = null,
+	/** The item to be transformed; its components are copied to the result. */
 	var input: InlinableList<ItemOrTagArgument>,
+	/** The catalyst item consumed alongside the input. */
 	var material: InlinableList<ItemOrTagArgument>,
 	override var result: CraftingResult,
+	var showNotification: Boolean? = null,
 ) : Recipe(), ResultedRecipe {
 	override val type = RecipeTypes.CRAFTING_TRANSMUTE
 }
 
+/**
+ * Adds a `crafting_transmute` recipe to the data pack.
+ *
+ * Use [CraftingTransmute.input] and [CraftingTransmute.material] inside the block to set the ingredients.
+ * Produces `data/<namespace>/recipe/<name>.json`.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/recipes
+ * Minecraft Wiki: https://minecraft.wiki/w/Recipe#crafting_transmute
+ */
 fun Recipes.craftingTransmute(name: String, block: CraftingTransmute.() -> Unit): RecipeArgument {
 	val recipe = RecipeFile(
 		name, CraftingTransmute(
@@ -34,8 +56,14 @@ fun Recipes.craftingTransmute(name: String, block: CraftingTransmute.() -> Unit)
 	return RecipeArgument(name, recipe.namespace ?: dp.name)
 }
 
+/** Sets the input (item to be transformed) to one or more specific items. */
 fun CraftingTransmute.input(vararg items: ItemArgument) = apply { input = items.toList() }
+
+/** Sets the input (item to be transformed) to an item tag. */
 fun CraftingTransmute.input(tag: ItemTagArgument) = apply { input = listOf(tag) }
 
+/** Sets the material (catalyst) to one or more specific items. */
 fun CraftingTransmute.material(vararg items: ItemArgument) = apply { material = items.toList() }
+
+/** Sets the material (catalyst) to an item tag. */
 fun CraftingTransmute.material(tag: ItemTagArgument) = apply { material = listOf(tag) }
