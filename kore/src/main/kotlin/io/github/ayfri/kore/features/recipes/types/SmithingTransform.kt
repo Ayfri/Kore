@@ -10,7 +10,6 @@ import io.github.ayfri.kore.features.recipes.data.CraftingResult
 import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 
 /**
  * Smithing table recipe that upgrades a base item using a template and an addition material.
@@ -32,11 +31,6 @@ data class SmithingTransform(
 	override var result: CraftingResult,
 	var showNotification: Boolean? = null,
 ) : Recipe(), ResultedRecipe {
-	@Transient
-	@Deprecated("SmithingTransform does not have a group", level = DeprecationLevel.HIDDEN)
-	override var group: String? = null
-		set(_) = Unit
-
 	override val type = RecipeTypes.SMITHING_TRANSFORM
 }
 

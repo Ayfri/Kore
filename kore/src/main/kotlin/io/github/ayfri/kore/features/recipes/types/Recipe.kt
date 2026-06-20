@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
 @Serializable(with = Recipe.Companion.RecipeSerializer::class)
 sealed class Recipe {
 	abstract val type: RecipeType
-	abstract var group: String?
+	open var group: String? = null
 
 	companion object {
 		data object RecipeSerializer : NamespacedPolymorphicSerializer<Recipe>(Recipe::class)

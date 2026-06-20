@@ -8,7 +8,6 @@ import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import io.github.ayfri.kore.generated.arguments.types.TrimPatternArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 
 /**
  * Smithing table recipe that applies a cosmetic trim pattern to armour.
@@ -31,11 +30,6 @@ data class SmithingTrim(
 	var pattern: TrimPatternArgument,
 	var showNotification: Boolean? = null,
 ) : Recipe() {
-	@Transient
-	@Deprecated("SmithingTrim does not have a group", level = DeprecationLevel.HIDDEN)
-	override var group: String? = null
-		set(_) = Unit
-
 	override val type = RecipeTypes.SMITHING_TRANSFORM
 }
 

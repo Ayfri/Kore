@@ -42,9 +42,6 @@ val CraftingSpecialFireworkStar = CraftingSpecial("firework_star")
 /** Adds a fade colour to an existing firework star. */
 val CraftingSpecialFireworkStarFade = CraftingSpecial("firework_star_fade")
 
-/** Duplicates a filled map. */
-val CraftingSpecialMapCloning = CraftingSpecial("mapcloning")
-
 /** Extends a map by combining it with paper. */
 val CraftingSpecialMapExtending = CraftingSpecial("mapextending")
 

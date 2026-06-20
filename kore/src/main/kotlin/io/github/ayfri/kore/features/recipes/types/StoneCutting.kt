@@ -20,7 +20,6 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class StoneCutting(
-	override var group: String? = null,
 	override var ingredient: InlinableList<ItemOrTagArgument> = emptyList(),
 	override var result: CraftingResult,
 	var showNotification: Boolean? = null,

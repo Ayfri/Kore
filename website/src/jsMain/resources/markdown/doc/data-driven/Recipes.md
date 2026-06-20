@@ -242,7 +242,6 @@ recipes {
 	craftingSpecial("book_clone", CraftingSpecialBookCloning)
 	craftingSpecial("firework_rocket", CraftingSpecialFireworkRocket)
 	craftingSpecial("firework_star", CraftingSpecialFireworkStar)
-	craftingSpecial("map_clone", CraftingSpecialMapCloning)
 	craftingSpecial("map_extend", CraftingSpecialMapExtending)
 	craftingSpecial("repair", CraftingSpecialRepairItem)
 	craftingSpecial("shield_decor", CraftingSpecialShieldDecoration)
