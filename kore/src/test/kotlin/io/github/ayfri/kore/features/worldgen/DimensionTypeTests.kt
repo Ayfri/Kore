@@ -129,6 +129,28 @@ fun DataPack.dimensionTypeTests() {
 			"monster_spawn_block_light_limit": 0
 		}
 	""".trimIndent()
+
+	dimensionType("my_dimension6") {
+		hasEnderDragonFight = true
+		monsterSpawnLightLevel = constant(0)
+	}
+
+	dimensionTypes.last() assertsIs """
+		{
+			"natural": true,
+			"has_skylight": true,
+			"has_ceiling": false,
+			"has_ender_dragon_fight": true,
+			"coordinate_scale": 1.0,
+			"ambient_light": 0.0,
+			"logical_height": 0,
+			"infiniburn": "#minecraft:infiniburn_overworld",
+			"min_y": 0,
+			"height": 16,
+			"monster_spawn_light_level": 0,
+			"monster_spawn_block_light_limit": 0
+		}
+	""".trimIndent()
 }
 
 class DimensionTypeTests : FunSpec({

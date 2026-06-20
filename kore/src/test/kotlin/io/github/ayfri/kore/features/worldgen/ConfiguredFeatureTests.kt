@@ -4,15 +4,10 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.data.block.blockState
-import io.github.ayfri.kore.features.worldgen.blockpredicate.allOf
-import io.github.ayfri.kore.features.worldgen.blockpredicate.matchingBlocks
-import io.github.ayfri.kore.features.worldgen.blockpredicate.not
-import io.github.ayfri.kore.features.worldgen.blockpredicate.solid
+import io.github.ayfri.kore.data.block.blockStateStone
+import io.github.ayfri.kore.features.worldgen.blockpredicate.*
 import io.github.ayfri.kore.features.worldgen.configuredfeature.Direction
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.dualNoiseProvider
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.slowNoise
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.variety
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.*
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.*
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.cherryFoliagePlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.layersfeaturesize.threeLayersFeatureSize
@@ -85,12 +80,6 @@ fun DataPack.configuredFeatureTests() {
 					"lower_size": 1,
 					"middle_size": 2,
 					"upper_size": 3
-				},
-				"dirt_provider": {
-					"type": "minecraft:simple_state_provider",
-					"state": {
-						"Name": "minecraft:stone"
-					}
 				},
 				"trunk_provider": {
 					"type": "minecraft:simple_state_provider",
@@ -294,6 +283,132 @@ fun DataPack.configuredFeatureTests() {
 		{
 			"type": "minecraft:end_platform",
 			"config": {}
+		}
+	""".trimIndent()
+
+	configuredFeature("test_block_blob", blockBlob(canPlaceOn = Solid, state = blockStateStone()))
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:block_blob",
+			"config": {
+				"can_place_on": {
+					"type": "minecraft:solid"
+				},
+				"state": {
+					"Name": "minecraft:stone"
+				}
+			}
+		}
+	""".trimIndent()
+
+	configuredFeature("test_spike", spike(canPlaceOn = Solid, canReplace = Solid, state = blockStateStone()))
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:spike",
+			"config": {
+				"can_place_on": {
+					"type": "minecraft:solid"
+				},
+				"can_replace": {
+					"type": "minecraft:solid"
+				},
+				"state": {
+					"Name": "minecraft:stone"
+				}
+			}
+		}
+	""".trimIndent()
+
+	configuredFeature("test_huge_red_mushroom", hugeRedMushroom(canPlaceOn = Solid))
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:huge_red_mushroom",
+			"config": {
+				"can_place_on": {
+					"type": "minecraft:solid"
+				},
+				"cap_provider": {
+					"type": "minecraft:simple_state_provider",
+					"state": {
+						"Name": "minecraft:stone"
+					}
+				},
+				"stem_provider": {
+					"type": "minecraft:simple_state_provider",
+					"state": {
+						"Name": "minecraft:stone"
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	configuredFeature("test_tree_below_trunk", tree {
+		cherryTrunkPlacer {
+			branchCount = constant(1)
+			branchHorizontalLength = constant(2)
+			branchStartOffsetFromTop = uniform(-5, -2)
+		}
+		cherryFoliagePlacer { height = constant(3) }
+		belowTrunkProvider = ruleBasedBlockStateProvider(fallback = simpleStateProvider(Blocks.DIRT))
+	})
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:tree",
+			"config": {
+				"below_trunk_provider": {
+					"fallback": {
+						"type": "minecraft:simple_state_provider",
+						"state": {
+							"Name": "minecraft:dirt"
+						}
+					},
+					"rules": []
+				},
+				"minimum_size": {
+					"type": "minecraft:two_layers_feature_size"
+				},
+				"trunk_provider": {
+					"type": "minecraft:simple_state_provider",
+					"state": {
+						"Name": "minecraft:stone"
+					}
+				},
+				"foliage_provider": {
+					"type": "minecraft:simple_state_provider",
+					"state": {
+						"Name": "minecraft:stone"
+					}
+				},
+				"trunk_placer": {
+					"type": "minecraft:cherry_trunk_placer",
+					"base_height": 0,
+					"height_rand_a": 0,
+					"height_rand_b": 0,
+					"branch_count": 1,
+					"branch_horizontal_length": 2,
+					"branch_start_offset_from_top": {
+						"min_inclusive": -5,
+						"max_inclusive": -2
+					},
+					"branch_end_offset_from_top": 0
+				},
+				"foliage_placer": {
+					"type": "minecraft:cherry_foliage_placer",
+					"radius": 0,
+					"offset": 0,
+					"height": 3,
+					"wide_bottom_layer_hole_chance": 0.0,
+					"corner_hole_chance": 0.0,
+					"hanging_leaves_chance": 0.0,
+					"hanging_leaves_extension_chance": 0.0
+				},
+				"decorators": []
+			}
 		}
 	""".trimIndent()
 }
