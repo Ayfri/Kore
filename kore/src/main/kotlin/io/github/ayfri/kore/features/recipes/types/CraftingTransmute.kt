@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.features.recipes.types
 
+import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
 import io.github.ayfri.kore.arguments.types.ItemOrTagArgument
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.arguments.types.resources.tagged.ItemTagArgument
@@ -22,13 +23,17 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class CraftingTransmute(
-	override var group: String? = null,
+	/** If true, the output count is increased by the material count. */
+	var addMaterialCountToResult: Boolean? = null,
 	/** Optional recipe book category. */
 	var category: RecipeCategory? = null,
+	override var group: String? = null,
 	/** The item to be transformed; its components are copied to the result. */
 	var input: InlinableList<ItemOrTagArgument>,
 	/** The catalyst item consumed alongside the input. */
 	var material: InlinableList<ItemOrTagArgument>,
+	/** How many material items are consumed per craft; can be a range or exact int. */
+	var materialCount: IntRangeOrIntJson? = null,
 	override var result: CraftingResult,
 	var showNotification: Boolean? = null,
 ) : Recipe(), ResultedRecipe {

@@ -27,29 +27,8 @@ data class CraftingSpecial(
 	override val type = RecipeTypes.CRAFTING_SPECIAL(name)
 }
 
-/** Duplicates a banner pattern onto another banner. */
-val CraftingSpecialBannerDuplicate = CraftingSpecial("bannerduplicate")
-
-/** Copies a written book. */
-val CraftingSpecialBookCloning = CraftingSpecial("bookcloning")
-
-/** Crafts a firework rocket from its components. */
-val CraftingSpecialFireworkRocket = CraftingSpecial("firework_rocket")
-
-/** Crafts a firework star from dyes and effects. */
-val CraftingSpecialFireworkStar = CraftingSpecial("firework_star")
-
-/** Adds a fade colour to an existing firework star. */
-val CraftingSpecialFireworkStarFade = CraftingSpecial("firework_star_fade")
-
-/** Extends a map by combining it with paper. */
-val CraftingSpecialMapExtending = CraftingSpecial("mapextending")
-
 /** Repairs items by combining two damaged items of the same type. */
 val CraftingSpecialRepairItem = CraftingSpecial("repairitem")
-
-/** Applies a banner pattern to a shield. */
-val CraftingSpecialShieldDecoration = CraftingSpecial("shielddecoration")
 
 /** Recolours a shulker box with a dye. */
 val CraftingSpecialShulkerBoxColoring = CraftingSpecial("shulkerboxcoloring")
