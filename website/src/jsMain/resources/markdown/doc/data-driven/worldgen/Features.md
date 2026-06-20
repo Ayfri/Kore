@@ -5,7 +5,7 @@ nav-title: Features
 description: Create configured and placed features (trees, ores, vegetation) with Kore's DSL.
 keywords: minecraft, datapack, kore, worldgen, configured feature, placed feature, tree, ore
 date-created: 2026-02-03
-date-modified: 2026-02-04
+date-modified: 2026-06-20
 routeOverride: /docs/data-driven/worldgen/features
 ---
 
@@ -39,8 +39,15 @@ while placers control the shape.
 
 ```kotlin
 val treeCfg = tree {
+	// Replace soil beneath the trunk with dirt (rule-based provider)
+	belowTrunkProvider = ruleBasedBlockStateProvider {
+		rule(
+			ifTrue = not { matchingBlockTag(tag = Tags.Block.CANNOT_REPLACE_BELOW_TREE_TRUNK) },
+			then = simpleStateProvider(Blocks.DIRT),
+		)
+	}
+
 	blobFoliagePlacer(radius = constant(2), offset = constant(0), height = 3)
-	dirtProvider = simpleStateProvider(Blocks.DIRT)
 	foliageProvider = simpleStateProvider(Blocks.OAK_LEAVES)
 	straightTrunkPlacer(baseHeight = 6, heightRandA = 3, heightRandB = 1)
 	trunkProvider = simpleStateProvider(Blocks.OAK_LOG)
@@ -78,16 +85,20 @@ val flower = dp.configuredFeature("my_flower", flowerCfg) {}
 
 Kore supports many feature types. Here are the most commonly used:
 
-| Feature Type     | Description                   | Example Use                    |
-|------------------|-------------------------------|--------------------------------|
-| `blockPile`      | Piles of blocks               | Pumpkin patches, melon patches |
-| `diskFeature`    | Circular disk of blocks       | Clay, sand, gravel patches     |
-| `fossilFeature`  | Structure-based fossils       | Underground fossils            |
-| `geode`          | Hollow structures with layers | Amethyst geodes                |
-| `icebergFeature` | Iceberg structures            | Ocean icebergs                 |
-| `lakeFeature`    | Liquid pools                  | Underground lava lakes         |
-| `randomPatch`    | Scattered block placements    | Flowers, grass, mushrooms      |
-| `springFeature`  | Fluid source blocks           | Water/lava springs             |
+| Feature Type        | Description                   | Example Use                    |
+|---------------------|-------------------------------|--------------------------------|
+| `blockBlob`         | Small rock blob on surface    | Mossy cobblestone in forests   |
+| `blockPile`         | Piles of blocks               | Pumpkin patches, melon patches |
+| `diskFeature`       | Circular disk of blocks       | Clay, sand, gravel patches     |
+| `fossilFeature`     | Structure-based fossils       | Underground fossils            |
+| `geode`             | Hollow structures with layers | Amethyst geodes                |
+| `hugeBrownMushroom` | Large brown mushroom          | Swamp/mushroom island fungi    |
+| `hugeRedMushroom`   | Large red mushroom            | Swamp/mushroom island fungi    |
+| `icebergFeature`    | Iceberg structures            | Ocean icebergs                 |
+| `lakeFeature`       | Liquid pools                  | Underground lava lakes         |
+| `randomPatch`       | Scattered block placements    | Flowers, grass, mushrooms      |
+| `spike`             | Tall spiky columns            | Ice spikes in frozen biomes    |
+| `springFeature`     | Fluid source blocks           | Water/lava springs             |
 
 Reference: [Feature types](https://minecraft.wiki/w/Configured_feature#Types)
 
@@ -167,7 +178,6 @@ fun DataPack.createForestFeatures() {
 	// 1) Tree configured feature
 	val oakTreeCfg = tree {
 		blobFoliagePlacer(radius = constant(2), offset = constant(0), height = 3)
-		dirtProvider = simpleStateProvider(Blocks.DIRT)
 		foliageProvider = simpleStateProvider(Blocks.OAK_LEAVES)
 		straightTrunkPlacer(baseHeight = 5, heightRandA = 2, heightRandB = 0)
 		trunkProvider = simpleStateProvider(Blocks.OAK_LOG)

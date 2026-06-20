@@ -5,7 +5,7 @@ nav-title: Recipes
 description: Create custom Minecraft recipes using Kore's type-safe Kotlin DSL for crafting, smelting, smithing, and more.
 keywords: minecraft, datapack, kore, recipes, crafting, smelting, smithing, stonecutting
 date-created: 2024-01-08
-date-modified: 2026-02-03
+date-modified: 2026-06-20
 routeOverride: /docs/data-driven/recipes
 ---
 
