@@ -237,6 +237,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `damageType(..)`                     | Specifies the damage type dealt when attacking with this item.                                           |
 | `deathProtection(..)`                | Prevents death and applies effects when the holder would die (like a totem).                             |
 | `debugStickState(..)`                | Stores the selected block state property for the debug stick per block type.                             |
+| `dye(..)`                            | Sets the dye color of an item using a `DyeColors` value.                                                 |
 | `dyedColor(..)`                      | Sets the dye color for leather armor or other dyeable items.                                             |
 | `enchantable(..)`                    | Defines the enchantability value affecting enchantment quality at enchanting tables.                     |
 | `enchantmentGlintOverride(..)`       | Forces the enchantment glint on or off regardless of enchantments.                                       |

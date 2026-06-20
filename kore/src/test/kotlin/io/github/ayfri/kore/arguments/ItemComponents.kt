@@ -7,6 +7,7 @@ import io.github.ayfri.kore.arguments.components.consumable.applyEffects
 import io.github.ayfri.kore.arguments.components.consumable.playSound
 import io.github.ayfri.kore.arguments.components.consumable.teleportRandomly
 import io.github.ayfri.kore.arguments.components.item.*
+import io.github.ayfri.kore.arguments.enums.DyeColors
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.types.literals.randomUUID
 import io.github.ayfri.kore.arguments.types.resources.model
@@ -270,6 +271,11 @@ fun itemComponentsTests() {
 		}
 	}
 	debugStickStateTest.asString() assertsIs """minecraft:stone[debug_stick_state={"minecraft:diamond_block":"test"}]"""
+
+	val dyeTest = stone {
+		dye(DyeColors.WHITE)
+	}
+	dyeTest.asString() assertsIs """minecraft:stone[dye="white"]"""
 
 	val dyedColorTest = leatherHelmet {
 		dyedColor(Color.AQUA)
