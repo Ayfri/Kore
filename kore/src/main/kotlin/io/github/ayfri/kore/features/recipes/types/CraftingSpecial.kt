@@ -18,7 +18,6 @@ data class CraftingSpecial(
 	override val type = RecipeTypes.CRAFTING_SPECIAL(name)
 }
 
-val CraftingSpecialArmorDye = CraftingSpecial("armordye")
 val CraftingSpecialBannerDuplicate = CraftingSpecial("bannerduplicate")
 val CraftingSpecialBookCloning = CraftingSpecial("bookcloning")
 val CraftingSpecialFireworkRocket = CraftingSpecial("firework_rocket")
@@ -29,7 +28,6 @@ val CraftingSpecialMapExtending = CraftingSpecial("mapextending")
 val CraftingSpecialRepairItem = CraftingSpecial("repairitem")
 val CraftingSpecialShieldDecoration = CraftingSpecial("shielddecoration")
 val CraftingSpecialShulkerBoxColoring = CraftingSpecial("shulkerboxcoloring")
-val CraftingSpecialTippedArrow = CraftingSpecial("tippedarrow")
 
 fun Recipes.craftingSpecial(name: String, craftingTypeName: String, block: CraftingSpecial.() -> Unit) =
 	dp.recipes.add(RecipeFile(name, CraftingSpecial(craftingTypeName).apply(block)))

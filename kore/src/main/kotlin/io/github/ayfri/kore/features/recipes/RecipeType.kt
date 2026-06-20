@@ -25,6 +25,8 @@ class CraftingSpecialEntry(group: String) : RecipeType {
 data object RecipeTypes {
 	val BLASTING = RecipeType { "blasting" }
 	val CAMPFIRE_COOKING = RecipeType { "campfire_cooking" }
+	val CRAFTING_DYE = RecipeType { "crafting_dye" }
+	val CRAFTING_IMBUE = RecipeType { "crafting_imbue" }
 	val CRAFTING_SHAPED = RecipeType { "crafting_shaped" }
 	val CRAFTING_SHAPELESS = RecipeType { "crafting_shapeless" }
 	val CRAFTING_SPECIAL = CraftingSpecial
@@ -38,6 +40,8 @@ data object RecipeTypes {
 	val values = listOf(
 		BLASTING,
 		CAMPFIRE_COOKING,
+		CRAFTING_DYE,
+		CRAFTING_IMBUE,
 		CRAFTING_SHAPED,
 		CRAFTING_SHAPELESS,
 		CRAFTING_SPECIAL,

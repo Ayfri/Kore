@@ -154,6 +154,34 @@ private fun DataPack.allRecipeTypesTests() {
 		}
 	""".trimIndent()
 
+	recipesBuilder.craftingDye("test_crafting_dye") {
+		dye(Items.RED_DYE)
+		target(Tags.Item.WOOL)
+		result(Items.RED_WOOL)
+	}
+	recipes.last() assertsIs """
+		{
+			"type": "minecraft:crafting_dye",
+			"dye": "minecraft:red_dye",
+			"result": "minecraft:red_wool",
+			"target": "#minecraft:wool"
+		}
+	""".trimIndent()
+
+	recipesBuilder.craftingImbue("test_crafting_imbue") {
+		material(Tags.Item.ARROWS)
+		source(Items.LINGERING_POTION)
+		result(Items.TIPPED_ARROW)
+	}
+	recipes.last() assertsIs """
+		{
+			"type": "minecraft:crafting_imbue",
+			"material": "#minecraft:arrows",
+			"result": "minecraft:tipped_arrow",
+			"source": "minecraft:lingering_potion"
+		}
+	""".trimIndent()
+
 	recipesBuilder.smithingTransform("test_smithing_transform") {
 		template(Items.DIAMOND_BLOCK)
 		base(Items.DIAMOND_SWORD)

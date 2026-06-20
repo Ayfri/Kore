@@ -24,19 +24,21 @@ Recipes have several key characteristics:
 
 ### Recipe Types
 
-| Type                 | Workstation    | Description                  |
-|----------------------|----------------|------------------------------|
-| `crafting_shaped`    | Crafting Table | Pattern-based crafting       |
-| `crafting_shapeless` | Crafting Table | Order-independent crafting   |
-| `crafting_transmute` | Crafting Table | Transform item with material |
-| `crafting_special_*` | Crafting Table | Built-in special recipes     |
-| `smelting`           | Furnace        | Standard smelting            |
-| `blasting`           | Blast Furnace  | Faster ore smelting          |
-| `smoking`            | Smoker         | Faster food cooking          |
-| `campfire_cooking`   | Campfire       | Slow food cooking            |
-| `smithing_transform` | Smithing Table | Upgrade items                |
-| `smithing_trim`      | Smithing Table | Apply armor trims            |
-| `stonecutting`       | Stonecutter    | Cut blocks                   |
+| Type                 | Workstation    | Description                   |
+|----------------------|----------------|-------------------------------|
+| `crafting_shaped`    | Crafting Table | Pattern-based crafting        |
+| `crafting_shapeless` | Crafting Table | Order-independent crafting    |
+| `crafting_transmute` | Crafting Table | Transform item with material  |
+| `crafting_dye`       | Crafting Table | Dye an item with a dye        |
+| `crafting_imbue`     | Crafting Table | Imbue items (e.g. tip arrows) |
+| `crafting_special_*` | Crafting Table | Built-in special recipes      |
+| `smelting`           | Furnace        | Standard smelting             |
+| `blasting`           | Blast Furnace  | Faster ore smelting           |
+| `smoking`            | Smoker         | Faster food cooking           |
+| `campfire_cooking`   | Campfire       | Slow food cooking             |
+| `smithing_transform` | Smithing Table | Upgrade items                 |
+| `smithing_trim`      | Smithing Table | Apply armor trims             |
+| `stonecutting`       | Stonecutter    | Cut blocks                    |
 
 ## File Structure
 
@@ -201,13 +203,41 @@ recipes {
 
 The result item copies all components from the input item.
 
+### Dye Crafting
+
+Dye an item using a dye ingredient. _Replaces the old `crafting_special_armordye` recipe_:
+
+```kotlin
+recipes {
+	craftingDye("red_wool_dye") {
+		dye(Items.RED_DYE)
+		target(Tags.Item.WOOL)
+		result(Items.RED_WOOL)
+	}
+}
+```
+
+### Imbue Crafting
+
+Imbue items with properties from a source (e.g. tip arrows with lingering potions). _Replaces the
+old `crafting_special_tippedarrow` recipe_:
+
+```kotlin
+recipes {
+	craftingImbue("tipped_arrow") {
+		material(Tags.Item.ARROWS)
+		source(Items.LINGERING_POTION)
+		result(Items.TIPPED_ARROW)
+	}
+}
+```
+
 ### Special Crafting
 
 Special recipes use built-in game logic for complex crafting that can't be data-driven:
 
 ```kotlin
 recipes {
-	craftingSpecial("armor_dye", CraftingSpecialArmorDye)
 	craftingSpecial("banner_copy", CraftingSpecialBannerDuplicate)
 	craftingSpecial("book_clone", CraftingSpecialBookCloning)
 	craftingSpecial("firework_rocket", CraftingSpecialFireworkRocket)
@@ -217,7 +247,6 @@ recipes {
 	craftingSpecial("repair", CraftingSpecialRepairItem)
 	craftingSpecial("shield_decor", CraftingSpecialShieldDecoration)
 	craftingSpecial("shulker_color", CraftingSpecialShulkerboxColoring)
-	craftingSpecial("tipped_arrow", CraftingSpecialTippedArrow)
 	craftingSpecial("suspicious_stew", CraftingSpecialSuspiciousStew)
 }
 ```
