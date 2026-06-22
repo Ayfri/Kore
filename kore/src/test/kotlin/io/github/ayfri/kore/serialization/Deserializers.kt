@@ -1,30 +1,118 @@
 package io.github.ayfri.kore.serialization
 
+import io.github.ayfri.kore.arguments.Advancement
 import io.github.ayfri.kore.arguments.Argument
-import io.github.ayfri.kore.arguments.components.item.damage
+import io.github.ayfri.kore.arguments.colors.Color
+import io.github.ayfri.kore.arguments.components.Components
+import io.github.ayfri.kore.arguments.components.item.*
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticlePosition
+import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticlePositionType
+import io.github.ayfri.kore.features.predicates.sub.Advancements
+import io.github.ayfri.kore.features.timelines.CubicBezier
+import io.github.ayfri.kore.features.timelines.EasingType
+import io.github.ayfri.kore.features.timelines.InBack
 import io.github.ayfri.kore.features.worldgen.dimension.generator.FlatGeneratorSettings
 import io.github.ayfri.kore.features.worldgen.dimension.generator.Layer
 import io.github.ayfri.kore.features.worldgen.flatlevelgeneratorpreset.FlatLevelGeneratorPreset
+import io.github.ayfri.kore.features.worldgen.noisesettings.rules.Block
+import io.github.ayfri.kore.features.worldgen.noisesettings.rules.block
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.StructureSets
+import io.github.ayfri.kore.generated.arguments.types.AdvancementArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
+import io.github.ayfri.kore.serializers.TripleAsArraySerializer
+import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import io.kotest.core.spec.style.FunSpec
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.serializer
 
 fun deserializersTests() {
+	advancementDeserializer()
+	argumentDeserializer()
+	blockEntityDataDeserializer()
+	blockStateDeserializer()
+	componentsDeserializer()
+	easingTypeDeserializer()
+	generatorFeatureDeserializer()
+	inlineAutoDeserializer()
 	namespacedPolymorphicDeserializer()
 	namespacedPolymorphicDeserializerWithMoveIntoProperty()
-	inlineAutoDeserializer()
-	argumentDeserializer()
-	generatorFeatureDeserializer()
+	particlePositionDeserializer()
+	tripleAsArrayDeserializer()
+}
+
+private inline fun <reified T> roundTripsAs(serializer: kotlinx.serialization.KSerializer<T>, value: T) {
+	val encoded = json.encodeToString(serializer, value)
+	json.encodeToString(serializer, json.decodeFromString(serializer, encoded)) assertsIs encoded
+}
+
+fun advancementDeserializer() {
+	roundTripsAs(Advancement.serializer(), Advancement(AdvancementArgument("adventure/root"), done = true))
+	roundTripsAs(
+		Advancement.serializer(),
+		Advancement(AdvancementArgument("story/mine_diamond"), criteria = mapOf("has_diamond" to true)),
+	)
+	roundTripsAs(
+		Advancements.serializer(),
+		Advancements(setOf(Advancement(AdvancementArgument("adventure/root"), done = true))),
+	)
+}
+
+fun blockEntityDataDeserializer() {
+	roundTripsAs(
+		BlockEntityDataComponent.serializer(),
+		BlockEntityDataComponent(Blocks.CHEST, nbt { this["Lock"] = "key" })
+	)
+	roundTripsAs(BlockEntityDataComponent.serializer(), BlockEntityDataComponent(Blocks.FURNACE))
+}
+
+fun blockStateDeserializer() {
+	roundTripsAs(Block.serializer(), block(Blocks.OAK_STAIRS, mapOf("facing" to "north", "half" to "top")))
+	roundTripsAs(Block.serializer(), block(Blocks.STONE))
+}
+
+fun tripleAsArrayDeserializer() {
+	val serializer = TripleAsArraySerializer(Int.serializer(), Int.serializer(), Int.serializer())
+	val encoded = json.encodeToString(serializer, Triple(1, 2, 3))
+	json.decodeFromString(serializer, encoded) assertsIs Triple(1, 2, 3)
+}
+
+fun easingTypeDeserializer() {
+	json.decodeFromString(EasingType.serializer(), "\"in_back\"").assertsIsA<InBack>()
+
+	val bezier = json.decodeFromString(EasingType.serializer(), """{"cubic_bezier": [0.1, 0.2, 0.3, 0.4]}""")
+		.assertsIsA<CubicBezier>()
+	bezier.x1 assertsIs 0.1f
+	bezier.y2 assertsIs 0.4f
+}
+
+fun particlePositionDeserializer() {
+	val position = ParticlePosition(ParticlePositionType.IN_BOUNDING_BOX, offset = 1.5f, scale = 2f)
+	val encoded = json.encodeToString(ParticlePosition.serializer(), position)
+	json.decodeFromString(ParticlePosition.serializer(), encoded) assertsIs position
+}
+
+fun componentsDeserializer() {
+	val components = Components().apply {
+		damage(5)
+		customName("Sword", Color.RED)
+		lore("A line")
+	}
+
+	val encoded = json.encodeToString(Components.serializer(), components)
+	val decoded = json.decodeFromString(Components.serializer(), encoded)
+
+	json.encodeToString(Components.serializer(), decoded) assertsIs encoded
+	decoded.components.keys.toList() assertsIs listOf("damage", "custom_name", "lore")
+	decoded.components.values.all { it is CustomComponent } assertsIs true
 }
 
 private inline fun <reified T> Any.assertsIsA(): T {
