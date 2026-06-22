@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.arguments.components
 
-import io.github.ayfri.kore.arguments.components.item.CustomComponent
 import io.github.ayfri.kore.arguments.components.matchers.ComponentMatcher
 import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
 import io.github.ayfri.kore.arguments.types.ItemOrTagArgument
@@ -133,24 +132,9 @@ data class ItemPredicate(
 		componentsAlternatives.getOrPut("~$name", ::mutableListOf).add(component)
 	}
 
-	override fun asNbt(): NbtCompound {
-		val classicComponents = componentsAlternatives.filterValues { it !is CustomComponent }
-		val customComponents = componentsAlternatives.filterValues { it is CustomComponent } as Map<String, List<CustomComponent>>
-
-		val classicComponentsSerialized = nbt {
-			classicComponents.forEach { (key, value) -> put(key, snbtSerializer.encodeToNbtTag(value)) }
-		}
-
-		val customComponentsSerialized = nbt {
-			customComponents.forEach { (key, value) -> put(key, snbtSerializer.encodeToNbtTag(value.map { it.nbt })) }
-		}
-
-		return nbt {
-			classicComponentsSerialized.forEach { (key, value) -> put(key, value) }
-			customComponentsSerialized.forEach { (key, value) -> put(key, value) }
-		}
+	override fun asNbt() = nbt {
+		componentsAlternatives.forEach { (key, value) -> put(key, snbtSerializer.encodeToNbtTag(value)) }
 	}
-
 
 	fun buildPredicateString(): String {
 		val validEntries = asNbt().entries.filter { (_, values) -> values.nbtList.isNotEmpty() }
@@ -161,7 +145,7 @@ data class ItemPredicate(
 			value to COUNT_ITEM_PREDICATE.negateIf(negated)
 		}
 
-		countSubPredicateKeys.map { (value, key) ->
+		countSubPredicateKeys.forEach { (value, key) ->
 			validEntries += if (value.range != null) {
 				"~${key}" to nbtList {
 					this += snbtSerializer.encodeToNbtTag(Range(value.range.start!!, value.range.end!!)).nbtCompound
@@ -183,17 +167,10 @@ data class ItemPredicate(
 		val entries = mutableListOf<ComponentEntry>()
 		for ((key, values) in validEntries) {
 			val keyName = key.removePrefix("~").removePrefix("!")
-			entries += values.nbtList.map {
+			val isChatComponent = componentsAlternatives[key]?.firstOrNull()?.isChatComponent() == true
+			values.nbtList.mapTo(entries) {
 				val value = when {
-					keyName in CHAT_COMPONENTS_COMPONENTS_TYPES -> {
-						val unescaped = it.toString().unescape()
-							// The quotes are added by the serializer, we just need to unescape the string.
-							.replace(Regex("\"\'\"(.+?)\"\'\"", RegexOption.DOT_MATCHES_ALL), "'\"$1\"'")
-							// we also need a fix for JSON Components as they are serialized as JSON but single quoted.
-							.replace(Regex("\"\'\\{(.+?)\\}\'\"", RegexOption.DOT_MATCHES_ALL), "'{$1}'")
-						unescaped
-					}
-
+					isChatComponent -> it.unescapeChatComponent()
 					it == nbt {} -> null
 					else -> it.toString()
 				}

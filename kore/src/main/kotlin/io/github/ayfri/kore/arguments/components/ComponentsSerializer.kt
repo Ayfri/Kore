@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.arguments.components
 
+import io.github.ayfri.kore.utils.unescape
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
@@ -11,6 +12,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.JsonNamingStrategy
 import net.benwoodworth.knbt.NbtEncoder
+import net.benwoodworth.knbt.NbtTag
 
 @OptIn(ExperimentalSerializationApi::class)
 val jsonSerializer = Json {
@@ -21,18 +23,16 @@ val jsonSerializer = Json {
 }
 
 /**
- * List of all the Components that are chat components and thus must be quoted.
- * Modify this list if you want to add a new chat component Component.
+ * SNBT serialization quotes and escapes chat components (and single-quotes JSON ones); this unwraps such a value
+ * back to the inline form expected inside the `item[key=value]` command syntax.
  *
- * See [ChatComponentsEscapedSerializer][io.github.ayfri.kore.arguments.chatcomponents.ChatComponents.Companion.ChatComponentsEscapedSerializer] for understanding how it's serialized.
+ * Only used for components where [Component.isChatComponent] is `true`.
  */
-val CHAT_COMPONENTS_COMPONENTS_TYPES = mutableListOf(
-	"custom_name",
-	"item_name",
-	"lore",
-	"written_book_content",
-)
-
+internal fun NbtTag.unescapeChatComponent() = toString().unescape()
+	// The quotes are added by the serializer, we just need to unescape the string.
+	.replace(Regex("\"\'\"(.+?)\"\'\"", RegexOption.DOT_MATCHES_ALL), "'\"$1\"'")
+	// we also need a fix for JSON Components as they are serialized as JSON but single quoted.
+	.replace(Regex("\"\'\\{(.+?)\\}\'\"", RegexOption.DOT_MATCHES_ALL), "'{$1}'")
 
 data object ComponentsSerializer : KSerializer<ComponentsScope> {
 	override val descriptor = buildClassSerialDescriptor("Components") {
