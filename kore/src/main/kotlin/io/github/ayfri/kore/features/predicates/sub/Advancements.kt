@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.predicates.sub
 
 import io.github.ayfri.kore.arguments.Advancement
+import io.github.ayfri.kore.serializers.decodeJsonObject
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
@@ -14,10 +15,11 @@ import kotlinx.serialization.json.put
 @Serializable(Advancements.Companion.AdvancementsSerializer::class)
 data class Advancements(val advancements: Set<Advancement> = emptySet()) {
 	companion object {
-		object AdvancementsSerializer : KSerializer<Advancements> {
+		data object AdvancementsSerializer : KSerializer<Advancements> {
 			override val descriptor = buildClassSerialDescriptor("Advancements")
 
-			override fun deserialize(decoder: Decoder) = error("Advancements cannot be deserialized")
+			override fun deserialize(decoder: Decoder) =
+				Advancements(decoder.decodeJsonObject().map { (id, value) -> Advancement.fromEntry(id, value) }.toSet())
 
 			override fun serialize(encoder: Encoder, value: Advancements) {
 				require(encoder is JsonEncoder) { "Advancements can only be serialized as Json" }

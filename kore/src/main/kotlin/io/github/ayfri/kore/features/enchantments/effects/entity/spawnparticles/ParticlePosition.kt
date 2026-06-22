@@ -6,9 +6,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.encodeStructure
+import kotlinx.serialization.encoding.*
 
 @Serializable(with = ParticlePosition.Companion.ParticlePositionSerializer::class)
 data class ParticlePosition(
@@ -35,7 +33,22 @@ data class ParticlePosition(
 					}
 				}
 
-			override fun deserialize(decoder: Decoder) = error("ParticlePosition is not meant to be deserialized")
+			@OptIn(ExperimentalSerializationApi::class)
+			override fun deserialize(decoder: Decoder) = decoder.decodeStructure(descriptor) {
+				lateinit var type: ParticlePositionType
+				var offset: Float? = null
+				var scale: Float? = null
+				while (true) {
+					when (val index = decodeElementIndex(descriptor)) {
+						0 -> type = decodeSerializableElement(descriptor, 0, ParticlePositionType.serializer())
+						1 -> offset = decodeNullableSerializableElement(descriptor, 1, Float.serializer())
+						2 -> scale = decodeNullableSerializableElement(descriptor, 2, Float.serializer())
+						CompositeDecoder.DECODE_DONE -> break
+						else -> error("Unexpected index $index in ParticlePosition")
+					}
+				}
+				ParticlePosition(type, offset, scale)
+			}
 		}
 	}
 }

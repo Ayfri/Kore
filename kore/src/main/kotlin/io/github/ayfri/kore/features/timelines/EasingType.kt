@@ -21,7 +21,20 @@ sealed class EasingType {
 		data object EasingTypeSerializer : KSerializer<EasingType> {
 			override val descriptor = buildClassSerialDescriptor("EasingType")
 
-			override fun deserialize(decoder: Decoder) = error("EasingType cannot be deserialized")
+			override fun deserialize(decoder: Decoder): EasingType {
+				require(decoder is JsonDecoder) { "EasingType can only be deserialized from Json" }
+				return when (val element = decoder.decodeJsonElement()) {
+					is JsonObject -> element["cubic_bezier"]!!.jsonArray.map { it.jsonPrimitive.float }
+						.let { (x1, y1, x2, y2) -> CubicBezier(x1, y1, x2, y2) }
+
+					else -> {
+						val name = element.jsonPrimitive.content
+						EasingType::class.sealedSubclasses.firstNotNullOfOrNull { subclass ->
+							subclass.objectInstance?.takeIf { it::class.getSerialName().snakeCase() == name }
+						} ?: error("Unknown easing type: '$name'")
+					}
+				}
+			}
 
 			override fun serialize(encoder: Encoder, value: EasingType) {
 				require(encoder is JsonEncoder)

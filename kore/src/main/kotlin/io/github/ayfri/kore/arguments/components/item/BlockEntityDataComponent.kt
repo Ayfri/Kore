@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
+import io.github.ayfri.kore.serializers.splitNamespacedId
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import kotlinx.serialization.KSerializer
@@ -18,6 +19,7 @@ import kotlinx.serialization.json.put
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtCompoundBuilder
 import net.benwoodworth.knbt.NbtEncoder
+import net.benwoodworth.knbt.NbtString
 
 @Serializable(with = BlockEntityDataComponent.Companion.BlockEntityDataComponentSerializer::class)
 data class BlockEntityDataComponent(
@@ -49,7 +51,12 @@ data class BlockEntityDataComponent(
 				else -> error("BlockEntityDataComponent is not serializable.")
 			}
 
-			override fun deserialize(decoder: Decoder) = error("BlockEntityDataComponent is not deserializable.")
+			override fun deserialize(decoder: Decoder): BlockEntityDataComponent {
+				val compound = decoder.decodeSerializableValue(NbtAsJsonSerializer) as NbtCompound
+				val (name, namespace) = (compound.getValue("id") as NbtString).value.splitNamespacedId()
+				val data = NbtCompound(compound.filterKeys { it != "id" })
+				return BlockEntityDataComponent(BlockArgument(name, namespace), data.takeUnless(NbtCompound::isEmpty))
+			}
 		}
 	}
 }
