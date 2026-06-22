@@ -352,8 +352,7 @@ private fun renderTokens(tokens: List<MiniMessageToken>, cfg: MiniMessageRendere
 							val fallback = withArgs.firstOrNull { it.startsWith("\"") }?.removeSurrounding("\"")
 							val translationArgs = if (fallback != null) withArgs.drop(1) else withArgs
 							val withComponents = translationArgs.map { arg ->
-								val parsed = miniMessageToTextComponents(arg) { copyFrom(cfg) }
-								if (parsed.list.size == 1) parsed.list[0] else text(arg)
+								miniMessageToTextComponents(arg) { copyFrom(cfg) }
 							}.takeIf { it.isNotEmpty() }
 
 							components += TranslatedTextComponent(

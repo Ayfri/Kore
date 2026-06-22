@@ -186,6 +186,33 @@ fun chatComponentsTests() {
 		}
 	""".trimIndent()
 
+	val translatedComponentWithComponents = translatedTextComponent(
+		"chat.type.advancement.goal", listOf(
+			textComponent("Kore", color = Color.AQUA),
+			scoreComponent("kills", self()),
+		)
+	)
+	translatedComponentWithComponents assertsIsJson """
+		{
+			"type": "translatable",
+			"translate": "chat.type.advancement.goal",
+			"with": [
+				{
+					"type": "text",
+					"color": "aqua",
+					"text": "Kore"
+				},
+				{
+					"type": "score",
+					"score": {
+						"name": "@s",
+						"objective": "kills"
+					}
+				}
+			]
+		}
+	""".trimIndent()
+
 	val hoverEventComponent = textComponent("Hover me!") {
 		hoverEvent {
 			showText("Hello, world!")

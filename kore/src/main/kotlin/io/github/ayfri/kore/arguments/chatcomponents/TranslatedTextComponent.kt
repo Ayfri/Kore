@@ -8,7 +8,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TranslatedTextComponent(
 	var translate: String,
-	var with: List<ChatComponent>? = null,
+	// Each argument is a single component (what every component factory returns); a multi-component arg is flattened to root + extra.
+	var with: List<ChatComponents>? = null,
 	var fallback: String? = null,
 ) : ChatComponent(), SimpleComponent {
 	override val type = ChatComponentType.TRANSLATABLE
@@ -17,15 +18,15 @@ data class TranslatedTextComponent(
 		super.toNbtTag().entries.forEach { (key, value) -> if (key != "text") this[key] = value }
 		fallback?.let { this["fallback"] = it }
 		this["translate"] = translate
-		with?.let {
-			this["with"] = nbtListOf(it.map { it.toNbtTag() })
+		with?.let { args ->
+			this["with"] = nbtListOf(args.map { it.toComponent().toNbtTag() })
 		}
 	}
 }
 
 fun translatedTextComponent(
 	translate: String,
-	with: List<ChatComponent>? = null,
+	with: List<ChatComponents>? = null,
 	fallback: String? = null,
 	block: TranslatedTextComponent.() -> Unit = {},
 ) =
@@ -38,4 +39,4 @@ fun translatedTextComponent(
 	fallback: String? = null,
 	block: TranslatedTextComponent.() -> Unit = {},
 ) =
-	translatedTextComponent(translate, with.map(::text), fallback, block)
+	translatedTextComponent(translate, with.map { textComponent(it) }, fallback, block)

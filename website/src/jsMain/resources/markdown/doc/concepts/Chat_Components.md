@@ -149,13 +149,24 @@ In-game output:<br>
 
 The
 `TranslatedTextComponent` displays translated text using translation keys. You can also pass arguments to the translation key with the
-`with` argument, which should be a list of text components or strings.<br>
+`with` argument, which is a list of strings or a list of components - so the result of any component factory (
+`scoreComponent`,
+`entityComponent`, `textComponent`, etc) can be passed directly.<br>
 A `fallback` property can be used to specify a fallback text if the translation key is not found.
 
 ### Example
 
 ```kotlin
-val translatedTextComponent = translatedTextComponent("chat.type.text", "Ayfri", "Hello !")
+// Strings are wrapped as text components automatically.
+val translatedFromStrings = translatedTextComponent("chat.type.text", listOf("Ayfri", "Hello !"))
+
+// Or pass components directly, no need to unwrap them.
+val translatedFromComponents = translatedTextComponent(
+  "chat.type.text", listOf(
+    textComponent("Ayfri", color = Color.AQUA),
+    scoreComponent("kills", self()),
+  )
+)
 ```
 
 In-game output:<br>

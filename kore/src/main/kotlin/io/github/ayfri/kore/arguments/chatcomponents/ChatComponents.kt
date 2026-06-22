@@ -7,6 +7,7 @@ import io.github.ayfri.kore.utils.nbtList
 import io.github.ayfri.kore.utils.plusAssign
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.encodeCollection
@@ -58,11 +59,15 @@ data class ChatComponents(
 
 	fun toNbtTag(): NbtTag = when (list.size) {
 		0 -> NbtString("")
-		1 -> list[0].also {
-			if (it.containsOnlyText()) return NbtString(it.text)
-		}.toNbtTag()
-
+		1 -> list[0].toNbt()
 		else -> toNbtList()
+	}
+
+	/** Collapses these components into a single [ChatComponent]: the first is the root, the rest become its `extra` siblings. */
+	fun toComponent(): ChatComponent = when (list.size) {
+		0 -> text()
+		1 -> list[0]
+		else -> list[0].apply { extra = ChatComponents(list.drop(1).toMutableList()) }
 	}
 
 	override fun asString() = StringifiedNbt.encodeToString(toNbtTag())
@@ -80,6 +85,14 @@ data class ChatComponents(
 			encodeDefaults = false
 			namingStrategy = JsonNamingStrategy.SnakeCase
 		}
+
+		/* Encodes a list of components as a serialized collection, each via [ChatComponentSerializer]. */
+		private fun Encoder.encodeComponents(descriptor: SerialDescriptor, components: List<ChatComponent>) =
+			encodeCollection(descriptor, components.size) {
+				components.forEachIndexed { i, component ->
+					encodeSerializableElement(descriptor, i, ChatComponentSerializer, component)
+				}
+			}
 
 		private data object ChatComponentSerializer : KSerializer<ChatComponent> {
 			override val descriptor = NbtTag.serializer().descriptor
@@ -143,15 +156,8 @@ data class ChatComponents(
 
 			/* Encode each component, if there's only one, encode it as a single component, if the component only contains a text, encode it as a string. */
 			override fun serialize(encoder: Encoder, value: ChatComponents) {
-				if (value.list.size == 1) {
-					encoder.encodeSerializableValue(ChatComponentSerializer, value.list[0])
-				} else {
-					encoder.encodeCollection(descriptor, value.list.size) {
-						value.list.forEachIndexed { i, component ->
-							encodeSerializableElement(descriptor, i, ChatComponentSerializer, component)
-						}
-					}
-				}
+				if (value.list.size == 1) encoder.encodeSerializableValue(ChatComponentSerializer, value.list[0])
+				else encoder.encodeComponents(descriptor, value.list)
 			}
 		}
 
@@ -182,21 +188,8 @@ data class ChatComponents(
 
 			override fun deserialize(decoder: Decoder) = ChatComponents()
 
-			override fun serialize(encoder: Encoder, value: ChatComponents) = when (encoder) {
-				is NbtEncoder -> encoder.encodeCollection(descriptor, value.list.size) {
-					value.list.forEachIndexed { i, component ->
-						encodeSerializableElement(descriptor, i, ChatComponentSerializer, component)
-					}
-				}
-
-				is JsonEncoder -> encoder.encodeCollection(descriptor, value.list.size) {
-					value.list.forEachIndexed { i, component ->
-						encodeSerializableElement(descriptor, i, ChatComponentSerializer, component)
-					}
-				}
-
-				else -> throw IllegalArgumentException("Unsupported encoder: $encoder")
-			}
+			override fun serialize(encoder: Encoder, value: ChatComponents) =
+				encoder.encodeComponents(descriptor, value.list)
 		}
 	}
 }
