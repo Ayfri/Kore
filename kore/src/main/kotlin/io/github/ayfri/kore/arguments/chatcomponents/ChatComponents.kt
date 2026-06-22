@@ -5,15 +5,18 @@ import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
 import io.github.ayfri.kore.utils.nbtList
 import io.github.ayfri.kore.utils.plusAssign
-import kotlinx.serialization.*
+import io.github.ayfri.kore.utils.serializerFor
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.encodeCollection
 import kotlinx.serialization.json.*
 import net.benwoodworth.knbt.*
-import kotlin.reflect.full.createType
 
 @Serializable(with = ChatComponents.Companion.ChatComponentsSerializer::class)
 data class ChatComponents(
@@ -124,7 +127,7 @@ data class ChatComponents(
 					if (value.containsOnlyText()) encoder.encodeString(value.text)
 					else encoder.encodeSerializableValue(PlainTextComponent.serializer(), value)
 
-				else -> encoder.encodeSerializableValue(serializer(value::class.createType()), value)
+				else -> encoder.encodeSerializableValue(encoder.serializersModule.serializerFor(value), value)
 			}
 		}
 

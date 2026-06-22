@@ -73,7 +73,9 @@ data class WrittenBookContentsComponent(
 	var author: String,
 	var generation: Int,
 	var resolved: Boolean,
-) : Component()
+) : Component() {
+	override fun isChatComponent() = true
+}
 
 fun ComponentsScope.writtenBookContent(
 	pages: List<WrittenPage>,

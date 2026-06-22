@@ -17,6 +17,8 @@ import net.benwoodworth.knbt.StringifiedNbt
 data class LoreComponent(
 	@Serializable(ChatComponents.Companion.ChatComponentsAsListSerializer::class) var list: ChatComponents = ChatComponents(),
 ) : Component() {
+	override fun isChatComponent() = true
+
 	companion object {
 		data object LoreComponentSerializer : InlineSerializer<LoreComponent, ChatComponents>(
 			ToStringSerializer(transform = {

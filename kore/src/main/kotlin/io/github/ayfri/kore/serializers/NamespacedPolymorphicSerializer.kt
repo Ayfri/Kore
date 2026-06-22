@@ -2,6 +2,7 @@ package io.github.ayfri.kore.serializers
 
 import io.github.ayfri.kore.utils.getSerialName
 import io.github.ayfri.kore.utils.nbt
+import io.github.ayfri.kore.utils.serializerFor
 import io.github.ayfri.kore.utils.snakeCase
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.serialDescriptor
@@ -190,7 +191,7 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 		val namespacedOutputClassName = getContentName(value)
 
 		val serializer = encoder.serializersModule.getPolymorphic(kClass, value)
-			?: encoder.serializersModule.serializer(value::class.createType()) as SerializationStrategy<T>
+			?: encoder.serializersModule.serializerFor(value)
 
 		when (encoder) {
 			is JsonEncoder -> serializeJson(namespacedOutputClassName, serializer, encoder, value)

@@ -18,10 +18,7 @@ import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.memberProperties
-import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.full.*
 import kotlin.reflect.jvm.isAccessible
 
 /**
@@ -62,6 +59,16 @@ fun KAnnotatedElement.getSpecifiedSerializer(): KSerializer<Any?>? {
 @Suppress("UNCHECKED_CAST")
 fun KProperty1<*, *>.getSerializer(serializersModule: SerializersModule) =
 	getSpecifiedSerializer() ?: serializersModule.serializer(returnType)
+
+/**
+ * Resolves the runtime serializer for [value]'s concrete class.
+ *
+ * Used to serialize abstract types ([Component][io.github.ayfri.kore.arguments.components.Component],
+ * [ChatComponent][io.github.ayfri.kore.arguments.chatcomponents.ChatComponent]) polymorphically without a
+ * discriminator: each subclass writes its own structure, so the subclass serializer must be looked up by class.
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T : Any> SerializersModule.serializerFor(value: T) = serializer(value::class.createType()) as KSerializer<T>
 
 fun <T : Any> KClass<T>.orderedMemberProperties(): Map<String, KProperty1<T, *>> {
 	val propertiesOrder = java.declaredFields.withIndex().associate { it.value.name to it.index }
