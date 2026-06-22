@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.bindings
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.generated.DEFAULT_PACK_FORMAT
 import io.github.ayfri.kore.pack.*
@@ -364,12 +365,8 @@ fun parsePackMcMeta(rootPath: Path, packMcMetaFile: Path, isZip: Boolean): PackM
 	val json = jsonDecoder.parseToJsonElement(content).jsonObject
 	val packObj = json["pack"]?.jsonObject ?: return null
 
-	val description = packObj["description"]?.let { desc ->
-		// Parse description as plain text for simplicity
-		when (desc) {
-			is JsonPrimitive -> textComponent(desc.content)
-			else -> textComponent(desc.toString())
-		}
+	val description = packObj["description"]?.let {
+		jsonDecoder.decodeFromJsonElement(ChatComponents.serializer(), it)
 	} ?: textComponent("Imported datapack")
 
 	val minFormat = packObj["min_format"]?.let { jsonDecoder.decodeFromJsonElement<PackFormat>(it) } ?: return null

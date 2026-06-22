@@ -1,12 +1,10 @@
 package io.github.ayfri.kore.serializers
 
+import io.github.ayfri.kore.utils.nbtListOf
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.*
 import net.benwoodworth.knbt.*
 
 data object NbtAsJsonSerializer : KSerializer<NbtTag> {
@@ -19,7 +17,32 @@ data object NbtAsJsonSerializer : KSerializer<NbtTag> {
 		}
 	}
 
-	override fun deserialize(decoder: Decoder) = throw UnsupportedOperationException("Nbt Json deserialization is not supported")
+	override fun deserialize(decoder: Decoder) = when (decoder) {
+		is NbtDecoder -> decoder.decodeNbtTag()
+		is JsonDecoder -> decoder.decodeJsonElement().toNbtTag()
+		else -> throw UnsupportedOperationException("NbtAsJsonSerializer can only be deserialized from Json or Nbt.")
+	}
+
+	private fun JsonElement.toNbtTag(): NbtTag = when (this) {
+		is JsonObject -> buildNbtCompound { this@toNbtTag.forEach { (key, value) -> put(key, value.toNbtTag()) } }
+		is JsonArray -> map { it.toNbtTag() }.let { elements ->
+			if (elements.all { it is NbtCompound }) nbtListOf(elements.filterIsInstance<NbtCompound>())
+			else nbtListOf(elements.map { (it as? NbtString)?.value ?: it.toString() })
+		}
+
+		is JsonPrimitive -> when {
+			isString -> NbtString(content)
+			booleanOrNull != null -> NbtByte((if (boolean) 1 else 0).toByte())
+			longOrNull != null -> long.let {
+				if (it in Int.MIN_VALUE.toLong()..Int.MAX_VALUE.toLong()) NbtInt(it.toInt()) else NbtLong(
+					it
+				)
+			}
+
+			doubleOrNull != null -> NbtDouble(double)
+			else -> NbtString(content)
+		}
+	}
 
 	private fun NbtTag.toJsonElement(): JsonElement = when (this) {
 		is NbtCompound -> JsonObject(mapValues { it.value.toJsonElement() })
