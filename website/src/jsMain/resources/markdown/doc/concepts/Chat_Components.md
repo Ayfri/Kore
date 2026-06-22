@@ -287,3 +287,20 @@ In-game output:<br>
 These components respect the same formatting as any other chat component, so you can still chain them, color them, or attach hover and click
 behaviors.
 
+## Parsing existing components
+
+Chat components round-trip: besides building them in Kotlin, you can decode vanilla JSON (or SNBT) back into
+`ChatComponents` using `ChatComponents.serializer()`. Every component type is supported (text, translatable, score,
+selector, keybind, nbt, object), along with nested `extra`, styling, and hover/click events. A bare string, a single
+object, and an array of components are all accepted.
+
+```kotlin
+val component = Json.decodeFromString(
+	ChatComponents.serializer(),
+	"""{"type": "text", "text": "Hello", "color": "red"}""",
+)
+```
+
+This is what the [datapack importer](/docs/advanced/bindings) uses to read components (such as a `pack.mcmeta`
+description) from existing packs.
+

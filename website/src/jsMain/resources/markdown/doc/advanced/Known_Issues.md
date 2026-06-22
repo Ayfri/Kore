@@ -89,12 +89,22 @@ Notable constraints from Kore’s own docs and README:
 
 **Category:** Kore limitation
 
-Many serializers are **write-only** for Kore’s use case: they **encode** what you build in Kotlin and **refuse to decode
-** from arbitrary vanilla JSON/SNBT. Examples in the codebase include **`ComponentsSerializer`** ("deserialization is
-not supported"), **`NbtAsJsonSerializer`**, book **page** serializers, and **chat component** decode paths that throw.
+Decoding support varies by serializer:
 
-**Workaround:** Treat your Kotlin project as the **source of truth**; inspect **generated files** under `path` / zip.
-For contributors extending serializers, see [Arguments](/docs/contributing/arguments) and the relevant feature docs.
+- **Chat components** decode fully into their typed forms via `ChatComponents.serializer()` (text, translatable, score,
+  selector, keybind, nbt, object), including nested `extra`, styling, and hover/click events. **`NbtAsJsonSerializer`**
+  decodes JSON/NBT into an `NbtTag`.
+- **Item components** (`ComponentsSerializer`) decode **generically**: each entry becomes a raw `CustomComponent` keyed
+  by its component name. This round-trips, but the values stay opaque instead of becoming their typed counterparts (such
+  as `DamageComponent`), because `Component` is not a sealed hierarchy and has no name to serializer registry to
+  dispatch
+  on. Typed item-component decoding would require that registry (ideally generated).
+- Book **page** serializers stay **write-only**: they encode what you build in Kotlin but do not decode vanilla
+  JSON/SNBT.
+
+**Workaround:** For the write-only and generic cases, treat your Kotlin project as the **source of truth** and inspect
+**generated files** under `path` / zip. For contributors extending serializers, see
+[Arguments](/docs/contributing/arguments) and the relevant feature docs.
 
 ### Custom components and `@SerialName`
 
