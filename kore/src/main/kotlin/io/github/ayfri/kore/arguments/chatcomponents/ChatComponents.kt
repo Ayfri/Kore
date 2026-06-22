@@ -184,15 +184,5 @@ data class ChatComponents(
 				else -> throw IllegalArgumentException("Unsupported encoder: $encoder")
 			}
 		}
-
-		/** Serializes a list of Chat Components as a list instead of inlining the first element if possible. **/
-		data object ChatComponentsAsListSerializer : KSerializer<ChatComponents> {
-			override val descriptor = ListSerializer(ChatComponent.serializer()).descriptor
-
-			override fun deserialize(decoder: Decoder) = ChatComponents()
-
-			override fun serialize(encoder: Encoder, value: ChatComponents) =
-				encoder.encodeComponents(descriptor, value.list)
-		}
 	}
 }
