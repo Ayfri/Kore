@@ -1,9 +1,6 @@
 package io.github.ayfri.kore.serializers
 
-import io.github.ayfri.kore.utils.getSerialName
-import io.github.ayfri.kore.utils.nbt
-import io.github.ayfri.kore.utils.serializerFor
-import io.github.ayfri.kore.utils.snakeCase
+import io.github.ayfri.kore.utils.*
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.serialDescriptor
 import kotlinx.serialization.encoding.Decoder
@@ -58,10 +55,7 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 					?: decoder.json.serializersModule.serializer(subclass.createType()) as DeserializationStrategy<T>
 
 				val contentJson = when (moveIntoProperty) {
-					null -> buildJsonObject {
-						jsonObject.filterKeys { it != outputName }.forEach(::put)
-					}
-
+					null -> buildJsonObject { copyAllFrom(jsonObject, outputName) }
 					else -> jsonObject[moveIntoProperty]?.jsonObject ?: buildJsonObject {}
 				}
 
@@ -134,7 +128,7 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 		val finalJson = when (moveIntoProperty) {
 			null -> buildJsonObject {
 				if (!skipOutputName) put(outputName, outputClassName)
-				valueJson.jsonObject.filterKeys { it != outputName }.forEach(::put)
+				copyAllFrom(valueJson.jsonObject, outputName)
 			}
 
 			else -> buildJsonObject {
@@ -143,7 +137,7 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 				when (valueJson) {
 					is JsonObject if skipEmptyOutput && valueJson.isEmpty() -> Unit
 					is JsonObject -> putJsonObject(moveIntoProperty) {
-						valueJson.jsonObject.filterKeys { it != outputName }.forEach(::put)
+						copyAllFrom(valueJson.jsonObject, outputName)
 					}
 
 					else -> put(moveIntoProperty, valueJson)

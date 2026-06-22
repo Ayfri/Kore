@@ -10,7 +10,6 @@ open class LowercaseSerializer<T : Enum<T>>(
 ) : EnumStringSerializer<T>(
 	values,
 	encode = { name.lowercase() },
-	decode = { str -> values.first { it.name.lowercase() == str } },
 ) {
 	override fun serialize(encoder: Encoder, value: T) =
 		encoder.encodeString(transform?.invoke(value, encoder) ?: value.name.lowercase())
