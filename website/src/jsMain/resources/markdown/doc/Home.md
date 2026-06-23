@@ -144,6 +144,7 @@ fun main() {
 - [Scoreboards](/docs/oop/scoreboards) - objective and score operations.
 - [Items](/docs/oop/items) - item creation and spawning.
 - [Events](/docs/oop/events) - advancement-based event system.
+- [World Events](/docs/oop/world-events) - tick, weather, day/night, and interval events from the world.
 - [Cooldowns](/docs/oop/cooldowns) - scoreboard-based cooldowns.
 - [Boss Bars](/docs/oop/boss-bars) - boss bar management.
 - [Timers](/docs/oop/timers) - scoreboard-based timers with optional boss bar.

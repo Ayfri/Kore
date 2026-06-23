@@ -120,6 +120,7 @@ runs all death handlers then removes the item.
 
 ## See also
 
+- [World Events](/docs/oop/world-events) - The world-side counterpart: tick, weather, day/night, and interval triggers.
 - [Cooldowns](/docs/oop/cooldowns) - Gate event-driven abilities or interactions so players cannot spam them.
 - [Entities & Players](/docs/oop/entities-and-players) - Build the selectors and entity handles that receive these event
   helpers.
