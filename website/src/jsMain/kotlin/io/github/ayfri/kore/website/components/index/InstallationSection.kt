@@ -136,7 +136,7 @@ object InstallationSectionStyle : StyleSheet() {
 			fontWeight(FontWeight.Bold)
 		}
 
-		mdMax(self) {
+		lgMax(self) {
 			maxWidth(92.percent)
 			padding(2.cssRem, 2.cssRem)
 			"h2" style {
@@ -160,7 +160,7 @@ object InstallationSectionStyle : StyleSheet() {
 		gap(2.4.cssRem)
 		minWidth(0.px)
 
-		mdMax(self) {
+		lgMax(self) {
 			gridTemplateColumns("1fr")
 			textAlign(TextAlign.Center)
 		}
@@ -178,7 +178,7 @@ object InstallationSectionStyle : StyleSheet() {
 		fontSize(1.1.cssRem)
 		maxWidth(34.cssRem)
 
-		mdMax(self) {
+		lgMax(self) {
 			maxWidth(100.percent)
 			marginX(auto)
 		}
@@ -191,7 +191,7 @@ object InstallationSectionStyle : StyleSheet() {
 		flexWrap(FlexWrap.Wrap)
 		justifyContent(JustifyContent.FlexStart)
 
-		mdMax(self) {
+		lgMax(self) {
 			justifyContent(JustifyContent.Center)
 		}
 
