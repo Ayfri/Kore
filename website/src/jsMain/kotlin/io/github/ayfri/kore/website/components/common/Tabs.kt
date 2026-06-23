@@ -3,10 +3,7 @@ package io.github.ayfri.kore.website.components.common
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.compose.css.functions.colorMix
-import io.github.ayfri.kore.website.utils.mdMax
-import io.github.ayfri.kore.website.utils.paddingX
-import io.github.ayfri.kore.website.utils.transition
-import io.github.ayfri.kore.website.utils.xsMax
+import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.Button
@@ -89,9 +86,13 @@ object TabsStyle : StyleSheet() {
 		padding(0.35.cssRem)
 		gap(0.35.cssRem)
 
-		mdMax(self) {
+		lgMax(self) {
 			display(DisplayStyle.Grid)
 			gridTemplateColumns("repeat(auto-fit, minmax(0, 1fr))")
+		}
+
+		smMax(self) {
+			gridTemplateColumns("repeat(2, 1fr)")
 		}
 
 		xsMax(self) {
@@ -130,8 +131,14 @@ object TabsStyle : StyleSheet() {
 			color(Color("var(--landing-text)"))
 		}
 
-		mdMax(self) {
+		lgMax(self) {
+			fontSize(0.8.cssRem)
 			paddingX(0.55.cssRem)
+		}
+
+		smMax(self) {
+			fontSize(0.75.cssRem)
+			paddingX(0.4.cssRem)
 		}
 	}
 
