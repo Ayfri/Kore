@@ -366,6 +366,10 @@ object HeroSectionStyle : StyleSheet() {
 			timingFunction(AnimationTimingFunction.EaseOut)
 		}
 
+		lgMax(self) {
+			justifyContent(JustifyContent.Center)
+		}
+
 		mdMax(self) {
 			fontSize(2.35.cssRem)
 			flexDirection(FlexDirection.Column)
