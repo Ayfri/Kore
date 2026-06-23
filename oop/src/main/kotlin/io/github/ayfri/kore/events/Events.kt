@@ -120,66 +120,19 @@ internal fun DataPack.ensureDeathTriggerSetup(ns: String) {
 	}
 }
 
-private fun DataPack.hasAdvancement(fileName: String) = advancements.any { it.fileName == fileName }
-
-context(fn: Function)
-fun Player.onBlockUse(block: Function.() -> Unit) {
-	fn.datapack.advancementEvent(fn.namespace, OopConstants.blockUseEvent, block.hashCode(), block) {
-		anyBlockUse("any_block_use")
-	}
-}
-
-context(fn: Function)
-fun Player.onChangeDimension(block: Function.() -> Unit) {
-	fn.datapack.advancementEvent(fn.namespace, OopConstants.changeDimensionEvent, block.hashCode(), block) {
-		changedDimension("changed_dimension")
-	}
-}
-
-context(fn: Function)
-fun Player.onConsumeItem(block: Function.() -> Unit) {
-	fn.datapack.advancementEvent(fn.namespace, OopConstants.consumeItemEvent, block.hashCode(), block) {
-		consumeItem("consume_item")
-	}
-}
-
-context(fn: Function)
-fun Player.onConsumeItem(item: ItemArgument, block: Function.() -> Unit) {
-	fn.datapack.advancementEventForItem(
-		fn.namespace,
-		OopConstants.consumeItemEvent,
-		item.name.lowercase(),
-		block.hashCode(),
-		block
-	) {
-		consumeItem("consume_item", item)
-	}
-}
-
-context(fn: Function)
-fun Player.onRecipeCrafted(recipe: RecipeArgument, block: Function.() -> Unit) {
-	fn.datapack.advancementEvent(fn.namespace, OopConstants.recipeCraftedEvent, block.hashCode(), block) {
-		recipeCrafted("recipe_crafted", recipe)
-	}
-}
-
-context(fn: Function)
-fun Entity.onDeath(block: Function.() -> Unit) {
-	val dp = fn.datapack
-	val ns = fn.namespace
-
-	dp.ensureDeathTriggerSetup(ns)
-	dp.addHandler(
+private fun DataPack.registerDeathEvent(entity: Entity, ns: String, hashCode: Int, block: Function.() -> Unit) {
+	ensureDeathTriggerSetup(ns)
+	addHandler(
 		OopConstants.deathHandlersTag,
 		ns,
-		OopConstants.eventHandlerName(OopConstants.deathEvent, block.hashCode()),
+		OopConstants.eventHandlerName(OopConstants.deathEvent, hashCode),
 		block
 	)
 
-	val entityTypeName = selector.type?.name?.lowercase() ?: "generic"
+	val entityTypeName = entity.selector.type?.name?.lowercase() ?: "generic"
 	val lootTableName = OopConstants.deathTriggerLootTable(entityTypeName)
-	if (dp.lootTables.none { it.fileName == lootTableName }) {
-		dp.lootTable(lootTableName) {
+	if (lootTables.none { it.fileName == lootTableName }) {
+		lootTable(lootTableName) {
 			pool {
 				val itemEntry = Item(
 					name = Items.STRUCTURE_VOID,
@@ -199,106 +152,253 @@ fun Entity.onDeath(block: Function.() -> Unit) {
 	}
 }
 
-context(fn: Function)
-fun Player.onEffectsChanged(block: Function.() -> Unit) {
-	fn.datapack.advancementEvent(fn.namespace, OopConstants.effectsChangedEvent, block.hashCode(), block) {
+private fun DataPack.hasAdvancement(fileName: String) = advancements.any { it.fileName == fileName }
+
+context(dp: DataPack)
+fun Player.onBlockUse(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.blockUseEvent, block.hashCode(), { block(self) }) {
+		anyBlockUse("any_block_use")
+	}
+}
+
+context(dp: DataPack)
+fun Player.onBredAnimals(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.bredAnimalsEvent, block.hashCode(), { block(self) }) {
+		bredAnimals("bred_animals")
+	}
+}
+
+context(dp: DataPack)
+fun Player.onBrewedPotion(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.brewedPotionEvent, block.hashCode(), { block(self) }) {
+		brewedPotion("brewed_potion")
+	}
+}
+
+context(dp: DataPack)
+fun Player.onChangeDimension(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.changeDimensionEvent, block.hashCode(), { block(self) }) {
+		changedDimension("changed_dimension")
+	}
+}
+
+context(dp: DataPack)
+fun Player.onConsumeItem(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.consumeItemEvent, block.hashCode(), { block(self) }) {
+		consumeItem("consume_item")
+	}
+}
+
+context(dp: DataPack)
+fun Player.onConsumeItem(item: ItemArgument, block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEventForItem(
+		dp.name,
+		OopConstants.consumeItemEvent,
+		item.name.lowercase(),
+		block.hashCode(),
+		{ block(self) }) {
+		consumeItem("consume_item", item)
+	}
+}
+
+context(dp: DataPack)
+fun Player.onEffectsChanged(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.effectsChangedEvent, block.hashCode(), { block(self) }) {
 		effectsChanged("effects_changed")
 	}
 }
 
-context(fn: Function)
-fun Player.onEnchantItem(block: Function.() -> Unit) {
-	fn.datapack.advancementEvent(fn.namespace, OopConstants.enchantItemEvent, block.hashCode(), block) {
+context(dp: DataPack)
+fun Player.onEnchantItem(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.enchantItemEvent, block.hashCode(), { block(self) }) {
 		enchantedItem("enchanted_item")
 	}
 }
 
-context(fn: Function)
-fun Player.onEntityHurtPlayer(block: Function.() -> Unit) {
-	fn.datapack.advancementEvent(fn.namespace, OopConstants.entityHurtPlayerEvent, block.hashCode(), block) {
+context(dp: DataPack)
+fun Player.onEntityHurtPlayer(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.entityHurtPlayerEvent, block.hashCode(), { block(self) }) {
 		entityHurtPlayer("entity_hurt_player")
 	}
 }
 
-context(fn: Function)
-fun Player.onFallFromHeight(block: Function.() -> Unit) {
-	fn.datapack.advancementEvent(fn.namespace, OopConstants.fallFromHeightEvent, block.hashCode(), block) {
+context(dp: DataPack)
+fun Player.onFallFromHeight(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.fallFromHeightEvent, block.hashCode(), { block(self) }) {
 		fallFromHeight("fall_from_height")
 	}
 }
 
-context(fn: Function)
-fun Player.onHurtEntity(block: Function.() -> Unit) {
-	fn.datapack.advancementEvent(fn.namespace, OopConstants.hurtEntityEvent, block.hashCode(), block) {
+context(dp: DataPack)
+fun Player.onFilledBucket(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.filledBucketEvent, block.hashCode(), { block(self) }) {
+		filledBucket("filled_bucket")
+	}
+}
+
+context(dp: DataPack)
+fun Player.onFishingRodHooked(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.fishingRodHookedEvent, block.hashCode(), { block(self) }) {
+		fishingRodHooked("fishing_rod_hooked")
+	}
+}
+
+context(dp: DataPack)
+fun Player.onHurtEntity(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.hurtEntityEvent, block.hashCode(), { block(self) }) {
 		playerHurtEntity("player_hurt_entity")
 	}
 }
 
-context(fn: Function)
-fun Player.onInventoryChange(block: Function.() -> Unit) {
-	fn.datapack.advancementEvent(fn.namespace, OopConstants.inventoryChangeEvent, block.hashCode(), block) {
+context(dp: DataPack)
+fun Player.onInteractWithEntity(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.interactWithEntityEvent, block.hashCode(), { block(self) }) {
+		playerInteractedWithEntity("player_interacted_with_entity")
+	}
+}
+
+context(dp: DataPack)
+fun Player.onInventoryChange(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.inventoryChangeEvent, block.hashCode(), { block(self) }) {
 		inventoryChanged("inventory_changed")
 	}
 }
 
-context(fn: Function)
-fun Player.onItemUsedOnBlock(block: Function.() -> Unit) {
-	fn.datapack.advancementEvent(fn.namespace, OopConstants.itemUsedOnBlockEvent, block.hashCode(), block) {
+context(dp: DataPack)
+fun Player.onItemUsedOnBlock(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.itemUsedOnBlockEvent, block.hashCode(), { block(self) }) {
 		itemUsedOnBlock("item_used_on_block")
 	}
 }
 
-context(fn: Function)
-fun Player.onKill(block: Function.() -> Unit) {
-	fn.datapack.advancementEvent(fn.namespace, OopConstants.killEvent, block.hashCode(), block) {
+context(dp: DataPack)
+fun Player.onKill(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.killEvent, block.hashCode(), { block(self) }) {
 		playerKilledEntity("kill")
 	}
 }
 
-context(fn: Function)
-fun Player.onPlaceBlock(block: Function.() -> Unit) {
-	fn.datapack.advancementEvent(fn.namespace, OopConstants.placeBlockEvent, block.hashCode(), block) {
+context(dp: DataPack)
+fun Player.onKilledByArrow(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.killedByArrowEvent, block.hashCode(), { block(self) }) {
+		killedByArrow("killed_by_arrow")
+	}
+}
+
+context(dp: DataPack)
+fun Player.onPlaceBlock(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.placeBlockEvent, block.hashCode(), { block(self) }) {
 		placedBlock("placed_block")
 	}
 }
 
-context(fn: Function)
-fun Player.onRightClick(item: ItemArgument, block: Function.() -> Unit) {
-	fn.datapack.advancementEventForItem(
-		fn.namespace,
+context(dp: DataPack)
+fun Player.onRecipeCrafted(recipe: RecipeArgument, block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.recipeCraftedEvent, block.hashCode(), { block(self) }) {
+		recipeCrafted("recipe_crafted", recipe)
+	}
+}
+
+context(dp: DataPack)
+fun Player.onRightClick(item: ItemArgument, block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEventForItem(
+		dp.name,
 		OopConstants.rightClickEvent,
 		item.name.lowercase(),
 		block.hashCode(),
-		block
-	) {
+		{ block(self) }) {
 		usingItem("use_item") { this.item = itemStack(item) }
 	}
 }
 
-context(fn: Function)
-fun Player.onSleptInBed(block: Function.() -> Unit) {
-	fn.datapack.advancementEvent(fn.namespace, OopConstants.sleptInBedEvent, block.hashCode(), block) {
+context(dp: DataPack)
+fun Player.onShotCrossbow(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.shotCrossbowEvent, block.hashCode(), { block(self) }) {
+		shotCrossbow("shot_crossbow")
+	}
+}
+
+context(dp: DataPack)
+fun Player.onSleptInBed(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.sleptInBedEvent, block.hashCode(), { block(self) }) {
 		sleptInBed("slept_in_bed")
 	}
 }
 
-context(fn: Function)
-fun Player.onStartRiding(block: Function.() -> Unit) {
-	fn.datapack.advancementEvent(fn.namespace, OopConstants.startRidingEvent, block.hashCode(), block) {
+context(dp: DataPack)
+fun Player.onStartRiding(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.startRidingEvent, block.hashCode(), { block(self) }) {
 		startedRiding("started_riding")
 	}
 }
 
-context(fn: Function)
-fun Player.onTameAnimal(block: Function.() -> Unit) {
-	fn.datapack.advancementEvent(fn.namespace, OopConstants.tameAnimalEvent, block.hashCode(), block) {
+context(dp: DataPack)
+fun Player.onTameAnimal(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.tameAnimalEvent, block.hashCode(), { block(self) }) {
 		tameAnimal("tame_animal")
 	}
 }
 
-context(fn: Function)
-fun Player.onTargetHit(block: Function.() -> Unit) {
-	fn.datapack.advancementEvent(fn.namespace, OopConstants.targetHitEvent, block.hashCode(), block) {
+context(dp: DataPack)
+fun Player.onTargetHit(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.targetHitEvent, block.hashCode(), { block(self) }) {
 		targetHit("target_hit")
 	}
 }
+
+context(dp: DataPack)
+fun Player.onTick(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.tickEvent, block.hashCode(), { block(self) }) {
+		tick("tick")
+	}
+}
+
+context(dp: DataPack)
+fun Player.onUsedEnderEye(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.usedEnderEyeEvent, block.hashCode(), { block(self) }) {
+		usedEnderEye("used_ender_eye")
+	}
+}
+
+context(dp: DataPack)
+fun Player.onUsedTotem(block: Function.(Player) -> Unit) {
+	val self = this
+	dp.advancementEvent(dp.name, OopConstants.usedTotemEvent, block.hashCode(), { block(self) }) {
+		usedTotem("used_totem")
+	}
+}
+
+context(dp: DataPack)
+fun Entity.onDeath(block: Function.(Entity) -> Unit) {
+	val self = this
+	dp.registerDeathEvent(this, dp.name, block.hashCode()) { block(self) }
+}
+
