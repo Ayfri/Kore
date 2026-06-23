@@ -40,7 +40,7 @@ import io.github.ayfri.kore.functions.function as dpFunction
 
 private val initializedDeathDispatch = mutableSetOf<String>()
 
-private fun DataPack.addHandler(
+internal fun DataPack.addHandler(
 	tagName: String,
 	ns: String,
 	handlerName: String,
