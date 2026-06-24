@@ -5,7 +5,7 @@ nav-title: GitHub Actions Publishing
 description: Automatically publish your Kore datapacks using GitHub Actions with mc-publish.
 keywords: minecraft, datapack, kore, github actions, publishing, automation, ci/cd
 date-created: 2025-09-30
-date-modified: 2025-09-30
+date-modified: 2026-06-24
 routeOverride: /docs/advanced/github-actions-publishing
 ---
 
@@ -58,7 +58,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Set up JDK 21
+      - name: Set up JDK 25
         uses: actions/setup-java@v5
         with:
           cache: gradle
@@ -71,8 +71,8 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build datapack
-        run: ./gradlew build
+      - name: Generate datapack
+        run: ./gradlew run
 
       - name: Publish to platforms
         uses: Kir-Antipov/mc-publish@v3.3
@@ -118,9 +118,8 @@ For more control over the publishing process, you can customize various aspects:
 
     # Supported game versions
     game-versions: |
-      1.21
-      1.21.5
-      1.21.6
+		1.21.10
+		1.21.11
 
     # Mod loaders (if exporting to Jars)
     loaders: |
@@ -141,6 +140,74 @@ For more control over the publishing process, you can customize various aspects:
 ```
 
 ## Kore-Specific Configuration
+
+Kore generates your datapack from Kotlin code, so the workflow needs a build step that runs your `main()` and produces a
+zip. Make sure your
+entry point calls `datapack.generateZip()` (Kore writes the archive to the `out/` directory by default), then point
+`mc-publish`'s `files` input
+at it:
+
+```yaml
+files: out/*.zip
+```
+
+Kore projects come in two flavours depending on the build tool you started from. Use the matching build step.
+
+### Gradle (Kore-Template)
+
+The default [Kore-Template](https://github.com/Ayfri/Kore-Template) is a Gradle project, so the build step uses the
+Gradle wrapper:
+
+```yaml
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5
+        with:
+			distribution: 'temurin'
+	        java-version: 25
+
+      - name: Ensure Gradle is executable
+        run: chmod +x gradlew
+
+      - name: Generate datapack
+        run: ./gradlew run
+```
+
+### Kotlin Toolchain (formerly Amper)
+
+Projects configured with the [Kotlin Toolchain](https://kotlinlang.org/docs/multiplatform/amper.html) (the
+`module.yaml` / `project.yaml`
+setup, previously called Amper) ship a `kotlin` wrapper script instead of `gradlew`. The wrapper downloads the toolchain
+and a JDK on first run,
+so you don't need a separate `setup-java` step:
+
+```yaml
+      - name: Make the Kotlin wrapper executable
+        run: chmod +x kotlin
+
+      - name: Generate datapack
+        env:
+			CI: "true"
+        run: ./kotlin run
+```
+
+For a multi-module project (several datapacks in one repository), target a specific module with `-m`:
+
+```yaml
+        run: ./kotlin run -m my-datapack
+```
+
+Gate `generateZip()` behind an environment variable so local runs still emit loose files while CI produces the
+publishable zip:
+
+```kotlin
+val isCI get() = System.getenv("CI") != null
+
+fun main() {
+	dataPack("my_datapack") {
+		// ... your content ...
+	}.run { if (isCI) generateZip() else generate() }
+}
+```
 
 ## Workflow Triggers
 
@@ -307,7 +374,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Set up JDK 21
+      - name: Set up JDK 25
         uses: actions/setup-java@v5
         with:
           cache: gradle
@@ -330,12 +397,11 @@ jobs:
           version: ${{ github.ref_name }}
           version-type: release
 
-          files: ${{ github.event.repository.name }}-${{ github.ref_name }}.zip
+          files: out/*.zip
 
           game-versions: |
-            1.21
-            1.21.5
-            1.12.6
+			  1.21.10
+			  1.21.11
 
           modrinth-id: YOUR_MODRINTH_ID
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
