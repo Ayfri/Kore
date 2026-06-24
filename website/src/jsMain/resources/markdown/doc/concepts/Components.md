@@ -30,20 +30,17 @@ Let's dive into creating custom items with various components using Kore. Below 
 Attribute modifiers allow you to alter the attributes of an item, such as increasing damage or changing the scale. Here's how to define a stone sword with an attribute modifier using Kore:
 
 ```kotlin
-import io.github.ayfri.kore.arguments.types.literals.randomUUID
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.Attributes
 
-val uuid = randomUUID()
 val attributeModifiersTest = Items.STONE_SWORD {
 	attributeModifiers {
 		modifier(
 			type = Attributes.SCALE,
 			amount = 1.0,
-			name = "Big!",
+          name = "big",
 			operation = AttributeModifierOperation.ADD_VALUE,
-			uuid = uuid,
 		)
 	}
 }
@@ -158,7 +155,7 @@ recipes {
 
 		result(Items.ENCHANTED_GOLDEN_APPLE {
 			food(
-				nutrition = 10,
+              nutrition = 10f,
 				saturation = 5.0f,
 			) {
 				effect(
@@ -417,6 +414,8 @@ The full list of variant helpers currently included in Kore is:
 
 - `axolotlVariant(..)`
 - `catCollar(..)` / `catVariant(..)`
+- `chickenVariant(..)`
+- `cowVariant(..)`
 - `foxVariant(..)`
 - `frogVariant(..)`
 - `horseVariant(..)`
@@ -431,7 +430,8 @@ The full list of variant helpers currently included in Kore is:
 - `shulkerColor(..)`
 - `tropicalFishBaseColor(..)` / `tropicalFishPattern(..)` / `tropicalFishPatternColor(..)`
 - `villagerVariant(..)`
-- `wolfCollar(..)` / `wolfVariant(..)`
+- `wolfCollar(..)` / `wolfSoundVariant(..)` / `wolfVariant(..)`
+- `zombieNautilusVariant(..)`
 
 They follow the exact same naming and DSL pattern you already know:
 
