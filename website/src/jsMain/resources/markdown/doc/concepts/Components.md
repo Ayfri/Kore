@@ -254,7 +254,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `itemName(..)`                       | Sets the item's base name (different from custom name; not italicized).                                  |
 | `jukeboxPlayable(..)`                | Allows the item to be played in a jukebox with a specified music disc track.                             |
 | `kineticWeapon(..) { .. }`           | Configures kinetic weapon properties for mounted combat (damage multiplier, conditions).                 |
-| `lock(..)`                           | Requires a matching item predicate (key) to open this container.                                         |
+| `lock(..)`                           | Locks a container so only players holding a matching item (item predicate) can open it.                  |
 | `lodestoneTarget(..)`                | Makes a compass point to specific coordinates in a dimension.                                            |
 | `lore(..)`                           | Adds tooltip lines below the item name for descriptions or flavor text.                                  |
 | `mapColor(..)`                       | Sets the color tint for filled map item textures.                                                        |

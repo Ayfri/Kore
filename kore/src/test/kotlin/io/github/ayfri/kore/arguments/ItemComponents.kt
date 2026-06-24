@@ -402,9 +402,25 @@ fun itemComponentsTests() {
 	jukeboxPlayableTest.asString() assertsIs """minecraft:jukebox[jukebox_playable="minecraft:otherside"]"""
 
 	val lockTest = stoneSword {
-		lock("test")
+		lock(Items.DIAMOND)
 	}
-	lockTest.asString() assertsIs """minecraft:stone_sword[lock="test"]"""
+	lockTest.asString() assertsIs """minecraft:stone_sword[lock={items:"minecraft:diamond"}]"""
+
+	stoneSword {
+		lock(Items.DIAMOND, Items.DIRT)
+	}.asString() assertsIs """minecraft:stone_sword[lock={items:["minecraft:diamond","minecraft:dirt"]}]"""
+
+	stoneSword {
+		lock(Items.DIAMOND) { count = 1 }
+	}.asString() assertsIs """minecraft:stone_sword[lock={items:"minecraft:diamond",count:1}]"""
+
+	stoneSword {
+		lock {
+			components {
+				itemModel(Items.DIAMOND)
+			}
+		}
+	}.asString() assertsIs """minecraft:stone_sword[lock={components:{item_model:"minecraft:diamond"}}]"""
 
 	val lodeStoneTargetTest = Items.LODESTONE {
 		lodestoneTarget(10, 10, 10, Dimensions.OVERWORLD)
