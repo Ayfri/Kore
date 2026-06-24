@@ -8,6 +8,7 @@ import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/** A mining rule that applies a speed multiplier and/or correct-drops flag to specific blocks. */
 @Serializable
 data class ToolRule(
 	var blocks: InlinableList<BlockOrTagArgument>,
@@ -16,6 +17,12 @@ data class ToolRule(
 	var correctForDrops: Boolean? = null,
 )
 
+/**
+ * Represents the `minecraft:tool` item component, which defines mining speed rules and damage per block broken.
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#tool
+ */
 @Serializable
 data class ToolComponent(
 	var rules: List<ToolRule>,
@@ -27,6 +34,7 @@ data class ToolComponent(
 	var canDestroyBlocksInCreative: Boolean? = null,
 ) : Component()
 
+/** Defines mining speed rules and damage per block broken for this tool. */
 fun ComponentsScope.tool(
 	rules: List<ToolRule> = emptyList(),
 	defaultMiningSpeed: Float? = null,

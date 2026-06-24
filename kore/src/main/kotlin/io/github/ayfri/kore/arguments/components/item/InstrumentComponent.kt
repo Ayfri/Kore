@@ -7,6 +7,14 @@ import io.github.ayfri.kore.generated.arguments.types.InstrumentArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents the `minecraft:instrument` item component, which specifies the goat horn sound variant when the item is used.
+ *
+ * Serializes as the instrument id directly (inlined).
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#instrument
+ */
 @Serializable(with = InstrumentComponent.Companion.InstrumentComponentSerializer::class)
 data class InstrumentComponent(var instrument: InstrumentArgument) : Component() {
 	companion object {
@@ -14,6 +22,7 @@ data class InstrumentComponent(var instrument: InstrumentArgument) : Component()
 	}
 }
 
+/** Specifies the goat horn sound variant when the item is used. */
 fun ComponentsScope.instrument(instrument: InstrumentArgument) = apply {
 	this[ItemComponentTypes.INSTRUMENT] = InstrumentComponent(instrument)
 }

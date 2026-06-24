@@ -10,6 +10,12 @@ import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents the `minecraft:blocks_attacks` item component, which configures how the item blocks incoming attacks when used (like a shield).
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#blocks_attacks
+ */
 @Serializable
 data class BlocksAttacks(
 	@SerialName("block_delay_seconds")
@@ -28,6 +34,7 @@ data class BlocksAttacks(
 	var itemDamage: ItemDamage? = null,
 ) : Component()
 
+/** A damage reduction rule applied while blocking, optionally limited to certain damage [type]s and blocking angle. */
 @Serializable
 data class DamageReduction(
 	var base: Float,
@@ -37,6 +44,7 @@ data class DamageReduction(
 	var type: InlinableList<DamageTypeOrTagArgument>? = null,
 )
 
+/** How much durability the blocking item loses based on the damage taken. */
 @Serializable
 data class ItemDamage(
 	var base: Float,
@@ -44,6 +52,7 @@ data class ItemDamage(
 	var threshold: Float,
 )
 
+/** Configures how the item blocks incoming attacks when used (like a shield). */
 fun ComponentsScope.blocksAttacks(block: BlocksAttacks.() -> Unit = {}) = apply {
 	this[ItemComponentTypes.BLOCKS_ATTACKS] = BlocksAttacks().apply(block)
 }

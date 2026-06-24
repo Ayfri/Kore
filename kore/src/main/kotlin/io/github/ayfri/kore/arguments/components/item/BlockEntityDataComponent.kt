@@ -21,6 +21,14 @@ import net.benwoodworth.knbt.NbtCompoundBuilder
 import net.benwoodworth.knbt.NbtEncoder
 import net.benwoodworth.knbt.NbtString
 
+/**
+ * Represents the `minecraft:block_entity_data` item component, which attaches custom NBT data to a block entity when the item is placed.
+ *
+ * The `id` must match the block entity type or the data is dropped on placement.
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#block_entity_data
+ */
 @Serializable(with = BlockEntityDataComponent.Companion.BlockEntityDataComponentSerializer::class)
 data class BlockEntityDataComponent(
 	var id: BlockArgument,
@@ -61,6 +69,7 @@ data class BlockEntityDataComponent(
 	}
 }
 
+/** Attaches custom NBT data to a block entity when the item is placed. */
 fun ComponentsScope.blockEntityData(id: BlockArgument, data: NbtCompound? = null) = apply {
 	this[ItemComponentTypes.BLOCK_ENTITY_DATA] = BlockEntityDataComponent(id, data)
 }

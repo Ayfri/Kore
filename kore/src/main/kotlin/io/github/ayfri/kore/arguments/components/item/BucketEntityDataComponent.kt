@@ -9,6 +9,12 @@ import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtCompoundBuilder
 
+/**
+ * Represents the `minecraft:bucket_entity_data` item component, which stores entity data for mobs captured in buckets (e.g., fish, axolotl).
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#bucket_entity_data
+ */
 @Serializable(with = BucketEntityDataComponent.Companion.BucketEntityDataComponentSerializer::class)
 data class BucketEntityDataComponent(var data: NbtCompound) : Component() {
 	companion object {
@@ -16,6 +22,7 @@ data class BucketEntityDataComponent(var data: NbtCompound) : Component() {
 	}
 }
 
+/** Stores entity data for mobs captured in buckets (e.g., fish, axolotl). */
 fun ComponentsScope.bucketEntityData(data: NbtCompound) = apply {
 	this[ItemComponentTypes.BUCKET_ENTITY_DATA] = BucketEntityDataComponent(data)
 }

@@ -11,6 +11,14 @@ import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
+/**
+ * Represents the `minecraft:pot_decorations` item component, which defines the pottery sherds or bricks on each face of a decorated pot.
+ *
+ * Must contain exactly 4 items (one per face).
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#pot_decorations
+ */
 @Serializable(with = PotDecorationsComponent.Companion.PotDecorationsComponentSerializer::class)
 data class PotDecorationsComponent(var list: List<ItemArgument>) : Component() {
 	companion object {
@@ -28,6 +36,7 @@ data class PotDecorationsComponent(var list: List<ItemArgument>) : Component() {
 	}
 }
 
+/** Defines the pottery sherds or bricks on each face of a decorated pot (must be exactly 4 items). */
 fun ComponentsScope.potDecorations(decorations: List<ItemArgument>) = apply {
 	this[ItemComponentTypes.POT_DECORATIONS] = PotDecorationsComponent(decorations)
 }

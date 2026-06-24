@@ -7,6 +7,12 @@ import io.github.ayfri.kore.generated.arguments.types.DataComponentTypeArgument
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents the `minecraft:tooltip_display` item component, which controls which parts of the item tooltip are shown.
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#tooltip_display
+ */
 @Serializable
 data class TooltipDisplayComponent(
 	@SerialName("hide_tooltip")
@@ -15,6 +21,7 @@ data class TooltipDisplayComponent(
 	var hiddenComponents: List<DataComponentTypeArgument> = emptyList()
 ) : Component()
 
+/** Controls which parts of the item tooltip are shown. */
 fun ComponentsScope.tooltipDisplay(hideTooltip: Boolean = false, hiddenComponents: List<DataComponentTypeArgument>) = apply {
 	this[ItemComponentTypes.TOOLTIP_DISPLAY] = TooltipDisplayComponent(hideTooltip, hiddenComponents)
 }

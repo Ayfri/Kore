@@ -7,6 +7,14 @@ import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents the `minecraft:custom_model_data` item component, which provides values for custom item model selection in resource packs.
+ *
+ * Holds parallel lists of colors, flags, floats and strings the resource pack model can read.
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#custom_model_data
+ */
 @Serializable
 data class CustomModelDataComponent(
 	var colors: List<@Serializable(ColorAsDecimalSerializer::class) Color>? = null,
@@ -15,6 +23,7 @@ data class CustomModelDataComponent(
 	var strings: List<String>? = null,
 ) : Component()
 
+/** Provides numeric values for custom item model selection in resource packs. */
 fun ComponentsScope.customModelData(
 	colors: List<Color>? = null,
 	flags: List<Boolean>? = null,
@@ -31,4 +40,4 @@ fun ComponentsScope.customModelData(
 }
 
 fun ComponentsScope.customModelData(init: CustomModelDataComponent.() -> Unit = {}) =
-	customModelData(null, null, null, null, init)
+	customModelData(null, floats = init)

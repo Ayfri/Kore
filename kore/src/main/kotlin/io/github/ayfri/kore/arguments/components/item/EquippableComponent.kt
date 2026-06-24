@@ -11,6 +11,12 @@ import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents the `minecraft:equippable` item component, which configures equipment slot, sounds, and model when the item is worn.
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#equippable
+ */
 @Serializable
 data class EquippableComponent(
 	var slot: EquipmentSlot,
@@ -34,6 +40,7 @@ data class EquippableComponent(
 	var swappable: Boolean? = null,
 ) : Component()
 
+/** Configures equipment slot, sounds, and model when the item is worn. */
 fun ComponentsScope.equippable(
 	slot: EquipmentSlot,
 	assetId: ModelArgument,

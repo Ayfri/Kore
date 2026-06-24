@@ -54,9 +54,16 @@ object WritablePagesSerializer : KSerializer<List<WritablePage>> {
 	}
 }
 
+/**
+ * Represents the `minecraft:writable_book_content` item component, which stores the pages of a book and quill (editable text).
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#writable_book_content
+ */
 @Serializable
 data class WritableBookContentsComponent(@Serializable(WritablePagesSerializer::class) var pages: List<WritablePage>) : Component()
 
+/** Stores the pages of a book and quill (editable text). */
 fun ComponentsScope.writableBookContent(pages: List<WritablePage>) =
 	apply { this[ItemComponentTypes.WRITABLE_BOOK_CONTENT] = WritableBookContentsComponent(pages) }
 

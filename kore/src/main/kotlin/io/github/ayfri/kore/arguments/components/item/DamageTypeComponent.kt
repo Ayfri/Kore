@@ -9,6 +9,14 @@ import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents the `minecraft:damage_type` item component, which specifies the damage type dealt when attacking with this item.
+ *
+ * Serializes as the damage type id directly (inlined).
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#damage_type
+ */
 @Serializable(with = DamageTypeComponent.Companion.DamageTypeComponentSerializer::class)
 data class DamageTypeComponent(
 	@Serializable(with = ResourceLocationArgument.Companion.ResourceLocationArgumentSimpleSerializer::class)
@@ -19,6 +27,7 @@ data class DamageTypeComponent(
 	}
 }
 
+/** Specifies the damage type dealt when attacking with this item. */
 fun ComponentsScope.damageType(value: DamageTypeArgument) = apply {
 	this[ItemComponentTypes.DAMAGE_TYPE] = DamageTypeComponent(value)
 }

@@ -7,12 +7,19 @@ import io.github.ayfri.kore.generated.arguments.types.MobEffectArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 
+/** A single effect entry (id + duration in ticks) applied when eating a suspicious stew. */
 @Serializable
 data class SuspiciousStewEffect(
 	var id: MobEffectArgument,
 	var duration: Int,
 )
 
+/**
+ * Represents the `minecraft:suspicious_stew_effects` item component, which sets the effects applied when consuming a suspicious stew.
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#suspicious_stew_effects
+ */
 @Serializable(with = SuspiciousStewEffectsComponent.Companion.SuspiciousStewEffectsComponentSerializer::class)
 data class SuspiciousStewEffectsComponent(var effects: List<SuspiciousStewEffect>) : Component() {
 	companion object {
@@ -22,6 +29,7 @@ data class SuspiciousStewEffectsComponent(var effects: List<SuspiciousStewEffect
 	}
 }
 
+/** Sets the effects applied when consuming a suspicious stew. */
 fun ComponentsScope.suspiciousStewEffectsComponent(effects: List<SuspiciousStewEffect>) = apply {
 	this[ItemComponentTypes.SUSPICIOUS_STEW_EFFECTS] = SuspiciousStewEffectsComponent(effects)
 }

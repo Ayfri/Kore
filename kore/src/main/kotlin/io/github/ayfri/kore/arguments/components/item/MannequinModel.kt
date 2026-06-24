@@ -3,6 +3,7 @@ package io.github.ayfri.kore.arguments.components.item
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
+/** The player model shape used for a mannequin / player head texture profile. */
 @Serializable(with = MannequinModel.Companion.MannequinModelSerializer::class)
 enum class MannequinModel {
 	/** Alex model. */

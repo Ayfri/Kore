@@ -7,13 +7,20 @@ import io.github.ayfri.kore.generated.arguments.types.EnchantmentArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents the `minecraft:stored_enchantments` item component, which embeds enchantments into an enchanted book without applying them to the holder.
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#stored_enchantments
+ */
 @Serializable(with = StoredEnchantments.Companion.StoredEnchantmentsSerializer::class)
 data class StoredEnchantments(var levels: MutableMap<EnchantmentArgument, Int> = mutableMapOf()) : Component() {
 	companion object {
-		data object StoredEnchantmentsSerializer : InlineAutoSerializer<StoredEnchantments>(StoredEnchantments::class) {}
+		data object StoredEnchantmentsSerializer : InlineAutoSerializer<StoredEnchantments>(StoredEnchantments::class)
 	}
 }
 
+/** Embeds enchantments into an enchanted book without applying them to the holder. */
 fun ComponentsScope.storedEnchantments(levels: Map<EnchantmentArgument, Int>) = apply {
 	this[ItemComponentTypes.STORED_ENCHANTMENTS] = StoredEnchantments(levels.toMutableMap())
 }

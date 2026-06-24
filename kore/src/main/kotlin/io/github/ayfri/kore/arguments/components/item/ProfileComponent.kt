@@ -11,6 +11,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.util.*
 
+/** A skin texture property (name, base64-encoded value, and optional signature). */
 @Serializable
 data class ProfileProperty(
 	var name: String,
@@ -18,6 +19,14 @@ data class ProfileProperty(
 	var signature: String? = null,
 )
 
+/**
+ * Represents the `minecraft:profile` item component, which sets the player skin displayed on a player head item.
+ *
+ * Can be a [PlayerProfile] (name/UUID lookup) or a [TextureProfile] (direct texture model).
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#profile
+ */
 @Serializable(with = ProfileComponent.Companion.ProfileComponentSerializer::class)
 sealed class ProfileComponent : Component() {
 	companion object {
@@ -45,6 +54,7 @@ data class TextureProfile(
 	var texture: ModelArgument? = null,
 ) : ProfileComponent()
 
+/** Sets the player skin displayed on a player head item using a player name or UUID lookup. */
 fun ComponentsScope.playerProfile(
 	name: String? = null,
 	id: UUIDArgument? = null,
@@ -74,6 +84,7 @@ fun PlayerProfile.property(name: String, value: ByteArray, signature: String? = 
 	property(name, String(value), signature)
 }
 
+/** Sets the player skin displayed on a player head item using direct texture/model references. */
 fun ComponentsScope.textureProfile(
 	cape: ModelArgument? = null,
 	elytra: ModelArgument? = null,

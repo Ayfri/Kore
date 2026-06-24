@@ -11,6 +11,7 @@ import io.github.ayfri.kore.utils.snakeCase
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/** The first-person animation played while the item is being consumed. */
 @Serializable(with = ConsumeAnimation.Companion.ConsumeAnimationSerializer::class)
 enum class ConsumeAnimation {
 	BLOCK,
@@ -31,6 +32,12 @@ enum class ConsumeAnimation {
 	}
 }
 
+/**
+ * Represents the `minecraft:consumable` item component, which makes the item consumable with a configurable eating time, animation, sound, and effects.
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#consumable
+ */
 @Serializable
 data class ConsumableComponent(
 	@SerialName("consume_seconds")
@@ -43,6 +50,7 @@ data class ConsumableComponent(
 	var onConsumeEffects: Map<String, ConsumeEffect>? = null,
 ) : Component()
 
+/** Makes the item consumable with configurable eating time, animation, sound, and effects. */
 fun ComponentsScope.consumable(
 	consumeSeconds: Float,
 	animation: ConsumeAnimation,

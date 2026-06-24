@@ -10,6 +10,7 @@ import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/** A single status effect entry used in potion/death-protection components. */
 @Serializable
 data class Effect(
 	val id: MobEffectArgument,
@@ -22,6 +23,12 @@ data class Effect(
 	var showIcon: Boolean,
 )
 
+/**
+ * Represents the `minecraft:potion_contents` item component, which configures potion type, color, and custom effects.
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#potion_contents
+ */
 @Serializable(with = PotionContentsComponent.Companion.PotionContentsComponentSerializer::class)
 data class PotionContentsComponent(
 	var potion: PotionArgument,
@@ -41,6 +48,7 @@ data class PotionContentsComponent(
 	}
 }
 
+/** Configures potion color, effects, and custom potion mixtures. */
 fun ComponentsScope.potionContents(potion: PotionArgument, customColor: RGB? = null, customEffects: List<Effect>? = null) = apply {
 	this[ItemComponentTypes.POTION_CONTENTS] = PotionContentsComponent(potion, customColor, customEffects)
 }

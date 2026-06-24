@@ -9,6 +9,12 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
+/**
+ * Represents the `minecraft:note_block_sound` item component, which specifies the sound a note block plays when this player head is above it.
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#note_block_sound
+ */
 @Serializable(with = NoteBlockSoundComponent.Companion.NoteBlockSoundComponentSerializer::class)
 data class NoteBlockSoundComponent(var blockSound: SoundArgument) : Component() {
 	companion object {
@@ -24,6 +30,7 @@ data class NoteBlockSoundComponent(var blockSound: SoundArgument) : Component() 
 	}
 }
 
+/** Specifies the sound a note block plays when this player head is above it. */
 fun ComponentsScope.noteBlockSound(blockSound: SoundArgument) = apply {
 	this[ItemComponentTypes.NOTE_BLOCK_SOUND] = NoteBlockSoundComponent(blockSound)
 }

@@ -6,6 +6,12 @@ import io.github.ayfri.kore.generated.ItemComponentTypes
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents the `minecraft:attack_range` item component, which configures the reach of an item when attacking (min/max range, hitbox margin, mob factor).
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#attack_range
+ */
 @Serializable
 data class AttackRangeComponent(
 	@SerialName("hitbox_margin")
@@ -22,6 +28,7 @@ data class AttackRangeComponent(
 	var mobFactor: Float? = null,
 ) : Component()
 
+/** Configures the attack range of an item (min/max range, hitbox margin, mob factor). */
 fun ComponentsScope.attackRange(
 	hitboxMargin: Float? = null,
 	maxCreativeReach: Float? = null,

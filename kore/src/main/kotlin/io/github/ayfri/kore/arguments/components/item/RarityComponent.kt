@@ -7,6 +7,7 @@ import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
+/** The item rarity tier, which controls the default name color. */
 @Serializable(with = Rarities.Companion.RaritySerializer::class)
 enum class Rarities {
 	COMMON,
@@ -19,6 +20,14 @@ enum class Rarities {
 	}
 }
 
+/**
+ * Represents the `minecraft:rarity` item component, which sets the item name color tier (common, uncommon, rare, epic).
+ *
+ * Serializes as the rarity string directly (inlined).
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#rarity
+ */
 @Serializable(with = RarityComponent.Companion.RarityComponentSerializer::class)
 data class RarityComponent(val rarity: Rarities) : Component() {
 	companion object {
@@ -26,6 +35,7 @@ data class RarityComponent(val rarity: Rarities) : Component() {
 	}
 }
 
+/** Sets the item name color tier (common, uncommon, rare, epic). */
 fun ComponentsScope.rarity(rarity: Rarities) = apply {
 	this[ItemComponentTypes.RARITY] = RarityComponent(rarity)
 }

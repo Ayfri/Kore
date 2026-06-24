@@ -9,6 +9,12 @@ import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtCompoundBuilder
 
+/**
+ * Represents the `minecraft:entity_data` item component, which stores entity NBT data for spawn eggs or items that spawn entities.
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#entity_data
+ */
 @Serializable(with = EntityDataComponent.Companion.EntityDataComponentSerializer::class)
 data class EntityDataComponent(var data: NbtCompound) : Component() {
 	companion object {
@@ -18,6 +24,7 @@ data class EntityDataComponent(var data: NbtCompound) : Component() {
 	}
 }
 
+/** Stores entity NBT data for spawn eggs or items that spawn entities. */
 fun ComponentsScope.entityData(data: NbtCompound) = apply {
 	this[ItemComponentTypes.ENTITY_DATA] = EntityDataComponent(data)
 }

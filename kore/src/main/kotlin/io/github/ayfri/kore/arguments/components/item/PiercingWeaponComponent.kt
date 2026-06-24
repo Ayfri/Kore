@@ -7,6 +7,12 @@ import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents the `minecraft:piercing_weapon` item component, which configures piercing weapon properties (knockback, dismount behavior).
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#piercing_weapon
+ */
 @Serializable
 data class PiercingWeaponComponent(
 	@SerialName("deals_knockback")
@@ -17,6 +23,7 @@ data class PiercingWeaponComponent(
 	var sound: SoundEventArgument? = null,
 ) : Component()
 
+/** Configures piercing weapon properties (knockback, dismount behavior). */
 fun ComponentsScope.piercingWeapon(block: PiercingWeaponComponent.() -> Unit = {}) = apply {
 	this[ItemComponentTypes.PIERCING_WEAPON] = PiercingWeaponComponent().apply(block)
 }

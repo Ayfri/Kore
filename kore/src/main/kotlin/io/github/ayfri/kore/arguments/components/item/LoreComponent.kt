@@ -16,6 +16,12 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import net.benwoodworth.knbt.StringifiedNbt
 
+/**
+ * Represents the `minecraft:lore` item component, which adds tooltip lines below the item name for descriptions or flavor text.
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#lore
+ */
 @Serializable(with = LoreComponent.Companion.LoreComponentSerializer::class)
 data class LoreComponent(
 	var list: ChatComponents = ChatComponents(),
@@ -33,6 +39,7 @@ data class LoreComponent(
 	}
 }
 
+/** Adds tooltip lines below the item name for descriptions or flavor text. */
 fun ComponentsScope.lore(chatComponents: ChatComponents) = apply { this[ItemComponentTypes.LORE] = LoreComponent(chatComponents) }
 
 fun ComponentsScope.lore(text: String = "", color: Color? = null, block: PlainTextComponent.() -> Unit = {}) =

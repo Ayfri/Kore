@@ -7,6 +7,12 @@ import io.github.ayfri.kore.generated.arguments.types.ConsumeCooldownGroupArgume
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents the `minecraft:use_cooldown` item component, which applies a shared use cooldown to items in the same cooldown group.
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#use_cooldown
+ */
 @Serializable
 data class UseCooldownComponent(
 	var seconds: Float,
@@ -14,6 +20,7 @@ data class UseCooldownComponent(
 	var cooldownGroup: ConsumeCooldownGroupArgument,
 ) : Component()
 
+/** Applies a shared use cooldown to items in the same cooldown group. */
 fun ComponentsScope.useCooldown(
 	seconds: Float,
 	cooldownGroup: ConsumeCooldownGroupArgument,

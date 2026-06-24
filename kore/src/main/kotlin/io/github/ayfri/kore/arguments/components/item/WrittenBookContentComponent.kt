@@ -65,6 +65,12 @@ private object WrittenPagesSerializer : KSerializer<List<WrittenPage>> {
 	}
 }
 
+/**
+ * Represents the `minecraft:written_book_content` item component, which stores the signed pages, title, and author of a written book.
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#written_book_content
+ */
 @Serializable
 data class WrittenBookContentsComponent(
 	@Serializable(with = WrittenPagesSerializer::class)
@@ -77,6 +83,7 @@ data class WrittenBookContentsComponent(
 	override fun isChatComponent() = true
 }
 
+/** Stores the signed pages, title, and author of a written book. */
 fun ComponentsScope.writtenBookContent(
 	pages: List<WrittenPage>,
 	title: WrittenPage,

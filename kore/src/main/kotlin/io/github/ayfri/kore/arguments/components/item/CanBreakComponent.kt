@@ -9,6 +9,12 @@ import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
 
+/**
+ * Represents the `minecraft:can_break` item component, which restricts which blocks this item can break in Adventure mode.
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#can_break
+ */
 @Serializable(with = CanBreakComponent.Companion.CanBreakComponentSerializer::class)
 data class CanBreakComponent(var predicates: List<BlockPredicate>) : Component() {
 	companion object {
@@ -16,6 +22,7 @@ data class CanBreakComponent(var predicates: List<BlockPredicate>) : Component()
 	}
 }
 
+/** Restricts which blocks this item can break in Adventure mode. */
 fun ComponentsScope.canBreak(predicates: List<BlockPredicate>) = apply {
 	this[ItemComponentTypes.CAN_BREAK] = CanBreakComponent(predicates.toMutableList())
 }

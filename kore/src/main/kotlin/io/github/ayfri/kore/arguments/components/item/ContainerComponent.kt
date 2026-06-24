@@ -8,9 +8,16 @@ import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 
+/** A single slot/item pair stored inside a [ContainerComponent]. */
 @Serializable
 data class ContainerSlot(var slot: Int, var item: ItemStack)
 
+/**
+ * Represents the `minecraft:container` item component, which stores items inside a container item (e.g., shulker box).
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#container
+ */
 @Serializable(with = ContainerComponent.Companion.ContainerComponentSerializer::class)
 data class ContainerComponent(var slots: List<ContainerSlot>) : Component() {
 	companion object {
@@ -18,6 +25,7 @@ data class ContainerComponent(var slots: List<ContainerSlot>) : Component() {
 	}
 }
 
+/** Stores items inside a container item (e.g., shulker box). */
 fun ComponentsScope.container(slots: List<ContainerSlot>) = apply {
 	this[ItemComponentTypes.CONTAINER] = ContainerComponent(slots)
 }

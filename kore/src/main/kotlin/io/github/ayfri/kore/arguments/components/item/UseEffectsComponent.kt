@@ -6,6 +6,12 @@ import io.github.ayfri.kore.generated.ItemComponentTypes
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents the `minecraft:use_effects` item component, which configures player behavior (sprint, vibrations, speed) while using the item.
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#use_effects
+ */
 @Serializable
 data class UseEffectsComponent(
 	@SerialName("can_sprint")
@@ -16,6 +22,7 @@ data class UseEffectsComponent(
 	var speedMultiplier: Float? = null,
 ) : Component()
 
+/** Configures player behavior (sprint, vibrations, speed) while using the item. */
 fun ComponentsScope.useEffects(block: UseEffectsComponent.() -> Unit = {}) = apply {
 	this[ItemComponentTypes.USE_EFFECTS] = UseEffectsComponent().apply(block)
 }

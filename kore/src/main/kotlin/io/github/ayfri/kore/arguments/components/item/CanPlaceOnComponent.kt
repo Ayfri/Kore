@@ -9,6 +9,12 @@ import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
 
+/**
+ * Represents the `minecraft:can_place_on` item component, which restricts which blocks this item can be placed on in Adventure mode.
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#can_place_on
+ */
 @Serializable(with = CanPlaceOnComponent.Companion.CanPlaceOnComponentSerializer::class)
 data class CanPlaceOnComponent(var predicates: List<BlockPredicate>) : Component() {
 	companion object {
@@ -16,6 +22,7 @@ data class CanPlaceOnComponent(var predicates: List<BlockPredicate>) : Component
 	}
 }
 
+/** Restricts which blocks this item can be placed on in Adventure mode. */
 fun ComponentsScope.canPlaceOn(predicates: List<BlockPredicate>) = apply {
 	this[ItemComponentTypes.CAN_PLACE_ON] = CanPlaceOnComponent(predicates.toMutableList())
 }

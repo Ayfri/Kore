@@ -7,6 +7,14 @@ import io.github.ayfri.kore.generated.arguments.types.JukeboxSongArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents the `minecraft:jukebox_playable` item component, which allows the item to be played in a jukebox with a specified music disc track.
+ *
+ * Serializes as the jukebox song id directly (inlined).
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#jukebox_playable
+ */
 @Serializable(with = JukeboxPlayableComponent.Companion.JukeboxPlayableComponentSerializer::class)
 data class JukeboxPlayableComponent(var song: JukeboxSongArgument) : Component() {
 	companion object {
@@ -14,6 +22,7 @@ data class JukeboxPlayableComponent(var song: JukeboxSongArgument) : Component()
 	}
 }
 
+/** Allows the item to be played in a jukebox with a specified music disc track. */
 fun ComponentsScope.jukeboxPlayable(song: JukeboxSongArgument) = apply {
 	this[ItemComponentTypes.JUKEBOX_PLAYABLE] = JukeboxPlayableComponent(song)
 }

@@ -7,6 +7,7 @@ import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/** Speed and timing conditions for when a [KineticWeaponComponent] effect (damage/knockback/dismount) triggers. */
 @Serializable
 data class KineticWeaponEffectCondition(
 	@SerialName("max_duration_ticks")
@@ -17,6 +18,12 @@ data class KineticWeaponEffectCondition(
 	var minRelativeSpeed: Float? = null,
 )
 
+/**
+ * Represents the `minecraft:kinetic_weapon` item component, which configures kinetic weapon properties for mounted combat (damage multiplier, conditions).
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#kinetic_weapon
+ */
 @Serializable
 data class KineticWeaponComponent(
 	@SerialName("contact_cooldown_ticks")
@@ -38,6 +45,7 @@ data class KineticWeaponComponent(
 	var sound: SoundEventArgument? = null,
 ) : Component()
 
+/** Configures kinetic weapon properties for mounted combat (damage multiplier, conditions). */
 fun ComponentsScope.kineticWeapon(block: KineticWeaponComponent.() -> Unit = {}) = apply {
 	this[ItemComponentTypes.KINETIC_WEAPON] = KineticWeaponComponent().apply(block)
 }

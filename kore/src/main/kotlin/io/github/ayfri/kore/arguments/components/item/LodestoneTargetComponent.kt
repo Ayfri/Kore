@@ -8,6 +8,12 @@ import io.github.ayfri.kore.generated.arguments.types.DimensionArgument
 import kotlinx.serialization.Serializable
 import kotlin.math.roundToInt
 
+/**
+ * Represents the `minecraft:lodestone_tracker` item component, which makes a compass point to specific coordinates in a dimension.
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#lodestone_tracker
+ */
 @Serializable
 data class LodestoneTargetComponent(
 	var pos: List<Int>,
@@ -15,6 +21,7 @@ data class LodestoneTargetComponent(
 	var tracked: Boolean? = null,
 ) : Component()
 
+/** Makes a compass point to specific coordinates in a dimension. */
 fun ComponentsScope.lodestoneTarget(pos: List<Int>, dimension: DimensionArgument, tracked: Boolean? = null) = apply {
 	this[ItemComponentTypes.LODESTONE_TRACKER] = LodestoneTargetComponent(pos, dimension, tracked)
 }

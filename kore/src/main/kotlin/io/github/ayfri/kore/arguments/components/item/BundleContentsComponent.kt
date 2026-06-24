@@ -9,6 +9,12 @@ import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents the `minecraft:bundle_contents` item component, which defines the items stored inside a bundle.
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#bundle_contents
+ */
 @Serializable(BundleContentsComponent.Companion.BundleContentsSerializer::class)
 data class BundleContentsComponent(val items: MutableList<ItemStack>) : Component() {
 	companion object {
@@ -16,6 +22,7 @@ data class BundleContentsComponent(val items: MutableList<ItemStack>) : Componen
 	}
 }
 
+/** Defines the items stored inside a bundle. */
 fun ComponentsScope.bundleContents(items: List<ItemStack>) = apply {
 	this[ItemComponentTypes.BUNDLE_CONTENTS] = BundleContentsComponent(items.toMutableList())
 }

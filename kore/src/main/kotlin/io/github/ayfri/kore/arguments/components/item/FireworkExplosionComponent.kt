@@ -9,6 +9,7 @@ import io.github.ayfri.kore.serializers.ToStringSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/** The shape of a firework star explosion. */
 @Serializable(with = FireworkExplosionShape.Companion.FireworkExplosionShapeSerializer::class)
 enum class FireworkExplosionShape {
 	SMALL_BALL,
@@ -24,6 +25,12 @@ enum class FireworkExplosionShape {
 	}
 }
 
+/**
+ * Represents the `minecraft:firework_explosion` item component, which defines a single firework star explosion: shape, colors, and effects.
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#firework_explosion
+ */
 @Serializable
 data class FireworkExplosionComponent(
 	var shape: FireworkExplosionShape,
@@ -36,6 +43,7 @@ data class FireworkExplosionComponent(
 	var hasFlicker: Boolean? = null,
 ) : Component()
 
+/** Defines a single firework star explosion shape, colors, and effects. */
 fun ComponentsScope.fireworkExplosion(
 	shape: FireworkExplosionShape,
 	colors: List<Color>? = null,

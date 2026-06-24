@@ -7,6 +7,14 @@ import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents the `minecraft:break_sound` item component, which sets the sound played when the item breaks from durability loss.
+ *
+ * Serializes as the sound event directly (inlined).
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#break_sound
+ */
 @Serializable(with = BreakSound.Companion.BreakSoundSerializer::class)
 data class BreakSound(var sound: SoundEventArgument) : Component() {
 	companion object {
@@ -14,4 +22,5 @@ data class BreakSound(var sound: SoundEventArgument) : Component() {
 	}
 }
 
+/** Specifies the sound played when the item breaks from durability loss. */
 fun ComponentsScope.breakSound(sound: SoundEventArgument) = apply { this[ItemComponentTypes.BREAK_SOUND] = BreakSound(sound) }

@@ -7,6 +7,14 @@ import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents the `minecraft:tooltip_style` item component, which sets a custom resource-pack model for the item tooltip background.
+ *
+ * Serializes as the model id directly (inlined).
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#tooltip_style
+ */
 @Serializable(with = TooltipStyleComponent.Companion.TooltipStyleComponentSerializer::class)
 data class TooltipStyleComponent(var model: ModelArgument) : Component() {
 	companion object {
@@ -14,6 +22,7 @@ data class TooltipStyleComponent(var model: ModelArgument) : Component() {
 	}
 }
 
+/** Sets a custom resource-pack model for the item tooltip background. */
 fun ComponentsScope.tooltipStyle(model: ModelArgument) = apply {
 	this[ItemComponentTypes.TOOLTIP_STYLE] = TooltipStyleComponent(model)
 }
