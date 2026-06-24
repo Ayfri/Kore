@@ -38,7 +38,7 @@ enum class InstallationMethod(val label: String, val language: String) {
 			</dependency>
 		""".trimIndent()
 	},
-	AMPER("Amper", "yaml") {
+	KOTLIN_TOOLCHAIN("Kotlin Toolchain", "yaml") {
 		override fun getCode(version: String) = """
 			dependencies:
 			  - io.github.ayfri.kore:kore:$version
