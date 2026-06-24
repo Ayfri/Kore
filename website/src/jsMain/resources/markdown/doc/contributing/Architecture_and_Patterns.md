@@ -189,6 +189,30 @@ Required frontmatter keys, in alphabetical order:
 
 Keep routes stable, keep navigation intentional, and update entry pages when a new doc should become discoverable.
 
+### How to write a documentation page
+
+Content rules that keep the docs consistent and trustworthy:
+
+- **Example-first.** Every public feature needs at least one copy-pastable Kotlin snippet. Verify each snippet against
+  the real API (the source or a test) before committing - never invent method names or argument shapes. Use tabs for
+  indentation, matching the Kotlin code style.
+- **State capabilities, not changes.** Write what the API *does*, not what changed between versions. Avoid changelog
+  phrasing like "now possible" or "new in this release" in body copy; that information belongs in commit messages and
+  release notes, not in a reference page that must read correctly a year later.
+- **Cross-link inline, not in a pile.** Link related pages from the sentence that mentions the concept (for example,
+  link [Scoreboards][scoreboards-doc] the first time you mention scoreboards). Prefer one good inline link over a long
+  trailing list. Keep any `See also` section short - three or four of the most relevant links, not a dump of everything
+  related.
+- **Link to the Minecraft Wiki for vanilla concepts.** When a page touches a vanilla system (a command, a registry, an
+  NBT structure, a pack format), link the relevant [Minecraft Wiki](https://minecraft.wiki) page. It is high quality and
+  saves Kore from restating vanilla behavior - Kore docs should explain the *Kore* DSL and defer vanilla semantics to
+  the
+  wiki.
+- **Do not duplicate.** If a concept already has a home page, link it instead of re-explaining it. One source of truth
+  per topic; everything else points at it.
+
+[scoreboards-doc]: /docs/concepts/scoreboards
+
 ## Why Kore uses these technical choices
 
 - **Centralized serializers** keep JSON and NBT output stable across modules and make diffs easier to review.

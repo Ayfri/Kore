@@ -15,7 +15,7 @@ Predicates are JSON structures used in data packs to check conditions within the
 
 Predicates can be used in:
 
-- **Commands**: Via `/execute if predicate` or target selector argument `predicate=`
+- **Commands**: Via [`execute if predicate`](/docs/commands/execute) or target selector argument `predicate=`
 - **Loot tables**: As conditions for loot entries
 - **Advancements**: As trigger conditions
 - **Other predicates**: Via the `reference` condition

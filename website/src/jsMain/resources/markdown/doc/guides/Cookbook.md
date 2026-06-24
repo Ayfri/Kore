@@ -117,7 +117,7 @@ val activePlayers = allPlayers {
 }
 
 function("start_wave") {
-	effect.give(activePlayers, Effects.RESISTANCE, 5, 0)
+	effect(activePlayers) { give(Effects.RESISTANCE, duration = 5, amplifier = 0) }
 	tellraw(activePlayers, textComponent("Wave started"))
 }
 ```

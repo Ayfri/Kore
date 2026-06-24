@@ -11,7 +11,9 @@ routeOverride: /docs/helpers/scheduler
 
 # Scheduler in Kore
 
-This document explains how to schedule and run tasks at specific times or intervals using Kore's built-in scheduler. Schedulers help automate recurring actions, delayed tasks, and cleanup when tasks are no longer needed.
+This document explains how to schedule and run tasks at specific times or intervals using Kore's built-in scheduler.
+Schedulers help automate recurring actions, delayed tasks, and cleanup when tasks are no longer needed. They are the
+higher-level way to do the time-based loops described in [Runtime Logic](/docs/concepts/runtime-logic).
 
 ## Overview
 

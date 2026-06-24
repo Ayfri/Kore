@@ -15,7 +15,7 @@ NBT (Named Binary Tag) is Minecraft's structured data format. Kore uses it anywh
 SNBT,
 such as:
 
-- command payloads like `summon`, `data merge`, or storage writes
+- command payloads like `summon`, `data merge`, or [storage writes](/docs/concepts/data-storage)
 - chat components that read values from blocks, entities, or storage
 - predicate sub-structures that expose an `nbt { ... }` block
 - helpers and domain objects that serialize themselves with `toNbt()`

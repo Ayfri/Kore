@@ -31,7 +31,8 @@ If you are new to datapacks, start with [Getting Started](/docs/getting-started)
 ## Why Kotlin (for datapack veterans)
 
 Kotlin does not replace Minecraft logic. It replaces fragile authoring workflows.
-Minecraft still runs generated `.mcfunction` and JSON. Kotlin gives you a safer, composable way to produce them.
+Minecraft still runs generated `.mcfunction` and JSON. Kotlin gives you a safer, composable way to produce them. For the
+high-level pitch and a comparison with other generators, see [Why Kore](/docs/guides/why-kore).
 
 The practical gains for experienced datapack teams are:
 
@@ -178,7 +179,7 @@ fun Function.welcomeAnnounce() = function("feature/welcome/announce") {
 }
 
 fun Function.joinEffects() = function("feature/welcome/join_effects") {
-	effect.give(allPlayers(), Effects.RESISTANCE, 3, 0)
+	effect(allPlayers()) { give(Effects.RESISTANCE, duration = 3, amplifier = 0) }
 	say("Join effects applied")
 }
 
@@ -201,7 +202,7 @@ fun Function.combatPipeline() = function("feature/combat/pipeline") {
 }
 
 fun Function.applyJoinEffects() {
-	effect.give(allPlayers(), Effects.RESISTANCE, 3, 0)
+	effect(allPlayers()) { give(Effects.RESISTANCE, duration = 3, amplifier = 0) }
 }
 
 fun Function.runRoundRules() {

@@ -166,7 +166,8 @@ See the code of the repository for more examples.<br>
 
 ## Complex Commands
 
-Some commands are more complex and require more than just a few arguments. For example, the `execute` or `data` commands.
+Some commands are more complex and require more than just a few arguments. For example, the
+[`execute`](/docs/commands/execute) or [`data`](/docs/concepts/data-storage) commands.
 
 In that case, you can use complex builders that includes all the arguments of the command. But the syntax may vary
 depending on the command, so pairing this page with the broader [Commands](/docs/commands/commands) reference and

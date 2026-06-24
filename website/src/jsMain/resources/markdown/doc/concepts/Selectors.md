@@ -139,7 +139,7 @@ val fighters = allPlayers {
 }
 
 function("round_start") {
-	effect.give(fighters, Effects.SPEED, 10, 1)
+	effect(fighters) { give(Effects.SPEED, duration = 10, amplifier = 1) }
 	tellraw(fighters, textComponent("Fight!"))
 	scoreboard.players.set(fighters, "combo", 0)
 }

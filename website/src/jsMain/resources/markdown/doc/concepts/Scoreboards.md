@@ -11,8 +11,12 @@ routeOverride: /docs/concepts/scoreboards
 
 # Scoreboards
 
-Scoreboards track numeric values for players and entities. They're essential for game mechanics, timers, and storing
-data. For the full scoreboard command reference, see [Commands](/docs/commands/commands#scoreboard-command).
+Scoreboards track numeric values for players and entities. They're one of the two runtime variable containers in a
+datapack (the other being [data storage](/docs/concepts/data-storage)), and are essential for game mechanics, timers,
+and
+counters. If you're unsure when to use a scoreboard versus a Kotlin variable,
+read [Runtime Logic](/docs/concepts/runtime-logic)
+first. For the full scoreboard command reference, see [Commands](/docs/commands/commands#scoreboard-command).
 
 You can manage scoreboards with the `scoreboard` command:
 

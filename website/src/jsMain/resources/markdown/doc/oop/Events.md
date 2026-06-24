@@ -110,7 +110,9 @@ This pattern works well for mini-games where multiple systems need to react to t
 ## Entity events
 
 ```kotlin
-val zombie = Entity().apply { selector.type = EntityTypes.ZOMBIE }
+val zombie = entity(EntityTypes.ZOMBIE) {
+  tag = "my_tag"
+}
 
 zombie.onDeath { self -> say("A ${self.type?.name} died!") }
 ```

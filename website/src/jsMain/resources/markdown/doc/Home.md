@@ -90,6 +90,7 @@ fun main() {
 
 ### Core Guides
 
+- [Why Kore](/docs/guides/why-kore) - why use Kore over raw datapacks or other generators.
 - [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore) - advanced guide for migrating established datapacks to
   a Kotlin/Kore architecture.
 - [Configuration](/docs/guides/configuration) - JSON formatting and generation options.
@@ -97,10 +98,14 @@ fun main() {
 
 ### Commands
 
+- [Execute](/docs/commands/execute) - context subcommands, conditions, stores, and the run clause.
 - [Macros](/docs/commands/macros) - dynamic command arguments for reusable functions.
 
 ### Concepts
 
+- [Runtime Logic](/docs/concepts/runtime-logic) - compile-time Kotlin vs runtime Minecraft: variables, conditions,
+  loops.
+- [Data Storage](/docs/concepts/data-storage) - the runtime NBT variable container via the `/data` command.
 - [Components](/docs/concepts/components) - item/component builders and custom components.
 - [Chat Components](/docs/concepts/chat-components) - formatted messages and text components.
 - [Colors](/docs/concepts/colors) - chat colors and formatting options.

@@ -11,8 +11,8 @@ routeOverride: /docs/helpers/state-delegates
 
 # State Delegates
 
-Kotlin property delegates that map scoreboard objectives or [NBT storage](https://minecraft.wiki/w/Commands/data)
-paths to simple `var` properties. Writing to the property emits the corresponding Minecraft command.
+Kotlin property delegates that map scoreboard objectives or [data storage](/docs/concepts/data-storage) paths to simple
+`var` properties. Writing to the property emits the corresponding Minecraft command.
 
 This helper reduces repetitive boilerplate in command-generation code. You write Kotlin that looks like state mutation,
 while Kore still emits explicit vanilla commands underneath.

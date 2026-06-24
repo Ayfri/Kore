@@ -467,12 +467,14 @@ Good expansion ideas after the custom enchantment:
 Start here next:
 
 1. [Creating a Datapack](/docs/guides/creating-a-datapack)
-2. [Functions](/docs/commands/functions)
-3. [Commands](/docs/commands/commands)
-4. [Selectors](/docs/concepts/selectors)
-5. [Cookbook](/docs/guides/cookbook)
-6. [Recipes](/docs/data-driven/recipes)
-7. [Enchantments](/docs/data-driven/enchantments)
+2. [Runtime Logic](/docs/concepts/runtime-logic) - how Kotlin `val`/`if`/`for` map to in-game scoreboards, storage, and
+   `execute`
+3. [Functions](/docs/commands/functions)
+4. [Commands](/docs/commands/commands)
+5. [Selectors](/docs/concepts/selectors)
+6. [Cookbook](/docs/guides/cookbook)
+7. [Recipes](/docs/data-driven/recipes)
+8. [Enchantments](/docs/data-driven/enchantments)
 
 For the full index, see [Home](/docs/home).
 

@@ -115,10 +115,10 @@ The
 
 ```kotlin
 function("effects") {
-	effect.give(allPlayers(), Effects.SPEED, 60, 1)
-	effect.give(self(), Effects.REGENERATION, infinite = true)
-	effect.clear(allPlayers())
-	effect.clear(self(), Effects.POISON)
+	effect(allPlayers()) { give(Effects.SPEED, duration = 60, amplifier = 1) }
+	effect(self()) { giveInfinite(Effects.REGENERATION) }
+	effect(allPlayers()) { clear() }
+	effect(self()) { clear(Effects.POISON) }
 }
 ```
 
@@ -580,7 +580,9 @@ The `execute` command is one of the most powerful commands in Minecraft. It allo
 - Store command results in scores or NBT
 - Chain multiple modifiers together
 
-Use `execute` with [Predicates](/docs/data-driven/predicates) for complex conditions.
+The examples below cover the basics. For the full subcommand, condition, store, and `run` reference, see the dedicated
+[Execute](/docs/commands/execute) page. Use `execute` with [Predicates](/docs/data-driven/predicates) for complex
+conditions.
 
 #### Basic Execute
 
@@ -602,7 +604,8 @@ Generated output:
 execute as @a run say Hello from execute!
 ```
 
-#### Execute with Conditions
+Conditions (`if`/`unless`), score comparisons, position/dimension/anchoring context, entity relations, and the full
+subcommand list are documented on the dedicated [Execute](/docs/commands/execute) page. A quick conditional example:
 
 ```kotlin
 function("execute_conditions") {
@@ -627,129 +630,6 @@ Generated output:
 
 ```mcfunction
 execute as @e[limit=3,sort=random] if score @s points >= 10 run say You have enough points!
-```
-
-For `execute if score`, Kore exposes the full set of scoreboard comparisons:
-
-| Kotlin DSL                                                | Generated syntax                    |
-|-----------------------------------------------------------|-------------------------------------|
-| `score(self(), "points") equalTo 10`                      | `if score @s points matches 10`     |
-| `score(self(), "points") notEqualTo 10`                   | `unless score @s points matches 10` |
-| `score(self(), "points") greaterThan 10`                  | `if score @s points > 10`           |
-| `score(self(), "points") greaterThanOrEqualTo 10`         | `if score @s points >= 10`          |
-| `score(self(), "points") lessThan 10`                     | `if score @s points < 10`           |
-| `score(self(), "points") lessThanOrEqualTo 10`            | `if score @s points <= 10`          |
-| `score(self(), "points") equalTo score(self(), "target")` | `if score @s points = @s target`    |
-
-```kotlin
-function("execute_score_comparisons") {
-	execute {
-		ifCondition {
-			score(self(), "points") equalTo 10
-			score(self(), "points") notEqualTo 11
-			score(self(), "points") greaterThan 5
-			score(self(), "points") greaterThanOrEqualTo 10
-			score(self(), "points") lessThan 20
-			score(self(), "points") lessThanOrEqualTo 15
-			score(self(), "points") equalTo score(self(), "target")
-		}
-
-		run {
-			say("Score comparisons matched")
-		}
-	}
-}
-```
-
-#### Execute with Multiple Conditions
-
-```kotlin
-function("execute_multi_conditions") {
-	execute {
-		ifCondition {
-			score(self(), "a") matches rangeOrInt(0)
-			score(self(), "b") matches rangeOrInt(1)
-			score(self(), "c") matches rangeOrInt(2)
-		}
-
-		run {
-			say("All conditions met!")
-		}
-	}
-}
-```
-
-Generated output:
-
-```mcfunction
-execute if score @s a matches 0 if score @s b matches 1 if score @s c matches 2 run say All conditions met!
-```
-
-#### Execute with Position and Dimension
-
-```kotlin
-function("execute_position") {
-	execute {
-		at(self())
-		positioned(vec3(0, 100, 0))
-		inDimension(Dimensions.THE_NETHER)
-
-		run {
-			setBlock(vec3(), Blocks.GLOWSTONE)
-		}
-	}
-}
-```
-
-Generated output:
-
-```mcfunction
-execute at @s positioned 0 100 0 in minecraft:the_nether run setblock ~ ~ ~ minecraft:glowstone
-```
-
-#### Execute with Alignment and Anchoring
-
-```kotlin
-function("execute_align") {
-	execute {
-		align(Axes.XYZ)
-		anchored(Anchor.EYES)
-		facing(vec3(0, 64, 0))
-
-		run {
-			say("Aligned and facing!")
-		}
-	}
-}
-```
-
-Generated output:
-
-```mcfunction
-execute align xyz anchored eyes facing 0 64 0 run say Aligned and facing!
-```
-
-#### Execute with Entity Relations
-
-```kotlin
-function("execute_relations") {
-	execute {
-		asTarget(allEntities {
-			type = EntityTypes.ZOMBIE
-		})
-		on(Relation.ATTACKER)
-
-		run {
-			effect.give(self(), Effects.GLOWING, 10)
-		}
-	}
-}
-```
-
-Generated output:
-
-```mcfunction
-execute as @e[type=minecraft:zombie] on attacker run effect give @s minecraft:glowing 10
 ```
 
 #### Execute Store
@@ -1306,11 +1186,11 @@ function("selector_examples") {
 	})
 
 	// Entities with scores
-	effect.give(allEntities {
+	effect(allEntities {
 		scores {
 			score("kills") greaterThanOrEqualTo 5
 		}
-	}, Effects.STRENGTH, 60)
+	}) { give(Effects.STRENGTH, duration = 60) }
 
 	// Entities with NBT
 	kill(allEntities {
