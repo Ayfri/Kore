@@ -26,7 +26,7 @@ fun FaqSection() {
 	val questions = listOf(
 		FaqItem(
 			"How does Kore handle variables, if/else conditions, and loops?",
-			"This is the most important concept in Kore. Standard Kotlin variables (`val`/`var`) and loops (`for`/`while`) are evaluated at compile-time to generate your datapack. To handle actual in-game logic at runtime, Kore provides built-in abstractions over Minecraft's scoreboards, command macros, and data storages. You write Kotlin, but Kore correctly maps your logic to Minecraft's execution engine."
+			"This is the most important concept in Kore. Standard Kotlin variables (`val`/`var`) and loops (`for`/`while`) are evaluated at compile-time to generate your datapack. To handle actual in-game logic at runtime, Kore provides built-in abstractions over Minecraft's scoreboards, command macros, and data storages. You write Kotlin, but Kore correctly maps your logic to Minecraft's execution engine. See the [Runtime Logic](/docs/concepts/runtime-logic) guide for the full picture."
 		),
 		FaqItem(
 			"Can I use other datapacks with Kore?",
