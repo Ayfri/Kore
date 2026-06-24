@@ -4,9 +4,19 @@ on:
   push:
     branches:
       - master
+    paths:
+      - '**/*.kt'
+      - '**/*.kts'
+      - '**/*.java'
+      - '.github/workflows/codeql.yml'
   pull_request:
     branches:
       - master
+    paths:
+      - '**/*.kt'
+      - '**/*.kts'
+      - '**/*.java'
+      - '.github/workflows/codeql.yml'
   schedule:
     - cron: '20 4 * * 1'
   workflow_dispatch:
