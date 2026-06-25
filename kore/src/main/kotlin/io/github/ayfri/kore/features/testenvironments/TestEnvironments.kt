@@ -6,6 +6,7 @@ import io.github.ayfri.kore.features.testenvironments.types.*
 import io.github.ayfri.kore.features.testenvironments.types.Function
 import io.github.ayfri.kore.generated.Gamerules
 import io.github.ayfri.kore.generated.arguments.types.TestEnvironmentArgument
+import io.github.ayfri.kore.generated.arguments.types.TimelineArgument
 import io.github.ayfri.kore.generated.arguments.types.WorldClockArgument
 import io.github.ayfri.kore.features.testenvironments.enums.Weather as WeatherEnum
 
@@ -104,6 +105,21 @@ class TestEnvironmentsBuilder(private val dataPack: DataPack) {
 		clock: WorldClockArgument,
 		time: Int,
 	): TestEnvironmentArgument = dataPack.testEnvironment(fileName, ClockTimeEnvironment(clock, time))
+
+	/**
+	 * Creates a timeline attributes test environment that applies a set of timelines during test execution.
+	 *
+	 * Timeline attributes environments allow tests to run under specific timeline configurations,
+	 * useful for testing time-driven mechanics driven by timeline definitions.
+	 *
+	 * @param fileName The name of the timeline attributes environment file
+	 * @param timelines The timelines to activate during test execution
+	 * @return TestEnvironmentArgument representing the timeline attributes environment
+	 */
+	fun timelineAttributes(
+		fileName: String = "timeline_attributes_environment",
+		vararg timelines: TimelineArgument,
+	): TestEnvironmentArgument = dataPack.testEnvironment(fileName, TimelineAttributesEnvironment(timelines.toList()))
 
 	/**
 	 * Creates a weather-based test environment with specific weather conditions.

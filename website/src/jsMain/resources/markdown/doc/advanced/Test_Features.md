@@ -5,7 +5,7 @@ nav-title: Test Features
 description: A comprehensive guide for creating test instances and test environments in Minecraft's GameTest framework with Kore.
 keywords: minecraft, datapack, kore, guide, test, testing, environment, instance, gametest, automation
 date-created: 2025-01-08
-date-modified: 2026-02-15
+date-modified: 2026-06-26
 routeOverride: /docs/advanced/test-features
 ---
 
@@ -17,7 +17,7 @@ registries.
 
 ## Test Environments
 
-Test environments define the preconditions under which tests run. There are five types:
+Test environments define the preconditions under which tests run. There are six types:
 
 ### Weather
 
@@ -31,15 +31,15 @@ testEnvironments {
 }
 ```
 
-### Time of Day
+### Clock Time
 
-Locks the time to a specific tick value:
+Locks a world clock to a specific tick value:
 
 ```kotlin
 testEnvironments {
-	timeOfDay("morning", 1000)
-	timeOfDay("noon", 6000)
-	timeOfDay("night", 18000)
+  clockTime("morning", WorldClocks.OVERWORLD, 1000)
+  clockTime("noon", WorldClocks.OVERWORLD, 6000)
+  clockTime("night", WorldClocks.OVERWORLD, 18000)
 }
 ```
 
@@ -73,6 +73,19 @@ testEnvironments {
 }
 ```
 
+### Timeline Attributes
+
+Applies a set of timelines during test execution, useful for testing time-driven mechanics:
+
+```kotlin
+val dayCycle = timeline("day_cycle", WorldClocks.OVERWORLD)
+val endCycle = timeline("end_cycle", WorldClocks.THE_END)
+
+testEnvironments {
+  timelineAttributes("timeline_env", dayCycle, endCycle)
+}
+```
+
 ### Combined (allOf)
 
 Merges multiple environments into one:
@@ -82,7 +95,7 @@ testEnvironments {
 	val rules = gameRules("no_mobs") {
 		this[Gamerules.DO_MOB_SPAWNING] = false
 	}
-	val time = timeOfDay("dawn", 1000)
+  val time = clockTime("dawn", WorldClocks.OVERWORLD, 1000)
 
 	allOf("controlled_dawn", rules, time)
 }
@@ -224,7 +237,7 @@ fun DataPack.createTestSuite() {
 		this[Gamerules.DO_MOB_SPAWNING] = false
 		this[Gamerules.RANDOM_TICK_SPEED] = 0
 	}
-	val dayTime = testEnvironmentsBuilder.timeOfDay("day", 6000)
+  val dayTime = testEnvironmentsBuilder.clockTime("day", WorldClocks.OVERWORLD, 6000)
 	val controlledDay = testEnvironmentsBuilder.allOf("controlled_day", controlled, dayTime)
 
 	// Function environment (setup/teardown)

@@ -6,6 +6,7 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.features.testenvironments.enums.Weather
 import io.github.ayfri.kore.features.testenvironments.testEnvironments
+import io.github.ayfri.kore.features.timelines.timeline
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.Gamerules
 import io.github.ayfri.kore.generated.WorldClocks
@@ -63,6 +64,21 @@ fun DataPack.testEnvironmentTests() {
 					"minecraft:keep_inventory": false,
 					"minecraft:random_tick_speed": 0
 				}
+			}
+		""".trimIndent()
+
+		val tl1 = timeline("day_cycle", WorldClocks.OVERWORLD)
+		val tl2 = timeline("end_cycle", WorldClocks.THE_END)
+
+		timelineAttributes("timeline_attributes_env", tl1, tl2)
+
+		testEnvironments.last() assertsIs """
+			{
+				"type": "minecraft:timeline_attributes",
+				"timelines": [
+					"features_tests:day_cycle",
+					"features_tests:end_cycle"
+				]
 			}
 		""".trimIndent()
 	}
