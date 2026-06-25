@@ -5,7 +5,7 @@ nav-title: Chat Components
 description: A guide for creating Chat Components in a Minecraft datapack using Kore.
 keywords: minecraft, datapack, kore, guide, chat-components
 date-created: 2024-09-05
-date-modified: 2026-05-29
+date-modified: 2026-06-26
 routeOverride: /docs/concepts/chat-components
 ---
 
@@ -108,6 +108,7 @@ In-game example:<br>
 
 The `NbtComponent` displays NBT data from a block, an entity, or a storage. The
 `interpret` property can be used to interpret the NBT data as a text component, if the parsing fails, nothing is displayed.<br>
+The `plain` property suppresses SNBT key/value coloring when set to `true`; it cannot be combined with `interpret`.<br>
 The `nbt` property can be used to specify the path to the NBT data.<br>
 If `nbt` points to an array, then it will display all the elements joined in the form `Element1, Element2` etc.<br>
 The `separator` property can be used to change the separator between the elements of the array.
