@@ -7,8 +7,14 @@ import io.github.ayfri.kore.utils.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * A `minecraft:score` component that renders the scoreboard value of [score]'s entity for its objective.
+ *
+ * Docs: [Text component format - Score](https://minecraft.wiki/w/Text_component_format#Score)
+ */
 @Serializable
 data class ScoreComponent(
+	/** The entity/objective pair whose score is displayed. */
 	var score: ScoreComponentEntry,
 ) : ChatComponent() {
 	override val type = ChatComponentType.SCORE
@@ -19,11 +25,15 @@ data class ScoreComponent(
 	}
 }
 
+/** Holds the entity selector and objective name for a [ScoreComponent]. */
 @Serializable
 data class ScoreComponentEntry(
+	/** Entity name or selector whose score is read (serialized as `name`). */
 	@SerialName("name")
 	var entity: String,
+	/** Scoreboard objective to read the score from. */
 	var objective: String,
+	/** Optional literal value that overrides the actual scoreboard score. */
 	var value: String? = null,
 ) {
 	fun toNbtTag() = nbt {
@@ -33,6 +43,7 @@ data class ScoreComponentEntry(
 	}
 }
 
+/** Creates a [ScoreComponent] displaying [selector]'s [objective] score. */
 fun scoreComponent(
 	objective: String,
 	selector: ScoreHolderArgument = AllArgument,
