@@ -34,6 +34,9 @@ fun Function.fetchprofile(name: String) = addLine(command("fetchprofile", litera
 /** Looks up a profile by UUID [id]. */
 fun Function.fetchprofile(id: UUIDArgument) = addLine(command("fetchprofile", literal("id"), id))
 
+/** Looks up a profile by entity [selector]. Requires a single-entity selector. */
+fun Function.fetchprofile(selector: EntityArgument) = addLine(command("fetchprofile", literal("entity"), selector))
+
 /** Fills the selected area with [biome]. */
 fun Function.fillbiome(from: Vec3, to: Vec3, biome: BiomeArgument) = addLine(command("fillbiome", from, to, biome))
 
