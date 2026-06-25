@@ -23,6 +23,7 @@ enum class NbtComponentSource {
 data class NbtComponent(
 	var nbt: String,
 	var interpret: Boolean? = null,
+	var plain: Boolean? = null,
 	var block: String? = null,
 	var entity: String? = null,
 	var storage: String? = null,
