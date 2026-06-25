@@ -16,6 +16,7 @@ fun DataPack.pigSoundVariantTests() {
 		adultSounds {
 			ambientSound = SoundEvents.Entity.Pig.AMBIENT
 			deathSound = SoundEvents.Entity.Pig.DEATH
+			eatSound = SoundEvents.Entity.Armadillo.EAT
 			hurtSound = SoundEvents.Entity.Pig.HURT
 			stepSound = SoundEvents.Entity.Pig.STEP
 		}
@@ -26,6 +27,7 @@ fun DataPack.pigSoundVariantTests() {
 			"adult_sounds": {
 				"ambient_sound": "minecraft:entity.pig.ambient",
 				"death_sound": "minecraft:entity.pig.death",
+				"eat_sound": "minecraft:entity.armadillo.eat",
 				"hurt_sound": "minecraft:entity.pig.hurt",
 				"step_sound": "minecraft:entity.pig.step"
 			}
@@ -36,12 +38,14 @@ fun DataPack.pigSoundVariantTests() {
 		adultSounds {
 			ambientSound = SoundEvents.Entity.Pig.AMBIENT
 			deathSound = SoundEvents.Entity.Pig.DEATH
+			eatSound = SoundEvents.Entity.Armadillo.EAT
 			hurtSound = SoundEvents.Entity.Pig.HURT
 			stepSound = SoundEvents.Entity.Pig.STEP
 		}
 		babySounds {
 			ambientSound = SoundEvents.Entity.Chicken.AMBIENT
 			deathSound = SoundEvents.Entity.Chicken.DEATH
+			eatSound = SoundEvents.Entity.Armadillo.EAT
 			hurtSound = SoundEvents.Entity.Chicken.HURT
 			stepSound = SoundEvents.Entity.Chicken.STEP
 		}
@@ -52,12 +56,14 @@ fun DataPack.pigSoundVariantTests() {
 			"adult_sounds": {
 				"ambient_sound": "minecraft:entity.pig.ambient",
 				"death_sound": "minecraft:entity.pig.death",
+				"eat_sound": "minecraft:entity.armadillo.eat",
 				"hurt_sound": "minecraft:entity.pig.hurt",
 				"step_sound": "minecraft:entity.pig.step"
 			},
 			"baby_sounds": {
 				"ambient_sound": "minecraft:entity.chicken.ambient",
 				"death_sound": "minecraft:entity.chicken.death",
+				"eat_sound": "minecraft:entity.armadillo.eat",
 				"hurt_sound": "minecraft:entity.chicken.hurt",
 				"step_sound": "minecraft:entity.chicken.step"
 			}

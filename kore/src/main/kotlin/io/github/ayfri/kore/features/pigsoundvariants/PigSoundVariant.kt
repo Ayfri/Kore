@@ -19,6 +19,8 @@ data class PigSoundVariantSounds(
 	var ambientSound: SoundEventArgument = SoundEvents.Entity.Pig.AMBIENT,
 	/** The death sound. */
 	var deathSound: SoundEventArgument = SoundEvents.Entity.Pig.DEATH,
+	/** The eat sound. */
+	var eatSound: SoundEventArgument = SoundEvents.Entity.Pig.AMBIENT,
 	/** The hurt sound. */
 	var hurtSound: SoundEventArgument = SoundEvents.Entity.Pig.HURT,
 	/** The step sound. */

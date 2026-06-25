@@ -5,7 +5,7 @@ nav-title: Variants
 description: Define entity and painting variants with Kore's type-safe DSL
 keywords: minecraft, datapack, kore, variants, cat, cow, chicken, frog, pig, wolf, zombie nautilus, painting, sound variants
 date-created: 2026-02-03
-date-modified: 2026-06-25
+date-modified: 2026-06-26
 routeOverride: /docs/data-driven/variants
 ---
 
@@ -430,6 +430,7 @@ pigSoundVariant("oinking") {
 	adultSounds {
 		ambientSound = SoundEvents.Entity.Pig.AMBIENT
 		deathSound = SoundEvents.Entity.Pig.DEATH
+		eatSound = SoundEvents.Entity.Pig.AMBIENT
 		hurtSound = SoundEvents.Entity.Pig.HURT
 		stepSound = SoundEvents.Entity.Pig.STEP
 	}
@@ -443,6 +444,7 @@ Produces JSON:
   "adult_sounds": {
     "ambient_sound": "minecraft:entity.pig.ambient",
     "death_sound": "minecraft:entity.pig.death",
+    "eat_sound": "minecraft:entity.pig.ambient",
     "hurt_sound": "minecraft:entity.pig.hurt",
     "step_sound": "minecraft:entity.pig.step"
   }
