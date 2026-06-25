@@ -3,9 +3,9 @@ root: .components.layouts.MarkdownLayout
 title: Variants
 nav-title: Variants
 description: Define entity and painting variants with Kore's type-safe DSL
-keywords: minecraft, datapack, kore, variants, cat, cow, chicken, frog, pig, wolf, zombie nautilus, painting
+keywords: minecraft, datapack, kore, variants, cat, cow, chicken, frog, pig, wolf, zombie nautilus, painting, sound variants
 date-created: 2026-02-03
-date-modified: 2026-06-16
+date-modified: 2026-06-25
 routeOverride: /docs/data-driven/variants
 ---
 
@@ -295,87 +295,6 @@ Produces JSON:
 }
 ```
 
-### Wolf Sound Variants
-
-Wolf sound variants define custom sounds for wolves. Sound variants are independent of color variants and spawning biome. Wolves will make the sounds associated with their variant when they bark, pant, whine, growl, die, or get hurt.
-
-Sounds are split into two groups: `adultSounds` (required) and `babySounds` (optional - falls back to `adultSounds` when
-absent).
-
-```kotlin
-wolfSoundVariant("funny") {
-	adultSounds = WolfSoundVariantSounds(
-		ambientSound = SoundEvents.Entity.Pig.AMBIENT,
-		deathSound = SoundEvents.Entity.Creeper.DEATH,
-		growlSound = SoundEvents.Entity.Player.LEVELUP,
-		hurtSound = SoundEvents.Entity.Zombie.HURT,
-		pantSound = SoundEvents.Entity.EnderDragon.FLAP,
-		whineSound = SoundEvents.Entity.Cat.PURR,
-	)
-}
-```
-
-Produces JSON:
-
-```json
-{
-  "adult_sounds": {
-    "ambient_sound": "minecraft:entity.pig.ambient",
-    "death_sound": "minecraft:entity.creeper.death",
-    "growl_sound": "minecraft:entity.player.levelup",
-    "hurt_sound": "minecraft:entity.zombie.hurt",
-    "pant_sound": "minecraft:entity.ender_dragon.flap",
-    "whine_sound": "minecraft:entity.cat.purr"
-  }
-}
-```
-
-With separate baby sounds:
-
-```kotlin
-wolfSoundVariant("funny") {
-	adultSounds = WolfSoundVariantSounds(
-		ambientSound = SoundEvents.Entity.Wolf.AMBIENT,
-		deathSound = SoundEvents.Entity.Wolf.DEATH,
-		growlSound = SoundEvents.Entity.Wolf.GROWL,
-		hurtSound = SoundEvents.Entity.Wolf.HURT,
-		pantSound = SoundEvents.Entity.Wolf.PANT,
-		whineSound = SoundEvents.Entity.Wolf.WHINE,
-	)
-	babySounds = WolfSoundVariantSounds(
-		ambientSound = SoundEvents.Entity.Pig.AMBIENT,
-		deathSound = SoundEvents.Entity.Pig.DEATH,
-		growlSound = SoundEvents.Entity.Wolf.GROWL,
-		hurtSound = SoundEvents.Entity.Pig.HURT,
-		pantSound = SoundEvents.Entity.Wolf.PANT,
-		whineSound = SoundEvents.Entity.Wolf.WHINE,
-	)
-}
-```
-
-Produces JSON:
-
-```json
-{
-  "adult_sounds": {
-    "ambient_sound": "minecraft:entity.wolf.ambient",
-    "death_sound": "minecraft:entity.wolf.death",
-    "growl_sound": "minecraft:entity.wolf.growl",
-    "hurt_sound": "minecraft:entity.wolf.hurt",
-    "pant_sound": "minecraft:entity.wolf.pant",
-    "whine_sound": "minecraft:entity.wolf.whine"
-  },
-  "baby_sounds": {
-    "ambient_sound": "minecraft:entity.pig.ambient",
-    "death_sound": "minecraft:entity.pig.death",
-    "growl_sound": "minecraft:entity.wolf.growl",
-    "hurt_sound": "minecraft:entity.pig.hurt",
-    "pant_sound": "minecraft:entity.wolf.pant",
-    "whine_sound": "minecraft:entity.wolf.whine"
-  }
-}
-```
-
 ### Zombie Nautilus Variants
 
 Zombie nautilus variants define the texture, model, and spawn conditions for zombie nautiluses.
@@ -403,6 +322,209 @@ Produces JSON:
 			}
 		}
 	]
+}
+```
+
+## Sound Variants
+
+### Cat Sound Variants
+
+Cat sound variants define custom sounds for cats. Sounds are split into `adultSounds` (required) and `babySounds` (
+optional - falls back to `adultSounds` when absent).
+
+```kotlin
+catSoundVariant("funny") {
+	adultSounds {
+		ambientSound = SoundEvents.Entity.Cat.AMBIENT
+		begForFoodSound = SoundEvents.Entity.Cat.BEG_FOR_FOOD
+		deathSound = SoundEvents.Entity.Cat.DEATH
+		eatSound = SoundEvents.Entity.Cat.EAT
+		hissSound = SoundEvents.Entity.Cat.HISS
+		hurtSound = SoundEvents.Entity.Cat.HURT
+		purreowSound = SoundEvents.Entity.Cat.PURREOW
+		purrSound = SoundEvents.Entity.Cat.PURR
+		strayAmbientSound = SoundEvents.Entity.Cat.STRAY_AMBIENT
+	}
+}
+```
+
+Produces JSON:
+
+```json
+{
+  "adult_sounds": {
+    "ambient_sound": "minecraft:entity.cat.ambient",
+    "beg_for_food_sound": "minecraft:entity.cat.beg_for_food",
+    "death_sound": "minecraft:entity.cat.death",
+    "eat_sound": "minecraft:entity.cat.eat",
+    "hiss_sound": "minecraft:entity.cat.hiss",
+    "hurt_sound": "minecraft:entity.cat.hurt",
+    "purreow_sound": "minecraft:entity.cat.purreow",
+    "purr_sound": "minecraft:entity.cat.purr",
+    "stray_ambient_sound": "minecraft:entity.cat.stray_ambient"
+  }
+}
+```
+
+### Chicken Sound Variants
+
+Chicken sound variants define custom sounds for chickens. Sounds are split into `adultSounds` (required) and
+`babySounds` (optional - falls back to `adultSounds` when absent).
+
+```kotlin
+chickenSoundVariant("clucky") {
+	adultSounds {
+		ambientSound = SoundEvents.Entity.Chicken.AMBIENT
+		deathSound = SoundEvents.Entity.Chicken.DEATH
+		hurtSound = SoundEvents.Entity.Chicken.HURT
+		stepSound = SoundEvents.Entity.Chicken.STEP
+	}
+}
+```
+
+Produces JSON:
+
+```json
+{
+  "adult_sounds": {
+    "ambient_sound": "minecraft:entity.chicken.ambient",
+    "death_sound": "minecraft:entity.chicken.death",
+    "hurt_sound": "minecraft:entity.chicken.hurt",
+    "step_sound": "minecraft:entity.chicken.step"
+  }
+}
+```
+
+### Cow Sound Variants
+
+Cow sound variants define custom sounds for cows. Unlike other sound variants, cows use a flat structure without
+age-group nesting.
+
+```kotlin
+cowSoundVariant("moody") {
+	ambientSound = SoundEvents.Entity.Cow.AMBIENT
+	deathSound = SoundEvents.Entity.Cow.DEATH
+	hurtSound = SoundEvents.Entity.Cow.HURT
+	stepSound = SoundEvents.Entity.Cow.STEP
+}
+```
+
+Produces JSON:
+
+```json
+{
+  "ambient_sound": "minecraft:entity.cow.ambient",
+  "death_sound": "minecraft:entity.cow.death",
+  "hurt_sound": "minecraft:entity.cow.hurt",
+  "step_sound": "minecraft:entity.cow.step"
+}
+```
+
+### Pig Sound Variants
+
+Pig sound variants define custom sounds for pigs. Sounds are split into `adultSounds` (required) and `babySounds` (
+optional - falls back to `adultSounds` when absent).
+
+```kotlin
+pigSoundVariant("oinking") {
+	adultSounds {
+		ambientSound = SoundEvents.Entity.Pig.AMBIENT
+		deathSound = SoundEvents.Entity.Pig.DEATH
+		hurtSound = SoundEvents.Entity.Pig.HURT
+		stepSound = SoundEvents.Entity.Pig.STEP
+	}
+}
+```
+
+Produces JSON:
+
+```json
+{
+  "adult_sounds": {
+    "ambient_sound": "minecraft:entity.pig.ambient",
+    "death_sound": "minecraft:entity.pig.death",
+    "hurt_sound": "minecraft:entity.pig.hurt",
+    "step_sound": "minecraft:entity.pig.step"
+  }
+}
+```
+
+### Wolf Sound Variants
+
+Wolf sound variants define custom sounds for wolves. Sound variants are independent of color variants and spawning
+biome. Wolves will make the sounds associated with their variant when they bark, pant, whine, growl, die, or get hurt.
+
+Sounds are split into two groups: `adultSounds` (required) and `babySounds` (optional - falls back to `adultSounds` when
+absent).
+
+```kotlin
+wolfSoundVariant("funny") {
+	adultSounds {
+		ambientSound = SoundEvents.Entity.Pig.AMBIENT
+		deathSound = SoundEvents.Entity.Creeper.DEATH
+		growlSound = SoundEvents.Entity.Player.LEVELUP
+		hurtSound = SoundEvents.Entity.Zombie.HURT
+		pantSound = SoundEvents.Entity.EnderDragon.FLAP
+		whineSound = SoundEvents.Entity.Cat.PURR
+	}
+}
+```
+
+Produces JSON:
+
+```json
+{
+  "adult_sounds": {
+    "ambient_sound": "minecraft:entity.pig.ambient",
+    "death_sound": "minecraft:entity.creeper.death",
+    "growl_sound": "minecraft:entity.player.levelup",
+    "hurt_sound": "minecraft:entity.zombie.hurt",
+    "pant_sound": "minecraft:entity.ender_dragon.flap",
+    "whine_sound": "minecraft:entity.cat.purr"
+  }
+}
+```
+
+With separate baby sounds:
+
+```kotlin
+wolfSoundVariant("funny") {
+	adultSounds {
+		ambientSound = SoundEvents.Entity.Wolf.AMBIENT
+		deathSound = SoundEvents.Entity.Wolf.DEATH
+		growlSound = SoundEvents.Entity.Wolf.GROWL
+		hurtSound = SoundEvents.Entity.Wolf.HURT
+		pantSound = SoundEvents.Entity.Wolf.PANT
+		whineSound = SoundEvents.Entity.Wolf.WHINE
+	}
+	babySounds {
+		ambientSound = SoundEvents.Entity.Pig.AMBIENT
+		deathSound = SoundEvents.Entity.Pig.DEATH
+		hurtSound = SoundEvents.Entity.Pig.HURT
+	}
+}
+```
+
+Produces JSON:
+
+```json
+{
+  "adult_sounds": {
+    "ambient_sound": "minecraft:entity.wolf.ambient",
+    "death_sound": "minecraft:entity.wolf.death",
+    "growl_sound": "minecraft:entity.wolf.growl",
+    "hurt_sound": "minecraft:entity.wolf.hurt",
+    "pant_sound": "minecraft:entity.wolf.pant",
+    "whine_sound": "minecraft:entity.wolf.whine"
+  },
+  "baby_sounds": {
+    "ambient_sound": "minecraft:entity.pig.ambient",
+    "death_sound": "minecraft:entity.pig.death",
+    "growl_sound": "minecraft:entity.wolf.growl",
+    "hurt_sound": "minecraft:entity.pig.hurt",
+    "pant_sound": "minecraft:entity.wolf.pant",
+    "whine_sound": "minecraft:entity.wolf.whine"
+  }
 }
 ```
 
