@@ -5,8 +5,10 @@ import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.emptyFunction
 import kotlinx.serialization.Serializable
 
+/** Fills the chat input box with [command] when the player clicks the component, without executing it. */
 @Serializable
 data class SuggestCommand(
+	/** The text to insert into the chat input box. */
 	var command: String,
 ) : Action(), ClickEvent, DialogAction
 

@@ -7,10 +7,17 @@ import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompoundBuilder
 import net.benwoodworth.knbt.NbtTag
 
+/**
+ * Sends a dynamically constructed custom packet to the dedicated server. Macro names in [id] or [additions] are
+ * substituted with matching dialog input values; undefined macros are replaced with an empty string.
+ * Ignored by vanilla servers.
+ */
 @SerialName("dynamic/custom")
 @Serializable
 data class DynamicCustom(
+	/** Namespaced packet identifier. May contain macro placeholders. */
 	var id: String,
+	/** Optional NBT additions merged into the packet payload. May contain macro placeholders. */
 	@Serializable(with = NbtAsJsonSerializer::class)
 	var additions: NbtTag? = null,
 ) : Action(), DialogAction

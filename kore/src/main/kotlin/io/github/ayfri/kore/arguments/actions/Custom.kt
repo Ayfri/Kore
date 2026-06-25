@@ -5,9 +5,12 @@ import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompoundBuilder
 import net.benwoodworth.knbt.NbtTag
 
+/** Sends a custom packet with [id] and optional [payload] to the dedicated server. Ignored by vanilla servers. */
 @Serializable
 data class Custom(
+	/** Namespaced packet identifier. */
 	var id: String,
+	/** Optional NBT payload attached to the packet. */
 	var payload: NbtTag? = null,
 ) : Action(), ClickEvent, DialogAction
 

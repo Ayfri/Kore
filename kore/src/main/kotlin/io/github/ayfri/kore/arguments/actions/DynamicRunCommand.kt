@@ -8,9 +8,14 @@ import io.github.ayfri.kore.functions.generatedFunction
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Runs a command built from [template] by substituting macro placeholders with matching dialog input values.
+ * Undefined macros are replaced with an empty string.
+ */
 @Serializable
 @SerialName("dynamic/run_command")
 data class DynamicRunCommand(
+	/** Command template string. Macro names matching dialog input IDs are substituted at runtime. */
 	var template: String,
 ) : Action(), DialogAction
 

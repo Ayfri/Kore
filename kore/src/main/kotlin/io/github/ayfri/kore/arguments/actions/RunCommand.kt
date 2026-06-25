@@ -5,8 +5,10 @@ import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.emptyFunction
 import kotlinx.serialization.Serializable
 
+/** Runs [command] as the clicking player when the component is clicked. The string should not include a leading `/`. */
 @Serializable
 data class RunCommand(
+	/** The command to execute, without a leading `/`. */
 	var command: String,
 ) : Action(), ClickEvent, DialogAction
 
