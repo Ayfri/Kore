@@ -5,9 +5,12 @@ import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.features.advancements.Advancement
 import io.github.ayfri.kore.features.bannerpatterns.BannerPattern
+import io.github.ayfri.kore.features.catsoundvariants.CatSoundVariant
 import io.github.ayfri.kore.features.catvariants.CatVariant
 import io.github.ayfri.kore.features.chattypes.ChatType
+import io.github.ayfri.kore.features.chickensoundvariants.ChickenSoundVariant
 import io.github.ayfri.kore.features.chickenvariants.ChickenVariant
+import io.github.ayfri.kore.features.cowsoundvariants.CowSoundVariant
 import io.github.ayfri.kore.features.cowvariants.CowVariant
 import io.github.ayfri.kore.features.damagetypes.DamageType
 import io.github.ayfri.kore.features.dialogs.Dialog
@@ -19,6 +22,7 @@ import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.jukeboxsongs.JukeboxSong
 import io.github.ayfri.kore.features.loottables.LootTable
 import io.github.ayfri.kore.features.paintingvariant.PaintingVariant
+import io.github.ayfri.kore.features.pigsoundvariants.PigSoundVariant
 import io.github.ayfri.kore.features.pigvariants.PigVariant
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.recipes.RecipeFile
@@ -84,11 +88,14 @@ class DataPack(val name: String) {
 	val advancements = registerGenerator<Advancement>()
 	val bannerPatterns = registerGenerator<BannerPattern>()
 	val biomes = registerGenerator<Biome>()
+	val catSoundVariants = registerGenerator<CatSoundVariant>()
 	val catVariants = registerGenerator<CatVariant>()
 	val chatTypes = registerGenerator<ChatType>()
+	val chickenSoundVariants = registerGenerator<ChickenSoundVariant>()
 	val chickenVariants = registerGenerator<ChickenVariant>()
 	val configuredCarvers = registerGenerator<ConfiguredCarver>()
 	val configuredFeatures = registerGenerator<ConfiguredFeature>()
+	val cowSoundVariants = registerGenerator<CowSoundVariant>()
 	val cowVariants = registerGenerator<CowVariant>()
 	val damageTypes = registerGenerator<DamageType>()
 	val densityFunctions = registerGenerator<DensityFunction>()
@@ -106,6 +113,7 @@ class DataPack(val name: String) {
 	val noises = registerGenerator<Noise>()
 	val noiseSettings = registerGenerator<NoiseSettings>()
 	val paintingVariants = registerGenerator<PaintingVariant>()
+	val pigSoundVariants = registerGenerator<PigSoundVariant>()
 	val pigVariants = registerGenerator<PigVariant>()
 	val placedFeatures = registerGenerator<PlacedFeature>()
 	val predicates = registerGenerator<Predicate>()

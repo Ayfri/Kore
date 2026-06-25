@@ -3,7 +3,8 @@ package io.github.ayfri.kore.features
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
-import io.github.ayfri.kore.features.wolfsoundvariants.WolfSoundVariantSounds
+import io.github.ayfri.kore.features.wolfsoundvariants.adultSounds
+import io.github.ayfri.kore.features.wolfsoundvariants.babySounds
 import io.github.ayfri.kore.features.wolfsoundvariants.wolfSoundVariant
 import io.github.ayfri.kore.generated.SoundEvents
 import io.github.ayfri.kore.utils.pretty
@@ -12,14 +13,14 @@ import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.wolfSoundVariantTests() {
 	wolfSoundVariant("funny") {
-		adultSounds = WolfSoundVariantSounds(
-			ambientSound = SoundEvents.Entity.Pig.AMBIENT,
-			deathSound = SoundEvents.Entity.Creeper.DEATH,
-			growlSound = SoundEvents.Entity.Player.LEVELUP,
-			hurtSound = SoundEvents.Entity.Zombie.HURT,
-			pantSound = SoundEvents.Entity.EnderDragon.FLAP,
-			whineSound = SoundEvents.Entity.Cat.PURR,
-		)
+		adultSounds {
+			ambientSound = SoundEvents.Entity.Pig.AMBIENT
+			deathSound = SoundEvents.Entity.Creeper.DEATH
+			growlSound = SoundEvents.Entity.Player.LEVELUP
+			hurtSound = SoundEvents.Entity.Zombie.HURT
+			pantSound = SoundEvents.Entity.EnderDragon.FLAP
+			whineSound = SoundEvents.Entity.Cat.PURR
+		}
 	}
 
 	wolfSoundVariants.last() assertsIs """
@@ -36,22 +37,19 @@ fun DataPack.wolfSoundVariantTests() {
 	""".trimIndent()
 
 	wolfSoundVariant("baby_test") {
-		adultSounds = WolfSoundVariantSounds(
-			ambientSound = SoundEvents.Entity.Wolf.AMBIENT,
-			deathSound = SoundEvents.Entity.Wolf.DEATH,
-			growlSound = SoundEvents.Entity.Wolf.GROWL,
-			hurtSound = SoundEvents.Entity.Wolf.HURT,
-			pantSound = SoundEvents.Entity.Wolf.PANT,
-			whineSound = SoundEvents.Entity.Wolf.WHINE,
-		)
-		babySounds = WolfSoundVariantSounds(
-			ambientSound = SoundEvents.Entity.Pig.AMBIENT,
-			deathSound = SoundEvents.Entity.Pig.DEATH,
-			growlSound = SoundEvents.Entity.Wolf.GROWL,
-			hurtSound = SoundEvents.Entity.Pig.HURT,
-			pantSound = SoundEvents.Entity.Wolf.PANT,
-			whineSound = SoundEvents.Entity.Wolf.WHINE,
-		)
+		adultSounds {
+			ambientSound = SoundEvents.Entity.Wolf.AMBIENT
+			deathSound = SoundEvents.Entity.Wolf.DEATH
+			growlSound = SoundEvents.Entity.Wolf.GROWL
+			hurtSound = SoundEvents.Entity.Wolf.HURT
+			pantSound = SoundEvents.Entity.Wolf.PANT
+			whineSound = SoundEvents.Entity.Wolf.WHINE
+		}
+		babySounds {
+			ambientSound = SoundEvents.Entity.Pig.AMBIENT
+			deathSound = SoundEvents.Entity.Pig.DEATH
+			hurtSound = SoundEvents.Entity.Pig.HURT
+		}
 	}
 
 	wolfSoundVariants.last() assertsIs """

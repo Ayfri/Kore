@@ -16,17 +16,17 @@ import kotlinx.serialization.Transient
 @Serializable
 data class WolfSoundVariantSounds(
 	/** The ambient sound. */
-	var ambientSound: SoundEventArgument,
+	var ambientSound: SoundEventArgument = SoundEvents.Entity.Wolf.AMBIENT,
 	/** The death sound. */
-	var deathSound: SoundEventArgument,
+	var deathSound: SoundEventArgument = SoundEvents.Entity.Wolf.DEATH,
 	/** The growl sound. */
-	var growlSound: SoundEventArgument,
+	var growlSound: SoundEventArgument = SoundEvents.Entity.Wolf.GROWL,
 	/** The hurt sound. */
-	var hurtSound: SoundEventArgument,
+	var hurtSound: SoundEventArgument = SoundEvents.Entity.Wolf.HURT,
 	/** The pant sound. */
-	var pantSound: SoundEventArgument,
+	var pantSound: SoundEventArgument = SoundEvents.Entity.Wolf.PANT,
 	/** The whine sound. */
-	var whineSound: SoundEventArgument,
+	var whineSound: SoundEventArgument = SoundEvents.Entity.Wolf.WHINE,
 )
 
 /**
@@ -52,6 +52,14 @@ data class WolfSoundVariant(
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
+/** Sets the adult sounds for this [WolfSoundVariant] using a builder block. */
+fun WolfSoundVariant.adultSounds(block: WolfSoundVariantSounds.() -> Unit) =
+	apply { adultSounds = WolfSoundVariantSounds().apply(block) }
+
+/** Sets the baby sounds for this [WolfSoundVariant] using a builder block. */
+fun WolfSoundVariant.babySounds(block: WolfSoundVariantSounds.() -> Unit) =
+	apply { babySounds = WolfSoundVariantSounds().apply(block) }
+
 /**
  * Create and register a [WolfSoundVariant] in this [DataPack].
  *
@@ -61,14 +69,7 @@ data class WolfSoundVariant(
  */
 fun DataPack.wolfSoundVariant(
 	fileName: String = "wolf_sound_variant",
-	adultSounds: WolfSoundVariantSounds = WolfSoundVariantSounds(
-		ambientSound = SoundEvents.Entity.Wolf.AMBIENT,
-		deathSound = SoundEvents.Entity.Wolf.DEATH,
-		growlSound = SoundEvents.Entity.Wolf.GROWL,
-		hurtSound = SoundEvents.Entity.Wolf.HURT,
-		pantSound = SoundEvents.Entity.Wolf.PANT,
-		whineSound = SoundEvents.Entity.Wolf.WHINE,
-	),
+	adultSounds: WolfSoundVariantSounds = WolfSoundVariantSounds(),
 	babySounds: WolfSoundVariantSounds? = null,
 	block: WolfSoundVariant.() -> Unit = {}
 ): WolfSoundVariantArgument {
