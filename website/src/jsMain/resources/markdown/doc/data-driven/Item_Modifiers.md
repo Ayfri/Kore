@@ -447,11 +447,22 @@ itemModifier("treasure_map") {
 
 #### setInstrument
 
-Set goat horn instrument:
+Set a goat horn instrument using a tag, a single ID, or multiple IDs/tags:
 
 ```kotlin
-itemModifier("horn") {
+// tag
+itemModifier("horn_tag") {
 	setInstrument(Tags.Instrument.GOAT_HORNS)
+}
+
+// single ID
+itemModifier("horn_id") {
+  setInstrument(Instruments.ADMIRE_GOAT_HORN)
+}
+
+// list of IDs/tags
+itemModifier("horn_list") {
+  setInstrument(Instruments.ADMIRE_GOAT_HORN, Instruments.SING_GOAT_HORN)
 }
 ```
 

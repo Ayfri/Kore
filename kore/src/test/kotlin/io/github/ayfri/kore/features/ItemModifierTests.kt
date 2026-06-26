@@ -669,6 +669,20 @@ fun DataPack.itemModifierTests() {
 		}
 	""".trimIndent()
 
+	itemModifier("set_instrument_list") {
+		setInstrument(Instruments.ADMIRE_GOAT_HORN, Instruments.SING_GOAT_HORN)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:set_instrument",
+			"options": [
+				"minecraft:admire_goat_horn",
+				"minecraft:sing_goat_horn"
+			]
+		}
+	""".trimIndent()
+
 	itemModifier("set_item") {
 		setItem(Items.APPLE)
 	}
