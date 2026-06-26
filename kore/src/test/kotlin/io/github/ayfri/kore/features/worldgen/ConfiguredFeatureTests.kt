@@ -353,9 +353,13 @@ fun DataPack.configuredFeatureTests() {
 			branchStartOffsetFromTop = uniform(-5, -2)
 		}
 		cherryFoliagePlacer { height = constant(3) }
-		belowTrunkProvider = ruleBasedBlockStateProvider(fallback = simpleStateProvider(Blocks.DIRT)) {
+		belowTrunkProvider = ruleBasedBlockStateProvider {
+			fallback = simpleStateProvider(Blocks.DIRT)
 			rule {
-
+				ifTrue {
+					hasSturdyFace(direction = Direction.DOWN)
+				}
+				then(simpleStateProvider(Blocks.GRASS_BLOCK))
 			}
 		}
 	})
@@ -372,7 +376,20 @@ fun DataPack.configuredFeatureTests() {
 							"Name": "minecraft:dirt"
 						}
 					},
-					"rules": []
+					"rules": [
+						{
+							"if_true": {
+								"type": "minecraft:has_sturdy_face",
+								"direction": "down"
+							},
+							"then": {
+								"type": "minecraft:simple_state_provider",
+								"state": {
+									"Name": "minecraft:grass_block"
+								}
+							}
+						}
+					]
 				},
 				"minimum_size": {
 					"type": "minecraft:two_layers_feature_size"
@@ -413,6 +430,146 @@ fun DataPack.configuredFeatureTests() {
 					"hanging_leaves_extension_chance": 0.0
 				},
 				"decorators": []
+			}
+		}
+	""".trimIndent()
+
+	configuredFeature(
+		"test_rule_based_provider_unified",
+		simpleBlock(
+			ruleBasedBlockStateProvider {
+				fallback = simpleStateProvider(Blocks.STONE)
+				rule {
+					ifTrue {
+						solid()
+					}
+					then(simpleStateProvider(Blocks.DIRT))
+				}
+				rule(
+					ifTrue = hasSturdyFace(direction = Direction.DOWN),
+					then = simpleStateProvider(Blocks.GRAVEL),
+				)
+				rule(then = simpleStateProvider(Blocks.SAND)) {
+					not {
+						matchingBlocks(block = Blocks.STONE)
+					}
+				}
+			}
+		)
+	)
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:simple_block",
+			"config": {
+				"to_place": {
+					"type": "minecraft:rule_based_block_state_provider",
+					"fallback": {
+						"type": "minecraft:simple_state_provider",
+						"state": {
+							"Name": "minecraft:stone"
+						}
+					},
+					"rules": [
+						{
+							"if_true": {
+								"type": "minecraft:solid"
+							},
+							"then": {
+								"type": "minecraft:simple_state_provider",
+								"state": {
+									"Name": "minecraft:dirt"
+								}
+							}
+						},
+						{
+							"if_true": {
+								"type": "minecraft:has_sturdy_face",
+								"direction": "down"
+							},
+							"then": {
+								"type": "minecraft:simple_state_provider",
+								"state": {
+									"Name": "minecraft:gravel"
+								}
+							}
+						},
+						{
+							"if_true": {
+								"type": "minecraft:not",
+								"predicate": {
+									"type": "minecraft:matching_blocks",
+									"blocks": "minecraft:stone"
+								}
+							},
+							"then": {
+								"type": "minecraft:simple_state_provider",
+								"state": {
+									"Name": "minecraft:sand"
+								}
+							}
+						}
+					]
+				},
+				"schedule_tick": false
+			}
+		}
+	""".trimIndent()
+
+	configuredFeature(
+		"test_rule_based_provider_list_block",
+		simpleBlock(
+			ruleBasedBlockStateProvider {
+				fallback = simpleStateProvider(Blocks.STONE)
+				rule(
+					ifTrue = Solid,
+					then = simpleStateProvider(Blocks.GRAVEL),
+				)
+				rule(then = simpleStateProvider(Blocks.SAND)) {
+					solid()
+				}
+			}
+		)
+	)
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:simple_block",
+			"config": {
+				"to_place": {
+					"type": "minecraft:rule_based_block_state_provider",
+					"fallback": {
+						"type": "minecraft:simple_state_provider",
+						"state": {
+							"Name": "minecraft:stone"
+						}
+					},
+					"rules": [
+						{
+							"if_true": {
+								"type": "minecraft:solid"
+							},
+							"then": {
+								"type": "minecraft:simple_state_provider",
+								"state": {
+									"Name": "minecraft:gravel"
+								}
+							}
+						},
+						{
+							"if_true": {
+								"type": "minecraft:solid"
+							},
+							"then": {
+								"type": "minecraft:simple_state_provider",
+								"state": {
+									"Name": "minecraft:sand"
+								}
+							}
+						}
+					]
+				},
+				"schedule_tick": false
 			}
 		}
 	""".trimIndent()

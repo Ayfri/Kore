@@ -5,7 +5,7 @@ nav-title: Features
 description: Create configured and placed features (trees, ores, vegetation) with Kore's DSL.
 keywords: minecraft, datapack, kore, worldgen, configured feature, placed feature, tree, ore
 date-created: 2026-02-03
-date-modified: 2026-06-20
+date-modified: 2026-06-26
 routeOverride: /docs/data-driven/worldgen/features
 ---
 
@@ -39,22 +39,81 @@ while placers control the shape.
 
 ```kotlin
 val treeCfg = tree {
-	// Replace soil beneath the trunk with dirt (rule-based provider)
-	belowTrunkProvider = ruleBasedBlockStateProvider {
-		rule(
-			ifTrue = not { matchingBlockTag(tag = Tags.Block.CANNOT_REPLACE_BELOW_TREE_TRUNK) },
-			then = simpleStateProvider(Blocks.DIRT),
-		)
-	}
-
 	blobFoliagePlacer(radius = constant(2), offset = constant(0), height = 3)
 	foliageProvider = simpleStateProvider(Blocks.OAK_LEAVES)
 	straightTrunkPlacer(baseHeight = 6, heightRandA = 3, heightRandB = 1)
 	trunkProvider = simpleStateProvider(Blocks.OAK_LOG)
+
+	belowTrunkProvider = ruleBasedBlockStateProvider {
+		fallback = simpleStateProvider(Blocks.DIRT)
+		rule {
+			ifTrue {
+				hasSturdyFace(direction = Direction.DOWN)
+			}
+			then(simpleStateProvider(Blocks.GRASS_BLOCK))
+		}
+	}
 }
 
 val tree = dp.configuredFeature("my_tree", treeCfg) {}
 ```
+
+---
+
+### Block State Providers
+
+Block state providers determine which block state is placed at a given position. Every feature field typed as
+`BlockStateProvider`
+accepts any of the following.
+
+| Provider                          | Picks based on                                 |
+|-----------------------------------|------------------------------------------------|
+| `dualNoiseProvider { }`           | Two-layer Perlin noise                         |
+| `noiseProvider { }`               | Single-layer Perlin noise                      |
+| `noiseTresholdProvider { }`       | Noise threshold between two blocks             |
+| `randomizedIntProvider { }`       | Int-provider-driven index into a state list    |
+| `rotatedBlockProvider(state)`     | Fixed block with random rotation               |
+| `ruleBasedBlockStateProvider { }` | Ordered predicate rules with optional fallback |
+| `simpleStateProvider(state)`      | Fixed block                                    |
+| `weightedStateProvider { }`       | Weighted random across several blocks          |
+
+#### `ruleBasedBlockStateProvider`
+
+Evaluates rules top-to-bottom and uses the first matching block state, or `fallback` when nothing matches.
+
+All three `rule` styles are available inside the provider block:
+
+```kotlin
+ruleBasedBlockStateProvider {
+	fallback = simpleStateProvider(Blocks.STONE)
+
+	// Style 1: receiver block: ifTrue { } and then(...) called on the rule
+	rule {
+		ifTrue { solid() }
+		then(simpleStateProvider(Blocks.DIRT))
+	}
+
+	// Style 2: direct values
+	rule(
+		ifTrue = hasSturdyFace(direction = Direction.DOWN),
+		then = simpleStateProvider(Blocks.GRAVEL),
+	)
+
+	// Style 3: trailing lambda for the predicate; then is a normal argument
+	rule(then = simpleStateProvider(Blocks.SAND)) {
+		not { matchingBlockTag(tag = Tags.Block.CANNOT_REPLACE_BELOW_TREE_TRUNK) }
+		solid()
+	}
+}
+```
+
+The `ifTrue { }` block in Style 1 and the trailing lambda in Style 3 both run on a `MutableList<BlockPredicate>`
+receiver, so all block
+predicate extensions (`solid()`, `not { }`, `matchingBlocks()`, `hasSturdyFace()`, `matchingBlockTag()`, etc.) work
+inside them. A
+single-element list is used as-is; multiple entries are automatically wrapped in `allOf`.
+
+---
 
 ### Ore
 
