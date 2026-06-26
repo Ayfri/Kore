@@ -300,6 +300,40 @@ heightRange(biasedToBottomHeightProvider(minInclusive = -64, maxInclusive = 0))
 heightRange(veryBiasedToBottomHeightProvider(minInclusive = -64, maxInclusive = 16))
 ```
 
+### Int Providers
+
+Int providers supply an integer value sampled at runtime. They are used wherever Minecraft expects a variable count or
+size, for example `count()`, `countOnEveryLayer()`, or block state providers.
+
+| Provider                                               | Behaviour                                                                           |
+|--------------------------------------------------------|-------------------------------------------------------------------------------------|
+| `biasedToBottom(minInclusive, maxInclusive)`           | Random integer in `[min, max]`, weighted towards the minimum.                       |
+| `clamped(minInclusive, maxInclusive, source)`          | Evaluates `source` and clamps its result to `[min, max]`.                           |
+| `clampedNormal(minInclusive, maxInclusive, mean, dev)` | Samples a normal distribution (`mean`/`dev`) and clamps the result to `[min, max]`. |
+| `constant(value)`                                      | Always returns `value`. Serializes as a plain integer, no wrapper object.           |
+| `uniform(minInclusive, maxInclusive)`                  | Uniform random integer in `[min, max]`.                                             |
+| `weightedList { }`                                     | Randomly selects one entry from a weighted pool.                                    |
+
+```kotlin
+// Fixed count
+count(constant(10))
+
+// Random 3-8 times per chunk, biased towards 3
+count(biasedToBottom(3, 8))
+
+// Normal distribution centered at 5, clamped to 1-10
+count(clampedNormal(1, 10, mean = 5.0f, deviation = 2.0f))
+
+// Clamped source: reroll uniform(0, 20) but never below 4 or above 12
+count(clamped(4, 12, uniform(0, 20)))
+
+// Weighted pool: 70% chance of 1, 30% chance of 3
+count(weightedList {
+	add(weightedEntry(7, constant(1)))
+	add(weightedEntry(3, constant(3)))
+})
+```
+
 ---
 
 ## Complete Example
