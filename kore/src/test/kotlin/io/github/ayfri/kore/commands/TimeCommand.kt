@@ -28,6 +28,7 @@ fun Function.timeTests() {
 	time.queryRepetitions(Timelines.DAY) assertsIs "time query minecraft:day repetitions"
 	time.queryTime() assertsIs "time query time"
 	time.set(timeMarker("moon")) assertsIs "time set minecraft:moon"
+	time.rate(2.0f) assertsIs "time rate 2"
 
 	// TimeWithClock - via time.of(clock)
 	val clock = WorldClockArgument("overworld")
@@ -43,6 +44,7 @@ fun Function.timeTests() {
 	time.of(clock).set(1) assertsIs "time of minecraft:overworld set 1"
 	time.of(clock).set(TimePeriod.DAY) assertsIs "time of minecraft:overworld set day"
 	time.of(clock).set(timeMarker("moon")) assertsIs "time of minecraft:overworld set minecraft:moon"
+	time.of(clock).rate(2.0f) assertsIs "time of minecraft:overworld rate 2"
 }
 
 class TimeCommandTests : FunSpec({

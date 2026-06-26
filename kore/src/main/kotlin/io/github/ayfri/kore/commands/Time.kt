@@ -2,6 +2,7 @@ package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.numbers.TimeNumber
 import io.github.ayfri.kore.arguments.numbers.TimeType
+import io.github.ayfri.kore.arguments.types.literals.float
 import io.github.ayfri.kore.arguments.types.literals.int
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.literals.time
@@ -89,6 +90,14 @@ data class TimeWithClock(private val fn: Function, private val clock: WorldClock
 	 */
 	fun queryTime() =
 		fn.addLine(command("time", literal("of"), clock, literal("query"), literal("time")))
+
+	/**
+	 * Sets the day-night cycle rate of this clock to [rate]. `1` is the default; `0` freezes the cycle; max is `1000`.
+	 *
+	 * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/time)
+	 */
+	fun rate(rate: Float) =
+		fn.addLine(command("time", literal("of"), clock, literal("rate"), float(rate)))
 
 	/**
 	 * Resumes this clock after a [pause].
@@ -195,6 +204,13 @@ data class Time(private val fn: Function) {
 	 * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/time)
 	 */
 	fun queryTime() = fn.addLine(command("time", literal("query"), literal("time")))
+
+	/**
+	 * Sets the day-night cycle rate of the world clock to [rate]. `1` is the default; `0` freezes the cycle; max is `1000`.
+	 *
+	 * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/time)
+	 */
+	fun rate(rate: Float) = fn.addLine(command("time", literal("rate"), float(rate)))
 
 	/**
 	 * Resumes the world clock after a [pause].

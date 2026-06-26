@@ -205,6 +205,29 @@ time query minecraft:day
 time query minecraft:day repetitions
 ```
 
+#### Setting the Day-Night Cycle Rate
+
+Use `rate(rate)` to control how fast the day-night cycle progresses. `1` is the default speed, `0` freezes the cycle,
+and the maximum is `1000`. This is independent of the server tick rate:
+
+```kotlin
+function("time_rate") {
+	time.rate(1.0f)   // default speed
+	time.rate(0.0f)   // freeze the day-night cycle
+	time.rate(2.0f)   // double speed
+	time.rate(0.5f)   // half speed
+}
+```
+
+Generated output:
+
+```mcfunction
+time rate 1
+time rate 0
+time rate 2
+time rate 0.5
+```
+
 #### Setting to a Time Marker
 
 `TimeMarkerArgument` (created with the `timeMarker()` factory) references a named tick position defined inside
@@ -240,6 +263,7 @@ function("season_control") {
 	time.of(seasonClock).query(Timelines.DAY)
 	time.of(seasonClock).queryRepetitions(Timelines.DAY)
 	time.of(seasonClock).queryTime()
+	time.of(seasonClock).rate(2.0f)
 }
 ```
 
@@ -255,6 +279,7 @@ time of mymod:season query daytime
 time of mymod:season query minecraft:day
 time of mymod:season query minecraft:day repetitions
 time of mymod:season query time
+time of mymod:season rate 2
 ```
 
 ### Weather Command
