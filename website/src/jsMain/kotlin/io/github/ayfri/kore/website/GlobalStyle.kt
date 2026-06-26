@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.website
 
 import com.varabyte.kobweb.compose.css.TextDecorationLine
+import com.varabyte.kobweb.compose.css.scrollMarginTop
 import com.varabyte.kobweb.compose.css.textDecorationLine
 import io.github.ayfri.kore.website.utils.ScrollbarWidth
 import io.github.ayfri.kore.website.utils.scrollbarColor
@@ -56,6 +57,10 @@ object GlobalStyle : StyleSheet() {
 
 			backgroundColor(backgroundColor)
 			color(textColor)
+		}
+
+		"html" style {
+			scrollMarginTop(2.cssRem)
 		}
 
 		"html, body" style {
