@@ -113,7 +113,17 @@ fun DataPack.biomeTests() {
 				[
 					"minecraft:ore_diamond",
 					"minecraft:ore_diamond_large"
-				]
+				],
+				[],
+				[],
+				[],
+				[],
+				[],
+				[],
+				[],
+				[],
+				[],
+				[]
 			]
 		}
 	""".trimIndent()
@@ -221,8 +231,7 @@ fun DataPack.biomeTests() {
 				[],
 				[],
 				[],
-				[
-				]
+				[]
 			]
 		}
 	""".trimIndent()
