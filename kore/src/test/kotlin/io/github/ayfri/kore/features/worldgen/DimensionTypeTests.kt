@@ -3,6 +3,7 @@ package io.github.ayfri.kore.features.worldgen
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.features.roundTrip
 import io.github.ayfri.kore.features.worldgen.dimensiontype.CardinalLight
 import io.github.ayfri.kore.features.worldgen.dimensiontype.SkyboxType
 import io.github.ayfri.kore.features.worldgen.dimensiontype.attributes
@@ -151,6 +152,8 @@ fun DataPack.dimensionTypeTests() {
 			"monster_spawn_block_light_limit": 0
 		}
 	""".trimIndent()
+
+	roundTrip(dimensionTypes.first())
 }
 
 class DimensionTypeTests : FunSpec({

@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.colors.rgb
 import io.github.ayfri.kore.assertions.assertGeneratorsGenerated
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.locateBiome
+import io.github.ayfri.kore.features.roundTrip
 import io.github.ayfri.kore.features.worldgen.biome.*
 import io.github.ayfri.kore.features.worldgen.biome.types.*
 import io.github.ayfri.kore.features.worldgen.environmentattributes.EnvironmentAttributeModifier
@@ -117,9 +118,120 @@ fun DataPack.biomeTests() {
 		}
 	""".trimIndent()
 
+	biome("frozen_biome") {
+		temperature = -0.5f
+		downfall = 0.8f
+		hasPrecipitation = true
+		temperatureModifier = TemperatureModifier.FROZEN
+		creatureSpawnProbability = 0.1f
+
+		effects {
+			waterColor = Color.AQUA
+			grassColor = Color.WHITE
+			foliageColor = Color.GRAY
+			dryFoliageColor = Color.GRAY
+			grassColorModifier = GrassColorModifier.SWAMP
+		}
+
+		spawners {
+			monster {
+				spawner(EntityTypes.ZOMBIE, weight = 100, minCount = 4, maxCount = 4)
+				spawner(EntityTypes.SKELETON, weight = 100, minCount = 4, maxCount = 4)
+			}
+			waterCreature {
+				spawner(EntityTypes.SQUID, weight = 10, minCount = 1, maxCount = 4)
+			}
+		}
+
+		spawnCosts {
+			spawnCost(EntityTypes.ZOMBIE, 0.5f, 0.5f)
+			spawnCost(EntityTypes.SKELETON, 0.5f, 0.5f)
+		}
+
+		features {
+			rawGeneration = emptyList()
+			lakes = listOf(PlacedFeatures.ORE_DIAMOND)
+			undergroundOres = listOf(PlacedFeatures.ORE_DIAMOND, PlacedFeatures.ORE_DIAMOND_LARGE)
+			vegetalDecoration = emptyList()
+		}
+	}
+
+	biomes.last() assertsIs """
+		{
+			"temperature": -0.5,
+			"downfall": 0.8,
+			"has_precipitation": true,
+			"temperature_modifier": "frozen",
+			"creature_spawn_probability": 0.1,
+			"effects": {
+				"water_color": 5636095,
+				"grass_color": 16777215,
+				"foliage_color": 11184810,
+				"dry_foliage_color": 11184810,
+				"grass_color_modifier": "swamp"
+			},
+			"spawners": {
+				"monster": [
+					{
+						"type": "minecraft:zombie",
+						"weight": 100,
+						"minCount": 4,
+						"maxCount": 4
+					},
+					{
+						"type": "minecraft:skeleton",
+						"weight": 100,
+						"minCount": 4,
+						"maxCount": 4
+					}
+				],
+				"water_creature": [
+					{
+						"type": "minecraft:squid",
+						"weight": 10,
+						"minCount": 1,
+						"maxCount": 4
+					}
+				]
+			},
+			"spawn_costs": {
+				"minecraft:zombie": {
+					"energy_budget": 0.5,
+					"charge": 0.5
+				},
+				"minecraft:skeleton": {
+					"energy_budget": 0.5,
+					"charge": 0.5
+				}
+			},
+			"carvers": {},
+			"features": [
+				[],
+				[
+					"minecraft:ore_diamond"
+				],
+				[],
+				[],
+				[],
+				[],
+				[
+					"minecraft:ore_diamond",
+					"minecraft:ore_diamond_large"
+				],
+				[],
+				[],
+				[],
+				[
+				]
+			]
+		}
+	""".trimIndent()
+
 	load {
 		locateBiome(biome)
 	}
+
+	roundTrip(biomes.first())
 }
 
 class BiomeTests : FunSpec({

@@ -26,6 +26,8 @@ fun DataPack.instrumentTests() {
 			"description": "A mighty horn!"
 		}
 	""".trimIndent()
+
+	roundTrip(instruments.first())
 }
 
 class InstrumentTests : FunSpec({
