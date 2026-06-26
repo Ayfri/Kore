@@ -8,7 +8,8 @@ import getFromCacheOrDownloadTxt
 import overrides
 
 suspend fun launchAllSimpleGenerators() {
-	val txtListsListGenerators = listOf(
+	val lists = listOf(
+		gen("Advancements", "advancement"),
 		gen("Atlases", "atlases") {
 			argumentClassName = "Atlas"
 		},
@@ -28,45 +29,14 @@ suspend fun launchAllSimpleGenerators() {
 		gen("FrogVariants", "frog_variant"),
 		gen("Instruments", "instrument"),
 		gen("JukeboxSongs", "jukebox_song"),
-		gen("PaintingVariants", "painting_variant"),
-		gen("PigSoundVariants", "pig_sound_variant"),
-		gen("PigVariants", "pig_variant"),
-		gen("Recipes", "recipe"),
-		gen("TestEnvironments", "test_environment"),
-		gen("TestInstances", "test_instance"),
-		gen("Timelines", "timeline"),
-		gen("TrimMaterials", "trim_material"),
-		gen("TrimPatterns", "trim_pattern"),
-		gen("WaypointStyles", "waypoint_style"),
-		gen("WolfSoundVariants", "wolf_sound_variant"),
-		gen("WolfVariants", "wolf_variant"),
-		gen("WorldClocks", "world_clock"),
-		gen("ZombieNautilusVariants", "zombie_nautilus_variant"),
-
-		gen("Biomes", "worldgen/biome"),
-		gen("BiomePresets", "worldgen/multi_noise_biome_source_parameter_list") {
-			argumentClassName = "MultiNoiseBiomeSourceParameterList"
-		},
-		gen("ConfiguredFeatures", "worldgen/configured_feature"),
-		gen("FlatLevelGeneratorPresets", "worldgen/flat_level_generator_preset"),
-		gen("MultiNoiseBiomeSourceParameterLists", "worldgen/multi_noise_biome_source_parameter_list"),
-		gen("Noises", "worldgen/noise"),
-		gen("NoiseSettings", "worldgen/noise_settings") {
-			argumentClassName = "NoiseSettings"
-		},
-		gen("PlacedFeatures", "worldgen/placed_feature"),
-		gen("ProcessorLists", "worldgen/processor_list"),
-		gen("ConfiguredStructures", "worldgen/structure"),
-		gen("StructureSets", "worldgen/structure_set"),
-		gen("WorldPresets", "worldgen/world_preset")
-	).transformRemoveJSONSuffix()
-
-	val txtListsTreeGenerators = listOf(
-		gen("Advancements", "advancement"),
 		gen("LootTables", "loot_table"),
 		gen("Models", "models") {
 			argumentClassName = "Model M"
 		},
+		gen("PaintingVariants", "painting_variant"),
+		gen("PigSoundVariants", "pig_sound_variant"),
+		gen("PigVariants", "pig_variant"),
+		gen("Recipes", "recipe"),
 		gen("Sounds", "sounds") {
 			argumentClassName = "Sound M"
 			transform { it.removeSuffix(".ogg") }
@@ -113,6 +83,8 @@ suspend fun launchAllSimpleGenerators() {
 				"worldgen/world_preset" to "worldgen.WorldPresetTag",
 			)
 		},
+		gen("TestEnvironments", "test_environment"),
+		gen("TestInstances", "test_instance"),
 		gen("Textures", "textures") {
 			argumentClassName = "Model M"
 			transform { it.removeSuffix(".png") }
@@ -122,16 +94,39 @@ suspend fun launchAllSimpleGenerators() {
 				"Painting" to "arguments.types.PaintingAssetArgument"
 			)
 		},
+		gen("Timelines", "timeline"),
 		gen("TradeSets", "trade_set"),
+		gen("TrimMaterials", "trim_material"),
+		gen("TrimPatterns", "trim_pattern"),
 		gen("VillagerTrades", "villager_trade"),
+		gen("WaypointStyles", "waypoint_style"),
+		gen("WolfSoundVariants", "wolf_sound_variant"),
+		gen("WolfVariants", "wolf_variant"),
+		gen("WorldClocks", "world_clock"),
+		gen("ZombieNautilusVariants", "zombie_nautilus_variant"),
 
+		// Worldgen
+		gen("Biomes", "worldgen/biome"),
+		gen("BiomePresets", "worldgen/multi_noise_biome_source_parameter_list") {
+			argumentClassName = "MultiNoiseBiomeSourceParameterList"
+		},
+		gen("ConfiguredFeatures", "worldgen/configured_feature"),
 		gen("DensityFunctions", "worldgen/density_function"),
+		gen("FlatLevelGeneratorPresets", "worldgen/flat_level_generator_preset"),
+		gen("MultiNoiseBiomeSourceParameterLists", "worldgen/multi_noise_biome_source_parameter_list"),
+		gen("Noises", "worldgen/noise"),
+		gen("NoiseSettings", "worldgen/noise_settings") {
+			argumentClassName = "NoiseSettings"
+		},
+		gen("PlacedFeatures", "worldgen/placed_feature"),
+		gen("ProcessorLists", "worldgen/processor_list"),
+		gen("ConfiguredStructures", "worldgen/structure"),
+		gen("StructureSets", "worldgen/structure_set"),
 		gen("TemplatePools", "worldgen/template_pool"),
-	).transformRemoveJSONSuffix().onEach { gen ->
-		gen.enumTree = true
-	}
+		gen("WorldPresets", "worldgen/world_preset"),
+	).transformRemoveJSONSuffix()
 
-	val txtRegistriesListGenerators = listOf(
+	val registries = listOf(
 		gen("Activities", "activity") {
 			argumentClassName = "Activity"
 		},
@@ -168,13 +163,16 @@ suspend fun launchAllSimpleGenerators() {
 			additionalCode {
 				addFunction(
 					FunSpec.builder("asId")
-						.addStatement($"return \"minecraft:\${name.lowercase()}\"")
+						.addStatement($$"return \"minecraft:${name.lowercase()}\"")
 						.returns(String::class)
 						.build()
 				)
 			}
 		},
 		gen("EntityTypes", "entity_type"),
+		gen("EnvironmentAttributes", "environment_attribute") {
+			transform { it.removePrefix("minecraft:") }
+		},
 		gen("Fluids", "fluid"),
 		gen("GameEvents", "game_event"),
 		gen("Items", "item") {
@@ -215,33 +213,25 @@ suspend fun launchAllSimpleGenerators() {
 		},
 		gen("PointOfInterestTypes", "point_of_interest_type"),
 		gen("Potions", "potion"),
+		gen("SoundEvents", "sound_event") {
+			argumentClassName = "SoundEvent"
+			separator = "."
+			transform { it.removePrefix("minecraft:") }
+		},
 		gen("StatisticTypes", "stat_type") {
 			argumentClassName = "StatType"
 			transform { it.removePrefix("minecraft:") }
 		},
 		gen("VillagerProfessions", "villager_profession"),
 		gen("VillagerTypes", "villager_type"),
+
+		// Worldgen
 		gen("Carvers", "worldgen/carver"),
 	)
 
-	val txtRegistriesTreeGenerators = listOf(
-		gen("EnvironmentAttributes", "environment_attribute") {
-			separator = "/"
-		},
-		gen("SoundEvents", "sound_event") {
-			argumentClassName = "SoundEvent"
-			separator = "."
-		},
-	).transformRemoveMinecraftPrefix().onEach { gen ->
-		gen.enumTree = true
-	}
+	val allGenerators = lists.setUrlWithType("lists") + registries.setUrlWithType("registries")
 
-	val allListGenerators = txtListsListGenerators.setUrlWithType("lists") +
-		txtListsTreeGenerators.setUrlWithType("lists") +
-		txtRegistriesListGenerators.setUrlWithType("registries") +
-		txtRegistriesTreeGenerators.setUrlWithType("registries")
-
-	allListGenerators.sortedBy { it.fileName }.forEach { gen ->
+	allGenerators.sortedBy { it.fileName }.forEach { gen ->
 		val url = gen.url
 		val list = getFromCacheOrDownloadTxt(gen.fileName, url).lines()
 		val parentArgumentType = gen.getParentArgumentType()
