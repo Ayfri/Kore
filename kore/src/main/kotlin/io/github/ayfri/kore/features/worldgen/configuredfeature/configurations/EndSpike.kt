@@ -18,3 +18,5 @@ data class EndSpikeEntry(
 	var height: Int? = null,
 	var guarded: Boolean? = null,
 )
+
+fun endSpike(block: EndSpike.() -> Unit = {}) = EndSpike().apply(block)

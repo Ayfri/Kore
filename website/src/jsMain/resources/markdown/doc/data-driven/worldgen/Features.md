@@ -155,7 +155,7 @@ Kore supports all vanilla configured feature types. Functions are listed alphabe
 | `disk(...)`                       | Circular disk of blocks              | Clay, sand, gravel patches     |
 | `dripstoneCluster(...)`           | Dense dripstone growth               | Cave dripstone rooms           |
 | `endGateway(...)`                 | End gateway portal                   | End outer islands              |
-| `EndSpike(...)`                   | End obsidian pillar with crystal     | The End respawn pillars        |
+| `endSpike(...)`                   | End obsidian pillar with crystal     | The End respawn pillars        |
 | `fillLayer(...)`                  | Fill a layer with blocks             | Custom dimension layers        |
 | `fossil(...)`                     | Structure-based fossil               | Underground fossils            |
 | `geode(...)`                      | Hollow structure with layered shells | Amethyst geodes                |
@@ -184,8 +184,6 @@ Kore supports all vanilla configured feature types. Functions are listed alphabe
 | `underwaterMagma(...)`            | Underwater magma blocks              | Ocean floors                   |
 | `vegetationPatch(...)`            | Vegetation on surfaces               | Cave moss patches              |
 | `waterloggedVegetationPatch(...)` | Waterlogged vegetation patches       | Underwater cave plants         |
-
-`EndSpike` has no factory function and is instantiated directly as a data class constructor.
 
 ### No-Config Features
 
