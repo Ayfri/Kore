@@ -236,18 +236,27 @@ Object components render atlas sprites or player skins inside chat. They require
 `ObjectTextComponent` family and can be built via
 `objectComponent` or `playerObjectComponent` depending on the source.
 
+All object components share a `fallback` property: a `ChatComponents` value used when the object cannot be displayed
+(for example, when printing messages in server logs or during narration). Pass it directly to the factory or set it in the builder block.
+
 ### AtlasObjectTextComponent
 
 - `atlas` - The atlas that contains the sprite. Optional when the sprite already resolves to an atlas entry, otherwise provide an explicit
   `AtlasArgument`.
+- `fallback` - Text component used when the sprite cannot be displayed (e.g. in server logs or during narration).
 - `sprite` - The `ModelArgument` that identifies the sprite to render and is required.
 
-Use `objectComponent` to construct atlas objects, optionally passing an atlas override.
+Use `objectComponent` to construct atlas objects, optionally passing an atlas override and a fallback.
 
 ```kotlin
 val atlasObject = objectComponent(
 	sprite = Textures.Block.COMMAND_BLOCK_BACK,
 	atlas = Atlases.BLOCKS
+)
+
+val atlasObjectWithFallback = objectComponent(
+	sprite = Textures.Block.COMMAND_BLOCK_BACK,
+	fallback = textComponent("command block")
 )
 ```
 
@@ -256,6 +265,7 @@ In-game output:<br>
 
 ### PlayerObjectTextComponent
 
+- `fallback` - Text component used when the player model cannot be displayed (e.g. in server logs or during narration).
 - `hat` - Whether to display the player's hat layer (true/false) or leave it untouched when null.
 - `player` - A `PlayerProfile` describing the skin whose head should render; provide either a name, UUID, or both plus properties.
 
@@ -269,6 +279,11 @@ val playerObject = playerObjectComponent("ayfri") {
 		property("textures", "base64_encoded_texture_data")
 	}
 }
+
+val playerObjectWithFallback = playerObjectComponent(
+	playerName = "ayfri",
+	fallback = textComponent("ayfri's head")
+)
 ```
 
 In-game output:<br>

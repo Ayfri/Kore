@@ -116,6 +116,16 @@ fun chatComponentsTests() {
 		}
 	""".trimIndent()
 
+	val objectComponentWithFallback = objectComponent(Textures.Block.ACACIA_LOG, fallback = textComponent("acacia log"))
+	objectComponentWithFallback assertsIsJson """
+		{
+			"type": "object",
+			"object": "atlas",
+			"fallback": "acacia log",
+			"sprite": "minecraft:block/acacia_log"
+		}
+	""".trimIndent()
+
 	val playerObject = playerObjectComponent("ayfri", hat = true) {
 		player {
 			property("textures", "base64_encoded_texture_data")
@@ -135,6 +145,18 @@ fun chatComponentsTests() {
 				]
 			},
 			"hat": true
+		}
+	""".trimIndent()
+
+	val playerObjectWithFallback = playerObjectComponent("ayfri", fallback = textComponent("ayfri's head"))
+	playerObjectWithFallback assertsIsJson """
+		{
+			"type": "object",
+			"object": "player",
+			"fallback": "ayfri's head",
+			"player": {
+				"name": "ayfri"
+			}
 		}
 	""".trimIndent()
 

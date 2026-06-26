@@ -15,15 +15,19 @@ import net.benwoodworth.knbt.encodeToNbtTag
  * A `minecraft:object` component that renders a 3D object inline in text. Use [AtlasObjectTextComponent] for a sprite,
  * or [PlayerObjectTextComponent] for a player head/model.
  *
+ * The optional [fallback] component is used when the object cannot be displayed (e.g. when printing in server logs or during narration).
+ *
  * Docs: [Text component format - Object](https://minecraft.wiki/w/Text_component_format#Object)
  */
 @Serializable(with = ObjectTextComponentSerializer::class)
 sealed class ObjectTextComponent : ChatComponent(), SimpleComponent {
 	final override val type = ChatComponentType.OBJECT
+	open var fallback: ChatComponents? = null
 
 	override fun toNbtTag() = nbt {
 		super.toNbtTag().entries.forEach { (key, value) -> if (key != "text") this[key] = value }
 		this["object"] = ObjectTextComponentSerializer.getContentName(this@ObjectTextComponent)
+		fallback?.let { this["fallback"] = it.toNbtTag() }
 	}
 }
 
@@ -41,6 +45,8 @@ data class AtlasObjectTextComponent(
 	var atlas: AtlasArgument? = null,
 	/** Model path of the sprite within the [atlas]. */
 	var sprite: ModelArgument,
+	/** Text component used when the object cannot be displayed (e.g. in server logs or during narration). */
+	override var fallback: ChatComponents? = null,
 ) : ObjectTextComponent() {
 	override fun toNbtTag() = nbt {
 		super.toNbtTag().entries.forEach { (key, value) -> this[key] = value }
@@ -57,6 +63,8 @@ data class PlayerObjectTextComponent(
 	var player: PlayerProfile,
 	/** When `true`, renders the outer hat/overlay skin layer. */
 	var hat: Boolean? = null,
+	/** Text component used when the object cannot be displayed (e.g. in server logs or during narration). */
+	override var fallback: ChatComponents? = null,
 ) : ObjectTextComponent() {
 	override fun toNbtTag() = nbt {
 		super.toNbtTag().entries.forEach { (key, value) -> this[key] = value }
@@ -95,30 +103,34 @@ data class PlayerProperty(
 	var signature: String? = null,
 )
 
-/** Creates an [AtlasObjectTextComponent] for [sprite], optionally scoped to an [atlas]. */
+/** Creates an [AtlasObjectTextComponent] for [sprite], optionally scoped to an [atlas] with an optional [fallback] component. */
 fun objectComponent(
 	sprite: ModelArgument,
 	atlas: AtlasArgument? = null,
+	fallback: ChatComponents? = null,
 	block: AtlasObjectTextComponent.() -> Unit = {},
-) = ChatComponents(AtlasObjectTextComponent(atlas, sprite).apply(block))
+) = ChatComponents(AtlasObjectTextComponent(atlas, sprite, fallback).apply(block))
 
-/** Creates a [PlayerObjectTextComponent] from a [PlayerProfile]. */
+/** Creates a [PlayerObjectTextComponent] from a [PlayerProfile] with an optional [fallback] component. */
 fun playerObjectComponent(
 	player: PlayerProfile,
 	hat: Boolean? = null,
+	fallback: ChatComponents? = null,
 	block: PlayerObjectTextComponent.() -> Unit = {},
-) = ChatComponents(PlayerObjectTextComponent(player, hat).apply(block))
+) = ChatComponents(PlayerObjectTextComponent(player, hat, fallback).apply(block))
 
-/** Creates a [PlayerObjectTextComponent] from a player [playerName]. */
+/** Creates a [PlayerObjectTextComponent] from a player [playerName] with an optional [fallback] component. */
 fun playerObjectComponent(
 	playerName: String,
 	hat: Boolean? = null,
+	fallback: ChatComponents? = null,
 	block: PlayerObjectTextComponent.() -> Unit = {},
-) = playerObjectComponent(PlayerProfile(name = playerName), hat, block)
+) = playerObjectComponent(PlayerProfile(name = playerName), hat, fallback, block)
 
-/** Creates a [PlayerObjectTextComponent] from a player [playerId] UUID. */
+/** Creates a [PlayerObjectTextComponent] from a player [playerId] UUID with an optional [fallback] component. */
 fun playerObjectComponent(
 	playerId: UUIDArgument,
 	hat: Boolean? = null,
+	fallback: ChatComponents? = null,
 	block: PlayerObjectTextComponent.() -> Unit = {},
-) = playerObjectComponent(PlayerProfile(id = playerId), hat, block)
+) = playerObjectComponent(PlayerProfile(id = playerId), hat, fallback, block)
