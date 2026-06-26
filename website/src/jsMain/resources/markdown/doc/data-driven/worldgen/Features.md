@@ -44,7 +44,7 @@ val treeCfg = tree {
 	straightTrunkPlacer(baseHeight = 6, heightRandA = 3, heightRandB = 1)
 	trunkProvider = simpleStateProvider(Blocks.OAK_LOG)
 
-	belowTrunkProvider = ruleBasedBlockStateProvider {
+	belowTrunkProvider = ruleBasedStateProvider {
 		fallback = simpleStateProvider(Blocks.DIRT)
 		rule {
 			ifTrue {
@@ -66,25 +66,25 @@ Block state providers determine which block state is placed at a given position.
 `BlockStateProvider`
 accepts any of the following.
 
-| Provider                          | Picks based on                                 |
-|-----------------------------------|------------------------------------------------|
-| `dualNoiseProvider { }`           | Two-layer Perlin noise                         |
-| `noiseProvider { }`               | Single-layer Perlin noise                      |
-| `noiseTresholdProvider { }`       | Noise threshold between two blocks             |
-| `randomizedIntProvider { }`       | Int-provider-driven index into a state list    |
-| `rotatedBlockProvider(state)`     | Fixed block with random rotation               |
-| `ruleBasedBlockStateProvider { }` | Ordered predicate rules with optional fallback |
-| `simpleStateProvider(state)`      | Fixed block                                    |
-| `weightedStateProvider { }`       | Weighted random across several blocks          |
+| Provider                      | Picks based on                                 |
+|-------------------------------|------------------------------------------------|
+| `dualNoiseProvider { }`       | Two-layer Perlin noise                         |
+| `noiseProvider { }`           | Single-layer Perlin noise                      |
+| `noiseTresholdProvider { }`   | Noise threshold between two blocks             |
+| `randomizedIntProvider { }`   | Int-provider-driven index into a state list    |
+| `rotatedBlockProvider(state)` | Fixed block with random rotation               |
+| `ruleBasedStateProvider { }`  | Ordered predicate rules with optional fallback |
+| `simpleStateProvider(state)`  | Fixed block                                    |
+| `weightedStateProvider { }`   | Weighted random across several blocks          |
 
-#### `ruleBasedBlockStateProvider`
+#### `ruleBasedStateProvider`
 
 Evaluates rules top-to-bottom and uses the first matching block state, or `fallback` when nothing matches.
 
 All three `rule` styles are available inside the provider block:
 
 ```kotlin
-ruleBasedBlockStateProvider {
+ruleBasedStateProvider {
 	fallback = simpleStateProvider(Blocks.STONE)
 
 	// Style 1: receiver block: ifTrue { } and then(...) called on the rule

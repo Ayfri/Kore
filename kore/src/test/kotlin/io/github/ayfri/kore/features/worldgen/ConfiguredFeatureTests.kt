@@ -10,15 +10,18 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.Direction
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.*
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.*
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.cherryFoliagePlacer
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.darkOakFoliagePlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.layersfeaturesize.threeLayersFeatureSize
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.attachedToLeaves
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.cherryTrunkPlacer
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.darkOakTrunkPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.target
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.features.worldgen.intproviders.uniform
 import io.github.ayfri.kore.features.worldgen.ruletest.randomBlockMatch
 import io.github.ayfri.kore.generated.Blocks
+import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
@@ -353,7 +356,7 @@ fun DataPack.configuredFeatureTests() {
 			branchStartOffsetFromTop = uniform(-5, -2)
 		}
 		cherryFoliagePlacer { height = constant(3) }
-		belowTrunkProvider = ruleBasedBlockStateProvider {
+		belowTrunkProvider = ruleBasedStateProvider {
 			fallback = simpleStateProvider(Blocks.DIRT)
 			rule {
 				ifTrue {
@@ -369,7 +372,7 @@ fun DataPack.configuredFeatureTests() {
 			"type": "minecraft:tree",
 			"config": {
 				"below_trunk_provider": {
-					"type": "minecraft:rule_based_block_state_provider",
+					"type": "minecraft:rule_based_state_provider",
 					"fallback": {
 						"type": "minecraft:simple_state_provider",
 						"state": {
@@ -437,7 +440,7 @@ fun DataPack.configuredFeatureTests() {
 	configuredFeature(
 		"test_rule_based_provider_unified",
 		simpleBlock(
-			ruleBasedBlockStateProvider {
+			ruleBasedStateProvider {
 				fallback = simpleStateProvider(Blocks.STONE)
 				rule {
 					ifTrue {
@@ -463,7 +466,7 @@ fun DataPack.configuredFeatureTests() {
 			"type": "minecraft:simple_block",
 			"config": {
 				"to_place": {
-					"type": "minecraft:rule_based_block_state_provider",
+					"type": "minecraft:rule_based_state_provider",
 					"fallback": {
 						"type": "minecraft:simple_state_provider",
 						"state": {
@@ -516,10 +519,111 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
+	configuredFeature("test_dark_oak_tree", tree {
+		ignoreVines = true
+		minimumSize = threeLayersFeatureSize {
+			limit = 1
+			upperLimit = 1
+			lowerSize = 0
+			middleSize = 1
+			upperSize = 2
+		}
+		trunkProvider = simpleStateProvider(blockState(Blocks.DARK_OAK_LOG, "axis" to "y"))
+		foliageProvider = simpleStateProvider(
+			blockState(
+				Blocks.DARK_OAK_LEAVES,
+				"distance" to "7",
+				"persistent" to "false",
+				"waterlogged" to "false"
+			)
+		)
+		darkOakTrunkPlacer(baseHeight = 6, heightRandA = 2, heightRandB = 1)
+		darkOakFoliagePlacer()
+		belowTrunkProvider = ruleBasedStateProvider {
+			rule {
+				ifTrue {
+					not {
+						matchingBlockTag(tag = Tags.Block.CANNOT_REPLACE_BELOW_TREE_TRUNK)
+					}
+				}
+				then(simpleStateProvider(Blocks.DIRT))
+			}
+		}
+	})
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:tree",
+			"config": {
+				"ignore_vines": true,
+				"below_trunk_provider": {
+					"type": "minecraft:rule_based_state_provider",
+					"rules": [
+						{
+							"if_true": {
+								"type": "minecraft:not",
+								"predicate": {
+									"type": "minecraft:matching_block_tag",
+									"tag": "minecraft:cannot_replace_below_tree_trunk"
+								}
+							},
+							"then": {
+								"type": "minecraft:simple_state_provider",
+								"state": {
+									"Name": "minecraft:dirt"
+								}
+							}
+						}
+					]
+				},
+				"minimum_size": {
+					"type": "minecraft:three_layers_feature_size",
+					"limit": 1,
+					"upper_limit": 1,
+					"lower_size": 0,
+					"middle_size": 1,
+					"upper_size": 2
+				},
+				"trunk_provider": {
+					"type": "minecraft:simple_state_provider",
+					"state": {
+						"Name": "minecraft:dark_oak_log",
+						"Properties": {
+							"axis": "y"
+						}
+					}
+				},
+				"foliage_provider": {
+					"type": "minecraft:simple_state_provider",
+					"state": {
+						"Name": "minecraft:dark_oak_leaves",
+						"Properties": {
+							"distance": "7",
+							"persistent": "false",
+							"waterlogged": "false"
+						}
+					}
+				},
+				"trunk_placer": {
+					"type": "minecraft:dark_oak_trunk_placer",
+					"base_height": 6,
+					"height_rand_a": 2,
+					"height_rand_b": 1
+				},
+				"foliage_placer": {
+					"type": "minecraft:dark_oak_foliage_placer",
+					"radius": 0,
+					"offset": 0
+				},
+				"decorators": []
+			}
+		}
+	""".trimIndent()
+
 	configuredFeature(
 		"test_rule_based_provider_list_block",
 		simpleBlock(
-			ruleBasedBlockStateProvider {
+			ruleBasedStateProvider {
 				fallback = simpleStateProvider(Blocks.STONE)
 				rule(
 					ifTrue = Solid,
@@ -537,7 +641,7 @@ fun DataPack.configuredFeatureTests() {
 			"type": "minecraft:simple_block",
 			"config": {
 				"to_place": {
-					"type": "minecraft:rule_based_block_state_provider",
+					"type": "minecraft:rule_based_state_provider",
 					"fallback": {
 						"type": "minecraft:simple_state_provider",
 						"state": {

@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator
 
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.ruleBasedBlockStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.ruleBasedStateProvider
 import kotlinx.serialization.Serializable
 
 /**
@@ -15,9 +15,9 @@ data class AlterGround(
 ) : TreeDecorator()
 
 /** Creates an [AlterGround] decorator with the given [provider]. */
-fun alterGround(provider: BlockStateProvider = ruleBasedBlockStateProvider()) = AlterGround(provider)
+fun alterGround(provider: BlockStateProvider = ruleBasedStateProvider()) = AlterGround(provider)
 
 /** Adds an [AlterGround] decorator to this list. */
-fun MutableList<TreeDecorator>.alterGround(provider: BlockStateProvider = ruleBasedBlockStateProvider()) {
+fun MutableList<TreeDecorator>.alterGround(provider: BlockStateProvider = ruleBasedStateProvider()) {
 	this += AlterGround(provider)
 }
