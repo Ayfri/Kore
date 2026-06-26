@@ -170,7 +170,7 @@ Kore supports all vanilla configured feature types. Functions are listed alphabe
 | `netherrackReplaceBlobs(...)`     | Replace netherrack with blobs        | Nether gravel/blackstone blobs |
 | `pointedDripstone(...)`           | Single pointed dripstone             | Cave stalactites/stalagmites   |
 | `randomBooleanSelector(...)`      | Picks one of two features randomly   | Symmetric ore variants         |
-| `RandomSelector(...)`             | Weighted random feature picker       | Mixed ore deposits             |
+| `randomSelector(...)`             | Weighted random feature picker       | Mixed ore deposits             |
 | `replaceSingleBlock(...)`         | Replace blocks by rule targets       | Custom block swaps             |
 | `rootSystem(...)`                 | Root placer for trees                | Mangrove roots                 |
 | `scatteredOre(...)`               | Scattered ore deposits               | Nether gold ore blobs          |
@@ -185,7 +185,7 @@ Kore supports all vanilla configured feature types. Functions are listed alphabe
 | `vegetationPatch(...)`            | Vegetation on surfaces               | Cave moss patches              |
 | `waterloggedVegetationPatch(...)` | Waterlogged vegetation patches       | Underwater cave plants         |
 
-`EndSpike` and `RandomSelector` have no factory function and are instantiated directly as data class constructors.
+`EndSpike` has no factory function and is instantiated directly as a data class constructor.
 
 ### No-Config Features
 

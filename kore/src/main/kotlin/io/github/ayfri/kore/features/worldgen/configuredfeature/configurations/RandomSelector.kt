@@ -14,3 +14,12 @@ data class RandomSelectorFeature(
 	var chance: Float? = null,
 	var feature: PlacedFeatureArgument,
 )
+
+fun randomSelector(
+	default: PlacedFeatureArgument? = null,
+	block: RandomSelector.() -> Unit = {},
+) = RandomSelector(default = default).apply(block)
+
+fun RandomSelector.feature(feature: PlacedFeatureArgument, chance: Float? = null) {
+	features += RandomSelectorFeature(chance, feature)
+}
