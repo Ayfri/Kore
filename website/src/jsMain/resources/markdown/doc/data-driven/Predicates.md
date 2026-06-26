@@ -5,7 +5,7 @@ nav-title: Predicates
 description: Learn how to use predicates in your Kore datapacks
 keywords: minecraft, datapack, kore, predicates, conditions, entity properties
 date-created: 2024-01-08
-date-modified: 2026-06-16
+date-modified: 2026-06-26
 routeOverride: /docs/data-driven/predicates
 ---
 
@@ -47,7 +47,7 @@ predicate("complex_test") {
 		enchantmentActiveCheck(true)
 		randomChance(0.5f)
 		randomChanceWithEnchantedBonus(
-			unenchantedChance = 3f,
+           unenchantedChance = 0.3f,
 			enchantedChance = 2,
 			Enchantments.EFFICIENCY
 		)
@@ -73,28 +73,33 @@ Conditions are categorized by their **loot context requirements
 
 #### Universal Conditions (invokable from any context)
 
-| Condition          | Description                                                                                                                                                                                           |
-|--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `allOf`            | Evaluates a list of predicates and passes if **all** of them pass                                                                                                                                     |
-| `anyOf`            | Evaluates a list of predicates and passes if **any one** of them passes                                                                                                                               |
-| `entityProperties` | Checks properties of an entity                                                                                                                                                                        |
-| `inverted`         | Inverts another predicate condition                                                                                                                                                                   |
-| `randomChance`     | Generates a random number between 0.0 and 1.0, passes if less than specified value                                                                                                                    |
-| `reference`        | Invokes another predicate file and returns its result (cannot be cyclic)                                                                                                                              |
-| `timeCheck`        | Compares a world clock's time against a range (optional `period` for modulo, optional `clock` to select which clock) - see [World Clocks](/docs/data-driven/world-clocks#timecheckpredicatecondition) |
-| `valueCheck`       | Compares a number against another number or range                                                                                                                                                     |
-| `weatherCheck`     | Checks the current game weather (raining, thundering)                                                                                                                                                 |
+| Condition          | Description                                                                                                                                                                                                            |
+|--------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `allOf`            | Evaluates a list of predicates and passes if **all** of them pass                                                                                                                                                      |
+| `anyOf`            | Evaluates a list of predicates and passes if **any one** of them passes                                                                                                                                                |
+| `entityProperties` | Checks properties of an entity                                                                                                                                                                                         |
+| `inverted`         | Inverts another predicate condition                                                                                                                                                                                    |
+| `randomChance`     | Passes if a random float between 0.0 and 1.0 is below the given `NumberProvider` value                                                                                                                                 |
+| `reference`        | Invokes another predicate file and returns its result (cannot be cyclic)                                                                                                                                               |
+| `timeCheck`        | Compares a world clock's time against a `NumberProvider` range (optional `period` for modulo, optional `clock` to select which clock) - see [World Clocks](/docs/data-driven/world-clocks#timecheckpredicatecondition) |
+| `valueCheck`       | Compares a `NumberProvider` value against another `NumberProvider` or range                                                                                                                                            |
+| `weatherCheck`     | Checks the current game weather (raining, thundering)                                                                                                                                                                  |
+
+> `randomChance`, `timeCheck`, and `valueCheck` accept a [
+`NumberProvider`](/docs/data-driven/loot-tables#number-providers) for their numeric arguments, so you can use dynamic
+> values like scoreboard scores, enchantment levels, or environment attributes instead of plain floats.
 
 #### Context-Dependent Conditions
 
-These conditions require specific loot context data and will **always fail** if that data is not provided:
+Most of these conditions require specific loot context data and will **always fail** if not provided. Three exceptions
+have optional context with graceful fallback behavior (noted in the table):
 
 | Condition                        | Required Context            | Description                                                                           |
 |----------------------------------|-----------------------------|---------------------------------------------------------------------------------------|
 | `blockStateProperty`             | Block state                 | Checks the mined block and its block states                                           |
 | `damageSourceProperties`         | Origin + damage source      | Checks properties of the damage source                                                |
 | `enchantmentActiveCheck`         | Enchantment active status   | Checks if an enchantment is active (only usable from `enchanted_location` context)    |
-| `entityScores`                   | Specified entity            | Checks the scoreboard scores of an entity                                             |
+| `entityScores`                   | Specified entity            | Checks scoreboard scores of an entity against `NumberProvider` ranges                 |
 | `killedByPlayer`                 | `attacking_player` entity   | Checks if there is an attacking player entity                                         |
 | `locationCheck`                  | Origin                      | Checks the current location against location criteria (supports offsets)              |
 | `matchTool`                      | Tool                        | Checks tool used to mine the block                                                    |

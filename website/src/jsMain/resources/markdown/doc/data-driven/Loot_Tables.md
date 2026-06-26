@@ -5,7 +5,7 @@ nav-title: Loot Tables
 description: Create and customize Minecraft loot tables using Kore's type-safe Kotlin DSL for drops, container contents, fishing, and more.
 keywords: minecraft, datapack, kore, loot tables, pools, entries, item modifiers, drops
 date-created: 2025-08-11
-date-modified: 2026-02-10
+date-modified: 2026-06-26
 routeOverride: /docs/data-driven/loot-tables
 ---
 
@@ -182,14 +182,16 @@ lootTable("modified_drops") {
 
 Number providers determine dynamic numeric values for rolls, counts, and other quantities.
 
-| Provider                | Description                | Example                                 |
-|-------------------------|----------------------------|-----------------------------------------|
-| `constant(value)`       | Fixed value                | `constant(5f)`                          |
-| `uniform(min, max)`     | Random between min and max | `uniform(1f, 5f)`                       |
-| `binomial(n, p)`        | Binomial distribution      | `binomial(5, 0.5f)`                     |
-| `scoreNumber(...)`      | Value from scoreboard      | `scoreNumber("kills", EntityType.THIS)` |
-| `enchantmentLevel(...)` | Based on enchantment level | `enchantmentLevel(5)`                   |
-| `sum(...)`              | Sum of multiple providers  | `sum(constant(1f), uniform(1f, 3f))`    |
+| Provider                          | Description                                               | Example                                                                 |
+|-----------------------------------|-----------------------------------------------------------|-------------------------------------------------------------------------|
+| `binomial(n, p)`                  | Binomial distribution                                     | `binomial(5, 0.5f)`                                                     |
+| `constant(value)`                 | Fixed value                                               | `constant(5f)`                                                          |
+| `enchantmentLevel(...)`           | Based on enchantment level (requires enchantment context) | `enchantmentLevel(5)`                                                   |
+| `environmentAttribute(attribute)` | Current value of a numeric env attribute                  | `environmentAttribute(EnvironmentAttributes.Visual.FOG_START_DISTANCE)` |
+| `scoreNumber(...)`                | Value from a scoreboard objective                         | `scoreNumber("kills", EntityType.THIS)`                                 |
+| `storageNumber(storage, path)`    | Value from command storage                                | `storageNumber("my_pack:data", "player.health")`                        |
+| `sum(...)`                        | Sum of multiple providers                                 | `sum(constant(1f), uniform(1f, 3f))`                                    |
+| `uniform(min, max)`               | Random value between min and max                          | `uniform(1f, 5f)`                                                       |
 
 ```kotlin
 pool {
