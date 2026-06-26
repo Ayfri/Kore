@@ -202,31 +202,6 @@ fun ReleaseCard(release: GitHubRelease) {
 	}
 }
 
-private fun buildMinecraftChangelogUrl(release: GitHubRelease): String? {
-	val mcVersion = release.getMinecraftVersion() ?: return null
-	val baseVersion = mcVersion.substringBefore("-")
-	val normalizedBase = baseVersion.replace(".", "-")
-
-	return when {
-		release.isSnapshot() -> "https://www.minecraft.net/en-us/article/minecraft-snapshot-$mcVersion"
-
-		release.isPreRelease() -> {
-			val preNumber = mcVersion.substringAfter("-pre", "")
-			if (preNumber.isEmpty()) null
-			else "https://www.minecraft.net/en-us/article/minecraft-$normalizedBase-pre-release-$preNumber"
-		}
-
-		release.isReleaseCandidate() -> {
-			val rcNumber = mcVersion.substringAfter("-rc", "")
-			if (rcNumber.isEmpty()) null
-			else "https://www.minecraft.net/en-us/article/minecraft-$normalizedBase-release-candidate-$rcNumber"
-		}
-
-		release.isRelease() -> "https://www.minecraft.net/en-us/article/minecraft-java-edition-$normalizedBase"
-		else -> null
-	}
-}
-
 object ReleasesListStyle : StyleSheet() {
 	val container by style {
 		display(DisplayStyle.Flex)
