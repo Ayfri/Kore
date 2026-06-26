@@ -155,7 +155,6 @@ Kore supports many feature types. Here are the most commonly used:
 | `hugeRedMushroom`   | Large red mushroom            | Swamp/mushroom island fungi    |
 | `icebergFeature`    | Iceberg structures            | Ocean icebergs                 |
 | `lakeFeature`       | Liquid pools                  | Underground lava lakes         |
-| `randomPatch`       | Scattered block placements    | Flowers, grass, mushrooms      |
 | `spike`             | Tall spiky columns            | Ice spikes in frozen biomes    |
 | `springFeature`     | Fluid source blocks           | Water/lava springs             |
 
