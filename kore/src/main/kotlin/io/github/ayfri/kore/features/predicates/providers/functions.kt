@@ -6,6 +6,7 @@ import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
 import io.github.ayfri.kore.features.predicates.types.EntityType
 import io.github.ayfri.kore.generated.LootScoreProviderTypes
+import io.github.ayfri.kore.generated.arguments.types.EnvironmentAttributeArgument
 
 fun constant(value: Float) = Constant(value)
 
@@ -32,3 +33,5 @@ fun enchantmentLevel(amount: LevelBased) = EnchantmentLevel(amount)
 
 fun sum(vararg summands: NumberProvider) = Sum(summands.toList())
 fun sum(summands: List<NumberProvider>) = Sum(summands)
+
+fun environmentAttribute(attribute: EnvironmentAttributeArgument) = EnvironmentAttributeNumberProvider(attribute)

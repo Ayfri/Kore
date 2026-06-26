@@ -3,10 +3,12 @@ package io.github.ayfri.kore.features.predicates.providers
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.predicates.types.EntityType
 import io.github.ayfri.kore.generated.LootScoreProviderTypes
+import io.github.ayfri.kore.generated.arguments.types.EnvironmentAttributeArgument
 import io.github.ayfri.kore.generated.arguments.types.LootScoreProviderTypeArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
@@ -93,3 +95,9 @@ data class EnchantmentLevel(var amount: LevelBased) : NumberProvider()
 
 @Serializable
 data class Sum(var summands: List<NumberProvider>) : NumberProvider()
+
+@SerialName("environment_attribute")
+@Serializable
+data class EnvironmentAttributeNumberProvider(
+	var attribute: EnvironmentAttributeArgument,
+) : NumberProvider()
