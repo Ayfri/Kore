@@ -20,6 +20,9 @@ import io.github.ayfri.kore.features.predicates.sub.entityspecific.gamemodes
 import io.github.ayfri.kore.features.predicates.sub.entityspecific.playerTypeSpecific
 import io.github.ayfri.kore.features.predicates.sub.item.enchantment
 import io.github.ayfri.kore.features.predicates.types.EntityType
+import io.github.ayfri.kore.features.worldgen.environmentattributes.types.MoonPhaseValue
+import io.github.ayfri.kore.features.worldgen.environmentattributes.types.beesStayInHive
+import io.github.ayfri.kore.features.worldgen.environmentattributes.types.moonPhase
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.set
@@ -147,6 +150,67 @@ fun DataPack.predicateTests() {
 			"condition": "minecraft:enchantment_active_check",
 			"active": true
 		}
+	""".trimIndent()
+
+	predicate("environment_attribute_check_boolean") {
+		environmentAttributeCheck(EnvironmentAttributes.Gameplay.BEES_STAY_IN_HIVE, true)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:environment_attribute_check",
+			"attribute": "minecraft:gameplay/bees_stay_in_hive",
+			"value": true
+		}
+	""".trimIndent()
+
+	predicate("environment_attribute_check_float") {
+		environmentAttributeCheck(EnvironmentAttributes.Visual.SKY_LIGHT_FACTOR, 0.5f)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:environment_attribute_check",
+			"attribute": "minecraft:visual/sky_light_factor",
+			"value": 0.5
+		}
+	""".trimIndent()
+
+	predicate("environment_attribute_check_moon_phase") {
+		environmentAttributeCheck(
+			EnvironmentAttributes.Visual.MOON_PHASE,
+			MoonPhaseValue(Textures.Environment.Celestial.Moon.FULL_MOON)
+		)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:environment_attribute_check",
+			"attribute": "minecraft:visual/moon_phase",
+			"value": "minecraft:environment/celestial/moon/full_moon"
+		}
+	""".trimIndent()
+
+	predicate("environment_attribute_check_scope") {
+		environmentAttributeCheck {
+			moonPhase(Textures.Environment.Celestial.Moon.FULL_MOON)
+			beesStayInHive(true)
+		}
+	}
+
+	predicates.last() assertsIs """
+		[
+			{
+				"condition": "minecraft:environment_attribute_check",
+				"attribute": "minecraft:visual/moon_phase",
+				"value": "minecraft:environment/celestial/moon/full_moon"
+			},
+			{
+				"condition": "minecraft:environment_attribute_check",
+				"attribute": "minecraft:gameplay/bees_stay_in_hive",
+				"value": true
+			}
+		]
 	""".trimIndent()
 
 	predicate("entity_properties") {

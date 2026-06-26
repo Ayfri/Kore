@@ -73,21 +73,53 @@ Conditions are categorized by their **loot context requirements
 
 #### Universal Conditions (invokable from any context)
 
-| Condition          | Description                                                                                                                                                                                                            |
-|--------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `allOf`            | Evaluates a list of predicates and passes if **all** of them pass                                                                                                                                                      |
-| `anyOf`            | Evaluates a list of predicates and passes if **any one** of them passes                                                                                                                                                |
-| `entityProperties` | Checks properties of an entity                                                                                                                                                                                         |
-| `inverted`         | Inverts another predicate condition                                                                                                                                                                                    |
-| `randomChance`     | Passes if a random float between 0.0 and 1.0 is below the given `NumberProvider` value                                                                                                                                 |
-| `reference`        | Invokes another predicate file and returns its result (cannot be cyclic)                                                                                                                                               |
-| `timeCheck`        | Compares a world clock's time against a `NumberProvider` range (optional `period` for modulo, optional `clock` to select which clock) - see [World Clocks](/docs/data-driven/world-clocks#timecheckpredicatecondition) |
-| `valueCheck`       | Compares a `NumberProvider` value against another `NumberProvider` or range                                                                                                                                            |
-| `weatherCheck`     | Checks the current game weather (raining, thundering)                                                                                                                                                                  |
+| Condition                   | Description                                                                                                                                                                                                            |
+|-----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `allOf`                     | Evaluates a list of predicates and passes if **all** of them pass                                                                                                                                                      |
+| `anyOf`                     | Evaluates a list of predicates and passes if **any one** of them passes                                                                                                                                                |
+| `entityProperties`          | Checks properties of an entity                                                                                                                                                                                         |
+| `environmentAttributeCheck` | Passes if the specified environment attribute currently matches the given value                                                                                                                                        |
+| `inverted`                  | Inverts another predicate condition                                                                                                                                                                                    |
+| `randomChance`              | Passes if a random float between 0.0 and 1.0 is below the given `NumberProvider` value                                                                                                                                 |
+| `reference`                 | Invokes another predicate file and returns its result (cannot be cyclic)                                                                                                                                               |
+| `timeCheck`                 | Compares a world clock's time against a `NumberProvider` range (optional `period` for modulo, optional `clock` to select which clock) - see [World Clocks](/docs/data-driven/world-clocks#timecheckpredicatecondition) |
+| `valueCheck`                | Compares a `NumberProvider` value against another `NumberProvider` or range                                                                                                                                            |
+| `weatherCheck`              | Checks the current game weather (raining, thundering)                                                                                                                                                                  |
 
 > `randomChance`, `timeCheck`, and `valueCheck` accept a [
 `NumberProvider`](/docs/data-driven/loot-tables#number-providers) for their numeric arguments, so you can use dynamic
 > values like scoreboard scores, enchantment levels, or environment attributes instead of plain floats.
+
+### Environment Attribute Check
+
+`environmentAttributeCheck` passes when the specified environment attribute equals the given value.
+The value type is inferred from the attribute - booleans for toggle attributes, floats for numeric ones, strings for
+enum-like ones (moon phase, villager activity), and objects for compound ones (ambient sounds, background music).
+
+```kotlin
+predicate("is_daytime") {
+   // Boolean attribute - convenience overload, no wrapping needed
+   environmentAttributeCheck(EnvironmentAttributes.Gameplay.MONSTERS_BURN, true)
+}
+
+predicate("dim_sky") {
+   // Float attribute - convenience overload, no wrapping needed
+   environmentAttributeCheck(EnvironmentAttributes.Visual.SKY_LIGHT_FACTOR, 0.5f)
+}
+
+predicate("full_moon") {
+   // Builder block: call exactly one typed helper from EnvironmentAttributesScope.
+   // It sets both the attribute ID and the expected value automatically.
+   environmentAttributeCheck {
+      moonPhase(Textures.Environment.Celestial.Moon.FULL_MOON)
+   }
+}
+```
+
+The builder block accepts any number of calls from the same scope helpers used in dimension types and biomes (
+`moonPhase`, `beesStayInHive`, `fogColor`, `ambientSounds`, etc.).
+Each attribute set in the block produces one `environment_attribute_check` condition, so multiple attributes are an
+implicit AND - all must match for the predicate to pass.
 
 #### Context-Dependent Conditions
 
