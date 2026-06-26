@@ -300,6 +300,37 @@ heightRange(biasedToBottomHeightProvider(minInclusive = -64, maxInclusive = 0))
 heightRange(veryBiasedToBottomHeightProvider(minInclusive = -64, maxInclusive = 16))
 ```
 
+### Float Providers
+
+Float providers supply a float value sampled at runtime. They appear in configured feature fields like `heightScale`,
+`stalactiteBluntness`, and `windSpeed`, as well as enchantment effect fields like `volume` and `pitch`.
+
+| Provider                                   | Behaviour                                                                                  |
+|--------------------------------------------|--------------------------------------------------------------------------------------------|
+| `constant(value)`                          | Always returns `value`. Serializes as a plain float, no wrapper object.                    |
+| `uniform(minInclusive, maxExclusive)`      | Uniform random float in `[min, max)`. `maxExclusive` cannot be less than `minInclusive`.   |
+| `clampedNormal(mean, deviation, min, max)` | Samples a normal distribution (`mean`/`deviation`) and clamps the result to `[min, max]`.  |
+| `trapezoid(min, max, plateau)`             | Samples a trapezoid distribution spanning `[min, max]` with a flat top of width `plateau`. |
+
+Each function also has a `*FloatProvider` alias (`constantFloatProvider`, `uniformFloatProvider`, etc.) for use when
+both float and int provider imports are in scope.
+
+```kotlin
+// Fixed scale
+heightScale = constant(1.5f)
+
+// Random uniform pitch 0.8..1.2 (exclusive upper)
+pitch = uniform(0.8f, 1.2f)
+
+// Normal distribution centered at 0.5, clamped to 0..1
+heightScale = clampedNormal(mean = 0.5f, deviation = 0.2f, min = 0.0f, max = 1.0f)
+
+// Trapezoid: peaks in the center of 0..2, plateau width 0.5
+heightScale = trapezoid(min = 0.0f, max = 2.0f, plateau = 0.5f)
+```
+
+---
+
 ### Int Providers
 
 Int providers supply an integer value sampled at runtime. They are used wherever Minecraft expects a variable count or
