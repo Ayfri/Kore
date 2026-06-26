@@ -102,12 +102,19 @@ fun itemComponentsTests() {
 
 	val blocksAttacksTest = Items.DIAMOND_SWORD {
 		blocksAttacks {
-			bypassedBy = Tags.DamageType.DAMAGES_HELMET
+			bypassedBy(Tags.DamageType.DAMAGES_HELMET)
 			damageReduction(base = 0f, factor = 0.5f, horizontalBlockingAngle = 120f, Tags.DamageType.IS_PLAYER_ATTACK)
 			itemDamage(base = 1f, factor = 0f, threshold = 0f)
 		}
 	}
 	blocksAttacksTest.asString() assertsIs """minecraft:diamond_sword[blocks_attacks={bypassed_by:"#minecraft:damages_helmet",damage_reductions:[{base:0.0f,factor:0.5f,horizontal_blocking_angle:120.0f,type:"#minecraft:is_player_attack"}],item_damage:{base:1.0f,factor:0.0f,threshold:0.0f}}]"""
+
+	val blocksAttacksMultiBypassTest = Items.DIAMOND_SWORD {
+		blocksAttacks {
+			bypassedBy(Tags.DamageType.DAMAGES_HELMET, Tags.DamageType.IS_PLAYER_ATTACK)
+		}
+	}
+	blocksAttacksMultiBypassTest.asString() assertsIs """minecraft:diamond_sword[blocks_attacks={bypassed_by:["#minecraft:damages_helmet","#minecraft:is_player_attack"]}]"""
 
 	val blockStateTest = stone {
 		blockState {
@@ -252,6 +259,11 @@ fun itemComponentsTests() {
 		damageResistant(Tags.DamageType.DAMAGES_HELMET)
 	}
 	damageResistantTest.asString() assertsIs """minecraft:stone_sword[damage_resistant={types:"#minecraft:damages_helmet"}]"""
+
+	val damageResistantMultiTest = stoneSword {
+		damageResistant(Tags.DamageType.DAMAGES_HELMET, Tags.DamageType.IS_PLAYER_ATTACK)
+	}
+	damageResistantMultiTest.asString() assertsIs """minecraft:stone_sword[damage_resistant={types:["#minecraft:damages_helmet","#minecraft:is_player_attack"]}]"""
 
 	val damageTypeTest = stoneSword {
 		damageType(DamageTypes.PLAYER_ATTACK)
@@ -547,6 +559,11 @@ fun itemComponentsTests() {
 		providesBannerPatterns(Tags.BannerPattern.PatternItem.CREEPER)
 	}
 	providesBannerPatternsTest.asString() assertsIs """minecraft:player_head[provides_banner_patterns="#minecraft:pattern_item/creeper"]"""
+
+	val providesBannerPatternsMultiTest = Items.PLAYER_HEAD {
+		providesBannerPatterns(Tags.BannerPattern.PatternItem.CREEPER, Tags.BannerPattern.PatternItem.SKULL)
+	}
+	providesBannerPatternsMultiTest.asString() assertsIs """minecraft:player_head[provides_banner_patterns=["#minecraft:pattern_item/creeper","#minecraft:pattern_item/skull"]]"""
 
 	val providerTrimMaterialTest = Items.PLAYER_HEAD {
 		providesTrimMaterial(TrimMaterials.DIAMOND)
