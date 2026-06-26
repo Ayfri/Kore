@@ -5,18 +5,18 @@ package io.github.ayfri.kore.website.utils
  */
 enum class MinecraftVersionPattern(val regex: Regex, val description: String) {
 	SNAPSHOT(
-		"""^(?:\d{2}w\d{2}[a-z]|\d+\.\d+(?:\.\d+)?-snapshot-\d+)$""".toRegex(),
+		"""^(?:\d{2}w\d{2}[a-z]|\d{2,}\.\d+(?:\.\d+)?-snapshot-\d+)$""".toRegex(),
 		"Minecraft snapshots (e.g., 24w11a or 26.1-snapshot-8)"
 	),
 	PRE_RELEASE(
-		"""^(?:1\.\d+(?:\.\d+)?-pre\d+|\d+\.\d+(?:\.\d+)?-pre-\d+)$""".toRegex(),
+		"""^(?:1\.\d+(?:\.\d+)?-pre\d+|\d{2,}\.\d+(?:\.\d+)?-pre-\d+)$""".toRegex(),
 		"Minecraft pre-releases (e.g., 1.21.4-pre1 or 26.1-pre-1)"
 	),
 	RELEASE_CANDIDATE(
-		"""^(?:1\.\d+(?:\.\d+)?-rc\d+|\d+\.\d+(?:\.\d+)?-rc-\d+)$""".toRegex(),
+		"""^(?:1\.\d+(?:\.\d+)?-rc\d+|\d{2,}\.\d+(?:\.\d+)?-rc-\d+)$""".toRegex(),
 		"Release candidates (e.g., 1.21.4-rc1 or 26.1-rc-1)"
 	),
-	RELEASE("""^\d+\.\d+(?:\.\d+)?$""".toRegex(), "Direct version pattern");
+	RELEASE("""^(?:1\.\d+(?:\.\d+)?|\d{2,}\.\d+(?:\.\d+)?)$""".toRegex(), "Direct version pattern");
 
 	fun extract(input: String) = regex.find(input)?.value
 	fun matches(input: String) = regex.matches(input)
