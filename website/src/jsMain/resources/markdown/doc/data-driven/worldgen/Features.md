@@ -142,21 +142,80 @@ val flower = dp.configuredFeature("my_flower", flowerCfg) {}
 
 ### Other Feature Types
 
-Kore supports many feature types. Here are the most commonly used:
+Kore supports all vanilla configured feature types. Functions are listed alphabetically:
 
-| Feature Type        | Description                   | Example Use                    |
-|---------------------|-------------------------------|--------------------------------|
-| `blockBlob`         | Small rock blob on surface    | Mossy cobblestone in forests   |
-| `blockPile`         | Piles of blocks               | Pumpkin patches, melon patches |
-| `diskFeature`       | Circular disk of blocks       | Clay, sand, gravel patches     |
-| `fossilFeature`     | Structure-based fossils       | Underground fossils            |
-| `geode`             | Hollow structures with layers | Amethyst geodes                |
-| `hugeBrownMushroom` | Large brown mushroom          | Swamp/mushroom island fungi    |
-| `hugeRedMushroom`   | Large red mushroom            | Swamp/mushroom island fungi    |
-| `icebergFeature`    | Iceberg structures            | Ocean icebergs                 |
-| `lakeFeature`       | Liquid pools                  | Underground lava lakes         |
-| `spike`             | Tall spiky columns            | Ice spikes in frozen biomes    |
-| `springFeature`     | Fluid source blocks           | Water/lava springs             |
+| Feature Type                      | Description                          | Example Use                    |
+|-----------------------------------|--------------------------------------|--------------------------------|
+| `bamboo(probability)`             | Bamboo stalks                        | Jungle bamboo                  |
+| `basaltColumns(reach, height)`    | Paired basalt pillar columns         | Nether basalt deltas           |
+| `blockBlob(...)`                  | Small block blob on a surface        | Mossy cobblestone in forests   |
+| `blockColumn(...)`                | Vertical stack of blocks with layers | Custom pillars                 |
+| `blockPile(...)`                  | Piles of blocks                      | Pumpkin/melon patches          |
+| `deltaFeature(...)`               | Basalt delta with contents and rim   | Nether basalt deltas           |
+| `disk(...)`                       | Circular disk of blocks              | Clay, sand, gravel patches     |
+| `dripstoneCluster(...)`           | Dense dripstone growth               | Cave dripstone rooms           |
+| `endGateway(...)`                 | End gateway portal                   | End outer islands              |
+| `EndSpike(...)`                   | End obsidian pillar with crystal     | The End respawn pillars        |
+| `fillLayer(...)`                  | Fill a layer with blocks             | Custom dimension layers        |
+| `fossil(...)`                     | Structure-based fossil               | Underground fossils            |
+| `geode(...)`                      | Hollow structure with layered shells | Amethyst geodes                |
+| `hugeBrownMushroom(...)`          | Large brown mushroom                 | Swamp/mushroom island fungi    |
+| `hugeFungus(...)`                 | Huge nether fungus                   | Crimson/warped forests         |
+| `hugeRedMushroom(...)`            | Large red mushroom                   | Swamp/mushroom island fungi    |
+| `iceberg(...)`                    | Iceberg structure                    | Frozen ocean icebergs          |
+| `lake(...)`                       | Liquid pool                          | Underground lava lakes         |
+| `largeDripstone(...)`             | Tall stalactite or stalagmite        | Cave ceilings/floors           |
+| `multifaceGrowth(...)`            | Multi-face block spread              | Glow lichen, sculk vein        |
+| `netherForestVegetation(...)`     | Nether plant scatter                 | Warped/crimson forest floors   |
+| `netherrackReplaceBlobs(...)`     | Replace netherrack with blobs        | Nether gravel/blackstone blobs |
+| `pointedDripstone(...)`           | Single pointed dripstone             | Cave stalactites/stalagmites   |
+| `randomBooleanSelector(...)`      | Picks one of two features randomly   | Symmetric ore variants         |
+| `RandomSelector(...)`             | Weighted random feature picker       | Mixed ore deposits             |
+| `replaceSingleBlock(...)`         | Replace blocks by rule targets       | Custom block swaps             |
+| `rootSystem(...)`                 | Root placer for trees                | Mangrove roots                 |
+| `scatteredOre(...)`               | Scattered ore deposits               | Nether gold ore blobs          |
+| `sculkPatch(...)`                 | Sculk spread with catalyst           | Ancient city surroundings      |
+| `seagrass(probability)`           | Seagrass placement                   | Ocean floors                   |
+| `seaPickle(count)`                | Sea pickle colonies                  | Warm ocean floors              |
+| `simpleRandomSelector(...)`       | Uniform random feature picker        | Coral type variety             |
+| `spike(...)`                      | Tall spiky columns                   | Ice spikes in frozen biomes    |
+| `springFeature(...)`              | Fluid source block                   | Water/lava springs             |
+| `twistingVines(...)`              | Twisting vine growth                 | Warped forest floors           |
+| `underwaterMagma(...)`            | Underwater magma blocks              | Ocean floors                   |
+| `vegetationPatch(...)`            | Vegetation on surfaces               | Cave moss patches              |
+| `waterloggedVegetationPatch(...)` | Waterlogged vegetation patches       | Underwater cave plants         |
+
+`EndSpike` and `RandomSelector` have no factory function and are instantiated directly as data class constructors.
+
+### No-Config Features
+
+These feature types have no configuration fields and are used directly as Kotlin `data object` values:
+
+```kotlin
+configuredFeature("basalt_pillar", BasaltPillar)
+configuredFeature("desert_well", DesertWell)
+```
+
+| Object              | Description                      |
+|---------------------|----------------------------------|
+| `BasaltPillar`      | Single basalt pillar             |
+| `BlueIce`           | Blue ice patch on icebergs       |
+| `BonusChest`        | Bonus chest at spawn             |
+| `ChorusPlant`       | Chorus plant on End islands      |
+| `CoralClaw`         | Coral claw structure             |
+| `CoralMushroom`     | Coral mushroom structure         |
+| `CoralTree`         | Coral tree structure             |
+| `DesertWell`        | Desert well structure            |
+| `EndIsland`         | Small End island                 |
+| `EndPlatform`       | Obsidian end platform            |
+| `FreezeTopLayer`    | Freeze/snow the top layer        |
+| `GlowstoneBlob`     | Glowstone blob on Nether ceiling |
+| `Kelp`              | Kelp stalk                       |
+| `MonsterRoom`       | Monster spawner room             |
+| `NoOp`              | Does nothing (placeholder)       |
+| `Vines`             | Random vine placement            |
+| `VoidStartPlatform` | Void dimension start platform    |
+| `WeepingVines`      | Weeping vines in the Nether      |
 
 Reference: [Feature types](https://minecraft.wiki/w/Configured_feature#Types)
 
@@ -184,24 +243,29 @@ Modifiers process in order, each one filtering or transforming the placement str
 
 - Start with `count()` or `rarityFilter()` to control frequency
 - Use `inSquare()` to spread horizontally within the chunk
-- Apply `heightRange()` or `heightmap()` for vertical positioning
+- Apply `heightRange()` or `heightMap()` for vertical positioning
 - End with `biome()` to respect biome boundaries
 
 Reference: [Placement modifier](https://minecraft.wiki/w/Placed_feature#Placement_modifiers)
 
-| Modifier                              | Description                   |
-|---------------------------------------|-------------------------------|
-| `biome()`                             | Only place in valid biomes    |
-| `blockPredicateFilter(predicate)`     | Custom block condition        |
-| `count(n)`                            | Place n times per chunk       |
-| `countOnEveryLayer(n)`                | Place n times on every layer  |
-| `environmentScan(...)`                | Scan for valid placement      |
-| `heightmap(type)`                     | Place relative to heightmap   |
-| `heightRange(provider)`               | Vertical placement range      |
-| `inSquare()`                          | Spread horizontally in chunk  |
-| `rarityFilter(chance)`                | 1/chance probability to place |
-| `surfaceRelativeThresholdFilter(...)` | Surface-relative placement    |
-| `surfaceWaterDepthFilter(maxDepth)`   | Max water depth filter        |
+| Modifier                              | Description                                      |
+|---------------------------------------|--------------------------------------------------|
+| `biome()`                             | Only place in valid biomes                       |
+| `blockPredicateFilter(predicate)`     | Custom block condition                           |
+| `carvingMask(step)`                   | Only place in blocks carved by `air` or `liquid` |
+| `count(n)`                            | Place n times per chunk                          |
+| `countOnEveryLayer(n)`                | Place n times on every layer                     |
+| `environmentScan(...)`                | Scan for valid placement                         |
+| `fixedPlacement(...)`                 | Place at specific absolute positions             |
+| `heightMap(type)`                     | Place relative to heightmap                      |
+| `heightRange(provider)`               | Vertical placement range                         |
+| `inSquare()`                          | Spread horizontally in chunk                     |
+| `noiseBasedCount(...)`                | Count based on noise value at the position       |
+| `noiseThresholdCount(...)`            | Fixed count chosen by noise threshold            |
+| `randomOffset(xzSpread, ySpread)`     | Scatter placement within an XZ/Y radius          |
+| `rarityFilter(chance)`                | 1/chance probability to place                    |
+| `surfaceRelativeThresholdFilter(...)` | Surface-relative placement                       |
+| `surfaceWaterDepthFilter(maxDepth)`   | Max water depth filter                           |
 
 ### Height Providers
 
@@ -209,22 +273,33 @@ Height providers control vertical distribution. Different providers create diffe
 
 - **Uniform** - Equal chance at all heights (good for evenly distributed ores)
 - **Trapezoid** - Peaks in the middle, tapers at edges (vanilla iron ore pattern)
-- **Very biased to bottom** - Concentrates near minimum Y (vanilla diamond pattern)
+- **Biased to bottom** - Concentrates near the minimum Y
+- **Very biased to bottom** - More extreme bottom concentration (vanilla diamond pattern)
+- **Weighted list** - Picks from multiple providers by weight
 
 Reference: [Height provider](https://minecraft.wiki/w/Height_provider)
 
 ```kotlin
 // Uniform distribution between min and max
-heightRange(uniformHeightProvider(minY = 0, maxY = 64))
+heightRange(uniformHeightProvider(minInclusive = 0, maxInclusive = 64))
 
 // Triangular distribution (peaks at center)
-heightRange(trapezoidHeightProvider(minY = 0, maxY = 64, plateau = 20))
+heightRange(trapezoidHeightProvider(minInclusive = 0, maxInclusive = 64, plateau = 20))
 
-// Constant height
-heightRange(constantHeightProvider(y = 32))
+// Constant absolute Y
+heightRange(constantAbsolute(32))
 
-// Relative to world bounds
-heightRange(veryBiasedToBottomHeightProvider(minY = 0, maxY = 64))
+// Constant offset above world bottom
+heightRange(constantAboveBottom(8))
+
+// Constant offset below world top
+heightRange(constantBelowTop(8))
+
+// Biased toward the bottom
+heightRange(biasedToBottomHeightProvider(minInclusive = -64, maxInclusive = 0))
+
+// Strongly biased toward the bottom
+heightRange(veryBiasedToBottomHeightProvider(minInclusive = -64, maxInclusive = 16))
 ```
 
 ---
