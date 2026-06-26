@@ -245,11 +245,13 @@ suspend fun launchAllSimpleGenerators() {
 		val url = gen.url
 		val list = getFromCacheOrDownloadTxt(gen.fileName, url).lines()
 		val parentArgumentType = gen.getParentArgumentType()
+		val paths = list.mapIfNotNull(gen.transform)
+		val useTree = gen.enumTree || paths.filter(String::isNotBlank).any { gen.separator in it }
 
 		when {
-			gen.enumTree -> {
+			useTree -> {
 				generatePathEnumTree(
-					paths = list.mapIfNotNull(gen.transform),
+					paths = paths,
 					gen
 				)
 
@@ -268,7 +270,7 @@ suspend fun launchAllSimpleGenerators() {
 			}
 
 			else -> generateEnum(
-				values = list.mapIfNotNull(gen.transform),
+				values = paths,
 				name = gen.name,
 				sourceUrl = url,
 				parentArgumentType = parentArgumentType,

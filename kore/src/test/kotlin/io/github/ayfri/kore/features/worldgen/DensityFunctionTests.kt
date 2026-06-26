@@ -28,7 +28,7 @@ fun DataPack.densityFunctionTests() {
 		"weird_scaled_sampler",
 		weirdScaledSampler(
 			RarityValueMapper.TYPE_1,
-			Noises.CALCITE,
+			Noises.Calcite,
 			DensityFunctions.Overworld.BASE_3D_NOISE
 		)
 	)
@@ -45,11 +45,11 @@ fun DataPack.densityFunctionTests() {
 	densityFunction(
 		"weird_scaled_sampler",
 		shiftedNoise(
-			Noises.CALCITE,
+			Noises.Calcite,
 		) {
 			xzScale = 0.1
 			yScale = 1.0
-			noise = Noises.CALCITE
+			noise = Noises.Calcite
 
 			shiftX(1.0)
 			shiftY(DensityFunctions.Overworld.BASE_3D_NOISE)
