@@ -1,23 +1,23 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator
 
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.RuleBasedBlockStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.ruleBasedBlockStateProvider
 import kotlinx.serialization.Serializable
 
 /**
- * Tree decorator that replaces ground blocks beneath a placed tree using a [RuleBasedBlockStateProvider].
+ * Tree decorator that replaces ground blocks beneath a placed tree using a [BlockStateProvider].
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#alter_ground
  */
 @Serializable
 data class AlterGround(
-	var provider: RuleBasedBlockStateProvider,
+	var provider: BlockStateProvider,
 ) : TreeDecorator()
 
-/** Creates an [AlterGround] decorator with the given rule-based [provider]. */
-fun alterGround(provider: RuleBasedBlockStateProvider = ruleBasedBlockStateProvider()) = AlterGround(provider)
+/** Creates an [AlterGround] decorator with the given [provider]. */
+fun alterGround(provider: BlockStateProvider = ruleBasedBlockStateProvider()) = AlterGround(provider)
 
 /** Adds an [AlterGround] decorator to this list. */
-fun MutableList<TreeDecorator>.alterGround(provider: RuleBasedBlockStateProvider = ruleBasedBlockStateProvider()) {
+fun MutableList<TreeDecorator>.alterGround(provider: BlockStateProvider = ruleBasedBlockStateProvider()) {
 	this += AlterGround(provider)
 }

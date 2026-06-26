@@ -353,7 +353,11 @@ fun DataPack.configuredFeatureTests() {
 			branchStartOffsetFromTop = uniform(-5, -2)
 		}
 		cherryFoliagePlacer { height = constant(3) }
-		belowTrunkProvider = ruleBasedBlockStateProvider(fallback = simpleStateProvider(Blocks.DIRT))
+		belowTrunkProvider = ruleBasedBlockStateProvider(fallback = simpleStateProvider(Blocks.DIRT)) {
+			rule {
+
+			}
+		}
 	})
 
 	configuredFeatures.last() assertsIs """
@@ -361,6 +365,7 @@ fun DataPack.configuredFeatureTests() {
 			"type": "minecraft:tree",
 			"config": {
 				"below_trunk_provider": {
+					"type": "minecraft:rule_based_block_state_provider",
 					"fallback": {
 						"type": "minecraft:simple_state_provider",
 						"state": {
