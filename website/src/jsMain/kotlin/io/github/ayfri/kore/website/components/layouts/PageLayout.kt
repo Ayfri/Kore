@@ -26,8 +26,12 @@ fun PageLayout(title: String, content: @Composable () -> Unit) {
 	url.hash = ""
 
 	setCanonical(url.href)
-	setTitle("$title - Kore, library for making Datapacks")
-	setDescription("Kore is a modern, open-source, and easy-to-use Kotlin library for Minecraft datapack development. It's designed to be simple, fast, and easy to use.")
+	setTitle("$title - Kore | Minecraft Datapack Generator")
+	setDescription("Kore is a modern Kotlin-based Minecraft datapack generator — type-safe, open-source, and easy to use. Create complex datapacks without writing JSON or MCFunction by hand.")
+	setKeywords(
+		"Minecraft datapack generator", "datapack generator", "Minecraft datapack", "Kotlin DSL",
+		"Kore", "datapack development", "Minecraft Java Edition", "MCFunction", "datapack library"
+	)
 	setType("website")
 
 	setTwitterCard("summary_large_image")

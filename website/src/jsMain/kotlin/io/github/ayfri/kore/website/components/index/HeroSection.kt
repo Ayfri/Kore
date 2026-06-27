@@ -222,7 +222,7 @@ fun HeroSection() {
 
 				P(
 					"""
-						A modern, type-safe Kotlin library for Minecraft datapack development.
+						A modern, type-safe Kotlin datapack generator for Minecraft.
 						Create complex datapacks without ever writing JSON or MCFunction manually.
 					""".trimIndent(),
 					HeroSectionStyle.subTitle

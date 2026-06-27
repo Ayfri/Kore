@@ -65,6 +65,11 @@ fun setTitle(title: String) = renderComposable(document.head!!) {
 	MetaProperty("twitter:title", title)
 }
 
+fun setKeywords(vararg keywords: String) = renderComposable(document.head!!) {
+	document.querySelector("meta[name=keywords]")?.remove()
+	MetaName("keywords", keywords.joinToString(", "))
+}
+
 fun setDescription(description: String) = renderComposable(document.head!!) {
 	selectAll("meta[property*=description]").forEach(HTMLElement::remove)
 	document.querySelector("meta[name=description]")?.remove()
