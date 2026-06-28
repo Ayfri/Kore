@@ -3,6 +3,7 @@ compatibility_date = "2026-06-28"
 
 [assets]
 directory = "./website/.kobweb/site"
+not_found_handling = "404-page"
 
 [observability]
 enabled = true
