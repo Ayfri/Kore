@@ -62,7 +62,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Kobweb export
-        run: ./gradlew kobwebExport -PkobwebExportLayout=STATIC -PkobwebBuildTarget=RELEASE -PkobwebReuseServer=false --stacktrace --no-daemon --info
+        run: ./gradlew kobwebExport -PkobwebExportLayout=STATIC -PkobwebBuildTarget=RELEASE -PkobwebReuseServer=false --stacktrace
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
