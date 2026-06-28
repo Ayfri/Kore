@@ -3,7 +3,7 @@ compatibility_date = "2026-06-28"
 
 [assets]
 directory = "./.kobweb/site"
-bindings = "ASSETS"
+binding = "ASSETS"
 
 [observability]
 enabled = true
