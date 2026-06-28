@@ -73,4 +73,3 @@ jobs:
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           wranglerVersion: "4"
           command: deploy
-          workingDirectory: website

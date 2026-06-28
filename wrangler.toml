@@ -2,7 +2,7 @@ name = "kore-website"
 compatibility_date = "2026-06-28"
 
 [assets]
-directory = "./.kobweb/site"
+directory = "./website/.kobweb/site"
 
 [observability]
 enabled = true
