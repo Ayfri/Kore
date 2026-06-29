@@ -23,20 +23,29 @@ version = "1.0-SNAPSHOT"
 val docGroupOrder =
 	listOf("guides", "commands", "data-driven", "concepts", "helpers", "oop", "advanced", "contributing")
 
+val minecraftVersion = rootProject.providers.gradleProperty("minecraft.version").orElse("").get()
+
+data class DocEntry(
+	val file: File,
+	val date: String,
+	val title: String,
+	val desc: String,
+	val navTitle: String,
+	val keywords: List<String>,
+	val dateModified: String,
+	val slugs: List<String>,
+	val position: Int? = null,
+)
+
 kobweb {
 	val projectGroup = group
 	val projectLogger = logger
-	val docGroupOrderCopy = docGroupOrder
 
 	app {
 		globals.set(
 			mapOf(
-				"docGroupOrder" to docGroupOrderCopy.joinToString(","),
-				"minecraftVersion" to rootProject.file("gradle.properties").readLines()
-					.firstOrNull { it.startsWith("minecraft.version=") }
-					?.substringAfter('=')
-					?.trim()
-					.orEmpty(),
+				"docGroupOrder" to docGroupOrder.joinToString(","),
+				"minecraftVersion" to minecraftVersion,
 				"projectVersion" to Project.VERSION,
 				"websiteUrl" to Project.WEBSITE_URL,
 			)
@@ -227,7 +236,7 @@ kobweb {
 			}
 
 			fun getGroupPriority(slug: String) =
-				docGroupOrderCopy.indexOf(slug.lowercase()).takeIf { it >= 0 } ?: docGroupOrderCopy.size
+				docGroupOrder.indexOf(slug.lowercase()).takeIf { it >= 0 } ?: docGroupOrder.size
 
 			// Sort entries by group priority, then optional position, then slug/title names.
 			val sortedEntries = docEntries.sortedWith(Comparator { a, b ->
@@ -311,13 +320,13 @@ kobweb {
 
 			// Write files to public resources directory
 			publicDir.mkdirs()
-			File(publicDir, "llms.txt").writeText(llmsContent)
-			File(publicDir, "llms-full.txt").writeText(llmsFullContent)
+			publicDir.resolve("llms.txt").writeText(llmsContent)
+			publicDir.resolve("llms-full.txt").writeText(llmsFullContent)
 
 			val markdownSources = markdownFiles.associate { docArticle ->
 				docArticle.filePath.replace('\\', '/') to markdownDir.resolve(docArticle.filePath).readText()
 			}
-			File(publicDir, "markdown-sources.json").writeText(JsonOutput.toJson(markdownSources))
+			publicDir.resolve("markdown-sources.json").writeText(JsonOutput.toJson(markdownSources))
 
 			println("LLMs.txt generated -> ${publicDir.absolutePath}")
 			projectLogger.info("markdown-sources.json written (${markdownSources.size} files)")
@@ -500,19 +509,6 @@ tasks.matching { it.name == "kspKotlinJs" }.configureEach {
 tasks.matching { it.name == "compileKotlinJs" }.configureEach {
 	dependsOn("fetchGitHubReleases")
 }
-
-data class DocEntry(
-	val file: File,
-	val date: String,
-	val title: String,
-	val desc: String,
-	val navTitle: String,
-	val keywords: List<String>,
-	val dateModified: String,
-	val slugs: List<String>,
-	val position: Int? = null,
-)
-
 
 kotlin {
 	configAsKobwebApplication("website")
