@@ -3,28 +3,32 @@ plugins {
 	id("com.vanniktech.maven.publish")
 }
 
+val minecraftVersion = providers.gradleProperty("minecraft.version")
 val isSnapshotBuild = providers.gradleProperty("kore.publish.snapshot")
 	.map(String::toBoolean)
 	.orElse(false)
-	.get()
 
-version = buildString {
-	append(Project.VERSION)
-	append("-")
-	append(mainProjectProperty("minecraft.version"))
 
-	if (isSnapshotBuild) append("-SNAPSHOT")
+val publicationVersion = minecraftVersion.zip(isSnapshotBuild) { mcVersion, snapshot ->
+	buildString {
+		append(Project.VERSION)
+		append("-")
+		append(mcVersion)
+		if (snapshot) append("-SNAPSHOT")
+	}
 }
+
 group = Project.GROUP
+version = publicationVersion.get()
 
 mavenPublishing {
-	publishToMavenCentral(automaticRelease = !isSnapshotBuild)
+	publishToMavenCentral(automaticRelease = !isSnapshotBuild.get())
 
-	if (providers.environmentVariable("CI").isPresent && !isSnapshotBuild) {
+	if (providers.environmentVariable("CI").isPresent && !isSnapshotBuild.get()) {
 		signAllPublications()
 	}
 
-	coordinates(Project.GROUP, project.name, version.toString())
+	coordinates(Project.GROUP, project.name, publicationVersion.get())
 
 	pom {
 		name = project.name
