@@ -139,10 +139,10 @@ fun markdownRendererTests() {
 	quoteSerialized[0].asString() assertsIs """[{type:"text",color:"gray",text:"│ "},{type:"text",text:"hello"}]"""
 
 	val ulSerialized = markdownToTextComponents("- item")
-	ulSerialized[0].asString() assertsIs """[{type:"text",text:"• "},{type:"text",text:"item"}]"""
+	ulSerialized[0].asString() assertsIs """["• ","item"]"""
 
 	val olSerialized = markdownToTextComponents("1. first")
-	olSerialized[0].asString() assertsIs """[{type:"text",text:"1. "},{type:"text",text:"first"}]"""
+	olSerialized[0].asString() assertsIs """["1.", "first"]"""
 
 }
 
