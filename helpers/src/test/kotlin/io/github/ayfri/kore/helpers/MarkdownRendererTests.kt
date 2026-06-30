@@ -142,7 +142,7 @@ fun markdownRendererTests() {
 	ulSerialized[0].asString() assertsIs """["• ","item"]"""
 
 	val olSerialized = markdownToTextComponents("1. first")
-	olSerialized[0].asString() assertsIs """["1.", "first"]"""
+	olSerialized[0].asString() assertsIs """["1. ","first"]"""
 
 }
 
