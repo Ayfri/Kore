@@ -186,6 +186,7 @@ kobweb {
 		}
 
 		// Capture values outside the callback for configuration cache compatibility
+		val docGroupOrder = docGroupOrder
 		val projectName = project.name
 		val projectDir = project.projectDir
 		val markdownDir = projectDir.resolve("src/jsMain/resources/markdown")
