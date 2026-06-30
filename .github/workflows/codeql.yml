@@ -76,7 +76,7 @@ jobs:
 
       - if: ${{ matrix.language == 'java-kotlin' }}
         name: Build for CodeQL
-        run: ./gradlew classes --stacktrace --no-daemon
+        run: ./gradlew classes --stacktrace --no-daemon --no-build-cache
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
