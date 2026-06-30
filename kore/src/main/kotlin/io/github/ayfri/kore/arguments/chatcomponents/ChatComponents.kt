@@ -3,8 +3,7 @@ package io.github.ayfri.kore.arguments.chatcomponents
 import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
-import io.github.ayfri.kore.utils.nbtList
-import io.github.ayfri.kore.utils.plusAssign
+import io.github.ayfri.kore.utils.nbtListOf
 import io.github.ayfri.kore.utils.serializerFor
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -54,10 +53,10 @@ data class ChatComponents(
 	fun toJsonString(json: Json = Json) = json.encodeToString(NbtAsJsonSerializer, toNbtTag())
 	fun toJsonListString(json: Json = Json) = json.encodeToString(NbtAsJsonSerializer, toNbtList())
 
-	fun toNbtList() = nbtList {
-		list.forEach {
-			this += it.toNbtTag()
-		}
+	fun toNbtList(): NbtTag = if (list.all { it.containsOnlyText() }) {
+		nbtListOf(list.map { it.text })
+	} else {
+		nbtListOf(list.map { it.toNbtTag() })
 	}
 
 	fun toNbtTag(): NbtTag = when (list.size) {
@@ -80,7 +79,8 @@ data class ChatComponents(
 	fun asSnbtArg() = literal(asString())
 
 	companion object {
-		val ONLY_SIMPLE_COMPONENTS_EXCEPTION = IllegalArgumentException("This ChatComponent should only contain simple components.")
+		val ONLY_SIMPLE_COMPONENTS_EXCEPTION =
+			IllegalArgumentException("This ChatComponent should only contain simple components.")
 
 		@OptIn(ExperimentalSerializationApi::class)
 		val jsonSerializer = Json {

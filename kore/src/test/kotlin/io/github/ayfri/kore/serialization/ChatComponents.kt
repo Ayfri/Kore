@@ -190,7 +190,8 @@ fun chatComponentsTests() {
 		}
 	""".trimIndent()
 
-	val translatedComponentWithArgs = translatedTextComponent("chat.type.advancement.goal", listOf("Kore", "The best library!"))
+	val translatedComponentWithArgs =
+		translatedTextComponent("chat.type.advancement.goal", listOf("Kore", "The best library!"))
 	translatedComponentWithArgs assertsIsJson """
 		{
 			"type": "translatable",
@@ -311,15 +312,28 @@ fun chatComponentsTests() {
 				"condition": "minecraft:match_tool",
 				"predicate": {
 					"components": {
-						"lore": "[{type:\"text\",text:\"text1\"},{type:\"text\",text:\"text2\"},{type:\"text\",text:\"text3\"}]"
+						"lore": "[\"text1\",\"text2\",\"text3\"]"
 					}
 				}
 			}
 		""".trimIndent()
 	}
 
+	chatComponentsExtra()
 	chatComponentsOnClick()
 	chatComponentAllFields()
+}
+
+private fun chatComponentsExtra() {
+	val withExtraMultiple = entityComponent(self()) {
+		extra = textComponent("test1") + text("test2")
+	}
+	withExtraMultiple assertsIs """{type:"selector",extra:["test1","test2"],selector:"@s"}"""
+
+	val withExtraSingle = entityComponent(self()) {
+		extra = textComponent("test1")
+	}
+	withExtraSingle assertsIs """{type:"selector",extra:"test1",selector:"@s"}"""
 }
 
 private fun chatComponentsOnClick() {

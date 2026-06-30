@@ -46,15 +46,15 @@ data object ComponentsSerializer : KSerializer<ComponentsScope> {
 	 * counterparts (e.g. [DamageComponent][io.github.ayfri.kore.arguments.components.item.DamageComponent]), because
 	 * [Component] is not a sealed hierarchy and has no name to serializer registry to dispatch on.
 	 */
-	override fun deserialize(decoder: Decoder): ComponentsScope = when (decoder) {
+	override fun deserialize(decoder: Decoder) = when (decoder) {
 		is NbtDecoder -> {
 			val compound = decoder.decodeNbtTag() as? NbtCompound ?: error("A components map must be an NBT compound.")
-			Components(compound.mapValuesTo(mutableMapOf<String, Component>()) { (_, value) -> CustomComponent(value) })
+			Components(compound.mapValuesTo(mutableMapOf()) { (_, value) -> CustomComponent(value) })
 		}
 
 		is JsonDecoder -> {
 			val json = decoder.decodeJsonElement() as? JsonObject ?: error("A components map must be a JSON object.")
-			Components(json.mapValuesTo(mutableMapOf<String, Component>()) { (_, value) ->
+			Components(json.mapValuesTo(mutableMapOf()) { (_, value) ->
 				CustomComponent(decoder.json.decodeFromJsonElement(NbtAsJsonSerializer, value))
 			})
 		}

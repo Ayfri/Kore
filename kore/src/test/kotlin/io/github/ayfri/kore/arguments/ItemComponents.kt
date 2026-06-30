@@ -445,7 +445,7 @@ fun itemComponentsTests() {
 	val loreTest = stoneSword {
 		lore("test")
 	}
-	loreTest.asString() assertsIs "minecraft:stone_sword[lore=[{type:\"text\",text:\"test\"}]]"
+	loreTest.asString() assertsIs "minecraft:stone_sword[lore=[\"test\"]]"
 	loreTest.components!!.lore(textComponent("test", Color.AQUA) + text("test2", Color.BLACK) + text("a"))
 	loreTest.asString() assertsIs "minecraft:stone_sword[lore=[{type:\"text\",color:\"aqua\",text:\"test\"},{type:\"text\",color:\"black\",text:\"test2\"},{type:\"text\",text:\"a\"}]]"
 
