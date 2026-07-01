@@ -2,6 +2,11 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import generators.Generator
 
+/**
+ * Generates a sealed hierarchy of nested `object`/`enum class` declarations from `/`-separated resource paths
+ * (e.g. `worldgen/biome/plains`): one nesting level per path segment, one `enum class` per leaf directory. Used
+ * instead of [generateEnum] whenever entries contain [Generator.separator].
+ */
 fun generatePathEnumTree(paths: List<String>, generator: Generator) {
 	val name = generator.name
 	val sourceUrl = generator.url
@@ -121,11 +126,13 @@ fun generatePathEnumTree(paths: List<String>, generator: Generator) {
 	generateFile(name, sourceUrl, topLevel)
 }
 
+/** Applies [block] only when [condition] is true. */
 inline fun <T> T.letIf(
 	condition: Boolean,
 	block: (T) -> T,
 ) = if (condition) block(this) else this
 
+/** Builds the `companion object` shared by every generated enum: a nested `<name>Serializer` object. */
 fun generateCompanion(name: String, encoderValue: String? = "value.asId()") =
 	TypeSpec.companionObjectBuilder().apply {
 		addType(

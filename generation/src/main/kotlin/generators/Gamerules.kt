@@ -35,6 +35,7 @@ private fun addGamerule(name: String, parent: String) = TypeSpec.objectBuilder(n
 	.addSuperinterface(ClassName(GENERATED_PACKAGE, INTERFACE_NAME, parent))
 	.build()
 
+/** Builds the `Gamerules` sealed interface from raw `/gamerule <name> <value: bool|integer>` syntax lines. */
 fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 	val validGamerules = gamerules.filter { "minecraft:" !in it }
 

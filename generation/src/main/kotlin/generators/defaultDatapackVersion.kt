@@ -35,6 +35,7 @@ val jsonParser = Json {
 	namingStrategy = JsonNamingStrategy.SnakeCase
 }
 
+/** Writes `DataPack.Companion.DEFAULT_PACK_FORMAT`; retries once if a stale cached table is missing the version. */
 suspend fun downloadDefaultDatapackVersion() {
 	val url = "$MAIN_GITHUB_URL/master/versions_data.json"
 	val versions = getFromCacheOrDownloadJson("version_data.json", url).jsonObject

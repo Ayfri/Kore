@@ -37,6 +37,7 @@ val client = HttpClient(CIO) {
 	}
 }
 
+/** Resolves a `PixiGeko/Minecraft-generated-data` path for the current [minecraftVersion]. */
 fun url(path: String) = "$MAIN_GITHUB_URL/$minecraftVersion/$path"
 
 fun clearGeneratedPackage() {
@@ -46,6 +47,7 @@ fun clearGeneratedPackage() {
 	generatedDir.mkdirs()
 }
 
+/** Entry point for `:generation:run`. Regenerates `kore/src/main/generated`; pass `--reload-cache` after a version bump. */
 suspend fun main(args: Array<String>) {
 	if ("--reload-cache" in args) clearCache()
 	clearGeneratedPackage()

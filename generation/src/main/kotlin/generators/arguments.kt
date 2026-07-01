@@ -28,6 +28,7 @@ private val jsonDecoder = Json {
 	ignoreUnknownKeys = true
 }
 
+/** Downloads the vanilla registry list, plus registries the report doesn't expose, minus ones modeled by hand. */
 suspend fun downloadRegistriesList(): Map<String, Registry> {
 	val registriesListUrl = url("minecraft-generated/reports/datapack.json")
 	val registriesList = getFromCacheOrDownloadJson("registries.json", registriesListUrl)
@@ -54,6 +55,7 @@ suspend fun downloadRegistriesList(): Map<String, Registry> {
 	}
 }
 
+/** Builds `<Name>Argument`, and when tagged also `<Name>OrTagArgument`/`<Name>TagArgument`, keyed by their path. */
 fun processArgumentType(argumentType: ArgumentType): Map<String, TypeSpec.Builder> {
 	val resourceLocationClass = ClassName("io.github.ayfri.kore.arguments.types", "ResourceLocationArgument")
 	val taggedResourceLocationClass = ClassName("io.github.ayfri.kore.arguments.types", "TaggedResourceLocationArgument")
@@ -135,6 +137,7 @@ private fun String.prependIfNotEmpty(other: String) = if (this.isNotEmpty()) {
     this
 }
 
+/** Generates a typed `*Argument` interface (and tag variants) for every vanilla registry, no manual entry needed. */
 suspend fun launchArgumentTypeGenerators() {
 	val registriesList = downloadRegistriesList()
 

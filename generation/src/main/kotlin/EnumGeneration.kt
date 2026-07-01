@@ -1,5 +1,10 @@
 import com.squareup.kotlinpoet.*
 
+/**
+ * Generates a flat `enum class` from a list of resource names, one constant per entry. When [parentArgumentType]
+ * is set, the enum also implements that `*Argument` interface. Used for entries without a `/`; see
+ * [generatePathEnumTree] for the tree-shaped variant.
+ */
 fun generateEnum(
 	values: Collection<String>,
 	name: String,

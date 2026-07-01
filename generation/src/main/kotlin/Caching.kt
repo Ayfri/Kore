@@ -5,6 +5,8 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import java.io.File
 
+// Download cache under `generation/build/cache`, cleared by `--reload-cache`.
+
 fun cacheFile(name: String, content: String) {
 	val file = File(cacheDir, name)
 	file.parentFile.mkdirs()

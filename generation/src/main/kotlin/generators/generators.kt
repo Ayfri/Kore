@@ -7,6 +7,7 @@ import generatePathEnumTree
 import getFromCacheOrDownloadTxt
 import overrides
 
+/** Manually maintained list of "simple" generators: resource lists and registries. Add new entries here with [gen]. */
 suspend fun launchAllSimpleGenerators() {
 	val lists = listOf(
 		gen("Advancements", "advancement"),
