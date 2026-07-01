@@ -18,8 +18,7 @@ kotlin {
 	jvmToolchain(25)
 
 	compilerOptions {
-		freeCompilerArgs =
-			listOf("-Xcontext-parameters", "-Xrender-internal-diagnostic-names")
+		freeCompilerArgs.addAll(listOf("-Xrender-internal-diagnostic-names"))
 	}
 }
 

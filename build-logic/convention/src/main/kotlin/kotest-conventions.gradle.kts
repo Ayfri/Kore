@@ -1,4 +1,4 @@
-import gradle.kotlin.dsl.accessors._cd941a2f98c58be1fe844d0c2d02034a.testImplementation
+import gradle.kotlin.dsl.accessors._511028b7c35ba999a76ba725df8506cc.testImplementation
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
