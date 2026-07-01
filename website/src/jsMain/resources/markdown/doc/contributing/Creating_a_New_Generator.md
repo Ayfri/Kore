@@ -34,8 +34,9 @@ What you want to mirror:
 - Package layout.
 - Test shape.
 
-If the feature needs a brand-new registry argument type, add it through the generation pipeline first. Do **not**
-hand-edit `kore/src/main/generated` or `build/generated/...`.
+If the feature needs a brand-new registry argument type, add it through the generation pipeline first - see
+[Contributing: The Generation Pipeline][generation-pipeline]. Do **not** hand-edit `kore/src/main/generated` or
+`build/generated/...`.
 
 ## 2) Create the feature class
 
@@ -215,11 +216,14 @@ You are usually done when the feature includes all of the following:
 
 - [Contributing: Architecture and Patterns][architecture]
 - [Contributing: Contributing][contributing]
+- [Contributing: The Generation Pipeline][generation-pipeline]
 - [Contributing: Workflow][workflow]
 
 [architecture]: /docs/contributing/architecture-and-patterns
 
 [contributing]: /docs/contributing/contributing
+
+[generation-pipeline]: /docs/contributing/generation-pipeline
 
 [damage-type]: https://github.com/ayfri/kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/features/damagetypes/DamageType.kt
 

@@ -65,6 +65,7 @@ git-excluded sandboxes are omitted on purpose.
 - Purpose: source-data processing and generated Kotlin/resource output.
 - Edit here when a generated enum, registry wrapper, or source-derived structure is wrong.
 - **Never** fix a generation issue by editing `kore/src/main/generated` or `build/generated/...` directly.
+- Full walkthrough: [Contributing: The Generation Pipeline][generation-pipeline].
 
 ### [`helpers/`][helpers-root]
 
@@ -225,6 +226,7 @@ Content rules that keep the docs consistent and trustworthy:
 
 - [Contributing: Contributing][contributing]
 - [Contributing: Creating a New Generator][new-generator]
+- [Contributing: The Generation Pipeline][generation-pipeline]
 - [Contributing: Workflow][workflow]
 
 [bindings-entities]: https://github.com/ayfri/kore/blob/master/bindings/src/main/kotlin/io/github/ayfri/kore/bindings/entities.kt
@@ -244,6 +246,8 @@ Content rules that keep the docs consistent and trustworthy:
 [datapack-kt]: https://github.com/ayfri/kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/DataPack.kt
 
 [docs-root]: https://github.com/ayfri/kore/tree/master/website/src/jsMain/resources/markdown/doc
+
+[generation-pipeline]: /docs/contributing/generation-pipeline
 
 [generation-root]: https://github.com/ayfri/kore/tree/master/generation
 
