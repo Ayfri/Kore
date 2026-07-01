@@ -66,16 +66,6 @@ dependencies {
 }
 ```
 
-Then activate the `-Xcontext-parameters` compiler option:
-
-```kotlin
-kotlin {
-	compilerOptions {
-		freeCompilerArgs.add("-Xcontext-parameters")
-	}
-}
-```
-
 You should also use Java 25 or higher:
 
 ```kotlin

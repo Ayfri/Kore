@@ -161,14 +161,10 @@ dependencies {
 
 #### Kotlin compiler and JVM settings
 
-Kore relies on context parameters. Make sure your `build.gradle.kts` contains:
+Kore relies on context parameters, which are stable since Kotlin 2.4. Make sure your `build.gradle.kts` contains:
 
 ```kotlin
 kotlin {
-	compilerOptions {
-		freeCompilerArgs.add("-Xcontext-parameters")
-	}
-
 	jvmToolchain(25)
 }
 ```
@@ -447,7 +443,7 @@ Good expansion ideas after the custom enchantment:
 ### Unresolved Kore DSL symbols
 
 - Check that the dependency exists in the correct module.
-- Verify the compiler flag `-Xcontext-parameters`.
+- Confirm you're on Kotlin 2.4 or higher (context parameters are stable there).
 - Refresh/sync Gradle in your IDE.
 
 ### Java/Kotlin toolchain errors
