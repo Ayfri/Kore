@@ -1,20 +1,18 @@
 package io.github.ayfri.kore.utils
 
-import java.util.*
+fun String.camelCase(separator: String = "_"): String {
+	val words = lowercase().split(separator)
+	return words[0] + words.drop(1).joinToString("") { word ->
+		word.replaceFirstChar { it.titlecase() }
+	}
+}
 
 fun String.ifNotEmpty(block: (String) -> String) = if (isNotEmpty()) block(this) else this
 
 fun String.pascalCase() = split("_").joinToString("") { word ->
 	word.replaceFirstChar {
-		if (it.isLowerCase()) it.titlecase(Locale.getDefault())
+		if (it.isLowerCase()) it.titlecase()
 		else it.toString()
-	}
-}
-
-fun String.camelCase(separator: String = "_"): String {
-	val words = lowercase().split(separator)
-	return words[0] + words.drop(1).joinToString("") { word ->
-		word.replaceFirstChar { it.titlecase(Locale.ENGLISH) }
 	}
 }
 
