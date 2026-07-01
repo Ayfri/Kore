@@ -498,17 +498,63 @@ tasks.register("fetchGitHubReleases") {
 	}
 }
 
+tasks.register("fetchGitHubStars") {
+	group = "kore"
+	description = "Fetches the GitHub repository star count and generates a Kotlin file with the data"
+
+	val outFile =
+		layout.buildDirectory.file("generated/kore/src/jsMain/kotlin/io/github/ayfri/kore/website/gitHubStars.kt")
+	outputs.file(outFile)
+
+	doLast {
+		val apiUrl = "https://api.github.com/repos/Ayfri/Kore"
+		val conn = URI(apiUrl).toURL().openConnection() as HttpURLConnection
+		conn.requestMethod = "GET"
+		conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
+		conn.setRequestProperty("User-Agent", "KoreWebsite/1.0 (+https://kore.ayfri.com)")
+
+		System.getenv("GITHUB_TOKEN")?.takeIf { it.isNotBlank() }
+			?.let { conn.setRequestProperty("Authorization", "token $it") }
+
+		val stars = try {
+			val code = conn.responseCode
+			if (code != 200) {
+				val err = conn.errorStream?.bufferedReader()?.use { it.readText() }
+				logger.error("GitHub API returned $code for repo stars. Body: $err")
+				null
+			} else {
+				val jsonResponse = conn.inputStream.bufferedReader().use { it.readText() }
+				(JsonSlurper().parseText(jsonResponse) as Map<*, *>)["stargazers_count"] as? Int
+			}
+		} catch (e: Exception) {
+			logger.error("Failed to fetch GitHub repository stars.", e)
+			null
+		}
+
+		val targetFile = outFile.get().asFile
+		targetFile.parentFile.mkdirs()
+		targetFile.writeText(buildString {
+			appendLine("// This file is generated. Do not modify directly.")
+			appendLine("package io.github.ayfri.kore.website")
+			appendLine("")
+			appendLine("val gitHubStars: Int? = $stars")
+		})
+
+		logger.lifecycle("Generated GitHub stars file (stars = $stars) → ${targetFile.path}")
+	}
+}
+
 tasks.named("kobwebExport") {
-	dependsOn("fetchGitHubReleases")
+	dependsOn("fetchGitHubReleases", "fetchGitHubStars")
 }
 
 // Ensure generated sources exist before KSP for JS runs
 tasks.matching { it.name == "kspKotlinJs" }.configureEach {
-	dependsOn("fetchGitHubReleases")
+	dependsOn("fetchGitHubReleases", "fetchGitHubStars")
 }
 
 tasks.matching { it.name == "compileKotlinJs" }.configureEach {
-	dependsOn("fetchGitHubReleases")
+	dependsOn("fetchGitHubReleases", "fetchGitHubStars")
 }
 
 kotlin {
