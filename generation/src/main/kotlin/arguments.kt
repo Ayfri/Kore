@@ -1,5 +1,10 @@
 import com.squareup.kotlinpoet.ClassName
 
+fun splitArgumentTypePrefix(qualifiedName: String): Pair<String, String> {
+	val prefix = if ("." in qualifiedName) qualifiedName.substringBeforeLast(".") + "." else ""
+	return prefix to qualifiedName.substringAfterLast(".")
+}
+
 fun argumentClassName(argument: String): ClassName {
 	val manual = argument.endsWith(" M")
 	val argumentName = argument.substringBefore(" ")

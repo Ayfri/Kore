@@ -18,6 +18,7 @@ fun clearCache() {
 }
 
 suspend fun getFromCacheOrDownloadTxt(name: String, url: String) = getFromCacheTxt(name) ?: download(name, url).body<String>().also { cacheFile(name, it) }
+
 suspend fun getFromCacheOrDownloadJson(name: String, url: String) =
 	getFromCacheJson(name) ?: download(name, url).body<JsonElement>().also { cacheFile(name, it.toString()) }
 

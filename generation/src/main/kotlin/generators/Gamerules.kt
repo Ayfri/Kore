@@ -7,6 +7,7 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import generateFile
 import getFromCacheOrDownloadTxt
 import overrides
+import serializableWith
 import setSealed
 import snakeCase
 import url
@@ -24,12 +25,7 @@ private val gamerulesClass = ClassName(GENERATED_PACKAGE, INTERFACE_NAME)
 private fun String.toGameruleName() = substringAfter("gamerule").substringBefore("<").snakeCase().trim().uppercase()
 
 private fun addGameruleChild(name: String) = TypeSpec.interfaceBuilder(name).apply {
-	addAnnotation(
-		AnnotationSpec.builder(ClassName("kotlinx.serialization", "Serializable"))
-			.addMember("with = Serializer::class")
-			.build()
-	)
-
+	addAnnotation(serializableWith("Serializer"))
 	addSuperinterface(gamerulesClass)
 	setSealed()
 }.build()
@@ -46,11 +42,7 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 	val integerGamerules = validGamerules.filter { it.endsWith("<value: integer>") }.map(String::toGameruleName)
 
 	val topLevelInterface = TypeSpec.interfaceBuilder(INTERFACE_NAME).apply {
-		addAnnotation(
-			AnnotationSpec.builder(ClassName("kotlinx.serialization", "Serializable"))
-				.addMember("with = $INTERFACE_NAME.Companion.Serializer::class")
-				.build()
-		)
+		addAnnotation(serializableWith("$INTERFACE_NAME.Companion.Serializer"))
 
 		setSealed()
 

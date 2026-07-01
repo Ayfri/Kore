@@ -48,7 +48,6 @@ fun Generator.tagsParents(vararg interfaces: Pair<String, String>) {
 	tagsParents = interfaces.toMap()
 }
 
-
 fun Generator.transform(transformFunction: (String) -> String) {
 	transform = transformFunction
 }
@@ -62,12 +61,6 @@ fun gen(
 fun List<Generator>.transformRemoveJSONSuffix() = map { generator ->
 	generator.apply {
 		if (generator.transform == null) transform = { it.removeSuffix(".json") }
-	}
-}
-
-fun List<Generator>.transformRemoveMinecraftPrefix() = map { generator ->
-	generator.apply {
-		if (generator.transform == null) transform = { it.removePrefix("minecraft:") }
 	}
 }
 

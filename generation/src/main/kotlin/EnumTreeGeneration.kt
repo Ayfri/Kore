@@ -18,21 +18,12 @@ fun generatePathEnumTree(paths: List<String>, generator: Generator) {
 
 	val topLevel = TypeSpec.interfaceBuilder(name).apply {
 		parentArgumentType?.let {
-			// Make it work with `worldgen.` prefix
-			val prefix = if ("." in it) it.substringBeforeLast(".") + "." else ""
-			val argumentTypeName = it.substringAfterLast(".")
+			val (prefix, argumentTypeName) = splitArgumentTypePrefix(it)
 			addSuperinterface(argumentClassName("${prefix}types.$argumentTypeName"))
 		}
 
 		addModifiers(KModifier.SEALED)
-		if (hasParent) {
-			addProperty(
-				PropertySpec.builder("namespace", String::class)
-					.getter(FunSpec.getterBuilder().addStatement("return \"minecraft\"").build())
-					.overrides()
-					.build()
-			)
-		}
+		if (hasParent) addMinecraftNamespaceProperty()
 	}
 
 	val topLevelInterfaceClassName = ClassName(GENERATED_PACKAGE, name)
@@ -79,17 +70,9 @@ fun generatePathEnumTree(paths: List<String>, generator: Generator) {
 				}
 
 				if (tagParent != null) {
-					addProperty(
-						PropertySpec.builder("namespace", String::class)
-							.getter(FunSpec.getterBuilder().addStatement("return \"minecraft\"").build())
-							.overrides()
-							.build()
-					)
+					addMinecraftNamespaceProperty()
 
-					val argumentType = tagsParents[tagParent]!!
-					// Make it work with `worldgen.` prefix
-					val prefix = if ("." in argumentType) argumentType.substringBeforeLast(".") + "." else ""
-					val argumentTypeName = argumentType.substringAfterLast(".")
+					val (prefix, argumentTypeName) = splitArgumentTypePrefix(tagsParents[tagParent]!!)
 					addSuperinterface(argumentClassName("${prefix}tagged.$argumentTypeName"))
 				}
 
@@ -117,11 +100,7 @@ fun generatePathEnumTree(paths: List<String>, generator: Generator) {
 					)
 				}
 
-				addAnnotation(
-					AnnotationSpec.builder(ClassName("kotlinx.serialization", "Serializable"))
-						.addMember("with = %T::class", ClassName("io.github.ayfri.kore.arguments", "Argument", "ArgumentSerializer"))
-						.build()
-				)
+				addAnnotation(serializableWith(ClassName("io.github.ayfri.kore.arguments", "Argument", "ArgumentSerializer")))
 			}
 		}.addEnumConstant(enumValue)
 	}
