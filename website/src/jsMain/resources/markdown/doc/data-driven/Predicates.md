@@ -5,7 +5,7 @@ nav-title: Predicates
 description: Learn how to use predicates in your Kore datapacks
 keywords: minecraft, datapack, kore, predicates, conditions, entity properties
 date-created: 2024-01-08
-date-modified: 2026-06-26
+date-modified: 2026-07-01
 routeOverride: /docs/data-driven/predicates
 ---
 
@@ -462,8 +462,9 @@ Component Matchers allow you to check various item components like:
 - Book contents
 - And many more
 
-Each matcher corresponds to a component type in Minecraft and provides type-safe ways to check their properties. For a complete list of available matchers, refer to the
-`arguments.components.matchers` package in the source code.
+Each matcher corresponds to a component type in Minecraft and provides type-safe ways to check their properties. See the
+[Available Component Matchers](/docs/concepts/components#available-component-matchers) table in the Components guide for
+the full list.
 
 ## Using Predicates in Commands
 
@@ -507,7 +508,11 @@ alongside the [Inventory Manager](/docs/helpers/inventory-manager).
 
 ## Item Predicates
 
-You can also create predicates for items with enchantments:
+Item predicates check the item involved in a predicate context - most commonly the tool used to mine a block via
+`matchTool`, but the same shape is used for `equipment` slots and `slots` checks inside `entityProperties` (see
+[Entity Predicate Example](#entity-predicate-example) above).
+
+A basic item predicate matches on the item type plus optional `count`/`durability` ranges:
 
 ```kotlin
 predicate("enchanted_tool") {
@@ -519,6 +524,16 @@ predicate("enchanted_tool") {
 	}
 }
 ```
+
+The `predicates { }` block accepts
+any [component matcher](/docs/concepts/components#component-matchers--item-predicates)
+
+- `damage`, `enchantments`, `storedEnchantments`, `customData`, `container`, and more - so you can gate a predicate on
+  arbitrary component state, not just enchantments. If you instead need the inline command-syntax form
+  (`minecraft:diamond_sword[damage=10]`) for use outside a predicate file - e.g. in `/give`, `/clear`, or the `items`
+  selector - see [Item Predicates](/docs/concepts/components#item-predicates) and
+  [Component Matchers (Sub-Predicates)](/docs/concepts/components#component-matchers-sub-predicates) in the Components
+  guide, which cover both forms side by side with more examples (existence checks, partial matching, negation, OR).
 
 ## Referencing Other Predicates
 
@@ -556,6 +571,8 @@ Predicates are powerful tools for creating complex conditions in your datapack. 
 - [Loot Tables](/docs/data-driven/loot-tables) - Use predicates as conditions for loot entries
 - [Advancements](/docs/data-driven/advancements) - Use predicates as trigger conditions
 - [Item Modifiers](/docs/data-driven/item-modifiers) - Modify items conditionally with predicates
+- [Components](/docs/concepts/components#component-matchers--item-predicates) - Item predicates and component matchers
+  in depth: command-syntax predicates, sub-predicate matchers, existence checks, and a complete tool-upgrade example
 - [Inventory Manager](/docs/helpers/inventory-manager) - Pair predicates with inventory management
 - [Villager Trades](/docs/data-driven/villager-trades) - Gate trade availability via `merchantPredicate`
 
