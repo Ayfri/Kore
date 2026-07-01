@@ -15,7 +15,7 @@ import io.github.ayfri.kore.helpers.assertions.assertsIs
 import io.github.ayfri.kore.helpers.mannequins.*
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.string.shouldMatch
-import java.util.*
+import kotlin.uuid.Uuid
 
 fun Function.mannequinTests() {
 	val m = mannequin {
@@ -45,7 +45,7 @@ fun Function.mannequinTests() {
 }
 
 fun Function.mannequinEntityTests() {
-	val uuid = UUIDArgument(UUID.fromString("00000000-0000-0000-0000-000000000001"))
+	val uuid = UUIDArgument(Uuid.parse("00000000-0000-0000-0000-000000000001"))
 	val entity = MannequinEntity(uuid)
 
 	entity.kill() assertsIs "kill @e[limit=1,nbt={UUID:[I;0,0,0,1]},type=minecraft:mannequin]"

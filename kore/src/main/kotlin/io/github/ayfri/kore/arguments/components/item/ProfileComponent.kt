@@ -9,7 +9,7 @@ import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.util.*
+import kotlin.uuid.Uuid
 
 /** A skin texture property (name, base64-encoded value, and optional signature). */
 @Serializable
@@ -65,7 +65,7 @@ fun ComponentsScope.playerProfile(
 
 fun ComponentsScope.playerProfile(
 	name: String? = null,
-	id: UUID,
+	id: Uuid,
 	properties: List<ProfileProperty>? = null,
 ) = playerProfile(name, UUIDArgument(id), properties)
 
@@ -73,7 +73,7 @@ fun ComponentsScope.playerProfile(name: String? = null, id: UUIDArgument? = null
 	this[ItemComponentTypes.PROFILE] = PlayerProfile(name, id).apply(block)
 }
 
-fun ComponentsScope.playerProfile(name: String? = null, id: UUID, block: PlayerProfile.() -> Unit) =
+fun ComponentsScope.playerProfile(name: String? = null, id: Uuid, block: PlayerProfile.() -> Unit) =
 	playerProfile(name, UUIDArgument(id), block)
 
 fun PlayerProfile.property(name: String, value: String, signature: String? = null) = apply {

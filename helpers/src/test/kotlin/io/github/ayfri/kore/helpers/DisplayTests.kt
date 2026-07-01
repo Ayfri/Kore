@@ -27,7 +27,7 @@ import io.github.ayfri.kore.helpers.displays.entities.ItemDisplayModelMode
 import io.github.ayfri.kore.helpers.displays.maths.*
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.string.shouldMatch
-import java.util.*
+import kotlin.uuid.Uuid
 
 fun Function.displayTests() {
 	val itemDisplay = itemDisplay {
@@ -122,7 +122,7 @@ fun Function.displayTests() {
 }
 
 fun Function.displayEntitySelectorTests() {
-	val uuid = UUIDArgument(UUID.fromString("00000000-0000-0000-0000-000000000001"))
+	val uuid = UUIDArgument(Uuid.parse("00000000-0000-0000-0000-000000000001"))
 
 	val blockEntity = BlockDisplayEntity(uuid)
 	blockEntity.kill() assertsIs "kill @e[limit=1,nbt={UUID:[I;0,0,0,1]},type=minecraft:block_display]"

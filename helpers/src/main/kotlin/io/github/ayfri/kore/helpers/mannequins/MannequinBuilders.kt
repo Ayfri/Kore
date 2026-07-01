@@ -10,7 +10,7 @@ import io.github.ayfri.kore.commands.summon
 import io.github.ayfri.kore.entities.MannequinEntity
 import io.github.ayfri.kore.functions.Function
 import net.benwoodworth.knbt.NbtCompound
-import java.util.*
+import kotlin.uuid.Uuid
 
 /**
  * DSL builder for a [Mannequin].
@@ -47,7 +47,7 @@ fun Mannequin.playerProfile(name: String? = null, id: UUIDArgument? = null, bloc
  * @param id The UUID of the player.
  * @param block The builder block for the profile.
  */
-fun Mannequin.playerProfile(name: String? = null, id: UUID, block: PlayerProfile.() -> Unit = {}) =
+fun Mannequin.playerProfile(name: String? = null, id: Uuid, block: PlayerProfile.() -> Unit = {}) =
 	playerProfile(name, UUIDArgument(id), block)
 
 /**

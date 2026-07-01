@@ -1,9 +1,9 @@
 package io.github.ayfri.kore.utils
 
 import io.github.ayfri.kore.arguments.DisplaySlots
-import io.github.ayfri.kore.arguments.chatcomponents.*
 import io.github.ayfri.kore.arguments.actions.runCommand
 import io.github.ayfri.kore.arguments.actions.suggestCommand
+import io.github.ayfri.kore.arguments.chatcomponents.*
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrIntStart
 import io.github.ayfri.kore.arguments.selector.SelectorArguments
@@ -18,14 +18,14 @@ import io.github.ayfri.kore.generated.EntityTypes
 import net.benwoodworth.knbt.put
 import net.benwoodworth.knbt.putNbtCompound
 import net.benwoodworth.knbt.putNbtList
-import java.util.*
+import kotlin.uuid.Uuid
 
 typealias DebugCallback = Function.(key: String, value: String) -> Command
 
 data class DebugEntity(val data: Map<String, String> = mutableMapOf()) {
 	constructor(block: MutableMap<String, String>.() -> Unit) : this(buildMap(block))
 
-	val randomTag = UUID.randomUUID().toString()
+	val randomTag = Uuid.random().toString()
 	var whenAllTestsValid: (Function.() -> Command)? = null
 	var whenAnyTestInvalid: (Function.() -> Command)? = null
 	val selector get() = selector()
