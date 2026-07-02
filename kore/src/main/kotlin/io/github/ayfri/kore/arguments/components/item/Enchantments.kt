@@ -6,6 +6,7 @@ import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.EnchantmentArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:enchantments` item component, which applies enchantments with their levels to the item.
@@ -16,7 +17,11 @@ import kotlinx.serialization.Serializable
 @Serializable(with = Enchantments.Companion.EnchantmentsSerializer::class)
 data class Enchantments(var levels: MutableMap<EnchantmentArgument, Int> = mutableMapOf()) : Component() {
 	companion object {
-		data object EnchantmentsSerializer : InlineAutoSerializer<Enchantments>(Enchantments::class)
+		data object EnchantmentsSerializer : InlineAutoSerializer<Enchantments, MutableMap<EnchantmentArgument, Int>>(
+			serializer<MutableMap<EnchantmentArgument, Int>>(),
+			Enchantments::levels,
+			::Enchantments
+		)
 	}
 }
 

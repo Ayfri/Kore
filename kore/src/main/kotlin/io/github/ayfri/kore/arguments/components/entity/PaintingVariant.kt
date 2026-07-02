@@ -6,6 +6,7 @@ import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.PaintingVariantArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:painting/variant` entity component, which sets the motif of a painting.
@@ -20,7 +21,11 @@ data class PaintingVariant(
 	var variant: PaintingVariantArgument
 ) : Component() {
 	companion object {
-		data object PaintingVariantSerializer : InlineAutoSerializer<PaintingVariant>(PaintingVariant::class)
+		data object PaintingVariantSerializer : InlineAutoSerializer<PaintingVariant, PaintingVariantArgument>(
+			serializer<PaintingVariantArgument>(),
+			PaintingVariant::variant,
+			::PaintingVariant
+		)
 	}
 }
 

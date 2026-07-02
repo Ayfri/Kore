@@ -15,8 +15,11 @@ data class PotionContentsComponentMatcher(
 	companion object {
 		data object PotionContentsListSerializer : InlinableListSerializer<MobEffectOrTagArgument>(MobEffectOrTagArgument.serializer())
 
-		data object PotionContentsComponentMatcherSerializer : InlineAutoSerializer<PotionContentsComponentMatcher>(
-			PotionContentsComponentMatcher::class
+		data object PotionContentsComponentMatcherSerializer :
+			InlineAutoSerializer<PotionContentsComponentMatcher, InlinableList<MobEffectOrTagArgument>>(
+				PotionContentsListSerializer,
+				PotionContentsComponentMatcher::potions,
+				::PotionContentsComponentMatcher,
 		)
 	}
 }

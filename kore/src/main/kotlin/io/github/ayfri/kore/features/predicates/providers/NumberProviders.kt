@@ -8,6 +8,7 @@ import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 @Serializable(with = NumberProvider.Companion.NumberProviderSerializer::class)
 sealed class NumberProvider {
@@ -37,7 +38,8 @@ data class Binomial(var n: NumberProvider, var p: NumberProvider) : NumberProvid
 @Serializable(with = Constant.Companion.ConstantNumberProviderSerializer::class)
 data class Constant(val value: Float) : NumberProvider() {
 	companion object {
-		data object ConstantNumberProviderSerializer : InlineAutoSerializer<Constant>(Constant::class)
+		data object ConstantNumberProviderSerializer :
+			InlineAutoSerializer<Constant, Float>(serializer<Float>(), Constant::value, ::Constant)
 	}
 }
 

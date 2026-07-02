@@ -5,13 +5,17 @@ import io.github.ayfri.kore.features.enchantments.effects.special.CrossbowChargi
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 @Serializable(with = CrossbowChargingSoundBuilder.Companion.CrossbowChargingSoundBuilderSerializer::class)
 data class CrossbowChargingSoundBuilder(var effects: List<CrossbowChargingSound> = emptyList()) : EffectBuilder() {
 	companion object {
-		data object CrossbowChargingSoundBuilderSerializer : InlineAutoSerializer<CrossbowChargingSoundBuilder>(
-			CrossbowChargingSoundBuilder::class
-		)
+		data object CrossbowChargingSoundBuilderSerializer :
+			InlineAutoSerializer<CrossbowChargingSoundBuilder, List<CrossbowChargingSound>>(
+				serializer<List<CrossbowChargingSound>>(),
+				CrossbowChargingSoundBuilder::effects,
+				::CrossbowChargingSoundBuilder
+			)
 	}
 }
 

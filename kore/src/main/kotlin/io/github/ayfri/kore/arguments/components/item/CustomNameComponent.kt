@@ -9,6 +9,7 @@ import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:custom_name` item component, which sets a custom display name (a text component) for the item.
@@ -23,7 +24,11 @@ data class CustomNameComponent(val component: ChatComponents) : Component() {
 	override fun isChatComponent() = true
 
 	companion object {
-		data object CustomNameComponentSerializer : InlineAutoSerializer<CustomNameComponent>(CustomNameComponent::class)
+		data object CustomNameComponentSerializer : InlineAutoSerializer<CustomNameComponent, ChatComponents>(
+			serializer<ChatComponents>(),
+			CustomNameComponent::component,
+			::CustomNameComponent
+		)
 	}
 }
 

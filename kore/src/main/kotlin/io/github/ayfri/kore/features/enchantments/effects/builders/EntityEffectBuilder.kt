@@ -21,11 +21,16 @@ import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 @Serializable(with = EntityEffectBuilder.Companion.EntityEffectBuilderSerializer::class)
 data class EntityEffectBuilder(var effects: List<ConditionalEffect> = emptyList()) : EffectBuilder() {
 	companion object {
-		data object EntityEffectBuilderSerializer : InlineAutoSerializer<EntityEffectBuilder>(EntityEffectBuilder::class)
+		data object EntityEffectBuilderSerializer : InlineAutoSerializer<EntityEffectBuilder, List<ConditionalEffect>>(
+			serializer<List<ConditionalEffect>>(),
+			EntityEffectBuilder::effects,
+			::EntityEffectBuilder
+		)
 	}
 }
 

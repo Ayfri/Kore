@@ -21,12 +21,18 @@ import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 
 @Serializable(with = PostAttackBuilder.Companion.PostAttackBuilderSerializer::class)
 data class PostAttackBuilder(var effects: List<PostAttackConditionalEffect> = emptyList()) : EffectBuilder() {
 	companion object {
-		data object PostAttackBuilderSerializer : InlineAutoSerializer<PostAttackBuilder>(PostAttackBuilder::class)
+		data object PostAttackBuilderSerializer :
+			InlineAutoSerializer<PostAttackBuilder, List<PostAttackConditionalEffect>>(
+				serializer<List<PostAttackConditionalEffect>>(),
+				PostAttackBuilder::effects,
+				::PostAttackBuilder
+			)
 	}
 }
 

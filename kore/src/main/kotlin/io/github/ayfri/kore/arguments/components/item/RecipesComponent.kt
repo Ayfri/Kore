@@ -6,6 +6,7 @@ import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:recipes` item component, which unlocks specified recipes when this knowledge book is used.
@@ -16,7 +17,11 @@ import kotlinx.serialization.Serializable
 @Serializable(with = RecipesComponent.Companion.RecipesComponentSerializer::class)
 data class RecipesComponent(var recipes: List<RecipeArgument>) : Component() {
 	companion object {
-		data object RecipesComponentSerializer : InlineAutoSerializer<RecipesComponent>(RecipesComponent::class)
+		data object RecipesComponentSerializer : InlineAutoSerializer<RecipesComponent, List<RecipeArgument>>(
+			serializer<List<RecipeArgument>>(),
+			RecipesComponent::recipes,
+			::RecipesComponent
+		)
 	}
 }
 

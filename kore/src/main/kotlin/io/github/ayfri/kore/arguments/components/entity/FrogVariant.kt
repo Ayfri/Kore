@@ -6,6 +6,7 @@ import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.FrogVariantArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:frog/variant` entity component, which sets the variant of a frog.
@@ -20,7 +21,11 @@ data class FrogVariant(
 	var variant: FrogVariantArgument
 ) : Component() {
 	companion object {
-		data object FrogVariantSerializer : InlineAutoSerializer<FrogVariant>(FrogVariant::class)
+		data object FrogVariantSerializer : InlineAutoSerializer<FrogVariant, FrogVariantArgument>(
+			serializer<FrogVariantArgument>(),
+			FrogVariant::variant,
+			::FrogVariant
+		)
 	}
 }
 

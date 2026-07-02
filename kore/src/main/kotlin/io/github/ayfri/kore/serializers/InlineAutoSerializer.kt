@@ -1,50 +1,39 @@
 package io.github.ayfri.kore.serializers
 
-import io.github.ayfri.kore.utils.createInstance
-import io.github.ayfri.kore.utils.getSerializer
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlin.reflect.KClass
-import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.jvm.isAccessible
 
 /**
- * A serializer that serializes the first property of a class automatically.
+ * A serializer that serializes a single-property wrapper class as its property value directly.
  *
  * @param T The target class type.
+ * @param P The type of the wrapped property.
+ * @param propertySerializer The serializer for the wrapped property.
+ * @param property Getter for the wrapped property.
+ * @param factory Constructor reference building [T] from the property value.
  *
  * Example:
  * ```kotlin
- * data object MyDataClassSerializer : InlineAutoSerializer<MyDataClass>()
- *
- * @Serializable(with = MyDataClassSerializer::class)
- * data class MyDataClass(var myProperty: Int = 0)
+ * @Serializable(with = MyDataClass.Companion.MyDataClassSerializer::class)
+ * data class MyDataClass(var myProperty: Int = 0) {
+ *     companion object {
+ *         data object MyDataClassSerializer :
+ *             InlineAutoSerializer<MyDataClass, Int>(serializer<Int>(), MyDataClass::myProperty, ::MyDataClass)
+ *     }
+ * }
  * ```
  */
-open class InlineAutoSerializer<T : Any>(val klass: KClass<T>) : KSerializer<T> {
-	private val firstProperty =
-		(klass.declaredMemberProperties.firstOrNull()
-			?: error("No properties found for class ${klass.simpleName}")).also {
-			it.isAccessible = true
-		}
+open class InlineAutoSerializer<T, P>(
+	private val propertySerializer: KSerializer<P>,
+	private val property: (T) -> P,
+	private val factory: (P) -> T,
+) : KSerializer<T> {
+	override val descriptor = propertySerializer.descriptor
 
-	override val descriptor by lazy { buildClassSerialDescriptor(klass.qualifiedName ?: "Unknown") }
+	override fun serialize(encoder: Encoder, value: T) =
+		encoder.encodeSerializableValue(propertySerializer, property(value))
 
-	override fun deserialize(decoder: Decoder): T {
-		val serializer = firstProperty.getSerializer(decoder.serializersModule)
-		val value = decoder.decodeSerializableValue(serializer)
-
-		return klass.createInstance(mapOf(firstProperty.name to value))
-	}
-
-	@OptIn(ExperimentalSerializationApi::class)
-	override fun serialize(encoder: Encoder, value: T) {
-		val propertyValue = firstProperty.get(value) ?: error("First property of ${klass.simpleName} is null")
-		val serializer = firstProperty.getSerializer(encoder.serializersModule)
-
-		encoder.encodeSerializableValue(serializer, propertyValue)
-	}
+	override fun deserialize(decoder: Decoder): T =
+		factory(decoder.decodeSerializableValue(propertySerializer))
 }

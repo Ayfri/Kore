@@ -6,6 +6,7 @@ import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.MapDecorationTypeArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /** A single named map icon/marker displayed on a filled map. */
 @Serializable
@@ -25,7 +26,12 @@ data class MapDecoration(
 @Serializable(with = MapDecorationsComponent.Companion.MapDecorationsComponentSerializer::class)
 data class MapDecorationsComponent(var decorations: Map<String, MapDecoration>) : Component() {
 	companion object {
-		data object MapDecorationsComponentSerializer : InlineAutoSerializer<MapDecorationsComponent>(MapDecorationsComponent::class)
+		data object MapDecorationsComponentSerializer :
+			InlineAutoSerializer<MapDecorationsComponent, Map<String, MapDecoration>>(
+				serializer<Map<String, MapDecoration>>(),
+				MapDecorationsComponent::decorations,
+				::MapDecorationsComponent
+			)
 	}
 }
 

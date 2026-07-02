@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.enums.MooshroomVariants
 import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:mooshroom/variant` entity component, which sets the variant of a mooshroom (red or brown).
@@ -20,7 +21,11 @@ data class MooshroomVariant(
 	var variant: MooshroomVariants
 ) : Component() {
 	companion object {
-		data object MooshroomVariantSerializer : InlineAutoSerializer<MooshroomVariant>(MooshroomVariant::class)
+		data object MooshroomVariantSerializer : InlineAutoSerializer<MooshroomVariant, MooshroomVariants>(
+			serializer<MooshroomVariants>(),
+			MooshroomVariant::variant,
+			::MooshroomVariant
+		)
 	}
 }
 

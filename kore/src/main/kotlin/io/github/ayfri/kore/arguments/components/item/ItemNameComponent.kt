@@ -9,6 +9,7 @@ import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:item_name` item component, which sets the item's base name (not italic, not removable in anvil).
@@ -23,7 +24,11 @@ data class ItemNameComponent(val components: ChatComponents) : Component() {
 	override fun isChatComponent() = true
 
 	companion object {
-		data object ItemNameComponentSerializer : InlineAutoSerializer<ItemNameComponent>(ItemNameComponent::class)
+		data object ItemNameComponentSerializer : InlineAutoSerializer<ItemNameComponent, ChatComponents>(
+			serializer<ChatComponents>(),
+			ItemNameComponent::components,
+			::ItemNameComponent
+		)
 	}
 }
 

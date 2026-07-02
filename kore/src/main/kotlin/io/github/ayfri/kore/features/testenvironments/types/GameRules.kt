@@ -4,6 +4,7 @@ import io.github.ayfri.kore.generated.Gamerules
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 @Serializable(with = GameRuleValue.Companion.GameRuleValueSerializer::class)
 sealed class GameRuleValue {
@@ -20,7 +21,8 @@ data class GameRuleBool(
 	var value: Boolean,
 ) : GameRuleValue() {
 	companion object {
-		data object GameRuleBoolSerializer : InlineAutoSerializer<GameRuleBool>(GameRuleBool::class)
+		data object GameRuleBoolSerializer :
+			InlineAutoSerializer<GameRuleBool, Boolean>(serializer<Boolean>(), GameRuleBool::value, ::GameRuleBool)
 	}
 }
 
@@ -29,7 +31,8 @@ data class GameRuleInt(
 	var value: Int,
 ) : GameRuleValue() {
 	companion object {
-		data object GameRuleIntSerializer : InlineAutoSerializer<GameRuleInt>(GameRuleInt::class)
+		data object GameRuleIntSerializer :
+			InlineAutoSerializer<GameRuleInt, Int>(serializer<Int>(), GameRuleInt::value, ::GameRuleInt)
 	}
 }
 

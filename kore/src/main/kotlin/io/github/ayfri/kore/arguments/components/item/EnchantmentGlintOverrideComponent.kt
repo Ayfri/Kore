@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:enchantment_glint_override` item component, which forces the enchantment glint on or off regardless of enchantments.
@@ -17,9 +18,12 @@ import kotlinx.serialization.Serializable
 @Serializable(with = EnchantmentGlintOverrideComponent.Companion.EnchantmentGlintOverrideComponentSerializer::class)
 data class EnchantmentGlintOverrideComponent(var glint: Boolean) : Component() {
 	companion object {
-		data object EnchantmentGlintOverrideComponentSerializer : InlineAutoSerializer<EnchantmentGlintOverrideComponent>(
-			EnchantmentGlintOverrideComponent::class
-		)
+		data object EnchantmentGlintOverrideComponentSerializer :
+			InlineAutoSerializer<EnchantmentGlintOverrideComponent, Boolean>(
+				serializer<Boolean>(),
+				EnchantmentGlintOverrideComponent::glint,
+				::EnchantmentGlintOverrideComponent
+			)
 	}
 }
 

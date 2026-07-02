@@ -7,6 +7,7 @@ import io.github.ayfri.kore.generated.EnvironmentAttributes
 import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /** A particle entry with its options and spawn probability. */
 @Serializable
@@ -28,7 +29,11 @@ data class ParticleValue(
 	var list: List<Particle> = emptyList(),
 ) : EnvironmentAttributesType() {
 	companion object {
-		data object AmbiantParticlesSerializer : InlineAutoSerializer<ParticleValue>(ParticleValue::class)
+		data object AmbiantParticlesSerializer : InlineAutoSerializer<ParticleValue, List<Particle>>(
+			serializer<List<Particle>>(),
+			ParticleValue::list,
+			::ParticleValue
+		)
 	}
 }
 

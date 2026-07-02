@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:repair_cost` item component, which adds an extra XP cost when repairing this item in an anvil.
@@ -17,7 +18,11 @@ import kotlinx.serialization.Serializable
 @Serializable(with = RepairCostComponent.Companion.RepairCostComponentSerializer::class)
 data class RepairCostComponent(var repairCost: Int) : Component() {
 	companion object {
-		data object RepairCostComponentSerializer : InlineAutoSerializer<RepairCostComponent>(RepairCostComponent::class)
+		data object RepairCostComponentSerializer : InlineAutoSerializer<RepairCostComponent, Int>(
+			serializer<Int>(),
+			RepairCostComponent::repairCost,
+			::RepairCostComponent
+		)
 	}
 }
 

@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.types.resources.BlockArgument
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:debug_stick_state` item component, which stores the selected block-state property per block type for the debug stick.
@@ -16,9 +17,12 @@ import kotlinx.serialization.Serializable
 @Serializable(with = DebugStickStateComponent.Companion.DebugStickStateSerializer::class)
 data class DebugStickStateComponent(var map: MutableMap<BlockArgument, String>) : Component() {
 	companion object {
-		data object DebugStickStateSerializer : InlineAutoSerializer<DebugStickStateComponent>(
-			DebugStickStateComponent::class
-		)
+		data object DebugStickStateSerializer :
+			InlineAutoSerializer<DebugStickStateComponent, MutableMap<BlockArgument, String>>(
+				serializer<MutableMap<BlockArgument, String>>(),
+				DebugStickStateComponent::map,
+				::DebugStickStateComponent
+			)
 	}
 }
 

@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.enums.LlamaVariants
 import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:llama/variant` entity component, which sets the variant of a llama.
@@ -20,7 +21,11 @@ data class LlamaVariant(
 	var variant: LlamaVariants
 ) : Component() {
 	companion object {
-		data object LlamaVariantSerializer : InlineAutoSerializer<LlamaVariant>(LlamaVariant::class)
+		data object LlamaVariantSerializer : InlineAutoSerializer<LlamaVariant, LlamaVariants>(
+			serializer<LlamaVariants>(),
+			LlamaVariant::variant,
+			::LlamaVariant
+		)
 	}
 }
 

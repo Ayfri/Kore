@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:minimum_attack_charge` item component, which sets the minimum attack charge (0.0-1.0) required for full damage.
@@ -19,8 +20,10 @@ data class MinimumAttackChargeComponent(
 	var value: Float,
 ) : Component() {
 	companion object {
-		data object MinimumAttackChargeComponentSerializer : InlineAutoSerializer<MinimumAttackChargeComponent>(
-			MinimumAttackChargeComponent::class
+		data object MinimumAttackChargeComponentSerializer : InlineAutoSerializer<MinimumAttackChargeComponent, Float>(
+			serializer<Float>(),
+			MinimumAttackChargeComponent::value,
+			::MinimumAttackChargeComponent
 		)
 	}
 }

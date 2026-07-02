@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.enums.VillagerVariants
 import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:villager/variant` entity component, which sets the biome type of a villager.
@@ -20,7 +21,11 @@ data class VillagerVariant(
 	var variant: VillagerVariants
 ) : Component() {
 	companion object {
-		data object VillagerVariantSerializer : InlineAutoSerializer<VillagerVariant>(VillagerVariant::class)
+		data object VillagerVariantSerializer : InlineAutoSerializer<VillagerVariant, VillagerVariants>(
+			serializer<VillagerVariants>(),
+			VillagerVariant::variant,
+			::VillagerVariant
+		)
 	}
 }
 

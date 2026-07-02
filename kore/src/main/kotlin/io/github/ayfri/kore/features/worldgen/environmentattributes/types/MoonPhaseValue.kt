@@ -7,6 +7,7 @@ import io.github.ayfri.kore.generated.EnvironmentAttributes
 import io.github.ayfri.kore.generated.arguments.types.MoonPhaseArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /** Represents a moon phase environment attribute value. */
 @Serializable(with = MoonPhaseValue.Companion.MoonPhaseValueSerializer::class)
@@ -14,7 +15,11 @@ data class MoonPhaseValue(
 	var value: MoonPhaseArgument,
 ) : EnvironmentAttributesType() {
 	companion object {
-		data object MoonPhaseValueSerializer : InlineAutoSerializer<MoonPhaseValue>(MoonPhaseValue::class)
+		data object MoonPhaseValueSerializer : InlineAutoSerializer<MoonPhaseValue, MoonPhaseArgument>(
+			serializer<MoonPhaseArgument>(),
+			MoonPhaseValue::value,
+			::MoonPhaseValue
+		)
 	}
 }
 

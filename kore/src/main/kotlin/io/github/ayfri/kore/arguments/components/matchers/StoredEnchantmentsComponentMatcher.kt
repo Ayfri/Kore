@@ -4,13 +4,17 @@ import io.github.ayfri.kore.features.predicates.sub.item.Enchantment
 import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 @Serializable(with = StoredEnchantmentsComponentMatcher.Companion.StoredEnchantmentsComponentMatcherSerializer::class)
 data class StoredEnchantmentsComponentMatcher(var enchantments: List<Enchantment> = emptyList()) : ComponentMatcher() {
 	companion object {
-		data object StoredEnchantmentsComponentMatcherSerializer : InlineAutoSerializer<StoredEnchantmentsComponentMatcher>(
-			StoredEnchantmentsComponentMatcher::class
-		)
+		data object StoredEnchantmentsComponentMatcherSerializer :
+			InlineAutoSerializer<StoredEnchantmentsComponentMatcher, List<Enchantment>>(
+				serializer<List<Enchantment>>(),
+				StoredEnchantmentsComponentMatcher::enchantments,
+				::StoredEnchantmentsComponentMatcher
+			)
 	}
 }
 

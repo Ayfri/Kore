@@ -7,6 +7,7 @@ import io.github.ayfri.kore.generated.DamageTypes
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 
 /**
@@ -23,7 +24,12 @@ data class DamageTypeComponent(
 	var value: DamageTypeArgument,
 ) : Component() {
 	companion object {
-		data object DamageTypeComponentSerializer : InlineAutoSerializer<DamageTypeComponent>(DamageTypeComponent::class)
+		@Suppress("UNCHECKED_CAST")
+		data object DamageTypeComponentSerializer : InlineAutoSerializer<DamageTypeComponent, DamageTypeArgument>(
+			ResourceLocationArgument.Companion.ResourceLocationArgumentSimpleSerializer as KSerializer<DamageTypeArgument>,
+			DamageTypeComponent::value,
+			::DamageTypeComponent,
+		)
 	}
 }
 

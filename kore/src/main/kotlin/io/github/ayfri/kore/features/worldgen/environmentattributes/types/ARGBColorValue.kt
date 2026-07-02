@@ -7,6 +7,7 @@ import io.github.ayfri.kore.features.worldgen.environmentattributes.environmentA
 import io.github.ayfri.kore.generated.EnvironmentAttributes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /** Represents an ARGB color environment attribute value, used for cloud color settings. */
 @Serializable(with = CloudColorValue.Companion.CloudColorValueSerializer::class)
@@ -14,7 +15,8 @@ data class CloudColorValue(
 	var value: ARGB,
 ) : EnvironmentAttributesType() {
 	companion object {
-		data object CloudColorValueSerializer : InlineAutoSerializer<CloudColorValue>(CloudColorValue::class)
+		data object CloudColorValueSerializer :
+			InlineAutoSerializer<CloudColorValue, ARGB>(serializer<ARGB>(), CloudColorValue::value, ::CloudColorValue)
 	}
 }
 

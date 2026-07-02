@@ -8,12 +8,17 @@ import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.ConfiguredStructureOrTagArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /** A list of [VariantSpawnEntry]s, this is a builder helper. */
 @Serializable(with = SpawnConditions.Companion.SpawnConditionsSerializer::class)
 data class SpawnConditions(var entries: List<VariantSpawnEntry> = mutableListOf()) {
 	companion object {
-		data object SpawnConditionsSerializer : InlineAutoSerializer<SpawnConditions>(SpawnConditions::class)
+		data object SpawnConditionsSerializer : InlineAutoSerializer<SpawnConditions, List<VariantSpawnEntry>>(
+			serializer<List<VariantSpawnEntry>>(),
+			SpawnConditions::entries,
+			::SpawnConditions
+		)
 	}
 }
 

@@ -6,6 +6,7 @@ import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /** The item rarity tier, which controls the default name color. */
 @Serializable(with = Rarities.Companion.RaritySerializer::class)
@@ -31,7 +32,11 @@ enum class Rarities {
 @Serializable(with = RarityComponent.Companion.RarityComponentSerializer::class)
 data class RarityComponent(val rarity: Rarities) : Component() {
 	companion object {
-		data object RarityComponentSerializer : InlineAutoSerializer<RarityComponent>(RarityComponent::class)
+		data object RarityComponentSerializer : InlineAutoSerializer<RarityComponent, Rarities>(
+			serializer<Rarities>(),
+			RarityComponent::rarity,
+			::RarityComponent
+		)
 	}
 }
 

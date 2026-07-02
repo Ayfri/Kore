@@ -6,6 +6,7 @@ import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.CatVariantArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:cat/variant` entity component, which sets the texture variant of a cat.
@@ -20,7 +21,11 @@ data class CatVariant(
 	var variant: CatVariantArgument
 ) : Component() {
 	companion object {
-		data object CatVariantSerializer : InlineAutoSerializer<CatVariant>(CatVariant::class)
+		data object CatVariantSerializer : InlineAutoSerializer<CatVariant, CatVariantArgument>(
+			serializer<CatVariantArgument>(),
+			CatVariant::variant,
+			::CatVariant
+		)
 	}
 }
 

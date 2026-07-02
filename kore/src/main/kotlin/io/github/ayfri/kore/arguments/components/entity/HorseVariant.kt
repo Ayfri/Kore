@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.enums.HorseVariants
 import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:horse/variant` entity component, which sets the coat variant of a horse.
@@ -20,7 +21,11 @@ data class HorseVariant(
 	var variant: HorseVariants
 ) : Component() {
 	companion object {
-		data object HorseVariantSerializer : InlineAutoSerializer<HorseVariant>(HorseVariant::class)
+		data object HorseVariantSerializer : InlineAutoSerializer<HorseVariant, HorseVariants>(
+			serializer<HorseVariants>(),
+			HorseVariant::variant,
+			::HorseVariant
+		)
 	}
 }
 

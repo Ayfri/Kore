@@ -8,6 +8,7 @@ import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:charged_projectiles` item component, which stores projectiles loaded into a crossbow.
@@ -18,7 +19,12 @@ import kotlinx.serialization.Serializable
 @Serializable(with = ChargedProjectilesComponent.Companion.ChargedProjectilesSerializer::class)
 data class ChargedProjectilesComponent(val projectiles: MutableList<ItemStack>) : Component() {
 	companion object {
-		data object ChargedProjectilesSerializer : InlineAutoSerializer<ChargedProjectilesComponent>(ChargedProjectilesComponent::class)
+		data object ChargedProjectilesSerializer :
+			InlineAutoSerializer<ChargedProjectilesComponent, MutableList<ItemStack>>(
+				serializer<MutableList<ItemStack>>(),
+				ChargedProjectilesComponent::projectiles,
+				::ChargedProjectilesComponent
+			)
 	}
 }
 

@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.enums.DyeColors
 import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:tropical_fish/base_color` entity component, which sets the base body color of a tropical fish.
@@ -20,7 +21,11 @@ data class TropicalFishBaseColor(
 	var color: DyeColors
 ) : Component() {
 	companion object {
-		data object TropicalFishBaseColorSerializer : InlineAutoSerializer<TropicalFishBaseColor>(TropicalFishBaseColor::class)
+		data object TropicalFishBaseColorSerializer : InlineAutoSerializer<TropicalFishBaseColor, DyeColors>(
+			serializer<DyeColors>(),
+			TropicalFishBaseColor::color,
+			::TropicalFishBaseColor
+		)
 	}
 }
 

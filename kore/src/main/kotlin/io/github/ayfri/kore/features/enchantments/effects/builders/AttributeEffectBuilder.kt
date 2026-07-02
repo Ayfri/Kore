@@ -8,11 +8,17 @@ import io.github.ayfri.kore.generated.arguments.types.AttributeArgument
 import io.github.ayfri.kore.generated.arguments.types.AttributeModifierArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 @Serializable(with = AttributeEffectBuilder.Companion.AttributeEffectBuilderSerializer::class)
 data class AttributeEffectBuilder(var effects: List<AttributeEffect> = emptyList()) : EffectBuilder() {
 	companion object {
-		data object AttributeEffectBuilderSerializer : InlineAutoSerializer<AttributeEffectBuilder>(AttributeEffectBuilder::class)
+		data object AttributeEffectBuilderSerializer :
+			InlineAutoSerializer<AttributeEffectBuilder, List<AttributeEffect>>(
+				serializer<List<AttributeEffect>>(),
+				AttributeEffectBuilder::effects,
+				::AttributeEffectBuilder
+			)
 	}
 }
 

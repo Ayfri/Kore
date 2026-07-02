@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.enums.DyeColors
 import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:wolf/collar` entity component, which sets the dye color of a wolf's collar.
@@ -20,7 +21,8 @@ data class WolfCollar(
 	var color: DyeColors
 ) : Component() {
 	companion object {
-		data object WolfCollarSerializer : InlineAutoSerializer<WolfCollar>(WolfCollar::class)
+		data object WolfCollarSerializer :
+			InlineAutoSerializer<WolfCollar, DyeColors>(serializer<DyeColors>(), WolfCollar::color, ::WolfCollar)
 	}
 }
 

@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.enums.FoxVariants
 import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:fox/variant` entity component, which sets the variant of a fox (red or snow).
@@ -20,7 +21,8 @@ data class FoxVariant(
 	var variant: FoxVariants
 ) : Component() {
 	companion object {
-		data object FoxVariantSerializer : InlineAutoSerializer<FoxVariant>(FoxVariant::class)
+		data object FoxVariantSerializer :
+			InlineAutoSerializer<FoxVariant, FoxVariants>(serializer<FoxVariants>(), FoxVariant::variant, ::FoxVariant)
 	}
 }
 

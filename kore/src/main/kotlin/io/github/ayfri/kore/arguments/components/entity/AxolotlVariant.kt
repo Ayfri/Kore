@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.enums.AxolotlVariants
 import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:axolotl/variant` entity component, which sets the color variant of an axolotl.
@@ -20,7 +21,11 @@ data class AxolotlVariant(
 	var variant: AxolotlVariants
 ) : Component() {
 	companion object {
-		data object AxolotlVariantSerializer : InlineAutoSerializer<AxolotlVariant>(AxolotlVariant::class)
+		data object AxolotlVariantSerializer : InlineAutoSerializer<AxolotlVariant, AxolotlVariants>(
+			serializer<AxolotlVariants>(),
+			AxolotlVariant::variant,
+			::AxolotlVariant
+		)
 	}
 }
 

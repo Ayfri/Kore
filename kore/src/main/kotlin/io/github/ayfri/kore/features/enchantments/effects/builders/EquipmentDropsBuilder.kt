@@ -8,11 +8,17 @@ import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 @Serializable(with = EquipmentDropsBuilder.Companion.EquipmentDropsBuilderSerializer::class)
 data class EquipmentDropsBuilder(var effects: List<EquipmentDropsConditionalEffect> = emptyList()) : EffectBuilder() {
 	companion object {
-		data object EquipmentDropsBuilderSerializer : InlineAutoSerializer<EquipmentDropsBuilder>(EquipmentDropsBuilder::class)
+		data object EquipmentDropsBuilderSerializer :
+			InlineAutoSerializer<EquipmentDropsBuilder, List<EquipmentDropsConditionalEffect>>(
+				serializer<List<EquipmentDropsConditionalEffect>>(),
+				EquipmentDropsBuilder::effects,
+				::EquipmentDropsBuilder
+			)
 	}
 }
 

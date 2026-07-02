@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:map_id` item component, which links the item to a specific map data ID for filled maps.
@@ -17,7 +18,8 @@ import kotlinx.serialization.Serializable
 @Serializable(with = MapIdComponent.Companion.MapIdComponentSerializer::class)
 data class MapIdComponent(var id: Int) : Component() {
 	companion object {
-		data object MapIdComponentSerializer : InlineAutoSerializer<MapIdComponent>(MapIdComponent::class)
+		data object MapIdComponentSerializer :
+			InlineAutoSerializer<MapIdComponent, Int>(serializer<Int>(), MapIdComponent::id, ::MapIdComponent)
 	}
 }
 

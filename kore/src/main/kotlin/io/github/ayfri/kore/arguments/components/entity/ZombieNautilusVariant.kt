@@ -6,6 +6,7 @@ import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.ZombieNautilusVariantArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:zombie_nautilus/variant` entity component, which sets the variant of a zombie nautilus.
@@ -20,7 +21,12 @@ data class ZombieNautilusVariant(
 	var variant: ZombieNautilusVariantArgument,
 ) : Component() {
 	companion object {
-		data object ZombieNautilusVariantSerializer : InlineAutoSerializer<ZombieNautilusVariant>(ZombieNautilusVariant::class)
+		data object ZombieNautilusVariantSerializer :
+			InlineAutoSerializer<ZombieNautilusVariant, ZombieNautilusVariantArgument>(
+				serializer<ZombieNautilusVariantArgument>(),
+				ZombieNautilusVariant::variant,
+				::ZombieNautilusVariant
+			)
 	}
 }
 

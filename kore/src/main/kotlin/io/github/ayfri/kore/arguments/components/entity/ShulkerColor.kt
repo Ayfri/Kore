@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.enums.DyeColors
 import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:shulker/color` entity component, which sets the color of a shulker.
@@ -20,7 +21,8 @@ data class ShulkerColor(
 	var color: DyeColors
 ) : Component() {
 	companion object {
-		data object ShulkerColorSerializer : InlineAutoSerializer<ShulkerColor>(ShulkerColor::class)
+		data object ShulkerColorSerializer :
+			InlineAutoSerializer<ShulkerColor, DyeColors>(serializer<DyeColors>(), ShulkerColor::color, ::ShulkerColor)
 	}
 }
 

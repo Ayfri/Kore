@@ -27,7 +27,12 @@ data class ProvidesBannerPatterns(
 	companion object {
 		data object PatternListSerializer :
 			InlinableListSerializer<BannerPatternOrTagArgument>(BannerPatternOrTagArgument.serializer())
-		data object ProvidesBannerPatternsSerializer : InlineAutoSerializer<ProvidesBannerPatterns>(ProvidesBannerPatterns::class)
+		data object ProvidesBannerPatternsSerializer :
+			InlineAutoSerializer<ProvidesBannerPatterns, List<BannerPatternOrTagArgument>>(
+				PatternListSerializer,
+				ProvidesBannerPatterns::patterns,
+				::ProvidesBannerPatterns
+			)
 	}
 }
 

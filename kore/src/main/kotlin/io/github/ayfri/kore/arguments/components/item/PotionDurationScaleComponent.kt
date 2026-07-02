@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:potion_duration_scale` item component, which multiplies the duration of potion effects from this item.
@@ -17,8 +18,10 @@ import kotlinx.serialization.Serializable
 @Serializable(with = PotionDurationScaleComponent.Companion.PotionDurationScaleComponentSerializer::class)
 data class PotionDurationScaleComponent(var value: Float) : Component() {
 	companion object {
-		data object PotionDurationScaleComponentSerializer : InlineAutoSerializer<PotionDurationScaleComponent>(
-			PotionDurationScaleComponent::class
+		data object PotionDurationScaleComponentSerializer : InlineAutoSerializer<PotionDurationScaleComponent, Float>(
+			serializer<Float>(),
+			PotionDurationScaleComponent::value,
+			::PotionDurationScaleComponent
 		)
 	}
 }

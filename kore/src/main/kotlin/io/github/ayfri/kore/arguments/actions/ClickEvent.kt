@@ -3,6 +3,7 @@ package io.github.ayfri.kore.arguments.actions
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Sealed interface for all click event actions attached to a text component.
@@ -28,6 +29,10 @@ sealed interface ClickEvent : ActionType {
 @Serializable(with = ClickEventContainer.Companion.ClickEventContainerSerializer::class)
 data class ClickEventContainer(override var action: ClickEvent? = null) : ActionWrapper<ClickEvent>() {
 	companion object {
-		data object ClickEventContainerSerializer : InlineAutoSerializer<ClickEventContainer>(ClickEventContainer::class)
+		data object ClickEventContainerSerializer : InlineAutoSerializer<ClickEventContainer, ClickEvent?>(
+			serializer<ClickEvent?>(),
+			ClickEventContainer::action,
+			::ClickEventContainer
+		)
 	}
 }

@@ -7,6 +7,7 @@ import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.NbtCompound
 
 /**
@@ -18,7 +19,11 @@ import net.benwoodworth.knbt.NbtCompound
 @Serializable(with = CanBreakComponent.Companion.CanBreakComponentSerializer::class)
 data class CanBreakComponent(var predicates: List<BlockPredicate>) : Component() {
 	companion object {
-		data object CanBreakComponentSerializer : InlineAutoSerializer<CanBreakComponent>(CanBreakComponent::class)
+		data object CanBreakComponentSerializer : InlineAutoSerializer<CanBreakComponent, List<BlockPredicate>>(
+			serializer<List<BlockPredicate>>(),
+			CanBreakComponent::predicates,
+			::CanBreakComponent
+		)
 	}
 }
 

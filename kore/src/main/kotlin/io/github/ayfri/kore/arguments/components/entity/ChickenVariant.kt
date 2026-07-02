@@ -6,6 +6,7 @@ import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.ChickenVariantArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:chicken/variant` entity component, which sets the variant of a chicken.
@@ -20,7 +21,11 @@ data class ChickenVariant(
 	var variant: ChickenVariantArgument
 ) : Component() {
 	companion object {
-		data object ChickenVariantSerializer : InlineAutoSerializer<ChickenVariant>(ChickenVariant::class)
+		data object ChickenVariantSerializer : InlineAutoSerializer<ChickenVariant, ChickenVariantArgument>(
+			serializer<ChickenVariantArgument>(),
+			ChickenVariant::variant,
+			::ChickenVariant
+		)
 	}
 }
 

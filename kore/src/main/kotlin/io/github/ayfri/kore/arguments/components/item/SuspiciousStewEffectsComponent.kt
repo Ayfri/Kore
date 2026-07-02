@@ -6,6 +6,7 @@ import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.MobEffectArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /** A single effect entry (id + duration in ticks) applied when eating a suspicious stew. */
 @Serializable
@@ -23,9 +24,12 @@ data class SuspiciousStewEffect(
 @Serializable(with = SuspiciousStewEffectsComponent.Companion.SuspiciousStewEffectsComponentSerializer::class)
 data class SuspiciousStewEffectsComponent(var effects: List<SuspiciousStewEffect>) : Component() {
 	companion object {
-		data object SuspiciousStewEffectsComponentSerializer : InlineAutoSerializer<SuspiciousStewEffectsComponent>(
-			SuspiciousStewEffectsComponent::class
-		)
+		data object SuspiciousStewEffectsComponentSerializer :
+			InlineAutoSerializer<SuspiciousStewEffectsComponent, List<SuspiciousStewEffect>>(
+				serializer<List<SuspiciousStewEffect>>(),
+				SuspiciousStewEffectsComponent::effects,
+				::SuspiciousStewEffectsComponent
+			)
 	}
 }
 

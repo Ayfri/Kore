@@ -13,8 +13,10 @@ data class CustomDataComponentMatcher(
 	@Serializable(with = NbtAsJsonSerializer::class) var data: NbtTag,
 ) : ComponentMatcher() {
 	companion object {
-		data object CustomDataComponentMatcherSerializer : InlineAutoSerializer<CustomDataComponentMatcher>(
-			CustomDataComponentMatcher::class,
+		data object CustomDataComponentMatcherSerializer : InlineAutoSerializer<CustomDataComponentMatcher, NbtTag>(
+			NbtAsJsonSerializer,
+			CustomDataComponentMatcher::data,
+			::CustomDataComponentMatcher
 		)
 	}
 }

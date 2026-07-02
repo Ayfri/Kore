@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.enums.SalmonSizes
 import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:salmon/size` entity component, which sets the size of a salmon (small, medium or large).
@@ -20,7 +21,8 @@ data class SalmonSize(
 	var size: SalmonSizes
 ) : Component() {
 	companion object {
-		data object SalmonSizeSerializer : InlineAutoSerializer<SalmonSize>(SalmonSize::class)
+		data object SalmonSizeSerializer :
+			InlineAutoSerializer<SalmonSize, SalmonSizes>(serializer<SalmonSizes>(), SalmonSize::size, ::SalmonSize)
 	}
 }
 

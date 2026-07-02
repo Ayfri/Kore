@@ -33,6 +33,7 @@ import io.kotest.core.spec.style.FunSpec
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.serializer
 
 fun deserializersTests() {
 	advancementDeserializer()
@@ -223,14 +224,16 @@ fun namespacedPolymorphicDeserializerWithMoveIntoProperty() {
 @Serializable(with = Wrapper.Companion.WrapperSerializer::class)
 private data class Wrapper(var content: String = "") {
 	companion object {
-		data object WrapperSerializer : InlineAutoSerializer<Wrapper>(Wrapper::class)
+		data object WrapperSerializer :
+			InlineAutoSerializer<Wrapper, String>(serializer<String>(), Wrapper::content, ::Wrapper)
 	}
 }
 
 @Serializable(with = IntWrapper.Companion.IntWrapperSerializer::class)
 private data class IntWrapper(var value: Int = 0) {
 	companion object {
-		data object IntWrapperSerializer : InlineAutoSerializer<IntWrapper>(IntWrapper::class)
+		data object IntWrapperSerializer :
+			InlineAutoSerializer<IntWrapper, Int>(serializer<Int>(), IntWrapper::value, ::IntWrapper)
 	}
 }
 

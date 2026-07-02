@@ -7,6 +7,7 @@ import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /** A single bee stored inside a hive: its [entityData], time spent in the hive and minimum stay. */
 @Serializable
@@ -28,7 +29,11 @@ data class BeeData(
 @Serializable(with = BeesContainer.Companion.BeesContainerSerializer::class)
 data class BeesContainer(var list: List<BeeData>) : Component() {
 	companion object {
-		data object BeesContainerSerializer : InlineAutoSerializer<BeesContainer>(BeesContainer::class)
+		data object BeesContainerSerializer : InlineAutoSerializer<BeesContainer, List<BeeData>>(
+			serializer<List<BeeData>>(),
+			BeesContainer::list,
+			::BeesContainer
+		)
 	}
 }
 

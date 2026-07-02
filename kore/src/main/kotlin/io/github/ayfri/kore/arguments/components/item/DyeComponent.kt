@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.enums.DyeColors
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:dye` item component, which sets the dye color of an item.
@@ -18,7 +19,8 @@ import kotlinx.serialization.Serializable
 @Serializable(with = DyeComponent.Companion.DyeComponentSerializer::class)
 data class DyeComponent(var value: DyeColors) : Component() {
 	companion object {
-		data object DyeComponentSerializer : InlineAutoSerializer<DyeComponent>(DyeComponent::class)
+		data object DyeComponentSerializer :
+			InlineAutoSerializer<DyeComponent, DyeColors>(serializer<DyeColors>(), DyeComponent::value, ::DyeComponent)
 	}
 }
 

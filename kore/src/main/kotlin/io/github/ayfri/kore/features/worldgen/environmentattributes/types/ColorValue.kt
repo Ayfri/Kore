@@ -16,7 +16,8 @@ data class ColorValue(
 	var value: Color,
 ) : EnvironmentAttributesType() {
 	companion object {
-		data object ColorValueSerializer : InlineAutoSerializer<ColorValue>(ColorValue::class)
+		data object ColorValueSerializer :
+			InlineAutoSerializer<ColorValue, Color>(ColorAsDecimalSerializer, ColorValue::value, ::ColorValue)
 	}
 }
 

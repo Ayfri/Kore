@@ -6,6 +6,7 @@ import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.CowVariantArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:cow/variant` entity component, which sets the variant of a cow.
@@ -20,7 +21,11 @@ data class CowVariant(
 	var variant: CowVariantArgument
 ) : Component() {
 	companion object {
-		data object CowVariantSerializer : InlineAutoSerializer<CowVariant>(CowVariant::class)
+		data object CowVariantSerializer : InlineAutoSerializer<CowVariant, CowVariantArgument>(
+			serializer<CowVariantArgument>(),
+			CowVariant::variant,
+			::CowVariant
+		)
 	}
 }
 

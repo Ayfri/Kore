@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:damage` item component, which sets how much durability a damageable item has already consumed.
@@ -17,7 +18,8 @@ import kotlinx.serialization.Serializable
 @Serializable(with = DamageComponent.Companion.DamageComponentSerializer::class)
 data class DamageComponent(var damage: Int) : Component() {
 	companion object {
-		data object DamageComponentSerializer : InlineAutoSerializer<DamageComponent>(DamageComponent::class)
+		data object DamageComponentSerializer :
+			InlineAutoSerializer<DamageComponent, Int>(serializer<Int>(), DamageComponent::damage, ::DamageComponent)
 	}
 }
 

@@ -6,6 +6,7 @@ import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.WolfSoundVariantArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:wolf/sound_variant` entity component, which sets the sound variant of a wolf.
@@ -20,7 +21,11 @@ data class WolfSoundVariant(
 	var variant: WolfSoundVariantArgument
 ) : Component() {
 	companion object {
-		data object WolfSoundVariantSerializer : InlineAutoSerializer<WolfSoundVariant>(WolfSoundVariant::class)
+		data object WolfSoundVariantSerializer : InlineAutoSerializer<WolfSoundVariant, WolfSoundVariantArgument>(
+			serializer<WolfSoundVariantArgument>(),
+			WolfSoundVariant::variant,
+			::WolfSoundVariant
+		)
 	}
 }
 

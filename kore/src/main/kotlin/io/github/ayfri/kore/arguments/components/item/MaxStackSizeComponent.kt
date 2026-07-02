@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:max_stack_size` item component, which overrides how many items can stack in a single inventory slot (1-99).
@@ -17,7 +18,11 @@ import kotlinx.serialization.Serializable
 @Serializable(with = MaxStackSizeComponent.Companion.MaxStackSizeComponentSerializer::class)
 data class MaxStackSizeComponent(var maxStackSize: Int) : Component() {
 	companion object {
-		data object MaxStackSizeComponentSerializer : InlineAutoSerializer<MaxStackSizeComponent>(MaxStackSizeComponent::class)
+		data object MaxStackSizeComponentSerializer : InlineAutoSerializer<MaxStackSizeComponent, Int>(
+			serializer<Int>(),
+			MaxStackSizeComponent::maxStackSize,
+			::MaxStackSizeComponent
+		)
 	}
 }
 

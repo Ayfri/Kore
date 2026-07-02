@@ -7,6 +7,7 @@ import io.github.ayfri.kore.generated.EnvironmentAttributes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /** Possible values for the eyeblossom_open environment attribute. */
 @Serializable(with = EyeblossomOpenState.Companion.EyeblossomOpenStateSerializer::class)
@@ -24,7 +25,11 @@ enum class EyeblossomOpenState {
 @Serializable(with = EyeblossomOpenValue.Companion.EyeblossomOpenValueSerializer::class)
 data class EyeblossomOpenValue(var value: EyeblossomOpenState) : EnvironmentAttributesType() {
 	companion object {
-		data object EyeblossomOpenValueSerializer : InlineAutoSerializer<EyeblossomOpenValue>(EyeblossomOpenValue::class)
+		data object EyeblossomOpenValueSerializer : InlineAutoSerializer<EyeblossomOpenValue, EyeblossomOpenState>(
+			serializer<EyeblossomOpenState>(),
+			EyeblossomOpenValue::value,
+			::EyeblossomOpenValue
+		)
 	}
 }
 

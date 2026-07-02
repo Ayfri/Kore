@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.enums.ParrotVariants
 import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:parrot/variant` entity component, which sets the color variant of a parrot.
@@ -20,7 +21,11 @@ data class ParrotVariant(
 	var variant: ParrotVariants
 ) : Component() {
 	companion object {
-		data object ParrotVariantSerializer : InlineAutoSerializer<ParrotVariant>(ParrotVariant::class)
+		data object ParrotVariantSerializer : InlineAutoSerializer<ParrotVariant, ParrotVariants>(
+			serializer<ParrotVariants>(),
+			ParrotVariant::variant,
+			::ParrotVariant
+		)
 	}
 }
 

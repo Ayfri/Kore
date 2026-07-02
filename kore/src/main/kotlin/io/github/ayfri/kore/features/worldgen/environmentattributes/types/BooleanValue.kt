@@ -6,12 +6,14 @@ import io.github.ayfri.kore.features.worldgen.environmentattributes.environmentA
 import io.github.ayfri.kore.generated.EnvironmentAttributes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /** Represents a boolean environment attribute value, used for toggling gameplay or visual features. */
 @Serializable(with = BooleanValue.Companion.BooleanValueSerializer::class)
 data class BooleanValue(var value: Boolean) : EnvironmentAttributesType() {
 	companion object {
-		data object BooleanValueSerializer : InlineAutoSerializer<BooleanValue>(BooleanValue::class)
+		data object BooleanValueSerializer :
+			InlineAutoSerializer<BooleanValue, Boolean>(serializer<Boolean>(), BooleanValue::value, ::BooleanValue)
 	}
 }
 

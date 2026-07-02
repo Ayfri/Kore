@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.enums.TropicalFishPatterns
 import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:tropical_fish/pattern` entity component, which sets the body pattern of a tropical fish.
@@ -20,7 +21,11 @@ data class TropicalFishPattern(
 	var pattern: TropicalFishPatterns
 ) : Component() {
 	companion object {
-		data object TropicalFishPatternSerializer : InlineAutoSerializer<TropicalFishPattern>(TropicalFishPattern::class)
+		data object TropicalFishPatternSerializer : InlineAutoSerializer<TropicalFishPattern, TropicalFishPatterns>(
+			serializer<TropicalFishPatterns>(),
+			TropicalFishPattern::pattern,
+			::TropicalFishPattern
+		)
 	}
 }
 

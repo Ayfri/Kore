@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.enums.RabbitVariants
 import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:rabbit/variant` entity component, which sets the variant of a rabbit.
@@ -20,7 +21,11 @@ data class RabbitVariant(
 	var variant: RabbitVariants
 ) : Component() {
 	companion object {
-		data object RabbitVariantSerializer : InlineAutoSerializer<RabbitVariant>(RabbitVariant::class)
+		data object RabbitVariantSerializer : InlineAutoSerializer<RabbitVariant, RabbitVariants>(
+			serializer<RabbitVariants>(),
+			RabbitVariant::variant,
+			::RabbitVariant
+		)
 	}
 }
 

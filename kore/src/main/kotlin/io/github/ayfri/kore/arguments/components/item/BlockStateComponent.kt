@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:block_state` item component, which sets block state properties (e.g., facing, powered) applied when the item is placed.
@@ -15,7 +16,11 @@ import kotlinx.serialization.Serializable
 @Serializable(with = BlockStateComponent.Companion.BlockStateComponentSerializer::class)
 data class BlockStateComponent(var states: Map<String, String>) : Component() {
 	companion object {
-		data object BlockStateComponentSerializer : InlineAutoSerializer<BlockStateComponent>(BlockStateComponent::class)
+		data object BlockStateComponentSerializer : InlineAutoSerializer<BlockStateComponent, Map<String, String>>(
+			serializer<Map<String, String>>(),
+			BlockStateComponent::states,
+			::BlockStateComponent
+		)
 	}
 }
 

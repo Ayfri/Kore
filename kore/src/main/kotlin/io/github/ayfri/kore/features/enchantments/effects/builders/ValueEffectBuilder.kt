@@ -8,11 +8,16 @@ import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 @Serializable(with = ValueEffectBuilder.Companion.ValueEffectBuilderSerializer::class)
 data class ValueEffectBuilder(var effects: List<ConditionalEffect> = emptyList()) : EffectBuilder() {
 	companion object {
-		data object ValueEffectBuilderSerializer : InlineAutoSerializer<ValueEffectBuilder>(ValueEffectBuilder::class)
+		data object ValueEffectBuilderSerializer : InlineAutoSerializer<ValueEffectBuilder, List<ConditionalEffect>>(
+			serializer<List<ConditionalEffect>>(),
+			ValueEffectBuilder::effects,
+			::ValueEffectBuilder
+		)
 	}
 }
 

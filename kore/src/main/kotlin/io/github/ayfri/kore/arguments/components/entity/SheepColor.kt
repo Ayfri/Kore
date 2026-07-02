@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.enums.DyeColors
 import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:sheep/color` entity component, which sets the wool color of a sheep.
@@ -20,7 +21,8 @@ data class SheepColor(
 	var color: DyeColors
 ) : Component() {
 	companion object {
-		data object SheepColorSerializer : InlineAutoSerializer<SheepColor>(SheepColor::class)
+		data object SheepColorSerializer :
+			InlineAutoSerializer<SheepColor, DyeColors>(serializer<DyeColors>(), SheepColor::color, ::SheepColor)
 	}
 }
 

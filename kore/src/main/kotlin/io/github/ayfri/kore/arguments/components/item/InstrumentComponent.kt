@@ -6,6 +6,7 @@ import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.InstrumentArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:instrument` item component, which specifies the goat horn sound variant when the item is used.
@@ -18,7 +19,11 @@ import kotlinx.serialization.Serializable
 @Serializable(with = InstrumentComponent.Companion.InstrumentComponentSerializer::class)
 data class InstrumentComponent(var instrument: InstrumentArgument) : Component() {
 	companion object {
-		data object InstrumentComponentSerializer : InlineAutoSerializer<InstrumentComponent>(InstrumentComponent::class)
+		data object InstrumentComponentSerializer : InlineAutoSerializer<InstrumentComponent, InstrumentArgument>(
+			serializer<InstrumentArgument>(),
+			InstrumentComponent::instrument,
+			::InstrumentComponent
+		)
 	}
 }
 

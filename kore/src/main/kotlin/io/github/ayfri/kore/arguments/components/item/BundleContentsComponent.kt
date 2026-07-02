@@ -8,6 +8,7 @@ import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:bundle_contents` item component, which defines the items stored inside a bundle.
@@ -18,7 +19,11 @@ import kotlinx.serialization.Serializable
 @Serializable(BundleContentsComponent.Companion.BundleContentsSerializer::class)
 data class BundleContentsComponent(val items: MutableList<ItemStack>) : Component() {
 	companion object {
-		data object BundleContentsSerializer : InlineAutoSerializer<BundleContentsComponent>(BundleContentsComponent::class)
+		data object BundleContentsSerializer : InlineAutoSerializer<BundleContentsComponent, MutableList<ItemStack>>(
+			serializer<MutableList<ItemStack>>(),
+			BundleContentsComponent::items,
+			::BundleContentsComponent
+		)
 	}
 }
 

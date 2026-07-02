@@ -20,7 +20,12 @@ data class MapColorComponent(
 	@Serializable(RGB.Companion.ColorAsDecimalSerializer::class) var color: RGB,
 ) : Component() {
 	companion object {
-		data object MapColorComponentSerializer : InlineAutoSerializer<MapColorComponent>(MapColorComponent::class)
+		data object MapColorComponentSerializer :
+			InlineAutoSerializer<MapColorComponent, RGB>(
+				RGB.Companion.ColorAsDecimalSerializer,
+				MapColorComponent::color,
+				::MapColorComponent
+			)
 	}
 }
 

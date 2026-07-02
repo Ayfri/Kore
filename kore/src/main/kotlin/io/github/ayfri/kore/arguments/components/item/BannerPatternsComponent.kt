@@ -7,6 +7,7 @@ import io.github.ayfri.kore.generated.BannerPatterns
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /** A single banner layer: a [pattern] tinted with a [color]. */
 @Serializable
@@ -24,9 +25,12 @@ data class BannerPatternEntry(
 @Serializable(with = BannerPatternsComponent.Companion.BannerPatternComponentSerializer::class)
 data class BannerPatternsComponent(var list: List<BannerPatternEntry>) : Component() {
 	companion object {
-		data object BannerPatternComponentSerializer : InlineAutoSerializer<BannerPatternsComponent>(
-			BannerPatternsComponent::class
-		)
+		data object BannerPatternComponentSerializer :
+			InlineAutoSerializer<BannerPatternsComponent, List<BannerPatternEntry>>(
+				serializer<List<BannerPatternEntry>>(),
+				BannerPatternsComponent::list,
+				::BannerPatternsComponent
+			)
 	}
 }
 

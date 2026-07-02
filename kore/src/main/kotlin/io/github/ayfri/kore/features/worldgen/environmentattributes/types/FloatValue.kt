@@ -6,12 +6,14 @@ import io.github.ayfri.kore.features.worldgen.environmentattributes.environmentA
 import io.github.ayfri.kore.generated.EnvironmentAttributes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /** Represents a float environment attribute value, used for numeric visual or gameplay settings. */
 @Serializable(with = FloatValue.Companion.FloatValueSerializer::class)
 data class FloatValue(var value: Float) : EnvironmentAttributesType() {
 	companion object {
-		data object FloatValueSerializer : InlineAutoSerializer<FloatValue>(FloatValue::class)
+		data object FloatValueSerializer :
+			InlineAutoSerializer<FloatValue, Float>(serializer<Float>(), FloatValue::value, ::FloatValue)
 	}
 }
 

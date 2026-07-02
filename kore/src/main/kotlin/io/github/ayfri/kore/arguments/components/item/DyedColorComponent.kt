@@ -19,7 +19,12 @@ import kotlinx.serialization.Serializable
 @Serializable(with = DyedColorComponent.Companion.DyedColorComponentSerializer::class)
 data class DyedColorComponent(@Serializable(RGB.Companion.ColorAsDecimalSerializer::class) var rgb: RGB) : Component() {
 	companion object {
-		data object DyedColorComponentSerializer : InlineAutoSerializer<DyedColorComponent>(DyedColorComponent::class)
+		data object DyedColorComponentSerializer :
+			InlineAutoSerializer<DyedColorComponent, RGB>(
+				RGB.Companion.ColorAsDecimalSerializer,
+				DyedColorComponent::rgb,
+				::DyedColorComponent
+			)
 	}
 }
 

@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.types.resources.ModelArgument
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:tooltip_style` item component, which sets a custom resource-pack model for the item tooltip background.
@@ -18,7 +19,11 @@ import kotlinx.serialization.Serializable
 @Serializable(with = TooltipStyleComponent.Companion.TooltipStyleComponentSerializer::class)
 data class TooltipStyleComponent(var model: ModelArgument) : Component() {
 	companion object {
-		data object TooltipStyleComponentSerializer : InlineAutoSerializer<TooltipStyleComponent>(TooltipStyleComponent::class)
+		data object TooltipStyleComponentSerializer : InlineAutoSerializer<TooltipStyleComponent, ModelArgument>(
+			serializer<ModelArgument>(),
+			TooltipStyleComponent::model,
+			::TooltipStyleComponent
+		)
 	}
 }
 

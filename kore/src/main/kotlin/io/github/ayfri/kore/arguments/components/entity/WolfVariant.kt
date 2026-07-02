@@ -6,6 +6,7 @@ import io.github.ayfri.kore.generated.EntityItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.WolfVariantArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Represents the `minecraft:wolf/variant` entity component, which sets the fur variant of a wolf.
@@ -20,7 +21,11 @@ data class WolfVariant(
 	var variant: WolfVariantArgument
 ) : Component() {
 	companion object {
-		data object WolfVariantSerializer : InlineAutoSerializer<WolfVariant>(WolfVariant::class)
+		data object WolfVariantSerializer : InlineAutoSerializer<WolfVariant, WolfVariantArgument>(
+			serializer<WolfVariantArgument>(),
+			WolfVariant::variant,
+			::WolfVariant
+		)
 	}
 }
 
