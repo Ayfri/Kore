@@ -59,6 +59,7 @@ suspend fun main(args: Array<String>) {
 	downloadGamerules()
 	downloadItemComponentTypes()
 	launchAllSimpleGenerators()
-	launchArgumentTypeGenerators()
+	val tagArguments = launchArgumentTypeGenerators()
+	generateTagArgumentFactories(tagArguments)
 	writeMinecraftVersion()
 }

@@ -4,6 +4,7 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.types.ResourceLocationArgument
 import io.github.ayfri.kore.arguments.types.TaggedResourceLocationArgument
+import io.github.ayfri.kore.generated.tagArgumentFactories
 import io.github.ayfri.kore.utils.resolve
 import kotlinx.io.files.Path
 import kotlinx.serialization.KSerializer
@@ -14,9 +15,6 @@ import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.*
 import kotlin.reflect.KClass
-import kotlin.reflect.full.companionObject
-import kotlin.reflect.full.companionObjectInstance
-import kotlin.reflect.full.memberFunctions
 
 /**
  * Data-driven tag definition for Minecraft Java Edition.
@@ -41,9 +39,6 @@ data class Tag<out T : TaggedResourceLocationArgument>(
 	@Transient
 	@PublishedApi
 	internal var tagClass: KClass<out TaggedResourceLocationArgument> = TaggedResourceLocationArgument::class
-
-	@PublishedApi
-	internal val invokeFunction get() = tagClass.companionObject!!.memberFunctions.first { it.name == "invoke" }
 
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(TagSerializer, this)
 
@@ -137,7 +132,7 @@ inline fun <reified T : TaggedResourceLocationArgument> DataPack.tag(
 		block()
 	}
 	tags += tag
-	return tag.invokeFunction.call(tag.tagClass.companionObjectInstance, fileName, tag.namespace ?: namespace) as T
+	return tagArgumentFactories.getValue(T::class)(fileName, tag.namespace ?: namespace) as T
 }
 
 @JvmName("tagUntyped")
@@ -174,7 +169,7 @@ inline fun <reified T : TaggedResourceLocationArgument> DataPack.addToTag(
 	}
 
 	tag.apply(block)
-	return tag.invokeFunction.call(tag.tagClass.companionObjectInstance, fileName, tag.namespace ?: namespace) as T
+	return tagArgumentFactories.getValue(T::class)(fileName, tag.namespace ?: namespace) as T
 }
 
 @JvmName("addToTagUntyped")

@@ -1,11 +1,15 @@
 package generators
 
+import GENERATED_FOLDER
+import GENERATED_PACKAGE
 import com.squareup.kotlinpoet.*
 import generateFile
 import getFromCacheOrDownloadJson
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
+import libDir
+import minecraftVersion
 import overrides
 import pascalCase
 import url
@@ -137,9 +141,16 @@ private fun String.prependIfNotEmpty(other: String) = if (this.isNotEmpty()) {
     this
 }
 
+/** Info about a generated `*TagArgument` interface needed by the factory registry. */
+data class TagArgumentInfo(
+	val simpleName: String,
+	val packageName: String,
+)
+
 /** Generates a typed `*Argument` interface (and tag variants) for every vanilla registry, no manual entry needed. */
-suspend fun launchArgumentTypeGenerators() {
+suspend fun launchArgumentTypeGenerators(): List<TagArgumentInfo> {
 	val registriesList = downloadRegistriesList()
+	val tagArguments = mutableListOf<TagArgumentInfo>()
 
 	registriesList.map { entry ->
 		val argumentType = argumentTypeGen(entry.key, entry.value.tags)
@@ -148,11 +159,64 @@ suspend fun launchArgumentTypeGenerators() {
 		filesToCreate.map { (name, typeSpec) ->
 			val prefix = name.substringBeforeLast(".").prependIfNotEmpty(".")
 
-			generateFile(name.substringAfterLast("."), topLevel = typeSpec, subPackage = when {
+			val subPackage = when {
 				"OrTagArgument" in name -> "arguments${prefix}"
-				"TagArgument" in name -> "arguments${prefix}.tagged"
+				"TagArgument" in name -> {
+					val tagSubPackage = "arguments${prefix}.tagged"
+					tagArguments.add(TagArgumentInfo(name.substringAfterLast("."), tagSubPackage))
+					tagSubPackage
+				}
+
 				else -> "arguments${prefix}.types"
-			})
+			}
+
+			generateFile(name.substringAfterLast("."), topLevel = typeSpec, subPackage = subPackage)
 		}
 	}
+
+	return tagArguments
+}
+
+/** Emits `kore/src/main/generated/TagArgumentFactories.kt` mapping every `*TagArgument` KClass to its factory lambda. */
+fun generateTagArgumentFactories(tagArguments: List<TagArgumentInfo>) {
+	val generatedNames = tagArguments.map { it.simpleName }.toSet()
+	val allNames = (generatedNames + listOf(
+		"BlockTagArgument",
+		"FunctionTagArgument",
+		"ItemTagArgument",
+		"TaggedResourceLocationArgument"
+	))
+		.sortedBy { it.lowercase() }
+
+	val imports = buildString {
+		appendLine("package $GENERATED_PACKAGE")
+		appendLine()
+		appendLine("import io.github.ayfri.kore.arguments.types.TaggedResourceLocationArgument")
+		appendLine("import io.github.ayfri.kore.arguments.types.resources.tagged.BlockTagArgument")
+		appendLine("import io.github.ayfri.kore.arguments.types.resources.tagged.FunctionTagArgument")
+		appendLine("import io.github.ayfri.kore.arguments.types.resources.tagged.ItemTagArgument")
+		appendLine("import kotlin.reflect.KClass")
+		for (info in tagArguments.sortedBy { it.simpleName.lowercase() }) {
+			appendLine("import $GENERATED_PACKAGE.${info.packageName}.${info.simpleName}")
+		}
+		appendLine()
+	}
+
+	val factoryEntries = allNames.joinToString(",\n\t") { name ->
+		"$name::class to { name, namespace -> $name(name, namespace) }"
+	}
+
+	val content = buildString {
+		appendLine("// Automatically generated - do not modify!")
+		appendLine("// Minecraft version : $minecraftVersion")
+		appendLine(imports)
+		appendLine("val tagArgumentFactories: Map<KClass<out TaggedResourceLocationArgument>, (String, String) -> TaggedResourceLocationArgument> = mapOf(")
+		appendLine("\t$factoryEntries")
+		appendLine(")")
+	}
+
+	val file = java.io.File(libDir, "$GENERATED_FOLDER/TagArgumentFactories.kt")
+	file.parentFile.mkdirs()
+	file.writeText(content)
+	println("Generated $file")
 }
