@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.arguments.selector
 
-import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.numbers.ranges.FloatRangeOrFloat
 import io.github.ayfri.kore.arguments.numbers.ranges.IntRangeOrInt
@@ -9,26 +8,24 @@ import io.github.ayfri.kore.arguments.scores.Scores
 import io.github.ayfri.kore.arguments.scores.SelectorScore
 import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
+import io.github.ayfri.kore.serializers.ToStringSerializer
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import net.benwoodworth.knbt.NbtCompound
-import net.benwoodworth.knbt.NbtTag
-import net.benwoodworth.knbt.StringifiedNbt
-import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.hasAnnotation
-import kotlin.reflect.full.memberProperties
-import kotlin.reflect.jvm.isAccessible
 
 /**
  * Container for target selector arguments used to build Minecraft target selectors (e.g. `@p[distance=..]`).
  * See: https://minecraft.wiki/w/Target_selectors
  */
+@OptIn(ExperimentalSerializationApi::class)
+@KeepGeneratedSerializer
 @Serializable(SelectorArguments.Companion.SelectorArgumentsSerializer::class)
 data class SelectorArguments(
 	/** X coordinate for this selector. */
@@ -73,7 +70,7 @@ data class SelectorArguments(
 	@SerialName("y_rotation")
 	var yRotation: FloatRangeOrFloat? = null,
 	/** Advancements filter for this selector. */
-	@Contextual var advancements: SelectorAdvancements? = null,
+	var advancements: SelectorAdvancements? = null,
 	/** Distance range for this selector. */
 	var distance: Range? = null,
 	/** Limit for this selector. */
@@ -81,6 +78,7 @@ data class SelectorArguments(
 	/** Level range for this selector. */
 	var level: IntRangeOrInt? = null,
 	/** Scores filter for this selector. */
+	@Serializable(ScoresSerializer::class)
 	var scores: Scores<SelectorScore>? = null,
 	/** Sorting order for this selector. */
 	var sort: Sort? = null,
@@ -200,36 +198,19 @@ data class SelectorArguments(
 	}
 
 	companion object {
+		data object ScoresSerializer : ToStringSerializer<Scores<SelectorScore>>({ "{${scores.joinToString(",")}}" })
+
 		data object SelectorArgumentsSerializer : KSerializer<SelectorArguments> {
 			override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("SelectorNbtData", PrimitiveKind.STRING)
 
 			override fun deserialize(decoder: Decoder) = SelectorArguments()
 
 			override fun serialize(encoder: Encoder, value: SelectorArguments) {
-				val argumentsMap = mutableMapOf<String, Any?>()
-				value::class.memberProperties.forEach {
-					it.isAccessible = true
-					if (it.hasAnnotation<Transient>()) return@forEach
-
-					val serialName = it.findAnnotation<SerialName>()?.value ?: it.name
-					argumentsMap[serialName] = it.getter.call(value)
-				}
-
-				encoder.encodeString(argumentsMap.entries.filter { it.value != null }.sortedBy { it.key }.mapNotNull { (key, value) ->
-					when (value) {
-						is SelectorAdvancements -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
-
-						is List<*> -> when {
-							value.isEmpty() -> return@mapNotNull null
-							else -> value.joinToString(",") { "$key=$it" }
-						}
-
-						is Argument -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
-
-						is Scores<*> -> "$key={${value.scores.joinToString(",")}}"
-						is Sort -> "$key=${json.encodeToJsonElement(value).jsonPrimitive.content}"
-						is NbtTag -> "$key=${StringifiedNbt.encodeToString(value).removeSurrounding("\"")}"
-						else -> "$key=$value"
+				val arguments = json.encodeToJsonElement(generatedSerializer(), value).jsonObject
+				encoder.encodeString(arguments.entries.sortedBy { it.key }.flatMap { (key, element) ->
+					when (element) {
+						is JsonArray -> element.map { "$key=${it.jsonPrimitive.content}" }
+						else -> listOf("$key=${element.jsonPrimitive.content}")
 					}
 				}.joinToString(","))
 			}
