@@ -13,7 +13,8 @@ data class StoredEnchantmentsComponentMatcher(var enchantments: List<Enchantment
 			InlineAutoSerializer<StoredEnchantmentsComponentMatcher, List<Enchantment>>(
 				serializer<List<Enchantment>>(),
 				StoredEnchantmentsComponentMatcher::enchantments,
-				::StoredEnchantmentsComponentMatcher
+				::StoredEnchantmentsComponentMatcher,
+				"StoredEnchantmentsComponentMatcher",
 			)
 	}
 }

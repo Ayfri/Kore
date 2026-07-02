@@ -15,7 +15,8 @@ data class Enchantments(var enchantments: List<Enchantment> = emptyList()) : Com
 		data object EnchantmentsComponentMatcherSerializer : InlineAutoSerializer<Enchantments, List<Enchantment>>(
 			serializer<List<Enchantment>>(),
 			Enchantments::enchantments,
-			::Enchantments
+			::Enchantments,
+			"Enchantments",
 		)
 	}
 }

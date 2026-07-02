@@ -20,7 +20,8 @@ data class PotionContentsComponentMatcher(
 				PotionContentsListSerializer,
 				PotionContentsComponentMatcher::potions,
 				::PotionContentsComponentMatcher,
-		)
+				"PotionContentsComponentMatcher",
+			)
 	}
 }
 

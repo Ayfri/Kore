@@ -27,7 +27,7 @@ data class ItemPredicate(
 	val componentsAlternatives = mutableMapOf<String, MutableList<Component>>()
 	var countSubPredicates = mutableListOf<Pair<IntRangeOrIntJson, Boolean>>()
 	var subPredicates = mutableListOf(ItemStackSubPredicates())
-	var subPredicatesKeys = ComponentMatcher::class.sealedSubclasses.map(ComponentMatcher.Companion::getComponentName)
+	var subPredicatesKeys = ComponentMatcher.Companion.ComponentMatcherSerializer.contentNames
 
 	override val lastAddedComponent get() = componentsAlternatives.values.lastOrNull()?.lastOrNull()
 	override val lastAddedComponentName get() = componentsAlternatives.keys.lastOrNull()
