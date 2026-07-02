@@ -22,6 +22,7 @@ out
 .wrangler
 website/**/public/llms*.txt
 website/**/public/markdown-sources.json
+website/**/public/sitemap.xml
 website/.kobweb/*
 !website/.kobweb/conf.yaml
 

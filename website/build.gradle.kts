@@ -329,6 +329,35 @@ kobweb {
 			}
 			publicDir.resolve("markdown-sources.json").writeText(JsonOutput.toJson(markdownSources))
 
+			// Generate sitemap.xml
+			val sitemap = buildString {
+				appendLine("""<?xml version="1.0" encoding="UTF-8"?>""")
+				appendLine("""<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">""")
+				appendLine("""	<url>""")
+				appendLine("""		<loc>$baseUrl/</loc>""")
+				appendLine("""		<changefreq>weekly</changefreq>""")
+				appendLine("""		<priority>1.0</priority>""")
+				appendLine("""	</url>""")
+				sortedEntries.forEach { entry ->
+					val route = entry.slugs.joinToString("/")
+					val priority = when {
+						entry.slugs.size <= 2 -> "0.9"
+						entry.slugs.size == 3 -> "0.7"
+						else -> "0.5"
+					}
+					appendLine("""	<url>""")
+					appendLine("""		<loc>$baseUrl/$route</loc>""")
+					appendLine("""		<lastmod>${entry.dateModified.take(10)}</lastmod>""")
+					appendLine("""		<changefreq>monthly</changefreq>""")
+					appendLine("""		<priority>$priority</priority>""")
+					appendLine("""	</url>""")
+				}
+				appendLine("</urlset>")
+			}
+			publicDir.resolve("sitemap.xml").writeText(sitemap)
+
+			println("Sitemap generated -> ${publicDir.resolve("sitemap.xml").absolutePath}")
+
 			println("LLMs.txt generated -> ${publicDir.absolutePath}")
 			projectLogger.info("markdown-sources.json written (${markdownSources.size} files)")
 
