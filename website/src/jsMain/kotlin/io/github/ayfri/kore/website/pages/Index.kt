@@ -12,7 +12,7 @@ import org.jetbrains.compose.web.dom.Div
 
 @Page
 @Composable
-fun HomePage() = PageLayout("Home") {
+fun HomePage() = PageLayout("Minecraft Datapack Generator") {
 	Style(HomePageStyle)
 
 	Div({
@@ -136,4 +136,3 @@ object HomePageStyle : StyleSheet() {
 		property("background", "radial-gradient(circle, rgba(254, 201, 7, 0.55) 0%, rgba(254, 201, 7, 0) 72%)")
 	}
 }
-
