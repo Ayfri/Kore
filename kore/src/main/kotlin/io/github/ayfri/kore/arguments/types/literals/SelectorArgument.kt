@@ -21,6 +21,10 @@ fun selector(base: SelectorType, limitToOne: Boolean = false, data: SelectorArgu
 		if (limitToOne) nbtData.limit = 1
 	})
 
+/** Parses a selector from its command representation (e.g. `@e[limit=1,tag=!foo]`). */
+fun selector(selector: String, data: SelectorArguments.() -> Unit = {}) =
+	SelectorArgument(Selector.fromString(selector).apply { nbtData.data() })
+
 fun allPlayers(limitToOne: Boolean = false, data: SelectorArguments.() -> Unit = {}) = selector(SelectorType.ALL_PLAYERS, limitToOne, data)
 fun allPlayers(limit: Int, data: SelectorArguments.() -> Unit = {}) = allPlayers { this.limit = limit; data() }
 fun allEntities(limitToOne: Boolean = false, data: SelectorArguments.() -> Unit = {}) =

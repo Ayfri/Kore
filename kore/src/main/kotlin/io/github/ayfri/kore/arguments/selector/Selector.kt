@@ -32,4 +32,21 @@ data class Selector(val base: SelectorType) {
 		nbtData == SelectorArguments() -> "@${base.value}"
 		else -> "@${base.value}[${json.encodeToJsonElement(nbtData).toString().unescape()}]"
 	}
+
+	companion object {
+		/** Parses a selector from its command representation (e.g. `@e[limit=1,tag=!foo]`). */
+		fun fromString(value: String): Selector {
+			require(value.startsWith("@")) { "A selector must start with '@', got: '$value'" }
+			val baseValue = value.removePrefix("@").substringBefore('[')
+			val base = SelectorType.entries.firstOrNull { it.value == baseValue }
+				?: error("Unknown selector type: '@$baseValue'")
+			return Selector(base).apply {
+				if ('[' in value) nbtData.copyFrom(
+					SelectorArguments.fromString(
+						value.substringAfter('[').substringBeforeLast(']')
+					)
+				)
+			}
+		}
+	}
 }

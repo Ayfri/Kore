@@ -1,11 +1,12 @@
 package io.github.ayfri.kore.arguments.selector
 
+import io.github.ayfri.kore.arguments.Advancement
 import io.github.ayfri.kore.arguments.enums.Gamemode
-import io.github.ayfri.kore.arguments.numbers.ranges.FloatRangeOrFloat
-import io.github.ayfri.kore.arguments.numbers.ranges.IntRangeOrInt
-import io.github.ayfri.kore.arguments.numbers.ranges.Range
+import io.github.ayfri.kore.arguments.numbers.ranges.*
+import io.github.ayfri.kore.arguments.numbers.ranges.IntRange
 import io.github.ayfri.kore.arguments.scores.Scores
 import io.github.ayfri.kore.arguments.scores.SelectorScore
+import io.github.ayfri.kore.generated.arguments.types.AdvancementArgument
 import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.serializers.ToStringSerializer
@@ -19,6 +20,7 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.StringifiedNbt
 
 /**
  * Container for target selector arguments used to build Minecraft target selectors (e.g. `@p[distance=..]`).
@@ -198,12 +200,66 @@ data class SelectorArguments(
 	}
 
 	companion object {
+		/**
+		 * Parses selector arguments from their command representation, the content between `[` and `]`
+		 * (e.g. `limit=1,tag=!foo,scores={foo=1..}`).
+		 */
+		fun fromString(input: String): SelectorArguments {
+			val arguments = SelectorArguments()
+			splitSelectorEntries(input).filter { it.isNotEmpty() }.forEach { entry ->
+				val key = entry.substringBefore('=')
+				val raw = entry.substringAfter('=')
+				val inverted = raw.startsWith("!")
+				val value = raw.removePrefix("!")
+				when (key) {
+					"advancements" -> arguments.advancements = parseAdvancements(value)
+					"distance" -> arguments.distance = parseRange(value)
+					"dx" -> arguments.dx = value.toDouble()
+					"dy" -> arguments.dy = value.toDouble()
+					"dz" -> arguments.dz = value.toDouble()
+					"gamemode" -> arguments._gamemodes +=
+						GamemodeOption(value.ifEmpty { null }?.let { Gamemode.valueOf(it.uppercase()) }, inverted)
+
+					"level" -> arguments.level = parseIntRangeOrInt(value)
+					"limit" -> arguments.limit = value.toInt()
+					"name" -> arguments._names += StringOption(value, inverted)
+					"nbt" -> arguments._nbt +=
+						NbtCompoundOption(value.ifEmpty { null }
+							?.let { StringifiedNbt.decodeFromString<NbtCompound>(it) }, inverted)
+
+					"predicate" -> arguments._predicates +=
+						PredicateOption(value.ifEmpty { null }
+							?.let { parseResourceLocation(it, PredicateArgument::invoke) }, inverted)
+
+					"scores" -> arguments.scores = Scores(
+						splitSelectorEntries(value.removeSurrounding("{", "}")).filter { it.isNotEmpty() }
+							.toMutableSet()
+					)
+
+					"sort" -> arguments.sort = Sort.valueOf(value.uppercase())
+					"tag" -> arguments._tags += StringOption(value, inverted)
+					"team" -> arguments._teams += StringOption(value, inverted)
+					"type" -> arguments._types +=
+						EntityTypeOption(value.ifEmpty { null }
+							?.let { parseResourceLocation(it, EntityTypeArgument::invoke) }, inverted)
+
+					"x" -> arguments.x = value.toDouble()
+					"x_rotation" -> arguments.xRotation = parseFloatRangeOrFloat(value)
+					"y" -> arguments.y = value.toDouble()
+					"y_rotation" -> arguments.yRotation = parseFloatRangeOrFloat(value)
+					"z" -> arguments.z = value.toDouble()
+					else -> error("Unknown selector argument: '$key'")
+				}
+			}
+			return arguments
+		}
+
 		data object ScoresSerializer : ToStringSerializer<Scores<SelectorScore>>({ "{${scores.joinToString(",")}}" })
 
 		data object SelectorArgumentsSerializer : KSerializer<SelectorArguments> {
 			override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("SelectorNbtData", PrimitiveKind.STRING)
 
-			override fun deserialize(decoder: Decoder) = SelectorArguments()
+			override fun deserialize(decoder: Decoder) = fromString(decoder.decodeString())
 
 			override fun serialize(encoder: Encoder, value: SelectorArguments) {
 				val arguments = json.encodeToJsonElement(generatedSerializer(), value).jsonObject
@@ -217,3 +273,101 @@ data class SelectorArguments(
 		}
 	}
 }
+
+/** Splits selector entries on top-level commas, ignoring commas inside braces, brackets and quoted strings. */
+private fun splitSelectorEntries(input: String): List<String> {
+	val entries = mutableListOf<String>()
+	val current = StringBuilder()
+	var depth = 0
+	var quote: Char? = null
+	var index = 0
+	while (index < input.length) {
+		val char = input[index]
+		when {
+			quote != null -> {
+				current.append(char)
+				when (char) {
+					'\\' -> {
+						index++
+						if (index < input.length) current.append(input[index])
+					}
+
+					quote -> quote = null
+				}
+			}
+
+			char == '"' || char == '\'' -> {
+				quote = char
+				current.append(char)
+			}
+
+			char == '{' || char == '[' -> {
+				depth++
+				current.append(char)
+			}
+
+			char == '}' || char == ']' -> {
+				depth--
+				current.append(char)
+			}
+
+			char == ',' && depth == 0 -> {
+				entries += current.toString()
+				current.clear()
+			}
+
+			else -> current.append(char)
+		}
+		index++
+	}
+	if (current.isNotEmpty()) entries += current.toString()
+	return entries
+}
+
+private fun <T> parseResourceLocation(id: String, factory: (String, String) -> T) =
+	factory(id.substringAfter(':'), id.substringBefore(':', "minecraft"))
+
+private fun parseIntRangeOrInt(value: String) = when {
+	".." in value -> IntRangeOrInt(
+		IntRange(
+			value.substringBefore("..").toIntOrNull(),
+			value.substringAfter("..").toIntOrNull()
+		)
+	)
+
+	else -> IntRangeOrInt(int = value.toInt())
+}
+
+private fun parseFloatRangeOrFloat(value: String) = when {
+	".." in value -> FloatRangeOrFloat(
+		FloatRange(
+			value.substringBefore("..").toDoubleOrNull(),
+			value.substringAfter("..").toDoubleOrNull()
+		)
+	)
+
+	else -> FloatRangeOrFloat(double = value.toDouble())
+}
+
+private fun parseRange(value: String): Range = when {
+	'.' in value.replace("..", "") -> parseFloatRangeOrFloat(value)
+	else -> parseIntRangeOrInt(value)
+}
+
+private fun parseAdvancements(value: String) = SelectorAdvancements(
+	splitSelectorEntries(value.removeSurrounding("{", "}")).filter { it.isNotEmpty() }.map { entry ->
+		val id = entry.substringBefore('=')
+		val state = entry.substringAfter('=')
+		val argument = parseResourceLocation(id, AdvancementArgument::invoke)
+		when {
+			state.startsWith("{") -> Advancement(
+				argument,
+				criteria = splitSelectorEntries(state.removeSurrounding("{", "}"))
+					.filter { it.isNotEmpty() }
+					.associate { it.substringBefore('=') to it.substringAfter('=').toBooleanStrict() },
+			)
+
+			else -> Advancement(argument, done = state.toBooleanStrict())
+		}
+	}.toSet()
+)

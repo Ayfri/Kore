@@ -5,7 +5,7 @@ nav-title: Datapack Veterans
 description: Deep technical guide for experienced datapack authors adopting Kore and Kotlin in production.
 keywords: minecraft, datapack, kore, kotlin, advanced, migration, architecture, production
 date-created: 2026-04-22
-date-modified: 2026-04-22
+date-modified: 2026-07-02
 routeOverride: /docs/guides/from-datapacks-to-kore
 ---
 
@@ -106,6 +106,8 @@ If your current pack is hand-written, this is the direct conceptual mapping:
 - `data/<ns>/function/...` -> `fun Function.someFeature() = function("feature/some_feature") { ... }`
 - `minecraft:load` tag editing -> `load("...") { function(someFeature()) }`
 - `minecraft:tick` tag editing -> `tick("...") { function(runtimeStep()) }`
+- `@a[tag=fighter,gamemode=!spectator]` -> typed selector builders, or `selector("@a[tag=fighter,gamemode=!spectator]")`
+  to parse the vanilla string as-is.
 - JSON resources -> dedicated typed builders (`advancement`, `lootTable`, `recipe`, `predicate`, `enchantment`,
   `worldgen`, ...).
 
@@ -237,6 +239,20 @@ fun DataPack.registerRoundMessaging() {
 }
 ```
 
+When porting an existing pack, you can also start from your current selector strings and refine them with the typed
+builder afterwards:
+
+```kotlin
+val activePlayersPorted = selector("@a[gamemode=!spectator,scores={lives=1..,round=1..}]")
+
+val nearbyActivePlayers = selector("@a[gamemode=!spectator]") {
+	distance = rangeOrIntEnd(16)
+}
+```
+
+Both forms produce the same selector model, so a string-parsed selector can be migrated property-by-property to the
+typed builder without behavior changes.
+
 See [Selectors](/docs/concepts/selectors) and [Scoreboards](/docs/concepts/scoreboards) for full syntax.
 
 ### 4) Data classes for repeatable feature config
@@ -305,7 +321,8 @@ Reference pages used in that pattern:
 When you already have stable gameplay in vanilla datapack files, migrate slice-by-slice.
 
 1. **Freeze behavior** with a smoke test checklist (`/reload`, bootstrap output, one command per feature).
-2. **Port one vertical slice** (for example onboarding flow or one combat mechanic).
+2. **Port one vertical slice** (for example onboarding flow or one combat mechanic). Keep complex selectors verbatim
+   with `selector("@a[...]")` during this pass and convert them to typed builders once the slice is validated.
 3. **Generate to folder** with `.generate()` and inspect the output.
 4. **Compare runtime behavior** in-game against your baseline.
 5. **Repeat by subsystem**, then standardize shared Kotlin helpers.
@@ -375,6 +392,8 @@ If your mental model is still from older Kore versions, these are high-impact up
 - **Pack metadata parity for modern Minecraft**: `minFormat`/`maxFormat`, overlays, and legacy compatibility handling
   are
   available directly in the pack DSL.
+- **Selector string parsing**: `selector("@a[tag=fighter]")`, `Selector.fromString`, and `SelectorArguments.fromString`
+  turn vanilla selector strings into the typed selector model, ideal for porting packs incrementally.
 - **Interop at scale with `bindings`**: import external datapacks and consume generated Kotlin constants instead of
   hand-maintained IDs.
 - **Dynamic Strings (`oop`)**: a macro-backed string toolkit over storage/NBT for advanced runtime text pipelines

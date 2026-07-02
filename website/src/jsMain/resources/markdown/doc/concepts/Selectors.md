@@ -5,7 +5,7 @@ nav-title: Selectors
 description: Build Minecraft target selectors in Kore with typed Kotlin builders. Compose entity filters, sorting, and score-based conditions instead of writing @e[...] strings by hand.
 keywords: minecraft, datapack, kore, selectors, target selectors, entities, players, commands
 date-created: 2026-04-21
-date-modified: 2026-04-21
+date-modified: 2026-07-02
 routeOverride: /docs/concepts/selectors
 ---
 
@@ -126,6 +126,23 @@ val nearestMarkedEntity = allEntities(limitToOne = true) {
 ```
 
 Use `limitToOne = true` when you want a concise single-target selector without repeating `limit = 1`.
+
+## Parsing selector strings
+
+You can build a selector from its vanilla command representation with the `selector(String)` overload, then optionally
+refine it with the regular builder.
+
+```kotlin
+val fighters = selector("@a[tag=fighter,gamemode=!spectator]")
+
+val nearbyFighters = selector("@a[tag=fighter]") {
+  distance = rangeOrIntEnd(16)
+}
+```
+
+Lower-level entry points are also available: `Selector.fromString("@e[limit=1]")` returns a `Selector`, and
+`SelectorArguments.fromString("limit=1,tag=!foo")` parses only the bracket content. All selector arguments are
+supported, including nested `scores`, `advancements`, and SNBT `nbt` filters.
 
 ## Using selectors in commands
 

@@ -7,10 +7,7 @@ import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrIntEnd
 import io.github.ayfri.kore.arguments.scores.lessThan
 import io.github.ayfri.kore.arguments.scores.score
-import io.github.ayfri.kore.arguments.selector.SelectorType
-import io.github.ayfri.kore.arguments.selector.Sort
-import io.github.ayfri.kore.arguments.selector.advancements
-import io.github.ayfri.kore.arguments.selector.scores
+import io.github.ayfri.kore.arguments.selector.*
 import io.github.ayfri.kore.arguments.types.literals.*
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
@@ -176,8 +173,37 @@ fun selectorTests() = dataPack("selector_tests") {
 	} assertsIs "@e[x_rotation=1.5,y=5.0]"
 }.generate()
 
+fun selectorDeserializationTests() = listOf(
+	"@e",
+	"@a[limit=1,name=foo]",
+	"@e[advancements={minecraft:story/enchant_item={bar=true}}]",
+	"@e[advancements={minecraft:story/enchant_item=true,selector_tests:foo=false}]",
+	"@e[distance=..1.5]",
+	"@e[distance=1..5]",
+	"@e[dx=1.0,dy=2.0,dz=3.0]",
+	"@e[gamemode=!creative,gamemode=!survival]",
+	"@e[level=..1]",
+	"@e[level=2..]",
+	"@e[limit=1]",
+	"@e[name=!foo,name=!bar]",
+	"@e[nbt={foo:\"bar\"}]",
+	"@e[nbt=!{foo:\"a,b\"},nbt=!{baz:\"qux\"}]",
+	"@e[predicate=!selector_tests:foo,predicate=!selector_tests:bar]",
+	"@e[scores={foo=1,bar=1..,baz=..0}]",
+	"@e[sort=random]",
+	"@e[tag=!foo,tag=!bar]",
+	"@e[team=!]",
+	"@e[type=!minecraft:marker,type=!minecraft:player]",
+	"@e[x=1.0,y=2.0,z=3.0]",
+	"@e[x_rotation=1.5,y_rotation=..1.5]",
+).forEach { Selector.fromString(it).toString() assertsIs it }
+
 class SelectorSerializationTests : FunSpec({
 	test("selector") {
 		selectorTests()
+	}
+
+	test("selector deserialization") {
+		selectorDeserializationTests()
 	}
 })
