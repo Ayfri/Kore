@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: World Generation
+title: Minecraft World Generation - Custom Dimensions, Biomes & Noise with Kore
 nav-title: Worldgen
-description: Overview of custom world generation (1.21+) with Kore's Kotlin DSL.
-keywords: minecraft, datapack, kore, worldgen, dimension, biome, features, structures, noise
+description: Create custom world generation datapacks with Kore's Kotlin DSL. Dimensions, biomes, noise settings, density functions, structures, features, and world presets -- all type-safe, no hand-written JSON.
+keywords: minecraft worldgen, datapack worldgen, custom dimension minecraft, custom biome, noise settings minecraft, minecraft noise router, density function, datapack terrain generation, minecraft world preset, custom world generation
 date-created: 2025-08-11
-date-modified: 2026-02-04
+date-modified: 2026-07-02
 routeOverride: /docs/data-driven/worldgen
 ---
 
@@ -182,4 +182,3 @@ dp.worldPreset("example_preset") {
 - [Timelines](/docs/data-driven/timelines) - Animate environment attributes over time using keyframes and easing functions
 - [World Clocks](/docs/data-driven/world-clocks) - World clocks, time markers, the `/time` command, and `timeCheck` -
   used by `DimensionType.defaultClock`
-

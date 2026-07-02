@@ -1,9 +1,9 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Villager Trades
+title: Villager Trades - Custom Trade Sets & Merchant Tables in Kore
 nav-title: Villager Trades
-description: Define custom villager trades and trade sets using Kore's type-safe Kotlin DSL for Minecraft Java Edition data packs.
-keywords: minecraft, datapack, kore, villager trade, trade set, villager_trade, trade_set, custom trades, merchant
+description: Define custom villager trades and trade sets for Minecraft 26.1+ with Kore's type-safe Kotlin DSL. Configure items, prices, demand, and profession-level trade tables without hand-writing JSON.
+keywords: minecraft villager trade, custom villager trades, datapack trade_set, datapack villager_trade, kore villager trades, minecraft merchant trades, custom trades datapack, profession trades, villager trade generator
 date-created: 2026-06-15
 date-modified: 2026-06-15
 routeOverride: /docs/data-driven/villager-trades

@@ -1,9 +1,9 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: World Events
+title: World Events - Tick, Weather & Day/Night Event System in Kore
 nav-title: World Events
-description: World-level event system for tick, weather, day/night, and interval triggers with the Kore OOP module.
-keywords: minecraft, datapack, kore, oop, events, world, tick, load, interval, weather, rain, thunder, day, night, noon, midnight, time of day, dimension
+description: React to world-level events in Minecraft with Kore's OOP module. Tick events, weather changes (rain/thunder), day/night cycle triggers (noon/midnight), and configurable interval timers.
+keywords: minecraft world events, datapack tick event, minecraft weather event, day night cycle datapack, kore world events, datapack interval timer, rain thunder event minecraft, world load event, datapack time of day
 date-created: 2026-06-23
 date-modified: 2026-06-23
 routeOverride: /docs/oop/world-events

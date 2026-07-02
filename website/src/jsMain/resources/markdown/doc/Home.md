@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Home
+title: Kore - Type-Safe Minecraft Datapack Generator
 nav-title: Home
-description: Welcome to the Kore wiki!
-keywords: minecraft, datapack, kore, guide
+description: Kore is a Kotlin DSL datapack generator for Minecraft Java Edition. Create datapacks with type-safe code instead of writing JSON and MCFunction by hand. Open-source and production-ready.
+keywords: minecraft datapack generator, datapack maker, minecraft data pack creator, kotlin datapack, kore, minecraft datapack dsl, datapack development, minecraft java edition, mcfunction generator, datapack library
 date-created: 2024-04-06
-date-modified: 2026-05-29
+date-modified: 2026-07-02
 routeOverride: /docs/home
 position: 0
 ---
@@ -204,4 +204,3 @@ Check out the [Known Issues](/docs/advanced/known-issues) page for a list of kno
   Kore work)
 
 For hands-on examples, follow the doc pages above - most pages include runnable snippets and links to test cases in the repository.
-

@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Why Kore
+title: Why Kore - Kotlin DSL vs Raw Datapacks & Other Generators
 nav-title: Why Kore
-description: Why use Kore over raw datapacks or other generators like Sandstone and Beet - type safety, one language, and tested output.
-keywords: minecraft, datapack, kore, comparison, sandstone, beet, mcfunction, json, why
+description: Compare Kore with raw datapacks, Sandstone, Beet, and other generators. Type safety, autocomplete, one Kotlin language for all JSON and MCFunction. No more error-prone hand-written datapack files.
+keywords: kore vs sandstone, kore vs beet, datapack generator comparison, kotlin datapack dsl, minecraft datapack alternative, type-safe datapack, why kore, datapack generator benefits, mcfunction generator, minecraft json generator
 date-created: 2026-06-24
-date-modified: 2026-06-24
+date-modified: 2026-07-02
 routeOverride: /docs/guides/why-kore
 position: 0
 ---

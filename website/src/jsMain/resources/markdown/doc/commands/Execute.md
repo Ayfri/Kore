@@ -1,9 +1,9 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Execute
+title: Execute Command - Type-Safe Context, Conditions & Stores in Kore
 nav-title: Execute
-description: Full guide to the execute command in Kore - context subcommands, conditions, stores, and the run clause.
-keywords: minecraft, datapack, kore, execute, command, conditions, if, unless, store, run
+description: Master the /execute command with Kore's type-safe DSL. Context subcommands (as, at, positioned), conditions (if/unless), stores (score, bossbar, storage), and the run clause. Full guide with mcfunction examples.
+keywords: minecraft execute command, execute as at positioned, execute if unless, execute store, datapack execute, kore execute, minecraft command conditions, execute run, context subcommands
 date-created: 2026-06-24
 date-modified: 2026-06-24
 routeOverride: /docs/commands/execute

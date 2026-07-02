@@ -2,7 +2,7 @@
 root: .components.layouts.MarkdownLayout
 title: NBTs
 nav-title: NBTs
-description: Build and reuse NBT in Kore with the shared DSL, common helper methods, and examples across commands, predicates, and chat components.
+description: Work with Minecraft NBT data in Kore using a shared Kotlin DSL across commands, predicates, and chat components. Includes SNBT helpers, path access, and reuse patterns.
 keywords: minecraft, datapack, kore, nbt, snbt, knbt, chat components, predicates, data command
 date-created: 2026-05-29
 date-modified: 2026-05-29

@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Predicates
+title: Minecraft Predicates - Type-Safe Condition DSL in Kore
 nav-title: Predicates
-description: Learn how to use predicates in your Kore datapacks
-keywords: minecraft, datapack, kore, predicates, conditions, entity properties
+description: Create Minecraft predicates with Kore's type-safe Kotlin DSL. Covers entity properties, location, weather, time, enchantments, damage, and NBT checks. Use in execute if/unless, loot tables, and advancements.
+keywords: minecraft predicates, datapack conditions, execute if predicate, entity properties check, location check, weather check, time check, damage predicate, kore predicates, minecraft condition dsl
 date-created: 2024-01-08
-date-modified: 2026-07-01
+date-modified: 2026-07-02
 routeOverride: /docs/data-driven/predicates
 ---
 
@@ -580,4 +580,3 @@ Predicates are powerful tools for creating complex conditions in your datapack. 
 
 - [Minecraft Wiki: Predicate](https://minecraft.wiki/w/Predicate) - Official JSON format reference
 - [Minecraft Wiki: Loot context](https://minecraft.wiki/w/Loot_context) - Understanding loot contexts for conditions
-

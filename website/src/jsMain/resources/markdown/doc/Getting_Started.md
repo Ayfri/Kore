@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Getting Started
+title: Getting Started with Kore
 nav-title: Getting Started
-description: Step-by-step guide to create your first Minecraft datapack with Kore.
-keywords: minecraft, datapack, kore, getting started, quickstart, kotlin
+description: Step-by-step guide to create your first Minecraft datapack with Kore. Set up a Kotlin project, write type-safe commands and functions, generate the datapack, and test in-game.
+keywords: minecraft datapack tutorial, kore getting started, create datapack with kotlin, minecraft datapack generator tutorial, kore setup guide, kotlin datapack beginner, minecraft function generator, datapack development guide
 date-created: 2025-08-21
-date-modified: 2026-04-22
+date-modified: 2026-07-02
 routeOverride: /docs/getting-started
 position: 1
 ---
@@ -481,4 +481,3 @@ For the full index, see [Home](/docs/home).
 - [Kore on Maven Central](https://central.sonatype.com/search?q=io.github.ayfri.kore)
 - [Kore on Discord](https://discord.ayfri.com)
 - [Minecraft Wiki: Datapack](https://minecraft.wiki/w/Data_pack)
-

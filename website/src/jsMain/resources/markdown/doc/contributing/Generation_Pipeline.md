@@ -2,8 +2,8 @@
 root: .components.layouts.MarkdownLayout
 title: "Contributing: The Generation Pipeline"
 nav-title: "Generation Pipeline"
-description: How the generation module downloads Minecraft source data and produces the enums and argument types under kore/src/main/generated.
-keywords: arguments, codegen, contributing, generation, kore, registries
+description: How Kore's generation module downloads Minecraft source data and codegens enums and argument types. Covers registries, data sources, caching, and the generator extension API for contributors.
+keywords: arguments, codegen, contributing, generation, kore, registries, minecraft data, enum generation, kotlin codegen, datapack generator internals
 date-created: 2026-07-01
 date-modified: 2026-07-01
 routeOverride: /docs/contributing/generation-pipeline

@@ -1,9 +1,9 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: World Clocks
+title: World Clocks - Custom Time Systems & TimeCheck Predicates in Kore
 nav-title: World Clocks
-description: Create and control custom world clocks, timelines, time markers, and the /time command in Kore datapacks.
-keywords: minecraft, datapack, kore, world_clock, timeline, time_marker, time command, timeCheck, predicate, dimension_type, default_clock
+description: Create custom world clocks and timelines in Kore datapacks. Define named time counters, time markers, timeCheck predicates, and control the /time command. Integrates with dimension types and environment timelines.
+keywords: minecraft world_clock, timeCheck predicate, custom time system datapack, datapack timeline, time marker minecraft, kore world clock, dimension_type clock, datapack time command, minecraft time counter
 date-created: 2026-06-16
 date-modified: 2026-06-16
 routeOverride: /docs/data-driven/world-clocks

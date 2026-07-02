@@ -1,9 +1,9 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Time
+title: TimeNumber - Minecraft Ticks, Seconds & Days in Kore
 nav-title: Time
-description: Guide to using TimeNumber in Kore - ticks, seconds, and days extensions, arithmetic, conversions, and command usage.
-keywords: minecraft, kore, time, ticks, seconds, days, TimeNumber, schedule, duration
+description: Work with Minecraft time in Kore using TimeNumber. Type-safe ticks, seconds, and days with arithmetic, conversions, and integration with commands, schedulers, and timers.
+keywords: minecraft time, ticks to seconds, minecraft tick timer, kore TimeNumber, datapack duration, tick conversion, minecraft time command, schedule delay, minecraft day cycle, time arithmetic
 date-created: 2026-06-16
 date-modified: 2026-06-16
 routeOverride: /docs/concepts/time

@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Advancements
+title: Minecraft Advancements with Kore - Type-Safe DSL Guide
 nav-title: Advancements
-description: A comprehensive guide for creating and managing advancements in Minecraft with Kore.
-keywords: minecraft, datapack, kore, guide, advancements, triggers, criteria, rewards
+description: Create custom Minecraft advancements with Kore's Kotlin DSL. Covers all triggers, criteria, rewards (functions, loot, recipes), display settings, and frames. Replace hand-written JSON with type-safe Kotlin.
+keywords: minecraft advancements, datapack advancements, advancement triggers, using_item trigger, inventory_changed, minecraft achievement, kore advancements, custom advancements, advancement criteria, advancement rewards
 date-created: 2024-01-08
-date-modified: 2026-02-15
+date-modified: 2026-07-02
 routeOverride: /docs/data-driven/advancements
 ---
 
@@ -649,4 +649,3 @@ Verify criteria trigger correctly in-game before releasing your data pack.
 
 - [Minecraft Wiki: Advancement](https://minecraft.wiki/w/Advancement) - Game mechanics overview
 - [Minecraft Wiki: Advancement Definition](https://minecraft.wiki/w/Advancement_definition) - JSON format specification
-

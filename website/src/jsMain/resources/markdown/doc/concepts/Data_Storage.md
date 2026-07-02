@@ -1,9 +1,9 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Data Storage
+title: Data Storage - Runtime NBT Variables with /data Command in Kore
 nav-title: Data Storage
-description: Use Minecraft data storage as a runtime NBT variable container in Kore - set, modify, copy, and read values with the /data command DSL.
-keywords: minecraft, datapack, kore, data, storage, nbt, runtime, variables, data command
+description: Use Minecraft data storage as runtime NBT variables in Kore. Set, modify, copy, and read values with the /data command DSL. Store strings, lists, and compounds beyond integer-only scoreboards.
+keywords: minecraft data storage, /data command, datapack nbt storage, data modify, data get, data merge, runtime variables minecraft, kore data, storage macros, datapack variable container
 date-created: 2026-06-24
 date-modified: 2026-06-24
 routeOverride: /docs/concepts/data-storage

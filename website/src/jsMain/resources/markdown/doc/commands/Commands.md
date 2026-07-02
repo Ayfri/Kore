@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Commands
+title: Minecraft Commands in Kore - Type-Safe Command DSL
 nav-title: Commands
-description: A comprehensive guide for using commands in Kore datapacks.
-keywords: minecraft, datapack, kore, guide, commands, execute, data, teleport
+description: Every Minecraft command in a type-safe Kotlin DSL. From /say, /teleport, and /give to /execute, /data, /scoreboard, and /summon -- all with code examples and generated mcfunction output.
+keywords: minecraft commands, kore commands, kotlin commands dsl, mcfunction generator, execute command, data command, teleport command, summon command, minecraft command builder, type-safe commands
 date-created: 2026-02-03
-date-modified: 2026-06-16
+date-modified: 2026-07-02
 routeOverride: /docs/commands/commands
 ---
 

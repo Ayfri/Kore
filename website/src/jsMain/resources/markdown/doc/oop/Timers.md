@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Timers
+title: Minecraft Timer Datapack - Scoreboard Timers in Kore OOP
 nav-title: Timers
-description: Scoreboard-based timers and timer-with-boss-bar combos with the Kore OOP module.
-keywords: minecraft, datapack, kore, oop, timer, scoreboard, bossbar, countdown, tick
+description: Scoreboard-based timers with Kore's OOP module. Countdown timers, boss bar timers, tick-based schedules, and reusable handles. Build cooldowns and game timers without raw command blocks.
+keywords: timer datapack, minecraft timer, datapack timer, scoreboard timer, countdown timer, minecraft cooldown, boss bar timer, tick timer, kore timer, datapack schedule
 date-created: 2026-03-03
-date-modified: 2026-03-31
+date-modified: 2026-07-02
 routeOverride: /docs/oop/timers
 ---
 

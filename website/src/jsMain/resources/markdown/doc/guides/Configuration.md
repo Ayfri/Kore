@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Configuration
+title: Kore Configuration - Datapack Settings, Pack Format & Output Options
 nav-title: Configuration
-description: A guide for configuring the output of a generated Minecraft datapack.
-keywords: minecraft, datapack, kore, guide, configuration
+description: Configure your Minecraft datapack output with Kore. Set pack_format, Minecraft version, description, namespace, pretty printing, ZIP/JAR export, and resource pack integration.
+keywords: minecraft datapack pack_format, pack_format datapack, datapack configuration, kore settings, datapack output, datapack namespace, pack format minecraft, datapack zip export, datapack description, kore configure
 date-created: 2024-04-06
-date-modified: 2026-04-26
+date-modified: 2026-07-02
 routeOverride: /docs/guides/configuration
 position: 2
 ---

@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Scheduler
+title: Minecraft Datapack Scheduler - Loop, Delay & Schedule Tasks with Kore
 nav-title: Scheduler
-description: A guide for scheduling tasks in Kore.
-keywords: minecraft, datapack, kore, guide, scheduler, schedule, loop, task, tasks
+description: Schedule and loop tasks in Minecraft datapacks with Kore. Tick-based loops, delayed actions, repeating schedules, and timed callbacks without complex scoreboard chains.
+keywords: datapack scheduler, minecraft schedule, timer datapack, datapack loop, tick loop minecraft, schedule function, repeating task datapack, delay command minecraft, kore scheduler, datapack timer loop
 date-created: 2025-03-26
-date-modified: 2025-03-26
+date-modified: 2026-07-02
 routeOverride: /docs/helpers/scheduler
 ---
 

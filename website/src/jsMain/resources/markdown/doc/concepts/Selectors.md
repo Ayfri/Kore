@@ -2,7 +2,7 @@
 root: .components.layouts.MarkdownLayout
 title: Selectors
 nav-title: Selectors
-description: Build Minecraft target selectors in Kore with typed helpers, filters, sorting, and score-based conditions.
+description: Build Minecraft target selectors in Kore with typed Kotlin builders. Compose entity filters, sorting, and score-based conditions instead of writing @e[...] strings by hand.
 keywords: minecraft, datapack, kore, selectors, target selectors, entities, players, commands
 date-created: 2026-04-21
 date-modified: 2026-04-21

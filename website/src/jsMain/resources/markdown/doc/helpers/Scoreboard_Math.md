@@ -2,7 +2,7 @@
 root: .components.layouts.MarkdownLayout
 title: Scoreboard Math Engine
 nav-title: Scoreboard Math
-description: Trigonometric and algebraic functions using scoreboard operations with the Kore helpers module - sine, cosine, square root, distance, parabolic trajectory, and delegate-based helpers.
+description: Trigonometric and algebraic functions using scoreboard operations with Kore. Sine, cosine, square root, distance, and parabolic trajectory via fixed-point math on scoreboards.
 keywords: minecraft, datapack, kore, helpers, math, scoreboard, trigonometry, sine, cosine, sqrt, distance, parabola
 date-created: 2026-03-03
 date-modified: 2026-04-01

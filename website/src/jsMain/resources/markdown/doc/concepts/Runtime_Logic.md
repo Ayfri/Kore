@@ -1,9 +1,9 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Runtime Logic
+title: "Runtime Logic - Kotlin vs Minecraft: Variables, Conditions & Loops"
 nav-title: Runtime Logic
-description: Understand the difference between compile-time Kotlin and runtime Minecraft logic in Kore, and how to do variables, conditions, and loops in-game.
-keywords: minecraft, datapack, kore, runtime, compile-time, variables, conditions, loops, scoreboard, storage, execute
+description: "The key concept for Kore datapacks: how compile-time Kotlin maps to runtime Minecraft logic. Variables via scoreboards and storage, conditions via execute if/unless, and loops via tick functions and schedulers."
+keywords: minecraft runtime logic, datapack variables, datapack conditions, datapack loops, kore runtime, datapack tick function, execute if unless, minecraft scoreboard variable, datapack programming, kore compile time
 date-created: 2026-06-24
 date-modified: 2026-06-24
 routeOverride: /docs/concepts/runtime-logic

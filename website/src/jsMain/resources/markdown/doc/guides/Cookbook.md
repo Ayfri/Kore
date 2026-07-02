@@ -2,7 +2,7 @@
 root: .components.layouts.MarkdownLayout
 title: Cookbook
 nav-title: Cookbook
-description: Practical Kore recipes for common datapack patterns such as setup functions, custom items, timers, worldgen, and bindings.
+description: "Practical Kore recipes for common datapack patterns: setup functions, custom items, timers, worldgen, raycasts, and bindings. Copy-paste code adapted for real projects."
 keywords: minecraft, datapack, kore, cookbook, recipes, patterns, guide
 date-created: 2026-04-21
 date-modified: 2026-04-21

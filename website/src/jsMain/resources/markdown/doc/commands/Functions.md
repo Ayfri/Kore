@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Functions
+title: Minecraft Datapack Functions - Create MCFunctions with Kore DSL
 nav-title: Functions
-description: A guide for creating functions in a datapack using Kore.
-keywords: minecraft, datapack, kore, guide, functions
+description: Create Minecraft datapack functions with Kore's Kotlin DSL. Build tick.json and load.json tags, organize commands into reusable functions, and generate clean MCFunction output.
+keywords: datapack functions, mcfunction, tick.json datapack, load.json datapack, minecraft function tags, tags/function datapack, kore functions, datapack mcfunction generator, function scheduling, minecraft function creator
 date-created: 2024-04-06
-date-modified: 2026-04-21
+date-modified: 2026-07-02
 routeOverride: /docs/commands/functions
 ---
 
