@@ -1,166 +1,94 @@
 package io.github.ayfri.kore.serializers
 
-import io.github.ayfri.kore.utils.*
+import io.github.ayfri.kore.utils.nbt
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.descriptors.serialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.encodeStructure
 import kotlinx.serialization.json.*
-import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtDecoder
 import net.benwoodworth.knbt.NbtEncoder
-import net.benwoodworth.knbt.NbtTag
-import kotlin.reflect.KClass
-import kotlin.reflect.KProperty1
-import kotlin.reflect.jvm.isAccessible
+import net.benwoodworth.knbt.nbtCompound
 
 /**
  * A serializer that inlines one of the specified properties if it's non-null.
  * If none of the specified properties are present (or if [inline] is false), it serializes as an object.
  *
  * @param T The target class type.
- * @param kClass The class of the object.
- * @param propertiesToInline The properties to check for inlining.
- * @param inline Whether to attempt to inline the first non-null property from [propertiesToInline].
+ * @param delegate The plugin-generated structural serializer for [T] (use `@KeepGeneratedSerializer` + `generatedSerializer()`).
+ * @param propertyNamesToInline The serial names of the properties to check for inlining.
+ * @param inline Whether to attempt to inline the first non-null property from [propertyNamesToInline].
  *
  * Example:
  * ```kotlin
- * data object MyClassSerializer : EitherInlineSerializer<MyClass>(
- *     MyClass::class,
- *     MyClass::p1,
- *     MyClass::p2
- * )
- *
- * @Serializable(with = MyClassSerializer::class)
- * data class MyClass(val p1: String? = null, val p2: Int? = null)
+ * @OptIn(ExperimentalSerializationApi::class)
+ * @KeepGeneratedSerializer
+ * @Serializable(with = MyClass.Companion.MyClassSerializer::class)
+ * data class MyClass(val p1: String? = null, val p2: Int? = null) {
+ *     companion object {
+ *         data object MyClassSerializer : EitherInlineSerializer<MyClass>(generatedSerializer(), "p1", "p2")
+ *     }
+ * }
  * ```
  */
+@OptIn(ExperimentalSerializationApi::class)
 open class EitherInlineSerializer<T : Any>(
-	private val kClass: KClass<T>,
-	private vararg val propertiesToInline: KProperty1<T, *>,
+	private val delegate: KSerializer<T>,
+	private vararg val propertyNamesToInline: String,
 	private val inline: Boolean = true,
 ) : KSerializer<T> {
-	private val properties by lazy { kClass.orderedMemberProperties() }
+	override val descriptor get() = delegate.descriptor
 
-	override val descriptor = buildClassSerialDescriptor("${kClass.simpleName!!}EitherInlineSerializer") {
-		properties.forEach { (_, prop) ->
-			element(prop.getSerialName(), serialDescriptor(prop.returnType), isOptional = true)
-		}
+	private fun jsonKey(json: Json, serialName: String): String {
+		val index = delegate.descriptor.getElementIndex(serialName)
+		return json.configuration.namingStrategy?.serialNameForJson(delegate.descriptor, index, serialName)
+			?: serialName
 	}
 
-	@Suppress("UNCHECKED_CAST")
 	override fun serialize(encoder: Encoder, value: T) {
-		require(kClass.isInstance(value)) { "Value must be instance of ${kClass.simpleName}" }
-
-		if (inline) {
-			for (prop in propertiesToInline) {
-				prop.getter.isAccessible = true
-				val propValue = prop.getter.call(value)
-				if (propValue != null) {
-					val serializer = prop.getSerializer(encoder.serializersModule) as KSerializer<Any>
-					encoder.encodeSerializableValue(serializer, propValue)
+		when (encoder) {
+			is JsonEncoder -> {
+				val obj = encoder.json.encodeToJsonElement(delegate, value).jsonObject
+				if (inline) for (name in propertyNamesToInline) obj[jsonKey(encoder.json, name)]?.let {
+					encoder.encodeJsonElement(it)
 					return
 				}
+				encoder.encodeJsonElement(obj)
 			}
-		}
 
-		when (encoder) {
-			is JsonEncoder -> encoder.encodeJsonElement(buildJsonObject {
-				properties.forEach { (_, property) ->
-					property.getter.isAccessible = true
-					val propertyValue = property.getter.call(value)
-					if (propertyValue != null) {
-						val serialName = property.getSerialName()
-						val serializer = property.getSerializer(encoder.serializersModule) as KSerializer<Any>
-						put(serialName, encoder.json.encodeToJsonElement(serializer, propertyValue))
-					}
+			is NbtEncoder -> {
+				val compound = encoder.nbt.encodeToNbtTag(delegate, value).nbtCompound
+				if (inline) for (name in propertyNamesToInline) compound[name]?.let {
+					encoder.encodeNbtTag(it)
+					return
 				}
-			})
-
-			is NbtEncoder -> encoder.encodeInline(descriptor).encodeSerializableValue(
-				NbtCompound.serializer(),
-				nbt {
-					properties.forEach { (_, property) ->
-						property.getter.isAccessible = true
-						val propertyValue = property.getter.call(value)
-						if (propertyValue != null) {
-							val serialName = property.getSerialName()
-							val serializer = property.getSerializer(encoder.serializersModule) as KSerializer<Any>
-							put(serialName, encoder.nbt.encodeToNbtTag(serializer, propertyValue))
-						}
-					}
-				})
-
-			else -> encoder.encodeStructure(descriptor) {
-				properties.values.forEachIndexed { index, property ->
-					property.getter.isAccessible = true
-					val propertyValue = property.getter.call(value)
-					if (propertyValue != null) {
-						val serializer = property.getSerializer(encoder.serializersModule) as KSerializer<Any>
-						encodeSerializableElement(descriptor, index, serializer, propertyValue)
-					}
-				}
+				encoder.encodeNbtTag(compound)
 			}
+
+			else -> encoder.encodeSerializableValue(delegate, value)
 		}
 	}
 
-	@Suppress("UNCHECKED_CAST")
-	override fun deserialize(decoder: Decoder): T {
-		val element: Any = when (decoder) {
-			is JsonDecoder -> decoder.decodeJsonElement()
-			is NbtDecoder -> decoder.decodeNbtTag()
-			else -> error("Unsupported decoder type: ${decoder::class.simpleName}")
+	override fun deserialize(decoder: Decoder): T = when (decoder) {
+		is JsonDecoder -> {
+			val element = decoder.decodeJsonElement()
+			val inlined = if (inline) propertyNamesToInline.firstNotNullOfOrNull { name ->
+				val wrapped = buildJsonObject { put(jsonKey(decoder.json, name), element) }
+				runCatching { decoder.json.decodeFromJsonElement(delegate, wrapped) }.getOrNull()
+			} else null
+
+			inlined ?: decoder.json.decodeFromJsonElement(delegate, element)
 		}
 
-		if (inline) {
-			for (prop in propertiesToInline) {
-				val serializer = prop.getSerializer(decoder.serializersModule) as KSerializer<Any>
-				val value = runCatching {
-					when (decoder) {
-						is JsonDecoder -> decoder.json.decodeFromJsonElement(serializer, element as JsonElement)
-						is NbtDecoder -> decoder.nbt.decodeFromNbtTag(serializer, element as NbtTag)
-						else -> null
-					}
-				}.getOrNull()
+		is NbtDecoder -> {
+			val tag = decoder.decodeNbtTag()
+			val inlined = if (inline) propertyNamesToInline.firstNotNullOfOrNull { name ->
+				runCatching { decoder.nbt.decodeFromNbtTag(delegate, nbt { put(name, tag) }) }.getOrNull()
+			} else null
 
-				if (value != null) {
-					return kClass.createInstance(mapOf(prop.name to value))
-				}
-			}
+			inlined ?: decoder.nbt.decodeFromNbtTag(delegate, tag)
 		}
 
-		val values = when (decoder) {
-			is JsonDecoder -> {
-				val jsonObject = element as? JsonObject ?: error("Expected JsonObject for $kClass but got $element")
-				properties.mapValues { (_, prop) ->
-					val serialName = prop.getSerialName()
-					jsonObject[serialName]?.let {
-						decoder.json.decodeFromJsonElement(
-							prop.getSerializer(decoder.serializersModule) as KSerializer<Any>,
-							it
-						)
-					}
-				}
-			}
-
-			is NbtDecoder -> {
-				val nbtCompound = element as? NbtCompound ?: error("Expected NbtCompound for $kClass but got $element")
-				properties.mapValues { (_, prop) ->
-					val serialName = prop.getSerialName()
-					nbtCompound[serialName]?.let {
-						decoder.nbt.decodeFromNbtTag(
-							prop.getSerializer(decoder.serializersModule) as KSerializer<Any>,
-							it
-						)
-					}
-				}
-			}
-
-			else -> error("Unsupported decoder type: ${decoder::class.simpleName}")
-		}
-
-		return kClass.createInstance(values)
+		else -> decoder.decodeSerializableValue(delegate)
 	}
 }

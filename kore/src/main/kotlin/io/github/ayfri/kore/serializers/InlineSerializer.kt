@@ -1,11 +1,8 @@
 package io.github.ayfri.kore.serializers
 
-import io.github.ayfri.kore.utils.createInstance
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlin.reflect.KClass
-import kotlin.reflect.KProperty1
 
 /**
  * A serializer that serializes a property of a class.
@@ -13,12 +10,15 @@ import kotlin.reflect.KProperty1
  * @param T The class that contains the property.
  * @param P The type of the property.
  * @param kSerializer The serializer of the property.
+ * @param property Getter for the property.
+ * @param factory Function building [T] from the property value.
  *
  * Example:
  * ```kotlin
  * data object MyDataClassSerializer : InlineSerializer<MyDataClass, Int>(
  *     kSerializer = Int.serializer(),
- *     property = MyDataClass::myProperty
+ *     property = MyDataClass::myProperty,
+ *     factory = ::MyDataClass,
  * )
  *
  * @Serializable(with = MyDataClassSerializer::class)
@@ -27,16 +27,14 @@ import kotlin.reflect.KProperty1
  */
 open class InlineSerializer<T, P>(
 	private val kSerializer: KSerializer<in P>,
-	private val property: KProperty1<T, P>,
+	private val property: (T) -> P,
+	private val factory: (P) -> T,
 ) : KSerializer<T> {
 	override val descriptor = kSerializer.descriptor
 
 	@Suppress("UNCHECKED_CAST")
-	override fun deserialize(decoder: Decoder): T {
-		val value = decoder.decodeSerializableValue(kSerializer as KSerializer<P>)
-		val ownerClass = property.parameters[0].type.classifier as KClass<Any>
-		return ownerClass.createInstance(mapOf(property.name to value)) as T
-	}
+	override fun deserialize(decoder: Decoder): T =
+		factory(decoder.decodeSerializableValue(kSerializer as KSerializer<P>))
 
-	override fun serialize(encoder: Encoder, value: T) = encoder.encodeSerializableValue(kSerializer, property.get(value))
+	override fun serialize(encoder: Encoder, value: T) = encoder.encodeSerializableValue(kSerializer, property(value))
 }

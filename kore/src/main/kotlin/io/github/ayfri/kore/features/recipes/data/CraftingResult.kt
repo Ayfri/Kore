@@ -4,8 +4,12 @@ import io.github.ayfri.kore.arguments.components.ComponentsPatch
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 
+@OptIn(ExperimentalSerializationApi::class)
+@KeepGeneratedSerializer
 @Serializable(with = CraftingResult.Companion.CraftingTransmuteResultSerializer::class)
 data class CraftingResult(
 	var id: String,
@@ -15,10 +19,8 @@ data class CraftingResult(
 	fun toItemStack() = ItemStack(id, count, components?.toComponents())
 
 	companion object {
-		data object CraftingTransmuteResultSerializer : SinglePropertySimplifierSerializer<CraftingResult, String>(
-			kClass = CraftingResult::class,
-			property = CraftingResult::id
-		)
+		data object CraftingTransmuteResultSerializer :
+			SinglePropertySimplifierSerializer<CraftingResult>(generatedSerializer(), "id")
 	}
 }
 

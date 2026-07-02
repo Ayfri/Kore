@@ -1,8 +1,12 @@
 package io.github.ayfri.kore.generation.quilt
 
 import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 
+@OptIn(ExperimentalSerializationApi::class)
+@KeepGeneratedSerializer
 @Serializable(with = QuiltDependency.Companion.QuiltDependencySerializer::class)
 data class QuiltDependency(
 	var id: String,
@@ -12,9 +16,7 @@ data class QuiltDependency(
 	var unless: QuiltDependency? = null,
 ) {
 	companion object {
-		data object QuiltDependencySerializer : SinglePropertySimplifierSerializer<QuiltDependency, String>(
-			kClass = QuiltDependency::class,
-			property = QuiltDependency::id,
-		)
+		data object QuiltDependencySerializer :
+			SinglePropertySimplifierSerializer<QuiltDependency>(generatedSerializer(), "id")
 	}
 }

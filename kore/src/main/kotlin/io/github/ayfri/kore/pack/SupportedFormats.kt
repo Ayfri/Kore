@@ -1,6 +1,8 @@
 package io.github.ayfri.kore.pack
 
 import io.github.ayfri.kore.serializers.EitherInlineSerializer
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -30,6 +32,8 @@ import kotlinx.serialization.Serializable
  *   Must be used together with [minInclusive]. Serialized as the `max_inclusive` object field.
  *   Mutually exclusive with [number] and [list].
  */
+@OptIn(ExperimentalSerializationApi::class)
+@KeepGeneratedSerializer
 @Serializable(with = SupportedFormats.Companion.SupportedFormatsSerializer::class)
 data class SupportedFormats(
 	var number: Int? = null,
@@ -71,10 +75,7 @@ data class SupportedFormats(
 	}
 
 	companion object {
-		data object SupportedFormatsSerializer : EitherInlineSerializer<SupportedFormats>(
-			SupportedFormats::class,
-			SupportedFormats::number,
-			SupportedFormats::list
-		)
+		data object SupportedFormatsSerializer :
+			EitherInlineSerializer<SupportedFormats>(generatedSerializer(), "number", "list")
 	}
 }

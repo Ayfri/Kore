@@ -1,19 +1,20 @@
 package io.github.ayfri.kore.features.predicates.providers
 
 import io.github.ayfri.kore.serializers.EitherInlineSerializer
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 
+@OptIn(ExperimentalSerializationApi::class)
+@KeepGeneratedSerializer
 @Serializable(with = IntOrNumberProvidersRange.Companion.IntOrNumberProviderRangeSerializer::class)
 data class IntOrNumberProvidersRange(
 	var value: Int? = null,
 	var range: Uniform? = null,
 ) {
 	companion object {
-		data object IntOrNumberProviderRangeSerializer : EitherInlineSerializer<IntOrNumberProvidersRange>(
-			IntOrNumberProvidersRange::class,
-			IntOrNumberProvidersRange::value,
-			IntOrNumberProvidersRange::range,
-		)
+		data object IntOrNumberProviderRangeSerializer :
+			EitherInlineSerializer<IntOrNumberProvidersRange>(generatedSerializer(), "value", "range")
 	}
 }
 

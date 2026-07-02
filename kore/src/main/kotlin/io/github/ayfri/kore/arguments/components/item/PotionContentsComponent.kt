@@ -7,6 +7,8 @@ import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.MobEffectArgument
 import io.github.ayfri.kore.generated.arguments.types.PotionArgument
 import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -29,6 +31,8 @@ data class Effect(
  * Docs: https://kore.ayfri.com/docs/concepts/components
  * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#potion_contents
  */
+@OptIn(ExperimentalSerializationApi::class)
+@KeepGeneratedSerializer
 @Serializable(with = PotionContentsComponent.Companion.PotionContentsComponentSerializer::class)
 data class PotionContentsComponent(
 	var potion: PotionArgument,
@@ -41,10 +45,8 @@ data class PotionContentsComponent(
 	var customName: String? = null,
 ) : Component() {
 	companion object {
-		data object PotionContentsComponentSerializer : SinglePropertySimplifierSerializer<PotionContentsComponent, PotionArgument>(
-			PotionContentsComponent::class,
-			PotionContentsComponent::potion,
-		)
+		data object PotionContentsComponentSerializer :
+			SinglePropertySimplifierSerializer<PotionContentsComponent>(generatedSerializer(), "potion")
 	}
 }
 

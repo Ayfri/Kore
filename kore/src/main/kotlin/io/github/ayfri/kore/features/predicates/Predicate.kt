@@ -36,11 +36,13 @@ data class Predicate(
 		data object PredicateSerializer : InlineSerializer<Predicate, InlinableList<PredicateCondition>>(
 			inlinableListSerializer(PredicateCondition.serializer()),
 			Predicate::predicateConditions,
+			{ Predicate(predicateConditions = it) },
 		)
 
 		data object PredicateAsListSerializer : InlineSerializer<Predicate, InlinableList<PredicateCondition>>(
 			ListSerializer(PredicateCondition.serializer()),
 			Predicate::predicateConditions,
+			{ Predicate(predicateConditions = it) },
 		)
 	}
 }

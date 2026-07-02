@@ -5,6 +5,8 @@ import io.github.ayfri.kore.features.predicates.PredicateAsList
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.sub.Entity
 import io.github.ayfri.kore.serializers.EitherInlineSerializer
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 
 /**
@@ -12,6 +14,8 @@ import kotlinx.serialization.Serializable
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/advancements
  */
+@OptIn(ExperimentalSerializationApi::class)
+@KeepGeneratedSerializer
 @Serializable(with = EntityOrPredicates.Companion.EntityOrPredicatesSerializer::class)
 data class EntityOrPredicates(
 	var legacyEntity: Entity? = null,
@@ -19,11 +23,8 @@ data class EntityOrPredicates(
 	var predicateConditions: PredicateAsList = Predicate(),
 ) {
 	companion object {
-		data object EntityOrPredicatesSerializer : EitherInlineSerializer<EntityOrPredicates>(
-			EntityOrPredicates::class,
-			EntityOrPredicates::legacyEntity,
-			EntityOrPredicates::predicateConditions,
-		)
+		data object EntityOrPredicatesSerializer :
+			EitherInlineSerializer<EntityOrPredicates>(generatedSerializer(), "legacyEntity", "predicateConditions")
 	}
 }
 

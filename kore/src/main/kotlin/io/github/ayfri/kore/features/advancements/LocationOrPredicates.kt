@@ -4,6 +4,8 @@ import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.sub.Location
 import io.github.ayfri.kore.serializers.EitherInlineSerializer
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 
 /**
@@ -11,17 +13,16 @@ import kotlinx.serialization.Serializable
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/advancements
  */
+@OptIn(ExperimentalSerializationApi::class)
+@KeepGeneratedSerializer
 @Serializable(with = LocationOrPredicates.Companion.LocationOrPredicatesSerializer::class)
 data class LocationOrPredicates(
 	var legacyLocation: Location? = null,
 	var predicateConditions: List<PredicateCondition>? = null,
 ) {
 	companion object {
-		data object LocationOrPredicatesSerializer : EitherInlineSerializer<LocationOrPredicates>(
-			LocationOrPredicates::class,
-			LocationOrPredicates::legacyLocation,
-			LocationOrPredicates::predicateConditions,
-		)
+		data object LocationOrPredicatesSerializer :
+			EitherInlineSerializer<LocationOrPredicates>(generatedSerializer(), "legacyLocation", "predicateConditions")
 	}
 }
 

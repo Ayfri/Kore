@@ -42,7 +42,8 @@ data class ItemModifier(
     companion object {
 	    data object ItemModifierAsListSerializer : InlineSerializer<ItemModifier, InlinableList<ItemFunction>>(
 		    ListSerializer(ItemFunction.serializer()),
-		    ItemModifier::modifiers
+		    ItemModifier::modifiers,
+		    { ItemModifier(modifiers = it) },
 	    )
 	}
 }

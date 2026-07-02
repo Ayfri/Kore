@@ -16,10 +16,8 @@ import kotlinx.serialization.serializer
 import kotlin.enums.EnumEntries
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KClass
-import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.KProperty1
-import kotlin.reflect.full.*
-import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.full.createType
+import kotlin.reflect.full.findAnnotation
 
 /**
  * Base serializer for enums that serialize to/from a transformed string representation.
@@ -41,24 +39,9 @@ open class EnumStringSerializer<T : Enum<T>>(
 
 internal inline fun <reified T : @Serializable Any> T.asArg() = Json.encodeToJsonElement(this@asArg).jsonPrimitive.content
 
-fun KAnnotatedElement.getSerialName(): String? =
-	findAnnotation<SerialName>()?.value ?: findAnnotation<JsonSerialName>()?.name
-
-fun KProperty1<*, *>.getSerialName() = (this as KAnnotatedElement).getSerialName() ?: name
+fun KAnnotatedElement.getSerialName() = findAnnotation<SerialName>()?.value ?: findAnnotation<JsonSerialName>()?.name
 
 fun KClass<*>.getSerialName() = (this as KAnnotatedElement).getSerialName() ?: simpleName ?: ""
-
-@Suppress("UNCHECKED_CAST")
-fun KAnnotatedElement.getSpecifiedSerializer(): KSerializer<Any?>? {
-	val serializable = findAnnotation<Serializable>() ?: return null
-	val serializerClass = serializable.with
-	if (serializerClass == KSerializer::class) return null
-	return (serializerClass.objectInstance ?: serializerClass.createInstance()) as KSerializer<Any?>
-}
-
-@Suppress("UNCHECKED_CAST")
-fun KProperty1<*, *>.getSerializer(serializersModule: SerializersModule) =
-	getSpecifiedSerializer() ?: serializersModule.serializer(returnType)
 
 /**
  * Resolves the runtime serializer for [value]'s concrete class.
@@ -69,35 +52,3 @@ fun KProperty1<*, *>.getSerializer(serializersModule: SerializersModule) =
  */
 @Suppress("UNCHECKED_CAST")
 fun <T : Any> SerializersModule.serializerFor(value: T) = serializer(value::class.createType()) as KSerializer<T>
-
-fun <T : Any> KClass<T>.orderedMemberProperties(): Map<String, KProperty1<T, *>> {
-	val propertiesOrder = java.declaredFields.withIndex().associate { it.value.name to it.index }
-	return memberProperties.associateBy { it.name }.toSortedMap(compareBy { propertiesOrder[it] })
-}
-
-@Suppress("UNCHECKED_CAST")
-fun <T : Any> KClass<T>.createInstance(values: Map<String, Any?>): T {
-	val constructor = primaryConstructor ?: constructors.first()
-	constructor.isAccessible = true
-	val params = constructor.parameters.mapNotNull { param ->
-		if (values.containsKey(param.name)) {
-			param to values[param.name]
-		} else if (param.isOptional) {
-			null
-		} else {
-			param to null
-		}
-	}.toMap()
-
-	val instance = constructor.callBy(params)
-
-	values.forEach { (name, value) ->
-		val property = memberProperties.find { it.name == name }
-		if (property is KMutableProperty1<*, *> && constructor.parameters.none { it.name == name }) {
-			property.isAccessible = true
-			(property as KMutableProperty1<Any, Any?>).set(instance, value)
-		}
-	}
-
-	return instance
-}

@@ -6,6 +6,8 @@ import io.github.ayfri.kore.assertions.assertsIsNbt
 import io.github.ayfri.kore.serializers.EitherInlineSerializer
 import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
 import io.kotest.core.spec.style.FunSpec
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import net.benwoodworth.knbt.ExperimentalNbtApi
@@ -31,13 +33,15 @@ fun serializersTests() {
 	eitherInlineSerializerInlined()
 }
 
+@OptIn(ExperimentalSerializationApi::class)
+@KeepGeneratedSerializer
 @Serializable(with = Data.Companion.DataSerializer::class)
 private class Data(
 	val name: String,
 	val optional: String? = null,
 ) {
 	companion object {
-		data object DataSerializer : SinglePropertySimplifierSerializer<Data, String>(Data::class, Data::name)
+		data object DataSerializer : SinglePropertySimplifierSerializer<Data>(generatedSerializer(), "name")
 	}
 }
 
@@ -102,18 +106,16 @@ fun singlePropertySimplifierSerializer() {
 	decodedFullSnbt.optional.orEmpty() assertsIs "optional"
 }
 
+@OptIn(ExperimentalSerializationApi::class)
+@KeepGeneratedSerializer
 @Serializable(with = EitherData.Companion.EitherDataSerializer::class)
 private class EitherData(
 	val p1: String? = null,
 	val p2: Int? = null,
 ) {
 	companion object {
-		data object EitherDataSerializer : EitherInlineSerializer<EitherData>(
-			EitherData::class,
-			EitherData::p1,
-			EitherData::p2,
-			inline = false
-		)
+		data object EitherDataSerializer :
+			EitherInlineSerializer<EitherData>(generatedSerializer(), "p1", "p2", inline = false)
 	}
 }
 
@@ -166,17 +168,16 @@ fun eitherInlineSerializer() {
 	(decoded2Snbt.p2 ?: 0) assertsIs 42
 }
 
+@OptIn(ExperimentalSerializationApi::class)
+@KeepGeneratedSerializer
 @Serializable(with = InlineEitherData.Companion.InlineEitherDataSerializer::class)
 private class InlineEitherData(
 	val p1: String? = null,
 	val p2: Int? = null,
 ) {
 	companion object {
-		data object InlineEitherDataSerializer : EitherInlineSerializer<InlineEitherData>(
-			InlineEitherData::class,
-			InlineEitherData::p1,
-			InlineEitherData::p2
-		)
+		data object InlineEitherDataSerializer :
+			EitherInlineSerializer<InlineEitherData>(generatedSerializer(), "p1", "p2")
 	}
 }
 

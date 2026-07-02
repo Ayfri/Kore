@@ -18,7 +18,8 @@ data class AdvancementCriteria(var criteria: AdvancementCriteriaMap = mutableMap
 	companion object {
 		data object AdvancementCriteriaSerializer : InlineSerializer<AdvancementCriteria, Map<String, AdvancementTriggerCondition>>(
 			MapSerializer(String.serializer(), AdvancementTriggerCondition.serializer()),
-			AdvancementCriteria::criteria
+			AdvancementCriteria::criteria,
+			{ AdvancementCriteria(it.toMutableMap()) },
 		)
 	}
 }

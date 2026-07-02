@@ -1,40 +1,34 @@
 package io.github.ayfri.kore.serializers
 
-import io.github.ayfri.kore.utils.*
+import io.github.ayfri.kore.utils.nbt
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.descriptors.serialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.JsonDecoder
-import kotlinx.serialization.json.JsonEncoder
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.*
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtDecoder
 import net.benwoodworth.knbt.NbtEncoder
-import kotlin.reflect.KClass
-import kotlin.reflect.KProperty1
-import kotlin.reflect.jvm.isAccessible
+import net.benwoodworth.knbt.nbtCompound
 
 /**
- * A serializer that serializes to a JSON object with only one property if all other properties are null.
+ * A serializer that serializes to only one property's value if all other properties are null.
  *
- * @param T The class that contains the property.
- * @param P The type of the property.
- * @param kClass The class of the object.
- * @param property The property to serialize.
+ * @param T The target class type.
+ * @param delegate The plugin-generated structural serializer for [T] (use `@KeepGeneratedSerializer` + `generatedSerializer()`).
+ * @param propertyName The serial name of the property to simplify to.
  *
  * Example:
  * ```kotlin
- * data object MyDataClassSerializer : SinglePropertySimplifierSerializer<MyDataClass, Int>(
- *     kClass = MyDataClass::class,
- *     property = MyDataClass::myProperty
- * )
- *
- * @Serializable(with = MyDataClassSerializer::class)
- * data class MyDataClass(var myProperty: Int = 0, var myOtherProperty: Int? = null)
- *
+ * @OptIn(ExperimentalSerializationApi::class)
+ * @KeepGeneratedSerializer
+ * @Serializable(with = MyDataClass.Companion.MyDataClassSerializer::class)
+ * data class MyDataClass(var myProperty: Int = 0, var myOtherProperty: Int? = null) {
+ *     companion object {
+ *         data object MyDataClassSerializer :
+ *             SinglePropertySimplifierSerializer<MyDataClass>(generatedSerializer(), "myProperty")
+ *     }
+ * }
  * ```
  * If myOtherProperty is null, the JSON will be:
  * ```json
@@ -48,123 +42,53 @@ import kotlin.reflect.jvm.isAccessible
  * }
  * ```
  */
-open class SinglePropertySimplifierSerializer<T : Any, P : Any>(
-	private val kClass: KClass<T>,
-	private val property: KProperty1<T, P>,
+@OptIn(ExperimentalSerializationApi::class)
+open class SinglePropertySimplifierSerializer<T : Any>(
+	private val delegate: KSerializer<T>,
+	private val propertyName: String,
 ) : KSerializer<T> {
-	override val descriptor by lazy {
-		buildClassSerialDescriptor("${kClass.simpleName!!}SimplifiableSerializer") {
-			element(property.name, serialDescriptor(property.returnType))
+	override val descriptor get() = delegate.descriptor
+
+	private fun jsonKey(json: Json): String {
+		val index = delegate.descriptor.getElementIndex(propertyName)
+		return json.configuration.namingStrategy?.serialNameForJson(delegate.descriptor, index, propertyName)
+			?: propertyName
+	}
+
+	override fun serialize(encoder: Encoder, value: T) = when (encoder) {
+		is JsonEncoder -> {
+			val obj = encoder.json.encodeToJsonElement(delegate, value).jsonObject
+			val key = jsonKey(encoder.json)
+			if (key in obj && obj.keys.all { it == key }) encoder.encodeJsonElement(obj.getValue(key))
+			else encoder.encodeJsonElement(obj)
 		}
-	}
 
-	private val properties by lazy { kClass.orderedMemberProperties() }
-
-	@Suppress("UNCHECKED_CAST")
-	override fun serialize(encoder: Encoder, value: T) {
-		require(kClass.isInstance(value) && value::class == kClass) { "Value must be instance of ${kClass.simpleName}" }
-		val propertySerializer = property.getSerializer(encoder.serializersModule) as KSerializer<P>
-
-		val propertyValue = properties[property.name]
-		val otherProperties = properties.filterKeys { it != property.name }
-		if (otherProperties.all {
-				it.value.getter.isAccessible = true
-				it.value.getter.call(value) == null
-			} && propertyValue != null
-		) {
-			propertyValue.getter.isAccessible = true
-			encoder.encodeSerializableValue(propertySerializer, propertyValue.getter.call(value) as P)
-		} else
-		// the default serializer is the current class, so we can't use it to encode the value, we have to create an object by hand
-			when (encoder) {
-				is JsonEncoder -> encoder.encodeJsonElement(buildJsonObject {
-					properties.forEach { (name, property) ->
-						property.getter.isAccessible = true
-						val propertyValue = property.getter.call(value)
-						if (propertyValue != null) {
-							val serialName = property.getSerialName()
-							put(
-								serialName,
-								if (name == this@SinglePropertySimplifierSerializer.property.name)
-									encoder.json.encodeToJsonElement(propertySerializer, propertyValue as P)
-								else
-									encoder.json.encodeToJsonElement(
-										property.getSerializer(encoder.serializersModule) as KSerializer<Any>,
-										propertyValue
-									)
-							)
-						}
-					}
-				})
-
-				is NbtEncoder -> encoder.encodeInline(descriptor)
-					.encodeSerializableValue(NbtCompound.serializer(), nbt {
-					properties.forEach { (name, property) ->
-						property.getter.isAccessible = true
-						val propertyValue = property.getter.call(value)
-						if (propertyValue != null) {
-							val serialName = property.getSerialName()
-							put(
-								serialName,
-								if (name == this@SinglePropertySimplifierSerializer.property.name)
-									encoder.nbt.encodeToNbtTag(propertySerializer, propertyValue as P)
-								else
-									encoder.nbt.encodeToNbtTag(
-										property.getSerializer(encoder.nbt.serializersModule) as KSerializer<Any>,
-										propertyValue
-									)
-							)
-						}
-					}
-				})
-
-				else -> error("Unsupported encoder type: ${encoder::class.simpleName}")
-			}
-	}
-
-	@Suppress("UNCHECKED_CAST")
-	override fun deserialize(decoder: Decoder): T {
-		val propertySerializer = property.getSerializer(decoder.serializersModule) as KSerializer<P>
-
-		return when (decoder) {
-			is JsonDecoder -> {
-				val element = decoder.decodeJsonElement()
-				if (element !is JsonObject) {
-					val value = decoder.json.decodeFromJsonElement(propertySerializer, element)
-					createInstance(mapOf(property.name to value))
-				} else {
-					val values = properties.mapValues { (_, prop) ->
-						val serialName = prop.getSerialName()
-						element[serialName]?.let {
-							val serializer = prop.getSerializer(decoder.serializersModule)
-							decoder.json.decodeFromJsonElement(serializer, it)
-						}
-					}
-					createInstance(values)
-				}
-			}
-
-			is NbtDecoder -> {
-				val tag = decoder.decodeNbtTag()
-				if (tag !is NbtCompound) {
-					val value = decoder.nbt.decodeFromNbtTag(propertySerializer, tag)
-					createInstance(mapOf(property.name to value))
-				} else {
-					val values = properties.mapValues { (_, prop) ->
-						val serialName = prop.getSerialName()
-						tag[serialName]?.let {
-							val serializer = prop.getSerializer(decoder.serializersModule)
-							decoder.nbt.decodeFromNbtTag(serializer, it)
-						}
-					}
-					createInstance(values)
-				}
-			}
-
-			else -> error("Unsupported decoder type: ${decoder::class.simpleName}")
+		is NbtEncoder -> {
+			val compound = encoder.nbt.encodeToNbtTag(delegate, value).nbtCompound
+			if (propertyName in compound && compound.keys.all { it == propertyName }) encoder.encodeNbtTag(
+				compound.getValue(
+					propertyName
+				)
+			)
+			else encoder.encodeNbtTag(compound)
 		}
+
+		else -> encoder.encodeSerializableValue(delegate, value)
 	}
 
-	@Suppress("UNCHECKED_CAST")
-	private fun createInstance(values: Map<String, Any?>): T = kClass.createInstance(values)
+	override fun deserialize(decoder: Decoder): T = when (decoder) {
+		is JsonDecoder -> {
+			val element = decoder.decodeJsonElement()
+			val obj = element as? JsonObject ?: buildJsonObject { put(jsonKey(decoder.json), element) }
+			decoder.json.decodeFromJsonElement(delegate, obj)
+		}
+
+		is NbtDecoder -> {
+			val tag = decoder.decodeNbtTag()
+			val compound = tag as? NbtCompound ?: nbt { put(propertyName, tag) }
+			decoder.nbt.decodeFromNbtTag(delegate, compound)
+		}
+
+		else -> decoder.decodeSerializableValue(delegate)
+	}
 }

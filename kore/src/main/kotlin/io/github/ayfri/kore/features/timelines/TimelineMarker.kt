@@ -1,6 +1,8 @@
 package io.github.ayfri.kore.features.timelines
 
 import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -16,15 +18,15 @@ import kotlinx.serialization.Serializable
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Timeline
  */
+@OptIn(ExperimentalSerializationApi::class)
+@KeepGeneratedSerializer
 @Serializable(with = TimelineMarker.Companion.TimelineMarkerSerializer::class)
 data class TimelineMarker(
 	@SerialName("show_in_commands") var showInCommands: Boolean? = null,
 	var ticks: Int,
 ) {
 	companion object {
-		data object TimelineMarkerSerializer : SinglePropertySimplifierSerializer<TimelineMarker, Int>(
-			TimelineMarker::class,
-			TimelineMarker::ticks,
-		)
+		data object TimelineMarkerSerializer :
+			SinglePropertySimplifierSerializer<TimelineMarker>(generatedSerializer(), "ticks")
 	}
 }
