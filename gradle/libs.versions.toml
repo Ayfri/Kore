@@ -7,6 +7,7 @@ kotest = "6.2.1"
 kotlin = "2.4.0"
 kotlin-dotenv = "6.5.1"
 kotlinpoet = "2.3.0"
+ksp = "2.3.9"
 kotlinx-serialization = "1.11.0"
 kotlinx-io = "0.9.1"
 ktoml = "0.7.1"
@@ -30,6 +31,7 @@ kotlin-dotenv = { module = "io.github.cdimascio:dotenv-kotlin", version.ref = "k
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-io = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinx-io"}
+ksp-symbol-processing-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 ktoml = { module = "com.akuleshov7:ktoml-core", version.ref = "ktoml" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
@@ -40,3 +42,4 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 [plugins]
 kobweb-application = { id = "com.varabyte.kobweb.application", version.ref = "kobweb" }
 kobwebx-markdown = { id = "com.varabyte.kobwebx.markdown", version.ref = "kobweb" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

@@ -1,6 +1,7 @@
 plugins {
 	kotlin("jvm")
 	kotlin("plugin.serialization")
+	alias(libs.plugins.ksp)
 	id("kotest-conventions")
 	id("publish-conventions")
 }
@@ -15,6 +16,8 @@ repositories {
 }
 
 dependencies {
+	ksp(project(":kore-ksp"))
+
 	implementation(libs.kotlinx.io)
 	implementation(libs.kotlinx.serialization)
 	implementation(libs.ktoml)
