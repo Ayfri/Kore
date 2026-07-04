@@ -9,6 +9,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.findPolymorphicSerializer
 import kotlinx.serialization.json.*
 import kotlinx.serialization.modules.EmptySerializersModule
 

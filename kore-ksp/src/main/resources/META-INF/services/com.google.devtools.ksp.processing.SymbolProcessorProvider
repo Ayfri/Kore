@@ -1,1 +1,2 @@
 io.github.ayfri.kore.ksp.SealedSerializerProcessorProvider
+io.github.ayfri.kore.ksp.SerializerMapProcessorProvider

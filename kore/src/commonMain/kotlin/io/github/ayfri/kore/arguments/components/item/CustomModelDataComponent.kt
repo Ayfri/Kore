@@ -40,5 +40,5 @@ fun ComponentsScope.customModelData(
 }
 
 /** Provides builder for custom item model selection in resource packs. */
-fun ComponentsScope.customModelData(init: CustomModelDataComponent.() -> Unit = {}) =
+fun ComponentsScope.customModelData(init: CustomModelDataComponent.() -> Unit = {}): ComponentsScope =
 	customModelData(init = init)
