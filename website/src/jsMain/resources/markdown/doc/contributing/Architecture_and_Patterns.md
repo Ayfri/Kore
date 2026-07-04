@@ -5,7 +5,7 @@ nav-title: "Architecture and Patterns"
 description: Detailed internal architecture, project layout, module responsibilities, and recurring implementation patterns for Kore contributors.
 keywords: architecture, bindings, commands, generator, kore, patterns, serializers, website
 date-created: 2026-04-10
-date-modified: 2026-04-15
+date-modified: 2026-07-04
 routeOverride: /docs/contributing/architecture-and-patterns
 ---
 
@@ -156,6 +156,14 @@ Decision rule:
 1. Check whether an existing serializer already matches the target JSON shape.
 2. If not, see whether the model can be expressed with an existing pattern.
 3. Only then add a new serializer, with focused tests.
+
+New sealed hierarchies serialized with `NamespacedPolymorphicSerializer` (a `type`-discriminated Minecraft polymorphic
+shape) must not enumerate subtypes by hand or via reflection.
+Annotate the sealed base with `@GeneratedSealedSerializer`; the `kore-ksp` module's `SealedSerializerProcessor`
+generates a reflection-free `fooSealedSerializer()` factory at compile time, which the family's serializer object passes
+to `NamespacedPolymorphicSerializer`'s constructor.
+See `SlotSource.kt` for the exact shape, and `CLAUDE.md` / `multiplatform.md` for the collision pitfalls (distinct
+`serialName`s required when subtypes share a descriptor, e.g. two `InlineAutoSerializer<_, List<X>>` wrappers).
 
 ## Fast heuristics when you are unsure where a change belongs
 
