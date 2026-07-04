@@ -177,7 +177,7 @@ suspend fun launchArgumentTypeGenerators(): List<TagArgumentInfo> {
 	return tagArguments
 }
 
-/** Emits `kore/src/main/generated/TagArgumentFactories.kt` mapping every `*TagArgument` KClass to its factory lambda. */
+/** Emits `kore/src/commonMain/kotlin/io/github/ayfri/kore/generated/TagArgumentFactories.kt` mapping every `*TagArgument` KClass to its factory lambda. */
 fun generateTagArgumentFactories(tagArguments: List<TagArgumentInfo>) {
 	val generatedNames = tagArguments.map { it.simpleName }.toSet()
 	val allNames = (generatedNames + listOf(

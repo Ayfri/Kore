@@ -2,7 +2,7 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.TypeSpec
 import java.io.File
 
-/** Writes one Kotlin file under `kore/src/main/generated`. Every generator in this module funnels through here. */
+/** Writes one Kotlin file under `kore/src/commonMain/kotlin/io/github/ayfri/kore/generated`. Every generator in this module funnels through here. */
 fun generateFile(
 	name: String,
 	sourceUrl: String? = null,
