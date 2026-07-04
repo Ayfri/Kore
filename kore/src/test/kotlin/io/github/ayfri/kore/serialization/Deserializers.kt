@@ -24,12 +24,14 @@ import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.StructureSets
 import io.github.ayfri.kore.generated.arguments.types.AdvancementArgument
+import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import io.github.ayfri.kore.serializers.TripleAsArraySerializer
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import io.kotest.core.spec.style.FunSpec
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
@@ -123,20 +125,22 @@ private inline fun <reified T> Any.assertsIsA(): T {
 
 // region NamespacedPolymorphicSerializer
 
+@GeneratedSealedSerializer
 @Serializable(with = Animal.Companion.AnimalSerializer::class)
-private sealed class Animal {
+internal sealed class Animal {
 	companion object {
-		data object AnimalSerializer : NamespacedPolymorphicSerializer<Animal>(Animal::class)
+		@OptIn(InternalSerializationApi::class)
+		data object AnimalSerializer : NamespacedPolymorphicSerializer<Animal>(animalSealedSerializer())
 	}
 }
 
 @Serializable
 @SerialName("cat")
-private data class Cat(val lives: Int = 9) : Animal()
+internal data class Cat(val lives: Int = 9) : Animal()
 
 @Serializable
 @SerialName("dog")
-private data class Dog(val tricks: Int = 0) : Animal()
+internal data class Dog(val tricks: Int = 0) : Animal()
 
 fun namespacedPolymorphicDeserializer() {
 	// JSON deserialization
@@ -172,20 +176,23 @@ fun namespacedPolymorphicDeserializer() {
 
 // region NamespacedPolymorphicSerializer with moveIntoProperty
 
+@GeneratedSealedSerializer
 @Serializable(with = Shape.Companion.ShapeSerializer::class)
-private sealed class Shape {
+internal sealed class Shape {
 	companion object {
-		data object ShapeSerializer : NamespacedPolymorphicSerializer<Shape>(Shape::class, moveIntoProperty = "value")
+		@OptIn(InternalSerializationApi::class)
+		data object ShapeSerializer :
+			NamespacedPolymorphicSerializer<Shape>(shapeSealedSerializer(), moveIntoProperty = "value")
 	}
 }
 
 @Serializable
 @SerialName("circle")
-private data class Circle(val radius: Int = 1) : Shape()
+internal data class Circle(val radius: Int = 1) : Shape()
 
 @Serializable
 @SerialName("square")
-private data class Square(val side: Int = 1) : Shape()
+internal data class Square(val side: Int = 1) : Shape()
 
 fun namespacedPolymorphicDeserializerWithMoveIntoProperty() {
 	// JSON deserialization with moveIntoProperty

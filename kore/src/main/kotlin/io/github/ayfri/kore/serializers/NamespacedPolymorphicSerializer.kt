@@ -1,10 +1,13 @@
 package io.github.ayfri.kore.serializers
 
-import io.github.ayfri.kore.utils.*
+import io.github.ayfri.kore.utils.copyAllFrom
+import io.github.ayfri.kore.utils.nbt
+import io.github.ayfri.kore.utils.snakeCase
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PolymorphicKind
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.serialDescriptor
+import kotlinx.serialization.encoding.AbstractEncoder
 import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
@@ -13,99 +16,49 @@ import kotlinx.serialization.json.*
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.*
-import kotlin.reflect.KClass
-import kotlin.reflect.full.createType
-import kotlin.reflect.full.hasAnnotation
 
 internal fun defaultContentName(serialName: String) = serialName.substringAfterLast('.').snakeCase()
 
 /**
  * Serializes a sealed hierarchy as Minecraft's `{ "type": "<namespace:name>", ...fields }` shape, resolving every case
- * automatically - no case list to maintain. Non-object cases (a subtype that serializes to a bare array or primitive)
- * are emitted as-is, which is why this exists instead of kotlinx's built-in polymorphism.
+ * automatically, reflection-free - no case list to maintain. Non-object cases (a subtype that serializes to a bare
+ * array or primitive) are emitted as-is, which is why this exists instead of kotlinx's built-in polymorphism.
  *
- * Two ways to construct it:
- *
- * - **Preferred, reflection-free** - pass the plugin-generated sealed serializer. Only works when the base sealed class
- *   is a plain `@Serializable` (not `@Serializable(with = ...)`), so `serializer()` yields the [SealedClassSerializer]
- *   rather than this custom one. Use it when the base type is never auto-serialized as a nested property (it is always
- *   routed through this serializer explicitly), e.g. `ComponentMatcher`:
- *   ```kotlin
- *   @Serializable
- *   sealed class Foo {
- *       companion object {
- *           data object FooSerializer : NamespacedPolymorphicSerializer<Foo>(serializer())
- *       }
- *   }
- *   ```
- * - **Legacy, reflection-based** - pass `Foo::class`. Needed when the base is `@Serializable(with = FooSerializer)`
- *   (so nested `Foo` properties pick this format automatically). Getting the generated sealed serializer reflection-free
- *   is impossible there (`@KeepGeneratedSerializer` is banned on sealed classes, `serializer()` would recurse), so these
- *   stay on `sealedSubclasses`/`createType` until `generation/` emits a subtype registry per family.
+ * Pass the KSP-generated sealed serializer (see [GeneratedSealedSerializer]):
+ * ```kotlin
+ * @GeneratedSealedSerializer
+ * @Serializable(with = Foo.Companion.FooSerializer::class)
+ * sealed class Foo {
+ *     companion object {
+ *         @OptIn(InternalSerializationApi::class)
+ *         data object FooSerializer : NamespacedPolymorphicSerializer<Foo>(fooSealedSerializer())
+ *     }
+ * }
+ * ```
  */
 @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
-open class NamespacedPolymorphicSerializer<T : Any> private constructor(
-	private val kClass: KClass<T>?,
-	generated: KSerializer<T>?,
-	private val outputName: String,
-	private val skipOutputName: Boolean,
-	private val moveIntoProperty: String?,
-	private val useMinecraftPrefix: Boolean,
-	private val skipEmptyOutput: Boolean,
-	private val contentName: (String) -> String,
+open class NamespacedPolymorphicSerializer<T : Any>(
+	generated: KSerializer<T>,
+	private val outputName: String = "type",
+	private val skipOutputName: Boolean = false,
+	private val moveIntoProperty: String? = null,
+	private val useMinecraftPrefix: Boolean = true,
+	private val skipEmptyOutput: Boolean = true,
+	private val contentName: (String) -> String = ::defaultContentName,
 ) : KSerializer<T> {
-	constructor(
-		kClass: KClass<T>,
-		outputName: String = "type",
-		skipOutputName: Boolean = false,
-		moveIntoProperty: String? = null,
-		useMinecraftPrefix: Boolean = true,
-		skipEmptyOutput: Boolean = true,
-	) : this(
-		kClass,
-		null,
-		outputName,
-		skipOutputName,
-		moveIntoProperty,
-		useMinecraftPrefix,
-		skipEmptyOutput,
-		::defaultContentName
-	)
-
-	constructor(
-		generated: KSerializer<T>,
-		outputName: String = "type",
-		skipOutputName: Boolean = false,
-		moveIntoProperty: String? = null,
-		useMinecraftPrefix: Boolean = true,
-		skipEmptyOutput: Boolean = true,
-		contentName: (String) -> String = ::defaultContentName,
-	) : this(
-		null,
-		generated,
-		outputName,
-		skipOutputName,
-		moveIntoProperty,
-		useMinecraftPrefix,
-		skipEmptyOutput,
-		contentName
-	)
-
 	@OptIn(InternalSerializationApi::class)
-	private val polymorphic = generated as AbstractPolymorphicSerializer<T>?
+	private val polymorphic = generated as AbstractPolymorphicSerializer<T>
 
 	override val descriptor = serialDescriptor<JsonElement>()
 
-	private val baseName get() = polymorphic?.descriptor?.serialName ?: kClass?.simpleName ?: "polymorphic"
+	private val baseName get() = polymorphic.descriptor.serialName
 	private fun namespaced(name: String) = if (useMinecraftPrefix) "minecraft:$name" else name
 	private fun normalize(typeName: String) =
 		if (useMinecraftPrefix) typeName.removePrefix("minecraft:") else typeName
 
-	// region reflection-free path (generated sealed serializer)
-
 	@OptIn(ExperimentalSerializationApi::class)
 	private val serialNames: List<String> by lazy {
-		val descriptor = polymorphic?.descriptor ?: return@lazy emptyList()
+		val descriptor = polymorphic.descriptor
 		if (descriptor.kind != PolymorphicKind.SEALED) return@lazy emptyList()
 		descriptor.getElementDescriptor(1)
 			.let { variants -> List(variants.elementsCount) { variants.getElementName(it) } }
@@ -113,41 +66,18 @@ open class NamespacedPolymorphicSerializer<T : Any> private constructor(
 
 	private val serialNameByContent by lazy { serialNames.associateBy(contentName) }
 
-	/** Every subtype's Minecraft name, e.g. `["enchantments", "damage", ...]`. Reflection-free path only. */
+	/** Every subtype's Minecraft name, e.g. `["enchantments", "damage", ...]`. */
 	val contentNames get() = serialNames.map(contentName)
 
-	@OptIn(InternalSerializationApi::class)
 	private fun generatedDeserializer(typeName: String): DeserializationStrategy<T> {
 		val serialName = serialNameByContent[normalize(typeName)] ?: normalize(typeName)
-		return polymorphic!!.findPolymorphicSerializerOrNull(ModuleOnlyDecoder(EmptySerializersModule()), serialName)
+		return polymorphic.findPolymorphicSerializerOrNull(ModuleOnlyDecoder(EmptySerializersModule()), serialName)
 			?: error("No subtype '$typeName' in $baseName")
 	}
 
 	/** Decode one already-split `{typeName -> content}` entry, for map-shaped consumers like `ItemStackSubPredicates`. */
 	fun deserializeJsonElement(json: Json, typeName: String, element: JsonElement): T =
 		json.decodeFromJsonElement(generatedDeserializer(typeName), element)
-
-	// endregion
-
-	@OptIn(ExperimentalSerializationApi::class)
-	private fun reflectiveDeserializer(module: SerializersModule, typeName: String): DeserializationStrategy<T> {
-		val subclass = findSubclass(typeName)
-		@Suppress("UNCHECKED_CAST")
-		return module.getPolymorphic(kClass!!, typeName)
-			?: module.serializer(subclass.createType()) as DeserializationStrategy<T>
-	}
-
-	private fun findSubclass(typeName: String): KClass<out T> {
-		val name = normalize(typeName)
-		return kClass!!.sealedSubclasses.firstOrNull { subclass ->
-			val serialName =
-				subclass.getSerialName().let { if (subclass.hasAnnotation<SerialName>()) it else it.snakeCase() }
-			serialName == name
-		} ?: error("No subclass of ${kClass.simpleName} found for type '$typeName'")
-	}
-
-	private fun objectDeserializer(module: SerializersModule, typeName: String) =
-		if (polymorphic != null) generatedDeserializer(typeName) else reflectiveDeserializer(module, typeName)
 
 	private fun contentJson(jsonObject: JsonObject) = when (moveIntoProperty) {
 		null -> buildJsonObject { copyAllFrom(jsonObject, outputName) }
@@ -168,10 +98,7 @@ open class NamespacedPolymorphicSerializer<T : Any> private constructor(
 				is JsonObject -> {
 					val typeName = element[outputName]?.jsonPrimitive?.content
 						?: error("Missing '$outputName' field in JSON object for $baseName")
-					decoder.json.decodeFromJsonElement(
-						objectDeserializer(decoder.json.serializersModule, typeName),
-						contentJson(element)
-					)
+					decoder.json.decodeFromJsonElement(generatedDeserializer(typeName), contentJson(element))
 				}
 
 				else -> deserializeBareJson(decoder, element)
@@ -181,10 +108,7 @@ open class NamespacedPolymorphicSerializer<T : Any> private constructor(
 				is NbtCompound -> {
 					val typeName = tag[outputName]?.let { (it as NbtString).value }
 						?: error("Missing '$outputName' field in NBT compound for $baseName")
-					decoder.nbt.decodeFromNbtTag(
-						objectDeserializer(decoder.nbt.serializersModule, typeName),
-						contentNbt(tag)
-					)
+					decoder.nbt.decodeFromNbtTag(generatedDeserializer(typeName), contentNbt(tag))
 				}
 
 				else -> deserializeBareNbt(decoder, tag)
@@ -195,36 +119,17 @@ open class NamespacedPolymorphicSerializer<T : Any> private constructor(
 	}
 
 	// A bare (non-object) element has no discriminator to read, so try every subtype until one decodes it.
-	@OptIn(ExperimentalSerializationApi::class)
 	private fun deserializeBareJson(decoder: JsonDecoder, element: JsonElement): T {
-		val candidates = polymorphic?.let { serialNames.map { name -> generatedDeserializer(contentName(name)) } }
-			?: kClass!!.sealedSubclasses.mapNotNull { subclass ->
-				decoder.json.serializersModule.getPolymorphic(kClass, subclass.simpleName!!)
-					?: runCatching { decoder.json.serializersModule.serializer(subclass.createType()) }.getOrNull()
-			}
-
+		val candidates = serialNames.map { name -> generatedDeserializer(contentName(name)) }
 		return candidates.firstNotNullOfOrNull { serializer ->
-			@Suppress("UNCHECKED_CAST")
-			runCatching {
-				decoder.json.decodeFromJsonElement(
-					serializer as DeserializationStrategy<T>,
-					element
-				)
-			}.getOrNull()
+			runCatching { decoder.json.decodeFromJsonElement(serializer, element) }.getOrNull()
 		} ?: error("No subtype of $baseName can deserialize non-object JSON element: $element")
 	}
 
-	@OptIn(ExperimentalSerializationApi::class)
 	private fun deserializeBareNbt(decoder: NbtDecoder, tag: NbtTag): T {
-		val candidates = polymorphic?.let { serialNames.map { name -> generatedDeserializer(contentName(name)) } }
-			?: kClass!!.sealedSubclasses.mapNotNull { subclass ->
-				decoder.nbt.serializersModule.getPolymorphic(kClass, subclass.simpleName!!)
-					?: runCatching { decoder.nbt.serializersModule.serializer(subclass.createType()) }.getOrNull()
-			}
-
+		val candidates = serialNames.map { name -> generatedDeserializer(contentName(name)) }
 		return candidates.firstNotNullOfOrNull { serializer ->
-			@Suppress("UNCHECKED_CAST")
-			runCatching { decoder.nbt.decodeFromNbtTag(serializer as DeserializationStrategy<T>, tag) }.getOrNull()
+			runCatching { decoder.nbt.decodeFromNbtTag(serializer, tag) }.getOrNull()
 		} ?: error("No subtype of $baseName can deserialize non-compound NBT element: $tag")
 	}
 
@@ -276,36 +181,20 @@ open class NamespacedPolymorphicSerializer<T : Any> private constructor(
 	override fun serialize(encoder: Encoder, value: T) {
 		require(encoder is JsonEncoder || encoder is NbtEncoder) { "PolymorphicTypeSerializer can only be serialized to Json or Nbt." }
 
-		val (serializer, outputClassName) = when {
-			polymorphic != null -> {
-				val actual = polymorphic.findPolymorphicSerializer(encoder, value)
-				actual to namespaced(contentName(actual.descriptor.serialName))
-			}
-
-			else -> {
-				require(kClass!!.isInstance(value) && value::class != kClass) { "Value must be instance of ${kClass.simpleName}" }
-				(encoder.serializersModule.getPolymorphic(kClass, value) ?: encoder.serializersModule.serializerFor(
-					value
-				)) to getContentName(value)
-			}
-		}
+		val actual = polymorphic.findPolymorphicSerializer(encoder, value)
+		val outputClassName = namespaced(contentName(actual.descriptor.serialName))
 
 		when (encoder) {
-			is JsonEncoder -> serializeJson(
-				outputClassName,
-				encoder.json.encodeToJsonElement(serializer, value),
-				encoder
-			)
-
-			is NbtEncoder -> serializeNbt(outputClassName, encoder.nbt.encodeToNbtTag(serializer, value), encoder)
+			is JsonEncoder -> serializeJson(outputClassName, encoder.json.encodeToJsonElement(actual, value), encoder)
+			is NbtEncoder -> serializeNbt(outputClassName, encoder.nbt.encodeToNbtTag(actual, value), encoder)
 		}
 	}
 
+	/** The Minecraft name (namespaced, per [contentName]) that [value] would serialize under. */
+	@OptIn(InternalSerializationApi::class)
 	fun getContentName(value: T): String {
-		val outputClassName = value::class.getSerialName().let {
-			if (value::class.hasAnnotation<SerialName>()) it else it.snakeCase()
-		}
-		return namespaced(outputClassName)
+		val actual = polymorphic.findPolymorphicSerializer(ModuleOnlyEncoder, value)
+		return namespaced(contentName(actual.descriptor.serialName))
 	}
 }
 
@@ -341,4 +230,13 @@ internal class ModuleOnlyDecoder(override val serializersModule: SerializersModu
 	) = fail()
 
 	override fun endStructure(descriptor: SerialDescriptor) = fail()
+}
+
+// Minimal Encoder that only exposes a SerializersModule, for findPolymorphicSerializer calls (e.g. getContentName)
+// that need to resolve a subtype from a value with no real encoding session. AbstractEncoder supplies every other
+// Encoder/CompositeEncoder member with a default that's unreachable here (SealedClassSerializer resolves purely
+// from `value::class` and never calls back into the encoder).
+@OptIn(ExperimentalSerializationApi::class)
+internal object ModuleOnlyEncoder : AbstractEncoder() {
+	override val serializersModule: SerializersModule = EmptySerializersModule()
 }
