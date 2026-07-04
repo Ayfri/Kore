@@ -12,7 +12,8 @@ data class EmptyConditionalEffectBuilder(var effects: List<EmptyConditionalEffec
 			InlineAutoSerializer<EmptyConditionalEffectBuilder, List<EmptyConditionalEffect>>(
 				serializer<List<EmptyConditionalEffect>>(),
 				EmptyConditionalEffectBuilder::effects,
-				::EmptyConditionalEffectBuilder
+				::EmptyConditionalEffectBuilder,
+				serialName = "EmptyConditionalEffectBuilder",
 			)
 	}
 }

@@ -11,17 +11,21 @@ import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.AttributeArgument
 import io.github.ayfri.kore.generated.arguments.types.AttributeModifierArgument
+import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
 
+@GeneratedSealedSerializer
 @Serializable(with = AttributeModifierDisplay.Companion.AttributeModifierDisplaySerializer::class)
 sealed class AttributeModifierDisplay {
 	companion object {
+		@OptIn(InternalSerializationApi::class)
 		data object AttributeModifierDisplaySerializer : NamespacedPolymorphicSerializer<AttributeModifierDisplay>(
-			kClass = AttributeModifierDisplay::class,
+			attributeModifierDisplaySealedSerializer(),
 			useMinecraftPrefix = false
 		)
 	}

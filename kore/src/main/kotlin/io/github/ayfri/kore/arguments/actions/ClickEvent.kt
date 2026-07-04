@@ -1,7 +1,9 @@
 package io.github.ayfri.kore.arguments.actions
 
+import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
@@ -11,11 +13,13 @@ import kotlinx.serialization.serializer
  *
  * Docs: [Text component format - Click event](https://minecraft.wiki/w/Text_component_format#Click_event)
  */
+@GeneratedSealedSerializer
 @Serializable(with = ClickEvent.Companion.ClickEventSerializer::class)
 sealed interface ClickEvent : ActionType {
 	companion object {
+		@OptIn(InternalSerializationApi::class)
 		data object ClickEventSerializer : NamespacedPolymorphicSerializer<ClickEvent>(
-			kClass = ClickEvent::class,
+			clickEventSealedSerializer(),
 			outputName = "action",
 			useMinecraftPrefix = false
 		)

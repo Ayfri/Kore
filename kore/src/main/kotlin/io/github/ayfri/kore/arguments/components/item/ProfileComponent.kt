@@ -6,7 +6,9 @@ import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
 import io.github.ayfri.kore.arguments.types.resources.ModelArgument
 import io.github.ayfri.kore.arguments.types.resources.model
 import io.github.ayfri.kore.generated.ItemComponentTypes
+import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
@@ -27,11 +29,13 @@ data class ProfileProperty(
  * Docs: https://kore.ayfri.com/docs/concepts/components
  * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#profile
  */
+@GeneratedSealedSerializer
 @Serializable(with = ProfileComponent.Companion.ProfileComponentSerializer::class)
 sealed class ProfileComponent : Component() {
 	companion object {
+		@OptIn(InternalSerializationApi::class)
 		data object ProfileComponentSerializer : NamespacedPolymorphicSerializer<ProfileComponent>(
-			ProfileComponent::class,
+			profileComponentSealedSerializer(),
 			skipOutputName = true,
 		)
 	}

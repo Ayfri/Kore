@@ -14,7 +14,8 @@ data class CrossbowChargingSoundBuilder(var effects: List<CrossbowChargingSound>
 			InlineAutoSerializer<CrossbowChargingSoundBuilder, List<CrossbowChargingSound>>(
 				serializer<List<CrossbowChargingSound>>(),
 				CrossbowChargingSoundBuilder::effects,
-				::CrossbowChargingSoundBuilder
+				::CrossbowChargingSoundBuilder,
+				serialName = "CrossbowChargingSoundBuilder",
 			)
 	}
 }

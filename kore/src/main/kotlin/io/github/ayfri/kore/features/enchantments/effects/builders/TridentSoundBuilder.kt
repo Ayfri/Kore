@@ -12,7 +12,8 @@ data class TridentSoundBuilder(var sounds: List<SoundEvent> = emptyList()) : Eff
 		data object TridentSoundBuilderSerializer : InlineAutoSerializer<TridentSoundBuilder, List<SoundEvent>>(
 			serializer<List<SoundEvent>>(),
 			TridentSoundBuilder::sounds,
-			::TridentSoundBuilder
+			::TridentSoundBuilder,
+			serialName = "TridentSoundBuilder",
 		)
 	}
 }

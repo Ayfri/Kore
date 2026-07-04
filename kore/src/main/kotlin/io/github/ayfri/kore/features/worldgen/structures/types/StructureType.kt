@@ -5,10 +5,13 @@ import io.github.ayfri.kore.features.worldgen.structures.SpawnOverrides
 import io.github.ayfri.kore.features.worldgen.structures.TerrainAdaptation
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.BiomeArgument
+import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.InlinableList
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
+@GeneratedSealedSerializer
 @Serializable(StructureType.Companion.StructureTypeSerializer::class)
 sealed class StructureType {
 	abstract var biomes: InlinableList<BiomeOrTagArgument>
@@ -19,7 +22,9 @@ sealed class StructureType {
 	var namespace: String? = null
 
 	companion object {
-		data object StructureTypeSerializer : NamespacedPolymorphicSerializer<StructureType>(StructureType::class)
+		@OptIn(InternalSerializationApi::class)
+		data object StructureTypeSerializer :
+			NamespacedPolymorphicSerializer<StructureType>(structureTypeSealedSerializer())
 	}
 }
 

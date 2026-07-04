@@ -1,7 +1,9 @@
 package io.github.ayfri.kore.features.loottables.entries.slotsource
 
+import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 /**
@@ -10,10 +12,12 @@ import kotlinx.serialization.Serializable
  * Docs: https://kore.ayfri.com/docs/data-driven/loot-tables
  * Minecraft Wiki: https://minecraft.wiki/w/Loot_table
  */
+@GeneratedSealedSerializer
 @Serializable(with = SlotSource.Companion.SlotSourceSerializer::class)
 sealed class SlotSource {
 	companion object {
-		data object SlotSourceSerializer : NamespacedPolymorphicSerializer<SlotSource>(SlotSource::class)
+		@OptIn(InternalSerializationApi::class)
+		data object SlotSourceSerializer : NamespacedPolymorphicSerializer<SlotSource>(slotSourceSealedSerializer())
 	}
 }
 

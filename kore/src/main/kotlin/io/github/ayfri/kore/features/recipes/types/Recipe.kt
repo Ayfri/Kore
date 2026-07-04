@@ -1,7 +1,9 @@
 package io.github.ayfri.kore.features.recipes.types
 
 import io.github.ayfri.kore.features.recipes.RecipeType
+import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 /**
@@ -12,12 +14,14 @@ import kotlinx.serialization.Serializable
  * Docs: https://kore.ayfri.com/docs/data-driven/recipes
  * Minecraft Wiki: https://minecraft.wiki/w/Recipe
  */
+@GeneratedSealedSerializer
 @Serializable(with = Recipe.Companion.RecipeSerializer::class)
 sealed class Recipe {
 	abstract val type: RecipeType
 	open var group: String? = null
 
 	companion object {
-		data object RecipeSerializer : NamespacedPolymorphicSerializer<Recipe>(Recipe::class)
+		@OptIn(InternalSerializationApi::class)
+		data object RecipeSerializer : NamespacedPolymorphicSerializer<Recipe>(recipeSealedSerializer())
 	}
 }

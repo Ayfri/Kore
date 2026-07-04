@@ -5,7 +5,9 @@ import io.github.ayfri.kore.features.advancements.conditions
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.sub.Entity
+import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -15,14 +17,16 @@ import kotlinx.serialization.Serializable
  * Docs: https://kore.ayfri.com/docs/data-driven/advancements/triggers
  * Minecraft Wiki: https://minecraft.wiki/w/Advancement#JSON_format
  */
+@GeneratedSealedSerializer
 @Serializable(AdvancementTriggerCondition.Companion.AdvancementTriggerConditionDefaultSerializer::class)
 sealed class AdvancementTriggerCondition {
 	@SerialName("player")
 	abstract var player: EntityOrPredicates?
 
 	companion object {
+		@OptIn(InternalSerializationApi::class)
 		data object AdvancementTriggerConditionDefaultSerializer : NamespacedPolymorphicSerializer<AdvancementTriggerCondition>(
-			kClass = AdvancementTriggerCondition::class,
+			advancementTriggerConditionSealedSerializer(),
 			outputName = "trigger",
 			moveIntoProperty = "conditions"
 		)

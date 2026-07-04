@@ -3,9 +3,12 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
+import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
+@GeneratedSealedSerializer
 @Serializable(with = RootPlacer.Companion.RootPlacerSerializer::class)
 sealed class RootPlacer {
 	abstract var rootProvider: BlockStateProvider
@@ -13,7 +16,8 @@ sealed class RootPlacer {
 	abstract var aboveRootProvider: AboveRootPlacement?
 
 	companion object {
-		data object RootPlacerSerializer : NamespacedPolymorphicSerializer<RootPlacer>(RootPlacer::class)
+		@OptIn(InternalSerializationApi::class)
+		data object RootPlacerSerializer : NamespacedPolymorphicSerializer<RootPlacer>(rootPlacerSealedSerializer())
 	}
 }
 

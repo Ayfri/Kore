@@ -31,7 +31,8 @@ data class PostAttackBuilder(var effects: List<PostAttackConditionalEffect> = em
 			InlineAutoSerializer<PostAttackBuilder, List<PostAttackConditionalEffect>>(
 				serializer<List<PostAttackConditionalEffect>>(),
 				PostAttackBuilder::effects,
-				::PostAttackBuilder
+				::PostAttackBuilder,
+				serialName = "PostAttackBuilder",
 			)
 	}
 }

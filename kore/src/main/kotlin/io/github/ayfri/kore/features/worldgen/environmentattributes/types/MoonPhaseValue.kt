@@ -18,7 +18,8 @@ data class MoonPhaseValue(
 		data object MoonPhaseValueSerializer : InlineAutoSerializer<MoonPhaseValue, MoonPhaseArgument>(
 			serializer<MoonPhaseArgument>(),
 			MoonPhaseValue::value,
-			::MoonPhaseValue
+			::MoonPhaseValue,
+			serialName = "MoonPhaseValue",
 		)
 	}
 }

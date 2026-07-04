@@ -1,6 +1,8 @@
 package io.github.ayfri.kore.features.loottables.entries
 
+import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 typealias LootEntries = MutableList<LootEntry>
@@ -11,9 +13,11 @@ typealias LootEntries = MutableList<LootEntry>
  * Docs: https://kore.ayfri.com/docs/data-driven/loot-tables
  * Minecraft Wiki: https://minecraft.wiki/w/Loot_table
  */
+@GeneratedSealedSerializer
 @Serializable(with = LootEntry.Companion.LootEntrySerializer::class)
 sealed class LootEntry {
 	companion object {
-		data object LootEntrySerializer : NamespacedPolymorphicSerializer<LootEntry>(LootEntry::class)
+		@OptIn(InternalSerializationApi::class)
+		data object LootEntrySerializer : NamespacedPolymorphicSerializer<LootEntry>(lootEntrySealedSerializer())
 	}
 }

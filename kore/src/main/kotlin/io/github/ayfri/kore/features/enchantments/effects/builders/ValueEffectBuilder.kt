@@ -16,7 +16,8 @@ data class ValueEffectBuilder(var effects: List<ConditionalEffect> = emptyList()
 		data object ValueEffectBuilderSerializer : InlineAutoSerializer<ValueEffectBuilder, List<ConditionalEffect>>(
 			serializer<List<ConditionalEffect>>(),
 			ValueEffectBuilder::effects,
-			::ValueEffectBuilder
+			::ValueEffectBuilder,
+			serialName = "ValueEffectBuilder",
 		)
 	}
 }

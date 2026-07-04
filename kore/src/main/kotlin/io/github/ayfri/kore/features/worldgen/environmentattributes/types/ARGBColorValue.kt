@@ -16,7 +16,12 @@ data class CloudColorValue(
 ) : EnvironmentAttributesType() {
 	companion object {
 		data object CloudColorValueSerializer :
-			InlineAutoSerializer<CloudColorValue, ARGB>(serializer<ARGB>(), CloudColorValue::value, ::CloudColorValue)
+			InlineAutoSerializer<CloudColorValue, ARGB>(
+				serializer<ARGB>(),
+				CloudColorValue::value,
+				::CloudColorValue,
+				serialName = "CloudColorValue",
+			)
 	}
 }
 

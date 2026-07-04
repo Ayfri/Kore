@@ -17,7 +17,8 @@ data class EquipmentDropsBuilder(var effects: List<EquipmentDropsConditionalEffe
 			InlineAutoSerializer<EquipmentDropsBuilder, List<EquipmentDropsConditionalEffect>>(
 				serializer<List<EquipmentDropsConditionalEffect>>(),
 				EquipmentDropsBuilder::effects,
-				::EquipmentDropsBuilder
+				::EquipmentDropsBuilder,
+				serialName = "EquipmentDropsBuilder",
 			)
 	}
 }

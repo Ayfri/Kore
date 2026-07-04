@@ -9,6 +9,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 
+@Serializable
 data class SingleOption(
 	override var key: String,
 	var label: ChatComponents,

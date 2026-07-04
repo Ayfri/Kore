@@ -28,7 +28,7 @@ data class ApplyBonus(
 ) : ItemFunction() {
 	companion object {
 		data object ApplyBonusSerializer : KSerializer<ApplyBonus> {
-			override val descriptor: SerialDescriptor = serialDescriptor<JsonElement>()
+			override val descriptor: SerialDescriptor = SerialDescriptor("ApplyBonus", serialDescriptor<JsonElement>())
 
 			override fun deserialize(decoder: Decoder) = error("ApplyBonus cannot be deserialized")
 

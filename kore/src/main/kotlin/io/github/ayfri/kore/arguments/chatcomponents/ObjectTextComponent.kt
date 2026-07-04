@@ -3,10 +3,12 @@ package io.github.ayfri.kore.arguments.chatcomponents
 import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
 import io.github.ayfri.kore.arguments.types.resources.ModelArgument
 import io.github.ayfri.kore.generated.arguments.types.AtlasArgument
+import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import io.github.ayfri.kore.utils.snbtSerializer
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.encodeToNbtTag
@@ -19,6 +21,7 @@ import net.benwoodworth.knbt.encodeToNbtTag
  *
  * Docs: [Text component format - Object](https://minecraft.wiki/w/Text_component_format#Object)
  */
+@GeneratedSealedSerializer
 @Serializable(with = ObjectTextComponentSerializer::class)
 sealed class ObjectTextComponent : ChatComponent(), SimpleComponent {
 	final override val type = ChatComponentType.OBJECT
@@ -31,8 +34,9 @@ sealed class ObjectTextComponent : ChatComponent(), SimpleComponent {
 	}
 }
 
+@OptIn(InternalSerializationApi::class)
 data object ObjectTextComponentSerializer : NamespacedPolymorphicSerializer<ObjectTextComponent>(
-	kClass = ObjectTextComponent::class,
+	objectTextComponentSealedSerializer(),
 	outputName = "object",
 	useMinecraftPrefix = false
 )

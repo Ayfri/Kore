@@ -17,7 +17,8 @@ data class AttributeEffectBuilder(var effects: List<AttributeEffect> = emptyList
 			InlineAutoSerializer<AttributeEffectBuilder, List<AttributeEffect>>(
 				serializer<List<AttributeEffect>>(),
 				AttributeEffectBuilder::effects,
-				::AttributeEffectBuilder
+				::AttributeEffectBuilder,
+				serialName = "AttributeEffectBuilder",
 			)
 	}
 }

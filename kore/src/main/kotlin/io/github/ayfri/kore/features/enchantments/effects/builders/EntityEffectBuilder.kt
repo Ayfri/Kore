@@ -29,7 +29,8 @@ data class EntityEffectBuilder(var effects: List<ConditionalEffect> = emptyList(
 		data object EntityEffectBuilderSerializer : InlineAutoSerializer<EntityEffectBuilder, List<ConditionalEffect>>(
 			serializer<List<ConditionalEffect>>(),
 			EntityEffectBuilder::effects,
-			::EntityEffectBuilder
+			::EntityEffectBuilder,
+			serialName = "EntityEffectBuilder",
 		)
 	}
 }

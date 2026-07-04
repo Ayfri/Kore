@@ -1,6 +1,8 @@
 package io.github.ayfri.kore.features.testenvironments.types
 
+import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 /**
@@ -13,9 +15,12 @@ import kotlinx.serialization.Serializable
  * This is part of Minecraft's GameTest framework introduced in snapshot 25w03a for automated
  * testing of datapack functionality.
  */
+@GeneratedSealedSerializer
 @Serializable(with = TestEnvironment.Companion.TestEnvironmentSerializer::class)
 sealed class TestEnvironment {
 	companion object {
-		data object TestEnvironmentSerializer : NamespacedPolymorphicSerializer<TestEnvironment>(TestEnvironment::class)
+		@OptIn(InternalSerializationApi::class)
+		data object TestEnvironmentSerializer :
+			NamespacedPolymorphicSerializer<TestEnvironment>(testEnvironmentSealedSerializer())
 	}
 }

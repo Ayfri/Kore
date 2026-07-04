@@ -9,10 +9,13 @@ import io.github.ayfri.kore.features.dialogs.body.BodyContainer
 import io.github.ayfri.kore.features.dialogs.body.DialogBody
 import io.github.ayfri.kore.features.dialogs.control.ControlContainer
 import io.github.ayfri.kore.features.dialogs.control.DialogControl
+import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.InlinableList
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
+@GeneratedSealedSerializer
 @Serializable(with = DialogData.Companion.DialogDataSerializer::class)
 sealed class DialogData {
 	/** Screen title, text component. Should be always visible on screen, no matter the specific type. */
@@ -38,7 +41,8 @@ sealed class DialogData {
 	abstract var pause: Boolean?
 
 	companion object {
-		data object DialogDataSerializer : NamespacedPolymorphicSerializer<DialogData>(DialogData::class)
+		@OptIn(InternalSerializationApi::class)
+		data object DialogDataSerializer : NamespacedPolymorphicSerializer<DialogData>(dialogDataSealedSerializer())
 	}
 }
 
