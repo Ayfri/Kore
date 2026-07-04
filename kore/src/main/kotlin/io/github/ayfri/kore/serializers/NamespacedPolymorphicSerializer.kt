@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.hasAnnotation
 
-private fun defaultContentName(serialName: String) = serialName.substringAfterLast('.').snakeCase()
+internal fun defaultContentName(serialName: String) = serialName.substringAfterLast('.').snakeCase()
 
 /**
  * Serializes a sealed hierarchy as Minecraft's `{ "type": "<namespace:name>", ...fields }` shape, resolving every case
@@ -311,8 +311,9 @@ open class NamespacedPolymorphicSerializer<T : Any> private constructor(
 
 // Minimal CompositeDecoder that only exposes a SerializersModule, so a SealedClassSerializer can resolve a subtype by
 // name (findPolymorphicSerializerOrNull) without a real decoding session. Every other operation is unreachable there.
+// Internal (not private) so EnumLikeSerializer's reflection-free path can reuse it.
 @OptIn(ExperimentalSerializationApi::class)
-private class ModuleOnlyDecoder(override val serializersModule: SerializersModule) : CompositeDecoder {
+internal class ModuleOnlyDecoder(override val serializersModule: SerializersModule) : CompositeDecoder {
 	private fun fail(): Nothing = error("ModuleOnlyDecoder only provides a SerializersModule")
 	override fun decodeBooleanElement(descriptor: SerialDescriptor, index: Int) = fail()
 	override fun decodeByteElement(descriptor: SerialDescriptor, index: Int) = fail()

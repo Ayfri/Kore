@@ -27,8 +27,17 @@ class SealedSerializerProcessor(
 		return emptyList()
 	}
 
+	// Recurses through nested sealed subclasses down to concrete leaves, deduplicating by qualified name so a leaf
+	// reachable through more than one intermediate sealed type (e.g. a diamond hierarchy) is only emitted once.
+	private fun leavesOf(declaration: KSClassDeclaration): List<KSClassDeclaration> {
+		val direct = declaration.getSealedSubclasses().toList()
+		return if (direct.isEmpty()) listOf(declaration) else direct.flatMap(::leavesOf)
+	}
+
 	private fun generateFactory(declaration: KSClassDeclaration) {
 		val subclasses = declaration.getSealedSubclasses().toList()
+			.flatMap(::leavesOf)
+			.distinctBy { it.qualifiedName?.asString() }
 		if (subclasses.isEmpty()) {
 			logger.error("Sealed family '${declaration.simpleName.asString()}' has no subclasses.", declaration)
 			return
