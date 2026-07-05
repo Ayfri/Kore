@@ -63,12 +63,15 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 			TypeSpec.companionObjectBuilder().apply {
 				addProperty(
 					PropertySpec.builder("values", List::class.asClassName().parameterizedBy(gamerulesClass))
-						.getter(
-							FunSpec.getterBuilder()
-								.addStatement(
-									"return %T::class.sealedSubclasses.map { it.sealedSubclasses.map { it.objectInstance!! } }.flatten()",
-									gamerulesClass
-								)
+						.initializer(
+							CodeBlock.builder()
+								.add("listOf(\n")
+								.indent()
+								.apply {
+									(booleanGamerules + integerGamerules).forEach { add("%N,\n", it) }
+								}
+								.unindent()
+								.add(")")
 								.build()
 						)
 						.build()
@@ -113,7 +116,7 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 								.returns(gamerulesClass)
 								.addStatement(
 									"return fromString(decoder.decodeString()) ?: throw %T(%S)",
-									IllegalArgumentException::class,
+									ClassName("kotlin", "IllegalArgumentException"),
 									$$"Unknown '${name}' gamerule"
 								)
 								.overrides()
@@ -135,7 +138,6 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 	}
 
 	generateFile(INTERFACE_NAME, sourceUrl, topLevelInterface) {
-		addImport("java.util", "Locale")
 		addImport("io.github.ayfri.kore.utils", "snakeCase")
 		addAnnotation(
 			AnnotationSpec.builder(Suppress::class)
