@@ -49,6 +49,7 @@ kotlin {
 
 dependencies {
 	add("kspCommonMainMetadata", project(":kore-ksp"))
+	add("kspJvmTest", project(":kore-ksp"))
 }
 
 tasks.named("compileKotlinJvm") {
