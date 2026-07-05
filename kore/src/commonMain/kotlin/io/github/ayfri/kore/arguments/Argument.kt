@@ -13,8 +13,15 @@ interface Argument {
 	)
 
 	companion object {
-		fun createArgumentProxy(value: String) = createArgumentProxyInternal(value)
-
 		internal fun parse(value: String) = parseArgument(value)
 	}
 }
+
+/**
+ * Builds an [Argument] instance from its raw string form (e.g. `"minecraft:stone[...]{...}"`), dynamically
+ * implementing whatever [Argument] sub-interfaces the deserialization target needs.
+ *
+ * Only meaningful on the JVM, where the datapack importer (`bindings/`) parses arguments back from existing
+ * datapacks; on JS, [Argument]s are only ever built by the DSL, never parsed, so the actual is a minimal stub.
+ */
+expect fun createArgumentProxy(value: String): Argument

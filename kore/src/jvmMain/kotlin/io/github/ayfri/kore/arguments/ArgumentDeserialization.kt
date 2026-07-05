@@ -1,29 +1,13 @@
 package io.github.ayfri.kore.arguments
 
 import io.github.ayfri.kore.arguments.components.ComponentsPatch
-import kotlinx.serialization.decodeFromString
 import net.benwoodworth.knbt.NbtCompound
-import net.benwoodworth.knbt.StringifiedNbt
 import java.io.File
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Modifier
 import java.lang.reflect.Proxy
 
 private const val KORE_PACKAGE = "io.github.ayfri.kore"
-
-internal data class ParsedArgument(
-	val rawValue: String,
-	val namespace: String,
-	val name: String,
-	val tagged: Boolean,
-	val components: ComponentsPatch?,
-	val states: MutableMap<String, String>,
-	val nbtData: NbtCompound?,
-)
-
-private class RawComponentsPatch(private val value: String) : ComponentsPatch() {
-	override fun toString() = value
-}
 
 private val cachedInterfaces by lazy(::collectArgumentInterfaces)
 
@@ -93,86 +77,6 @@ internal fun createArgumentProxyInternal(value: String): Argument {
 		cachedInterfaces,
 		handler
 	) as Argument
-}
-
-internal fun parseArgument(value: String): ParsedArgument {
-	val tagged = value.startsWith("#")
-	val unprefixedValue = value.removePrefix("#")
-	val id = unprefixedValue.substringBefore("[").substringBefore("{")
-	val normalizedValue = when {
-		":" in id -> value
-		tagged -> "#minecraft:$unprefixedValue"
-		else -> "minecraft:$value"
-	}
-	val namespace = if (":" in id) id.substringBefore(":") else "minecraft"
-	val name = if (":" in id) id.substringAfter(":") else id
-	val bracketContent = value.substringAfter('[', "").substringBeforeLast(']', "")
-	val components = bracketContent.takeIf(String::isNotEmpty)?.let { RawComponentsPatch("[$it]") }
-	val states = parseStates(bracketContent)
-	val nbtData = parseNbt(value)
-
-	return ParsedArgument(normalizedValue, namespace, name, tagged, components, states, nbtData)
-}
-
-private fun ParsedArgument.baseId() = buildString {
-	if (tagged) append('#')
-	append(namespace)
-	append(':')
-	append(name)
-}
-
-private fun Map<String, String>.asStateString() = when {
-	isEmpty() -> ""
-	else -> entries.joinToString(",", prefix = "[", postfix = "]") { "${it.key}=${it.value}" }
-}
-
-private fun observedStates(states: Map<String, String>, onChange: () -> Unit): MutableMap<String, String> =
-	ObservableMutableMap(states, onChange)
-
-private class ObservableMutableMap(
-	states: Map<String, String>,
-	private val onChange: () -> Unit,
-) : LinkedHashMap<String, String>(states) {
-	override fun put(key: String, value: String): String? = super.put(key, value).also { onChange() }
-
-	override fun putAll(from: Map<out String, String>) {
-		if (from.isEmpty()) return
-		super.putAll(from)
-		onChange()
-	}
-
-	override fun remove(key: String): String? = super.remove(key).also {
-		if (it != null) onChange()
-	}
-
-	override fun clear() {
-		if (isEmpty()) return
-		super.clear()
-		onChange()
-	}
-}
-
-private fun parseStates(content: String) = content
-	.takeIf(String::isNotBlank)
-	?.split(',')
-	?.mapNotNull { entry ->
-		val separatorIndex = entry.indexOf('=')
-		if (separatorIndex < 0) return@mapNotNull null
-		val key = entry.take(separatorIndex).trim()
-		val value = entry.substring(separatorIndex + 1).trim()
-		key to value
-	}
-	?.toMap()
-	?.toMutableMap()
-	?: mutableMapOf()
-
-private fun parseNbt(value: String): NbtCompound? {
-	val nbtStart = value.indexOf('{')
-	if (nbtStart < 0) return null
-
-	return runCatching {
-		StringifiedNbt.decodeFromString<NbtCompound>(value.substring(nbtStart))
-	}.getOrNull()
 }
 
 private fun collectArgumentInterfaces(): Array<Class<*>> {
