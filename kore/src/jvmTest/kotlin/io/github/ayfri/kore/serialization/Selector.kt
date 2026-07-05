@@ -15,6 +15,7 @@ import io.github.ayfri.kore.features.predicates.conditions.entityProperties
 import io.github.ayfri.kore.features.predicates.predicate
 import io.github.ayfri.kore.features.predicates.sub.block
 import io.github.ayfri.kore.features.predicates.sub.steppingOn
+import io.github.ayfri.kore.generate
 import io.github.ayfri.kore.generated.Advancements
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.EntityTypes

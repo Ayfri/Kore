@@ -3,6 +3,7 @@ package io.github.ayfri.kore.helpers
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.numbers.seconds
 import io.github.ayfri.kore.dataPack
+import io.github.ayfri.kore.generate
 import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.schedulerTest() {

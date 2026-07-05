@@ -15,6 +15,7 @@ import io.github.ayfri.kore.commands.particle.types.*
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.generate
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.Items

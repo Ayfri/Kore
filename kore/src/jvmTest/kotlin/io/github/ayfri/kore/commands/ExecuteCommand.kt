@@ -32,6 +32,7 @@ import io.github.ayfri.kore.features.predicates.predicate
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.generate
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.utils.debugEntity
 import io.kotest.core.spec.style.FunSpec

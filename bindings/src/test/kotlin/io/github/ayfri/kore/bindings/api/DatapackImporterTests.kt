@@ -9,6 +9,7 @@ import io.github.ayfri.kore.features.advancements.advancement
 import io.github.ayfri.kore.features.advancements.criteria
 import io.github.ayfri.kore.features.advancements.triggers.tick
 import io.github.ayfri.kore.functions.function
+import io.github.ayfri.kore.generate
 import io.github.ayfri.kore.generated.Items
 import io.kotest.core.spec.style.FunSpec
 import kotlin.io.path.readText

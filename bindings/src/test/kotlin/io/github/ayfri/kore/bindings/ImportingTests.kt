@@ -16,6 +16,8 @@ import io.github.ayfri.kore.features.recipes.types.result
 import io.github.ayfri.kore.features.worldgen.biome.biome
 import io.github.ayfri.kore.features.worldgen.dimension.dimension
 import io.github.ayfri.kore.functions.function
+import io.github.ayfri.kore.generate
+import io.github.ayfri.kore.generateZip
 import io.github.ayfri.kore.generated.DimensionTypes
 import io.github.ayfri.kore.generated.Items
 import io.kotest.core.spec.style.FunSpec
@@ -23,17 +25,6 @@ import java.nio.file.Files
 import kotlin.io.path.Path
 import kotlin.io.path.readText
 
-
-fun importingTests() {
-	testBasicFunctionExploration()
-	testMacroFunctionDetection()
-	testCodeGeneration()
-	testZipImport()
-	testMultipleNamespaces()
-	testNestedDirectories()
-	testDataDrivenResources()
-	testAutoDiscoveryAndWorldgen()
-}
 
 inline fun newTest(name: String, block: TestContext.() -> Unit) {
 	val context = TestContext(name)

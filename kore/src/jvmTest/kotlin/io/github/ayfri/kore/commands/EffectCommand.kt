@@ -5,6 +5,7 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.generate
 import io.github.ayfri.kore.generated.Effects
 import io.kotest.core.spec.style.FunSpec
 

@@ -7,6 +7,7 @@ import io.github.ayfri.kore.features.dialogs.types.dialogList
 import io.github.ayfri.kore.features.dialogs.types.dialogs
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.generate
 import io.github.ayfri.kore.generated.Dialogs
 import io.kotest.core.spec.style.FunSpec
 

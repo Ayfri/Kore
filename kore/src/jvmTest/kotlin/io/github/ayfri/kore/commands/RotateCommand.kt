@@ -8,6 +8,7 @@ import io.github.ayfri.kore.commands.execute.Anchor
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.generate
 import io.kotest.core.spec.style.FunSpec
 
 fun Function.rotateTests() {

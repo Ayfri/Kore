@@ -9,6 +9,7 @@ import io.github.ayfri.kore.features.itemmodifiers.functions.Source
 import io.github.ayfri.kore.features.itemmodifiers.functions.setLore
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.generate
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
 import io.kotest.core.spec.style.FunSpec

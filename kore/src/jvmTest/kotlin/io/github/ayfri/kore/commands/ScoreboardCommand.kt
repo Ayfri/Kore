@@ -15,6 +15,7 @@ import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.generate
 import io.github.ayfri.kore.generated.CustomStats
 import io.github.ayfri.kore.generated.Items
 import io.kotest.core.spec.style.FunSpec

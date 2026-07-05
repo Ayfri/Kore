@@ -8,6 +8,7 @@ import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.*
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.generate
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import io.kotest.core.spec.style.FunSpec
