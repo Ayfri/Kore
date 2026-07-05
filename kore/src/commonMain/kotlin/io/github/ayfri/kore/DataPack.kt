@@ -55,16 +55,9 @@ import io.github.ayfri.kore.features.worldgen.worldpreset.WorldPreset
 import io.github.ayfri.kore.features.zombienautilusvariants.ZombieNautilusVariant
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.DEFAULT_PACK_FORMAT
-import io.github.ayfri.kore.generation.DataPackGenerationOptions
-import io.github.ayfri.kore.generation.DataPackGenerator
-import io.github.ayfri.kore.generation.DataPackJarGenerationOptions
-import io.github.ayfri.kore.generation.DatapackGenerationMode
 import io.github.ayfri.kore.pack.*
 import io.github.ayfri.kore.serializers.JsonNamingSnakeCaseStrategy
-import io.github.ayfri.kore.utils.absolute
-import io.github.ayfri.kore.utils.exists
-import io.github.ayfri.kore.utils.makeDirectories
-import io.github.ayfri.kore.utils.warn
+import io.github.ayfri.kore.utils.*
 import kotlinx.io.files.Path
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -183,27 +176,6 @@ class DataPack(val name: String) {
 	/** Generates the `pack.mcmeta` file. */
 	fun generatePackMCMetaFile() = jsonEncoder.encodeToString(PackMCMeta(pack, overlays, features, filter))
 
-	/** Generates the datapack as raw files. */
-	fun generate(init: DataPackGenerationOptions.() -> Unit = {}) {
-		val options = DataPackGenerationOptions().apply(init)
-		val datapackGenerator = DataPackGenerator(this, options)
-		datapackGenerator.generate()
-	}
-
-	/** Generates the datapack as a jar file, must be used as a mod. */
-	fun generateJar(init: DataPackJarGenerationOptions.() -> Unit = {}) {
-		val options = DataPackJarGenerationOptions(this).apply(init)
-		val datapackGenerator = DataPackGenerator(this, options, DatapackGenerationMode.JAR)
-		datapackGenerator.generate()
-	}
-
-	/** Generates the datapack as a zip file for easy distribution and faster loading. */
-	fun generateZip(init: DataPackGenerationOptions.() -> Unit = {}) {
-		val options = DataPackGenerationOptions().apply(init)
-		val datapackGenerator = DataPackGenerator(this, options, DatapackGenerationMode.ZIP)
-		datapackGenerator.generate()
-	}
-
 	/** Checks if the datapack is compatible with the other pack by comparing pack format ranges. */
 	fun isCompatibleWith(otherPack: PackMCMeta): Boolean {
 		if (pack.isCompatibleWith(otherPack.pack)) return true
@@ -246,11 +218,6 @@ fun DataPack.iconPath(path: String) {
 }
 
 /** Sets the icon path of the pack displayed in-game. */
-fun DataPack.iconPath(path: java.nio.file.Path) {
-	iconPath = Path(path.toAbsolutePath().toFile().absolutePath)
-}
-
-/** Sets the icon path of the pack displayed in-game. */
 fun DataPack.iconPath(path: Path) {
 	iconPath = path
 }
@@ -261,11 +228,28 @@ fun DataPack.path(path: String) {
 }
 
 /** Sets the output path of the pack. */
-fun DataPack.path(path: java.nio.file.Path) {
-	this.path = Path(path.toAbsolutePath().toFile().absolutePath)
-}
-
-/** Sets the output path of the pack. */
 fun DataPack.path(path: Path) {
 	this.path = path
+}
+
+/**
+ * Exports the whole datapack as an in-memory map of relative path (`data/...` or `pack.mcmeta`) to file content.
+ *
+ * This is the platform-neutral distribution path (works on JS): it never touches the filesystem, so the host
+ * is free to write the returned entries however it wants. For on-disk/archive generation on the JVM, use
+ * [generate]/[generateZip]/[generateJar] instead.
+ */
+fun DataPack.exportAsStrings(): Map<String, String> = buildMap {
+	put("pack.mcmeta", generatePackMCMetaFile())
+
+	(functions + generatedFunctions).distinctBy { it.getFinalPath() }.forEach {
+		put(it.getFinalPath(), it.lines.joinToString("\n"))
+	}
+
+	generators.flatten().forEach {
+		put(
+			it.getPathFromDataDir(Path("data"), it.namespace ?: name).asInvariantPathSeparator,
+			it.generateJson(this@exportAsStrings)
+		)
+	}
 }

@@ -7,14 +7,12 @@ import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.files.SystemPathSeparator
 import kotlinx.io.files.SystemTemporaryDirectory
 import kotlinx.io.readString
-import java.io.File
+import kotlin.random.Random
 
 val SystemPathSeparatorString = SystemPathSeparator.toString()
 
 val Path.asInvariantPathSeparator get() = this.toStringWithSeparator("/")
 val Path.nameWithoutExtension get() = this.name.substringBeforeLast('.')
-
-fun Path(file: File) = Path(file.absolutePath)
 
 fun Path.absolute() = SystemFileSystem.resolve(this)
 fun Path.delete() = SystemFileSystem.delete(this)
@@ -27,9 +25,11 @@ fun Path.isRegularFile() = SystemFileSystem.metadataOrNull(this)?.isRegularFile 
 fun Path.makeDirectories(force: Boolean = false) = SystemFileSystem.createDirectories(this, force)
 fun Path.resolveSafe(vararg paths: Path) = SystemFileSystem.resolve(Path(this.toString(), *paths.map { it.toString() }.toTypedArray()))
 fun Path.resolveSafe(vararg paths: String) = SystemFileSystem.resolve(Path(this.toString(), *paths))
-fun Path.resolve(vararg paths: Path) = Path(paths.fold(this.toJavaFile()) { acc, path -> acc.resolve(path.toJavaFile()) })
-fun Path.resolve(vararg paths: String) = Path(paths.fold(this.toJavaFile()) { acc, path -> acc.resolve(path) })
-fun Path.toJavaFile() = File(this.toString())
+fun Path.resolve(vararg paths: String): Path = paths.fold(this) { acc, part ->
+	Path(part).let { if (it.isAbsolute) it else Path(acc.toString(), part) }
+}
+
+fun Path.resolve(vararg paths: Path): Path = resolve(*paths.map(Path::toString).toTypedArray())
 fun Path.toSink() = SystemFileSystem.sink(this)
 fun Path.toSource() = SystemFileSystem.source(this)
 fun Path.toStringWithSeparator(separator: String = SystemPathSeparatorString) =
@@ -50,7 +50,7 @@ fun Path.write(array: ByteArray) = if (!this.isDirectory()) this.toSink().buffer
 data object TemporaryFiles {
 	fun createTempFile(suffix: String = ".tmp"): Path {
 		val tempDir = SystemTemporaryDirectory
-		val tempFile = tempDir.resolve(System.nanoTime().toString() + suffix)
+		val tempFile = tempDir.resolve(Random.nextLong().toString() + suffix)
 		tempFile.ensureParents()
 		tempFile.createIfNotExists()
 		return tempFile

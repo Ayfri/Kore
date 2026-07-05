@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.generation
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.generate
 import io.github.ayfri.kore.utils.absolute
 import io.github.ayfri.kore.utils.makeDirectories
 import io.github.ayfri.kore.utils.resolve

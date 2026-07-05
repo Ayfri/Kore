@@ -16,7 +16,6 @@ import io.github.ayfri.kore.commands.function
 import io.github.ayfri.kore.commands.tellraw
 import io.github.ayfri.kore.features.tags.functionTag
 import io.github.ayfri.kore.utils.ifNotEmpty
-import java.io.File
 
 /**
  * Represents a Minecraft function (.mcfunction) being built in memory.
@@ -106,59 +105,53 @@ open class Function(
 	fun getFinalPath() = "data/$namespace/function/${directory.ifNotEmpty { "$it/" }}$name.mcfunction"
 
 	/**
-	 * Writes the function to disk under the given output directory.
-	 * Creates parent directories if required and injects debug markers
-	 * when debug mode is active.
+	 * Injects the debug `tellraw` markers (start/finish) at the boundaries of this function's lines
+	 * when debug mode is active. Used by the JVM file generator before writing to disk.
 	 */
-	fun generate(directory: File) {
-		val file = File(directory, "${this.directory}/$name.mcfunction")
-		file.parentFile.mkdirs()
+	internal fun injectDebugMarkers() {
+		if (!debug) return
 
-		if (debug) {
-			lines.add(0, command("tellraw", allPlayers(), (textComponent("Running function ") {
-				color = Color.GRAY
-				italic = true
-			} + textComponent(asId()) {
-				color = Color.WHITE
-				bold = true
-				italic = true
+		lines.add(0, command("tellraw", allPlayers(), (textComponent("Running function ") {
+			color = Color.GRAY
+			italic = true
+		} + textComponent(asId()) {
+			color = Color.WHITE
+			bold = true
+			italic = true
 
-				clickEvent {
-					runCommand {
-						function(asId())
-					}
+			clickEvent {
+				runCommand {
+					function(asId())
 				}
+			}
 
-				hoverEvent {
-					showText("Click to execute function") {
-						italic = true
-						color = Color.GRAY
-					}
+			hoverEvent {
+				showText("Click to execute function") {
+					italic = true
+					color = Color.GRAY
 				}
-			}).asJsonArg()).toString())
+			}
+		}).asJsonArg()).toString())
 
-			lines.add(command("tellraw", allPlayers(), (textComponent("Finished running function ", Color.GRAY) {
-				italic = true
-			} + text(asId(), Color.WHITE) {
-				bold = true
-				italic = true
+		lines.add(command("tellraw", allPlayers(), (textComponent("Finished running function ", Color.GRAY) {
+			italic = true
+		} + text(asId(), Color.WHITE) {
+			bold = true
+			italic = true
 
-				clickEvent {
-					runCommand {
-						function(asId())
-					}
+			clickEvent {
+				runCommand {
+					function(asId())
 				}
+			}
 
-				hoverEvent {
-					showText("Click to execute function") {
-						italic = true
-						color = Color.GRAY
-					}
+			hoverEvent {
+				showText("Click to execute function") {
+					italic = true
+					color = Color.GRAY
 				}
-			}).asJsonArg()).toString())
-		}
-
-		file.writeText(toString())
+			}
+		}).asJsonArg()).toString())
 	}
 
 	/** Clears all lines from the function. Useful for reusing the instance. */
