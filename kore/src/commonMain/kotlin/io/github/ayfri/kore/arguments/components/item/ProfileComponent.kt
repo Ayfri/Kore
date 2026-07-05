@@ -85,7 +85,7 @@ fun PlayerProfile.property(name: String, value: String, signature: String? = nul
 }
 
 fun PlayerProfile.property(name: String, value: ByteArray, signature: String? = null) = apply {
-	property(name, String(value), signature)
+	property(name, value.decodeToString(), signature)
 }
 
 /** Sets the player skin displayed on a player head item using direct texture/model references. */

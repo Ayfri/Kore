@@ -8,7 +8,7 @@ fun JsonObject.copyExcept(vararg keys: String) = buildJsonObject {
 
 operator fun JsonObject.set(key: String, value: JsonObject) = buildJsonObject {
 	put(key, value)
-	forEach(::put)
+	this@set.forEach { (entryKey, entryValue) -> put(entryKey, entryValue) }
 }
 
 fun JsonObject.setType(type: String, typePropertyName: String = "type") = buildJsonObject {

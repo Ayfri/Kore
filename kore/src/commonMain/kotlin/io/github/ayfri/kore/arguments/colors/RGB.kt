@@ -25,7 +25,7 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 		hex.substring(4, 6).toInt(16),
 	)
 
-	val hex get() = "%02x%02x%02x".format(red, green, blue)
+	val hex get() = listOf(red, green, blue).joinToString("") { it.toString(16).padStart(2, '0') }
 	val hexWithHash get() = "#$hex"
 
 	val r get() = red

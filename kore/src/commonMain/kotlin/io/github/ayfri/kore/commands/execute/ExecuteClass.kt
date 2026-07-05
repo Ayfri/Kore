@@ -150,10 +150,10 @@ class Execute {
 
 		if (function.isInlinable) return emptyFunction(fn.datapack) {
 			block().apply {
-				arguments.replaceAll {
-					when (it) {
-						is EntityArgument -> targetArg(it)
-						else -> it
+				for (i in arguments.indices) {
+					arguments[i] = when (val argument = arguments[i]) {
+						is EntityArgument -> targetArg(argument)
+						else -> argument
 					}
 				}
 			}

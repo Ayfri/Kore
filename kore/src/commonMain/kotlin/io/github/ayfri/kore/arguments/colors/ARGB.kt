@@ -20,7 +20,7 @@ data class ARGB(var alpha: Int, var red: Int, var green: Int, var blue: Int) : C
 		hex.substring(6, 8).toInt(16),
 	)
 
-	val hex get() = "%02x%02x%02x%02x".format(alpha, red, green, blue)
+	val hex get() = listOf(alpha, red, green, blue).joinToString("") { it.toString(16).padStart(2, '0') }
 	val hexWithHash get() = "#$hex"
 
 	val a get() = alpha

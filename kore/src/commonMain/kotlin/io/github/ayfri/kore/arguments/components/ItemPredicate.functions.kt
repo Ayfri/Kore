@@ -64,7 +64,7 @@ fun ItemPredicate.clearPredicate(component: String) {
 	componentsAlternatives.remove("!$component")
 	if (component == COUNT_ITEM_PREDICATE) countSubPredicates.clear()
 	if (component in subPredicatesKeys) {
-		subPredicates.removeIf { (matchers) ->
+		subPredicates.removeAll { (matchers) ->
 			matchers.any { it.componentName == component }
 		}
 	}

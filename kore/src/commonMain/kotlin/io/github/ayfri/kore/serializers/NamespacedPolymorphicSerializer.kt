@@ -85,7 +85,7 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 	}
 
 	private fun contentNbt(nbtCompound: NbtCompound) = when (moveIntoProperty) {
-		null -> nbt { nbtCompound.filterKeys { it != outputName }.forEach(::put) }
+		null -> nbt { nbtCompound.filterKeys { it != outputName }.forEach { (key, tag) -> put(key, tag) } }
 		else -> nbtCompound[moveIntoProperty]?.nbtCompound ?: nbt {}
 	}
 
@@ -164,13 +164,13 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 		val finalNbt = when (moveIntoProperty) {
 			null -> nbt {
 				if (!skipOutputName) put(outputName, NbtString(outputClassName))
-				valueNbt.filterKeys { it != outputName }.forEach(::put)
+				valueNbt.filterKeys { it != outputName }.forEach { (key, tag) -> put(key, tag) }
 			}
 
 			else -> nbt {
 				if (!skipOutputName) put(outputName, NbtString(outputClassName))
 				if (!(skipEmptyOutput && valueNbt.isEmpty()))
-					putNbtCompound(moveIntoProperty) { valueNbt.filterKeys { it != outputName }.forEach(::put) }
+					putNbtCompound(moveIntoProperty) { valueNbt.filterKeys { it != outputName }.forEach { (key, tag) -> put(key, tag) } }
 			}
 		}
 

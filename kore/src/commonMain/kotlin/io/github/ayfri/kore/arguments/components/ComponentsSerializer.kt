@@ -31,9 +31,10 @@ val jsonSerializer = Json {
  */
 internal fun NbtTag.unescapeChatComponent() = toString().unescape()
 	// The quotes are added by the serializer, we just need to unescape the string.
-	.replace(Regex("\"\'\"(.+?)\"\'\"", RegexOption.DOT_MATCHES_ALL), "'\"$1\"'")
+	// `[\s\S]` is used instead of `.` (with DOT_MATCHES_ALL) since that RegexOption is JVM-only.
+	.replace(Regex("\"\'\"([\\s\\S]+?)\"\'\""), "'\"$1\"'")
 	// we also need a fix for JSON Components as they are serialized as JSON but single quoted.
-	.replace(Regex("\"\'\\{(.+?)\\}\'\"", RegexOption.DOT_MATCHES_ALL), "'{$1}'")
+	.replace(Regex("\"\'\\{([\\s\\S]+?)\\}\'\""), "'{$1}'")
 
 data object ComponentsSerializer : KSerializer<ComponentsScope> {
 	override val descriptor = buildClassSerialDescriptor("Components") {

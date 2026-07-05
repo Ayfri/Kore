@@ -39,7 +39,7 @@ fun Path.readText() = if (!this.isDirectory()) this.toSource().buffered().run {
 	readString()
 } else throw IOException("Cannot read directory as text")
 fun Path.writeText(content: String) = if (!this.isDirectory()) this.toSink().buffered().apply {
-	write(content.toByteArray())
+	write(content.encodeToByteArray())
 	flush()
 } else throw IOException("Cannot write to directory")
 fun Path.write(array: ByteArray) = if (!this.isDirectory()) this.toSink().buffered().apply {

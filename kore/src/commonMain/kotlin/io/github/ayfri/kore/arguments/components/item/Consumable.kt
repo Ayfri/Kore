@@ -68,6 +68,6 @@ fun ComponentsScope.consumable(
 
 fun ConsumableComponent.onConsumeEffects(block: ConsumeEffects.() -> Unit) = apply {
 	onConsumeEffects = ConsumeEffects().apply(block).effects.associateBy {
-		"minecraft:${it.javaClass.simpleName.snakeCase()}"
+		"minecraft:${it::class.simpleName!!.snakeCase()}"
 	}
 }

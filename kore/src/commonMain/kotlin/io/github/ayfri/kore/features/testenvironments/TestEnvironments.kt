@@ -177,6 +177,6 @@ class GameRulesBuilder {
 	}
 
 	internal fun build() = GameRules(
-		rules = rules.toSortedMap(compareBy { it.name })
+		rules = rules.toList().sortedBy { (rule, _) -> rule.name }.toMap()
 	)
 }
