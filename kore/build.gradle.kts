@@ -58,3 +58,15 @@ tasks.named("compileKotlinJvm") {
 		dependsOn(":generation:run")
 	}
 }
+
+// The commonMain source set manually adds the KSP metadata output folder as an extra source directory
+// (see `kotlin.srcDir(...)` above), which Gradle doesn't automatically recognize as a task output/input
+// link. Every task that compiles or packages commonMain sources must therefore be told explicitly to wait
+// for `kspCommonMainKotlinMetadata`, or builds fail (or silently race) with "implicit dependency" errors -
+// this bit everyone publishing the KMP `kore` module, not just `compileKotlinJvm`/`compileKotlinJs`.
+tasks.matching {
+	it.name != "kspCommonMainKotlinMetadata" &&
+		(it.name.startsWith("compileKotlin") || it.name.contains("SourcesJar", ignoreCase = true))
+}.configureEach {
+	dependsOn(tasks.named("kspCommonMainKotlinMetadata"))
+}
