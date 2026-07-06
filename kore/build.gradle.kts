@@ -24,7 +24,7 @@ kotlin {
 	jvmToolchain(25)
 
 	compilerOptions {
-		freeCompilerArgs.addAll(listOf("-Xrender-internal-diagnostic-names"))
+		freeCompilerArgs.add("-Xrender-internal-diagnostic-names")
 	}
 
 	sourceSets {
@@ -34,6 +34,7 @@ kotlin {
 				implementation(libs.kotlinx.serialization)
 				api(libs.knbt)
 			}
+			// KSP doesn't expose common-metadata output as a source dir automatically, unlike per-target KSP.
 			kotlin.srcDir(layout.buildDirectory.dir("generated/ksp/metadata/commonMain/kotlin"))
 		}
 
@@ -50,23 +51,21 @@ kotlin {
 dependencies {
 	add("kspCommonMainMetadata", project(":kore-ksp"))
 	add("kspJvmTest", project(":kore-ksp"))
+	add("kspJsTest", project(":kore-ksp"))
 }
 
+// Bootstrap the generated MC enums/registries on a fresh checkout before the first JVM compile.
 tasks.named("compileKotlinJvm") {
-	val generatedFolder = file("src/commonMain/kotlin/io/github/ayfri/kore/generated")
-	if (!generatedFolder.exists()) {
+	if (!file("src/commonMain/kotlin/io/github/ayfri/kore/generated").exists()) {
 		dependsOn(":generation:run")
 	}
 }
 
-// The commonMain source set manually adds the KSP metadata output folder as an extra source directory
-// (see `kotlin.srcDir(...)` above), which Gradle doesn't automatically recognize as a task output/input
-// link. Every task that compiles or packages commonMain sources must therefore be told explicitly to wait
-// for `kspCommonMainKotlinMetadata`, or builds fail (or silently race) with "implicit dependency" errors -
-// this bit everyone publishing the KMP `kore` module, not just `compileKotlinJvm`/`compileKotlinJs`.
+// The common-metadata srcDir added above isn't tracked as a task output, so every consumer must
+// depend on the KSP task that fills it, or builds race. Per-target KSP tasks wire themselves.
 tasks.matching {
 	it.name != "kspCommonMainKotlinMetadata" &&
 		(it.name.startsWith("compileKotlin") || it.name.contains("SourcesJar", ignoreCase = true))
 }.configureEach {
-	dependsOn(tasks.named("kspCommonMainKotlinMetadata"))
+	dependsOn("kspCommonMainKotlinMetadata")
 }
