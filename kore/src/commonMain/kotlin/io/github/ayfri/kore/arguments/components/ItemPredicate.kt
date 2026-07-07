@@ -7,6 +7,7 @@ import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.utils.*
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.ListSerializer
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.encodeToNbtTag
 import net.benwoodworth.knbt.nbtCompound
@@ -133,7 +134,13 @@ data class ItemPredicate(
 	}
 
 	override fun asNbt() = nbt {
-		componentsAlternatives.forEach { (key, value) -> put(key, snbtSerializer.encodeToNbtTag(value)) }
+		val listSerializer = ListSerializer(Component.Companion.ComponentSerializer())
+		componentsAlternatives.forEach { (key, value) ->
+			put(
+				key,
+				snbtSerializer.encodeToNbtTag(listSerializer, value)
+			)
+		}
 	}
 
 	fun buildPredicateString(): String {

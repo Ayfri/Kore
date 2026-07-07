@@ -8,11 +8,9 @@ import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.snbtSerializer
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.encodeToJsonElement
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtCompoundBuilder
 import net.benwoodworth.knbt.NbtTag
-import net.benwoodworth.knbt.encodeToNbtTag
 
 abstract class ComponentsScope(open val components: MutableMap<String, Component> = mutableMapOf()) {
 	/** The last added component name, used for `!` and other operators. */
@@ -61,12 +59,16 @@ abstract class ComponentsScope(open val components: MutableMap<String, Component
 
 	/** Converts the scope to a [NbtCompound] for serialization as SNBT. */
 	open fun asNbt() = nbt {
-		components.forEach { (key, value) -> put(key, snbtSerializer.encodeToNbtTag(value)) }
+		components.forEach { (key, value) ->
+			put(key, snbtSerializer.encodeToNbtTag(Component.Companion.ComponentSerializer(), value))
+		}
 	}
 
 	/** Converts the scope to a [JsonObject] for serialization as JSON. */
 	open fun asJson() = buildJsonObject {
-		components.forEach { (key, value) -> put(key, jsonSerializer.encodeToJsonElement(value)) }
+		components.forEach { (key, value) ->
+			put(key, jsonSerializer.encodeToJsonElement(Component.Companion.ComponentSerializer(), value))
+		}
 	}
 
 	override fun toString() = asNbt().entries

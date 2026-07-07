@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.serialization
 
 import io.github.ayfri.kore.arguments.actions.openUrl
+import io.github.ayfri.kore.arguments.canDeserializeTypedArguments
 import io.github.ayfri.kore.arguments.chatcomponents.*
 import io.github.ayfri.kore.arguments.chatcomponents.hover.showText
 import io.github.ayfri.kore.arguments.colors.Color
@@ -29,8 +30,12 @@ fun chatComponentsDeserializationTests() {
 	keybindComponent("key.sprint").assertsRoundTrips()
 	nbtComponent("test", self()).assertsRoundTrips()
 	nbtComponent("test", storage("my_storage")).assertsRoundTrips()
-	objectComponent(Textures.Block.ACACIA_LOG, Atlases.BLOCKS).assertsRoundTrips()
-	objectComponent(Textures.Block.ACACIA_LOG).assertsRoundTrips()
+
+	// needs typed Argument deserialization (JVM-only, see canDeserializeTypedArguments)
+	if (canDeserializeTypedArguments) {
+		objectComponent(Textures.Block.ACACIA_LOG, Atlases.BLOCKS).assertsRoundTrips()
+		objectComponent(Textures.Block.ACACIA_LOG).assertsRoundTrips()
+	}
 	scoreComponent("my_objective", self()).assertsRoundTrips()
 	translatedTextComponent("block.minecraft.stone").assertsRoundTrips()
 	translatedTextComponent("chat.type.advancement.goal", listOf("Kore", "The best library!")).assertsRoundTrips()

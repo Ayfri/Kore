@@ -8,3 +8,5 @@ package io.github.ayfri.kore.arguments
 actual fun createArgumentProxy(value: String): Argument = object : Argument {
 	override fun asString() = value
 }
+
+actual val canDeserializeTypedArguments: Boolean = false

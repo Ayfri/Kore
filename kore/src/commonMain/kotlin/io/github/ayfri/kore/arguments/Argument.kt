@@ -25,3 +25,6 @@ interface Argument {
  * datapacks; on JS, [Argument]s are only ever built by the DSL, never parsed, so the actual is a minimal stub.
  */
 expect fun createArgumentProxy(value: String): Argument
+
+/** Whether [createArgumentProxy] rebuilds a fully-typed [Argument] (`true` on JVM) or just the `asString` stub. */
+expect val canDeserializeTypedArguments: Boolean

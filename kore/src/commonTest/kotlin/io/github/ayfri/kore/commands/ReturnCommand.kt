@@ -32,7 +32,7 @@ fun Function.returnCommand() {
 		returnValue(0)
 	} assertsMatches Regex(
 		"""
-		execute unless block 0 0 0 minecraft:stone run return run function ${datapack.name}:${datapack.configuration.generatedFunctionsFolder}/generated_\d+
+		execute unless block 0 0 0 minecraft:stone run return run function ${datapack.name}:${datapack.configuration.generatedFunctionsFolder}/generated_-?\d+
 	""".trimIndent()
 	)
 }

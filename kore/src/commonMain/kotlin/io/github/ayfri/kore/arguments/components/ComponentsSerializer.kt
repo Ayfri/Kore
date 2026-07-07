@@ -5,8 +5,9 @@ import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
 import io.github.ayfri.kore.utils.unescape
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
@@ -38,7 +39,10 @@ internal fun NbtTag.unescapeChatComponent() = toString().unescape()
 
 data object ComponentsSerializer : KSerializer<ComponentsScope> {
 	override val descriptor = buildClassSerialDescriptor("Components") {
-		element<Map<String, Component>>("components")
+		element(
+			"components",
+			MapSerializer(String.serializer(), Component.Companion.ComponentSerializer()).descriptor,
+		)
 	}
 
 	/**
