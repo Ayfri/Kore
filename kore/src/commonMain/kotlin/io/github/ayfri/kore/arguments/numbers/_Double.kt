@@ -4,6 +4,10 @@ import kotlin.math.truncate
 
 val Double.truncated get() = truncate(this)
 
+/** Like `toString()`, but always keeps a decimal point (JVM does this by default, JS doesn't). */
+val Double.toStringWithDecimal
+	get() = toString().let { if ('.' !in it && 'E' !in it && 'e' !in it) "$it.0" else it }
+
 fun Double.toStringTruncatedIfRound() = when {
 	this % 1 == 0.0 -> toLong().toString()
 	else -> toString()

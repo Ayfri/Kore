@@ -4,6 +4,7 @@ import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.enums.Axis
 import io.github.ayfri.kore.arguments.numbers.PosNumber
 import io.github.ayfri.kore.arguments.numbers.pos
+import io.github.ayfri.kore.arguments.numbers.toStringWithDecimal
 import io.github.ayfri.kore.arguments.types.ContainerArgument
 import io.github.ayfri.kore.arguments.types.DataArgument
 import kotlinx.serialization.Serializable
@@ -107,7 +108,8 @@ data class Vec3(
 		"${x.toStringTruncatedIfZero()} ${y.toStringTruncatedIfZero()} ${z.toStringTruncatedIfZero()}"
 
 	fun toStringTruncated() = "${x.toStringTruncated()} ${y.toStringTruncated()} ${z.toStringTruncated()}"
-	fun toStringValues() = "${x.value} ${y.value} ${z.value}"
+	fun toStringValues() =
+		"${x.value.toStringWithDecimal} ${y.value.toStringWithDecimal} ${z.value.toStringWithDecimal}"
 	fun toVec2() = Vec2(x, y)
 
 	companion object {

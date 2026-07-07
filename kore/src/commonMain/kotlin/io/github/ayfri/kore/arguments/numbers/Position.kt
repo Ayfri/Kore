@@ -54,7 +54,7 @@ data class PosNumber(
 	override fun toString() = when (type) {
 		Type.LOCAL -> "$prefix${value.truncateIfRoundEmptyIfZero}"
 		Type.RELATIVE -> "$prefix${value.truncateIfRoundEmptyIfZero}"
-		Type.WORLD -> value.toString()
+		Type.WORLD -> value.toStringWithDecimal
 	}
 
 	fun truncate() = copy(value = value.truncated)

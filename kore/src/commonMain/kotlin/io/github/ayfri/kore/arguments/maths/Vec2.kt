@@ -4,6 +4,7 @@ import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.enums.Axis
 import io.github.ayfri.kore.arguments.numbers.PosNumber
 import io.github.ayfri.kore.arguments.numbers.pos
+import io.github.ayfri.kore.arguments.numbers.toStringWithDecimal
 import kotlin.math.acos
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
@@ -86,7 +87,7 @@ data class Vec2(val x: PosNumber, val y: PosNumber) : Argument {
 
 	fun toStringTruncatedIfZero() = "${x.toStringTruncatedIfZero()} ${y.toStringTruncatedIfZero()}"
 	fun toStringTruncated() = "${x.toStringTruncated()} ${y.toStringTruncated()}"
-	fun toStringValues() = "${x.value} ${y.value}"
+	fun toStringValues() = "${x.value.toStringWithDecimal} ${y.value.toStringWithDecimal}"
 	fun toVec3(z: PosNumber) = Vec3(x, y, z)
 	fun toVec3(z: Number = 0, type: PosNumber.Type = PosNumber.Type.WORLD) = Vec3(x, y, pos(z, type))
 

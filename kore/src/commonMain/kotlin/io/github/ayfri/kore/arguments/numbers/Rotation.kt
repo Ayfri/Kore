@@ -34,7 +34,7 @@ data class RotNumber(val value: Double, val type: Type = Type.WORLD) : Comparabl
 
 	override fun toString() = when (type) {
 		Type.RELATIVE -> "$prefix${value.truncateIfRoundEmptyIfZero}"
-		Type.WORLD -> value.toString()
+		Type.WORLD -> value.toStringWithDecimal
 	}
 
 	fun stripTrailingNumbers() = copy(value = value.toLong().toDouble())
