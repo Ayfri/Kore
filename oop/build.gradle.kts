@@ -1,5 +1,5 @@
 plugins {
-	kotlin("jvm")
+	kotlin("multiplatform")
 	kotlin("plugin.serialization")
 	id("kotest-conventions")
 	id("publish-conventions")
@@ -14,12 +14,19 @@ repositories {
 	mavenCentral()
 }
 
-dependencies {
-	api(project(":kore"))
-	implementation(libs.kotlinx.io)
-	implementation(libs.kotlinx.serialization)
-}
-
 kotlin {
+	jvm()
+	js {
+		browser()
+		nodejs()
+	}
 	jvmToolchain(25)
+
+	sourceSets {
+		commonMain.dependencies {
+			api(project(":kore"))
+			implementation(libs.kotlinx.io)
+			implementation(libs.kotlinx.serialization)
+		}
+	}
 }
