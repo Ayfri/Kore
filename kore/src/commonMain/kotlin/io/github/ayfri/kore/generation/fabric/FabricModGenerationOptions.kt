@@ -27,7 +27,7 @@ data class FabricModGenerationOptions(
 	var schemaVersion: Int = 1,
 	var version: String,
 ) : DataPackJarGenerationProvider() {
-	override fun generateAdditionalFiles(generator: DataPackGenerator, options: DataPackJarGenerationOptions) {
+	override suspend fun generateAdditionalFiles(generator: DataPackGenerator, options: DataPackJarGenerationOptions) {
 		val fabricOptions = options.providers.filterIsInstance<FabricModGenerationOptions>()
 		if (fabricOptions.isEmpty()) return
 

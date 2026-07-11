@@ -30,7 +30,10 @@ data class QuiltLicense(
 				require(value.identifier == null && value.licenses == null) { "QuiltLicense must have either identifier or licenses." }
 
 				if (value.identifier != null) encoder.encodeString(value.identifier!!)
-				else encoder.encodeSerializableValue(inlinableListSerializer(QuiltLicenseObject.serializer()), value.licenses!!)
+				else encoder.encodeSerializableValue(
+					inlinableListSerializer(QuiltLicenseObject.serializer()),
+					value.licenses!!
+				)
 			}
 		}
 	}

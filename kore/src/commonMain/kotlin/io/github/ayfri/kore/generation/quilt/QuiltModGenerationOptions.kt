@@ -10,7 +10,7 @@ data class QuiltModGenerationOptions(
 	var schemaVersion: Int = 1,
 	var loader: QuiltLoader,
 ) : DataPackJarGenerationProvider() {
-	override fun generateAdditionalFiles(generator: DataPackGenerator, options: DataPackJarGenerationOptions) {
+	override suspend fun generateAdditionalFiles(generator: DataPackGenerator, options: DataPackJarGenerationOptions) {
 		val quiltOptions = options.providers.filterIsInstance<QuiltModGenerationOptions>()
 		if (quiltOptions.isEmpty()) return
 
@@ -22,5 +22,11 @@ data class QuiltModGenerationOptions(
 }
 
 fun DataPackJarGenerationOptions.quilt(group: String, init: QuiltLoader.() -> Unit) {
-	providers += QuiltModGenerationOptions(loader = QuiltLoader(group = group, id = datapack.name, version = "0.0.1").apply(init))
+	providers += QuiltModGenerationOptions(
+		loader = QuiltLoader(
+			group = group,
+			id = datapack.name,
+			version = "0.0.1"
+		).apply(init)
+	)
 }
