@@ -65,8 +65,7 @@ sealed class DisplayEntity(
 			}
 		}
 
-		@JvmStatic
-		protected fun <T : DisplayEntity> CompositeEncoder.encodeDisplayEntity(
+		internal fun <T : DisplayEntity> CompositeEncoder.encodeDisplayEntity(
 			value: T,
 			descriptor: SerialDescriptor,
 			offset: Int
@@ -91,8 +90,7 @@ sealed class DisplayEntity(
 			value.width?.let { encodeIntElement(descriptor, offset + 10, it) }
 		}
 
-		@JvmStatic
-		protected fun ClassSerialDescriptorBuilder.addDisplayEntity() {
+		internal fun ClassSerialDescriptorBuilder.addDisplayEntity() {
 			element("billboard_mode", BillboardMode.serializer().descriptor)
 			element("brightness", Brightness.serializer().descriptor)
 			element("glow_color_override", RGB.serializer().descriptor)

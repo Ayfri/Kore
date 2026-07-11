@@ -1,13 +1,13 @@
 package io.github.ayfri.kore.helpers.displays.maths
 
 import io.github.ayfri.kore.arguments.maths.Vec3
+import io.github.ayfri.kore.helpers.displays.maths.internal.Vector3f
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.FloatArraySerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import org.joml.Vector3f
 import kotlin.math.absoluteValue
 import kotlin.math.sqrt
 

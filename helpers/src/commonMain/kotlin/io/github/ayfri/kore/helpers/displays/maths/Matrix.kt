@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.helpers.displays.maths
 
-import org.joml.Matrix4f
-import java.nio.FloatBuffer
+import io.github.ayfri.kore.helpers.displays.maths.internal.Matrix4f
 
 class Matrix(collection: Collection<Float> = listOf()) {
 	constructor(array: FloatArray) : this(array.toMutableList())
@@ -10,19 +9,10 @@ class Matrix(collection: Collection<Float> = listOf()) {
 		this.matrix = matrix
 	}
 
-	constructor(buffer: FloatBuffer) : this() {
-		matrix = Matrix4f(buffer)
-	}
-
 	var matrix = Matrix4f()
 
 	val values get() = matrix.transpose().get(FloatArray(16)).toMutableList()
 	val valuesAsArray: FloatArray get() = matrix.transpose().get(FloatArray(16))
-
-	val isIdentity get() = matrix.properties() and Matrix4f.PROPERTY_IDENTITY.toInt() != 0
-	val isTranslation get() = matrix.properties() and Matrix4f.PROPERTY_TRANSLATION.toInt() != 0
-	val isScale get() = matrix.properties() and Matrix4f.PROPERTY_AFFINE.toInt() != 0
-	val isRotation get() = matrix.properties() and Matrix4f.PROPERTY_ORTHONORMAL.toInt() != 0
 
 	init {
 		when {
@@ -38,7 +28,7 @@ class Matrix(collection: Collection<Float> = listOf()) {
 
 	operator fun times(other: Matrix) = apply { matrix.mul(other.matrix) }
 
-	fun getTranslation() = Vec3f(matrix.m30(), matrix.m31(), matrix.m32())
+	fun getTranslation() = Vec3f(matrix.m30, matrix.m31, matrix.m32)
 
 	fun setIdentity() = apply { matrix.identity() }
 
@@ -64,7 +54,7 @@ class Matrix(collection: Collection<Float> = listOf()) {
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
-		if (javaClass != other?.javaClass) return false
+		if (this::class != other?.let { it::class }) return false
 
 		other as Matrix
 

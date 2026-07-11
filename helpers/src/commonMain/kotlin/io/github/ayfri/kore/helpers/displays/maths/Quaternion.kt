@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.helpers.displays.maths
 
-import org.joml.Quaternionf
+import io.github.ayfri.kore.helpers.displays.maths.internal.Quaternionf
 
 class Quaternion(x: Float = 0f, y: Float = 0f, z: Float = 0f, w: Float = 1f) {
 	constructor(x: Number, y: Number, z: Number, w: Number) : this(x.toFloat(), y.toFloat(), z.toFloat(), w.toFloat())
@@ -56,7 +56,7 @@ class Quaternion(x: Float = 0f, y: Float = 0f, z: Float = 0f, w: Float = 1f) {
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
-		if (javaClass != other?.javaClass) return false
+		if (this::class != other?.let { it::class }) return false
 
 		other as Quaternion
 
@@ -76,6 +76,6 @@ class Quaternion(x: Float = 0f, y: Float = 0f, z: Float = 0f, w: Float = 1f) {
 		fun fromEulerAngles(eulerAngles: Vec3f) = fromEulerAngles(eulerAngles.x, eulerAngles.y, eulerAngles.z)
 
 		fun slerp(a: Quaternion, b: Quaternion, t: Float) =
-			Quaternion(a.quaternion.slerp(b.quaternion, t, Quaternionf()))
+			Quaternion(a.quaternion.copy().slerp(b.quaternion, t))
 	}
 }

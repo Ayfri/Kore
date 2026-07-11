@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.helpers.displays.maths
 
-import org.joml.Matrix3f
-import org.joml.Quaternionf
-import org.joml.Vector3f
+import io.github.ayfri.kore.helpers.displays.maths.internal.Matrix3f
+import io.github.ayfri.kore.helpers.displays.maths.internal.Quaternionf
+import io.github.ayfri.kore.helpers.displays.maths.internal.Vector3f
 import kotlin.math.abs
 import kotlin.math.hypot
 import kotlin.math.max

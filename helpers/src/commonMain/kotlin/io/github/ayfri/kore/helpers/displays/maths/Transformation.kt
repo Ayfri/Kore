@@ -3,13 +3,13 @@ package io.github.ayfri.kore.helpers.displays.maths
 import io.github.ayfri.kore.helpers.displays.MatrixBuilder
 import io.github.ayfri.kore.helpers.displays.RotationBuilder
 import io.github.ayfri.kore.helpers.displays.entities.DisplayEntity
+import io.github.ayfri.kore.helpers.displays.maths.internal.Matrix3f
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.serialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.encodeCollection
-import org.joml.Matrix3f
 
 @Serializable(with = Transformation.Companion.TransformationSerializer::class)
 data class Transformation(

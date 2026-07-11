@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.helpers.displays.maths
 
-import org.joml.Math
-import org.joml.Matrix3f
-import org.joml.Quaternionf
+import io.github.ayfri.kore.helpers.displays.maths.internal.Matrix3f
+import io.github.ayfri.kore.helpers.displays.maths.internal.Quaternionf
+import io.github.ayfri.kore.helpers.displays.maths.internal.JomlMath as Math
 
 data class GivensPair(val sinHalf: Float, val cosHalf: Float) {
 	val cosDouble get() = cosHalf * cosHalf - sinHalf * sinHalf

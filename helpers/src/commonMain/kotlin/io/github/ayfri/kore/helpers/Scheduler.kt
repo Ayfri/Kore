@@ -134,11 +134,11 @@ data class SchedulerManager(private val dp: DataPack) {
 	fun clear() = schedulers.clear()
 
 	/** Remove schedulers that reference the provided function argument. */
-	fun removeScheduler(function: FunctionArgument) = schedulers.removeIf { it.function.asId() == function.asId() }
+	fun removeScheduler(function: FunctionArgument) = schedulers.removeAll { it.function.asId() == function.asId() }
 
 	/** Remove schedulers that reference the function identified by name/namespace. */
 	fun removeScheduler(function: String, namespace: String = dp.name) =
-		schedulers.removeIf { it.function.asId() == FunctionArgument(function, namespace).asId() }
+		schedulers.removeAll { it.function.asId() == FunctionArgument(function, namespace).asId() }
 
 	/**
 	 * Unschedule (cancel) the repeating scheduler that references [function], if any.

@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.helpers.displays.maths
 
-import org.joml.AxisAngle4f
+import io.github.ayfri.kore.helpers.displays.maths.internal.AxisAngle4f
 
 class AxisAngle(
 	angle: Float = 0f,
@@ -40,7 +40,7 @@ class AxisAngle(
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
-		if (javaClass != other?.javaClass) return false
+		if (this::class != other?.let { it::class }) return false
 
 		other as AxisAngle
 
