@@ -3,7 +3,6 @@ package io.github.ayfri.kore.bindings.api
 import io.github.ayfri.kore.bindings.Datapack
 import io.github.ayfri.kore.bindings.debugEnabled
 import io.github.ayfri.kore.bindings.download.Downloaders
-import io.github.ayfri.kore.bindings.explore
 import io.github.ayfri.kore.bindings.generateDatapackFile
 import java.nio.file.Path
 import kotlin.io.path.Path

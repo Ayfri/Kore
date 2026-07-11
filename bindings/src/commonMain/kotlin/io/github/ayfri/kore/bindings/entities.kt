@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.bindings
 
 import io.github.ayfri.kore.pack.PackMCMeta
-import java.nio.file.Path
+import kotlinx.io.files.Path
 
 data class Function(
 	val id: String,
