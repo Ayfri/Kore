@@ -1,6 +1,8 @@
 package io.github.ayfri.kore.helpers.displays.maths
 
 import io.github.ayfri.kore.helpers.displays.maths.internal.Quaternionf
+import kotlin.math.cos
+import kotlin.math.sin
 
 class Quaternion(x: Float = 0f, y: Float = 0f, z: Float = 0f, w: Float = 1f) {
 	constructor(x: Number, y: Number, z: Number, w: Number) : this(x.toFloat(), y.toFloat(), z.toFloat(), w.toFloat())
@@ -70,7 +72,11 @@ class Quaternion(x: Float = 0f, y: Float = 0f, z: Float = 0f, w: Float = 1f) {
 	companion object {
 		val IDENTITY = Quaternion()
 
-		fun fromAxisAngle(axis: Vec3f, angle: Float) = Quaternion(Quaternionf(axis.x, axis.y, axis.z, angle))
+		fun fromAxisAngle(axis: Vec3f, angle: Float): Quaternion {
+			val halfSin = sin(angle * 0.5f)
+			val halfCos = cos(angle * 0.5f)
+			return Quaternion(axis.x * halfSin, axis.y * halfSin, axis.z * halfSin, halfCos)
+		}
 		fun fromAxisAngle(axisAngle: AxisAngle) = fromAxisAngle(axisAngle.axis, axisAngle.angle)
 		fun fromEulerAngles(x: Float, y: Float, z: Float) = Quaternion(Quaternionf().rotateXYZ(x, y, z))
 		fun fromEulerAngles(eulerAngles: Vec3f) = fromEulerAngles(eulerAngles.x, eulerAngles.y, eulerAngles.z)
