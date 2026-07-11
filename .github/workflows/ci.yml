@@ -55,10 +55,10 @@ jobs:
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
       - name: Run tests
-        run: ./gradlew test
+        run: ./gradlew :kore:jvmTest :oop:test :helpers:test :bindings:test
 
       - name: Upload test reports
         uses: actions/upload-artifact@v7
         with:
           name: test-report
-          path: kore/build/reports/tests/test/
+          path: kore/build/reports/tests/jvmTest/
