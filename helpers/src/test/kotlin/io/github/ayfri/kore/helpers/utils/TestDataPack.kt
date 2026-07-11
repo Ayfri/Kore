@@ -2,7 +2,6 @@ package io.github.ayfri.kore.helpers.utils
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.configuration
-import io.github.ayfri.kore.generate
 import io.github.ayfri.kore.generation.DataPackGenerationOptions
 import kotlinx.io.files.Path
 

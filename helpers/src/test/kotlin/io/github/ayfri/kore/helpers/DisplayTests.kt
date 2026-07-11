@@ -17,7 +17,6 @@ import io.github.ayfri.kore.entities.display.TextDisplayEntity
 import io.github.ayfri.kore.entities.kill
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
-import io.github.ayfri.kore.generate
 import io.github.ayfri.kore.generated.Attributes
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Enchantments

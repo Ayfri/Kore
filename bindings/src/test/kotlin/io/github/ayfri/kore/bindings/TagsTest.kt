@@ -4,7 +4,6 @@ import io.github.ayfri.kore.features.tags.biomeTag
 import io.github.ayfri.kore.features.tags.blockTag
 import io.github.ayfri.kore.features.tags.enchantmentTag
 import io.github.ayfri.kore.features.tags.itemTag
-import io.github.ayfri.kore.generate
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Items
 import io.kotest.core.spec.style.FunSpec

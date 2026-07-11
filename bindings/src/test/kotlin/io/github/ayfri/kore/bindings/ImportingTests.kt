@@ -16,8 +16,6 @@ import io.github.ayfri.kore.features.recipes.types.result
 import io.github.ayfri.kore.features.worldgen.biome.biome
 import io.github.ayfri.kore.features.worldgen.dimension.dimension
 import io.github.ayfri.kore.functions.function
-import io.github.ayfri.kore.generate
-import io.github.ayfri.kore.generateZip
 import io.github.ayfri.kore.generated.DimensionTypes
 import io.github.ayfri.kore.generated.Items
 import io.kotest.core.spec.style.FunSpec

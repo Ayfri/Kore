@@ -6,7 +6,6 @@ import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
-import io.github.ayfri.kore.generate
 import io.kotest.core.spec.style.FunSpec
 
 fun Function.scoreboardTests() {
