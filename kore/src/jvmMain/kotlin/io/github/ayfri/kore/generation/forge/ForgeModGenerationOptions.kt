@@ -20,7 +20,7 @@ data class ForgeModGenerationOptions(
 	var properties: Map<String, String>? = null,
 	var showAsResourcePack: Boolean = false,
 ) : DataPackJarGenerationProvider() {
-	override fun generateAdditionalFiles(generator: DataPackGenerator, options: DataPackJarGenerationOptions) {
+	override suspend fun generateAdditionalFiles(generator: DataPackGenerator, options: DataPackJarGenerationOptions) {
 		val tomlSerializer = tomlSerializer(generator)
 		val toml = tomlSerializer.encodeToString(this)
 		generator.writeFile("META-INF/mods.toml", toml)

@@ -1,9 +1,6 @@
 package io.github.ayfri.kore.utils
 
 import io.github.ayfri.kore.DataPack
-import io.github.ayfri.kore.generate
-import io.github.ayfri.kore.generateJar
-import io.github.ayfri.kore.generateZip
 import io.github.ayfri.kore.generation.DataPackGenerationOptions
 import io.github.ayfri.kore.generation.DataPackJarGenerationOptions
 import io.github.cdimascio.dotenv.dotenv

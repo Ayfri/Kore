@@ -22,7 +22,7 @@ data class NeoForgeModGenerationOptions(
 	var showAsDataPack: Boolean = false,
 	var services: List<String>? = null,
 ) : DataPackJarGenerationProvider() {
-	override fun generateAdditionalFiles(generator: DataPackGenerator, options: DataPackJarGenerationOptions) {
+	override suspend fun generateAdditionalFiles(generator: DataPackGenerator, options: DataPackJarGenerationOptions) {
 		val tomlSerializer = tomlSerializer(generator)
 		val toml = tomlSerializer.encodeToString(this)
 		generator.writeFile("META-INF/neoforge.mods.toml", toml)
