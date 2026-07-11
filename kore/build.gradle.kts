@@ -55,18 +55,23 @@ dependencies {
 	add("kspJsTest", project(":kore-ksp"))
 }
 
-// Bootstrap the generated MC enums/registries on a fresh checkout before the first JVM compile.
-tasks.named("compileKotlinJvm") {
-	if (!file("src/commonMain/kotlin/io/github/ayfri/kore/generated").exists()) {
+// Bootstrap generated MC enums/registries on a fresh checkout, for every target that needs them.
+if (!file("src/commonMain/kotlin/io/github/ayfri/kore/generated").exists()) {
+	tasks.matching {
+		it.name.startsWith("compileKotlin") ||
+			it.name == "compileCommonMainKotlinMetadata" ||
+			it.name.contains("SourcesJar", ignoreCase = true)
+	}.configureEach {
 		dependsOn(":generation:run")
 	}
 }
 
-// The common-metadata srcDir added above isn't tracked as a task output, so every consumer must
-// depend on the KSP task that fills it, or builds race. Per-target KSP tasks wire themselves.
+// The common-metadata srcDir above isn't a tracked task output, so consumers must depend on the KSP task filling it.
 tasks.matching {
 	it.name != "kspCommonMainKotlinMetadata" &&
-		(it.name.startsWith("compileKotlin") || it.name.contains("SourcesJar", ignoreCase = true))
+		(it.name.startsWith("compileKotlin") ||
+			it.name == "compileCommonMainKotlinMetadata" ||
+			it.name.contains("SourcesJar", ignoreCase = true))
 }.configureEach {
 	dependsOn("kspCommonMainKotlinMetadata")
 }
