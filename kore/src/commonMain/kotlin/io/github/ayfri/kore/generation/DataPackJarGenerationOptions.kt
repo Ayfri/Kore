@@ -4,7 +4,7 @@ import io.github.ayfri.kore.DataPack
 import kotlinx.io.files.Path
 
 abstract class DataPackJarGenerationProvider {
-	abstract fun generateAdditionalFiles(generator: DataPackGenerator, options: DataPackJarGenerationOptions)
+	abstract suspend fun generateAdditionalFiles(generator: DataPackGenerator, options: DataPackJarGenerationOptions)
 }
 
 data class DataPackJarGenerationOptions(

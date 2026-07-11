@@ -55,6 +55,11 @@ import io.github.ayfri.kore.features.worldgen.worldpreset.WorldPreset
 import io.github.ayfri.kore.features.zombienautilusvariants.ZombieNautilusVariant
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.DEFAULT_PACK_FORMAT
+import io.github.ayfri.kore.generation.DataPackGenerationOptions
+import io.github.ayfri.kore.generation.DataPackGenerator
+import io.github.ayfri.kore.generation.DataPackJarGenerationOptions
+import io.github.ayfri.kore.generation.DatapackGenerationMode
+import io.github.ayfri.kore.generation.platform.runSuspendBlocking
 import io.github.ayfri.kore.pack.*
 import io.github.ayfri.kore.serializers.JsonNamingSnakeCaseStrategy
 import io.github.ayfri.kore.utils.*
@@ -184,6 +189,48 @@ class DataPack(val name: String) {
 		warn("The pack format range of the other pack is different from the current one. This may cause issues.")
 		warn(packFormatPrint)
 		return false
+	}
+
+	/**
+	 * Generates the datapack as raw files.
+	 *
+	 * Synchronous: only supported where a real synchronous filesystem exists (JVM, Node.js). On the browser,
+	 * use [generateZipBytes] instead.
+	 */
+	fun generate(init: DataPackGenerationOptions.() -> Unit = {}) {
+		val options = DataPackGenerationOptions().apply(init)
+		runSuspendBlocking { DataPackGenerator(this, options).generate() }
+	}
+
+	/**
+	 * Generates the datapack as a jar file, must be used as a mod.
+	 *
+	 * Synchronous: only supported where a real synchronous filesystem exists (JVM, Node.js).
+	 */
+	fun generateJar(init: DataPackJarGenerationOptions.() -> Unit = {}) {
+		val options = DataPackJarGenerationOptions(this).apply(init)
+		runSuspendBlocking { DataPackGenerator(this, options, DatapackGenerationMode.JAR).generate() }
+	}
+
+	/**
+	 * Generates the datapack as a zip file for easy distribution and faster loading.
+	 *
+	 * Synchronous: only supported where a real synchronous filesystem exists (JVM, Node.js). On the browser,
+	 * use [generateZipBytes] instead.
+	 */
+	fun generateZip(init: DataPackGenerationOptions.() -> Unit = {}) {
+		val options = DataPackGenerationOptions().apply(init)
+		runSuspendBlocking { DataPackGenerator(this, options, DatapackGenerationMode.ZIP).generate() }
+	}
+
+	/**
+	 * Generates the datapack as a zip file and returns its bytes, without requiring a real filesystem. Works on
+	 * every target, including the browser (staged through OPFS behind the scenes).
+	 */
+	suspend fun generateZipBytes(init: DataPackGenerationOptions.() -> Unit = {}): ByteArray {
+		val options = DataPackGenerationOptions().apply(init)
+		return DataPackGenerator(this, options, DatapackGenerationMode.ZIP).generate()
+			?: error("Generating the datapack as a zip unexpectedly produced no bytes.")
 	}
 
 	@OptIn(ExperimentalSerializationApi::class)

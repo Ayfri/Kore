@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.generation
 
 import io.github.ayfri.kore.DataPack
-import io.github.ayfri.kore.generate
 import io.github.ayfri.kore.utils.absolute
 import io.github.ayfri.kore.utils.makeDirectories
 import io.github.ayfri.kore.utils.resolve
@@ -29,7 +28,8 @@ fun DataPackGenerationOptions.mergeWithPacks(vararg packs: Path) {
  * Merge the current [DataPack] with the given [packs].
  * Also, checks if the versions match and prints out warning if they don't.
  *
- * **Note:** This function will generate the given [packs] in temporary folders before merging them.
+ * **Note:** This function will generate the given [packs] in temporary folders before merging them. Only
+ * available where synchronous generation is supported (JVM/Node.js), since it must generate [packs] eagerly.
  */
 fun DataPackGenerationOptions.mergeWithPacks(vararg packs: DataPack) {
 	mergeWithPacks(*packs.map {
