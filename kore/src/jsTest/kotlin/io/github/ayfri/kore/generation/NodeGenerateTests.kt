@@ -15,8 +15,11 @@ import io.kotest.matchers.shouldBe
 import kotlinx.io.buffered
 import kotlinx.io.readByteArray
 
+// SystemFileSystem only works in the Node subtarget; the browser subtarget has no filesystem and throws at runtime.
+private val isNodeJs: Boolean = js("typeof process !== 'undefined' && !!(process.versions && process.versions.node)") as Boolean
+
 class NodeGenerateTests : FunSpec({
-	test("generate() writes real files through Node's fs module") {
+	test("generate() writes real files through Node's fs module").config(enabled = isNodeJs) {
 		val outDir = TemporaryFiles.createTempDirectory("kore_node_generate_test")
 
 		val dp = dataPack("node_generate_test") {
@@ -30,7 +33,7 @@ class NodeGenerateTests : FunSpec({
 		functionFile.readText() shouldBe "say Hello from Node!"
 	}
 
-	test("generateZip() writes a real zip file through Node's fs module") {
+	test("generateZip() writes a real zip file through Node's fs module").config(enabled = isNodeJs) {
 		val outDir = TemporaryFiles.createTempDirectory("kore_node_generate_zip_test")
 
 		val dp = dataPack("node_generate_zip_test") {
