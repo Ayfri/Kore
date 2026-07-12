@@ -164,18 +164,18 @@ class DisplayTests : FunSpec({
 	test("display") {
 		dataPack("helpers_tests") {
 			load { displayTests() }
-		}.generate()
+		}
 	}
 
 	test("display entity selectors") {
 		dataPack("helpers_tests") {
 			load { displayEntitySelectorTests() }
-		}.generate()
+		}
 	}
 
 	test("display to entity") {
 		dataPack("helpers_tests") {
 			load { displayToEntityTests() }
-		}.generate()
+		}
 	}
 })

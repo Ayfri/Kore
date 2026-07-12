@@ -6,10 +6,9 @@ import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.cooldown.registerCooldown
 import io.github.ayfri.kore.entities.player
 import io.github.ayfri.kore.functions.function
-import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
 
-fun cooldownTests() = testDataPack("cooldown_tests") {
+fun cooldownTests() = dataPack("cooldown_tests") {
 	val player = player("TestPlayer")
 	val cd = registerCooldown("attack_cd", 2.seconds)
 
@@ -30,8 +29,6 @@ fun cooldownTests() = testDataPack("cooldown_tests") {
 
 	generatedFunctions.any { it.name == OopConstants.cooldownInitFunctionName("attack_cd") } assertsIs true
 	generatedFunctions.any { it.name == OopConstants.cooldownTickFunctionName("attack_cd") } assertsIs true
-}.apply {
-	generate()
 }
 
 class CooldownTests : FunSpec({

@@ -5,10 +5,9 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.spawner.registerSpawner
-import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
 
-fun spawnerTests() = testDataPack("spawner_tests") {
+fun spawnerTests() = dataPack("spawner_tests") {
 	val zombieSpawner = registerSpawner("zombie_wave", EntityTypes.ZOMBIE) {
 		position = vec3(100, 64, 200)
 	}
@@ -32,8 +31,6 @@ fun spawnerTests() = testDataPack("spawner_tests") {
 	}
 
 	generatedFunctions.any { it.name == OopConstants.spawnerSpawnFunctionName("zombie_wave") } assertsIs true
-}.apply {
-	generate()
 }
 
 class SpawnerTests : FunSpec({

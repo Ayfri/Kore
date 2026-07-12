@@ -32,6 +32,6 @@ class ScoreboardHelperTests : FunSpec({
 	test("scoreboard") {
 		dataPack("helpers_tests") {
 			load { scoreboardTests() }
-		}.generate()
+		}
 	}
 })

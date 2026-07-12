@@ -66,18 +66,18 @@ class MannequinTests : FunSpec({
 	test("mannequin nbt") {
 		dataPack("helpers_tests") {
 			load { mannequinTests() }
-		}.generate()
+		}
 	}
 
 	test("mannequin entity selector") {
 		dataPack("helpers_tests") {
 			load { mannequinEntityTests() }
-		}.generate()
+		}
 	}
 
 	test("mannequin summon") {
 		dataPack("helpers_tests") {
 			load { mannequinSummonTests() }
-		}.generate()
+		}
 	}
 })

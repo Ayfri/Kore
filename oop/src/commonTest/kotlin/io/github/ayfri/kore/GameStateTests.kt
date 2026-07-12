@@ -4,10 +4,9 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.gamestate.registerGameStates
-import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
 
-fun gameStateTests() = testDataPack("game_state_tests") {
+fun gameStateTests() = dataPack("game_state_tests") {
 	val states = registerGameStates {
 		state("waiting")
 		state("playing")
@@ -39,8 +38,6 @@ fun gameStateTests() = testDataPack("game_state_tests") {
 	}
 
 	generatedFunctions.any { it.name == "kore_state_init" } assertsIs true
-}.apply {
-	generate()
 }
 
 class GameStateTests : FunSpec({

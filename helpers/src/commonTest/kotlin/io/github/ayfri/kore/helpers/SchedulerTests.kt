@@ -28,6 +28,6 @@ class SchedulerTests : FunSpec({
 	test("scheduler") {
 		dataPack("helpers_tests") {
 			schedulerTest()
-		}.generate()
+		}
 	}
 })

@@ -6,10 +6,9 @@ import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.entities.player
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.timer.registerTimer
-import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
 
-fun timerTests() = testDataPack("timer_tests") {
+fun timerTests() = dataPack("timer_tests") {
 	val gameTimer = registerTimer("game_timer", 200.ticks)
 	val player = player("Ayfri")
 
@@ -35,8 +34,6 @@ fun timerTests() = testDataPack("timer_tests") {
 
 	generatedFunctions.any { it.name == OopConstants.timerInitFunctionName("game_timer") } assertsIs true
 	generatedFunctions.any { it.name == OopConstants.timerTickFunctionName("game_timer") } assertsIs true
-}.apply {
-	generate()
 }
 
 class TimerTests : FunSpec({

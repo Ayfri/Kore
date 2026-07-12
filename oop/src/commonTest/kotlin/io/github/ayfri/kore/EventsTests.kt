@@ -8,10 +8,9 @@ import io.github.ayfri.kore.events.*
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.Items
-import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
 
-fun eventsTests() = testDataPack("events_tests") {
+fun eventsTests() = dataPack("events_tests") {
 	val player = player("TestPlayer")
 	val zombie = entity(EntityTypes.ZOMBIE)
 
@@ -80,8 +79,6 @@ fun eventsTests() = testDataPack("events_tests") {
 
 	lootTables.any { it.fileName.endsWith("death_trigger_zombie") } assertsIs true
 	generatedFunctions.any { it.name == OopConstants.deathDispatcherFunction } assertsIs true
-}.apply {
-	generate()
 }
 
 class EventsTests : FunSpec({

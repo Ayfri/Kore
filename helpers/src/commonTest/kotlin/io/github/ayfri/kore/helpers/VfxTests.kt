@@ -1,14 +1,14 @@
 package io.github.ayfri.kore.helpers
 
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.generated.Particles
 import io.github.ayfri.kore.assertions.assertsIs
-import io.github.ayfri.kore.utils.testDataPack
 import io.github.ayfri.kore.helpers.vfx.Shape
 import io.github.ayfri.kore.helpers.vfx.drawCircle
 import io.github.ayfri.kore.helpers.vfx.drawShape
 import io.kotest.core.spec.style.FunSpec
 
-fun vfxTests() = testDataPack("vfx_tests") {
+fun vfxTests() = dataPack("vfx_tests") {
 	drawCircle("fire_circle", Particles.FLAME, radius = 5.0, points = 16)
 
 	drawShape("helix_soul") {
@@ -49,8 +49,6 @@ fun vfxTests() = testDataPack("vfx_tests") {
 	val sphere = generatedFunctions.first { it.name == HelpersConstants.vfxShapeFunctionName("test_sphere") }
 	sphere.lines.size assertsIs 30
 	sphere.lines.all { it.startsWith("particle minecraft:heart") } assertsIs true
-}.apply {
-	generate()
 }
 
 class VfxTests : FunSpec({

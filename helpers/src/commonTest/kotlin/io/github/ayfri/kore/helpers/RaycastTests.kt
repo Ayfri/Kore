@@ -1,15 +1,15 @@
 package io.github.ayfri.kore.helpers
 
 import io.github.ayfri.kore.commands.say
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.helpers.raycast.RaycastConfig
 import io.github.ayfri.kore.helpers.raycast.raycast
-import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
 
-fun raycastTests() = testDataPack("raycast_tests") {
+fun raycastTests() = dataPack("raycast_tests") {
 	val basicRay = raycast {
 		name = "basic"
 		maxDistance = 50
@@ -89,8 +89,6 @@ fun raycastTests() = testDataPack("raycast_tests") {
 
 	val dedupStep = generatedFunctions.first { it.name == HelpersConstants.raycastStepFunctionName("dedup") }
 	dedupStep.lines.any { it.contains("raycast_dedup_max") } assertsIs true
-}.apply {
-	generate()
 }
 
 class RaycastTests : FunSpec({

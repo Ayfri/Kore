@@ -22,10 +22,9 @@ import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.items.summon
 import io.github.ayfri.kore.scoreboard.*
 import io.github.ayfri.kore.teams.*
-import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
 
-fun oopTests() = testDataPack("oop") {
+fun oopTests() = dataPack("oop") {
 	val teamBar = registerBossBar("team_bar", name) {
 		color = BossBarColor.BLUE
 		max = 20
@@ -232,8 +231,6 @@ fun oopTests() = testDataPack("oop") {
 
 		lines.size assertsIs 5
 	}
-}.apply {
-	generate()
 }
 
 class OopTests : FunSpec({

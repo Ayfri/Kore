@@ -4,10 +4,9 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.entities.*
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.arguments.types.MobEffectArgument
-import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
 
-fun entityEffectsTests() = testDataPack("effects_tests") {
+fun entityEffectsTests() = dataPack("effects_tests") {
 	val player = player("TestPlayer")
 	val speed = MobEffectArgument("speed")
 	val regen = MobEffectArgument("regeneration")
@@ -31,8 +30,6 @@ fun entityEffectsTests() = testDataPack("effects_tests") {
 		player.clearAllEffects() assertsIs "effect clear @e[limit=1,name=TestPlayer,type=minecraft:player]"
 		lines.size assertsIs 5
 	}
-}.apply {
-	generate()
 }
 
 class EntityEffectsTests : FunSpec({

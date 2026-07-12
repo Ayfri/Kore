@@ -6,11 +6,10 @@ import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.events.*
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.Dimensions
-import io.github.ayfri.kore.utils.testDataPack
 import io.github.ayfri.kore.world.world
 import io.kotest.core.spec.style.FunSpec
 
-fun worldEventsTests() = testDataPack("world_events_tests") {
+fun worldEventsTests() = dataPack("world_events_tests") {
 	val world = world()
 	val nether = world(Dimensions.THE_NETHER)
 
@@ -48,8 +47,6 @@ fun worldEventsTests() = testDataPack("world_events_tests") {
 	val netherTickTag = OopConstants.worldEventTag(OopConstants.worldTickEvent, Dimensions.THE_NETHER.asId())
 	generatedFunctions.any { it.name == OopConstants.dispatchFunctionName(netherTickTag) } assertsIs true
 	functions.any { it.name.startsWith("${netherTickTag}_handler_") } assertsIs true
-}.apply {
-	generate()
 }
 
 class WorldEventsTests : FunSpec({

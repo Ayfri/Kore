@@ -10,10 +10,9 @@ import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.SoundEvents
 import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
-import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
 
-fun entityCommandsTests() = testDataPack("entity_commands_tests") {
+fun entityCommandsTests() = dataPack("entity_commands_tests") {
 	val player = player("TestPlayer")
 	val zombie = entity {
 		type = EntityTypes.ZOMBIE
@@ -145,8 +144,6 @@ fun entityCommandsTests() = testDataPack("entity_commands_tests") {
 		player.showActionBar("Press F to interact") assertsIs """title @e[limit=1,name=TestPlayer,type=minecraft:player] actionbar "Press F to interact""""
 		lines.size assertsIs 1
 	}
-}.apply {
-	generate()
 }
 
 class EntityCommandsTests : FunSpec({

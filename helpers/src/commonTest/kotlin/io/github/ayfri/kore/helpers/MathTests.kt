@@ -1,14 +1,14 @@
 package io.github.ayfri.kore.helpers
 
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.entities.player
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.helpers.maths.*
 import io.github.ayfri.kore.helpers.state.scoreboard
-import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
 
-fun mathTests() = testDataPack("math_tests") {
+fun mathTests() = dataPack("math_tests") {
 	val player = player("TestPlayer")
 	val math = registerMath()
 
@@ -104,8 +104,6 @@ fun mathTests() = testDataPack("math_tests") {
 	initFn.lines[2] assertsIs "scoreboard players set #360 kore_math 360"
 	initFn.lines[3] assertsIs "scoreboard players set #scale kore_math 1000"
 	initFn.lines.size assertsIs 4
-}.apply {
-	generate()
 }
 
 class MathTests : FunSpec({

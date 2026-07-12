@@ -1,6 +1,8 @@
 plugins {
 	kotlin("multiplatform")
 	kotlin("plugin.serialization")
+	alias(libs.plugins.ksp)
+	alias(libs.plugins.kotest)
 	id("kotest-conventions")
 	id("publish-conventions")
 }
@@ -29,7 +31,7 @@ kotlin {
 			implementation(libs.kotlinx.serialization)
 		}
 
-		jvmTest.dependencies {
+		commonTest.dependencies {
 			implementation(project(":common-tests"))
 		}
 	}

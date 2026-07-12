@@ -120,6 +120,6 @@ class InventoryManagerTests : FunSpec({
 	test("inventory manager") {
 		dataPack("helpers_tests") {
 			load { inventoryManagerTests() }
-		}.generate()
+		}
 	}
 })

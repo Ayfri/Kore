@@ -53,17 +53,9 @@ private data class LinkToken(val label: String, val url: String) : MdToken
 private data class ColorStart(val color: Color) : MdToken
 private data object ColorEnd : MdToken
 
+// Kept on a single line, without RegexOption.COMMENTS/(?x), since ECMAScript RegExp has no extended/verbose mode.
 private val INLINE_PATTERN = Regex(
-	"""(?x)
-	  (``.+?``)                             # backtick code (double)
-	| (`.+?`)                               # backtick code (single)
-	| (\*\*|__)                             # bold toggle (**) or underline (__)
-	| (~~)                                  # strikethrough toggle
-	| (\|\|)                                # obfuscated toggle
-	| (\*|(?<!\w)_(?=\S))                   # italic toggle
-	| (\[([^\]]+)]\(([^)]+)\))              # link [label](url)
-	| (§\(([^)]*)\))                        # color §(#rrggbb) or §() to reset
-	"""
+	"""(``.+?``)|(`.+?`)|(\*\*|__)|(~~)|(\|\|)|(\*|(?<!\w)_(?=\S))|(\[([^\]]+)\]\(([^)]+)\))|(§\(([^)]*)\))"""
 )
 
 private fun tokenize(input: String): List<MdToken> {

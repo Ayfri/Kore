@@ -50,7 +50,9 @@ sealed class DisplayEntity(
 	@Transient
 	abstract val entityType: EntityTypeArgument
 
-	open fun toNbt() = StringifiedNbt.encodeToNbtTag(this).nbtCompound
+	// Passed explicitly since the reified serializer() lookup for a sealed class with a custom serializer
+	// resolves via a runtime KClass fallback on Kotlin/JS (no reflection there), throwing at runtime.
+	open fun toNbt() = StringifiedNbt.encodeToNbtTag(DisplayEntitySerializer<DisplayEntity>(), this).nbtCompound
 
 	companion object {
 		class DisplayEntitySerializer<T : DisplayEntity> : KSerializer<T> {

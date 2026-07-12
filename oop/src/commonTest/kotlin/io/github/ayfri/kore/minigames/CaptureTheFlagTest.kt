@@ -11,6 +11,7 @@ import io.github.ayfri.kore.bossbar.registerBossBar
 import io.github.ayfri.kore.commands.BossBarStyle
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.cooldown.registerCooldown
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.entities.*
 import io.github.ayfri.kore.events.onHurtEntity
 import io.github.ayfri.kore.functions.function
@@ -21,10 +22,9 @@ import io.github.ayfri.kore.scoreboard.create
 import io.github.ayfri.kore.scoreboard.scoreboard
 import io.github.ayfri.kore.spawner.registerSpawner
 import io.github.ayfri.kore.timer.registerTimer
-import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
 
-fun captureTheFlagTest() = testDataPack("ctf") {
+fun captureTheFlagTest() = dataPack("ctf") {
 	val attacker = player("Attacker")
 	val defender = player("Defender")
 
@@ -147,8 +147,6 @@ fun captureTheFlagTest() = testDataPack("ctf") {
 	generatedFunctions.any { it.name == OopConstants.cooldownInitFunctionName("sprint_boost") } assertsIs true
 	generatedFunctions.any { it.name == OopConstants.spawnerSpawnFunctionName("flag_guard") } assertsIs true
 	generatedFunctions.any { it.name == "kore_state_init" } assertsIs true
-}.apply {
-	generate()
 }
 
 class CaptureTheFlagTests : FunSpec({

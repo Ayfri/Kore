@@ -8,6 +8,7 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.bossbar.registerBossBar
 import io.github.ayfri.kore.commands.BossBarStyle
 import io.github.ayfri.kore.commands.say
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.entities.player
 import io.github.ayfri.kore.entities.sendMessage
 import io.github.ayfri.kore.entities.showTitle
@@ -17,10 +18,9 @@ import io.github.ayfri.kore.gamestate.registerGameStates
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.spawner.registerSpawner
 import io.github.ayfri.kore.timer.registerTimer
-import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
 
-fun kingOfTheHillTest() = testDataPack("koth") {
+fun kingOfTheHillTest() = dataPack("koth") {
 	val player = player("Fighter")
 	val states = registerGameStates {
 		state("lobby")
@@ -95,8 +95,6 @@ fun kingOfTheHillTest() = testDataPack("koth") {
 	generatedFunctions.any { it.name == OopConstants.timerTickFunctionName("round_timer") } assertsIs true
 	generatedFunctions.any { it.name == OopConstants.spawnerSpawnFunctionName("zombie_wave") } assertsIs true
 	generatedFunctions.any { it.name == "kore_state_init" } assertsIs true
-}.apply {
-	generate()
 }
 
 class KingOfTheHillTests : FunSpec({
