@@ -3,9 +3,9 @@ package io.github.ayfri.kore.bindings.api
 import io.github.ayfri.kore.bindings.Datapack
 import io.github.ayfri.kore.bindings.debugEnabled
 import io.github.ayfri.kore.bindings.download.Downloaders
+import io.github.ayfri.kore.bindings.explore as explorePath
 import io.github.ayfri.kore.bindings.generateDatapackFile
-import java.nio.file.Path
-import kotlin.io.path.Path
+import kotlinx.io.files.Path
 
 /**
  * Internal implementation for importing datapacks.
@@ -48,7 +48,7 @@ internal class DatapackImporter(val source: String) {
 	fun explore(): Datapack {
 		debugEnabled = debug
 		val (path, actualFileName) = resolveSource()
-		val datapack = explore(path.toString())
+		val datapack = explorePath(path.toString())
 		// Keep the original filename in the datapack, don't override with remappedName
 		// The remappedName is only used for the Kotlin object name, not for package calculation
 		return datapack.copy(name = actualFileName)
@@ -73,8 +73,3 @@ internal class DatapackImporter(val source: String) {
 		generateDatapackFile(datapack, outputPath, packageNameOverride, remappings)
 	}
 }
-
-class RemappingState(
-	val namespaces: Map<String, String> = emptyMap(),
-	val objectName: String? = null
-)

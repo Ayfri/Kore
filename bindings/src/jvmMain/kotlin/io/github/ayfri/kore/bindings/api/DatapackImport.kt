@@ -111,6 +111,11 @@ class DatapackImportDsl {
 	fun url(path: Path, block: DatapackConfiguration.() -> Unit = {}) = url(path.toString(), block)
 
 	/**
+	 * Add a datapack to import from a local file path.
+	 */
+	fun url(path: kotlinx.io.files.Path, block: DatapackConfiguration.() -> Unit = {}) = url(path.toString(), block)
+
+	/**
 	 * Execute the import process for all configured datapacks.
 	 */
 	internal fun execute() = datapacks.map { (source, datapackConfig) ->

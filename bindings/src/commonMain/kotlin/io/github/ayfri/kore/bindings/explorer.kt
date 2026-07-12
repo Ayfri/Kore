@@ -5,198 +5,76 @@ import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.generated.DEFAULT_PACK_FORMAT
 import io.github.ayfri.kore.pack.*
+import kotlinx.io.files.Path
 import kotlinx.serialization.json.*
-import java.io.FileNotFoundException
-import java.nio.file.Files
-import java.nio.file.Path
-import java.util.zip.ZipFile
-import kotlin.io.path.Path
-import kotlin.io.path.isDirectory
-import kotlin.io.path.name
 
 // Debug configuration for verbose logging
 internal var debugEnabled = false
 
 private val jsonDecoder = Json { ignoreUnknownKeys = true }
 
-fun openAsFiles(path: Path): List<Path> {
-	if (!path.isDirectory()) {
-		if (!path.isZipFormat()) error("File $path isn't using a supported format.")
-
-		val zipPath = path.toAbsolutePath()
-		ZipFile(zipPath.toFile()).use {
-			val entries = it.entries()
-			val files = mutableListOf<Path>()
-
-			while (entries.hasMoreElements()) {
-				val entry = entries.nextElement()
-				if (!entry.isDirectory) {
-					// Store relative path inside the ZIP so getEntry() works later
-					val extractedPath = Path(entry.name)
-					files.add(extractedPath)
-				}
-			}
-
-			return files
-		}
-	}
-
-	val files = mutableListOf<Path>()
-
-	path.toFile().walkTopDown().forEach {
-		if (it.isFile) {
-			files.add(it.toPath())
-		}
-	}
-
-	return files
-}
-
-fun openFile(rootPath: Path, path: Path, isZip: Boolean): String {
-	if (isZip) {
-		ZipFile(rootPath.toFile()).use {
-			// Normalize entry name for ZIP lookup: forward slashes, no leading slash
-			val entryName = path.pathInvariant
-				.replace('\\', '/')
-				.trimStart('/')
-
-			val entry = it.getEntry(entryName)
-			if (entry != null) {
-				return it.getInputStream(entry).bufferedReader().readText()
-			}
-
-			// Try to locate entry by suffix, ignoring leading root folder and singular/plural variations
-			val afterData = entryName.substringAfter("data/", entryName)
-			val candidates = buildList {
-				add(entryName)
-				add(afterData)
-			}
-			val found = it.entries().asSequence().firstOrNull { e ->
-				val name = e.name.replace('\\', '/')
-				candidates.any { cand -> name.endsWith(cand) }
-			}
-			if (found != null) {
-				return it.getInputStream(found).bufferedReader().readText()
-			}
-			throw FileNotFoundException("File $entryName was not found inside the zip.")
-
-		}
-	}
-
-	return path.toFile().readText()
-}
-
-fun Path.matchesWithDatapackPath(path: Regex) = pathInvariant.matches(path)
-
-fun explore(inputPath: String): Datapack {
-	val input = Path(inputPath).toAbsolutePath()
-	var path = input
-	var isZip = input.isZipFormat()
-	val displayName = input.name
-
-	// Fallbacks when a .zip path is provided but the file does not exist
-	if (isZip && !Files.exists(path)) {
-		val baseName = displayName.removeSuffix(".zip")
-		// 1) Try <dir>/<base>/<base>.zip
-		val nestedZip = input.parent?.resolve(baseName)?.resolve("$baseName.zip")
-		if (nestedZip != null && Files.exists(nestedZip)) {
-			path = nestedZip
-			isZip = true
-		} else {
-			// 2) Try sibling directory with same base name (possibly nested)
-			val candidateDir = input.parent?.resolve(baseName)
-			if (candidateDir != null && Files.isDirectory(candidateDir)) {
-				var chosen = candidateDir
-				val nested = candidateDir.resolve(baseName)
-				if (Files.isDirectory(nested)) chosen = nested
-				path = chosen
-				isZip = false
-			}
-		}
-	}
-
-	val tree = openAsFiles(path)
+/**
+ * Explores an already in-memory datapack (e.g. an uploaded/downloaded zip decoded via [readZipDatapack])
+ * and builds its [Datapack] model - functions, resources, and pack metadata.
+ */
+fun explore(datapack: InMemoryDatapack, displayName: String, displayPath: Path): Datapack {
+	val tree = datapack.files.keys.toList()
 
 	// Find the actual data directory root (may be nested like datapack_name/datapack_name/data/...)
 	// Look for the first occurrence of /data/<namespace>/ pattern (e.g., /data/minecraft/ or /data/custom_ns/)
-	// For ZIP files, paths are relative and may start without a prefix
 	val dataRoot = tree.firstOrNull {
-		val normalized = it.pathInvariant.replace('\\', '/')
-		normalized.matches(Regex("^.*/data/[^/]+/.+")) || normalized.matches(Regex("^data/[^/]+/.+"))
+		it.matches(Regex("^.*/data/[^/]+/.+")) || it.matches(Regex("^data/[^/]+/.+"))
 	}?.let { file ->
-		val normalized = file.pathInvariant.replace('\\', '/')
-		val dataIndex = normalized.indexOf("/data/")
-		if (dataIndex >= 0) {
-            normalized.take(dataIndex)
-		} else {
-			// Path starts with "data/" directly (no prefix)
-			""
-		}
-	} ?: (if (isZip) "" else path.pathInvariant)
+		val dataIndex = file.indexOf("/data/")
+		if (dataIndex >= 0) file.take(dataIndex) else ""
+	} ?: ""
 
 	// Build regex patterns that handle both empty and non-empty data roots
 	val dataPrefix = if (dataRoot.isEmpty()) "" else "${Regex.escape(dataRoot)}/"
-	val dataFiles = tree.filter { it.matchesWithDatapackPath(Regex("^${dataPrefix}data/.+")) }
+	val dataFiles = tree.filter { it.matches(Regex("^${dataPrefix}data/.+")) }
 		// Filter out nested datapacks (e.g., data/minecraft/datapacks/trade_rebalance/...)
 		// This is a special case in vanilla Minecraft datapacks
-		.filter { file ->
-			val normalized = file.pathInvariant.replace('\\', '/')
-			!normalized.contains("/datapacks/")
-		}
+		.filter { !it.contains("/datapacks/") }
 
 	if (debugEnabled) {
 		println("[DEBUG] Data files found: ${dataFiles.size}")
 	}
 
 	// Find all function files
-	val functionsFiles =
-		dataFiles.filter { it.matchesWithDatapackPath(Regex("^${dataPrefix}data/.+?/function/.+\\.mcfunction$")) }
-
-	val functions = functionsFiles.mapNotNull {
-		val rootForOpen = if (isZip) path else Path(dataRoot)
-		exploreFunction(rootForOpen, dataRoot, it, isZip)
-	}
+	val functionsFiles = dataFiles.filter { it.matches(Regex("^${dataPrefix}data/.+?/function/.+\\.mcfunction$")) }
+	val functions = functionsFiles.mapNotNull { exploreFunction(datapack, dataRoot, it) }
 
 	// Auto-discover resource types by looking for directories like data/<namespace>/<type>/
-	// Use all data files (including minecraft namespace) for resource discovery
 	val discoveredTypes = discoverResourceTypes(dataFiles, dataRoot)
 	// Filter to only valid resource types that have corresponding Kore Arguments
 	val resourceTypes = discoveredTypes.filter { isValidResourceType(it) }
 
-	// Debug: Print discovered types
 	if (debugEnabled && discoveredTypes.isNotEmpty()) {
 		println("[DEBUG] Discovered resource types: ${
 			discoveredTypes.joinToString(" | ") { type ->
-				val explored = exploreResources(dataFiles, dataRoot, type)
-				"$type ${explored.size}"
+				"$type ${exploreResources(dataFiles, dataRoot, type).size}"
 			}
 		}")
 	}
 
 	// Explore all discovered and valid resource types
-	// Use all data files (including minecraft namespace) for resource exploration
 	val resources = resourceTypes.associateWith { resourceType ->
 		exploreResources(dataFiles, dataRoot, resourceType)
 	}.filterValues { it.isNotEmpty() }
 
 	// Parse pack.mcmeta - find the one at the root, not in subdirectories
 	val packInfo = try {
-		// Build the expected path for the root pack.mcmeta
 		val rootPackMcMetaPattern = if (dataRoot.isEmpty()) {
 			Regex("^pack\\.mcmeta$")
 		} else {
 			Regex("^${Regex.escape(dataRoot)}/pack\\.mcmeta$")
 		}
 
-		val packMcMetaPath = tree.firstOrNull {
-			it.pathInvariant.replace('\\', '/').matches(rootPackMcMetaPattern)
-		}
+		val packMcMetaPath = tree.firstOrNull { it.matches(rootPackMcMetaPattern) }
 
 		if (packMcMetaPath != null) {
-			val rootForOpen = if (isZip) path else if (dataRoot.isEmpty()) path else Path(dataRoot)
-			val parsedPack = parsePackMcMeta(rootForOpen, packMcMetaPath, isZip)
+			val parsedPack = parsePackMcMeta(datapack, packMcMetaPath)
 
-			// Check pack format compatibility
 			if (parsedPack != null) {
 				checkPackCompatibility(parsedPack)
 			}
@@ -211,23 +89,21 @@ fun explore(inputPath: String): Datapack {
 		null
 	}
 
-	return Datapack(displayName, path, functions = functions, resources = resources, pack = packInfo)
+	return Datapack(displayName, displayPath, functions = functions, resources = resources, pack = packInfo)
 }
 
-fun discoverResourceTypes(dataFiles: List<Path>, dataRootString: String): List<String> {
+fun discoverResourceTypes(dataFiles: List<String>, dataRootString: String): List<String> {
 	val resourceTypes = mutableSetOf<String>()
 
 	for (file in dataFiles) {
-		if (!file.toString().endsWith(".json")) continue
-
-		val pathStr = file.pathInvariant.replace('\\', '/')
+		if (!file.endsWith(".json")) continue
 
 		// Remove data root prefix if present
 		val relativePath = if (dataRootString.isNotEmpty()) {
-			val prefix = dataRootString.replace('\\', '/') + "/"
-			if (pathStr.startsWith(prefix)) pathStr.removePrefix(prefix) else pathStr
+			val prefix = "$dataRootString/"
+			if (file.startsWith(prefix)) file.removePrefix(prefix) else file
 		} else {
-			pathStr
+			file
 		}
 
 		// Expected structure: data/<namespace>/<type>/...  or data/<namespace>/<type>/<subtype>/...
@@ -236,7 +112,6 @@ fun discoverResourceTypes(dataFiles: List<Path>, dataRootString: String): List<S
 		val parts = relativePath.split("/")
 		if (parts.size < 4) continue // Need at least: data, namespace, type, file
 
-		parts[1]
 		val typeOrCategory = parts[2]
 
 		// Skip special directories
@@ -246,8 +121,7 @@ fun discoverResourceTypes(dataFiles: List<Path>, dataRootString: String): List<S
 			"worldgen" -> {
 				// Structure: data/<namespace>/worldgen/<subtype>/<name>.json
 				if (parts.size >= 5) {
-					val subtype = parts[3]
-					resourceTypes.add("worldgen/$subtype")
+					resourceTypes.add("worldgen/${parts[3]}")
 				}
 			}
 			"tags" -> {
@@ -256,11 +130,8 @@ fun discoverResourceTypes(dataFiles: List<Path>, dataRootString: String): List<S
 				if (parts.size >= 5) {
 					val subtype = parts[3]
 					if (subtype == "worldgen" && parts.size >= 6) {
-						// tags/worldgen/<subtype>
-						val worldgenSubtype = parts[4]
-						resourceTypes.add("tags/worldgen/$worldgenSubtype")
+						resourceTypes.add("tags/worldgen/${parts[4]}")
 					} else {
-						// tags/<subtype>
 						resourceTypes.add("tags/$subtype")
 					}
 				}
@@ -275,27 +146,26 @@ fun discoverResourceTypes(dataFiles: List<Path>, dataRootString: String): List<S
 	return resourceTypes.sorted()
 }
 
-fun exploreFunction(rootPath: Path, dataRootString: String, functionFile: Path, isZip: Boolean): Function? {
-	val content = openFile(rootPath, functionFile, isZip)
+fun exploreFunction(datapack: InMemoryDatapack, dataRootString: String, functionFile: String): Function? {
+	val content = datapack.files[functionFile] ?: return null
 	val dataPrefix = if (dataRootString.isEmpty()) "" else "${Regex.escape(dataRootString)}/"
-	val path =
-		Regex("^${dataPrefix}data/.+?/function/(.+)\\.mcfunction\$").find(functionFile.pathInvariant)?.groupValues?.get(
-			1
-		) ?: run {
+
+	val path = Regex("^${dataPrefix}data/.+?/function/(.+)\\.mcfunction$").find(functionFile)?.groupValues?.get(1)
+		?: run {
 			warn("Function file $functionFile doesn't match the expected pattern - skipping")
 			return null
 		}
+
 	// For namespace extraction, match only up to the first directory after data/
 	// This ensures we only capture the actual namespace, not nested paths
-	val namespace =
-		Regex("^${dataPrefix}data/([^/\\\\]+)/function/.+\\.mcfunction\$").find(functionFile.pathInvariant)?.let {
-			it.groupValues[1]
-		} ?: run {
-			warn("Could not extract namespace from function $functionFile - skipping")
-			return null
-		}
+	val namespace = Regex("^${dataPrefix}data/([^/\\\\]+)/function/.+\\.mcfunction$").find(functionFile)?.let {
+		it.groupValues[1]
+	} ?: run {
+		warn("Could not extract namespace from function $functionFile - skipping")
+		return null
+	}
 
-	// Validate that namespace doesn't contain invalid characters (should be impossible now with [^/\\\\]+ pattern)
+	// Validate that namespace doesn't contain invalid characters (should be impossible now with [^/\\]+ pattern)
 	if ('/' in namespace || '\\' in namespace) {
 		warn("Invalid namespace '$namespace' extracted from $functionFile - skipping")
 		return null
@@ -314,16 +184,14 @@ fun exploreFunction(rootPath: Path, dataRootString: String, functionFile: Path, 
 	return Function("$namespace:$path", macroArguments)
 }
 
-fun exploreResources(dataFiles: List<Path>, dataRootString: String, resourceType: String): List<Resource> {
+fun exploreResources(dataFiles: List<String>, dataRootString: String, resourceType: String): List<Resource> {
 	return dataFiles.mapNotNull { file ->
-		val pathStr = file.pathInvariant.replace('\\', '/')
-
 		// Remove data root prefix if present
 		val relativePath = if (dataRootString.isNotEmpty()) {
-			val prefix = dataRootString.replace('\\', '/') + "/"
-			if (pathStr.startsWith(prefix)) pathStr.removePrefix(prefix) else pathStr
+			val prefix = "$dataRootString/"
+			if (file.startsWith(prefix)) file.removePrefix(prefix) else file
 		} else {
-			pathStr
+			file
 		}
 
 		// Expected structure: data/<namespace>/<type>/...
@@ -360,8 +228,8 @@ fun exploreResources(dataFiles: List<Path>, dataRootString: String, resourceType
 	}
 }
 
-fun parsePackMcMeta(rootPath: Path, packMcMetaFile: Path, isZip: Boolean): PackMCMeta? = try {
-	val content = openFile(rootPath, packMcMetaFile, isZip)
+fun parsePackMcMeta(datapack: InMemoryDatapack, packMcMetaFile: String): PackMCMeta? = try {
+	val content = datapack.files[packMcMetaFile] ?: return null
 	val json = jsonDecoder.parseToJsonElement(content).jsonObject
 	val packObj = json["pack"]?.jsonObject ?: return null
 
@@ -392,7 +260,6 @@ fun parsePackMcMeta(rootPath: Path, packMcMetaFile: Path, isZip: Boolean): PackM
 	PackMCMeta(pack, overlays)
 } catch (e: Exception) {
 	warn("Error parsing pack.mcmeta")
-	e.printStackTrace()
 	null
 }
 

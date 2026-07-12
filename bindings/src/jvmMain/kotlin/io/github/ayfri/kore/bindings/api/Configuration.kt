@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.bindings.api
 
-import java.nio.file.Path
-import kotlin.io.path.Path
+import kotlinx.io.files.Path
 
 /**
  * Global configuration for all datapack imports.
