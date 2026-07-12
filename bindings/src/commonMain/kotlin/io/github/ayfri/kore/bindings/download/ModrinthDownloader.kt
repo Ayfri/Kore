@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.bindings.download
 
 import io.github.ayfri.kore.bindings.getFromCacheOrDownload
-import java.nio.file.Path
+import kotlinx.io.files.Path
 
 /**
  * Downloads datapacks from Modrinth.
@@ -9,12 +9,12 @@ import java.nio.file.Path
  * - Project latest: `modrinth:slug`
  * - Specific version: `modrinth:slug:version`
  */
-data object ModrinthDownloader : Downloader {
+internal data object ModrinthDownloader : Downloader {
 	private const val API_BASE = "https://api.modrinth.com/v2"
 
 	override fun match(source: String) = source.startsWith("modrinth:")
 
-	override fun download(reference: String, skipCache: Boolean) =
+	override suspend fun download(reference: String, skipCache: Boolean) =
 		downloadVersion(parseReference(reference.removePrefix("modrinth:")), skipCache)
 
 	/**
@@ -34,7 +34,7 @@ data object ModrinthDownloader : Downloader {
 		return ModrinthRef(parts[0], parts.getOrNull(1))
 	}
 
-	private fun downloadVersion(ref: ModrinthRef, skipCache: Boolean): Pair<Path, String> {
+	private suspend fun downloadVersion(ref: ModrinthRef, skipCache: Boolean): Pair<Path, String> {
 		val versionsUrl = "$API_BASE/project/${ref.slug}/version"
 		val json = fetchJsonString(versionsUrl)
 

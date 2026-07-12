@@ -3,6 +3,7 @@ package io.github.ayfri.kore.bindings.api
 import io.github.ayfri.kore.bindings.Datapack
 import io.github.ayfri.kore.bindings.debugEnabled
 import io.github.ayfri.kore.bindings.download.Downloaders
+import io.github.ayfri.kore.bindings.download.runDownloadBlocking
 import io.github.ayfri.kore.bindings.explore as explorePath
 import io.github.ayfri.kore.bindings.generateDatapackFile
 import kotlinx.io.files.Path
@@ -39,7 +40,7 @@ internal class DatapackImporter(val source: String) {
 	 * Resolves the source to a local path and returns the actual filename.
 	 * Downloads the file if it's a URL or GitHub reference, or locates it on the local filesystem.
 	 */
-	private fun resolveSource() = Downloaders.download(source, skipCache, requestBody, requestHeaders)
+	private fun resolveSource() = runDownloadBlocking { Downloaders.download(source, skipCache, requestBody, requestHeaders) }
 
 	/**
 	 * Explores the datapack structure and returns metadata without generating code.

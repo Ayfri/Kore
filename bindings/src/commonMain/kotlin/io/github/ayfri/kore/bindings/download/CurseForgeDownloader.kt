@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.bindings.download
 
 import io.github.ayfri.kore.bindings.getFromCacheOrDownload
-import java.nio.file.Path
+import kotlinx.io.files.Path
 
 /**
  * Downloads datapacks from CurseForge.
@@ -13,16 +13,16 @@ import java.nio.file.Path
  * Requires `CURSEFORGE_API_KEY` environment variable
  * or `curseforge.api.key` system property
  */
-data object CurseForgeDownloader : Downloader {
+internal data object CurseForgeDownloader : Downloader {
 	private const val API_BASE = "https://api.curseforge.com/v1"
 	private val apiKey by lazy {
-		System.getenv("CURSEFORGE_API_KEY") ?: System.getProperty("curseforge.api.key")
+		platformEnvVar("CURSEFORGE_API_KEY") ?: platformSystemProperty("curseforge.api.key")
 		?: throw IllegalStateException("CURSEFORGE_API_KEY environment variable or curseforge.api.key system property is required for CurseForge downloads")
 	}
 
 	override fun match(source: String) = source.startsWith("curseforge:")
 
-	override fun download(reference: String, skipCache: Boolean) =
+	override suspend fun download(reference: String, skipCache: Boolean) =
 		downloadFile(parseReference(reference.removePrefix("curseforge:")), skipCache)
 
 	/**
@@ -53,7 +53,7 @@ data object CurseForgeDownloader : Downloader {
 		return CurseForgeRef(parts[0], parts.getOrNull(1))
 	}
 
-	private fun downloadFile(ref: CurseForgeRef, skipCache: Boolean): Pair<Path, String> {
+	private suspend fun downloadFile(ref: CurseForgeRef, skipCache: Boolean): Pair<Path, String> {
 		val projectId = resolveProjectId(ref.projectIdentifier)
 
 		val url = if (ref.fileId != null) {
@@ -71,7 +71,7 @@ data object CurseForgeDownloader : Downloader {
 		return getFromCacheOrDownload(downloadUrl, skipCache)
 	}
 
-	private fun resolveProjectId(identifier: String): String {
+	private suspend fun resolveProjectId(identifier: String): String {
 		// If it's already a number, return it
 		if (identifier.all { it.isDigit() }) return identifier
 
@@ -87,7 +87,7 @@ data object CurseForgeDownloader : Downloader {
 		return match.groupValues[1]
 	}
 
-	private fun fetchJsonWithKey(url: String) = fetchJsonString(url, mapOf("x-api-key" to apiKey))
+	private suspend fun fetchJsonWithKey(url: String) = fetchJsonString(url, mapOf("x-api-key" to apiKey))
 
 	private fun extractUrl(json: String): String {
 		val urlPattern = """"downloadUrl"\s*:\s*"([^"]+)"""".toRegex()

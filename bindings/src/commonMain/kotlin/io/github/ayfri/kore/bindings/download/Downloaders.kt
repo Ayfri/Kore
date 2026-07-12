@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.bindings.download
 
-import java.nio.file.Path
+import kotlinx.io.files.Path
 
-data object Downloaders {
+internal data object Downloaders {
 	private val downloaders = mutableListOf<Downloader>()
 
 	init {
@@ -23,7 +23,7 @@ data object Downloaders {
 		}
 	}
 
-	fun download(
+	suspend fun download(
 		source: String,
 		skipCache: Boolean = false,
 		requestBody: String? = null,

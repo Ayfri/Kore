@@ -1,25 +1,24 @@
 package io.github.ayfri.kore.bindings.download
 
-import java.nio.file.Files
-import java.nio.file.Path
-import kotlin.io.path.Path
+import io.github.ayfri.kore.utils.exists
+import kotlinx.io.files.Path
 
-data object LocalDownloader : Downloader {
+internal data object LocalDownloader : Downloader {
 	override fun match(source: String) = true // Fallback
 
-	override fun download(reference: String, skipCache: Boolean): Pair<Path, String> {
+	override suspend fun download(reference: String, skipCache: Boolean): Pair<Path, String> {
 		val path = locateLocalDatapack(reference)
-		return path to path.fileName.toString()
+		return path to path.name
 	}
 
 	private fun locateLocalDatapack(source: String): Path {
 		// Try direct path first
 		val path = Path(source)
-		if (Files.exists(path)) return path
+		if (path.exists()) return path
 
 		// Try with .zip extension
 		val withZip = Path("$source.zip")
-		if (Files.exists(withZip)) return withZip
+		if (withZip.exists()) return withZip
 
 		// Try looking in common datapack locations
 		val commonLocations = listOf(
@@ -28,7 +27,7 @@ data object LocalDownloader : Downloader {
 		)
 
 		for (location in commonLocations) {
-			if (Files.exists(location)) {
+			if (location.exists()) {
 				println("Found datapack at: $location")
 				return location
 			}

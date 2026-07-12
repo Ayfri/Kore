@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.bindings.download
 
 import io.github.ayfri.kore.bindings.getFromCacheOrDownload
-import java.nio.file.Path
+import kotlinx.io.files.Path
 
 /**
  * Downloads datapacks from GitHub repositories.
@@ -17,13 +17,13 @@ import java.nio.file.Path
  *
  * Without a key, public GitHub APIs are still used with standard rate limiting.
  */
-data object GitHubDownloader : Downloader {
+internal data object GitHubDownloader : Downloader {
 	private const val GITHUB_API_BASE = "https://api.github.com"
 	private const val GITHUB_ARCHIVE = "https://github.com"
 
 	override fun match(source: String) = source.startsWith("github:")
 
-	override fun download(reference: String, skipCache: Boolean): Pair<Path, String> {
+	override suspend fun download(reference: String, skipCache: Boolean): Pair<Path, String> {
 		val ref = parseReference(reference.removePrefix("github:"))
 
 		return when {
@@ -38,7 +38,7 @@ data object GitHubDownloader : Downloader {
 		?.let { mapOf("Authorization" to "Bearer $it") }
 		?: emptyMap()
 
-	private fun apiHeaders() = buildApiHeaders(System.getenv("GITHUB_API_KEY") ?: System.getProperty("github.api.key"))
+	private fun apiHeaders() = buildApiHeaders(platformEnvVar("GITHUB_API_KEY") ?: platformSystemProperty("github.api.key"))
 
 	/**
 	 * Represents a parsed GitHub reference.
@@ -93,7 +93,7 @@ data object GitHubDownloader : Downloader {
 	 * Downloads a specific release asset (.zip file).
 	 * Uses the GitHub Releases API to find the asset download URL.
 	 */
-	private fun downloadReleaseAsset(ref: GitHubRef, skipCache: Boolean): Pair<Path, String> {
+	private suspend fun downloadReleaseAsset(ref: GitHubRef, skipCache: Boolean): Pair<Path, String> {
 		// Get release data from API
 		val releaseUrl = "$GITHUB_API_BASE/repos/${ref.owner}/${ref.repo}/releases/tags/${ref.tag}"
 		val releaseJson = fetchJsonString(releaseUrl, apiHeaders())
@@ -114,7 +114,7 @@ data object GitHubDownloader : Downloader {
 	/**
 	 * Downloads a repository as a ZIP archive for a specific tag/branch/commit.
 	 */
-	private fun downloadArchive(ref: GitHubRef, skipCache: Boolean): Pair<Path, String> {
+	private suspend fun downloadArchive(ref: GitHubRef, skipCache: Boolean): Pair<Path, String> {
 		println("Downloading GitHub archive: ${ref.owner}/${ref.repo}@${ref.tag}")
 
 		// Try as a tag first
@@ -143,7 +143,7 @@ data object GitHubDownloader : Downloader {
 	/**
 	 * Downloads the default branch (main/master) of a repository.
 	 */
-	private fun downloadDefaultBranch(ref: GitHubRef, skipCache: Boolean): Pair<Path, String> {
+	private suspend fun downloadDefaultBranch(ref: GitHubRef, skipCache: Boolean): Pair<Path, String> {
 		// Get repository info to find default branch
 		val repoUrl = "$GITHUB_API_BASE/repos/${ref.owner}/${ref.repo}"
 		val repoJson = fetchJsonString(repoUrl, apiHeaders())
