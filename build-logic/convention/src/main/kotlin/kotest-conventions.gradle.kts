@@ -26,6 +26,18 @@ pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
 	}
 }
 
+// Aggregates every module's `allTests` (itself covering every KMP target: jvmTest, jsNodeTest, jsBrowserTest)
+// into a single root task, so CI doesn't need to enumerate modules or platforms.
+val testAll = rootProject.tasks.findByName("testAll")
+	?: rootProject.tasks.create("testAll") {
+		group = "verification"
+		description = "Runs every module's tests across all Kotlin Multiplatform targets (JVM, JS Node, JS Browser)."
+	}
+
+pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
+	testAll.dependsOn("${project.path}:allTests")
+}
+
 tasks.withType<Test>().configureEach {
 	useJUnitPlatform()
 
