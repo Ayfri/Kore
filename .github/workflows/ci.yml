@@ -55,7 +55,7 @@ jobs:
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
       - name: Run tests
-        run: ./gradlew :kore:jvmTest :oop:jvmTest :helpers:jvmTest :bindings:jvmTest
+        run: ./gradlew testAll
 
       - name: Upload test reports
         if: always()
@@ -63,7 +63,7 @@ jobs:
         with:
           name: test-report-${{ matrix.os }}
           path: |
-            kore/build/reports/tests/jvmTest/
-            oop/build/reports/tests/jvmTest/
-            helpers/build/reports/tests/jvmTest/
-            bindings/build/reports/tests/jvmTest/
+            kore/build/reports/tests/
+            oop/build/reports/tests/
+            helpers/build/reports/tests/
+            bindings/build/reports/tests/

@@ -1,6 +1,8 @@
 plugins {
 	kotlin("multiplatform")
 	kotlin("plugin.serialization")
+	alias(libs.plugins.ksp)
+	alias(libs.plugins.kotest)
 	id("kotest-conventions")
 	id("publish-conventions")
 }
@@ -47,10 +49,4 @@ kotlin {
 			implementation(libs.kotlin.dotenv)
 		}
 	}
-}
-
-// commonTest is exercised on the js() target via compilation only (no io.kotest multiplatform
-// test-discovery plugin wired up in this repo yet); don't fail :build over that missing runner.
-tasks.matching { it.name == "jsNodeTest" || it.name == "jsBrowserTest" }.configureEach {
-	(this as? org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest)?.failOnNoDiscoveredTests?.set(false)
 }
