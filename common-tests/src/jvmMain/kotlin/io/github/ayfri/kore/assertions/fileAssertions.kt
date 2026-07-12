@@ -1,8 +1,14 @@
 package io.github.ayfri.kore.assertions
 
+import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.utils.*
 import io.kotest.matchers.shouldBe
 import java.util.zip.ZipInputStream
+
+private val DataPack.cleanPath get() = path.let {
+	if (!it.exists()) it.makeDirectories()
+	it.absolute()
+}
 
 fun TestDataPack.assertFileGenerated(path: String) = callAfterGeneration {
 	val file = dp.cleanPath.resolveSafe(path.replace("/", SystemPathSeparatorString))

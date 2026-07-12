@@ -75,7 +75,7 @@ infix fun String.assertsIsNbt(string: String) = also { this shouldBeAcrossPlatfo
 infix fun ChatComponents.assertsIsJson(string: String) =
 	also { toJsonString(jsonStringifier) shouldBeAcrossPlatforms string }
 
-infix fun <T : Any> T.assertsIs(expected: T) = also { toString() shouldBeAcrossPlatforms expected.toString() }
+infix fun <T> T.assertsIs(expected: T) = also { toString() shouldBeAcrossPlatforms expected.toString() }
 
 infix fun Argument.assertsIs(string: String) {
 	asString() shouldBeAcrossPlatforms string

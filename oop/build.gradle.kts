@@ -28,5 +28,9 @@ kotlin {
 			implementation(libs.kotlinx.io)
 			implementation(libs.kotlinx.serialization)
 		}
+
+		jvmTest.dependencies {
+			implementation(project(":common-tests"))
+		}
 	}
 }

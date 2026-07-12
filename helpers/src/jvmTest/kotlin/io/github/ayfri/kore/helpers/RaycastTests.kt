@@ -3,10 +3,10 @@ package io.github.ayfri.kore.helpers
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.function
-import io.github.ayfri.kore.helpers.assertions.assertsIs
+import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.helpers.raycast.RaycastConfig
 import io.github.ayfri.kore.helpers.raycast.raycast
-import io.github.ayfri.kore.helpers.utils.testDataPack
+import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
 
 fun raycastTests() = testDataPack("raycast_tests") {

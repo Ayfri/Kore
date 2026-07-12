@@ -8,8 +8,8 @@ import io.github.ayfri.kore.arguments.chatcomponents.*
 import io.github.ayfri.kore.arguments.chatcomponents.hover.HoverAction
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.RGB
-import io.github.ayfri.kore.helpers.assertions.assertsIs
-import io.github.ayfri.kore.helpers.assertions.assertsThrows
+import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.assertions.assertsThrows
 import io.github.ayfri.kore.helpers.text.TagResolver
 import io.github.ayfri.kore.helpers.text.miniMessageToTextComponents
 import io.kotest.core.spec.style.FunSpec

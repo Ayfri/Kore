@@ -2,10 +2,10 @@ package io.github.ayfri.kore.helpers
 
 import io.github.ayfri.kore.entities.player
 import io.github.ayfri.kore.functions.function
-import io.github.ayfri.kore.helpers.assertions.assertsIs
+import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.helpers.maths.*
 import io.github.ayfri.kore.helpers.state.scoreboard
-import io.github.ayfri.kore.helpers.utils.testDataPack
+import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
 
 fun mathTests() = testDataPack("math_tests") {

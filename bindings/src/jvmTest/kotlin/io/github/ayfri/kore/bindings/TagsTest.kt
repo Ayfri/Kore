@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.bindings
 
+import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.features.tags.biomeTag
 import io.github.ayfri.kore.features.tags.blockTag
 import io.github.ayfri.kore.features.tags.enchantmentTag

@@ -3,7 +3,7 @@ package io.github.ayfri.kore.helpers
 import io.github.ayfri.kore.arguments.actions.OpenUrl
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.RGB
-import io.github.ayfri.kore.helpers.assertions.assertsIs
+import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.helpers.text.markdownToTextComponents
 import io.kotest.core.spec.style.FunSpec
 

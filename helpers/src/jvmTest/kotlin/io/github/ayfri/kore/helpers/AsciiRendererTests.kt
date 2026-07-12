@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.helpers
 
 import io.github.ayfri.kore.arguments.colors.Color
-import io.github.ayfri.kore.helpers.assertions.assertsIs
+import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.helpers.text.ansiToTextComponents
 import io.kotest.core.spec.style.FunSpec
 

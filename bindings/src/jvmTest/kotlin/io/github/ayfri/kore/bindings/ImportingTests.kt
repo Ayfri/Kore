@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.bindings
 
 import io.github.ayfri.kore.arguments.types.literals.allPlayers
+import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.give
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.features.advancements.advancement

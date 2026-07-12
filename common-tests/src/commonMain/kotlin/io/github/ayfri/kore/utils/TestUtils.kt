@@ -5,5 +5,5 @@ import io.github.ayfri.kore.configuration
 
 fun DataPack.pretty() = configuration {
 	prettyPrint = true
-	prettyPrintIndent = "\t"
+	prettyPrintIndent = "	"
 }

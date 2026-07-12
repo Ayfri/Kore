@@ -21,7 +21,7 @@ import io.github.ayfri.kore.generated.Attributes
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.Items
-import io.github.ayfri.kore.helpers.assertions.assertsIs
+import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.helpers.displays.*
 import io.github.ayfri.kore.helpers.displays.entities.ItemDisplayModelMode
 import io.github.ayfri.kore.helpers.displays.maths.*

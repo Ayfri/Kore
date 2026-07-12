@@ -11,13 +11,13 @@ private val testConfiguration = dotenv {
 	ignoreIfMissing = true
 	systemProperties = true
 }
-val minecraftSaveTestPath = Path(testConfiguration["TEST_FOLDER", "out"])
+val testDataPackPath = Path(testConfiguration["TEST_FOLDER", "out"])
 
-data class TestDataPack(internal val dp: DataPack) {
+data class TestDataPack(val dp: DataPack) {
 	private val calledAfterGeneration = mutableListOf<DataPack.() -> Unit>()
 
 	init {
-		dp.path = minecraftSaveTestPath
+		dp.path = testDataPackPath
 	}
 
 	fun callAfterGeneration(block: DataPack.() -> Unit) {
@@ -40,7 +40,7 @@ data class TestDataPack(internal val dp: DataPack) {
 	}
 }
 
-internal fun testDataPack(name: String, block: DataPack.() -> Unit): TestDataPack {
+fun testDataPack(name: String, block: DataPack.() -> Unit): TestDataPack {
 	val testDataPack = TestDataPack(DataPack(name))
 	testDataPack.dp.apply(block)
 	return testDataPack

@@ -1,13 +1,6 @@
 plugins {
 	kotlin("multiplatform")
 	kotlin("plugin.serialization")
-	id("kotest-conventions")
-	id("publish-conventions")
-}
-
-metadata {
-	name = "Helpers"
-	description = "Helper utilities built on top of Kore and its OOP abstractions."
 }
 
 repositories {
@@ -24,14 +17,14 @@ kotlin {
 
 	sourceSets {
 		commonMain.dependencies {
-			api(project(":oop"))
+			api(project(":kore"))
+			api(libs.kotest.assertions.core)
 			implementation(libs.kotlinx.io)
 			implementation(libs.kotlinx.serialization)
 		}
 
-		jvmTest.dependencies {
-			implementation(libs.joml)
-			implementation(project(":common-tests"))
+		jvmMain.dependencies {
+			implementation(libs.kotlin.dotenv)
 		}
 	}
 }

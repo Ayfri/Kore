@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.helpers
 
 import io.github.ayfri.kore.generated.Particles
-import io.github.ayfri.kore.helpers.assertions.assertsIs
-import io.github.ayfri.kore.helpers.utils.testDataPack
+import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.utils.testDataPack
 import io.github.ayfri.kore.helpers.vfx.Shape
 import io.github.ayfri.kore.helpers.vfx.drawCircle
 import io.github.ayfri.kore.helpers.vfx.drawShape

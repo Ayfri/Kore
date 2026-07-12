@@ -26,7 +26,7 @@ import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
-import io.github.ayfri.kore.helpers.assertions.assertsIs
+import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.helpers.inventorymanager.*
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set

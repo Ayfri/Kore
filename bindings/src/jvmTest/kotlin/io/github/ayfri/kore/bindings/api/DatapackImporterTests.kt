@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.bindings.api
 
 import io.github.ayfri.kore.arguments.types.literals.allPlayers
-import io.github.ayfri.kore.bindings.assertsIs
+import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.bindings.newTest
 import io.github.ayfri.kore.bindings.toKotlinxIoPath
 import io.github.ayfri.kore.commands.give

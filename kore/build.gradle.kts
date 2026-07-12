@@ -43,6 +43,10 @@ kotlin {
 			implementation(libs.ktoml)
 		}
 
+		commonTest.dependencies {
+			implementation(project(":common-tests"))
+		}
+
 		jvmTest.dependencies {
 			implementation(libs.kotlin.dotenv)
 		}

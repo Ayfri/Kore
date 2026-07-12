@@ -29,6 +29,7 @@ pluginManagement {
 
 rootProject.name = "Kore"
 
+include(":common-tests")
 include(":generation")
 include(":kore-ksp")
 include(":kore")

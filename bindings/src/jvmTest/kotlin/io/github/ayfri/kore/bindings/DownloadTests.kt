@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.bindings
 
+import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.bindings.api.DatapackConfiguration
 import io.github.ayfri.kore.bindings.api.DatapackImportDsl
 import io.github.ayfri.kore.bindings.api.exploreDatapacks

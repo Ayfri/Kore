@@ -4,7 +4,7 @@ import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.entities.entity
 import io.github.ayfri.kore.functions.function
-import io.github.ayfri.kore.helpers.assertions.assertsIs
+import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.helpers.state.*
 import io.github.ayfri.kore.scoreboard.minusAssign
 import io.github.ayfri.kore.scoreboard.plusAssign

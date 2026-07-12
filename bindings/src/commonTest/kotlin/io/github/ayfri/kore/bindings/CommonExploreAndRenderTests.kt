@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.bindings
 
+import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.bindings.api.RemappingState
 import io.kotest.core.spec.style.FunSpec
 import kotlinx.io.files.Path
