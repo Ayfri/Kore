@@ -8,7 +8,7 @@ import getFromCacheOrDownloadTxt
 import overrides
 
 /** Manually maintained list of "simple" generators: resource lists and registries. Add new entries here with [gen]. */
-suspend fun launchAllSimpleGenerators() {
+suspend fun launchAllSimpleGenerators(): List<Generator> {
 	val lists = listOf(
 		gen("Advancements", "advancement"),
 		gen("Atlases", "atlases") {
@@ -270,4 +270,6 @@ suspend fun launchAllSimpleGenerators() {
 			)
 		}
 	}
+
+	return allGenerators
 }
