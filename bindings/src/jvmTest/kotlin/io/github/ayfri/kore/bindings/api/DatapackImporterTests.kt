@@ -3,6 +3,7 @@ package io.github.ayfri.kore.bindings.api
 import io.github.ayfri.kore.arguments.types.literals.allPlayers
 import io.github.ayfri.kore.bindings.assertsIs
 import io.github.ayfri.kore.bindings.newTest
+import io.github.ayfri.kore.bindings.toKotlinxIoPath
 import io.github.ayfri.kore.commands.give
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.features.advancements.advancement
@@ -36,7 +37,7 @@ fun testBasicImport() = newTest("basic_import") {
 
 	val datapacks = importDatapacks {
 		configuration {
-			outputPath(srcDir())
+			outputPath(srcDir().toKotlinxIoPath())
 		}
 
 		url(pack.path.toString())
@@ -88,7 +89,7 @@ fun testCustomPackageName() = newTest("custom_package") {
 
 	importDatapacks {
 		configuration {
-			outputPath(srcDir())
+			outputPath(srcDir().toKotlinxIoPath())
 		}
 
 		url(pack.path.toString()) {
@@ -114,7 +115,7 @@ fun testCustomRemapName() = newTest("custom_remap") {
 
 	importDatapacks {
 		configuration {
-			outputPath(srcDir())
+			outputPath(srcDir().toKotlinxIoPath())
 		}
 
 		url(pack.path.toString()) {
@@ -147,7 +148,7 @@ fun testMultipleDatapacks() = newTest("multiple_packs") {
 
 	val datapacks = importDatapacks {
 		configuration {
-			outputPath(srcDir())
+			outputPath(srcDir().toKotlinxIoPath())
 		}
 
 		url(pack1.path.toString())
@@ -174,7 +175,7 @@ fun testGlobalConfiguration() = newTest("global_config") {
 
 	importDatapacks {
 		configuration {
-			outputPath(srcDir())
+			outputPath(srcDir().toKotlinxIoPath())
 			packagePrefix = "com.global.test"
 		}
 
@@ -213,7 +214,7 @@ fun testMixedConfiguration() = newTest("mixed_config") {
 
 	val datapacks = importDatapacks {
 		configuration {
-			outputPath(srcDir())
+			outputPath(srcDir().toKotlinxIoPath())
 			packagePrefix = "com.mixed"
 		}
 
@@ -272,7 +273,7 @@ fun testMultipleNamespacesInSinglePack() = newTest("multi_ns_single") {
 
 	val datapacks = importDatapacks {
 		configuration {
-			outputPath(srcDir())
+			outputPath(srcDir().toKotlinxIoPath())
 		}
 
 		url(pack.path.toString())

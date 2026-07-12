@@ -9,7 +9,7 @@ fun importingVanilla() = newTest("vanilla") {
     importDatapacks {
         configuration {
             debug = true
-            outputPath(srcDir())
+            outputPath(srcDir().toKotlinxIoPath())
         }
 
         val resourceUrl = Thread.currentThread().contextClassLoader

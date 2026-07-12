@@ -119,7 +119,7 @@ fun testTagCodeGeneration() = newTest("tag_codegen") {
 
 	// Test code generation
 	val srcDir = srcDir()
-	writeFiles(explored, srcDir)
+	writeFiles(explored, srcDir.toKotlinxIoPath())
 
 	val generatedFile = srcDir.resolve("TagCodegenTest.kt")
 	generatedFile.toFile().exists() assertsIs true

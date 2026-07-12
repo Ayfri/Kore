@@ -111,7 +111,7 @@ fun testCodeGeneration() = newTest("codegen") {
 	val explored = explore(pack.path.toString())
 	val srcDir = srcDir()
 
-	writeFiles(explored, srcDir)
+	writeFiles(explored, srcDir.toKotlinxIoPath())
 
 	val generatedFile = srcDir.resolve("CodegenTest.kt")
 	generatedFile.toFile().exists() assertsIs true
@@ -194,7 +194,7 @@ fun testMultipleNamespaces() = newTest("multinamespace") {
 
 	// Test code generation with multiple namespaces
 	val srcDir = srcDir()
-	writeFiles(explored, srcDir)
+	writeFiles(explored, srcDir.toKotlinxIoPath())
 
 	val generatedFile = srcDir.resolve("MultiNs.kt")
 	generatedFile.toFile().exists() assertsIs true
@@ -323,7 +323,7 @@ fun testDataDrivenResources() = newTest("resources") {
 
 	// Test code generation
 	val srcDir = srcDir()
-	writeFiles(explored, srcDir)
+	writeFiles(explored, srcDir.toKotlinxIoPath())
 
 	val generatedFile = srcDir.resolve("ResourcesTest.kt")
 	generatedFile.toFile().exists() assertsIs true
@@ -412,7 +412,7 @@ fun testAutoDiscoveryAndWorldgen() = newTest("autodiscovery") {
 
 	// Test code generation with auto-discovered types
 	val srcDir = srcDir()
-	writeFiles(explored, srcDir)
+	writeFiles(explored, srcDir.toKotlinxIoPath())
 
 	val generatedFile = srcDir.resolve("AutodiscoveryTest.kt")
 	generatedFile.toFile().exists() assertsIs true

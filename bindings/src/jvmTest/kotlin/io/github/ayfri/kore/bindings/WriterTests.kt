@@ -37,7 +37,7 @@ fun testPackMetadataGenerationUsesPackHelpers() = newTest("pack_metadata_generat
 
 	val explored = explore(pack.path.toString())
 	val srcDir = srcDir()
-	writeFiles(explored, srcDir)
+	writeFiles(explored, srcDir.toKotlinxIoPath())
 
 	val content = srcDir.resolve("PackMetadataGeneration.kt").readText()
 
@@ -61,7 +61,7 @@ fun testNamespaceWithDotsInMultiNamespace() = newTest("ns_normalize_dots") {
 
 	val explored = explore(pack.path.toString())
 	val srcDir = srcDir()
-	writeFiles(explored, srcDir)
+	writeFiles(explored, srcDir.toKotlinxIoPath())
 
 	val content = srcDir.resolve("NsNormalizeDots.kt").readText()
 
@@ -82,7 +82,7 @@ fun testNamespaceWithHyphensInMultiNamespace() = newTest("ns_normalize_hyphens")
 
 	val explored = explore(pack.path.toString())
 	val srcDir = srcDir()
-	writeFiles(explored, srcDir)
+	writeFiles(explored, srcDir.toKotlinxIoPath())
 
 	val content = srcDir.resolve("NsNormalizeHyphens.kt").readText()
 
@@ -103,7 +103,7 @@ fun testNamespaceWithMixedSpecialCharsInMultiNamespace() = newTest("ns_normalize
 
 	val explored = explore(pack.path.toString())
 	val srcDir = srcDir()
-	writeFiles(explored, srcDir)
+	writeFiles(explored, srcDir.toKotlinxIoPath())
 
 	val content = srcDir.resolve("NsNormalizeMixed.kt").readText()
 
@@ -126,7 +126,7 @@ fun testNamespaceRemappingRenamesObject() = newTest("remapping_namespace") {
 
 	writeFiles(
 		explored,
-		srcDir,
+		srcDir.toKotlinxIoPath(),
 		RemappingState(
 			namespaces = mapOf(
 				"internal_ns" to "PublicApi",
@@ -170,7 +170,7 @@ fun testObjectNameAndNamespaceRemappingCombined() = newTest("remapping_combined"
 
 	writeFiles(
 		explored,
-		srcDir,
+		srcDir.toKotlinxIoPath(),
 		RemappingState(
 			namespaces = mapOf("ns_a" to "CoreFeatures", "ns_b" to "CompatLayer"),
 			objectName = "MyDatapack"
