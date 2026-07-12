@@ -55,6 +55,6 @@ internal actual suspend fun platformWalk(directory: Path): List<Path> {
 }
 
 internal actual suspend fun platformUnzipToTempDir(zipFile: Path): Path {
-	if (isNode) throw UnsupportedOperationException("Merging with an existing .zip datapack isn't supported on Node.js yet.")
+	if (isNode) return commonUnzipToTempDir(zipFile)
 	throw UnsupportedOperationException("Merging with an existing .zip datapack isn't supported in the browser yet.")
 }
