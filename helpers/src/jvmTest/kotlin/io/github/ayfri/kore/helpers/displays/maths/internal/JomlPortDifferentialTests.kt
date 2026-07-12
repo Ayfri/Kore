@@ -223,7 +223,7 @@ class JomlPortDifferentialTests : FunSpec({
 	context("Matrix3f") {
 		test("mul matches") {
 			val a = Matrix3f(1f, 0.2f, 0f, 0.1f, 1f, 0.3f, 0f, 0f, 1f)
-			val b = Matrix3f(0.9f, 0f, 0.1f, 0f, 1.1f, 0f, 0.2f, 0f, 1f)
+			val b = Matrix3f(0.9f, 0f, 0.1f, 0f, 1.1f, 0f, 0.2f, 0f)
 			val ja = JMatrix3f(1f, 0.2f, 0f, 0.1f, 1f, 0.3f, 0f, 0f, 1f)
 			val jb = JMatrix3f(0.9f, 0f, 0.1f, 0f, 1.1f, 0f, 0.2f, 0f, 1f)
 
@@ -231,7 +231,7 @@ class JomlPortDifferentialTests : FunSpec({
 		}
 
 		test("transpose matches") {
-			val a = Matrix3f(1f, 0.2f, 0f, 0.1f, 1f, 0.3f, 0f)
+			val a = Matrix3f(m01 = 0.2f, m02 = 0.1f, m10 = 0.3f)
 			val ja = JMatrix3f(1f, 0.2f, 0f, 0.1f, 1f, 0.3f, 0f, 0f, 1f)
 			a.transpose().approx(ja.transpose())
 		}
@@ -245,7 +245,7 @@ class JomlPortDifferentialTests : FunSpec({
 		test("rotate(quaternion) from a non-identity matrix matches") {
 			val q = Quaternionf(0.1f, 0.2f, 0.3f, 0.9f).normalize()
 			val jq = JQuaternionf(0.1f, 0.2f, 0.3f, 0.9f).normalize()
-			val a = Matrix3f(m01 = 0.2f, m02 = 0.1f, m10 = 0.3f)
+			val a = Matrix3f(m01 = 0.2f, m10 = 0.1f, m12 = 0.3f)
 			val ja = JMatrix3f(1f, 0.2f, 0f, 0.1f, 1f, 0.3f, 0f, 0f, 1f)
 
 			a.rotate(q).approx(ja.rotate(jq))
