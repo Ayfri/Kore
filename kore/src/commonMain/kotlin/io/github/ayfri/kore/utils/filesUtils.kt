@@ -25,11 +25,6 @@ fun Path.isRegularFile() = SystemFileSystem.metadataOrNull(this)?.isRegularFile 
 fun Path.makeDirectories(force: Boolean = false) = SystemFileSystem.createDirectories(this, force)
 fun Path.resolveSafe(vararg paths: Path) = SystemFileSystem.resolve(Path(this.toString(), *paths.map { it.toString() }.toTypedArray()))
 fun Path.resolveSafe(vararg paths: String) = SystemFileSystem.resolve(Path(this.toString(), *paths))
-fun Path.resolve(vararg paths: String): Path = paths.fold(this) { acc, part ->
-	Path(part).let { if (it.isAbsolute) it else Path(acc.toString(), part) }
-}
-
-fun Path.resolve(vararg paths: Path): Path = resolve(*paths.map(Path::toString).toTypedArray())
 fun Path.toSink() = SystemFileSystem.sink(this)
 fun Path.toSource() = SystemFileSystem.source(this)
 fun Path.toStringWithSeparator(separator: String = SystemPathSeparatorString) =
