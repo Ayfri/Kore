@@ -29,7 +29,7 @@ open class Macros {
 * The delegate validates the macro name, registers it in [thisRef.args]
 * and returns the textual macro `$(name)` to be used in command lines.
 */
-inline operator fun String.getValue(thisRef: Macros, property: KProperty<*>): String {
+operator fun String.getValue(thisRef: Macros, property: KProperty<*>): String {
 	require(this matches Regex(Macros.MACRO_NAME_REGEX)) {
 		"Macro name must only contain letters, numbers and underscores, got '$this'."
 	}
