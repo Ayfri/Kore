@@ -53,7 +53,7 @@ suspend fun downloadRegistriesList(): Map<String, Registry> {
 
 	val ignoreList = listOf("minecraft:block", "minecraft:item", "minecraft:tag")
 
-	val completeMap = json.getOrDefault("registries", emptyMap()) + additionalTypes
+	val completeMap = (json["registries"] ?: emptyMap()) + additionalTypes
 	return completeMap.filterKeys { key ->
 		key !in ignoreList
 	}
