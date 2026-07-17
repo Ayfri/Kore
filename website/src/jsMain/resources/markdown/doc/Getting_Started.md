@@ -15,6 +15,10 @@ position: 1
 This guide takes you from zero to a real development workflow with Kore. Instead of stopping at a minimal "hello world,"
 you will build a small but structured datapack, run it in-game, iterate quickly, and learn how to scale your project.
 
+This guide targets the JVM, the primary way to build and export a datapack (`generate()` / `generateZip()`). The same
+calls also work on Node.js; see [Multiplatform Support](/docs/advanced/multiplatform) for that and for the
+browser-only `exportAsStrings()` / `generateZipBytes()` alternatives.
+
 If you already have solid datapack experience and want an architecture-first migration guide, jump to
 [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore).
 

@@ -5,7 +5,7 @@ nav-title: "CI/CD and Releases"
 description: Project and Minecraft versioning, CI automation, CodeQL scanning, release naming, and operational release practices for Kore maintainers.
 keywords: cd, ci, kore, maintenance, minecraft, releases, versioning
 date-created: 2026-04-10
-date-modified: 2026-04-15
+date-modified: 2026-07-12
 routeOverride: /docs/contributing/ci-cd-and-releases
 ---
 
@@ -57,7 +57,10 @@ Maintainer notes:
 
 Current repository automation is split across dedicated workflows under `.github/workflows`:
 
-- `ci.yml`: runs the Gradle test suite on pushes and pull requests targeting `master`.
+- `ci.yml`: runs `./gradlew testAll` on pushes and pull requests targeting `master`, on both Ubuntu and Windows
+  runners. `testAll` is a root task defined in the `kotest-conventions` convention plugin that aggregates every
+  Kotlin Multiplatform module's `allTests` task (JVM, Node.js, and browser via Karma) - see
+  [Multiplatform Support][multiplatform] for what runs where.
 - `codeql.yml`: runs GitHub CodeQL analysis for `actions` and `java-kotlin` on pushes, pull requests, manual dispatch,
   and a weekly schedule.
 - `publish.yml`: performs the manual release publication flow.
@@ -90,10 +93,13 @@ Consistent messages improve changelog scanning and release auditability.
 - [Contributing][contributing]
 - [Contributing: Architecture and Patterns][architecture]
 - [Contributing: Workflow][workflow]
+- [Multiplatform Support][multiplatform]
 
 [architecture]: /docs/contributing/architecture-and-patterns
 
 [contributing]: /docs/contributing/contributing
+
+[multiplatform]: /docs/advanced/multiplatform
 
 [gradle-properties]: https://github.com/ayfri/kore/blob/master/gradle.properties
 

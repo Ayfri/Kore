@@ -5,7 +5,7 @@ nav-title: "Architecture and Patterns"
 description: Detailed internal architecture, project layout, module responsibilities, and recurring implementation patterns for Kore contributors.
 keywords: architecture, bindings, commands, generator, kore, patterns, serializers, website
 date-created: 2026-04-10
-date-modified: 2026-07-04
+date-modified: 2026-07-12
 routeOverride: /docs/contributing/architecture-and-patterns
 ---
 
@@ -50,7 +50,7 @@ git-excluded sandboxes are omitted on purpose.
 - Purpose: datapack importer and Kotlin binding generator.
 - Typical flow: explorer -> normalized entities -> writer output.
 - Common edit surface: [`explorer.kt`][bindings-explorer], [`entities.kt`][bindings-entities], [
-  `writer.kt`][bindings-writer], then tests under [`bindings/src/test`][bindings-tests].
+  `writer.kt`][bindings-writer], then tests under [`bindings/src/commonTest`][bindings-tests].
 - Pattern to preserve: single-namespace packs stay compact, multi-namespace packs become namespace-nested objects, and
   worldgen content is grouped under `Worldgen`.
 
@@ -77,7 +77,7 @@ git-excluded sandboxes are omitted on purpose.
 
 - Purpose: core DSL, typed arguments, command wrappers, serializers, worldgen builders, and data-driven resources.
 - Common edit surface: feature classes, `DataPack` registration, `Function` extensions, serializers, and tests under [
-  `kore/src/test`][kore-tests].
+  `kore/src/commonTest`][kore-tests].
 - A typical change in this module touches one feature family end to end: model, registration, builder entry point,
   tests, and docs.
 
@@ -176,7 +176,9 @@ See `SlotSource.kt` for the exact shape, and `CLAUDE.md` / `multiplatform.md` fo
 ## Testing patterns that speed up contribution
 
 - Feature tests usually assert emitted JSON payloads and generated command/resource lines.
-- Module-specific `testDataPack(...)` helpers provide compact generation setups.
+- Most specs build a `dataPack { }` in `commonTest` and never call `generate()`, so they run on the JVM, Node.js, and
+  a headless browser alike (see [Multiplatform Support][multiplatform]). The `testDataPack(...)` helper wraps real
+  file/ZIP/JAR generation and is JVM/Node-only - keep specs that call it in `jvmTest`.
 - Serializer tests should focus on roundtrip behavior and JSON or SNBT shape checks.
 
 When you touch generators, the usual path is: model -> `DataPack` registration -> builder entry point -> tests -> docs.
@@ -236,6 +238,7 @@ Content rules that keep the docs consistent and trustworthy:
 - [Contributing: Creating a New Generator][new-generator]
 - [Contributing: The Generation Pipeline][generation-pipeline]
 - [Contributing: Workflow][workflow]
+- [Multiplatform Support][multiplatform]
 
 [bindings-entities]: https://github.com/ayfri/kore/blob/master/bindings/src/main/kotlin/io/github/ayfri/kore/bindings/entities.kt
 
@@ -243,7 +246,7 @@ Content rules that keep the docs consistent and trustworthy:
 
 [bindings-root]: https://github.com/ayfri/kore/tree/master/bindings
 
-[bindings-tests]: https://github.com/ayfri/kore/tree/master/bindings/src/test/kotlin/io/github/ayfri/kore/bindings
+[bindings-tests]: https://github.com/ayfri/kore/tree/master/bindings/src/commonTest/kotlin/io/github/ayfri/kore/bindings
 
 [bindings-writer]: https://github.com/ayfri/kore/blob/master/bindings/src/main/kotlin/io/github/ayfri/kore/bindings/writer.kt
 
@@ -269,7 +272,9 @@ Content rules that keep the docs consistent and trustworthy:
 
 [kore-root]: https://github.com/ayfri/kore/tree/master/kore
 
-[kore-tests]: https://github.com/ayfri/kore/tree/master/kore/src/test/kotlin/io/github/ayfri/kore
+[kore-tests]: https://github.com/ayfri/kore/tree/master/kore/src/commonTest/kotlin/io/github/ayfri/kore
+
+[multiplatform]: /docs/advanced/multiplatform
 
 [new-generator]: /docs/contributing/creating-a-new-generator
 

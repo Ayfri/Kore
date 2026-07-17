@@ -32,6 +32,11 @@ generation of datapack JSON, and tight integration with vanilla concepts (functi
 Kore is split into installable modules. Start with `kore`, then add the others depending on the abstractions or tooling
 you need.
 
+All four modules are **Kotlin Multiplatform** (JVM + JS): the same coordinates publish JVM, JS, and common metadata
+variants. File/ZIP/JAR generation works on the JVM and Node.js; browser JS consumers build the DSL and call
+`exportAsStrings()` / `generateZipBytes()` instead. See [Multiplatform Support](/docs/advanced/multiplatform) for
+what runs where.
+
 ### `kore` - Core DSL
 
 - Build datapacks with the main Kore DSL.
@@ -159,6 +164,7 @@ fun main() {
 ### Advanced
 
 - [Bindings](/docs/advanced/bindings) - import existing datapacks and generate Kotlin bindings (experimental).
+- [Multiplatform Support](/docs/advanced/multiplatform) - JVM + JS targets, what runs where, `exportAsStrings()`.
 - [GitHub Actions Publishing](/docs/advanced/github-actions-publishing) - automate datapack publishing.
 - [Test Features (GameTest)](/docs/advanced/test-features) - testing datapacks with GameTest.
 - [Known Issues](/docs/advanced/known-issues) - workarounds and limitations.

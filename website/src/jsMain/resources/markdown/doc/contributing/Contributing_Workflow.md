@@ -5,7 +5,7 @@ nav-title: "Contributing Workflow"
 description: End-to-end workflow for opening issues, implementing changes, validating them, and preparing pull requests in Kore.
 keywords: contributing, docs, issues, kore, pull-request, quality, tests, workflow
 date-created: 2026-04-10
-date-modified: 2026-04-15
+date-modified: 2026-07-12
 routeOverride: /docs/contributing/contributing-workflow
 ---
 
@@ -61,10 +61,15 @@ instead of inventing a new shape from scratch.
 
 For `bindings` and `kore`, tests are expected alongside code changes.
 
-Test locations:
+Test locations, per module (all four modules are Kotlin Multiplatform - see
+[Multiplatform Support][multiplatform]):
 
-- [`bindings/src/test/kotlin/io/github/ayfri/kore/bindings`][bindings-tests]
-- [`kore/src/test/kotlin/io/github/ayfri/kore`][kore-tests]
+- `commonTest` for specs that build a `dataPack { }` in memory and assert JSON/command output; these run on the JVM,
+  Node.js, and a headless browser.
+- `jvmTest` for specs that need real file I/O (`generate()`, `generateZip()`) or a JVM-only dependency.
+
+For example, [`bindings/src/commonTest/kotlin/io/github/ayfri/kore/bindings`][bindings-tests] and
+[`kore/src/commonTest/kotlin/io/github/ayfri/kore`][kore-tests].
 
 At minimum, validate:
 
@@ -86,10 +91,11 @@ Run the checks that match the modules you changed.
 
 Typical commands:
 
-- `./gradlew :bindings:test` for `bindings` changes.
-- `./gradlew :kore:test` for core DSL changes.
-- `./gradlew :oop:test` for OOP module changes.
-- `./gradlew :helpers:test` for helpers module changes.
+- `./gradlew :bindings:jvmTest` for `bindings` changes, fast JVM-only iteration.
+- `./gradlew :kore:jvmTest` for core DSL changes, fast JVM-only iteration.
+- `./gradlew :oop:jvmTest` for OOP module changes, fast JVM-only iteration.
+- `./gradlew :helpers:jvmTest` for helpers module changes, fast JVM-only iteration.
+- `./gradlew testAll` before opening the PR, to also run every module's Node.js and browser (Karma) test tasks.
 - Your local website workflow when you touched docs navigation or page structure.
 
 Validation checklist:
@@ -129,10 +135,11 @@ For the title and commit messages, follow conventional commits. Common examples:
 - [Contributing: Contributing][contributing]
 - [Contributing: Creating a New Generator][new-generator]
 - [Contributing: CI/CD and Releases][releases]
+- [Multiplatform Support][multiplatform]
 
 [architecture]: /docs/contributing/architecture-and-patterns
 
-[bindings-tests]: https://github.com/ayfri/kore/tree/master/bindings/src/test/kotlin/io/github/ayfri/kore/bindings
+[bindings-tests]: https://github.com/ayfri/kore/tree/master/bindings/src/commonTest/kotlin/io/github/ayfri/kore/bindings
 
 [contributing]: /docs/contributing/contributing
 
@@ -140,7 +147,9 @@ For the title and commit messages, follow conventional commits. Common examples:
 
 [issue-templates]: https://github.com/ayfri/kore/tree/master/.github/ISSUE_TEMPLATE
 
-[kore-tests]: https://github.com/ayfri/kore/tree/master/kore/src/test/kotlin/io/github/ayfri/kore
+[kore-tests]: https://github.com/ayfri/kore/tree/master/kore/src/commonTest/kotlin/io/github/ayfri/kore
+
+[multiplatform]: /docs/advanced/multiplatform
 
 [new-generator]: /docs/contributing/creating-a-new-generator
 
