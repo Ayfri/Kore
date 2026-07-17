@@ -21,6 +21,7 @@ import io.github.ayfri.kore.arguments.types.literals.rotation
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.assertions.assertsMatches
 import io.github.ayfri.kore.commands.execute.Anchor
 import io.github.ayfri.kore.commands.execute.BlocksTestMode
 import io.github.ayfri.kore.commands.execute.Relation
@@ -299,6 +300,42 @@ fun Function.executeTests() {
 	} assertsIs """
 		execute if stopwatch unit_tests:my_timer 100 run say stopwatch reached 100
 	""".trimIndent()
+
+	execute {
+		ifCondition {
+			entity(testEntity.selector)
+		}
+
+		run {
+			if (false) say("never")
+		}
+	} assertsIs """
+		execute if entity $selectorAsString
+	""".trimIndent()
+
+	val condition = true
+
+	execute {
+		at(testEntity.selector)
+
+		run {
+			if (condition) say("test")
+		}
+	} assertsIs """
+		execute at $selectorAsString run say test
+	""".trimIndent()
+
+	val things = listOf("a", "b", "c")
+
+	execute {
+		run {
+			things.forEach { say(it) }
+		}
+	} assertsMatches Regex(
+		"""execute run function ${datapack.name}:${datapack.configuration.generatedFunctionsFolder}/generated_-?\d+"""
+	)
+
+	datapack.generatedFunctions.last().commandLines assertsIs listOf("say a", "say b", "say c")
 }
 
 class ExecuteCommandTests : FunSpec({

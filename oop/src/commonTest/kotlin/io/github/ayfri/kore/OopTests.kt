@@ -95,7 +95,7 @@ fun oopTests() = dataPack("oop") {
 			run {
 				it.teleportTo(it)
 			}
-		} assertsIs "execute as @e[gamemode=survival,limit=1,name=Ayfri,team=red,type=minecraft:player] run teleport @e[gamemode=survival,limit=1,name=Ayfri,team=red,type=minecraft:player] @s"
+		} assertsIs "execute as @e[gamemode=survival,limit=1,name=Ayfri,team=red,type=minecraft:player] run teleport @s @s"
 		lines.size assertsIs 1
 	}
 
@@ -121,7 +121,7 @@ fun oopTests() = dataPack("oop") {
 			run {
 				player.joinTeam("red")
 			}
-		} assertsIs "execute if score @e[gamemode=survival,limit=1,name=Ayfri,team=red,type=minecraft:player] deathCount matches 2.. run team join red @e[gamemode=survival,limit=1,name=Ayfri,team=red,team=red,team=,type=minecraft:player]"
+		} assertsIs "execute if score @e[gamemode=survival,limit=1,name=Ayfri,team=red,type=minecraft:player] deathCount matches 2.. run team join red @e[gamemode=survival,limit=1,name=Ayfri,team=red,team=,type=minecraft:player]"
 		lines.size assertsIs 1
 	}
 

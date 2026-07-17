@@ -41,6 +41,7 @@ open class Function(
 	private var debug = false
 	internal var nextLineHasMacro = false
 	val lines = mutableListOf<String>()
+	val commands = mutableListOf<Command>()
 	val commandLines get() = lines.filter { !it.startsWith('#') && it.isNotBlank() && it.isNotEmpty() }
 	val isInlinable get() = commandLines.size == 1
 
@@ -69,6 +70,7 @@ open class Function(
 	 * Returns the given [Command] for fluent usage.
 	 */
 	open fun addLine(command: Command): Command {
+		commands += command
 		lines += handleMacro(command.toString())
 
 		if (nextLineHasMacro) command.hasMacro = true

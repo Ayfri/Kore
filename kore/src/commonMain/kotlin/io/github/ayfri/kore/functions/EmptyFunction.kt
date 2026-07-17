@@ -11,6 +11,8 @@ import io.github.ayfri.kore.commands.Command
 class EmptyFunction internal constructor(datapack: DataPack = DataPack("")) : Function("", datapack.name, datapack = datapack) {
 	override fun addLine(line: String) = ""
 	override fun addLine(command: Command): Command {
+		commands.clear()
+		commands += command
 		lines.clear()
 		lines += command.toString()
 		return command

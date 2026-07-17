@@ -141,28 +141,34 @@ class Execute {
 	/**
 	 * Runs the given [block] as the final command of the execute chain.
 	 *
-	 * If the block produces a single inlinable command, it is inlined directly; otherwise a generated function is created
-	 * and invoked. Entity arguments in the block are rewritten through [targetArg] to keep `@s` semantics consistent.
+	 * [block] is evaluated exactly once. If it produced no command, the execute chain does nothing. If it produced a
+	 * single command, it is inlined directly; otherwise a generated function is created and invoked. Entity arguments
+	 * of an inlined command are rewritten through [targetArg] to keep `@s` semantics consistent.
 	 */
-	context(fn:Function)
-	fun run(block: Function.() -> Command): FunctionArgument {
-		val function = Function("", "", datapack = fn.datapack).apply { block() }
+	context(fn: Function)
+	fun run(block: Function.() -> Unit): FunctionArgument {
+		val function = Function("", "", datapack = fn.datapack).apply(block)
 
-		if (function.isInlinable) return emptyFunction(fn.datapack) {
-			block().apply {
-				for (i in arguments.indices) {
-					arguments[i] = when (val argument = arguments[i]) {
-						is EntityArgument -> targetArg(argument)
-						else -> argument
-					}
+		if (function.commandLines.isEmpty()) {
+			run = emptyFunction(fn.datapack)
+			return run
+		}
+
+		if (function.commands.size == 1 && function.commandLines.size == 1) {
+			val command = function.commands.single()
+			for (i in command.arguments.indices) {
+				command.arguments[i] = when (val argument = command.arguments[i]) {
+					is EntityArgument -> targetArg(argument)
+					else -> argument
 				}
 			}
-			run = this
-			lines.removeAll { it.startsWith("#") || it.isBlank() || it.isEmpty() }
+
+			run = emptyFunction(fn.datapack) { addLine(command) }
+			return run
 		}
 
 		val name = "generated_${this.hashCode()}"
-		val generatedFunction = fn.datapack.generatedFunction(name) { block() }
+		val generatedFunction = fn.datapack.generatedFunction(name) { lines += function.lines }
 		if (generatedFunction.name == name && fn.datapack.configuration.generateCommentOfGeneratedFunctionCall) fn.comment("Generated function ${fn.asString()}")
 		run = generatedFunction
 
