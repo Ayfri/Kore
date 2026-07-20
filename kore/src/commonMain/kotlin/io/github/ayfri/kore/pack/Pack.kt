@@ -66,6 +66,9 @@ data class PackSection(
 			if (it !in minFormat..maxFormat) {
 				warn("packFormat (${it.asFormatString()}) is outside the range [${minFormat.asFormatString()}, ${maxFormat.asFormatString()}]")
 			}
+			if (it !is PackFormatMajor) {
+				warn("packFormat (${it.asFormatString()}) must be a plain integer, not a [major, minor] array or a decimal")
+			}
 		}
 	}
 

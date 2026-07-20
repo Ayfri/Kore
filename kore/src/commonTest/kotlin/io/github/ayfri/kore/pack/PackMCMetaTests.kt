@@ -32,10 +32,7 @@ private fun testEmptyDatapackMCMeta() = dataPack("empty_pack") {
 				${DataPack.DEFAULT_PACK_FORMAT.major},
 				${DataPack.DEFAULT_PACK_FORMAT.minorOrNull() ?: 0}
 			],
-			"pack_format": [
-				${DataPack.DEFAULT_PACK_FORMAT.major},
-				${DataPack.DEFAULT_PACK_FORMAT.minorOrNull() ?: 0}
-			]
+			"pack_format": ${DataPack.DEFAULT_PACK_FORMAT.major}
 		}
 	}
 """.trimIndent()
@@ -56,10 +53,7 @@ private fun testPackMCMetaMinMaxFormat() = dataPack("minmax_pack") {
 				94,
 				0
 			],
-			"pack_format": [
-				${DataPack.DEFAULT_PACK_FORMAT.major},
-				${DataPack.DEFAULT_PACK_FORMAT.minorOrNull() ?: 0}
-			]
+			"pack_format": ${DataPack.DEFAULT_PACK_FORMAT.major}
 		}
 	}
 """.trimIndent()

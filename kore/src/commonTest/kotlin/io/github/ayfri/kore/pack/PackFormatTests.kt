@@ -50,6 +50,14 @@ private fun testPackSectionValidation() {
 		packFormat = packFormat(20)
 	)
 
+	// packFormat not a plain integer
+	PackSection(
+		description = textComponent("Test"),
+		minFormat = packFormat(10),
+		maxFormat = packFormat(15),
+		packFormat = packFormat(12, 0)
+	)
+
 	// Decimal min/max
 	PackSection(
 		description = textComponent("Test"),

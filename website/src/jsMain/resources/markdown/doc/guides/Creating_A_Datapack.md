@@ -5,7 +5,7 @@ nav-title: Creating A Datapack
 description: A guide for creating a Minecraft datapack using Kore.
 keywords: minecraft, datapack, kore, guide
 date-created: 2024-02-26
-date-modified: 2026-03-31
+date-modified: 2026-07-21
 routeOverride: /docs/guides/creating-a-datapack
 ---
 
@@ -92,12 +92,28 @@ pack {
 }
 ```
 
-### Legacy `supportedFormats`
+### Legacy `pack_format` and `supportedFormats`
 
-Kore automatically handles backward compatibility for older game versions. If your
-`minFormat` is below the threshold (82 for DataPacks, 65 for ResourcePacks), Kore will automatically include the legacy
-`pack_format` and `supported_formats` fields in the generated
-`pack.mcmeta` file to ensure compatibility with older versions of Minecraft.
+`pack.mcmeta`'s `pack_format` field is always a plain integer, even on modern Minecraft versions - some
+third-party tools (e.g. Modrinth) still read it for compatibility. Kore includes it by default, defaulting to the
+current Minecraft version's pack format as a plain integer, unless you set `packFormat = null` yourself.
+
+If your `minFormat` is below the threshold (82 for DataPacks, 65 for ResourcePacks), Kore additionally includes the
+legacy `supported_formats` field in the generated `pack.mcmeta` file to ensure compatibility with older versions of
+Minecraft.
+
+You can override `packFormat` explicitly - it only accepts a plain integer (`PackFormatMajor`); assigning a
+`[major, minor]` pair or a decimal value triggers a warning:
+
+```kotlin
+dataPack("mydatapack") {
+	pack {
+		minFormat(94)
+		maxFormat(94)
+		packFormat = packFormat(94) // must stay a plain integer
+	}
+}
+```
 
 You can also set `supportedFormats` explicitly with a small DSL:
 
@@ -116,22 +132,22 @@ dataPack("mydatapack") {
 
 ### Targeting Minecraft 1.21.9+
 
-Starting with Minecraft 1.21.9 (25w31a), `min_format` and `max_format` are the primary fields in `pack.mcmeta`.
-The`pack_format` field can be a decimal value to represent snapshots or minor versions.
-You can set this using `packFormat(Double)`:
+Starting with Minecraft 1.21.9 (25w31a), `min_format` and `max_format` are the primary fields in `pack.mcmeta`, and
+can use a `[major, minor]` pair to target snapshots or minor versions:
 
 ```kotlin
 dataPack("my_datapack") {
 	pack {
-		minFormat(94)
-		maxFormat(94)
-		packFormat = packFormat(94.1)
+		minFormat(94, 1)
+		maxFormat(94, 1)
 		description = textComponent("Targeting 1.21.9")
 	}
 }
 ```
 
-Note that `minFormat` and `maxFormat` do not accept decimal values - use a plain integer or a `[major, minor]` pair.
+Note that `minFormat`, `maxFormat`, and `packFormat` do not accept decimal values - use a plain integer or a
+`[major, minor]` pair for `minFormat`/`maxFormat`, and a plain integer for `packFormat`. `PackFormatDecimal` exists
+only for parsing legacy third-party `pack.mcmeta` files that used a decimal `pack_format`; don't set it yourself.
 
 ## Overlays
 
