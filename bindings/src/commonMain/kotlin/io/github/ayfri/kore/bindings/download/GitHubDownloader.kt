@@ -70,13 +70,13 @@ internal data object GitHubDownloader : Downloader {
 
 		require(parts.isNotEmpty() && parts[0].isNotEmpty()) { "GitHub reference cannot be empty" }
 
-		val repoParts = parts[0].split(".")
-		require(repoParts.size == 2 && repoParts[0].isNotEmpty() && repoParts[1].isNotEmpty()) {
+		val dotIndex = parts[0].indexOf('.')
+		require(dotIndex > 0 && dotIndex < parts[0].lastIndex) {
 			"Invalid GitHub reference format. Expected 'user.repo:tag:asset' format. Got: '$reference'"
 		}
 
-		val owner = repoParts[0]
-		val repo = repoParts[1]
+		val owner = parts[0].substring(0, dotIndex)
+		val repo = parts[0].substring(dotIndex + 1)
 		val tag = parts.getOrNull(1)?.ifEmpty { null }
 		val assetName = parts.getOrNull(2)?.ifEmpty { null }
 

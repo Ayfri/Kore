@@ -28,6 +28,10 @@ fun testParsingLogic() = newTest("parsing-logic") {
 	ghRef.assetName assertsIs "asset.zip"
 	GitHubDownloader.buildApiHeaders(null).isEmpty() assertsIs true
 	GitHubDownloader.buildApiHeaders("token_123")["Authorization"] assertsIs "Bearer token_123"
+	val ghRefDottedRepo = GitHubDownloader.parseReference("xiaodou8593.math3.1:3.1.1")
+	ghRefDottedRepo.owner assertsIs "xiaodou8593"
+	ghRefDottedRepo.repo assertsIs "math3.1"
+	ghRefDottedRepo.tag assertsIs "3.1.1"
 	val config = DatapackConfiguration().apply {
 		body("{\"hello\":\"world\"}")
 		header("Authorization", "Bearer token")
