@@ -87,6 +87,9 @@ generated control flow; turn it off for minimal `.mcfunction` output in releases
 `generate()` and `generateZip()` accept `DataPackGenerationOptions` (for example `mergeWithPacks`). `generateJar()` uses
 `DataPackJarGenerationOptions`, which supports the same merge list plus loader-specific configuration.
 
+When targeting Fabric, individual resources can also be gated at load time with
+[Fabric Resource Conditions](/docs/guides/fabric-resource-conditions).
+
 ## Development vs release-oriented setups
 
 A practical split:

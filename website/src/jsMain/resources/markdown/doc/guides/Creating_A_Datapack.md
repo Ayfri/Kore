@@ -320,6 +320,9 @@ dataPack("my_datapack") {
 
 This sets the Fabric version, and includes contact information and the author's name.
 
+To make individual resources load conditionally inside a Fabric mod (based on other mods, tags, registries or feature
+flags), see [Fabric Resource Conditions](/docs/guides/fabric-resource-conditions).
+
 #### Forge
 
 To configure Forge mod loader, use the `forge` block:
@@ -455,6 +458,7 @@ It also checks for `supportedFormats` and warns if the other pack is not support
 - [Functions](/docs/commands/functions) - reusable logic, tags, and generated functions
 - [Selectors](/docs/concepts/selectors) - target entities and players with typed filters
 - [Configuration](/docs/guides/configuration) - tune JSON formatting and generation behavior
+- [Fabric Resource Conditions](/docs/guides/fabric-resource-conditions) - load resources conditionally inside a Fabric mod
 
 ## Publishing and Distribution
 

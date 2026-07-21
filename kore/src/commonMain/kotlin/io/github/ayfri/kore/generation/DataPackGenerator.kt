@@ -84,7 +84,7 @@ data class DataPackGenerator(
 				val namespace = generator.namespace ?: datapack.name
 				val path = generator.getPathFromDataDir(outputDataPath, namespace)
 				if (options.mergeWithPacks.isNotEmpty() && path.dataRelativePath() in tagsToMerge) return@forEach
-				writeFile(path.toString(), generator.generateJson(datapack))
+				writeFile(path.toString(), generator.generateJsonWithLoadConditions(datapack))
 			}
 
 		if (options.mergeWithPacks.isNotEmpty()) mergeWithOtherPacks()

@@ -313,7 +313,7 @@ fun DataPack.exportAsStrings(): Map<String, String> = buildMap {
 	generators.flatten().forEach {
 		put(
 			it.getPathFromDataDir(Path("data"), it.namespace ?: name).asInvariantPathSeparator,
-			it.generateJson(this@exportAsStrings)
+			it.generateJsonWithLoadConditions(this@exportAsStrings)
 		)
 	}
 }
