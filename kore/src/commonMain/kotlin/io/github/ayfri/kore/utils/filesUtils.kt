@@ -9,9 +9,12 @@ import kotlinx.io.files.SystemTemporaryDirectory
 import kotlinx.io.readString
 import kotlin.random.Random
 
-val SystemPathSeparatorString = SystemPathSeparator.toString()
+/**
+ * Lazy on purpose: as an eager file-level property it made *any* access to this file initialize
+ * [SystemPathSeparator], which needs Node's `path` module and throws in the browser.
+ */
+val SystemPathSeparatorString by lazy { SystemPathSeparator.toString() }
 
-val Path.asInvariantPathSeparator get() = this.toStringWithSeparator("/")
 val Path.nameWithoutExtension get() = this.name.substringBeforeLast('.')
 
 fun Path.absolute() = SystemFileSystem.resolve(this)

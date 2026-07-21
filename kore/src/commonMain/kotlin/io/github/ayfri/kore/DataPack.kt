@@ -307,7 +307,7 @@ fun DataPack.exportAsStrings(): Map<String, String> = buildMap {
 	put("pack.mcmeta", generatePackMCMetaFile())
 
 	(functions + generatedFunctions).distinctBy { it.getFinalPath() }.forEach {
-		put(it.getFinalPath(), it.lines.joinToString("\n"))
+		put(it.getFinalPath().replace('\\', '/'), it.lines.joinToString("\n"))
 	}
 
 	generators.flatten().forEach {

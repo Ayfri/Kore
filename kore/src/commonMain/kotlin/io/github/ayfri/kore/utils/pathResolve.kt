@@ -16,3 +16,12 @@ fun Path.resolve(vararg paths: String): Path = Path(paths.fold(toString()) { acc
 })
 
 fun Path.resolve(vararg paths: Path): Path = resolve(*paths.map(Path::toString).toTypedArray())
+
+/**
+ * Path string with `\` normalized to `/`, matching the separator datapacks and archives always use.
+ *
+ * Lives here rather than in [filesUtils.kt] for the same reason as [resolve]: reading
+ * [kotlinx.io.files.SystemPathSeparator] requires Node's `path` module on Kotlin/JS and throws in the browser.
+ * Since it is reached from [io.github.ayfri.kore.exportAsStrings], it has to stay browser-safe.
+ */
+val Path.asInvariantPathSeparator get() = toString().replace('\\', '/')
