@@ -24,7 +24,7 @@ abstract class Generator(@Transient val resourceFolder: String = "") {
 
 	/** Returns the final path of the generated file, relative to the datapack output directory. */
 	fun getFinalPath(dataPack: DataPack): Path {
-		val dataFolder = dataPack.cleanPath.resolve(dataPack.name, "data")
+		val dataFolder = dataPack.cleanPath.resolve(dataPack.folderName ?: dataPack.name, "data")
 		val namespace = namespace ?: dataPack.name
 		return getPathFromDataDir(dataFolder, namespace)
 	}

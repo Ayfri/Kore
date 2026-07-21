@@ -34,10 +34,13 @@ data class DataPackGenerator(
 	val dataPackPath: Path get() = if (platformRequiresSuspension) datapack.path else datapack.cleanPath
 
 	val outputPath: Path
-		get() = when (mode) {
-			DatapackGenerationMode.FOLDER -> dataPackPath.resolve(datapack.name)
-			DatapackGenerationMode.JAR -> dataPackPath.resolve("${datapack.name}.jar")
-			DatapackGenerationMode.ZIP -> dataPackPath.resolve("${datapack.name}.zip")
+		get() {
+			val folderName = datapack.folderName ?: datapack.name
+			return when (mode) {
+				DatapackGenerationMode.FOLDER -> dataPackPath.resolve(folderName)
+				DatapackGenerationMode.JAR -> dataPackPath.resolve("$folderName.jar")
+				DatapackGenerationMode.ZIP -> dataPackPath.resolve("$folderName.zip")
+			}
 		}
 
 	val outputDataPath get() = outputPath.resolve("data")

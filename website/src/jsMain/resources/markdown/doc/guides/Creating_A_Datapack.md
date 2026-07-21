@@ -39,6 +39,29 @@ dataPack("my_datapack") {
 }
 ```
 
+## Separating the Output Folder Name from the Namespace
+
+By default the output folder/archive is named after the datapack's `name`, which is also the default namespace used by
+every function and generator that doesn't set an explicit `namespace`. Sometimes you need those to differ, for example
+when plugging Kore into a modded Fabric project's datagen step: Fabric Loom expects generated resources under a fixed
+`generated` directory, but the resource namespace inside should be your mod ID, not the literal string `generated`.
+
+Set `folderName` to decouple the two:
+
+```kotlin
+dataPack("mymod") {
+	folderName("generated")
+	path("src/main")
+
+	predicate("always_true")
+}.generate()
+// -> src/main/generated/pack.mcmeta
+// -> src/main/generated/data/mymod/predicate/always_true.json
+```
+
+The output folder (and `.zip`/`.jar` file name) becomes `generated`, while every resource still defaults to the `mymod`
+namespace. Individual functions/generators can still override their own `namespace` as before.
+
 ## Adding Icon
 
 To add an icon to the datapack, use the `iconPath` function:

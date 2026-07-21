@@ -141,6 +141,13 @@ class DataPack(val name: String) {
 	var generated = false
 		internal set
 	var iconPath: Path? = null
+	/**
+	 * Overrides the output folder/archive base name, independently of [name] (which stays the default
+	 * namespace for functions and generators). Set this when the folder name is dictated by an external
+	 * toolchain, e.g. Fabric Loom's datagen expects a fixed `generated` output directory while the resources
+	 * inside should use the mod ID as namespace.
+	 */
+	var folderName: String? = null
 	var path = Path("out")
 	@Suppress("DEPRECATION")
 	val pack = PackSection(
@@ -278,6 +285,15 @@ fun DataPack.path(path: String) {
 /** Sets the output path of the pack. */
 fun DataPack.path(path: Path) {
 	this.path = path
+}
+
+/**
+ * Sets the output folder/archive base name, independently of [DataPack.name].
+ *
+ * Docs: https://kore.ayfri.com/docs/guides/creating-a-datapack
+ */
+fun DataPack.folderName(folderName: String) {
+	this.folderName = folderName
 }
 
 /**

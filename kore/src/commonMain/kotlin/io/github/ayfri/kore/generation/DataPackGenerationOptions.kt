@@ -38,6 +38,6 @@ fun DataPackGenerationOptions.mergeWithPacks(vararg packs: DataPack) {
 		it.path = tempPath
 		it.generate()
 		it.path = previousPath
-		tempPath.resolveSafe(it.name).absolute()
+		tempPath.resolveSafe(it.folderName ?: it.name).absolute()
 	}.toTypedArray())
 }

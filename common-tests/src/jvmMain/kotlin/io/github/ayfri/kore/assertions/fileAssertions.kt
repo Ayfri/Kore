@@ -27,7 +27,7 @@ fun TestDataPack.assertFileJsonContent(path: String, content: String) = callAfte
 }
 
 private fun TestDataPack.assertFileGeneratedInArchive(path: String, extension: String) = callAfterGeneration {
-	val file = dp.cleanPath.resolve("${dp.name}.$extension")
+	val file = dp.cleanPath.resolve("${dp.folderName ?: dp.name}.$extension")
 	val invariantPath = path.replace("\\", "/").removePrefix("/")
 	val zipFile = file.toJavaFile()
 	val inputStream = zipFile.inputStream()
