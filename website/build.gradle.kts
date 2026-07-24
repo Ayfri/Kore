@@ -88,7 +88,8 @@ kobweb {
 
 		handlers {
 			img.set { image ->
-				val altText = image.children().filterIsInstance<Text>().joinToString("") { it.literal.escapeSingleQuotedText() }
+				val altText =
+					image.children().filterIsInstance<Text>().joinToString("") { it.literal.escapeSingleQuotedText() }
 				childrenOverride = emptyList()
 
 				"""org.jetbrains.compose.web.dom.Img(src="${image.destination}", alt="$altText") {
@@ -190,7 +191,8 @@ kobweb {
 		val projectName = project.name
 		val projectDir = project.projectDir
 		val markdownDir = projectDir.resolve("src/jsMain/resources/markdown")
-		val publicDir = projectDir.resolve("src/jsMain/resources/public")
+		// Kobweb flattens a "public" subfolder of resources to the site root, so the generated dir must mirror that layout for llms.txt/sitemap.xml/etc. to end up at the site root.
+		val llmsResourcesDir = layout.buildDirectory.dir("generated/llms-resources/public").get().asFile
 
 		process.set { markdownFiles ->
 			val docEntries = mutableListOf<DocEntry>()
@@ -199,7 +201,8 @@ kobweb {
 				val path = markdownDir.resolve(docArticle.filePath)
 				val fileName = path.name
 				val fm = docArticle.frontMatter
-				val requiredFields = listOf("title", "description", "date-created", "date-modified", "nav-title", "routeOverride")
+				val requiredFields =
+					listOf("title", "description", "date-created", "date-modified", "nav-title", "routeOverride")
 				val title = fm["title"]?.firstOrNull()
 				val desc = fm["description"]?.firstOrNull()
 				val dateCreated = fm["date-created"]?.firstOrNull()
@@ -319,15 +322,15 @@ kobweb {
 				}
 			}
 
-			// Write files to public resources directory
-			publicDir.mkdirs()
-			publicDir.resolve("llms.txt").writeText(llmsContent)
-			publicDir.resolve("llms-full.txt").writeText(llmsFullContent)
+			// Write files to a generated resources directory (never checked into sources)
+			llmsResourcesDir.mkdirs()
+			llmsResourcesDir.resolve("llms.txt").writeText(llmsContent)
+			llmsResourcesDir.resolve("llms-full.txt").writeText(llmsFullContent)
 
 			val markdownSources = markdownFiles.associate { docArticle ->
 				docArticle.filePath.replace('\\', '/') to markdownDir.resolve(docArticle.filePath).readText()
 			}
-			publicDir.resolve("markdown-sources.json").writeText(JsonOutput.toJson(markdownSources))
+			llmsResourcesDir.resolve("markdown-sources.json").writeText(JsonOutput.toJson(markdownSources))
 
 			// Generate sitemap.xml
 			val sitemap = buildString {
@@ -354,11 +357,11 @@ kobweb {
 				}
 				appendLine("</urlset>")
 			}
-			publicDir.resolve("sitemap.xml").writeText(sitemap)
+			llmsResourcesDir.resolve("sitemap.xml").writeText(sitemap)
 
-			println("Sitemap generated -> ${publicDir.resolve("sitemap.xml").absolutePath}")
+			println("Sitemap generated -> ${llmsResourcesDir.resolve("sitemap.xml").absolutePath}")
 
-			println("LLMs.txt generated -> ${publicDir.absolutePath}")
+			println("LLMs.txt generated -> ${llmsResourcesDir.absolutePath}")
 			projectLogger.info("markdown-sources.json written (${markdownSources.size} files)")
 
 			generateKotlin("$projectGroup/docEntries.kt", buildString {
@@ -417,7 +420,8 @@ tasks.register("fetchGitHubReleases") {
 	group = "kore"
 	description = "Fetches GitHub releases and generates a Kotlin file with the data"
 
-	val outFile = layout.buildDirectory.file("generated/kore/src/jsMain/kotlin/io/github/ayfri/kore/website/gitHubReleases.kt")
+	val outFile =
+		layout.buildDirectory.file("generated/kore/src/jsMain/kotlin/io/github/ayfri/kore/website/gitHubReleases.kt")
 	outputs.file(outFile)
 
 	doLast {
@@ -434,7 +438,8 @@ tasks.register("fetchGitHubReleases") {
 			conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
 			conn.setRequestProperty("User-Agent", "KoreWebsite/1.0 (+https://kore.ayfri.com)")
 
-			System.getenv("GITHUB_TOKEN")?.takeIf { it.isNotBlank() }?.let { conn.setRequestProperty("Authorization", "token $it") }
+			System.getenv("GITHUB_TOKEN")?.takeIf { it.isNotBlank() }
+				?.let { conn.setRequestProperty("Authorization", "token $it") }
 
 			val code = conn.responseCode
 			if (code != 200) {
@@ -586,6 +591,12 @@ tasks.matching { it.name == "compileKotlinJs" }.configureEach {
 	dependsOn("fetchGitHubReleases", "fetchGitHubStars")
 }
 
+// llms.txt/sitemap.xml/markdown-sources.json are written by kobwebxMarkdownProcess into a
+// generated resources dir; make the dependency explicit so caching/ordering can't skip them.
+tasks.matching { it.name == "jsProcessResources" }.configureEach {
+	dependsOn("kobwebxMarkdownProcess")
+}
+
 kotlin {
 	configAsKobwebApplication("website")
 
@@ -607,6 +618,7 @@ kotlin {
 	sourceSets {
 		jsMain {
 			kotlin.srcDir("build/generated/kore/src/jsMain/kotlin")
+			resources.srcDir(layout.buildDirectory.dir("generated/llms-resources"))
 		}
 		commonMain {
 			dependencies {
