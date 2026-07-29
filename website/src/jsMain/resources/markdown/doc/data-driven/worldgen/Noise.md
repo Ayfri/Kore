@@ -183,6 +183,15 @@ surfaceRule = sequence(
 )
 ```
 
+Use `noiseGradient` to pick a block state from a list of entries, indexed by the value of a noise:
+
+```kotlin
+surfaceRule = noiseGradient(hillsNoise) {
+	entry(BlockState(Blocks.STONE))
+	entry(BlockState(Blocks.DEEPSLATE))
+}
+```
+
 ---
 
 ## Complete Example

@@ -3,6 +3,7 @@ package io.github.ayfri.kore.features.worldgen
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
+import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.features.worldgen.dimension.biomesource.multinoise.multiNoiseBiomeSourceParameters
 import io.github.ayfri.kore.features.worldgen.noise.noise
 import io.github.ayfri.kore.features.worldgen.noisesettings.*
@@ -12,6 +13,8 @@ import io.github.ayfri.kore.features.worldgen.noisesettings.rules.condition
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.biomes
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.noiseThreshold
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.not
+import io.github.ayfri.kore.features.worldgen.noisesettings.rules.entry
+import io.github.ayfri.kore.features.worldgen.noisesettings.rules.noiseGradient
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.surfaceRules
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.Blocks
@@ -70,6 +73,11 @@ fun DataPack.noiseSettingsTests() {
 			}
 
 			this += condition(noiseThreshold(myNoise))
+
+			this += noiseGradient(myNoise) {
+				entry(BlockState(Blocks.STONE))
+				entry()
+			}
 		}
 	}
 
@@ -204,6 +212,18 @@ fun DataPack.noiseSettingsTests() {
 							"type": "minecraft:sequence",
 							"sequence": []
 						}
+					},
+					{
+						"type": "minecraft:noise_gradient",
+						"gradient": [
+							{
+								"state": {
+									"Name": "minecraft:stone"
+								}
+							},
+							{}
+						],
+						"noise": "$name:my_noise"
 					}
 				]
 			}
