@@ -605,6 +605,11 @@ fun itemComponentsTests() {
 	}
 	storedEnchantmentsTest.asString() assertsIs """minecraft:stone_sword[stored_enchantments={"minecraft:looting":3}]"""
 
+	val sulfurCubeContentTest = Items.POTION {
+		sulfurCubeContent(itemStack(Items.GLASS_BOTTLE))
+	}
+	sulfurCubeContentTest.asString() assertsIs """minecraft:potion[sulfur_cube_content={value:{id:"minecraft:glass_bottle"}}]"""
+
 	val suspiciousStewTest = Items.SUSPICIOUS_STEW {
 		suspiciousStewEffectsComponent {
 			effect(Effects.POISON, 100)

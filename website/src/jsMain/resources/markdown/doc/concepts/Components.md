@@ -274,6 +274,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `repairable(..)`                     | Defines which items can repair this item on an anvil.                                                    |
 | `repairCost(..)`                     | Sets the anvil repair cost penalty for combining or renaming.                                            |
 | `storedEnchantments(..)`             | Stores enchantments in an enchanted book for anvil application.                                          |
+| `sulfurCubeContent(..)`              | Stores the item held inside a sulfur cube.                                                               |
 | `suspiciousStewEffectsComponent(..)` | Defines the status effects applied when consuming suspicious stew.                                       |
 | `swingAnimation(..)`                 | Configures the swing animation type (none, stab, whack) and duration.                                    |
 | `tool { .. }`                        | Configures mining speeds, suitable blocks, and durability cost for tools.                                |
