@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.testinstances
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
-import io.github.ayfri.kore.features.testinstances.enums.TestRotation
+import io.github.ayfri.kore.arguments.StructureRotation
 import io.github.ayfri.kore.features.testinstances.enums.TestType
 import io.github.ayfri.kore.generated.arguments.types.TestEnvironmentArgument
 import io.github.ayfri.kore.generated.arguments.types.TestInstanceArgument
@@ -61,7 +61,7 @@ fun DataPack.testInstance(
 	maxAttempts: Int? = null,
 	required: Boolean? = null,
 	requiredSuccesses: Int? = null,
-	rotation: TestRotation? = null,
+	rotation: StructureRotation? = null,
 	setupTicks: Int? = null,
 	skyAccess: Boolean? = null,
 	init: TestInstanceFeature.() -> Unit = {},

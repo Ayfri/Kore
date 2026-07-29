@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.testinstances
 
-import io.github.ayfri.kore.features.testinstances.enums.TestRotation
+import io.github.ayfri.kore.arguments.StructureRotation
 import io.github.ayfri.kore.features.testinstances.enums.TestType
 import io.github.ayfri.kore.generated.arguments.types.TestEnvironmentArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
@@ -41,7 +41,7 @@ data class TestInstance(
 	val maxTicks: Int,
 	val required: Boolean? = null,
 	val requiredSuccesses: Int? = null,
-	val rotation: TestRotation? = null,
+	val rotation: StructureRotation? = null,
 	val setupTicks: Int? = null,
 	val skyAccess: Boolean? = null,
 	val structure: StructureArgument,

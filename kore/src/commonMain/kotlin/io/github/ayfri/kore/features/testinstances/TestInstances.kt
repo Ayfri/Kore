@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.testinstances
 
 import io.github.ayfri.kore.DataPack
-import io.github.ayfri.kore.features.testinstances.enums.TestRotation
+import io.github.ayfri.kore.arguments.StructureRotation
 import io.github.ayfri.kore.features.testinstances.enums.TestType
 import io.github.ayfri.kore.generated.arguments.types.TestEnvironmentArgument
 import io.github.ayfri.kore.generated.arguments.types.TestInstanceArgument
@@ -53,7 +53,7 @@ class TestInstanceDSLBuilder {
 	var maxTicks: Int = 100
 	var required: Boolean? = null
 	var requiredSuccesses: Int? = null
-	var rotation: TestRotation? = null
+	var rotation: StructureRotation? = null
 	var setupTicks: Int? = null
 	var skyAccess: Boolean? = null
 	var structure: StructureArgument? = null
@@ -63,9 +63,9 @@ class TestInstanceDSLBuilder {
 		type = TestType.BLOCK_BASED
 	}
 
-	fun clockwise90() = rotation(TestRotation.CLOCKWISE_90)
+	fun clockwise90() = rotation(StructureRotation.CLOCKWISE_90)
 
-	fun counterclockwise90() = rotation(TestRotation.COUNTERCLOCKWISE_90)
+	fun counterclockwise90() = rotation(StructureRotation.COUNTERCLOCKWISE_90)
 
 	fun environment(env: TestEnvironmentArgument) {
 		environment = env
@@ -80,11 +80,11 @@ class TestInstanceDSLBuilder {
 		type = TestType.FUNCTION
 	}
 
-	fun noRotation() = rotation(TestRotation.NONE)
+	fun noRotation() = rotation(StructureRotation.NONE)
 
-	fun rotate180() = rotation(TestRotation.ROT_180)
+	fun rotate180() = rotation(StructureRotation.ROT_180)
 
-	fun rotation(rot: TestRotation) {
+	fun rotation(rot: StructureRotation) {
 		rotation = rot
 	}
 

@@ -158,7 +158,7 @@ All available properties for a test instance:
 | `required`                         | `Boolean`                 | Whether the test must pass for the suite to succeed. |
 | `manualOnly`                       | `Boolean`                 | Whether the test is only run manually.               |
 | `skyAccess`                        | `Boolean`                 | Whether the structure needs sky access.              |
-| `rotation(rot)`                    | `TestRotation`            | Rotation applied to the structure.                   |
+| `rotation(rot)`                    | `StructureRotation`       | Rotation applied to the structure.                   |
 
 Rotation helpers: `noRotation()`, `clockwise90()`, `rotate180()`, `counterclockwise90()`.
 
