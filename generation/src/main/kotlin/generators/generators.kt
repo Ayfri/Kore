@@ -46,6 +46,7 @@ suspend fun launchAllSimpleGenerators(): List<Generator> {
 			argumentClassName = "worldgen.Structure"
 			transform { it.removeSuffix(".nbt") }
 		},
+		gen("SulfurCubeArchetypes", "sulfur_cube_archetype"),
 		gen("Tags", "tags") {
 			argumentClassName = "Tag M"
 			tagsParents(
