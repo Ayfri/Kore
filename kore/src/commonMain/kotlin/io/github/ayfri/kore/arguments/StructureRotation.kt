@@ -21,6 +21,8 @@ enum class StructureRotation {
 	COUNTERCLOCKWISE_90;
 
 	companion object {
-		data object RotationSerializer : LowercaseSerializer<StructureRotation>(entries)
+		data object RotationSerializer : LowercaseSerializer<StructureRotation>(entries, transform = {
+			if (this == ROT_180) "180" else name.lowercase()
+		})
 	}
 }
