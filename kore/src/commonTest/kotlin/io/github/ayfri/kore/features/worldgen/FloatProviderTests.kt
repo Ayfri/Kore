@@ -34,7 +34,8 @@ fun DataPack.floatProviderTests() {
 				"stalagmite_bluntness": 0.0,
 				"wind_speed": 0.0,
 				"min_radius_for_wind": 0,
-				"min_bluntness_for_wind": 0.0
+				"min_bluntness_for_wind": 0.0,
+				"replaceable_blocks": []
 			}
 		}
 	""".trimIndent()
@@ -54,7 +55,8 @@ fun DataPack.floatProviderTests() {
 				"stalagmite_bluntness": 0.0,
 				"wind_speed": 0.0,
 				"min_radius_for_wind": 0,
-				"min_bluntness_for_wind": 0.0
+				"min_bluntness_for_wind": 0.0,
+				"replaceable_blocks": []
 			}
 		}
 	""".trimIndent()
@@ -79,7 +81,8 @@ fun DataPack.floatProviderTests() {
 				"stalagmite_bluntness": 0.0,
 				"wind_speed": 0.0,
 				"min_radius_for_wind": 0,
-				"min_bluntness_for_wind": 0.0
+				"min_bluntness_for_wind": 0.0,
+				"replaceable_blocks": []
 			}
 		}
 	""".trimIndent()
@@ -103,7 +106,8 @@ fun DataPack.floatProviderTests() {
 				"stalagmite_bluntness": 0.0,
 				"wind_speed": 0.0,
 				"min_radius_for_wind": 0,
-				"min_bluntness_for_wind": 0.0
+				"min_bluntness_for_wind": 0.0,
+				"replaceable_blocks": []
 			}
 		}
 	""".trimIndent()

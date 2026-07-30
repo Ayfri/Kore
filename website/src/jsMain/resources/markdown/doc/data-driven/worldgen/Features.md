@@ -153,7 +153,6 @@ Kore supports all vanilla configured feature types. Functions are listed alphabe
 | `blockPile(...)`                  | Piles of blocks                      | Pumpkin/melon patches          |
 | `deltaFeature(...)`               | Basalt delta with contents and rim   | Nether basalt deltas           |
 | `disk(...)`                       | Circular disk of blocks              | Clay, sand, gravel patches     |
-| `dripstoneCluster(...)`           | Dense dripstone growth               | Cave dripstone rooms           |
 | `endGateway(...)`                 | End gateway portal                   | End outer islands              |
 | `endSpike(...)`                   | End obsidian pillar with crystal     | The End respawn pillars        |
 | `fillLayer(...)`                  | Fill a layer with blocks             | Custom dimension layers        |
@@ -168,7 +167,6 @@ Kore supports all vanilla configured feature types. Functions are listed alphabe
 | `multifaceGrowth(...)`            | Multi-face block spread              | Glow lichen, sculk vein        |
 | `netherForestVegetation(...)`     | Nether plant scatter                 | Warped/crimson forest floors   |
 | `netherrackReplaceBlobs(...)`     | Replace netherrack with blobs        | Nether gravel/blackstone blobs |
-| `pointedDripstone(...)`           | Single pointed dripstone             | Cave stalactites/stalagmites   |
 | `randomBooleanSelector(...)`      | Picks one of two features randomly   | Symmetric ore variants         |
 | `randomSelector(...)`             | Weighted random feature picker       | Mixed ore deposits             |
 | `replaceSingleBlock(...)`         | Replace blocks by rule targets       | Custom block swaps             |
@@ -178,6 +176,8 @@ Kore supports all vanilla configured feature types. Functions are listed alphabe
 | `seagrass(probability)`           | Seagrass placement                   | Ocean floors                   |
 | `seaPickle(count)`                | Sea pickle colonies                  | Warm ocean floors              |
 | `simpleRandomSelector(...)`       | Uniform random feature picker        | Coral type variety             |
+| `speleothem(...)`                 | Single pointed speleothem            | Cave stalactites/stalagmites   |
+| `speleothemCluster(...)`          | Dense speleothem growth              | Cave speleothem rooms          |
 | `spike(...)`                      | Tall spiky columns                   | Ice spikes in frozen biomes    |
 | `springFeature(...)`              | Fluid source block                   | Water/lava springs             |
 | `twistingVines(...)`              | Twisting vine growth                 | Warped forest floors           |

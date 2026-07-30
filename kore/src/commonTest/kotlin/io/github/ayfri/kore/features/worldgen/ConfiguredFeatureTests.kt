@@ -408,35 +408,48 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_dripstone_cluster", dripstoneCluster {
+	configuredFeature("test_speleothem_cluster", speleothemCluster {
 		floorToCeilingSearchRange = 30
 		height = constant(12)
 		radius = constant(4)
 		maxStalagmiteStalactiteHeightDiff = 3
 		heightDeviation = 2
-		dripstoneBlockLayerThickness = constant(1)
+		speleothemBlockLayerThickness = constant(1)
 		density = constant(2)
 		wetness = constant(1)
-		chanceOfDripstoneColumnAtMaxDistanceFromCenter = 2
-		maxDistanceFromEdgeAffectingChanceOfDripstoneColumn = 4
+		chanceOfSpeleothemAtMaxDistanceFromCenter = 2
+		maxDistanceFromEdgeAffectingChanceOfSpeleothem = 4
 		maxDistanceFromCenterAffectingHeightBias = 6
+		baseBlock = blockState(Blocks.DRIPSTONE_BLOCK)
+		pointedBlock = blockState(Blocks.POINTED_DRIPSTONE)
+		replaceableBlocks = listOf(Blocks.STONE, Blocks.DIRT)
 	})
 
 	configuredFeatures.last() assertsIs """
 		{
-			"type": "minecraft:dripstone_cluster",
+			"type": "minecraft:speleothem_cluster",
 			"config": {
 				"floor_to_ceiling_search_range": 30,
 				"height": 12,
 				"radius": 4,
 				"max_stalagmite_stalactite_height_diff": 3,
 				"height_deviation": 2,
-				"dripstone_block_layer_thickness": 1,
+				"speleothem_block_layer_thickness": 1,
 				"density": 2,
 				"wetness": 1,
-				"chance_of_dripstone_column_at_max_distance_from_center": 2,
-				"max_distance_from_edge_affecting_chance_of_dripstone_column": 4,
-				"max_distance_from_center_affecting_height_bias": 6
+				"chance_of_speleothem_at_max_distance_from_center": 2,
+				"max_distance_from_edge_affecting_chance_of_speleothem": 4,
+				"max_distance_from_center_affecting_height_bias": 6,
+				"base_block": {
+					"Name": "minecraft:dripstone_block"
+				},
+				"pointed_block": {
+					"Name": "minecraft:pointed_dripstone"
+				},
+				"replaceable_blocks": [
+					"minecraft:stone",
+					"minecraft:dirt"
+				]
 			}
 		}
 	""".trimIndent()
@@ -746,6 +759,7 @@ fun DataPack.configuredFeatureTests() {
 		windSpeed = constantFloat(0.0f)
 		minRadiusForWind = 3
 		minBluntnessForWind = 0.5f
+		replaceableBlocks = listOf(Blocks.STONE, Blocks.DIRT)
 	})
 
 	configuredFeatures.last() assertsIs """
@@ -760,7 +774,11 @@ fun DataPack.configuredFeatureTests() {
 				"stalagmite_bluntness": 0.5,
 				"wind_speed": 0.0,
 				"min_radius_for_wind": 3,
-				"min_bluntness_for_wind": 0.5
+				"min_bluntness_for_wind": 0.5,
+				"replaceable_blocks": [
+					"minecraft:stone",
+					"minecraft:dirt"
+				]
 			}
 		}
 	""".trimIndent()
@@ -881,23 +899,37 @@ fun DataPack.configuredFeatureTests() {
 	""".trimIndent()
 
 	configuredFeature(
-		"test_pointed_dripstone",
-		pointedDripstone(
-			chanceOfTallerDripstone = 0.5,
+		"test_speleothem",
+		speleothem(
+			chanceOfTallerGeneration = 0.5,
 			chanceOfDirectionalSpread = 0.5,
 			chanceOfSpreadRadius2 = 0.5,
 			chanceOfSpreadRadius3 = 0.5,
-		),
+		) {
+			baseBlock = blockState(Blocks.DRIPSTONE_BLOCK)
+			pointedBlock = blockState(Blocks.POINTED_DRIPSTONE)
+			replaceableBlocks = listOf(Blocks.STONE, Blocks.DIRT)
+		},
 	)
 
 	configuredFeatures.last() assertsIs """
 		{
-			"type": "minecraft:pointed_dripstone",
+			"type": "minecraft:speleothem",
 			"config": {
-				"chance_of_taller_dripstone": 0.5,
+				"chance_of_taller_generation": 0.5,
 				"chance_of_directional_spread": 0.5,
 				"chance_of_spread_radius2": 0.5,
-				"chance_of_spread_radius3": 0.5
+				"chance_of_spread_radius3": 0.5,
+				"base_block": {
+					"Name": "minecraft:dripstone_block"
+				},
+				"pointed_block": {
+					"Name": "minecraft:pointed_dripstone"
+				},
+				"replaceable_blocks": [
+					"minecraft:stone",
+					"minecraft:dirt"
+				]
 			}
 		}
 	""".trimIndent()

@@ -1,9 +1,11 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
+import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
 import io.github.ayfri.kore.features.worldgen.floatproviders.FloatProvider
 import io.github.ayfri.kore.features.worldgen.floatproviders.constant
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
+import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -17,6 +19,7 @@ data class LargeDripstone(
 	var windSpeed: FloatProvider = constant(0f),
 	var minRadiusForWind: Int = 0,
 	var minBluntnessForWind: Float = 0f,
+	var replaceableBlocks: InlinableList<BlockOrTagArgument> = emptyList(),
 ) : FeatureConfig()
 
 fun largeDripstone(block: LargeDripstone.() -> Unit = {}) = LargeDripstone().apply(block)
