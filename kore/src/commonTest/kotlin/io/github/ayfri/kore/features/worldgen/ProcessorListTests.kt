@@ -9,11 +9,13 @@ import io.github.ayfri.kore.features.worldgen.processorlist.processorList
 import io.github.ayfri.kore.features.worldgen.processorlist.types.Nop
 import io.github.ayfri.kore.features.worldgen.processorlist.types.capped
 import io.github.ayfri.kore.features.worldgen.processorlist.types.gravity
+import io.github.ayfri.kore.features.worldgen.processorlist.types.protectedBlocks
 import io.github.ayfri.kore.features.worldgen.processorlist.types.rule.blockentitymodifier.appendStatic
 import io.github.ayfri.kore.features.worldgen.processorlist.types.rule.positionpredicate.axisAlignedLinearPos
 import io.github.ayfri.kore.features.worldgen.processorlist.types.rule.rule
 import io.github.ayfri.kore.features.worldgen.processorlist.types.rules
 import io.github.ayfri.kore.features.worldgen.ruletest.randomBlockStateMatch
+import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.set
 import io.kotest.core.spec.style.FunSpec
@@ -39,6 +41,8 @@ fun DataPack.processorListTests() {
 		gravity(HeightMap.OCEAN_FLOOR)
 
 		capped(6, Nop)
+
+		protectedBlocks(listOf(Blocks.STONE, Blocks.DIRT))
 	}
 
 	processorLists.last() assertsIs """
@@ -87,6 +91,13 @@ fun DataPack.processorListTests() {
 					"delegate": {
 						"processor_type": "minecraft:nop"
 					}
+				},
+				{
+					"processor_type": "minecraft:protected_blocks",
+					"value": [
+						"minecraft:stone",
+						"minecraft:dirt"
+					]
 				}
 			]
 		}

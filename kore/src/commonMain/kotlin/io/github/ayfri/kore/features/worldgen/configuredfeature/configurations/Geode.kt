@@ -1,11 +1,12 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
-import io.github.ayfri.kore.arguments.types.resources.tagged.BlockTagArgument
+import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
 import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.generated.Tags
+import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -33,8 +34,8 @@ data class GeodeBlocks(
 	var middleLayer: BlockStateProvider = simpleStateProvider(),
 	var outerLayer: BlockStateProvider = simpleStateProvider(),
 	var innerPlacements: List<BlockState> = emptyList(),
-	var cannotReplace: BlockTagArgument = Tags.Block.FEATURES_CANNOT_REPLACE,
-	var invalidBlocks: BlockTagArgument = Tags.Block.GEODE_INVALID_BLOCKS,
+	var cannotReplace: InlinableList<BlockOrTagArgument> = listOf(Tags.Block.FEATURES_CANNOT_REPLACE),
+	var invalidBlocks: InlinableList<BlockOrTagArgument> = listOf(Tags.Block.GEODE_INVALID_BLOCKS),
 )
 
 @Serializable

@@ -1,12 +1,13 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
-import io.github.ayfri.kore.arguments.types.resources.tagged.BlockTagArgument
+import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.Surface
 import io.github.ayfri.kore.generated.arguments.worldgen.types.PlacedFeatureArgument
+import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -18,14 +19,14 @@ data class WaterloggedVegetationPatch(
 	var extraEdgeColumnChance: Double = 0.0,
 	var vegetationChance: Double = 0.0,
 	var xzRadius: Int = 0,
-	var replaceable: BlockTagArgument,
+	var replaceable: InlinableList<BlockOrTagArgument>,
 	var groundState: BlockStateProvider = simpleStateProvider(),
 	var vegetationFeature: PlacedFeatureArgument,
 ) : FeatureConfig()
 
 fun waterloggedVegetationPatch(
 	surface: Surface,
-	replaceable: BlockTagArgument,
+	replaceable: InlinableList<BlockOrTagArgument>,
 	vegetationFeature: PlacedFeatureArgument,
 	block: WaterloggedVegetationPatch.() -> Unit = {},
 ) = WaterloggedVegetationPatch(surface, replaceable = replaceable, vegetationFeature = vegetationFeature).apply(block)

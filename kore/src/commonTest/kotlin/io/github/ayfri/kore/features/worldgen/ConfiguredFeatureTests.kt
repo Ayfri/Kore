@@ -998,6 +998,7 @@ fun DataPack.configuredFeatureTests() {
 	configuredFeature("test_root_system", rootSystem(feature = PlacedFeatures.ACACIA) {
 		requiredVerticalSpaceForTree = 2
 		rootRadius = 3
+		rootReplaceable = listOf(Blocks.DIRT)
 		rootPlacementAttempts = 6
 		rootColumnMaxHeight = 3
 		hangingRootRadius = 2
@@ -1014,6 +1015,7 @@ fun DataPack.configuredFeatureTests() {
 			"config": {
 				"required_vertical_space_for_tree": 2,
 				"root_radius": 3,
+				"root_replaceable": "minecraft:dirt",
 				"root_placement_attempts": 6,
 				"root_column_max_height": 3,
 				"hanging_root_radius": 2,
@@ -1707,7 +1709,7 @@ fun DataPack.configuredFeatureTests() {
 		"test_vegetation_patch",
 		vegetationPatch(
 			surface = Surface.FLOOR,
-			replaceable = Tags.Block.DIRT,
+			replaceable = listOf(Tags.Block.DIRT),
 			vegetationFeature = PlacedFeatures.ACACIA
 		) {
 			depth = constant(3)
@@ -1762,7 +1764,7 @@ fun DataPack.configuredFeatureTests() {
 		"test_waterlogged_vegetation_patch",
 		waterloggedVegetationPatch(
 			surface = Surface.CEILING,
-			replaceable = Tags.Block.DIRT,
+			replaceable = listOf(Tags.Block.DIRT),
 			vegetationFeature = PlacedFeatures.ACACIA
 		) {
 			depth = constant(2)

@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.worldgen.dimensiontype
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
-import io.github.ayfri.kore.arguments.types.resources.tagged.BlockTagArgument
+import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
 import io.github.ayfri.kore.features.worldgen.environmentattributes.EnvironmentAttributesScope
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
@@ -41,7 +41,7 @@ data class DimensionType(
 	var defaultClock: WorldClockArgument? = null,
 	var hasFixedTime: Boolean? = null,
 	var logicalHeight: Int = 0,
-	var infiniburn: BlockTagArgument,
+	var infiniburn: InlinableList<BlockOrTagArgument>,
 	var minY: Int = 0,
 	var height: Int = 16,
 	var monsterSpawnLightLevel: IntProvider = constant(0),
@@ -84,7 +84,7 @@ fun DataPack.dimensionType(
 	fileName: String,
 	block: DimensionType.() -> Unit = {},
 ): DimensionTypeArgument {
-	val dimensionType = DimensionType(fileName, infiniburn = Tags.Block.INFINIBURN_OVERWORLD).apply(block)
+	val dimensionType = DimensionType(fileName, infiniburn = listOf(Tags.Block.INFINIBURN_OVERWORLD)).apply(block)
 	dimensionTypes += dimensionType
 	return DimensionTypeArgument(fileName, dimensionType.namespace ?: name)
 }

@@ -1,16 +1,19 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
+import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
 import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicate
 import io.github.ayfri.kore.features.worldgen.blockpredicate.True
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.generated.arguments.worldgen.types.PlacedFeatureArgument
+import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class RootSystem(
 	var requiredVerticalSpaceForTree: Int = 0,
 	var rootRadius: Int = 0,
+	var rootReplaceable: InlinableList<BlockOrTagArgument> = emptyList(),
 	var rootPlacementAttempts: Int = 0,
 	var rootColumnMaxHeight: Int = 0,
 	var hangingRootRadius: Int = 0,
