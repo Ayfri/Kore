@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.arguments.StructureRotation
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.data.block.blockState
 import io.github.ayfri.kore.data.block.blockStateStone
@@ -25,6 +26,7 @@ import io.github.ayfri.kore.features.worldgen.ruletest.randomBlockMatch
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.PlacedFeatures
 import io.github.ayfri.kore.generated.ProcessorLists
+import io.github.ayfri.kore.generated.Structures
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 import io.github.ayfri.kore.utils.pretty
@@ -1252,6 +1254,20 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
+	configuredFeature("test_sequence", sequence(PlacedFeatures.ACACIA, PlacedFeatures.ACACIA_CHECKED))
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:sequence",
+			"config": {
+				"features": [
+					"minecraft:acacia",
+					"minecraft:acacia_checked"
+				]
+			}
+		}
+	""".trimIndent()
+
 	configuredFeature("test_simple_block", simpleBlock(simpleStateProvider(Blocks.STONE), scheduleTick = true))
 
 	configuredFeatures.last() assertsIs """
@@ -1326,6 +1342,39 @@ fun DataPack.configuredFeatureTests() {
 				"valid_blocks": [
 					"minecraft:stone",
 					"minecraft:gravel"
+				]
+			}
+		}
+	""".trimIndent()
+
+	configuredFeature(
+		"test_template",
+		template(
+			structureTemplate(Structures.EndCity.BRIDGE_END, weight = 2, rotations = listOf(StructureRotation.CLOCKWISE_90)),
+			structureTemplate(Structures.EndCity.BRIDGE_GENTLE_STAIRS),
+		),
+	)
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:template",
+			"config": {
+				"templates": [
+					{
+						"data": {
+							"id": "minecraft:end_city/bridge_end",
+							"rotations": [
+								"clockwise_90"
+							]
+						},
+						"weight": 2
+					},
+					{
+						"data": {
+							"id": "minecraft:end_city/bridge_gentle_stairs"
+						},
+						"weight": 1
+					}
 				]
 			}
 		}

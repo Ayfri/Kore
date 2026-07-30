@@ -175,11 +175,13 @@ Kore supports all vanilla configured feature types. Functions are listed alphabe
 | `sculkPatch(...)`                 | Sculk spread with catalyst           | Ancient city surroundings      |
 | `seagrass(probability)`           | Seagrass placement                   | Ocean floors                   |
 | `seaPickle(count)`                | Sea pickle colonies                  | Warm ocean floors              |
+| `sequence(...)`                   | Places multiple features in order    | Multi-step feature chains      |
 | `simpleRandomSelector(...)`       | Uniform random feature picker        | Coral type variety             |
 | `speleothem(...)`                 | Single pointed speleothem            | Cave stalactites/stalagmites   |
 | `speleothemCluster(...)`          | Dense speleothem growth              | Cave speleothem rooms          |
 | `spike(...)`                      | Tall spiky columns                   | Ice spikes in frozen biomes    |
 | `springFeature(...)`              | Fluid source block                   | Water/lava springs             |
+| `template(...)`                   | Places a weighted structure template | Random structure variants      |
 | `twistingVines(...)`              | Twisting vine growth                 | Warped forest floors           |
 | `underwaterMagma(...)`            | Underwater magma blocks              | Ocean floors                   |
 | `vegetationPatch(...)`            | Vegetation on surfaces               | Cave moss patches              |
