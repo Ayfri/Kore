@@ -18,9 +18,14 @@ data class KtPropertySpec(
 	val name: String,
 	val type: KtRef? = null,
 	val modifiers: Set<KtModifier> = emptySet(),
+	val mutable: Boolean = false,
 	/** Fully-rendered Kotlin initializer expression, e.g. `"\"foo\""` or `"NAMESPACE"`. */
-	val initializer: String,
-	/** Extra symbols referenced by [initializer] that must be imported. */
+	val initializer: String? = null,
+	/** Fully-rendered getter, e.g. `"get() = NAMESPACE"`. */
+	val getter: String? = null,
+	/** Fully-rendered setter, e.g. `"set(value) = error(\"...\")"`. */
+	val setter: String? = null,
+	/** Extra symbols referenced by [initializer], [getter], or [setter] that must be imported. */
 	val referencedTypes: List<KtRef> = emptyList(),
 )
 
