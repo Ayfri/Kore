@@ -17,13 +17,13 @@ import kotlinx.serialization.Serializable
 data class UseCooldownComponent(
 	var seconds: Float,
 	@SerialName("cooldown_group")
-	var cooldownGroup: ConsumeCooldownGroupArgument,
+	var cooldownGroup: ConsumeCooldownGroupArgument? = null,
 ) : Component()
 
 /** Applies a shared use cooldown to items in the same cooldown group. */
 fun ComponentsScope.useCooldown(
 	seconds: Float,
-	cooldownGroup: ConsumeCooldownGroupArgument,
+	cooldownGroup: ConsumeCooldownGroupArgument? = null,
 	block: UseCooldownComponent.() -> Unit = {},
 ) = apply {
 	this[ItemComponentTypes.USE_COOLDOWN] = UseCooldownComponent(seconds, cooldownGroup).apply(block)
