@@ -64,7 +64,8 @@ private fun createNamespaceProperty(
 	)
 }
 
-private fun createFunctionNameProperty() = KtPropertySpec(
+/** Derives `name` from the overridden `asId()` instead of storing it separately, so both stay in sync. */
+private fun createNameProperty() = KtPropertySpec(
 	name = "name",
 	type = stringRef,
 	modifiers = setOf(KtModifier.OVERRIDE),
@@ -80,27 +81,17 @@ private fun createFunctionDirectoryProperty() = KtPropertySpec(
 	setter = $$"set(value) = error(\"Generated function bindings are immutable; cannot set directory to '$value'\")",
 )
 
-private fun createMappedAsIdFunction(entries: List<Pair<String, String>>) = KtFunSpec(
+private fun createMappedAsIdFunction(entries: List<Pair<String, String>>, idPrefix: String = "") = KtFunSpec(
 	name = "asId",
 	modifiers = setOf(KtModifier.OVERRIDE),
 	returnType = stringRef,
 	statements = buildList {
 		add("return when (this) {")
 		entries.forEach { (enumName, path) ->
-			add($$"\t$$enumName -> \"$NAMESPACE:$$path\"")
+			add($$"\t$$enumName -> \"$$idPrefix$NAMESPACE:$$path\"")
 		}
 		add("}")
 	},
-)
-
-/**
- * Helper function to create an asId() function for simple resources.
- */
-private fun createAsIdFunction(pathPrefix: String = "", tagPrefix: String = "") = KtFunSpec(
-	name = "asId",
-	modifiers = setOf(KtModifier.OVERRIDE),
-	returnType = stringRef,
-	statements = listOf("return \"$tagPrefix\$NAMESPACE:$pathPrefix\${name.lowercase()}\""),
 )
 
 /**
@@ -120,6 +111,7 @@ fun generateSimpleFunctionsEnum(functions: List<Function>, namespace: String): K
 		name = "Functions",
 		annotations = listOf(createSerializableAnnotation()),
 		superinterfaces = listOf(functionArgumentRef),
+		// `name` isn't overridden: `Enum.name` is final and already satisfies FunctionArgument's abstract `name`.
 		properties = listOf(createNamespaceProperty(namespace), createFunctionDirectoryProperty()),
 		functions = listOf(createMappedAsIdFunction(entries)),
 		enumConstants = entries.map { it.first },
@@ -129,17 +121,22 @@ fun generateSimpleFunctionsEnum(functions: List<Function>, namespace: String): K
 /**
  * Generates a simple enum for resources when there are no nested directories.
  */
-fun generateSimpleResourceEnum(resources: List<Resource>, typeInfo: ResourceTypeInfo, namespace: String) = KtTypeSpec(
-	kind = KtTypeKind.ENUM,
-	name = typeInfo.pluralName,
-	annotations = listOf(createSerializableAnnotation()),
-	superinterfaces = listOf(KtRef(typeInfo.argumentPackage, typeInfo.argumentInterface)),
-	properties = listOf(createNamespaceProperty(namespace)),
-	functions = listOf(createAsIdFunction()),
-	enumConstants = resources.map { resource ->
-		resource.id.substringAfter(":").replace(Regex("[^a-zA-Z0-9_]"), "_").snakeCase().uppercase()
-	},
-)
+fun generateSimpleResourceEnum(resources: List<Resource>, typeInfo: ResourceTypeInfo, namespace: String): KtTypeSpec {
+	val nameAllocator = KotlinNameAllocator()
+	val entries = resources.sortedBy(Resource::id).map { resource ->
+		nameAllocator.allocate(resource.id.substringAfter(":").kotlinEnumName(), "_RESOURCE") to resource.id.substringAfter(":")
+	}
+
+	return KtTypeSpec(
+		kind = KtTypeKind.ENUM,
+		name = typeInfo.pluralName,
+		annotations = listOf(createSerializableAnnotation()),
+		superinterfaces = listOf(KtRef(typeInfo.argumentPackage, typeInfo.argumentInterface)),
+		properties = listOf(createNamespaceProperty(namespace)),
+		functions = listOf(createMappedAsIdFunction(entries)),
+		enumConstants = entries.map { it.first },
+	)
+}
 
 /**
  * Generates a nested enum tree for functions with subdirectories.
@@ -160,7 +157,7 @@ fun generateFunctionsEnumTree(
 	)
 	val functionPaths = functions.map { it.id.substringAfter(":") }
 	sealedInterface.properties += createNamespaceProperty(namespace, useGetter = true)
-	sealedInterface.properties += createFunctionNameProperty()
+	sealedInterface.properties += createNameProperty()
 	sealedInterface.properties += createFunctionDirectoryProperty()
 
 	// Allocate directory names before function names so a directory keeps the concise name when
@@ -282,30 +279,52 @@ fun generateResourceEnumTree(
 		modifiers = setOf(KtModifier.SEALED),
 		superinterfaces = listOf(supertypeRef),
 	)
-	sealedInterface.properties += KtPropertySpec(
-		name = "namespace",
-		type = stringRef,
-		modifiers = setOf(KtModifier.OVERRIDE),
-		initializer = "NAMESPACE",
+	val resourcePaths = resources.map { it.id.substringAfter(":") }
+	sealedInterface.properties += createNamespaceProperty(namespace, useGetter = true)
+	sealedInterface.properties += createNameProperty()
+
+	val directories = buildSet {
+		resourcePaths.forEach { path ->
+			val segments = path.split(separator)
+			for (index in 1 until segments.size) add(segments.take(index).joinToString(separator))
+		}
+	}
+	val scopeAllocators = mutableMapOf<String, KotlinNameAllocator>()
+	fun scopeAllocator(path: String) = scopeAllocators.getOrPut(path) { KotlinNameAllocator() }
+	fun parentPath(path: String) = path.substringBeforeLast(separator, "")
+
+	val directoryNames = mutableMapOf<String, String>()
+	directories.sortedWith(compareBy<String>({ it.count { char -> char.toString() == separator } }, { it })).forEach { path ->
+		val preferredName = path.substringAfterLast(separator).kotlinTypeName()
+		directoryNames[path] = scopeAllocator(parentPath(path)).allocate(preferredName, "Group")
+	}
+
+	val resourceNames = mutableMapOf<String, String>()
+	resources.sortedBy(Resource::id).forEach { resource ->
+		val path = resource.id.substringAfter(":")
+		val parent = parentPath(path)
+		val isTopLevel = parent.isEmpty()
+		val preferredName = if (isTopLevel) path.kotlinTypeName() else path.substringAfterLast(separator).kotlinEnumName()
+		val collisionSuffix = if (isTopLevel) "Resource" else "_RESOURCE"
+		resourceNames[resource.id] = scopeAllocator(parent).allocate(preferredName, collisionSuffix)
+	}
+
+	data class ResourceEnumGroup(
+		val node: MutableTypeNode,
+		val entries: MutableList<Pair<String, String>> = mutableListOf(),
 	)
 
-	// Group resources by depth and parent
-	val resourcePaths = resources.map { it.id.substringAfter(":") }
-	val maxDepth = resourcePaths.maxOfOrNull { it.count { c -> c.toString() == separator } } ?: 0
-	val typeBuilders = MutableList(maxDepth + 1) { mutableMapOf<String, MutableTypeNode>() }
-
-	// Build enums from deepest to shallowest
-	for (resource in resources) {
+	val rootResources = mutableListOf<KtTypeSpec>()
+	val resourceGroups = mutableMapOf<String, ResourceEnumGroup>()
+	resources.forEach { resource ->
 		val path = resource.id.substringAfter(":")
-		val depth = path.count { it.toString() == separator }
-		val enumValue = path.substringAfterLast(separator).replace(Regex("[^a-zA-Z0-9_]"), "_").snakeCase().uppercase()
+		val parent = parentPath(path)
+		val kotlinName = resourceNames.getValue(resource.id)
 
-		if (depth == 0) {
-			// Top-level resource - create data object
-			val objectName = path.pascalCase()
-			sealedInterface.nestedTypes += KtTypeSpec(
+		if (parent.isEmpty()) {
+			rootResources += KtTypeSpec(
 				kind = KtTypeKind.OBJECT,
-				name = objectName,
+				name = kotlinName,
 				modifiers = setOf(KtModifier.DATA),
 				superinterfaces = listOf(selfRef),
 				functions = listOf(
@@ -313,63 +332,45 @@ fun generateResourceEnumTree(
 						name = "asId",
 						modifiers = setOf(KtModifier.OVERRIDE),
 						returnType = stringRef,
-						statements = listOf("return \"\$NAMESPACE:${path.lowercase()}\""),
+						statements = listOf("return \"\$NAMESPACE:$path\""),
 					)
 				),
 			)
 		} else {
-			// Get or create enum for this parent
-			val parent = path.substringBeforeLast(separator)
-			val enumName = parent.substringAfterLast(separator).pascalCase()
-
-			val enumBuilder = typeBuilders[depth - 1].getOrPut(parent) {
-				MutableTypeNode(
-					kind = KtTypeKind.ENUM,
-					name = enumName,
-					annotations = listOf(createSerializableAnnotation()),
-					superinterfaces = listOf(selfRef),
-				).apply {
-					functions += KtFunSpec(
-						name = "asId",
-						modifiers = setOf(KtModifier.OVERRIDE),
-						returnType = stringRef,
-						statements = listOf("return \"\$NAMESPACE:$parent/\${name.lowercase()}\""),
+			val group = resourceGroups.getOrPut(parent) {
+				ResourceEnumGroup(
+					MutableTypeNode(
+						kind = KtTypeKind.ENUM,
+						name = directoryNames.getValue(parent),
+						annotations = listOf(createSerializableAnnotation()),
+						superinterfaces = listOf(selfRef),
 					)
-				}
+				)
 			}
-
-			enumBuilder.enumConstants += enumValue
+			group.node.enumConstants += kotlinName
+			group.entries += kotlinName to path
 		}
 	}
+	resourceGroups.values.forEach { group -> group.node.functions += createMappedAsIdFunction(group.entries) }
 
-	// Nest enums from deepest to shallowest
-	for (depth in typeBuilders.lastIndex downTo 1) {
-		for ((path, typeBuilder) in typeBuilders[depth]) {
-			val parent = path.substringBeforeLast(separator)
-			val objectName = parent.substringAfterLast(separator).pascalCase()
-
-			val parentBuilder = typeBuilders[depth - 1].getOrPut(parent) {
-				MutableTypeNode(
-					kind = KtTypeKind.OBJECT,
-					name = objectName,
-					modifiers = setOf(KtModifier.DATA),
-					superinterfaces = listOf(selfRef),
-				).apply {
-					functions += KtFunSpec(
-						name = "asId",
-						modifiers = setOf(KtModifier.OVERRIDE),
-						returnType = stringRef,
-						statements = listOf("return \"\$NAMESPACE:${parent.lowercase()}\""),
-					)
-				}
-			}
-
-			parentBuilder.nestedTypes += typeBuilder.build()
-		}
+	// A directory with direct resources is an enum; one used only for nesting stays a plain, non-implementing container.
+	val directoryNodes = directories.associateWithTo(mutableMapOf()) { path ->
+		resourceGroups[path]?.node ?: MutableTypeNode(
+			kind = KtTypeKind.OBJECT,
+			name = directoryNames.getValue(path),
+			modifiers = setOf(KtModifier.DATA),
+		)
 	}
+	directories.sortedWith(compareByDescending<String> { it.count { char -> char.toString() == separator } }.thenBy { it })
+		.forEach { path ->
+			val parent = parentPath(path)
+			if (parent.isNotEmpty()) directoryNodes.getValue(parent).nestedTypes += directoryNodes.getValue(path).build()
+		}
 
-	// Add top-level enums/objects to sealed interface
-	typeBuilders.firstOrNull()?.forEach { (_, builder) -> sealedInterface.nestedTypes += builder.build() }
+	directories.filter { parentPath(it).isEmpty() }.sorted().forEach { path ->
+		sealedInterface.nestedTypes += directoryNodes.getValue(path).build()
+	}
+	sealedInterface.nestedTypes += rootResources
 
 	return sealedInterface.build()
 }
@@ -412,7 +413,7 @@ fun generateTagsObject(resources: List<Resource>, namespace: String, packageName
 		modifiers = setOf(KtModifier.SEALED),
 		superinterfaces = listOf(tagArgumentRef),
 	)
-	tagsInterface.properties += createNamespaceProperty(namespace)
+	tagsInterface.properties += createNamespaceProperty(namespace, useGetter = true)
 
 	// Group tags by category (e.g., "block", "item", "enchantment", "worldgen/biome", etc.)
 	val tagsByCategory = resources.groupBy { it.type.substringAfter("tags/") }
@@ -463,7 +464,7 @@ private fun generateTagEnum(
 			modifiers = setOf(KtModifier.SEALED),
 			superinterfaces = listOf(KtRef(packageName, "$datapackObjectName.Tags")) + buildSupertypes(tagArgumentInterface),
 		)
-		categoryInterface.properties += createNamespaceProperty("")
+		categoryInterface.properties += createNamespaceProperty("", useGetter = true)
 
 		// Build nested enums
 		buildNestedTagEnums(categoryInterface, resources, tagArgumentInterface)
@@ -479,11 +480,12 @@ private fun generateTagEnum(
 		)
 		enumBuilder.properties += createNamespaceProperty("")
 
-		resources.forEach { resource ->
-			enumBuilder.enumConstants += resource.id.substringAfter(":").replace(Regex("[^a-zA-Z0-9_]"), "_").snakeCase().uppercase()
+		val nameAllocator = KotlinNameAllocator()
+		val entries = resources.sortedBy(Resource::id).map { resource ->
+			nameAllocator.allocate(resource.id.substringAfter(":").kotlinEnumName(), "_TAG") to resource.id.substringAfter(":")
 		}
-
-		enumBuilder.functions += createAsIdFunction(tagPrefix = "#")
+		enumBuilder.enumConstants += entries.map { it.first }
+		enumBuilder.functions += createMappedAsIdFunction(entries, idPrefix = "#")
 
 		enumBuilder.build()
 	}
@@ -526,80 +528,108 @@ private fun buildNestedTagEnums(
 	resources: List<Resource>,
 	tagArgumentInterface: String?,
 ) {
+	val separator = "/"
 	val resourcePaths = resources.map { it.id.substringAfter(":") }
-	val maxDepth = resourcePaths.maxOfOrNull { it.count { c -> c == '/' } } ?: 0
-	val typeBuilders = MutableList(maxDepth + 1) { mutableMapOf<String, MutableTypeNode>() }
+	fun parentPath(path: String) = path.substringBeforeLast(separator, "")
 
-	// Build enums from deepest to shallowest
-	for (resource in resources) {
+	val directories = buildSet {
+		resourcePaths.forEach { path ->
+			val segments = path.split(separator)
+			for (index in 1 until segments.size) add(segments.take(index).joinToString(separator))
+		}
+	}
+	val scopeAllocators = mutableMapOf<String, KotlinNameAllocator>()
+	fun scopeAllocator(path: String) = scopeAllocators.getOrPut(path) { KotlinNameAllocator() }
+
+	val directoryNames = mutableMapOf<String, String>()
+	directories.sortedWith(compareBy<String>({ it.count { char -> char == '/' } }, { it })).forEach { path ->
+		val preferredName = path.substringAfterLast(separator).kotlinTypeName()
+		directoryNames[path] = scopeAllocator(parentPath(path)).allocate(preferredName, "Group")
+	}
+
+	val tagNames = mutableMapOf<String, String>()
+	resources.sortedBy(Resource::id).forEach { resource ->
 		val path = resource.id.substringAfter(":")
-		val depth = path.count { it == '/' }
-		val enumValue = path.substringAfterLast("/").replace(Regex("[^a-zA-Z0-9_]"), "_").snakeCase().uppercase()
+		val parent = parentPath(path)
+		val isTopLevel = parent.isEmpty()
+		val preferredName = if (isTopLevel) path.kotlinTypeName() else path.substringAfterLast(separator).kotlinEnumName()
+		val collisionSuffix = if (isTopLevel) "Tag" else "_TAG"
+		tagNames[resource.id] = scopeAllocator(parent).allocate(preferredName, collisionSuffix)
+	}
 
-		if (depth == 0) {
-			// Top-level tag - create data object
-			val objectName = path.pascalCase()
-			parentBuilder.nestedTypes += KtTypeSpec(
+	data class TagEnumGroup(
+		val node: MutableTypeNode,
+		val entries: MutableList<Pair<String, String>> = mutableListOf(),
+	)
+
+	val rootTags = mutableListOf<KtTypeSpec>()
+	val tagGroups = mutableMapOf<String, TagEnumGroup>()
+	resources.forEach { resource ->
+		val path = resource.id.substringAfter(":")
+		val parent = parentPath(path)
+		val kotlinName = tagNames.getValue(resource.id)
+
+		if (parent.isEmpty()) {
+			// Self-contained: it doesn't implement the category sealed interface, so it can't inherit `name`/`namespace`.
+			rootTags += KtTypeSpec(
 				kind = KtTypeKind.OBJECT,
-				name = objectName,
+				name = kotlinName,
 				modifiers = setOf(KtModifier.DATA),
 				superinterfaces = buildSupertypes(tagArgumentInterface),
-				functions = listOf(createAsIdFunction(tagPrefix = "#")),
+				properties = listOf(
+					KtPropertySpec(name = "namespace", type = stringRef, modifiers = setOf(KtModifier.OVERRIDE), initializer = "NAMESPACE"),
+					KtPropertySpec(
+						name = "name",
+						type = stringRef,
+						modifiers = setOf(KtModifier.OVERRIDE),
+						initializer = kotlinStringLiteral(path.substringAfterLast(separator)),
+					),
+				),
+				functions = listOf(
+					KtFunSpec(
+						name = "asId",
+						modifiers = setOf(KtModifier.OVERRIDE),
+						returnType = stringRef,
+						statements = listOf("return \"#\$NAMESPACE:$path\""),
+					)
+				),
 			)
 		} else {
-			// Nested tag - add to enum
-			val parent = path.substringBeforeLast("/")
-			val enumName = parent.substringAfterLast("/").split("_").joinToString("") { it.pascalCase() }
-
-			val enumBuilder = typeBuilders[depth - 1].getOrPut(parent) {
-				MutableTypeNode(
-					kind = KtTypeKind.ENUM,
-					name = enumName,
-					annotations = listOf(createSerializableAnnotation()),
-					superinterfaces = buildSupertypes(tagArgumentInterface),
-				).apply {
-					properties += createNamespaceProperty("")
-					functions += KtFunSpec(
-						name = "asId",
-						modifiers = setOf(KtModifier.OVERRIDE),
-						returnType = stringRef,
-						statements = listOf("return \"#\$NAMESPACE:$parent/\${name.lowercase()}\""),
-					)
-				}
+			val group = tagGroups.getOrPut(parent) {
+				TagEnumGroup(
+					MutableTypeNode(
+						kind = KtTypeKind.ENUM,
+						name = directoryNames.getValue(parent),
+						annotations = listOf(createSerializableAnnotation()),
+						superinterfaces = buildSupertypes(tagArgumentInterface),
+					).apply {
+						properties += createNamespaceProperty("")
+					}
+				)
 			}
-
-			enumBuilder.enumConstants += enumValue
+			group.node.enumConstants += kotlinName
+			group.entries += kotlinName to path
 		}
 	}
+	tagGroups.values.forEach { group -> group.node.functions += createMappedAsIdFunction(group.entries, idPrefix = "#") }
 
-	// Nest enums from deepest to shallowest
-	for (depth in typeBuilders.lastIndex downTo 1) {
-		for ((path, typeBuilder) in typeBuilders[depth]) {
-			val parent = path.substringBeforeLast("/")
-			val objectName = parent.substringAfterLast("/").split("_").joinToString("") { it.pascalCase() }
-
-			val parentNode = typeBuilders[depth - 1].getOrPut(parent) {
-				MutableTypeNode(
-					kind = KtTypeKind.OBJECT,
-					name = objectName,
-					modifiers = setOf(KtModifier.DATA),
-					superinterfaces = buildSupertypes(tagArgumentInterface),
-				).apply {
-					functions += KtFunSpec(
-						name = "asId",
-						modifiers = setOf(KtModifier.OVERRIDE),
-						returnType = stringRef,
-						statements = listOf("return \"#\$NAMESPACE:${parent.lowercase()}\""),
-					)
-				}
-			}
-
-			parentNode.nestedTypes += typeBuilder.build()
-		}
+	// A directory with direct tags is an enum; one used only for nesting stays a plain, non-implementing container.
+	val directoryNodes = directories.associateWithTo(mutableMapOf()) { path ->
+		tagGroups[path]?.node ?: MutableTypeNode(
+			kind = KtTypeKind.OBJECT,
+			name = directoryNames.getValue(path),
+			modifiers = setOf(KtModifier.DATA),
+		)
+	}
+	directories.sortedWith(compareByDescending<String> { it.count { char -> char == '/' } }.thenBy { it }).forEach { path ->
+		val parent = parentPath(path)
+		if (parent.isNotEmpty()) directoryNodes.getValue(parent).nestedTypes += directoryNodes.getValue(path).build()
 	}
 
-	// Add top-level enums/objects to parent
-	typeBuilders.firstOrNull()?.forEach { (_, builder) -> parentBuilder.nestedTypes += builder.build() }
+	directories.filter { parentPath(it).isEmpty() }.sorted().forEach { path ->
+		parentBuilder.nestedTypes += directoryNodes.getValue(path).build()
+	}
+	parentBuilder.nestedTypes += rootTags
 }
 
 /**
