@@ -243,16 +243,26 @@ class DataPack(val name: String) {
 			?: error("Generating the datapack as a zip unexpectedly produced no bytes.")
 	}
 
+	private var jsonEncoderCacheKey: Pair<Boolean, String>? = null
+	private lateinit var jsonEncoderCacheValue: Json
+
 	@OptIn(ExperimentalSerializationApi::class)
-	val jsonEncoder
-		get() = Json {
-			prettyPrint = configuration.prettyPrint
-			if (prettyPrint) prettyPrintIndent = configuration.prettyPrintIndent
-			encodeDefaults = true
-			explicitNulls = false
-			ignoreUnknownKeys = true
-			namingStrategy = JsonNamingSnakeCaseStrategy
-			useAlternativeNames = false
+	val jsonEncoder: Json
+		get() {
+			val key = configuration.prettyPrint to configuration.prettyPrintIndent
+			if (jsonEncoderCacheKey != key) {
+				jsonEncoderCacheKey = key
+				jsonEncoderCacheValue = Json {
+					prettyPrint = configuration.prettyPrint
+					if (prettyPrint) prettyPrintIndent = configuration.prettyPrintIndent
+					encodeDefaults = true
+					explicitNulls = false
+					ignoreUnknownKeys = true
+					namingStrategy = JsonNamingSnakeCaseStrategy
+					useAlternativeNames = false
+				}
+			}
+			return jsonEncoderCacheValue
 		}
 
 	companion object {
