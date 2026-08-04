@@ -6,8 +6,13 @@ import java.io.File
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Modifier
 import java.lang.reflect.Proxy
+import java.util.concurrent.ConcurrentHashMap
 
-private const val KORE_PACKAGE = "io.github.ayfri.kore"
+// All `Argument` subinterfaces live under these two packages.
+private val ARGUMENT_SCAN_PACKAGES = listOf(
+	"io.github.ayfri.kore.arguments",
+	"io.github.ayfri.kore.generated.arguments",
+)
 
 private val cachedInterfaces by lazy(::collectArgumentInterfaces)
 
@@ -80,50 +85,55 @@ internal fun createArgumentProxyInternal(value: String): Argument {
 }
 
 private fun collectArgumentInterfaces(): Array<Class<*>> {
-	val result = mutableSetOf<Class<*>>(Argument::class.java)
 	val classLoader = Thread.currentThread().contextClassLoader ?: Argument::class.java.classLoader
-	try {
-		val resourcePath = KORE_PACKAGE.replace('.', '/')
-		val urls = classLoader.getResources(resourcePath)
-		while (urls.hasMoreElements()) {
-			val url = urls.nextElement()
-			if (url.protocol == "file") {
-				scanDirectory(File(url.toURI()), KORE_PACKAGE, classLoader, result)
-			} else if (url.protocol == "jar") {
-				scanJar(url, classLoader, result)
+	val classNames = mutableSetOf<String>()
+
+	for (pkg in ARGUMENT_SCAN_PACKAGES) {
+		try {
+			val resourcePath = pkg.replace('.', '/')
+			val urls = classLoader.getResources(resourcePath)
+			while (urls.hasMoreElements()) {
+				val url = urls.nextElement()
+				if (url.protocol == "file") {
+					collectClassNames(File(url.toURI()), pkg, classNames)
+				} else if (url.protocol == "jar") {
+					collectClassNamesFromJar(url, pkg, classNames)
+				}
 			}
+		} catch (_: Exception) {
 		}
-	} catch (_: Exception) {
 	}
+
+	val result = ConcurrentHashMap.newKeySet<Class<*>>()
+	result += Argument::class.java
+	classNames.parallelStream().forEach { tryAddArgumentInterface(it, classLoader, result) }
 	return result.toTypedArray()
 }
 
-private fun scanJar(url: java.net.URL, classLoader: ClassLoader, result: MutableSet<Class<*>>) {
+private fun collectClassNamesFromJar(url: java.net.URL, pkg: String, result: MutableSet<String>) {
 	val jarConnection = url.openConnection() as java.net.JarURLConnection
 	val jarFile = jarConnection.jarFile
-	val prefix = KORE_PACKAGE.replace('.', '/')
+	val prefix = pkg.replace('.', '/')
 	for (entry in jarFile.entries()) {
 		val entryName = entry.name
 		if (entryName.startsWith(prefix) && entryName.endsWith(".class")) {
-			val className = entryName.removeSuffix(".class").replace('/', '.')
-			tryAddArgumentInterface(className, classLoader, result)
+			result += entryName.removeSuffix(".class").replace('/', '.')
 		}
 	}
 }
 
-private fun scanDirectory(dir: File, pkg: String, classLoader: ClassLoader, result: MutableSet<Class<*>>) {
+private fun collectClassNames(dir: File, pkg: String, result: MutableSet<String>) {
 	if (!dir.exists()) return
-	for (file in dir.listFiles() ?: return) {
-		if (file.isDirectory) {
-			scanDirectory(file, "$pkg.${file.name}", classLoader, result)
-		} else if (file.name.endsWith(".class")) {
-			val className = "$pkg.${file.name.removeSuffix(".class")}"
-			tryAddArgumentInterface(className, classLoader, result)
+	val dirPath = dir.toPath()
+	dir.walkTopDown()
+		.filter { it.isFile && it.extension == "class" }
+		.mapTo(result) { file ->
+			val relative = dirPath.relativize(file.toPath()).joinToString(".") { it.toString().removeSuffix(".class") }
+			"$pkg.$relative"
 		}
-	}
 }
 
-private fun tryAddArgumentInterface(className: String, classLoader: ClassLoader, result: MutableSet<Class<*>>) {
+private fun tryAddArgumentInterface(className: String, classLoader: ClassLoader, result: MutableCollection<Class<*>>) {
 	try {
 		val cls = Class.forName(className, false, classLoader)
 		if (cls.isInterface
@@ -131,7 +141,7 @@ private fun tryAddArgumentInterface(className: String, classLoader: ClassLoader,
 			&& !Modifier.isPrivate(cls.modifiers)
 			&& !cls.isSealed
 		) {
-			result.add(cls)
+			result += cls
 		}
 	} catch (_: Exception) {
 	}
