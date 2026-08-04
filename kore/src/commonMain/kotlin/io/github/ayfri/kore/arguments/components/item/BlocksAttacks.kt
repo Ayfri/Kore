@@ -17,7 +17,7 @@ import kotlinx.serialization.Serializable
  * @property bypassedBy Damage type(s) that bypass this item's blocking entirely. Defaults to none.
  * @property damageReductions Rules controlling how much damage is absorbed per attack. Defaults to blocking all damage within 90 degrees.
  * @property disableCooldownScale Multiplier applied to the disable cooldown when a disabling attack lands. `0` means the item can never be disabled. Defaults to `1`.
- * @property disableSound Sound played when the item is disabled by an attack. Defaults to none.
+ * @property disabledSound Sound played when the item is disabled by an attack. Defaults to none.
  * @property itemDamage Controls how much durability the item loses from a blocked hit. Defaults to none.
  *
  * Docs: https://kore.ayfri.com/docs/concepts/components
@@ -35,8 +35,8 @@ data class BlocksAttacks(
 	var damageReductions: List<DamageReduction>? = null,
 	@SerialName("disable_cooldown_scale")
 	var disableCooldownScale: Float = 1f,
-	@SerialName("disable_sound")
-	var disableSound: SoundEventArgument? = null,
+	@SerialName("disabled_sound")
+	var disabledSound: SoundEventArgument? = null,
 	@SerialName("item_damage")
 	var itemDamage: ItemDamage? = null,
 ) : Component()
