@@ -142,7 +142,6 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 		addAnnotation(
 			AnnotationSpec.builder(Suppress::class)
 				.addMember("%S", "ClassName")
-				.addMember("%S", "SERIALIZER_TYPE_INCOMPATIBLE")
 				.build()
 		)
 	}
