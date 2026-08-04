@@ -34,6 +34,7 @@ private class NavTab(val name: String, val link: String, val section: String = l
 private val navTabs = listOf(
 	NavTab("Features", "/features"),
 	NavTab("Docs", "/docs/home", "/docs"),
+	NavTab("Playground", "/playground"),
 	NavTab("Updates", "/updates"),
 )
 
