@@ -4,6 +4,7 @@ import io.github.ayfri.kore.arguments.colors.RGB
 import io.github.ayfri.kore.arguments.components.item.FireworkExplosionShape
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.PredicateAsList
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -19,7 +20,8 @@ data class SetFireworkExplosion(
 	var colors: List<@Serializable(RGB.Companion.ColorAsDecimalSerializer::class) RGB>? = null,
 	var fadeColors: List<@Serializable(RGB.Companion.ColorAsDecimalSerializer::class) RGB>? = null,
 	var hasTrail: Boolean? = null,
-	var hasFlicker: Boolean? = null,
+	@SerialName("has_twinkle")
+	var hasTwinkle: Boolean? = null,
 ) : ItemFunction()
 
 /** Add a `set_firework_explosion` step. */

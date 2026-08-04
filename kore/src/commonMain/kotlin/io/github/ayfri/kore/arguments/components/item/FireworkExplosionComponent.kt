@@ -39,8 +39,8 @@ data class FireworkExplosionComponent(
 	var fadeColors: List<@Serializable(RGB.Companion.ColorAsDecimalSerializer::class) RGB>? = null,
 	@SerialName("has_trail")
 	var hasTrail: Boolean? = null,
-	@SerialName("has_flicker")
-	var hasFlicker: Boolean? = null,
+	@SerialName("has_twinkle")
+	var hasTwinkle: Boolean? = null,
 ) : Component()
 
 /** Defines a single firework star explosion shape, colors, and effects. */
@@ -49,10 +49,10 @@ fun ComponentsScope.fireworkExplosion(
 	colors: List<Color>? = null,
 	fadeColors: List<Color>? = null,
 	hasTrail: Boolean? = null,
-	hasFlicker: Boolean? = null,
+	hasTwinkle: Boolean? = null,
 ) = apply {
 	components["firework_explosion"] =
-		FireworkExplosionComponent(shape, colors?.map(Color::toRGB), fadeColors?.map(Color::toRGB), hasTrail, hasFlicker)
+		FireworkExplosionComponent(shape, colors?.map(Color::toRGB), fadeColors?.map(Color::toRGB), hasTrail, hasTwinkle)
 }
 
 fun ComponentsScope.fireworkExplosion(shape: FireworkExplosionShape, block: FireworkExplosionComponent.() -> Unit) = apply {

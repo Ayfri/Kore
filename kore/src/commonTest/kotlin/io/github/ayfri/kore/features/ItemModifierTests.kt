@@ -609,7 +609,7 @@ fun DataPack.itemModifierTests() {
 		setFireworkExplosion(FireworkExplosionShape.STAR) {
 			colors = listOf(Color.RED.toRGB())
 			fadeColors = listOf(Color.BLUE.toRGB())
-			hasFlicker = true
+			hasTwinkle = true
 			hasTrail = true
 		}
 	}
@@ -625,7 +625,7 @@ fun DataPack.itemModifierTests() {
 				5592575
 			],
 			"has_trail": true,
-			"has_flicker": true
+			"has_twinkle": true
 		}
 	""".trimIndent()
 
@@ -637,7 +637,7 @@ fun DataPack.itemModifierTests() {
 					colors(Color.RED)
 					fadeColors(Color.BLUE)
 					hasTrail = true
-					hasFlicker = true
+					hasTwinkle = true
 				}
 
 				mode(Mode.REPLACE_ALL)
@@ -660,7 +660,7 @@ fun DataPack.itemModifierTests() {
 							5592575
 						],
 						"has_trail": true,
-						"has_flicker": true
+						"has_twinkle": true
 					}
 				],
 				"mode": "replace_all"

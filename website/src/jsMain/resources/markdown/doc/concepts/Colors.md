@@ -244,7 +244,7 @@ val rocket = Items.FIREWORK_ROCKET {
             colors(Color.AQUA)
             fadeColors(Color.BLACK, Color.WHITE)
             hasTrail = true
-            hasFlicker = true
+            hasTwinkle = true
         }
     }
 }

@@ -339,28 +339,28 @@ fun itemComponentsTests() {
 				colors(Color.AQUA)
 				fadeColors(Color.BLACK, Color.WHITE)
 				hasTrail = true
-				hasFlicker = true
+				hasTwinkle = true
 			}
 
 			explosion(FireworkExplosionShape.CREEPER) {
 				colors(Color.BLACK)
 				fadeColors(Color.WHITE)
 				hasTrail = false
-				hasFlicker = false
+				hasTwinkle = false
 			}
 		}
 	}
-	fireworksTest.asString() assertsIs """minecraft:firework_rocket[fireworks={explosions:[{shape:"burst",colors:[5636095],fade_colors:[0,16777215],has_trail:1b,has_flicker:1b},{shape:"creeper",colors:[0],fade_colors:[16777215],has_trail:0b,has_flicker:0b}],flight_duration:1}]"""
+	fireworksTest.asString() assertsIs """minecraft:firework_rocket[fireworks={explosions:[{shape:"burst",colors:[5636095],fade_colors:[0,16777215],has_trail:1b,has_twinkle:1b},{shape:"creeper",colors:[0],fade_colors:[16777215],has_trail:0b,has_twinkle:0b}],flight_duration:1}]"""
 
 	val fireworkExplosionTest = Items.FIREWORK_STAR {
 		fireworkExplosion(FireworkExplosionShape.BURST) {
 			colors(Color.AQUA)
 			fadeColors(Color.BLACK, Color.WHITE)
 			hasTrail = true
-			hasFlicker = true
+			hasTwinkle = true
 		}
 	}
-	fireworkExplosionTest.asString() assertsIs """minecraft:firework_star[firework_explosion={shape:"burst",colors:[5636095],fade_colors:[0,16777215],has_trail:1b,has_flicker:1b}]"""
+	fireworkExplosionTest.asString() assertsIs """minecraft:firework_star[firework_explosion={shape:"burst",colors:[5636095],fade_colors:[0,16777215],has_trail:1b,has_twinkle:1b}]"""
 
 	val foodTest = Items.COOKED_BEEF {
 		food(

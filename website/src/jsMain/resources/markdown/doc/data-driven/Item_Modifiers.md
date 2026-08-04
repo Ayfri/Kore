@@ -542,7 +542,7 @@ itemModifier("firework_explosion") {
 	setFireworkExplosion(FireworkExplosionShape.STAR) {
 		colors = listOf(Color.RED.toRGB())
 		fadeColors = listOf(Color.BLUE.toRGB())
-		hasFlicker = true
+		hasTwinkle = true
 		hasTrail = true
 	}
 }
@@ -561,7 +561,7 @@ itemModifier("firework") {
 				colors(Color.RED)
 				fadeColors(Color.BLUE)
 				hasTrail = true
-				hasFlicker = true
+				hasTwinkle = true
 			}
 
 			mode(Mode.REPLACE_ALL)
