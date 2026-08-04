@@ -45,14 +45,53 @@ private fun createSerializableAnnotation() = KtAnnotationSpec(
 /**
  * Helper function to create a namespace property.
  */
-private fun createNamespaceProperty(namespace: String, isConstant: Boolean = false): KtPropertySpec {
+private fun createNamespaceProperty(
+	namespace: String,
+	isConstant: Boolean = false,
+	useGetter: Boolean = false,
+): KtPropertySpec {
 	val modifiers = buildSet {
 		if (isConstant) add(KtModifier.CONST)
 		add(KtModifier.OVERRIDE)
 	}
 	val initializer = if (isConstant) kotlinStringLiteral(namespace) else "NAMESPACE"
-	return KtPropertySpec(name = "namespace", type = stringRef, modifiers = modifiers, initializer = initializer)
+	return KtPropertySpec(
+		name = "namespace",
+		type = stringRef,
+		modifiers = modifiers,
+		initializer = initializer.takeUnless { useGetter },
+		getter = "get() = $initializer".takeIf { useGetter },
+	)
 }
+
+private fun createFunctionNameProperty() = KtPropertySpec(
+	name = "name",
+	type = stringRef,
+	modifiers = setOf(KtModifier.OVERRIDE),
+	getter = "get() = asId().substringAfter(\":\").substringAfterLast(\"/\")",
+)
+
+private fun createFunctionDirectoryProperty() = KtPropertySpec(
+	name = "directory",
+	type = stringRef,
+	modifiers = setOf(KtModifier.OVERRIDE),
+	mutable = true,
+	getter = "get() = asId().substringAfter(\":\").substringBeforeLast(\"/\", \"\")",
+	setter = $$"set(value) = error(\"Generated function bindings are immutable; cannot set directory to '$value'\")",
+)
+
+private fun createMappedAsIdFunction(entries: List<Pair<String, String>>) = KtFunSpec(
+	name = "asId",
+	modifiers = setOf(KtModifier.OVERRIDE),
+	returnType = stringRef,
+	statements = buildList {
+		add("return when (this) {")
+		entries.forEach { (enumName, path) ->
+			add($$"\t$$enumName -> \"$NAMESPACE:$$path\"")
+		}
+		add("}")
+	},
+)
 
 /**
  * Helper function to create an asId() function for simple resources.
@@ -67,17 +106,25 @@ private fun createAsIdFunction(pathPrefix: String = "", tagPrefix: String = "") 
 /**
  * Generates a simple enum for functions when there are no nested directories.
  */
-fun generateSimpleFunctionsEnum(functions: List<Function>, namespace: String) = KtTypeSpec(
-	kind = KtTypeKind.ENUM,
-	name = "Functions",
-	annotations = listOf(createSerializableAnnotation()),
-	superinterfaces = listOf(functionArgumentRef),
-	properties = listOf(createNamespaceProperty(namespace)),
-	functions = listOf(createAsIdFunction()),
-	enumConstants = functions.map { function ->
-		function.id.substringAfter(":").replace(Regex("[^a-zA-Z0-9_]"), "_").snakeCase().uppercase()
-	},
-)
+fun generateSimpleFunctionsEnum(functions: List<Function>, namespace: String): KtTypeSpec {
+	val nameAllocator = KotlinNameAllocator()
+	val entriesById = functions.sortedBy(Function::id).associate { function ->
+		function.id to nameAllocator.allocate(function.id.substringAfter(":").kotlinEnumName(), "_FUNCTION")
+	}
+	val entries = functions.map { function ->
+		entriesById.getValue(function.id) to function.id.substringAfter(":")
+	}
+
+	return KtTypeSpec(
+		kind = KtTypeKind.ENUM,
+		name = "Functions",
+		annotations = listOf(createSerializableAnnotation()),
+		superinterfaces = listOf(functionArgumentRef),
+		properties = listOf(createNamespaceProperty(namespace), createFunctionDirectoryProperty()),
+		functions = listOf(createMappedAsIdFunction(entries)),
+		enumConstants = entries.map { it.first },
+	)
+}
 
 /**
  * Generates a simple enum for resources when there are no nested directories.
@@ -105,37 +152,65 @@ fun generateFunctionsEnumTree(
 	namespace: String,
 ): KtTypeSpec {
 	val selfRef = KtRef(packageName, "$datapackObjectName.Functions")
-
 	val sealedInterface = MutableTypeNode(
 		kind = KtTypeKind.INTERFACE,
 		name = "Functions",
 		modifiers = setOf(KtModifier.SEALED),
 		superinterfaces = listOf(functionArgumentRef),
 	)
-	sealedInterface.properties += KtPropertySpec(
-		name = "namespace",
-		type = stringRef,
-		modifiers = setOf(KtModifier.OVERRIDE),
-		initializer = "NAMESPACE",
+	val functionPaths = functions.map { it.id.substringAfter(":") }
+	sealedInterface.properties += createNamespaceProperty(namespace, useGetter = true)
+	sealedInterface.properties += createFunctionNameProperty()
+	sealedInterface.properties += createFunctionDirectoryProperty()
+
+	// Allocate directory names before function names so a directory keeps the concise name when
+	// `foo.mcfunction` and `foo/...` coexist. The function then becomes `FooFunction`.
+	val directories = buildSet {
+		functionPaths.forEach { path ->
+			val segments = path.split(separator)
+			for (index in 1 until segments.size) add(segments.take(index).joinToString(separator))
+		}
+	}
+	val scopeAllocators = mutableMapOf<String, KotlinNameAllocator>()
+	fun scopeAllocator(path: String) = scopeAllocators.getOrPut(path) { KotlinNameAllocator() }
+	fun parentPath(path: String) = path.substringBeforeLast(separator, "")
+
+	val directoryNames = mutableMapOf<String, String>()
+	directories.sortedWith(compareBy<String>({ it.count { char -> char.toString() == separator } }, { it })).forEach { path ->
+		val preferredName = path.substringAfterLast(separator).kotlinTypeName()
+		directoryNames[path] = scopeAllocator(parentPath(path)).allocate(preferredName, "Group")
+	}
+
+	val functionNames = mutableMapOf<String, String>()
+	functions.sortedBy(Function::id).forEach { function ->
+		val path = function.id.substringAfter(":")
+		val parent = parentPath(path)
+		val isTopLevel = parent.isEmpty()
+		val preferredName = if (isTopLevel) {
+			path.kotlinTypeName()
+		} else {
+			path.substringAfterLast(separator).kotlinEnumName()
+		}
+		val collisionSuffix = if (isTopLevel) "Function" else "_FUNCTION"
+		functionNames[function.id] = scopeAllocator(parent).allocate(preferredName, collisionSuffix)
+	}
+
+	data class FunctionEnumGroup(
+		val node: MutableTypeNode,
+		val entries: MutableList<Pair<String, String>> = mutableListOf(),
 	)
 
-	// Group functions by depth and parent
-	val functionPaths = functions.map { it.id.substringAfter(":") }
-	val maxDepth = functionPaths.maxOfOrNull { it.count { c -> c.toString() == separator } } ?: 0
-	val typeBuilders = MutableList(maxDepth + 1) { mutableMapOf<String, MutableTypeNode>() }
-
-	// Build enums from deepest to shallowest
-	for (function in functions) {
+	val rootFunctions = mutableListOf<KtTypeSpec>()
+	val functionGroups = mutableMapOf<String, FunctionEnumGroup>()
+	functions.forEach { function ->
 		val path = function.id.substringAfter(":")
-		val depth = path.count { it.toString() == separator }
-		val enumValue = path.substringAfterLast(separator).replace(Regex("[^a-zA-Z0-9_]"), "_").snakeCase().uppercase()
+		val parent = parentPath(path)
+		val kotlinName = functionNames.getValue(function.id)
 
-		if (depth == 0) {
-			// Top-level function - create data object
-			val objectName = path.pascalCase()
-			sealedInterface.nestedTypes += KtTypeSpec(
+		if (parent.isEmpty()) {
+			rootFunctions += KtTypeSpec(
 				kind = KtTypeKind.OBJECT,
-				name = objectName,
+				name = kotlinName,
 				modifiers = setOf(KtModifier.DATA),
 				superinterfaces = listOf(selfRef),
 				functions = listOf(
@@ -143,63 +218,46 @@ fun generateFunctionsEnumTree(
 						name = "asId",
 						modifiers = setOf(KtModifier.OVERRIDE),
 						returnType = stringRef,
-						statements = listOf("return \"\$NAMESPACE:${path.lowercase()}\""),
+						statements = listOf("return \"\$NAMESPACE:$path\""),
 					)
 				),
 			)
 		} else {
-			// Get or create enum for this parent
-			val parent = path.substringBeforeLast(separator)
-			val enumName = parent.substringAfterLast(separator).pascalCase()
-
-			val enumBuilder = typeBuilders[depth - 1].getOrPut(parent) {
-				val node = MutableTypeNode(
-					kind = KtTypeKind.ENUM,
-					name = enumName,
-					annotations = listOf(createSerializableAnnotation()),
-					superinterfaces = listOf(selfRef),
+			val group = functionGroups.getOrPut(parent) {
+				FunctionEnumGroup(
+					MutableTypeNode(
+						kind = KtTypeKind.ENUM,
+						name = directoryNames.getValue(parent),
+						annotations = listOf(createSerializableAnnotation()),
+						superinterfaces = listOf(selfRef),
+					)
 				)
-				node.functions += KtFunSpec(
-					name = "asId",
-					modifiers = setOf(KtModifier.OVERRIDE),
-					returnType = stringRef,
-					statements = listOf("return \"\$NAMESPACE:$parent/\${name.lowercase()}\""),
-				)
-				node
 			}
-
-			enumBuilder.enumConstants += enumValue
+			group.node.enumConstants += kotlinName
+			group.entries += kotlinName to path
 		}
 	}
+	functionGroups.values.forEach { group -> group.node.functions += createMappedAsIdFunction(group.entries) }
 
-	// Nest enums from deepest to shallowest
-	for (depth in typeBuilders.lastIndex downTo 1) {
-		for ((path, typeBuilder) in typeBuilders[depth]) {
-			val parent = path.substringBeforeLast(separator)
-			val objectName = parent.substringAfterLast(separator).pascalCase()
-
-			val parentBuilder = typeBuilders[depth - 1].getOrPut(parent) {
-				val node = MutableTypeNode(
-					kind = KtTypeKind.OBJECT,
-					name = objectName,
-					modifiers = setOf(KtModifier.DATA),
-					superinterfaces = listOf(selfRef),
-				)
-				node.functions += KtFunSpec(
-					name = "asId",
-					modifiers = setOf(KtModifier.OVERRIDE),
-					returnType = stringRef,
-					statements = listOf("return \"\$NAMESPACE:${parent.lowercase()}\""),
-				)
-				node
-			}
-
-			parentBuilder.nestedTypes += typeBuilder.build()
-		}
+	// A directory with direct functions is an enum; a directory used only for nesting is a plain
+	// container object and must not pretend to be a callable function itself.
+	val directoryNodes = directories.associateWithTo(mutableMapOf()) { path ->
+		functionGroups[path]?.node ?: MutableTypeNode(
+			kind = KtTypeKind.OBJECT,
+			name = directoryNames.getValue(path),
+			modifiers = setOf(KtModifier.DATA),
+		)
 	}
+	directories.sortedWith(compareByDescending<String> { it.count { char -> char.toString() == separator } }.thenBy { it })
+		.forEach { path ->
+			val parent = parentPath(path)
+			if (parent.isNotEmpty()) directoryNodes.getValue(parent).nestedTypes += directoryNodes.getValue(path).build()
+		}
 
-	// Add top-level enums/objects to sealed interface
-	typeBuilders.firstOrNull()?.forEach { (_, builder) -> sealedInterface.nestedTypes += builder.build() }
+	directories.filter { parentPath(it).isEmpty() }.sorted().forEach { path ->
+		sealedInterface.nestedTypes += directoryNodes.getValue(path).build()
+	}
+	sealedInterface.nestedTypes += rootFunctions
 
 	return sealedInterface.build()
 }

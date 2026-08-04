@@ -140,7 +140,10 @@ fun testCodeGeneration() = newTest("codegen") {
 
 	content.contains(": FunctionArgument") assertsIs true
 	content.contains("override fun asId()") assertsIs true
-	content.contains("override val namespace: String = NAMESPACE") assertsIs true
+	content.contains("override val namespace: String = NAMESPACE") assertsIs false
+	content.contains("override val namespace: String") assertsIs true
+	content.contains("get() = NAMESPACE") assertsIs true
+	content.contains("override var directory: String") assertsIs true
 }
 
 fun testZipImport() = newTest("zip") {

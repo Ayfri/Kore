@@ -88,9 +88,16 @@ private fun renderType(type: KtTypeSpec, sb: StringBuilder, indent: Int) {
 			if (KtModifier.CONST in prop.modifiers) add("const")
 		}
 		if (mods.isNotEmpty()) sb.append(mods.joinToString(" ")).append(" ")
-		sb.append("val ").append(prop.name)
+		sb.append(if (prop.mutable) "var " else "val ").append(prop.name)
 		prop.type?.let { sb.append(": ").append(it.simpleName) }
-		sb.append(" = ").append(prop.initializer).append("\n")
+		prop.initializer?.let { sb.append(" = ").append(it) }
+		sb.append("\n")
+
+		listOfNotNull(prop.getter, prop.setter).forEach { accessor ->
+			accessor.lines().forEach { line ->
+				sb.append(bodyPad).append("\t").append(line).append("\n")
+			}
+		}
 	}
 	if (type.properties.isNotEmpty()) sb.append("\n")
 

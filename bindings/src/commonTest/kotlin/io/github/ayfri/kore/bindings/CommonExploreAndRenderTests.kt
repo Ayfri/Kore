@@ -7,6 +7,7 @@ import kotlinx.io.files.Path
 
 fun commonExploreAndRenderTests() {
 	testExploreAndRenderInMemoryDatapack()
+	testFunctionBindingsUseValidKotlinIdentifiersAndImplementTheirContract()
 }
 
 fun testExploreAndRenderInMemoryDatapack() {
@@ -35,6 +36,66 @@ fun testExploreAndRenderInMemoryDatapack() {
 	source.contains("const val NAMESPACE: String = \"mypack\"") assertsIs true
 	source.contains("sealed interface Functions") assertsIs true
 	source.contains("enum class Enchantments") assertsIs true
+}
+
+fun testFunctionBindingsUseValidKotlinIdentifiersAndImplementTheirContract() {
+	val datapack = InMemoryDatapack(
+		mapOf(
+			"pack.mcmeta" to """{"pack":{"description":"Test pack","min_format":95,"max_format":95}}""",
+			"data/mypack/function/_3div.mcfunction" to "",
+			"data/mypack/function/_get_double.mcfunction" to "",
+			"data/mypack/function/get_double/-3_0.mcfunction" to "",
+			"data/mypack/function/get_double/1_2.mcfunction" to "",
+			"data/mypack/function/test.mcfunction" to "",
+			"data/mypack/function/test/nested.mcfunction" to "",
+			"data/mypack/function/only/deep/value.mcfunction" to "",
+		)
+	)
+
+	val explored = explore(datapack, "function_edge_cases", Path("function_edge_cases"))
+	val (_, source) = renderDatapackFile(explored, remappings = RemappingState())
+
+	// FunctionArgument's properties need interface accessors because interfaces cannot hold state.
+	source.contains("override val namespace: String = NAMESPACE") assertsIs false
+	source.contains("override val namespace: String\n\t\t\tget() = NAMESPACE") assertsIs true
+	source.contains("override val name: String\n\t\t\tget() = asId()") assertsIs true
+	source.contains("override var directory: String") assertsIs true
+	source.contains("set(value) = error(") assertsIs true
+
+	// Leading digits, punctuation, and directory/function collisions must remain valid declarations.
+	source.contains("data object N3div : FunctionEdgeCases.Functions") assertsIs true
+	source.contains("data object GetDoubleFunction : FunctionEdgeCases.Functions") assertsIs true
+	source.contains("data object TestFunction : FunctionEdgeCases.Functions") assertsIs true
+	source.contains("data object 3div") assertsIs false
+	source.contains("_1_2,") assertsIs true
+	source.contains("_3_0,") assertsIs true
+
+	// asId() must use the original Minecraft path, not reconstruct it from a sanitized identifier.
+	source.contains("\"\$NAMESPACE:get_double/-3_0\"") assertsIs true
+	source.contains("\"\$NAMESPACE:get_double/1_2\"") assertsIs true
+
+	// Directories used only to contain deeper groups are not phantom FunctionArgument instances.
+	source.contains("data object Only : FunctionEdgeCases.Functions") assertsIs false
+	source.contains("data object Only {") assertsIs true
+
+	val simpleDatapack = InMemoryDatapack(
+		mapOf(
+			"pack.mcmeta" to """{"pack":{"description":"Test pack","min_format":95,"max_format":95}}""",
+			"data/mypack/function/-3_0.mcfunction" to "",
+			"data/mypack/function/1_2.mcfunction" to "",
+			"data/mypack/function/foo-bar.mcfunction" to "",
+			"data/mypack/function/foo.bar.mcfunction" to "",
+		)
+	)
+	val simpleExplored = explore(simpleDatapack, "simple_function_edge_cases", Path("simple_function_edge_cases"))
+	val (_, simpleSource) = renderDatapackFile(simpleExplored, remappings = RemappingState())
+
+	simpleSource.contains("enum class Functions : FunctionArgument") assertsIs true
+	simpleSource.contains("FOO_BAR,") assertsIs true
+	simpleSource.contains("FOO_BAR_FUNCTION,") assertsIs true
+	simpleSource.contains("_3_0 -> \"\$NAMESPACE:-3_0\"") assertsIs true
+	simpleSource.contains("_1_2 -> \"\$NAMESPACE:1_2\"") assertsIs true
+	simpleSource.contains("override var directory: String") assertsIs true
 }
 
 class CommonExploreAndRenderTests : FunSpec({
