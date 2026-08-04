@@ -58,6 +58,14 @@ private fun testPackSectionValidation() {
 		packFormat = packFormat(12, 0)
 	)
 
+	// packFormat major spans its whole minor range, should not warn against a min/max sharing that major (e.g. the default pack format)
+	PackSection(
+		description = textComponent("Test"),
+		minFormat = packFormat(101, 2),
+		maxFormat = packFormat(101, 2),
+		packFormat = packFormat(101)
+	)
+
 	// Decimal min/max
 	PackSection(
 		description = textComponent("Test"),

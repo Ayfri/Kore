@@ -135,7 +135,14 @@ fun PackSection.isCompatibleWith(other: PackSection): Boolean {
 
 private fun PackSection.formatRange() = minFormat.toComparable(isMax = false)..maxFormat.toComparable(isMax = true)
 
-private fun PackFormat.toComparable(isMax: Boolean) = when (this) {
+/** Returns `true` if this format (a bare major spans its whole minor range) overlaps `[min, max]`. */
+internal fun PackFormat.overlaps(min: PackFormat, max: PackFormat): Boolean {
+	val low = toComparable(isMax = false)
+	val high = toComparable(isMax = true)
+	return high >= min.toComparable(isMax = false) && low <= max.toComparable(isMax = true)
+}
+
+internal fun PackFormat.toComparable(isMax: Boolean) = when (this) {
 	is PackFormatMajor -> packFormatValue(major, if (isMax) Int.MAX_VALUE else 0)
 	is PackFormatFull -> packFormatValue(major, minor)
 	is PackFormatDecimal -> packFormatValue(major, minor)

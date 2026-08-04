@@ -63,7 +63,7 @@ data class PackSection(
 		}
 		@Suppress("DEPRECATION")
 		packFormat?.let {
-			if (it !in minFormat..maxFormat) {
+			if (!it.overlaps(minFormat, maxFormat)) {
 				warn("packFormat (${it.asFormatString()}) is outside the range [${minFormat.asFormatString()}, ${maxFormat.asFormatString()}]")
 			}
 			if (it !is PackFormatMajor) {
