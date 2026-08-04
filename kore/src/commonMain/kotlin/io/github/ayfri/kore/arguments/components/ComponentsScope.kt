@@ -6,6 +6,7 @@ import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.generated.arguments.types.DataComponentTypeArgument
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.snbtSerializer
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import net.benwoodworth.knbt.NbtCompound
@@ -60,14 +61,14 @@ abstract class ComponentsScope(open val components: MutableMap<String, Component
 	/** Converts the scope to a [NbtCompound] for serialization as SNBT. */
 	open fun asNbt() = nbt {
 		components.forEach { (key, value) ->
-			put(key, snbtSerializer.encodeToNbtTag(Component.Companion.ComponentSerializer(), value))
+			put(key, snbtSerializer.encodeToNbtTag(componentSerializerFor(value), value))
 		}
 	}
 
 	/** Converts the scope to a [JsonObject] for serialization as JSON. */
 	open fun asJson() = buildJsonObject {
 		components.forEach { (key, value) ->
-			put(key, jsonSerializer.encodeToJsonElement(Component.Companion.ComponentSerializer(), value))
+			put(key, jsonSerializer.encodeToJsonElement(componentSerializerFor(value), value))
 		}
 	}
 
@@ -78,3 +79,7 @@ abstract class ComponentsScope(open val components: MutableMap<String, Component
 			"$key=$rendered"
 		}
 }
+
+/** Looks up the concrete serializer for a component's runtime type. */
+@Suppress("UNCHECKED_CAST")
+private fun componentSerializerFor(value: Component) = componentSerializers.getValue(value::class) as KSerializer<Component>
