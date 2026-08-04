@@ -177,7 +177,7 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 		encoder.encodeNbtTag(finalNbt)
 	}
 
-	@OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)
+	@OptIn(InternalSerializationApi::class)
 	override fun serialize(encoder: Encoder, value: T) {
 		require(encoder is JsonEncoder || encoder is NbtEncoder) { "PolymorphicTypeSerializer can only be serialized to Json or Nbt." }
 
