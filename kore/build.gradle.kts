@@ -71,10 +71,12 @@ if (!file("src/commonMain/kotlin/io/github/ayfri/kore/generated").exists()) {
 }
 
 // The common-metadata srcDir above isn't a tracked task output, so consumers must depend on the KSP task filling it.
+// Per-target `ksp*` tasks (e.g. `kspKotlinJvm`) also resolve commonMain's Kotlin sources, so they need the same dependency.
 tasks.matching {
 	it.name != "kspCommonMainKotlinMetadata" &&
 		(it.name.startsWith("compileKotlin") ||
 			it.name == "compileCommonMainKotlinMetadata" ||
+			it.name.startsWith("ksp") ||
 			it.name.contains("SourcesJar", ignoreCase = true))
 }.configureEach {
 	dependsOn("kspCommonMainKotlinMetadata")
