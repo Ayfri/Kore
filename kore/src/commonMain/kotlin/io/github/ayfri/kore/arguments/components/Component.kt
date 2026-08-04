@@ -32,22 +32,10 @@ abstract class Component {
 			@Suppress("UNCHECKED_CAST")
 			override fun serialize(encoder: Encoder, value: Component) {
 				require(kClass.isInstance(value) && value::class != kClass) { "Value must be instance of ${kClass.simpleName}" }
+				require(encoder is NbtEncoder || encoder is JsonEncoder) { "Components can only be serialized to Nbt or Json" }
 
 				val serializer = componentSerializers.getValue(value::class) as KSerializer<Component>
-
-				when (encoder) {
-					is NbtEncoder -> {
-						val valueNbt = encoder.nbt.encodeToNbtTag(serializer, value)
-						encoder.encodeSerializableValue(NbtTag.serializer(), valueNbt)
-					}
-
-					is JsonEncoder -> {
-						val valueJson = encoder.json.encodeToJsonElement(serializer, value)
-						encoder.encodeJsonElement(valueJson)
-					}
-
-					else -> error("Components can only be serialized to Nbt or Json")
-				}
+				encoder.encodeSerializableValue(serializer, value)
 			}
 		}
 	}
