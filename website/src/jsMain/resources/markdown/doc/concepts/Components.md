@@ -155,7 +155,7 @@ recipes {
 
 		result(Items.ENCHANTED_GOLDEN_APPLE {
 			food(
-              nutrition = 10f,
+				nutrition = 10,
 				saturation = 5.0f,
 			) {
 				effect(
@@ -736,4 +736,3 @@ Happy crafting!
 ### External Resources
 
 - [Minecraft Wiki: Data component format](https://minecraft.wiki/w/Data_component_format) - Official component reference
-

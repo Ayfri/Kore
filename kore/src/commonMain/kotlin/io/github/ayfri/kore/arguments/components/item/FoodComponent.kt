@@ -8,14 +8,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class FoodComponent(
-	var nutrition: Float,
+	var nutrition: Int,
 	var saturation: Float,
 	@SerialName("can_always_eat")
 	var canAlwaysEat: Boolean? = null,
 ) : Component()
 
 fun ComponentsScope.food(
-	nutrition: Float,
+	nutrition: Int,
 	saturation: Float,
 	canAlwaysEat: Boolean? = null,
 	block: FoodComponent.() -> Unit = {},

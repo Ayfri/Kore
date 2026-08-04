@@ -364,12 +364,12 @@ fun itemComponentsTests() {
 
 	val foodTest = Items.COOKED_BEEF {
 		food(
-			nutrition = 10f,
+			nutrition = 10,
 			saturation = 1.0f,
 			canAlwaysEat = true
 		)
 	}
-	foodTest.asString() assertsIs """minecraft:cooked_beef[food={nutrition:10.0f,saturation:1.0f,can_always_eat:1b}]"""
+	foodTest.asString() assertsIs """minecraft:cooked_beef[food={nutrition:10,saturation:1.0f,can_always_eat:1b}]"""
 
 	val gliderTest = Items.ELYTRA {
 		glider()
