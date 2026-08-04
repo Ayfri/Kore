@@ -209,7 +209,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | Helper                               | Description                                                                                              |
 |--------------------------------------|----------------------------------------------------------------------------------------------------------|
 | `additionalTradeCost(..)`            | Sets an extra emerald cost added on top of the base price for villager trades.                           |
-| `attackRange(..)`                    | Configures the attack range of an item (min/max range, hitbox margin, mob factor).                       |
+| `attackRange(..)`                    | Configures the attack range of an item (min/max reach, hitbox margin, mob factor).                       |
 | `attributeModifiers(..)`             | Modifies entity attributes (e.g., attack damage, speed, armor) when the item is equipped or held.        |
 | `bannerPatterns(..)`                 | Defines the layered patterns displayed on a banner or shield.                                            |
 | `baseColor(..)`                      | Sets the base color of a banner before patterns are applied.                                             |
