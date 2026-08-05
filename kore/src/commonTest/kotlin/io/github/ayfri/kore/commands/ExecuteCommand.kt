@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.PLAYER
+import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.predicate
 import io.github.ayfri.kore.arguments.enums.DataType
@@ -16,9 +17,11 @@ import io.github.ayfri.kore.arguments.scores.score
 import io.github.ayfri.kore.arguments.selector.Sort
 import io.github.ayfri.kore.arguments.selector.scores
 import io.github.ayfri.kore.arguments.types.literals.allEntities
+import io.github.ayfri.kore.arguments.types.literals.allPlayers
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.literals.rotation
 import io.github.ayfri.kore.arguments.types.literals.self
+import io.github.ayfri.kore.arguments.types.literals.uuid
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.assertions.assertsMatches
@@ -287,6 +290,46 @@ fun Function.executeTests() {
 		}
 	} assertsIs """
 		execute as @e run say hi
+	""".trimIndent()
+
+	execute {
+		asTarget(allPlayers())
+
+		run {
+			tellraw(allPlayers(), textComponent("test"))
+		}
+	} assertsIs """
+		execute as @a run tellraw @a "test"
+	""".trimIndent()
+
+	execute {
+		asTarget(allEntities(true))
+
+		run {
+			tellraw(allEntities(true), textComponent("test"))
+		}
+	} assertsIs """
+		execute as @e[limit=1] run tellraw @s "test"
+	""".trimIndent()
+
+	execute {
+		asTarget(uuid("00000000-0000-0000-0000-000000000000"))
+
+		run {
+			tellraw(uuid("00000000-0000-0000-0000-000000000000"), textComponent("test"))
+		}
+	} assertsIs """
+		execute as 00000000-0000-0000-0000-000000000000 run tellraw @s "test"
+	""".trimIndent()
+
+	execute {
+		asTarget(uuid("00000000-0000-0000-0000-000000000000"))
+
+		run {
+			tellraw(allPlayers(), textComponent("test"))
+		}
+	} assertsIs """
+		execute as 00000000-0000-0000-0000-000000000000 run tellraw @a "test"
 	""".trimIndent()
 
 	execute {

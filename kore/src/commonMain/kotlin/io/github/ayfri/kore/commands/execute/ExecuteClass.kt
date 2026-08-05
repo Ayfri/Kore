@@ -55,14 +55,15 @@ class Execute {
 	private var asArg: EntityArgument? = null
 
 	internal fun targetArg(arg: Argument) = when {
-		asArg is UUIDArgument || (asArg as? SelectorArgument)?.selector?.let {
+		asArg is UUIDArgument && arg is UUIDArgument && asArg == arg -> self()
+
+		(asArg as? SelectorArgument)?.selector?.let {
 			val nbtData = it.nbtData
 			val otherSel = (arg as? SelectorArgument)?.selector
 			val otherNbtData = otherSel?.nbtData
 			nbtData.limit == 1 && nbtData.sort != Sort.RANDOM && nbtData == otherNbtData
 		} == true -> self()
 
-		asArg == arg -> self()
 		else -> arg
 	}
 
