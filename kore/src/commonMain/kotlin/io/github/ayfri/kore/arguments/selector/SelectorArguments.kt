@@ -98,7 +98,6 @@ data class SelectorArguments(
 	@SerialName("type")
 	private var _types: MutableList<EntityTypeOption> = mutableListOf(),
 ) {
-	@Transient
 	/** Selected `Gamemode` for this selector (maps to the `gamemode` argument). */
 	var gamemode
 		get() = (_gamemodes.firstOrNull() ?: GamemodeOption()).value
@@ -107,7 +106,6 @@ data class SelectorArguments(
 			else _gamemodes += GamemodeOption(value)
 		}
 
-	@Transient
 	/** Filter by entity/player name for this selector (maps to the `name` argument). */
 	var name
 		get() = (_names.firstOrNull() ?: StringOption()).value
@@ -116,7 +114,6 @@ data class SelectorArguments(
 			else _names += StringOption(value)
 		}
 
-	@Transient
 	/** Filter by NBT data for this selector (maps to the `nbt` argument). */
 	var nbt
 		get() = (_nbt.firstOrNull() ?: NbtCompoundOption()).value
@@ -125,7 +122,6 @@ data class SelectorArguments(
 			else _nbt += NbtCompoundOption(value)
 		}
 
-	@Transient
 	/** Filter by predicate for this selector (maps to the `predicate` argument). */
 	var predicate
 		get() = (_predicates.firstOrNull() ?: PredicateOption()).value
@@ -134,7 +130,6 @@ data class SelectorArguments(
 			else _predicates += PredicateOption(value)
 		}
 
-	@Transient
 	/** Filter by tag for this selector (maps to the `tag` argument). */
 	var tag
 		get() = (_tags.firstOrNull() ?: StringOption()).value
@@ -143,7 +138,6 @@ data class SelectorArguments(
 			else _tags += StringOption(value)
 		}
 
-	@Transient
 	/** Filter by team name for this selector (maps to the `team` argument). */
 	var team
 		get() = (_teams.firstOrNull() ?: StringOption()).value
@@ -152,7 +146,6 @@ data class SelectorArguments(
 			else _teams += StringOption(value)
 		}
 
-	@Transient
 	/** Filter by entity type for this selector (maps to the `type` argument). */
 	var type
 		get() = (_types.firstOrNull() ?: EntityTypeOption()).value
