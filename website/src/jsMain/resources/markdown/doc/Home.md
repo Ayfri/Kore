@@ -111,7 +111,7 @@ Useful contributor-facing internals:
 
 - [Architecture and Patterns](/docs/contributing/architecture-and-patterns) - module boundaries and recurring
   implementation patterns.
-- [Arguments Internals](/docs/concepts/arguments) - how the typed argument layer, resource wrappers, and literals fit
+- [Arguments Internals](/docs/contributing/arguments) - how the typed argument layer, resource wrappers, and literals fit
   together.
 
 ## Short tips

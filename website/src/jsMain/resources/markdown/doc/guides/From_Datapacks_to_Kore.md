@@ -1,131 +1,110 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: From Datapacks to Kore
+title: Migrating a Minecraft Datapack to Kore - Guide for Datapack Veterans
 nav-title: Datapack Veterans
-description: Deep technical guide for experienced datapack authors adopting Kore and Kotlin in production.
-keywords: minecraft, datapack, kore, kotlin, advanced, migration, architecture, production
+description: Port an existing hand-written datapack to Kore without a rewrite - vanilla-to-Kotlin mapping, slice-by-slice migration, project structure and common mistakes.
+keywords: datapack migration, migrate datapack to kotlin, mcfunction to kotlin, kore migration guide, datapack architecture, datapack refactor, advanced datapack development
 date-created: 2026-04-22
-date-modified: 2026-07-02
+date-modified: 2026-08-05
 routeOverride: /docs/guides/from-datapacks-to-kore
+position: 4
 ---
 
-# From Datapacks to Kore (Advanced)
+# From Datapacks to Kore
 
-This page is for datapack authors who already ship real projects and want to adopt Kore without losing low-level
-control.
-You already understand vanilla systems, resource formats, and function/tag architecture. The goal here is to map that
-experience to Kore's model, explain the boundaries clearly, and provide practical migration patterns with
-production-style Kotlin.
+This page is for authors who **already ship a working datapack** and want to move it to Kore without losing low-level
+control or freezing development for a rewrite.
 
-## Who this guide is for
+You are the target audience if you already structure packs with folders, tags and shared utility functions, work
+comfortably with scoreboards, predicates, loot tables and worldgen, and care about maintainability and deterministic
+output.
 
-You are the target audience if you already:
+New to datapacks? Start with [Getting Started](/docs/getting-started) instead. Still deciding whether to migrate at all?
+[Why Kore](/docs/guides/why-kore) covers the trade-off, including when to stay hand-written.
 
-- Structure large datapacks with folders, tags, and shared utility functions.
-- Work with scoreboards, predicates, loot tables, recipes, and worldgen.
-- Care about maintainability, testability, and deterministic generation.
-- Want type safety and refactors without losing low-level control.
-
-If you are new to datapacks, start with [Getting Started](/docs/getting-started) first.
-
-## Why Kotlin (for datapack veterans)
-
-Kotlin does not replace Minecraft logic. It replaces fragile authoring workflows.
-Minecraft still runs generated `.mcfunction` and JSON. Kotlin gives you a safer, composable way to produce them. For the
-high-level pitch and a comparison with other generators, see [Why Kore](/docs/guides/why-kore).
-
-The practical gains for experienced datapack teams are:
-
-- **Typed APIs over stringly-typed commands**: fewer invalid IDs, selectors, and argument combinations.
-- **Refactorability**: IDE rename/find-usages works across your gameplay code.
-- **Composition**: extract reusable builders instead of copy-pasting command blocks.
-- **Expressive abstraction**: extensions and data classes let you encode conventions once and reuse everywhere.
-- **Deterministic output**: generation from code makes large packs easier to audit and reproduce.
-
-If you want a quick baseline first, read [Creating A Datapack](/docs/guides/creating-a-datapack), then come back here.
-
-## Kore mental model in one sentence
+## The one thing to internalize first
 
 Kore is a **compile-time authoring DSL and generator**, not an in-game runtime framework.
 
-That distinction matters:
+- Your Kotlin runs on your machine or in CI, during generation.
+- The generated `.mcfunction` and JSON files run in Minecraft.
+- Kotlin objects and functions do **not** exist in-game afterwards.
 
-- Kore code runs on your machine (or CI) during generation.
-- Generated datapack files run in Minecraft.
-- Kotlin objects and functions do not exist in-game after generation.
+Almost every early misunderstanding traces back to this line. A Kotlin `val` is not a scoreboard value; a Kotlin `if`
+picks what gets *written into* the pack, not what the game evaluates at runtime. When you do want in-game conditionals
+and variables, that is a separate mechanism - see [Runtime Logic](/docs/concepts/runtime-logic).
 
 Think of Kore as a programmable build system for datapack content.
 
-## What Kore gives you
-
-At a high level, Kore ships as four installable modules:
-
-- `kore`: core DSL for functions, commands, and data-driven resources.
-- `oop`: higher-level gameplay utilities (entities, teams, timers, scoreboards, events, and more).
-- `helpers`: utility layer (renderers, math, raycasts, delegates, visual helpers, scheduler patterns).
-- `bindings`: importer that generates Kotlin bindings from external datapacks (**experimental**).
-
-Use `kore` as your baseline, then add modules only when you need their abstractions.
-For the canonical module overview, see [Home](/docs/home).
-
-## What Kore does not give you (or not yet)
-
-Important boundaries and limitations:
-
-- **Not a resource pack tool**: Kore currently targets datapacks, not resource packs.
-- **Some SNBT gaps**: heterogeneous SNBT lists and SNBT operations like `bool(arg)`/`uuid(arg)` are not fully supported
-  yet.
-- **No magical runtime optimization**: Kore improves authoring quality; Minecraft execution cost is still defined by
-  your generated logic.
-- **Bindings stability caveat**: `bindings` is explicitly experimental and may evolve quickly.
-
-For known caveats, see [Known Issues](/docs/advanced/known-issues).
-
-## How Kore works under the hood (practical pipeline)
-
-A practical pipeline view:
-
-1. You describe datapack content in Kotlin builders.
-2. Kore builds an in-memory model of functions/resources.
-3. Kore serializes this model to `.mcfunction` and JSON files.
-4. It writes output via `.generate()`, `.generateZip()`, or `.generateJar()`.
-
-Key implications:
-
-- Generation is deterministic from your Kotlin source and config.
-- You can inspect generated output at any time.
-- CI can regenerate and diff output to enforce consistency.
-
-Output targets and packaging strategy are explained in detail
-in [Creating A Datapack](/docs/guides/creating-a-datapack).
-
 ## Vanilla-to-Kore mapping
 
-If your current pack is hand-written, this is the direct conceptual mapping:
+Direct translation of what you already have:
 
-- `data/<ns>/function/...` -> `fun Function.someFeature() = function("feature/some_feature") { ... }`
-- `minecraft:load` tag editing -> `load("...") { function(someFeature()) }`
-- `minecraft:tick` tag editing -> `tick("...") { function(runtimeStep()) }`
-- `@a[tag=fighter,gamemode=!spectator]` -> typed selector builders, or `selector("@a[tag=fighter,gamemode=!spectator]")`
-  to parse the vanilla string as-is.
-- JSON resources -> dedicated typed builders (`advancement`, `lootTable`, `recipe`, `predicate`, `enchantment`,
-  `worldgen`, ...).
+| Hand-written | Kore |
+|--------------|------|
+| `data/<ns>/function/feature/x.mcfunction` | `fun Function.x() = function("feature/x") { ... }` |
+| editing the `minecraft:load` tag | `load("...") { function(someFeature()) }` |
+| editing the `minecraft:tick` tag | `tick("...") { function(runtimeStep()) }` |
+| `@a[tag=fighter,gamemode=!spectator]` | typed selector builders, or `selector("@a[tag=fighter,gamemode=!spectator]")` to parse the vanilla string as-is |
+| JSON resource files | typed builders: `advancement`, `lootTable`, `recipe`, `predicate`, `enchantment`, `worldgen`, ... |
+| folder nesting | the path string in the builder (`"feature/combat/init"`) |
 
-Kore does not hide vanilla concepts. It formalizes them.
+Kore does not hide vanilla concepts. It formalizes them - the generated output is the same pack you would have written
+by hand, so anything you know about load order, tag dispatch, or `execute` semantics still applies.
 
-## A realistic project shape
+### What Kore will not do for you
 
-A scalable source layout for Kore projects:
+Set expectations before you start:
 
-- `pack/` for pack bootstrap and configuration.
-- `feature/` for domain modules (combat, quests, economy, UI, progression).
-- `runtime/` for lifecycle and tick routing.
-- `resources/` for data-driven definitions.
-- `interop/` for imported/bound external packs.
+- **Not a resource pack tool.** Datapacks only.
+- **Some SNBT gaps.** Heterogeneous SNBT lists and operations like `bool(arg)`/`uuid(arg)` are not fully supported.
+- **No runtime optimization.** Execution cost is still defined by the commands you generate.
+- **`bindings` is experimental** and may change between versions.
 
-This keeps gameplay code readable while preserving direct datapack semantics in generated output.
+See [Known Issues](/docs/advanced/known-issues) for the current list.
 
-Example:
+## Migrate incrementally, never big-bang
+
+The mistake that kills migrations is porting the whole pack before testing any of it. Go slice by slice:
+
+1. **Freeze behavior.** Write a smoke checklist first: `/reload`, expected bootstrap output, one command per feature.
+   This is your regression baseline, and you cannot recover it later.
+2. **Port one vertical slice** - a full feature end to end, not a folder. Onboarding flow, or one combat mechanic.
+3. **Keep hostile details verbatim.** Paste complex selectors into `selector("@a[...]")` during this pass rather than
+   retyping them into the builder; convert them once the slice is validated.
+4. **Generate to a folder** with `.generate()` and read the output. Diff it against the original files.
+5. **Compare in-game** against your baseline before moving on.
+6. **Repeat by subsystem**, then extract the shared Kotlin helpers the repetition has revealed.
+
+Steps 4 and 5 are the point. A slice that generates plausible-looking files but was never loaded in-game is not
+migrated.
+
+Porting selectors deserves a note, because it is where most of the friction is. Both forms below produce the same
+selector model, so a parsed string can be migrated property-by-property with no behavior change:
+
+```kotlin
+val activePlayersPorted = selector("@a[gamemode=!spectator,scores={lives=1..,round=1..}]")
+
+val nearbyActivePlayers = selector("@a[gamemode=!spectator]") {
+	distance = rangeOrIntEnd(16)
+}
+```
+
+If your pack depends on **another** datapack, import it with [Bindings](/docs/advanced/bindings) rather than
+re-declaring its IDs as string literals.
+
+## Project structure that scales
+
+Once more than one slice has landed, the source layout starts to matter. A shape that works for large packs:
+
+- `pack/` - pack bootstrap and configuration.
+- `feature/` - domain modules (combat, quests, economy, UI, progression).
+- `runtime/` - lifecycle and tick routing.
+- `resources/` - data-driven definitions.
+- `interop/` - imported or bound external packs.
+
+Mirror those prefixes in the **generated** paths too (`feature/`, `runtime/`, `system/`), so a function you find
+in-game maps back to a Kotlin file without guessing.
 
 ```kotlin
 data object Objectives {
@@ -165,15 +144,15 @@ fun main() {
 }
 ```
 
-For deeper lifecycle docs, see [Functions](/docs/commands/functions).
+Two conventions carry most of the weight here: `DataPack` extensions **register** things, `Function` extensions
+**produce or emit** commands.
 
-## Kotlin patterns that actually pay off in Kore
+## Kotlin patterns worth adopting
 
-### 1) Type-safe function references first (recommended)
+### Reference functions by value, not by path string
 
-Prefer function factories over string paths when wiring lifecycle hooks. You get refactors, find usages, and
-compile-time
-safety on every caller:
+Function factories give you rename, find-usages, and a compile error on every caller when something moves. String paths
+give you none of that:
 
 ```kotlin
 fun Function.welcomeAnnounce() = function("feature/welcome/announce") {
@@ -193,9 +172,9 @@ fun DataPack.registerJoinFlow() {
 }
 ```
 
-### 2) Extension-based feature modules
+This is the single highest-value habit to adopt early - retrofitting it later means touching every call site.
 
-Use `DataPack` extensions for registration, and `Function` extensions for reusable command snippets.
+### Split registration from reusable snippets
 
 ```kotlin
 fun Function.combatPipeline() = function("feature/combat/pipeline") {
@@ -218,46 +197,12 @@ fun DataPack.registerCombatPipeline() {
 }
 ```
 
-### 3) Typed selectors as reusable domain rules
+`combatPipeline` becomes a real `.mcfunction`; `applyJoinEffects` and `runRoundRules` inline into it. See
+[the Cookbook](/docs/guides/cookbook#reuse-logic-as-a-real-function-or-inlined) for when to pick which.
 
-Avoid rewriting long selector constraints inline.
-Keep domain intent in one selector value and reuse it across systems.
+### Turn tuning values into typed configs
 
-```kotlin
-val activePlayers = allPlayers {
-	gamemode = !Gamemode.SPECTATOR
-	scores = scores {
-		"lives" greaterThan 0
-		"round" greaterThanOrEqualTo 1
-	}
-}
-
-fun DataPack.registerRoundMessaging() {
-	function("feature/round/status") {
-		tellraw(activePlayers, textComponent("Round running"))
-	}
-}
-```
-
-When porting an existing pack, you can also start from your current selector strings and refine them with the typed
-builder afterwards:
-
-```kotlin
-val activePlayersPorted = selector("@a[gamemode=!spectator,scores={lives=1..,round=1..}]")
-
-val nearbyActivePlayers = selector("@a[gamemode=!spectator]") {
-	distance = rangeOrIntEnd(16)
-}
-```
-
-Both forms produce the same selector model, so a string-parsed selector can be migrated property-by-property to the
-typed builder without behavior changes.
-
-See [Selectors](/docs/concepts/selectors) and [Scoreboards](/docs/concepts/scoreboards) for full syntax.
-
-### 4) Data classes for repeatable feature config
-
-When you duplicate numeric tuning values, move them into typed configs.
+Balancing numbers scattered across functions are the hardest thing to review in a hand-written pack. Make them data:
 
 ```kotlin
 data class WaveConfig(
@@ -278,193 +223,241 @@ fun DataPack.registerWave(config: WaveConfig) {
 }
 ```
 
-This keeps balancing changes local and reviewable.
+One `WaveConfig` list now defines every wave, and a balance pass is a reviewable diff instead of an archaeology
+session.
 
-## Advanced example: command + data-driven feature in one flow
+More patterns - selectors as domain rules, custom items validated by predicates, module choice - are in the
+[Cookbook](/docs/guides/cookbook).
 
-A common production pattern is to pair a command function with a typed data resource and lifecycle wiring.
+## Data-driven resources are values, not files
+
+This is where the migration pays off most, and it is the part veterans usually underestimate. In a hand-written pack,
+a loot table or a predicate is a **file**, and everything that points at it is a **string** you retyped:
+`"mypack:predicates/is_active"`, spelled slightly differently in four places, verified only by `/reload`.
+
+In Kore, every data-driven builder **returns a typed argument** identifying the resource it just declared:
+
+| Builder | Returns |
+|---------|---------|
+| `predicate("...") { }` | `PredicateArgument` |
+| `lootTable("...") { }` | `LootTableArgument` |
+| `itemModifier("...") { }` | `ItemModifierArgument` |
+| `advancement("...") { }` | `AdvancementArgument` |
+| `function("...") { }` | `FunctionArgument` |
+
+Assign that to a `val` and the resource becomes a first-class value. Rename it, find its usages, and get a compile
+error the moment something points at a resource that no longer exists.
+
+### Declare once, reference everywhere
+
+The same `PredicateArgument` works as an `execute` condition, as a nested condition inside another predicate via
+`reference`, and as an enchantment effect requirement - all from one declaration:
 
 ```kotlin
-fun DataPack.registerArenaBlade() {
-	val arenaBlade = Items.DIAMOND_SWORD {
-		customName(textComponent("Arena Blade", Color.AQUA))
-		tooltipDisplay(showInTooltip = true)
+fun DataPack.registerCombatRules() {
+	val isActiveFighter = predicate("rules/is_active_fighter") {
+		entityScores(EntityType.THIS) {
+			this["lives"] = intRange(1f, 99f)
+		}
 	}
 
-	val arenaBladePredicate = predicate("arena_blade") {
-		matchTool(arenaBlade)
-	}
-
-	fun Function.checkArenaBlade() = function("feature/items/check_arena_blade") {
+	// 1. As a command condition.
+	function("feature/combat/tick") {
 		execute {
-			ifCondition(arenaBladePredicate)
+			ifCondition(isActiveFighter)
 			run {
-				tellraw(allPlayers(), textComponent("Arena Blade detected"))
+				say("fighting")
 			}
 		}
 	}
 
-	load("system/items_bootstrap") {
-		function(checkArenaBlade())
+	// 2. Composed into another predicate.
+	predicate("rules/is_wounded_fighter") {
+		reference(isActiveFighter)
+		entityScores(EntityType.THIS) {
+			this["health"] = intRange(1f, 5f)
+		}
 	}
 }
 ```
 
-Reference pages used in that pattern:
+Compare that with the vanilla version, where the second predicate embeds
+`{"condition": "minecraft:reference", "name": "mypack:rules/is_active_fighter"}` - a string nothing checks.
 
-- [Components](/docs/concepts/components)
-- [Predicates](/docs/data-driven/predicates)
-- [Functions](/docs/commands/functions)
-
-## Migration strategy for existing packs (incremental, no big-bang)
-
-When you already have stable gameplay in vanilla datapack files, migrate slice-by-slice.
-
-1. **Freeze behavior** with a smoke test checklist (`/reload`, bootstrap output, one command per feature).
-2. **Port one vertical slice** (for example onboarding flow or one combat mechanic). Keep complex selectors verbatim
-   with `selector("@a[...]")` during this pass and convert them to typed builders once the slice is validated.
-3. **Generate to folder** with `.generate()` and inspect the output.
-4. **Compare runtime behavior** in-game against your baseline.
-5. **Repeat by subsystem**, then standardize shared Kotlin helpers.
-
-If your project depends on another datapack, import it with [Bindings](/docs/advanced/bindings) instead of string
-literals.
-
-## Minecraft parity checkpoints (official docs)
-
-Use these vanilla checkpoints when validating generated output. They match what Kore emits and help avoid stale
-assumptions:
-
-- **`pack.mcmeta` format evolution**: modern packs use `min_format`/`max_format`, with compatibility behavior for older
-  formats. See [Minecraft Wiki - pack.mcmeta](https://minecraft.wiki/w/Pack.mcmeta) and
-  [Minecraft Wiki - pack format](https://minecraft.wiki/w/Pack_format).
-- **Datapack root + namespace rules**: generated folder/zip output should keep vanilla root conventions.
-  See [Minecraft Wiki - data pack](https://minecraft.wiki/w/Data_pack).
-- **Lifecycle tags**: `load` and `tick` are still function-tag wiring under the hood. Kore gives you typed composition,
-  but
-  the runtime behavior remains vanilla tag dispatch.
-- **Scheduling semantics**: `schedule function ...` behavior is still Minecraft-native. Kore only improves authoring
-  ergonomics around it.
-
-When something looks surprising in-game, inspect generated files and compare with these references first.
-
-## Interop with existing datapacks via `bindings`
-
-This is useful when your pack relies on internal shared packs or third-party resources.
+The same holds across resource kinds. A `LootTableArgument` feeds the `loot` command, the `containerLoot` item
+component, and advancement rewards:
 
 ```kotlin
-import io.github.ayfri.kore.bindings.api.importDatapacks
-
-importDatapacks {
-	configuration {
-		outputPath("src/main/kotlin")
-		packagePrefix = "kore.dependencies"
+fun DataPack.registerRewards() {
+	val bossDrop = lootTable("rewards/boss_drop") {
+		pool {
+			entries {
+				item(Items.DIAMOND)
+			}
+		}
 	}
 
-	github("pixigeko.minecraft-default-data:1.21.11") {
-		subPath = "data"
+	function("feature/boss/on_death") {
+		loot(allPlayers(), bossDrop)
+	}
+
+	advancement("progression/boss_slain") {
+		rewards {
+			loots(bossDrop)
+		}
 	}
 }
 ```
 
-Then consume generated constants in your own functions instead of hand-written IDs.
-See the full flow in [Bindings](/docs/advanced/bindings).
+Move or rename `bossDrop` and both call sites follow. In a hand-written pack this is a grep-and-pray refactor.
 
-## Choosing between `kore`, `helpers`, and `oop`
+### Generate families of resources instead of copy-pasting JSON
 
-Use this rule of thumb:
+Hand-written packs accumulate near-identical JSON files: nine tier variants of a loot table, one advancement per
+collectible, a recipe per material. Kore turns that into a loop over data, which is the single biggest file-count
+reduction in most migrations:
 
-- Stay on `kore` when the logic is still easy to reason about with plain builders.
-- Add `helpers` when you repeat infrastructure glue (rendering, scheduler, math, state delegates, raycasts).
-- Add `oop` when systems need stable gameplay objects and cross-system coordination (teams, timers, entities, state
-  machines).
+```kotlin
+data class Tier(val id: String, val item: ItemArgument, val weight: Int)
 
-Related deep dives:
+val tiers = listOf(
+	Tier("common", Items.IRON_INGOT, 10),
+	Tier("rare", Items.GOLD_INGOT, 4),
+	Tier("epic", Items.DIAMOND, 1),
+)
 
-- [Helpers Utilities](/docs/helpers/utilities)
-- [OOP Utilities](/docs/oop/oop-utilities)
-- [Dynamic Strings](/docs/oop/dynamic-strings)
+fun DataPack.registerTierDrops(): Map<String, LootTableArgument> = tiers.associate { tier ->
+	tier.id to lootTable("rewards/${tier.id}_drop") {
+		pool {
+			entries {
+				item(tier.item) {
+					weight = tier.weight
+				}
+			}
+		}
+	}
+}
+```
 
-## Recent Kore features worth using in migration projects
+One list is now the source of truth for every tier. Adding a tier is one line, not a new file plus three call sites you
+have to remember to update - and the returned map keeps every table addressable by id, still typed.
 
-If your mental model is still from older Kore versions, these are high-impact upgrades:
+### Factor out shared fragments, not just whole resources
 
-- **Pack metadata parity for modern Minecraft**: `minFormat`/`maxFormat`, overlays, and legacy compatibility handling
-  are
-  available directly in the pack DSL.
-- **Selector string parsing**: `selector("@a[tag=fighter]")`, `Selector.fromString`, and `SelectorArguments.fromString`
-  turn vanilla selector strings into the typed selector model, ideal for porting packs incrementally.
-- **Interop at scale with `bindings`**: import external datapacks and consume generated Kotlin constants instead of
-  hand-maintained IDs.
-- **Dynamic Strings (`oop`)**: a macro-backed string toolkit over storage/NBT for advanced runtime text pipelines
-  (substring, split, replace, case conversion, trim/pad, lists).
-- **Multiple output targets in the same workflow**: keep `.generate()` for review and CI diffs, then switch to
-  `.generateZip()`/`.generateJar()` for releases.
+Reuse is not limited to complete resources. Any nested builder chunk can become a `fun`, so a condition or a pool that
+appears in twelve loot tables is written once:
 
-## Verification workflow for advanced teams
+```kotlin
+fun LootTable.commonJunkPool() = pool {
+	rolls = constant(1f)
+	entries {
+		item(Items.STRING) { weight = 5 }
+		item(Items.BONE) { weight = 3 }
+	}
+}
 
-A robust dev/release loop:
+fun DataPack.registerChests() {
+	lootTable("chests/hallway") {
+		commonJunkPool()
+		pool {
+			entries { item(Items.IRON_INGOT) }
+		}
+	}
 
-1. Generate unpacked output with `.generate()` for reviewability.
-2. Run focused smoke checks in-game (`/reload`, lifecycle hooks, one key command per feature).
-3. Check generated tags/resources for namespace and path correctness.
-4. Package releases with `.generateZip()` or `.generateJar()` only after behavior checks.
-5. Keep generated outputs deterministic so CI and code review can catch regressions early.
+	lootTable("chests/vault") {
+		commonJunkPool()
+		pool {
+			entries { item(Items.DIAMOND) }
+		}
+	}
+}
+```
 
-For packaging details (zip/jar/merge), see [Creating A Datapack](/docs/guides/creating-a-datapack).
+The rule mirrors the one for functions: extension functions on the **builder type** (`LootTable`, `Predicate`,
+`Advancement`) emit into whatever resource is being built, while extensions on `DataPack` register new resources.
 
-## Common migration mistakes (and fixes)
+### Migration order for data-driven content
 
-- **Mistake**: Porting file-by-file instead of behavior-by-behavior.  
-  **Fix**: Migrate vertical slices and validate each runtime path before moving on.
-- **Mistake**: Building giant wrappers too early.  
-  **Fix**: Start with direct DSL usage and extract only repeated patterns.
-- **Mistake**: Ignoring naming conventions in generated paths.  
-  **Fix**: Adopt stable prefixes (`feature/`, `runtime/`, `system/`) from day one.
-- **Mistake**: Treating Kotlin as runtime state.  
-  **Fix**: Remember Kotlin runs at generation time only.
-- **Mistake**: Keeping critical IDs as ad-hoc strings everywhere.  
-  **Fix**: Centralize objectives/resource IDs in constants and helper APIs.
+Data-driven resources are usually the **easiest slices to port first**, before touching any command logic:
 
-## Detailed migration checklist
+1. Pick one resource family (all your loot tables, or all your predicates).
+2. Port them as-is, one `val` per file, without trying to deduplicate yet.
+3. Generate with `.generate()` and **diff the JSON against the original files**. This is the strongest verification
+   available anywhere in the migration - byte-level parity, no game needed.
+4. Only once the diff is clean, collapse the near-duplicates into loops and shared fragments, and re-diff.
 
-Before migration:
+Step 3 is why data-driven content is a good starting point: unlike command logic, correctness is mechanically
+checkable before you ever load the world.
 
-- Freeze current pack behavior (manual test matrix or GameTest strategy).
-- Identify shared naming conventions and objective IDs.
-- Decide your initial module set (`kore` only, or `kore` + `helpers`/`oop`).
+Per-resource references: [Loot Tables](/docs/data-driven/loot-tables), [Predicates](/docs/data-driven/predicates),
+[Recipes](/docs/data-driven/recipes), [Advancements](/docs/data-driven/advancements),
+[Item Modifiers](/docs/data-driven/item-modifiers), [Tags](/docs/data-driven/tags).
 
-First week:
+## Common migration mistakes
 
-- Port lifecycle (`load`, `tick`) and one gameplay feature.
+- **Porting file-by-file instead of behavior-by-behavior.**
+  Migrate vertical slices and validate each runtime path before moving on.
+- **Building giant wrappers on day one.**
+  Start with direct DSL usage; extract only patterns that have actually repeated.
+- **Letting generated paths drift from your Kotlin structure.**
+  Adopt stable prefixes (`feature/`, `runtime/`, `system/`) from the first slice.
+- **Treating Kotlin as runtime state.**
+  Kotlin runs at generation time only. See [Runtime Logic](/docs/concepts/runtime-logic) for real in-game state.
+- **Keeping critical IDs as ad-hoc strings.**
+  Centralize objectives and resource IDs in constants, as in `Objectives` above.
+- **Skipping the in-game check because the JSON looks right.**
+  Valid JSON that loads is not the same as behavior that matches your baseline.
+
+## Verification loop
+
+Once migrated, a release loop that catches regressions:
+
+1. Generate unpacked output with `.generate()` so it is reviewable.
+2. Run the smoke checks from step 1 of the migration in-game.
+3. Check generated tags and resources for namespace and path correctness.
+4. Package with `.generateZip()` or `.generateJar()` only after behavior checks pass.
+5. Keep output deterministic so CI can diff generated files and code review catches surprises.
+
+Generation is deterministic from your Kotlin source and config, which is what makes step 5 work: committing generated
+output (or diffing it in CI) turns "did that refactor change anything?" into a mechanical question.
+
+### Parity checkpoints
+
+When something looks wrong in-game, inspect the generated files and compare against the vanilla references before
+suspecting Kore:
+
+- **`pack.mcmeta` format**: modern packs use `min_format`/`max_format`. See
+  [Minecraft Wiki - pack.mcmeta](https://minecraft.wiki/w/Pack.mcmeta) and
+  [pack format](https://minecraft.wiki/w/Pack_format).
+- **Root and namespace rules**: see [Minecraft Wiki - data pack](https://minecraft.wiki/w/Data_pack).
+- **Lifecycle tags**: `load` and `tick` are still plain function-tag wiring; runtime behavior is vanilla tag dispatch.
+- **Scheduling**: `schedule function ...` semantics are Minecraft-native. Kore only improves the authoring ergonomics.
+
+## Migration checklist
+
+**Before you start**
+
+- Freeze current behavior with a manual test matrix.
+- Inventory shared naming conventions and objective IDs.
+- Decide your module set (`kore` alone, or plus `helpers`/`oop` - see the [Cookbook](/docs/guides/cookbook#pick-the-right-module)).
+
+**First slice**
+
+- Port lifecycle (`load`, `tick`) plus one gameplay feature.
 - Introduce extension-based registration (`DataPack.registerX()`).
-- Add one data-driven resource with typed builder for parity checks.
+- Port one data-driven resource to a typed builder and diff the JSON against the original.
 
-Stabilization:
+**Stabilization**
 
-- Add reusable selector/predicate helpers.
+- Extract reusable selector and predicate helpers.
 - Introduce typed config objects for balancing-heavy systems.
-- Optional: integrate external resources through `bindings`.
-
-## Should you adopt Kore?
-
-Kore is an excellent fit if you want:
-
-- Long-term maintainability for non-trivial datapacks.
-- Safer refactors and shared abstractions.
-- Team workflows with code review and generation checks.
-
-Stay hand-written if your project is very small, short-lived, or intentionally one-off.
+- Optionally bring in external resources through `bindings`.
 
 ## Where to go next
 
-- [Getting Started](/docs/getting-started) for a minimal end-to-end baseline.
-- [Creating A Datapack](/docs/guides/creating-a-datapack) for output and generation details.
-- [Functions](/docs/commands/functions) for function composition and lifecycle hooks.
-- [Commands](/docs/commands/commands) for typed command usage.
-- [Cookbook](/docs/guides/cookbook) for practical composition patterns.
-- [OOP Utilities](/docs/oop/oop-utilities) for higher-level gameplay abstractions.
-- [Helpers Utilities](/docs/helpers/utilities) for reusable utility patterns.
-- [Bindings](/docs/advanced/bindings) for importing external datapacks.
-- [Known Issues](/docs/advanced/known-issues) for current limitations.
-
+- [Creating a Datapack](/docs/guides/creating-a-datapack) - metadata, output modes, packaging
+- [Runtime Logic](/docs/concepts/runtime-logic) - in-game conditionals and variables
+- [Functions](/docs/commands/functions) - composition and lifecycle hooks
+- [Cookbook](/docs/guides/cookbook) - the individual patterns referenced above
+- [Bindings](/docs/advanced/bindings) - importing external datapacks
+- [Known Issues](/docs/advanced/known-issues) - current limitations

@@ -1,22 +1,36 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Creating A Datapack
-nav-title: Creating A Datapack
-description: A guide for creating a Minecraft datapack using Kore.
-keywords: minecraft, datapack, kore, guide
+title: Creating a Minecraft Datapack with Kore - Metadata, Output & Packaging
+nav-title: Creating a Datapack
+description: Shape a Kore datapack end to end - namespace, output folder, pack.mcmeta, overlays and filters, then generate a folder, ZIP or a mod JAR for Fabric or NeoForge.
+keywords: minecraft datapack, kore datapack, pack.mcmeta, pack format, datapack zip, datapack jar, fabric datapack mod, datapack overlays, datapack namespace, generate datapack
 date-created: 2024-02-26
-date-modified: 2026-07-21
+date-modified: 2026-08-05
 routeOverride: /docs/guides/creating-a-datapack
+position: 1
 ---
 
-# Creating a DataPack
+# Creating a Datapack
 
-A DataPack in Kore represents a Minecraft datapack that contains custom game data and resources.
+Everything in Kore hangs off one object: the `DataPack`. It holds your namespace, your metadata, every function and
+data-driven resource you declare, and it decides what lands on disk.
 
-If you already maintain large hand-written datapacks and want migration/architecture patterns rather than basics, read
-[From Datapacks to Kore](/docs/guides/from-datapacks-to-kore).
+This page is about the **shell** around your gameplay code - naming, metadata, packaging - in the order you actually
+need it:
 
-To create a DataPack, use the `dataPack` function:
+1. [Declaring the pack](#declaring-the-pack) and choosing where it is written.
+2. [Pack metadata](#pack-metadata) - `pack.mcmeta`, pack formats, overlays, filters.
+3. [Adding content](#adding-content) - the one-line version, with links to the real reference pages.
+4. [Generating output](#generating-output) - folder, ZIP, mod JAR, and merging with other packs.
+
+For the gameplay code itself, see [Functions](/docs/commands/functions) and
+[Commands](/docs/commands/commands). If you already maintain large hand-written datapacks and want migration and
+architecture patterns instead of basics, read [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore).
+
+## Declaring the pack
+
+`dataPack` builds the pack; `generate()` writes it. Nothing is written to disk until you call one of the generation
+functions.
 
 ```kotlin
 dataPack("my_datapack") {
@@ -24,29 +38,29 @@ dataPack("my_datapack") {
 }.generate()
 ```
 
-This will generate the datapack with the given name in the `out` folder by default. If
-`generate()` is not called, the datapack will not be generated.
+The name you pass does two things: it becomes the **output folder name** and the **default namespace** for every
+function and resource that does not set its own.
 
-Check the [Generation](#generation) section for more information.
+### Output folder
 
-## Changing Output Folder
-
-To change the output folder, use the `path` property:
+`path` sets the base directory that generation writes into. It defaults to `out`.
 
 ```kotlin
 dataPack("my_datapack") {
-  path("%appdata%/.minecraft/saves/my_world/datapacks")
-}
+	path("%appdata%/.minecraft/saves/my_world/datapacks")
+}.generate()
 ```
 
-## Separating the Output Folder Name from the Namespace
+Pointing `path` straight at a world's `datapacks` folder is the fastest development loop: regenerate, then `/reload`
+in-game.
 
-By default the output folder/archive is named after the datapack's `name`, which is also the default namespace used by
-every function and generator that doesn't set an explicit `namespace`. Sometimes you need those to differ, for example
-when plugging Kore into a modded Fabric project's datagen step: Fabric Loom expects generated resources under a fixed
-`generated` directory, but the resource namespace inside should be your mod ID, not the literal string `generated`.
+### Separating the folder name from the namespace
 
-Set `folderName` to decouple the two:
+Sometimes the folder and the namespace must differ. The usual case is plugging Kore into a modded Fabric project's
+datagen step: Fabric Loom expects generated resources under a fixed `generated` directory, but the resource namespace
+inside should be your mod ID, not the literal string `generated`.
+
+`folderName` decouples the two:
 
 ```kotlin
 dataPack("mymod") {
@@ -60,27 +74,26 @@ dataPack("mymod") {
 ```
 
 The output folder (and `.zip`/`.jar` file name) becomes `generated`, while every resource still defaults to the `mymod`
-namespace. Individual functions/generators can still override their own `namespace` as before.
+namespace. Individual functions and generators can still override their own `namespace` as before.
 
-## Adding Icon
+### Icon
 
-To add an icon to the datapack, use the `iconPath` function:
+`iconPath` points at the `pack.png` shown in the datapack list:
 
 ```kotlin
 dataPack("my_datapack") {
-  iconPath("icon.png")
+	iconPath("icon.png")
 }
 ```
 
-## Configuration
+### Serialization settings
 
-See [Configuration](/docs/guides/configuration)
+How the JSON is formatted, and where Kore puts the functions it generates for you, is controlled by a separate
+`configuration { }` block - see [Configuration](/docs/guides/configuration).
 
-## Pack Metadata
+## Pack metadata
 
-The `dataPack` function generates a `pack.mcmeta` file containing metadata about the datapack.
-
-Configure this metadata using the `pack` block:
+Every datapack needs a `pack.mcmeta`. Kore always generates one; the `pack` block configures it.
 
 ```kotlin
 dataPack("mydatapack") {
@@ -92,11 +105,11 @@ dataPack("mydatapack") {
 }
 ```
 
-- `minFormat` - The minimum supported pack format version.
-- `maxFormat` - The maximum supported pack format version.
-- `description` - A text component for the datapack description.
+- `minFormat` - the minimum supported pack format version.
+- `maxFormat` - the maximum supported pack format version.
+- `description` - a text component for the datapack description.
 
-`minFormat` and `maxFormat` are shortcut functions that accept the same arguments as `packFormat()`:
+`minFormat` and `maxFormat` are shortcut functions accepting the same arguments as `packFormat()`:
 
 ```kotlin
 pack {
@@ -115,18 +128,36 @@ pack {
 }
 ```
 
+### Targeting Minecraft 1.21.9+
+
+Since Minecraft 1.21.9 (25w31a), `min_format` and `max_format` are the primary fields in `pack.mcmeta`, and accept a
+`[major, minor]` pair to target snapshots or minor versions:
+
+```kotlin
+dataPack("my_datapack") {
+	pack {
+		minFormat(94, 1)
+		maxFormat(94, 1)
+		description = textComponent("Targeting 1.21.9")
+	}
+}
+```
+
+`minFormat`, `maxFormat` and `packFormat` do not accept decimal values - use a plain integer or a `[major, minor]` pair
+for `minFormat`/`maxFormat`, and a plain integer for `packFormat`. `PackFormatDecimal` exists only for parsing legacy
+third-party `pack.mcmeta` files that used a decimal `pack_format`; do not set it yourself.
+
 ### Legacy `pack_format` and `supportedFormats`
 
-`pack.mcmeta`'s `pack_format` field is always a plain integer, even on modern Minecraft versions - some
-third-party tools (e.g. Modrinth) still read it for compatibility. Kore includes it by default, defaulting to the
-current Minecraft version's pack format as a plain integer, unless you set `packFormat = null` yourself.
+`pack.mcmeta`'s `pack_format` field is always a plain integer, even on modern Minecraft versions - some third-party
+tools (Modrinth, for example) still read it for compatibility. Kore includes it by default, using the current Minecraft
+version's pack format, unless you set `packFormat = null` yourself.
 
-If your `minFormat` is below the threshold (82 for DataPacks, 65 for ResourcePacks), Kore additionally includes the
-legacy `supported_formats` field in the generated `pack.mcmeta` file to ensure compatibility with older versions of
-Minecraft.
+If your `minFormat` is below the threshold (82 for datapacks, 65 for resource packs), Kore additionally writes the
+legacy `supported_formats` field so older Minecraft versions still accept the pack.
 
-You can override `packFormat` explicitly - it only accepts a plain integer (`PackFormatMajor`); assigning a
-`[major, minor]` pair or a decimal value triggers a warning:
+Overriding `packFormat` explicitly only accepts a plain integer (`PackFormatMajor`); a `[major, minor]` pair or a
+decimal value triggers a warning:
 
 ```kotlin
 dataPack("mydatapack") {
@@ -138,7 +169,7 @@ dataPack("mydatapack") {
 }
 ```
 
-You can also set `supportedFormats` explicitly with a small DSL:
+`supportedFormats` can also be set explicitly:
 
 ```kotlin
 dataPack("mydatapack") {
@@ -153,30 +184,10 @@ dataPack("mydatapack") {
 }
 ```
 
-### Targeting Minecraft 1.21.9+
+### Overlays
 
-Starting with Minecraft 1.21.9 (25w31a), `min_format` and `max_format` are the primary fields in `pack.mcmeta`, and
-can use a `[major, minor]` pair to target snapshots or minor versions:
-
-```kotlin
-dataPack("my_datapack") {
-	pack {
-		minFormat(94, 1)
-		maxFormat(94, 1)
-		description = textComponent("Targeting 1.21.9")
-	}
-}
-```
-
-Note that `minFormat`, `maxFormat`, and `packFormat` do not accept decimal values - use a plain integer or a
-`[major, minor]` pair for `minFormat`/`maxFormat`, and a plain integer for `packFormat`. `PackFormatDecimal` exists
-only for parsing legacy third-party `pack.mcmeta` files that used a decimal `pack_format`; don't set it yourself.
-
-## Overlays
-
-Overlays allow you to apply different resources depending on the pack format version of the client. Use the `overlays`
-DSL to declare
-overlay entries:
+Overlays let one pack ship different resources per client pack format - the standard way to support several Minecraft
+versions from a single download. Declare each overlay directory with `entry`:
 
 ```kotlin
 dataPack("my_datapack") {
@@ -189,36 +200,40 @@ dataPack("my_datapack") {
 }
 ```
 
-Each `entry` takes a directory name and a block where you configure `minFormat` and `maxFormat` using the same shortcut
-functions as in the `pack` block.
+Each `entry` takes a directory name and a block configuring `minFormat`/`maxFormat` with the same shortcut functions as
+the `pack` block. Clients in that format range load the overlay directory on top of the base pack.
 
-## Filters
+### Filters
 
-Filters are used to filter out certain files from the datapack. For now, you can only filter out block files.
+A filter tells Minecraft to **ignore** resources coming from packs applied *below* yours - the vanilla way to disable
+data from another datapack (or from vanilla itself) rather than trying to override it. Any file matching a blocked
+pattern is treated as if it were not present at all.
 
-For example, to filter out all `.txt` files:
+Each `block` entry takes a `namespace` and a `path`, both optional and both interpreted as regexes. Omitting one means
+"match anything":
 
 ```kotlin
 dataPack("my_datapack") {
 	filter {
-		blocks("stone*")
+		block(namespace = "minecraft", path = "recipe/.*_boat.json")
+		block(path = "loot_table/blocks/stone.*")
 	}
 }
 ```
 
-This will filter out all block files that start with `stone`.
+Here every vanilla boat recipe, and every stone-related block loot table from lower packs, stop existing for the game.
+`block` also accepts a `FilteredBlock` or a builder block, and `blocks(...)` adds several at once.
 
-## Content
+Careful: this is not scoped to your namespace. `block(path = ".*")` with no namespace disables the entire data of every
+pack below yours.
 
-The main content of the datapack is generated from the various builder functions like `biome`, `lootTable`, etc.
+## Adding content
 
-For example:
+Everything else in the `dataPack { }` block is content, declared through the builder matching the resource you want:
+`function`, `advancement`, `lootTable`, `recipes`, `predicate`, `enchantment`, `biome`, and so on.
 
 ```kotlin
 dataPack("my_datapack") {
-
-	// ...
-
 	recipes {
 		craftingShaped("enchanted_golden_apple") {
 			pattern(
@@ -236,11 +251,21 @@ dataPack("my_datapack") {
 }
 ```
 
-This demonstrates adding a custom recipe to the datapack.
+Each builder has its own reference page - start from [Recipes](/docs/data-driven/recipes),
+[Loot Tables](/docs/data-driven/loot-tables), [Predicates](/docs/data-driven/predicates), or
+[Functions](/docs/commands/functions).
 
-## Generation
+## Generating output
 
-To generate the datapack, call the `generate()` function:
+Three generation functions, three shapes. All of them write into `path` (default `out`).
+
+| Call | Produces | Use it for |
+|------|----------|------------|
+| `generate()` | `<path>/<name>/` folder | development, reviewable diffs, CI checks |
+| `generateZip()` | `<path>/<name>.zip` | distributing a normal datapack |
+| `generateJar()` | `<path>/<name>.jar` | shipping the pack as a mod |
+
+### Folder
 
 ```kotlin
 dataPack("my_datapack") {
@@ -248,18 +273,10 @@ dataPack("my_datapack") {
 }.generate()
 ```
 
-This will generate the datapack with the given name in the `out` folder by default.<br>
-To change the output folder, use the `path` function:
+Best default while developing: you can open the generated `.mcfunction` and JSON files and check exactly what Kore
+emitted.
 
-```kotlin
-dataPack("my_datapack") {
-  path("%appdata%/.minecraft/saves/my_world/datapacks")
-}.generate()
-```
-
-### Zip Generation
-
-To generate a zip file of the datapack, use the `generateZip` function:
+### ZIP
 
 ```kotlin
 dataPack("my_datapack") {
@@ -267,15 +284,13 @@ dataPack("my_datapack") {
 }.generateZip()
 ```
 
-Generated ZIP entries follow the ZIP specification and always use forward slashes (`/`) internally.
-This keeps the archive compatible with strict tools such as Windows Explorer in addition to WinRAR and other archive
-managers.
+Same contents as the folder, in one archive - what you upload for players to install. Generated ZIP entries follow the
+ZIP specification and always use forward slashes (`/`) internally, keeping the archive readable by strict tools such as
+Windows Explorer as well as WinRAR and other archive managers.
 
-### Jar Generation
+### Mod JAR
 
-To generate a JAR file for your datapack, use the `generateJar` function.
-This function packages the datapack into a JAR file which can then be used directly with your Minecraft installation or
-distributed for others to use.
+`generateJar()` packages the datapack as a **mod**, so players install it in `mods/` instead of per-world `datapacks/`:
 
 ```kotlin
 dataPack("my_datapack") {
@@ -283,24 +298,10 @@ dataPack("my_datapack") {
 }.generateJar()
 ```
 
-By calling `generateJar()`, the generated JAR file will be placed in the default output folder.
-If you wish to specify a different location, use the `path` function:
-
-```kotlin
-dataPack("my_datapack") {
-  path("path/to/output/folder")
-}.generateJar()
-```
-
-You can also configure the JAR generation for different mod loaders such as Fabric, Forge, Quilt, and NeoForge.<br>
-This will add metadata to the JAR file that is specific to the mod loader.<br>
-You will be able to include your datapack as a mod for your mod loader and simplify the installation process for users.
-
-Below are examples of how to set up these mod loaders:
+The JAR lands in the same output folder; `path` moves it like for the other modes. On its own, `generateJar()` produces
+a bare archive - you also declare a loader block to get the metadata that loader needs.
 
 #### Fabric
-
-To configure Fabric mod loader, use the `fabric` block inside the `generateJar` function:
 
 ```kotlin
 dataPack("my_datapack") {
@@ -318,14 +319,12 @@ dataPack("my_datapack") {
 }
 ```
 
-This sets the Fabric version, and includes contact information and the author's name.
+This writes the Fabric mod metadata with the version, contact information, and author.
 
-To make individual resources load conditionally inside a Fabric mod (based on other mods, tags, registries or feature
+To make individual resources load conditionally inside a Fabric mod (gated on other mods, tags, registries, or feature
 flags), see [Fabric Resource Conditions](/docs/guides/fabric-resource-conditions).
 
 #### Forge
-
-To configure Forge mod loader, use the `forge` block:
 
 ```kotlin
 dataPack("my_datapack") {
@@ -345,11 +344,7 @@ dataPack("my_datapack") {
 }
 ```
 
-This sets the mod authors, credits, and dependencies for Forge.
-
 #### Quilt
-
-To configure Quilt mod loader, use the `quilt` block:
 
 ```kotlin
 dataPack("my_datapack") {
@@ -369,11 +364,7 @@ dataPack("my_datapack") {
 }
 ```
 
-This sets the metadata such as contact information and contributors for Quilt.
-
 #### NeoForge
-
-To configure NeoForge mod loader, use the `neoForge` block:
 
 ```kotlin
 dataPack("my_datapack") {
@@ -393,11 +384,10 @@ dataPack("my_datapack") {
 }
 ```
 
-This sets the authors, credits, and dependencies for NeoForge.
-
 ### Merging with existing datapacks
 
-To merge the generated datapack with an existing datapack, use the DSL with the function `mergeWithDatapacks`:
+`mergeWithDatapacks` folds other packs into the generated output, so you can ship one download that also contains a
+dependency or a pack you do not own the source of:
 
 ```kotlin
 dataPack("my_datapack") {
@@ -407,16 +397,13 @@ dataPack("my_datapack") {
 }
 ```
 
-If a zip is provided, it will be considered as a datapack and merged with the generated datapack.<br>
-Kore creates the temporary directory used for extraction automatically before unzipping, then merges the extracted
-files with the generated datapack. This temporary folder is not removed automatically.
+A path to a zip is treated as a datapack and merged too. Kore creates the temporary directory used for extraction
+automatically before unzipping, then merges the extracted files with the generated datapack. **This temporary folder is
+not removed automatically.**
 
-#### Checking for compatibility
+#### Pack format compatibility
 
-When merging with other datapacks, Kore will check if the pack format range overlaps. If it does not,
-it will print a warning message.
-
-Example:
+When merging, Kore checks whether the pack format ranges overlap and warns when they do not:
 
 ```kotlin
 val myDatapack1 = dataPack("my_datapack 1") {
@@ -441,37 +428,19 @@ myDatapack1.generate {
 }
 ```
 
-This will print out the following message:
+Prints:
 
 ```
 The pack format range of the other pack is different from the current one. This may cause issues.
 Format range: current: 40..40 other: 50..50.
 ```
 
-It also checks for `supportedFormats` and warns if the other pack is not supported.
+`supportedFormats` is checked the same way, with a warning when the other pack is not supported.
 
-## What to read next
+#### Lifecycle tags are merged, not overwritten
 
-- [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore) - migration strategy, architecture choices, and
-  production workflow for advanced authors
-- [Cookbook](/docs/guides/cookbook) - practical patterns once your pack structure is in place
-- [Functions](/docs/commands/functions) - reusable logic, tags, and generated functions
-- [Selectors](/docs/concepts/selectors) - target entities and players with typed filters
-- [Configuration](/docs/guides/configuration) - tune JSON formatting and generation behavior
-- [Fabric Resource Conditions](/docs/guides/fabric-resource-conditions) - load resources conditionally inside a Fabric mod
-
-## Publishing and Distribution
-
-Once you've generated your datapack, you may want to distribute it to the community.
-For automated publishing to platforms like Modrinth, CurseForge, and GitHub Releases,
-see the [GitHub Actions Publishing](/docs/advanced/github-actions-publishing) guide.
-
-#### Tags
-
-When merging with other datapacks, Kore will merge the tags `minecraft/tags/function/load.json` and
-`minecraft/tags/functions/tick.json`.
-
-Example:
+Both packs' `minecraft:load` and `minecraft:tick` function tags are combined, so nothing silently loses its entry
+point:
 
 ```kotlin
 val myDatapack1 = dataPack("my_datapack 1") {
@@ -494,7 +463,7 @@ myDatapack1.generate {
 }
 ```
 
-The resulting `load.json` file will contain:
+The resulting `load.json` contains both:
 
 ```json
 {
@@ -506,3 +475,12 @@ The resulting `load.json` file will contain:
 }
 ```
 
+## What to read next
+
+- [Configuration](/docs/guides/configuration) - JSON formatting and generated function naming
+- [Functions](/docs/commands/functions) - reusable logic, lifecycle tags, and generated functions
+- [Cookbook](/docs/guides/cookbook) - practical patterns once your pack structure is in place
+- [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore) - migration strategy and production workflow
+- [Fabric Resource Conditions](/docs/guides/fabric-resource-conditions) - load resources conditionally in a Fabric mod
+- [GitHub Actions Publishing](/docs/advanced/github-actions-publishing) - automate releases to Modrinth, CurseForge and
+  GitHub

@@ -23,7 +23,7 @@ Each item is tagged:
 | **Generation rough edge**       | `generate()` / `generateZip()` / merge paths behave as implemented; surprising until you read the generation docs.                       |
 
 For the high-level "what Kore does not include,"
-see [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore#what-kore-does-not-give-you-or-not-yet).
+see [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore#what-kore-will-not-do-for-you).
 
 ---
 
@@ -61,7 +61,7 @@ for format-level fixes.
 
 Kore generates **datapacks** only (`data/`, functions, JSON registries, `pack.mcmeta`). It does **not** emit **resource
 packs** (`assets/`). That scope is stated on the site (for example [Home](/docs/home)) and
-in [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore#what-kore-does-not-give-you-or-not-yet).
+in [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore#what-kore-will-not-do-for-you).
 
 **Workaround:** Maintain a separate resource-pack project or tooling; you can still keep both in one Gradle repo.
 
@@ -150,7 +150,7 @@ in [Not supported (Minecraft limitations)](/docs/helpers/markdown-renderer#not-s
 | Need                  | Where to look                                                                            |
 |-----------------------|------------------------------------------------------------------------------------------|
 | Tune JSON output      | [Configuration](/docs/guides/configuration) (`prettyPrint`, comments, paths)             |
-| Folder vs zip vs jar  | [Creating A Datapack - Generation](/docs/guides/creating-a-datapack#generation)          |
+| Folder vs zip vs jar  | [Creating A Datapack - Generation](/docs/guides/creating-a-datapack#generating-output)          |
 | Import external packs | [Bindings](/docs/advanced/bindings)                                                      |
 | Module layout         | [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore)                            |
 | Report a bug or gap   | [Kore on GitHub](https://github.com/Ayfri/Kore/issues) with pack format and Kore version |

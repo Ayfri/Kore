@@ -172,5 +172,5 @@ function("round_start") {
 
 ## See also
 
-- [Arguments Internals](/docs/concepts/arguments) - contributor-facing details about Kore's broader argument system
+- [Arguments Internals](/docs/contributing/arguments) - contributor-facing details about Kore's broader argument system
 - [Minecraft Wiki: Target selectors](https://minecraft.wiki/w/Target_selectors) - vanilla syntax and semantics

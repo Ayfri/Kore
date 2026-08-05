@@ -1,26 +1,29 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Cookbook
+title: Kore Cookbook - Practical Datapack Patterns in Kotlin
 nav-title: Cookbook
-description: "Practical Kore recipes for common datapack patterns: setup functions, custom items, timers, worldgen, raycasts, and bindings. Copy-paste code adapted for real projects."
-keywords: minecraft, datapack, kore, cookbook, recipes, patterns, guide
+description: "Working Kore patterns to copy: bootstrap and tick structure, reusable functions, selector and predicate helpers, scheduled actions, and module choice."
+keywords: minecraft datapack patterns, kore examples, kotlin datapack code, datapack bootstrap, reusable mcfunction, datapack selectors, scheduled function, kore cookbook
 date-created: 2026-04-21
-date-modified: 2026-04-21
+date-modified: 2026-08-05
 routeOverride: /docs/guides/cookbook
 position: 3
 ---
 
 # Cookbook
 
-This page collects practical patterns you can lift into a real Kore datapack. It does not try to replace the full
-reference pages; instead, it shows how several documented features fit together.
+Short, self-contained answers to questions that come up in every real pack. Each entry states the problem, shows the
+Kore version, and says when to prefer it over the alternative.
 
-If your main goal is migrating an already mature datapack architecture, pair this page with
-[From Datapacks to Kore](/docs/guides/from-datapacks-to-kore).
+These are patterns, not a reference: each one links to the page that documents the API in full. If you are porting an
+existing hand-written pack, read [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore) first for the migration
+strategy, then use this page for the individual pieces.
 
-## Recipe 1 - A clean pack bootstrap
+## Structure a pack: bootstrap vs tick
 
-Use a dedicated setup function for one-time registration and a tick function for recurring gameplay logic.
+**Problem:** everything ends up in one function, and one-time setup gets re-run every tick.
+
+Split the two lifecycles explicitly. `load` runs once after `/reload`, `tick` runs every game tick:
 
 ```kotlin
 fun DataPack.registerCoreSystems() {
@@ -44,17 +47,20 @@ fun main() = dataPack("arena") {
 }.generateZip()
 ```
 
-Use this pattern when you want a clear separation between initialization and runtime logic.
+Registering objectives inside `tick` would work but wastes a command every tick; anything idempotent and one-time
+belongs in `load`.
 
-Related pages:
+See [Functions](/docs/commands/functions) and [Creating a Datapack](/docs/guides/creating-a-datapack).
 
-- [Functions](/docs/commands/functions)
-- [Creating A Datapack](/docs/guides/creating-a-datapack)
+## Reuse logic as a real function or inlined
 
-## Recipe 2 - Reuse logic by exposing named functions from `Function`
+**Problem:** the same commands appear in several places, and it is not obvious whether they deserve their own
+`.mcfunction`.
 
-Sometimes you want a helper that can be called from multiple places while still generating a normal datapack function.
-An ergonomic pattern is to attach it directly to `Function`:
+Both options are `Function` extensions - the difference is whether you call `function(...)` inside.
+
+**Generate a real function** when the logic must be callable in its own right (scheduling, function tags, `/function`
+from chat, debug visibility):
 
 ```kotlin
 fun Function.myFunction() = function("my_function") {
@@ -67,22 +73,11 @@ load {
 }
 ```
 
-This is totally fine even if several call sites end up recreating the same named function declaration. Kore is heavily
-optimized for this kind of reuse, so regenerating the same function is effectively instant and keeps your code much
-cleaner than manually caching every `FunctionArgument` yourself.
+Several call sites re-declaring the same named function is fine. Kore is optimized for this, so regenerating the same
+function is effectively instant and stays cleaner than caching every `FunctionArgument` by hand.
 
-Use this when the code should remain callable as a proper datapack function, for example for scheduling, tags,
-cross-function reuse, or debug visibility.
-
-Related pages:
-
-- [Functions](/docs/commands/functions)
-- [Commands](/docs/commands/commands)
-
-## Recipe 3 - Reuse code inline without creating a function
-
-Not every reusable snippet needs its own generated function. If you just want to share a small block of commands,
-regular `Function` extensions are often enough:
+**Inline the commands** when the snippet is small and only exists to avoid copy-paste - no extra `/function` call at
+runtime:
 
 ```kotlin
 fun Function.saySomething() {
@@ -95,17 +90,15 @@ load {
 }
 ```
 
-Prefer this pattern when the reused logic is small and should stay inlined at the call site instead of becoming a
-separate `/function` entry.
+Rule of thumb: inline by default, extract into a real function the moment something needs to *reference* it.
 
-Related pages:
+See [Functions](/docs/commands/functions) and [Commands](/docs/commands/commands).
 
-- [Functions](/docs/commands/functions)
-- [Cookbook](/docs/guides/cookbook)
+## Stop repeating long selectors
 
-## Recipe 4 - Gate gameplay with selectors and scores
+**Problem:** the same `@a[...]` constraints are rewritten in ten places, and updating the rule means finding all ten.
 
-Keep complex target selection in reusable values instead of repeating long selector builders.
+A selector is a value. Name it once and reuse it:
 
 ```kotlin
 val activePlayers = allPlayers {
@@ -122,16 +115,15 @@ function("start_wave") {
 }
 ```
 
-This keeps wave logic readable and centralizes the rules that define an eligible player.
+The name documents the intent ("who counts as playing right now") and one edit updates every use.
 
-Related pages:
+See [Selectors](/docs/concepts/selectors) and [Scoreboards](/docs/concepts/scoreboards).
 
-- [Selectors](/docs/concepts/selectors)
-- [Scoreboards](/docs/concepts/scoreboards)
+## Make a custom item recognizable later
 
-## Recipe 5 - Define a custom item and validate it later
+**Problem:** you give a player a custom item, then cannot reliably identify it once it has moved between inventories.
 
-Combine item components with predicates when the item should remain recognizable after being moved between inventories.
+Define the item once with its components, and derive a predicate from that same value:
 
 ```kotlin
 val arenaBlade = Items.DIAMOND_SWORD {
@@ -153,17 +145,16 @@ function("check_weapon") {
 }
 ```
 
-Use this when a datapack needs both rich item metadata and reliable runtime checks.
+Because the predicate is built from `arenaBlade`, changing the item cannot desynchronize the check.
 
-Related pages:
+See [Components](/docs/concepts/components), [Predicates](/docs/data-driven/predicates) and
+[Item Modifiers](/docs/data-driven/item-modifiers).
 
-- [Components](/docs/concepts/components)
-- [Predicates](/docs/data-driven/predicates)
-- [Item Modifiers](/docs/data-driven/item-modifiers)
+## Delay an action without duplicating it
 
-## Recipe 6 - Schedule delayed actions instead of duplicating code
+**Problem:** a telegraph, cooldown, or cutscene beat needs the same commands now and again later.
 
-Wrap delayed logic in a named function and schedule it instead of inlining the same command sequence multiple times.
+Name the delayed step as a function and schedule that:
 
 ```kotlin
 val explosionWarning = function("explosion_warning") {
@@ -180,53 +171,49 @@ function("trigger_explosion") {
 }
 ```
 
-This pattern is a good default for cutscenes, telegraphs, cooldowns, and delayed effects.
+`schedule` needs a real function reference, which is exactly why this case justifies generating one rather than
+inlining.
 
-Related pages:
+See [Commands](/docs/commands/commands), [Helpers Utilities](/docs/helpers/utilities) and
+[Scheduler](/docs/helpers/scheduler).
 
-- [Commands](/docs/commands/commands)
-- [Helpers Utilities](/docs/helpers/utilities)
-- [Scheduler](/docs/helpers/scheduler)
+## Pick the right module
 
-## Recipe 7 - Choose between core, helpers, and oop early
+**Problem:** unclear whether a system should use plain `kore`, or pull in `helpers`/`oop`.
 
-When a system starts simple, keep it in `kore`. Add `helpers` for reusable glue. Move to `oop` once gameplay objects
-need long-lived identities.
+Escalate only when the simpler layer starts hurting:
 
-- Use **`kore`** for raw commands, data-driven JSON, tags, functions, and lightweight selectors.
-- Use **`helpers`** for rendering pipelines, geometry, scheduler utilities, or state delegates.
-- Use **`oop`** for players, teams, boss bars, timers, spawners, scoreboards, and state machines.
+- **`kore`** - raw commands, data-driven JSON, tags, functions, selectors. Start here, always.
+- **`helpers`** - add it when you are rewriting infrastructure glue: renderers, geometry, raycasts, scheduler patterns,
+  scoreboard math, state delegates.
+- **`oop`** - add it when gameplay needs long-lived identities that several systems share: players, teams, boss bars,
+  timers, spawners, state machines.
 
-That decision alone prevents many documentation and architecture mistakes later.
+The failure mode is reaching for `oop` on day one and wrapping everything in abstractions the pack never needed. Write
+it with `kore`, then move up when the duplication is real.
 
-Related pages:
+See [Home](/docs/home), [Helpers Utilities](/docs/helpers/utilities) and [OOP Utilities](/docs/oop/oop-utilities).
 
-- [Home](/docs/home)
-- [Helpers Utilities](/docs/helpers/utilities)
-- [OOP Utilities](/docs/oop/oop-utilities)
+## Depend on an existing datapack
 
-## Recipe 8 - Import an existing datapack, then wrap it with Kotlin
+**Problem:** your pack calls into another pack's functions using hand-typed ID strings that break silently when that
+pack changes.
 
-Use `bindings` when you already have a datapack and want typed access to its resources instead of stringly typed calls.
+Import it with `bindings` and get typed Kotlin constants instead:
 
-Typical flow:
+1. Configure a binding source.
+2. Generate the Kotlin wrappers.
+3. Call the imported functions and resources from your own pack.
 
-1. Configure a binding source
-2. Generate Kotlin wrappers
-3. Call imported functions/resources from your own pack
+Worth it for large internal libraries or third-party packs you track across versions - a renamed function then becomes a
+compile error rather than a silent no-op in-game.
 
-This is especially useful for large internal libraries or third-party datapacks that your project depends on.
+See [Bindings](/docs/advanced/bindings), which is **experimental**, and [Functions](/docs/commands/functions).
 
-Related pages:
+## Principles behind these
 
-- [Bindings](/docs/advanced/bindings)
-- [Functions](/docs/commands/functions)
-
-## How to use this page
-
-Treat these recipes as starting points:
-
-- Extract repeating code into small reusable helpers
-- Move cross-cutting conditions into selectors or predicates
-- Favor typed arguments over handwritten command strings
-- Keep links to the relevant reference pages nearby while you iterate
+- Extract repeated code into small helpers before it spreads.
+- Move cross-cutting conditions into named selectors or predicates.
+- Prefer typed arguments over hand-written command strings.
+- Let Kotlin values (items, selectors, function references) be the single source of truth, and derive everything else
+  from them.

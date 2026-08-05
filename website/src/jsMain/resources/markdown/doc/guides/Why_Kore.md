@@ -2,10 +2,10 @@
 root: .components.layouts.MarkdownLayout
 title: Why Kore - Kotlin DSL vs Raw Datapacks & Other Generators
 nav-title: Why Kore
-description: Compare Kore with raw datapacks, Sandstone, Beet, and other generators. Type safety, autocomplete, one Kotlin language for all JSON and MCFunction. No more error-prone hand-written datapack files.
+description: Kore compared with raw datapacks, Sandstone and Beet. Type safety, autocomplete and one Kotlin language for JSON and MCFunction, plus when to skip Kore.
 keywords: kore vs sandstone, kore vs beet, datapack generator comparison, kotlin datapack dsl, minecraft datapack alternative, type-safe datapack, why kore, datapack generator benefits, mcfunction generator, minecraft json generator
 date-created: 2026-06-24
-date-modified: 2026-07-02
+date-modified: 2026-08-05
 routeOverride: /docs/guides/why-kore
 position: 0
 ---
@@ -13,11 +13,11 @@ position: 0
 # Why Kore
 
 Datapacks are powerful but painful to write by hand: stringly-typed commands, sprawling JSON, no autocomplete, and
-silent
-failures you only discover after `/reload`. Kore replaces all of that with a single, strongly-typed Kotlin DSL that
-generates the exact same vanilla output - just faster, safer, and without the boilerplate.
+silent failures you only discover after `/reload`. Kore replaces all of that with a single, strongly-typed Kotlin DSL
+that generates the exact same vanilla output - just faster, safer, and without the boilerplate.
 
-This page explains what Kore gives you over raw datapacks, and how it compares to other generators.
+This page is for **deciding**: what Kore gives you over raw datapacks, how it compares to other generators, and when it
+is the wrong tool. If you are already convinced, go to [Getting Started](/docs/getting-started) instead.
 
 ## The problem with hand-written datapacks
 
@@ -29,8 +29,7 @@ A real datapack is a mix of two error-prone formats:
   subtly wrong. No editor tells you a field is misspelled until the game refuses to load it.
 
 There is no autocomplete, no type checking, no refactoring, and no way to share logic except copy-paste. As a pack
-grows,
-this gets worse fast.
+grows, this gets worse fast.
 
 ## What Kore changes
 
@@ -50,13 +49,12 @@ dataPack("example") {
 
 Every vanilla list - blocks, items, entities, effects, enchantments, biomes, sounds - is a generated enum. You cannot
 misspell `minecraft:diamond_sword`, because you write `Items.DIAMOND_SWORD` and the compiler checks it. The same applies
-to command arguments, NBT paths, and data-driven schemas. See [Arguments](/docs/concepts/arguments).
+to command arguments, NBT paths, and data-driven schemas. See [Arguments](/docs/contributing/arguments).
 
 ### Real code structure
 
 Because it is Kotlin, you get everything the language offers: extension functions to split a pack across files, loops
-and
-conditionals to generate repetitive content at build time (see [Runtime Logic](/docs/concepts/runtime-logic)), and
+and conditionals to generate repetitive content at build time (see [Runtime Logic](/docs/concepts/runtime-logic)), and
 refactoring/autocomplete from your IDE. Big projects stay maintainable.
 
 ### Tested, predictable output
@@ -87,24 +85,30 @@ compiler checks, plus exact-output tests shipped with every feature. The DSL mir
 reads naturally to anyone who knows datapacks.
 
 **Where others may fit better:** Beet has a very mature plugin ecosystem and `mecha`'s command compiler, and is a good
-fit
-if your team lives in Python. Sandstone is a strong choice for TypeScript-first teams. If you only need a handful of
-commands and never plan to scale, raw datapacks are fine.
+fit if your team lives in Python. Sandstone is a strong choice for TypeScript-first teams.
 
 Kore's bet is that for anything beyond trivial, a typed compiler-checked DSL saves more time than it costs to learn.
 
-## When to choose Kore
-
-Reach for Kore when:
+## Choose Kore when
 
 - Your pack is more than a few functions, or you expect it to grow.
 - You want autocomplete, refactoring, and the compiler catching mistakes before `/reload`.
 - You already know Kotlin (or are happy to learn a small subset - see [Getting Started](/docs/getting-started)).
 - You want data-driven content (loot, recipes, advancements, worldgen, dialogs) without writing JSON.
 
+## Skip Kore when
+
+Being honest about the cost matters more than winning the comparison:
+
+- **The pack is tiny or one-off.** Three functions and a loot table are not worth a Gradle project.
+- **Your collaborators will not touch a JVM toolchain.** Kore needs a JDK, Gradle, and a compile step between editing
+  and `/reload` - slower than saving an `.mcfunction` and reloading.
+- **You need resource packs too.** Kore targets datapacks only, see [Known Issues](/docs/advanced/known-issues).
+- **You expect runtime gains.** Kore improves authoring, not in-game execution cost: the generated commands run exactly
+  as fast as the ones you would have written.
+
 ## Next steps
 
 - [Getting Started](/docs/getting-started) - build your first datapack
 - [Runtime Logic](/docs/concepts/runtime-logic) - the one concept that makes everything click
-- [Creating a Datapack](/docs/guides/creating-a-datapack) - lifecycle and output options
-- [Cookbook](/docs/guides/cookbook) - practical patterns to copy
+- [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore) - port a pack you already ship
