@@ -90,6 +90,8 @@ Consistent messages improve changelog scanning and release auditability.
 
 ## See also
 
+- [Version Matrix](/docs/home#version-matrix) - Kore-to-Minecraft version table generated from GitHub releases at
+  each website build.
 - [Contributing][contributing]
 - [Contributing: Architecture and Patterns][architecture]
 - [Contributing: Workflow][workflow]

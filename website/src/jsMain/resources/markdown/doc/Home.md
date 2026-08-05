@@ -5,7 +5,7 @@ nav-title: Home
 description: Kore is a Kotlin DSL datapack generator for Minecraft Java Edition. Create datapacks with type-safe code instead of writing JSON and MCFunction by hand. Open-source and production-ready.
 keywords: minecraft datapack generator, datapack maker, minecraft data pack creator, kotlin datapack, kore, minecraft datapack dsl, datapack development, minecraft java edition, mcfunction generator, datapack library
 date-created: 2024-04-06
-date-modified: 2026-07-02
+date-modified: 2026-08-05
 routeOverride: /docs/home
 position: 0
 ---
@@ -15,17 +15,42 @@ position: 0
 **Welcome to the Kore wiki!**
 
 Kore is a Kotlin library for building Minecraft datapacks with a concise, type-safe Kotlin DSL. It focuses on readable builders, stable
-generation of datapack JSON, and tight integration with vanilla concepts (functions, loot tables, predicates, worldgen, ...).
+generation of datapack JSON, and tight integration with vanilla concepts (functions, loot tables, predicates, worldgen, ...). Coming from
+raw datapacks? Read [Why Kore](/docs/guides/why-kore) or the migration-focused [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore).
 
 ## Quick start
 
 - **Getting started**: Check out the [Getting Started](/docs/getting-started) guide for a step-by-step introduction to creating your first datapack.
-- **Prerequisites**: Java 21+ and a Kotlin-capable build environment.
+- **Prerequisites**: Java 25 (JDK 25) and a Kotlin 2.4+ build environment.
 - **Starter template**: use the `Kore Template` for a ready-to-run project: [
   `Kore Template`](https://github.com/Kore-Minecraft/Kore-Template).
-- **Create & generate**: see [Creating A Datapack](/docs/guides/creating-a-datapack) for lifecycle and output options (`.generate()`,
-  `.generateZip()`, `.generateJar()`).
 - **Build faster**: browse the [Cookbook](/docs/guides/cookbook) for practical patterns you can reuse.
+
+### Minimal example
+
+```kotlin
+fun main() {
+	val datapack = dataPack("example") {
+		function("display_text") {
+			tellraw(allPlayers(), textComponent("Hello World!"))
+		}
+	}
+
+	datapack.generateZip()
+}
+```
+
+### IDE tooling
+
+Kore Assistant brings gutter icons, hovers, and declaration navigation for the Kore DSL straight into your editor:
+[IntelliJ IDEA](https://plugins.jetbrains.com/plugin/27025-kore-assistant) |
+[VS Code](https://marketplace.visualstudio.com/items?itemName=ayfri.kore-assistant).
+
+## Jump to a topic
+
+{{{ .components.doc.FeatureGrid }}}
+
+Looking for something more specific? The full page list, with search, lives in the sidebar on the left.
 
 ## Installable modules
 
@@ -43,15 +68,13 @@ what runs where.
 - Artifact: `io.github.ayfri.kore:kore:VERSION`
 - Snapshot builds from each commit on `master`: add `https://central.sonatype.com/repository/maven-snapshots/` and use
   `VERSION-SNAPSHOT`
-- Start here: [Getting Started](/docs/getting-started)
 
 ### `oop` - Object-oriented gameplay utilities
 
 - Add higher-level abstractions for boss bars, cooldowns, entities, game states, scoreboards, spawners, teams, and
   timers.
 - Especially useful when several gameplay systems need to exchange data cleanly, such as syncing a `Team` with a boss
-  bar or reusing an `Entity`
-  handle across scoreboards and commands.
+  bar or reusing an `Entity` handle across scoreboards and commands.
 - Artifact: `io.github.ayfri.kore:oop:VERSION`
 - Explore: [OOP Utilities](/docs/oop/oop-utilities)
 
@@ -60,8 +83,7 @@ what runs where.
 - Add renderers, raycasts, scheduler utilities, scoreboard math, state delegates, particle helpers, and related
   utilities.
 - These helpers complement the core DSL well for advanced text pipelines, reusable state access, geometric particles, or
-  command-heavy math
-  routines.
+  command-heavy math routines.
 - Artifact: `io.github.ayfri.kore:helpers:VERSION`
 - Explore: [Helpers Utilities](/docs/helpers/utilities)
 
@@ -71,103 +93,14 @@ what runs where.
 - Artifact: `io.github.ayfri.kore:bindings:VERSION`
 - Explore: [Bindings](/docs/advanced/bindings)
 
-{{{ .components.doc.FeatureGrid }}}
+## Version Matrix
 
-### Minimal example
+One Kore version per stable Minecraft version, the latest tagged pre-release as a separate `Snapshot` row, and the
+latest continuous `-SNAPSHOT` build from `master` as `Maven Snapshot`. Gradle coordinates link straight to Maven
+Central. Generated from GitHub releases and the current project version on every website build, so it always
+reflects the latest published version without manual edits.
 
-```kotlin
-fun main() {
-    dataPack("example") {
-        function("display_text") { tellraw(allPlayers(), textComponent("Hello World!")) }
-    }.generateZip()
-}
-```
-
-## Essential reading
-
-- **[Getting Started](/docs/getting-started)**: step-by-step guide to create your first datapack.
-- **[Creating A Datapack](/docs/guides/creating-a-datapack)**: lifecycle, output paths, and generation options.
-- **[Cookbook](/docs/guides/cookbook)**: practical recipes combining multiple Kore features.
-- **[Commands](/docs/commands/commands)**: comprehensive guide to all Minecraft commands with examples.
-- **[Functions](/docs/commands/functions)**: building functions, tags, and command helpers.
-
-## Full documentation index
-
-### Core Guides
-
-- [Why Kore](/docs/guides/why-kore) - why use Kore over raw datapacks or other generators.
-- [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore) - advanced guide for migrating established datapacks to
-  a Kotlin/Kore architecture.
-- [Configuration](/docs/guides/configuration) - JSON formatting and generation options.
-- [Cookbook](/docs/guides/cookbook) - practical patterns for common datapack workflows.
-
-### Commands
-
-- [Execute](/docs/commands/execute) - context subcommands, conditions, stores, and the run clause.
-- [Macros](/docs/commands/macros) - dynamic command arguments for reusable functions.
-
-### Concepts
-
-- [Runtime Logic](/docs/concepts/runtime-logic) - compile-time Kotlin vs runtime Minecraft: variables, conditions,
-  loops.
-- [Data Storage](/docs/concepts/data-storage) - the runtime NBT variable container via the `/data` command.
-- [Components](/docs/concepts/components) - item/component builders and custom components.
-- [Chat Components](/docs/concepts/chat-components) - formatted messages and text components.
-- [Colors](/docs/concepts/colors) - chat colors and formatting options.
-- [NBTs](/docs/concepts/nbts) - the shared NBT builder DSL used across commands and data-driven APIs.
-- [Selectors](/docs/concepts/selectors) - entity and player targeting with typed filters.
-- [Scoreboards](/docs/concepts/scoreboards) - objectives, teams, and scoreboard displays.
-- [Time](/docs/concepts/time) - `TimeNumber` and the `.ticks`, `.seconds`, `.days` extensions for command durations.
-
-### Data-Driven
-
-- [Predicates](/docs/data-driven/predicates) - reusable conditions used by loot tables, advancements and item modifiers.
-- [Loot Tables](/docs/data-driven/loot-tables) & [Item Modifiers](/docs/data-driven/item-modifiers) - tables, pools and
-  `/item modify` helpers.
-- [Recipes](/docs/data-driven/recipes) & [Advancements](/docs/data-driven/advancements) - crafting, rewards and integration.
-- [Enchantments](/docs/data-driven/enchantments) - custom enchantment definitions.
-- [Dialogs](/docs/data-driven/dialogs) - NPC dialog systems.
-- [Worldgen](/docs/data-driven/worldgen) - biomes, features and dimension examples.
-- [Tags](/docs/data-driven/tags) - custom tag definitions for grouping items, blocks, entities, etc.
-
-### Helpers
-
-- [Helpers Utilities](/docs/helpers/utilities) - overview of helper-focused utilities extracted from the OOP module.
-- [Display Entities](/docs/helpers/display-entities) - text, block, and item displays.
-- [Inventory Manager](/docs/helpers/inventory-manager) - inventory manipulation helpers.
-- [Mannequins](/docs/helpers/mannequins) - armor stand helpers.
-- [ANSI Renderer](/docs/helpers/ansi-renderer) - ANSI escape codes to text components.
-- [Area](/docs/helpers/area) - 3D bounding box geometry.
-- [Markdown Renderer](/docs/helpers/markdown-renderer) - Markdown to text components.
-- [MiniMessage Renderer](/docs/helpers/minimessage-renderer) - Adventure MiniMessage to text components.
-- [Raycasts](/docs/helpers/raycasts) - recursive step-based raycasting.
-- [Scheduler](/docs/helpers/scheduler) - delayed function execution patterns.
-- [Scoreboard Math](/docs/helpers/scoreboard-math) - trigonometry and algebra via scoreboards.
-- [State Delegates](/docs/helpers/state-delegates) - Kotlin property delegates for scoreboards/storage.
-- [VFX Particles](/docs/helpers/vfx-particles) - geometric particle shapes.
-
-### OOP
-
-- [OOP Utilities](/docs/oop/oop-utilities) - overview of all OOP module features.
-- [Entities & Players](/docs/oop/entities-and-players) - entity/player management, commands, and effects.
-- [Teams](/docs/oop/teams) - object-oriented team management.
-- [Scoreboards](/docs/oop/scoreboards) - objective and score operations.
-- [Items](/docs/oop/items) - item creation and spawning.
-- [Events](/docs/oop/events) - advancement-based event system.
-- [World Events](/docs/oop/world-events) - tick, weather, day/night, and interval events from the world.
-- [Cooldowns](/docs/oop/cooldowns) - scoreboard-based cooldowns.
-- [Boss Bars](/docs/oop/boss-bars) - boss bar management.
-- [Timers](/docs/oop/timers) - scoreboard-based timers with optional boss bar.
-- [Spawners](/docs/oop/spawners) - reusable entity spawner handles.
-- [Game State Machine](/docs/oop/game-state-machine) - scoreboard-based state machine.
-
-### Advanced
-
-- [Bindings](/docs/advanced/bindings) - import existing datapacks and generate Kotlin bindings (experimental).
-- [Multiplatform Support](/docs/advanced/multiplatform) - JVM + JS targets, what runs where, `exportAsStrings()`.
-- [GitHub Actions Publishing](/docs/advanced/github-actions-publishing) - automate datapack publishing.
-- [Test Features (GameTest)](/docs/advanced/test-features) - testing datapacks with GameTest.
-- [Known Issues](/docs/advanced/known-issues) - workarounds and limitations.
+{{{ .components.doc.VersionMatrix }}}
 
 ## Contributing to Kore
 
@@ -186,20 +119,21 @@ Useful contributor-facing internals:
 - Keep builders small and reusable; prefer extracting predicates and modifiers.
 - Enable `prettyPrint` in [`Configuration`](/docs/guides/configuration) during development for readable JSON.
 - Reach for [`OOP Utilities`](/docs/oop/oop-utilities) when multiple gameplay features should share the same handles
-  instead
-  of re-building
-  selectors and score names manually.
+  instead of re-building selectors and score names manually.
 - Use [`Components`](/docs/concepts/components) + [`Predicates`](/docs/data-driven/predicates) together for robust item checks and inventory
   management.
 - Reach for [`NBTs`](/docs/concepts/nbts) when you need to build a payload once and reuse it across commands, chat, or
   predicates.
 - Use [`Helpers Utilities`](/docs/helpers/utilities) to avoid reimplementing common glue code such as renderers,
-  scheduler patterns, raycasts,
-  or scoreboard-based maths.
+  scheduler patterns, raycasts, or scoreboard-based maths.
+- Hit a wall? Check [Known Issues](/docs/advanced/known-issues) for known workarounds before filing a bug.
 
-## Known issues
+## Need help?
 
-Check out the [Known Issues](/docs/advanced/known-issues) page for a list of known issues and workarounds.
+- **Discord**: join the [Kore Discord](https://discord.ayfri.com) for questions and to chat with other datapack devs.
+- **Issues & bugs**: report them on the [GitHub repository](https://github.com/Ayfri/Kore/issues).
+- **Stuck on setup?**: the [Getting Started](/docs/getting-started) guide has a dedicated Troubleshooting section.
+- **Read first**: [Kore Hello World](https://ayfri.com/articles/kore-hello-world/), a hands-on intro article.
 
 ## Community & source
 
