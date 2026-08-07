@@ -1,51 +1,39 @@
 package io.github.ayfri.kore.features.predicates.sub
 
-import io.github.ayfri.kore.arguments.ItemSlot
-import io.github.ayfri.kore.arguments.components.ComponentsPatch
-import io.github.ayfri.kore.features.predicates.sub.entityspecific.EntityTypeSpecific
-import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
-import io.github.ayfri.kore.generated.arguments.EntityTypeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.types.MobEffectArgument
-import io.github.ayfri.kore.serializers.InlinableList
-import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
-import net.benwoodworth.knbt.NbtCompound
-import net.benwoodworth.knbt.NbtCompoundBuilder
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.JsonDecoder
+import kotlinx.serialization.json.jsonObject
 
-@Serializable
-data class Entity(
-	var distance: Distance? = null,
-	var components: ComponentsPatch? = null,
-	var effects: Map<MobEffectArgument, Effect>? = null,
-	var equipment: Equipment? = null,
-	var flags: EntityFlags? = null,
-	var location: Location? = null,
-	var movement: Movement? = null,
-	var movementAffectedBy: Location? = null,
-	@Serializable(NbtAsJsonSerializer::class) var nbt: NbtCompound? = null,
-	var passenger: Entity? = null,
-	var periodicTicks: Int? = null,
-	var predicates: ItemStackSubPredicates? = null,
-	@Serializable(EntitySlotsSerializer::class) var slots: Map<ItemSlot, ItemStack>? = null,
-	var steppingOn: Location? = null,
-	var targetedEntity: Entity? = null,
-	var team: String? = null,
-	var type: InlinableList<EntityTypeOrTagArgument>? = null,
-	var typeSpecific: EntityTypeSpecific? = null,
-	var vehicle: Entity? = null,
-)
+/**
+ * An entity predicate, matching an entity against a set of identifier-keyed [EntitySubPredicate] entries.
+ *
+ * Minecraft Wiki: [Predicate](https://minecraft.wiki/w/Predicate)
+ */
+@Serializable(with = Entity.Companion.EntitySerializer::class)
+data class Entity(val subPredicates: MutableList<EntitySubPredicate> = mutableListOf()) {
+	companion object {
+		data object EntitySerializer : KSerializer<Entity> {
+			private val mapSerializer = MapSerializer(String.serializer(), EntitySubPredicate.Companion.EntitySubPredicateSerializer)
+			override val descriptor = mapSerializer.descriptor
 
-private object EntitySlotsSerializer : KSerializer<Map<ItemSlot, ItemStack>> {
-	override val descriptor = MapSerializer(String.serializer(), ItemStack.serializer()).descriptor
+			override fun serialize(encoder: Encoder, value: Entity) {
+				val map = value.subPredicates.associateBy { EntitySubPredicate.Companion.EntitySubPredicateSerializer.getContentName(it) }
+				encoder.encodeSerializableValue(mapSerializer, map)
+			}
 
-	override fun deserialize(decoder: kotlinx.serialization.encoding.Decoder) = error("Entity slots cannot be deserialized.")
-
-	override fun serialize(encoder: kotlinx.serialization.encoding.Encoder, value: Map<ItemSlot, ItemStack>) {
-		val map = value.mapKeys { it.key.asString() }
-		MapSerializer(String.serializer(), ItemStack.serializer()).serialize(encoder, map)
+			override fun deserialize(decoder: Decoder): Entity {
+				require(decoder is JsonDecoder) { "Entity predicate can only be deserialized as Json" }
+				val subPredicates = decoder.decodeJsonElement().jsonObject.map { (key, element) ->
+					EntitySubPredicate.Companion.EntitySubPredicateSerializer.deserializeJsonElement(decoder.json, key, element)
+				}
+				return Entity(subPredicates.toMutableList())
+			}
+		}
 	}
 }
 
@@ -63,75 +51,3 @@ data class EntityFlags(
 )
 
 fun entity(init: Entity.() -> Unit = {}) = Entity().apply(init)
-
-fun Entity.components(init: ComponentsPatch.() -> Unit) {
-	components = ComponentsPatch().apply(init)
-}
-
-fun Entity.distance(init: Distance.() -> Unit = {}) {
-	distance = Distance().apply(init)
-}
-
-fun Entity.flags(init: EntityFlags.() -> Unit = {}) {
-	flags = EntityFlags().apply(init)
-}
-
-fun Entity.equipment(init: Equipment.() -> Unit = {}) {
-	equipment = Equipment().apply(init)
-}
-
-fun Entity.effects(block: MutableMap<MobEffectArgument, Effect>.() -> Unit) {
-	effects = buildMap(block)
-}
-
-fun Entity.effects(vararg effects: Pair<MobEffectArgument, Effect>) {
-	this.effects = effects.toMap()
-}
-
-fun Entity.location(init: Location.() -> Unit = {}) {
-	location = Location().apply(init)
-}
-
-fun Entity.movement(init: Movement.() -> Unit = {}) {
-	movement = Movement().apply(init)
-}
-
-fun Entity.movementAffectedBy(init: Location.() -> Unit = {}) {
-	movementAffectedBy = Location().apply(init)
-}
-
-fun Entity.nbt(block: NbtCompoundBuilder.() -> Unit) {
-	nbt = io.github.ayfri.kore.utils.nbt(block)
-}
-
-fun Entity.passenger(init: Entity.() -> Unit = {}) {
-	passenger = Entity().apply(init)
-}
-
-fun Entity.predicates(block: ItemStackSubPredicates.() -> Unit) {
-	predicates = ItemStackSubPredicates().apply(block)
-}
-
-fun Entity.slots(init: MutableMap<ItemSlot, ItemStack>.() -> Unit) {
-	slots = buildMap(init)
-}
-
-fun Entity.slots(vararg slots: Pair<ItemSlot, ItemStack>) {
-	this.slots = slots.toMap()
-}
-
-fun Entity.steppingOn(init: Location.() -> Unit = {}) {
-	steppingOn = Location().apply(init)
-}
-
-fun Entity.targetedEntity(init: Entity.() -> Unit = {}) {
-	targetedEntity = Entity().apply(init)
-}
-
-fun Entity.type(vararg types: EntityTypeOrTagArgument) {
-	type = types.toList()
-}
-
-fun Entity.vehicle(init: Entity.() -> Unit = {}) {
-	vehicle = Entity().apply(init)
-}

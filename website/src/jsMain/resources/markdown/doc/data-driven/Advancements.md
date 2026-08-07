@@ -322,7 +322,7 @@ advancement("trigger_examples") {
 		// Entity interaction
 		playerKilledEntity("kill_zombie") {
 			entity {
-				type(EntityTypes.ZOMBIE)
+				entityType(EntityTypes.ZOMBIE)
 			}
 		}
 
@@ -595,12 +595,12 @@ dataPack("adventure_pack") {
 		criteria {
 			playerKilledEntity("kill_dragon") {
 				entity {
-					type(EntityTypes.ENDER_DRAGON)
+					entityType(EntityTypes.ENDER_DRAGON)
 				}
 			}
 			playerKilledEntity("kill_wither") {
 				entity {
-					type(EntityTypes.WITHER)
+					entityType(EntityTypes.WITHER)
 				}
 			}
 		}

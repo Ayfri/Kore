@@ -210,7 +210,7 @@ predicate("entity_check") {
 
 		// Check entity passenger
 		passenger {
-			team = "foo"
+			team("foo")
 		}
 
 		// Check custom data predicates
@@ -240,11 +240,13 @@ predicate("entity_check") {
 		}
 
 		// Check entity type
-		type(EntityTypes.MARKER)
+		entityType(EntityTypes.MARKER)
 
 		// Check player-specific properties
-		playerTypeSpecific {
-			gamemodes(Gamemode.SURVIVAL)
+		typeSpecific {
+			player {
+				gamemodes(Gamemode.SURVIVAL)
+			}
 		}
 
 		// Check entity vehicle with distance
@@ -264,31 +266,34 @@ Sub-predicates are nested data structures that allow you to define specific prop
 
 ### Entity Sub-Predicates
 
-The `entityProperties` condition supports various sub-predicates to check different aspects of an entity:
+The `entityProperties` condition supports various sub-predicates to check different aspects of an entity. Each one is
+serialized as its own identifier-keyed entry (`minecraft:<name>`) rather than a flat object:
 
-| Sub-Predicate        | Description                              | Example                                                                  |
-|----------------------|------------------------------------------|--------------------------------------------------------------------------|
-| `components`         | Check entity data components             | `components { axolotlVariant(AxolotlVariants.CYAN) }`                    |
-| `distance`           | Check distance between entities          | `distance { x(1f..4f) }`                                                 |
-| `effects`            | Check potion effects                     | `effects { this[Effects.SPEED] = effect { amplifier = rangeOrInt(1) } }` |
-| `equipment`          | Check equipped items                     | `equipment { mainHand = itemStack(Items.DIAMOND_SWORD) }`                |
-| `flags`              | Check entity flags (baby, on fire, etc.) | `flags { isBaby = true }`                                                |
-| `location`           | Check entity location                    | `location { block { blocks(Blocks.STONE) } }`                            |
-| `movement`           | Check entity movement                    | `movement { x(1.0, 4.0); horizontalSpeed(1.0) }`                         |
-| `movementAffectedBy` | Check what affects entity movement       | `movementAffectedBy { canSeeSky = true }`                                |
-| `nbt`                | Check entity NBT data                    | `nbt { this["foo"] = "bar" }`                                            |
-| `passenger`          | Check entity passenger                   | `passenger { team = "foo" }`                                             |
-| `periodicTicks`      | Check entity periodic ticks              | `periodicTicks = 20`                                                     |
-| `predicates`         | Check custom data predicates             | `predicates { customData { this["key"] = "value" } }`                    |
-| `slots`              | Check specific inventory slots           | `slots { this[WEAPON.MAINHAND] = itemStack(Items.DIAMOND_SWORD) }`       |
-| `steppingOn`         | Check block the entity is standing on    | `steppingOn { blocks(Blocks.STONE) }`                                    |
-| `targetedEntity`     | Check entity being targeted              | `targetedEntity { type(EntityTypes.ZOMBIE) }`                            |
-| `team`               | Check entity team                        | `team = "my_team"`                                                       |
-| `type`               | Check entity type                        | `type(EntityTypes.MARKER)`                                               |
-| `typeSpecific`       | Check type-specific properties           | See [Type-Specific Properties](#entity-type-specific-properties)         |
-| `vehicle`            | Check entity vehicle                     | `vehicle { distance { x(1f..4f) } }`                                     |
+| Sub-Predicate          | JSON key                         | Description                              | Example                                                                  |
+|------------------------|----------------------------------|------------------------------------------|--------------------------------------------------------------------------|
+| `components`           | `minecraft:components`           | Check entity data components             | `components { axolotlVariant(AxolotlVariants.CYAN) }`                    |
+| `distance`             | `minecraft:distance`             | Check distance between entities          | `distance { x(1f..4f) }`                                                 |
+| `effects`              | `minecraft:effects`              | Check potion effects                     | `effects { this[Effects.SPEED] = effect { amplifier = rangeOrInt(1) } }` |
+| `entityTags`           | `minecraft:entity_tags`          | Check scoreboard tags set through `/tag` | `entityTags { allOf("boss") }`                                           |
+| `entityType`           | `minecraft:entity_type`          | Check entity type                        | `entityType(EntityTypes.MARKER)`                                         |
+| `equipment`            | `minecraft:equipment`            | Check equipped items                     | `equipment { mainHand = itemStack(Items.DIAMOND_SWORD) }`                |
+| `flags`                | `minecraft:flags`                | Check entity flags (baby, on fire, etc.) | `flags { isBaby = true }`                                                |
+| `location`             | `minecraft:location`             | Check entity location                    | `location { block { blocks(Blocks.STONE) } }`                            |
+| `movement`             | `minecraft:movement`             | Check entity movement                    | `movement { x(1.0, 4.0); horizontalSpeed(1.0) }`                         |
+| `movementAffectedBy`   | `minecraft:movement_affected_by` | Check what affects entity movement       | `movementAffectedBy { canSeeSky = true }`                                |
+| `nbt`                  | `minecraft:nbt`                  | Check entity NBT data                    | `nbt { this["foo"] = "bar" }`                                            |
+| `passenger`            | `minecraft:passenger`            | Check entity passenger                   | `passenger { team("foo") }`                                              |
+| `periodicTicks`        | `minecraft:periodic_ticks`       | Check entity periodic ticks              | `periodicTicks(20)`                                                      |
+| `predicates`           | `minecraft:predicates`           | Check custom data predicates             | `predicates { customData { this["key"] = "value" } }`                    |
+| `slots`                | `minecraft:slots`                | Check specific inventory slots           | `slots { this[WEAPON.MAINHAND] = itemStack(Items.DIAMOND_SWORD) }`       |
+| `steppingOn`           | `minecraft:stepping_on`          | Check block the entity is standing on    | `steppingOn { blocks(Blocks.STONE) }`                                    |
+| `targetedEntity`       | `minecraft:targeted_entity`      | Check entity being targeted              | `targetedEntity { entityType(EntityTypes.ZOMBIE) }`                      |
+| `team`                 | `minecraft:team`                 | Check entity team                        | `team("my_team")`                                                        |
+| `typeSpecific { ... }` | `minecraft:type_specific/<name>` | Check type-specific properties           | See [Type-Specific Properties](#entity-type-specific-properties)         |
+| `vehicle`              | `minecraft:vehicle`              | Check entity vehicle                     | `vehicle { distance { x(1f..4f) } }`                                     |
 
-The `Entity` class provides all the functions for these sub-predicates.
+The `Entity` class provides all the functions for these sub-predicates, backed by a single `EntitySubPredicate` sealed
+family - each call appends one entry to `Entity.subPredicates`.
 
 ### Entity Type-Specific Properties
 
@@ -317,7 +322,9 @@ Any component you can put on an **item** can be matched on an **entity
 
 #### Remaining built-in `typeSpecific` helpers
 
-These helpers are still available because they cover information that is **not** represented by components:
+These helpers are still available because they cover information that is **not** represented by components. They're
+grouped under a `typeSpecific { }` scope, and each keys under `minecraft:type_specific/<name>` (except `cubeMob`,
+which keys under `minecraft:cube_mob` - Mojang's own replacement for the old `minecraft:slime` predicate):
 
 ##### Fishing Hook
 
@@ -326,7 +333,9 @@ Check if a fishing hook is in open water:
 ```kotlin
 predicate("fishing_hook_check") {
 	entityProperties {
-		fishingHookTypeSpecific(inOpenWater = true)
+		typeSpecific {
+			fishingHook(inOpenWater = true)
+		}
 	}
 }
 ```
@@ -338,8 +347,10 @@ Check lightning bolt properties like blocks set on fire:
 ```kotlin
 predicate("lightning_check") {
 	entityProperties {
-		lightningTypeSpecific {
-			blocksSetOnFire = rangeOrInt(1..5)
+		typeSpecific {
+			lightning {
+				blocksSetOnFire = rangeOrInt(1..5)
+			}
 		}
 	}
 }
@@ -352,23 +363,25 @@ Check player-specific properties including gamemode, food stats, unlocked recipe
 ```kotlin
 predicate("player_check") {
 	entityProperties {
-		playerTypeSpecific {
-			gamemodes(Gamemode.CREATIVE)
-           food {
-              level = rangeOrInt(5..15)
-              saturation = rangeOrDouble(1.0, 10.0)
-           }
-			recipes {
-				this[Recipes.BOW] = true
-			}
-			input {
-				forward = true
-				backward = false
-				left = true
-				right = false
-				jump = true
-				sneak = false
-				sprint = true
+		typeSpecific {
+			player {
+				gamemodes(Gamemode.CREATIVE)
+				food {
+					level = rangeOrInt(5..15)
+					saturation = rangeOrDouble(1.0, 10.0)
+				}
+				recipes {
+					this[Recipes.BOW] = true
+				}
+				input {
+					forward = true
+					backward = false
+					left = true
+					right = false
+					jump = true
+					sneak = false
+					sprint = true
+				}
 			}
 		}
 	}
@@ -382,7 +395,9 @@ Check raider properties like raid participation and captain status:
 ```kotlin
 predicate("raider_check") {
 	entityProperties {
-		raiderTypeSpecific(hasRaid = true, isCaptain = false)
+		typeSpecific {
+			raider(hasRaid = true, isCaptain = false)
+		}
 	}
 }
 ```
@@ -394,19 +409,23 @@ Check if a sheep has been sheared:
 ```kotlin
 predicate("sheep_check") {
 	entityProperties {
-		sheepTypeSpecific(sheared = true)
+		typeSpecific {
+			sheep(sheared = true)
+		}
 	}
 }
 ```
 
-##### Slime
+##### Cube Mob (slimes and magma cubes)
 
-Check slime size:
+Check cube mob size - renamed from `minecraft:slime` to `minecraft:cube_mob` in 26.2-snapshot-3:
 
 ```kotlin
-predicate("slime_check") {
+predicate("cube_mob_check") {
 	entityProperties {
-		slimeTypeSpecific(rangeOrInt(2))
+		typeSpecific {
+			cubeMob(rangeOrInt(2))
+		}
 	}
 }
 ```

@@ -126,21 +126,21 @@ bredAnimals("breed_animals") {
 	child {
 		conditions {
 			entityProperties {
-				type(EntityTypes.COW)
+				entityType(EntityTypes.COW)
 			}
 		}
 	}
 	parent {
 		conditions {
 			entityProperties {
-				type(EntityTypes.COW)
+				entityType(EntityTypes.COW)
 			}
 		}
 	}
 	partner {
 		conditions {
 			entityProperties {
-				type(EntityTypes.COW)
+				entityType(EntityTypes.COW)
 			}
 		}
 	}
@@ -203,7 +203,7 @@ channeledLightning("lightning_rod") {
 	victim {
 		conditions {
 			entityProperties {
-				type(EntityTypes.CREEPER)
+				entityType(EntityTypes.CREEPER)
 			}
 		}
 	}
@@ -294,14 +294,14 @@ curedZombieVillager("cure_zombie") {
 	villager {
 		conditions {
 			entityProperties {
-				type(EntityTypes.VILLAGER)
+				entityType(EntityTypes.VILLAGER)
 			}
 		}
 	}
 	zombie {
 		conditions {
 			entityProperties {
-				type(EntityTypes.ZOMBIE)
+				entityType(EntityTypes.ZOMBIE)
 			}
 		}
 	}
@@ -353,7 +353,7 @@ effectsChanged("get_effect") {
 	source {
 		conditions {
 			entityProperties {
-				type(EntityTypes.WITCH)
+				entityType(EntityTypes.WITCH)
 			}
 		}
 	}
@@ -423,7 +423,7 @@ Triggers when an entity hurts a player.
 entityHurtPlayer("hurt_player") {
 	damage {
 		sourceEntity {
-			type(EntityTypes.ZOMBIE)
+			entityType(EntityTypes.ZOMBIE)
 		}
 		taken = rangeOrDouble(5.0..10.0)
 		type {
@@ -694,7 +694,7 @@ killedByArrow("killed_by_arrow") {
 	victim {
 		conditions {
 			entityProperties {
-				type(EntityTypes.PLAYER)
+				entityType(EntityTypes.PLAYER)
 			}
 		}
 	}
@@ -718,11 +718,11 @@ Triggers when a mob is killed near a sculk catalyst.
 ```kotlin
 killMobNearSculkCatalyst("kill_mob") {
 	entity {
-		type(EntityTypes.ZOMBIE)
+		entityType(EntityTypes.ZOMBIE)
 	}
 	killingBlow {
 		sourceEntity {
-			type(EntityTypes.PLAYER)
+			entityType(EntityTypes.PLAYER)
 		}
 	}
 }
@@ -771,7 +771,7 @@ lightningStrike("struck") {
 		type {
 			conditions {
 				entityProperties {
-					type(EntityTypes.CREEPER)
+					entityType(EntityTypes.CREEPER)
 				}
 			}
 		}
@@ -913,7 +913,7 @@ playerInteractedWithEntity("interact_with_golem") {
 	}
 	entity {
 		conditionEntity {
-			type(EntityTypes.IRON_GOLEM)
+			entityType(EntityTypes.IRON_GOLEM)
 		}
 	}
 }
@@ -938,7 +938,7 @@ playerKilledEntity("kill_mob") {
 	entity {
 		conditions {
 			entityProperties {
-				type(EntityTypes.ZOMBIE)
+				entityType(EntityTypes.ZOMBIE)
 			}
 		}
 	}
@@ -962,7 +962,7 @@ Triggers after a player shears equipment off of a mob, such as wolf armor.
 ```kotlin
 playerShearedEquipment("shear_wolf_armor") {
 	entity {
-		type(EntityTypes.WOLF)
+		entityType(EntityTypes.WOLF)
 	}
 	item {
 		item(Items.LEATHER)
@@ -1133,7 +1133,7 @@ _None._
 startedRiding("ride_horse") {
 	conditions {
 		vehicle {
-			type(EntityTypes.HORSE)
+			entityType(EntityTypes.HORSE)
 		}
 	}
 }
@@ -1155,7 +1155,7 @@ Triggers when an entity is summoned.
 ```kotlin
 summonedEntity("summon_iron_golem") {
 	entity {
-		type(EntityTypes.IRON_GOLEM)
+		entityType(EntityTypes.IRON_GOLEM)
 	}
 }
 ```
@@ -1176,7 +1176,7 @@ Triggers when an animal is tamed.
 ```kotlin
 tameAnimal("tame_wolf") {
 	entity {
-		type(EntityTypes.WOLF)
+		entityType(EntityTypes.WOLF)
 	}
 }
 ```
@@ -1201,7 +1201,7 @@ targetHit("hit_target") {
 	projectile {
 		conditions {
 			entityProperties {
-				type(EntityTypes.ARROW)
+				entityType(EntityTypes.ARROW)
 			}
 		}
 	}
@@ -1225,7 +1225,7 @@ Triggers when a thrown item is picked up by an entity.
 ```kotlin
 thrownItemPickedUpByEntity("feed_animal") {
 	entity {
-		type(EntityTypes.COW)
+		entityType(EntityTypes.COW)
 	}
 	item {
 		item(Items.WHEAT)

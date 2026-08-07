@@ -481,7 +481,7 @@ pool {
 
 		// Check entity properties
 		entityProperties {
-			type(EntityTypes.PLAYER)
+			entityType(EntityTypes.PLAYER)
 		}
 
 		// Check killer

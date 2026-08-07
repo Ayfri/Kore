@@ -471,7 +471,7 @@ effects {
 			requirements {
 				// Only against undead
 				entityProperties {
-					type(EntityTypes.ZOMBIE, EntityTypes.SKELETON)
+					entityType(EntityTypes.ZOMBIE, EntityTypes.SKELETON)
 				}
 			}
 		}
