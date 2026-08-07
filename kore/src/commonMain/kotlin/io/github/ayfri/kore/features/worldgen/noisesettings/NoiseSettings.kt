@@ -7,7 +7,6 @@ import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.data.block.blockState
 import io.github.ayfri.kore.features.worldgen.dimension.biomesource.multinoise.MultiNoiseBiomeSourceParameters
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.Bandlands
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.Block
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.SurfaceRule
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.arguments.worldgen.types.NoiseSettingsArgument
@@ -32,9 +31,7 @@ data class NoiseSettings(
 	var aquifersEnabled: Boolean = false,
 	var oreVeinsEnabled: Boolean = false,
 	var legacyRandomSource: Boolean = false,
-	@Serializable(with = Block.Companion.BlockStateSerializer::class)
 	var defaultBlock: BlockState = blockState(Blocks.STONE),
-	@Serializable(with = Block.Companion.BlockStateSerializer::class)
 	var defaultFluid: BlockState = blockState(Blocks.WATER, mapOf("level" to "0")),
 	var noise: NoiseOptions = NoiseOptions(-64, 384, 1, 2),
 	var noiseRouter: NoiseRouter = NoiseRouter(),

@@ -15,6 +15,8 @@ data class BlockState(
 	var properties: Map<String, String>? = null,
 ) {
 	init {
+		if (properties?.isEmpty() == true) properties = null
+
 		val states = name.states
 		if (states.isNotEmpty()) {
 			properties = states.toMap()
