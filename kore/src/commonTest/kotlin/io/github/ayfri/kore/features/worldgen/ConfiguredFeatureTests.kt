@@ -24,6 +24,7 @@ import io.github.ayfri.kore.features.worldgen.intproviders.uniform
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.Surface
 import io.github.ayfri.kore.features.worldgen.ruletest.randomBlockMatch
 import io.github.ayfri.kore.generated.Blocks
+import io.github.ayfri.kore.generated.Fluids
 import io.github.ayfri.kore.generated.PlacedFeatures
 import io.github.ayfri.kore.generated.ProcessorLists
 import io.github.ayfri.kore.generated.Structures
@@ -735,7 +736,16 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_lake", lake(fluid = blockState(Blocks.STONE), barrier = blockState(Blocks.GRAVEL)))
+	configuredFeature(
+		"test_lake",
+		lake(
+			fluid = blockState(Blocks.STONE),
+			barrier = blockState(Blocks.GRAVEL),
+			canPlaceFeature = matchingBlocks(block = Blocks.STONE),
+			canReplaceWithAirOrFluid = Solid,
+			canReplaceWithBarrier = matchingFluids(fluids = listOf(Fluids.WATER)),
+		)
+	)
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -746,6 +756,17 @@ fun DataPack.configuredFeatureTests() {
 				},
 				"barrier": {
 					"Name": "minecraft:gravel"
+				},
+				"can_place_feature": {
+					"type": "minecraft:matching_blocks",
+					"blocks": "minecraft:stone"
+				},
+				"can_replace_with_air_or_fluid": {
+					"type": "minecraft:solid"
+				},
+				"can_replace_with_barrier": {
+					"type": "minecraft:matching_fluids",
+					"fluids": "minecraft:water"
 				}
 			}
 		}
