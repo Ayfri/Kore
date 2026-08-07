@@ -436,7 +436,7 @@ private fun DataPack.allTriggersTests() {
 				source {
 					conditions {
 						entityProperties {
-							type(EntityTypes.WITCH)
+							entityType(EntityTypes.WITCH)
 						}
 					}
 				}
@@ -466,7 +466,7 @@ private fun DataPack.allTriggersTests() {
 								"condition": "minecraft:entity_properties",
 								"entity": "this",
 								"predicate": {
-									"type": "minecraft:witch"
+									"minecraft:entity_type": "minecraft:witch"
 								}
 							}
 						]
@@ -569,7 +569,7 @@ private fun DataPack.allTriggersTests() {
 				cause {
 					conditions {
 						entityProperties {
-							type(EntityTypes.PLAYER)
+							entityType(EntityTypes.PLAYER)
 						}
 					}
 				}
@@ -608,7 +608,7 @@ private fun DataPack.allTriggersTests() {
 								"condition": "minecraft:entity_properties",
 								"entity": "this",
 								"predicate": {
-									"type": "minecraft:player"
+									"minecraft:entity_type": "minecraft:player"
 								}
 							}
 						]
@@ -755,7 +755,7 @@ private fun DataPack.allTriggersTests() {
 				victim {
 					conditions {
 						entityProperties {
-							type(EntityTypes.PLAYER)
+							entityType(EntityTypes.PLAYER)
 						}
 					}
 				}
@@ -786,7 +786,7 @@ private fun DataPack.allTriggersTests() {
 									"condition": "minecraft:entity_properties",
 									"entity": "this",
 									"predicate": {
-										"type": "minecraft:player"
+										"minecraft:entity_type": "minecraft:player"
 									}
 								}
 							]
@@ -928,7 +928,7 @@ private fun DataPack.allTriggersTests() {
 				}
 				entity {
 					conditionEntity {
-						type(EntityTypes.IRON_GOLEM)
+						entityType(EntityTypes.IRON_GOLEM)
 					}
 				}
 			}
@@ -944,7 +944,7 @@ private fun DataPack.allTriggersTests() {
 							"items": "minecraft:iron_ingot"
 						},
 						"entity": {
-							"type": "minecraft:iron_golem"
+							"minecraft:entity_type": "minecraft:iron_golem"
 						}
 					}
 				}
@@ -971,7 +971,7 @@ private fun DataPack.allTriggersTests() {
 		criteria {
 			playerShearedEquipment("player_sheared_equipment") {
 				entity {
-					type(EntityTypes.SHEEP)
+					entityType(EntityTypes.SHEEP)
 				}
 				item {
 					items = listOf(Items.WHITE_WOOL)
@@ -986,7 +986,7 @@ private fun DataPack.allTriggersTests() {
 					"trigger": "minecraft:player_sheared_equipment",
 					"conditions": {
 						"entity": {
-							"type": "minecraft:sheep"
+							"minecraft:entity_type": "minecraft:sheep"
 						},
 						"item": {
 							"items": "minecraft:white_wool"

@@ -16,8 +16,6 @@ import io.github.ayfri.kore.features.predicates.conditions.*
 import io.github.ayfri.kore.features.predicates.predicate
 import io.github.ayfri.kore.features.predicates.providers.*
 import io.github.ayfri.kore.features.predicates.sub.*
-import io.github.ayfri.kore.features.predicates.sub.entityspecific.gamemodes
-import io.github.ayfri.kore.features.predicates.sub.entityspecific.playerTypeSpecific
 import io.github.ayfri.kore.features.predicates.sub.item.enchantment
 import io.github.ayfri.kore.features.predicates.types.EntityType
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.MoonPhaseValue
@@ -110,10 +108,10 @@ fun DataPack.predicateTests() {
 		damageSourceProperties {
 			isDirect = true
 			directEntity = entity {
-				type(EntityTypes.ZOMBIE)
+				entityType(EntityTypes.ZOMBIE)
 			}
 			sourceEntity = entity {
-				type(EntityTypes.SKELETON)
+				entityType(EntityTypes.SKELETON)
 			}
 			tag(Tags.DamageType.IS_PROJECTILE, expected = true)
 		}
@@ -124,11 +122,11 @@ fun DataPack.predicateTests() {
 			"condition": "minecraft:damage_source_properties",
 			"predicate": {
 				"direct_entity": {
-					"type": "minecraft:zombie"
+					"minecraft:entity_type": "minecraft:zombie"
 				},
 				"is_direct": true,
 				"source_entity": {
-					"type": "minecraft:skeleton"
+					"minecraft:entity_type": "minecraft:skeleton"
 				},
 				"tags": [
 					{
@@ -254,10 +252,10 @@ fun DataPack.predicateTests() {
 			}
 
 			passenger {
-				team = "foo"
+				team("foo")
 			}
 
-			periodicTicks = 20
+			periodicTicks(20)
 
 			predicates {
 				customData {
@@ -284,11 +282,17 @@ fun DataPack.predicateTests() {
 				}
 			}
 
-			team = "alpha"
-			type(EntityTypes.MARKER)
+			entityTags {
+				allOf("boss")
+			}
 
-			playerTypeSpecific {
-				gamemodes(Gamemode.SURVIVAL)
+			team("alpha")
+			entityType(EntityTypes.MARKER)
+
+			typeSpecific {
+				player {
+					gamemodes(Gamemode.SURVIVAL)
+				}
 			}
 
 			vehicle {
@@ -305,57 +309,57 @@ fun DataPack.predicateTests() {
 			"condition": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
-				"components": {
+				"minecraft:components": {
 					"axolotl_variant": "cyan",
 					"damage": 12,
 					"!unbreakable": {}
 				},
-				"effects": {
+				"minecraft:effects": {
 					"minecraft:invisibility": {
 						"amplifier": 1
 					}
 				},
-				"equipment": {
+				"minecraft:equipment": {
 					"mainhand": {
 						"items": "minecraft:diamond_sword"
 					}
 				},
-				"flags": {
+				"minecraft:flags": {
 					"is_baby": true
 				},
-				"location": {
+				"minecraft:location": {
 					"block": {
 						"blocks": "minecraft:stone"
 					}
 				},
-				"movement": {
+				"minecraft:movement": {
 					"x": {
 						"min": 1.0,
 						"max": 4.0
 					},
 					"horizontal_speed": 1.0
 				},
-				"movement_affected_by": {
+				"minecraft:movement_affected_by": {
 					"can_see_sky": true
 				},
-				"nbt": {
+				"minecraft:nbt": {
 					"foo": "bar"
 				},
-				"passenger": {
-					"team": "foo"
+				"minecraft:passenger": {
+					"minecraft:team": "foo"
 				},
-				"periodic_ticks": 20,
-				"predicates": {
+				"minecraft:periodic_ticks": 20,
+				"minecraft:predicates": {
 					"minecraft:custom_data": {
 						"foo": "bar"
 					}
 				},
-				"slots": {
+				"minecraft:slots": {
 					"weapon.mainhand": {
 						"items": "minecraft:diamond_sword"
 					}
 				},
-				"stepping_on": {
+				"minecraft:stepping_on": {
 					"block": {
 						"blocks": "minecraft:stone",
 						"components": {
@@ -371,16 +375,20 @@ fun DataPack.predicateTests() {
 						}
 					}
 				},
-				"team": "alpha",
-				"type": "minecraft:marker",
-				"type_specific": {
-					"type": "minecraft:player",
+				"minecraft:entity_tags": {
+					"all_of": [
+						"boss"
+					]
+				},
+				"minecraft:team": "alpha",
+				"minecraft:entity_type": "minecraft:marker",
+				"minecraft:type_specific/player": {
 					"gamemode": [
 						"survival"
 					]
 				},
-				"vehicle": {
-					"distance": {
+				"minecraft:vehicle": {
+					"minecraft:distance": {
 						"x": {
 							"min": 1.0,
 							"max": 4.0

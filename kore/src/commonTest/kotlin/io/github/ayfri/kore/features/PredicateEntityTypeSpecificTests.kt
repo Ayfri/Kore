@@ -8,7 +8,7 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.predicates.conditions.entityProperties
 import io.github.ayfri.kore.features.predicates.predicate
-import io.github.ayfri.kore.features.predicates.sub.entityspecific.*
+import io.github.ayfri.kore.features.predicates.sub.*
 import io.github.ayfri.kore.generated.Recipes
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
@@ -16,7 +16,9 @@ import io.kotest.core.spec.style.FunSpec
 fun DataPack.predicateEntityTypeSpecificTests() {
 	predicate("fishing_hook_type_specific") {
 		entityProperties {
-			fishingHookTypeSpecific(inOpenWater = true)
+			typeSpecific {
+				fishingHook(inOpenWater = true)
+			}
 		}
 	}
 
@@ -25,8 +27,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 			"condition": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
-				"type_specific": {
-					"type": "minecraft:fishing_hook",
+				"minecraft:type_specific/fishing_hook": {
 					"in_open_water": true
 				}
 			}
@@ -35,8 +36,10 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 
 	predicate("lightning_type_specific") {
 		entityProperties {
-			lightningTypeSpecific {
-				blocksSetOnFire = rangeOrInt(1..5)
+			typeSpecific {
+				lightning {
+					blocksSetOnFire = rangeOrInt(1..5)
+				}
 			}
 		}
 	}
@@ -46,8 +49,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 			"condition": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
-				"type_specific": {
-					"type": "minecraft:lightning",
+				"minecraft:type_specific/lightning": {
 					"blocks_set_on_fire": {
 						"min": 1,
 						"max": 5
@@ -59,19 +61,21 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 
 	predicate("player_type_specific") {
 		entityProperties {
-			playerTypeSpecific {
-				gamemodes(Gamemode.CREATIVE)
-				recipes {
-					this[Recipes.BOW] = true
-				}
-				input {
-					forward = true
-					backward = false
-					left = true
-					right = false
-					jump = true
-					sneak = false
-					sprint = true
+			typeSpecific {
+				player {
+					gamemodes(Gamemode.CREATIVE)
+					recipes {
+						this[Recipes.BOW] = true
+					}
+					input {
+						forward = true
+						backward = false
+						left = true
+						right = false
+						jump = true
+						sneak = false
+						sprint = true
+					}
 				}
 			}
 		}
@@ -82,8 +86,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 			"condition": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
-				"type_specific": {
-					"type": "minecraft:player",
+				"minecraft:type_specific/player": {
 					"gamemode": [
 						"creative"
 					],
@@ -106,10 +109,12 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 
 	predicate("player_food_type_specific") {
 		entityProperties {
-			playerTypeSpecific {
-				food {
-					level = rangeOrInt(5..15)
-					saturation = rangeOrDouble(1.0, 10.0)
+			typeSpecific {
+				player {
+					food {
+						level = rangeOrInt(5..15)
+						saturation = rangeOrDouble(1.0, 10.0)
+					}
 				}
 			}
 		}
@@ -120,8 +125,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 			"condition": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
-				"type_specific": {
-					"type": "minecraft:player",
+				"minecraft:type_specific/player": {
 					"food": {
 						"level": {
 							"min": 5,
@@ -139,7 +143,9 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 
 	predicate("raider_type_specific") {
 		entityProperties {
-			raiderTypeSpecific(hasRaid = true, isCaptain = false)
+			typeSpecific {
+				raider(hasRaid = true, isCaptain = false)
+			}
 		}
 	}
 
@@ -148,8 +154,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 			"condition": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
-				"type_specific": {
-					"type": "minecraft:raider",
+				"minecraft:type_specific/raider": {
 					"has_raid": true,
 					"is_captain": false
 				}
@@ -159,7 +164,9 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 
 	predicate("sheep_type_specific") {
 		entityProperties {
-			sheepTypeSpecific(sheared = true)
+			typeSpecific {
+				sheep(sheared = true)
+			}
 		}
 	}
 
@@ -168,17 +175,18 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 			"condition": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
-				"type_specific": {
-					"type": "minecraft:sheep",
+				"minecraft:type_specific/sheep": {
 					"sheared": true
 				}
 			}
 		}
 	""".trimIndent()
 
-	predicate("slime_type_specific") {
+	predicate("cube_mob_type_specific") {
 		entityProperties {
-			slimeTypeSpecific(rangeOrInt(2))
+			typeSpecific {
+				cubeMob(rangeOrInt(2))
+			}
 		}
 	}
 
@@ -187,8 +195,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 			"condition": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
-				"type_specific": {
-					"type": "minecraft:slime",
+				"minecraft:cube_mob": {
 					"size": 2
 				}
 			}
