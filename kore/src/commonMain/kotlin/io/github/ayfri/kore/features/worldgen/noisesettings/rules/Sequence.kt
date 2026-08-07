@@ -28,11 +28,11 @@ fun NoiseSettings.surfaceRules(vararg rules: SurfaceRule) {
 }
 
 /**
- * Creates a sequence of [SurfaceRule] objects based on the provided block.
+ * Appends a sequence of [SurfaceRule] objects based on the provided block.
  */
-fun sequence(block: MutableList<SurfaceRule>.() -> Unit) = Sequence(buildList(block))
+fun MutableList<SurfaceRule>.sequence(block: MutableList<SurfaceRule>.() -> Unit) = apply { add(Sequence(buildList(block))) }
 
 /**
- * Creates a new sequence of SurfaceRule objects.
+ * Appends a new sequence of SurfaceRule objects.
  */
-fun sequence(vararg rules: SurfaceRule) = Sequence(rules.toList())
+fun MutableList<SurfaceRule>.sequence(vararg rules: SurfaceRule) = apply { add(Sequence(rules.toList())) }

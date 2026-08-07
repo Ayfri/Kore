@@ -46,5 +46,14 @@ data class Block(
 	}
 }
 
-fun block(name: BlockArgument, block: MutableMap<String, String>.() -> Unit = {}) = Block(BlockState(name, buildMap(block)))
-fun block(name: BlockArgument, properties: Map<String, String>) = Block(BlockState(name, properties))
+/**
+ * Appends a block surface rule.
+ */
+fun MutableList<SurfaceRule>.block(name: BlockArgument, block: MutableMap<String, String>.() -> Unit = {}) =
+	apply { add(Block(BlockState(name, buildMap(block)))) }
+
+/**
+ * Appends a block surface rule.
+ */
+fun MutableList<SurfaceRule>.block(name: BlockArgument, properties: Map<String, String>) =
+	apply { add(Block(BlockState(name, properties))) }

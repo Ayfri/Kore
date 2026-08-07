@@ -141,24 +141,24 @@ Reference: [Noise router](https://minecraft.wiki/w/Noise_settings#Noise_router)
 noiseRouter {
 	// Core terrain
 	finalDensity = /* density function */
-		initialDensity = /* density function */
+    initialDensity = /* density function */
 
-		// Aquifers and ore veins
-		barrier = /* density function */
-		fluidLevelFloodedness = /* density function */
-		fluidLevelSpread = /* density function */
-		lava = /* density function */
-		veinToggle = /* density function */
-		veinRidged = /* density function */
-		veinGap = /* density function */
+    // Aquifers and ore veins
+    barrier = /* density function */
+    fluidLevelFloodedness = /* density function */
+    fluidLevelSpread = /* density function */
+    lava = /* density function */
+    veinToggle = /* density function */
+    veinRidged = /* density function */
+    veinGap = /* density function */
 
-		// Biome and erosion
-		continents = /* density function */
-		erosion = /* density function */
-		depth = /* density function */
-		ridges = /* density function */
-		temperature = /* density function */
-		vegetation = /* density function */
+    // Biome and erosion
+    continents = /* density function */
+    erosion = /* density function */
+    depth = /* density function */
+    ridges = /* density function */
+    temperature = /* density function */
+    vegetation = /* density function */
 }
 ```
 
@@ -170,25 +170,25 @@ Conditions can check biome, depth, noise values, and more.
 Reference: [Surface rule](https://minecraft.wiki/w/Surface_rule)
 
 ```kotlin
-surfaceRule = sequence(
-	condition(
-		biome(Biomes.DESERT),
+surfaceRules {
+	condition(biomes(Biomes.DESERT)) {
 		block(Blocks.SAND)
-	),
-	condition(
-		stoneDepthFloor(offset = 0, addSurfaceDepth = false, secondaryDepthRange = 0),
+	}
+	condition(stoneDepth(Surface.FLOOR, addSurfaceDepth = false, secondaryDepthRange = 0)) {
 		block(Blocks.GRASS_BLOCK)
-	),
+	}
 	block(Blocks.STONE)
-)
+}
 ```
 
 Use `noiseGradient` to pick a block state from a list of entries, indexed by the value of a noise:
 
 ```kotlin
-surfaceRule = noiseGradient(hillsNoise) {
-	entry(BlockState(Blocks.STONE))
-	entry(BlockState(Blocks.DEEPSLATE))
+surfaceRules {
+	noiseGradient(hillsNoise) {
+		entry(BlockState(Blocks.STONE))
+		entry(BlockState(Blocks.DEEPSLATE))
+	}
 }
 ```
 

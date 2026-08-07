@@ -17,8 +17,8 @@ import io.github.ayfri.kore.features.timelines.InBack
 import io.github.ayfri.kore.features.worldgen.dimension.generator.FlatGeneratorSettings
 import io.github.ayfri.kore.features.worldgen.dimension.generator.Layer
 import io.github.ayfri.kore.features.worldgen.flatlevelgeneratorpreset.FlatLevelGeneratorPreset
+import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.Block
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.block
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Items
@@ -78,8 +78,8 @@ fun blockEntityDataDeserializer() {
 }
 
 fun blockStateDeserializer() {
-	roundTripsAs(Block.serializer(), block(Blocks.OAK_STAIRS, mapOf("facing" to "north", "half" to "top")))
-	roundTripsAs(Block.serializer(), block(Blocks.STONE))
+	roundTripsAs(Block.serializer(), Block(BlockState(Blocks.OAK_STAIRS, mapOf("facing" to "north", "half" to "top"))))
+	roundTripsAs(Block.serializer(), Block(BlockState(Blocks.STONE)))
 }
 
 fun tripleAsArrayDeserializer() {

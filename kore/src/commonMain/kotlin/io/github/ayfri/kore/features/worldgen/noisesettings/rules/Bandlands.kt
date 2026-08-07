@@ -7,3 +7,8 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data object Bandlands : SurfaceRule()
+
+/**
+ * Appends a bandlands surface rule.
+ */
+fun MutableList<SurfaceRule>.bandlands() = apply { add(Bandlands) }

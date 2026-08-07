@@ -7,7 +7,7 @@ import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.features.worldgen.dimension.biomesource.multinoise.multiNoiseBiomeSourceParameters
 import io.github.ayfri.kore.features.worldgen.noise.noise
 import io.github.ayfri.kore.features.worldgen.noisesettings.*
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.Bandlands
+import io.github.ayfri.kore.features.worldgen.noisesettings.rules.bandlands
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.block
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.condition
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.biomes
@@ -55,26 +55,26 @@ fun DataPack.noiseSettingsTests() {
 		)
 
 		surfaceRules {
-			this += Bandlands
-			this += block(Blocks.STONE)
-			this += condition(
+			bandlands()
+			block(Blocks.STONE)
+			condition(
 				not {
 					biomes {
 						this += Biomes.BADLANDS
 					}
 				}
 			) {
-				this += block(Blocks.STONE)
-				this += block(Blocks.DIRT)
-				this += block(Blocks.GRAVEL)
-				this += block(Blocks.GRANITE)
-				this += block(Blocks.DIORITE)
-				this += block(Blocks.ANDESITE)
+				block(Blocks.STONE)
+				block(Blocks.DIRT)
+				block(Blocks.GRAVEL)
+				block(Blocks.GRANITE)
+				block(Blocks.DIORITE)
+				block(Blocks.ANDESITE)
 			}
 
-			this += condition(noiseThreshold(myNoise))
+			condition(noiseThreshold(myNoise))
 
-			this += noiseGradient(myNoise) {
+			noiseGradient(myNoise) {
 				entry(BlockState(Blocks.STONE))
 				entry()
 			}

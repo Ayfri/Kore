@@ -26,10 +26,17 @@ data class NoiseGradient(
 	var noise: NoiseArgument,
 ) : SurfaceRule()
 
-fun noiseGradient(noise: NoiseArgument, gradient: List<NoiseGradientEntry>) = NoiseGradient(gradient, noise)
+/**
+ * Appends a noise gradient surface rule.
+ */
+fun MutableList<SurfaceRule>.noiseGradient(noise: NoiseArgument, gradient: List<NoiseGradientEntry>) =
+	apply { add(NoiseGradient(gradient, noise)) }
 
-fun noiseGradient(noise: NoiseArgument, block: MutableList<NoiseGradientEntry>.() -> Unit) =
-	NoiseGradient(buildList(block), noise)
+/**
+ * Appends a noise gradient surface rule.
+ */
+fun MutableList<SurfaceRule>.noiseGradient(noise: NoiseArgument, block: MutableList<NoiseGradientEntry>.() -> Unit) =
+	apply { add(NoiseGradient(buildList(block), noise)) }
 
 fun MutableList<NoiseGradientEntry>.entry(state: BlockState? = null) = apply {
 	add(NoiseGradientEntry(state))
