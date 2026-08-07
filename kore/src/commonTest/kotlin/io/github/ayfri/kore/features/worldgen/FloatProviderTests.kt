@@ -4,7 +4,7 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.largeDripstone
-import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeaturesBuilder
 import io.github.ayfri.kore.features.worldgen.floatproviders.clampedNormal
 import io.github.ayfri.kore.features.worldgen.floatproviders.constant
 import io.github.ayfri.kore.features.worldgen.floatproviders.trapezoid
@@ -13,9 +13,9 @@ import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.floatProviderTests() {
-	configuredFeature("clamped_normal_test", largeDripstone {
+	configuredFeaturesBuilder.largeDripstone("clamped_normal_test") {
 		heightScale = clampedNormal(mean = 0.5f, deviation = 0.1f, min = 0.0f, max = 1.0f)
-	})
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -40,9 +40,9 @@ fun DataPack.floatProviderTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("constant_test", largeDripstone {
+	configuredFeaturesBuilder.largeDripstone("constant_test") {
 		heightScale = constant(2.0f)
-	})
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -61,9 +61,9 @@ fun DataPack.floatProviderTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("trapezoid_test", largeDripstone {
+	configuredFeaturesBuilder.largeDripstone("trapezoid_test") {
 		heightScale = trapezoid(min = 0.0f, max = 1.0f, plateau = 0.5f)
-	})
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -87,9 +87,9 @@ fun DataPack.floatProviderTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("uniform_test", largeDripstone {
+	configuredFeaturesBuilder.largeDripstone("uniform_test") {
 		heightScale = uniform(minInclusive = 1.0f, maxExclusive = 5.0f)
-	})
+	}
 
 	configuredFeatures.last() assertsIs """
 		{

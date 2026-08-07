@@ -45,3 +45,15 @@ fun DataPack.configuredFeature(
 	configuredFeatures += configuredFeature
 	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: name)
 }
+
+val DataPack.configuredFeaturesBuilder get() = ConfiguredFeatures(this)
+
+/**
+ * Declares configured features using Kore's DSL builder, one call per config type (e.g. [io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.geode]).
+ *
+ * Produces one `data/<namespace>/worldgen/configured_feature/<fileName>.json` per call inside [block].
+ *
+ * JSON format reference: https://minecraft.wiki/w/Configured_feature
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
+ */
+fun DataPack.configuredFeatures(block: ConfiguredFeatures.() -> Unit) = configuredFeaturesBuilder.apply(block)

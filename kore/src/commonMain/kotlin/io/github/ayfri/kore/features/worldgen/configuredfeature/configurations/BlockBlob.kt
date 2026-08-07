@@ -4,6 +4,9 @@ import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.data.block.blockStateStone
 import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicate
 import io.github.ayfri.kore.features.worldgen.blockpredicate.True
+import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
+import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
+import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
 import kotlinx.serialization.Serializable
 
 /**
@@ -25,8 +28,13 @@ data class BlockBlob(
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#block_blob
  */
-fun blockBlob(
+fun ConfiguredFeatures.blockBlob(
+	fileName: String,
 	canPlaceOn: BlockPredicate = True,
 	state: BlockState = blockStateStone(),
 	block: BlockBlob.() -> Unit = {},
-) = BlockBlob(canPlaceOn, state).apply(block)
+): ConfiguredFeatureArgument {
+	val configuredFeature = ConfiguredFeature(fileName, BlockBlob(canPlaceOn, state).apply(block))
+	dp.configuredFeatures += configuredFeature
+	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
+}

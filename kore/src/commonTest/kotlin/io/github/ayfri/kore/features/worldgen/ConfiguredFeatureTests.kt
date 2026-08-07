@@ -17,25 +17,20 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.t
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.attachedToLeaves
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.cherryTrunkPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.darkOakTrunkPlacer
-import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeaturesBuilder
 import io.github.ayfri.kore.features.worldgen.configuredfeature.target
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.features.worldgen.intproviders.uniform
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.Surface
 import io.github.ayfri.kore.features.worldgen.ruletest.randomBlockMatch
-import io.github.ayfri.kore.generated.Blocks
-import io.github.ayfri.kore.generated.Fluids
-import io.github.ayfri.kore.generated.PlacedFeatures
-import io.github.ayfri.kore.generated.ProcessorLists
-import io.github.ayfri.kore.generated.Structures
-import io.github.ayfri.kore.generated.Tags
+import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
 import io.github.ayfri.kore.features.worldgen.floatproviders.constant as constantFloat
 
 fun DataPack.configuredFeatureTests() {
-	configuredFeature("end_platform", EndPlatform)
+	configuredFeaturesBuilder.endPlatform("end_platform")
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -44,7 +39,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_bamboo", bamboo(probability = 0.5))
+	configuredFeaturesBuilder.bamboo("test_bamboo", probability = 0.5)
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -55,7 +50,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_basalt_columns", basaltColumns(reach = 3, height = 6))
+	configuredFeaturesBuilder.basaltColumns("test_basalt_columns", reach = 3, height = 6)
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -67,7 +62,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_basalt_pillar", BasaltPillar)
+	configuredFeaturesBuilder.basaltPillar("test_basalt_pillar")
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -76,7 +71,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_block_blob", blockBlob(canPlaceOn = Solid, state = blockStateStone()))
+	configuredFeaturesBuilder.blockBlob("test_block_blob", canPlaceOn = Solid, state = blockStateStone())
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -92,7 +87,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_block_pile", blockPile(simpleStateProvider(Blocks.GRAVEL)))
+	configuredFeaturesBuilder.blockPile("test_block_pile", simpleStateProvider(Blocks.GRAVEL))
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -108,41 +103,38 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature(
-		"test_block_predicates_and_complex_provider",
-		blockColumn(direction = Direction.DOWN) {
-			allowedPlacement = allOf {
-				not {
-					matchingBlocks(
-						blocks = listOf(
-							Blocks.DIRT,
-							Blocks.STONE
-						)
+	configuredFeaturesBuilder.blockColumn("test_block_predicates_and_complex_provider", direction = Direction.DOWN) {
+		allowedPlacement = allOf {
+			not {
+				matchingBlocks(
+					blocks = listOf(
+						Blocks.DIRT,
+						Blocks.STONE
 					)
+				)
+			}
+
+			solid()
+		}
+
+		layers {
+			layer(provider = dualNoiseProvider {
+				slowNoise {
+					firstOctave = 1
+					amplitudes = listOf(1.2)
 				}
 
-				solid()
-			}
+				variety(1, 2)
+				scale = 1.0
+				slowScale = 1.0
 
-			layers {
-				layer(provider = dualNoiseProvider {
-					slowNoise {
-						firstOctave = 1
-						amplitudes = listOf(1.2)
-					}
-
-					variety(1, 2)
-					scale = 1.0
-					slowScale = 1.0
-
-					states = listOf(
-						blockState(Blocks.STONE),
-						blockState(Blocks.DIRT)
-					)
-				})
-			}
+				states = listOf(
+					blockState(Blocks.STONE),
+					blockState(Blocks.DIRT)
+				)
+			})
 		}
-	)
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -205,7 +197,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_blue_ice", BlueIce)
+	configuredFeaturesBuilder.blueIce("test_blue_ice")
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -214,7 +206,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_bonus_chest", BonusChest)
+	configuredFeaturesBuilder.bonusChest("test_bonus_chest")
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -223,7 +215,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_chorus_plant", ChorusPlant)
+	configuredFeaturesBuilder.chorusPlant("test_chorus_plant")
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -232,7 +224,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_coral_claw", CoralClaw)
+	configuredFeaturesBuilder.coralClaw("test_coral_claw")
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -241,7 +233,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_coral_mushroom", CoralMushroom)
+	configuredFeaturesBuilder.coralMushroom("test_coral_mushroom")
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -250,7 +242,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_coral_tree", CoralTree)
+	configuredFeaturesBuilder.coralTree("test_coral_tree")
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -259,7 +251,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_dark_oak_tree", tree {
+	configuredFeaturesBuilder.tree("test_dark_oak_tree") {
 		ignoreVines = true
 		minimumSize = threeLayersFeatureSize {
 			limit = 1
@@ -289,7 +281,7 @@ fun DataPack.configuredFeatureTests() {
 				then(simpleStateProvider(Blocks.DIRT))
 			}
 		}
-	})
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -360,7 +352,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_delta_feature", deltaFeature(size = 3, rimSize = 1))
+	configuredFeaturesBuilder.deltaFeature("test_delta_feature", size = 3, rimSize = 1)
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -378,7 +370,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_desert_well", DesertWell)
+	configuredFeaturesBuilder.desertWell("test_desert_well")
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -387,9 +379,12 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature(
+	configuredFeaturesBuilder.disk(
 		"test_disk",
-		disk(stateProvider = simpleStateProvider(Blocks.GRAVEL), target = Solid, radius = 3, halfHeight = 1),
+		stateProvider = simpleStateProvider(Blocks.GRAVEL),
+		target = Solid,
+		radius = 3,
+		halfHeight = 1
 	)
 
 	configuredFeatures.last() assertsIs """
@@ -411,7 +406,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_speleothem_cluster", speleothemCluster {
+	configuredFeaturesBuilder.speleothemCluster("test_speleothem_cluster") {
 		floorToCeilingSearchRange = 30
 		height = constant(12)
 		radius = constant(4)
@@ -426,7 +421,7 @@ fun DataPack.configuredFeatureTests() {
 		baseBlock = blockState(Blocks.DRIPSTONE_BLOCK)
 		pointedBlock = blockState(Blocks.POINTED_DRIPSTONE)
 		replaceableBlocks = listOf(Blocks.STONE, Blocks.DIRT)
-	})
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -457,7 +452,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_end_island", EndIsland)
+	configuredFeaturesBuilder.endIsland("test_end_island")
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -466,10 +461,10 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_end_spike", endSpike {
+	configuredFeaturesBuilder.endSpike("test_end_spike") {
 		crystalInvulnerable = true
 		spikes += EndSpikeEntry(radius = 5, height = 60, guarded = false)
-	})
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -492,7 +487,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_fill_layer", fillLayer(height = 32))
+	configuredFeaturesBuilder.fillLayer("test_fill_layer", height = 32)
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -506,15 +501,12 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature(
-		"test_fossil",
-		fossil(
-			maxEmptyCornersAllowed = 4,
-			fossilStructures = listOf(StructureArgument("fossil/spine_1")),
-			overlayStructures = listOf(StructureArgument("fossil/overlay/coal_0")),
-			fossilProcessors = ProcessorLists.FOSSIL_COAL,
-			overlayProcessors = ProcessorLists.FOSSIL_ROT,
-		),
+	configuredFeaturesBuilder.fossil(
+		"test_fossil", maxEmptyCornersAllowed = 4,
+		fossilStructures = listOf(StructureArgument("fossil/spine_1")),
+		overlayStructures = listOf(StructureArgument("fossil/overlay/coal_0")),
+		fossilProcessors = ProcessorLists.FOSSIL_COAL,
+		overlayProcessors = ProcessorLists.FOSSIL_ROT,
 	)
 
 	configuredFeatures.last() assertsIs """
@@ -534,7 +526,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_freeze_top_layer", FreezeTopLayer)
+	configuredFeaturesBuilder.freezeTopLayer("test_freeze_top_layer")
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -543,7 +535,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_geode", geode {
+	configuredFeaturesBuilder.geode("test_geode") {
 		layers {
 			filling = 1.0
 			innerLayer = 2.0
@@ -556,7 +548,7 @@ fun DataPack.configuredFeatureTests() {
 			crackPointOffset = 2.0
 		}
 		invalidBlocksTreshold = 1
-	})
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -613,7 +605,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_glowstone_blob", GlowstoneBlob)
+	configuredFeaturesBuilder.glowstoneBlob("test_glowstone_blob")
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -622,7 +614,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_huge_brown_mushroom", hugeBrownMushroom(canPlaceOn = Solid))
+	configuredFeaturesBuilder.hugeBrownMushroom("test_huge_brown_mushroom", canPlaceOn = Solid)
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -647,11 +639,11 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_huge_fungus", hugeFungus {
+	configuredFeaturesBuilder.hugeFungus("test_huge_fungus") {
 		planted = true
 		hatState = simpleStateProvider(Blocks.DIRT)
 		stemState = simpleStateProvider(Blocks.STONE)
-	})
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -689,7 +681,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_huge_red_mushroom", hugeRedMushroom(canPlaceOn = Solid))
+	configuredFeaturesBuilder.hugeRedMushroom("test_huge_red_mushroom", canPlaceOn = Solid)
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -714,7 +706,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_iceberg", iceberg(state = blockState(Blocks.DIRT)))
+	configuredFeaturesBuilder.iceberg("test_iceberg", state = blockState(Blocks.DIRT))
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -727,7 +719,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_kelp", Kelp)
+	configuredFeaturesBuilder.kelp("test_kelp")
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -736,15 +728,12 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature(
-		"test_lake",
-		lake(
-			fluid = blockState(Blocks.STONE),
-			barrier = blockState(Blocks.GRAVEL),
-			canPlaceFeature = matchingBlocks(block = Blocks.STONE),
-			canReplaceWithAirOrFluid = Solid,
-			canReplaceWithBarrier = matchingFluids(fluids = listOf(Fluids.WATER)),
-		)
+	configuredFeaturesBuilder.lake(
+		"test_lake", fluid = blockState(Blocks.STONE),
+		barrier = blockState(Blocks.GRAVEL),
+		canPlaceFeature = matchingBlocks(block = Blocks.STONE),
+		canReplaceWithAirOrFluid = Solid,
+		canReplaceWithBarrier = matchingFluids(fluids = listOf(Fluids.WATER)),
 	)
 
 	configuredFeatures.last() assertsIs """
@@ -772,7 +761,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_large_dripstone", largeDripstone {
+	configuredFeaturesBuilder.largeDripstone("test_large_dripstone") {
 		floorToCeilingSearchRange = 30
 		columnRadius = constant(3)
 		heightScale = constantFloat(2.0f)
@@ -783,7 +772,7 @@ fun DataPack.configuredFeatureTests() {
 		minRadiusForWind = 3
 		minBluntnessForWind = 0.5f
 		replaceableBlocks = listOf(Blocks.STONE, Blocks.DIRT)
-	})
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -806,7 +795,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_monster_room", MonsterRoom)
+	configuredFeaturesBuilder.monsterRoom("test_monster_room")
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -815,7 +804,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_multiface_growth", multifaceGrowth {
+	configuredFeaturesBuilder.multifaceGrowth("test_multiface_growth") {
 		block = Blocks.STONE
 		searchRange = 10
 		chanceOfSpreading = 0.5
@@ -823,7 +812,7 @@ fun DataPack.configuredFeatureTests() {
 		canPlaceOnCeiling = true
 		canPlaceOnWall = true
 		canBePlacedOn = listOf(Blocks.STONE, Blocks.DIRT)
-	})
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -843,9 +832,11 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature(
+	configuredFeaturesBuilder.netherForestVegetation(
 		"test_nether_forest_vegetation",
-		netherForestVegetation(stateProvider = simpleStateProvider(Blocks.STONE), spreadWidth = 8, spreadHeight = 4),
+		stateProvider = simpleStateProvider(Blocks.STONE),
+		spreadWidth = 8,
+		spreadHeight = 4
 	)
 
 	configuredFeatures.last() assertsIs """
@@ -864,9 +855,11 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature(
+	configuredFeaturesBuilder.netherrackReplaceBlobs(
 		"test_netherrack_replace_blobs",
-		netherrackReplaceBlobs(blockState(Blocks.GRAVEL), blockStateStone(), constant(3)),
+		blockState(Blocks.GRAVEL),
+		blockStateStone(),
+		constant(3)
 	)
 
 	configuredFeatures.last() assertsIs """
@@ -884,7 +877,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_no_op", NoOp)
+	configuredFeaturesBuilder.noOp("test_no_op")
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -893,11 +886,11 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_ore", ore {
+	configuredFeaturesBuilder.ore("test_ore") {
 		targets {
 			target(state = blockState(Blocks.STONE), target = randomBlockMatch(Blocks.STONE))
 		}
-	})
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -921,19 +914,16 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature(
-		"test_speleothem",
-		speleothem(
-			chanceOfTallerGeneration = 0.5,
-			chanceOfDirectionalSpread = 0.5,
-			chanceOfSpreadRadius2 = 0.5,
-			chanceOfSpreadRadius3 = 0.5,
-		) {
-			baseBlock = blockState(Blocks.DRIPSTONE_BLOCK)
-			pointedBlock = blockState(Blocks.POINTED_DRIPSTONE)
-			replaceableBlocks = listOf(Blocks.STONE, Blocks.DIRT)
-		},
-	)
+	configuredFeaturesBuilder.speleothem(
+		"test_speleothem", chanceOfTallerGeneration = 0.5,
+		chanceOfDirectionalSpread = 0.5,
+		chanceOfSpreadRadius2 = 0.5,
+		chanceOfSpreadRadius3 = 0.5,
+	) {
+		baseBlock = blockState(Blocks.DRIPSTONE_BLOCK)
+		pointedBlock = blockState(Blocks.POINTED_DRIPSTONE)
+		replaceableBlocks = listOf(Blocks.STONE, Blocks.DIRT)
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -957,9 +947,10 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature(
+	configuredFeaturesBuilder.randomBooleanSelector(
 		"test_random_boolean_selector",
-		randomBooleanSelector(featureFalse = PlacedFeatures.FOSSIL_LOWER, featureTrue = PlacedFeatures.FOSSIL_UPPER),
+		featureFalse = PlacedFeatures.FOSSIL_LOWER,
+		featureTrue = PlacedFeatures.FOSSIL_UPPER
 	)
 
 	configuredFeatures.last() assertsIs """
@@ -972,9 +963,9 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_random_selector", randomSelector(default = PlacedFeatures.ACACIA) {
+	configuredFeaturesBuilder.randomSelector("test_random_selector", default = PlacedFeatures.ACACIA) {
 		feature(PlacedFeatures.ACACIA_CHECKED, 0.5f)
-	})
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -991,9 +982,9 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature(
+	configuredFeaturesBuilder.replaceSingleBlock(
 		"test_replace_single_block",
-		replaceSingleBlock(target(randomBlockMatch(Blocks.STONE), blockState(Blocks.STONE))),
+		target(randomBlockMatch(Blocks.STONE), blockState(Blocks.STONE))
 	)
 
 	configuredFeatures.last() assertsIs """
@@ -1016,7 +1007,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_root_system", rootSystem(feature = PlacedFeatures.ACACIA) {
+	configuredFeaturesBuilder.rootSystem("test_root_system", feature = PlacedFeatures.ACACIA) {
 		requiredVerticalSpaceForTree = 2
 		rootRadius = 3
 		rootReplaceable = listOf(Blocks.DIRT)
@@ -1028,7 +1019,7 @@ fun DataPack.configuredFeatureTests() {
 		allowedVerticalWaterForTree = 0
 		rootStateProvider = simpleStateProvider(Blocks.DIRT)
 		hangingRootStateProvider = simpleStateProvider(Blocks.DIRT)
-	})
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1063,21 +1054,16 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature(
-		"test_rule_based_provider_list_block",
-		simpleBlock(
-			ruleBasedStateProvider {
-				fallback = simpleStateProvider(Blocks.STONE)
-				rule(
-					ifTrue = Solid,
-					then = simpleStateProvider(Blocks.GRAVEL),
-				)
-				rule(then = simpleStateProvider(Blocks.SAND)) {
-					solid()
-				}
-			}
+	configuredFeaturesBuilder.simpleBlock("test_rule_based_provider_list_block", ruleBasedStateProvider {
+		fallback = simpleStateProvider(Blocks.STONE)
+		rule(
+			ifTrue = Solid,
+			then = simpleStateProvider(Blocks.GRAVEL),
 		)
-	)
+		rule(then = simpleStateProvider(Blocks.SAND)) {
+			solid()
+		}
+	})
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1121,29 +1107,24 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature(
-		"test_rule_based_provider_unified",
-		simpleBlock(
-			ruleBasedStateProvider {
-				fallback = simpleStateProvider(Blocks.STONE)
-				rule {
-					ifTrue {
-						solid()
-					}
-					then(simpleStateProvider(Blocks.DIRT))
-				}
-				rule(
-					ifTrue = hasSturdyFace(direction = Direction.DOWN),
-					then = simpleStateProvider(Blocks.GRAVEL),
-				)
-				rule(then = simpleStateProvider(Blocks.SAND)) {
-					not {
-						matchingBlocks(block = Blocks.STONE)
-					}
-				}
+	configuredFeaturesBuilder.simpleBlock("test_rule_based_provider_unified", ruleBasedStateProvider {
+		fallback = simpleStateProvider(Blocks.STONE)
+		rule {
+			ifTrue {
+				solid()
 			}
+			then(simpleStateProvider(Blocks.DIRT))
+		}
+		rule(
+			ifTrue = hasSturdyFace(direction = Direction.DOWN),
+			then = simpleStateProvider(Blocks.GRAVEL),
 		)
-	)
+		rule(then = simpleStateProvider(Blocks.SAND)) {
+			not {
+				matchingBlocks(block = Blocks.STONE)
+			}
+		}
+	})
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1203,9 +1184,11 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature(
+	configuredFeaturesBuilder.scatteredOre(
 		"test_scattered_ore",
-		scatteredOre(5, 0.5, target(randomBlockMatch(Blocks.STONE), blockState(Blocks.STONE))),
+		5,
+		0.5,
+		target(randomBlockMatch(Blocks.STONE), blockState(Blocks.STONE))
 	)
 
 	configuredFeatures.last() assertsIs """
@@ -1230,7 +1213,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_sculk_patch", sculkPatch {
+	configuredFeaturesBuilder.sculkPatch("test_sculk_patch") {
 		chargeCount = 10
 		amountPerCharge = 2
 		spreadAttempts = 45
@@ -1238,7 +1221,7 @@ fun DataPack.configuredFeatureTests() {
 		spreadRounds = 2
 		extraRateGrowths = constant(0)
 		catalystChance = 0.5
-	})
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1255,7 +1238,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_sea_pickle", seaPickle(count = constant(3)))
+	configuredFeaturesBuilder.seaPickle("test_sea_pickle", count = constant(3))
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1266,7 +1249,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_seagrass", seagrass(probability = 0.5))
+	configuredFeaturesBuilder.seagrass("test_seagrass", probability = 0.5)
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1277,7 +1260,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_sequence", sequence(PlacedFeatures.ACACIA, PlacedFeatures.ACACIA_CHECKED))
+	configuredFeaturesBuilder.sequence("test_sequence", PlacedFeatures.ACACIA, PlacedFeatures.ACACIA_CHECKED)
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1291,7 +1274,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_simple_block", simpleBlock(simpleStateProvider(Blocks.STONE), scheduleTick = true))
+	configuredFeaturesBuilder.simpleBlock("test_simple_block", simpleStateProvider(Blocks.STONE), scheduleTick = true)
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1308,9 +1291,10 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature(
+	configuredFeaturesBuilder.simpleRandomSelector(
 		"test_simple_random_selector",
-		simpleRandomSelector(PlacedFeatures.ACACIA, PlacedFeatures.ACACIA_CHECKED),
+		PlacedFeatures.ACACIA,
+		PlacedFeatures.ACACIA_CHECKED
 	)
 
 	configuredFeatures.last() assertsIs """
@@ -1325,7 +1309,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_spike", spike(canPlaceOn = Solid, canReplace = Solid, state = blockStateStone()))
+	configuredFeaturesBuilder.spike("test_spike", canPlaceOn = Solid, canReplace = Solid, state = blockStateStone())
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1344,13 +1328,13 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_spring_feature", springFeature {
+	configuredFeaturesBuilder.springFeature("test_spring_feature") {
 		state = blockState(Blocks.STONE)
 		rockCount = 4
 		holeCount = 1
 		requiresBlockBelow = true
 		validBlocks = listOf(Blocks.STONE, Blocks.GRAVEL)
-	})
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1370,12 +1354,14 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature(
+	configuredFeaturesBuilder.template(
 		"test_template",
-		template(
-			structureTemplate(Structures.EndCity.BRIDGE_END, weight = 2, rotations = listOf(StructureRotation.CLOCKWISE_90)),
-			structureTemplate(Structures.EndCity.BRIDGE_GENTLE_STAIRS),
+		structureTemplate(
+			Structures.EndCity.BRIDGE_END,
+			weight = 2,
+			rotations = listOf(StructureRotation.CLOCKWISE_90)
 		),
+		structureTemplate(Structures.EndCity.BRIDGE_GENTLE_STAIRS),
 	)
 
 	configuredFeatures.last() assertsIs """
@@ -1403,7 +1389,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_tree", tree {
+	configuredFeaturesBuilder.tree("test_tree") {
 		minimumSize = threeLayersFeatureSize {
 			limit = 5
 			upperLimit = 2
@@ -1429,7 +1415,7 @@ fun DataPack.configuredFeatureTests() {
 				requiredEmptyBlocks = 3
 			}
 		}
-	})
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1500,7 +1486,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_tree_alter_ground", tree {
+	configuredFeaturesBuilder.tree("test_tree_alter_ground") {
 		cherryTrunkPlacer {
 			branchCount = constant(1)
 			branchHorizontalLength = constant(2)
@@ -1516,7 +1502,7 @@ fun DataPack.configuredFeatureTests() {
 				}
 			}
 		}
-	})
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1592,7 +1578,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_tree_below_trunk", tree {
+	configuredFeaturesBuilder.tree("test_tree_below_trunk") {
 		cherryTrunkPlacer {
 			branchCount = constant(1)
 			branchHorizontalLength = constant(2)
@@ -1608,7 +1594,7 @@ fun DataPack.configuredFeatureTests() {
 				then(simpleStateProvider(Blocks.GRASS_BLOCK))
 			}
 		}
-	})
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1680,9 +1666,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature(
-		"test_triple_as_array", endGateway(exact = true)
-	)
+	configuredFeaturesBuilder.endGateway("test_triple_as_array", exact = true)
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1693,7 +1677,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_twisting_vines", twistingVines(spreadWidth = 8, spreadHeight = 4, maxHeight = 16))
+	configuredFeaturesBuilder.twistingVines("test_twisting_vines", spreadWidth = 8, spreadHeight = 4, maxHeight = 16)
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1706,13 +1690,10 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature(
-		"test_underwater_magma",
-		underwaterMagma(
-			floorSearchRange = 3,
-			placementRadiusAroundFloor = 1,
-			placementProbabilityPerValidPosition = 0.5
-		),
+	configuredFeaturesBuilder.underwaterMagma(
+		"test_underwater_magma", floorSearchRange = 3,
+		placementRadiusAroundFloor = 1,
+		placementProbabilityPerValidPosition = 0.5
 	)
 
 	configuredFeatures.last() assertsIs """
@@ -1726,19 +1707,16 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature(
-		"test_vegetation_patch",
-		vegetationPatch(
-			surface = Surface.FLOOR,
-			replaceable = listOf(Tags.Block.DIRT),
-			vegetationFeature = PlacedFeatures.ACACIA
-		) {
-			depth = constant(3)
-			verticalRange = 3
-			vegetationChance = 0.5
-			xzRadius = 2
-		},
-	)
+	configuredFeaturesBuilder.vegetationPatch(
+		"test_vegetation_patch", surface = Surface.FLOOR,
+		replaceable = listOf(Tags.Block.DIRT),
+		vegetationFeature = PlacedFeatures.ACACIA
+	) {
+		depth = constant(3)
+		verticalRange = 3
+		vegetationChance = 0.5
+		xzRadius = 2
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1763,7 +1741,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_vines", Vines)
+	configuredFeaturesBuilder.vines("test_vines")
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1772,7 +1750,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_void_start_platform", VoidStartPlatform)
+	configuredFeaturesBuilder.voidStartPlatform("test_void_start_platform")
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1781,19 +1759,16 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature(
-		"test_waterlogged_vegetation_patch",
-		waterloggedVegetationPatch(
-			surface = Surface.CEILING,
-			replaceable = listOf(Tags.Block.DIRT),
-			vegetationFeature = PlacedFeatures.ACACIA
-		) {
-			depth = constant(2)
-			verticalRange = 8
-			vegetationChance = 0.5
-			xzRadius = 3
-		},
-	)
+	configuredFeaturesBuilder.waterloggedVegetationPatch(
+		"test_waterlogged_vegetation_patch", surface = Surface.CEILING,
+		replaceable = listOf(Tags.Block.DIRT),
+		vegetationFeature = PlacedFeatures.ACACIA
+	) {
+		depth = constant(2)
+		verticalRange = 8
+		vegetationChance = 0.5
+		xzRadius = 3
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1818,7 +1793,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeature("test_weeping_vines", WeepingVines)
+	configuredFeaturesBuilder.weepingVines("test_weeping_vines")
 
 	configuredFeatures.last() assertsIs """
 		{

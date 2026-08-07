@@ -2,8 +2,11 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
 import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicate
 import io.github.ayfri.kore.features.worldgen.blockpredicate.True
+import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
+import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
+import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
 import kotlinx.serialization.Serializable
 
 /**
@@ -22,10 +25,15 @@ data class HugeBrownMushroom(
 ) : FeatureConfig()
 
 /** Creates a [HugeBrownMushroom] feature configuration. */
-fun hugeBrownMushroom(
+fun ConfiguredFeatures.hugeBrownMushroom(
+	fileName: String,
 	canPlaceOn: BlockPredicate = True,
 	capProvider: BlockStateProvider = simpleStateProvider(),
 	stemProvider: BlockStateProvider = simpleStateProvider(),
 	foliageRadius: Int? = null,
 	block: HugeBrownMushroom.() -> Unit = {},
-) = HugeBrownMushroom(canPlaceOn, capProvider, stemProvider, foliageRadius).apply(block)
+): ConfiguredFeatureArgument {
+	val configuredFeature = ConfiguredFeature(fileName, HugeBrownMushroom(canPlaceOn, capProvider, stemProvider, foliageRadius).apply(block))
+	dp.configuredFeatures += configuredFeature
+	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
+}

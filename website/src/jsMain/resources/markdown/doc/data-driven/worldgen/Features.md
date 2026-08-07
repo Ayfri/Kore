@@ -30,7 +30,9 @@ References: [Configured feature](https://minecraft.wiki/w/Configured_feature), [
 
 ## Configured Features
 
-Configured features define the feature type and its parameters. Kore provides builder functions for common feature types.
+A configured feature is declared through `configuredFeaturesBuilder`: each feature type (tree, ore, geode, ...) is a function on it taking
+the file name first, so one call produces one `ConfiguredFeature` file and returns its `ConfiguredFeatureArgument` - there's no way to
+combine feature types into a single configured feature.
 
 ### Tree
 
@@ -38,24 +40,24 @@ Trees are complex features with trunk placers, foliage placers, and decorators. 
 while placers control the shape.
 
 ```kotlin
-val treeCfg = tree {
-	blobFoliagePlacer(radius = constant(2), offset = constant(0), height = 3)
-	foliageProvider = simpleStateProvider(Blocks.OAK_LEAVES)
-	straightTrunkPlacer(baseHeight = 6, heightRandA = 3, heightRandB = 1)
-	trunkProvider = simpleStateProvider(Blocks.OAK_LOG)
+configuredFeatures {
+	tree("my_tree") {
+		blobFoliagePlacer(radius = constant(2), offset = constant(0), height = 3)
+		foliageProvider = simpleStateProvider(Blocks.OAK_LEAVES)
+		straightTrunkPlacer(baseHeight = 6, heightRandA = 3, heightRandB = 1)
+		trunkProvider = simpleStateProvider(Blocks.OAK_LOG)
 
-	belowTrunkProvider = ruleBasedStateProvider {
-		fallback = simpleStateProvider(Blocks.DIRT)
-		rule {
-			ifTrue {
-				hasSturdyFace(direction = Direction.DOWN)
+		belowTrunkProvider = ruleBasedStateProvider {
+			fallback = simpleStateProvider(Blocks.DIRT)
+			rule {
+				ifTrue {
+					hasSturdyFace(direction = Direction.DOWN)
+				}
+				then(simpleStateProvider(Blocks.GRASS_BLOCK))
 			}
-			then(simpleStateProvider(Blocks.GRASS_BLOCK))
 		}
 	}
 }
-
-val tree = dp.configuredFeature("my_tree", treeCfg) {}
 ```
 
 ---
@@ -123,21 +125,18 @@ Ore features place clusters of blocks that replace existing terrain. The `size` 
 Reference: [Ore feature](https://minecraft.wiki/w/Ore_(feature))
 
 ```kotlin
-val oreCfg = ore(
+val ore = ore(
+	"my_ore",
 	size = 10,                        // Max blocks per vein
 	discardChanceOnAirExposure = 0.1, // Skip blocks exposed to air
 	targets = listOf(Target())        // Rule tests for replacement
 )
-
-val ore = dp.configuredFeature("my_ore", oreCfg) {}
 ```
 
 ### Simple Block
 
 ```kotlin
-val flowerCfg = simpleBlock(toPlace = simpleStateProvider(Blocks.DANDELION))
-
-val flower = dp.configuredFeature("my_flower", flowerCfg) {}
+val flower = simpleBlock("my_flower", toPlace = simpleStateProvider(Blocks.DANDELION))
 ```
 
 ### Other Feature Types
@@ -192,8 +191,8 @@ Kore supports all vanilla configured feature types. Functions are listed alphabe
 These feature types have no configuration fields and are used directly as Kotlin `data object` values:
 
 ```kotlin
-configuredFeature("basalt_pillar", BasaltPillar)
-configuredFeature("desert_well", DesertWell)
+basaltPillar("basalt_pillar")
+desertWell("desert_well")
 ```
 
 | Object              | Description                      |
@@ -374,13 +373,12 @@ count(weightedList {
 ```kotlin
 fun DataPack.createForestFeatures() {
 	// 1) Tree configured feature
-	val oakTreeCfg = tree {
+	val oakTree = configuredFeaturesBuilder.tree("oak_tree") {
 		blobFoliagePlacer(radius = constant(2), offset = constant(0), height = 3)
 		foliageProvider = simpleStateProvider(Blocks.OAK_LEAVES)
 		straightTrunkPlacer(baseHeight = 5, heightRandA = 2, heightRandB = 0)
 		trunkProvider = simpleStateProvider(Blocks.OAK_LOG)
 	}
-	val oakTree = configuredFeature("oak_tree", oakTreeCfg) {}
 
 	// 2) Tree placed feature
 	val oakTreePlaced = placedFeature("oak_tree_placed", oakTree) {
@@ -391,8 +389,7 @@ fun DataPack.createForestFeatures() {
 	}
 
 	// 3) Flower configured feature
-	val flowerCfg = simpleBlock(toPlace = simpleStateProvider(Blocks.POPPY))
-	val flower = configuredFeature("forest_flower", flowerCfg) {}
+	val flower = configuredFeaturesBuilder.simpleBlock("forest_flower", toPlace = simpleStateProvider(Blocks.POPPY))
 
 	// 4) Flower placed feature
 	val flowerPlaced = placedFeature("forest_flower_placed", flower) {
@@ -403,12 +400,12 @@ fun DataPack.createForestFeatures() {
 	}
 
 	// 5) Ore configured feature
-	val ironOreCfg = ore(
+	val ironOre = configuredFeaturesBuilder.ore(
+		"iron_ore",
 		size = 9,
 		discardChanceOnAirExposure = 0.0,
 		targets = listOf(Target())
 	)
-	val ironOre = configuredFeature("iron_ore", ironOreCfg) {}
 
 	// 6) Ore placed feature
 	val ironOrePlaced = placedFeature("iron_ore_placed", ironOre) {
