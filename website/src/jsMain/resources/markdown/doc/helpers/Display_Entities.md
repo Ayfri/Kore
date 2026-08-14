@@ -5,7 +5,7 @@ nav-title: Display Entities
 description: A guide for creating Display Entities in the world.
 keywords: minecraft, datapack, kore, guide, display-entities
 date-created: 2024-04-06
-date-modified: 2026-06-16
+date-modified: 2026-08-14
 routeOverride: /docs/helpers/display-entities
 ---
 
@@ -56,8 +56,9 @@ val entityDisplay = blockDisplay {
 }
 
 summon(entity = entityDisplay.entityType, pos = vec3(0, 0, 0), nbt = entityDisplay.toNbt())
-// will summon a grass block with snow on top, scaled by 2, rotated by 0 degrees and translated by 2 blocks on the y axis at the position 0, 0, 0
 ```
+
+This summons a snowy grass block at `0 0 0`, scaled by 2 and translated 2 blocks up, facing the camera on both axes.
 
 ## Block Displays
 
@@ -180,9 +181,10 @@ val display = blockDisplay {
 
 display.summon()
 
+// toEntity() is typed as Entity, so cast when you want the specific subclass
 val entity: BlockDisplayEntity = display.toEntity() as BlockDisplayEntity
 
-// use any Entity OOP extension
+// every Entity OOP extension works on the handle
 entity.addTag("my_display")
 entity.teleportTo(0, 65, 0)
 entity.kill()
@@ -198,3 +200,6 @@ val text  = TextDisplayEntity(uuid)
 ```
 
 All three target their entity with `@e[type=minecraft:<type>,nbt={UUID:[I;...]}]`.
+
+These handle classes live in the `oop` module and extend `Entity`, so every entity-scoped extension applies to them -
+see [Entities & Players](/docs/oop/entities-and-players) for the full list.

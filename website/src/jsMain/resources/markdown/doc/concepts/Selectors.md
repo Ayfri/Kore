@@ -5,7 +5,7 @@ nav-title: Selectors
 description: Build Minecraft target selectors in Kore with typed Kotlin builders. Compose entity filters, sorting, and score-based conditions instead of writing @e[...] strings by hand.
 keywords: minecraft, datapack, kore, selectors, target selectors, entities, players, commands
 date-created: 2026-04-21
-date-modified: 2026-07-02
+date-modified: 2026-08-14
 routeOverride: /docs/concepts/selectors
 ---
 
@@ -36,6 +36,15 @@ val executor = self()
 val nearest = nearestPlayer()
 ```
 
+`allPlayers` and `allEntities` take either a `limitToOne: Boolean` or an explicit `limit: Int` as their first
+argument, so `allEntities(3)` and `allEntities(limitToOne = true)` both avoid writing `limit` inside the builder.
+`allEntitiesLimitToOne()` is a named shorthand for the latter. `selector(SelectorType.X)` is the generic entry point
+the others delegate to.
+
+All of them return a `SelectorArgument`. That type implements `EntityArgument`, `DataArgument`, `PossessorArgument`,
+and `ScoreHolderArgument`, which is why the same value can be passed to commands that target entities, read NBT, or
+hold scores.
+
 ## Filtering targets
 
 Each selector helper accepts a `SelectorArguments` builder.
@@ -43,8 +52,8 @@ Each selector helper accepts a `SelectorArguments` builder.
 ```kotlin
 val nearbyZombies = allEntities {
 	type = EntityTypes.ZOMBIE
-	distance = rangeOrIntEnd(16)
-	sort = Sort.NEAREST
+	distance = rangeOrIntEnd(16) // ..16, meaning up to 16 blocks away
+	sort = Sort.NEAREST          // sort runs before limit, so this keeps the 5 closest
 	limit = 5
 }
 ```
@@ -71,6 +80,7 @@ Kore exposes the main Java Edition selector filters directly as mutable properti
 Example with position and volume:
 
 ```kotlin
+// x/y/z is one corner of the box, dx/dy/dz its size along each axis
 val entitiesInRoom = allEntities {
 	x = 10.0
 	y = 64.0
@@ -83,16 +93,39 @@ val entitiesInRoom = allEntities {
 
 ## Score-based filtering
 
-Selectors integrate nicely with [Scoreboards](/docs/concepts/scoreboards) and other scoreboard-driven logic.
+Selectors integrate nicely with [Scoreboards](/docs/concepts/scoreboards) and other scoreboard-driven logic. Open a
+`scores { }` block inside the selector builder - it assigns the filter for you, so do not write `scores = scores { }`.
 
 ```kotlin
 val activePlayers = allPlayers {
-	scores = scores {
+	scores {
 		"round" greaterThanOrEqualTo 1
 		"lives" greaterThan 0
 	}
 }
 ```
+
+Three notations are available inside the block, and they can be mixed:
+
+```kotlin
+val filtered = allEntities {
+	scores {
+		"baz" lessThan 1
+		score("bar") greaterThanOrEqualTo 1
+		score("foo", rangeOrInt(1))
+	}
+}
+```
+
+```mcfunction
+@e[scores={baz=..0,bar=1..,foo=1}]
+```
+
+The comparison words are `lessThan`, `lessThanOrEqualTo`, `equalTo`, `greaterThanOrEqualTo`, `greaterThan`, and
+`matches` (which takes a range). Kore converts each into the vanilla inclusive-range syntax, so `greaterThan 0`
+becomes `1..`.
+
+`advancements { }` works the same way for advancement filters.
 
 That is especially useful in [`execute`](/docs/commands/commands), timers, game loops, and mini-game state tracking.
 
@@ -101,6 +134,7 @@ That is especially useful in [`execute`](/docs/commands/commands), timers, game 
 Several selector filters support inversion.
 
 ```kotlin
+// ! negates a filter, becoming gamemode=!spectator in the generated selector
 val nonSpectators = allPlayers {
 	gamemode = !Gamemode.SPECTATOR
 	team = !"admins"
@@ -162,6 +196,29 @@ function("round_start") {
 }
 ```
 
+## Selectors and OOP entity handles
+
+The [`oop` module](/docs/oop/entities-and-players) wraps selectors in `Entity` handles so gameplay code can call
+methods instead of rebuilding filters. The two layers connect in one direction only:
+
+- `Entity.asSelector()` turns a handle into a `SelectorArgument` you can pass to any command.
+- There is **no** conversion the other way. `self()`, `allPlayers()`, and friends return `SelectorArgument`, not
+  `Entity`, so they cannot be passed to `Entity`-only helpers such as `getScoreEntity` or `batch`.
+
+`Entity` also always renders as `@e[...]`, so no handle can represent `@s`. When the executing entity is already
+`@s`, stay on the selector layer and use the core command DSL:
+
+```kotlin
+function("charge_up") {
+	val lastCharge = scoreboard.objective(self(), "last_crystal_charge")
+	lastCharge += 10
+}
+```
+
+```mcfunction
+scoreboard players add @s last_crystal_charge 10
+```
+
 ## Practical tips
 
 - Prefer reusable selector values when the same filter appears in several functions.
@@ -172,5 +229,7 @@ function("round_start") {
 
 ## See also
 
+- [Entities & Players](/docs/oop/entities-and-players) - OOP handles built on top of these selectors
+- [Commands](/docs/commands/commands) - where selectors are consumed
 - [Arguments Internals](/docs/contributing/arguments) - contributor-facing details about Kore's broader argument system
 - [Minecraft Wiki: Target selectors](https://minecraft.wiki/w/Target_selectors) - vanilla syntax and semantics

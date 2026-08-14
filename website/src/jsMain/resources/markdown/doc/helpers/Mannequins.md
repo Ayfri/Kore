@@ -5,7 +5,7 @@ nav-title: Mannequins
 description: A guide for creating Mannequins in the world.
 keywords: minecraft, datapack, kore, guide, mannequins
 date-created: 2026-01-25
-date-modified: 2026-06-16
+date-modified: 2026-08-14
 routeOverride: /docs/helpers/mannequins
 ---
 
@@ -118,13 +118,16 @@ val myMannequin = mannequin {
 	playerProfile("Ayfri")
 }
 
-// summon() spawns the entity and returns a typed handle
+// summon() spawns the entity and hands back a handle pointing at that exact instance
 val handle: MannequinEntity = myMannequin.summon(vec3(0, 64, 0))
 
-// all Entity OOP extensions work on the handle
+// every Entity OOP extension works on the handle
 handle.swing(SwingHand.MAINHAND)
 handle.kill()
 handle.teleportTo(0, 64, 5)
 ```
 
 The generated selector is `@e[type=minecraft:mannequin,nbt={UUID:[I;...]}]`, uniquely targeting the spawned instance.
+
+`MannequinEntity` lives in the `oop` module and extends `Entity`, so every entity-scoped extension applies to it -
+see [Entities & Players](/docs/oop/entities-and-players) for the full list.
