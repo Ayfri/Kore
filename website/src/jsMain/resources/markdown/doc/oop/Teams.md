@@ -5,7 +5,7 @@ nav-title: Teams
 description: Object-oriented team management with the Kore OOP module - create, configure, and manage Minecraft teams.
 keywords: minecraft, datapack, kore, oop, teams, scoreboard, collision, nametag, friendly fire
 date-created: 2026-03-03
-date-modified: 2026-03-31
+date-modified: 2026-08-14
 routeOverride: /docs/oop/teams
 ---
 
@@ -63,9 +63,10 @@ management without rebuilding selectors manually.
 ```kotlin
 val red = team("red")
 val tracker = player("Tracker")
-val membersLeft = tracker.getScoreEntity("red.members")
 
 function("check_red_team") {
+	val membersLeft = tracker.getScoreEntity("red.members")
+
 	execute {
 		ifCondition {
 			hasMembers(red)
