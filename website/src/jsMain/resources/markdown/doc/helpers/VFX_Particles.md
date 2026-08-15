@@ -2,8 +2,8 @@
 root: .components.layouts.MarkdownLayout
 title: Geometric Particle VFX Engine
 nav-title: VFX Particles
-description: "Generate geometric particle effects with Kore: circles, lines, spheres, spirals, and helixes. Pre-computed positions emitted as generated functions."
-keywords: minecraft, datapack, kore, helpers, vfx, particles, shape, circle, line, sphere, spiral, helix, geometry
+description: "Generate geometric particle effects with Kore: circles, lines, spheres, spirals and helixes, in world, relative or local coordinates."
+keywords: minecraft, datapack, kore, helpers, vfx, particles, shape, circle, line, sphere, spiral, helix, geometry, coordinates, relative, local
 date-created: 2026-03-03
 date-modified: 2026-08-15
 routeOverride: /docs/helpers/vfx-particles
@@ -31,6 +31,25 @@ drawShape("soul_helix") {
 	turns = 4
 }
 ```
+
+## Calling the generated function
+
+Both helpers return the generated `Function`, which you call with the `function` command. Since positions default to
+the relative coordinate space, running it under `execute at` centers the shape on the target:
+
+```kotlin
+val ring = drawCircle("fire_ring", Particles.FLAME, radius = 5.0, points = 16)
+
+function("cast_ring") {
+	execute {
+		at(self())
+		run { function(ring) }
+	}
+}
+```
+
+The geometry is computed at generation time, so the runtime cost is one `function` call plus one `particle` command per
+point. Keep `points` in check for effects that run every tick.
 
 ## Choosing between helpers
 
@@ -64,25 +83,49 @@ recomputing them mentally for every particle command.
 | `positionType` | `PosNumber.Type.RELATIVE` | All shapes                    |
 | `origin`       | `vec3(0, 0, 0)`           | All shapes                    |
 
+`points` must be strictly positive, otherwise `drawShape` throws. The `dx`/`dy`/`dz` direction is normalized, so only
+its ratio matters, and a zero direction vector produces no particles.
+
 ## Coordinate space
 
-Every generated point is emitted in `positionType`'s coordinate space, offset by `origin`:
+Every generated point is written in `positionType`'s coordinate space:
 
-- `PosNumber.Type.RELATIVE` (the default) emits `~x ~y ~z`, so the shape is centered on wherever the generated
-  function executes (e.g. wrapped in `execute at @s run function ...`).
-- `PosNumber.Type.LOCAL` emits `^x ^y ^z`, so the shape follows the executing entity's facing direction.
-- `PosNumber.Type.WORLD` emits absolute coordinates, so the shape always draws around `origin` regardless of where
-  the function executes.
+- `PosNumber.Type.RELATIVE` (the default) writes `~x ~y ~z`, so the shape is centered on wherever the generated
+  function is executed.
+- `PosNumber.Type.LOCAL` writes `^x ^y ^z`, so the shape additionally rotates with the executing entity's facing
+  direction.
+- `PosNumber.Type.WORLD` writes absolute coordinates, so the shape always lands at the same place in the world
+  regardless of where the function is executed.
 
 ```kotlin
 drawCircle("fire_ring", Particles.FLAME, radius = 5.0, points = 4, positionType = PosNumber.Type.LOCAL)
 ```
 
 ```mcfunction
-particle minecraft:flame ^5.0 ^0.0 ^0.0
-particle minecraft:flame ^0.0 ^0.0 ^5.0
+particle minecraft:flame ^5 ^ ^
 ...
 ```
+
+Local coordinates read as `^left ^up ^forward`, so a circle generated on the XZ plane maps to the left/forward plane and
+tilts with where the entity looks, which suits casting and shield effects that should track the player's aim.
+
+## Offsetting with origin
+
+`origin` shifts every point of the shape before the coordinate space is applied. It is the way to lift a shape off the
+ground or to place a world-space shape somewhere other than `0 0 0`:
+
+```kotlin
+drawShape("halo") {
+	shape = Shape.CIRCLE
+	particle = Particles.END_ROD
+	radius = 0.5
+	points = 12
+	origin = vec3(0, 2.2, 0)
+}
+```
+
+Only the three numeric values of `origin` are used. Any `~` or `^` marker it carries is discarded, since `positionType`
+alone decides the coordinate space of the output.
 
 ## Example: arena intro effect
 

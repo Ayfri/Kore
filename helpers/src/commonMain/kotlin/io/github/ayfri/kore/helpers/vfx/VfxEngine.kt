@@ -16,22 +16,36 @@ import kotlin.math.sqrt
 
 /** Geometric shapes supported by the VFX engine. */
 enum class Shape {
+	/** Flat closed circle on the XZ plane, using [VfxShape.radius]. */
 	CIRCLE,
+
+	/** Fixed-radius coil rising along Y, using [VfxShape.radius], [VfxShape.height] and [VfxShape.turns]. */
 	HELIX,
+
+	/** Straight segment along the `dx`/`dy`/`dz` direction, using [VfxShape.length]. */
 	LINE,
+
+	/** Points spread over a sphere surface, using [VfxShape.radius]. */
 	SPHERE,
+
+	/** Coil rising along Y whose radius grows from `0` to [VfxShape.radius], using [VfxShape.turns]. */
 	SPIRAL,
 }
 
-/** Configuration for a geometric particle shape emitted by [drawShape]. */
+/**
+ * Configuration for a geometric particle shape emitted by [drawShape].
+ *
+ * Geometry is computed once at generation time around [origin], then every point is written in [positionType]'s
+ * coordinate space. Which properties are read depends on [shape] - see each [Shape] constant.
+ */
 class VfxShape {
-	/** X component of the [Shape.LINE] direction vector. */
+	/** X component of the [Shape.LINE] direction vector. Normalized with [dy] and [dz], so only the ratio matters. */
 	var dx: Double = 1.0
 
-	/** Y component of the [Shape.LINE] direction vector. */
+	/** Y component of the [Shape.LINE] direction vector. Normalized with [dx] and [dz], so only the ratio matters. */
 	var dy: Double = 0.0
 
-	/** Z component of the [Shape.LINE] direction vector. */
+	/** Z component of the [Shape.LINE] direction vector. Normalized with [dx] and [dy], so only the ratio matters. */
 	var dz: Double = 0.0
 
 	/** Total rise along Y for [Shape.SPIRAL] and [Shape.HELIX]. */
@@ -40,16 +54,30 @@ class VfxShape {
 	/** Total length of a [Shape.LINE]. */
 	var length: Double = 5.0
 
-	/** Numeric offset applied to every generated point, in the same coordinate space as [positionType]. */
+	/**
+	 * Offset added to every generated point, before [positionType] is applied.
+	 *
+	 * Only the three numeric values are used: any `~` / `^` marker carried by this [Vec3] is discarded, since the
+	 * coordinate space of the output is decided by [positionType] alone.
+	 */
 	var origin: Vec3 = vec3(0, 0, 0)
 
 	/** Particle type used for every generated point. */
 	lateinit var particle: ParticleTypeArgument
 
-	/** Number of points to generate along the shape. */
+	/** Number of points to generate along the shape. Must be strictly positive. */
 	var points: Int = 20
 
-	/** Coordinate space the generated `particle` commands are emitted in. Defaults to execution-relative (`~`). */
+	/**
+	 * Coordinate space every generated `particle` command is written in.
+	 *
+	 * - [PosNumber.Type.RELATIVE] (default) writes `~x ~y ~z`, so the shape is centered on wherever the generated
+	 *   function is executed, typically through `execute at <target> run function ...`.
+	 * - [PosNumber.Type.LOCAL] writes `^x ^y ^z`, so the shape additionally rotates with the executing entity's
+	 *   facing direction.
+	 * - [PosNumber.Type.WORLD] writes absolute coordinates, so the shape always lands at the same place in the world
+	 *   regardless of where the function is executed.
+	 */
 	var positionType: PosNumber.Type = PosNumber.Type.RELATIVE
 
 	/** Radius used by [Shape.CIRCLE], [Shape.SPHERE], [Shape.SPIRAL] and [Shape.HELIX]. */
@@ -62,7 +90,7 @@ class VfxShape {
 	var turns: Int = 3
 }
 
-/** Combines [VfxShape.origin] with a point and converts it to [VfxShape.positionType]'s coordinate space. */
+/** Offsets a computed point by [VfxShape.origin] and rewrites it in [VfxShape.positionType]'s coordinate space. */
 private fun VfxShape.at(x: Double, y: Double, z: Double) = (origin + vec3(x, y, z)).let {
 	when (positionType) {
 		PosNumber.Type.LOCAL -> it.local
@@ -71,9 +99,37 @@ private fun VfxShape.at(x: Double, y: Double, z: Double) = (origin + vec3(x, y, 
 	}
 }
 
-/** Generates a function containing pre-computed `particle` commands for the configured shape. */
+/**
+ * Generates a function holding one pre-computed `particle` command per point of the configured shape.
+ *
+ * The positions are baked at generation time, so with the default [VfxShape.positionType] the resulting function
+ * follows whoever runs it:
+ *
+ * ```kotlin
+ * val ring = drawShape("fire_ring") {
+ * 	shape = Shape.CIRCLE
+ * 	particle = Particles.FLAME
+ * 	radius = 5.0
+ * 	points = 16
+ * }
+ *
+ * function("cast_ring") {
+ * 	execute {
+ * 		at(self())
+ * 		run { function(ring) }
+ * 	}
+ * }
+ * ```
+ *
+ * @param name shape name, turned into the function name by [HelpersConstants.vfxShapeFunctionName]
+ * @param block configures the [VfxShape] to generate
+ * @return the generated [Function], to be called with the `function` command
+ * @throws IllegalArgumentException if [VfxShape.points] is not strictly positive
+ */
 fun DataPack.drawShape(name: String, block: VfxShape.() -> Unit) =
 	VfxShape().apply(block).let { cfg ->
+		require(cfg.points > 0) { "VfxShape.points must be strictly positive, got ${cfg.points}." }
+
 		generatedFunction(HelpersConstants.vfxShapeFunctionName(name)) {
 			when (cfg.shape) {
 				Shape.CIRCLE -> drawCircle(cfg)
@@ -88,11 +144,12 @@ fun DataPack.drawShape(name: String, block: VfxShape.() -> Unit) =
 /**
  * Shorthand for [drawShape] with [Shape.CIRCLE].
  *
- * @param name generated function name, see [HelpersConstants.vfxShapeFunctionName]
+ * @param name shape name, turned into the function name by [HelpersConstants.vfxShapeFunctionName]
  * @param particle particle type used for every generated point
  * @param radius circle radius
  * @param points number of points to generate around the circle
- * @param positionType coordinate space the generated `particle` commands are emitted in
+ * @param positionType coordinate space the generated `particle` commands are written in
+ * @return the generated [Function], to be called with the `function` command
  */
 fun DataPack.drawCircle(
 	name: String,
@@ -118,7 +175,10 @@ private fun Function.drawCircle(cfg: VfxShape) {
 	}
 }
 
-/** Emits [VfxShape.points] particles evenly spaced along a [Shape.LINE] in the `dx/dy/dz` direction. */
+/**
+ * Emits [VfxShape.points] particles evenly spaced along a [Shape.LINE] in the normalized `dx`/`dy`/`dz` direction.
+ * Emits nothing when that direction is the zero vector, since it has no orientation to follow.
+ */
 private fun Function.drawLine(cfg: VfxShape) {
 	val mag = sqrt(cfg.dx * cfg.dx + cfg.dy * cfg.dy + cfg.dz * cfg.dz)
 	if (mag == 0.0) return
