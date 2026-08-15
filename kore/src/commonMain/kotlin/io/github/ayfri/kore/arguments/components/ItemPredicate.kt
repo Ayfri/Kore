@@ -105,10 +105,15 @@ data class ItemPredicate(
 		}
 
 		else -> {
-			val component =
-				componentsAlternatives[name]?.withIndex()?.last() ?: error("The component '$name' is not present, can't negate its value.")
-			componentsAlternatives[name]?.removeAt(component.index)
-			componentsAlternatives.getOrPut("!$name", ::mutableListOf).add(component.value)
+			val sourceKey = when {
+				componentsAlternatives[name]?.isNotEmpty() == true -> name
+				componentsAlternatives["~$name"]?.isNotEmpty() == true -> "~$name"
+				else -> error("The component '$name' is not present, can't negate its value.")
+			}
+			val component = componentsAlternatives[sourceKey]!!.withIndex().last()
+			componentsAlternatives[sourceKey]?.removeAt(component.index)
+			val negatedKey = if (sourceKey.startsWith("~")) "~!$name" else "!$name"
+			componentsAlternatives.getOrPut(negatedKey, ::mutableListOf).add(component.value)
 		}
 	}
 
@@ -128,9 +133,15 @@ data class ItemPredicate(
 	 */
 	fun setPartial(component: ItemComponentTypes) = setPartial(component.name.lowercase())
 	fun setPartial(name: String) {
-		val component = componentsAlternatives[name]?.lastOrNull() ?: error("The component '$name' is not present, can't make it partial.")
-		componentsAlternatives[name]?.removeLastOrNull()
-		componentsAlternatives.getOrPut("~$name", ::mutableListOf).add(component)
+		val sourceKey = when {
+			componentsAlternatives[name]?.isNotEmpty() == true -> name
+			componentsAlternatives["!$name"]?.isNotEmpty() == true -> "!$name"
+			else -> error("The component '$name' is not present, can't make it partial.")
+		}
+		val component = componentsAlternatives[sourceKey]!!.last()
+		componentsAlternatives[sourceKey]?.removeLastOrNull()
+		val partialKey = if (sourceKey.startsWith("!")) "~!$name" else "~$name"
+		componentsAlternatives.getOrPut(partialKey, ::mutableListOf).add(component)
 	}
 
 	override fun asNbt() = nbt {

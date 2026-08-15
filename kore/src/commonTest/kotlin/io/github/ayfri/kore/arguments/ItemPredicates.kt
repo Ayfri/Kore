@@ -111,6 +111,35 @@ fun itemPredicatesTests() {
 		isPresent(ItemComponentTypes.INSTRUMENT, ItemComponentTypes.DAMAGE)
 	}
 	multipleExistenceTest.toString() assertsIs """*[instrument,damage]"""
+
+	// Test a component being made partial then negated
+	val partialThenNegatedTest = itemPredicate {
+		customData {
+			this["test"] = 1
+		}
+		partial(ItemComponentTypes.CUSTOM_DATA)
+		negate(ItemComponentTypes.CUSTOM_DATA)
+	}
+	partialThenNegatedTest.toString() assertsIs """*[!custom_data~{test:1}]"""
+
+	// Test a component being negated then made partial
+	val negatedThenPartialTest = itemPredicate {
+		customData {
+			this["test"] = 1
+		}
+		negate(ItemComponentTypes.CUSTOM_DATA)
+		partial(ItemComponentTypes.CUSTOM_DATA)
+	}
+	negatedThenPartialTest.toString() assertsIs """*[!custom_data~{test:1}]"""
+
+	// Test buildPartial followed by negate
+	val buildPartialThenNegatedTest = itemPredicate {
+		buildPartial(ItemComponentTypes.CUSTOM_DATA) {
+			this["test"] = 1
+		}
+		negate(ItemComponentTypes.CUSTOM_DATA)
+	}
+	buildPartialThenNegatedTest.toString() assertsIs """*[!custom_data~{test:1}]"""
 }
 
 class ItemPredicatesTests : FunSpec({
