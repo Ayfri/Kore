@@ -5,7 +5,7 @@ nav-title: VFX Particles
 description: "Generate geometric particle effects with Kore: circles, lines, spheres, spirals, and helixes. Pre-computed positions emitted as generated functions."
 keywords: minecraft, datapack, kore, helpers, vfx, particles, shape, circle, line, sphere, spiral, helix, geometry
 date-created: 2026-03-03
-date-modified: 2026-03-31
+date-modified: 2026-08-15
 routeOverride: /docs/helpers/vfx-particles
 ---
 
@@ -52,15 +52,37 @@ recomputing them mentally for every particle command.
 
 ## VfxShape properties
 
-| Property   | Default | Used by                       |
-|------------|---------|-------------------------------|
-| `particle` | -       | All shapes                    |
-| `radius`   | `1.0`   | CIRCLE, SPHERE, SPIRAL, HELIX |
-| `points`   | `20`    | All shapes                    |
-| `height`   | `3.0`   | SPIRAL, HELIX                 |
-| `length`   | `5.0`   | LINE                          |
-| `dx/dy/dz` | `1,0,0` | LINE direction                |
-| `turns`    | `3`     | SPIRAL, HELIX                 |
+| Property       | Default                   | Used by                       |
+|----------------|---------------------------|-------------------------------|
+| `particle`     | -                         | All shapes                    |
+| `radius`       | `1.0`                     | CIRCLE, SPHERE, SPIRAL, HELIX |
+| `points`       | `20`                      | All shapes                    |
+| `height`       | `3.0`                     | SPIRAL, HELIX                 |
+| `length`       | `5.0`                     | LINE                          |
+| `dx/dy/dz`     | `1,0,0`                   | LINE direction                |
+| `turns`        | `3`                       | SPIRAL, HELIX                 |
+| `positionType` | `PosNumber.Type.RELATIVE` | All shapes                    |
+| `origin`       | `vec3(0, 0, 0)`           | All shapes                    |
+
+## Coordinate space
+
+Every generated point is emitted in `positionType`'s coordinate space, offset by `origin`:
+
+- `PosNumber.Type.RELATIVE` (the default) emits `~x ~y ~z`, so the shape is centered on wherever the generated
+  function executes (e.g. wrapped in `execute at @s run function ...`).
+- `PosNumber.Type.LOCAL` emits `^x ^y ^z`, so the shape follows the executing entity's facing direction.
+- `PosNumber.Type.WORLD` emits absolute coordinates, so the shape always draws around `origin` regardless of where
+  the function executes.
+
+```kotlin
+drawCircle("fire_ring", Particles.FLAME, radius = 5.0, points = 4, positionType = PosNumber.Type.LOCAL)
+```
+
+```mcfunction
+particle minecraft:flame ^5.0 ^0.0 ^0.0
+particle minecraft:flame ^0.0 ^0.0 ^5.0
+...
+```
 
 ## Example: arena intro effect
 

@@ -74,7 +74,10 @@ data class PosNumber(
 
 val Number.localPos get() = PosNumber(toDouble(), PosNumber.Type.LOCAL)
 val Number.relativePos get() = PosNumber(toDouble(), PosNumber.Type.RELATIVE)
+
+/** Defaults to [PosNumber.Type.WORLD], unlike [pos] and `vec3(type)` which default to [PosNumber.Type.RELATIVE]. */
 val Number.pos get() = PosNumber(toDouble())
 val Number.worldPos get() = pos
 
+/** Defaults to [PosNumber.Type.RELATIVE], unlike [Number.pos] which defaults to [PosNumber.Type.WORLD]. */
 fun pos(value: Number = 0, type: PosNumber.Type = PosNumber.Type.RELATIVE) = PosNumber(value.toDouble(), type)
