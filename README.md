@@ -178,6 +178,7 @@ fun main() {
 -   [Kore-Bindings](https://github.com/e-psi-lon/Kore-Bindings)
 -   [OreCrops](https://github.com/e-psi-lon/OreCrops)
 -   [realms-map](https://github.com/Aeltumn/realms-maps)
+-   [jumpr](https://github.com/LluisJM/jumpr)
 
 _How to add your project to the list ?_
 
