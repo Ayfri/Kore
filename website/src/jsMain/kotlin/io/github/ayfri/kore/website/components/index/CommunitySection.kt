@@ -43,8 +43,8 @@ fun CommunitySection() {
 		) { MdiBook(style = IconStyle.ROUNDED) },
 		CommunityPlatform(
 			"Examples",
-			"Explore real Kotlin datapack snippets and ready-to-adapt examples directly from the project.",
-			"https://github.com/Ayfri/Kore/tree/master/examples",
+			"Explore real Kotlin datapack snippets and ready-to-adapt examples in the dedicated examples repository.",
+			"https://github.com/Kore-Minecraft/examples",
 		) { MdiFunctions(style = IconStyle.ROUNDED) },
 	)
 
