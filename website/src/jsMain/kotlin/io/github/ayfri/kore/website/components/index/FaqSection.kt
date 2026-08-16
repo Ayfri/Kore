@@ -29,20 +29,28 @@ fun FaqSection() {
 			"This is the most important concept in Kore. Standard Kotlin variables (`val`/`var`) and loops (`for`/`while`) are evaluated at compile-time to generate your datapack. To handle actual in-game logic at runtime, Kore provides built-in abstractions over Minecraft's scoreboards, command macros, and data storages. You write Kotlin, but Kore correctly maps your logic to Minecraft's execution engine. See the [Runtime Logic](/docs/concepts/runtime-logic) guide for the full picture."
 		),
 		FaqItem(
-			"Can I use other datapacks with Kore?",
-			"Yes, you can use other datapacks with Kore. By providing [bindings](/docs/advanced/bindings) for your datapacks, you can use them in your Kore code.",
-		),
-		FaqItem(
 			"Does Kore add overhead to the generated datapack?",
 			"No. Kore is a **build-time** tool. It acts as a smart generator that compiles your Kotlin code down to raw, native JSON and MCFunction files. There is no 'Kore runtime' or plugin required on your server. The output is exactly what you would have written by hand, just generated faster and without typos."
 		),
 		FaqItem(
-			"Does Kore support command macros and recent Minecraft features?",
-			"Yes. Kore is designed to stay up-to-date with recent Minecraft updates. It fully supports command macros introduced in 1.20.2, dialogs and timelines, allowing you to leverage dynamic command execution safely with Kotlin's string interpolation and type safety."
+			"What if the DSL doesn't cover something I need?",
+			"Any function body accepts a raw command line through `addLine(\"...\")`, so an unsupported or brand-new command is a one-line escape hatch rather than a blocker. The same applies to data-driven files: you keep full low-level control, and you can open an issue so the typed API catches up."
 		),
 		FaqItem(
-			"Is Kore compatible with mods?",
-			"By providing bindings for the commands/data-driven features included in your mods, you can use Kore with mods. However, Kore is not compatible with any mod currently.",
+			"Do I have to rewrite my existing datapack all at once?",
+			"No. Kore generates a normal datapack, so you can port it slice by slice: move one system over, generate, and let the rest of your hand-written pack keep running next to it. The [migration guide](/docs/guides/from-datapacks-to-kore) walks through the vanilla-to-Kore mapping and a sensible order to follow."
+		),
+		FaqItem(
+			"Do I need to know Kotlin or Gradle already?",
+			"Not really. Kore's DSL mirrors Minecraft's own structure, so if you can read a `.mcfunction` file you can read it, and your IDE autocompletes every command, item and enum. For the build side, the [Kore Template](https://github.com/Kore-Minecraft/Kore-Template) is a working project you clone and run, with nothing to configure by hand."
+		),
+		FaqItem(
+			"Does Kore keep up with recent Minecraft versions?",
+			"Yes. Enums, registries and generated arguments are codegen'd straight from Minecraft's own data, so a version bump is a regeneration rather than a manual rewrite, and recent features like command macros, dialogs and timelines are supported. Every published artifact concatenates both versions: `2.8.0-26.1.2` is Kore 2.8.0 targeting Minecraft 26.1.2, so the game version a build targets is always in the version string."
+		),
+		FaqItem(
+			"Can I use Kore with other datapacks or mods?",
+			"Yes for datapacks: by providing [bindings](/docs/advanced/bindings) for them, you can reference their functions and tags from your Kore code. Mods work the same way if you write bindings for the commands and data-driven features they add, but Kore does not ship bindings for any mod currently.",
 		),
 		FaqItem(
 			"Can I also generate Resource Packs with Kore?",

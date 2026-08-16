@@ -6,6 +6,7 @@ import com.varabyte.kobweb.compose.css.TextAlign
 import com.varabyte.kobweb.compose.css.overflow
 import com.varabyte.kobweb.compose.css.textAlign
 import io.github.ayfri.kore.website.components.common.ButtonColor
+import io.github.ayfri.kore.website.components.common.ButtonVariant
 import io.github.ayfri.kore.website.components.common.LinkButton
 import io.github.ayfri.kore.website.utils.P
 import io.github.ayfri.kore.website.utils.marginX
@@ -28,7 +29,12 @@ fun CtaSection() {
 
 		P("Craft your first datapack with Kore and enjoy the power of Kotlin for Minecraft development.")
 
-		LinkButton("Get Started", "/docs/getting-started", color = ButtonColor.PRIMARY)
+		Div({
+			classes(CtaSectionStyle.actions)
+		}) {
+			LinkButton("Get Started", "/docs/getting-started", color = ButtonColor.PRIMARY)
+			LinkButton("Migrate an existing pack", "/docs/guides/from-datapacks-to-kore", variant = ButtonVariant.OUTLINE)
+		}
 	}
 }
 
@@ -75,5 +81,12 @@ object CtaSectionStyle : StyleSheet() {
 		mdMax(type("p")) {
 			width(95.percent)
 		}
+	}
+
+	val actions by style {
+		display(DisplayStyle.Flex)
+		flexWrap(FlexWrap.Wrap)
+		gap(1.cssRem)
+		justifyContent(JustifyContent.Center)
 	}
 }
