@@ -5,7 +5,7 @@ nav-title: Home
 description: Kore is a Kotlin DSL datapack generator for Minecraft Java Edition. Create datapacks with type-safe code instead of writing JSON and MCFunction by hand. Open-source and production-ready.
 keywords: minecraft datapack generator, datapack maker, minecraft data pack creator, kotlin datapack, kore, minecraft datapack dsl, datapack development, minecraft java edition, mcfunction generator, datapack library
 date-created: 2024-04-06
-date-modified: 2026-08-05
+date-modified: 2026-08-16
 routeOverride: /docs/home
 position: 0
 ---
@@ -142,5 +142,18 @@ Useful contributor-facing internals:
 - **LLM-friendly documentation**: [llms.txt](https://kore.ayfri.com/llms.txt) | [llms-full.txt](https://kore.ayfri.com/llms-full.txt)
 - **AI Agents skills**: [Kore-Skill](https://github.com/Kore-Minecraft/Kore-Skill) (optional skills pack for AI-assisted
   Kore work)
+
+### Community creations
+
+Real projects built with Kore, useful to see the DSL used at full project scale:
+
+- [SimplEnergyKore](https://github.com/e-psi-lon/SimplEnergyKore)
+- [Kore-Bindings](https://github.com/e-psi-lon/Kore-Bindings)
+- [OreCrops](https://github.com/e-psi-lon/OreCrops)
+- [realms-map](https://github.com/Aeltumn/realms-maps)
+- [jumpr](https://github.com/LluisJM/jumpr)
+
+To add your project to the list, open an issue on the
+[repository](https://github.com/Ayfri/Kore/issues) or ping me on [Discord](https://discord.ayfri.com).
 
 For hands-on examples, follow the doc pages above - most pages include runnable snippets and links to test cases in the repository.
