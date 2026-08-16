@@ -85,7 +85,7 @@ Kore APIs generate JSON under standard datapack directories (replace `<ns>` with
 | `biome(...)`                    | `data/<ns>/worldgen/biome/<name>.json`                       |
 | `configuredCarver(...)`         | `data/<ns>/worldgen/configured_carver/<name>.json`           |
 | `configuredFeature(...)`        | `data/<ns>/worldgen/configured_feature/<name>.json`          |
-| `densityFunction(...)`          | `data/<ns>/worldgen/density_function/<name>.json`            |
+| `densityFunctions { ... }`      | `data/<ns>/worldgen/density_function/<name>.json`            |
 | `dimension(...)`                | `data/<ns>/dimension/<name>.json`                            |
 | `dimensionType(...)`            | `data/<ns>/dimension_type/<name>.json`                       |
 | `flatLevelGeneratorPreset(...)` | `data/<ns>/worldgen/flat_level_generator_preset/<name>.json` |

@@ -34,24 +34,59 @@ and cached to build complex terrain shapes from simple primitives.
 
 Reference: [Density function](https://minecraft.wiki/w/Density_function)
 
+Every density function file holds exactly one node type. Declare one or more inside a `densityFunctions { ... }` block, one builder call per file:
+
 ```kotlin
-val df = dp.densityFunction("my_density", type = /* DensityFunctionType */) {}
+dp.densityFunctions {
+	val base = constant("base", 1.0)
+	abs("my_density", base)
+	add("terrain", 1.0, 2.0)
+	noise("hills", hillsNoise, xzScale = 0.5, yScale = 0.25)
+}
 ```
 
-### Common Density Function Types
+Each call returns a `DensityFunctionArgument` you can pass into another density function, a noise router field, or a [noise settings](#noise-settings) block.
 
-| Type                                          | Description                    |
-|-----------------------------------------------|--------------------------------|
-| `constant`                                    | Fixed value everywhere         |
-| `noise`                                       | Sample from a noise definition |
-| `yClampedGradient`                            | Gradient based on Y coordinate |
-| `add`, `mul`                                  | Combine two density functions  |
-| `min`, `max`                                  | Take min/max of two functions  |
-| `blend_density`                               | Blend between functions        |
-| `cache_2d`, `cache_once`, `cache_all_in_cell` | Caching wrappers               |
-| `interpolated`                                | Smooth interpolation           |
-| `flat_cache`                                  | 2D cache for flat operations   |
-| `spline`                                      | Cubic spline interpolation     |
+### Density Function Types
+
+| Type                    | Builder                          | Description                                                                  |
+|-------------------------|-----------------------------------|-------------------------------------------------------------------------------|
+| `abs`                   | `abs(...)`                        | Absolute value of the input.                                                  |
+| `add`                   | `add(...)`                        | Sums two inputs.                                                              |
+| `beardifier`            | `beardifier(...)`                 | Blends nearby terrain into structures. No parameters.                         |
+| `blend_alpha`           | `blendAlpha(...)`                 | Smooths transitions between chunk generation versions. No parameters.         |
+| `blend_density`         | `blendDensity(...)`               | Blends the input across chunk generation version transitions.                 |
+| `blend_offset`          | `blendOffset(...)`                | Supports legacy chunk compatibility blending. No parameters.                  |
+| `cache_2d`              | `cache2D(...)`                    | Caches the input once per horizontal (X/Z) position.                          |
+| `cache_all_in_cell`     | `cacheAllInCell(...)`             | Caches the input for the duration of its interpolation cell.                  |
+| `cache_once`            | `cacheOnce(...)`                  | Caches the input once per block position, even if referenced multiple times.  |
+| `clamp`                 | `clamp(...)`                      | Restricts the input between `min` and `max`.                                  |
+| `constant`              | `constant(...)`                   | A fixed value, ignoring the input position.                                   |
+| `cube`                  | `cube(...)`                       | Raises the input to the power of 3 (x^3).                                     |
+| `end_islands`           | `endIslands(...)`                 | Samples the End's island noise. No parameters.                                |
+| `find_top_surface`      | `findTopSurface(...)`             | Scans a column for the topmost position where a density is above zero.        |
+| `flat_cache`            | `flatCache(...)`                  | Caches the input per 4x4 column, computed once at Y=0.                        |
+| `half_negative`         | `halfNegative(...)`               | Halves the input when negative, otherwise leaves it unchanged.                |
+| `interpolated`          | `interpolated(...)`               | Interpolates the input across the surrounding grid cells.                     |
+| `invert`                | `invert(...)`                     | Reciprocal (1 / x) of the input.                                              |
+| `max`                   | `max(...)`                        | Larger of two inputs.                                                         |
+| `min`                   | `min(...)`                        | Smaller of two inputs.                                                        |
+| `mul`                   | `mul(...)`                        | Multiplies two inputs.                                                        |
+| `noise`                 | `noise(...)`                      | Samples a noise, scaled horizontally and vertically.                          |
+| `old_blended_noise`     | `oldBlendedNoise(...)`            | Legacy blended noise used before the 1.18 terrain rewrite.                    |
+| `quarter_negative`      | `quarterNegative(...)`            | Quarters the input when negative, otherwise leaves it unchanged.              |
+| `range_choice`          | `rangeChoice(...)`                | Picks between two inputs based on whether a value falls within a range.       |
+| `shift`                 | `shift(...)`                      | Samples a noise at the input position scaled down by 4.                       |
+| `shift_a`               | `shiftA(...)`                     | Samples a noise at `(x/4, 0, z/4)`, scaled back up by 4.                      |
+| `shift_b`               | `shiftB(...)`                     | Samples a noise at `(z/4, x/4, 0)`, scaled back up by 4.                      |
+| `shifted_noise`         | `shiftedNoise(...)`               | Like `noise`, but with the sampled coordinates shifted.                       |
+| `spline`                | `spline(...)`                     | Cubic spline over the input.                                                  |
+| `square`                | `square(...)`                     | Raises the input to the power of 2 (x^2).                                     |
+| `squeeze`               | `squeeze(...)`                    | Clamps the input to [-1, 1], then applies `x/2 - x^3/24`.                    |
+| `weird_scaled_sampler`  | `weirdScaledSampler(...)`         | Samples a noise and remaps it to bias cave/ravine rarity.                     |
+| `y_clamped_gradient`    | `yClampedGradient(...)`           | Linear gradient between two values as Y goes from one bound to another.       |
+
+All builders live in `io.github.ayfri.kore.features.worldgen.densityfunction.types` and take the file's `fileName` as their first argument.
 
 ---
 

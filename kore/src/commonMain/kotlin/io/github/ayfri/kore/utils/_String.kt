@@ -16,7 +16,10 @@ fun String.pascalCase() = split("_").joinToString("") { word ->
 	}
 }
 
-fun String.snakeCase() = replace(Regex("([a-z])([A-Z])"), "$1_$2").lowercase()
+fun String.snakeCase() = replace(Regex("([A-Z]+)([A-Z][a-z])"), "$1_$2")
+	.replace(Regex("([a-z])([0-9])"), "$1_$2")
+	.replace(Regex("([a-z])([A-Z])"), "$1_$2")
+	.lowercase()
 
 /**
  * Unescape a string.

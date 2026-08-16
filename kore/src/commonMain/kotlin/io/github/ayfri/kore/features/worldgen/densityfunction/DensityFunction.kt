@@ -3,7 +3,6 @@ package io.github.ayfri.kore.features.worldgen.densityfunction
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.features.worldgen.densityfunction.types.DensityFunctionType
-import io.github.ayfri.kore.generated.arguments.worldgen.types.DensityFunctionArgument
 import kotlinx.serialization.Transient
 
 /**
@@ -12,7 +11,8 @@ import kotlinx.serialization.Transient
  * A density function is a composable expression graph used by the noise router to shape terrain
  * (e.g. adding ridges, caves, erosion). This serializes the chosen function node.
  *
- * JSON format reference: https://minecraft.wiki/w/Density_function
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
+ * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
 data class DensityFunction(
 	@Transient
@@ -22,20 +22,14 @@ data class DensityFunction(
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(type)
 }
 
+val DataPack.densityFunctionsBuilder get() = DensityFunctionsScope(this)
+
 /**
- * Creates a density function file wiring a specific function node.
+ * Declares density functions using Kore's DSL builder, one call per node type (e.g. [io.github.ayfri.kore.features.worldgen.densityfunction.types.abs]).
  *
- * Produces `data/<namespace>/worldgen/density_function/<fileName>.json`.
+ * Produces one `data/<namespace>/worldgen/density_function/<fileName>.json` per call inside [block].
  *
- * JSON format reference: https://minecraft.wiki/w/Density_function
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
+ * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DataPack.densityFunction(
-	fileName: String,
-	type: DensityFunctionType,
-	block: DensityFunction.() -> Unit = {},
-): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, type).apply(block)
-	densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: name)
-}
+fun DataPack.densityFunctions(block: DensityFunctionsScope.() -> Unit) = densityFunctionsBuilder.apply(block)
