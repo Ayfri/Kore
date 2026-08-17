@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.noisesettings.rules
 
+import io.github.ayfri.kore.arguments.types.resources.BlockArgument
 import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.generated.arguments.worldgen.types.NoiseArgument
 import kotlinx.serialization.Serializable
@@ -27,17 +28,39 @@ data class NoiseGradient(
 ) : SurfaceRule()
 
 /**
- * Appends a noise gradient surface rule.
+ * Builder scope for the entries of a [NoiseGradient] surface rule.
+ *
+ * @property entries The entries appended so far, in gradient order.
  */
-fun MutableList<SurfaceRule>.noiseGradient(noise: NoiseArgument, gradient: List<NoiseGradientEntry>) =
-	apply { add(NoiseGradient(gradient, noise)) }
+class NoiseGradientScope {
+	val entries = mutableListOf<NoiseGradientEntry>()
+}
 
 /**
  * Appends a noise gradient surface rule.
  */
-fun MutableList<SurfaceRule>.noiseGradient(noise: NoiseArgument, block: MutableList<NoiseGradientEntry>.() -> Unit) =
-	apply { add(NoiseGradient(buildList(block), noise)) }
+fun SurfaceRulesScope.noiseGradient(noise: NoiseArgument, gradient: List<NoiseGradientEntry>) =
+	apply { rules += NoiseGradient(gradient, noise) }
 
-fun MutableList<NoiseGradientEntry>.entry(state: BlockState? = null) = apply {
-	add(NoiseGradientEntry(state))
-}
+/**
+ * Appends a noise gradient surface rule.
+ */
+fun SurfaceRulesScope.noiseGradient(noise: NoiseArgument, block: NoiseGradientScope.() -> Unit) =
+	apply { rules += NoiseGradient(NoiseGradientScope().apply(block).entries, noise) }
+
+/**
+ * Appends an entry placing [name] with the given block-state properties.
+ */
+fun NoiseGradientScope.state(name: BlockArgument, block: MutableMap<String, String>.() -> Unit = {}) =
+	apply { entries += NoiseGradientEntry(BlockState(name, buildMap(block))) }
+
+/**
+ * Appends an entry placing [name] with the given block-state [properties].
+ */
+fun NoiseGradientScope.state(name: BlockArgument, properties: Map<String, String>) =
+	apply { entries += NoiseGradientEntry(BlockState(name, properties)) }
+
+/**
+ * Appends an entry leaving the position untouched.
+ */
+fun NoiseGradientScope.empty() = apply { entries += NoiseGradientEntry() }

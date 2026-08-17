@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions
 
+import io.github.ayfri.kore.features.worldgen.noisesettings.rules.SurfaceRulesScope
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
@@ -21,14 +22,14 @@ enum class Surface {
 	}
 }
 
-fun stoneDepth(
+fun SurfaceRulesScope.stoneDepth(
 	surfaceType: Surface,
 	offset: Double = 0.0,
 	addSurfaceDepth: Boolean = false,
 	secondaryDepthRange: Int = 0,
 ) = StoneDepth(offset, surfaceType, addSurfaceDepth, secondaryDepthRange)
 
-fun stoneDepth(
+fun SurfaceRulesScope.stoneDepth(
 	surfaceType: Surface,
 	block: StoneDepth.() -> Unit,
 ) = StoneDepth(surfaceType = surfaceType).apply(block)

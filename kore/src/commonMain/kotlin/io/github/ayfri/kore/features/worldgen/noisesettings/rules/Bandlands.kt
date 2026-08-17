@@ -11,4 +11,4 @@ data object Bandlands : SurfaceRule()
 /**
  * Appends a bandlands surface rule.
  */
-fun MutableList<SurfaceRule>.bandlands() = apply { add(Bandlands) }
+fun SurfaceRulesScope.bandlands() = apply { rules += Bandlands }

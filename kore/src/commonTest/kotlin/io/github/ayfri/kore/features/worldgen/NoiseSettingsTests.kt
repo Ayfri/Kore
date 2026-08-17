@@ -2,7 +2,6 @@ package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
-import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.worldgen.dimension.biomesource.multinoise.multiNoiseBiomeSourceParameters
 import io.github.ayfri.kore.features.worldgen.noise.noise
@@ -69,21 +68,21 @@ fun DataPack.noiseSettingsTests() {
 		surfaceRules {
 			bandlands()
 			block(Blocks.STONE)
-			condition(AbovePreliminarySurface, Block(BlockState(Blocks.ANDESITE)))
-			condition(biomes(Biomes.BADLANDS), Block(BlockState(Blocks.RED_SAND)))
-			condition(Hole, Block(BlockState(Blocks.DIORITE)))
-			condition(noiseThreshold(myNoise, minThreshold = -0.5, maxThreshold = 0.5), Block(BlockState(Blocks.GRANITE)))
-			condition(not(Steep), Block(BlockState(Blocks.GRAVEL)))
-			condition(Steep, Block(BlockState(Blocks.STONE)))
-			condition(stoneDepth(Surface.FLOOR, offset = 1.0, addSurfaceDepth = true, secondaryDepthRange = 2), Block(BlockState(Blocks.DIRT)))
-			condition(Temperature, Block(BlockState(Blocks.SNOW_BLOCK)))
-			condition(verticalGradient("bedrock_floor", aboveBottom(0), aboveBottom(5)), Block(BlockState(Blocks.BEDROCK)))
-			condition(water(offset = -1, surfaceDepthMultiplier = 2, addStoneDepth = true), Block(BlockState(Blocks.GRASS_BLOCK)))
-			condition(yAbove(absolute(64), surfaceDepthMultiplier = 1, addStoneDepth = true), Block(BlockState(Blocks.CALCITE)))
-			condition(yAbove(belowTop(8)), Block(BlockState(Blocks.PACKED_ICE)))
+			condition(AbovePreliminarySurface) { block(Blocks.ANDESITE) }
+			condition(biomes(Biomes.BADLANDS)) { block(Blocks.RED_SAND) }
+			condition(Hole) { block(Blocks.DIORITE) }
+			condition(noiseThreshold(myNoise, minThreshold = -0.5, maxThreshold = 0.5)) { block(Blocks.GRANITE) }
+			condition(not(Steep)) { block(Blocks.GRAVEL) }
+			condition(Steep) { block(Blocks.STONE) }
+			condition(stoneDepth(Surface.FLOOR, offset = 1.0, addSurfaceDepth = true, secondaryDepthRange = 2)) { block(Blocks.DIRT) }
+			condition(Temperature) { block(Blocks.SNOW_BLOCK) }
+			condition(verticalGradient("bedrock_floor", aboveBottom(0), aboveBottom(5))) { block(Blocks.BEDROCK) }
+			condition(water(offset = -1, surfaceDepthMultiplier = 2, addStoneDepth = true)) { block(Blocks.GRASS_BLOCK) }
+			condition(yAbove(absolute(64), surfaceDepthMultiplier = 1, addStoneDepth = true)) { block(Blocks.CALCITE) }
+			condition(yAbove(belowTop(8))) { block(Blocks.PACKED_ICE) }
 			noiseGradient(myNoise) {
-				entry(BlockState(Blocks.STONE))
-				entry()
+				state(Blocks.STONE)
+				empty()
 			}
 			sequence {
 				block(Blocks.DEEPSLATE)

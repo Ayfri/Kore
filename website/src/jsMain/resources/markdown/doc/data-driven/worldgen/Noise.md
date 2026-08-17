@@ -323,6 +323,9 @@ surfaceRules {
 }
 ```
 
+Every builder below lives on the `surfaceRules` scope, so nothing leaks into the global namespace and the IDE completes the whole rule set
+from inside the block.
+
 | Rule             | Builder                    | Description                                                |
 |------------------|----------------------------|------------------------------------------------------------|
 | `bandlands`      | `bandlands()`              | Vanilla badlands terracotta banding.                       |
@@ -331,19 +334,25 @@ surfaceRules {
 | `noise_gradient` | `noiseGradient(noise) { }` | Picks a block state from a list, indexed by a noise value. |
 | `sequence`       | `sequence { }`             | Groups rules, first match wins.                            |
 
-`noiseGradient` entries take a `BlockState`, or nothing at all to leave the position untouched:
+A `condition` block holding a single rule serializes as that rule, several rules are wrapped in a `sequence`.
+
+`noiseGradient` entries are block states, and `empty()` leaves the position untouched:
 
 ```kotlin
 surfaceRules {
 	noiseGradient(hills) {
-		entry(BlockState(Blocks.STONE))
-		entry(BlockState(Blocks.DEEPSLATE))
-		entry()
+		state(Blocks.STONE)
+		state(Blocks.DEEPSLATE)
+		empty()
 	}
 }
 ```
 
+`state` takes an optional block-state property block, like `block`.
+
 #### Conditions
+
+Condition builders live on the `surfaceRules` scope too, so they resolve without extra imports inside the block.
 
 | Condition                   | Builder                                                   | Description                                         |
 |-----------------------------|-----------------------------------------------------------|-----------------------------------------------------|
@@ -351,7 +360,7 @@ surfaceRules {
 | `biome`                     | `biomes(...)`                                             | Position is in one of the listed biomes.            |
 | `hole`                      | `Hole`                                                    | Column has a surface depth of 0.                    |
 | `noise_threshold`           | `noiseThreshold(noise, minThreshold, maxThreshold)`       | Noise value falls within a range.                   |
-| `not`                       | `not { }`                                                 | Inverts another condition.                          |
+| `not`                       | `not(condition)`                                          | Inverts another condition.                          |
 | `steep`                     | `Steep`                                                   | Position is on a steep north or east facing slope.  |
 | `stone_depth`               | `stoneDepth(surfaceType, offset, ...)`                    | Depth below the floor or ceiling of the terrain.    |
 | `temperature`               | `Temperature`                                             | Biome is cold enough for snowfall.                  |
@@ -364,6 +373,10 @@ surfaceRules {
 ```kotlin
 condition(AbovePreliminarySurface) {
 	block(Blocks.GRASS_BLOCK)
+}
+
+condition(not(Steep)) {
+	block(Blocks.GRAVEL)
 }
 ```
 

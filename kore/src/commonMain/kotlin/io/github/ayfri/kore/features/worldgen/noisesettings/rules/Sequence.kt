@@ -16,8 +16,8 @@ data class Sequence(
 /**
  * Sets the surface rules for the noise settings.
  */
-fun NoiseSettings.surfaceRules(block: MutableList<SurfaceRule>.() -> Unit) {
-	surfaceRule = Sequence(buildList(block))
+fun NoiseSettings.surfaceRules(block: SurfaceRulesScope.() -> Unit) {
+	surfaceRule = Sequence(buildSurfaceRules(block))
 }
 
 /**
@@ -30,9 +30,9 @@ fun NoiseSettings.surfaceRules(vararg rules: SurfaceRule) {
 /**
  * Appends a sequence of [SurfaceRule] objects based on the provided block.
  */
-fun MutableList<SurfaceRule>.sequence(block: MutableList<SurfaceRule>.() -> Unit) = apply { add(Sequence(buildList(block))) }
+fun SurfaceRulesScope.sequence(block: SurfaceRulesScope.() -> Unit) = apply { rules += Sequence(buildSurfaceRules(block)) }
 
 /**
  * Appends a new sequence of SurfaceRule objects.
  */
-fun MutableList<SurfaceRule>.sequence(vararg rules: SurfaceRule) = apply { add(Sequence(rules.toList())) }
+fun SurfaceRulesScope.sequence(vararg sequenceRules: SurfaceRule) = apply { rules += Sequence(sequenceRules.toList()) }

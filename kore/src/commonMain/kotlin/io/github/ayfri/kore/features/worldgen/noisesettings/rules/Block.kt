@@ -12,11 +12,11 @@ data class Block(
 /**
  * Appends a block surface rule.
  */
-fun MutableList<SurfaceRule>.block(name: BlockArgument, block: MutableMap<String, String>.() -> Unit = {}) =
-	apply { add(Block(BlockState(name, buildMap(block)))) }
+fun SurfaceRulesScope.block(name: BlockArgument, block: MutableMap<String, String>.() -> Unit = {}) =
+	apply { rules += Block(BlockState(name, buildMap(block))) }
 
 /**
  * Appends a block surface rule.
  */
-fun MutableList<SurfaceRule>.block(name: BlockArgument, properties: Map<String, String>) =
-	apply { add(Block(BlockState(name, properties))) }
+fun SurfaceRulesScope.block(name: BlockArgument, properties: Map<String, String>) =
+	apply { rules += Block(BlockState(name, properties)) }

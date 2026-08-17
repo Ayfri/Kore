@@ -18,17 +18,21 @@ data class Condition(
 /**
  * Appends a condition that associates a rule condition with a surface rule.
  */
-fun MutableList<SurfaceRule>.condition(condition: SurfaceRuleCondition, thenRun: SurfaceRule) =
-	apply { add(Condition(condition, thenRun)) }
+fun SurfaceRulesScope.condition(condition: SurfaceRuleCondition, thenRun: SurfaceRule) =
+	apply { rules += Condition(condition, thenRun) }
+
+/**
+ * Appends a condition that associates a rule condition with the surface rules appended in [thenBlock].
+ *
+ * A single rule is used as-is, several are wrapped in a [Sequence].
+ */
+fun SurfaceRulesScope.condition(condition: SurfaceRuleCondition, thenBlock: SurfaceRulesScope.() -> Unit) = apply {
+	val thenRules = buildSurfaceRules(thenBlock)
+	rules += Condition(condition, thenRules.singleOrNull() ?: Sequence(thenRules))
+}
 
 /**
  * Appends a condition that associates a rule condition with a sequence of surface rules.
  */
-fun MutableList<SurfaceRule>.condition(condition: SurfaceRuleCondition, thenBlock: MutableList<SurfaceRule>.() -> Unit) =
-	apply { add(Condition(condition, Sequence(buildList(thenBlock)))) }
-
-/**
- * Appends a condition that associates a rule condition with a sequence of surface rules.
- */
-fun MutableList<SurfaceRule>.condition(condition: SurfaceRuleCondition, vararg thenRules: SurfaceRule) =
-	apply { add(Condition(condition, Sequence(thenRules.toList()))) }
+fun SurfaceRulesScope.condition(condition: SurfaceRuleCondition, vararg thenRules: SurfaceRule) =
+	apply { rules += Condition(condition, Sequence(thenRules.toList())) }
