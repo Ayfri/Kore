@@ -5,7 +5,7 @@ nav-title: Structures
 description: Create structures with template pools, processors, and structure sets using Kore's DSL.
 keywords: minecraft, datapack, kore, worldgen, structure, template pool, processor, jigsaw
 date-created: 2026-02-03
-date-modified: 2026-02-15
+date-modified: 2026-08-17
 routeOverride: /docs/data-driven/worldgen/structures
 ---
 
@@ -37,25 +37,139 @@ randomization (varied block types), and terrain adaptation (gravity for surface 
 
 Reference: [Processor list](https://minecraft.wiki/w/Processor_list)
 
+Processors run in declaration order, each one taking the output of the previous one as its input. `processorList`
+returns a `ProcessorListArgument` you pass to template pool elements.
+
 ```kotlin
+import io.github.ayfri.kore.features.worldgen.processorlist.processorList
+import io.github.ayfri.kore.features.worldgen.processorlist.types.*
+
 val processors = dp.processorList("my_processors") {
-	processors = listOf(
-		// Add processor entries here
-	)
+	blockIgnore(Blocks.STRUCTURE_BLOCK, Blocks.JIGSAW)
+	blockAge(0.5)
+	gravity(HeightMap.WORLD_SURFACE_WG)
 }
 ```
 
-### Common Processors
+```json
+{
+	"processors": [
+		{
+			"processor_type": "minecraft:block_ignore",
+			"blocks": [
+				{ "Name": "minecraft:structure_block" },
+				{ "Name": "minecraft:jigsaw" }
+			]
+		},
+		{
+			"processor_type": "minecraft:block_age",
+			"mossiness": 0.5
+		},
+		{
+			"processor_type": "minecraft:gravity",
+			"heightmap": "WORLD_SURFACE_WG",
+			"offset": 0
+		}
+	]
+}
+```
 
-| Processor          | Description                                 |
-|--------------------|---------------------------------------------|
-| `block_rot`        | Randomly rotates blocks                     |
-| `block_ignore`     | Ignores certain blocks during placement     |
-| `block_age`        | Ages blocks (cracks, moss)                  |
-| `gravity`          | Adjusts Y position to terrain               |
-| `rule`             | Replaces blocks based on rules              |
-| `protected_blocks` | Prevents certain blocks from being replaced |
-| `capped`           | Limits processor applications               |
+### Processors
+
+Every processor is a function scoped to the `processorList { }` block.
+
+| Processor                             | Description                                                            |
+|---------------------------------------|------------------------------------------------------------------------|
+| `blackstoneReplace()`                 | Replaces blocks with their blackstone counterparts, like bastions      |
+| `blockAge(mossiness)`                 | Ages blocks: moss, cracks, and randomly missing blocks                 |
+| `blockIgnore(vararg blocks)`          | Skips those block states, keeping whatever the world already has       |
+| `blockRot(integrity, rottableBlocks)` | Randomly removes blocks, `integrity` is the chance to keep one         |
+| `capped(limit) { }`                   | Runs a single delegate processor on at most `limit` blocks             |
+| `gravity(heightmap, offset)`          | Drops the blocks onto a heightmap so the structure follows the terrain |
+| `jigsawReplacement()`                 | Turns leftover jigsaw blocks into their final state block              |
+| `lavaSubmergedBlock()`                | Fills the positions around blocks placed inside a lava lake with lava  |
+| `nop()`                               | Does nothing, useful as a placeholder delegate                         |
+| `protectedBlocks(vararg blocks)`      | Keeps those world blocks untouched, the template never replaces them   |
+| `rules { }`                           | Replaces blocks using a list of rules, the first matching rule wins    |
+
+`limit` accepts a plain `Int` or any int provider, and the delegate cannot be another `capped` processor:
+
+```kotlin
+processorList("capped_aging") {
+	capped(uniform(1, 4)) {
+		blockAge(0.8)
+	}
+}
+```
+
+### Rules
+
+A rule replaces a template block by `outputState` when its three predicates pass, and the first matching rule wins.
+
+| Property              | Description                                               | Default      |
+|-----------------------|-----------------------------------------------------------|--------------|
+| `positionPredicate`   | Test on the position inside the structure piece           | `null`       |
+| `inputPredicate`      | Test on the block of the structure template               | `AlwaysTrue` |
+| `locationPredicate`   | Test on the block already in the world at that position   | `AlwaysTrue` |
+| `outputState`         | Block state placed when every predicate passes            | stone        |
+| `blockEntityModifier` | What happens to the block entity data of the placed block | `null`       |
+
+```kotlin
+processorList("mossify") {
+	rules {
+		rule {
+			inputPredicate = blockMatch(Blocks.STONE_BRICKS)
+			locationPredicate = tagMatch(Tags.Block.DIRT)
+			outputState = blockState(Blocks.MOSSY_STONE_BRICKS)
+		}
+
+		rule {
+			positionPredicate = axisAlignedLinearPos(Axis.Y) {
+				minDist = 0
+				maxDist = 4
+				minChance = 1.0
+				maxChance = 0.0
+			}
+
+			inputPredicate = randomBlockStateMatch(blockState(Blocks.STONE), 0.5)
+			outputState = blockState(Blocks.CRACKED_STONE_BRICKS)
+			blockEntityModifier = appendLoot(LootTables.Chests.SIMPLE_DUNGEON)
+		}
+	}
+}
+```
+
+Position predicates, scoped to the `rule { }` block:
+
+| Position predicate               | Description                                                      |
+|----------------------------------|------------------------------------------------------------------|
+| `alwaysTruePos()`                | Passes everywhere, same as leaving `positionPredicate` to `null` |
+| `linearPos(...)`                 | Chance interpolated with the distance from the piece origin      |
+| `axisAlignedLinearPos(axis) { }` | Same, with the distance measured along one axis only             |
+
+Block entity modifiers, also scoped to the `rule { }` block, decide what happens to the block entity data of the
+placed block:
+
+| Block entity modifier   | Description                                                         |
+|-------------------------|---------------------------------------------------------------------|
+| `appendLoot(lootTable)` | Fills the placed container from a loot table                        |
+| `appendStatic { }`      | Merges NBT data into the block entity                               |
+| `clear()`               | Drops the block entity data of the template                         |
+| `passthrough()`         | Keeps it untouched, same as leaving `blockEntityModifier` to `null` |
+
+Rule tests, used by `inputPredicate` and `locationPredicate`, are the shared worldgen ones from
+`io.github.ayfri.kore.features.worldgen.ruletest`:
+
+| Rule test                                   | Description                                |
+|---------------------------------------------|--------------------------------------------|
+| `AlwaysTrue`                                | Matches any block                          |
+| `blockMatch(block)`                         | Matches one block, ignoring its properties |
+| `blockStateMatch(blockState)`               | Matches one exact block state              |
+| `randomBlockMatch(block, probability)`      | Matches a block with a probability         |
+| `randomBlockStateMatch(state, probability)` | Matches a block state with a probability   |
+| `tagMatch(tag)`                             | Matches any block of a block tag           |
+
+Group processor lists under a tag with `processorListTag`, see [Tags](/docs/data-driven/tags).
 
 ---
 
@@ -248,9 +362,8 @@ concentricRingsPlacement(
 fun DataPack.createCustomVillage() {
 	// 1) Processor list for aging blocks
 	val villageProcessors = processorList("village_processors") {
-		processors = listOf(
-			// Add aging, gravity, etc.
-		)
+		blockAge(0.3)
+		gravity(HeightMap.WORLD_SURFACE_WG)
 	}
 
 	// 2) Template pool for houses
