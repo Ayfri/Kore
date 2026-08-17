@@ -211,12 +211,12 @@ fun DataPack.densityFunctionTests() {
 		}
 	""".trimIndent()
 
-	densityFunctionsBuilder.noise("noise", DensityFunctions.Overworld.BASE_3D_NOISE, xzScale = 0.5, yScale = 0.25)
+	densityFunctionsBuilder.noise("noise", Noises.Calcite, xzScale = 0.5, yScale = 0.25)
 
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:noise",
-			"noise": "minecraft:overworld/base_3d_noise",
+			"noise": "minecraft:calcite",
 			"xz_scale": 0.5,
 			"y_scale": 0.25
 		}
@@ -318,12 +318,55 @@ fun DataPack.densityFunctionTests() {
 		}
 	""".trimIndent()
 
-	densityFunctionsBuilder.spline("spline", DensityFunctions.Overworld.BASE_3D_NOISE)
+	densityFunctionsBuilder.spline("spline_constant", 1.5f)
 
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:spline",
-			"argument": "minecraft:overworld/base_3d_noise"
+			"spline": 1.5
+		}
+	""".trimIndent()
+
+	densityFunctionsBuilder.spline("spline", DensityFunctions.Overworld.CONTINENTS) {
+		point(-1.1f, 0.044f)
+		point(-0.51f, DensityFunctions.Overworld.EROSION, derivative = 0.5f) {
+			point(-0.6f, 1.0f)
+			point(0.5f, -1.0f)
+		}
+	}
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:spline",
+			"spline": {
+				"coordinate": "minecraft:overworld/continents",
+				"points": [
+					{
+						"location": -1.1,
+						"value": 0.044,
+						"derivative": 0.0
+					},
+					{
+						"location": -0.51,
+						"value": {
+							"coordinate": "minecraft:overworld/erosion",
+							"points": [
+								{
+									"location": -0.6,
+									"value": 1.0,
+									"derivative": 0.0
+								},
+								{
+									"location": 0.5,
+									"value": -1.0,
+									"derivative": 0.0
+								}
+							]
+						},
+						"derivative": 0.5
+					}
+				]
+			}
 		}
 	""".trimIndent()
 

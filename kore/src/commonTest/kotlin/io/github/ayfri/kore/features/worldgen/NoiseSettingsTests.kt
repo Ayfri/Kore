@@ -2,20 +2,13 @@ package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
-import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.data.block.BlockState
+import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.worldgen.dimension.biomesource.multinoise.multiNoiseBiomeSourceParameters
 import io.github.ayfri.kore.features.worldgen.noise.noise
 import io.github.ayfri.kore.features.worldgen.noisesettings.*
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.bandlands
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.block
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.condition
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.biomes
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.noiseThreshold
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.not
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.entry
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.noiseGradient
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.surfaceRules
+import io.github.ayfri.kore.features.worldgen.noisesettings.rules.*
+import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.*
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.DensityFunctions
@@ -29,6 +22,12 @@ fun DataPack.noiseSettingsTests() {
 	}
 
 	noiseSettings("my_noise_settings") {
+		seaLevel = 42
+		disableMobGeneration = true
+		aquifersEnabled = true
+		oreVeinsEnabled = true
+		legacyRandomSource = true
+
 		defaultBlock(Blocks.REDSTONE_LAMP) {
 			this["lit"] = "true"
 		}
@@ -37,12 +36,25 @@ fun DataPack.noiseSettingsTests() {
 			this["level"] = "0"
 		}
 
+		noiseOptions(-64, 384, 1, 2)
+
 		noiseRouter {
 			barrier(0.5)
+			fluidLevelFloodedness(1.5)
+			fluidLevelSpread(2.5)
 			lava(DensityFunctions.End.BASE_3D_NOISE)
+			temperature(DensityFunctions.Overworld.BASE_3D_NOISE)
+			vegetation(3.5)
+			continents(DensityFunctions.Overworld.CONTINENTS)
+			erosion(DensityFunctions.Overworld.EROSION)
+			depth(DensityFunctions.Overworld.DEPTH)
+			ridges(DensityFunctions.Overworld.RIDGES)
+			preliminarySurfaceLevel(4.5)
+			finalDensity(DensityFunctions.Overworld.SLOPED_CHEESE)
+			veinToggle(5.5)
+			veinRidged(6.5)
+			veinGap(7.5)
 		}
-
-		noiseOptions(-64, 384, 1, 2)
 
 		spawnTarget += multiNoiseBiomeSourceParameters(
 			0.0,
@@ -57,38 +69,35 @@ fun DataPack.noiseSettingsTests() {
 		surfaceRules {
 			bandlands()
 			block(Blocks.STONE)
-			condition(
-				not {
-					biomes {
-						this += Biomes.BADLANDS
-					}
-				}
-			) {
-				block(Blocks.STONE)
-				block(Blocks.DIRT)
-				block(Blocks.GRAVEL)
-				block(Blocks.GRANITE)
-				block(Blocks.DIORITE)
-				block(Blocks.ANDESITE)
-			}
-
-			condition(noiseThreshold(myNoise))
-
+			condition(AbovePreliminarySurface, Block(BlockState(Blocks.ANDESITE)))
+			condition(biomes(Biomes.BADLANDS), Block(BlockState(Blocks.RED_SAND)))
+			condition(Hole, Block(BlockState(Blocks.DIORITE)))
+			condition(noiseThreshold(myNoise, minThreshold = -0.5, maxThreshold = 0.5), Block(BlockState(Blocks.GRANITE)))
+			condition(not(Steep), Block(BlockState(Blocks.GRAVEL)))
+			condition(Steep, Block(BlockState(Blocks.STONE)))
+			condition(stoneDepth(Surface.FLOOR, offset = 1.0, addSurfaceDepth = true, secondaryDepthRange = 2), Block(BlockState(Blocks.DIRT)))
+			condition(Temperature, Block(BlockState(Blocks.SNOW_BLOCK)))
+			condition(verticalGradient("bedrock_floor", aboveBottom(0), aboveBottom(5)), Block(BlockState(Blocks.BEDROCK)))
+			condition(water(offset = -1, surfaceDepthMultiplier = 2, addStoneDepth = true), Block(BlockState(Blocks.GRASS_BLOCK)))
+			condition(yAbove(absolute(64), surfaceDepthMultiplier = 1, addStoneDepth = true), Block(BlockState(Blocks.CALCITE)))
+			condition(yAbove(belowTop(8)), Block(BlockState(Blocks.PACKED_ICE)))
 			noiseGradient(myNoise) {
 				entry(BlockState(Blocks.STONE))
 				entry()
 			}
+			sequence {
+				block(Blocks.DEEPSLATE)
+			}
 		}
 	}
 
-	// language=json
 	noiseSettings.last() assertsIs """
 		{
-			"sea_level": 63,
-			"disable_mob_generation": false,
-			"aquifers_enabled": false,
-			"ore_veins_enabled": false,
-			"legacy_random_source": false,
+			"sea_level": 42,
+			"disable_mob_generation": true,
+			"aquifers_enabled": true,
+			"ore_veins_enabled": true,
+			"legacy_random_source": true,
 			"default_block": {
 				"Name": "minecraft:redstone_lamp",
 				"Properties": {
@@ -109,20 +118,20 @@ fun DataPack.noiseSettingsTests() {
 			},
 			"noise_router": {
 				"barrier": 0.5,
-				"fluid_level_floodedness": 0.0,
-				"fluid_level_spread": 0.0,
+				"fluid_level_floodedness": 1.5,
+				"fluid_level_spread": 2.5,
 				"lava": "minecraft:end/base_3d_noise",
-				"temperature": 0.0,
-				"vegetation": 0.0,
-				"continents": 0.0,
-				"erosion": 0.0,
-				"depth": 0.0,
-				"ridges": 0.0,
-				"preliminary_surface_level": 0.0,
-				"final_density": 0.0,
-				"vein_toggle": 0.0,
-				"vein_ridged": 0.0,
-				"vein_gap": 0.0
+				"temperature": "minecraft:overworld/base_3d_noise",
+				"vegetation": 3.5,
+				"continents": "minecraft:overworld/continents",
+				"erosion": "minecraft:overworld/erosion",
+				"depth": "minecraft:overworld/depth",
+				"ridges": "minecraft:overworld/ridges",
+				"preliminary_surface_level": 4.5,
+				"final_density": "minecraft:overworld/sloped_cheese",
+				"vein_toggle": 5.5,
+				"vein_ridged": 6.5,
+				"vein_gap": 7.5
 			},
 			"spawn_target": [
 				{
@@ -150,54 +159,40 @@ fun DataPack.noiseSettingsTests() {
 					{
 						"type": "minecraft:condition",
 						"if_true": {
-							"type": "minecraft:not",
-							"invert": {
-								"type": "minecraft:biome",
-								"biome_is": [
-									"minecraft:badlands"
-								]
-							}
+							"type": "minecraft:above_preliminary_surface"
 						},
 						"then_run": {
-							"type": "minecraft:sequence",
-							"sequence": [
-								{
-									"type": "minecraft:block",
-									"result_state": {
-										"Name": "minecraft:stone"
-									}
-								},
-								{
-									"type": "minecraft:block",
-									"result_state": {
-										"Name": "minecraft:dirt"
-									}
-								},
-								{
-									"type": "minecraft:block",
-									"result_state": {
-										"Name": "minecraft:gravel"
-									}
-								},
-								{
-									"type": "minecraft:block",
-									"result_state": {
-										"Name": "minecraft:granite"
-									}
-								},
-								{
-									"type": "minecraft:block",
-									"result_state": {
-										"Name": "minecraft:diorite"
-									}
-								},
-								{
-									"type": "minecraft:block",
-									"result_state": {
-										"Name": "minecraft:andesite"
-									}
-								}
+							"type": "minecraft:block",
+							"result_state": {
+								"Name": "minecraft:andesite"
+							}
+						}
+					},
+					{
+						"type": "minecraft:condition",
+						"if_true": {
+							"type": "minecraft:biome",
+							"biome_is": [
+								"minecraft:badlands"
 							]
+						},
+						"then_run": {
+							"type": "minecraft:block",
+							"result_state": {
+								"Name": "minecraft:red_sand"
+							}
+						}
+					},
+					{
+						"type": "minecraft:condition",
+						"if_true": {
+							"type": "minecraft:hole"
+						},
+						"then_run": {
+							"type": "minecraft:block",
+							"result_state": {
+								"Name": "minecraft:diorite"
+							}
 						}
 					},
 					{
@@ -205,12 +200,137 @@ fun DataPack.noiseSettingsTests() {
 						"if_true": {
 							"type": "minecraft:noise_threshold",
 							"noise": "$name:my_noise",
-							"min_threshold": 0.0,
-							"max_threshold": 0.0
+							"min_threshold": -0.5,
+							"max_threshold": 0.5
 						},
 						"then_run": {
-							"type": "minecraft:sequence",
-							"sequence": []
+							"type": "minecraft:block",
+							"result_state": {
+								"Name": "minecraft:granite"
+							}
+						}
+					},
+					{
+						"type": "minecraft:condition",
+						"if_true": {
+							"type": "minecraft:not",
+							"invert": {
+								"type": "minecraft:steep"
+							}
+						},
+						"then_run": {
+							"type": "minecraft:block",
+							"result_state": {
+								"Name": "minecraft:gravel"
+							}
+						}
+					},
+					{
+						"type": "minecraft:condition",
+						"if_true": {
+							"type": "minecraft:steep"
+						},
+						"then_run": {
+							"type": "minecraft:block",
+							"result_state": {
+								"Name": "minecraft:stone"
+							}
+						}
+					},
+					{
+						"type": "minecraft:condition",
+						"if_true": {
+							"type": "minecraft:stone_depth",
+							"offset": 1.0,
+							"surface_type": "floor",
+							"add_surface_depth": true,
+							"secondary_depth_range": 2
+						},
+						"then_run": {
+							"type": "minecraft:block",
+							"result_state": {
+								"Name": "minecraft:dirt"
+							}
+						}
+					},
+					{
+						"type": "minecraft:condition",
+						"if_true": {
+							"type": "minecraft:temperature"
+						},
+						"then_run": {
+							"type": "minecraft:block",
+							"result_state": {
+								"Name": "minecraft:snow_block"
+							}
+						}
+					},
+					{
+						"type": "minecraft:condition",
+						"if_true": {
+							"type": "minecraft:vertical_gradient",
+							"random_name": "bedrock_floor",
+							"true_at_and_below": {
+								"above_bottom": 0
+							},
+							"false_at_and_above": {
+								"above_bottom": 5
+							}
+						},
+						"then_run": {
+							"type": "minecraft:block",
+							"result_state": {
+								"Name": "minecraft:bedrock"
+							}
+						}
+					},
+					{
+						"type": "minecraft:condition",
+						"if_true": {
+							"type": "minecraft:water",
+							"offset": -1,
+							"surface_depth_multiplier": 2,
+							"add_stone_depth": true
+						},
+						"then_run": {
+							"type": "minecraft:block",
+							"result_state": {
+								"Name": "minecraft:grass_block"
+							}
+						}
+					},
+					{
+						"type": "minecraft:condition",
+						"if_true": {
+							"type": "minecraft:y_above",
+							"anchor": {
+								"absolute": 64
+							},
+							"surface_depth_multiplier": 1,
+							"add_stone_depth": true
+						},
+						"then_run": {
+							"type": "minecraft:block",
+							"result_state": {
+								"Name": "minecraft:calcite"
+							}
+						}
+					},
+					{
+						"type": "minecraft:condition",
+						"if_true": {
+							"type": "minecraft:y_above",
+							"anchor": {
+								"below_top": 8
+							},
+							"surface_depth_multiplier": 0,
+							"add_stone_depth": false
+						},
+						"then_run": {
+							"type": "minecraft:block",
+							"result_state": {
+								"Name": "minecraft:packed_ice"
+							}
 						}
 					},
 					{
@@ -224,6 +344,17 @@ fun DataPack.noiseSettingsTests() {
 							{}
 						],
 						"noise": "$name:my_noise"
+					},
+					{
+						"type": "minecraft:sequence",
+						"sequence": [
+							{
+								"type": "minecraft:block",
+								"result_state": {
+									"Name": "minecraft:deepslate"
+								}
+							}
+						]
 					}
 				]
 			}

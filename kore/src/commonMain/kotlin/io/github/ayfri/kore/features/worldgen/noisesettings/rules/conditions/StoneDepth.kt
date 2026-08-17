@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class StoneDepth(
 	var offset: Double = 0.0,
-	var surface: Surface,
+	var surfaceType: Surface,
 	var addSurfaceDepth: Boolean = false,
 	var secondaryDepthRange: Int = 0,
 ) : SurfaceRuleCondition()
@@ -22,13 +22,13 @@ enum class Surface {
 }
 
 fun stoneDepth(
-	surface: Surface,
+	surfaceType: Surface,
 	offset: Double = 0.0,
 	addSurfaceDepth: Boolean = false,
 	secondaryDepthRange: Int = 0,
-) = StoneDepth(offset, surface, addSurfaceDepth, secondaryDepthRange)
+) = StoneDepth(offset, surfaceType, addSurfaceDepth, secondaryDepthRange)
 
 fun stoneDepth(
-	surface: Surface,
+	surfaceType: Surface,
 	block: StoneDepth.() -> Unit,
-) = StoneDepth(surface = surface).apply(block)
+) = StoneDepth(surfaceType = surfaceType).apply(block)
