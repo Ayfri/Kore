@@ -181,45 +181,49 @@ connecting to streets connecting to more houses).
 
 Reference: [Template pool](https://minecraft.wiki/w/Template_pool)
 
+Element builders are declared directly inside the `templatePool` block, each one appending a weighted entry to the pool.
+
 ```kotlin
 val pool = dp.templatePool("my_pool") {
 	fallback = TemplatePools.Empty
-	elements {
-		// Add weighted template pool entries
+
+	single(Structures.Village.Plains.TownCenters.PLAINS_FOUNTAIN_01, ProcessorLists.EMPTY, weight = 3)
+	feature(PlacedFeatures.PILE_HAY, weight = 1)
+	empty(weight = 2)
+}
+```
+
+`fallback` is the pool used when a piece cannot connect any further, and defaults to `TemplatePools.Empty`.
+
+### Pool Elements
+
+| Builder                              | JSON `element_type`                    | Description                                                  |
+|--------------------------------------|----------------------------------------|--------------------------------------------------------------|
+| `single(location, processors)`       | `minecraft:single_pool_element`        | Places a structure template                                  |
+| `legacySingle(location, processors)` | `minecraft:legacy_single_pool_element` | Same, but keeps existing world blocks instead of placing air |
+| `feature(feature)`                   | `minecraft:feature_pool_element`       | Places a placed feature in a 1x1x1 piece                     |
+| `list { }`                           | `minecraft:list_pool_element`          | Places several elements at the same position, in order       |
+| `empty()`                            | `minecraft:empty_pool_element`         | Places nothing, useful as filler weight                      |
+
+Every builder takes `weight` (1 to 150, defaults to `1`) and `projection` (defaults to `Projection.RIGID`). `processors` defaults to
+`ProcessorLists.EMPTY`. A trailing block gives access to the remaining fields, such as `overrideLiquidSettings` on `single` and
+`legacySingle`.
+
+```kotlin
+dp.templatePool("houses") {
+	single(Structures.Village.Plains.Houses.PLAINS_SMALL_HOUSE_1, weight = 4) {
+		projection = Projection.TERRAIN_MATCHING
+		overrideLiquidSettings = LiquidSettings.IGNORE_WATERLOGGING
+	}
+
+	list(weight = 1) {
+		single(Structures.Village.Plains.Houses.PLAINS_SMALL_HOUSE_2, ProcessorLists.MOSSIFY_10_PERCENT)
+		feature(PlacedFeatures.PILE_HAY)
 	}
 }
 ```
 
-### Pool Elements
-
-```kotlin
-elements {
-	// Single piece with weight
-	singlePoolElement(
-		location = "my_namespace:structures/house",
-		projection = Projection.RIGID,
-		processors = myProcessors,
-		weight = 1
-	)
-
-	// Empty element (for spacing)
-	emptyPoolElement(weight = 1)
-
-	// Feature element
-	featurePoolElement(
-		feature = myPlacedFeature,
-		projection = Projection.TERRAIN_MATCHING,
-		weight = 1
-	)
-
-	// List of elements (all placed together)
-	listPoolElement(
-		elements = listOf(/* ... */),
-		projection = Projection.RIGID,
-		weight = 1
-	)
-}
-```
+`list` blocks contain unweighted elements, since the weight belongs to the list entry itself.
 
 ### Projection Types
 
@@ -369,33 +373,16 @@ fun DataPack.createCustomVillage() {
 	// 2) Template pool for houses
 	val housesPool = templatePool("village/houses") {
 		fallback = TemplatePools.Empty
-		elements {
-			singlePoolElement(
-				location = "my_pack:village/house_small",
-				projection = Projection.RIGID,
-				processors = villageProcessors,
-				weight = 3
-			)
-			singlePoolElement(
-				location = "my_pack:village/house_large",
-				projection = Projection.RIGID,
-				processors = villageProcessors,
-				weight = 1
-			)
-		}
+
+		single(StructureArgument("village/house_small", "my_pack"), villageProcessors, weight = 3)
+		single(StructureArgument("village/house_large", "my_pack"), villageProcessors, weight = 1)
 	}
 
 	// 3) Start pool (village center)
 	val startPool = templatePool("village/start") {
 		fallback = TemplatePools.Empty
-		elements {
-			singlePoolElement(
-				location = "my_pack:village/center",
-				projection = Projection.RIGID,
-				processors = villageProcessors,
-				weight = 1
-			)
-		}
+
+		single(StructureArgument("village/center", "my_pack"), villageProcessors)
 	}
 
 	// 4) Configured structure (via structures builder)
