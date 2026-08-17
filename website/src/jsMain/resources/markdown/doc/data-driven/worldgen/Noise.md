@@ -1,263 +1,453 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Noise & Terrain
+title: Minecraft Noise Settings, Density Functions & Surface Rules with Kore
 nav-title: Noise
-description: Define terrain shaping with density functions, noise definitions, and noise settings.
-keywords: minecraft, datapack, kore, worldgen, noise, density function, noise settings, terrain
+description: Shape Minecraft terrain from Kotlin - noise definitions, density functions, noise routers and surface rules, fully type-safe with Kore.
+keywords: minecraft datapack, kore, worldgen, noise settings, density function, noise router, surface rule, terrain generation, perlin noise, octaves
 date-created: 2026-02-03
-date-modified: 2026-02-03
+date-modified: 2026-08-17
 routeOverride: /docs/data-driven/worldgen/noise
 ---
 
 # Noise & Terrain
 
-Noise and density functions are the mathematical foundation of Minecraft's terrain generation. They control everything from mountain heights
-to cave shapes, creating the continuous, natural-looking landscapes players explore.
+Noise, density functions and noise settings are the three layers that shape Minecraft terrain. They build on each other in that order:
 
-## How Terrain Generation Works
+1. **Noise definitions** (`worldgen/noise`) - raw Perlin noise, described by octaves and amplitudes.
+2. **Density functions** (`worldgen/density_function`) - composable math nodes that sample noises and combine them into a density value for
+   any 3D position.
+3. **Noise settings** (`worldgen/noise_settings`) - the terrain configuration a dimension points at: world bounds, default blocks, the noise
+   router wiring density functions to generation roles, and the surface rules painting the top layers.
 
-Minecraft uses **density functions** to determine whether each position in 3D space should be solid or air. Positive density = solid block,
-negative density = air. These functions sample from **noise definitions** (Perlin noise with configurable octaves) to create smooth, natural
-variation.
+Minecraft decides whether a position is solid from the density value the router's `finalDensity` produces: positive density is a block,
+negative density is air (or fluid, below sea level).
 
-The **noise router** connects density functions to specific terrain aspects: base terrain shape, cave carving, aquifer placement, ore vein
-distribution, and biome parameters.
-
-References: [Density function](https://minecraft.wiki/w/Density_function), [Noise](https://minecraft.wiki/w/Noise), [Noise settings](https://minecraft.wiki/w/Noise_settings)
-
----
-
-## Density Functions
-
-Density functions are composable mathematical operations that output a density value for any 3D position. They can be combined, transformed,
-and cached to build complex terrain shapes from simple primitives.
-
-Reference: [Density function](https://minecraft.wiki/w/Density_function)
-
-Every density function file holds exactly one node type. Declare one or more inside a `densityFunctions { ... }` block, one builder call per file:
-
-```kotlin
-dp.densityFunctions {
-	val base = constant("base", 1.0)
-	abs("my_density", base)
-	add("terrain", 1.0, 2.0)
-	noise("hills", hillsNoise, xzScale = 0.5, yScale = 0.25)
-}
-```
-
-Each call returns a `DensityFunctionArgument` you can pass into another density function, a noise router field, or a [noise settings](#noise-settings) block.
-
-### Density Function Types
-
-| Type                    | Builder                          | Description                                                                  |
-|-------------------------|-----------------------------------|-------------------------------------------------------------------------------|
-| `abs`                   | `abs(...)`                        | Absolute value of the input.                                                  |
-| `add`                   | `add(...)`                        | Sums two inputs.                                                              |
-| `beardifier`            | `beardifier(...)`                 | Blends nearby terrain into structures. No parameters.                         |
-| `blend_alpha`           | `blendAlpha(...)`                 | Smooths transitions between chunk generation versions. No parameters.         |
-| `blend_density`         | `blendDensity(...)`               | Blends the input across chunk generation version transitions.                 |
-| `blend_offset`          | `blendOffset(...)`                | Supports legacy chunk compatibility blending. No parameters.                  |
-| `cache_2d`              | `cache2D(...)`                    | Caches the input once per horizontal (X/Z) position.                          |
-| `cache_all_in_cell`     | `cacheAllInCell(...)`             | Caches the input for the duration of its interpolation cell.                  |
-| `cache_once`            | `cacheOnce(...)`                  | Caches the input once per block position, even if referenced multiple times.  |
-| `clamp`                 | `clamp(...)`                      | Restricts the input between `min` and `max`.                                  |
-| `constant`              | `constant(...)`                   | A fixed value, ignoring the input position.                                   |
-| `cube`                  | `cube(...)`                       | Raises the input to the power of 3 (x^3).                                     |
-| `end_islands`           | `endIslands(...)`                 | Samples the End's island noise. No parameters.                                |
-| `find_top_surface`      | `findTopSurface(...)`             | Scans a column for the topmost position where a density is above zero.        |
-| `flat_cache`            | `flatCache(...)`                  | Caches the input per 4x4 column, computed once at Y=0.                        |
-| `half_negative`         | `halfNegative(...)`               | Halves the input when negative, otherwise leaves it unchanged.                |
-| `interpolated`          | `interpolated(...)`               | Interpolates the input across the surrounding grid cells.                     |
-| `invert`                | `invert(...)`                     | Reciprocal (1 / x) of the input.                                              |
-| `max`                   | `max(...)`                        | Larger of two inputs.                                                         |
-| `min`                   | `min(...)`                        | Smaller of two inputs.                                                        |
-| `mul`                   | `mul(...)`                        | Multiplies two inputs.                                                        |
-| `noise`                 | `noise(...)`                      | Samples a noise, scaled horizontally and vertically.                          |
-| `old_blended_noise`     | `oldBlendedNoise(...)`            | Legacy blended noise used before the 1.18 terrain rewrite.                    |
-| `quarter_negative`      | `quarterNegative(...)`            | Quarters the input when negative, otherwise leaves it unchanged.              |
-| `range_choice`          | `rangeChoice(...)`                | Picks between two inputs based on whether a value falls within a range.       |
-| `shift`                 | `shift(...)`                      | Samples a noise at the input position scaled down by 4.                       |
-| `shift_a`               | `shiftA(...)`                     | Samples a noise at `(x/4, 0, z/4)`, scaled back up by 4.                      |
-| `shift_b`               | `shiftB(...)`                     | Samples a noise at `(z/4, x/4, 0)`, scaled back up by 4.                      |
-| `shifted_noise`         | `shiftedNoise(...)`               | Like `noise`, but with the sampled coordinates shifted.                       |
-| `spline`                | `spline(...)`                     | Cubic spline over the input.                                                  |
-| `square`                | `square(...)`                     | Raises the input to the power of 2 (x^2).                                     |
-| `squeeze`               | `squeeze(...)`                    | Clamps the input to [-1, 1], then applies `x/2 - x^3/24`.                    |
-| `weird_scaled_sampler`  | `weirdScaledSampler(...)`         | Samples a noise and remaps it to bias cave/ravine rarity.                     |
-| `y_clamped_gradient`    | `yClampedGradient(...)`           | Linear gradient between two values as Y goes from one bound to another.       |
-
-All builders live in `io.github.ayfri.kore.features.worldgen.densityfunction.types` and take the file's `fileName` as their first argument.
+References: [Noise](https://minecraft.wiki/w/Noise), [Density function](https://minecraft.wiki/w/Density_function),
+[Noise settings](https://minecraft.wiki/w/Noise_settings)
 
 ---
 
 ## Noise Definitions
 
-Noise definitions configure Perlin noise parameters. Perlin noise creates smooth, continuous random values that look natural. **Octaves**
-layer multiple noise samples at different scales-lower octaves create large features (continents), higher octaves add fine detail (small
-hills).
+A noise definition configures one Perlin noise instance. **Octaves** layer noise samples at different scales - low octaves make large
+features (continents), high octaves add fine detail (small bumps).
 
-Reference: [Noise](https://minecraft.wiki/w/Noise)
+`firstOctave = -7` starts at the 2⁷ = 128 block scale. Each following octave doubles in frequency, and `amplitudes` weights each one, usually
+decreasing so detail never overwhelms the base shape.
 
 ```kotlin
-val noise = dp.noise("my_noise") {
-	firstOctave = -7
-	amplitudes = listOf(1.0, 1.0, 0.5)
+val hills = dp.noise("hills") {
+	firstOctave = -5
+	amplitudes = listOf(1.0, 0.5, 0.25)
 }
 ```
 
-### Parameters
+Two shorthands take the values inline:
 
-| Parameter     | Description                               |
-|---------------|-------------------------------------------|
-| `firstOctave` | Starting octave (negative = larger scale) |
-| `amplitudes`  | List of amplitude weights per octave      |
+```kotlin
+dp.noise("hills", firstOctave = -5, amplitudes = listOf(1.0, 0.5, 0.25))
+dp.noise("hills", -5, 1.0, 0.5, 0.25)
+```
 
-**Understanding octaves:** `firstOctave = -7` means the first octave operates at 2⁷ = 128 block scale. Each subsequent octave doubles in
-frequency (halves in scale). Amplitudes weight each octave's contribution-typically decreasing for higher octaves to add detail without
-overwhelming the base shape.
+| Parameter     | Type           | Description                                       |
+|---------------|----------------|---------------------------------------------------|
+| `firstOctave` | `Int`          | Starting octave, negative values are larger scale |
+| `amplitudes`  | `List<Double>` | Amplitude weight per octave                       |
+
+Every call returns a `NoiseArgument`. Vanilla noises are available as `Noises.AquiferBarrier`, `Noises.Continentalness` and so on, and can be
+passed anywhere a `NoiseArgument` is expected.
+
+---
+
+## Density Functions
+
+Density functions are math nodes evaluated per position. Each one lives in its own file and holds exactly one node type, so composing them
+means referencing other density function files.
+
+Declare them inside a `densityFunctions { ... }` block, one builder call per file:
+
+```kotlin
+dp.densityFunctions {
+	val base = constant("base", 1.0)
+	val hills = noise("hills", Noises.Continentalness, xzScale = 0.25, yScale = 0.0)
+
+	abs("abs_hills", hills)
+	add("terrain", base, hills)
+}
+```
+
+Each call returns a `DensityFunctionArgument` usable as an input to another node, as a [noise router](#noise-router) field, or anywhere else
+a density function is expected. Vanilla nodes come from the generated `DensityFunctions` object, e.g.
+`DensityFunctions.Overworld.BASE_3D_NOISE`.
+
+The block itself returns the builder scope, not the last node, so arguments you need later are captured in `val`s inside it. For a single
+node, or to return one node out of a group, `dp.densityFunctionsBuilder` exposes the same builders:
+
+```kotlin
+dp.densityFunctionsBuilder.abs("abs_base_3d_noise", DensityFunctions.Overworld.BASE_3D_NOISE)
+
+val terrain = with(dp.densityFunctionsBuilder) {
+	val gradient = yClampedGradient("gradient") { fromY = 0; toY = 128; fromValue = 1.0; toValue = -1.0 }
+	add("terrain", DensityFunctions.Overworld.BASE_3D_NOISE, gradient)
+}
+```
+
+Most builders accept either a `Double` or a `DensityFunctionArgument` for their inputs, in every combination. `noise`, `shift`, `shiftA`,
+`shiftB`, `shiftedNoise` and `weirdScaledSampler` take a `NoiseArgument` instead, since they sample a noise definition directly.
+
+### Density Function Types
+
+| Type                   | Builder                   | Description                                                                   |
+|------------------------|---------------------------|-------------------------------------------------------------------------------|
+| `abs`                  | `abs(...)`                | Absolute value of the input.                                                  |
+| `add`                  | `add(...)`                | Sums two inputs.                                                              |
+| `beardifier`           | `beardifier(...)`         | Blends nearby terrain into structures. No parameters.                         |
+| `blend_alpha`          | `blendAlpha(...)`         | Smooths transitions between chunk generation versions. No parameters.         |
+| `blend_density`        | `blendDensity(...)`       | Blends the input across chunk generation version transitions.                 |
+| `blend_offset`         | `blendOffset(...)`        | Supports legacy chunk compatibility blending. No parameters.                  |
+| `cache_2d`             | `cache2D(...)`            | Caches the input once per horizontal (X/Z) position.                          |
+| `cache_all_in_cell`    | `cacheAllInCell(...)`     | Caches the input for the duration of its interpolation cell.                  |
+| `cache_once`           | `cacheOnce(...)`          | Caches the input once per block position, even if referenced multiple times.  |
+| `clamp`                | `clamp(...)`              | Restricts the input between `min` and `max`.                                  |
+| `constant`             | `constant(...)`           | A fixed value, ignoring the input position.                                   |
+| `cube`                 | `cube(...)`               | Raises the input to the power of 3 (x³).                                      |
+| `end_islands`          | `endIslands(...)`         | Samples the End's island noise. No parameters.                                |
+| `find_top_surface`     | `findTopSurface(...)`     | Scans a column for the topmost position where a density is above zero.        |
+| `flat_cache`           | `flatCache(...)`          | Caches the input per 4x4 column, computed once at Y=0.                        |
+| `half_negative`        | `halfNegative(...)`       | Halves the input when negative, otherwise leaves it unchanged.                |
+| `interpolated`         | `interpolated(...)`       | Interpolates the input across the surrounding grid cells.                     |
+| `invert`               | `invert(...)`             | Reciprocal (1 / x) of the input.                                              |
+| `max`                  | `max(...)`                | Larger of two inputs.                                                         |
+| `min`                  | `min(...)`                | Smaller of two inputs.                                                        |
+| `mul`                  | `mul(...)`                | Multiplies two inputs.                                                        |
+| `noise`                | `noise(...)`              | Samples a noise definition, scaled horizontally and vertically.               |
+| `old_blended_noise`    | `oldBlendedNoise(...)`    | Legacy blended noise used before the 1.18 terrain rewrite.                    |
+| `quarter_negative`     | `quarterNegative(...)`    | Quarters the input when negative, otherwise leaves it unchanged.              |
+| `range_choice`         | `rangeChoice(...)`        | Picks between two inputs based on whether a value falls within a range.       |
+| `shift`                | `shift(...)`              | Samples a noise at `(x/4, y/4, z/4)`, scaled back up by 4.                    |
+| `shift_a`              | `shiftA(...)`             | Samples a noise at `(x/4, 0, z/4)`, scaled back up by 4.                      |
+| `shift_b`              | `shiftB(...)`             | Samples a noise at `(z/4, x/4, 0)`, scaled back up by 4.                      |
+| `shifted_noise`        | `shiftedNoise(...)`       | Like `noise`, but with the sampled coordinates shifted.                       |
+| `spline`               | `spline(...)`             | Cubic spline interpolating control points over a coordinate.                  |
+| `square`               | `square(...)`             | Raises the input to the power of 2 (x²).                                      |
+| `squeeze`              | `squeeze(...)`            | Clamps the input to [-1, 1], then applies `x/2 - x³/24`.                      |
+| `weird_scaled_sampler` | `weirdScaledSampler(...)` | Samples a noise and remaps it to bias cave/ravine rarity.                     |
+| `y_clamped_gradient`   | `yClampedGradient(...)`   | Linear gradient between two values as Y goes from one bound to another.       |
+
+All builders live in `io.github.ayfri.kore.features.worldgen.densityfunction.types` and take the file's name as their first argument.
+
+`beardifier`, `blend_alpha`, `blend_offset`, `blend_density` and `cache_all_in_cell` are internal to vanilla generation and are not meant to
+be referenced from a datapack, even though the builders exist.
+
+### Multi-Parameter Nodes
+
+Nodes with more than a couple of inputs take a builder block instead of a long positional list:
+
+```kotlin
+dp.densityFunctions {
+	rangeChoice("caves") {
+		input(DensityFunctions.Overworld.BASE_3D_NOISE)
+		minInclusive = -0.3
+		maxExclusive = 0.3
+		whenInRange(-1.0)
+		whenOutOfRange(1.0)
+	}
+
+	yClampedGradient("depth_bias") {
+		fromY = -64
+		toY = 320
+		fromValue = 1.0
+		toValue = -1.0
+	}
+
+	shiftedNoise("shifted_hills", Noises.Continentalness) {
+		xzScale = 0.25
+		yScale = 0.0
+		shiftX(DensityFunctions.ShiftX)
+		shiftZ(DensityFunctions.ShiftZ)
+	}
+
+	weirdScaledSampler("ravines", RarityValueMapper.TYPE_1, Noises.CaveEntrance, DensityFunctions.Overworld.BASE_3D_NOISE)
+
+	findTopSurface("top_surface", DensityFunctions.Overworld.BASE_3D_NOISE, DensityFunctions.Y, lowerBound = -64, cellHeight = 8)
+}
+```
+
+### Splines
+
+A `spline` interpolates control points over a coordinate density function. Points hold either a constant value or a nested spline, which is
+how vanilla layers continentalness, erosion and ridges into a single terrain offset:
+
+```kotlin
+dp.densityFunctions {
+	spline("offset", DensityFunctions.Overworld.CONTINENTS) {
+		point(-1.1f, 0.044f)
+		point(-0.51f, DensityFunctions.Overworld.EROSION, derivative = 0.5f) {
+			point(-0.6f, 1.0f)
+			point(0.5f, -1.0f)
+		}
+	}
+
+	spline("flat", 0.5f)
+}
+```
+
+Points are ordered by increasing `location`, and `derivative` sets the slope of the curve at that point.
+
+Fields typed `DensityFunctionOrDouble` are set through their matching setter function (`input(...)`, `whenInRange(...)`, `shiftX(...)`),
+overloaded for both a `Double` and a `DensityFunctionArgument`. Assigning the field directly needs an explicit
+`densityFunctionOrDouble(...)` wrapper.
 
 ---
 
 ## Noise Settings
 
-Noise settings define the complete terrain generation configuration for a dimension. They specify world bounds, default blocks, the noise
-router (which density functions control which terrain aspects), and surface rules.
-
-Reference: [Noise settings](https://minecraft.wiki/w/Noise_settings)
+Noise settings are the complete terrain configuration for a dimension. A dimension references one through its noise generator.
 
 ```kotlin
-val terrain = dp.noiseSettings("my_terrain") {
-	// Vertical bounds
+val terrain = dp.noiseSettings("custom_terrain") {
+	seaLevel = 63
+	aquifersEnabled = true
+	oreVeinsEnabled = true
+
 	noiseOptions(minY = -64, height = 384, sizeHorizontal = 1, sizeVertical = 2)
 
-	// Default blocks
-	defaultBlock(Blocks.STONE) {}
+	defaultBlock(Blocks.STONE)
 	defaultFluid(Blocks.WATER) { this["level"] = "0" }
 
-	// Noise router (terrain shaping)
-	// noiseRouter { ... }
+	noiseRouter {
+		finalDensity(DensityFunctions.Overworld.SLOPED_CHEESE)
+	}
 
-	// Surface rules
-	// surfaceRule = ...
-
-	// Spawn target
-	// spawnTarget = ...
+	surfaceRules {
+		block(Blocks.STONE)
+	}
 }
 ```
+
+### Properties
+
+Defaults below are Kore's, which are not always vanilla's - the Overworld for instance ships with `aquifersEnabled` and `oreVeinsEnabled`
+set to `true`.
+
+| Property               | Type                                    | Kore default       | Description                                             |
+|------------------------|-----------------------------------------|--------------------|---------------------------------------------------------|
+| `aquifersEnabled`      | `Boolean`                               | `false`            | Generates local water/lava tables instead of a flat sea |
+| `defaultBlock`         | `BlockState`                            | `stone`            | Block placed where density is positive                  |
+| `defaultFluid`         | `BlockState`                            | `water[level=0]`   | Fluid placed below `seaLevel` where density is negative |
+| `disableMobGeneration` | `Boolean`                               | `false`            | Skips mob spawning during chunk generation              |
+| `legacyRandomSource`   | `Boolean`                               | `false`            | Uses the pre-1.18 random source                         |
+| `noise`                | `NoiseOptions`                          | `(-64, 384, 1, 2)` | Vertical range and sampling resolution                  |
+| `noiseRouter`          | `NoiseRouter`                           | all zeroes         | Density functions wired to generation roles             |
+| `oreVeinsEnabled`      | `Boolean`                               | `false`            | Enables copper and iron ore veins                       |
+| `seaLevel`             | `Int`                                   | `63`               | Y level the default fluid fills up to                   |
+| `spawnTarget`          | `List<MultiNoiseBiomeSourceParameters>` | empty              | Climate parameters the world spawn point searches for   |
+| `surfaceRule`          | `SurfaceRule`                           | `bandlands`        | Rule painting surface blocks                            |
 
 ### Noise Options
 
 ```kotlin
 noiseOptions(
-	minY = -64,        // Minimum Y level
-	height = 384,      // Total height (must be multiple of 16)
-	sizeHorizontal = 1, // Horizontal noise size (1, 2, or 4)
-	sizeVertical = 2    // Vertical noise size (1, 2, or 4)
+	minY = -64,         // Lowest generated Y level, -2032 to 2031, multiple of 16
+	height = 384,       // Total height, 0 to 4064, multiple of 16
+	sizeHorizontal = 1, // Horizontal cell size, 1 to 4
+	sizeVertical = 2    // Vertical cell size, 1 to 4
 )
 ```
+
+`minY + height` must stay within the dimension type's own vertical range, and larger `size` values mean coarser, cheaper terrain.
 
 ### Default Blocks
 
 ```kotlin
-// Solid terrain block
-defaultBlock(Blocks.STONE) {}
-
-// Fluid block with properties
-defaultFluid(Blocks.WATER) { this["level"] = "0" }
+defaultBlock(Blocks.DEEPSLATE)
+defaultFluid(Blocks.LAVA) { this["level"] = "0" }
 ```
+
+Both take an optional block-state property block, and both accept a plain `Map<String, String>` instead.
 
 ### Noise Router
 
-The noise router maps density functions to specific terrain generation roles. Each field controls a different aspect of world generation:
-
-Reference: [Noise router](https://minecraft.wiki/w/Noise_settings#Noise_router)
+The noise router maps density functions to generation roles. Every field is a `DensityFunctionOrDouble`, so set it with the matching
+function, which is overloaded for both a `Double` and a `DensityFunctionArgument`:
 
 ```kotlin
 noiseRouter {
-	// Core terrain
-	finalDensity = /* density function */
-    initialDensity = /* density function */
-
-    // Aquifers and ore veins
-    barrier = /* density function */
-    fluidLevelFloodedness = /* density function */
-    fluidLevelSpread = /* density function */
-    lava = /* density function */
-    veinToggle = /* density function */
-    veinRidged = /* density function */
-    veinGap = /* density function */
-
-    // Biome and erosion
-    continents = /* density function */
-    erosion = /* density function */
-    depth = /* density function */
-    ridges = /* density function */
-    temperature = /* density function */
-    vegetation = /* density function */
+	barrier(0.5)
+	lava(DensityFunctions.End.BASE_3D_NOISE)
+	finalDensity(myTerrainDensity)
 }
 ```
 
+| Field                     | Role                                                           |
+|---------------------------|----------------------------------------------------------------|
+| `barrier`                 | Aquifer barrier noise, separating fluid pockets from stone     |
+| `continents`              | Continentalness climate parameter, ocean vs inland             |
+| `depth`                   | Depth climate parameter, distance below the surface            |
+| `erosion`                 | Erosion climate parameter, flat vs mountainous                 |
+| `finalDensity`            | Final solid/air decision for every position                    |
+| `fluidLevelFloodedness`   | How often aquifers are filled                                  |
+| `fluidLevelSpread`        | How much aquifer fluid levels vary                             |
+| `lava`                    | Whether an aquifer holds lava instead of water                 |
+| `preliminarySurfaceLevel` | Estimated surface height, used by surface rules and structures |
+| `ridges`                  | Weirdness climate parameter, driving ridged terrain            |
+| `temperature`             | Temperature climate parameter for biome placement              |
+| `vegetation`              | Humidity climate parameter for biome placement                 |
+| `veinGap`                 | Gaps punched through ore veins                                 |
+| `veinRidged`              | Ore vein shape                                                 |
+| `veinToggle`              | Whether ore veins generate at a position                       |
+
+Unset fields serialize as `0.0`, which means flat, featureless terrain - so a hand-written router usually starts from the vanilla density
+functions in the generated `DensityFunctions` object.
+
+Reference: [Noise router](https://minecraft.wiki/w/Noise_settings#Noise_router)
+
 ### Surface Rules
 
-Surface rules determine which blocks appear on the terrain surface. They're evaluated top-to-bottom, with the first matching rule winning.
-Conditions can check biome, depth, noise values, and more.
-
-Reference: [Surface rule](https://minecraft.wiki/w/Surface_rule)
+Surface rules decide which blocks replace the top layers of terrain. They are evaluated in order, and the first rule producing a block wins.
 
 ```kotlin
 surfaceRules {
 	condition(biomes(Biomes.DESERT)) {
 		block(Blocks.SAND)
 	}
-	condition(stoneDepth(Surface.FLOOR, addSurfaceDepth = false, secondaryDepthRange = 0)) {
-		block(Blocks.GRASS_BLOCK)
+
+	condition(stoneDepth(Surface.FLOOR, addSurfaceDepth = true)) {
+		condition(water(offset = -1, surfaceDepthMultiplier = 0)) {
+			block(Blocks.GRASS_BLOCK)
+		}
+		block(Blocks.DIRT)
 	}
+
 	block(Blocks.STONE)
 }
 ```
 
-Use `noiseGradient` to pick a block state from a list of entries, indexed by the value of a noise:
+| Rule             | Builder                    | Description                                                |
+|------------------|----------------------------|------------------------------------------------------------|
+| `bandlands`      | `bandlands()`              | Vanilla badlands terracotta banding.                       |
+| `block`          | `block(block) { }`         | Places a block state.                                      |
+| `condition`      | `condition(condition) { }` | Runs nested rules when the condition passes.               |
+| `noise_gradient` | `noiseGradient(noise) { }` | Picks a block state from a list, indexed by a noise value. |
+| `sequence`       | `sequence { }`             | Groups rules, first match wins.                            |
+
+`noiseGradient` entries take a `BlockState`, or nothing at all to leave the position untouched:
 
 ```kotlin
 surfaceRules {
-	noiseGradient(hillsNoise) {
+	noiseGradient(hills) {
 		entry(BlockState(Blocks.STONE))
 		entry(BlockState(Blocks.DEEPSLATE))
+		entry()
 	}
 }
 ```
+
+#### Conditions
+
+| Condition                   | Builder                                                   | Description                                         |
+|-----------------------------|-----------------------------------------------------------|-----------------------------------------------------|
+| `above_preliminary_surface` | `AbovePreliminarySurface`                                 | Position is above the router's preliminary surface. |
+| `biome`                     | `biomes(...)`                                             | Position is in one of the listed biomes.            |
+| `hole`                      | `Hole`                                                    | Column has a surface depth of 0.                    |
+| `noise_threshold`           | `noiseThreshold(noise, minThreshold, maxThreshold)`       | Noise value falls within a range.                   |
+| `not`                       | `not { }`                                                 | Inverts another condition.                          |
+| `steep`                     | `Steep`                                                   | Position is on a steep north or east facing slope.  |
+| `stone_depth`               | `stoneDepth(surfaceType, offset, ...)`                    | Depth below the floor or ceiling of the terrain.    |
+| `temperature`               | `Temperature`                                             | Biome is cold enough for snowfall.                  |
+| `vertical_gradient`         | `verticalGradient(name, trueAtAndBelow, falseAtAndAbove)` | Random blend between two Y anchors.                 |
+| `water`                     | `water(offset, surfaceDepthMultiplier, addStoneDepth)`    | Position is above the local water level.            |
+| `y_above`                   | `yAbove(anchor, surfaceDepthMultiplier, addStoneDepth)`   | Position is above a Y anchor, exclusive.            |
+
+`AbovePreliminarySurface`, `Hole`, `Steep` and `Temperature` take no arguments, so they are passed directly as objects:
+
+```kotlin
+condition(AbovePreliminarySurface) {
+	block(Blocks.GRASS_BLOCK)
+}
+```
+
+Y anchors used by `yAbove` and `verticalGradient` are built with `absolute(y)`, `aboveBottom(offset)` or `belowTop(offset)`:
+
+```kotlin
+condition(verticalGradient("bedrock_floor", aboveBottom(0), aboveBottom(5))) {
+	block(Blocks.BEDROCK)
+}
+```
+
+Reference: [Surface rule](https://minecraft.wiki/w/Surface_rule)
 
 ---
 
 ## Complete Example
 
+A minimal but working custom dimension, from noise to playable world:
+
 ```kotlin
 fun DataPack.createCustomTerrain() {
-	// 1) Custom noise definition
-	val hillsNoise = noise("hills_noise") {
-		firstOctave = -5
-		amplitudes = listOf(1.0, 0.5, 0.25)
+	// 1) Noise definition, sampled by the density function below
+	val hills = noise("hills", firstOctave = -5, amplitudes = listOf(1.0, 0.5, 0.25))
+
+	// 2) Density functions shaping the terrain
+	val terrainDensity = with(densityFunctionsBuilder) {
+		val hillsNoise = noise("hills_noise", hills, xzScale = 0.35, yScale = 0.0)
+
+		val gradient = yClampedGradient("height_gradient") {
+			fromY = 0
+			toY = 128
+			fromValue = 1.0
+			toValue = -1.0
+		}
+
+		add("final_density", hillsNoise, gradient)
 	}
 
-	// 2) Noise settings for terrain
+	// 3) Noise settings wiring everything together
 	val terrain = noiseSettings("custom_terrain") {
+		seaLevel = 63
 		noiseOptions(minY = -64, height = 384, sizeHorizontal = 1, sizeVertical = 2)
-		defaultBlock(Blocks.STONE) {}
+		defaultBlock(Blocks.STONE)
 		defaultFluid(Blocks.WATER) { this["level"] = "0" }
+
+		noiseRouter {
+			finalDensity(terrainDensity)
+		}
+
+		surfaceRules {
+			condition(stoneDepth(Surface.FLOOR)) {
+				block(Blocks.GRASS_BLOCK)
+			}
+			block(Blocks.STONE)
+		}
 	}
 
-	// 3) Use in dimension
+	// 4) Dimension type and dimension
 	val dimType = dimensionType("custom_type") {
 		minY = -64
 		height = 384
 		hasSkylight = true
 	}
 
+	val plains = biome("custom_plains") {
+		temperature = 0.8f
+		downfall = 0.4f
+		hasPrecipitation = true
+	}
+
 	dimension("custom_world", type = dimType) {
 		noiseGenerator(
+			biomeSource = fixed(plains),
 			settings = terrain,
-			biomeSource = /* your biome source */
 		)
 	}
 }
 ```
+
+Test it in game with `/execute in <namespace>:custom_world run tp @s 0 200 0`.
+
+## See Also
+
+- [Biomes](/docs/data-driven/worldgen/biomes) - Climate, visuals, mob spawns, carvers, and feature lists
+- [Dimensions](/docs/data-driven/worldgen/dimensions) - Dimensions and dimension types referencing noise settings
+- [World Generation](/docs/data-driven/worldgen) - Overview of the worldgen system
+- [World Presets](/docs/data-driven/worldgen/world-presets) - Bundling dimensions into a selectable world type

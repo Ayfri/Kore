@@ -5,7 +5,7 @@ nav-title: Worldgen
 description: Create custom world generation datapacks with Kore's Kotlin DSL. Dimensions, biomes, noise settings, density functions, structures, features, and world presets -- all type-safe, no hand-written JSON.
 keywords: minecraft worldgen, datapack worldgen, custom dimension minecraft, custom biome, noise settings minecraft, minecraft noise router, density function, datapack terrain generation, minecraft world preset, custom world generation
 date-created: 2025-08-11
-date-modified: 2026-07-02
+date-modified: 2026-08-17
 routeOverride: /docs/data-driven/worldgen
 ---
 
@@ -19,9 +19,8 @@ World generation (worldgen) is the procedural generation process Minecraft uses 
 structures. Because there are over 18 quintillion (2⁶⁴) possible worlds, the game generates them using randomness, algorithms, and some
 manually built decorations.
 
-The generation process uses **gradient noise algorithms** (like Perlin noise) to ensure terrain has both continuity and randomness. Multiple
-noise functions with different frequencies and amplitudes (called **octaves**) are combined to create natural-looking variation with hills,
-valleys, and other terrain features.
+The terrain shape itself comes from gradient noise combined through density functions, covered in full on the
+[Noise & Terrain](/docs/data-driven/worldgen/noise) page.
 
 See [World generation](https://minecraft.wiki/w/World_generation) for the full technical breakdown.
 
@@ -52,7 +51,8 @@ World generation is split into focused pages:
 - [**Environment Attributes**](/docs/data-driven/worldgen/environment-attributes) - Visual, audio, and gameplay attributes for biomes and
   dimensions
 - [**Features**](/docs/data-driven/worldgen/features) - Configured and placed features (trees, ores, vegetation)
-- [**Noise & Terrain**](/docs/data-driven/worldgen/noise) - Density functions, noise definitions, and noise settings
+- [**Noise & Terrain**](/docs/data-driven/worldgen/noise) - Noise definitions, density functions, noise settings, noise routers, and surface
+  rules
 - [**Structures**](/docs/data-driven/worldgen/structures) - Structures, template pools, processors, and structure sets
 - [**World Presets**](/docs/data-driven/worldgen/world-presets) - World presets and flat level generator presets
 
@@ -125,7 +125,7 @@ val dimType = dp.dimensionType("example_type") {
 	hasSkylight = true
 }
 
-// 2) Noise settings
+// 2) Noise settings, see the Noise & Terrain page for routers and surface rules
 val terrain = dp.noiseSettings("example_noise") {
 	noiseOptions(-64, 384, 1, 2)
 }
