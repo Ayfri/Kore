@@ -1,11 +1,18 @@
 package io.github.ayfri.kore.features.worldgen.processorlist.types
 
-import io.github.ayfri.kore.features.worldgen.processorlist.ProcessorList
 import kotlinx.serialization.Serializable
 
+/**
+ * Does nothing, leaving the template blocks untouched. Useful as a placeholder delegate for [Capped].
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Processor_list
+ */
 @Serializable
 data object Nop : ProcessorType()
 
-fun ProcessorList.nop() {
-	processors += Nop
-}
+/**
+ * Appends a `nop` processor, leaving the template blocks untouched.
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Processor_list
+ */
+fun ProcessorsScope.nop() = apply { processors += Nop }
