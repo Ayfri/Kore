@@ -112,6 +112,7 @@ suspend fun launchAllSimpleGenerators(): List<Generator> {
 		gen("BiomePresets", "worldgen/multi_noise_biome_source_parameter_list") {
 			argumentClassName = "MultiNoiseBiomeSourceParameterList"
 		},
+		gen("ConfiguredCarvers", "worldgen/configured_carver"),
 		gen("ConfiguredFeatures", "worldgen/configured_feature"),
 		gen("DensityFunctions", "worldgen/density_function"),
 		gen("FlatLevelGeneratorPresets", "worldgen/flat_level_generator_preset"),

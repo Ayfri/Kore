@@ -13,7 +13,7 @@ import io.github.ayfri.kore.features.worldgen.environmentattributes.EnvironmentA
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.fogColor
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.skyColor
 import io.github.ayfri.kore.functions.load
-import io.github.ayfri.kore.generated.Carvers
+import io.github.ayfri.kore.generated.ConfiguredCarvers
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.PlacedFeatures
 import io.github.ayfri.kore.utils.pretty
@@ -52,13 +52,7 @@ fun DataPack.biomeTests() {
 			spawnCost(EntityTypes.ZOMBIE, 1f, 1f)
 		}
 
-		carvers {
-			air(Carvers.CANYON)
-			liquid {
-				add(Carvers.NETHER_CAVE)
-				add(Carvers.CAVE)
-			}
-		}
+		carvers(ConfiguredCarvers.CANYON, ConfiguredCarvers.NETHER_CAVE, ConfiguredCarvers.CAVE)
 
 		features {
 			rawGeneration = listOf(PlacedFeatures.ORE_DIAMOND, PlacedFeatures.ORE_DIAMOND_LARGE)
@@ -99,15 +93,11 @@ fun DataPack.biomeTests() {
 					"charge": 1.0
 				}
 			},
-			"carvers": {
-				"air": [
-					"minecraft:canyon"
-				],
-				"liquid": [
-					"minecraft:nether_cave",
-					"minecraft:cave"
-				]
-			},
+			"carvers": [
+				"minecraft:canyon",
+				"minecraft:nether_cave",
+				"minecraft:cave"
+			],
 			"features": [
 				[
 					"minecraft:ore_diamond",
@@ -213,7 +203,7 @@ fun DataPack.biomeTests() {
 					"charge": 0.5
 				}
 			},
-			"carvers": {},
+			"carvers": [],
 			"features": [
 				[],
 				[
