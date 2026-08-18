@@ -4,10 +4,12 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.worldgen.blockpredicate.allOf
+import io.github.ayfri.kore.features.worldgen.blockpredicate.matchingBiomes
 import io.github.ayfri.kore.features.worldgen.blockpredicate.matchingBlockTag
 import io.github.ayfri.kore.features.worldgen.blockpredicate.trueBlockPredicate
 import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.*
 import io.github.ayfri.kore.features.worldgen.placedfeature.placedFeature
+import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.ConfiguredFeatures
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.utils.pretty
@@ -56,6 +58,47 @@ fun DataPack.placedFeatureTests() {
 								"type": "minecraft:true"
 							}
 						]
+					}
+				}
+			]
+		}
+	""".trimIndent()
+
+	placedFeature("matching_biomes", ConfiguredFeatures.ACACIA) {
+		blockPredicateFilter(matchingBiomes(Biomes.PLAINS, Biomes.SAVANNA))
+	}
+
+	placedFeatures.last() assertsIs """
+		{
+			"feature": "minecraft:acacia",
+			"placement": [
+				{
+					"type": "minecraft:block_predicate_filter",
+					"predicate": {
+						"type": "minecraft:matching_biomes",
+						"biomes": [
+							"minecraft:plains",
+							"minecraft:savanna"
+						]
+					}
+				}
+			]
+		}
+	""".trimIndent()
+
+	placedFeature("matching_biome_tag", ConfiguredFeatures.ACACIA) {
+		blockPredicateFilter(matchingBiomes(Tags.Worldgen.Biome.IS_SAVANNA))
+	}
+
+	placedFeatures.last() assertsIs """
+		{
+			"feature": "minecraft:acacia",
+			"placement": [
+				{
+					"type": "minecraft:block_predicate_filter",
+					"predicate": {
+						"type": "minecraft:matching_biomes",
+						"biomes": "#minecraft:is_savanna"
 					}
 				}
 			]

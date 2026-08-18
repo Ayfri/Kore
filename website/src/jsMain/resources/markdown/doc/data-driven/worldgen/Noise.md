@@ -5,7 +5,7 @@ nav-title: Noise
 description: Shape Minecraft terrain from Kotlin - noise definitions, density functions, noise routers and surface rules, fully type-safe with Kore.
 keywords: minecraft datapack, kore, worldgen, noise settings, density function, noise router, surface rule, terrain generation, perlin noise, octaves
 date-created: 2026-02-03
-date-modified: 2026-08-17
+date-modified: 2026-08-18
 routeOverride: /docs/data-driven/worldgen/noise
 ---
 
@@ -93,7 +93,7 @@ val terrain = with(dp.densityFunctionsBuilder) {
 ```
 
 Most builders accept either a `Double` or a `DensityFunctionArgument` for their inputs, in every combination. `noise`, `shift`, `shiftA`,
-`shiftB`, `shiftedNoise` and `weirdScaledSampler` take a `NoiseArgument` instead, since they sample a noise definition directly.
+`shiftB` and `shiftedNoise` take a `NoiseArgument` instead, since they sample a noise definition directly.
 
 ### Density Function Types
 
@@ -116,6 +116,7 @@ Most builders accept either a `Double` or a `DensityFunctionArgument` for their 
 | `flat_cache`           | `flatCache(...)`          | Caches the input per 4x4 column, computed once at Y=0.                        |
 | `half_negative`        | `halfNegative(...)`       | Halves the input when negative, otherwise leaves it unchanged.                |
 | `interpolated`         | `interpolated(...)`       | Interpolates the input across the surrounding grid cells.                     |
+| `interval_select`      | `intervalSelect(...)`     | Picks one of several functions from where the input falls between thresholds. |
 | `invert`               | `invert(...)`             | Reciprocal (1 / x) of the input.                                              |
 | `max`                  | `max(...)`                | Larger of two inputs.                                                         |
 | `min`                  | `min(...)`                | Smaller of two inputs.                                                        |
@@ -131,7 +132,6 @@ Most builders accept either a `Double` or a `DensityFunctionArgument` for their 
 | `spline`               | `spline(...)`             | Cubic spline interpolating control points over a coordinate.                  |
 | `square`               | `square(...)`             | Raises the input to the power of 2 (x²).                                      |
 | `squeeze`              | `squeeze(...)`            | Clamps the input to [-1, 1], then applies `x/2 - x³/24`.                      |
-| `weird_scaled_sampler` | `weirdScaledSampler(...)` | Samples a noise and remaps it to bias cave/ravine rarity.                     |
 | `y_clamped_gradient`   | `yClampedGradient(...)`   | Linear gradient between two values as Y goes from one bound to another.       |
 
 All builders live in `io.github.ayfri.kore.features.worldgen.densityfunction.types` and take the file's name as their first argument.
@@ -167,11 +167,20 @@ dp.densityFunctions {
 		shiftZ(DensityFunctions.ShiftZ)
 	}
 
-	weirdScaledSampler("ravines", RarityValueMapper.TYPE_1, Noises.CaveEntrance, DensityFunctions.Overworld.BASE_3D_NOISE)
+	intervalSelect("cave_shape") {
+		input(DensityFunctions.Overworld.BASE_3D_NOISE)
+		thresholds(-0.3f, 0.3f)
+		function(DensityFunctions.Nether.BASE_3D_NOISE)
+		function(0.0)
+		function(DensityFunctions.End.BASE_3D_NOISE)
+	}
 
 	findTopSurface("top_surface", DensityFunctions.Overworld.BASE_3D_NOISE, DensityFunctions.Y, lowerBound = -64, cellHeight = 8)
 }
 ```
+
+`intervalSelect` holds one more function than it has thresholds: the first function applies below the first threshold, each following one
+applies between two consecutive thresholds, and the last one applies at or above the last threshold. Thresholds must be sorted ascending.
 
 ### Splines
 

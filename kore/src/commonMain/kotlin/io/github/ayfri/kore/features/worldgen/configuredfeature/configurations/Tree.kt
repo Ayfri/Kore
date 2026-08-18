@@ -3,6 +3,8 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.RuleBasedStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.ruleBasedStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.FancyFoliagePlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.FoliagePlacer
@@ -17,15 +19,15 @@ import kotlinx.serialization.Serializable
 /**
  * Configuration for the `tree` feature.
  *
- * [belowTrunkProvider] is a [BlockStateProvider] that controls which block (if any) is
- * placed beneath the trunk. When `null`, no block is placed below.
+ * [belowTrunkProvider] is a [RuleBasedStateProvider] that controls which block is placed beneath the trunk.
+ * It is mandatory, defaulting to an empty [ruleBasedStateProvider] which places nothing.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
  */
 @Serializable
 data class Tree(
 	var ignoreVines: Boolean? = null,
-	var belowTrunkProvider: BlockStateProvider? = null,
+	var belowTrunkProvider: BlockStateProvider,
 	var minimumSize: LayersFeatureSize = TwoLayersFeatureSize(),
 	var trunkProvider: BlockStateProvider = simpleStateProvider(),
 	var foliageProvider: BlockStateProvider = simpleStateProvider(),
@@ -48,7 +50,12 @@ fun Tree.decorators(block: MutableList<TreeDecorator>.() -> Unit) {
 
 /** Creates a [Tree] configuration, uses [FancyTrunkPlacer] and [FancyFoliagePlacer] by default. */
 fun ConfiguredFeatures.tree(fileName: String, block: Tree.() -> Unit = {}): ConfiguredFeatureArgument {
-	val configuredFeature = ConfiguredFeature(fileName, Tree(trunkPlacer = FancyTrunkPlacer(), foliagePlacer = FancyFoliagePlacer()).apply(block))
+	val tree = Tree(
+		belowTrunkProvider = ruleBasedStateProvider(),
+		trunkPlacer = FancyTrunkPlacer(),
+		foliagePlacer = FancyFoliagePlacer(),
+	).apply(block)
+	val configuredFeature = ConfiguredFeature(fileName, tree)
 	dp.configuredFeatures += configuredFeature
 	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
 }

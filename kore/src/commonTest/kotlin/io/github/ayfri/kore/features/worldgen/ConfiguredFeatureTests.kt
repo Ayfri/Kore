@@ -804,8 +804,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.multifaceGrowth("test_multiface_growth") {
-		block = Blocks.STONE
+	configuredFeaturesBuilder.multifaceGrowth("test_multiface_growth", Blocks.STONE) {
 		searchRange = 10
 		chanceOfSpreading = 0.5
 		canPlaceOnFloor = true
@@ -1421,6 +1420,10 @@ fun DataPack.configuredFeatureTests() {
 		{
 			"type": "minecraft:tree",
 			"config": {
+				"below_trunk_provider": {
+					"type": "minecraft:rule_based_state_provider",
+					"rules": []
+				},
 				"minimum_size": {
 					"type": "minecraft:three_layers_feature_size",
 					"limit": 5,
@@ -1508,6 +1511,10 @@ fun DataPack.configuredFeatureTests() {
 		{
 			"type": "minecraft:tree",
 			"config": {
+				"below_trunk_provider": {
+					"type": "minecraft:rule_based_state_provider",
+					"rules": []
+				},
 				"minimum_size": {
 					"type": "minecraft:two_layers_feature_size"
 				},

@@ -8,9 +8,17 @@ import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeature
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
+/**
+ * Configuration for the `multiface_growth` feature.
+ *
+ * [block] is the multiface block that spreads over the surfaces allowed by [canPlaceOnFloor],
+ * [canPlaceOnCeiling] and [canPlaceOnWall].
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#multiface_growth
+ */
 @Serializable
 data class MultifaceGrowth(
-	var block: BlockArgument? = null,
+	var block: BlockArgument,
 	var searchRange: Int? = null,
 	var chanceOfSpreading: Double? = null,
 	var canPlaceOnFloor: Boolean? = null,
@@ -19,8 +27,13 @@ data class MultifaceGrowth(
 	var canBePlacedOn: InlinableList<BlockOrTagArgument> = emptyList(),
 ) : FeatureConfig()
 
-fun ConfiguredFeatures.multifaceGrowth(fileName: String, block: MultifaceGrowth.() -> Unit = {}): ConfiguredFeatureArgument {
-	val configuredFeature = ConfiguredFeature(fileName, MultifaceGrowth().apply(block))
+/** Creates a [MultifaceGrowth] configuration spreading [block] over the configured surfaces. */
+fun ConfiguredFeatures.multifaceGrowth(
+	fileName: String,
+	block: BlockArgument,
+	init: MultifaceGrowth.() -> Unit = {},
+): ConfiguredFeatureArgument {
+	val configuredFeature = ConfiguredFeature(fileName, MultifaceGrowth(block).apply(init))
 	dp.configuredFeatures += configuredFeature
 	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
 }

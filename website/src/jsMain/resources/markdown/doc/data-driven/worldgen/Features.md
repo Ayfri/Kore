@@ -5,7 +5,7 @@ nav-title: Features
 description: Create configured and placed features (trees, ores, vegetation) with Kore's DSL.
 keywords: minecraft, datapack, kore, worldgen, configured feature, placed feature, tree, ore
 date-created: 2026-02-03
-date-modified: 2026-06-26
+date-modified: 2026-08-18
 routeOverride: /docs/data-driven/worldgen/features
 ---
 
@@ -37,7 +37,8 @@ combine feature types into a single configured feature.
 ### Tree
 
 Trees are complex features with trunk placers, foliage placers, and decorators. The trunk and foliage providers define which blocks to use,
-while placers control the shape.
+while placers control the shape. `belowTrunkProvider` is mandatory and takes a `ruleBasedStateProvider`; it defaults to an empty one, which
+places nothing under the trunk.
 
 ```kotlin
 configuredFeatures {
@@ -111,7 +112,7 @@ ruleBasedStateProvider {
 
 The `ifTrue { }` block in Style 1 and the trailing lambda in Style 3 both run on a `MutableList<BlockPredicate>`
 receiver, so all block
-predicate extensions (`solid()`, `not { }`, `matchingBlocks()`, `hasSturdyFace()`, `matchingBlockTag()`, etc.) work
+predicate extensions (`solid()`, `not { }`, `matchingBlocks()`, `matchingBiomes()`, `hasSturdyFace()`, `matchingBlockTag()`, etc.) work
 inside them. A
 single-element list is used as-is; multiple entries are automatically wrapped in `allOf`.
 
@@ -163,7 +164,7 @@ Kore supports all vanilla configured feature types. Functions are listed alphabe
 | `iceberg(...)`                    | Iceberg structure                    | Frozen ocean icebergs          |
 | `lake(...)`                       | Liquid pool                          | Underground lava lakes         |
 | `largeDripstone(...)`             | Tall stalactite or stalagmite        | Cave ceilings/floors           |
-| `multifaceGrowth(...)`            | Multi-face block spread              | Glow lichen, sculk vein        |
+| `multifaceGrowth(block, ...)`     | Multi-face block spread              | Glow lichen, sculk vein        |
 | `netherForestVegetation(...)`     | Nether plant scatter                 | Warped/crimson forest floors   |
 | `netherrackReplaceBlobs(...)`     | Replace netherrack with blobs        | Nether gravel/blackstone blobs |
 | `randomBooleanSelector(...)`      | Picks one of two features randomly   | Symmetric ore variants         |

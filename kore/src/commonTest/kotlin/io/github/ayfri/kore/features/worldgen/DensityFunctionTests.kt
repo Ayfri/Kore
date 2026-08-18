@@ -172,6 +172,30 @@ fun DataPack.densityFunctionTests() {
 		}
 	""".trimIndent()
 
+	densityFunctionsBuilder.intervalSelect("interval_select") {
+		input(DensityFunctions.Overworld.BASE_3D_NOISE)
+		thresholds(-0.5f, 0.5f)
+		function(DensityFunctions.Nether.BASE_3D_NOISE)
+		function(0.0)
+		function(DensityFunctions.End.BASE_3D_NOISE)
+	}
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:interval_select",
+			"input": "minecraft:overworld/base_3d_noise",
+			"thresholds": [
+				-0.5,
+				0.5
+			],
+			"functions": [
+				"minecraft:nether/base_3d_noise",
+				0.0,
+				"minecraft:end/base_3d_noise"
+			]
+		}
+	""".trimIndent()
+
 	densityFunctionsBuilder.invert("invert", DensityFunctions.Overworld.BASE_3D_NOISE)
 
 	densityFunctions.last() assertsIs """
@@ -385,22 +409,6 @@ fun DataPack.densityFunctionTests() {
 		{
 			"type": "minecraft:squeeze",
 			"argument": "minecraft:overworld/base_3d_noise"
-		}
-	""".trimIndent()
-
-	densityFunctionsBuilder.weirdScaledSampler(
-		"weird_scaled_sampler",
-		RarityValueMapper.TYPE_1,
-		Noises.Calcite,
-		DensityFunctions.Overworld.BASE_3D_NOISE
-	)
-
-	densityFunctions.last() assertsIs """
-		{
-			"type": "minecraft:weird_scaled_sampler",
-			"rarity_value_mapper": "type_1",
-			"noise": "minecraft:calcite",
-			"input": "minecraft:overworld/base_3d_noise"
 		}
 	""".trimIndent()
 
