@@ -5,7 +5,7 @@ nav-title: Biomes
 description: Define biomes with climate, effects, spawns, carvers, and features using Kore's DSL.
 keywords: minecraft, datapack, kore, worldgen, biome, carver, spawner, effects
 date-created: 2026-02-03
-date-modified: 2026-02-04
+date-modified: 2026-08-17
 routeOverride: /docs/data-driven/worldgen/biomes
 ---
 
@@ -122,18 +122,15 @@ spawnCosts {
 ## Carvers
 
 Carvers hollow out terrain to create caves and canyons. They run during the `carvers` generation step, after terrain noise but before
-features. Two carving modes exist: `air` for standard caves and `liquid` for underwater caves.
+features. The field is a flat list of configured carver IDs, or a single carver tag.
 
-Reference: [Carver](https://minecraft.wiki/w/Carver)
+Reference: [Biome definition - Carvers](https://minecraft.wiki/w/Biome_definition)
 
 ```kotlin
-carvers {
-	air(myCaveCarver)        // Carves air (caves)
-	liquid(myUnderwaterCave) // Carves underwater caves
-}
+carvers(myCaveCarver, myCanyonCarver, ConfiguredCarvers.CAVE)
 ```
 
-See [Carvers](#carvers-cavescanyons) below for creating configured carvers.
+See [Carvers](/docs/data-driven/worldgen/carvers) for creating configured carvers.
 
 ## Features
 
@@ -163,114 +160,68 @@ See [Features](/docs/data-driven/worldgen/features) for creating configured and 
 
 ---
 
-# Carvers (Caves/Canyons)
-
-Configured carvers remove terrain to form cave systems and canyons. They use noise-based algorithms to create natural-looking underground
-spaces. Carvers run after terrain generation but before features, ensuring caves don't destroy placed decorations.
-
-Minecraft has two carver types:
-
-- **Cave carvers** - Create winding tunnel systems with variable radius
-- **Canyon carvers** - Create deep ravines with steep walls
-
-References: [Carver](https://minecraft.wiki/w/Carver), [Configured carver](https://minecraft.wiki/w/Configured_carver)
-
-## Cave Carver
-
-```kotlin
-val caveCfg = caveConfig {
-	floorLevel = constant(-0.2f)
-	horizontalRadiusMultiplier = constant(1.0f)
-	lavaLevel = absolute(8)
-	probability = 0.08
-	verticalRadiusMultiplier = constant(0.7f)
-	y = uniformHeightProvider(32, 128)
-	yScale = constant(0.5f)
-}
-
-val cave = dp.configuredCarver("my_cave", caveCfg) {}
-```
-
-## Canyon Carver
-
-```kotlin
-val canyonCfg = canyonConfig {
-	lavaLevel = absolute(8)
-	probability = 0.02
-	y = uniformHeightProvider(10, 67)
-	yScale = constant(3.0f)
-	// Additional canyon-specific settings...
-}
-
-val canyon = dp.configuredCarver("my_canyon", canyonCfg) {}
-```
-
----
-
 # Complete Biome Example
 
 ```kotlin
 fun DataPack.createHighlandsBiome() {
-	// Create a cave carver
-	val caveCfg = caveConfig {
-		floorLevel = constant(-0.2f)
-		horizontalRadiusMultiplier = constant(1.0f)
-		lavaLevel = absolute(8)
+	// Create a cave carver (see the Carvers page)
+	val cave = configuredCarversBuilder.cave("highlands_cave") {
 		probability = 0.08
-		verticalRadiusMultiplier = constant(0.7f)
-		y = uniformHeightProvider(32, 128)
+		y = uniformHeightProvider(absolute(32), absolute(128))
 		yScale = constant(0.5f)
+		verticalRadiusMultiplier = constant(0.7f)
+		floorLevel = constant(-0.2f)
 	}
-	val cave = configuredCarver("highlands_cave", caveCfg) {}
 
 	// Create placed features (see Features page)
 	val treePlaced = /* ... */
 	val orePlaced = /* ... */
 
-		// Create the biome
-		biome("highlands") {
-			temperature = 0.8f
-			downfall = 0.3f
-			hasPrecipitation = true
+	// Create the biome
+	biome("highlands") {
+		temperature = 0.8f
+		downfall = 0.3f
+		hasPrecipitation = true
 
-			attributes {
-				fogColor(0xBFEFFF)
-				skyColor(0x99D9FF)
-				waterFogColor(0x0A2C4F)
+		attributes {
+			fogColor(0xBFEFFF)
+			skyColor(0x99D9FF)
+			waterFogColor(0x0A2C4F)
+		}
+
+		effects {
+			waterColor = color(0x34A7F0)
+		}
+
+		spawners {
+			creature {
+				spawner(EntityTypes.COW, 6, 2, 4)
+				spawner(EntityTypes.SHEEP, 8, 2, 4)
 			}
-
-			effects {
-				waterColor = color(0x34A7F0)
-			}
-
-			spawners {
-				creature {
-					spawner(EntityTypes.COW, 6, 2, 4)
-					spawner(EntityTypes.SHEEP, 8, 2, 4)
-				}
-				monster {
-					spawner(EntityTypes.SKELETON, 80, 1, 2)
-					spawner(EntityTypes.ZOMBIE, 80, 1, 2)
-				}
-			}
-
-			spawnCosts {
-				this[EntityTypes.COW] = spawnCost(1.2f, 0.1f)
-				this[EntityTypes.SHEEP] = spawnCost(1.0f, 0.08f)
-			}
-
-			carvers { air(cave) }
-
-			features {
-				undergroundOres = listOf(orePlaced)
-				vegetalDecoration = listOf(treePlaced)
+			monster {
+				spawner(EntityTypes.SKELETON, 80, 1, 2)
+				spawner(EntityTypes.ZOMBIE, 80, 1, 2)
 			}
 		}
+
+		spawnCosts {
+			this[EntityTypes.COW] = spawnCost(1.2f, 0.1f)
+			this[EntityTypes.SHEEP] = spawnCost(1.0f, 0.08f)
+		}
+
+		carvers(cave)
+
+		features {
+			undergroundOres = listOf(orePlaced)
+			vegetalDecoration = listOf(treePlaced)
+		}
+	}
 }
- ```
+```
 
 ## See Also
 
+- [Carvers](/docs/data-driven/worldgen/carvers) - Cave, nether cave, and canyon carvers
 - [Dimensions](/docs/data-driven/worldgen/dimensions) - Dimension types and generators
 - [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) - Full reference for visual, audio, and gameplay attributes
 - [Features](/docs/data-driven/worldgen/features) - Configured and placed features

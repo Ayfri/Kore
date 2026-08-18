@@ -47,6 +47,7 @@ Reference: [World generation steps](https://minecraft.wiki/w/World_generation#St
 World generation is split into focused pages:
 
 - [**Biomes**](/docs/data-driven/worldgen/biomes) - Climate, visuals, mob spawns, carvers, and feature lists
+- [**Carvers**](/docs/data-driven/worldgen/carvers) - Cave, nether cave, and canyon carvers
 - [**Dimensions**](/docs/data-driven/worldgen/dimensions) - Dimensions and dimension types
 - [**Environment Attributes**](/docs/data-driven/worldgen/environment-attributes) - Visual, audio, and gameplay attributes for biomes and
   dimensions
@@ -83,7 +84,7 @@ Kore APIs generate JSON under standard datapack directories (replace `<ns>` with
 | API                             | Output Path                                                  |
 |---------------------------------|--------------------------------------------------------------|
 | `biome(...)`                    | `data/<ns>/worldgen/biome/<name>.json`                       |
-| `configuredCarver(...)`         | `data/<ns>/worldgen/configured_carver/<name>.json`           |
+| `configuredCarvers { ... }`     | `data/<ns>/worldgen/configured_carver/<name>.json`           |
 | `configuredFeature(...)`        | `data/<ns>/worldgen/configured_feature/<name>.json`          |
 | `densityFunctions { ... }`      | `data/<ns>/worldgen/density_function/<name>.json`            |
 | `dimension(...)`                | `data/<ns>/dimension/<name>.json`                            |
