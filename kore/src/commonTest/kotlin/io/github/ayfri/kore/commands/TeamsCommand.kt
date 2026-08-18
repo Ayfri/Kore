@@ -21,6 +21,7 @@ fun Function.teamsTests() {
 		modify("test") {
 			collisionRule(CollisionRule.NEVER) assertsIs "team modify test collisionRule never"
 			color(Color.RED) assertsIs "team modify test color red"
+			color(Color.DARK_PURPLE) assertsIs "team modify test color dark_purple"
 			deathMessageVisibility(Visibility.NEVER) assertsIs "team modify test deathMessageVisibility never"
 			displayName("Test") assertsIs "team modify test displayName \"Test\""
 			friendlyFire(true) assertsIs "team modify test friendlyFire true"
