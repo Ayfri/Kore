@@ -5,7 +5,7 @@ nav-title: Test Features
 description: A comprehensive guide for creating test instances and test environments in Minecraft's GameTest framework with Kore.
 keywords: minecraft, datapack, kore, guide, test, testing, environment, instance, gametest, automation
 date-created: 2025-01-08
-date-modified: 2026-06-26
+date-modified: 2026-08-18
 routeOverride: /docs/advanced/test-features
 ---
 
@@ -17,7 +17,7 @@ registries.
 
 ## Test Environments
 
-Test environments define the preconditions under which tests run. There are six types:
+Test environments define the preconditions under which tests run. There are seven types:
 
 ### Weather
 
@@ -40,6 +40,17 @@ testEnvironments {
   clockTime("morning", WorldClocks.OVERWORLD, 1000)
   clockTime("noon", WorldClocks.OVERWORLD, 6000)
   clockTime("night", WorldClocks.OVERWORLD, 18000)
+}
+```
+
+### Difficulty
+
+Forces the game difficulty, keeping difficulty-dependent mechanics deterministic:
+
+```kotlin
+testEnvironments {
+	difficulty("peaceful_env", Difficulty.PEACEFUL)
+	difficulty("hard_env", Difficulty.HARD)
 }
 ```
 

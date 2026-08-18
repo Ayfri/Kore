@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.testenvironments
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.arguments.enums.Difficulty
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.features.testenvironments.types.*
 import io.github.ayfri.kore.generated.Gamerules
@@ -104,6 +105,21 @@ class TestEnvironmentsBuilder(private val dataPack: DataPack) {
 		clock: WorldClockArgument,
 		time: Int,
 	): TestEnvironmentArgument = dataPack.testEnvironment(fileName, ClockTimeEnvironment(clock, time))
+
+	/**
+	 * Creates a difficulty test environment that forces the game difficulty during test execution.
+	 *
+	 * Difficulty environments keep tests deterministic for mechanics that depend on the difficulty,
+	 * such as mob damage, hunger drain or spawning rules.
+	 *
+	 * @param fileName The name of the difficulty environment file
+	 * @param difficulty The difficulty to apply during test execution
+	 * @return TestEnvironmentArgument representing the difficulty environment
+	 */
+	fun difficulty(
+		fileName: String = "difficulty_environment",
+		difficulty: Difficulty,
+	): TestEnvironmentArgument = dataPack.testEnvironment(fileName, DifficultyEnvironment(difficulty))
 
 	/**
 	 * Creates a timeline attributes test environment that applies a set of timelines during test execution.

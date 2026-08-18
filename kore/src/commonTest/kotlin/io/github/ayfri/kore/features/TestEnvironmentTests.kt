@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.arguments.enums.Difficulty
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.dataPack
@@ -48,6 +49,15 @@ fun DataPack.testEnvironmentTests() {
 				"type": "minecraft:clock_time",
 				"clock": "minecraft:overworld",
 				"time": 1000
+			}
+		""".trimIndent()
+
+		difficulty("difficulty_env", Difficulty.HARD)
+
+		testEnvironments.last() assertsIs """
+			{
+				"type": "minecraft:difficulty",
+				"difficulty": "hard"
 			}
 		""".trimIndent()
 
