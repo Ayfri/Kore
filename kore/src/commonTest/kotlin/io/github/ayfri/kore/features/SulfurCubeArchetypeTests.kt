@@ -14,6 +14,7 @@ import io.kotest.core.spec.style.FunSpec
 fun DataPack.sulfurCubeArchetypeTests() {
 	sulfurCubeArchetype("regular", items = Tags.Item.SWORDS) {
 		buoyant = true
+		explosionFuse = 80
 
 		modifier(
 			amount = 4.0,
@@ -34,6 +35,7 @@ fun DataPack.sulfurCubeArchetypeTests() {
 				}
 			],
 			"buoyant": true,
+			"explosion_fuse": 80,
 			"items": "#minecraft:swords"
 		}
 	""".trimIndent()

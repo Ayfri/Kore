@@ -2,17 +2,17 @@
 root: .components.layouts.MarkdownLayout
 title: Sulfur Cube Archetypes - Custom Sulfur Cube Behavior in Kore
 nav-title: Sulfur Cube Archetypes
-description: Define custom sulfur cube archetypes for Minecraft 26.2+ with Kore's type-safe Kotlin DSL. Configure attribute modifiers, buoyancy, and valid item contents.
+description: Define custom sulfur cube archetypes for Minecraft 26.2+ with Kore's Kotlin DSL. Configure attribute modifiers, buoyancy, explosion fuse and item contents.
 keywords: minecraft sulfur cube, datapack sulfur_cube_archetype, kore sulfur cube archetype, custom mob archetype datapack, sulfur cube attribute modifiers
 date-created: 2026-07-29
-date-modified: 2026-07-29
+date-modified: 2026-08-18
 routeOverride: /docs/data-driven/sulfur-cube-archetypes
 ---
 
 # Sulfur Cube Archetypes
 
-Sulfur cube archetypes are data-driven JSON files that control the attribute modifiers, buoyancy, and valid item
-contents of a sulfur cube. Each archetype is referenced by its file name and can be assigned to sulfur cube
+Sulfur cube archetypes are data-driven JSON files that control the attribute modifiers, buoyancy, explosion fuse, and
+valid item contents of a sulfur cube. Each archetype is referenced by its file name and can be assigned to sulfur cube
 entities to change their behavior.
 
 ## File Structure
@@ -35,6 +35,7 @@ import io.github.ayfri.kore.generated.Tags
 
 datapack.sulfurCubeArchetype("regular", items = Tags.Item.SWORDS) {
 	buoyant = true
+	explosionFuse = 80
 
 	modifier(
 		amount = 4.0,
@@ -51,6 +52,7 @@ datapack.sulfurCubeArchetype("regular", items = Tags.Item.SWORDS) {
 |----------------------|-----------------------------------------------------|-----------------------------------------------------------------------|
 | `attributeModifiers` | `MutableList<SulfurCubeArchetypeAttributeModifier>` | Attribute modifiers applied while the archetype is active.            |
 | `buoyant`            | `Boolean`                                           | Whether the sulfur cube floats on liquids.                            |
+| `explosionFuse`      | `Int?`                                              | Ticks before the sulfur cube explodes, omitted when `null`.           |
 | `items`              | `ItemTagArgument`                                   | Item tag defining which items the sulfur cube can hold. **Required.** |
 
 ### SulfurCubeArchetypeAttributeModifier Fields

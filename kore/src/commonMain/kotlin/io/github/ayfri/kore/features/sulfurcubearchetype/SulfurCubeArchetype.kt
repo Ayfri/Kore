@@ -28,7 +28,7 @@ data class SulfurCubeArchetypeAttributeModifier(
 /**
  * Data-driven sulfur cube archetype definition.
  *
- * Controls the attribute modifiers, buoyancy, and valid item contents of a sulfur cube.
+ * Controls the attribute modifiers, buoyancy, explosion fuse, and valid item contents of a sulfur cube.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/sulfur-cube-archetypes
  * Minecraft Wiki: https://minecraft.wiki/w/Sulfur_cube_archetype_definition
@@ -39,6 +39,7 @@ data class SulfurCubeArchetype(
 	override var fileName: String = "sulfur_cube_archetype",
 	var attributeModifiers: MutableList<SulfurCubeArchetypeAttributeModifier>,
 	var buoyant: Boolean,
+	var explosionFuse: Int? = null,
 	var items: ItemTagArgument,
 ) : Generator("sulfur_cube_archetype") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
@@ -58,7 +59,7 @@ fun DataPack.sulfurCubeArchetype(
 	buoyant: Boolean = false,
 	init: SulfurCubeArchetype.() -> Unit = {},
 ): SulfurCubeArchetypeArgument {
-	val archetype = SulfurCubeArchetype(fileName, mutableListOf(), buoyant, items).apply(init)
+	val archetype = SulfurCubeArchetype(fileName, mutableListOf(), buoyant, items = items).apply(init)
 	sulfurCubeArchetypes += archetype
 	return SulfurCubeArchetypeArgument(fileName, archetype.namespace ?: name)
 }
