@@ -5,7 +5,7 @@ nav-title: Enchantments
 description: Create custom Minecraft enchantments using Kore's type-safe Kotlin DSL with support for all vanilla effect components and level-based values.
 keywords: minecraft, datapack, kore, enchantments, effects, custom enchantments
 date-created: 2025-03-02
-date-modified: 2026-02-03
+date-modified: 2026-08-18
 routeOverride: /docs/data-driven/enchantments
 ---
 
@@ -387,6 +387,18 @@ spawnParticles(
 	verticalVelocity(base = 0.5f, movementScale = 0f)
 	speed(0.5f)
 }
+```
+
+Particles carrying options take a builder instead of a plain `ParticleTypeArgument`: `blockParticleType`, `dustParticleType`,
+`dustColorTransitionParticleType`, `itemParticleType`, `geyserParticleType`, `geyserBaseParticleType`, `geyserPlumeParticleType` and
+`geyserPoofParticleType`.
+
+```kotlin
+spawnParticles(
+	geyserBaseParticleType(Particles.GEYSER_BASE, burstImpulseBase = 0.5f, waterBlocks = 3),
+	horizontalPositionType = ParticlePositionType.ENTITY_POSITION,
+	verticalPositionType = ParticlePositionType.ENTITY_POSITION
+)
 ```
 
 ### Run Function

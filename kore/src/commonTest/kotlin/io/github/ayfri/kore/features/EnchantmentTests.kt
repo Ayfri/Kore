@@ -11,6 +11,7 @@ import io.github.ayfri.kore.features.enchantments.*
 import io.github.ayfri.kore.features.enchantments.effects.builders.*
 import io.github.ayfri.kore.features.enchantments.effects.entity.*
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticlePositionType
+import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.*
 import io.github.ayfri.kore.features.enchantments.effects.special.requirements
 import io.github.ayfri.kore.features.enchantments.effects.special.start
 import io.github.ayfri.kore.features.enchantments.values.*
@@ -1183,6 +1184,117 @@ fun DataPack.enchantmentTests() {
 					{
 						"sound_id": "minecraft:entity.firework_rocket.launch",
 						"range": 5.0
+					}
+				]
+			}
+		}
+	""".trimIndent()
+
+	enchantment("geyser_particles") {
+		effects {
+			hitBlock {
+				allOf {
+					spawnParticles(
+						geyserParticleType(Particles.GEYSER, waterBlocks = 3),
+						horizontalPositionType = ParticlePositionType.ENTITY_POSITION,
+						verticalPositionType = ParticlePositionType.ENTITY_POSITION,
+					)
+
+					spawnParticles(
+						geyserBaseParticleType(Particles.GEYSER_BASE, burstImpulseBase = 0.5f, waterBlocks = 3),
+						horizontalPositionType = ParticlePositionType.ENTITY_POSITION,
+						verticalPositionType = ParticlePositionType.ENTITY_POSITION,
+					)
+
+					spawnParticles(
+						geyserPlumeParticleType(Particles.GEYSER_PLUME, waterBlocks = 4),
+						horizontalPositionType = ParticlePositionType.ENTITY_POSITION,
+						verticalPositionType = ParticlePositionType.ENTITY_POSITION,
+					)
+
+					spawnParticles(
+						geyserPoofParticleType(Particles.GEYSER_POOF, burstImpulseBase = 1.5f, waterBlocks = 4),
+						horizontalPositionType = ParticlePositionType.ENTITY_POSITION,
+						verticalPositionType = ParticlePositionType.ENTITY_POSITION,
+					)
+				}
+			}
+		}
+	}
+
+	enchantments.last() assertsIs """
+		{
+			$DUMMY_ENCHANTMENT_CONTENT
+			"effects": {
+				"minecraft:hit_block": [
+					{
+						"effect": {
+							"type": "minecraft:all_of",
+							"effects": [
+								{
+									"type": "minecraft:spawn_particles",
+									"particle": {
+										"type": "minecraft:geyser",
+										"water_blocks": 3
+									},
+									"horizontal_position": {
+										"type": "entity_position"
+									},
+									"vertical_position": {
+										"type": "entity_position"
+									},
+									"horizontal_velocity": {},
+									"vertical_velocity": {}
+								},
+								{
+									"type": "minecraft:spawn_particles",
+									"particle": {
+										"type": "minecraft:geyser_base",
+										"burst_impulse_base": 0.5,
+										"water_blocks": 3
+									},
+									"horizontal_position": {
+										"type": "entity_position"
+									},
+									"vertical_position": {
+										"type": "entity_position"
+									},
+									"horizontal_velocity": {},
+									"vertical_velocity": {}
+								},
+								{
+									"type": "minecraft:spawn_particles",
+									"particle": {
+										"type": "minecraft:geyser_plume",
+										"water_blocks": 4
+									},
+									"horizontal_position": {
+										"type": "entity_position"
+									},
+									"vertical_position": {
+										"type": "entity_position"
+									},
+									"horizontal_velocity": {},
+									"vertical_velocity": {}
+								},
+								{
+									"type": "minecraft:spawn_particles",
+									"particle": {
+										"type": "minecraft:geyser_poof",
+										"burst_impulse_base": 1.5,
+										"water_blocks": 4
+									},
+									"horizontal_position": {
+										"type": "entity_position"
+									},
+									"vertical_position": {
+										"type": "entity_position"
+									},
+									"horizontal_velocity": {},
+									"vertical_velocity": {}
+								}
+							]
+						}
 					}
 				]
 			}
