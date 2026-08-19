@@ -48,10 +48,13 @@ jobs:
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
       # `setup-gradle` only caches Gradle User Home, so without this the configuration cache is recalculated every run.
+      # `build-logic`'s build dir rides along: its outputs are configuration inputs, and a missing one invalidates the entry.
       - name: Cache Gradle configuration cache
         uses: actions/cache@v6
         with:
-          path: .gradle/configuration-cache
+          path: |
+            .gradle/configuration-cache
+            build-logic/convention/build
           key: gradle-config-cache-export-${{ runner.os }}-${{ hashFiles('**/*.gradle.kts', 'gradle.properties', 'gradle/libs.versions.toml', 'gradle/wrapper/gradle-wrapper.properties', 'build-logic/**/*.kt') }}
 
       - name: Query Browser Cache ID
