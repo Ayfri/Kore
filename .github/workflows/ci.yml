@@ -57,13 +57,6 @@ jobs:
           build-scan-terms-of-use-url: 'https://gradle.com/terms-of-service'
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
-      # Defender scans every file npm writes into `node_modules`, which costs ~150s on Windows for ~12k files.
-      - name: Exclude the build directories from Defender
-        if: runner.os == 'Windows'
-        continue-on-error: true
-        shell: pwsh
-        run: Add-MpPreference -ExclusionPath "${{ github.workspace }}", "$env:GRADLE_USER_HOME"
-
       # `setup-gradle` only caches Gradle User Home, so without this the configuration cache is recalculated every run.
       # `build-logic`'s build dir rides along: its outputs are configuration inputs, and a missing one invalidates the entry.
       - name: Cache Gradle configuration cache
