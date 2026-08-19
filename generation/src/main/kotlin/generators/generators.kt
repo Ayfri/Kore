@@ -5,6 +5,9 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import generateEnum
 import generatePathEnumTree
 import getFromCacheOrDownloadTxt
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import overrides
 
 /** Manually maintained list of "simple" generators: resource lists and registries. Add new entries here with [gen]. */
@@ -234,43 +237,47 @@ suspend fun launchAllSimpleGenerators(): List<Generator> {
 
 	val allGenerators = lists.setUrlWithType("lists") + registries.setUrlWithType("registries")
 
-	allGenerators.sortedBy { it.fileName }.forEach { gen ->
-		val url = gen.url
-		val list = getFromCacheOrDownloadTxt(gen.fileName, url).lines()
-		val parentArgumentType = gen.getParentArgumentType()
-		val paths = list.mapIfNotNull(gen.transform)
-		val useTree = gen.enumTree || paths.filter(String::isNotBlank).any { gen.separator in it }
+	coroutineScope {
+		allGenerators.sortedBy { it.fileName }.map { gen ->
+			async {
+				val url = gen.url
+				val list = getFromCacheOrDownloadTxt(gen.fileName, url).lines()
+				val parentArgumentType = gen.getParentArgumentType()
+				val paths = list.mapIfNotNull(gen.transform)
+				val useTree = gen.enumTree || paths.filter(String::isNotBlank).any { gen.separator in it }
 
-		when {
-			useTree -> {
-				generatePathEnumTree(
-					paths = paths,
-					gen
-				)
+				when {
+					useTree -> {
+						generatePathEnumTree(
+							paths = paths,
+							gen
+						)
 
-				gen.extractEnums?.forEach { (prefix, enumName) ->
-					// Get the values prefixed by it
-					val values = list.filter { it.startsWith(prefix) }
-					generateEnum(
-						values = values.map { it.removePrefix(prefix).removePrefix(gen.separator) }
-							.mapIfNotNull(gen.transform),
-						name = enumName,
+						gen.extractEnums?.forEach { (prefix, enumName) ->
+							// Get the values prefixed by it
+							val values = list.filter { it.startsWith(prefix) }
+							generateEnum(
+								values = values.map { it.removePrefix(prefix).removePrefix(gen.separator) }
+									.mapIfNotNull(gen.transform),
+								name = enumName,
+								sourceUrl = url,
+								asString = gen.asString,
+								additionalEnumCode = gen.additionalCode
+							)
+						}
+					}
+
+					else -> generateEnum(
+						values = paths,
+						name = gen.name,
 						sourceUrl = url,
+						parentArgumentType = parentArgumentType,
 						asString = gen.asString,
 						additionalEnumCode = gen.additionalCode
 					)
 				}
 			}
-
-			else -> generateEnum(
-				values = paths,
-				name = gen.name,
-				sourceUrl = url,
-				parentArgumentType = parentArgumentType,
-				asString = gen.asString,
-				additionalEnumCode = gen.additionalCode
-			)
-		}
+		}.awaitAll()
 	}
 
 	return allGenerators
