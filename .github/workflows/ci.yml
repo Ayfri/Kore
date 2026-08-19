@@ -28,8 +28,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        # Windows roughly doubles the wall clock, so it only guards master.
-        os: ${{ github.ref == 'refs/heads/master' && fromJSON('[ "ubuntu-latest", "windows-latest" ]') || fromJSON('[ "ubuntu-latest" ]') }}
+        os: [ ubuntu-latest, windows-latest ]
 
     runs-on: ${{ matrix.os }}
 
