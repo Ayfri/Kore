@@ -123,7 +123,8 @@ fun generatePathEnumTree(paths: List<String>, generator: Generator) {
 
 	typeBuilders.firstOrNull()?.forEach { topLevel.addType(it.value.build()) }
 
-	generateFile(name, sourceUrl, topLevel)
+	val file = generateFile(name, sourceUrl, topLevel)
+	logGenerated("enum tree", name, "${paths.size} paths", file)
 }
 
 /** Applies [block] only when [condition] is true. */

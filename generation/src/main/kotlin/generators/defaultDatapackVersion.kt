@@ -14,6 +14,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNamingStrategy
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
+import logGenerated
 import minecraftVersion
 import java.io.File
 
@@ -51,42 +52,46 @@ suspend fun downloadDefaultDatapackVersion() {
 	writeDefaultDatapackVersion(packVersion, url)
 }
 
-fun writeDefaultDatapackVersion(packVersion: PackVersion, sourceUrl: String) = generateFile("defaultDatapackVersion", sourceUrl) {
-	val dataPackClassName = ClassName("io.github.ayfri.kore", "DataPack")
-	val packFormatClassName = ClassName("io.github.ayfri.kore.pack", "PackFormat")
-	val packFormatFn = MemberName("io.github.ayfri.kore.pack", "packFormat")
+fun writeDefaultDatapackVersion(packVersion: PackVersion, sourceUrl: String) {
+	val file = generateFile("defaultDatapackVersion", sourceUrl) {
+		val dataPackClassName = ClassName("io.github.ayfri.kore", "DataPack")
+		val packFormatClassName = ClassName("io.github.ayfri.kore.pack", "PackFormat")
+		val packFormatFn = MemberName("io.github.ayfri.kore.pack", "packFormat")
 
-	// Deprecated variable for backwards compatibility
-	addProperty(
-		PropertySpec
-			.builder("DEFAULT_DATAPACK_FORMAT", Int::class)
-			.receiver(dataPackClassName.nestedClass("Companion"))
-			.addAnnotation(
-				ClassName("kotlin", "Deprecated")
-					.let {
-						com.squareup.kotlinpoet.AnnotationSpec.builder(it)
-							.addMember("message = %S", "Use DEFAULT_PACK_FORMAT instead")
-							.addMember("replaceWith = %L", "ReplaceWith(\"DEFAULT_PACK_FORMAT.major\")")
-							.build()
-					}
-			)
-			.getter(FunSpec.getterBuilder().addStatement("return ${packVersion.major}").build())
-			.build()
-	)
+		// Deprecated variable for backwards compatibility
+		addProperty(
+			PropertySpec
+				.builder("DEFAULT_DATAPACK_FORMAT", Int::class)
+				.receiver(dataPackClassName.nestedClass("Companion"))
+				.addAnnotation(
+					ClassName("kotlin", "Deprecated")
+						.let {
+							com.squareup.kotlinpoet.AnnotationSpec.builder(it)
+								.addMember("message = %S", "Use DEFAULT_PACK_FORMAT instead")
+								.addMember("replaceWith = %L", "ReplaceWith(\"DEFAULT_PACK_FORMAT.major\")")
+								.build()
+						}
+				)
+				.getter(FunSpec.getterBuilder().addStatement("return ${packVersion.major}").build())
+				.build()
+		)
 
-	// New variable with full PackFormat support
-	addProperty(
-		PropertySpec
-			.builder("DEFAULT_PACK_FORMAT", packFormatClassName)
-			.receiver(dataPackClassName.nestedClass("Companion"))
-			.getter(
-				FunSpec.getterBuilder()
-					.addStatement(
-						"return %M(${packVersion.major}${packVersion.minor?.let { ", $it" } ?: ""})",
-						packFormatFn
-					)
-					.build()
-			)
-			.build()
-	)
+		// New variable with full PackFormat support
+		addProperty(
+			PropertySpec
+				.builder("DEFAULT_PACK_FORMAT", packFormatClassName)
+				.receiver(dataPackClassName.nestedClass("Companion"))
+				.getter(
+					FunSpec.getterBuilder()
+						.addStatement(
+							"return %M(${packVersion.major}${packVersion.minor?.let { ", $it" } ?: ""})",
+							packFormatFn
+						)
+						.build()
+				)
+				.build()
+		)
+	}
+
+	logGenerated("file", "defaultDatapackVersion", file = file)
 }

@@ -52,7 +52,7 @@ suspend fun main(args: Array<String>) {
 	if ("--reload-cache" in args) clearCache()
 	clearGeneratedPackage()
 
-	println("Generating assets from minecraft version: $minecraftVersion")
+	println("Generating assets for Minecraft version $minecraftVersion")
 
 	downloadDataPacks()
 	downloadDefaultDatapackVersion()

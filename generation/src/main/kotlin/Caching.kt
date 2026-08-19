@@ -46,7 +46,7 @@ private fun getFromCacheJson(name: String): JsonElement? {
 }
 
 private suspend fun download(name: String, url: String): HttpResponse {
-	println("Downloading '$name' at : $url")
+	println("Downloading $name from $url")
 	val get = client.get(url)
 	if (!get.status.isSuccess()) error("${get.status.value}: $url")
 	return get

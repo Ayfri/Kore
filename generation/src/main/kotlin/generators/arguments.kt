@@ -9,6 +9,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
 import libDir
+import logGenerated
 import minecraftVersion
 import overrides
 import pascalCase
@@ -151,12 +152,13 @@ data class TagArgumentInfo(
 suspend fun launchArgumentTypeGenerators(): List<TagArgumentInfo> {
 	val registriesList = downloadRegistriesList()
 	val tagArguments = mutableListOf<TagArgumentInfo>()
+	var fileCount = 0
 
-	registriesList.map { entry ->
+	registriesList.forEach { entry ->
 		val argumentType = argumentTypeGen(entry.key, entry.value.tags)
 		val filesToCreate = processArgumentType(argumentType)
 
-		filesToCreate.map { (name, typeSpec) ->
+		filesToCreate.forEach { (name, typeSpec) ->
 			val prefix = name.substringBeforeLast(".").prependIfNotEmpty(".")
 
 			val subPackage = when {
@@ -171,8 +173,11 @@ suspend fun launchArgumentTypeGenerators(): List<TagArgumentInfo> {
 			}
 
 			generateFile(name.substringAfterLast("."), topLevel = typeSpec, subPackage = subPackage)
+			fileCount++
 		}
 	}
+
+	println("Generated $fileCount argument types (${tagArguments.size} tagged, ${registriesList.size} registries)")
 
 	return tagArguments
 }
@@ -218,5 +223,5 @@ fun generateTagArgumentFactories(tagArguments: List<TagArgumentInfo>) {
 	val file = java.io.File(libDir, "$GENERATED_FOLDER/TagArgumentFactories.kt")
 	file.parentFile.mkdirs()
 	file.writeText(content)
-	println("Generated $file")
+	logGenerated("file", "TagArgumentFactories", "${allNames.size} entries", file)
 }

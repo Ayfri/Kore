@@ -6,6 +6,7 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.STRING
 import generateFile
+import logGenerated
 
 /** [Generator.fileName] is a download-list identifier, not always identical to the real datapack folder name. */
 private val FOLDER_NAME_OVERRIDES = mapOf("dimensions" to "dimension")
@@ -54,11 +55,12 @@ fun generateDatapackFolderRegistry(allGenerators: List<Generator>) {
 		add(")")
 	}.build()
 
-	generateFile("DatapackFolderRegistry") { _ ->
+	val file = generateFile("DatapackFolderRegistry") { _ ->
 		addProperty(
 			PropertySpec.builder("DATAPACK_FOLDER_TO_ARGUMENT", MAP.parameterizedBy(STRING, STRING))
 				.initializer(initializer)
 				.build()
 		)
 	}
+	logGenerated("registry", "DatapackFolderRegistry", "${mapping.size} folders", file)
 }

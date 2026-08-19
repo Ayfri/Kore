@@ -3,10 +3,11 @@ package generators
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
 import generateFile
+import logGenerated
 import minecraftVersion
 
 fun writeMinecraftVersion() {
-	generateFile("minecraftVersion") {
+	val file = generateFile("minecraftVersion") {
 		addProperty(
 			PropertySpec
 				.builder("MINECRAFT_VERSION", String::class)
@@ -15,4 +16,5 @@ fun writeMinecraftVersion() {
 				.build()
 		)
 	}
+	logGenerated("file", "minecraftVersion", file = file)
 }

@@ -44,5 +44,6 @@ fun generateEnum(
 		addType(generateCompanion(name, encoderValue))
 	}
 
-	generateFile(name, sourceUrl, enumType, additionalCode = additionalCode)
+	val file = generateFile(name, sourceUrl, enumType, additionalCode = additionalCode)
+	logGenerated("enum", name, "${values.size} values", file)
 }
