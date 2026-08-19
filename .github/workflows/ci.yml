@@ -69,6 +69,10 @@ jobs:
 
       - name: Run tests
         run: ./gradlew testAll ${{ github.ref == 'refs/heads/master' && '-Pkore.jsBrowserTests=true' || '' }}
+        env:
+          # npm's default cache sits on the runner's slow C: drive, a different volume than the D: workspace, so npm
+          # copies every package instead of hardlinking it. Keeping both on one volume is worth ~2min on Windows.
+          npm_config_cache: ${{ runner.temp }}/npm-cache
 
       - name: Upload test reports
         if: failure()
