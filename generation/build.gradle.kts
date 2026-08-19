@@ -28,7 +28,7 @@ application {
 
 // Cacheable alternative to `run`: same JavaExec, but with declared inputs/outputs so Gradle can skip it (locally or
 // via the remote build cache) when `minecraft.version` hasn't changed since the last successful run.
-val generateSources by tasks.registering(JavaExec::class) {
+tasks.register<JavaExec>("generateSources") {
 	group = "build"
 	description = "Regenerates kore's generated sources from Minecraft data."
 	mainClass = application.mainClass
