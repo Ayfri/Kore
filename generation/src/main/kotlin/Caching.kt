@@ -1,6 +1,7 @@
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import java.io.File
@@ -47,6 +48,6 @@ private fun getFromCacheJson(name: String): JsonElement? {
 private suspend fun download(name: String, url: String): HttpResponse {
 	println("Downloading '$name' at : $url")
 	val get = client.get(url)
-	if (get.status.value == 404) error("404: $url")
+	if (!get.status.isSuccess()) error("${get.status.value}: $url")
 	return get
 }
