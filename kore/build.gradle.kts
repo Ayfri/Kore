@@ -59,15 +59,14 @@ dependencies {
 	add("kspJsTest", project(":kore-ksp"))
 }
 
-// Bootstrap generated MC enums/registries on a fresh checkout, for every target that needs them.
-if (!file("src/commonMain/kotlin/io/github/ayfri/kore/generated").exists()) {
-	tasks.matching {
-		it.name.startsWith("compileKotlin") ||
-			it.name == "compileCommonMainKotlinMetadata" ||
-			it.name.contains("SourcesJar", ignoreCase = true)
-	}.configureEach {
-		dependsOn(":generation:run")
-	}
+// Generated MC enums/registries: `generateSources` is cacheable and keyed on `minecraft.version`, so it only reruns on a bump.
+tasks.matching {
+	it.name.startsWith("compileKotlin") ||
+		it.name == "compileCommonMainKotlinMetadata" ||
+		it.name.startsWith("ksp") ||
+		it.name.contains("SourcesJar", ignoreCase = true)
+}.configureEach {
+	dependsOn(":generation:generateSources")
 }
 
 // The common-metadata srcDir above isn't a tracked task output, so consumers must depend on the KSP task filling it.
