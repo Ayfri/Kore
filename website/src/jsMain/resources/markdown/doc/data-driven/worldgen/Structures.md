@@ -158,16 +158,17 @@ placed block:
 | `passthrough()`         | Keeps it untouched, same as leaving `blockEntityModifier` to `null` |
 
 Rule tests, used by `inputPredicate` and `locationPredicate`, are the shared worldgen ones from
-`io.github.ayfri.kore.features.worldgen.ruletest`:
+`io.github.ayfri.kore.features.worldgen.ruletest`. They are scoped to the `rule { }` block, and to the `target { }`
+block of the ore-like configured features:
 
-| Rule test                                   | Description                                |
-|---------------------------------------------|--------------------------------------------|
-| `AlwaysTrue`                                | Matches any block                          |
-| `blockMatch(block)`                         | Matches one block, ignoring its properties |
-| `blockStateMatch(blockState)`               | Matches one exact block state              |
-| `randomBlockMatch(block, probability)`      | Matches a block with a probability         |
-| `randomBlockStateMatch(state, probability)` | Matches a block state with a probability   |
-| `tagMatch(tag)`                             | Matches any block of a block tag           |
+| Rule test                                   | Description                                                         |
+|---------------------------------------------|---------------------------------------------------------------------|
+| `alwaysTrue()`                              | Matches any block, same as leaving the predicate to its default     |
+| `blockMatch(block)`                         | Matches one block, whatever its block state properties are          |
+| `blockStateMatch(blockState)`               | Matches one exact block state, every property having to match       |
+| `randomBlockMatch(block, probability)`      | Matches a block with a probability, clamped between `0.0` and `1.0` |
+| `randomBlockStateMatch(state, probability)` | Matches a block state with a probability                            |
+| `tagMatch(tag)`                             | Matches any block of a block tag                                    |
 
 Group processor lists under a tag with `processorListTag`, see [Tags](/docs/data-driven/tags).
 

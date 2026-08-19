@@ -23,6 +23,7 @@ import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.features.worldgen.intproviders.uniform
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.Surface
 import io.github.ayfri.kore.features.worldgen.ruletest.randomBlockMatch
+import io.github.ayfri.kore.features.worldgen.ruletest.tagMatch
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 import io.github.ayfri.kore.utils.pretty
@@ -887,7 +888,13 @@ fun DataPack.configuredFeatureTests() {
 
 	configuredFeaturesBuilder.ore("test_ore") {
 		targets {
-			target(state = blockState(Blocks.STONE), target = randomBlockMatch(Blocks.STONE))
+			target(blockState(Blocks.STONE)) {
+				target = randomBlockMatch(Blocks.STONE, 0.5)
+			}
+
+			target(blockState(Blocks.DEEPSLATE)) {
+				target = tagMatch(Tags.Block.DEEPSLATE_ORE_REPLACEABLES)
+			}
 		}
 	}
 
@@ -902,10 +909,19 @@ fun DataPack.configuredFeatureTests() {
 						"target": {
 							"predicate_type": "minecraft:random_block_match",
 							"block": "minecraft:stone",
-							"probability": 0.0
+							"probability": 0.5
 						},
 						"state": {
 							"Name": "minecraft:stone"
+						}
+					},
+					{
+						"target": {
+							"predicate_type": "minecraft:tag_match",
+							"tag": "minecraft:deepslate_ore_replaceables"
+						},
+						"state": {
+							"Name": "minecraft:deepslate"
 						}
 					}
 				]
@@ -981,10 +997,13 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.replaceSingleBlock(
-		"test_replace_single_block",
-		target(randomBlockMatch(Blocks.STONE), blockState(Blocks.STONE))
-	)
+	configuredFeaturesBuilder.replaceSingleBlock("test_replace_single_block") {
+		targets {
+			target(blockState(Blocks.STONE)) {
+				target = randomBlockMatch(Blocks.STONE, 0.5)
+			}
+		}
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -995,7 +1014,7 @@ fun DataPack.configuredFeatureTests() {
 						"target": {
 							"predicate_type": "minecraft:random_block_match",
 							"block": "minecraft:stone",
-							"probability": 0.0
+							"probability": 0.5
 						},
 						"state": {
 							"Name": "minecraft:stone"
@@ -1183,12 +1202,13 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.scatteredOre(
-		"test_scattered_ore",
-		5,
-		0.5,
-		target(randomBlockMatch(Blocks.STONE), blockState(Blocks.STONE))
-	)
+	configuredFeaturesBuilder.scatteredOre("test_scattered_ore", 5, 0.5) {
+		targets {
+			target(blockState(Blocks.STONE)) {
+				target = randomBlockMatch(Blocks.STONE, 0.5)
+			}
+		}
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1201,7 +1221,7 @@ fun DataPack.configuredFeatureTests() {
 						"target": {
 							"predicate_type": "minecraft:random_block_match",
 							"block": "minecraft:stone",
-							"probability": 0.0
+							"probability": 0.5
 						},
 						"state": {
 							"Name": "minecraft:stone"

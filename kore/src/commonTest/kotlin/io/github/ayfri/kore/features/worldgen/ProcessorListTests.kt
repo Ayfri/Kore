@@ -170,6 +170,8 @@ fun DataPack.processorListTests() {
 			}
 
 			rule {
+				inputPredicate = alwaysTrue()
+				locationPredicate = alwaysTrue()
 				blockEntityModifier = passthrough()
 			}
 		}
@@ -189,7 +191,7 @@ fun DataPack.processorListTests() {
 							},
 							"location_predicate": {
 								"predicate_type": "minecraft:tag_match",
-								"tag": "#minecraft:dirt"
+								"tag": "minecraft:dirt"
 							},
 							"input_predicate": {
 								"predicate_type": "minecraft:block_match",

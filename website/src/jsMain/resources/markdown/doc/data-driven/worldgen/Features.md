@@ -130,9 +130,22 @@ val ore = ore(
 	"my_ore",
 	size = 10,                        // Max blocks per vein
 	discardChanceOnAirExposure = 0.1, // Skip blocks exposed to air
-	targets = listOf(Target())        // Rule tests for replacement
-)
+) {
+	targets {
+		// The rule test builders are scoped to the target { } block.
+		target(blockState(Blocks.IRON_ORE)) {
+			target = tagMatch(Tags.Block.STONE_ORE_REPLACEABLES)
+		}
+
+		target(blockState(Blocks.DEEPSLATE_IRON_ORE)) {
+			target = tagMatch(Tags.Block.DEEPSLATE_ORE_REPLACEABLES)
+		}
+	}
+}
 ```
+
+`targets { }` is available on `ore`, `scatteredOre` and `replaceSingleBlock`, the three configured features replacing
+terrain blocks. The first target matching a block wins.
 
 ### Simple Block
 
@@ -405,8 +418,13 @@ fun DataPack.createForestFeatures() {
 		"iron_ore",
 		size = 9,
 		discardChanceOnAirExposure = 0.0,
-		targets = listOf(Target())
-	)
+	) {
+		targets {
+			target(blockState(Blocks.IRON_ORE)) {
+				target = tagMatch(Tags.Block.STONE_ORE_REPLACEABLES)
+			}
+		}
+	}
 
 	// 6) Ore placed feature
 	val ironOrePlaced = placedFeature("iron_ore_placed", ironOre) {

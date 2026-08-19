@@ -6,6 +6,7 @@ import io.github.ayfri.kore.features.worldgen.processorlist.types.rule.blockenti
 import io.github.ayfri.kore.features.worldgen.processorlist.types.rule.positionpredicate.PositionPredicate
 import io.github.ayfri.kore.features.worldgen.ruletest.AlwaysTrue
 import io.github.ayfri.kore.features.worldgen.ruletest.RuleTest
+import io.github.ayfri.kore.features.worldgen.ruletest.RuleTestScope
 import kotlinx.serialization.Serializable
 
 /**
@@ -27,28 +28,21 @@ data class ProcessorRule(
 	var inputPredicate: RuleTest = AlwaysTrue,
 	var outputState: BlockState = blockStateStone(),
 	var blockEntityModifier: BlockEntityModifier? = null,
-)
+) : RuleTestScope
 
 /**
- * Appends a rule replacing the blocks matching its predicates by [outputState].
+ * Appends a rule replacing the blocks matching its predicates by [ProcessorRule.outputState].
+ *
+ * The rule test, position predicate and block entity modifier builders are all scoped to this block.
  *
  * ```kotlin
  * rule {
  *     inputPredicate = blockMatch(Blocks.STONE_BRICKS)
- *     locationPredicate = tagMatch(BlockTags.DIRT)
+ *     locationPredicate = tagMatch(Tags.Block.DIRT)
  *     outputState = blockState(Blocks.MOSSY_STONE_BRICKS)
  * }
  * ```
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Processor_list
  */
-fun RulesScope.rule(
-	positionPredicate: PositionPredicate? = null,
-	locationPredicate: RuleTest = AlwaysTrue,
-	inputPredicate: RuleTest = AlwaysTrue,
-	outputState: BlockState = blockStateStone(),
-	blockEntityModifier: BlockEntityModifier? = null,
-	block: ProcessorRule.() -> Unit = {},
-) = apply {
-	rules += ProcessorRule(positionPredicate, locationPredicate, inputPredicate, outputState, blockEntityModifier).apply(block)
-}
+fun RulesScope.rule(block: ProcessorRule.() -> Unit = {}) = apply { rules += ProcessorRule().apply(block) }
