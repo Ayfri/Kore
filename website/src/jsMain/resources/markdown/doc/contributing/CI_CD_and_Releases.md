@@ -57,14 +57,29 @@ Maintainer notes:
 
 Current repository automation is split across dedicated workflows under `.github/workflows`:
 
-- `ci.yml`: runs `./gradlew testAll` on pushes and pull requests targeting `master`, on both Ubuntu and Windows
-  runners. `testAll` is a root task defined in the `kotest-conventions` convention plugin that aggregates every
-  Kotlin Multiplatform module's `allTests` task (JVM, Node.js, and browser via Karma) - see
-  [Multiplatform Support][multiplatform] for what runs where.
+- `ci.yml`: runs `./gradlew testAll` on pushes and pull requests targeting `master`. `testAll` is a root task defined
+  in the `kotest-conventions` convention plugin that aggregates every Kotlin Multiplatform module's `allTests` task
+  (JVM, Node.js, and browser via Karma) - see [Multiplatform Support][multiplatform] for what runs where.
+  Pull requests run on Ubuntu only; `master` additionally runs the Windows matrix entry.
 - `codeql.yml`: runs GitHub CodeQL analysis for `actions` and `java-kotlin` on pushes, pull requests, manual dispatch,
   and a weekly schedule.
 - `publish.yml`: performs the manual release publication flow.
 - `publish-snapshot.yml`: publishes snapshot artifacts from `master`.
+
+### CI build tuning
+
+`jsBrowserTest` tasks are skipped unless `-Pkore.jsBrowserTests=true` is passed. Browser and Node.js execute the same
+JS IR, so the Karma round-trip costs startup time without adding coverage; CI passes the flag on `master` only. The
+flag drives `onlyIf` rather than `enabled`, because a disabled task stops contributing its npm dependencies and both
+modes have to agree on `kotlin-js-store/package-lock.json`.
+
+That lock is produced by npm - the Kotlin Gradle plugin uses npm instead of Yarn here, the direction the plugin itself
+is heading in ([KT-84662](https://youtrack.jetbrains.com/issue/KT-84662)). Its contents depend on which tasks are in
+the graph, so regenerate it by deleting the file and running `./gradlew testAll`, not with `kotlinUpgradePackageLock`
+alone.
+
+Test reports are uploaded as artifacts on failure only. `gradle/actions/setup-gradle` publishes a Build Scan for every
+run, which is the fastest way to see where wall-clock time went.
 
 CodeQL is intentionally scoped to the meaningful code in this repository:
 
