@@ -4,17 +4,27 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.dataPack
+import io.github.ayfri.kore.features.sulfurcubearchetype.SulfurCubeArchetypeKnockbackModifiers
+import io.github.ayfri.kore.features.sulfurcubearchetype.contactDamage
+import io.github.ayfri.kore.features.sulfurcubearchetype.explosion
 import io.github.ayfri.kore.features.sulfurcubearchetype.modifier
 import io.github.ayfri.kore.features.sulfurcubearchetype.sulfurCubeArchetype
 import io.github.ayfri.kore.generated.Attributes
+import io.github.ayfri.kore.generated.DamageTypes
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.sulfurCubeArchetypeTests() {
-	sulfurCubeArchetype("regular", items = Tags.Item.SWORDS) {
+	sulfurCubeArchetype(
+		"regular",
+		items = Tags.Item.SWORDS,
+		knockbackModifiers = SulfurCubeArchetypeKnockbackModifiers(horizontalPower = 0.4f, verticalPower = 0.2f),
+	) {
 		buoyant = true
-		explosionFuse = 80
+
+		contactDamage(amount = 3f, damageType = DamageTypes.GENERIC, attributeToSource = true)
+		explosion(fuse = 80, power = 3, causesFire = true)
 
 		modifier(
 			amount = 4.0,
@@ -35,8 +45,21 @@ fun DataPack.sulfurCubeArchetypeTests() {
 				}
 			],
 			"buoyant": true,
-			"explosion_fuse": 80,
-			"items": "#minecraft:swords"
+			"contact_damage": {
+				"amount": 3.0,
+				"attribute_to_source": true,
+				"damage_type": "minecraft:generic"
+			},
+			"explosion": {
+				"causes_fire": true,
+				"fuse": 80,
+				"power": 3
+			},
+			"items": "#minecraft:swords",
+			"knockback_modifiers": {
+				"horizontal_power": 0.4,
+				"vertical_power": 0.2
+			}
 		}
 	""".trimIndent()
 }

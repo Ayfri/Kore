@@ -5,6 +5,7 @@ import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.types.resources.tagged.ItemTagArgument
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.generated.arguments.types.AttributeArgument
+import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.SulfurCubeArchetypeArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -26,9 +27,50 @@ data class SulfurCubeArchetypeAttributeModifier(
 )
 
 /**
+ * The damage dealt to entities that touch a sulfur cube.
+ *
+ * @property amount The amount of damage dealt.
+ * @property attributeToSource Whether the damage is attributed to the sulfur cube as its source.
+ * @property damageType The type of damage dealt.
+ */
+@Serializable
+data class SulfurCubeArchetypeContactDamage(
+	var amount: Float,
+	var attributeToSource: Boolean,
+	var damageType: DamageTypeArgument,
+)
+
+/**
+ * The explosion triggered by a sulfur cube archetype.
+ *
+ * @property causesFire Whether the explosion sets blocks on fire.
+ * @property fuse The delay, in ticks, before the explosion goes off.
+ * @property power The explosion's power.
+ */
+@Serializable
+data class SulfurCubeArchetypeExplosion(
+	var causesFire: Boolean,
+	var fuse: Int,
+	var power: Int,
+)
+
+/**
+ * The knockback dealt to entities that touch a sulfur cube.
+ *
+ * @property horizontalPower The horizontal knockback power.
+ * @property verticalPower The vertical knockback power.
+ */
+@Serializable
+data class SulfurCubeArchetypeKnockbackModifiers(
+	var horizontalPower: Float,
+	var verticalPower: Float,
+)
+
+/**
  * Data-driven sulfur cube archetype definition.
  *
- * Controls the attribute modifiers, buoyancy, explosion fuse, and valid item contents of a sulfur cube.
+ * Controls the attribute modifiers, buoyancy, contact damage, explosion, knockback, and valid item contents of a
+ * sulfur cube.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/sulfur-cube-archetypes
  * Minecraft Wiki: https://minecraft.wiki/w/Sulfur_cube_archetype_definition
@@ -39,8 +81,10 @@ data class SulfurCubeArchetype(
 	override var fileName: String = "sulfur_cube_archetype",
 	var attributeModifiers: MutableList<SulfurCubeArchetypeAttributeModifier>,
 	var buoyant: Boolean,
-	var explosionFuse: Int? = null,
+	var contactDamage: SulfurCubeArchetypeContactDamage? = null,
+	var explosion: SulfurCubeArchetypeExplosion? = null,
 	var items: ItemTagArgument,
+	var knockbackModifiers: SulfurCubeArchetypeKnockbackModifiers,
 ) : Generator("sulfur_cube_archetype") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
@@ -56,10 +100,11 @@ data class SulfurCubeArchetype(
 fun DataPack.sulfurCubeArchetype(
 	fileName: String = "sulfur_cube_archetype",
 	items: ItemTagArgument,
+	knockbackModifiers: SulfurCubeArchetypeKnockbackModifiers,
 	buoyant: Boolean = false,
 	init: SulfurCubeArchetype.() -> Unit = {},
 ): SulfurCubeArchetypeArgument {
-	val archetype = SulfurCubeArchetype(fileName, mutableListOf(), buoyant, items = items).apply(init)
+	val archetype = SulfurCubeArchetype(fileName, mutableListOf(), buoyant, items = items, knockbackModifiers = knockbackModifiers).apply(init)
 	sulfurCubeArchetypes += archetype
 	return SulfurCubeArchetypeArgument(fileName, archetype.namespace ?: name)
 }
@@ -71,4 +116,33 @@ fun SulfurCubeArchetype.modifier(
 	operation: AttributeModifierOperation,
 ) {
 	attributeModifiers += SulfurCubeArchetypeAttributeModifier(amount, attribute, id, operation)
+}
+
+/**
+ * Sets [SulfurCubeArchetype.contactDamage] to a [SulfurCubeArchetypeContactDamage] built from the given parameters.
+ */
+fun SulfurCubeArchetype.contactDamage(
+	amount: Float,
+	damageType: DamageTypeArgument,
+	attributeToSource: Boolean = false,
+) {
+	contactDamage = SulfurCubeArchetypeContactDamage(amount, attributeToSource, damageType)
+}
+
+/**
+ * Sets [SulfurCubeArchetype.explosion] to a [SulfurCubeArchetypeExplosion] built from the given parameters.
+ */
+fun SulfurCubeArchetype.explosion(
+	fuse: Int,
+	power: Int,
+	causesFire: Boolean = false,
+) {
+	explosion = SulfurCubeArchetypeExplosion(causesFire, fuse, power)
+}
+
+/**
+ * Sets [SulfurCubeArchetype.knockbackModifiers] to a [SulfurCubeArchetypeKnockbackModifiers] built from the given parameters.
+ */
+fun SulfurCubeArchetype.knockbackModifiers(horizontalPower: Float, verticalPower: Float) {
+	knockbackModifiers = SulfurCubeArchetypeKnockbackModifiers(horizontalPower, verticalPower)
 }
