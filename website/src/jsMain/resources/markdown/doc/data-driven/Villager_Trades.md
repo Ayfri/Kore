@@ -5,7 +5,7 @@ nav-title: Villager Trades
 description: Define custom villager trades and trade sets for Minecraft 26.1+ with Kore's type-safe Kotlin DSL. Configure items, prices, demand, and profession-level trade tables without hand-writing JSON.
 keywords: minecraft villager trade, custom villager trades, datapack trade_set, datapack villager_trade, kore villager trades, minecraft merchant trades, custom trades datapack, profession trades, villager trade generator
 date-created: 2026-06-15
-date-modified: 2026-06-15
+date-modified: 2026-08-20
 routeOverride: /docs/data-driven/villager-trades
 ---
 
@@ -37,7 +37,7 @@ data/<namespace>/trade_set/<name>.json
 For the full JSON specification see:
 
 - [Minecraft Wiki: Villager trade definition](https://minecraft.wiki/w/Villager_trade_definition)
-- [Minecraft Wiki: Trade set definition](https://minecraft.wiki/w/Trade_set_definition)
+- [Minecraft Wiki: Trade set](https://minecraft.wiki/w/Trade_set)
 
 ---
 
@@ -155,54 +155,81 @@ doubleTradePriceEnchantments = listOf(Enchantments.BINDING_CURSE)
 
 ### Creating a Trade Set
 
-A `TradeSet` groups references to `villager_trade` files and controls how many are offered per level.
-Pass the list of trade references (returned by `villagerTrade`) and an `amount` provider:
+A `TradeSet` groups references to `villager_trade` files and controls how many are rolled per level.
+Everything is set inside the block: `trades` takes the references returned by `villagerTrade` (or trade
+tags), and `amount` takes the number of trades rolled out of the pool.
 
 ```kotlin
-val wheatTrade = datapack.villagerTrade("wheat_for_emerald") {
-    wants(Items.WHEAT, count = 20)
-    gives(Items.EMERALD)
-    xp = constant(1f)
-}
+datapack {
+    val wheatTrade = villagerTrade("wheat_for_emerald") {
+        wants(Items.WHEAT, count = 20)
+        gives(Items.EMERALD)
+        xp = constant(1f)
+    }
 
-val potatoTrade = datapack.villagerTrade("potato_for_emerald") {
-    wants(Items.POTATO, count = 26)
-    gives(Items.EMERALD)
-    xp = constant(1f)
-}
+    val potatoTrade = villagerTrade("potato_for_emerald") {
+        wants(Items.POTATO, count = 26)
+        gives(Items.EMERALD)
+        xp = constant(1f)
+    }
 
-datapack.tradeSet(
-    "novice_farmer",
-    trades = listOf(wheatTrade, potatoTrade),
-    amount = constant(2f),
-)
+    tradeSet("novice_farmer") {
+        trades(wheatTrade, potatoTrade)
+        amount(2f)
+    }
+}
 ```
+
+A file name holding slashes lands in subfolders, the way vanilla groups its sets per profession and
+level, so `tradeSet("farmer/level_1")` writes `data/<namespace>/trade_set/farmer/level_1.json`.
 
 ### Sampling with Tags
 
-You can mix individual trade references with tag references in the same pool:
+Individual trade references and tag references mix in the same pool, and `trade` appends a single one
+to what is already there:
 
 ```kotlin
-datapack.tradeSet(
-    "apprentice_farmer",
-    trades = listOf(
-        VillagerTradeTagArgument("farmer_apprentice", "mymod"),
-        myCustomTrade,
-    ),
-    amount = uniform(constant(1f), constant(3f)),
-) {
+tradeSet("apprentice_farmer") {
+    trades(Tags.VillagerTrade.Farmer.LEVEL_2, myCustomTrade)
+    trade(VillagerTradeTagArgument("farmer_apprentice", "mymod"))
+    amount(1f, 3f)
     allowDuplicates = false
+}
+```
+
+A pool holding a single entry serializes as a plain string rather than an array, matching vanilla.
+
+### Reproducible Rolls
+
+`randomSequence` seeds the rolls from a named random sequence, so the same set always produces the
+same trades for a given world seed:
+
+```kotlin
+tradeSet("farmer/level_1") {
+    trades(Tags.VillagerTrade.Farmer.LEVEL_1)
+    amount(2f)
+    randomSequence("trade_set/farmer/level_1", "mypack")
 }
 ```
 
 ### TradeSet Fields
 
-| Field             | Type                                        | Description                                                        |
-|-------------------|---------------------------------------------|--------------------------------------------------------------------|
-| `allowDuplicates` | `Boolean?`                                  | Whether the same trade can be drawn more than once per level-up.   |
-| `amount`          | `NumberProvider`                            | How many trades are drawn from this set when a villager levels up. |
-| `randomSequence`  | `RandomSequenceArgument?`                   | Named random sequence for reproducible sampling.                   |
-| `trades`          | `InlinableList<VillagerTradeOrTagArgument>` | Trade references or tags to sample from.                           |
+| Field             | Type                                        | Description                                                                    |
+|-------------------|---------------------------------------------|--------------------------------------------------------------------------------|
+| `allowDuplicates` | `Boolean?`                                  | Whether the same trade can be rolled more than once. Defaults to `false`.      |
+| `amount`          | `NumberProvider`                            | How many trades are rolled out of the set. Defaults to `constant(1f)`.         |
+| `randomSequence`  | `RandomSequenceArgument?`                   | Named random sequence the rolls are seeded from, non-deterministic when unset. |
+| `trades`          | `InlinableList<VillagerTradeOrTagArgument>` | Trade references or tags rolled from.                                          |
+
+### TradeSet Builders
+
+| Builder                       | Description                                                   |
+|-------------------------------|---------------------------------------------------------------|
+| `amount(value)`               | Rolls exactly `value` trades.                                 |
+| `amount(min, max)`            | Rolls between `min` and `max` trades, both included.          |
+| `randomSequence(name, ns)`    | Seeds the rolls from a named random sequence.                 |
+| `trade(trade)`                | Appends one trade or tag to the pool.                         |
+| `trades(vararg / list)`       | Sets the pool, replacing the entries already there.           |
 
 ---
 
@@ -231,11 +258,9 @@ datapack {
         xp = constant(1f)
     }
 
-    tradeSet(
-        "custom_farmer_novice",
-        trades = listOf(hayTrade, wheatTrade, breadTrade),
-        amount = constant(2f),
-    ) {
+    tradeSet("custom_farmer_novice") {
+        trades(hayTrade, wheatTrade, breadTrade)
+        amount(2f)
         allowDuplicates = false
     }
 }
@@ -254,6 +279,6 @@ datapack {
 ### External Resources
 
 - [Minecraft Wiki: Villager trade definition](https://minecraft.wiki/w/Villager_trade_definition)
-- [Minecraft Wiki: Trade set definition](https://minecraft.wiki/w/Trade_set_definition)
+- [Minecraft Wiki: Trade set](https://minecraft.wiki/w/Trade_set)
 - [Minecraft Wiki: Trading](https://minecraft.wiki/w/Trading) - How the vanilla trading system works
 - [Minecraft Wiki: Villager](https://minecraft.wiki/w/Villager) - Villager behavior, professions, and leveling
