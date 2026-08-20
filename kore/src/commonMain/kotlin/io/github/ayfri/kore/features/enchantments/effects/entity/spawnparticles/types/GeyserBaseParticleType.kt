@@ -14,5 +14,6 @@ data class GeyserBaseParticleType(
 	var waterBlocks: Int,
 ) : ParticleType()
 
-fun geyserBaseParticleType(type: ParticleTypeArgument, burstImpulseBase: Float, waterBlocks: Int) =
+/** Creates the options of the `geyser_base` particle. */
+fun ParticleTypeScope.geyserBaseParticleType(type: ParticleTypeArgument, burstImpulseBase: Float, waterBlocks: Int) =
 	GeyserBaseParticleType(type, burstImpulseBase, waterBlocks)

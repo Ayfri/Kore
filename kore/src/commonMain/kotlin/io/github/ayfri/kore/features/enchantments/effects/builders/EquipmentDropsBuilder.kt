@@ -1,15 +1,19 @@
 package io.github.ayfri.kore.features.enchantments.effects.builders
 
-import io.github.ayfri.kore.features.enchantments.effects.value.Add
-import io.github.ayfri.kore.features.enchantments.effects.value.Multiply
-import io.github.ayfri.kore.features.enchantments.effects.value.RemoveBinomial
-import io.github.ayfri.kore.features.enchantments.effects.value.Set
-import io.github.ayfri.kore.features.enchantments.values.LevelBased
-import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
+import io.github.ayfri.kore.features.enchantments.effects.value.ValueEffect
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
+/**
+ * The list of conditional value effects of the `equipment_drops` component, changing how likely the equipment of a
+ * killed entity is to drop.
+ *
+ * Each entry names which side of the fight has to carry the enchantment, so effects are added through
+ * `on(enchanted) { }` rather than directly.
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#equipment_drops
+ */
 @Serializable(with = EquipmentDropsBuilder.Companion.EquipmentDropsBuilderSerializer::class)
 data class EquipmentDropsBuilder(var effects: List<EquipmentDropsConditionalEffect> = emptyList()) : EffectBuilder() {
 	companion object {
@@ -23,52 +27,31 @@ data class EquipmentDropsBuilder(var effects: List<EquipmentDropsConditionalEffe
 	}
 }
 
-fun EquipmentDropsBuilder.add(
-	specifier: EquipmentDropsSpecifier,
-	value: LevelBased,
-	block: EquipmentDropsConditionalEffect.() -> Unit = {},
-) =
-	apply { effects += EquipmentDropsConditionalEffect(specifier, Add(value)).apply(block) }
-
-fun EquipmentDropsBuilder.add(specifier: EquipmentDropsSpecifier, value: Int, block: EquipmentDropsConditionalEffect.() -> Unit = {}) =
-	apply { effects += EquipmentDropsConditionalEffect(specifier, Add(constantLevelBased(value))).apply(block) }
-
-
-fun EquipmentDropsBuilder.allOf(specifier: EquipmentDropsSpecifier, block: ValueEffectAllOfTopBuilder.() -> Unit) = apply {
-	val builder = ValueEffectAllOfTopBuilder().apply(block)
-	effects += EquipmentDropsConditionalEffect(specifier, builder.effects, builder.requirements)
+/** Collects the effects an `equipment_drops` entry applies, all sharing the same enchanted side. */
+class EquipmentDropsScope internal constructor(
+	private val enchanted: EquipmentDropsSpecifier,
+	private val builder: EquipmentDropsBuilder,
+) : ValueEffectScope {
+	override fun addEffect(effect: ValueEffect) {
+		builder.effects += EquipmentDropsConditionalEffect(enchanted, effect, effect.requirements)
+	}
 }
 
-
-fun EquipmentDropsBuilder.multiply(
-	specifier: EquipmentDropsSpecifier,
-	value: LevelBased, block: EquipmentDropsConditionalEffect.() -> Unit = {},
-) =
-	apply { effects += EquipmentDropsConditionalEffect(specifier, Multiply(value)).apply(block) }
-
-fun EquipmentDropsBuilder.multiply(specifier: EquipmentDropsSpecifier, value: Int, block: EquipmentDropsConditionalEffect.() -> Unit = {}) =
-	apply { effects += EquipmentDropsConditionalEffect(specifier, Multiply(constantLevelBased(value))).apply(block) }
-
-
-fun EquipmentDropsBuilder.removeBinomial(
-	specifier: EquipmentDropsSpecifier,
-	chance: LevelBased, block: EquipmentDropsConditionalEffect.() -> Unit = {},
-) =
-	apply { effects += EquipmentDropsConditionalEffect(specifier, RemoveBinomial(chance)).apply(block) }
-
-fun EquipmentDropsBuilder.removeBinomial(
-	specifier: EquipmentDropsSpecifier,
-	chance: Int, block: EquipmentDropsConditionalEffect.() -> Unit = {},
-) =
-	apply { effects += EquipmentDropsConditionalEffect(specifier, RemoveBinomial(constantLevelBased(chance))).apply(block) }
-
-
-fun EquipmentDropsBuilder.set(
-	specifier: EquipmentDropsSpecifier,
-	value: LevelBased,
-	block: EquipmentDropsConditionalEffect.() -> Unit = {},
-) =
-	apply { effects += EquipmentDropsConditionalEffect(specifier, Set(value)).apply(block) }
-
-fun EquipmentDropsBuilder.set(specifier: EquipmentDropsSpecifier, value: Int, block: EquipmentDropsConditionalEffect.() -> Unit = {}) =
-	apply { effects += EquipmentDropsConditionalEffect(specifier, Set(constantLevelBased(value))).apply(block) }
+/**
+ * Appends every effect built in [block], each applying when [enchanted] carries the enchantment.
+ *
+ * ```kotlin
+ * equipmentDrops {
+ *     on(EquipmentDropsSpecifier.ATTACKER) {
+ *         add(0.05f) {
+ *             requirements { weatherCheck(raining = true) }
+ *         }
+ *     }
+ * }
+ * ```
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#equipment_drops
+ */
+fun EquipmentDropsBuilder.on(enchanted: EquipmentDropsSpecifier, block: EquipmentDropsScope.() -> Unit) {
+	EquipmentDropsScope(enchanted, this).apply(block)
+}

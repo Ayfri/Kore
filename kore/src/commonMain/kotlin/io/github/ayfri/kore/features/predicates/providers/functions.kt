@@ -26,7 +26,7 @@ fun constant(value: Float) = Constant(value)
 
 
 /** Creates an [EnchantmentLevel] number provider from a fixed integer [amount]. */
-fun enchantmentLevel(amount: Int) = EnchantmentLevel(constantLevelBased(amount))
+fun enchantmentLevel(amount: Int) = EnchantmentLevel(LevelBased.constantLevelBased(amount))
 
 /** Creates an [EnchantmentLevel] number provider from a [LevelBased] expression. */
 fun enchantmentLevel(amount: LevelBased) = EnchantmentLevel(amount)

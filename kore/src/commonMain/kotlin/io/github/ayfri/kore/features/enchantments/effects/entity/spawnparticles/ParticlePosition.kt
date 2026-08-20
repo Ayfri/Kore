@@ -8,6 +8,17 @@ import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.*
 
+/**
+ * Where a `spawn_particles` particle spawns on one axis.
+ *
+ * [scale] is only written when [type] is [ParticlePositionType.IN_BOUNDING_BOX], the only mode the game reads it in.
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#spawn_particles
+ *
+ * @property type What the offset is measured against.
+ * @property offset The distance from the reference point, `0` when `null`.
+ * @property scale The share of the hitbox size the particle is spread over, `1` when `null`.
+ */
 @Serializable(with = ParticlePosition.Companion.ParticlePositionSerializer::class)
 data class ParticlePosition(
 	var type: ParticlePositionType,

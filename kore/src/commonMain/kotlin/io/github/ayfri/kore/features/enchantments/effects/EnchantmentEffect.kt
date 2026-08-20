@@ -9,6 +9,15 @@ import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
+/**
+ * Anything an effect component can hold: an [AttributeEffect], an [EntityEffect], a [ValueEffect] or a
+ * [SpecialEnchantmentEffect].
+ *
+ * The four families have unrelated serializers, so this one only dispatches to the right one. Enchantments are
+ * written, never read back, hence the deserialization error.
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#Effect_components
+ */
 @Serializable(with = EnchantmentEffect.Companion.EnchantmentEffectSerializer::class)
 interface EnchantmentEffect {
 	companion object {

@@ -14,5 +14,6 @@ data class GeyserPoofParticleType(
 	var waterBlocks: Int,
 ) : ParticleType()
 
-fun geyserPoofParticleType(type: ParticleTypeArgument, burstImpulseBase: Float, waterBlocks: Int) =
+/** Creates the options of the `geyser_poof` particle. */
+fun ParticleTypeScope.geyserPoofParticleType(type: ParticleTypeArgument, burstImpulseBase: Float, waterBlocks: Int) =
 	GeyserPoofParticleType(type, burstImpulseBase, waterBlocks)

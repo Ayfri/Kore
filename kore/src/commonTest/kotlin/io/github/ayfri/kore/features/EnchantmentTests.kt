@@ -11,11 +11,15 @@ import io.github.ayfri.kore.features.enchantments.*
 import io.github.ayfri.kore.features.enchantments.effects.builders.*
 import io.github.ayfri.kore.features.enchantments.effects.entity.*
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticlePositionType
-import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.*
-import io.github.ayfri.kore.features.enchantments.effects.special.requirements
+import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.geyserBaseParticleType
+import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.geyserParticleType
+import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.geyserPlumeParticleType
+import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.geyserPoofParticleType
 import io.github.ayfri.kore.features.enchantments.effects.special.start
+import io.github.ayfri.kore.features.enchantments.effects.value.requirements
 import io.github.ayfri.kore.features.enchantments.values.*
 import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
+import io.github.ayfri.kore.features.worldgen.blockpredicate.matchingBlocks
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.utils.pretty
@@ -72,6 +76,29 @@ fun DataPack.enchantmentTests() {
 		}
 	""".trimIndent()
 
+	enchantment("supported_items_tag") {
+		supportedItems(Tags.Item.SWORDS)
+	}
+
+	enchantments.last() assertsIs """
+		{
+			"description": "",
+			"supported_items": "#minecraft:swords",
+			"weight": 1,
+			"max_level": 1,
+			"min_cost": {
+				"base": 0,
+				"per_level_above_first": 0
+			},
+			"max_cost": {
+				"base": 0,
+				"per_level_above_first": 0
+			},
+			"anvil_cost": 0,
+			"slots": []
+		}
+	""".trimIndent()
+
 	enchantment("ammo_use") {
 		effects {
 			ammoUse {
@@ -114,7 +141,7 @@ fun DataPack.enchantmentTests() {
 				}
 
 				multiply(2)
-				removeBinomial(2)
+				removeBinomial(0.25f)
 				set(2)
 			}
 		}
@@ -164,7 +191,7 @@ fun DataPack.enchantmentTests() {
 					{
 						"effect": {
 							"type": "minecraft:remove_binomial",
-							"chance": 2
+							"chance": 0.25
 						}
 					},
 					{
@@ -178,10 +205,49 @@ fun DataPack.enchantmentTests() {
 		}
 	""".trimIndent()
 
+	enchantment("all_of_requirements") {
+		effects {
+			damage {
+				allOf {
+					requirements {
+						weatherCheck(raining = true)
+					}
+
+					add(2)
+				}
+			}
+		}
+	}
+
+	enchantments.last() assertsIs """
+		{
+			$DUMMY_ENCHANTMENT_CONTENT
+			"effects": {
+				"minecraft:damage": [
+					{
+						"effect": {
+							"type": "minecraft:all_of",
+							"effects": [
+								{
+									"type": "minecraft:add",
+									"value": 2
+								}
+							]
+						},
+						"requirements": {
+							"condition": "minecraft:weather_check",
+							"raining": true
+						}
+					}
+				]
+			}
+		}
+	""".trimIndent()
+
 	enchantment("attributes") {
 		effects {
 			attributes {
-				attribute("my_modifier", name, Attributes.SCALE, AttributeModifierOperation.ADD_VALUE, 5)
+				attribute("my_modifier", name, Attributes.SCALE, AttributeModifierOperation.ADD_VALUE, constantLevelBased(5))
 			}
 		}
 	}
@@ -206,13 +272,14 @@ fun DataPack.enchantmentTests() {
 		effects {
 			blockExperience {
 				allOf {
-					add(clampedLevelBased(5, 0.0, 10.0))
+					add(clampedLevelBased(5, 0f, 10f))
 					add(constantLevelBased(5))
 					add(exponentLevelBased(1, 5))
 					add(fractionLevelBased(1, 5))
 					add(levelsSquaredLevelBased(2))
 					add(linearLevelBased(2, 2))
 					add(lookupLevelBased(2, 2, fallback = 2))
+					add(linearLevelBased(1.5f, 0.25f))
 				}
 			}
 		}
@@ -281,6 +348,14 @@ fun DataPack.enchantmentTests() {
 										],
 										"fallback": 2
 									}
+								},
+								{
+									"type": "minecraft:add",
+									"value": {
+										"type": "minecraft:linear",
+										"base": 1.5,
+										"per_level_above_first": 0.25
+									}
 								}
 							]
 						}
@@ -293,7 +368,7 @@ fun DataPack.enchantmentTests() {
 	enchantment("crossbow_charging_sounds") {
 		effects {
 			crossbowChargingSounds {
-				crossbowChargingSound {
+				level {
 					start(SoundEvents.Item.Crossbow.QUICK_CHARGE_3)
 				}
 			}
@@ -306,9 +381,7 @@ fun DataPack.enchantmentTests() {
 			"effects": {
 				"minecraft:crossbow_charging_sounds": [
 					{
-						"start": "minecraft:item.crossbow.quick_charge_3",
-						"mid": ":",
-						"end": ":"
+						"start": "minecraft:item.crossbow.quick_charge_3"
 					}
 				]
 			}
@@ -327,38 +400,10 @@ fun DataPack.enchantmentTests() {
 		{
 			$DUMMY_ENCHANTMENT_CONTENT
 			"effects": {
-				"minecraft:crossbow_charge_time": [
-					{
-						"effect": {
-							"type": "minecraft:add",
-							"value": 5
-						}
-					}
-				]
-			}
-		}
-	""".trimIndent()
-
-	enchantment("damage") {
-		effects {
-			damage {
-				add(5)
-			}
-		}
-	}
-
-	enchantments.last() assertsIs """
-		{
-			$DUMMY_ENCHANTMENT_CONTENT
-			"effects": {
-				"minecraft:damage": [
-					{
-						"effect": {
-							"type": "minecraft:add",
-							"value": 5
-						}
-					}
-				]
+				"minecraft:crossbow_charge_time": {
+					"type": "minecraft:add",
+					"value": 5
+				}
 			}
 		}
 	""".trimIndent()
@@ -366,11 +411,11 @@ fun DataPack.enchantmentTests() {
 	enchantment("damage_immunity") {
 		effects {
 			damageImmunity {
-				sound {
-					requirements {
-						weatherCheck(raining = true)
-					}
+				requirements {
+					weatherCheck(raining = true)
 				}
+
+				always()
 			}
 		}
 	}
@@ -386,6 +431,37 @@ fun DataPack.enchantmentTests() {
 							"condition": "minecraft:weather_check",
 							"raining": true
 						}
+					},
+					{
+						"effect": {}
+					}
+				]
+			}
+		}
+	""".trimIndent()
+
+	enchantment("damage_protection") {
+		effects {
+			damageProtection {
+				add(linearLevelBased(1, 1))
+			}
+		}
+	}
+
+	enchantments.last() assertsIs """
+		{
+			$DUMMY_ENCHANTMENT_CONTENT
+			"effects": {
+				"minecraft:damage_protection": [
+					{
+						"effect": {
+							"type": "minecraft:add",
+							"value": {
+								"type": "minecraft:linear",
+								"base": 1,
+								"per_level_above_first": 1
+							}
+						}
 					}
 				]
 			}
@@ -395,17 +471,21 @@ fun DataPack.enchantmentTests() {
 	enchantment("equipment_drops") {
 		effects {
 			equipmentDrops {
-				add(EquipmentDropsSpecifier.ATTACKER, 5) {
-					requirements {
-						weatherCheck(raining = true)
+				on(EquipmentDropsSpecifier.ATTACKER) {
+					add(5) {
+						requirements {
+							weatherCheck(raining = true)
+						}
 					}
 				}
 
-				allOf(EquipmentDropsSpecifier.VICTIM) {
-					add(5)
-
+				on(EquipmentDropsSpecifier.VICTIM) {
 					allOf {
 						add(5)
+
+						allOf {
+							add(5)
+						}
 					}
 				}
 			}
@@ -454,54 +534,6 @@ fun DataPack.enchantmentTests() {
 		}
 	""".trimIndent()
 
-	enchantment("fishing_luck_bonus") {
-		effects {
-			fishingLuckBonus {
-				add(5)
-			}
-		}
-	}
-
-	enchantments.last() assertsIs """
-		{
-			$DUMMY_ENCHANTMENT_CONTENT
-			"effects": {
-				"minecraft:fishing_luck_bonus": [
-					{
-						"effect": {
-							"type": "minecraft:add",
-							"value": 5
-						}
-					}
-				]
-			}
-		}
-	""".trimIndent()
-
-	enchantment("fishing_time_reduction") {
-		effects {
-			fishingTimeReduction {
-				add(5)
-			}
-		}
-	}
-
-	enchantments.last() assertsIs """
-		{
-			$DUMMY_ENCHANTMENT_CONTENT
-			"effects": {
-				"minecraft:fishing_time_reduction": [
-					{
-						"effect": {
-							"type": "minecraft:add",
-							"value": 5
-						}
-					}
-				]
-			}
-		}
-	""".trimIndent()
-
 	enchantment("hit_block") {
 		effects {
 			hitBlock {
@@ -524,20 +556,25 @@ fun DataPack.enchantmentTests() {
 					}
 				}
 
-				changeItemDamage(1)
+				damageItem(1)
+
 				explode(
-					attributeToUser = true,
-					createFire = true,
-					blockInteraction = BlockInteraction.TNT,
-					smallParticle = Particles.ANGRY_VILLAGER,
-					largeParticle = Particles.ANGRY_VILLAGER,
-					sound = Sounds.Random.FUSE
+					smallParticle = Particles.GUST_EMITTER_SMALL,
+					largeParticle = Particles.GUST_EMITTER_LARGE,
+					sound = SoundEvents.Entity.WindCharge.WIND_BURST,
 				) {
-					radius(2)
+					blockInteraction = BlockInteraction.TRIGGER
+					radius(3.5f)
+					knockbackMultiplier(2)
+
+					blockParticles {
+						particle(2, Particles.ASH, scaling = 0.5f)
+					}
 				}
 
 				ignite(2)
 				playSound(SoundEvents.Entity.FireworkRocket.LAUNCH, 5f)
+
 				replaceBlock {
 					blockState = simpleStateProvider(Blocks.DIAMOND_BLOCK)
 					offset(5, 5, 5)
@@ -622,13 +659,27 @@ fun DataPack.enchantmentTests() {
 					{
 						"effect": {
 							"type": "minecraft:explode",
-							"attribute_to_user": true,
-							"block_interaction": "tnt",
-							"create_fire": true,
-							"large_particle": "minecraft:angry_villager",
-							"radius": 2,
-							"small_particle": "minecraft:angry_villager",
-							"sound": "minecraft:random/fuse"
+							"large_particle": {
+								"type": "minecraft:gust_emitter_large"
+							},
+							"small_particle": {
+								"type": "minecraft:gust_emitter_small"
+							},
+							"sound": "minecraft:entity.wind_charge.wind_burst",
+							"attribute_to_user": false,
+							"block_interaction": "trigger",
+							"block_particles": [
+								{
+									"weight": 2,
+									"particle": {
+										"type": "minecraft:ash"
+									},
+									"scaling": 0.5
+								}
+							],
+							"create_fire": false,
+							"knockback_multiplier": 2,
+							"radius": 3.5
 						}
 					},
 					{
@@ -644,8 +695,8 @@ fun DataPack.enchantmentTests() {
 								"sound_id": "minecraft:entity.firework_rocket.launch",
 								"range": 5.0
 							},
-							"volume": 1.0E-5,
-							"pitch": 1.0E-5
+							"volume": 1.0,
+							"pitch": 1.0
 						}
 					},
 					{
@@ -746,6 +797,66 @@ fun DataPack.enchantmentTests() {
 		}
 	""".trimIndent()
 
+	enchantment("location_changed") {
+		effects {
+			locationChanged {
+				replaceDisk {
+					blockState = simpleStateProvider(Blocks.FROSTED_ICE)
+					radius = clampedLevelBased(linearLevelBased(3, 1), 0f, 16f)
+					height(1)
+					offset(0, -1, 0)
+					triggerGameEvent = GameEvents.BLOCK_PLACE
+
+					predicate {
+						matchingBlocks(Blocks.WATER)
+					}
+				}
+			}
+		}
+	}
+
+	enchantments.last() assertsIs """
+		{
+			$DUMMY_ENCHANTMENT_CONTENT
+			"effects": {
+				"minecraft:location_changed": [
+					{
+						"effect": {
+							"type": "minecraft:replace_disk",
+							"block_state": {
+								"type": "minecraft:simple_state_provider",
+								"state": {
+									"Name": "minecraft:frosted_ice"
+								}
+							},
+							"radius": {
+								"type": "minecraft:clamped",
+								"value": {
+									"type": "minecraft:linear",
+									"base": 3,
+									"per_level_above_first": 1
+								},
+								"min": 0.0,
+								"max": 16.0
+							},
+							"height": 1,
+							"offset": [
+								0,
+								-1,
+								0
+							],
+							"predicate": {
+								"type": "minecraft:matching_blocks",
+								"blocks": "minecraft:water"
+							},
+							"trigger_game_event": "minecraft:block_place"
+						}
+					}
+				]
+			}
+		}
+	""".trimIndent()
+
 	enchantment("item_damage") {
 		effects {
 			itemDamage {
@@ -797,13 +908,17 @@ fun DataPack.enchantmentTests() {
 	enchantment("post_attack") {
 		effects {
 			postAttack {
-				applyMobEffect(PostAttackSpecifier.ATTACKER, PostAttackSpecifier.DAMAGING_ENTITY, Effects.SPEED) {
-					requirements {
-						weatherCheck(raining = true)
+				on(PostAttackSpecifier.ATTACKER, PostAttackSpecifier.DAMAGING_ENTITY) {
+					applyMobEffect(Effects.SPEED) {
+						requirements {
+							weatherCheck(raining = true)
+						}
 					}
 				}
 
-				damageEntity(PostAttackSpecifier.VICTIM, PostAttackSpecifier.DAMAGING_ENTITY, DamageTypes.IN_FIRE, 1, 2)
+				on(PostAttackSpecifier.VICTIM, PostAttackSpecifier.DAMAGING_ENTITY) {
+					damageEntity(DamageTypes.IN_FIRE, 1, 2)
+				}
 			}
 		}
 	}
@@ -847,7 +962,7 @@ fun DataPack.enchantmentTests() {
 	enchantment("post_piercing_attack") {
 		effects {
 			postPiercingAttack {
-				applyMobEffect(PostAttackSpecifier.ATTACKER, PostAttackSpecifier.VICTIM, Effects.SLOWNESS) {
+				applyMobEffect(Effects.SLOWNESS) {
 					minDuration(2)
 					maxDuration(4)
 				}
@@ -861,8 +976,6 @@ fun DataPack.enchantmentTests() {
 			"effects": {
 				"minecraft:post_piercing_attack": [
 					{
-						"enchanted": "attacker",
-						"affected": "victim",
 						"effect": {
 							"type": "minecraft:apply_mob_effect",
 							"to_apply": "minecraft:slowness",
@@ -1158,14 +1271,10 @@ fun DataPack.enchantmentTests() {
 		{
 			$DUMMY_ENCHANTMENT_CONTENT
 			"effects": {
-				"minecraft:trident_spin_attack_strength": [
-					{
-						"effect": {
-							"type": "minecraft:add",
-							"value": 5
-						}
-					}
-				]
+				"minecraft:trident_spin_attack_strength": {
+					"type": "minecraft:add",
+					"value": 5
+				}
 			}
 		}
 	""".trimIndent()

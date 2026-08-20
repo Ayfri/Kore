@@ -18,5 +18,5 @@ fun Predicate.randomChanceWithEnchantedBonus(unenchantedChance: Float, enchanted
 }
 
 fun Predicate.randomChanceWithEnchantedBonus(unenchantedChance: Float, enchantedChance: Int, enchantment: EnchantmentArgument) {
-	predicateConditions += RandomChanceWithEnchantedBonus(unenchantedChance, constantLevelBased(enchantedChance), enchantment)
+	predicateConditions += RandomChanceWithEnchantedBonus(unenchantedChance, LevelBased.constantLevelBased(enchantedChance), enchantment)
 }

@@ -1,28 +1,23 @@
 package io.github.ayfri.kore.features.enchantments.effects.builders
 
-import io.github.ayfri.kore.arguments.maths.Vec3f
-import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
-import io.github.ayfri.kore.arguments.types.resources.SoundArgument
-import io.github.ayfri.kore.data.sound.SoundEvent
-import io.github.ayfri.kore.features.enchantments.effects.entity.*
-import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticlePosition
-import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticlePositionType
-import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.ParticleType
-import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.particleType
-import io.github.ayfri.kore.features.enchantments.values.LevelBased
-import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
-import io.github.ayfri.kore.features.worldgen.floatproviders.constantFloatProvider
-import io.github.ayfri.kore.generated.arguments.EntityTypeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.MobEffectOrTagArgument
-import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
-import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
-import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
+import io.github.ayfri.kore.features.enchantments.effects.entity.EntityEffect
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
+/**
+ * The list of conditional entity effects of a component such as `hit_block`, `tick` or `location_changed`.
+ *
+ * Serialized as the bare list, each entry pairing an effect with the requirements it runs under.
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#Entity_effects
+ */
 @Serializable(with = EntityEffectBuilder.Companion.EntityEffectBuilderSerializer::class)
-data class EntityEffectBuilder(var effects: List<ConditionalEffect> = emptyList()) : EffectBuilder() {
+data class EntityEffectBuilder(var effects: List<ConditionalEffect> = emptyList()) : EffectBuilder(), EntityEffectScope {
+	override fun addEffect(effect: EntityEffect) {
+		effects += ConditionalEffect(effect, effect.requirements)
+	}
+
 	companion object {
 		data object EntityEffectBuilderSerializer : InlineAutoSerializer<EntityEffectBuilder, List<ConditionalEffect>>(
 			serializer<List<ConditionalEffect>>(),
@@ -31,241 +26,4 @@ data class EntityEffectBuilder(var effects: List<ConditionalEffect> = emptyList(
 			serialName = "EntityEffectBuilder",
 		)
 	}
-}
-
-fun EntityEffectBuilder.allOf(block: EntityEffectAllOfTopBuilder.() -> Unit = {}) = apply {
-	val effect = EntityEffectAllOfTopBuilder().apply(block)
-	effects += ConditionalEffect(effect.effects, effect.requirements)
-}
-
-fun EntityEffectBuilder.applyExhaustion(amount: Int, block: ApplyExhaustion.() -> Unit = {}) =
-	apply {
-		val effect = ApplyExhaustion(constantLevelBased(amount)).apply(block)
-		effects += ConditionalEffect(effect, effect.requirements)
-	}
-
-fun EntityEffectBuilder.applyImpulse(
-	coordinateScale: Vec3f,
-	direction: Vec3f,
-	magnitude: LevelBased,
-	block: ApplyImpulse.() -> Unit = {},
-) = apply {
-	val effect = ApplyImpulse(coordinateScale, direction, magnitude).apply(block)
-	effects += ConditionalEffect(effect, effect.requirements)
-}
-
-fun EntityEffectBuilder.applyMobEffect(block: ApplyMobEffect.() -> Unit = {}) =
-	apply {
-		val effect = ApplyMobEffect().apply(block)
-		effects += ConditionalEffect(effect, effect.requirements)
-	}
-
-fun EntityEffectBuilder.applyMobEffect(effect: MobEffectOrTagArgument, block: ApplyMobEffect.() -> Unit = {}) =
-	apply {
-		val effect = ApplyMobEffect(listOf(effect)).apply(block)
-		effects += ConditionalEffect(effect, effect.requirements)
-	}
-
-fun EntityEffectBuilder.damageEntity(damageType: DamageTypeArgument, block: DamageEntity.() -> Unit = {}) =
-	apply {
-		val effect = DamageEntity(damageType).apply(block)
-		effects += ConditionalEffect(effect, effect.requirements)
-	}
-
-fun EntityEffectBuilder.damageEntity(
-	damageType: DamageTypeArgument,
-	minDamage: Int,
-	maxDamage: Int,
-	block: DamageEntity.() -> Unit = {},
-) =
-	apply {
-		val effect = DamageEntity(
-			damageType,
-			constantLevelBased(minDamage),
-			constantLevelBased(maxDamage)
-		).apply(block)
-		effects += ConditionalEffect(effect, effect.requirements)
-	}
-
-fun EntityEffectBuilder.changeItemDamage(block: DamageItem.() -> Unit = {}) =
-	apply {
-		val effect = DamageItem().apply(block)
-		effects += ConditionalEffect(effect, effect.requirements)
-	}
-
-fun EntityEffectBuilder.changeItemDamage(amount: Int, block: DamageItem.() -> Unit = {}) =
-	apply {
-		val effect = DamageItem(constantLevelBased(amount)).apply(block)
-		effects += ConditionalEffect(effect, effect.requirements)
-	}
-
-fun EntityEffectBuilder.explode(
-	attributeToUser: Boolean,
-	createFire: Boolean,
-	blockInteraction: BlockInteraction,
-	smallParticle: ParticleTypeArgument,
-	largeParticle: ParticleTypeArgument,
-	sound: SoundArgument,
-	block: Explode.() -> Unit = {},
-) = apply {
-	val effect = Explode(
-		attributeToUser,
-		createFire = createFire,
-		blockInteraction = blockInteraction,
-		smallParticle = smallParticle,
-		largeParticle = largeParticle,
-		sound = sound
-	).apply(block)
-	effects += ConditionalEffect(effect, effect.requirements)
-}
-
-fun EntityEffectBuilder.ignite(duration: Int = 0, block: Ignite.() -> Unit = {}) =
-	apply {
-		val effect = Ignite(constantLevelBased(duration)).apply(block)
-		effects += ConditionalEffect(effect, effect.requirements)
-	}
-
-fun EntityEffectBuilder.playSound(sound: SoundEventArgument, range: Float? = null, block: PlaySound.() -> Unit = {}) =
-	apply {
-		val effect = PlaySound(listOf(SoundEvent(sound, range))).apply(block)
-		effects += ConditionalEffect(effect, effect.requirements)
-	}
-
-fun EntityEffectBuilder.playSound(
-	sound: SoundEventArgument,
-	range: Float? = null,
-	volume: Float,
-	pitch: Float,
-	block: PlaySound.() -> Unit = {},
-) =
-	apply {
-		val effect = PlaySound(
-			listOf(SoundEvent(sound, range)),
-			constantFloatProvider(volume),
-			constantFloatProvider(pitch)
-		).apply(block)
-		effects += ConditionalEffect(effect, effect.requirements)
-	}
-
-/**
- * Appends a `replace_block` effect, replacing the block at the target position by [ReplaceBlock.blockState].
- *
- * The block state provider and block predicate builders are scoped to [block].
- *
- * ```kotlin
- * replaceBlock {
- *     blockState = simpleStateProvider(Blocks.WATER)
- *     predicate { matchingBlocks(Blocks.LAVA) }
- * }
- * ```
- *
- * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#replace_block
- */
-fun EntityEffectBuilder.replaceBlock(block: ReplaceBlock.() -> Unit = {}) =
-	apply {
-		val effect = ReplaceBlock().apply(block)
-		effects += ConditionalEffect(effect, effect.requirements)
-	}
-
-/**
- * Appends a `replace_disk` effect, replacing a disk of blocks around the target position by [ReplaceDisk.blockState].
- *
- * The block state provider and block predicate builders are scoped to [block].
- *
- * ```kotlin
- * replaceDisk {
- *     blockState = simpleStateProvider(Blocks.FROSTED_ICE)
- *     radius(3)
- * }
- * ```
- *
- * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#replace_disk
- */
-fun EntityEffectBuilder.replaceDisk(block: ReplaceDisk.() -> Unit = {}) =
-	apply {
-		val effect = ReplaceDisk().apply(block)
-		effects += ConditionalEffect(effect, effect.requirements)
-	}
-
-fun EntityEffectBuilder.runFunction(function: FunctionArgument, block: RunFunction.() -> Unit = {}) =
-	apply {
-		val effect = RunFunction(function).apply(block)
-		effects += ConditionalEffect(effect, effect.requirements)
-	}
-
-fun EntityEffectBuilder.setBlockProperties(block: SetBlockProperties.() -> Unit = {}) =
-	apply {
-		val effect = SetBlockProperties().apply(block)
-		effects += ConditionalEffect(effect, effect.requirements)
-	}
-
-fun EntityEffectBuilder.spawnParticles(
-	particle: ParticleType,
-	horizontalPositionType: ParticlePositionType,
-	verticalPositionType: ParticlePositionType,
-	block: SpawnParticles.() -> Unit = {},
-) = apply {
-	val effect = SpawnParticles(
-		particle,
-		horizontalPosition = ParticlePosition(horizontalPositionType),
-		verticalPosition = ParticlePosition(verticalPositionType)
-	).apply(block)
-	effects += ConditionalEffect(effect, effect.requirements)
-}
-
-fun EntityEffectBuilder.spawnParticles(
-	particle: ParticleTypeArgument,
-	horizontalPositionType: ParticlePositionType,
-	verticalPositionType: ParticlePositionType,
-	block: SpawnParticles.() -> Unit = {},
-) = apply {
-	val effect = SpawnParticles(
-		particleType(particle),
-		horizontalPosition = ParticlePosition(horizontalPositionType),
-		verticalPosition = ParticlePosition(verticalPositionType)
-	).apply(block)
-	effects += ConditionalEffect(effect, effect.requirements)
-}
-
-fun EntityEffectBuilder.spawnParticles(
-	particle: ParticleType,
-	horizontalPosition: ParticlePosition,
-	verticalPosition: ParticlePosition,
-	block: SpawnParticles.() -> Unit = {},
-) = apply {
-	val effect = SpawnParticles(
-		particle,
-		horizontalPosition = horizontalPosition,
-		verticalPosition = verticalPosition,
-	).apply(block)
-	effects += ConditionalEffect(effect, effect.requirements)
-}
-
-fun EntityEffectBuilder.spawnParticles(
-	particle: ParticleTypeArgument,
-	horizontalPosition: ParticlePosition,
-	verticalPosition: ParticlePosition,
-	block: SpawnParticles.() -> Unit = {},
-) = apply {
-	val effect = SpawnParticles(
-		particleType(particle),
-		horizontalPosition = horizontalPosition,
-		verticalPosition = verticalPosition,
-	).apply(block)
-	effects += ConditionalEffect(effect, effect.requirements)
-}
-
-fun EntityEffectBuilder.summonEntity(block: SummonEntity.() -> Unit) =
-	apply {
-		val effect = SummonEntity().apply(block)
-		effects += ConditionalEffect(effect, effect.requirements)
-	}
-
-fun EntityEffectBuilder.summonEntity(
-	vararg entityType: EntityTypeOrTagArgument,
-	joinTeam: Boolean? = null,
-	block: SummonEntity.() -> Unit = {},
-) = apply {
-	val effect = SummonEntity(entityType.toList(), joinTeam).apply(block)
-	effects += ConditionalEffect(effect, effect.requirements)
 }

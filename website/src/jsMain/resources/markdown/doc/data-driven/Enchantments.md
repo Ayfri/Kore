@@ -27,18 +27,18 @@ Custom enchantments have several key characteristics:
 
 Every enchantment defines these core properties:
 
-| Property                | Description                                         |
-|-------------------------|-----------------------------------------------------|
-| `description`           | Text component displayed on items                   |
-| `supported_items`       | Items that can receive the enchantment              |
-| `primary_items`         | Items where enchantment appears in enchanting table |
-| `exclusive_set`         | Incompatible enchantments                           |
-| `weight`                | Probability weight (1-1024)                         |
-| `max_level`             | Maximum level (1-255)                               |
-| `min_cost` / `max_cost` | Enchanting table level requirements                 |
-| `anvil_cost`            | Base cost for anvil application                     |
-| `slots`                 | Equipment slots where effects apply                 |
-| `effects`               | Effect components that define behavior              |
+| Property                | Description                                                  |
+|-------------------------|--------------------------------------------------------------|
+| `description`           | Text component displayed on items                            |
+| `supported_items`       | Items or item tags that can receive the enchantment          |
+| `primary_items`         | Items or item tags offered by the enchanting table           |
+| `exclusive_set`         | Incompatible enchantments                                    |
+| `weight`                | Probability weight (1-1024)                                  |
+| `max_level`             | Maximum level (1-255)                                        |
+| `min_cost` / `max_cost` | Enchanting power window, as `base` + `per_level_above_first` |
+| `anvil_cost`            | Base cost for anvil application                              |
+| `slots`                 | Equipment slots where effects apply                          |
+| `effects`               | Effect components that define behavior                       |
 
 ## File Structure
 
@@ -70,8 +70,8 @@ dataPack("my_datapack") {
 
 		effects {
 			// Define effects here
-        }
-    }
+		}
+	}
 }
 ```
 
@@ -88,20 +88,22 @@ enchantment("test") {
 	// Simple string
 	description("Test Enchantment")
 
-	// Or with text component for formatting
-	description(textComponent("Test") { color = Color.GOLD })
+	// Or with a text component for formatting
+	description = textComponent("Test") { color = Color.GOLD }
 }
 ```
 
 ### Supported and Primary Items
 
+Both accept items and item tags, mixed freely:
+
 ```kotlin
 enchantment("bow_enchant") {
-	// Items that can have this enchantment (anvil/commands)
+	// Items the enchantment can be applied to on an anvil or with /enchant
 	supportedItems(Items.BOW, Items.CROSSBOW)
 
-	// Items where it appears in enchanting table (subset of supported)
-	primaryItems(Tags.Item.BOW_ENCHANTABLE)
+	// Subset offered by the enchanting table
+	primaryItems(Tags.Item.ENCHANTABLE_BOW)
 }
 ```
 
@@ -111,7 +113,7 @@ Enchantments that cannot coexist:
 
 ```kotlin
 enchantment("protection_variant") {
-	exclusiveSet(Tags.Enchantment.ARMOR_EXCLUSIVE)
+	exclusiveSet(Tags.Enchantment.EXCLUSIVE_SET_ARMOR)
 	// Or individual enchantments
 	exclusiveSet(Enchantments.PROTECTION, Enchantments.FIRE_PROTECTION)
 }
@@ -124,7 +126,7 @@ enchantment("rare_enchant") {
 	weight = 1  // Very rare (compare to Mending: 2, Unbreaking: 5)
 	maxLevel = 5
 
-	// Level cost formula: base + (level - 1) * per_level_above_first
+	// Enchanting power formula: base + (level - 1) * perLevelAboveFirst
 	minCost(base = 1, perLevelAboveFirst = 11)   // 1, 12, 23, 34, 45
 	maxCost(base = 21, perLevelAboveFirst = 11)  // 21, 32, 43, 54, 65
 
@@ -154,7 +156,8 @@ Effects define what the enchantment actually does. Kore supports all vanilla eff
 
 ### Value Effect Components
 
-These components modify numeric values with level-based scaling:
+These components change a number the game computes, and share the `add`, `multiply`, `set`, `removeBinomial` and
+`allOf` builders:
 
 | Component                   | Description                        |
 |-----------------------------|------------------------------------|
@@ -182,43 +185,64 @@ These components modify numeric values with level-based scaling:
 effects {
 	// Simple damage bonus
 	damage {
-		add(linearLevelBased(2, 0.5))  // +2 base, +0.5 per level
+		add(linearLevelBased(2f, 0.5f))  // +2 base, +0.5 per level
 	}
 
 	// Protection with conditions
 	damageProtection {
-		add(constantLevelBased(4)) {
+		add(4) {
 			requirements {
-				damageType(DamageTypes.IN_FIRE)
+				weatherCheck(raining = true)
 			}
 		}
 	}
 
-	// Multiple value modifications
+	// Several operations, applied in order
 	armorEffectiveness {
-		add(5)
-		multiply(1.5)
-		set(10)
-		removeBinomial(0.5)  // 50% chance to remove 1
 		allOf {
 			add(2)
-			multiply(1.2)
-        }
-    }
+			multiply(1.2f)
+			removeBinomial(0.5f)  // 50% chance to remove one unit
+		}
+	}
+}
+```
+
+`equipmentDrops` names which side of the fight has to carry the enchantment, so its effects go inside an `on` block:
+
+```kotlin
+effects {
+	equipmentDrops {
+		on(EquipmentDropsSpecifier.ATTACKER) {
+			add(0.05f)
+		}
+	}
+}
+```
+
+`crossbowChargeTime` and `tridentSpinAttackStrength` hold a single effect instead of a list, so they take no
+`requirements`. Use an `allOf` block to apply several operations:
+
+```kotlin
+effects {
+	crossbowChargeTime {
+		add(linearLevelBased(-0.25f, -0.25f))
+	}
 }
 ```
 
 ### Entity Effect Components
 
-These components trigger actions on entities:
+These components run actions on an entity, and share the entity effect builders listed below:
 
-| Component            | Description                                   |
-|----------------------|-----------------------------------------------|
-| `hitBlock`           | After hitting a block with the enchanted item |
-| `postAttack`         | After damaging an entity                      |
-| `postPiercingAttack` | After a piercing attack with an item          |
-| `projectileSpawned`  | When a projectile is created                  |
-| `tick`               | Every game tick while equipped                |
+| Component            | Description                                     |
+|----------------------|-------------------------------------------------|
+| `hitBlock`           | After hitting a block with the enchanted item   |
+| `locationChanged`    | When the holder moves, equips the item or loads |
+| `postAttack`         | After damaging an entity                        |
+| `postPiercingAttack` | After a piercing projectile goes through it     |
+| `projectileSpawned`  | When a projectile is created                    |
+| `tick`               | Every game tick while equipped                  |
 
 ```kotlin
 effects {
@@ -227,25 +251,28 @@ effects {
 		applyMobEffect(Effects.SPEED) {
 			minDuration(5)
 			maxDuration(10)
-			minAmplifier(0)
 			maxAmplifier(2)
 		}
 	}
 
 	// Periodic effects
 	tick {
-		damageEntity(DamageTypes.MAGIC, 0.5, 1.0)
+		damageEntity(DamageTypes.MAGIC, 1, 2)
 	}
+}
+```
 
-	// Post-attack effects (like Thorns)
+`postAttack` names both the side carrying the enchantment and the side taking the effect, so its effects go inside an
+`on` block:
+
+```kotlin
+effects {
+	// Thorns-like retaliation
 	postAttack {
-		damageEntity(
-			PostAttackSpecifier.ATTACKER,
-			PostAttackSpecifier.VICTIM,
-			DamageTypes.THORNS,
-			1, 3
-		)
-    }
+		on(PostAttackSpecifier.VICTIM, PostAttackSpecifier.ATTACKER) {
+			damageEntity(DamageTypes.THORNS, 1, 3)
+		}
+	}
 }
 ```
 
@@ -255,19 +282,17 @@ effects {
 |--------------------------|--------------------------------------|
 | `attributes`             | Applies attribute modifiers          |
 | `crossbowChargingSounds` | Custom crossbow sounds               |
-| `damageImmunity`         | Grants immunity to damage types      |
+| `damageImmunity`         | Grants immunity to matching hits     |
 | `preventArmorChange`     | Prevents removing from armor slot    |
 | `preventEquipmentDrop`   | Prevents item from dropping on death |
 | `tridentSound`           | Custom trident sounds                |
 
 ```kotlin
 effects {
-	// Damage immunity (like totems)
+	// Immunity to matching hits, one entry per condition set
 	damageImmunity {
-		sound {
-			requirements {
-				damageType(DamageTypes.FALLING_BLOCK)
-			}
+		requirements {
+			weatherCheck(raining = true)
 		}
 	}
 
@@ -282,49 +307,60 @@ effects {
 			name,
 			Attributes.MOVEMENT_SPEED,
 			AttributeModifierOperation.ADD_MULTIPLIED_BASE,
-			0.1  // +10% speed
+			constantLevelBased(0.1f)  // +10% speed
 		)
 	}
 
-	// Custom sounds
+	// One sound entry per enchantment level
 	crossbowChargingSounds {
-		crossbowChargingSound {
+		level {
 			start(SoundEvents.Item.Crossbow.QUICK_CHARGE_1)
 			mid(SoundEvents.Item.Crossbow.QUICK_CHARGE_2)
 			end(SoundEvents.Item.Crossbow.QUICK_CHARGE_3)
-        }
-    }
+		}
+	}
 }
 ```
 
 ## Entity Effects
 
-Entity effects are actions that can be triggered by effect components:
+The builders below are available in every entity effect component, in `allOf` blocks and inside a `postAttack`
+`on` block.
+
+### All Of
+
+```kotlin
+allOf {
+	requirements { weatherCheck(raining = true) }  // only on the outermost allOf
+	ignite(5)
+	damageItem(1)
+}
+```
 
 ### Apply Exhaustion
 
 ```kotlin
-applyExhaustion(amount = 5)
+applyExhaustion(5)
 ```
 
 ### Apply Impulse
 
 ```kotlin
 applyImpulse(
-	direction = Vec3f(0f, 1f, 0f),      // local coordinates applied to entity look vector
-	coordinateScale = Vec3f(1f, 1f, 1f), // world-space scaling per axis
-	magnitude = constantLevelBased(2)    // final scaling
+	coordinateScale = Vec3f(1f, 1f, 1f),  // factor applied to the current motion, per axis
+	direction = Vec3f(y = 1f),            // direction the entity is pushed towards
+	magnitude = constantLevelBased(2)     // strength of the push, in blocks per tick
 )
 ```
 
 ### Apply Mob Effect
 
 ```kotlin
-applyMobEffect(Effects.SLOWNESS, Effects.WEAKNESS) {
+applyMobEffect(Effects.SLOWNESS) {
+	toApply(Effects.SLOWNESS, Effects.WEAKNESS)  // one is picked at random
 	minDuration(5)
-	maxDuration(linearLevelBased(5, 5))
-	minAmplifier(0)
-	maxAmplifier(constantLevelBased(1))
+	maxDuration = linearLevelBased(5, 5)
+	amplifier(1)  // sets both bounds at once
 }
 ```
 
@@ -334,34 +370,49 @@ applyMobEffect(Effects.SLOWNESS, Effects.WEAKNESS) {
 damageEntity(DamageTypes.MAGIC, minDamage = 1, maxDamage = 5)
 ```
 
+### Damage Item
+
+```kotlin
+damageItem(1)  // durability removed from the enchanted item
+```
+
 ### Explode
+
+`smallParticle`, `largeParticle` and `sound` are required; everything else has a vanilla default:
 
 ```kotlin
 explode(
-	attributeToUser = true,
-	createFire = false,
-	blockInteraction = BlockInteraction.TNT,
-	smallParticle = Particles.EXPLOSION,
-	largeParticle = Particles.EXPLOSION_EMITTER,
-	sound = Sounds.Entity.Generic.EXPLODE
+	smallParticle = Particles.GUST_EMITTER_SMALL,
+	largeParticle = Particles.GUST_EMITTER_LARGE,
+	sound = SoundEvents.Entity.WindCharge.WIND_BURST,
 ) {
-	radius(linearLevelBased(2, 1))
+	blockInteraction = BlockInteraction.TRIGGER
+	radius(3.5f)
+	knockbackMultiplier(linearLevelBased(1.5f, 0.35f))
+	immuneBlocks(Tags.Block.BLOCKS_WIND_CHARGE_EXPLOSIONS)
+
+	blockParticles {
+		particle(2, Particles.ASH, scaling = 0.5f)
+	}
 }
 ```
 
 ### Ignite
 
 ```kotlin
-ignite(duration = linearLevelBased(4, 4))  // seconds
+ignite(linearLevelBased(4, 4))  // seconds
 ```
 
 ### Play Sound
 
 ```kotlin
-playSound(SoundEvents.Entity.Firework.LAUNCH, volume = 1f)
+playSound(SoundEvents.Entity.FireworkRocket.LAUNCH, range = 16f) {
+	volume(1f)
+	pitch(1.2f)
+}
 ```
 
-### Replace Block/Disk
+### Replace Block / Disk
 
 ```kotlin
 replaceBlock {
@@ -371,9 +422,20 @@ replaceBlock {
 }
 
 replaceDisk {
-	blockState = simpleStateProvider(Blocks.ICE)
-	radius(linearLevelBased(2, 1))
+	blockState = simpleStateProvider(Blocks.FROSTED_ICE)
+	radius = clampedLevelBased(linearLevelBased(3, 1), 0f, 16f)
 	height(1)
+	offset(0, -1, 0)
+	predicate { matchingBlocks(Blocks.WATER) }
+}
+```
+
+### Set Block Properties
+
+```kotlin
+setBlockProperties {
+	properties("lit" to "true")
+	offset(0, -1, 0)
 }
 ```
 
@@ -387,7 +449,6 @@ spawnParticles(
 ) {
 	horizontalVelocity(base = 0.1f, movementScale = 0f)
 	verticalVelocity(base = 0.5f, movementScale = 0f)
-	speed(0.5f)
 }
 ```
 
@@ -412,84 +473,68 @@ runFunction(FunctionArgument("on_hit", "my_datapack"))
 ### Summon Entity
 
 ```kotlin
-summonEntity(EntityTypes.LIGHTNING_BOLT)
-```
-
-### Change Item Damage
-
-```kotlin
-changeItemDamage(linearLevelBased(1, 1))  // Durability consumed
+summonEntity(EntityTypes.LIGHTNING_BOLT, joinTeam = true)
 ```
 
 ## Level-Based Values
 
-Level-based values allow effects to scale with enchantment level:
+Level-based values allow effects to scale with enchantment level. Every one of them is a float, so fractional results
+are expressible, and every builder is scoped to the block that accepts a value.
 
-| Type                                 | Description       | Example                                     |
-|--------------------------------------|-------------------|---------------------------------------------|
-| `clampedLevelBased(value, min, max)` | Clamped range     | `clampedLevelBased(linear, 1.0, 10.0)`      |
-| `constantLevelBased(value)`          | Fixed value       | `constantLevelBased(5)`                     |
-| `exponentLevelBased(base, power)`    | Exponential       | `exponentLevelBased(1, 5)` → 1, 5, 25...    |
-| `fractionLevelBased(num, denom)`     | Fractional        | `fractionLevelBased(1, 2)` → 0.5, 1, 1.5... |
-| `levelsSquaredLevelBased(base)`      | Quadratic scaling | `levelsSquaredLevelBased(1)` → 1, 4, 9...   |
-| `linearLevelBased(base, perLevel)`   | Linear scaling    | `linearLevelBased(2, 0.5)` → 2, 2.5, 3...   |
-| `lookupLevelBased(list, fallback)`   | Lookup table      | `lookupLevelBased(listOf(1, 3, 7), 10)`     |
+| Type                                 | Description       | Example                                       |
+|--------------------------------------|-------------------|-----------------------------------------------|
+| `clampedLevelBased(value, min, max)` | Clamped range     | `clampedLevelBased(linear, 1f, 10f)`          |
+| `constantLevelBased(value)`          | Fixed value       | `constantLevelBased(5)`                       |
+| `exponentLevelBased(base, power)`    | Exponential       | `exponentLevelBased(1, 5)`                    |
+| `fractionLevelBased(num, denom)`     | Fractional        | `fractionLevelBased(1, 2)`                    |
+| `levelsSquaredLevelBased(added)`     | Quadratic scaling | `levelsSquaredLevelBased(1)` → 1, 4, 9...     |
+| `linearLevelBased(base, perLevel)`   | Linear scaling    | `linearLevelBased(2f, 0.5f)` → 2, 2.5, 3...   |
+| `lookupLevelBased(values, fallback)` | Lookup table      | `lookupLevelBased(1, 3, 7, fallback = 10)`    |
+
+Outside a DSL block, `LevelBased` is a scope of its own, so `LevelBased.linearLevelBased(1, 1)` builds a value anywhere.
 
 ```kotlin
 effects {
 	damage {
 		// Linear: 2 + 0.5 per level → 2, 2.5, 3, 3.5, 4 for levels 1-5
-		add(linearLevelBased(2, 0.5))
+		add(linearLevelBased(2f, 0.5f))
 	}
 
 	blockExperience {
-		// Complex combination
 		allOf {
-			add(clampedLevelBased(linearLevelBased(1, 2), 0.0, 10.0))
-			multiply(levelsSquaredLevelBased(0.1))
-        }
-    }
+			add(clampedLevelBased(linearLevelBased(1, 2), 0f, 10f))
+			multiply(levelsSquaredLevelBased(0.1f))
+		}
+	}
 }
 ```
 
 ## Requirements (Conditions)
 
-Effect components can have requirements that must be met:
+Every effect accepts a `requirements` block holding [predicate](/docs/data-driven/predicates) conditions, lifted next
+to the effect in the generated JSON:
 
 ```kotlin
 effects {
 	damage {
 		add(5) {
 			requirements {
-				// Only in rain
 				weatherCheck(raining = true)
 			}
 		}
 	}
 
-	damageProtection {
-		add(4) {
-			requirements {
-				// Only against fire damage
-				damageType(DamageTypes.IN_FIRE, DamageTypes.ON_FIRE)
-			}
-		}
-	}
-
 	postAttack {
-		applyMobEffect(
-			PostAttackSpecifier.ATTACKER,
-			PostAttackSpecifier.VICTIM,
-			Effects.POISON
-		) {
-			requirements {
-				// Only against undead
-				entityProperties {
-					entityType(EntityTypes.ZOMBIE, EntityTypes.SKELETON)
+		on(PostAttackSpecifier.ATTACKER, PostAttackSpecifier.VICTIM) {
+			applyMobEffect(Effects.POISON) {
+				requirements {
+					entityProperties {
+						type(Tags.EntityType.UNDEAD)
+					}
 				}
 			}
 		}
-    }
+	}
 }
 ```
 
@@ -498,9 +543,9 @@ effects {
 ```kotlin
 dataPack("custom_enchants") {
 	enchantment("vampiric") {
-		description(textComponent("Vampiric") { color = Color.DARK_RED })
+		description = textComponent("Vampiric") { color = Color.DARK_RED }
 		supportedItems(Tags.Item.SWORDS)
-		primaryItems(Tags.Item.SWORD_ENCHANTABLE)
+		primaryItems(Tags.Item.ENCHANTABLE_SWORD)
 		exclusiveSet(Enchantments.MENDING)
 		weight = 2
 		maxLevel = 3
@@ -512,18 +557,13 @@ dataPack("custom_enchants") {
 		effects {
 			// Lifesteal on hit
 			postAttack {
-				applyMobEffect(
-					PostAttackSpecifier.ATTACKER,
-					PostAttackSpecifier.ATTACKER,
-					Effects.INSTANT_HEALTH
-				) {
-					minAmplifier(0)
-					maxAmplifier(0)
-					minDuration(1)
-					maxDuration(1)
+				on(PostAttackSpecifier.ATTACKER, PostAttackSpecifier.ATTACKER) {
+					applyMobEffect(Effects.INSTANT_HEALTH) {
+						duration(1)
 
-					requirements {
-						randomChance(linearLevelBased(0.1, 0.1))  // 10/20/30% chance
+						requirements {
+							randomChance(0.3f)
+						}
 					}
 				}
 			}
@@ -538,108 +578,32 @@ dataPack("custom_enchants") {
 					}
 				}
 			}
-
-			// Visual feedback
-			hitBlock {
-				spawnParticles(
-					Particles.CRIMSON_SPORE,
-					horizontalPositionType = ParticlePositionType.ENTITY_POSITION,
-					verticalPositionType = ParticlePositionType.ENTITY_POSITION
-				) {
-					speed(0.2f)
-				}
-			}
 		}
-    }
-}
-```
-
-### Generated JSON
-
-```json
-{
-	"description": {
-		"text": "Vampiric",
-		"color": "dark_red"
-	},
-	"supported_items": "#minecraft:swords",
-	"primary_items": "#minecraft:sword_enchantable",
-	"exclusive_set": "minecraft:mending",
-	"weight": 2,
-	"max_level": 3,
-	"min_cost": {
-		"base": 20,
-		"per_level_above_first": 15
-	},
-	"max_cost": {
-		"base": 50,
-		"per_level_above_first": 15
-	},
-	"anvil_cost": 8,
-	"slots": [
-		"mainhand"
-	],
-	"effects": {
-		"minecraft:post_attack": [
-			{
-				"enchanted": "attacker",
-				"affected": "attacker",
-				"effect": {
-					"type": "minecraft:apply_mob_effect",
-					"to_apply": "minecraft:instant_health",
-					"min_amplifier": 0,
-					"max_amplifier": 0,
-					"min_duration": 1,
-					"max_duration": 1
-				},
-				"requirements": {
-					"condition": "minecraft:random_chance",
-					"chance": {
-						"type": "minecraft:linear",
-						"base": 0.1,
-						"per_level_above_first": 0.1
-					}
-				}
-			}
-		],
-		"minecraft:damage": [
-			{
-				"effect": {
-					"type": "minecraft:add",
-					"value": {
-						"type": "minecraft:linear",
-						"base": 2,
-						"per_level_above_first": 1
-					}
-				},
-				"requirements": {
-					"condition": "minecraft:entity_properties",
-					"predicate": {
-						"type": "#minecraft:undead"
-					}
-				}
-			}
-		]
 	}
 }
 ```
 
 ## Enchantment Providers
 
-Enchantment providers are used by enchanting tables and loot functions to select enchantments, so they often appear next
-to [Loot Tables](/docs/data-driven/loot-tables) and runtime [Item Modifiers](/docs/data-driven/item-modifiers):
+Enchantment providers pick the enchantments an item receives outside the enchanting table, such as the gear mobs spawn
+with or the crossbow of a raid pillager. They generate `data/<namespace>/enchantment_provider/<name>.json`, and a name
+holding slashes lands in subfolders.
 
 ```kotlin
-enchantmentProvider("custom_table") {
-	single {
-		enchantment = Enchantments.SHARPNESS
-    }
-}
+dataPack("custom_enchants") {
+	enchantmentProviders {
+		// One enchantment, at a level rolled from an int provider
+		single("pillager_spawn_crossbow", Enchantments.PIERCING, uniform(1, 3))
 
-enchantmentProvider("cost_based") {
-	byCost {
-		// Configuration for cost-based selection
-    }
+		// An enchanting power budget spent on a set of enchantments
+		byCost("mob_spawn_equipment", Tags.Enchantment.ON_MOB_SPAWN_EQUIPMENT, cost = uniform(5, 25))
+
+		// The same, scaled with the regional difficulty
+		byCostWithDifficulty("raid/pillager_post_wave_3", Enchantments.PIERCING, minCost = 10, maxCostSpan = 15)
+
+		// Villager trade providers follow the <biome>_<profession>_<level> naming
+		single(villagerTradeName(Biomes.PLAINS, VillagerProfessions.ARMORER, 2), Enchantments.PROTECTION)
+	}
 }
 ```
 
@@ -663,5 +627,5 @@ enchantmentProvider("cost_based") {
 ### External Resources
 
 - [Minecraft Wiki: Enchantment definition](https://minecraft.wiki/w/Enchantment_definition) - Official JSON format reference
+- [Minecraft Wiki: Enchantment provider](https://minecraft.wiki/w/Enchantment_provider) - Provider JSON format reference
 - [Minecraft Wiki: Enchanting](https://minecraft.wiki/w/Enchanting) - Enchanting mechanics overview
-

@@ -1,27 +1,18 @@
 package io.github.ayfri.kore.features.enchantments.effects.builders
 
-import io.github.ayfri.kore.arguments.maths.Vec3f
-import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
-import io.github.ayfri.kore.arguments.types.resources.SoundArgument
-import io.github.ayfri.kore.data.sound.SoundEvent
-import io.github.ayfri.kore.features.enchantments.effects.entity.*
-import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticlePosition
-import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticlePositionType
-import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.ParticleType
-import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.particleType
-import io.github.ayfri.kore.features.enchantments.values.LevelBased
-import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
-import io.github.ayfri.kore.features.worldgen.floatproviders.constantFloatProvider
-import io.github.ayfri.kore.generated.arguments.EntityTypeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.MobEffectOrTagArgument
-import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
-import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
-import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
+import io.github.ayfri.kore.features.enchantments.effects.entity.EntityEffect
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
-
+/**
+ * The list of conditional entity effects of the `post_attack` component.
+ *
+ * Each entry names which side of the fight has to carry the enchantment and which side the effect lands on, so
+ * effects are added through `on(enchanted, affected) { }` rather than directly.
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#post_attack
+ */
 @Serializable(with = PostAttackBuilder.Companion.PostAttackBuilderSerializer::class)
 data class PostAttackBuilder(var effects: List<PostAttackConditionalEffect> = emptyList()) : EffectBuilder() {
 	companion object {
@@ -35,301 +26,38 @@ data class PostAttackBuilder(var effects: List<PostAttackConditionalEffect> = em
 	}
 }
 
-fun PostAttackBuilder.allOf(
-	enchanted: PostAttackSpecifier,
-	affected: PostAttackSpecifier,
-	block: EntityEffectAllOfBuilder.() -> Unit = {},
-) = apply {
-	val effect = EntityEffectAllOfTopBuilder().apply(block)
-	effects += PostAttackConditionalEffect(enchanted, affected, effect.effects, effect.requirements)
+/** Collects the effects a `post_attack` entry runs, all sharing the same enchanted and affected sides. */
+class PostAttackScope internal constructor(
+	private val enchanted: PostAttackSpecifier,
+	private val affected: PostAttackSpecifier,
+	private val builder: PostAttackBuilder,
+) : EntityEffectScope {
+	override fun addEffect(effect: EntityEffect) {
+		builder.effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
+	}
 }
-
-fun PostAttackBuilder.applyExhaustion(
-	enchanted: PostAttackSpecifier,
-	affected: PostAttackSpecifier,
-	amount: Int,
-	block: ApplyExhaustion.() -> Unit = {},
-) = apply {
-	val effect = ApplyExhaustion(constantLevelBased(amount)).apply(block)
-	effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
-}
-
-fun PostAttackBuilder.applyImpulse(
-	enchanted: PostAttackSpecifier,
-	affected: PostAttackSpecifier,
-	coordinateScale: Vec3f,
-	direction: Vec3f,
-	magnitude: LevelBased,
-	block: ApplyImpulse.() -> Unit = {},
-) = apply {
-	val effect = ApplyImpulse(coordinateScale, direction, magnitude).apply(block)
-	effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
-}
-
-fun PostAttackBuilder.applyMobEffect(enchanted: PostAttackSpecifier, affected: PostAttackSpecifier, block: ApplyMobEffect.() -> Unit = {}) =
-	apply {
-		val effect = ApplyMobEffect().apply(block)
-		effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
-	}
-
-fun PostAttackBuilder.applyMobEffect(
-	enchanted: PostAttackSpecifier,
-	affected: PostAttackSpecifier,
-	effect: MobEffectOrTagArgument, block: ApplyMobEffect.() -> Unit = {},
-) =
-	apply {
-		val effect = ApplyMobEffect(listOf(effect)).apply(block)
-		effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
-	}
-
-fun PostAttackBuilder.damageEntity(
-	enchanted: PostAttackSpecifier,
-	affected: PostAttackSpecifier,
-	damageType: DamageTypeArgument, block: DamageEntity.() -> Unit = {},
-) =
-	apply {
-		val effect = DamageEntity(damageType).apply(block)
-		effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
-	}
-
-fun PostAttackBuilder.damageEntity(
-	enchanted: PostAttackSpecifier, affected: PostAttackSpecifier,
-	damageType: DamageTypeArgument,
-	minDamage: Int,
-	maxDamage: Int,
-	block: DamageEntity.() -> Unit = {},
-) =
-	apply {
-		val effect = DamageEntity(
-			damageType,
-			constantLevelBased(minDamage),
-			constantLevelBased(maxDamage)
-		).apply(block)
-		effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
-	}
-
-fun PostAttackBuilder.damageItem(enchanted: PostAttackSpecifier, affected: PostAttackSpecifier, block: DamageItem.() -> Unit = {}) =
-	apply {
-		val effect = DamageItem().apply(block)
-		effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
-	}
-
-fun PostAttackBuilder.damageItem(
-	enchanted: PostAttackSpecifier,
-	affected: PostAttackSpecifier,
-	amount: Int, block: DamageItem.() -> Unit = {},
-) =
-	apply {
-		val effect = DamageItem(constantLevelBased(amount)).apply(block)
-		effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
-	}
-
-fun PostAttackBuilder.explode(
-	enchanted: PostAttackSpecifier, affected: PostAttackSpecifier,
-	attributeToUser: Boolean,
-	createFire: Boolean,
-	blockInteraction: BlockInteraction,
-	smallParticle: ParticleTypeArgument,
-	largeParticle: ParticleTypeArgument,
-	sound: SoundArgument,
-	block: Explode.() -> Unit = {},
-) = apply {
-	val effect = Explode(
-		attributeToUser,
-		createFire = createFire,
-		blockInteraction = blockInteraction,
-		smallParticle = smallParticle,
-		largeParticle = largeParticle,
-		sound = sound
-	).apply(block)
-	effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
-}
-
-fun PostAttackBuilder.ignite(
-	enchanted: PostAttackSpecifier,
-	affected: PostAttackSpecifier,
-	duration: Int = 0,
-	block: Ignite.() -> Unit = {},
-) =
-	apply {
-		val effect = Ignite(constantLevelBased(duration)).apply(block)
-		effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
-	}
-
-fun PostAttackBuilder.playSound(
-	enchanted: PostAttackSpecifier,
-	affected: PostAttackSpecifier,
-	sound: SoundEventArgument,
-	range: Float? = null,
-	block: PlaySound.() -> Unit = {},
-) =
-	apply {
-		val effect = PlaySound(listOf(SoundEvent(sound, range))).apply(block)
-		effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
-	}
-
-fun PostAttackBuilder.playSound(
-	enchanted: PostAttackSpecifier,
-	affected: PostAttackSpecifier,
-	sound: SoundEventArgument,
-	range: Float? = null,
-	volume: Float,
-	pitch: Float,
-	block: PlaySound.() -> Unit = {},
-) =
-	apply {
-		val effect = PlaySound(
-			listOf(SoundEvent(sound, range)),
-			constantFloatProvider(volume),
-			constantFloatProvider(pitch)
-		).apply(block)
-		effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
-	}
 
 /**
- * Appends a `replace_block` effect, replacing the block at the target position by [ReplaceBlock.blockState].
- *
- * The block state provider and block predicate builders are scoped to [block].
+ * Appends every effect built in [block], each running when [enchanted] carries the enchantment and landing on
+ * [affected].
  *
  * ```kotlin
  * postAttack {
- *     replaceBlock(PostAttackSpecifier.ATTACKER, PostAttackSpecifier.VICTIM) {
- *         blockState = simpleStateProvider(Blocks.FIRE)
+ *     on(PostAttackSpecifier.ATTACKER, PostAttackSpecifier.VICTIM) {
+ *         applyMobEffect(Effects.SLOWNESS) { duration(100) }
+ *         damageEntity(DamageTypes.MAGIC, 1, 2) {
+ *             requirements { weatherCheck(raining = true) }
+ *         }
  *     }
  * }
  * ```
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#replace_block
+ * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#post_attack
  */
-fun PostAttackBuilder.replaceBlock(
+fun PostAttackBuilder.on(
 	enchanted: PostAttackSpecifier,
 	affected: PostAttackSpecifier,
-	block: ReplaceBlock.() -> Unit = {},
-) =
-	apply {
-		val effect = ReplaceBlock().apply(block)
-		effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
-	}
-
-/**
- * Appends a `replace_disk` effect, replacing a disk of blocks around the target position by [ReplaceDisk.blockState].
- *
- * The block state provider and block predicate builders are scoped to [block].
- *
- * ```kotlin
- * postAttack {
- *     replaceDisk(PostAttackSpecifier.ATTACKER, PostAttackSpecifier.VICTIM) {
- *         blockState = simpleStateProvider(Blocks.FROSTED_ICE)
- *         radius(3)
- *     }
- * }
- * ```
- *
- * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#replace_disk
- */
-fun PostAttackBuilder.replaceDisk(
-	enchanted: PostAttackSpecifier,
-	affected: PostAttackSpecifier,
-	block: ReplaceDisk.() -> Unit = {},
-) =
-	apply {
-		val effect = ReplaceDisk().apply(block)
-		effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
-	}
-
-fun PostAttackBuilder.runFunction(
-	enchanted: PostAttackSpecifier,
-	affected: PostAttackSpecifier,
-	function: FunctionArgument,
-	block: RunFunction.() -> Unit = {},
-) =
-	apply {
-		val effect = RunFunction(function).apply(block)
-		effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
-	}
-
-fun PostAttackBuilder.setBlockProperties(
-	enchanted: PostAttackSpecifier,
-	affected: PostAttackSpecifier,
-	block: SetBlockProperties.() -> Unit = {},
-) =
-	apply {
-		val effect = SetBlockProperties().apply(block)
-		effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
-	}
-
-fun PostAttackBuilder.spawnParticles(
-	enchanted: PostAttackSpecifier, affected: PostAttackSpecifier,
-	particle: ParticleType,
-	horizontalPositionType: ParticlePositionType,
-	verticalPositionType: ParticlePositionType,
-	block: SpawnParticles.() -> Unit = {},
-) = apply {
-	val effect = SpawnParticles(
-		particle,
-		horizontalPosition = ParticlePosition(horizontalPositionType),
-		verticalPosition = ParticlePosition(verticalPositionType)
-	).apply(block)
-	effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
-}
-
-fun PostAttackBuilder.spawnParticles(
-	enchanted: PostAttackSpecifier, affected: PostAttackSpecifier,
-	particle: ParticleTypeArgument,
-	horizontalPositionType: ParticlePositionType,
-	verticalPositionType: ParticlePositionType,
-	block: SpawnParticles.() -> Unit = {},
-) = apply {
-	val effect = SpawnParticles(
-		particleType(particle),
-		horizontalPosition = ParticlePosition(horizontalPositionType),
-		verticalPosition = ParticlePosition(verticalPositionType)
-	).apply(block)
-	effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
-}
-
-fun PostAttackBuilder.spawnParticles(
-	enchanted: PostAttackSpecifier, affected: PostAttackSpecifier,
-	particle: ParticleType,
-	horizontalPosition: ParticlePosition,
-	verticalPosition: ParticlePosition,
-	block: SpawnParticles.() -> Unit = {},
-) = apply {
-	val effect = SpawnParticles(
-		particle,
-		horizontalPosition = horizontalPosition,
-		verticalPosition = verticalPosition,
-	).apply(block)
-	effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
-}
-
-fun PostAttackBuilder.spawnParticles(
-	enchanted: PostAttackSpecifier, affected: PostAttackSpecifier,
-	particle: ParticleTypeArgument,
-	horizontalPosition: ParticlePosition,
-	verticalPosition: ParticlePosition,
-	block: SpawnParticles.() -> Unit = {},
-) = apply {
-	val effect = SpawnParticles(
-		particleType(particle),
-		horizontalPosition = horizontalPosition,
-		verticalPosition = verticalPosition,
-	).apply(block)
-	effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
-}
-
-fun PostAttackBuilder.summonEntity(enchanted: PostAttackSpecifier, affected: PostAttackSpecifier, block: SummonEntity.() -> Unit) =
-	apply {
-		val effect = SummonEntity().apply(block)
-		effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
-	}
-
-fun PostAttackBuilder.summonEntity(
-	enchanted: PostAttackSpecifier, affected: PostAttackSpecifier,
-	vararg entityType: EntityTypeOrTagArgument,
-	joinTeam: Boolean? = null,
-	block: SummonEntity.() -> Unit = {},
-) = apply {
-	val effect = SummonEntity(entityType.toList(), joinTeam).apply(block)
-	effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
+	block: PostAttackScope.() -> Unit,
+) {
+	PostAttackScope(enchanted, affected, this).apply(block)
 }

@@ -10,4 +10,5 @@ data class GeyserPlumeParticleType(
 	var waterBlocks: Int,
 ) : ParticleType()
 
-fun geyserPlumeParticleType(type: ParticleTypeArgument, waterBlocks: Int) = GeyserPlumeParticleType(type, waterBlocks)
+/** Creates the options of the `geyser_plume` particle. */
+fun ParticleTypeScope.geyserPlumeParticleType(type: ParticleTypeArgument, waterBlocks: Int) = GeyserPlumeParticleType(type, waterBlocks)

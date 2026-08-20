@@ -1,6 +1,8 @@
 package io.github.ayfri.kore.features.enchantments.effects.entity
 
+import io.github.ayfri.kore.features.enchantments.values.Constant
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
+import io.github.ayfri.kore.features.enchantments.values.LevelBasedScope
 import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
 import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicate
 import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicateScope
@@ -29,19 +31,29 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ReplaceDisk(
 	var blockState: BlockStateProvider = SimpleStateProvider(),
-	var radius: LevelBased = constantLevelBased(0),
-	var height: LevelBased = constantLevelBased(0),
+	var radius: LevelBased = Constant(0f),
+	var height: LevelBased = Constant(0f),
 	var offset: TripleAsArray<Int, Int, Int>? = null,
 	var predicate: BlockPredicate? = null,
 	var triggerGameEvent: GameEventArgument? = null,
-) : EntityEffect(), BlockPredicateScope, BlockStateProviderScope
+) : EntityEffect(), BlockPredicateScope, BlockStateProviderScope, LevelBasedScope
 
-/** Sets [ReplaceDisk.radius] to a constant [value], whatever the enchantment level is. */
+/** Sets [ReplaceDisk.radius] to a constant [value] in blocks, whatever the enchantment level is. */
+fun ReplaceDisk.radius(value: Float) {
+	radius = constantLevelBased(value)
+}
+
+/** Sets [ReplaceDisk.radius] to a constant [value] in blocks, whatever the enchantment level is. */
 fun ReplaceDisk.radius(value: Int) {
 	radius = constantLevelBased(value)
 }
 
-/** Sets [ReplaceDisk.height] to a constant [value], whatever the enchantment level is. */
+/** Sets [ReplaceDisk.height] to a constant [value] in blocks, whatever the enchantment level is. */
+fun ReplaceDisk.height(value: Float) {
+	height = constantLevelBased(value)
+}
+
+/** Sets [ReplaceDisk.height] to a constant [value] in blocks, whatever the enchantment level is. */
 fun ReplaceDisk.height(value: Int) {
 	height = constantLevelBased(value)
 }
