@@ -296,6 +296,7 @@ Kore supports all vanilla configured feature types. Functions are listed alphabe
 | `underwaterMagma(...)`            | Underwater magma blocks              | Ocean floors                   |
 | `vegetationPatch(...)`            | Vegetation on surfaces               | Cave moss patches              |
 | `waterloggedVegetationPatch(...)` | Waterlogged vegetation patches       | Underwater cave plants         |
+| `weightedRandomSelector(...)`     | Weighted random feature picker       | Mixed ore/vegetation deposits  |
 
 ### No-Config Features
 
