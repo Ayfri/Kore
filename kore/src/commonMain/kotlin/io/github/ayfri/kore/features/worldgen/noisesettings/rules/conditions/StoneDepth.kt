@@ -4,6 +4,14 @@ import io.github.ayfri.kore.features.worldgen.noisesettings.rules.SurfaceRulesSc
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents a condition that checks the depth of stone (or another equivalent block) at the current position.
+ *
+ * @property offset The depth offset to apply before comparing.
+ * @property surfaceType Whether the depth is measured from the [Surface.CEILING] or the [Surface.FLOOR].
+ * @property addSurfaceDepth Whether the surface depth is added to the comparison.
+ * @property secondaryDepthRange The range of the secondary depth noise added to the comparison.
+ */
 @Serializable
 data class StoneDepth(
 	var offset: Double = 0.0,
@@ -12,6 +20,9 @@ data class StoneDepth(
 	var secondaryDepthRange: Int = 0,
 ) : SurfaceRuleCondition()
 
+/**
+ * The side of the terrain a [StoneDepth] condition measures from.
+ */
 @Serializable(with = Surface.Companion.SurfaceSerializer::class)
 enum class Surface {
 	CEILING,
@@ -22,6 +33,7 @@ enum class Surface {
 	}
 }
 
+/** Creates a [StoneDepth] condition with the given parameters. */
 fun SurfaceRulesScope.stoneDepth(
 	surfaceType: Surface,
 	offset: Double = 0.0,
@@ -29,6 +41,7 @@ fun SurfaceRulesScope.stoneDepth(
 	secondaryDepthRange: Int = 0,
 ) = StoneDepth(offset, surfaceType, addSurfaceDepth, secondaryDepthRange)
 
+/** Creates a [StoneDepth] condition for [surfaceType], further configured in [block]. */
 fun SurfaceRulesScope.stoneDepth(
 	surfaceType: Surface,
 	block: StoneDepth.() -> Unit,
