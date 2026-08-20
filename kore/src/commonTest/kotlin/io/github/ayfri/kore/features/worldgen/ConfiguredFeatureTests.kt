@@ -1031,6 +1031,8 @@ fun DataPack.configuredFeatureTests() {
 		allowedVerticalWaterForTree = 0
 		rootStateProvider = simpleStateProvider(Blocks.DIRT)
 		hangingRootStateProvider = simpleStateProvider(Blocks.DIRT)
+		levelTestDistance = 5
+		maxLevelDeviation = 1
 	}
 
 	configuredFeatures.last() assertsIs """
@@ -1061,6 +1063,8 @@ fun DataPack.configuredFeatureTests() {
 				"allowed_tree_position": {
 					"type": "minecraft:true"
 				},
+				"level_test_distance": 5,
+				"max_level_deviation": 1,
 				"feature": "minecraft:acacia"
 			}
 		}
@@ -1823,6 +1827,29 @@ fun DataPack.configuredFeatureTests() {
 		{
 			"type": "minecraft:weeping_vines",
 			"config": {}
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.weightedRandomSelector("test_weighted_random_selector") {
+		feature(PlacedFeatures.ACACIA, weight = 3)
+		feature(PlacedFeatures.OAK, weight = 1)
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:weighted_random_selector",
+			"config": {
+				"features": [
+					{
+						"feature": "minecraft:acacia",
+						"weight": 3
+					},
+					{
+						"feature": "minecraft:oak",
+						"weight": 1
+					}
+				]
+			}
 		}
 	""".trimIndent()
 }
