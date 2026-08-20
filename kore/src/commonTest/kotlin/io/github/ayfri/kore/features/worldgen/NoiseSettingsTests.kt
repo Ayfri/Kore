@@ -71,7 +71,7 @@ fun DataPack.noiseSettingsTests() {
 			condition(AbovePreliminarySurface) { block(Blocks.ANDESITE) }
 			condition(biomes(Biomes.BADLANDS)) { block(Blocks.RED_SAND) }
 			condition(Hole) { block(Blocks.DIORITE) }
-			condition(noiseThreshold(myNoise, minThreshold = -0.5, maxThreshold = 0.5)) { block(Blocks.GRANITE) }
+			condition(noiseThreshold(myNoise) { minThreshold = -0.5; maxThreshold = 0.5; is3d = true }) { block(Blocks.GRANITE) }
 			condition(not(Steep)) { block(Blocks.GRAVEL) }
 			condition(Steep) { block(Blocks.STONE) }
 			condition(stoneDepth(Surface.FLOOR, offset = 1.0, addSurfaceDepth = true, secondaryDepthRange = 2)) { block(Blocks.DIRT) }
@@ -80,10 +80,6 @@ fun DataPack.noiseSettingsTests() {
 			condition(water(offset = -1, surfaceDepthMultiplier = 2, addStoneDepth = true)) { block(Blocks.GRASS_BLOCK) }
 			condition(yAbove(absolute(64), surfaceDepthMultiplier = 1, addStoneDepth = true)) { block(Blocks.CALCITE) }
 			condition(yAbove(belowTop(8))) { block(Blocks.PACKED_ICE) }
-			noiseGradient(myNoise) {
-				state(Blocks.STONE)
-				empty()
-			}
 			sequence {
 				block(Blocks.DEEPSLATE)
 			}
@@ -200,7 +196,8 @@ fun DataPack.noiseSettingsTests() {
 							"type": "minecraft:noise_threshold",
 							"noise": "$name:my_noise",
 							"min_threshold": -0.5,
-							"max_threshold": 0.5
+							"max_threshold": 0.5,
+							"is3d": true
 						},
 						"then_run": {
 							"type": "minecraft:block",
@@ -331,18 +328,6 @@ fun DataPack.noiseSettingsTests() {
 								"Name": "minecraft:packed_ice"
 							}
 						}
-					},
-					{
-						"type": "minecraft:noise_gradient",
-						"gradient": [
-							{
-								"state": {
-									"Name": "minecraft:stone"
-								}
-							},
-							{}
-						],
-						"noise": "$name:my_noise"
 					},
 					{
 						"type": "minecraft:sequence",
