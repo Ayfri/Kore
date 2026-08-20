@@ -24,12 +24,11 @@ data/<namespace>/sulfur_cube_archetype/<name>.json
 ## Creating an Archetype
 
 Use `sulfurCubeArchetype` on your `DataPack`. Pass an `ItemTagArgument` describing which items the sulfur cube can
-hold and a `SulfurCubeArchetypeKnockbackModifiers` for the knockback it deals, then add attribute modifiers with
-`modifier`, contact damage with `contactDamage`, and an explosion with `explosion`:
+hold and the knockback it deals via `horizontalKnockbackPower`/`verticalKnockbackPower`, then add attribute modifiers
+with `modifier`, contact damage with `contactDamage`, and an explosion with `explosion`:
 
 ```kotlin
 import io.github.ayfri.kore.commands.AttributeModifierOperation
-import io.github.ayfri.kore.features.sulfurcubearchetype.SulfurCubeArchetypeKnockbackModifiers
 import io.github.ayfri.kore.features.sulfurcubearchetype.contactDamage
 import io.github.ayfri.kore.features.sulfurcubearchetype.explosion
 import io.github.ayfri.kore.features.sulfurcubearchetype.modifier
@@ -41,7 +40,8 @@ import io.github.ayfri.kore.generated.Tags
 datapack.sulfurCubeArchetype(
 	"regular",
 	items = Tags.Item.SWORDS,
-	knockbackModifiers = SulfurCubeArchetypeKnockbackModifiers(horizontalPower = 0.4f, verticalPower = 0.2f),
+	horizontalKnockbackPower = 0.4f,
+	verticalKnockbackPower = 0.2f,
 ) {
 	buoyant = true
 

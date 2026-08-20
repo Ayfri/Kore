@@ -100,10 +100,12 @@ data class SulfurCubeArchetype(
 fun DataPack.sulfurCubeArchetype(
 	fileName: String = "sulfur_cube_archetype",
 	items: ItemTagArgument,
-	knockbackModifiers: SulfurCubeArchetypeKnockbackModifiers,
+	horizontalKnockbackPower: Float,
+	verticalKnockbackPower: Float,
 	buoyant: Boolean = false,
 	init: SulfurCubeArchetype.() -> Unit = {},
 ): SulfurCubeArchetypeArgument {
+	val knockbackModifiers = SulfurCubeArchetypeKnockbackModifiers(horizontalKnockbackPower, verticalKnockbackPower)
 	val archetype = SulfurCubeArchetype(fileName, mutableListOf(), buoyant, items = items, knockbackModifiers = knockbackModifiers).apply(init)
 	sulfurCubeArchetypes += archetype
 	return SulfurCubeArchetypeArgument(fileName, archetype.namespace ?: name)

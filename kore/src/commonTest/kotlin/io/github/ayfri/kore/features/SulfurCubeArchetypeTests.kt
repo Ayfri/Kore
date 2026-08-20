@@ -4,7 +4,6 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.dataPack
-import io.github.ayfri.kore.features.sulfurcubearchetype.SulfurCubeArchetypeKnockbackModifiers
 import io.github.ayfri.kore.features.sulfurcubearchetype.contactDamage
 import io.github.ayfri.kore.features.sulfurcubearchetype.explosion
 import io.github.ayfri.kore.features.sulfurcubearchetype.modifier
@@ -19,7 +18,8 @@ fun DataPack.sulfurCubeArchetypeTests() {
 	sulfurCubeArchetype(
 		"regular",
 		items = Tags.Item.SWORDS,
-		knockbackModifiers = SulfurCubeArchetypeKnockbackModifiers(horizontalPower = 0.4f, verticalPower = 0.2f),
+		horizontalKnockbackPower = 0.4f,
+		verticalKnockbackPower = 0.2f,
 	) {
 		buoyant = true
 
