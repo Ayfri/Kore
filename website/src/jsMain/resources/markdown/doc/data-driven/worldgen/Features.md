@@ -5,7 +5,7 @@ nav-title: Features
 description: Create configured and placed features (trees, ores, vegetation) with Kore's DSL.
 keywords: minecraft, datapack, kore, worldgen, configured feature, placed feature, tree, ore
 date-created: 2026-02-03
-date-modified: 2026-08-19
+date-modified: 2026-08-20
 routeOverride: /docs/data-driven/worldgen/features
 ---
 
@@ -37,8 +37,8 @@ combine feature types into a single configured feature.
 ### Tree
 
 Trees are complex features with trunk placers, foliage placers, and decorators. The trunk and foliage providers define which blocks to use,
-while placers control the shape. `belowTrunkProvider` is mandatory and takes a `ruleBasedStateProvider`; it defaults to an empty one, which
-places nothing under the trunk.
+while placers control the shape. `belowTrunkProvider` takes a `ruleBasedStateProvider` and defaults to an empty one, which places nothing
+under the trunk.
 
 ```kotlin
 configuredFeatures {
@@ -62,24 +62,112 @@ configuredFeatures {
 
 ### Block State Providers
 
-Block state providers determine which block state is placed at a given position. Every feature field typed as
-`BlockStateProvider`
-accepts any of the following.
+Block state providers determine which block state is placed at a given position. They fill every feature field typed as
+`BlockStateProvider`: `toPlace` on `simpleBlock`, `stateProvider` on `disk`, `trunkProvider` and `foliageProvider` on `tree`, and so on.
 
-| Provider                      | Picks based on                                 |
-|-------------------------------|------------------------------------------------|
-| `dualNoiseProvider { }`       | Two-layer Perlin noise                         |
-| `noiseProvider { }`           | Single-layer Perlin noise                      |
-| `noiseTresholdProvider { }`   | Noise threshold between two blocks             |
-| `randomizedIntProvider { }`   | Int-provider-driven index into a state list    |
-| `rotatedBlockProvider(state)` | Fixed block with random rotation               |
-| `ruleBasedStateProvider { }`  | Ordered predicate rules with optional fallback |
-| `simpleStateProvider(state)`  | Fixed block                                    |
-| `weightedStateProvider { }`   | Weighted random across several blocks          |
+Every builder is an extension on `BlockStateProviderScope`, so they resolve inside the configuration block of a feature that actually takes
+a provider, and nowhere else:
+
+```kotlin
+configuredFeatures {
+	simpleBlock("my_flower") {
+		toPlace = simpleStateProvider(Blocks.DANDELION)
+	}
+}
+```
+
+| Provider                                    | Picks based on                                                    |
+|---------------------------------------------|-------------------------------------------------------------------|
+| `dualNoiseProvider { }`                     | Two Perlin noises, one selecting the variety, one picking a state |
+| `noiseProvider { }`                         | A single Perlin noise mapped onto a list of states                |
+| `noiseThresholdProvider { }`                | A Perlin noise compared against a threshold                       |
+| `randomizedIntStateProvider(property) { }`  | Another provider, with one integer property randomized            |
+| `rotatedBlockProvider(block)`               | A fixed block with a random `axis`                                |
+| `ruleBasedStateProvider { }`                | Ordered block predicate rules, with an optional fallback          |
+| `simpleStateProvider(block)`                | A fixed block                                                     |
+| `weightedStateProvider { }`                 | A weighted random pick across several providers                   |
+
+Providers nest freely: any of them can appear as the `source` of a `randomizedIntStateProvider`, the `data` of a weighted entry or the
+`then` of a rule.
+
+#### `simpleStateProvider` and `rotatedBlockProvider`
+
+Both take a block, a block plus a property map, or a block plus a block state builder. `rotatedBlockProvider` ignores the `axis` of the
+state it is given and randomizes it at every position.
+
+```kotlin
+simpleStateProvider(Blocks.DANDELION)
+simpleStateProvider(Blocks.OAK_LOG, mapOf("axis" to "y"))
+rotatedBlockProvider(Blocks.OAK_LOG)
+```
+
+#### `weightedStateProvider`
+
+Entries are declared inside the provider block, each one drawn proportionally to its weight, which defaults to `1`. An entry takes a block,
+a block state, another provider, or a receiver block setting `data` itself.
+
+```kotlin
+weightedStateProvider {
+	entry(Blocks.DANDELION, weight = 3)
+	entry(Blocks.POPPY)
+	entry(weight = 2) {
+		data = rotatedBlockProvider(Blocks.OAK_LOG)
+	}
+}
+```
+
+#### `noiseProvider`, `dualNoiseProvider` and `noiseThresholdProvider`
+
+The three noise-based providers share `seed`, `scale` and a `noise { }` block. `noise(firstOctave, vararg amplitudes)` is the short form,
+`noise(firstOctave) { }` the receiver form; `dualNoiseProvider` gets the same pair as `slowNoise`. `states(...)` takes either blocks or
+block states.
+
+```kotlin
+noiseProvider {
+	seed = 2345
+	scale = 0.05
+	noise(-3, 1.0, 1.0)
+	states(Blocks.MOSS_BLOCK, Blocks.STONE)
+}
+
+dualNoiseProvider {
+	seed = 2345
+	scale = 0.05
+	slowScale = 0.005
+	noise(-3, 1.0)
+	slowNoise(-10, 1.0, 1.0)
+	variety(1, 3) // How many states are in play at a position.
+	states(Blocks.CRIMSON_ROOTS, Blocks.WARPED_ROOTS)
+}
+
+noiseThresholdProvider {
+	seed = 2345
+	scale = 0.05
+	threshold = -0.8
+	highChance = 0.31
+	noise(-3, 1.0)
+	defaultState = blockState(Blocks.GRASS_BLOCK)
+	lowStates(Blocks.PODZOL)
+	highStates(Blocks.COARSE_DIRT)
+}
+```
+
+#### `randomizedIntStateProvider`
+
+Takes the state given by `source` and overrides one integer block state property with a sampled value. The block placed by `source` has to
+declare that property.
+
+```kotlin
+randomizedIntStateProvider("age") {
+	values(0, 7) // Shorthand for a uniform int provider.
+	source = simpleStateProvider(Blocks.WHEAT)
+}
+```
 
 #### `ruleBasedStateProvider`
 
-Evaluates rules top-to-bottom and uses the first matching block state, or `fallback` when nothing matches.
+Evaluates rules top-to-bottom and uses the first matching block state, or `fallback` when nothing matches. With no `fallback` and no
+matching rule, the feature places nothing.
 
 Both `rule` styles are available inside the provider block:
 
@@ -106,6 +194,8 @@ ruleBasedStateProvider {
 Both predicate blocks run on a block predicate scope, so every builder (`solid()`, `not { }`, `matchingBlocks()`, `matchingBiomes()`,
 `hasSturdyFace()`, `matchingBlockTag()`, ...) resolves inside them. A single predicate is used as-is, several ones are wrapped in an
 `all_of`. See [Block Predicates](/docs/data-driven/worldgen/block-predicates) for the full list.
+
+Reference: [Block state provider](https://minecraft.wiki/w/Block_state_provider)
 
 ---
 
@@ -141,7 +231,23 @@ terrain blocks. The first target matching a block wins.
 ### Simple Block
 
 ```kotlin
-val flower = simpleBlock("my_flower", toPlace = simpleStateProvider(Blocks.DANDELION))
+val flower = simpleBlock("my_flower") {
+	toPlace = simpleStateProvider(Blocks.DANDELION)
+}
+```
+
+### Block Column
+
+`blockColumn` stacks layers along a direction, each layer declared inside a `layers { }` block with its height and its provider.
+
+```kotlin
+val caveVines = blockColumn("cave_vines", direction = Direction.DOWN) {
+	allowedPlacement { replaceable() }
+	layers {
+		layer(constant(3)) { provider = simpleStateProvider(Blocks.CAVE_VINES_PLANT) }
+		layer(constant(1)) { provider = simpleStateProvider(Blocks.CAVE_VINES) }
+	}
+}
 ```
 
 ### Other Feature Types
@@ -394,7 +500,9 @@ fun DataPack.createForestFeatures() {
 	}
 
 	// 3) Flower configured feature
-	val flower = configuredFeaturesBuilder.simpleBlock("forest_flower", toPlace = simpleStateProvider(Blocks.POPPY))
+	val flower = configuredFeaturesBuilder.simpleBlock("forest_flower") {
+		toPlace = simpleStateProvider(Blocks.POPPY)
+	}
 
 	// 4) Flower placed feature
 	val flowerPlaced = placedFeature("forest_flower_placed", flower) {

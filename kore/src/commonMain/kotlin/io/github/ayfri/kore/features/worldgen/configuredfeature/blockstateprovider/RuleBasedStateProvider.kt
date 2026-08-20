@@ -8,8 +8,7 @@ import io.github.ayfri.kore.features.worldgen.blockpredicate.blockPredicate
 import kotlinx.serialization.Serializable
 
 /**
- * A [BlockStateProvider] picking a block state by evaluating [rules] in order and returning the first match, or
- * [fallback] when none matches.
+ * Picks a block state by evaluating [rules] in order and returning the first match, or [fallback] when none matches.
  *
  * When [fallback] is `null` and no rule matches, the consuming feature places nothing.
  *
@@ -22,7 +21,7 @@ import kotlinx.serialization.Serializable
 data class RuleBasedStateProvider(
 	var fallback: BlockStateProvider? = null,
 	var rules: List<RuleBasedStateProviderRule> = emptyList(),
-) : BlockStateProvider()
+) : BlockStateProvider(), BlockStateProviderScope
 
 /**
  * A single rule of a [RuleBasedStateProvider]: when [ifTrue] passes at the candidate position, [then] provides the
@@ -36,8 +35,8 @@ data class RuleBasedStateProvider(
 @Serializable
 data class RuleBasedStateProviderRule(
 	var ifTrue: BlockPredicate = True,
-	var then: BlockStateProvider = simpleStateProvider(),
-) : BlockPredicateScope
+	var then: BlockStateProvider = SimpleStateProvider(),
+) : BlockPredicateScope, BlockStateProviderScope
 
 /**
  * Creates a `rule_based` block state provider, evaluating its rules in order and falling back to
@@ -54,7 +53,8 @@ data class RuleBasedStateProviderRule(
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#rule_based
  */
-fun ruleBasedStateProvider(block: RuleBasedStateProvider.() -> Unit = {}) = RuleBasedStateProvider().apply(block)
+fun BlockStateProviderScope.ruleBasedStateProvider(block: RuleBasedStateProvider.() -> Unit = {}) =
+	RuleBasedStateProvider().apply(block)
 
 /**
  * Appends a rule using [then] when the predicate built in [ifTrue] passes.

@@ -4,7 +4,8 @@ import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.Surface
@@ -23,9 +24,9 @@ data class VegetationPatch(
 	var vegetationChance: Double = 0.0,
 	var xzRadius: Int = 0,
 	var replaceable: InlinableList<BlockOrTagArgument>,
-	var groundState: BlockStateProvider = simpleStateProvider(),
+	var groundState: BlockStateProvider = SimpleStateProvider(),
 	var vegetationFeature: PlacedFeatureArgument,
-) : FeatureConfig()
+) : FeatureConfig(), BlockStateProviderScope
 
 fun ConfiguredFeatures.vegetationPatch(
 	fileName: String,

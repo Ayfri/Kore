@@ -90,7 +90,9 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.blockPile("test_block_pile", simpleStateProvider(Blocks.GRAVEL))
+	configuredFeaturesBuilder.blockPile("test_block_pile") {
+		stateProvider = simpleStateProvider(Blocks.GRAVEL)
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -116,21 +118,15 @@ fun DataPack.configuredFeatureTests() {
 		}
 
 		layers {
-			layer(provider = dualNoiseProvider {
-				slowNoise {
-					firstOctave = 1
-					amplitudes = listOf(1.2)
+			layer {
+				provider = dualNoiseProvider {
+					slowNoise(firstOctave = 1, 1.2)
+					variety(1, 2)
+					scale = 1.0
+					slowScale = 1.0
+					states(Blocks.STONE, Blocks.DIRT)
 				}
-
-				variety(1, 2)
-				scale = 1.0
-				slowScale = 1.0
-
-				states = listOf(
-					blockState(Blocks.STONE),
-					blockState(Blocks.DIRT)
-				)
-			})
+			}
 		}
 	}
 
@@ -170,6 +166,7 @@ fun DataPack.configuredFeatureTests() {
 							},
 							"scale": 1.0,
 							"variety": {
+								"type": "minecraft:uniform",
 								"min_inclusive": 1,
 								"max_inclusive": 2
 							},
@@ -377,12 +374,8 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.disk(
-		"test_disk",
-		stateProvider = simpleStateProvider(Blocks.GRAVEL),
-		radius = 3,
-		halfHeight = 1
-	) {
+	configuredFeaturesBuilder.disk("test_disk", radius = 3, halfHeight = 1) {
+		stateProvider = simpleStateProvider(Blocks.GRAVEL)
 		target { solid() }
 	}
 
@@ -546,7 +539,7 @@ fun DataPack.configuredFeatureTests() {
 			baseCrackSize = 2.0
 			crackPointOffset = 2.0
 		}
-		invalidBlocksTreshold = 1
+		invalidBlocksThreshold = 1
 	}
 
 	configuredFeatures.last() assertsIs """
@@ -599,7 +592,7 @@ fun DataPack.configuredFeatureTests() {
 					"base_crack_size": 2.0,
 					"crack_point_offset": 2.0
 				},
-				"invalid_blocks_treshold": 1
+				"invalid_blocks_threshold": 1
 			}
 		}
 	""".trimIndent()
@@ -836,12 +829,9 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.netherForestVegetation(
-		"test_nether_forest_vegetation",
-		stateProvider = simpleStateProvider(Blocks.STONE),
-		spreadWidth = 8,
-		spreadHeight = 4
-	)
+	configuredFeaturesBuilder.netherForestVegetation("test_nether_forest_vegetation", spreadWidth = 8, spreadHeight = 4) {
+		stateProvider = simpleStateProvider(Blocks.STONE)
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1076,15 +1066,17 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.simpleBlock("test_rule_based_provider_list_block", ruleBasedStateProvider {
-		fallback = simpleStateProvider(Blocks.STONE)
-		rule(simpleStateProvider(Blocks.GRAVEL)) {
-			solid()
+	configuredFeaturesBuilder.simpleBlock("test_rule_based_provider_list_block") {
+		toPlace = ruleBasedStateProvider {
+			fallback = simpleStateProvider(Blocks.STONE)
+			rule(simpleStateProvider(Blocks.GRAVEL)) {
+				solid()
+			}
+			rule(simpleStateProvider(Blocks.SAND)) {
+				solid()
+			}
 		}
-		rule(simpleStateProvider(Blocks.SAND)) {
-			solid()
-		}
-	})
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1128,23 +1120,25 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.simpleBlock("test_rule_based_provider_unified", ruleBasedStateProvider {
-		fallback = simpleStateProvider(Blocks.STONE)
-		rule {
-			ifTrue {
-				solid()
+	configuredFeaturesBuilder.simpleBlock("test_rule_based_provider_unified") {
+		toPlace = ruleBasedStateProvider {
+			fallback = simpleStateProvider(Blocks.STONE)
+			rule {
+				ifTrue {
+					solid()
+				}
+				then = simpleStateProvider(Blocks.DIRT)
 			}
-			then = simpleStateProvider(Blocks.DIRT)
-		}
-		rule(simpleStateProvider(Blocks.GRAVEL)) {
-			hasSturdyFace(Direction.DOWN)
-		}
-		rule(simpleStateProvider(Blocks.SAND)) {
-			not {
-				matchingBlocks(Blocks.STONE)
+			rule(simpleStateProvider(Blocks.GRAVEL)) {
+				hasSturdyFace(Direction.DOWN)
+			}
+			rule(simpleStateProvider(Blocks.SAND)) {
+				not {
+					matchingBlocks(Blocks.STONE)
+				}
 			}
 		}
-	})
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1295,7 +1289,9 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.simpleBlock("test_simple_block", simpleStateProvider(Blocks.STONE), scheduleTick = true)
+	configuredFeaturesBuilder.simpleBlock("test_simple_block", scheduleTick = true) {
+		toPlace = simpleStateProvider(Blocks.STONE)
+	}
 
 	configuredFeatures.last() assertsIs """
 		{

@@ -5,7 +5,7 @@ nav-title: Enchantments
 description: Create custom Minecraft enchantments using Kore's type-safe Kotlin DSL with support for all vanilla effect components and level-based values.
 keywords: minecraft, datapack, kore, enchantments, effects, custom enchantments
 date-created: 2025-03-02
-date-modified: 2026-08-18
+date-modified: 2026-08-20
 routeOverride: /docs/data-driven/enchantments
 ---
 
@@ -364,12 +364,14 @@ playSound(SoundEvents.Entity.Firework.LAUNCH, volume = 1f)
 ### Replace Block/Disk
 
 ```kotlin
-replaceBlock(simpleStateProvider(Blocks.FIRE)) {
+replaceBlock {
+	blockState = simpleStateProvider(Blocks.FIRE)
 	offset(0, 1, 0)
 	triggerGameEvent = GameEvents.BLOCK_PLACE
 }
 
-replaceDisk(simpleStateProvider(Blocks.ICE)) {
+replaceDisk {
+	blockState = simpleStateProvider(Blocks.ICE)
 	radius(linearLevelBased(2, 1))
 	height(1)
 }

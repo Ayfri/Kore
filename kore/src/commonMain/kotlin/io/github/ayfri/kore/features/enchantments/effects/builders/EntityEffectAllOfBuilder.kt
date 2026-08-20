@@ -13,8 +13,6 @@ import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.features.worldgen.floatproviders.constantFloatProvider
 import io.github.ayfri.kore.generated.arguments.EntityTypeOrTagArgument
 import io.github.ayfri.kore.generated.arguments.MobEffectOrTagArgument
@@ -118,11 +116,43 @@ fun EntityEffectAllOfBuilder.playSound(
 		)
 	}
 
-fun EntityEffectAllOfBuilder.replaceBlock(blockState: BlockStateProvider = simpleStateProvider(), block: ReplaceBlock.() -> Unit = {}) =
-	apply { effects.effects += ReplaceBlock(blockState).apply(block) }
+/**
+ * Appends a `replace_block` effect, replacing the block at the target position by [ReplaceBlock.blockState].
+ *
+ * The block state provider and block predicate builders are scoped to [block].
+ *
+ * ```kotlin
+ * allOf {
+ *     replaceBlock {
+ *         blockState = simpleStateProvider(Blocks.WATER)
+ *         predicate { matchingBlocks(Blocks.LAVA) }
+ *     }
+ * }
+ * ```
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#replace_block
+ */
+fun EntityEffectAllOfBuilder.replaceBlock(block: ReplaceBlock.() -> Unit = {}) =
+	apply { effects.effects += ReplaceBlock().apply(block) }
 
-fun EntityEffectAllOfBuilder.replaceDisk(blockState: BlockStateProvider = simpleStateProvider(), block: ReplaceDisk.() -> Unit = {}) =
-	apply { effects.effects += ReplaceDisk(blockState).apply(block) }
+/**
+ * Appends a `replace_disk` effect, replacing a disk of blocks around the target position by [ReplaceDisk.blockState].
+ *
+ * The block state provider and block predicate builders are scoped to [block].
+ *
+ * ```kotlin
+ * allOf {
+ *     replaceDisk {
+ *         blockState = simpleStateProvider(Blocks.FROSTED_ICE)
+ *         radius(3)
+ *     }
+ * }
+ * ```
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#replace_disk
+ */
+fun EntityEffectAllOfBuilder.replaceDisk(block: ReplaceDisk.() -> Unit = {}) =
+	apply { effects.effects += ReplaceDisk().apply(block) }
 
 fun EntityEffectAllOfBuilder.runFunction(function: FunctionArgument, block: RunFunction.() -> Unit = {}) =
 	apply { effects.effects += RunFunction(function).apply(block) }

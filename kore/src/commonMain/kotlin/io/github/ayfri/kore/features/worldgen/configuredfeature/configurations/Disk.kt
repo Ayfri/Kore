@@ -8,6 +8,8 @@ import io.github.ayfri.kore.features.worldgen.blockpredicate.blockPredicate
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
@@ -26,19 +28,20 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Disk(
-	var stateProvider: BlockStateProvider,
+	var stateProvider: BlockStateProvider = SimpleStateProvider(),
 	var target: BlockPredicate = True,
 	var radius: IntProvider = constant(0),
 	var halfHeight: Int = 0,
-) : FeatureConfig(), BlockPredicateScope
+) : FeatureConfig(), BlockPredicateScope, BlockStateProviderScope
 
 /**
- * Creates a `disk` configured feature, replacing the blocks matching [Disk.target] by [stateProvider].
+ * Creates a `disk` configured feature, replacing the blocks matching [Disk.target] by [Disk.stateProvider].
  *
- * The block predicate builders are scoped to [block].
+ * The block predicate and block state provider builders are scoped to [block].
  *
  * ```kotlin
- * disk("clay_disk", stateProvider = simpleStateProvider(Blocks.CLAY), radius = constant(3)) {
+ * disk("clay_disk", radius = constant(3)) {
+ *     stateProvider = simpleStateProvider(Blocks.CLAY)
  *     target { matchingBlocks(Blocks.DIRT, Blocks.CLAY) }
  * }
  * ```
@@ -49,12 +52,11 @@ data class Disk(
  */
 fun ConfiguredFeatures.disk(
 	fileName: String,
-	stateProvider: BlockStateProvider,
 	radius: IntProvider = constant(0),
 	halfHeight: Int = 0,
 	block: Disk.() -> Unit = {},
 ): ConfiguredFeatureArgument {
-	val configuredFeature = ConfiguredFeature(fileName, Disk(stateProvider, radius = radius, halfHeight = halfHeight).apply(block))
+	val configuredFeature = ConfiguredFeature(fileName, Disk(radius = radius, halfHeight = halfHeight).apply(block))
 	dp.configuredFeatures += configuredFeature
 	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
 }
@@ -66,11 +68,10 @@ fun ConfiguredFeatures.disk(
  */
 fun ConfiguredFeatures.disk(
 	fileName: String,
-	stateProvider: BlockStateProvider,
 	radius: Int,
 	halfHeight: Int = 0,
 	block: Disk.() -> Unit = {},
-) = disk(fileName, stateProvider, constant(radius), halfHeight, block)
+) = disk(fileName, constant(radius), halfHeight, block)
 
 /**
  * Sets [Disk.target] to the predicate built in [block], the blocks the disk replaces.
@@ -78,7 +79,8 @@ fun ConfiguredFeatures.disk(
  * A lone predicate is used as-is, several of them are wrapped in an `all_of`.
  *
  * ```kotlin
- * disk("clay_disk", stateProvider = simpleStateProvider(Blocks.CLAY)) {
+ * disk("clay_disk") {
+ *     stateProvider = simpleStateProvider(Blocks.CLAY)
  *     target { matchingBlocks(Blocks.DIRT, Blocks.CLAY) }
  * }
  * ```

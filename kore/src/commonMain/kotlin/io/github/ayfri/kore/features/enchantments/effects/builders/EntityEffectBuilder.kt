@@ -11,8 +11,6 @@ import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.particleType
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.features.worldgen.floatproviders.constantFloatProvider
 import io.github.ayfri.kore.generated.arguments.EntityTypeOrTagArgument
 import io.github.ayfri.kore.generated.arguments.MobEffectOrTagArgument
@@ -149,15 +147,43 @@ fun EntityEffectBuilder.playSound(
 		effects += ConditionalEffect(effect, effect.requirements)
 	}
 
-fun EntityEffectBuilder.replaceBlock(blockState: BlockStateProvider = simpleStateProvider(), block: ReplaceBlock.() -> Unit = {}) =
+/**
+ * Appends a `replace_block` effect, replacing the block at the target position by [ReplaceBlock.blockState].
+ *
+ * The block state provider and block predicate builders are scoped to [block].
+ *
+ * ```kotlin
+ * replaceBlock {
+ *     blockState = simpleStateProvider(Blocks.WATER)
+ *     predicate { matchingBlocks(Blocks.LAVA) }
+ * }
+ * ```
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#replace_block
+ */
+fun EntityEffectBuilder.replaceBlock(block: ReplaceBlock.() -> Unit = {}) =
 	apply {
-		val effect = ReplaceBlock(blockState).apply(block)
+		val effect = ReplaceBlock().apply(block)
 		effects += ConditionalEffect(effect, effect.requirements)
 	}
 
-fun EntityEffectBuilder.replaceDisk(blockState: BlockStateProvider = simpleStateProvider(), block: ReplaceDisk.() -> Unit = {}) =
+/**
+ * Appends a `replace_disk` effect, replacing a disk of blocks around the target position by [ReplaceDisk.blockState].
+ *
+ * The block state provider and block predicate builders are scoped to [block].
+ *
+ * ```kotlin
+ * replaceDisk {
+ *     blockState = simpleStateProvider(Blocks.FROSTED_ICE)
+ *     radius(3)
+ * }
+ * ```
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#replace_disk
+ */
+fun EntityEffectBuilder.replaceDisk(block: ReplaceDisk.() -> Unit = {}) =
 	apply {
-		val effect = ReplaceDisk(blockState).apply(block)
+		val effect = ReplaceDisk().apply(block)
 		effects += ConditionalEffect(effect, effect.requirements)
 	}
 

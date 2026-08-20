@@ -11,8 +11,6 @@ import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.particleType
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.features.worldgen.floatproviders.constantFloatProvider
 import io.github.ayfri.kore.generated.arguments.EntityTypeOrTagArgument
 import io.github.ayfri.kore.generated.arguments.MobEffectOrTagArgument
@@ -188,25 +186,54 @@ fun PostAttackBuilder.playSound(
 		effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
 	}
 
+/**
+ * Appends a `replace_block` effect, replacing the block at the target position by [ReplaceBlock.blockState].
+ *
+ * The block state provider and block predicate builders are scoped to [block].
+ *
+ * ```kotlin
+ * postAttack {
+ *     replaceBlock(PostAttackSpecifier.ATTACKER, PostAttackSpecifier.VICTIM) {
+ *         blockState = simpleStateProvider(Blocks.FIRE)
+ *     }
+ * }
+ * ```
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#replace_block
+ */
 fun PostAttackBuilder.replaceBlock(
 	enchanted: PostAttackSpecifier,
 	affected: PostAttackSpecifier,
-	blockState: BlockStateProvider = simpleStateProvider(),
 	block: ReplaceBlock.() -> Unit = {},
 ) =
 	apply {
-		val effect = ReplaceBlock(blockState).apply(block)
+		val effect = ReplaceBlock().apply(block)
 		effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
 	}
 
+/**
+ * Appends a `replace_disk` effect, replacing a disk of blocks around the target position by [ReplaceDisk.blockState].
+ *
+ * The block state provider and block predicate builders are scoped to [block].
+ *
+ * ```kotlin
+ * postAttack {
+ *     replaceDisk(PostAttackSpecifier.ATTACKER, PostAttackSpecifier.VICTIM) {
+ *         blockState = simpleStateProvider(Blocks.FROSTED_ICE)
+ *         radius(3)
+ *     }
+ * }
+ * ```
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#replace_disk
+ */
 fun PostAttackBuilder.replaceDisk(
 	enchanted: PostAttackSpecifier,
 	affected: PostAttackSpecifier,
-	blockState: BlockStateProvider = simpleStateProvider(),
 	block: ReplaceDisk.() -> Unit = {},
 ) =
 	apply {
-		val effect = ReplaceDisk(blockState).apply(block)
+		val effect = ReplaceDisk().apply(block)
 		effects += PostAttackConditionalEffect(enchanted, affected, effect, effect.requirements)
 	}
 

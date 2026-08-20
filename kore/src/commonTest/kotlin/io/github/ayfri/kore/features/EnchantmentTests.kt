@@ -538,12 +538,14 @@ fun DataPack.enchantmentTests() {
 
 				ignite(2)
 				playSound(SoundEvents.Entity.FireworkRocket.LAUNCH, 5f)
-				replaceBlock(simpleStateProvider(Blocks.DIAMOND_BLOCK)) {
+				replaceBlock {
+					blockState = simpleStateProvider(Blocks.DIAMOND_BLOCK)
 					offset(5, 5, 5)
 					triggerGameEvent = GameEvents.BLOCK_PLACE
 				}
 
-				replaceDisk(simpleStateProvider(Blocks.DIAMOND_BLOCK)) {
+				replaceDisk {
+					blockState = simpleStateProvider(Blocks.DIAMOND_BLOCK)
 					radius(5)
 					height(2)
 				}

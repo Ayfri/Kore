@@ -9,7 +9,8 @@ import io.github.ayfri.kore.features.worldgen.blockpredicate.blockPredicate
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
 import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.PlacedFeatureArgument
 import io.github.ayfri.kore.serializers.InlinableList
@@ -26,11 +27,11 @@ data class RootSystem(
 	var hangingRootsVerticalSpan: Int = 0,
 	var hangingRootPlacementAttempts: Int = 0,
 	var allowedVerticalWaterForTree: Int = 0,
-	var rootStateProvider: BlockStateProvider = simpleStateProvider(),
-	var hangingRootStateProvider: BlockStateProvider = simpleStateProvider(),
+	var rootStateProvider: BlockStateProvider = SimpleStateProvider(),
+	var hangingRootStateProvider: BlockStateProvider = SimpleStateProvider(),
 	var allowedTreePosition: BlockPredicate = True,
 	var feature: PlacedFeatureArgument,
-) : FeatureConfig(), BlockPredicateScope
+) : FeatureConfig(), BlockPredicateScope, BlockStateProviderScope
 
 fun ConfiguredFeatures.rootSystem(
 	fileName: String,
