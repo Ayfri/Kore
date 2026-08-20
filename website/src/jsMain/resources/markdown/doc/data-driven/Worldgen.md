@@ -5,7 +5,7 @@ nav-title: Worldgen
 description: Create custom world generation datapacks with Kore's Kotlin DSL. Dimensions, biomes, noise settings, density functions, structures, features, and world presets -- all type-safe, no hand-written JSON.
 keywords: minecraft worldgen, datapack worldgen, custom dimension minecraft, custom biome, noise settings minecraft, minecraft noise router, density function, datapack terrain generation, minecraft world preset, custom world generation
 date-created: 2025-08-11
-date-modified: 2026-08-17
+date-modified: 2026-08-19
 routeOverride: /docs/data-driven/worldgen
 ---
 
@@ -47,6 +47,7 @@ Reference: [World generation steps](https://minecraft.wiki/w/World_generation#St
 World generation is split into focused pages:
 
 - [**Biomes**](/docs/data-driven/worldgen/biomes) - Climate, visuals, mob spawns, carvers, and feature lists
+- [**Block Predicates**](/docs/data-driven/worldgen/block-predicates) - Tests on the block at a position, shared by the features and the enchantments
 - [**Carvers**](/docs/data-driven/worldgen/carvers) - Cave, nether cave, and canyon carvers
 - [**Dimensions**](/docs/data-driven/worldgen/dimensions) - Dimensions and dimension types
 - [**Environment Attributes**](/docs/data-driven/worldgen/environment-attributes) - Visual, audio, and gameplay attributes for biomes and

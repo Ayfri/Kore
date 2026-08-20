@@ -1,7 +1,10 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
 import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicate
+import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicateScope
+import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicatesScope
 import io.github.ayfri.kore.features.worldgen.blockpredicate.True
+import io.github.ayfri.kore.features.worldgen.blockpredicate.blockPredicate
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.Direction
@@ -18,7 +21,7 @@ data class BlockColumn(
 	var allowedPlacement: BlockPredicate = True,
 	var prioritizeTip: Boolean = false,
 	var layers: List<Layer> = emptyList(),
-) : FeatureConfig()
+) : FeatureConfig(), BlockPredicateScope
 
 @Serializable
 data class Layer(
@@ -38,15 +41,52 @@ fun MutableList<Layer>.layer(height: IntProvider = constant(0), provider: BlockS
 	this += Layer(height, provider)
 }
 
+/**
+ * Creates a `block_column` configured feature, stacking [BlockColumn.layers] along [direction].
+ *
+ * The block predicate builders are scoped to [block].
+ *
+ * ```kotlin
+ * blockColumn("cave_vines", direction = Direction.DOWN) {
+ *     allowedPlacement { replaceable() }
+ *     layers {
+ *         layer(constant(3), simpleStateProvider(Blocks.CAVE_VINES_PLANT))
+ *     }
+ * }
+ * ```
+ *
+ * Produces `data/<namespace>/worldgen/configured_feature/<fileName>.json`.
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#block_column
+ */
 fun ConfiguredFeatures.blockColumn(
 	fileName: String,
 	direction: Direction,
-	allowedPlacement: BlockPredicate = True,
 	prioritizeTip: Boolean = false,
 	layers: List<Layer> = emptyList(),
 	block: BlockColumn.() -> Unit = {},
 ): ConfiguredFeatureArgument {
-	val configuredFeature = ConfiguredFeature(fileName, BlockColumn(direction, allowedPlacement, prioritizeTip, layers).apply(block))
+	val configuredFeature = ConfiguredFeature(
+		fileName,
+		BlockColumn(direction, prioritizeTip = prioritizeTip, layers = layers).apply(block),
+	)
 	dp.configuredFeatures += configuredFeature
 	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
+}
+
+/**
+ * Sets [BlockColumn.allowedPlacement] to the predicate built in [block], the blocks the column may be placed in.
+ *
+ * A lone predicate is used as-is, several of them are wrapped in an `all_of`.
+ *
+ * ```kotlin
+ * blockColumn("cave_vines", direction = Direction.DOWN) {
+ *     allowedPlacement { replaceable() }
+ * }
+ * ```
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_predicate
+ */
+fun BlockColumn.allowedPlacement(block: BlockPredicatesScope.() -> Unit) {
+	allowedPlacement = blockPredicate(block)
 }

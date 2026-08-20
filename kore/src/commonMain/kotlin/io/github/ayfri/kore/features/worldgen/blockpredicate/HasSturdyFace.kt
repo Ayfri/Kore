@@ -4,14 +4,31 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.Direction
 import io.github.ayfri.kore.serializers.TripleAsArray
 import kotlinx.serialization.Serializable
 
+/**
+ * Passes when the block at [offset] has a full supporting surface on its [direction] face.
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_predicate#has_sturdy_face
+ *
+ * @property offset The `[X, Y, Z]` block offset to test at, each component between `-16` and `16`, `[0, 0, 0]` when `null`.
+ * @property direction The face that has to be sturdy.
+ */
 @Serializable
 data class HasSturdyFace(
-	var offset: TripleAsArray<Int, Int, Int>? = null,
+	override var offset: TripleAsArray<Int, Int, Int>? = null,
 	var direction: Direction,
-) : BlockPredicate()
+) : BlockPredicate(), OffsetBlockPredicate
 
-fun hasSturdyFace(offset: TripleAsArray<Int, Int, Int>? = null, direction: Direction) = HasSturdyFace(offset, direction)
-
-fun MutableList<BlockPredicate>.hasSturdyFace(offset: TripleAsArray<Int, Int, Int>? = null, direction: Direction) {
-	this += HasSturdyFace(offset, direction)
-}
+/**
+ * Creates a `has_sturdy_face` block predicate, passing when the tested block has a full supporting surface on its
+ * [direction] face.
+ *
+ * ```kotlin
+ * blockPredicateFilter {
+ *     predicate { hasSturdyFace(Direction.UP) { offset(0, -1, 0) } }
+ * }
+ * ```
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_predicate#has_sturdy_face
+ */
+fun BlockPredicateScope.hasSturdyFace(direction: Direction, init: HasSturdyFace.() -> Unit = {}) =
+	HasSturdyFace(direction = direction).apply(init).also { addBlockPredicate(it) }

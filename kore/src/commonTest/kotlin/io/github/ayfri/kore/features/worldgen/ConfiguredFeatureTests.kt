@@ -72,7 +72,9 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.blockBlob("test_block_blob", canPlaceOn = Solid, state = blockStateStone())
+	configuredFeaturesBuilder.blockBlob("test_block_blob", state = blockStateStone()) {
+		canPlaceOn { solid() }
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -105,14 +107,9 @@ fun DataPack.configuredFeatureTests() {
 	""".trimIndent()
 
 	configuredFeaturesBuilder.blockColumn("test_block_predicates_and_complex_provider", direction = Direction.DOWN) {
-		allowedPlacement = allOf {
+		allowedPlacement {
 			not {
-				matchingBlocks(
-					blocks = listOf(
-						Blocks.DIRT,
-						Blocks.STONE
-					)
-				)
+				matchingBlocks(Blocks.DIRT, Blocks.STONE)
 			}
 
 			solid()
@@ -279,7 +276,7 @@ fun DataPack.configuredFeatureTests() {
 						matchingBlockTag(tag = Tags.Block.CANNOT_REPLACE_BELOW_TREE_TRUNK)
 					}
 				}
-				then(simpleStateProvider(Blocks.DIRT))
+				then = simpleStateProvider(Blocks.DIRT)
 			}
 		}
 	}
@@ -383,10 +380,11 @@ fun DataPack.configuredFeatureTests() {
 	configuredFeaturesBuilder.disk(
 		"test_disk",
 		stateProvider = simpleStateProvider(Blocks.GRAVEL),
-		target = Solid,
 		radius = 3,
 		halfHeight = 1
-	)
+	) {
+		target { solid() }
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -615,7 +613,9 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.hugeBrownMushroom("test_huge_brown_mushroom", canPlaceOn = Solid)
+	configuredFeaturesBuilder.hugeBrownMushroom("test_huge_brown_mushroom") {
+		canPlaceOn { solid() }
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -682,7 +682,9 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.hugeRedMushroom("test_huge_red_mushroom", canPlaceOn = Solid)
+	configuredFeaturesBuilder.hugeRedMushroom("test_huge_red_mushroom") {
+		canPlaceOn { solid() }
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -730,12 +732,14 @@ fun DataPack.configuredFeatureTests() {
 	""".trimIndent()
 
 	configuredFeaturesBuilder.lake(
-		"test_lake", fluid = blockState(Blocks.STONE),
+		"test_lake",
+		fluid = blockState(Blocks.STONE),
 		barrier = blockState(Blocks.GRAVEL),
-		canPlaceFeature = matchingBlocks(block = Blocks.STONE),
-		canReplaceWithAirOrFluid = Solid,
-		canReplaceWithBarrier = matchingFluids(fluids = listOf(Fluids.WATER)),
-	)
+	) {
+		canPlaceFeature { matchingBlocks(Blocks.STONE) }
+		canReplaceWithAirOrFluid { solid() }
+		canReplaceWithBarrier { matchingFluids(Fluids.WATER) }
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1074,11 +1078,10 @@ fun DataPack.configuredFeatureTests() {
 
 	configuredFeaturesBuilder.simpleBlock("test_rule_based_provider_list_block", ruleBasedStateProvider {
 		fallback = simpleStateProvider(Blocks.STONE)
-		rule(
-			ifTrue = Solid,
-			then = simpleStateProvider(Blocks.GRAVEL),
-		)
-		rule(then = simpleStateProvider(Blocks.SAND)) {
+		rule(simpleStateProvider(Blocks.GRAVEL)) {
+			solid()
+		}
+		rule(simpleStateProvider(Blocks.SAND)) {
 			solid()
 		}
 	})
@@ -1131,15 +1134,14 @@ fun DataPack.configuredFeatureTests() {
 			ifTrue {
 				solid()
 			}
-			then(simpleStateProvider(Blocks.DIRT))
+			then = simpleStateProvider(Blocks.DIRT)
 		}
-		rule(
-			ifTrue = hasSturdyFace(direction = Direction.DOWN),
-			then = simpleStateProvider(Blocks.GRAVEL),
-		)
-		rule(then = simpleStateProvider(Blocks.SAND)) {
+		rule(simpleStateProvider(Blocks.GRAVEL)) {
+			hasSturdyFace(Direction.DOWN)
+		}
+		rule(simpleStateProvider(Blocks.SAND)) {
 			not {
-				matchingBlocks(block = Blocks.STONE)
+				matchingBlocks(Blocks.STONE)
 			}
 		}
 	})
@@ -1328,7 +1330,10 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.spike("test_spike", canPlaceOn = Solid, canReplace = Solid, state = blockStateStone())
+	configuredFeaturesBuilder.spike("test_spike", state = blockStateStone()) {
+		canPlaceOn { solid() }
+		canReplace { solid() }
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -1519,9 +1524,8 @@ fun DataPack.configuredFeatureTests() {
 		decorators {
 			alterGround {
 				fallback = simpleStateProvider(Blocks.DIRT)
-				rule {
-					ifTrue { hasSturdyFace(direction = Direction.DOWN) }
-					then(simpleStateProvider(Blocks.GRASS_BLOCK))
+				rule(simpleStateProvider(Blocks.GRASS_BLOCK)) {
+					hasSturdyFace(Direction.DOWN)
 				}
 			}
 		}
@@ -1614,11 +1618,8 @@ fun DataPack.configuredFeatureTests() {
 		cherryFoliagePlacer { height = constant(3) }
 		belowTrunkProvider = ruleBasedStateProvider {
 			fallback = simpleStateProvider(Blocks.DIRT)
-			rule {
-				ifTrue {
-					hasSturdyFace(direction = Direction.DOWN)
-				}
-				then(simpleStateProvider(Blocks.GRASS_BLOCK))
+			rule(simpleStateProvider(Blocks.GRASS_BLOCK)) {
+				hasSturdyFace(Direction.DOWN)
 			}
 		}
 	}

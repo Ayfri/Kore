@@ -2,33 +2,31 @@ package io.github.ayfri.kore.features.worldgen.blockpredicate
 
 import kotlinx.serialization.Serializable
 
+/**
+ * Passes when [predicate] does not pass.
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_predicate#not
+ *
+ * @property predicate The predicate to invert.
+ */
 @Serializable
 data class Not(
 	var predicate: BlockPredicate,
 ) : BlockPredicate()
 
-fun not(vararg predicates: BlockPredicate) = when (predicates.size) {
-	1 -> Not(predicates.first())
-	else -> Not(allOf(*predicates))
-}
-
-fun not(predicate: MutableList<BlockPredicate>.() -> Unit) {
-	val list = buildList(predicate)
-	when (list.size) {
-		1 -> Not(list.first())
-		else -> Not(allOf(list))
-	}
-}
-
-fun MutableList<BlockPredicate>.not(vararg predicates: BlockPredicate) = when (predicates.size) {
-	1 -> this += Not(predicates.first())
-	else -> this += Not(allOf(*predicates))
-}
-
-fun MutableList<BlockPredicate>.not(predicate: MutableList<BlockPredicate>.() -> Unit) {
-	val list = buildList(predicate)
-	when (list.size) {
-		1 -> this += Not(list.first())
-		else -> this += Not(allOf(list))
-	}
-}
+/**
+ * Creates a `not` block predicate, passing when the predicate built in [block] does not pass.
+ *
+ * Several predicates built in [block] are wrapped in an [AllOf], so the result passes when at least one of them
+ * fails.
+ *
+ * ```kotlin
+ * blockPredicateFilter {
+ *     predicate { not { matchingBlockTag(Tags.Block.LEAVES) } }
+ * }
+ * ```
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_predicate#not
+ */
+fun BlockPredicateScope.not(block: BlockPredicatesScope.() -> Unit) =
+	Not(blockPredicate(block)).also { addBlockPredicate(it) }

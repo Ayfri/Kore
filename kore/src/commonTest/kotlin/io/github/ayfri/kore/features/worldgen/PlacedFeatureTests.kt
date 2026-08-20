@@ -3,10 +3,7 @@ package io.github.ayfri.kore.features.worldgen
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
-import io.github.ayfri.kore.features.worldgen.blockpredicate.allOf
-import io.github.ayfri.kore.features.worldgen.blockpredicate.matchingBiomes
-import io.github.ayfri.kore.features.worldgen.blockpredicate.matchingBlockTag
-import io.github.ayfri.kore.features.worldgen.blockpredicate.trueBlockPredicate
+import io.github.ayfri.kore.features.worldgen.blockpredicate.*
 import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.*
 import io.github.ayfri.kore.features.worldgen.placedfeature.placedFeature
 import io.github.ayfri.kore.generated.Biomes
@@ -25,10 +22,12 @@ fun DataPack.placedFeatureTests() {
 
 		rarityFilter(5)
 
-		blockPredicateFilter(allOf {
-			matchingBlockTag(tag = Tags.Block.DIRT)
-			trueBlockPredicate()
-		})
+		blockPredicateFilter {
+			predicate {
+				matchingBlockTag(Tags.Block.DIRT)
+				alwaysTrue()
+			}
+		}
 	}
 
 	placedFeatures.last() assertsIs """
@@ -65,7 +64,9 @@ fun DataPack.placedFeatureTests() {
 	""".trimIndent()
 
 	placedFeature("matching_biomes", ConfiguredFeatures.ACACIA) {
-		blockPredicateFilter(matchingBiomes(Biomes.PLAINS, Biomes.SAVANNA))
+		blockPredicateFilter {
+			predicate { matchingBiomes(Biomes.PLAINS, Biomes.SAVANNA) }
+		}
 	}
 
 	placedFeatures.last() assertsIs """
@@ -87,7 +88,9 @@ fun DataPack.placedFeatureTests() {
 	""".trimIndent()
 
 	placedFeature("matching_biome_tag", ConfiguredFeatures.ACACIA) {
-		blockPredicateFilter(matchingBiomes(Tags.Worldgen.Biome.IS_SAVANNA))
+		blockPredicateFilter {
+			predicate { matchingBiomes(Tags.Worldgen.Biome.IS_SAVANNA) }
+		}
 	}
 
 	placedFeatures.last() assertsIs """

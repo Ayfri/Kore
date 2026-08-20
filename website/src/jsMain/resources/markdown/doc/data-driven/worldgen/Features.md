@@ -5,7 +5,7 @@ nav-title: Features
 description: Create configured and placed features (trees, ores, vegetation) with Kore's DSL.
 keywords: minecraft, datapack, kore, worldgen, configured feature, placed feature, tree, ore
 date-created: 2026-02-03
-date-modified: 2026-08-18
+date-modified: 2026-08-19
 routeOverride: /docs/data-driven/worldgen/features
 ---
 
@@ -50,11 +50,8 @@ configuredFeatures {
 
 		belowTrunkProvider = ruleBasedStateProvider {
 			fallback = simpleStateProvider(Blocks.DIRT)
-			rule {
-				ifTrue {
-					hasSturdyFace(direction = Direction.DOWN)
-				}
-				then(simpleStateProvider(Blocks.GRASS_BLOCK))
+			rule(simpleStateProvider(Blocks.GRASS_BLOCK)) {
+				hasSturdyFace(Direction.DOWN)
 			}
 		}
 	}
@@ -84,37 +81,31 @@ accepts any of the following.
 
 Evaluates rules top-to-bottom and uses the first matching block state, or `fallback` when nothing matches.
 
-All three `rule` styles are available inside the provider block:
+Both `rule` styles are available inside the provider block:
 
 ```kotlin
 ruleBasedStateProvider {
 	fallback = simpleStateProvider(Blocks.STONE)
 
-	// Style 1: receiver block: ifTrue { } and then(...) called on the rule
-	rule {
-		ifTrue { solid() }
-		then(simpleStateProvider(Blocks.DIRT))
+	// Style 1: the provider first, the predicate in the trailing lambda
+	rule(simpleStateProvider(Blocks.DIRT)) {
+		solid()
 	}
 
-	// Style 2: direct values
-	rule(
-		ifTrue = hasSturdyFace(direction = Direction.DOWN),
-		then = simpleStateProvider(Blocks.GRAVEL),
-	)
-
-	// Style 3: trailing lambda for the predicate; then is a normal argument
-	rule(then = simpleStateProvider(Blocks.SAND)) {
-		not { matchingBlockTag(tag = Tags.Block.CANNOT_REPLACE_BELOW_TREE_TRUNK) }
-		solid()
+	// Style 2: receiver block, with ifTrue { } and then set on the rule
+	rule {
+		ifTrue {
+			not { matchingBlockTag(Tags.Block.CANNOT_REPLACE_BELOW_TREE_TRUNK) }
+			solid()
+		}
+		then = simpleStateProvider(Blocks.SAND)
 	}
 }
 ```
 
-The `ifTrue { }` block in Style 1 and the trailing lambda in Style 3 both run on a `MutableList<BlockPredicate>`
-receiver, so all block
-predicate extensions (`solid()`, `not { }`, `matchingBlocks()`, `matchingBiomes()`, `hasSturdyFace()`, `matchingBlockTag()`, etc.) work
-inside them. A
-single-element list is used as-is; multiple entries are automatically wrapped in `allOf`.
+Both predicate blocks run on a block predicate scope, so every builder (`solid()`, `not { }`, `matchingBlocks()`, `matchingBiomes()`,
+`hasSturdyFace()`, `matchingBlockTag()`, ...) resolves inside them. A single predicate is used as-is, several ones are wrapped in an
+`all_of`. See [Block Predicates](/docs/data-driven/worldgen/block-predicates) for the full list.
 
 ---
 
@@ -264,7 +255,7 @@ Reference: [Placement modifier](https://minecraft.wiki/w/Placed_feature#Placemen
 | Modifier                              | Description                                      |
 |---------------------------------------|--------------------------------------------------|
 | `biome()`                             | Only place in valid biomes                       |
-| `blockPredicateFilter(predicate)`     | Custom block condition                           |
+| `blockPredicateFilter { }`            | Custom block condition                           |
 | `carvingMask(step)`                   | Only place in blocks carved by `air` or `liquid` |
 | `count(n)`                            | Place n times per chunk                          |
 | `countOnEveryLayer(n)`                | Place n times on every layer                     |

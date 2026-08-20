@@ -1,16 +1,22 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider
 
-import io.github.ayfri.kore.features.worldgen.blockpredicate.AllOf
 import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicate
+import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicateScope
+import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicatesScope
 import io.github.ayfri.kore.features.worldgen.blockpredicate.True
+import io.github.ayfri.kore.features.worldgen.blockpredicate.blockPredicate
 import kotlinx.serialization.Serializable
 
 /**
- * A [BlockStateProvider] that picks a block state by evaluating a list of predicate–provider rules in order,
- * returning the first match, or [fallback] if none match. When [fallback] is `null` and no rule matches,
- * the consuming feature places nothing.
+ * A [BlockStateProvider] picking a block state by evaluating [rules] in order and returning the first match, or
+ * [fallback] when none matches.
+ *
+ * When [fallback] is `null` and no rule matches, the consuming feature places nothing.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#rule_based
+ *
+ * @property fallback The provider used when no rule matches, placing nothing when `null`.
+ * @property rules The rules evaluated in order, the first matching one winning.
  */
 @Serializable
 data class RuleBasedStateProvider(
@@ -19,113 +25,90 @@ data class RuleBasedStateProvider(
 ) : BlockStateProvider()
 
 /**
- * A single rule inside a [RuleBasedStateProvider].
+ * A single rule of a [RuleBasedStateProvider]: when [ifTrue] passes at the candidate position, [then] provides the
+ * block state.
  *
- * [ifTrue] is tested at the candidate position; when it passes, [then] provides the block state.
- * Defaults to [True] / [simpleStateProvider] so the rule can be configured via the DSL receiver block.
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#rule_based
+ *
+ * @property ifTrue The predicate tested at the candidate position.
+ * @property then The provider used when [ifTrue] passes.
  */
 @Serializable
 data class RuleBasedStateProviderRule(
 	var ifTrue: BlockPredicate = True,
 	var then: BlockStateProvider = simpleStateProvider(),
-)
-
-/** Creates a [RuleBasedStateProvider] with an optional [fallback] and a fixed [rules] list. */
-fun ruleBasedStateProvider(
-	fallback: BlockStateProvider? = null,
-	rules: List<RuleBasedStateProviderRule> = emptyList(),
-) = RuleBasedStateProvider(fallback, rules)
+) : BlockPredicateScope
 
 /**
- * Creates a [RuleBasedStateProvider] configured entirely via [block] on the provider itself.
+ * Creates a `rule_based` block state provider, evaluating its rules in order and falling back to
+ * [RuleBasedStateProvider.fallback] when none matches.
  *
- * Set [RuleBasedStateProvider.fallback] and append rules with the [RuleBasedStateProvider.rule] extensions inside [block].
- */
-fun ruleBasedStateProvider(
-	block: RuleBasedStateProvider.() -> Unit,
-) = RuleBasedStateProvider().apply(block)
-
-/**
- * Sets [RuleBasedStateProviderRule.ifTrue] by building a predicate from a [MutableList] block.
+ * ```kotlin
+ * ruleBasedStateProvider {
+ *     fallback = simpleStateProvider(Blocks.DIRT)
+ *     rule(simpleStateProvider(Blocks.GRASS_BLOCK)) {
+ *         hasSturdyFace(Direction.DOWN)
+ *     }
+ * }
+ * ```
  *
- * A single entry is used as-is; multiple entries are wrapped in [AllOf].
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#rule_based
  */
-fun RuleBasedStateProviderRule.ifTrue(block: MutableList<BlockPredicate>.() -> Unit) {
-	val predicates = buildList(block)
-	ifTrue = if (predicates.size == 1) predicates.first() else AllOf(predicates)
-}
-
-/** Sets [RuleBasedStateProviderRule.then] to [provider]. */
-fun RuleBasedStateProviderRule.then(provider: BlockStateProvider) {
-	then = provider
-}
+fun ruleBasedStateProvider(block: RuleBasedStateProvider.() -> Unit = {}) = RuleBasedStateProvider().apply(block)
 
 /**
- * Appends a [RuleBasedStateProviderRule] with [ifTrue] and [then] set directly.
- */
-fun MutableList<RuleBasedStateProviderRule>.rule(
-	ifTrue: BlockPredicate,
-	then: BlockStateProvider,
-) {
-	this += RuleBasedStateProviderRule(ifTrue, then)
-}
-
-/**
- * Appends a [RuleBasedStateProviderRule] by building [ifTrue] from a [MutableList] predicate block
- * and setting [then] as the block state provider.
+ * Appends a rule using [then] when the predicate built in [ifTrue] passes.
  *
- * A single predicate in [ifTrue] is used as-is; multiple are wrapped in [AllOf].
+ * A lone predicate is used as-is, several of them are wrapped in an `all_of`.
+ *
+ * ```kotlin
+ * ruleBasedStateProvider {
+ *     rule(simpleStateProvider(Blocks.GRASS_BLOCK)) {
+ *         hasSturdyFace(Direction.DOWN)
+ *         not { matchingFluids(Fluids.WATER) }
+ *     }
+ * }
+ * ```
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#rule_based
  */
-fun MutableList<RuleBasedStateProviderRule>.rule(
-	then: BlockStateProvider,
-	ifTrue: MutableList<BlockPredicate>.() -> Unit,
-) {
-	val predicates = buildList(ifTrue)
-	val predicate = if (predicates.size == 1) predicates.first() else AllOf(predicates)
-	this += RuleBasedStateProviderRule(predicate, then)
+fun RuleBasedStateProvider.rule(then: BlockStateProvider, ifTrue: BlockPredicatesScope.() -> Unit) {
+	rules += RuleBasedStateProviderRule(blockPredicate(ifTrue), then)
 }
 
 /**
- * Appends a [RuleBasedStateProviderRule] configured entirely via [block] on the rule itself.
+ * Appends a rule configured entirely through [block], with [RuleBasedStateProviderRule.ifTrue] and
+ * [RuleBasedStateProviderRule.then].
  *
- * Use [RuleBasedStateProviderRule.ifTrue] and [RuleBasedStateProviderRule.then] inside [block].
- */
-fun MutableList<RuleBasedStateProviderRule>.rule(
-	block: RuleBasedStateProviderRule.() -> Unit,
-) {
-	this += RuleBasedStateProviderRule().apply(block)
-}
-
-/** Appends a [RuleBasedStateProviderRule] with [ifTrue] and [then] set directly. */
-fun RuleBasedStateProvider.rule(
-	ifTrue: BlockPredicate,
-	then: BlockStateProvider,
-) {
-	rules += RuleBasedStateProviderRule(ifTrue, then)
-}
-
-/**
- * Appends a [RuleBasedStateProviderRule] by building [ifTrue] from a [MutableList] predicate block
- * and setting [then] as the block state provider.
+ * ```kotlin
+ * ruleBasedStateProvider {
+ *     rule {
+ *         ifTrue { solid() }
+ *         then = simpleStateProvider(Blocks.DIRT)
+ *     }
+ * }
+ * ```
  *
- * A single predicate in [ifTrue] is used as-is; multiple are wrapped in [AllOf].
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#rule_based
  */
-fun RuleBasedStateProvider.rule(
-	then: BlockStateProvider,
-	ifTrue: MutableList<BlockPredicate>.() -> Unit,
-) {
-	val predicates = buildList(ifTrue)
-	val predicate = if (predicates.size == 1) predicates.first() else AllOf(predicates)
-	rules += RuleBasedStateProviderRule(predicate, then)
-}
-
-/**
- * Appends a [RuleBasedStateProviderRule] configured entirely via [block] on the rule itself.
- *
- * Use [RuleBasedStateProviderRule.ifTrue] and [RuleBasedStateProviderRule.then] inside [block].
- */
-fun RuleBasedStateProvider.rule(
-	block: RuleBasedStateProviderRule.() -> Unit,
-) {
+fun RuleBasedStateProvider.rule(block: RuleBasedStateProviderRule.() -> Unit) {
 	rules += RuleBasedStateProviderRule().apply(block)
+}
+
+/**
+ * Sets [RuleBasedStateProviderRule.ifTrue] to the predicate built in [block], the condition the position has to pass.
+ *
+ * A lone predicate is used as-is, several of them are wrapped in an `all_of`.
+ *
+ * ```kotlin
+ * rule {
+ *     ifTrue { solid() }
+ *     then = simpleStateProvider(Blocks.DIRT)
+ * }
+ * ```
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_predicate
+ */
+fun RuleBasedStateProviderRule.ifTrue(block: BlockPredicatesScope.() -> Unit) {
+	ifTrue = blockPredicate(block)
 }
