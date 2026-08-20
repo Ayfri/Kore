@@ -16,6 +16,14 @@ import io.github.ayfri.kore.generated.arguments.worldgen.types.PlacedFeatureArgu
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
+/**
+ * Configuration for the `root_system` feature, growing a tree's root system alongside [feature].
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#root_system
+ *
+ * @property levelTestDistance The distance, in chunks, over which the surrounding terrain level is validated.
+ * @property maxLevelDeviation The maximum terrain level deviation tolerated within [levelTestDistance].
+ */
 @Serializable
 data class RootSystem(
 	var requiredVerticalSpaceForTree: Int = 0,
@@ -30,6 +38,8 @@ data class RootSystem(
 	var rootStateProvider: BlockStateProvider = SimpleStateProvider(),
 	var hangingRootStateProvider: BlockStateProvider = SimpleStateProvider(),
 	var allowedTreePosition: BlockPredicate = True,
+	var levelTestDistance: Int = 0,
+	var maxLevelDeviation: Int = 0,
 	var feature: PlacedFeatureArgument,
 ) : FeatureConfig(), BlockPredicateScope, BlockStateProviderScope
 
