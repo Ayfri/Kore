@@ -8,13 +8,18 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
 /**
- * Data-driven noise definition.
+ * Data-driven definition of the Perlin noise parameters a noise router samples, an octave being added per amplitude
+ * starting at [firstOctave].
  *
- * Defines octave-based amplitudes for a noise instance used by noise routers and terrain
- * generation. Often referenced by noise settings/routers.
+ * Produces `data/<namespace>/worldgen/noise/<fileName>.json`. A [fileName] holding slashes lands in subfolders, the
+ * way vanilla groups its cave and ore noises.
  *
- * JSON format reference: https://minecraft.wiki/w/Noise_router
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
+ * Minecraft Wiki: https://minecraft.wiki/w/Noise
+ *
+ * @property fileName The name of the generated file, slashes creating subfolders.
+ * @property firstOctave The octave the first amplitude applies to, serialized as `firstOctave` and not snake_cased.
+ * @property amplitudes The amplitude of each successive octave, an amplitude of `0.0` skipping its octave.
  */
 @Serializable
 data class Noise(
@@ -27,31 +32,26 @@ data class Noise(
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
-/** Creates a noise definition using a builder block. */
+/**
+ * Registers a noise named [fileName], slashes creating subfolders.
+ *
+ * ```kotlin
+ * noise("cave/entrance") {
+ *     firstOctave = -7
+ *     amplitudes(0.4, 0.5, 1.0)
+ * }
+ * ```
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
+ * Minecraft Wiki: https://minecraft.wiki/w/Noise
+ */
 fun DataPack.noise(fileName: String = "noise", init: Noise.() -> Unit = {}): NoiseArgument {
 	val noise = Noise(fileName).apply(init)
 	noises += noise
 	return NoiseArgument(fileName, noise.namespace ?: name)
 }
 
-/**
- * Creates a noise definition with inline parameters.
- *
- * Quick helper when you already know octave and amplitude values.
- */
-fun DataPack.noise(
-	fileName: String = "noise",
-	firstOctave: Int = 0,
-	amplitudes: List<Double> = emptyList(),
-	block: Noise.() -> Unit = {},
-) = noise(fileName) {
-	this.firstOctave = firstOctave
-	this.amplitudes = amplitudes
-	block()
-}
-
-fun DataPack.noise(fileName: String, firstOctave: Int = 0, vararg amplitudes: Double, block: Noise.() -> Unit = {}) = noise(fileName) {
-	this.firstOctave = firstOctave
+/** Sets the amplitudes to [amplitudes], one per successive octave starting at [Noise.firstOctave]. */
+fun Noise.amplitudes(vararg amplitudes: Double) {
 	this.amplitudes = amplitudes.toList()
-	block()
 }

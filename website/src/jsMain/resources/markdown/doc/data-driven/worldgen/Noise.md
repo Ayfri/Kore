@@ -5,7 +5,7 @@ nav-title: Noise
 description: Shape Minecraft terrain from Kotlin - noise definitions, density functions, noise routers and surface rules, fully type-safe with Kore.
 keywords: minecraft datapack, kore, worldgen, noise settings, density function, noise router, surface rule, terrain generation, perlin noise, octaves
 date-created: 2026-02-03
-date-modified: 2026-08-18
+date-modified: 2026-08-20
 routeOverride: /docs/data-driven/worldgen/noise
 ---
 
@@ -42,17 +42,22 @@ val hills = dp.noise("hills") {
 }
 ```
 
-Two shorthands take the values inline:
+`amplitudes(...)` sets the weights inline instead of building the list:
 
 ```kotlin
-dp.noise("hills", firstOctave = -5, amplitudes = listOf(1.0, 0.5, 0.25))
-dp.noise("hills", -5, 1.0, 0.5, 0.25)
+val hills = dp.noise("hills") {
+	firstOctave = -5
+	amplitudes(1.0, 0.5, 0.25)
+}
 ```
 
-| Parameter     | Type           | Description                                       |
-|---------------|----------------|---------------------------------------------------|
-| `firstOctave` | `Int`          | Starting octave, negative values are larger scale |
-| `amplitudes`  | `List<Double>` | Amplitude weight per octave                       |
+A file name holding slashes lands in subfolders, so `noise("cave/entrance")` writes
+`data/<namespace>/worldgen/noise/cave/entrance.json`.
+
+| Field         | Type           | Description                                        |
+|---------------|----------------|----------------------------------------------------|
+| `firstOctave` | `Int`          | Starting octave, negative values are larger scale. |
+| `amplitudes`  | `List<Double>` | Amplitude weight per octave, `0.0` skipping one.   |
 
 Every call returns a `NoiseArgument`. Vanilla noises are available as `Noises.AquiferBarrier`, `Noises.Continentalness` and so on, and can be
 passed anywhere a `NoiseArgument` is expected.
@@ -408,7 +413,10 @@ A minimal but working custom dimension, from noise to playable world:
 ```kotlin
 fun DataPack.createCustomTerrain() {
 	// 1) Noise definition, sampled by the density function below
-	val hills = noise("hills", firstOctave = -5, amplitudes = listOf(1.0, 0.5, 0.25))
+	val hills = noise("hills") {
+		firstOctave = -5
+		amplitudes(1.0, 0.5, 0.25)
+	}
 
 	// 2) Density functions shaping the terrain
 	val terrainDensity = with(densityFunctionsBuilder) {
