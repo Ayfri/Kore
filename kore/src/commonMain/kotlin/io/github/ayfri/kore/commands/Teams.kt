@@ -51,6 +51,9 @@ class Modify(private val fn: Function, val team: String) {
 	/** Sets the team color, used by the nametag, chat prefix and score markers. */
 	fun color(color: FormattingColor) = fn.addLine(command("team", literal("modify"), literal(team), literal("color"), color))
 
+	/** Resets the team color back to the default white, undoing any [color] call. */
+	fun colorReset() = fn.addLine(command("team", literal("modify"), literal(team), literal("color"), literal("reset")))
+
 	/** Controls who can see a member's death message. */
 	fun deathMessageVisibility(visibility: Visibility) =
 		fn.addLine(command("team", literal("modify"), literal(team), literal("deathMessageVisibility"), literal(visibility.asArg())))
