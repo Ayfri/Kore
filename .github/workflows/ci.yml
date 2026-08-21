@@ -45,7 +45,7 @@ jobs:
           distribution: 'temurin'
           java-version: 25
 
-      # When projects are created on Windows, the executable bit is sometimes lost. So set it back just in case.
+      # Committing from Windows can drop the executable bit.
       - name: Ensure Gradle is executable
         run: chmod +x gradlew
 
@@ -57,8 +57,7 @@ jobs:
           build-scan-terms-of-use-url: 'https://gradle.com/terms-of-service'
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
-      # `setup-gradle` only caches Gradle User Home, so without this the configuration cache is recalculated every run.
-      # `build-logic`'s build dir rides along: its outputs are configuration inputs, and a missing one invalidates the entry.
+      # `setup-gradle` only caches Gradle User Home. `build-logic`'s build dir rides along as a configuration input.
       - name: Cache Gradle configuration cache
         uses: actions/cache@v6
         with:
@@ -70,8 +69,7 @@ jobs:
       - name: Run tests
         run: ./gradlew testAll ${{ github.ref == 'refs/heads/master' && '-Pkore.jsBrowserTests=true' || '' }}
         env:
-          # npm's default cache sits on the runner's slow C: drive, a different volume than the D: workspace, so npm
-          # copies every package instead of hardlinking it. Keeping both on one volume is worth ~2min on Windows.
+          # Off-volume from the D: workspace, npm copies packages instead of hardlinking them. Worth ~2min on Windows.
           npm_config_cache: ${{ runner.temp }}/npm-cache
 
       - name: Upload test reports

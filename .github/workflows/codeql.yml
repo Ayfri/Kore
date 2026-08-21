@@ -46,7 +46,7 @@ jobs:
             build-mode: manual
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
 
@@ -74,9 +74,15 @@ jobs:
         with:
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
+      # `classes` does not exist on the KMP modules, hence the explicit list; CodeQL only extracts JVM targets anyway.
+      # `--no-build-cache`/`--no-daemon`: a cache hit emits no compiler events, leaving the database empty.
       - if: ${{ matrix.language == 'java-kotlin' }}
         name: Build for CodeQL
-        run: ./gradlew classes --stacktrace --no-daemon --no-build-cache
+        run: >-
+          ./gradlew
+          :kore:jvmMainClasses :oop:jvmMainClasses :helpers:jvmMainClasses :bindings:jvmMainClasses
+          :common-tests:jvmMainClasses :generation:classes :kore-ksp:classes
+          --stacktrace --no-daemon --no-build-cache
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4

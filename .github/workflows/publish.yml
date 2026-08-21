@@ -7,9 +7,15 @@ permissions:
   id-token: write
   contents: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   publish:
     runs-on: ubuntu-latest
+
+    timeout-minutes: 45
 
     steps:
       - uses: actions/checkout@v7
@@ -28,6 +34,15 @@ jobs:
         with:
           dependency-graph: generate-and-upload
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+
+      # `setup-gradle` only caches Gradle User Home. `build-logic`'s build dir rides along as a configuration input.
+      - name: Cache Gradle configuration cache
+        uses: actions/cache@v6
+        with:
+          path: |
+            .gradle/configuration-cache
+            build-logic/convention/build
+          key: gradle-config-cache-publish-v1-${{ runner.os }}-${{ hashFiles('**/*.gradle.kts', 'gradle.properties', 'gradle/libs.versions.toml', 'gradle/wrapper/gradle-wrapper.properties', 'build-logic/**/*.kt') }}
 
       - name: Publish to Central Portal
         run: ./gradlew publishToMavenCentral --stacktrace

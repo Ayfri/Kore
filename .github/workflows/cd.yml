@@ -32,13 +32,13 @@ jobs:
         shell: bash
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: 25
 
-      # When projects are created on Windows, the executable bit is sometimes lost. So set it back just in case.
+      # Committing from Windows can drop the executable bit.
       - name: Ensure Gradle is executable
         run: chmod +x gradlew
 
@@ -47,15 +47,14 @@ jobs:
         with:
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
-      # `setup-gradle` only caches Gradle User Home, so without this the configuration cache is recalculated every run.
-      # `build-logic`'s build dir rides along: its outputs are configuration inputs, and a missing one invalidates the entry.
+      # `setup-gradle` only caches Gradle User Home. `build-logic`'s build dir rides along as a configuration input.
       - name: Cache Gradle configuration cache
         uses: actions/cache@v6
         with:
           path: |
             .gradle/configuration-cache
             build-logic/convention/build
-          key: gradle-config-cache-export-${{ runner.os }}-${{ hashFiles('**/*.gradle.kts', 'gradle.properties', 'gradle/libs.versions.toml', 'gradle/wrapper/gradle-wrapper.properties', 'build-logic/**/*.kt') }}
+          key: gradle-config-cache-export-v2-${{ runner.os }}-${{ hashFiles('**/*.gradle.kts', 'gradle.properties', 'gradle/libs.versions.toml', 'gradle/wrapper/gradle-wrapper.properties', 'build-logic/**/*.kt') }}
 
       - name: Query Browser Cache ID
         id: browser-cache-id
@@ -68,11 +67,9 @@ jobs:
           path: ~/.cache/ms-playwright
           key: "${{ runner.os }}-playwright-${{ steps.browser-cache-id.outputs.value }}"
 
-      - name: Ensure gradle wrapper is executable
-        run: chmod +x gradlew
-
+      # Snapshotting is CPU-bound, and the Kobweb server serving the pages needs a core of its own, so `high` not `max`.
       - name: Run Kobweb export
-        run: ./gradlew kobwebExport -PkobwebExportLayout=STATIC -PkobwebBuildTarget=RELEASE -PkobwebReuseServer=false --stacktrace
+        run: ./gradlew :website:kobwebExport -PkobwebExportLayout=STATIC -PkobwebBuildTarget=RELEASE -PkobwebReuseServer=false -Pkobweb.export.numThreads=high --stacktrace
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
