@@ -1,22 +1,22 @@
 package io.github.ayfri.kore.arguments.numbers.ranges.serializers
 
+import io.github.ayfri.kore.arguments.numbers.ranges.FloatRange
 import io.github.ayfri.kore.arguments.numbers.ranges.FloatRangeOrFloat
-import io.github.ayfri.kore.arguments.numbers.ranges.range
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrDouble
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.nullable
-import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
+import kotlinx.serialization.json.JsonDecoder
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 
 typealias FloatRangeOrFloatJson = @Serializable(with = FloatRangeOrFloatJsonSerializer::class) FloatRangeOrFloat
 
+/** Writes a [FloatRangeOrFloat] as a bare number, or as `{ "min": ..., "max": ... }` with either bound left out when open. */
 data object FloatRangeOrFloatJsonSerializer : KSerializer<FloatRangeOrFloat> {
 	override val descriptor = buildClassSerialDescriptor("FloatRangeOrFloat") {
 		element<Double>("min")
@@ -25,33 +25,25 @@ data object FloatRangeOrFloatJsonSerializer : KSerializer<FloatRangeOrFloat> {
 
 	override fun serialize(encoder: Encoder, value: FloatRangeOrFloat) = when {
 		value.range != null -> encoder.encodeStructure(descriptor) {
-			encodeDoubleElement(descriptor, 0, value.range.start!!)
-			encodeDoubleElement(descriptor, 1, value.range.end!!)
+			value.range.start?.let { encodeDoubleElement(descriptor, 0, it) }
+			value.range.end?.let { encodeDoubleElement(descriptor, 1, it) }
 		}
 
 		else -> encoder.encodeDouble(value.double!!)
 	}
 
-	@OptIn(ExperimentalSerializationApi::class)
-	override fun deserialize(decoder: Decoder) = when {
-		decoder.decodeNullableSerializableValue(Double.serializer().nullable) != null -> {
-			decoder.decodeStructure(descriptor) {
-				var min: Double? = null
-				var max: Double? = null
+	override fun deserialize(decoder: Decoder): FloatRangeOrFloat {
+		val jsonDecoder = decoder as? JsonDecoder ?: error("This serializer can only be used with JSON")
+		return when (val element = jsonDecoder.decodeJsonElement()) {
+			is JsonPrimitive -> rangeOrDouble(element.content.toDouble())
+			is JsonObject -> FloatRangeOrFloat(
+				FloatRange(
+					(element["min"] as? JsonPrimitive)?.content?.toDouble(),
+					(element["max"] as? JsonPrimitive)?.content?.toDouble(),
+				)
+			)
 
-				while (true) {
-					when (val index = decodeElementIndex(descriptor)) {
-						0 -> min = decodeDoubleElement(descriptor, 0)
-						1 -> max = decodeDoubleElement(descriptor, 1)
-						-1 -> break
-						else -> error("Unexpected index: $index")
-					}
-				}
-
-				rangeOrDouble(range(min!!, max!!))
-			}
+			else -> error("Unexpected JSON element: $element")
 		}
-
-		else -> rangeOrDouble(decoder.decodeDouble())
 	}
 }
