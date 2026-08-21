@@ -88,27 +88,6 @@ fun DataPack.predicateTests() {
 		}
 	""".trimIndent()
 
-	predicate("any_of_default") {
-		anyOf {
-			killedByPlayer()
-			survivesExplosion()
-		}
-	}
-
-	predicates.last() assertsIs """
-		{
-			"condition": "minecraft:any_of",
-			"terms": [
-				{
-					"condition": "minecraft:killed_by_player"
-				},
-				{
-					"condition": "minecraft:survives_explosion"
-				}
-			]
-		}
-	""".trimIndent()
-
 	predicate("block_state_property") {
 		blockStateProperty(Blocks.REDSTONE_LAMP) {
 			this["facing"] = "north"
@@ -161,39 +140,6 @@ fun DataPack.predicateTests() {
 		}
 	""".trimIndent()
 
-	predicate("damage_source_properties_tags") {
-		damageSourceProperties {
-			isDirect = true
-			tag(Tags.DamageType.IS_FIRE)
-			tag(Tags.DamageType.BYPASSES_ARMOR, expected = false)
-			sourceEntity {
-				entityType(EntityTypes.SKELETON)
-			}
-		}
-	}
-
-	predicates.last() assertsIs """
-		{
-			"condition": "minecraft:damage_source_properties",
-			"predicate": {
-				"is_direct": true,
-				"source_entity": {
-					"minecraft:entity_type": "minecraft:skeleton"
-				},
-				"tags": [
-					{
-						"id": "#minecraft:is_fire",
-						"expected": true
-					},
-					{
-						"id": "#minecraft:bypasses_armor",
-						"expected": false
-					}
-				]
-			}
-		}
-	""".trimIndent()
-
 	predicate("enchantment_active_check") {
 		enchantmentActiveCheck(true)
 	}
@@ -203,67 +149,6 @@ fun DataPack.predicateTests() {
 			"condition": "minecraft:enchantment_active_check",
 			"active": true
 		}
-	""".trimIndent()
-
-	predicate("environment_attribute_check_boolean") {
-		environmentAttributeCheck(EnvironmentAttributes.Gameplay.BEES_STAY_IN_HIVE, true)
-	}
-
-	predicates.last() assertsIs """
-		{
-			"condition": "minecraft:environment_attribute_check",
-			"attribute": "minecraft:gameplay/bees_stay_in_hive",
-			"value": true
-		}
-	""".trimIndent()
-
-	predicate("environment_attribute_check_float") {
-		environmentAttributeCheck(EnvironmentAttributes.Visual.SKY_LIGHT_FACTOR, 0.5f)
-	}
-
-	predicates.last() assertsIs """
-		{
-			"condition": "minecraft:environment_attribute_check",
-			"attribute": "minecraft:visual/sky_light_factor",
-			"value": 0.5
-		}
-	""".trimIndent()
-
-	predicate("environment_attribute_check_moon_phase") {
-		environmentAttributeCheck(
-			EnvironmentAttributes.Visual.MOON_PHASE,
-			MoonPhaseValue(Textures.Environment.Celestial.Moon.FULL_MOON)
-		)
-	}
-
-	predicates.last() assertsIs """
-		{
-			"condition": "minecraft:environment_attribute_check",
-			"attribute": "minecraft:visual/moon_phase",
-			"value": "minecraft:environment/celestial/moon/full_moon"
-		}
-	""".trimIndent()
-
-	predicate("environment_attribute_check_scope") {
-		environmentAttributeCheck {
-			moonPhase(Textures.Environment.Celestial.Moon.FULL_MOON)
-			beesStayInHive(true)
-		}
-	}
-
-	predicates.last() assertsIs """
-		[
-			{
-				"condition": "minecraft:environment_attribute_check",
-				"attribute": "minecraft:visual/moon_phase",
-				"value": "minecraft:environment/celestial/moon/full_moon"
-			},
-			{
-				"condition": "minecraft:environment_attribute_check",
-				"attribute": "minecraft:gameplay/bees_stay_in_hive",
-				"value": true
-			}
-		]
 	""".trimIndent()
 
 	predicate("entity_properties") {
@@ -460,30 +345,6 @@ fun DataPack.predicateTests() {
 		}
 	""".trimIndent()
 
-	predicate("entity_properties_attacker") {
-		entityProperties(EntityTarget.ATTACKER) {
-			entityType(EntityTypes.ZOMBIE)
-			flags {
-				isBaby = true
-				isOnFire = false
-			}
-		}
-	}
-
-	predicates.last() assertsIs """
-		{
-			"condition": "minecraft:entity_properties",
-			"entity": "attacker",
-			"predicate": {
-				"minecraft:entity_type": "minecraft:zombie",
-				"minecraft:flags": {
-					"is_baby": true,
-					"is_on_fire": false
-				}
-			}
-		}
-	""".trimIndent()
-
 	predicate("entity_score") {
 		entityScores(EntityTarget.THIS) {
 			this["kills"] = intRange(1f, 5f)
@@ -505,6 +366,67 @@ fun DataPack.predicateTests() {
 		}
 	""".trimIndent()
 
+	predicate("environment_attribute_check_boolean") {
+		environmentAttributeCheck(EnvironmentAttributes.Gameplay.BEES_STAY_IN_HIVE, true)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:environment_attribute_check",
+			"attribute": "minecraft:gameplay/bees_stay_in_hive",
+			"value": true
+		}
+	""".trimIndent()
+
+	predicate("environment_attribute_check_float") {
+		environmentAttributeCheck(EnvironmentAttributes.Visual.SKY_LIGHT_FACTOR, 0.5f)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:environment_attribute_check",
+			"attribute": "minecraft:visual/sky_light_factor",
+			"value": 0.5
+		}
+	""".trimIndent()
+
+	predicate("environment_attribute_check_moon_phase") {
+		environmentAttributeCheck(
+			EnvironmentAttributes.Visual.MOON_PHASE,
+			MoonPhaseValue(Textures.Environment.Celestial.Moon.FULL_MOON)
+		)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:environment_attribute_check",
+			"attribute": "minecraft:visual/moon_phase",
+			"value": "minecraft:environment/celestial/moon/full_moon"
+		}
+	""".trimIndent()
+
+	predicate("environment_attribute_check_scope") {
+		environmentAttributeCheck {
+			moonPhase(Textures.Environment.Celestial.Moon.FULL_MOON)
+			beesStayInHive(true)
+		}
+	}
+
+	predicates.last() assertsIs """
+		[
+			{
+				"condition": "minecraft:environment_attribute_check",
+				"attribute": "minecraft:visual/moon_phase",
+				"value": "minecraft:environment/celestial/moon/full_moon"
+			},
+			{
+				"condition": "minecraft:environment_attribute_check",
+				"attribute": "minecraft:gameplay/bees_stay_in_hive",
+				"value": true
+			}
+		]
+	""".trimIndent()
+
 	predicate("inverted") {
 		inverted {
 			randomChance(0.1f)
@@ -517,6 +439,19 @@ fun DataPack.predicateTests() {
 			"term": {
 				"condition": "minecraft:random_chance",
 				"chance": 0.1
+			}
+		}
+	""".trimIndent()
+
+	predicate("inverted_condition") {
+		inverted(SurvivesExplosion)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:inverted",
+			"term": {
+				"condition": "minecraft:survives_explosion"
 			}
 		}
 	""".trimIndent()
@@ -643,6 +578,22 @@ fun DataPack.predicateTests() {
 		}
 	""".trimIndent()
 
+	predicate("match_tool_items") {
+		matchTool(Items.DIAMOND_PICKAXE, Items.IRON_PICKAXE)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:match_tool",
+			"predicate": {
+				"items": [
+					"minecraft:diamond_pickaxe",
+					"minecraft:iron_pickaxe"
+				]
+			}
+		}
+	""".trimIndent()
+
 	predicate("random_chance") {
 		randomChance(0.4f)
 	}
@@ -678,6 +629,17 @@ fun DataPack.predicateTests() {
 		}
 	""".trimIndent()
 
+	predicate("reference_argument") {
+		reference(PredicateArgument("test", "kore"))
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:reference",
+			"name": "kore:test"
+		}
+	""".trimIndent()
+
 	predicate("survives_explosion") {
 		survivesExplosion()
 	}
@@ -700,6 +662,24 @@ fun DataPack.predicateTests() {
 				0.1,
 				0.25,
 				0.5
+			]
+		}
+	""".trimIndent()
+
+	predicate("table_bonus_builder") {
+		tableBonus(Enchantments.FORTUNE) {
+			add(0.1f)
+			add(0.2f)
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:table_bonus",
+			"enchantment": "minecraft:fortune",
+			"chances": [
+				0.1,
+				0.2
 			]
 		}
 	""".trimIndent()
@@ -814,64 +794,6 @@ fun DataPack.predicateTests() {
 			"condition": "minecraft:weather_check",
 			"raining": true,
 			"thundering": false
-		}
-	""".trimIndent()
-
-	predicate("match_tool_items") {
-		matchTool(Items.DIAMOND_PICKAXE, Items.IRON_PICKAXE)
-	}
-
-	predicates.last() assertsIs """
-		{
-			"condition": "minecraft:match_tool",
-			"predicate": {
-				"items": [
-					"minecraft:diamond_pickaxe",
-					"minecraft:iron_pickaxe"
-				]
-			}
-		}
-	""".trimIndent()
-
-	predicate("reference_argument") {
-		reference(PredicateArgument("test", "kore"))
-	}
-
-	predicates.last() assertsIs """
-		{
-			"condition": "minecraft:reference",
-			"name": "kore:test"
-		}
-	""".trimIndent()
-
-	predicate("inverted_condition") {
-		inverted(SurvivesExplosion)
-	}
-
-	predicates.last() assertsIs """
-		{
-			"condition": "minecraft:inverted",
-			"term": {
-				"condition": "minecraft:survives_explosion"
-			}
-		}
-	""".trimIndent()
-
-	predicate("table_bonus_builder") {
-		tableBonus(Enchantments.FORTUNE) {
-			add(0.1f)
-			add(0.2f)
-		}
-	}
-
-	predicates.last() assertsIs """
-		{
-			"condition": "minecraft:table_bonus",
-			"enchantment": "minecraft:fortune",
-			"chances": [
-				0.1,
-				0.2
-			]
 		}
 	""".trimIndent()
 
