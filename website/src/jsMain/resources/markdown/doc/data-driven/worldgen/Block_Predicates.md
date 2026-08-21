@@ -5,7 +5,7 @@ nav-title: Block Predicates
 description: Test blocks during world generation with Kore's block predicate DSL - solid, matching blocks, fluids, biomes, tags and offsets.
 keywords: minecraft, datapack, kore, worldgen, block predicate, placement condition, matching blocks, would survive
 date-created: 2026-08-19
-date-modified: 2026-08-19
+date-modified: 2026-08-21
 routeOverride: /docs/data-driven/worldgen/block-predicates
 ---
 
@@ -143,5 +143,6 @@ blockPredicateFilter {
 
 ## See Also
 
-- [Features](/docs/data-driven/worldgen/features) - Configured and placed features
-- [Worldgen](/docs/data-driven/worldgen) - World generation overview
+- [Features](/docs/data-driven/worldgen/features) - the placement modifiers and providers taking predicates
+- [Structures](/docs/data-driven/worldgen/structures) - the separate rule tests used by processors
+- [World Generation](/docs/data-driven/worldgen) - overview of the worldgen system

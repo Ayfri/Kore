@@ -5,7 +5,7 @@ nav-title: Noise
 description: Shape Minecraft terrain from Kotlin - noise definitions, density functions, noise routers and surface rules, fully type-safe with Kore.
 keywords: minecraft datapack, kore, worldgen, noise settings, density function, noise router, surface rule, terrain generation, perlin noise, octaves
 date-created: 2026-02-03
-date-modified: 2026-08-20
+date-modified: 2026-08-21
 routeOverride: /docs/data-driven/worldgen/noise
 ---
 
@@ -404,78 +404,15 @@ Reference: [Surface rule](https://minecraft.wiki/w/Surface_rule)
 
 ---
 
-## Complete Example
+## Putting It Together
 
-A minimal but working custom dimension, from noise to playable world:
-
-```kotlin
-fun DataPack.createCustomTerrain() {
-	// 1) Noise definition, sampled by the density function below
-	val hills = noise("hills") {
-		firstOctave = -5
-		amplitudes(1.0, 0.5, 0.25)
-	}
-
-	// 2) Density functions shaping the terrain
-	val terrainDensity = with(densityFunctionsBuilder) {
-		val hillsNoise = noise("hills_noise", hills, xzScale = 0.35, yScale = 0.0)
-
-		val gradient = yClampedGradient("height_gradient") {
-			fromY = 0
-			toY = 128
-			fromValue = 1.0
-			toValue = -1.0
-		}
-
-		add("final_density", hillsNoise, gradient)
-	}
-
-	// 3) Noise settings wiring everything together
-	val terrain = noiseSettings("custom_terrain") {
-		seaLevel = 63
-		noiseOptions(minY = -64, height = 384, sizeHorizontal = 1, sizeVertical = 2)
-		defaultBlock(Blocks.STONE)
-		defaultFluid(Blocks.WATER) { this["level"] = "0" }
-
-		noiseRouter {
-			finalDensity(terrainDensity)
-		}
-
-		surfaceRules {
-			condition(stoneDepth(Surface.FLOOR)) {
-				block(Blocks.GRASS_BLOCK)
-			}
-			block(Blocks.STONE)
-		}
-	}
-
-	// 4) Dimension type and dimension
-	val dimType = dimensionType("custom_type") {
-		minY = -64
-		height = 384
-		hasSkylight = true
-	}
-
-	val plains = biome("custom_plains") {
-		temperature = 0.8f
-		downfall = 0.4f
-		hasPrecipitation = true
-	}
-
-	dimension("custom_world", type = dimType) {
-		noiseGenerator(
-			biomeSource = fixed(plains),
-			settings = terrain,
-		)
-	}
-}
-```
-
-Test it in game with `/execute in <namespace>:custom_world run tp @s 0 200 0`.
+The [worldgen overview](/docs/data-driven/worldgen#a-complete-custom-dimension) walks through a noise, its density functions, the noise
+settings wiring them together, and the dimension pointing at the result.
 
 ## See Also
 
-- [Biomes](/docs/data-driven/worldgen/biomes) - Climate, visuals, mob spawns, carvers, and feature lists
-- [Dimensions](/docs/data-driven/worldgen/dimensions) - Dimensions and dimension types referencing noise settings
-- [World Generation](/docs/data-driven/worldgen) - Overview of the worldgen system
-- [World Presets](/docs/data-driven/worldgen/world-presets) - Bundling dimensions into a selectable world type
+- [Biomes](/docs/data-driven/worldgen/biomes) - the biomes a noise generator distributes over the terrain
+- [Carvers](/docs/data-driven/worldgen/carvers) - the caves cut out of the terrain afterwards
+- [Dimensions](/docs/data-driven/worldgen/dimensions) - the dimension pointing at noise settings
+- [Providers](/docs/data-driven/worldgen/providers) - the vertical anchors used by surface rule conditions
+- [World Generation](/docs/data-driven/worldgen) - overview of the worldgen system

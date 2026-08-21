@@ -2,35 +2,18 @@
 root: .components.layouts.MarkdownLayout
 title: Biomes
 nav-title: Biomes
-description: Define biomes with climate, effects, spawns, carvers, and features using Kore's DSL.
-keywords: minecraft, datapack, kore, worldgen, biome, carver, spawner, effects
+description: Define Minecraft biomes with climate, colors, mob spawns, carvers and features using Kore's type-safe Kotlin DSL.
+keywords: minecraft, datapack, kore, worldgen, biome, carver, spawner, biome effects, climate parameters
 date-created: 2026-02-03
-date-modified: 2026-08-17
+date-modified: 2026-08-21
 routeOverride: /docs/data-driven/worldgen/biomes
 ---
 
 # Biomes
 
-Biomes define climate, visuals, mob spawns, carvers, and the placed features list for each decoration step. In Minecraft, biomes control not
-just the terrain appearance but also weather behavior, mob spawning rules, and which features generate.
-
-## How Biomes Work
-
-In the Overworld, biome placement is determined by 6 climate parameters:
-
-- **Temperature** - Controls snow/ice coverage and vegetation types (5 levels from frozen to hot)
-- **Humidity** - Affects vegetation density (5 levels from arid to humid)
-- **Continentalness** - Determines ocean/beach/inland placement
-- **Erosion** - Controls flat vs mountainous terrain (7 levels)
-- **Weirdness** - Triggers biome variants (e.g., Jungle → Bamboo Jungle)
-- **Depth** - Determines surface vs cave biomes
-
-These parameters form a 6D space where each biome occupies defined intervals. The game selects the closest matching biome for any given
-location.
-
-References: [Biome](https://minecraft.wiki/w/Biome), [Biome definition](https://minecraft.wiki/w/Biome_definition)
-
-## Basic Biome
+A biome describes a region of the world: its climate, its colors and sounds, which mobs spawn there, which carvers dig through it and which
+features decorate it. It does not decide where it appears - that is the job of the [biome source](/docs/data-driven/worldgen/dimensions) of
+a dimension.
 
 ```kotlin
 val myBiome = dp.biome("my_biome") {
@@ -41,7 +24,6 @@ val myBiome = dp.biome("my_biome") {
 	attributes {
 		skyColor(0x78A7FF)
 		fogColor(0xC0D8FF)
-		waterFogColor(0x050533)
 	}
 
 	effects {
@@ -50,46 +32,68 @@ val myBiome = dp.biome("my_biome") {
 }
 ```
 
-## Environment Attributes
+References: [Biome](https://minecraft.wiki/w/Biome), [Biome definition](https://minecraft.wiki/w/Biome_definition)
 
-Biome visuals/audio/gameplay are partially controlled by **environment attributes** (`attributes`), a shared system used by both biomes and
-dimension types. See the [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) page for the full list of attributes,
-modifiers, and interpolation rules.
+## Where Biomes Land In The World
+
+The vanilla Overworld places biomes in a 6-dimensional climate space. Each biome claims an interval on every axis, and the game picks the
+closest match for a position. These are the same six parameters a `multiNoise` biome source lists per entry:
+
+| Parameter         | Controls                                                    |
+|-------------------|-------------------------------------------------------------|
+| `temperature`     | Snow and ice coverage, vegetation types                     |
+| `humidity`        | Vegetation density, arid to humid                           |
+| `continentalness` | Ocean, beach or inland                                      |
+| `erosion`         | Flat versus mountainous terrain                             |
+| `weirdness`       | Biome variants, for example Jungle to Bamboo Jungle         |
+| `depth`           | Surface versus cave biome                                   |
+
+The `temperature` and `downfall` fields on the biome itself are a different thing: they drive in-world behavior such as snow instead of
+rain, water freezing, and cauldrons filling.
+
+## Climate Fields
+
+| Field                      | Type      | Default | Effect                                                                       |
+|----------------------------|-----------|---------|------------------------------------------------------------------------------|
+| `temperature`              | `Float`   | `0.8`   | Below `0.15`, precipitation falls as snow and water freezes.                 |
+| `downfall`                 | `Float`   | `0.4`   | Wetness, driving foliage tinting and how fast fire spreads.                  |
+| `hasPrecipitation`         | `Boolean` | `true`  | Whether rain or snow falls at all.                                           |
+| `temperatureModifier`      | enum      | none    | `FROZEN` applies the noise-based warm patches of the frozen ocean.           |
+| `creatureSpawnProbability` | `Float?`  | none    | Chance per chunk for the initial creature spawn during world generation.     |
+
+## Colors And Atmosphere
+
+Two blocks share this job, and the split matters:
+
+- `attributes { }` covers everything the camera sees or hears - sky, fog, particles, music, ambient sounds - plus gameplay rules. It is the
+  same system dimension types use, so a biome value simply overrides the dimension value. See
+  [Environment Attributes](/docs/data-driven/worldgen/environment-attributes).
+- `effects { }` covers the biome-local block and liquid tints, which are not attributes.
 
 ```kotlin
 attributes {
-	// Simple values serialize as a raw JSON value (equivalent to "minecraft:override")
 	skyColor(0x78A7FF)
+	fogColor(0xC0D8FF, EnvironmentAttributeModifier.ADD)
+}
 
-	// Expanded form when a modifier is provided
-	fogColor(0xC0D8FF, AttributeModifier.ADD)
+effects {
+	waterColor = color(0x3F76E4)       // Defaults to the vanilla overworld blue.
+	foliageColor = color(0x59AE30)
+	dryFoliageColor = color(0xA0A04C)
+	grassColor = color(0x79C05A)
+	grassColorModifier = GrassColorModifier.SWAMP
 }
 ```
 
-## Effects
-
-The `effects` block controls biome-specific colors like water/foliage/grass. Visual sky/fog/water fog, particles and sounds are handled by
-`attributes`.
+Colors serialize as decimal integers. `grassColorModifier` applies the vanilla `SWAMP` or `DARK_FOREST` post-processing on top of the
+computed grass color.
 
 Reference: [Biome definition - Effects](https://minecraft.wiki/w/Biome_definition#Effects)
 
-```kotlin
-effects {
-	// Water color (serialized as a decimal int in JSON)
-	waterColor = color(0x3F76E4)
+## Mob Spawns
 
-	// Optional colors
-	foliageColor = color(0x59AE30)
-	grassColor = color(0x79C05A)
-}
-```
-
-## Spawners
-
-Define mob spawn rules per category. Each spawner entry specifies the entity type, spawn weight (relative probability), and count range.
-Higher weights mean more frequent spawns relative to other entries in the same category.
-
-Reference: [Biome definition - Mob spawning](https://minecraft.wiki/w/Biome_definition#Mob_spawning)
+`spawners` declares what may spawn per mob category. Within a category, `weight` is a relative probability against the other entries, and
+`minCount`/`maxCount` bound the size of a spawned group.
 
 ```kotlin
 spawners {
@@ -101,48 +105,42 @@ spawners {
 		spawner(EntityTypes.SKELETON, weight = 80, minCount = 1, maxCount = 2)
 		spawner(EntityTypes.ZOMBIE, weight = 80, minCount = 1, maxCount = 2)
 	}
-	// Other categories: ambient, waterCreature, undergroundWaterCreature, waterAmbient, misc, axolotls
 }
 ```
 
-## Spawn Costs
+Categories: `ambiant`, `axolotl`, `creature`, `monster`, `undergroundWaterCreature`, `waterAmbiant`, `waterCreature`.
 
-Spawn costs control mob density using an energy budget system. Each mob type has an `energyBudget` (max population density) and `charge` (
-cost per mob). This prevents overcrowding while allowing natural mob distribution.
-
-Reference: [Biome definition - Spawn costs](https://minecraft.wiki/w/Biome_definition#Spawn_costs)
+`spawnCosts` caps density with an energy budget instead of a raw count. Each mob spends `charge` from a shared `energyBudget`, so a crowded
+area stops spawning before it becomes a mob farm.
 
 ```kotlin
 spawnCosts {
-	this[EntityTypes.COW] = spawnCost(energyBudget = 1.2f, charge = 0.1f)
-	this[EntityTypes.SHEEP] = spawnCost(energyBudget = 1.0f, charge = 0.08f)
+	spawnCost(EntityTypes.COW, energyBudget = 1.2f, charge = 0.1f)
 }
 ```
 
+References: [Mob spawning](https://minecraft.wiki/w/Biome_definition#Mob_spawning),
+[Spawn costs](https://minecraft.wiki/w/Biome_definition#Spawn_costs)
+
 ## Carvers
 
-Carvers hollow out terrain to create caves and canyons. They run during the `carvers` generation step, after terrain noise but before
-features. The field is a flat list of configured carver IDs, or a single carver tag.
-
-Reference: [Biome definition - Carvers](https://minecraft.wiki/w/Biome_definition)
+`carvers` is a flat list of configured carver IDs, or a single carver tag. They run during the `carvers` step, after the terrain noise and
+before any feature.
 
 ```kotlin
-carvers(myCaveCarver, myCanyonCarver, ConfiguredCarvers.CAVE)
+carvers(myCaveCarver, ConfiguredCarvers.CAVE)
 ```
 
-See [Carvers](/docs/data-driven/worldgen/carvers) for creating configured carvers.
+See [Carvers](/docs/data-driven/worldgen/carvers).
 
 ## Features
 
-Features are attached to biomes via decoration steps. Each step runs in order during chunk generation, with structures placing before
-features within the same step. See the [main worldgen page](/docs/data-driven/worldgen#decoration-steps) for the full
-step list.
-
-Reference: [Biome definition - Features](https://minecraft.wiki/w/Biome_definition#Features)
+`features` lists placed features per [decoration step](/docs/data-driven/worldgen#decoration-steps). Every property is a plain list, and
+leaving one empty simply means nothing of yours generates at that step.
 
 ```kotlin
 features {
-	fluidSprings = listOf(...)
+	fluidSprings = listOf(springPlaced)
 	lakes = listOf(...)
 	localModifications = listOf(...)
 	rawGeneration = listOf(...)
@@ -156,28 +154,18 @@ features {
 }
 ```
 
-See [Features](/docs/data-driven/worldgen/features) for creating configured and placed features.
+See [Features](/docs/data-driven/worldgen/features).
 
----
-
-# Complete Biome Example
+## Complete Example
 
 ```kotlin
-fun DataPack.createHighlandsBiome() {
-	// Create a cave carver (see the Carvers page)
+fun DataPack.highlandsBiome(treePlaced: PlacedFeatureArgument, orePlaced: PlacedFeatureArgument) {
 	val cave = configuredCarversBuilder.cave("highlands_cave") {
 		probability = 0.08
 		y = uniformHeightProvider(absolute(32), absolute(128))
-		yScale = constant(0.5f)
-		verticalRadiusMultiplier = constant(0.7f)
 		floorLevel = constant(-0.2f)
 	}
 
-	// Create placed features (see Features page)
-	val treePlaced = /* ... */
-	val orePlaced = /* ... */
-
-	// Create the biome
 	biome("highlands") {
 		temperature = 0.8f
 		downfall = 0.3f
@@ -200,13 +188,11 @@ fun DataPack.createHighlandsBiome() {
 			}
 			monster {
 				spawner(EntityTypes.SKELETON, 80, 1, 2)
-				spawner(EntityTypes.ZOMBIE, 80, 1, 2)
 			}
 		}
 
 		spawnCosts {
-			this[EntityTypes.COW] = spawnCost(1.2f, 0.1f)
-			this[EntityTypes.SHEEP] = spawnCost(1.0f, 0.08f)
+			spawnCost(EntityTypes.COW, 1.2f, 0.1f)
 		}
 
 		carvers(cave)
@@ -221,9 +207,8 @@ fun DataPack.createHighlandsBiome() {
 
 ## See Also
 
-- [Carvers](/docs/data-driven/worldgen/carvers) - Cave, nether cave, and canyon carvers
-- [Dimensions](/docs/data-driven/worldgen/dimensions) - Dimension types and generators
-- [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) - Full reference for visual, audio, and gameplay attributes
-- [Features](/docs/data-driven/worldgen/features) - Configured and placed features
-- [World Generation](/docs/data-driven/worldgen) - Overview of the worldgen system
-
+- [Carvers](/docs/data-driven/worldgen/carvers) - the caves and canyons a biome runs
+- [Dimensions](/docs/data-driven/worldgen/dimensions) - biome sources placing biomes in a world
+- [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) - the full attribute reference
+- [Features](/docs/data-driven/worldgen/features) - the placed features a biome lists
+- [World Generation](/docs/data-driven/worldgen) - overview of the worldgen system

@@ -2,10 +2,10 @@
 root: .components.layouts.MarkdownLayout
 title: Carvers
 nav-title: Carvers
-description: Create cave, nether cave, and canyon carvers with Kore's type-safe worldgen DSL.
+description: Carve caves, nether caves and canyons into Minecraft terrain with Kore - probability, height, radius and debug settings.
 keywords: minecraft, datapack, kore, worldgen, carver, cave, canyon, ravine
 date-created: 2026-08-17
-date-modified: 2026-08-17
+date-modified: 2026-08-21
 routeOverride: /docs/data-driven/worldgen/carvers
 ---
 
@@ -78,8 +78,8 @@ Every carver type shares these fields:
 | Field         | Type                                 | Default                               | Meaning                                                                          |
 |---------------|--------------------------------------|---------------------------------------|----------------------------------------------------------------------------------|
 | `probability` | `Double` in `[0, 1]`                 | `0.1`                                 | Chance for each chunk to attempt a carve.                                        |
-| `y`           | [Height provider](#height-providers) | `constantAbsolute(0)`                 | Height at which the carve starts.                                                |
-| `yScale`      | [Float provider](#float-providers)   | `constant(1f)`                        | Vertical scaling of the carved shape.                                            |
+| `y`           | [Height provider](#providers)        | `constantAbsolute(0)`                 | Height at which the carve starts.                                                |
+| `yScale`      | [Float provider](#providers)         | `constant(1f)`                        | Vertical scaling of the carved shape.                                            |
 | `lavaLevel`   | Vertical anchor                      | `absolute(-54)`                       | Y level at or below which carved areas fill with lava. Ignored by `nether_cave`. |
 | `replaceable` | Block IDs and block tags             | the carver's vanilla replaceables tag | Blocks the carver is allowed to remove.                                          |
 
@@ -169,57 +169,32 @@ canyon("my_canyon") {
 `airState` replaces carved air, `waterState` replaces water and waterlogs the block, `lavaState` replaces lava, and `barrierState`
 replaces the barrier blocks aquifers generate.
 
-## Height Providers
+## Providers
 
-`lavaLevel` takes a vertical anchor: `absolute(y)`, `aboveBottom(n)`, or `belowTop(n)`. `y` takes a height provider,
-which wraps anchors into a distribution. Both families of builders are scoped to the carver block, so they resolve
-inside `cave { }`, `netherCave { }` and `canyon { }`.
+`lavaLevel` takes a vertical anchor (`absolute(y)`, `aboveBottom(n)`, `belowTop(n)`), `y` takes a height provider wrapping anchors into a
+distribution, and every float field takes a float provider. All three families are scoped to the carver block, so they resolve inside
+`cave { }`, `netherCave { }` and `canyon { }`:
 
 ```kotlin
-constantAbsolute(64)
-constantAboveBottom(8)
-constantBelowTop(16)
-constantHeightProvider(belowTop(16))
-uniformHeightProvider(aboveBottom(8), absolute(180))
-trapezoidHeightProvider(absolute(0), absolute(128), plateau = 32)
-biasedToBottomHeightProvider(aboveBottom(8), absolute(64))
-veryBiasedToBottomHeightProvider(aboveBottom(8), absolute(64))
-weightedListHeightProvider {
-	entry(3, constantAboveBottom(8))
-	entry(1, uniformHeightProvider(absolute(0), absolute(64)))
+cave("my_cave") {
+	y = uniformHeightProvider(aboveBottom(8), absolute(180))
+	lavaLevel = belowTop(10)
+	yScale = uniform(0.1f, 0.9f)
+	floorLevel = constant(-0.2f)
 }
 ```
 
-See [Height providers](/docs/data-driven/worldgen/features#height-providers) for what each distribution does.
-
-## Float Providers
-
-Every float field accepts a provider; `constant` serializes to a bare number.
-
-```kotlin
-constant(0.5f)
-uniform(0.75f, 1.0f)
-trapezoid(0.0f, 6.0f, 2.0f)
-clampedNormal(mean = 0.0f, deviation = 1.0f, min = -1.0f, max = 1.0f)
-```
+See [Providers](/docs/data-driven/worldgen/providers) for the full list of distributions.
 
 ## Using Carvers In A Biome
 
-A biome's `carvers` field is a flat list of configured carver IDs, or a single carver tag.
+A biome's `carvers` field is a flat list of configured carver IDs, or a single carver tag:
 
 ```kotlin
-fun DataPack.carvedBiome() {
-	val cave = configuredCarversBuilder.cave("highlands_cave") {
-		probability = 0.08
-		y = uniformHeightProvider(absolute(32), absolute(128))
-		yScale = constant(0.5f)
-		verticalRadiusMultiplier = constant(0.7f)
-		floorLevel = constant(-0.2f)
-	}
+val cave = configuredCarversBuilder.cave("highlands_cave") { probability = 0.08 }
 
-	biome("highlands") {
-		carvers(cave, ConfiguredCarvers.CANYON)
-	}
+biome("highlands") {
+	carvers(cave, ConfiguredCarvers.CANYON)
 }
 ```
 
@@ -229,12 +204,12 @@ fun DataPack.carvedBiome() {
 }
 ```
 
-`ConfiguredCarvers` lists the vanilla configured carvers: `CANYON`, `CAVE`, `CAVE_EXTRA_UNDERGROUND`, and `NETHER_CAVE`. The field also
+`ConfiguredCarvers` lists the vanilla configured carvers: `CANYON`, `CAVE`, `CAVE_EXTRA_UNDERGROUND` and `NETHER_CAVE`. The field also
 accepts a `ConfiguredCarverTagArgument`, though vanilla ships no carver tag.
 
 ## See Also
 
-- [Biomes](/docs/data-driven/worldgen/biomes) - Climate, effects, spawns, and feature lists
-- [Features](/docs/data-driven/worldgen/features) - Configured and placed features
-- [Noise & Terrain](/docs/data-driven/worldgen/noise) - Terrain shape the carvers cut through
-- [World Generation](/docs/data-driven/worldgen) - Overview of the worldgen system
+- [Biomes](/docs/data-driven/worldgen/biomes) - listing the carvers a biome runs
+- [Noise & Terrain](/docs/data-driven/worldgen/noise) - the terrain shape the carvers cut through
+- [Providers](/docs/data-driven/worldgen/providers) - height and float providers
+- [World Generation](/docs/data-driven/worldgen) - overview of the worldgen system

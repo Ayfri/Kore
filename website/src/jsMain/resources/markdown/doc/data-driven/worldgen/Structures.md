@@ -2,48 +2,40 @@
 root: .components.layouts.MarkdownLayout
 title: Structures
 nav-title: Structures
-description: Create structures with template pools, processors, and structure sets using Kore's DSL.
-keywords: minecraft, datapack, kore, worldgen, structure, template pool, processor, jigsaw
+description: Build Minecraft structures with Kore - configured structures, jigsaw template pools, block processors and structure set placement.
+keywords: minecraft, datapack, kore, worldgen, structure, template pool, processor list, jigsaw, structure set
 date-created: 2026-02-03
-date-modified: 2026-08-17
+date-modified: 2026-08-21
 routeOverride: /docs/data-driven/worldgen/structures
 ---
 
 # Structures
 
-Structures are large, complex generated features like villages, temples, strongholds, and dungeons. Unlike simple features (trees, ores),
-structures can span multiple chunks and consist of interconnected pieces assembled using the **jigsaw system**.
+Structures are the large, hand-authored pieces of the world: villages, temples, strongholds, trial chambers. Unlike a feature, a structure
+can span many chunks and be assembled from separate building blocks, and it starts generating during `structures_starts`, before the terrain
+itself, which is why terrain can adapt around it instead of cutting through it.
 
-## Structure Generation Pipeline
+Four file types work together, from the smallest to the largest scale:
 
-Structure generation involves four interconnected components:
+| File                     | Answers                                                             | Kore API              |
+|--------------------------|---------------------------------------------------------------------|-----------------------|
+| **Processor list**       | How are the blocks of a piece changed as it is placed?              | `processorList(...)`  |
+| **Template pool**        | Which pieces may connect here, and with what weights?               | `templatePool(...)`   |
+| **Configured structure** | What kind of structure is this, in which biomes, at which step?     | `structures { }`      |
+| **Structure set**        | How far apart do instances of it stand across the world?            | `structureSet(...)`   |
 
-1. **Processor list** - Modifies blocks when placing structure pieces (aging, randomization, gravity adjustment)
-2. **Template pool** - Defines weighted collections of structure pieces that can connect via jigsaw blocks
-3. **Configured structure** - Specifies the structure type, starting pool, biome restrictions, and terrain adaptation
-4. **Structure set** - Controls world-scale placement: spacing between structures, clustering, and exclusion zones
+A structure made of a single fixed shape only needs the last two; a jigsaw structure like a village uses all four.
 
-Structures generate during the `structures_starts` step, before terrain features. This allows terrain to adapt around structures rather than
-structures cutting through terrain.
-
-References: [Structure](https://minecraft.wiki/w/Structure), [Structure definition](https://minecraft.wiki/w/Structure_definition), [Structure set](https://minecraft.wiki/w/Structure_set), [Template pool](https://minecraft.wiki/w/Template_pool), [Processor list](https://minecraft.wiki/w/Processor_list)
+References: [Structure](https://minecraft.wiki/w/Structure), [Structure definition](https://minecraft.wiki/w/Structure_definition)
 
 ---
 
 ## Processor List
 
-Processor lists transform blocks when structure pieces are placed. They enable effects like aging (cracked bricks, mossy stone),
-randomization (varied block types), and terrain adaptation (gravity for surface structures).
-
-Reference: [Processor list](https://minecraft.wiki/w/Processor_list)
-
-Processors run in declaration order, each one taking the output of the previous one as its input. `processorList`
-returns a `ProcessorListArgument` you pass to template pool elements.
+Processors transform the blocks of a structure template as it is stamped into the world: aging bricks, randomizing block types, dropping the
+structure onto the terrain. They run in declaration order, each one taking the output of the previous.
 
 ```kotlin
-import io.github.ayfri.kore.features.worldgen.processorlist.processorList
-import io.github.ayfri.kore.features.worldgen.processorlist.types.*
-
 val processors = dp.processorList("my_processors") {
 	blockIgnore(Blocks.STRUCTURE_BLOCK, Blocks.JIGSAW)
 	blockAge(0.5)
@@ -61,38 +53,30 @@ val processors = dp.processorList("my_processors") {
 				{ "Name": "minecraft:jigsaw" }
 			]
 		},
-		{
-			"processor_type": "minecraft:block_age",
-			"mossiness": 0.5
-		},
-		{
-			"processor_type": "minecraft:gravity",
-			"heightmap": "WORLD_SURFACE_WG",
-			"offset": 0
-		}
+		{ "processor_type": "minecraft:block_age", "mossiness": 0.5 },
+		{ "processor_type": "minecraft:gravity", "heightmap": "WORLD_SURFACE_WG", "offset": 0 }
 	]
 }
 ```
 
-### Processors
-
 Every processor is a function scoped to the `processorList { }` block.
 
-| Processor                             | Description                                                            |
+| Processor                             | Effect                                                                 |
 |---------------------------------------|------------------------------------------------------------------------|
 | `blackstoneReplace()`                 | Replaces blocks with their blackstone counterparts, like bastions      |
 | `blockAge(mossiness)`                 | Ages blocks: moss, cracks, and randomly missing blocks                 |
 | `blockIgnore(vararg blocks)`          | Skips those block states, keeping whatever the world already has       |
-| `blockRot(integrity, rottableBlocks)` | Randomly removes blocks, `integrity` is the chance to keep one         |
+| `blockRot(integrity, rottableBlocks)` | Randomly removes blocks, `integrity` being the chance to keep one      |
 | `capped(limit) { }`                   | Runs a single delegate processor on at most `limit` blocks             |
 | `gravity(heightmap, offset)`          | Drops the blocks onto a heightmap so the structure follows the terrain |
 | `jigsawReplacement()`                 | Turns leftover jigsaw blocks into their final state block              |
 | `lavaSubmergedBlock()`                | Fills the positions around blocks placed inside a lava lake with lava  |
 | `nop()`                               | Does nothing, useful as a placeholder delegate                         |
 | `protectedBlocks(vararg blocks)`      | Keeps those world blocks untouched, the template never replaces them   |
-| `rules { }`                           | Replaces blocks using a list of rules, the first matching rule wins    |
+| `rules { }`                           | Replaces blocks using a list of rules, the first matching rule winning |
 
-`limit` accepts a plain `Int` or any int provider, and the delegate cannot be another `capped` processor:
+`limit` accepts a plain `Int` or any [int provider](/docs/data-driven/worldgen/providers#int-providers), and the delegate cannot be another
+`capped` processor:
 
 ```kotlin
 processorList("capped_aging") {
@@ -102,16 +86,18 @@ processorList("capped_aging") {
 }
 ```
 
+Reference: [Processor list](https://minecraft.wiki/w/Processor_list)
+
 ### Rules
 
 A rule replaces a template block by `outputState` when its three predicates pass, and the first matching rule wins.
 
-| Property              | Description                                               | Default      |
+| Property              | Tests or sets                                             | Default      |
 |-----------------------|-----------------------------------------------------------|--------------|
-| `positionPredicate`   | Test on the position inside the structure piece           | `null`       |
-| `inputPredicate`      | Test on the block of the structure template               | `AlwaysTrue` |
-| `locationPredicate`   | Test on the block already in the world at that position   | `AlwaysTrue` |
-| `outputState`         | Block state placed when every predicate passes            | stone        |
+| `positionPredicate`   | The position inside the structure piece                   | `null`       |
+| `inputPredicate`      | The block of the structure template                       | `AlwaysTrue` |
+| `locationPredicate`   | The block already in the world at that position           | `AlwaysTrue` |
+| `outputState`         | The block state placed when every predicate passes        | stone        |
 | `blockEntityModifier` | What happens to the block entity data of the placed block | `null`       |
 
 ```kotlin
@@ -139,50 +125,43 @@ processorList("mossify") {
 }
 ```
 
-Position predicates, scoped to the `rule { }` block:
+**Position predicates**, scoped to `rule { }`:
 
-| Position predicate               | Description                                                      |
+| Builder                          | Passes                                                           |
 |----------------------------------|------------------------------------------------------------------|
-| `alwaysTruePos()`                | Passes everywhere, same as leaving `positionPredicate` to `null` |
-| `linearPos(...)`                 | Chance interpolated with the distance from the piece origin      |
+| `alwaysTruePos()`                | Everywhere, same as leaving `positionPredicate` to `null`        |
+| `linearPos(...)`                 | With a chance interpolated over the distance from the origin     |
 | `axisAlignedLinearPos(axis) { }` | Same, with the distance measured along one axis only             |
 
-Block entity modifiers, also scoped to the `rule { }` block, decide what happens to the block entity data of the
-placed block:
+**Block entity modifiers**, also scoped to `rule { }`:
 
-| Block entity modifier   | Description                                                         |
+| Builder                 | Effect                                                              |
 |-------------------------|---------------------------------------------------------------------|
 | `appendLoot(lootTable)` | Fills the placed container from a loot table                        |
 | `appendStatic { }`      | Merges NBT data into the block entity                               |
 | `clear()`               | Drops the block entity data of the template                         |
 | `passthrough()`         | Keeps it untouched, same as leaving `blockEntityModifier` to `null` |
 
-Rule tests, used by `inputPredicate` and `locationPredicate`, are the shared worldgen ones from
-`io.github.ayfri.kore.features.worldgen.ruletest`. They are scoped to the `rule { }` block, and to the `target { }`
-block of the ore-like configured features:
+**Rule tests**, used by `inputPredicate` and `locationPredicate`. These are the shared worldgen ones from
+`io.github.ayfri.kore.features.worldgen.ruletest`, also available in the `target { }` block of the
+[ore-like features](/docs/data-driven/worldgen/features#ore):
 
-| Rule test                                   | Description                                                         |
-|---------------------------------------------|---------------------------------------------------------------------|
-| `alwaysTrue()`                              | Matches any block, same as leaving the predicate to its default     |
-| `blockMatch(block)`                         | Matches one block, whatever its block state properties are          |
-| `blockStateMatch(blockState)`               | Matches one exact block state, every property having to match       |
-| `randomBlockMatch(block, probability)`      | Matches a block with a probability, clamped between `0.0` and `1.0` |
-| `randomBlockStateMatch(state, probability)` | Matches a block state with a probability                            |
-| `tagMatch(tag)`                             | Matches any block of a block tag                                    |
-
-Group processor lists under a tag with `processorListTag`, see [Tags](/docs/data-driven/tags).
+| Builder                                     | Matches                                                     |
+|---------------------------------------------|-------------------------------------------------------------|
+| `alwaysTrue()`                              | Any block, same as leaving the predicate to its default     |
+| `blockMatch(block)`                         | One block, whatever its block state properties are          |
+| `blockStateMatch(blockState)`               | One exact block state, every property having to match       |
+| `randomBlockMatch(block, probability)`      | A block with a probability, clamped between `0.0` and `1.0` |
+| `randomBlockStateMatch(state, probability)` | A block state with a probability                            |
+| `tagMatch(tag)`                             | Any block of a block tag                                    |
 
 ---
 
 ## Template Pool
 
-Template pools define weighted collections of structure pieces for jigsaw structures. The jigsaw system connects pieces by matching jigsaw
-block names, allowing modular structure assembly. Each pool can reference other pools for recursive generation (e.g., village houses
-connecting to streets connecting to more houses).
-
-Reference: [Template pool](https://minecraft.wiki/w/Template_pool)
-
-Element builders are declared directly inside the `templatePool` block, each one appending a weighted entry to the pool.
+A template pool is a weighted bag of pieces the jigsaw system may pick from. Pieces connect through jigsaw blocks: each one names the pool
+it wants next, so a village street pool can point at a house pool that points back at the street pool, and the structure grows until it hits
+its `size` budget.
 
 ```kotlin
 val pool = dp.templatePool("my_pool") {
@@ -194,21 +173,19 @@ val pool = dp.templatePool("my_pool") {
 }
 ```
 
-`fallback` is the pool used when a piece cannot connect any further, and defaults to `TemplatePools.Empty`.
+`fallback` is the pool used when a piece cannot connect any further - usually `TemplatePools.Empty`, which is also the default.
 
-### Pool Elements
-
-| Builder                              | JSON `element_type`                    | Description                                                  |
+| Builder                              | `element_type`                         | Places                                                       |
 |--------------------------------------|----------------------------------------|--------------------------------------------------------------|
-| `single(location, processors)`       | `minecraft:single_pool_element`        | Places a structure template                                  |
+| `single(location, processors)`       | `minecraft:single_pool_element`        | A structure template                                         |
 | `legacySingle(location, processors)` | `minecraft:legacy_single_pool_element` | Same, but keeps existing world blocks instead of placing air |
-| `feature(feature)`                   | `minecraft:feature_pool_element`       | Places a placed feature in a 1x1x1 piece                     |
-| `list { }`                           | `minecraft:list_pool_element`          | Places several elements at the same position, in order       |
-| `empty()`                            | `minecraft:empty_pool_element`         | Places nothing, useful as filler weight                      |
+| `feature(feature)`                   | `minecraft:feature_pool_element`       | A placed feature, in a 1x1x1 piece                           |
+| `list { }`                           | `minecraft:list_pool_element`          | Several elements at the same position, in order              |
+| `empty()`                            | `minecraft:empty_pool_element`         | Nothing, useful as filler weight                             |
 
-Every builder takes `weight` (1 to 150, defaults to `1`) and `projection` (defaults to `Projection.RIGID`). `processors` defaults to
-`ProcessorLists.EMPTY`. A trailing block gives access to the remaining fields, such as `overrideLiquidSettings` on `single` and
-`legacySingle`.
+Every builder takes `weight` (1 to 150, default `1`) and `projection` (`Projection.RIGID` keeps the original shape, `TERRAIN_MATCHING`
+adapts it to the terrain height; default `RIGID`). `processors` defaults to `ProcessorLists.EMPTY`. A trailing block reaches the remaining
+fields, such as `overrideLiquidSettings` on `single` and `legacySingle`.
 
 ```kotlin
 dp.templatePool("houses") {
@@ -224,83 +201,154 @@ dp.templatePool("houses") {
 }
 ```
 
-`list` blocks contain unweighted elements, since the weight belongs to the list entry itself.
+Elements inside a `list` are unweighted: the weight belongs to the list entry itself.
 
-### Projection Types
-
-| Type               | Description              |
-|--------------------|--------------------------|
-| `RIGID`            | Maintains original shape |
-| `TERRAIN_MATCHING` | Adapts to terrain height |
+Reference: [Template pool](https://minecraft.wiki/w/Template_pool)
 
 ---
 
 ## Configured Structure
 
-Configured structures define the structure type, starting template pool, biome restrictions, generation step, and terrain adaptation
-settings. The structure type determines the generation algorithm (jigsaw assembly, single piece, or specialized logic).
-
-Reference: [Structure definition](https://minecraft.wiki/w/Structure_definition)
+A configured structure picks the generation algorithm and says where it is allowed to appear. Each type is a function on
+`structuresBuilder`, taking the file name first, so one call writes one file:
 
 ```kotlin
 dp.structures {
-	// Use the StructuresBuilder DSL
+	desertPyramid("my_pyramid") {
+		biomes(Biomes.DESERT, Biomes.BADLANDS)
+		terrainAdaptation = TerrainAdaptation.BEARD_BOX
+
+		spawnOverrides {
+			monster(BoundingBox.FULL) {
+				spawner(EntityTypes.HUSK, weight = 1, minCount = 4, maxCount = 4)
+			}
+		}
+	}
 }
 ```
 
+### Shared Fields
+
+| Field               | Type                  | Default                                 | Meaning                                                                         |
+|---------------------|-----------------------|-----------------------------------------|---------------------------------------------------------------------------------|
+| `biomes`            | Biomes or a biome tag | empty, meaning nowhere                  | Biomes the structure start is allowed to land in.                               |
+| `step`              | `GenerationStep`      | the vanilla step of that structure type | Which [decoration step](/docs/data-driven/worldgen#decoration-steps) places it. |
+| `spawnOverrides`    | `SpawnOverrides`      | empty, keeping the biome spawns         | Mob spawn lists replacing the biome ones inside the structure.                  |
+| `terrainAdaptation` | `TerrainAdaptation`   | none                                    | How the terrain reacts around the structure.                                    |
+
+`step` is a constructor parameter as well, so `desertPyramid("x", step = GenerationStep.UNDERGROUND_STRUCTURES)` works too.
+
+`spawnOverrides` takes one block per mob category (`monster`, `creature`, `ambiant`, `axolotl`, `misc`, `waterCreature`, `waterAmbiant`,
+`undergroundWaterCreature`), each with a `BoundingBox`: `FULL` applies to the whole structure, `PIECE` to the individual piece.
+
+| `TerrainAdaptation` | Effect                                                            |
+|---------------------|-------------------------------------------------------------------|
+| `NONE`              | No adaptation, the structure is stamped as-is.                    |
+| `BEARD_THIN`        | Grows terrain under the structure and clears the inside.          |
+| `BEARD_BOX`         | Same, over the full bounding box.                                 |
+| `BURY`              | Grows terrain around the structure so it ends up buried.          |
+| `ENCAPSULATE`       | Same over the full bounding box, used by the trial chambers.      |
+
 ### Structure Types
 
-Common structure types include:
+| Builder                                                | Extra fields                                   |
+|--------------------------------------------------------|------------------------------------------------|
+| `buriedTreasure(...)`                                  | none                                           |
+| `desertPyramid(...)`                                   | none                                           |
+| `endCity(...)`                                         | none                                           |
+| `fortress(...)`                                        | none                                           |
+| `igloo(...)`                                           | none                                           |
+| `jigsaw(..., startPool)`                               | see below                                      |
+| `jungleTemple(...)`                                    | none                                           |
+| `mineshaft(...)`                                       | `type`: `MineshaftType.NORMAL` or `MESA`       |
+| `netherFossil(...)`                                    | `height`: a height provider                    |
+| `oceanMonument(...)`                                   | none                                           |
+| `oceanRuin(..., largeProbability, clusterProbability)` | `biomeTemp`: `BiomeTemperature.COLD` or `WARM` |
+| `ruinedPortal(...)`                                    | `setup(...)` entries, see below                |
+| `shipWreck(...)`                                       | `isBeached`                                    |
+| `stronghold(...)`                                      | none                                           |
+| `swampHut(...)`                                        | none                                           |
+| `woodlandMansion(...)`                                 | none                                           |
 
-- `jigsaw` - Modular structures using template pools
-- `buried_treasure` - Single buried chest
-- `desert_pyramid` - Desert temple
-- `end_city` - End city
-- `fortress` - Nether fortress
-- `igloo` - Igloo with optional basement
-- `jungle_temple` - Jungle temple
-- `mineshaft` - Underground mineshaft
-- `monument` - Ocean monument
-- `nether_fossil` - Nether fossil
-- `ocean_ruin` - Ocean ruins
-- `ruined_portal` - Ruined portal
-- `shipwreck` - Shipwreck
-- `stronghold` - Stronghold
-- `swamp_hut` - Witch hut
-- `woodland_mansion` - Woodland mansion
+Only `jigsaw` builds its shape from data; every other type runs a hardcoded algorithm and only exposes the knobs listed above.
 
-### Terrain Adaptation
+```kotlin
+structures {
+	mineshaft("badlands_mineshaft") {
+		biomes(Tags.Worldgen.Biome.IS_BADLANDS)
+		type = MineshaftType.MESA
+	}
 
-| Value         | Description                                                   |
-|---------------|---------------------------------------------------------------|
-| `NONE`        | No adaptation                                                 |
-| `BEARD_THIN`  | Generates terrain under the structure, removes terrain inside |
-| `BEARD_BOX`   | Advanced alternative of beard_thin                            |
-| `BURY`        | Generates terrain surrounding the structure to make it buried |
-| `ENCAPSULATE` | Advanced alternative of bury (used by Trial Chambers)         |
+	netherFossil("deep_fossil") {
+		biomes(Biomes.SOUL_SAND_VALLEY)
+		height = uniformHeightProvider(aboveBottom(32), belowTop(2))
+	}
 
-### Pool Aliases
+	ruinedPortal("my_ruined_portal") {
+		biomes(Biomes.DESERT)
+		setup(RuinedPortalPlacement.PARTLY_BURIED, mossiness = 0.0f, weight = 1f)
+		setup(RuinedPortalPlacement.ON_LAND_SURFACE, overgrown = true, vines = true, weight = 0.5f)
+	}
 
-Pool aliases rewire jigsaw pool connections by redirecting pool references on individual structure instances.
+	oceanRuin("my_ocean_ruin", largeProbability = 0.4f, clusterProbability = 0.8f) {
+		biomes(Biomes.WARM_OCEAN)
+		biomeTemp = BiomeTemperature.WARM
+	}
+}
+```
+
+### Jigsaw
+
+```kotlin
+structures {
+	jigsaw("my_village", startPool = villageStart) {
+		biomes(Biomes.PLAINS)
+		step = GenerationStep.SURFACE_STRUCTURES
+		terrainAdaptation = TerrainAdaptation.BEARD_THIN
+		size = 6
+		startHeight = constantAbsolute(0)
+		projectStartToHeightmap = HeightMap.WORLD_SURFACE_WG
+		maxDistanceFromCenter(80)
+	}
+}
+```
+
+| Field                     | Default               | Meaning                                                                                |
+|---------------------------|-----------------------|----------------------------------------------------------------------------------------|
+| `startPool`               | mandatory             | The template pool the first piece is drawn from.                                       |
+| `size`                    | `0`                   | How many times pieces may branch out from the start piece.                             |
+| `startHeight`             | `constantAbsolute(0)` | Height provider for the start piece.                                                   |
+| `startJigsawName`         | none                  | Only connect through jigsaw blocks carrying this name.                                 |
+| `projectStartToHeightmap` | none                  | Snaps the start piece onto a heightmap instead of using `startHeight`.                 |
+| `maxDistanceFromCenter`   | `80`                  | Radius in blocks the structure may not grow past, up to `128`.                         |
+| `dimensionPadding`        | none                  | Blocks kept free above and below the structure, `dimensionPadding(top, bottom)`.       |
+| `liquidSettings`          | none                  | Whether pieces waterlog, `LiquidSettings.APPLY_WATERLOGGING` or `IGNORE_WATERLOGGING`. |
+| `useExpansionHack`        | `false`               | The legacy village terrain hack, raising pieces above the ground.                      |
+| `poolAliases`             | none                  | Per-instance pool rewiring, see below.                                                 |
+
+`dimensionPadding(value)` and `maxDistanceFromCenter(value)` are functions, taking one value for both directions or two for each.
+
+#### Pool Aliases
+
+Pool aliases rewire which pool an alias resolves to, per structure instance. That is how a single jigsaw structure can produce differently
+themed variants without duplicating every pool.
 
 ```kotlin
 poolAliases {
-	// Direct: rewire alias to a specific target
-	directPoolAlias(TemplatePools.Empty, TemplatePools.Empty)
+	// Always resolve this alias to that pool.
+	directPoolAlias(TemplatePools.Empty, housesPool)
 
-	// Random: rewire alias to a randomly selected weighted target
+	// Draw the target from a weighted list, per instance.
 	randomPoolAlias(TemplatePools.Empty) {
-		weightedPoolEntry(1, myPool)
-		weightedPoolEntry(2, otherPool)
+		weightedPoolEntry(1, desertHouses)
+		weightedPoolEntry(2, plainsHouses)
 	}
 
-	// Random group: select a weighted group of pool aliases
+	// Draw a whole group of aliases at once, keeping a variant coherent.
 	randomGroupPoolAlias {
 		weightedGroupEntry(1) {
-			directPoolAlias(TemplatePools.Empty, myPool)
-			randomPoolAlias(TemplatePools.Empty) {
-				weightedPoolEntry(1, otherPool)
-			}
+			directPoolAlias(TemplatePools.Empty, desertHouses)
+			directPoolAlias(TemplatePools.Empty, desertStreets)
 		}
 	}
 }
@@ -310,93 +358,75 @@ poolAliases {
 
 ## Structure Set
 
-Structure sets control world-scale placement using a grid-based system. **Spacing** defines the grid cell size (average distance), while *
-*separation** ensures minimum distance between structures. Multiple structures can share a set with weights for mutual exclusion (only one
-generates per cell).
+A structure set decides how instances spread over the world. Several structures can share a set, in which case the weights make them
+mutually exclusive: only one generates per grid cell.
+
+```kotlin
+val villages = dp.structureSet("custom_villages") {
+	structure(ConfiguredStructures.VILLAGE_PLAINS, weight = 3)
+	structure(ConfiguredStructures.VILLAGE_DESERT, weight = 1)
+
+	randomSpreadPlacement(spacing = 34, separation = 8) {
+		salt = 10387312
+		spreadType = SpreadType.LINEAR
+	}
+}
+```
+
+Every configured structure builder returns a `ConfiguredStructureArgument`, which is exactly what `structure()` takes, so a set mixes your
+own structures and the vanilla ones from the generated `ConfiguredStructures` object:
+
+```kotlin
+val myPyramid = dp.structuresBuilder.desertPyramid("my_pyramid") {
+	biomes(Biomes.DESERT)
+}
+
+dp.structureSet("my_pyramids") {
+	structure(myPyramid, weight = 2)
+	randomSpreadPlacement(spacing = 32, separation = 8)
+}
+```
+
+### Placement
+
+Two placement types exist, and a set has exactly one. Without a call to either, it uses an empty random spread.
+
+**`randomSpreadPlacement(spreadType, spacing, separation)`** is the common one. The world is cut into a grid of `spacing` chunks; each cell
+gets at most one structure, placed at random inside it, never closer than `separation` chunks to the cell edge. `separation` must stay below
+`spacing`, and the closer the two, the more regular the layout. `SpreadType.LINEAR` picks the position uniformly, `TRIANGULAR` biases it
+towards the cell center.
+
+**`concentricRingsPlacement(distance, spread, count)`** places structures in rings around the world origin, the way strongholds do:
+`distance` chunks to the first ring, `spread` chunks of jitter, `count` structures in total. `preferredBiomes(...)` restricts where within a
+ring a structure may land.
+
+Both share these fields, set inside the trailing block:
+
+| Field                      | Meaning                                                                                      |
+|----------------------------|----------------------------------------------------------------------------------------------|
+| `salt`                     | Seed modifier keeping different sets from aligning their grids. Random unless you set it.    |
+| `frequency`                | Fraction of eligible cells actually generating a structure, from `0.0` to `1.0`.             |
+| `frequencyReductionMethod` | How `frequency` is applied: `DEFAULT`, or one of the three `LEGACY_TYPE_*` vanilla variants. |
+| `exclusionZone(set, n)`    | Skips a placement within `n` chunks of a structure of another set.                           |
+| `locateOffset`             | Offset applied to what `/locate` reports, as `listOf(x, y, z)`.                              |
+
+```kotlin
+dp.structureSet("my_strongholds") {
+	structure(ConfiguredStructures.STRONGHOLD)
+
+	concentricRingsPlacement(distance = 32, spread = 3, count = 128) {
+		preferredBiomes(Biomes.PLAINS, Biomes.FOREST)
+		exclusionZone(villages, chunkCount = 5)
+	}
+}
+```
 
 Reference: [Structure set](https://minecraft.wiki/w/Structure_set)
 
-```kotlin
-val structSet = dp.structureSet("my_structures") {
-	structure(myConfiguredStructure, weight = 1)
+## See Also
 
-	// Placement type
-	randomSpreadPlacement(spacing = 32, separation = 8) {
-		// Optional: salt, spreadType, etc.
-	}
-}
-```
-
-### Placement Types
-
-#### Random Spread
-
-The most common placement type. Divides the world into a grid where each cell may contain one structure at a random position. The `salt`
-value ensures different structure sets don't align their grids.
-
-```kotlin
-randomSpreadPlacement(
-	spacing = 32,      // Average distance between structures
-	separation = 8     // Minimum distance between structures
-) {
-	salt = 12345       // Seed modifier for randomization
-	spreadType = SpreadType.LINEAR // or TRIANGULAR
-}
-```
-
-#### Concentric Rings
-
-Places structures in expanding rings around the world origin. Used by strongholds to ensure they're distributed at increasing distances from
-spawn.
-
-Reference: [Structure set - Concentric rings](https://minecraft.wiki/w/Structure_set#concentric_rings)
-
-```kotlin
-concentricRingsPlacement(
-	distance = 32,
-	spread = 3,
-	count = 128
-)
-```
-
----
-
-## Complete Example
-
-```kotlin
-fun DataPack.createCustomVillage() {
-	// 1) Processor list for aging blocks
-	val villageProcessors = processorList("village_processors") {
-		blockAge(0.3)
-		gravity(HeightMap.WORLD_SURFACE_WG)
-	}
-
-	// 2) Template pool for houses
-	val housesPool = templatePool("village/houses") {
-		fallback = TemplatePools.Empty
-
-		single(StructureArgument("village/house_small", "my_pack"), villageProcessors, weight = 3)
-		single(StructureArgument("village/house_large", "my_pack"), villageProcessors, weight = 1)
-	}
-
-	// 3) Start pool (village center)
-	val startPool = templatePool("village/start") {
-		fallback = TemplatePools.Empty
-
-		single(StructureArgument("village/center", "my_pack"), villageProcessors)
-	}
-
-	// 4) Configured structure (via structures builder)
-	structures {
-		// Define jigsaw structure referencing startPool
-	}
-
-	// 5) Structure set for placement
-	structureSet("custom_villages") {
-		// structure(customVillage, weight = 1)
-		randomSpreadPlacement(spacing = 34, separation = 8) {
-			salt = 10387312
-		}
-	}
-}
-```
+- [Biomes](/docs/data-driven/worldgen/biomes) - the biomes a structure restricts itself to
+- [Features](/docs/data-driven/worldgen/features) - the smaller decorations placed alongside structures
+- [Providers](/docs/data-driven/worldgen/providers) - height and int providers used by jigsaw and processors
+- [Tags](/docs/data-driven/tags) - grouping processor lists, template pools and structures
+- [World Generation](/docs/data-driven/worldgen) - overview of the worldgen system

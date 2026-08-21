@@ -268,7 +268,7 @@ dataPack.dimensionType("twilight_dimension") {
 }
 ```
 
-See [World Generation](/docs/data-driven/worldgen) for the full `DimensionType` reference.
+See [Dimensions](/docs/data-driven/worldgen/dimensions) for the full `DimensionType` reference.
 
 ---
 
@@ -336,7 +336,7 @@ dataPack("my_mod") {
 
 - [Timelines](/docs/data-driven/timelines) - detailed track, keyframe, and easing reference
 - [Predicates](/docs/data-driven/predicates) - all available predicate conditions including `timeCheck`
-- [World Generation](/docs/data-driven/worldgen) - `DimensionType` and other worldgen resources
+- [Dimensions](/docs/data-driven/worldgen/dimensions) - `DimensionType` and the dimensions using a clock
 - [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) - attributes available in timeline tracks
 
 ### External Resources
