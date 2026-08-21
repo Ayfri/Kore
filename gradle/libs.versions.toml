@@ -2,7 +2,7 @@
 jetbrains-compose = "1.11.1"
 joml = "1.10.8"
 knbt = "0.11.9"
-kobweb = "0.25.0"
+kobweb = "0.25.1"
 kompress = "2.3.1"
 kotest = "6.2.3"
 kotlin = "2.4.0"
