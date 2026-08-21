@@ -108,7 +108,7 @@ spawners {
 }
 ```
 
-Categories: `ambiant`, `axolotl`, `creature`, `monster`, `undergroundWaterCreature`, `waterAmbiant`, `waterCreature`.
+Categories: `ambient`, `axolotls`, `creature`, `monster`, `undergroundWaterCreature`, `waterAmbient`, `waterCreature`.
 
 `spawnCosts` caps density with an energy budget instead of a raw count. Each mob spends `charge` from a shared `energyBudget`, so a crowded
 area stops spawning before it becomes a mob farm.

@@ -133,9 +133,21 @@ fun DataPack.biomeTests() {
 		}
 
 		spawners {
+			ambient {
+				spawner(EntityTypes.BAT, weight = 10, minCount = 8, maxCount = 8)
+			}
+			axolotls {
+				spawner(EntityTypes.AXOLOTL, weight = 10, minCount = 4, maxCount = 6)
+			}
 			monster {
 				spawner(EntityTypes.ZOMBIE, weight = 100, minCount = 4, maxCount = 4)
 				spawner(EntityTypes.SKELETON, weight = 100, minCount = 4, maxCount = 4)
+			}
+			undergroundWaterCreature {
+				spawner(EntityTypes.GLOW_SQUID, weight = 10, minCount = 4, maxCount = 6)
+			}
+			waterAmbient {
+				spawner(EntityTypes.COD, weight = 10, minCount = 3, maxCount = 6)
 			}
 			waterCreature {
 				spawner(EntityTypes.SQUID, weight = 10, minCount = 1, maxCount = 4)
@@ -170,6 +182,22 @@ fun DataPack.biomeTests() {
 				"grass_color_modifier": "swamp"
 			},
 			"spawners": {
+				"ambient": [
+					{
+						"type": "minecraft:bat",
+						"weight": 10,
+						"minCount": 8,
+						"maxCount": 8
+					}
+				],
+				"axolotls": [
+					{
+						"type": "minecraft:axolotl",
+						"weight": 10,
+						"minCount": 4,
+						"maxCount": 6
+					}
+				],
 				"monster": [
 					{
 						"type": "minecraft:zombie",
@@ -182,6 +210,22 @@ fun DataPack.biomeTests() {
 						"weight": 100,
 						"minCount": 4,
 						"maxCount": 4
+					}
+				],
+				"underground_water_creature": [
+					{
+						"type": "minecraft:glow_squid",
+						"weight": 10,
+						"minCount": 4,
+						"maxCount": 6
+					}
+				],
+				"water_ambient": [
+					{
+						"type": "minecraft:cod",
+						"weight": 10,
+						"minCount": 3,
+						"maxCount": 6
 					}
 				],
 				"water_creature": [
