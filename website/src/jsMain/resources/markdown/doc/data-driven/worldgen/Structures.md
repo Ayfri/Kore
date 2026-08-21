@@ -209,8 +209,8 @@ Reference: [Template pool](https://minecraft.wiki/w/Template_pool)
 
 ## Configured Structure
 
-A configured structure picks the generation algorithm and says where it is allowed to appear. Each type is a function on
-`structuresBuilder`, taking the file name first, so one call writes one file:
+A configured structure picks the generation algorithm and says where it is allowed to appear. Each type is a function on the
+`structures { }` scope, taking the file name first and everything else in a trailing block, so one call writes one file:
 
 ```kotlin
 dp.structures {
@@ -227,6 +227,9 @@ dp.structures {
 }
 ```
 
+`dp.structuresBuilder.desertPyramid(...)` writes the same file outside a `structures { }` block, and `dp.structure(fileName, type)`
+takes an already built type, for the rare case where the generator itself needs tweaking, such as overriding its namespace.
+
 ### Shared Fields
 
 | Field               | Type                  | Default                                 | Meaning                                                                         |
@@ -236,10 +239,25 @@ dp.structures {
 | `spawnOverrides`    | `SpawnOverrides`      | empty, keeping the biome spawns         | Mob spawn lists replacing the biome ones inside the structure.                  |
 | `terrainAdaptation` | `TerrainAdaptation`   | none                                    | How the terrain reacts around the structure.                                    |
 
-`step` is a constructor parameter as well, so `desertPyramid("x", step = GenerationStep.UNDERGROUND_STRUCTURES)` works too.
+Every type defaults `step` to the step its vanilla counterpart uses, so it only needs setting when a structure should generate at another
+point of the world generation.
 
-`spawnOverrides` takes one block per mob category (`monster`, `creature`, `ambiant`, `axolotl`, `misc`, `waterCreature`, `waterAmbiant`,
-`undergroundWaterCreature`), each with a `BoundingBox`: `FULL` applies to the whole structure, `PIECE` to the individual piece.
+`spawnOverrides` takes one block per mob category (`ambient`, `axolotls`, `creature`, `misc`, `monster`, `undergroundWaterCreature`,
+`waterAmbient`, `waterCreature`), each with a `BoundingBox`: `FULL` applies to the whole structure, `PIECE` to the individual piece and is
+the default. A category left out keeps the biome spawns, while a category declared with an empty block stops it from spawning inside the
+structure entirely:
+
+```kotlin
+spawnOverrides {
+	// No monster ever spawns inside the mansion, whatever the biome says.
+	monster(BoundingBox.PIECE)
+
+	// Guardians spawn anywhere inside the monument, on top of the biome spawns being dropped.
+	waterCreature(BoundingBox.FULL) {
+		spawner(EntityTypes.GUARDIAN, weight = 20, minCount = 2, maxCount = 4)
+	}
+}
+```
 
 | `TerrainAdaptation` | Effect                                                            |
 |---------------------|-------------------------------------------------------------------|
@@ -251,24 +269,24 @@ dp.structures {
 
 ### Structure Types
 
-| Builder                                                | Extra fields                                   |
-|--------------------------------------------------------|------------------------------------------------|
-| `buriedTreasure(...)`                                  | none                                           |
-| `desertPyramid(...)`                                   | none                                           |
-| `endCity(...)`                                         | none                                           |
-| `fortress(...)`                                        | none                                           |
-| `igloo(...)`                                           | none                                           |
-| `jigsaw(..., startPool)`                               | see below                                      |
-| `jungleTemple(...)`                                    | none                                           |
-| `mineshaft(...)`                                       | `type`: `MineshaftType.NORMAL` or `MESA`       |
-| `netherFossil(...)`                                    | `height`: a height provider                    |
-| `oceanMonument(...)`                                   | none                                           |
-| `oceanRuin(..., largeProbability, clusterProbability)` | `biomeTemp`: `BiomeTemperature.COLD` or `WARM` |
-| `ruinedPortal(...)`                                    | `setup(...)` entries, see below                |
-| `shipWreck(...)`                                       | `isBeached`                                    |
-| `stronghold(...)`                                      | none                                           |
-| `swampHut(...)`                                        | none                                           |
-| `woodlandMansion(...)`                                 | none                                           |
+| Builder                  | Default `step`           | Extra fields                                                                             |
+|--------------------------|--------------------------|------------------------------------------------------------------------------------------|
+| `buriedTreasure(...)`    | `underground_structures` | none                                                                                     |
+| `desertPyramid(...)`     | `surface_structures`     | none                                                                                     |
+| `endCity(...)`           | `surface_structures`     | none                                                                                     |
+| `fortress(...)`          | `underground_decoration` | none                                                                                     |
+| `igloo(...)`             | `surface_structures`     | none                                                                                     |
+| `jigsaw(..., startPool)` | `surface_structures`     | see below                                                                                |
+| `jungleTemple(...)`      | `surface_structures`     | none                                                                                     |
+| `mineshaft(...)`         | `underground_structures` | `mineshaftType`: `MineshaftType.NORMAL` or `MESA`                                        |
+| `netherFossil(...)`      | `underground_decoration` | `height`: a height provider                                                              |
+| `oceanMonument(...)`     | `surface_structures`     | none                                                                                     |
+| `oceanRuin(...)`         | `surface_structures`     | `biomeTemp`: `BiomeTemperature.COLD` or `WARM`, `largeProbability`, `clusterProbability` |
+| `ruinedPortal(...)`      | `surface_structures`     | `setup(...)` entries, see below                                                          |
+| `shipwreck(...)`         | `surface_structures`     | `isBeached`                                                                              |
+| `stronghold(...)`        | `surface_structures`     | none                                                                                     |
+| `swampHut(...)`          | `surface_structures`     | none                                                                                     |
+| `woodlandMansion(...)`   | `surface_structures`     | none                                                                                     |
 
 Only `jigsaw` builds its shape from data; every other type runs a hardcoded algorithm and only exposes the knobs listed above.
 
@@ -276,7 +294,7 @@ Only `jigsaw` builds its shape from data; every other type runs a hardcoded algo
 structures {
 	mineshaft("badlands_mineshaft") {
 		biomes(Tags.Worldgen.Biome.IS_BADLANDS)
-		type = MineshaftType.MESA
+		mineshaftType = MineshaftType.MESA
 	}
 
 	netherFossil("deep_fossil") {
@@ -290,12 +308,17 @@ structures {
 		setup(RuinedPortalPlacement.ON_LAND_SURFACE, overgrown = true, vines = true, weight = 0.5f)
 	}
 
-	oceanRuin("my_ocean_ruin", largeProbability = 0.4f, clusterProbability = 0.8f) {
+	oceanRuin("my_ocean_ruin") {
 		biomes(Biomes.WARM_OCEAN)
 		biomeTemp = BiomeTemperature.WARM
+		largeProbability = 0.4f
+		clusterProbability = 0.8f
 	}
 }
 ```
+
+A `ruinedPortal` needs at least one `setup`: it is the weighted list one variant is drawn from per instance, and vanilla rejects the
+structure when it is empty.
 
 ### Jigsaw
 
@@ -303,7 +326,6 @@ structures {
 structures {
 	jigsaw("my_village", startPool = villageStart) {
 		biomes(Biomes.PLAINS)
-		step = GenerationStep.SURFACE_STRUCTURES
 		terrainAdaptation = TerrainAdaptation.BEARD_THIN
 		size = 6
 		startHeight = constantAbsolute(0)
@@ -320,13 +342,14 @@ structures {
 | `startHeight`             | `constantAbsolute(0)` | Height provider for the start piece.                                                   |
 | `startJigsawName`         | none                  | Only connect through jigsaw blocks carrying this name.                                 |
 | `projectStartToHeightmap` | none                  | Snaps the start piece onto a heightmap instead of using `startHeight`.                 |
-| `maxDistanceFromCenter`   | `80`                  | Radius in blocks the structure may not grow past, up to `128`.                         |
+| `maxDistanceFromCenter`   | `80`                  | Radius in blocks the structure may not grow past, up to `128` horizontally.            |
 | `dimensionPadding`        | none                  | Blocks kept free above and below the structure, `dimensionPadding(top, bottom)`.       |
 | `liquidSettings`          | none                  | Whether pieces waterlog, `LiquidSettings.APPLY_WATERLOGGING` or `IGNORE_WATERLOGGING`. |
 | `useExpansionHack`        | `false`               | The legacy village terrain hack, raising pieces above the ground.                      |
 | `poolAliases`             | none                  | Per-instance pool rewiring, see below.                                                 |
 
-`dimensionPadding(value)` and `maxDistanceFromCenter(value)` are functions, taking one value for both directions or two for each.
+`dimensionPadding(value)` and `maxDistanceFromCenter(value)` are functions, taking one value for both directions or two for each. Given one
+value, they write a bare number instead of an object.
 
 #### Pool Aliases
 

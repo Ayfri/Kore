@@ -11,16 +11,17 @@ import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
 /**
- * Places a fossil made of bone blocks, the structure used in the soul sand valleys.
+ * Places a fossil made of bone blocks, the structure found in the soul sand valleys.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/structures
  * Minecraft Wiki: https://minecraft.wiki/w/Structure_definition
  *
- * @property height The Y level the fossil is generated at.
+ * @property height The Y level the fossil is generated at, drawn again for every instance.
  */
 @Serializable
 data class NetherFossil(
 	override var biomes: InlinableList<BiomeOrTagArgument> = emptyList(),
-	override var step: GenerationStep,
+	override var step: GenerationStep = GenerationStep.UNDERGROUND_DECORATION,
 	override var spawnOverrides: SpawnOverrides = SpawnOverrides(),
 	override var terrainAdaptation: TerrainAdaptation? = null,
 	var height: HeightProvider = ConstantHeightProvider(Absolute(0)),
@@ -34,21 +35,18 @@ data class NetherFossil(
  * ```kotlin
  * structures {
  *     netherFossil("my_fossil") {
+ *         biomes(Biomes.SOUL_SAND_VALLEY)
  *         height = uniformHeightProvider(aboveBottom(32), belowTop(2))
  *     }
  * }
  * ```
  *
- * Produces `data/<namespace>/worldgen/structure/<filename>.json`.
+ * Produces `data/<namespace>/worldgen/structure/<fileName>.json`.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/structures
  * Minecraft Wiki: https://minecraft.wiki/w/Structure_definition
  */
-fun StructuresBuilder.netherFossil(
-	filename: String = "nether_fossil",
-	step: GenerationStep = GenerationStep.UNDERGROUND_DECORATION,
+fun StructuresScope.netherFossil(
+	fileName: String = "nether_fossil",
 	init: NetherFossil.() -> Unit = {},
-): ConfiguredStructureArgument {
-	val netherFossil = NetherFossil(step = step).apply(init)
-	dp.structures += Structure(filename, netherFossil)
-	return ConfiguredStructureArgument(filename, netherFossil.namespace ?: dp.name)
-}
+): ConfiguredStructureArgument = dp.structure(fileName, NetherFossil().apply(init))
