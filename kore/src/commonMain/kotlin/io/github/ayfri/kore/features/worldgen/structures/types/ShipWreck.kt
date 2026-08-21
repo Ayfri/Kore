@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.worldgen.structures.types
 
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -19,8 +19,8 @@ fun StructuresBuilder.shipWreck(
 	filename: String = "shipwreck",
 	step: GenerationStep = GenerationStep.SURFACE_STRUCTURES,
 	init: ShipWreck.() -> Unit = {},
-): StructureArgument {
+): ConfiguredStructureArgument {
 	val shipWreck = ShipWreck(step = step).apply(init)
 	dp.structures += Structure(filename, shipWreck)
-	return StructureArgument(filename, shipWreck.namespace ?: dp.name)
+	return ConfiguredStructureArgument(filename, shipWreck.namespace ?: dp.name)
 }

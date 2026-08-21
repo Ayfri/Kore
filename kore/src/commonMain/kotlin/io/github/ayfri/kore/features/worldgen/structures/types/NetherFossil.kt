@@ -6,7 +6,7 @@ import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProviderScop
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.features.worldgen.verticalanchors.Absolute
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -47,8 +47,8 @@ fun StructuresBuilder.netherFossil(
 	filename: String = "nether_fossil",
 	step: GenerationStep = GenerationStep.UNDERGROUND_DECORATION,
 	init: NetherFossil.() -> Unit = {},
-): StructureArgument {
+): ConfiguredStructureArgument {
 	val netherFossil = NetherFossil(step = step).apply(init)
 	dp.structures += Structure(filename, netherFossil)
-	return StructureArgument(filename, netherFossil.namespace ?: dp.name)
+	return ConfiguredStructureArgument(filename, netherFossil.namespace ?: dp.name)
 }

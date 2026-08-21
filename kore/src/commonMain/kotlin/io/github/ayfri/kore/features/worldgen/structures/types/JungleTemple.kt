@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.worldgen.structures.types
 
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -18,8 +18,8 @@ fun StructuresBuilder.jungleTemple(
 	filename: String = "jungle_temple",
 	step: GenerationStep = GenerationStep.SURFACE_STRUCTURES,
 	init: JungleTemple.() -> Unit = {},
-): StructureArgument {
+): ConfiguredStructureArgument {
 	val jungleTemple = JungleTemple(step = step).apply(init)
 	dp.structures += Structure(filename, jungleTemple)
-	return StructureArgument(filename, jungleTemple.namespace ?: dp.name)
+	return ConfiguredStructureArgument(filename, jungleTemple.namespace ?: dp.name)
 }

@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.worldgen.structures.types
 
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -19,8 +19,8 @@ fun StructuresBuilder.mineshaft(
 	filename: String = "mineshaft",
 	step: GenerationStep = GenerationStep.UNDERGROUND_STRUCTURES,
 	init: Mineshaft.() -> Unit = {},
-): StructureArgument {
+): ConfiguredStructureArgument {
 	val mineshaft = Mineshaft(step = step).apply(init)
 	dp.structures += Structure(filename, mineshaft)
-	return StructureArgument(filename, mineshaft.namespace ?: dp.name)
+	return ConfiguredStructureArgument(filename, mineshaft.namespace ?: dp.name)
 }

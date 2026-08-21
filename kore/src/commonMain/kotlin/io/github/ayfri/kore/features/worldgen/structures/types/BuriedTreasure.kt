@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.worldgen.structures.types
 
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -18,8 +18,8 @@ fun StructuresBuilder.buriedTreasure(
 	fileName: String = "buried_treasure",
 	step: GenerationStep = GenerationStep.UNDERGROUND_STRUCTURES,
 	init: BuriedTreasure.() -> Unit = {},
-): StructureArgument {
+): ConfiguredStructureArgument {
 	val buriedTreasure = BuriedTreasure(step = step).apply(init)
 	dp.structures += Structure(fileName, buriedTreasure)
-	return StructureArgument(fileName, buriedTreasure.namespace ?: dp.name)
+	return ConfiguredStructureArgument(fileName, buriedTreasure.namespace ?: dp.name)
 }

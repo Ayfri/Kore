@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.worldgen.structures.types
 
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -31,10 +31,10 @@ fun StructuresBuilder.ruinedPortal(
 	filename: String = "ruined_portal",
 	step: GenerationStep = GenerationStep.SURFACE_STRUCTURES,
 	init: RuinedPortal.() -> Unit = {},
-): StructureArgument {
+): ConfiguredStructureArgument {
 	val ruinedPortal = RuinedPortal(step = step).apply(init)
 	dp.structures += Structure(filename, ruinedPortal)
-	return StructureArgument(filename, ruinedPortal.namespace ?: dp.name)
+	return ConfiguredStructureArgument(filename, ruinedPortal.namespace ?: dp.name)
 }
 
 fun RuinedPortal.setup(

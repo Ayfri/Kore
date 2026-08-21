@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.worldgen.structures.types
 
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -23,8 +23,8 @@ fun StructuresBuilder.oceanRuin(
 	largeProbability: Float = 0.3f,
 	clusterProbability: Float = 0.9f,
 	init: OceanRuin.() -> Unit = {},
-): StructureArgument {
+): ConfiguredStructureArgument {
 	val oceanRuin = OceanRuin(step = step, largeProbability = largeProbability, clusterProbability = clusterProbability).apply(init)
 	dp.structures += Structure(filename, oceanRuin)
-	return StructureArgument(filename, oceanRuin.namespace ?: dp.name)
+	return ConfiguredStructureArgument(filename, oceanRuin.namespace ?: dp.name)
 }

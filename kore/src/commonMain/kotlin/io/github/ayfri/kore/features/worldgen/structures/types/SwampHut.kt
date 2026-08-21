@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.worldgen.structures.types
 
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -18,8 +18,8 @@ fun StructuresBuilder.swampHut(
 	filename: String = "swamp_hut",
 	step: GenerationStep = GenerationStep.SURFACE_STRUCTURES,
 	init: SwampHut.() -> Unit = {},
-): StructureArgument {
+): ConfiguredStructureArgument {
 	val swampHut = SwampHut(step = step).apply(init)
 	dp.structures += Structure(filename, swampHut)
-	return StructureArgument(filename, swampHut.namespace ?: dp.name)
+	return ConfiguredStructureArgument(filename, swampHut.namespace ?: dp.name)
 }

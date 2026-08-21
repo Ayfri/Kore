@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.worldgen.structures.types
 
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -18,8 +18,8 @@ fun StructuresBuilder.igloo(
 	filename: String = "igloo",
 	step: GenerationStep = GenerationStep.SURFACE_STRUCTURES,
 	init: Igloo.() -> Unit = {},
-): StructureArgument {
+): ConfiguredStructureArgument {
 	val igloo = Igloo(step = step).apply(init)
 	dp.structures += Structure(filename, igloo)
-	return StructureArgument(filename, igloo.namespace ?: dp.name)
+	return ConfiguredStructureArgument(filename, igloo.namespace ?: dp.name)
 }

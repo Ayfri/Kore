@@ -3,6 +3,9 @@ package io.github.ayfri.kore.features.worldgen
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
+import io.github.ayfri.kore.features.worldgen.structures.structuresBuilder
+import io.github.ayfri.kore.features.worldgen.structures.types.biomes
+import io.github.ayfri.kore.features.worldgen.structures.types.desertPyramid
 import io.github.ayfri.kore.features.worldgen.structureset.*
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.ConfiguredStructures
@@ -33,7 +36,35 @@ fun DataPack.structureSetTests() {
 		}
 	}
 
+	val customStructure = structuresBuilder.desertPyramid("my_set_pyramid") {
+		biomes(Biomes.DESERT)
+	}
+
+	structureSet("my_custom_structure_set") {
+		structure(customStructure, weight = 2)
+		randomSpreadPlacement(spacing = 32, separation = 8) {
+			salt = 0
+		}
+	}
+
 	structureSets.last() assertsIs """
+		{
+			"structures": [
+				{
+					"structure": "$name:my_set_pyramid",
+					"weight": 2
+				}
+			],
+			"placement": {
+				"type": "minecraft:random_spread",
+				"salt": 0,
+				"spacing": 32,
+				"separation": 8
+			}
+		}
+	""".trimIndent()
+
+	structureSets[1] assertsIs """
 		{
 			"structures": [
 				{

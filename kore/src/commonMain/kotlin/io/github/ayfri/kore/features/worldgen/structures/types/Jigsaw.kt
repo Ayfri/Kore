@@ -8,7 +8,7 @@ import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.*
 import io.github.ayfri.kore.features.worldgen.verticalanchors.Absolute
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.TemplatePoolArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
@@ -36,10 +36,10 @@ fun StructuresBuilder.jigsaw(
 	step: GenerationStep = GenerationStep.SURFACE_STRUCTURES,
 	startPool: TemplatePoolArgument,
 	init: Jigsaw.() -> Unit = {},
-): StructureArgument {
+): ConfiguredStructureArgument {
 	val jigsaw = Jigsaw(step = step, startPool = startPool).apply(init)
 	dp.structures += Structure(filename, jigsaw)
-	return StructureArgument(filename, jigsaw.namespace ?: dp.name)
+	return ConfiguredStructureArgument(filename, jigsaw.namespace ?: dp.name)
 }
 
 fun Jigsaw.poolAliases(block: MutableList<PoolAlias>.() -> Unit = {}) {

@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.worldgen.structures.types
 
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -18,8 +18,8 @@ fun StructuresBuilder.oceanMonument(
 	filename: String = "ocean_monument",
 	step: GenerationStep = GenerationStep.UNDERGROUND_DECORATION,
 	init: OceanMonument.() -> Unit = {},
-): StructureArgument {
+): ConfiguredStructureArgument {
 	val oceanMonument = OceanMonument(step = step).apply(init)
 	dp.structures += Structure(filename, oceanMonument)
-	return StructureArgument(filename, oceanMonument.namespace ?: dp.name)
+	return ConfiguredStructureArgument(filename, oceanMonument.namespace ?: dp.name)
 }

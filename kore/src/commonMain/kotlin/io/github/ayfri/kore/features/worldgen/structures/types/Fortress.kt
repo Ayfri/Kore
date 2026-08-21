@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.worldgen.structures.types
 
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -18,8 +18,8 @@ fun StructuresBuilder.fortress(
 	filename: String = "fortress",
 	step: GenerationStep = GenerationStep.UNDERGROUND_DECORATION,
 	init: Fortress.() -> Unit = {},
-): StructureArgument {
+): ConfiguredStructureArgument {
 	val fortress = Fortress(step = step).apply(init)
 	dp.structures += Structure(filename, fortress)
-	return StructureArgument(filename, fortress.namespace ?: dp.name)
+	return ConfiguredStructureArgument(filename, fortress.namespace ?: dp.name)
 }

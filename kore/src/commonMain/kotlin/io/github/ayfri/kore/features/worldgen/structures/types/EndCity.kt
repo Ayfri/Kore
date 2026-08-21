@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.worldgen.structures.types
 
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -18,8 +18,8 @@ fun StructuresBuilder.endCity(
 	filename: String = "end_city",
 	step: GenerationStep = GenerationStep.SURFACE_STRUCTURES,
 	init: EndCity.() -> Unit = {},
-): StructureArgument {
+): ConfiguredStructureArgument {
 	val endCity = EndCity(step = step).apply(init)
 	dp.structures += Structure(filename, endCity)
-	return StructureArgument(filename, endCity.namespace ?: dp.name)
+	return ConfiguredStructureArgument(filename, endCity.namespace ?: dp.name)
 }
