@@ -335,18 +335,18 @@ structures {
 }
 ```
 
-| Field                     | Default               | Meaning                                                                                |
-|---------------------------|-----------------------|----------------------------------------------------------------------------------------|
-| `startPool`               | mandatory             | The template pool the first piece is drawn from.                                       |
-| `size`                    | `0`                   | How many times pieces may branch out from the start piece.                             |
-| `startHeight`             | `constantAbsolute(0)` | Height provider for the start piece.                                                   |
-| `startJigsawName`         | none                  | Only connect through jigsaw blocks carrying this name.                                 |
-| `projectStartToHeightmap` | none                  | Snaps the start piece onto a heightmap instead of using `startHeight`.                 |
-| `maxDistanceFromCenter`   | `80`                  | Radius in blocks the structure may not grow past, up to `128` horizontally.            |
-| `dimensionPadding`        | none                  | Blocks kept free above and below the structure, `dimensionPadding(top, bottom)`.       |
-| `liquidSettings`          | none                  | Whether pieces waterlog, `LiquidSettings.APPLY_WATERLOGGING` or `IGNORE_WATERLOGGING`. |
-| `useExpansionHack`        | `false`               | The legacy village terrain hack, raising pieces above the ground.                      |
-| `poolAliases`             | none                  | Per-instance pool rewiring, see below.                                                 |
+| Field                     | Default               | Meaning                                                                                 |
+|---------------------------|-----------------------|-----------------------------------------------------------------------------------------|
+| `dimensionPadding`        | none                  | Blocks kept free above and below the structure, `dimensionPadding(top, bottom)`.        |
+| `liquidSettings`          | none                  | Whether pieces waterlog, `LiquidSettings.APPLY_WATERLOGGING` or `IGNORE_WATERLOGGING`.  |
+| `maxDistanceFromCenter`   | `80`                  | Radius the structure may not grow past, up to `128`, or `116` when it beards or buries. |
+| `poolAliases`             | none                  | Per-instance pool rewiring, see below.                                                  |
+| `projectStartToHeightmap` | none                  | Snaps the start piece onto a heightmap instead of using `startHeight`.                  |
+| `size`                    | `1`                   | How many times pieces may branch out from the start piece, from `1` to `20`.            |
+| `startHeight`             | `constantAbsolute(0)` | Height provider for the start piece.                                                    |
+| `startJigsawName`         | none                  | Only connect through jigsaw blocks carrying this name.                                  |
+| `startPool`               | mandatory             | The template pool the first piece is drawn from.                                        |
+| `useExpansionHack`        | `false`               | The legacy village terrain hack, raising pieces above the ground.                       |
 
 `dimensionPadding(value)` and `maxDistanceFromCenter(value)` are functions, taking one value for both directions or two for each. Given one
 value, they write a bare number instead of an object.

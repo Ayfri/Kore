@@ -160,7 +160,7 @@ fun DataPack.structureTests() {
 			"step": "top_layer_modification",
 			"spawn_overrides": {},
 			"start_pool": "minecraft:empty",
-			"size": 0,
+			"size": 1,
 			"start_height": {
 				"absolute": 10
 			},

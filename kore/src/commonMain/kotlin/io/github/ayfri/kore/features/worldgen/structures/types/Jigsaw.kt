@@ -25,11 +25,13 @@ import kotlinx.serialization.Serializable
  * Minecraft Wiki: https://minecraft.wiki/w/Structure_definition
  *
  * @property startPool The template pool the first piece is drawn from.
- * @property size Between `0` and `20`, how many times pieces may branch out from the start piece.
+ * @property size Between `1` and `20`, how many times pieces may branch out from the start piece.
  * @property startHeight The height the start piece is placed at, ignored when [projectStartToHeightmap] is set.
  * @property startJigsawName Only connect the start piece through the jigsaw blocks carrying this name.
  * @property projectStartToHeightmap Snaps the start piece onto a heightmap instead of using [startHeight].
- * @property maxDistanceFromCenter How far pieces may grow from the center, up to `128` blocks horizontally.
+ * @property maxDistanceFromCenter How far pieces may grow from the center, up to `128` blocks horizontally, or `116`
+ * when [terrainAdaptation] is one of [TerrainAdaptation.BEARD_THIN], [TerrainAdaptation.BEARD_BOX] or
+ * [TerrainAdaptation.BURY].
  * @property useExpansionHack The legacy village terrain hack, raising pieces above the ground.
  * @property poolAliases Per-instance pool rewiring, letting one structure produce differently themed variants.
  * @property dimensionPadding Blocks kept free above and below the structure, so it never touches the world bounds.
@@ -42,7 +44,7 @@ data class Jigsaw(
 	override var spawnOverrides: SpawnOverrides = SpawnOverrides(),
 	override var terrainAdaptation: TerrainAdaptation? = null,
 	var startPool: TemplatePoolArgument,
-	var size: Int = 0,
+	var size: Int = 1,
 	var startHeight: HeightProvider = ConstantHeightProvider(Absolute(0)),
 	var startJigsawName: String? = null,
 	var projectStartToHeightmap: HeightMap? = null,
@@ -115,7 +117,11 @@ fun Jigsaw.maxDistanceFromCenter(distance: Int) {
 	maxDistanceFromCenter = MaxDistanceFromCenter(distance)
 }
 
-/** Limits the structure to [horizontal] blocks from its center horizontally, and [vertical] blocks vertically. */
+/**
+ * Limits the structure to [horizontal] blocks from its center horizontally, and [vertical] blocks vertically.
+ *
+ * [horizontal] caps at `128`, or `116` when the structure beards or buries its terrain.
+ */
 fun Jigsaw.maxDistanceFromCenter(horizontal: Int, vertical: Int? = null) {
 	maxDistanceFromCenter = MaxDistanceFromCenter(horizontal, vertical)
 }
