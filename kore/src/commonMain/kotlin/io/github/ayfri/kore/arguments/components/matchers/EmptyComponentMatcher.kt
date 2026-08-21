@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.arguments.components.matchers
 
-import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -48,7 +47,7 @@ data class EmptyComponentMatcher(
  * ```
  * Will output: `{predicates:{"minecraft:instrument":{}}}`
  */
-fun ItemStackSubPredicates.exists(component: ItemComponentTypes) = exists(component.name.lowercase())
+fun DataComponentPredicate.exists(component: ItemComponentTypes) = exists(component.name.lowercase())
 
 /**
  * Check if a component exists on an item, without checking its value.
@@ -62,6 +61,6 @@ fun ItemStackSubPredicates.exists(component: ItemComponentTypes) = exists(compon
  * ```
  * Will output: `{predicates:{"minecraft:instrument":{}}}`
  */
-fun ItemStackSubPredicates.exists(componentName: String) = apply {
+fun DataComponentPredicate.exists(componentName: String) = apply {
 	matchers += EmptyComponentMatcher(componentName)
 }

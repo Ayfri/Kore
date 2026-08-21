@@ -554,7 +554,7 @@ import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 
 predicate("upgradeable_pickaxe") {
   matchTool {
-    item(Items.DIAMOND_PICKAXE)
+    items(Items.DIAMOND_PICKAXE)
     predicates {
       // Match damage component with range
       damage {
@@ -616,6 +616,7 @@ predicate("has_instrument") {
 | `potionContents(..)`      | Match potion effects                           |
 | `storedEnchantments { }`  | Match stored enchantments (enchanted books)    |
 | `trim { }`                | Match armor trim pattern/material              |
+| `villagerVariant(..)`     | Match the villager type of an entity           |
 | `writableBookContent { }` | Match book pages                               |
 | `writtenBookContent { }`  | Match signed book content                      |
 

@@ -94,7 +94,7 @@ expects:
 
 ```kotlin
 val itemDisplay = itemDisplay {
-	item(Items.DIAMOND_SWORD) {
+	items(Items.DIAMOND_SWORD) {
 		name = textComponent("test")
 
 		enchantments {

@@ -1009,7 +1009,7 @@ function("loot_examples") {
 				pool {
 					rolls(1f)
 					entries {
-						item(Items.ANVIL)
+						items(Items.ANVIL)
 					}
 				}
 			}
@@ -1115,7 +1115,7 @@ function("special_particles") {
 		instantEffect(color = Color.GREEN)
 		tintedLeaves(Color.RED)
 
-		item(Items.DIAMOND_SWORD {
+		items(Items.DIAMOND_SWORD {
 			enchantments {
 				enchantment(Enchantments.SHARPNESS, 5)
 			}

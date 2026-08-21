@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.arguments.components.matchers
 
-import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
 import io.github.ayfri.kore.generated.arguments.TrimMaterialOrTagArgument
 import io.github.ayfri.kore.generated.arguments.TrimPatternOrTagArgument
 import io.github.ayfri.kore.serializers.InlinableList
@@ -12,7 +11,7 @@ data class TrimComponentMatcher(
 	var pattern: InlinableList<TrimPatternOrTagArgument>? = null,
 ) : ComponentMatcher()
 
-fun ItemStackSubPredicates.trim(init: TrimComponentMatcher.() -> Unit) =
+fun DataComponentPredicate.trim(init: TrimComponentMatcher.() -> Unit) =
 	apply { matchers += TrimComponentMatcher().apply(init) }
 
 fun TrimComponentMatcher.materials(vararg materials: TrimMaterialOrTagArgument) {

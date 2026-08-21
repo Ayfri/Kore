@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.arguments.components.matchers
 
-import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
 import io.github.ayfri.kore.utils.nbt
@@ -21,7 +20,7 @@ data class CustomDataComponentMatcher(
 	}
 }
 
-fun ItemStackSubPredicates.customData(init: NbtCompoundBuilder.() -> Unit) =
+fun DataComponentPredicate.customData(init: NbtCompoundBuilder.() -> Unit) =
 	apply { matchers += CustomDataComponentMatcher(nbt(init)) }
 
-fun ItemStackSubPredicates.customData(string: String) = apply { matchers += CustomDataComponentMatcher(string.nbt) }
+fun DataComponentPredicate.customData(string: String) = apply { matchers += CustomDataComponentMatcher(string.nbt) }

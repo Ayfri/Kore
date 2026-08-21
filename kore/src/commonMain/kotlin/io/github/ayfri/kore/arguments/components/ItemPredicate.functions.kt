@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.arguments.components
 
+import io.github.ayfri.kore.arguments.components.matchers.DataComponentPredicate
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
-import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.utils.nbt
 import net.benwoodworth.knbt.NbtCompoundBuilder
@@ -139,8 +139,8 @@ fun ItemPredicate.negate(vararg component: String) = component.forEach(::setNega
 /**
  * Add a sub predicate to the item.
  */
-fun ItemPredicate.subPredicates(block: ItemStackSubPredicates.() -> Unit) = apply {
-	subPredicates += ItemStackSubPredicates().apply(block)
+fun ItemPredicate.subPredicates(block: DataComponentPredicate.() -> Unit) = apply {
+	subPredicates += DataComponentPredicate().apply(block)
 }
 
 /**

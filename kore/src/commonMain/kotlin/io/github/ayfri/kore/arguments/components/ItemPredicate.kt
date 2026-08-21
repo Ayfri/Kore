@@ -1,9 +1,9 @@
 package io.github.ayfri.kore.arguments.components
 
 import io.github.ayfri.kore.arguments.components.matchers.ComponentMatcher
+import io.github.ayfri.kore.arguments.components.matchers.DataComponentPredicate
 import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
 import io.github.ayfri.kore.arguments.types.ItemOrTagArgument
-import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.utils.*
 import kotlinx.serialization.Serializable
@@ -27,7 +27,7 @@ data class ItemPredicate(
 ) : ComponentsPatch() {
 	val componentsAlternatives = mutableMapOf<String, MutableList<Component>>()
 	var countSubPredicates = mutableListOf<Pair<IntRangeOrIntJson, Boolean>>()
-	var subPredicates = mutableListOf(ItemStackSubPredicates())
+	var subPredicates = mutableListOf(DataComponentPredicate())
 	var subPredicatesKeys = ComponentMatcher.Companion.ComponentMatcherSerializer.contentNames
 
 	override val lastAddedComponent get() = componentsAlternatives.values.lastOrNull()?.lastOrNull()

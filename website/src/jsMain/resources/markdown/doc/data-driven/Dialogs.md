@@ -109,7 +109,7 @@ A simple dialog with a single action button for displaying information:
 ```kotlin
 val noticeDialog = dialogBuilder.notice("achievement", "Achievement Unlocked!") {
 	bodies {
-		item(Items.DIAMOND_SWORD) {
+		items(Items.DIAMOND_SWORD) {
 			description = ItemDescription(textComponent("Your first diamond tool!"))
 			showTooltip = true
 		}
@@ -274,7 +274,7 @@ Display items with descriptions:
 
 ```kotlin
 bodies {
-	item(Items.ENCHANTED_BOOK) {
+	items(Items.ENCHANTED_BOOK) {
 		description = ItemDescription(textComponent("A mysterious tome"))
 		showTooltip = true
 		showDecorations = false
@@ -509,7 +509,7 @@ val tutorialDialog = dialogBuilder.dialogList("tutorials", "Tutorial Menu") {
 
 	bodies {
 		plainMessage("Choose a tutorial to begin:")
-		item(Items.BOOK) {
+		items(Items.BOOK) {
 			description = ItemDescription(textComponent("Learn the basics"))
 		}
 	}

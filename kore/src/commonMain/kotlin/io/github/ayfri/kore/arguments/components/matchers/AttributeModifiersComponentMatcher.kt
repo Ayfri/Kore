@@ -5,7 +5,6 @@ import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrDouble
 import io.github.ayfri.kore.arguments.numbers.ranges.serializers.FloatRangeOrFloatJson
 import io.github.ayfri.kore.commands.AttributeModifierOperation
-import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
 import io.github.ayfri.kore.generated.arguments.types.AttributeArgument
 import io.github.ayfri.kore.generated.arguments.types.AttributeModifierArgument
 import kotlinx.serialization.Serializable
@@ -24,7 +23,7 @@ data class AttributeModifiersComponentMatcher(
 	var modifiers: CollectionMatcher<AttributeModifierMatcher> = CollectionMatcher(),
 ) : ComponentMatcher()
 
-fun ItemStackSubPredicates.attributeModifiers(init: AttributeModifiersComponentMatcher.() -> Unit) =
+fun DataComponentPredicate.attributeModifiers(init: AttributeModifiersComponentMatcher.() -> Unit) =
 	apply { matchers += AttributeModifiersComponentMatcher().apply(init) }
 
 fun AttributeModifiersComponentMatcher.modifiers(block: CollectionMatcher<AttributeModifierMatcher>.() -> Unit) {

@@ -2,8 +2,8 @@ package io.github.ayfri.kore.arguments.components.item
 
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.arguments.components.data.BlockPredicate
 import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
+import io.github.ayfri.kore.features.predicates.sub.BlockPredicate
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
@@ -38,12 +38,12 @@ fun ComponentsScope.canPlaceOn(
 	block: BlockOrTagArgument,
 	nbt: NbtCompound? = null,
 	state: Map<String, String>? = null,
-) = canPlaceOn(listOf(BlockPredicate(mutableListOf(block), nbt, state?.toMutableMap())))
+) = canPlaceOn(listOf(BlockPredicate(blocks = listOf(block), nbt = nbt, state = state)))
 
 fun ComponentsScope.canPlaceOn(block: CanPlaceOnComponent.() -> Unit) =
 	CanPlaceOnComponent(mutableListOf()).apply(block).let { this[ItemComponentTypes.CAN_PLACE_ON] = it }
 
 fun CanPlaceOnComponent.predicate(vararg block: BlockOrTagArgument, nbt: NbtCompound? = null, state: Map<String, String>? = null) =
-	apply { predicates += BlockPredicate(mutableListOf(*block), nbt, state?.toMutableMap()) }
+	apply { predicates += BlockPredicate(blocks = block.toList(), nbt = nbt, state = state) }
 
 fun CanPlaceOnComponent.predicate(predicate: BlockPredicate) = apply { predicates += predicate }

@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.arguments.components.matchers
 
-import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
 import io.github.ayfri.kore.generated.arguments.MobEffectOrTagArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import io.github.ayfri.kore.serializers.InlinableListSerializer
@@ -25,8 +24,8 @@ data class PotionContentsComponentMatcher(
 	}
 }
 
-fun ItemStackSubPredicates.potionContents(block: MutableList<MobEffectOrTagArgument>.() -> Unit) {
+fun DataComponentPredicate.potionContents(block: MutableList<MobEffectOrTagArgument>.() -> Unit) {
 	matchers += PotionContentsComponentMatcher().apply { potions = buildList(block) }
 }
 
-fun ItemStackSubPredicates.potionContents(vararg potions: MobEffectOrTagArgument) = potionContents { addAll(potions) }
+fun DataComponentPredicate.potionContents(vararg potions: MobEffectOrTagArgument) = potionContents { addAll(potions) }

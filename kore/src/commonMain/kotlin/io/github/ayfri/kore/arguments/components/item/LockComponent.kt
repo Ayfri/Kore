@@ -3,8 +3,8 @@ package io.github.ayfri.kore.arguments.components.item
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsPatch
 import io.github.ayfri.kore.arguments.components.ComponentsScope
+import io.github.ayfri.kore.arguments.components.matchers.DataComponentPredicate
 import io.github.ayfri.kore.arguments.types.ItemOrTagArgument
-import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
@@ -22,7 +22,7 @@ data class LockComponent(
 	var items: InlinableList<ItemOrTagArgument>? = null,
 	var count: Int? = null,
 	var components: ComponentsPatch? = null,
-	var predicates: ItemStackSubPredicates? = null,
+	var predicates: DataComponentPredicate? = null,
 ) : Component()
 
 /** Locks a container so only players holding an item matching the predicate can open it. */
@@ -38,6 +38,6 @@ fun LockComponent.components(block: ComponentsPatch.() -> Unit) {
 	components = (components ?: ComponentsPatch()).apply(block)
 }
 
-fun LockComponent.predicates(block: ItemStackSubPredicates.() -> Unit) {
-	predicates = (predicates ?: ItemStackSubPredicates()).apply(block)
+fun LockComponent.predicates(block: DataComponentPredicate.() -> Unit) {
+	predicates = (predicates ?: DataComponentPredicate()).apply(block)
 }

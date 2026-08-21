@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.arguments.components.matchers
 
 import io.github.ayfri.kore.arguments.components.item.FireworkExplosionShape
-import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -11,5 +10,5 @@ data class FireworkExplosionComponentMatcher(
 	var hasTwinkle: Boolean? = null,
 ) : ComponentMatcher()
 
-fun ItemStackSubPredicates.fireworkExplosion(init: FireworkExplosionComponentMatcher.() -> Unit) =
+fun DataComponentPredicate.fireworkExplosion(init: FireworkExplosionComponentMatcher.() -> Unit) =
 	apply { matchers += FireworkExplosionComponentMatcher().apply(init) }

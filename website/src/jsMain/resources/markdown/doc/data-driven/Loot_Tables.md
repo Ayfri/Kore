@@ -46,13 +46,13 @@ dataPack("my_datapack") {
 			rolls = constant(3f)
 
 			entries {
-				item(Items.DIAMOND) {
+				items(Items.DIAMOND) {
 					weight = 1
 				}
-				item(Items.GOLD_INGOT) {
+				items(Items.GOLD_INGOT) {
 					weight = 5
 				}
-				item(Items.IRON_INGOT) {
+				items(Items.IRON_INGOT) {
 					weight = 10
 				}
 			}
@@ -106,7 +106,7 @@ lootTable("enchanted_loot") {
 
 	pool {
 		entries {
-			item(Items.DIAMOND_SWORD)
+			items(Items.DIAMOND_SWORD)
 		}
 	}
 }
@@ -135,7 +135,7 @@ lootTable("simple_pool") {
 		bonusRolls = constant(1f)
 
 		entries {
-			item(Items.EMERALD)
+			items(Items.EMERALD)
 		}
 	}
 }
@@ -153,7 +153,7 @@ lootTable("weather_dependent") {
 		}
 
 		entries {
-			item(Items.WATER_BUCKET)
+			items(Items.WATER_BUCKET)
 		}
 	}
 }
@@ -167,7 +167,7 @@ lootTable("modified_drops") {
 		rolls = constant(1f)
 
 		entries {
-			item(Items.DIAMOND_PICKAXE)
+			items(Items.DIAMOND_PICKAXE)
 		}
 
 		functions {
@@ -188,7 +188,7 @@ Number providers determine dynamic numeric values for rolls, counts, and other q
 | `constant(value)`                 | Fixed value                                               | `constant(5f)`                                                          |
 | `enchantmentLevel(...)`           | Based on enchantment level (requires enchantment context) | `enchantmentLevel(5)`                                                   |
 | `environmentAttribute(attribute)` | Current value of a numeric env attribute                  | `environmentAttribute(EnvironmentAttributes.Visual.FOG_START_DISTANCE)` |
-| `scoreNumber(...)`                | Value from a scoreboard objective                         | `scoreNumber("kills", EntityType.THIS)`                                 |
+| `scoreNumber(...)`                | Value from a scoreboard objective                         | `scoreNumber("kills", EntityTarget.THIS)`                                 |
 | `storageNumber(storage, path)`    | Value from command storage                                | `storageNumber("my_pack:data", "player.health")`                        |
 | `sum(...)`                        | Sum of multiple providers                                 | `sum(constant(1f), uniform(1f, 3f))`                                    |
 | `uniform(min, max)`               | Random value between min and max                          | `uniform(1f, 5f)`                                                       |
@@ -199,7 +199,7 @@ pool {
 	bonusRolls = constant(1f)  // +1 roll per luck level
 
 	entries {
-		item(Items.GOLD_INGOT)
+		items(Items.GOLD_INGOT)
 	}
 }
 ```
@@ -217,7 +217,7 @@ Drops a specific item:
 
 ```kotlin
 entries {
-	item(Items.DIAMOND) {
+	items(Items.DIAMOND) {
 		weight = 1
 		quality = 2
 		conditions {
@@ -292,17 +292,17 @@ Selects the first entry whose conditions pass:
 entries {
 	alternatives {
 		children {
-			item(Items.DIAMOND) {
+			items(Items.DIAMOND) {
 				conditions {
 					randomChance(0.1f)
 				}
 			}
-			item(Items.GOLD_INGOT) {
+			items(Items.GOLD_INGOT) {
 				conditions {
 					randomChance(0.3f)
 				}
 			}
-			item(Items.IRON_INGOT)  // Fallback
+			items(Items.IRON_INGOT)  // Fallback
 		}
 	}
 }
@@ -319,8 +319,8 @@ entries {
 			weatherCheck(raining = true)
 		}
 		children {
-			item(Items.WATER_BUCKET)
-			item(Items.FISH)
+			items(Items.WATER_BUCKET)
+			items(Items.FISH)
 		}
 	}
 }
@@ -334,13 +334,13 @@ Children are added until one fails its conditions:
 entries {
 	sequence {
 		children {
-			item(Items.DIAMOND) {
+			items(Items.DIAMOND) {
 				conditions { randomChance(0.5f) }
 			}
-			item(Items.EMERALD) {
+			items(Items.EMERALD) {
 				conditions { randomChance(0.5f) }
 			}
-			item(Items.GOLD_INGOT)
+			items(Items.GOLD_INGOT)
 		}
 	}
 }
@@ -548,7 +548,7 @@ dataPack("treasure_hunt") {
 			rolls = constant(1f)
 
 			entries {
-				item(Items.NETHER_STAR)
+				items(Items.NETHER_STAR)
 			}
 		}
 
@@ -562,14 +562,14 @@ dataPack("treasure_hunt") {
 			}
 
 			entries {
-				item(Items.NETHERITE_SWORD) {
+				items(Items.NETHERITE_SWORD) {
 					weight = 1
 					functions {
 						enchantWithLevels(levels = constant(30f))
 						setName("Boss Slayer")
 					}
 				}
-				item(Items.DIAMOND_SWORD) {
+				items(Items.DIAMOND_SWORD) {
 					weight = 5
 					functions {
 						enchantWithLevels(levels = uniform(15f, 25f))
@@ -710,7 +710,7 @@ dataPack("better_zombies") {
 			rolls = constant(1f)
 
 			entries {
-				item(Items.ROTTEN_FLESH) {
+				items(Items.ROTTEN_FLESH) {
 					functions {
 						setCount(uniform(0f, 2f))
 						lootingEnchant(uniform(0f, 1f))
@@ -728,7 +728,7 @@ dataPack("better_zombies") {
 			}
 
 			entries {
-				item(Items.DIAMOND)
+				items(Items.DIAMOND)
 			}
 		}
 	}

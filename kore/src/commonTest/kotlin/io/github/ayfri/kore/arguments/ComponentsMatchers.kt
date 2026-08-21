@@ -6,12 +6,12 @@ import io.github.ayfri.kore.arguments.components.countElement
 import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
 import io.github.ayfri.kore.arguments.components.item.FireworkExplosionShape
 import io.github.ayfri.kore.arguments.components.matchers.*
+import io.github.ayfri.kore.arguments.components.matchers.DataComponentPredicate
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.assertions.assertsIsJson
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.dataPack
-import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
-import io.github.ayfri.kore.features.predicates.sub.itemStack
+import io.github.ayfri.kore.features.predicates.sub.itemStackPredicate
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.utils.pretty
@@ -21,7 +21,7 @@ import io.kotest.core.spec.style.FunSpec
 fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 	pretty()
 
-	val attributeModifiers = ItemStackSubPredicates().apply {
+	val attributeModifiers = DataComponentPredicate().apply {
 		attributeModifiers {
 			modifiers {
 				contains {
@@ -55,11 +55,11 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 		}
 	""".trimIndent()
 
-	val bundlerContents = ItemStackSubPredicates().apply {
+	val bundlerContents = DataComponentPredicate().apply {
 		bundlerContents {
 			items {
-				countElement(size = rangeOrInt(1), test = itemStack(Items.CAKE))
-				contains(itemStack(Items.APPLE))
+				countElement(size = rangeOrInt(1), test = itemStackPredicate(Items.CAKE))
+				contains(itemStackPredicate(Items.APPLE))
 			}
 		}
 	}
@@ -86,11 +86,11 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 		}
 	""".trimIndent()
 
-	val container = ItemStackSubPredicates().apply {
+	val container = DataComponentPredicate().apply {
 		container {
 			items {
-				countElement(size = rangeOrInt(1), test = itemStack(Items.CAKE))
-				contains(itemStack(Items.APPLE))
+				countElement(size = rangeOrInt(1), test = itemStackPredicate(Items.CAKE))
+				contains(itemStackPredicate(Items.APPLE))
 			}
 		}
 	}
@@ -117,7 +117,7 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 		}
 	""".trimIndent()
 
-	val customData = ItemStackSubPredicates().apply {
+	val customData = DataComponentPredicate().apply {
 		customData {
 			this["test"] = 1
 		}
@@ -131,7 +131,7 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 		}
 	""".trimIndent()
 
-	val damage = ItemStackSubPredicates().apply {
+	val damage = DataComponentPredicate().apply {
 		damage {
 			durability(1)
 			damage = rangeOrInt(4..5)
@@ -150,7 +150,7 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 		}
 	""".trimIndent()
 
-	val enchantment = ItemStackSubPredicates().apply {
+	val enchantment = DataComponentPredicate().apply {
 		enchantments {
 			enchantment(Enchantments.SHARPNESS, level = 3)
 		}
@@ -167,7 +167,7 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 		}
 	""".trimIndent()
 
-	val fireworkExplosion = ItemStackSubPredicates().apply {
+	val fireworkExplosion = DataComponentPredicate().apply {
 		fireworkExplosion {
 			shape = FireworkExplosionShape.LARGE_BALL
 			hasTrail = true
@@ -185,7 +185,7 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 		}
 	""".trimIndent()
 
-	val fireworks = ItemStackSubPredicates().apply {
+	val fireworks = DataComponentPredicate().apply {
 		fireworks {
 			explosions {
 				countElement(
@@ -220,7 +220,7 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 		}
 	""".trimIndent()
 
-	val jukeboxPlayable = ItemStackSubPredicates().apply {
+	val jukeboxPlayable = DataComponentPredicate().apply {
 		jukeboxPlayable {
 			songs(JukeboxSongs.OTHERSIDE, JukeboxSongs.CREATOR)
 		}
@@ -238,7 +238,7 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 	""".trimIndent()
 
 
-	val potionContents = ItemStackSubPredicates().apply {
+	val potionContents = DataComponentPredicate().apply {
 		potionContents(Effects.HASTE, Effects.SPEED)
 	}
 
@@ -251,7 +251,7 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 		}
 	""".trimIndent()
 
-	val storedEnchantment = ItemStackSubPredicates().apply {
+	val storedEnchantment = DataComponentPredicate().apply {
 		storedEnchantments {
 			enchantment(Enchantments.SHARPNESS, level = 3)
 		}
@@ -268,7 +268,7 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 		}
 	""".trimIndent()
 
-	val trim = ItemStackSubPredicates().apply {
+	val trim = DataComponentPredicate().apply {
 		trim {
 			materials(TrimMaterials.IRON)
 			patterns(TrimPatterns.WARD, TrimPatterns.HOST)
@@ -287,7 +287,7 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 		}
 	""".trimIndent()
 
-	val writableBookContent = ItemStackSubPredicates().apply {
+	val writableBookContent = DataComponentPredicate().apply {
 		writableBookContent {
 			pages {
 				contains {
@@ -309,7 +309,7 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 		}
 	""".trimIndent()
 
-	val writtenBookContent = ItemStackSubPredicates().apply {
+	val writtenBookContent = DataComponentPredicate().apply {
 		writtenBookContent {
 			pages {
 				contains {
@@ -336,7 +336,7 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 	""".trimIndent()
 
 	// Test empty component matcher for existence checks
-	val existsInstrument = ItemStackSubPredicates().apply {
+	val existsInstrument = DataComponentPredicate().apply {
 		exists(ItemComponentTypes.INSTRUMENT)
 	}
 
@@ -347,7 +347,7 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 	""".trimIndent()
 
 	// Test multiple existence checks
-	val existsMultiple = ItemStackSubPredicates().apply {
+	val existsMultiple = DataComponentPredicate().apply {
 		exists(ItemComponentTypes.INSTRUMENT)
 		exists(ItemComponentTypes.DAMAGE)
 	}

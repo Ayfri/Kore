@@ -98,7 +98,7 @@ lootTable("treasure") {
 		}
 
 		entries {
-			item(Items.DIAMOND) {
+			items(Items.DIAMOND) {
 				// Entry-level functions
 				functions {
 					setName("Lucky Diamond")
@@ -386,12 +386,12 @@ Fill container items (bundles, shulker boxes):
 itemModifier("filled_bundle") {
 	setContents(ContentComponentTypes.BUNDLE_CONTENTS) {
 		entries {
-			item(Items.DIAMOND) {
+			items(Items.DIAMOND) {
 				functions {
 					setCount(16f)
 				}
 			}
-			item(Items.EMERALD) {
+			items(Items.EMERALD) {
 				functions {
 					setCount(32f)
 				}
@@ -875,7 +875,7 @@ dataPack("legendary_items") {
 			rolls = constant(1f)
 
 			entries {
-				item(Items.DIAMOND_SWORD) {
+				items(Items.DIAMOND_SWORD) {
 					functions {
 						reference(legendaryModifier)
 					}
