@@ -257,7 +257,7 @@ fun DataPack.predicateTests() {
 				team("foo")
 			}
 
-			periodicTicks(20)
+			periodicTick(20)
 
 			predicates {
 				customData {
@@ -352,7 +352,7 @@ fun DataPack.predicateTests() {
 				"minecraft:passenger": {
 					"minecraft:team": "foo"
 				},
-				"minecraft:periodic_ticks": 20,
+				"minecraft:periodic_tick": 20,
 				"minecraft:predicates": {
 					"minecraft:custom_data": {
 						"foo": "bar"

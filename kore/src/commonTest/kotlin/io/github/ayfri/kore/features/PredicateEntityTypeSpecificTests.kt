@@ -195,7 +195,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 			"condition": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
-				"minecraft:cube_mob": {
+				"minecraft:type_specific/cube_mob": {
 					"size": 2
 				}
 			}

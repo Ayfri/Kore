@@ -283,7 +283,7 @@ serialized as its own identifier-keyed entry (`minecraft:<name>`) rather than a 
 | `movementAffectedBy`   | `minecraft:movement_affected_by` | Check what affects entity movement       | `movementAffectedBy { canSeeSky = true }`                                |
 | `nbt`                  | `minecraft:nbt`                  | Check entity NBT data                    | `nbt { this["foo"] = "bar" }`                                            |
 | `passenger`            | `minecraft:passenger`            | Check entity passenger                   | `passenger { team("foo") }`                                              |
-| `periodicTicks`        | `minecraft:periodic_ticks`       | Check entity periodic ticks              | `periodicTicks(20)`                                                      |
+| `periodicTick`         | `minecraft:periodic_tick`        | Check entity periodic ticks              | `periodicTick(20)`                                                       |
 | `predicates`           | `minecraft:predicates`           | Check custom data predicates             | `predicates { customData { this["key"] = "value" } }`                    |
 | `slots`                | `minecraft:slots`                | Check specific inventory slots           | `slots { this[WEAPON.MAINHAND] = itemStack(Items.DIAMOND_SWORD) }`       |
 | `steppingOn`           | `minecraft:stepping_on`          | Check block the entity is standing on    | `steppingOn { blocks(Blocks.STONE) }`                                    |
@@ -323,8 +323,7 @@ Any component you can put on an **item** can be matched on an **entity
 #### Remaining built-in `typeSpecific` helpers
 
 These helpers are still available because they cover information that is **not** represented by components. They're
-grouped under a `typeSpecific { }` scope, and each keys under `minecraft:type_specific/<name>` (except `cubeMob`,
-which keys under `minecraft:cube_mob` - Mojang's own replacement for the old `minecraft:slime` predicate):
+grouped under a `typeSpecific { }` scope, and each keys under `minecraft:type_specific/<name>`:
 
 ##### Fishing Hook
 
@@ -418,7 +417,7 @@ predicate("sheep_check") {
 
 ##### Cube Mob (slimes and magma cubes)
 
-Check cube mob size - renamed from `minecraft:slime` to `minecraft:cube_mob` in 26.2-snapshot-3:
+Check cube mob size, keyed under `minecraft:type_specific/cube_mob`:
 
 ```kotlin
 predicate("cube_mob_check") {

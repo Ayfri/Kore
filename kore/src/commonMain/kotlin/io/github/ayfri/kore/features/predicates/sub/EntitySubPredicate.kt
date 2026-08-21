@@ -149,11 +149,11 @@ data class PassengerSubPredicate(val entity: Entity) : EntitySubPredicate() {
 	}
 }
 
-@Serializable(with = PeriodicTicksSubPredicate.Companion.Serializer::class)
-data class PeriodicTicksSubPredicate(val ticks: Int) : EntitySubPredicate() {
+@Serializable(with = PeriodicTickSubPredicate.Companion.Serializer::class)
+data class PeriodicTickSubPredicate(val ticks: Int) : EntitySubPredicate() {
 	companion object {
-		data object Serializer : InlineAutoSerializer<PeriodicTicksSubPredicate, Int>(
-			Int.serializer(), PeriodicTicksSubPredicate::ticks, ::PeriodicTicksSubPredicate, "PeriodicTicksSubPredicate"
+		data object Serializer : InlineAutoSerializer<PeriodicTickSubPredicate, Int>(
+			Int.serializer(), PeriodicTickSubPredicate::ticks, ::PeriodicTickSubPredicate, "PeriodicTickSubPredicate"
 		)
 	}
 }
@@ -304,6 +304,6 @@ fun Entity.team(team: String) {
 	subPredicates += TeamSubPredicate(team)
 }
 
-fun Entity.periodicTicks(ticks: Int) {
-	subPredicates += PeriodicTicksSubPredicate(ticks)
+fun Entity.periodicTick(ticks: Int) {
+	subPredicates += PeriodicTickSubPredicate(ticks)
 }
