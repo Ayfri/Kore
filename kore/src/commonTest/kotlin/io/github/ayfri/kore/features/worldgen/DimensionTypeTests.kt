@@ -32,7 +32,6 @@ fun DataPack.dimensionTypeTests() {
 			"attributes": {
 				"minecraft:visual/cloud_height": 128.0
 			},
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
@@ -56,15 +55,14 @@ fun DataPack.dimensionTypeTests() {
 
 	dimensionTypes.last() assertsIs """
 		{
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 2,
 			"monster_spawn_block_light_limit": 0
 		}
@@ -87,17 +85,16 @@ fun DataPack.dimensionTypeTests() {
 
 	dimensionTypes.last() assertsIs """
 		{
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
 			"cardinal_light": "nether",
 			"has_fixed_time": true,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0,
 			"skybox": "end",
@@ -115,16 +112,15 @@ fun DataPack.dimensionTypeTests() {
 
 	dimensionTypes.last() assertsIs """
 		{
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
 			"default_clock": "minecraft:overworld",
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}
@@ -137,16 +133,15 @@ fun DataPack.dimensionTypeTests() {
 
 	dimensionTypes.last() assertsIs """
 		{
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"has_ender_dragon_fight": true,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}

@@ -41,15 +41,14 @@ fun DataPack.environmentAttributesTests() {
 					}
 				]
 			},
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}
@@ -91,15 +90,14 @@ fun DataPack.environmentAttributesTests() {
 					"modifier": "override"
 				}
 			},
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}
@@ -131,15 +129,14 @@ fun DataPack.environmentAttributesTests() {
 					}
 				}
 			},
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}
@@ -167,15 +164,14 @@ fun DataPack.environmentAttributesTests() {
 					"error_message": "Cannot sleep here"
 				}
 			},
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}
@@ -196,15 +192,14 @@ fun DataPack.environmentAttributesTests() {
 					"modifier": "or"
 				}
 			},
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}
@@ -246,15 +241,14 @@ fun DataPack.environmentAttributesTests() {
 				"minecraft:gameplay/snow_golem_melts": true,
 				"minecraft:gameplay/water_evaporates": true
 			},
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}
@@ -275,15 +269,14 @@ fun DataPack.environmentAttributesTests() {
 					"modifier": "add"
 				}
 			},
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}
@@ -307,15 +300,14 @@ fun DataPack.environmentAttributesTests() {
 				"minecraft:visual/sky_light_color": 16777215,
 				"minecraft:visual/water_fog_color": 329011
 			},
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}
@@ -335,15 +327,14 @@ fun DataPack.environmentAttributesTests() {
 					"type": "minecraft:dripping_dripstone_water"
 				}
 			},
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}
@@ -381,15 +372,14 @@ fun DataPack.environmentAttributesTests() {
 				"minecraft:visual/star_brightness": 0.7,
 				"minecraft:visual/sun_angle": 90.0
 			},
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}
@@ -407,15 +397,14 @@ fun DataPack.environmentAttributesTests() {
 			"attributes": {
 				"minecraft:visual/cloud_color": "#ff804020"
 			},
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}
@@ -440,15 +429,14 @@ fun DataPack.environmentAttributesTests() {
 					}
 				}
 			},
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}
@@ -476,15 +464,14 @@ fun DataPack.environmentAttributesTests() {
 				"minecraft:visual/water_fog_end_distance": 96.0,
 				"minecraft:visual/water_fog_start_distance": 0.0
 			},
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}
@@ -505,15 +492,14 @@ fun DataPack.environmentAttributesTests() {
 					"modifier": "override"
 				}
 			},
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}
@@ -539,15 +525,14 @@ fun DataPack.environmentAttributesTests() {
 					"modifier": "override"
 				}
 			},
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}
@@ -568,15 +553,14 @@ fun DataPack.environmentAttributesTests() {
 					"modifier": "override"
 				}
 			},
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}
@@ -594,15 +578,14 @@ fun DataPack.environmentAttributesTests() {
 			"attributes": {
 				"minecraft:visual/ambient_light_color": 1315860
 			},
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}
@@ -623,15 +606,14 @@ fun DataPack.environmentAttributesTests() {
 					"modifier": "multiply"
 				}
 			},
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}
@@ -649,15 +631,14 @@ fun DataPack.environmentAttributesTests() {
 			"attributes": {
 				"minecraft:visual/night_vision_color": 65408
 			},
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}
@@ -675,15 +656,14 @@ fun DataPack.environmentAttributesTests() {
 			"attributes": {
 				"minecraft:visual/sunrise_sunset_color": "#80ff8000"
 			},
-			"natural": true,
 			"has_skylight": true,
 			"has_ceiling": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
-			"logical_height": 0,
+			"logical_height": 384,
 			"infiniburn": "#minecraft:infiniburn_overworld",
-			"min_y": 0,
-			"height": 16,
+			"min_y": -64,
+			"height": 384,
 			"monster_spawn_light_level": 0,
 			"monster_spawn_block_light_limit": 0
 		}

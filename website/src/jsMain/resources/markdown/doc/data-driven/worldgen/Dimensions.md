@@ -5,7 +5,7 @@ nav-title: Dimensions
 description: Create custom dimensions and dimension types with Kore's DSL.
 keywords: minecraft, datapack, kore, worldgen, dimension, dimension type, generator
 date-created: 2026-02-03
-date-modified: 2026-06-20
+date-modified: 2026-08-21
 routeOverride: /docs/data-driven/worldgen/dimensions
 ---
 
@@ -37,7 +37,6 @@ val myDimType = dp.dimensionType("my_dim_type") {
 	height = 384
 	logicalHeight = 384
 	minY = -64
-	natural = true
 
 	attributes {
 		canStartRaid(true)
@@ -59,22 +58,30 @@ val myDimType = dp.dimensionType("my_dim_type") {
 
 ### Dimension Type Properties
 
-| Property              | Description                                                       |
-|-----------------------|-------------------------------------------------------------------|
-| `ambientLight`        | Base light level (0.0 to 1.0)                                     |
-| `attributes`          | Environment attributes (visual/audio/gameplay rules)              |
-| `cardinalLight`       | Cardinal light type (`CardinalLight.DEFAULT` or `NETHER`)         |
-| `hasCeiling`          | Whether dimension has bedrock ceiling                             |
-| `hasEnderDragonFight` | Whether the Ender Dragon fight can exist in this dimension        |
-| `hasFixedTime`        | Whether the day-night cycle is frozen                             |
-| `hasSkylight`         | Whether sky provides light                                        |
-| `height`              | Total height (multiple of 16, max 4064)                           |
-| `infiniburn`          | Block tag for infinite burning                                    |
-| `logicalHeight`       | Max height for teleportation/portals                              |
-| `minY`                | Minimum Y coordinate (multiple of 16)                             |
-| `natural`             | Compasses/clocks work normally                                    |
-| `skybox`              | Skybox type (`SkyboxType.NONE`, `OVERWORLD`, or `END`)            |
-| `timelines`           | List of [timelines](/docs/data-driven/timelines) or timeline tags |
+Every property defaults to its vanilla overworld value, so a dimension type only declares what it changes.
+
+| Property                      | Default                 | Description                                                              |
+|-------------------------------|-------------------------|--------------------------------------------------------------------------|
+| `ambientLight`                | `0f`                    | Minimum light level everywhere, from `0` to `1`.                         |
+| `attributes`                  | none                    | Environment attributes (visual, audio and gameplay rules).               |
+| `cardinalLight`               | `DEFAULT`               | `CardinalLight.DEFAULT` or `NETHER`, which flattens the shading.         |
+| `coordinateScale`             | `1.0`                   | Coordinate multiplier when travelling to the dimension.                  |
+| `defaultClock`                | none                    | World clock driving the day cycle, none freezing the time.               |
+| `hasCeiling`                  | `false`                 | Whether the world has a bedrock ceiling.                                 |
+| `hasEnderDragonFight`         | omitted                 | Whether the Ender Dragon fight can happen in the world.                  |
+| `hasFixedTime`                | `false`                 | Whether the time of day is frozen.                                       |
+| `hasSkylight`                 | `true`                  | Whether the sky lights the world.                                        |
+| `height`                      | `384`                   | Total height, a multiple of `16`, from `16` to `4064`.                   |
+| `infiniburn`                  | `#infiniburn_overworld` | Block tag listing the blocks that burn forever.                          |
+| `logicalHeight`               | `384`                   | How high chorus fruits and portals bring a player, at most `height`.     |
+| `minY`                        | `-64`                   | Lowest buildable Y, a multiple of `16`, from `-2032` to `2031`.          |
+| `monsterSpawnBlockLightLimit` | `0`                     | Block light level at or below which monsters spawn, from `0` to `15`.    |
+| `monsterSpawnLightLevel`      | `constant(0)`           | Sky light levels at which monsters spawn, from `0` to `15`.              |
+| `skybox`                      | `OVERWORLD`             | `SkyboxType.NONE`, `OVERWORLD` or `END`.                                 |
+| `timelines`                   | none                    | List of [timelines](/docs/data-driven/timelines) or timeline tags.       |
+
+There is no `natural`, `ultrawarm`, `piglinSafe`, `bedWorks`, `respawnAnchorWorks`, `hasRaids` or `effects` property: everything they used
+to control is now an [environment attribute](/docs/data-driven/worldgen/environment-attributes).
 
 ---
 
@@ -198,7 +205,6 @@ fun DataPack.createSkyDimension() {
 		height = 256
 		logicalHeight = 256
 		minY = 0
-		natural = true
 
 		attributes {
 			canStartRaid(false)
