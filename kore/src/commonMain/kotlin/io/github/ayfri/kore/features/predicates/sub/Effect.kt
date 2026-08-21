@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Effect(
-	var ambiant: Boolean? = null,
+	var ambient: Boolean? = null,
 	var amplifier: IntRangeOrIntJson? = null,
 	var duration: IntRangeOrIntJson? = null,
 	var visible: Boolean? = null,

@@ -221,6 +221,8 @@ fun DataPack.predicateTests() {
 			effects {
 				this[Effects.INVISIBILITY] = effect {
 					amplifier = rangeOrInt(1)
+					ambient = true
+					visible = false
 				}
 			}
 
@@ -316,7 +318,9 @@ fun DataPack.predicateTests() {
 				},
 				"minecraft:effects": {
 					"minecraft:invisibility": {
-						"amplifier": 1
+						"ambient": true,
+						"amplifier": 1,
+						"visible": false
 					}
 				},
 				"minecraft:equipment": {
