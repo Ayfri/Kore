@@ -12,7 +12,7 @@ data class OceanRuin(
 	override var step: GenerationStep,
 	override var spawnOverrides: SpawnOverrides = SpawnOverrides(),
 	override var terrainAdaptation: TerrainAdaptation? = null,
-	var type: MineshaftType = MineshaftType.NORMAL,
+	var biomeTemp: BiomeTemperature = BiomeTemperature.COLD,
 	var largeProbability: Float,
 	var clusterProbability: Float,
 ) : StructureType()

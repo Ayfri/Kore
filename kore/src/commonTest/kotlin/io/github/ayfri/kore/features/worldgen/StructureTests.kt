@@ -170,6 +170,23 @@ fun DataPack.structureTests() {
 			}
 		}
 	""".trimIndent()
+
+	structuresBuilder.oceanRuin("my_ocean_ruin", largeProbability = 0.4f, clusterProbability = 0.8f) {
+		biomes(Biomes.WARM_OCEAN)
+		biomeTemp = BiomeTemperature.WARM
+	}
+
+	structures.last() assertsIs """
+		{
+			"type": "minecraft:ocean_ruin",
+			"biomes": "minecraft:warm_ocean",
+			"step": "surface_structures",
+			"spawn_overrides": {},
+			"biome_temp": "warm",
+			"large_probability": 0.4,
+			"cluster_probability": 0.8
+		}
+	""".trimIndent()
 }
 
 class StructureTests : FunSpec({
