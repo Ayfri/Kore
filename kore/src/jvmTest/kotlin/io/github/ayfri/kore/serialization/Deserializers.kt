@@ -8,16 +8,16 @@ import io.github.ayfri.kore.arguments.components.item.*
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticlePosition
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticlePositionType
-import io.github.ayfri.kore.features.predicates.sub.Advancements
+import io.github.ayfri.kore.features.predicates.sub.AdvancementsPredicate
 import io.github.ayfri.kore.features.timelines.CubicBezier
 import io.github.ayfri.kore.features.timelines.EasingType
 import io.github.ayfri.kore.features.timelines.InBack
 import io.github.ayfri.kore.features.worldgen.dimension.generator.FlatGeneratorSettings
 import io.github.ayfri.kore.features.worldgen.dimension.generator.Layer
 import io.github.ayfri.kore.features.worldgen.flatlevelgeneratorpreset.FlatLevelGeneratorPreset
-import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.Block
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.Blocks
@@ -64,8 +64,8 @@ fun advancementDeserializer() {
 		Advancement(AdvancementArgument("story/mine_diamond"), criteria = mapOf("has_diamond" to true)),
 	)
 	roundTripsAs(
-		Advancements.serializer(),
-		Advancements(setOf(Advancement(AdvancementArgument("adventure/root"), done = true))),
+		AdvancementsPredicate.serializer(),
+		AdvancementsPredicate(setOf(Advancement(AdvancementArgument("adventure/root"), done = true))),
 	)
 }
 

@@ -3,7 +3,7 @@ package io.github.ayfri.kore.features.advancements.triggers
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
-import io.github.ayfri.kore.features.predicates.sub.ItemStack
+import io.github.ayfri.kore.features.predicates.sub.ItemStackPredicate
 import kotlinx.serialization.Serializable
 
 /**
@@ -15,21 +15,21 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ConsumeItem(
 	override var player: EntityOrPredicates? = null,
-	var item: ItemStack? = null,
+	var item: ItemStackPredicate? = null,
 ) : AdvancementTriggerCondition()
 
-fun AdvancementCriteria.consumeItem(name: String, item: ItemStack? = null, block: ConsumeItem.() -> Unit = {}) {
+fun AdvancementCriteria.consumeItem(name: String, item: ItemStackPredicate? = null, block: ConsumeItem.() -> Unit = {}) {
 	criteria[name] = ConsumeItem(item = item).apply(block)
 }
 
 fun AdvancementCriteria.consumeItem(name: String, vararg item: ItemArgument, block: ConsumeItem.() -> Unit = {}) {
-	criteria[name] = ConsumeItem(item = ItemStack(items = item.toList())).apply(block)
+	criteria[name] = ConsumeItem(item = ItemStackPredicate(items = item.toList())).apply(block)
 }
 
-fun ConsumeItem.item(block: ItemStack.() -> Unit) {
-	item = ItemStack().apply(block)
+fun ConsumeItem.item(block: ItemStackPredicate.() -> Unit) {
+	item = ItemStackPredicate().apply(block)
 }
 
 fun ConsumeItem.item(vararg items: ItemArgument) {
-	item = ItemStack(items = items.toList())
+	item = ItemStackPredicate(items = items.toList())
 }

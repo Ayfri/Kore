@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.advancements.triggers
 
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
-import io.github.ayfri.kore.features.predicates.sub.ItemStack
+import io.github.ayfri.kore.features.predicates.sub.ItemStackPredicate
 import kotlinx.serialization.Serializable
 
 /**
@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UsedTotem(
 	override var player: EntityOrPredicates? = null,
-	var item: ItemStack? = null,
+	var item: ItemStackPredicate? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `usedTotem` criterion, triggered when a totem of undying is used. */
@@ -23,6 +23,6 @@ fun AdvancementCriteria.usedTotem(name: String, block: UsedTotem.() -> Unit = {}
 }
 
 /** Set the item constraints. */
-fun UsedTotem.item(block: ItemStack.() -> Unit) {
-	item = ItemStack().apply(block)
+fun UsedTotem.item(block: ItemStackPredicate.() -> Unit) {
+	item = ItemStackPredicate().apply(block)
 }

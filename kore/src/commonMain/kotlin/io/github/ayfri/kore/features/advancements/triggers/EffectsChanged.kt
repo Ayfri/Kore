@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.advancements.triggers
 
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
-import io.github.ayfri.kore.features.predicates.sub.Effect
+import io.github.ayfri.kore.features.predicates.sub.MobEffectPredicate
 import io.github.ayfri.kore.generated.Effects
 import kotlinx.serialization.Serializable
 
@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class EffectsChanged(
 	override var player: EntityOrPredicates? = null,
-	var effects: Map<Effects, Effect>? = null,
+	var effects: Map<Effects, MobEffectPredicate>? = null,
 	var source: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
@@ -25,13 +25,13 @@ fun AdvancementCriteria.effectsChanged(name: String, block: EffectsChanged.() ->
 }
 
 /** Set the effects map constraints. */
-fun EffectsChanged.effects(block: Map<Effects, Effect>.() -> Unit) {
+fun EffectsChanged.effects(block: Map<Effects, MobEffectPredicate>.() -> Unit) {
 	effects = buildMap(block)
 }
 
 /** Add or replace a single effect constraint. */
-fun EffectsChanged.effect(effect: Effects, block: Effect.() -> Unit) {
-	effects = (effects?.toMutableMap() ?: mutableMapOf()).apply { this[effect] = Effect().apply(block) }
+fun EffectsChanged.effect(effect: Effects, block: MobEffectPredicate.() -> Unit) {
+	effects = (effects?.toMutableMap() ?: mutableMapOf()).apply { this[effect] = MobEffectPredicate().apply(block) }
 }
 
 /** Set the source entity constraints. */

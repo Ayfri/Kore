@@ -101,7 +101,7 @@ beeNestDestroyed("destroy_nest") {
 	block = Blocks.BEE_NEST
 	numBeesInside = rangeOrInt(1)
 	item {
-		item(Items.HONEYCOMB)
+		items(Items.HONEYCOMB)
 	}
 }
 ```
@@ -377,7 +377,7 @@ Triggers when an item is enchanted.
 ```kotlin
 enchantedItem("enchant_item") {
 	item {
-		item(Items.DIAMOND_SWORD)
+		items(Items.DIAMOND_SWORD)
 	}
 	levels = rangeOrInt(1..3)
 }
@@ -514,7 +514,7 @@ Triggers when a bucket is filled.
 ```kotlin
 filledBucket("fill_bucket") {
 	item {
-		item(Items.WATER_BUCKET)
+		items(Items.WATER_BUCKET)
 	}
 }
 ```
@@ -537,7 +537,7 @@ Triggers when a fishing rod hooks something.
 ```kotlin
 fishingRodHooked("catch_fish") {
 	item {
-		item(Items.FISHING_ROD)
+		items(Items.FISHING_ROD)
 	}
 	rod {
 		components {
@@ -604,7 +604,7 @@ Triggers when inventory contents change.
 ```kotlin
 inventoryChanged("get_diamond") {
 	item {
-		item(Items.DIAMOND)
+		items(Items.DIAMOND)
 	}
 	slots {
 		empty = rangeOrInt(1..3)
@@ -631,7 +631,7 @@ Triggers when item durability changes.
 itemDurabilityChanged("tool_break") {
 	delta = rangeOrInt(-10..-1)
 	item {
-		item(Items.DIAMOND_PICKAXE)
+		items(Items.DIAMOND_PICKAXE)
 	}
 }
 ```
@@ -965,7 +965,7 @@ playerShearedEquipment("shear_wolf_armor") {
 		entityType(EntityTypes.WOLF)
 	}
 	item {
-		item(Items.LEATHER)
+		items(Items.LEATHER)
 	}
 }
 ```
@@ -1053,7 +1053,7 @@ Triggers when shooting a crossbow.
 ```kotlin
 shotCrossbow("shoot_crossbow") {
 	item {
-		item(Items.CROSSBOW)
+		items(Items.CROSSBOW)
 		enchantments {
 			enchantment(Enchantments.MULTISHOT, 1)
 		}
@@ -1228,7 +1228,7 @@ thrownItemPickedUpByEntity("feed_animal") {
 		entityType(EntityTypes.COW)
 	}
 	item {
-		item(Items.WHEAT)
+		items(Items.WHEAT)
 	}
 }
 ```
@@ -1250,7 +1250,7 @@ Triggers when a thrown item is picked up by a player.
 ```kotlin
 thrownItemPickedUpByPlayer("catch_trident") {
 	item {
-		item(Items.TRIDENT)
+		items(Items.TRIDENT)
 	}
 }
 ```
@@ -1271,7 +1271,7 @@ Triggers every tick (20 times per second).
 ```kotlin
 tick("game_tick") {
 	conditions {
-		timeCheck(6000..18000) // Daytime only
+		timeCheck(WorldClocks.OVERWORLD, 6000..18000) // Daytime only
 	}
 }
 ```
@@ -1313,7 +1313,7 @@ Triggers when a totem is used.
 ```kotlin
 usedTotem("save_life") {
 	item {
-		item(Items.TOTEM_OF_UNDYING)
+		items(Items.TOTEM_OF_UNDYING)
 	}
 }
 ```
@@ -1356,7 +1356,7 @@ Triggers when a villager trades.
 ```kotlin
 villagerTrade("trade") {
 	item {
-		item(Items.EMERALD)
+		items(Items.EMERALD)
 	}
 	villager {
 		conditions {

@@ -3,7 +3,7 @@ package io.github.ayfri.kore.features.advancements.triggers
 import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
-import io.github.ayfri.kore.features.predicates.sub.ItemStack
+import io.github.ayfri.kore.features.predicates.sub.ItemStackPredicate
 import kotlinx.serialization.Serializable
 
 /**
@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class EnchantedItem(
 	override var player: EntityOrPredicates? = null,
-	var item: ItemStack? = null,
+	var item: ItemStackPredicate? = null,
 	var levels: IntRangeOrIntJson? = null,
 ) : AdvancementTriggerCondition()
 
@@ -25,6 +25,6 @@ fun AdvancementCriteria.enchantedItem(name: String, block: EnchantedItem.() -> U
 }
 
 /** Set the item constraints. */
-fun EnchantedItem.item(block: ItemStack.() -> Unit) {
-	item = ItemStack().apply(block)
+fun EnchantedItem.item(block: ItemStackPredicate.() -> Unit) {
+	item = ItemStackPredicate().apply(block)
 }

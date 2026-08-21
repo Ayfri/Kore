@@ -3,7 +3,7 @@ package io.github.ayfri.kore.features.itemmodifiers.functions
 import io.github.ayfri.kore.arguments.types.ItemOrTagArgument
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.PredicateAsList
-import io.github.ayfri.kore.features.predicates.sub.ItemStack
+import io.github.ayfri.kore.features.predicates.sub.ItemStackPredicate
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -16,23 +16,23 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Filtered(
 	override var conditions: PredicateAsList? = null,
-	var itemFilter: ItemStack = ItemStack(),
+	var itemFilter: ItemStackPredicate = ItemStackPredicate(),
 	var onFail: InlinableList<ItemFunction>? = null,
 	var onPass: InlinableList<ItemFunction>? = null,
 ) : ItemFunction()
 
 /** Add a `filtered` step to this modifier. */
-fun ItemModifier.filtered(itemFilter: ItemStack = ItemStack(), block: Filtered.() -> Unit = {}) =
+fun ItemModifier.filtered(itemFilter: ItemStackPredicate = ItemStackPredicate(), block: Filtered.() -> Unit = {}) =
 	Filtered(itemFilter = itemFilter).apply(block).also { modifiers += it }
 
 /** Set the item filter for this `filtered` step. */
-fun Filtered.itemFilter(block: ItemStack.() -> Unit) {
-	itemFilter = ItemStack().apply(block)
+fun Filtered.itemFilter(block: ItemStackPredicate.() -> Unit) {
+	itemFilter = ItemStackPredicate().apply(block)
 }
 
 /** Set the item filter for this `filtered` step. */
-fun Filtered.itemFilter(vararg items: ItemOrTagArgument, block: ItemStack.() -> Unit = {}) {
-	itemFilter = ItemStack(items = items.toList()).apply(block)
+fun Filtered.itemFilter(vararg items: ItemOrTagArgument, block: ItemStackPredicate.() -> Unit = {}) {
+	itemFilter = ItemStackPredicate(items = items.toList()).apply(block)
 }
 
 /** Append nested item functions that will run when the [itemFilter] matches. */

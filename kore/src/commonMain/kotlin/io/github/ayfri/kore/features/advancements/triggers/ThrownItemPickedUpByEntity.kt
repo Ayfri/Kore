@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.advancements.triggers
 
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
-import io.github.ayfri.kore.features.predicates.sub.ItemStack
+import io.github.ayfri.kore.features.predicates.sub.ItemStackPredicate
 import kotlinx.serialization.Serializable
 
 /**
@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
 data class ThrownItemPickedUpByEntity(
 	override var player: EntityOrPredicates? = null,
 	var entity: EntityOrPredicates? = null,
-	var item: ItemStack? = null,
+	var item: ItemStackPredicate? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `thrownItemPickedUpByEntity` criterion, triggered when a thrown item is picked up by an entity. */
@@ -29,6 +29,6 @@ fun ThrownItemPickedUpByEntity.entity(block: EntityOrPredicates.() -> Unit) {
 }
 
 /** Set the item constraints. */
-fun ThrownItemPickedUpByEntity.item(block: ItemStack.() -> Unit) {
-	item = ItemStack().apply(block)
+fun ThrownItemPickedUpByEntity.item(block: ItemStackPredicate.() -> Unit) {
+	item = ItemStackPredicate().apply(block)
 }

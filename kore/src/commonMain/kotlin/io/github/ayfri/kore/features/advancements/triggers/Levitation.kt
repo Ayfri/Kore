@@ -3,7 +3,7 @@ package io.github.ayfri.kore.features.advancements.triggers
 import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
-import io.github.ayfri.kore.features.predicates.sub.Distance
+import io.github.ayfri.kore.features.predicates.sub.DistancePredicate
 import kotlinx.serialization.Serializable
 
 /**
@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Levitation(
 	override var player: EntityOrPredicates? = null,
-	var distance: Distance? = null,
+	var distance: DistancePredicate? = null,
 	var duration: IntRangeOrIntJson? = null,
 ) : AdvancementTriggerCondition()
 
@@ -25,6 +25,6 @@ fun AdvancementCriteria.levitation(name: String, block: Levitation.() -> Unit = 
 }
 
 /** Set the distance constraints. */
-fun Levitation.distance(block: Distance.() -> Unit) {
-	distance = Distance().apply(block)
+fun Levitation.distance(block: DistancePredicate.() -> Unit) {
+	distance = DistancePredicate().apply(block)
 }

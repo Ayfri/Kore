@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.advancements.triggers
 
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
-import io.github.ayfri.kore.features.predicates.sub.ItemStack
+import io.github.ayfri.kore.features.predicates.sub.ItemStackPredicate
 import kotlinx.serialization.Serializable
 
 /**
@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PlayerInteractedWithEntity(
 	override var player: EntityOrPredicates? = null,
-	var item: ItemStack? = null,
+	var item: ItemStackPredicate? = null,
 	var entity: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
@@ -24,8 +24,8 @@ fun AdvancementCriteria.playerInteractedWithEntity(name: String, block: PlayerIn
 }
 
 /** Set the item constraints. */
-fun PlayerInteractedWithEntity.item(block: ItemStack.() -> Unit) {
-	item = ItemStack().apply(block)
+fun PlayerInteractedWithEntity.item(block: ItemStackPredicate.() -> Unit) {
+	item = ItemStackPredicate().apply(block)
 }
 
 /** Set the entity constraints. */

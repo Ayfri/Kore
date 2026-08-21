@@ -12,17 +12,25 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
-@Serializable(Advancements.Companion.AdvancementsSerializer::class)
-data class Advancements(val advancements: Set<Advancement> = emptySet()) {
+/**
+ * Matches the advancement progress of a player, as the `advancements` key of a [PlayerSubPredicate].
+ *
+ * Each [Advancement] is written as an advancement id mapped either to a boolean (whether the whole advancement is
+ * granted) or to an object of criterion name to boolean when individual criteria are listed.
+ *
+ * Minecraft Wiki: [Predicate](https://minecraft.wiki/w/Predicate)
+ */
+@Serializable(AdvancementsPredicate.Companion.AdvancementsPredicateSerializer::class)
+data class AdvancementsPredicate(val advancements: Set<Advancement> = emptySet()) {
 	companion object {
-		data object AdvancementsSerializer : KSerializer<Advancements> {
-			override val descriptor = buildClassSerialDescriptor("Advancements")
+		data object AdvancementsPredicateSerializer : KSerializer<AdvancementsPredicate> {
+			override val descriptor = buildClassSerialDescriptor("AdvancementsPredicate")
 
 			override fun deserialize(decoder: Decoder) =
-				Advancements(decoder.decodeJsonObject().map { (id, value) -> Advancement.fromEntry(id, value) }.toSet())
+				AdvancementsPredicate(decoder.decodeJsonObject().map { (id, value) -> Advancement.fromEntry(id, value) }.toSet())
 
-			override fun serialize(encoder: Encoder, value: Advancements) {
-				require(encoder is JsonEncoder) { "Advancements can only be serialized as Json" }
+			override fun serialize(encoder: Encoder, value: AdvancementsPredicate) {
+				require(encoder is JsonEncoder) { "AdvancementsPredicate can only be serialized as Json" }
 
 				val jsonObject = buildJsonObject {
 					value.advancements.forEach { (advancement, done, criteria) ->

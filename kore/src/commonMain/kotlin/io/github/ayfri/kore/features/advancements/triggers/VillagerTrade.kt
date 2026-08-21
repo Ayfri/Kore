@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.advancements.triggers
 
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
-import io.github.ayfri.kore.features.predicates.sub.ItemStack
+import io.github.ayfri.kore.features.predicates.sub.ItemStackPredicate
 import kotlinx.serialization.Serializable
 
 /**
@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class VillagerTrade(
 	override var player: EntityOrPredicates? = null,
-	var item: ItemStack? = null,
+	var item: ItemStackPredicate? = null,
 	var villager: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
@@ -24,8 +24,8 @@ fun AdvancementCriteria.villagerTrade(name: String, block: VillagerTrade.() -> U
 }
 
 /** Set the item constraints. */
-fun VillagerTrade.item(block: ItemStack.() -> Unit) {
-	item = ItemStack().apply(block)
+fun VillagerTrade.item(block: ItemStackPredicate.() -> Unit) {
+	item = ItemStackPredicate().apply(block)
 }
 
 /** Set the villager constraints. */

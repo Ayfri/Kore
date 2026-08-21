@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.predicates.providers
 
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
-import io.github.ayfri.kore.features.predicates.types.EntityType
+import io.github.ayfri.kore.features.predicates.types.EntityTarget
 import io.github.ayfri.kore.generated.arguments.types.EnvironmentAttributeArgument
 import io.github.ayfri.kore.generated.arguments.types.LootScoreProviderTypeArgument
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
@@ -30,8 +30,9 @@ sealed class NumberProvider {
  *
  * Minecraft Wiki: [Number provider - binomial](https://minecraft.wiki/w/Number_provider#binomial)
  */
+@SerialName("binomial")
 @Serializable
-data class Binomial(var n: NumberProvider, var p: NumberProvider) : NumberProvider()
+data class BinomialNumberProvider(var n: NumberProvider, var p: NumberProvider) : NumberProvider()
 
 /**
  * A constant fixed numeric value. Serializes inline (no wrapper object).
@@ -40,11 +41,11 @@ data class Binomial(var n: NumberProvider, var p: NumberProvider) : NumberProvid
  *
  * Minecraft Wiki: [Number provider - constant](https://minecraft.wiki/w/Number_provider#constant)
  */
-@Serializable(with = Constant.Companion.ConstantNumberProviderSerializer::class)
-data class Constant(val value: Float) : NumberProvider() {
+@Serializable(with = ConstantNumberProvider.Companion.ConstantNumberProviderSerializer::class)
+data class ConstantNumberProvider(val value: Float) : NumberProvider() {
 	companion object {
 		data object ConstantNumberProviderSerializer :
-			InlineAutoSerializer<Constant, Float>(serializer<Float>(), Constant::value, ::Constant)
+			InlineAutoSerializer<ConstantNumberProvider, Float>(serializer<Float>(), ConstantNumberProvider::value, ::ConstantNumberProvider, "constant")
 	}
 }
 
@@ -55,8 +56,9 @@ data class Constant(val value: Float) : NumberProvider() {
  *
  * Minecraft Wiki: [Number provider - enchantment_level](https://minecraft.wiki/w/Number_provider#enchantment_level)
  */
+@SerialName("enchantment_level")
 @Serializable
-data class EnchantmentLevel(var amount: LevelBased) : NumberProvider()
+data class EnchantmentLevelNumberProvider(var amount: LevelBased) : NumberProvider()
 
 /**
  * Reads the current value of an environment attribute (must be representable as a number).
@@ -74,7 +76,7 @@ data class EnvironmentAttributeNumberProvider(
 ) : NumberProvider()
 
 /**
- * Selects the player name or context entity for a [Score] query.
+ * Selects the player name or context entity for a [ScoreNumberProvider] query.
  *
  * @param type [io.github.ayfri.kore.generated.LootScoreProviderTypes.FIXED] to use a literal player name/UUID, [io.github.ayfri.kore.generated.LootScoreProviderTypes.CONTEXT] to use a loot context entity.
  * @param name Player name or UUID string; required when [type] is [io.github.ayfri.kore.generated.LootScoreProviderTypes.FIXED].
@@ -84,7 +86,7 @@ data class EnvironmentAttributeNumberProvider(
 data class ScoreTargetNumberProvider(
 	var type: LootScoreProviderTypeArgument,
 	var name: String? = null,
-	var target: EntityType? = null,
+	var target: EntityTarget? = null,
 )
 
 /**
@@ -96,8 +98,9 @@ data class ScoreTargetNumberProvider(
  *
  * Minecraft Wiki: [Number provider - score](https://minecraft.wiki/w/Number_provider#score)
  */
+@SerialName("score")
 @Serializable
-data class Score(
+data class ScoreNumberProvider(
 	var target: ScoreTargetNumberProvider,
 	var score: String,
 	var scale: Float? = null,
@@ -111,8 +114,9 @@ data class Score(
  *
  * Minecraft Wiki: [Number provider - storage](https://minecraft.wiki/w/Number_provider#storage)
  */
+@SerialName("storage")
 @Serializable
-data class Storage(var storage: String, var path: String) : NumberProvider()
+data class StorageNumberProvider(var storage: String, var path: String) : NumberProvider()
 
 /**
  * The sum of multiple number providers.
@@ -121,8 +125,9 @@ data class Storage(var storage: String, var path: String) : NumberProvider()
  *
  * Minecraft Wiki: [Number provider - sum](https://minecraft.wiki/w/Number_provider#sum)
  */
+@SerialName("sum")
 @Serializable
-data class Sum(var summands: List<NumberProvider>) : NumberProvider()
+data class SumNumberProvider(var summands: List<NumberProvider>) : NumberProvider()
 
 /**
  * A uniformly distributed random value between [min] and [max] (inclusive).
@@ -132,5 +137,6 @@ data class Sum(var summands: List<NumberProvider>) : NumberProvider()
  *
  * Minecraft Wiki: [Number provider - uniform](https://minecraft.wiki/w/Number_provider#uniform)
  */
+@SerialName("uniform")
 @Serializable
-data class Uniform(var min: NumberProvider, var max: NumberProvider) : NumberProvider()
+data class UniformNumberProvider(var min: NumberProvider, var max: NumberProvider) : NumberProvider()

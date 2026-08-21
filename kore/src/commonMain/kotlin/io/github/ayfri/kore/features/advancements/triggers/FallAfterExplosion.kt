@@ -3,9 +3,9 @@ package io.github.ayfri.kore.features.advancements.triggers
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
 import io.github.ayfri.kore.features.predicates.Predicate
-import io.github.ayfri.kore.features.predicates.sub.Distance
-import io.github.ayfri.kore.features.predicates.sub.Entity
-import io.github.ayfri.kore.features.predicates.sub.Location
+import io.github.ayfri.kore.features.predicates.sub.DistancePredicate
+import io.github.ayfri.kore.features.predicates.sub.EntityPredicate
+import io.github.ayfri.kore.features.predicates.sub.LocationPredicate
 import kotlinx.serialization.Serializable
 
 /**
@@ -17,8 +17,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FallAfterExplosion(
 	override var player: EntityOrPredicates? = null,
-	var startPosition: Location = Location(),
-	var distance: Distance = Distance(),
+	var startPosition: LocationPredicate = LocationPredicate(),
+	var distance: DistancePredicate = DistancePredicate(),
 	var cause: EntityOrPredicates? = null,
 ) : AdvancementTriggerCondition()
 
@@ -28,13 +28,13 @@ fun AdvancementCriteria.fallAfterExplosion(name: String, block: FallAfterExplosi
 }
 
 /** Set the start position constraints. */
-fun FallAfterExplosion.startPosition(block: Location.() -> Unit) {
-	startPosition = Location().apply(block)
+fun FallAfterExplosion.startPosition(block: LocationPredicate.() -> Unit) {
+	startPosition = LocationPredicate().apply(block)
 }
 
 /** Set the distance constraints. */
-fun FallAfterExplosion.distance(block: Distance.() -> Unit) {
-	distance = Distance().apply(block)
+fun FallAfterExplosion.distance(block: DistancePredicate.() -> Unit) {
+	distance = DistancePredicate().apply(block)
 }
 
 /** Set the cause constraints. */
@@ -43,7 +43,7 @@ fun FallAfterExplosion.cause(block: EntityOrPredicates.() -> Unit) {
 }
 
 /** Set the cause constraints, deprecated, prefer using Predicates instead. */
-fun FallAfterExplosion.cause(entity: Entity) {
+fun FallAfterExplosion.cause(entity: EntityPredicate) {
 	cause = EntityOrPredicates(legacyEntity = entity)
 }
 

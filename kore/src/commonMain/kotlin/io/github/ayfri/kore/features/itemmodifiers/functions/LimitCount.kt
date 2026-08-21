@@ -3,8 +3,8 @@ package io.github.ayfri.kore.features.itemmodifiers.functions
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.PredicateAsList
 import io.github.ayfri.kore.features.predicates.providers.IntOrNumberProvidersRange
-import io.github.ayfri.kore.features.predicates.providers.int
 import io.github.ayfri.kore.features.predicates.providers.intRange
+import io.github.ayfri.kore.features.predicates.providers.intValue
 import kotlinx.serialization.Serializable
 
 /**
@@ -27,7 +27,7 @@ fun ItemModifier.limitCount(limit: IntOrNumberProvidersRange, block: LimitCount.
 
 /** Convenience overload with a fixed maximum. */
 fun ItemModifier.limitCount(limit: Int, block: LimitCount.() -> Unit = {}) {
-	modifiers += LimitCount(limit = int(limit)).apply(block)
+	modifiers += LimitCount(limit = intValue(limit)).apply(block)
 }
 
 /** Convenience overload with a float range. */

@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.components.entity.axolotlVariant
 import io.github.ayfri.kore.arguments.components.item.damage
 import io.github.ayfri.kore.arguments.components.item.unbreakable
 import io.github.ayfri.kore.arguments.components.matchers.customData
+import io.github.ayfri.kore.arguments.components.matchers.enchantmentPredicate
 import io.github.ayfri.kore.arguments.components.matchers.enchantments
 import io.github.ayfri.kore.arguments.enums.AxolotlVariants
 import io.github.ayfri.kore.arguments.enums.Gamemode
@@ -16,8 +17,8 @@ import io.github.ayfri.kore.features.predicates.conditions.*
 import io.github.ayfri.kore.features.predicates.predicate
 import io.github.ayfri.kore.features.predicates.providers.*
 import io.github.ayfri.kore.features.predicates.sub.*
-import io.github.ayfri.kore.features.predicates.sub.item.enchantment
-import io.github.ayfri.kore.features.predicates.types.EntityType
+import io.github.ayfri.kore.features.predicates.types.EntityTarget
+import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.MoonPhaseValue
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.beesStayInHive
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.moonPhase
@@ -31,7 +32,7 @@ fun DataPack.predicateTests() {
 		allOf {
 			enchantmentActiveCheck(false)
 			randomChance(0.25f)
-			timeCheck(10f..20f)
+			timeCheck(WorldClocks.OVERWORLD, 10f..20f)
 			weatherCheck(raining = false, thundering = true)
 		}
 	}
@@ -50,6 +51,7 @@ fun DataPack.predicateTests() {
 				},
 				{
 					"condition": "minecraft:time_check",
+					"clock": "minecraft:overworld",
 					"value": {
 						"min": 10.0,
 						"max": 20.0
@@ -107,10 +109,10 @@ fun DataPack.predicateTests() {
 	predicate("damage_source_properties") {
 		damageSourceProperties {
 			isDirect = true
-			directEntity = entity {
+			directEntity {
 				entityType(EntityTypes.ZOMBIE)
 			}
-			sourceEntity = entity {
+			sourceEntity {
 				entityType(EntityTypes.SKELETON)
 			}
 			tag(Tags.DamageType.IS_PROJECTILE, expected = true)
@@ -219,7 +221,7 @@ fun DataPack.predicateTests() {
 			}
 
 			effects {
-				this[Effects.INVISIBILITY] = effect {
+				this[Effects.INVISIBILITY] = mobEffectPredicate {
 					amplifier = rangeOrInt(1)
 					ambient = true
 					visible = false
@@ -227,7 +229,7 @@ fun DataPack.predicateTests() {
 			}
 
 			equipment {
-				mainHand = itemStack(Items.DIAMOND_SWORD)
+				mainHand = itemStackPredicate(Items.DIAMOND_SWORD)
 			}
 
 			flags {
@@ -266,7 +268,7 @@ fun DataPack.predicateTests() {
 			}
 
 			slots {
-				this[WEAPON.MAINHAND] = itemStack(Items.DIAMOND_SWORD)
+				this[WEAPON.MAINHAND] = itemStackPredicate(Items.DIAMOND_SWORD)
 			}
 
 			steppingOn {
@@ -397,10 +399,7 @@ fun DataPack.predicateTests() {
 							"min": 1.0,
 							"max": 4.0
 						},
-						"z": {
-							"min": 1.0,
-							"max": 1.0
-						}
+						"z": 1.0
 					}
 				}
 			}
@@ -408,9 +407,9 @@ fun DataPack.predicateTests() {
 	""".trimIndent()
 
 	predicate("entity_score") {
-		entityScores(EntityType.THIS) {
+		entityScores(EntityTarget.THIS) {
 			this["kills"] = intRange(1f, 5f)
-			this["deaths"] = int(2)
+			this["deaths"] = intValue(2)
 		}
 	}
 
@@ -475,19 +474,18 @@ fun DataPack.predicateTests() {
 			position {
 				x(1)
 				y(2..4)
-				z = rangeOrInt(3)
+				z(3)
 			}
 			smokey = true
-			weather = Weather.RAINING
 		}
 	}
 
 	predicates.last() assertsIs """
 		{
 			"condition": "minecraft:location_check",
-			"offset_x": 1,
-			"offset_y": 2,
-			"offset_z": 3,
+			"offsetX": 1,
+			"offsetY": 2,
+			"offsetZ": 3,
 			"predicate": {
 				"biomes": [
 					"minecraft:plains",
@@ -511,30 +509,29 @@ fun DataPack.predicateTests() {
 					"light": 7
 				},
 				"position": {
-					"x": 1,
+					"x": 1.0,
 					"y": {
-						"min": 2,
-						"max": 4
+						"min": 2.0,
+						"max": 4.0
 					},
-					"z": 3
+					"z": 3.0
 				},
-				"smokey": true,
-				"weather": "raining"
+				"smokey": true
 			}
 		}
 	""".trimIndent()
 
 	predicate("match_tool") {
 		matchTool {
-			item(Items.DIAMOND_PICKAXE, Items.IRON_PICKAXE)
+			items(Items.DIAMOND_PICKAXE, Items.IRON_PICKAXE)
 			components {
 				damage(5)
 				unbreakable()
 			}
 			predicates {
 				enchantments(
-					enchantment(Enchantments.EFFICIENCY, levels = rangeOrInt(3)),
-					enchantment(Enchantments.UNBREAKING, levels = rangeOrInt(2))
+					enchantmentPredicate(Enchantments.EFFICIENCY, levels = rangeOrInt(3)),
+					enchantmentPredicate(Enchantments.UNBREAKING, levels = rangeOrInt(2))
 				)
 			}
 		}
@@ -630,53 +627,38 @@ fun DataPack.predicateTests() {
 	""".trimIndent()
 
 	predicate("time_check") {
-		timeCheck(5f..15f, period = 24000)
+		timeCheck(WorldClocks.OVERWORLD, 5f..15f)
 	}
 
 	predicates.last() assertsIs """
 		{
 			"condition": "minecraft:time_check",
+			"clock": "minecraft:overworld",
 			"value": {
 				"min": 5.0,
 				"max": 15.0
+			}
+		}
+	""".trimIndent()
+
+	predicate("time_check_with_period") {
+		timeCheck(WorldClocks.THE_END, 0f..6000f, period = 24000)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:time_check",
+			"clock": "minecraft:the_end",
+			"value": {
+				"min": 0.0,
+				"max": 6000.0
 			},
 			"period": 24000
 		}
 	""".trimIndent()
 
-	predicate("time_check_with_clock") {
-		timeCheck(0f..12000f, clock = WorldClocks.OVERWORLD)
-	}
-
-	predicates.last() assertsIs """
-		{
-			"condition": "minecraft:time_check",
-			"value": {
-				"min": 0.0,
-				"max": 12000.0
-			},
-			"clock": "minecraft:overworld"
-		}
-	""".trimIndent()
-
-	predicate("time_check_clock_and_period") {
-		timeCheck(0f..6000f, period = 24000, clock = WorldClocks.OVERWORLD)
-	}
-
-	predicates.last() assertsIs """
-		{
-			"condition": "minecraft:time_check",
-			"value": {
-				"min": 0.0,
-				"max": 6000.0
-			},
-			"period": 24000,
-			"clock": "minecraft:overworld"
-		}
-	""".trimIndent()
-
 	predicate("value_check") {
-		valueCheck(scoreNumber("kills", target = EntityType.THIS), intRange(0f, 10f))
+		valueCheck(scoreNumber("kills", target = EntityTarget.THIS), intRange(0f, 10f))
 	}
 
 	predicates.last() assertsIs """
@@ -732,6 +714,64 @@ fun DataPack.predicateTests() {
 			"condition": "minecraft:weather_check",
 			"raining": true,
 			"thundering": false
+		}
+	""".trimIndent()
+
+	predicate("match_tool_items") {
+		matchTool(Items.DIAMOND_PICKAXE, Items.IRON_PICKAXE)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:match_tool",
+			"predicate": {
+				"items": [
+					"minecraft:diamond_pickaxe",
+					"minecraft:iron_pickaxe"
+				]
+			}
+		}
+	""".trimIndent()
+
+	predicate("reference_argument") {
+		reference(PredicateArgument("test", "kore"))
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:reference",
+			"name": "kore:test"
+		}
+	""".trimIndent()
+
+	predicate("inverted_condition") {
+		inverted(SurvivesExplosion)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:inverted",
+			"term": {
+				"condition": "minecraft:survives_explosion"
+			}
+		}
+	""".trimIndent()
+
+	predicate("table_bonus_builder") {
+		tableBonus(Enchantments.FORTUNE) {
+			add(0.1f)
+			add(0.2f)
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:table_bonus",
+			"enchantment": "minecraft:fortune",
+			"chances": [
+				0.1,
+				0.2
+			]
 		}
 	""".trimIndent()
 

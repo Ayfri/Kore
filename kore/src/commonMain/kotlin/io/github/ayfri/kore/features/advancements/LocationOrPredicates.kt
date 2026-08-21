@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.advancements
 
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
-import io.github.ayfri.kore.features.predicates.sub.Location
+import io.github.ayfri.kore.features.predicates.sub.LocationPredicate
 import io.github.ayfri.kore.serializers.EitherInlineSerializer
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
@@ -17,7 +17,7 @@ import kotlinx.serialization.Serializable
 @KeepGeneratedSerializer
 @Serializable(with = LocationOrPredicates.Companion.LocationOrPredicatesSerializer::class)
 data class LocationOrPredicates(
-	var legacyLocation: Location? = null,
+	var legacyLocation: LocationPredicate? = null,
 	var predicateConditions: List<PredicateCondition>? = null,
 ) {
 	companion object {
@@ -27,8 +27,8 @@ data class LocationOrPredicates(
 }
 
 /** Set the location condition. */
-fun LocationOrPredicates.location(block: Location.() -> Unit) {
-	legacyLocation = Location().apply(block)
+fun LocationOrPredicates.location(block: LocationPredicate.() -> Unit) {
+	legacyLocation = LocationPredicate().apply(block)
 }
 
 /** Set the predicate conditions. */

@@ -3,7 +3,7 @@ package io.github.ayfri.kore.features.advancements
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.PredicateAsList
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
-import io.github.ayfri.kore.features.predicates.sub.Entity
+import io.github.ayfri.kore.features.predicates.sub.EntityPredicate
 import io.github.ayfri.kore.serializers.EitherInlineSerializer
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
@@ -18,7 +18,7 @@ import kotlinx.serialization.Serializable
 @KeepGeneratedSerializer
 @Serializable(with = EntityOrPredicates.Companion.EntityOrPredicatesSerializer::class)
 data class EntityOrPredicates(
-	var legacyEntity: Entity? = null,
+	var legacyEntity: EntityPredicate? = null,
 	@Serializable(with = Predicate.Companion.PredicateAsListSerializer::class)
 	var predicateConditions: PredicateAsList = Predicate(),
 ) {
@@ -29,13 +29,13 @@ data class EntityOrPredicates(
 }
 
 /** Set the entity condition, deprecated, prefer using [conditions] instead. */
-fun EntityOrPredicates.conditionEntity(entity: Entity) = apply {
+fun EntityOrPredicates.conditionEntity(entity: EntityPredicate) = apply {
 	legacyEntity = entity
 }
 
 /** Set the entity condition, deprecated, prefer using [conditions] instead. */
-fun EntityOrPredicates.conditionEntity(entity: Entity.() -> Unit) = apply {
-	legacyEntity = Entity().apply(entity)
+fun EntityOrPredicates.conditionEntity(entity: EntityPredicate.() -> Unit) = apply {
+	legacyEntity = EntityPredicate().apply(entity)
 }
 
 /** Set the predicate conditions. */

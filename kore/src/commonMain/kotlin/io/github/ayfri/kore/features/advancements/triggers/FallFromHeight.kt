@@ -2,8 +2,8 @@ package io.github.ayfri.kore.features.advancements.triggers
 
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
-import io.github.ayfri.kore.features.predicates.sub.Distance
-import io.github.ayfri.kore.features.predicates.sub.Location
+import io.github.ayfri.kore.features.predicates.sub.DistancePredicate
+import io.github.ayfri.kore.features.predicates.sub.LocationPredicate
 import kotlinx.serialization.Serializable
 
 /**
@@ -15,8 +15,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FallFromHeight(
 	override var player: EntityOrPredicates? = null,
-	var startPosition: Location? = null,
-	var distance: Distance? = null,
+	var startPosition: LocationPredicate? = null,
+	var distance: DistancePredicate? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `fallFromHeight` criterion, triggered when a player falls from a height. */
@@ -25,11 +25,11 @@ fun AdvancementCriteria.fallFromHeight(name: String, block: FallFromHeight.() ->
 }
 
 /** Set the start position constraints. */
-fun FallFromHeight.startPosition(block: Location.() -> Unit) {
-	startPosition = Location().apply(block)
+fun FallFromHeight.startPosition(block: LocationPredicate.() -> Unit) {
+	startPosition = LocationPredicate().apply(block)
 }
 
 /** Set the distance constraints. */
-fun FallFromHeight.distance(block: Distance.() -> Unit) {
-	distance = Distance().apply(block)
+fun FallFromHeight.distance(block: DistancePredicate.() -> Unit) {
+	distance = DistancePredicate().apply(block)
 }

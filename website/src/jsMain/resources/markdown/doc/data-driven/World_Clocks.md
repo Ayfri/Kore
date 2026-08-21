@@ -219,12 +219,12 @@ function("advance_season") {
 
 ## `timeCheck` Predicate Condition
 
-The `timeCheck` condition passes when the queried world time falls within a specified range.
-The optional `clock` parameter selects which clock to query; it defaults to the standard day clock.
+The `timeCheck` condition passes when the time of a world clock falls within a specified range.
+The `clock` parameter is mandatory and selects which clock is queried.
 
 ```kotlin
 predicate("is_daytime") {
-	timeCheck(value = 0f..12000f)
+	timeCheck(WorldClocks.OVERWORLD, 0f..12000f)
 }
 ```
 
@@ -232,15 +232,15 @@ Pass a `period` to apply a modulo first - useful for checking time within a repe
 
 ```kotlin
 predicate("is_second_quarter") {
-	timeCheck(min = 6000f, max = 12000f, period = 24000)
+	timeCheck(WorldClocks.OVERWORLD, min = 6000f, max = 12000f, period = 24000)
 }
 ```
 
-Target a specific world clock:
+Custom clocks work the same way:
 
 ```kotlin
 predicate("is_summer") {
-	timeCheck(min = 24000f, max = 48000f, clock = seasonClock)
+	timeCheck(seasonClock, min = 24000f, max = 48000f)
 }
 ```
 
@@ -314,7 +314,7 @@ dataPack("my_mod") {
 
 	// 4. Predicate: is it currently summer?
 	predicate("is_summer") {
-		timeCheck(min = 24000f, max = 48000f, clock = season)
+		timeCheck(season, min = 24000f, max = 48000f)
 	}
 
 	// 5. Command: skip to winter

@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.advancements.triggers
 
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
-import io.github.ayfri.kore.features.predicates.sub.DamageSource
+import io.github.ayfri.kore.features.predicates.sub.DamageSourcePredicate
 import kotlinx.serialization.Serializable
 
 /**
@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
 data class PlayerKilledEntity(
 	override var player: EntityOrPredicates? = null,
 	var entity: EntityOrPredicates? = null,
-	var killingBlow: DamageSource? = null,
+	var killingBlow: DamageSourcePredicate? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add a `playerKilledEntity` criterion, triggered when a player kills an entity. */
@@ -29,6 +29,6 @@ fun PlayerKilledEntity.entity(block: EntityOrPredicates.() -> Unit) {
 }
 
 /** Set the killing blow constraints. */
-fun PlayerKilledEntity.killingBlow(block: DamageSource.() -> Unit) {
-	killingBlow = DamageSource().apply(block)
+fun PlayerKilledEntity.killingBlow(block: DamageSourcePredicate.() -> Unit) {
+	killingBlow = DamageSourcePredicate().apply(block)
 }

@@ -5,7 +5,7 @@ nav-title: Predicates
 description: Create Minecraft predicates with Kore's type-safe Kotlin DSL. Covers entity properties, location, weather, time, enchantments, damage, and NBT checks. Use in execute if/unless, loot tables, and advancements.
 keywords: minecraft predicates, datapack conditions, execute if predicate, entity properties check, location check, weather check, time check, damage predicate, kore predicates, minecraft condition dsl
 date-created: 2024-01-08
-date-modified: 2026-07-02
+date-modified: 2026-08-21
 routeOverride: /docs/data-driven/predicates
 ---
 
@@ -29,7 +29,7 @@ Here's a simple example of creating a predicate that checks if a player is holdi
 ```kotlin
 val myPredicate = predicate("test") {
 	matchTool {
-		item(Items.DIAMOND_PICKAXE)
+		items(Items.DIAMOND_PICKAXE)
 	}
 }
 ```
@@ -82,7 +82,7 @@ Conditions are categorized by their **loot context requirements
 | `inverted`                  | Inverts another predicate condition                                                                                                                                                                                    |
 | `randomChance`              | Passes if a random float between 0.0 and 1.0 is below the given `NumberProvider` value                                                                                                                                 |
 | `reference`                 | Invokes another predicate file and returns its result (cannot be cyclic)                                                                                                                                               |
-| `timeCheck`                 | Compares a world clock's time against a `NumberProvider` range (optional `period` for modulo, optional `clock` to select which clock) - see [World Clocks](/docs/data-driven/world-clocks#timecheckpredicatecondition) |
+| `timeCheck`                 | Compares a world clock's time against a `NumberProvider` range (mandatory `clock` to select the clock, optional `period` for modulo) - see [World Clocks](/docs/data-driven/world-clocks#timecheckpredicatecondition) |
 | `valueCheck`                | Compares a `NumberProvider` value against another `NumberProvider` or range                                                                                                                                            |
 | `weatherCheck`              | Checks the current game weather (raining, thundering)                                                                                                                                                                  |
 
@@ -147,6 +147,8 @@ The
 
 ### Entity Context Options
 
+The `entity` parameter takes an `EntityTarget`:
+
 | Value                | Description                                               |
 |----------------------|-----------------------------------------------------------|
 | `this`               | The entity that invoked the predicate (default)           |
@@ -170,14 +172,15 @@ predicate("entity_check") {
 
 		// Check effects
 		effects {
-			this[Effects.INVISIBILITY] = effect {
+			this[Effects.INVISIBILITY] = mobEffectPredicate {
 				amplifier = rangeOrInt(1)
 			}
 		}
 
-		// Check equipment
+		// Check equipment, one entry per equipment slot
 		equipment {
-			mainHand = itemStack(Items.DIAMOND_SWORD)
+			mainHand = itemStackPredicate(Items.DIAMOND_SWORD)
+			body = itemStackPredicate(Items.SADDLE)
 		}
 
 		// Check entity flags
@@ -187,9 +190,7 @@ predicate("entity_check") {
 
 		// Check location
 		location {
-			block {
-				blocks(Blocks.STONE)
-			}
+			block(Blocks.STONE)
 		}
 
 		// Check movement
@@ -213,6 +214,17 @@ predicate("entity_check") {
 			team("foo")
 		}
 
+		// Check scoreboard tags set through /tag
+		entityTags {
+			allOf("boss")
+			noneOf("tamed")
+		}
+
+		// Check the entity this one's AI is targeting
+		targetedEntity {
+			entityType(EntityTypes.VILLAGER)
+		}
+
 		// Check custom data predicates
 		predicates {
 			customData {
@@ -222,21 +234,22 @@ predicate("entity_check") {
 
 		// Check specific inventory slots
 		slots {
-			this[WEAPON.MAINHAND] = itemStack(Items.DIAMOND_SWORD)
+			this[WEAPON.MAINHAND] = itemStackPredicate(Items.DIAMOND_SWORD)
 		}
 
 		// Check block the entity is standing on
 		steppingOn {
-			blocks(Blocks.STONE)
-			components {
-				damage(5)
-			}
-			predicates {
-				customData {
-					this["foo"] = "bar"
+			block(Blocks.STONE) {
+				components {
+					damage(5)
 				}
+				predicates {
+					customData {
+						this["foo"] = "bar"
+					}
+				}
+				state("up", "bottom")
 			}
-			state("up", "bottom")
 		}
 
 		// Check entity type
@@ -269,42 +282,41 @@ Sub-predicates are nested data structures that allow you to define specific prop
 The `entityProperties` condition supports various sub-predicates to check different aspects of an entity. Each one is
 serialized as its own identifier-keyed entry (`minecraft:<name>`) rather than a flat object:
 
-| Sub-Predicate          | JSON key                         | Description                              | Example                                                                  |
-|------------------------|----------------------------------|------------------------------------------|--------------------------------------------------------------------------|
-| `components`           | `minecraft:components`           | Check entity data components             | `components { axolotlVariant(AxolotlVariants.CYAN) }`                    |
-| `distance`             | `minecraft:distance`             | Check distance between entities          | `distance { x(1f..4f) }`                                                 |
-| `effects`              | `minecraft:effects`              | Check potion effects                     | `effects { this[Effects.SPEED] = effect { amplifier = rangeOrInt(1) } }` |
-| `entityTags`           | `minecraft:entity_tags`          | Check scoreboard tags set through `/tag` | `entityTags { allOf("boss") }`                                           |
-| `entityType`           | `minecraft:entity_type`          | Check entity type                        | `entityType(EntityTypes.MARKER)`                                         |
-| `equipment`            | `minecraft:equipment`            | Check equipped items                     | `equipment { mainHand = itemStack(Items.DIAMOND_SWORD) }`                |
-| `flags`                | `minecraft:flags`                | Check entity flags (baby, on fire, etc.) | `flags { isBaby = true }`                                                |
-| `location`             | `minecraft:location`             | Check entity location                    | `location { block { blocks(Blocks.STONE) } }`                            |
-| `movement`             | `minecraft:movement`             | Check entity movement                    | `movement { x(1.0, 4.0); horizontalSpeed(1.0) }`                         |
-| `movementAffectedBy`   | `minecraft:movement_affected_by` | Check what affects entity movement       | `movementAffectedBy { canSeeSky = true }`                                |
-| `nbt`                  | `minecraft:nbt`                  | Check entity NBT data                    | `nbt { this["foo"] = "bar" }`                                            |
-| `passenger`            | `minecraft:passenger`            | Check entity passenger                   | `passenger { team("foo") }`                                              |
-| `periodicTick`         | `minecraft:periodic_tick`        | Check entity periodic ticks              | `periodicTick(20)`                                                       |
-| `predicates`           | `minecraft:predicates`           | Check custom data predicates             | `predicates { customData { this["key"] = "value" } }`                    |
-| `slots`                | `minecraft:slots`                | Check specific inventory slots           | `slots { this[WEAPON.MAINHAND] = itemStack(Items.DIAMOND_SWORD) }`       |
-| `steppingOn`           | `minecraft:stepping_on`          | Check block the entity is standing on    | `steppingOn { blocks(Blocks.STONE) }`                                    |
-| `targetedEntity`       | `minecraft:targeted_entity`      | Check entity being targeted              | `targetedEntity { entityType(EntityTypes.ZOMBIE) }`                      |
-| `team`                 | `minecraft:team`                 | Check entity team                        | `team("my_team")`                                                        |
-| `typeSpecific { ... }` | `minecraft:type_specific/<name>` | Check type-specific properties           | See [Type-Specific Properties](#entity-type-specific-properties)         |
-| `vehicle`              | `minecraft:vehicle`              | Check entity vehicle                     | `vehicle { distance { x(1f..4f) } }`                                     |
+| Sub-Predicate          | JSON key                         | Description                              | Example                                                                              |
+|------------------------|----------------------------------|------------------------------------------|--------------------------------------------------------------------------------------|
+| `components`           | `minecraft:components`           | Check entity data components             | `components { axolotlVariant(AxolotlVariants.CYAN) }`                                |
+| `distance`             | `minecraft:distance`             | Check distance between entities          | `distance { x(1f..4f) }`                                                             |
+| `effects`              | `minecraft:effects`              | Check potion effects                     | `effects { this[Effects.SPEED] = mobEffectPredicate { amplifier = rangeOrInt(1) } }` |
+| `entityTags`           | `minecraft:entity_tags`          | Check scoreboard tags set through `/tag` | `entityTags { allOf("boss") }`                                                       |
+| `entityType`           | `minecraft:entity_type`          | Check entity type                        | `entityType(EntityTypes.MARKER)`                                                     |
+| `equipment`            | `minecraft:equipment`            | Check equipped items                     | `equipment { mainHand = itemStackPredicate(Items.DIAMOND_SWORD) }`                   |
+| `flags`                | `minecraft:flags`                | Check entity flags (baby, on fire, etc.) | `flags { isBaby = true }`                                                            |
+| `location`             | `minecraft:location`             | Check entity location                    | `location { block(Blocks.STONE) }`                                                   |
+| `movement`             | `minecraft:movement`             | Check entity movement                    | `movement { x(1.0, 4.0); horizontalSpeed(1.0) }`                                     |
+| `movementAffectedBy`   | `minecraft:movement_affected_by` | Check what affects entity movement       | `movementAffectedBy { canSeeSky = true }`                                            |
+| `nbt`                  | `minecraft:nbt`                  | Check entity NBT data                    | `nbt { this["foo"] = "bar" }`                                                        |
+| `passenger`            | `minecraft:passenger`            | Check entity passenger                   | `passenger { team("foo") }`                                                          |
+| `periodicTick`         | `minecraft:periodic_tick`        | Check entity periodic ticks              | `periodicTick(20)`                                                                   |
+| `predicates`           | `minecraft:predicates`           | Check custom data predicates             | `predicates { customData { this["key"] = "value" } }`                                |
+| `slots`                | `minecraft:slots`                | Check specific inventory slots           | `slots { this[WEAPON.MAINHAND] = itemStackPredicate(Items.DIAMOND_SWORD) }`          |
+| `steppingOn`           | `minecraft:stepping_on`          | Check block the entity is standing on    | `steppingOn { block(Blocks.STONE) }`                                                 |
+| `targetedEntity`       | `minecraft:targeted_entity`      | Check entity being targeted              | `targetedEntity { entityType(EntityTypes.ZOMBIE) }`                                  |
+| `team`                 | `minecraft:team`                 | Check entity team                        | `team("my_team")`                                                                    |
+| `typeSpecific { ... }` | `minecraft:type_specific/<name>` | Check type-specific properties           | See [Type-Specific Properties](#entity-type-specific-properties)                     |
+| `vehicle`              | `minecraft:vehicle`              | Check entity vehicle                     | `vehicle { distance { x(1f..4f) } }`                                                 |
 
-The `Entity` class provides all the functions for these sub-predicates, backed by a single `EntitySubPredicate` sealed
-family - each call appends one entry to `Entity.subPredicates`.
+The `EntityPredicate` class provides all the functions for these sub-predicates, backed by a single
+`EntitySubPredicate` sealed family - each call appends one entry to `EntityPredicate.subPredicates`.
 
 ### Entity Type-Specific Properties
 
-Entities can still expose a handful of hard-coded type-specific predicates (mainly utility ones such as fishing hooks, lightning, player, raider, sheep and slime). All the visual
-*variant* checks that existed before snapshot **25w04a** were migrated by Mojang to the new **components
-** system. Kore therefore removed the dedicated helpers (`axolotlTypeSpecific`,
-`catTypeSpecific`, …) in favor of component matching.
+Entities expose a handful of hard-coded type-specific predicates, covering the state that data components do not:
+fishing hooks, lightning bolts, players, raiders, sheep and cube mobs. Every visual *variant* check lives in the
+components system instead, so it is matched through the `components` block.
 
-#### Component-based variant checks (25w04a +)
+#### Component-based variant checks
 
-You can now query an entity’s data components directly from `entityProperties` with the `components` block:
+Query an entity's data components directly from `entityProperties` with the `components` block:
 
 ```kotlin
 // Check axolotl variant via its component
@@ -317,13 +329,13 @@ predicate("axolotl_component_check") {
 }
 ```
 
-Any component you can put on an **item** can be matched on an **entity
-** in exactly the same way - just call the corresponding extension inside the `components {}` scope.
+Any component you can put on an **item** can be matched on an **entity** in exactly the same way - just call the
+corresponding extension inside the `components {}` scope.
 
-#### Remaining built-in `typeSpecific` helpers
+#### Built-in `typeSpecific` helpers
 
-These helpers are still available because they cover information that is **not** represented by components. They're
-grouped under a `typeSpecific { }` scope, and each keys under `minecraft:type_specific/<name>`:
+These helpers cover information that is **not** represented by components. They're grouped under a `typeSpecific { }`
+scope, and each keys under `minecraft:type_specific/<name>`:
 
 ##### Fishing Hook
 
@@ -357,7 +369,8 @@ predicate("lightning_check") {
 
 ##### Player
 
-Check player-specific properties including gamemode, food stats, unlocked recipes, and input state:
+Check player-specific properties including gamemode, experience level, food stats, unlocked recipes, statistics, what
+the player is looking at, and input state:
 
 ```kotlin
 predicate("player_check") {
@@ -365,12 +378,20 @@ predicate("player_check") {
 		typeSpecific {
 			player {
 				gamemodes(Gamemode.CREATIVE)
+				level = rangeOrInt(1..5)
 				food {
 					level = rangeOrInt(5..15)
 					saturation = rangeOrDouble(1.0, 10.0)
 				}
 				recipes {
 					this[Recipes.BOW] = true
+				}
+				lookingAt {
+					entityType(EntityTypes.CREEPER)
+				}
+				stats {
+					statistic(StatisticTypes.CUSTOM, CustomStats.JUMP, 10)
+					statistic(StatisticTypes.MINED, Blocks.STONE, 1..5)
 				}
 				input {
 					forward = true
@@ -429,8 +450,8 @@ predicate("cube_mob_check") {
 }
 ```
 
-> **Note**   All former
-`*TypeSpecific` helpers that dealt with variants (axolotl, cat, fox, frog, horse, llama, mooshroom, painting, parrot, pig, rabbit, salmon, tropical fish, villager, wolf) have been removed. Update your predicates to use component matching instead.
+> **Note**   Variant checks (axolotl, cat, fox, frog, horse, llama, mooshroom, painting, parrot, pig, rabbit, salmon,
+> tropical fish, villager, wolf) are component matches, not `typeSpecific` helpers.
 
 ### Item Sub-Predicates
 
@@ -441,9 +462,8 @@ When using `matchTool` or checking equipment, you can use item sub-predicates. T
 ```kotlin
 predicate("basic_item_check") {
 	matchTool {
-		item(Items.DIAMOND_SWORD)
-		count = rangeOrInt(1..64)
-		durability = rangeOrInt(0..100)
+		items(Items.DIAMOND_SWORD)
+		count(1..64)
 	}
 }
 ```
@@ -453,7 +473,7 @@ predicate("basic_item_check") {
 ```kotlin
 predicate("component_check") {
 	matchTool {
-		item(Items.DIAMOND_SWORD)
+		items(Items.DIAMOND_SWORD)
 		predicates {
 			// Check damage and durability
 			damage {
@@ -535,7 +555,7 @@ A basic item predicate matches on the item type plus optional `count`/`durabilit
 ```kotlin
 predicate("enchanted_tool") {
 	matchTool {
-		item(Items.DIAMOND_PICKAXE)
+		items(Items.DIAMOND_PICKAXE)
 		predicates {
 			enchantments(enchantment(Enchantments.EFFICIENCY))
 		}

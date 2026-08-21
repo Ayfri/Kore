@@ -10,7 +10,7 @@ import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.features.advancements.triggers.AdvancementTriggerCondition
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
-import io.github.ayfri.kore.features.predicates.sub.Entity
+import io.github.ayfri.kore.features.predicates.sub.EntityPredicate
 import io.github.ayfri.kore.generated.arguments.types.AdvancementArgument
 import io.github.ayfri.kore.generated.arguments.types.LootTableArgument
 import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
@@ -128,7 +128,7 @@ fun AdvancementDisplay.icon(icon: ItemArgument, count: Int? = null, components: 
 fun Advancement.criteria(
 	name: String,
 	triggerCondition: AdvancementTriggerCondition,
-	condition: Entity? = null,
+	condition: EntityPredicate? = null,
 ) {
 	criteria.criteria[name] = triggerCondition.apply { this.player = EntityOrPredicates(condition) }
 }

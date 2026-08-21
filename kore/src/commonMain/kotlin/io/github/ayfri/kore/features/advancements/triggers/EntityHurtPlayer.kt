@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.advancements.triggers
 
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
-import io.github.ayfri.kore.features.predicates.sub.Damage
+import io.github.ayfri.kore.features.predicates.sub.DamagePredicate
 import kotlinx.serialization.Serializable
 
 /**
@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class EntityHurtPlayer(
 	override var player: EntityOrPredicates? = null,
-	var damage: Damage? = null,
+	var damage: DamagePredicate? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add an `entityHurtPlayer` criterion, triggered when a player takes damage from an entity. */
@@ -23,6 +23,6 @@ fun AdvancementCriteria.entityHurtPlayer(name: String, block: EntityHurtPlayer.(
 }
 
 /** Set the damage constraints. */
-fun EntityHurtPlayer.damage(block: Damage.() -> Unit) {
-	damage = Damage().apply(block)
+fun EntityHurtPlayer.damage(block: DamagePredicate.() -> Unit) {
+	damage = DamagePredicate().apply(block)
 }

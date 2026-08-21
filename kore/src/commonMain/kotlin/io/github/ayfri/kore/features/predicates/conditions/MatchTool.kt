@@ -1,23 +1,32 @@
 package io.github.ayfri.kore.features.predicates.conditions
 
-import io.github.ayfri.kore.arguments.types.resources.ItemArgument
+import io.github.ayfri.kore.arguments.types.ItemOrTagArgument
 import io.github.ayfri.kore.features.predicates.Predicate
-import io.github.ayfri.kore.features.predicates.sub.ItemStack
+import io.github.ayfri.kore.features.predicates.sub.ItemStackPredicate
 import kotlinx.serialization.Serializable
 
+/**
+ * Passes when the tool used to break the block matches [predicate].
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/predicates
+ * Minecraft Wiki: [Predicate - match_tool](https://minecraft.wiki/w/Predicate#match_tool)
+ */
 @Serializable
 data class MatchTool(
-	var predicate: ItemStack,
+	var predicate: ItemStackPredicate,
 ) : PredicateCondition()
 
-fun Predicate.matchTool(vararg items: ItemArgument) {
-	predicateConditions += MatchTool(ItemStack(items = items.toList()))
+/** Adds a [MatchTool] condition passing when the tool is any of [items]. */
+fun Predicate.matchTool(vararg items: ItemOrTagArgument) {
+	predicateConditions += MatchTool(ItemStackPredicate(items = items.toList()))
 }
 
-fun Predicate.matchTool(predicate: ItemStack) {
+/** Adds a [MatchTool] condition matching [predicate]. */
+fun Predicate.matchTool(predicate: ItemStackPredicate) {
 	predicateConditions += MatchTool(predicate)
 }
 
-fun Predicate.matchTool(block: ItemStack.() -> Unit = {}) {
-	predicateConditions += MatchTool(ItemStack().apply(block))
+/** Adds a [MatchTool] condition matching the item built by [block]. */
+fun Predicate.matchTool(block: ItemStackPredicate.() -> Unit) {
+	predicateConditions += MatchTool(ItemStackPredicate().apply(block))
 }

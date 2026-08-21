@@ -12,6 +12,7 @@ import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.arguments.types.resources.tagged.FunctionTagArgument
 import io.github.ayfri.kore.commands.advancements
 import io.github.ayfri.kore.commands.execute.execute
+import io.github.ayfri.kore.commands.function as functionCommand
 import io.github.ayfri.kore.commands.kill
 import io.github.ayfri.kore.entities.Entity
 import io.github.ayfri.kore.entities.Player
@@ -25,9 +26,10 @@ import io.github.ayfri.kore.features.itemmodifiers.functions.SetCustomData
 import io.github.ayfri.kore.features.loottables.entries.Item
 import io.github.ayfri.kore.features.loottables.lootTable
 import io.github.ayfri.kore.features.loottables.pool
-import io.github.ayfri.kore.features.predicates.sub.itemStack
+import io.github.ayfri.kore.features.predicates.sub.itemStackPredicate
 import io.github.ayfri.kore.features.tags.functionTag
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.function as dpFunction
 import io.github.ayfri.kore.functions.generatedFunction
 import io.github.ayfri.kore.functions.tick
 import io.github.ayfri.kore.generated.EntityTypes
@@ -35,8 +37,6 @@ import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import io.github.ayfri.kore.utils.nbt
 import net.benwoodworth.knbt.NbtByte
-import io.github.ayfri.kore.commands.function as functionCommand
-import io.github.ayfri.kore.functions.function as dpFunction
 
 private val initializedDeathDispatch = mutableSetOf<String>()
 
@@ -328,7 +328,7 @@ fun Player.onRightClick(item: ItemArgument, block: Function.(Player) -> Unit) {
 		item.name.lowercase(),
 		block.hashCode(),
 		{ block(self) }) {
-		usingItem("use_item") { this.item = itemStack(item) }
+		usingItem("use_item") { this.item = itemStackPredicate(item) }
 	}
 }
 

@@ -6,7 +6,7 @@ import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.loottables.lootTable
 import io.github.ayfri.kore.features.loottables.pool
 import io.github.ayfri.kore.features.predicates.providers.*
-import io.github.ayfri.kore.features.predicates.types.EntityType
+import io.github.ayfri.kore.features.predicates.types.EntityTarget
 import io.github.ayfri.kore.generated.EnvironmentAttributes
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
@@ -92,7 +92,7 @@ fun DataPack.numberProviderTests() {
 
 	lootTable("score_context_test") {
 		pool {
-			rolls = scoreNumber("kills", EntityType.THIS)
+			rolls = scoreNumber("kills", EntityTarget.THIS)
 		}
 	}
 

@@ -14,6 +14,7 @@ import io.github.ayfri.kore.commands.scoreboard.Operation
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.timeCheck
+import io.github.ayfri.kore.generated.WorldClocks
 import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
@@ -112,7 +113,7 @@ context(dp: DataPack)
 fun World.onDayStart(block: Function.() -> Unit) =
 	dp.registerWorldEvent(
 		OopConstants.dayStartEvent, dimension, block.hashCode(), intoLoad = false, needsState = true, block,
-		edgeDispatcher(rising = true, dimension) { timeCheck(0f..11999f) })
+		edgeDispatcher(rising = true, dimension) { timeCheck(WorldClocks.OVERWORLD, 0f..11999f) })
 
 /**
  * Runs [block] every [period] ticks, backed by a scoreboard counter so it is unaffected by the day/night cycle being frozen.
@@ -167,7 +168,7 @@ context(dp: DataPack)
 fun World.onNightStart(block: Function.() -> Unit) =
 	dp.registerWorldEvent(
 		OopConstants.nightStartEvent, dimension, block.hashCode(), intoLoad = false, needsState = true, block,
-		edgeDispatcher(rising = true, dimension) { timeCheck(13000f..23999f) })
+		edgeDispatcher(rising = true, dimension) { timeCheck(WorldClocks.OVERWORLD, 13000f..23999f) })
 
 /** Runs [block] the tick it turns noon (`daytime` reaches `6000`), scoped to this world's dimension when set. */
 context(dp: DataPack)
@@ -232,7 +233,7 @@ fun World.onTimeOfDay(time: Int, block: Function.() -> Unit) =
 		block
 	) { handlers, _ ->
 		execute {
-			ifCondition { predicate { timeCheck(time) } }
+			ifCondition { predicate { timeCheck(WorldClocks.OVERWORLD, time) } }
 			dimension?.let { inDimension(it) }
 			run { functionCommand(handlers) }
 		}

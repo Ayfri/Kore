@@ -3,7 +3,7 @@ package io.github.ayfri.kore.features.advancements.triggers
 import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
-import io.github.ayfri.kore.features.predicates.sub.ItemStack
+import io.github.ayfri.kore.features.predicates.sub.ItemStackPredicate
 import kotlinx.serialization.Serializable
 
 /**
@@ -17,7 +17,7 @@ data class ItemDurabilityChanged(
 	override var player: EntityOrPredicates? = null,
 	var delta: IntRangeOrIntJson? = null,
 	var durability: IntRangeOrIntJson? = null,
-	var item: ItemStack? = null,
+	var item: ItemStackPredicate? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add an `itemDurabilityChanged` criterion, triggered when an item's durability changes. */
@@ -36,6 +36,6 @@ fun ItemDurabilityChanged.durability(block: IntRangeOrIntJson.() -> Unit) {
 }
 
 /** Set the item constraints. */
-fun ItemDurabilityChanged.item(block: ItemStack.() -> Unit) {
-	item = ItemStack().apply(block)
+fun ItemDurabilityChanged.item(block: ItemStackPredicate.() -> Unit) {
+	item = ItemStackPredicate().apply(block)
 }

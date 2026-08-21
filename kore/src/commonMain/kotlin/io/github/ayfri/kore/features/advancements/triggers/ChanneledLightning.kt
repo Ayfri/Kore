@@ -3,7 +3,7 @@ package io.github.ayfri.kore.features.advancements.triggers
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
 import io.github.ayfri.kore.features.predicates.Predicate
-import io.github.ayfri.kore.features.predicates.sub.Entity
+import io.github.ayfri.kore.features.predicates.sub.EntityPredicate
 import kotlinx.serialization.Serializable
 
 /**
@@ -29,7 +29,7 @@ fun ChanneledLightning.victim(block: EntityOrPredicates.() -> Unit) {
 }
 
 /** Add victims by entity instances, deprecated, prefer using predicates instead. */
-fun ChanneledLightning.victims(vararg entities: Entity) {
+fun ChanneledLightning.victims(vararg entities: EntityPredicate) {
 	victims = entities.map { EntityOrPredicates(legacyEntity = it) }
 }
 

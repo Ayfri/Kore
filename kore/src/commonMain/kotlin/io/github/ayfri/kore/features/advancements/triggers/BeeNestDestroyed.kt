@@ -4,7 +4,7 @@ import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJs
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
-import io.github.ayfri.kore.features.predicates.sub.ItemStack
+import io.github.ayfri.kore.features.predicates.sub.ItemStackPredicate
 import kotlinx.serialization.Serializable
 
 /**
@@ -17,7 +17,7 @@ import kotlinx.serialization.Serializable
 data class BeeNestDestroyed(
 	override var player: EntityOrPredicates? = null,
 	var block: BlockArgument? = null,
-	var item: ItemStack? = null,
+	var item: ItemStackPredicate? = null,
 	var numBeesInside: IntRangeOrIntJson? = null,
 ) : AdvancementTriggerCondition()
 
@@ -25,7 +25,7 @@ data class BeeNestDestroyed(
 fun AdvancementCriteria.beeNestDestroyed(
 	name: String,
 	block: BlockArgument? = null,
-	item: ItemStack? = null,
+	item: ItemStackPredicate? = null,
 	numBeesInside: IntRangeOrIntJson? = null,
 	init: BeeNestDestroyed.() -> Unit,
 ) {
@@ -33,6 +33,6 @@ fun AdvancementCriteria.beeNestDestroyed(
 }
 
 /** Define the item used in the destruction. */
-fun BeeNestDestroyed.item(block: ItemStack.() -> Unit) {
-	item = ItemStack().apply(block)
+fun BeeNestDestroyed.item(block: ItemStackPredicate.() -> Unit) {
+	item = ItemStackPredicate().apply(block)
 }

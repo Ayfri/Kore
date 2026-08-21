@@ -4,7 +4,7 @@ import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
 import io.github.ayfri.kore.features.advancements.LocationOrPredicates
 import io.github.ayfri.kore.features.predicates.Predicate
-import io.github.ayfri.kore.features.predicates.sub.Location
+import io.github.ayfri.kore.features.predicates.sub.LocationPredicate
 import kotlinx.serialization.Serializable
 
 /**
@@ -20,7 +20,7 @@ data class AllayDropItemOnBlock(
 ) : AdvancementTriggerCondition()
 
 /** Add an `allayDropItemOnBlock` criterion, triggered when an allay drops an item on a block. */
-fun AdvancementCriteria.allayDropItemOnBlock(name: String, location: Location, block: AllayDropItemOnBlock.() -> Unit) {
+fun AdvancementCriteria.allayDropItemOnBlock(name: String, location: LocationPredicate, block: AllayDropItemOnBlock.() -> Unit) {
 	criteria[name] = AllayDropItemOnBlock(location = LocationOrPredicates(location)).apply(block)
 }
 
@@ -36,8 +36,8 @@ fun AdvancementCriteria.allayDropItemOnBlock(name: String, block: AllayDropItemO
 }
 
 /** Set the location condition, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
-fun AllayDropItemOnBlock.location(block: Location.() -> Unit) {
-	location = LocationOrPredicates(Location().apply(block))
+fun AllayDropItemOnBlock.location(block: LocationPredicate.() -> Unit) {
+	location = LocationOrPredicates(LocationPredicate().apply(block))
 }
 
 /** Set the predicate conditions, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */

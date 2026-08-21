@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.predicates.sub
 
-/** Receiver for [Entity.typeSpecific] - groups the type-specific sub-predicate builders (`fishingHook`, `player`, ...). */
-class EntityTypeSpecificScope(internal val entity: Entity)
+/** Receiver for [EntityPredicate.typeSpecific] - groups the type-specific sub-predicate builders (`fishingHook`, `player`, ...). */
+class EntityTypeSpecificScope(internal val entity: EntityPredicate)
 
 /**
  * Adds the entity's type-specific sub-predicate, matched only against entities of the relevant type
@@ -9,7 +9,7 @@ class EntityTypeSpecificScope(internal val entity: Entity)
  *
  * Example:
  * ```kotlin
- * entity {
+ * entityPredicate {
  *     typeSpecific {
  *         player {
  *             gamemodes(Gamemode.SURVIVAL)
@@ -18,6 +18,6 @@ class EntityTypeSpecificScope(internal val entity: Entity)
  * }
  * ```
  */
-fun Entity.typeSpecific(block: EntityTypeSpecificScope.() -> Unit) {
+fun EntityPredicate.typeSpecific(block: EntityTypeSpecificScope.() -> Unit) {
 	EntityTypeSpecificScope(this).apply(block)
 }

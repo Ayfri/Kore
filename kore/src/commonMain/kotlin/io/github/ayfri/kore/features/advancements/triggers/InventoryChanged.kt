@@ -2,8 +2,7 @@ package io.github.ayfri.kore.features.advancements.triggers
 
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
-import io.github.ayfri.kore.features.predicates.sub.ItemStack
-import io.github.ayfri.kore.features.predicates.sub.Slots
+import io.github.ayfri.kore.features.predicates.sub.ItemStackPredicate
 import kotlinx.serialization.Serializable
 
 /**
@@ -15,8 +14,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class InventoryChanged(
 	override var player: EntityOrPredicates? = null,
-	var items: List<ItemStack>? = null,
-	var slots: Slots? = null,
+	var items: List<ItemStackPredicate>? = null,
+	var slots: InventorySlotsPredicate? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add an `inventoryChanged` criterion, triggered when a player's inventory changes. */
@@ -25,16 +24,16 @@ fun AdvancementCriteria.inventoryChanged(name: String, block: InventoryChanged.(
 }
 
 /** Add one item constraint. */
-fun InventoryChanged.item(block: ItemStack.() -> Unit) {
-	items = (items ?: emptyList()) + listOf(ItemStack().apply(block))
+fun InventoryChanged.item(block: ItemStackPredicate.() -> Unit) {
+	items = (items ?: emptyList()) + listOf(ItemStackPredicate().apply(block))
 }
 
 /** Replace the item constraints list. */
-fun InventoryChanged.items(block: MutableList<ItemStack>.() -> Unit) {
+fun InventoryChanged.items(block: MutableList<ItemStackPredicate>.() -> Unit) {
 	items = buildList(block)
 }
 
 /** Set the slot constraints. */
-fun InventoryChanged.slots(block: Slots.() -> Unit) {
-	slots = Slots().apply(block)
+fun InventoryChanged.slots(block: InventorySlotsPredicate.() -> Unit) {
+	slots = InventorySlotsPredicate().apply(block)
 }

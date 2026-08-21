@@ -21,7 +21,7 @@ import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.features.predicates.providers.enchantmentLevel
 import io.github.ayfri.kore.features.predicates.providers.providersRange
 import io.github.ayfri.kore.features.predicates.providers.scoreNumber
-import io.github.ayfri.kore.features.predicates.types.EntityType
+import io.github.ayfri.kore.features.predicates.types.EntityTarget
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
@@ -291,7 +291,7 @@ fun DataPack.itemModifierTests() {
 	itemModifier("limit_count") {
 		limitCount(
 			providersRange(
-				min = scoreNumber("my_score", EntityType.THIS, 4f),
+				min = scoreNumber("my_score", EntityTarget.THIS, 4f),
 				max = enchantmentLevel(5)
 			)
 		)

@@ -4,7 +4,7 @@ import io.github.ayfri.kore.features.advancements.EntityOrPredicates
 import io.github.ayfri.kore.features.advancements.conditions
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
-import io.github.ayfri.kore.features.predicates.sub.Entity
+import io.github.ayfri.kore.features.predicates.sub.EntityPredicate
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import kotlinx.serialization.InternalSerializationApi
@@ -34,13 +34,13 @@ sealed class AdvancementTriggerCondition {
 }
 
 /** Set the entity condition, deprecated, prefer using [conditions] instead. */
-fun AdvancementTriggerCondition.conditionEntity(entity: Entity) {
+fun AdvancementTriggerCondition.conditionEntity(entity: EntityPredicate) {
 	player = EntityOrPredicates(legacyEntity = entity)
 }
 
 /** Set the entity condition, deprecated, prefer using [conditions] instead. */
-fun AdvancementTriggerCondition.conditionEntity(entity: Entity.() -> Unit) {
-	player = EntityOrPredicates(legacyEntity = Entity().apply(entity))
+fun AdvancementTriggerCondition.conditionEntity(entity: EntityPredicate.() -> Unit) {
+	player = EntityOrPredicates(legacyEntity = EntityPredicate().apply(entity))
 }
 
 /** Set the predicate conditions. */

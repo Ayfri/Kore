@@ -227,7 +227,7 @@ advancement("conditional_criteria") {
 			}
 			conditions {
 				randomChance(0.5f)  // 50% chance
-				timeCheck(6000f..18000f)  // Daytime only
+				timeCheck(WorldClocks.OVERWORLD, 6000f..18000f)  // Daytime only
 			}
 		}
 	}

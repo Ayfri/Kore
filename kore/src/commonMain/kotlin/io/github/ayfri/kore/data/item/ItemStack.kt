@@ -3,8 +3,8 @@ package io.github.ayfri.kore.data.item
 import io.github.ayfri.kore.arguments.components.Components
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
+import io.github.ayfri.kore.features.predicates.sub.ItemStackPredicate
 import kotlinx.serialization.Serializable
-import io.github.ayfri.kore.features.predicates.sub.ItemStack as ItemStackSubPredicate
 
 @Serializable
 data class ItemStack(
@@ -20,7 +20,7 @@ data class ItemStack(
 
 	fun toItemArgument() = ItemArgument(id.substringAfter(":"), id.substringBefore(":"), components?.toPatch())
 
-	fun toItemStackSubPredicate() = ItemStackSubPredicate(
+	fun toItemStackPredicate() = ItemStackPredicate(
 		count = count?.toInt()?.let { rangeOrInt(it) },
 		components = components,
 		items = listOf(toItemArgument())

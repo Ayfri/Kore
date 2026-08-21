@@ -256,7 +256,7 @@ The same `PredicateArgument` works as an `execute` condition, as a nested condit
 ```kotlin
 fun DataPack.registerCombatRules() {
 	val isActiveFighter = predicate("rules/is_active_fighter") {
-		entityScores(EntityType.THIS) {
+		entityScores(EntityTarget.THIS) {
 			this["lives"] = intRange(1f, 99f)
 		}
 	}
@@ -274,7 +274,7 @@ fun DataPack.registerCombatRules() {
 	// 2. Composed into another predicate.
 	predicate("rules/is_wounded_fighter") {
 		reference(isActiveFighter)
-		entityScores(EntityType.THIS) {
+		entityScores(EntityTarget.THIS) {
 			this["health"] = intRange(1f, 5f)
 		}
 	}
@@ -292,7 +292,7 @@ fun DataPack.registerRewards() {
 	val bossDrop = lootTable("rewards/boss_drop") {
 		pool {
 			entries {
-				item(Items.DIAMOND)
+				items(Items.DIAMOND)
 			}
 		}
 	}
@@ -351,8 +351,8 @@ appears in twelve loot tables is written once:
 fun LootTable.commonJunkPool() = pool {
 	rolls = constant(1f)
 	entries {
-		item(Items.STRING) { weight = 5 }
-		item(Items.BONE) { weight = 3 }
+		items(Items.STRING) { weight = 5 }
+		items(Items.BONE) { weight = 3 }
 	}
 }
 

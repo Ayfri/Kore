@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.loottables.entries.slotsource
 
-import io.github.ayfri.kore.features.predicates.sub.ItemStack
+import io.github.ayfri.kore.features.predicates.sub.ItemStackPredicate
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 @SerialName("filtered")
 data class FilteredSlotSource(
-	var itemFilter: ItemStack = ItemStack(),
+	var itemFilter: ItemStackPredicate = ItemStackPredicate(),
 	var slotSource: InlinableList<SlotSource> = emptyList(),
 ) : SlotSource()
 
@@ -19,8 +19,8 @@ fun SlotSourcesBuilder.filtered(block: FilteredSlotSource.() -> Unit = {}) {
 }
 
 /** Configure the item filter predicate for this [FilteredSlotSource]. */
-fun FilteredSlotSource.itemFilter(block: ItemStack.() -> Unit) {
-	itemFilter = ItemStack().apply(block)
+fun FilteredSlotSource.itemFilter(block: ItemStackPredicate.() -> Unit) {
+	itemFilter = ItemStackPredicate().apply(block)
 }
 
 /** Configure the slot sources for this [FilteredSlotSource]. */

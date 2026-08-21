@@ -14,31 +14,36 @@ import kotlinx.serialization.json.jsonObject
  *
  * Minecraft Wiki: [Predicate](https://minecraft.wiki/w/Predicate)
  */
-@Serializable(with = Entity.Companion.EntitySerializer::class)
-data class Entity(val subPredicates: MutableList<EntitySubPredicate> = mutableListOf()) {
+@Serializable(with = EntityPredicate.Companion.EntityPredicateSerializer::class)
+data class EntityPredicate(val subPredicates: MutableList<EntitySubPredicate> = mutableListOf()) {
 	companion object {
-		data object EntitySerializer : KSerializer<Entity> {
+		data object EntityPredicateSerializer : KSerializer<EntityPredicate> {
 			private val mapSerializer = MapSerializer(String.serializer(), EntitySubPredicate.Companion.EntitySubPredicateSerializer)
 			override val descriptor = mapSerializer.descriptor
 
-			override fun serialize(encoder: Encoder, value: Entity) {
+			override fun serialize(encoder: Encoder, value: EntityPredicate) {
 				val map = value.subPredicates.associateBy { EntitySubPredicate.Companion.EntitySubPredicateSerializer.getContentName(it) }
 				encoder.encodeSerializableValue(mapSerializer, map)
 			}
 
-			override fun deserialize(decoder: Decoder): Entity {
+			override fun deserialize(decoder: Decoder): EntityPredicate {
 				require(decoder is JsonDecoder) { "Entity predicate can only be deserialized as Json" }
 				val subPredicates = decoder.decodeJsonElement().jsonObject.map { (key, element) ->
 					EntitySubPredicate.Companion.EntitySubPredicateSerializer.deserializeJsonElement(decoder.json, key, element)
 				}
-				return Entity(subPredicates.toMutableList())
+				return EntityPredicate(subPredicates.toMutableList())
 			}
 		}
 	}
 }
 
+/**
+ * Matches the boolean state flags of an entity, keyed under `minecraft:flags`.
+ *
+ * Minecraft Wiki: [Predicate](https://minecraft.wiki/w/Predicate)
+ */
 @Serializable
-data class EntityFlags(
+data class EntityFlagsPredicate(
 	var isBaby: Boolean? = null,
 	var isFallFlying: Boolean? = null,
 	var isFlying: Boolean? = null,
@@ -50,4 +55,5 @@ data class EntityFlags(
 	var isSwimming: Boolean? = null,
 )
 
-fun entity(init: Entity.() -> Unit = {}) = Entity().apply(init)
+/** Creates an [EntityPredicate]. */
+fun entityPredicate(init: EntityPredicate.() -> Unit = {}) = EntityPredicate().apply(init)

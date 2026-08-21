@@ -13,6 +13,7 @@ import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.advancements.*
 import io.github.ayfri.kore.features.advancements.triggers.*
+import io.github.ayfri.kore.features.advancements.triggers.InventorySlotsPredicate
 import io.github.ayfri.kore.features.predicates.conditions.anyOf
 import io.github.ayfri.kore.features.predicates.conditions.entityProperties
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
@@ -36,13 +37,13 @@ fun DataPack.advancementTests() {
 		@Suppress("DEPRECATION")
 		criteria(
 			name = "test",
-			triggerCondition = ConsumeItem(item = itemStack(Items.ENCHANTED_GOLDEN_APPLE))
+			triggerCondition = ConsumeItem(item = itemStackPredicate(Items.ENCHANTED_GOLDEN_APPLE))
 		) {
 			randomChance(chance = 0.5f)
-			timeCheck(10f..20f)
+			timeCheck(WorldClocks.OVERWORLD, 10f..20f)
 
 			anyOf {
-				timeCheck(10f..20f)
+				timeCheck(WorldClocks.OVERWORLD, 10f..20f)
 			}
 		}
 
@@ -82,6 +83,7 @@ fun DataPack.advancementTests() {
 							},
 							{
 								"condition": "minecraft:time_check",
+								"clock": "minecraft:overworld",
 								"value": {
 									"min": 10.0,
 									"max": 20.0
@@ -92,6 +94,7 @@ fun DataPack.advancementTests() {
 								"terms": [
 									{
 										"condition": "minecraft:time_check",
+										"clock": "minecraft:overworld",
 										"value": {
 											"min": 10.0,
 											"max": 20.0
@@ -306,7 +309,7 @@ private fun DataPack.allTriggersTests() {
 
 				conditions {
 					randomChance(0.5f)
-					timeCheck(10f..20f)
+					timeCheck(WorldClocks.OVERWORLD, 10f..20f)
 				}
 			}
 		}
@@ -324,6 +327,7 @@ private fun DataPack.allTriggersTests() {
 							},
 							{
 								"condition": "minecraft:time_check",
+								"clock": "minecraft:overworld",
 								"value": {
 									"min": 10.0,
 									"max": 20.0
@@ -350,7 +354,7 @@ private fun DataPack.allTriggersTests() {
 			) {
 				conditions {
 					randomChance(0.5f)
-					timeCheck(10f..20f)
+					timeCheck(WorldClocks.OVERWORLD, 10f..20f)
 				}
 
 				ingredient {
@@ -375,6 +379,7 @@ private fun DataPack.allTriggersTests() {
 							},
 							{
 								"condition": "minecraft:time_check",
+								"clock": "minecraft:overworld",
 								"value": {
 									"min": 10.0,
 									"max": 20.0
@@ -594,10 +599,7 @@ private fun DataPack.allTriggersTests() {
 							}
 						},
 						"distance": {
-							"absolute": {
-								"min": 10.0,
-								"max": 10.0
-							},
+							"absolute": 10.0,
 							"x": {
 								"min": 10.0,
 								"max": 20.0
