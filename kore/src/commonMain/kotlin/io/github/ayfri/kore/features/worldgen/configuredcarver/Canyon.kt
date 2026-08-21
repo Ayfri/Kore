@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.features.worldgen.configuredcarver
 
 import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
+import io.github.ayfri.kore.features.worldgen.floatproviders.ConstantFloatProvider
 import io.github.ayfri.kore.features.worldgen.floatproviders.FloatProvider
-import io.github.ayfri.kore.features.worldgen.floatproviders.constant
 import io.github.ayfri.kore.features.worldgen.heightproviders.ConstantHeightProvider
 import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProvider
 import io.github.ayfri.kore.features.worldgen.verticalanchors.Absolute
@@ -27,11 +27,11 @@ data class Canyon(
 	override var probability: Double = 0.1,
 	override var y: HeightProvider = ConstantHeightProvider(Absolute(0)),
 	@JsonSerialName("yScale")
-	override var yScale: FloatProvider = constant(1f),
+	override var yScale: FloatProvider = ConstantFloatProvider(1f),
 	override var lavaLevel: VerticalAnchor = Absolute(-54),
 	override var replaceable: InlinableList<BlockOrTagArgument> = listOf(Tags.Block.OVERWORLD_CARVER_REPLACEABLES),
 	override var debugSettings: DebugSettings? = null,
-	var verticalRotation: FloatProvider = constant(0f),
+	var verticalRotation: FloatProvider = ConstantFloatProvider(0f),
 	var shape: CanyonShapeConfig = CanyonShapeConfig(),
 ) : Config()
 
@@ -50,10 +50,10 @@ data class Canyon(
  */
 @Serializable
 data class CanyonShapeConfig(
-	var distanceFactor: FloatProvider = constant(1f),
-	var thickness: FloatProvider = constant(1f),
+	var distanceFactor: FloatProvider = ConstantFloatProvider(1f),
+	var thickness: FloatProvider = ConstantFloatProvider(1f),
 	var widthSmoothness: Int = 1,
-	var horizontalRadiusFactor: FloatProvider = constant(1f),
+	var horizontalRadiusFactor: FloatProvider = ConstantFloatProvider(1f),
 	var verticalRadiusDefaultFactor: Float = 1f,
 	var verticalRadiusCenterFactor: Float = 0f,
 )

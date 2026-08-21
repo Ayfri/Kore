@@ -1,7 +1,9 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider
 
+import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
-import io.github.ayfri.kore.features.worldgen.intproviders.constant
+import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
+import io.github.ayfri.kore.features.worldgen.intproviders.UniformIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.uniform
 import kotlinx.serialization.Serializable
 
@@ -20,9 +22,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RandomizedIntStateProvider(
 	var property: String = "",
-	var values: IntProvider = constant(0),
+	var values: IntProvider = ConstantIntProvider(0),
 	var source: BlockStateProvider = SimpleStateProvider(),
-) : BlockStateProvider(), BlockStateProviderScope
+) : BlockStateProvider(), BlockStateProviderScope, IntProviderScope
 
 /**
  * Creates a `randomized_int_state_provider`, overriding the integer [property] of the state given by [source].
@@ -40,7 +42,7 @@ data class RandomizedIntStateProvider(
  */
 fun BlockStateProviderScope.randomizedIntStateProvider(
 	property: String = "",
-	values: IntProvider = constant(0),
+	values: IntProvider = ConstantIntProvider(0),
 	block: RandomizedIntStateProvider.() -> Unit = {},
 ) = RandomizedIntStateProvider(property, values).apply(block)
 

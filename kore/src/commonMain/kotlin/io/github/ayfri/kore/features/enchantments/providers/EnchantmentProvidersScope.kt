@@ -2,6 +2,7 @@ package io.github.ayfri.kore.features.enchantments.providers
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.features.enchantments.providers.types.EnchantmentProviderType
+import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.generated.arguments.types.VillagerProfessionArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.BiomeArgument
 
@@ -10,7 +11,7 @@ import io.github.ayfri.kore.generated.arguments.worldgen.types.BiomeArgument
  *
  * Obtained through `enchantmentProviders { }`.
  */
-data class EnchantmentProvidersScope(val dataPack: DataPack) {
+data class EnchantmentProvidersScope(val dataPack: DataPack) : IntProviderScope {
 	/** Registers a provider named [fileName], slashes creating subfolders. */
 	internal fun register(fileName: String, type: EnchantmentProviderType) {
 		dataPack.enchantmentProviders += EnchantmentProvider(fileName, type)

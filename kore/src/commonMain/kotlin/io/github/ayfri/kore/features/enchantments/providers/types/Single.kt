@@ -1,8 +1,9 @@
 package io.github.ayfri.kore.features.enchantments.providers.types
 
 import io.github.ayfri.kore.features.enchantments.providers.EnchantmentProvidersScope
+import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
-import io.github.ayfri.kore.features.worldgen.intproviders.constant
+import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.generated.arguments.EnchantmentOrTagArgument
 import kotlinx.serialization.Serializable
 
@@ -17,8 +18,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Single(
 	var enchantment: EnchantmentOrTagArgument,
-	var level: IntProvider = constant(1),
-) : EnchantmentProviderType()
+	var level: IntProvider = ConstantIntProvider(1),
+) : EnchantmentProviderType(), IntProviderScope
 
 /**
  * Registers a `single` provider named [fileName], handing out [enchantment] at a level rolled from [level].
@@ -34,6 +35,6 @@ data class Single(
 fun EnchantmentProvidersScope.single(
 	fileName: String,
 	enchantment: EnchantmentOrTagArgument,
-	level: IntProvider = constant(1),
+	level: IntProvider = ConstantIntProvider(1),
 	block: Single.() -> Unit = {},
 ) = register(fileName, Single(enchantment, level).apply(block))

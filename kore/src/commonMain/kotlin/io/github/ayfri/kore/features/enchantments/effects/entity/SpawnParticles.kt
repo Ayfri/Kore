@@ -5,8 +5,9 @@ import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticleVelocity
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.ParticleType
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.ParticleTypeScope
+import io.github.ayfri.kore.features.worldgen.floatproviders.ConstantFloatProvider
 import io.github.ayfri.kore.features.worldgen.floatproviders.FloatProvider
-import io.github.ayfri.kore.features.worldgen.floatproviders.constantFloatProvider
+import io.github.ayfri.kore.features.worldgen.floatproviders.FloatProviderScope
 import kotlinx.serialization.Serializable
 
 /**
@@ -27,7 +28,7 @@ data class SpawnParticles(
 	var verticalPosition: ParticlePosition,
 	var horizontalVelocity: ParticleVelocity = ParticleVelocity(),
 	var verticalVelocity: ParticleVelocity = ParticleVelocity(),
-) : EntityEffect(), ParticleTypeScope
+) : EntityEffect(), FloatProviderScope, ParticleTypeScope
 
 /** Sets [SpawnParticles.horizontalPosition], where the particle spawns on the X and Z axes. */
 fun SpawnParticles.horizontalPosition(type: ParticlePositionType, offset: Float? = null, scale: Float? = null) {
@@ -46,7 +47,7 @@ fun SpawnParticles.horizontalVelocity(base: FloatProvider? = null, movementScale
 
 /** Sets [SpawnParticles.horizontalVelocity] to a constant [base] speed, on top of [movementScale] of the entity motion. */
 fun SpawnParticles.horizontalVelocity(base: Float, movementScale: Float? = null) {
-	horizontalVelocity = ParticleVelocity(constantFloatProvider(base), movementScale)
+	horizontalVelocity = ParticleVelocity(ConstantFloatProvider(base), movementScale)
 }
 
 /** Sets [SpawnParticles.verticalVelocity], how fast the particle flies on the Y axis. */
@@ -56,5 +57,5 @@ fun SpawnParticles.verticalVelocity(base: FloatProvider? = null, movementScale: 
 
 /** Sets [SpawnParticles.verticalVelocity] to a constant [base] speed, on top of [movementScale] of the entity motion. */
 fun SpawnParticles.verticalVelocity(base: Float, movementScale: Float? = null) {
-	verticalVelocity = ParticleVelocity(constantFloatProvider(base), movementScale)
+	verticalVelocity = ParticleVelocity(ConstantFloatProvider(base), movementScale)
 }

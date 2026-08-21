@@ -4,9 +4,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Int provider that always returns [value].
+ * Always returns the same integer.
  *
- * Serializes as a plain integer rather than a typed object.
+ * It is inlined when serialized, so it produces `5` rather than an object with a `type` field.
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Custom_world_generation/int_provider
+ *
+ * @property value The value returned on every call.
  */
 @Serializable
 @SerialName("minecraft:constant")

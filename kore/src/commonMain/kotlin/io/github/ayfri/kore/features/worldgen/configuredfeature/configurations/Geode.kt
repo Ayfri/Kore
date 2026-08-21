@@ -8,6 +8,7 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovid
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
+import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
 import io.github.ayfri.kore.serializers.InlinableList
@@ -28,7 +29,7 @@ data class Geode(
 	var minGenOffset: Int? = null,
 	var maxGenOffset: Int? = null,
 	var invalidBlocksThreshold: Int = 0,
-) : FeatureConfig()
+) : FeatureConfig(), IntProviderScope
 
 /**
  * The block state providers making up each shell of a [Geode].

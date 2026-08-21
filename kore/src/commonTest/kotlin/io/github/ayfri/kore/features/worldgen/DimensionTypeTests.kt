@@ -70,8 +70,8 @@ fun DataPack.dimensionTypeTests() {
 
 	dimensionType("my_dimension3") {
 		monsterSpawnLightLevel = weightedList {
-			this += entry(1, constant(2))
-			add(entry(1, clampedNormal(0, 10, 5f, 2f)))
+			entry(1, constant(2))
+			entry(1, clampedNormal(0, 10, 5f, 2f))
 		}
 	}
 

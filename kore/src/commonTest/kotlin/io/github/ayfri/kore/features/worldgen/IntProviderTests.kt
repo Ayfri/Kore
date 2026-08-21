@@ -133,8 +133,8 @@ fun DataPack.intProviderTests() {
 
 	placedFeature("weighted_list_test", ConfiguredFeatures.ACACIA) {
 		count(weightedList {
-			add(weightedEntry(3, uniform(1, 5)))
-			add(weightedEntry(1, constant(10)))
+			entry(3, uniform(1, 5))
+			entry(1, constant(10))
 		})
 	}
 
@@ -158,6 +158,62 @@ fun DataPack.intProviderTests() {
 							{
 								"weight": 1,
 								"data": 10
+							}
+						]
+					}
+				}
+			]
+		}
+	""".trimIndent()
+
+	placedFeature("weighted_list_pairs_test", ConfiguredFeatures.ACACIA) {
+		count(weightedList(3 to uniform(1, 5), 1 to constant(10)))
+	}
+
+	placedFeatures.last() assertsIs """
+		{
+			"feature": "minecraft:acacia",
+			"placement": [
+				{
+					"type": "minecraft:count",
+					"count": {
+						"type": "minecraft:weighted_list",
+						"distribution": [
+							{
+								"weight": 3,
+								"data": {
+									"type": "minecraft:uniform",
+									"min_inclusive": 1,
+									"max_inclusive": 5
+								}
+							},
+							{
+								"weight": 1,
+								"data": 10
+							}
+						]
+					}
+				}
+			]
+		}
+	""".trimIndent()
+
+	placedFeature("weighted_list_of_entries_test", ConfiguredFeatures.ACACIA) {
+		count(weightedList(listOf(weightedListEntry(1, constant(4)))))
+	}
+
+	placedFeatures.last() assertsIs """
+		{
+			"feature": "minecraft:acacia",
+			"placement": [
+				{
+					"type": "minecraft:count",
+					"count": {
+						"type": "minecraft:weighted_list",
+						"distribution": [
+							{
+								"weight": 1,
+								"data": 4
 							}
 						]
 					}

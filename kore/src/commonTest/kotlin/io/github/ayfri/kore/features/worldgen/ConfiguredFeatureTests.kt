@@ -17,6 +17,7 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.t
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.attachedToLeaves
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.cherryTrunkPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.darkOakTrunkPlacer
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeaturesBuilder
 import io.github.ayfri.kore.features.worldgen.configuredfeature.target
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
@@ -849,12 +850,14 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.netherrackReplaceBlobs(
-		"test_netherrack_replace_blobs",
-		blockState(Blocks.GRAVEL),
-		blockStateStone(),
-		constant(3)
-	)
+	configuredFeatures {
+		netherrackReplaceBlobs(
+			"test_netherrack_replace_blobs",
+			blockState(Blocks.GRAVEL),
+			blockStateStone(),
+			constant(3)
+		)
+	}
 
 	configuredFeatures.last() assertsIs """
 		{
@@ -968,6 +971,35 @@ fun DataPack.configuredFeatureTests() {
 			"config": {
 				"feature_false": "minecraft:fossil_lower",
 				"feature_true": "minecraft:fossil_upper"
+			}
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.randomPatch("test_random_patch_defaults", PlacedFeatures.FLOWER_DEFAULT)
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:random_patch",
+			"config": {
+				"feature": "minecraft:flower_default"
+			}
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.randomPatch("test_random_patch", PlacedFeatures.FLOWER_DEFAULT) {
+		tries = 64
+		xzSpread = 5
+		ySpread = 2
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:random_patch",
+			"config": {
+				"feature": "minecraft:flower_default",
+				"tries": 64,
+				"xz_spread": 5,
+				"y_spread": 2
 			}
 		}
 	""".trimIndent()
@@ -1257,7 +1289,7 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.seaPickle("test_sea_pickle", count = constant(3))
+	configuredFeatures { seaPickle("test_sea_pickle", count = constant(3)) }
 
 	configuredFeatures.last() assertsIs """
 		{

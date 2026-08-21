@@ -1,6 +1,8 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.features.worldgen.floatproviders.FloatProviderScope
+import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 
 /**
  * Builder scope for declaring configured features via [configuredFeatures].
@@ -9,4 +11,4 @@ import io.github.ayfri.kore.DataPack
  * exposes an extension function on this class that creates one [ConfiguredFeature] file, so a
  * configured feature can only ever hold the single config it was declared with.
  */
-data class ConfiguredFeatures(val dp: DataPack)
+data class ConfiguredFeatures(val dp: DataPack) : FloatProviderScope, IntProviderScope

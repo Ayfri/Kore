@@ -1,5 +1,7 @@
 package io.github.ayfri.kore.features.worldgen.processorlist.types
 
+import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
+
 /**
  * Builder scope for declaring structure processors.
  *
@@ -8,7 +10,7 @@ package io.github.ayfri.kore.features.worldgen.processorlist.types
  *
  * @property processors The processors appended so far, in application order.
  */
-interface ProcessorsScope {
+interface ProcessorsScope : IntProviderScope {
 	val processors: MutableList<ProcessorType>
 }
 

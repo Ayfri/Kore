@@ -1,6 +1,8 @@
 package io.github.ayfri.kore.features.worldgen.processorlist.types
 
+import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
+import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import kotlinx.serialization.Serializable
 
@@ -14,9 +16,9 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Capped(
-	var limit: IntProvider = constant(1),
+	var limit: IntProvider = ConstantIntProvider(1),
 	var delegate: ProcessorType = Nop,
-) : ProcessorType()
+) : ProcessorType(), IntProviderScope
 
 /**
  * Appends a `capped` processor running [delegate] on at most [limit] blocks.

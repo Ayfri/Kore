@@ -11,8 +11,9 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.Direction
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
+import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
-import io.github.ayfri.kore.features.worldgen.intproviders.constant
+import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
 import kotlinx.serialization.Serializable
 
@@ -32,7 +33,7 @@ data class BlockColumn(
 	var allowedPlacement: BlockPredicate = True,
 	var prioritizeTip: Boolean = false,
 	var layers: List<Layer> = emptyList(),
-) : FeatureConfig(), BlockPredicateScope
+) : FeatureConfig(), BlockPredicateScope, IntProviderScope
 
 /**
  * A single layer of a [BlockColumn]: [height] blocks given by [provider].
@@ -44,9 +45,9 @@ data class BlockColumn(
  */
 @Serializable
 data class Layer(
-	var height: IntProvider = constant(0),
+	var height: IntProvider = ConstantIntProvider(0),
 	var provider: BlockStateProvider = SimpleStateProvider(),
-) : BlockStateProviderScope
+) : BlockStateProviderScope, IntProviderScope
 
 /**
  * Builder scope for declaring the layers of a [BlockColumn] via [layers].
@@ -55,7 +56,7 @@ data class Layer(
  *
  * @property layers The layers appended so far.
  */
-class LayersScope {
+class LayersScope : IntProviderScope {
 	val layers = mutableListOf<Layer>()
 }
 
@@ -96,12 +97,12 @@ fun BlockColumn.layers(vararg layers: Layer) = run { this.layers = layers.toList
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#block_column
  */
-fun LayersScope.layer(height: IntProvider = constant(0), block: Layer.() -> Unit = {}) {
+fun LayersScope.layer(height: IntProvider = ConstantIntProvider(0), block: Layer.() -> Unit = {}) {
 	layers += Layer(height).apply(block)
 }
 
 /** Appends a layer of [height] blocks made of [provider]. */
-fun LayersScope.layer(height: IntProvider = constant(0), provider: BlockStateProvider) {
+fun LayersScope.layer(height: IntProvider = ConstantIntProvider(0), provider: BlockStateProvider) {
 	layers += Layer(height, provider)
 }
 

@@ -1,8 +1,9 @@
 package io.github.ayfri.kore.features.enchantments.effects.entity
 
 import io.github.ayfri.kore.data.sound.SoundEvent
+import io.github.ayfri.kore.features.worldgen.floatproviders.ConstantFloatProvider
 import io.github.ayfri.kore.features.worldgen.floatproviders.FloatProvider
-import io.github.ayfri.kore.features.worldgen.floatproviders.constantFloatProvider
+import io.github.ayfri.kore.features.worldgen.floatproviders.FloatProviderScope
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
@@ -21,9 +22,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PlaySound(
 	var sound: InlinableList<SoundEvent>,
-	var volume: FloatProvider = constantFloatProvider(1f),
-	var pitch: FloatProvider = constantFloatProvider(1f),
-) : EntityEffect()
+	var volume: FloatProvider = ConstantFloatProvider(1f),
+	var pitch: FloatProvider = ConstantFloatProvider(1f),
+) : EntityEffect(), FloatProviderScope
 
 /** Sets [PlaySound.sound], one entry per enchantment level. */
 fun PlaySound.sound(vararg sounds: SoundEvent) {
@@ -37,10 +38,10 @@ fun PlaySound.sound(sound: SoundEventArgument, range: Float? = null) {
 
 /** Sets [PlaySound.pitch] to a constant [value], from `0.00001` to `2`. */
 fun PlaySound.pitch(value: Float) {
-	pitch = constantFloatProvider(value)
+	pitch = ConstantFloatProvider(value)
 }
 
 /** Sets [PlaySound.volume] to a constant [value], from `0.00001` to `10`. */
 fun PlaySound.volume(value: Float) {
-	volume = constantFloatProvider(value)
+	volume = ConstantFloatProvider(value)
 }

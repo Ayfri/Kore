@@ -4,8 +4,15 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Int provider that samples from a normal distribution defined by [mean] and [deviation],
- * then clamps the result so it is never below [minInclusive] or above [maxInclusive].
+ * Returns an integer drawn from a normal distribution of [mean] and [deviation], clamped so it is never below
+ * [minInclusive] nor above [maxInclusive].
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Custom_world_generation/int_provider
+ *
+ * @property minInclusive Lowest value that can be returned.
+ * @property maxInclusive Highest value that can be returned, which must be at or above [minInclusive].
+ * @property mean Center of the distribution.
+ * @property deviation Standard deviation of the distribution, larger values spreading it wider.
  */
 @Serializable
 @SerialName("minecraft:clamped_normal")

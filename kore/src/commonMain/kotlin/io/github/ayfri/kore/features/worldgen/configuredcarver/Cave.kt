@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.features.worldgen.configuredcarver
 
 import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
+import io.github.ayfri.kore.features.worldgen.floatproviders.ConstantFloatProvider
 import io.github.ayfri.kore.features.worldgen.floatproviders.FloatProvider
-import io.github.ayfri.kore.features.worldgen.floatproviders.constant
 import io.github.ayfri.kore.features.worldgen.heightproviders.ConstantHeightProvider
 import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProvider
 import io.github.ayfri.kore.features.worldgen.verticalanchors.Absolute
@@ -28,13 +28,13 @@ data class Cave(
 	override var probability: Double = 0.1,
 	override var y: HeightProvider = ConstantHeightProvider(Absolute(0)),
 	@JsonSerialName("yScale")
-	override var yScale: FloatProvider = constant(1f),
+	override var yScale: FloatProvider = ConstantFloatProvider(1f),
 	override var lavaLevel: VerticalAnchor = Absolute(-54),
 	override var replaceable: InlinableList<BlockOrTagArgument> = listOf(Tags.Block.OVERWORLD_CARVER_REPLACEABLES),
 	override var debugSettings: DebugSettings? = null,
-	var horizontalRadiusMultiplier: FloatProvider = constant(1f),
-	var verticalRadiusMultiplier: FloatProvider = constant(1f),
-	var floorLevel: FloatProvider = constant(0f),
+	var horizontalRadiusMultiplier: FloatProvider = ConstantFloatProvider(1f),
+	var verticalRadiusMultiplier: FloatProvider = ConstantFloatProvider(1f),
+	var floorLevel: FloatProvider = ConstantFloatProvider(0f),
 ) : Config()
 
 /**
@@ -53,13 +53,13 @@ data class NetherCave(
 	override var probability: Double = 0.1,
 	override var y: HeightProvider = ConstantHeightProvider(Absolute(0)),
 	@JsonSerialName("yScale")
-	override var yScale: FloatProvider = constant(1f),
+	override var yScale: FloatProvider = ConstantFloatProvider(1f),
 	override var lavaLevel: VerticalAnchor = Absolute(-54),
 	override var replaceable: InlinableList<BlockOrTagArgument> = listOf(Tags.Block.NETHER_CARVER_REPLACEABLES),
 	override var debugSettings: DebugSettings? = null,
-	var horizontalRadiusMultiplier: FloatProvider = constant(1f),
-	var verticalRadiusMultiplier: FloatProvider = constant(1f),
-	var floorLevel: FloatProvider = constant(0f),
+	var horizontalRadiusMultiplier: FloatProvider = ConstantFloatProvider(1f),
+	var verticalRadiusMultiplier: FloatProvider = ConstantFloatProvider(1f),
+	var floorLevel: FloatProvider = ConstantFloatProvider(0f),
 ) : Config()
 
 /**

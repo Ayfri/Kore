@@ -4,8 +4,12 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Int provider that returns a uniformly random integer between [minInclusive] and [maxInclusive].
- * [maxInclusive] cannot be less than [minInclusive].
+ * Returns an integer drawn uniformly between [minInclusive] and [maxInclusive], both included.
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Custom_world_generation/int_provider
+ *
+ * @property minInclusive Lowest value that can be drawn.
+ * @property maxInclusive Highest value that can be drawn, which must be at or above [minInclusive].
  */
 @Serializable
 @SerialName("minecraft:uniform")

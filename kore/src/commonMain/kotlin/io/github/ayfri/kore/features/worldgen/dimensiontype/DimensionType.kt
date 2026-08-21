@@ -4,8 +4,9 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
 import io.github.ayfri.kore.features.worldgen.environmentattributes.EnvironmentAttributesScope
+import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
-import io.github.ayfri.kore.features.worldgen.intproviders.constant
+import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.generated.arguments.TimelineOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.DimensionTypeArgument
@@ -61,11 +62,11 @@ data class DimensionType(
 	var infiniburn: InlinableList<BlockOrTagArgument> = listOf(Tags.Block.INFINIBURN_OVERWORLD),
 	var minY: Int = -64,
 	var height: Int = 384,
-	var monsterSpawnLightLevel: IntProvider = constant(0),
+	var monsterSpawnLightLevel: IntProvider = ConstantIntProvider(0),
 	var monsterSpawnBlockLightLimit: Int = 0,
 	var skybox: SkyboxType? = null,
 	var timelines: InlinableList<TimelineOrTagArgument>? = null,
-) : Generator("dimension_type") {
+) : Generator("dimension_type"), IntProviderScope {
 	@Transient
 	private lateinit var jsonEncoder: Json
 

@@ -1,8 +1,10 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider
 
 import io.github.ayfri.kore.data.block.BlockState
+import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
-import io.github.ayfri.kore.features.worldgen.intproviders.constant
+import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
+import io.github.ayfri.kore.features.worldgen.intproviders.UniformIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.uniform
 import kotlinx.serialization.Serializable
 
@@ -27,11 +29,11 @@ data class DualNoiseProvider(
 	override var seed: Long = 0,
 	override var noise: Noise = Noise(),
 	override var scale: Double = 0.0,
-	var variety: IntProvider = constant(1),
+	var variety: IntProvider = ConstantIntProvider(1),
 	var slowNoise: Noise = Noise(),
 	var slowScale: Double = 0.0,
 	override var states: List<BlockState> = emptyList(),
-) : BlockStateProvider(), NoiseBasedStateProvider, BlockStatesHolder
+) : BlockStateProvider(), NoiseBasedStateProvider, BlockStatesHolder, IntProviderScope
 
 /**
  * Creates a `dual_noise_provider`, picking a block state out of [DualNoiseProvider.states] by sampling two Perlin

@@ -1,8 +1,9 @@
 package io.github.ayfri.kore.features.enchantments.providers.types
 
 import io.github.ayfri.kore.features.enchantments.providers.EnchantmentProvidersScope
+import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
-import io.github.ayfri.kore.features.worldgen.intproviders.constant
+import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.generated.arguments.EnchantmentOrTagArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
@@ -18,8 +19,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ByCost(
 	var enchantments: InlinableList<EnchantmentOrTagArgument> = emptyList(),
-	var cost: IntProvider = constant(0),
-) : EnchantmentProviderType()
+	var cost: IntProvider = ConstantIntProvider(0),
+) : EnchantmentProviderType(), IntProviderScope
 
 /**
  * Registers a `by_cost` provider named [fileName], spending a [cost] enchanting power budget on [enchantments].
@@ -35,6 +36,6 @@ data class ByCost(
 fun EnchantmentProvidersScope.byCost(
 	fileName: String,
 	vararg enchantments: EnchantmentOrTagArgument,
-	cost: IntProvider = constant(0),
+	cost: IntProvider = ConstantIntProvider(0),
 	block: ByCost.() -> Unit = {},
 ) = register(fileName, ByCost(enchantments.toList(), cost).apply(block))

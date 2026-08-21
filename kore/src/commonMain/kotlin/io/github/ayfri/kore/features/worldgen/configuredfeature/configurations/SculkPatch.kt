@@ -2,8 +2,9 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
+import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
-import io.github.ayfri.kore.features.worldgen.intproviders.constant
+import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
 import kotlinx.serialization.Serializable
 
@@ -14,9 +15,9 @@ data class SculkPatch(
 	var spreadAttempts: Int = 0,
 	var growthRounds: Int = 0,
 	var spreadRounds: Int = 0,
-	var extraRateGrowths: IntProvider = constant(0),
+	var extraRateGrowths: IntProvider = ConstantIntProvider(0),
 	var catalystChance: Double = 0.0,
-) : FeatureConfig()
+) : FeatureConfig(), IntProviderScope
 
 fun ConfiguredFeatures.sculkPatch(fileName: String, block: SculkPatch.() -> Unit = {}): ConfiguredFeatureArgument {
 	val configuredFeature = ConfiguredFeature(fileName, SculkPatch().apply(block))

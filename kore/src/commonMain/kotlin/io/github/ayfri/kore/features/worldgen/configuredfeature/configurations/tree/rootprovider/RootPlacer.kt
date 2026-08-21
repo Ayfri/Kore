@@ -4,6 +4,7 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovid
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
+import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import kotlinx.serialization.InternalSerializationApi
@@ -20,7 +21,7 @@ import kotlinx.serialization.Serializable
  */
 @GeneratedSealedSerializer
 @Serializable(with = RootPlacer.Companion.RootPlacerSerializer::class)
-sealed class RootPlacer : BlockStateProviderScope {
+sealed class RootPlacer : BlockStateProviderScope, IntProviderScope {
 	abstract var rootProvider: BlockStateProvider
 	abstract var trunkOffsetY: IntProvider
 	abstract var aboveRootProvider: AboveRootPlacement?

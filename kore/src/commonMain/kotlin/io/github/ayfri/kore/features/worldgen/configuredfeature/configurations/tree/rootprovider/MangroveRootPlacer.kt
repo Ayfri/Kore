@@ -4,8 +4,8 @@ import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
+import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
-import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -22,7 +22,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MangroveRootPlacer(
 	override var rootProvider: BlockStateProvider = SimpleStateProvider(),
-	override var trunkOffsetY: IntProvider = constant(0),
+	override var trunkOffsetY: IntProvider = ConstantIntProvider(0),
 	override var aboveRootProvider: AboveRootPlacement? = null,
 	var mangroveRootPlacement: MangroveRootPlacement = MangroveRootPlacement(),
 ) : RootPlacer()

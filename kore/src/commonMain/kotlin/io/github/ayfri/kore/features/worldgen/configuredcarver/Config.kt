@@ -2,6 +2,7 @@ package io.github.ayfri.kore.features.worldgen.configuredcarver
 
 import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
 import io.github.ayfri.kore.features.worldgen.floatproviders.FloatProvider
+import io.github.ayfri.kore.features.worldgen.floatproviders.FloatProviderScope
 import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProvider
 import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProviderScope
 import io.github.ayfri.kore.features.worldgen.verticalanchors.VerticalAnchor
@@ -28,7 +29,7 @@ import kotlinx.serialization.Serializable
  */
 @GeneratedSealedSerializer
 @Serializable(with = Config.Companion.ConfigSerializer::class)
-sealed class Config : HeightProviderScope {
+sealed class Config : FloatProviderScope, HeightProviderScope {
 	abstract var probability: Double
 	abstract var y: HeightProvider
 	abstract var yScale: FloatProvider

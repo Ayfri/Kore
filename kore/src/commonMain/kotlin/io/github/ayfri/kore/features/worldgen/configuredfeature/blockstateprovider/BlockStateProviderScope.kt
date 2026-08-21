@@ -1,5 +1,7 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider
 
+import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
+
 /**
  * Builder scope for block state providers, the block state pickers shared by the configured features, the tree
  * decorators and the enchantment effects.
@@ -8,6 +10,9 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovi
  * interface, so they only resolve inside a block that actually accepts a block state provider, such as
  * `simpleBlock("...") { }`, `tree("...") { }` or `weightedStateProvider { }`.
  *
+ * It extends [IntProviderScope], so the int providers the `randomized_int_state_provider` and the
+ * `dual_noise_provider` take are available in the same block.
+ *
  * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider
  */
-interface BlockStateProviderScope
+interface BlockStateProviderScope : IntProviderScope

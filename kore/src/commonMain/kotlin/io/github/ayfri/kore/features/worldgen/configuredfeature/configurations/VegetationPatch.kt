@@ -6,8 +6,9 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatur
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
+import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
-import io.github.ayfri.kore.features.worldgen.intproviders.constant
+import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.Surface
 import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.PlacedFeatureArgument
@@ -17,7 +18,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class VegetationPatch(
 	var surface: Surface,
-	var depth: IntProvider = constant(0),
+	var depth: IntProvider = ConstantIntProvider(0),
 	var verticalRange: Int = 0,
 	var extraBottomBlockChance: Double = 0.0,
 	var extraEdgeColumnChance: Double = 0.0,
@@ -26,7 +27,7 @@ data class VegetationPatch(
 	var replaceable: InlinableList<BlockOrTagArgument>,
 	var groundState: BlockStateProvider = SimpleStateProvider(),
 	var vegetationFeature: PlacedFeatureArgument,
-) : FeatureConfig(), BlockStateProviderScope
+) : FeatureConfig(), BlockStateProviderScope, IntProviderScope
 
 fun ConfiguredFeatures.vegetationPatch(
 	fileName: String,

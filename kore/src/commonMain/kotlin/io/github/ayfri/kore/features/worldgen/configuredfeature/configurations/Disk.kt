@@ -10,7 +10,9 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatur
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
+import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
+import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
 import kotlinx.serialization.Serializable
@@ -30,9 +32,9 @@ import kotlinx.serialization.Serializable
 data class Disk(
 	var stateProvider: BlockStateProvider = SimpleStateProvider(),
 	var target: BlockPredicate = True,
-	var radius: IntProvider = constant(0),
+	var radius: IntProvider = ConstantIntProvider(0),
 	var halfHeight: Int = 0,
-) : FeatureConfig(), BlockPredicateScope, BlockStateProviderScope
+) : FeatureConfig(), BlockPredicateScope, BlockStateProviderScope, IntProviderScope
 
 /**
  * Creates a `disk` configured feature, replacing the blocks matching [Disk.target] by [Disk.stateProvider].
@@ -52,7 +54,7 @@ data class Disk(
  */
 fun ConfiguredFeatures.disk(
 	fileName: String,
-	radius: IntProvider = constant(0),
+	radius: IntProvider = ConstantIntProvider(0),
 	halfHeight: Int = 0,
 	block: Disk.() -> Unit = {},
 ): ConfiguredFeatureArgument {

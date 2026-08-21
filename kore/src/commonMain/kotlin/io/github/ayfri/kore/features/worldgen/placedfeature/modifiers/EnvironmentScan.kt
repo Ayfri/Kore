@@ -5,8 +5,9 @@ import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicateScope
 import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicatesScope
 import io.github.ayfri.kore.features.worldgen.blockpredicate.True
 import io.github.ayfri.kore.features.worldgen.blockpredicate.blockPredicate
+import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
-import io.github.ayfri.kore.features.worldgen.intproviders.constant
+import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.features.worldgen.placedfeature.PlacedFeature
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
@@ -25,10 +26,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class EnvironmentScan(
 	var directionOfSearchDirection: SearchDirection,
-	var maxSteps: IntProvider = constant(0),
+	var maxSteps: IntProvider = ConstantIntProvider(0),
 	var targetCondition: BlockPredicate = True,
 	var allowedSearchCondition: BlockPredicate? = null,
-) : PlacementModifier(), BlockPredicateScope
+) : PlacementModifier(), BlockPredicateScope, IntProviderScope
 
 /** The direction an [EnvironmentScan] walks in. */
 @Serializable(with = SearchDirection.Companion.DirectionSerializer::class)
@@ -60,7 +61,7 @@ enum class SearchDirection {
  */
 fun PlacedFeature.environmentScan(
 	directionOfSearchDirection: SearchDirection,
-	maxSteps: IntProvider = constant(0),
+	maxSteps: IntProvider = ConstantIntProvider(0),
 	block: EnvironmentScan.() -> Unit = {},
 ) {
 	placementModifiers += EnvironmentScan(directionOfSearchDirection, maxSteps).apply(block)
