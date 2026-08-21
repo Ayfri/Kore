@@ -8,6 +8,7 @@ import kotlinx.html.unsafe
 import org.commonmark.node.*
 import java.net.HttpURLConnection
 import java.net.URI
+import kotlin.time.Duration.Companion.seconds
 
 plugins {
 	kotlin("multiplatform")
@@ -80,6 +81,8 @@ kobweb {
 
 		export {
 			includeSourceMap = false
+			// Playwright's 30s default leaves no headroom once several pages are snapshotted at once.
+			timeout = 90.seconds
 		}
 	}
 
@@ -596,6 +599,11 @@ tasks.matching { it.name == "compileKotlinJs" }.configureEach {
 tasks.matching { it.name == "jsProcessResources" }.configureEach {
 	dependsOn("kobwebxMarkdownProcess")
 }
+
+// The export discards the source map (`includeSourceMap = false`), so building it only slows minification down.
+tasks.withType<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>()
+	.matching { it.name == "jsBrowserProductionWebpack" }
+	.configureEach { sourceMaps = false }
 
 kotlin {
 	configAsKobwebApplication("website")
