@@ -92,33 +92,54 @@ include Classic Flat, Tunnelers' Dream, Water World, and Redstone Ready.
 
 Reference: [Superflat - Presets](https://minecraft.wiki/w/Superflat#Presets)
 
-```kotlin
-val flatPreset = dp.flatLevelGeneratorPreset("classic_flat") {
-	// Display item in UI
-	// displayItem = Items.GRASS_BLOCK
+A preset is an icon plus the superflat settings it applies. Everything left untouched keeps the vanilla `classic_flat` values, so a preset
+only declares what it changes.
 
-	// Flat world settings
-	// layers, biome, structure overrides
+```kotlin
+val tunnelersDream = dp.flatLevelGeneratorPreset("tunnelers_dream", Items.STONE) {
+	settings {
+		biome = Biomes.WINDSWEPT_HILLS
+		layers {
+			layer(Blocks.BEDROCK)
+			layer(Blocks.STONE, height = 230)
+			layer(Blocks.DIRT, height = 5)
+			layer(Blocks.GRASS_BLOCK)
+		}
+		structureOverrides(StructureSets.MINESHAFTS, StructureSets.STRONGHOLDS)
+	}
+}
+```
+
+Calling it with no arguments writes `classic_flat` itself: a grass block icon, the plains biome, a bedrock/dirt/grass stack, and villages as
+the only structure set.
+
+A preset only shows up in the superflat customization screen once it is listed in the `minecraft:visible` flat level generator preset tag:
+
+```kotlin
+dp.flatLevelGeneratorPresetTag("visible", namespace = "minecraft") {
+	add(tunnelersDream)
 }
 ```
 
 ### Flat Generator Layers
 
-When using a flat generator in a dimension:
+The same settings drive the flat generator of a dimension:
 
 ```kotlin
 dimension("flat_world", type = myDimType) {
 	flatGenerator(biome = Biomes.PLAINS) {
 		layers {
-			layer(Blocks.BEDROCK, height = 1)
+			layer(Blocks.BEDROCK)
 			layer(Blocks.STONE, height = 3)
 			layer(Blocks.DIRT, height = 3)
-			layer(Blocks.GRASS_BLOCK, height = 1)
+			layer(Blocks.GRASS_BLOCK)
 		}
-		// structureOverrides = ...
+		structureOverrides(StructureSets.VILLAGES)
 	}
 }
 ```
+
+See [Flat Generator](/docs/data-driven/worldgen/dimensions#flat-generator) for the full field list.
 
 ---
 

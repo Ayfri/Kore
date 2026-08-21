@@ -149,14 +149,28 @@ Reference: [Superflat](https://minecraft.wiki/w/Superflat)
 dimension("flat_world", type = myDimType) {
 	flatGenerator(biome = Biomes.PLAINS) {
 		layers {
-			layer(Blocks.BEDROCK, height = 1)
+			layer(Blocks.BEDROCK)
 			layer(Blocks.DIRT, height = 2)
-			layer(Blocks.GRASS_BLOCK, height = 1)
+			layer(Blocks.GRASS_BLOCK)
 		}
-		// structureOverrides = ...
+		structureOverrides(StructureSets.VILLAGES)
+		features = true
+		lakes = false
 	}
 }
 ```
+
+| Field                | Type                     | Default              | Description                                            |
+|----------------------|--------------------------|----------------------|--------------------------------------------------------|
+| `biome`              | Biome                    | mandatory            | The biome every chunk of the world uses.               |
+| `lakes`              | `Boolean?`               | `false`              | Whether lava lakes generate.                           |
+| `features`           | `Boolean?`               | `false`              | Whether the biome placed features generate.            |
+| `layers`             | `List<Layer>`            | empty                | Block layers, read from the bottom of the world up.    |
+| `structureOverrides` | Structure sets or a tag  | every structure set  | The only structure sets allowed to generate.           |
+
+Layers are declared in three interchangeable ways: `layer(block, height)` appends one layer to whatever is already there, `layers(...)`
+takes them as varargs, and `layers { }` builds the whole stack at once. `height` defaults to `1` and goes up to `4064`.
+`structureOverrides` takes structure sets as varargs, a builder block, or a single structure set tag.
 
 ### Debug Generator
 

@@ -14,12 +14,18 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
 /**
- * Data-driven flat level generator preset.
+ * One entry of the superflat customization screen: an icon and the superflat settings it applies.
  *
- * Defines the preset shown in the world creation UI for flat worlds: display item, biome,
- * layer stack and structure overrides.
+ * A preset only shows up in the screen when it is listed in the `minecraft:visible` flat level generator preset tag.
  *
- * JSON format reference: https://minecraft.wiki/w/World_preset_definition#Superflat_Level_Generation_Preset
+ * The defaults reproduce the vanilla `classic_flat` preset: a grass block icon, the plains biome, a bedrock, dirt and
+ * grass block stack, and villages as the only structure set.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/world-presets
+ * Minecraft Wiki: https://minecraft.wiki/w/World_preset_definition#Superflat_Level_Generation_Preset
+ *
+ * @property display The item used as the icon of the preset, which has to be an existing item.
+ * @property settings The superflat settings the preset applies.
  */
 @Serializable
 data class FlatLevelGeneratorPreset(
@@ -40,37 +46,54 @@ data class FlatLevelGeneratorPreset(
 }
 
 /**
- * Creates a preset using a builder block. Defaults match the classic_flat preset.
+ * Creates a flat level generator preset shown with the [display] icon, configured in [init].
+ *
+ * Everything left untouched keeps the vanilla `classic_flat` values, so a preset only has to declare what it changes.
+ *
+ * ```kotlin
+ * flatLevelGeneratorPreset("tunnelers_dream", Items.STONE) {
+ *     settings {
+ *         biome = Biomes.WINDSWEPT_HILLS
+ *         layers {
+ *             layer(Blocks.BEDROCK)
+ *             layer(Blocks.STONE, height = 230)
+ *             layer(Blocks.DIRT, height = 5)
+ *             layer(Blocks.GRASS_BLOCK)
+ *         }
+ *         structureOverrides(StructureSets.MINESHAFTS, StructureSets.STRONGHOLDS)
+ *     }
+ * }
+ * ```
  *
  * Produces `data/<namespace>/worldgen/flat_level_generator_preset/<fileName>.json`.
  *
- * JSON format reference: https://minecraft.wiki/w/World_preset_definition#Superflat_Level_Generation_Preset
- * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/world-presets
+ * Minecraft Wiki: https://minecraft.wiki/w/World_preset_definition#Superflat_Level_Generation_Preset
  */
 fun DataPack.flatLevelGeneratorPreset(
 	fileName: String = "flat_level_generator_preset",
+	display: ItemArgument = Items.GRASS_BLOCK,
 	init: FlatLevelGeneratorPreset.() -> Unit = {},
 ): FlatLevelGeneratorPresetArgument {
-	val preset = FlatLevelGeneratorPreset(fileName).apply(init)
+	val preset = FlatLevelGeneratorPreset(fileName, display).apply(init)
 	flatLevelGeneratorPresets += preset
 	return FlatLevelGeneratorPresetArgument(fileName, preset.namespace ?: name)
 }
 
 /**
- * Creates a preset with an explicit display item; settings configured in the provided block.
+ * Configures the superflat settings of the preset, starting from the `classic_flat` values.
  *
- * Produces `data/<namespace>/worldgen/flat_level_generator_preset/<fileName>.json`.
- *
- * JSON format reference: https://minecraft.wiki/w/World_preset_definition#Superflat_Level_Generation_Preset
+ * ```kotlin
+ * flatLevelGeneratorPreset("water_world", Items.WATER_BUCKET) {
+ *     settings {
+ *         biome = Biomes.DEEP_OCEAN
+ *         layers {
+ *             layer(Blocks.BEDROCK, height = 5)
+ *             layer(Blocks.DEEPSLATE, height = 5)
+ *             layer(Blocks.WATER, height = 90)
+ *         }
+ *     }
+ * }
+ * ```
  */
-fun DataPack.flatLevelGeneratorPreset(
-	fileName: String = "flat_level_generator_preset",
-	display: ItemArgument,
-	block: FlatGeneratorSettings.() -> Unit = {},
-): FlatLevelGeneratorPresetArgument {
-	flatLevelGeneratorPresets += FlatLevelGeneratorPreset(fileName, display).also { it.settings.apply(block) }
-	return FlatLevelGeneratorPresetArgument(fileName, name)
-}
-
-/** Configure the settings for the preset. */
 fun FlatLevelGeneratorPreset.settings(block: FlatGeneratorSettings.() -> Unit) = settings.apply(block)

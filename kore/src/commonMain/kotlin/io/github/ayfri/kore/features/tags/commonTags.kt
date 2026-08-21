@@ -207,6 +207,14 @@ fun DataPack.pointOfInterestTypeTag(
 	block: Tag<PointOfInterestTypeTagArgument>.() -> Unit = {},
 ) = tag(fileName, "point_of_interest_type", namespace, replace, block)
 
+/** Create a structure set tag. Produces `data/<namespace>/tags/worldgen/structure_set/<fileName>.json`. */
+fun DataPack.structureSetTag(
+	fileName: String = "structure_set",
+	namespace: String = name,
+	replace: Boolean = false,
+	block: Tag<StructureSetTagArgument>.() -> Unit = {},
+) = tag(fileName, "worldgen/structure_set", namespace, replace, block)
+
 /** Create a structure tag. Produces `data/<namespace>/tags/structure/<fileName>.json`. */
 fun DataPack.structureTag(
 	fileName: String = "structure",

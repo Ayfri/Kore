@@ -4,12 +4,15 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.worldgen.dimension.generator.Layer
+import io.github.ayfri.kore.features.worldgen.dimension.generator.layers
+import io.github.ayfri.kore.features.worldgen.dimension.generator.structureOverrides
 import io.github.ayfri.kore.features.worldgen.flatlevelgeneratorpreset.flatLevelGeneratorPreset
 import io.github.ayfri.kore.features.worldgen.flatlevelgeneratorpreset.settings
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.StructureSets
+import io.github.ayfri.kore.generated.arguments.worldgen.tagged.StructureSetTagArgument
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
 
@@ -54,6 +57,73 @@ fun DataPack.flatLevelGeneratorPresetTests() {
 					"minecraft:villages",
 					"minecraft:strongholds"
 				]
+			}
+		}
+	""".trimIndent()
+
+	flatLevelGeneratorPreset("classic_flat")
+
+	flatLevelGeneratorPresets.last() assertsIs """
+		{
+			"display": "minecraft:grass_block",
+			"settings": {
+				"biome": "minecraft:plains",
+				"layers": [
+					{
+						"block": "minecraft:bedrock",
+						"height": 1
+					},
+					{
+						"block": "minecraft:dirt",
+						"height": 2
+					},
+					{
+						"block": "minecraft:grass_block",
+						"height": 1
+					}
+				],
+				"structure_overrides": "minecraft:villages"
+			}
+		}
+	""".trimIndent()
+
+	flatLevelGeneratorPreset("tunnelers_dream", Items.STONE) {
+		settings {
+			biome = Biomes.WINDSWEPT_HILLS
+			layers {
+				layer(Blocks.BEDROCK)
+				layer(Blocks.STONE, height = 230)
+				layer(Blocks.DIRT, height = 5)
+				layer(Blocks.GRASS_BLOCK)
+			}
+			structureOverrides(StructureSetTagArgument("my_structure_sets", "test"))
+		}
+	}
+
+	flatLevelGeneratorPresets.last() assertsIs """
+		{
+			"display": "minecraft:stone",
+			"settings": {
+				"biome": "minecraft:windswept_hills",
+				"layers": [
+					{
+						"block": "minecraft:bedrock",
+						"height": 1
+					},
+					{
+						"block": "minecraft:stone",
+						"height": 230
+					},
+					{
+						"block": "minecraft:dirt",
+						"height": 5
+					},
+					{
+						"block": "minecraft:grass_block",
+						"height": 1
+					}
+				],
+				"structure_overrides": "#test:my_structure_sets"
 			}
 		}
 	""".trimIndent()
