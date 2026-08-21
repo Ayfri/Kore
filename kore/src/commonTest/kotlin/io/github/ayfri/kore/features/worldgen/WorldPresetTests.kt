@@ -17,13 +17,13 @@ import io.kotest.core.spec.style.FunSpec
 fun DataPack.worldPresetTests() {
 	worldPreset("my_world_preset") {
 		dimension(DimensionTypes.OVERWORLD) {
-			generator = noiseGenerator(NoiseSettings.OVERWORLD, multiNoise(BiomePresets.OVERWORLD))
+			noiseGenerator(NoiseSettings.OVERWORLD, multiNoise(BiomePresets.OVERWORLD))
 		}
 		dimension(DimensionTypes.THE_NETHER) {
-			generator = noiseGenerator(NoiseSettings.NETHER, multiNoise(BiomePresets.NETHER))
+			noiseGenerator(NoiseSettings.NETHER, multiNoise(BiomePresets.NETHER))
 		}
 		dimension(DimensionTypes.THE_END) {
-			generator = noiseGenerator(NoiseSettings.END, theEnd())
+			noiseGenerator(NoiseSettings.END, theEnd())
 		}
 	}
 
