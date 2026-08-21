@@ -378,17 +378,41 @@ Reference: [Placement modifier](https://minecraft.wiki/w/Placed_feature#Placemen
 | `surfaceRelativeThresholdFilter(...)` | Surface-relative placement                       |
 | `surfaceWaterDepthFilter(maxDepth)`   | Max water depth filter                           |
 
+### Vertical Anchors
+
+A vertical anchor is a single Y level, the building block every height provider takes as a bound. The three forms
+serialize as a one-key object, and the resolved Y is always clamped to the dimension's build height.
+
+| Builder          | JSON                  | Meaning                                                           |
+|------------------|-----------------------|-------------------------------------------------------------------|
+| `absolute(y)`    | `{"absolute": y}`     | Absolute Y coordinate, the one shown on the F3 screen.            |
+| `aboveBottom(n)` | `{"above_bottom": n}` | `n` blocks above the bottom of the dimension, `0` being `min_y`.  |
+| `belowTop(n)`    | `{"below_top": n}`    | `n` blocks below the top of the dimension, larger values go down. |
+
+The builders are extensions on `VerticalAnchorScope`, so they resolve inside any block that accepts an anchor: a
+placed feature, a carver configuration or a `surfaceRules { }` block.
+
+Reference: [Vertical anchor](https://minecraft.wiki/w/Custom_world_generation/vertical_anchor)
+
 ### Height Providers
 
 Height providers control vertical distribution. Different providers create different ore/feature distributions:
 
-- **Uniform** - Equal chance at all heights (good for evenly distributed ores)
-- **Trapezoid** - Peaks in the middle, tapers at edges (vanilla iron ore pattern)
-- **Biased to bottom** - Concentrates near the minimum Y
-- **Very biased to bottom** - More extreme bottom concentration (vanilla diamond pattern)
-- **Weighted list** - Picks from multiple providers by weight
+| Provider                                                    | Behaviour                                                                         |
+|-------------------------------------------------------------|-----------------------------------------------------------------------------------|
+| `constantHeightProvider(anchor)`                            | Always the given anchor. Serializes as the bare anchor, no wrapper object.        |
+| `constantAbsolute(y)` / `constantAboveBottom(n)` / `constantBelowTop(n)` | Shorthands for `constantHeightProvider` on each anchor form.          |
+| `uniformHeightProvider(min, max)`                           | Equal chance at every level between both bounds, included.                        |
+| `trapezoidHeightProvider(min, max, plateau)`                | Flat top of `plateau` blocks in the middle, linear falloff on both sides.         |
+| `biasedToBottomHeightProvider(min, max, inner)`             | Uniform over the `inner` bottom blocks, exponential falloff above them.           |
+| `veryBiasedToBottomHeightProvider(min, max, inner)`         | Same shape with a sharper falloff, the vanilla diamond pattern.                   |
+| `weightedListHeightProvider { }`                            | Picks one of the nested providers, by weight.                                     |
 
-Reference: [Height provider](https://minecraft.wiki/w/Height_provider)
+Every builder except `weightedListHeightProvider` also takes plain `Int` bounds, which are read as absolute Y
+coordinates. They are extensions on `HeightProviderScope`, which extends `VerticalAnchorScope`, so the anchors are
+available in the same block.
+
+Reference: [Height provider](https://minecraft.wiki/w/Custom_world_generation/height_provider)
 
 ```kotlin
 // Uniform distribution between min and max
@@ -406,11 +430,20 @@ heightRange(constantAboveBottom(8))
 // Constant offset below world top
 heightRange(constantBelowTop(8))
 
+// Any anchor, wrapped in a constant provider
+heightRange(constantHeightProvider(belowTop(16)))
+
 // Biased toward the bottom
 heightRange(biasedToBottomHeightProvider(minInclusive = -64, maxInclusive = 0))
 
 // Strongly biased toward the bottom
 heightRange(veryBiasedToBottomHeightProvider(minInclusive = -64, maxInclusive = 16))
+
+// One provider drawn out of several, by weight
+heightRange(weightedListHeightProvider {
+	entry(3, constantAbsolute(32))
+	entry(1, uniformHeightProvider(aboveBottom(0), absolute(16)))
+})
 ```
 
 ### Float Providers

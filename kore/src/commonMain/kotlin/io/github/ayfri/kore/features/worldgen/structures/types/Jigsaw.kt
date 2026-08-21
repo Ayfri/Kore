@@ -1,10 +1,12 @@
 package io.github.ayfri.kore.features.worldgen.structures.types
 
 import io.github.ayfri.kore.features.worldgen.HeightMap
+import io.github.ayfri.kore.features.worldgen.heightproviders.ConstantHeightProvider
 import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProvider
-import io.github.ayfri.kore.features.worldgen.heightproviders.constantAbsolute
+import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProviderScope
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.*
+import io.github.ayfri.kore.features.worldgen.verticalanchors.Absolute
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.TemplatePoolArgument
@@ -19,7 +21,7 @@ data class Jigsaw(
 	override var terrainAdaptation: TerrainAdaptation? = null,
 	var startPool: TemplatePoolArgument,
 	var size: Int = 0,
-	var startHeight: HeightProvider = constantAbsolute(0),
+	var startHeight: HeightProvider = ConstantHeightProvider(Absolute(0)),
 	var startJigsawName: String? = null,
 	var projectStartToHeightmap: HeightMap? = null,
 	var maxDistanceFromCenter: MaxDistanceFromCenter = MaxDistanceFromCenter(80),
@@ -27,7 +29,7 @@ data class Jigsaw(
 	var poolAliases: List<PoolAlias>? = null,
 	var dimensionPadding: DimensionPadding? = null,
 	var liquidSettings: LiquidSettings? = null,
-) : StructureType()
+) : StructureType(), HeightProviderScope
 
 fun StructuresBuilder.jigsaw(
 	filename: String = "jigsaw",

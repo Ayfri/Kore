@@ -1,5 +1,7 @@
 package io.github.ayfri.kore.features.worldgen.noisesettings.rules
 
+import io.github.ayfri.kore.features.worldgen.verticalanchors.VerticalAnchorScope
+
 /**
  * Builder scope for declaring surface rules via [surfaceRules].
  *
@@ -8,7 +10,7 @@ package io.github.ayfri.kore.features.worldgen.noisesettings.rules
  *
  * @property rules The rules appended so far, in evaluation order.
  */
-class SurfaceRulesScope {
+class SurfaceRulesScope : VerticalAnchorScope {
 	val rules = mutableListOf<SurfaceRule>()
 }
 

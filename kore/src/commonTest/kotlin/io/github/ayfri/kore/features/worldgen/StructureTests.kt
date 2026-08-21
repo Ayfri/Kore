@@ -5,9 +5,12 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.worldgen.biome.types.spawner
 import io.github.ayfri.kore.features.worldgen.heightproviders.constantAbsolute
+import io.github.ayfri.kore.features.worldgen.heightproviders.uniformHeightProvider
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.features.worldgen.structures.types.*
 import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.LiquidSettings
+import io.github.ayfri.kore.features.worldgen.verticalanchors.aboveBottom
+import io.github.ayfri.kore.features.worldgen.verticalanchors.belowTop
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.TemplatePools
@@ -142,6 +145,29 @@ fun DataPack.structureTests() {
 				"bottom": 20
 			},
 			"liquid_settings": "ignore_waterlogging"
+		}
+	""".trimIndent()
+
+	structuresBuilder.netherFossil("my_nether_fossil") {
+		biomes(Biomes.SOUL_SAND_VALLEY)
+		height = uniformHeightProvider(aboveBottom(32), belowTop(2))
+	}
+
+	structures.last() assertsIs """
+		{
+			"type": "minecraft:nether_fossil",
+			"biomes": "minecraft:soul_sand_valley",
+			"step": "underground_decoration",
+			"spawn_overrides": {},
+			"height": {
+				"type": "minecraft:uniform",
+				"min_inclusive": {
+					"above_bottom": 32
+				},
+				"max_inclusive": {
+					"below_top": 2
+				}
+			}
 		}
 	""".trimIndent()
 }

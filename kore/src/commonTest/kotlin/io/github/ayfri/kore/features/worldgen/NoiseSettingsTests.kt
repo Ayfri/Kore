@@ -8,6 +8,9 @@ import io.github.ayfri.kore.features.worldgen.noise.noise
 import io.github.ayfri.kore.features.worldgen.noisesettings.*
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.*
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.*
+import io.github.ayfri.kore.features.worldgen.verticalanchors.aboveBottom
+import io.github.ayfri.kore.features.worldgen.verticalanchors.absolute
+import io.github.ayfri.kore.features.worldgen.verticalanchors.belowTop
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.DensityFunctions

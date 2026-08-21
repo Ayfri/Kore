@@ -3,10 +3,10 @@ package io.github.ayfri.kore.features.worldgen.configuredcarver
 import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
 import io.github.ayfri.kore.features.worldgen.floatproviders.FloatProvider
 import io.github.ayfri.kore.features.worldgen.floatproviders.constant
+import io.github.ayfri.kore.features.worldgen.heightproviders.ConstantHeightProvider
 import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProvider
-import io.github.ayfri.kore.features.worldgen.heightproviders.constantAbsolute
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.HeightConstant
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.absolute
+import io.github.ayfri.kore.features.worldgen.verticalanchors.Absolute
+import io.github.ayfri.kore.features.worldgen.verticalanchors.VerticalAnchor
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredCarverArgument
 import io.github.ayfri.kore.serializers.InlinableList
@@ -26,10 +26,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Cave(
 	override var probability: Double = 0.1,
-	override var y: HeightProvider = constantAbsolute(0),
+	override var y: HeightProvider = ConstantHeightProvider(Absolute(0)),
 	@JsonSerialName("yScale")
 	override var yScale: FloatProvider = constant(1f),
-	override var lavaLevel: HeightConstant = absolute(-54),
+	override var lavaLevel: VerticalAnchor = Absolute(-54),
 	override var replaceable: InlinableList<BlockOrTagArgument> = listOf(Tags.Block.OVERWORLD_CARVER_REPLACEABLES),
 	override var debugSettings: DebugSettings? = null,
 	var horizontalRadiusMultiplier: FloatProvider = constant(1f),
@@ -51,10 +51,10 @@ data class Cave(
 @Serializable
 data class NetherCave(
 	override var probability: Double = 0.1,
-	override var y: HeightProvider = constantAbsolute(0),
+	override var y: HeightProvider = ConstantHeightProvider(Absolute(0)),
 	@JsonSerialName("yScale")
 	override var yScale: FloatProvider = constant(1f),
-	override var lavaLevel: HeightConstant = absolute(-54),
+	override var lavaLevel: VerticalAnchor = Absolute(-54),
 	override var replaceable: InlinableList<BlockOrTagArgument> = listOf(Tags.Block.NETHER_CARVER_REPLACEABLES),
 	override var debugSettings: DebugSettings? = null,
 	var horizontalRadiusMultiplier: FloatProvider = constant(1f),

@@ -171,17 +171,26 @@ replaces the barrier blocks aquifers generate.
 
 ## Height Providers
 
-`y` and `lavaLevel` use vertical anchors: `absolute(y)`, `aboveBottom(y)`, and `belowTop(y)`. `y` wraps them in a height provider:
+`lavaLevel` takes a vertical anchor: `absolute(y)`, `aboveBottom(n)`, or `belowTop(n)`. `y` takes a height provider,
+which wraps anchors into a distribution. Both families of builders are scoped to the carver block, so they resolve
+inside `cave { }`, `netherCave { }` and `canyon { }`.
 
 ```kotlin
 constantAbsolute(64)
 constantAboveBottom(8)
 constantBelowTop(16)
+constantHeightProvider(belowTop(16))
 uniformHeightProvider(aboveBottom(8), absolute(180))
 trapezoidHeightProvider(absolute(0), absolute(128), plateau = 32)
 biasedToBottomHeightProvider(aboveBottom(8), absolute(64))
 veryBiasedToBottomHeightProvider(aboveBottom(8), absolute(64))
+weightedListHeightProvider {
+	entry(3, constantAboveBottom(8))
+	entry(1, uniformHeightProvider(absolute(0), absolute(64)))
+}
 ```
+
+See [Height providers](/docs/data-driven/worldgen/features#height-providers) for what each distribution does.
 
 ## Float Providers
 

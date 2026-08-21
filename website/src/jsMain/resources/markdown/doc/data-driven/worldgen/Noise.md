@@ -341,11 +341,11 @@ Every builder below lives on the `surfaceRules` scope, so nothing leaks into the
 from inside the block.
 
 | Rule        | Builder                    | Description                                  |
-|-------------|-----------------------------|-----------------------------------------------|
-| `bandlands` | `bandlands()`               | Vanilla badlands terracotta banding.          |
-| `block`     | `block(block) { }`          | Places a block state.                         |
-| `condition` | `condition(condition) { }`  | Runs nested rules when the condition passes.  |
-| `sequence`  | `sequence { }`              | Groups rules, first match wins.               |
+|-------------|----------------------------|----------------------------------------------|
+| `bandlands` | `bandlands()`              | Vanilla badlands terracotta banding.         |
+| `block`     | `block(block) { }`         | Places a block state.                        |
+| `condition` | `condition(condition) { }` | Runs nested rules when the condition passes. |
+| `sequence`  | `sequence { }`             | Groups rules, first match wins.              |
 
 A `condition` block holding a single rule serializes as that rule, several rules are wrapped in a `sequence`.
 
@@ -353,19 +353,19 @@ A `condition` block holding a single rule serializes as that rule, several rules
 
 Condition builders live on the `surfaceRules` scope too, so they resolve without extra imports inside the block.
 
-| Condition                   | Builder                                                     | Description                                          |
-|------------------------------|---------------------------------------------------------------|--------------------------------------------------------|
-| `above_preliminary_surface` | `AbovePreliminarySurface`                                    | Position is above the router's preliminary surface.  |
-| `biome`                     | `biomes(...)`                                                 | Position is in one of the listed biomes.             |
-| `hole`                       | `Hole`                                                        | Column has a surface depth of 0.                     |
-| `noise_threshold`           | `noiseThreshold(noise, minThreshold, maxThreshold) { is3d }` | Noise value falls within a range, in 2D or 3D.       |
-| `not`                        | `not(condition)`                                              | Inverts another condition.                           |
-| `steep`                      | `Steep`                                                       | Position is on a steep north or east facing slope.   |
-| `stone_depth`                | `stoneDepth(surfaceType, offset, ...)`                        | Depth below the floor or ceiling of the terrain.     |
-| `temperature`                | `Temperature`                                                 | Biome is cold enough for snowfall.                   |
-| `vertical_gradient`         | `verticalGradient(name, trueAtAndBelow, falseAtAndAbove)`    | Random blend between two Y anchors.                  |
-| `water`                      | `water(offset, surfaceDepthMultiplier, addStoneDepth)`        | Position is above the local water level.             |
-| `y_above`                    | `yAbove(anchor, surfaceDepthMultiplier, addStoneDepth)`       | Position is above a Y anchor, exclusive.             |
+| Condition                   | Builder                                                      | Description                                         |
+|-----------------------------|--------------------------------------------------------------|-----------------------------------------------------|
+| `above_preliminary_surface` | `AbovePreliminarySurface`                                    | Position is above the router's preliminary surface. |
+| `biome`                     | `biomes(...)`                                                | Position is in one of the listed biomes.            |
+| `hole`                      | `Hole`                                                       | Column has a surface depth of 0.                    |
+| `noise_threshold`           | `noiseThreshold(noise, minThreshold, maxThreshold) { is3d }` | Noise value falls within a range, in 2D or 3D.      |
+| `not`                       | `not(condition)`                                             | Inverts another condition.                          |
+| `steep`                     | `Steep`                                                      | Position is on a steep north or east facing slope.  |
+| `stone_depth`               | `stoneDepth(surfaceType, offset, ...)`                       | Depth below the floor or ceiling of the terrain.    |
+| `temperature`               | `Temperature`                                                | Biome is cold enough for snowfall.                  |
+| `vertical_gradient`         | `verticalGradient(name, trueAtAndBelow, falseAtAndAbove)`    | Random blend between two Y anchors.                 |
+| `water`                     | `water(offset, surfaceDepthMultiplier, addStoneDepth)`       | Position is above the local water level.            |
+| `y_above`                   | `yAbove(anchor, surfaceDepthMultiplier, addStoneDepth)`      | Position is above a Y anchor, exclusive.            |
 
 `noiseThreshold` evaluates its noise in 2D (X/Z) by default. Set `is3d = true` to evaluate it in 3D instead:
 
@@ -391,7 +391,8 @@ condition(not(Steep)) {
 }
 ```
 
-Y anchors used by `yAbove` and `verticalGradient` are built with `absolute(y)`, `aboveBottom(offset)` or `belowTop(offset)`:
+The vertical anchors used by `yAbove` and `verticalGradient` are built with `absolute(y)`, `aboveBottom(offset)` or
+`belowTop(offset)`, all scoped to the `surfaceRules { }` block:
 
 ```kotlin
 condition(verticalGradient("bedrock_floor", aboveBottom(0), aboveBottom(5))) {

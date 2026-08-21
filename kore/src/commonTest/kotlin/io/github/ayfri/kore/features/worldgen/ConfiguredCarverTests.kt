@@ -17,9 +17,9 @@ import io.github.ayfri.kore.features.worldgen.floatproviders.trapezoid
 import io.github.ayfri.kore.features.worldgen.floatproviders.uniform
 import io.github.ayfri.kore.features.worldgen.heightproviders.constantAboveBottom
 import io.github.ayfri.kore.features.worldgen.heightproviders.uniformHeightProvider
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.aboveBottom
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.absolute
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.belowTop
+import io.github.ayfri.kore.features.worldgen.verticalanchors.aboveBottom
+import io.github.ayfri.kore.features.worldgen.verticalanchors.absolute
+import io.github.ayfri.kore.features.worldgen.verticalanchors.belowTop
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.utils.pretty

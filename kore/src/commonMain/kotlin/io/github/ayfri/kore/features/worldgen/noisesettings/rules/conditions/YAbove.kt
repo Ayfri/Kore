@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions
 
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.SurfaceRulesScope
+import io.github.ayfri.kore.features.worldgen.verticalanchors.VerticalAnchor
 import kotlinx.serialization.Serializable
 
 /**
@@ -13,7 +14,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class YAbove(
-	var anchor: HeightConstant,
+	var anchor: VerticalAnchor,
 	var surfaceDepthMultiplier: Int = 0,
 	var addStoneDepth: Boolean = false,
 ) : SurfaceRuleCondition()
@@ -22,7 +23,7 @@ data class YAbove(
  * Creates a [YAbove] instance with the given parameters.
  */
 fun SurfaceRulesScope.yAbove(
-	anchor: HeightConstant,
+	anchor: VerticalAnchor,
 	surfaceDepthMultiplier: Int = 0,
 	addStoneDepth: Boolean = false,
 ) = YAbove(anchor, surfaceDepthMultiplier, addStoneDepth)
@@ -31,6 +32,6 @@ fun SurfaceRulesScope.yAbove(
  * Creates a [YAbove] instance with the given parameters.
  */
 fun SurfaceRulesScope.yAbove(
-	anchor: HeightConstant,
+	anchor: VerticalAnchor,
 	block: YAbove.() -> Unit,
 ) = YAbove(anchor).apply(block)
