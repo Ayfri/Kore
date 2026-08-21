@@ -88,6 +88,27 @@ fun DataPack.predicateTests() {
 		}
 	""".trimIndent()
 
+	predicate("any_of_default") {
+		anyOf {
+			killedByPlayer()
+			survivesExplosion()
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:any_of",
+			"terms": [
+				{
+					"condition": "minecraft:killed_by_player"
+				},
+				{
+					"condition": "minecraft:survives_explosion"
+				}
+			]
+		}
+	""".trimIndent()
+
 	predicate("block_state_property") {
 		blockStateProperty(Blocks.REDSTONE_LAMP) {
 			this["facing"] = "north"
@@ -134,6 +155,39 @@ fun DataPack.predicateTests() {
 					{
 						"id": "#minecraft:is_projectile",
 						"expected": true
+					}
+				]
+			}
+		}
+	""".trimIndent()
+
+	predicate("damage_source_properties_tags") {
+		damageSourceProperties {
+			isDirect = true
+			tag(Tags.DamageType.IS_FIRE)
+			tag(Tags.DamageType.BYPASSES_ARMOR, expected = false)
+			sourceEntity {
+				entityType(EntityTypes.SKELETON)
+			}
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:damage_source_properties",
+			"predicate": {
+				"is_direct": true,
+				"source_entity": {
+					"minecraft:entity_type": "minecraft:skeleton"
+				},
+				"tags": [
+					{
+						"id": "#minecraft:is_fire",
+						"expected": true
+					},
+					{
+						"id": "#minecraft:bypasses_armor",
+						"expected": false
 					}
 				]
 			}
@@ -401,6 +455,30 @@ fun DataPack.predicateTests() {
 						},
 						"z": 1.0
 					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	predicate("entity_properties_attacker") {
+		entityProperties(EntityTarget.ATTACKER) {
+			entityType(EntityTypes.ZOMBIE)
+			flags {
+				isBaby = true
+				isOnFire = false
+			}
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:entity_properties",
+			"entity": "attacker",
+			"predicate": {
+				"minecraft:entity_type": "minecraft:zombie",
+				"minecraft:flags": {
+					"is_baby": true,
+					"is_on_fire": false
 				}
 			}
 		}
@@ -674,6 +752,28 @@ fun DataPack.predicateTests() {
 			},
 			"range": {
 				"min": 0.0,
+				"max": 10.0
+			}
+		}
+	""".trimIndent()
+
+	predicate("value_check_int_range") {
+		valueCheck(scoreNumber("kills", EntityTarget.THIS), 1..10)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:value_check",
+			"value": {
+				"type": "minecraft:score",
+				"target": {
+					"type": "minecraft:context",
+					"target": "this"
+				},
+				"score": "kills"
+			},
+			"range": {
+				"min": 1.0,
 				"max": 10.0
 			}
 		}

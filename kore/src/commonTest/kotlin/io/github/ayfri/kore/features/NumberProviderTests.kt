@@ -138,6 +138,55 @@ fun DataPack.numberProviderTests() {
 		}
 	""".trimIndent()
 
+	lootTable("score_provider_test") {
+		pool {
+			rolls = scoreNumber("kills", fixedScore("Steve"))
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"rolls": {
+						"type": "minecraft:score",
+						"target": {
+							"type": "minecraft:fixed",
+							"name": "Steve"
+						},
+						"score": "kills"
+					},
+					"entries": []
+				}
+			]
+		}
+	""".trimIndent()
+
+	lootTable("score_scaled_test") {
+		pool {
+			rolls = scoreNumber("kills", EntityTarget.ATTACKING_PLAYER, scale = 0.5f)
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"rolls": {
+						"type": "minecraft:score",
+						"target": {
+							"type": "minecraft:context",
+							"target": "attacking_player"
+						},
+						"score": "kills",
+						"scale": 0.5
+					},
+					"entries": []
+				}
+			]
+		}
+	""".trimIndent()
+
 	lootTable("storage_test") {
 		pool {
 			rolls = storageNumber("my_pack:data", "player.health")

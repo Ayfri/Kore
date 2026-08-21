@@ -7,9 +7,14 @@ import kotlinx.serialization.Serializable
 
 /**
  * An integer bound written either as a bare number ([value]) or as a `{ "min": ..., "max": ... }` object backed by
- * number providers ([range]).
+ * number providers ([range]). Exactly one of the two is set.
+ *
+ * Both bounds are clamped to an integer by the game.
  *
  * Minecraft Wiki: [Predicate](https://minecraft.wiki/w/Predicate)
+ *
+ * @property value The exact value to match, when the bound is a bare number.
+ * @property range The bounds to match, when the bound is an object.
  */
 @OptIn(ExperimentalSerializationApi::class)
 @KeepGeneratedSerializer
@@ -27,18 +32,20 @@ data class IntOrNumberProvidersRange(
 /** Creates an [IntOrNumberProvidersRange] matching the exact [value]. */
 fun intValue(value: Int) = IntOrNumberProvidersRange(value)
 
-/** Creates an [IntOrNumberProvidersRange] between the values produced by [min] and [max]. */
-fun providersRange(min: NumberProvider, max: NumberProvider) = IntOrNumberProvidersRange(range = uniform(min, max))
+/** Creates an [IntOrNumberProvidersRange] between [min] and [max], both included. */
+fun intRange(min: NumberProvider, max: NumberProvider) = IntOrNumberProvidersRange(range = uniform(min, max))
 
-/** Creates an [IntOrNumberProvidersRange] between [min] and the value produced by [max]. */
-fun providersRange(min: Float, max: NumberProvider) = IntOrNumberProvidersRange(range = uniform(constant(min), max))
+/** Creates an [IntOrNumberProvidersRange] between [min] and [max], both included. */
+fun intRange(min: Float, max: NumberProvider) = IntOrNumberProvidersRange(range = uniform(min, max))
 
-/** Creates an [IntOrNumberProvidersRange] between the value produced by [min] and [max]. */
-fun providersRange(min: NumberProvider, max: Float) = IntOrNumberProvidersRange(range = uniform(min, constant(max)))
+/** Creates an [IntOrNumberProvidersRange] between [min] and [max], both included. */
+fun intRange(min: NumberProvider, max: Float) = IntOrNumberProvidersRange(range = uniform(min, max))
 
-/** Creates an [IntOrNumberProvidersRange] between [min] and [max]. */
-fun intRange(min: Float, max: Float) = IntOrNumberProvidersRange(range = uniform(constant(min), constant(max)))
+/** Creates an [IntOrNumberProvidersRange] between [min] and [max], both included. */
+fun intRange(min: Float, max: Float) = IntOrNumberProvidersRange(range = uniform(min, max))
 
-/** Creates an [IntOrNumberProvidersRange] spanning [range]. */
-fun intRange(range: ClosedFloatingPointRange<Float>) =
-	IntOrNumberProvidersRange(range = uniform(constant(range.start), constant(range.endInclusive)))
+/** Creates an [IntOrNumberProvidersRange] spanning [range], both bounds included. */
+fun intRange(range: ClosedFloatingPointRange<Float>) = intRange(range.start, range.endInclusive)
+
+/** Creates an [IntOrNumberProvidersRange] spanning [range], both bounds included. */
+fun intRange(range: IntRange) = intRange(range.first.toFloat(), range.last.toFloat())

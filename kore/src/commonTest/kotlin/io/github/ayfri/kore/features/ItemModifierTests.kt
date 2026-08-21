@@ -19,7 +19,7 @@ import io.github.ayfri.kore.features.predicates.conditions.randomChance
 import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.features.predicates.providers.enchantmentLevel
-import io.github.ayfri.kore.features.predicates.providers.providersRange
+import io.github.ayfri.kore.features.predicates.providers.intRange
 import io.github.ayfri.kore.features.predicates.providers.scoreNumber
 import io.github.ayfri.kore.features.predicates.types.EntityTarget
 import io.github.ayfri.kore.functions.load
@@ -290,7 +290,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifier("limit_count") {
 		limitCount(
-			providersRange(
+			intRange(
 				min = scoreNumber("my_score", EntityTarget.THIS, 4f),
 				max = enchantmentLevel(5)
 			)
