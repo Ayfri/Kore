@@ -18,6 +18,7 @@ data class Spawners(
 	var ambient: List<Spawn>? = null,
 	var axolotls: List<Spawn>? = null,
 	var creature: List<Spawn>? = null,
+	var misc: List<Spawn>? = null,
 	var monster: List<Spawn>? = null,
 	var undergroundWaterCreature: List<Spawn>? = null,
 	var waterAmbient: List<Spawn>? = null,
@@ -56,6 +57,11 @@ fun Spawners.axolotls(init: MutableList<Spawn>.() -> Unit) {
 /** Sets the `creature` spawns, the passive land mobs. */
 fun Spawners.creature(init: MutableList<Spawn>.() -> Unit) {
 	creature = buildList(init)
+}
+
+/** Sets the `misc` spawns, the category of the mobs that never spawn naturally. */
+fun Spawners.misc(init: MutableList<Spawn>.() -> Unit) {
+	misc = buildList(init)
 }
 
 /** Sets the `monster` spawns. */

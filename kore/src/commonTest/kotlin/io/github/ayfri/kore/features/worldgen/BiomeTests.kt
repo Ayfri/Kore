@@ -139,6 +139,9 @@ fun DataPack.biomeTests() {
 			axolotls {
 				spawner(EntityTypes.AXOLOTL, weight = 10, minCount = 4, maxCount = 6)
 			}
+			misc {
+				spawner(EntityTypes.OAK_BOAT, weight = 1, minCount = 1, maxCount = 1)
+			}
 			monster {
 				spawner(EntityTypes.ZOMBIE, weight = 100, minCount = 4, maxCount = 4)
 				spawner(EntityTypes.SKELETON, weight = 100, minCount = 4, maxCount = 4)
@@ -196,6 +199,14 @@ fun DataPack.biomeTests() {
 						"weight": 10,
 						"minCount": 4,
 						"maxCount": 6
+					}
+				],
+				"misc": [
+					{
+						"type": "minecraft:oak_boat",
+						"weight": 1,
+						"minCount": 1,
+						"maxCount": 1
 					}
 				],
 				"monster": [
