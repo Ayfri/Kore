@@ -184,11 +184,11 @@ Number providers determine dynamic numeric values for rolls, counts, and other q
 
 | Provider                          | Description                                               | Example                                                                 |
 |-----------------------------------|-----------------------------------------------------------|-------------------------------------------------------------------------|
-| `binomial(n, p)`                  | Binomial distribution                                     | `binomial(5, 0.5f)`                                                     |
+| `binomial(n, p)`                  | Binomial distribution                                     | `binomial(5f, 0.5f)`                                                    |
 | `constant(value)`                 | Fixed value                                               | `constant(5f)`                                                          |
 | `enchantmentLevel(...)`           | Based on enchantment level (requires enchantment context) | `enchantmentLevel(5)`                                                   |
 | `environmentAttribute(attribute)` | Current value of a numeric env attribute                  | `environmentAttribute(EnvironmentAttributes.Visual.FOG_START_DISTANCE)` |
-| `scoreNumber(...)`                | Value from a scoreboard objective                         | `scoreNumber("kills", EntityTarget.THIS)`                                 |
+| `scoreNumber(...)`                | Value from a scoreboard objective                         | `scoreNumber("kills", EntityTarget.THIS)`                               |
 | `storageNumber(storage, path)`    | Value from command storage                                | `storageNumber("my_pack:data", "player.health")`                        |
 | `sum(...)`                        | Sum of multiple providers                                 | `sum(constant(1f), uniform(1f, 3f))`                                    |
 | `uniform(min, max)`               | Random value between min and max                          | `uniform(1f, 5f)`                                                       |
@@ -753,4 +753,3 @@ dataPack("better_zombies") {
 
 - [Minecraft Wiki: Loot table](https://minecraft.wiki/w/Loot_table) - Official JSON format reference
 - [Minecraft Wiki: Loot context](https://minecraft.wiki/w/Loot_context) - Understanding loot contexts
-

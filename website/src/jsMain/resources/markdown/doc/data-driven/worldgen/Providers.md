@@ -88,6 +88,9 @@ Int providers fill every field expecting a variable count or size: `count()` and
 | `clamped(minInclusive, maxInclusive, source)`          | Evaluates `source` and clamps its result to `[min, max]`.                           |
 | `weightedList { }`                                     | Randomly selects one entry from a weighted pool.                                    |
 
+The builders extend `IntProviderScope`, so they resolve inside a placed feature, a configured feature configuration, a `processorList { }`
+block, a dimension type and an enchantment provider.
+
 ```kotlin
 count(constant(10))
 count(biasedToBottom(3, 8))
@@ -98,10 +101,15 @@ count(clamped(4, 12, uniform(0, 20)))
 
 // 70% chance of 1, 30% chance of 3.
 count(weightedList {
-	add(weightedEntry(7, constant(1)))
-	add(weightedEntry(3, constant(3)))
+	entry(7, constant(1))
+	entry(3, constant(3))
 })
+
+// Same pool, written as weight-to-provider pairs.
+count(weightedList(7 to constant(1), 3 to constant(3)))
 ```
+
+Reference: [Int provider](https://minecraft.wiki/w/Custom_world_generation/int_provider)
 
 ## Float Providers
 
@@ -115,6 +123,9 @@ Float providers fill float fields such as `yScale` and `floorLevel` on carvers, 
 | `trapezoid(min, max, plateau)`             | Trapezoid distribution over `[min, max]` with a flat top of width `plateau`.              |
 | `clampedNormal(mean, deviation, min, max)` | Samples a normal distribution (`mean`/`deviation`) and clamps the result to `[min, max]`. |
 
+The builders extend `FloatProviderScope`, so they resolve inside a carver configuration, a configured feature configuration and the
+`play_sound` / `spawn_particles` enchantment effects.
+
 ```kotlin
 yScale = constant(1.5f)
 pitch = uniform(0.8f, 1.2f)
@@ -122,9 +133,10 @@ floorLevel = clampedNormal(mean = 0.5f, deviation = 0.2f, min = 0.0f, max = 1.0f
 thickness = trapezoid(min = 0.0f, max = 2.0f, plateau = 0.5f)
 ```
 
-`constant`, `uniform`, `trapezoid` and `clampedNormal` are named the same for ints and floats and are told apart by their argument types.
-When both imports are in scope and the call is ambiguous, use the `*FloatProvider` aliases: `constantFloatProvider`, `uniformFloatProvider`,
-`trapezoidFloatProvider`, `clampedNormalFloatProvider`.
+`constant`, `uniform`, `trapezoid` and `clampedNormal` are named the same for ints and floats. A block accepting both, such as
+`largeDripstone { }`, tells them apart by argument type: `constant(3)` builds an int provider and `constant(3f)` a float one.
+
+Reference: [Float provider](https://minecraft.wiki/w/Custom_world_generation/float_provider)
 
 ## See Also
 

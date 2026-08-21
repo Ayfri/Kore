@@ -164,7 +164,7 @@ itemModifier("limit") {
 	limitCount(64)
 
 	// Range
-	limitCount(providersRange(min = constant(1f), max = constant(32f)))
+	limitCount(intRange(min = constant(1f), max = constant(32f)))
 }
 ```
 
