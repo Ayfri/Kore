@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.enchantments.providers.types
 
-import io.github.ayfri.kore.features.enchantments.providers.EnchantmentProviders
+import io.github.ayfri.kore.features.enchantments.providers.EnchantmentProvidersScope
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.generated.arguments.EnchantmentOrTagArgument
@@ -31,7 +31,7 @@ data class Single(
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_provider#single
  */
-fun EnchantmentProviders.single(
+fun EnchantmentProvidersScope.single(
 	fileName: String,
 	enchantment: EnchantmentOrTagArgument,
 	level: IntProvider = constant(1),

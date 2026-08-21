@@ -10,7 +10,7 @@ import io.github.ayfri.kore.generated.arguments.worldgen.types.BiomeArgument
  *
  * Obtained through `enchantmentProviders { }`.
  */
-data class EnchantmentProviders(val dataPack: DataPack) {
+data class EnchantmentProvidersScope(val dataPack: DataPack) {
 	/** Registers a provider named [fileName], slashes creating subfolders. */
 	internal fun register(fileName: String, type: EnchantmentProviderType) {
 		dataPack.enchantmentProviders += EnchantmentProvider(fileName, type)
@@ -28,7 +28,7 @@ data class EnchantmentProviders(val dataPack: DataPack) {
  * }
  * ```
  */
-fun EnchantmentProviders.villagerTradeName(
+fun EnchantmentProvidersScope.villagerTradeName(
 	biome: BiomeArgument,
 	profession: VillagerProfessionArgument,
 	villagerLevel: Int,

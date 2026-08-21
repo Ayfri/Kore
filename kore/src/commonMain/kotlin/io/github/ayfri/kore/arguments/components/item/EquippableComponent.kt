@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.types.resources.ModelArgument
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.EntityTypeOrTagArgument
+import io.github.ayfri.kore.generated.arguments.types.EquipmentAssetArgument
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.SerialName
@@ -21,7 +22,7 @@ import kotlinx.serialization.Serializable
 data class EquippableComponent(
 	var slot: EquipmentSlot,
 	@SerialName("asset_id")
-	var assetId: ModelArgument,
+	var assetId: EquipmentAssetArgument,
 	@SerialName("allowed_entities")
 	var allowedEntities: InlinableList<EntityTypeOrTagArgument>? = null,
 	@SerialName("camera_overlay")
@@ -43,19 +44,21 @@ data class EquippableComponent(
 /** Configures equipment slot, sounds, and model when the item is worn. */
 fun ComponentsScope.equippable(
 	slot: EquipmentSlot,
-	assetId: ModelArgument,
+	assetId: EquipmentAssetArgument,
 	init: EquippableComponent.() -> Unit = {},
 ) = apply {
 	this[ItemComponentTypes.EQUIPPABLE] = EquippableComponent(slot, assetId = assetId).apply(init)
 }
 
+/** Configures equipment slot, sounds, and model when the item is worn. */
 fun ComponentsScope.equippable(
 	slot: EquipmentSlot,
 	assetId: String,
 	namespace: String = "minecraft",
 	init: EquippableComponent.() -> Unit = {},
-) = equippable(slot, ModelArgument(assetId, namespace), init)
+) = equippable(slot, EquipmentAssetArgument(assetId, namespace), init)
 
+/** Sets the allowed entities to wear the item. */
 fun EquippableComponent.allowedEntities(vararg entities: EntityTypeOrTagArgument) = apply {
 	allowedEntities = entities.toList()
 }

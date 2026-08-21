@@ -240,7 +240,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `enchantmentGlintOverride(..)`       | Forces the enchantment glint on or off regardless of enchantments.                                       |
 | `enchantments(..)`                   | Applies enchantments with their levels to the item.                                                      |
 | `entityData(..)`                     | Stores entity NBT data for spawn eggs or items that spawn entities.                                      |
-| `equippable(..)`                     | Configures equipment slot, sounds, and model when the item is worn.                                      |
+| `equippable(..)`                     | Configures equipment slot, sounds, and `EquipmentAssets` model when the item is worn.                    |
 | `fireworkExplosion(..)`              | Defines a single firework star explosion shape, colors, and effects.                                     |
 | `fireworks(..)`                      | Configures firework rocket flight duration and explosion effects.                                        |
 | `food(..)`                           | Makes the item edible with nutrition, saturation, and optional effects.                                  |

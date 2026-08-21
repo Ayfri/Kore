@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.enchantments.providers.types
 
-import io.github.ayfri.kore.features.enchantments.providers.EnchantmentProviders
+import io.github.ayfri.kore.features.enchantments.providers.EnchantmentProvidersScope
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.generated.arguments.EnchantmentOrTagArgument
@@ -32,7 +32,7 @@ data class ByCost(
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_provider#by_cost
  */
-fun EnchantmentProviders.byCost(
+fun EnchantmentProvidersScope.byCost(
 	fileName: String,
 	vararg enchantments: EnchantmentOrTagArgument,
 	cost: IntProvider = constant(0),

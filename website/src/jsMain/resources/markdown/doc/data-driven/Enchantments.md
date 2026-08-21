@@ -587,7 +587,8 @@ dataPack("custom_enchants") {
 
 Enchantment providers pick the enchantments an item receives outside the enchanting table, such as the gear mobs spawn
 with or the crossbow of a raid pillager. They generate `data/<namespace>/enchantment_provider/<name>.json`, and a name
-holding slashes lands in subfolders.
+holding slashes lands in subfolders. Every vanilla provider is listed as an `EnchantmentProviders` constant, such as
+`EnchantmentProviders.Raid.VINDICATOR`, whose `asId()` is the name to reuse to override it.
 
 ```kotlin
 dataPack("custom_enchants") {

@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.enchantments.providers.types
 
-import io.github.ayfri.kore.features.enchantments.providers.EnchantmentProviders
+import io.github.ayfri.kore.features.enchantments.providers.EnchantmentProvidersScope
 import io.github.ayfri.kore.generated.arguments.EnchantmentOrTagArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
@@ -28,7 +28,7 @@ data class ByCostWithDifficulty(
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_provider#by_cost_with_difficulty
  */
-fun EnchantmentProviders.byCostWithDifficulty(
+fun EnchantmentProvidersScope.byCostWithDifficulty(
 	fileName: String,
 	vararg enchantments: EnchantmentOrTagArgument,
 	minCost: Int = 1,

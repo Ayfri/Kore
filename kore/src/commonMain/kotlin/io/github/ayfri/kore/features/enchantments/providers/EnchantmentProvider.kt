@@ -29,7 +29,7 @@ data class EnchantmentProvider(
 }
 
 /** The builder registering [EnchantmentProvider]s in this datapack. */
-val DataPack.enchantmentProvidersBuilder get() = EnchantmentProviders(this)
+val DataPack.enchantmentProvidersBuilder get() = EnchantmentProvidersScope(this)
 
 /**
  * Registers enchantment providers in this datapack.
@@ -43,4 +43,4 @@ val DataPack.enchantmentProvidersBuilder get() = EnchantmentProviders(this)
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/enchantments
  */
-fun DataPack.enchantmentProviders(block: EnchantmentProviders.() -> Unit) = enchantmentProvidersBuilder.apply(block)
+fun DataPack.enchantmentProviders(block: EnchantmentProvidersScope.() -> Unit) = enchantmentProvidersBuilder.apply(block)
