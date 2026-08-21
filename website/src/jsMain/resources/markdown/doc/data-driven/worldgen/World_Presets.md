@@ -5,7 +5,7 @@ nav-title: World Presets
 description: Create world presets and flat level generator presets with Kore's DSL.
 keywords: minecraft, datapack, kore, worldgen, world preset, flat, superflat
 date-created: 2026-02-03
-date-modified: 2026-02-04
+date-modified: 2026-08-21
 routeOverride: /docs/data-driven/worldgen/world-presets
 ---
 
@@ -22,16 +22,19 @@ Reference: [World preset](https://minecraft.wiki/w/World_preset)
 
 ## World Preset
 
-A world preset defines the complete dimension configuration for a world. At minimum, it should include an Overworld dimension, but can also
-customize or replace the Nether and End, or add entirely new dimensions.
+A world preset defines the complete dimension configuration for a world. At minimum, it needs a `minecraft:overworld` dimension, but it can
+also customize or replace the Nether and End, or add entirely new dimensions.
+
+`dimension(id, type)` takes two distinct things: `id` is the id the world knows the dimension by, and `type` is the dimension type file
+holding its height bounds, lighting and environment attributes. They carry the same name for the vanilla dimensions, which is why a preset
+can put a custom type behind the vanilla `minecraft:overworld` id.
 
 ```kotlin
 dp.worldPreset("my_preset") {
-	dimension(DimensionTypes.OVERWORLD) {
-		type = myDimType
+	dimension(Dimensions.OVERWORLD, myDimType) {
 		// Generator configuration
 	}
-	// Optionally add NETHER, END, or custom dimensions
+	// Optionally add the Nether, the End, or custom dimensions
 }
 ```
 
@@ -40,8 +43,7 @@ dp.worldPreset("my_preset") {
 ```kotlin
 dp.worldPreset("custom_world") {
 	// Overworld with custom terrain
-	dimension(DimensionTypes.OVERWORLD) {
-		type = myOverworldType
+	dimension(Dimensions.OVERWORLD, myOverworldType) {
 		noiseGenerator(
 			settings = myNoiseSettings,
 			biomeSource = multiNoise { /* ... */ }
@@ -49,8 +51,7 @@ dp.worldPreset("custom_world") {
 	}
 
 	// Standard Nether
-	dimension(DimensionTypes.THE_NETHER) {
-		type = DimensionTypes.THE_NETHER
+	dimension(Dimensions.THE_NETHER, DimensionTypes.THE_NETHER) {
 		noiseGenerator(
 			settings = NoiseSettings.NETHER,
 			biomeSource = multiNoise { /* ... */ }
@@ -58,8 +59,7 @@ dp.worldPreset("custom_world") {
 	}
 
 	// Standard End
-	dimension(DimensionTypes.THE_END) {
-		type = DimensionTypes.THE_END
+	dimension(Dimensions.THE_END, DimensionTypes.THE_END) {
 		noiseGenerator(
 			settings = NoiseSettings.END,
 			biomeSource = theEnd()
@@ -70,16 +70,33 @@ dp.worldPreset("custom_world") {
 
 ### Custom Dimension in Preset
 
+A custom id adds a dimension next to the vanilla ones, reachable with `/execute in <namespace>:<id>`:
+
 ```kotlin
 dp.worldPreset("aether_world") {
-	// Replace Overworld with custom dimension
-	dimension(DimensionTypes.OVERWORLD) {
-		type = aetherDimType
+	// Replace the Overworld with custom terrain
+	dimension(Dimensions.OVERWORLD, aetherDimType) {
 		noiseGenerator(
 			settings = aetherNoise,
 			biomeSource = checkerboard(scale = 3, highlands, forest, shores)
 		)
 	}
+
+	// Add a dimension of your own
+	dimension(DimensionArgument("mining", "my_pack"), miningDimType) {
+		noiseGenerator(
+			settings = NoiseSettings.CAVES,
+			biomeSource = fixed(Biomes.DRIPSTONE_CAVES)
+		)
+	}
+}
+```
+
+A preset only shows up in the world type dropdown once it is listed in the `minecraft:normal` world preset tag:
+
+```kotlin
+dp.worldPresetTag("normal", namespace = "minecraft") {
+	add(customWorld)
 }
 ```
 
@@ -153,7 +170,6 @@ fun DataPack.createSkylandsPreset() {
 		height = 256
 		hasSkylight = true
 		hasCeiling = false
-		natural = true
 		ambientLight = 0.1f
 
 		attributes {
@@ -194,8 +210,7 @@ fun DataPack.createSkylandsPreset() {
 
 	// 4) World preset
 	worldPreset("skylands") {
-		dimension(DimensionTypes.OVERWORLD) {
-			type = skyType
+		dimension(Dimensions.OVERWORLD, skyType) {
 			noiseGenerator(
 				settings = skyNoise,
 				biomeSource = fixed(skyBiome)

@@ -10,19 +10,22 @@ import io.github.ayfri.kore.features.worldgen.worldpreset.dimension
 import io.github.ayfri.kore.features.worldgen.worldpreset.worldPreset
 import io.github.ayfri.kore.generated.BiomePresets
 import io.github.ayfri.kore.generated.DimensionTypes
+import io.github.ayfri.kore.generated.Dimensions
 import io.github.ayfri.kore.generated.NoiseSettings
+import io.github.ayfri.kore.generated.arguments.types.DimensionArgument
+import io.github.ayfri.kore.generated.arguments.types.DimensionTypeArgument
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.worldPresetTests() {
 	worldPreset("my_world_preset") {
-		dimension(DimensionTypes.OVERWORLD) {
+		dimension(Dimensions.OVERWORLD, DimensionTypes.OVERWORLD) {
 			noiseGenerator(NoiseSettings.OVERWORLD, multiNoise(BiomePresets.OVERWORLD))
 		}
-		dimension(DimensionTypes.THE_NETHER) {
+		dimension(Dimensions.THE_NETHER, DimensionTypes.THE_NETHER) {
 			noiseGenerator(NoiseSettings.NETHER, multiNoise(BiomePresets.NETHER))
 		}
-		dimension(DimensionTypes.THE_END) {
+		dimension(Dimensions.THE_END, DimensionTypes.THE_END) {
 			noiseGenerator(NoiseSettings.END, theEnd())
 		}
 	}
@@ -59,6 +62,43 @@ fun DataPack.worldPresetTests() {
 						"settings": "minecraft:end",
 						"biome_source": {
 							"type": "minecraft:the_end"
+						}
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	worldPreset("my_custom_world_preset") {
+		dimension(Dimensions.OVERWORLD, DimensionTypeArgument("skylands_type", "test")) {
+			noiseGenerator(NoiseSettings.OVERWORLD, theEnd())
+		}
+		dimension(DimensionArgument("mining", "test"), DimensionTypes.OVERWORLD_CAVES) {
+			noiseGenerator(NoiseSettings.CAVES, multiNoise(BiomePresets.OVERWORLD))
+		}
+	}
+
+	worldPresets.last() assertsIs """
+		{
+			"dimensions": {
+				"minecraft:overworld": {
+					"type": "test:skylands_type",
+					"generator": {
+						"type": "minecraft:noise",
+						"settings": "minecraft:overworld",
+						"biome_source": {
+							"type": "minecraft:the_end"
+						}
+					}
+				},
+				"test:mining": {
+					"type": "minecraft:overworld_caves",
+					"generator": {
+						"type": "minecraft:noise",
+						"settings": "minecraft:caves",
+						"biome_source": {
+							"type": "minecraft:multi_noise",
+							"preset": "minecraft:overworld"
 						}
 					}
 				}

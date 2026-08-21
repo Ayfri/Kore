@@ -156,8 +156,8 @@ val dim = dp.dimension("example_dimension", type = dimType) {
 
 // 5) World preset
 dp.worldPreset("example_preset") {
-	dimension(DimensionTypes.OVERWORLD) {
-		type = dimType
+	dimension(Dimensions.OVERWORLD, dimType) {
+		// noiseGenerator(settings = terrain, biomeSource = ...)
 	}
 }
 ```
