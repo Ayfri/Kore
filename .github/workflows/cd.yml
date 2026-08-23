@@ -69,7 +69,7 @@ jobs:
 
       # Snapshotting is CPU-bound, and the Kobweb server serving the pages needs a core of its own, so `high` not `max`.
       - name: Run Kobweb export
-        run: ./gradlew :website:kobwebExport -PkobwebExportLayout=STATIC -PkobwebBuildTarget=RELEASE -PkobwebReuseServer=false -Pkobweb.export.numThreads=high --stacktrace
+        run: ./gradlew :website:kobwebExport -PkobwebExportLayout=STATIC -PkobwebBuildTarget=RELEASE -PkobwebReuseServer=false --stacktrace
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
