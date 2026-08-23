@@ -19,6 +19,12 @@ typealias CSSTimeValue = CSSSizeValue<out CSSUnitTime>
  */
 fun StyleScope.animationDelay(vararg delays: CSSTimeValue) = property("animation-delay", delays.joinToString())
 
+/**
+ * Sets the SVG `fill` presentation property, which neither Compose HTML nor Kobweb exposes as a CSS builder. Lucide
+ * icons ship as stroke-only outlines, so a solid glyph needs `fill` overridden from CSS.
+ */
+fun StyleScope.fill(color: CSSColorValue) = property("fill", color)
+
 fun StyleScope.marginX(value: CSSNumeric) {
 	marginLeft(value)
 	marginRight(value)

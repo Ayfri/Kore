@@ -3,7 +3,7 @@ package io.github.ayfri.kore.website.components.doc
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.core.rememberPageContext
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiSearch
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideSearch
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.docEntries
 import io.github.ayfri.kore.website.utils.Search
@@ -47,7 +47,7 @@ fun Search() {
 		Div({
 			classes(SearchStyle.inputContainer)
 		}) {
-			MdiSearch()
+			LucideSearch()
 			Input(InputType.Search) {
 				classes(SearchStyle.input)
 				attr("placeholder", "Search documentation...")
@@ -107,9 +107,10 @@ data object SearchStyle : StyleSheet() {
 		padding(0.5.cssRem)
 		transition(0.2.s, "border-color")
 
-		child(self, type("span")) style {
+		child(self, type("svg")) style {
 			color(GlobalStyle.altTextColor)
-			fontSize(1.25.cssRem)
+			flexShrink(0)
+			fontSize(1.15.cssRem)
 		}
 	}
 

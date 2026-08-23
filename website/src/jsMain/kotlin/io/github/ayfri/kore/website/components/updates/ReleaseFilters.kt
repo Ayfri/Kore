@@ -2,9 +2,9 @@ package io.github.ayfri.kore.website.components.updates
 
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiFilter
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiRestartAlt
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiSearch
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideFunnel
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideRotateCcw
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideSearch
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
@@ -155,7 +155,7 @@ fun ReleaseFilters(
 			Div({
 				classes(ReleaseFiltersStyle.searchInputContainer)
 			}) {
-				MdiSearch()
+				LucideSearch()
 				Input(InputType.Text) {
 					classes(ReleaseFiltersStyle.searchInput)
 					id("release-search")
@@ -171,7 +171,7 @@ fun ReleaseFilters(
 				attr("aria-controls", "filters-panel")
 				onClick { expanded = !expanded }
 			}) {
-				MdiFilter()
+				LucideFunnel()
 				Text(if (expanded) "Hide Filters" else "Show Filters")
 			}
 
@@ -180,7 +180,7 @@ fun ReleaseFilters(
 					classes(ReleaseFiltersStyle.resetButton)
 					onClick { onFilterChange(ReleaseFilterOptions()) }
 				}) {
-					MdiRestartAlt()
+					LucideRotateCcw()
 					Text("Reset Filters")
 				}
 			}
@@ -317,9 +317,10 @@ object ReleaseFiltersStyle : StyleSheet() {
 		padding(0.px, 0.8.cssRem)
 		transition(0.2.s, "background-color", "box-shadow")
 
-		"span.material-icons" style {
+		"svg" style {
 			color(GlobalStyle.altTextColor)
-			fontSize(1.5.cssRem)
+			flexShrink(0)
+			fontSize(1.35.cssRem)
 		}
 
 		hover(self) style {
@@ -369,8 +370,9 @@ object ReleaseFiltersStyle : StyleSheet() {
 			boxShadow(0.px, 2.px, 6.px, 0.px, rgba(0, 0, 0, 0.2))
 		}
 
-		"span.material-icons" style {
-			fontSize(1.2.cssRem)
+		"svg" style {
+			flexShrink(0)
+			fontSize(1.1.cssRem)
 		}
 
 		mdMax(self) {
@@ -403,8 +405,9 @@ object ReleaseFiltersStyle : StyleSheet() {
 			boxShadow(0.px, 2.px, 4.px, 0.px, rgba(0, 0, 0, 0.1))
 		}
 
-		"span.material-icons" style {
-			fontSize(1.2.cssRem)
+		"svg" style {
+			flexShrink(0)
+			fontSize(1.1.cssRem)
 		}
 
 		mdMax(self) {

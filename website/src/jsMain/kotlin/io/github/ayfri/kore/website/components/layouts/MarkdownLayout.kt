@@ -4,8 +4,8 @@ import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.compose.css.functions.blur
 import com.varabyte.kobweb.core.rememberPageContext
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiChevronRight
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiContentCopy
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideCopy
+import com.varabyte.kobweb.silk.components.icons.lucide.LucidePanelLeftOpen
 import com.varabyte.kobwebx.markdown.markdown
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.*
@@ -83,7 +83,7 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 			classes(MarkdownLayoutStyle.revealButton)
 			onClick { revealed = !revealed }
 		}) {
-			MdiChevronRight()
+			LucidePanelLeftOpen()
 		}
 
 		DocSidebar(revealed, onClose = { revealed = false })
@@ -129,7 +129,7 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 							}
 						}
 					}) {
-						MdiContentCopy()
+						LucideCopy()
 					}
 				}
 			}
@@ -260,8 +260,8 @@ object MarkdownLayoutStyle : StyleSheet() {
 			display(DisplayStyle.Block)
 		}
 
-		child(self, type("span")) style {
-			fontSize(2.cssRem)
+		child(self, type("svg")) style {
+			fontSize(1.6.cssRem)
 		}
 	}
 
@@ -299,7 +299,7 @@ object MarkdownLayoutStyle : StyleSheet() {
 		justifyContent(JustifyContent.Center)
 		padding(0.25.cssRem)
 
-		child(self, type("span")) style {
+		child(self, type("svg")) style {
 			fontSize(0.95.cssRem)
 		}
 
@@ -354,6 +354,10 @@ object MarkdownLayoutStyle : StyleSheet() {
 
 		self + hover style {
 			opacity(1)
+		}
+
+		"svg" style {
+			fontSize(0.65.em)
 		}
 	}
 

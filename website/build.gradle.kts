@@ -181,7 +181,7 @@ kobweb {
 					|   org.jetbrains.compose.web.dom.A("#$id", {
 					|	   classes(io.github.ayfri.kore.website.components.layouts.MarkdownLayoutStyle.anchor)
 					|   }) {
-					|	   com.varabyte.kobweb.silk.components.icons.mdi.MdiLink(modifier = com.varabyte.kobweb.compose.ui.Modifier.ariaHidden())
+					|	   com.varabyte.kobweb.silk.components.icons.lucide.LucideHash(modifier = com.varabyte.kobweb.compose.ui.Modifier.ariaHidden())
 					|   }
 					|   $content
 					|}
@@ -639,7 +639,7 @@ kotlin {
 				implementation(libs.compose.runtime)
 				implementation(libs.kobweb.core)
 				implementation(libs.kobwebx.markdown)
-				implementation(libs.kobwebx.silk.icons.mdi)
+				implementation(libs.kobwebx.silk.icons.lucide)
 				implementation(npm("marked", libs.versions.marked.get()))
 			}
 		}

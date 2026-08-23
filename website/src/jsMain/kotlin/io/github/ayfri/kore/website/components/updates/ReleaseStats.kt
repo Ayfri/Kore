@@ -3,8 +3,9 @@ package io.github.ayfri.kore.website.components.updates
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.varabyte.kobweb.compose.css.*
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiArchive
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiCalendarMonth
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideCalendarClock
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideCalendarPlus
+import com.varabyte.kobweb.silk.components.icons.lucide.LucidePackage
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.css.*
@@ -54,9 +55,9 @@ fun ReleaseStats(allReleases: List<GitHubRelease>) {
 		Div({
 			classes(ReleaseStatsStyle.statsRow)
 		}) {
-			StatCard({ MdiArchive() }, "${allReleases.size}", "Total Releases")
-			StatCard({ MdiCalendarMonth() }, allReleases.minOfOrNull { it.publishedAt }?.let(::formatDate) ?: "N/A", "First Release")
-			StatCard({ MdiCalendarMonth() }, allReleases.maxOfOrNull { it.publishedAt }?.let(::formatDate) ?: "N/A", "Latest Release")
+			StatCard({ LucidePackage() }, "${allReleases.size}", "Total Releases")
+			StatCard({ LucideCalendarPlus() }, allReleases.minOfOrNull { it.publishedAt }?.let(::formatDate) ?: "N/A", "First Release")
+			StatCard({ LucideCalendarClock() }, allReleases.maxOfOrNull { it.publishedAt }?.let(::formatDate) ?: "N/A", "Latest Release")
 		}
 
 		if (minecraftVersionStats.isNotEmpty()) {
@@ -159,9 +160,10 @@ object ReleaseStatsStyle : StyleSheet() {
 			translateY((-2).px)
 		}
 
-		"span.material-icons" style {
+		"svg" style {
 			color(GlobalStyle.altTextColor)
-			fontSize(2.cssRem)
+			flexShrink(0)
+			fontSize(1.75.cssRem)
 		}
 
 		mdMax(self) {

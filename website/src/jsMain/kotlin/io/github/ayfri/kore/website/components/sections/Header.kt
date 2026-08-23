@@ -11,11 +11,10 @@ import com.varabyte.kobweb.compose.css.functions.saturate
 import com.varabyte.kobweb.compose.css.textDecorationLine
 import com.varabyte.kobweb.compose.css.zIndex
 import com.varabyte.kobweb.compose.ui.Modifier
-import com.varabyte.kobweb.compose.ui.modifiers.color
-import com.varabyte.kobweb.compose.ui.modifiers.fontSize
+import com.varabyte.kobweb.compose.ui.modifiers.classNames
 import com.varabyte.kobweb.compose.ui.modifiers.margin
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiMenu
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiStar
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideMenu
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideStar
 import io.github.ayfri.kore.website.GITHUB_LINK
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.updates.GitHubRelease
@@ -99,7 +98,7 @@ fun Header(latestRelease: GitHubRelease? = null) {
 					Text("GitHub")
 
 					githubStars?.let { stars ->
-						MdiStar(Modifier.color(Color("#e3b341")).fontSize(0.85.cssRem).margin(left = 0.1.cssRem))
+						LucideStar(Modifier.classNames(HeaderStyle.githubStar).margin(left = 0.1.cssRem))
 						Span({ classes(HeaderStyle.githubStarsCount) }) {
 							Text(formatStarsCount(stars))
 						}
@@ -115,7 +114,7 @@ fun Header(latestRelease: GitHubRelease? = null) {
 				Label(forId = openMenuInputName, {
 					classes(HeaderStyle.mobileMenuLabel)
 				}) {
-					MdiMenu()
+					LucideMenu()
 				}
 
 				Input(InputType.Checkbox) {
@@ -214,8 +213,8 @@ object HeaderStyle : StyleSheet() {
 	val mobileMenuLabel by style {
 		zIndex(10)
 
-		className("material-icons") style {
-			fontSize(2.2.cssRem)
+		child(self, type("svg")) style {
+			fontSize(1.9.cssRem)
 		}
 
 		mdMin(self) {
@@ -323,6 +322,12 @@ object HeaderStyle : StyleSheet() {
 	val githubLogo by style {
 		height(1.4.cssRem)
 		width(1.4.cssRem)
+	}
+
+	val githubStar by style {
+		color(Color("#e3b341"))
+		fill(Color("#e3b341"))
+		fontSize(0.9.cssRem)
 	}
 
 	val githubStarsCount by style {

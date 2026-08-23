@@ -2,8 +2,7 @@ package io.github.ayfri.kore.website.components.index
 
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
-import com.varabyte.kobweb.silk.components.icons.mdi.IconStyle
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiChevronRight
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideChevronRight
 import io.github.ayfri.kore.website.components.common.Markdown
 import io.github.ayfri.kore.website.utils.marginX
 import io.github.ayfri.kore.website.utils.mdMax
@@ -97,7 +96,7 @@ fun FaqSection() {
 							classes(FaqSectionStyle.questionIndicator)
 							if (isOpen) classes(FaqSectionStyle.questionIndicatorOpened)
 						}) {
-							MdiChevronRight(style = IconStyle.ROUNDED)
+							LucideChevronRight()
 						}
 					}
 

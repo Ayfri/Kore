@@ -8,7 +8,10 @@ import com.varabyte.kobweb.compose.css.borderTop
 import com.varabyte.kobweb.compose.css.boxShadow
 import com.varabyte.kobweb.compose.css.textAlign
 import com.varabyte.kobweb.compose.css.textDecorationLine
-import com.varabyte.kobweb.silk.components.icons.mdi.*
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideBugOff
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideGitBranch
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideLibraryBig
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideTextCursorInput
 import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
@@ -30,19 +33,19 @@ fun FeaturesSection() {
 		Feature(
 			"Errors at build time, not on /reload",
 			"A misspelled item, a wrong selector argument or an invalid loot table field stops the compiler. You find out in your editor instead of after loading the world and reading the log.",
-		) { MdiArchitecture(style = IconStyle.ROUNDED) },
+		) { LucideBugOff() },
 		Feature(
 			"Autocomplete for the whole game",
 			"Blocks, items, enchantments, sounds, advancements and every other registry are generated as enums straight from Minecraft's data. The API mirrors vanilla structure, so what you already know still applies.",
-		) { MdiDataObject(style = IconStyle.ROUNDED) },
+		) { LucideTextCursorInput() },
 		Feature(
 			"Refactor a pack the way you refactor code",
 			"Rename a function and every call site follows. Share logic with real functions instead of copy-paste, split a large pack across files, and keep it reviewable in git.",
-		) { MdiGroupAdd(style = IconStyle.ROUNDED) },
+		) { LucideGitBranch() },
 		Feature(
 			"Documented feature by feature",
 			"Every command, data-driven file and helper has a reference page with a copy-pastable example, plus guides for migrating an existing pack and a cookbook of common patterns.",
-		) { MdiBook(style = IconStyle.ROUNDED) },
+		) { LucideLibraryBig() },
 	)
 
 	Div({
@@ -223,9 +226,9 @@ object FeaturesSectionStyle : StyleSheet() {
 		justifyContent(JustifyContent.Center)
 		backgroundColor(Color("rgba(8, 182, 214, 0.15)"))
 
-		className("material-icons-round") style {
-			fontSize(2.2.cssRem)
+		"svg" style {
 			color(Color("var(--landing-accent)"))
+			fontSize(1.8.cssRem)
 		}
 	}
 }

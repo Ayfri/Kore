@@ -2,7 +2,8 @@ package io.github.ayfri.kore.website.components.index
 
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
-import com.varabyte.kobweb.silk.components.icons.mdi.*
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideBookOpenText
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideFlaskConical
 import io.github.ayfri.kore.website.utils.lgMax
 import io.github.ayfri.kore.website.utils.marginX
 import io.github.ayfri.kore.website.utils.mdMax
@@ -22,6 +23,11 @@ data class CommunityPlatform(
 )
 
 @Composable
+private fun BrandMark(src: String, name: String) = Img(src, "$name logo") {
+	classes(CommunitySectionStyle.brandMark)
+}
+
+@Composable
 fun CommunitySection() {
 	Style(CommunitySectionStyle)
 
@@ -30,22 +36,22 @@ fun CommunitySection() {
 			"Discord",
 			"Join our active Discord community to chat with other Kore developers, get help, and share your projects.",
 			"https://discord.gg/BySjRNQ9Je",
-		) { MdiDiscord(style = IconStyle.ROUNDED) },
+		) { BrandMark("/discord-mark.svg", "Discord") },
 		CommunityPlatform(
 			"GitHub",
 			"Contribute to Kore, report issues, or explore the source code on our GitHub repository.",
 			"https://github.com/Ayfri/Kore",
-		) { MdiDataObject(style = IconStyle.ROUNDED) },
+		) { BrandMark("/github-mark-white.svg", "GitHub") },
 		CommunityPlatform(
 			"Docs",
 			"Browse guided documentation, API references, and practical examples to ship faster with Kore.",
 			"/docs/getting-started",
-		) { MdiBook(style = IconStyle.ROUNDED) },
+		) { LucideBookOpenText() },
 		CommunityPlatform(
 			"Examples",
 			"Explore real Kotlin datapack snippets and ready-to-adapt examples in the dedicated examples repository.",
 			"https://github.com/Kore-Minecraft/examples",
-		) { MdiFunctions(style = IconStyle.ROUNDED) },
+		) { LucideFlaskConical() },
 	)
 
 	Section({
@@ -184,14 +190,14 @@ object CommunitySectionStyle : StyleSheet() {
 		borderRadius(1.1.cssRem)
 		backgroundColor(Color("rgba(8, 182, 214, 0.14)"))
 
-		"i" {
+		"svg" style {
 			color(Color("var(--landing-text)"))
-			fontSize(1.6.cssRem)
+			fontSize(2.cssRem)
 		}
+	}
 
-		className("material-icons-round") style {
-			color(Color("var(--landing-text)"))
-			fontSize(2.4.cssRem)
-		}
+	val brandMark by style {
+		height(1.9.cssRem)
+		width(1.9.cssRem)
 	}
 }

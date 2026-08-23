@@ -5,8 +5,8 @@ import com.varabyte.kobweb.browser.storage.BooleanStorageKey
 import com.varabyte.kobweb.browser.storage.getItem
 import com.varabyte.kobweb.browser.storage.setItem
 import com.varabyte.kobweb.compose.css.*
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiCalendarMonth
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiOpenInNew
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideCalendarDays
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideExternalLink
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.utils.*
 import kotlinx.browser.localStorage
@@ -138,7 +138,7 @@ fun ReleaseCard(release: GitHubRelease) {
 					Span({
 						classes(ReleasesListStyle.releaseDate)
 					}) {
-						MdiCalendarMonth()
+						LucideCalendarDays()
 						Text("Published ${formatDate(release.publishedAt)}")
 						Text(" • ")
 						Text("(${formatRelativeDate(release.publishedAt)})")
@@ -160,7 +160,7 @@ fun ReleaseCard(release: GitHubRelease) {
 					target(ATarget.Blank)
 					rel("noopener", "noreferrer")
 				}) {
-					MdiOpenInNew()
+					LucideExternalLink()
 					Text("Minecraft changelog")
 				}
 			}
@@ -353,8 +353,9 @@ object ReleasesListStyle : StyleSheet() {
 		backgroundColor(GlobalStyle.buttonBackgroundColor.alpha(0.12))
 		transition(0.2.s, "background-color", "color")
 
-		"span.material-icons" style {
-			fontSize(1.05.cssRem)
+		"svg" style {
+			flexShrink(0)
+			fontSize(0.95.cssRem)
 		}
 
 		hover(self) style {

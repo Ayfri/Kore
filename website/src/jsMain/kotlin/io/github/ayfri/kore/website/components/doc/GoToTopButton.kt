@@ -5,7 +5,7 @@ import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.css.cursor
 import com.varabyte.kobweb.compose.css.translateY
 import com.varabyte.kobweb.compose.css.zIndex
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiKeyboardArrowUp
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideArrowUp
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.utils.onEvents
 import io.github.ayfri.kore.website.utils.transition
@@ -47,8 +47,8 @@ object GoToTopButtonStyle : StyleSheet() {
 			translateY(0.percent)
 		}
 
-		child(self, type("span")) style {
-			fontSize(2.cssRem)
+		child(self, type("svg")) style {
+			fontSize(1.5.cssRem)
 		}
 	}
 }
@@ -68,6 +68,6 @@ fun GoToTopButton() {
 			onClick { window.scrollTo(0.0, 0.0) }
 		}
 	) {
-		MdiKeyboardArrowUp()
+		LucideArrowUp()
 	}
 }

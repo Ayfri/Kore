@@ -26,7 +26,7 @@ joml = { module = "org.joml:joml", version.ref = "joml" }
 knbt = { module = "net.benwoodworth.knbt:knbt", version.ref = "knbt" }
 kobweb-core = { module = "com.varabyte.kobweb:kobweb-core", version.ref = "kobweb" }
 kobwebx-markdown = { module = "com.varabyte.kobwebx:kobwebx-markdown", version.ref = "kobweb" }
-kobwebx-silk-icons-mdi = { module = "com.varabyte.kobwebx:silk-icons-mdi", version.ref = "kobweb" }
+kobwebx-silk-icons-lucide = { module = "com.varabyte.kobwebx:silk-icons-lucide", version.ref = "kobweb" }
 kompress-core = { module = "dev.karmakrafts.kompress:kompress-core", version.ref = "kompress" }
 kompress-zip = { module = "dev.karmakrafts.kompress:kompress-zip", version.ref = "kompress" }
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }

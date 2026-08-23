@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.borderLeft
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.modifiers.ariaHidden
-import com.varabyte.kobweb.silk.components.icons.mdi.*
+import com.varabyte.kobweb.silk.components.icons.lucide.*
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.utils.marginY
 import org.jetbrains.compose.web.css.*
@@ -16,13 +16,13 @@ enum class CalloutType(
 	val color: CSSColorValue,
 	val icon: @Composable () -> Unit,
 ) {
-	CAUTION("Caution", Color("#ffc107"), { MdiWarning(Modifier.ariaHidden()) }),
-	DANGER("Danger", Color("#d73a49"), { MdiError(Modifier.ariaHidden()) }),
-	IMPORTANT("Important", Color("#8b5cf6"), { MdiPriorityHigh(Modifier.ariaHidden()) }),
-	INFO("Info", Color("#0078d4"), { MdiInfo(Modifier.ariaHidden()) }),
-	NOTE("Note", Color("#0078d4"), { MdiInfo(Modifier.ariaHidden()) }),
-	TIP("Tip", Color("#28a745"), { MdiLightbulb(Modifier.ariaHidden()) }),
-	WARNING("Warning", Color("#ffc107"), { MdiWarning(Modifier.ariaHidden()) });
+	CAUTION("Caution", Color("#ffc107"), { LucideOctagonAlert(Modifier.ariaHidden()) }),
+	DANGER("Danger", Color("#d73a49"), { LucideCircleX(Modifier.ariaHidden()) }),
+	IMPORTANT("Important", Color("#8b5cf6"), { LucideMessageSquareWarning(Modifier.ariaHidden()) }),
+	INFO("Info", Color("#0078d4"), { LucideInfo(Modifier.ariaHidden()) }),
+	NOTE("Note", Color("#0078d4"), { LucideNotepadText(Modifier.ariaHidden()) }),
+	TIP("Tip", Color("#28a745"), { LucideLightbulb(Modifier.ariaHidden()) }),
+	WARNING("Warning", Color("#ffc107"), { LucideTriangleAlert(Modifier.ariaHidden()) });
 
 	companion object {
 		fun fromString(value: String): CalloutType = entries.find { it.name.equals(value, ignoreCase = true) } ?: NOTE
@@ -45,6 +45,10 @@ object CalloutStyle : StyleSheet() {
 		fontSize(1.1.cssRem)
 		fontWeight("bold")
 		gap(0.5.cssRem)
+
+		child(self, type("svg")) style {
+			flexShrink(0)
+		}
 	}
 
 	val calloutContent by style {

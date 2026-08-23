@@ -5,9 +5,9 @@ import com.varabyte.kobweb.browser.util.kebabCaseToTitleCamelCase
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.core.AppGlobals
 import com.varabyte.kobweb.core.rememberPageContext
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiChevronRight
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiUnfoldLess
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiUnfoldMore
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideChevronRight
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideChevronsDownUp
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideChevronsUpDown
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.docEntries
 import io.github.ayfri.kore.website.utils.A
@@ -199,7 +199,7 @@ fun Entry(
 				if (isCollapsed) classes(DocTreeStyle.collapsed)
 				onClick { onToggleCollapse(groupPath) }
 			}) {
-				MdiChevronRight()
+				LucideChevronRight()
 			}
 		}
 		A(article.path, article.navTitle) {
@@ -234,7 +234,7 @@ fun GroupEntry(
 			classes(DocTreeStyle.collapseToggle)
 			if (isCollapsed) classes(DocTreeStyle.collapsed)
 		}) {
-			MdiChevronRight()
+			LucideChevronRight()
 		}
 		Span({
 			classes(DocTreeStyle.entry, DocTreeStyle.groupEntry)
@@ -305,7 +305,7 @@ fun DocTree() {
 					Span({
 						classes(DocTreeStyle.actionIcon)
 					}) {
-						MdiUnfoldMore()
+						LucideChevronsUpDown()
 					}
 				}
 
@@ -317,7 +317,7 @@ fun DocTree() {
 					Span({
 						classes(DocTreeStyle.actionIcon)
 					}) {
-						MdiUnfoldLess()
+						LucideChevronsDownUp()
 					}
 				}
 			}
@@ -388,7 +388,7 @@ data object DocTreeStyle : StyleSheet() {
 		opacity(0.7)
 		transition(0.2.s, "color", "opacity")
 
-		self + className("material-icons") style {
+		"svg" style {
 			fontSize(1.1.cssRem)
 		}
 
@@ -473,8 +473,8 @@ data object DocTreeStyle : StyleSheet() {
 		transform { rotate(90.deg) }
 		userSelect(UserSelect.None)
 
-		self + className("material-icons") style {
-			fontSize(1.1.cssRem)
+		"svg" style {
+			fontSize(0.9.cssRem)
 		}
 	}
 

@@ -3,7 +3,7 @@ package io.github.ayfri.kore.website.components.doc
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.compose.css.functions.blur
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiClose
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideX
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.utils.smMax
 import io.github.ayfri.kore.website.utils.transition
@@ -30,7 +30,7 @@ fun DocSidebar(revealed: Boolean, onClose: () -> Unit) {
 				classes(DocSidebarStyle.closeButton)
 				onClick { onClose() }
 			}) {
-				MdiClose()
+				LucideX()
 			}
 		}
 
@@ -96,8 +96,8 @@ data object DocSidebarStyle : StyleSheet() {
 			display(DisplayStyle.Block)
 		}
 
-		className("material-icons") style {
-			fontSize(2.cssRem)
+		child(self, type("svg")) style {
+			fontSize(1.75.cssRem)
 		}
 	}
 }
