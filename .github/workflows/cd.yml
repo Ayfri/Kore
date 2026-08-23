@@ -72,6 +72,7 @@ jobs:
         run: ./gradlew :website:kobwebExport -PkobwebExportLayout=STATIC -PkobwebBuildTarget=RELEASE -PkobwebReuseServer=false --stacktrace
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          KOBWEB_EXPORT_NUM_THREADS: high
 
       - name: Build & Deploy Worker
         uses: cloudflare/wrangler-action@v4
