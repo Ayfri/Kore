@@ -7,9 +7,11 @@ import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.sulfurcubearchetype.contactDamage
 import io.github.ayfri.kore.features.sulfurcubearchetype.explosion
 import io.github.ayfri.kore.features.sulfurcubearchetype.modifier
+import io.github.ayfri.kore.features.sulfurcubearchetype.soundSettings
 import io.github.ayfri.kore.features.sulfurcubearchetype.sulfurCubeArchetype
 import io.github.ayfri.kore.generated.Attributes
 import io.github.ayfri.kore.generated.DamageTypes
+import io.github.ayfri.kore.generated.SoundEvents
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
@@ -31,6 +33,13 @@ fun DataPack.sulfurCubeArchetypeTests() {
 			attribute = Attributes.MAX_HEALTH,
 			id = "sulfur_cube_archetype:regular",
 			operation = AttributeModifierOperation.ADD_VALUE,
+		)
+
+		soundSettings(
+			hitSound = SoundEvents.Entity.SulfurCube.HIT,
+			pushSound = SoundEvents.Entity.SulfurCube.PUSH,
+			pushSoundCooldown = 5f,
+			pushSoundImpulseThreshold = 0.6f,
 		)
 	}
 
@@ -59,6 +68,12 @@ fun DataPack.sulfurCubeArchetypeTests() {
 			"knockback_modifiers": {
 				"horizontal_power": 0.4,
 				"vertical_power": 0.2
+			},
+			"sound_settings": {
+				"hit_sound": "minecraft:entity.sulfur_cube.hit",
+				"push_sound": "minecraft:entity.sulfur_cube.push",
+				"push_sound_cooldown": 5.0,
+				"push_sound_impulse_threshold": 0.6
 			}
 		}
 	""".trimIndent()

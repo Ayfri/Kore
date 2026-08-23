@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.types.resources.tagged.ItemTagArgument
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.generated.arguments.types.AttributeArgument
 import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
+import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.generated.arguments.types.SulfurCubeArchetypeArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -67,6 +68,22 @@ data class SulfurCubeArchetypeKnockbackModifiers(
 )
 
 /**
+ * The archetype-specific sounds a sulfur cube plays.
+ *
+ * @property hitSound The sound played when the sulfur cube is hit.
+ * @property pushSound The sound played when the sulfur cube pushes an entity.
+ * @property pushSoundCooldown The delay, in ticks, before [pushSound] can play again.
+ * @property pushSoundImpulseThreshold The minimum push impulse required for [pushSound] to play.
+ */
+@Serializable
+data class SulfurCubeArchetypeSoundSettings(
+	var hitSound: SoundEventArgument,
+	var pushSound: SoundEventArgument,
+	var pushSoundCooldown: Float,
+	var pushSoundImpulseThreshold: Float,
+)
+
+/**
  * Data-driven sulfur cube archetype definition.
  *
  * Controls the attribute modifiers, buoyancy, contact damage, explosion, knockback, and valid item contents of a
@@ -85,6 +102,7 @@ data class SulfurCubeArchetype(
 	var explosion: SulfurCubeArchetypeExplosion? = null,
 	var items: ItemTagArgument,
 	var knockbackModifiers: SulfurCubeArchetypeKnockbackModifiers,
+	var soundSettings: SulfurCubeArchetypeSoundSettings? = null,
 ) : Generator("sulfur_cube_archetype") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
@@ -147,4 +165,16 @@ fun SulfurCubeArchetype.explosion(
  */
 fun SulfurCubeArchetype.knockbackModifiers(horizontalPower: Float, verticalPower: Float) {
 	knockbackModifiers = SulfurCubeArchetypeKnockbackModifiers(horizontalPower, verticalPower)
+}
+
+/**
+ * Sets [SulfurCubeArchetype.soundSettings] to a [SulfurCubeArchetypeSoundSettings] built from the given parameters.
+ */
+fun SulfurCubeArchetype.soundSettings(
+	hitSound: SoundEventArgument,
+	pushSound: SoundEventArgument,
+	pushSoundCooldown: Float,
+	pushSoundImpulseThreshold: Float,
+) {
+	soundSettings = SulfurCubeArchetypeSoundSettings(hitSound, pushSound, pushSoundCooldown, pushSoundImpulseThreshold)
 }

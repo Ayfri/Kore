@@ -5,7 +5,7 @@ nav-title: Sulfur Cube Archetypes
 description: Define custom sulfur cube archetypes for Minecraft 26.2+ with Kore's Kotlin DSL. Configure attribute modifiers, buoyancy, contact damage, explosion, knockback and item contents.
 keywords: minecraft sulfur cube, datapack sulfur_cube_archetype, kore sulfur cube archetype, custom mob archetype datapack, sulfur cube attribute modifiers
 date-created: 2026-07-29
-date-modified: 2026-08-20
+date-modified: 2026-08-23
 routeOverride: /docs/data-driven/sulfur-cube-archetypes
 ---
 
@@ -32,9 +32,11 @@ import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.features.sulfurcubearchetype.contactDamage
 import io.github.ayfri.kore.features.sulfurcubearchetype.explosion
 import io.github.ayfri.kore.features.sulfurcubearchetype.modifier
+import io.github.ayfri.kore.features.sulfurcubearchetype.soundSettings
 import io.github.ayfri.kore.features.sulfurcubearchetype.sulfurCubeArchetype
 import io.github.ayfri.kore.generated.Attributes
 import io.github.ayfri.kore.generated.DamageTypes
+import io.github.ayfri.kore.generated.SoundEvents
 import io.github.ayfri.kore.generated.Tags
 
 datapack.sulfurCubeArchetype(
@@ -54,6 +56,13 @@ datapack.sulfurCubeArchetype(
 		id = "sulfur_cube_archetype:regular",
 		operation = AttributeModifierOperation.ADD_VALUE,
 	)
+
+	soundSettings(
+		hitSound = SoundEvents.Entity.SulfurCube.HIT,
+		pushSound = SoundEvents.Entity.SulfurCube.PUSH,
+		pushSoundCooldown = 5f,
+		pushSoundImpulseThreshold = 0.6f,
+	)
 }
 ```
 
@@ -67,6 +76,7 @@ datapack.sulfurCubeArchetype(
 | `explosion`          | `SulfurCubeArchetypeExplosion?`                     | The explosion triggered by the sulfur cube, omitted when `null`.          |
 | `items`              | `ItemTagArgument`                                   | Item tag defining which items the sulfur cube can hold. **Required.**     |
 | `knockbackModifiers` | `SulfurCubeArchetypeKnockbackModifiers`             | Knockback dealt to entities that touch the sulfur cube. **Required.**     |
+| `soundSettings`      | `SulfurCubeArchetypeSoundSettings?`                 | Archetype-specific hit and push sounds, omitted when `null`.              |
 
 ### SulfurCubeArchetypeAttributeModifier Fields
 
@@ -99,6 +109,15 @@ datapack.sulfurCubeArchetype(
 |-------------------|---------|---------------------------------|
 | `horizontalPower` | `Float` | The horizontal knockback power. |
 | `verticalPower`   | `Float` | The vertical knockback power.   |
+
+### SulfurCubeArchetypeSoundSettings Fields
+
+| Field                       | Type                 | Description                                                |
+|-----------------------------|----------------------|------------------------------------------------------------|
+| `hitSound`                  | `SoundEventArgument` | The sound played when the sulfur cube is hit.              |
+| `pushSound`                 | `SoundEventArgument` | The sound played when the sulfur cube pushes an entity.    |
+| `pushSoundCooldown`         | `Float`              | The delay, in ticks, before `pushSound` can play again.    |
+| `pushSoundImpulseThreshold` | `Float`              | The minimum push impulse required for `pushSound` to play. |
 
 ## See Also
 
