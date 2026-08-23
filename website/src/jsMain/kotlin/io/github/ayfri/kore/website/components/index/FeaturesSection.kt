@@ -1,13 +1,8 @@
 package io.github.ayfri.kore.website.components.index
 
 import androidx.compose.runtime.Composable
-import com.varabyte.kobweb.compose.css.TextAlign
-import com.varabyte.kobweb.compose.css.TextDecorationLine
-import com.varabyte.kobweb.compose.css.borderColor
-import com.varabyte.kobweb.compose.css.borderTop
-import com.varabyte.kobweb.compose.css.boxShadow
-import com.varabyte.kobweb.compose.css.textAlign
-import com.varabyte.kobweb.compose.css.textDecorationLine
+import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.compose.css.functions.linearGradient
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideBugOff
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideGitBranch
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideLibraryBig
@@ -15,8 +10,9 @@ import com.varabyte.kobweb.silk.components.icons.lucide.LucideTextCursorInput
 import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.AlignItems
+import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.css.keywords.auto
-import org.jetbrains.compose.web.css.selectors.Nth
 import org.jetbrains.compose.web.dom.*
 
 data class Feature(
@@ -70,13 +66,18 @@ fun FeaturesSection() {
 					classes(FeaturesSectionStyle.feature)
 				}) {
 					Div({
-						classes(FeaturesSectionStyle.featureIcon)
+						classes(FeaturesSectionStyle.featureHeader)
 					}) {
-						feature.icon()
+						Div({
+							classes(FeaturesSectionStyle.featureIcon)
+						}) {
+							feature.icon()
+						}
+						H2 {
+							Text(feature.title)
+						}
 					}
-					H2 {
-						Text(feature.title)
-					}
+
 					P(feature.description)
 				}
 			}
@@ -92,25 +93,12 @@ fun FeaturesSection() {
 }
 
 object FeaturesSectionStyle : StyleSheet() {
-	@OptIn(ExperimentalComposeWebApi::class)
-	val fadeInUp by keyframes {
-		from {
-			opacity(0)
-			transform { translateY(18.px) }
-		}
-		to {
-			opacity(1)
-			transform { translateY(0.px) }
-		}
-	}
-
 	val featuresContainer by style {
 		marginX(auto)
 		maxWidth(85.cssRem)
 		padding(2.5.cssRem, 5.vw)
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
-		gap(1.2.cssRem)
 
 		mdMax(self) {
 			padding(2.5.cssRem, 5.vw)
@@ -119,6 +107,7 @@ object FeaturesSectionStyle : StyleSheet() {
 
 	val sectionTitle by style {
 		fontSize(2.6.cssRem)
+		marginTop(0.px)
 		marginBottom(0.5.cssRem)
 		textAlign(TextAlign.Left)
 	}
@@ -126,9 +115,10 @@ object FeaturesSectionStyle : StyleSheet() {
 	val sectionSubtitle by style {
 		color(Color("var(--landing-muted)"))
 		fontSize(1.1.cssRem)
-		marginBottom(1.5.cssRem)
+		lineHeight(1.6.number)
+		marginBottom(1.8.cssRem)
 		textAlign(TextAlign.Left)
-		maxWidth(40.cssRem)
+		maxWidth(42.cssRem)
 	}
 
 	val sectionFootnote by style {
@@ -146,89 +136,85 @@ object FeaturesSectionStyle : StyleSheet() {
 		}
 	}
 
+	// Two columns rather than four: the descriptions are two or three lines, so wider cards keep them from towering.
 	val grid by style {
 		display(DisplayStyle.Grid)
-		gridTemplateColumns("repeat(auto-fit, minmax(15.5rem, 1fr))")
-		gap(1.35.cssRem)
-
-		lgMax(self) {
-			gridTemplateColumns("repeat(auto-fit, minmax(15rem, 1fr))")
-		}
+		gridTemplateColumns("repeat(2, minmax(0, 1fr))")
+		gap(1.2.cssRem)
 
 		mdMax(self) {
-			display(DisplayStyle.Flex)
-			flexDirection(FlexDirection.Column)
-			alignItems(AlignItems.Stretch)
+			gridTemplateColumns("minmax(0, 1fr)")
 		}
 	}
 
 	@OptIn(ExperimentalComposeWebApi::class)
 	val feature by style {
-		backgroundColor(Color("var(--landing-card)"))
 		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
 		borderRadius(1.2.cssRem)
-		borderTop(2.px, LineStyle.Solid, Color("var(--landing-accent)"))
-		padding(1.8.cssRem)
-
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Column)
-		alignItems(AlignItems.FlexStart)
-		gap(1.cssRem)
-		textAlign(TextAlign.Left)
+		padding(1.5.cssRem, 1.6.cssRem)
+		backgroundImage(
+			linearGradient(135.deg) {
+				add(rgba(21, 28, 38, 0.95), 0.percent)
+				add(rgba(15, 20, 27, 0.92), 60.percent)
+				add(rgba(8, 182, 214, 0.09), 100.percent)
+			}
+		)
+		boxShadow(0.px, 18.px, 40.px, 0.px, rgba(5, 12, 20, 0.35))
 		transition(0.35.s, "transform", "border-color", "box-shadow")
-		boxShadow(0.px, 18.px, 40.px, 0.px, rgba(5, 12, 20, 0.3))
-		animation(fadeInUp) {
-			duration(0.6.s)
-			timingFunction(AnimationTimingFunction.EaseOut)
-			fillMode(AnimationFillMode.Both)
-		}
+		textAlign(TextAlign.Left)
 
 		hover(self) style {
 			transform { translateY((-6).px) }
-			borderColor(Color("rgba(8, 182, 214, 0.5)"))
-			boxShadow(0.px, 26.px, 60.px, 0.px, rgba(5, 12, 20, 0.45))
-		}
-
-		self + nthOfType(Nth.Functional(b = 1)) style {
-			animationDelay(0.05.s)
-		}
-
-		self + nthOfType(Nth.Functional(b = 2)) style {
-			animationDelay(0.12.s)
-			borderTop(2.px, LineStyle.Solid, Color("var(--landing-gold)"))
-		}
-
-		self + nthOfType(Nth.Functional(b = 3)) style {
-			animationDelay(0.18.s)
-			borderTop(2.px, LineStyle.Solid, Color("var(--landing-accent-strong)"))
-		}
-
-		"h2" {
-			fontSize(1.6.cssRem)
-			marginTop(0.px)
-			marginBottom(0.px)
+			borderColor(Color("rgba(8, 182, 214, 0.55)"))
+			boxShadow(0.px, 26.px, 65.px, 0.px, rgba(5, 12, 20, 0.5))
 		}
 
 		"p" {
 			color(Color("var(--landing-muted)"))
-			fontSize(1.05.cssRem)
+			fontSize(1.02.cssRem)
 			lineHeight(1.6.number)
+			marginTop(0.9.cssRem)
+			marginBottom(0.px)
+		}
+
+		smMax(self) {
+			padding(1.3.cssRem)
+		}
+	}
+
+	// Icon sits on the title line instead of stacked above it, so a two-line description does not leave the card half empty.
+	val featureHeader by style {
+		display(DisplayStyle.Flex)
+		alignItems(AlignItems.Center)
+		gap(0.9.cssRem)
+
+		"h2" {
+			fontSize(1.35.cssRem)
+			lineHeight(1.3.number)
+			marginTop(0.px)
 			marginBottom(0.px)
 		}
 	}
 
 	val featureIcon by style {
-		width(3.1.cssRem)
-		height(3.1.cssRem)
-		borderRadius(0.9.cssRem)
+		width(2.6.cssRem)
+		height(2.6.cssRem)
+		flexShrink(0)
+		borderRadius(0.85.cssRem)
+		border(1.px, LineStyle.Solid, Color("rgba(8, 182, 214, 0.3)"))
 		display(DisplayStyle.Flex)
 		alignItems(AlignItems.Center)
 		justifyContent(JustifyContent.Center)
-		backgroundColor(Color("rgba(8, 182, 214, 0.15)"))
+		backgroundImage(
+			linearGradient(160.deg) {
+				add(rgba(8, 182, 214, 0.24), 0.percent)
+				add(rgba(8, 182, 214, 0.06), 100.percent)
+			}
+		)
 
 		"svg" style {
-			color(Color("var(--landing-accent)"))
-			fontSize(1.8.cssRem)
+			color(Color("var(--landing-accent-strong)"))
+			fontSize(1.35.cssRem)
 		}
 	}
 }
