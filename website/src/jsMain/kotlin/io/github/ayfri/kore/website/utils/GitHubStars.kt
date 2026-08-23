@@ -1,5 +1,7 @@
 package io.github.ayfri.kore.website.utils
 
+import io.github.ayfri.kore.website.externals.Intl
+import io.github.ayfri.kore.website.externals.numberFormatOptions
 import kotlinx.browser.localStorage
 import kotlinx.browser.window
 import kotlinx.coroutines.await
@@ -41,17 +43,7 @@ private fun readCachedStars(): CachedStars? {
 	return CachedStars(count, timestamp)
 }
 
-/** Formats a star count like GitHub badges do, e.g. `1234` -> `1.2k`. */
-fun formatStarsCount(count: Int): String {
-	fun compact(value: Int, divisor: Int, suffix: String): String {
-		val tenths = value * 10 / divisor
-		val formatted = if (tenths % 10 == 0) "${tenths / 10}" else "${tenths / 10}.${tenths % 10}"
-		return "$formatted$suffix"
-	}
+private val compactNumber = Intl.NumberFormat("en", numberFormatOptions(notation = "compact", maximumFractionDigits = 1))
 
-	return when {
-		count >= 1_000_000 -> compact(count, 1_000_000, "m")
-		count >= 1_000 -> compact(count, 1_000, "k")
-		else -> count.toString()
-	}
-}
+/** Formats a star count like GitHub badges do, e.g. `1234` -> `1.2k`. */
+fun formatStarsCount(count: Int) = compactNumber.format(count).lowercase()

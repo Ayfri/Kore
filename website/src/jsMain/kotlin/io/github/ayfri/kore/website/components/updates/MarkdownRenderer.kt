@@ -5,6 +5,9 @@ import androidx.compose.runtime.remember
 import com.varabyte.kobweb.compose.css.*
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.CodeBlock
+import io.github.ayfri.kore.website.externals.MarkedToken
+import io.github.ayfri.kore.website.externals.lexer
+import io.github.ayfri.kore.website.externals.parser
 import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.keywords.auto
@@ -21,25 +24,23 @@ private sealed interface ReleaseBlock {
  * while everything else stays a single `marked` render pass.
  */
 private fun parseReleaseBlocks(markdown: String): List<ReleaseBlock> {
-	val tokens = js("marked.lexer(markdown)").unsafeCast<Array<dynamic>>()
 	val blocks = mutableListOf<ReleaseBlock>()
-	val pendingMarkup = mutableListOf<dynamic>()
+	val pendingMarkup = mutableListOf<MarkedToken>()
 
 	fun flushMarkup() {
 		if (pendingMarkup.isEmpty()) return
-		val markupTokens = pendingMarkup.toTypedArray()
-		blocks += ReleaseBlock.Markup(js("marked.parser(markupTokens)").unsafeCast<String>())
+		blocks += ReleaseBlock.Markup(parser(pendingMarkup.toTypedArray()))
 		pendingMarkup.clear()
 	}
 
-	tokens.forEach { token ->
-		if (token.type != "code") {
-			pendingMarkup.add(token)
+	lexer(markdown).forEach { markedToken ->
+		if (markedToken.type != "code") {
+			pendingMarkup += markedToken
 			return@forEach
 		}
 
 		flushMarkup()
-		blocks += ReleaseBlock.Code(token.text as String, (token.lang as String?)?.substringBefore(' ')?.ifBlank { null })
+		blocks += ReleaseBlock.Code(markedToken.text, markedToken.lang?.substringBefore(' ')?.ifBlank { null })
 	}
 	flushMarkup()
 

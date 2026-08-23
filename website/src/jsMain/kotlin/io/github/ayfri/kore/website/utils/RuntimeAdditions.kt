@@ -2,8 +2,8 @@ package io.github.ayfri.kore.website.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import io.github.ayfri.kore.website.externals.Prism
 import kotlinx.browser.document
-import org.w3c.dom.Element
 
 private var kotlinHighlightingReady = false
 
@@ -17,13 +17,13 @@ private fun prepareKotlinHighlighting() {
 @Composable
 fun loadPrism() = LaunchedEffect(Unit) {
 	prepareKotlinHighlighting()
-	js("window.Prism.highlightAll()").unsafeCast<Unit>()
+	Prism.highlightAll()
 }
 
 /** Highlights only the code blocks inside the element with [elementId], re-running whenever [key] changes. */
 @Composable
 fun highlightCodeIn(elementId: String, key: Any?) = LaunchedEffect(key) {
 	prepareKotlinHighlighting()
-	val root: Element = document.getElementById(elementId) ?: return@LaunchedEffect
-	js("window.Prism.highlightAllUnder(root)").unsafeCast<Unit>()
+	val root = document.getElementById(elementId) ?: return@LaunchedEffect
+	Prism.highlightAllUnder(root)
 }

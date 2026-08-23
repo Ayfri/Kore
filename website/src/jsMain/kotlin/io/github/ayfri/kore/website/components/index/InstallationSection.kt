@@ -7,6 +7,7 @@ import io.github.ayfri.kore.website.components.common.Button
 import io.github.ayfri.kore.website.components.common.ButtonColor
 import io.github.ayfri.kore.website.components.common.ButtonVariant
 import io.github.ayfri.kore.website.components.common.CodeBlock
+import io.github.ayfri.kore.website.externals.Prism
 import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
@@ -105,7 +106,7 @@ fun InstallationSection() {
 				val version = AppGlobals.getValue("projectVersion") + "-" + AppGlobals.getValue("minecraftVersion")
 				key(selectedMethod) {
 					LaunchedEffect(selectedMethod) {
-						js("Prism.highlightAll()")
+						Prism.highlightAll()
 					}
 					CodeBlock(selectedMethod.getCode(version), selectedMethod.language, InstallationSectionStyle.code)
 				}

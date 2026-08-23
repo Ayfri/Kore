@@ -154,4 +154,4 @@ fun StyleScope.scrollbarWidth(
 inline val SelectorsScope.placeholder get() = selector("::placeholder")
 
 fun CSSColorValue.alpha(alpha: String) = Color(toString() + alpha)
-fun CSSColorValue.alpha(alpha: Double) = Color(toString() + js("Math.floor(255 * alpha).toString(16).padStart(2, '0')"))
+fun CSSColorValue.alpha(alpha: Double) = Color(toString() + (alpha * 255).toInt().toString(16).padStart(2, '0'))
