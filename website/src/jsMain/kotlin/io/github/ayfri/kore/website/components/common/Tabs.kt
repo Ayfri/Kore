@@ -70,7 +70,7 @@ object TabsStyle : StyleSheet() {
 		borderRadius(1.2.cssRem)
 		overflow(Overflow.Hidden)
 		backgroundColor(Color("var(--landing-surface-2)"))
-		property("box-shadow", "0 20px 50px rgba(5, 12, 20, 0.55)")
+		boxShadow(0.px, 20.px, 50.px, 0.px, rgba(5, 12, 20, 0.55))
 	}
 
 	val buttons by style {

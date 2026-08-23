@@ -2,6 +2,7 @@ package io.github.ayfri.kore.website.components.index
 
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.compose.css.functions.linearGradient
 import com.varabyte.kobweb.core.AppGlobals
 import io.github.ayfri.kore.website.components.common.Button
 import io.github.ayfri.kore.website.components.common.ButtonColor
@@ -121,15 +122,18 @@ object InstallationSectionStyle : StyleSheet() {
 		marginTop(1.5.cssRem)
 		marginBottom(3.cssRem)
 		maxWidth(85.cssRem)
-		property("box-sizing", "border-box")
+		boxSizing(BoxSizing.BorderBox)
 		padding(2.2.cssRem, 2.75.cssRem)
 		borderRadius(1.6.cssRem)
 		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
-		property(
-			"background",
-			"linear-gradient(135deg, rgba(21, 28, 38, 0.95) 0%, rgba(15, 20, 27, 0.92) 55%, rgba(8, 182, 214, 0.1) 100%)"
+		backgroundImage(
+			linearGradient(135.deg) {
+				add(rgba(21, 28, 38, 0.95), 0.percent)
+				add(rgba(15, 20, 27, 0.92), 55.percent)
+				add(rgba(8, 182, 214, 0.1), 100.percent)
+			}
 		)
-		property("box-shadow", "0 24px 70px rgba(5, 12, 20, 0.45)")
+		boxShadow(0.px, 24.px, 70.px, 0.px, rgba(5, 12, 20, 0.45))
 
 		"h2" style {
 			fontSize(2.4.cssRem)
@@ -226,9 +230,9 @@ object InstallationSectionStyle : StyleSheet() {
 		borderRadius(1.cssRem)
 		backgroundColor(Color("rgba(9, 15, 22, 0.95)"))
 		border(1.px, LineStyle.Solid, Color("rgba(8, 182, 214, 0.2)"))
-		property("box-shadow", "0 12px 35px rgba(5, 12, 20, 0.4)")
+		boxShadow(0.px, 12.px, 35.px, 0.px, rgba(5, 12, 20, 0.4))
 		maxWidth(100.percent)
-		property("overflow-x", "auto")
+		overflowX(Overflow.Auto)
 		width(100.percent)
 
 		smMax(self) {

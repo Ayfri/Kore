@@ -2,6 +2,9 @@ package io.github.ayfri.kore.website.pages
 
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.compose.css.functions.RadialGradient
+import com.varabyte.kobweb.compose.css.functions.blur
+import com.varabyte.kobweb.compose.css.functions.radialGradient
 import com.varabyte.kobweb.core.Page
 import io.github.ayfri.kore.website.components.index.*
 import io.github.ayfri.kore.website.components.layouts.PageLayout
@@ -72,12 +75,28 @@ object HomePageStyle : StyleSheet() {
 		property("--landing-radius", "20px")
 
 		fontFamily("IBM Plex Sans", "Inter", "Segoe UI", "sans-serif")
-		property("color", "var(--landing-text)")
+		color(Color("var(--landing-text)"))
 
-		property(
-			"background",
-			"radial-gradient(circle at 12% 8%, rgba(8, 182, 214, 0.18) 0%, transparent 40%), " +
-				"radial-gradient(circle at 88% 12%, rgba(254, 201, 7, 0.12) 0%, transparent 38%)"
+		// `Background.list` takes its layers bottom-to-top, the opposite of the CSS order.
+		background(
+			Background.list(
+				Background.of(
+					BackgroundImage.of(
+						radialGradient(RadialGradient.Shape.Circle(), CSSPosition(88.percent, 12.percent)) {
+							add(rgba(254, 201, 7, 0.12), 0.percent)
+							add(Color.transparent, 38.percent)
+						}
+					)
+				),
+				Background.of(
+					BackgroundImage.of(
+						radialGradient(RadialGradient.Shape.Circle(), CSSPosition(12.percent, 8.percent)) {
+							add(rgba(8, 182, 214, 0.18), 0.percent)
+							add(Color.transparent, 40.percent)
+						}
+					)
+				),
+			)
 		)
 
 		"h1" style {
@@ -114,7 +133,7 @@ object HomePageStyle : StyleSheet() {
 	val glow by style {
 		position(Position.Absolute)
 		borderRadius(999.px)
-		property("filter", "blur(120px)")
+		filter(Filter.list(Filter.of(blur(120.px))))
 		opacity(0.55)
 		pointerEvents(PointerEvents.None)
 		zIndex(0)
@@ -125,7 +144,12 @@ object HomePageStyle : StyleSheet() {
 		left((-10).cssRem)
 		width(30.cssRem)
 		height(30.cssRem)
-		property("background", "radial-gradient(circle, rgba(8, 182, 214, 0.65) 0%, rgba(8, 182, 214, 0) 70%)")
+		backgroundImage(
+			radialGradient(RadialGradient.Shape.Circle()) {
+				add(rgba(8, 182, 214, 0.65), 0.percent)
+				add(rgba(8, 182, 214, 0), 70.percent)
+			}
+		)
 	}
 
 	val glowBottom by style {
@@ -133,6 +157,11 @@ object HomePageStyle : StyleSheet() {
 		right((-8).cssRem)
 		width(34.cssRem)
 		height(34.cssRem)
-		property("background", "radial-gradient(circle, rgba(254, 201, 7, 0.55) 0%, rgba(254, 201, 7, 0) 72%)")
+		backgroundImage(
+			radialGradient(RadialGradient.Shape.Circle()) {
+				add(rgba(254, 201, 7, 0.55), 0.percent)
+				add(rgba(254, 201, 7, 0), 72.percent)
+			}
+		)
 	}
 }

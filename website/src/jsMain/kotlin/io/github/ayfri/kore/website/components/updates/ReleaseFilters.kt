@@ -415,13 +415,13 @@ object ReleaseFiltersStyle : StyleSheet() {
 
 	val filtersPanel by style {
 		display(DisplayStyle.Grid)
-		property("grid-template-rows", "1fr")
+		gridTemplateRows { size(1.fr) }
 		opacity(1)
 		transition(0.22.s, "grid-template-rows", "opacity")
 	}
 
 	val filtersPanelCollapsed by style {
-		property("grid-template-rows", "0fr")
+		gridTemplateRows { size(0.fr) }
 		opacity(0)
 	}
 

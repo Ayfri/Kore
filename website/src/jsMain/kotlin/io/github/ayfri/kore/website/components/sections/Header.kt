@@ -1,8 +1,13 @@
 package io.github.ayfri.kore.website.components.sections
 
 import androidx.compose.runtime.*
+import com.varabyte.kobweb.compose.css.BackdropFilter
 import com.varabyte.kobweb.compose.css.TextDecorationLine
+import com.varabyte.kobweb.compose.css.backdropFilter
+import com.varabyte.kobweb.compose.css.borderBottom
+import com.varabyte.kobweb.compose.css.functions.blur
 import com.varabyte.kobweb.compose.css.functions.calc
+import com.varabyte.kobweb.compose.css.functions.saturate
 import com.varabyte.kobweb.compose.css.textDecorationLine
 import com.varabyte.kobweb.compose.css.zIndex
 import com.varabyte.kobweb.compose.ui.Modifier
@@ -16,6 +21,7 @@ import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.updates.GitHubRelease
 import io.github.ayfri.kore.website.gitHubStars
 import io.github.ayfri.kore.website.utils.*
+import kotlin.js.Date
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.attributes.ATarget
 import org.jetbrains.compose.web.attributes.InputType
@@ -23,7 +29,6 @@ import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.*
-import kotlin.js.Date
 
 val tabs = mapOf(
 	"Docs" to "/docs/home",
@@ -154,9 +159,9 @@ object HeaderStyle : StyleSheet() {
 
 		position(Position.Sticky)
 		top(0.px)
-		property("backdrop-filter", "saturate(150%) blur(8px)")
+		backdropFilter(BackdropFilter.list(BackdropFilter.of(saturate(150.percent)), BackdropFilter.of(blur(8.px))))
 		backgroundColor(rgba(24, 26, 31, 0.6))
-		property("border-bottom", "1px solid ${GlobalStyle.tertiaryBackgroundColor}")
+		borderBottom(1.px, LineStyle.Solid, GlobalStyle.tertiaryBackgroundColor)
 		zIndex(50)
 
 		"div" style {

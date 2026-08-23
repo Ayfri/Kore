@@ -148,12 +148,12 @@ object CommunitySectionStyle : StyleSheet() {
 		textAlign(TextAlign.Left)
 		textDecorationLine(TextDecorationLine.None)
 		transition(0.35.s, "transform", "border-color", "box-shadow")
-		property("box-shadow", "0 18px 40px rgba(5, 12, 20, 0.35)")
+		boxShadow(0.px, 18.px, 40.px, 0.px, rgba(5, 12, 20, 0.35))
 
 		hover(self) style {
 			transform { translateY((-8).px) }
 			borderColor(Color("rgba(8, 182, 214, 0.6)"))
-			property("box-shadow", "0 26px 65px rgba(5, 12, 20, 0.5)")
+			boxShadow(0.px, 26.px, 65.px, 0.px, rgba(5, 12, 20, 0.5))
 		}
 
 		"h3" style {
@@ -165,7 +165,7 @@ object CommunitySectionStyle : StyleSheet() {
 		"p" style {
 			color(Color("var(--landing-muted)"))
 			fontSize(1.02.cssRem)
-			property("line-height", "1.6")
+			lineHeight(1.6.number)
 			marginBottom(0.px)
 		}
 

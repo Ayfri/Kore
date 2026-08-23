@@ -226,7 +226,7 @@ object MasonryStyle : StyleSheet() {
 		minWidth(0.px)
 		overflow(Overflow.Hidden)
 		padding(1.4.cssRem)
-		property("box-shadow", "0 18px 40px rgba(5, 12, 20, 0.35)")
+		boxShadow(0.px, 18.px, 40.px, 0.px, rgba(5, 12, 20, 0.35))
 		width(100.percent)
 
 		"pre" style {

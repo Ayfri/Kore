@@ -46,7 +46,7 @@ object PageNavigationStyle : StyleSheet() {
 		fontSize(0.75.cssRem)
 		fontWeight(500)
 		textTransform(TextTransform.Uppercase)
-		property("letter-spacing", "0.05em")
+		letterSpacing(0.05.em)
 	}
 
 	val metadataValue by style {

@@ -256,7 +256,7 @@ object ReleasesListStyle : StyleSheet() {
 		transition(0.3.s, "background-color", "transform", "box-shadow")
 		// Skip layout and paint for the cards that are off-screen, there are hundreds of them.
 		property("content-visibility", "auto")
-		property("contain-intrinsic-size", "auto 320px")
+		containIntrinsicSize(ContainIntrinsicSize.Auto(320.px))
 
 		hover(self) style {
 			backgroundColor(GlobalStyle.tertiaryBackgroundColor.alpha(0.66))

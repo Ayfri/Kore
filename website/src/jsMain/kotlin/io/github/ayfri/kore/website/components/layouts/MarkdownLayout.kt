@@ -11,10 +11,12 @@ import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.*
 import io.github.ayfri.kore.website.components.doc.*
 import io.github.ayfri.kore.website.utils.*
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.browser.window
 import kotlinx.coroutines.await
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
@@ -23,7 +25,6 @@ import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
 import org.w3c.dom.events.Event
-import kotlin.time.Duration.Companion.seconds
 
 /** Width under which the doc sidebar is a drawer, so the dimming overlay has to be rendered. */
 private const val MOBILE_BREAKPOINT_PX = 768
@@ -308,6 +309,7 @@ object MarkdownLayoutStyle : StyleSheet() {
 		}
 	}
 
+	@OptIn(ExperimentalComposeWebApi::class)
 	val copyToast by style {
 		backgroundColor(GlobalStyle.tertiaryBackgroundColor)
 		border(1.px, LineStyle.Solid, rgba(255, 255, 255, 0.35))
@@ -321,7 +323,7 @@ object MarkdownLayoutStyle : StyleSheet() {
 		paddingY(0.2.cssRem)
 		pointerEvents(PointerEvents.None)
 		position(Position.Absolute)
-		property("transform", "translateX(-50%)")
+		transform { translateX((-50).percent) }
 		whiteSpace(WhiteSpace.NoWrap)
 		zIndex(1)
 	}
@@ -379,7 +381,7 @@ object MarkdownLayoutStyle : StyleSheet() {
 			borderCollapse(BorderCollapse.Separate)
 			borderRadius(GlobalStyle.roundingButton)
 			border(1.px, LineStyle.Solid, GlobalStyle.tertiaryBackgroundColor)
-			property("border-spacing", "0")
+			borderSpacing(BorderSpacing.of(0.px))
 			marginY(1.cssRem)
 			overflow(Overflow.Hidden)
 			width(Width.FitContent)

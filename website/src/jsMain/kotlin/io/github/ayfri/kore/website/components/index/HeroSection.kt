@@ -2,6 +2,8 @@ package io.github.ayfri.kore.website.components.index
 
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.compose.css.functions.blur
+import com.varabyte.kobweb.compose.css.functions.dropShadow
 import com.varabyte.kobweb.core.AppGlobals
 import io.github.ayfri.kore.website.GITHUB_LINK
 import io.github.ayfri.kore.website.GlobalStyle
@@ -343,7 +345,7 @@ object HeroSectionStyle : StyleSheet() {
 		overflow(Overflow.Hidden)
 		padding(0.65.cssRem)
 		boxShadow(0.px, 30.px, 80.px, 0.px, rgba(5, 14, 23, 0.55))
-		property("backdrop-filter", "blur(14px)")
+		backdropFilter(BackdropFilter.list(BackdropFilter.of(blur(14.px))))
 
 		mdMax(self) {
 			padding(0.45.cssRem)
@@ -388,15 +390,15 @@ object HeroSectionStyle : StyleSheet() {
 		display(DisplayStyle.InlineBlock)
 		maxWidth(100.percent)
 		overflowWrap(OverflowWrap.Anywhere)
-		property("text-wrap", "balance")
+		textWrap(TextWrap.Balance)
 		textGradient(GlobalStyle.logoRightColor, GlobalStyle.logoLeftColor)
-		property("text-shadow", "0 10px 30px rgba(4, 155, 178, 0.2)")
+		textShadow(TextShadow.of(0.px, 10.px, 30.px, rgba(4, 155, 178, 0.2)))
 	}
 
 	val logo by style {
 		height(4.1.cssRem)
 		marginLeft(0.cssRem)
-		property("filter", "drop-shadow(0 16px 24px rgba(4, 155, 178, 0.35))")
+		filter(Filter.list(Filter.of(dropShadow(0.px, 16.px, 24.px, rgba(4, 155, 178, 0.35)))))
 		flexShrink(0)
 		verticalAlign(VerticalAlign.Middle)
 

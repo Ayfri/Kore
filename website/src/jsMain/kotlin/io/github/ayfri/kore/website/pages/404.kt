@@ -112,7 +112,7 @@ object PageNotFoundStyle : StyleSheet() {
 			}
 		)
 		property("-webkit-background-clip", "text")
-		property("background-clip", "text")
+		backgroundClip(BackgroundClip.Text)
 		color(Color.transparent)
 		userSelect(UserSelect.None)
 
@@ -151,6 +151,7 @@ object PageNotFoundStyle : StyleSheet() {
 		}
 	}
 
+	@OptIn(ExperimentalComposeWebApi::class)
 	val buttons by style {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Row)
@@ -167,7 +168,7 @@ object PageNotFoundStyle : StyleSheet() {
 		}
 
 		type("a") + hover style {
-			property("transform", "translateY(-2px)")
+			transform { translateY((-2).px) }
 		}
 	}
 }

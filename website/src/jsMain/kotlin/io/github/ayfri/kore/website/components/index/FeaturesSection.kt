@@ -5,6 +5,7 @@ import com.varabyte.kobweb.compose.css.TextAlign
 import com.varabyte.kobweb.compose.css.TextDecorationLine
 import com.varabyte.kobweb.compose.css.borderColor
 import com.varabyte.kobweb.compose.css.borderTop
+import com.varabyte.kobweb.compose.css.boxShadow
 import com.varabyte.kobweb.compose.css.textAlign
 import com.varabyte.kobweb.compose.css.textDecorationLine
 import com.varabyte.kobweb.silk.components.icons.mdi.*
@@ -172,7 +173,7 @@ object FeaturesSectionStyle : StyleSheet() {
 		gap(1.cssRem)
 		textAlign(TextAlign.Left)
 		transition(0.35.s, "transform", "border-color", "box-shadow")
-		property("box-shadow", "0 18px 40px rgba(5, 12, 20, 0.3)")
+		boxShadow(0.px, 18.px, 40.px, 0.px, rgba(5, 12, 20, 0.3))
 		animation(fadeInUp) {
 			duration(0.6.s)
 			timingFunction(AnimationTimingFunction.EaseOut)
@@ -182,7 +183,7 @@ object FeaturesSectionStyle : StyleSheet() {
 		hover(self) style {
 			transform { translateY((-6).px) }
 			borderColor(Color("rgba(8, 182, 214, 0.5)"))
-			property("box-shadow", "0 26px 60px rgba(5, 12, 20, 0.45)")
+			boxShadow(0.px, 26.px, 60.px, 0.px, rgba(5, 12, 20, 0.45))
 		}
 
 		self + nthOfType(Nth.Functional(b = 1)) style {
@@ -208,7 +209,7 @@ object FeaturesSectionStyle : StyleSheet() {
 		"p" {
 			color(Color("var(--landing-muted)"))
 			fontSize(1.05.cssRem)
-			property("line-height", "1.6")
+			lineHeight(1.6.number)
 			marginBottom(0.px)
 		}
 	}

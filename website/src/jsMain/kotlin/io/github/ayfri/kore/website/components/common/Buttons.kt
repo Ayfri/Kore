@@ -93,7 +93,7 @@ private fun getVariantClass(variant: ButtonVariant, color: ButtonColor) = when (
 object ButtonStyle : StyleSheet() {
 	@OptIn(ExperimentalComposeWebApi::class)
 	val button by style {
-		property("display", "inline-flex")
+		display(DisplayStyle.LegacyInlineFlex)
 		alignItems(AlignItems.Center)
 		justifyContent(JustifyContent.Center)
 		gap(0.5.cssRem)
