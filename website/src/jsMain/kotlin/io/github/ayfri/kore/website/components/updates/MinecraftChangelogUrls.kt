@@ -1,37 +1,32 @@
 package io.github.ayfri.kore.website.components.updates
 
+private const val ARTICLE_BASE = "https://www.minecraft.net/en-us/article"
+
+private val weeklySnapshotRegex = Regex("""^\d{2}w\d{2}[a-z]$""")
+private val snapshotNumberRegex = Regex("""-snapshot-(\d+)$""")
+private val preReleaseNumberRegex = Regex("""-pre-?(\d+)$""")
+private val releaseCandidateNumberRegex = Regex("""-rc-?(\d+)$""")
+
+private fun Regex.numberIn(version: String) = find(version)?.groupValues?.get(1)
+
 internal fun buildMinecraftChangelogUrl(release: GitHubRelease): String? {
-	val mcVersion = release.getMinecraftVersion() ?: return null
-	val baseVersion =
-		mcVersion.substringBeforeLast("-snapshot-").substringBeforeLast("-pre-").substringBeforeLast("-rc-")
-			.substringBefore("-pre").substringBefore("-rc")
-	val normalizedBase = baseVersion.replace(".", "-")
+	val version = release.minecraftVersion ?: return null
+	val base = version.substringBefore("-").replace(".", "-")
 
 	return when {
-		release.isSnapshot() -> buildSnapshotChangelogUrl(mcVersion, normalizedBase)
-		release.isPreRelease() -> buildPrereleaseChangelogUrl(mcVersion, normalizedBase)
-		release.isReleaseCandidate() -> buildReleaseCandidateChangelogUrl(mcVersion, normalizedBase)
-		release.isRelease() -> "https://www.minecraft.net/en-us/article/minecraft-java-edition-$normalizedBase"
+		release.isSnapshot -> when {
+			weeklySnapshotRegex.matches(version) -> "$ARTICLE_BASE/minecraft-snapshot-$version"
+			else -> snapshotNumberRegex.numberIn(version)?.let { "$ARTICLE_BASE/minecraft-$base-snapshot-$it" }
+		}
+
+		release.isPreReleaseVersion -> preReleaseNumberRegex.numberIn(version)
+			?.let { "$ARTICLE_BASE/minecraft-$base-pre-release-$it" }
+
+		release.isReleaseCandidate -> releaseCandidateNumberRegex.numberIn(version)
+			?.let { "$ARTICLE_BASE/minecraft-$base-release-candidate-$it" }
+
+		release.isStableRelease -> "$ARTICLE_BASE/minecraft-java-edition-$base"
+
 		else -> null
 	}
-}
-
-private fun buildSnapshotChangelogUrl(mcVersion: String, normalizedBase: String): String? {
-	val weeklySnapshot = Regex("""^\d{2}w\d{2}[a-z]$""")
-	if (weeklySnapshot.matches(mcVersion)) {
-		return "https://www.minecraft.net/en-us/article/minecraft-snapshot-$mcVersion"
-	}
-
-	val snapshotNumber = Regex("""-snapshot-(\d+)$""").find(mcVersion)?.groupValues?.get(1) ?: return null
-	return "https://www.minecraft.net/en-us/article/minecraft-$normalizedBase-snapshot-$snapshotNumber"
-}
-
-private fun buildPrereleaseChangelogUrl(mcVersion: String, normalizedBase: String): String? {
-	val preNumber = Regex("""-pre-?(\d+)$""").find(mcVersion)?.groupValues?.get(1) ?: return null
-	return "https://www.minecraft.net/en-us/article/minecraft-$normalizedBase-pre-release-$preNumber"
-}
-
-private fun buildReleaseCandidateChangelogUrl(mcVersion: String, normalizedBase: String): String? {
-	val rcNumber = Regex("""-rc-?(\d+)$""").find(mcVersion)?.groupValues?.get(1) ?: return null
-	return "https://www.minecraft.net/en-us/article/minecraft-$normalizedBase-release-candidate-$rcNumber"
 }

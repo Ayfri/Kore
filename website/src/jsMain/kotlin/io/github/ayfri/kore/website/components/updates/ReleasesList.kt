@@ -25,26 +25,24 @@ private val ShowReleaseCandidatesStorageKey = BooleanStorageKey("kore.releases.s
 @Composable
 fun ReleasesList(releases: List<GitHubRelease>) {
 	Style(ReleasesListStyle)
+	// Injected here rather than in `MarkdownRenderer`: `Style` emits a <style> tag per call, and there is one renderer per card.
+	Style(MarkdownRendererStyle)
 
-	val allReleases = releases.sortedByDescending { it.publishedAt }
-	val initialFilterOptions = remember {
-		ReleaseFilterOptions(
-			showPreReleases = localStorage.getItem(ShowPreReleasesStorageKey) ?: false,
-			showSnapshots = localStorage.getItem(ShowSnapshotsStorageKey) ?: false,
-			showReleaseCandidates = localStorage.getItem(ShowReleaseCandidatesStorageKey) ?: false
+	val allReleases = remember(releases) { releases.sortedByDescending { it.publishedAt } }
+	var filterOptions by remember {
+		mutableStateOf(
+			ReleaseFilterOptions(
+				showPreReleases = localStorage.getItem(ShowPreReleasesStorageKey) ?: false,
+				showSnapshots = localStorage.getItem(ShowSnapshotsStorageKey) ?: false,
+				showReleaseCandidates = localStorage.getItem(ShowReleaseCandidatesStorageKey) ?: false
+			)
 		)
 	}
-	var filterOptions by remember { mutableStateOf(initialFilterOptions) }
 
-	val sortComparator by mutableStateOf(
-		when (filterOptions.sortOrder) {
-		SortOrder.NEWEST_FIRST -> compareByDescending<GitHubRelease> { it.publishedAt }
-			SortOrder.OLDEST_FIRST -> compareBy { it.publishedAt }
-	})
-	// Apply the filters
-	val filteredReleases = allReleases.filter { release ->
-		release.matchesFilters(filterOptions)
-	}.sortedWith(sortComparator)
+	val filteredReleases = remember(allReleases, filterOptions) {
+		val matching = allReleases.filter { it.matchesFilters(filterOptions) }
+		if (filterOptions.sortOrder == SortOrder.OLDEST_FIRST) matching.asReversed() else matching
+	}
 
 	Div({
 		classes(ReleasesListStyle.container)
@@ -102,7 +100,7 @@ fun ReleasesList(releases: List<GitHubRelease>) {
 		}
 
 		// Add the statistics
-		ReleaseStats(allReleases, filteredReleases)
+		ReleaseStats(allReleases)
 	}
 }
 
@@ -256,9 +254,11 @@ object ReleasesListStyle : StyleSheet() {
 		flexDirection(FlexDirection.Column)
 		padding(1.5.cssRem)
 		transition(0.3.s, "background-color", "transform", "box-shadow")
+		// Skip layout and paint for the cards that are off-screen, there are hundreds of them.
+		property("content-visibility", "auto")
+		property("contain-intrinsic-size", "auto 320px")
 
 		hover(self) style {
-			console.log(GlobalStyle.tertiaryBackgroundColor.alpha(0.5))
 			backgroundColor(GlobalStyle.tertiaryBackgroundColor.alpha(0.66))
 			boxShadow(0.px, 4.px, 12.px, 0.px, rgba(0, 0, 0, 0.15))
 			transform { translateY((-3).px) }

@@ -31,15 +31,15 @@ private data class VersionRow(
 
 /** Maps a GitHub release to a [VersionRow], or `null` if its tag doesn't encode both versions. */
 private fun GitHubRelease.toVersionRow(): VersionRow? {
-	val koreVersion = getKoreVersion() ?: return null
-	val minecraftVersion = getMinecraftVersion() ?: return null
+	val koreVersion = koreVersion ?: return null
+	val minecraftVersion = minecraftVersion ?: return null
 
 	return VersionRow(
 		release = this,
 		koreVersion = koreVersion,
 		minecraftVersion = minecraftVersion,
 		gradleCoordinate = tagName.removePrefix("v"),
-		isStable = isRelease(),
+		isStable = isStableRelease,
 	)
 }
 
@@ -79,12 +79,12 @@ fun VersionMatrix() {
 	val stableRows = allRows
 		.filter { it.isStable }
 		.groupBy { it.minecraftVersion }
-		.map { (_, rows) -> rows.maxBy { it.release.publishedDate.getTime() } }
+		.map { (_, rows) -> rows.maxBy { it.release.publishedTime } }
 		.groupBy { it.familyKey() }
 		.map { (_, rows) -> rows.maxWith(byHighestMinecraftVersion) }
 		.sortedWith(byHighestMinecraftVersion.reversed())
 
-	val latestOverall = allRows.maxByOrNull { it.release.publishedDate.getTime() }
+	val latestOverall = allRows.maxByOrNull { it.release.publishedTime }
 	val snapshotRow = latestOverall?.takeIf { !it.isStable }
 
 	val mavenSnapshotCoordinate = AppGlobals["projectVersion"]?.let { projectVersion ->

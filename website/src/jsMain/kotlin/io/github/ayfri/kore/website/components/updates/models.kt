@@ -3,6 +3,11 @@ package io.github.ayfri.kore.website.components.updates
 import io.github.ayfri.kore.website.utils.*
 import kotlin.js.Date
 
+/** Stable Minecraft releases from oldest to newest, resolved once and shared by every release. */
+private val stableReleasesByDate by lazy {
+	GitHubService.getReleases().filter { it.isStableRelease }.sortedBy { it.publishedTime }
+}
+
 data class GitHubRelease(
 	val id: Int,
 	val name: String,
@@ -13,31 +18,39 @@ data class GitHubRelease(
 	val publishedAt: String,
 	val body: String,
 	val isPrerelease: Boolean,
-	val assets: List<GitHubAsset> = emptyList()
+	val assets: List<GitHubAsset> = emptyList(),
 ) {
-	val publishedDate get() = Date(publishedAt)
+	val publishedDate by lazy { Date(publishedAt) }
+	val publishedTime by lazy { publishedDate.getTime() }
 
-	fun getKoreVersion() = extractKoreVersion(tagName)
-	fun getMinecraftVersion() = extractMinecraftVersion(tagName).takeIf { "-" in tagName }
-	fun getMainMinecraftVersion() = extractMainMinecraftVersion(getMinecraftVersion())
+	val koreVersion by lazy { extractKoreVersion(tagName) }
+	val minecraftVersion by lazy { extractMinecraftVersion(tagName).takeIf { "-" in tagName } }
 
-	fun isPreRelease() = getMinecraftVersion()?.let { MinecraftVersionPattern.PRE_RELEASE.matches(it) } == true
-	fun isRelease() = getMinecraftVersion()?.let { MinecraftVersionPattern.RELEASE.matches(it) } == true
-	fun isReleaseCandidate() = getMinecraftVersion()?.let { MinecraftVersionPattern.RELEASE_CANDIDATE.matches(it) } == true
-	fun isSnapshot() = getMinecraftVersion()?.let { MinecraftVersionPattern.SNAPSHOT.matches(it) } == true
+	private val versionKind by lazy { minecraftVersion?.let(MinecraftVersionPattern::of) }
+	val isSnapshot get() = versionKind == MinecraftVersionPattern.SNAPSHOT
+	val isPreReleaseVersion get() = versionKind == MinecraftVersionPattern.PRE_RELEASE
+	val isReleaseCandidate get() = versionKind == MinecraftVersionPattern.RELEASE_CANDIDATE
+	val isStableRelease get() = versionKind == MinecraftVersionPattern.RELEASE
 
-	fun findNextMinecraftReleaseVersion(): String {
-		val allReleases = GitHubService.getReleases()
-		val releasesSortedByPublishDate = allReleases.sortedBy { it.publishedDate.getTime() }
-		val nextMainRelease = releasesSortedByPublishDate
-			.firstOrNull { (it.publishedDate.getTime() > publishedDate.getTime()) && it.isRelease() }
-		if (nextMainRelease?.getMinecraftVersion() != null) return nextMainRelease.getMinecraftVersion()!!
+	/**
+	 * The `major.minor.patch` bucket this release belongs to, used by the version filters.
+	 *
+	 * A tag names the version it targets (`26.2-pre-4` and `26.2-snapshot-1` both target 26.2), so it is read straight
+	 * from the tag. Only the old weekly snapshots (`23w41a`) carry no version and are attached to the release they led to.
+	 */
+	val baseMinecraftVersion by lazy {
+		extractBaseMinecraftVersion(minecraftVersion) ?: extractBaseMinecraftVersion(nextMinecraftReleaseVersion)
+	}
 
-		// Gets the last main version and increments it, ex: 1.21.4 -> 1.21.5
-		val latestPreviousVersion = releasesSortedByPublishDate.first { it.isRelease() }
-		val mainVersion = latestPreviousVersion.getMinecraftVersion()!!.substringBeforeLast(".")
-		val minorPatch = latestPreviousVersion.getMinecraftVersion()!!.substringAfterLast(".").toIntOrNull() ?: -1
-		return "$mainVersion.${minorPatch + 1}"
+	/** [baseMinecraftVersion] reduced to `major.minor`. */
+	val mainMinecraftVersion by lazy { extractMainMinecraftVersion(baseMinecraftVersion) }
+
+	/** Lowercased haystack for the search box, built once instead of on every keystroke. */
+	private val searchIndex by lazy { "$name $tagName $body".lowercase() }
+
+	/** The first stable release published after this one, or null when none followed it yet. */
+	private val nextMinecraftReleaseVersion by lazy {
+		stableReleasesByDate.firstOrNull { it.publishedTime > publishedTime }?.minecraftVersion
 	}
 
 	/**
@@ -46,36 +59,20 @@ data class GitHubRelease(
 	 * @return true if the release matches the criteria, false otherwise
 	 */
 	fun matchesFilters(options: ReleaseFilterOptions): Boolean {
-		// Check the pre-release filter
-		if (!options.showPreReleases && isPreRelease()) return false
-
-		// Check the release candidate filter
-		if (!options.showReleaseCandidates && isReleaseCandidate()) return false
-
-		// Check the snapshot filter
-		if (!options.showSnapshots && isSnapshot()) return false
+		if (!options.showPreReleases && isPreReleaseVersion) return false
+		if (!options.showReleaseCandidates && isReleaseCandidate) return false
+		if (!options.showSnapshots && isSnapshot) return false
 
 		if (options.selectedMinecraftVersions.isNotEmpty()) {
-			val effectiveVersion = getMinecraftVersion()?.takeIf { !isSnapshot() } ?: findNextMinecraftReleaseVersion()
-			val baseVersion = extractBaseMinecraftVersion(effectiveVersion) ?: return false
-			val matchesSelected = options.selectedMinecraftVersions.any { selectedVersion ->
-				val isMainVersion = selectedVersion.split(".").size == 2
-				if (isMainVersion) {
-					baseVersion == selectedVersion || baseVersion.startsWith("$selectedVersion.")
-				} else {
-					baseVersion == selectedVersion
-				}
+			val base = baseMinecraftVersion ?: return false
+			val matches = options.selectedMinecraftVersions.any { selected ->
+				// A `major.minor` selection also covers every patch below it.
+				base == selected || (selected.count { it == '.' } == 1 && base.startsWith("$selected."))
 			}
-			if (!matchesSelected) return false
+			if (!matches) return false
 		}
 
-		// Check the text search
-		if (options.searchQuery.isNotEmpty()) {
-			val query = options.searchQuery.lowercase()
-			return name.lowercase().contains(query) || tagName.lowercase().contains(query) || body.lowercase().contains(query)
-		}
-
-		return true
+		return options.searchQuery.isEmpty() || options.searchQuery.lowercase() in searchIndex
 	}
 }
 
@@ -85,5 +82,5 @@ data class GitHubAsset(
 	val browserDownloadUrl: String,
 	val contentType: String,
 	val size: Float,
-	val downloadCount: Int
+	val downloadCount: Int,
 )

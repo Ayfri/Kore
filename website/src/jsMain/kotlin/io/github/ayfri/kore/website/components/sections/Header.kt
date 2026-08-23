@@ -42,7 +42,7 @@ private fun latestReleaseAnchor(release: GitHubRelease) = "/updates#release-${re
 
 private fun GitHubRelease.isRecent(days: Int): Boolean {
 	val millisecondsPerDay = 24 * 60 * 60 * 1000
-	return Date.now() - publishedDate.getTime() <= days * millisecondsPerDay
+	return Date.now() - publishedTime <= days * millisecondsPerDay
 }
 
 @Composable
@@ -76,7 +76,7 @@ fun Header(latestRelease: GitHubRelease? = null) {
 					A(latestReleaseAnchor(release), {
 						classes(HeaderStyle.releaseBadge)
 					}) {
-						Text("New ${release.getKoreVersion()} release!")
+						Text("New ${release.koreVersion} release!")
 					}
 				}
 			}
@@ -128,7 +128,7 @@ fun Header(latestRelease: GitHubRelease? = null) {
 						A(latestReleaseAnchor(release), {
 							classes(HeaderStyle.releaseBadge, HeaderStyle.releaseBadgeMobile)
 						}) {
-							Text("New ${release.getKoreVersion()} release!")
+							Text("New ${release.koreVersion} release!")
 						}
 					}
 				}

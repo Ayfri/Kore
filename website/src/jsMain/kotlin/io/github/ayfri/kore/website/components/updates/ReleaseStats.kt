@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.website.components.updates
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiArchive
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiCalendarMonth
@@ -14,28 +15,37 @@ import org.jetbrains.compose.web.dom.H3
 import org.jetbrains.compose.web.dom.Text
 
 @Composable
-fun ReleaseStats(allReleases: List<GitHubRelease>, filteredReleases: List<GitHubRelease>) {
+private fun StatCard(icon: @Composable () -> Unit, value: String, label: String) {
+	Div({
+		classes(ReleaseStatsStyle.statCard)
+	}) {
+		icon()
+		Div({
+			classes(ReleaseStatsStyle.statContent)
+		}) {
+			Div({
+				classes(ReleaseStatsStyle.statValue)
+			}) {
+				Text(value)
+			}
+			Div({
+				classes(ReleaseStatsStyle.statLabel)
+			}) {
+				Text(label)
+			}
+		}
+	}
+}
+
+@Composable
+fun ReleaseStats(allReleases: List<GitHubRelease>) {
 	Style(ReleaseStatsStyle)
 
-	// Calculate basic statistics
-	val totalReleases = allReleases.size
-	val firstReleaseDate = allReleases.minByOrNull { it.publishedAt }?.publishedAt?.let { formatDate(it) } ?: "N/A"
-	val latestReleaseDate = allReleases.maxByOrNull { it.publishedAt }?.publishedAt?.let { formatDate(it) } ?: "N/A"
-
-	// Extract Minecraft version statistics using effective versions
-	val minecraftVersionStats = allReleases.groupBy { release ->
-		release.getMainMinecraftVersion() ?: extractMainMinecraftVersion(release.findNextMinecraftReleaseVersion())
-	}
-	.map { (mcVersion, releases) ->
-		mcVersion to releases.size
-	}
-	.sortedByDescending { (version, _) ->
-		// Sort by version number (newest first)
-		version?.split(".")?.let { parts ->
-			val major = parts.getOrNull(0)?.toIntOrNull() ?: 0
-			val minor = parts.getOrNull(1)?.toIntOrNull() ?: 0
-			major * 1000 + minor
-		} ?: 0
+	val minecraftVersionStats = remember(allReleases) {
+		allReleases.groupingBy { it.mainMinecraftVersion }
+			.eachCount()
+			.toList()
+			.sortedWith { (left), (right) -> compareMinecraftVersions(right ?: "0.0", left ?: "0.0") }
 	}
 
 	Div({
@@ -44,65 +54,9 @@ fun ReleaseStats(allReleases: List<GitHubRelease>, filteredReleases: List<GitHub
 		Div({
 			classes(ReleaseStatsStyle.statsRow)
 		}) {
-			Div({
-				classes(ReleaseStatsStyle.statCard)
-			}) {
-				MdiArchive()
-				Div({
-					classes(ReleaseStatsStyle.statContent)
-				}) {
-					Div({
-						classes(ReleaseStatsStyle.statValue)
-					}) {
-						Text("$totalReleases")
-					}
-					Div({
-						classes(ReleaseStatsStyle.statLabel)
-					}) {
-						Text("Total Releases")
-					}
-				}
-			}
-
-			Div({
-				classes(ReleaseStatsStyle.statCard)
-			}) {
-				MdiCalendarMonth()
-				Div({
-					classes(ReleaseStatsStyle.statContent)
-				}) {
-					Div({
-						classes(ReleaseStatsStyle.statValue)
-					}) {
-						Text(firstReleaseDate)
-					}
-					Div({
-						classes(ReleaseStatsStyle.statLabel)
-					}) {
-						Text("First Release")
-					}
-				}
-			}
-
-			Div({
-				classes(ReleaseStatsStyle.statCard)
-			}) {
-				MdiCalendarMonth()
-				Div({
-					classes(ReleaseStatsStyle.statContent)
-				}) {
-					Div({
-						classes(ReleaseStatsStyle.statValue)
-					}) {
-						Text(latestReleaseDate)
-					}
-					Div({
-						classes(ReleaseStatsStyle.statLabel)
-					}) {
-						Text("Latest Release")
-					}
-				}
-			}
+			StatCard({ MdiArchive() }, "${allReleases.size}", "Total Releases")
+			StatCard({ MdiCalendarMonth() }, allReleases.minOfOrNull { it.publishedAt }?.let(::formatDate) ?: "N/A", "First Release")
+			StatCard({ MdiCalendarMonth() }, allReleases.maxOfOrNull { it.publishedAt }?.let(::formatDate) ?: "N/A", "Latest Release")
 		}
 
 		if (minecraftVersionStats.isNotEmpty()) {
@@ -118,7 +72,7 @@ fun ReleaseStats(allReleases: List<GitHubRelease>, filteredReleases: List<GitHub
 				Div({
 					classes(ReleaseStatsStyle.minecraftVersionBars)
 				}) {
-					val maxReleases = minecraftVersionStats.maxOfOrNull { it.second } ?: 1
+					val maxReleases = minecraftVersionStats.maxOf { it.second }
 
 					minecraftVersionStats.forEach { (version, count) ->
 						Div({
@@ -136,7 +90,7 @@ fun ReleaseStats(allReleases: List<GitHubRelease>, filteredReleases: List<GitHub
 								Div({
 									classes(ReleaseStatsStyle.versionBarInner)
 									style {
-										width((count.toDouble() / maxReleases.toDouble() * 100).percent)
+										width((count.toDouble() / maxReleases * 100).percent)
 									}
 								}) {
 									Text("$count")

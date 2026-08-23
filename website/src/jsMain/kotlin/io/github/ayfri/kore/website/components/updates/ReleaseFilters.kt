@@ -29,56 +29,123 @@ data class ReleaseFilterOptions(
 	val sortOrder: SortOrder = SortOrder.NEWEST_FIRST,
 )
 
-enum class SortOrder {
-	NEWEST_FIRST,
-	OLDEST_FIRST
+enum class SortOrder(val label: String, val inputId: String) {
+	NEWEST_FIRST("Newest First", "sort-newest"),
+	OLDEST_FIRST("Oldest First", "sort-oldest"),
 }
 
-@OptIn(ExperimentalComposeWebApi::class)
+/** Version buckets and badge counts derived from the release list, built once per list instead of per recomposition. */
+private class ReleaseFacets(releases: List<GitHubRelease>) {
+	private val baseVersions = releases.mapNotNull { it.baseMinecraftVersion }
+	private val baseCounts = baseVersions.groupingBy { it }.eachCount()
+	private val mainCounts = baseVersions.mapNotNull { extractMainMinecraftVersion(it) }.groupingBy { it }.eachCount()
+
+	val snapshots = releases.count { it.isSnapshot }
+	val preReleases = releases.count { it.isPreReleaseVersion }
+	val releaseCandidates = releases.count { it.isReleaseCandidate }
+
+	/** A `major.minor` bucket paired with itself followed by its `major.minor.patch` versions, newest first. */
+	val versionGroups = baseCounts.keys
+		.groupBy { extractMainMinecraftVersion(it) }
+		.mapNotNull { (main, bases) ->
+			if (main == null) return@mapNotNull null
+			val patches = bases.filterNot { it == main }.sortedWith { left, right -> compareMinecraftVersions(right, left) }
+			main to (listOf(main) + patches)
+		}
+		.sortedWith { (left), (right) -> compareMinecraftVersions(right, left) }
+
+	fun countOf(version: String, mainVersion: String) =
+		(if (version == mainVersion) mainCounts[mainVersion] else baseCounts[version]) ?: 0
+}
+
+@Composable
+private fun FilterGroup(label: String, vararg extraClasses: String, content: @Composable () -> Unit) {
+	Div({
+		classes(ReleaseFiltersStyle.filterGroup, *extraClasses)
+	}) {
+		Div({
+			classes(ReleaseFiltersStyle.filterLabel)
+		}) {
+			Text(label)
+		}
+
+		content()
+	}
+}
+
+@Composable
+private fun FilterCheckbox(id: String, label: String, count: Int, checked: Boolean, onChange: (Boolean) -> Unit) {
+	Div({
+		classes(ReleaseFiltersStyle.checkboxContainer)
+	}) {
+		Input(InputType.Checkbox) {
+			id(id)
+			checked(checked)
+			onChange { onChange(it.value) }
+		}
+
+		Label(id, {
+			classes(ReleaseFiltersStyle.checkboxLabel)
+		}) {
+			Text(label)
+			Span({
+				classes(ReleaseFiltersStyle.badge)
+			}) {
+				Text("$count")
+			}
+		}
+	}
+}
+
+@Composable
+private fun SortRadio(order: SortOrder, checked: Boolean, onSelect: () -> Unit) {
+	Div({
+		classes(ReleaseFiltersStyle.radioContainer)
+	}) {
+		Input(InputType.Radio) {
+			id(order.inputId)
+			name("sort-order")
+			checked(checked)
+			onChange { onSelect() }
+		}
+
+		Label(order.inputId) {
+			Text(order.label)
+		}
+	}
+}
+
+@Composable
+private fun VersionChip(version: String, count: Int, selected: Boolean, onToggle: () -> Unit) {
+	Div({
+		classes(ReleaseFiltersStyle.versionChip)
+		if (selected) classes(ReleaseFiltersStyle.versionChipSelected)
+		onClick { onToggle() }
+	}) {
+		Text(version)
+		Span({
+			classes(ReleaseFiltersStyle.versionChipCount)
+		}) {
+			Text("($count)")
+		}
+	}
+}
+
 @Composable
 fun ReleaseFilters(
 	allReleases: List<GitHubRelease>,
 	filterOptions: ReleaseFilterOptions,
-	onFilterChange: (ReleaseFilterOptions) -> Unit
+	onFilterChange: (ReleaseFilterOptions) -> Unit,
 ) {
 	Style(ReleaseFiltersStyle)
 
 	var expanded by remember { mutableStateOf(false) }
-
-	// Extract all available Minecraft versions in the releases
-	val effectiveReleaseVersions = allReleases.mapNotNull { release ->
-		val effectiveVersion = release.getMinecraftVersion()?.takeIf { !release.isSnapshot() }
-			?: release.findNextMinecraftReleaseVersion()
-		extractBaseMinecraftVersion(effectiveVersion)
-	}
-	val baseVersionCounts = effectiveReleaseVersions.groupingBy { it }.eachCount()
-	val mainVersionCounts = effectiveReleaseVersions
-		.mapNotNull { extractMainMinecraftVersion(it) }
-		.groupingBy { it }
-		.eachCount()
-	val availableMinecraftVersions = baseVersionCounts.keys
-		.groupBy { extractMainMinecraftVersion(it) }
-		.filterKeys { it != null }
-		.mapValues { (mainVersion, versions) ->
-			val sortedVersions = versions.sortedWith { left, right -> compareMinecraftVersions(right, left) }
-			listOf(mainVersion!!) + sortedVersions.filterNot { it == mainVersion }
-		}
-		.toList()
-		.sortedWith { (leftVersion), (rightVersion) -> compareMinecraftVersions(rightVersion!!, leftVersion!!) }
-
-	// Count snapshots for badge display
-	val snapshotCount = allReleases.count { release -> release.isSnapshot() }
-
-	// Count prereleases for badge display - using both GitHub flag and Minecraft patterns
-	val prereleaseCount = allReleases.count { release -> release.isPreRelease() }
-	// Count release candidates for badge display
-	val releaseCandidateCount = allReleases.count { release -> release.isReleaseCandidate() }
+	val facets = remember(allReleases) { ReleaseFacets(allReleases) }
 
 	Div({
 		id("filters")
 		classes(ReleaseFiltersStyle.container)
 	}) {
-		// Search bar
 		Div({
 			classes(ReleaseFiltersStyle.searchBar)
 		}) {
@@ -91,21 +158,20 @@ fun ReleaseFilters(
 					id("release-search")
 					placeholder("Search by name, tag, version, or content...")
 					value(filterOptions.searchQuery)
-					onInput { event ->
-						onFilterChange(filterOptions.copy(searchQuery = event.value))
-					}
+					onInput { onFilterChange(filterOptions.copy(searchQuery = it.value)) }
 				}
 			}
 
 			Button({
 				classes(ReleaseFiltersStyle.filterToggle)
+				attr("aria-expanded", "$expanded")
+				attr("aria-controls", "filters-panel")
 				onClick { expanded = !expanded }
 			}) {
 				MdiFilter()
 				Text(if (expanded) "Hide Filters" else "Show Filters")
 			}
 
-			// Reset button
 			if (filterOptions != ReleaseFilterOptions()) {
 				Button({
 					classes(ReleaseFiltersStyle.resetButton)
@@ -117,187 +183,76 @@ fun ReleaseFilters(
 			}
 		}
 
-		// Advanced filters (collapsible)
+		// The panel is a single-row grid animating between 0fr and 1fr, so the height follows the real content.
 		Div({
-			classes(ReleaseFiltersStyle.filters)
-			if (!expanded) classes(ReleaseFiltersStyle.filtersCollapsed)
+			id("filters-panel")
+			classes(ReleaseFiltersStyle.filtersPanel)
+			if (!expanded) {
+				classes(ReleaseFiltersStyle.filtersPanelCollapsed)
+				attr("inert", "")
+			}
 		}) {
-			// Pre-release filter
 			Div({
-				classes(ReleaseFiltersStyle.filterGroup)
+				classes(ReleaseFiltersStyle.filters)
 			}) {
-				Div({
-					classes(ReleaseFiltersStyle.filterLabel)
-				}) {
-					Text("Release Type")
+				FilterGroup("Release Type") {
+					Div({
+						classes(ReleaseFiltersStyle.checkboxGroup)
+					}) {
+						FilterCheckbox(
+							id = "show-release-candidates",
+							label = "Show Release Candidates",
+							count = facets.releaseCandidates,
+							checked = filterOptions.showReleaseCandidates,
+						) { onFilterChange(filterOptions.copy(showReleaseCandidates = it)) }
+
+						FilterCheckbox(
+							id = "show-prereleases",
+							label = "Show Pre-releases",
+							count = facets.preReleases,
+							checked = filterOptions.showPreReleases,
+						) { onFilterChange(filterOptions.copy(showPreReleases = it)) }
+
+						FilterCheckbox(
+							id = "show-snapshots",
+							label = "Show Snapshots",
+							count = facets.snapshots,
+							checked = filterOptions.showSnapshots,
+						) { onFilterChange(filterOptions.copy(showSnapshots = it)) }
+					}
 				}
 
-				Div({
-					classes(ReleaseFiltersStyle.checkboxGroup)
-				}) {
+				FilterGroup("Sort Order") {
 					Div({
-						classes(ReleaseFiltersStyle.checkboxContainer)
+						classes(ReleaseFiltersStyle.radioGroup)
 					}) {
-						Input(InputType.Checkbox) {
-							id("show-release-candidates")
-							checked(filterOptions.showReleaseCandidates)
-							onChange { event ->
-								onFilterChange(filterOptions.copy(showReleaseCandidates = event.value))
+						SortOrder.entries.forEach { order ->
+							SortRadio(order, filterOptions.sortOrder == order) {
+								onFilterChange(filterOptions.copy(sortOrder = order))
 							}
 						}
+					}
+				}
 
-						Label("show-release-candidates", {
-							classes(ReleaseFiltersStyle.checkboxLabel)
+				if (facets.versionGroups.isNotEmpty()) {
+					FilterGroup("Minecraft Versions", ReleaseFiltersStyle.versionsFilter) {
+						Div({
+							classes(ReleaseFiltersStyle.versionsList)
 						}) {
-							Text("Show Release Candidates")
-							Span({
-								classes(ReleaseFiltersStyle.badge)
-							}) {
-								Text(releaseCandidateCount.toString())
-							}
-						}
-					}
+							facets.versionGroups.forEach { (mainVersion, versions) ->
+								Div({
+									classes(ReleaseFiltersStyle.versionsRow)
+								}) {
+									versions.forEach { version ->
+										val selected = version in filterOptions.selectedMinecraftVersions
 
-					Div({
-						classes(ReleaseFiltersStyle.checkboxContainer)
-					}) {
-						Input(InputType.Checkbox) {
-							id("show-prereleases")
-							checked(filterOptions.showPreReleases)
-							onChange { event ->
-								onFilterChange(filterOptions.copy(showPreReleases = event.value))
-							}
-						}
-
-						Label("show-prereleases", {
-							classes(ReleaseFiltersStyle.checkboxLabel)
-						}) {
-							Text("Show Pre-releases")
-							Span({
-								classes(ReleaseFiltersStyle.badge)
-							}) {
-								Text(prereleaseCount.toString())
-							}
-						}
-					}
-
-					Div({
-						classes(ReleaseFiltersStyle.checkboxContainer)
-					}) {
-						Input(InputType.Checkbox) {
-							id("show-snapshots")
-							checked(filterOptions.showSnapshots)
-							onChange { event ->
-								onFilterChange(filterOptions.copy(showSnapshots = event.value))
-							}
-						}
-
-						Label("show-snapshots", {
-							classes(ReleaseFiltersStyle.checkboxLabel)
-						}) {
-							Text("Show Snapshots")
-							Span({
-								classes(ReleaseFiltersStyle.badge)
-							}) {
-								Text(snapshotCount.toString())
-							}
-						}
-					}
-				}
-			}
-
-			// Sort filter
-			Div({
-				classes(ReleaseFiltersStyle.filterGroup)
-			}) {
-				Div({
-					classes(ReleaseFiltersStyle.filterLabel)
-				}) {
-					Text("Sort Order")
-				}
-
-				Div({
-					classes(ReleaseFiltersStyle.radioGroup)
-				}) {
-					Div({
-						classes(ReleaseFiltersStyle.radioContainer)
-					}) {
-						Input(InputType.Radio) {
-							id("sort-newest")
-							name("sort-order")
-							checked(filterOptions.sortOrder == SortOrder.NEWEST_FIRST)
-							onChange {
-								onFilterChange(filterOptions.copy(sortOrder = SortOrder.NEWEST_FIRST))
-							}
-						}
-
-						Label("sort-newest") {
-							Text("Newest First")
-						}
-					}
-
-					Div({
-						classes(ReleaseFiltersStyle.radioContainer)
-					}) {
-						Input(InputType.Radio) {
-							id("sort-oldest")
-							name("sort-order")
-							checked(filterOptions.sortOrder == SortOrder.OLDEST_FIRST)
-							onChange {
-								onFilterChange(filterOptions.copy(sortOrder = SortOrder.OLDEST_FIRST))
-							}
-						}
-
-						Label("sort-oldest") {
-							Text("Oldest First")
-						}
-					}
-				}
-			}
-
-			// Minecraft version filters (checkboxes)
-			if (availableMinecraftVersions.isNotEmpty()) {
-				Div({
-					classes(ReleaseFiltersStyle.filterGroup, ReleaseFiltersStyle.versionsFilter)
-				}) {
-					Div({
-						classes(ReleaseFiltersStyle.filterLabel)
-					}) {
-						Text("Minecraft Versions")
-					}
-
-					Div({
-						classes(ReleaseFiltersStyle.versionsList)
-					}) {
-						availableMinecraftVersions.forEach { (mainVersion, versions) ->
-							Div({
-								classes(ReleaseFiltersStyle.versionsRow)
-							}) {
-								versions.forEach { version ->
-									val isChecked = filterOptions.selectedMinecraftVersions.contains(version)
-									val count = if (version == mainVersion) {
-										mainVersionCounts[mainVersion] ?: 0
-									} else {
-										baseVersionCounts[version] ?: 0
-									}
-
-									Div({
-										classes(ReleaseFiltersStyle.versionChip)
-										if (isChecked) classes(ReleaseFiltersStyle.versionChipSelected)
-										onClick {
-											val newSelectedVersions = if (isChecked) {
-												filterOptions.selectedMinecraftVersions - version
-											} else {
-												filterOptions.selectedMinecraftVersions + version
-											}
-											onFilterChange(filterOptions.copy(selectedMinecraftVersions = newSelectedVersions))
-										}
-									}) {
-										Text(version)
-										Span({
-											classes(ReleaseFiltersStyle.versionChipCount)
-										}) {
-											Text("($count)")
+										VersionChip(version, facets.countOf(version, mainVersion), selected) {
+											val current = filterOptions.selectedMinecraftVersions
+											onFilterChange(
+												filterOptions.copy(
+													selectedMinecraftVersions = if (selected) current - version else current + version
+												)
+											)
 										}
 									}
 								}
@@ -319,7 +274,6 @@ object ReleaseFiltersStyle : StyleSheet() {
 		flexDirection(FlexDirection.Column)
 		marginBottom(1.6.cssRem)
 		padding(1.3.cssRem)
-		transition(0.3.s, "padding")
 		scrollMarginTop(6.cssRem)
 		width(100.percent)
 
@@ -443,7 +397,7 @@ object ReleaseFiltersStyle : StyleSheet() {
 		hover(self) style {
 			backgroundColor(rgba(200, 80, 80, 0.3))
 			transform { translateY((-1).px) }
-			boxShadow(0.px, 2.px, 6.px, 0.px, rgba(0, 0, 0, 0.1))
+			boxShadow(0.px, 2.px, 4.px, 0.px, rgba(0, 0, 0, 0.1))
 		}
 
 		"span.material-icons" style {
@@ -456,16 +410,25 @@ object ReleaseFiltersStyle : StyleSheet() {
 		}
 	}
 
+	val filtersPanel by style {
+		display(DisplayStyle.Grid)
+		property("grid-template-rows", "1fr")
+		opacity(1)
+		transition(0.22.s, "grid-template-rows", "opacity")
+	}
+
+	val filtersPanelCollapsed by style {
+		property("grid-template-rows", "0fr")
+		opacity(0)
+	}
+
 	val filters by style {
 		display(DisplayStyle.Grid)
 		gap(1.5.cssRem)
 		gridTemplateColumns { repeat(3) { size(1.fr) } }
-		marginTop(0.6.cssRem)
-		maxHeight(500.px)
-		opacity(1)
+		minHeight(0.px)
 		overflow(Overflow.Hidden)
 		paddingTop(1.2.cssRem)
-		transition(0.5.s, "max-height", "opacity", "padding-top", "margin-top", "border-top")
 
 		mdMax(self) {
 			gridTemplateColumns { repeat(2) { size(1.fr) } }
@@ -477,14 +440,6 @@ object ReleaseFiltersStyle : StyleSheet() {
 			gap(1.cssRem)
 			paddingTop(1.cssRem)
 		}
-	}
-
-	val filtersCollapsed by style {
-		borderTop(0.px, LineStyle.Solid, rgba(255, 255, 255, 0))
-		marginTop(0.px)
-		maxHeight(0.px)
-		opacity(0)
-		paddingTop(0.px)
 	}
 
 	@OptIn(ExperimentalComposeWebApi::class)
