@@ -1,61 +1,79 @@
 package io.github.ayfri.kore.website.components.updates
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import com.varabyte.kobweb.compose.css.*
 import io.github.ayfri.kore.website.GlobalStyle
+import io.github.ayfri.kore.website.components.common.CodeBlock
 import io.github.ayfri.kore.website.utils.*
-import kotlinx.browser.document
-import kotlinx.dom.clear
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.Div
-import org.w3c.dom.HTMLDivElement
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.get
+
+/** A slice of a changelog: either a run of rendered markdown, or a fenced code block handed to [CodeBlock]. */
+private sealed interface ReleaseBlock {
+	data class Markup(val html: String) : ReleaseBlock
+	data class Code(val text: String, val lang: String?) : ReleaseBlock
+}
+
+/**
+ * Lexes [markdown] and splits it around fenced code blocks, so those can be rendered as real [CodeBlock] components
+ * while everything else stays a single `marked` render pass.
+ */
+private fun parseReleaseBlocks(markdown: String): List<ReleaseBlock> {
+	val tokens = js("marked.lexer(markdown)").unsafeCast<Array<dynamic>>()
+	val blocks = mutableListOf<ReleaseBlock>()
+	val pendingMarkup = mutableListOf<dynamic>()
+
+	fun flushMarkup() {
+		if (pendingMarkup.isEmpty()) return
+		val markupTokens = pendingMarkup.toTypedArray()
+		blocks += ReleaseBlock.Markup(js("marked.parser(markupTokens)").unsafeCast<String>())
+		pendingMarkup.clear()
+	}
+
+	tokens.forEach { token ->
+		if (token.type != "code") {
+			pendingMarkup.add(token)
+			return@forEach
+		}
+
+		flushMarkup()
+		blocks += ReleaseBlock.Code(token.text as String, (token.lang as String?)?.substringBefore(' ')?.ifBlank { null })
+	}
+	flushMarkup()
+
+	return blocks
+}
 
 @Composable
 fun MarkdownRenderer(markdown: String, id: String) {
-	Style(MarkdownRendererStyle)
-	loadPrism()
+	val blocks = remember(markdown) {
+		runCatching { parseReleaseBlocks(markdown) }
+			.onFailure { console.error("Error rendering markdown:", it.message) }
+			.getOrDefault(listOf(ReleaseBlock.Markup("Failed to render markdown content.")))
+	}
 
-	// Create a wrapper div with the specified ID
 	Div({
 		id(id)
 		classes(MarkdownRendererStyle.container)
-	})
-
-	// Load Prism.js for syntax highlighting
-	LaunchedEffect(markdown) {
-		// Wait a brief moment to ensure the DOM is ready
-		val container = document.getElementById(id) as? HTMLDivElement
-		if (container != null) {
-			container.clear()
-
-			try {
-				// Parse markdown to HTML using marked.js
-				val html = js("marked.parse(markdown)").unsafeCast<String>()
-				container.innerHTML = html
-
-				// Process code blocks for syntax highlighting
-				val codeBlocks = container.querySelectorAll("pre code")
-				for (i in 0 until codeBlocks.length) {
-					val codeBlock = codeBlocks[i] as? HTMLElement ?: continue
-					val parent = codeBlock.parentElement ?: continue
-
-					// Add language class for Prism
-					val language = codeBlock.className.split("-").getOrNull(1)
-					if (language != null) {
-						parent.className = "language-$language"
-						codeBlock.className = "language-$language"
+	}) {
+		blocks.forEach { block ->
+			when (block) {
+				is ReleaseBlock.Markup -> Div({
+					ref {
+						it.innerHTML = block.html
+						onDispose {}
 					}
-				}
-			} catch (e: Exception) {
-				console.error("Error rendering markdown:", e.message)
-				container.textContent = "Failed to render markdown content."
+				})
+
+				is ReleaseBlock.Code -> CodeBlock(block.text, block.lang)
 			}
 		}
 	}
+
+	// Scoped to this changelog: the page-wide `loadPrism` pass would redo the whole document once per release.
+	highlightCodeIn(id, markdown)
 }
 
 object MarkdownRendererStyle : StyleSheet() {
