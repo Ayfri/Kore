@@ -58,8 +58,8 @@ datapack.sulfurCubeArchetype(
 	)
 
 	soundSettings(
-		hitSound = SoundEvents.Entity.SulfurCube.HIT,
-		pushSound = SoundEvents.Entity.SulfurCube.PUSH,
+		hitSound = SoundEvents.Entity.SulfurCube.Hot.HIT,
+		pushSound = SoundEvents.Entity.SulfurCube.Sticky.PUSH,
 		pushSoundCooldown = 5f,
 		pushSoundImpulseThreshold = 0.6f,
 	)

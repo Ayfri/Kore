@@ -4,11 +4,7 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.dataPack
-import io.github.ayfri.kore.features.sulfurcubearchetype.contactDamage
-import io.github.ayfri.kore.features.sulfurcubearchetype.explosion
-import io.github.ayfri.kore.features.sulfurcubearchetype.modifier
-import io.github.ayfri.kore.features.sulfurcubearchetype.soundSettings
-import io.github.ayfri.kore.features.sulfurcubearchetype.sulfurCubeArchetype
+import io.github.ayfri.kore.features.sulfurcubearchetype.*
 import io.github.ayfri.kore.generated.Attributes
 import io.github.ayfri.kore.generated.DamageTypes
 import io.github.ayfri.kore.generated.SoundEvents
@@ -36,8 +32,8 @@ fun DataPack.sulfurCubeArchetypeTests() {
 		)
 
 		soundSettings(
-			hitSound = SoundEvents.Entity.SulfurCube.HIT,
-			pushSound = SoundEvents.Entity.SulfurCube.PUSH,
+			hitSound = SoundEvents.Entity.SulfurCube.Hot.HIT,
+			pushSound = SoundEvents.Entity.SulfurCube.Sticky.PUSH,
 			pushSoundCooldown = 5f,
 			pushSoundImpulseThreshold = 0.6f,
 		)
