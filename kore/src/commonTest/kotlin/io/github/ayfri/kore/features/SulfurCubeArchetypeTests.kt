@@ -66,8 +66,8 @@ fun DataPack.sulfurCubeArchetypeTests() {
 				"vertical_power": 0.2
 			},
 			"sound_settings": {
-				"hit_sound": "minecraft:entity.sulfur_cube.hit",
-				"push_sound": "minecraft:entity.sulfur_cube.push",
+				"hit_sound": "minecraft:entity.sulfur_cube.hot.hit",
+				"push_sound": "minecraft:entity.sulfur_cube.sticky.push",
 				"push_sound_cooldown": 5.0,
 				"push_sound_impulse_threshold": 0.6
 			}
