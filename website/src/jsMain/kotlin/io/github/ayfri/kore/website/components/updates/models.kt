@@ -72,7 +72,7 @@ data class GitHubRelease(
 			if (!matches) return false
 		}
 
-		return options.searchQuery.isEmpty() || options.searchQuery.lowercase() in searchIndex
+		return options.searchQuery.isEmpty() || options.lowercasedSearchQuery in searchIndex
 	}
 }
 

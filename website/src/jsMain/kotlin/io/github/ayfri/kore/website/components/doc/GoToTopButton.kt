@@ -7,10 +7,15 @@ import com.varabyte.kobweb.compose.css.translateY
 import com.varabyte.kobweb.compose.css.zIndex
 import com.varabyte.kobweb.silk.components.icons.mdi.MdiKeyboardArrowUp
 import io.github.ayfri.kore.website.GlobalStyle
+import io.github.ayfri.kore.website.utils.onEvents
 import io.github.ayfri.kore.website.utils.transition
 import kotlinx.browser.window
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Button
+import org.w3c.dom.events.Event
+
+/** Scroll distance past which the button slides in. */
+private const val REVEAL_SCROLL_PX = 300
 
 object GoToTopButtonStyle : StyleSheet() {
 	val button by style {
@@ -52,11 +57,7 @@ object GoToTopButtonStyle : StyleSheet() {
 fun GoToTopButton() {
 	var visible by remember { mutableStateOf(false) }
 
-	LaunchedEffect(Unit) {
-		window.onscroll = {
-			visible = window.scrollY > 300
-		}
-	}
+	window.onEvents("scroll" to { _: Event -> visible = window.scrollY > REVEAL_SCROLL_PX })
 
 	Style(GoToTopButtonStyle)
 

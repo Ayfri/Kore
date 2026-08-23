@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.website.components.doc
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import com.varabyte.kobweb.compose.css.*
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.utils.transition
@@ -109,7 +110,7 @@ object PageNavigationStyle : StyleSheet() {
 @Composable
 fun PageNavigation(currentPath: String, publishDate: String?, modifiedDate: String?, editUrl: String) {
 	val orderedEntries = getOrderedDocEntries()
-	val currentIndex = orderedEntries.indexOfFirst { it.path == currentPath }
+	val currentIndex = remember(currentPath) { orderedEntries.indexOfFirst { it.path == currentPath } }
 	if (currentIndex == -1) return
 
 	Style(PageNavigationStyle)

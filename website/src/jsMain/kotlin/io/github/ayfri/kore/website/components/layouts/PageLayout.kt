@@ -39,9 +39,7 @@ fun PageLayout(title: String, content: @Composable () -> Unit) {
 
 	setImage("$baseUrl/logo.png")
 
-	val latestRelease = GitHubService.getReleases().maxByOrNull { it.publishedAt }
-
-	Header(latestRelease)
+	Header(GitHubService.latestRelease)
 
 	Main({
 		classes(PageLayoutStyle.main)

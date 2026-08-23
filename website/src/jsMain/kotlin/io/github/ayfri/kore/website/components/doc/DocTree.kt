@@ -21,9 +21,16 @@ import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.dom.*
 import org.w3c.dom.HTMLUListElement
+import org.w3c.dom.events.Event
 
 private const val DOC_TREE_SCROLL_KEY = "doc-tree:scroll-top"
 private const val DOC_TREE_COLLAPSED_GROUPS_KEY = "doc-tree:collapsed-groups"
+
+/** The doc slugs of an entry, without the leading `docs` segment. */
+private val DocArticle.docSlugs get() = slugs.drop(1)
+
+/** Every strict ancestor group path of [slugs], e.g. `a/b/c` yields `a` then `a/b`. */
+private fun ancestorPathsOf(slugs: List<String>) = List(maxOf(slugs.size - 1, 0)) { slugs.take(it + 1).joinToString("/") }
 
 private fun parseCollapsedGroups(value: String?): Set<String> = value
 	?.split('|')
@@ -36,43 +43,35 @@ private fun Set<String>.serializeCollapsedGroups() = sorted().joinToString("|")
 
 private fun getCurrentEntryAncestorPaths(currentURL: String): Set<String> {
 	val currentEntry = docEntries.firstOrNull { it.path == currentURL } ?: return emptySet()
-	val slugs = currentEntry.slugs.drop(1)
-	if (slugs.size <= 1) return emptySet()
-
-	return buildSet {
-		for (i in 0 until slugs.lastIndex) {
-			add(slugs.take(i + 1).joinToString("/"))
-		}
-	}
+	return ancestorPathsOf(currentEntry.docSlugs).toSet()
 }
 
 private fun StyleScope.indentation(level: Int) = marginLeft(level * 1.5.cssRem)
 
-private val docGroupOrder
-	get() = AppGlobals["docGroupOrder"]
+private val docGroupOrder by lazy {
+	AppGlobals["docGroupOrder"]
 		?.split(',')
 		?.map(String::trim)
 		?.filter(String::isNotEmpty)
 		.orEmpty()
+}
 
 private fun getGroupPriority(slug: String): Int {
 	val index = docGroupOrder.indexOf(slug.lowercase())
 	return if (index >= 0) index else docGroupOrder.size
 }
 
-/**
- * Returns the ordered list of DocArticle entries as they appear in the DocTree.
- * This is used by PageNavigation to determine previous/next pages.
- */
-fun getOrderedDocEntries() = docEntries.sortedWith(Comparator { a, b ->
-	val slugsA = a.slugs.drop(1)
-	val slugsB = b.slugs.drop(1)
+/** Orders entries by explicit position, then configured group priority, then slug and nav title. */
+private val docEntryComparator = Comparator<DocArticle> { a, b ->
+	val slugsA = a.docSlugs
+	val slugsB = b.docSlugs
 	val maxDepth = minOf(slugsA.size, slugsB.size)
 
 	for (i in 0 until maxDepth) {
 		val slugA = slugsA[i]
 		val slugB = slugsB[i]
 
+		// A fixed position only applies to the leaf entry that declared it.
 		val posA = if (i == slugsA.lastIndex) a.position else null
 		val posB = if (i == slugsB.lastIndex) b.position else null
 
@@ -92,7 +91,15 @@ fun getOrderedDocEntries() = docEntries.sortedWith(Comparator { a, b ->
 	if (lengthCompare != 0) return@Comparator lengthCompare
 
 	compareValues(a.navTitle, b.navTitle)
-})
+}
+
+private val orderedDocEntries by lazy { docEntries.sortedWith(docEntryComparator) }
+
+/**
+ * Returns the ordered list of DocArticle entries as they appear in the DocTree.
+ * This is used by PageNavigation to determine previous/next pages.
+ */
+fun getOrderedDocEntries() = orderedDocEntries
 
 sealed class DocNode(val level: Int, val groupPath: String) {
 	class EntryNode(val entry: DocArticle, level: Int, val isGroup: Boolean = false, groupPath: String) : DocNode(
@@ -104,6 +111,45 @@ sealed class DocNode(val level: Int, val groupPath: String) {
 		level,
 		groupPath
 	)
+}
+
+/** Every group path that can be folded, i.e. every strict ancestor path of an entry. */
+private val collapsiblePaths by lazy {
+	docEntries.flatMapTo(mutableSetOf()) { ancestorPathsOf(it.docSlugs) }
+}
+
+/** The flattened tree rendered by [DocTree]. Doc entries are static, so it is built once. */
+private val docNodes by lazy {
+	val entryPaths = docEntries.mapTo(mutableSetOf()) { it.docSlugs.joinToString("/") }
+	val processedGroups = mutableSetOf<String>()
+
+	buildList {
+		orderedDocEntries.forEach { entry ->
+			val slugs = entry.docSlugs
+			val entryPath = slugs.joinToString("/")
+
+			ancestorPathsOf(slugs).forEachIndexed { index, groupPath ->
+				if (!processedGroups.add(groupPath)) return@forEachIndexed
+				if (groupPath in entryPaths) return@forEachIndexed
+				add(DocNode.GroupNode(slugs[index].kebabCaseToTitleCamelCase(), index + 1, groupPath))
+			}
+
+			val isGroup = entryPath in collapsiblePaths
+			add(DocNode.EntryNode(entry, slugs.size, isGroup, entryPath))
+
+			if (isGroup) processedGroups.add(entryPath)
+		}
+	}
+}
+
+/**
+ * The groups to fold for the page whose ancestors are [currentEntryAncestorPaths]: whatever the session remembers, or
+ * every group on a first visit, minus the groups leading to the current page so it always stays visible.
+ */
+private fun resolveCollapsedGroups(currentEntryAncestorPaths: Set<String>): Set<String> {
+	val stored = sessionStorage.getItem(DOC_TREE_COLLAPSED_GROUPS_KEY)
+	val collapsed = if (stored == null) collapsiblePaths else parseCollapsedGroups(stored).intersect(collapsiblePaths)
+	return collapsed - currentEntryAncestorPaths
 }
 
 @Composable
@@ -203,116 +249,14 @@ fun GroupEntry(
 fun DocTree() {
 	Style(DocTreeStyle)
 
-	val context = rememberPageContext().route
-	val entries = docEntries
-	val currentURL = context.path
+	val currentURL = rememberPageContext().route.path
 	val currentEntryAncestorPaths = remember(currentURL) { getCurrentEntryAncestorPaths(currentURL) }
-	val allCollapsiblePaths = remember(entries) {
-		buildSet {
-			entries.forEach { entry ->
-				val slugs = entry.slugs.drop(1)
-				if (slugs.size > 1) {
-					for (i in 0 until slugs.lastIndex) {
-						add(slugs.take(i + 1).joinToString("/"))
-					}
-				}
-			}
-		}
-	}
-	val initialCollapsedGroups = remember(currentURL) {
-		val defaultCollapsed: Set<String> = docEntries
-			.asSequence()
-			.flatMap { entry ->
-				val slugs = entry.slugs.drop(1)
-				if (slugs.size <= 1) {
-					emptySequence()
-				} else {
-					List(slugs.dropLast(1).size) { index ->
-						slugs.take(index + 1).joinToString("/")
-					}.asSequence()
-				}
-			}
-			.toSet()
 
-		val storedCollapsed = parseCollapsedGroups(sessionStorage.getItem(DOC_TREE_COLLAPSED_GROUPS_KEY))
-		val visibleCollapsedGroups = (defaultCollapsed + storedCollapsed).intersect(allCollapsiblePaths)
-		visibleCollapsedGroups - currentEntryAncestorPaths
-	}
-
-	val nodes = buildList {
-		val sortedEntries = entries.sortedWith(Comparator { a, b ->
-			val slugsA = a.slugs.drop(1)
-			val slugsB = b.slugs.drop(1)
-			val maxDepth = minOf(slugsA.size, slugsB.size)
-
-			for (i in 0 until maxDepth) {
-				val slugA = slugsA[i]
-				val slugB = slugsB[i]
-
-				val posA = if (i == slugsA.lastIndex) a.position else null
-				val posB = if (i == slugsB.lastIndex) b.position else null
-
-				val posCompare = compareValues(posA ?: Int.MAX_VALUE, posB ?: Int.MAX_VALUE)
-				if (posCompare != 0) return@Comparator posCompare
-
-				// Apply group priority for top-level groups
-				if (i == 0 && slugsA.size > 1 && slugsB.size > 1) {
-					val groupCompare = compareValues(getGroupPriority(slugA), getGroupPriority(slugB))
-					if (groupCompare != 0) return@Comparator groupCompare
-				}
-
-				val slugCompare = compareValues(slugA.lowercase(), slugB.lowercase())
-				if (slugCompare != 0) return@Comparator slugCompare
-			}
-
-			val lengthCompare = compareValues(slugsA.size, slugsB.size)
-			if (lengthCompare != 0) return@Comparator lengthCompare
-
-			return@Comparator compareValues(a.navTitle, b.navTitle)
-		})
-
-		val processedGroups = mutableSetOf<String>()
-
-		sortedEntries.forEach { entry ->
-			val slugs = entry.slugs.drop(1)
-			val level = slugs.size
-
-			if (slugs.size > 1) {
-				for (i in 0 until slugs.size - 1) {
-					val groupPathSlugs = slugs.take(i + 1)
-					val groupPath = groupPathSlugs.joinToString("/")
-					if (groupPath !in processedGroups) {
-						processedGroups.add(groupPath)
-						val groupName = slugs[i].kebabCaseToTitleCamelCase()
-
-						val groupHasDirectEntry = entries.any { e -> e.slugs.drop(1) == groupPathSlugs }
-
-						if (!groupHasDirectEntry) {
-							add(DocNode.GroupNode(groupName, i + 1, groupPath))
-						}
-					}
-				}
-			}
-
-			val isGroup = entries.any { other ->
-				other != entry &&
-					other.slugs.size > slugs.size &&
-					other.slugs.drop(1).take(slugs.size) == slugs
-			}
-			add(DocNode.EntryNode(entry, level, isGroup, slugs.joinToString("/")))
-
-			if (isGroup) {
-				processedGroups.add(slugs.joinToString("/"))
-			}
-		}
-	}
-
-	var collapsedGroups by remember { mutableStateOf(initialCollapsedGroups) }
+	var collapsedGroups by remember { mutableStateOf(resolveCollapsedGroups(currentEntryAncestorPaths)) }
 	var listElement by remember { mutableStateOf<HTMLUListElement?>(null) }
 
 	LaunchedEffect(currentURL) {
-		val storedCollapsedGroups = parseCollapsedGroups(sessionStorage.getItem(DOC_TREE_COLLAPSED_GROUPS_KEY))
-		collapsedGroups = storedCollapsedGroups.intersect(allCollapsiblePaths) - currentEntryAncestorPaths
+		collapsedGroups = resolveCollapsedGroups(currentEntryAncestorPaths)
 	}
 
 	LaunchedEffect(collapsedGroups) {
@@ -325,28 +269,16 @@ fun DocTree() {
 	}
 
 	DisposableEffect(listElement) {
-		val element = listElement
-		if (element == null) {
-			onDispose { }
-		} else {
-			val listener: (org.w3c.dom.events.Event) -> Unit = {
-				sessionStorage.setItem(DOC_TREE_SCROLL_KEY, element.scrollTop.toString())
-			}
-			element.addEventListener("scroll", listener)
-			onDispose {
-				element.removeEventListener("scroll", listener)
-			}
+		val element = listElement ?: return@DisposableEffect onDispose { }
+		val listener: (Event) -> Unit = {
+			sessionStorage.setItem(DOC_TREE_SCROLL_KEY, element.scrollTop.toString())
 		}
+		element.addEventListener("scroll", listener)
+		onDispose { element.removeEventListener("scroll", listener) }
 	}
 
-	fun isNodeVisible(node: DocNode): Boolean {
-		val nodePath = node.groupPath
-		for (collapsedPath in collapsedGroups) {
-			if (nodePath != collapsedPath && nodePath.startsWith("$collapsedPath/")) {
-				return false
-			}
-		}
-		return true
+	val visibleNodes = remember(collapsedGroups) {
+		docNodes.filter { node -> collapsedGroups.none { node.groupPath.startsWith("$it/") } }
 	}
 
 	Div({
@@ -380,9 +312,7 @@ fun DocTree() {
 				Button({
 					classes(DocTreeStyle.actionButton)
 					title("Fold all groups except current")
-					onClick {
-						collapsedGroups = allCollapsiblePaths - currentEntryAncestorPaths
-					}
+					onClick { collapsedGroups = collapsiblePaths - currentEntryAncestorPaths }
 				}) {
 					Span({
 						classes(DocTreeStyle.actionIcon)
@@ -400,16 +330,12 @@ fun DocTree() {
 				onDispose { listElement = null }
 			}
 		}) {
-			nodes.forEach { node ->
-				if (isNodeVisible(node)) {
-					node.Render(currentURL, collapsedGroups, { path ->
-						collapsedGroups = if (path in collapsedGroups) {
-							collapsedGroups - path
-						} else {
-							collapsedGroups + path
-						}
-					})
-				}
+			val onToggleCollapse: (String) -> Unit = { path ->
+				collapsedGroups = if (path in collapsedGroups) collapsedGroups - path else collapsedGroups + path
+			}
+
+			visibleNodes.forEach { node ->
+				node.Render(currentURL, collapsedGroups, onToggleCollapse)
 			}
 		}
 	}

@@ -27,7 +27,10 @@ data class ReleaseFilterOptions(
 	val showReleaseCandidates: Boolean = false,
 	val selectedMinecraftVersions: Set<String> = emptySet(),
 	val sortOrder: SortOrder = SortOrder.NEWEST_FIRST,
-)
+) {
+	/** Lowercased once per query instead of once per release tested. */
+	val lowercasedSearchQuery by lazy { searchQuery.lowercase() }
+}
 
 enum class SortOrder(val label: String, val inputId: String) {
 	NEWEST_FIRST("Newest First", "sort-newest"),

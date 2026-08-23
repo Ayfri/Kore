@@ -65,6 +65,21 @@ private fun VersionRow.familyKey() =
 
 private val byHighestMinecraftVersion = Comparator<VersionRow> { a, b -> compareMinecraftVersions(a.minecraftVersion, b.minecraftVersion) }
 
+private val allRows by lazy { GitHubService.getReleases().mapNotNull { it.toVersionRow() } }
+
+private val stableRows by lazy {
+	allRows
+		.filter { it.isStable }
+		.groupBy { it.minecraftVersion }
+		.map { (_, rows) -> rows.maxBy { it.release.publishedTime } }
+		.groupBy { it.familyKey() }
+		.map { (_, rows) -> rows.maxWith(byHighestMinecraftVersion) }
+		.sortedWith(byHighestMinecraftVersion.reversed())
+}
+
+/** The latest release overall, kept only when it is not stable, so it shows up as the `Snapshot` row. */
+private val snapshotRow by lazy { allRows.maxByOrNull { it.release.publishedTime }?.takeIf { !it.isStable } }
+
 /**
  * One Kore version per meaningful Minecraft version, the latest tagged pre-release as a separate `Snapshot` row,
  * and the latest continuous `-SNAPSHOT` build published from `master` as `Maven Snapshot`. Generated from GitHub
@@ -73,19 +88,6 @@ private val byHighestMinecraftVersion = Comparator<VersionRow> { a, b -> compare
 @Composable
 fun VersionMatrix() {
 	Style(VersionMatrixStyle)
-
-	val allRows = GitHubService.getReleases().mapNotNull { it.toVersionRow() }
-
-	val stableRows = allRows
-		.filter { it.isStable }
-		.groupBy { it.minecraftVersion }
-		.map { (_, rows) -> rows.maxBy { it.release.publishedTime } }
-		.groupBy { it.familyKey() }
-		.map { (_, rows) -> rows.maxWith(byHighestMinecraftVersion) }
-		.sortedWith(byHighestMinecraftVersion.reversed())
-
-	val latestOverall = allRows.maxByOrNull { it.release.publishedTime }
-	val snapshotRow = latestOverall?.takeIf { !it.isStable }
 
 	val mavenSnapshotCoordinate = AppGlobals["projectVersion"]?.let { projectVersion ->
 		AppGlobals["minecraftVersion"]?.let { minecraftVersion -> "$projectVersion-$minecraftVersion-SNAPSHOT" }

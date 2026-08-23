@@ -1,143 +1,89 @@
 package io.github.ayfri.kore.website.components.common
 
-import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.core.AppGlobals
-import io.github.ayfri.kore.website.utils.Script
 import io.github.ayfri.kore.website.utils.obj
 import kotlinx.browser.document
-import org.jetbrains.compose.web.attributes.AttrsScope
-import org.jetbrains.compose.web.dom.ElementBuilder
-import org.jetbrains.compose.web.dom.TagElement
-import org.jetbrains.compose.web.dom.Text
-import org.jetbrains.compose.web.renderComposable
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.HTMLImageElement
-import org.w3c.dom.HTMLTitleElement
+import org.w3c.dom.Element
 import org.w3c.dom.asList
 
-private val titleBuilder = ElementBuilder.createBuilder<HTMLTitleElement>("title")
-private val metaBuilder = ElementBuilder.createBuilder<HTMLImageElement>("meta")
-private val linkBuilder = ElementBuilder.createBuilder<HTMLImageElement>("link")
+private const val DEFAULT_BASE_URL = "https://kore.ayfri.com"
 
-@Composable
-fun Title(text: String) = TagElement<HTMLTitleElement>(
-	elementBuilder = titleBuilder,
-	applyAttrs = {},
-	content = {
-		Text(text)
-	}
-)
+private val baseUrl get() = AppGlobals["websiteUrl"] ?: DEFAULT_BASE_URL
 
-@Composable
-fun Meta(attrs: AttrsScope<HTMLImageElement>.() -> Unit = {}) = TagElement<HTMLImageElement>(
-	elementBuilder = metaBuilder,
-	applyAttrs = {
-		apply(attrs)
-	},
-	content = null
-)
+private fun selectAllInHead(selector: String) = document.head!!.querySelectorAll(selector).asList()
 
-@Composable
-fun MetaProperty(property: String, content: String) = Meta {
-	attr("property", property)
-	attr("content", content)
+private fun removeAllInHead(selector: String) = selectAllInHead(selector).forEach { (it as Element).remove() }
+
+/** Creates the `<head>` element matching [selector] if it is missing, then applies [attributes] to it. */
+private fun upsert(selector: String, tag: String, vararg attributes: Pair<String, String>): Element {
+	val head = document.head!!
+	val element = head.querySelector(selector) ?: document.createElement(tag).also(head::appendChild)
+	attributes.forEach { (name, value) -> element.setAttribute(name, value) }
+	return element
 }
 
-@Composable
-fun MetaName(name: String, content: String) = Meta {
-	attr("name", name)
-	attr("content", content)
+private fun metaName(name: String, content: String) = upsert("meta[name='$name']", "meta", "name" to name, "content" to content)
+
+private fun metaProperty(property: String, content: String) =
+	upsert("meta[property='$property']", "meta", "property" to property, "content" to content)
+
+private fun link(rel: String, href: String) = upsert("link[rel='$rel']", "link", "rel" to rel, "href" to href)
+
+fun setTitle(title: String) {
+	document.title = title
+	metaProperty("og:title", title)
+	metaName("twitter:title", title)
 }
 
-@Composable
-fun Link(rel: String, href: String) = TagElement<HTMLImageElement>(
-	elementBuilder = linkBuilder,
-	applyAttrs = {
-		attr("rel", rel)
-		attr("href", href)
-	},
-	content = null
-)
+fun setKeywords(vararg keywords: String) = metaName("keywords", keywords.joinToString(", "))
 
-fun selectAll(selector: String) = document.querySelectorAll(selector).asList().unsafeCast<List<HTMLElement>>()
-
-fun setTitle(title: String) = renderComposable(document.head!!) {
-	document.querySelector("title")?.remove()
-
-	Title(title)
-	MetaProperty("og:title", title)
-	MetaProperty("twitter:title", title)
+fun setDescription(description: String) {
+	metaName("description", description)
+	metaProperty("og:description", description)
+	metaName("twitter:description", description)
 }
 
-fun setKeywords(vararg keywords: String) = renderComposable(document.head!!) {
-	document.querySelector("meta[name=keywords]")?.remove()
-	MetaName("keywords", keywords.joinToString(", "))
+fun setCanonical(url: String) {
+	link("canonical", url)
+	metaProperty("og:url", url)
+	metaName("twitter:url", url)
 }
 
-fun setDescription(description: String) = renderComposable(document.head!!) {
-	selectAll("meta[property*=description]").forEach(HTMLElement::remove)
-	document.querySelector("meta[name=description]")?.remove()
+fun setType(type: String) = metaProperty("og:type", type)
 
-	MetaName("description", description)
-	MetaProperty("og:description", description)
-	MetaProperty("twitter:description", description)
+fun setTwitterCard(card: String) = metaName("twitter:card", card)
+
+fun setTwitterCreator(creator: String) {
+	metaName("twitter:creator", creator)
+	metaName("twitter:site", creator)
 }
 
-fun setCanonical(url: String) = renderComposable(document.head!!) {
-	Link("canonical", url)
-	MetaProperty("og:url", url)
-	MetaProperty("twitter:url", url)
+fun setImage(url: String) {
+	metaProperty("og:image", url)
+	metaName("twitter:image", url)
 }
 
-fun setType(type: String) = renderComposable(document.head!!) {
-	MetaProperty("og:type", type)
-}
-
-fun setTwitterCard(card: String) = renderComposable(document.head!!) {
-	MetaName("twitter:card", card)
-}
-
-fun setTwitterCreator(creator: String) = renderComposable(document.head!!) {
-	MetaName("twitter:creator", creator)
-	MetaName("twitter:site", creator)
-}
-
-fun setImage(url: String) = renderComposable(document.head!!) {
-	selectAll("meta[property*=image]").forEach(HTMLElement::remove)
-
-	MetaProperty("og:image", url)
-	MetaProperty("twitter:image", url)
-}
-
-fun setHrefLang(path: String) = renderComposable(document.head!!) {
-	selectAll("meta[hreflang]").forEach(HTMLElement::remove)
-	val baseUrl = AppGlobals["websiteUrl"] ?: "https://kore.ayfri.com"
-
-	Meta {
-		attr("rel", "alternate")
-		attr("hreflang", "en")
-		attr("href", "$baseUrl$path")
-	}
-	Meta {
-		attr("rel", "alternate")
-		attr("hreflang", "x-default")
-		attr("href", "$baseUrl$path")
+fun setHrefLang(path: String) {
+	listOf("en", "x-default").forEach { hreflang ->
+		upsert(
+			"link[hreflang='$hreflang']",
+			"link",
+			"rel" to "alternate",
+			"hreflang" to hreflang,
+			"href" to "$baseUrl$path",
+		)
 	}
 }
 
-fun setDates(publishDate: String?, modifiedDate: String?) = renderComposable(document.head!!) {
-	selectAll("meta[property*=date], meta[name*=date]").forEach(HTMLElement::remove)
-
-	publishDate?.let {
-		MetaProperty("article:published_time", it)
-		MetaName("date", it)
-	}
-
-	modifiedDate?.let {
-		MetaProperty("article:modified_time", it)
-		MetaName("last-modified", it)
-	}
+fun setDates(publishDate: String?, modifiedDate: String?) {
+	setOptionalMeta("meta[property='article:published_time']", publishDate) { metaProperty("article:published_time", it) }
+	setOptionalMeta("meta[name='date']", publishDate) { metaName("date", it) }
+	setOptionalMeta("meta[property='article:modified_time']", modifiedDate) { metaProperty("article:modified_time", it) }
+	setOptionalMeta("meta[name='last-modified']", modifiedDate) { metaName("last-modified", it) }
 }
+
+private inline fun setOptionalMeta(selector: String, value: String?, set: (String) -> Unit) =
+	if (value == null) removeAllInHead(selector) else set(value)
 
 fun setJsonLd(
 	title: String,
@@ -147,9 +93,23 @@ fun setJsonLd(
 	keywords: String,
 	path: String,
 	slugs: List<String>,
-) = renderComposable(document.head!!) {
-	selectAll("script[type='application/ld+json']").forEach(HTMLElement::remove)
-	val baseUrl = AppGlobals["websiteUrl"] ?: "https://kore.ayfri.com"
+) {
+	val breadcrumbItems = arrayOf(
+		obj {
+			`@type` = "ListItem"
+			position = 1
+			name = "Home"
+			item = "$baseUrl/"
+		},
+		*slugs.mapIndexed { index, slug ->
+			obj {
+				`@type` = "ListItem"
+				position = index + 2
+				name = slug.replace("-", " ").replaceFirstChar { it.uppercase() }
+				item = "$baseUrl/${slugs.take(index + 1).joinToString("/")}"
+			}
+		}.toTypedArray()
+	)
 
 	val jsonLd = obj {
 		`@context` = "https://schema.org"
@@ -179,28 +139,9 @@ fun setJsonLd(
 		this["keywords"] = keywords
 		breadcrumb = obj {
 			`@type` = "BreadcrumbList"
-			itemListElement = slugs.mapIndexed { index, slug ->
-				obj {
-					`@type` = "ListItem"
-					position = index + 2
-					name = slug.replace("-", " ").replaceFirstChar { it.uppercase() }
-					item = "$baseUrl/${slugs.take(index + 1).joinToString("/")}"
-				}
-			}.toTypedArray().also {
-				arrayOf(
-					obj {
-						`@type` = "ListItem"
-						position = 1
-						name = "Home"
-						item = "$baseUrl/"
-					},
-					*it
-				)
-			}
+			itemListElement = breadcrumbItems
 		}
 	}
 
-	Script(type = "application/ld+json") {
-		Text(JSON.stringify(jsonLd))
-	}
+	upsert("script[type='application/ld+json']", "script", "type" to "application/ld+json").textContent = JSON.stringify(jsonLd)
 }

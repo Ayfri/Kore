@@ -22,7 +22,11 @@ import org.jetbrains.compose.web.dom.Article
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
+import org.w3c.dom.events.Event
 import kotlin.time.Duration.Companion.seconds
+
+/** Width under which the doc sidebar is a drawer, so the dimming overlay has to be rendered. */
+private const val MOBILE_BREAKPOINT_PX = 768
 
 @Composable
 fun MarkdownLayout(content: @Composable () -> Unit) {
@@ -36,17 +40,14 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 	val context = rememberPageContext()
 	val markdownData = context.markdown!!.frontMatter
 
-	// Format dates for SEO
-	val publishDate = markdownData["date-created"]?.get(0)?.let(::formatDate)
-	val modifiedDate = markdownData["date-modified"]?.get(0)?.let(::formatDate)
+	// Structured data wants the raw ISO dates, the page footer wants them readable.
+	val publishDate = markdownData["date-created"]?.get(0)
+	val modifiedDate = markdownData["date-modified"]?.get(0)
 
-	var onMobile by remember { mutableStateOf(false) }
+	var onMobile by remember { mutableStateOf(window.innerWidth < MOBILE_BREAKPOINT_PX) }
 	var revealed by remember { mutableStateOf(false) }
 
-	onMobile = window.innerWidth < 768
-	window.onresize = {
-		onMobile = window.innerWidth < 768
-	}
+	window.onEvents("resize" to { _: Event -> onMobile = window.innerWidth < MOBILE_BREAKPOINT_PX })
 
 	val copyMarkdownScope = rememberCoroutineScope()
 	val markdownResourcePath = context.markdown!!.path
@@ -89,9 +90,8 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 		Div({
 			classes(MarkdownLayoutStyle.content)
 		}) {
-			if (markdownData["description"] != null) {
-				setDescription(markdownData["description"]!![0])
-			}
+			// Kept in the composition body so it runs after `PageLayout` applied the generic site description.
+			markdownData["description"]?.get(0)?.let(::setDescription)
 
 			Div({
 				classes(MarkdownLayoutStyle.breadcrumbRow)
@@ -150,8 +150,8 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 
 					PageNavigation(
 						currentPath = context.route.path,
-						publishDate = publishDate,
-						modifiedDate = modifiedDate,
+						publishDate = publishDate?.let(::formatDate),
+						modifiedDate = modifiedDate?.let(::formatDate),
 						editUrl = "https://github.com/Ayfri/Kore/edit/master/website/src/jsMain/resources/markdown/$markdownResourcePath"
 					)
 				}
