@@ -187,16 +187,16 @@ object FeaturesSectionStyle : StyleSheet() {
 		}
 
 		self + nthOfType(Nth.Functional(b = 1)) style {
-			property("animation-delay", "0.05s")
+			animationDelay(0.05.s)
 		}
 
 		self + nthOfType(Nth.Functional(b = 2)) style {
-			property("animation-delay", "0.12s")
+			animationDelay(0.12.s)
 			borderTop(2.px, LineStyle.Solid, Color("var(--landing-gold)"))
 		}
 
 		self + nthOfType(Nth.Functional(b = 3)) style {
-			property("animation-delay", "0.18s")
+			animationDelay(0.18.s)
 			borderTop(2.px, LineStyle.Solid, Color("var(--landing-accent-strong)"))
 		}
 

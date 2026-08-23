@@ -12,6 +12,13 @@ import org.jetbrains.compose.web.css.selectors.CSSSelector.PseudoElement.after
 
 typealias CSSTimeValue = CSSSizeValue<out CSSUnitTime>
 
+/**
+ * Sets `animation-delay`, which Compose HTML and Kobweb only expose through the `animation` shorthand and through
+ * `Modifier.animation`'s [com.varabyte.kobweb.compose.ui.modifiers.AnimationScope], neither of which fits a plain
+ * `StyleSheet` rule that overrides the delay alone.
+ */
+fun StyleScope.animationDelay(vararg delays: CSSTimeValue) = property("animation-delay", delays.joinToString())
+
 fun StyleScope.marginX(value: CSSNumeric) {
 	marginLeft(value)
 	marginRight(value)
