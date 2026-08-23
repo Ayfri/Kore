@@ -8,6 +8,8 @@ import org.w3c.dom.HTMLImageElement
 import org.w3c.dom.HTMLParagraphElement
 import org.w3c.dom.HTMLSpanElement
 
+private val imgBuilder = ElementBuilder.createBuilder<HTMLImageElement>("img")
+
 @Composable
 fun A(href: String, content: String = "", vararg classes: String = arrayOf("link"), attrs: AttrsScope<HTMLAnchorElement>.() -> Unit = {}) {
 	A(href, {
@@ -25,7 +27,7 @@ fun AttrsScope<HTMLAnchorElement>.rel(vararg values: String) {
 @Composable
 fun Img(attrs: AttrsScope<HTMLImageElement>.() -> Unit = {}) {
 	TagElement<HTMLImageElement>(
-		elementBuilder = ElementBuilder.createBuilder("img"),
+		elementBuilder = imgBuilder,
 		applyAttrs = {
 			apply(attrs)
 		},

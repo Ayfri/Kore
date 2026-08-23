@@ -15,9 +15,13 @@ import org.w3c.dom.HTMLImageElement
 import org.w3c.dom.HTMLTitleElement
 import org.w3c.dom.asList
 
+private val titleBuilder = ElementBuilder.createBuilder<HTMLTitleElement>("title")
+private val metaBuilder = ElementBuilder.createBuilder<HTMLImageElement>("meta")
+private val linkBuilder = ElementBuilder.createBuilder<HTMLImageElement>("link")
+
 @Composable
 fun Title(text: String) = TagElement<HTMLTitleElement>(
-	elementBuilder = ElementBuilder.createBuilder("title"),
+	elementBuilder = titleBuilder,
 	applyAttrs = {},
 	content = {
 		Text(text)
@@ -26,7 +30,7 @@ fun Title(text: String) = TagElement<HTMLTitleElement>(
 
 @Composable
 fun Meta(attrs: AttrsScope<HTMLImageElement>.() -> Unit = {}) = TagElement<HTMLImageElement>(
-	elementBuilder = ElementBuilder.createBuilder("meta"),
+	elementBuilder = metaBuilder,
 	applyAttrs = {
 		apply(attrs)
 	},
@@ -47,7 +51,7 @@ fun MetaName(name: String, content: String) = Meta {
 
 @Composable
 fun Link(rel: String, href: String) = TagElement<HTMLImageElement>(
-	elementBuilder = ElementBuilder.createBuilder("link"),
+	elementBuilder = linkBuilder,
 	applyAttrs = {
 		attr("rel", rel)
 		attr("href", href)

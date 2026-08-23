@@ -9,13 +9,18 @@ import org.w3c.dom.HTMLDetailsElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLScriptElement
 
+private val detailsBuilder = ElementBuilder.createBuilder<HTMLDetailsElement>("details")
+private val summaryBuilder = ElementBuilder.createBuilder<HTMLDetailsElement>("summary")
+private val searchBuilder = ElementBuilder.createBuilder<HTMLElement>("search")
+private val scriptBuilder = ElementBuilder.createBuilder<HTMLScriptElement>("script")
+
 @Composable
 fun Details(
 	attrs: AttrBuilderContext<HTMLDetailsElement>? = null,
 	content: ContentBuilder<HTMLDetailsElement>? = null,
 ) {
 	TagElement(
-		elementBuilder = ElementBuilder.createBuilder("details"),
+		elementBuilder = detailsBuilder,
 		applyAttrs = attrs,
 		content = content
 	)
@@ -27,7 +32,7 @@ fun Summary(
 	content: ContentBuilder<HTMLDetailsElement>? = null,
 ) {
 	TagElement(
-		elementBuilder = ElementBuilder.createBuilder("summary"),
+		elementBuilder = summaryBuilder,
 		applyAttrs = attrs,
 		content = content
 	)
@@ -39,7 +44,7 @@ fun Search(
 	content: ContentBuilder<HTMLElement>? = null,
 ) {
 	TagElement(
-		elementBuilder = ElementBuilder.createBuilder("search"),
+		elementBuilder = searchBuilder,
 		applyAttrs = attrs,
 		content = content
 	)
@@ -53,7 +58,7 @@ fun Script(
 	content: ContentBuilder<HTMLScriptElement>? = null,
 ) {
 	TagElement(
-		elementBuilder = ElementBuilder.createBuilder("script"),
+		elementBuilder = scriptBuilder,
 		applyAttrs = {
 			if (src != null) {
 				attr("src", src)
