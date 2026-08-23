@@ -627,6 +627,11 @@ kotlin {
 		jsMain {
 			kotlin.srcDir("build/generated/kore/src/jsMain/kotlin")
 			resources.srcDir(layout.buildDirectory.dir("generated/llms-resources"))
+
+			dependencies {
+				// Minifier for the production bundle, see `webpack.config.d/00-bundle-speed.js`.
+				implementation(devNpm("@swc/core", libs.versions.swc.get()))
+			}
 		}
 		commonMain {
 			dependencies {
