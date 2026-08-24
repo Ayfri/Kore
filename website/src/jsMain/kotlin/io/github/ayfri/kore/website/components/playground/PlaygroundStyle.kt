@@ -36,6 +36,17 @@ object PlaygroundStyle : StyleSheet() {
 		}
 	}
 
+	/** A bar with no known fraction still has to look alive, so it sweeps instead of sitting still. */
+	val sweep by keyframes {
+		from {
+			property("margin-left", "-40%")
+		}
+
+		to {
+			property("margin-left", "100%")
+		}
+	}
+
 	val container by style {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
@@ -182,7 +193,7 @@ object PlaygroundStyle : StyleSheet() {
 
 	val workspace by style {
 		display(DisplayStyle.Grid)
-		gap(1.cssRem)
+		gap(0.35.cssRem)
 		gridTemplateColumns("minmax(12rem, var(--playground-split, 1.1fr)) auto minmax(12rem, 1fr)")
 		property("height", "calc(100dvh - 17rem)")
 		minHeight(520.px)
@@ -200,7 +211,7 @@ object PlaygroundStyle : StyleSheet() {
 		property("cursor", "col-resize")
 		justifyContent(JustifyContent.Center)
 		property("touch-action", "none")
-		width(0.9.cssRem)
+		width(0.6.cssRem)
 
 		self + hover style {
 			property("--playground-splitter-color", accentColor)
@@ -212,7 +223,7 @@ object PlaygroundStyle : StyleSheet() {
 			property("content", "''")
 			height(3.cssRem)
 			transition(0.2.s, "background-color")
-			width(3.px)
+			width(1.px)
 		}
 
 		mdMax(self) {
@@ -472,17 +483,31 @@ object PlaygroundStyle : StyleSheet() {
 	}
 
 	val preview by style {
+		display(DisplayStyle.Flex)
+		flexDirection(FlexDirection.Column)
 		minHeight(0.px)
 		overflow(Overflow.Auto)
 
-		"pre" style {
+		// Prism's toolbar plugin wraps the `pre`, so the wrapper is what has to fill the pane - a four-line
+		// `pack.mcmeta` otherwise leaves the code box, and the horizontal scrollbar with it, halfway up.
+		"div.code-toolbar" style {
+			display(DisplayStyle.Flex)
+			flexDirection(FlexDirection.Column)
+			flexGrow(1)
+			minWidth(100.percent)
+			property("width", "max-content")
+		}
+
+		// Scrolling belongs to the pane, not to the code box, so the bar sits at the bottom edge either way.
+		"pre, pre[class*=\"language-\"]" style {
 			backgroundColor(Color.transparent)
 			borderRadius(0.px)
 			boxSizing(BoxSizing.BorderBox)
+			flexGrow(1)
 			fontSize(0.82.cssRem)
 			margin(0.px)
-			minHeight(100.percent)
 			minWidth(100.percent)
+			overflow(Overflow.Visible)
 			padding(0.8.cssRem)
 		}
 	}
@@ -533,6 +558,32 @@ object PlaygroundStyle : StyleSheet() {
 		fontSize(0.75.cssRem)
 		gap(0.9.cssRem)
 		padding(0.4.cssRem, 0.8.cssRem)
+	}
+
+	val progressTrack by style {
+		backgroundColor(GlobalStyle.tertiaryBackgroundColor)
+		borderRadius(999.px)
+		height(0.25.cssRem)
+		maxWidth(24.cssRem)
+		overflow(Overflow.Hidden)
+		width(100.percent)
+	}
+
+	val progressBar by style {
+		backgroundColor(GlobalStyle.linkColor)
+		borderRadius(999.px)
+		height(100.percent)
+		property("transition", "width 0.25s ease")
+	}
+
+	val progressBarPending by style {
+		animation(sweep) {
+			duration(1.4.s)
+			timingFunction(AnimationTimingFunction.EaseInOut)
+			iterationCount(null)
+		}
+
+		width(40.percent)
 	}
 
 	val spinner by style {

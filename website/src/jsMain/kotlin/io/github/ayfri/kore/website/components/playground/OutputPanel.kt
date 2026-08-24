@@ -13,6 +13,8 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.web.css.percent
+import org.jetbrains.compose.web.css.width
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Span
@@ -24,12 +26,17 @@ sealed interface OutputState {
 	/** Nothing has been run yet in this session. */
 	data object Idle : OutputState
 
-	/** A compile or a run is in flight; [label] is what the visitor is waiting on. */
-	data class Working(val label: String, val hint: String? = null) : OutputState
+	/**
+	 * A compile or a run is in flight; [label] is what the visitor is waiting on.
+	 *
+	 * [fraction] drives a determinate bar. It is real progress where the backend or the loader can measure
+	 * it, and an elapsed-against-typical guess for the compile itself, which can only be estimated.
+	 */
+	data class Working(val label: String, val hint: String? = null, val fraction: Double? = null) : OutputState
 
 	data class Failed(val title: String, val detail: String? = null) : OutputState
 
-	data class Ready(val files: List<GeneratedFile>, val compileMs: Int, val runMs: Int) : OutputState
+	data class Ready(val files: List<GeneratedFile>, val compileMs: Int, val runMs: Int, val cached: Boolean = false) : OutputState
 }
 
 /** Picks the Prism grammar from the file extension; unknown extensions stay unhighlighted. */
@@ -61,7 +68,7 @@ fun OutputPanel(
 	val scope = rememberCoroutineScope()
 
 	var copied by remember { mutableStateOf(false) }
-	var pretty by remember { mutableStateOf(true) }
+	var pretty by remember { mutableStateOf(PlaygroundStorage.prettyJson) }
 	var selectedPath by remember { mutableStateOf<String?>(null) }
 
 	val files = (state as? OutputState.Ready)?.files.orEmpty()
@@ -97,7 +104,10 @@ fun OutputPanel(
 				if (state is OutputState.Ready) {
 					Button({
 						classes(*prettyToggleClasses(pretty))
-						onClick { pretty = !pretty }
+						onClick {
+							pretty = !pretty
+							PlaygroundStorage.prettyJson = pretty
+						}
 						title("Pretty-printed JSON, or the minified form Minecraft actually reads")
 					}) {
 						Text(if (pretty) "Pretty" else "Raw")
@@ -162,7 +172,7 @@ fun OutputPanel(
 				Div({ classes(PlaygroundStyle.statusStrip) }) {
 					Span { Text("${state.files.size} files") }
 					Span { Text(humanSize(state.files.sumOf { it.content.length })) }
-					Span { Text("compiled in ${state.compileMs / 1000.0}s") }
+					Span { Text(if (state.cached) "reused a cached compile" else "compiled in ${state.compileMs / 1000.0}s") }
 					Span { Text("ran in ${state.runMs}ms") }
 				}
 			}
@@ -171,6 +181,13 @@ fun OutputPanel(
 				Div({ classes(PlaygroundStyle.spinner) })
 				Span({ classes(PlaygroundStyle.stateTitle) }) { Text(state.label) }
 				state.hint?.let { hint -> Span({ classes(PlaygroundStyle.stateDetail) }) { Text(hint) } }
+
+				Div({ classes(PlaygroundStyle.progressTrack) }) {
+					Div({
+						classes(*progressBarClasses(state.fraction != null))
+						state.fraction?.let { fraction -> style { width((fraction * 100).percent) } }
+					})
+				}
 			}
 
 			is OutputState.Failed -> Div({ classes(PlaygroundStyle.stateBox) }) {
@@ -199,6 +216,11 @@ fun OutputPanel(
 private fun paneClasses(maximized: Boolean) = when {
 	maximized -> arrayOf(PlaygroundStyle.pane, PlaygroundStyle.paneMaximized)
 	else -> arrayOf(PlaygroundStyle.pane)
+}
+
+private fun progressBarClasses(determinate: Boolean) = when {
+	determinate -> arrayOf(PlaygroundStyle.progressBar)
+	else -> arrayOf(PlaygroundStyle.progressBar, PlaygroundStyle.progressBarPending)
 }
 
 private fun prettyToggleClasses(pretty: Boolean) = when {

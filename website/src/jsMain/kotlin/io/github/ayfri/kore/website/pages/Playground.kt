@@ -27,6 +27,12 @@ import org.w3c.dom.events.MouseEvent
 
 private const val COMPILE_HINT = "Kotlin/JS compilation against Kore takes about 30 seconds. The result is cached, so re-running an unchanged snippet is instant."
 
+/** What the wait looks like before the backend has said anything, worded from this visitor's own timings. */
+private fun compileHint(typicalMs: Int?) = when (typicalMs) {
+	null -> COMPILE_HINT
+	else -> "Your last compiles took about ${typicalMs / 1000}s. The result is cached, so re-running an unchanged snippet is instant."
+}
+
 @Page
 @Composable
 fun PlaygroundPage() {
@@ -47,20 +53,47 @@ fun PlaygroundPage() {
 	var editor by remember { mutableStateOf<CodeEditor?>(null) }
 	var maximizedPane by remember { mutableStateOf(MaximizedPane.NONE) }
 	var resizing by remember { mutableStateOf(false) }
-	var splitFraction by remember { mutableStateOf(DEFAULT_SPLIT) }
+	var splitFraction by remember { mutableStateOf(PlaygroundStorage.splitFraction?.coerceIn(MIN_SPLIT, MAX_SPLIT) ?: DEFAULT_SPLIT) }
 	var workspace by remember { mutableStateOf<HTMLElement?>(null) }
 	var elapsedSeconds by remember { mutableStateOf(0) }
+	var typicalCompileMs by remember { mutableStateOf<Int?>(null) }
 	var initialCode by remember { mutableStateOf<String?>(null) }
 	var output by remember { mutableStateOf<OutputState>(OutputState.Idle) }
 	var selectedExample by remember { mutableStateOf<PlaygroundExample?>(defaultExample) }
 	var shareLabel by remember { mutableStateOf("Share") }
 
-	// A shared link wins over the default example, and must be resolved before the editor is created.
+	// A shared link wins over a restored draft, which wins over the default example. Resolved before the
+	// editor is created, since Monaco only reads its initial value once.
 	LaunchedEffect(Unit) {
-		val shared = sharedCode()
-		if (shared != null) selectedExample = null
-		code = shared ?: defaultExample.code
+		code = sharedCode() ?: PlaygroundStorage.draft ?: defaultExample.code
+		selectedExample = exampleFor(code)
 		initialCode = code
+		typicalCompileMs = PlaygroundStorage.typicalCompileMs
+	}
+
+	// Debounced through the effect itself: a new keystroke cancels the pending write.
+	LaunchedEffect(code) {
+		if (initialCode == null) return@LaunchedEffect
+		delay(400)
+		PlaygroundStorage.draft = code
+	}
+
+	// Squiggles while typing: the JVM type-check answers in well under a second, so the slow JS compile is
+	// only ever paid on Run. A compile in flight owns the markers, and a stale answer is dropped.
+	LaunchedEffect(code) {
+		if (!backendConfigured || initialCode == null || busy) return@LaunchedEffect
+		delay(700)
+
+		val fresh = runCatching { highlightPlayground(code) }.getOrNull() ?: return@LaunchedEffect
+		if (busy) return@LaunchedEffect
+
+		diagnostics = fresh
+		editor?.showDiagnostics(fresh)
+	}
+
+	LaunchedEffect(splitFraction) {
+		delay(200)
+		PlaygroundStorage.splitFraction = splitFraction
 	}
 
 	LaunchedEffect(busy) {
@@ -76,9 +109,13 @@ fun PlaygroundPage() {
 
 		scope.launch {
 			busy = true
-			output = OutputState.Working("Compiling", COMPILE_HINT)
+			output = OutputState.Working("Compiling", compileHint(typicalCompileMs))
 
-			val result = runCatching { compilePlayground(code) }.getOrElse { throwable ->
+			val result = runCatching {
+				compilePlaygroundStreaming(code) { progress ->
+					output = OutputState.Working(progress.label, progress.detail, progress.fraction)
+				}
+			}.getOrElse { throwable ->
 				busy = false
 				output = OutputState.Failed("Could not reach the compile backend", throwable.message)
 				return@launch
@@ -100,8 +137,17 @@ fun PlaygroundPage() {
 
 			output = OutputState.Working("Running", "The compiled pack is built in your browser, inside a worker.")
 
-			output = when (val execution = runCompiledPack(result.evaluationOrder)) {
-				is RunResult.Success -> OutputState.Ready(execution.files, result.durationMs, execution.durationMs)
+			if (!result.cached) {
+				PlaygroundStorage.recordCompile(result.durationMs)
+				typicalCompileMs = PlaygroundStorage.typicalCompileMs
+			}
+
+			val execution = runCompiledPack(result.evaluationOrder) { progress ->
+				output = OutputState.Working(progress.label, progress.detail, progress.fraction)
+			}
+
+			output = when (execution) {
+				is RunResult.Success -> OutputState.Ready(execution.files, result.durationMs, execution.durationMs, result.cached)
 				is RunResult.Failure -> OutputState.Failed("The snippet failed while running", execution.message)
 			}
 
@@ -227,7 +273,7 @@ fun PlaygroundPage() {
 							className = PlaygroundStyle.editor,
 							onChange = {
 								code = it
-								selectedExample = playgroundExamples.firstOrNull { example -> example.code == it }
+								selectedExample = exampleFor(it)
 							},
 							onReady = { editor = it },
 						)
@@ -249,7 +295,7 @@ fun PlaygroundPage() {
 				})
 
 				OutputPanel(
-					state = output.withElapsed(elapsedSeconds),
+					state = output.withElapsed(elapsedSeconds, typicalCompileMs),
 					backendConfigured = backendConfigured,
 					maximized = maximizedPane == MaximizedPane.OUTPUT,
 					onToggleMaximize = {
@@ -269,6 +315,9 @@ private const val DEFAULT_SPLIT = 0.55
 private const val MAX_SPLIT = 0.8
 private const val MIN_SPLIT = 0.2
 
+/** Matches a buffer back to the example it came from, so the picker keeps showing the right entry. */
+private fun exampleFor(code: String) = playgroundExamplesByCode[code]
+
 private fun splitterClasses(resizing: Boolean) = when {
 	resizing -> arrayOf(PlaygroundStyle.splitter, PlaygroundStyle.splitterActive)
 	else -> arrayOf(PlaygroundStyle.splitter)
@@ -286,8 +335,21 @@ private fun editorPaneClasses(maximized: Boolean) = when {
 	else -> arrayOf(PlaygroundStyle.pane)
 }
 
-/** Shows how long the visitor has been waiting, so a 30s compile never looks like a hung spinner. */
-private fun OutputState.withElapsed(seconds: Int) = when {
-	this is OutputState.Working && seconds > 0 -> copy(label = "$label... ${seconds}s")
-	else -> this
+/**
+ * Shows how long the visitor has been waiting, so a 30s compile never looks like a hung spinner.
+ *
+ * The compile is the one stage that cannot report a fraction of itself, so elapsed time against what past
+ * compiles took stands in for it - capped short of full, since the estimate is a median and this compile
+ * may well be the slow kind.
+ */
+private fun OutputState.withElapsed(seconds: Int, typicalMs: Int?) = when {
+	this !is OutputState.Working || seconds == 0 -> this
+
+	else -> copy(
+		label = "$label... ${seconds}s",
+		fraction = fraction ?: typicalMs?.let { (seconds * 1000.0 / it).coerceAtMost(ESTIMATE_CEILING) },
+	)
 }
+
+/** An estimated bar never reaches the end: the compile is over when the files show up, not when a guess says so. */
+private const val ESTIMATE_CEILING = 0.92

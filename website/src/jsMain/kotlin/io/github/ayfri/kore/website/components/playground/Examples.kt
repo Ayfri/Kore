@@ -415,4 +415,7 @@ val playgroundExamples = listOf(
 /** Examples grouped for the picker, in declaration order so a category keeps the order it was written in. */
 val playgroundExamplesByCategory = playgroundExamples.groupBy { it.category }
 
+/** Reverse index used to tell whether the current buffer is still an untouched example, checked on every keystroke. */
+val playgroundExamplesByCode = playgroundExamples.associateBy { it.code }
+
 val defaultExample = playgroundExamples.first()
