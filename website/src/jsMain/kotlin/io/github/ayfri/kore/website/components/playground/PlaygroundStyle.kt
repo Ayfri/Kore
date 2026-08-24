@@ -193,7 +193,8 @@ object PlaygroundStyle : StyleSheet() {
 
 	val workspace by style {
 		display(DisplayStyle.Grid)
-		gap(0.35.cssRem)
+		columnGap(0.px)
+		rowGap(1.cssRem)
 		gridTemplateColumns("minmax(12rem, var(--playground-split, 1.1fr)) auto minmax(12rem, 1fr)")
 		property("height", "calc(100dvh - 17rem)")
 		minHeight(520.px)
