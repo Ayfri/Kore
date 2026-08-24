@@ -68,6 +68,7 @@ external interface EditorOptions {
 	var fontFamily: String?
 	var fontLigatures: Boolean?
 	var fontSize: Int?
+	var guides: GuidesOptions?
 	var insertSpaces: Boolean?
 	var language: String?
 	var minimap: MinimapOptions?
@@ -82,6 +83,13 @@ external interface EditorOptions {
 
 external interface BracketPairColorizationOptions {
 	var enabled: Boolean?
+}
+
+external interface GuidesOptions {
+	var bracketPairs: Boolean?
+	var highlightActiveBracketPair: Boolean?
+	var highlightActiveIndentation: Boolean?
+	var indentation: Boolean?
 }
 
 external interface MinimapOptions {
