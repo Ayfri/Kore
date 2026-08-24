@@ -57,6 +57,8 @@ kobweb {
 			mapOf(
 				"docGroupOrder" to docGroupOrder.joinToString(","),
 				"minecraftVersion" to minecraftVersion,
+				// Compile backend for /playground. Empty here: the page stays usable and says compiling is off.
+				"playgroundApiUrl" to (findProperty("kore.playgroundApiUrl") as String? ?: ""),
 				"projectVersion" to Project.VERSION,
 				"websiteUrl" to Project.WEBSITE_URL,
 			)
