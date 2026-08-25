@@ -26,17 +26,6 @@ pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
 	}
 }
 
-// Aggregates every module's `allTests` (itself covering every KMP target: jvmTest, jsNodeTest, jsBrowserTest)
-// into a single root task, so CI doesn't need to enumerate modules or platforms.
-val testAll = rootProject.tasks.maybeCreate("testAll").apply {
-	group = "verification"
-	description = "Runs every module's tests across all Kotlin Multiplatform targets (JVM, JS Node, and JS Browser when enabled)."
-}
-
-pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
-	testAll.dependsOn("${project.path}:allTests")
-}
-
 // Browser and Node run the same JS IR, so the Karma round-trip is opt-in via `-Pkore.jsBrowserTests=true`.
 // It has to be `onlyIf` rather than `enabled`: a disabled task stops contributing its npm dependencies, which would
 // make `kotlin-js-store/package-lock.json` differ between the two modes.

@@ -2,6 +2,7 @@ plugins {
 	kotlin("jvm")
 	kotlin("plugin.serialization")
 	application
+	id("kotlin-conventions")
 }
 
 repositories {
@@ -35,6 +36,6 @@ tasks.register<JavaExec>("generateSources") {
 	classpath = sourceSets.main.get().runtimeClasspath
 
 	inputs.property("minecraftVersion", providers.gradleProperty("minecraft.version"))
-	outputs.dir(rootProject.file("kore/src/commonMain/kotlin/io/github/ayfri/kore/generated"))
+	outputs.dir(isolated.rootProject.projectDirectory.dir("kore/src/commonMain/kotlin/io/github/ayfri/kore/generated"))
 	outputs.cacheIf { true }
 }

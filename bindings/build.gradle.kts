@@ -4,6 +4,7 @@ plugins {
 	alias(libs.plugins.ksp)
 	alias(libs.plugins.kotest)
 	id("kotest-conventions")
+	id("kotlin-conventions")
 	id("publish-conventions")
 }
 

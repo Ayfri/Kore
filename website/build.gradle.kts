@@ -13,6 +13,7 @@ import kotlin.time.Duration.Companion.seconds
 plugins {
 	kotlin("multiplatform")
 	kotlin("plugin.compose")
+	id("kotlin-conventions")
 	id("publish-conventions") apply false
 	alias(libs.plugins.kobweb.application)
 	alias(libs.plugins.kobwebx.markdown)
@@ -24,7 +25,7 @@ version = "1.0-SNAPSHOT"
 val docGroupOrder =
 	listOf("guides", "commands", "data-driven", "concepts", "helpers", "oop", "advanced", "contributing")
 
-val minecraftVersion = rootProject.providers.gradleProperty("minecraft.version").orElse("").get()
+val minecraftVersion = providers.gradleProperty("minecraft.version").orElse("").get()
 
 data class DocEntry(
 	val file: File,
