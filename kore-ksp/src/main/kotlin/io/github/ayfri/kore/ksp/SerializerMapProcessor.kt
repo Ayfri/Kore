@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.ksp
 
-import com.google.devtools.ksp.getAllSuperTypes
 import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.*
 import java.io.OutputStreamWriter
@@ -11,7 +10,13 @@ class SerializerMapProcessor(
 	private val codeGenerator: CodeGenerator,
 	private val logger: KSPLogger,
 ) : SymbolProcessor {
+	private var processed = false
+
 	override fun process(resolver: Resolver): List<KSAnnotated> {
+		// Everything is emitted in the first round, so later rounds would only rescan the files we just generated.
+		if (processed) return emptyList()
+		processed = true
+
 		val symbols = resolver.getSymbolsWithAnnotation(ANNOTATION_NAME)
 
 		for (symbol in symbols) {
@@ -40,17 +45,36 @@ class SerializerMapProcessor(
 	private fun allClassDeclarations(resolver: Resolver): Sequence<KSClassDeclaration> =
 		collectClasses(resolver.getAllFiles().asSequence().flatMap { it.declarations.asSequence() })
 
+	// Walks direct supertypes with a shared cache, so a hierarchy common to many candidates resolves once overall
+	// instead of once per candidate as `getAllSuperTypes()` does.
+	private fun subtypeOf(
+		declaration: KSClassDeclaration,
+		baseQualifiedName: String,
+		cache: MutableMap<KSClassDeclaration, Boolean>,
+	): Boolean {
+		cache[declaration]?.let { return it }
+		cache[declaration] = false // Breaks cycles in malformed hierarchies.
+
+		val result = declaration.superTypes.any { reference ->
+			val superDeclaration = reference.resolve().declaration.let { if (it is KSTypeAlias) it.type.resolve().declaration else it }
+			superDeclaration.qualifiedName?.asString() == baseQualifiedName ||
+				(superDeclaration is KSClassDeclaration && subtypeOf(superDeclaration, baseQualifiedName, cache))
+		}
+
+		cache[declaration] = result
+		return result
+	}
+
 	private fun generateMap(resolver: Resolver, base: KSClassDeclaration) {
 		val baseQualifiedName = base.qualifiedName?.asString()
 			?: return logger.error("Base type has no qualified name.", base)
 
+		val cache = mutableMapOf<KSClassDeclaration, Boolean>()
 		val subclasses = allClassDeclarations(resolver)
 			.filter { it.classKind == ClassKind.CLASS || it.classKind == ClassKind.OBJECT }
 			.filter { Modifier.ABSTRACT !in it.modifiers && Modifier.SEALED !in it.modifiers }
 			.filter { it.qualifiedName?.asString() != baseQualifiedName }
-			.filter { declaration ->
-				declaration.getAllSuperTypes().any { it.declaration.qualifiedName?.asString() == baseQualifiedName }
-			}
+			.filter { subtypeOf(it, baseQualifiedName, cache) }
 			.distinctBy { it.qualifiedName?.asString() }
 			.sortedBy { it.qualifiedName?.asString() }
 			.toList()

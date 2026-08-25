@@ -12,7 +12,13 @@ class SealedSerializerProcessor(
 	private val codeGenerator: CodeGenerator,
 	private val logger: KSPLogger,
 ) : SymbolProcessor {
+	private var processed = false
+
 	override fun process(resolver: Resolver): List<KSAnnotated> {
+		// Everything is emitted in the first round, so later rounds would only rescan the files we just generated.
+		if (processed) return emptyList()
+		processed = true
+
 		val symbols = resolver.getSymbolsWithAnnotation(ANNOTATION_NAME)
 
 		for (symbol in symbols) {
