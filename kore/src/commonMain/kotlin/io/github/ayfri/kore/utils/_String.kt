@@ -16,9 +16,14 @@ fun String.pascalCase() = split("_").joinToString("") { word ->
 	}
 }
 
-fun String.snakeCase() = replace(Regex("([A-Z]+)([A-Z][a-z])"), "$1_$2")
-	.replace(Regex("([a-z])([0-9])"), "$1_$2")
-	.replace(Regex("([a-z])([A-Z])"), "$1_$2")
+// Hoisted: `snakeCase` runs on every polymorphic serial name, so recompiling these per call is pure overhead.
+private val ACRONYM_BOUNDARY = Regex("([A-Z]+)([A-Z][a-z])")
+private val LETTER_THEN_DIGIT = Regex("([a-z])([0-9])")
+private val LOWER_THEN_UPPER = Regex("([a-z])([A-Z])")
+
+fun String.snakeCase() = replace(ACRONYM_BOUNDARY, "$1_$2")
+	.replace(LETTER_THEN_DIGIT, "$1_$2")
+	.replace(LOWER_THEN_UPPER, "$1_$2")
 	.lowercase()
 
 /**

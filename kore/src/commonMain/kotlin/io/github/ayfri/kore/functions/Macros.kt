@@ -21,6 +21,10 @@ open class Macros {
 
 		/** Regex pattern used to find macro expressions like `$(name)`. */
 		const val MACRO_REGEX = "\\$\\($MACRO_NAME_REGEX\\)"
+
+		// Compiled once: these are matched per added line and per macro declaration.
+		internal val macroNamePattern = Regex(MACRO_NAME_REGEX)
+		internal val macroPattern = Regex(MACRO_REGEX)
 	}
 }
 
@@ -30,7 +34,7 @@ open class Macros {
 * and returns the textual macro `$(name)` to be used in command lines.
 */
 operator fun String.getValue(thisRef: Macros, property: KProperty<*>): String {
-	require(this matches Regex(Macros.MACRO_NAME_REGEX)) {
+	require(this matches Macros.macroNamePattern) {
 		"Macro name must only contain letters, numbers and underscores, got '$this'."
 	}
 

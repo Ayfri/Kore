@@ -50,7 +50,7 @@ open class Function(
 
 	private fun handleMacro(line: String): String {
 		if (nextLineHasMacro) {
-			if (Regex(Macros.MACRO_REGEX) in line && !line.startsWith('$')) return "$$line"
+			if (Macros.macroPattern in line && !line.startsWith('$')) return "$$line"
 			nextLineHasMacro = false
 		}
 
