@@ -1,4 +1,5 @@
 [versions]
+gradle-plugin-publish = "2.1.1"
 jetbrains-compose = "1.11.1"
 joml = "1.10.8"
 knbt = "0.11.9"
@@ -45,6 +46,7 @@ ktor-serialization = { module = "io.ktor:ktor-serialization", version.ref = "kto
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 [plugins]
+gradle-plugin-publish = { id = "com.gradle.plugin-publish", version.ref = "gradle-plugin-publish" }
 kobweb-application = { id = "com.varabyte.kobweb.application", version.ref = "kobweb" }
 kobwebx-markdown = { id = "com.varabyte.kobwebx.markdown", version.ref = "kobweb" }
 kotest = { id = "io.kotest", version.ref = "kotest" }

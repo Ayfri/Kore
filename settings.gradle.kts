@@ -31,6 +31,7 @@ rootProject.name = "Kore"
 
 // Dependency order: it seeds the task graph, so the long kore -> oop -> helpers JS chain gets scheduled before the cheap leaves.
 include(":generation")
+include(":kore-gradle-plugin")
 include(":kore-ksp")
 include(":kore")
 include(":common-tests")
