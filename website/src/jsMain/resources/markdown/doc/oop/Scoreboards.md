@@ -3,9 +3,9 @@ root: .components.layouts.MarkdownLayout
 title: Scoreboards
 nav-title: Scoreboards
 description: Object-oriented scoreboard management with the Kore OOP module - objectives, display slots, per-entity score operations, and score arithmetic operators.
-keywords: minecraft, datapack, kore, oop, scoreboard, objective, score, display slot, plusAssign, operators
+keywords: minecraft, datapack, kore, oop, scoreboard, objective, score, display slot, fake player, operators, constants
 date-created: 2026-03-03
-date-modified: 2026-08-14
+date-modified: 2026-09-04
 routeOverride: /docs/oop/scoreboards
 ---
 
@@ -71,21 +71,21 @@ function("score_ops") {
 }
 ```
 
-| Function                | Description                                            |
-|-------------------------|--------------------------------------------------------|
-| `set`                   | Set score to a value                                   |
-| `add`                   | Add to the score                                       |
-| `remove`                | Subtract from the score                                |
-| `reset`                 | Reset the score                                        |
-| `copyTo`                | Copy this score to another holder/objective, or into entity/storage NBT |
-| `copyFrom`              | Copy from another holder/objective                     |
-| `copyDataFrom`          | Store a numeric NBT value (entity or storage) into this score |
-| `copyEntityCountFrom`   | Store how many entities match a selector into this score |
-| `copyMemberCountFrom`   | Store a team's member count into this score            |
+| Function              | Description                                                             |
+|-----------------------|-------------------------------------------------------------------------|
+| `set`                 | Set score to a value                                                    |
+| `add`                 | Add to the score                                                        |
+| `remove`              | Subtract from the score                                                 |
+| `reset`               | Reset the score                                                         |
+| `copyTo`              | Copy this score to another holder/objective, or into entity/storage NBT |
+| `copyFrom`            | Copy from another holder/objective                                      |
+| `copyDataFrom`        | Store a numeric NBT value (entity or storage) into this score           |
+| `copyEntityCountFrom` | Store how many entities match a selector into this score                |
+| `copyMemberCountFrom` | Store a team's member count into this score                             |
 
 ### Operators
 
-`ScoreboardEntity` supports `+=` and `-=`:
+`ScoreboardEntity` supports `+=` and `-=` against a literal:
 
 ```kotlin
 function("on_kill") {
@@ -94,6 +94,68 @@ function("on_kill") {
 	kills -= 1
 }
 ```
+
+The same operators work between two score handles, and `*=`, `/=`, `%=` are available on both sides. Every one of them
+compiles to a single `scoreboard players operation`:
+
+```kotlin
+function("score_math") {
+	val score = player.getScoreEntity("score")
+	val kills = player.getScoreEntity("kills")
+
+	score += kills  // scoreboard players operation ... += ...
+	score *= kills
+	score /= kills  // floored division, as vanilla does
+	score %= kills  // floored modulo
+
+	score setTo kills
+	score minWith kills   // keeps the smaller of the two
+	score maxWith kills   // keeps the larger of the two
+	score swapWith kills
+}
+```
+
+`*=`, `/=` and `%=` also accept an `Int`. Vanilla has no literal right-hand side for `operation`, so Kore reads the
+value from a fake-player constant, declared once per function in the `kore_constants` objective
+(rename it through `OopConstants.constantsObjective`):
+
+```kotlin
+function("halve_score") {
+	val score = player.getScoreEntity("score")
+	score /= 2
+}
+```
+
+```mcfunction
+scoreboard objectives add kore_constants dummy
+scoreboard players set #2 kore_constants 2
+scoreboard players operation @e[...] score /= #2 kore_constants
+```
+
+### Fake players
+
+A score holder starting with `#` is a *fake player*: a holder no real entity owns, which is how datapacks keep globals
+and constants out of the sidebar. `fakePlayer` builds an `Entity` handle for one, so every `ScoreboardEntity` API works
+against it:
+
+```kotlin
+function("next_wave") {
+	val wave = fakePlayer("wave").getScoreEntity("game_state")
+	wave += 1
+	wave.copyTo(storage("kore", "game"), "wave")
+}
+```
+
+```mcfunction
+scoreboard players add #wave game_state 1
+execute store result storage kore:game wave int 1.0 run scoreboard players get #wave game_state
+```
+
+`fakePlayer("wave")` and `fakePlayer("#wave")` both produce `#wave`. Use the `FakePlayer` constructor directly for
+holders that must not carry that prefix, such as the `§0`..`§f` holders behind sidebar lines.
+
+A fake player has no entity behind it, so `asSelector()` throws instead of emitting `@e[name=#wave]`, which matches an
+entity custom name and would silently target nothing. Only score APIs, which go through `asScoreHolder()`, accept one.
 
 ### Copying between scores, NBT, and counts
 
@@ -142,10 +204,8 @@ This emits `scoreboard players add @s last_crystal_charge 10`.
 operators, and the `min` / `max` infix operations:
 
 ```kotlin
-function("score_math") {
+function("self_score_math") {
 	val mine = scoreboard.objective(self(), "score")
-	// a name starting with # is a fake player: a score holder no real entity owns,
-	// which is the usual way to store a global value
 	val best = scoreboard.objective(literal("#best"), "score")
 
 	mine++
@@ -154,8 +214,8 @@ function("score_math") {
 }
 ```
 
-Use `scoreboard.objective(...)` whenever the score holder is `@s`, a fake player (`literal("#total")`), or any
-selector you already have as an `Argument`. Use `ScoreboardEntity` when you already hold an OOP `Entity`.
+Use `scoreboard.objective(...)` whenever the score holder is `@s` or any selector you already have as an `Argument`.
+Use `ScoreboardEntity` when you hold an OOP `Entity`, including a [fake player](#fake-players).
 
 ## Practical pattern
 

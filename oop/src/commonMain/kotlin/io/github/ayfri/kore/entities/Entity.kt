@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.enums.DataType
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.maths.coordinate
 import io.github.ayfri.kore.arguments.selector.SelectorArguments
+import io.github.ayfri.kore.arguments.types.ScoreHolderArgument
 import io.github.ayfri.kore.arguments.types.literals.RotationArgument
 import io.github.ayfri.kore.arguments.types.literals.allEntities
 import io.github.ayfri.kore.arguments.types.literals.rotation
@@ -43,11 +44,19 @@ open class Entity(
 		}
 
 	/** Builds an `@e` selector mirroring this entity, with optional extra modifications. */
-	fun asSelector(limitToOne: Boolean = this.limitToOne, modification: SelectorArguments.() -> Unit = {}) =
+	open fun asSelector(limitToOne: Boolean = this.limitToOne, modification: SelectorArguments.() -> Unit = {}) =
 		allEntities(limitToOne) {
 			copyFrom(selector)
 			modification()
 		}
+
+	/**
+	 * The score-holder form of this entity, used by every `scoreboard` and `execute store ... score` call.
+	 *
+	 * Selector-backed entities resolve to their selector; [FakePlayer] resolves to its bare name, because
+	 * `@e[name=#foo]` matches an entity custom name and would silently target nothing.
+	 */
+	open fun asScoreHolder(): ScoreHolderArgument = asSelector()
 }
 
 /** Executes a block as this entity. */
@@ -90,7 +99,7 @@ fun Entity.getScoreEntity(name: String) = ScoreboardEntity(name, this)
 /** Stores how many entities currently match this selector into [score]. */
 context(fn: Function)
 fun Entity.storeCountIn(score: ScoreboardEntity) = fn.execute {
-	storeResult { score(score.entity.asSelector(), score.name) }
+	storeResult { score(score.entity.asScoreHolder(), score.name) }
 	run {
 		execute {
 			ifCondition {
@@ -165,7 +174,7 @@ fun Entity.replaceItem(slot: ItemSlotType, item: ItemArgument, count: Int = 1) =
 
 /** Sets this entity's score in the objective named [name]. */
 context(fn: Function)
-fun Entity.setScore(name: String, value: Int) = fn.scoreboard.players.set(asSelector(), name, value)
+fun Entity.setScore(name: String, value: Int) = fn.scoreboard.players.set(asScoreHolder(), name, value)
 
 /** Teleports this entity to [coordinate] with an optional [rotation]. */
 context(fn: Function)

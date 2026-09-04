@@ -8,6 +8,7 @@ data object OopConstants {
 	var bredAnimalsEvent = "on_bred_animals"
 	var brewedPotionEvent = "on_brewed_potion"
     var changeDimensionEvent = "on_change_dimension"
+    var constantsObjective = "kore_constants"
     var consumeItemEvent = "on_consume_item"
     var cooldownReadyHandlersTag = "cooldown_ready_handlers"
     var dayStartEvent = "on_day_start"
