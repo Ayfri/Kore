@@ -3,6 +3,7 @@ package io.github.ayfri.kore.utils
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.benwoodworth.knbt.*
@@ -23,6 +24,19 @@ fun nbtList(block: NbtListBuilder<NbtCompound>.() -> Unit = {}) = buildNbtList(b
 fun NbtCompoundBuilder.nbt(name: String, block: NbtCompoundBuilder.() -> Unit = {}) = putNbtCompound(name, block)
 fun NbtCompoundBuilder.json(name: String, block: NbtCompoundBuilder.() -> Unit = {}) =
 	put(name, StringifiedNbt.encodeToString(buildNbtCompound(block)))
+
+/**
+ * Parses an SNBT compound, the textual NBT form Minecraft accepts in commands: `"{Count:3b,tag:{x:1}}".toNbt()`.
+ *
+ * Use it to reuse a snippet copied from a command or the wiki where the DSL expects an [NbtCompound], instead of
+ * transcribing it into an [nbt] builder.
+ *
+ * @throws kotlinx.serialization.SerializationException when the string is not a valid SNBT compound.
+ */
+fun String.toNbt() = StringifiedNbt.decodeFromString<NbtCompound>(this)
+
+/** Parses any SNBT value, including lists, arrays, and bare primitives. */
+fun String.toNbtTag() = StringifiedNbt.decodeFromString<NbtTag>(this)
 
 fun stringifiedNbt(nbt: NbtTag) = StringifiedNbt.encodeToString(nbt)
 fun stringifiedNbt(block: NbtCompoundBuilder.() -> Unit) = StringifiedNbt.encodeToString(buildNbtCompound(block))
