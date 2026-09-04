@@ -18,11 +18,18 @@ import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import net.benwoodworth.knbt.NbtCompoundBuilder
 
-private fun ItemStack.itemEntityItemCompound(effectiveComponents: Components) = nbt {
+/**
+ * Builds the `{id, count?, components?}` compound Minecraft expects wherever an item stack lives in NBT: the `Item`
+ * tag of an item entity, a container's `Items` entries, or a `data modify ... set value` target.
+ *
+ * @param components Components written into the compound, defaulting to the stack's own ones. Empty components are
+ * omitted entirely, matching how vanilla serializes a stack with no component patch.
+ */
+fun ItemStack.toNbt(components: Components? = this.components) = nbt {
 	this["id"] = id
-	count?.let { this["count"] = it.toInt() }
-	if (effectiveComponents.components.isNotEmpty()) {
-		this["components"] = effectiveComponents.asNbt()
+	this@toNbt.count?.let { this["count"] = it.toInt() }
+	if (components != null && components.components.isNotEmpty()) {
+		this["components"] = components.asNbt()
 	}
 }
 
@@ -52,7 +59,7 @@ fun ItemStack.summon(
 	val effectiveComponents = components ?: Components()
 	opts.applyCommonEntitySummonNbt(this)
 
-	this["Item"] = itemEntityItemCompound(effectiveComponents)
+	this["Item"] = toNbt(effectiveComponents)
 
 	opts.pickupDelay?.let { this["PickupDelay"] = it }
 	opts.age?.let { this["Age"] = it }

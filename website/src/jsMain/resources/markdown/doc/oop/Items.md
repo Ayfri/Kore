@@ -2,10 +2,10 @@
 root: .components.layouts.MarkdownLayout
 title: Items
 nav-title: Items
-description: Object-oriented item creation and spawning with the Kore OOP module.
-keywords: minecraft, datapack, kore, oop, items, item stack, summon, give
+description: Object-oriented item creation, spawning, and NBT serialization with the Kore OOP module.
+keywords: minecraft, datapack, kore, oop, items, item stack, summon, give, nbt, data modify
 date-created: 2026-03-03
-date-modified: 2026-08-14
+date-modified: 2026-09-04
 routeOverride: /docs/oop/items
 ---
 
@@ -35,6 +35,30 @@ function("item_demo") {
 
 `summon()` spawns the stack as a `minecraft:item` entity at the given position (defaulting to `~ ~ ~`). The overload
 taking a `ChatComponents` or a `String` + `Color` sets the entity's visible custom name.
+
+## Writing a stack into NBT
+
+`toNbt()` returns the `{id, count?, components?}` compound Minecraft expects wherever an item stack lives in NBT: the
+`Item` tag of an item entity, a container's `Items` entries, or a `data modify ... set value` target. Empty components
+are omitted, matching how vanilla serializes a stack with no component patch.
+
+```kotlin
+function("stock_shop") {
+	val sword = itemStack(Items.DIAMOND_SWORD, 3) {
+		enchantments {
+			sharpness(5)
+		}
+	}
+
+	data(storage("kore", "shop")).modify("offer.item", sword.toNbt())
+}
+```
+
+```mcfunction
+data modify storage kore:shop offer.item set value {id:"minecraft:diamond_sword",count:3,components:{enchantments:{"minecraft:sharpness":5}}}
+```
+
+Pass explicit components to serialize a variant of the same stack without rebuilding it: `sword.toNbt(otherComponents)`.
 
 ## Configuring the spawned entity
 
