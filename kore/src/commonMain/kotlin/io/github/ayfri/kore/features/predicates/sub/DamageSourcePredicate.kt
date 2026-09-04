@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.features.predicates.sub
 
+import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.generated.Tags
 import kotlinx.serialization.Serializable
 
@@ -10,6 +11,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class DamageTagPredicate(
+	@Serializable(Argument.ArgumentSerializer::class)
 	var id: Tags.DamageType,
 	/** Whether the damage type is expected to have or not have the tag. */
 	var expected: Boolean,
