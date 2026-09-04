@@ -6,28 +6,28 @@ val minecraftVersion = providers.gradleProperty("minecraft.version")
 val isSnapshotBuild = providers.gradleProperty("kore.publish.snapshot")
 	.map(String::toBoolean)
 	.orElse(false)
+	.get()
 
-
-val publicationVersion = minecraftVersion.zip(isSnapshotBuild) { mcVersion, snapshot ->
-	buildString {
-		append(Project.VERSION)
-		append("-")
-		append(mcVersion)
-		if (snapshot) append("-SNAPSHOT")
-	}
+// Every published module shares one version, `<koreVersion>-<mcVersion>`, e.g. `2.13.1-26.2`. The Gradle plugin has no
+// use for the Minecraft suffix, but carrying it keeps every release uniform and leaves consumers a single string.
+val publicationVersion = buildString {
+	append(Project.VERSION)
+	append("-")
+	append(minecraftVersion.get())
+	if (isSnapshotBuild) append("-SNAPSHOT")
 }
 
 group = Project.GROUP
-version = publicationVersion.get()
+version = publicationVersion
 
 mavenPublishing {
-	publishToMavenCentral(automaticRelease = !isSnapshotBuild.get())
+	publishToMavenCentral(automaticRelease = !isSnapshotBuild)
 
-	if (providers.environmentVariable("CI").isPresent && !isSnapshotBuild.get()) {
+	if (providers.environmentVariable("CI").isPresent && !isSnapshotBuild) {
 		signAllPublications()
 	}
 
-	coordinates(Project.GROUP, project.name, publicationVersion.get())
+	coordinates(Project.GROUP, project.name, publicationVersion)
 
 	pom {
 		name = project.name
