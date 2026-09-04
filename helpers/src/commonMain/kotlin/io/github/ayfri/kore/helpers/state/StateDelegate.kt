@@ -67,14 +67,14 @@ data class ScoreboardDelegate(
 		ensureObjective()
 		fn.scoreboard {
 			players {
-				set(entity.asSelector(), objectiveName, value)
+				set(entity.asScoreHolder(), objectiveName, value)
 			}
 		}
 	}
 
 	fun asExecuteScore(): ExecuteScore {
 		ensureObjective()
-		return ExecuteScore(entity.asSelector(), objectiveName)
+		return ExecuteScore(entity.asScoreHolder(), objectiveName)
 	}
 
 	fun scoreboardEntity(): ScoreboardEntity {
@@ -227,7 +227,7 @@ fun repeat(
 	val iteration = ScoreboardDelegate("${name}_iteration", times.entity, fn)
 	val iterationScore = iteration.scoreboardEntity()
 	if (counter == null) {
-		counterScore.copyFrom(times.entity.asSelector(), times.objectiveName)
+		counterScore.copyFrom(times.entity.asScoreHolder(), times.objectiveName)
 	}
 	iterationScore.set(0)
 	return runWhile(effectiveCounter greaterThan 0, name) {
@@ -329,3 +329,67 @@ fun <T : Any> Entity.storage(
 	path: String,
 	default: T,
 ) = StorageDelegate(storageId, path, fn, default)
+
+/** Emits `... += <other>` between two delegated scores. */
+context(fn: Function)
+operator fun ScoreboardDelegate.plusAssign(other: ScoreboardDelegate) {
+	scoreboardEntity() += other.scoreboardEntity()
+}
+
+/** Emits `... -= <other>` between two delegated scores. */
+context(fn: Function)
+operator fun ScoreboardDelegate.minusAssign(other: ScoreboardDelegate) {
+	scoreboardEntity() -= other.scoreboardEntity()
+}
+
+/** Emits `... *= <other>` between two delegated scores. */
+context(fn: Function)
+operator fun ScoreboardDelegate.timesAssign(other: ScoreboardDelegate) {
+	scoreboardEntity() *= other.scoreboardEntity()
+}
+
+/** Emits `... /= <other>` between two delegated scores, using Minecraft's floored integer division. */
+context(fn: Function)
+operator fun ScoreboardDelegate.divAssign(other: ScoreboardDelegate) {
+	scoreboardEntity() /= other.scoreboardEntity()
+}
+
+/** Emits `... %= <other>` between two delegated scores, using Minecraft's floored modulo. */
+context(fn: Function)
+operator fun ScoreboardDelegate.remAssign(other: ScoreboardDelegate) {
+	scoreboardEntity() %= other.scoreboardEntity()
+}
+
+/** Emits `... *= #<value>` against a generated constant holder. */
+context(fn: Function)
+operator fun ScoreboardDelegate.timesAssign(value: Int) {
+	scoreboardEntity() *= value
+}
+
+/** Emits `... /= #<value>` against a generated constant holder. */
+context(fn: Function)
+operator fun ScoreboardDelegate.divAssign(value: Int) {
+	scoreboardEntity() /= value
+}
+
+/** Emits `... %= #<value>` against a generated constant holder. */
+context(fn: Function)
+operator fun ScoreboardDelegate.remAssign(value: Int) {
+	scoreboardEntity() %= value
+}
+
+/** Emits `... = <other>` between two delegated scores. */
+context(fn: Function)
+infix fun ScoreboardDelegate.setTo(other: ScoreboardDelegate) = scoreboardEntity() setTo other.scoreboardEntity()
+
+/** Emits `... < <other>`, keeping the smaller of the two delegated scores. */
+context(fn: Function)
+infix fun ScoreboardDelegate.minWith(other: ScoreboardDelegate) = scoreboardEntity() minWith other.scoreboardEntity()
+
+/** Emits `... > <other>`, keeping the larger of the two delegated scores. */
+context(fn: Function)
+infix fun ScoreboardDelegate.maxWith(other: ScoreboardDelegate) = scoreboardEntity() maxWith other.scoreboardEntity()
+
+/** Emits `... >< <other>`, swapping both delegated scores. */
+context(fn: Function)
+infix fun ScoreboardDelegate.swapWith(other: ScoreboardDelegate) = scoreboardEntity() swapWith other.scoreboardEntity()

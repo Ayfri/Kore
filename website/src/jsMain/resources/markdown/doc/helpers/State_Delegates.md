@@ -3,9 +3,9 @@ root: .components.layouts.MarkdownLayout
 title: State Delegates
 nav-title: State Delegates
 description: Kotlin property delegates that map scoreboard objectives or NBT storage to simple var properties with the Kore helpers module.
-keywords: minecraft, datapack, kore, helpers, state, delegate, scoreboard, storage, nbt, property
+keywords: minecraft, datapack, kore, helpers, state, delegate, scoreboard, storage, nbt, property, operators, fake player
 date-created: 2026-03-03
-date-modified: 2026-04-01
+date-modified: 2026-09-04
 routeOverride: /docs/helpers/state-delegates
 ---
 
@@ -52,6 +52,39 @@ function("mana_delta") {
 - `set(value)` for absolute updates.
 - `add(value)` and `remove(value)` for relative updates.
 - `plusAssign` / `minusAssign` as Kotlin operator sugar for those relative updates.
+
+### Arithmetic between delegates
+
+Two delegates combine directly, without unwrapping either of them into a score handle. `+=`, `-=`, `*=`, `/=` and `%=`
+each compile to one `scoreboard players operation`, and `setTo`, `minWith`, `maxWith` and `swapWith` cover the
+remaining vanilla operations:
+
+```kotlin
+function("apply_damage") {
+	val health = player.scoreboard("health")
+	val damage = player.scoreboard("incoming_damage")
+	val floor = player.scoreboard("min_health")
+
+	health -= damage
+	health maxWith floor
+	damage *= 2
+}
+```
+
+`*=`, `/=` and `%=` also accept an `Int`, read from a fake-player constant Kore declares once per function. See
+[Scoreboards](/docs/oop/scoreboards#operators) for the emitted commands.
+
+### Global scores
+
+A delegate is not tied to a real entity. Pair it with a [fake player](/docs/oop/scoreboards#fake-players) for values
+that belong to the pack rather than to a player:
+
+```kotlin
+function("start_wave") {
+	var wave by fakePlayer("wave").scoreboard("game_state")
+	wave = 1  // emits: /scoreboard players set #wave game_state 1
+}
+```
 
 ## Storage delegate
 
@@ -215,16 +248,17 @@ function("combo_loops") {
 
 ## API summary
 
-| Function / type         | Purpose                                                                                           |
-|-------------------------|---------------------------------------------------------------------------------------------------|
-| `scoreboard(...)`       | Create a scoreboard-backed delegate for an entity.                                                |
-| `scoreboardEntity(...)` | Create a score handle for relative arithmetic.                                                    |
-| `runIf(...)`            | Run a block when a delegated score condition matches.                                             |
-| `runWhile(...)`         | Re-run a block while a delegated score condition stays true.                                      |
-| `repeat(...)`           | Run a block once per score point, with an optional separate counter score and iteration delegate. |
-| `storage(...)`          | Create an NBT storage-backed delegate.                                                            |
-| `ScoreboardDelegate`    | Lazy scoreboard delegate implementation plus score conditions.                                    |
-| `StorageDelegate<T>`    | Generic storage delegate implementation.                                                          |
+| Function / type                              | Purpose                                                                                           |
+|----------------------------------------------|---------------------------------------------------------------------------------------------------|
+| `scoreboard(...)`                            | Create a scoreboard-backed delegate for an entity.                                                |
+| `scoreboardEntity(...)`                      | Create a score handle for relative arithmetic.                                                    |
+| `runIf(...)`                                 | Run a block when a delegated score condition matches.                                             |
+| `runWhile(...)`                              | Re-run a block while a delegated score condition stays true.                                      |
+| `repeat(...)`                                | Run a block once per score point, with an optional separate counter score and iteration delegate. |
+| `storage(...)`                               | Create an NBT storage-backed delegate.                                                            |
+| `setTo` / `minWith` / `maxWith` / `swapWith` | Infix score operations between two delegates.                                                     |
+| `ScoreboardDelegate`                         | Lazy scoreboard delegate implementation plus score conditions.                                    |
+| `StorageDelegate<T>`                         | Generic storage delegate implementation.                                                          |
 
 ## See also
 
