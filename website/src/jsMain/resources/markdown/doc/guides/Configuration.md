@@ -5,15 +5,16 @@ nav-title: Configuration
 description: Tune how Kore serializes your datapack - pretty-printed JSON, indentation, the generated functions folder, and debug comments on generated function calls.
 keywords: kore configuration, datapack pretty print, datapack json formatting, generated functions folder, kore settings, minecraft datapack debug, generated_scopes, mcfunction output
 date-created: 2024-04-06
-date-modified: 2026-08-05
+date-modified: 2026-09-05
 routeOverride: /docs/guides/configuration
 position: 2
 ---
 
 # DataPack configuration
 
-The `configuration { }` block controls **how Kore writes** your pack: JSON formatting, and the naming of the functions
-Kore generates on your behalf. It has four options, all listed at the bottom of this page.
+The `configuration { }` block controls **how Kore writes** your pack: JSON formatting, the naming of the functions
+Kore generates on your behalf, and the [optimization passes](/docs/guides/optimization) run before writing. All options
+are listed at the bottom of this page.
 
 It does **not** control *where* output goes or *what shape* it takes - that is `path` plus your choice of `generate()`,
 `generateZip()` or `generateJar()`, covered in [Creating a Datapack](/docs/guides/creating-a-datapack).
@@ -107,6 +108,7 @@ dataPack("mypack") {
 |------------------------------------------|--------------------------------------------------------------------|----------------------|
 | `generateCommentOfGeneratedFunctionCall` | Insert a comment when calling a generated function from `execute`. | `false`              |
 | `generatedFunctionsFolder`               | Subfolder under `function/` for generated `.mcfunction` files.     | `"generated_scopes"` |
+| `optimization`                           | Whole-pack passes run before writing, see [Optimization](/docs/guides/optimization). | disabled             |
 | `prettyPrint`                            | Pretty-print JSON resources.                                       | `false`              |
 | `prettyPrintIndent`                      | Indent string when pretty-printing JSON.                           | `"\t"`               |
 
@@ -115,3 +117,4 @@ dataPack("mypack") {
 - [Creating a Datapack](/docs/guides/creating-a-datapack) - metadata, output location, and packaging
 - [Functions](/docs/commands/functions) - what produces the generated functions this page names
 - [Execute](/docs/commands/execute) - the main source of generated scope functions
+- [Optimization](/docs/guides/optimization) - the passes cleaning up the finished pack
