@@ -5,7 +5,7 @@ nav-title: "CI/CD and Releases"
 description: Project and Minecraft versioning, CI automation, CodeQL scanning, release naming, and operational release practices for Kore maintainers.
 keywords: cd, ci, kore, maintenance, minecraft, releases, versioning
 date-created: 2026-04-10
-date-modified: 2026-07-12
+date-modified: 2026-09-05
 routeOverride: /docs/contributing/ci-cd-and-releases
 ---
 
@@ -24,6 +24,11 @@ Expected increment conventions:
 
 - Breaking/major change: `+0.1`
 - Minor fix/addition: `+0.0.1`
+
+Every published module carries the concatenation of the two, `<projectVersion>-<minecraftVersion>`, produced once in
+the `publish-conventions` convention plugin. `kore-gradle-plugin` is included even though a build plugin targets no
+game version, so one version string covers both the `plugins {}` and the `dependencies {}` block of a consumer build,
+and a release that only bumps `minecraft.version` still moves every coordinate forward.
 
 ## Release naming pattern
 
@@ -63,7 +68,8 @@ Current repository automation is split across dedicated workflows under `.github
   Pull requests run on Ubuntu only; `master` additionally runs the Windows matrix entry.
 - `codeql.yml`: runs GitHub CodeQL analysis for `actions` and `java-kotlin` on pushes, pull requests, manual dispatch,
   and a weekly schedule.
-- `publish.yml`: performs the manual release publication flow.
+- `publish.yml`: performs the manual release publication flow, to the Central Portal for every module and to the
+  Gradle Plugin Portal for `kore-gradle-plugin`.
 - `publish-snapshot.yml`: publishes snapshot artifacts from `master`.
 
 ### CI build tuning
