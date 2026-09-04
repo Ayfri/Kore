@@ -6,6 +6,7 @@ import io.github.ayfri.kore.features.tags.Tag
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generation.platform.*
 import io.github.ayfri.kore.generation.zip.ZipWriter
+import io.github.ayfri.kore.optimization.runOptimizationPasses
 import io.github.ayfri.kore.pack.PackMCMeta
 import io.github.ayfri.kore.utils.*
 import kotlinx.io.files.Path
@@ -60,6 +61,8 @@ data class DataPackGenerator(
 			warn("Trying to generate the already generated datapack '${datapack.name}' in $dataPackPath.")
 			return null
 		}
+
+		datapack.runOptimizationPasses()
 
 		val packMCMeta = datapack.generatePackMCMetaFile()
 
