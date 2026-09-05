@@ -2,7 +2,7 @@
 root: .components.layouts.MarkdownLayout
 title: Kore Optimization Passes - Prune Dead Functions From Your Datapack
 nav-title: Optimization
-description: Run whole-pack optimization passes before Kore writes your datapack, pruning empty functions and the calls to them, and plug in your own passes.
+description: Run whole-pack optimization passes before Kore writes your datapack, pruning dead functions, shortening execute chains and sorting selectors, or plug in your own.
 keywords: kore optimization, datapack dead code, prune empty mcfunction, datapack size, minecraft datapack optimization, kore configuration passes
 date-created: 2026-09-05
 date-modified: 2026-09-05
@@ -43,6 +43,10 @@ configuration {
 }
 ```
 
+The built-in passes run in this order, each one feeding the next: `prune-empty-functions`,
+`simplify-execute-chains`, `hoist-conditions-into-selectors`, `reorder-selector-arguments`, `dedupe-functions`,
+`prune-unreferenced-generated-functions`, `warn-unreachable-code`.
+
 ## `prune-empty-functions`
 
 Removes user functions that contain no command, then removes the calls made to them. Comment-only functions count as
@@ -62,6 +66,66 @@ val relay = function("relay") { function(empty) }
 function("caller") { function(relay) }
 // all three functions are gone
 ```
+
+## `simplify-execute-chains`
+
+Rewrites every `execute` chain into the shortest form running the exact same command.
+
+- `execute run <command>` loses its chain entirely.
+- An `as @s` clause preceded by another `as` is dropped, since the executor it re-selects is already the current one.
+- A clause repeated right after itself is dropped when running it twice cannot fork the execution context, so
+  `at @s at @s` collapses while `at @e[type=pig] at @e[type=pig]` stays, the second one forking over every pig again.
+
+A leading `as @s` is kept: a function called from a function tag has no executor, so the chain must still fail there.
+Macro lines, and chains whose clauses contain a quoted string, are left alone.
+
+## `hoist-conditions-into-selectors`
+
+Moves the score conditions testing the executor into the selector that picked it:
+
+```
+execute as @e[type=marker] if score @s timer matches 1 run say hi
+execute as @e[type=marker,scores={timer=1}] run say hi
+```
+
+The second form builds one execution context per matching entity instead of one per marker, and runs one command node
+less. The range syntax is identical on both sides, so the rewrite is a move, not a translation.
+
+A condition is only hoisted while nothing between the `as` and the condition can change the executor (`as`, `on`,
+`summon`, `store`), and only into a selector that carries no `scores` argument yet.
+
+## `reorder-selector-arguments`
+
+The game tests selector arguments in the order they are written, so `@e[nbt={...},type=marker]` deserializes the NBT of
+every entity in range before checking the type, while `@e[type=marker,nbt={...}]` reads it for markers only. The result
+set is the same either way, which makes the reordering free. The pass sorts them cheapest first, roughly
+`type`, `tag`, `team`, `scores`, `level`, `gamemode`, `name`, position and distance, then `advancements`, `predicate`
+and `nbt`.
+
+## `dedupe-functions`
+
+Merges functions sharing the exact same body and redirects the calls to the survivor. `addGeneratedFunction` already
+merges two generated functions built with identical lines, but only at the moment they are created, and two of them
+become identical again once `simplify-execute-chains` rewrites their lines.
+
+Hand-written functions stay untouched by default, since their names are part of what the pack exposes and something
+outside the pack may call them. Opt in with `this += DedupeFunctionsPass(includeUserFunctions = true)` after removing
+the default instance. A duplicate is also kept when a resource mentions its id, since a function tag or an advancement
+reward holds it in a typed field the pass cannot rewrite.
+
+## `prune-unreferenced-generated-functions`
+
+Generated functions only exist because a DSL construct created one, so they are unreachable as soon as the line calling
+them is gone, which happens when a later edit of the same `DataPack` drops the callsite or when an earlier pass removes
+it. Pruning repeats until it converges, so a chain of generated functions calling each other collapses in one run. Two
+of them calling each other are kept, since each still references the other.
+
+## `warn-unreachable-code`
+
+Reports the commands sitting after an unconditional `return` in the same function, which the game never runs. Only a
+top-level `return` ends the function for sure, so a `return` behind an `execute` chain or on a macro line is ignored.
+Nothing is removed: dead code after a `return` is almost always a mistake in the surrounding logic rather than
+something to silently drop.
 
 ## Writing your own pass
 
