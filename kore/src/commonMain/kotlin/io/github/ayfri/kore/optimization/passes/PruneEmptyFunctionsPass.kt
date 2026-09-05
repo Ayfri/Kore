@@ -4,6 +4,7 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.optimization.DataPackPass
 import io.github.ayfri.kore.optimization.PassResult
+import io.github.ayfri.kore.optimization.utils.generatorsJson
 
 /**
  * Removes user functions containing no command, and the calls made to them.
