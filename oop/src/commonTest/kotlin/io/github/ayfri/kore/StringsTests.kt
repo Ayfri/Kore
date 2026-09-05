@@ -673,6 +673,46 @@ fun stringListTests() = dataPack("unit_tests") {
 	loop.lines[1] assertsIs "function unit_tests:kore_string_foreach_body_0"
 }
 
+fun joinTests() = dataPack("unit_tests") {
+	registerDynamicStrings()
+
+	val summary = dynamicString("summary")
+	val tokens = koreStringList("tokens")
+
+	function("join") {
+		tokens.join(", ", summary, prefix = "[", postfix = "]")
+		lines assertsIs listOf(
+			"""data modify storage $LIB heap.summary set value "["""",
+			"""data modify storage $LIB tmp.kore_string_join_sep set value ", """",
+			"""data modify storage $LIB args.kore_string_join_step.dst set value "summary"""",
+			"""data modify storage $LIB args.kore_string_join_step.listPath set value "lists.tokens"""",
+			"execute store result score #kore_string_join_size kore_string_len run data get storage $LIB lists.tokens",
+			"scoreboard players set #kore_string_join_i kore_string_len 0",
+			"execute store result storage $LIB args.kore_string_join_step.index int 1.0 run scoreboard players get #kore_string_join_i kore_string_len",
+			"execute if score #kore_string_join_i kore_string_len < #kore_string_join_size kore_string_len " +
+				"run function unit_tests:kore_string_join_step with storage $LIB args.kore_string_join_step",
+			"""data modify storage $LIB tmp.kore_string_concat_tmp set value "]"""",
+			"data modify storage $LIB heap.summary append string storage $LIB tmp.kore_string_concat_tmp",
+		)
+	}
+
+	function("join_no_wrapping") {
+		tokens.join("", summary)
+		lines.first() assertsIs "data modify storage $LIB heap.summary set value \"\""
+		lines.size assertsIs 8
+	}
+
+	functions.first { it.name == "kore_string_join_step" }.lines assertsIs listOf(
+		"\$execute if score #kore_string_join_i kore_string_len matches 1.. run data modify storage $LIB heap.\$(dst) " +
+			"append string storage $LIB tmp.kore_string_join_sep",
+		"\$data modify storage $LIB heap.\$(dst) append string storage $LIB \$(listPath)[\$(index)]",
+		"scoreboard players add #kore_string_join_i kore_string_len 1",
+		"execute store result storage $LIB args.kore_string_join_step.index int 1.0 run scoreboard players get #kore_string_join_i kore_string_len",
+		"execute if score #kore_string_join_i kore_string_len < #kore_string_join_size kore_string_len " +
+			"run function unit_tests:kore_string_join_step with storage $LIB args.kore_string_join_step",
+	)
+}
+
 fun registrationTests() = dataPack("unit_tests") {
 	val runtime = registerDynamicStrings()
 
@@ -821,6 +861,7 @@ class StringsTests : FunSpec({
 	test("concat") { concatTests() }
 	test("custom config") { customConfigTests() }
 	test("find") { findTests() }
+	test("join") { joinTests() }
 	test("missing runtime") { missingRuntimeTests() }
 	test("parse") { parseTests() }
 	test("registration") { registrationTests() }

@@ -48,6 +48,7 @@ data object OopConstants {
 	var stringFindMacroName = "kore_string_find"
 	var stringFindStepMacroName = "kore_string_find_step"
 	var stringHeapRoot = "heap"
+	var stringJoinStepMacroName = "kore_string_join_step"
 	var stringLengthHolder = "#kore_string_len"
 	var stringLengthObjective = "kore_string_len"
 	var stringListsRoot = "lists"
