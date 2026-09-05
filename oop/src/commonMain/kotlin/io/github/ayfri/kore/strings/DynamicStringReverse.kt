@@ -22,10 +22,8 @@ private const val REVERSE_SCRATCH = "${INTERNAL_NAME_PREFIX}reverse_scratch"
 internal fun DynamicStringRuntime.reverseTailHelper(): FunctionWithMacros<ReverseMacros> =
 	ensure(OopConstants.stringReverseMacroName, ::ReverseMacros) {
 		substringHelper()
-		concatHelper()
 
 		val subArgs = argsPath(OopConstants.stringSubstringMacroName)
-		val cArgs = argsPath(OopConstants.stringConcatMacroName)
 		val iCursor = ScoreCursor("#${INTERNAL_NAME_PREFIX}rev_i", config.lengthObjective)
 		val ip1 = ScoreCursor("#${INTERNAL_NAME_PREFIX}rev_ip1", config.lengthObjective)
 
@@ -34,13 +32,11 @@ internal fun DynamicStringRuntime.reverseTailHelper(): FunctionWithMacros<Revers
 		ip1.add(this, 1)
 		storeScoreToNbt(ip1, libStorageArg, "$subArgs.end")
 
-		setNbtString(libStorageArg, "$subArgs.dst", REVERSE_SCRATCH)
 		callMacro(OopConstants.stringSubstringMacroName, libStorageArg, subArgs)
 
-		copyNbt(libStorageArg, "$cArgs.a", libStorageArg, heapPath(REVERSE_ACCUMULATOR))
-		copyNbt(libStorageArg, "$cArgs.b", libStorageArg, heapPath(REVERSE_SCRATCH))
-		setNbtString(libStorageArg, "$cArgs.dst", REVERSE_ACCUMULATOR)
-		callMacro(OopConstants.stringConcatMacroName, libStorageArg, cArgs)
+		data(libStorageArg) {
+			modify(heapPath(REVERSE_ACCUMULATOR)) { append(libStorageArg, heapPath(REVERSE_SCRATCH), null, null) }
+		}
 
 		iCursor.sub(this, 1)
 		ifScoreMatchesRunFunction(iCursor, rangeOrIntStart(0), OopConstants.stringReverseMacroName)
@@ -63,7 +59,10 @@ fun DynamicString.reverse(target: DynamicString = this) {
 	accumulator.set("")
 
 	val subArgs = rt.argsPath(OopConstants.stringSubstringMacroName)
-	fn.data(rt.libStorageArg) { modify("$subArgs.src", name) }
+	fn.data(rt.libStorageArg) {
+		modify("$subArgs.src", name)
+		modify("$subArgs.dst", REVERSE_SCRATCH)
+	}
 
 	val iCursor = ScoreCursor("#${INTERNAL_NAME_PREFIX}rev_i", rt.config.lengthObjective)
 	val lenCursor = ScoreCursor("#${INTERNAL_NAME_PREFIX}rev_len", rt.config.lengthObjective)

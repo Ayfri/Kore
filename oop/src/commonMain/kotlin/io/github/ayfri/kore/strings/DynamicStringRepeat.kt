@@ -8,6 +8,7 @@ import io.github.ayfri.kore.functions.FunctionWithMacros
 import io.github.ayfri.kore.functions.Macros
 import io.github.ayfri.kore.functions.getValue
 
+private const val REPEAT_BUFFER_KEY = "${INTERNAL_NAME_PREFIX}repeat_buf"
 private const val REPEAT_SRC_SCRATCH = "${INTERNAL_NAME_PREFIX}repeat_src"
 
 /** Macros for the `kore_string_repeat_step` helper. */
@@ -22,14 +23,15 @@ class RepeatMacros internal constructor() : Macros() {
 	val src by "src"
 }
 
+/**
+ * Appends one copy of `src` to `dst`. The source is staged in a scratch slot first so a caller may
+ * legally pass the same slot as both operands without the destination growing while it is read.
+ */
 internal fun DynamicStringRuntime.repeatStepHelper(): FunctionWithMacros<RepeatStepMacros> =
 	ensure(OopConstants.stringRepeatStepMacroName, ::RepeatStepMacros) {
-		concatHelper()
-		val cArgs = argsPath(OopConstants.stringConcatMacroName)
-		copyNbt(libStorageArg, "$cArgs.a", libStorageArg, heapPath(macros.dst))
-		copyNbt(libStorageArg, "$cArgs.b", libStorageArg, heapPath(macros.src))
-		setNbtString(libStorageArg, "$cArgs.dst", macros.dst)
-		callMacro(OopConstants.stringConcatMacroName, libStorageArg, cArgs)
+		val buffer = tmpPath(REPEAT_BUFFER_KEY)
+		copyNbt(libStorageArg, buffer, libStorageArg, heapPath(macros.src))
+		addLine("data modify storage $libStorage ${heapPath(macros.dst)} append string storage $libStorage $buffer")
 	}
 
 internal fun DynamicStringRuntime.repeatControllerHelper(): FunctionWithMacros<RepeatMacros> =

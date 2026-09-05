@@ -44,7 +44,6 @@ data object OopConstants {
     var stateObjective = "kore_state"
     var stateWhenHandlersTag = "state_when_handlers"
 	var stringArgsRoot = "args"
-	var stringConcatMacroName = "kore_string_concat"
 	var stringCountMacroName = "kore_string_count"
 	var stringFindMacroName = "kore_string_find"
 	var stringFindStepMacroName = "kore_string_find_step"

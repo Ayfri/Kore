@@ -53,7 +53,6 @@ internal fun DynamicStringRuntime.splitStepHelper(): FunctionWithMacros<SplitSte
 
 		storeScoreToNbt(splitStart, libStorageArg, "$subArgs.start")
 		storeScoreToNbt(splitEnd, libStorageArg, "$subArgs.end")
-		setNbtString(libStorageArg, "$subArgs.dst", SPLIT_SCRATCH)
 		callMacro(OopConstants.stringSubstringMacroName, libStorageArg, subArgs)
 
 		addLine(
@@ -102,6 +101,7 @@ fun DynamicString.split(delimiter: String, target: KoreStringList) {
 		modify("$findArgs.needlePath", delimPath)
 		modify("$stepArgs.listPath", target.nbtPath)
 		modify("$subArgs.src", name)
+		modify("$subArgs.dst", SPLIT_SCRATCH)
 	}
 
 	val srcLen = ScoreCursor("#${INTERNAL_NAME_PREFIX}split_srclen", obj)

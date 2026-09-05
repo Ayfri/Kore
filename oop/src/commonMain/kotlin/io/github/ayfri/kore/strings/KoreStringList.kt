@@ -66,9 +66,9 @@ fun KoreStringList.elementAt(index: Int, target: DynamicString) = fn.data(target
  */
 context(fn: Function)
 fun KoreStringList.forEach(element: DynamicString, body: Function.() -> Unit) {
-	val suffix = runtime.nextAnonymousName("id").substringAfterLast('_')
-	val bodyName = "${INTERNAL_NAME_PREFIX}foreach_body_$suffix"
-	val loopName = "${INTERNAL_NAME_PREFIX}foreach_loop_$suffix"
+	val id = runtime.nextAnonymousId()
+	val bodyName = "${INTERNAL_NAME_PREFIX}foreach_body_$id"
+	val loopName = "${INTERNAL_NAME_PREFIX}foreach_loop_$id"
 	val obj = runtime.config.lengthObjective
 
 	val bodyFn = fn.datapack.function(

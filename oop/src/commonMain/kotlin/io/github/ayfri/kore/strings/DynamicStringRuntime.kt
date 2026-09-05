@@ -68,7 +68,7 @@ class DynamicStringRuntime internal constructor(
 	internal fun argsPath(helper: String): String = "${config.argsRoot}.$helper"
 	internal fun heapPath(name: String): String = "${config.heapRoot}.$name"
 	internal fun listsPath(name: String): String = "${config.listsRoot}.$name"
-	internal fun nextAnonymousName(prefix: String): String = "${prefix}_${anonymousCounter++}"
+	internal fun nextAnonymousId(): Int = anonymousCounter++
 	internal fun tablesPath(name: String): String = "${config.tablesRoot}.$name"
 	internal fun tmpPath(name: String): String = "${config.tmpRoot}.$name"
 

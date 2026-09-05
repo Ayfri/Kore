@@ -1,22 +1,15 @@
 package io.github.ayfri.kore.strings
 
-import io.github.ayfri.kore.OopConstants
+import io.github.ayfri.kore.commands.Command
 import io.github.ayfri.kore.commands.data
 import io.github.ayfri.kore.functions.Function
-import io.github.ayfri.kore.functions.FunctionWithMacros
-import io.github.ayfri.kore.functions.Macros
-import io.github.ayfri.kore.functions.getValue
 
-/** Macro identifiers for the shared `kore_string_concat` helper. */
-class ConcatMacros internal constructor() : Macros() {
-	val a by "a"
-	val b by "b"
-	val dst by "dst"
-}
+/** Scratch slot staging an operand that vanilla cannot read directly (a literal, or an aliased source). */
+internal const val CONCAT_TMP_KEY = "${INTERNAL_NAME_PREFIX}concat_tmp"
 
 /**
  * One operand of a concatenation: either a compile-time [Literal] or the runtime content of a
- * [Ref]erenced [DynamicString]. Replaces the untyped `Any` operands the module used to accept.
+ * [Ref]erenced [DynamicString].
  */
 sealed interface StringPart {
 	data class Literal(val value: String) : StringPart
@@ -29,57 +22,69 @@ val String.asStringPart: StringPart get() = StringPart.Literal(this)
 /** Wraps this dynamic string as a concatenation operand. */
 val DynamicString.asStringPart: StringPart get() = StringPart.Ref(this)
 
-internal fun DynamicStringRuntime.concatHelper(): FunctionWithMacros<ConcatMacros> =
-	ensure(OopConstants.stringConcatMacroName, ::ConcatMacros) {
-		data(libStorageArg) {
-			modify(heapPath(macros.dst), "${macros.a}${macros.b}")
-		}
-	}
+/**
+ * Copies [value] into the shared scratch slot, the only way to feed a literal to vanilla's
+ * `append string` / `prepend string`, which both require an NBT source path.
+ */
+private fun DynamicString.stageLiteral(fn: Function, value: String): String {
+	val tmp = runtime.tmpPath(CONCAT_TMP_KEY)
+	fn.setNbtString(storage, tmp, value)
+	return tmp
+}
 
-private fun invokeConcat(fn: Function, a: StringPart, b: StringPart, target: DynamicString) {
-	val rt = target.runtime
-	rt.concatHelper()
-	val args = rt.argsPath(OopConstants.stringConcatMacroName)
-	fn.data(rt.libStorageArg) {
-		when (a) {
-			is StringPart.Literal -> modify("$args.a", a.value)
-			is StringPart.Ref -> modify("$args.a") { set(a.string.storage, a.string.nbtPath) }
-		}
-		when (b) {
-			is StringPart.Literal -> modify("$args.b", b.value)
-			is StringPart.Ref -> modify("$args.b") { set(b.string.storage, b.string.nbtPath) }
-		}
-		modify("$args.dst", target.name)
-	}
-	fn.callMacro(OopConstants.stringConcatMacroName, rt.libStorageArg, args)
+/** Same staging for a [DynamicString] operand, used when source and destination are the same slot. */
+private fun DynamicString.stageSelf(fn: Function): String {
+	val tmp = runtime.tmpPath(CONCAT_TMP_KEY)
+	fn.copyNbt(storage, tmp, storage, nbtPath)
+	return tmp
 }
 
 /** Appends [value] at the end of this dynamic string (in place). */
 context(fn: Function)
-fun DynamicString.append(value: String) = invokeConcat(fn, asStringPart, value.asStringPart, this)
+fun DynamicString.append(value: String): Command {
+	val tmp = stageLiteral(fn, value)
+	return fn.data(storage) { modify(nbtPath) { append(storage, tmp, null, null) } }
+}
 
 /** Appends the content of [other] at the end of this dynamic string (in place). */
 context(fn: Function)
-fun DynamicString.append(other: DynamicString) = appendFrom(other)
+fun DynamicString.append(other: DynamicString): Command {
+	if (other != this) return appendFrom(other)
+	val tmp = stageSelf(fn)
+	return fn.data(storage) { modify(nbtPath) { append(storage, tmp, null, null) } }
+}
 
-/** Writes `a + b` (both literal) into [target]. */
+/** Writes `a + b` (both literal) into [target]. Folded at generation time into a single `set value`. */
 context(fn: Function)
-fun concat(target: DynamicString, a: String, b: String) = invokeConcat(fn, a.asStringPart, b.asStringPart, target)
+fun concat(target: DynamicString, a: String, b: String) = target.set(a + b)
 
 /** Writes `a + b` into [target], with [a] as a literal and [b] as a [DynamicString]. */
 context(fn: Function)
-fun concat(target: DynamicString, a: String, b: DynamicString) =
-	invokeConcat(fn, a.asStringPart, b.asStringPart, target)
+fun concat(target: DynamicString, a: String, b: DynamicString) = when (target) {
+	b -> target.prepend(a)
+	else -> {
+		target.set(a)
+		target.appendFrom(b)
+	}
+}
 
 /** Writes `a + b` into [target], with [a] as a [DynamicString] and [b] as a literal. */
 context(fn: Function)
-fun concat(target: DynamicString, a: DynamicString, b: String) =
-	invokeConcat(fn, a.asStringPart, b.asStringPart, target)
+fun concat(target: DynamicString, a: DynamicString, b: String) {
+	if (target != a) target.setFrom(a)
+	target.append(b)
+}
 
 /** Writes `a + b` into [target], reading [a] and [b] as [DynamicString]s. */
 context(fn: Function)
-fun concat(target: DynamicString, a: DynamicString, b: DynamicString) =
-	invokeConcat(fn, a.asStringPart, b.asStringPart, target)
+fun concat(target: DynamicString, a: DynamicString, b: DynamicString) = when (target) {
+	a -> target.append(b)
+	b -> target.prepend(a)
+	else -> {
+		target.setFrom(a)
+		target.appendFrom(b)
+	}
+}
 
 /**
  * N-ary concatenation: writes the concatenation of [parts] into [target] by seeding it with the
@@ -94,7 +99,7 @@ fun concatAll(target: DynamicString, vararg parts: StringPart) {
 	}
 	when (first) {
 		is StringPart.Literal -> target.set(first.value)
-		is StringPart.Ref -> target.setFrom(first.string)
+		is StringPart.Ref -> if (target != first.string) target.setFrom(first.string)
 	}
 	parts.drop(1).forEach { part ->
 		when (part) {
@@ -112,12 +117,21 @@ operator fun DynamicString.plusAssign(other: DynamicString) {
 
 /** Operator alias for [append] when the right operand is a literal. */
 context(fn: Function)
-operator fun DynamicString.plusAssign(value: String) = append(value)
+operator fun DynamicString.plusAssign(value: String) {
+	append(value)
+}
 
 /** Prepends the content of [other] at the beginning of this dynamic string (in place). */
 context(fn: Function)
-fun DynamicString.prepend(other: DynamicString) = prependFrom(other)
+fun DynamicString.prepend(other: DynamicString): Command {
+	if (other != this) return prependFrom(other)
+	val tmp = stageSelf(fn)
+	return fn.data(storage) { modify(nbtPath) { prepend(storage, tmp, null, null) } }
+}
 
 /** Prepends [value] at the beginning of this dynamic string (in place). */
 context(fn: Function)
-fun DynamicString.prepend(value: String) = invokeConcat(fn, value.asStringPart, asStringPart, this)
+fun DynamicString.prepend(value: String): Command {
+	val tmp = stageLiteral(fn, value)
+	return fn.data(storage) { modify(nbtPath) { prepend(storage, tmp, null, null) } }
+}
