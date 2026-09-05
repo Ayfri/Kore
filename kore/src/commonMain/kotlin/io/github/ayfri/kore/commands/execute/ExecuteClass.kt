@@ -139,6 +139,12 @@ class Execute {
 	/** Summons a new entity of the given type and executes the chained command as/at it. */
 	fun summon(entity: EntityTypeArgument) = array.addAll(literal("summon"), entity)
 
+	/** Rewrites the entity arguments of a command inlined into the chain, so a selector equal to the `as` target becomes `@s`. */
+	private fun inlineTargets(command: Command) = command.arguments.indices.forEach { index ->
+		val argument = command.arguments[index]
+		if (argument is EntityArgument) command.arguments[index] = targetArg(argument)
+	}
+
 	/**
 	 * Runs the given [block] as the final command of the execute chain.
 	 *
@@ -156,14 +162,7 @@ class Execute {
 		}
 
 		if (function.commands.size == 1 && function.commandLines.size == 1) {
-			val command = function.commands.single()
-			for (i in command.arguments.indices) {
-				command.arguments[i] = when (val argument = command.arguments[i]) {
-					is EntityArgument -> targetArg(argument)
-					else -> argument
-				}
-			}
-
+			val command = function.commands.single().also(::inlineTargets)
 			run = emptyFunction(fn.datapack) { addLine(command) }
 			return run
 		}
