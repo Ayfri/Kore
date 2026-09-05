@@ -6,10 +6,9 @@ import io.github.ayfri.kore.assertions.assertsIsJson
 import io.github.ayfri.kore.commands.tellraw
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.strings.*
-import io.github.ayfri.kore.utils.testDataPack
 import io.kotest.core.spec.style.FunSpec
 
-fun stringsTests() = testDataPack("unit_tests") {
+fun stringsTests() = dataPack("unit_tests") {
 	registerDynamicStrings()
 
 	val greeting = dynamicString("greeting")
@@ -87,7 +86,7 @@ fun stringsTests() = testDataPack("unit_tests") {
 	""".trimIndent()
 }
 
-fun stringListTests() = testDataPack("unit_tests") {
+fun stringListTests() = dataPack("unit_tests") {
 	registerDynamicStrings()
 
 	val tokens = koreStringList("tokens")
@@ -130,7 +129,7 @@ fun stringListTests() = testDataPack("unit_tests") {
 	}
 }
 
-fun registrationTests() = testDataPack("unit_tests") {
+fun registrationTests() = dataPack("unit_tests") {
 	val runtime = registerDynamicStrings()
 	val macroFn = runtime.substringHelper()
 	macroFn.name assertsIs "kore_string_substring"
@@ -141,7 +140,7 @@ fun registrationTests() = testDataPack("unit_tests") {
 	concat.lines.last() assertsIs "\$data modify storage kore_string_lib:memory heap.\$(dst) set value \"\$(a)\$(b)\""
 }
 
-fun advancedStringsTests() = testDataPack("unit_tests") {
+fun advancedStringsTests() = dataPack("unit_tests") {
 	registerDynamicStrings()
 
 	val s = dynamicString("phrase")
@@ -267,7 +266,7 @@ fun advancedStringsTests() = testDataPack("unit_tests") {
 	}
 }
 
-fun listForEachTests() = testDataPack("unit_tests") {
+fun listForEachTests() = dataPack("unit_tests") {
 	registerDynamicStrings()
 	val list = koreStringList("items")
 	val current = dynamicString("current")
@@ -288,7 +287,7 @@ fun listForEachTests() = testDataPack("unit_tests") {
 	}
 }
 
-fun customConfigTests() = testDataPack("unit_tests") {
+fun customConfigTests() = dataPack("unit_tests") {
 	val custom = DynamicStringConfig(
 		storageNamespace = "my_pack",
 		storageName = "strings",
@@ -309,10 +308,10 @@ fun customConfigTests() = testDataPack("unit_tests") {
 }
 
 class StringsTests : FunSpec({
-	test("strings") { stringsTests().generate() }
-	test("string list") { stringListTests().generate() }
-	test("registration") { registrationTests().generate() }
-	test("advanced strings") { advancedStringsTests().generate() }
-	test("list forEach") { listForEachTests().generate() }
-	test("custom config") { customConfigTests().generate() }
+	test("strings") { stringsTests() }
+	test("string list") { stringListTests() }
+	test("registration") { registrationTests() }
+	test("advanced strings") { advancedStringsTests() }
+	test("list forEach") { listForEachTests() }
+	test("custom config") { customConfigTests() }
 })

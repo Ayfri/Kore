@@ -5,7 +5,7 @@ nav-title: Dynamic Strings
 description: Object-oriented string utilities backed by NBT storage and macros - full Kotlin-like API on top of datapack macros.
 keywords: minecraft, datapack, kore, oop, string, nbt, storage, macro, substring, split, replace, trim, pad, concat
 date-created: 2026-04-16
-date-modified: 2026-05-05
+date-modified: 2026-09-05
 routeOverride: /docs/oop/dynamic-strings
 ---
 
@@ -16,7 +16,7 @@ datapack strings can be manipulated with an idiomatic Kotlin API. The module shi
 Kotlin's `String` standard library and by the Bookshelf `bs.string` module, but everything is generated lazily: only the
 helpers you actually call are materialized as `mcfunction` files inside your pack.
 
-The module targets Minecraft **1.21.11**. Under the hood it leans on:
+Under the hood it leans on:
 
 - `data modify ... set string` for slicing,
 - `execute store result` for measuring lengths,

@@ -9,7 +9,6 @@ import io.github.ayfri.kore.functions.FunctionWithMacros
 import io.github.ayfri.kore.functions.Macros
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.functions.load
-import java.util.*
 
 /**
  * Configuration knobs for the Kore dynamic string runtime. Every string helper routes its
@@ -74,7 +73,8 @@ class DynamicStringRuntime internal constructor(
 	}
 }
 
-private val runtimes = IdentityHashMap<DataPack, DynamicStringRuntime>()
+/** [DataPack] has no `equals`/`hashCode` override, so this keys on instance identity. */
+private val runtimes = mutableMapOf<DataPack, DynamicStringRuntime>()
 
 /**
  * Registers the shared infrastructure required by every [DynamicString] (load hook + scoreboard

@@ -38,6 +38,7 @@ Utility-style features such as renderers, math helpers, raycasts, areas, state d
 - **[Boss Bars](/docs/oop/boss-bars)** - Register, configure, and manage boss bars.
 - **[Cooldowns](/docs/oop/cooldowns)** - Scoreboard-based cooldown system that decrements
   every [tick](/docs/concepts/time).
+- **[Dynamic Strings](/docs/oop/dynamic-strings)** - NBT-backed string handles with a Kotlin-like API (substring, split, replace, trim, pad).
 - **[Entities & Players](/docs/oop/entities-and-players)** - Create entities and players, execute helpers, batch
   commands, entity commands, and entity effects.
 - **[Events](/docs/oop/events)** - Advancement-based event system for player and entity actions.
