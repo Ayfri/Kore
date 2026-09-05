@@ -33,10 +33,14 @@ back a `DynamicStringRuntime` used to lazily allocate helpers:
 
 ```kotlin
 val stringRuntime = registerDynamicStrings()
+
+val greeting = dynamicString("greeting")     // on the DataPack
+val buffer = stringRuntime.dynamicString("buffer")  // or on the runtime
 ```
 
-Every `DynamicString`/`KoreStringList` you build after this point is validated against the runtime, so name collisions
-throw a clear error at datapack-generation time rather than producing subtle command conflicts at runtime.
+Every `DynamicString` / `KoreStringList` you build after this point is validated against the runtime, so name collisions
+throw a clear error at datapack-generation time rather than producing subtle command conflicts at runtime. The
+`kore_string_` prefix is reserved for the module's own scratch slots and is rejected for the same reason.
 
 ## Creating and mutating a string
 
@@ -60,7 +64,7 @@ tellraw(allPlayers(), greeting.asChatComponents())
 
 ## Measuring length
 
-`length()` stores the number of characters into the `kore_string_len` objective and returns the score holder name, while
+`length()` stores the number of characters into the configured length objective (`kore_string_len` by default) and returns the score holder name, while
 `lengthScore()` returns the typed `(holder, objective)` pair, which is useful when several lengths are kept alive at the
 same time:
 
@@ -97,27 +101,37 @@ greeting.substringDynamic(startEntity, endEntity, target = buffer)
 ## Concatenation, append and prepend
 
 ```kotlin
-greeting.append(" world")                     // greeting += " world"
-greeting += " world"                          // plusAssign alias
+greeting.append(" world")                      // greeting += " world"
+greeting += " world"                           // plusAssign alias
 greeting.prepend("Hello, ")
-concat(target = buffer, greeting, "!", other) // buffer := greeting + "!" + other
+concat(buffer, greeting, "!")                  // buffer := greeting + "!"
 greeting.append(other)                         // direct data modify ... append string ...
 greeting.prepend(other)                        // direct data modify ... prepend string ...
 greeting.appendFrom(other, start = 1)          // append substring [1..]
 greeting.prependFrom(other, 0, 3)              // prepend substring [0..3)
 ```
 
-## Comparison helpers
-
-All comparison helpers write a 0 / 1 flag into a scoreboard holder on the `kore_string_len` objective. Equal maps to `0`
-for convenience (same convention as `execute store success`).
+`concat` has an overload for every literal / dynamic operand combination. For more than two operands, `concatAll` takes
+`StringPart`s, built with the `asStringPart` extension available on both `String` and `DynamicString`:
 
 ```kotlin
-greeting.equalsTo("Hello")            // diff == 0 when identical
-greeting.isEmpty()                    // empty == 0 when empty
-greeting.startsWith("He")
-greeting.endsWith(buffer)             // dynamic suffix
+concatAll(buffer, greeting.asStringPart, ", ".asStringPart, other.asStringPart)
 ```
+
+## Comparison helpers
+
+Every comparison helper writes a `0` / `1` flag into a scoreboard holder on the length objective, with `1` meaning the
+comparison holds. That is the same convention as `contains` and `count`, so all predicates in the module read the same
+way: `execute if score <holder> kore_string_len matches 1 run ...`.
+
+```kotlin
+greeting.equalsTo("Hello")            // -> #kore_string_equals, 1 when identical
+greeting.isEmpty()                    // -> #kore_string_is_empty
+greeting.startsWith("He")             // -> #kore_string_starts
+greeting.endsWith(buffer)             // -> #kore_string_ends, dynamic suffix
+```
+
+Each of them takes an optional `resultHolder` if you need several results alive at the same time.
 
 ## Reverse
 
@@ -156,6 +170,9 @@ greeting.replace("l", "L")             // all occurrences
 greeting.replaceFirst("l", "L")        // first only
 ```
 
+`replace` resumes the search past the text it just inserted, so a growing replacement such as `replace("a", "aa")`
+terminates instead of matching its own output forever.
+
 ## Case conversion (ASCII)
 
 ```kotlin
@@ -165,7 +182,10 @@ greeting.capitalize()
 greeting.decapitalize()
 ```
 
-A lookup table macro is emitted per direction the first time it is used. Non-ASCII characters are left untouched.
+A translation table is written to `kore_string_lib:memory tables.<direction>` on world load, and each character is
+mapped through a single `set from` on that table. Characters with no entry, including every non-ASCII one, are left
+untouched. Double quotes and backslashes skip the lookup because they cannot be used as an NBT path key; neither has a
+case, so they come out unchanged either way.
 
 ## Repeat, pad, trim
 
@@ -232,16 +252,23 @@ val runtime = registerDynamicStrings(
 		listsRoot      = "kore.lists",
 		storageName    = "state",
 		storageNamespace = "my_pack",
+		tablesRoot     = "kore.tables",
 		tmpRoot        = "kore.tmp",
 	),
 )
 ```
 
-Whitespace handled by `trim`, `trimStart` and `trimEnd` is also customizable per datapack:
+`trimWhitespace` is part of the same config. Its entries land verbatim inside the generated commands, so they use SNBT
+escapes, not Kotlin ones:
 
 ```kotlin
-runtime.trimWhitespace = listOf(" ", "\t", "\n", "\r", "\u00A0") // non-breaking space added
+registerDynamicStrings(
+	DynamicStringConfig(trimWhitespace = listOf(" ", "\\t", "\\n", "\\r", "\\u00A0")),
+)
 ```
+
+Every field defaults to the matching `OopConstants.string*` value, so changing one of those moves the default for
+every datapack in the project instead.
 
 ## A complete end-to-end example
 
@@ -258,8 +285,7 @@ import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.strings.*
 
 fun DataPack.greetingPipeline() {
-	val runtime = registerDynamicStrings()
-	runtime.trimWhitespace = listOf(" ", "\t", "\n")
+	registerDynamicStrings()
 
 	val raw      = dynamicString("raw_input")
 	val normal   = dynamicString("normalized")
