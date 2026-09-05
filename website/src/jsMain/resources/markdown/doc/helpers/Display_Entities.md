@@ -5,7 +5,7 @@ nav-title: Display Entities
 description: A guide for creating Display Entities in the world.
 keywords: minecraft, datapack, kore, guide, display-entities
 date-created: 2024-04-06
-date-modified: 2026-04-01
+date-modified: 2026-08-14
 routeOverride: /docs/helpers/display-entities
 ---
 
@@ -56,8 +56,9 @@ val entityDisplay = blockDisplay {
 }
 
 summon(entity = entityDisplay.entityType, pos = vec3(0, 0, 0), nbt = entityDisplay.toNbt())
-// will summon a grass block with snow on top, scaled by 2, rotated by 0 degrees and translated by 2 blocks on the y axis at the position 0, 0, 0
 ```
+
+This summons a snowy grass block at `0 0 0`, scaled by 2 and translated 2 blocks up, facing the camera on both axes.
 
 ## Block Displays
 
@@ -93,7 +94,7 @@ expects:
 
 ```kotlin
 val itemDisplay = itemDisplay {
-	item(Items.DIAMOND_SWORD) {
+	items(Items.DIAMOND_SWORD) {
 		name = textComponent("test")
 
 		enchantments {
@@ -166,3 +167,39 @@ interpolableEntityDisplay.interpolateTo(duration = 2.seconds) {
 
 Interpolation is especially useful when you want display entities to move or morph smoothly between ticks without
 rebuilding the entity from scratch.
+
+## OOP Entity Handles
+
+After creating an interpolable, call `toEntity()` to get a typed OOP entity handle (`BlockDisplayEntity`,
+`ItemDisplayEntity`, or `TextDisplayEntity`). This gives access to all `Entity` extension functions such as `kill`,
+`teleportTo`, `addTag`, and more.
+
+```kotlin
+val display = blockDisplay {
+	blockState(Blocks.STONE)
+}.interpolable(vec3(0, 64, 0))
+
+display.summon()
+
+// toEntity() is typed as Entity, so cast when you want the specific subclass
+val entity: BlockDisplayEntity = display.toEntity() as BlockDisplayEntity
+
+// every Entity OOP extension works on the handle
+entity.addTag("my_display")
+entity.teleportTo(0, 65, 0)
+entity.kill()
+```
+
+You can also construct the typed entity handles directly when you already have a UUID:
+
+```kotlin
+val uuid = uuid("12345678-1234-1234-1234-123456789012")
+val block = BlockDisplayEntity(uuid)
+val item  = ItemDisplayEntity(uuid)
+val text  = TextDisplayEntity(uuid)
+```
+
+All three target their entity with `@e[type=minecraft:<type>,nbt={UUID:[I;...]}]`.
+
+These handle classes live in the `oop` module and extend `Entity`, so every entity-scoped extension applies to them -
+see [Entities & Players](/docs/oop/entities-and-players) for the full list.

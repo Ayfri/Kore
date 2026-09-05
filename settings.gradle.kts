@@ -1,15 +1,23 @@
 pluginManagement {
 	includeBuild("build-logic")
 
-	val kotlinVersion = file("gradle/libs.versions.toml").readLines()
-		.first { it.startsWith("kotlin =") || it.startsWith("kotlin=") }
+	val versionsToml = file("gradle/libs.versions.toml").readLines()
+
+	val kotlinVersion = versionsToml
+		.first { it.startsWith("kotlin =") }
 		.substringAfter("\"").substringBefore("\"")
+
+	val kspVersion = versionsToml
+		.first { it.startsWith("ksp =") }
+		.substringAfter("\"").substringBefore("\"")
+
 
 	plugins {
 		kotlin("jvm") version kotlinVersion
 		kotlin("multiplatform") version kotlinVersion
 		kotlin("plugin.serialization") version kotlinVersion
 		kotlin("plugin.compose") version kotlinVersion
+		id("com.google.devtools.ksp") version kspVersion
 	}
 
 	repositories {
@@ -21,10 +29,14 @@ pluginManagement {
 
 rootProject.name = "Kore"
 
+// Dependency order: it seeds the task graph, so the long kore -> oop -> helpers JS chain gets scheduled before the cheap leaves.
 include(":generation")
+include(":kore-gradle-plugin")
+include(":kore-ksp")
 include(":kore")
-include(":helpers")
+include(":common-tests")
 include(":oop")
+include(":helpers")
 include(":bindings")
 include(":website")
 

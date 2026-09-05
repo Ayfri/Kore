@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Commands
+title: Minecraft Commands in Kore - Type-Safe Command DSL
 nav-title: Commands
-description: A comprehensive guide for using commands in Kore datapacks.
-keywords: minecraft, datapack, kore, guide, commands, execute, data, teleport
+description: Every Minecraft command in a type-safe Kotlin DSL. From /say, /teleport, and /give to /execute, /data, /scoreboard, and /summon -- all with code examples and generated mcfunction output.
+keywords: minecraft commands, kore commands, kotlin commands dsl, mcfunction generator, execute command, data command, teleport command, summon command, minecraft command builder, type-safe commands
 date-created: 2026-02-03
-date-modified: 2026-05-29
+date-modified: 2026-08-14
 routeOverride: /docs/commands/commands
 ---
 
@@ -18,7 +18,8 @@ arguments, see [Macros](/docs/commands/macros).
 
 ## Simple Commands
 
-Simple commands are straightforward and take basic arguments like strings, numbers, or [selectors](#selectors).
+Simple commands are straightforward and take basic arguments like strings, numbers,
+or [selectors](/docs/concepts/selectors).
 
 ### Say Command
 
@@ -47,13 +48,12 @@ The `teleport` (or
 
 ```kotlin
 function("teleport_examples") {
-	// Teleport to coordinates
 	teleport(allPlayers(), vec3(100, 64, 100))
 
-	// Teleport to another entity
+	// second argument is the destination, so this sends everyone to the command's executor
 	teleport(allPlayers(), self())
 
-	// Teleport with rotation
+	// rotation is yaw then pitch: yaw turns left/right, pitch looks up/down
 	teleport(self(), vec3(0, 100, 0), rotation(0.rot, 90.rot))
 }
 ```
@@ -114,10 +114,10 @@ The
 
 ```kotlin
 function("effects") {
-	effect.give(allPlayers(), Effects.SPEED, 60, 1)
-	effect.give(self(), Effects.REGENERATION, infinite = true)
-	effect.clear(allPlayers())
-	effect.clear(self(), Effects.POISON)
+	effect(allPlayers()) { give(Effects.SPEED, duration = 60, amplifier = 1) }
+	effect(self()) { giveInfinite(Effects.REGENERATION) }
+	effect(allPlayers()) { clear() }
+	effect(self()) { clear(Effects.POISON) }
 }
 ```
 
@@ -151,24 +151,134 @@ gamemode survival Steve
 
 ### Time Command
 
-The
-`time` command controls the world's day/night cycle. Time is measured in ticks (20 ticks = 1 second, 24000 ticks = 1 Minecraft day). Day starts at 1000, noon at 6000, night at 13000.
+The `time` command controls world clocks. Time is measured in [ticks](/docs/concepts/time) (20 ticks = 1 second,
+24 000 ticks = 1 Minecraft day). The `time` property on a `Function` returns a `Time` DSL scope.
+
+For a full reference covering world clocks, timelines, time markers, and the `timeCheck` predicate, see
+[World Clocks](/docs/data-driven/world-clocks).
+
+#### Basic Time Operations
 
 ```kotlin
 function("time_control") {
-	time.add(1.days)
-	time.set(TimePeriod.DAY)
-	time.query(TimeType.DAYS)
+	time.add(6000)           // advance the clock, 6000 ticks = 5 minutes
+	time.add(1.days)         // units spare you the maths, 1 day = 24000 ticks
+	time.pause()             // freeze the clock, the world keeps running
+	time.resume()
+	time.set(TimePeriod.DAY) // jump to a named moment instead of a raw tick
+	time.set(6000)
+	time.query(TimeType.DAYTIME)
+	time.queryTime()         // total ticks since the world was created
 }
 ```
 
 Generated output:
 
 ```mcfunction
+time add 6000
+time add 1d
+time pause
+time resume
 time set day
 time set 6000
-time add 1000
 time query daytime
+time query time
+```
+
+#### Querying Timelines
+
+Use `query(timeline)` to read a timeline's progress, and `queryRepetitions(timeline)` to read how many times
+it has looped:
+
+```kotlin
+function("time_query_timeline") {
+	time.query(Timelines.DAY)
+	time.queryRepetitions(Timelines.DAY)
+}
+```
+
+Generated output:
+
+```mcfunction
+time query minecraft:day
+time query minecraft:day repetitions
+```
+
+#### Setting the Day-Night Cycle Rate
+
+Use `rate(rate)` to control how fast the day-night cycle progresses. `1` is the default speed, `0` freezes the cycle,
+and the maximum is `1000`. This is independent of the server tick rate:
+
+```kotlin
+function("time_rate") {
+	time.rate(1.0f) // default speed
+	time.rate(0.0f) // sun and moon stop moving, but the world still ticks
+	time.rate(2.0f) // days pass twice as fast
+	time.rate(0.5f) // days pass half as fast
+}
+```
+
+Generated output:
+
+```mcfunction
+time rate 1
+time rate 0
+time rate 2
+time rate 0.5
+```
+
+#### Setting to a Time Marker
+
+`TimeMarkerArgument` (created with the `timeMarker()` factory) references a named tick position defined inside
+a timeline. Pass it to `time.set()` to jump the clock to that position:
+
+```kotlin
+function("skip_to_noon") {
+	time.set(timeMarker("noon", "mymod"))
+}
+```
+
+Generated output:
+
+```mcfunction
+time set mymod:noon
+```
+
+#### Targeting a Specific Clock with `time.of(clock)`
+
+When your datapack defines multiple [world clocks](/docs/data-driven/world-clocks), use `time.of(clock)` to
+scope every subcommand to that clock. It returns a `TimeWithClock` instance that mirrors the full `Time` API:
+
+```kotlin
+val seasonClock = worldClock("season")
+
+function("season_control") {
+	time.of(seasonClock).add(6000)
+	time.of(seasonClock).pause()
+	time.of(seasonClock).resume()
+	time.of(seasonClock).set(TimePeriod.DAY)
+	time.of(seasonClock).set(timeMarker("summer", "mymod"))
+	time.of(seasonClock).query(TimeType.DAYTIME)
+	time.of(seasonClock).query(Timelines.DAY)
+	time.of(seasonClock).queryRepetitions(Timelines.DAY)
+	time.of(seasonClock).queryTime()
+	time.of(seasonClock).rate(2.0f)
+}
+```
+
+Generated output:
+
+```mcfunction
+time of mymod:season add 6000
+time of mymod:season pause
+time of mymod:season resume
+time of mymod:season set day
+time of mymod:season set mymod:summer
+time of mymod:season query daytime
+time of mymod:season query minecraft:day
+time of mymod:season query minecraft:day repetitions
+time of mymod:season query time
+time of mymod:season rate 2
 ```
 
 ### Weather Command
@@ -213,6 +323,20 @@ Generated output:
 summon minecraft:zombie 0 64 0
 summon minecraft:creeper ~ ~ ~ {CustomName:"\"Boom\"",NoAI:true}
 ```
+
+The trailing block is the raw [NBT builder](/docs/concepts/nbts), so entity tags are written by name and are not
+type-checked against the entity type.
+
+For item entities, the [`oop` module](/docs/oop/items) provides a typed alternative: `itemStack(...).summon { }`
+builds the `Item` compound for you and exposes the common entity tags (`Motion`, `Rotation`, `Tags`, `Glowing`,
+`NoGravity`, `PickupDelay`, `Age`, …) as named properties on `ItemEntitySummonData` instead of string keys. See
+[Items → Configuring the spawned entity](/docs/oop/items#configuring-the-spawned-entity).
+
+Higher-level spawning options:
+
+- [Spawners](/docs/oop/spawners) - reusable named spawner handles with a fixed type and position.
+- [Display Entities](/docs/helpers/display-entities) - block, item, and text displays with transformations and interpolation.
+- [Mannequins](/docs/helpers/mannequins) - posable player-model entities.
 
 ### SetBlock Command
 
@@ -277,11 +401,12 @@ enchant @s minecraft:sharpness 5
 ### Difficulty Command
 
 The
-`difficulty` command gets or sets the world's difficulty level (Peaceful, Easy, Normal, Hard). Difficulty affects mob damage, hunger depletion, and whether hostile mobs spawn.
+`difficulty` command gets or sets the world's difficulty level (Peaceful, Easy, Normal, Hard). Difficulty affects mob
+damage, hunger depletion, and whether hostile mobs spawn. Called without arguments it queries the current value.
 
 ```kotlin
 function("difficulty_examples") {
-	difficulty()  // Query current difficulty
+	difficulty() // no argument reads the current difficulty instead of setting it
 	difficulty(Difficulty.HARD)
 }
 ```
@@ -296,11 +421,12 @@ difficulty hard
 ### SpawnPoint Command
 
 The
-`spawnpoint` command sets where a player respawns after death. Each player can have their own spawn point. Optionally specify the facing direction on respawn.
+`spawnpoint` command sets where a player respawns after death. Each player can have their own spawn point. Called
+without a position it uses the executor's current one, and an optional rotation sets the facing direction on respawn.
 
 ```kotlin
 function("spawnpoint_examples") {
-	spawnPoint()  // Set at current position
+	spawnPoint() // sets the executor's spawn to wherever the command runs from
 	spawnPoint(self())
 	spawnPoint(self(), vec3(100, 64, 100))
 	spawnPoint(self(), vec3(100, 64, 100), rotation(90, 0))
@@ -369,7 +495,7 @@ conditions. Useful for cooldowns, timed events, and measuring durations.
 
 ```kotlin
 function("stopwatch_examples") {
-	val myStopwatch = stopwatch("my_timer")
+	val myStopwatch = stopWatch("my_timer")
 	stopwatchCreate(myStopwatch)
 	stopwatchQuery(myStopwatch)
 	stopwatchRestart(myStopwatch)
@@ -409,17 +535,17 @@ execute if stopwatch my_datapack:my_timer 100 run say Timer reached 100 ticks!
 
 ### Message Commands
 
-The `msg` command (aliases: `tell`, `w`) sends a private message to a specific player. The `teammsg` command (alias:
-`tm`) sends a message to all members of the sender's team. See [Scoreboards](/docs/concepts/scoreboards) for team
-management.
+The `msg` command sends a private message to a specific player, and `teammsg` sends a message to all members of the
+sender's team. `tell` and `w` are aliases of `msg`, `tm` is an alias of `teamMsg` - each pair emits the same command.
+See [Scoreboards](/docs/concepts/scoreboards) for team management.
 
 ```kotlin
 function("message_examples") {
 	msg(self(), "Hello!")
-	tell(self(), "Hello!")  // Alias for msg
-	w(self(), "Hello!")     // Alias for msg
+	tell(self(), "Hello!") // alias for msg
+	w(self(), "Hello!")    // alias for msg
 	teamMsg("Hello team!")
-	tm("Hello team!")       // Alias for teamMsg
+	tm("Hello team!")      // alias for teamMsg
 }
 ```
 
@@ -436,13 +562,14 @@ teammsg Hello team!
 ### Spectate Command
 
 The
-`spectate` command makes a player in Spectator mode view the game from another entity's perspective. Call without arguments to stop spectating.
+`spectate` command makes a player in Spectator mode view the game from another entity's perspective. Call it without
+arguments to stop spectating, with one argument for the target to spectate, and with two to also name the spectator.
 
 ```kotlin
 function("spectate_examples") {
-	spectate()  // Stop spectating
-	spectate(self())  // Spectate target
-	spectate(self(), self())  // Target and spectator
+	spectate()               // stop spectating and return to your own body
+	spectate(self())         // the entity to look through
+	spectate(self(), self()) // target first, then which player does the spectating
 }
 ```
 
@@ -494,7 +621,9 @@ The `execute` command is one of the most powerful commands in Minecraft. It allo
 - Store command results in scores or NBT
 - Chain multiple modifiers together
 
-Use `execute` with [Predicates](/docs/data-driven/predicates) for complex conditions.
+The examples below cover the basics. For the full subcommand, condition, store, and `run` reference, see the dedicated
+[Execute](/docs/commands/execute) page. Use `execute` with [Predicates](/docs/data-driven/predicates) for complex
+conditions.
 
 #### Basic Execute
 
@@ -516,7 +645,8 @@ Generated output:
 execute as @a run say Hello from execute!
 ```
 
-#### Execute with Conditions
+Conditions (`if`/`unless`), score comparisons, position/dimension/anchoring context, entity relations, and the full
+subcommand list are documented on the dedicated [Execute](/docs/commands/execute) page. A quick conditional example:
 
 ```kotlin
 function("execute_conditions") {
@@ -543,129 +673,6 @@ Generated output:
 execute as @e[limit=3,sort=random] if score @s points >= 10 run say You have enough points!
 ```
 
-For `execute if score`, Kore exposes the full set of scoreboard comparisons:
-
-| Kotlin DSL                                                | Generated syntax                    |
-|-----------------------------------------------------------|-------------------------------------|
-| `score(self(), "points") equalTo 10`                      | `if score @s points matches 10`     |
-| `score(self(), "points") notEqualTo 10`                   | `unless score @s points matches 10` |
-| `score(self(), "points") greaterThan 10`                  | `if score @s points > 10`           |
-| `score(self(), "points") greaterThanOrEqualTo 10`         | `if score @s points >= 10`          |
-| `score(self(), "points") lessThan 10`                     | `if score @s points < 10`           |
-| `score(self(), "points") lessThanOrEqualTo 10`            | `if score @s points <= 10`          |
-| `score(self(), "points") equalTo score(self(), "target")` | `if score @s points = @s target`    |
-
-```kotlin
-function("execute_score_comparisons") {
-	execute {
-		ifCondition {
-			score(self(), "points") equalTo 10
-			score(self(), "points") notEqualTo 11
-			score(self(), "points") greaterThan 5
-			score(self(), "points") greaterThanOrEqualTo 10
-			score(self(), "points") lessThan 20
-			score(self(), "points") lessThanOrEqualTo 15
-			score(self(), "points") equalTo score(self(), "target")
-		}
-
-		run {
-			say("Score comparisons matched")
-		}
-	}
-}
-```
-
-#### Execute with Multiple Conditions
-
-```kotlin
-function("execute_multi_conditions") {
-	execute {
-		ifCondition {
-			score(self(), "a") matches rangeOrInt(0)
-			score(self(), "b") matches rangeOrInt(1)
-			score(self(), "c") matches rangeOrInt(2)
-		}
-
-		run {
-			say("All conditions met!")
-		}
-	}
-}
-```
-
-Generated output:
-
-```mcfunction
-execute if score @s a matches 0 if score @s b matches 1 if score @s c matches 2 run say All conditions met!
-```
-
-#### Execute with Position and Dimension
-
-```kotlin
-function("execute_position") {
-	execute {
-		at(self())
-		positioned(vec3(0, 100, 0))
-		inDimension(Dimensions.THE_NETHER)
-
-		run {
-			setBlock(vec3(), Blocks.GLOWSTONE)
-		}
-	}
-}
-```
-
-Generated output:
-
-```mcfunction
-execute at @s positioned 0 100 0 in minecraft:the_nether run setblock ~ ~ ~ minecraft:glowstone
-```
-
-#### Execute with Alignment and Anchoring
-
-```kotlin
-function("execute_align") {
-	execute {
-		align(Axes.XYZ)
-		anchored(Anchor.EYES)
-		facing(vec3(0, 64, 0))
-
-		run {
-			say("Aligned and facing!")
-		}
-	}
-}
-```
-
-Generated output:
-
-```mcfunction
-execute align xyz anchored eyes facing 0 64 0 run say Aligned and facing!
-```
-
-#### Execute with Entity Relations
-
-```kotlin
-function("execute_relations") {
-	execute {
-		asTarget(allEntities {
-			type = EntityTypes.ZOMBIE
-		})
-		on(Relation.ATTACKER)
-
-		run {
-			effect.give(self(), Effects.GLOWING, 10)
-		}
-	}
-}
-```
-
-Generated output:
-
-```mcfunction
-execute as @e[type=minecraft:zombie] on attacker run effect give @s minecraft:glowing 10
-```
-
 #### Execute Store
 
 Store command results in scores or NBT:
@@ -678,7 +685,7 @@ function("execute_store") {
 		}
 
 		run {
-			time.query(TimeQuery.DAYTIME)
+			time.query(TimeType.DAYTIME)
 		}
 	}
 }
@@ -810,20 +817,39 @@ usage.
 
 ```kotlin
 function("scoreboard_examples") {
-	// Objectives
-	scoreboard.objectives.add("kills", "playerKillCount", textComponent("Player Kills"))
+	scoreboard.objectives.add("kills", ScoreboardCriteria.PLAYER_KILL_COUNT, textComponent("Player Kills"))
 	scoreboard.objectives.remove("old_objective")
-	scoreboard.objectives.setDisplay(DisplaySlot.SIDEBAR, "kills")
+	scoreboard.objectives.setDisplay(DisplaySlots.sidebar, "kills")
 
-	// Players
 	scoreboard.players.set(allPlayers(), "kills", 0)
 	scoreboard.players.add(self(), "kills", 1)
 	scoreboard.players.remove(self(), "kills", 5)
 	scoreboard.players.reset(self(), "kills")
 
-	// Operations
 	scoreboard.players.operation(self(), "total", Operation.ADD, self(), "kills")
 }
+```
+
+Criteria come from the `ScoreboardCriteria` enum, or from the builders for compound criteria:
+`criteriaKilled(EntityTypes.ZOMBIE)`, `criteriaMined(Blocks.STONE)`, `criteriaTeamKill(FormattingColor.RED)`,
+`criteriaCustom(...)`, and friends. Passing a raw string does not compile - `ScoreboardCriterion` is an interface.
+
+`scoreboard.objective(target, "objective")` returns a `PlayerObjective` handle when you want to run several
+operations on the same score, including the `+=`, `-=`, `++`, `--` operators and the `min` / `max` infix operations:
+
+```kotlin
+function("score_handle") {
+	val kills = scoreboard.objective(self(), "kills")
+	kills += 1
+	kills.reset()
+}
+```
+
+Generated output:
+
+```mcfunction
+scoreboard players add @s kills 1
+scoreboard players reset @s kills
 ```
 
 ### Bossbar Command
@@ -872,13 +898,13 @@ The
 
 ```kotlin
 function("attribute_examples") {
-	attribute(self(), Attributes.GENERIC_MAX_HEALTH) {
+	attribute(self(), Attributes.MAX_HEALTH) {
 		get()
 		base.get()
 		base.set(40.0)
 	}
 
-	attribute(self(), Attributes.GENERIC_MOVEMENT_SPEED) {
+	attribute(self(), Attributes.MOVEMENT_SPEED) {
 		modifiers.add("speed_boost", 0.1, AttributeModifierOperation.ADD_VALUE)
 		modifiers.remove("speed_boost")
 	}
@@ -889,7 +915,8 @@ function("attribute_examples") {
 
 The
 `schedule` command delays function execution by a specified time. Useful for timers, cooldowns, and delayed effects.
-Time can be specified in ticks, seconds, or days. See [Scheduler Helper](/docs/helpers/scheduler) for advanced
+Time can be specified in [ticks, seconds, or days](/docs/concepts/time). See [Scheduler Helper](/docs/helpers/scheduler)
+for advanced
 scheduling patterns.
 
 ```kotlin
@@ -912,27 +939,27 @@ Sources include fishing, killing entities, mining blocks, or direct loot table r
 
 ```kotlin
 function("loot_examples") {
-	// Give loot to a player
+	// roll a loot table and put the result straight into the player's inventory
 	loot(self()) {
 		loot(LootTables.Gameplay.CAT_MORNING_GIFT)
 	}
 
-	// Fish loot with a tool
+	// roll it as if fished at a position with that rod, so rod enchantments apply
 	loot(self()) {
 		fish(LootTables.Gameplay.CAT_MORNING_GIFT, vec3(), Items.FISHING_ROD)
 	}
 
-	// Kill loot from an entity
+	// roll the drops the entity would give if killed, without killing it
 	loot(self()) {
 		kill(self())
 	}
 
-	// Mine loot from a position
+	// roll the drops the block would give if mined with that tool
 	loot(self()) {
 		mine(vec3(), Items.DIAMOND_PICKAXE)
 	}
 
-	// Insert loot into a container
+	// drop the items into the container at that position instead of an inventory
 	loot {
 		target {
 			insert(vec3())
@@ -942,7 +969,7 @@ function("loot_examples") {
 		}
 	}
 
-	// Replace block inventory slot
+	// overwrite one slot of a container block, CONTAINER[0] being its first slot
 	loot {
 		target {
 			replaceBlock(vec3(), CONTAINER[0])
@@ -952,7 +979,7 @@ function("loot_examples") {
 		}
 	}
 
-	// Replace entity equipment slot
+	// overwrite an equipment slot, here the helmet
 	loot {
 		target {
 			replaceEntity(self(), ARMOR.HEAD)
@@ -962,7 +989,17 @@ function("loot_examples") {
 		}
 	}
 
-	// Inline loot table definition
+	// mobs that carry their own inventory (villagers, piglins) use mob.inventory.*
+	loot {
+		target {
+			replaceEntity(self(), MOB.INVENTORY[0])
+		}
+		source {
+			loot(LootTables.Gameplay.CAT_MORNING_GIFT)
+		}
+	}
+
+	// the source can also be a loot table written inline, with no separate file
 	loot {
 		target {
 			give(self())
@@ -972,7 +1009,7 @@ function("loot_examples") {
 				pool {
 					rolls(1f)
 					entries {
-						item(Items.ANVIL)
+						items(Items.ANVIL)
 					}
 				}
 			}
@@ -991,8 +1028,15 @@ loot give @s mine ~ ~ ~ minecraft:diamond_pickaxe
 loot insert ~ ~ ~ kill @s
 loot replace block ~ ~ ~ container.0 loot minecraft:gameplay/cat_morning_gift
 loot replace entity @s armor.head loot minecraft:gameplay/cat_morning_gift
+loot replace entity @s mob.inventory.0 loot minecraft:gameplay/cat_morning_gift
 loot give @s loot {pools:[{rolls:1.0f,entries:[{type:"minecraft:item",name:"minecraft:anvil"}]}]}
 ```
+
+The `target` block chooses where items go (`give`, `insert` into a container, `replaceBlock`, `replaceEntity`) and the
+`source` block chooses where they come from (`loot`, `fish`, `kill`, `mine`). Slot constants come from the item slot
+types: `CONTAINER[n]` for block inventories, `ARMOR.HEAD` and friends for equipment, and `MOB.INVENTORY[n]` for mobs
+that carry their own inventory such as villagers and piglins. The last example shows that `source { loot { ... } }`
+also accepts an inline [loot table](/docs/data-driven/loot-tables) instead of a reference.
 
 ### Particle Command
 
@@ -1001,16 +1045,15 @@ The `particle` command spawns visual particle effects in the world. Particles ha
 
 ```kotlin
 function("particle_examples") {
-	// Simple particle
 	particle(Particles.ASH)
 
-	// Particle at position with delta and count
+	// arguments are position, delta (how far particles scatter), speed, then count
 	particle(Particles.ASH, vec3(), vec3(), 1.0, 2)
 
-	// Particle with force mode (visible from far away)
+	// force shows the particle even far away or through blocks
 	particle(Particles.ASH, vec3(), vec3(), 1.0, 2, ParticleMode.FORCE)
 
-	// Particle visible only to specific players
+	// a last selector limits who sees the particle
 	particle(Particles.ASH, vec3(), vec3(), 1.0, 2, ParticleMode.NORMAL, allEntities())
 }
 ```
@@ -1026,51 +1069,89 @@ particle minecraft:ash ~ ~ ~ ~ ~ ~ 1 2 normal @e
 
 #### Special Particle Types
 
+Some particles carry extra data beyond a position. The `particles { }` block exposes one builder per such type:
+
+| Builder                | Extra data                                          |
+|------------------------|-----------------------------------------------------|
+| `block`                | A block state, so the particle matches that block    |
+| `blockCrumble`         | A block state, for the crumbling effect              |
+| `blockMarker`          | A block state, used to visualise invisible blocks    |
+| `dragonBreath`         | A power value                                        |
+| `dust`                 | A color and a scale                                  |
+| `dustColorTransition`  | A start color, a scale, and an end color             |
+| `entityEffect`         | A color tint                                         |
+| `fallingDust`          | A block state                                        |
+| `flash`                | An ARGB color                                        |
+| `instantEffect`        | A color tint                                         |
+| `item`                 | An item stack, [components](/docs/concepts/components) included |
+| `sculkCharge`          | A roll angle in radians                              |
+| `shriek`               | A delay in ticks                                     |
+| `tintedLeaves`         | A color tint                                         |
+| `trail`                | A color, a target position, and a duration           |
+| `vibration`            | A destination position and a travel duration         |
+
+Every builder also takes an optional trailing position, and `particle(Particles.X)` inside the block emits a plain
+particle with no extra data.
+
 ```kotlin
 function("special_particles") {
 	particles {
-		// Block particles with state
 		block(Blocks.STONE_SLAB(states = mapOf("half" to "top")))
 
-		// Block crumble effect
 		blockCrumble(Blocks.STONE)
 
-		// Block marker (invisible barrier visualization)
 		blockMarker(Blocks.STONE)
 
-		// Falling dust
 		fallingDust(Blocks.STONE)
 
-		// Colored dust particles
 		dust(Color.PURPLE, 2.0)
 		dust(rgb(0xabcdef), 2.0)
 
-		// Dust color transition
 		dustColorTransition(Color.BLUE, 2.0, Color.RED)
 
-		// Entity effect with color
+		dragonBreath(0.5f)
 		entityEffect(color = Color.GREEN)
+		flash(Color.WHITE.toARGB())
+		instantEffect(color = Color.GREEN)
+		tintedLeaves(Color.RED)
 
-		// Item particle with components
-		item(Items.DIAMOND_SWORD {
+		items(Items.DIAMOND_SWORD {
 			enchantments {
 				enchantment(Enchantments.SHARPNESS, 5)
 			}
 		})
 
-		// Sculk charge with angle
 		sculkCharge(PI / 2)
 
-		// Shriek with delay
 		shriek(100)
 
-		// Trail particle
 		trail(Color.RED, Triple(1, 2, 3), 10)
 
-		// Vibration to position
 		vibration(vec3(1, 2, 3), 10)
 	}
 }
+```
+
+Generated output:
+
+```mcfunction
+particle block{block_state:{Name:"minecraft:stone_slab",Properties:{half:"top"}}}
+particle block_crumble{block_state:{Name:"minecraft:stone"}}
+particle block_marker{block_state:{Name:"minecraft:stone"}}
+particle falling_dust{block_state:{Name:"minecraft:stone"}}
+particle dust{color:11141375,scale:2.0d}
+particle dust{color:11259375,scale:2.0d}
+particle dust_color_transition{from_color:5592575,to_color:16733525,scale:2.0d}
+particle dragon_breath{power:0.5f}
+particle entity_effect{color:[0.3333333333333333d,1.0d,0.3333333333333333d]}
+particle flash{color:"#ffffffff"}
+particle instant_effect{color:[0.3333333333333333d,1.0d,0.3333333333333333d]}
+particle tinted_leaves{color:[1.0d,0.3333333333333333d,0.3333333333333333d,1.0d]}
+particle item{item:{id:"minecraft:diamond_sword",components:{enchantments:{"minecraft:sharpness":5}}}}
+particle sculk_charge 1.5707963267948966
+particle shriek 100
+particle trail{color:16733525,duration:10,target:[1,2,3]}
+particle vibration 1.0 2.0 3.0 10
 ```
 
 ### Clone Command
@@ -1081,14 +1162,14 @@ The
 
 ```kotlin
 function("clone_examples") {
-	// Basic clone
+	// begin and end are the two opposite corners of the region to copy,
+	// destination is where its lowest corner lands
 	clone {
 		begin = vec3(0, 64, 0)
 		end = vec3(10, 74, 10)
 		destination = vec3(100, 64, 100)
 	}
 
-	// Clone between dimensions
 	clone {
 		begin = vec3(0, 64, 0)
 		end = vec3(10, 74, 10)
@@ -1097,15 +1178,15 @@ function("clone_examples") {
 		to = Dimensions.OVERWORLD
 	}
 
-	// Clone with mask mode
+	// masked skips air blocks, so the copy does not erase what is already there
 	clone {
 		begin = vec3(0, 64, 0)
 		end = vec3(10, 74, 10)
 		destination = vec3(100, 64, 100)
-		masked(CloneMode.MOVE)  // Only non-air blocks, move instead of copy
+		masked(CloneMode.MOVE)
 	}
 
-	// Clone with block filter
+	// only copies blocks matching the tag, everything else is left untouched
 	clone {
 		begin = vec3(0, 64, 0)
 		end = vec3(10, 74, 10)
@@ -1113,7 +1194,7 @@ function("clone_examples") {
 		filter(Tags.Block.BASE_STONE_OVERWORLD, CloneMode.FORCE)
 	}
 
-	// Strict mode (fail if regions overlap incorrectly)
+	// source and destination overlap here, strict makes that fail instead of corrupting the copy
 	clone {
 		begin = vec3(0, 64, 0)
 		end = vec3(10, 74, 10)
@@ -1141,27 +1222,21 @@ specified in ticks.
 ```kotlin
 function("worldborder_examples") {
 	worldBorder {
-		// Expand border by 10 blocks over 200 ticks (10 seconds)
-		add(10.0, time = 200)
+		// sizes are the border's full diameter in blocks, times are in ticks
+		add(10.0, time = 200) // grow by 10 blocks over 10 seconds
 
-		// Set border to 1000 blocks instantly
-		set(1000.0)
+		set(1000.0) // instant
 
-		// Set border to 500 blocks over 6000 ticks (5 minutes)
-		set(500.0, time = 6000)
+		set(500.0, time = 6000) // shrink over 5 minutes
 
-		// Set center
 		center(0.0, 0.0)
 
-		// Damage settings
-		damageAmount(0.2f)
-		damageBuffer(5.0)
+		damageAmount(0.2f) // damage per second per block past the buffer
+		damageBuffer(5.0)  // blocks of grace beyond the border before damage starts
 
-		// Warning settings
 		setWarningDistance(10)
 		setWarningTime(15)
 
-		// Query current size
 		get()
 	}
 }
@@ -1190,16 +1265,11 @@ the [Selectors](/docs/concepts/selectors) page alongside this reference:
 
 ```kotlin
 function("selector_examples") {
-	// All players
-	say(allPlayers())
+	say(allPlayers())                         // @a
+	teleport(nearestPlayer(), vec3(0, 64, 0)) // @p
+	give(randomPlayer(), Items.DIAMOND)       // @r
 
-	// Nearest player
-	teleport(nearestPlayer(), vec3(0, 64, 0))
-
-	// Random player
-	give(randomPlayer(), Items.DIAMOND)
-
-	// All entities with filters
+	// sort decides who the limit keeps, so this is the 10 closest zombies within 10 blocks
 	kill(allEntities {
 		type = EntityTypes.ZOMBIE
 		limit = 10
@@ -1207,14 +1277,12 @@ function("selector_examples") {
 		distance = rangeOrIntEnd(10)
 	})
 
-	// Entities with scores
-	effect.give(allEntities {
+	effect(allEntities {
 		scores {
 			score("kills") greaterThanOrEqualTo 5
 		}
-	}, Effects.STRENGTH, 60)
+	}) { give(Effects.STRENGTH, duration = 60) }
 
-	// Entities with NBT
 	kill(allEntities {
 		nbt = nbt {
 			this["CustomName"] = "\"Target\""
@@ -1232,7 +1300,6 @@ function("greet_player") {
 	say("Hello, ${macro("player_name")}!")
 }
 
-// Call with arguments
 load {
 	function("greet_player", arguments = nbt { this["player_name"] = "Steve" })
 }
@@ -1269,7 +1336,6 @@ Function context:
 fun Function.myModCommand(target: EntityArgument, value: Int) =
 	addLine(command("mymod", literal(target.asString()), int(value)))
 
-// Usage
 function("custom") {
 	myModCommand(self(), 42)
 }
@@ -1290,6 +1356,7 @@ the [Cookbook](/docs/guides/cookbook) gives more realistic project-scale example
 - [Macros](/docs/commands/macros) - Dynamic command arguments
 - [Chat Components](/docs/concepts/chat-components) - Formatted text in commands
 - [Cookbook](/docs/guides/cookbook) - Practical command composition patterns in real datapacks
+- [World Clocks](/docs/data-driven/world-clocks) - World clocks, timelines, time markers, and `timeCheck`
 
 ### External Resources
 

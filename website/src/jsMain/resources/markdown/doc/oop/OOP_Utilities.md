@@ -5,7 +5,7 @@ nav-title: OOP Utilities
 description: Overview of object-oriented gameplay utilities in the Kore OOP module - entities, teams, scoreboards, items, events, timers, spawners, and state machines.
 keywords: minecraft, datapack, kore, oop, entity, player, commands, teams, scoreboard, items, events, cooldown, bossbar, effects, timer, spawner, gamestate
 date-created: 2026-02-21
-date-modified: 2026-03-31
+date-modified: 2026-08-14
 routeOverride: /docs/oop/oop-utilities
 position: 0
 ---
@@ -36,7 +36,8 @@ Utility-style features such as renderers, math helpers, raycasts, areas, state d
 ## All Features
 
 - **[Boss Bars](/docs/oop/boss-bars)** - Register, configure, and manage boss bars.
-- **[Cooldowns](/docs/oop/cooldowns)** - Scoreboard-based cooldown system that decrements every tick.
+- **[Cooldowns](/docs/oop/cooldowns)** - Scoreboard-based cooldown system that decrements
+  every [tick](/docs/concepts/time).
 - **[Entities & Players](/docs/oop/entities-and-players)** - Create entities and players, execute helpers, batch
   commands, entity commands, and entity effects.
 - **[Events](/docs/oop/events)** - Advancement-based event system for player and entity actions.
@@ -56,7 +57,7 @@ commands.
 - **Systems such as timers, cooldowns, boss bars, and spawners** generate their own supporting commands and objectives.
 - **Your Kotlin code reads closer to gameplay intent**, which makes larger datapacks easier to maintain.
 
-You do not have to go “all in”: the OOP layer is meant to sit on top of Kore, not replace it.
+You do not have to go "all in": the OOP layer is meant to sit on top of Kore, not replace it.
 
 ## Typical workflow
 
@@ -79,13 +80,11 @@ Here's a complete side-by-side comparison showing how the same mini-game setup l
 
 ```kotlin
 dataPack("arena") {
-	val namespace = "arena"
-
-	// --- Scoreboard objectives ---
+	// --- Scoreboard objectives and teams ---
 	function("setup") {
-		scoreboard.objectives.add("kills", "dummy", textComponent("Kills"))
-		scoreboard.objectives.add("game_state", "dummy")
-		scoreboard.objectives.add("cooldown_dash", "dummy")
+		scoreboard.objectives.add("kills", ScoreboardCriteria.DUMMY, textComponent("Kills"))
+		scoreboard.objectives.add("game_state", ScoreboardCriteria.DUMMY)
+		scoreboard.objectives.add("cooldown_dash", ScoreboardCriteria.DUMMY)
 		teams {
 			team("red") {
 				color = FormattingColor.RED
@@ -98,7 +97,7 @@ dataPack("arena") {
 		}
 	}
 
-	// --- Player setup (manual selectors) ---
+	// --- Player setup, selector rebuilt in each function ---
 	function("join_red") {
 		val player = allPlayers {
 			limit = 1
@@ -106,7 +105,7 @@ dataPack("arena") {
 		}
 		teams.join("red", player)
 		gamemode(Gamemode.SURVIVAL, player)
-		effect.give(player, Effects.SPEED, 999999, 1)
+		effect(player) { give(Effects.SPEED, duration = 999999, amplifier = 1) }
 		scoreboard.players.set(player, "kills", 0)
 		scoreboard.players.set(player, "cooldown_dash", 0)
 	}
@@ -118,12 +117,12 @@ dataPack("arena") {
 		}
 		teams.join("blue", player)
 		gamemode(Gamemode.SURVIVAL, player)
-		effect.give(player, Effects.SPEED, 999999, 1)
+		effect(player) { give(Effects.SPEED, duration = 999999, amplifier = 1) }
 		scoreboard.players.set(player, "kills", 0)
 		scoreboard.players.set(player, "cooldown_dash", 0)
 	}
 
-	// --- State transitions (manual scoreboard) ---
+	// --- State transitions, tracked by hand on a fake player ---
 	function("start_game") {
 		scoreboard.players.set(literal("#game_state"), "game_state", 1)
 		execute {
@@ -139,7 +138,7 @@ dataPack("arena") {
 		}
 	}
 
-	// --- Cooldown tick (manual decrement) ---
+	// --- Cooldown, decremented manually every tick ---
 	function("tick_cooldowns") {
 		execute {
 			ifCondition {
@@ -151,7 +150,7 @@ dataPack("arena") {
 		}
 	}
 
-	// --- Spawning a mob (manual summon) ---
+	// --- Spawning ---
 	function("spawn_guardian") {
 		summon(EntityTypes.IRON_GOLEM, vec3(0, 64, 0))
 	}
@@ -162,7 +161,7 @@ dataPack("arena") {
 
 ```kotlin
 dataPack("arena") {
-	// --- Players as objects ---
+	// --- Players as reusable objects ---
 	val redPlayer = player("RedPlayer")
 	val bluePlayer = player("BluePlayer")
 
@@ -179,7 +178,7 @@ dataPack("arena") {
 	// --- Scoreboard ---
 	val kills = scoreboard("kills")
 
-	// --- Cooldown ---
+	// --- Cooldown, tick function generated for you ---
 	val dashCooldown = registerCooldown("dash", 3.seconds)
 
 	// --- Game states ---
@@ -199,24 +198,24 @@ dataPack("arena") {
 		redPlayer.joinTeam("red")
 		redPlayer.setGamemode(Gamemode.SURVIVAL)
 		redPlayer.giveEffect(Effects.SPEED, duration = 999999, amplifier = 1)
-		kills.set(redPlayer, 0)
+		kills.getScore(redPlayer).set(0)
 	}
 
 	function("join_blue") {
 		bluePlayer.joinTeam("blue")
 		bluePlayer.setGamemode(Gamemode.SURVIVAL)
 		bluePlayer.giveEffect(Effects.SPEED, duration = 999999, amplifier = 1)
-		kills.set(bluePlayer, 0)
+		kills.getScore(bluePlayer).set(0)
 	}
 
 	// --- State transition ---
 	function("start_game") {
 		states.transitionTo("running")
-		redPlayer.title(textComponent("Game Started!") {
+		redPlayer.showTitle(textComponent("Game Started!") {
 			color = Color.GREEN
 			bold = true
 		})
-		bluePlayer.title(textComponent("Game Started!") {
+		bluePlayer.showTitle(textComponent("Game Started!") {
 			color = Color.GREEN
 			bold = true
 		})
@@ -231,14 +230,14 @@ dataPack("arena") {
 
 ### Key Differences
 
-| Aspect                | Vanilla Kore                                                           | OOP Kore                                                                     |
-|-----------------------|------------------------------------------------------------------------|------------------------------------------------------------------------------|
-| **Entity references** | Manual selectors (`allPlayers { ... }`) repeated everywhere            | Named objects (`player("RedPlayer")`) reused across functions                |
-| **Commands**          | Low-level calls like `scoreboard.players.set(...)`, `effect.give(...)` | Method calls on entities: `player.giveEffect(...)`, `player.joinTeam(...)`   |
-| **Game state**        | Manual scoreboard objectives and raw `set` calls                       | `registerGameStates { state("running") }` + `states.transitionTo("running")` |
-| **Cooldowns**         | Manual scoreboard decrement loops                                      | `registerCooldown("dash", 3.seconds)` - tick function auto-generated         |
-| **Spawning**          | Raw `summon(EntityTypes.X, pos)`                                       | `registerSpawner(...)` + `spawner.spawn()`                                   |
-| **Boilerplate**       | Selector construction, objective registration, execute blocks          | Handled internally by the OOP abstractions                                   |
+| Aspect                | Vanilla Kore                                                                    | OOP Kore                                                                     |
+|-----------------------|---------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| **Entity references** | Manual selectors (`allPlayers { ... }`) repeated everywhere                     | Named objects (`player("RedPlayer")`) reused across functions                |
+| **Commands**          | Low-level calls like `scoreboard.players.set(...)`, `effect(...) { give(...) }` | Method calls on entities: `player.giveEffect(...)`, `player.joinTeam(...)`   |
+| **Game state**        | Manual scoreboard objectives and raw `set` calls                                | `registerGameStates { state("running") }` + `states.transitionTo("running")` |
+| **Cooldowns**         | Manual scoreboard decrement loops                                               | `registerCooldown("dash", 3.seconds)` - tick function auto-generated         |
+| **Spawning**          | Raw `summon(EntityTypes.X, pos)`                                                | `registerSpawner(...)` + `spawner.spawn()`                                   |
+| **Boilerplate**       | Selector construction, objective registration, execute blocks                   | Handled internally by the OOP abstractions                                   |
 
 The OOP module doesn't replace vanilla Kore - it builds on top of it.
 You can freely mix both styles, using OOP utilities where they simplify your code and dropping to vanilla commands when

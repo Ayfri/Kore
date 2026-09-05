@@ -1,7 +1,10 @@
 plugins {
-	kotlin("jvm")
+	kotlin("multiplatform")
 	kotlin("plugin.serialization")
+	alias(libs.plugins.ksp)
+	alias(libs.plugins.kotest)
 	id("kotest-conventions")
+	id("kotlin-conventions")
 	id("publish-conventions")
 }
 
@@ -15,19 +18,36 @@ repositories {
 }
 
 kotlin {
+	jvm()
+	js {
+		browser()
+		nodejs()
+	}
 	jvmToolchain(25)
 
 	compilerOptions {
-		freeCompilerArgs =
-			listOf("-Xcontext-parameters", "-Xrender-internal-diagnostic-names")
+		freeCompilerArgs.addAll(listOf("-Xrender-internal-diagnostic-names"))
 	}
-}
 
-dependencies {
-	implementation(libs.kotlinpoet)
-	implementation(libs.kotlinx.serialization)
-	implementation(project(":kore"))
+	sourceSets {
+		commonMain.dependencies {
+			api(project(":kore"))
+			implementation(libs.kompress.core)
+			implementation(libs.kompress.zip)
+			implementation(libs.kotlinx.io)
+			implementation(libs.kotlinx.serialization)
+		}
 
-	testImplementation(libs.kotlin.dotenv)
-	testImplementation(libs.kotlinx.io)
+		jvmMain.dependencies {
+			implementation(libs.kotlinpoet)
+		}
+
+		commonTest.dependencies {
+			implementation(project(":common-tests"))
+		}
+
+		jvmTest.dependencies {
+			implementation(libs.kotlin.dotenv)
+		}
+	}
 }

@@ -4,17 +4,19 @@ import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.compose.css.functions.blur
 import com.varabyte.kobweb.core.rememberPageContext
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiChevronRight
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiContentCopy
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideCopy
+import com.varabyte.kobweb.silk.components.icons.lucide.LucidePanelLeftOpen
 import com.varabyte.kobwebx.markdown.markdown
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.*
 import io.github.ayfri.kore.website.components.doc.*
 import io.github.ayfri.kore.website.utils.*
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.browser.window
 import kotlinx.coroutines.await
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
@@ -22,7 +24,10 @@ import org.jetbrains.compose.web.dom.Article
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
-import kotlin.time.Duration.Companion.seconds
+import org.w3c.dom.events.Event
+
+/** Width under which the doc sidebar is a drawer, so the dimming overlay has to be rendered. */
+private const val MOBILE_BREAKPOINT_PX = 768
 
 @Composable
 fun MarkdownLayout(content: @Composable () -> Unit) {
@@ -36,17 +41,14 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 	val context = rememberPageContext()
 	val markdownData = context.markdown!!.frontMatter
 
-	// Format dates for SEO
-	val publishDate = markdownData["date-created"]?.get(0)?.let(::formatDate)
-	val modifiedDate = markdownData["date-modified"]?.get(0)?.let(::formatDate)
+	// Structured data wants the raw ISO dates, the page footer wants them readable.
+	val publishDate = markdownData["date-created"]?.get(0)
+	val modifiedDate = markdownData["date-modified"]?.get(0)
 
-	var onMobile by remember { mutableStateOf(false) }
+	var onMobile by remember { mutableStateOf(window.innerWidth < MOBILE_BREAKPOINT_PX) }
 	var revealed by remember { mutableStateOf(false) }
 
-	onMobile = window.innerWidth < 768
-	window.onresize = {
-		onMobile = window.innerWidth < 768
-	}
+	window.onEvents("resize" to { _: Event -> onMobile = window.innerWidth < MOBILE_BREAKPOINT_PX })
 
 	val copyMarkdownScope = rememberCoroutineScope()
 	val markdownResourcePath = context.markdown!!.path
@@ -81,7 +83,7 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 			classes(MarkdownLayoutStyle.revealButton)
 			onClick { revealed = !revealed }
 		}) {
-			MdiChevronRight()
+			LucidePanelLeftOpen()
 		}
 
 		DocSidebar(revealed, onClose = { revealed = false })
@@ -89,9 +91,8 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 		Div({
 			classes(MarkdownLayoutStyle.content)
 		}) {
-			if (markdownData["description"] != null) {
-				setDescription(markdownData["description"]!![0])
-			}
+			// Kept in the composition body so it runs after `PageLayout` applied the generic site description.
+			markdownData["description"]?.get(0)?.let(::setDescription)
 
 			Div({
 				classes(MarkdownLayoutStyle.breadcrumbRow)
@@ -128,7 +129,7 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 							}
 						}
 					}) {
-						MdiContentCopy()
+						LucideCopy()
 					}
 				}
 			}
@@ -150,8 +151,8 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 
 					PageNavigation(
 						currentPath = context.route.path,
-						publishDate = publishDate,
-						modifiedDate = modifiedDate,
+						publishDate = publishDate?.let(::formatDate),
+						modifiedDate = modifiedDate?.let(::formatDate),
 						editUrl = "https://github.com/Ayfri/Kore/edit/master/website/src/jsMain/resources/markdown/$markdownResourcePath"
 					)
 				}
@@ -259,8 +260,8 @@ object MarkdownLayoutStyle : StyleSheet() {
 			display(DisplayStyle.Block)
 		}
 
-		child(self, type("span")) style {
-			fontSize(2.cssRem)
+		child(self, type("svg")) style {
+			fontSize(1.6.cssRem)
 		}
 	}
 
@@ -298,7 +299,7 @@ object MarkdownLayoutStyle : StyleSheet() {
 		justifyContent(JustifyContent.Center)
 		padding(0.25.cssRem)
 
-		child(self, type("span")) style {
+		child(self, type("svg")) style {
 			fontSize(0.95.cssRem)
 		}
 
@@ -308,6 +309,7 @@ object MarkdownLayoutStyle : StyleSheet() {
 		}
 	}
 
+	@OptIn(ExperimentalComposeWebApi::class)
 	val copyToast by style {
 		backgroundColor(GlobalStyle.tertiaryBackgroundColor)
 		border(1.px, LineStyle.Solid, rgba(255, 255, 255, 0.35))
@@ -321,7 +323,7 @@ object MarkdownLayoutStyle : StyleSheet() {
 		paddingY(0.2.cssRem)
 		pointerEvents(PointerEvents.None)
 		position(Position.Absolute)
-		property("transform", "translateX(-50%)")
+		transform { translateX((-50).percent) }
 		whiteSpace(WhiteSpace.NoWrap)
 		zIndex(1)
 	}
@@ -353,6 +355,10 @@ object MarkdownLayoutStyle : StyleSheet() {
 		self + hover style {
 			opacity(1)
 		}
+
+		"svg" style {
+			fontSize(0.65.em)
+		}
 	}
 
 	val content by style {
@@ -379,7 +385,7 @@ object MarkdownLayoutStyle : StyleSheet() {
 			borderCollapse(BorderCollapse.Separate)
 			borderRadius(GlobalStyle.roundingButton)
 			border(1.px, LineStyle.Solid, GlobalStyle.tertiaryBackgroundColor)
-			property("border-spacing", "0")
+			borderSpacing(BorderSpacing.of(0.px))
 			marginY(1.cssRem)
 			overflow(Overflow.Hidden)
 			width(Width.FitContent)

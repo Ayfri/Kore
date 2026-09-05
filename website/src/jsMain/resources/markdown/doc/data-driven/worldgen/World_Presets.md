@@ -2,84 +2,66 @@
 root: .components.layouts.MarkdownLayout
 title: World Presets
 nav-title: World Presets
-description: Create world presets and flat level generator presets with Kore's DSL.
-keywords: minecraft, datapack, kore, worldgen, world preset, flat, superflat
+description: Add your own world types to the Minecraft world creation screen, and superflat presets to its customization screen, with Kore.
+keywords: minecraft, datapack, kore, worldgen, world preset, world type, flat level generator preset, superflat
 date-created: 2026-02-03
-date-modified: 2026-02-04
+date-modified: 2026-08-21
 routeOverride: /docs/data-driven/worldgen/world-presets
 ---
 
 # World Presets
 
-World presets define complete world configurations that appear in the "World Type" dropdown during world creation. They specify which
-dimensions exist and how each generates terrain. Vanilla presets include Default, Superflat, Large Biomes, Amplified, and Single Biome.
+A world preset is an entry in the **World Type** dropdown of the world creation screen. It describes the full set of dimensions a new world
+starts with, so it is how you replace the Overworld rather than merely add a dimension next to it. Vanilla ships Default, Superflat, Large
+Biomes, Amplified and Single Biome.
 
-Custom world presets let you offer players pre-configured world types with your custom dimensions, terrain, and biomes.
+A flat level generator preset is the smaller sibling: an entry in the Superflat customization screen, holding one layer stack.
 
-Reference: [World preset](https://minecraft.wiki/w/World_preset)
+References: [World preset](https://minecraft.wiki/w/World_preset), [Superflat presets](https://minecraft.wiki/w/Superflat#Presets)
 
 ---
 
 ## World Preset
 
-A world preset defines the complete dimension configuration for a world. At minimum, it should include an Overworld dimension, but can also
-customize or replace the Nether and End, or add entirely new dimensions.
+A preset needs at least a `minecraft:overworld` dimension; the Nether, the End and any dimension of your own are optional.
+
+`dimension(id, type)` takes two distinct things. `id` is the id the world knows the dimension by - what `/execute in` and portals resolve.
+`type` is the [dimension type](/docs/data-driven/worldgen/dimensions) file holding the height bounds, lighting and environment attributes.
+They happen to share a name for the vanilla dimensions, which is exactly why a preset can put a custom type behind the vanilla
+`minecraft:overworld` id.
 
 ```kotlin
-dp.worldPreset("my_preset") {
-	dimension(DimensionTypes.OVERWORLD) {
-		type = myDimType
-		// Generator configuration
-	}
-	// Optionally add NETHER, END, or custom dimensions
-}
-```
-
-### Basic Example
-
-```kotlin
-dp.worldPreset("custom_world") {
-	// Overworld with custom terrain
-	dimension(DimensionTypes.OVERWORLD) {
-		type = myOverworldType
-		noiseGenerator(
-			settings = myNoiseSettings,
-			biomeSource = multiNoise { /* ... */ }
-		)
+val customWorld = dp.worldPreset("custom_world") {
+	// Vanilla id, custom type and terrain.
+	dimension(Dimensions.OVERWORLD, myOverworldType) {
+		noiseGenerator(settings = myNoiseSettings, biomeSource = multiNoise(BiomePresets.OVERWORLD))
 	}
 
-	// Standard Nether
-	dimension(DimensionTypes.THE_NETHER) {
-		type = DimensionTypes.THE_NETHER
-		noiseGenerator(
-			settings = NoiseSettings.NETHER,
-			biomeSource = multiNoise { /* ... */ }
-		)
+	// Untouched vanilla Nether.
+	dimension(Dimensions.THE_NETHER, DimensionTypes.THE_NETHER) {
+		noiseGenerator(settings = NoiseSettings.NETHER, biomeSource = multiNoise(BiomePresets.NETHER))
 	}
 
-	// Standard End
-	dimension(DimensionTypes.THE_END) {
-		type = DimensionTypes.THE_END
-		noiseGenerator(
-			settings = NoiseSettings.END,
-			biomeSource = theEnd()
-		)
+	// Untouched vanilla End.
+	dimension(Dimensions.THE_END, DimensionTypes.THE_END) {
+		noiseGenerator(settings = NoiseSettings.END, biomeSource = theEnd())
+	}
+
+	// A dimension of your own, reachable with /execute in my_pack:mining.
+	dimension(DimensionArgument("mining", "my_pack"), miningDimType) {
+		noiseGenerator(settings = NoiseSettings.CAVES, biomeSource = fixed(Biomes.DRIPSTONE_CAVES))
 	}
 }
 ```
 
-### Custom Dimension in Preset
+The generator block is the same one a standalone dimension uses, `noiseGenerator`, `flatGenerator` or `debugGenerator` included. See
+[Dimensions](/docs/data-driven/worldgen/dimensions#generators).
+
+A preset only shows up in the dropdown once it is listed in the `minecraft:normal` world preset tag:
 
 ```kotlin
-dp.worldPreset("aether_world") {
-	// Replace Overworld with custom dimension
-	dimension(DimensionTypes.OVERWORLD) {
-		type = aetherDimType
-		noiseGenerator(
-			settings = aetherNoise,
-			biomeSource = checkerboard(scale = 3, highlands, forest, shores)
-		)
-	}
+dp.worldPresetTag("normal", namespace = "minecraft") {
+	add(customWorld)
 }
 ```
 
@@ -87,107 +69,40 @@ dp.worldPreset("aether_world") {
 
 ## Flat Level Generator Preset
 
-Flat level generator presets appear in the Superflat customization screen, offering quick-select layer configurations. Vanilla presets
-include Classic Flat, Tunnelers' Dream, Water World, and Redstone Ready.
-
-Reference: [Superflat - Presets](https://minecraft.wiki/w/Superflat#Presets)
-
-```kotlin
-val flatPreset = dp.flatLevelGeneratorPreset("classic_flat") {
-	// Display item in UI
-	// displayItem = Items.GRASS_BLOCK
-
-	// Flat world settings
-	// layers, biome, structure overrides
-}
-```
-
-### Flat Generator Layers
-
-When using a flat generator in a dimension:
+A preset is an icon plus the superflat settings it applies. Everything left untouched keeps the vanilla `classic_flat` values, so a preset
+only declares what it changes; called with no arguments at all, it writes `classic_flat` itself - a grass block icon, the plains biome, a
+bedrock/dirt/grass stack, and villages as the only structure set.
 
 ```kotlin
-dimension("flat_world", type = myDimType) {
-	flatGenerator(biome = Biomes.PLAINS) {
+val tunnelersDream = dp.flatLevelGeneratorPreset("tunnelers_dream", Items.STONE) {
+	settings {
+		biome = Biomes.WINDSWEPT_HILLS
 		layers {
-			layer(Blocks.BEDROCK, height = 1)
-			layer(Blocks.STONE, height = 3)
-			layer(Blocks.DIRT, height = 3)
-			layer(Blocks.GRASS_BLOCK, height = 1)
+			layer(Blocks.BEDROCK)
+			layer(Blocks.STONE, height = 230)
+			layer(Blocks.DIRT, height = 5)
+			layer(Blocks.GRASS_BLOCK)
 		}
-		// structureOverrides = ...
+		structureOverrides(StructureSets.MINESHAFTS, StructureSets.STRONGHOLDS)
 	}
 }
 ```
 
----
+`settings { }` is the same `FlatGeneratorSettings` block the
+[flat generator](/docs/data-driven/worldgen/dimensions#flat-generator) of a dimension takes, with the same fields and the same three ways of
+declaring layers.
 
-## Complete Example
+A preset only shows up in the superflat customization screen once it is listed in the `minecraft:visible` flat level generator preset tag:
 
 ```kotlin
-fun DataPack.createSkylandsPreset() {
-	// 1) Custom dimension type
-	val skyType = dimensionType("skylands_type") {
-		minY = 0
-		height = 256
-		hasSkylight = true
-		hasCeiling = false
-		natural = true
-		ambientLight = 0.1f
-
-		attributes {
-			canStartRaid(true)
-			bedRule(
-				BedRule(
-					canSleep = BedSleepRule.ALWAYS,
-					canSetSpawn = BedSleepRule.ALWAYS,
-					explodes = false,
-				)
-			)
-		}
-	}
-
-	// 2) Noise settings
-	val skyNoise = noiseSettings("skylands_noise") {
-		noiseOptions(minY = 0, height = 256, sizeHorizontal = 2, sizeVertical = 1)
-		defaultBlock(Blocks.STONE) {}
-		defaultFluid(Blocks.WATER) { this["level"] = "0" }
-	}
-
-	// 3) Biome
-	val skyBiome = biome("skylands_biome") {
-		temperature = 0.5f
-		downfall = 0.5f
-		hasPrecipitation = true
-
-		attributes {
-			skyColor(0x87CEEB)
-			fogColor(0xC0D8FF)
-			waterFogColor(0x050533)
-		}
-
-		effects {
-			waterColor = color(0x3F76E4)
-		}
-	}
-
-	// 4) World preset
-	worldPreset("skylands") {
-		dimension(DimensionTypes.OVERWORLD) {
-			type = skyType
-			noiseGenerator(
-				settings = skyNoise,
-				biomeSource = fixed(skyBiome)
-			)
-		}
-	}
+dp.flatLevelGeneratorPresetTag("visible", namespace = "minecraft") {
+	add(tunnelersDream)
 }
 ```
 
 ## See Also
 
-- [Biomes](/docs/data-driven/worldgen/biomes) - Climate, visuals, mob spawns, and features
-- [Dimensions](/docs/data-driven/worldgen/dimensions) - Dimension types and generators
-- [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) - Visual, audio, and gameplay attributes for biomes and
-  dimensions
-- [World Generation](/docs/data-driven/worldgen) - Overview of the worldgen system
+- [Dimensions](/docs/data-driven/worldgen/dimensions) - dimension types and the generator builders reused here
+- [Noise & Terrain](/docs/data-driven/worldgen/noise) - the noise settings a preset points at
+- [Tags](/docs/data-driven/tags) - the `normal` and `visible` tags making a preset selectable
+- [World Generation](/docs/data-driven/worldgen) - overview of the worldgen system

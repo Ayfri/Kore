@@ -3,10 +3,11 @@ package io.github.ayfri.kore.website.components.doc
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.core.rememberPageContext
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiSearch
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideSearch
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.docEntries
 import io.github.ayfri.kore.website.utils.Search
+import io.github.ayfri.kore.website.utils.onEvents
 import io.github.ayfri.kore.website.utils.transition
 import kotlinx.browser.document
 import org.jetbrains.compose.web.attributes.InputType
@@ -14,12 +15,29 @@ import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.dom.*
 import org.w3c.dom.HTMLElement
+import org.w3c.dom.events.Event
+
+/** Highest number of documentation pages listed under the search box. */
+private const val MAX_RESULTS = 5
 
 @Composable
 fun Search() {
 	var query by remember { mutableStateOf("") }
 	var showResults by remember { mutableStateOf(false) }
 	val context = rememberPageContext()
+
+	val results = remember(query) {
+		if (query.isEmpty()) emptyList() else docEntries.filter { entry ->
+			entry.title.contains(query, ignoreCase = true) ||
+				entry.desc.contains(query, ignoreCase = true) ||
+				entry.keywords.any { keyword -> keyword.contains(query, ignoreCase = true) }
+		}.take(MAX_RESULTS)
+	}
+
+	document.onEvents("click" to { event: Event ->
+		val target = event.target
+		if (target !is HTMLElement || target.closest(".${SearchStyle.container}") == null) showResults = false
+	})
 
 	Style(SearchStyle)
 
@@ -29,7 +47,7 @@ fun Search() {
 		Div({
 			classes(SearchStyle.inputContainer)
 		}) {
-			MdiSearch()
+			LucideSearch()
 			Input(InputType.Search) {
 				classes(SearchStyle.input)
 				attr("placeholder", "Search documentation...")
@@ -40,12 +58,6 @@ fun Search() {
 		}
 
 		if (showResults && query.isNotEmpty()) {
-			val results = docEntries.filter {
-				it.title.contains(query, ignoreCase = true) ||
-					it.desc.contains(query, ignoreCase = true) ||
-					it.keywords.any { keyword -> keyword.contains(query, ignoreCase = true) }
-			}
-
 			Div({
 				classes(SearchStyle.results)
 			}) {
@@ -56,7 +68,7 @@ fun Search() {
 						Text("No results found")
 					}
 				} else {
-					results.take(5).forEach { entry ->
+					results.forEach { entry ->
 						A(entry.path, {
 							classes(SearchStyle.result)
 							onClick {
@@ -72,16 +84,6 @@ fun Search() {
 				}
 			}
 		}
-	}
-
-	// Click outside to close results
-	LaunchedEffect(Unit) {
-		document.addEventListener("click", { event ->
-			val target = event.target
-			if (target !is HTMLElement || target.closest(".${SearchStyle.container}") == null) {
-				showResults = false
-			}
-		})
 	}
 }
 
@@ -105,9 +107,10 @@ data object SearchStyle : StyleSheet() {
 		padding(0.5.cssRem)
 		transition(0.2.s, "border-color")
 
-		child(self, type("span")) style {
+		child(self, type("svg")) style {
 			color(GlobalStyle.altTextColor)
-			fontSize(1.25.cssRem)
+			flexShrink(0)
+			fontSize(1.15.cssRem)
 		}
 	}
 

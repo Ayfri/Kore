@@ -1,0 +1,81 @@
+package io.github.ayfri.kore.pack
+
+import io.github.ayfri.kore.serializers.EitherInlineSerializer
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KeepGeneratedSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+/**
+ * Represents the `supported_formats` (or `formats` in overlays) value in a `pack.mcmeta` file.
+ *
+ * This is a **legacy field** kept for backwards compatibility with old game versions
+ * (data pack format < 82, resource pack format < 65). It was introduced in Minecraft 1.20.2 (23w31a)
+ * and became conditional in Minecraft 1.21.9 (25w31a): it must be absent for modern packs and
+ * present only when the pack covers old game versions.
+ *
+ * The value can take three forms in JSON:
+ * - A single integer, e.g. `42` - use [number].
+ * - A list of integers, e.g. `[42, 45]` - use [list].
+ * - An object with a range, e.g. `{ "min_inclusive": 42, "max_inclusive": 45 }` - use [minInclusive] and [maxInclusive].
+ *
+ * JSON format reference: [Pack.mcmeta – Minecraft Wiki](https://minecraft.wiki/w/Pack.mcmeta)
+ *
+ * @property number A single supported major pack format version. Serialized as a plain integer.
+ *   Mutually exclusive with [list], [minInclusive], and [maxInclusive].
+ * @property list An explicit list of supported major pack format versions. Serialized as an integer array.
+ *   Mutually exclusive with [number], [minInclusive], and [maxInclusive].
+ * @property minInclusive The minimum major pack format version in the supported range (inclusive).
+ *   Must be used together with [maxInclusive]. Serialized as the `min_inclusive` object field.
+ *   Mutually exclusive with [number] and [list].
+ * @property maxInclusive The maximum major pack format version in the supported range (inclusive).
+ *   Must be used together with [minInclusive]. Serialized as the `max_inclusive` object field.
+ *   Mutually exclusive with [number] and [list].
+ */
+@OptIn(ExperimentalSerializationApi::class)
+@KeepGeneratedSerializer
+@Serializable(with = SupportedFormats.Companion.SupportedFormatsSerializer::class)
+data class SupportedFormats(
+	var number: Int? = null,
+	var list: List<Int>? = null,
+	@SerialName("min_inclusive")
+	var minInclusive: Int? = null,
+	@SerialName("max_inclusive")
+	var maxInclusive: Int? = null,
+) {
+	/** Checks if the given value is in the supported formats. */
+	fun isInRange(value: Int) = when {
+		number != null -> value == number
+		list != null -> value in list!!
+		minInclusive != null && maxInclusive != null -> value in minInclusive!!..maxInclusive!!
+		else -> false
+	}
+
+	/** Checks if the given range is in the supported formats. */
+	fun isInRange(value: IntRange) = when {
+		number != null -> value.first == number && value.last == number
+		list != null -> value.all { it in list!! }
+		minInclusive != null && maxInclusive != null -> value.first in minInclusive!!..maxInclusive!! && value.last in minInclusive!!..maxInclusive!!
+		else -> false
+	}
+
+	/** Checks if the given supported formats are compatible. */
+	fun isCompatibleWith(other: SupportedFormats) = when {
+		number != null && other.number != null -> number == other.number
+		list != null && other.list != null -> list!!.intersect(other.list!!.toSet()).isNotEmpty()
+		minInclusive != null && maxInclusive != null && other.minInclusive != null && other.maxInclusive != null -> minInclusive!! in other.minInclusive!!..other.maxInclusive!! || maxInclusive!! in other.minInclusive!!..other.maxInclusive!!
+		else -> false
+	}
+
+	override fun toString() = when {
+		number != null -> number.toString()
+		list != null -> list.toString()
+		minInclusive != null && maxInclusive != null -> "$minInclusive..$maxInclusive"
+		else -> "Unsupported format"
+	}
+
+	companion object {
+		data object SupportedFormatsSerializer :
+			EitherInlineSerializer<SupportedFormats>(generatedSerializer(), "number", "list")
+	}
+}

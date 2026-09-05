@@ -3,8 +3,8 @@ package io.github.ayfri.kore.website.components.doc
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.TextDecorationLine
 import com.varabyte.kobweb.compose.css.textDecorationLine
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiChevronRight
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiHome
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideChevronRight
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideHouse
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.docEntries
 import io.github.ayfri.kore.website.utils.transition
@@ -24,8 +24,9 @@ object BreadCrumbsStyle : StyleSheet() {
 		marginTop(0.5.cssRem)
 		opacity(0.8)
 
-		child(self, className("material-icons")) style {
-			fontSize(1.2.cssRem)
+		"svg" style {
+			flexShrink(0)
+			fontSize(1.05.cssRem)
 		}
 	}
 
@@ -58,11 +59,11 @@ fun Breadcrumbs(slugs: List<String>) {
 		A("/", {
 			classes(BreadCrumbsStyle.breadcrumbLink)
 		}) {
-			MdiHome()
+			LucideHouse()
 		}
 
 		slugs.forEachIndexed { index, slug ->
-			MdiChevronRight()
+			LucideChevronRight()
 			val path = "/docs/${slugs.take(index + 1).joinToString("/")}"
 			val displayText = slug.replace("-", " ").replaceFirstChar { it.uppercase() }
 			val pathExists = docEntries.any { it.path == path }

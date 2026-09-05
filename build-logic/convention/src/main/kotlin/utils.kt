@@ -13,5 +13,3 @@ fun Project.metadata(block: ModuleMetadata.() -> Unit) {
 	extra.set("publicationName", metadata.name)
 	extra.set("publicationDescription", metadata.description)
 }
-
-fun Project.mainProjectProperty(name: String) = project.rootProject.property(name).toString()

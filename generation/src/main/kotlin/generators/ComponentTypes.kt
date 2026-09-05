@@ -8,6 +8,7 @@ import removeMinecraftPrefix
 import snakeCase
 import url
 
+/** Downloads `data_component_type` and splits it into `ItemComponentTypes` and `EntityItemComponentTypes` (by `/`). */
 suspend fun downloadItemComponentTypes() {
 	val url = url("custom-generated/registries/data_component_type.txt")
 	val components = getFromCacheOrDownloadTxt("data_component_type.txt", url).lines()

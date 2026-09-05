@@ -8,10 +8,12 @@ import kotlinx.html.unsafe
 import org.commonmark.node.*
 import java.net.HttpURLConnection
 import java.net.URI
+import kotlin.time.Duration.Companion.seconds
 
 plugins {
 	kotlin("multiplatform")
 	kotlin("plugin.compose")
+	id("kotlin-conventions")
 	id("publish-conventions") apply false
 	alias(libs.plugins.kobweb.application)
 	alias(libs.plugins.kobwebx.markdown)
@@ -23,20 +25,29 @@ version = "1.0-SNAPSHOT"
 val docGroupOrder =
 	listOf("guides", "commands", "data-driven", "concepts", "helpers", "oop", "advanced", "contributing")
 
+val minecraftVersion = providers.gradleProperty("minecraft.version").orElse("").get()
+
+data class DocEntry(
+	val file: File,
+	val date: String,
+	val title: String,
+	val desc: String,
+	val navTitle: String,
+	val keywords: List<String>,
+	val dateModified: String,
+	val slugs: List<String>,
+	val position: Int? = null,
+)
+
 kobweb {
 	val projectGroup = group
 	val projectLogger = logger
-	val docGroupOrderCopy = docGroupOrder
 
 	app {
 		globals.set(
 			mapOf(
-				"docGroupOrder" to docGroupOrderCopy.joinToString(","),
-				"minecraftVersion" to rootProject.file("gradle.properties").readLines()
-					.firstOrNull { it.startsWith("minecraft.version=") }
-					?.substringAfter('=')
-					?.trim()
-					.orEmpty(),
+				"docGroupOrder" to docGroupOrder.joinToString(","),
+				"minecraftVersion" to minecraftVersion,
 				"projectVersion" to Project.VERSION,
 				"websiteUrl" to Project.WEBSITE_URL,
 			)
@@ -71,6 +82,8 @@ kobweb {
 
 		export {
 			includeSourceMap = false
+			// Playwright's 30s default leaves no headroom once several pages are snapshotted at once.
+			timeout = 90.seconds
 		}
 	}
 
@@ -79,7 +92,8 @@ kobweb {
 
 		handlers {
 			img.set { image ->
-				val altText = image.children().filterIsInstance<Text>().joinToString("") { it.literal.escapeSingleQuotedText() }
+				val altText =
+					image.children().filterIsInstance<Text>().joinToString("") { it.literal.escapeSingleQuotedText() }
 				childrenOverride = emptyList()
 
 				"""org.jetbrains.compose.web.dom.Img(src="${image.destination}", alt="$altText") {
@@ -168,7 +182,7 @@ kobweb {
 					|   org.jetbrains.compose.web.dom.A("#$id", {
 					|	   classes(io.github.ayfri.kore.website.components.layouts.MarkdownLayoutStyle.anchor)
 					|   }) {
-					|	   com.varabyte.kobweb.silk.components.icons.mdi.MdiLink(modifier = com.varabyte.kobweb.compose.ui.Modifier.ariaHidden())
+					|	   com.varabyte.kobweb.silk.components.icons.lucide.LucideHash(modifier = com.varabyte.kobweb.compose.ui.Modifier.ariaHidden())
 					|   }
 					|   $content
 					|}
@@ -177,10 +191,12 @@ kobweb {
 		}
 
 		// Capture values outside the callback for configuration cache compatibility
+		val docGroupOrder = docGroupOrder
 		val projectName = project.name
 		val projectDir = project.projectDir
 		val markdownDir = projectDir.resolve("src/jsMain/resources/markdown")
-		val publicDir = projectDir.resolve("src/jsMain/resources/public")
+		// Kobweb flattens a "public" subfolder of resources to the site root, so the generated dir must mirror that layout for llms.txt/sitemap.xml/etc. to end up at the site root.
+		val llmsResourcesDir = layout.buildDirectory.dir("generated/llms-resources/public").get().asFile
 
 		process.set { markdownFiles ->
 			val docEntries = mutableListOf<DocEntry>()
@@ -189,7 +205,8 @@ kobweb {
 				val path = markdownDir.resolve(docArticle.filePath)
 				val fileName = path.name
 				val fm = docArticle.frontMatter
-				val requiredFields = listOf("title", "description", "date-created", "date-modified", "nav-title", "routeOverride")
+				val requiredFields =
+					listOf("title", "description", "date-created", "date-modified", "nav-title", "routeOverride")
 				val title = fm["title"]?.firstOrNull()
 				val desc = fm["description"]?.firstOrNull()
 				val dateCreated = fm["date-created"]?.firstOrNull()
@@ -227,7 +244,7 @@ kobweb {
 			}
 
 			fun getGroupPriority(slug: String) =
-				docGroupOrderCopy.indexOf(slug.lowercase()).takeIf { it >= 0 } ?: docGroupOrderCopy.size
+				docGroupOrder.indexOf(slug.lowercase()).takeIf { it >= 0 } ?: docGroupOrder.size
 
 			// Sort entries by group priority, then optional position, then slug/title names.
 			val sortedEntries = docEntries.sortedWith(Comparator { a, b ->
@@ -309,17 +326,46 @@ kobweb {
 				}
 			}
 
-			// Write files to public resources directory
-			publicDir.mkdirs()
-			File(publicDir, "llms.txt").writeText(llmsContent)
-			File(publicDir, "llms-full.txt").writeText(llmsFullContent)
+			// Write files to a generated resources directory (never checked into sources)
+			llmsResourcesDir.mkdirs()
+			llmsResourcesDir.resolve("llms.txt").writeText(llmsContent)
+			llmsResourcesDir.resolve("llms-full.txt").writeText(llmsFullContent)
 
 			val markdownSources = markdownFiles.associate { docArticle ->
 				docArticle.filePath.replace('\\', '/') to markdownDir.resolve(docArticle.filePath).readText()
 			}
-			File(publicDir, "markdown-sources.json").writeText(JsonOutput.toJson(markdownSources))
+			llmsResourcesDir.resolve("markdown-sources.json").writeText(JsonOutput.toJson(markdownSources))
 
-			println("LLMs.txt generated -> ${publicDir.absolutePath}")
+			// Generate sitemap.xml
+			val sitemap = buildString {
+				appendLine("""<?xml version="1.0" encoding="UTF-8"?>""")
+				appendLine("""<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">""")
+				appendLine("""	<url>""")
+				appendLine("""		<loc>$baseUrl/</loc>""")
+				appendLine("""		<changefreq>weekly</changefreq>""")
+				appendLine("""		<priority>1.0</priority>""")
+				appendLine("""	</url>""")
+				sortedEntries.forEach { entry ->
+					val route = entry.slugs.joinToString("/")
+					val priority = when {
+						entry.slugs.size <= 2 -> "0.9"
+						entry.slugs.size == 3 -> "0.7"
+						else -> "0.5"
+					}
+					appendLine("""	<url>""")
+					appendLine("""		<loc>$baseUrl/$route</loc>""")
+					appendLine("""		<lastmod>${entry.dateModified.take(10)}</lastmod>""")
+					appendLine("""		<changefreq>monthly</changefreq>""")
+					appendLine("""		<priority>$priority</priority>""")
+					appendLine("""	</url>""")
+				}
+				appendLine("</urlset>")
+			}
+			llmsResourcesDir.resolve("sitemap.xml").writeText(sitemap)
+
+			println("Sitemap generated -> ${llmsResourcesDir.resolve("sitemap.xml").absolutePath}")
+
+			println("LLMs.txt generated -> ${llmsResourcesDir.absolutePath}")
 			projectLogger.info("markdown-sources.json written (${markdownSources.size} files)")
 
 			generateKotlin("$projectGroup/docEntries.kt", buildString {
@@ -378,7 +424,8 @@ tasks.register("fetchGitHubReleases") {
 	group = "kore"
 	description = "Fetches GitHub releases and generates a Kotlin file with the data"
 
-	val outFile = layout.buildDirectory.file("generated/kore/src/jsMain/kotlin/io/github/ayfri/kore/website/gitHubReleases.kt")
+	val outFile =
+		layout.buildDirectory.file("generated/kore/src/jsMain/kotlin/io/github/ayfri/kore/website/gitHubReleases.kt")
 	outputs.file(outFile)
 
 	doLast {
@@ -395,7 +442,8 @@ tasks.register("fetchGitHubReleases") {
 			conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
 			conn.setRequestProperty("User-Agent", "KoreWebsite/1.0 (+https://kore.ayfri.com)")
 
-			System.getenv("GITHUB_TOKEN")?.takeIf { it.isNotBlank() }?.let { conn.setRequestProperty("Authorization", "token $it") }
+			System.getenv("GITHUB_TOKEN")?.takeIf { it.isNotBlank() }
+				?.let { conn.setRequestProperty("Authorization", "token $it") }
 
 			val code = conn.responseCode
 			if (code != 200) {
@@ -488,31 +536,75 @@ tasks.register("fetchGitHubReleases") {
 	}
 }
 
+tasks.register("fetchGitHubStars") {
+	group = "kore"
+	description = "Fetches the GitHub repository star count and generates a Kotlin file with the data"
+
+	val outFile =
+		layout.buildDirectory.file("generated/kore/src/jsMain/kotlin/io/github/ayfri/kore/website/gitHubStars.kt")
+	outputs.file(outFile)
+
+	doLast {
+		val apiUrl = "https://api.github.com/repos/Ayfri/Kore"
+		val conn = URI(apiUrl).toURL().openConnection() as HttpURLConnection
+		conn.requestMethod = "GET"
+		conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
+		conn.setRequestProperty("User-Agent", "KoreWebsite/1.0 (+https://kore.ayfri.com)")
+
+		System.getenv("GITHUB_TOKEN")?.takeIf { it.isNotBlank() }
+			?.let { conn.setRequestProperty("Authorization", "token $it") }
+
+		val stars = try {
+			val code = conn.responseCode
+			if (code != 200) {
+				val err = conn.errorStream?.bufferedReader()?.use { it.readText() }
+				logger.error("GitHub API returned $code for repo stars. Body: $err")
+				null
+			} else {
+				val jsonResponse = conn.inputStream.bufferedReader().use { it.readText() }
+				(JsonSlurper().parseText(jsonResponse) as Map<*, *>)["stargazers_count"] as? Int
+			}
+		} catch (e: Exception) {
+			logger.error("Failed to fetch GitHub repository stars.", e)
+			null
+		}
+
+		val targetFile = outFile.get().asFile
+		targetFile.parentFile.mkdirs()
+		targetFile.writeText(buildString {
+			appendLine("// This file is generated. Do not modify directly.")
+			appendLine("package io.github.ayfri.kore.website")
+			appendLine("")
+			appendLine("val gitHubStars: Int? = $stars")
+		})
+
+		logger.lifecycle("Generated GitHub stars file (stars = $stars) → ${targetFile.path}")
+	}
+}
+
 tasks.named("kobwebExport") {
-	dependsOn("fetchGitHubReleases")
+	dependsOn("fetchGitHubReleases", "fetchGitHubStars")
 }
 
 // Ensure generated sources exist before KSP for JS runs
 tasks.matching { it.name == "kspKotlinJs" }.configureEach {
-	dependsOn("fetchGitHubReleases")
+	dependsOn("fetchGitHubReleases", "fetchGitHubStars")
 }
 
 tasks.matching { it.name == "compileKotlinJs" }.configureEach {
-	dependsOn("fetchGitHubReleases")
+	dependsOn("fetchGitHubReleases", "fetchGitHubStars")
 }
 
-data class DocEntry(
-	val file: File,
-	val date: String,
-	val title: String,
-	val desc: String,
-	val navTitle: String,
-	val keywords: List<String>,
-	val dateModified: String,
-	val slugs: List<String>,
-	val position: Int? = null,
-)
+// llms.txt/sitemap.xml/markdown-sources.json are written by kobwebxMarkdownProcess into a
+// generated resources dir; make the dependency explicit so caching/ordering can't skip them.
+tasks.matching { it.name == "jsProcessResources" }.configureEach {
+	dependsOn("kobwebxMarkdownProcess")
+}
 
+// The export discards the source map (`includeSourceMap = false`), so building it only slows minification down.
+tasks.withType<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>()
+	.matching { it.name == "jsBrowserProductionWebpack" }
+	.configureEach { sourceMaps = false }
 
 kotlin {
 	configAsKobwebApplication("website")
@@ -535,6 +627,12 @@ kotlin {
 	sourceSets {
 		jsMain {
 			kotlin.srcDir("build/generated/kore/src/jsMain/kotlin")
+			resources.srcDir(layout.buildDirectory.dir("generated/llms-resources"))
+
+			dependencies {
+				// Minifier for the production bundle, see `webpack.config.d/00-bundle-speed.js`.
+				implementation(devNpm("@swc/core", libs.versions.swc.get()))
+			}
 		}
 		commonMain {
 			dependencies {
@@ -542,7 +640,7 @@ kotlin {
 				implementation(libs.compose.runtime)
 				implementation(libs.kobweb.core)
 				implementation(libs.kobwebx.markdown)
-				implementation(libs.kobwebx.silk.icons.mdi)
+				implementation(libs.kobwebx.silk.icons.lucide)
 				implementation(npm("marked", libs.versions.marked.get()))
 			}
 		}

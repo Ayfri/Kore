@@ -1,33 +1,28 @@
 package io.github.ayfri.kore.website.utils
 
+import io.github.ayfri.kore.website.externals.Intl
+import io.github.ayfri.kore.website.externals.dateTimeFormatOptions
+import io.github.ayfri.kore.website.externals.relativeTimeFormatOptions
 import kotlin.js.Date
 
-fun formatDate(isoDateString: String): String {
-	val date = Date(isoDateString)
+private const val MILLISECONDS_PER_DAY = 24.0 * 60 * 60 * 1000
 
-	val day = date.getDate().toString().padStart(2, '0')
-	val month = (date.getMonth() + 1).toString().padStart(2, '0')
-	val year = date.getFullYear().toString()
+private val dayMonthYear = Intl.DateTimeFormat("en-GB", dateTimeFormatOptions(day = "2-digit", month = "2-digit", year = "numeric"))
 
-	return "$day/$month/$year"
-}
+private val relativeTime = Intl.RelativeTimeFormat("en", relativeTimeFormatOptions(numeric = "auto"))
 
+/** Formats an ISO date as `dd/mm/yyyy`. */
+fun formatDate(isoDateString: String) = dayMonthYear.format(Date(isoDateString))
+
+/** Formats how long ago an ISO date is, e.g. `today`, `yesterday`, `5 days ago`, `last month`, `2 years ago`. */
 fun formatRelativeDate(isoDateString: String): String {
-	val date = Date(isoDateString)
-	val now = Date()
+	val days = ((Date().getTime() - Date(isoDateString).getTime()) / MILLISECONDS_PER_DAY).toInt()
 
-	val diffMs = now.getTime() - date.getTime()
-	val diffDays = (diffMs / (1000 * 60 * 60 * 24)).toInt()
-	val diffMonths = diffDays / 30
-	val diffYears = diffDays / 365
-
-	return when {
-		diffDays < 1 -> "today"
-		diffDays == 1 -> "yesterday"
-		diffDays < 30 -> "$diffDays days ago"
-		diffMonths == 1 -> "1 month ago"
-		diffMonths < 12 -> "$diffMonths months ago"
-		diffYears == 1 -> "1 year ago"
-		else -> "$diffYears years ago"
+	val (amount, unit) = when {
+		days < 30 -> days to "day"
+		days < 365 -> days / 30 to "month"
+		else -> days / 365 to "year"
 	}
+
+	return relativeTime.format(-amount, unit)
 }

@@ -12,7 +12,10 @@ routeOverride: /docs/commands/macros
 # Macros
 
 Macros allow dynamic command arguments that are substituted at runtime. Added in Minecraft 1.20.2, they enable creating
-reusable functions with parameters. For basic command usage, see [Commands](/docs/commands/commands).
+reusable functions with parameters. They are one of the runtime tools covered
+in [Runtime Logic](/docs/concepts/runtime-logic),
+and their values typically come from [data storage](/docs/concepts/data-storage). For basic command usage, see
+[Commands](/docs/commands/commands).
 
 ## Using Macros
 

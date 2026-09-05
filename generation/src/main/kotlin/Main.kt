@@ -12,7 +12,7 @@ import kotlin.io.path.absolute
 
 const val HEADER = """// Automatically generated - do not modify!"""
 const val MAIN_GITHUB_URL = "https://raw.githubusercontent.com/PixiGeko/Minecraft-generated-data"
-const val CODE_FOLDER = "src/main/kotlin"
+const val CODE_FOLDER = "src/commonMain/kotlin"
 const val CODE_PACKAGE = "io.github.ayfri.kore"
 const val GENERATED_FOLDER = "$CODE_FOLDER/io/github/ayfri/kore/generated"
 const val GENERATED_PACKAGE = "$CODE_PACKAGE.generated"
@@ -37,6 +37,7 @@ val client = HttpClient(CIO) {
 	}
 }
 
+/** Resolves a `PixiGeko/Minecraft-generated-data` path for the current [minecraftVersion]. */
 fun url(path: String) = "$MAIN_GITHUB_URL/$minecraftVersion/$path"
 
 fun clearGeneratedPackage() {
@@ -46,17 +47,20 @@ fun clearGeneratedPackage() {
 	generatedDir.mkdirs()
 }
 
+/** Entry point for `:generation:run`. Regenerates `kore/src/commonMain/kotlin/io/github/ayfri/kore/generated`; pass `--reload-cache` after a version bump. */
 suspend fun main(args: Array<String>) {
 	if ("--reload-cache" in args) clearCache()
 	clearGeneratedPackage()
 
-	println("Generating assets from minecraft version: $minecraftVersion")
+	println("Generating assets for Minecraft version $minecraftVersion")
 
 	downloadDataPacks()
 	downloadDefaultDatapackVersion()
 	downloadGamerules()
 	downloadItemComponentTypes()
-	launchAllSimpleGenerators()
-	launchArgumentTypeGenerators()
+	val allGenerators = launchAllSimpleGenerators()
+	generateDatapackFolderRegistry(allGenerators)
+	val tagArguments = launchArgumentTypeGenerators()
+	generateTagArgumentFactories(tagArguments)
 	writeMinecraftVersion()
 }

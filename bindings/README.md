@@ -344,7 +344,7 @@ datapacks.forEach { pack ->
 
 ## Implementation Notes
 
-- **KotlinPoet** for code generation
+- Kotlin Multiplatform (`jvm()` + `js()`): exploration, entities, and code generation (`KtRenderer`/`KtType`, a hand-rolled common codegen model) live in `commonMain`; downloaders, caching, and the `importDatapacks {}` DSL stay `jvmMain`-only
 - **Clikt** for CLI support (future use)
 - **kotlinx-serialization** for JSON parsing
 

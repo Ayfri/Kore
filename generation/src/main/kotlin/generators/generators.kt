@@ -5,63 +5,44 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import generateEnum
 import generatePathEnumTree
 import getFromCacheOrDownloadTxt
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import overrides
 
-suspend fun launchAllSimpleGenerators() {
-	val txtListsListGenerators = listOf(
+/** Manually maintained list of "simple" generators: resource lists and registries. Add new entries here with [gen]. */
+suspend fun launchAllSimpleGenerators(): List<Generator> {
+	val lists = listOf(
+		gen("Advancements", "advancement"),
 		gen("Atlases", "atlases") {
 			argumentClassName = "Atlas"
 		},
 		gen("BannerPatterns", "banner_pattern"),
+		gen("CatSoundVariants", "cat_sound_variant"),
 		gen("CatVariants", "cat_variant"),
 		gen("ChatTypes", "chat_type"),
+		gen("ChickenSoundVariants", "chicken_sound_variant"),
 		gen("ChickenVariants", "chicken_variant"),
+		gen("CowSoundVariants", "cow_sound_variant"),
 		gen("CowVariants", "cow_variant"),
 		gen("DamageTypes", "damage_type"),
 		gen("Dialogs", "dialog"),
 		gen("DimensionTypes", "dimension_type"),
 		gen("Dimensions", "dimensions"),
+		gen("EnchantmentProviders", "enchantment_provider"),
 		gen("Enchantments", "enchantment"),
+		gen("EquipmentAssets", "equipment"),
 		gen("FrogVariants", "frog_variant"),
 		gen("Instruments", "instrument"),
 		gen("JukeboxSongs", "jukebox_song"),
-		gen("PaintingVariants", "painting_variant"),
-		gen("PigVariants", "pig_variant"),
-		gen("Recipes", "recipe"),
-		gen("TestEnvironments", "test_environment"),
-		gen("TestInstances", "test_instance"),
-		gen("Timelines", "timeline"),
-		gen("TrimMaterials", "trim_material"),
-		gen("TrimPatterns", "trim_pattern"),
-		gen("WaypointStyles", "waypoint_style"),
-		gen("WolfSoundVariants", "wolf_sound_variant"),
-		gen("WolfVariants", "wolf_variant"),
-		gen("ZombieNautilusVariants", "zombie_nautilus_variant"),
-
-		gen("Biomes", "worldgen/biome"),
-		gen("BiomePresets", "worldgen/multi_noise_biome_source_parameter_list") {
-			argumentClassName = "MultiNoiseBiomeSourceParameterList"
-		},
-		gen("ConfiguredFeatures", "worldgen/configured_feature"),
-		gen("FlatLevelGeneratorPresets", "worldgen/flat_level_generator_preset"),
-		gen("MultiNoiseBiomeSourceParameterLists", "worldgen/multi_noise_biome_source_parameter_list"),
-		gen("Noises", "worldgen/noise"),
-		gen("NoiseSettings", "worldgen/noise_settings") {
-			argumentClassName = "NoiseSettings"
-		},
-		gen("PlacedFeatures", "worldgen/placed_feature"),
-		gen("ProcessorLists", "worldgen/processor_list"),
-		gen("ConfiguredStructures", "worldgen/structure"),
-		gen("StructureSets", "worldgen/structure_set"),
-		gen("WorldPresets", "worldgen/world_preset")
-	).transformRemoveJSONSuffix()
-
-	val txtListsTreeGenerators = listOf(
-		gen("Advancements", "advancement"),
 		gen("LootTables", "loot_table"),
 		gen("Models", "models") {
 			argumentClassName = "Model M"
 		},
+		gen("PaintingVariants", "painting_variant"),
+		gen("PigSoundVariants", "pig_sound_variant"),
+		gen("PigVariants", "pig_variant"),
+		gen("Recipes", "recipe"),
 		gen("Sounds", "sounds") {
 			argumentClassName = "Sound M"
 			transform { it.removeSuffix(".ogg") }
@@ -70,6 +51,7 @@ suspend fun launchAllSimpleGenerators() {
 			argumentClassName = "worldgen.Structure"
 			transform { it.removeSuffix(".nbt") }
 		},
+		gen("SulfurCubeArchetypes", "sulfur_cube_archetype"),
 		gen("Tags", "tags") {
 			argumentClassName = "Tag M"
 			tagsParents(
@@ -89,7 +71,9 @@ suspend fun launchAllSimpleGenerators() {
 				"point_of_interest_type" to "PointOfInterestTypeTag",
 				"pig_variant" to "PigVariantTag",
 				"timeline" to "TimelineTag",
+				"trade_set" to "TradeSetTag",
 				"wolf_variant" to "WolfVariantTag",
+				"villager_trade" to "VillagerTradeTag",
 				"zombie_nautilus_variant" to "ZombieNautilusVariantTag",
 				"worldgen/biome" to "worldgen.BiomeTag",
 				"worldgen/configured_carver" to "worldgen.ConfiguredCarverTag",
@@ -106,6 +90,8 @@ suspend fun launchAllSimpleGenerators() {
 				"worldgen/world_preset" to "worldgen.WorldPresetTag",
 			)
 		},
+		gen("TestEnvironments", "test_environment"),
+		gen("TestInstances", "test_instance"),
 		gen("Textures", "textures") {
 			argumentClassName = "Model M"
 			transform { it.removeSuffix(".png") }
@@ -115,13 +101,40 @@ suspend fun launchAllSimpleGenerators() {
 				"Painting" to "arguments.types.PaintingAssetArgument"
 			)
 		},
-		gen("DensityFunctions", "worldgen/density_function"),
-		gen("TemplatePools", "worldgen/template_pool"),
-	).transformRemoveJSONSuffix().onEach { gen ->
-		gen.enumTree = true
-	}
+		gen("Timelines", "timeline"),
+		gen("TradeSets", "trade_set"),
+		gen("TrimMaterials", "trim_material"),
+		gen("TrimPatterns", "trim_pattern"),
+		gen("VillagerTrades", "villager_trade"),
+		gen("WaypointStyles", "waypoint_style"),
+		gen("WolfSoundVariants", "wolf_sound_variant"),
+		gen("WolfVariants", "wolf_variant"),
+		gen("WorldClocks", "world_clock"),
+		gen("ZombieNautilusVariants", "zombie_nautilus_variant"),
 
-	val txtRegistriesListGenerators = listOf(
+		// Worldgen
+		gen("Biomes", "worldgen/biome"),
+		gen("BiomePresets", "worldgen/multi_noise_biome_source_parameter_list") {
+			argumentClassName = "MultiNoiseBiomeSourceParameterList"
+		},
+		gen("ConfiguredCarvers", "worldgen/configured_carver"),
+		gen("ConfiguredFeatures", "worldgen/configured_feature"),
+		gen("DensityFunctions", "worldgen/density_function"),
+		gen("FlatLevelGeneratorPresets", "worldgen/flat_level_generator_preset"),
+		gen("MultiNoiseBiomeSourceParameterLists", "worldgen/multi_noise_biome_source_parameter_list"),
+		gen("Noises", "worldgen/noise"),
+		gen("NoiseSettings", "worldgen/noise_settings") {
+			argumentClassName = "NoiseSettings"
+		},
+		gen("PlacedFeatures", "worldgen/placed_feature"),
+		gen("ProcessorLists", "worldgen/processor_list"),
+		gen("ConfiguredStructures", "worldgen/structure"),
+		gen("StructureSets", "worldgen/structure_set"),
+		gen("TemplatePools", "worldgen/template_pool"),
+		gen("WorldPresets", "worldgen/world_preset"),
+	).transformRemoveJSONSuffix()
+
+	val registries = listOf(
 		gen("Activities", "activity") {
 			argumentClassName = "Activity"
 		},
@@ -158,13 +171,16 @@ suspend fun launchAllSimpleGenerators() {
 			additionalCode {
 				addFunction(
 					FunSpec.builder("asId")
-						.addStatement($"return \"minecraft:\${name.lowercase()}\"")
+						.addStatement($$"return \"minecraft:${name.lowercase()}\"")
 						.returns(String::class)
 						.build()
 				)
 			}
 		},
 		gen("EntityTypes", "entity_type"),
+		gen("EnvironmentAttributes", "environment_attribute") {
+			transform { it.removePrefix("minecraft:") }
+		},
 		gen("Fluids", "fluid"),
 		gen("GameEvents", "game_event"),
 		gen("Items", "item") {
@@ -205,66 +221,66 @@ suspend fun launchAllSimpleGenerators() {
 		},
 		gen("PointOfInterestTypes", "point_of_interest_type"),
 		gen("Potions", "potion"),
+		gen("SoundEvents", "sound_event") {
+			argumentClassName = "SoundEvent"
+			separator = "."
+			transform { it.removePrefix("minecraft:") }
+		},
 		gen("StatisticTypes", "stat_type") {
 			argumentClassName = "StatType"
 			transform { it.removePrefix("minecraft:") }
 		},
 		gen("VillagerProfessions", "villager_profession"),
 		gen("VillagerTypes", "villager_type"),
+
+		// Worldgen
 		gen("Carvers", "worldgen/carver"),
 	)
 
-	val txtRegistriesTreeGenerators = listOf(
-		gen("EnvironmentAttributes", "environment_attribute") {
-			separator = "/"
-		},
-		gen("SoundEvents", "sound_event") {
-			argumentClassName = "SoundEvent"
-			separator = "."
-		},
-	).transformRemoveMinecraftPrefix().onEach { gen ->
-		gen.enumTree = true
-	}
+	val allGenerators = lists.setUrlWithType("lists") + registries.setUrlWithType("registries")
 
-	val allListGenerators = txtListsListGenerators.setUrlWithType("lists") +
-		txtListsTreeGenerators.setUrlWithType("lists") +
-		txtRegistriesListGenerators.setUrlWithType("registries") +
-		txtRegistriesTreeGenerators.setUrlWithType("registries")
+	coroutineScope {
+		allGenerators.sortedBy { it.fileName }.map { gen ->
+			async {
+				val url = gen.url
+				val list = getFromCacheOrDownloadTxt(gen.fileName, url).lines()
+				val parentArgumentType = gen.getParentArgumentType()
+				val paths = list.mapIfNotNull(gen.transform)
+				val useTree = gen.enumTree || paths.filter(String::isNotBlank).any { gen.separator in it }
 
-	allListGenerators.sortedBy { it.fileName }.forEach { gen ->
-		val url = gen.url
-		val list = getFromCacheOrDownloadTxt(gen.fileName, url).lines()
-		val parentArgumentType = gen.getParentArgumentType()
+				when {
+					useTree -> {
+						generatePathEnumTree(
+							paths = paths,
+							gen
+						)
 
-		when {
-			gen.enumTree -> {
-				generatePathEnumTree(
-					paths = list.mapIfNotNull(gen.transform),
-					gen
-				)
+						gen.extractEnums?.forEach { (prefix, enumName) ->
+							// Get the values prefixed by it
+							val values = list.filter { it.startsWith(prefix) }
+							generateEnum(
+								values = values.map { it.removePrefix(prefix).removePrefix(gen.separator) }
+									.mapIfNotNull(gen.transform),
+								name = enumName,
+								sourceUrl = url,
+								asString = gen.asString,
+								additionalEnumCode = gen.additionalCode
+							)
+						}
+					}
 
-				gen.extractEnums?.forEach { (prefix, enumName) ->
-					// Get the values prefixed by it
-					val values = list.filter { it.startsWith(prefix) }
-					generateEnum(
-						values = values.map { it.removePrefix(prefix).removePrefix(gen.separator) }
-							.mapIfNotNull(gen.transform),
-						name = enumName,
+					else -> generateEnum(
+						values = paths,
+						name = gen.name,
 						sourceUrl = url,
+						parentArgumentType = parentArgumentType,
 						asString = gen.asString,
 						additionalEnumCode = gen.additionalCode
 					)
 				}
 			}
-
-			else -> generateEnum(
-				values = list.mapIfNotNull(gen.transform),
-				name = gen.name,
-				sourceUrl = url,
-				parentArgumentType = parentArgumentType,
-				asString = gen.asString,
-				additionalEnumCode = gen.additionalCode
-			)
-		}
+		}.awaitAll()
 	}
+
+	return allGenerators
 }

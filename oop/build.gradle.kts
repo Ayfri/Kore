@@ -1,7 +1,10 @@
 plugins {
-	kotlin("jvm")
+	kotlin("multiplatform")
 	kotlin("plugin.serialization")
+	alias(libs.plugins.ksp)
+	alias(libs.plugins.kotest)
 	id("kotest-conventions")
+	id("kotlin-conventions")
 	id("publish-conventions")
 }
 
@@ -14,16 +17,23 @@ repositories {
 	mavenCentral()
 }
 
-dependencies {
-	api(project(":kore"))
-	implementation(libs.kotlinx.io)
-	implementation(libs.kotlinx.serialization)
-}
-
 kotlin {
+	jvm()
+	js {
+		browser()
+		nodejs()
+	}
 	jvmToolchain(25)
 
-	compilerOptions {
-		freeCompilerArgs = listOf("-Xcontext-parameters")
+	sourceSets {
+		commonMain.dependencies {
+			api(project(":kore"))
+			implementation(libs.kotlinx.io)
+			implementation(libs.kotlinx.serialization)
+		}
+
+		commonTest.dependencies {
+			implementation(project(":common-tests"))
+		}
 	}
 }

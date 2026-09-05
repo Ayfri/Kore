@@ -1,0 +1,37 @@
+package io.github.ayfri.kore.arguments.components.item
+
+import io.github.ayfri.kore.arguments.components.Component
+import io.github.ayfri.kore.arguments.components.ComponentsScope
+import io.github.ayfri.kore.generated.ItemComponentTypes
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
+import io.github.ayfri.kore.utils.nbt
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
+import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.NbtCompoundBuilder
+
+/**
+ * Represents the `minecraft:bucket_entity_data` item component, which stores entity data for mobs captured in buckets (e.g., fish, axolotl).
+ *
+ * Docs: https://kore.ayfri.com/docs/concepts/components
+ * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#bucket_entity_data
+ */
+@Serializable(with = BucketEntityDataComponent.Companion.BucketEntityDataComponentSerializer::class)
+data class BucketEntityDataComponent(var data: NbtCompound) : Component() {
+	companion object {
+		data object BucketEntityDataComponentSerializer : InlineAutoSerializer<BucketEntityDataComponent, NbtCompound>(
+			serializer<NbtCompound>(),
+			BucketEntityDataComponent::data,
+			::BucketEntityDataComponent
+		)
+	}
+}
+
+/** Stores entity data for mobs captured in buckets (e.g., fish, axolotl). */
+fun ComponentsScope.bucketEntityData(data: NbtCompound) = apply {
+	this[ItemComponentTypes.BUCKET_ENTITY_DATA] = BucketEntityDataComponent(data)
+}
+
+fun ComponentsScope.bucketEntityData(block: NbtCompoundBuilder.() -> Unit) = apply {
+	this[ItemComponentTypes.BUCKET_ENTITY_DATA] = BucketEntityDataComponent(nbt(block))
+}

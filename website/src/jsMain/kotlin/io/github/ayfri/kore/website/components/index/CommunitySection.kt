@@ -2,7 +2,8 @@ package io.github.ayfri.kore.website.components.index
 
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
-import com.varabyte.kobweb.silk.components.icons.mdi.*
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideBookOpenText
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideFlaskConical
 import io.github.ayfri.kore.website.utils.lgMax
 import io.github.ayfri.kore.website.utils.marginX
 import io.github.ayfri.kore.website.utils.mdMax
@@ -22,6 +23,11 @@ data class CommunityPlatform(
 )
 
 @Composable
+private fun BrandMark(src: String, name: String) = Img(src, "$name logo") {
+	classes(CommunitySectionStyle.brandMark)
+}
+
+@Composable
 fun CommunitySection() {
 	Style(CommunitySectionStyle)
 
@@ -30,22 +36,22 @@ fun CommunitySection() {
 			"Discord",
 			"Join our active Discord community to chat with other Kore developers, get help, and share your projects.",
 			"https://discord.gg/BySjRNQ9Je",
-		) { MdiDiscord(style = IconStyle.ROUNDED) },
+		) { BrandMark("/discord-mark.svg", "Discord") },
 		CommunityPlatform(
 			"GitHub",
 			"Contribute to Kore, report issues, or explore the source code on our GitHub repository.",
 			"https://github.com/Ayfri/Kore",
-		) { MdiDataObject(style = IconStyle.ROUNDED) },
+		) { BrandMark("/github-mark-white.svg", "GitHub") },
 		CommunityPlatform(
 			"Docs",
 			"Browse guided documentation, API references, and practical examples to ship faster with Kore.",
 			"/docs/getting-started",
-		) { MdiBook(style = IconStyle.ROUNDED) },
+		) { LucideBookOpenText() },
 		CommunityPlatform(
 			"Examples",
-			"Explore real Kotlin datapack snippets and ready-to-adapt examples directly from the project.",
-			"https://github.com/Ayfri/Kore/tree/master/examples",
-		) { MdiFunctions(style = IconStyle.ROUNDED) },
+			"Explore real Kotlin datapack snippets and ready-to-adapt examples in the dedicated examples repository.",
+			"https://github.com/Kore-Minecraft/examples",
+		) { LucideFlaskConical() },
 	)
 
 	Section({
@@ -148,12 +154,12 @@ object CommunitySectionStyle : StyleSheet() {
 		textAlign(TextAlign.Left)
 		textDecorationLine(TextDecorationLine.None)
 		transition(0.35.s, "transform", "border-color", "box-shadow")
-		property("box-shadow", "0 18px 40px rgba(5, 12, 20, 0.35)")
+		boxShadow(0.px, 18.px, 40.px, 0.px, rgba(5, 12, 20, 0.35))
 
 		hover(self) style {
 			transform { translateY((-8).px) }
 			borderColor(Color("rgba(8, 182, 214, 0.6)"))
-			property("box-shadow", "0 26px 65px rgba(5, 12, 20, 0.5)")
+			boxShadow(0.px, 26.px, 65.px, 0.px, rgba(5, 12, 20, 0.5))
 		}
 
 		"h3" style {
@@ -165,7 +171,7 @@ object CommunitySectionStyle : StyleSheet() {
 		"p" style {
 			color(Color("var(--landing-muted)"))
 			fontSize(1.02.cssRem)
-			property("line-height", "1.6")
+			lineHeight(1.6.number)
 			marginBottom(0.px)
 		}
 
@@ -184,14 +190,14 @@ object CommunitySectionStyle : StyleSheet() {
 		borderRadius(1.1.cssRem)
 		backgroundColor(Color("rgba(8, 182, 214, 0.14)"))
 
-		"i" {
+		"svg" style {
 			color(Color("var(--landing-text)"))
-			fontSize(1.6.cssRem)
+			fontSize(2.cssRem)
 		}
+	}
 
-		className("material-icons-round") style {
-			color(Color("var(--landing-text)"))
-			fontSize(2.4.cssRem)
-		}
+	val brandMark by style {
+		height(1.9.cssRem)
+		width(1.9.cssRem)
 	}
 }

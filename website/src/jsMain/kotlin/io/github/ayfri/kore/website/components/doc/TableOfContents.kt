@@ -2,57 +2,57 @@ package io.github.ayfri.kore.website.components.doc
 
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.core.rememberPageContext
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.layouts.MarkdownLayoutStyle
+import io.github.ayfri.kore.website.utils.onEvents
 import io.github.ayfri.kore.website.utils.transition
 import io.github.ayfri.kore.website.utils.xlMax
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
+import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.asList
+import org.w3c.dom.events.Event
+
+/** Distance above a heading at which it becomes the active entry. */
+private const val ACTIVE_HEADING_OFFSET_PX = 100
+
+private val headingsSelector = ".${MarkdownLayoutStyle.mainContent} .${MarkdownLayoutStyle.heading}"
+
+/** Restarts the highlight animation, which only replays once the class is removed and the element reflowed in between. */
+private fun Element.replayHighlight() {
+	classList.remove(MarkdownLayoutStyle.highlight)
+	(this as? HTMLElement)?.offsetWidth
+	classList.add(MarkdownLayoutStyle.highlight)
+}
 
 @Composable
 fun TableOfContents() {
-	var headings by remember { mutableStateOf(listOf<HTMLElement>()) }
+	val currentPath = rememberPageContext().route.path
+	var headings by remember { mutableStateOf(emptyList<HTMLElement>()) }
 	var activeHeadingId by remember { mutableStateOf<String?>(null) }
 
-	LaunchedEffect(Unit) {
-		headings = document.querySelectorAll(".${MarkdownLayoutStyle.mainContent} .${MarkdownLayoutStyle.heading}")
-			.asList()
-			.map { it as HTMLElement }
+	LaunchedEffect(currentPath) {
+		headings = document.querySelectorAll(headingsSelector).asList().map { it as HTMLElement }
 	}
 
-	LaunchedEffect(Unit) {
-		window.addEventListener("hashchange", {
-			val hash = window.location.hash
-			if (hash.isNotEmpty()) {
-				val element = document.querySelector(hash)
-				element?.classList?.remove(MarkdownLayoutStyle.highlight)
-				element?.classList?.add(MarkdownLayoutStyle.highlight)
-			}
-		})
-	}
+	// `offsetTop` forces a layout, so heading positions are measured once and refreshed on resize, never on scroll.
+	var offsets by remember(headings) { mutableStateOf(headings.map { it.id to it.offsetTop }) }
 
-	LaunchedEffect(Unit) {
-		window.addEventListener("scroll", {
-			val scrollPosition = window.scrollY + 100
-			val currentHeadings = document.querySelectorAll(".${MarkdownLayoutStyle.mainContent} .${MarkdownLayoutStyle.heading}")
-				.asList()
-				.map { it as HTMLElement }
-
-			var currentActive: String? = null
-			for (heading in currentHeadings) {
-				if (heading.offsetTop <= scrollPosition) {
-					currentActive = heading.id
-				} else {
-					break
-				}
-			}
-			activeHeadingId = currentActive
-		})
-	}
+	window.onEvents(
+		"scroll" to { _: Event ->
+			val scrollPosition = window.scrollY + ACTIVE_HEADING_OFFSET_PX
+			activeHeadingId = offsets.lastOrNull { (_, top) -> top <= scrollPosition }?.first
+		},
+		"resize" to { _: Event -> offsets = headings.map { it.id to it.offsetTop } },
+		"hashchange" to { _: Event ->
+			window.location.hash.takeIf(String::isNotEmpty)?.let { document.querySelector(it)?.replayHighlight() }
+		},
+		key = offsets,
+	)
 
 	Style(TableOfContentsStyle)
 
@@ -79,9 +79,7 @@ fun TableOfContents() {
 						val id = heading.id
 						if (id.isNotEmpty()) {
 							window.location.hash = "#$id"
-							heading.classList.remove(MarkdownLayoutStyle.highlight)
-							heading.offsetWidth
-							heading.classList.add(MarkdownLayoutStyle.highlight)
+							heading.replayHighlight()
 						}
 					}
 				}) {

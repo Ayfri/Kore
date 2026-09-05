@@ -1,0 +1,105 @@
+package io.github.ayfri.kore.commands
+
+import io.github.ayfri.kore.arguments.colors.Color
+import io.github.ayfri.kore.arguments.colors.rgb
+import io.github.ayfri.kore.arguments.components.item.enchantment
+import io.github.ayfri.kore.arguments.components.item.enchantments
+import io.github.ayfri.kore.arguments.maths.vec3
+import io.github.ayfri.kore.arguments.types.literals.allEntities
+import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.commands.particle.ParticleMode
+import io.github.ayfri.kore.commands.particle.particle
+import io.github.ayfri.kore.commands.particle.particles
+import io.github.ayfri.kore.commands.particle.types.*
+import io.github.ayfri.kore.dataPack
+import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.generated.Blocks
+import io.github.ayfri.kore.generated.Enchantments
+import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.generated.Particles
+import io.kotest.core.spec.style.FunSpec
+import kotlin.math.PI
+
+fun Function.particleTests() {
+	particle(Particles.ASH) assertsIs "particle minecraft:ash"
+	particle(Particles.ASH, vec3()) assertsIs "particle minecraft:ash ~ ~ ~"
+	particle(Particles.ASH, vec3(), vec3(), 1.0, 2) assertsIs "particle minecraft:ash ~ ~ ~ ~ ~ ~ 1 2"
+	particle(
+		Particles.ASH,
+		vec3(),
+		vec3(),
+		1.0,
+		2,
+		ParticleMode.FORCE
+	) assertsIs "particle minecraft:ash ~ ~ ~ ~ ~ ~ 1 2 force"
+
+	particle(
+		Particles.ASH,
+		vec3(),
+		vec3(),
+		1.0,
+		2,
+		ParticleMode.NORMAL,
+		allEntities()
+	) assertsIs "particle minecraft:ash ~ ~ ~ ~ ~ ~ 1 2 normal @e"
+
+	particles {
+		block(Blocks.STONE_SLAB(states = mapOf("half" to "top"))) assertsIs "particle block{block_state:{Name:\"minecraft:stone_slab\",Properties:{half:\"top\"}}}"
+
+		blockCrumble(Blocks.STONE) assertsIs "particle block_crumble{block_state:{Name:\"minecraft:stone\"}}"
+		blockCrumble(Blocks.STONE_SLAB(states = mapOf("half" to "top"))) assertsIs "particle block_crumble{block_state:{Name:\"minecraft:stone_slab\",Properties:{half:\"top\"}}}"
+
+		blockMarker(Blocks.STONE) assertsIs "particle block_marker{block_state:{Name:\"minecraft:stone\"}}"
+		fallingDust(Blocks.STONE) assertsIs "particle falling_dust{block_state:{Name:\"minecraft:stone\"}}"
+
+		dust(Color.PURPLE, 2.0) assertsIs "particle dust{color:11141375,scale:2.0d}"
+		dust(rgb(0xabcdef), 2.0) assertsIs "particle dust{color:11259375,scale:2.0d}"
+
+		dustColorTransition(
+			Color.BLUE,
+			2.0,
+			Color.RED
+		) assertsIs "particle dust_color_transition{from_color:5592575,to_color:16733525,scale:2.0d}"
+
+		dragonBreath(0.5f) assertsIs "particle dragon_breath{power:0.5f}"
+		entityEffect(color = Color.GREEN) assertsIs "particle entity_effect{color:[0.3333333333333333d,1.0d,0.3333333333333333d]}"
+		flash(Color.WHITE.toARGB()) assertsIs "particle flash{color:\"#ffffffff\"}"
+		instantEffect(color = Color.GREEN) assertsIs "particle instant_effect{color:[0.3333333333333333d,1.0d,0.3333333333333333d]}"
+
+		item(Items.DIAMOND_SWORD {
+			enchantments {
+				enchantment(Enchantments.SHARPNESS, 5)
+				enchantment(Enchantments.KNOCKBACK, 2)
+			}
+		}) assertsIs """particle item{item:{id:"minecraft:diamond_sword",components:{enchantments:{"minecraft:sharpness":5,"minecraft:knockback":2}}}}"""
+
+		particle(Particles.ASH) assertsIs "particle minecraft:ash"
+
+		sculkCharge(PI / 2) assertsIs "particle sculk_charge 1.5707963267948966"
+		shriek(100) assertsIs "particle shriek 100"
+
+		tintedLeaves(Color.RED) assertsIs "particle tinted_leaves{color:[1.0d,0.3333333333333333d,0.3333333333333333d,1.0d]}"
+
+		trail(
+			Color.RED,
+			Triple(1, 2, 3),
+			10
+		) assertsIs "particle trail{color:16733525,duration:10,target:[1,2,3]}"
+		trail(
+			Color.BLUE,
+			Triple(0, 0, 0),
+			20
+		) assertsIs "particle trail{color:5592575,duration:20,target:[0,0,0]}"
+
+		vibration(vec3(1, 2, 3), 10) assertsIs "particle vibration 1.0 2.0 3.0 10"
+	}
+}
+
+class ParticleCommandTests : FunSpec({
+	test("particle") {
+		dataPack("unit_tests") {
+			load { particleTests() }
+		}
+	}
+})

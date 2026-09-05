@@ -5,7 +5,7 @@ nav-title: Chat Components
 description: A guide for creating Chat Components in a Minecraft datapack using Kore.
 keywords: minecraft, datapack, kore, guide, chat-components
 date-created: 2024-09-05
-date-modified: 2026-05-29
+date-modified: 2026-06-26
 routeOverride: /docs/concepts/chat-components
 ---
 
@@ -108,6 +108,7 @@ In-game example:<br>
 
 The `NbtComponent` displays NBT data from a block, an entity, or a storage. The
 `interpret` property can be used to interpret the NBT data as a text component, if the parsing fails, nothing is displayed.<br>
+The `plain` property suppresses SNBT key/value coloring when set to `true`; it cannot be combined with `interpret`.<br>
 The `nbt` property can be used to specify the path to the NBT data.<br>
 If `nbt` points to an array, then it will display all the elements joined in the form `Element1, Element2` etc.<br>
 The `separator` property can be used to change the separator between the elements of the array.
@@ -149,13 +150,24 @@ In-game output:<br>
 
 The
 `TranslatedTextComponent` displays translated text using translation keys. You can also pass arguments to the translation key with the
-`with` argument, which should be a list of text components or strings.<br>
+`with` argument, which is a list of strings or a list of components - so the result of any component factory (
+`scoreComponent`,
+`entityComponent`, `textComponent`, etc) can be passed directly.<br>
 A `fallback` property can be used to specify a fallback text if the translation key is not found.
 
 ### Example
 
 ```kotlin
-val translatedTextComponent = translatedTextComponent("chat.type.text", "Ayfri", "Hello !")
+// Strings are wrapped as text components automatically.
+val translatedFromStrings = translatedTextComponent("chat.type.text", listOf("Ayfri", "Hello !"))
+
+// Or pass components directly, no need to unwrap them.
+val translatedFromComponents = translatedTextComponent(
+  "chat.type.text", listOf(
+    textComponent("Ayfri", color = Color.AQUA),
+    scoreComponent("kills", self()),
+  )
+)
 ```
 
 In-game output:<br>
@@ -224,18 +236,27 @@ Object components render atlas sprites or player skins inside chat. They require
 `ObjectTextComponent` family and can be built via
 `objectComponent` or `playerObjectComponent` depending on the source.
 
+All object components share a `fallback` property: a `ChatComponents` value used when the object cannot be displayed
+(for example, when printing messages in server logs or during narration). Pass it directly to the factory or set it in the builder block.
+
 ### AtlasObjectTextComponent
 
 - `atlas` - The atlas that contains the sprite. Optional when the sprite already resolves to an atlas entry, otherwise provide an explicit
   `AtlasArgument`.
+- `fallback` - Text component used when the sprite cannot be displayed (e.g. in server logs or during narration).
 - `sprite` - The `ModelArgument` that identifies the sprite to render and is required.
 
-Use `objectComponent` to construct atlas objects, optionally passing an atlas override.
+Use `objectComponent` to construct atlas objects, optionally passing an atlas override and a fallback.
 
 ```kotlin
 val atlasObject = objectComponent(
 	sprite = Textures.Block.COMMAND_BLOCK_BACK,
 	atlas = Atlases.BLOCKS
+)
+
+val atlasObjectWithFallback = objectComponent(
+	sprite = Textures.Block.COMMAND_BLOCK_BACK,
+	fallback = textComponent("command block")
 )
 ```
 
@@ -244,6 +265,7 @@ In-game output:<br>
 
 ### PlayerObjectTextComponent
 
+- `fallback` - Text component used when the player model cannot be displayed (e.g. in server logs or during narration).
 - `hat` - Whether to display the player's hat layer (true/false) or leave it untouched when null.
 - `player` - A `PlayerProfile` describing the skin whose head should render; provide either a name, UUID, or both plus properties.
 
@@ -257,6 +279,11 @@ val playerObject = playerObjectComponent("ayfri") {
 		property("textures", "base64_encoded_texture_data")
 	}
 }
+
+val playerObjectWithFallback = playerObjectComponent(
+	playerName = "ayfri",
+	fallback = textComponent("ayfri's head")
+)
 ```
 
 In-game output:<br>
@@ -275,4 +302,21 @@ In-game output:<br>
 
 These components respect the same formatting as any other chat component, so you can still chain them, color them, or attach hover and click
 behaviors.
+
+## Parsing existing components
+
+Chat components round-trip: besides building them in Kotlin, you can decode vanilla JSON (or SNBT) back into
+`ChatComponents` using `ChatComponents.serializer()`. Every component type is supported (text, translatable, score,
+selector, keybind, nbt, object), along with nested `extra`, styling, and hover/click events. A bare string, a single
+object, and an array of components are all accepted.
+
+```kotlin
+val component = Json.decodeFromString(
+	ChatComponents.serializer(),
+	"""{"type": "text", "text": "Hello", "color": "red"}""",
+)
+```
+
+This is what the [datapack importer](/docs/advanced/bindings) uses to read components (such as a `pack.mcmeta`
+description) from existing packs.
 

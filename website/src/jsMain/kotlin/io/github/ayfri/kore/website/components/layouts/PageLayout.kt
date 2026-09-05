@@ -26,8 +26,12 @@ fun PageLayout(title: String, content: @Composable () -> Unit) {
 	url.hash = ""
 
 	setCanonical(url.href)
-	setTitle("$title - Kore, library for making Datapacks")
-	setDescription("Kore is a modern, open-source, and easy-to-use Kotlin library for Minecraft datapack development. It's designed to be simple, fast, and easy to use.")
+	setTitle("$title | Kore")
+	setDescription("Kore is a modern, type-safe Kotlin datapack generator for Minecraft. Open-source and easy to use. Create datapacks without writing JSON or MCFunction by hand.")
+	setKeywords(
+		"Minecraft datapack generator", "datapack generator", "Minecraft datapack", "Kotlin DSL",
+		"Kore", "datapack development", "Minecraft Java Edition", "MCFunction", "datapack library"
+	)
 	setType("website")
 
 	setTwitterCard("summary_large_image")
@@ -35,9 +39,7 @@ fun PageLayout(title: String, content: @Composable () -> Unit) {
 
 	setImage("$baseUrl/logo.png")
 
-	val latestRelease = GitHubService.getReleases().maxByOrNull { it.publishedAt }
-
-	Header(latestRelease)
+	Header(GitHubService.latestRelease)
 
 	Main({
 		classes(PageLayoutStyle.main)

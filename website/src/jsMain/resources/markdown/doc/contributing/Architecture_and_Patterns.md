@@ -5,7 +5,7 @@ nav-title: "Architecture and Patterns"
 description: Detailed internal architecture, project layout, module responsibilities, and recurring implementation patterns for Kore contributors.
 keywords: architecture, bindings, commands, generator, kore, patterns, serializers, website
 date-created: 2026-04-10
-date-modified: 2026-04-15
+date-modified: 2026-07-12
 routeOverride: /docs/contributing/architecture-and-patterns
 ---
 
@@ -50,7 +50,7 @@ git-excluded sandboxes are omitted on purpose.
 - Purpose: datapack importer and Kotlin binding generator.
 - Typical flow: explorer -> normalized entities -> writer output.
 - Common edit surface: [`explorer.kt`][bindings-explorer], [`entities.kt`][bindings-entities], [
-  `writer.kt`][bindings-writer], then tests under [`bindings/src/test`][bindings-tests].
+  `writer.kt`][bindings-writer], then tests under [`bindings/src/commonTest`][bindings-tests].
 - Pattern to preserve: single-namespace packs stay compact, multi-namespace packs become namespace-nested objects, and
   worldgen content is grouped under `Worldgen`.
 
@@ -65,6 +65,7 @@ git-excluded sandboxes are omitted on purpose.
 - Purpose: source-data processing and generated Kotlin/resource output.
 - Edit here when a generated enum, registry wrapper, or source-derived structure is wrong.
 - **Never** fix a generation issue by editing `kore/src/main/generated` or `build/generated/...` directly.
+- Full walkthrough: [Contributing: The Generation Pipeline][generation-pipeline].
 
 ### [`helpers/`][helpers-root]
 
@@ -76,7 +77,7 @@ git-excluded sandboxes are omitted on purpose.
 
 - Purpose: core DSL, typed arguments, command wrappers, serializers, worldgen builders, and data-driven resources.
 - Common edit surface: feature classes, `DataPack` registration, `Function` extensions, serializers, and tests under [
-  `kore/src/test`][kore-tests].
+  `kore/src/commonTest`][kore-tests].
 - A typical change in this module touches one feature family end to end: model, registration, builder entry point,
   tests, and docs.
 
@@ -156,6 +157,14 @@ Decision rule:
 2. If not, see whether the model can be expressed with an existing pattern.
 3. Only then add a new serializer, with focused tests.
 
+New sealed hierarchies serialized with `NamespacedPolymorphicSerializer` (a `type`-discriminated Minecraft polymorphic
+shape) must not enumerate subtypes by hand or via reflection.
+Annotate the sealed base with `@GeneratedSealedSerializer`; the `kore-ksp` module's `SealedSerializerProcessor`
+generates a reflection-free `fooSealedSerializer()` factory at compile time, which the family's serializer object passes
+to `NamespacedPolymorphicSerializer`'s constructor.
+See `SlotSource.kt` for the exact shape, and `CLAUDE.md` / `multiplatform.md` for the collision pitfalls (distinct
+`serialName`s required when subtypes share a descriptor, e.g. two `InlineAutoSerializer<_, List<X>>` wrappers).
+
 ## Fast heuristics when you are unsure where a change belongs
 
 - **Build, publishing, or versioning behavior** -> `build-logic/` and root Gradle metadata.
@@ -167,7 +176,9 @@ Decision rule:
 ## Testing patterns that speed up contribution
 
 - Feature tests usually assert emitted JSON payloads and generated command/resource lines.
-- Module-specific `testDataPack(...)` helpers provide compact generation setups.
+- Most specs build a `dataPack { }` in `commonTest` and never call `generate()`, so they run on the JVM, Node.js, and
+  a headless browser alike (see [Multiplatform Support][multiplatform]). The `testDataPack(...)` helper wraps real
+  file/ZIP/JAR generation and is JVM/Node-only - keep specs that call it in `jvmTest`.
 - Serializer tests should focus on roundtrip behavior and JSON or SNBT shape checks.
 
 When you touch generators, the usual path is: model -> `DataPack` registration -> builder entry point -> tests -> docs.
@@ -189,6 +200,30 @@ Required frontmatter keys, in alphabetical order:
 
 Keep routes stable, keep navigation intentional, and update entry pages when a new doc should become discoverable.
 
+### How to write a documentation page
+
+Content rules that keep the docs consistent and trustworthy:
+
+- **Example-first.** Every public feature needs at least one copy-pastable Kotlin snippet. Verify each snippet against
+  the real API (the source or a test) before committing - never invent method names or argument shapes. Use tabs for
+  indentation, matching the Kotlin code style.
+- **State capabilities, not changes.** Write what the API *does*, not what changed between versions. Avoid changelog
+  phrasing like "now possible" or "new in this release" in body copy; that information belongs in commit messages and
+  release notes, not in a reference page that must read correctly a year later.
+- **Cross-link inline, not in a pile.** Link related pages from the sentence that mentions the concept (for example,
+  link [Scoreboards][scoreboards-doc] the first time you mention scoreboards). Prefer one good inline link over a long
+  trailing list. Keep any `See also` section short - three or four of the most relevant links, not a dump of everything
+  related.
+- **Link to the Minecraft Wiki for vanilla concepts.** When a page touches a vanilla system (a command, a registry, an
+  NBT structure, a pack format), link the relevant [Minecraft Wiki](https://minecraft.wiki) page. It is high quality and
+  saves Kore from restating vanilla behavior - Kore docs should explain the *Kore* DSL and defer vanilla semantics to
+  the
+  wiki.
+- **Do not duplicate.** If a concept already has a home page, link it instead of re-explaining it. One source of truth
+  per topic; everything else points at it.
+
+[scoreboards-doc]: /docs/concepts/scoreboards
+
 ## Why Kore uses these technical choices
 
 - **Centralized serializers** keep JSON and NBT output stable across modules and make diffs easier to review.
@@ -201,7 +236,9 @@ Keep routes stable, keep navigation intentional, and update entry pages when a n
 
 - [Contributing: Contributing][contributing]
 - [Contributing: Creating a New Generator][new-generator]
+- [Contributing: The Generation Pipeline][generation-pipeline]
 - [Contributing: Workflow][workflow]
+- [Multiplatform Support][multiplatform]
 
 [bindings-entities]: https://github.com/ayfri/kore/blob/master/bindings/src/main/kotlin/io/github/ayfri/kore/bindings/entities.kt
 
@@ -209,7 +246,7 @@ Keep routes stable, keep navigation intentional, and update entry pages when a n
 
 [bindings-root]: https://github.com/ayfri/kore/tree/master/bindings
 
-[bindings-tests]: https://github.com/ayfri/kore/tree/master/bindings/src/test/kotlin/io/github/ayfri/kore/bindings
+[bindings-tests]: https://github.com/ayfri/kore/tree/master/bindings/src/commonTest/kotlin/io/github/ayfri/kore/bindings
 
 [bindings-writer]: https://github.com/ayfri/kore/blob/master/bindings/src/main/kotlin/io/github/ayfri/kore/bindings/writer.kt
 
@@ -220,6 +257,8 @@ Keep routes stable, keep navigation intentional, and update entry pages when a n
 [datapack-kt]: https://github.com/ayfri/kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/DataPack.kt
 
 [docs-root]: https://github.com/ayfri/kore/tree/master/website/src/jsMain/resources/markdown/doc
+
+[generation-pipeline]: /docs/contributing/generation-pipeline
 
 [generation-root]: https://github.com/ayfri/kore/tree/master/generation
 
@@ -233,7 +272,9 @@ Keep routes stable, keep navigation intentional, and update entry pages when a n
 
 [kore-root]: https://github.com/ayfri/kore/tree/master/kore
 
-[kore-tests]: https://github.com/ayfri/kore/tree/master/kore/src/test/kotlin/io/github/ayfri/kore
+[kore-tests]: https://github.com/ayfri/kore/tree/master/kore/src/commonTest/kotlin/io/github/ayfri/kore
+
+[multiplatform]: /docs/advanced/multiplatform
 
 [new-generator]: /docs/contributing/creating-a-new-generator
 

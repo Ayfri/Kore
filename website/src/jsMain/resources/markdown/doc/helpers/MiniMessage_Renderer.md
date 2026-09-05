@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: MiniMessage Renderer
+title: MiniMessage Renderer & Viewer - Parse Adventure Format in Minecraft
 nav-title: MiniMessage Renderer
-description: Parse Adventure MiniMessage format strings into Minecraft text components using the Kore helpers module.
-keywords: minecraft, datapack, kore, helpers, minimessage, adventure, text, component, renderer, parser, color, decoration, click, hover
+description: Parse Adventure MiniMessage format into Minecraft text components with Kore. Supports colors, decorations, click/hover events, gradients, and fonts. Use as a MiniMessage viewer for rich text in datapacks.
+keywords: minimessage, minimessage viewer, minimessage renderer, minimessage parser, adventure text, minecraft text components, minimessage generator, mini message format, kore minimessage, minimessage to chat component
 date-created: 2026-03-03
-date-modified: 2026-03-31
+date-modified: 2026-07-02
 routeOverride: /docs/helpers/minimessage-renderer
 ---
 

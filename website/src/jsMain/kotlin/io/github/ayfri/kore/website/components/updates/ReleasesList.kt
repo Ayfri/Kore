@@ -5,8 +5,8 @@ import com.varabyte.kobweb.browser.storage.BooleanStorageKey
 import com.varabyte.kobweb.browser.storage.getItem
 import com.varabyte.kobweb.browser.storage.setItem
 import com.varabyte.kobweb.compose.css.*
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiCalendarMonth
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiOpenInNew
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideCalendarDays
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideExternalLink
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.utils.*
 import kotlinx.browser.localStorage
@@ -25,26 +25,24 @@ private val ShowReleaseCandidatesStorageKey = BooleanStorageKey("kore.releases.s
 @Composable
 fun ReleasesList(releases: List<GitHubRelease>) {
 	Style(ReleasesListStyle)
+	// Injected here rather than in `MarkdownRenderer`: `Style` emits a <style> tag per call, and there is one renderer per card.
+	Style(MarkdownRendererStyle)
 
-	val allReleases = releases.sortedByDescending { it.publishedAt }
-	val initialFilterOptions = remember {
-		ReleaseFilterOptions(
-			showPreReleases = localStorage.getItem(ShowPreReleasesStorageKey) ?: false,
-			showSnapshots = localStorage.getItem(ShowSnapshotsStorageKey) ?: false,
-			showReleaseCandidates = localStorage.getItem(ShowReleaseCandidatesStorageKey) ?: false
+	val allReleases = remember(releases) { releases.sortedByDescending { it.publishedAt } }
+	var filterOptions by remember {
+		mutableStateOf(
+			ReleaseFilterOptions(
+				showPreReleases = localStorage.getItem(ShowPreReleasesStorageKey) ?: false,
+				showSnapshots = localStorage.getItem(ShowSnapshotsStorageKey) ?: false,
+				showReleaseCandidates = localStorage.getItem(ShowReleaseCandidatesStorageKey) ?: false
+			)
 		)
 	}
-	var filterOptions by remember { mutableStateOf(initialFilterOptions) }
 
-	val sortComparator by mutableStateOf(
-		when (filterOptions.sortOrder) {
-		SortOrder.NEWEST_FIRST -> compareByDescending<GitHubRelease> { it.publishedAt }
-			SortOrder.OLDEST_FIRST -> compareBy { it.publishedAt }
-	})
-	// Apply the filters
-	val filteredReleases = allReleases.filter { release ->
-		release.matchesFilters(filterOptions)
-	}.sortedWith(sortComparator)
+	val filteredReleases = remember(allReleases, filterOptions) {
+		val matching = allReleases.filter { it.matchesFilters(filterOptions) }
+		if (filterOptions.sortOrder == SortOrder.OLDEST_FIRST) matching.asReversed() else matching
+	}
 
 	Div({
 		classes(ReleasesListStyle.container)
@@ -102,7 +100,7 @@ fun ReleasesList(releases: List<GitHubRelease>) {
 		}
 
 		// Add the statistics
-		ReleaseStats(allReleases, filteredReleases)
+		ReleaseStats(allReleases)
 	}
 }
 
@@ -140,7 +138,7 @@ fun ReleaseCard(release: GitHubRelease) {
 					Span({
 						classes(ReleasesListStyle.releaseDate)
 					}) {
-						MdiCalendarMonth()
+						LucideCalendarDays()
 						Text("Published ${formatDate(release.publishedAt)}")
 						Text(" • ")
 						Text("(${formatRelativeDate(release.publishedAt)})")
@@ -162,7 +160,7 @@ fun ReleaseCard(release: GitHubRelease) {
 					target(ATarget.Blank)
 					rel("noopener", "noreferrer")
 				}) {
-					MdiOpenInNew()
+					LucideExternalLink()
 					Text("Minecraft changelog")
 				}
 			}
@@ -199,31 +197,6 @@ fun ReleaseCard(release: GitHubRelease) {
 				}
 			}
 		}
-	}
-}
-
-private fun buildMinecraftChangelogUrl(release: GitHubRelease): String? {
-	val mcVersion = release.getMinecraftVersion() ?: return null
-	val baseVersion = mcVersion.substringBefore("-")
-	val normalizedBase = baseVersion.replace(".", "-")
-
-	return when {
-		release.isSnapshot() -> "https://www.minecraft.net/en-us/article/minecraft-snapshot-$mcVersion"
-
-		release.isPreRelease() -> {
-			val preNumber = mcVersion.substringAfter("-pre", "")
-			if (preNumber.isEmpty()) null
-			else "https://www.minecraft.net/en-us/article/minecraft-$normalizedBase-pre-release-$preNumber"
-		}
-
-		release.isReleaseCandidate() -> {
-			val rcNumber = mcVersion.substringAfter("-rc", "")
-			if (rcNumber.isEmpty()) null
-			else "https://www.minecraft.net/en-us/article/minecraft-$normalizedBase-release-candidate-$rcNumber"
-		}
-
-		release.isRelease() -> "https://www.minecraft.net/en-us/article/minecraft-java-edition-$normalizedBase"
-		else -> null
 	}
 }
 
@@ -281,9 +254,11 @@ object ReleasesListStyle : StyleSheet() {
 		flexDirection(FlexDirection.Column)
 		padding(1.5.cssRem)
 		transition(0.3.s, "background-color", "transform", "box-shadow")
+		// Skip layout and paint for the cards that are off-screen, there are hundreds of them.
+		property("content-visibility", "auto")
+		containIntrinsicSize(ContainIntrinsicSize.Auto(320.px))
 
 		hover(self) style {
-			console.log(GlobalStyle.tertiaryBackgroundColor.alpha(0.5))
 			backgroundColor(GlobalStyle.tertiaryBackgroundColor.alpha(0.66))
 			boxShadow(0.px, 4.px, 12.px, 0.px, rgba(0, 0, 0, 0.15))
 			transform { translateY((-3).px) }
@@ -378,8 +353,9 @@ object ReleasesListStyle : StyleSheet() {
 		backgroundColor(GlobalStyle.buttonBackgroundColor.alpha(0.12))
 		transition(0.2.s, "background-color", "color")
 
-		"span.material-icons" style {
-			fontSize(1.05.cssRem)
+		"svg" style {
+			flexShrink(0)
+			fontSize(0.95.cssRem)
 		}
 
 		hover(self) style {

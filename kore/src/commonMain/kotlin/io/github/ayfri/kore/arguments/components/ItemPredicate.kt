@@ -1,0 +1,222 @@
+package io.github.ayfri.kore.arguments.components
+
+import io.github.ayfri.kore.arguments.components.matchers.ComponentMatcher
+import io.github.ayfri.kore.arguments.components.matchers.DataComponentPredicate
+import io.github.ayfri.kore.arguments.numbers.ranges.serializers.IntRangeOrIntJson
+import io.github.ayfri.kore.arguments.types.ItemOrTagArgument
+import io.github.ayfri.kore.generated.ItemComponentTypes
+import io.github.ayfri.kore.utils.*
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.ListSerializer
+import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.encodeToNbtTag
+import net.benwoodworth.knbt.nbtCompound
+import net.benwoodworth.knbt.nbtList
+
+const val COUNT_ITEM_PREDICATE = "count"
+
+@Serializable
+private data class Range(val min: Int, val max: Int)
+
+private fun String.negateIf(condition: Boolean) = if (condition) "!$this" else this
+
+private data class ComponentEntry(val key: String, val negated: Boolean, val sign: String, val value: String?)
+
+data class ItemPredicate(
+	var itemArgument: ItemOrTagArgument? = null,
+) : ComponentsPatch() {
+	val componentsAlternatives = mutableMapOf<String, MutableList<Component>>()
+	var countSubPredicates = mutableListOf<Pair<IntRangeOrIntJson, Boolean>>()
+	var subPredicates = mutableListOf(DataComponentPredicate())
+	var subPredicatesKeys = ComponentMatcher.Companion.ComponentMatcherSerializer.contentNames
+
+	override val lastAddedComponent get() = componentsAlternatives.values.lastOrNull()?.lastOrNull()
+	override val lastAddedComponentName get() = componentsAlternatives.keys.lastOrNull()
+
+	override val components
+		get() = componentsAlternatives.mapValues { it.value.first() }.toMutableMap()
+
+	override fun set(name: String, component: Component) {
+		componentsAlternatives.getOrPut(name, ::mutableListOf).add(component)
+	}
+
+	override fun get(name: String) = componentsAlternatives[name]?.firstOrNull()
+
+	override fun setToRemove(name: String) {
+		componentsAlternatives[name]?.removeLastOrNull()
+		componentsAlternatives.getOrPut("!$name", ::mutableListOf).add(EmptyComponent)
+	}
+
+	/**
+	 * Set the last added component as negated. **Negated isn't similar to removed.**
+	 * - Negated means that the value should not be equal to the one set.
+	 * - Removed means that the component should not be present.
+	 *
+	 * Example:
+	 * ```kotlin
+	 * itemPredicate {
+	 *    !damage(1)
+	 *    damage(2)
+	 * }
+	 * ```
+	 * Will output: `*[!damage=1|damage=2]`
+	 */
+	override fun ComponentsScope.not() {
+		val subPredicatePredicateKeysList = subPredicatesKeys.joinToString("', '")
+		val currentClassName = this::class.simpleName
+		setNegated(
+			lastAddedComponentName ?: error(
+				"No component to set as removed, note that it doesn't work with '$COUNT_ITEM_PREDICATE' nor '$subPredicatePredicateKeysList' in '$currentClassName'."
+			)
+		)
+	}
+
+	/**
+	 * Set a component to be expected, meaning it should be present but without any specific value.
+	 *
+	 * Example:
+	 * ```kotlin
+	 * itemPredicate {
+	 *     setExpected(ItemComponentTypes.DAMAGE)
+	 * }
+	 * ```
+	 * Will output: `*[damage]`
+	 */
+	fun setExpected(component: ItemComponentTypes) = setExpected(component.name.lowercase())
+	fun setExpected(component: String) {
+		componentsAlternatives.getOrPut(component, ::mutableListOf).add(EmptyComponent)
+	}
+
+	/**
+	 * Set a component to be negated, meaning it should not be present.
+	 *
+	 * Example:
+	 * ```kotlin
+	 * itemPredicate {
+	 * 	   setNegated(ItemComponentTypes.DAMAGE)
+	 * }
+	 * ```
+	 * Will output: `*[!damage]`
+	 */
+	fun setNegated(component: ItemComponentTypes) = setNegated(component.name.lowercase())
+	fun setNegated(name: String) = when (name) {
+		COUNT_ITEM_PREDICATE -> {
+			countSubPredicates.removeLastOrNull()?.let { countSubPredicates.add(it.first to true) }
+		}
+
+		else -> {
+			val sourceKey = when {
+				componentsAlternatives[name]?.isNotEmpty() == true -> name
+				componentsAlternatives["~$name"]?.isNotEmpty() == true -> "~$name"
+				else -> error("The component '$name' is not present, can't negate its value.")
+			}
+			val component = componentsAlternatives[sourceKey]!!.withIndex().last()
+			componentsAlternatives[sourceKey]?.removeAt(component.index)
+			val negatedKey = if (sourceKey.startsWith("~")) "~!$name" else "!$name"
+			componentsAlternatives.getOrPut(negatedKey, ::mutableListOf).add(component.value)
+		}
+	}
+
+	/**
+	 * Set a component to be partial, meaning it should be present but with a specific value.
+	 *
+	 * Example:
+	 * ```kotlin
+	 * itemPredicate {
+	 *     customData {
+	 *         this["test"] = 1
+	 *     }
+	 * 	   setPartial(ItemComponentTypes.DAMAGE)
+	 * }
+	 *
+	 * Will output: `*[damage~{test:1}]`
+	 */
+	fun setPartial(component: ItemComponentTypes) = setPartial(component.name.lowercase())
+	fun setPartial(name: String) {
+		val sourceKey = when {
+			componentsAlternatives[name]?.isNotEmpty() == true -> name
+			componentsAlternatives["!$name"]?.isNotEmpty() == true -> "!$name"
+			else -> error("The component '$name' is not present, can't make it partial.")
+		}
+		val component = componentsAlternatives[sourceKey]!!.last()
+		componentsAlternatives[sourceKey]?.removeLastOrNull()
+		val partialKey = if (sourceKey.startsWith("!")) "~!$name" else "~$name"
+		componentsAlternatives.getOrPut(partialKey, ::mutableListOf).add(component)
+	}
+
+	override fun asNbt() = nbt {
+		val listSerializer = ListSerializer(Component.Companion.ComponentSerializer())
+		componentsAlternatives.forEach { (key, value) ->
+			put(
+				key,
+				snbtSerializer.encodeToNbtTag(listSerializer, value)
+			)
+		}
+	}
+
+	fun buildPredicateString(): String {
+		val validEntries = asNbt().entries.filter { (_, values) -> values.nbtList.isNotEmpty() }
+			.map { (key, values) -> key to values.nbtList }
+			.toMutableList()
+
+		val countSubPredicateKeys = countSubPredicates.map { (value, negated) ->
+			value to COUNT_ITEM_PREDICATE.negateIf(negated)
+		}
+
+		countSubPredicateKeys.forEach { (value, key) ->
+			validEntries += if (value.range != null) {
+				"~${key}" to nbtList {
+					this += snbtSerializer.encodeToNbtTag(Range(value.range.start!!, value.range.end!!)).nbtCompound
+				}
+			} else {
+				key to nbtListOf(value.int!!)
+			}
+		}
+
+		subPredicates.forEach { subPredicate ->
+			val subPredicateEntries = snbtSerializer.encodeToNbtTag(subPredicate).nbtCompound
+			for ((key, value) in subPredicateEntries) {
+				val keyName = key.removePrefix("minecraft:")
+				val prefix = if (value is NbtCompound) "~" else ""
+				validEntries += "$prefix$keyName" to snbtSerializer.encodeToNbtTag(listOf(value)).nbtList
+			}
+		}
+
+		val entries = mutableListOf<ComponentEntry>()
+		for ((key, values) in validEntries) {
+			val keyName = key.removePrefix("~").removePrefix("!")
+			val isChatComponent = componentsAlternatives[key]?.firstOrNull()?.isChatComponent() == true
+			values.nbtList.mapTo(entries) {
+				val value = when {
+					isChatComponent -> it.unescapeChatComponent()
+					it == nbt {} -> null
+					else -> it.toString()
+				}
+
+				ComponentEntry(
+					key = keyName,
+					negated = "!" in key,
+					sign = if ("~" in key) "~" else "=",
+					value = value
+				)
+			}
+		}
+
+		if (entries.isEmpty()) return ""
+
+		return entries.groupBy(ComponentEntry::key).values.joinToString(",", prefix = "[", postfix = "]") { values ->
+			values.joinToString("|") { (key, negated, sign, value) ->
+				val negation = if (negated) "!" else ""
+				val valueString = value?.let { "$sign$value" } ?: ""
+				"$negation$key$valueString"
+			}
+		}
+	}
+
+	override fun toString(): String {
+		val itemString = itemArgument?.asString() ?: "*"
+		val arrayComponents = buildPredicateString()
+
+		return itemString + arrayComponents
+	}
+}

@@ -1,0 +1,46 @@
+package io.github.ayfri.kore.features.itemmodifiers.functions
+
+import io.github.ayfri.kore.arguments.types.ItemOrTagArgument
+import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
+import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.sub.ItemStackPredicate
+import io.github.ayfri.kore.serializers.InlinableList
+import kotlinx.serialization.Serializable
+
+/**
+ * Conditional wrapper that applies nested item functions depending on whether the item matches the provided [itemFilter].
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
+ * See also: https://minecraft.wiki/w/Item_modifier
+ */
+@Serializable
+data class Filtered(
+	override var conditions: PredicateAsList? = null,
+	var itemFilter: ItemStackPredicate = ItemStackPredicate(),
+	var onFail: InlinableList<ItemFunction>? = null,
+	var onPass: InlinableList<ItemFunction>? = null,
+) : ItemFunction()
+
+/** Add a `filtered` step to this modifier. */
+fun ItemModifier.filtered(itemFilter: ItemStackPredicate = ItemStackPredicate(), block: Filtered.() -> Unit = {}) =
+	Filtered(itemFilter = itemFilter).apply(block).also { modifiers += it }
+
+/** Set the item filter for this `filtered` step. */
+fun Filtered.itemFilter(block: ItemStackPredicate.() -> Unit) {
+	itemFilter = ItemStackPredicate().apply(block)
+}
+
+/** Set the item filter for this `filtered` step. */
+fun Filtered.itemFilter(vararg items: ItemOrTagArgument, block: ItemStackPredicate.() -> Unit = {}) {
+	itemFilter = ItemStackPredicate(items = items.toList()).apply(block)
+}
+
+/** Append nested item functions that will run when the [itemFilter] matches. */
+fun Filtered.onPass(block: ItemModifier.() -> Unit) {
+	onPass = (onPass ?: emptyList()) + ItemModifier().apply(block).modifiers
+}
+
+/** Append nested item functions that will run when the [itemFilter] does not match. */
+fun Filtered.onFail(block: ItemModifier.() -> Unit) {
+	onFail = (onFail ?: emptyList()) + ItemModifier().apply(block).modifiers
+}

@@ -5,7 +5,7 @@ nav-title: Teams
 description: Object-oriented team management with the Kore OOP module - create, configure, and manage Minecraft teams.
 keywords: minecraft, datapack, kore, oop, teams, scoreboard, collision, nametag, friendly fire
 date-created: 2026-03-03
-date-modified: 2026-03-31
+date-modified: 2026-08-14
 routeOverride: /docs/oop/teams
 ---
 
@@ -34,10 +34,11 @@ The main benefit is that configuration stays grouped by team, which makes lobby 
 much easier to read than a long list of raw `team modify` commands.
 
 Teams can also act as a bridge to other OOP features. Once you have a `Team` handle, you can reuse its members as an
-entity selector for scoreboards, boss bars, or any API that already works with `Entity`.
+entity selector for [Scoreboards](/docs/oop/scoreboards), [Boss Bars](/docs/oop/boss-bars), or any API that already
+works with `Entity`.
 
 They also integrate nicely with `execute` conditions and score tracking helpers, which makes it easy to express checks
-like “does this team still have this player?” or “how many players are still alive in this team?” without rebuilding
+like "does this team still have this player?" or "how many players are still alive in this team?" without rebuilding
 selectors by hand.
 
 ## Reusing a team in other OOP features
@@ -62,9 +63,10 @@ management without rebuilding selectors manually.
 ```kotlin
 val red = team("red")
 val tracker = player("Tracker")
-val membersLeft = tracker.getScoreEntity("red.members")
 
 function("check_red_team") {
+	val membersLeft = tracker.getScoreEntity("red.members")
+
 	execute {
 		ifCondition {
 			hasMembers(red)
@@ -84,7 +86,7 @@ function("check_red_team") {
 
 This pattern is useful when several OOP systems need to exchange state. A `Team` can expose conditions for `execute`,
 while a `ScoreboardEntity` can cache the current member count or mirror that count into entity/storage NBT for later
-reuse by timers, events, or custom game rules.
+reuse by timers, [Events](/docs/oop/events), or custom game rules.
 
 ## Team functions
 
@@ -117,6 +119,5 @@ reuse by timers, events, or custom game rules.
 
 ## See also
 
-- [Boss Bars](/docs/oop/boss-bars)
-- [Scoreboards](/docs/oop/scoreboards)
-- [Entities & Players](/docs/oop/entities-and-players)
+- [Entities & Players](/docs/oop/entities-and-players) - Build the player and entity handles that join, leave, or target
+  teams.

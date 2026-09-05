@@ -6,7 +6,9 @@ import com.squareup.kotlinpoet.MemberName.Companion.member
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import generateFile
 import getFromCacheOrDownloadTxt
+import logGenerated
 import overrides
+import serializableWith
 import setSealed
 import snakeCase
 import url
@@ -24,12 +26,7 @@ private val gamerulesClass = ClassName(GENERATED_PACKAGE, INTERFACE_NAME)
 private fun String.toGameruleName() = substringAfter("gamerule").substringBefore("<").snakeCase().trim().uppercase()
 
 private fun addGameruleChild(name: String) = TypeSpec.interfaceBuilder(name).apply {
-	addAnnotation(
-		AnnotationSpec.builder(ClassName("kotlinx.serialization", "Serializable"))
-			.addMember("with = Serializer::class")
-			.build()
-	)
-
+	addAnnotation(serializableWith("Serializer"))
 	addSuperinterface(gamerulesClass)
 	setSealed()
 }.build()
@@ -39,6 +36,7 @@ private fun addGamerule(name: String, parent: String) = TypeSpec.objectBuilder(n
 	.addSuperinterface(ClassName(GENERATED_PACKAGE, INTERFACE_NAME, parent))
 	.build()
 
+/** Builds the `Gamerules` sealed interface from raw `/gamerule <name> <value: bool|integer>` syntax lines. */
 fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 	val validGamerules = gamerules.filter { "minecraft:" !in it }
 
@@ -46,11 +44,7 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 	val integerGamerules = validGamerules.filter { it.endsWith("<value: integer>") }.map(String::toGameruleName)
 
 	val topLevelInterface = TypeSpec.interfaceBuilder(INTERFACE_NAME).apply {
-		addAnnotation(
-			AnnotationSpec.builder(ClassName("kotlinx.serialization", "Serializable"))
-				.addMember("with = $INTERFACE_NAME.Companion.Serializer::class")
-				.build()
-		)
+		addAnnotation(serializableWith("$INTERFACE_NAME.Companion.Serializer"))
 
 		setSealed()
 
@@ -70,12 +64,15 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 			TypeSpec.companionObjectBuilder().apply {
 				addProperty(
 					PropertySpec.builder("values", List::class.asClassName().parameterizedBy(gamerulesClass))
-						.getter(
-							FunSpec.getterBuilder()
-								.addStatement(
-									"return %T::class.sealedSubclasses.map { it.sealedSubclasses.map { it.objectInstance!! } }.flatten()",
-									gamerulesClass
-								)
+						.initializer(
+							CodeBlock.builder()
+								.add("listOf(\n")
+								.indent()
+								.apply {
+									(booleanGamerules + integerGamerules).forEach { add("%N,\n", it) }
+								}
+								.unindent()
+								.add(")")
 								.build()
 						)
 						.build()
@@ -120,7 +117,7 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 								.returns(gamerulesClass)
 								.addStatement(
 									"return fromString(decoder.decodeString()) ?: throw %T(%S)",
-									IllegalArgumentException::class,
+									ClassName("kotlin", "IllegalArgumentException"),
 									$$"Unknown '${name}' gamerule"
 								)
 								.overrides()
@@ -141,14 +138,13 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 		)
 	}
 
-	generateFile(INTERFACE_NAME, sourceUrl, topLevelInterface) {
-		addImport("java.util", "Locale")
+	val file = generateFile(INTERFACE_NAME, sourceUrl, topLevelInterface) {
 		addImport("io.github.ayfri.kore.utils", "snakeCase")
 		addAnnotation(
 			AnnotationSpec.builder(Suppress::class)
 				.addMember("%S", "ClassName")
-				.addMember("%S", "SERIALIZER_TYPE_INCOMPATIBLE")
 				.build()
 		)
 	}
+	logGenerated("interface", INTERFACE_NAME, file = file)
 }

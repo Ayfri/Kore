@@ -11,7 +11,8 @@ routeOverride: /docs/helpers/inventory-manager
 
 # Inventory Manager
 
-Kore’s Inventory Manager lets you declaratively control inventories on entities or blocks and react to slot events.
+Kore’s Inventory Manager lets you declaratively control [inventories](https://minecraft.wiki/w/Inventory) on entities or
+blocks and react to slot events.
 
 - Manage items in any `ContainerArgument` (players, entities, or block containers).
 - Register slot listeners that fire when an item is taken from a slot.
@@ -83,18 +84,19 @@ inventoryManager(chestPos) {
 
 ## API overview
 
-- `inventoryManager(container)` – Create a manager for any `ContainerArgument` (`EntityArgument` or `Vec3`).
-- `slotEvent(slot, expectedItem) { … }` – Register handlers for a single slot.
-  - `onTake { … }` – Fires once when the slot transitions from expected item to something else.
-  - `duringTake { … }` – Fires every tick while the slot is not holding the expected item; useful to enforce state.
-  - `onTick { … }` – Runs every tick regardless of state; convenient for housekeeping.
+- `inventoryManager(container)` - Create a manager for any `ContainerArgument` (`EntityArgument` or `Vec3`). Internally
+  uses [`/item`](https://minecraft.wiki/w/Commands/item) to place items in slots.
+- `slotEvent(slot, expectedItem) { … }` - Register handlers for a single slot.
+    - `onTake { … }` - Fires once when the slot transitions from expected item to something else.
+    - `duringTake { … }` - Fires every tick while the slot is not holding the expected item; useful to enforce state.
+    - `onTick { … }` - Runs every tick regardless of state; convenient for housekeeping.
   - Helpers inside the scope:
-    - `setItemInSlot()` – Put back the expected item into the slot.
-    - `clearAllItemsNotInSlot([targets])` – Clear all other slots.
-    - `killAllItemsNotInSlot()` – Remove dropped items that don’t belong to this slot.
-- `generateSlotsListeners()` – Emits the `load`/`tick` functions and scoreboard wiring for all registered listeners.
-- `setBlock(block)` – When the container is a position, place a block (e.g., a chest) before managing its contents.
-- `clear(slot)`, `clearAll()`, `clearAll(item)` – Utilities to wipe inventory content.
+      - `setItemInSlot()` - Put back the expected item into the slot.
+      - `clearAllItemsNotInSlot([targets])` - Clear all other slots.
+      - `killAllItemsNotInSlot()` - Remove dropped items that don’t belong to this slot.
+- `generateSlotsListeners()` - Emits the `load`/`tick` functions and scoreboard wiring for all registered listeners.
+- `setBlock(block)` - When the container is a position, place a block (e.g., a chest) before managing its contents.
+- `clear(slot)`, `clearAll()`, `clearAll(item)` - Utilities to wipe inventory content.
 
 Internally, Inventory Manager relies on a scoreboard objective and a tiny helper marker entity (for non-entity containers) to detect state transitions. Names are auto-namespaced and unique per datapack.
 
@@ -149,7 +151,7 @@ fun Function.inventoryManagerTests() {
 
 ## See also
 
-- [Scheduler](/docs/helpers/scheduler) – Run repeated or delayed logic that complements inventory policies.
-- [Components](/docs/concepts/components) – Define complex items (names, lore, enchantments) you can enforce in slots.
-- [Predicates](/docs/data-driven/predicates) – Validate component-based item properties in other contexts.
-- [Scoreboards](/docs/concepts/scoreboards) – Background knowledge on objectives used under the hood.
+- [Scheduler](/docs/helpers/scheduler) - Run repeated or delayed logic that complements inventory policies.
+- [Components](/docs/concepts/components) - Define complex items (names, lore, enchantments) you can enforce in slots.
+- [Predicates](/docs/data-driven/predicates) - Validate component-based item properties in other contexts.
+- [Scoreboards](/docs/concepts/scoreboards) - Background knowledge on objectives used under the hood.

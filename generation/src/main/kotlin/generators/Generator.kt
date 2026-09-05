@@ -3,6 +3,7 @@ package generators
 import com.squareup.kotlinpoet.TypeSpec
 import url
 
+/** Describes one enum/enum-tree to generate from an upstream `.txt` resource list. Build one with [gen]. */
 data class Generator(
 	var name: String,
 	var fileName: String,
@@ -21,6 +22,7 @@ data class Generator(
 		fileName = "${fileName.lowercase()}.txt"
 	}
 
+	/** The `*Argument` interface this generator should implement, or `null` for a plain enum. */
 	fun getParentArgumentType(): String? {
 		var parentArgumentType = argumentClassName ?: name.removeSuffix("s")
 		if (parentArgumentType.isEmpty()) return null
@@ -32,6 +34,7 @@ data class Generator(
 	fun setUrlWithType(type: String) = url("custom-generated/$type/$fileName").let { url = it }
 }
 
+// Builder-style setters, so `gen(...) { ... }` call sites read like a DSL instead of assigning `var`s directly.
 fun Generator.additionalCode(block: TypeSpec.Builder.() -> Unit) {
 	additionalCode = block
 }
@@ -47,7 +50,6 @@ fun Generator.subInterfacesParents(vararg interfaces: Pair<String, String>) {
 fun Generator.tagsParents(vararg interfaces: Pair<String, String>) {
 	tagsParents = interfaces.toMap()
 }
-
 
 fun Generator.transform(transformFunction: (String) -> String) {
 	transform = transformFunction
@@ -65,14 +67,9 @@ fun List<Generator>.transformRemoveJSONSuffix() = map { generator ->
 	}
 }
 
-fun List<Generator>.transformRemoveMinecraftPrefix() = map { generator ->
-	generator.apply {
-		if (generator.transform == null) transform = { it.removePrefix("minecraft:") }
-	}
-}
-
 fun List<Generator>.setUrlWithType(type: String) = map { generator ->
 	generator.apply { setUrlWithType(type) }
 }
 
+/** Applies [transform] to every element, or returns the list unchanged when [transform] is `null`. */
 fun <T> List<T>.mapIfNotNull(transform: ((T) -> T)?) = if (transform != null) map(transform) else this

@@ -1,0 +1,42 @@
+package io.github.ayfri.kore.features.advancements
+
+import io.github.ayfri.kore.features.predicates.Predicate
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
+import io.github.ayfri.kore.features.predicates.sub.LocationPredicate
+import io.github.ayfri.kore.serializers.EitherInlineSerializer
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KeepGeneratedSerializer
+import kotlinx.serialization.Serializable
+
+/**
+ * Container for either a location or predicate conditions.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements
+ */
+@OptIn(ExperimentalSerializationApi::class)
+@KeepGeneratedSerializer
+@Serializable(with = LocationOrPredicates.Companion.LocationOrPredicatesSerializer::class)
+data class LocationOrPredicates(
+	var legacyLocation: LocationPredicate? = null,
+	var predicateConditions: List<PredicateCondition>? = null,
+) {
+	companion object {
+		data object LocationOrPredicatesSerializer :
+			EitherInlineSerializer<LocationOrPredicates>(generatedSerializer(), "legacyLocation", "predicateConditions")
+	}
+}
+
+/** Set the location condition. */
+fun LocationOrPredicates.location(block: LocationPredicate.() -> Unit) {
+	legacyLocation = LocationPredicate().apply(block)
+}
+
+/** Set the predicate conditions. */
+fun LocationOrPredicates.predicate(block: Predicate.() -> Unit) {
+	predicateConditions = (predicateConditions ?: emptyList()) + Predicate().apply(block).predicateConditions
+}
+
+/** Set the predicate conditions. */
+fun LocationOrPredicates.predicate(predicate: Predicate) {
+	predicateConditions = (predicateConditions ?: emptyList()) + predicate.predicateConditions
+}

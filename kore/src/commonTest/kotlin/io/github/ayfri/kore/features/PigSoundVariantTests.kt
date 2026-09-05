@@ -1,0 +1,80 @@
+package io.github.ayfri.kore.features
+
+import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.dataPack
+import io.github.ayfri.kore.features.pigsoundvariants.adultSounds
+import io.github.ayfri.kore.features.pigsoundvariants.babySounds
+import io.github.ayfri.kore.features.pigsoundvariants.pigSoundVariant
+import io.github.ayfri.kore.generated.SoundEvents
+import io.github.ayfri.kore.utils.pretty
+import io.kotest.core.spec.style.FunSpec
+
+fun DataPack.pigSoundVariantTests() {
+	pigSoundVariant("funny") {
+		adultSounds {
+			ambientSound = SoundEvents.Entity.Pig.AMBIENT
+			deathSound = SoundEvents.Entity.Pig.DEATH
+			eatSound = SoundEvents.Entity.Armadillo.EAT
+			hurtSound = SoundEvents.Entity.Pig.HURT
+			stepSound = SoundEvents.Entity.Pig.STEP
+		}
+	}
+
+	pigSoundVariants.last() assertsIs """
+		{
+			"adult_sounds": {
+				"ambient_sound": "minecraft:entity.pig.ambient",
+				"death_sound": "minecraft:entity.pig.death",
+				"eat_sound": "minecraft:entity.armadillo.eat",
+				"hurt_sound": "minecraft:entity.pig.hurt",
+				"step_sound": "minecraft:entity.pig.step"
+			}
+		}
+	""".trimIndent()
+
+	pigSoundVariant("baby_test") {
+		adultSounds {
+			ambientSound = SoundEvents.Entity.Pig.AMBIENT
+			deathSound = SoundEvents.Entity.Pig.DEATH
+			eatSound = SoundEvents.Entity.Armadillo.EAT
+			hurtSound = SoundEvents.Entity.Pig.HURT
+			stepSound = SoundEvents.Entity.Pig.STEP
+		}
+		babySounds {
+			ambientSound = SoundEvents.Entity.Chicken.AMBIENT
+			deathSound = SoundEvents.Entity.Chicken.DEATH
+			eatSound = SoundEvents.Entity.Armadillo.EAT
+			hurtSound = SoundEvents.Entity.Chicken.HURT
+			stepSound = SoundEvents.Entity.Chicken.STEP
+		}
+	}
+
+	pigSoundVariants.last() assertsIs """
+		{
+			"adult_sounds": {
+				"ambient_sound": "minecraft:entity.pig.ambient",
+				"death_sound": "minecraft:entity.pig.death",
+				"eat_sound": "minecraft:entity.armadillo.eat",
+				"hurt_sound": "minecraft:entity.pig.hurt",
+				"step_sound": "minecraft:entity.pig.step"
+			},
+			"baby_sounds": {
+				"ambient_sound": "minecraft:entity.chicken.ambient",
+				"death_sound": "minecraft:entity.chicken.death",
+				"eat_sound": "minecraft:entity.armadillo.eat",
+				"hurt_sound": "minecraft:entity.chicken.hurt",
+				"step_sound": "minecraft:entity.chicken.step"
+			}
+		}
+	""".trimIndent()
+}
+
+class PigSoundVariantTests : FunSpec({
+	test("pig sound variant") {
+		dataPack("pigSoundVariant") {
+			pretty()
+			pigSoundVariantTests()
+		}
+	}
+})

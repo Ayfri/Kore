@@ -20,6 +20,7 @@ Use it to identify the right guide before touching code, tests, or documentation
 - **Add a new data-driven feature:** read [Contributing: Creating a New Generator][new-generator] before editing `kore`.
 - **Add or update DSL features:** start with [Contributing: Architecture and Patterns][architecture], then
   use [Contributing: Workflow][workflow].
+- **Add or fix a generated enum/registry/argument type:** read [Contributing: The Generation Pipeline][generation-pipeline].
 - **Prepare an issue or a pull request:** go straight to [Contributing: Workflow][workflow].
 - **Ship a release or update versions:** use [Contributing: CI/CD and Releases][releases].
 
@@ -51,6 +52,8 @@ Use it to identify the right guide before touching code, tests, or documentation
    with [Contributing: Creating a New Generator][new-generator].
 
 [architecture]: /docs/contributing/architecture-and-patterns
+
+[generation-pipeline]: /docs/contributing/generation-pipeline
 
 [new-generator]: /docs/contributing/creating-a-new-generator
 

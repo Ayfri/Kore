@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.website
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import com.varabyte.kobweb.core.App
 import com.varabyte.kobweb.core.KobwebApp
 import com.varabyte.kobweb.core.init.InitKobweb
@@ -14,23 +15,24 @@ import org.jetbrains.compose.web.css.Style
 @App
 @Composable
 fun AppEntry(content: @Composable () -> Unit) {
-	val renderer = object : TextRenderer() {
-		override fun link(href: String?, title: String?, text: String) = """
-			<a href="$href" ${title?.let { "title=$it" } ?: ""} class="link">$text</a>
-		""".trimIndent()
+	// `marked` is a module-level singleton, so its renderer is registered once instead of on every recomposition.
+	remember {
+		val textRenderer = object : TextRenderer() {
+			override fun link(href: String?, title: String?, text: String): String {
+				val titleAttribute = title?.let { " title=\"$it\"" }.orEmpty()
+				return """<a href="$href"$titleAttribute class="link">$text</a>"""
+			}
 
-		override fun code(code: String, infoString: String, escaped: Boolean): String {
-			val language = if (infoString.isEmpty()) "nohighlight" else "language-$infoString"
-			return """
-				<pre><code class="$language line-numbers">$code</code></pre>
-			""".trimIndent()
+			override fun code(code: String, infoString: String, escaped: Boolean): String {
+				val language = if (infoString.isEmpty()) "nohighlight" else "language-$infoString"
+				return """<pre><code class="$language line-numbers">$code</code></pre>"""
+			}
 		}
+
+		use(object : MarkedOptions {
+			override var renderer: TextRenderer? = textRenderer
+		})
 	}
-
-	use(object : MarkedOptions {
-		override var renderer: TextRenderer? = renderer
-	})
-
 
 	KobwebApp {
 		Style(GlobalStyle)

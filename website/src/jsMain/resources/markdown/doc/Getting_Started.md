@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Getting Started
+title: Getting Started with Kore
 nav-title: Getting Started
-description: Step-by-step guide to create your first Minecraft datapack with Kore.
-keywords: minecraft, datapack, kore, getting started, quickstart, kotlin
+description: Step-by-step guide to create your first Minecraft datapack with Kore. Set up a Kotlin project, write type-safe commands and functions, generate the datapack, and test in-game.
+keywords: minecraft datapack tutorial, kore getting started, create datapack with kotlin, minecraft datapack generator tutorial, kore setup guide, kotlin datapack beginner, minecraft function generator, datapack development guide
 date-created: 2025-08-21
-date-modified: 2026-04-22
+date-modified: 2026-07-02
 routeOverride: /docs/getting-started
 position: 1
 ---
@@ -14,6 +14,10 @@ position: 1
 
 This guide takes you from zero to a real development workflow with Kore. Instead of stopping at a minimal "hello world,"
 you will build a small but structured datapack, run it in-game, iterate quickly, and learn how to scale your project.
+
+This guide targets the JVM, the primary way to build and export a datapack (`generate()` / `generateZip()`). The same
+calls also work on Node.js; see [Multiplatform Support](/docs/advanced/multiplatform) for that and for the
+browser-only `exportAsStrings()` / `generateZipBytes()` alternatives.
 
 If you already have solid datapack experience and want an architecture-first migration guide, jump to
 [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore).
@@ -161,14 +165,10 @@ dependencies {
 
 #### Kotlin compiler and JVM settings
 
-Kore relies on context parameters. Make sure your `build.gradle.kts` contains:
+Kore relies on context parameters, which are stable since Kotlin 2.4. Make sure your `build.gradle.kts` contains:
 
 ```kotlin
 kotlin {
-	compilerOptions {
-		freeCompilerArgs.add("-Xcontext-parameters")
-	}
-
 	jvmToolchain(25)
 }
 ```
@@ -447,7 +447,7 @@ Good expansion ideas after the custom enchantment:
 ### Unresolved Kore DSL symbols
 
 - Check that the dependency exists in the correct module.
-- Verify the compiler flag `-Xcontext-parameters`.
+- Confirm you're on Kotlin 2.4 or higher (context parameters are stable there).
 - Refresh/sync Gradle in your IDE.
 
 ### Java/Kotlin toolchain errors
@@ -467,12 +467,14 @@ Good expansion ideas after the custom enchantment:
 Start here next:
 
 1. [Creating a Datapack](/docs/guides/creating-a-datapack)
-2. [Functions](/docs/commands/functions)
-3. [Commands](/docs/commands/commands)
-4. [Selectors](/docs/concepts/selectors)
-5. [Cookbook](/docs/guides/cookbook)
-6. [Recipes](/docs/data-driven/recipes)
-7. [Enchantments](/docs/data-driven/enchantments)
+2. [Runtime Logic](/docs/concepts/runtime-logic) - how Kotlin `val`/`if`/`for` map to in-game scoreboards, storage, and
+   `execute`
+3. [Functions](/docs/commands/functions)
+4. [Commands](/docs/commands/commands)
+5. [Selectors](/docs/concepts/selectors)
+6. [Cookbook](/docs/guides/cookbook)
+7. [Recipes](/docs/data-driven/recipes)
+8. [Enchantments](/docs/data-driven/enchantments)
 
 For the full index, see [Home](/docs/home).
 
@@ -483,4 +485,3 @@ For the full index, see [Home](/docs/home).
 - [Kore on Maven Central](https://central.sonatype.com/search?q=io.github.ayfri.kore)
 - [Kore on Discord](https://discord.ayfri.com)
 - [Minecraft Wiki: Datapack](https://minecraft.wiki/w/Data_pack)
-

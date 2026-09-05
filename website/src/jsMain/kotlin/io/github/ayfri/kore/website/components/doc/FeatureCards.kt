@@ -2,10 +2,10 @@ package io.github.ayfri.kore.website.components.doc
 
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.translateY
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiBook
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiDataObject
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiFunctions
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiSettings
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideBlocks
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideBraces
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideRocket
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideTerminal
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.utils.marginY
 import io.github.ayfri.kore.website.utils.mdMax
@@ -54,7 +54,7 @@ object FeatureStyle : StyleSheet() {
 		justifyContent(JustifyContent.Center)
 		color(Color.white)
 
-		"span" style {
+		"svg" style {
 			fontSize(48.px)
 			opacity(0.8)
 
@@ -141,7 +141,7 @@ fun FeatureGrid() {
 	}) {
 		FeatureCard(
 			title = "Getting Started",
-			icon = { MdiBook() }
+			icon = { LucideRocket() }
 		) {
 			Div({
 				classes(FeatureStyle.linkList)
@@ -154,7 +154,7 @@ fun FeatureGrid() {
 
 		FeatureCard(
 			title = "Commands & Functions",
-			icon = { MdiFunctions() }
+			icon = { LucideTerminal() }
 		) {
 			Div({
 				classes(FeatureStyle.linkList)
@@ -168,7 +168,7 @@ fun FeatureGrid() {
 
 		FeatureCard(
 			title = "Data-driven Features",
-			icon = { MdiDataObject() }
+			icon = { LucideBraces() }
 		) {
 			Div({
 				classes(FeatureStyle.linkList)
@@ -184,7 +184,7 @@ fun FeatureGrid() {
 
 		FeatureCard(
 			title = "Concepts & Helpers",
-			icon = { MdiSettings() }
+			icon = { LucideBlocks() }
 		) {
 			Div({
 				classes(FeatureStyle.linkList)

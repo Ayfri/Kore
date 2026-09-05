@@ -1,0 +1,49 @@
+package io.github.ayfri.kore.features.advancements
+
+import io.github.ayfri.kore.features.predicates.Predicate
+import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
+import io.github.ayfri.kore.features.predicates.sub.EntityPredicate
+import io.github.ayfri.kore.serializers.EitherInlineSerializer
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KeepGeneratedSerializer
+import kotlinx.serialization.Serializable
+
+/**
+ * Container for either an entity or predicate conditions.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/advancements
+ */
+@OptIn(ExperimentalSerializationApi::class)
+@KeepGeneratedSerializer
+@Serializable(with = EntityOrPredicates.Companion.EntityOrPredicatesSerializer::class)
+data class EntityOrPredicates(
+	var legacyEntity: EntityPredicate? = null,
+	@Serializable(with = Predicate.Companion.PredicateAsListSerializer::class)
+	var predicateConditions: PredicateAsList = Predicate(),
+) {
+	companion object {
+		data object EntityOrPredicatesSerializer :
+			EitherInlineSerializer<EntityOrPredicates>(generatedSerializer(), "legacyEntity", "predicateConditions")
+	}
+}
+
+/** Set the entity condition, deprecated, prefer using [conditions] instead. */
+fun EntityOrPredicates.conditionEntity(entity: EntityPredicate) = apply {
+	legacyEntity = entity
+}
+
+/** Set the entity condition, deprecated, prefer using [conditions] instead. */
+fun EntityOrPredicates.conditionEntity(entity: EntityPredicate.() -> Unit) = apply {
+	legacyEntity = EntityPredicate().apply(entity)
+}
+
+/** Set the predicate conditions. */
+fun EntityOrPredicates.conditions(vararg conditions: PredicateCondition) = apply {
+	predicateConditions = Predicate(predicateConditions = conditions.toList())
+}
+
+/** Set the predicate conditions. */
+fun EntityOrPredicates.conditions(conditions: Predicate.() -> Unit) = apply {
+	predicateConditions = Predicate().apply(conditions)
+}

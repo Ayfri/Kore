@@ -66,16 +66,6 @@ dependencies {
 }
 ```
 
-Then activate the `-Xcontext-parameters` compiler option:
-
-```kotlin
-kotlin {
-	compilerOptions {
-		freeCompilerArgs.add("-Xcontext-parameters")
-	}
-}
-```
-
 You should also use Java 25 or higher:
 
 ```kotlin
@@ -188,6 +178,7 @@ fun main() {
 -   [Kore-Bindings](https://github.com/e-psi-lon/Kore-Bindings)
 -   [OreCrops](https://github.com/e-psi-lon/OreCrops)
 -   [realms-map](https://github.com/Aeltumn/realms-maps)
+-   [jumpr](https://github.com/LluisJM/jumpr)
 
 _How to add your project to the list ?_
 
@@ -232,7 +223,7 @@ _How to add your project to the list ?_
 - **Prerequisites**:
   - Java 21 (JDK 21) installed and `JAVA_HOME` set.
   - The project uses the Gradle wrapper (`gradlew`). Ensure it is executable on your platform.
-  - Node tooling for the Kotlin/JS parts (npm/yarn).
+  - Node tooling for the Kotlin/JS parts (npm).
 
  - **Kobweb CLI (recommended for local dev)**:
   - The Kobweb CLI provides a convenient development workflow for Kotlin/Kobweb projects. It runs a dev server with live reload and can export a static build.

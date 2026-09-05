@@ -47,7 +47,7 @@ properties.
 
 | Markdown syntax        | Rendering                            |
 |------------------------|--------------------------------------|
-| `# Heading` – `######` | Bold + heading color (configurable)  |
+| `# Heading` - `######` | Bold + heading color (configurable)  |
 | `- item` / `* item`    | Unordered list with bullet prefix    |
 | `1. item`              | Ordered list with number prefix      |
 | `> quote`              | Blockquote with `│ ` prefix          |
@@ -92,7 +92,7 @@ val heading = markdownToTextComponents("# Welcome to **Kore**")
 | `bold`             | `null`        | Default bold state                           |
 | `italic`           | `null`        | Default italic state                         |
 | `font`             | `null`        | Minecraft font resource location             |
-| `headingColors`    | level 1–6 map | Color per heading level (gold, yellow, etc.) |
+| `headingColors`    | level 1-6 map | Color per heading level (gold, yellow, etc.) |
 | `codeColor`        | `Color.GRAY`  | Color for inline code spans                  |
 | `linkColor`        | `Color.AQUA`  | Color for link text                          |
 | `linkUnderline`    | `true`        | Whether links are underlined                 |

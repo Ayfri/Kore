@@ -5,7 +5,7 @@ nav-title: Item Modifiers
 description: Transform item stacks using Kore's type-safe DSL for loot functions - set counts, add enchantments, copy data, and more.
 keywords: minecraft, datapack, kore, item modifiers, loot functions, /item modify, components
 date-created: 2025-08-11
-date-modified: 2026-02-15
+date-modified: 2026-06-16
 routeOverride: /docs/data-driven/item-modifiers
 ---
 
@@ -98,7 +98,7 @@ lootTable("treasure") {
 		}
 
 		entries {
-			item(Items.DIAMOND) {
+			items(Items.DIAMOND) {
 				// Entry-level functions
 				functions {
 					setName("Lucky Diamond")
@@ -164,7 +164,7 @@ itemModifier("limit") {
 	limitCount(64)
 
 	// Range
-	limitCount(providersRange(min = constant(1f), max = constant(32f)))
+	limitCount(intRange(min = constant(1f), max = constant(32f)))
 }
 ```
 
@@ -188,6 +188,11 @@ itemModifier("random_enchant") {
 
 	// Only compatible enchantments
 	enchantRandomly(onlyCompatible = true)
+
+  // Include the additional cost component from trade costs
+  enchantRandomly(Enchantments.SHARPNESS) {
+    includeAdditionalCostComponent = true
+  }
 }
 ```
 
@@ -205,6 +210,11 @@ itemModifier("table_enchant") {
 
 	// Limit to specific enchantments
 	enchantWithLevels(Enchantments.PROTECTION, levels = constant(30f))
+
+  // Include the additional cost component from trade costs
+  enchantWithLevels(levels = constant(30f)) {
+    includeAdditionalCostComponent = true
+  }
 }
 ```
 
@@ -376,12 +386,12 @@ Fill container items (bundles, shulker boxes):
 itemModifier("filled_bundle") {
 	setContents(ContentComponentTypes.BUNDLE_CONTENTS) {
 		entries {
-			item(Items.DIAMOND) {
+			items(Items.DIAMOND) {
 				functions {
 					setCount(16f)
 				}
 			}
-			item(Items.EMERALD) {
+			items(Items.EMERALD) {
 				functions {
 					setCount(32f)
 				}
@@ -437,11 +447,22 @@ itemModifier("treasure_map") {
 
 #### setInstrument
 
-Set goat horn instrument:
+Set a goat horn instrument using a tag, a single ID, or multiple IDs/tags:
 
 ```kotlin
-itemModifier("horn") {
+// tag
+itemModifier("horn_tag") {
 	setInstrument(Tags.Instrument.GOAT_HORNS)
+}
+
+// single ID
+itemModifier("horn_id") {
+  setInstrument(Instruments.ADMIRE_GOAT_HORN)
+}
+
+// list of IDs/tags
+itemModifier("horn_list") {
+  setInstrument(Instruments.ADMIRE_GOAT_HORN, Instruments.SING_GOAT_HORN)
 }
 ```
 
@@ -475,6 +496,31 @@ itemModifier("potion") {
 }
 ```
 
+#### setRandomPotion
+
+Set a random potion from a list of options (or tags):
+
+```kotlin
+itemModifier("random_potion") {
+  // Random from specific list
+  setRandomPotion(Potions.HEALING, Potions.SWIFTNESS)
+}
+```
+
+#### setRandomDyes
+
+Set a random number of dyes on the item using a number provider:
+
+```kotlin
+itemModifier("random_dyes") {
+  // Fixed count
+  setRandomDyes(3f)
+
+  // Dynamic count
+  setRandomDyes(uniform(1f, 5f))
+}
+```
+
 #### setStewEffect
 
 Set suspicious stew effects:
@@ -496,7 +542,7 @@ itemModifier("firework_explosion") {
 	setFireworkExplosion(FireworkExplosionShape.STAR) {
 		colors = listOf(Color.RED.toRGB())
 		fadeColors = listOf(Color.BLUE.toRGB())
-		hasFlicker = true
+		hasTwinkle = true
 		hasTrail = true
 	}
 }
@@ -515,7 +561,7 @@ itemModifier("firework") {
 				colors(Color.RED)
 				fadeColors(Color.BLUE)
 				hasTrail = true
-				hasFlicker = true
+				hasTwinkle = true
 			}
 
 			mode(Mode.REPLACE_ALL)
@@ -829,7 +875,7 @@ dataPack("legendary_items") {
 			rolls = constant(1f)
 
 			entries {
-				item(Items.DIAMOND_SWORD) {
+				items(Items.DIAMOND_SWORD) {
 					functions {
 						reference(legendaryModifier)
 					}
@@ -926,6 +972,8 @@ dataPack("legendary_items") {
 - [Components](/docs/concepts/components) - Understanding item components
 - [Loot Tables](/docs/data-driven/loot-tables) - Use item modifiers in loot tables
 - [Commands](/docs/commands/commands) - Using the `/item` command
+- [Villager Trades](/docs/data-driven/villager-trades) - Apply item modifiers to villager trade outputs via
+  `givenItemModifiers`
 
 ### External Resources
 

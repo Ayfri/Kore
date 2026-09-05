@@ -2,10 +2,10 @@
 root: .components.layouts.MarkdownLayout
 title: Helpers Utilities
 nav-title: Helpers Utilities
-description: Overview of helper-focused utilities in Kore - renderers, display entities, inventories, mannequins, math, raycasts, scheduling, state delegates, and particle helpers.
-keywords: minecraft, datapack, kore, helpers, ansi, markdown, minimessage, raycast, math, area, state, vfx, particles, text, display, inventory, mannequin, scheduler
+description: Overview of helper-focused utilities in Kore - renderers, displays, inventories, mannequins, math, NBT paths, raycasts, scheduling, and state delegates.
+keywords: minecraft, datapack, kore, helpers, ansi, markdown, minimessage, raycast, math, area, state, nbt, vfx, particles, text, display, inventory, mannequin, scheduler
 date-created: 2026-03-31
-date-modified: 2026-04-01
+date-modified: 2026-09-04
 routeOverride: /docs/helpers/utilities
 position: 0
 ---
@@ -68,6 +68,8 @@ That makes helpers a good fit for packs that start simple and progressively adop
   titles, signs, or boss bars.
 - **[MiniMessage Renderer](/docs/helpers/minimessage-renderer)** - Parse Adventure MiniMessage tags into Minecraft
   text components while keeping authoring ergonomic.
+- **[NBT Paths](/docs/helpers/nbt-paths)** - Build typed NBT paths and resolve trees that mix literal values with
+  runtime scores.
 - **[Raycasts](/docs/helpers/raycasts)** - Generate recursive step-based raycasts with callbacks for hits, misses, and
   per-step side effects.
 - **[Scheduler](/docs/helpers/scheduler)** - Schedule delayed or repeating functions with load-time registration and

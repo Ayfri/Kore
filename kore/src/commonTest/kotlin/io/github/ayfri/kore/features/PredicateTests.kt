@@ -1,0 +1,813 @@
+package io.github.ayfri.kore.features
+
+import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.arguments.WEAPON
+import io.github.ayfri.kore.arguments.components.entity.axolotlVariant
+import io.github.ayfri.kore.arguments.components.item.damage
+import io.github.ayfri.kore.arguments.components.item.unbreakable
+import io.github.ayfri.kore.arguments.components.matchers.customData
+import io.github.ayfri.kore.arguments.components.matchers.enchantmentPredicate
+import io.github.ayfri.kore.arguments.components.matchers.enchantments
+import io.github.ayfri.kore.arguments.enums.AxolotlVariants
+import io.github.ayfri.kore.arguments.enums.Gamemode
+import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
+import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.dataPack
+import io.github.ayfri.kore.features.predicates.conditions.*
+import io.github.ayfri.kore.features.predicates.predicate
+import io.github.ayfri.kore.features.predicates.providers.*
+import io.github.ayfri.kore.features.predicates.sub.*
+import io.github.ayfri.kore.features.predicates.types.EntityTarget
+import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
+import io.github.ayfri.kore.features.worldgen.environmentattributes.types.MoonPhaseValue
+import io.github.ayfri.kore.features.worldgen.environmentattributes.types.beesStayInHive
+import io.github.ayfri.kore.features.worldgen.environmentattributes.types.moonPhase
+import io.github.ayfri.kore.generated.*
+import io.github.ayfri.kore.utils.pretty
+import io.github.ayfri.kore.utils.set
+import io.kotest.core.spec.style.FunSpec
+
+fun DataPack.predicateTests() {
+	predicate("all_of") {
+		allOf {
+			enchantmentActiveCheck(false)
+			randomChance(0.25f)
+			timeCheck(WorldClocks.OVERWORLD, 10f..20f)
+			weatherCheck(raining = false, thundering = true)
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:all_of",
+			"terms": [
+				{
+					"condition": "minecraft:enchantment_active_check",
+					"active": false
+				},
+				{
+					"condition": "minecraft:random_chance",
+					"chance": 0.25
+				},
+				{
+					"condition": "minecraft:time_check",
+					"clock": "minecraft:overworld",
+					"value": {
+						"min": 10.0,
+						"max": 20.0
+					}
+				},
+				{
+					"condition": "minecraft:weather_check",
+					"raining": false,
+					"thundering": true
+				}
+			]
+		}
+	""".trimIndent()
+
+	predicate("any_of") {
+		anyOf {
+			killedByPlayer(true)
+			survivesExplosion()
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:any_of",
+			"terms": [
+				{
+					"condition": "minecraft:killed_by_player",
+					"inverse": true
+				},
+				{
+					"condition": "minecraft:survives_explosion"
+				}
+			]
+		}
+	""".trimIndent()
+
+	predicate("block_state_property") {
+		blockStateProperty(Blocks.REDSTONE_LAMP) {
+			this["facing"] = "north"
+			this["lit"] = "true"
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:block_state_property",
+			"block": "minecraft:redstone_lamp",
+			"properties": {
+				"facing": "north",
+				"lit": "true"
+			}
+		}
+	""".trimIndent()
+
+	predicate("damage_source_properties") {
+		damageSourceProperties {
+			isDirect = true
+			directEntity {
+				entityType(EntityTypes.ZOMBIE)
+			}
+			sourceEntity {
+				entityType(EntityTypes.SKELETON)
+			}
+			tag(Tags.DamageType.IS_PROJECTILE, expected = true)
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:damage_source_properties",
+			"predicate": {
+				"direct_entity": {
+					"minecraft:entity_type": "minecraft:zombie"
+				},
+				"is_direct": true,
+				"source_entity": {
+					"minecraft:entity_type": "minecraft:skeleton"
+				},
+				"tags": [
+					{
+						"id": "#minecraft:is_projectile",
+						"expected": true
+					}
+				]
+			}
+		}
+	""".trimIndent()
+
+	predicate("enchantment_active_check") {
+		enchantmentActiveCheck(true)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:enchantment_active_check",
+			"active": true
+		}
+	""".trimIndent()
+
+	predicate("entity_properties") {
+		entityProperties {
+			components {
+				axolotlVariant(AxolotlVariants.CYAN)
+				damage(12)
+				!unbreakable()
+			}
+
+			effects {
+				this[Effects.INVISIBILITY] = mobEffectPredicate {
+					amplifier = rangeOrInt(1)
+					ambient = true
+					visible = false
+				}
+			}
+
+			equipment {
+				mainHand = itemStackPredicate(Items.DIAMOND_SWORD)
+			}
+
+			flags {
+				isBaby = true
+			}
+
+			location {
+				block {
+					blocks(Blocks.STONE)
+				}
+			}
+
+			movement {
+				x(1.0, 4.0)
+				horizontalSpeed(1.0)
+			}
+
+			movementAffectedBy {
+				canSeeSky = true
+			}
+
+			nbt {
+				this["foo"] = "bar"
+			}
+
+			passenger {
+				team("foo")
+			}
+
+			periodicTick(20)
+
+			predicates {
+				customData {
+					this["foo"] = "bar"
+				}
+			}
+
+			slots {
+				this[WEAPON.MAINHAND] = itemStackPredicate(Items.DIAMOND_SWORD)
+			}
+
+			steppingOn {
+				block {
+					blocks(Blocks.STONE)
+					components {
+						damage(5)
+					}
+					predicates {
+						customData {
+							this["foo"] = "bar"
+						}
+					}
+					state("up", "bottom")
+				}
+			}
+
+			entityTags {
+				allOf("boss")
+			}
+
+			team("alpha")
+			entityType(EntityTypes.MARKER)
+
+			typeSpecific {
+				player {
+					gamemodes(Gamemode.SURVIVAL)
+				}
+			}
+
+			vehicle {
+				distance {
+					x(1f..4f)
+					z(1f)
+				}
+			}
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:entity_properties",
+			"entity": "this",
+			"predicate": {
+				"minecraft:components": {
+					"axolotl_variant": "cyan",
+					"damage": 12,
+					"!unbreakable": {}
+				},
+				"minecraft:effects": {
+					"minecraft:invisibility": {
+						"ambient": true,
+						"amplifier": 1,
+						"visible": false
+					}
+				},
+				"minecraft:equipment": {
+					"mainhand": {
+						"items": "minecraft:diamond_sword"
+					}
+				},
+				"minecraft:flags": {
+					"is_baby": true
+				},
+				"minecraft:location": {
+					"block": {
+						"blocks": "minecraft:stone"
+					}
+				},
+				"minecraft:movement": {
+					"x": {
+						"min": 1.0,
+						"max": 4.0
+					},
+					"horizontal_speed": 1.0
+				},
+				"minecraft:movement_affected_by": {
+					"can_see_sky": true
+				},
+				"minecraft:nbt": {
+					"foo": "bar"
+				},
+				"minecraft:passenger": {
+					"minecraft:team": "foo"
+				},
+				"minecraft:periodic_tick": 20,
+				"minecraft:predicates": {
+					"minecraft:custom_data": {
+						"foo": "bar"
+					}
+				},
+				"minecraft:slots": {
+					"weapon.mainhand": {
+						"items": "minecraft:diamond_sword"
+					}
+				},
+				"minecraft:stepping_on": {
+					"block": {
+						"blocks": "minecraft:stone",
+						"components": {
+							"damage": 5
+						},
+						"predicates": {
+							"minecraft:custom_data": {
+								"foo": "bar"
+							}
+						},
+						"state": {
+							"up": "bottom"
+						}
+					}
+				},
+				"minecraft:entity_tags": {
+					"all_of": [
+						"boss"
+					]
+				},
+				"minecraft:team": "alpha",
+				"minecraft:entity_type": "minecraft:marker",
+				"minecraft:type_specific/player": {
+					"gamemode": [
+						"survival"
+					]
+				},
+				"minecraft:vehicle": {
+					"minecraft:distance": {
+						"x": {
+							"min": 1.0,
+							"max": 4.0
+						},
+						"z": 1.0
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	predicate("entity_score") {
+		entityScores(EntityTarget.THIS) {
+			this["kills"] = intRange(1f, 5f)
+			this["deaths"] = intValue(2)
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:entity_scores",
+			"entity": "this",
+			"scores": {
+				"kills": {
+					"min": 1.0,
+					"max": 5.0
+				},
+				"deaths": 2
+			}
+		}
+	""".trimIndent()
+
+	predicate("environment_attribute_check_boolean") {
+		environmentAttributeCheck(EnvironmentAttributes.Gameplay.BEES_STAY_IN_HIVE, true)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:environment_attribute_check",
+			"attribute": "minecraft:gameplay/bees_stay_in_hive",
+			"value": true
+		}
+	""".trimIndent()
+
+	predicate("environment_attribute_check_float") {
+		environmentAttributeCheck(EnvironmentAttributes.Visual.SKY_LIGHT_FACTOR, 0.5f)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:environment_attribute_check",
+			"attribute": "minecraft:visual/sky_light_factor",
+			"value": 0.5
+		}
+	""".trimIndent()
+
+	predicate("environment_attribute_check_moon_phase") {
+		environmentAttributeCheck(
+			EnvironmentAttributes.Visual.MOON_PHASE,
+			MoonPhaseValue(Textures.Environment.Celestial.Moon.FULL_MOON)
+		)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:environment_attribute_check",
+			"attribute": "minecraft:visual/moon_phase",
+			"value": "minecraft:environment/celestial/moon/full_moon"
+		}
+	""".trimIndent()
+
+	predicate("environment_attribute_check_scope") {
+		environmentAttributeCheck {
+			moonPhase(Textures.Environment.Celestial.Moon.FULL_MOON)
+			beesStayInHive(true)
+		}
+	}
+
+	predicates.last() assertsIs """
+		[
+			{
+				"condition": "minecraft:environment_attribute_check",
+				"attribute": "minecraft:visual/moon_phase",
+				"value": "minecraft:environment/celestial/moon/full_moon"
+			},
+			{
+				"condition": "minecraft:environment_attribute_check",
+				"attribute": "minecraft:gameplay/bees_stay_in_hive",
+				"value": true
+			}
+		]
+	""".trimIndent()
+
+	predicate("inverted") {
+		inverted {
+			randomChance(0.1f)
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:inverted",
+			"term": {
+				"condition": "minecraft:random_chance",
+				"chance": 0.1
+			}
+		}
+	""".trimIndent()
+
+	predicate("inverted_condition") {
+		inverted(SurvivesExplosion)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:inverted",
+			"term": {
+				"condition": "minecraft:survives_explosion"
+			}
+		}
+	""".trimIndent()
+
+	predicate("killed_by_player") {
+		killedByPlayer(true)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:killed_by_player",
+			"inverse": true
+		}
+	""".trimIndent()
+
+	predicate("location_check") {
+		locationCheck(offsetX = 1, offsetY = 2, offsetZ = 3) {
+			biomes(Biomes.PLAINS, Biomes.SAVANNA)
+			block {
+				blocks(Blocks.GOLD_BLOCK)
+				states {
+					this["lit"] = "true"
+				}
+			}
+			canSeeSky = true
+			dimension = Dimensions.OVERWORLD
+			fluids(Fluids.WATER) {
+				states {
+					this["level"] = "0"
+				}
+			}
+			light(7)
+			position {
+				x(1)
+				y(2..4)
+				z(3)
+			}
+			smokey = true
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:location_check",
+			"offsetX": 1,
+			"offsetY": 2,
+			"offsetZ": 3,
+			"predicate": {
+				"biomes": [
+					"minecraft:plains",
+					"minecraft:savanna"
+				],
+				"block": {
+					"blocks": "minecraft:gold_block",
+					"state": {
+						"lit": "true"
+					}
+				},
+				"can_see_sky": true,
+				"dimension": "minecraft:overworld",
+				"fluid": {
+					"fluids": "minecraft:water",
+					"state": {
+						"level": "0"
+					}
+				},
+				"light": {
+					"light": 7
+				},
+				"position": {
+					"x": 1.0,
+					"y": {
+						"min": 2.0,
+						"max": 4.0
+					},
+					"z": 3.0
+				},
+				"smokey": true
+			}
+		}
+	""".trimIndent()
+
+	predicate("match_tool") {
+		matchTool {
+			items(Items.DIAMOND_PICKAXE, Items.IRON_PICKAXE)
+			components {
+				damage(5)
+				unbreakable()
+			}
+			predicates {
+				enchantments(
+					enchantmentPredicate(Enchantments.EFFICIENCY, levels = rangeOrInt(3)),
+					enchantmentPredicate(Enchantments.UNBREAKING, levels = rangeOrInt(2))
+				)
+			}
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:match_tool",
+			"predicate": {
+				"items": [
+					"minecraft:diamond_pickaxe",
+					"minecraft:iron_pickaxe"
+				],
+				"components": {
+					"damage": 5,
+					"unbreakable": {}
+				},
+				"predicates": {
+					"minecraft:enchantments": [
+						{
+							"enchantments": "minecraft:efficiency",
+							"levels": 3
+						},
+						{
+							"enchantments": "minecraft:unbreaking",
+							"levels": 2
+						}
+					]
+				}
+			}
+		}
+	""".trimIndent()
+
+	predicate("match_tool_items") {
+		matchTool(Items.DIAMOND_PICKAXE, Items.IRON_PICKAXE)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:match_tool",
+			"predicate": {
+				"items": [
+					"minecraft:diamond_pickaxe",
+					"minecraft:iron_pickaxe"
+				]
+			}
+		}
+	""".trimIndent()
+
+	predicate("random_chance") {
+		randomChance(0.4f)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:random_chance",
+			"chance": 0.4
+		}
+	""".trimIndent()
+
+	predicate("random_chance_with_enchanted_bonus") {
+		randomChanceWithEnchantedBonus(unenchantedChance = 1f, enchantedChance = 2, Enchantments.FORTUNE)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:random_chance_with_enchanted_bonus",
+			"unenchanted_chance": 1.0,
+			"enchanted_chance": 2,
+			"enchantment": "minecraft:fortune"
+		}
+	""".trimIndent()
+
+	predicate("reference") {
+		reference("kore:test")
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:reference",
+			"name": "kore:test"
+		}
+	""".trimIndent()
+
+	predicate("reference_argument") {
+		reference(PredicateArgument("test", "kore"))
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:reference",
+			"name": "kore:test"
+		}
+	""".trimIndent()
+
+	predicate("survives_explosion") {
+		survivesExplosion()
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:survives_explosion"
+		}
+	""".trimIndent()
+
+	predicate("table_bonus") {
+		tableBonus(Enchantments.LOOTING, 0.1f, 0.25f, 0.5f)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:table_bonus",
+			"enchantment": "minecraft:looting",
+			"chances": [
+				0.1,
+				0.25,
+				0.5
+			]
+		}
+	""".trimIndent()
+
+	predicate("table_bonus_builder") {
+		tableBonus(Enchantments.FORTUNE) {
+			add(0.1f)
+			add(0.2f)
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:table_bonus",
+			"enchantment": "minecraft:fortune",
+			"chances": [
+				0.1,
+				0.2
+			]
+		}
+	""".trimIndent()
+
+	predicate("time_check") {
+		timeCheck(WorldClocks.OVERWORLD, 5f..15f)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:time_check",
+			"clock": "minecraft:overworld",
+			"value": {
+				"min": 5.0,
+				"max": 15.0
+			}
+		}
+	""".trimIndent()
+
+	predicate("time_check_with_period") {
+		timeCheck(WorldClocks.THE_END, 0f..6000f, period = 24000)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:time_check",
+			"clock": "minecraft:the_end",
+			"value": {
+				"min": 0.0,
+				"max": 6000.0
+			},
+			"period": 24000
+		}
+	""".trimIndent()
+
+	predicate("value_check") {
+		valueCheck(scoreNumber("kills", target = EntityTarget.THIS), intRange(0f, 10f))
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:value_check",
+			"value": {
+				"type": "minecraft:score",
+				"target": {
+					"type": "minecraft:context",
+					"target": "this"
+				},
+				"score": "kills"
+			},
+			"range": {
+				"min": 0.0,
+				"max": 10.0
+			}
+		}
+	""".trimIndent()
+
+	predicate("value_check_int_range") {
+		valueCheck(scoreNumber("kills", EntityTarget.THIS), 1..10)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:value_check",
+			"value": {
+				"type": "minecraft:score",
+				"target": {
+					"type": "minecraft:context",
+					"target": "this"
+				},
+				"score": "kills"
+			},
+			"range": {
+				"min": 1.0,
+				"max": 10.0
+			}
+		}
+	""".trimIndent()
+
+	predicate("value_check_sum") {
+		valueCheck(sum(constant(1f), constant(2f), uniform(3f, 5f)), intRange(0f, 10f))
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:value_check",
+			"value": {
+				"type": "minecraft:sum",
+				"summands": [
+					1.0,
+					2.0,
+					{
+						"type": "minecraft:uniform",
+						"min": 3.0,
+						"max": 5.0
+					}
+				]
+			},
+			"range": {
+				"min": 0.0,
+				"max": 10.0
+			}
+		}
+	""".trimIndent()
+
+	predicate("weather_check") {
+		weatherCheck(raining = true, thundering = false)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"condition": "minecraft:weather_check",
+			"raining": true,
+			"thundering": false
+		}
+	""".trimIndent()
+
+	predicate("round_trip_random_chance") {
+		randomChance(0.4f)
+	}
+	roundTrip(predicates.last())
+}
+
+class PredicateTests : FunSpec({
+	test("predicate") {
+		dataPack("predicate") {
+			pretty()
+			predicateTests()
+		}
+	}
+})

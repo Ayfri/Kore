@@ -11,8 +11,10 @@ routeOverride: /docs/oop/cooldowns
 
 # Cooldowns
 
-Cooldowns use a [scoreboard objective](https://minecraft.wiki/w/Scoreboard) that decrements every tick.
-When the score reaches 0 the cooldown is ready.
+Cooldowns use a [scoreboard objective](https://minecraft.wiki/w/Scoreboard) that decrements
+every [tick](/docs/concepts/time).
+When the score reaches 0 the cooldown is ready. Durations are expressed as [`TimeNumber`](/docs/concepts/time) values -
+`2.seconds`, `40.ticks`, etc.
 
 They are a good fit for abilities, interactions, item usage limits, or any mechanic that should be reusable for several
 players without hand-writing the decrement logic every time.
@@ -44,7 +46,7 @@ function("dash_hit") {
 }
 ```
 
-This split keeps the “can I use it?” check separate from the event or action that actually starts the cooldown.
+This split keeps the "can I use it?" check separate from the event or action that actually starts the cooldown.
 
 ## Using a cooldown
 
@@ -71,6 +73,6 @@ function("combat") {
 
 ## See also
 
-- [Timers](/docs/oop/timers) – Use timers when you need scheduled callbacks rather than per-player readiness checks.
-- [Events](/docs/oop/events) – Start or reset cooldowns from gameplay triggers such as clicks, kills, or item use.
-- [State Delegates](/docs/helpers/state-delegates) – Reduce scoreboard boilerplate in adjacent stateful systems.
+- [Timers](/docs/oop/timers) - Use timers when you need scheduled callbacks rather than per-player readiness checks.
+- [Events](/docs/oop/events) - Start or reset cooldowns from gameplay triggers such as clicks, kills, or item use.
+- [State Delegates](/docs/helpers/state-delegates) - Reduce scoreboard boilerplate in adjacent stateful systems.

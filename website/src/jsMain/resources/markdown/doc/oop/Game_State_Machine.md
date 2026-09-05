@@ -68,13 +68,13 @@ function("game_loop") {
 Helper functions integrate states with other OOP systems:
 
 ```kotlin
-// Transition to a state only when a cooldown is ready
+// only switches state if the cooldown has expired, so the transition cannot be spammed
 states.transitionWithCooldown("playing", cooldown, player)
 
-// Spawn entities when entering a state
+// runs the spawner every time the game enters this state
 states.whenStateSpawn("playing", zombieSpawner, count = 3)
 
-// Start a timer when entering a state
+// starts the timer on entering this state
 states.whenStateStartTimer("playing", timer, player)
 ```
 

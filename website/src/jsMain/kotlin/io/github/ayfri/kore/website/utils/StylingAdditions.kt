@@ -12,6 +12,19 @@ import org.jetbrains.compose.web.css.selectors.CSSSelector.PseudoElement.after
 
 typealias CSSTimeValue = CSSSizeValue<out CSSUnitTime>
 
+/**
+ * Sets `animation-delay`, which Compose HTML and Kobweb only expose through the `animation` shorthand and through
+ * `Modifier.animation`'s [com.varabyte.kobweb.compose.ui.modifiers.AnimationScope], neither of which fits a plain
+ * `StyleSheet` rule that overrides the delay alone.
+ */
+fun StyleScope.animationDelay(vararg delays: CSSTimeValue) = property("animation-delay", delays.joinToString())
+
+/**
+ * Sets the SVG `fill` presentation property, which neither Compose HTML nor Kobweb exposes as a CSS builder. Lucide
+ * icons ship as stroke-only outlines, so a solid glyph needs `fill` overridden from CSS.
+ */
+fun StyleScope.fill(color: CSSColorValue) = property("fill", color)
+
 fun StyleScope.marginX(value: CSSNumeric) {
 	marginLeft(value)
 	marginRight(value)
@@ -154,4 +167,4 @@ fun StyleScope.scrollbarWidth(
 inline val SelectorsScope.placeholder get() = selector("::placeholder")
 
 fun CSSColorValue.alpha(alpha: String) = Color(toString() + alpha)
-fun CSSColorValue.alpha(alpha: Double) = Color(toString() + js("Math.floor(255 * alpha).toString(16).padStart(2, '0')"))
+fun CSSColorValue.alpha(alpha: Double) = Color(toString() + (alpha * 255).toInt().toString(16).padStart(2, '0'))

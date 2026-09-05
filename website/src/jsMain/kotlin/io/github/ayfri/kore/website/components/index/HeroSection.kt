@@ -2,6 +2,8 @@ package io.github.ayfri.kore.website.components.index
 
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.compose.css.functions.blur
+import com.varabyte.kobweb.compose.css.functions.dropShadow
 import com.varabyte.kobweb.core.AppGlobals
 import io.github.ayfri.kore.website.GITHUB_LINK
 import io.github.ayfri.kore.website.GlobalStyle
@@ -125,6 +127,52 @@ enum class HeroTab(val tabName: String, val language: String) {
 				datapack.generateZip()
 			}
 		""".trimIndent()
+	},
+	OOP_AND_HELPERS("arena.kt", "kotlin") {
+		override val code = """
+			fun arenaDatapack() = dataPack("arena") {
+				val redTeam = team("red") {
+					color = FormattingColor.RED
+					collisionRule = CollisionRule.PUSH_OTHER_TEAMS
+				}
+
+				val dashCooldown = registerCooldown("dash", 3.seconds)
+				val golem = registerSpawner("golem", EntityTypes.IRON_GOLEM) {
+					position = vec3(0, 64, 0)
+				}
+				val roundTimer = registerTimerWithBossBar("round", 60.seconds) {
+					color = BossBarColor.GREEN
+					style = BossBarStyle.NOTCHED_20
+				}
+
+				drawShape("spawn_ring") {
+					shape = Shape.CIRCLE
+					particle = Particles.FLAME
+					radius = 5.0
+					points = 32
+				}
+
+				val scanner = raycast {
+					name = "scanner"
+					maxDistance = 24
+					step = 0.25
+					onStep = { particle(Particles.END_ROD, vec3()) }
+					onHitBlock = { say("Target acquired!") }
+				}
+
+				function("start_round") {
+					val nearest = allPlayers(limitToOne = true) { sort = Sort.NEAREST }
+					redTeam.join(nearest)
+					nearest.giveEffect(Effects.SPEED, amplifier = 1)
+					dashCooldown.start(nearest)
+					golem.spawn()
+
+					roundTimer.start(nearest)
+					roundTimer.onComplete(nearest) { say("Round over!") }
+					scanner.cast()
+				}
+			}
+		""".trimIndent()
 	};
 
 	abstract val code: String
@@ -176,7 +224,7 @@ fun HeroSection() {
 
 				P(
 					"""
-						A modern, type-safe Kotlin library for Minecraft datapack development.
+						A modern, type-safe Kotlin datapack generator for Minecraft.
 						Create complex datapacks without ever writing JSON or MCFunction manually.
 					""".trimIndent(),
 					HeroSectionStyle.subTitle
@@ -220,12 +268,6 @@ object HeroSectionStyle : StyleSheet() {
 			opacity(1)
 			transform { translateY(0.px) }
 		}
-	}
-
-	@OptIn(ExperimentalComposeWebApi::class)
-	val panelFloat by keyframes {
-		from { transform { translateY(0.px) } }
-		to { transform { translateY((-12).px) } }
 	}
 
 	val heroSection by style {
@@ -303,13 +345,7 @@ object HeroSectionStyle : StyleSheet() {
 		overflow(Overflow.Hidden)
 		padding(0.65.cssRem)
 		boxShadow(0.px, 30.px, 80.px, 0.px, rgba(5, 14, 23, 0.55))
-		property("backdrop-filter", "blur(14px)")
-		animation(panelFloat) {
-			duration(8.s)
-			timingFunction(AnimationTimingFunction.EaseInOut)
-			direction(AnimationDirection.Alternate)
-		}
-		property("animation-iteration-count", "infinite")
+		backdropFilter(BackdropFilter.list(BackdropFilter.of(blur(14.px))))
 
 		mdMax(self) {
 			padding(0.45.cssRem)
@@ -332,6 +368,10 @@ object HeroSectionStyle : StyleSheet() {
 			timingFunction(AnimationTimingFunction.EaseOut)
 		}
 
+		lgMax(self) {
+			justifyContent(JustifyContent.Center)
+		}
+
 		mdMax(self) {
 			fontSize(2.35.cssRem)
 			flexDirection(FlexDirection.Column)
@@ -350,15 +390,15 @@ object HeroSectionStyle : StyleSheet() {
 		display(DisplayStyle.InlineBlock)
 		maxWidth(100.percent)
 		overflowWrap(OverflowWrap.Anywhere)
-		property("text-wrap", "balance")
+		textWrap(TextWrap.Balance)
 		textGradient(GlobalStyle.logoRightColor, GlobalStyle.logoLeftColor)
-		property("text-shadow", "0 10px 30px rgba(4, 155, 178, 0.2)")
+		textShadow(TextShadow.of(0.px, 10.px, 30.px, rgba(4, 155, 178, 0.2)))
 	}
 
 	val logo by style {
 		height(4.1.cssRem)
 		marginLeft(0.cssRem)
-		property("filter", "drop-shadow(0 16px 24px rgba(4, 155, 178, 0.35))")
+		filter(Filter.list(Filter.of(dropShadow(0.px, 16.px, 24.px, rgba(4, 155, 178, 0.35)))))
 		flexShrink(0)
 		verticalAlign(VerticalAlign.Middle)
 

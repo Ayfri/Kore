@@ -3,7 +3,7 @@ package io.github.ayfri.kore.website.components.doc
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.compose.css.functions.blur
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiClose
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideX
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.utils.smMax
 import io.github.ayfri.kore.website.utils.transition
@@ -30,7 +30,7 @@ fun DocSidebar(revealed: Boolean, onClose: () -> Unit) {
 				classes(DocSidebarStyle.closeButton)
 				onClick { onClose() }
 			}) {
-				MdiClose()
+				LucideX()
 			}
 		}
 
@@ -46,31 +46,31 @@ data object DocSidebarStyle : StyleSheet() {
 	}
 
 	val sidebar by style {
-        alignSelf(AlignSelf.FlexStart)
-        backgroundColor(GlobalStyle.secondaryBackgroundColor)
-        border(1.px, LineStyle.Solid, GlobalStyle.tertiaryBackgroundColor)
-        borderRadius(GlobalStyle.roundingButton)
-        display(DisplayStyle.Flex)
-        flexDirection(FlexDirection.Column)
+		alignSelf(AlignSelf.FlexStart)
+		backgroundColor(GlobalStyle.secondaryBackgroundColor)
+		border(1.px, LineStyle.Solid, GlobalStyle.tertiaryBackgroundColor)
+		borderRadius(GlobalStyle.roundingButton)
+		display(DisplayStyle.Flex)
+		flexDirection(FlexDirection.Column)
 		marginLeft(0.25.cssRem)
 		padding(0.5.cssRem)
-        position(Position.Sticky)
-        top(5.cssRem)
+		position(Position.Sticky)
+		top(5.cssRem)
 		width(22.cssRem)
 
 		smMax(self) {
 			backgroundColor(rgba(24, 26, 31, 0.95))
 			backdropFilter(BackdropFilter.list(BackdropFilter.of(blur(4.px))))
 			height(100.vh)
-            left(0.px)
-            paddingTop(2.cssRem)
-            position(Position.Fixed)
-            top(0.px)
-            translateX((-100).percent)
-            transition(0.3.s, "translate")
-            width(100.percent)
-            zIndex(60)
-        }
+			left(0.px)
+			paddingTop(2.cssRem)
+			position(Position.Fixed)
+			top(0.px)
+			translateX((-100).percent)
+			transition(0.3.s, "translate")
+			width(100.percent)
+			zIndex(60)
+		}
 
 		self + className("reveal") style {
 			translateX(0.percent)
@@ -96,8 +96,8 @@ data object DocSidebarStyle : StyleSheet() {
 			display(DisplayStyle.Block)
 		}
 
-		className("material-icons") style {
-			fontSize(2.cssRem)
+		child(self, type("svg")) style {
+			fontSize(1.75.cssRem)
 		}
 	}
 }

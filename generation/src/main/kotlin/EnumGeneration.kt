@@ -1,5 +1,10 @@
 import com.squareup.kotlinpoet.*
 
+/**
+ * Generates a flat `enum class` from a list of resource names, one constant per entry. When [parentArgumentType]
+ * is set, the enum also implements that `*Argument` interface. Used for entries without a `/`; see
+ * [generatePathEnumTree] for the tree-shaped variant.
+ */
 fun generateEnum(
 	values: Collection<String>,
 	name: String,
@@ -10,18 +15,10 @@ fun generateEnum(
 	additionalEnumCode: TypeSpec.Builder.() -> Unit = {},
 ) {
 	val enumType = TypeSpec.enumBuilder(name).apply {
-		addAnnotation(
-			AnnotationSpec.builder(
-				ClassName("kotlinx.serialization", "Serializable")
-			)
-				.addMember("with = $name.Companion.${name.asSerializer()}::class")
-				.build()
-		)
+		addAnnotation(serializableWith("$name.Companion.${name.asSerializer()}"))
 
 		parentArgumentType?.let {
-			// Make it work with `worldgen.` prefix
-			val prefix = if ("." in it) it.substringBeforeLast(".") + "." else ""
-			val argumentTypeName = it.substringAfterLast(".")
+			val (prefix, argumentTypeName) = splitArgumentTypePrefix(it)
 			addSuperinterface(argumentClassName("${prefix}types.$argumentTypeName"))
 		}
 
@@ -30,12 +27,7 @@ fun generateEnum(
 		}
 
 		if (parentArgumentType != null) {
-			addProperty(
-				PropertySpec.builder("namespace", String::class)
-					.getter(FunSpec.getterBuilder().addStatement("return \"minecraft\"").build())
-					.overrides()
-					.build()
-			)
+			addMinecraftNamespaceProperty()
 
 			addFunction(
 				FunSpec.builder("asId")
@@ -52,5 +44,6 @@ fun generateEnum(
 		addType(generateCompanion(name, encoderValue))
 	}
 
-	generateFile(name, sourceUrl, enumType, additionalCode = additionalCode)
+	val file = generateFile(name, sourceUrl, enumType, additionalCode = additionalCode)
+	logGenerated("enum", name, "${values.size} values", file)
 }

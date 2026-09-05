@@ -62,7 +62,7 @@ layout and the derived areas stay consistent even if the original dimensions cha
 
 - Define lobby, arena, checkpoint, or boss-room bounds once in Kotlin.
 - Derive a slightly larger trigger zone with `expand(...)`.
-- Compute a smaller “safe interior” with `contract(...)`.
+- Compute a smaller "safe interior" with `contract(...)`.
 - Test whether a point or another region belongs inside a larger gameplay area.
 
 ## Function reference
@@ -81,7 +81,7 @@ layout and the derived areas stay consistent even if the original dimensions cha
 
 ## See also
 
-- [Raycasts](/docs/helpers/raycasts) – Combine spatial bounds with line-of-sight checks or interaction beams.
-- [Entities & Players](/docs/oop/entities-and-players) – Reuse computed areas to place, move, or query gameplay
+- [Raycasts](/docs/helpers/raycasts) - Combine spatial bounds with line-of-sight checks or interaction beams.
+- [Entities & Players](/docs/oop/entities-and-players) - Reuse computed areas to place, move, or query gameplay
   entities.
-- [Predicates](/docs/data-driven/predicates) – Turn region logic into reusable condition checks when needed.
+- [Predicates](/docs/data-driven/predicates) - Turn region logic into reusable condition checks when needed.

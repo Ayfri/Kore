@@ -1,23 +1,33 @@
 package io.github.ayfri.kore.website.components.sections
 
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import com.varabyte.kobweb.compose.css.BackdropFilter
 import com.varabyte.kobweb.compose.css.TextDecorationLine
+import com.varabyte.kobweb.compose.css.backdropFilter
+import com.varabyte.kobweb.compose.css.borderBottom
+import com.varabyte.kobweb.compose.css.functions.blur
 import com.varabyte.kobweb.compose.css.functions.calc
+import com.varabyte.kobweb.compose.css.functions.saturate
 import com.varabyte.kobweb.compose.css.textDecorationLine
 import com.varabyte.kobweb.compose.css.zIndex
-import com.varabyte.kobweb.silk.components.icons.mdi.MdiMenu
+import com.varabyte.kobweb.compose.ui.Modifier
+import com.varabyte.kobweb.compose.ui.modifiers.classNames
+import com.varabyte.kobweb.compose.ui.modifiers.margin
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideMenu
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideStar
 import io.github.ayfri.kore.website.GITHUB_LINK
 import io.github.ayfri.kore.website.GlobalStyle
-import io.github.ayfri.kore.website.components.common.LinkButton
 import io.github.ayfri.kore.website.components.updates.GitHubRelease
+import io.github.ayfri.kore.website.gitHubStars
 import io.github.ayfri.kore.website.utils.*
+import kotlin.js.Date
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.attributes.ATarget
 import org.jetbrains.compose.web.attributes.InputType
+import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.*
-import kotlin.js.Date
 
 val tabs = mapOf(
 	"Docs" to "/docs/home",
@@ -36,12 +46,18 @@ private fun latestReleaseAnchor(release: GitHubRelease) = "/updates#release-${re
 
 private fun GitHubRelease.isRecent(days: Int): Boolean {
 	val millisecondsPerDay = 24 * 60 * 60 * 1000
-	return Date.now() - publishedDate.getTime() <= days * millisecondsPerDay
+	return Date.now() - publishedTime <= days * millisecondsPerDay
 }
 
 @Composable
 fun Header(latestRelease: GitHubRelease? = null) {
 	val recentLatestRelease = latestRelease?.takeIf { it.isRecent(10) }
+	var githubStars by remember { mutableStateOf(gitHubStars) }
+
+	LaunchedEffect(Unit) {
+		val (owner, repo) = GITHUB_LINK.substringAfter("github.com/").split("/")
+		githubStars = fetchGitHubStars(owner, repo)
+	}
 
 	Style(HeaderStyle)
 
@@ -64,7 +80,7 @@ fun Header(latestRelease: GitHubRelease? = null) {
 					A(latestReleaseAnchor(release), {
 						classes(HeaderStyle.releaseBadge)
 					}) {
-						Text("New ${release.getKoreVersion()} release!")
+						Text("New ${release.koreVersion} release!")
 					}
 				}
 			}
@@ -72,11 +88,22 @@ fun Header(latestRelease: GitHubRelease? = null) {
 			Div({
 				classes(HeaderStyle.githubLink)
 			}) {
-				LinkButton("GitHub", GITHUB_LINK, target = ATarget.Blank, icon = {
+				A(GITHUB_LINK, {
+					classes(HeaderStyle.githubButton)
+					target(ATarget.Blank)
+				}) {
 					Img(src = "/github-mark-white.svg", alt = "GitHub Logo") {
 						classes(HeaderStyle.githubLogo)
 					}
-				})
+					Text("GitHub")
+
+					githubStars?.let { stars ->
+						LucideStar(Modifier.classNames(HeaderStyle.githubStar).margin(left = 0.1.cssRem))
+						Span({ classes(HeaderStyle.githubStarsCount) }) {
+							Text(formatStarsCount(stars))
+						}
+					}
+				}
 			}
 
 			Div({
@@ -87,7 +114,7 @@ fun Header(latestRelease: GitHubRelease? = null) {
 				Label(forId = openMenuInputName, {
 					classes(HeaderStyle.mobileMenuLabel)
 				}) {
-					MdiMenu()
+					LucideMenu()
 				}
 
 				Input(InputType.Checkbox) {
@@ -105,7 +132,7 @@ fun Header(latestRelease: GitHubRelease? = null) {
 						A(latestReleaseAnchor(release), {
 							classes(HeaderStyle.releaseBadge, HeaderStyle.releaseBadgeMobile)
 						}) {
-							Text("New ${release.getKoreVersion()} release!")
+							Text("New ${release.koreVersion} release!")
 						}
 					}
 				}
@@ -131,9 +158,9 @@ object HeaderStyle : StyleSheet() {
 
 		position(Position.Sticky)
 		top(0.px)
-		property("backdrop-filter", "saturate(150%) blur(8px)")
+		backdropFilter(BackdropFilter.list(BackdropFilter.of(saturate(150.percent)), BackdropFilter.of(blur(8.px))))
 		backgroundColor(rgba(24, 26, 31, 0.6))
-		property("border-bottom", "1px solid ${GlobalStyle.tertiaryBackgroundColor}")
+		borderBottom(1.px, LineStyle.Solid, GlobalStyle.tertiaryBackgroundColor)
 		zIndex(50)
 
 		"div" style {
@@ -186,8 +213,8 @@ object HeaderStyle : StyleSheet() {
 	val mobileMenuLabel by style {
 		zIndex(10)
 
-		className("material-icons") style {
-			fontSize(2.2.cssRem)
+		child(self, type("svg")) style {
+			fontSize(1.9.cssRem)
 		}
 
 		mdMin(self) {
@@ -267,30 +294,45 @@ object HeaderStyle : StyleSheet() {
 	}
 
 	val githubLink by style {
-		"a" style {
-			alignItems(AlignItems.Center)
-			display(DisplayStyle.Flex)
-			flexDirection(FlexDirection.Row)
-			gap(0.5.cssRem)
-			justifyContent(JustifyContent.Center)
-			fontSize(1.3.cssRem)
-			padding(0.4.cssRem, 0.8.cssRem)
-			borderRadius(GlobalStyle.roundingButton)
-			backgroundColor(GlobalStyle.tertiaryBackgroundColor)
-			transition(0.2.s, "background")
-
-			hover(type("a")) style {
-				backgroundColor(GlobalStyle.secondaryBackgroundColor)
-			}
-		}
-
 		mdMax(type("div") + self) {
 			display(DisplayStyle.None)
+		}
+	}
+
+	val githubButton by style {
+		alignItems(AlignItems.Center)
+		display(DisplayStyle.Flex)
+		flexDirection(FlexDirection.Row)
+		gap(0.5.cssRem)
+		justifyContent(JustifyContent.Center)
+		fontSize(1.05.cssRem)
+		fontWeight(700)
+		padding(0.6.cssRem, 0.8.cssRem)
+		borderRadius(GlobalStyle.roundingButton)
+		backgroundColor(GlobalStyle.tertiaryBackgroundColor)
+		color(GlobalStyle.textColor)
+		textDecorationLine(TextDecorationLine.None)
+		transition(0.2.s, "background")
+
+		hover(self) style {
+			backgroundColor(GlobalStyle.secondaryBackgroundColor)
 		}
 	}
 
 	val githubLogo by style {
 		height(1.4.cssRem)
 		width(1.4.cssRem)
+	}
+
+	val githubStar by style {
+		color(Color("#e3b341"))
+		fill(Color("#e3b341"))
+		fontSize(0.9.cssRem)
+	}
+
+	val githubStarsCount by style {
+		color(GlobalStyle.altTextColor)
+		fontSize(0.9.cssRem)
+		fontWeight(600)
 	}
 }

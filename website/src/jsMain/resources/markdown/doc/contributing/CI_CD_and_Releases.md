@@ -5,7 +5,7 @@ nav-title: "CI/CD and Releases"
 description: Project and Minecraft versioning, CI automation, CodeQL scanning, release naming, and operational release practices for Kore maintainers.
 keywords: cd, ci, kore, maintenance, minecraft, releases, versioning
 date-created: 2026-04-10
-date-modified: 2026-04-15
+date-modified: 2026-09-05
 routeOverride: /docs/contributing/ci-cd-and-releases
 ---
 
@@ -24,6 +24,11 @@ Expected increment conventions:
 
 - Breaking/major change: `+0.1`
 - Minor fix/addition: `+0.0.1`
+
+Every published module carries the concatenation of the two, `<projectVersion>-<minecraftVersion>`, produced once in
+the `publish-conventions` convention plugin. `kore-gradle-plugin` is included even though a build plugin targets no
+game version, so one version string covers both the `plugins {}` and the `dependencies {}` block of a consumer build,
+and a release that only bumps `minecraft.version` still moves every coordinate forward.
 
 ## Release naming pattern
 
@@ -57,11 +62,30 @@ Maintainer notes:
 
 Current repository automation is split across dedicated workflows under `.github/workflows`:
 
-- `ci.yml`: runs the Gradle test suite on pushes and pull requests targeting `master`.
+- `ci.yml`: runs `./gradlew testAll` on pushes and pull requests targeting `master`. `testAll` is a root task defined
+  in the `kotest-conventions` convention plugin that aggregates every Kotlin Multiplatform module's `allTests` task
+  (JVM, Node.js, and browser via Karma) - see [Multiplatform Support][multiplatform] for what runs where.
+  Pull requests run on Ubuntu only; `master` additionally runs the Windows matrix entry.
 - `codeql.yml`: runs GitHub CodeQL analysis for `actions` and `java-kotlin` on pushes, pull requests, manual dispatch,
   and a weekly schedule.
-- `publish.yml`: performs the manual release publication flow.
+- `publish.yml`: performs the manual release publication flow, to the Central Portal for every module and to the
+  Gradle Plugin Portal for `kore-gradle-plugin`.
 - `publish-snapshot.yml`: publishes snapshot artifacts from `master`.
+
+### CI build tuning
+
+`jsBrowserTest` tasks are skipped unless `-Pkore.jsBrowserTests=true` is passed. Browser and Node.js execute the same
+JS IR, so the Karma round-trip costs startup time without adding coverage; CI passes the flag on `master` only. The
+flag drives `onlyIf` rather than `enabled`, because a disabled task stops contributing its npm dependencies and both
+modes have to agree on `kotlin-js-store/package-lock.json`.
+
+That lock is produced by npm - the Kotlin Gradle plugin uses npm instead of Yarn here, the direction the plugin itself
+is heading in ([KT-84662](https://youtrack.jetbrains.com/issue/KT-84662)). Its contents depend on which tasks are in
+the graph, so regenerate it by deleting the file and running `./gradlew testAll`, not with `kotlinUpgradePackageLock`
+alone.
+
+Test reports are uploaded as artifacts on failure only. `gradle/actions/setup-gradle` publishes a Build Scan for every
+run, which is the fastest way to see where wall-clock time went.
 
 CodeQL is intentionally scoped to the meaningful code in this repository:
 
@@ -87,13 +111,18 @@ Consistent messages improve changelog scanning and release auditability.
 
 ## See also
 
+- [Version Matrix](/docs/home#version-matrix) - Kore-to-Minecraft version table generated from GitHub releases at
+  each website build.
 - [Contributing][contributing]
 - [Contributing: Architecture and Patterns][architecture]
 - [Contributing: Workflow][workflow]
+- [Multiplatform Support][multiplatform]
 
 [architecture]: /docs/contributing/architecture-and-patterns
 
 [contributing]: /docs/contributing/contributing
+
+[multiplatform]: /docs/advanced/multiplatform
 
 [gradle-properties]: https://github.com/ayfri/kore/blob/master/gradle.properties
 

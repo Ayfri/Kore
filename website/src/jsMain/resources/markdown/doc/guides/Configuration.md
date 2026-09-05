@@ -1,20 +1,26 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Configuration
+title: Kore Configuration - JSON Formatting & Generated Function Options
 nav-title: Configuration
-description: A guide for configuring the output of a generated Minecraft datapack.
-keywords: minecraft, datapack, kore, guide, configuration
+description: Tune how Kore serializes your datapack - pretty-printed JSON, indentation, the generated functions folder, and debug comments on generated function calls.
+keywords: kore configuration, datapack pretty print, datapack json formatting, generated functions folder, kore settings, minecraft datapack debug, generated_scopes, mcfunction output
 date-created: 2024-04-06
-date-modified: 2026-04-26
+date-modified: 2026-09-05
 routeOverride: /docs/guides/configuration
 position: 2
 ---
 
 # DataPack configuration
 
-The `configuration { }` block on a [DataPack](https://kore.ayfri.com/docs/guides/creating-a-datapack) controls how Kore
-serializes JSON (and related formats) and where **generated** functions live. Output **location** and **archive shape**
-are chosen when you call `generate()`, `generateZip()`, or `generateJar()`.
+The `configuration { }` block controls **how Kore writes** your pack: JSON formatting, the naming of the functions
+Kore generates on your behalf, and the [optimization passes](/docs/guides/optimization) run before writing. All options
+are listed at the bottom of this page.
+
+It does **not** control *where* output goes or *what shape* it takes - that is `path` plus your choice of `generate()`,
+`generateZip()` or `generateJar()`, covered in [Creating a Datapack](/docs/guides/creating-a-datapack).
+
+None of these settings change in-game behavior. They exist to make development and debugging easier, and releases
+leaner.
 
 ## Example
 
@@ -71,35 +77,30 @@ calling function documenting that call, for example:
 This is controlled by `generateCommentOfGeneratedFunctionCall`. Default: `false`. Turn it on while debugging or learning
 generated control flow; turn it off for minimal `.mcfunction` output in releases.
 
-## Where files go (`path`) and generation modes
+## Development vs release setups
 
-- **`dataPack.path`** (default: `out`): base directory for generation. The generator resolves packs relative to this
-  path (see below).
-- **`generate()`** writes an **unzipped folder**: `<path>/<datapack.name>/` with `pack.mcmeta`, `data/`, etc. Best for
-  pointing Minecraft at a dev folder, CI checks, or tools that expect a plain tree.
-- **`generateZip()`** writes **`<path>/<datapack.name>.zip`**. Same contents as the folder layout, in one archive.
-  Convenient for distribution and often faster for the game to load than thousands of loose files.
-- **`generateJar()`** writes **`<path>/<datapack.name>.jar`**. The comment on the API states this is intended for use *
-  *as a mod**: JAR generation runs optional **providers** (Fabric, Forge, NeoForge, Quilt, etc.) to add loader metadata
-  and package the datapack accordingly. Do not expect a plain datapack ZIP renamed to `.jar` unless you only need the
-  archive format without mod infrastructure.
+The defaults are release-oriented (compact JSON, no comments). While developing, flipping both booleans makes the output
+far easier to read:
 
-`generate()` and `generateZip()` accept `DataPackGenerationOptions` (for example `mergeWithPacks`). `generateJar()` uses
-`DataPackJarGenerationOptions`, which supports the same merge list plus loader-specific configuration.
+| Concern | Development | Release |
+|---------|-------------|---------|
+| `prettyPrint` | `true` for readable JSON and clean git diffs | `false` for smaller files |
+| `generateCommentOfGeneratedFunctionCall` | `true` to trace where a generated function came from | `false` for lean `.mcfunction` output |
+| Output mode | `generate()` into a world's `datapacks` folder | `generateZip()`, or `generateJar()` when shipping as a mod |
 
-## Development vs release-oriented setups
+Keep one `dataPack { }` definition and branch on a build constant, or use separate `main`/`debug` entry points,
+depending on your Gradle setup:
 
-A practical split:
+```kotlin
+val debug = System.getenv("KORE_DEBUG") != null
 
-| Concern                                  | Development                                                               | Release                                                                            |
-|------------------------------------------|---------------------------------------------------------------------------|------------------------------------------------------------------------------------|
-| `prettyPrint`                            | `true` for readable JSON                                                  | `false` for smaller files                                                          |
-| `generateCommentOfGeneratedFunctionCall` | `true` if comments help tracing                                           | `false` for lean functions                                                         |
-| Output                                   | `generate()` to a folder under `path`, or `generateZip()` for quick share | `generateZip()` for vanilla datapacks; `generateJar()` only when shipping as a mod |
-| `path`                                   | e.g. a world `datapacks` folder or `./build/datapack`                     | your build output directory or CI artifact path                                    |
-
-You can keep one `dataPack { }` definition and branch configuration with build constants, or use separate `main`/`debug`
-entry points, depending on your Gradle setup.
+dataPack("mypack") {
+	configuration {
+		prettyPrint = debug
+		generateCommentOfGeneratedFunctionCall = debug
+	}
+}
+```
 
 ## Reference
 
@@ -107,7 +108,13 @@ entry points, depending on your Gradle setup.
 |------------------------------------------|--------------------------------------------------------------------|----------------------|
 | `generateCommentOfGeneratedFunctionCall` | Insert a comment when calling a generated function from `execute`. | `false`              |
 | `generatedFunctionsFolder`               | Subfolder under `function/` for generated `.mcfunction` files.     | `"generated_scopes"` |
+| `optimization`                           | Whole-pack passes run before writing, see [Optimization](/docs/guides/optimization). | disabled             |
 | `prettyPrint`                            | Pretty-print JSON resources.                                       | `false`              |
 | `prettyPrintIndent`                      | Indent string when pretty-printing JSON.                           | `"\t"`               |
 
-Configuring a datapack is especially useful for debugging and for tuning pack size and readability in production.
+## What to read next
+
+- [Creating a Datapack](/docs/guides/creating-a-datapack) - metadata, output location, and packaging
+- [Functions](/docs/commands/functions) - what produces the generated functions this page names
+- [Execute](/docs/commands/execute) - the main source of generated scope functions
+- [Optimization](/docs/guides/optimization) - the passes cleaning up the finished pack

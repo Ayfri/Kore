@@ -2,7 +2,7 @@
 root: .components.layouts.MarkdownLayout
 title: Scoreboard Math Engine
 nav-title: Scoreboard Math
-description: Trigonometric and algebraic functions using scoreboard operations with the Kore helpers module - sine, cosine, square root, distance, parabolic trajectory, and delegate-based helpers.
+description: Trigonometric and algebraic functions using scoreboard operations with Kore. Sine, cosine, square root, distance, and parabolic trajectory via fixed-point math on scoreboards.
 keywords: minecraft, datapack, kore, helpers, math, scoreboard, trigonometry, sine, cosine, sqrt, distance, parabola
 date-created: 2026-03-03
 date-modified: 2026-04-01
@@ -56,7 +56,8 @@ the input angle is already tracked as an integer.
 
 ### Delegate-based syntax
 
-If you already use scoreboard delegates, the math helpers also expose infix wrappers that preserve the same runtime
+If you already use [scoreboard delegates](/docs/helpers/state-delegates), the math helpers also expose infix wrappers
+that preserve the same runtime
 behavior while removing string boilerplate:
 
 ```kotlin
@@ -157,7 +158,7 @@ scoreboard operations rather than relying on one giant black-box function.
 
 ## See also
 
-- [State Delegates](/docs/helpers/state-delegates) – Write scoreboard-backed values with less boilerplate before feeding
+- [State Delegates](/docs/helpers/state-delegates) - Write scoreboard-backed values with less boilerplate before feeding
   them into math helpers.
-- [Cooldowns](/docs/oop/cooldowns) – Pair time-based gameplay gates with scoreboard-driven calculations.
-- [Scoreboards](/docs/oop/scoreboards) – Higher-level scoreboard utilities that fit naturally around these formulas.
+- [Cooldowns](/docs/oop/cooldowns) - Pair time-based gameplay gates with scoreboard-driven calculations.
+- [Scoreboards](/docs/oop/scoreboards) - Higher-level scoreboard utilities that fit naturally around these formulas.

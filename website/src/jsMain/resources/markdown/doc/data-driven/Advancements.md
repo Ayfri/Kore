@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Advancements
+title: Minecraft Advancements with Kore - Type-Safe DSL Guide
 nav-title: Advancements
-description: A comprehensive guide for creating and managing advancements in Minecraft with Kore.
-keywords: minecraft, datapack, kore, guide, advancements, triggers, criteria, rewards
+description: Create custom Minecraft advancements with Kore's Kotlin DSL. Covers all triggers, criteria, rewards (functions, loot, recipes), display settings, and frames. Replace hand-written JSON with type-safe Kotlin.
+keywords: minecraft advancements, datapack advancements, advancement triggers, using_item trigger, inventory_changed, minecraft achievement, kore advancements, custom advancements, advancement criteria, advancement rewards
 date-created: 2024-01-08
-date-modified: 2026-02-15
+date-modified: 2026-07-02
 routeOverride: /docs/data-driven/advancements
 ---
 
@@ -227,7 +227,7 @@ advancement("conditional_criteria") {
 			}
 			conditions {
 				randomChance(0.5f)  // 50% chance
-				timeCheck(6000f..18000f)  // Daytime only
+				timeCheck(WorldClocks.OVERWORLD, 6000f..18000f)  // Daytime only
 			}
 		}
 	}
@@ -322,7 +322,7 @@ advancement("trigger_examples") {
 		// Entity interaction
 		playerKilledEntity("kill_zombie") {
 			entity {
-				type(EntityTypes.ZOMBIE)
+				entityType(EntityTypes.ZOMBIE)
 			}
 		}
 
@@ -595,12 +595,12 @@ dataPack("adventure_pack") {
 		criteria {
 			playerKilledEntity("kill_dragon") {
 				entity {
-					type(EntityTypes.ENDER_DRAGON)
+					entityType(EntityTypes.ENDER_DRAGON)
 				}
 			}
 			playerKilledEntity("kill_wither") {
 				entity {
-					type(EntityTypes.WITHER)
+					entityType(EntityTypes.WITHER)
 				}
 			}
 		}
@@ -649,4 +649,3 @@ Verify criteria trigger correctly in-game before releasing your data pack.
 
 - [Minecraft Wiki: Advancement](https://minecraft.wiki/w/Advancement) - Game mechanics overview
 - [Minecraft Wiki: Advancement Definition](https://minecraft.wiki/w/Advancement_definition) - JSON format specification
-

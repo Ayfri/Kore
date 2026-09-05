@@ -5,7 +5,7 @@ nav-title: Components
 description: A guide for using components in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, components
 date-created: 2024-01-08
-date-modified: 2026-02-10
+date-modified: 2026-07-01
 routeOverride: /docs/concepts/components
 ---
 
@@ -16,8 +16,8 @@ In Minecraft, data components are structured key-value properties used to define
 - Entity variant components: properties exposed as components for certain entity variants when represented as items or spawn eggs (e.g.,
   `wolf/variant`, `cat/collar`). These follow the same component mechanics but target entity-specific customization.
 
-This page focuses on using item components with Kore. For the vanilla reference and exhaustive definitions, see the Minecraft Wiki’s Data component format (
-`https://minecraft.wiki/w/Data_component_format`).
+This page focuses on using item components with Kore. For the vanilla reference and exhaustive definitions, see
+the [Minecraft Wiki - Data component format](https://minecraft.wiki/w/Data_component_format).
 
 The Kore library provides a comprehensive and user-friendly way to work with these components, enabling you to create custom items with ease. This article will guide you through the process of using components with Kore, showcasing examples and best practices.
 
@@ -30,20 +30,17 @@ Let's dive into creating custom items with various components using Kore. Below 
 Attribute modifiers allow you to alter the attributes of an item, such as increasing damage or changing the scale. Here's how to define a stone sword with an attribute modifier using Kore:
 
 ```kotlin
-import io.github.ayfri.kore.arguments.types.literals.randomUUID
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.Attributes
 
-val uuid = randomUUID()
 val attributeModifiersTest = Items.STONE_SWORD {
 	attributeModifiers {
 		modifier(
 			type = Attributes.SCALE,
 			amount = 1.0,
-			name = "Big!",
+          name = "big",
 			operation = AttributeModifierOperation.ADD_VALUE,
-			uuid = uuid,
 		)
 	}
 }
@@ -91,7 +88,7 @@ val fireworksTest = Items.FIREWORK_ROCKET {
 			colors(Color.AQUA)
 			fadeColors(Color.BLACK, Color.WHITE)
 			hasTrail = true
-			hasFlicker = true
+			hasTwinkle = true
 		}
 	}
 }
@@ -211,7 +208,8 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 
 | Helper                               | Description                                                                                              |
 |--------------------------------------|----------------------------------------------------------------------------------------------------------|
-| `attackRange(..)`                    | Configures the attack range of an item (min/max range, hitbox margin, mob factor).                       |
+| `additionalTradeCost(..)`            | Sets an extra emerald cost added on top of the base price for villager trades.                           |
+| `attackRange(..)`                    | Configures the attack range of an item (min/max reach, hitbox margin, mob factor).                       |
 | `attributeModifiers(..)`             | Modifies entity attributes (e.g., attack damage, speed, armor) when the item is equipped or held.        |
 | `bannerPatterns(..)`                 | Defines the layered patterns displayed on a banner or shield.                                            |
 | `baseColor(..)`                      | Sets the base color of a banner before patterns are applied.                                             |
@@ -236,12 +234,13 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `damageType(..)`                     | Specifies the damage type dealt when attacking with this item.                                           |
 | `deathProtection(..)`                | Prevents death and applies effects when the holder would die (like a totem).                             |
 | `debugStickState(..)`                | Stores the selected block state property for the debug stick per block type.                             |
+| `dye(..)`                            | Sets the dye color of an item using a `DyeColors` value.                                                 |
 | `dyedColor(..)`                      | Sets the dye color for leather armor or other dyeable items.                                             |
 | `enchantable(..)`                    | Defines the enchantability value affecting enchantment quality at enchanting tables.                     |
 | `enchantmentGlintOverride(..)`       | Forces the enchantment glint on or off regardless of enchantments.                                       |
 | `enchantments(..)`                   | Applies enchantments with their levels to the item.                                                      |
 | `entityData(..)`                     | Stores entity NBT data for spawn eggs or items that spawn entities.                                      |
-| `equippable(..)`                     | Configures equipment slot, sounds, and model when the item is worn.                                      |
+| `equippable(..)`                     | Configures equipment slot, sounds, and `EquipmentAssets` model when the item is worn.                    |
 | `fireworkExplosion(..)`              | Defines a single firework star explosion shape, colors, and effects.                                     |
 | `fireworks(..)`                      | Configures firework rocket flight duration and explosion effects.                                        |
 | `food(..)`                           | Makes the item edible with nutrition, saturation, and optional effects.                                  |
@@ -252,7 +251,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `itemName(..)`                       | Sets the item's base name (different from custom name; not italicized).                                  |
 | `jukeboxPlayable(..)`                | Allows the item to be played in a jukebox with a specified music disc track.                             |
 | `kineticWeapon(..) { .. }`           | Configures kinetic weapon properties for mounted combat (damage multiplier, conditions).                 |
-| `lock(..)`                           | Requires a matching item predicate (key) to open this container.                                         |
+| `lock(..)`                           | Locks a container so only players holding a matching item (item predicate) can open it.                  |
 | `lodestoneTarget(..)`                | Makes a compass point to specific coordinates in a dimension.                                            |
 | `lore(..)`                           | Adds tooltip lines below the item name for descriptions or flavor text.                                  |
 | `mapColor(..)`                       | Sets the color tint for filled map item textures.                                                        |
@@ -275,6 +274,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `repairable(..)`                     | Defines which items can repair this item on an anvil.                                                    |
 | `repairCost(..)`                     | Sets the anvil repair cost penalty for combining or renaming.                                            |
 | `storedEnchantments(..)`             | Stores enchantments in an enchanted book for anvil application.                                          |
+| `sulfurCubeContent(..)`              | Stores the item held inside a sulfur cube.                                                               |
 | `suspiciousStewEffectsComponent(..)` | Defines the status effects applied when consuming suspicious stew.                                       |
 | `swingAnimation(..)`                 | Configures the swing animation type (none, stab, whack) and duration.                                    |
 | `tool { .. }`                        | Configures mining speeds, suitable blocks, and durability cost for tools.                                |
@@ -415,6 +415,8 @@ The full list of variant helpers currently included in Kore is:
 
 - `axolotlVariant(..)`
 - `catCollar(..)` / `catVariant(..)`
+- `chickenVariant(..)`
+- `cowVariant(..)`
 - `foxVariant(..)`
 - `frogVariant(..)`
 - `horseVariant(..)`
@@ -429,7 +431,8 @@ The full list of variant helpers currently included in Kore is:
 - `shulkerColor(..)`
 - `tropicalFishBaseColor(..)` / `tropicalFishPattern(..)` / `tropicalFishPatternColor(..)`
 - `villagerVariant(..)`
-- `wolfCollar(..)` / `wolfVariant(..)`
+- `wolfCollar(..)` / `wolfSoundVariant(..)` / `wolfVariant(..)`
+- `zombieNautilusVariant(..)`
 
 They follow the exact same naming and DSL pattern you already know:
 
@@ -454,7 +457,168 @@ Items.WOLF_SPAWN_EGG {
 ## Component Matchers & Item Predicates
 
 Kore provides powerful tools for matching and filtering items based on their components. This is useful in predicates, execute conditions,
-and loot tables.
+and loot tables. There are two distinct forms:
+
+- **Item predicates** (`.predicate { }` / `itemPredicate { }`) produce the inline command syntax `<item>[predicate]`,
+  used
+  anywhere an item argument is accepted - `/give`, `/clear`, the `items` selector, `execute if items`.
+- **Component matchers** (`predicates { }` inside `matchTool { }`, or `subPredicates { }` inside `.predicate { }`) check
+  the same components from within a predicate *file* -
+  see [Item Predicates](/docs/data-driven/predicates#item-predicates)
+  and [Item Sub-Predicates](/docs/data-driven/predicates#item-sub-predicates) in the Predicates guide for how they plug
+  into
+  a full predicate.
+
+Both forms share the same set of component checks - see [Available Component Matchers](#available-component-matchers)
+below for the full list.
+
+### Item Predicates
+
+Item predicates let you filter items by their components using the command syntax `<item>[predicate]`:
+
+```kotlin
+import io.github.ayfri.kore.arguments.components.*
+import io.github.ayfri.kore.arguments.components.item.*
+import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.generated.ItemComponentTypes
+
+// Match items with specific component values
+val damagedSword = Items.DIAMOND_SWORD.predicate {
+  damage(10)
+}
+// Result: minecraft:diamond_sword[damage=10]
+
+// Match any item with a component present (existence check)
+val hasInstrument = itemPredicate {
+  isPresent(ItemComponentTypes.INSTRUMENT)
+}
+// Result: *[instrument]
+
+// Partial matching with ~ syntax
+val customDataMatch = Items.STONE.predicate {
+  customData {
+    this["myKey"] = "myValue"
+  }
+  partial(ItemComponentTypes.CUSTOM_DATA)
+}
+// Result: minecraft:stone[custom_data~{myKey:"myValue"}]
+
+// Negated predicates (component must NOT have this value)
+val notDamaged = Items.DIAMOND_SWORD.predicate {
+  !damage(0)
+}
+// Result: minecraft:diamond_sword[!damage=0]
+
+// Multiple alternatives with OR
+val multipleValues = Items.STONE.predicate {
+  damage(1) or damage(2) or damage(3)
+}
+// Result: minecraft:stone[damage=1|damage=2|damage=3]
+
+// Count predicate
+val stackOf10 = Items.DIAMOND.predicate {
+  count(10)
+}
+// Result: minecraft:diamond[count=10]
+```
+
+#### Practical Example: Clearing Items by Name
+
+A common vanilla pattern is clearing every item with a specific `item_name`, regardless of its item type - the raw
+command looks like `clear @s *[minecraft:item_name="Blank"] 2`. It breaks down into three pieces: `@s` is the target,
+`*[minecraft:item_name="Blank"]` is an item predicate matching **any** item (`*`) whose `item_name` component equals
+`"Blank"`, and `2` is the max count to remove. Build the same thing with Kore's `clear` command and `itemPredicate { }`:
+
+```kotlin
+import io.github.ayfri.kore.commands.clear
+import io.github.ayfri.kore.commands.selectors.self
+
+function("clear_blank_items") {
+  clear(self(), itemPredicate { itemName("Blank") }, 2)
+}
+```
+
+This generates `clear @s *[item_name="Blank"] 2`. Because no `ItemArgument` is passed to `itemPredicate { }`, it
+defaults
+to `*` (any item) - pass an item to `.predicate { }` instead (e.g. `Items.PAPER.predicate { itemName("Blank") }`) if you
+want to restrict the match to a specific item type too.
+
+### Component Matchers (Sub-Predicates)
+
+For matching logic beyond a plain item predicate, use the `predicates { }` builder inside `matchTool { }` (or
+`subPredicates { }` inside `.predicate { }`) with component matchers:
+
+```kotlin
+import io.github.ayfri.kore.arguments.components.matchers.*
+import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
+
+predicate("upgradeable_pickaxe") {
+  matchTool {
+    items(Items.DIAMOND_PICKAXE)
+    predicates {
+      // Match damage component with range
+      damage {
+        durability = rangeOrInt(1..100)
+        damage = rangeOrInt(0..10)
+      }
+
+      // Match enchantments
+      enchantments {
+        enchantment(Enchantments.SHARPNESS, level = 3)
+      }
+
+      // Match potion contents
+      potionContents(Effects.SPEED, Effects.STRENGTH)
+    }
+  }
+}
+```
+
+### Existence Checks
+
+You can check if a component exists on an item without matching a specific value. In an item predicate (command form),
+use `isPresent`:
+
+```kotlin
+val hasInstrument = itemPredicate {
+  isPresent(ItemComponentTypes.INSTRUMENT)
+}
+// Result: *[instrument]
+```
+
+Inside a `predicates { }` / `subPredicates { }` block, use `exists`:
+
+```kotlin
+predicate("has_instrument") {
+  matchTool {
+    predicates {
+      exists(ItemComponentTypes.INSTRUMENT)
+      exists(ItemComponentTypes.DAMAGE)
+    }
+  }
+}
+```
+
+### Available Component Matchers
+
+| Matcher                   | Description                                    |
+|---------------------------|------------------------------------------------|
+| `attributeModifiers { }`  | Match attribute modifier properties            |
+| `bundlerContents { }`     | Match bundle contents                          |
+| `container { }`           | Match container slot contents                  |
+| `customData { }`          | Match custom NBT data                          |
+| `damage { }`              | Match damage/durability values                 |
+| `enchantments { }`        | Match enchantment types and levels             |
+| `exists(component)`       | Check if component exists (empty `{}` matcher) |
+| `fireworkExplosion { }`   | Match firework star properties                 |
+| `fireworks { }`           | Match firework rocket properties               |
+| `jukeboxPlayable { }`     | Match jukebox song                             |
+| `potionContents(..)`      | Match potion effects                           |
+| `storedEnchantments { }`  | Match stored enchantments (enchanted books)    |
+| `trim { }`                | Match armor trim pattern/material              |
+| `villagerVariant(..)`     | Match the villager type of an entity           |
+| `writableBookContent { }` | Match book pages                               |
+| `writtenBookContent { }`  | Match signed book content                      |
 
 ### Complete Example: Custom Tool Upgrade System
 
@@ -552,127 +716,6 @@ dataPack("tool_upgrades") {
 }
 ```
 
-### Item Predicates
-
-Item predicates let you filter items by their components using the command syntax `<item>[predicate]`:
-
-```kotlin
-import io.github.ayfri.kore.arguments.components.*
-import io.github.ayfri.kore.arguments.components.item.*
-import io.github.ayfri.kore.generated.Items
-import io.github.ayfri.kore.generated.ItemComponentTypes
-
-// Match items with specific component values
-val damagedSword = Items.DIAMOND_SWORD.predicate {
-  damage(10)
-}
-// Result: minecraft:diamond_sword[damage=10]
-
-// Match any item with a component present (existence check)
-val hasInstrument = itemPredicate {
-  isPresent(ItemComponentTypes.INSTRUMENT)
-}
-// Result: *[instrument]
-
-// Partial matching with ~ syntax
-val customDataMatch = Items.STONE.predicate {
-  customData {
-    this["myKey"] = "myValue"
-  }
-  partial(ItemComponentTypes.CUSTOM_DATA)
-}
-// Result: minecraft:stone[custom_data~{myKey:"myValue"}]
-
-// Negated predicates (component must NOT have this value)
-val notDamaged = Items.DIAMOND_SWORD.predicate {
-  !damage(0)
-}
-// Result: minecraft:diamond_sword[!damage=0]
-
-// Multiple alternatives with OR
-val multipleValues = Items.STONE.predicate {
-  damage(1) or damage(2) or damage(3)
-}
-// Result: minecraft:stone[damage=1|damage=2|damage=3]
-
-// Count predicate
-val stackOf10 = Items.DIAMOND.predicate {
-  count(10)
-}
-// Result: minecraft:diamond[count=10]
-```
-
-### Component Matchers (Sub-Predicates)
-
-For more complex matching logic, use `subPredicates` with component matchers. These serialize to JSON format for use in predicate files:
-
-```kotlin
-import io.github.ayfri.kore.features.predicates.sub.item.ItemStackSubPredicates
-import io.github.ayfri.kore.arguments.components.matchers.*
-import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
-
-val subPredicate = ItemStackSubPredicates().apply {
-  // Match damage component with range
-  damage {
-    durability = rangeOrInt(1..100)
-    damage = rangeOrInt(0..10)
-  }
-
-  // Match enchantments
-  enchantments {
-    enchantment(Enchantments.SHARPNESS, level = 3)
-  }
-
-  // Match potion contents
-  potionContents(Effects.SPEED, Effects.STRENGTH)
-}
-```
-
-### Existence Checks
-
-You can check if a component exists on an item without matching a specific value:
-
-```kotlin
-// In item predicates (command form)
-val hasInstrument = itemPredicate {
-  isPresent(ItemComponentTypes.INSTRUMENT)
-}
-// Result: *[instrument]
-
-// In sub-predicates (JSON form for predicate files)
-val existsCheck = ItemStackSubPredicates().apply {
-  exists(ItemComponentTypes.INSTRUMENT)
-}
-// Result: {"minecraft:instrument": {}}
-
-// Multiple existence checks
-val multipleExists = ItemStackSubPredicates().apply {
-  exists(ItemComponentTypes.INSTRUMENT)
-  exists(ItemComponentTypes.DAMAGE)
-}
-// Result: {"minecraft:instrument": {}, "minecraft:damage": {}}
-```
-
-### Available Component Matchers
-
-| Matcher                   | Description                                    |
-|---------------------------|------------------------------------------------|
-| `attributeModifiers { }`  | Match attribute modifier properties            |
-| `bundlerContents { }`     | Match bundle contents                          |
-| `container { }`           | Match container slot contents                  |
-| `customData { }`          | Match custom NBT data                          |
-| `damage { }`              | Match damage/durability values                 |
-| `enchantments { }`        | Match enchantment types and levels             |
-| `exists(component)`       | Check if component exists (empty `{}` matcher) |
-| `fireworkExplosion { }`   | Match firework star properties                 |
-| `fireworks { }`           | Match firework rocket properties               |
-| `jukeboxPlayable { }`     | Match jukebox song                             |
-| `potionContents(..)`      | Match potion effects                           |
-| `storedEnchantments { }`  | Match stored enchantments (enchanted books)    |
-| `trim { }`                | Match armor trim pattern/material              |
-| `writableBookContent { }` | Match book pages                               |
-| `writtenBookContent { }`  | Match signed book content                      |
-
 ## Conclusion
 
 Components are a powerful tool for customizing Minecraft objects, and the Kore library makes it easier than ever to work with these components programmatically. Whether you're adding custom attributes, enchantments, or creating complex items with multiple components, Kore provides a robust and intuitive API for enhancing your Minecraft experience.
@@ -683,7 +726,10 @@ Happy crafting!
 
 ## See Also
 
-- [Predicates](/docs/data-driven/predicates) - Use components in predicate conditions
+- [Predicates](/docs/data-driven/predicates) - Use components in predicate conditions; see
+  [Item Predicates](/docs/data-driven/predicates#item-predicates) and
+  [Item Sub-Predicates](/docs/data-driven/predicates#item-sub-predicates) for how the matchers on this page plug into a
+  full `predicate { }` file
 - [Item Modifiers](/docs/data-driven/item-modifiers) - Patch components at runtime
 - [Recipes](/docs/data-driven/recipes) - Use components in recipe results
 - [Inventory Manager](/docs/helpers/inventory-manager) - Enforce component-rich items in slots
@@ -691,4 +737,3 @@ Happy crafting!
 ### External Resources
 
 - [Minecraft Wiki: Data component format](https://minecraft.wiki/w/Data_component_format) - Official component reference
-

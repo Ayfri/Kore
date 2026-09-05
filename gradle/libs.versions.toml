@@ -1,18 +1,22 @@
 [versions]
-jetbrains-compose = "1.10.3"
+gradle-plugin-publish = "2.1.1"
+jetbrains-compose = "1.11.1"
 joml = "1.10.8"
 knbt = "0.11.9"
-kobweb = "0.24.0"
-kotest = "6.1.11"
-kotlin = "2.3.20"
+kobweb = "0.25.1"
+kompress = "2.3.1"
+kotest = "6.2.3"
+kotlin = "2.4.0"
 kotlin-dotenv = "6.5.1"
 kotlinpoet = "2.3.0"
+ksp = "2.3.11"
 kotlinx-serialization = "1.11.0"
-kotlinx-io = "0.9.0"
+kotlinx-io = "0.9.1"
 ktoml = "0.7.1"
-ktor = "3.5.0"
-marked = "17.0.5"
-vanniktech-publish = "0.36.0"
+ktor = "3.5.2"
+marked = "18.0.9"
+swc = "1.16.1"
+vanniktech-publish = "0.37.0"
 
 [libraries]
 compose-html-core = { module = "org.jetbrains.compose.html:html-core", version.ref = "jetbrains-compose" }
@@ -23,13 +27,17 @@ joml = { module = "org.joml:joml", version.ref = "joml" }
 knbt = { module = "net.benwoodworth.knbt:knbt", version.ref = "knbt" }
 kobweb-core = { module = "com.varabyte.kobweb:kobweb-core", version.ref = "kobweb" }
 kobwebx-markdown = { module = "com.varabyte.kobwebx:kobwebx-markdown", version.ref = "kobweb" }
-kobwebx-silk-icons-mdi = { module = "com.varabyte.kobwebx:silk-icons-mdi", version.ref = "kobweb" }
-kotest-assertions-core = { module = "io.kotest:kotest-assertions-core-jvm", version.ref = "kotest" }
+kobwebx-silk-icons-lucide = { module = "com.varabyte.kobwebx:silk-icons-lucide", version.ref = "kobweb" }
+kompress-core = { module = "dev.karmakrafts.kompress:kompress-core", version.ref = "kompress" }
+kompress-zip = { module = "dev.karmakrafts.kompress:kompress-zip", version.ref = "kompress" }
+kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
 kotlin-dotenv = { module = "io.github.cdimascio:dotenv-kotlin", version.ref = "kotlin-dotenv" }
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-io = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinx-io"}
+ksp-symbol-processing-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 ktoml = { module = "com.akuleshov7:ktoml-core", version.ref = "ktoml" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
@@ -38,5 +46,9 @@ ktor-serialization = { module = "io.ktor:ktor-serialization", version.ref = "kto
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 [plugins]
+gradle-plugin-publish = { id = "com.gradle.plugin-publish", version.ref = "gradle-plugin-publish" }
 kobweb-application = { id = "com.varabyte.kobweb.application", version.ref = "kobweb" }
 kobwebx-markdown = { id = "com.varabyte.kobwebx.markdown", version.ref = "kobweb" }
+kotest = { id = "io.kotest", version.ref = "kotest" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+vanniktech-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktech-publish" }

@@ -1,9 +1,12 @@
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import java.io.File
+
+// Download cache under `generation/build/cache`, cleared by `--reload-cache`.
 
 fun cacheFile(name: String, content: String) {
 	val file = File(cacheDir, name)
@@ -18,6 +21,7 @@ fun clearCache() {
 }
 
 suspend fun getFromCacheOrDownloadTxt(name: String, url: String) = getFromCacheTxt(name) ?: download(name, url).body<String>().also { cacheFile(name, it) }
+
 suspend fun getFromCacheOrDownloadJson(name: String, url: String) =
 	getFromCacheJson(name) ?: download(name, url).body<JsonElement>().also { cacheFile(name, it.toString()) }
 
@@ -42,8 +46,8 @@ private fun getFromCacheJson(name: String): JsonElement? {
 }
 
 private suspend fun download(name: String, url: String): HttpResponse {
-	println("Downloading '$name' at : $url")
+	println("Downloading $name from $url")
 	val get = client.get(url)
-	if (get.status.value == 404) error("404: $url")
+	if (!get.status.isSuccess()) error("${get.status.value}: $url")
 	return get
 }

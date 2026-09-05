@@ -101,7 +101,7 @@ beeNestDestroyed("destroy_nest") {
 	block = Blocks.BEE_NEST
 	numBeesInside = rangeOrInt(1)
 	item {
-		item(Items.HONEYCOMB)
+		items(Items.HONEYCOMB)
 	}
 }
 ```
@@ -126,21 +126,21 @@ bredAnimals("breed_animals") {
 	child {
 		conditions {
 			entityProperties {
-				type(EntityTypes.COW)
+				entityType(EntityTypes.COW)
 			}
 		}
 	}
 	parent {
 		conditions {
 			entityProperties {
-				type(EntityTypes.COW)
+				entityType(EntityTypes.COW)
 			}
 		}
 	}
 	partner {
 		conditions {
 			entityProperties {
-				type(EntityTypes.COW)
+				entityType(EntityTypes.COW)
 			}
 		}
 	}
@@ -203,7 +203,7 @@ channeledLightning("lightning_rod") {
 	victim {
 		conditions {
 			entityProperties {
-				type(EntityTypes.CREEPER)
+				entityType(EntityTypes.CREEPER)
 			}
 		}
 	}
@@ -294,14 +294,14 @@ curedZombieVillager("cure_zombie") {
 	villager {
 		conditions {
 			entityProperties {
-				type(EntityTypes.VILLAGER)
+				entityType(EntityTypes.VILLAGER)
 			}
 		}
 	}
 	zombie {
 		conditions {
 			entityProperties {
-				type(EntityTypes.ZOMBIE)
+				entityType(EntityTypes.ZOMBIE)
 			}
 		}
 	}
@@ -353,7 +353,7 @@ effectsChanged("get_effect") {
 	source {
 		conditions {
 			entityProperties {
-				type(EntityTypes.WITCH)
+				entityType(EntityTypes.WITCH)
 			}
 		}
 	}
@@ -377,7 +377,7 @@ Triggers when an item is enchanted.
 ```kotlin
 enchantedItem("enchant_item") {
 	item {
-		item(Items.DIAMOND_SWORD)
+		items(Items.DIAMOND_SWORD)
 	}
 	levels = rangeOrInt(1..3)
 }
@@ -423,7 +423,7 @@ Triggers when an entity hurts a player.
 entityHurtPlayer("hurt_player") {
 	damage {
 		sourceEntity {
-			type(EntityTypes.ZOMBIE)
+			entityType(EntityTypes.ZOMBIE)
 		}
 		taken = rangeOrDouble(5.0..10.0)
 		type {
@@ -514,7 +514,7 @@ Triggers when a bucket is filled.
 ```kotlin
 filledBucket("fill_bucket") {
 	item {
-		item(Items.WATER_BUCKET)
+		items(Items.WATER_BUCKET)
 	}
 }
 ```
@@ -537,7 +537,7 @@ Triggers when a fishing rod hooks something.
 ```kotlin
 fishingRodHooked("catch_fish") {
 	item {
-		item(Items.FISHING_ROD)
+		items(Items.FISHING_ROD)
 	}
 	rod {
 		components {
@@ -604,7 +604,7 @@ Triggers when inventory contents change.
 ```kotlin
 inventoryChanged("get_diamond") {
 	item {
-		item(Items.DIAMOND)
+		items(Items.DIAMOND)
 	}
 	slots {
 		empty = rangeOrInt(1..3)
@@ -631,7 +631,7 @@ Triggers when item durability changes.
 itemDurabilityChanged("tool_break") {
 	delta = rangeOrInt(-10..-1)
 	item {
-		item(Items.DIAMOND_PICKAXE)
+		items(Items.DIAMOND_PICKAXE)
 	}
 }
 ```
@@ -694,7 +694,7 @@ killedByArrow("killed_by_arrow") {
 	victim {
 		conditions {
 			entityProperties {
-				type(EntityTypes.PLAYER)
+				entityType(EntityTypes.PLAYER)
 			}
 		}
 	}
@@ -718,11 +718,11 @@ Triggers when a mob is killed near a sculk catalyst.
 ```kotlin
 killMobNearSculkCatalyst("kill_mob") {
 	entity {
-		type(EntityTypes.ZOMBIE)
+		entityType(EntityTypes.ZOMBIE)
 	}
 	killingBlow {
 		sourceEntity {
-			type(EntityTypes.PLAYER)
+			entityType(EntityTypes.PLAYER)
 		}
 	}
 }
@@ -771,7 +771,7 @@ lightningStrike("struck") {
 		type {
 			conditions {
 				entityProperties {
-					type(EntityTypes.CREEPER)
+					entityType(EntityTypes.CREEPER)
 				}
 			}
 		}
@@ -913,7 +913,7 @@ playerInteractedWithEntity("interact_with_golem") {
 	}
 	entity {
 		conditionEntity {
-			type(EntityTypes.IRON_GOLEM)
+			entityType(EntityTypes.IRON_GOLEM)
 		}
 	}
 }
@@ -938,7 +938,7 @@ playerKilledEntity("kill_mob") {
 	entity {
 		conditions {
 			entityProperties {
-				type(EntityTypes.ZOMBIE)
+				entityType(EntityTypes.ZOMBIE)
 			}
 		}
 	}
@@ -962,10 +962,10 @@ Triggers after a player shears equipment off of a mob, such as wolf armor.
 ```kotlin
 playerShearedEquipment("shear_wolf_armor") {
 	entity {
-		type(EntityTypes.WOLF)
+		entityType(EntityTypes.WOLF)
 	}
 	item {
-		item(Items.LEATHER)
+		items(Items.LEATHER)
 	}
 }
 ```
@@ -1053,7 +1053,7 @@ Triggers when shooting a crossbow.
 ```kotlin
 shotCrossbow("shoot_crossbow") {
 	item {
-		item(Items.CROSSBOW)
+		items(Items.CROSSBOW)
 		enchantments {
 			enchantment(Enchantments.MULTISHOT, 1)
 		}
@@ -1133,7 +1133,7 @@ _None._
 startedRiding("ride_horse") {
 	conditions {
 		vehicle {
-			type(EntityTypes.HORSE)
+			entityType(EntityTypes.HORSE)
 		}
 	}
 }
@@ -1155,7 +1155,7 @@ Triggers when an entity is summoned.
 ```kotlin
 summonedEntity("summon_iron_golem") {
 	entity {
-		type(EntityTypes.IRON_GOLEM)
+		entityType(EntityTypes.IRON_GOLEM)
 	}
 }
 ```
@@ -1176,7 +1176,7 @@ Triggers when an animal is tamed.
 ```kotlin
 tameAnimal("tame_wolf") {
 	entity {
-		type(EntityTypes.WOLF)
+		entityType(EntityTypes.WOLF)
 	}
 }
 ```
@@ -1201,7 +1201,7 @@ targetHit("hit_target") {
 	projectile {
 		conditions {
 			entityProperties {
-				type(EntityTypes.ARROW)
+				entityType(EntityTypes.ARROW)
 			}
 		}
 	}
@@ -1225,10 +1225,10 @@ Triggers when a thrown item is picked up by an entity.
 ```kotlin
 thrownItemPickedUpByEntity("feed_animal") {
 	entity {
-		type(EntityTypes.COW)
+		entityType(EntityTypes.COW)
 	}
 	item {
-		item(Items.WHEAT)
+		items(Items.WHEAT)
 	}
 }
 ```
@@ -1250,7 +1250,7 @@ Triggers when a thrown item is picked up by a player.
 ```kotlin
 thrownItemPickedUpByPlayer("catch_trident") {
 	item {
-		item(Items.TRIDENT)
+		items(Items.TRIDENT)
 	}
 }
 ```
@@ -1271,7 +1271,7 @@ Triggers every tick (20 times per second).
 ```kotlin
 tick("game_tick") {
 	conditions {
-		timeCheck(6000..18000) // Daytime only
+		timeCheck(WorldClocks.OVERWORLD, 6000..18000) // Daytime only
 	}
 }
 ```
@@ -1313,7 +1313,7 @@ Triggers when a totem is used.
 ```kotlin
 usedTotem("save_life") {
 	item {
-		item(Items.TOTEM_OF_UNDYING)
+		items(Items.TOTEM_OF_UNDYING)
 	}
 }
 ```
@@ -1356,7 +1356,7 @@ Triggers when a villager trades.
 ```kotlin
 villagerTrade("trade") {
 	item {
-		item(Items.EMERALD)
+		items(Items.EMERALD)
 	}
 	villager {
 		conditions {

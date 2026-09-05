@@ -7,6 +7,8 @@ import com.varabyte.kobweb.compose.css.fontStyle
 import com.varabyte.kobweb.compose.css.textAlign
 import com.varabyte.kobweb.core.Page
 import io.github.ayfri.kore.website.GlobalStyle
+import io.github.ayfri.kore.website.components.common.setDescription
+import io.github.ayfri.kore.website.components.common.setKeywords
 import io.github.ayfri.kore.website.components.layouts.PageLayout
 import io.github.ayfri.kore.website.components.updates.GitHubService
 import io.github.ayfri.kore.website.components.updates.ReleasesList
@@ -26,7 +28,10 @@ import org.jetbrains.compose.web.dom.Text
 fun UpdatesPage() {
 	Style(UpdatesPageStyle)
 
-	PageLayout("Kore Releases | Latest Releases and Updates") {
+	setDescription("Kore changelog and release history for the Minecraft datapack generator. Browse all versions, release notes, and updates automatically fetched from GitHub.")
+	setKeywords("kore releases", "kore changelog", "datapack generator updates", "kore version history", "minecraft datapack library releases", "kore github releases")
+
+	PageLayout("Kore Releases - Changelog & Version History") {
 		Div({
 			classes(UpdatesPageStyle.container)
 		}) {
@@ -42,7 +47,7 @@ fun UpdatesPage() {
 				P({
 					classes(UpdatesPageStyle.description)
 				}) {
-					Text("The latest versions of Kore, automatically fetched from GitHub.")
+					Text("Browse all Kore releases, release notes, and version history, automatically fetched from GitHub.")
 				}
 
 				P({
