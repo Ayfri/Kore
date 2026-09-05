@@ -9,25 +9,11 @@ import io.github.ayfri.kore.functions.FunctionWithMacros
 import io.github.ayfri.kore.functions.Macros
 import io.github.ayfri.kore.functions.getValue
 
-private const val TRIM_CHAR_PATH = "tmp.kore_string_trim_c"
-private const val TRIM_END_SCORE = "#kore_string_trim_end"
-private const val TRIM_I_SCORE = "#kore_string_trim_i"
-private const val TRIM_LEN_SCORE = "#kore_string_trim_len"
-private const val TRIM_WS_SCORE = "#kore_string_trim_ws"
-
-/**
- * ASCII whitespace set mirrored from Kotlin's [Char.isWhitespace] for the most common cases.
- * Customizable per datapack through [DynamicStringRuntime.trimWhitespace] if a caller needs Unicode
- * spaces or, on the contrary, wants to strip additional characters (dashes, quotes, …).
- */
-var DynamicStringRuntime.trimWhitespace: List<String>
-	get() = TRIM_WHITESPACE_OVERRIDES[this] ?: DEFAULT_TRIM_WHITESPACE
-	set(value) {
-		TRIM_WHITESPACE_OVERRIDES[this] = value
-	}
-
-internal val DEFAULT_TRIM_WHITESPACE: List<String> = listOf(" ", "\\t", "\\n", "\\r")
-private val TRIM_WHITESPACE_OVERRIDES = mutableMapOf<DynamicStringRuntime, List<String>>()
+private const val TRIM_CHAR_KEY = "${INTERNAL_NAME_PREFIX}trim_c"
+private const val TRIM_END_SCORE = "#${INTERNAL_NAME_PREFIX}trim_end"
+private const val TRIM_I_SCORE = "#${INTERNAL_NAME_PREFIX}trim_i"
+private const val TRIM_LEN_SCORE = "#${INTERNAL_NAME_PREFIX}trim_len"
+private const val TRIM_WS_SCORE = "#${INTERNAL_NAME_PREFIX}trim_ws"
 
 /** Macros for the character-extract step reused by trim-start / trim-end. */
 class TrimStepMacros internal constructor() : Macros() {
@@ -40,26 +26,27 @@ class TrimStepMacros internal constructor() : Macros() {
 class TrimControllerMacros internal constructor() : Macros()
 
 /**
- * Step macro extracting `src[i..i+1]` into [TRIM_CHAR_PATH] and setting [TRIM_WS_SCORE] to `1` when
- * the resulting character matches any whitespace, `0` otherwise.
+ * Step macro extracting `src[i..i+1]` into the trim scratch slot and setting [TRIM_WS_SCORE] to `1`
+ * when the character matches any of [DynamicStringConfig.trimWhitespace], `0` otherwise.
  */
 private fun DynamicStringRuntime.registerTrimStep(name: String): FunctionWithMacros<TrimStepMacros> =
 	ensure(name, ::TrimStepMacros) {
+		val charPath = tmpPath(TRIM_CHAR_KEY)
 		val obj = config.lengthObjective
 		val wsScore = ScoreCursor(TRIM_WS_SCORE, obj)
 
 		setSubstringMacro(
 			storage = libStorageArg,
-			path = TRIM_CHAR_PATH,
+			path = charPath,
 			srcStorage = libStorageArg,
 			srcPath = heapPath(macros.src),
 			startExpr = macros.i,
 			endExpr = macros.iPlusOne,
 		)
 		wsScore.set(this, 0)
-		for (ws in this@registerTrimStep.trimWhitespace) {
+		for (ws in config.trimWhitespace) {
 			addLine(
-				"execute if data storage $libStorage tmp{kore_string_trim_c:\"$ws\"} run " +
+				"execute if data storage $libStorage ${config.tmpRoot}{$TRIM_CHAR_KEY:\"$ws\"} run " +
 					"scoreboard players set ${wsScore.holder} $obj 1"
 			)
 		}
@@ -78,7 +65,7 @@ internal fun DynamicStringRuntime.trimStartControllerHelper(): FunctionWithMacro
 		val obj = config.lengthObjective
 		val stepArgs = argsPath(step.name)
 		val iCursor = ScoreCursor(TRIM_I_SCORE, obj)
-		val ip1 = ScoreCursor("#kore_string_trim_ip1", obj)
+		val ip1 = ScoreCursor("#${INTERNAL_NAME_PREFIX}trim_ip1", obj)
 		val endCursor = ScoreCursor(TRIM_END_SCORE, obj)
 		val wsScore = ScoreCursor(TRIM_WS_SCORE, obj)
 
@@ -105,7 +92,7 @@ internal fun DynamicStringRuntime.trimEndControllerHelper(): FunctionWithMacros<
 		val obj = config.lengthObjective
 		val stepArgs = argsPath(step.name)
 		val iCursor = ScoreCursor(TRIM_I_SCORE, obj)
-		val last = ScoreCursor("#kore_string_trim_last", obj)
+		val last = ScoreCursor("#${INTERNAL_NAME_PREFIX}trim_last", obj)
 		val endCursor = ScoreCursor(TRIM_END_SCORE, obj)
 		val wsScore = ScoreCursor(TRIM_WS_SCORE, obj)
 
@@ -144,7 +131,7 @@ private fun DynamicString.primeTrim(fn: Function): TrimCursors {
 	return TrimCursors(end = endCursor, i = iCursor, len = len)
 }
 
-/** Strips leading whitespace (configurable via [DynamicStringRuntime.trimWhitespace]) into [target]. */
+/** Strips leading whitespace (configurable via [DynamicStringConfig.trimWhitespace]) into [target]. */
 context(fn: Function)
 fun DynamicString.trimStart(target: DynamicString = this) {
 	val rt = fn.datapack.requireDynamicStringRuntime()
@@ -155,7 +142,7 @@ fun DynamicString.trimStart(target: DynamicString = this) {
 	substringDynamicCursors(fn, c.i, c.end, target)
 }
 
-/** Strips trailing whitespace (configurable via [DynamicStringRuntime.trimWhitespace]) into [target]. */
+/** Strips trailing whitespace (configurable via [DynamicStringConfig.trimWhitespace]) into [target]. */
 context(fn: Function)
 fun DynamicString.trimEnd(target: DynamicString = this) {
 	val rt = fn.datapack.requireDynamicStringRuntime()

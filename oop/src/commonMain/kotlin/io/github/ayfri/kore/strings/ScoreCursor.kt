@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.strings
 
-import io.github.ayfri.kore.OopConstants
 import io.github.ayfri.kore.arguments.enums.DataType
 import io.github.ayfri.kore.arguments.types.ScoreHolderArgument
 import io.github.ayfri.kore.arguments.types.literals.literal
@@ -16,7 +15,7 @@ import io.github.ayfri.kore.functions.Function
  * scores that do not belong to any in-game entity. Each method is thin and delegates to the Kore
  * scoreboard DSL so the generated commands stay consistent with the rest of the module.
  */
-internal data class ScoreCursor(val holder: String, val objective: String = OopConstants.stringLengthObjective) {
+internal data class ScoreCursor(val holder: String, val objective: String) {
 	fun add(fn: Function, value: Int) = fn.scoreboard { players { add(asScoreHolder(), objective, value) } }
 
 	fun addFrom(fn: Function, source: ScoreCursor) = operation(fn, Operation.ADD, source)
@@ -35,11 +34,7 @@ internal data class ScoreCursor(val holder: String, val objective: String = OopC
 
 	fun set(fn: Function, value: Int) = fn.scoreboard { players { set(asScoreHolder(), objective, value) } }
 
-	/**
-	 * Stores the content of an NBT path into this cursor using a raw `execute store result`. The DSL
-	 * cannot currently express `execute store … run data get` inside a nested `run { }` block, so we
-	 * emit the single command directly.
-	 */
+	/** Stores the content of an NBT path into this cursor using `execute store result`. */
 	fun storeValueOfNbt(fn: Function, target: StorageArgument, path: String, scale: Double = 1.0) =
 		fn.addLine("execute store result score $holder $objective run data get storage ${target.asString()} $path $scale")
 
@@ -59,6 +54,3 @@ internal data class ScoreCursor(val holder: String, val objective: String = OopC
 			"run scoreboard players get $holder $objective"
 	)
 }
-
-internal fun scoreCursor(holder: String, objective: String = OopConstants.stringLengthObjective) =
-	ScoreCursor(holder, objective)

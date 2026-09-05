@@ -9,11 +9,20 @@ import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.FunctionWithMacros
 import io.github.ayfri.kore.functions.Macros
 import io.github.ayfri.kore.functions.getValue
+import io.github.ayfri.kore.utils.nbt
+import net.benwoodworth.knbt.NbtString
+import net.benwoodworth.knbt.NbtTag
 
-private const val CASE_CHAR_PATH = "tmp.kore_string_case_c"
-private const val CASE_SCRATCH = "kore_string_case_scratch"
-private const val LOWER_TABLE_FN = "kore_string_lower_table"
-private const val UPPER_TABLE_FN = "kore_string_upper_table"
+private const val CASE_ARGS_KEY = "${INTERNAL_NAME_PREFIX}case_args"
+private const val CASE_CHAR_KEY = "c"
+private const val CASE_SCRATCH = "${INTERNAL_NAME_PREFIX}case_scratch"
+private const val CAP_HEAD_SCRATCH = "${INTERNAL_NAME_PREFIX}cap_head"
+private const val CAP_REST_SCRATCH = "${INTERNAL_NAME_PREFIX}cap_rest"
+
+/** Macros holder for the per-character table lookup, fed the extracted character as `c`. */
+class CaseMapMacros internal constructor() : Macros() {
+	val c by "c"
+}
 
 /** Shared macros holder for both upper / lower step helpers. */
 class CaseStepMacros internal constructor() : Macros() {
@@ -23,73 +32,92 @@ class CaseStepMacros internal constructor() : Macros() {
 	val src by "src"
 }
 
-/** Empty holders for upper / lower / table controllers. */
-class LowerMacros internal constructor() : Macros()
-class LowerStepMacros internal constructor() : Macros()
-class UpperMacros internal constructor() : Macros()
-class UpperStepMacros internal constructor() : Macros()
+/** Empty macros holder for the upper / lower controllers, whose loop state lives in scores. */
+class CaseControllerMacros internal constructor() : Macros()
 
-private fun DynamicStringRuntime.registerCaseTable(
-	name: String,
-	domain: CharRange,
-	mapping: (Char) -> Char,
-) = ensure(name, ::UpperMacros) {
-	for (c in domain) {
-		val mapped = mapping(c)
-		addLine(
-			"execute if data storage $libStorage tmp{kore_string_case_c:\"$c\"} run " +
-				"data modify storage $libStorage $CASE_CHAR_PATH set value \"$mapped\""
-		)
+/**
+ * Writes the translation table as a single NBT compound on world load, so a step can map a
+ * character with one `set from` instead of scanning 26 `execute if data` branches.
+ */
+private fun DynamicStringRuntime.registerCaseTable(name: String, domain: CharRange, mapping: (Char) -> Char) {
+	val table: NbtTag = nbt { domain.forEach { c -> put(c.toString(), NbtString(mapping(c).toString())) } }
+	ensureLoaded(name) {
+		data(libStorageArg) {
+			modify(tablesPath(name), table)
+		}
 	}
 }
 
 internal fun DynamicStringRuntime.lowerTableHelper() =
-	registerCaseTable(LOWER_TABLE_FN, 'A'..'Z') { it.lowercaseChar() }
+	registerCaseTable(OopConstants.stringLowerTableMacroName, 'A'..'Z') { it.lowercaseChar() }
 
 internal fun DynamicStringRuntime.upperTableHelper() =
-	registerCaseTable(UPPER_TABLE_FN, 'a'..'z') { it.uppercaseChar() }
+	registerCaseTable(OopConstants.stringUpperTableMacroName, 'a'..'z') { it.uppercaseChar() }
 
+/**
+ * Maps the character sitting in the case args compound through [tableName], leaving it untouched
+ * when the table has no entry for it.
+ *
+ * The character is used as a quoted NBT path key, so it has to be passed as a macro argument of its
+ * own: this function is always invoked `with storage <tmpRoot>.<caseArgs>`. A quote or a backslash
+ * would break that path, so both are excluded up front; neither has a case, which makes skipping
+ * the lookup the right answer anyway.
+ */
+private fun DynamicStringRuntime.registerCaseMap(tableName: String): FunctionWithMacros<CaseMapMacros> =
+	ensure("${tableName}_map", ::CaseMapMacros) {
+		addLine(
+			"""execute unless data storage $libStorage ${tmpPath(CASE_ARGS_KEY)}{$CASE_CHAR_KEY:"\""} """ +
+				"""unless data storage $libStorage ${tmpPath(CASE_ARGS_KEY)}{$CASE_CHAR_KEY:"\\"} run """ +
+				"""data modify storage $libStorage ${caseCharPath()} set from """ +
+				"""storage $libStorage ${tablesPath(tableName)}."${'$'}($CASE_CHAR_KEY)""""
+		)
+	}
+
+/** Extracts `src[i..i+1]`, maps it through [tableName] then appends the result to `dst`. */
 private fun DynamicStringRuntime.registerCaseStep(
 	stepName: String,
 	tableName: String,
 ): FunctionWithMacros<CaseStepMacros> = ensure(stepName, ::CaseStepMacros) {
 	substringHelper()
-	val m = macros
+	val map = registerCaseMap(tableName)
 
 	setSubstringMacro(
 		storage = libStorageArg,
-		path = CASE_CHAR_PATH,
+		path = caseCharPath(),
 		srcStorage = libStorageArg,
-		srcPath = heapPath(m.src),
-		startExpr = m.i,
-		endExpr = m.iPlusOne,
+		srcPath = heapPath(macros.src),
+		startExpr = macros.i,
+		endExpr = macros.iPlusOne,
 	)
-	function(namespace = datapack.name, name = tableName)
+	callMacro(map.name, libStorageArg, tmpPath(CASE_ARGS_KEY))
 	data(libStorageArg) {
-		modify(heapPath(m.dst)) {
-			append(libStorageArg, CASE_CHAR_PATH)
+		modify(heapPath(macros.dst)) {
+			append(libStorageArg, caseCharPath())
 		}
 	}
 }
 
 internal fun DynamicStringRuntime.lowerStepHelper(): FunctionWithMacros<CaseStepMacros> {
 	lowerTableHelper()
-	return registerCaseStep(OopConstants.stringLowerStepMacroName, LOWER_TABLE_FN)
+	return registerCaseStep(OopConstants.stringLowerStepMacroName, OopConstants.stringLowerTableMacroName)
 }
 
 internal fun DynamicStringRuntime.upperStepHelper(): FunctionWithMacros<CaseStepMacros> {
 	upperTableHelper()
-	return registerCaseStep(OopConstants.stringUpperStepMacroName, UPPER_TABLE_FN)
+	return registerCaseStep(OopConstants.stringUpperStepMacroName, OopConstants.stringUpperTableMacroName)
 }
+
+/** Path of the single character a case step is currently mapping. */
+private fun DynamicStringRuntime.caseCharPath() = "${tmpPath(CASE_ARGS_KEY)}.$CASE_CHAR_KEY"
 
 private fun DynamicStringRuntime.registerCaseController(
 	name: String,
 	stepName: String,
-): FunctionWithMacros<UpperMacros> = ensure(name, ::UpperMacros) {
+): FunctionWithMacros<CaseControllerMacros> = ensure(name, ::CaseControllerMacros) {
 	val stepArgs = argsPath(stepName)
-	val iCursor = ScoreCursor("#kore_string_case_i", config.lengthObjective)
-	val ip1 = ScoreCursor("#kore_string_case_ip1", config.lengthObjective)
-	val len = ScoreCursor("#kore_string_case_len", config.lengthObjective)
+	val iCursor = ScoreCursor("#${INTERNAL_NAME_PREFIX}case_i", config.lengthObjective)
+	val ip1 = ScoreCursor("#${INTERNAL_NAME_PREFIX}case_ip1", config.lengthObjective)
+	val len = ScoreCursor("#${INTERNAL_NAME_PREFIX}case_len", config.lengthObjective)
 
 	storeScoreToNbt(iCursor, libStorageArg, "$stepArgs.i")
 	scoreOperation(ip1, Operation.SET, iCursor)
@@ -100,68 +128,62 @@ private fun DynamicStringRuntime.registerCaseController(
 	ifScoreCompareRunFunction(iCursor, Relation.LESS_THAN, len, name)
 }
 
-internal fun DynamicStringRuntime.lowerControllerHelper(): FunctionWithMacros<UpperMacros> {
+internal fun DynamicStringRuntime.lowerControllerHelper(): FunctionWithMacros<CaseControllerMacros> {
 	lowerStepHelper()
 	return registerCaseController(OopConstants.stringLowerMacroName, OopConstants.stringLowerStepMacroName)
 }
 
-internal fun DynamicStringRuntime.upperControllerHelper(): FunctionWithMacros<UpperMacros> {
+internal fun DynamicStringRuntime.upperControllerHelper(): FunctionWithMacros<CaseControllerMacros> {
 	upperStepHelper()
 	return registerCaseController(OopConstants.stringUpperMacroName, OopConstants.stringUpperStepMacroName)
 }
 
 context(fn: Function)
 private fun DynamicString.runCase(controllerName: String, stepName: String, target: DynamicString) {
-	val rt = fn.datapack.requireDynamicStringRuntime()
-	val scratch = DynamicString(CASE_SCRATCH)
+	val scratch = runtime.scratchString(CASE_SCRATCH)
 	scratch.set("")
-	val stepArgs = rt.argsPath(stepName)
-	fn.data(rt.libStorageArg) {
+	val stepArgs = runtime.argsPath(stepName)
+	fn.data(runtime.libStorageArg) {
 		modify("$stepArgs.src", name)
 		modify("$stepArgs.dst", scratch.name)
 	}
-	val lenCursor = ScoreCursor("#kore_string_case_len", rt.config.lengthObjective)
-	val iCursor = ScoreCursor("#kore_string_case_i", rt.config.lengthObjective)
+	val lenCursor = ScoreCursor("#${INTERNAL_NAME_PREFIX}case_len", runtime.config.lengthObjective)
+	val iCursor = ScoreCursor("#${INTERNAL_NAME_PREFIX}case_i", runtime.config.lengthObjective)
 	length(lenCursor.holder)
 	iCursor.set(fn, 0)
 	fn.ifScoreCompareRunFunction(iCursor, Relation.LESS_THAN, lenCursor, controllerName)
 	if (target != scratch) target.setFrom(scratch)
 }
 
-/** Converts every ASCII lowercase letter to its uppercase counterpart. */
+/** Capitalises only the first character of the string (ASCII). */
 context(fn: Function)
-fun DynamicString.uppercase(target: DynamicString = this) {
-	fn.datapack.requireDynamicStringRuntime().upperControllerHelper()
-	runCase(OopConstants.stringUpperMacroName, OopConstants.stringUpperStepMacroName, target)
+fun DynamicString.capitalize(target: DynamicString = this) = changeFirstCharCase(target, uppercase = true)
+
+/** Lowercases only the first character of the string (ASCII). */
+context(fn: Function)
+fun DynamicString.decapitalize(target: DynamicString = this) = changeFirstCharCase(target, uppercase = false)
+
+context(fn: Function)
+private fun DynamicString.changeFirstCharCase(target: DynamicString, uppercase: Boolean) {
+	val head = runtime.scratchString(CAP_HEAD_SCRATCH)
+	val rest = runtime.scratchString(CAP_REST_SCRATCH)
+	substringTo(head, 0, 1)
+	substringTo(rest, 1)
+	if (uppercase) head.uppercase() else head.lowercase()
+	target.setFrom(head)
+	target.appendFrom(rest)
 }
 
 /** Converts every ASCII uppercase letter to its lowercase counterpart. */
 context(fn: Function)
 fun DynamicString.lowercase(target: DynamicString = this) {
-	fn.datapack.requireDynamicStringRuntime().lowerControllerHelper()
+	runtime.lowerControllerHelper()
 	runCase(OopConstants.stringLowerMacroName, OopConstants.stringLowerStepMacroName, target)
 }
 
-/** Capitalises only the first character of the string (ASCII). */
+/** Converts every ASCII lowercase letter to its uppercase counterpart. */
 context(fn: Function)
-fun DynamicString.capitalize(target: DynamicString = this) {
-	val head = DynamicString("kore_string_cap_head")
-	val rest = DynamicString("kore_string_cap_rest")
-	substringTo(head, 0, 1)
-	substringTo(rest, 1)
-	head.uppercase()
-	target.setFrom(head)
-	target.appendFrom(rest)
-}
-
-/** Lowercases only the first character of the string (ASCII). */
-context(fn: Function)
-fun DynamicString.decapitalize(target: DynamicString = this) {
-	val head = DynamicString("kore_string_cap_head")
-	val rest = DynamicString("kore_string_cap_rest")
-	substringTo(head, 0, 1)
-	substringTo(rest, 1)
-	head.lowercase()
-	target.setFrom(head)
-	target.appendFrom(rest)
+fun DynamicString.uppercase(target: DynamicString = this) {
+	runtime.upperControllerHelper()
+	runCase(OopConstants.stringUpperMacroName, OopConstants.stringUpperStepMacroName, target)
 }

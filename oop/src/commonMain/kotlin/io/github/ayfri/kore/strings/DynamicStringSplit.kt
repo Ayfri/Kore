@@ -17,7 +17,7 @@ class SplitStepMacros internal constructor() : Macros() {
 /** Empty macros holder for the split controller. */
 class SplitMacros internal constructor() : Macros()
 
-private const val SPLIT_SCRATCH = "kore_string_split_scratch"
+private const val SPLIT_SCRATCH = "${INTERNAL_NAME_PREFIX}split_scratch"
 
 /**
  * Step helper that:
@@ -33,13 +33,13 @@ internal fun DynamicStringRuntime.splitStepHelper(): FunctionWithMacros<SplitSte
 		val obj = config.lengthObjective
 		val subArgs = argsPath(OopConstants.stringSubstringMacroName)
 
-		val splitStart = ScoreCursor("#kore_string_split_start", obj)
-		val splitEnd = ScoreCursor("#kore_string_split_end", obj)
-		val splitSrcLen = ScoreCursor("#kore_string_split_srclen", obj)
-		val findI = ScoreCursor("#kore_string_find_i", obj)
-		val findBound = ScoreCursor("#kore_string_find_bound", obj)
+		val splitStart = ScoreCursor("#${INTERNAL_NAME_PREFIX}split_start", obj)
+		val splitEnd = ScoreCursor("#${INTERNAL_NAME_PREFIX}split_end", obj)
+		val splitSrcLen = ScoreCursor("#${INTERNAL_NAME_PREFIX}split_srclen", obj)
+		val findI = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_i", obj)
+		val findBound = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_bound", obj)
 		val findResult = ScoreCursor(FIND_RESULT_HOLDER, obj)
-		val findSubLen = ScoreCursor("#kore_string_find_sublen", obj)
+		val findSubLen = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_sublen", obj)
 
 		scoreOperation(findI, Operation.SET, splitStart)
 		findResult.set(this, -1)
@@ -91,7 +91,7 @@ fun DynamicString.split(delimiter: String, target: KoreStringList) {
 	target.clear()
 
 	val obj = rt.config.lengthObjective
-	val delimPath = rt.tmpPath("kore_string_split_delim")
+	val delimPath = rt.tmpPath("${INTERNAL_NAME_PREFIX}split_delim")
 	val findArgs = rt.argsPath(OopConstants.stringFindStepMacroName)
 	val stepArgs = rt.argsPath(OopConstants.stringSplitStepMacroName)
 	val subArgs = rt.argsPath(OopConstants.stringSubstringMacroName)
@@ -104,10 +104,10 @@ fun DynamicString.split(delimiter: String, target: KoreStringList) {
 		modify("$subArgs.src", name)
 	}
 
-	val srcLen = ScoreCursor("#kore_string_split_srclen", obj)
-	val findSubLen = ScoreCursor("#kore_string_find_sublen", obj)
-	val findBound = ScoreCursor("#kore_string_find_bound", obj)
-	val splitStart = ScoreCursor("#kore_string_split_start", obj)
+	val srcLen = ScoreCursor("#${INTERNAL_NAME_PREFIX}split_srclen", obj)
+	val findSubLen = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_sublen", obj)
+	val findBound = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_bound", obj)
+	val splitStart = ScoreCursor("#${INTERNAL_NAME_PREFIX}split_start", obj)
 
 	length(srcLen.holder)
 	findSubLen.set(fn, delimiter.length)

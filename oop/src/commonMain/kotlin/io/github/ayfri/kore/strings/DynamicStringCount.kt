@@ -10,7 +10,7 @@ import io.github.ayfri.kore.functions.FunctionWithMacros
 import io.github.ayfri.kore.functions.Macros
 
 /** Default score holder storing the result of a count operation. */
-const val COUNT_RESULT_HOLDER = "#kore_string_count"
+const val COUNT_RESULT_HOLDER = "#${INTERNAL_NAME_PREFIX}count"
 
 /** Empty holder for the count controller (state is driven by scores). */
 class CountMacros internal constructor() : Macros()
@@ -24,11 +24,11 @@ internal fun DynamicStringRuntime.countControllerHelper(): FunctionWithMacros<Co
 	ensure(OopConstants.stringCountMacroName, ::CountMacros) {
 		findControllerHelper()
 		val obj = config.lengthObjective
-		val findI = ScoreCursor("#kore_string_find_i", obj)
-		val findBound = ScoreCursor("#kore_string_find_bound", obj)
+		val findI = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_i", obj)
+		val findBound = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_bound", obj)
 		val findResult = ScoreCursor(FIND_RESULT_HOLDER, obj)
-		val findSubLen = ScoreCursor("#kore_string_find_sublen", obj)
-		val countStart = ScoreCursor("#kore_string_count_start", obj)
+		val findSubLen = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_sublen", obj)
+		val countStart = ScoreCursor("#${INTERNAL_NAME_PREFIX}count_start", obj)
 		val count = ScoreCursor(COUNT_RESULT_HOLDER, obj)
 
 		scoreOperation(findI, Operation.SET, countStart)
@@ -63,10 +63,10 @@ private fun primeCountLoop(
 	val obj = rt.config.lengthObjective
 	val controller = rt.countControllerHelper()
 
-	val srcLen = ScoreCursor("#kore_string_find_srclen", obj)
-	val findSubLen = ScoreCursor("#kore_string_find_sublen", obj)
-	val findBound = ScoreCursor("#kore_string_find_bound", obj)
-	val countStart = ScoreCursor("#kore_string_count_start", obj)
+	val srcLen = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_srclen", obj)
+	val findSubLen = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_sublen", obj)
+	val findBound = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_bound", obj)
+	val countStart = ScoreCursor("#${INTERNAL_NAME_PREFIX}count_start", obj)
 	val count = ScoreCursor(COUNT_RESULT_HOLDER, obj)
 
 	context(fn) { source.length(srcLen.holder) }
@@ -93,10 +93,10 @@ context(fn: Function)
 fun DynamicString.count(needle: String, resultHolder: String = COUNT_RESULT_HOLDER): String {
 	require(needle.isNotEmpty()) { "count needle must not be empty." }
 	val rt = fn.datapack.requireDynamicStringRuntime()
-	val needleScratch = rt.tmpPath("kore_string_count_needle")
+	val needleScratch = rt.tmpPath("${INTERNAL_NAME_PREFIX}count_needle")
 	fn.data(rt.libStorageArg) { modify(needleScratch, needle) }
 	val result = primeCountLoop(fn, this, needleScratch) { f ->
-		ScoreCursor("#kore_string_find_sublen", rt.config.lengthObjective).set(f, needle.length)
+		ScoreCursor("#${INTERNAL_NAME_PREFIX}find_sublen", rt.config.lengthObjective).set(f, needle.length)
 	}
 	if (resultHolder != result.holder) ScoreCursor(resultHolder, result.objective).assignFrom(fn, result)
 	return resultHolder
@@ -107,7 +107,7 @@ context(fn: Function)
 fun DynamicString.count(needle: DynamicString, resultHolder: String = COUNT_RESULT_HOLDER): String {
 	val rt = fn.datapack.requireDynamicStringRuntime()
 	val result = primeCountLoop(fn, this, needle.nbtPath) { f ->
-		ScoreCursor("#kore_string_find_sublen", rt.config.lengthObjective)
+		ScoreCursor("#${INTERNAL_NAME_PREFIX}find_sublen", rt.config.lengthObjective)
 			.storeValueOfNbt(f, rt.libStorageArg, needle.nbtPath)
 	}
 	if (resultHolder != result.holder) ScoreCursor(resultHolder, result.objective).assignFrom(fn, result)

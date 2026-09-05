@@ -23,14 +23,14 @@ class FindStepMacros internal constructor() : Macros() {
 class FindMacros internal constructor() : Macros()
 
 /** Slot holding the extracted candidate substring during a find iteration. */
-internal const val FIND_CANDIDATE_SLOT = "kore_string_find_candidate"
-internal const val FIND_EQ_PATH = "tmp.kore_string_find_eq"
+internal const val FIND_CANDIDATE_SLOT = "${INTERNAL_NAME_PREFIX}find_candidate"
+internal const val FIND_EQ_KEY = "${INTERNAL_NAME_PREFIX}find_eq"
 
 /** Default score holder storing the result of a find (-1 when absent). */
-const val FIND_RESULT_HOLDER = "#kore_string_find"
+const val FIND_RESULT_HOLDER = "#${INTERNAL_NAME_PREFIX}find"
 
 /** Default score holder storing the result of a contains check (0 / 1). */
-const val CONTAINS_RESULT_HOLDER = "#kore_string_contains"
+const val CONTAINS_RESULT_HOLDER = "#${INTERNAL_NAME_PREFIX}contains"
 
 /**
  * Registers the atomic find-step macro that extracts a candidate substring and compares it with
@@ -46,10 +46,11 @@ internal fun DynamicStringRuntime.findStepHelper(): FunctionWithMacros<FindStepM
 			startExpr = macros.start,
 			endExpr = macros.end,
 		)
-		copyNbt(libStorageArg, FIND_EQ_PATH, libStorageArg, macros.needlePath)
+		val eqPath = tmpPath(FIND_EQ_KEY)
+		copyNbt(libStorageArg, eqPath, libStorageArg, macros.needlePath)
 		addLine(
-			"execute store success score #kore_string_diff ${config.lengthObjective} run " +
-				"data modify storage $libStorage $FIND_EQ_PATH set from " +
+			"execute store success score #${INTERNAL_NAME_PREFIX}diff ${config.lengthObjective} run " +
+				"data modify storage $libStorage $eqPath set from " +
 				"storage $libStorage ${heapPath(FIND_CANDIDATE_SLOT)}"
 		)
 	}
@@ -59,12 +60,12 @@ internal fun DynamicStringRuntime.findControllerHelper(): FunctionWithMacros<Fin
 	ensure(OopConstants.stringFindMacroName, ::FindMacros) {
 		findStepHelper()
 		val findArgs = argsPath(OopConstants.stringFindStepMacroName)
-		val iCursor = ScoreCursor("#kore_string_find_i", config.lengthObjective)
-		val ipSub = ScoreCursor("#kore_string_find_ipsub", config.lengthObjective)
-		val subLen = ScoreCursor("#kore_string_find_sublen", config.lengthObjective)
-		val diff = ScoreCursor("#kore_string_diff", config.lengthObjective)
+		val iCursor = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_i", config.lengthObjective)
+		val ipSub = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_ipsub", config.lengthObjective)
+		val subLen = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_sublen", config.lengthObjective)
+		val diff = ScoreCursor("#${INTERNAL_NAME_PREFIX}diff", config.lengthObjective)
 		val result = ScoreCursor(FIND_RESULT_HOLDER, config.lengthObjective)
-		val bound = ScoreCursor("#kore_string_find_bound", config.lengthObjective)
+		val bound = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_bound", config.lengthObjective)
 
 		storeScoreToNbt(iCursor, libStorageArg, "$findArgs.start")
 		scoreOperation(ipSub, Operation.SET, iCursor)
@@ -99,10 +100,10 @@ private fun DynamicString.preparePrelude(
 ): FindPrelude {
 	val rt = fn.datapack.requireDynamicStringRuntime()
 	val obj = rt.config.lengthObjective
-	val srcLen = ScoreCursor("#kore_string_find_srclen", obj)
-	val subLen = ScoreCursor("#kore_string_find_sublen", obj)
-	val bound = ScoreCursor("#kore_string_find_bound", obj)
-	val i = ScoreCursor("#kore_string_find_i", obj)
+	val srcLen = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_srclen", obj)
+	val subLen = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_sublen", obj)
+	val bound = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_bound", obj)
+	val i = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_i", obj)
 	val result = ScoreCursor(FIND_RESULT_HOLDER, obj)
 
 	context(fn) { length(srcLen.holder) }
@@ -133,7 +134,7 @@ fun DynamicString.indexOf(needle: String, resultHolder: String = FIND_RESULT_HOL
 	require(needle.isNotEmpty()) { "indexOf needle must not be empty." }
 	val rt = fn.datapack.requireDynamicStringRuntime()
 	val controller = rt.findControllerHelper()
-	val needleScratch = rt.tmpPath("kore_string_find_needle")
+	val needleScratch = rt.tmpPath("${INTERNAL_NAME_PREFIX}find_needle")
 	fn.data(rt.libStorageArg) { modify(needleScratch, needle) }
 	val prelude = preparePrelude(fn, needleScratch, needle.length)
 	fn.ifScoreMatchesRunFunction(prelude.bound, rangeOrIntStart(0), controller.name)

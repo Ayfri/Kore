@@ -5,11 +5,11 @@ import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrIntStart
 import io.github.ayfri.kore.commands.data
 import io.github.ayfri.kore.functions.Function
 
-private const val PAD_CAP_SCORE = "#kore_string_pad_cap"
-private const val PAD_DIFF_SCORE = "#kore_string_pad_diff"
-private const val PAD_LEN_SCORE = "#kore_string_pad_len"
-private const val PAD_SCRATCH = "kore_string_pad_scratch"
-private const val PAD_SRC_COPY = "kore_string_pad_src"
+private const val PAD_CAP_SCORE = "#${INTERNAL_NAME_PREFIX}pad_cap"
+private const val PAD_DIFF_SCORE = "#${INTERNAL_NAME_PREFIX}pad_diff"
+private const val PAD_LEN_SCORE = "#${INTERNAL_NAME_PREFIX}pad_len"
+private const val PAD_SCRATCH = "${INTERNAL_NAME_PREFIX}pad_scratch"
+private const val PAD_SRC_COPY = "${INTERNAL_NAME_PREFIX}pad_src"
 
 /**
  * Runs the existing repeat controller dynamically. `scratch` is both the source and the destination
@@ -28,9 +28,9 @@ private fun dynamicRepeatInPlace(fn: Function, scratch: DynamicString, cap: Scor
 		modify("$controllerArgs.src", scratch.name)
 		modify("$controllerArgs.dst", scratch.name)
 	}
-	ScoreCursor("#kore_string_repeat_cap", cap.objective).assignFrom(fn, cap)
+	ScoreCursor("#${INTERNAL_NAME_PREFIX}repeat_cap", cap.objective).assignFrom(fn, cap)
 	fn.ifScoreMatchesRunMacro(
-		cursor = ScoreCursor("#kore_string_repeat_cap", cap.objective),
+		cursor = ScoreCursor("#${INTERNAL_NAME_PREFIX}repeat_cap", cap.objective),
 		range = rangeOrIntStart(1),
 		name = OopConstants.stringRepeatMacroName,
 		storage = rt.libStorageArg,
@@ -51,7 +51,7 @@ private fun applyPad(
 	rt.concatHelper()
 	val obj = rt.config.lengthObjective
 
-	val srcCopy = DynamicString(PAD_SRC_COPY)
+	val srcCopy = rt.scratchString(PAD_SRC_COPY)
 	context(fn) { srcCopy.setFrom(source) }
 
 	val curLen = ScoreCursor(PAD_LEN_SCORE, obj)
@@ -63,7 +63,7 @@ private fun applyPad(
 	context(fn) { target.setFrom(srcCopy) }
 	if (targetLength == 0) return
 
-	val scratch = DynamicString(PAD_SCRATCH)
+	val scratch = rt.scratchString(PAD_SCRATCH)
 	fn.data(rt.libStorageArg) { modify(scratch.nbtPath, padChar.toString()) }
 
 	val capCursor = ScoreCursor(PAD_CAP_SCORE, obj)

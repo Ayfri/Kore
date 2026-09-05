@@ -8,6 +8,8 @@ import io.github.ayfri.kore.functions.FunctionWithMacros
 import io.github.ayfri.kore.functions.Macros
 import io.github.ayfri.kore.functions.getValue
 
+private const val REPEAT_SRC_SCRATCH = "${INTERNAL_NAME_PREFIX}repeat_src"
+
 /** Macros for the `kore_string_repeat_step` helper. */
 class RepeatStepMacros internal constructor() : Macros() {
 	val dst by "dst"
@@ -33,7 +35,7 @@ internal fun DynamicStringRuntime.repeatStepHelper(): FunctionWithMacros<RepeatS
 internal fun DynamicStringRuntime.repeatControllerHelper(): FunctionWithMacros<RepeatMacros> =
 	ensure(OopConstants.stringRepeatMacroName, ::RepeatMacros) {
 		repeatStepHelper()
-		val cap = ScoreCursor("#kore_string_repeat_cap", config.lengthObjective)
+		val cap = ScoreCursor("#${INTERNAL_NAME_PREFIX}repeat_cap", config.lengthObjective)
 		val stepArgs = argsPath(OopConstants.stringRepeatStepMacroName)
 		val controllerArgs = argsPath(OopConstants.stringRepeatMacroName)
 
@@ -67,7 +69,7 @@ fun DynamicString.repeat(times: Int, target: DynamicString = this) {
 		target.set("")
 		return
 	}
-	val srcBuf = DynamicString("kore_string_repeat_src")
+	val srcBuf = rt.scratchString(REPEAT_SRC_SCRATCH)
 	srcBuf.setFrom(this)
 	target.setFrom(srcBuf)
 	if (times == 1) return
@@ -82,6 +84,6 @@ fun DynamicString.repeat(times: Int, target: DynamicString = this) {
 		modify("$controllerArgs.src", srcBuf.name)
 		modify("$controllerArgs.dst", target.name)
 	}
-	ScoreCursor("#kore_string_repeat_cap", rt.config.lengthObjective).set(fn, times - 1)
+	ScoreCursor("#${INTERNAL_NAME_PREFIX}repeat_cap", rt.config.lengthObjective).set(fn, times - 1)
 	fn.callMacro(OopConstants.stringRepeatMacroName, rt.libStorageArg, controllerArgs)
 }

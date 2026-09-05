@@ -5,27 +5,34 @@ import io.github.ayfri.kore.OopConstants
 import io.github.ayfri.kore.arguments.types.resources.StorageArgument
 import io.github.ayfri.kore.arguments.types.resources.storage
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
+import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.FunctionWithMacros
 import io.github.ayfri.kore.functions.Macros
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.functions.load
 
+/** Name prefix reserved for the scratch slots the module allocates for itself. */
+internal const val INTERNAL_NAME_PREFIX = "kore_string_"
+
 /**
  * Configuration knobs for the Kore dynamic string runtime. Every string helper routes its
- * reads / writes through the values exposed here, so swapping the storage namespace or the backing
- * objective is a single-call change.
+ * reads / writes through the values exposed here, so swapping the storage namespace, the NBT roots
+ * or the backing objective is a single-call change.
  *
- * Defaults mirror the values stored on [OopConstants].
+ * Defaults mirror the values stored on [OopConstants], which are themselves mutable if you would
+ * rather change them globally than per datapack.
  */
 data class DynamicStringConfig(
 	val argsRoot: String = OopConstants.stringArgsRoot,
-	val heapRoot: String = "heap",
+	val heapRoot: String = OopConstants.stringHeapRoot,
 	val lengthHolder: String = OopConstants.stringLengthHolder,
 	val lengthObjective: String = OopConstants.stringLengthObjective,
-	val listsRoot: String = "lists",
+	val listsRoot: String = OopConstants.stringListsRoot,
 	val storageName: String = OopConstants.stringStorageName,
 	val storageNamespace: String = OopConstants.stringStorageNamespace,
+	val tablesRoot: String = OopConstants.stringTablesRoot,
 	val tmpRoot: String = OopConstants.stringTmpRoot,
+	val trimWhitespace: List<String> = OopConstants.stringTrimWhitespace,
 )
 
 /**
@@ -39,19 +46,22 @@ class DynamicStringRuntime internal constructor(
 	val datapack: DataPack,
 	val config: DynamicStringConfig = DynamicStringConfig(),
 ) {
-	internal val allocatedListNames = mutableSetOf<String>()
-	internal val allocatedStringNames = mutableSetOf<String>()
 	internal val libStorageArg: StorageArgument = storage(config.storageName, config.storageNamespace)
 	internal val libStorage: String = libStorageArg.asString()
-	internal val registered = mutableMapOf<String, FunctionWithMacros<*>>()
 
+	private val allocatedListNames = mutableSetOf<String>()
+	private val allocatedStringNames = mutableSetOf<String>()
 	private var anonymousCounter = 0
+	private val loadedKeys = mutableSetOf<String>()
+	private val registered = mutableMapOf<String, FunctionWithMacros<*>>()
 
 	internal fun allocateList(name: String) {
+		requireUserName(name, "KoreStringList")
 		require(allocatedListNames.add(name)) { "KoreStringList name '$name' is already allocated in this datapack." }
 	}
 
 	internal fun allocateString(name: String) {
+		requireUserName(name, "DynamicString")
 		require(allocatedStringNames.add(name)) { "DynamicString name '$name' is already allocated in this datapack." }
 	}
 
@@ -59,7 +69,14 @@ class DynamicStringRuntime internal constructor(
 	internal fun heapPath(name: String): String = "${config.heapRoot}.$name"
 	internal fun listsPath(name: String): String = "${config.listsRoot}.$name"
 	internal fun nextAnonymousName(prefix: String): String = "${prefix}_${anonymousCounter++}"
+	internal fun tablesPath(name: String): String = "${config.tablesRoot}.$name"
 	internal fun tmpPath(name: String): String = "${config.tmpRoot}.$name"
+
+	/** Builds a handle on one of the module's own scratch slots, bypassing the user-facing name allocation. */
+	internal fun scratchList(name: String) = KoreStringList(name, this)
+
+	/** Builds a handle on one of the module's own scratch slots, bypassing the user-facing name allocation. */
+	internal fun scratchString(name: String) = DynamicString(name, this)
 
 	internal fun <T : Macros> ensure(
 		name: String,
@@ -71,6 +88,16 @@ class DynamicStringRuntime internal constructor(
 			datapack.function(name = name, macros = factory, namespace = datapack.name, function = body)
 		} as FunctionWithMacros<T>
 	}
+
+	/** Registers [body] in the load tag once per [key], used by helpers needing world-load initialisation. */
+	internal fun ensureLoaded(key: String, body: Function.() -> Unit) {
+		if (!loadedKeys.add(key)) return
+		datapack.load(name = "${key}_init", namespace = datapack.name, block = body)
+	}
+
+	private fun requireUserName(name: String, kind: String) = require(!name.startsWith(INTERNAL_NAME_PREFIX)) {
+		"$kind name '$name' uses the reserved '$INTERNAL_NAME_PREFIX' prefix, which the string module keeps for its own scratch slots."
+	}
 }
 
 /** [DataPack] has no `equals`/`hashCode` override, so this keys on instance identity. */
@@ -81,7 +108,7 @@ private val runtimes = mutableMapOf<DataPack, DynamicStringRuntime>()
  * objective) and returns the lazy [DynamicStringRuntime] used by every helper to self-register.
  *
  * Call this exactly once per datapack, before any `DynamicString` / `KoreStringList` helper. Pass a
- * custom [config] to swap the underlying storage namespace / heap root / scoreboard objective.
+ * custom [config] to swap the underlying storage namespace / NBT roots / scoreboard objective.
  */
 fun DataPack.registerDynamicStrings(config: DynamicStringConfig = DynamicStringConfig()): DynamicStringRuntime =
 	runtimes.getOrPut(this) {
@@ -98,15 +125,3 @@ fun DataPack.registerDynamicStrings(config: DynamicStringConfig = DynamicStringC
 /** Returns the runtime previously created by [registerDynamicStrings] or throws if missing. */
 internal fun DataPack.requireDynamicStringRuntime(): DynamicStringRuntime =
 	runtimes[this] ?: error("registerDynamicStrings() must be called before any DynamicString helper.")
-
-/** Full path of an internal scratch slot inside the kore string storage. */
-internal fun DataPack.tmpPath(name: String): String = requireDynamicStringRuntime().tmpPath(name)
-
-/** Full path of the macro args compound for the given helper. */
-internal fun DataPack.argsPath(helper: String): String = requireDynamicStringRuntime().argsPath(helper)
-
-/** Top-level shortcut reading through the current active runtime. Prefer the [DataPack] receiver variants. */
-internal fun tmpPath(name: String): String = "${OopConstants.stringTmpRoot}.$name"
-
-/** Top-level shortcut reading through the current active runtime. Prefer the [DataPack] receiver variants. */
-internal fun argsPath(helper: String): String = "${OopConstants.stringArgsRoot}.$helper"

@@ -20,7 +20,7 @@ class ToListStepMacros internal constructor() : Macros() {
 /** Empty macros holder used by the to-list controller loop. */
 class ToListMacros internal constructor() : Macros()
 
-private const val TO_LIST_SCRATCH = "kore_string_to_list_scratch"
+private const val TO_LIST_SCRATCH = "${INTERNAL_NAME_PREFIX}to_list_scratch"
 
 internal fun DynamicStringRuntime.toListStepHelper(): FunctionWithMacros<ToListStepMacros> =
 	ensure(OopConstants.stringToListStepMacroName, ::ToListStepMacros) {
@@ -42,9 +42,9 @@ internal fun DynamicStringRuntime.toListControllerHelper(): FunctionWithMacros<T
 	ensure(OopConstants.stringToListMacroName, ::ToListMacros) {
 		toListStepHelper()
 		val stepArgs = argsPath(OopConstants.stringToListStepMacroName)
-		val iCursor = ScoreCursor("#kore_string_tl_i", config.lengthObjective)
-		val ip1 = ScoreCursor("#kore_string_tl_ip1", config.lengthObjective)
-		val len = ScoreCursor("#kore_string_tl_len", config.lengthObjective)
+		val iCursor = ScoreCursor("#${INTERNAL_NAME_PREFIX}tl_i", config.lengthObjective)
+		val ip1 = ScoreCursor("#${INTERNAL_NAME_PREFIX}tl_ip1", config.lengthObjective)
+		val len = ScoreCursor("#${INTERNAL_NAME_PREFIX}tl_len", config.lengthObjective)
 
 		storeScoreToNbt(iCursor, libStorageArg, "$stepArgs.i")
 		scoreOperation(ip1, Operation.SET, iCursor)
@@ -66,8 +66,8 @@ fun DynamicString.toList(target: KoreStringList) {
 	val controller = rt.toListControllerHelper()
 	target.clear()
 
-	val lenCursor = ScoreCursor("#kore_string_tl_len", rt.config.lengthObjective)
-	val iCursor = ScoreCursor("#kore_string_tl_i", rt.config.lengthObjective)
+	val lenCursor = ScoreCursor("#${INTERNAL_NAME_PREFIX}tl_len", rt.config.lengthObjective)
+	val iCursor = ScoreCursor("#${INTERNAL_NAME_PREFIX}tl_i", rt.config.lengthObjective)
 	length(lenCursor.holder)
 	iCursor.set(fn, 0)
 

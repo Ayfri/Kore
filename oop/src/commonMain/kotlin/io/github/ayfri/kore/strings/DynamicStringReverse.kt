@@ -12,8 +12,8 @@ import io.github.ayfri.kore.functions.Macros
 class ReverseMacros internal constructor() : Macros()
 
 /** Scratch heap slot used to extract a single character each reverse iteration. */
-private const val REVERSE_ACCUMULATOR = "kore_string_rev_out"
-private const val REVERSE_SCRATCH = "kore_string_reverse_scratch"
+private const val REVERSE_ACCUMULATOR = "${INTERNAL_NAME_PREFIX}rev_out"
+private const val REVERSE_SCRATCH = "${INTERNAL_NAME_PREFIX}reverse_scratch"
 
 /**
  * Emits the re-entrant tail function that consumes one character per iteration. Relies on the
@@ -26,8 +26,8 @@ internal fun DynamicStringRuntime.reverseTailHelper(): FunctionWithMacros<Revers
 
 		val subArgs = argsPath(OopConstants.stringSubstringMacroName)
 		val cArgs = argsPath(OopConstants.stringConcatMacroName)
-		val iCursor = ScoreCursor("#kore_string_rev_i", config.lengthObjective)
-		val ip1 = ScoreCursor("#kore_string_rev_ip1", config.lengthObjective)
+		val iCursor = ScoreCursor("#${INTERNAL_NAME_PREFIX}rev_i", config.lengthObjective)
+		val ip1 = ScoreCursor("#${INTERNAL_NAME_PREFIX}rev_ip1", config.lengthObjective)
 
 		storeScoreToNbt(iCursor, libStorageArg, "$subArgs.start")
 		scoreOperation(ip1, Operation.SET, iCursor)
@@ -59,14 +59,14 @@ fun DynamicString.reverse(target: DynamicString = this) {
 	val rt = fn.datapack.requireDynamicStringRuntime()
 	val tail = rt.reverseTailHelper()
 
-	val accumulator = DynamicString(REVERSE_ACCUMULATOR)
+	val accumulator = rt.scratchString(REVERSE_ACCUMULATOR)
 	accumulator.set("")
 
 	val subArgs = rt.argsPath(OopConstants.stringSubstringMacroName)
 	fn.data(rt.libStorageArg) { modify("$subArgs.src", name) }
 
-	val iCursor = ScoreCursor("#kore_string_rev_i", rt.config.lengthObjective)
-	val lenCursor = ScoreCursor("#kore_string_rev_len", rt.config.lengthObjective)
+	val iCursor = ScoreCursor("#${INTERNAL_NAME_PREFIX}rev_i", rt.config.lengthObjective)
+	val lenCursor = ScoreCursor("#${INTERNAL_NAME_PREFIX}rev_len", rt.config.lengthObjective)
 	length(lenCursor.holder)
 	iCursor.assignFrom(fn, lenCursor)
 	iCursor.sub(fn, 1)

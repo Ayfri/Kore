@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.strings
 
 import io.github.ayfri.kore.OopConstants
+import io.github.ayfri.kore.arguments.enums.Relation
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrIntStart
 import io.github.ayfri.kore.commands.data
 import io.github.ayfri.kore.commands.scoreboard.Operation
@@ -19,57 +20,29 @@ class ReplaceMacros internal constructor() : Macros() {
 	val srcName by "srcName"
 }
 
-/** Kept for symmetric runtime access (range replacements do not need a macro). */
-class ReplaceRangeMacros internal constructor() : Macros()
-
-private const val REPLACE_AFTER = "kore_string_replace_after"
-private const val REPLACE_BEFORE = "kore_string_replace_before"
-private const val REPLACE_NEEDLE_PATH = "tmp.kore_string_replace_needle"
-private const val REPLACE_NEW_PATH = "tmp.kore_string_replace_new"
-
-/** Replaces the content of `this[start, end)` with [replacement] in place. */
-context(fn: Function)
-fun DynamicString.replaceRange(start: Int, end: Int, replacement: String) {
-	require(start in 0..end) { "replaceRange: invalid range [$start, $end)" }
-	val before = DynamicString(REPLACE_BEFORE)
-	val after = DynamicString(REPLACE_AFTER)
-	substringTo(before, 0, start)
-	substringTo(after, end)
-	setFrom(before)
-	append(replacement)
-	appendFrom(after)
-}
-
-/** Dynamic variant accepting a [DynamicString] as replacement. */
-context(fn: Function)
-fun DynamicString.replaceRange(start: Int, end: Int, replacement: DynamicString) {
-	require(start in 0..end) { "replaceRange: invalid range [$start, $end)" }
-	val before = DynamicString(REPLACE_BEFORE)
-	val after = DynamicString(REPLACE_AFTER)
-	substringTo(before, 0, start)
-	substringTo(after, end)
-	setFrom(before)
-	appendFrom(replacement)
-	appendFrom(after)
-}
+private const val REPLACE_AFTER = "${INTERNAL_NAME_PREFIX}replace_after"
+private const val REPLACE_BEFORE = "${INTERNAL_NAME_PREFIX}replace_before"
+private const val REPLACE_NEEDLE_KEY = "${INTERNAL_NAME_PREFIX}replace_needle"
+private const val REPLACE_NEW_KEY = "${INTERNAL_NAME_PREFIX}replace_new"
 
 /**
  * Macro step performing a single in-place replacement at the already-resolved position
  * `#kore_string_find`:
  *   1. `before = src[0 .. #find)`
  *   2. `after  = src[#find + oldLen .. srcLen)`
- *   3. `src    = before`, then append `tmp.kore_string_replace_new`, then append `after`.
+ *   3. `src    = before`, then append the replacement, then append `after`.
  */
 internal fun DynamicStringRuntime.replaceStepHelper(): FunctionWithMacros<ReplaceStepMacros> =
 	ensure(OopConstants.stringReplaceStepMacroName, ::ReplaceStepMacros) {
 		substringHelper()
 		val obj = config.lengthObjective
 		val subArgs = argsPath(OopConstants.stringSubstringMacroName)
-		val zero = ScoreCursor("#kore_string_zero", obj)
+		val newPath = tmpPath(REPLACE_NEW_KEY)
+		val zero = ScoreCursor("#${INTERNAL_NAME_PREFIX}zero", obj)
 		val findResult = ScoreCursor(FIND_RESULT_HOLDER, obj)
-		val findSubLen = ScoreCursor("#kore_string_find_sublen", obj)
-		val srcLen = ScoreCursor("#kore_string_replace_srclen", obj)
-		val afterStart = ScoreCursor("#kore_string_replace_after_start", obj)
+		val findSubLen = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_sublen", obj)
+		val srcLen = ScoreCursor("#${INTERNAL_NAME_PREFIX}replace_srclen", obj)
+		val afterStart = ScoreCursor("#${INTERNAL_NAME_PREFIX}replace_after_start", obj)
 
 		zero.set(this, 0)
 		storeScoreToNbt(zero, libStorageArg, "$subArgs.start")
@@ -89,7 +62,7 @@ internal fun DynamicStringRuntime.replaceStepHelper(): FunctionWithMacros<Replac
 		copyNbt(libStorageArg, heapPath(macros.srcName), libStorageArg, heapPath(REPLACE_BEFORE))
 		data(libStorageArg) {
 			modify(heapPath(macros.srcName)) {
-				append(libStorageArg, REPLACE_NEW_PATH)
+				append(libStorageArg, newPath)
 			}
 			modify(heapPath(macros.srcName)) {
 				append(libStorageArg, heapPath(REPLACE_AFTER))
@@ -98,8 +71,12 @@ internal fun DynamicStringRuntime.replaceStepHelper(): FunctionWithMacros<Replac
 	}
 
 /**
- * Replace controller loop: finds the next match, mutates the source with the replace-step macro
- * then decrements the `#kore_string_replace_cap` counter before re-entering the loop.
+ * Replace controller loop: searches from `#kore_string_replace_start` onwards, mutates the source
+ * with the replace-step macro, then moves the cursor past the inserted replacement before
+ * re-entering the loop.
+ *
+ * Restarting the search past the replacement is what keeps `replace("a", "aa")` finite: a naive
+ * loop searching from index `0` would keep matching the text it just wrote.
  */
 internal fun DynamicStringRuntime.replaceControllerHelper(): FunctionWithMacros<ReplaceMacros> =
 	ensure(OopConstants.stringReplaceMacroName, ::ReplaceMacros) {
@@ -108,19 +85,22 @@ internal fun DynamicStringRuntime.replaceControllerHelper(): FunctionWithMacros<
 		val obj = config.lengthObjective
 		val stepArgs = argsPath(OopConstants.stringReplaceStepMacroName)
 		val controllerArgs = argsPath(OopConstants.stringReplaceMacroName)
-		val srcLen = ScoreCursor("#kore_string_replace_srclen", obj)
-		val findBound = ScoreCursor("#kore_string_find_bound", obj)
-		val findSubLen = ScoreCursor("#kore_string_find_sublen", obj)
-		val findI = ScoreCursor("#kore_string_find_i", obj)
+		val cap = ScoreCursor("#${INTERNAL_NAME_PREFIX}replace_cap", obj)
+		val findBound = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_bound", obj)
+		val findI = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_i", obj)
 		val findResult = ScoreCursor(FIND_RESULT_HOLDER, obj)
-		val cap = ScoreCursor("#kore_string_replace_cap", obj)
+		val findSubLen = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_sublen", obj)
+		val newLen = ScoreCursor("#${INTERNAL_NAME_PREFIX}replace_newlen", obj)
+		val srcLen = ScoreCursor("#${INTERNAL_NAME_PREFIX}replace_srclen", obj)
+		val start = ScoreCursor("#${INTERNAL_NAME_PREFIX}replace_start", obj)
 
 		storeNbtToScore(srcLen, libStorageArg, heapPath(macros.srcName))
 		scoreOperation(findBound, Operation.SET, srcLen)
 		scoreOperation(findBound, Operation.REMOVE, findSubLen)
-		findI.set(this, 0)
+		scoreOperation(findI, Operation.SET, start)
 		findResult.set(this, -1)
-		ifScoreMatchesRunFunction(findBound, rangeOrIntStart(0), OopConstants.stringFindMacroName)
+		ifScoreCompareRunFunction(findI, Relation.LESS_THAN_OR_EQUAL_TO, findBound, OopConstants.stringFindMacroName)
+
 		addLine(
 			"execute unless score ${findResult.holder} $obj matches -1 " +
 				"run scoreboard players remove ${cap.holder} $obj 1"
@@ -133,6 +113,16 @@ internal fun DynamicStringRuntime.replaceControllerHelper(): FunctionWithMacros<
 		)
 		addLine(
 			"execute unless score ${findResult.holder} $obj matches -1 " +
+				"if score ${cap.holder} $obj matches 0.. " +
+				"run scoreboard players operation ${start.holder} $obj = ${findResult.holder} $obj"
+		)
+		addLine(
+			"execute unless score ${findResult.holder} $obj matches -1 " +
+				"if score ${cap.holder} $obj matches 0.. " +
+				"run scoreboard players operation ${start.holder} $obj += ${newLen.holder} $obj"
+		)
+		addLine(
+			"execute unless score ${findResult.holder} $obj matches -1 " +
 				"if score ${cap.holder} $obj matches 1.. " +
 				"run function ${datapack.name}:${OopConstants.stringReplaceMacroName} " +
 				"with storage $libStorage $controllerArgs"
@@ -140,23 +130,27 @@ internal fun DynamicStringRuntime.replaceControllerHelper(): FunctionWithMacros<
 	}
 
 private fun DynamicString.beginReplace(fn: Function, oldValue: String, newValue: String, cap: Int) {
-	val rt = fn.datapack.requireDynamicStringRuntime()
-	rt.replaceControllerHelper()
-	val findArgs = rt.argsPath(OopConstants.stringFindStepMacroName)
-	val controllerArgs = rt.argsPath(OopConstants.stringReplaceMacroName)
-	val stepArgs = rt.argsPath(OopConstants.stringReplaceStepMacroName)
+	require(oldValue.isNotEmpty()) { "replace oldValue must not be empty." }
+	val obj = runtime.config.lengthObjective
+	runtime.replaceControllerHelper()
+	val controllerArgs = runtime.argsPath(OopConstants.stringReplaceMacroName)
+	val findArgs = runtime.argsPath(OopConstants.stringFindStepMacroName)
+	val needlePath = runtime.tmpPath(REPLACE_NEEDLE_KEY)
+	val stepArgs = runtime.argsPath(OopConstants.stringReplaceStepMacroName)
 
-	fn.data(rt.libStorageArg) {
-		modify(REPLACE_NEW_PATH, newValue)
-		modify(REPLACE_NEEDLE_PATH, oldValue)
+	fn.data(runtime.libStorageArg) {
+		modify(runtime.tmpPath(REPLACE_NEW_KEY), newValue)
+		modify(needlePath, oldValue)
 		modify("$findArgs.src", name)
-		modify("$findArgs.needlePath", REPLACE_NEEDLE_PATH)
+		modify("$findArgs.needlePath", needlePath)
 		modify("$controllerArgs.srcName", name)
 		modify("$stepArgs.srcName", name)
 	}
-	ScoreCursor("#kore_string_find_sublen", rt.config.lengthObjective).set(fn, oldValue.length)
-	ScoreCursor("#kore_string_replace_cap", rt.config.lengthObjective).set(fn, cap)
-	fn.callMacro(OopConstants.stringReplaceMacroName, rt.libStorageArg, controllerArgs)
+	ScoreCursor("#${INTERNAL_NAME_PREFIX}find_sublen", obj).set(fn, oldValue.length)
+	ScoreCursor("#${INTERNAL_NAME_PREFIX}replace_cap", obj).set(fn, cap)
+	ScoreCursor("#${INTERNAL_NAME_PREFIX}replace_newlen", obj).set(fn, newValue.length)
+	ScoreCursor("#${INTERNAL_NAME_PREFIX}replace_start", obj).set(fn, 0)
+	fn.callMacro(OopConstants.stringReplaceMacroName, runtime.libStorageArg, controllerArgs)
 }
 
 /** Replaces every occurrence of [oldValue] with [newValue] inside this string (in place). */
@@ -166,3 +160,29 @@ fun DynamicString.replace(oldValue: String, newValue: String) = beginReplace(fn,
 /** Replaces only the first occurrence of [oldValue] with [newValue] inside this string. */
 context(fn: Function)
 fun DynamicString.replaceFirst(oldValue: String, newValue: String) = beginReplace(fn, oldValue, newValue, 1)
+
+/** Replaces the content of `this[start, end)` with [replacement] in place. */
+context(fn: Function)
+fun DynamicString.replaceRange(start: Int, end: Int, replacement: String) {
+	require(start in 0..end) { "replaceRange: invalid range [$start, $end)" }
+	val after = runtime.scratchString(REPLACE_AFTER)
+	val before = runtime.scratchString(REPLACE_BEFORE)
+	substringTo(before, 0, start)
+	substringTo(after, end)
+	setFrom(before)
+	append(replacement)
+	appendFrom(after)
+}
+
+/** Dynamic variant accepting a [DynamicString] as replacement. */
+context(fn: Function)
+fun DynamicString.replaceRange(start: Int, end: Int, replacement: DynamicString) {
+	require(start in 0..end) { "replaceRange: invalid range [$start, $end)" }
+	val after = runtime.scratchString(REPLACE_AFTER)
+	val before = runtime.scratchString(REPLACE_BEFORE)
+	substringTo(before, 0, start)
+	substringTo(after, end)
+	setFrom(before)
+	appendFrom(replacement)
+	appendFrom(after)
+}

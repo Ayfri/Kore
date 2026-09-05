@@ -53,7 +53,7 @@ context(fn: Function)
 fun DynamicString.parseTo(target: DataArgument, targetPath: String) {
 	val rt = fn.datapack.requireDynamicStringRuntime()
 	rt.parseHelper()
-	val args = argsPath(OopConstants.stringParseMacroName)
+	val args = rt.argsPath(OopConstants.stringParseMacroName)
 	fn.data(storage) {
 		modify("$args.value") { set(storage, nbtPath) }
 		modify("$args.dstStorage", target.asString())
@@ -75,7 +75,7 @@ context(fn: Function)
 fun DynamicString.setFromNbt(source: DataArgument, sourcePath: String) {
 	val rt = fn.datapack.requireDynamicStringRuntime()
 	rt.toStringHelper()
-	val args = argsPath(OopConstants.stringToStringMacroName)
+	val args = rt.argsPath(OopConstants.stringToStringMacroName)
 	fn.data(storage) {
 		modify("$args.value") { set(source, sourcePath) }
 		modify("$args.dstName", name)
