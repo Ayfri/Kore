@@ -66,6 +66,11 @@ fun stringsTests() = dataPack("unit_tests") {
 		lines.size assertsIs 1
 	}
 
+	function("string_as_raw_argument") {
+		tellraw(allPlayers(), greeting.asChatComponents(interpret = false)) assertsIs
+			"""tellraw @a {type:"nbt",interpret:0b,nbt:"heap.greeting",source:"storage",storage:"$LIB"}"""
+	}
+
 	greeting.asChatComponents() assertsIsJson """
 		{
 			"type": "nbt",
@@ -158,39 +163,52 @@ fun concatTests() = dataPack("unit_tests") {
 	val other = dynamicString("other")
 	val target = dynamicString("target")
 
+	// Two literals are folded at generation time, no macro and no runtime work at all.
 	function("concat_literals") {
 		concat(target, "x", "y")
-		lines assertsIs listOf(
-			"""data modify storage $LIB args.kore_string_concat.a set value "x"""",
-			"""data modify storage $LIB args.kore_string_concat.b set value "y"""",
-			"""data modify storage $LIB args.kore_string_concat.dst set value "target"""",
-			"function unit_tests:kore_string_concat with storage $LIB args.kore_string_concat",
-		)
+		lines assertsIs listOf("""data modify storage $LIB heap.target set value "xy"""")
 	}
 
 	function("concat_mixed") {
 		concat(target, greeting, "!")
-		lines.first() assertsIs
-			"data modify storage $LIB args.kore_string_concat.a set from storage $LIB heap.greeting"
-		lines[1] assertsIs """data modify storage $LIB args.kore_string_concat.b set value "!""""
+		lines assertsIs listOf(
+			"data modify storage $LIB heap.target set from storage $LIB heap.greeting",
+			"""data modify storage $LIB tmp.kore_string_concat_tmp set value "!"""",
+			"data modify storage $LIB heap.target append string storage $LIB tmp.kore_string_concat_tmp",
+		)
 
 		concat(target, "!", greeting)
-		lines[4] assertsIs """data modify storage $LIB args.kore_string_concat.a set value "!""""
-		lines[5] assertsIs
-			"data modify storage $LIB args.kore_string_concat.b set from storage $LIB heap.greeting"
+		lines[3] assertsIs """data modify storage $LIB heap.target set value "!""""
+		lines[4] assertsIs "data modify storage $LIB heap.target append string storage $LIB heap.greeting"
 
 		concat(target, greeting, other)
-		lines[8] assertsIs
-			"data modify storage $LIB args.kore_string_concat.a set from storage $LIB heap.greeting"
-		lines[9] assertsIs "data modify storage $LIB args.kore_string_concat.b set from storage $LIB heap.other"
-		lines.size assertsIs 12
+		lines[5] assertsIs "data modify storage $LIB heap.target set from storage $LIB heap.greeting"
+		lines[6] assertsIs "data modify storage $LIB heap.target append string storage $LIB heap.other"
+		lines.size assertsIs 7
+	}
+
+	// Writing into one of the operands must not clobber it before it is read.
+	function("concat_aliased") {
+		concat(target, target, other)
+		lines assertsIs listOf("data modify storage $LIB heap.target append string storage $LIB heap.other")
+
+		concat(target, other, target)
+		lines[1] assertsIs "data modify storage $LIB heap.target prepend string storage $LIB heap.other"
+
+		concat(target, target, target)
+		lines[2] assertsIs "data modify storage $LIB tmp.kore_string_concat_tmp set from storage $LIB heap.target"
+		lines[3] assertsIs "data modify storage $LIB heap.target append string storage $LIB tmp.kore_string_concat_tmp"
+		lines.size assertsIs 4
 	}
 
 	function("concat_all") {
 		concatAll(target, greeting.asStringPart, "-".asStringPart, other.asStringPart)
-		lines.first() assertsIs "data modify storage $LIB heap.target set from storage $LIB heap.greeting"
-		lines.last() assertsIs "data modify storage $LIB heap.target append string storage $LIB heap.other"
-		lines.size assertsIs 6
+		lines assertsIs listOf(
+			"data modify storage $LIB heap.target set from storage $LIB heap.greeting",
+			"""data modify storage $LIB tmp.kore_string_concat_tmp set value "-"""",
+			"data modify storage $LIB heap.target append string storage $LIB tmp.kore_string_concat_tmp",
+			"data modify storage $LIB heap.target append string storage $LIB heap.other",
+		)
 	}
 
 	function("concat_all_empty") {
@@ -215,8 +233,9 @@ fun concatTests() = dataPack("unit_tests") {
 		lines.first() assertsIs "data modify storage $LIB heap.greeting append string storage $LIB heap.other"
 
 		greeting += "!"
-		lines[2] assertsIs """data modify storage $LIB args.kore_string_concat.b set value "!""""
-		lines.size assertsIs 5
+		lines[1] assertsIs """data modify storage $LIB tmp.kore_string_concat_tmp set value "!""""
+		lines[2] assertsIs "data modify storage $LIB heap.greeting append string storage $LIB tmp.kore_string_concat_tmp"
+		lines.size assertsIs 3
 	}
 }
 
@@ -379,27 +398,31 @@ fun caseTests() = dataPack("unit_tests") {
 		lines.size assertsIs 7
 	}
 
+	// A single character goes straight through the table lookup, never through the per-character loop.
 	function("capitalize") {
 		greeting.capitalize(other)
-		lines.first() assertsIs
-			"data modify storage $LIB heap.kore_string_cap_head set string storage $LIB heap.greeting 0 1"
-		lines[1] assertsIs
-			"data modify storage $LIB heap.kore_string_cap_rest set string storage $LIB heap.greeting 1"
-		lines.last() assertsIs "data modify storage $LIB heap.other append string storage $LIB heap.kore_string_cap_rest"
+		lines assertsIs listOf(
+			"data modify storage $LIB tmp.kore_string_case_args.c set string storage $LIB heap.greeting 0 1",
+			"function unit_tests:kore_string_upper_table_map with storage $LIB tmp.kore_string_case_args",
+			"data modify storage $LIB heap.kore_string_cap_rest set string storage $LIB heap.greeting 1",
+			"data modify storage $LIB heap.other set from storage $LIB tmp.kore_string_case_args.c",
+			"data modify storage $LIB heap.other append string storage $LIB heap.kore_string_cap_rest",
+		)
 	}
 
 	function("decapitalize") {
 		greeting.decapitalize()
-		lines[2] assertsIs """data modify storage $LIB heap.kore_string_case_scratch set value """""
+		lines[1] assertsIs "function unit_tests:kore_string_lower_table_map with storage $LIB tmp.kore_string_case_args"
 		lines.last() assertsIs
 			"data modify storage $LIB heap.greeting append string storage $LIB heap.kore_string_cap_rest"
+		lines.size assertsIs 5
 	}
 
 	// One table lookup per character, instead of scanning the 26 branches of an if-chain.
 	functions.first { it.name == "kore_string_upper_step" }.lines assertsIs listOf(
 		"\$data modify storage $LIB tmp.kore_string_case_args.c set string storage $LIB heap.\$(src) \$(i) \$(iPlusOne)",
 		"function unit_tests:kore_string_upper_table_map with storage $LIB tmp.kore_string_case_args",
-		"\$data modify storage $LIB heap.\$(dst) append from storage $LIB tmp.kore_string_case_args.c",
+		"\$data modify storage $LIB heap.\$(dst) append string storage $LIB tmp.kore_string_case_args.c",
 	)
 
 	functions.first { it.name == "kore_string_upper_table_map" }.lines assertsIs listOf(
@@ -430,7 +453,7 @@ fun replaceTests() = dataPack("unit_tests") {
 			"data modify storage $LIB heap.kore_string_replace_after set string storage $LIB heap.greeting 2"
 		lines.last() assertsIs
 			"data modify storage $LIB heap.greeting append string storage $LIB heap.kore_string_replace_after"
-		lines.size assertsIs 8
+		lines.size assertsIs 6
 	}
 
 	function("replace_range_dynamic") {
@@ -509,13 +532,19 @@ fun trimPadRepeatTests() = dataPack("unit_tests") {
 		lines.first() assertsIs "data modify storage $LIB heap.kore_string_pad_src set from storage $LIB heap.greeting"
 		lines[2] assertsIs "scoreboard players set #kore_string_pad_diff kore_string_len 10"
 		lines.last() assertsIs
-			"execute if score #kore_string_pad_diff kore_string_len matches 1.. run function unit_tests:kore_string_concat with storage $LIB args.kore_string_concat"
+			"execute if score #kore_string_pad_diff kore_string_len matches 1.. run data modify storage $LIB heap.other prepend string storage $LIB heap.kore_string_pad_scratch"
+
+		// The repeated unit lives in its own slot: reusing the accumulator would double the padding each step.
+		lines[5] assertsIs """data modify storage $LIB heap.kore_string_pad_char set value "0""""
+		lines[6] assertsIs """data modify storage $LIB heap.kore_string_pad_scratch set value "0""""
+		lines[9] assertsIs """data modify storage $LIB args.kore_string_repeat_step.src set value "kore_string_pad_char""""
+		lines[10] assertsIs """data modify storage $LIB args.kore_string_repeat_step.dst set value "kore_string_pad_scratch""""
 	}
 
 	function("pad_end") {
 		greeting.padEnd(4, ' ')
-		lines[lines.size - 3] assertsIs
-			"execute if score #kore_string_pad_diff kore_string_len matches 1.. run data modify storage $LIB args.kore_string_concat.a set from storage $LIB heap.kore_string_pad_src"
+		lines.last() assertsIs
+			"execute if score #kore_string_pad_diff kore_string_len matches 1.. run data modify storage $LIB heap.greeting append string storage $LIB heap.kore_string_pad_scratch"
 	}
 
 	function("repeat_zero") {
@@ -536,6 +565,12 @@ fun trimPadRepeatTests() = dataPack("unit_tests") {
 		lines[6] assertsIs "scoreboard players set #kore_string_repeat_cap kore_string_len 2"
 		lines.last() assertsIs "function unit_tests:kore_string_repeat with storage $LIB args.kore_string_repeat"
 	}
+
+	// One copy appended per step, staged through a scratch slot so src and dst may be the same slot.
+	functions.first { it.name == "kore_string_repeat_step" }.lines assertsIs listOf(
+		"\$data modify storage $LIB tmp.kore_string_repeat_buf set from storage $LIB heap.\$(src)",
+		"\$data modify storage $LIB heap.\$(dst) append string storage $LIB tmp.kore_string_repeat_buf",
+	)
 
 	// The trim step compares against the configured whitespace set, written as SNBT escapes.
 	functions.first { it.name == "kore_string_trim_start_step" }.lines.drop(2) assertsIs
@@ -625,6 +660,13 @@ fun stringListTests() = dataPack("unit_tests") {
 		)
 	}
 
+	function("list_for_each_twice") {
+		tokens.forEach(current) { tellraw(allPlayers(), current.asChatComponents()) }
+		tokens.forEach(current) { tellraw(allPlayers(), current.asChatComponents()) }
+		functions.map { it.name }.filter { it.startsWith("kore_string_foreach_loop_") } assertsIs
+			listOf("kore_string_foreach_loop_0", "kore_string_foreach_loop_1", "kore_string_foreach_loop_2")
+	}
+
 	val loop = functions.first { it.name == "kore_string_foreach_loop_0" }
 	loop.lines.first() assertsIs
 		"\$data modify storage $LIB heap.current set from storage $LIB lists.tokens[\$(index)]"
@@ -706,6 +748,19 @@ fun customConfigTests() = dataPack("unit_tests") {
 		ping.trimStart()
 	}
 
+	function("custom_parse_roots") {
+		ping.setFromNbt(ping.storage, "out.value")
+		lines assertsIs listOf(
+			"data modify storage my_pack:strings a.kore_string_to_string.value set from storage my_pack:strings out.value",
+			"""data modify storage my_pack:strings a.kore_string_to_string.dstName set value "ping"""",
+			"function unit_tests:kore_string_to_string with storage my_pack:strings a.kore_string_to_string",
+		)
+	}
+
+	functions.first { it.name == "kore_string_to_string" }.lines assertsIs listOf(
+		"\$data modify storage my_pack:strings h.\$(dstName) set value \"\$(value)\"",
+	)
+
 	generatedFunctions.first { it.name == "kore_string_upper_table_init" }.lines.first()
 		.startsWith("data modify storage my_pack:strings tb.kore_string_upper_table set value ") assertsIs true
 
@@ -726,6 +781,8 @@ fun advancedStringsTests() = dataPack("unit_tests") {
 		greeting.reverse(other)
 		lines.first() assertsIs """data modify storage $LIB heap.kore_string_rev_out set value """""
 		lines[1] assertsIs """data modify storage $LIB args.kore_string_substring.src set value "greeting""""
+		// The destination slot never changes, so it is written once instead of on every iteration.
+		lines[2] assertsIs """data modify storage $LIB args.kore_string_substring.dst set value "kore_string_reverse_scratch""""
 		lines.last() assertsIs "data modify storage $LIB heap.other set from storage $LIB heap.kore_string_rev_out"
 	}
 
@@ -745,6 +802,14 @@ fun advancedStringsTests() = dataPack("unit_tests") {
 			"execute if score #kore_string_tl_i kore_string_len < #kore_string_tl_len kore_string_len " +
 				"run function unit_tests:kore_string_to_list"
 	}
+
+	// One character extracted then appended per iteration, no intermediate concat helper.
+	functions.first { it.name == "kore_string_reverse" }.lines.drop(4) assertsIs listOf(
+		"function unit_tests:kore_string_substring with storage $LIB args.kore_string_substring",
+		"data modify storage $LIB heap.kore_string_rev_out append string storage $LIB heap.kore_string_reverse_scratch",
+		"scoreboard players remove #kore_string_rev_i kore_string_len 1",
+		"execute if score #kore_string_rev_i kore_string_len matches 0.. run function unit_tests:kore_string_reverse",
+	)
 
 	shouldThrow<IllegalArgumentException> { function("bad_split") { greeting.split("", tokens) } }
 }
