@@ -2,8 +2,8 @@
 root: .components.layouts.MarkdownLayout
 title: Dynamic Strings
 nav-title: Dynamic Strings
-description: Manipulate Minecraft datapack strings with a Kotlin-like API - substring, split, replace, trim, pad and case conversion backed by NBT storage and macros.
-keywords: minecraft, datapack, kore, oop, string, nbt, storage, macro, substring, split, replace, trim, pad, concat
+description: Manipulate Minecraft datapack strings with a Kotlin-like API - substring, split, join, replace, trim, pad and case conversion backed by NBT storage and macros.
+keywords: minecraft, datapack, kore, oop, string, nbt, storage, macro, substring, split, join, replace, trim, pad, concat
 date-created: 2026-04-16
 date-modified: 2026-09-05
 routeOverride: /docs/oop/dynamic-strings
@@ -12,7 +12,7 @@ routeOverride: /docs/oop/dynamic-strings
 # Dynamic Strings
 
 `DynamicString` wraps an NBT slot inside a shared storage (`kore_string_lib:memory`, path `heap.<name>`) so datapack
-strings can be manipulated with an idiomatic Kotlin API: `substring`, `split`, `replace`, `trim`, `padStart`,
+strings can be manipulated with an idiomatic Kotlin API: `substring`, `split`, `join`, `replace`, `trim`, `padStart`,
 `uppercase`, and the rest of the `kotlin.String` vocabulary.
 
 Only the helpers you actually call are materialized as `mcfunction` files, so an unused API costs nothing in the
@@ -272,6 +272,63 @@ function("tokenize") {
 `forEach` generates a dedicated macro loop per call site and binds the current element into the `DynamicString` you
 pass as the cursor. Inside the block the `Function` receiver is active, so any Kore DSL call is valid.
 
+## Joining a list back into a string
+
+`join` is the inverse of `split`: it walks the list once and appends every element into a target string, inserting the
+separator between them and wrapping the result with an optional `prefix` / `postfix`, exactly like
+`kotlin.collections.joinToString`.
+
+```kotlin
+tokens.join(", ", summary)                                     // "alpha, beta, gamma"
+tokens.join(", ", summary, prefix = "[", postfix = "]")        // "[alpha, beta, gamma]"
+tokens.join(",", csv)                                          // csv := "alpha,beta,gamma"
+csv.split(",", tokens)                                         // and back to a list
+```
+
+The target is overwritten, an empty list leaves it as `prefix + postfix`, and the separator is only inserted between
+elements, never at the ends.
+
+### Why it matters
+
+Any list whose length is only known at runtime - collected items, party members, discovered locations, unlocked
+recipes - has to be turned into one readable line at some point. Without `join`, that line is written by hand: one
+`tellraw` component per possible entry, each gated behind its own `execute if`, with the commas typed between them and
+a special case for the last element. Adding one entry means editing every one of those commands.
+
+This tracker prints the relics a player has found, whatever their number and ids:
+
+```kotlin
+import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.arguments.types.literals.allPlayers
+import io.github.ayfri.kore.commands.tellraw
+import io.github.ayfri.kore.functions.function
+import io.github.ayfri.kore.strings.*
+
+fun DataPack.relicTracker() {
+	registerDynamicStrings()
+
+	val relics = koreStringList("relics")            // filled at runtime: ["ember_shard", "tide_core"]
+	val pretty = koreStringList("relics_pretty")
+	val current = dynamicString("current_relic")
+	val summary = dynamicString("relics_summary")
+
+	function("announce_relics") {
+		pretty.clear()
+		relics.forEach(current) {
+			current.replace("_", " ")
+			current.capitalize()
+			pretty.append(current)
+		}
+
+		pretty.join(", ", summary, prefix = "Relics found: ", postfix = ".")
+		tellraw(allPlayers(), summary.asChatComponents(interpret = false))
+	}
+}
+```
+
+The same pair also gives persistence for free: `join(",", csv)` collapses the list into a single string that fits in an
+item's custom name, a sign line or a storage field, and `csv.split(",", relics)` restores the list on the way back.
+
 ## Parsing and serialization
 
 `parseTo` evaluates the string content as SNBT and writes the resulting value anywhere, which covers numbers (`42`,
@@ -372,7 +429,7 @@ Helpers fall into three tiers, worth keeping in mind when a string is long or a 
 |----------------|-------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------|
 | Constant       | `set`, `setFrom`, `clear`, `substring`, `substringTo`, `take`, `drop`, `charAt(Int)`, `append`, `prepend`, `concat`                       | 1 to 3 commands, no macro                     |
 | One macro call | `substringDynamic`, `takeLast`, `dropLast`, `capitalize`, `decapitalize`, `parseTo`, `setFromNbt`                                         | a handful of commands plus one function call  |
-| Recursive      | `reverse`, `indexOf`, `contains`, `count`, `replace`, `split`, `toList`, `uppercase`, `lowercase`, `trim`, `repeat`, `padStart`, `padEnd` | one function call per character or per offset |
+| Recursive      | `reverse`, `indexOf`, `contains`, `count`, `replace`, `split`, `join`, `toList`, `uppercase`, `lowercase`, `trim`, `repeat`, `padStart`, `padEnd` | one function call per character, offset or element |
 
 Recursive helpers are bounded by the `maxCommandChainLength` game rule (65 536 by default), which is far above any
 realistic string length but is the hard ceiling.
