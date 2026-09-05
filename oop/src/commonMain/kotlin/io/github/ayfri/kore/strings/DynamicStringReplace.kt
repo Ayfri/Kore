@@ -62,10 +62,10 @@ internal fun DynamicStringRuntime.replaceStepHelper(): FunctionWithMacros<Replac
 		copyNbt(libStorageArg, heapPath(macros.srcName), libStorageArg, heapPath(REPLACE_BEFORE))
 		data(libStorageArg) {
 			modify(heapPath(macros.srcName)) {
-				append(libStorageArg, newPath)
+				append(libStorageArg, newPath, null, null)
 			}
 			modify(heapPath(macros.srcName)) {
-				append(libStorageArg, heapPath(REPLACE_AFTER))
+				append(libStorageArg, heapPath(REPLACE_AFTER), null, null)
 			}
 		}
 	}

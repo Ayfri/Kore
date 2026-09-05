@@ -39,7 +39,7 @@ internal fun DynamicStringRuntime.parseHelper(): FunctionWithMacros<ParseMacros>
  */
 internal fun DynamicStringRuntime.toStringHelper(): FunctionWithMacros<ToStringMacros> =
 	ensure(OopConstants.stringToStringMacroName, ::ToStringMacros) {
-		addLine("data modify storage $libStorage heap.${macros.dstName} set value \"${macros.value}\"")
+		addLine("data modify storage $libStorage ${heapPath(macros.dstName)} set value \"${macros.value}\"")
 	}
 
 /**

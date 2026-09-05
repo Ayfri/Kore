@@ -16,7 +16,6 @@ import net.benwoodworth.knbt.NbtTag
 private const val CASE_ARGS_KEY = "${INTERNAL_NAME_PREFIX}case_args"
 private const val CASE_CHAR_KEY = "c"
 private const val CASE_SCRATCH = "${INTERNAL_NAME_PREFIX}case_scratch"
-private const val CAP_HEAD_SCRATCH = "${INTERNAL_NAME_PREFIX}cap_head"
 private const val CAP_REST_SCRATCH = "${INTERNAL_NAME_PREFIX}cap_rest"
 
 /** Macros holder for the per-character table lookup, fed the extracted character as `c`. */
@@ -63,7 +62,7 @@ internal fun DynamicStringRuntime.upperTableHelper() =
  * would break that path, so both are excluded up front; neither has a case, which makes skipping
  * the lookup the right answer anyway.
  */
-private fun DynamicStringRuntime.registerCaseMap(tableName: String): FunctionWithMacros<CaseMapMacros> =
+internal fun DynamicStringRuntime.caseMapHelper(tableName: String): FunctionWithMacros<CaseMapMacros> =
 	ensure("${tableName}_map", ::CaseMapMacros) {
 		addLine(
 			"""execute unless data storage $libStorage ${tmpPath(CASE_ARGS_KEY)}{$CASE_CHAR_KEY:"\""} """ +
@@ -79,7 +78,7 @@ private fun DynamicStringRuntime.registerCaseStep(
 	tableName: String,
 ): FunctionWithMacros<CaseStepMacros> = ensure(stepName, ::CaseStepMacros) {
 	substringHelper()
-	val map = registerCaseMap(tableName)
+	val map = caseMapHelper(tableName)
 
 	setSubstringMacro(
 		storage = libStorageArg,
@@ -92,7 +91,7 @@ private fun DynamicStringRuntime.registerCaseStep(
 	callMacro(map.name, libStorageArg, tmpPath(CASE_ARGS_KEY))
 	data(libStorageArg) {
 		modify(heapPath(macros.dst)) {
-			append(libStorageArg, caseCharPath())
+			append(libStorageArg, caseCharPath(), null, null)
 		}
 	}
 }
@@ -108,7 +107,7 @@ internal fun DynamicStringRuntime.upperStepHelper(): FunctionWithMacros<CaseStep
 }
 
 /** Path of the single character a case step is currently mapping. */
-private fun DynamicStringRuntime.caseCharPath() = "${tmpPath(CASE_ARGS_KEY)}.$CASE_CHAR_KEY"
+internal fun DynamicStringRuntime.caseCharPath() = "${tmpPath(CASE_ARGS_KEY)}.$CASE_CHAR_KEY"
 
 private fun DynamicStringRuntime.registerCaseController(
 	name: String,
@@ -163,14 +162,21 @@ fun DynamicString.capitalize(target: DynamicString = this) = changeFirstCharCase
 context(fn: Function)
 fun DynamicString.decapitalize(target: DynamicString = this) = changeFirstCharCase(target, uppercase = false)
 
+/**
+ * Maps a single character through the case table instead of running the whole per-character loop,
+ * which would cost a controller call and a length measurement for one character.
+ */
 context(fn: Function)
 private fun DynamicString.changeFirstCharCase(target: DynamicString, uppercase: Boolean) {
-	val head = runtime.scratchString(CAP_HEAD_SCRATCH)
+	val tableName = if (uppercase) OopConstants.stringUpperTableMacroName else OopConstants.stringLowerTableMacroName
+	if (uppercase) runtime.upperTableHelper() else runtime.lowerTableHelper()
+	val map = runtime.caseMapHelper(tableName)
 	val rest = runtime.scratchString(CAP_REST_SCRATCH)
-	substringTo(head, 0, 1)
+
+	fn.setSubstring(storage, runtime.caseCharPath(), storage, nbtPath, 0, 1)
+	fn.callMacro(map.name, storage, runtime.tmpPath(CASE_ARGS_KEY))
 	substringTo(rest, 1)
-	if (uppercase) head.uppercase() else head.lowercase()
-	target.setFrom(head)
+	fn.copyNbt(storage, target.nbtPath, storage, runtime.caseCharPath())
 	target.appendFrom(rest)
 }
 
