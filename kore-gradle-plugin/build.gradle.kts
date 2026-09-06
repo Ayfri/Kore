@@ -1,4 +1,5 @@
 import java.time.Duration
+import org.gradle.plugin.compatibility.compatibility
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -38,6 +39,13 @@ gradlePlugin {
 		displayName = "Kore"
 		description = "Builds a Kore datapack, links it into Minecraft worlds and reloads a running server."
 		tags = listOf("minecraft", "datapack", "kore", "kotlin")
+
+		// Shown as a badge on the Plugin Portal, covered by the TestKit runs asserting a reused entry.
+		compatibility {
+			features {
+				configurationCache = true
+			}
+		}
 	}
 
 	// Makes the plugin under development available to TestKit builds through `withPluginClasspath()`.
