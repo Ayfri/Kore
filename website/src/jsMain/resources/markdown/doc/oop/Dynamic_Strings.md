@@ -301,7 +301,7 @@ greeting.reverse(target = buffer)
 
 A tail-recursive macro walks the string from its last character to its first, appending each one to an accumulator. The
 recursion depth equals the string length, so it is bounded by the
-[`maxCommandChainLength`](https://minecraft.wiki/w/Game_rule#Miscellaneous) game rule (65 536 by default).
+[`max_command_sequence_length`](https://minecraft.wiki/w/Game_rule#Miscellaneous) game rule (65 536 by default).
 
 ## Splitting and lists
 
@@ -596,7 +596,7 @@ Helpers fall into three tiers, worth keeping in mind when a string is long or a 
 | One macro call | `substringDynamic`, `takeLast`, `dropLast`, `capitalize`, `decapitalize`, `parseTo`, `setFromNbt`, `setFrom(score)`, `toScore`                    | a handful of commands plus one function call       |
 | Recursive      | `reverse`, `indexOf`, `contains`, `count`, `replace`, `split`, `join`, `toList`, `uppercase`, `lowercase`, `trim`, `repeat`, `padStart`, `padEnd` | one function call per character, offset or element |
 
-Recursive helpers are bounded by the `maxCommandChainLength` game rule (65 536 by default), which is far above any
+Recursive helpers are bounded by the `max_command_sequence_length` game rule (65 536 by default), which is far above any
 realistic string length but is the hard ceiling.
 
 The module handles ASCII text. Case conversion only maps `a-z` / `A-Z`, and indices are NBT string indices, so
