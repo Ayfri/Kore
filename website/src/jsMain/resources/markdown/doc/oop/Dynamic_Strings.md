@@ -31,7 +31,12 @@ fun DataPack.hello() {
 		greeting.set("  Hello, WORLD  ")
 		greeting.trim()
 		greeting.lowercase()
-		greeting.capitalize(target = buffer)
+		greeting += '!'      // "hello, world!"
+
+		buffer.build {       // "kore says: hello, world!"
+			+"kore says: "
+			+greeting
+		}
 		tellraw(allPlayers(), buffer.asChatComponents())
 	}
 }
@@ -47,20 +52,26 @@ Three things are worth knowing before reading the rest of this page.
 
 **Results come back as scoreboard scores, not values.** A datapack cannot return a value, so every helper that computes
 something (`length`, `indexOf`, `contains`, `count`, `equalsTo`, …) writes it into a fake-player score on the
-`kore_string_len` objective and returns the holder name. Predicates all use the same convention: `1` means true, `0`
-means false.
+`kore_string_len` objective and returns a `DynamicStringResult`. Predicates all use the same convention: `1` means true,
+`0` means false. `then` and `otherwise` branch on it, `matching` takes any range.
 
 ```kotlin
-val holder = greeting.contains("kore")   // "#kore_string_contains"
-execute {
-	ifCondition { score(literal(holder), "kore_string_len", rangeOrInt(1)) }
-	run { tellraw(allPlayers(), textComponent("found")) }
-}
+(greeting contains "kore").then { tellraw(allPlayers(), textComponent("found")) }
+greeting.count(",").matching(rangeOrIntStart(3)) { tellraw(allPlayers(), textComponent("too many")) }
+```
+
+A `DynamicStringResult` **is** a `ScoreboardEntity`, so it also feeds straight into any helper taking a runtime score,
+and into the whole scoreboard DSL:
+
+```kotlin
+bar.repeat(greeting.length())            // as many bars as characters
+myScore.copyFrom(greeting.indexOf("="))  // persist a result before the next call reuses the holder
 ```
 
 **Most operations write into a target.** Helpers that produce a new string take an optional `target: DynamicString`
 parameter defaulting to `this`, so `greeting.uppercase()` mutates in place while `greeting.uppercase(buffer)` leaves the
-source untouched.
+source untouched. Each one also has an expression form (`uppercased()`, `trimmed()`, `repeated(3)`, `paddedStart(4)`, …)
+writing into a fresh anonymous slot and returning it, so transformations chain without declaring a scratch string.
 
 ## Registering the module
 
@@ -96,22 +107,33 @@ tellraw(allPlayers(), greeting.asChatComponents(interpret = false))
 
 ## Length
 
-`length()` stores the character count into the configured objective and returns the holder name. `lengthScore()`
-returns the typed `(holder, objective)` pair, useful when several lengths are alive at once:
+`length()` stores the character count into the configured objective and returns it as a `DynamicStringResult`. Pass a
+custom holder when several lengths must stay alive at once:
 
 ```kotlin
-val holder = greeting.length()                     // "#kore_string_len"
-val typed = greeting.lengthScore("#my_len")        // DynamicStringLength("#my_len", "kore_string_len")
+val len = greeting.length()             // DynamicStringResult("#kore_string_len", "kore_string_len")
+val alive = greeting.length("#my_len")  // a second, independent length
+buffer.padStart(len, '0')               // a result is a score, so it drives any runtime-width helper
 ```
 
 ## Substring, take and drop
 
-Static bounds compile down to a single `data modify ... set string`, with `kotlin.String.substring` semantics
-(`start` inclusive, `end` exclusive, `end = null` meaning "to the end"):
+Indexing slices into a fresh anonymous slot and returns it, with inclusive Kotlin range semantics on the indices:
 
 ```kotlin
 greeting.set("minecraft")
+val initial = greeting[0]   // "m"
+val word = greeting[0..3]   // "mine"
+val tail = greeting[4..<9]  // "craft"
+```
+
+The named forms write into an explicit target (defaulting to `this`) instead of allocating one, with
+`kotlin.String.substring` semantics (`start` inclusive, `end` exclusive, `end = null` meaning "to the end"). All of them
+compile down to a single `data modify ... set string`:
+
+```kotlin
 greeting.substring(0, 4)             // "mine", in place
+greeting.substring(0..3)             // same slice, range form
 greeting.substringTo(buffer, 4, 9)   // buffer = "craft"
 greeting.take(4, buffer)             // buffer = "mine"
 greeting.drop(4, buffer)             // buffer = "craft"
@@ -134,45 +156,59 @@ greeting.charAt(indexEntity, buffer)                                // buffer = 
 
 ```kotlin
 greeting.set("Hello")
-greeting.append(", world")             // "Hello, world"
-greeting += "!"                        // "Hello, world!", plusAssign alias
+greeting += ", world"  // "Hello, world"
+greeting += '!'        // "Hello, world!"
+greeting += other      // append another dynamic string
+greeting += kills      // append a score, rendered as its decimal value
+
+val fullName = first + " " + last  // expression form, into a fresh anonymous slot
+```
+
+`build` rewrites a string from any number of operands: literals, characters, other dynamic strings and scores, each
+pushed with a `+`. Consecutive literals are folded at generation time into a single `set value`, the first operand seeds
+the target instead of being appended to it, and writing into one of the operands is safe because it is read before it is
+overwritten.
+
+```kotlin
+summary.build {
+	+"Player "
+	+playerName  // another DynamicString
+	+": "
+	+kills       // a ScoreboardEntity, rendered as its decimal value
+	+'!'
+}
+```
+
+An empty block clears the target, and `plus` leaves both its operands untouched.
+
+The named forms cover prepending and partial operands, which have no operator:
+
+```kotlin
+greeting.append(", world")             // same as +=
 greeting.prepend("> ")                 // "> Hello, world!"
-greeting.append(other)                 // append another dynamic string
 greeting.appendFrom(other, start = 1)  // append only other[1..]
 greeting.prependFrom(other, 0, 3)      // prepend only other[0..3)
 ```
 
-`concat` writes `a + b` into a target and has an overload for every literal / dynamic combination. Two literals are
-folded at generation time into a single `set value`, and writing into one of the operands is safe: the operand is read
-before it is overwritten.
-
-```kotlin
-concat(buffer, "Hello, ", "world")    // -> data modify ... set value "Hello, world"
-concat(buffer, greeting, "!")
-concat(greeting, other, greeting)     // aliasing is handled, becomes a prepend
-```
-
-For more than two operands, `concatAll` takes `StringPart`s built with the `asStringPart` extension available on both
-`String` and `DynamicString`. Passing no part clears the target:
-
-```kotlin
-concatAll(buffer, greeting.asStringPart, ", ".asStringPart, other.asStringPart)
-```
-
 ## Comparisons
 
-Every comparison writes a `0` / `1` flag into a holder on the length objective and returns a `DynamicStringEquality`
-carrying the holder and objective. Each one accepts an optional `resultHolder` so several results can stay alive at the
-same time.
+Every comparison writes a `0` / `1` flag into a holder on the length objective and returns a `DynamicStringResult`.
+`eq`, `startsWith` and `endsWith` are infix, so a comparison reads like a condition:
 
 ```kotlin
 greeting.set("minecraft")
-greeting.equalsTo("minecraft")  // 1  -> #kore_string_equals
-greeting.equalsTo(buffer)       // dynamic operand
-greeting.isEmpty()              // 0  -> #kore_string_is_empty
-greeting.startsWith("mine")     // 1  -> #kore_string_starts
-greeting.endsWith(buffer)       // -> #kore_string_ends, runtime suffix length
+greeting eq "minecraft"     // 1  -> #kore_string_equals
+greeting eq buffer          // dynamic operand
+greeting.isEmpty()          // 0  -> #kore_string_is_empty
+greeting startsWith "mine"  // 1  -> #kore_string_starts
+greeting endsWith buffer    // -> #kore_string_ends, runtime suffix length
+
+(greeting startsWith "mine").then { tellraw(allPlayers(), textComponent("a mine")) }
+(greeting eq buffer).otherwise { buffer.setFrom(greeting) }
 ```
+
+`equalsTo` is the non-infix form of `eq`, and takes an optional `resultHolder` when several equality results must stay
+alive at the same time.
 
 `startsWith` and `endsWith` reject an empty literal, which would always match.
 
@@ -183,7 +219,7 @@ greeting.set("minecraft")
 greeting.indexOf("craft")  // 4   -> #kore_string_find, -1 when absent
 greeting.indexOf("kore")   // -1
 greeting.indexOf(buffer)   // dynamic needle
-greeting.contains("mine")  // 1   -> #kore_string_contains, 0 / 1
+greeting contains "mine"   // 1   -> #kore_string_contains, 0 / 1
 greeting.count("a")        // 1   -> #kore_string_count
 ```
 
@@ -193,6 +229,9 @@ length of the haystack. An empty needle is rejected.
 ## Replacing
 
 ```kotlin
+greeting.set("minecraft")
+greeting -= "mine"                  // "craft", strips every occurrence
+
 greeting.set("minecraft")
 greeting.replaceRange(0, 4, "war")  // "warcraft", literal or dynamic replacement
 greeting.replace("a", "4")          // "w4rcr4ft", every occurrence
@@ -240,7 +279,8 @@ greeting.padStart(5, padChar = '0')  // "00042", no-op when already 5 characters
 greeting.padEnd(7, padChar = '.')    // "00042..", pads on the right instead
 
 greeting.set("ab")
-greeting.repeat(3)  // "ababab", 0 clears, negative throws
+greeting *= 3       // "ababab", 0 clears, negative throws
+greeting.repeat(3)  // named form, takes an explicit target
 ```
 
 The width and the count also accept a score, so a progress bar or an aligned column can be sized in game:
@@ -287,15 +327,16 @@ val current = dynamicString("current")
 
 function("tokenize") {
 	tokens.clear()
-	tokens.append("alpha")
-	tokens.append(current)
+	tokens += "alpha"          // append a literal
+	tokens += current          // append a dynamic string
+	val second = tokens[1]     // read into a fresh anonymous slot
+
 	tokens.prepend("beta")
 	tokens.insertAt(1, "middle")
 	tokens.removeAt(2)
 	tokens.setAt(0, current)
-	tokens.size()              // -> #kore_string_len
-	tokens.elementAt(0, current)
-	tokens[1] into current     // ergonomic alias of elementAt
+	tokens.elementAt(0, current)  // read into an explicit target
+	tokens.size()                 // -> DynamicStringResult on #kore_string_len
 
 	tokens.forEach(current) {
 		tellraw(allPlayers(), current.asChatComponents())
@@ -443,7 +484,7 @@ fun DataPack.dialogueTypewriter() {
 		title(allPlayers(), TitleLocation.ACTIONBAR, shown.asChatComponents(interpret = false))
 		playSound(SoundEvents.Block.NoteBlock.HAT, target = allPlayers())
 
-		val length = line.lengthScore()
+		val length = line.length()
 		execute {
 			ifCondition {
 				score(cursor.entity.asScoreHolder(), cursor.name, literal(length.holder), length.objective, Relation.LESS_THAN)
@@ -475,12 +516,9 @@ values you thought of when writing the pack.
 
 ```kotlin
 import io.github.ayfri.kore.DataPack
-import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.arguments.types.literals.allPlayers
-import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.resources.storage
 import io.github.ayfri.kore.commands.data
-import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.tellraw
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.strings.*
@@ -506,16 +544,14 @@ fun DataPack.packConfig() {
 		entries.forEach(entry) {
 			entry.trim()
 			entry.split("=", pair)
-			pair[0] into key
-			pair[1] into value
+			pair.elementAt(0, key)
+			pair.elementAt(1, value)
 
 			value.trim()
 			value.parseTo(settings, "pending")   // "64" -> the int 64, usable by execute store / if data
 
-			val isRadius = key.equalsTo("spawn_radius")
-			execute {
-				ifCondition { score(literal(isRadius.holder), isRadius.objective, rangeOrInt(1)) }
-				run { data(settings) { modify("spawn_radius") { set(settings, "pending") } } }
+			(key eq "spawn_radius").then {
+				data(settings) { modify("spawn_radius") { set(settings, "pending") } }
 			}
 		}
 
@@ -526,10 +562,29 @@ fun DataPack.packConfig() {
 ```
 
 The `lowercase` pass makes `Spawn_Radius` and `spawn_radius` the same key, and `trim` absorbs the spaces around each
-separator. An entry without `=` leaves `pair[1]` out of range, so check `pair.size()` first when the input is
+separator. An entry without `=` leaves index `1` of the pair out of range, so check `pair.size()` first when the input is
 player-written.
 
 Every helper is generated once per datapack, so calling the same pipeline from several places adds no extra function.
+
+## Operator reference
+
+Every operator is a thin alias over the named helper, so it carries the exact same cost.
+
+| Operator              | Equivalent                   | Notes                                                  |
+|-----------------------|------------------------------|--------------------------------------------------------|
+| `s += "x"` / `+= 'x'` | `s.append("x")`              | also accepts a `DynamicString` or a `ScoreboardEntity` |
+| `s -= "x"`            | `s.replace("x", "")`         | strips every occurrence, literal or dynamic needle     |
+| `s *= 3`              | `s.repeat(3)`                | also accepts a runtime count as a `ScoreboardEntity`   |
+| `a + b`               | copy of `a` then `append(b)` | expression form, writes into a fresh anonymous slot    |
+| `s[2]` / `s[1..3]`    | `charAt` / `substringTo`     | inclusive range, writes into a fresh anonymous slot    |
+| `list += "x"`         | `list.append("x")`           | also accepts a `DynamicString`                         |
+| `list[1]`             | `list.elementAt(1, target)`  | writes into a fresh anonymous slot                     |
+| `a eq b`              | `a.equalsTo(b)`              | infix, like `startsWith`, `endsWith` and `contains`    |
+
+Anonymous slots come from `tempString()` (or `tempDynamicString()` on a `DataPack`), which is also the helper to call
+when a pipeline needs a scratch string of its own. They live in the same heap as named strings, under the reserved
+`kore_string_temp_<n>` prefix, and are never reused across call sites.
 
 ## Cost and limits
 
@@ -537,7 +592,7 @@ Helpers fall into three tiers, worth keeping in mind when a string is long or a 
 
 | Tier           | Helpers                                                                                                                                           | Cost                                               |
 |----------------|---------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------|
-| Constant       | `set`, `setFrom`, `clear`, `substring`, `substringTo`, `take`, `drop`, `charAt(Int)`, `append`, `prepend`, `concat`                               | 1 to 3 commands, no macro                          |
+| Constant       | `set`, `setFrom`, `clear`, `substring`, `substringTo`, `take`, `drop`, `charAt(Int)`, `append`, `prepend`, `build`                                | 1 to 3 commands, no macro                          |
 | One macro call | `substringDynamic`, `takeLast`, `dropLast`, `capitalize`, `decapitalize`, `parseTo`, `setFromNbt`, `setFrom(score)`, `toScore`                    | a handful of commands plus one function call       |
 | Recursive      | `reverse`, `indexOf`, `contains`, `count`, `replace`, `split`, `join`, `toList`, `uppercase`, `lowercase`, `trim`, `repeat`, `padStart`, `padEnd` | one function call per character, offset or element |
 
