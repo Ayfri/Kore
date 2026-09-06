@@ -119,7 +119,13 @@ fun KoreStringList.forEach(element: DynamicString, body: Function.() -> Unit) {
 context(fn: Function)
 operator fun KoreStringList.get(index: Int): GetElementInto = GetElementInto(this, index)
 
-/** Inserts the literal [value] at [index]. */
+/**
+ * Inserts the literal [value] at [index].
+ *
+ * ```
+ * ["a", "c"].insertAt(1, "b")  // ["a", "b", "c"]
+ * ```
+ */
 context(fn: Function)
 fun KoreStringList.insertAt(index: Int, value: String) = fn.data(storage) {
 	modify(nbtPath) { insert<String>(index, value) }
@@ -143,7 +149,13 @@ fun KoreStringList.prepend(source: DynamicString) = fn.data(storage) {
 	modify(nbtPath) { prepend(source.storage, source.nbtPath) }
 }
 
-/** Removes the element at [index]. */
+/**
+ * Removes the element at [index].
+ *
+ * ```
+ * ["a", "b", "c"].removeAt(1)  // ["a", "c"]
+ * ```
+ */
 context(fn: Function)
 fun KoreStringList.removeAt(index: Int) = fn.data(storage) {
 	remove("$nbtPath[$index]")

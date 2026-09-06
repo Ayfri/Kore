@@ -53,11 +53,24 @@ private fun DynamicString.invokeSubstringMacro(
 	fn.callMacro(OopConstants.stringSubstringMacroName, runtime.libStorageArg, args)
 }
 
-/** Returns the character located at [index] into [target] using a static index. */
+/**
+ * Returns the character located at [index] into [target] using a static index.
+ *
+ * ```
+ * "kore".charAt(1)  // "o"
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.charAt(index: Int, target: DynamicString = this) = substringTo(target, index, index + 1)
 
-/** Copies the character located at the runtime [index] into [target]. */
+/**
+ * Copies the character located at the runtime [index] into [target].
+ *
+ * ```
+ * // index holds 1 at runtime
+ * "kore".charAt(index)  // "o"
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.charAt(index: ScoreboardEntity, target: DynamicString = this) {
 	val obj = runtime.config.lengthObjective
@@ -78,11 +91,23 @@ fun DynamicString.charAt(index: ScoreboardEntity, target: DynamicString = this) 
 	substringDynamicCursors(fn, indexCursor, endCursor, target)
 }
 
-/** Static `drop(n)` alias: writes everything from index [n] onward into [target]. */
+/**
+ * Static `drop(n)` alias: writes everything from index [n] onward into [target].
+ *
+ * ```
+ * "minecraft".drop(4)  // "craft"
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.drop(n: Int, target: DynamicString = this) = substringTo(target, n)
 
-/** Static `dropLast(n)`: writes everything but the last [n] characters into [target]. */
+/**
+ * Static `dropLast(n)`: writes everything but the last [n] characters into [target].
+ *
+ * ```
+ * "minecraft".dropLast(5)  // "mine"
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.dropLast(n: Int, target: DynamicString = this) {
 	require(n >= 0) { "dropLast n must be non negative, got $n" }
@@ -102,6 +127,11 @@ fun DynamicString.dropLast(n: Int, target: DynamicString = this) {
  *
  * Mirrors the [kotlin.String.substring] semantics: [start] is inclusive, [end] is exclusive. When
  * [end] is `null`, the slice extends to the end of the underlying string.
+ *
+ * ```
+ * "minecraft".substring(0, 4)  // "mine"
+ * "minecraft".substring(4)     // "craft"
+ * ```
  */
 context(fn: Function)
 fun DynamicString.substring(start: Int, end: Int? = null) = fn.data(storage) {
@@ -116,6 +146,11 @@ fun DynamicString.substring(start: Int, end: Int? = null) = fn.data(storage) {
  *
  * The indices are serialised into the substring helper's macro args then the hidden macro function
  * is invoked to perform the actual slicing on [target] (defaults to `this`).
+ *
+ * ```
+ * // start holds 4 and end holds 9 at runtime
+ * "minecraft".substringDynamic(start, end)  // "craft"
+ * ```
  */
 context(fn: Function)
 fun DynamicString.substringDynamic(
@@ -142,7 +177,13 @@ internal fun DynamicString.substringDynamicCursors(
 	writeEnd = { store, path -> end.writeToStorage(fn, store, path, DataType.INT) },
 )
 
-/** Writes a static substring of this string into [target]. */
+/**
+ * Writes a static substring of this string into [target].
+ *
+ * ```
+ * "minecraft".substringTo(out, 4, 9)  // out = "craft"
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.substringTo(target: DynamicString, start: Int, end: Int? = null) = fn.data(target.storage) {
 	modify(target.nbtPath) {
@@ -151,7 +192,13 @@ fun DynamicString.substringTo(target: DynamicString, start: Int, end: Int? = nul
 	}
 }
 
-/** Static `take(n)` alias: writes the first [n] characters into [target] (defaults to `this`). */
+/**
+ * Static `take(n)` alias: writes the first [n] characters into [target] (defaults to `this`).
+ *
+ * ```
+ * "minecraft".take(4)  // "mine"
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.take(n: Int, target: DynamicString = this) = substringTo(target, 0, n)
 
@@ -160,6 +207,10 @@ fun DynamicString.take(n: Int, target: DynamicString = this) = substringTo(targe
  * negative.
  *
  * Implemented by first measuring the length at runtime then dispatching to the substring macro.
+ *
+ * ```
+ * "minecraft".takeLast(5)  // "craft"
+ * ```
  */
 context(fn: Function)
 fun DynamicString.takeLast(n: Int, target: DynamicString = this) {

@@ -55,7 +55,14 @@ fun DynamicString.equalsTo(
 	}
 }
 
-/** Compares this string with a [literal] value. See [equalsTo] for score semantics. */
+/**
+ * Compares this string with a [literal] value. See [equalsTo] for score semantics.
+ *
+ * ```
+ * "kore".equalsTo("kore")  // 1
+ * "kore".equalsTo("lib")   // 0
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.equalsTo(literal: String, resultHolder: String = EQUALS_RESULT_HOLDER): DynamicStringEquality {
 	val tmp = runtime.tmpPath(COMPARE_TMP_KEY)
@@ -106,7 +113,14 @@ fun DynamicString.endsWith(
 	return scratch.equalsTo(suffix, resultHolder)
 }
 
-/** Stores `1` into [resultHolder] when this string is empty, `0` otherwise. */
+/**
+ * Stores `1` into [resultHolder] when this string is empty, `0` otherwise.
+ *
+ * ```
+ * "".isEmpty()      // 1
+ * "kore".isEmpty()  // 0
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.isEmpty(resultHolder: String = IS_EMPTY_RESULT_HOLDER) = equalsTo("", resultHolder)
 

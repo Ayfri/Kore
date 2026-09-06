@@ -39,14 +39,27 @@ private fun DynamicString.stageSelf(fn: Function): String {
 	return tmp
 }
 
-/** Appends [value] at the end of this dynamic string (in place). */
+/**
+ * Appends [value] at the end of this dynamic string (in place).
+ *
+ * ```
+ * "kore".append(" lib")  // "kore lib"
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.append(value: String): Command {
 	val tmp = stageLiteral(fn, value)
 	return fn.data(storage) { modify(nbtPath) { append(storage, tmp, null, null) } }
 }
 
-/** Appends the content of [other] at the end of this dynamic string (in place). */
+/**
+ * Appends the content of [other] at the end of this dynamic string (in place).
+ *
+ * ```
+ * // other holds " lib" at runtime
+ * "kore".append(other)  // "kore lib"
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.append(other: DynamicString): Command {
 	if (other != this) return appendFrom(other)
@@ -121,7 +134,14 @@ operator fun DynamicString.plusAssign(value: String) {
 	append(value)
 }
 
-/** Prepends the content of [other] at the beginning of this dynamic string (in place). */
+/**
+ * Prepends the content of [other] at the beginning of this dynamic string (in place).
+ *
+ * ```
+ * // other holds "kore " at runtime
+ * "lib".prepend(other)  // "kore lib"
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.prepend(other: DynamicString): Command {
 	if (other != this) return prependFrom(other)
@@ -129,7 +149,13 @@ fun DynamicString.prepend(other: DynamicString): Command {
 	return fn.data(storage) { modify(nbtPath) { prepend(storage, tmp, null, null) } }
 }
 
-/** Prepends [value] at the beginning of this dynamic string (in place). */
+/**
+ * Prepends [value] at the beginning of this dynamic string (in place).
+ *
+ * ```
+ * "lib".prepend("kore ")  // "kore lib"
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.prepend(value: String): Command {
 	val tmp = stageLiteral(fn, value)

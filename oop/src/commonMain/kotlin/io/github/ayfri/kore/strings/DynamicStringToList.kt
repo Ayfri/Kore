@@ -59,6 +59,10 @@ internal fun DynamicStringRuntime.toListControllerHelper(): FunctionWithMacros<T
  * Splits this string into one-character elements and writes them into [target], clearing any
  * previous content. Equivalent of `string.toCharArray().map { it.toString() }` converted to a
  * persistent NBT list of strings.
+ *
+ * ```
+ * "kore".toList(out)  // out = ["k", "o", "r", "e"]
+ * ```
  */
 context(fn: Function)
 fun DynamicString.toList(target: KoreStringList) {

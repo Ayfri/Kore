@@ -53,6 +53,11 @@ internal fun DynamicStringRuntime.joinStepHelper(): FunctionWithMacros<JoinStepM
  * wrapping the result with [prefix] and [postfix], mirroring [kotlin.collections.joinToString].
  *
  * [target] is overwritten, and an empty list leaves it as `prefix + postfix`.
+ *
+ * ```
+ * ["a", "b"].join(", ", out)                               // out = "a, b"
+ * ["a", "b"].join(", ", out, prefix = "[", postfix = "]")  // out = "[a, b]"
+ * ```
  */
 context(fn: Function)
 fun KoreStringList.join(

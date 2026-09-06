@@ -154,11 +154,23 @@ private fun DynamicString.runCase(controllerName: String, stepName: String, targ
 	if (target != scratch) target.setFrom(scratch)
 }
 
-/** Capitalises only the first character of the string (ASCII). */
+/**
+ * Capitalises only the first character of the string (ASCII).
+ *
+ * ```
+ * "kore lib".capitalize()  // "Kore lib"
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.capitalize(target: DynamicString = this) = changeFirstCharCase(target, uppercase = true)
 
-/** Lowercases only the first character of the string (ASCII). */
+/**
+ * Lowercases only the first character of the string (ASCII).
+ *
+ * ```
+ * "Kore Lib".decapitalize()  // "kore Lib"
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.decapitalize(target: DynamicString = this) = changeFirstCharCase(target, uppercase = false)
 
@@ -180,14 +192,26 @@ private fun DynamicString.changeFirstCharCase(target: DynamicString, uppercase: 
 	target.appendFrom(rest)
 }
 
-/** Converts every ASCII uppercase letter to its lowercase counterpart. */
+/**
+ * Converts every ASCII uppercase letter to its lowercase counterpart.
+ *
+ * ```
+ * "KoRe 42".lowercase()  // "kore 42"
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.lowercase(target: DynamicString = this) {
 	runtime.lowerControllerHelper()
 	runCase(OopConstants.stringLowerMacroName, OopConstants.stringLowerStepMacroName, target)
 }
 
-/** Converts every ASCII lowercase letter to its uppercase counterpart. */
+/**
+ * Converts every ASCII lowercase letter to its uppercase counterpart.
+ *
+ * ```
+ * "KoRe 42".uppercase()  // "KORE 42"
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.uppercase(target: DynamicString = this) {
 	runtime.upperControllerHelper()

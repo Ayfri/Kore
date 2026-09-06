@@ -131,7 +131,13 @@ private fun DynamicString.primeTrim(fn: Function): TrimCursors {
 	return TrimCursors(end = endCursor, i = iCursor, len = len)
 }
 
-/** Strips leading whitespace (configurable via [DynamicStringConfig.trimWhitespace]) into [target]. */
+/**
+ * Strips leading whitespace (configurable via [DynamicStringConfig.trimWhitespace]) into [target].
+ *
+ * ```
+ * "  hi  ".trimStart()  // "hi  "
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.trimStart(target: DynamicString = this) {
 	val rt = fn.datapack.requireDynamicStringRuntime()
@@ -142,7 +148,13 @@ fun DynamicString.trimStart(target: DynamicString = this) {
 	substringDynamicCursors(fn, c.i, c.end, target)
 }
 
-/** Strips trailing whitespace (configurable via [DynamicStringConfig.trimWhitespace]) into [target]. */
+/**
+ * Strips trailing whitespace (configurable via [DynamicStringConfig.trimWhitespace]) into [target].
+ *
+ * ```
+ * "  hi  ".trimEnd()  // "  hi"
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.trimEnd(target: DynamicString = this) {
 	val rt = fn.datapack.requireDynamicStringRuntime()
@@ -153,7 +165,13 @@ fun DynamicString.trimEnd(target: DynamicString = this) {
 	substringDynamicCursors(fn, c.i, c.end, target)
 }
 
-/** Strips both leading and trailing whitespace. */
+/**
+ * Strips both leading and trailing whitespace.
+ *
+ * ```
+ * "  hi  ".trim()  // "hi"
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.trim(target: DynamicString = this) {
 	val rt = fn.datapack.requireDynamicStringRuntime()

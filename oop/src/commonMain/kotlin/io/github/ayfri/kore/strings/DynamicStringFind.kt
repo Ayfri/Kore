@@ -128,6 +128,11 @@ private fun DynamicString.preparePrelude(
 /**
  * Looks for the first occurrence of the literal [needle] inside this string. Stores the result
  * index (or `-1`) into [resultHolder] on the `kore_string_len` objective and returns it.
+ *
+ * ```
+ * "minecraft".indexOf("craft")  // 4
+ * "minecraft".indexOf("kore")   // -1
+ * ```
  */
 context(fn: Function)
 fun DynamicString.indexOf(needle: String, resultHolder: String = FIND_RESULT_HOLDER): String {
@@ -144,7 +149,14 @@ fun DynamicString.indexOf(needle: String, resultHolder: String = FIND_RESULT_HOL
 	return resultHolder
 }
 
-/** Dynamic variant looking for the content of another [DynamicString] as the needle. */
+/**
+ * Dynamic variant looking for the content of another [DynamicString] as the needle.
+ *
+ * ```
+ * // needle holds "craft" at runtime
+ * "minecraft".indexOf(needle)  // 4
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.indexOf(needle: DynamicString, resultHolder: String = FIND_RESULT_HOLDER): String {
 	val rt = fn.datapack.requireDynamicStringRuntime()
@@ -169,7 +181,14 @@ private fun Function.materialiseContainsFlag(resultHolder: String) {
 	}
 }
 
-/** `true` (score 1) when [needle] exists in this string, `false` (score 0) otherwise. */
+/**
+ * `true` (score 1) when [needle] exists in this string, `false` (score 0) otherwise.
+ *
+ * ```
+ * "minecraft".contains("craft")  // 1
+ * "minecraft".contains("kore")   // 0
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.contains(needle: String, resultHolder: String = CONTAINS_RESULT_HOLDER): String {
 	indexOf(needle)
@@ -177,7 +196,14 @@ fun DynamicString.contains(needle: String, resultHolder: String = CONTAINS_RESUL
 	return resultHolder
 }
 
-/** Dynamic variant of [contains] where [needle] is another [DynamicString]. */
+/**
+ * Dynamic variant of [contains] where [needle] is another [DynamicString].
+ *
+ * ```
+ * // needle holds "craft" at runtime
+ * "minecraft".contains(needle)  // 1
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.contains(needle: DynamicString, resultHolder: String = CONTAINS_RESULT_HOLDER): String {
 	indexOf(needle)

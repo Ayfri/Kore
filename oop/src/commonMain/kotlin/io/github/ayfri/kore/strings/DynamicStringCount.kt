@@ -88,6 +88,10 @@ private fun primeCountLoop(
 /**
  * Counts the number of occurrences of the literal [needle] in this string. The result is written to
  * [resultHolder] on the `kore_string_len` objective. Returns [resultHolder] for chaining.
+ *
+ * ```
+ * "a,b,,c".count(",")  // 3
+ * ```
  */
 context(fn: Function)
 fun DynamicString.count(needle: String, resultHolder: String = COUNT_RESULT_HOLDER): String {
@@ -102,7 +106,14 @@ fun DynamicString.count(needle: String, resultHolder: String = COUNT_RESULT_HOLD
 	return resultHolder
 }
 
-/** Dynamic variant of [count] where the needle itself is another [DynamicString]. */
+/**
+ * Dynamic variant of [count] where the needle itself is another [DynamicString].
+ *
+ * ```
+ * // needle holds "," at runtime
+ * "a,b,,c".count(needle)  // 3
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.count(needle: DynamicString, resultHolder: String = COUNT_RESULT_HOLDER): String {
 	val rt = fn.datapack.requireDynamicStringRuntime()

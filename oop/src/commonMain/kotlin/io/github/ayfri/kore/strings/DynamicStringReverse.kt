@@ -49,6 +49,10 @@ internal fun DynamicStringRuntime.reverseTailHelper(): FunctionWithMacros<Revers
  * the first one, appending each character to an accumulator. The depth of the recursion matches
  * the length of the source string and is therefore bounded by Minecraft's
  * [Gamerules.MAX_COMMAND_SEQUENCE_LENGTH](https://minecraft.wiki/w/Game_rule#Miscellaneous) limit (65 536 by default).
+ *
+ * ```
+ * "kore".reverse()  // "erok"
+ * ```
  */
 context(fn: Function)
 fun DynamicString.reverse(target: DynamicString = this) {
