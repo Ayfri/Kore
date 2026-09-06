@@ -110,34 +110,36 @@ Static bounds compile down to a single `data modify ... set string`, with `kotli
 (`start` inclusive, `end` exclusive, `end = null` meaning "to the end"):
 
 ```kotlin
-greeting.substring(0, 5)                      // slice in place
-greeting.substringTo(buffer, 1, 4)            // slice into another string
-greeting.take(3, buffer)                      // buffer := greeting[0..3)
-greeting.drop(2, buffer)                      // buffer := greeting[2..]
-greeting.takeLast(3, buffer)
-greeting.dropLast(4, buffer)
-greeting.charAt(5, buffer)                    // single character
-greeting.setFrom(buffer, start = 2)           // greeting := buffer[2..]
-greeting.setFrom(buffer, start = 0, end = 4)  // greeting := buffer[0..4)
+greeting.set("minecraft")
+greeting.substring(0, 4)             // "mine", in place
+greeting.substringTo(buffer, 4, 9)   // buffer = "craft"
+greeting.take(4, buffer)             // buffer = "mine"
+greeting.drop(4, buffer)             // buffer = "craft"
+greeting.takeLast(5, buffer)         // buffer = "craft"
+greeting.dropLast(5, buffer)         // buffer = "mine"
+greeting.charAt(1, buffer)           // buffer = "i"
+greeting.setFrom(buffer, start = 2)  // greeting = buffer[2..]
 ```
 
 `takeLast` and `dropLast` measure the length at runtime, so they cost one extra `execute store result` and go through
 the substring macro. Runtime bounds held in scores use the dynamic variants:
 
 ```kotlin
-greeting.substringDynamic(startEntity, endEntity, target = buffer)
-greeting.charAt(indexEntity, buffer)
+// startEntity holds 4 and endEntity holds 9 at runtime
+greeting.substringDynamic(startEntity, endEntity, target = buffer)  // buffer = "craft"
+greeting.charAt(indexEntity, buffer)                                // buffer = "c"
 ```
 
 ## Concatenation
 
 ```kotlin
-greeting.append(" world")             // in place
-greeting += " world"                  // plusAssign alias
-greeting.prepend("Hello, ")
-greeting.append(other)                // append another dynamic string
-greeting.appendFrom(other, start = 1) // append only other[1..]
-greeting.prependFrom(other, 0, 3)     // prepend only other[0..3)
+greeting.set("Hello")
+greeting.append(", world")             // "Hello, world"
+greeting += "!"                        // "Hello, world!", plusAssign alias
+greeting.prepend("> ")                 // "> Hello, world!"
+greeting.append(other)                 // append another dynamic string
+greeting.appendFrom(other, start = 1)  // append only other[1..]
+greeting.prependFrom(other, 0, 3)      // prepend only other[0..3)
 ```
 
 `concat` writes `a + b` into a target and has an overload for every literal / dynamic combination. Two literals are
@@ -164,11 +166,12 @@ carrying the holder and objective. Each one accepts an optional `resultHolder` s
 same time.
 
 ```kotlin
-greeting.equalsTo("Hello")        // -> #kore_string_equals
-greeting.equalsTo(buffer)         // dynamic operand
-greeting.isEmpty()                // -> #kore_string_is_empty
-greeting.startsWith("He")         // -> #kore_string_starts
-greeting.endsWith(buffer)         // -> #kore_string_ends, runtime suffix length
+greeting.set("minecraft")
+greeting.equalsTo("minecraft")  // 1  -> #kore_string_equals
+greeting.equalsTo(buffer)       // dynamic operand
+greeting.isEmpty()              // 0  -> #kore_string_is_empty
+greeting.startsWith("mine")     // 1  -> #kore_string_starts
+greeting.endsWith(buffer)       // -> #kore_string_ends, runtime suffix length
 ```
 
 `startsWith` and `endsWith` reject an empty literal, which would always match.
@@ -176,10 +179,12 @@ greeting.endsWith(buffer)         // -> #kore_string_ends, runtime suffix length
 ## Searching
 
 ```kotlin
-greeting.indexOf("world")   // -> #kore_string_find, -1 when absent
-greeting.indexOf(buffer)    // dynamic needle
-greeting.contains("hell")   // -> #kore_string_contains, 0 / 1
-greeting.count(",")         // -> #kore_string_count
+greeting.set("minecraft")
+greeting.indexOf("craft")  // 4   -> #kore_string_find, -1 when absent
+greeting.indexOf("kore")   // -1
+greeting.indexOf(buffer)   // dynamic needle
+greeting.contains("mine")  // 1   -> #kore_string_contains, 0 / 1
+greeting.count("a")        // 1   -> #kore_string_count
 ```
 
 All four share one recursive find controller that walks the string one offset at a time, so their cost grows with the
@@ -188,9 +193,18 @@ length of the haystack. An empty needle is rejected.
 ## Replacing
 
 ```kotlin
-greeting.replaceRange(0, 5, "Salut")   // static range, literal or dynamic replacement
-greeting.replace("l", "L")             // every occurrence
-greeting.replaceFirst("l", "L")        // first occurrence only
+greeting.set("minecraft")
+greeting.replaceRange(0, 4, "war")  // "warcraft", literal or dynamic replacement
+greeting.replace("a", "4")          // "w4rcr4ft", every occurrence
+greeting.replaceFirst("r", "R")     // "w4Rcr4ft", first occurrence only
+```
+
+Both the needle and the replacement accept a `DynamicString`, so a find-and-replace can be driven entirely by values
+computed in game. An empty runtime needle replaces nothing instead of looping forever:
+
+```kotlin
+greeting.replace(needle, replacement)
+greeting.replaceFirst("-", replacement)
 ```
 
 `replace` resumes the search past the text it just inserted, so a growing replacement such as `replace("a", "aa")`
@@ -199,10 +213,11 @@ terminates instead of matching its own output forever.
 ## Case conversion (ASCII)
 
 ```kotlin
-greeting.uppercase()
-greeting.lowercase(target = buffer)
-greeting.capitalize()      // first character only
-greeting.decapitalize()
+greeting.set("KoRe 42")
+greeting.uppercase()                 // "KORE 42"
+greeting.lowercase(target = buffer)  // buffer = "kore 42"
+buffer.capitalize()                  // "Kore 42", first character only
+buffer.decapitalize()                // "kore 42"
 ```
 
 A translation table is written to `tables.<direction>` on world load, and each character is mapped through a single
@@ -215,12 +230,25 @@ the lookup because they cannot be used as an NBT path key; neither has a case, s
 ## Trim, pad and repeat
 
 ```kotlin
-greeting.trim()                       // strip leading + trailing whitespace
-greeting.trimStart()
-greeting.trimEnd()
-greeting.padStart(10, padChar = '0')  // no-op when already 10 characters or longer
-greeting.padEnd(10, padChar = ' ')
-greeting.repeat(3)                    // static count, 0 clears, negative throws
+greeting.set("  hi  ")
+greeting.trimStart()  // "hi  "
+greeting.trimEnd()    // "hi"
+greeting.trim()       // strips both ends at once
+
+greeting.set("42")
+greeting.padStart(5, padChar = '0')  // "00042", no-op when already 5 characters or longer
+greeting.padEnd(7, padChar = '.')    // "00042..", pads on the right instead
+
+greeting.set("ab")
+greeting.repeat(3)  // "ababab", 0 clears, negative throws
+```
+
+The width and the count also accept a score, so a progress bar or an aligned column can be sized in game:
+
+```kotlin
+// width holds 5 and count holds 3 at runtime
+greeting.padStart(width, '0')  // "00042"
+bar.repeat(count)              // "|||" when bar holds "|"
 ```
 
 The whitespace set is `DynamicStringConfig.trimWhitespace`, see below.
@@ -239,11 +267,17 @@ recursion depth equals the string length, so it is bounded by the
 
 ```kotlin
 val parts = koreStringList("parts")
-greeting.split(",", parts)   // Kotlin semantics: empty tokens are preserved
-greeting.toList(parts)       // one element per character
+
+greeting.set("a,b,,c")
+greeting.split(",", parts)        // ["a", "b", "", "c"], empty tokens are preserved
+greeting.split(separator, parts)  // the delimiter can itself be a DynamicString
+
+greeting.set("kore")
+greeting.toList(parts)  // ["k", "o", "r", "e"], one element per character
 ```
 
-Both clear the target list first and reuse the find / substring primitives.
+Both clear the target list first and reuse the find / substring primitives. A runtime delimiter that turns out to be
+empty leaves the list empty rather than looping forever.
 
 `KoreStringList` wraps an NBT list at `lists.<name>` and offers the usual list primitives:
 
@@ -300,6 +334,27 @@ fits in an item name, a sign line or one storage field:
 tokens.join(",", csv)        // csv := "alpha,beta"
 csv.split(",", tokens)       // back to a list
 ```
+
+## Numbers and scores
+
+Scores are the only values a datapack can compute, so `DynamicString` converts in both directions. `setFrom(score)`
+renders a score as text, `toScore` parses the text back into a score:
+
+```kotlin
+val kills = ScoreboardEntity("stats", fakePlayer("#kills"))
+
+label.setFrom(kills)      // "7"
+label.padStart(3, '0')    // "007"
+label.prepend("Kills: ")  // "Kills: 007"
+
+label.appendFrom(kills)   // append a score to an existing string
+label.prependFrom(kills)  // prepend one
+
+input.toScore(kills)      // "42" -> the score 42
+```
+
+This is what makes a formatted clock, a leaderboard line or a numeric config value work without a `score` chat
+component, and the result stays a string that `padStart`, `split` or `join` can keep working on.
 
 ## Parsing and serialization
 
@@ -483,7 +538,7 @@ Helpers fall into three tiers, worth keeping in mind when a string is long or a 
 | Tier           | Helpers                                                                                                                                           | Cost                                               |
 |----------------|---------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------|
 | Constant       | `set`, `setFrom`, `clear`, `substring`, `substringTo`, `take`, `drop`, `charAt(Int)`, `append`, `prepend`, `concat`                               | 1 to 3 commands, no macro                          |
-| One macro call | `substringDynamic`, `takeLast`, `dropLast`, `capitalize`, `decapitalize`, `parseTo`, `setFromNbt`                                                 | a handful of commands plus one function call       |
+| One macro call | `substringDynamic`, `takeLast`, `dropLast`, `capitalize`, `decapitalize`, `parseTo`, `setFromNbt`, `setFrom(score)`, `toScore`                    | a handful of commands plus one function call       |
 | Recursive      | `reverse`, `indexOf`, `contains`, `count`, `replace`, `split`, `join`, `toList`, `uppercase`, `lowercase`, `trim`, `repeat`, `padStart`, `padEnd` | one function call per character, offset or element |
 
 Recursive helpers are bounded by the `maxCommandChainLength` game rule (65 536 by default), which is far above any
