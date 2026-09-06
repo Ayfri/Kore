@@ -933,6 +933,40 @@ fun dynamicOperandTests() = dataPack("unit_tests") {
 	}
 }
 
+fun scoreBridgeTests() = dataPack("unit_tests") {
+	registerDynamicStrings()
+
+	val label = dynamicString("label")
+	val kills = ScoreboardEntity("stats", fakePlayer("#kills"))
+
+	function("score_to_string") {
+		label.setFrom(kills)
+		lines assertsIs listOf(
+			"execute store result storage $LIB tmp.kore_string_score int 1.0 run scoreboard players get #kills stats",
+			"data modify storage $LIB args.kore_string_to_string.value set from storage $LIB tmp.kore_string_score",
+			"""data modify storage $LIB args.kore_string_to_string.dstName set value "label"""",
+			"function unit_tests:kore_string_to_string with storage $LIB args.kore_string_to_string",
+		)
+	}
+
+	function("score_appended") {
+		label.appendFrom(kills)
+		lines[2] assertsIs """data modify storage $LIB args.kore_string_to_string.dstName set value "kore_string_score_text""""
+		lines.last() assertsIs "data modify storage $LIB heap.label append string storage $LIB heap.kore_string_score_text"
+	}
+
+	function("string_to_score") {
+		label.toScore(kills)
+		lines assertsIs listOf(
+			"data modify storage $LIB args.kore_string_parse.value set from storage $LIB heap.label",
+			"""data modify storage $LIB args.kore_string_parse.dstStorage set value "kore_string_lib:memory"""",
+			"""data modify storage $LIB args.kore_string_parse.dstPath set value "tmp.kore_string_score"""",
+			"function unit_tests:kore_string_parse with storage $LIB args.kore_string_parse",
+			"execute store result score #kills stats run data get storage $LIB tmp.kore_string_score 1.0",
+		)
+	}
+}
+
 class StringsTests : FunSpec({
 	test("advanced strings") { advancedStringsTests() }
 	test("case") { caseTests() }
@@ -945,6 +979,7 @@ class StringsTests : FunSpec({
 	test("missing runtime") { missingRuntimeTests() }
 	test("parse") { parseTests() }
 	test("registration") { registrationTests() }
+	test("score bridge") { scoreBridgeTests() }
 	test("replace") { replaceTests() }
 	test("string list") { stringListTests() }
 	test("strings") { stringsTests() }
