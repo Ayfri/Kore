@@ -86,7 +86,7 @@ scoreboard players operation #on_rain_start.prev kore_world = #on_rain_start.now
 
 Because the previous state is unset on the first tick after a reload, edge events never fire spuriously on load.
 
-`onInterval` instead keeps a counter on the same objective, so it stays accurate even when `doDaylightCycle` is off:
+`onInterval` instead keeps a counter on the same objective, so it stays accurate even when `advance_time` is off:
 
 ```mcfunction
 # dispatch_on_interval

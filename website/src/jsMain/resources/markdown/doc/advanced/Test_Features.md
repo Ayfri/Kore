@@ -61,8 +61,8 @@ Overrides game rules for controlled conditions:
 ```kotlin
 testEnvironments {
     gameRules("controlled_env") {
-        this[Gamerules.DO_DAYLIGHT_CYCLE] = false
-        this[Gamerules.DO_MOB_SPAWNING] = false
+        this[Gamerules.ADVANCE_TIME] = false
+        this[Gamerules.SPAWN_MOBS] = false
         this[Gamerules.RANDOM_TICK_SPEED] = 0
     }
 }
@@ -104,7 +104,7 @@ Merges multiple environments into one:
 ```kotlin
 testEnvironments {
 	val rules = gameRules("no_mobs") {
-		this[Gamerules.DO_MOB_SPAWNING] = false
+		this[Gamerules.SPAWN_MOBS] = false
 	}
   val time = clockTime("dawn", WorldClocks.OVERWORLD, 1000)
 
@@ -244,8 +244,8 @@ fun DataPack.createTestSuite() {
 	val cleanupFn = function("test_cleanup") { say("Cleaning up test") }
 	// Create reusable environments
 	val controlled = testEnvironmentsBuilder.gameRules("controlled") {
-		this[Gamerules.DO_DAYLIGHT_CYCLE] = false
-		this[Gamerules.DO_MOB_SPAWNING] = false
+		this[Gamerules.ADVANCE_TIME] = false
+		this[Gamerules.SPAWN_MOBS] = false
 		this[Gamerules.RANDOM_TICK_SPEED] = 0
 	}
   val dayTime = testEnvironmentsBuilder.clockTime("day", WorldClocks.OVERWORLD, 6000)
