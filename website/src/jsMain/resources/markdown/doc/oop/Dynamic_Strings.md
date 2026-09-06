@@ -345,11 +345,78 @@ registerDynamicStrings(
 Every field defaults to the matching `OopConstants.string*` value, so changing one of those moves the default for every
 datapack in the project instead of for a single one.
 
-## End-to-end example
+## End-to-end example: a typewriter dialogue box
 
-A pack setting is a good fit for these helpers: admins edit one string with a single `/data modify`, the pack turns it
-into typed values. The alternative is one `execute if data` per accepted value, hardcoded in the pack, which caps the
-setting to the values you thought of when writing it.
+Revealing a line of dialogue one character at a time is a staple of adventure maps, and it is the exact thing vanilla
+cannot do: a text component is fixed at write time, so the usual workarounds are one hardcoded `tellraw` per frame
+(`"T"`, `"Th"`, `"The"`, …) or shipping a third-party string library such as
+[String-Parser](https://github.com/5uso/String-Parser) and driving it by hand.
+
+With a `DynamicString` the effect is a growing substring, and the dialogue text stays a plain Kotlin string:
+
+```kotlin
+import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.arguments.enums.Relation
+import io.github.ayfri.kore.arguments.numbers.ticks
+import io.github.ayfri.kore.arguments.types.literals.allPlayers
+import io.github.ayfri.kore.arguments.types.literals.literal
+import io.github.ayfri.kore.commands.TitleLocation
+import io.github.ayfri.kore.commands.execute.execute
+import io.github.ayfri.kore.commands.playSound
+import io.github.ayfri.kore.commands.schedule
+import io.github.ayfri.kore.commands.title
+import io.github.ayfri.kore.entities.fakePlayer
+import io.github.ayfri.kore.functions.function
+import io.github.ayfri.kore.generated.SoundEvents
+import io.github.ayfri.kore.scoreboard.ScoreboardEntity
+import io.github.ayfri.kore.scoreboard.add
+import io.github.ayfri.kore.scoreboard.set
+import io.github.ayfri.kore.strings.*
+import io.github.ayfri.kore.commands.function as callFunction
+
+fun DataPack.dialogueTypewriter() {
+	registerDynamicStrings()
+
+	val line = dynamicString("dialogue_line")
+	val shown = dynamicString("dialogue_shown")
+	val start = ScoreboardEntity("dialogue", fakePlayer("#start"))
+	val cursor = ScoreboardEntity("dialogue", fakePlayer("#cursor"))
+
+	function("dialogue_tick") {
+		cursor.add(1)
+		line.substringDynamic(start, cursor, target = shown)   // shown := line[0..cursor)
+		title(allPlayers(), TitleLocation.ACTIONBAR, shown.asChatComponents(interpret = false))
+		playSound(SoundEvents.Block.NoteBlock.HAT, target = allPlayers())
+
+		val length = line.lengthScore()
+		execute {
+			ifCondition {
+				score(cursor.entity.asScoreHolder(), cursor.name, literal(length.holder), length.objective, Relation.LESS_THAN)
+			}
+			run { schedule(1.ticks, "${datapack.name}:dialogue_tick") }
+		}
+	}
+
+	function("dialogue_start") {
+		line.set("The keeper looks up. You made it.")
+		start.set(0)
+		cursor.set(0)
+		callFunction(datapack.name, "dialogue_tick")
+	}
+}
+```
+
+The whole effect is a handful of commands per tick, one of them the substring macro, and the text is never
+duplicated: changing the line, translating it, or
+feeding it from a sign, a book or a `KoreStringList` of lines only touches `line`. `substringDynamic` reads its bounds
+from scores, so the same function drives a slow reveal, an instant skip (set `cursor` to the length) or a scrolling
+window (advance `start` too).
+
+## Another example: parsing a config line
+
+A pack setting is the other everyday fit: admins edit one string with a single `/data modify`, the pack turns it into
+typed values. The alternative is one `execute if data` per accepted value, hardcoded, which caps the setting to the
+values you thought of when writing the pack.
 
 ```kotlin
 import io.github.ayfri.kore.DataPack
