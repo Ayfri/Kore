@@ -3,6 +3,7 @@ package io.github.ayfri.kore.strings
 import io.github.ayfri.kore.commands.Command
 import io.github.ayfri.kore.commands.data
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.scoreboard.ScoreboardEntity
 
 /** Scratch slot staging an operand that vanilla cannot read directly (a literal, or an aliased source). */
 internal const val CONCAT_TMP_KEY = "${INTERNAL_NAME_PREFIX}concat_tmp"
@@ -67,60 +68,96 @@ fun DynamicString.append(other: DynamicString): Command {
 	return fn.data(storage) { modify(nbtPath) { append(storage, tmp, null, null) } }
 }
 
-/** Writes `a + b` (both literal) into [target]. Folded at generation time into a single `set value`. */
-context(fn: Function)
-fun concat(target: DynamicString, a: String, b: String) = target.set(a + b)
+/**
+ * Builder handed to [DynamicString.build], where every `+` appends one operand to the target.
+ *
+ * ```
+ * summary.build {
+ * 	+"Player "
+ * 	+playerName
+ * 	+": "
+ * 	+kills
+ * }
+ * ```
+ */
+class DynamicStringBuilder internal constructor(private val target: DynamicString, private val fn: Function) {
+	private val pendingLiteral = StringBuilder()
+	private var started = false
 
-/** Writes `a + b` into [target], with [a] as a literal and [b] as a [DynamicString]. */
-context(fn: Function)
-fun concat(target: DynamicString, a: String, b: DynamicString) = when (target) {
-	b -> target.prepend(a)
-	else -> {
-		target.set(a)
-		target.appendFrom(b)
+	/** Appends the literal value of this string. */
+	operator fun String.unaryPlus() {
+		pendingLiteral.append(this)
 	}
-}
 
-/** Writes `a + b` into [target], with [a] as a [DynamicString] and [b] as a literal. */
-context(fn: Function)
-fun concat(target: DynamicString, a: DynamicString, b: String) {
-	if (target != a) target.setFrom(a)
-	target.append(b)
-}
+	/** Appends this single character. */
+	operator fun Char.unaryPlus() {
+		pendingLiteral.append(this)
+	}
 
-/** Writes `a + b` into [target], reading [a] and [b] as [DynamicString]s. */
-context(fn: Function)
-fun concat(target: DynamicString, a: DynamicString, b: DynamicString) = when (target) {
-	a -> target.append(b)
-	b -> target.prepend(a)
-	else -> {
-		target.setFrom(a)
-		target.appendFrom(b)
+	/** Appends the runtime content of this dynamic string. */
+	operator fun DynamicString.unaryPlus() = context(fn) {
+		flush()
+		if (started) target.append(this@unaryPlus) else if (target != this@unaryPlus) target.setFrom(this@unaryPlus)
+		started = true
+	}
+
+	/** Appends the decimal rendering of this score. */
+	operator fun ScoreboardEntity.unaryPlus() = context(fn) {
+		flush()
+		if (started) target.appendFrom(this@unaryPlus) else target.setFrom(this@unaryPlus)
+		started = true
+	}
+
+	/** Consecutive literals are folded into a single operand, and the first one seeds the target with a plain `set value`. */
+	private fun flush() = context(fn) {
+		if (pendingLiteral.isEmpty()) return@context
+		val value = pendingLiteral.toString()
+		pendingLiteral.clear()
+		if (started) target.append(value) else target.set(value)
+		started = true
+	}
+
+	internal fun seal() = context(fn) {
+		flush()
+		if (!started) target.set("")
 	}
 }
 
 /**
- * N-ary concatenation: writes the concatenation of [parts] into [target] by seeding it with the
- * first part then appending the remaining ones. Passing no part clears [target].
+ * Rebuilds this string from the operands pushed inside [block].
+ *
+ * Replaces chains of `set` / `append` calls with a single readable block mixing literals, other
+ * dynamic strings and scores.
+ *
+ * ```
+ * // playerName holds "Ayfri" and kills holds 3 at runtime
+ * summary.build { +"Player "; +playerName; +": "; +kills }  // "Player Ayfri: 3"
+ * ```
  */
 context(fn: Function)
-fun concatAll(target: DynamicString, vararg parts: StringPart) {
-	val first = parts.firstOrNull()
-	if (first == null) {
-		target.set("")
-		return
-	}
-	when (first) {
-		is StringPart.Literal -> target.set(first.value)
-		is StringPart.Ref -> if (target != first.string) target.setFrom(first.string)
-	}
-	parts.drop(1).forEach { part ->
-		when (part) {
-			is StringPart.Literal -> target.append(part.value)
-			is StringPart.Ref -> target.append(part.string)
-		}
-	}
+fun DynamicString.build(block: DynamicStringBuilder.() -> Unit): DynamicString {
+	DynamicStringBuilder(this, fn).apply(block).seal()
+	return this
 }
+
+/**
+ * Concatenation as an expression: writes `this + other` into a fresh anonymous slot and returns it,
+ * leaving both operands untouched.
+ *
+ * ```
+ * val full = first + " " + last
+ * ```
+ */
+context(fn: Function)
+operator fun DynamicString.plus(other: String): DynamicString = copy().also { it.append(other) }
+
+/** Expression concatenation with the runtime content of [other]. See [plus]. */
+context(fn: Function)
+operator fun DynamicString.plus(other: DynamicString): DynamicString = copy().also { it.append(other) }
+
+/** Expression concatenation with the decimal rendering of [score]. See [plus]. */
+context(fn: Function)
+operator fun DynamicString.plus(score: ScoreboardEntity): DynamicString = copy().also { it.appendFrom(score) }
 
 /** Operator alias for [append] when the right operand is another [DynamicString]. */
 context(fn: Function)
@@ -132,6 +169,18 @@ operator fun DynamicString.plusAssign(other: DynamicString) {
 context(fn: Function)
 operator fun DynamicString.plusAssign(value: String) {
 	append(value)
+}
+
+/** Operator alias for [append] when the right operand is a single character. */
+context(fn: Function)
+operator fun DynamicString.plusAssign(char: Char) {
+	append(char.toString())
+}
+
+/** Operator alias for [appendFrom], rendering [score] as its decimal value. */
+context(fn: Function)
+operator fun DynamicString.plusAssign(score: ScoreboardEntity) {
+	appendFrom(score)
 }
 
 /**

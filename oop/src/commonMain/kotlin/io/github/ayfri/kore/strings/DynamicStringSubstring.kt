@@ -223,3 +223,34 @@ fun DynamicString.takeLast(n: Int, target: DynamicString = this) {
 	startCursor.sub(fn, n)
 	substringDynamicCursors(fn, startCursor, lenCursor, target)
 }
+
+/**
+ * Extracts the character at [index] into a fresh anonymous slot, leaving this string untouched.
+ *
+ * ```
+ * val initial = name[0]
+ * ```
+ */
+context(fn: Function)
+operator fun DynamicString.get(index: Int): DynamicString = runtime.tempString().also { charAt(index, it) }
+
+/** Runtime-index variant of [get], reading the position from a score. */
+context(fn: Function)
+operator fun DynamicString.get(index: ScoreboardEntity): DynamicString = runtime.tempString().also { charAt(index, it) }
+
+/**
+ * Extracts an inclusive character range into a fresh anonymous slot, matching Kotlin's `..` and
+ * `..<` semantics on indices.
+ *
+ * ```
+ * val year = date[0..3]   // "2026" out of "2026-09-06"
+ * val day = date[8..<10]  // "06"
+ * ```
+ */
+context(fn: Function)
+operator fun DynamicString.get(indices: IntRange): DynamicString =
+	runtime.tempString().also { substringTo(it, indices.first, indices.last + 1) }
+
+/** In-place substring over an inclusive index range. See [get]. */
+context(fn: Function)
+fun DynamicString.substring(indices: IntRange) = substring(indices.first, indices.last + 1)

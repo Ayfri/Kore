@@ -138,7 +138,7 @@ internal fun DynamicStringRuntime.upperControllerHelper(): FunctionWithMacros<Ca
 }
 
 context(fn: Function)
-private fun DynamicString.runCase(controllerName: String, stepName: String, target: DynamicString) {
+private fun DynamicString.runCase(controllerName: String, stepName: String, target: DynamicString): DynamicString {
 	val scratch = runtime.scratchString(CASE_SCRATCH)
 	scratch.set("")
 	val stepArgs = runtime.argsPath(stepName)
@@ -152,6 +152,7 @@ private fun DynamicString.runCase(controllerName: String, stepName: String, targ
 	iCursor.set(fn, 0)
 	fn.ifScoreCompareRunFunction(iCursor, Relation.LESS_THAN, lenCursor, controllerName)
 	if (target != scratch) target.setFrom(scratch)
+	return target
 }
 
 /**
@@ -179,7 +180,7 @@ fun DynamicString.decapitalize(target: DynamicString = this) = changeFirstCharCa
  * which would cost a controller call and a length measurement for one character.
  */
 context(fn: Function)
-private fun DynamicString.changeFirstCharCase(target: DynamicString, uppercase: Boolean) {
+private fun DynamicString.changeFirstCharCase(target: DynamicString, uppercase: Boolean): DynamicString {
 	val tableName = if (uppercase) OopConstants.stringUpperTableMacroName else OopConstants.stringLowerTableMacroName
 	if (uppercase) runtime.upperTableHelper() else runtime.lowerTableHelper()
 	val map = runtime.caseMapHelper(tableName)
@@ -190,6 +191,7 @@ private fun DynamicString.changeFirstCharCase(target: DynamicString, uppercase: 
 	substringTo(rest, 1)
 	fn.copyNbt(storage, target.nbtPath, storage, runtime.caseCharPath())
 	target.appendFrom(rest)
+	return target
 }
 
 /**
@@ -200,9 +202,9 @@ private fun DynamicString.changeFirstCharCase(target: DynamicString, uppercase: 
  * ```
  */
 context(fn: Function)
-fun DynamicString.lowercase(target: DynamicString = this) {
+fun DynamicString.lowercase(target: DynamicString = this): DynamicString {
 	runtime.lowerControllerHelper()
-	runCase(OopConstants.stringLowerMacroName, OopConstants.stringLowerStepMacroName, target)
+	return runCase(OopConstants.stringLowerMacroName, OopConstants.stringLowerStepMacroName, target)
 }
 
 /**
@@ -213,7 +215,23 @@ fun DynamicString.lowercase(target: DynamicString = this) {
  * ```
  */
 context(fn: Function)
-fun DynamicString.uppercase(target: DynamicString = this) {
+fun DynamicString.uppercase(target: DynamicString = this): DynamicString {
 	runtime.upperControllerHelper()
-	runCase(OopConstants.stringUpperMacroName, OopConstants.stringUpperStepMacroName, target)
+	return runCase(OopConstants.stringUpperMacroName, OopConstants.stringUpperStepMacroName, target)
 }
+
+/** Expression form of [capitalize]: writes the capitalised value into a fresh anonymous slot. */
+context(fn: Function)
+fun DynamicString.capitalized(): DynamicString = capitalize(runtime.tempString())
+
+/** Expression form of [decapitalize]: writes the decapitalised value into a fresh anonymous slot. */
+context(fn: Function)
+fun DynamicString.decapitalized(): DynamicString = decapitalize(runtime.tempString())
+
+/** Expression form of [lowercase]: writes the lowercased value into a fresh anonymous slot. */
+context(fn: Function)
+fun DynamicString.lowercased(): DynamicString = lowercase(runtime.tempString())
+
+/** Expression form of [uppercase]: writes the uppercased value into a fresh anonymous slot. */
+context(fn: Function)
+fun DynamicString.uppercased(): DynamicString = uppercase(runtime.tempString())

@@ -39,6 +39,28 @@ fun DynamicStringRuntime.dynamicString(name: String): DynamicString {
 /** Creates a new [DynamicString] in the context of the given [DataPack], allocating its name. */
 fun DataPack.dynamicString(name: String): DynamicString = requireDynamicStringRuntime().dynamicString(name)
 
+/**
+ * Allocates a fresh anonymous [DynamicString] scratch slot, the backing store of every expression
+ * style helper ([DynamicString.plus], [DynamicString.get], [DynamicString.uppercased], ...).
+ *
+ * Each call returns a distinct slot, so intermediate results never clobber each other.
+ */
+fun DynamicStringRuntime.tempString(): DynamicString = scratchString("${INTERNAL_NAME_PREFIX}temp_${nextTempId()}")
+
+/** Allocates a fresh anonymous [DynamicString] scratch slot in the context of the given [DataPack]. */
+fun DataPack.tempDynamicString(): DynamicString = requireDynamicStringRuntime().tempString()
+
+/**
+ * Copies this string into a fresh anonymous slot, the entry point for chaining transformations
+ * without touching the original.
+ *
+ * ```
+ * val shouted = name.copy().also { it.uppercase() }
+ * ```
+ */
+context(fn: Function)
+fun DynamicString.copy(): DynamicString = runtime.tempString().also { it.setFrom(this) }
+
 /** Exposes this storage-backed string as an NBT chat component consumable by chat-like arguments. */
 fun DynamicString.asChatComponents(interpret: Boolean = true): ChatComponents = nbtComponent(nbtPath, storage) {
 	this.interpret = interpret
@@ -65,11 +87,14 @@ context(fn: Function)
 fun DynamicString.copyTo(target: DynamicString) = target.setFrom(this)
 
 /**
- * Stores the length of this string into [holder] on the configured length objective using
- * `execute store result`. Returns [holder] so callers can chain the resulting score.
+ * Measures the length of this string into a score and returns it.
+ *
+ * ```
+ * "kore".length()  // 4
+ * ```
  */
 context(fn: Function)
-fun DynamicString.length(holder: String = runtime.config.lengthHolder): String {
+fun DynamicString.length(holder: String = runtime.config.lengthHolder): DynamicStringResult {
 	fn.execute {
 		storeResult { score(literal(holder), runtime.config.lengthObjective) }
 		run {
@@ -78,20 +103,7 @@ fun DynamicString.length(holder: String = runtime.config.lengthHolder): String {
 			}
 		}
 	}
-	return holder
-}
-
-/** Full typed handle to the score produced by [length]. */
-data class DynamicStringLength(val holder: String, val objective: String)
-
-/**
- * Typed variant of [length] that returns both holder and objective, handy when multiple length
- * scores are kept alive simultaneously (use [holder] to avoid clobbering the default one).
- */
-context(fn: Function)
-fun DynamicString.lengthScore(holder: String = runtime.config.lengthHolder): DynamicStringLength {
-	length(holder)
-	return DynamicStringLength(holder, runtime.config.lengthObjective)
+	return DynamicStringResult(holder, runtime.config.lengthObjective)
 }
 
 /**

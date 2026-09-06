@@ -55,7 +55,7 @@ internal fun DynamicStringRuntime.reverseTailHelper(): FunctionWithMacros<Revers
  * ```
  */
 context(fn: Function)
-fun DynamicString.reverse(target: DynamicString = this) {
+fun DynamicString.reverse(target: DynamicString = this): DynamicString {
 	val rt = fn.datapack.requireDynamicStringRuntime()
 	val tail = rt.reverseTailHelper()
 
@@ -77,4 +77,9 @@ fun DynamicString.reverse(target: DynamicString = this) {
 	fn.ifScoreMatchesRunFunction(iCursor, rangeOrIntStart(0), tail.name)
 
 	if (target != accumulator) target.setFrom(accumulator)
+	return target
 }
+
+/** Expression form of [reverse]: writes the reversed value into a fresh anonymous slot. */
+context(fn: Function)
+fun DynamicString.reversed(): DynamicString = reverse(runtime.tempString())

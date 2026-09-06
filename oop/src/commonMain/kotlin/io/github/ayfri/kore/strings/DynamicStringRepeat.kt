@@ -109,21 +109,22 @@ internal fun repeatInto(
  * ```
  */
 context(fn: Function)
-fun DynamicString.repeat(times: Int, target: DynamicString = this) {
+fun DynamicString.repeat(times: Int, target: DynamicString = this): DynamicString {
 	require(times >= 0) { "repeat count must be non negative, got $times" }
 	val rt = fn.datapack.requireDynamicStringRuntime()
 	if (times == 0) {
 		target.set("")
-		return
+		return target
 	}
 	val srcBuf = rt.scratchString(REPEAT_SRC_SCRATCH)
 	srcBuf.setFrom(this)
 	target.setFrom(srcBuf)
-	if (times == 1) return
+	if (times == 1) return target
 
 	val cap = ScoreCursor("#${INTERNAL_NAME_PREFIX}repeat_cap", rt.config.lengthObjective)
 	cap.set(fn, times - 1)
 	repeatInto(fn, target, srcBuf, cap, guarded = false)
+	return target
 }
 
 /**
@@ -138,7 +139,7 @@ fun DynamicString.repeat(times: Int, target: DynamicString = this) {
  * ```
  */
 context(fn: Function)
-fun DynamicString.repeat(times: ScoreboardEntity, target: DynamicString = this) {
+fun DynamicString.repeat(times: ScoreboardEntity, target: DynamicString = this): DynamicString {
 	val rt = fn.datapack.requireDynamicStringRuntime()
 	val obj = rt.config.lengthObjective
 	val cap = ScoreCursor("#${INTERNAL_NAME_PREFIX}repeat_cap", obj)
@@ -153,4 +154,31 @@ fun DynamicString.repeat(times: ScoreboardEntity, target: DynamicString = this) 
 	}
 	cap.sub(fn, 1)
 	repeatInto(fn, target, srcBuf, cap)
+	return target
 }
+
+/**
+ * Operator alias of [repeat] with a static count.
+ *
+ * ```
+ * separator *= 20  // "-" becomes "--------------------"
+ * ```
+ */
+context(fn: Function)
+operator fun DynamicString.timesAssign(times: Int) {
+	repeat(times)
+}
+
+/** Operator alias of [repeat] with a runtime count. See [timesAssign]. */
+context(fn: Function)
+operator fun DynamicString.timesAssign(times: ScoreboardEntity) {
+	repeat(times)
+}
+
+/** Expression form of [repeat]: writes the repeated value into a fresh anonymous slot. */
+context(fn: Function)
+fun DynamicString.repeated(times: Int): DynamicString = repeat(times, runtime.tempString())
+
+/** Expression form of [repeat] with a runtime count. See [repeated]. */
+context(fn: Function)
+fun DynamicString.repeated(times: ScoreboardEntity): DynamicString = repeat(times, runtime.tempString())

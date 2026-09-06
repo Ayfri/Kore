@@ -139,13 +139,14 @@ private fun DynamicString.primeTrim(fn: Function): TrimCursors {
  * ```
  */
 context(fn: Function)
-fun DynamicString.trimStart(target: DynamicString = this) {
+fun DynamicString.trimStart(target: DynamicString = this): DynamicString {
 	val rt = fn.datapack.requireDynamicStringRuntime()
 	val controller = rt.trimStartControllerHelper()
 	val c = primeTrim(fn)
 	prepareTrim(fn, this, OopConstants.stringTrimStartStepMacroName)
 	fn.ifScoreCompareRunFunction(c.i, Relation.LESS_THAN, c.end, controller.name)
 	substringDynamicCursors(fn, c.i, c.end, target)
+	return target
 }
 
 /**
@@ -156,13 +157,14 @@ fun DynamicString.trimStart(target: DynamicString = this) {
  * ```
  */
 context(fn: Function)
-fun DynamicString.trimEnd(target: DynamicString = this) {
+fun DynamicString.trimEnd(target: DynamicString = this): DynamicString {
 	val rt = fn.datapack.requireDynamicStringRuntime()
 	val controller = rt.trimEndControllerHelper()
 	val c = primeTrim(fn)
 	prepareTrim(fn, this, OopConstants.stringTrimEndStepMacroName)
 	fn.ifScoreCompareRunFunction(c.end, Relation.GREATER_THAN, c.i, controller.name)
 	substringDynamicCursors(fn, c.i, c.end, target)
+	return target
 }
 
 /**
@@ -173,7 +175,7 @@ fun DynamicString.trimEnd(target: DynamicString = this) {
  * ```
  */
 context(fn: Function)
-fun DynamicString.trim(target: DynamicString = this) {
+fun DynamicString.trim(target: DynamicString = this): DynamicString {
 	val rt = fn.datapack.requireDynamicStringRuntime()
 	val startController = rt.trimStartControllerHelper()
 	val endController = rt.trimEndControllerHelper()
@@ -183,4 +185,17 @@ fun DynamicString.trim(target: DynamicString = this) {
 	fn.ifScoreCompareRunFunction(c.i, Relation.LESS_THAN, c.end, startController.name)
 	fn.ifScoreCompareRunFunction(c.end, Relation.GREATER_THAN, c.i, endController.name)
 	substringDynamicCursors(fn, c.i, c.end, target)
+	return target
 }
+
+/** Expression form of [trim]: writes the trimmed value into a fresh anonymous slot. */
+context(fn: Function)
+fun DynamicString.trimmed(): DynamicString = trim(runtime.tempString())
+
+/** Expression form of [trimStart]: writes the trimmed value into a fresh anonymous slot. */
+context(fn: Function)
+fun DynamicString.trimmedStart(): DynamicString = trimStart(runtime.tempString())
+
+/** Expression form of [trimEnd]: writes the trimmed value into a fresh anonymous slot. */
+context(fn: Function)
+fun DynamicString.trimmedEnd(): DynamicString = trimEnd(runtime.tempString())

@@ -135,7 +135,7 @@ private fun DynamicString.preparePrelude(
  * ```
  */
 context(fn: Function)
-fun DynamicString.indexOf(needle: String, resultHolder: String = FIND_RESULT_HOLDER): String {
+fun DynamicString.indexOf(needle: String, resultHolder: String = FIND_RESULT_HOLDER): DynamicStringResult {
 	require(needle.isNotEmpty()) { "indexOf needle must not be empty." }
 	val rt = fn.datapack.requireDynamicStringRuntime()
 	val controller = rt.findControllerHelper()
@@ -146,7 +146,7 @@ fun DynamicString.indexOf(needle: String, resultHolder: String = FIND_RESULT_HOL
 	if (resultHolder != prelude.result.holder) {
 		ScoreCursor(resultHolder, prelude.result.objective).assignFrom(fn, prelude.result)
 	}
-	return resultHolder
+	return DynamicStringResult(resultHolder, prelude.result.objective)
 }
 
 /**
@@ -158,7 +158,7 @@ fun DynamicString.indexOf(needle: String, resultHolder: String = FIND_RESULT_HOL
  * ```
  */
 context(fn: Function)
-fun DynamicString.indexOf(needle: DynamicString, resultHolder: String = FIND_RESULT_HOLDER): String {
+fun DynamicString.indexOf(needle: DynamicString, resultHolder: String = FIND_RESULT_HOLDER): DynamicStringResult {
 	val rt = fn.datapack.requireDynamicStringRuntime()
 	val controller = rt.findControllerHelper()
 	val prelude = preparePrelude(fn, needle.nbtPath, null)
@@ -166,7 +166,7 @@ fun DynamicString.indexOf(needle: DynamicString, resultHolder: String = FIND_RES
 	if (resultHolder != prelude.result.holder) {
 		ScoreCursor(resultHolder, prelude.result.objective).assignFrom(fn, prelude.result)
 	}
-	return resultHolder
+	return DynamicStringResult(resultHolder, prelude.result.objective)
 }
 
 /** Internal helper turning the find result into a 0 / 1 flag. */
@@ -190,10 +190,11 @@ private fun Function.materialiseContainsFlag(resultHolder: String) {
  * ```
  */
 context(fn: Function)
-fun DynamicString.contains(needle: String, resultHolder: String = CONTAINS_RESULT_HOLDER): String {
+infix fun DynamicString.contains(needle: String): DynamicStringResult {
+	val resultHolder = CONTAINS_RESULT_HOLDER
 	indexOf(needle)
 	fn.materialiseContainsFlag(resultHolder)
-	return resultHolder
+	return DynamicStringResult(resultHolder, runtime.config.lengthObjective)
 }
 
 /**
@@ -205,8 +206,9 @@ fun DynamicString.contains(needle: String, resultHolder: String = CONTAINS_RESUL
  * ```
  */
 context(fn: Function)
-fun DynamicString.contains(needle: DynamicString, resultHolder: String = CONTAINS_RESULT_HOLDER): String {
+infix fun DynamicString.contains(needle: DynamicString): DynamicStringResult {
+	val resultHolder = CONTAINS_RESULT_HOLDER
 	indexOf(needle)
 	fn.materialiseContainsFlag(resultHolder)
-	return resultHolder
+	return DynamicStringResult(resultHolder, runtime.config.lengthObjective)
 }

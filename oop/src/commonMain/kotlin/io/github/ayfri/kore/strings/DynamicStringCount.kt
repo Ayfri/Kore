@@ -86,15 +86,15 @@ private fun primeCountLoop(
 }
 
 /**
- * Counts the number of occurrences of the literal [needle] in this string. The result is written to
- * [resultHolder] on the `kore_string_len` objective. Returns [resultHolder] for chaining.
+ * Counts the number of occurrences of the literal [needle] in this string, into [resultHolder] on
+ * the `kore_string_len` objective.
  *
  * ```
  * "a,b,,c".count(",")  // 3
  * ```
  */
 context(fn: Function)
-fun DynamicString.count(needle: String, resultHolder: String = COUNT_RESULT_HOLDER): String {
+fun DynamicString.count(needle: String, resultHolder: String = COUNT_RESULT_HOLDER): DynamicStringResult {
 	require(needle.isNotEmpty()) { "count needle must not be empty." }
 	val rt = fn.datapack.requireDynamicStringRuntime()
 	val needleScratch = rt.tmpPath("${INTERNAL_NAME_PREFIX}count_needle")
@@ -103,7 +103,7 @@ fun DynamicString.count(needle: String, resultHolder: String = COUNT_RESULT_HOLD
 		ScoreCursor("#${INTERNAL_NAME_PREFIX}find_sublen", rt.config.lengthObjective).set(f, needle.length)
 	}
 	if (resultHolder != result.holder) ScoreCursor(resultHolder, result.objective).assignFrom(fn, result)
-	return resultHolder
+	return DynamicStringResult(resultHolder, result.objective)
 }
 
 /**
@@ -115,12 +115,12 @@ fun DynamicString.count(needle: String, resultHolder: String = COUNT_RESULT_HOLD
  * ```
  */
 context(fn: Function)
-fun DynamicString.count(needle: DynamicString, resultHolder: String = COUNT_RESULT_HOLDER): String {
+fun DynamicString.count(needle: DynamicString, resultHolder: String = COUNT_RESULT_HOLDER): DynamicStringResult {
 	val rt = fn.datapack.requireDynamicStringRuntime()
 	val result = primeCountLoop(fn, this, needle.nbtPath) { f ->
 		ScoreCursor("#${INTERNAL_NAME_PREFIX}find_sublen", rt.config.lengthObjective)
 			.storeValueOfNbt(f, rt.libStorageArg, needle.nbtPath)
 	}
 	if (resultHolder != result.holder) ScoreCursor(resultHolder, result.objective).assignFrom(fn, result)
-	return resultHolder
+	return DynamicStringResult(resultHolder, result.objective)
 }

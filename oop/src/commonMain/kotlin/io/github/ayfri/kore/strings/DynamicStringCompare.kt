@@ -23,15 +23,6 @@ const val IS_EMPTY_RESULT_HOLDER = "#kore_string_is_empty"
 const val STARTS_WITH_RESULT_HOLDER = "#kore_string_starts"
 
 /**
- * Boolean result of a string comparison.
- *
- * The [holder] score on [objective] contains `1` when the comparison holds and `0` when it does
- * not, matching the convention of every other predicate in the module (`contains`, …). Use it as
- * `execute if score <holder> <objective> matches 1 run ...`.
- */
-data class DynamicStringEquality(val holder: String, val objective: String)
-
-/**
  * Compares this string with [other] and stores `1` into [resultHolder] when both are equal, `0`
  * otherwise.
  *
@@ -43,7 +34,7 @@ context(fn: Function)
 fun DynamicString.equalsTo(
 	other: DynamicString,
 	resultHolder: String = EQUALS_RESULT_HOLDER,
-): DynamicStringEquality {
+): DynamicStringResult {
 	val tmp = runtime.tmpPath(COMPARE_TMP_KEY)
 	fn.data(storage) {
 		modify(tmp) { set(storage, nbtPath) }
@@ -64,7 +55,7 @@ fun DynamicString.equalsTo(
  * ```
  */
 context(fn: Function)
-fun DynamicString.equalsTo(literal: String, resultHolder: String = EQUALS_RESULT_HOLDER): DynamicStringEquality {
+fun DynamicString.equalsTo(literal: String, resultHolder: String = EQUALS_RESULT_HOLDER): DynamicStringResult {
 	val tmp = runtime.tmpPath(COMPARE_TMP_KEY)
 	fn.data(storage) {
 		modify(tmp, literal)
@@ -76,12 +67,16 @@ fun DynamicString.equalsTo(literal: String, resultHolder: String = EQUALS_RESULT
 	}
 }
 
-/** Stores `1` into [resultHolder] when this string ends with [suffix], `0` otherwise. */
+/**
+ * Checks whether this string ends with [suffix].
+ *
+ * ```
+ * (path endsWith ".json").then { say("json file") }
+ * ```
+ */
 context(fn: Function)
-fun DynamicString.endsWith(
-	suffix: String,
-	resultHolder: String = ENDS_WITH_RESULT_HOLDER,
-): DynamicStringEquality {
+infix fun DynamicString.endsWith(suffix: String): DynamicStringResult {
+	val resultHolder = ENDS_WITH_RESULT_HOLDER
 	require(suffix.isNotEmpty()) { "endsWith suffix must be non empty (an empty suffix always matches)." }
 	val obj = runtime.config.lengthObjective
 	val scratch = runtime.scratchString(ENDS_SCRATCH)
@@ -96,10 +91,8 @@ fun DynamicString.endsWith(
 
 /** Dynamic variant of [endsWith] where the suffix length is measured at runtime. */
 context(fn: Function)
-fun DynamicString.endsWith(
-	suffix: DynamicString,
-	resultHolder: String = ENDS_WITH_RESULT_HOLDER,
-): DynamicStringEquality {
+infix fun DynamicString.endsWith(suffix: DynamicString): DynamicStringResult {
+	val resultHolder = ENDS_WITH_RESULT_HOLDER
 	val obj = runtime.config.lengthObjective
 	val scratch = runtime.scratchString(ENDS_SCRATCH)
 	val lenCursor = ScoreCursor("#${INTERNAL_NAME_PREFIX}ends_srclen", obj)
@@ -114,7 +107,7 @@ fun DynamicString.endsWith(
 }
 
 /**
- * Stores `1` into [resultHolder] when this string is empty, `0` otherwise.
+ * Checks whether this string is empty.
  *
  * ```
  * "".isEmpty()      // 1
@@ -122,18 +115,19 @@ fun DynamicString.endsWith(
  * ```
  */
 context(fn: Function)
-fun DynamicString.isEmpty(resultHolder: String = IS_EMPTY_RESULT_HOLDER) = equalsTo("", resultHolder)
+fun DynamicString.isEmpty() = equalsTo("", IS_EMPTY_RESULT_HOLDER)
 
 /**
- * Stores `1` into [resultHolder] when this string starts with [prefix], `0` otherwise.
+ * Checks whether this string starts with [prefix], copying the candidate prefix into a scratch slot
+ * before comparing it.
  *
- * Uses a scratch heap slot to copy the candidate prefix before comparing it.
+ * ```
+ * (name startsWith "kore_").then { say("internal name") }
+ * ```
  */
 context(fn: Function)
-fun DynamicString.startsWith(
-	prefix: String,
-	resultHolder: String = STARTS_WITH_RESULT_HOLDER,
-): DynamicStringEquality {
+infix fun DynamicString.startsWith(prefix: String): DynamicStringResult {
+	val resultHolder = STARTS_WITH_RESULT_HOLDER
 	require(prefix.isNotEmpty()) { "startsWith prefix must be non empty (an empty prefix always matches)." }
 	val scratch = runtime.scratchString(STARTS_SCRATCH)
 	substringTo(scratch, 0, prefix.length)
@@ -142,10 +136,8 @@ fun DynamicString.startsWith(
 
 /** Dynamic variant of [startsWith] where the prefix length is measured at runtime. */
 context(fn: Function)
-fun DynamicString.startsWith(
-	prefix: DynamicString,
-	resultHolder: String = STARTS_WITH_RESULT_HOLDER,
-): DynamicStringEquality {
+infix fun DynamicString.startsWith(prefix: DynamicString): DynamicStringResult {
+	val resultHolder = STARTS_WITH_RESULT_HOLDER
 	val obj = runtime.config.lengthObjective
 	val prefixLenCursor = ScoreCursor("#${INTERNAL_NAME_PREFIX}starts_len", obj)
 	val scratch = runtime.scratchString(STARTS_SCRATCH)
@@ -164,7 +156,7 @@ private fun Function.storeInvertedDiff(
 	runtime: DynamicStringRuntime,
 	resultHolder: String,
 	diffCommand: Function.() -> Unit,
-): DynamicStringEquality {
+): DynamicStringResult {
 	val obj = runtime.config.lengthObjective
 	val diff = ScoreCursor("#${INTERNAL_NAME_PREFIX}diff", obj)
 	val result = ScoreCursor(resultHolder, obj)
@@ -177,5 +169,19 @@ private fun Function.storeInvertedDiff(
 		ifCondition { score(diff.asScoreHolder(), obj, rangeOrInt(0)) }
 		run { scoreboard { players { set(result.asScoreHolder(), obj, 1) } } }
 	}
-	return DynamicStringEquality(resultHolder, obj)
+	return DynamicStringResult(resultHolder, obj)
 }
+
+/**
+ * Infix alias of [equalsTo] against a literal, the readable form when the result feeds a branch.
+ *
+ * ```
+ * (name eq "kore").then { say("exact match") }
+ * ```
+ */
+context(fn: Function)
+infix fun DynamicString.eq(value: String) = equalsTo(value)
+
+/** Infix alias of [equalsTo] against another dynamic string. See [eq]. */
+context(fn: Function)
+infix fun DynamicString.eq(other: DynamicString) = equalsTo(other)

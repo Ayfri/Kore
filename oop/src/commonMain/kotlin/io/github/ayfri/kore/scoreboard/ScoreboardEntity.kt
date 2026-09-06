@@ -60,6 +60,10 @@ fun ScoreboardEntity.copyFrom(source: ScoreHolderArgument, sourceObjective: Stri
 	}
 }
 
+/** Copies the value of another score into this one, the way to persist a transient result. */
+context(fn: Function)
+fun ScoreboardEntity.copyFrom(source: ScoreboardEntity) = copyFrom(source.entity.asScoreHolder(), source.name)
+
 /** Stores the current numeric NBT value from [source] at [path] into this score. */
 context(fn: Function)
 fun ScoreboardEntity.copyDataFrom(source: Entity, path: String, scale: Double = 1.0) = fn.execute {

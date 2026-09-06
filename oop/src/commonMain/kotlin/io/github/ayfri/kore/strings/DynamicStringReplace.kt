@@ -292,3 +292,17 @@ fun DynamicString.replaceRange(start: Int, end: Int, replacement: DynamicString)
 	appendFrom(replacement)
 	appendFrom(after)
 }
+
+/**
+ * Operator alias of `replace(value, "")`: strips every occurrence of the literal [value].
+ *
+ * ```
+ * path -= ".json"  // "world.json" becomes "world"
+ * ```
+ */
+context(fn: Function)
+operator fun DynamicString.minusAssign(value: String) = replace(value, "")
+
+/** Operator alias of `replace(value, "")` with a runtime needle. See [minusAssign]. */
+context(fn: Function)
+operator fun DynamicString.minusAssign(value: DynamicString) = replace(value, "")

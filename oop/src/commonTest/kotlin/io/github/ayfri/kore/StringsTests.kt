@@ -48,11 +48,11 @@ fun stringsTests() = dataPack("unit_tests") {
 	}
 
 	function("string_length") {
-		greeting.length() assertsIs "#kore_string_len"
+		greeting.length().holder assertsIs "#kore_string_len"
 		lines.last() assertsIs
 			"execute store result score #kore_string_len kore_string_len run data get storage $LIB heap.greeting"
 
-		val typed = greeting.lengthScore("#custom_len")
+		val typed = greeting.length("#custom_len")
 		typed.holder assertsIs "#custom_len"
 		typed.objective assertsIs "kore_string_len"
 		lines.last() assertsIs
@@ -163,57 +163,84 @@ fun concatTests() = dataPack("unit_tests") {
 	val other = dynamicString("other")
 	val target = dynamicString("target")
 
-	// Two literals are folded at generation time, no macro and no runtime work at all.
-	function("concat_literals") {
-		concat(target, "x", "y")
+	// Consecutive literals are folded at generation time, no macro and no runtime work at all.
+	function("build_literals") {
+		target.build {
+			+"x"
+			+'y'
+		}
 		lines assertsIs listOf("""data modify storage $LIB heap.target set value "xy"""")
 	}
 
-	function("concat_mixed") {
-		concat(target, greeting, "!")
+	function("build_mixed") {
+		target.build {
+			+greeting
+			+"!"
+		}
 		lines assertsIs listOf(
 			"data modify storage $LIB heap.target set from storage $LIB heap.greeting",
 			"""data modify storage $LIB tmp.kore_string_concat_tmp set value "!"""",
 			"data modify storage $LIB heap.target append string storage $LIB tmp.kore_string_concat_tmp",
 		)
 
-		concat(target, "!", greeting)
+		target.build {
+			+"!"
+			+greeting
+		}
 		lines[3] assertsIs """data modify storage $LIB heap.target set value "!""""
 		lines[4] assertsIs "data modify storage $LIB heap.target append string storage $LIB heap.greeting"
 
-		concat(target, greeting, other)
+		target.build {
+			+greeting
+			+other
+		}
 		lines[5] assertsIs "data modify storage $LIB heap.target set from storage $LIB heap.greeting"
 		lines[6] assertsIs "data modify storage $LIB heap.target append string storage $LIB heap.other"
 		lines.size assertsIs 7
 	}
 
 	// Writing into one of the operands must not clobber it before it is read.
-	function("concat_aliased") {
-		concat(target, target, other)
+	function("build_aliased") {
+		target.build {
+			+target
+			+other
+		}
 		lines assertsIs listOf("data modify storage $LIB heap.target append string storage $LIB heap.other")
 
-		concat(target, other, target)
-		lines[1] assertsIs "data modify storage $LIB heap.target prepend string storage $LIB heap.other"
-
-		concat(target, target, target)
-		lines[2] assertsIs "data modify storage $LIB tmp.kore_string_concat_tmp set from storage $LIB heap.target"
-		lines[3] assertsIs "data modify storage $LIB heap.target append string storage $LIB tmp.kore_string_concat_tmp"
-		lines.size assertsIs 4
+		target.build {
+			+target
+			+target
+		}
+		lines[1] assertsIs "data modify storage $LIB tmp.kore_string_concat_tmp set from storage $LIB heap.target"
+		lines[2] assertsIs "data modify storage $LIB heap.target append string storage $LIB tmp.kore_string_concat_tmp"
+		lines.size assertsIs 3
 	}
 
-	function("concat_all") {
-		concatAll(target, greeting.asStringPart, "-".asStringPart, other.asStringPart)
+	function("build_empty") {
+		target.build {}
+		lines assertsIs listOf("""data modify storage $LIB heap.target set value """"")
+	}
+
+	function("plus_expression") {
+		val full = greeting + "-" + other
+		full.name assertsIs "kore_string_temp_1"
 		lines assertsIs listOf(
-			"data modify storage $LIB heap.target set from storage $LIB heap.greeting",
+			"data modify storage $LIB heap.kore_string_temp_0 set from storage $LIB heap.greeting",
 			"""data modify storage $LIB tmp.kore_string_concat_tmp set value "-"""",
-			"data modify storage $LIB heap.target append string storage $LIB tmp.kore_string_concat_tmp",
-			"data modify storage $LIB heap.target append string storage $LIB heap.other",
+			"data modify storage $LIB heap.kore_string_temp_0 append string storage $LIB tmp.kore_string_concat_tmp",
+			"data modify storage $LIB heap.kore_string_temp_1 set from storage $LIB heap.kore_string_temp_0",
+			"data modify storage $LIB heap.kore_string_temp_1 append string storage $LIB heap.other",
 		)
 	}
 
-	function("concat_all_empty") {
-		concatAll(target)
-		lines assertsIs listOf("""data modify storage $LIB heap.target set value """"")
+	function("plus_assign_operators") {
+		greeting += other
+		greeting += '!'
+		lines assertsIs listOf(
+			"data modify storage $LIB heap.greeting append string storage $LIB heap.other",
+			"""data modify storage $LIB tmp.kore_string_concat_tmp set value "!"""",
+			"data modify storage $LIB heap.greeting append string storage $LIB tmp.kore_string_concat_tmp",
+		)
 	}
 
 	function("append_and_prepend_dynamic") {
@@ -320,7 +347,7 @@ fun findTests() = dataPack("unit_tests") {
 	val other = dynamicString("other")
 
 	function("index_of_literal") {
-		greeting.indexOf("lo") assertsIs "#kore_string_find"
+		greeting.indexOf("lo").holder assertsIs "#kore_string_find"
 		lines assertsIs listOf(
 			"""data modify storage $LIB tmp.kore_string_find_needle set value "lo"""",
 			"execute store result score #kore_string_find_srclen kore_string_len run data get storage $LIB heap.greeting",
@@ -336,7 +363,7 @@ fun findTests() = dataPack("unit_tests") {
 	}
 
 	function("index_of_dynamic") {
-		greeting.indexOf(other, "#my_find") assertsIs "#my_find"
+		greeting.indexOf(other, "#my_find").holder assertsIs "#my_find"
 		lines[1] assertsIs
 			"execute store result score #kore_string_find_sublen kore_string_len run data get storage $LIB heap.other 1.0"
 		lines.last() assertsIs
@@ -344,27 +371,27 @@ fun findTests() = dataPack("unit_tests") {
 	}
 
 	function("contains") {
-		greeting.contains("lo") assertsIs "#kore_string_contains"
+		(greeting contains "lo").holder assertsIs "#kore_string_contains"
 		lines[lines.size - 2] assertsIs "scoreboard players set #kore_string_contains kore_string_len 0"
 		lines.last() assertsIs
 			"execute if score #kore_string_find kore_string_len matches 0.. run scoreboard players set #kore_string_contains kore_string_len 1"
 	}
 
 	function("contains_dynamic") {
-		greeting.contains(other) assertsIs "#kore_string_contains"
+		(greeting contains other).holder assertsIs "#kore_string_contains"
 		lines.last() assertsIs
 			"execute if score #kore_string_find kore_string_len matches 0.. run scoreboard players set #kore_string_contains kore_string_len 1"
 	}
 
 	function("count_literal") {
-		greeting.count(",") assertsIs "#kore_string_count"
+		greeting.count(",").holder assertsIs "#kore_string_count"
 		lines.first() assertsIs "data modify storage $LIB tmp.kore_string_count_needle set value \",\""
 		lines.last() assertsIs
 			"execute if score #kore_string_find_bound kore_string_len matches 0.. run function unit_tests:kore_string_count"
 	}
 
 	function("count_dynamic") {
-		greeting.count(other, "#my_count") assertsIs "#my_count"
+		greeting.count(other, "#my_count").holder assertsIs "#my_count"
 		lines.last() assertsIs
 			"scoreboard players operation #my_count kore_string_len = #kore_string_count kore_string_len"
 	}
@@ -635,13 +662,13 @@ fun stringListTests() = dataPack("unit_tests") {
 			"data modify storage $LIB lists.tokens[0] set from storage $LIB heap.current"
 		tokens.elementAt(3, current) assertsIs
 			"data modify storage $LIB heap.current set from storage $LIB lists.tokens[3]"
-		(tokens[1] into current) assertsIs
-			"data modify storage $LIB heap.current set from storage $LIB lists.tokens[1]"
+		tokens[1].name assertsIs "kore_string_temp_0"
+		lines[6] assertsIs "data modify storage $LIB heap.kore_string_temp_0 set from storage $LIB lists.tokens[1]"
 		lines.size assertsIs 7
 	}
 
 	function("list_size") {
-		tokens.size() assertsIs "#kore_string_len"
+		tokens.size().holder assertsIs "#kore_string_len"
 		lines.last() assertsIs
 			"execute store result score #kore_string_len kore_string_len run data get storage $LIB lists.tokens"
 		lines.size assertsIs 1
@@ -766,10 +793,10 @@ fun customConfigTests() = dataPack("unit_tests") {
 	function("custom_paths") {
 		ping.set("pong") assertsIs """data modify storage my_pack:strings h.ping set value "pong""""
 		pong.clear() assertsIs "data modify storage my_pack:strings ls.pong set value []"
-		ping.length() assertsIs "#my_len"
+		ping.length().holder assertsIs "#my_len"
 		lines.last() assertsIs
 			"execute store result score #my_len my_len run data get storage my_pack:strings h.ping"
-		pong.size() assertsIs "#my_len"
+		pong.size().holder assertsIs "#my_len"
 		lines.size assertsIs 4
 	}
 
@@ -967,6 +994,84 @@ fun scoreBridgeTests() = dataPack("unit_tests") {
 	}
 }
 
+fun operatorTests() = dataPack("unit_tests") {
+	registerDynamicStrings()
+
+	val greeting = dynamicString("greeting")
+	val other = dynamicString("other")
+	val tokens = koreStringList("tokens")
+	val kills = ScoreboardEntity("stats", fakePlayer("kills"))
+
+	function("index_operators") {
+		val initial = greeting[0]
+		initial.name assertsIs "kore_string_temp_0"
+		lines.last() assertsIs
+			"data modify storage $LIB heap.kore_string_temp_0 set string storage $LIB heap.greeting 0 1"
+
+		val slice = greeting[1..3]
+		slice.name assertsIs "kore_string_temp_1"
+		lines.last() assertsIs
+			"data modify storage $LIB heap.kore_string_temp_1 set string storage $LIB heap.greeting 1 4"
+
+		greeting.substring(0..<2) assertsIs
+			"data modify storage $LIB heap.greeting set string storage $LIB heap.greeting 0 2"
+		lines.size assertsIs 3
+	}
+
+	function("minus_assign") {
+		greeting -= "-"
+		lines.first() assertsIs """data modify storage $LIB tmp.kore_string_replace_new set value """""
+	}
+
+	function("times_assign") {
+		greeting *= 0
+		lines assertsIs listOf("""data modify storage $LIB heap.greeting set value """"")
+	}
+
+	function("list_plus_assign") {
+		tokens += "a"
+		tokens += greeting
+		lines assertsIs listOf(
+			"""data modify storage $LIB lists.tokens append value "a"""",
+			"data modify storage $LIB lists.tokens append from storage $LIB heap.greeting",
+		)
+	}
+
+	function("score_operand") {
+		greeting += kills
+		lines.last() assertsIs "data modify storage $LIB heap.greeting append string storage $LIB heap.kore_string_score_text"
+	}
+
+	function("expression_transforms") {
+		greeting.uppercased().name assertsIs "kore_string_temp_2"
+		greeting.trimmed().name assertsIs "kore_string_temp_3"
+		greeting.reversed().name assertsIs "kore_string_temp_4"
+		greeting.repeated(2).name assertsIs "kore_string_temp_5"
+		greeting.paddedStart(4, '0').name assertsIs "kore_string_temp_6"
+	}
+
+	function("result_branches") {
+		(greeting eq "hi").then { greeting.set("matched") }
+		lines.last() assertsIs
+			"""execute if score #kore_string_equals kore_string_len matches 1 run data modify storage $LIB heap.greeting set value "matched""""
+
+		(greeting startsWith "h").otherwise { greeting.set("nope") }
+		lines.last() assertsIs
+			"""execute if score #kore_string_starts kore_string_len matches 0 run data modify storage $LIB heap.greeting set value "nope""""
+
+		(greeting contains other).then { greeting.clear() }
+		lines.last() assertsIs
+			"execute if score #kore_string_contains kore_string_len matches 1 run data remove storage $LIB heap.greeting"
+	}
+
+	// A result is a plain score, so it drives every helper taking a runtime count.
+	function("result_as_score") {
+		other.repeat(greeting.length())
+		lines.first() assertsIs
+			"execute store result score #kore_string_len kore_string_len run data get storage $LIB heap.greeting"
+	}
+}
+
 class StringsTests : FunSpec({
 	test("advanced strings") { advancedStringsTests() }
 	test("case") { caseTests() }
@@ -977,6 +1082,7 @@ class StringsTests : FunSpec({
 	test("find") { findTests() }
 	test("join") { joinTests() }
 	test("missing runtime") { missingRuntimeTests() }
+	test("operators") { operatorTests() }
 	test("parse") { parseTests() }
 	test("registration") { registrationTests() }
 	test("score bridge") { scoreBridgeTests() }

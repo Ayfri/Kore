@@ -115,9 +115,15 @@ fun KoreStringList.forEach(element: DynamicString, body: Function.() -> Unit) {
 	)
 }
 
-/** Alias of [elementAt] for ergonomic access. */
+/**
+ * Reads the element at [index] into a fresh anonymous slot.
+ *
+ * ```
+ * val first = tokens[0]
+ * ```
+ */
 context(fn: Function)
-operator fun KoreStringList.get(index: Int): GetElementInto = GetElementInto(this, index)
+operator fun KoreStringList.get(index: Int): DynamicString = runtime.tempString().also { elementAt(index, it) }
 
 /**
  * Inserts the literal [value] at [index].
@@ -174,25 +180,34 @@ fun KoreStringList.setAt(index: Int, source: DynamicString) = fn.data(storage) {
 }
 
 /**
- * Stores the number of elements of this list into [holder] on the configured length objective
- * using `execute store result`. Returns [holder] so callers can chain the resulting score.
+ * Measures the number of elements of this list into a score and returns it.
+ *
+ * ```
+ * ["a", "b"].size()  // 2
+ * ```
  */
 context(fn: Function)
-fun KoreStringList.size(holder: String = runtime.config.lengthHolder): String {
+fun KoreStringList.size(holder: String = runtime.config.lengthHolder): DynamicStringResult {
 	fn.execute {
 		storeResult { score(literal(holder), runtime.config.lengthObjective) }
 		run { data(storage) { get(nbtPath) } }
 	}
-	return holder
-}
-
-/** Transitional wrapper returned by `list[index] into target` style calls. */
-data class GetElementInto(val list: KoreStringList, val index: Int) {
-	context(fn: Function)
-	infix fun into(target: DynamicString) = list.elementAt(index, target)
+	return DynamicStringResult(holder, runtime.config.lengthObjective)
 }
 
 /** Macros holder for the generated per-call `forEach` loop. */
 class ForEachMacros internal constructor() : Macros() {
 	val index by "index"
+}
+
+/** Operator alias of [append] for a literal element. */
+context(fn: Function)
+operator fun KoreStringList.plusAssign(value: String) {
+	append(value)
+}
+
+/** Operator alias of [append] for the runtime content of [source]. */
+context(fn: Function)
+operator fun KoreStringList.plusAssign(source: DynamicString) {
+	append(source)
 }

@@ -52,6 +52,7 @@ class DynamicStringRuntime internal constructor(
 	private val allocatedListNames = mutableSetOf<String>()
 	private val allocatedStringNames = mutableSetOf<String>()
 	private var anonymousCounter = 0
+	private var tempCounter = 0
 	private val loadedKeys = mutableSetOf<String>()
 	private val registered = mutableMapOf<String, FunctionWithMacros<*>>()
 
@@ -69,6 +70,7 @@ class DynamicStringRuntime internal constructor(
 	internal fun heapPath(name: String): String = "${config.heapRoot}.$name"
 	internal fun listsPath(name: String): String = "${config.listsRoot}.$name"
 	internal fun nextAnonymousId(): Int = anonymousCounter++
+	internal fun nextTempId(): Int = tempCounter++
 	internal fun tablesPath(name: String): String = "${config.tablesRoot}.$name"
 	internal fun tmpPath(name: String): String = "${config.tmpRoot}.$name"
 

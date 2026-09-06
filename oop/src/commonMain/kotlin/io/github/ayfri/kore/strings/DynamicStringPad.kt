@@ -29,7 +29,7 @@ private fun applyPad(
 	padChar: Char,
 	target: DynamicString,
 	prepend: Boolean,
-) {
+): DynamicString {
 	if (length is PadLength.Static) require(length.value >= 0) { "target length must be non negative, got ${length.value}" }
 	val rt = fn.datapack.requireDynamicStringRuntime()
 	val obj = rt.config.lengthObjective
@@ -47,7 +47,7 @@ private fun applyPad(
 	diff.subFrom(fn, curLen)
 
 	context(fn) { target.setFrom(srcCopy) }
-	if (length is PadLength.Static && length.value == 0) return
+	if (length is PadLength.Static && length.value == 0) return target
 
 	val padUnit = rt.scratchString(PAD_CHAR_SCRATCH)
 	val scratch = rt.scratchString(PAD_SCRATCH)
@@ -69,6 +69,7 @@ private fun applyPad(
 		}
 
 	fn.padGlue(diff, obj, rt.libStorageArg, target.nbtPath, glue)
+	return target
 }
 
 /** Appends or prepends the built padding only when the string was actually shorter than requested. */
@@ -133,3 +134,23 @@ fun DynamicString.padEnd(targetLength: Int, padChar: Char = ' ', target: Dynamic
 context(fn: Function)
 fun DynamicString.padEnd(targetLength: ScoreboardEntity, padChar: Char = ' ', target: DynamicString = this) =
 	applyPad(fn, this, PadLength.Dynamic(targetLength), padChar, target, prepend = false)
+
+/** Expression form of [padStart]: writes the padded value into a fresh anonymous slot. */
+context(fn: Function)
+fun DynamicString.paddedStart(targetLength: Int, padChar: Char = ' '): DynamicString =
+	padStart(targetLength, padChar, runtime.tempString())
+
+/** Expression form of [padStart] with a runtime width. See [paddedStart]. */
+context(fn: Function)
+fun DynamicString.paddedStart(targetLength: ScoreboardEntity, padChar: Char = ' '): DynamicString =
+	padStart(targetLength, padChar, runtime.tempString())
+
+/** Expression form of [padEnd]: writes the padded value into a fresh anonymous slot. */
+context(fn: Function)
+fun DynamicString.paddedEnd(targetLength: Int, padChar: Char = ' '): DynamicString =
+	padEnd(targetLength, padChar, runtime.tempString())
+
+/** Expression form of [padEnd] with a runtime width. See [paddedEnd]. */
+context(fn: Function)
+fun DynamicString.paddedEnd(targetLength: ScoreboardEntity, padChar: Char = ' '): DynamicString =
+	padEnd(targetLength, padChar, runtime.tempString())
