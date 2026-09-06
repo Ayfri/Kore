@@ -139,3 +139,36 @@ internal fun Function.storeScoreToNbt(
 	type: DataType = DataType.INT,
 	scale: Double = 1.0,
 ) = score.writeToStorage(this, storage, path, type, scale)
+
+/**
+ * Stages [part] into [path] so a helper can read it as an NBT source. A [StringPart.Ref] is copied
+ * rather than referenced, which is what makes `replace(needle, replacement)` safe when one of the
+ * operands is the string being mutated.
+ */
+internal fun DynamicStringRuntime.writePart(fn: Function, part: StringPart, path: String) {
+	when (part) {
+		is StringPart.Literal -> fn.setNbtString(libStorageArg, path, part.value)
+		is StringPart.Ref -> fn.copyNbt(libStorageArg, path, libStorageArg, part.string.nbtPath)
+	}
+}
+
+/** Writes the length of [part] into [cursor], as a constant when it is known at generation time. */
+internal fun DynamicStringRuntime.writePartLength(
+	fn: Function,
+	part: StringPart,
+	path: String,
+	cursor: ScoreCursor,
+) {
+	when (part) {
+		is StringPart.Literal -> cursor.set(fn, part.value.length)
+		is StringPart.Ref -> cursor.storeValueOfNbt(fn, libStorageArg, path)
+	}
+}
+
+/** Subtracts the length of [part] from [cursor], reading [lengthCursor] only when the length is dynamic. */
+internal fun subtractPartLength(fn: Function, part: StringPart, cursor: ScoreCursor, lengthCursor: ScoreCursor) {
+	when (part) {
+		is StringPart.Literal -> cursor.sub(fn, part.value.length)
+		is StringPart.Ref -> cursor.subFrom(fn, lengthCursor)
+	}
+}

@@ -129,39 +129,138 @@ internal fun DynamicStringRuntime.replaceControllerHelper(): FunctionWithMacros<
 		)
 	}
 
-private fun DynamicString.beginReplace(fn: Function, oldValue: String, newValue: String, cap: Int) {
-	require(oldValue.isNotEmpty()) { "replace oldValue must not be empty." }
+private fun DynamicString.beginReplace(fn: Function, oldValue: StringPart, newValue: StringPart, cap: Int) {
+	if (oldValue is StringPart.Literal) require(oldValue.value.isNotEmpty()) { "replace oldValue must not be empty." }
 	val obj = runtime.config.lengthObjective
-	runtime.replaceControllerHelper()
+	val controller = runtime.replaceControllerHelper()
 	val controllerArgs = runtime.argsPath(OopConstants.stringReplaceMacroName)
 	val findArgs = runtime.argsPath(OopConstants.stringFindStepMacroName)
 	val needlePath = runtime.tmpPath(REPLACE_NEEDLE_KEY)
+	val newPath = runtime.tmpPath(REPLACE_NEW_KEY)
 	val stepArgs = runtime.argsPath(OopConstants.stringReplaceStepMacroName)
+	val needleLen = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_sublen", obj)
+	val newLen = ScoreCursor("#${INTERNAL_NAME_PREFIX}replace_newlen", obj)
 
+	runtime.writePart(fn, newValue, newPath)
+	runtime.writePart(fn, oldValue, needlePath)
 	fn.data(runtime.libStorageArg) {
-		modify(runtime.tmpPath(REPLACE_NEW_KEY), newValue)
-		modify(needlePath, oldValue)
 		modify("$findArgs.src", name)
 		modify("$findArgs.needlePath", needlePath)
 		modify("$controllerArgs.srcName", name)
 		modify("$stepArgs.srcName", name)
 	}
-	ScoreCursor("#${INTERNAL_NAME_PREFIX}find_sublen", obj).set(fn, oldValue.length)
+	runtime.writePartLength(fn, oldValue, needlePath, needleLen)
 	ScoreCursor("#${INTERNAL_NAME_PREFIX}replace_cap", obj).set(fn, cap)
-	ScoreCursor("#${INTERNAL_NAME_PREFIX}replace_newlen", obj).set(fn, newValue.length)
+	runtime.writePartLength(fn, newValue, newPath, newLen)
 	ScoreCursor("#${INTERNAL_NAME_PREFIX}replace_start", obj).set(fn, 0)
-	fn.callMacro(OopConstants.stringReplaceMacroName, runtime.libStorageArg, controllerArgs)
+
+	// A runtime needle can be empty, and an empty needle matches at the cursor forever, so the loop is guarded.
+	if (oldValue is StringPart.Literal) fn.callMacro(controller.name, runtime.libStorageArg, controllerArgs)
+	else fn.ifScoreMatchesRunMacro(needleLen, rangeOrIntStart(1), controller.name, runtime.libStorageArg, controllerArgs)
 }
 
-/** Replaces every occurrence of [oldValue] with [newValue] inside this string (in place). */
+/**
+ * Replaces every occurrence of [oldValue] with [newValue] inside this string (in place).
+ *
+ * ```
+ * "a-b-c".replace("-", "+")  // "a+b+c"
+ * "aa".replace("a", "aa")    // "aaaa", the search resumes past what it just wrote
+ * ```
+ */
 context(fn: Function)
-fun DynamicString.replace(oldValue: String, newValue: String) = beginReplace(fn, oldValue, newValue, Int.MAX_VALUE)
+fun DynamicString.replace(oldValue: String, newValue: String) =
+	beginReplace(fn, oldValue.asStringPart, newValue.asStringPart, Int.MAX_VALUE)
 
-/** Replaces only the first occurrence of [oldValue] with [newValue] inside this string. */
+/**
+ * Replaces every occurrence of the runtime content of [oldValue]. An empty needle replaces nothing.
+ *
+ * ```
+ * // needle holds "-" at runtime
+ * "a-b".replace(needle, "+")  // "a+b"
+ * ```
+ */
 context(fn: Function)
-fun DynamicString.replaceFirst(oldValue: String, newValue: String) = beginReplace(fn, oldValue, newValue, 1)
+fun DynamicString.replace(oldValue: DynamicString, newValue: String) =
+	beginReplace(fn, oldValue.asStringPart, newValue.asStringPart, Int.MAX_VALUE)
 
-/** Replaces the content of `this[start, end)` with [replacement] in place. */
+/**
+ * Replaces every occurrence of [oldValue] with the runtime content of [newValue].
+ *
+ * ```
+ * // value holds "+" at runtime
+ * "a-b".replace("-", value)  // "a+b"
+ * ```
+ */
+context(fn: Function)
+fun DynamicString.replace(oldValue: String, newValue: DynamicString) =
+	beginReplace(fn, oldValue.asStringPart, newValue.asStringPart, Int.MAX_VALUE)
+
+/**
+ * Fully dynamic replace: both the needle and the replacement are read at runtime.
+ *
+ * ```
+ * // needle holds "-" and value holds "+" at runtime
+ * "a-b".replace(needle, value)  // "a+b"
+ * ```
+ */
+context(fn: Function)
+fun DynamicString.replace(oldValue: DynamicString, newValue: DynamicString) =
+	beginReplace(fn, oldValue.asStringPart, newValue.asStringPart, Int.MAX_VALUE)
+
+/**
+ * Replaces only the first occurrence of [oldValue] with [newValue] inside this string.
+ *
+ * ```
+ * "a-b-c".replaceFirst("-", "+")  // "a+b-c"
+ * ```
+ */
+context(fn: Function)
+fun DynamicString.replaceFirst(oldValue: String, newValue: String) =
+	beginReplace(fn, oldValue.asStringPart, newValue.asStringPart, 1)
+
+/**
+ * Replaces only the first occurrence of the runtime content of [oldValue].
+ *
+ * ```
+ * // needle holds "-" at runtime
+ * "a-b-c".replaceFirst(needle, "+")  // "a+b-c"
+ * ```
+ */
+context(fn: Function)
+fun DynamicString.replaceFirst(oldValue: DynamicString, newValue: String) =
+	beginReplace(fn, oldValue.asStringPart, newValue.asStringPart, 1)
+
+/**
+ * Replaces only the first occurrence of [oldValue] with the runtime content of [newValue].
+ *
+ * ```
+ * // value holds "+" at runtime
+ * "a-b-c".replaceFirst("-", value)  // "a+b-c"
+ * ```
+ */
+context(fn: Function)
+fun DynamicString.replaceFirst(oldValue: String, newValue: DynamicString) =
+	beginReplace(fn, oldValue.asStringPart, newValue.asStringPart, 1)
+
+/**
+ * Fully dynamic [replaceFirst]: both the needle and the replacement are read at runtime.
+ *
+ * ```
+ * // needle holds "-" and value holds "+" at runtime
+ * "a-b-c".replaceFirst(needle, value)  // "a+b-c"
+ * ```
+ */
+context(fn: Function)
+fun DynamicString.replaceFirst(oldValue: DynamicString, newValue: DynamicString) =
+	beginReplace(fn, oldValue.asStringPart, newValue.asStringPart, 1)
+
+/**
+ * Replaces the content of `this[start, end)` with [replacement] in place.
+ *
+ * ```
+ * "minecraft".replaceRange(0, 4, "war")  // "warcraft"
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.replaceRange(start: Int, end: Int, replacement: String) {
 	require(start in 0..end) { "replaceRange: invalid range [$start, $end)" }
@@ -174,7 +273,14 @@ fun DynamicString.replaceRange(start: Int, end: Int, replacement: String) {
 	appendFrom(after)
 }
 
-/** Dynamic variant accepting a [DynamicString] as replacement. */
+/**
+ * Dynamic variant accepting a [DynamicString] as replacement.
+ *
+ * ```
+ * // value holds "war" at runtime
+ * "minecraft".replaceRange(0, 4, value)  // "warcraft"
+ * ```
+ */
 context(fn: Function)
 fun DynamicString.replaceRange(start: Int, end: Int, replacement: DynamicString) {
 	require(start in 0..end) { "replaceRange: invalid range [$start, $end)" }

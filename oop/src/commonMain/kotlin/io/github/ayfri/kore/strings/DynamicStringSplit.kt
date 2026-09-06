@@ -2,7 +2,9 @@ package io.github.ayfri.kore.strings
 
 import io.github.ayfri.kore.OopConstants
 import io.github.ayfri.kore.arguments.enums.Relation
+import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrIntStart
 import io.github.ayfri.kore.commands.data
+import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.scoreboard.Operation
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.FunctionWithMacros
@@ -76,18 +78,11 @@ internal fun DynamicStringRuntime.splitStepHelper(): FunctionWithMacros<SplitSte
 		)
 	}
 
-/**
- * Splits this string on the given literal [delimiter] and writes the resulting tokens into [target].
- *
- * Clears [target] first. Empty tokens are preserved when two delimiters are adjacent or at the
- * string boundaries (Kotlin semantics).
- */
-context(fn: Function)
-fun DynamicString.split(delimiter: String, target: KoreStringList) {
-	require(delimiter.isNotEmpty()) { "split delimiter must not be empty." }
+private fun DynamicString.beginSplit(fn: Function, delimiter: StringPart, target: KoreStringList) {
+	if (delimiter is StringPart.Literal) require(delimiter.value.isNotEmpty()) { "split delimiter must not be empty." }
 	val rt = fn.datapack.requireDynamicStringRuntime()
 	val step = rt.splitStepHelper()
-	target.clear()
+	context(fn) { target.clear() }
 
 	val obj = rt.config.lengthObjective
 	val delimPath = rt.tmpPath("${INTERNAL_NAME_PREFIX}split_delim")
@@ -95,8 +90,8 @@ fun DynamicString.split(delimiter: String, target: KoreStringList) {
 	val stepArgs = rt.argsPath(OopConstants.stringSplitStepMacroName)
 	val subArgs = rt.argsPath(OopConstants.stringSubstringMacroName)
 
+	rt.writePart(fn, delimiter, delimPath)
 	fn.data(rt.libStorageArg) {
-		modify(delimPath, delimiter)
 		modify("$findArgs.src", name)
 		modify("$findArgs.needlePath", delimPath)
 		modify("$stepArgs.listPath", target.nbtPath)
@@ -109,18 +104,59 @@ fun DynamicString.split(delimiter: String, target: KoreStringList) {
 	val findBound = ScoreCursor("#${INTERNAL_NAME_PREFIX}find_bound", obj)
 	val splitStart = ScoreCursor("#${INTERNAL_NAME_PREFIX}split_start", obj)
 
-	length(srcLen.holder)
-	findSubLen.set(fn, delimiter.length)
+	context(fn) { length(srcLen.holder) }
+	rt.writePartLength(fn, delimiter, delimPath, findSubLen)
 	findBound.assignFrom(fn, srcLen)
-	findBound.sub(fn, delimiter.length)
+	subtractPartLength(fn, delimiter, findBound, findSubLen)
 	splitStart.set(fn, 0)
 
-	fn.ifScoreCompareRunMacro(
-		left = splitStart,
-		relation = Relation.LESS_THAN_OR_EQUAL_TO,
-		right = srcLen,
-		name = step.name,
-		storage = rt.libStorageArg,
-		path = stepArgs,
-	)
+	if (delimiter is StringPart.Literal) {
+		fn.ifScoreCompareRunMacro(
+			left = splitStart,
+			relation = Relation.LESS_THAN_OR_EQUAL_TO,
+			right = srcLen,
+			name = step.name,
+			storage = rt.libStorageArg,
+			path = stepArgs,
+		)
+		return
+	}
+
+	// An empty runtime delimiter matches at the cursor without ever advancing it, so the loop is guarded.
+	context(fn) {
+		fn.execute {
+			ifCondition { score(findSubLen.asScoreHolder(), obj, rangeOrIntStart(1)) }
+			ifCondition {
+				score(splitStart.asScoreHolder(), obj, srcLen.asScoreHolder(), obj, Relation.LESS_THAN_OR_EQUAL_TO)
+			}
+			run { callMacro(step.name, rt.libStorageArg, stepArgs) }
+		}
+	}
 }
+
+/**
+ * Splits this string on the given literal [delimiter] and writes the resulting tokens into [target].
+ *
+ * Clears [target] first. Empty tokens are preserved when two delimiters are adjacent or at the
+ * string boundaries (Kotlin semantics).
+ *
+ * ```
+ * "a,b,,c".split(",", out)  // out = ["a", "b", "", "c"]
+ * ```
+ */
+context(fn: Function)
+fun DynamicString.split(delimiter: String, target: KoreStringList) =
+	beginSplit(fn, delimiter.asStringPart, target)
+
+/**
+ * Splits this string on a delimiter only known at runtime, so the separator can itself come from a
+ * sign, a config entry or another computed string. An empty delimiter leaves [target] empty.
+ *
+ * ```
+ * // sep holds ";" at runtime
+ * "a;b".split(sep, out)  // out = ["a", "b"]
+ * ```
+ */
+context(fn: Function)
+fun DynamicString.split(delimiter: DynamicString, target: KoreStringList) =
+	beginSplit(fn, delimiter.asStringPart, target)

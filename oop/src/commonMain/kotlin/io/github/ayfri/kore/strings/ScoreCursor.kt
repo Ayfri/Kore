@@ -7,6 +7,7 @@ import io.github.ayfri.kore.arguments.types.resources.StorageArgument
 import io.github.ayfri.kore.commands.scoreboard.Operation
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.scoreboard.ScoreboardEntity
 
 /**
  * Lightweight handle around a `#fakePlayer` score holder on an explicit objective.
@@ -23,6 +24,13 @@ internal data class ScoreCursor(val holder: String, val objective: String) {
 	fun asScoreHolder(): ScoreHolderArgument = literal(holder)
 
 	fun assignFrom(fn: Function, source: ScoreCursor) = operation(fn, Operation.SET, source)
+
+	/** Copies the score of a Kore [ScoreboardEntity] into this cursor. */
+	fun assignFrom(fn: Function, source: ScoreboardEntity) = fn.scoreboard {
+		players {
+			operation(asScoreHolder(), objective, Operation.SET, source.entity.asScoreHolder(), source.name)
+		}
+	}
 
 	fun operation(fn: Function, op: Operation, source: ScoreCursor) = fn.scoreboard {
 		players {

@@ -562,7 +562,7 @@ fun trimPadRepeatTests() = dataPack("unit_tests") {
 
 	function("repeat_many") {
 		greeting.repeat(3, other)
-		lines[6] assertsIs "scoreboard players set #kore_string_repeat_cap kore_string_len 2"
+		lines[2] assertsIs "scoreboard players set #kore_string_repeat_cap kore_string_len 2"
 		lines.last() assertsIs "function unit_tests:kore_string_repeat with storage $LIB args.kore_string_repeat"
 	}
 
@@ -854,12 +854,92 @@ fun advancedStringsTests() = dataPack("unit_tests") {
 	shouldThrow<IllegalArgumentException> { function("bad_split") { greeting.split("", tokens) } }
 }
 
+fun dynamicOperandTests() = dataPack("unit_tests") {
+	registerDynamicStrings()
+
+	val greeting = dynamicString("greeting")
+	val needle = dynamicString("needle")
+	val other = dynamicString("other")
+	val replacement = dynamicString("replacement")
+	val tokens = koreStringList("tokens")
+	val width = ScoreboardEntity("layout", fakePlayer("#width"))
+
+	function("replace_dynamic") {
+		greeting.replace(needle, replacement)
+		lines assertsIs listOf(
+			"data modify storage $LIB tmp.kore_string_replace_new set from storage $LIB heap.replacement",
+			"data modify storage $LIB tmp.kore_string_replace_needle set from storage $LIB heap.needle",
+			"""data modify storage $LIB args.kore_string_find_step.src set value "greeting"""",
+			"""data modify storage $LIB args.kore_string_find_step.needlePath set value "tmp.kore_string_replace_needle"""",
+			"""data modify storage $LIB args.kore_string_replace.srcName set value "greeting"""",
+			"""data modify storage $LIB args.kore_string_replace_step.srcName set value "greeting"""",
+			"execute store result score #kore_string_find_sublen kore_string_len run " +
+				"data get storage $LIB tmp.kore_string_replace_needle 1.0",
+			"scoreboard players set #kore_string_replace_cap kore_string_len 2147483647",
+			"execute store result score #kore_string_replace_newlen kore_string_len run " +
+				"data get storage $LIB tmp.kore_string_replace_new 1.0",
+			"scoreboard players set #kore_string_replace_start kore_string_len 0",
+			"execute if score #kore_string_find_sublen kore_string_len matches 1.. " +
+				"run function unit_tests:kore_string_replace with storage $LIB args.kore_string_replace",
+		)
+	}
+
+	function("replace_first_dynamic") {
+		greeting.replaceFirst("a", replacement)
+		lines[8] assertsIs "execute store result score #kore_string_replace_newlen kore_string_len run " +
+			"data get storage $LIB tmp.kore_string_replace_new 1.0"
+		lines.last() assertsIs "function unit_tests:kore_string_replace with storage $LIB args.kore_string_replace"
+	}
+
+	function("split_dynamic") {
+		greeting.split(needle, tokens)
+		lines[1] assertsIs "data modify storage $LIB tmp.kore_string_split_delim set from storage $LIB heap.needle"
+		lines[8] assertsIs "execute store result score #kore_string_find_sublen kore_string_len run " +
+			"data get storage $LIB tmp.kore_string_split_delim 1.0"
+		lines[10] assertsIs "scoreboard players operation #kore_string_find_bound kore_string_len -= " +
+			"#kore_string_find_sublen kore_string_len"
+		lines.last() assertsIs
+			"execute if score #kore_string_find_sublen kore_string_len matches 1.. " +
+				"if score #kore_string_split_start kore_string_len <= #kore_string_split_srclen kore_string_len " +
+				"run function unit_tests:kore_string_split_step with storage $LIB args.kore_string_split_step"
+	}
+
+	function("repeat_dynamic") {
+		greeting.repeat(width, target = other)
+		lines assertsIs listOf(
+			"data modify storage $LIB heap.kore_string_repeat_src set from storage $LIB heap.greeting",
+			"""data modify storage $LIB heap.other set value """"",
+			"scoreboard players operation #kore_string_repeat_cap kore_string_len = #width layout",
+			"execute if score #kore_string_repeat_cap kore_string_len matches 1.. run " +
+				"data modify storage $LIB heap.other set from storage $LIB heap.kore_string_repeat_src",
+			"scoreboard players remove #kore_string_repeat_cap kore_string_len 1",
+			"""data modify storage $LIB args.kore_string_repeat_step.src set value "kore_string_repeat_src"""",
+			"""data modify storage $LIB args.kore_string_repeat_step.dst set value "other"""",
+			"""data modify storage $LIB args.kore_string_repeat.src set value "kore_string_repeat_src"""",
+			"""data modify storage $LIB args.kore_string_repeat.dst set value "other"""",
+			"execute if score #kore_string_repeat_cap kore_string_len matches 1.. " +
+				"run function unit_tests:kore_string_repeat with storage $LIB args.kore_string_repeat",
+		)
+	}
+
+	function("pad_dynamic") {
+		greeting.padStart(width, '0')
+		lines[2] assertsIs "scoreboard players operation #kore_string_pad_diff kore_string_len = #width layout"
+		lines[3] assertsIs "scoreboard players operation #kore_string_pad_diff kore_string_len -= " +
+			"#kore_string_pad_len kore_string_len"
+		lines.last() assertsIs
+			"execute if score #kore_string_pad_diff kore_string_len matches 1.. run " +
+				"data modify storage $LIB heap.greeting prepend string storage $LIB heap.kore_string_pad_scratch"
+	}
+}
+
 class StringsTests : FunSpec({
 	test("advanced strings") { advancedStringsTests() }
 	test("case") { caseTests() }
 	test("compare") { compareTests() }
 	test("concat") { concatTests() }
 	test("custom config") { customConfigTests() }
+	test("dynamic operands") { dynamicOperandTests() }
 	test("find") { findTests() }
 	test("join") { joinTests() }
 	test("missing runtime") { missingRuntimeTests() }
