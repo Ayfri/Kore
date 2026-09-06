@@ -2,6 +2,16 @@ name: Publish
 
 on:
   workflow_dispatch:
+    inputs:
+      # Central rejects a version that is already deployed, so a partial failure needs each half to be runnable alone.
+      publish_central:
+        description: 'Publish to Maven Central'
+        type: boolean
+        default: true
+      publish_plugin_portal:
+        description: 'Publish to the Gradle Plugin Portal'
+        type: boolean
+        default: true
 
 permissions:
   id-token: write
@@ -45,6 +55,7 @@ jobs:
           key: gradle-config-cache-publish-v1-${{ runner.os }}-${{ hashFiles('**/*.gradle.kts', 'gradle.properties', 'gradle/libs.versions.toml', 'gradle/wrapper/gradle-wrapper.properties', 'build-logic/**/*.kt') }}
 
       - name: Publish to Central Portal
+        if: inputs.publish_central
         run: ./gradlew publishToMavenCentral --stacktrace
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.CENTRAL_USERNAME }}
@@ -56,6 +67,7 @@ jobs:
       # Separate from Central: the portal is what lets consumers write `id("io.github.ayfri.kore") version "..."`
       # without adding a repository to `pluginManagement`.
       - name: Publish the Gradle plugin to the Plugin Portal
+        if: inputs.publish_plugin_portal
         run: ./gradlew :kore-gradle-plugin:publishPlugins --stacktrace
         env:
           GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
