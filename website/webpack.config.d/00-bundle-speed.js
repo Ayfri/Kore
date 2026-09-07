@@ -4,13 +4,13 @@
 // Measured on the real bundle: 632s -> 16s, for +10 KB brotli. The IR compiler already inlines and DCEs beforehand.
 ;(function () {
 	if (config.mode !== 'production') return;
-	const TerserPlugin = require('terser-webpack-plugin');
+	const MinimizerPlugin = require('minimizer-webpack-plugin');
 	config.optimization = config.optimization || {};
 	config.optimization.concatenateModules = false;
 	config.optimization.minimizer = [
-		new TerserPlugin({
+		new MinimizerPlugin({
 			extractComments: false,
-			minify: TerserPlugin.swcMinify,
+			minify: MinimizerPlugin.swcMinify,
 			terserOptions: {
 				compress: true,
 				format: { comments: false },
