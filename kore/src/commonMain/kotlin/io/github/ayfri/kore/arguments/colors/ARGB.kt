@@ -2,6 +2,7 @@ package io.github.ayfri.kore.arguments.colors
 
 import io.github.ayfri.kore.serializers.ToStringSerializer
 import kotlinx.serialization.Serializable
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 /**
@@ -118,10 +119,10 @@ data class ARGB(var alpha: Int, var red: Int, var green: Int, var blue: Int) : C
 
 		/** Builds an [ARGB] from an array [R, G, B, A] from 0.0 to 1.0. */
 		fun fromRGBAArray(array: DoubleArray) = ARGB(
-			array[3].times(255).toInt(),
-			array[0].times(255).toInt(),
-			array[1].times(255).toInt(),
-			array[2].times(255).toInt()
+			(array[3] * 255).roundToInt().coerceIn(0, 255),
+			(array[0] * 255).roundToInt().coerceIn(0, 255),
+			(array[1] * 255).roundToInt().coerceIn(0, 255),
+			(array[2] * 255).roundToInt().coerceIn(0, 255),
 		)
 
 		fun random(random: Random = Random, alpha: Boolean = false) = ARGB(

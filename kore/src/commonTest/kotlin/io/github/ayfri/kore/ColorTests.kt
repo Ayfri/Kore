@@ -40,6 +40,7 @@ fun colorTests() {
 
 	redARGB.decimal assertsIs 0xFFFF5555.toInt()
 	ARGB.fromDecimal(blueARGB.decimal) assertsIs blueARGB
+	ARGB.fromRGBAArray(blueARGB.rgbaNormalizedArray) assertsIs blueARGB
 }
 
 class ColorTests : FunSpec({
