@@ -1,12 +1,14 @@
 package io.github.ayfri.kore.helpers
 
 object HelpersConstants {
-	var mathConst2 = "#2"
-	var mathConst360 = "#360"
-	var mathConstScale = "#scale"
+	var mathDisplayUuid = "4b4f5245-0000-0000-0000-000000000002"
+	var mathEntitiesX = -30_000_000
+	var mathEntitiesZ = 1664
+	var mathFunctionsDirectory = "kore_math"
 	var mathInitFunction = "kore_math_init"
+	var mathMarkerUuid = "4b4f5245-0000-0000-0000-000000000001"
 	var mathObjective = "kore_math"
-	var mathSqrtIterations = 8
+	var mathStorage = "kore_math"
 	var raycastInitFunction = "kore_raycast_init"
 	var raycastObjective = "kore_raycast"
 	var raycastTag = "kore_raycasting"
