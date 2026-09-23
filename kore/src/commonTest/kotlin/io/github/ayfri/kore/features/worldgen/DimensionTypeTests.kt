@@ -34,6 +34,7 @@ fun DataPack.dimensionTypeTests() {
 			},
 			"has_skylight": true,
 			"has_ceiling": false,
+			"has_ender_dragon_fight": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
 			"logical_height": 512,
@@ -57,6 +58,7 @@ fun DataPack.dimensionTypeTests() {
 		{
 			"has_skylight": true,
 			"has_ceiling": false,
+			"has_ender_dragon_fight": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
 			"logical_height": 384,
@@ -87,6 +89,7 @@ fun DataPack.dimensionTypeTests() {
 		{
 			"has_skylight": true,
 			"has_ceiling": false,
+			"has_ender_dragon_fight": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
 			"cardinal_light": "nether",
@@ -114,6 +117,7 @@ fun DataPack.dimensionTypeTests() {
 		{
 			"has_skylight": true,
 			"has_ceiling": false,
+			"has_ender_dragon_fight": false,
 			"coordinate_scale": 1.0,
 			"ambient_light": 0.0,
 			"default_clock": "minecraft:overworld",

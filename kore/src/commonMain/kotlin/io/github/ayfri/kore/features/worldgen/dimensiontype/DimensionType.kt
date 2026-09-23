@@ -52,7 +52,7 @@ data class DimensionType(
 	var attributes: EnvironmentAttributesScope? = null,
 	var hasSkylight: Boolean = true,
 	var hasCeiling: Boolean = false,
-	var hasEnderDragonFight: Boolean? = null,
+	var hasEnderDragonFight: Boolean = false,
 	var coordinateScale: Double = 1.0,
 	var ambientLight: Float = 0f,
 	var cardinalLight: CardinalLight? = null,

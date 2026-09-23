@@ -5,7 +5,7 @@ nav-title: Dimensions
 description: Create custom Minecraft dimensions and dimension types with Kore - world bounds, lighting rules, terrain generators and biome sources.
 keywords: minecraft, datapack, kore, worldgen, dimension, dimension type, generator, biome source, multi noise, superflat
 date-created: 2026-02-03
-date-modified: 2026-08-21
+date-modified: 2026-09-23
 routeOverride: /docs/data-driven/worldgen/dimensions
 ---
 
@@ -48,7 +48,7 @@ Every property defaults to its vanilla Overworld value, so a dimension type only
 | `coordinateScale`             | `1.0`                   | Coordinate multiplier when travelling to the dimension.               |
 | `defaultClock`                | none                    | World clock driving the day cycle, none freezing the time.            |
 | `hasCeiling`                  | `false`                 | Whether the world has a bedrock ceiling.                              |
-| `hasEnderDragonFight`         | omitted                 | Whether the Ender Dragon fight can happen in the world.               |
+| `hasEnderDragonFight`         | `false`                 | Whether the Ender Dragon fight can happen in the world.               |
 | `hasFixedTime`                | `false`                 | Whether the time of day is frozen.                                    |
 | `hasSkylight`                 | `true`                  | Whether the sky lights the world.                                     |
 | `height`                      | `384`                   | Total height, a multiple of `16`, from `16` to `4064`.                |
