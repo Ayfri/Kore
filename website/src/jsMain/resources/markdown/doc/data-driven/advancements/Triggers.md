@@ -5,7 +5,7 @@ nav-title: Advancements Triggers
 description: A guide for using advancements triggers in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, advancements, triggers
 date-created: 2024-08-01
-date-modified: 2026-04-25
+date-modified: 2026-09-23
 routeOverride: /docs/data-driven/advancements/triggers
 ---
 
@@ -1155,7 +1155,9 @@ Triggers when an entity is summoned.
 ```kotlin
 summonedEntity("summon_iron_golem") {
 	entity {
-		entityType(EntityTypes.IRON_GOLEM)
+		conditionEntity {
+			entityType(EntityTypes.IRON_GOLEM)
+		}
 	}
 }
 ```
@@ -1176,7 +1178,9 @@ Triggers when an animal is tamed.
 ```kotlin
 tameAnimal("tame_wolf") {
 	entity {
-		entityType(EntityTypes.WOLF)
+		conditionEntity {
+			entityType(EntityTypes.WOLF)
+		}
 	}
 }
 ```
@@ -1225,7 +1229,9 @@ Triggers when a thrown item is picked up by an entity.
 ```kotlin
 thrownItemPickedUpByEntity("feed_animal") {
 	entity {
-		entityType(EntityTypes.COW)
+		conditionEntity {
+			entityType(EntityTypes.COW)
+		}
 	}
 	item {
 		items(Items.WHEAT)

@@ -5,7 +5,7 @@ nav-title: Advancements
 description: Create custom Minecraft advancements with Kore's Kotlin DSL. Covers all triggers, criteria, rewards (functions, loot, recipes), display settings, and frames. Replace hand-written JSON with type-safe Kotlin.
 keywords: minecraft advancements, datapack advancements, advancement triggers, using_item trigger, inventory_changed, minecraft achievement, kore advancements, custom advancements, advancement criteria, advancement rewards
 date-created: 2024-01-08
-date-modified: 2026-07-02
+date-modified: 2026-09-23
 routeOverride: /docs/data-driven/advancements
 ---
 
@@ -322,7 +322,9 @@ advancement("trigger_examples") {
 		// Entity interaction
 		playerKilledEntity("kill_zombie") {
 			entity {
-				entityType(EntityTypes.ZOMBIE)
+				conditionEntity {
+					entityType(EntityTypes.ZOMBIE)
+				}
 			}
 		}
 
@@ -595,12 +597,16 @@ dataPack("adventure_pack") {
 		criteria {
 			playerKilledEntity("kill_dragon") {
 				entity {
-					entityType(EntityTypes.ENDER_DRAGON)
+					conditionEntity {
+						entityType(EntityTypes.ENDER_DRAGON)
+					}
 				}
 			}
 			playerKilledEntity("kill_wither") {
 				entity {
-					entityType(EntityTypes.WITHER)
+					conditionEntity {
+						entityType(EntityTypes.WITHER)
+					}
 				}
 			}
 		}
