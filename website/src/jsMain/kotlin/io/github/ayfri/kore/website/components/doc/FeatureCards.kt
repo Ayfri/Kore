@@ -159,7 +159,7 @@ fun FeatureGrid() {
 			Div({
 				classes(FeatureStyle.linkList)
 			}) {
-				FeatureLink("/docs/commands/", "Commands")
+				FeatureLink("/docs/commands/commands", "Commands")
 				FeatureLink("/docs/commands/functions", "Functions")
 				FeatureLink("/docs/commands/macros", "Macros")
 				FeatureLink("/docs/helpers/scheduler", "Scheduler")
