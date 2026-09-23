@@ -174,7 +174,8 @@ fun HeroSection() {
 						Text("Rethink your datapack development experience with")
 					}
 					Img {
-						attr("src", "/logo.png")
+						attr("alt", "Kore")
+						attr("src", "/logo.avif")
 						classes(HeroSectionStyle.logo)
 					}
 				}

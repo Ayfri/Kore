@@ -70,7 +70,7 @@ fun Header(latestRelease: GitHubRelease? = null) {
 				classes(HeaderStyle.linksListDesktop)
 			}) {
 				org.jetbrains.compose.web.dom.A("/") {
-					Img("/logo.png", "Kore Logo") {
+					Img("/logo.avif", "Kore Logo") {
 						classes(HeaderStyle.logo)
 					}
 				}
@@ -139,7 +139,7 @@ fun Header(latestRelease: GitHubRelease? = null) {
 				}
 
 				org.jetbrains.compose.web.dom.A("/") {
-					Img("/logo.png", "Kore Logo") {
+					Img("/logo.avif", "Kore Logo") {
 						classes(HeaderStyle.logo)
 					}
 				}
