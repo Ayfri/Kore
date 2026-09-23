@@ -3,9 +3,9 @@ root: .components.layouts.MarkdownLayout
 title: Helpers Utilities
 nav-title: Helpers Utilities
 description: Overview of helper-focused utilities in Kore - renderers, displays, inventories, mannequins, math, NBT paths, raycasts, scheduling, and state delegates.
-keywords: minecraft, datapack, kore, helpers, ansi, markdown, minimessage, raycast, math, area, state, nbt, vfx, particles, text, display, inventory, mannequin, scheduler
+keywords: minecraft, datapack, kore, helpers, ansi, markdown, minimessage, raycast, math, vector, area, state, nbt, vfx, particles, text, display, inventory, mannequin, scheduler
 date-created: 2026-03-31
-date-modified: 2026-09-04
+date-modified: 2026-09-23
 routeOverride: /docs/helpers/utilities
 position: 0
 ---
@@ -74,8 +74,10 @@ That makes helpers a good fit for packs that start simple and progressively adop
   per-step side effects.
 - **[Scheduler](/docs/helpers/scheduler)** - Schedule delayed or repeating functions with load-time registration and
   cancelation helpers.
-- **[Scoreboard Math](/docs/helpers/scoreboard-math)** - Reuse fixed-point math routines such as trigonometry,
-  square-root, distance, and projectile formulas.
+- **[Score Vectors](/docs/helpers/score-vectors)** - Runtime 3D vectors for look directions, dashes, knockback,
+  exact lengths, teleports, and motion.
+- **[Scoreboard Math](/docs/helpers/scoreboard-math)** - Shared fixed-point sine, cosine, atan2, and exact integer
+  square root, two commands per call.
 - **[State Delegates](/docs/helpers/state-delegates)** - Map scoreboard objectives or NBT storage paths to Kotlin
   properties for terser command-generation code.
 - **[VFX Particles](/docs/helpers/vfx-particles)** - Generate circles, spheres, spirals, helixes, and lines as
