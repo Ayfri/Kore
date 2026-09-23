@@ -5,9 +5,7 @@ import com.varabyte.kobweb.browser.util.kebabCaseToTitleCamelCase
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.core.AppGlobals
 import com.varabyte.kobweb.core.rememberPageContext
-import com.varabyte.kobweb.silk.components.icons.lucide.LucideChevronRight
-import com.varabyte.kobweb.silk.components.icons.lucide.LucideChevronsDownUp
-import com.varabyte.kobweb.silk.components.icons.lucide.LucideChevronsUpDown
+import com.varabyte.kobweb.silk.components.icons.lucide.*
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.docEntries
 import io.github.ayfri.kore.website.utils.A
@@ -240,6 +238,16 @@ fun GroupEntry(
 			classes(DocTreeStyle.entry, DocTreeStyle.groupEntry)
 			title(name)
 		}) {
+			if (level == 1) when (groupPath) {
+				"advanced" -> LucideFlaskConical()
+				"commands" -> LucideTerminal()
+				"concepts" -> LucideLightbulb()
+				"contributing" -> LucideGitPullRequest()
+				"data-driven" -> LucideBraces()
+				"guides" -> LucideBookOpen()
+				"helpers" -> LucideWrench()
+				"oop" -> LucideBoxes()
+			}
 			Text(name)
 		}
 	}
@@ -436,7 +444,10 @@ data object DocTreeStyle : StyleSheet() {
 	}
 
 	val groupEntry by style {
+		alignItems(AlignItems.Center)
 		color(GlobalStyle.altTextColor)
+		display(DisplayStyle.Flex)
+		gap(0.45.cssRem)
 		userSelect(UserSelect.None)
 	}
 
