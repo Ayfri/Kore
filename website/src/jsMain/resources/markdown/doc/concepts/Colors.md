@@ -79,9 +79,12 @@ These helpers were added to make it easy to generate example content, tests, or 
 
 Different Minecraft systems expect colors in different formats. Kore picks the right format automatically via serializers.
 
-- Chat components (`color`, `shadow_color`): string
+- Chat components `color`: string
 	- Named colors emit lowercase names (e.g. `"red"`).
 	- `RGB` emits `"#rrggbb"`; `ARGB` emits `"#aarrggbb"`.
+
+- Chat components `shadow_color`: signed ARGB int (`ColorAsARGBDecimalSerializer`), colors without alpha being fully opaque
+	- `Color.BLUE` emits `-11184641` (`0xFF5555FF`), `argb(0, 0, 0, 0)` emits `0`.
 
 - Item components (decimal ints):
 	- `dyedColor(..)`: decimal (or object with `rgb` decimal when tooltip flag is present)

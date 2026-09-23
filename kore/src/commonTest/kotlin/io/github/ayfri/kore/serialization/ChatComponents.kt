@@ -488,7 +488,7 @@ private fun chatComponentAllFields() {
 			"insertion": "insertion",
 			"italic": true,
 			"obfuscated": true,
-			"shadow_color": "blue",
+			"shadow_color": -11184641,
 			"strikethrough": true,
 			"text": "Hello, world!",
 			"underlined": true

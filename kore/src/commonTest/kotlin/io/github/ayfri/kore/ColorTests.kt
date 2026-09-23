@@ -1,5 +1,6 @@
 package io.github.ayfri.kore
 
+import io.github.ayfri.kore.arguments.colors.ARGB
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.color
 import io.github.ayfri.kore.assertions.assertsIs
@@ -36,6 +37,9 @@ fun colorTests() {
 	redARGB.mix(blueARGB, 2) assertsIs listOf(color(255, 85, 85, 255), color(169, 84, 169, 191))
 
 	red.toARGB(100).hex assertsIs "64ff5555"
+
+	redARGB.decimal assertsIs 0xFFFF5555.toInt()
+	ARGB.fromDecimal(blueARGB.decimal) assertsIs blueARGB
 }
 
 class ColorTests : FunSpec({

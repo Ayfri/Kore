@@ -28,6 +28,9 @@ data class ARGB(var alpha: Int, var red: Int, var green: Int, var blue: Int) : C
 	val g get() = green
 	val b get() = blue
 
+	/** Signed 0xAARRGGBB integer, the form Minecraft stores ARGB colors in. */
+	val decimal get() = alpha shl 24 or (red shl 16) or (green shl 8) or blue
+
 	val array get() = intArrayOf(alpha, red, green, blue)
 	val normalizedArray get() = doubleArrayOf(alpha / 255.0, red / 255.0, green / 255.0, blue / 255.0)
 	val rgbaArray get() = intArrayOf(red, green, blue, alpha)
@@ -107,7 +110,7 @@ data class ARGB(var alpha: Int, var red: Int, var green: Int, var blue: Int) : C
 		/** Builds an [ARGB] from a [NamedColor], sets alpha to 255. */
 		fun fromNamedColor(color: NamedColor, alpha: Int = 255) = RGB.fromNamedColor(color).toARGB(alpha)
 
-		/** Builds an [ARGB] from a 0xRRGGBB decimal integer. */
+		/** Builds an [ARGB] from a 0xAARRGGBB decimal integer. */
 		fun fromDecimal(decimal: Int) = ARGB(decimal shr 24 and 0xFF, decimal shr 16 and 0xFF, decimal shr 8 and 0xFF, decimal and 0xFF)
 
 		/** Builds an [ARGB] from components 0..255. */

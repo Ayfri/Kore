@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.actions.ClickEventContainer
 import io.github.ayfri.kore.arguments.chatcomponents.hover.HoverAction
 import io.github.ayfri.kore.arguments.chatcomponents.hover.HoverEvent
 import io.github.ayfri.kore.arguments.colors.Color
+import io.github.ayfri.kore.arguments.colors.ColorAsARGBDecimalSerializer
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.pascalCase
@@ -60,8 +61,9 @@ sealed class ChatComponent {
 	/** Replaces each character with a random character that changes every tick when `true`. */
 	var obfuscated: Boolean? = null
 
-	/** ARGB color of the drop shadow cast by this text. */
+	/** ARGB color of the drop shadow cast by this text, written as an ARGB int since the game rejects color names here. */
 	@SerialName("shadow_color")
+	@Serializable(ColorAsARGBDecimalSerializer::class)
 	var shadowColor: Color? = null
 
 	/** Renders a horizontal line through the text when `true`. */
@@ -85,7 +87,7 @@ sealed class ChatComponent {
 		insertion?.let { this["insertion"] = it }
 		italic?.let { this["italic"] = it }
 		obfuscated?.let { this["obfuscated"] = it }
-		shadowColor?.let { this["shadow_color"] = it.asString() }
+		shadowColor?.let { this["shadow_color"] = it.toARGB().decimal }
 		strikethrough?.let { this["strikethrough"] = it }
 		if (extra == null) this["text"] = text
 		underlined?.let { this["underlined"] = it }
