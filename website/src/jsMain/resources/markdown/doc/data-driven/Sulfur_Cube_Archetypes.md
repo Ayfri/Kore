@@ -5,7 +5,7 @@ nav-title: Sulfur Cube Archetypes
 description: Define custom sulfur cube archetypes for Minecraft 26.2+ with Kore's Kotlin DSL. Configure attribute modifiers, buoyancy, contact damage, explosion, knockback and item contents.
 keywords: minecraft sulfur cube, datapack sulfur_cube_archetype, kore sulfur cube archetype, custom mob archetype datapack, sulfur cube attribute modifiers
 date-created: 2026-07-29
-date-modified: 2026-08-23
+date-modified: 2026-09-23
 routeOverride: /docs/data-driven/sulfur-cube-archetypes
 ---
 
@@ -76,7 +76,7 @@ datapack.sulfurCubeArchetype(
 | `explosion`          | `SulfurCubeArchetypeExplosion?`                     | The explosion triggered by the sulfur cube, omitted when `null`.          |
 | `items`              | `ItemTagArgument`                                   | Item tag defining which items the sulfur cube can hold. **Required.**     |
 | `knockbackModifiers` | `SulfurCubeArchetypeKnockbackModifiers`             | Knockback dealt to entities that touch the sulfur cube. **Required.**     |
-| `soundSettings`      | `SulfurCubeArchetypeSoundSettings?`                 | Archetype-specific hit and push sounds, omitted when `null`.              |
+| `soundSettings`      | `SulfurCubeArchetypeSoundSettings`                  | Hit and push sounds, required by the game, vanilla `regular` by default.  |
 
 ### SulfurCubeArchetypeAttributeModifier Fields
 

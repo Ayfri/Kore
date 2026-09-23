@@ -4,6 +4,7 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.types.resources.tagged.ItemTagArgument
 import io.github.ayfri.kore.commands.AttributeModifierOperation
+import io.github.ayfri.kore.generated.SoundEvents
 import io.github.ayfri.kore.generated.arguments.types.AttributeArgument
 import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
@@ -87,7 +88,7 @@ data class SulfurCubeArchetypeSoundSettings(
  * Data-driven sulfur cube archetype definition.
  *
  * Controls the attribute modifiers, buoyancy, contact damage, explosion, knockback, and valid item contents of a
- * sulfur cube.
+ * sulfur cube. The sound settings, required by the game, default to the vanilla `regular` archetype ones.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/sulfur-cube-archetypes
  * Minecraft Wiki: https://minecraft.wiki/w/Sulfur_cube_archetype_definition
@@ -102,7 +103,12 @@ data class SulfurCubeArchetype(
 	var explosion: SulfurCubeArchetypeExplosion? = null,
 	var items: ItemTagArgument,
 	var knockbackModifiers: SulfurCubeArchetypeKnockbackModifiers,
-	var soundSettings: SulfurCubeArchetypeSoundSettings? = null,
+	var soundSettings: SulfurCubeArchetypeSoundSettings = SulfurCubeArchetypeSoundSettings(
+		SoundEvents.Entity.SulfurCube.Regular.HIT,
+		SoundEvents.Entity.SulfurCube.Regular.PUSH,
+		pushSoundCooldown = 0.5f,
+		pushSoundImpulseThreshold = 0.2f,
+	),
 ) : Generator("sulfur_cube_archetype") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
