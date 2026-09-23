@@ -45,6 +45,7 @@ import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunction
 import io.github.ayfri.kore.features.worldgen.dimension.Dimension
 import io.github.ayfri.kore.features.worldgen.dimensiontype.DimensionType
 import io.github.ayfri.kore.features.worldgen.flatlevelgeneratorpreset.FlatLevelGeneratorPreset
+import io.github.ayfri.kore.features.worldgen.multinoisebiomesourceparameterlist.MultiNoiseBiomeSourceParameterList
 import io.github.ayfri.kore.features.worldgen.noise.Noise
 import io.github.ayfri.kore.features.worldgen.noisesettings.NoiseSettings
 import io.github.ayfri.kore.features.worldgen.placedfeature.PlacedFeature
@@ -109,6 +110,7 @@ class DataPack(val name: String) {
 	val itemModifiers = registerGenerator<ItemModifier>()
 	val jukeboxSongs = registerGenerator<JukeboxSong>()
 	val lootTables = registerGenerator<LootTable>()
+	val multiNoiseBiomeSourceParameterLists = registerGenerator<MultiNoiseBiomeSourceParameterList>()
 	val noises = registerGenerator<Noise>()
 	val noiseSettings = registerGenerator<NoiseSettings>()
 	val paintingVariants = registerGenerator<PaintingVariant>()

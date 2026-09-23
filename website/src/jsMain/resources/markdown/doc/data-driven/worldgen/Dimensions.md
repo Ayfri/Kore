@@ -111,7 +111,7 @@ dimension("my_dimension", type = myDimType) {
 |--------------------------------------|--------------------------------------------------------------------------|
 | `fixed(biome)`                       | One biome everywhere, the simplest option.                               |
 | `checkerboard(scale, vararg biomes)` | A square grid, each square `2^scale` chunks wide (`scale` defaults `2`). |
-| `multiNoise(preset)`                 | A vanilla parameter list: `BiomePresets.OVERWORLD` or `NETHER`.          |
+| `multiNoise(preset)`                 | A parameter list: `BiomePresets.OVERWORLD`, `NETHER`, or your own one.   |
 | `multiNoise { }`                     | Your own biomes, each claiming a range in the 6D climate space.          |
 | `theEnd()`                           | The hardcoded End layout: central island, void, outer islands.           |
 
@@ -136,7 +136,22 @@ noiseGenerator(
 )
 ```
 
-Reference: [Biome source](https://minecraft.wiki/w/Biome_source)
+#### Multi-Noise Parameter Lists
+
+A parameter list gives a vanilla biome layout its own id, written to
+`data/<ns>/worldgen/multi_noise_biome_source_parameter_list/<name>.json`. Its `preset` is either `BiomePresets.OVERWORLD` or `NETHER`,
+and any `multiNoise(preset)` biome source can point to it.
+
+```kotlin
+val skylandsBiomes = dp.multiNoiseBiomeSourceParameterList("skylands", BiomePresets.OVERWORLD)
+
+dp.dimension("skylands", type = myDimType) {
+	noiseGenerator(settings = NoiseSettings.FLOATING_ISLANDS, biomeSource = multiNoise(skylandsBiomes))
+}
+```
+
+References: [Biome source](https://minecraft.wiki/w/Biome_source),
+[Multi-noise biome source parameter list](https://minecraft.wiki/w/Multi-noise_biome_source_parameter_list)
 
 ### Flat Generator
 

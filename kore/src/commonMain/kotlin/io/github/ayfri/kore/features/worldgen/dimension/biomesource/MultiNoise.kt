@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.worldgen.dimension.biomesource
 
 import io.github.ayfri.kore.features.worldgen.dimension.biomesource.multinoise.MultiNoiseEntry
-import io.github.ayfri.kore.generated.BiomePresets
+import io.github.ayfri.kore.generated.arguments.worldgen.types.MultiNoiseBiomeSourceParameterListArgument
 import io.github.ayfri.kore.serializers.EitherInlineSerializer
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
 @Serializable(with = MultiNoise.Companion.MultiNoiseSerializer::class)
 data class MultiNoise(
 	var biomes: List<MultiNoiseEntry>? = null,
-	var preset: BiomePresets? = null,
+	var preset: MultiNoiseBiomeSourceParameterListArgument? = null,
 ) : BiomeSource() {
 	companion object {
 		data object MultiNoiseSerializer :
@@ -24,4 +24,4 @@ fun multiNoise(biomes: List<MultiNoiseEntry>) = MultiNoise(biomes = biomes)
 fun multiNoise(vararg biomes: MultiNoiseEntry) = MultiNoise(biomes = biomes.toList())
 fun multiNoise(block: MutableList<MultiNoiseEntry>.() -> Unit) = MultiNoise(biomes = buildList(block))
 
-fun multiNoise(preset: BiomePresets) = MultiNoise(preset = preset)
+fun multiNoise(preset: MultiNoiseBiomeSourceParameterListArgument) = MultiNoise(preset = preset)
