@@ -28,10 +28,11 @@ import org.jetbrains.compose.web.dom.Text
 fun UpdatesPage() {
 	Style(UpdatesPageStyle)
 
-	setDescription("Kore changelog and release history for the Minecraft datapack generator. Browse all versions, release notes, and updates automatically fetched from GitHub.")
-	setKeywords("kore releases", "kore changelog", "datapack generator updates", "kore version history", "minecraft datapack library releases", "kore github releases")
-
 	PageLayout("Kore Releases - Changelog & Version History") {
+		// PageLayout writes the site-wide defaults, so page-specific meta must be set after it, inside the content.
+		setDescription("Kore changelog and release history for the Minecraft datapack generator. Browse all versions, release notes, and updates automatically fetched from GitHub.")
+		setKeywords("kore releases", "kore changelog", "datapack generator updates", "kore version history", "minecraft datapack library releases", "kore github releases")
+
 		Div({
 			classes(UpdatesPageStyle.container)
 		}) {
