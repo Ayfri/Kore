@@ -51,51 +51,25 @@ enum class HeroTab(val tabName: String, val language: String) {
 	},
 	CUSTOM_SCOREBOARD("customScoreboard.kt", "kotlin") {
 		override val code = """
-			fun scoreboardDisplayDatapack() = dataPack("scoreboard_display") {
-				val randomEntityUUID = randomUUID()
-				val scoreName = "score"
+			fun sidebarDatapack() = dataPack("sidebar") {
+				val game = literal("#game")
 
-				val scoreHolderEntity = allEntities(limitToOne = true) {
-					nbt = nbt {
-						putNbtCompound("data") {
-							this["UUID"] = randomEntityUUID.uuid.toString()
-						}
-					}
+				val minigame = sidebar("minigame") {
+					title("✪ Mini-game ✪", Color.GOLD)
+					line("Game: Sky Wars")
+					line("Players", value = scoreComponent("players", game))
+					line("Score", value = scoreComponent("score", game))
+					emptyLine()
+					line("HyKore server 3.1.0", Color.YELLOW)
 				}
 
 				load {
-					ScoreboardDisplay.resetAll()
-
-					summon(EntityTypes.MARKER) {
-						putNbtCompound("data") {
-							this["UUID"] = randomEntityUUID.uuid.toString()
-						}
-					}
-
-					scoreboard.objectives.add(scoreName)
-					scoreboard.player(scoreHolderEntity) {
-						set(scoreName, 0)
-					}
+					scoreboard.objectives.add("players")
+					scoreboard.objectives.add("score")
+					minigame.create()
 				}
 
-				tick {
-					scoreboardDisplay("minigame") {
-						displayName = textComponent("✪ Mini-game ✪", Color.GOLD)
-						appendLine("Game: Mini-game")
-						appendLine("IP: 127.0.0.1")
-						appendLine("Players: 10/20")
-						appendLine(textComponent("Score: ")) {
-							customScoreEntity = scoreHolderEntity
-							customScoreObjective = scoreName
-						}
-
-						emptyLine()
-						appendLine("HyKore server 3.1.0")
-
-						hideValues(1..<4)
-						hideValues(6..lines.size)
-					}
-				}
+				tick { minigame.refresh() }
 			}
 		""".trimIndent()
 	},

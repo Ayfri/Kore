@@ -3,7 +3,7 @@ root: .components.layouts.MarkdownLayout
 title: Helpers Utilities
 nav-title: Helpers Utilities
 description: Overview of helper-focused utilities in Kore - renderers, displays, inventories, mannequins, math, NBT paths, raycasts, scheduling, and state delegates.
-keywords: minecraft, datapack, kore, helpers, ansi, markdown, minimessage, raycast, math, vector, area, state, nbt, vfx, particles, text, display, inventory, mannequin, scheduler
+keywords: minecraft, datapack, kore, helpers, ansi, markdown, minimessage, raycast, math, vector, area, state, nbt, vfx, particles, text, display, inventory, mannequin, scheduler, menu, dialog, sidebar
 date-created: 2026-03-31
 date-modified: 2026-09-23
 routeOverride: /docs/helpers/utilities
@@ -66,6 +66,8 @@ That makes helpers a good fit for packs that start simple and progressively adop
   selection.
 - **[Markdown Renderer](/docs/helpers/markdown-renderer)** - Turn Markdown snippets into rich Minecraft text for chat,
   titles, signs, or boss bars.
+- **[Menus](/docs/helpers/menus)** - Build dialog-based GUIs whose buttons run functions for any player, with
+  sub-pages, links, and pause screen or Smithed menu entries.
 - **[MiniMessage Renderer](/docs/helpers/minimessage-renderer)** - Parse Adventure MiniMessage tags into Minecraft
   text components while keeping authoring ergonomic.
 - **[NBT Paths](/docs/helpers/nbt-paths)** - Build typed NBT paths and resolve trees that mix literal values with
@@ -78,6 +80,8 @@ That makes helpers a good fit for packs that start simple and progressively adop
   exact lengths, teleports, and motion.
 - **[Scoreboard Math](/docs/helpers/scoreboard-math)** - Shared fixed-point sine, cosine, atan2, and exact integer
   square root, two commands per call.
+- **[Sidebars](/docs/helpers/sidebars)** - Show up to 15 custom lines on the sidebar, with right-aligned values, live
+  scores, and conditional lines.
 - **[State Delegates](/docs/helpers/state-delegates)** - Map scoreboard objectives or NBT storage paths to Kotlin
   properties for terser command-generation code.
 - **[VFX Particles](/docs/helpers/vfx-particles)** - Generate circles, spheres, spirals, helixes, and lines as

@@ -5,7 +5,7 @@ nav-title: Dialogs
 description: Create interactive dialog screens in Minecraft with Kore's comprehensive dialog system.
 keywords: minecraft, datapack, kore, dialogs, ui, interactive, forms, confirmation, notice
 date-created: 2025-09-18
-date-modified: 2025-09-18
+date-modified: 2026-09-23
 routeOverride: /docs/data-driven/dialogs
 ---
 
@@ -543,6 +543,9 @@ val tutorialDialog = dialogBuilder.dialogList("tutorials", "Tutorial Menu") {
 5. **Handle edge cases**: Provide cancel/exit options where appropriate
 
 ## Integration with Other Systems
+
+For multi-page GUIs whose buttons run functions for players without operator rights, the
+[Menus helper](/docs/helpers/menus) builds the dialogs and the trigger wiring for you.
 
 Dialogs work seamlessly with other Kore features:
 
