@@ -13,6 +13,7 @@ import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.arguments.types.resources.storage
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.assertions.assertsIsJson
+import io.github.ayfri.kore.commands.function
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.predicates.conditions.matchTool
@@ -24,6 +25,7 @@ import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.Textures
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.set
+import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
 
 fun chatComponentsTests() {
@@ -450,6 +452,33 @@ private fun chatComponentsOnClick() {
 			"text": "run command"
 		}
 	""".trimIndent()
+
+	textComponent("run function") {
+		clickEvent {
+			runCommand {
+				function("arena:join")
+			}
+		}
+	} assertsIsJson """
+		{
+			"type": "text",
+			"click_event": {
+				"action": "run_command",
+				"command": "function arena:join"
+			},
+			"text": "run function"
+		}
+	""".trimIndent()
+
+	shouldThrowAny {
+		textComponent("unresolvable function") {
+			clickEvent {
+				runCommand {
+					function("join")
+				}
+			}
+		}
+	}
 }
 
 private fun chatComponentAllFields() {

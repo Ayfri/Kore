@@ -21,6 +21,8 @@ fun Function.functionTests() {
 		arguments = storage,
 		path = "test"
 	) assertsIs "function ${datapack.name}:tests with storage minecraft:foo test"
+	function("other_pack:tests") assertsIs "function other_pack:tests"
+	function("other_pack:tests", group = true) assertsIs "function #other_pack:tests"
 
 	function("unit_tests", "function_tests", true) assertsIs "function #unit_tests:function_tests"
 	function("unit_tests", "function_tests", true, arguments) assertsIs "function #unit_tests:function_tests {foo:1}"

@@ -12,20 +12,33 @@ import io.github.ayfri.kore.utils.nbt
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtCompoundBuilder
 
-/** Calls a function in the current datapack by [name], optionally passing NBT [arguments]. */
+/**
+ * Resolves [name] against the current datapack, keeping an already namespaced id (`ns:name`) as is.
+ * Functions without a datapack (the `runCommand { }` / `suggestCommand { }` builders) can't resolve a bare name.
+ */
+private fun Function.functionId(name: String, group: Boolean) = when {
+	':' in name -> tag(name, group)
+	datapack.name.isEmpty() -> error(
+		"Cannot resolve the namespace of function '$name' here, there is no datapack in scope. Pass a namespaced id like 'my_pack:$name' or the function itself."
+	)
+
+	else -> tag(name, datapack.name, group)
+}
+
+/** Calls a function by [name], resolved in the current datapack unless already namespaced, optionally passing NBT [arguments]. */
 fun Function.function(name: String, group: Boolean = false, arguments: NbtCompound? = null) = addLine(
 	command(
 		"function",
-		tag(name, datapack.name, group),
+		functionId(name, group),
 		compound(arguments)
 	)
 )
 
-/** Calls a function in the current datapack by [name], passing data from [arguments] at [path]. */
+/** Calls a function by [name], resolved in the current datapack unless already namespaced, passing data from [arguments] at [path]. */
 fun Function.function(name: String, group: Boolean = false, arguments: DataArgument, path: String? = null) = addLine(
 	command(
 		"function",
-		tag(name, datapack.name, group),
+		functionId(name, group),
 		literal("with"),
 		literal(arguments.literalName),
 		arguments,

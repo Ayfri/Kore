@@ -123,7 +123,7 @@ open class Function(
 
 			clickEvent {
 				runCommand {
-					function(asId())
+					function(this@Function)
 				}
 			}
 
@@ -143,7 +143,7 @@ open class Function(
 
 			clickEvent {
 				runCommand {
-					function(asId())
+					function(this@Function)
 				}
 			}
 

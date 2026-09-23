@@ -5,7 +5,7 @@ nav-title: Chat Components
 description: A guide for creating Chat Components in a Minecraft datapack using Kore.
 keywords: minecraft, datapack, kore, guide, chat-components
 date-created: 2024-09-05
-date-modified: 2026-06-26
+date-modified: 2026-09-23
 routeOverride: /docs/concepts/chat-components
 ---
 
@@ -226,6 +226,20 @@ val clickEventComponent = textComponent("Click me!") {
 		runCommand {
 			say("Hello, world!")
 		}
+	}
+}
+```
+
+The `runCommand { }` and `suggestCommand { }` builders have no datapack in scope, so a function call inside them needs
+the function itself or a namespaced id. A bare name like `function("join")` throws because its namespace can't be
+resolved:
+
+```kotlin
+val join = function("join") { say("Joined!") }
+
+val joinButton = textComponent("[Join]") {
+	clickEvent {
+		runCommand { function(join) } // or function("my_pack:join")
 	}
 }
 ```
