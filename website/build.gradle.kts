@@ -96,6 +96,11 @@ kobweb {
 					image.children().filterIsInstance<Text>().joinToString("") { it.literal.escapeSingleQuotedText() }
 				childrenOverride = emptyList()
 
+				// `![Diamond](mc:item/diamond)` renders a vanilla texture inline.
+				if (image.destination.startsWith("mc:")) {
+					return@set """io.github.ayfri.kore.website.components.common.McSprite("${image.destination.removePrefix("mc:")}", "$altText")"""
+				}
+
 				"""org.jetbrains.compose.web.dom.Img(src="${image.destination}", alt="$altText") {
 					|   attr("loading", "lazy")
 					|   attr("decoding", "async")

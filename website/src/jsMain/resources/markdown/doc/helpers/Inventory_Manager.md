@@ -52,6 +52,8 @@ function("inventory_demo") {
 }
 ```
 
+{{{ .components.mc.InventoryManagerMockup }}}
+
 Tip: Use the builder variant to both declare listeners and auto-generate them in one go:
 
 ```kotlin

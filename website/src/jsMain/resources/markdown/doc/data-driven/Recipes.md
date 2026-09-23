@@ -24,29 +24,29 @@ Recipes have several key characteristics:
 
 ### Recipe Types
 
-| Type                                  | Workstation    | Description                         |
-|---------------------------------------|----------------|-------------------------------------|
-| `blasting`                            | Blast Furnace  | Faster ore smelting                 |
-| `campfire_cooking`                    | Campfire       | Slow food cooking                   |
-| `crafting_decorated_pot`              | Crafting Table | Craft a decorated pot from sherds   |
-| `crafting_dye`                        | Crafting Table | Dye an item with a dye              |
-| `crafting_imbue`                      | Crafting Table | Imbue items (e.g. tip arrows)       |
-| `crafting_shaped`                     | Crafting Table | Pattern-based crafting              |
-| `crafting_shapeless`                  | Crafting Table | Order-independent crafting          |
-| `crafting_special_bannerduplicate`    | Crafting Table | Copy a banner pattern               |
-| `crafting_special_bookcloning`        | Crafting Table | Copy a written book                 |
-| `crafting_special_firework_rocket`    | Crafting Table | Craft a firework rocket             |
-| `crafting_special_firework_star`      | Crafting Table | Craft a firework star               |
-| `crafting_special_firework_star_fade` | Crafting Table | Add a fade colour to a star         |
-| `crafting_special_mapextending`       | Crafting Table | Extend a map with paper             |
-| `crafting_special_shielddecoration`   | Crafting Table | Apply a banner to a shield          |
-| `crafting_special_*`                  | Crafting Table | Remaining hardcoded special recipes |
-| `crafting_transmute`                  | Crafting Table | Transform item with material        |
-| `smelting`                            | Furnace        | Standard smelting                   |
-| `smithing_transform`                  | Smithing Table | Upgrade items                       |
-| `smithing_trim`                       | Smithing Table | Apply armor trims                   |
-| `smoking`                             | Smoker         | Faster food cooking                 |
-| `stonecutting`                        | Stonecutter    | Cut blocks                          |
+| Type                                  | Workstation                                                    | Description                         |
+|---------------------------------------|----------------------------------------------------------------|-------------------------------------|
+| `blasting`                            | ![Blast Furnace](mc:block/blast_furnace_front) Blast Furnace   | Faster ore smelting                 |
+| `campfire_cooking`                    | ![Campfire](mc:item/campfire) Campfire                         | Slow food cooking                   |
+| `crafting_decorated_pot`              | ![Crafting Table](mc:block/crafting_table_front) Crafting Table | Craft a decorated pot from sherds   |
+| `crafting_dye`                        | ![Crafting Table](mc:block/crafting_table_front) Crafting Table | Dye an item with a dye              |
+| `crafting_imbue`                      | ![Crafting Table](mc:block/crafting_table_front) Crafting Table | Imbue items (e.g. tip arrows)       |
+| `crafting_shaped`                     | ![Crafting Table](mc:block/crafting_table_front) Crafting Table | Pattern-based crafting              |
+| `crafting_shapeless`                  | ![Crafting Table](mc:block/crafting_table_front) Crafting Table | Order-independent crafting          |
+| `crafting_special_bannerduplicate`    | ![Crafting Table](mc:block/crafting_table_front) Crafting Table | Copy a banner pattern               |
+| `crafting_special_bookcloning`        | ![Crafting Table](mc:block/crafting_table_front) Crafting Table | Copy a written book                 |
+| `crafting_special_firework_rocket`    | ![Crafting Table](mc:block/crafting_table_front) Crafting Table | Craft a firework rocket             |
+| `crafting_special_firework_star`      | ![Crafting Table](mc:block/crafting_table_front) Crafting Table | Craft a firework star               |
+| `crafting_special_firework_star_fade` | ![Crafting Table](mc:block/crafting_table_front) Crafting Table | Add a fade colour to a star         |
+| `crafting_special_mapextending`       | ![Crafting Table](mc:block/crafting_table_front) Crafting Table | Extend a map with paper             |
+| `crafting_special_shielddecoration`   | ![Crafting Table](mc:block/crafting_table_front) Crafting Table | Apply a banner to a shield          |
+| `crafting_special_*`                  | ![Crafting Table](mc:block/crafting_table_front) Crafting Table | Remaining hardcoded special recipes |
+| `crafting_transmute`                  | ![Crafting Table](mc:block/crafting_table_front) Crafting Table | Transform item with material        |
+| `smelting`                            | ![Furnace](mc:block/furnace_front) Furnace                     | Standard smelting                   |
+| `smithing_transform`                  | ![Smithing Table](mc:block/smithing_table_front) Smithing Table | Upgrade items                       |
+| `smithing_trim`                       | ![Smithing Table](mc:block/smithing_table_front) Smithing Table | Apply armor trims                   |
+| `smoking`                             | ![Smoker](mc:block/smoker_front) Smoker                        | Faster food cooking                 |
+| `stonecutting`                        | ![Stonecutter](mc:block/stonecutter_saw) Stonecutter           | Cut blocks                          |
 
 ## File Structure
 
@@ -256,6 +256,8 @@ recipes {
 }
 ```
 
+{{{ .components.mc.ShapedRecipeMockup }}}
+
 #### Pattern Rules
 
 - Patterns can be 1x1 to 3x3
@@ -432,6 +434,8 @@ recipes {
 }
 ```
 
+{{{ .components.mc.SmeltingRecipeMockup }}}
+
 ### Smoking (Smoker)
 
 For food items, twice as fast as furnace:
@@ -463,6 +467,8 @@ recipes {
 	}
 }
 ```
+
+{{{ .components.mc.SmithingRecipeMockup }}}
 
 The result item copies components from the base item.
 

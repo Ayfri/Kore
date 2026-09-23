@@ -31,6 +31,8 @@ load { lobby.create() }
 tick { lobby.refresh() }
 ```
 
+{{{ .components.mc.SidebarMockup }}}
+
 `sidebar(...)` only declares the sidebar, commands are emitted where you call its functions.
 
 ## Lines

@@ -209,6 +209,8 @@ function("commands_demo") {
 }
 ```
 
+{{{ .components.mc.TitleMockup }}}
+
 | Function        | Description                               |
 |-----------------|-------------------------------------------|
 | `addTag`        | Add a scoreboard tag                      |

@@ -33,6 +33,8 @@ function("item_demo") {
 }
 ```
 
+{{{ .components.mc.ItemTooltipMockup }}}
+
 `summon()` spawns the stack as a `minecraft:item` entity at the given position (defaulting to `~ ~ ~`). The overload
 taking a `ChatComponents` or a `String` + `Color` sets the entity's visible custom name.
 

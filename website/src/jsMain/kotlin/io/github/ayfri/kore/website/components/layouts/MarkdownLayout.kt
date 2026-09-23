@@ -10,6 +10,8 @@ import com.varabyte.kobwebx.markdown.markdown
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.*
 import io.github.ayfri.kore.website.components.doc.*
+import io.github.ayfri.kore.website.components.mc.DocMockupsStyle
+import io.github.ayfri.kore.website.components.mc.McUiStyle
 import io.github.ayfri.kore.website.utils.*
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.browser.window
@@ -33,7 +35,10 @@ private const val MOBILE_BREAKPOINT_PX = 768
 fun MarkdownLayout(content: @Composable () -> Unit) {
 	Style(BrandIconStyle)
 	Style(CalloutStyle)
+	Style(DocMockupsStyle)
 	Style(MarkdownLayoutStyle)
+	Style(McSpriteStyle)
+	Style(McUiStyle)
 
 	LaunchedEffect(Unit) {
 		initMCFunctionHighlighting()

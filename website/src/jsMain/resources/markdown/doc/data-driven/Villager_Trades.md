@@ -87,6 +87,8 @@ datapack.villagerTrade("book_trade") {
 }
 ```
 
+{{{ .components.mc.VillagerTradesMockup }}}
+
 ### VillagerTrade Fields
 
 All fields are optional except `wants` and `gives`, which must be set before the data pack is generated.

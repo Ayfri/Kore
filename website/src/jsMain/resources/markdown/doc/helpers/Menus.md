@@ -43,6 +43,8 @@ val kits = menu("kits", "Choose your kit", Color.GOLD) {
 function("open_kits") { kits.open() }
 ```
 
+{{{ .components.mc.KitsMenuMockup }}}
+
 ## Buttons
 
 `button(label) { ... }` runs its block as the clicking player, at their position. `reopen = true` shows the page again

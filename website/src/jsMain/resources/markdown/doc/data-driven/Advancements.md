@@ -98,11 +98,13 @@ advancement("styled_advancement") {
 
 Each frame type produces different visual feedback:
 
-| Frame       | Notification Header   | Header Color | Sound         |
-|-------------|-----------------------|--------------|---------------|
-| `TASK`      | "Advancement Made!"   | Yellow       | Standard      |
-| `GOAL`      | "Goal Reached!"       | Yellow       | Standard      |
-| `CHALLENGE` | "Challenge Complete!" | Pink         | Special music |
+| Frame                                                                                   | Notification Header   | Header Color | Sound         |
+|-----------------------------------------------------------------------------------------|-----------------------|--------------|---------------|
+| ![Task frame](mc:gui/sprites/advancements/task_frame_obtained) `TASK`                   | "Advancement Made!"   | Yellow       | Standard      |
+| ![Goal frame](mc:gui/sprites/advancements/goal_frame_obtained) `GOAL`                   | "Goal Reached!"       | Yellow       | Standard      |
+| ![Challenge frame](mc:gui/sprites/advancements/challenge_frame_obtained) `CHALLENGE`    | "Challenge Complete!" | Pink         | Special music |
+
+{{{ .components.mc.AdvancementToastsMockup }}}
 
 > **Note:** Root advancements (without a parent) don't trigger notifications or chat messages.
 

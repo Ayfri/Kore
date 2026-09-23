@@ -198,6 +198,20 @@ Required frontmatter keys, in alphabetical order:
 - `routeOverride`
 - `title`
 
+An image whose destination starts with `mc:` renders a vanilla texture inline, the path being relative to `textures/`
+without extension, e.g. `![Furnace](mc:block/furnace_front)`. Use it only where seeing the in-game block, item or GUI
+sprite tells the reader something (a workstation column, frame styles), never as decoration, and check the path
+exists in [misode/mcmeta](https://github.com/misode/mcmeta/tree/assets/assets/minecraft/textures) first. Animated
+textures show their first frame.
+
+Bigger in-game renders (dialogs, containers, HUD elements, toasts, trades) live in `components/mc/DocMockups.kt`, built
+from the vanilla GUI textures in `components/mc/McUi.kt`. Embed one right after the example it renders with
+`{{{ .components.mc.KitsMenuMockup }}}`, and update it whenever that example changes. Mockups use vanilla GUI
+coordinates through `gui(pixels)` (GUI scale 2) and `McAt`, so offsets copied from the game's screen classes land on
+the same pixels. Text is drawn as SVG pixel squares by `McFont.kt`, from glyph bitmaps of the OFL
+[Minecraft font](https://github.com/IdreesInc/Minecraft-Font), so it stays sharp at any zoom where browser font
+rendering blurs pixel fonts.
+
 Keep routes stable, keep navigation intentional, and update entry pages when a new doc should become discoverable.
 
 ### How to write a documentation page

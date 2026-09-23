@@ -102,6 +102,8 @@ val confirmDialog = dialogBuilder.confirmation("delete_world", "Delete World?") 
 }
 ```
 
+{{{ .components.mc.ConfirmationDialogMockup }}}
+
 ### Notice Dialog
 
 A simple dialog with a single action button for displaying information:
@@ -126,6 +128,8 @@ val noticeDialog = dialogBuilder.notice("achievement", "Achievement Unlocked!") 
 	}
 }
 ```
+
+{{{ .components.mc.NoticeDialogMockup }}}
 
 ### Multi Action Dialog
 
@@ -177,6 +181,8 @@ val menuDialog = dialogBuilder.multiAction("main_menu", "Server Menu") {
 	}
 }
 ```
+
+{{{ .components.mc.MultiActionDialogMockup }}}
 
 ### Dialog List
 

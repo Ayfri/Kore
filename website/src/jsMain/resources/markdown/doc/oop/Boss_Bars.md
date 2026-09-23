@@ -48,6 +48,8 @@ function("hide_phase_bar") {
 }
 ```
 
+{{{ .components.mc.BossBarMockup }}}
+
 In practice, boss bars often pair well with timers, boss fights, or round-based activities where the bar is configured
 once and then updated from several different functions.
 
