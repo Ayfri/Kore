@@ -345,6 +345,13 @@ kobweb {
 				appendLine("""		<changefreq>weekly</changefreq>""")
 				appendLine("""		<priority>1.0</priority>""")
 				appendLine("""	</url>""")
+				listOf("features", "updates").forEach { page ->
+					appendLine("""	<url>""")
+					appendLine("""		<loc>$baseUrl/$page</loc>""")
+					appendLine("""		<changefreq>weekly</changefreq>""")
+					appendLine("""		<priority>0.9</priority>""")
+					appendLine("""	</url>""")
+				}
 				sortedEntries.forEach { entry ->
 					val route = entry.slugs.joinToString("/")
 					val priority = when {

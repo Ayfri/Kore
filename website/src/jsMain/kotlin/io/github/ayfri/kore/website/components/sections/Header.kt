@@ -30,6 +30,7 @@ import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.*
 
 val tabs = mapOf(
+	"Features" to "/features",
 	"Docs" to "/docs/home",
 	"Getting Started" to "/docs/getting-started",
 	"Updates" to "/updates",
