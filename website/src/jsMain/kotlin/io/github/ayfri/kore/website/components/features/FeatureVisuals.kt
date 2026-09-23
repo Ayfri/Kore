@@ -6,8 +6,11 @@ import com.varabyte.kobweb.silk.components.icons.lucide.LucideFileBraces
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideFileCode
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideFolder
 import io.github.ayfri.kore.website.components.common.CodeBlock
+import io.github.ayfri.kore.website.components.common.mcTexture
+import io.github.ayfri.kore.website.components.mc.*
 import io.github.ayfri.kore.website.utils.Span
 import io.github.ayfri.kore.website.utils.animationDelay
+import io.github.ayfri.kore.website.utils.highlightCodeIn
 import io.github.ayfri.kore.website.utils.smMax
 import io.github.ayfri.kore.website.utils.transition
 import kotlinx.coroutines.delay
@@ -16,27 +19,9 @@ import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.dom.*
+import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.HTMLElement
 import kotlin.math.*
-
-/** Minecraft's `§` color codes used by the in-game mockups. */
-private object McColor {
-	const val AQUA = "#55ffff"
-	const val BLUE = "#5555ff"
-	const val DARK_GREEN = "#00aa00"
-	const val DARK_PURPLE = "#aa00aa"
-	const val GOLD = "#ffaa00"
-	const val GRAY = "#aaaaaa"
-	const val WHITE = "#ffffff"
-	const val YELLOW = "#ffff55"
-}
-
-/** Vanilla textures from misode/mcmeta, hotlinked so Mojang assets never land in this repo. */
-private const val TEXTURES = "https://raw.githubusercontent.com/misode/mcmeta/assets/assets/minecraft/textures"
-
-private fun texture(path: String) = "url('$TEXTURES/$path.png')"
-
-@Composable
-private fun ItemSprite(item: String) = Img("$TEXTURES/item/$item.png", item) { classes(FeatureVisualsStyle.itemIcon) }
 
 @Composable
 private fun Window(title: String, content: @Composable () -> Unit) {
@@ -57,18 +42,6 @@ private fun WindowFooter(label: String, content: @Composable () -> Unit) {
 	}
 }
 
-@Composable
-private fun McLine(text: String, color: String, italic: Boolean = false, underlined: Boolean = false) {
-	Div({
-		classes(FeatureVisualsStyle.mcLine)
-		style {
-			color(Color(color))
-			if (italic) fontStyle(FontStyle.Italic)
-			if (underlined) property("text-decoration", "underline")
-		}
-	}) { Text(text.ifEmpty { " " }) }
-}
-
 /** Kotlin source on top, the files it generates below, as captured from a real `exportAsStrings()` run. */
 @Composable
 private fun CodeCompare(title: String, kotlin: String, outputs: List<ShowcaseFile>) {
@@ -84,18 +57,18 @@ private fun CodeCompare(title: String, kotlin: String, outputs: List<ShowcaseFil
 	}
 }
 
-// ---------------------------------------------------------------- Commands
+// --- Commands ---
 
 @Composable
 fun AutocompleteScene() {
 	val suggestions = listOf("DIAMOND", "DIAMOND_AXE", "DIAMOND_BLOCK", "DIAMOND_BOOTS", "DIAMOND_CHESTPLATE", "DIAMOND_HELMET")
 	var selected by remember { mutableStateOf(0) }
+	val command = "give @s minecraft:${suggestions[selected].lowercase()}"
 	Window("Arena.kt") {
 		Div({ classes(FeatureVisualsStyle.editor) }) {
-			Div { Span("function", FeatureVisualsStyle.tokenFn); Text("(\"reward\") {") }
+			Div { PrismCode("function(\"reward\") {", "kotlin") }
 			Div({ classes(FeatureVisualsStyle.indent) }) {
-				Span("give", FeatureVisualsStyle.tokenFn)
-				Text("(self(), Items.DIA")
+				PrismCode("give(self(), Items.DIA", "kotlin")
 				Span({ classes(FeatureVisualsStyle.caret) })
 			}
 			Div({ classes(FeatureVisualsStyle.popup) }) {
@@ -115,12 +88,23 @@ fun AutocompleteScene() {
 					}
 				}
 			}
-			Div { Text("}") }
+			Div { PrismCode("}", "kotlin") }
 		}
 		WindowFooter("generates") {
-			Code { Text("give @s minecraft:${suggestions[selected].lowercase()}") }
+			Div({ id(AUTOCOMPLETE_OUTPUT_ID) }) {
+				key(command) { PrismCode(command, "mcfunction") }
+			}
 		}
 	}
+	highlightCodeIn(AUTOCOMPLETE_OUTPUT_ID, command)
+}
+
+private const val AUTOCOMPLETE_OUTPUT_ID = "autocomplete-output"
+
+/** Inline code Prism highlights, recreate it with `key` when [code] changes since Prism rewrites its children. */
+@Composable
+private fun PrismCode(code: String, language: String) {
+	Code({ classes("language-$language") }) { Text(code) }
 }
 
 @Composable
@@ -166,7 +150,7 @@ fun SelectorsScene() = CodeCompare(
 	),
 )
 
-// ---------------------------------------------------------------- Game data
+// --- Game data ---
 
 @Composable
 fun TooltipScene() {
@@ -185,7 +169,7 @@ fun TooltipScene() {
 				"kotlin",
 			)
 		}
-		McTooltip {
+		McTooltip(FeatureVisualsStyle.tooltipPlacement) {
 			McLine("Blade of the Arena", McColor.GOLD, italic = true)
 			McLine("Awarded to the last one standing", McColor.GRAY, italic = true)
 			McLine("Season 3", McColor.DARK_PURPLE, italic = true)
@@ -196,11 +180,6 @@ fun TooltipScene() {
 			McLine("Unbreakable", McColor.BLUE)
 		}
 	}
-}
-
-@Composable
-private fun McTooltip(vararg extraClasses: String, content: @Composable () -> Unit) {
-	Div({ classes(FeatureVisualsStyle.tooltip, *extraClasses) }) { content() }
 }
 
 @Composable
@@ -220,16 +199,19 @@ fun ChatScene() {
 				"kotlin",
 			)
 		}
-		Div({ classes(FeatureVisualsStyle.chatScreen) }) {
-			Div({ classes(FeatureVisualsStyle.chatLines) }) {
-				McLine("<Alex> ready?", McColor.WHITE)
-				Div({
+		Div({
+			classes(McUiStyle.world, FeatureVisualsStyle.chatScreen)
+			style { property("background-image", mcPanorama(1)) }
+		}) {
+			McChat(FeatureVisualsStyle.hudChat) {
+				McChatLine("<Alex> ready?")
+				McChatLine("[Join the arena]", McColor.AQUA, underlined = hovered) {
 					classes(FeatureVisualsStyle.chatLink)
 					onMouseEnter { hovered = true }
 					onMouseLeave { hovered = false }
-				}) { McLine("[Join the arena]", McColor.AQUA, underlined = hovered) }
+				}
 			}
-			if (hovered) McTooltip(FeatureVisualsStyle.chatHover) { McLine("Teleports you to the lobby", McColor.WHITE) }
+			if (hovered) McTooltip(FeatureVisualsStyle.chatHover) { McLine("Teleports you to the lobby") }
 			Span(if (hovered) "click runs function arena:join" else "hover the chat message", FeatureVisualsStyle.sceneHint)
 		}
 	}
@@ -260,7 +242,7 @@ fun StorageScene() = CodeCompare(
 	),
 )
 
-// ---------------------------------------------------------------- Data-driven
+// --- Data-driven ---
 
 /** File tree whose three highlighted files open the matching scene through [open]. */
 @Composable
@@ -306,7 +288,7 @@ fun FileTreeScene(open: (Int) -> Unit) {
 			}
 		}
 		WindowFooter("written by") {
-			Code { Text("dataPack(\"arena\") { ... }.generate()") }
+			PrismCode("dataPack(\"arena\") { ... }.generate()", "kotlin")
 		}
 	}
 }
@@ -321,7 +303,7 @@ fun LootTableScene() = CodeCompare(
 @Composable
 fun RecipeScene() {
 	Div({ classes(FeatureVisualsStyle.stack) }) {
-		CraftingGrid()
+		McCraftingTable(listOf(" G ", "GDG", " G "), mapOf('G' to "gold_ingot", 'D' to "diamond"), "trial_key")
 		CodeCompare(
 			"Recipes.kt",
 			"""
@@ -362,41 +344,9 @@ fun RecipeScene() {
 }
 
 @Composable
-private fun CraftingGrid() {
-	val pattern = " G GDG G "
-	Div({ classes(FeatureVisualsStyle.craftingTable) }) {
-		Span("Crafting", FeatureVisualsStyle.craftingTitle)
-		Div({ classes(FeatureVisualsStyle.craftingBody) }) {
-			Div({ classes(FeatureVisualsStyle.craftingGrid) }) {
-				pattern.forEach { key ->
-					Div({ classes(FeatureVisualsStyle.slot) }) {
-						when (key) {
-							'G' -> ItemSprite("gold_ingot")
-							'D' -> ItemSprite("diamond")
-						}
-					}
-				}
-			}
-			Span("➜", FeatureVisualsStyle.craftingArrow)
-			Div({ classes(FeatureVisualsStyle.slot, FeatureVisualsStyle.resultSlot) }) {
-				ItemSprite("trial_key")
-			}
-		}
-	}
-}
-
-@Composable
 fun AdvancementScene() {
 	Div({ classes(FeatureVisualsStyle.stack) }) {
-		Div({ classes(FeatureVisualsStyle.toast) }) {
-			Div({ classes(FeatureVisualsStyle.toastIcon) }) {
-				ItemSprite("iron_sword")
-			}
-			Div {
-				McLine("Goal Reached!", McColor.YELLOW)
-				McLine("First Blood", McColor.WHITE)
-			}
-		}
+		McToast("iron_sword", "Goal Reached!", "First Blood", FeatureVisualsStyle.toastPlacement)
 		CodeCompare(
 			"Advancements.kt",
 			"""
@@ -436,21 +386,24 @@ fun AdvancementScene() {
 	}
 }
 
-// ---------------------------------------------------------------- Worldgen
+// --- Worldgen ---
 
-private enum class Biome(val label: String, val color: String) {
-	DEEP_OCEAN("Deep ocean", "#1f3f7a"),
-	OCEAN("Ocean", "#2f63b0"),
-	BEACH("Beach", "#d8c98c"),
-	DESERT("Desert", "#e3c27a"),
-	PLAINS("Plains", "#79b34f"),
-	FOREST("Forest", "#3f7d33"),
-	MOUNTAINS("Mountains", "#8b8f93"),
-	SNOW("Snowy peaks", "#eef3f7"),
+/** Biomes with the vanilla map color a map item paints them with. */
+private enum class Biome(val label: String, val mapColor: Int) {
+	BEACH("Beach", 0xf7e9a3),
+	DEEP_OCEAN("Deep Ocean", 0x4040ff),
+	DESERT("Desert", 0xf7e9a3),
+	FOREST("Forest", 0x007c00),
+	OCEAN("Ocean", 0x4040ff),
+	PLAINS("Plains", 0x7fb238),
+	SNOWY_PLAINS("Snowy Plains", 0xffffff),
+	SNOWY_SLOPES("Snowy Slopes", 0xffffff),
+	WINDSWEPT_HILLS("Windswept Hills", 0x707070);
+
+	val water get() = this == OCEAN || this == DEEP_OCEAN
 }
 
-private const val MAP_WIDTH = 44
-private const val MAP_HEIGHT = 24
+private const val MAP_SIZE = 128
 
 private fun hash(x: Int, y: Int, seed: Int): Double {
 	var h = x * 374761393 + y * 668265263 + seed * 144269504
@@ -468,155 +421,317 @@ private fun smoothNoise(x: Double, y: Double, seed: Int): Double {
 	return top + (bottom - top) * ty
 }
 
-private fun fractalNoise(x: Int, y: Int, seed: Int) =
-	0.6 * smoothNoise(x / 14.0, y / 14.0, seed) + 0.3 * smoothNoise(x / 7.0, y / 7.0, seed) + 0.1 * smoothNoise(x / 3.5, y / 3.5, seed)
+private fun fractalNoise(x: Int, y: Int, seed: Int, scale: Double) =
+	0.6 * smoothNoise(x / scale, y / scale, seed) + 0.3 * smoothNoise(2 * x / scale, 2 * y / scale, seed) +
+		0.1 * smoothNoise(4 * x / scale, 4 * y / scale, seed)
 
-/** A fixed-seed value-noise map, computed once, so the illustration is identical on every render. */
-private val biomeMap = List(MAP_HEIGHT) { y ->
-	List(MAP_WIDTH) { x ->
-		val height = fractalNoise(x, y, 7) + 0.1
-		val moisture = fractalNoise(x, y, 31)
+private class WorldColumn(val biome: Biome, val height: Int)
+
+/** A fixed-seed world, the biome picked from height, temperature and humidity like a trimmed-down `multiNoise` source. */
+private fun generateWorld(seaLevel: Int, desertMinTemperature: Double) = List(MAP_SIZE * MAP_SIZE) { index ->
+	val x = index % MAP_SIZE
+	val z = index / MAP_SIZE
+	val height = (fractalNoise(x, z, 7, 40.0) * 140 + 4).toInt()
+	/** Value noise stays close to 0.5, stretching it spreads the climate over the whole -1 to 1 range. */
+	fun climate(seed: Int, scale: Double) = ((fractalNoise(x, z, seed, scale) - 0.5) * 4).coerceIn(-1.0, 1.0)
+	val temperature = climate(31, 56.0)
+	val humidity = climate(53, 44.0)
+	val biome = when {
+		height < seaLevel - 12 -> Biome.DEEP_OCEAN
+		height < seaLevel -> Biome.OCEAN
+		height < seaLevel + 2 -> Biome.BEACH
+		height > 100 -> Biome.SNOWY_SLOPES
+		height > 90 -> Biome.WINDSWEPT_HILLS
+		temperature >= desertMinTemperature && humidity < 0.05 -> Biome.DESERT
+		temperature < -0.3 -> Biome.SNOWY_PLAINS
+		humidity > 0.1 -> Biome.FOREST
+		else -> Biome.PLAINS
+	}
+	WorldColumn(biome, height)
+}
+
+/**
+ * The map item shading: land gets brighter on north-facing rises and darker on drops, with a checkerboard dither,
+ * water gets darker with depth. Returns the RGB color of the column at [index].
+ */
+private fun mapPixel(world: List<WorldColumn>, index: Int, seaLevel: Int): Int {
+	val column = world[index]
+	val x = index % MAP_SIZE
+	val z = index / MAP_SIZE
+	val dither = (x + z) and 1
+	val brightness = if (column.biome.water) {
+		val shade = (seaLevel - column.height) * 0.1 + dither * 0.2
 		when {
-			height < 0.36 -> Biome.DEEP_OCEAN
-			height < 0.44 -> Biome.OCEAN
-			height < 0.455 -> Biome.BEACH
-			height < 0.63 && moisture < 0.42 -> Biome.DESERT
-			height < 0.63 && moisture > 0.52 -> Biome.FOREST
-			height < 0.63 -> Biome.PLAINS
-			height < 0.71 -> Biome.MOUNTAINS
-			else -> Biome.SNOW
+			shade < 0.5 -> 255
+			shade > 0.9 -> 180
+			else -> 220
+		}
+	} else {
+		val north = world[if (z == 0) index else index - MAP_SIZE].height.coerceAtLeast(seaLevel)
+		val shade = (column.height - north) * 0.8 + (dither - 0.5) * 0.4
+		when {
+			shade > 0.6 -> 255
+			shade < -0.6 -> 180
+			else -> 220
 		}
 	}
+	return listOf(16, 8, 0).fold(0) { rgb, shift -> rgb or ((column.biome.mapColor shr shift and 0xff) * brightness / 255 shl shift) }
 }
+
+private const val WORLDGEN_CODE_ID = "worldgen-code"
+private val SEA_LEVELS = listOf(50, 63, 76)
+private val DESERT_TEMPERATURES = listOf(-0.1, 0.1, 0.3)
+
+private data class MapHover(val x: Double, val y: Double, val column: WorldColumn)
 
 @Composable
 fun BiomeMapScene() {
-	var hovered by remember { mutableStateOf<Biome?>(null) }
-	Window("custom_overworld") {
-		Div({
-			classes(FeatureVisualsStyle.map)
-			onMouseLeave { hovered = null }
-		}) {
-			biomeMap.forEach { row ->
-				row.forEach { biome ->
-					Div({
-						if (hovered != null && hovered != biome) classes(FeatureVisualsStyle.mapDimmed)
-						style { backgroundColor(Color(biome.color)) }
-						onMouseEnter { hovered = biome }
-					})
-				}
-			}
-		}
-		Div({ classes(FeatureVisualsStyle.legend) }) {
-			Biome.entries.forEach { biome ->
-				Span({
-					classes(FeatureVisualsStyle.legendItem)
-					if (biome == hovered) classes(FeatureVisualsStyle.legendItemActive)
-					onMouseEnter { hovered = biome }
-					onMouseLeave { hovered = null }
+	var seaLevel by remember { mutableStateOf(63) }
+	var desertMinTemperature by remember { mutableStateOf(0.1) }
+	var hover by remember { mutableStateOf<MapHover?>(null) }
+	val world = remember(seaLevel, desertMinTemperature) { generateWorld(seaLevel, desertMinTemperature) }
+
+	Div({ classes(FeatureVisualsStyle.stack) }) {
+		Div({ classes(FeatureVisualsStyle.mapRow) }) {
+			Div({ classes(FeatureVisualsStyle.mapFrame) }) {
+				Canvas({
+					classes(FeatureVisualsStyle.mapCanvas)
+					attr("height", MAP_SIZE.toString())
+					attr("width", MAP_SIZE.toString())
+					onMouseMove { event ->
+						val target = event.target as HTMLElement
+						val x = (event.offsetX / target.clientWidth * MAP_SIZE).toInt().coerceIn(0, MAP_SIZE - 1)
+						val z = (event.offsetY / target.clientHeight * MAP_SIZE).toInt().coerceIn(0, MAP_SIZE - 1)
+						hover = MapHover(event.offsetX, event.offsetY, world[z * MAP_SIZE + x])
+					}
+					onMouseLeave { hover = null }
 				}) {
-					Span({
-						classes(FeatureVisualsStyle.legendSwatch)
-						style { backgroundColor(Color(biome.color)) }
-					})
-					Text(biome.label)
+					DisposableEffect(world) {
+						val context = scopeElement.getContext("2d") as CanvasRenderingContext2D
+						val image = context.createImageData(MAP_SIZE.toDouble(), MAP_SIZE.toDouble())
+						val pixels = image.data.asDynamic()
+						world.indices.forEach { index ->
+							val rgb = mapPixel(world, index, seaLevel)
+							pixels[index * 4] = rgb shr 16
+							pixels[index * 4 + 1] = rgb shr 8 and 0xff
+							pixels[index * 4 + 2] = rgb and 0xff
+							pixels[index * 4 + 3] = 255
+						}
+						context.putImageData(image, 0.0, 0.0)
+						onDispose {}
+					}
 				}
-			}
-		}
-	}
-}
-
-// ---------------------------------------------------------------- Gameplay
-
-private enum class GamePhase { LOBBY, PLAYING, ENDED }
-
-@Composable
-fun GameplayScene() {
-	var phase by remember { mutableStateOf(GamePhase.LOBBY) }
-	var remaining by remember { mutableStateOf(1.0) }
-	var score by remember { mutableStateOf(340) }
-	var title by remember { mutableStateOf<String?>(null) }
-	val chat = remember { mutableStateListOf("<Steve> gg") }
-
-	LaunchedEffect(phase) {
-		if (phase != GamePhase.PLAYING) return@LaunchedEffect
-		title = "Round 1"
-		remaining = 1.0
-		while (remaining > 0) {
-			delay(80)
-			remaining = (remaining - 0.01).coerceAtLeast(0.0)
-			if (remaining < 0.8) title = null
-		}
-		chat += "Boss round over!"
-		title = "Victory"
-		phase = GamePhase.ENDED
-	}
-
-	Div({ classes(FeatureVisualsStyle.gameWrapper) }) {
-		Div({ classes(FeatureVisualsStyle.scene) }) {
-			if (phase != GamePhase.LOBBY) {
-				Div({ classes(FeatureVisualsStyle.bossBar) }) {
-					McLine("Boss round", McColor.WHITE)
-					Div({ classes(FeatureVisualsStyle.bossBarTrack) }) {
-						Div({
-							classes(FeatureVisualsStyle.bossBarFill)
-							style { width((remaining * 100).percent) }
-						})
+				hover?.let {
+					Div({
+						classes(FeatureVisualsStyle.mapTooltip)
+						style {
+							left((it.x + 38).px)
+							top((it.y - 10).px)
+						}
+					}) {
+						McTooltip {
+							McLine(it.column.biome.label)
+							McLine("minecraft:${it.column.biome.name.lowercase()}", McColor.DARK_GRAY)
+							McLine("Y ${it.column.height}", McColor.GRAY)
+						}
 					}
 				}
 			}
 
+			Div({ classes(FeatureVisualsStyle.knobs) }) {
+				Knob("seaLevel", SEA_LEVELS, seaLevel, Int::toString) { seaLevel = it }
+				Knob("desert temperature", DESERT_TEMPERATURES, desertMinTemperature, Double::toString) { desertMinTemperature = it }
+			}
+		}
+
+		val code = """
+			val terrain = noiseSettings("islands") {
+				seaLevel = $seaLevel
+			}
+
+			dimension("islands", type = islandsType) {
+				noiseGenerator(settings = terrain, biomeSource = multiNoise {
+					add(multiNoiseEntry(Biomes.DESERT) {
+						temperature = doubleOrPair($desertMinTemperature, 1.0)
+					})
+					// forest, plains, snowy plains, peaks...
+				})
+			}
+		""".trimIndent()
+		Window("Islands.kt") {
+			Div({ id(WORLDGEN_CODE_ID) }) {
+				key(code) { CodeBlock(code, "kotlin") }
+			}
+		}
+		highlightCodeIn(WORLDGEN_CODE_ID, code)
+	}
+}
+
+@Composable
+private fun <T> Knob(label: String, options: List<T>, selected: T, format: (T) -> String, onSelect: (T) -> Unit) {
+	Div({ classes(FeatureVisualsStyle.knob) }) {
+		Span(label, FeatureVisualsStyle.knobLabel)
+		Div({ classes(FeatureVisualsStyle.knobOptions) }) {
+			options.forEach { option ->
+				Button({
+					classes(FeatureVisualsStyle.pill)
+					if (option == selected) classes(FeatureVisualsStyle.pillActive)
+					onClick { onSelect(option) }
+				}) { Text(format(option)) }
+			}
+		}
+	}
+}
+
+// --- Gameplay ---
+
+private enum class GamePhase { LOBBY, PLAYING, ENDED }
+
+private data class ChatMessage(val text: String, val color: String = McColor.WHITE)
+
+private data class GameTitle(val title: String, val subtitle: String, val color: String = McColor.WHITE)
+
+private const val ROUND_SECONDS = 20
+private const val TICK_MS = 100L
+private const val DASH_COOLDOWN_TICKS = 25
+
+private val LOBBY_HOTBAR = listOf("nether_star")
+private val KIT_HOTBAR = listOf("iron_sword", "bow", "feather", "cooked_beef")
+private const val DASH_SLOT = 2
+
+/** Each control drives one oop feature: state machine, timer, events, team scores, cooldowns and player commands. */
+@Composable
+fun GameplayScene() {
+	var phase by remember { mutableStateOf(GamePhase.LOBBY) }
+	var ticks by remember { mutableStateOf(0) }
+	var red by remember { mutableStateOf(0) }
+	var blue by remember { mutableStateOf(0) }
+	var health by remember { mutableStateOf(20) }
+	var dashTicks by remember { mutableStateOf(0) }
+	var dashes by remember { mutableStateOf(0) }
+	var title by remember { mutableStateOf<GameTitle?>(null) }
+	val chat = remember { mutableStateListOf(ChatMessage("<Steve> gl hf")) }
+	val roundTicks = ROUND_SECONDS * 1000 / TICK_MS.toInt()
+	val remaining = 1.0 - ticks.toDouble() / roundTicks
+	val night = phase == GamePhase.PLAYING && remaining < 0.5
+
+	LaunchedEffect(phase) {
+		if (phase != GamePhase.PLAYING) return@LaunchedEffect
+		title = GameTitle("Fight!", "Round 1")
+		while (ticks < roundTicks) {
+			delay(TICK_MS)
+			ticks++
+			when (ticks) {
+				roundTicks / 5 -> title = null
+				roundTicks * 3 / 10 -> {
+					blue++
+					chat += ChatMessage("Steve was slain by Alex", McColor.GRAY)
+				}
+				roundTicks / 2 -> chat += ChatMessage("Night falls, mobs are spawning", McColor.GOLD)
+			}
+		}
+		val redWins = red >= blue
+		chat += ChatMessage("${if (redWins) "Red" else "Blue"} wins $red - $blue", McColor.YELLOW)
+		title = GameTitle("GG", "${if (redWins) "Red" else "Blue"} wins", if (redWins) McColor.RED else McColor.BLUE)
+		phase = GamePhase.ENDED
+	}
+
+	LaunchedEffect(dashes) {
+		if (dashes == 0) return@LaunchedEffect
+		dashTicks = DASH_COOLDOWN_TICKS
+		while (dashTicks > 0) {
+			delay(TICK_MS)
+			dashTicks--
+		}
+	}
+
+	val playing = phase == GamePhase.PLAYING
+	val secondsLeft = (remaining * ROUND_SECONDS).toInt()
+
+	Div({ classes(FeatureVisualsStyle.gameWrapper) }) {
+		Div({
+			classes(McUiStyle.world, FeatureVisualsStyle.mcScene)
+			style { property("background-image", mcPanorama(3)) }
+		}) {
+			Div({
+				classes(FeatureVisualsStyle.nightOverlay)
+				if (night) classes(FeatureVisualsStyle.nightOverlayVisible)
+			})
+
+			Div({ classes(FeatureVisualsStyle.hudTop) }) {
+				when (phase) {
+					GamePhase.LOBBY -> McBossBar("Waiting for players 3/8", McBossBarColor.YELLOW, 3 / 8.0)
+					GamePhase.PLAYING -> McBossBar("Round ends in 0:${secondsLeft.toString().padStart(2, '0')}", McBossBarColor.RED, remaining, notches = 10)
+					GamePhase.ENDED -> {}
+				}
+			}
+
 			title?.let {
-				Div({ classes(FeatureVisualsStyle.mcTitle) }) { McLine(it, if (it == "Victory") McColor.GOLD else McColor.WHITE) }
+				Div({ classes(FeatureVisualsStyle.hudTitle) }) { McLine(it.title, it.color, scale = 4) }
+				Div({ classes(FeatureVisualsStyle.hudSubtitle) }) { McLine(it.subtitle, scale = 2) }
 			}
 
-			Div({ classes(FeatureVisualsStyle.sidebar) }) {
-				Div({ classes(FeatureVisualsStyle.sidebarTitle) }) { McLine("✪ Mini-game ✪", McColor.GOLD) }
-				SidebarRow("Game: Sky Wars")
-				SidebarRow("State", phase.name.lowercase())
-				SidebarRow("Score", score.toString())
-				SidebarRow("")
-				SidebarRow("HyKore server 3.1.0", color = McColor.YELLOW)
+			Div({ classes(FeatureVisualsStyle.hudSidebar) }) {
+				McSidebar(
+					"SKY WARS", McColor.GOLD, listOf(
+						McSidebarLine("State", value = phase.name.lowercase()),
+						McSidebarLine(""),
+						McSidebarLine("Red", McColor.RED, red.toString()),
+						McSidebarLine("Blue", McColor.BLUE, blue.toString()),
+						McSidebarLine(""),
+						McSidebarLine("Time", value = "0:${secondsLeft.toString().padStart(2, '0')}"),
+					)
+				)
 			}
 
-			Div({ classes(FeatureVisualsStyle.chat) }) {
-				chat.takeLast(3).forEach { McLine(it, if (it.startsWith("<")) McColor.WHITE else McColor.AQUA) }
+			McChat(FeatureVisualsStyle.hudChat, FeatureVisualsStyle.aboveHotbar) {
+				chat.takeLast(2).forEach { McChatLine(it.text, it.color) }
+			}
+
+			Div({ classes(FeatureVisualsStyle.hudHotbar) }) {
+				McHotbar(
+					if (phase == GamePhase.LOBBY) LOBBY_HOTBAR else KIT_HOTBAR,
+					enchanted = setOf("nether_star"),
+					health = health,
+					cooldowns = if (dashTicks > 0) mapOf(DASH_SLOT to dashTicks.toDouble() / DASH_COOLDOWN_TICKS) else emptyMap(),
+				)
+			}
+		}
+
+		Div({ classes(FeatureVisualsStyle.stateMachine) }) {
+			GamePhase.entries.forEachIndexed { index, state ->
+				if (index > 0) Span({ classes(FeatureVisualsStyle.stateArrow) }) { Text("→") }
+				Span({
+					classes(FeatureVisualsStyle.pill)
+					if (state == phase) classes(FeatureVisualsStyle.pillActive)
+				}) { Text(state.name) }
 			}
 		}
 
 		Div({ classes(FeatureVisualsStyle.controls) }) {
-			McButton(if (phase == GamePhase.PLAYING) "Round running..." else "timer.start()", enabled = phase != GamePhase.PLAYING) {
-				title = null
+			McButton("game.start()", enabled = phase == GamePhase.LOBBY) {
+				ticks = 0
 				phase = GamePhase.PLAYING
 			}
-			McButton("score += 10") { score += 10 }
-			McButton("state.reset()") {
+			McButton("red.score += 1", enabled = playing) {
+				red++
+				chat += ChatMessage("Alex was slain by Steve", McColor.GRAY)
+			}
+			McButton("dash.use()", enabled = playing && dashTicks == 0) { dashes++ }
+			McButton("player.damage(4f)", enabled = playing && health > 0) { health = (health - 4).coerceAtLeast(0) }
+			McButton("game.reset()", enabled = phase != GamePhase.LOBBY) {
 				phase = GamePhase.LOBBY
+				ticks = 0
+				red = 0
+				blue = 0
+				health = 20
 				title = null
-				score = 340
 			}
 		}
 	}
 }
 
-@Composable
-private fun SidebarRow(label: String, value: String? = null, color: String = McColor.WHITE) {
-	Div({ classes(FeatureVisualsStyle.sidebarRow) }) {
-		McLine(label, color)
-		value?.let { McLine(it, McColor.WHITE) }
-	}
-}
-
-@Composable
-private fun McButton(label: String, enabled: Boolean = true, onClick: () -> Unit) {
-	Button({
-		classes(FeatureVisualsStyle.mcButton)
-		if (!enabled) disabled()
-		onClick { onClick() }
-	}) { Text(label) }
-}
-
-// ---------------------------------------------------------------- Helpers
+// --- Helpers ---
 
 private enum class VfxShape(val call: String) {
 	CIRCLE("Shape.CIRCLE"),
@@ -710,7 +825,7 @@ fun RaycastScene() {
 			classes(FeatureVisualsStyle.block)
 			if (reached == steps) classes(FeatureVisualsStyle.blockHit)
 		})
-		if (reached == steps) Div({ classes(FeatureVisualsStyle.chat) }) { McLine("Target acquired!", McColor.WHITE) }
+		if (reached == steps) McChat(FeatureVisualsStyle.hudChat) { McChatLine("Target acquired!") }
 		Span("raycast { step = 0.25; onHitBlock { ... } }", FeatureVisualsStyle.sceneLabel, FeatureVisualsStyle.labelLeft)
 	}
 }
@@ -718,7 +833,10 @@ fun RaycastScene() {
 @Composable
 fun MenuScene() {
 	var pressed by remember { mutableStateOf<String?>(null) }
-	Div({ classes(FeatureVisualsStyle.scene, FeatureVisualsStyle.dialogScene) }) {
+	Div({
+		classes(McUiStyle.world, McUiStyle.menuBackground, FeatureVisualsStyle.mcScene, FeatureVisualsStyle.dialogScene)
+		style { property("background-image", mcPanorama(0)) }
+	}) {
 		Div({ classes(FeatureVisualsStyle.dialog) }) {
 			McLine("Arena menu", McColor.WHITE)
 			McLine("Pick a mode to queue for.", McColor.GRAY)
@@ -730,7 +848,7 @@ fun MenuScene() {
 	}
 }
 
-// ---------------------------------------------------------------- Build
+// --- Build ---
 
 private val terminalLines = listOf(
 	"\$ gradlew koreRun --continuous",
@@ -868,10 +986,6 @@ object FeatureVisualsStyle : StyleSheet() {
 		paddingLeft(1.6.cssRem)
 	}
 
-	val tokenFn by style {
-		color(Color("#6fb3ff"))
-	}
-
 	val caretBlink by keyframes {
 		from { opacity(1) }
 		to { opacity(0) }
@@ -948,16 +1062,10 @@ object FeatureVisualsStyle : StyleSheet() {
 		width(100.percent)
 	}
 
-	val tooltip by style {
-		backgroundColor(rgba(16, 0, 16, 0.94))
-		border(2.px, LineStyle.Solid, Color("#2d0a6b"))
-		boxShadow(0.px, 0.px, 0.px, 2.px, rgba(16, 0, 16, 0.94))
+	val tooltipPlacement by style {
 		marginRight(1.cssRem)
 		marginTop((-3).cssRem)
-		padding(0.5.cssRem, 0.7.cssRem)
-		position(Position.Relative)
 		property("align-self", "flex-end")
-		property("border-image", "linear-gradient(#5000ff, #28007f) 1")
 
 		smMax(self) {
 			marginRight(0.px)
@@ -966,33 +1074,12 @@ object FeatureVisualsStyle : StyleSheet() {
 		}
 	}
 
-	val mcLine by style {
-		fontFamily(MONO, "monospace")
-		fontSize(0.85.cssRem)
-		lineHeight(1.45.number)
-		property("text-shadow", "2px 2px 0 rgba(0, 0, 0, 0.55)")
-		whiteSpace(WhiteSpace.Pre)
-	}
-
 	val chatScreen by style {
 		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
 		borderRadius(1.cssRem)
 		minHeight(9.cssRem)
 		overflow(Overflow.Hidden)
 		padding(1.cssRem)
-		position(Position.Relative)
-		property("background", "linear-gradient(180deg, #6ea8ff, #b3d3ff)")
-	}
-
-	val chatLines by style {
-		bottom(1.cssRem)
-		left(1.cssRem)
-		position(Position.Absolute)
-
-		"div" style {
-			backgroundColor(rgba(0, 0, 0, 0.45))
-			padding(0.px, 0.4.cssRem)
-		}
 	}
 
 	val chatLink by style {
@@ -1061,130 +1148,65 @@ object FeatureVisualsStyle : StyleSheet() {
 		color(Color("var(--landing-muted)"))
 	}
 
-	val craftingTable by style {
-		backgroundColor(Color("#c6c6c6"))
-		border(2.px, LineStyle.Solid, Color("#000"))
-		borderRadius(0.25.cssRem)
-		boxShadow(0.px, 0.px, 0.px, 0.px, Color.transparent)
-		padding(0.6.cssRem, 1.cssRem, 1.cssRem)
-		property("align-self", "flex-start")
-		property("box-shadow", "inset 3px 3px 0 #fff, inset -3px -3px 0 #555")
+	val toastPlacement by style {
+		property("align-self", "flex-end")
 	}
 
-	val craftingTitle by style {
-		color(Color("#404040"))
-		display(DisplayStyle.Block)
-		fontFamily(MONO, "monospace")
-		fontSize(0.8.cssRem)
-		marginBottom(0.4.cssRem)
-	}
-
-	val craftingBody by style {
+	val mapRow by style {
 		alignItems(AlignItems.Center)
 		display(DisplayStyle.Flex)
+		flexWrap(FlexWrap.Wrap)
 		gap(1.2.cssRem)
-	}
-
-	val craftingGrid by style {
-		display(DisplayStyle.Grid)
-		gridTemplateColumns("repeat(3, 2.4rem)")
-	}
-
-	val slot by style {
-		alignItems(AlignItems.Center)
-		backgroundColor(Color("#8b8b8b"))
-		display(DisplayStyle.Flex)
-		height(2.4.cssRem)
 		justifyContent(JustifyContent.Center)
-		width(2.4.cssRem)
-		property("box-shadow", "inset 2px 2px 0 #373737, inset -2px -2px 0 #fff")
 	}
 
-	val resultSlot by style {
-		height(3.2.cssRem)
-		width(3.2.cssRem)
-	}
-
-	val craftingArrow by style {
-		color(Color("#8b8b8b"))
-		fontSize(1.8.cssRem)
-	}
-
-	val itemIcon by style {
-		display(DisplayStyle.Block)
-		height(80.percent)
-		width(80.percent)
+	/** Vanilla draws `map_background` 7 px around the 128 px map. */
+	val mapFrame by style {
+		flexShrink(0)
+		height(gui(142))
+		padding(gui(7))
+		position(Position.Relative)
+		width(gui(142))
+		property("background", "${mcTexture("map/map_background")} 0 0 / 100% 100%")
+		property("box-sizing", "border-box")
 		property("image-rendering", "pixelated")
 	}
 
-	val toast by style {
-		alignItems(AlignItems.Center)
-		backgroundColor(Color("#212121"))
-		border(2.px, LineStyle.Solid, Color("#000"))
-		borderRadius(0.35.cssRem)
-		display(DisplayStyle.Flex)
-		gap(0.8.cssRem)
-		padding(0.5.cssRem, 1.cssRem, 0.5.cssRem, 0.6.cssRem)
-		property("align-self", "flex-end")
-		property("box-shadow", "inset 2px 2px 0 #5a5a5a, inset -2px -2px 0 #0e0e0e, 0 12px 30px rgba(0, 0, 0, 0.45)")
-		width(18.cssRem)
-	}
-
-	val toastIcon by style {
-		alignItems(AlignItems.Center)
-		display(DisplayStyle.Flex)
-		height(2.2.cssRem)
-		justifyContent(JustifyContent.Center)
-		width(2.2.cssRem)
-	}
-
-	val map by style {
-		display(DisplayStyle.Grid)
-		gridTemplateColumns("repeat($MAP_WIDTH, 1fr)")
-		property("aspect-ratio", "$MAP_WIDTH / $MAP_HEIGHT")
+	val mapCanvas by style {
+		cursor(Cursor.Crosshair)
+		display(DisplayStyle.Block)
+		height(100.percent)
 		width(100.percent)
-
-		"> div" style {
-			transition(0.15.s, "opacity", "filter")
-		}
+		property("image-rendering", "pixelated")
 	}
 
-	val mapDimmed by style {
-		opacity(0.25)
-		property("filter", "grayscale(0.7)")
+	val mapTooltip by style {
+		position(Position.Absolute)
+		zIndex(1)
+		property("pointer-events", "none")
 	}
 
-	val legend by style {
-		display(DisplayStyle.Grid)
-		gap(0.3.cssRem, 1.cssRem)
-		gridTemplateColumns("repeat(auto-fill, minmax(7.5rem, 1fr))")
-		padding(0.8.cssRem, 1.cssRem)
-	}
-
-	val legendItem by style {
-		alignItems(AlignItems.Center)
-		color(Color("var(--landing-muted)"))
-		cursor(Cursor.Default)
+	val knobs by style {
 		display(DisplayStyle.Flex)
-		fontSize(0.78.cssRem)
-		gap(0.4.cssRem)
-		transition(0.15.s, "color")
-		whiteSpace(WhiteSpace.NoWrap)
+		flexDirection(FlexDirection.Column)
+		gap(0.9.cssRem)
 	}
 
-	/** Color and swatch ring only: a bolder font would widen the label and reflow the grid. */
-	val legendItemActive by style {
-		color(Color("var(--landing-text)"))
-
-		"span" style { property("box-shadow", "0 0 0 2px var(--landing-text)") }
+	val knob by style {
+		display(DisplayStyle.Flex)
+		flexDirection(FlexDirection.Column)
+		gap(0.35.cssRem)
 	}
 
-	val legendSwatch by style {
-		borderRadius(0.15.cssRem)
-		flexShrink(0)
-		height(0.7.cssRem)
-		transition(0.15.s, "box-shadow")
-		width(0.7.cssRem)
+	val knobLabel by style {
+		color(Color("var(--landing-muted)"))
+		fontFamily(MONO, "monospace")
+		fontSize(0.75.cssRem)
+	}
+
+	val knobOptions by style {
+		display(DisplayStyle.Flex)
+		gap(0.35.cssRem)
 	}
 
 	val gameWrapper by style {
@@ -1215,11 +1237,19 @@ object FeatureVisualsStyle : StyleSheet() {
 		property("background", "radial-gradient(circle at 50% 120%, #1c2a3a 0%, #0b1017 70%)")
 	}
 
+	/** The frame of scenes drawing the world through [McUiStyle.world]. */
+	val mcScene by style {
+		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		borderRadius(1.cssRem)
+		boxShadow(0.px, 24.px, 60.px, 0.px, rgba(5, 12, 20, 0.5))
+		overflow(Overflow.Hidden)
+		property("aspect-ratio", "16 / 10")
+	}
+
 	val dialogScene by style {
 		alignItems(AlignItems.Center)
 		display(DisplayStyle.Flex)
 		justifyContent(JustifyContent.Center)
-		property("background", "linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), linear-gradient(180deg, #6ea8ff 0%, #b3d3ff 55%, #6fb144 55%, #5a3d26 100%)")
 	}
 
 	val dialog by style {
@@ -1232,86 +1262,74 @@ object FeatureVisualsStyle : StyleSheet() {
 		"button" style { width(100.percent) }
 	}
 
-	val bossBar by style {
+	val nightOverlay by style {
+		backgroundColor(rgba(8, 12, 40, 0.6))
+		opacity(0)
+		position(Position.Absolute)
+		transition(1.5.s, "opacity")
+		property("inset", 0.px)
+	}
+
+	val nightOverlayVisible by style {
+		opacity(1)
+	}
+
+	/** HUD placements follow the game: boss bars from the top, titles around the center, sidebar on the right edge. */
+	val hudTop by style {
+		position(Position.Absolute)
+		top(gui(3))
+		property("left", PIXEL_HALF)
+		property("transform", pixelTranslate("-50%"))
+	}
+
+	val hudTitle by style {
+		position(Position.Absolute)
+		property("left", PIXEL_HALF)
+		property("top", PIXEL_HALF)
+		property("transform", pixelTranslate("-50%", gui(-40).toString()))
+	}
+
+	val hudSubtitle by style {
+		position(Position.Absolute)
+		property("left", PIXEL_HALF)
+		property("top", PIXEL_HALF)
+		property("transform", pixelTranslate("-50%", gui(10).toString()))
+	}
+
+	val hudSidebar by style {
+		position(Position.Absolute)
+		right(gui(1))
+		property("top", PIXEL_HALF)
+		property("transform", pixelTranslate("0px", "-50%"))
+	}
+
+	val hudChat by style {
+		bottom(gui(8))
+		left(0.px)
+		position(Position.Absolute)
+	}
+
+	/** The game keeps the chat 40 px above the bottom, clear of the hotbar. */
+	val aboveHotbar by style {
+		bottom(gui(40))
+	}
+
+	val hudHotbar by style {
+		bottom(0.px)
+		position(Position.Absolute)
+		property("left", PIXEL_HALF)
+		property("transform", pixelTranslate("-50%"))
+	}
+
+	val stateMachine by style {
 		alignItems(AlignItems.Center)
 		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Column)
-		gap(0.25.cssRem)
-		left(50.percent)
-		position(Position.Absolute)
-		top(0.8.cssRem)
-		property("transform", "translateX(-50%)")
-		width(55.percent)
+		flexWrap(FlexWrap.Wrap)
+		gap(0.4.cssRem)
 	}
 
-	val bossBarTrack by style {
-		backgroundColor(Color("#0b3d0b"))
-		height(0.45.cssRem)
-		position(Position.Relative)
-		width(100.percent)
-		// NOTCHED_20 style: 20 segments.
-		property(
-			"background-image",
-			"repeating-linear-gradient(90deg, transparent 0 calc(5% - 1px), rgba(0, 0, 0, 0.55) calc(5% - 1px) 5%)"
-		)
-	}
-
-	val bossBarFill by style {
-		backgroundColor(Color("#3bd23b"))
-		height(100.percent)
-		property("mix-blend-mode", "screen")
-		transition(0.08.s, "width")
-	}
-
-	val mcTitle by style {
-		left(50.percent)
-		position(Position.Absolute)
-		top(32.percent)
-		property("transform", "translate(-50%, -50%) scale(2.6)")
-		property("transform-origin", "center")
-	}
-
-	val sidebar by style {
-		backgroundColor(rgba(0, 0, 0, 0.42))
-		minWidth(12.cssRem)
-		padding(0.1.cssRem, 0.4.cssRem, 0.3.cssRem)
-		position(Position.Absolute)
-		right(0.7.cssRem)
-		top(55.percent)
-		property("transform", "translateY(-50%)")
-
-		smMax(self) {
-			minWidth(9.cssRem)
-			"div" style { fontSize(0.62.cssRem) }
-		}
-	}
-
-	val sidebarTitle by style {
-		backgroundColor(rgba(0, 0, 0, 0.2))
-		display(DisplayStyle.Flex)
-		justifyContent(JustifyContent.Center)
-		margin(0.px, (-0.4).cssRem, 0.2.cssRem)
-	}
-
-	val sidebarRow by style {
-		display(DisplayStyle.Flex)
-		gap(1.cssRem)
-		justifyContent(JustifyContent.SpaceBetween)
-	}
-
-	val chat by style {
-		bottom(0.8.cssRem)
-		left(0.7.cssRem)
-		position(Position.Absolute)
-
-		"div" style {
-			backgroundColor(rgba(0, 0, 0, 0.45))
-			padding(0.px, 0.4.cssRem)
-		}
-
-		smMax(self) {
-			"div" style { fontSize(0.62.cssRem) }
-		}
+	val stateArrow by style {
+		color(Color("var(--landing-muted)"))
 	}
 
 	val controls by style {
@@ -1320,29 +1338,6 @@ object FeatureVisualsStyle : StyleSheet() {
 		gap(0.5.cssRem)
 	}
 
-	val mcButton by style {
-		backgroundColor(Color("#6f6f6f"))
-		border(2.px, LineStyle.Solid, Color("#000"))
-		color(Color("#fff"))
-		cursor(Cursor.Pointer)
-		fontFamily(MONO, "monospace")
-		fontSize(0.8.cssRem)
-		padding(0.35.cssRem, 0.9.cssRem)
-		property("box-shadow", "inset 2px 2px 0 #a8a8a8, inset -2px -2px 0 #4a4a4a")
-		property("text-shadow", "2px 2px 0 #3f3f3f")
-
-		hover(self) style {
-			backgroundColor(Color("#7b86c2"))
-			property("box-shadow", "inset 2px 2px 0 #bcc4f0, inset -2px -2px 0 #4a5288")
-		}
-
-		(self + disabled) style {
-			backgroundColor(Color("#3c3c3c"))
-			color(Color("#a0a0a0"))
-			cursor(Cursor.Default)
-			property("box-shadow", "none")
-		}
-	}
 
 	val pill by style {
 		backgroundColor(Color("var(--landing-card)"))
@@ -1386,13 +1381,13 @@ object FeatureVisualsStyle : StyleSheet() {
 	}
 
 	val flame by style {
-		property("background-image", texture("particle/flame"))
+		property("background-image", mcTexture("particle/flame"))
 		property("filter", "drop-shadow(0 0 4px rgba(255, 140, 30, 0.8))")
 	}
 
 	/** First frame of the `end_rod` particle animation. */
 	val endRod by style {
-		property("background-image", texture("particle/glitter_7"))
+		property("background-image", mcTexture("particle/glitter_7"))
 		property("filter", "drop-shadow(0 0 4px rgba(220, 210, 255, 0.8))")
 	}
 
@@ -1413,7 +1408,7 @@ object FeatureVisualsStyle : StyleSheet() {
 		top(22.percent)
 		transition(0.2.s, "box-shadow")
 		width(7.5.percent)
-		property("background", "${texture("block/target_side")} center / cover")
+		property("background", "${mcTexture("block/target_side")} center / cover")
 		property("image-rendering", "pixelated")
 	}
 

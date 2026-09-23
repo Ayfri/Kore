@@ -9,6 +9,7 @@ import io.github.ayfri.kore.website.components.common.setKeywords
 import io.github.ayfri.kore.website.components.features.*
 import io.github.ayfri.kore.website.components.index.CtaSection
 import io.github.ayfri.kore.website.components.layouts.PageLayout
+import io.github.ayfri.kore.website.components.mc.McUiStyle
 import io.github.ayfri.kore.website.utils.initMCFunctionHighlighting
 import org.jetbrains.compose.web.css.Style
 import org.jetbrains.compose.web.dom.Div
@@ -20,6 +21,7 @@ fun FeaturesPage() {
 	Style(BrandIconStyle)
 	Style(FeatureSectionsStyle)
 	Style(FeatureVisualsStyle)
+	Style(McUiStyle)
 
 	LaunchedEffect(Unit) {
 		initMCFunctionHighlighting()
