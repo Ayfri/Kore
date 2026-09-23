@@ -2,6 +2,7 @@ package io.github.ayfri.kore.arguments.numbers
 
 import kotlinx.serialization.Serializable
 import kotlin.math.absoluteValue
+import kotlin.math.floor
 
 /**
  * One axis of a [io.github.ayfri.kore.arguments.maths.Vec3] or other command position component: a numeric value plus
@@ -47,7 +48,9 @@ data class PosNumber(
 	operator fun rem(other: PosNumber) = PosNumber(value % other.value, type)
 	operator fun rem(other: Number) = PosNumber(value % other.toDouble(), type)
 	operator fun unaryMinus() = PosNumber(-value, type)
-	operator fun unaryPlus() = PosNumber(value.absoluteValue, type)
+	operator fun unaryPlus() = this
+
+	fun abs() = PosNumber(value.absoluteValue, type)
 
 	override fun compareTo(other: PosNumber) = value.compareTo(other.value)
 
@@ -65,10 +68,11 @@ data class PosNumber(
 		Type.WORLD -> value.toStringTruncatedIfRound()
 	}
 
+	/** Block-position form: world values are floored like Minecraft does, so `-1.5` becomes block `-2`. */
 	fun toStringTruncated() = when (type) {
 		Type.LOCAL -> "$prefix${value.truncateIfRoundEmptyIfZero}"
 		Type.RELATIVE -> "$prefix${value.truncateIfRoundEmptyIfZero}"
-		Type.WORLD -> value.toStringTruncated()
+		Type.WORLD -> floor(value).toLong().toString()
 	}
 }
 

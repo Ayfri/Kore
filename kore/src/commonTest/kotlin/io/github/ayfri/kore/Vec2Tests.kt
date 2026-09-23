@@ -50,7 +50,7 @@ fun vec2Tests() {
 	point5.abs() assertsIs vec2(1.5, 0)
 	point5.ceil() assertsIs vec2(-1, 0)
 	point5.floor() assertsIs vec2(-2, 0)
-	point5.negate() assertsIs vec2(1.5, -0.0)
+	-point5 assertsIs vec2(1.5, -0.0)
 	point5.normalize() assertsIs vec2(-1.0, 0)
 	point5.round() assertsIs vec2(-1, 0)
 
@@ -58,15 +58,15 @@ fun vec2Tests() {
 	val angleInRadians = 45.0 * (PI / 180.0)
 	(angleTo - angleInRadians < 0.0001) assertsIs true
 
-	point3.cross(point4) assertsIs vec2(50, 10)
+	point3.cross(point4) assertsIs 40.0
 	point1.distanceTo(point2) assertsIs sqrt(8.0)
 	point1.distanceSquaredTo(point2) assertsIs 8.0
 	point2.dot(point3) assertsIs 20.0
-	point1.manhattanDistanceTo(point2) assertsIs -4.0
+	point1.manhattanDistanceTo(point2) assertsIs 4.0
 	point3.max(point4) assertsIs vec2(5, 10)
 	point3.min(point4) assertsIs vec2(2, 5)
 
-	point3.toVec3() assertsIs vec3(5, 5, 0)
+	vec2(3, -5).toVec3(64) assertsIs vec3(3, 64, -5)
 
 	val point6 = vec2(1.2, 2)
 

@@ -53,8 +53,10 @@ fun vec3Tests() {
 	point5.abs() assertsIs vec3(1.5, 0, 0)
 	point5.ceil() assertsIs vec3(-1, 0, 0)
 	point5.floor() assertsIs vec3(-2, 0, 0)
-	point5.negate() assertsIs vec3(1.5, -0.0, -0.0)
+	-point5 assertsIs vec3(1.5, -0.0, -0.0)
 	point5.normalize() assertsIs vec3(-1, 0, 0)
+	point1.normalize() assertsIs point1
+	point2.lerp(point3, 0.5) assertsIs vec3(3.5, 3.5, 3.5)
 	point5.round() assertsIs vec3(-1, 0, 0)
 
 	val angleTo = vec3(5, 5, 0).angleTo(point3)
@@ -65,11 +67,11 @@ fun vec3Tests() {
 	point1.distanceTo(point2) assertsIs sqrt(12.0)
 	point1.distanceSquaredTo(point2) assertsIs 12.0
 	point2.dot(point3) assertsIs 30.0
-	point1.manhattanDistanceTo(point2) assertsIs -6.0
+	point1.manhattanDistanceTo(point2) assertsIs 6.0
 	point3.max(point4) assertsIs vec3(5, 5, 10)
 	point3.min(point4) assertsIs vec3(2, 5, 5)
 
-	point3.toVec2() assertsIs vec2(5, 5)
+	point4.toVec2() assertsIs vec2(2, 10)
 
 	val point6 = vec3(1.2, 2.4, 3.0)
 
@@ -79,6 +81,10 @@ fun vec3Tests() {
 	point6.toStringTruncated() assertsIs "1 2 3"
 
 	Vec3.fromString("1.5 2.5 3") assertsIs vec3(1.5, 2.5, 3)
+
+	vec3(-1.5, 2.7, -0.2).toStringTruncated() assertsIs "-2 2 -1"
+	vec3(-3.0E7, 0, 1664).asString() assertsIs "-30000000.0 0.0 1664.0"
+	vec3(1.0E-4, 0, 0).relative.asString() assertsIs "~0.0001 ~ ~"
 }
 
 fun posNumberToStringTests() {
