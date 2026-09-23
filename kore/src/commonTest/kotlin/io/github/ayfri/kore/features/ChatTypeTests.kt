@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.arguments.colors.ARGB
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
@@ -19,6 +20,7 @@ fun DataPack.chatTypeTests() {
 			style {
 				color = Color.RED
 				bold = true
+				shadowColor = ARGB(255, 255, 0, 0)
 			}
 		}
 
@@ -43,8 +45,14 @@ fun DataPack.chatTypeTests() {
 					"content"
 				],
 				"style": {
+					"bold": true,
 					"color": "red",
-					"bold": true
+					"shadow_color": [
+						1.0,
+						0.0,
+						0.0,
+						1.0
+					]
 				}
 			},
 			"narration": {
