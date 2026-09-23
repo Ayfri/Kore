@@ -1,6 +1,8 @@
 package io.github.ayfri.kore.helpers.displays.maths
 
+import io.github.ayfri.kore.arguments.maths.Vec3f
 import io.github.ayfri.kore.helpers.displays.maths.internal.Matrix3f
+import io.github.ayfri.kore.helpers.maths.Vec3f
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.floats.plusOrMinus
 import io.kotest.matchers.shouldBe

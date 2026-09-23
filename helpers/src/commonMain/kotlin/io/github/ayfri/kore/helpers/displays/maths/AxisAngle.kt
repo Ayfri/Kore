@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.helpers.displays.maths
 
+import io.github.ayfri.kore.arguments.maths.Vec3f
 import io.github.ayfri.kore.helpers.displays.maths.internal.AxisAngle4f
 
 class AxisAngle(

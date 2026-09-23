@@ -1,10 +1,12 @@
 package io.github.ayfri.kore.helpers
 
 import io.github.ayfri.kore.arguments.components.item.*
+import io.github.ayfri.kore.arguments.maths.Vec3f
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.numbers.seconds
 import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
 import io.github.ayfri.kore.arguments.types.literals.allEntities
+import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.commands.kill
 import io.github.ayfri.kore.commands.schedule
@@ -21,7 +23,6 @@ import io.github.ayfri.kore.generated.Attributes
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.Items
-import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.helpers.displays.*
 import io.github.ayfri.kore.helpers.displays.entities.ItemDisplayModelMode
 import io.github.ayfri.kore.helpers.displays.maths.*

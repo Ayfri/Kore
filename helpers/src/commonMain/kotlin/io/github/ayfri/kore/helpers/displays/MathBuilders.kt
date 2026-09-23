@@ -1,9 +1,10 @@
 package io.github.ayfri.kore.helpers.displays
 
+import io.github.ayfri.kore.arguments.maths.Vec3f
 import io.github.ayfri.kore.helpers.displays.maths.AxisAngle
 import io.github.ayfri.kore.helpers.displays.maths.Matrix
 import io.github.ayfri.kore.helpers.displays.maths.Quaternion
-import io.github.ayfri.kore.helpers.displays.maths.Vec3f
+import io.github.ayfri.kore.helpers.displays.maths.toQuaternion
 
 class MatrixBuilder {
 	private val elements = mutableListOf<Float>()

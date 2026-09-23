@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.helpers.displays.maths
 
+import io.github.ayfri.kore.arguments.maths.Vec3f
 import io.github.ayfri.kore.helpers.displays.maths.internal.Quaternionf
 import kotlin.math.cos
 import kotlin.math.sin
@@ -85,3 +86,6 @@ class Quaternion(x: Float = 0f, y: Float = 0f, z: Float = 0f, w: Float = 1f) {
 			Quaternion(a.quaternion.copy().slerp(b.quaternion, t))
 	}
 }
+
+/** Converts these Euler angles in radians into a rotation, applied X then Y then Z like JOML's `rotateXYZ`. */
+fun Vec3f.toQuaternion() = Quaternion.fromEulerAngles(this)
