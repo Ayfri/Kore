@@ -164,6 +164,21 @@ kobweb {
 					literal.lowercase().replace(Regex("[^a-z0-9]+"), "-")
 				}
 
+				// Ordered so "GitHub Actions" wins over "GitHub".
+				val brandIcons = listOf(
+					"CurseForge" to "curseforge",
+					"GitHub Actions" to "githubactions",
+					"GitHub" to "github",
+					"Gradle" to "gradle",
+					"IntelliJ" to "intellijidea",
+					"Modrinth" to "modrinth",
+					"Node.js" to "nodedotjs",
+				)
+				val headingText = heading.children().joinToString("") { it.plainText() }
+				val brandIcon = brandIcons.firstOrNull { (brand) -> brand in headingText }
+					?.let { (_, icon) -> "io.github.ayfri.kore.website.components.common.BrandIcon(\"$icon\")" }
+					.orEmpty()
+
 				val content = heading.children().joinToString("\n") { it.composeText() }
 
 				childrenOverride = emptyList()
@@ -184,6 +199,7 @@ kobweb {
 					|   }) {
 					|	   com.varabyte.kobweb.silk.components.icons.lucide.LucideHash(modifier = com.varabyte.kobweb.compose.ui.Modifier.ariaHidden())
 					|   }
+					|   $brandIcon
 					|   $content
 					|}
 				""".trimMargin()
