@@ -3,6 +3,7 @@ package io.github.ayfri.kore.commands
 import io.github.ayfri.kore.arguments.DisplaySlots
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
+import io.github.ayfri.kore.arguments.colors.FormattingColor
 import io.github.ayfri.kore.arguments.scores.ScoreboardCriteria
 import io.github.ayfri.kore.arguments.scores.criteriaCrafted
 import io.github.ayfri.kore.arguments.scores.criteriaCustom
@@ -68,6 +69,8 @@ fun Function.scoreboardTests() {
 
 			remove("test") assertsIs "scoreboard objectives remove test"
 			setDisplay(DisplaySlots.list, "test") assertsIs "scoreboard objectives setdisplay list test"
+			setDisplay(DisplaySlots.sidebarTeam(FormattingColor.DARK_RED), "test") assertsIs
+				"scoreboard objectives setdisplay sidebar.team.dark_red test"
 		}
 
 		players {

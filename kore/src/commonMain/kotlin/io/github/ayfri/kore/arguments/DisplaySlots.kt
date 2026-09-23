@@ -35,5 +35,5 @@ data object DisplaySlots {
 	 * Shows the score in the sidebar for players on a team with the given color.
 	 * @param color The team color (e.g., red, blue, green, etc.).
 	 */
-	fun sidebarTeam(color: FormattingColor) = DisplaySlot { "sidebar.team.${color.name}" }
+	fun sidebarTeam(color: FormattingColor) = DisplaySlot { "sidebar.team.${color.asString()}" }
 }
