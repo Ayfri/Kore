@@ -5,7 +5,7 @@ nav-title: Trims
 description: Create custom armor trim materials and patterns with Kore's type-safe DSL
 keywords: minecraft, datapack, kore, trims, armor, trim material, trim pattern, customization
 date-created: 2026-02-03
-date-modified: 2026-02-03
+date-modified: 2026-09-23
 routeOverride: /docs/data-driven/trims
 ---
 
@@ -19,71 +19,64 @@ Armor trims are a customization system that allows players to add decorative pat
 
 Trim materials define the color palette and appearance when a trim is applied to armor. Each material specifies:
 
-- **Asset name**: Points to the color palette texture
+- **Asset name**: The color palette applied to the trim, written as its bare name (`amethyst`)
 - **Description**: The text shown in-game when hovering over trimmed armor
-- **Override armor materials**: Optional per-armor-type color overrides (e.g., different colors for netherite vs. iron armor)
+- **Override armor assets**: Optional palettes swapped in on specific equipment, like vanilla gold using `gold_darker` on
+  gold armor so the trim stays visible
 
 ### Basic Usage
 
 ```kotlin
-trimMaterial("ruby", TrimColorPalettes.AMETHYST, textComponent("Ruby Trim")) {
+trimMaterial("ruby", Textures.Trims.ColorPalettes.AMETHYST) {
 	description("Ruby", Color.RED)
 }
 ```
 
-This creates a trim material file at `data/<namespace>/trim_material/ruby.json`.
-
-### Material with Armor Overrides
-
-Some materials look different depending on the base armor material. For example, netherite armor uses a darker variant:
-
-```kotlin
-trimMaterial("custom_gold", TrimColorPalettes.GOLD, textComponent("Custom Gold")) {
-	description("Custom Gold Trim", Color.GOLD)
-	overrideArmorMaterial(ArmorMaterial.NETHERITE, Color.hex("4a3c2e"))
-}
-```
-
-You can also set multiple overrides at once:
-
-```kotlin
-trimMaterial("rainbow", TrimColorPalettes.AMETHYST, textComponent("Rainbow")) {
-	description("Rainbow Trim")
-	overrideArmorMaterials(
-		ArmorMaterial.IRON to Color.hex("c0c0c0"),
-		ArmorMaterial.GOLD to Color.hex("ffd700"),
-		ArmorMaterial.DIAMOND to Color.hex("00ffff"),
-		ArmorMaterial.NETHERITE to Color.hex("4a4a4a")
-	)
-}
-```
-
-### Generated JSON
-
-A trim material generates JSON like this:
+This creates a trim material file at `data/<namespace>/trim_material/ruby.json`:
 
 ```json
 {
-	"asset_name": "minecraft:amethyst",
+	"asset_name": "amethyst",
 	"description": {
 		"text": "Ruby",
-		"color": "#FF0000"
+		"color": "red"
 	}
 }
 ```
 
-With armor overrides:
+### Palette Overrides per Equipment
+
+A trim in the same color as the armor it sits on disappears, so vanilla swaps in a darker palette on matching armor:
+
+```kotlin
+trimMaterial("custom_gold", Textures.Trims.ColorPalettes.GOLD) {
+	description("Custom Gold Trim", Color.GOLD)
+	overrideArmorAsset(EquipmentAssets.GOLD, Textures.Trims.ColorPalettes.GOLD_DARKER)
+}
+```
 
 ```json
 {
-	"asset_name": "minecraft:gold",
+	"asset_name": "gold",
 	"description": {
 		"text": "Custom Gold Trim",
 		"color": "gold"
 	},
-	"override_armor_materials": {
-		"netherite": "#4a3c2e"
+	"override_armor_assets": {
+		"minecraft:gold": "gold_darker"
 	}
+}
+```
+
+`overrideArmorAssets` sets several overrides at once:
+
+```kotlin
+trimMaterial("dark_quartz", Textures.Trims.ColorPalettes.QUARTZ) {
+	description("Dark Quartz")
+	overrideArmorAssets(
+		EquipmentAssets.DIAMOND to Textures.Trims.ColorPalettes.DIAMOND_DARKER,
+		EquipmentAssets.NETHERITE to Textures.Trims.ColorPalettes.NETHERITE_DARKER,
+	)
 }
 ```
 

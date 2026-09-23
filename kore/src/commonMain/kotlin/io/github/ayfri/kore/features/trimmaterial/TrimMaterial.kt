@@ -6,13 +6,15 @@ import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.PlainTextComponent
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
+import io.github.ayfri.kore.generated.arguments.types.EquipmentAssetArgument
 import io.github.ayfri.kore.generated.arguments.types.TrimColorPaletteArgument
 import io.github.ayfri.kore.generated.arguments.types.TrimMaterialArgument
 import io.github.ayfri.kore.serializers.ToStringSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
-data object TrimColorPaletteShortSerializer : ToStringSerializer<TrimColorPaletteArgument>({ "$namespace:${name.lowercase()}"})
+/** Writes a palette as its bare name (`gold_darker`), the game rejecting any `:` in a trim palette suffix. */
+data object TrimColorPaletteShortSerializer : ToStringSerializer<TrimColorPaletteArgument>({ name.lowercase() })
 
 /**
  * Data-driven armor trim material.
@@ -36,7 +38,11 @@ data class TrimMaterial(
 	@Serializable(TrimColorPaletteShortSerializer::class) var assetName: TrimColorPaletteArgument,
 	/** The description of the trim material. */
 	var description: ChatComponents,
-	/** Armor materials that should have a different color palette. */
+	/** Palettes used instead of [assetName] on specific equipment, like the darker gold palette on gold armor. */
+	var overrideArmorAssets: Map<EquipmentAssetArgument, @Serializable(TrimColorPaletteShortSerializer::class) TrimColorPaletteArgument>? = null,
+	/** Ignored by the game, which reads [overrideArmorAssets] instead. */
+	@Deprecated("Ignored by the game, which reads `override_armor_assets`. Use overrideArmorAssets instead.")
+	@Transient
 	var overrideArmorMaterials: Map<ArmorMaterial, Color>? = null,
 ) : Generator("trim_material") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
@@ -47,16 +53,35 @@ fun TrimMaterial.description(text: String = "", color: Color? = null, block: Pla
 	description = textComponent(text, color, block)
 }
 
-/** Set the color palette for the specified [ArmorMaterial]. */
-fun TrimMaterial.overrideArmorMaterial(armorMaterial: ArmorMaterial, color: Color) = apply {
-	if (overrideArmorMaterials == null) overrideArmorMaterials = mutableMapOf()
-	overrideArmorMaterials = overrideArmorMaterials!! + mapOf(armorMaterial to color)
+/**
+ * Uses [palette] instead of [TrimMaterial.assetName] when the trim is applied on [equipment].
+ *
+ * ```kotlin
+ * trimMaterial("gold", Textures.Trims.ColorPalettes.GOLD) {
+ *     overrideArmorAsset(EquipmentAssets.GOLD, Textures.Trims.ColorPalettes.GOLD_DARKER)
+ * }
+ * ```
+ * writes `"override_armor_assets": { "minecraft:gold": "gold_darker" }`.
+ */
+fun TrimMaterial.overrideArmorAsset(equipment: EquipmentAssetArgument, palette: TrimColorPaletteArgument) = apply {
+	overrideArmorAssets = overrideArmorAssets.orEmpty() + (equipment to palette)
 }
 
-/** Set the color palette for the specified [ArmorMaterial]s. */
+/** Uses each palette instead of [TrimMaterial.assetName] when the trim is applied on its equipment. */
+fun TrimMaterial.overrideArmorAssets(vararg overrides: Pair<EquipmentAssetArgument, TrimColorPaletteArgument>) = apply {
+	overrideArmorAssets = overrideArmorAssets.orEmpty() + overrides
+}
+
+@Suppress("DEPRECATION")
+@Deprecated("Ignored by the game, which reads `override_armor_assets`. Use overrideArmorAsset instead.")
+fun TrimMaterial.overrideArmorMaterial(armorMaterial: ArmorMaterial, color: Color) = apply {
+	overrideArmorMaterials = overrideArmorMaterials.orEmpty() + (armorMaterial to color)
+}
+
+@Suppress("DEPRECATION")
+@Deprecated("Ignored by the game, which reads `override_armor_assets`. Use overrideArmorAssets instead.")
 fun TrimMaterial.overrideArmorMaterials(vararg armorMaterials: Pair<ArmorMaterial, Color>) = apply {
-	if (overrideArmorMaterials == null) overrideArmorMaterials = mutableMapOf()
-	overrideArmorMaterials = overrideArmorMaterials!! + armorMaterials.toMap()
+	overrideArmorMaterials = overrideArmorMaterials.orEmpty() + armorMaterials
 }
 
 /**
