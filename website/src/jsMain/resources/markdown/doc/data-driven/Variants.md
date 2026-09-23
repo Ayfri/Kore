@@ -167,7 +167,7 @@ Produces JSON:
 Frog variants define the texture and spawn conditions for frogs.
 
 ```kotlin
-frogVariant("test_frog_variant", Textures.Entity.Frog.TEMPERATE_FROG) {
+frogVariant("test_frog_variant", Textures.Entity.Frog.FROG_TEMPERATE) {
 	spawnConditions {
 		add(10)
 		biome(5, Biomes.SNOWY_PLAINS)
@@ -183,7 +183,7 @@ Produces JSON:
 
 ```json
 {
-	"asset_id": "minecraft:entity/frog/temperate_frog",
+	"asset_id": "minecraft:entity/frog/frog_temperate",
 	"spawn_conditions": [
 		{
 			"priority": 10
