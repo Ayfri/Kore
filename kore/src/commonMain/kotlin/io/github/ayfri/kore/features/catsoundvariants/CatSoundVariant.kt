@@ -39,7 +39,7 @@ data class CatSoundSet(
  * Data-driven cat sound variant definition.
  *
  * Cat sound variants define custom sounds for cats split by age group.
- * Sounds are split into [adultSounds] (required) and [babySounds] (optional - falls back to [adultSounds] when absent).
+ * Sounds are split into [adultSounds] and [babySounds], both required by the game - a null [babySounds] is written as [adultSounds].
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/variants
  * JSON format reference: https://minecraft.wiki/w/Cat#Sound_variants
@@ -50,10 +50,10 @@ data class CatSoundVariant(
 	override var fileName: String = "cat_sound_variant",
 	/** The sounds used by adult cats. */
 	var adultSounds: CatSoundSet,
-	/** The sounds used by baby cats. Defaults to [adultSounds] when null. */
+	/** The sounds used by baby cats. Written as [adultSounds] when null. */
 	var babySounds: CatSoundSet? = null,
 ) : Generator("cat_sound_variant") {
-	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
+	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(copy(babySounds = babySounds ?: adultSounds))
 }
 
 /** Sets the adult sounds for this [CatSoundVariant] using a builder block. */

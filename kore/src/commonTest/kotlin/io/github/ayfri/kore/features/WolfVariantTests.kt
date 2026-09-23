@@ -5,6 +5,7 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.data.spawncondition.biome
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.wolfvariants.assets
+import io.github.ayfri.kore.features.wolfvariants.babyAssets
 import io.github.ayfri.kore.features.wolfvariants.spawnConditions
 import io.github.ayfri.kore.features.wolfvariants.wolfVariant
 import io.github.ayfri.kore.generated.Biomes
@@ -19,6 +20,11 @@ fun DataPack.wolfVariantTests() {
 			tame = Textures.Entity.Wolf.WOLF_RUSTY_ANGRY,
 			wild = Textures.Entity.Wolf.WOLF_BLACK,
 		)
+		babyAssets(
+			angry = Textures.Entity.Wolf.WOLF_BLACK_ANGRY_BABY,
+			tame = Textures.Entity.Wolf.WOLF_BLACK_TAME_BABY,
+			wild = Textures.Entity.Wolf.WOLF_BLACK_BABY,
+		)
 		spawnConditions {
 			biome(5, Biomes.OCEAN, Biomes.SNOWY_SLOPES)
 		}
@@ -30,6 +36,11 @@ fun DataPack.wolfVariantTests() {
 				"angry": "minecraft:entity/wolf/wolf_striped",
 				"tame": "minecraft:entity/wolf/wolf_rusty_angry",
 				"wild": "minecraft:entity/wolf/wolf_black"
+			},
+			"baby_assets": {
+				"angry": "minecraft:entity/wolf/wolf_black_angry_baby",
+				"tame": "minecraft:entity/wolf/wolf_black_tame_baby",
+				"wild": "minecraft:entity/wolf/wolf_black_baby"
 			},
 			"spawn_conditions": [
 				{

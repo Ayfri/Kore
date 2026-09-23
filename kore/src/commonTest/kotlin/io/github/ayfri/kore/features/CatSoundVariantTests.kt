@@ -37,6 +37,17 @@ fun DataPack.catSoundVariantTests() {
 				"purreow_sound": "minecraft:entity.cat.purreow",
 				"purr_sound": "minecraft:entity.cat.purr",
 				"stray_ambient_sound": "minecraft:entity.cat.stray_ambient"
+			},
+			"baby_sounds": {
+				"ambient_sound": "minecraft:entity.cat.ambient",
+				"beg_for_food_sound": "minecraft:entity.cat.beg_for_food",
+				"death_sound": "minecraft:entity.cat.death",
+				"eat_sound": "minecraft:entity.cat.eat",
+				"hiss_sound": "minecraft:entity.cat.hiss",
+				"hurt_sound": "minecraft:entity.cat.hurt",
+				"purreow_sound": "minecraft:entity.cat.purreow",
+				"purr_sound": "minecraft:entity.cat.purr",
+				"stray_ambient_sound": "minecraft:entity.cat.stray_ambient"
 			}
 		}
 	""".trimIndent()

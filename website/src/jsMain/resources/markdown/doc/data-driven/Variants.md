@@ -5,7 +5,7 @@ nav-title: Variants
 description: Define entity and painting variants with Kore's type-safe DSL
 keywords: minecraft, datapack, kore, variants, cat, cow, chicken, frog, pig, wolf, zombie nautilus, painting, sound variants
 date-created: 2026-02-03
-date-modified: 2026-06-26
+date-modified: 2026-09-23
 routeOverride: /docs/data-driven/variants
 ---
 
@@ -32,8 +32,11 @@ Higher priority values take precedence when multiple conditions match.
 
 Cat variants define the texture and spawn conditions for cats. You can specify biomes, moon brightness, and structures as spawn conditions.
 
+The game requires a kitten texture too. `babyAssetId` defaults to the adult texture suffixed with `_baby`, the vanilla naming,
+so only pass it when your kitten texture is named differently. Cow, chicken and pig variants work the same way.
+
 ```kotlin
-catVariant("test_cat_variant", Textures.Entity.Cat.TABBY) {
+catVariant("test_cat_variant", Textures.Entity.Cat.CAT_TABBY) {
 	spawnConditions {
 		add(10)
 		biome(5, Biomes.PLAINS)
@@ -49,7 +52,8 @@ Produces JSON:
 
 ```json
 {
-	"asset_id": "minecraft:entity/cat/tabby",
+	"asset_id": "minecraft:entity/cat/cat_tabby",
+	"baby_asset_id": "minecraft:entity/cat/cat_tabby_baby",
 	"spawn_conditions": [
 		{
 			"priority": 10
@@ -101,7 +105,7 @@ Produces JSON:
 Cow variants define the texture, model, and spawn conditions for cows.
 
 ```kotlin
-cowVariant("test_cow_variant", Textures.Entity.Cow.COLD_COW, CowModel.COLD) {
+cowVariant("test_cow_variant", Textures.Entity.Cow.COW_COLD, CowModel.COLD) {
 	spawnConditions {
 		structures(0, Tags.Worldgen.Structure.MINESHAFT)
 	}
@@ -112,7 +116,8 @@ Produces JSON:
 
 ```json
 {
-	"asset_id": "minecraft:entity/cow/cold_cow",
+	"asset_id": "minecraft:entity/cow/cow_cold",
+	"baby_asset_id": "minecraft:entity/cow/cow_cold_baby",
 	"model": "cold",
 	"spawn_conditions": [
 		{
@@ -131,7 +136,7 @@ Produces JSON:
 Chicken variants define the texture, model, and spawn conditions for chickens.
 
 ```kotlin
-chickenVariant("test_chicken_variant", Textures.Entity.Chicken.TEMPERATE_CHICKEN, ChickenModel.NORMAL) {
+chickenVariant("test_chicken_variant", Textures.Entity.Chicken.CHICKEN_TEMPERATE, ChickenModel.NORMAL) {
 	spawnConditions {
 		structures(0, Tags.Worldgen.Structure.VILLAGE)
 	}
@@ -142,7 +147,8 @@ Produces JSON:
 
 ```json
 {
-	"asset_id": "minecraft:entity/chicken/temperate_chicken",
+	"asset_id": "minecraft:entity/chicken/chicken_temperate",
+	"baby_asset_id": "minecraft:entity/chicken/chicken_temperate_baby",
 	"model": "normal",
 	"spawn_conditions": [
 		{
@@ -229,7 +235,7 @@ Produces JSON:
 Pig variants define the texture, model, and spawn conditions for pigs.
 
 ```kotlin
-pigVariant("test_pig_variant", Textures.Entity.Pig.COLD_PIG, PigModel.COLD) {
+pigVariant("test_pig_variant", Textures.Entity.Pig.PIG_COLD, PigModel.COLD) {
 	spawnConditions {
 		structures(0, Tags.Worldgen.Structure.ON_TREASURE_MAPS)
 	}
@@ -240,7 +246,8 @@ Produces JSON:
 
 ```json
 {
-	"asset_id": "minecraft:entity/pig/cold_pig",
+	"asset_id": "minecraft:entity/pig/pig_cold",
+	"baby_asset_id": "minecraft:entity/pig/pig_cold_baby",
 	"model": "cold",
 	"spawn_conditions": [
 		{
@@ -256,7 +263,8 @@ Produces JSON:
 
 ### Wolf Variants
 
-Wolf variants define separate textures for angry, tame, and wild states, along with spawn conditions.
+Wolf variants define separate textures for angry, tame, and wild states, for adults and puppies, along with spawn conditions.
+The puppy textures are required by the game and default to the vanilla ones.
 
 ```kotlin
 wolfVariant("test_wolf_variant") {
@@ -264,6 +272,11 @@ wolfVariant("test_wolf_variant") {
 		angry = Textures.Entity.Wolf.WOLF_STRIPED,
 		tame = Textures.Entity.Wolf.WOLF_RUSTY_ANGRY,
 		wild = Textures.Entity.Wolf.WOLF_BLACK,
+	)
+	babyAssets(
+		angry = Textures.Entity.Wolf.WOLF_BLACK_ANGRY_BABY,
+		tame = Textures.Entity.Wolf.WOLF_BLACK_TAME_BABY,
+		wild = Textures.Entity.Wolf.WOLF_BLACK_BABY,
 	)
 	spawnConditions {
 		biome(5, Biomes.OCEAN, Biomes.SNOWY_SLOPES)
@@ -279,6 +292,11 @@ Produces JSON:
 		"angry": "minecraft:entity/wolf/wolf_striped",
 		"tame": "minecraft:entity/wolf/wolf_rusty_angry",
 		"wild": "minecraft:entity/wolf/wolf_black"
+	},
+	"baby_assets": {
+		"angry": "minecraft:entity/wolf/wolf_black_angry_baby",
+		"tame": "minecraft:entity/wolf/wolf_black_tame_baby",
+		"wild": "minecraft:entity/wolf/wolf_black_baby"
 	},
 	"spawn_conditions": [
 		{
@@ -329,8 +347,8 @@ Produces JSON:
 
 ### Cat Sound Variants
 
-Cat sound variants define custom sounds for cats. Sounds are split into `adultSounds` (required) and `babySounds` (
-optional - falls back to `adultSounds` when absent).
+Cat sound variants define custom sounds for cats. Sounds are split into `adultSounds` and `babySounds`, both required by
+the game. When `babySounds` is left unset, Kore writes `adultSounds` in its place.
 
 ```kotlin
 catSoundVariant("funny") {
@@ -362,14 +380,25 @@ Produces JSON:
     "purreow_sound": "minecraft:entity.cat.purreow",
     "purr_sound": "minecraft:entity.cat.purr",
     "stray_ambient_sound": "minecraft:entity.cat.stray_ambient"
+  },
+  "baby_sounds": {
+    "ambient_sound": "minecraft:entity.cat.ambient",
+    "beg_for_food_sound": "minecraft:entity.cat.beg_for_food",
+    "death_sound": "minecraft:entity.cat.death",
+    "eat_sound": "minecraft:entity.cat.eat",
+    "hiss_sound": "minecraft:entity.cat.hiss",
+    "hurt_sound": "minecraft:entity.cat.hurt",
+    "purreow_sound": "minecraft:entity.cat.purreow",
+    "purr_sound": "minecraft:entity.cat.purr",
+    "stray_ambient_sound": "minecraft:entity.cat.stray_ambient"
   }
 }
 ```
 
 ### Chicken Sound Variants
 
-Chicken sound variants define custom sounds for chickens. Sounds are split into `adultSounds` (required) and
-`babySounds` (optional - falls back to `adultSounds` when absent).
+Chicken sound variants define custom sounds for chickens. Sounds are split into `adultSounds` and `babySounds`, both
+required by the game. When `babySounds` is left unset, Kore writes `adultSounds` in its place.
 
 ```kotlin
 chickenSoundVariant("clucky") {
@@ -387,6 +416,12 @@ Produces JSON:
 ```json
 {
   "adult_sounds": {
+    "ambient_sound": "minecraft:entity.chicken.ambient",
+    "death_sound": "minecraft:entity.chicken.death",
+    "hurt_sound": "minecraft:entity.chicken.hurt",
+    "step_sound": "minecraft:entity.chicken.step"
+  },
+  "baby_sounds": {
     "ambient_sound": "minecraft:entity.chicken.ambient",
     "death_sound": "minecraft:entity.chicken.death",
     "hurt_sound": "minecraft:entity.chicken.hurt",
@@ -422,8 +457,8 @@ Produces JSON:
 
 ### Pig Sound Variants
 
-Pig sound variants define custom sounds for pigs. Sounds are split into `adultSounds` (required) and `babySounds` (
-optional - falls back to `adultSounds` when absent).
+Pig sound variants define custom sounds for pigs. Sounds are split into `adultSounds` and `babySounds`, both required by
+the game. When `babySounds` is left unset, Kore writes `adultSounds` in its place.
 
 ```kotlin
 pigSoundVariant("oinking") {
@@ -447,6 +482,13 @@ Produces JSON:
     "eat_sound": "minecraft:entity.pig.ambient",
     "hurt_sound": "minecraft:entity.pig.hurt",
     "step_sound": "minecraft:entity.pig.step"
+  },
+  "baby_sounds": {
+    "ambient_sound": "minecraft:entity.pig.ambient",
+    "death_sound": "minecraft:entity.pig.death",
+    "eat_sound": "minecraft:entity.pig.ambient",
+    "hurt_sound": "minecraft:entity.pig.hurt",
+    "step_sound": "minecraft:entity.pig.step"
   }
 }
 ```
@@ -454,10 +496,10 @@ Produces JSON:
 ### Wolf Sound Variants
 
 Wolf sound variants define custom sounds for wolves. Sound variants are independent of color variants and spawning
-biome. Wolves will make the sounds associated with their variant when they bark, pant, whine, growl, die, or get hurt.
+biome. Wolves make the sounds associated with their variant when they bark, pant, whine, growl, step, die, or get hurt.
 
-Sounds are split into two groups: `adultSounds` (required) and `babySounds` (optional - falls back to `adultSounds` when
-absent).
+Sounds are split into `adultSounds` and `babySounds`, both required by the game. When `babySounds` is left unset, Kore
+writes `adultSounds` in its place.
 
 ```kotlin
 wolfSoundVariant("funny") {
@@ -482,6 +524,16 @@ Produces JSON:
     "growl_sound": "minecraft:entity.player.levelup",
     "hurt_sound": "minecraft:entity.zombie.hurt",
     "pant_sound": "minecraft:entity.ender_dragon.flap",
+    "step_sound": "minecraft:entity.wolf.step",
+    "whine_sound": "minecraft:entity.cat.purr"
+  },
+  "baby_sounds": {
+    "ambient_sound": "minecraft:entity.pig.ambient",
+    "death_sound": "minecraft:entity.creeper.death",
+    "growl_sound": "minecraft:entity.player.levelup",
+    "hurt_sound": "minecraft:entity.zombie.hurt",
+    "pant_sound": "minecraft:entity.ender_dragon.flap",
+    "step_sound": "minecraft:entity.wolf.step",
     "whine_sound": "minecraft:entity.cat.purr"
   }
 }
@@ -517,6 +569,7 @@ Produces JSON:
     "growl_sound": "minecraft:entity.wolf.growl",
     "hurt_sound": "minecraft:entity.wolf.hurt",
     "pant_sound": "minecraft:entity.wolf.pant",
+    "step_sound": "minecraft:entity.wolf.step",
     "whine_sound": "minecraft:entity.wolf.whine"
   },
   "baby_sounds": {
@@ -525,6 +578,7 @@ Produces JSON:
     "growl_sound": "minecraft:entity.wolf.growl",
     "hurt_sound": "minecraft:entity.pig.hurt",
     "pant_sound": "minecraft:entity.wolf.pant",
+    "step_sound": "minecraft:entity.wolf.step",
     "whine_sound": "minecraft:entity.wolf.whine"
   }
 }

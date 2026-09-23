@@ -31,6 +31,7 @@ fun DataPack.catVariantTests() {
 	catVariants.last() assertsIs """
 		{
 			"asset_id": "minecraft:entity/cat/cat_tabby",
+			"baby_asset_id": "minecraft:entity/cat/cat_tabby_baby",
 			"spawn_conditions": [
 				{
 					"priority": 10

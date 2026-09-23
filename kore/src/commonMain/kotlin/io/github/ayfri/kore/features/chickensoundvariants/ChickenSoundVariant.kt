@@ -29,7 +29,7 @@ data class ChickenSoundVariantSounds(
  * Data-driven chicken sound variant definition.
  *
  * Chicken sound variants define custom sounds for chickens split by age group.
- * Sounds are split into [adultSounds] (required) and [babySounds] (optional - falls back to [adultSounds] when absent).
+ * Sounds are split into [adultSounds] and [babySounds], both required by the game - a null [babySounds] is written as [adultSounds].
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/variants
  * JSON format reference: https://minecraft.wiki/w/Chicken#Sound_variants
@@ -40,10 +40,10 @@ data class ChickenSoundVariant(
 	override var fileName: String = "chicken_sound_variant",
 	/** The sounds used by adult chickens. */
 	var adultSounds: ChickenSoundVariantSounds,
-	/** The sounds used by baby chickens. Defaults to [adultSounds] when null. */
+	/** The sounds used by baby chickens. Written as [adultSounds] when null. */
 	var babySounds: ChickenSoundVariantSounds? = null,
 ) : Generator("chicken_sound_variant") {
-	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
+	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(copy(babySounds = babySounds ?: adultSounds))
 }
 
 /** Sets the adult sounds for this [ChickenSoundVariant] using a builder block. */

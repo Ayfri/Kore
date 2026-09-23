@@ -27,6 +27,12 @@ fun DataPack.chickenSoundVariantTests() {
 				"death_sound": "minecraft:entity.chicken.death",
 				"hurt_sound": "minecraft:entity.chicken.hurt",
 				"step_sound": "minecraft:entity.chicken.step"
+			},
+			"baby_sounds": {
+				"ambient_sound": "minecraft:entity.chicken.ambient",
+				"death_sound": "minecraft:entity.chicken.death",
+				"hurt_sound": "minecraft:entity.chicken.hurt",
+				"step_sound": "minecraft:entity.chicken.step"
 			}
 		}
 	""".trimIndent()

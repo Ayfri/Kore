@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.types.resources.ModelArgument
 import io.github.ayfri.kore.data.spawncondition.SpawnConditions
 import io.github.ayfri.kore.data.spawncondition.VariantSpawnEntry
 import io.github.ayfri.kore.generated.arguments.types.CowVariantArgument
+import io.github.ayfri.kore.utils.babyTexture
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
@@ -24,6 +25,8 @@ data class CowVariant(
 	override var fileName: String = "cow_variant",
 	/** The texture asset to use for the cow variant. */
 	var assetId: ModelArgument,
+	/** The texture asset used by calves, required by the game. Defaults to [assetId] suffixed with `_baby`, the vanilla naming. */
+	var babyAssetId: ModelArgument = assetId.babyTexture(),
 	/** The model to use for the cow variant. */
 	var model: CowModel,
 	/** The spawn conditions for this cow variant. */
@@ -51,9 +54,10 @@ fun DataPack.cowVariant(
 	fileName: String = "cow_variant",
 	assetId: ModelArgument,
 	model: CowModel,
+	babyAssetId: ModelArgument = assetId.babyTexture(),
 	block: CowVariant.() -> Unit = {}
 ): CowVariantArgument {
-	val cowVariant = CowVariant(fileName, assetId, model).apply(block)
+	val cowVariant = CowVariant(fileName, assetId = assetId, babyAssetId = babyAssetId, model = model).apply(block)
 	cowVariants += cowVariant
 	return CowVariantArgument(fileName, cowVariant.namespace ?: name)
 }

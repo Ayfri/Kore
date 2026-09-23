@@ -22,6 +22,7 @@ fun DataPack.chickenVariantTests() {
 	chickenVariants.last() assertsIs """
 		{
 			"asset_id": "minecraft:entity/chicken/chicken_temperate",
+			"baby_asset_id": "minecraft:entity/chicken/chicken_temperate_baby",
 			"model": "normal",
 			"spawn_conditions": [
 				{

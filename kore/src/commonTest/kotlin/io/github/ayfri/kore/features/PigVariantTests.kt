@@ -22,6 +22,7 @@ fun DataPack.pigVariantTests() {
 	pigVariants.last() assertsIs """
 		{
 			"asset_id": "minecraft:entity/pig/pig_cold",
+			"baby_asset_id": "minecraft:entity/pig/pig_cold_baby",
 			"model": "cold",
 			"spawn_conditions": [
 				{

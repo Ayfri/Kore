@@ -25,6 +25,8 @@ data class WolfSoundVariantSounds(
 	var hurtSound: SoundEventArgument = SoundEvents.Entity.Wolf.HURT,
 	/** The pant sound. */
 	var pantSound: SoundEventArgument = SoundEvents.Entity.Wolf.PANT,
+	/** The step sound. */
+	var stepSound: SoundEventArgument = SoundEvents.Entity.Wolf.STEP,
 	/** The whine sound. */
 	var whineSound: SoundEventArgument = SoundEvents.Entity.Wolf.WHINE,
 )
@@ -46,10 +48,10 @@ data class WolfSoundVariant(
 	override var fileName: String = "wolf_sound_variant",
 	/** The sounds used by adult wolves. */
 	var adultSounds: WolfSoundVariantSounds,
-	/** The sounds used by baby wolves. Defaults to [adultSounds] when null. */
+	/** The sounds used by baby wolves, required by the game. Written as [adultSounds] when null. */
 	var babySounds: WolfSoundVariantSounds? = null,
 ) : Generator("wolf_sound_variant") {
-	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
+	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(copy(babySounds = babySounds ?: adultSounds))
 }
 
 /** Sets the adult sounds for this [WolfSoundVariant] using a builder block. */

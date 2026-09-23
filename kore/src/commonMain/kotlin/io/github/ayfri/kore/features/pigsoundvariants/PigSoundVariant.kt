@@ -31,7 +31,7 @@ data class PigSoundVariantSounds(
  * Data-driven pig sound variant definition.
  *
  * Pig sound variants define custom sounds for pigs split by age group.
- * Sounds are split into [adultSounds] (required) and [babySounds] (optional - falls back to [adultSounds] when absent).
+ * Sounds are split into [adultSounds] and [babySounds], both required by the game - a null [babySounds] is written as [adultSounds].
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/variants
  * JSON format reference: https://minecraft.wiki/w/Pig#Sound_variants
@@ -42,10 +42,10 @@ data class PigSoundVariant(
 	override var fileName: String = "pig_sound_variant",
 	/** The sounds used by adult pigs. */
 	var adultSounds: PigSoundVariantSounds,
-	/** The sounds used by baby pigs. Defaults to [adultSounds] when null. */
+	/** The sounds used by baby pigs. Written as [adultSounds] when null. */
 	var babySounds: PigSoundVariantSounds? = null,
 ) : Generator("pig_sound_variant") {
-	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
+	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(copy(babySounds = babySounds ?: adultSounds))
 }
 
 /** Sets the adult sounds for this [PigSoundVariant] using a builder block. */

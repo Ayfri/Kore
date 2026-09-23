@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.types.resources.ModelArgument
 import io.github.ayfri.kore.data.spawncondition.SpawnConditions
 import io.github.ayfri.kore.data.spawncondition.VariantSpawnEntry
 import io.github.ayfri.kore.generated.arguments.types.PigVariantArgument
+import io.github.ayfri.kore.utils.babyTexture
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
@@ -24,6 +25,8 @@ data class PigVariant(
 	override var fileName: String = "pig_variant",
 	/** The texture asset to use for the pig variant. */
 	var assetId: ModelArgument,
+	/** The texture asset used by piglets, required by the game. Defaults to [assetId] suffixed with `_baby`, the vanilla naming. */
+	var babyAssetId: ModelArgument = assetId.babyTexture(),
 	/** The model to use for the pig variant. */
 	var model: PigModel = PigModel.NORMAL,
 	/** The spawn conditions for this pig variant. */
@@ -48,9 +51,10 @@ fun DataPack.pigVariant(
 	fileName: String = "pig_variant",
 	assetId: ModelArgument,
 	model: PigModel = PigModel.NORMAL,
+	babyAssetId: ModelArgument = assetId.babyTexture(),
 	block: PigVariant.() -> Unit = {},
 ): PigVariantArgument {
-	val pigVariant = PigVariant(fileName, assetId, model).apply(block)
+	val pigVariant = PigVariant(fileName, assetId = assetId, babyAssetId = babyAssetId, model = model).apply(block)
 	pigVariants += pigVariant
 	return PigVariantArgument(fileName, pigVariant.namespace ?: name)
 }

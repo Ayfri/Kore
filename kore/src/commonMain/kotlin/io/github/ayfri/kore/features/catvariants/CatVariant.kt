@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.types.resources.ModelArgument
 import io.github.ayfri.kore.data.spawncondition.SpawnConditions
 import io.github.ayfri.kore.data.spawncondition.VariantSpawnEntry
 import io.github.ayfri.kore.generated.arguments.types.CatVariantArgument
+import io.github.ayfri.kore.utils.babyTexture
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
@@ -24,8 +25,10 @@ data class CatVariant(
 	override var fileName: String = "cat_variant",
 	/** The texture asset to use for the cat variant. */
 	var assetId: ModelArgument,
+	/** The texture asset used by kittens, required by the game. Defaults to [assetId] suffixed with `_baby`, the vanilla naming. */
+	var babyAssetId: ModelArgument = assetId.babyTexture(),
 	/** The spawn conditions for this cat variant. */
-	var spawnConditions: List<VariantSpawnEntry> = emptyList()
+	var spawnConditions: List<VariantSpawnEntry> = emptyList(),
 ) : Generator("cat_variant") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
@@ -45,9 +48,10 @@ fun DataPack.catVariant(
 	fileName: String = "cat_variant",
 	assetId: ModelArgument,
 	spawnConditions: List<VariantSpawnEntry> = emptyList(),
+	babyAssetId: ModelArgument = assetId.babyTexture(),
 	init: CatVariant.() -> Unit = {},
 ): CatVariantArgument {
-	val catVariant = CatVariant(fileName, assetId, spawnConditions).apply(init)
+	val catVariant = CatVariant(fileName, assetId = assetId, babyAssetId = babyAssetId, spawnConditions = spawnConditions).apply(init)
 	catVariants += catVariant
 	return CatVariantArgument(fileName, catVariant.namespace ?: name)
 }

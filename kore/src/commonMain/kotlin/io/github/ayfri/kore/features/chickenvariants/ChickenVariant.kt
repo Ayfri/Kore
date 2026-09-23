@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.types.resources.ModelArgument
 import io.github.ayfri.kore.data.spawncondition.SpawnConditions
 import io.github.ayfri.kore.data.spawncondition.VariantSpawnEntry
 import io.github.ayfri.kore.generated.arguments.types.ChickenVariantArgument
+import io.github.ayfri.kore.utils.babyTexture
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
@@ -24,6 +25,8 @@ data class ChickenVariant(
 	override var fileName: String = "chicken_variant",
 	/** The texture asset to use for the chicken variant. */
 	var assetId: ModelArgument,
+	/** The texture asset used by chicks, required by the game. Defaults to [assetId] suffixed with `_baby`, the vanilla naming. */
+	var babyAssetId: ModelArgument = assetId.babyTexture(),
 	/** The model to use for the chicken variant. */
 	var model: ChickenModel,
 	/** The spawn conditions for this chicken variant. */
@@ -51,9 +54,10 @@ fun DataPack.chickenVariant(
 	fileName: String = "chicken_variant",
 	assetId: ModelArgument,
 	model: ChickenModel,
+	babyAssetId: ModelArgument = assetId.babyTexture(),
 	block: ChickenVariant.() -> Unit = {}
 ): ChickenVariantArgument {
-	val chickenVariant = ChickenVariant(fileName, assetId, model).apply(block)
+	val chickenVariant = ChickenVariant(fileName, assetId = assetId, babyAssetId = babyAssetId, model = model).apply(block)
 	chickenVariants += chickenVariant
 	return ChickenVariantArgument(fileName, chickenVariant.namespace ?: name)
 }

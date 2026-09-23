@@ -25,7 +25,9 @@ data class WolfVariant(
 	override var fileName: String = "wolf_variant",
 	/** The different textures for the wolf variant, defaulting to vanilla. */
 	var assets: Assets = Assets(),
-	var spawnConditions: List<VariantSpawnEntry> = emptyList()
+	/** The different textures used by puppies, required by the game, defaulting to vanilla. */
+	var babyAssets: Assets = Assets(Textures.Entity.Wolf.WOLF_ANGRY_BABY, Textures.Entity.Wolf.WOLF_TAME_BABY, Textures.Entity.Wolf.WOLF_BABY),
+	var spawnConditions: List<VariantSpawnEntry> = emptyList(),
 ) : Generator("wolf_variant") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
@@ -44,6 +46,11 @@ data class Assets(
 /** Sets the different textures for this wolf variant. */
 fun WolfVariant.assets(angry: ModelArgument, tame: ModelArgument, wild: ModelArgument) {
 	assets = Assets(angry, tame, wild)
+}
+
+/** Sets the different textures used by puppies of this wolf variant. */
+fun WolfVariant.babyAssets(angry: ModelArgument, tame: ModelArgument, wild: ModelArgument) {
+	babyAssets = Assets(angry, tame, wild)
 }
 
 /** Sets the spawn conditions for this wolf variant. */

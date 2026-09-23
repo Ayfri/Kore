@@ -29,6 +29,13 @@ fun DataPack.pigSoundVariantTests() {
 				"eat_sound": "minecraft:entity.armadillo.eat",
 				"hurt_sound": "minecraft:entity.pig.hurt",
 				"step_sound": "minecraft:entity.pig.step"
+			},
+			"baby_sounds": {
+				"ambient_sound": "minecraft:entity.pig.ambient",
+				"death_sound": "minecraft:entity.pig.death",
+				"eat_sound": "minecraft:entity.armadillo.eat",
+				"hurt_sound": "minecraft:entity.pig.hurt",
+				"step_sound": "minecraft:entity.pig.step"
 			}
 		}
 	""".trimIndent()

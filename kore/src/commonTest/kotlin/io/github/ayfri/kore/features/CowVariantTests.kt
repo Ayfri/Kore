@@ -22,6 +22,7 @@ fun DataPack.cowVariantTests() {
 	cowVariants.last() assertsIs """
 		{
 			"asset_id": "minecraft:entity/cow/cow_cold",
+			"baby_asset_id": "minecraft:entity/cow/cow_cold_baby",
 			"model": "cold",
 			"spawn_conditions": [
 				{

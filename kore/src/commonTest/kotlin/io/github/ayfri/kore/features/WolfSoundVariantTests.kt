@@ -30,6 +30,16 @@ fun DataPack.wolfSoundVariantTests() {
 				"growl_sound": "minecraft:entity.player.levelup",
 				"hurt_sound": "minecraft:entity.zombie.hurt",
 				"pant_sound": "minecraft:entity.ender_dragon.flap",
+				"step_sound": "minecraft:entity.wolf.step",
+				"whine_sound": "minecraft:entity.cat.purr"
+			},
+			"baby_sounds": {
+				"ambient_sound": "minecraft:entity.pig.ambient",
+				"death_sound": "minecraft:entity.creeper.death",
+				"growl_sound": "minecraft:entity.player.levelup",
+				"hurt_sound": "minecraft:entity.zombie.hurt",
+				"pant_sound": "minecraft:entity.ender_dragon.flap",
+				"step_sound": "minecraft:entity.wolf.step",
 				"whine_sound": "minecraft:entity.cat.purr"
 			}
 		}
@@ -59,6 +69,7 @@ fun DataPack.wolfSoundVariantTests() {
 				"growl_sound": "minecraft:entity.wolf.growl",
 				"hurt_sound": "minecraft:entity.wolf.hurt",
 				"pant_sound": "minecraft:entity.wolf.pant",
+				"step_sound": "minecraft:entity.wolf.step",
 				"whine_sound": "minecraft:entity.wolf.whine"
 			},
 			"baby_sounds": {
@@ -67,6 +78,7 @@ fun DataPack.wolfSoundVariantTests() {
 				"growl_sound": "minecraft:entity.wolf.growl",
 				"hurt_sound": "minecraft:entity.pig.hurt",
 				"pant_sound": "minecraft:entity.wolf.pant",
+				"step_sound": "minecraft:entity.wolf.step",
 				"whine_sound": "minecraft:entity.wolf.whine"
 			}
 		}
