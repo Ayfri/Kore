@@ -32,6 +32,7 @@ import io.github.ayfri.kore.features.testenvironments.TestEnvironmentFeature
 import io.github.ayfri.kore.features.testinstances.TestInstanceFeature
 import io.github.ayfri.kore.features.timelines.Timeline
 import io.github.ayfri.kore.features.tradesets.TradeSet
+import io.github.ayfri.kore.features.trialspawners.TrialSpawner
 import io.github.ayfri.kore.features.trimmaterial.TrimMaterial
 import io.github.ayfri.kore.features.trimpattern.TrimPattern
 import io.github.ayfri.kore.features.villagertrades.VillagerTrade
@@ -129,6 +130,7 @@ class DataPack(val name: String) {
 	val testInstances = registerGenerator<TestInstanceFeature>()
 	val timelines = registerGenerator<Timeline>()
 	val tradeSets = registerGenerator<TradeSet>()
+	val trialSpawners = registerGenerator<TrialSpawner>()
 	val trimMaterials = registerGenerator<TrimMaterial>()
 	val trimPatterns = registerGenerator<TrimPattern>()
 	val villagerTrades = registerGenerator<VillagerTrade>()
