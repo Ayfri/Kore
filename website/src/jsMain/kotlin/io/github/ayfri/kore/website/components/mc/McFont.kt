@@ -25,10 +25,11 @@ internal object McFont {
 
 	private fun glyph(char: Char) = glyphs[char] ?: glyphs.getValue('?')
 
-	fun width(text: String) = text.sumOf { glyph(it).advance }
+	/** Bold glyphs advance 1 px further, the game drawing them twice 1 px apart. */
+	fun width(text: String, bold: Boolean = false) = text.sumOf { glyph(it).advance } + if (bold) text.length else 0
 
 	/** The path of [text]'s pixels, each horizontal run of a glyph row merged into one rectangle. */
-	fun path(text: String) = buildString {
+	fun path(text: String, bold: Boolean = false) = buildString {
 		var cursor = 0
 		text.forEach { char ->
 			val glyph = glyph(char)
@@ -44,7 +45,7 @@ internal object McFont {
 					append("M${cursor + start} ${row}h${column - start}v1h${start - column}z")
 				}
 			}
-			cursor += glyph.advance
+			cursor += glyph.advance + if (bold) 1 else 0
 		}
 	}
 

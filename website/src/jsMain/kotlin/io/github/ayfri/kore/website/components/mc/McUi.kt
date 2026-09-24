@@ -21,6 +21,7 @@ object McColor {
 	const val DARK_GRAY = "#555555"
 	const val DARK_GREEN = "#00aa00"
 	const val DARK_PURPLE = "#aa00aa"
+	const val DARK_RED = "#aa0000"
 	const val GOLD = "#ffaa00"
 	const val GRAY = "#aaaaaa"
 	const val GREEN = "#55ff55"
@@ -46,11 +47,17 @@ const val PIXEL_HALF = "round(50%, 1px)"
 private fun shadowOf(color: String) =
 	"#" + color.removePrefix("#").chunked(2).joinToString("") { (it.toInt(16) / 4).toString(16).padStart(2, '0') }
 
-/**
- * One line of in-game text, 9 GUI pixels tall like the game's line height, [scale] being 4 for titles and 2 for subtitles.
- * Chat, tooltips and buttons draw a hard [shadow], containers labels, toasts and the sidebar don't.
- * Italics shear the glyphs by 1 px over their height and the underline sits under the descender row, like the game.
- */
+/** A run of [McText] sharing one style, like a text component without children. */
+data class McSpan(
+	val text: String,
+	val color: String = McColor.WHITE,
+	val bold: Boolean = false,
+	val italic: Boolean = false,
+	val underlined: Boolean = false,
+	val strikethrough: Boolean = false,
+)
+
+/** One line of in-game text in a single style, see [McText]. */
 @Composable
 fun McLine(
 	text: String,
@@ -59,18 +66,35 @@ fun McLine(
 	underlined: Boolean = false,
 	shadow: Boolean = true,
 	scale: Int = 1,
-) {
-	val width = McFont.width(text)
-	val pixels = McFont.path(text) + if (underlined) "M0 8h${width}v1h-${width}z" else ""
+) = McText(listOf(McSpan(text, color, italic = italic, underlined = underlined)), shadow, scale)
+
+/**
+ * One line of in-game text made of styled [spans], 9 GUI pixels tall like the game's line height, [scale] being 4 for titles and 2 for subtitles.
+ * Chat, tooltips and buttons draw a hard [shadow], containers labels, toasts and the sidebar don't.
+ * Italics shear the glyphs by 1 px over their height, bold draws them twice 1 px apart, and lines are never sheared, like the game.
+ */
+@Composable
+fun McText(spans: List<McSpan>, shadow: Boolean = true, scale: Int = 1) {
+	val starts = spans.runningFold(0) { x, span -> x + McFont.width(span.text, span.bold) }
+	val width = starts.last()
+	fun layer(offset: Int, fill: (McSpan) -> String) = spans.withIndex().joinToString("") { (index, span) ->
+		val pixels = McFont.path(span.text, span.bold)
+		val spanWidth = starts[index + 1] - starts[index]
+		val lines = (if (span.underlined) "M0 8h${spanWidth}v1h-${spanWidth}z" else "") +
+			if (span.strikethrough) "M0 3.5h${spanWidth}v1h-${spanWidth}z" else ""
+		val shear = if (span.italic) """ transform="translate(1 0) skewX(-7)"""" else ""
+		val bold = if (span.bold) """<path transform="translate(1 0)" d="$pixels"/>""" else ""
+		"""<g fill="${fill(span)}" transform="translate(${starts[index] + offset} $offset)"><g$shear><path d="$pixels"/>$bold</g><path d="$lines"/></g>"""
+	}
 	val svg = buildString {
 		append("""<svg width="${(width + 1) * 2 * scale}" height="${18 * scale}" viewBox="0 0 ${width + 1} 9" shape-rendering="crispEdges">""")
-		append(if (italic) """<g transform="translate(1 0) skewX(-7)">""" else "<g>")
-		if (shadow) append("""<path fill="${shadowOf(color)}" transform="translate(1 1)" d="$pixels"/>""")
-		append("""<path fill="$color" d="$pixels"/></g></svg>""")
+		if (shadow) append(layer(1) { shadowOf(it.color) })
+		append(layer(0) { it.color })
+		append("</svg>")
 	}
 	Div({
 		classes(McUiStyle.line)
-		attr("aria-label", text)
+		attr("aria-label", spans.joinToString("") { it.text })
 		attr("role", "img")
 	}) {
 		DisposableEffect(svg) {
@@ -317,11 +341,15 @@ fun McChat(vararg extraClasses: String, content: @Composable () -> Unit) {
 
 /** A chat line on the game's translucent background, kept on this wrapper as the text filter would make it opaque. */
 @Composable
-fun McChatLine(text: String, color: String = McColor.WHITE, underlined: Boolean = false, attrs: AttrsScope<HTMLDivElement>.() -> Unit = {}) {
+fun McChatLine(text: String, color: String = McColor.WHITE, underlined: Boolean = false, attrs: AttrsScope<HTMLDivElement>.() -> Unit = {}) =
+	McChatLine(McSpan(text, color, underlined = underlined), attrs = attrs)
+
+@Composable
+fun McChatLine(vararg spans: McSpan, attrs: AttrsScope<HTMLDivElement>.() -> Unit = {}) {
 	Div({
 		classes(McUiStyle.chatLine)
 		attrs()
-	}) { McLine(text, color, underlined = underlined) }
+	}) { McText(spans.toList()) }
 }
 
 object McUiStyle : StyleSheet() {

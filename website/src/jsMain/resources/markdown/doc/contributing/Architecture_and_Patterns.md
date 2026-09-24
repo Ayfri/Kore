@@ -210,7 +210,8 @@ from the vanilla GUI textures in `components/mc/McUi.kt`. Embed one right after 
 coordinates through `gui(pixels)` (GUI scale 2) and `McAt`, so offsets copied from the game's screen classes land on
 the same pixels. Text is drawn as SVG pixel squares by `McFont.kt`, from glyph bitmaps of the OFL
 [Minecraft font](https://github.com/IdreesInc/Minecraft-Font), so it stays sharp at any zoom where browser font
-rendering blurs pixel fonts.
+rendering blurs pixel fonts. `McText` takes a list of `McSpan` runs (color, bold, italic, underlined, strikethrough)
+for lines mixing styles, like chat messages built from several text components.
 
 Keep routes stable, keep navigation intentional, and update entry pages when a new doc should become discoverable.
 
