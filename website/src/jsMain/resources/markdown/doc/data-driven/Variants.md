@@ -318,7 +318,11 @@ Produces JSON:
 Zombie nautilus variants define the texture, model, and spawn conditions for zombie nautiluses.
 
 ```kotlin
-zombieNautilusVariant("test_zombie_nautilus_variant", Textures.Entity.Nautilus.ZOMBIE_NAUTILUS_CORAL, ZombieNautilusModel.WARM) {
+zombieNautilusVariant(
+	"test_zombie_nautilus_variant",
+	Textures.Entity.Nautilus.ZOMBIE_NAUTILUS_CORAL,
+	ZombieNautilusModel.WARM,
+) {
 	spawnConditions {
 		structures(0, Tags.Worldgen.Structure.ON_TREASURE_MAPS)
 	}
