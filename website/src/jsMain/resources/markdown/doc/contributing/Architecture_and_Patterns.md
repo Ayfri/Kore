@@ -162,8 +162,6 @@ shape) must not enumerate subtypes by hand or via reflection.
 Annotate the sealed base with `@GeneratedSealedSerializer`; the `kore-ksp` module's `SealedSerializerProcessor`
 generates a reflection-free `fooSealedSerializer()` factory at compile time, which the family's serializer object passes
 to `NamespacedPolymorphicSerializer`'s constructor.
-See `SlotSource.kt` for the exact shape, and `CLAUDE.md` / `multiplatform.md` for the collision pitfalls (distinct
-`serialName`s required when subtypes share a descriptor, e.g. two `InlineAutoSerializer<_, List<X>>` wrappers).
 
 ## Fast heuristics when you are unsure where a change belongs
 
