@@ -374,6 +374,8 @@ object MarkdownLayoutStyle : StyleSheet() {
 		marginBottom(2.cssRem)
 		maxWidth(100.vw)
 		minHeight(100.percent)
+		/** Flex items default to `min-width: auto`, so unwrapped code lines would widen the page instead of scrolling their block. */
+		minWidth(0.px)
 		overflowX(Overflow.Visible)
 		width(100.percent)
 
