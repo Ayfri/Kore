@@ -233,13 +233,69 @@ fun VillagerTradesMockup() {
 
 /** The mouse rests on the first hotbar slot, where giveItem puts the sword, the tooltip being pushed up by the screen's bottom. */
 @Composable
-fun ItemTooltipMockup() = McScene("In game: hovering the sword given by player.giveItem(sword)", SceneKind.SCREEN, panorama = 2) {
+private fun HoveredSwordInventory(enchantments: List<String>) =
 	McContainer("crafting_table", DocMockupsStyle.tooltipRoom, rows = McContainerInventory) {
 		McLabel("Inventory", 8, 72)
 		McAt(4, 138, DocMockupsStyle.slotHighlightBack)
 		McSlot(8, 142, "diamond_sword", enchanted = true)
 		McAt(4, 138, DocMockupsStyle.slotHighlightFront)
-		McAt(28, 66) { DiamondSwordTooltip(enchantments = listOf("Sharpness V", "Unbreaking III")) }
+		McAt(28, 66) { DiamondSwordTooltip(enchantments = enchantments) }
+	}
+
+@Composable
+fun ItemTooltipMockup() = McScene("In game: hovering the sword given by player.giveItem(sword)", SceneKind.SCREEN, panorama = 2) {
+	HoveredSwordInventory(listOf("Sharpness V", "Unbreaking III"))
+}
+
+/** Custom enchantments show their `description` in gray, followed by the level numeral as maxLevel is above 1. */
+@Composable
+fun EnchantmentTooltipMockup() {
+	val levels = listOf("I", "II", "III")
+	var level by remember { mutableStateOf(levels.first()) }
+	McScene("In game: a diamond sword enchanted with fire_aspect_plus, pick a level up to maxLevel", SceneKind.SCREEN, panorama = 4) {
+		HoveredSwordInventory(listOf("Fire Aspect+ $level"))
+		Div({ classes(DocMockupsStyle.screenControls) }) {
+			levels.forEach { McButton("Level $it", enabled = it != level) { level = it } }
+		}
+	}
+}
+
+/** Each roll draws one entry by weight, then the chest puts every stack in a random empty slot. */
+private fun rollCustomChest(): Map<Int, String> {
+	val pool = listOf("diamond" to 1, "gold_ingot" to 5, "iron_ingot" to 10).flatMap { (item, weight) -> List(weight) { item } }
+	return (0 until 27).shuffled().take(3).associateWith { pool.random() }
+}
+
+@Composable
+fun LootChestMockup() {
+	var loot by remember { mutableStateOf(rollCustomChest()) }
+	McScene("In game: a chest filled from custom_chest, 3 rolls weighted 1:5:10, reroll to fill it again", SceneKind.SCREEN, panorama = 5) {
+		McContainer("generic_54", height = 222, rows = 0 until 71) {
+			McLabel("Chest", 8, 6)
+			loot.forEach { (slot, item) -> McSlot(8 + slot % 9 * 18, 18 + slot / 9 * 18, item) }
+		}
+		Div({ classes(DocMockupsStyle.screenControls) }) {
+			McButton("Reroll", width = 100) { loot = rollCustomChest() }
+		}
+	}
+}
+
+@Composable
+fun MarkdownRendererMockup() = McScene("In game: the four examples above sent to the chat", SceneKind.HUD, panorama = 4, height = 70) {
+	McChat(DocMockupsStyle.hudChat) {
+		McChatLine(McSpan("bold and ", bold = true), McSpan("italic", bold = true, italic = true), McSpan(" text", bold = true))
+		McChatLine(McSpan("Visit "), McSpan("Kore", McColor.GREEN, underlined = true))
+		McChatLine(McSpan("red text", "#ff0000"), McSpan(" normal text"))
+		McChatLine(McSpan("Welcome to Kore", McColor.GOLD, bold = true))
+	}
+}
+
+/** The team prefix and color go inside the chat brackets, as they are part of the player's display name. */
+@Composable
+fun TeamChatMockup() = McScene("In game: the chat after player.joinTeam(red), next to a player without team", SceneKind.HUD, panorama = 5, height = 50) {
+	McChat(DocMockupsStyle.hudChat) {
+		McChatLine(McSpan("<"), McSpan("RED ", McColor.DARK_RED, bold = true), McSpan("Steve", McColor.DARK_RED), McSpan("> ready when you are"))
+		McChatLine(McSpan("<Alex> gl hf"))
 	}
 }
 
@@ -501,6 +557,19 @@ object DocMockupsStyle : StyleSheet() {
 		position(Position.Absolute)
 		property("left", PIXEL_HALF)
 		property("transform", pixelTranslate("-50%"))
+	}
+
+	val hudChat by style {
+		bottom(gui(8))
+		left(0.px)
+		position(Position.Absolute)
+	}
+
+	val screenControls by style {
+		display(DisplayStyle.Flex)
+		gap(gui(4))
+		justifyContent(JustifyContent.Center)
+		marginTop(gui(8))
 	}
 
 	val hudControls by style {

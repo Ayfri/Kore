@@ -5,7 +5,7 @@ nav-title: Teams
 description: Object-oriented team management with the Kore OOP module - create, configure, and manage Minecraft teams.
 keywords: minecraft, datapack, kore, oop, teams, scoreboard, collision, nametag, friendly fire
 date-created: 2026-03-03
-date-modified: 2026-08-14
+date-modified: 2026-09-23
 routeOverride: /docs/oop/teams
 ---
 
@@ -29,6 +29,8 @@ function("team_setup") {
 	player.leaveAnyTeam()
 }
 ```
+
+{{{ .components.mc.TeamChatMockup }}}
 
 The main benefit is that configuration stays grouped by team, which makes lobby setup, role assignment, and PvP rules
 much easier to read than a long list of raw `team modify` commands.

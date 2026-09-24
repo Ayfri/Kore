@@ -5,7 +5,7 @@ nav-title: Enchantments
 description: Create custom Minecraft enchantments using Kore's type-safe Kotlin DSL with support for all vanilla effect components and level-based values.
 keywords: minecraft, datapack, kore, enchantments, effects, custom enchantments
 date-created: 2025-03-02
-date-modified: 2026-08-20
+date-modified: 2026-09-23
 routeOverride: /docs/data-driven/enchantments
 ---
 
@@ -76,6 +76,8 @@ dataPack("my_datapack") {
 ```
 
 This generates `data/my_datapack/enchantment/fire_aspect_plus.json`.
+
+{{{ .components.mc.EnchantmentTooltipMockup }}}
 
 ## Basic Properties
 

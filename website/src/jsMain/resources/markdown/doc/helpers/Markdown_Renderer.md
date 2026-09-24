@@ -5,7 +5,7 @@ nav-title: Markdown Renderer
 description: Convert Markdown-formatted text into Minecraft text components with the Kore helpers module.
 keywords: minecraft, datapack, kore, helpers, markdown, text, renderer, bold, italic, link, heading, list
 date-created: 2026-03-03
-date-modified: 2026-03-31
+date-modified: 2026-09-23
 routeOverride: /docs/helpers/markdown-renderer
 ---
 
@@ -83,6 +83,8 @@ val colored = markdownToTextComponents("§(#ff0000)red text§() normal text")
 // Heading with inline styles
 val heading = markdownToTextComponents("# Welcome to **Kore**")
 ```
+
+{{{ .components.mc.MarkdownRendererMockup }}}
 
 ## Configuration
 
