@@ -277,8 +277,13 @@ fun McBossBar(title: String, color: McBossBarColor, progress: Double, notches: I
 	}
 }
 
-/** One sidebar row, [value] being the right-aligned text. */
-data class McSidebarLine(val text: String, val color: String = McColor.WHITE, val value: String? = null)
+/** One sidebar row, [value] being the right-aligned text, red for plain scores and white for fixed number formats. */
+data class McSidebarLine(
+	val text: String,
+	val color: String = McColor.WHITE,
+	val value: String? = null,
+	val valueColor: String = McColor.WHITE,
+)
 
 /** The scoreboard sidebar shown on the right of the screen, without text shadow like in game. */
 @Composable
@@ -289,10 +294,28 @@ fun McSidebar(title: String, titleColor: String, lines: List<McSidebarLine>) {
 			lines.forEach { line ->
 				Div({ classes(McUiStyle.sidebarRow) }) {
 					McLine(line.text, line.color, shadow = false)
-					line.value?.let { McLine(it, shadow = false) }
+					line.value?.let { McLine(it, line.valueColor, shadow = false) }
 				}
 			}
 		}
+	}
+}
+
+/**
+ * The `/title` text over the world: [title] 4x scaled with its top 40 GUI pixels above the screen center,
+ * [subtitle] 2x scaled 10 GUI pixels under the center. The parent must be positioned.
+ */
+@Composable
+fun McTitle(title: String, color: String = McColor.WHITE, subtitle: String? = null, subtitleColor: String = McColor.WHITE) {
+	Div({
+		classes(McUiStyle.titleLine)
+		style { property("top", "calc($PIXEL_HALF - ${gui(40)})") }
+	}) { McLine(title, color, scale = 4) }
+	subtitle?.let {
+		Div({
+			classes(McUiStyle.titleLine)
+			style { property("top", "calc($PIXEL_HALF + ${gui(10)})") }
+		}) { McLine(it, subtitleColor, scale = 2) }
 	}
 }
 
@@ -581,6 +604,12 @@ object McUiStyle : StyleSheet() {
 		display(DisplayStyle.Flex)
 		gap(gui(6))
 		justifyContent(JustifyContent.SpaceBetween)
+	}
+
+	val titleLine by style {
+		position(Position.Absolute)
+		property("left", PIXEL_HALF)
+		property("transform", pixelTranslate("-50%"))
 	}
 
 	val hotbar by style {

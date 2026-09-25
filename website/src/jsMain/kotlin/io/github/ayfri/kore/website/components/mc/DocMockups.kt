@@ -338,17 +338,10 @@ fun SmithingRecipeMockup() = McScene("In game: the netherite_sword upgrade in a 
 	}
 }
 
-/** Vanilla draws the title at 4x scale 40 px above the screen center, the subtitle at 2x 10 px under it, the action bar 72 px above the bottom. */
+/** Vanilla draws the action bar 72 px above the bottom, see [McTitle] for the title. */
 @Composable
 fun TitleMockup() = McScene("In game: showTitle and showActionBar, after giveItem and replaceItem filled the hotbar", SceneKind.HUD, panorama = 2, height = 210) {
-	Div({
-		classes(DocMockupsStyle.hudCentered)
-		style { top(gui(105 - 40)) }
-	}) { McLine("Title", scale = 4) }
-	Div({
-		classes(DocMockupsStyle.hudCentered)
-		style { top(gui(105 + 10)) }
-	}) { McLine("Subtitle", scale = 2) }
+	McTitle("Title", subtitle = "Subtitle")
 	Div({
 		classes(DocMockupsStyle.hudCentered)
 		style { bottom(gui(72 - 9)) }
