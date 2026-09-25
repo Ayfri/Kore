@@ -1,10 +1,12 @@
 import com.varabyte.kobweb.gradle.application.util.configAsKobwebApplication
 import com.varabyte.kobwebx.gradle.markdown.children
+import com.varabyte.kobwebx.gradle.markdown.handlers.NodeScope
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import kotlinx.html.link
 import kotlinx.html.script
 import kotlinx.html.unsafe
+import org.commonmark.ext.gfm.tables.TableCell
 import org.commonmark.node.*
 import java.net.HttpURLConnection
 import java.net.URI
@@ -96,6 +98,36 @@ kobweb {
 		imports.add("com.varabyte.kobweb.compose.ui.modifiers.*")
 
 		handlers {
+			/** A node holding a single text or inline code becomes one `MarkdownLeaf` call instead of a composable lambda, ~6 MB less JS over all pages. */
+			fun NodeScope.leaf(node: Node, tag: String, fallback: String, extraArgs: String = ""): String {
+				val child = node.firstChild?.takeIf { it.next == null }
+				val (text, code) = when (child) {
+					is Text -> child.literal to false
+					is Code -> child.literal to true
+					else -> return fallback
+				}
+				childrenOverride = emptyList()
+				val codeArg = if (code) ", code = true" else ""
+				return """io.github.ayfri.kore.website.components.layouts.MarkdownLeaf("$tag", "${text.escapeSingleQuotedText()}"$codeArg$extraArgs)"""
+			}
+
+			fun NodeScope.cell(cell: TableCell, tag: String): String {
+				val align = cell.alignment?.name?.lowercase()
+				val fallback = "org.jetbrains.compose.web.dom.${tag.replaceFirstChar { it.uppercase() }}" +
+					align?.let { "(attrs = { style { property(\"text-align\", \"$it\") } })" }.orEmpty()
+				return leaf(cell, tag, fallback, align?.let { ", align = \"$it\"" }.orEmpty())
+			}
+
+			a.set { link ->
+				val href = link.destination.escapeSingleQuotedText()
+				leaf(link, "a", "org.jetbrains.compose.web.dom.A(\"$href\")", ", href = \"$href\"")
+			}
+			em.set { leaf(it, "em", "org.jetbrains.compose.web.dom.Em") }
+			p.set { leaf(it, "p", "org.jetbrains.compose.web.dom.P") }
+			strong.set { leaf(it, "b", "org.jetbrains.compose.web.dom.B") }
+			td.set { cell(it, "td") }
+			th.set { cell(it, "th") }
+
 			img.set { image ->
 				val altText =
 					image.children().filterIsInstance<Text>().joinToString("") { it.literal.escapeSingleQuotedText() }
@@ -150,7 +182,7 @@ kobweb {
 
 				fun Node.composeText(): String = when (this) {
 					is Text -> "org.jetbrains.compose.web.dom.Text(\"${literal.escapeSingleQuotedText()}\")"
-					is Code -> "org.jetbrains.compose.web.dom.Code { org.jetbrains.compose.web.dom.Text(\"${literal.escapeTripleQuotedText()}\") }"
+					is Code -> "io.github.ayfri.kore.website.components.layouts.InlineCode(\"${literal.escapeSingleQuotedText()}\")"
 					is Link -> {
 						val linkContent = children().joinToString("\n") { child -> child.composeText() }
 						"""org.jetbrains.compose.web.dom.A(href = "$destination") {
@@ -185,34 +217,21 @@ kobweb {
 					"Node.js" to "nodedotjs",
 				)
 				val headingText = heading.children().joinToString("") { it.plainText() }
-				val brandIcon = brandIcons.firstOrNull { (brand) -> brand in headingText }
-					?.let { (_, icon) -> "io.github.ayfri.kore.website.components.common.BrandIcon(\"$icon\")" }
-					.orEmpty()
+				val brandIcon = brandIcons.firstOrNull { (brand) -> brand in headingText }?.let { (_, icon) -> ", \"$icon\"" }.orEmpty()
 
 				val content = heading.children().joinToString("\n") { it.composeText() }
 
 				childrenOverride = emptyList()
-				val tag = "H${heading.level}"
 
-				val onSubtitle =
-					if (heading.level > 1) "classes(io.github.ayfri.kore.website.components.layouts.MarkdownLayoutStyle.heading)"
-					else ""
-
-				val idAttribute = if (id.isNotBlank()) """attr("id", "$id")""" else ""
-
-				"""org.jetbrains.compose.web.dom.${tag.replaceFirstChar { it.uppercase() }}({
-					|   $idAttribute
-					|   $onSubtitle
-					|}) {
-					|   org.jetbrains.compose.web.dom.A("#$id", {
-					|	   classes(io.github.ayfri.kore.website.components.layouts.MarkdownLayoutStyle.anchor)
-					|   }) {
-					|	   com.varabyte.kobweb.silk.components.icons.lucide.LucideHash(modifier = com.varabyte.kobweb.compose.ui.Modifier.ariaHidden())
-					|   }
-					|   $brandIcon
+				"""io.github.ayfri.kore.website.components.layouts.MarkdownHeading(${heading.level}, "$id"$brandIcon) {
 					|   $content
 					|}
 				""".trimMargin()
+			}
+
+			inlineCode.set { code ->
+				childrenOverride = emptyList()
+				"io.github.ayfri.kore.website.components.layouts.InlineCode(\"${code.literal.escapeSingleQuotedText()}\")"
 			}
 		}
 
