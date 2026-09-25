@@ -282,7 +282,7 @@ object HeroSectionStyle : StyleSheet() {
 
 	val heroGrid by style {
 		display(DisplayStyle.Grid)
-		gridTemplateColumns("minmax(0, 1.05fr) minmax(0, 0.95fr)")
+		gridTemplateColumns("minmax(0, 0.9fr) minmax(0, 1.1fr)")
 		gap(2.4.cssRem)
 		alignItems(AlignItems.Start)
 		minWidth(0.px)
@@ -436,7 +436,7 @@ object HeroSectionStyle : StyleSheet() {
 		width(100.percent)
 
 		"pre" style {
-			fontSize(0.95.cssRem)
+			fontSize(0.85.cssRem)
 			margin(0.px)
 			maxWidth(100.percent)
 			overflowX(Overflow.Auto)
