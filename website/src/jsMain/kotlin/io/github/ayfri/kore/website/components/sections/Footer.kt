@@ -117,6 +117,8 @@ fun Footer() {
 					DomA("https://ayfri.com", { title("Hello :)") }) { Text("Ayfri") }
 					Text(" · ")
 					DomA("$GITHUB_LINK/blob/master/LICENSE", { target(ATarget.Blank) }) { Text("GPL-3.0 License") }
+					Text(" · ")
+					DomA("/legal-notice") { Text("Legal Notice") }
 					Text(" · Built with ")
 					LucideHeart(Modifier.classNames(FooterStyle.heart))
 					Text(" and ")
