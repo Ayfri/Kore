@@ -30,6 +30,9 @@ val minecraftVersion = providers.gradleProperty("minecraft.version").orElse("").
 /** Plain-text GitHub data (stars, latest release tag) written by the fetch tasks for the Open Graph cards. */
 val gitHubDataDir = layout.buildDirectory.dir("generated/github")
 
+/** Open Graph cards only ship in the exported site, rendering them on every Markdown edit of the dev server costs seconds. */
+val renderOgImages = gradle.startParameter.taskNames.any { it.substringAfterLast(':') == "kobwebExport" }
+
 data class DocEntry(
 	val file: File,
 	val date: String,
@@ -223,6 +226,7 @@ kobweb {
 		val ogFontsDir = layout.buildDirectory.dir("og-fonts").get().asFile
 		val gitHubDataDir = gitHubDataDir.get().asFile
 		val minecraftVersion = minecraftVersion
+		val renderOgImages = renderOgImages
 
 		process.set { markdownFiles ->
 			val docEntries = mutableListOf<DocEntry>()
@@ -399,49 +403,51 @@ kobweb {
 			println("Sitemap generated -> ${llmsResourcesDir.resolve("sitemap.xml").absolutePath}")
 
 			// Open Graph cards, `/og/<route>.png` per doc page, `/og/features.png`, `/og/updates.png` and `/og/default.png` for the other pages.
-			val ogDir = llmsResourcesDir.resolve("og")
-			val host = baseUrl.substringAfter("://")
-			val stars = gitHubDataDir.resolve("stars.txt").takeIf { it.exists() }?.readText()?.toIntOrNull()
-			val ogRenderer = OgImageRenderer(ogFontsDir, projectDir.resolve("src/jsMain/resources/public/logo.png"), stars)
-			ogRenderer.render(
-				ogDir.resolve("default.png"),
-				label = "Open-source Kotlin DSL",
-				title = "Type-safe Minecraft datapacks, written in Kotlin",
-				description = "Create datapacks without writing JSON or MCFunction by hand.",
-				footer = "$host  ·  Kore ${Project.VERSION} for Minecraft $minecraftVersion",
-			)
-			ogRenderer.render(
-				ogDir.resolve("features.png"),
-				label = "Features",
-				title = "Commands, JSON resources, worldgen & tooling",
-				description = "Typed commands, loot tables, recipes, worldgen, gameplay helpers, Gradle plugin and mod jar export.",
-				footer = "$host/features",
-			)
-			val latestTag = gitHubDataDir.resolve("latest-release-tag.txt").takeIf { it.exists() }?.readText()?.removePrefix("v").orEmpty()
-			ogRenderer.render(
-				ogDir.resolve("updates.png"),
-				label = "Latest release",
-				title = latestTag.split("-", limit = 2).let { parts ->
-					when {
-						latestTag.isEmpty() -> "Kore releases"
-						parts.size == 2 -> "Kore ${parts[0]} for Minecraft ${parts[1]}"
-						else -> "Kore $latestTag"
-					}
-				},
-				description = "Changelog and release history of every Kore version, fetched from GitHub.",
-				footer = "$host/updates",
-			)
-			sortedEntries.parallelStream().forEach { entry ->
-				val route = entry.slugs.joinToString("/")
+			if (renderOgImages) {
+				val ogDir = llmsResourcesDir.resolve("og")
+				val host = baseUrl.substringAfter("://")
+				val stars = gitHubDataDir.resolve("stars.txt").takeIf { it.exists() }?.readText()?.toIntOrNull()
+				val ogRenderer = OgImageRenderer(ogFontsDir, projectDir.resolve("src/jsMain/resources/public/logo.png"), stars)
 				ogRenderer.render(
-					ogDir.resolve("$route.png"),
-					label = entry.slugs.dropLast(1).joinToString(" / ") { it.replace("-", " ") },
-					title = entry.navTitle,
-					description = entry.desc,
-					footer = "$host/$route",
+					ogDir.resolve("default.png"),
+					label = "Open-source Kotlin DSL",
+					title = "Type-safe Minecraft datapacks, written in Kotlin",
+					description = "Create datapacks without writing JSON or MCFunction by hand.",
+					footer = "$host  ·  Kore ${Project.VERSION} for Minecraft $minecraftVersion",
 				)
+				ogRenderer.render(
+					ogDir.resolve("features.png"),
+					label = "Features",
+					title = "Commands, JSON resources, worldgen & tooling",
+					description = "Typed commands, loot tables, recipes, worldgen, gameplay helpers, Gradle plugin and mod jar export.",
+					footer = "$host/features",
+				)
+				val latestTag = gitHubDataDir.resolve("latest-release-tag.txt").takeIf { it.exists() }?.readText()?.removePrefix("v").orEmpty()
+				ogRenderer.render(
+					ogDir.resolve("updates.png"),
+					label = "Latest release",
+					title = latestTag.split("-", limit = 2).let { parts ->
+						when {
+							latestTag.isEmpty() -> "Kore releases"
+							parts.size == 2 -> "Kore ${parts[0]} for Minecraft ${parts[1]}"
+							else -> "Kore $latestTag"
+						}
+					},
+					description = "Changelog and release history of every Kore version, fetched from GitHub.",
+					footer = "$host/updates",
+				)
+				sortedEntries.parallelStream().forEach { entry ->
+					val route = entry.slugs.joinToString("/")
+					ogRenderer.render(
+						ogDir.resolve("$route.png"),
+						label = entry.slugs.dropLast(1).joinToString(" / ") { it.replace("-", " ") },
+						title = entry.navTitle,
+						description = entry.desc,
+						footer = "$host/$route",
+					)
+				}
+				println("Open Graph images generated -> ${ogDir.absolutePath}")
 			}
-			println("Open Graph images generated -> ${ogDir.absolutePath}")
 
 			println("LLMs.txt generated -> ${llmsResourcesDir.absolutePath}")
 			projectLogger.info("markdown-sources.json written (${markdownSources.size} files)")
@@ -691,6 +697,7 @@ tasks.matching { it.name == "jsProcessResources" }.configureEach {
 tasks.matching { it.name == "kobwebxMarkdownProcess" }.configureEach {
 	dependsOn("fetchGitHubReleases", "fetchGitHubStars")
 	inputs.dir(gitHubDataDir).withPropertyName("gitHubData").optional()
+	inputs.property("renderOgImages", renderOgImages)
 }
 
 // The export discards the source map (`includeSourceMap = false`), so building it only slows minification down.
