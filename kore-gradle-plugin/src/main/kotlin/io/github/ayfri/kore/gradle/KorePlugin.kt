@@ -96,6 +96,7 @@ class KorePlugin : Plugin<Project> {
 	private fun applyConventions(project: Project, kore: KoreExtension) {
 		kore.packName.convention(project.name)
 		kore.outputDirectory.convention(project.layout.buildDirectory.dir("kore"))
+		kore.aotCache.convention(true)
 		kore.cleanBeforeBuild.convention(true)
 		kore.linkToAllWorlds.convention(false)
 		kore.linkMode.convention(LinkMode.COPY)
@@ -125,6 +126,8 @@ class KorePlugin : Plugin<Project> {
 			task.classpath = kore.runtimeClasspath
 			task.generatedDirectory.set(kore.outputDirectory)
 			task.cleanBeforeBuild.set(kore.cleanBeforeBuild)
+			task.aotCache.set(kore.aotCache)
+			task.aotCacheDirectory.set(project.layout.buildDirectory.dir("kore-aot"))
 			task.additionalInputs.from(kore.additionalInputs)
 			task.jvmArgs = kore.jvmArguments.getOrElse(emptyList())
 

@@ -145,6 +145,17 @@ kore {
 }
 ```
 
+## Faster generation with the AOT cache
+
+With a JDK 25+ toolchain, `koreBuild` runs your entry point on a
+[JDK AOT cache](https://openjdk.org/jeps/514) stored in `build/kore-aot`. The first generation records which classes Kore
+loads, the next ones start with them already parsed and linked: on a small pack the generation drops from about 1s to
+under 0.4s. Your own classes load normally, so editing them keeps the cache valid, and a dependency or JDK update trains a new
+one on the next run.
+
+The only visible difference is the numeric suffix of generated function names (`generated_scopes/generated_1234...`),
+which comes from identity hash codes and changes once when the cache takes over. Set `aotCache = false` to turn it off.
+
 ## Full configuration reference
 
 ```kotlin
@@ -153,6 +164,7 @@ kore {
 	packName = "my_pack"                       // defaults to the project name
 	outputDirectory = layout.buildDirectory.dir("kore")
 	cleanBeforeBuild = true
+	aotCache = true                            // JDK 25+ only, ignored on older JDKs
 
 	runtimeClasspath.setFrom(/* ... */)        // defaults to the `main` source set, set it for Kotlin Multiplatform
 	arguments = listOf("--verbose")            // appended after the output directory

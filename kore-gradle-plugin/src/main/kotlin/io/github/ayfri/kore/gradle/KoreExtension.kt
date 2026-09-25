@@ -36,6 +36,12 @@ abstract class KoreExtension {
 	/** Extra JVM arguments for the generation process. */
 	abstract val jvmArguments: ListProperty<String>
 
+	/**
+	 * Whether the generation process runs on a JDK AOT cache trained by its first run, which starts Kore ~3x faster.
+	 * Needs JDK 25+ for the entry point, older JDKs ignore it. Defaults to `true`.
+	 */
+	abstract val aotCache: Property<Boolean>
+
 	/** Extra system properties for the generation process, merged with `kore.output` and `kore.packName`. */
 	abstract val systemProperties: MapProperty<String, String>
 

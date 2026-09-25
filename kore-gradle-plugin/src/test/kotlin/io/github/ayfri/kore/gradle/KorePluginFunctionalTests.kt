@@ -192,6 +192,39 @@ class KorePluginFunctionalTests : FunSpec({
 		}
 	}
 
+	test("the first generation trains an AOT cache that the next ones reuse") {
+		val project = TestProject()
+		val caches = { project.root.resolve("build/kore-aot").listFiles { file -> file.extension == "aot" }.orEmpty().toList() }
+
+		try {
+			project.run("koreBuild")
+			val trained = caches().single()
+			val trainedAt = trained.lastModified()
+
+			project.writeGenerator(functionBody = "say goodbye")
+			project.run("koreBuild")
+
+			project.outputDirectory.resolve("my_pack/data/test/function/load.mcfunction").readText() shouldBe "say goodbye"
+			caches() shouldBe listOf(trained)
+			trained.lastModified() shouldBe trainedAt
+		} finally {
+			project.delete()
+		}
+	}
+
+	test("aotCache = false runs the entry point without a cache") {
+		val project = TestProject(koreConfiguration = "\taotCache = false")
+
+		try {
+			project.run("koreBuild")
+
+			project.outputDirectory.resolve("my_pack/data/test/function/load.mcfunction").readText() shouldBe "say hello"
+			project.root.resolve("build/kore-aot").exists() shouldBe false
+		} finally {
+			project.delete()
+		}
+	}
+
 	test("a failing reload does not fail the build unless failOnError is set") {
 		val project = TestProject(
 			koreConfiguration = "\trcon {\n\t\tpassword = \"secret\"\n\t\tport = 1\n\t\ttimeoutMillis = 500\n\t}"
