@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
 	implementation(libs.gradle.plugin.kotlin)
+	implementation(libs.gradle.plugin.ksp)
 	implementation(libs.gradle.plugin.vanniktech.publish)
 }
 

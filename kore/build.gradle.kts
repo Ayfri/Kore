@@ -1,7 +1,7 @@
 plugins {
 	kotlin("multiplatform")
 	kotlin("plugin.serialization")
-	alias(libs.plugins.ksp)
+	id("com.google.devtools.ksp")
 	alias(libs.plugins.kotest)
 	id("kotest-conventions")
 	id("kotlin-conventions")
@@ -56,8 +56,6 @@ kotlin {
 
 dependencies {
 	add("kspCommonMainMetadata", project(":kore-ksp"))
-	add("kspJvmTest", project(":kore-ksp"))
-	add("kspJsTest", project(":kore-ksp"))
 }
 
 // Generated MC enums/registries: `generateSources` is cacheable and keyed on `minecraft.version`, so it only reruns on a bump.

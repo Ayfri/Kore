@@ -24,7 +24,6 @@ import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.StructureSets
 import io.github.ayfri.kore.generated.arguments.types.AdvancementArgument
-import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import io.github.ayfri.kore.serializers.TripleAsArraySerializer
@@ -32,6 +31,7 @@ import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import io.kotest.core.spec.style.FunSpec
 import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.SealedClassSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
@@ -125,12 +125,13 @@ private inline fun <reified T> Any.assertsIsA(): T {
 
 // region NamespacedPolymorphicSerializer
 
-@GeneratedSealedSerializer
 @Serializable(with = Animal.Companion.AnimalSerializer::class)
 internal sealed class Animal {
 	companion object {
 		@OptIn(InternalSerializationApi::class)
-		data object AnimalSerializer : NamespacedPolymorphicSerializer<Animal>(animalSealedSerializer())
+		data object AnimalSerializer : NamespacedPolymorphicSerializer<Animal>(
+			SealedClassSerializer("Animal", Animal::class, arrayOf(Cat::class, Dog::class), arrayOf(Cat.serializer(), Dog.serializer()))
+		)
 	}
 }
 
@@ -176,13 +177,14 @@ fun namespacedPolymorphicDeserializer() {
 
 // region NamespacedPolymorphicSerializer with moveIntoProperty
 
-@GeneratedSealedSerializer
 @Serializable(with = Shape.Companion.ShapeSerializer::class)
 internal sealed class Shape {
 	companion object {
 		@OptIn(InternalSerializationApi::class)
-		data object ShapeSerializer :
-			NamespacedPolymorphicSerializer<Shape>(shapeSealedSerializer(), moveIntoProperty = "value")
+		data object ShapeSerializer : NamespacedPolymorphicSerializer<Shape>(
+			SealedClassSerializer("Shape", Shape::class, arrayOf(Circle::class, Square::class), arrayOf(Circle.serializer(), Square.serializer())),
+			moveIntoProperty = "value",
+		)
 	}
 }
 

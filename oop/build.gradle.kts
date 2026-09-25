@@ -1,7 +1,7 @@
 plugins {
 	kotlin("multiplatform")
 	kotlin("plugin.serialization")
-	alias(libs.plugins.ksp)
+	id("com.google.devtools.ksp")
 	alias(libs.plugins.kotest)
 	id("kotest-conventions")
 	id("kotlin-conventions")
