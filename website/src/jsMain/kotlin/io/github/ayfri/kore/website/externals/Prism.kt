@@ -6,10 +6,20 @@ import kotlin.js.RegExp
 
 /** Bindings for the Prism highlighter, loaded as a global script rather than as a module. */
 external object Prism {
+	val hooks: PrismHooks
 	val languages: PrismLanguages
 
 	fun highlightAll()
 	fun highlightAllUnder(element: Element)
+}
+
+external interface PrismHooks {
+	fun add(name: String, callback: (PrismHookEnv) -> Unit)
+}
+
+external interface PrismHookEnv {
+	/** HTML Prism is about to insert into the `code` element, only set from the `before-insert` hook onwards. */
+	var highlightedCode: String
 }
 
 /** The grammars Prism knows about, keyed by language name. */

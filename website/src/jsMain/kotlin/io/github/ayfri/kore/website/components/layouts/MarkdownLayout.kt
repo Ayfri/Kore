@@ -7,6 +7,7 @@ import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideCopy
 import com.varabyte.kobweb.silk.components.icons.lucide.LucidePanelLeftOpen
 import com.varabyte.kobwebx.markdown.markdown
+import io.github.ayfri.kore.website.CodeThemeStyle
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.*
 import io.github.ayfri.kore.website.components.doc.*
@@ -211,16 +212,12 @@ object MarkdownLayoutStyle : StyleSheet() {
 		}
 
 		"code" + not(attrContains("class", "language")) style {
-			fontFamily("Consolas", "Monaco", "Andale Mono", "Ubuntu Mono", "monospace")
-			fontSize(0.9.cssRem)
+			fontFamily(*CodeThemeStyle.fonts)
+			fontSize(0.85.cssRem)
 			backgroundColor(GlobalStyle.secondaryBackgroundColor)
 			borderRadius(GlobalStyle.roundingButton)
 			paddingX(0.2.cssRem)
 			paddingY(0.1.cssRem)
-		}
-
-		child(type("div") + className("code-toolbar"), type("pre")) style {
-			borderRadius(GlobalStyle.roundingButton)
 		}
 
 		"pre" style {

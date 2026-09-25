@@ -3,6 +3,7 @@ package io.github.ayfri.kore.website.components.updates
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.varabyte.kobweb.compose.css.*
+import io.github.ayfri.kore.website.CodeThemeStyle
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.CodeBlock
 import io.github.ayfri.kore.website.externals.MarkedToken
@@ -138,8 +139,8 @@ object MarkdownRendererStyle : StyleSheet() {
 		}
 
 		"code" style {
-			fontFamily("Consolas", "Monaco", "Andale Mono", "Ubuntu Mono", "monospace")
-			fontSize(0.9.cssRem)
+			fontFamily(*CodeThemeStyle.fonts)
+			fontSize(0.875.cssRem)
 		}
 
 		"code:not([class*='language-'])" style {

@@ -27,7 +27,16 @@ private val functionPatterns
 	)
 
 fun initKotlinHighlighting() {
-	Prism.languages["kotlin"]?.set("function", functionPatterns)
+	val kotlin = Prism.languages["kotlin"] ?: return
+	kotlin["function"] = functionPatterns
+
+	// `set(self(), ...)` is a DSL call, only the `get()` / `set(value)` accessor forms stay keywords.
+	val keyword = kotlin.asDynamic().keyword
+	keyword.pattern = RegExp(
+		(keyword.pattern.source as String)
+			.replace("|get|", "|get(?!\\((?!\\)))|")
+			.replace("|set|", "|set(?!\\((?!value\\)))|")
+	)
 
 	// Prism Kotlin deletes `class-name` from the clike base; re-add it so PascalCase references (types, companions) are highlighted.
 	Prism.languages.insertBefore(
@@ -48,6 +57,39 @@ fun initKotlinHighlighting() {
 					"constant" to RegExp("[A-Z][A-Z0-9_]+$"),
 				),
 			),
+		)
+	)
+
+	// Groups the dotted path so its segments are not mistaken for property accesses.
+	Prism.languages.insertBefore(
+		"kotlin", "annotation", grammar(
+			"namespace" to token(
+				RegExp("^(\\s*)(?:import|package)\\s+[\\w.*`]+(?:\\s+as\\s+\\w+)?", "m"),
+				lookbehind = true,
+				greedy = true,
+				inside = grammar(
+					"keyword" to RegExp("\\b(?:import|package|as)\\b"),
+					"punctuation" to RegExp("[.*]"),
+				),
+			),
+		)
+	)
+
+	Prism.languages.insertBefore(
+		"kotlin", "keyword", grammar(
+			"implicit-parameter" to token(RegExp("(^|[^.\\w])\\bit\\b(?!\\s*[({=])"), lookbehind = true, alias = "keyword"),
+		)
+	)
+
+	Prism.languages.insertBefore(
+		"kotlin", "function", grammar(
+			"named-argument" to token(RegExp("(?<=[(,]\\s*)[a-z_]\\w*(?=\\s*=(?!=))")),
+		)
+	)
+
+	Prism.languages.insertBefore(
+		"kotlin", "number", grammar(
+			"property" to token(RegExp("(\\??\\.)[a-z_]\\w*\\b(?!\\s*[({]|\\s*->)"), lookbehind = true),
 		)
 	)
 }

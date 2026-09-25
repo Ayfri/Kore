@@ -56,7 +56,6 @@ kobweb {
 		index {
 			head.apply {
 				add {
-					link("/prism.min.css", "stylesheet")
 					script("text/javascript", "/prism.min.js") {
 						attributes += "data-manual" to ""
 					}
@@ -67,7 +66,7 @@ kobweb {
 				link("https://fonts.gstatic.com", "preconnect") {
 					attributes["crossorigin"] = "anonymous"
 				}
-				link("https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;500;900&display=swap", "stylesheet")
+				link("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=Roboto:wght@100;300;500;900&display=swap", "stylesheet")
 
 				script("text/javascript", "https://www.googletagmanager.com/gtag/js?id=G-3ZXF56FSLH") {
 					async = true
