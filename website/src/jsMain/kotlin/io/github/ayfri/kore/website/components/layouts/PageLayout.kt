@@ -37,7 +37,8 @@ fun PageLayout(title: String, content: @Composable () -> Unit) {
 	setTwitterCard("summary_large_image")
 	setTwitterCreator("@Ayfri_")
 
-	setImage("$baseUrl/logo.png")
+	setImage("$baseUrl/logo.png", "Kore logo")
+	setSiteMetadata()
 
 	Header(GitHubService.latestRelease)
 

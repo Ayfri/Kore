@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.website.components.common
 
 import com.varabyte.kobweb.core.AppGlobals
+import io.github.ayfri.kore.website.GITHUB_LINK
 import io.github.ayfri.kore.website.utils.obj
 import kotlinx.browser.document
 import org.w3c.dom.Element
@@ -58,9 +59,53 @@ fun setTwitterCreator(creator: String) {
 	metaName("twitter:site", creator)
 }
 
-fun setImage(url: String) {
+fun setImage(url: String, alt: String) {
 	metaProperty("og:image", url)
+	metaProperty("og:image:alt", alt)
 	metaName("twitter:image", url)
+	metaName("twitter:image:alt", alt)
+}
+
+/** Site-wide metadata, the JSON-LD graph giving crawlers and AI answer engines the Kore entity, its repository and its author. */
+fun setSiteMetadata() {
+	metaProperty("og:locale", "en_US")
+	metaProperty("og:site_name", "Kore")
+	metaName("theme-color", "#24282e")
+
+	val person = obj {
+		`@type` = "Person"
+		`@id` = "$baseUrl/#author"
+		name = "Pierre Roy"
+		alternateName = "Ayfri"
+		url = "https://ayfri.com"
+		sameAs = arrayOf("https://github.com/Ayfri")
+	}
+	val jsonLd = obj {
+		`@context` = "https://schema.org"
+		`@graph` = arrayOf(
+			obj {
+				`@type` = "WebSite"
+				`@id` = "$baseUrl/#website"
+				name = "Kore"
+				url = "$baseUrl/"
+				publisher = obj { `@id` = "$baseUrl/#author" }
+			},
+			obj {
+				`@type` = "SoftwareSourceCode"
+				`@id` = "$baseUrl/#software"
+				name = "Kore"
+				this["description"] = "Type-safe Kotlin DSL generating Minecraft Java Edition datapacks."
+				codeRepository = GITHUB_LINK
+				programmingLanguage = "Kotlin"
+				license = "https://www.gnu.org/licenses/gpl-3.0.html"
+				version = AppGlobals["projectVersion"]
+				author = obj { `@id` = "$baseUrl/#author" }
+			},
+			person,
+		)
+	}
+
+	upsert("script#site-json-ld", "script", "id" to "site-json-ld", "type" to "application/ld+json").textContent = JSON.stringify(jsonLd)
 }
 
 fun setHrefLang(path: String) {
@@ -116,11 +161,7 @@ fun setJsonLd(
 		`@type` = "TechArticle"
 		headline = title
 		this["description"] = description
-		author = obj {
-			`@type` = "Organization"
-			name = "Kore"
-			url = "https://github.com/Ayfri/Kore"
-		}
+		author = obj { `@id` = "$baseUrl/#author" }
 		datePublished = publishDate
 		dateModified = modifiedDate
 		mainEntityOfPage = obj {
@@ -143,5 +184,5 @@ fun setJsonLd(
 		}
 	}
 
-	upsert("script[type='application/ld+json']", "script", "type" to "application/ld+json").textContent = JSON.stringify(jsonLd)
+	upsert("script#page-json-ld", "script", "id" to "page-json-ld", "type" to "application/ld+json").textContent = JSON.stringify(jsonLd)
 }
