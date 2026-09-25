@@ -53,7 +53,8 @@ object HomePageStyle : StyleSheet() {
 
 	val page by style {
 		position(Position.Relative)
-		overflow(Overflow.Hidden)
+		// `clip` rather than `hidden`, which would make this the scroll container and break every sticky element inside.
+		property("overflow", "clip")
 		paddingBottom(2.5.cssRem)
 
 		property("--landing-accent", "#08b6d6")
