@@ -35,9 +35,6 @@ fun FeaturesPage() {
 		)
 
 		Div({ classes(HomePageStyle.page) }) {
-			Div({ classes(HomePageStyle.glow, HomePageStyle.glowTop) })
-			Div({ classes(HomePageStyle.glow, HomePageStyle.glowBottom) })
-
 			Div({ classes(HomePageStyle.content) }) {
 				FeaturesHero()
 				ShowcaseSection()

@@ -1,518 +1,543 @@
 package io.github.ayfri.kore.website.components.index
 
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
-import com.varabyte.kobweb.compose.css.functions.blur
-import com.varabyte.kobweb.compose.css.functions.dropShadow
 import com.varabyte.kobweb.core.AppGlobals
-import io.github.ayfri.kore.website.GITHUB_LINK
-import io.github.ayfri.kore.website.GlobalStyle
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideArrowRight
 import io.github.ayfri.kore.website.components.common.*
+import io.github.ayfri.kore.website.components.features.*
+import io.github.ayfri.kore.website.components.mc.*
 import io.github.ayfri.kore.website.utils.*
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.*
+import org.jetbrains.compose.web.dom.A as DomA
 
-enum class HeroTab(val tabName: String, val language: String) {
-	INDEX("index.kt", "kotlin") {
-		override val code = """
-			fun main() {
-				val datapack = dataPack("test") {
-					function("display_text") {
-						tellraw(allPlayers(), textComponent("Hello World!"))
-					}
+private class HeroExample(val name: String, val file: String, val showcase: Showcase, val preview: @Composable () -> Unit)
 
-					function("tp_random_entity_to_entity") {
-						val target = allEntities(limitToOne = true) {
-							sort = Sort.RANDOM
-						}
+private val welcomeShowcase = Showcase(
+	"Chat & items",
+	"""
+		dataPack("arena") {
+			function("welcome") {
+				tellraw(allPlayers(), "Welcome!", color = Color.GOLD)
+				give(allPlayers(), Items.IRON_SWORD)
+			}
+		}
+	""".trimIndent(),
+	listOf(
+		ShowcaseFile(
+			"data/arena/function/welcome.mcfunction",
+			"mcfunction",
+			"""
+				tellraw @a {type:"text",color:"gold",text:"Welcome!"}
+				give @a minecraft:iron_sword
+			""".trimIndent(),
+		),
+	),
+)
 
-						execute {
-							asTarget(target)
-							run {
-								summon(Entities.CREEPER, vec3())
-							}
-						}
-					}
+private val victoryShowcase = Showcase(
+	"Titles",
+	"""
+		dataPack("arena") {
+			function("victory") {
+				title(
+					allPlayers(),
+					TitleLocation.TITLE,
+					textComponent("Victory!", Color.GOLD),
+				)
+				effect(allPlayers()) {
+					give(Effects.GLOWING, 10, 0, true)
+				}
+			}
+		}
+	""".trimIndent(),
+	listOf(
+		ShowcaseFile(
+			"data/arena/function/victory.mcfunction",
+			"mcfunction",
+			"""
+				title @a title {type:"text",color:"gold",text:"Victory!"}
+				effect give @a minecraft:glowing 10 0 true
+			""".trimIndent(),
+		),
+	),
+)
 
-					pack {
-						description = textComponent("Datapack test for ", Color.GOLD) + text("Kore", Color.AQUA) {
-							bold = true
-						}
+private val bossBarShowcase = Showcase(
+	"Boss bars",
+	"""
+		dataPack("arena") {
+			function("boss_fight") {
+				bossBar("boss", "arena") {
+					add("Wither Storm")
+					setColor(BossBarColor.PURPLE)
+					setStyle(BossBarStyle.NOTCHED_10)
+					setMax(200)
+					setValue(150)
+					setPlayers(allPlayers())
+				}
+			}
+		}
+	""".trimIndent(),
+	listOf(
+		ShowcaseFile(
+			"data/arena/function/boss_fight.mcfunction",
+			"mcfunction",
+			"""
+				bossbar add arena:boss "Wither Storm"
+				bossbar set arena:boss color purple
+				bossbar set arena:boss style notched_10
+				bossbar set arena:boss max 200
+				bossbar set arena:boss value 150
+				bossbar set arena:boss players @a
+			""".trimIndent(),
+		),
+	),
+)
+
+private val scoreboardShowcase = Showcase(
+	"Scoreboards",
+	"""
+		dataPack("arena") {
+			function("setup_scores") {
+				scoreboard {
+					objectives {
+						add("kills", ScoreboardCriteria.PLAYER_KILL_COUNT)
+						setDisplay(DisplaySlots.sidebar, "kills")
 					}
 				}
-
-				datapack.generateZip()
 			}
-		""".trimIndent()
+		}
+	""".trimIndent(),
+	listOf(
+		ShowcaseFile(
+			"data/arena/function/setup_scores.mcfunction",
+			"mcfunction",
+			"""
+				scoreboard objectives add kills playerKillCount
+				scoreboard objectives setdisplay sidebar kills
+			""".trimIndent(),
+		),
+	),
+)
+
+/** Slots of the 27 slot chest filled by the 3 rolls of the boss_chest loot table. */
+private val bossChestLoot = mapOf(3 to "iron_ingot", 12 to "golden_apple", 23 to "diamond")
+
+private val heroExamples = listOf(
+	HeroExample("Chat", "Welcome.kt", welcomeShowcase) {
+		WorldPreview(1) {
+			McChat(FeatureVisualsStyle.hudChat, FeatureVisualsStyle.aboveHotbar) { McChatLine("Welcome!", McColor.GOLD) }
+			Div({ classes(FeatureVisualsStyle.hudHotbar) }) { McHotbar(listOf("iron_sword")) }
+		}
 	},
-	CUSTOM_SCOREBOARD("customScoreboard.kt", "kotlin") {
-		override val code = """
-			fun sidebarDatapack() = dataPack("sidebar") {
-				val game = literal("#game")
-
-				val minigame = sidebar("minigame") {
-					title("✪ Mini-game ✪", Color.GOLD)
-					line("Game: Sky Wars")
-					line("Players", value = scoreComponent("players", game))
-					line("Score", value = scoreComponent("score", game))
-					emptyLine()
-					line("HyKore server 3.1.0", Color.YELLOW)
-				}
-
-				load {
-					scoreboard.objectives.add("players")
-					scoreboard.objectives.add("score")
-					minigame.create()
-				}
-
-				tick { minigame.refresh() }
-			}
-		""".trimIndent()
+	HeroExample("Titles", "Victory.kt", victoryShowcase) {
+		WorldPreview(3) {
+			McTitle("Victory!", McColor.GOLD)
+			Div({ classes(FeatureVisualsStyle.hudHotbar) }) { McHotbar(listOf("iron_sword")) }
+		}
 	},
-	EXTERNAL_DATAPACK("externalDatapack.kt", "kotlin") {
-		override val code = """
-			import io.github.ayfri.kore.bindings.api.importDatapacks
-			import kore.dependencies.vanillatweaks.VanillaTweaks
-
-			fun setupBindings() = importDatapacks {
-				github("VanillaTweaks/Vanilla-Tweaks-Datapacks")
-			}
-
-			fun main() {
-				setupBindings()
-
-				val datapack = dataPack("my_enhanced_datapack") {
-					function("spawn_at_valid_location") {
-						execute {
-							ifCondition {
-								block(vec3(0, -1, 0), VanillaTweaks.Spawn.Tags.Blocks.VALID_SPAWN_LOCATION)
-							}
-							run {
-								say("Spawning at valid location!")
-							}
-						}
-					}
-				}
-
-				datapack.generateZip()
-			}
-		""".trimIndent()
+	HeroExample("Boss bars", "BossFight.kt", bossBarShowcase) {
+		WorldPreview(2) {
+			Div({ classes(HeroSectionStyle.bossBar) }) { McBossBar("Wither Storm", McBossBarColor.PURPLE, 150 / 200.0, notches = 10) }
+			Div({ classes(FeatureVisualsStyle.hudHotbar) }) { McHotbar(listOf("iron_sword")) }
+		}
 	},
-	OOP_AND_HELPERS("arena.kt", "kotlin") {
-		override val code = """
-			fun arenaDatapack() = dataPack("arena") {
-				val redTeam = team("red") {
-					color = FormattingColor.RED
-					collisionRule = CollisionRule.PUSH_OTHER_TEAMS
-				}
-
-				val dashCooldown = registerCooldown("dash", 3.seconds)
-				val golem = registerSpawner("golem", EntityTypes.IRON_GOLEM) {
-					position = vec3(0, 64, 0)
-				}
-				val roundTimer = registerTimerWithBossBar("round", 60.seconds) {
-					color = BossBarColor.GREEN
-					style = BossBarStyle.NOTCHED_20
-				}
-
-				drawShape("spawn_ring") {
-					shape = Shape.CIRCLE
-					particle = Particles.FLAME
-					radius = 5.0
-					points = 32
-				}
-
-				val scanner = raycast {
-					name = "scanner"
-					maxDistance = 24
-					step = 0.25
-					onStep = { particle(Particles.END_ROD, vec3()) }
-					onHitBlock = { say("Target acquired!") }
-				}
-
-				function("start_round") {
-					val nearest = allPlayers(limitToOne = true) { sort = Sort.NEAREST }
-					redTeam.join(nearest)
-					nearest.giveEffect(Effects.SPEED, amplifier = 1)
-					dashCooldown.start(nearest)
-					golem.spawn()
-
-					roundTimer.start(nearest)
-					roundTimer.onComplete(nearest) { say("Round over!") }
-					scanner.cast()
-				}
+	HeroExample("Scoreboards", "Scores.kt", scoreboardShowcase) {
+		WorldPreview(0) {
+			Div({ classes(HeroSectionStyle.sidebar) }) {
+				McSidebar(
+					"kills", McColor.WHITE, listOf(
+						McSidebarLine("Steve", value = "7", valueColor = McColor.RED),
+						McSidebarLine("Alex", value = "4", valueColor = McColor.RED),
+						McSidebarLine("Notch", value = "1", valueColor = McColor.RED),
+					)
+				)
 			}
-		""".trimIndent()
-	};
+			Div({ classes(FeatureVisualsStyle.hudHotbar) }) { McHotbar(listOf("iron_sword")) }
+		}
+	},
+	HeroExample("Recipes", "Recipes.kt", recipeShowcase) {
+		WorldPreview(1, McUiStyle.menuBackground, HeroSectionStyle.centered) { ArenaKeyRecipe() }
+	},
+	HeroExample("Loot tables", "Loot.kt", showcases.first()) {
+		WorldPreview(3, McUiStyle.menuBackground, HeroSectionStyle.centered) {
+			McContainer("generic_54", height = 222, rows = 0 until 71) {
+				McLabel("Chest", 8, 6)
+				bossChestLoot.forEach { (slot, item) -> McSlot(8 + slot % 9 * 18, 18 + slot / 9 * 18, item) }
+			}
+		}
+	},
+	HeroExample("Advancements", "Advancements.kt", advancementShowcase) {
+		WorldPreview(0) { FirstBloodToast(HeroSectionStyle.toast) }
+	},
+)
 
-	abstract val code: String
-}
+/** Time each example stays on screen while the showcase rotates on its own. */
+private const val EXAMPLE_MS = 7000L
+
+private const val SHOWCASE_ID = "hero-showcase"
 
 @Composable
 fun HeroSection() {
 	Style(HeroSectionStyle)
 
-	Section({
-		classes(HeroSectionStyle.heroSection)
-	}) {
-		Div({
-			classes(HeroSectionStyle.heroGrid)
-		}) {
-			Div({
-				classes(HeroSectionStyle.heroCopy)
-			}) {
-				H1({
-					classes(HeroSectionStyle.title)
-				}) {
-					Span({
-						classes(HeroSectionStyle.titleText)
-					}) {
-						Text("Rethink your datapack development experience with")
-					}
-					Img {
-						attr("alt", "Kore")
-						attr("src", "/logo.avif")
-						classes(HeroSectionStyle.logo)
-					}
-				}
+	Section({ classes(HeroSectionStyle.hero) }) {
+		DomA("/updates", { classes(HeroSectionStyle.announcement) }) {
+			Span("New", HeroSectionStyle.announcementBadge)
+			Text("Kore ${AppGlobals.getValue("projectVersion")} supports Minecraft ${AppGlobals.getValue("minecraftVersion")}")
+			LucideArrowRight()
+		}
 
-				Div({
-					classes(HeroSectionStyle.versionContainer)
-				}) {
-					Div({ classes(HeroSectionStyle.versionItem) }) {
-						Span("Kore", classes = arrayOf(HeroSectionStyle.versionLabel))
-						Span(AppGlobals["projectVersion"] ?: "1.37.0", classes = arrayOf(HeroSectionStyle.versionValue))
-					}
-					Div({ classes(HeroSectionStyle.versionDivider) })
-					Div({ classes(HeroSectionStyle.versionItem) }) {
-						Span("Minecraft", classes = arrayOf(HeroSectionStyle.versionLabel))
-						Span(
-							AppGlobals["minecraftVersion"] ?: "1.21.10",
-							classes = arrayOf(HeroSectionStyle.versionValue)
-						)
-					}
-				}
+		H1({ classes(HeroSectionStyle.title) }) {
+			Text("Minecraft datapacks, written in ")
+			Span("Kotlin", FeatureSectionsStyle.heroTitleAccent)
+		}
 
-				P(
-					"""
-						A modern, type-safe Kotlin datapack generator for Minecraft.
-						Create complex datapacks without ever writing JSON or MCFunction manually.
-					""".trimIndent(),
-					HeroSectionStyle.subTitle
-				)
+		P(
+			"Kore is a Kotlin library that generates regular Minecraft datapacks. Your editor autocompletes every item and command, mistakes show up before you /reload, and what ships is plain vanilla files.",
+			HeroSectionStyle.lead
+		)
 
-				Div({
-					classes(HeroSectionStyle.actions)
+		Div({ classes(HeroSectionStyle.actions) }) {
+			LinkButton("Get started", "/docs/getting-started", color = ButtonColor.PRIMARY)
+			LinkButton("Explore features", "/features", variant = ButtonVariant.OUTLINE)
+		}
+
+		HeroShowcase()
+	}
+}
+
+/** One Kotlin snippet next to what it does in game, rotating through [heroExamples] until the visitor picks one. */
+@Composable
+private fun HeroShowcase() {
+	var example by remember { mutableStateOf(0) }
+	var autoplay by remember { mutableStateOf(true) }
+	val current = heroExamples[example]
+	val output = current.showcase.outputs.first()
+
+	LaunchedEffect(autoplay) {
+		while (autoplay) {
+			delay(EXAMPLE_MS)
+			example = (example + 1) % heroExamples.size
+		}
+	}
+	highlightCodeIn(SHOWCASE_ID, example)
+
+	Div({ classes(HeroSectionStyle.showcase) }) {
+		Div({ classes(HeroSectionStyle.tabs) }) {
+			heroExamples.forEachIndexed { index, entry ->
+				Button({
+					classes(HeroSectionStyle.tab)
+					if (index == example) classes(HeroSectionStyle.tabActive)
+					onClick {
+						example = index
+						autoplay = false
+					}
 				}) {
-					LinkButton("Get Started", "/docs/getting-started", color = ButtonColor.PRIMARY)
-					LinkButton("GitHub", GITHUB_LINK, variant = ButtonVariant.OUTLINE)
+					Text(entry.name)
+					if (index == example && autoplay) Span({ classes(HeroSectionStyle.tabProgress) })
 				}
 			}
+		}
 
+		key(example) {
 			Div({
-				classes(HeroSectionStyle.heroPanel)
+				id(SHOWCASE_ID)
+				classes(HeroSectionStyle.frame, FeatureSectionsStyle.sceneBody)
 			}) {
-				val tabs = HeroTab.entries.map {
-					Tab(it.tabName) { CodeBlock(it.code, it.language) }
+				Div({ classes(HeroSectionStyle.codePane) }) {
+					Span(current.file, HeroSectionStyle.paneTitle)
+					CodeBlock(current.showcase.kotlin, "kotlin")
+					Div({ classes(HeroSectionStyle.paneFooter) }) {
+						Text("Generates ")
+						Code { Text(output.path) }
+					}
 				}
-
-				Tabs(tabs, className = HeroSectionStyle.tabs, contentClassName = HeroSectionStyle.tabContent)
+				Div({ classes(HeroSectionStyle.gamePane) }) { current.preview() }
 			}
 		}
 	}
 }
 
+/** The world seen from title screen panorama [face], with HUD or menu [content] drawn over it. */
+@Composable
+private fun WorldPreview(face: Int, vararg extraClasses: String, content: @Composable () -> Unit) {
+	Div({
+		classes(McUiStyle.world, HeroSectionStyle.world, *extraClasses)
+		style { property("background-image", mcPanorama(face)) }
+	}) { content() }
+}
+
 object HeroSectionStyle : StyleSheet() {
-	init {
-		smMax(child(className("code-toolbar"), type("pre"))) {
-			fontSize(0.8.cssRem)
-		}
-	}
-
-	@OptIn(ExperimentalComposeWebApi::class)
-	val heroReveal by keyframes {
-		from {
-			opacity(0)
-			transform { translateY(16.px) }
-		}
-		to {
-			opacity(1)
-			transform { translateY(0.px) }
-		}
-	}
-
-	val heroSection by style {
+	val hero by style {
+		alignItems(AlignItems.Center)
 		boxSizing(BoxSizing.BorderBox)
-		position(Position.Relative)
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
-		paddingTop(4.2.cssRem)
-		paddingBottom(2.6.cssRem)
-		paddingX(6.vw)
-		property(
-			"background",
-			"radial-gradient(circle at 15% 15%, rgba(8, 182, 214, 0.18) 0%, transparent 42%), " +
-				"radial-gradient(circle at 85% 20%, rgba(254, 201, 7, 0.12) 0%, transparent 38%), " +
-				"linear-gradient(180deg, rgba(15, 20, 27, 0.98) 0%, rgba(15, 20, 27, 0.85) 65%, rgba(15, 20, 27, 0.6) 100%)"
-		)
-		borderBottom(1.px, LineStyle.Solid, Color("var(--landing-border)"))
-		overflow(Overflow.Hidden)
-
-		"p" style {
-			color(Color("var(--landing-muted)"))
-			fontSize(1.05.cssRem)
-		}
-
-		mdMax(self) {
-			"p" style {
-				fontSize(1.cssRem)
-			}
-		}
+		marginX(auto)
+		maxWidth(76.cssRem)
+		padding(4.5.cssRem, 5.vw, 3.cssRem)
+		textAlign(TextAlign.Center)
+		width(100.percent)
 
 		smMax(self) {
-			paddingTop(3.2.cssRem)
-			paddingBottom(2.cssRem)
-			paddingX(1.1.cssRem)
+			padding(2.5.cssRem, 1.1.cssRem, 2.cssRem)
 		}
 	}
 
-	val heroGrid by style {
-		display(DisplayStyle.Grid)
-		gridTemplateColumns("minmax(0, 0.9fr) minmax(0, 1.1fr)")
-		gap(2.4.cssRem)
-		alignItems(AlignItems.Start)
-		minWidth(0.px)
-
-		lgMax(self) {
-			gridTemplateColumns("1fr")
-			gap(2.2.cssRem)
-		}
-	}
-
-	val heroCopy by style {
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Column)
-		alignItems(AlignItems.FlexStart)
-		gap(1.2.cssRem)
-		minWidth(0.px)
-		textAlign(TextAlign.Left)
-
-		lgMin {
-			marginTop(4.cssRem)
-		}
-
-		lgMax(self) {
-			alignItems(AlignItems.Center)
-			textAlign(TextAlign.Center)
-		}
-	}
-
-	val heroPanel by style {
-		backgroundColor(Color("var(--landing-card)"))
-		borderRadius(1.6.cssRem)
+	val announcement by style {
+		alignItems(AlignItems.Center)
+		backgroundColor(rgba(21, 28, 38, 0.7))
 		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
-		minWidth(0.px)
-		maxWidth(100.percent)
-		overflow(Overflow.Hidden)
-		padding(0.65.cssRem)
-		boxShadow(0.px, 30.px, 80.px, 0.px, rgba(5, 14, 23, 0.55))
-		backdropFilter(BackdropFilter.list(BackdropFilter.of(blur(14.px))))
+		borderRadius(999.px)
+		color(Color("var(--landing-muted)"))
+		display(DisplayStyle.Flex)
+		fontSize(0.88.cssRem)
+		gap(0.6.cssRem)
+		marginBottom(1.8.cssRem)
+		padding(0.3.cssRem, 0.9.cssRem, 0.3.cssRem, 0.3.cssRem)
+		transition(0.2.s, "border-color", "color")
 
-		mdMax(self) {
-			padding(0.45.cssRem)
+		"svg" style { fontSize(0.9.cssRem) }
+
+		hover(self) style {
+			borderColor(Color("rgba(8, 182, 214, 0.5)"))
+			color(Color("var(--landing-text)"))
 		}
+	}
+
+	val announcementBadge by style {
+		backgroundColor(rgba(8, 182, 214, 0.18))
+		borderRadius(999.px)
+		color(Color("var(--landing-accent-strong)"))
+		fontSize(0.78.cssRem)
+		fontWeight(600)
+		padding(0.15.cssRem, 0.6.cssRem)
 	}
 
 	val title by style {
-		fontSize(3.2.cssRem)
-		fontWeight(FontWeight.Bold)
+		fontSize(4.2.cssRem)
 		letterSpacing((-2).px)
 		lineHeight(1.05.number)
 		margin(0.px)
-		display(DisplayStyle.Flex)
-		alignItems(AlignItems.Center)
-		flexWrap(FlexWrap.Wrap)
-		gap(0.6.cssRem)
-		textTransform(TextTransform.Uppercase)
-		animation(heroReveal) {
-			duration(0.7.s)
-			timingFunction(AnimationTimingFunction.EaseOut)
-		}
-
-		lgMax(self) {
-			justifyContent(JustifyContent.Center)
-		}
+		maxWidth(15.em)
+		textWrap(TextWrap.Balance)
 
 		mdMax(self) {
-			fontSize(2.35.cssRem)
-			flexDirection(FlexDirection.Column)
-			alignItems(AlignItems.Center)
-			gap(0.85.cssRem)
-			textAlign(TextAlign.Center)
-		}
-
-		xsMax(self) {
-			fontSize(1.85.cssRem)
+			fontSize(2.8.cssRem)
 			letterSpacing((-1).px)
 		}
-	}
-
-	val titleText by style {
-		display(DisplayStyle.InlineBlock)
-		maxWidth(100.percent)
-		overflowWrap(OverflowWrap.Anywhere)
-		textWrap(TextWrap.Balance)
-		textGradient(GlobalStyle.logoRightColor, GlobalStyle.logoLeftColor)
-		textShadow(TextShadow.of(0.px, 10.px, 30.px, rgba(4, 155, 178, 0.2)))
-	}
-
-	val logo by style {
-		height(4.1.cssRem)
-		marginLeft(0.cssRem)
-		filter(Filter.list(Filter.of(dropShadow(0.px, 16.px, 24.px, rgba(4, 155, 178, 0.35)))))
-		flexShrink(0)
-		verticalAlign(VerticalAlign.Middle)
-
-		mdMax(self) {
-			height(3.2.cssRem)
-			marginLeft(0.cssRem)
-		}
 
 		xsMax(self) {
-			height(2.65.cssRem)
+			fontSize(2.2.cssRem)
 		}
 	}
 
-	val subTitle by style {
-		maxWidth(38.cssRem)
-		margin(0.px)
+	val lead by style {
 		color(Color("var(--landing-muted)"))
+		fontSize(1.2.cssRem)
+		margin(1.4.cssRem, 0.px, 0.px)
+		maxWidth(40.cssRem)
+		textWrap(TextWrap.Pretty)
 
-		mdMax(self) {
-			maxWidth(92.percent)
-			textAlign(TextAlign.Center)
-			marginX(auto)
+		smMax(self) {
+			fontSize(1.05.cssRem)
 		}
 	}
 
 	val actions by style {
 		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Row)
-		gap(1.2.cssRem)
 		flexWrap(FlexWrap.Wrap)
+		gap(1.cssRem)
+		justifyContent(JustifyContent.Center)
+		marginTop(2.cssRem)
+	}
 
-		mdMax(child(self, type("a"))) {
-			fontSize(1.1.cssRem)
-		}
+	val showcase by style {
+		display(DisplayStyle.Flex)
+		flexDirection(FlexDirection.Column)
+		alignItems(AlignItems.Center)
+		gap(1.2.cssRem)
+		marginTop(4.cssRem)
+		textAlign(TextAlign.Left)
+		width(100.percent)
 
-		mdMax(self) {
-			justifyContent(JustifyContent.Center)
+		smMax(self) {
+			marginTop(2.5.cssRem)
 		}
 	}
 
 	val tabs by style {
-		width(100.percent)
-		minHeight(18.cssRem)
-		height(auto)
-		borderRadius(1.2.cssRem)
+		display(DisplayStyle.Flex)
+		flexWrap(FlexWrap.Wrap)
+		gap(0.3.cssRem)
+		justifyContent(JustifyContent.Center)
+	}
 
-		xlMax(self) {
-			minHeight(17.cssRem)
-		}
+	val tab by style {
+		backgroundColor(Color.transparent)
+		border(0.px)
+		borderRadius(0.5.cssRem)
+		color(Color("var(--landing-muted)"))
+		cursor(Cursor.Pointer)
+		fontFamily("inherit")
+		fontSize(0.92.cssRem)
+		fontWeight(500)
+		overflow(Overflow.Hidden)
+		padding(0.5.cssRem, 1.cssRem)
+		position(Position.Relative)
+		transition(0.2.s, "background-color", "color")
 
-		mdMax(self) {
-			minHeight(16.cssRem)
+		hover(self) style {
+			color(Color("var(--landing-text)"))
 		}
 	}
 
-	val tabContent by style {
-		backgroundColor(Color("var(--landing-surface-2)"))
-		height(auto)
-		minWidth(0.px)
+	val tabActive by style {
+		backgroundColor(rgba(255, 255, 255, 0.06))
+		color(Color("var(--landing-text)"))
+	}
+
+	@OptIn(ExperimentalComposeWebApi::class)
+	val progressFill by keyframes {
+		from { transform { scaleX(0) } }
+		to { transform { scaleX(1) } }
+	}
+
+	/** Fills under the current tab while the showcase rotates, so it's clear it moves on by itself. */
+	val tabProgress by style {
+		backgroundColor(Color("var(--landing-accent)"))
+		bottom(0.px)
+		height(2.px)
+		left(0.px)
+		position(Position.Absolute)
+		property("transform-origin", "left")
 		width(100.percent)
+		animation(progressFill) {
+			duration(EXAMPLE_MS.toDouble().ms)
+			timingFunction(AnimationTimingFunction.Linear)
+		}
+	}
+
+	val frame by style {
+		backgroundColor(Color("var(--landing-surface-2)"))
+		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		borderRadius(1.1.cssRem)
+		boxShadow(0.px, 40.px, 100.px, (-20).px, rgba(0, 0, 0, 0.6))
+		display(DisplayStyle.Grid)
+		gridTemplateColumns("minmax(0, 1.15fr) minmax(0, 1fr)")
+		// Tall enough for the longest example, so rotating examples never moves the page.
+		minHeight(25.cssRem)
+		overflow(Overflow.Hidden)
+		width(100.percent)
+
+		lgMax(self) {
+			gridTemplateColumns("minmax(0, 1fr)")
+		}
+	}
+
+	val codePane by style {
+		borderRight(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		display(DisplayStyle.Flex)
+		flexDirection(FlexDirection.Column)
+		minWidth(0.px)
+
+		// Prism's language label and copy button are noise in a showcase, the pane already frames the code.
+		"div.code-toolbar > .toolbar" style { display(DisplayStyle.None) }
+
+		"div.code-toolbar" style {
+			backgroundColor(Color.transparent)
+			border(0.px)
+			borderRadius(0.px)
+			flexGrow(1)
+		}
 
 		"pre" style {
-			fontSize(0.85.cssRem)
+			backgroundColor(Color.transparent)
+			fontSize(0.82.cssRem)
+			height(100.percent)
 			margin(0.px)
-			maxWidth(100.percent)
 			overflowX(Overflow.Auto)
+			property("box-sizing", "border-box")
+		}
+
+		lgMax(self) {
+			borderRight(0.px, LineStyle.None, Color.transparent)
+			borderBottom(1.px, LineStyle.Solid, Color("var(--landing-border)"))
 		}
 
 		smMax(self) {
-			"pre" style {
-				fontSize(0.7.cssRem)
-			}
+			"pre" style { fontSize(0.72.cssRem) }
 		}
 	}
 
-	val versionContainer by style {
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Row)
-		alignItems(AlignItems.Center)
-		flexWrap(FlexWrap.Wrap)
-		justifyContent(JustifyContent.Center)
-		backgroundColor(Color("rgba(21, 28, 38, 0.8)"))
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
-		borderRadius(999.px)
-		maxWidth(100.percent)
-		padding(0.55.cssRem, 1.6.cssRem)
-		gap(1.2.cssRem)
-
-		smMax(self) {
-			borderRadius(1.05.cssRem)
-			flexWrap(FlexWrap.Nowrap)
-			gap(0.65.cssRem)
-			justifyContent(JustifyContent.SpaceBetween)
-			padding(0.55.cssRem, 0.9.cssRem)
-			width(100.percent)
-		}
-	}
-
-	val versionItem by style {
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Row)
-		gap(0.5.cssRem)
-		alignItems(AlignItems.Center)
-		flexWrap(FlexWrap.Nowrap)
-		minWidth(0.px)
-
-		smMax(self) {
-			gap(0.35.cssRem)
-		}
-	}
-
-	val versionLabel by style {
+	val paneTitle by style {
+		borderBottom(1.px, LineStyle.Solid, Color("var(--landing-border)"))
 		color(Color("var(--landing-muted)"))
 		fontSize(0.82.cssRem)
-		fontWeight(FontWeight.Medium)
-		fontFamily("JetBrains Mono", "IBM Plex Mono", "Consolas", "monospace")
-		textTransform(TextTransform.Uppercase)
-		letterSpacing(1.4.px)
+		padding(0.7.cssRem, 1.1.cssRem)
+	}
 
-		xsMax(self) {
-			fontSize(0.68.cssRem)
-			letterSpacing(0.8.px)
+	val paneFooter by style {
+		borderTop(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		color(Color("var(--landing-muted)"))
+		fontSize(0.8.cssRem)
+		overflowWrap(OverflowWrap.Anywhere)
+		padding(0.7.cssRem, 1.1.cssRem)
+
+		"code" style {
+			color(Color("var(--landing-text)"))
+			fontFamily("JetBrains Mono", "monospace")
 		}
 	}
 
-	val versionValue by style {
-		color(Color("var(--landing-accent)"))
-		fontSize(1.cssRem)
-		fontFamily("JetBrains Mono", "IBM Plex Mono", "Consolas", "monospace")
-		fontWeight(FontWeight.Bold)
+	val gamePane by style {
+		minHeight(20.cssRem)
+		minWidth(0.px)
+		position(Position.Relative)
+	}
 
-		xsMax(self) {
-			fontSize(0.82.cssRem)
+	val world by style {
+		position(Position.Absolute)
+		property("inset", "0")
+
+		// GUI pixels are fixed size, so the whole HUD shrinks on phones instead of overflowing.
+		smMax(self) {
+			"> *" style { property("zoom", "0.75") }
 		}
 	}
 
-	val versionDivider by style {
-		width(1.px)
-		height(1.cssRem)
-		backgroundColor(Color("var(--landing-border)"))
+	val centered by style {
+		alignItems(AlignItems.Center)
+		display(DisplayStyle.Flex)
+		justifyContent(JustifyContent.Center)
+	}
+
+	/** The game centers the sidebar vertically on the right edge of the screen. */
+	val sidebar by style {
+		position(Position.Absolute)
+		right(0.px)
+		property("top", PIXEL_HALF)
+		property("transform", pixelTranslate("0px", "-50%"))
+	}
+
+	val bossBar by style {
+		position(Position.Absolute)
+		top(gui(2))
+		property("left", PIXEL_HALF)
+		property("transform", pixelTranslate("-50%"))
+	}
+
+	val toast by style {
+		position(Position.Absolute)
+		right(0.px)
+		top(gui(4))
 	}
 }

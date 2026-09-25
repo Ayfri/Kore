@@ -1,55 +1,45 @@
 package io.github.ayfri.kore.website.pages
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.compose.css.functions.RadialGradient
-import com.varabyte.kobweb.compose.css.functions.blur
 import com.varabyte.kobweb.compose.css.functions.radialGradient
 import com.varabyte.kobweb.core.Page
+import io.github.ayfri.kore.website.components.common.BrandIconStyle
+import io.github.ayfri.kore.website.components.features.FeatureSectionsStyle
+import io.github.ayfri.kore.website.components.features.FeatureVisualsStyle
 import io.github.ayfri.kore.website.components.index.*
 import io.github.ayfri.kore.website.components.layouts.PageLayout
+import io.github.ayfri.kore.website.components.mc.McUiStyle
+import io.github.ayfri.kore.website.utils.initMCFunctionHighlighting
 import io.github.ayfri.kore.website.utils.smMax
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.Div
 
 @Page
 @Composable
-fun HomePage() = PageLayout("Minecraft Datapack Generator") {
+fun HomePage() {
 	Style(HomePageStyle)
+	Style(BrandIconStyle)
+	Style(FeatureSectionsStyle)
+	Style(FeatureVisualsStyle)
+	Style(McUiStyle)
 
-	Div({
-		classes(HomePageStyle.page)
-	}) {
-		Div({ classes(HomePageStyle.glow, HomePageStyle.glowTop) })
-		Div({ classes(HomePageStyle.glow, HomePageStyle.glowBottom) })
+	LaunchedEffect(Unit) {
+		initMCFunctionHighlighting()
+	}
 
-		Div({
-			classes(HomePageStyle.content)
-		}) {
-			// Hero section with code examples
-			HeroSection()
-
-			// Quick installation guide
-			InstallationSection()
-
-			// Editor and Gradle plugins
-			ToolingSection()
-
-			// Core features section
-			FeaturesSection()
-
-			// Masonry grid with code examples
-			Masonry(masonryItems)
-
-			// Community platforms section
-			CommunitySection()
-
-			// FAQ section
-			FaqSection()
-
-			// Call to action section
-			CtaSection()
+	PageLayout("Minecraft Datapack Generator") {
+		Div({ classes(HomePageStyle.page) }) {
+			Div({ classes(HomePageStyle.content) }) {
+				HeroSection()
+				IntroSection()
+				ExploreSection()
+				GetStartedSection()
+				FaqSection()
+				CtaSection()
+			}
 		}
 	}
 }
@@ -86,7 +76,7 @@ object HomePageStyle : StyleSheet() {
 				Background.of(
 					BackgroundImage.of(
 						radialGradient(RadialGradient.Shape.Circle(), CSSPosition(88.percent, 12.percent)) {
-							add(rgba(254, 201, 7, 0.12), 0.percent)
+							add(rgba(254, 201, 7, 0.08), 0.percent)
 							add(Color.transparent, 38.percent)
 						}
 					)
@@ -94,7 +84,7 @@ object HomePageStyle : StyleSheet() {
 				Background.of(
 					BackgroundImage.of(
 						radialGradient(RadialGradient.Shape.Circle(), CSSPosition(12.percent, 8.percent)) {
-							add(rgba(8, 182, 214, 0.18), 0.percent)
+							add(rgba(8, 182, 214, 0.12), 0.percent)
 							add(Color.transparent, 40.percent)
 						}
 					)
@@ -102,20 +92,9 @@ object HomePageStyle : StyleSheet() {
 			)
 		)
 
-		"h1" style {
-			fontFamily("Sora", "Space Grotesk", "Segoe UI", "sans-serif")
-			fontWeight(700)
-		}
-
-		"h2" style {
-			fontFamily("JetBrains Mono", "IBM Plex Mono", "Consolas", "monospace")
-			fontWeight(700)
-			letterSpacing((-0.5).px)
-		}
-
-		"h3" style {
-			fontFamily("JetBrains Mono", "IBM Plex Mono", "Consolas", "monospace")
-			fontWeight(700)
+		"h1, h2, h3" style {
+			fontFamily("Sora", "Segoe UI", "sans-serif")
+			fontWeight(600)
 		}
 
 		"p" style {
@@ -124,47 +103,7 @@ object HomePageStyle : StyleSheet() {
 	}
 
 	val content by style {
-		position(Position.Relative)
-		zIndex(1)
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
-		gap(0.75.cssRem)
-		height(auto)
-		overflow(Overflow.Visible)
-	}
-
-	val glow by style {
-		position(Position.Absolute)
-		borderRadius(999.px)
-		filter(Filter.list(Filter.of(blur(120.px))))
-		opacity(0.55)
-		pointerEvents(PointerEvents.None)
-		zIndex(0)
-	}
-
-	val glowTop by style {
-		top((-12).cssRem)
-		left((-10).cssRem)
-		width(30.cssRem)
-		height(30.cssRem)
-		backgroundImage(
-			radialGradient(RadialGradient.Shape.Circle()) {
-				add(rgba(8, 182, 214, 0.65), 0.percent)
-				add(rgba(8, 182, 214, 0), 70.percent)
-			}
-		)
-	}
-
-	val glowBottom by style {
-		bottom((-16).cssRem)
-		right((-8).cssRem)
-		width(34.cssRem)
-		height(34.cssRem)
-		backgroundImage(
-			radialGradient(RadialGradient.Shape.Circle()) {
-				add(rgba(254, 201, 7, 0.55), 0.percent)
-				add(rgba(254, 201, 7, 0), 72.percent)
-			}
-		)
 	}
 }

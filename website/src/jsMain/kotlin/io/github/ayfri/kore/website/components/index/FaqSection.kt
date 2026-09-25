@@ -3,11 +3,12 @@ package io.github.ayfri.kore.website.components.index
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideChevronRight
+import io.github.ayfri.kore.website.DISCORD_LINK
 import io.github.ayfri.kore.website.components.common.Markdown
+import io.github.ayfri.kore.website.components.features.FeatureSectionsStyle
 import io.github.ayfri.kore.website.utils.marginX
 import io.github.ayfri.kore.website.utils.mdMax
 import io.github.ayfri.kore.website.utils.transition
-import io.github.ayfri.kore.website.utils.xsMax
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.keywords.auto
@@ -59,14 +60,10 @@ fun FaqSection() {
 	var openedQuestionIndex by remember { mutableStateOf(0) }
 
 	Section({
-		classes(FaqSectionStyle.faqContainer)
+		classes(FeatureSectionsStyle.section, FaqSectionStyle.faqContainer)
 	}) {
-		Div({
-			classes(FaqSectionStyle.faqHeader)
-		}) {
-			H2 {
-				Text("Frequently Asked Questions")
-			}
+		SectionHeader("Questions people ask first") {
+			Markdown("Something else on your mind? Ask on [Discord]($DISCORD_LINK) or browse the [docs](/docs/home).", FaqSectionStyle.faqHint)
 		}
 
 		Div({
@@ -121,66 +118,37 @@ fun FaqSection() {
 @OptIn(ExperimentalComposeWebApi::class)
 object FaqSectionStyle : StyleSheet() {
 	val faqContainer by style {
-		marginX(auto)
-		marginTop(1.5.cssRem)
-		marginBottom(2.5.cssRem)
-		maxWidth(85.cssRem)
-		display(DisplayStyle.Grid)
-		gridTemplateColumns("minmax(0, 0.9fr) minmax(0, 1.4fr)")
-		gap(2.cssRem)
-		padding(2.1.cssRem, 4.vw)
-		borderRadius(1.8.cssRem)
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
-		property(
-			"background",
-			"linear-gradient(135deg, rgba(15, 20, 27, 0.92) 0%, rgba(21, 28, 38, 0.9) 100%)"
-		)
-
-		mdMax(self) {
-			gridTemplateColumns("1fr")
-			padding(2.cssRem, 4.vw)
-		}
+		display(DisplayStyle.Flex)
+		flexDirection(FlexDirection.Column)
 	}
 
-	val faqHeader by style {
-		"h2" {
-			marginTop(0.px)
-			marginBottom(0.px)
-			fontSize(2.6.cssRem)
-			textAlign(TextAlign.Left)
-		}
-
-		mdMax(self) {
-			"h2" style {
-				textAlign(TextAlign.Center)
-				fontSize(2.2.cssRem)
-			}
-		}
+	val faqHint by style {
+		color(Color("var(--landing-muted)"))
+		fontSize(1.1.cssRem)
+		margin(0.px)
 	}
 
 	val faq by style {
+		borderTop(1.px, LineStyle.Solid, Color("var(--landing-border)"))
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
-		gap(1.2.cssRem)
+		marginX(auto)
+		maxWidth(54.cssRem)
+		width(100.percent)
 	}
 
 	val faqItem by style {
-		padding(1.05.cssRem, 1.35.cssRem)
-		borderRadius(1.1.cssRem)
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
-		backgroundColor(Color("rgba(12, 18, 26, 0.85)"))
-		boxShadow(0.px, 12.px, 30.px, 0.px, rgba(5, 12, 20, 0.35))
+		borderBottom(1.px, LineStyle.Solid, Color("var(--landing-border)"))
 		overflow(Overflow.Hidden)
-		transition(0.25.s, "border-color", "background-color")
-
-		xsMax(self) {
-			padding(1.05.cssRem, 1.1.cssRem)
-		}
+		padding(1.1.cssRem, 0.4.cssRem)
+		property("border-left", "2px solid transparent")
+		transition(0.25.s, "border-color", "background-color", "padding")
 	}
 
 	val faqItemOpened by style {
-		borderColor(Color("rgba(8, 182, 214, 0.45)"))
-		backgroundColor(Color("rgba(16, 24, 34, 0.92)"))
+		backgroundColor(rgba(8, 182, 214, 0.05))
+		paddingLeft(1.cssRem)
+		property("border-left-color", "var(--landing-accent-strong)")
 	}
 
 	val questionButton by style {
@@ -195,8 +163,9 @@ object FaqSectionStyle : StyleSheet() {
 		color(Color("var(--landing-text)"))
 		cursor(Cursor.Pointer)
 		textAlign(TextAlign.Left)
-		fontSize(1.2.cssRem)
-		fontWeight(FontWeight.Bold)
+		fontFamily("inherit")
+		fontSize(1.05.cssRem)
+		fontWeight(600)
 		property("-webkit-tap-highlight-color", "transparent")
 
 		hover(self) style {
@@ -204,7 +173,7 @@ object FaqSectionStyle : StyleSheet() {
 		}
 
 		mdMax(self) {
-			fontSize(1.12.cssRem)
+			fontSize(1.cssRem)
 		}
 	}
 
