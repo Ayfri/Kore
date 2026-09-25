@@ -25,7 +25,7 @@ data class Scene(
 	val content: @Composable (open: (Int) -> Unit) -> Unit,
 )
 
-/** A page section: [title] labels it in the nav, [headline] sells it, and [scenes] (when any) sit next to the text. */
+/** A Features page section: [title] names it, [headline] sells it on the homepage tiles, and [scenes] (when any) sit next to the items. */
 data class FeatureCategory(
 	val id: String,
 	val title: String,

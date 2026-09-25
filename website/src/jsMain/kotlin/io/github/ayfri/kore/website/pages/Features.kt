@@ -7,7 +7,6 @@ import io.github.ayfri.kore.website.components.common.BrandIconStyle
 import io.github.ayfri.kore.website.components.common.setDescription
 import io.github.ayfri.kore.website.components.common.setKeywords
 import io.github.ayfri.kore.website.components.features.*
-import io.github.ayfri.kore.website.components.index.CtaSection
 import io.github.ayfri.kore.website.components.layouts.PageLayout
 import io.github.ayfri.kore.website.components.mc.McUiStyle
 import io.github.ayfri.kore.website.utils.initMCFunctionHighlighting
@@ -35,12 +34,15 @@ fun FeaturesPage() {
 		)
 
 		Div({ classes(HomePageStyle.page) }) {
-			Div({ classes(HomePageStyle.content) }) {
-				FeaturesHero()
-				ShowcaseSection()
-				featureCategories.forEachIndexed { index, category -> CategorySection(category, index) }
-				LimitsSection()
-				CtaSection()
+			Div({ classes(FeatureSectionsStyle.layout) }) {
+				FeaturesNav()
+				Div {
+					FeaturesHeader()
+					ShowcaseSection()
+					featureCategories.forEach { CategorySection(it) }
+					LimitsSection()
+				FeaturesCta()
+				}
 			}
 		}
 	}
