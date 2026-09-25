@@ -23,9 +23,10 @@ import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLElement
 import kotlin.math.*
 
+/** An editor-like frame titled [title], usually a file name, around code or a file tree. */
 @Composable
-private fun Window(title: String, content: @Composable () -> Unit) {
-	Div({ classes(FeatureVisualsStyle.window) }) {
+fun Window(title: String, vararg extraClasses: String, content: @Composable () -> Unit) {
+	Div({ classes(FeatureVisualsStyle.window, *extraClasses) }) {
 		Div({ classes(FeatureVisualsStyle.windowBar) }) {
 			repeat(3) { Span({ classes(FeatureVisualsStyle.windowDot) }) }
 			Span(title, FeatureVisualsStyle.windowTitle)
@@ -294,97 +295,35 @@ fun FileTreeScene(open: (Int) -> Unit) {
 }
 
 @Composable
-fun LootTableScene() = CodeCompare(
-	"Loot.kt",
-	showcases.first().kotlin,
-	showcases.first().outputs.map { it.copy(path = it.path.removePrefix("data/arena/")) },
-)
+fun LootTableScene() = ShowcaseCompare("Loot.kt", showcases.first())
 
 @Composable
 fun RecipeScene() {
 	Div({ classes(FeatureVisualsStyle.stack) }) {
-		McCraftingTable(listOf(" G ", "GDG", " G "), mapOf('G' to "gold_ingot", 'D' to "diamond"), "trial_key")
-		CodeCompare(
-			"Recipes.kt",
-			"""
-				recipes {
-					craftingShaped("arena_key") {
-						pattern(" G ", "GDG", " G ")
-						keys {
-							"G" to Items.GOLD_INGOT
-							"D" to Items.DIAMOND
-						}
-						result(Items.TRIAL_KEY)
-					}
-				}
-			""".trimIndent(),
-			listOf(
-				ShowcaseFile(
-					"recipe/arena_key.json",
-					"json",
-					"""
-						{
-							"type": "minecraft:crafting_shaped",
-							"pattern": [
-								" G ",
-								"GDG",
-								" G "
-							],
-							"key": {
-								"G": "minecraft:gold_ingot",
-								"D": "minecraft:diamond"
-							},
-							"result": "minecraft:trial_key"
-						}
-					""".trimIndent(),
-				),
-			),
-		)
+		ArenaKeyRecipe()
+		ShowcaseCompare("Recipes.kt", recipeShowcase)
 	}
 }
+
+/** The crafting grid of [recipeShowcase]. */
+@Composable
+fun ArenaKeyRecipe() = McCraftingTable(listOf(" G ", "GDG", " G "), mapOf('G' to "gold_ingot", 'D' to "diamond"), "trial_key")
+
+@Composable
+private fun ShowcaseCompare(title: String, showcase: Showcase) =
+	CodeCompare(title, showcase.kotlin, showcase.outputs.map { it.copy(path = it.path.removePrefix("data/arena/")) })
 
 @Composable
 fun AdvancementScene() {
 	Div({ classes(FeatureVisualsStyle.stack) }) {
-		McToast("iron_sword", "Goal Reached!", "First Blood", FeatureVisualsStyle.toastPlacement)
-		CodeCompare(
-			"Advancements.kt",
-			"""
-				advancement("first_kill") {
-					display(Items.IRON_SWORD, "First Blood", "Win your first duel") {
-						frame = AdvancementFrameType.GOAL
-					}
-					criteria {
-						playerKilledEntity("kill_player")
-					}
-				}
-			""".trimIndent(),
-			listOf(
-				ShowcaseFile(
-					"advancement/first_kill.json",
-					"json",
-					"""
-						{
-							"display": {
-								"icon": {
-									"id": "minecraft:iron_sword"
-								},
-								"title": "First Blood",
-								"description": "Win your first duel",
-								"frame": "goal"
-							},
-							"criteria": {
-								"kill_player": {
-									"trigger": "minecraft:player_killed_entity"
-								}
-							}
-						}
-					""".trimIndent(),
-				),
-			),
-		)
+		FirstBloodToast(FeatureVisualsStyle.toastPlacement)
+		ShowcaseCompare("Advancements.kt", advancementShowcase)
 	}
 }
+
+/** The toast [advancementShowcase] pops when granted. */
+@Composable
+fun FirstBloodToast(vararg extraClasses: String) = McToast("iron_sword", "Goal Reached!", "First Blood", *extraClasses)
 
 // --- Worldgen ---
 

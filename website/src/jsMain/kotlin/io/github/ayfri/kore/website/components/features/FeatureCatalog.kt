@@ -149,6 +149,88 @@ val showcases = listOf(
 	),
 )
 
+val recipeShowcase = Showcase(
+	"Recipe",
+	"""
+		dataPack("arena") {
+			recipes {
+				craftingShaped("arena_key") {
+					pattern(" G ", "GDG", " G ")
+					keys {
+						"G" to Items.GOLD_INGOT
+						"D" to Items.DIAMOND
+					}
+					result(Items.TRIAL_KEY)
+				}
+			}
+		}
+	""".trimIndent(),
+	listOf(
+		ShowcaseFile(
+			"data/arena/recipe/arena_key.json",
+			"json",
+			"""
+				{
+					"type": "minecraft:crafting_shaped",
+					"pattern": [
+						" G ",
+						"GDG",
+						" G "
+					],
+					"key": {
+						"G": "minecraft:gold_ingot",
+						"D": "minecraft:diamond"
+					},
+					"result": "minecraft:trial_key"
+				}
+			""".trimIndent(),
+		),
+	),
+)
+
+val advancementShowcase = Showcase(
+	"Advancement",
+	"""
+		dataPack("arena") {
+			advancement("first_kill") {
+				display(
+					Items.IRON_SWORD,
+					"First Blood",
+					"Win your first duel",
+				) {
+					frame = AdvancementFrameType.GOAL
+				}
+				criteria {
+					playerKilledEntity("kill_player")
+				}
+			}
+		}
+	""".trimIndent(),
+	listOf(
+		ShowcaseFile(
+			"data/arena/advancement/first_kill.json",
+			"json",
+			"""
+				{
+					"display": {
+						"icon": {
+							"id": "minecraft:iron_sword"
+						},
+						"title": "First Blood",
+						"description": "Win your first duel",
+						"frame": "goal"
+					},
+					"criteria": {
+						"kill_player": {
+							"trigger": "minecraft:player_killed_entity"
+						}
+					}
+				}
+			""".trimIndent(),
+		),
+	),
+)
+
 val featureCategories = listOf(
 	FeatureCategory(
 		id = "commands",
