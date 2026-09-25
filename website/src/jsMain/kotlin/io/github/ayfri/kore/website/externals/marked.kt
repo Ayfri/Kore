@@ -4,7 +4,7 @@
 
 package io.github.ayfri.kore.website.externals
 
-external fun use(vararg options: MarkedOptions)
+external fun use(vararg extensions: MarkedExtension)
 
 external fun parse(markdown: String): String
 
@@ -18,22 +18,24 @@ external interface MarkedToken {
 	val type: String
 	val text: String
 
+	/** Target of a link or image token, absent for every other token type. */
+	var href: String?
+
 	/** Info string of a fenced code block, absent for every other token type. */
 	val lang: String?
 }
 
-external interface MarkedOptions {
-	var renderer: TextRenderer?
+external interface MarkedExtension {
+	var renderer: MarkedRenderer?
 }
 
-external interface Renderer<T> {
-	fun link(href: String?, title: String?, text: String): String
-	fun image(href: String?, title: String?, text: String): String
-	fun code(code: String, infoString: String, escaped: Boolean): String
-}
-
-open external class TextRenderer : Renderer<String> {
-	override fun link(href: String?, title: String?, text: String): String
-	override fun image(href: String?, title: String?, text: String): String
-	override fun code(code: String, infoString: String, escaped: Boolean): String
+/**
+ * Renderer overrides, read with `for...in`, so they must be own properties of a plain object (see `jsObject`), never class methods.
+ * An override returning `false` falls back to the default renderer.
+ */
+external interface MarkedRenderer {
+	/** Raw HTML found in the markdown, block or inline. */
+	var html: ((token: MarkedToken) -> String)?
+	var image: ((token: MarkedToken) -> Boolean)?
+	var link: ((token: MarkedToken) -> Boolean)?
 }

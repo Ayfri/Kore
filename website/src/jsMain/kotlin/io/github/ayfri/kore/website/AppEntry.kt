@@ -6,31 +6,38 @@ import com.varabyte.kobweb.core.App
 import com.varabyte.kobweb.core.KobwebApp
 import com.varabyte.kobweb.core.init.InitKobweb
 import com.varabyte.kobweb.core.init.InitKobwebContext
-import io.github.ayfri.kore.website.externals.MarkedOptions
-import io.github.ayfri.kore.website.externals.TextRenderer
+import io.github.ayfri.kore.website.externals.MarkedToken
 import io.github.ayfri.kore.website.externals.use
 import io.github.ayfri.kore.website.pages.PageNotFound
+import io.github.ayfri.kore.website.utils.jsObject
 import org.jetbrains.compose.web.css.Style
+
+private val lineBreakTag = Regex("""^<br\s*/?>$""", RegexOption.IGNORE_CASE)
+private val safeUrlSchemes = setOf("http", "https", "mailto")
+private val urlScheme = Regex("^([^:/?#]+):")
+
+/** Browsers ignore whitespace and control characters inside a scheme, so `java\tscript:` must be caught as `javascript:`. */
+private fun neutralizeUnsafeHref(token: MarkedToken): Boolean {
+	val scheme = urlScheme.find(token.href.orEmpty().filter { it > ' ' })?.groupValues[1]?.lowercase()
+	if (scheme != null && scheme !in safeUrlSchemes) token.href = "#"
+	return false
+}
 
 @App
 @Composable
 fun AppEntry(content: @Composable () -> Unit) {
-	// `marked` is a module-level singleton, so its renderer is registered once instead of on every recomposition.
+	// `marked` is a module-level singleton rendering changelogs straight into `innerHTML`, so raw HTML and script URLs are defused once here.
 	remember {
-		val textRenderer = object : TextRenderer() {
-			override fun link(href: String?, title: String?, text: String): String {
-				val titleAttribute = title?.let { " title=\"$it\"" }.orEmpty()
-				return """<a href="$href"$titleAttribute class="link">$text</a>"""
+		use(jsObject {
+			renderer = jsObject {
+				html = { token ->
+					val html = token.text.trim()
+					if (lineBreakTag.matches(html)) html
+					else token.text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;")
+				}
+				image = ::neutralizeUnsafeHref
+				link = ::neutralizeUnsafeHref
 			}
-
-			override fun code(code: String, infoString: String, escaped: Boolean): String {
-				val language = if (infoString.isEmpty()) "nohighlight" else "language-$infoString"
-				return """<pre><code class="$language line-numbers">$code</code></pre>"""
-			}
-		}
-
-		use(object : MarkedOptions {
-			override var renderer: TextRenderer? = textRenderer
 		})
 	}
 
