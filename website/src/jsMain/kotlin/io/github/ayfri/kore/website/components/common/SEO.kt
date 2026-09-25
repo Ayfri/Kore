@@ -59,9 +59,14 @@ fun setTwitterCreator(creator: String) {
 	metaName("twitter:site", creator)
 }
 
-fun setImage(url: String, alt: String) {
+/** Sets the social card to `/og/[card].png`, one of the 1200x630 PNGs rendered at build time by `OgImageRenderer`. */
+fun setImage(card: String, alt: String) {
+	val url = "$baseUrl/og/$card.png"
 	metaProperty("og:image", url)
 	metaProperty("og:image:alt", alt)
+	metaProperty("og:image:height", "630")
+	metaProperty("og:image:type", "image/png")
+	metaProperty("og:image:width", "1200")
 	metaName("twitter:image", url)
 	metaName("twitter:image:alt", alt)
 }

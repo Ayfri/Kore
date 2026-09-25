@@ -37,7 +37,7 @@ fun PageLayout(title: String, content: @Composable () -> Unit) {
 	setTwitterCard("summary_large_image")
 	setTwitterCreator("@Ayfri_")
 
-	setImage("$baseUrl/logo.png", "Kore logo")
+	setImage("default", "Kore, type-safe Minecraft datapacks written in Kotlin")
 	setSiteMetadata()
 
 	Header(GitHubService.latestRelease)

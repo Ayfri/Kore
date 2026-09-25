@@ -96,6 +96,7 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 		}) {
 			// Kept in the composition body so it runs after `PageLayout` applied the generic site description.
 			markdownData["description"]?.get(0)?.let(::setDescription)
+			setImage(context.route.path.removePrefix("/"), "${markdownData["nav-title"]?.get(0)} | Kore documentation")
 
 			Div({
 				classes(MarkdownLayoutStyle.breadcrumbRow)

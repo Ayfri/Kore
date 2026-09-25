@@ -217,6 +217,8 @@ kobweb {
 		val markdownDir = projectDir.resolve("src/jsMain/resources/markdown")
 		// Kobweb flattens a "public" subfolder of resources to the site root, so the generated dir must mirror that layout for llms.txt/sitemap.xml/etc. to end up at the site root.
 		val llmsResourcesDir = layout.buildDirectory.dir("generated/llms-resources/public").get().asFile
+		val ogFontsDir = layout.buildDirectory.dir("og-fonts").get().asFile
+		val minecraftVersion = minecraftVersion
 
 		process.set { markdownFiles ->
 			val docEntries = mutableListOf<DocEntry>()
@@ -391,6 +393,28 @@ kobweb {
 			llmsResourcesDir.resolve("sitemap.xml").writeText(sitemap)
 
 			println("Sitemap generated -> ${llmsResourcesDir.resolve("sitemap.xml").absolutePath}")
+
+			// Open Graph cards, `/og/<route>.png` per doc page and `/og/default.png` for the other pages.
+			val ogDir = llmsResourcesDir.resolve("og")
+			val ogRenderer = OgImageRenderer(ogFontsDir, projectDir.resolve("src/jsMain/resources/public/logo.png"))
+			ogRenderer.render(
+				ogDir.resolve("default.png"),
+				label = "Open-source Kotlin DSL",
+				title = "Type-safe Minecraft datapacks, written in Kotlin",
+				description = "Create datapacks without writing JSON or MCFunction by hand.",
+				footer = "${baseUrl.substringAfter("://")}  ·  Kore ${Project.VERSION} for Minecraft $minecraftVersion",
+			)
+			sortedEntries.parallelStream().forEach { entry ->
+				val route = entry.slugs.joinToString("/")
+				ogRenderer.render(
+					ogDir.resolve("$route.png"),
+					label = entry.slugs.dropLast(1).joinToString(" / ") { it.replace("-", " ") },
+					title = entry.navTitle,
+					description = entry.desc,
+					footer = "${baseUrl.substringAfter("://")}/$route",
+				)
+			}
+			println("Open Graph images generated -> ${ogDir.absolutePath}")
 
 			println("LLMs.txt generated -> ${llmsResourcesDir.absolutePath}")
 			projectLogger.info("markdown-sources.json written (${markdownSources.size} files)")
