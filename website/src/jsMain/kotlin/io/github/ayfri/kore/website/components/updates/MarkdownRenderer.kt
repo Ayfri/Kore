@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.website.components.updates
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import com.varabyte.kobweb.compose.css.*
 import io.github.ayfri.kore.website.CodeThemeStyle
 import io.github.ayfri.kore.website.GlobalStyle
@@ -48,9 +47,12 @@ private fun parseReleaseBlocks(markdown: String): List<ReleaseBlock> {
 	return blocks
 }
 
+/** Parsed changelogs outlive their composable, so re-mounting a release after a filter change skips the `marked` pass. */
+private val parsedBlocks = HashMap<String, List<ReleaseBlock>>()
+
 @Composable
 fun MarkdownRenderer(markdown: String, id: String) {
-	val blocks = remember(markdown) {
+	val blocks = parsedBlocks.getOrPut(markdown) {
 		runCatching { parseReleaseBlocks(markdown) }
 			.onFailure { console.error("Error rendering markdown:", it.message) }
 			.getOrDefault(listOf(ReleaseBlock.Markup("Failed to render markdown content.")))
@@ -80,42 +82,42 @@ fun MarkdownRenderer(markdown: String, id: String) {
 
 object MarkdownRendererStyle : StyleSheet() {
 	val container by style {
-		backgroundColor(GlobalStyle.backgroundColor.alpha(0.5))
-		borderRadius(GlobalStyle.roundingButton)
 		color(GlobalStyle.textColor)
-		fontSize(1.cssRem)
-		lineHeight(1.6.number)
+		fontSize(0.95.cssRem)
+		lineHeight(1.65.number)
 		maxWidth(100.percent)
 		overflowX(Overflow.Auto)
-		padding(0.5.cssRem)
-		boxShadow(0.px, 2.px, 6.px, 0.px, rgba(0, 0, 0, 0.1))
 
-		// Add min-height to ensure content appears
-		minHeight(2.cssRem)
-
-		"h1, h2, h3, h4, h5, h6" style {
-			marginY(0.75.cssRem)
+		// Nested selectors are prefixed as one string, so a bare comma list would leak every part after the first site-wide.
+		":is(h1, h2, h3, h4, h5, h6)" style {
 			fontWeight(600)
+			marginBottom(0.5.cssRem)
+			marginTop(1.4.cssRem)
 		}
 
 		"h1" style {
-			fontSize(1.8.cssRem)
-			borderBottom(1.px, LineStyle.Solid, GlobalStyle.borderColor)
-			paddingY(0.5.cssRem)
+			fontSize(1.35.cssRem)
 		}
 
 		"h2" style {
-			fontSize(1.5.cssRem)
-			borderBottom(1.px, LineStyle.Solid, GlobalStyle.borderColor.alpha(0.5))
-			paddingBottom(0.3.cssRem)
+			fontSize(1.15.cssRem)
 		}
 
 		"h3" style {
-			fontSize(1.3.cssRem)
+			fontSize(1.02.cssRem)
+		}
+
+		":is(h4, h5, h6)" style {
+			color(Color("var(--landing-muted)"))
+			fontSize(0.95.cssRem)
 		}
 
 		"p" style {
-			marginY(0.8.cssRem)
+			marginY(0.7.cssRem)
+		}
+
+		"> div:first-child > :first-child" style {
+			marginTop(0.6.cssRem)
 		}
 
 		"a" style {
@@ -136,27 +138,33 @@ object MarkdownRendererStyle : StyleSheet() {
 			padding(1.cssRem)
 			overflowX(Overflow.Auto)
 			border(1.px, LineStyle.Solid, GlobalStyle.tertiaryBackgroundColor.alpha(0.3))
+			fontSize(0.78.cssRem)
 		}
 
+		/** Sized on inline code only: a block's `code` must inherit the `pre` size, which the hover band and line numbers are measured on. */
 		"code" style {
 			fontFamily(*CodeThemeStyle.fonts)
-			fontSize(0.875.cssRem)
 		}
 
-		"code:not([class*='language-'])" style {
+		":not(pre) > code" style {
 			backgroundColor(GlobalStyle.secondaryBackgroundColor)
 			borderRadius(GlobalStyle.roundingButton)
-			padding(0.2.cssRem, 0.4.cssRem)
 			color(GlobalStyle.linkColorHover)
+			fontSize(0.85.cssRem)
+			padding(0.2.cssRem, 0.4.cssRem)
 		}
 
-		"ul, ol" style {
-			marginY(1.cssRem)
-			paddingLeft(2.cssRem)
+		":is(ul, ol)" style {
+			marginY(0.7.cssRem)
+			paddingLeft(1.4.cssRem)
 		}
 
 		"li" style {
-			marginY(0.4.cssRem)
+			marginY(0.35.cssRem)
+		}
+
+		"li::marker" style {
+			color(Color("var(--landing-accent)"))
 		}
 
 		"blockquote" style {
@@ -191,7 +199,7 @@ object MarkdownRendererStyle : StyleSheet() {
 			overflow(Overflow.Hidden)
 		}
 
-		"th, td" style {
+		":is(th, td)" style {
 			border(1.px, LineStyle.Solid, GlobalStyle.borderColor)
 			padding(0.6.cssRem)
 			textAlign(TextAlign.Left)
@@ -207,12 +215,7 @@ object MarkdownRendererStyle : StyleSheet() {
 		}
 
 		mdMax(self) {
-			fontSize(0.95.cssRem)
-			padding(1.cssRem)
-		}
-
-		smMax(self) {
-			padding(0.8.cssRem)
+			fontSize(0.92.cssRem)
 		}
 	}
 }

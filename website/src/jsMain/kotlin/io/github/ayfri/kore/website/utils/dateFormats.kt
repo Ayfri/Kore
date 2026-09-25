@@ -9,10 +9,15 @@ private const val MILLISECONDS_PER_DAY = 24.0 * 60 * 60 * 1000
 
 private val dayMonthYear = Intl.DateTimeFormat("en-GB", dateTimeFormatOptions(day = "2-digit", month = "2-digit", year = "numeric"))
 
+private val dayShortMonthYear = Intl.DateTimeFormat("en-GB", dateTimeFormatOptions(day = "numeric", month = "short", year = "numeric"))
+
 private val relativeTime = Intl.RelativeTimeFormat("en", relativeTimeFormatOptions(numeric = "auto"))
 
 /** Formats an ISO date as `dd/mm/yyyy`. */
 fun formatDate(isoDateString: String) = dayMonthYear.format(Date(isoDateString))
+
+/** Formats an ISO date as `7 Sept 2026`. */
+fun formatShortDate(isoDateString: String) = dayShortMonthYear.format(Date(isoDateString))
 
 /** Formats how long ago an ISO date is, e.g. `today`, `yesterday`, `5 days ago`, `last month`, `2 years ago`. */
 fun formatRelativeDate(isoDateString: String): String {

@@ -5,15 +5,12 @@ import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideFunnel
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideRotateCcw
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideSearch
-import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.attributes.InputType
-import org.jetbrains.compose.web.attributes.name
 import org.jetbrains.compose.web.attributes.placeholder
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
-import org.jetbrains.compose.web.css.AlignSelf
 import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.dom.*
 
@@ -30,11 +27,13 @@ data class ReleaseFilterOptions(
 ) {
 	/** Lowercased once per query instead of once per release tested. */
 	val lowercasedSearchQuery by lazy { searchQuery.lowercase() }
+
+	val activeCount get() = listOf(showPreReleases, showSnapshots, showReleaseCandidates).count { it } + selectedMinecraftVersions.size
 }
 
-enum class SortOrder(val label: String, val inputId: String) {
-	NEWEST_FIRST("Newest First", "sort-newest"),
-	OLDEST_FIRST("Oldest First", "sort-oldest"),
+enum class SortOrder(val label: String) {
+	NEWEST_FIRST("Newest"),
+	OLDEST_FIRST("Oldest"),
 }
 
 /** Version buckets and badge counts derived from the release list, built once per list instead of per recomposition. */
@@ -62,74 +61,22 @@ private class ReleaseFacets(releases: List<GitHubRelease>) {
 }
 
 @Composable
-private fun FilterGroup(label: String, vararg extraClasses: String, content: @Composable () -> Unit) {
-	Div({
-		classes(ReleaseFiltersStyle.filterGroup, *extraClasses)
-	}) {
-		Div({
-			classes(ReleaseFiltersStyle.filterLabel)
-		}) {
-			Text(label)
-		}
-
+private fun FilterGroup(label: String, content: @Composable () -> Unit) {
+	Div({ classes(ReleaseFiltersStyle.group) }) {
+		Span(label, ReleaseFiltersStyle.groupLabel)
 		content()
 	}
 }
 
 @Composable
-private fun FilterCheckbox(id: String, label: String, count: Int, checked: Boolean, onChange: (Boolean) -> Unit) {
-	Div({
-		classes(ReleaseFiltersStyle.checkboxContainer)
-	}) {
+private fun ChannelSwitch(label: String, count: Int, checked: Boolean, onChange: (Boolean) -> Unit) {
+	Label(attrs = { classes(ReleaseFiltersStyle.switchRow) }) {
+		Span(label)
+		Span("$count", ReleaseFiltersStyle.count)
 		Input(InputType.Checkbox) {
-			id(id)
+			classes(ReleaseFiltersStyle.switch)
 			checked(checked)
 			onChange { onChange(it.value) }
-		}
-
-		Label(id, {
-			classes(ReleaseFiltersStyle.checkboxLabel)
-		}) {
-			Text(label)
-			Span({
-				classes(ReleaseFiltersStyle.badge)
-			}) {
-				Text("$count")
-			}
-		}
-	}
-}
-
-@Composable
-private fun SortRadio(order: SortOrder, checked: Boolean, onSelect: () -> Unit) {
-	Div({
-		classes(ReleaseFiltersStyle.radioContainer)
-	}) {
-		Input(InputType.Radio) {
-			id(order.inputId)
-			name("sort-order")
-			checked(checked)
-			onChange { onSelect() }
-		}
-
-		Label(order.inputId) {
-			Text(order.label)
-		}
-	}
-}
-
-@Composable
-private fun VersionChip(version: String, count: Int, selected: Boolean, onToggle: () -> Unit) {
-	Div({
-		classes(ReleaseFiltersStyle.versionChip)
-		if (selected) classes(ReleaseFiltersStyle.versionChipSelected)
-		onClick { onToggle() }
-	}) {
-		Text(version)
-		Span({
-			classes(ReleaseFiltersStyle.versionChipCount)
-		}) {
-			Text("($count)")
 		}
 	}
 }
@@ -145,122 +92,95 @@ fun ReleaseFilters(
 	var expanded by remember { mutableStateOf(false) }
 	val facets = remember(allReleases) { ReleaseFacets(allReleases) }
 
-	Div({
+	Aside({
 		id("filters")
-		classes(ReleaseFiltersStyle.container)
+		classes(ReleaseFiltersStyle.sidebar)
 	}) {
-		Div({
-			classes(ReleaseFiltersStyle.searchBar)
-		}) {
-			Div({
-				classes(ReleaseFiltersStyle.searchInputContainer)
-			}) {
-				LucideSearch()
-				Input(InputType.Text) {
-					classes(ReleaseFiltersStyle.searchInput)
-					id("release-search")
-					placeholder("Search by name, tag, version, or content...")
-					value(filterOptions.searchQuery)
-					onInput { onFilterChange(filterOptions.copy(searchQuery = it.value)) }
-				}
-			}
-
-			Button({
-				classes(ReleaseFiltersStyle.filterToggle)
-				attr("aria-expanded", "$expanded")
-				attr("aria-controls", "filters-panel")
-				onClick { expanded = !expanded }
-			}) {
-				LucideFunnel()
-				Text(if (expanded) "Hide Filters" else "Show Filters")
-			}
-
-			if (filterOptions != ReleaseFilterOptions()) {
-				Button({
-					classes(ReleaseFiltersStyle.resetButton)
-					onClick { onFilterChange(ReleaseFilterOptions()) }
-				}) {
-					LucideRotateCcw()
-					Text("Reset Filters")
-				}
+		Div({ classes(ReleaseFiltersStyle.search) }) {
+			LucideSearch()
+			Input(InputType.Search) {
+				id("release-search")
+				placeholder("Search releases...")
+				value(filterOptions.searchQuery)
+				onInput { onFilterChange(filterOptions.copy(searchQuery = it.value)) }
 			}
 		}
 
-		// The panel is a single-row grid animating between 0fr and 1fr, so the height follows the real content.
+		Button({
+			classes(ReleaseFiltersStyle.panelToggle)
+			attr("aria-expanded", "$expanded")
+			attr("aria-controls", "filters-panel")
+			onClick { expanded = !expanded }
+		}) {
+			LucideFunnel()
+			Text(if (expanded) "Hide filters" else "Filters")
+			filterOptions.activeCount.takeIf { it > 0 }?.let { Span("$it", ReleaseFiltersStyle.count) }
+		}
+
+		// A single-row grid animating between 0fr and 1fr, so the height follows the content. Only collapses under lg.
 		Div({
 			id("filters-panel")
-			classes(ReleaseFiltersStyle.filtersPanel)
-			if (!expanded) {
-				classes(ReleaseFiltersStyle.filtersPanelCollapsed)
-				attr("inert", "")
-			}
+			classes(ReleaseFiltersStyle.panel)
+			if (!expanded) classes(ReleaseFiltersStyle.panelCollapsed)
 		}) {
-			Div({
-				classes(ReleaseFiltersStyle.filters)
-			}) {
-				FilterGroup("Release Type") {
-					Div({
-						classes(ReleaseFiltersStyle.checkboxGroup)
-					}) {
-						FilterCheckbox(
-							id = "show-release-candidates",
-							label = "Show Release Candidates",
-							count = facets.releaseCandidates,
-							checked = filterOptions.showReleaseCandidates,
-						) { onFilterChange(filterOptions.copy(showReleaseCandidates = it)) }
-
-						FilterCheckbox(
-							id = "show-prereleases",
-							label = "Show Pre-releases",
-							count = facets.preReleases,
-							checked = filterOptions.showPreReleases,
-						) { onFilterChange(filterOptions.copy(showPreReleases = it)) }
-
-						FilterCheckbox(
-							id = "show-snapshots",
-							label = "Show Snapshots",
-							count = facets.snapshots,
-							checked = filterOptions.showSnapshots,
-						) { onFilterChange(filterOptions.copy(showSnapshots = it)) }
+			Div({ classes(ReleaseFiltersStyle.panelContent) }) {
+				FilterGroup("Channels") {
+					ChannelSwitch("Release candidates", facets.releaseCandidates, filterOptions.showReleaseCandidates) {
+						onFilterChange(filterOptions.copy(showReleaseCandidates = it))
+					}
+					ChannelSwitch("Pre-releases", facets.preReleases, filterOptions.showPreReleases) {
+						onFilterChange(filterOptions.copy(showPreReleases = it))
+					}
+					ChannelSwitch("Snapshots", facets.snapshots, filterOptions.showSnapshots) {
+						onFilterChange(filterOptions.copy(showSnapshots = it))
 					}
 				}
 
-				FilterGroup("Sort Order") {
-					Div({
-						classes(ReleaseFiltersStyle.radioGroup)
-					}) {
+				FilterGroup("Sort") {
+					Div({ classes(ReleaseFiltersStyle.segmented) }) {
 						SortOrder.entries.forEach { order ->
-							SortRadio(order, filterOptions.sortOrder == order) {
-								onFilterChange(filterOptions.copy(sortOrder = order))
-							}
+							Button({
+								classes(ReleaseFiltersStyle.segment)
+								if (filterOptions.sortOrder == order) classes(ReleaseFiltersStyle.segmentActive)
+								attr("aria-pressed", "${filterOptions.sortOrder == order}")
+								onClick { onFilterChange(filterOptions.copy(sortOrder = order)) }
+							}) { Text(order.label) }
 						}
 					}
 				}
 
 				if (facets.versionGroups.isNotEmpty()) {
-					FilterGroup("Minecraft Versions", ReleaseFiltersStyle.versionsFilter) {
-						Div({
-							classes(ReleaseFiltersStyle.versionsList)
-						}) {
-							facets.versionGroups.forEach { (mainVersion, versions) ->
-								Div({
-									classes(ReleaseFiltersStyle.versionsRow)
-								}) {
-									versions.forEach { version ->
-										val selected = version in filterOptions.selectedMinecraftVersions
-
-										VersionChip(version, facets.countOf(version, mainVersion), selected) {
+					FilterGroup("Minecraft") {
+						facets.versionGroups.forEach { (mainVersion, versions) ->
+							Div({ classes(ReleaseFiltersStyle.versionRow) }) {
+								versions.forEach { version ->
+									val selected = version in filterOptions.selectedMinecraftVersions
+									Button({
+										classes(ReleaseFiltersStyle.versionChip)
+										if (version == mainVersion) classes(ReleaseFiltersStyle.versionChipMain)
+										if (selected) classes(ReleaseFiltersStyle.versionChipSelected)
+										attr("aria-pressed", "$selected")
+										onClick {
 											val current = filterOptions.selectedMinecraftVersions
-											onFilterChange(
-												filterOptions.copy(
-													selectedMinecraftVersions = if (selected) current - version else current + version
-												)
-											)
+											onFilterChange(filterOptions.copy(selectedMinecraftVersions = if (selected) current - version else current + version))
 										}
+									}) {
+										Text(version)
+										Span("${facets.countOf(version, mainVersion)}", ReleaseFiltersStyle.versionChipCount)
 									}
 								}
 							}
 						}
+					}
+				}
+
+				if (filterOptions != ReleaseFilterOptions()) {
+					Button({
+						classes(ReleaseFiltersStyle.reset)
+						onClick { onFilterChange(ReleaseFilterOptions()) }
+					}) {
+						LucideRotateCcw()
+						Text("Reset filters")
 					}
 				}
 			}
@@ -269,325 +189,309 @@ fun ReleaseFilters(
 }
 
 object ReleaseFiltersStyle : StyleSheet() {
-	val container by style {
-		backgroundColor(GlobalStyle.secondaryBackgroundColor)
-		borderRadius(GlobalStyle.roundingButton)
-		boxShadow(0.px, 2.px, 6.px, 0.px, rgba(0, 0, 0, 0.1))
+	private const val MONO = "JetBrains Mono"
+
+	/** Sticky next to the timeline on large screens, a regular block above it under lg. */
+	val sidebar by style {
+		property("align-self", "start")
+		property("background", "linear-gradient(180deg, rgba(8, 182, 214, 0.09), rgba(8, 182, 214, 0.02) 45%), #1a2330")
+		border(1.px, LineStyle.Solid, Color("rgba(151, 176, 202, 0.24)"))
+		boxShadow(0.px, 12.px, 32.px, (-16).px, rgba(0, 0, 0, 0.6))
+		borderRadius(1.cssRem)
+		boxSizing(BoxSizing.BorderBox)
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
-		marginBottom(1.6.cssRem)
-		padding(1.3.cssRem)
-		scrollMarginTop(6.cssRem)
-		width(100.percent)
+		gap(1.1.cssRem)
+		property("max-height", "calc(100vh - 7rem)")
+		overflowY(Overflow.Auto)
+		padding(1.1.cssRem)
+		position(Position.Sticky)
+		property("scrollbar-width", "thin")
+		top(6.cssRem)
 
-		mdMax(self) {
-			padding(1.1.cssRem)
-			gap(0.9.cssRem)
-		}
-
-		smMax(self) {
-			padding(0.95.cssRem)
-			gap(0.75.cssRem)
-		}
-	}
-
-	val searchBar by style {
-		alignItems(AlignItems.Center)
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Row)
-		flexWrap(FlexWrap.Wrap)
-		gap(1.cssRem)
-		width(100.percent)
-
-		mdMax(self) {
-			flexDirection(FlexDirection.Column)
-			alignItems(AlignItems.Stretch)
+		lgMax(self) {
 			gap(0.8.cssRem)
+			property("max-height", "none")
+			overflowY(Overflow.Visible)
+			position(Position.Static)
 		}
 	}
 
-	val searchInputContainer by style {
+	val search by style {
 		alignItems(AlignItems.Center)
-		backgroundColor(GlobalStyle.tertiaryBackgroundColor)
-		borderRadius(GlobalStyle.roundingButton)
+		backgroundColor(rgba(255, 255, 255, 0.05))
+		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		borderRadius(0.7.cssRem)
 		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Row)
-		flexGrow(1)
-		gap(0.5.cssRem)
+		gap(0.55.cssRem)
 		padding(0.px, 0.8.cssRem)
-		transition(0.2.s, "background-color", "box-shadow")
+		transition(0.2.s, "border-color", "box-shadow")
 
 		"svg" style {
-			color(GlobalStyle.altTextColor)
+			color(Color("var(--landing-muted)"))
 			flexShrink(0)
-			fontSize(1.35.cssRem)
+			fontSize(1.05.cssRem)
 		}
 
-		hover(self) style {
-			backgroundColor(rgba(255, 255, 255, 0.08))
+		"input" style {
+			backgroundColor(Color.transparent)
+			border(0.px)
+			color(Color("var(--landing-text)"))
+			fontSize(0.92.cssRem)
+			height(2.5.cssRem)
+			minWidth(0.px)
+			outlineWidth(0.px)
+			width(100.percent)
 		}
 
-		self + focus style {
-			boxShadow(0.px, 0.px, 0.px, 2.px, GlobalStyle.buttonBackgroundColor.alpha(0.5))
+		"input::placeholder" style {
+			color(Color("var(--landing-muted)"))
 		}
-	}
 
-	val searchInput by style {
-		backgroundColor(Color.transparent)
-		border(0.px)
-		color(GlobalStyle.textColor)
-		flexGrow(1)
-		fontSize(1.cssRem)
-		height(2.5.cssRem)
-		outlineWidth(0.px)
-		width(100.percent)
-
-		self + placeholder style {
-			color(GlobalStyle.altTextColor)
+		self + ":focus-within" style {
+			borderColor(Color("rgba(8, 182, 214, 0.6)"))
+			boxShadow(0.px, 0.px, 0.px, 3.px, rgba(8, 182, 214, 0.15))
 		}
 	}
 
-	@OptIn(ExperimentalComposeWebApi::class)
-	val filterToggle by style {
+	val panelToggle by style {
 		alignItems(AlignItems.Center)
-		backgroundColor(GlobalStyle.buttonBackgroundColor)
-		border(0.px)
-		borderRadius(GlobalStyle.roundingButton)
-		color(GlobalStyle.textColor)
+		backgroundColor(rgba(255, 255, 255, 0.05))
+		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		borderRadius(0.7.cssRem)
+		color(Color("var(--landing-text)"))
 		cursor(Cursor.Pointer)
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Row)
+		display(DisplayStyle.None)
 		fontSize(0.9.cssRem)
 		fontWeight(600)
 		gap(0.5.cssRem)
-		padding(0.6.cssRem, 1.2.cssRem)
-		transition(0.2.s, "background-color", "transform", "box-shadow")
-		whiteSpace(WhiteSpace.NoWrap)
-
-		hover(self) style {
-			backgroundColor(GlobalStyle.buttonBackgroundColorHover)
-			transform { translateY((-1).px) }
-			boxShadow(0.px, 2.px, 6.px, 0.px, rgba(0, 0, 0, 0.2))
-		}
+		justifyContent(JustifyContent.Center)
+		padding(0.6.cssRem, 1.cssRem)
 
 		"svg" style {
-			flexShrink(0)
-			fontSize(1.1.cssRem)
+			fontSize(1.cssRem)
 		}
 
-		mdMax(self) {
-			alignSelf(AlignSelf.Stretch)
-			justifyContent(JustifyContent.Center)
+		lgMax(self) {
+			display(DisplayStyle.Flex)
 		}
 	}
 
-	@OptIn(ExperimentalComposeWebApi::class)
-	val resetButton by style {
-		alignItems(AlignItems.Center)
-		backgroundColor(rgba(200, 80, 80, 0.2))
-		border(0.px)
-		borderRadius(GlobalStyle.roundingButton)
-		color(rgb(230, 120, 120))
-		cursor(Cursor.Pointer)
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Row)
-		fontSize(0.9.cssRem)
-		fontWeight(600)
-		gap(0.5.cssRem)
-		justifySelf(JustifySelf.Center)
-		padding(0.6.cssRem, 1.2.cssRem)
-		transition(0.2.s, "background-color", "transform", "box-shadow")
-		whiteSpace(WhiteSpace.NoWrap)
-
-		hover(self) style {
-			backgroundColor(rgba(200, 80, 80, 0.3))
-			transform { translateY((-1).px) }
-			boxShadow(0.px, 2.px, 4.px, 0.px, rgba(0, 0, 0, 0.1))
-		}
-
-		"svg" style {
-			flexShrink(0)
-			fontSize(1.1.cssRem)
-		}
-
-		mdMax(self) {
-			alignSelf(AlignSelf.Stretch)
-			justifyContent(JustifyContent.Center)
-		}
-	}
-
-	val filtersPanel by style {
+	val panel by style {
 		display(DisplayStyle.Grid)
 		gridTemplateRows { size(1.fr) }
-		opacity(1)
-		transition(0.22.s, "grid-template-rows", "opacity")
+		transition(0.22.s, "grid-template-rows", "opacity", "visibility")
 	}
 
-	val filtersPanelCollapsed by style {
-		gridTemplateRows { size(0.fr) }
-		opacity(0)
+	val panelCollapsed by style {
+		lgMax(self) {
+			gridTemplateRows { size(0.fr) }
+			opacity(0)
+			property("visibility", "hidden")
+		}
 	}
 
-	val filters by style {
-		display(DisplayStyle.Grid)
-		gap(1.5.cssRem)
-		gridTemplateColumns { repeat(3) { size(1.fr) } }
+	val panelContent by style {
+		display(DisplayStyle.Flex)
+		flexDirection(FlexDirection.Column)
+		gap(1.1.cssRem)
 		minHeight(0.px)
 		overflow(Overflow.Hidden)
-		paddingTop(1.2.cssRem)
 
-		mdMax(self) {
-			gridTemplateColumns { repeat(2) { size(1.fr) } }
-			gap(1.2.cssRem)
+		lgMax(self) {
+			display(DisplayStyle.Grid)
+			gap(1.5.cssRem)
+			gridTemplateColumns("repeat(2, minmax(0, 1fr))")
+			paddingTop(0.4.cssRem)
 		}
 
 		smMax(self) {
-			gridTemplateColumns { size(1.fr) }
-			gap(1.cssRem)
-			paddingTop(1.cssRem)
+			gridTemplateColumns("minmax(0, 1fr)")
 		}
 	}
 
-	@OptIn(ExperimentalComposeWebApi::class)
-	val filterGroup by style {
+	val group by style {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
-		gap(0.8.cssRem)
-		backgroundColor(GlobalStyle.tertiaryBackgroundColor.alpha(0.3))
-		borderRadius(GlobalStyle.roundingButton)
-		padding(1.cssRem)
-		transition(0.2.s, "background-color", "transform", "box-shadow")
+		gap(0.45.cssRem)
 
-		hover(self) style {
-			backgroundColor(GlobalStyle.tertiaryBackgroundColor.alpha(0.4))
-			transform { translateY((-2).px) }
-			boxShadow(0.px, 3.px, 8.px, 0.px, rgba(0, 0, 0, 0.15))
-		}
-
-		mdMax(self) {
-			padding(0.8.cssRem)
+		lgMin(self + ":not(:first-child)") {
+			borderTop(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+			paddingTop(1.1.cssRem)
 		}
 	}
 
-	val filterLabel by style {
-		color(GlobalStyle.altTextColor)
-		fontSize(0.9.cssRem)
-		fontWeight(600)
-		textTransform(TextTransform.Uppercase)
+	val groupLabel by style {
+		color(Color("var(--landing-muted)"))
+		fontFamily(MONO, "monospace")
+		fontSize(0.72.cssRem)
+		letterSpacing(1.5.px)
 		marginBottom(0.2.cssRem)
+		textTransform(TextTransform.Uppercase)
 	}
 
-	val checkboxGroup by style {
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Column)
-		gap(0.8.cssRem)
-	}
-
-	val checkboxContainer by style {
+	val switchRow by style {
 		alignItems(AlignItems.Center)
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Row)
-		gap(0.5.cssRem)
-	}
-
-	val checkboxLabel by style {
-		cursor(Cursor.Pointer)
-		fontSize(0.95.cssRem)
-		display(DisplayStyle.Flex)
-		alignItems(AlignItems.Center)
-		gap(0.5.cssRem)
-	}
-
-	val badge by style {
-		backgroundColor(GlobalStyle.tertiaryBackgroundColor)
-		borderRadius(16.px)
-		color(GlobalStyle.textColor)
-		fontSize(0.75.cssRem)
-		fontWeight(700)
-		lineHeight(1.0.number)
-		minWidth(1.5.cssRem)
-		padding(0.25.cssRem, 0.5.cssRem)
-		textAlign(TextAlign.Center)
-	}
-
-	val radioGroup by style {
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Column)
-		gap(0.8.cssRem)
-	}
-
-	val radioContainer by style {
-		alignItems(AlignItems.Center)
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Row)
-		gap(0.5.cssRem)
-
-		"label" style {
-			cursor(Cursor.Pointer)
-			fontSize(0.95.cssRem)
-		}
-	}
-
-	val versionsFilter by style {
-		gridColumn("span 3")
-
-		mdMax(self) {
-			gridColumn("span 2")
-		}
-
-		smMax(self) {
-			gridColumn("span 1")
-		}
-	}
-
-	val versionsList by style {
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Column)
-		gap(0.8.cssRem)
-	}
-
-	val versionsRow by style {
-		display(DisplayStyle.Flex)
-		flexWrap(FlexWrap.Wrap)
-		gap(0.6.cssRem)
-	}
-
-	@OptIn(ExperimentalComposeWebApi::class)
-	val versionChip by style {
-		alignItems(AlignItems.Center)
-		backgroundColor(rgba(80, 80, 80, 0.3))
-		borderRadius(20.px)
-		color(GlobalStyle.altTextColor)
+		borderRadius(0.5.cssRem)
 		cursor(Cursor.Pointer)
 		display(DisplayStyle.Flex)
 		fontSize(0.9.cssRem)
-		fontWeight(500)
-		justifyContent(JustifyContent.Center)
-		padding(0.4.cssRem, 0.8.cssRem)
-		transition(0.2.s, "background-color", "color", "transform", "box-shadow")
+		gap(0.5.cssRem)
+		padding(0.35.cssRem, 0.4.cssRem)
+		transition(0.2.s, "background-color")
 		userSelect(UserSelect.None)
 
 		hover(self) style {
-			backgroundColor(rgba(100, 100, 100, 0.4))
-			transform { translateY((-1).px) }
-			boxShadow(0.px, 2.px, 4.px, 0.px, rgba(0, 0, 0, 0.2))
+			backgroundColor(rgba(8, 182, 214, 0.07))
+		}
+	}
+
+	val count by style {
+		color(Color("var(--landing-muted)"))
+		fontFamily(MONO, "monospace")
+		fontSize(0.72.cssRem)
+		marginRight(autoLength)
+	}
+
+	@OptIn(ExperimentalComposeWebApi::class)
+	val switch by style {
+		property("appearance", "none")
+		backgroundColor(Color("var(--landing-border)"))
+		borderRadius(999.px)
+		cursor(Cursor.Pointer)
+		flexShrink(0)
+		height(1.1.cssRem)
+		margin(0.px)
+		position(Position.Relative)
+		transition(0.2.s, "background-color")
+		width(2.cssRem)
+
+		self + before style {
+			backgroundColor(Color("var(--landing-text)"))
+			borderRadius(50.percent)
+			property("content", "''")
+			height(0.8.cssRem)
+			left(0.15.cssRem)
+			position(Position.Absolute)
+			top(0.15.cssRem)
+			transition(0.2.s, "transform")
+			width(0.8.cssRem)
+		}
+
+		self + checked style {
+			backgroundColor(Color("var(--landing-accent)"))
+		}
+
+		(self + checked + before) style {
+			transform { translateX(0.9.cssRem) }
+		}
+
+		self + focusVisible style {
+			outline("2px solid var(--landing-accent-strong)")
+			property("outline-offset", "2px")
+		}
+	}
+
+	val segmented by style {
+		backgroundColor(rgba(255, 255, 255, 0.05))
+		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		borderRadius(999.px)
+		display(DisplayStyle.Grid)
+		gap(0.25.cssRem)
+		gridTemplateColumns("repeat(2, minmax(0, 1fr))")
+		padding(0.25.cssRem)
+	}
+
+	val segment by style {
+		backgroundColor(Color.transparent)
+		border(0.px)
+		borderRadius(999.px)
+		color(Color("var(--landing-muted)"))
+		cursor(Cursor.Pointer)
+		fontSize(0.85.cssRem)
+		padding(0.35.cssRem, 0.8.cssRem)
+		transition(0.2.s, "background-color", "color", "scale")
+
+		hover(self) style {
+			color(Color("var(--landing-text)"))
+		}
+
+		self + active style {
+			property("scale", "0.95")
+		}
+	}
+
+	val segmentActive by style {
+		backgroundColor(rgba(8, 182, 214, 0.22))
+		color(Color("var(--landing-text)"))
+	}
+
+	val versionRow by style {
+		display(DisplayStyle.Flex)
+		flexWrap(FlexWrap.Wrap)
+		gap(0.35.cssRem)
+	}
+
+	val versionChip by style {
+		alignItems(AlignItems.Center)
+		backgroundColor(Color.transparent)
+		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		borderRadius(0.45.cssRem)
+		color(Color("var(--landing-muted)"))
+		cursor(Cursor.Pointer)
+		property("display", "inline-flex")
+		fontFamily(MONO, "monospace")
+		fontSize(0.76.cssRem)
+		gap(0.35.cssRem)
+		padding(0.2.cssRem, 0.5.cssRem)
+		transition(0.2.s, "background-color", "border-color", "color", "scale")
+
+		hover(self) style {
+			backgroundColor(rgba(8, 182, 214, 0.08))
+			color(Color("var(--landing-text)"))
+		}
+
+		self + active style {
+			property("scale", "0.94")
+		}
+	}
+
+	val versionChipMain by style {
+		backgroundColor(rgba(255, 255, 255, 0.05))
+		color(Color("var(--landing-text)"))
+		fontWeight(600)
+	}
+
+	val versionChipSelected by style {
+		backgroundColor(rgba(8, 182, 214, 0.2))
+		borderColor(Color("rgba(8, 182, 214, 0.7)"))
+		color(Color("var(--landing-text)"))
+
+		hover(self) style {
+			backgroundColor(rgba(8, 182, 214, 0.28))
 		}
 	}
 
 	val versionChipCount by style {
-		color(GlobalStyle.altTextColor)
-		fontSize(0.7.cssRem)
-		fontWeight(500)
-		marginLeft(0.35.cssRem)
+		opacity(0.6)
+		fontSize(0.68.cssRem)
 	}
 
-	val versionChipSelected by style {
-		backgroundColor(GlobalStyle.buttonBackgroundColor)
-		color(GlobalStyle.textColor)
-		fontWeight(600)
+	val reset by style {
+		alignItems(AlignItems.Center)
+		property("align-self", "flex-start")
+		backgroundColor(Color.transparent)
+		border(0.px)
+		color(Color("var(--landing-muted)"))
+		cursor(Cursor.Pointer)
+		display(DisplayStyle.Flex)
+		fontSize(0.85.cssRem)
+		gap(0.4.cssRem)
+		padding(0.px)
+		transition(0.2.s, "color")
 
 		hover(self) style {
-			backgroundColor(GlobalStyle.buttonBackgroundColorHover)
+			color(Color("var(--landing-text)"))
 		}
 	}
 }

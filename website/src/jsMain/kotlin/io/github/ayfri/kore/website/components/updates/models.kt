@@ -26,7 +26,7 @@ data class GitHubRelease(
 	val koreVersion by lazy { extractKoreVersion(tagName) }
 	val minecraftVersion by lazy { extractMinecraftVersion(tagName).takeIf { "-" in tagName } }
 
-	private val versionKind by lazy { minecraftVersion?.let(MinecraftVersionPattern::of) }
+	val versionKind by lazy { minecraftVersion?.let(MinecraftVersionPattern::of) }
 	val isSnapshot get() = versionKind == MinecraftVersionPattern.SNAPSHOT
 	val isPreReleaseVersion get() = versionKind == MinecraftVersionPattern.PRE_RELEASE
 	val isReleaseCandidate get() = versionKind == MinecraftVersionPattern.RELEASE_CANDIDATE
