@@ -19,6 +19,11 @@ import org.jetbrains.compose.web.dom.*
 enum class InstallationMethod(val label: String, val language: String) {
 	GRADLE_KOTLIN("Gradle (Kotlin)", "kotlin") {
 		override fun getCode(version: String) = """
+			plugins {
+			    // Optional: build, link and reload your pack from Gradle
+			    id("io.github.ayfri.kore") version "$version"
+			}
+
 			dependencies {
 			    implementation("io.github.ayfri.kore:kore:$version")
 			}
@@ -26,6 +31,11 @@ enum class InstallationMethod(val label: String, val language: String) {
 	},
 	GRADLE_GROOVY("Gradle (Groovy)", "groovy") {
 		override fun getCode(version: String) = """
+			plugins {
+			    // Optional: build, link and reload your pack from Gradle
+			    id 'io.github.ayfri.kore' version '$version'
+			}
+
 			dependencies {
 			    implementation 'io.github.ayfri.kore:kore:$version'
 			}
@@ -160,7 +170,7 @@ object InstallationSectionStyle : StyleSheet() {
 
 	val inner by style {
 		display(DisplayStyle.Grid)
-		gridTemplateColumns("minmax(0, 1fr) minmax(0, 1fr)")
+		gridTemplateColumns("minmax(0, 0.9fr) minmax(0, 1.1fr)")
 		alignItems(AlignItems.Center)
 		gap(2.4.cssRem)
 		minWidth(0.px)

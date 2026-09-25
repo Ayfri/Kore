@@ -33,6 +33,9 @@ fun HomePage() = PageLayout("Minecraft Datapack Generator") {
 			// Quick installation guide
 			InstallationSection()
 
+			// Editor and Gradle plugins
+			ToolingSection()
+
 			// Core features section
 			FeaturesSection()
 

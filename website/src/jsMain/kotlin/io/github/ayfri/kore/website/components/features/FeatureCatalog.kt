@@ -335,7 +335,7 @@ val featureCategories = listOf(
 			FeatureItem("Lantern Load", "Full Lantern Load boilerplate, version publishing and dependency guards.", "/docs/guides/lantern-load"),
 			FeatureItem("Fabric resource conditions", "Load recipes, advancements and loot tables only when mods, tags or flags are present.", "/docs/guides/fabric-resource-conditions"),
 			FeatureItem("GameTest", "Write test instances and environments for Minecraft's built-in test framework.", "/docs/advanced/test-features"),
-			FeatureItem("IntelliJ plugin", "Kore Assistant browses every declaration as a datapack tree and flags calls to functions declared nowhere.", "https://plugins.jetbrains.com/plugin/27025-kore-assistant", logos = listOf("intellijidea")),
+			FeatureItem("Editor plugins", "Kore Assistant browses every declaration as a datapack tree and flags calls to functions declared nowhere. A VS Code extension is also available.", "https://plugins.jetbrains.com/plugin/27025-kore-assistant", logos = listOf("intellijidea", "visualstudiocode")),
 			FeatureItem("Project template", "Clone a working project with Gradle already set up and start writing your pack.", "https://github.com/Kore-Minecraft/Kore-Template", logos = listOf("github", "gradle")),
 		),
 	),
