@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.core.Page
 import io.github.ayfri.kore.website.components.common.BrandIconStyle
 import io.github.ayfri.kore.website.components.common.setDescription
+import io.github.ayfri.kore.website.components.common.setImage
 import io.github.ayfri.kore.website.components.common.setKeywords
 import io.github.ayfri.kore.website.components.features.*
 import io.github.ayfri.kore.website.components.layouts.PageLayout
@@ -22,6 +23,7 @@ fun FeaturesPage() {
 
 	PageLayout("Features - Commands, JSON Resources, Worldgen & Tooling") {
 		setDescription("Every Kore feature in one place. Typed commands, loot tables, recipes, worldgen, gameplay helpers, Gradle plugin and mod jar export for Minecraft datapacks.")
+		setImage("features", "Kore features, commands, JSON resources, worldgen and tooling")
 		setKeywords(
 			"kore features", "minecraft datapack generator features", "kotlin datapack dsl", "datapack worldgen generator",
 			"loot table generator", "mcfunction generator", "datapack gradle plugin", "minecraft datapack library"

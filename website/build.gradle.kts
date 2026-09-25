@@ -27,6 +27,9 @@ val docGroupOrder =
 
 val minecraftVersion = providers.gradleProperty("minecraft.version").orElse("").get()
 
+/** Plain-text GitHub data (stars, latest release tag) written by the fetch tasks for the Open Graph cards. */
+val gitHubDataDir = layout.buildDirectory.dir("generated/github")
+
 data class DocEntry(
 	val file: File,
 	val date: String,
@@ -218,6 +221,7 @@ kobweb {
 		// Kobweb flattens a "public" subfolder of resources to the site root, so the generated dir must mirror that layout for llms.txt/sitemap.xml/etc. to end up at the site root.
 		val llmsResourcesDir = layout.buildDirectory.dir("generated/llms-resources/public").get().asFile
 		val ogFontsDir = layout.buildDirectory.dir("og-fonts").get().asFile
+		val gitHubDataDir = gitHubDataDir.get().asFile
 		val minecraftVersion = minecraftVersion
 
 		process.set { markdownFiles ->
@@ -394,15 +398,38 @@ kobweb {
 
 			println("Sitemap generated -> ${llmsResourcesDir.resolve("sitemap.xml").absolutePath}")
 
-			// Open Graph cards, `/og/<route>.png` per doc page and `/og/default.png` for the other pages.
+			// Open Graph cards, `/og/<route>.png` per doc page, `/og/features.png`, `/og/updates.png` and `/og/default.png` for the other pages.
 			val ogDir = llmsResourcesDir.resolve("og")
-			val ogRenderer = OgImageRenderer(ogFontsDir, projectDir.resolve("src/jsMain/resources/public/logo.png"))
+			val host = baseUrl.substringAfter("://")
+			val stars = gitHubDataDir.resolve("stars.txt").takeIf { it.exists() }?.readText()?.toIntOrNull()
+			val ogRenderer = OgImageRenderer(ogFontsDir, projectDir.resolve("src/jsMain/resources/public/logo.png"), stars)
 			ogRenderer.render(
 				ogDir.resolve("default.png"),
 				label = "Open-source Kotlin DSL",
 				title = "Type-safe Minecraft datapacks, written in Kotlin",
 				description = "Create datapacks without writing JSON or MCFunction by hand.",
-				footer = "${baseUrl.substringAfter("://")}  ·  Kore ${Project.VERSION} for Minecraft $minecraftVersion",
+				footer = "$host  ·  Kore ${Project.VERSION} for Minecraft $minecraftVersion",
+			)
+			ogRenderer.render(
+				ogDir.resolve("features.png"),
+				label = "Features",
+				title = "Commands, JSON resources, worldgen & tooling",
+				description = "Typed commands, loot tables, recipes, worldgen, gameplay helpers, Gradle plugin and mod jar export.",
+				footer = "$host/features",
+			)
+			val latestTag = gitHubDataDir.resolve("latest-release-tag.txt").takeIf { it.exists() }?.readText()?.removePrefix("v").orEmpty()
+			ogRenderer.render(
+				ogDir.resolve("updates.png"),
+				label = "Latest release",
+				title = latestTag.split("-", limit = 2).let { parts ->
+					when {
+						latestTag.isEmpty() -> "Kore releases"
+						parts.size == 2 -> "Kore ${parts[0]} for Minecraft ${parts[1]}"
+						else -> "Kore $latestTag"
+					}
+				},
+				description = "Changelog and release history of every Kore version, fetched from GitHub.",
+				footer = "$host/updates",
 			)
 			sortedEntries.parallelStream().forEach { entry ->
 				val route = entry.slugs.joinToString("/")
@@ -411,7 +438,7 @@ kobweb {
 					label = entry.slugs.dropLast(1).joinToString(" / ") { it.replace("-", " ") },
 					title = entry.navTitle,
 					description = entry.desc,
-					footer = "${baseUrl.substringAfter("://")}/$route",
+					footer = "$host/$route",
 				)
 			}
 			println("Open Graph images generated -> ${ogDir.absolutePath}")
@@ -477,7 +504,8 @@ tasks.register("fetchGitHubReleases") {
 
 	val outFile =
 		layout.buildDirectory.file("generated/kore/src/jsMain/kotlin/io/github/ayfri/kore/website/gitHubReleases.kt")
-	outputs.file(outFile)
+	val latestTagFile = gitHubDataDir.map { it.file("latest-release-tag.txt") }
+	outputs.files(outFile, latestTagFile)
 
 	doLast {
 		fun String.escapeForKotlinRawString() = replace("\"\"\"", "\\\"\\\"\\\"").replace("$", "${'$'}{'$'}")
@@ -511,6 +539,10 @@ tasks.register("fetchGitHubReleases") {
 			hasMorePages = pageReleases.isNotEmpty() && pageReleases.size == 100
 			page++
 		}
+
+		// Same pick as `GitHubService.latestRelease`, ISO timestamps sort chronologically as strings.
+		val latestTag = allReleases.filter { it["published_at"] != null }.maxByOrNull { it["published_at"] as String }?.get("tag_name") as String?
+		latestTagFile.get().asFile.apply { parentFile.mkdirs() }.writeText(latestTag.orEmpty())
 
 		// Always write a file, even if it is empty
 		val targetFile = outFile.get().asFile
@@ -593,7 +625,8 @@ tasks.register("fetchGitHubStars") {
 
 	val outFile =
 		layout.buildDirectory.file("generated/kore/src/jsMain/kotlin/io/github/ayfri/kore/website/gitHubStars.kt")
-	outputs.file(outFile)
+	val starsFile = gitHubDataDir.map { it.file("stars.txt") }
+	outputs.files(outFile, starsFile)
 
 	doLast {
 		val apiUrl = "https://api.github.com/repos/Ayfri/Kore"
@@ -619,6 +652,8 @@ tasks.register("fetchGitHubStars") {
 			logger.error("Failed to fetch GitHub repository stars.", e)
 			null
 		}
+
+		starsFile.get().asFile.apply { parentFile.mkdirs() }.writeText(stars?.toString().orEmpty())
 
 		val targetFile = outFile.get().asFile
 		targetFile.parentFile.mkdirs()
@@ -650,6 +685,12 @@ tasks.matching { it.name == "compileKotlinJs" }.configureEach {
 // generated resources dir; make the dependency explicit so caching/ordering can't skip them.
 tasks.matching { it.name == "jsProcessResources" }.configureEach {
 	dependsOn("kobwebxMarkdownProcess")
+}
+
+// The Open Graph cards rendered by kobwebxMarkdownProcess show the star count and the latest release.
+tasks.matching { it.name == "kobwebxMarkdownProcess" }.configureEach {
+	dependsOn("fetchGitHubReleases", "fetchGitHubStars")
+	inputs.dir(gitHubDataDir).withPropertyName("gitHubData").optional()
 }
 
 // The export discards the source map (`includeSourceMap = false`), so building it only slows minification down.
