@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.website.pages
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.compose.css.functions.RadialGradient
 import com.varabyte.kobweb.compose.css.functions.radialGradient
@@ -12,7 +11,6 @@ import io.github.ayfri.kore.website.components.features.FeatureVisualsStyle
 import io.github.ayfri.kore.website.components.index.*
 import io.github.ayfri.kore.website.components.layouts.PageLayout
 import io.github.ayfri.kore.website.components.mc.McUiStyle
-import io.github.ayfri.kore.website.utils.initMCFunctionHighlighting
 import io.github.ayfri.kore.website.utils.smMax
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
@@ -25,10 +23,6 @@ fun HomePage() {
 	Style(FeatureSectionsStyle)
 	Style(FeatureVisualsStyle)
 	Style(McUiStyle)
-
-	LaunchedEffect(Unit) {
-		initMCFunctionHighlighting()
-	}
 
 	PageLayout("Minecraft Datapack Generator") {
 		Div({ classes(HomePageStyle.page) }) {
@@ -93,7 +87,7 @@ object HomePageStyle : StyleSheet() {
 			)
 		)
 
-		"h1, h2, h3" style {
+		":is(h1, h2, h3)" style {
 			fontFamily("Sora", "Segoe UI", "sans-serif")
 			fontWeight(600)
 		}

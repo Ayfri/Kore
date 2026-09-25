@@ -41,10 +41,6 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 	Style(McSpriteStyle)
 	Style(McUiStyle)
 
-	LaunchedEffect(Unit) {
-		initMCFunctionHighlighting()
-	}
-
 	val context = rememberPageContext()
 	val markdownData = context.markdown!!.frontMatter
 
@@ -403,14 +399,14 @@ object MarkdownLayoutStyle : StyleSheet() {
 			backgroundColor(GlobalStyle.secondaryBackgroundColor)
 		}
 
-		"th, td" style {
+		":is(th, td)" style {
 			borderBottom(1.px, LineStyle.Solid, GlobalStyle.tertiaryBackgroundColor)
 			borderRight(1.px, LineStyle.Solid, GlobalStyle.tertiaryBackgroundColor)
 			padding(0.75.cssRem)
 			textAlign(TextAlign.Left)
 		}
 
-		"th:last-child, td:last-child" style {
+		":is(th, td):last-child" style {
 			borderRight(0.px)
 		}
 

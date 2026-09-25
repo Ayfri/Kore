@@ -20,6 +20,7 @@ private fun prepareHighlighting() {
 	if (highlightingReady) return
 	initKotlinHighlighting()
 	initConfigHighlighting()
+	initMCFunctionHighlighting()
 
 	Prism.hooks.add("before-insert") { env ->
 		env.highlightedCode = env.highlightedCode.replace(leadingIndent) { match ->
@@ -36,7 +37,7 @@ private fun prepareHighlighting() {
 		val lineHeight = style.lineHeight.removeSuffix("px").toDoubleOrNull() ?: return@addEventListener
 		val paddingTop = style.paddingTop.removeSuffix("px").toDouble()
 		val contentHeight = pre.scrollHeight - paddingTop - style.paddingBottom.removeSuffix("px").toDouble()
-		val y = event.clientY - pre.getBoundingClientRect().top + pre.scrollTop - paddingTop
+		val y = event.clientY - pre.getBoundingClientRect().top - pre.clientTop + pre.scrollTop - paddingTop
 		if (y < 0 || y >= contentHeight) pre.style.removeProperty("--hover-y")
 		else pre.style.setProperty("--hover-y", "${paddingTop + floor(y / lineHeight) * lineHeight}px")
 	})
