@@ -37,10 +37,13 @@ fun DataPack.structureSet(
 	fileName: String = "structure_set",
 	init: StructureSet.() -> Unit = {},
 ): StructureSetArgument {
-	val structureSet = StructureSet(fileName, placement = RandomSpreadPlacement()).apply(init)
+	val structureSet = StructureSet(fileName, placement = RandomSpreadPlacement(salt = defaultSalt(fileName))).apply(init)
 	structureSets += structureSet
 	return StructureSetArgument(fileName, structureSet.namespace ?: name)
 }
+
+/** A salt derived from the set's [fileName], so builds stay reproducible while two sets still don't align their grids. */
+private fun defaultSalt(fileName: String) = fileName.hashCode() and Int.MAX_VALUE
 
 /** Adds a structure to the structure set. */
 fun StructureSet.structure(structure: ConfiguredStructureArgument, weight: Int = 1) = apply {
@@ -61,6 +64,7 @@ fun StructureSet.concentricRingsPlacement(
 	block: ConcentricRingsPlacement.() -> Unit = {},
 ) = run {
 	placement = ConcentricRingsPlacement(
+		salt = defaultSalt(fileName),
 		distance = distance,
 		spread = spread,
 		count = count,
@@ -81,6 +85,7 @@ fun StructureSet.randomSpreadPlacement(
 	block: RandomSpreadPlacement.() -> Unit = {},
 ) = run {
 	placement = RandomSpreadPlacement(
+		salt = defaultSalt(fileName),
 		spreadType = spreadType,
 		spacing = spacing,
 		separation = separation,

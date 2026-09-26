@@ -96,4 +96,16 @@ class StructureSetTests : FunSpec({
 			structureSetTests()
 		}
 	}
+
+	test("default salt is derived from the file name") {
+		fun salts() = dataPack("salts") {
+			structureSet("first")
+			structureSet("second") { concentricRingsPlacement() }
+		}.structureSets.map { it.placement.salt }
+
+		val salts = salts()
+		salts assertsIs salts()
+		(salts[0] != salts[1]) assertsIs true
+		salts[0] assertsIs ("first".hashCode() and Int.MAX_VALUE)
+	}
 })

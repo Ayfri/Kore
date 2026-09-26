@@ -5,7 +5,6 @@ import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureSetArgum
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlin.random.Random
 
 @Serializable
 sealed interface Placement {
@@ -23,7 +22,7 @@ fun Placement.exclusionZone(otherSet: StructureSetArgument, chunkCount: Int = 1)
 @SerialName("minecraft:concentric_rings")
 @Serializable
 data class ConcentricRingsPlacement(
-	override var salt: Int = Random.nextInt(Int.MAX_VALUE),
+	override var salt: Int = 0,
 	override var frequencyReductionMethod: FrequencyReductionMethod? = null,
 	override var frequency: Double? = null,
 	override var exclusionZone: ExclusionZone? = null,
@@ -41,7 +40,7 @@ fun ConcentricRingsPlacement.preferredBiomes(vararg biomes: BiomeArgument) = app
 @SerialName("minecraft:random_spread")
 @Serializable
 data class RandomSpreadPlacement(
-	override var salt: Int = Random.nextInt(Int.MAX_VALUE),
+	override var salt: Int = 0,
 	override var frequencyReductionMethod: FrequencyReductionMethod? = null,
 	override var frequency: Double? = null,
 	override var exclusionZone: ExclusionZone? = null,

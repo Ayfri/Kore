@@ -5,7 +5,7 @@ nav-title: Structures
 description: Build Minecraft structures with Kore - configured structures, jigsaw template pools, block processors and structure set placement.
 keywords: minecraft, datapack, kore, worldgen, structure, template pool, processor list, jigsaw, structure set
 date-created: 2026-02-03
-date-modified: 2026-08-21
+date-modified: 2026-09-26
 routeOverride: /docs/data-driven/worldgen/structures
 ---
 
@@ -427,7 +427,7 @@ Both share these fields, set inside the trailing block:
 
 | Field                      | Meaning                                                                                      |
 |----------------------------|----------------------------------------------------------------------------------------------|
-| `salt`                     | Seed modifier keeping different sets from aligning their grids. Random unless you set it.    |
+| `salt`                     | Seed modifier keeping different sets from aligning their grids. Derived from the file name.  |
 | `frequency`                | Fraction of eligible cells actually generating a structure, from `0.0` to `1.0`.             |
 | `frequencyReductionMethod` | How `frequency` is applied: `DEFAULT`, or one of the three `LEGACY_TYPE_*` vanilla variants. |
 | `exclusionZone(set, n)`    | Skips a placement within `n` chunks of a structure of another set.                           |
