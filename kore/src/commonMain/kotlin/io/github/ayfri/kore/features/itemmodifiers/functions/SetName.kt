@@ -46,6 +46,9 @@ fun ItemModifier.setName(
 	SetName(entity = entity, name = textComponent(name, color, componentBlock)).apply(block).also { modifiers += it }
 
 /** Add a `set_name` step from an existing component. */
-fun ItemModifier.setName(name: ChatComponent, entity: Source? = null, block: SetName.() -> Unit = {}) {
-	modifiers += SetName(entity = entity, name = ChatComponents(name)).apply(block)
-}
+fun ItemModifier.setName(name: ChatComponent, entity: Source? = null, block: SetName.() -> Unit = {}) =
+	setName(ChatComponents(name), entity, block)
+
+/** Add a `set_name` step from components, like the ones `textComponent()` returns or several joined with `+`. */
+fun ItemModifier.setName(name: ChatComponents, entity: Source? = null, block: SetName.() -> Unit = {}) =
+	SetName(entity = entity, name = name).apply(block).also { modifiers += it }

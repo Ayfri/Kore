@@ -2,6 +2,7 @@ package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.WEAPON
+import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.FormattingColor
 import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
@@ -747,6 +748,24 @@ fun DataPack.itemModifierTests() {
 				"type": "text"
 			},
 			"target": "custom_name"
+		}
+	""".trimIndent()
+
+	itemModifier("set_name_components") {
+		setName(textComponent("Legendary ", Color.GOLD) + textComponent("Sword"))
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:set_name",
+			"name": [
+				{
+					"text": "Legendary ",
+					"color": "gold",
+					"type": "text"
+				},
+				"Sword"
+			]
 		}
 	""".trimIndent()
 

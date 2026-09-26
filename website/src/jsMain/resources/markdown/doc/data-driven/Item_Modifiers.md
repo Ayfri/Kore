@@ -256,6 +256,9 @@ itemModifier("named") {
 		bold = true
 	})
 
+	// Several components joined with +
+	setName(textComponent("Legendary ", Color.GOLD) + textComponent("Sword"))
+
 	// Set item name vs custom name
 	setName("Base Name") {
 		target = SetNameTarget.ITEM_NAME  // or CUSTOM_NAME
