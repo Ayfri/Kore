@@ -155,14 +155,17 @@ This still generates an `execute if score <target> combo matches 45 run ...` com
 If you want a quick reference for every comparison helper available with delegated scores, they map directly to the
 same scoreboard comparisons as the `execute` DSL:
 
-| Kotlin helper               | Generated score comparison                                     |
-|-----------------------------|----------------------------------------------------------------|
-| `equalTo(...)`              | `matches <value>` for literal values, or `=` for another score |
-| `notEqualTo(...)`           | `unless score ... matches <value>` style negation              |
-| `greaterThan(...)`          | `>`                                                            |
-| `greaterThanOrEqualTo(...)` | `>=`                                                           |
-| `lessThan(...)`             | `<`                                                            |
-| `lessThanOrEqualTo(...)`    | `<=`                                                           |
+| Kotlin helper               | Against a literal | Against another score |
+|-----------------------------|-------------------|-----------------------|
+| `equalTo(...)`              | `matches 10`      | `=`                   |
+| `greaterThan(...)`          | `matches 11..`    | `>`                   |
+| `greaterThanOrEqualTo(...)` | `matches 10..`    | `>=`                  |
+| `lessThan(...)`             | `matches ..9`     | `<`                   |
+| `lessThanOrEqualTo(...)`    | `matches ..10`    | `<=`                  |
+| `matches(...)`              | `matches <range>` | -                     |
+
+A "not equal" check isn't possible with these helpers because `runIf` only emits `execute if`; open an `execute`
+block with `unlessCondition` for it.
 
 ```kotlin
 function("combo_comparisons") {
@@ -171,7 +174,6 @@ function("combo_comparisons") {
   val threshold = player.scoreboard("threshold", default = 10)
 
   runIf(combo equalTo 10) { say("combo == 10") }
-  runIf(combo notEqualTo 10) { say("combo != 10") }
   runIf(combo greaterThan 10) { say("combo > 10") }
   runIf(combo greaterThanOrEqualTo 10) { say("combo >= 10") }
   runIf(combo lessThan 10) { say("combo < 10") }

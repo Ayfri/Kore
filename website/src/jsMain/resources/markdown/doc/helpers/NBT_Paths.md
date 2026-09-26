@@ -20,7 +20,7 @@ Every core `data` and `execute store` API takes an NBT path as a `String`, so a 
 path from segments instead, quoting each one only when vanilla requires it:
 
 ```kotlin
-val enchantments = nbtPath("equipment") / slot / "components" / "minecraft:enchantments"
+val enchantments = nbtPath("equipment") / "mainhand" / "components" / "minecraft:enchantments"
 // equipment.mainhand.components."minecraft:enchantments"
 ```
 
@@ -68,7 +68,7 @@ function("build_offer") {
 	val price = fakePlayer("price").getScoreEntity("shop")
 	val stock = fakePlayer("stock").getScoreEntity("shop")
 
-	resolveNbt(storage("kore", "shop"), nbtPath("offer")) {
+	resolveNbt(storage("shop", "kore"), nbtPath("offer")) {
 		this["item"] = "minecraft:diamond"
 		this["price"] = price
 		compound("meta") {
@@ -81,8 +81,8 @@ function("build_offer") {
 
 ```mcfunction
 data modify storage kore:shop offer set value {item:"minecraft:diamond",meta:{featured:1b}}
-execute store result storage kore:shop offer.price int 1.0 run scoreboard players get #price shop
-execute store result storage kore:shop offer.meta.stock int 1.0 run scoreboard players get #stock shop
+execute store result storage kore:shop offer.price int 1 run scoreboard players get #price shop
+execute store result storage kore:shop offer.meta.stock int 1 run scoreboard players get #stock shop
 ```
 
 `execute store result` creates the parent compounds it needs, so a nested compound holding only scores emits no
@@ -93,7 +93,7 @@ Values accept `NbtTag` and every Kotlin primitive, a `ScoreboardEntity`, or a
 `scale` for fixed-point scores:
 
 ```kotlin
-resolveNbt(storage("kore", "physics"), nbtPath("motion")) {
+resolveNbt(storage("physics", "kore"), nbtPath("motion")) {
 	// a score counting thousandths of a block becomes a double
 	set("y", velocity, DataType.DOUBLE, 0.001)
 }
@@ -109,7 +109,7 @@ The usual reason to assemble a tree at runtime is calling a macro function with 
 
 ```kotlin
 function("teleport_to_score") {
-	val macro = storage("kore", "macro")
+	val macro = storage("macro", "kore")
 
 	resolveNbt(macro) {
 		this["x"] = posX

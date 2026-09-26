@@ -25,12 +25,13 @@ A "Scheduler" in Kore lets you:
 
 All scheduling logic revolves around three core classes:
 
-1. [Scheduler](https://github.com/Ayfri/Kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/helpers/Scheduler.kt#L34) -
-   Represents a single scheduled task (with optional delay and period).
-2. [UnScheduler](https://github.com/Ayfri/Kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/helpers/UnScheduler.kt#L34) -
-   Cancels, or clears, repeating tasks.
-3. [SchedulerManager](https://github.com/Ayfri/Kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/helpers/SchedulerManager.kt#L42) -
-   Maintains a list of schedulers for a given DataPack and offers convenience methods to add or remove them.
+1. `Scheduler` - Represents a single scheduled task (with optional delay and period).
+2. `UnScheduler` - Cancels, or clears, repeating tasks.
+3. `SchedulerManager` - Maintains a list of schedulers for a given DataPack and offers convenience methods to add or
+   remove them.
+
+All three live in [Scheduler.kt](https://github.com/Ayfri/Kore/blob/master/helpers/src/commonMain/kotlin/io/github/ayfri/kore/helpers/Scheduler.kt)
+in the `helpers` module.
 
 **Note:**
 **Schedulers are saved and loaded from a `scheduler_setup` function that is added to the `minecraft/load.json` tag.**
@@ -122,7 +123,7 @@ removeScheduler("my_function_to_remove")
 
 ### Canceling all tasks
 
-You can cancel all tasks by calling clearSchedulers:
+You can cancel every repeating task by calling `unScheduleAll()` from a function:
 
 ```kotlin
 unScheduleAll()
@@ -141,24 +142,15 @@ In this example, we keep a running "counter" in a storage and increment it every
 ### Full Example
 
 ```kotlin
-import io.github.ayfri.kore.DataPack
-import io.github.ayfri.kore.arguments.numbers.seconds
-import io.github.ayfri.kore.arguments.types.resources.StorageArgument
-import io.github.ayfri.kore.commands.data
-import io.github.ayfri.kore.commands.execute
-import io.github.ayfri.kore.commands.value
-import io.github.ayfri.kore.functions.function
-import io.github.ayfri.kore.generated.EntityTypes
-
 fun DataPack.complexSchedulerExample() {
 	// Create a storage reference for storing and reading data
-	val myStorage = storage("kore_example:counter_storage")
+	val myStorage = storage("counter_storage", "kore_example")
 
 	// A function that resets the counter at any time
 	function("reset_counter") {
 		data(myStorage) {
 			merge {
-				value("counter", 0)
+				this["counter"] = 0
 			}
 		}
 		say("Counter has been reset to 0!")
@@ -170,7 +162,7 @@ fun DataPack.complexSchedulerExample() {
 
 		// Create a repeating scheduler. It starts after 2 seconds, repeats every 4 seconds.
 		addScheduler(2.seconds, 4.seconds) {
-			val tempEntity = entity("#temp_entity")
+			val tempEntity = literal("#temp_entity") // a fake player holding the score
 
 			// 1) Store the value in a score
 			execute {
@@ -191,7 +183,7 @@ fun DataPack.complexSchedulerExample() {
 			// 3) Store the score in the storage
 			execute {
 				storeResult {
-					storage(myStorage, "counter")
+					storage(myStorage, "counter", DataType.INT, 1.0)
 				}
 
 				run {
@@ -218,7 +210,7 @@ fun DataPack.complexSchedulerExample() {
 			execute {
 				// Compare the counter with a threshold, e.g. 5
 				ifCondition {
-					score(tempEntity, "counter") greaterOrEqual 5
+					score(tempEntity, "counter") greaterThanOrEqualTo 5
 				}
 				run {
 					summon(EntityTypes.LIGHTNING_BOLT)
@@ -243,7 +235,7 @@ Explanation:
 	- We store the counter in a score
 	- We increment the counter in storage.
 	- We show the updated counter using data get and say commands.
-	- We run a condition (ifData … >= 5) to check if "counter" has reached 5 or more, then summon a lightning bolt.
+	- We run a score condition to check if "counter" has reached 5 or more, then summon a lightning bolt.
 3. We also add a single-run scheduler at 10 seconds that calls a function to reset the counter and prints a final message.
 
 ## Conclusion

@@ -94,16 +94,21 @@ expects:
 
 ```kotlin
 val itemDisplay = itemDisplay {
-	items(Items.DIAMOND_SWORD) {
-		name = textComponent("test")
+	item(Items.DIAMOND_SWORD) {
+		customName(textComponent("test"))
 
 		enchantments {
-			Enchantments.SHARPNESS at 1
-			Enchantments.UNBREAKING at 3
+			enchantment(Enchantments.SHARPNESS, 1)
+			enchantment(Enchantments.UNBREAKING, 3)
 		}
 
-		modifiers {
-			modifier(Attributes.ATTACK_DAMAGE, 1.0, AttributeModifierOperation.ADD)
+		attributeModifiers {
+			modifier(
+				type = Attributes.ATTACK_DAMAGE,
+				amount = 1.0,
+				name = "bonus_damage",
+				operation = AttributeModifierOperation.ADD_VALUE,
+			)
 		}
 	}
 }
@@ -155,7 +160,7 @@ builds and two identical displays still get different ones.
 
 ```kotlin
 val interpolableEntityDisplay = blockDisplay {
-	blockState(Blocks.STONE_BLOCK)
+	blockState(Blocks.STONE)
 }.interpolable(position = vec3(0, 0, 0))
 
 interpolableEntityDisplay.summon()
