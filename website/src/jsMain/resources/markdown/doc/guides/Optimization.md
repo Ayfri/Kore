@@ -5,7 +5,7 @@ nav-title: Optimization
 description: Run whole-pack optimization passes before Kore writes your datapack, pruning dead functions, shortening execute chains and sorting selectors, or plug in your own.
 keywords: kore optimization, datapack dead code, prune empty mcfunction, datapack size, minecraft datapack optimization, kore configuration passes
 date-created: 2026-09-05
-date-modified: 2026-09-05
+date-modified: 2026-09-26
 routeOverride: /docs/guides/optimization
 position: 8
 ---
@@ -33,7 +33,8 @@ dataPack("mypack") {
 
 Writing the `optimization { }` block enables the passes, and every built-in pass runs in order. Each pass that changed
 something prints one summary line, `[kore:prune-empty-functions] pruned 12 empty functions and 4 calls to them`. Set
-`verbose = false` to silence them.
+`verbose = false` to silence them. The lines go through `KoreLogger`, see [Configuration](/docs/guides/configuration#logging)
+to route them to your own logger.
 
 ```kotlin
 configuration {
@@ -117,8 +118,11 @@ reward holds it in a typed field the pass cannot rewrite.
 
 Generated functions only exist because a DSL construct created one, so they are unreachable as soon as the line calling
 them is gone, which happens when a later edit of the same `DataPack` drops the callsite or when an earlier pass removes
-it. Pruning repeats until it converges, so a chain of generated functions calling each other collapses in one run. Two
-of them calling each other are kept, since each still references the other.
+it. Pruning a function re-checks the generated functions it called, so a chain of generated functions calling each
+other collapses in one run. Two of them calling each other are kept, since each still references the other.
+
+Every pass reading references (`prune-empty-functions`, `dedupe-functions` and this one) indexes the whole pack once,
+matching whole `namespace:path` tokens: `ns:foo` never counts as a mention of it inside `ns:foo/bar` or `xns:foo`.
 
 ## `warn-unreachable-code`
 

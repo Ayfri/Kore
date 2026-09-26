@@ -4,7 +4,7 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.optimization.DataPackPass
 import io.github.ayfri.kore.optimization.PassResult
-import io.github.ayfri.kore.optimization.utils.generatorsJson
+import io.github.ayfri.kore.optimization.utils.idsReferencedByResources
 
 /**
  * Removes user functions containing no command, and the calls made to them.
@@ -23,15 +23,12 @@ data object PruneEmptyFunctionsPass : DataPackPass {
 	override val name = "prune-empty-functions"
 
 	override fun run(dataPack: DataPack): PassResult {
+		val fromResources = dataPack.idsReferencedByResources()
 		var prunedFunctions = 0
 		var removedCalls = 0
 
 		while (true) {
-			val candidates = dataPack.functions.filter { it.commandLines.isEmpty() }
-			if (candidates.isEmpty()) break
-
-			val referenced = referencedIds(dataPack, candidates)
-			val pruned = candidates.filter { it.asId() !in referenced }
+			val pruned = dataPack.functions.filter { it.commandLines.isEmpty() && it.asId() !in fromResources }
 			if (pruned.isEmpty()) break
 
 			dataPack.functions -= pruned.toSet()
@@ -50,12 +47,6 @@ data object PruneEmptyFunctionsPass : DataPackPass {
 
 		if (prunedFunctions == 0) return PassResult.NONE
 		return PassResult(prunedFunctions + removedCalls, "pruned $prunedFunctions empty functions and $removedCalls calls to them")
-	}
-
-	/** Serializes every generator once and keeps the ids still appearing in it, the only reliable way to spot non-tag references. */
-	private fun referencedIds(dataPack: DataPack, candidates: List<Function>): Set<String> {
-		val json = dataPack.generators.flatten().joinToString("\n") { it.generateJson(dataPack) }
-		return candidates.mapNotNull { it.asId().takeIf(json::contains) }.toSet()
 	}
 
 	private fun isRemovableCall(line: String, prunedIds: Set<String>): Boolean {

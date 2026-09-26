@@ -175,6 +175,29 @@ class OptimizationTests : FunSpec({
 		}
 	}
 
+	test("a chain of unreferenced generated functions collapses in one run, whatever their order") {
+		dataPack("optimization_tests") {
+			val leaf = generatedFunction("leaf") { say("leaf") }
+			val middle = generatedFunction("middle") { function(leaf) }
+			generatedFunction("top") { function(middle) }
+
+			PruneUnreferencedGeneratedFunctionsPass.run(this).changes shouldBe 3
+			generatedFunctions shouldBe emptyList()
+		}
+	}
+
+	test("only whole namespaced ids count as references") {
+		dataPack("optimization_tests") {
+			val target = generatedFunction("target") { say("target") }
+			function("caller") {
+				addLine("function ${target.asId()}_other")
+				addLine("function x${target.asId()}")
+			}
+
+			PruneUnreferencedGeneratedFunctionsPass.run(this).changes shouldBe 1
+		}
+	}
+
 	test("lines after an unconditional return are reported") {
 		dataPack("optimization_tests") {
 			function("early_return") {

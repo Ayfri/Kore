@@ -4,8 +4,8 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.optimization.DataPackPass
 import io.github.ayfri.kore.optimization.PassResult
-import io.github.ayfri.kore.optimization.utils.functionIdPattern
-import io.github.ayfri.kore.optimization.utils.generatorsJson
+import io.github.ayfri.kore.optimization.utils.idsReferencedByResources
+import io.github.ayfri.kore.optimization.utils.namespacedIdToken
 
 /**
  * Merges functions sharing the exact same body, redirecting the calls to the survivor.
@@ -24,40 +24,34 @@ data class DedupeFunctionsPass(val includeUserFunctions: Boolean = false) : Data
 	override val name = "dedupe-functions"
 
 	override fun run(dataPack: DataPack): PassResult {
-		val json = dataPack.generatorsJson()
+		val fromResources = dataPack.idsReferencedByResources()
+		val userFunctions = dataPack.functions.toHashSet()
 		val duplicates = (dataPack.functions + dataPack.generatedFunctions)
 			.groupBy { it.commandLines }
 			.filterKeys(List<String>::isNotEmpty)
 			.values
 			.filter { it.size > 1 }
 
-		var merged = 0
+		val redirects = HashMap<String, String>()
+		val merged = HashSet<Function>()
 		duplicates.forEach { group ->
-			val keeper = group.firstOrNull { it in dataPack.functions } ?: group.first()
+			val keeper = group.firstOrNull { it in userFunctions } ?: group.first()
 
-			group.filter { it !== keeper && it.canBeMerged(dataPack, json) }.forEach { duplicate ->
-				dataPack.functions -= duplicate
-				dataPack.generatedFunctions -= duplicate
-				dataPack.replaceCalls(duplicate, keeper)
-				merged++
+			group.filter { it !== keeper && (includeUserFunctions || it !in userFunctions) && it.asId() !in fromResources }.forEach {
+				redirects[it.asId()] = keeper.asId()
+				merged += it
 			}
 		}
 
-		if (merged == 0) return PassResult.NONE
-		return PassResult(merged, "merged $merged duplicated functions")
-	}
-
-	private fun Function.canBeMerged(dataPack: DataPack, json: String) =
-		(includeUserFunctions || this !in dataPack.functions) && asId() !in json
-
-	private fun DataPack.replaceCalls(duplicate: Function, keeper: Function) {
-		val pattern = functionIdPattern(duplicate.asId())
-		val keeperId = keeper.asId()
-
-		(functions + generatedFunctions).forEach { function ->
+		if (merged.isEmpty()) return PassResult.NONE
+		dataPack.functions.removeAll(merged)
+		dataPack.generatedFunctions.removeAll(merged)
+		(dataPack.functions + dataPack.generatedFunctions).forEach { function ->
 			function.lines.forEachIndexed { index, line ->
-				if (pattern.containsMatchIn(line)) function.lines[index] = pattern.replace(line, keeperId)
+				function.lines[index] = namespacedIdToken.replace(line) { redirects[it.value] ?: it.value }
 			}
 		}
+
+		return PassResult(merged.size, "merged ${merged.size} duplicated functions")
 	}
 }
