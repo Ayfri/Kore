@@ -109,7 +109,7 @@ class StateDelegateTests : FunSpec({
 			scoreboard players set @e[limit=1] combo 9
 			scoreboard objectives add combo_repeat_counter dummy
 			scoreboard objectives add combo_repeat_iteration dummy
-			scoreboard players operation @e[limit=1] combo = @e[limit=1] combo_repeat_counter
+			scoreboard players operation @e[limit=1] combo_repeat_counter = @e[limit=1] combo
 			scoreboard players set @e[limit=1] combo_repeat_iteration 0
 			execute if score @e[limit=1] combo_repeat_counter matches 1.. run function helpers_tests:generated_scopes/combo_repeat
 		""".trimIndent()
@@ -137,5 +137,27 @@ class StateDelegateTests : FunSpec({
 				execute if score @e[limit=1] combo_repeat_counter matches 1.. run function helpers_tests:generated_scopes/combo_repeat
 			""".trimIndent(),
 		)
+	}
+
+	test("scoreboard delegates negate conditions with notEqualTo and runUnless") {
+		val datapack = dataPack("helpers_tests") {}
+
+		val stateFunction = datapack.function("state_delegate_negation") {
+			val player = entity()
+			val combo = player.scoreboard("combo")
+			val threshold = player.scoreboard("threshold")
+
+			runIf(combo notEqualTo 3, name = "combo_not_three") { say("Not three") }
+			runIf(combo notEqualTo threshold, name = "combo_not_threshold") { say("Not threshold") }
+			runUnless(combo greaterThan 5, name = "combo_at_most_five") { say("At most five") }
+		}
+
+		stateFunction.toString() assertsIs """
+			scoreboard objectives add combo dummy
+			execute unless score @e[limit=1] combo matches 3 run function helpers_tests:generated_scopes/combo_not_three
+			scoreboard objectives add threshold dummy
+			execute unless score @e[limit=1] combo = @e[limit=1] threshold run function helpers_tests:generated_scopes/combo_not_threshold
+			execute unless score @e[limit=1] combo matches 6.. run function helpers_tests:generated_scopes/combo_at_most_five
+		""".trimIndent()
 	}
 })

@@ -97,8 +97,13 @@ private fun scoreRangeCondition(left: ExecuteScore, value: IntRangeOrInt): Score
 	score(left.target, left.objective, value)
 }
 
+private fun inverted(condition: ScoreRunCondition): ScoreRunCondition = { inverted(condition) }
+
 /** Builds an `execute if score ... = <value>` style condition from a scoreboard delegate. */
 infix fun ScoreboardDelegate.equalTo(value: Int) = scoreValueCondition(asExecuteScore(), Relation.EQUAL_TO, value)
+
+/** Builds an `execute unless score ... matches <value>` condition from a scoreboard delegate. */
+infix fun ScoreboardDelegate.notEqualTo(value: Int) = inverted(equalTo(value))
 
 /** Builds an `execute if score ... < <value>` style condition from a scoreboard delegate. */
 infix fun ScoreboardDelegate.lessThan(value: Int) = scoreValueCondition(asExecuteScore(), Relation.LESS_THAN, value)
@@ -121,6 +126,9 @@ infix fun ScoreboardDelegate.matches(value: IntRangeOrInt) = scoreRangeCondition
 /** Builds an `execute if score <left> = <right>` condition between two scoreboard delegates. */
 infix fun ScoreboardDelegate.equalTo(other: ScoreboardDelegate) =
 	scoreRelationCondition(asExecuteScore(), Relation.EQUAL_TO, other.asExecuteScore())
+
+/** Builds an `execute unless score <left> = <right>` condition between two scoreboard delegates. */
+infix fun ScoreboardDelegate.notEqualTo(other: ScoreboardDelegate) = inverted(equalTo(other))
 
 /** Builds an `execute if score <left> < <right>` condition between two scoreboard delegates. */
 infix fun ScoreboardDelegate.lessThan(other: ScoreboardDelegate) =
@@ -161,6 +169,20 @@ fun runIf(
 
 	run(runFunction)
 }
+
+/**
+ * Runs [block] inside a generated function only if [condition] does NOT match, the `unless` counterpart of [runIf].
+ *
+ * @param condition The delegated score condition to evaluate.
+ * @param name The generated function name used for the conditional branch.
+ * @param block The commands emitted when [condition] doesn't match.
+ */
+context(fn: Function)
+fun runUnless(
+	condition: ScoreRunCondition,
+	name: String = "state_delegate_unless_${fn.name}_${fn.lines.size}",
+	block: Function.() -> Unit,
+) = runIf(inverted(condition), name, block)
 
 /**
  * Re-runs a generated function while [condition] remains true.

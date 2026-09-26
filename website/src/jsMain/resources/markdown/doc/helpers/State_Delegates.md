@@ -163,9 +163,20 @@ same scoreboard comparisons as the `execute` DSL:
 | `lessThan(...)`             | `matches ..9`     | `<`                   |
 | `lessThanOrEqualTo(...)`    | `matches ..10`    | `<=`                  |
 | `matches(...)`              | `matches <range>` | -                     |
+| `notEqualTo(...)`           | `matches 10`      | `=`                   |
 
-A "not equal" check isn't possible with these helpers because `runIf` only emits `execute if`; open an `execute`
-block with `unlessCondition` for it.
+Scores have no `!=`, so `notEqualTo` emits `execute unless score ...` with the `equalTo` check. `runUnless` does the
+same for any condition, running its block when the condition doesn't match:
+
+```kotlin
+function("combo_negations") {
+	val player = entity()
+	val combo = player.scoreboard("combo", default = 0)
+
+	runIf(combo notEqualTo 10) { say("combo != 10") } // execute unless score <target> combo matches 10 run ...
+	runUnless(combo greaterThan 5) { say("combo <= 5") } // execute unless score <target> combo matches 6.. run ...
+}
+```
 
 ```kotlin
 function("combo_comparisons") {
@@ -255,6 +266,7 @@ function("combo_loops") {
 | `scoreboard(...)`                            | Create a scoreboard-backed delegate for an entity.                                                |
 | `scoreboardEntity(...)`                      | Create a score handle for relative arithmetic.                                                    |
 | `runIf(...)`                                 | Run a block when a delegated score condition matches.                                             |
+| `runUnless(...)`                             | Run a block when a delegated score condition doesn't match.                                       |
 | `runWhile(...)`                              | Re-run a block while a delegated score condition stays true.                                      |
 | `repeat(...)`                                | Run a block once per score point, with an optional separate counter score and iteration delegate. |
 | `storage(...)`                               | Create an NBT storage-backed delegate.                                                            |
