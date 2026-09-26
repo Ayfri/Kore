@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.bindings.download
 
 import io.github.ayfri.kore.bindings.getFromCacheOrDownload
+import io.github.ayfri.kore.utils.KoreLogger.info
 import kotlinx.io.files.Path
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
@@ -111,7 +112,7 @@ internal data object GitHubDownloader : Downloader {
 				"Asset '${ref.assetName}' not found in release '${ref.tag}' of '${ref.owner}/${ref.repo}'"
 			)
 
-		println("Downloading release asset from GitHub: ${ref.owner}/${ref.repo}@${ref.tag}/${ref.assetName}")
+		info("Downloading release asset from GitHub: ${ref.owner}/${ref.repo}@${ref.tag}/${ref.assetName}")
 		return getFromCacheOrDownload(downloadUrl, skipCache)
 	}
 
@@ -119,7 +120,7 @@ internal data object GitHubDownloader : Downloader {
 	 * Downloads a repository as a ZIP archive for a specific tag/branch/commit.
 	 */
 	private suspend fun downloadArchive(ref: GitHubRef, skipCache: Boolean): Pair<Path, String> {
-		println("Downloading GitHub archive: ${ref.owner}/${ref.repo}@${ref.tag}")
+		info("Downloading GitHub archive: ${ref.owner}/${ref.repo}@${ref.tag}")
 
 		// Try as a tag first
 		var downloadUrl = "$GITHUB_ARCHIVE/${ref.owner}/${ref.repo}/archive/refs/tags/${ref.tag}.zip"
@@ -154,7 +155,7 @@ internal data object GitHubDownloader : Downloader {
 			?.jsonPrimitive?.content
 			?: throw IllegalArgumentException("Could not determine default branch for ${ref.owner}/${ref.repo}")
 
-		println("Downloading GitHub archive: ${ref.owner}/${ref.repo} (default branch: $defaultBranch)")
+		info("Downloading GitHub archive: ${ref.owner}/${ref.repo} (default branch: $defaultBranch)")
 
 		val downloadUrl = "$GITHUB_ARCHIVE/${ref.owner}/${ref.repo}/archive/refs/heads/$defaultBranch.zip"
 		return getFromCacheOrDownload(downloadUrl, skipCache)

@@ -7,6 +7,7 @@ import io.github.ayfri.kore.bindings.api.exploreDatapacks
 import io.github.ayfri.kore.bindings.download.CurseForgeDownloader
 import io.github.ayfri.kore.bindings.download.GitHubDownloader
 import io.github.ayfri.kore.bindings.download.ModrinthDownloader
+import io.github.ayfri.kore.bindings.download.encodeUrlComponent
 import io.github.ayfri.kore.generated.CatVariants
 import io.github.ayfri.kore.generated.JukeboxSongs
 import io.github.ayfri.kore.generated.WolfVariants
@@ -71,6 +72,22 @@ fun testParsingLogic() = newTest("parsing-logic") {
 
 	val cfRefUrl = CurseForgeDownloader.parseReference("https://www.curseforge.com/minecraft/data-packs/my-slug")
 	cfRefUrl.projectIdentifier assertsIs "my-slug"
+
+	val modrinthVersions = """[
+		{"id":"m1","version_number":"2.0","loaders":["fabric"],"files":[{"url":"https://x/mod.jar","primary":true}]},
+		{"id":"d1","version_number":"1.9","loaders":["datapack"],"files":[{"url":"https://x/extra.zip","primary":false},{"url":"https://x/pack.zip","primary":true}]}
+	]"""
+	ModrinthDownloader.downloadUrl(modrinthVersions, "slug", null) assertsIs "https://x/pack.zip"
+	ModrinthDownloader.downloadUrl(modrinthVersions, "slug", "2.0") assertsIs "https://x/mod.jar"
+	ModrinthDownloader.downloadUrl(modrinthVersions, "slug", "d1") assertsIs "https://x/pack.zip"
+
+	CurseForgeDownloader.projectId("""{"data":[{"id":1,"slug":"my-slug-extra"},{"id":2,"slug":"my-slug"}]}""", "my-slug") assertsIs "2"
+	CurseForgeDownloader.downloadUrl(
+		"""{"data":[{"id":10,"fileName":"old.zip","downloadUrl":"https://x/old.zip"},{"id":12,"fileName":"hidden.zip","downloadUrl":null},{"id":11,"fileName":"new.zip","downloadUrl":"https://x/new.zip"}]}""",
+		singleFile = false,
+	) assertsIs "https://x/new.zip"
+	CurseForgeDownloader.downloadUrl("""{"data":{"id":5,"downloadUrl":"https://x/five.zip"}}""", singleFile = true) assertsIs "https://x/five.zip"
+	encodeUrlComponent("my slug/é") assertsIs "my%20slug%2F%C3%A9"
 
 	println("Parsing logic tests passed")
 }

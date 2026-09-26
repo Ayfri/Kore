@@ -1,7 +1,9 @@
 package io.github.ayfri.kore.bindings.download
 
 import io.github.ayfri.kore.bindings.getFromCacheOrDownload
+import io.github.ayfri.kore.utils.KoreLogger
 import kotlinx.io.files.Path
+import kotlinx.serialization.Serializable
 
 /**
  * Downloads datapacks from CurseForge.
@@ -15,10 +17,21 @@ import kotlinx.io.files.Path
  */
 internal data object CurseForgeDownloader : Downloader {
 	private const val API_BASE = "https://api.curseforge.com/v1"
+	private const val MINECRAFT_GAME_ID = 432
+
 	private val apiKey by lazy {
 		platformEnvVar("CURSEFORGE_API_KEY") ?: platformSystemProperty("curseforge.api.key")
 		?: throw IllegalStateException("CURSEFORGE_API_KEY environment variable or curseforge.api.key system property is required for CurseForge downloads")
 	}
+
+	@Serializable
+	private data class Response<T>(val data: T)
+
+	@Serializable
+	private data class Mod(val id: Long, val slug: String)
+
+	@Serializable
+	private data class File(val id: Long, val fileName: String = "", val downloadUrl: String? = null)
 
 	override fun match(source: String) = source.startsWith("curseforge:")
 
@@ -43,7 +56,6 @@ internal data object CurseForgeDownloader : Downloader {
 	 * - URL: `https://www.curseforge.com/minecraft/mc-mods/my-mod-slug`
 	 */
 	fun parseReference(reference: String): CurseForgeRef {
-		// Handle URL
 		if (reference.startsWith("http")) {
 			val slug = reference.trim().trimEnd('/').substringAfterLast('/')
 			return CurseForgeRef(slug)
@@ -53,46 +65,42 @@ internal data object CurseForgeDownloader : Downloader {
 		return CurseForgeRef(parts[0], parts.getOrNull(1))
 	}
 
-	private suspend fun downloadFile(ref: CurseForgeRef, skipCache: Boolean): Pair<Path, String> {
-		val projectId = resolveProjectId(ref.projectIdentifier)
+	/** Returns the id of the project whose slug is exactly [slug] in a `/mods/search` response. */
+	internal fun projectId(searchJson: String, slug: String) =
+		apiJson.decodeFromString<Response<List<Mod>>>(searchJson).data.firstOrNull { it.slug == slug }?.id?.toString()
+			?: throw IllegalArgumentException("Could not resolve CurseForge slug '$slug' to a project ID")
 
-		val url = if (ref.fileId != null) {
-			"$API_BASE/mods/$projectId/files/${ref.fileId}"
-		} else {
-			"$API_BASE/mods/$projectId/files"
+	/**
+	 * Returns the download URL of the file in a `/mods/{id}/files/{fileId}` response, or of the newest downloadable
+	 * file in a `/mods/{id}/files` response. A file with a `null` URL is one whose author disabled third-party downloads.
+	 */
+	internal fun downloadUrl(filesJson: String, singleFile: Boolean): String {
+		val files = when {
+			singleFile -> listOf(apiJson.decodeFromString<Response<File>>(filesJson).data)
+			else -> apiJson.decodeFromString<Response<List<File>>>(filesJson).data
 		}
 
-		val json = fetchJsonWithKey(url)
-		// If we requested a list (no fileId), we want the first one (latest).
-		// If we requested a specific file, the JSON is that file object.
-		val downloadUrl = extractUrl(json)
+		return files.filter { it.downloadUrl != null }.maxByOrNull { it.id }?.downloadUrl
+			?: throw IllegalArgumentException(
+				"No downloadable CurseForge file among ${files.map { it.fileName }}, its author may have disabled third-party downloads"
+			)
+	}
 
-		println("Downloading from CurseForge: $projectId (url: $downloadUrl)")
+	private suspend fun downloadFile(ref: CurseForgeRef, skipCache: Boolean): Pair<Path, String> {
+		val projectId = resolveProjectId(ref.projectIdentifier)
+		val filesUrl = "$API_BASE/mods/$projectId/files${ref.fileId?.let { "/${encodeUrlComponent(it)}" }.orEmpty()}"
+		val downloadUrl = downloadUrl(fetchJsonWithKey(filesUrl), singleFile = ref.fileId != null)
+
+		KoreLogger.info("Downloading from CurseForge: $projectId (url: $downloadUrl)")
 		return getFromCacheOrDownload(downloadUrl, skipCache)
 	}
 
 	private suspend fun resolveProjectId(identifier: String): String {
-		// If it's already a number, return it
 		if (identifier.all { it.isDigit() }) return identifier
 
-		// Otherwise, search for the slug
-		println("Resolving CurseForge slug: $identifier")
-		val searchUrl = "$API_BASE/mods/search?gameId=432&slug=$identifier"
-		val json = fetchJsonWithKey(searchUrl)
-
-		val idPattern = """"id"\s*:\s*(\d+)""".toRegex()
-		val match = idPattern.find(json)
-			?: throw IllegalArgumentException("Could not resolve CurseForge slug '$identifier' to a project ID")
-
-		return match.groupValues[1]
+		KoreLogger.info("Resolving CurseForge slug: $identifier")
+		return projectId(fetchJsonWithKey("$API_BASE/mods/search?gameId=$MINECRAFT_GAME_ID&slug=${encodeUrlComponent(identifier)}"), identifier)
 	}
 
 	private suspend fun fetchJsonWithKey(url: String) = fetchJsonString(url, mapOf("x-api-key" to apiKey))
-
-	private fun extractUrl(json: String): String {
-		val urlPattern = """"downloadUrl"\s*:\s*"([^"]+)"""".toRegex()
-		val match = urlPattern.find(json)
-			?: throw IllegalArgumentException("No downloadUrl found in CurseForge response")
-		return match.groupValues[1]
-	}
 }

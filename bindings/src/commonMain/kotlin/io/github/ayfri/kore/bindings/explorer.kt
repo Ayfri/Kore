@@ -5,6 +5,8 @@ import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.generated.DEFAULT_PACK_FORMAT
 import io.github.ayfri.kore.pack.*
+import io.github.ayfri.kore.utils.KoreLogger.info
+import io.github.ayfri.kore.utils.KoreLogger.warn
 import kotlinx.io.files.Path
 import kotlinx.serialization.json.*
 
@@ -12,6 +14,11 @@ import kotlinx.serialization.json.*
 internal var debugEnabled = false
 
 private val jsonDecoder = Json { ignoreUnknownKeys = true }
+private val dataFilePattern = Regex("""^(?:(.*?)/)??data/[^/]+/.+""")
+private val functionFilePattern = Regex("""^data/([^/\\]+)/function/(.+)\.mcfunction$""")
+private val macroPattern = Regex("""\$\(([^)]+)\)""")
+
+private fun String.relativeToDataRoot(dataRoot: String) = if (dataRoot.isEmpty()) this else removePrefix("$dataRoot/")
 
 /**
  * Explores an already in-memory datapack (e.g. an uploaded/downloaded zip decoded via [readZipDatapack])
@@ -22,27 +29,19 @@ fun explore(datapack: InMemoryDatapack, displayName: String, displayPath: Path):
 
 	// Find the actual data directory root (may be nested like datapack_name/datapack_name/data/...)
 	// Look for the first occurrence of /data/<namespace>/ pattern (e.g., /data/minecraft/ or /data/custom_ns/)
-	val dataRoot = tree.firstOrNull {
-		it.matches(Regex("^.*/data/[^/]+/.+")) || it.matches(Regex("^data/[^/]+/.+"))
-	}?.let { file ->
-		val dataIndex = file.indexOf("/data/")
-		if (dataIndex >= 0) file.take(dataIndex) else ""
-	} ?: ""
+	val dataRoot = tree.firstNotNullOfOrNull { dataFilePattern.matchEntire(it) }?.groupValues?.get(1).orEmpty()
 
-	// Build regex patterns that handle both empty and non-empty data roots
-	val dataPrefix = if (dataRoot.isEmpty()) "" else "${Regex.escape(dataRoot)}/"
-	val dataFiles = tree.filter { it.matches(Regex("^${dataPrefix}data/.+")) }
+	val dataDir = if (dataRoot.isEmpty()) "data/" else "$dataRoot/data/"
+	val dataFiles = tree.filter { it.length > dataDir.length && it.startsWith(dataDir) }
 		// Filter out nested datapacks (e.g., data/minecraft/datapacks/trade_rebalance/...)
 		// This is a special case in vanilla Minecraft datapacks
 		.filter { !it.contains("/datapacks/") }
 
 	if (debugEnabled) {
-		println("[DEBUG] Data files found: ${dataFiles.size}")
+		info("[DEBUG] Data files found: ${dataFiles.size}")
 	}
 
-	// Find all function files
-	val functionsFiles = dataFiles.filter { it.matches(Regex("^${dataPrefix}data/.+?/function/.+\\.mcfunction$")) }
-	val functions = functionsFiles.mapNotNull { exploreFunction(datapack, dataRoot, it) }
+	val functions = dataFiles.filter { it.endsWith(".mcfunction") && "/function/" in it }.mapNotNull { exploreFunction(datapack, dataRoot, it) }
 
 	// Auto-discover resource types by looking for directories like data/<namespace>/<type>/
 	val discoveredTypes = discoverResourceTypes(dataFiles, dataRoot)
@@ -50,7 +49,7 @@ fun explore(datapack: InMemoryDatapack, displayName: String, displayPath: Path):
 	val resourceTypes = discoveredTypes.filter { isValidResourceType(it) }
 
 	if (debugEnabled && discoveredTypes.isNotEmpty()) {
-		println("[DEBUG] Discovered resource types: ${
+		info("[DEBUG] Discovered resource types: ${
 			discoveredTypes.joinToString(" | ") { type ->
 				"$type ${exploreResources(dataFiles, dataRoot, type).size}"
 			}
@@ -98,13 +97,7 @@ fun discoverResourceTypes(dataFiles: List<String>, dataRootString: String): List
 	for (file in dataFiles) {
 		if (!file.endsWith(".json")) continue
 
-		// Remove data root prefix if present
-		val relativePath = if (dataRootString.isNotEmpty()) {
-			val prefix = "$dataRootString/"
-			if (file.startsWith(prefix)) file.removePrefix(prefix) else file
-		} else {
-			file
-		}
+		val relativePath = file.relativeToDataRoot(dataRootString)
 
 		// Expected structure: data/<namespace>/<type>/...  or data/<namespace>/<type>/<subtype>/...
 		if (!relativePath.startsWith("data/")) continue
@@ -148,51 +141,24 @@ fun discoverResourceTypes(dataFiles: List<String>, dataRootString: String): List
 
 fun exploreFunction(datapack: InMemoryDatapack, dataRootString: String, functionFile: String): Function? {
 	val content = datapack.files[functionFile] ?: return null
-	val dataPrefix = if (dataRootString.isEmpty()) "" else "${Regex.escape(dataRootString)}/"
 
-	val path = Regex("^${dataPrefix}data/.+?/function/(.+)\\.mcfunction$").find(functionFile)?.groupValues?.get(1)
-		?: run {
-			warn("Function file $functionFile doesn't match the expected pattern - skipping")
-			return null
-		}
-
-	// For namespace extraction, match only up to the first directory after data/
-	// This ensures we only capture the actual namespace, not nested paths
-	val namespace = Regex("^${dataPrefix}data/([^/\\\\]+)/function/.+\\.mcfunction$").find(functionFile)?.let {
-		it.groupValues[1]
-	} ?: run {
-		warn("Could not extract namespace from function $functionFile - skipping")
+	val (namespace, path) = functionFilePattern.matchEntire(functionFile.relativeToDataRoot(dataRootString))?.destructured ?: run {
+		warn("Function file $functionFile doesn't match the expected `data/<namespace>/function/<path>.mcfunction` pattern - skipping")
 		return null
 	}
 
-	// Validate that namespace doesn't contain invalid characters (should be impossible now with [^/\\]+ pattern)
-	if ('/' in namespace || '\\' in namespace) {
-		warn("Invalid namespace '$namespace' extracted from $functionFile - skipping")
-		return null
-	}
-
-	// a macro is detected as a line starting with $ and containing $(.+?).
-	// Extract all variable names from $(variable_name) patterns
+	// A macro line starts with `$`, its arguments are the `$(name)` patterns it contains.
 	val macroArguments = content.lines()
 		.filter { it.startsWith("$") }
-		.flatMap { line ->
-			Regex("\\$\\(([^)]+)\\)").findAll(line).map { it.groupValues[1] }
-		}
+		.flatMap { line -> macroPattern.findAll(line).map { it.groupValues[1] } }
 		.distinct()
-		.toList()
 
 	return Function("$namespace:$path", macroArguments)
 }
 
 fun exploreResources(dataFiles: List<String>, dataRootString: String, resourceType: String): List<Resource> {
 	return dataFiles.mapNotNull { file ->
-		// Remove data root prefix if present
-		val relativePath = if (dataRootString.isNotEmpty()) {
-			val prefix = "$dataRootString/"
-			if (file.startsWith(prefix)) file.removePrefix(prefix) else file
-		} else {
-			file
-		}
+		val relativePath = file.relativeToDataRoot(dataRootString)
 
 		// Expected structure: data/<namespace>/<type>/...
 		if (!relativePath.startsWith("data/") || !relativePath.endsWith(".json")) {

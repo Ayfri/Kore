@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.bindings.download
 
+import io.github.ayfri.kore.utils.KoreLogger.info
 import io.github.ayfri.kore.utils.exists
 import kotlinx.io.files.Path
 
@@ -28,7 +29,7 @@ internal data object LocalDownloader : Downloader {
 
 		for (location in commonLocations) {
 			if (location.exists()) {
-				println("Found datapack at: $location")
+				info("Found datapack at: $location")
 				return location
 			}
 		}

@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.bindings
 
 import io.github.ayfri.kore.bindings.api.RemappingState
+import io.github.ayfri.kore.utils.KoreLogger
 import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
@@ -31,5 +32,5 @@ fun generateDatapackFile(
 	SystemFileSystem.sink(targetFile).buffered().use { it.writeString(source) }
 
 	val elapsedTime = startTime.elapsedNow()
-	println("Generated bindings '$datapackObjectName' in $elapsedTime in: $targetFile")
+	KoreLogger.info("Generated bindings '$datapackObjectName' in $elapsedTime in: $targetFile")
 }

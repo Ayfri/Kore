@@ -5,6 +5,7 @@ import io.github.ayfri.kore.bindings.download.cacheFileExists
 import io.github.ayfri.kore.bindings.download.cacheReadFile
 import io.github.ayfri.kore.bindings.download.cacheWriteFile
 import io.github.ayfri.kore.bindings.download.httpRequest
+import io.github.ayfri.kore.utils.KoreLogger.info
 import kotlinx.io.files.Path
 
 private val unsafeFileNameCharacters = Regex("""[^\w .+-]|^\.+$""")
@@ -52,14 +53,14 @@ internal suspend fun getFromCacheOrDownload(
 	val cachedFile = Path(cacheDir(), "$cacheKey-$decodedFileName")
 
 	if (!skipCache && cacheFileExists(cachedFile)) {
-		println("Using cached datapack: $cachedFile")
+		info("Using cached datapack: $cachedFile")
 		return cachedFile to decodedFileName
 	}
 
 	if (skipCache && cacheFileExists(cachedFile)) {
-		println("Skipping cache, redownloading datapack from: $url")
+		info("Skipping cache, redownloading datapack from: $url")
 	} else {
-		println("Downloading datapack from: $url")
+		info("Downloading datapack from: $url")
 	}
 
 	try {
@@ -74,7 +75,7 @@ internal suspend fun getFromCacheOrDownload(
 
 		cacheWriteFile(cachedFile, response.bytes)
 		val sizeInMb = (response.bytes.size / (1024.0 * 1024.0) * 100).let { (it + 0.5).toLong() / 100.0 }
-		println("Downloaded and cached: $cachedFile ($sizeInMb MB)")
+		info("Downloaded and cached: $cachedFile ($sizeInMb MB)")
 		return cachedFile to decodedFileName
 	} catch (e: Exception) {
 		throw IllegalArgumentException("Failed to download datapack from $url: ${e.message}", e)

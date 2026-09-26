@@ -5,7 +5,7 @@ nav-title: Bindings
 description: Import existing datapacks and generate Kotlin bindings.
 keywords: kore, bindings, import, datapack, github, modrinth, curseforge
 date-created: 2026-01-23
-date-modified: 2026-04-21
+date-modified: 2026-09-26
 routeOverride: /docs/advanced/bindings
 position: 3
 ---
@@ -178,8 +178,10 @@ Downloads the latest or a specific version of a Modrinth project.
 
 Patterns:
 
-- `slug`: Latest stable version.
-- `slug:version`: Specific version ID or number.
+- `slug`: Newest version published for the `datapack` loader, so a project also shipping mod jars resolves to its datapack.
+- `slug:version`: Specific version ID or number, whatever its loader.
+
+The primary file of the version is downloaded, or its first file when none is marked primary.
 
 ```kotlin
 modrinth("vanilla-refresh")
@@ -191,7 +193,7 @@ Downloads from CurseForge. Requires the `CURSEFORGE_API_KEY` environment variabl
 
 Patterns:
 
-- `projectId`: Latest file for the project.
+- `projectId`: Latest file for the project that allows third-party downloads.
 - `projectId:fileId`: Specific file.
 - `slug`: Project slug.
 - `slug:fileId`: Specific file for a project slug.
