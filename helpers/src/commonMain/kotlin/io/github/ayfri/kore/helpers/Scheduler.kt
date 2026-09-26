@@ -8,6 +8,8 @@ import io.github.ayfri.kore.commands.function
 import io.github.ayfri.kore.commands.schedule
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.generatedFunction
+import io.github.ayfri.kore.functions.generatedFunctionName
+import io.github.ayfri.kore.functions.hashedGeneratedFunction
 import io.github.ayfri.kore.functions.load
 
 /**
@@ -43,22 +45,23 @@ data class Scheduler(
 	 */
 	context(fn: Function)
 	fun execute() {
-		val generatedFunction = fn.datapack.generatedFunction("scheduler_${hashCode()}") {
-			if (function is Function) lines += function.lines else fn.function(function)
-			if (period != null) fn.schedule(asId()).replace(period!!)
+		val delay = delay
+		val runTask: Function.() -> Unit = { if (function is Function) lines += function.lines else function(function) }
+		val wrapper = period?.let { period ->
+			fn.datapack.generatedFunction(generatedFunctionName("scheduler", listOf(function.asId(), period.asString()))) {
+				runTask()
+				schedule(this).replace(period)
+			}
 		}
 
 		when {
-			delay == null && period == null -> if (function is Function) fn.lines += function.lines else fn.function(
-				function
-			)
-
-			delay != null && period == null -> fn.schedule(function).replace(delay!!)
-			delay == null && period != null -> fn.function(generatedFunction)
-			else -> fn.schedule(generatedFunction).replace(delay!!)
+			wrapper == null && delay == null -> fn.runTask()
+			wrapper == null -> fn.schedule(function).replace(delay!!)
+			delay == null -> fn.function(wrapper)
+			else -> fn.schedule(wrapper).replace(delay)
 		}
 
-		if (period != null) this.generatedFunction = generatedFunction
+		generatedFunction = wrapper
 	}
 }
 
@@ -102,7 +105,7 @@ data class SchedulerManager(private val dp: DataPack) {
 	 * The generated function is stored and scheduled according to [delay] and [period]. Returns the created [Scheduler].
 	 */
 	fun addScheduler(delay: TimeNumber? = null, period: TimeNumber? = null, block: Function.() -> Command) =
-		Scheduler(dp.generatedFunction("scheduler_${block.hashCode()}") { block() }, delay, period).also {
+		Scheduler(dp.hashedGeneratedFunction("scheduler_task") { block() }, delay, period).also {
 			with(fn) { it.execute() }
 			schedulers.add(it)
 		}
@@ -170,7 +173,6 @@ data class SchedulerManager(private val dp: DataPack) {
 	fun run() = dp.load("scheduler_setup") {
 		if (debug) startDebug()
 		lines += fn.lines
-		if (debug) endDebug()
 	}
 }
 

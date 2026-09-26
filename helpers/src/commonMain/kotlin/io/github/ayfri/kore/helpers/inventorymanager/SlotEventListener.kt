@@ -8,7 +8,6 @@ import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.types.ContainerArgument
 import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.literals.allEntities
-import io.github.ayfri.kore.arguments.types.literals.randomUUID
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.commands.data
@@ -33,7 +32,8 @@ data class SlotEventListener(
 	var item: ItemArgument,
 ) {
 	val events = mutableListOf<SlotEvent>()
-	var randomTag = randomUUID().asString()
+	/** Marks this listener's item, derived from its container and slot so builds stay reproducible. */
+	var randomTag = "${container.asString()}#${slot.asIndex()}".hashCode().toUInt().toString(16)
 	internal var onTick: (Function.() -> Unit)? = null
 	internal var onTickFunction: FunctionArgument? = null
 

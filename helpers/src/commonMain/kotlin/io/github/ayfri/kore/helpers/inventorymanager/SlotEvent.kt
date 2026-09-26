@@ -3,7 +3,7 @@ package io.github.ayfri.kore.helpers.inventorymanager
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.functions.Function
-import io.github.ayfri.kore.functions.generatedFunction
+import io.github.ayfri.kore.functions.hashedGeneratedFunction
 
 data class SlotEvent(
 	val function: FunctionArgument,
@@ -38,7 +38,7 @@ fun SlotEventListener.event(type: SlotEventType, function: FunctionArgument) = e
 
 context(dp: DataPack)
 fun SlotEventListener.event(type: SlotEventType, block: Function.() -> Unit) {
-	val generatedFunction = dp.generatedFunction("${type.name.lowercase()}_event_${hashCode()}", block = block)
+	val generatedFunction = dp.hashedGeneratedFunction("${type.name.lowercase()}_event", block = block)
 	events.add(SlotEvent(generatedFunction, type))
 }
 
