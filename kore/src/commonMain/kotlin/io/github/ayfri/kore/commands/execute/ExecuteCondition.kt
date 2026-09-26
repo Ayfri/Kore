@@ -40,6 +40,16 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 		this.arguments += listOf(literal(prefix), *arguments.toTypedArray())
 	}
 
+	/**
+	 * Adds the conditions of [block] with `if` and `unless` swapped, the only way to write "not equal" since scores have no `!=`.
+	 * ```kotlin
+	 * ifCondition { inverted { score(self(), "a", rangeOrInt(0)) } } // execute unless score @s a matches 0
+	 * ```
+	 */
+	fun inverted(block: ExecuteCondition.() -> Unit) {
+		arguments += ExecuteCondition(ex, prefix == "if").apply(block).arguments
+	}
+
 	/** Checks if the biome at the given position matches the given biome or biome tag. */
 	fun biome(pos: Vec3, biome: BiomeOrTagArgument) =
 		addArguments(listOf(literal("biome"), literal(pos.toStringTruncated()), biome))

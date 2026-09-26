@@ -120,6 +120,10 @@ Available checks inside the condition block:
 | `score(target, obj, src, srcObj, relation)` | Two scores compare with a relation                 |
 | `stopwatch(id, range)`                      | A stopwatch's elapsed seconds are within a range   |
 
+`inverted { }` flips the checks inside it, `if` becoming `unless` and the reverse. It lets a reusable condition block be
+negated, `ifCondition { inverted { score(self(), "frozen", rangeOrInt(1)) } }` emitting
+`execute unless score @s frozen matches 1`.
+
 ### Comparing scores fluently
 
 Inside a condition block, `score(target, objective)` returns a handle with the full set of infix comparison operators:

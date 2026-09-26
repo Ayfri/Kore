@@ -75,6 +75,29 @@ fun Function.executeTests() {
 	""".trimIndent()
 
 	execute {
+		ifCondition {
+			entity(allPlayers())
+			inverted { score(self(), "frozen", rangeOrInt(1)) }
+		}
+		unlessCondition {
+			inverted { entity(allEntities()) }
+		}
+		run { say("inverted") }
+	} assertsIs """
+		execute if entity @a unless score @s frozen matches 1 if entity @e run say inverted
+	""".trimIndent()
+
+	execute {
+		at(self())
+		run("named_run") {
+			say("a")
+			say("b")
+		}
+	} assertsIs """
+		execute at @s run function ${datapack.name}:${datapack.configuration.generatedFunctionsFolder}/named_run
+	""".trimIndent()
+
+	execute {
 		at(testEntity.selector)
 
 		run {
