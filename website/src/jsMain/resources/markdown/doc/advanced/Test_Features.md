@@ -37,9 +37,9 @@ Locks a world clock to a specific tick value:
 
 ```kotlin
 testEnvironments {
-  clockTime("morning", WorldClocks.OVERWORLD, 1000)
-  clockTime("noon", WorldClocks.OVERWORLD, 6000)
-  clockTime("night", WorldClocks.OVERWORLD, 18000)
+	clockTime("morning", WorldClocks.OVERWORLD, 1000)
+	clockTime("noon", WorldClocks.OVERWORLD, 6000)
+	clockTime("night", WorldClocks.OVERWORLD, 18000)
 }
 ```
 
@@ -60,11 +60,11 @@ Overrides game rules for controlled conditions:
 
 ```kotlin
 testEnvironments {
-    gameRules("controlled_env") {
-        this[Gamerules.ADVANCE_TIME] = false
-        this[Gamerules.SPAWN_MOBS] = false
-        this[Gamerules.RANDOM_TICK_SPEED] = 0
-    }
+	gameRules("controlled_env") {
+		this[Gamerules.ADVANCE_TIME] = false
+		this[Gamerules.SPAWN_MOBS] = false
+		this[Gamerules.RANDOM_TICK_SPEED] = 0
+	}
 }
 ```
 
@@ -93,7 +93,7 @@ val dayCycle = timeline("day_cycle", WorldClocks.OVERWORLD)
 val endCycle = timeline("end_cycle", WorldClocks.THE_END)
 
 testEnvironments {
-  timelineAttributes("timeline_env", dayCycle, endCycle)
+	timelineAttributes("timeline_env", dayCycle, endCycle)
 }
 ```
 
@@ -106,7 +106,7 @@ testEnvironments {
 	val rules = gameRules("no_mobs") {
 		this[Gamerules.SPAWN_MOBS] = false
 	}
-  val time = clockTime("dawn", WorldClocks.OVERWORLD, 1000)
+	val time = clockTime("dawn", WorldClocks.OVERWORLD, 1000)
 
 	allOf("controlled_dawn", rules, time)
 }
@@ -133,22 +133,22 @@ Test instances define the actual tests. Each one references a structure, an envi
 
 ```kotlin
 testInstances {
-    // Block-based test
+	// Block-based test
 	testInstance("redstone_test") {
-        blockBased()
-        environment(env)
-        maxTicks = 100
-        structure(Structures.AncientCity.Structures.BARRACKS)
-    }
+		blockBased()
+		environment(env)
+		maxTicks = 100
+		structure(Structures.AncientCity.Structures.BARRACKS)
+	}
 
-    // Function-based test
-    testInstance("function_test") {
-        functionBased()
-	    environment(env)
-	    function("com.example.MyMod::myTest")
-        maxTicks = 200
-	    structure(Structures.Igloo.TOP)
-    }
+	// Function-based test
+	testInstance("function_test") {
+		functionBased()
+		environment(env)
+		function("com.example.MyMod::myTest")
+		maxTicks = 200
+		structure(Structures.Igloo.TOP)
+	}
 }
 ```
 
@@ -201,39 +201,39 @@ testSelector("*_combat")      // Pattern matching
 
 ```kotlin
 function("run_tests") {
-    test {
-        val selector = testSelector("my_pack:test_*")
+	test {
+		val selector = testSelector("my_pack:test_*")
 
-        run(selector)
-        runClosest()
-        runMultiple(selector, 5)
+		run(selector)
+		runClosest()
+		runMultiple(selector, 5)
 
-        create(TestInstanceArgument("test", "pack"))
-        locate(selector)
-        pos("variable")
+		create(TestInstanceArgument("test", "pack"))
+		locate(selector)
+		pos("variable")
 
-        clearAll()
-        resetClosest()
-        stop()
+		clearAll()
+		resetClosest()
+		stop()
 
-        verify(TestInstanceArgument("test1", "pack"),
-               TestInstanceArgument("test2", "pack"))
-    }
+		verify(TestInstanceArgument("test1", "pack"))
+	}
 }
 ```
 
-### In-Game Commands
+This generates:
 
 ```mcfunction
-/test run my_datapack:basic_test
-/test runmultiple my_datapack:basic_test my_datapack:function_test
-/test runclosest
-/test runfailed
-/test create my_datapack:new_test 16 16 16
-/test locate my_datapack:test_*
-/test clearall 15
-/test resetclosest
-/test stop
+test run my_pack:test_*
+test runclosest
+test runmultiple my_pack:test_* 5
+test create pack:test
+test locate my_pack:test_*
+test pos variable
+test clearall
+test resetclosest
+test stop
+test verify pack:test1
 ```
 
 ## Complete Example
@@ -248,7 +248,7 @@ fun DataPack.createTestSuite() {
 		this[Gamerules.SPAWN_MOBS] = false
 		this[Gamerules.RANDOM_TICK_SPEED] = 0
 	}
-  val dayTime = testEnvironmentsBuilder.clockTime("day", WorldClocks.OVERWORLD, 6000)
+	val dayTime = testEnvironmentsBuilder.clockTime("day", WorldClocks.OVERWORLD, 6000)
 	val controlledDay = testEnvironmentsBuilder.allOf("controlled_day", controlled, dayTime)
 
 	// Function environment (setup/teardown)
@@ -257,36 +257,36 @@ fun DataPack.createTestSuite() {
 			setup(setupFn)
 			teardown(cleanupFn)
 		}
-    }
+	}
 
-    testInstances {
-        testInstance("redstone_basic") {
-            blockBased()
-	        environment(controlledDay)
-            maxTicks = 100
-            required = true
-            structure(Structures.AncientCity.Structures.BARRACKS)
-        }
+	testInstances {
+		testInstance("redstone_basic") {
+			blockBased()
+			environment(controlledDay)
+			maxTicks = 100
+			required = true
+			structure(Structures.AncientCity.Structures.BARRACKS)
+		}
 
-        testInstance("complex_logic_test") {
-            functionBased()
-	        environment(controlled)
-	        function("com.example.MyMod::myTest")
-            maxAttempts = 2
-            maxTicks = 200
-            required = true
-            structure(Structures.AncientCity.Structures.BARRACKS)
-        }
+		testInstance("complex_logic_test") {
+			functionBased()
+			environment(controlled)
+			function("com.example.MyMod::myTest")
+			maxAttempts = 2
+			maxTicks = 200
+			required = true
+			structure(Structures.AncientCity.Structures.BARRACKS)
+		}
 
-        testInstance("directional_blocks") {
-            blockBased()
-            clockwise90()
-	        environment(controlled)
-            maxTicks = 120
-            required = true
-            structure(Structures.AncientCity.Structures.BARRACKS)
-        }
-    }
+		testInstance("directional_blocks") {
+			blockBased()
+			clockwise90()
+			environment(controlled)
+			maxTicks = 120
+			required = true
+			structure(Structures.AncientCity.Structures.BARRACKS)
+		}
+	}
 }
 ```
 

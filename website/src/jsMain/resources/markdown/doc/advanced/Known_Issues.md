@@ -35,7 +35,7 @@ see [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore#what-kore-will-
 
 Kore builds NBT and SNBT through **[knbt](https://github.com/BenWoodworth/knbt)** (`StringifiedNbt` and builders). Entry
 points include [
-`NbtTagUtils.kt`](https://github.com/Ayfri/Kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/utils/NbtTagUtils.kt)
+`NbtTagUtils.kt`](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/utils/NbtTagUtils.kt)
 and the `nbt { }` / `stringifiedNbt(...)` helpers used across commands and components.
 
 For normal day-to-day usage and examples, start with [NBTs](/docs/concepts/nbts); this section focuses on limitations
@@ -115,8 +115,7 @@ explicit **`@SerialName("vanilla_json_key")`** because the **KNBT** stack does n
 Kore’s JSON `namingStrategy` for that shape. The guide shows this in context (for example the `UseComponent` example
 with `durability_damages`).
 
-**Workaround:** Copy patterns from [Components](/docs/concepts/components) and match the keys your target **pack format
-** expects (use Minecraft’s registry JSON or Kore’s generators as reference, not guesswork).
+**Workaround:** Copy patterns from [Components](/docs/concepts/components) and match the keys your target **pack format** expects (use Minecraft’s registry JSON or Kore’s generators as reference, not guesswork).
 
 ---
 
@@ -132,8 +131,7 @@ These are **not Kore bugs**; Kore documents them so authors know what the DSL wi
 macros only in **functions**, **no type checking**, and macros are **not** threaded through every possible command
 argument slot.
 
-**Workaround:** Prefer normal Kotlin command builders where types matter; keep macro surfaces small and **test in-game
-**.
+**Workaround:** Prefer normal Kotlin command builders where types matter; keep macro surfaces small and **test in-game**.
 
 ### Markdown renderer (`helpers`)
 
