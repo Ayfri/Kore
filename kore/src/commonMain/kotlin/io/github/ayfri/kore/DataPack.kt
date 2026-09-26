@@ -63,6 +63,7 @@ import io.github.ayfri.kore.generation.DataPackGenerator
 import io.github.ayfri.kore.generation.DataPackJarGenerationOptions
 import io.github.ayfri.kore.generation.DatapackGenerationMode
 import io.github.ayfri.kore.generation.platform.runSuspendBlocking
+import io.github.ayfri.kore.optimization.runOptimizationPasses
 import io.github.ayfri.kore.pack.*
 import io.github.ayfri.kore.serializers.JsonNamingSnakeCaseStrategy
 import io.github.ayfri.kore.utils.*
@@ -352,13 +353,17 @@ fun DataPack.folderName(folderName: String) {
 }
 
 /**
- * Exports the whole datapack as an in-memory map of relative path (`data/...` or `pack.mcmeta`) to file content.
+ * Exports the whole datapack as an in-memory map of relative path (`data/...` or `pack.mcmeta`) to file content,
+ * after running the enabled optimization passes like [generate] does.
  *
  * This is the platform-neutral distribution path (works on JS): it never touches the filesystem, so the host
  * is free to write the returned entries however it wants. For on-disk/archive generation on the JVM, use
  * [generate]/[generateZip]/[generateJar] instead.
  */
-fun DataPack.exportAsStrings(): Map<String, String> = resourceFiles(linkedMapOf("pack.mcmeta" to generatePackMCMetaFile()))
+fun DataPack.exportAsStrings(): Map<String, String> {
+	runOptimizationPasses()
+	return resourceFiles(linkedMapOf("pack.mcmeta" to generatePackMCMetaFile()))
+}
 
 /**
  * Adds every function and generator file to [files] as pack-relative path (`data/...`) to content. Two resources

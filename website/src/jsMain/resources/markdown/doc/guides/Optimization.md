@@ -17,7 +17,8 @@ an empty block generates no function at all, and two generated functions with th
 *local* decisions, taken with only the surrounding statement in view.
 
 Optimization passes are the opposite: they run once, on the finished pack, right before it is written, when every
-function, tag and resource is known. They are disabled by default, since a pass deletes content.
+function, tag and resource is known. Every output path runs them, `generate()`, `generateZip()`, `generateJar()`,
+`generateZipBytes()` and `exportAsStrings()` alike. They are disabled by default, since a pass deletes content.
 
 ## Enabling them
 

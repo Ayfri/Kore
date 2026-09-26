@@ -1,12 +1,15 @@
 package io.github.ayfri.kore.generation
 
+import io.github.ayfri.kore.commands.function
 import io.github.ayfri.kore.commands.say
+import io.github.ayfri.kore.configuration
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.exportAsStrings
 import io.github.ayfri.kore.features.advancements.advancement
 import io.github.ayfri.kore.features.advancements.display
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.optimization.optimization
 import io.github.ayfri.kore.utils.asInvariantPathSeparator
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -32,6 +35,23 @@ fun exportAsStringsTests() {
 class ExportAsStringsTests : FunSpec({
 	test("exportAsStrings emits invariant / separators for every entry") {
 		exportAsStringsTests()
+	}
+
+	test("exportAsStrings runs the enabled optimization passes") {
+		val files = dataPack("export_as_strings_test") {
+			configuration {
+				optimization()
+			}
+
+			val empty = function("empty") {}
+			function("caller") {
+				say("hello")
+				function(empty)
+			}
+		}.exportAsStrings()
+
+		("data/export_as_strings_test/function/empty.mcfunction" in files) shouldBe false
+		files["data/export_as_strings_test/function/caller.mcfunction"] shouldBe "say hello"
 	}
 
 	test("asInvariantPathSeparator normalizes backslashes without reading the system separator") {
