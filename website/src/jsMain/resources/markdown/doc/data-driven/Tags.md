@@ -5,7 +5,7 @@ nav-title: Tags
 description: Create and manage tags for grouping game elements with Kore's type-safe DSL
 keywords: minecraft, datapack, kore, tags, grouping, blocks, items, entities, functions
 date-created: 2026-02-03
-date-modified: 2026-02-03
+date-modified: 2026-09-26
 routeOverride: /docs/data-driven/tags
 ---
 
@@ -234,7 +234,8 @@ Kore provides helpers for all vanilla tag types:
 
 ## Modifying Existing Tags
 
-Use `addToTag` to append to an existing tag without creating duplicates:
+Calling a tag builder again with the same name, type and namespace adds to the tag already registered, so the pack
+writes a single file listing every entry. `addToTag` does the same when you only know the registry type:
 
 ```kotlin
 // First creation
@@ -243,9 +244,12 @@ blockTag("my_ores") {
 	add(Blocks.GOLD_ORE)
 }
 
-// Later in code, add more entries
-addToTag<BlockTagArgument>("my_ores", "block") {
+// Later in code, add more entries to the same data/<namespace>/tags/block/my_ores.json
+blockTag("my_ores") {
 	add(Blocks.DIAMOND_ORE)
+}
+
+addToTag<BlockTagArgument>("my_ores", "block") {
 	add(Blocks.EMERALD_ORE)
 }
 ```

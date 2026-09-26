@@ -112,8 +112,12 @@ data class Tag<out T : TaggedResourceLocationArgument>(
 }
 
 /**
- * Create and register a tag in this [DataPack]. The type parameter [T] selects the tag registry
- * (e.g. `BlockTagArgument`, `ItemTagArgument`, etc.).
+ * Create and register a tag in this [DataPack], or add to the one already registered with the same [fileName], [type]
+ * and [namespace]. The type parameter [T] selects the tag registry (e.g. `BlockTagArgument`, `ItemTagArgument`, etc.).
+ * ```
+ * functionTag("setup") { add("a") }
+ * functionTag("setup") { add("b") } // one setup.json listing a and b
+ * ```
  *
  * Produces `data/<namespace>/tags/<type>/<fileName>.json`.
  *
@@ -127,12 +131,16 @@ inline fun <reified T : TaggedResourceLocationArgument> DataPack.tag(
 	replace: Boolean = false,
 	block: Tag<T>.() -> Unit = {},
 ): T {
-	val tag = Tag<T>(fileName = fileName, type = type, replace = replace).apply {
-		this.namespace = namespace
-		tagClass = T::class
-		block()
-	}
-	tags += tag
+	@Suppress("UNCHECKED_CAST")
+	val tag = tags.find { it.fileName == fileName && it.type == type && it.namespace == namespace } as Tag<T>?
+		?: Tag<T>(fileName = fileName, type = type).also {
+			it.namespace = namespace
+			it.tagClass = T::class
+			tags += it
+		}
+
+	tag.replace = tag.replace || replace
+	tag.apply(block)
 	return tagArgumentFactories.getValue(T::class)(fileName, tag.namespace ?: namespace) as T
 }
 
@@ -153,25 +161,14 @@ inline fun DataPack.tag(
 ) = tag<TaggedResourceLocationArgument>(fileName, type, namespace, replace, block)
 
 /**
- * Add entries to an existing tag, or create it if missing.
+ * Add entries to an existing tag, or create it if missing. Same as [tag] without `replace`.
  */
 inline fun <reified T : TaggedResourceLocationArgument> DataPack.addToTag(
 	fileName: String = "tag",
 	type: String = "",
 	namespace: String = name,
 	block: Tag<T>.() -> Unit = {},
-): T {
-	val tag = tags.find {
-		it.fileName == fileName && it.type == type && it.namespace == namespace && it.tagClass == T::class
-	} as Tag<T>? ?: Tag<T>(fileName = fileName, type = type).also {
-		it.namespace = namespace
-		it.tagClass = T::class
-		tags += it
-	}
-
-	tag.apply(block)
-	return tagArgumentFactories.getValue(T::class)(fileName, tag.namespace ?: namespace) as T
-}
+) = tag(fileName, type, namespace, block = block)
 
 @JvmName("addToTagUntyped")
 /**
