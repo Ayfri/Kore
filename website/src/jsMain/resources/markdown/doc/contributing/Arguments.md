@@ -89,7 +89,7 @@ This is why you can write things like:
 
 - `Items.DIAMOND_SWORD`
 - `Blocks.STONE`
-- `Sounds.Entity.Player.LEVELUP`
+- `SoundEvents.Entity.Player.LEVELUP`
 - generated predicates, loot tables, functions, and tags
 
 Those values serialize to the namespaced IDs Minecraft expects, which means users usually do not need to handwrite
@@ -98,7 +98,7 @@ Those values serialize to the namespaced IDs Minecraft expects, which means user
 ```kotlin
 function("starter_kit") {
 	give(allPlayers(), Items.DIAMOND_SWORD)
-	playsound(Sounds.Entity.Player.LEVELUP, self())
+	playSound(SoundEvents.Entity.Player.LEVELUP, PlaySoundMixer.PLAYER, self())
 }
 ```
 
