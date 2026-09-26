@@ -98,8 +98,8 @@ import io.github.ayfri.kore.arguments.numbers.ticks
 import io.github.ayfri.kore.arguments.numbers.days
 
 // schedule
-schedule.function(myFunction, 5.seconds)
-schedule.function(myFunction, 100.ticks, ScheduleMode.REPLACE)
+schedule(5.seconds, myFunction)
+schedule(myFunction).replace(100.ticks)
 
 // title times (fade-in, stay, fade-out)
 title(self(), 0.5.seconds, 3.seconds, 0.5.seconds)
@@ -116,7 +116,7 @@ worldBorder.add(10.0, 200.ticks)
 
 ## Further reading
 
-- [Schedule command](/docs/commands/commands#schedule) - scheduling functions with a delay
+- [Schedule command](/docs/commands/commands#schedule-command) - scheduling functions with a delay
 - [Minecraft Wiki - Schedule command](https://minecraft.wiki/w/Commands/schedule) - vanilla `/schedule` syntax and
   behavior
 - [Scheduler helper](/docs/helpers/scheduler) - OOP wrapper for recurring schedules

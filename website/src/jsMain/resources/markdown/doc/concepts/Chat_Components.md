@@ -120,7 +120,7 @@ common helpers, and other contexts that use the same patterns.
 
 ```kotlin
 val nbtComponent = nbtComponent("Health", entity = nearestEntity {
-	type = EntityType.CREEPER
+	type = EntityTypes.CREEPER
 })
 ```
 

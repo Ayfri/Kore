@@ -33,10 +33,10 @@ Helpers to create numeric colors:
 import io.github.ayfri.kore.arguments.colors.*
 
 val c1 = color(85, 255, 255) // RGB
-val c2 = color('#55ffff') // RGB from hex string
+val c2 = color("#55ffff") // RGB from hex string
 val c3 = color(0x55ffff) // RGB from decimal
 val c4 = argb(255, 85, 255, 255) // ARGB
-val c5 = argb('#ff55ffff') // ARGB from hex string
+val c5 = argb("#ff55ffff") // ARGB from hex string
 ```
 
 Conversions and utils:
@@ -73,7 +73,7 @@ val randomArgbWithAlpha = ARGB.random(alpha = true)
 val randomFormatting = FormattingColor.random()
 ```
 
-These helpers were added to make it easy to generate example content, tests, or procedurally-generated visuals.
+They make it easy to generate example content, tests, or procedurally-generated visuals.
 
 ## Serialization formats by context
 
@@ -88,23 +88,23 @@ Different Minecraft systems expect colors in different formats. Kore picks the r
 
 - Item components (decimal ints):
 	- `dyedColor(..)`: decimal (or object with `rgb` decimal when tooltip flag is present)
-	  [See on GitHub](https://github.com/Ayfri/Kore/tree/master/kore/src/main/kotlin/io/github/ayfri/kore/arguments/components/item/DyedColorComponent.kt#L14)
+	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/arguments/components/item/DyedColorComponent.kt)
 	  ```kotlin
 	  @Serializable(RGB.Companion.ColorAsDecimalSerializer::class) var rgb: RGB,
 	  ```
 	- `mapColor(..)`: decimal
-	  [See on GitHub](https://github.com/Ayfri/Kore/tree/master/kore/src/main/kotlin/io/github/ayfri/kore/arguments/components/item/MapColorComponent.kt#L13)
+	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/arguments/components/item/MapColorComponent.kt)
 	  ```kotlin
 	  InlineSerializer<MapColorComponent, RGB>(RGB.Companion.ColorAsDecimalSerializer, MapColorComponent::color)
 	  ```
 	- `potionContents(customColor=..)`: decimal
-	  [See on GitHub](https://github.com/Ayfri/Kore/tree/master/kore/src/main/kotlin/io/github/ayfri/kore/arguments/components/item/PotionContentsComponent.kt#L29-L30)
+	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/arguments/components/item/PotionContentsComponent.kt)
 	  ```kotlin
 	  @Serializable(RGB.Companion.ColorAsDecimalSerializer::class)
 	  var customColor: RGB? = null,
 	  ```
 	- Firework explosion `colors` / `fade_colors`: decimal list
-	  [See on GitHub](https://github.com/Ayfri/Kore/tree/master/kore/src/main/kotlin/io/github/ayfri/kore/arguments/components/item/FireworkExplosionComponent.kt#L30-L32)
+	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/arguments/components/item/FireworkExplosionComponent.kt)
 	  ```kotlin
 	  var colors: List<@Serializable(RGB.Companion.ColorAsDecimalSerializer::class) RGB>? = null,
 	  @SerialName("fade_colors")
@@ -113,8 +113,8 @@ Different Minecraft systems expect colors in different formats. Kore picks the r
 
 - Worldgen Biomes (decimal ints):
 	- `effects.waterColor`, `effects.grassColor`, `effects.foliageColor`, etc. use decimal ints.
-	- Sky/fog/water fog colors are now set via **environment attributes** (`attributes`).
-	  [See on GitHub](https://github.com/Ayfri/Kore/tree/master/kore/src/main/kotlin/io/github/ayfri/kore/features/worldgen/biome/types/BiomeEffects.kt)
+	- Sky/fog/water fog colors are set via **environment attributes** (`attributes`).
+	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/features/worldgen/biome/types/BiomeEffects.kt)
   ```kotlin
   // BiomeEffects (decimal ints in JSON)
   @Serializable(ColorAsDecimalSerializer::class) var waterColor: Color = color(4159204)
@@ -132,41 +132,41 @@ Different Minecraft systems expect colors in different formats. Kore picks the r
 
 - Particles:
 	- Command particles (decimal ints): Dust, DustColorTransition, Trail
-	  [See on GitHub](https://github.com/Ayfri/Kore/tree/master/kore/src/main/kotlin/io/github/ayfri/kore/commands/particle/types/DustParticleType.kt#L21)
+	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/commands/particle/types/DustParticleType.kt)
 	  ```kotlin
 	  var color: @Serializable(ColorAsDecimalSerializer::class) Color,
 	  ```
-	  [See on GitHub](https://github.com/Ayfri/Kore/tree/master/kore/src/main/kotlin/io/github/ayfri/kore/commands/particle/types/DustColorTransitionParticleType.kt#L22-L25)
+	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/commands/particle/types/DustColorTransitionParticleType.kt)
 	  ```kotlin
 	  var fromColor: @Serializable(ColorAsDecimalSerializer::class) Color,
 	  var toColor: @Serializable(ColorAsDecimalSerializer::class) Color,
 	  ```
-	  [See on GitHub](https://github.com/Ayfri/Kore/tree/master/kore/src/main/kotlin/io/github/ayfri/kore/commands/particle/types/TrailParticleType.kt#L22)
+	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/commands/particle/types/TrailParticleType.kt)
 	  ```kotlin
 	  var color: @Serializable(ColorAsDecimalSerializer::class) Color,
 	  ```
 	- Enchantment effect particles (double arrays `[r, g, b]` in 0..1):
-	  [See on GitHub](https://github.com/Ayfri/Kore/tree/master/kore/src/main/kotlin/io/github/ayfri/kore/features/enchantments/effects/entity/spawnparticles/types/DustParticleType.kt#L11)
+	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/features/enchantments/effects/entity/spawnparticles/types/DustParticleType.kt)
 	  ```kotlin
 	  var color: @Serializable(ColorAsDoubleArraySerializer::class) Color,
 	  ```
-	  [See on GitHub](https://github.com/Ayfri/Kore/tree/master/kore/src/main/kotlin/io/github/ayfri/kore/features/enchantments/effects/entity/spawnparticles/types/DustColorTransitionParticleType.kt#L12-L14)
+	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/features/enchantments/effects/entity/spawnparticles/types/DustColorTransitionParticleType.kt)
 	  ```kotlin
 	  var fromColor: @Serializable(ColorAsDoubleArraySerializer::class) Color,
 	  var toColor: @Serializable(ColorAsDoubleArraySerializer::class) Color,
 	  ```
-	  [See on GitHub](https://github.com/Ayfri/Kore/tree/master/kore/src/main/kotlin/io/github/ayfri/kore/features/enchantments/effects/entity/spawnparticles/types/EntityEffectParticleType.kt#L11)
+	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/features/enchantments/effects/entity/spawnparticles/types/EffectParticleType.kt)
 	  ```kotlin
 	  var color: @Serializable(ColorAsDoubleArraySerializer::class) Color,
 	  ```
 
 - UI and commands using named colors (strings):
 	- Teams, Scoreboards, Bossbar: `FormattingColor` / `BossBarColor`
-	  [See on GitHub](https://github.com/Ayfri/Kore/tree/master/kore/src/main/kotlin/io/github/ayfri/kore/commands/Teams.kt#L43)
+	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/commands/Teams.kt)
 	  ```kotlin
 	  fun color(color: FormattingColor) = fn.addLine(..., literal("color"), color)
 	  ```
-	  [See on GitHub](https://github.com/Ayfri/Kore/tree/master/kore/src/main/kotlin/io/github/ayfri/kore/commands/BossBar.kt#L57)
+	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/commands/BossBar.kt)
 	  ```kotlin
 	  fun setColor(color: BossBarColor) = fn.addLine(..., literal("color"), color)
 	  ```
@@ -176,28 +176,24 @@ Different Minecraft systems expect colors in different formats. Kore picks the r
 `DyeColors` are used for entity variants and certain item/entity data components:
 
 - `catCollar(..)`, `wolfCollar(..)`, `sheepColor(..)`, `shulkerColor(..)`
-  [See on GitHub](https://github.com/Ayfri/Kore/tree/master/kore/src/main/kotlin/io/github/ayfri/kore/arguments/components/entity/CatCollar.kt#L11-L22)
+  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/arguments/components/entity/CatCollar.kt)
   ```kotlin
   data class CatCollar(var color: DyeColors)
-  // ... existing code ...
   fun ComponentsScope.catCollar(color: DyeColors)
   ```
-  [See on GitHub](https://github.com/Ayfri/Kore/tree/master/kore/src/main/kotlin/io/github/ayfri/kore/arguments/components/entity/WolfCollar.kt#L11-L22)
+  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/arguments/components/entity/WolfCollar.kt)
   ```kotlin
   data class WolfCollar(var color: DyeColors)
-  // ... existing code ...
   fun ComponentsScope.wolfCollar(color: DyeColors)
   ```
-  [See on GitHub](https://github.com/Ayfri/Kore/tree/master/kore/src/main/kotlin/io/github/ayfri/kore/arguments/components/entity/SheepColor.kt#L11-L22)
+  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/arguments/components/entity/SheepColor.kt)
   ```kotlin
   data class SheepColor(var color: DyeColors)
-  // ... existing code ...
   fun ComponentsScope.sheepColor(color: DyeColors)
   ```
-  [See on GitHub](https://github.com/Ayfri/Kore/tree/master/kore/src/main/kotlin/io/github/ayfri/kore/arguments/components/entity/ShulkerColor.kt#L11-L22)
+  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/arguments/components/entity/ShulkerColor.kt)
   ```kotlin
   data class ShulkerColor(var color: DyeColors)
-  // ... existing code ...
   fun ComponentsScope.shulkerColor(color: DyeColors)
   ```
 
@@ -209,7 +205,7 @@ Chat components (string serialization):
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
 
-val title = textComponent('Legendary Sword', Color.AQUA)
+val title = textComponent("Legendary Sword", Color.AQUA)
 ```
 
 Dyed leather color (decimal serialization):
@@ -219,7 +215,7 @@ import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.arguments.colors.Color
 
 val dyedHelmet = Items.LEATHER_HELMET {
-    dyedColor(Color.AQUA)
+	dyedColor(Color.AQUA)
 }
 ```
 
@@ -230,7 +226,7 @@ import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.arguments.colors.rgb
 
 val withMapColor = Items.STONE {
-    mapColor(rgb(85, 255, 255))
+	mapColor(rgb(85, 255, 255))
 }
 ```
 
@@ -238,18 +234,18 @@ Fireworks (decimal lists):
 
 ```kotlin
 import io.github.ayfri.kore.generated.Items
-import io.github.ayfri.kore.generated.FireworkExplosionShape
+import io.github.ayfri.kore.arguments.components.item.FireworkExplosionShape
 import io.github.ayfri.kore.arguments.colors.Color
 
 val rocket = Items.FIREWORK_ROCKET {
-    fireworks(flightDuration = 1) {
-        explosion(FireworkExplosionShape.BURST) {
-            colors(Color.AQUA)
-            fadeColors(Color.BLACK, Color.WHITE)
-            hasTrail = true
-            hasTwinkle = true
-        }
-    }
+	fireworks(flightDuration = 1) {
+		explosion(FireworkExplosionShape.BURST) {
+			colors(Color.AQUA)
+			fadeColors(Color.BLACK, Color.WHITE)
+			hasTrail = true
+			hasTwinkle = true
+		}
+	}
 }
 ```
 
@@ -282,7 +278,7 @@ Particles
   import io.github.ayfri.kore.arguments.colors.rgb
 
   val enchantDust = DustParticleType(
-      type = ParticleTypeArgument('minecraft:dust'),
+      type = ParticleTypeArgument("dust"),
       color = rgb(255, 0, 0)
   )
   ```
@@ -294,7 +290,7 @@ import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.arguments.enums.DyeColors
 
 val cat = Items.CAT_SPAWN_EGG {
-    catCollar(DyeColors.RED)
+	catCollar(DyeColors.RED)
 }
 ```
 

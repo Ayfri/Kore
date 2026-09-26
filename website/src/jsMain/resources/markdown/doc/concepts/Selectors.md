@@ -61,7 +61,7 @@ val nearbyZombies = allEntities {
 This generates a selector equivalent to:
 
 ```mcfunction
-@e[type=minecraft:zombie,distance=..16,sort=nearest,limit=5]
+@e[distance=..16,limit=5,sort=nearest,type=minecraft:zombie]
 ```
 
 ## Common selector arguments

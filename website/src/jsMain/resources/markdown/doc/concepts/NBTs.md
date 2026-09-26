@@ -33,14 +33,14 @@ The main entry point is `nbt { ... }`, which creates an `NbtCompound`.
 
 ```kotlin
 val customData = nbt {
-	this["CustomName"] = "\"Hero\""
+	this["CustomName"] = "Hero"
 	this["Health"] = 20
 	this["Invulnerable"] = true
 	this["Tags"] = nbtListOf("kore", "example")
 
-	this["Weapon"] = nbt {
+	this["Item"] = nbt {
 		this["id"] = "minecraft:diamond_sword"
-		this["Count"] = 1.toByte()
+		this["count"] = 1
 	}
 }
 ```
@@ -58,7 +58,7 @@ Inside an `nbt { ... }` block, the most common pattern is assigning with `this["
 ```kotlin
 val payload = nbt {
 	this["cooldown"] = 40.toShort()
-	this["count"] = 1.toByte()
+	this["Slot"] = 1.toByte()
 	this["enabled"] = true
 	this["level"] = 3
 	this["name"] = "Kore"
@@ -81,8 +81,8 @@ Use another `nbt { ... }` block for a nested compound when one key contains anot
 
 ```kotlin
 val nested = nbt {
-	this["display"] = nbt {
-		this["Name"] = "\"Treasure\""
+	this["components"] = nbt {
+		this["minecraft:custom_name"] = "Treasure"
 	}
 }
 ```
@@ -105,12 +105,12 @@ If you want to build a list incrementally, use `nbtList { ... }`:
 ```kotlin
 val passengers = nbtList {
 	addNbtCompound {
-		this["CustomName"] = "\"Left Guard\""
+		this["CustomName"] = "Left Guard"
 		this["id"] = "minecraft:armor_stand"
 	}
 
 	addNbtCompound {
-		this["CustomName"] = "\"Right Guard\""
+		this["CustomName"] = "Right Guard"
 		this["id"] = "minecraft:armor_stand"
 	}
 }
@@ -128,7 +128,7 @@ way to reuse a snippet copied from a command or the wiki without transcribing it
 
 ```kotlin
 function("raw_snbt") {
-	data(storage("kore", "shop")).modify("offer", """{id:"minecraft:diamond",count:3}""".toNbt())
+	data(storage("shop", "kore")).modify("offer", """{id:"minecraft:diamond",count:3}""".toNbt())
 }
 ```
 
@@ -148,7 +148,7 @@ Commands usually accept an `NbtCompound` directly.
 ```kotlin
 function("summon_example") {
 	summon(EntityTypes.ARMOR_STAND, vec3(0, 64, 0), nbt = nbt {
-		this["CustomName"] = "\"Guide\""
+		this["CustomName"] = "Guide"
 		this["NoGravity"] = true
 	})
 }
@@ -160,7 +160,7 @@ The `data` command also uses NBT builders naturally:
 function("storage_seed") {
 	data(self()) {
 		merge {
-			this["CustomName"] = "\"Hero\""
+			this["CustomName"] = "Hero"
 			this["Invulnerable"] = true
 		}
 	}
@@ -174,7 +174,7 @@ If you are learning the command surface itself, see [Commands](/docs/commands/co
 `NbtComponent` reads a value from block, entity, or storage NBT and displays it in chat.
 
 ```kotlin
-val nameFromStorage = nbtComponent("player.name", storage("kore:ui")) {
+val nameFromStorage = nbtComponent("player.name", storage("ui", "kore")) {
 	interpret = true
 	separator = textComponent(", ")
 }
@@ -197,7 +197,7 @@ NBT:
 ```kotlin
 block(Blocks.CHEST) {
 	nbt {
-		this["CustomName"] = "\"Loot Chest\""
+		this["CustomName"] = "Loot Chest"
 	}
 }
 ```
@@ -259,7 +259,7 @@ memory with
 `nbt { ... }`, `nbtListOf(...)`, `nbtList { ... }`, and `toNbt()`.
 
 `Snbt` (stringified NBT) is the text form of that same data, written as a string such as
-`{CustomName:"\"Hero\"",Health:20}`.
+`{CustomName:"Hero",Health:20}`.
 
 In Kore, you usually work with typed `Nbt` objects first, then let Kore serialize them when needed. Reach for SNBT
 helpers such as

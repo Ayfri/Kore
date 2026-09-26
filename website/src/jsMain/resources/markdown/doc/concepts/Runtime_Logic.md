@@ -63,7 +63,7 @@ There is no loop left in the output. The `for` was a **code generator**, not in-
 val debugMode = true
 
 function("tick") {
-	movePlayers()
+	say("tick")
 	if (debugMode) {
 		// Included only because `debugMode` was true AT BUILD TIME.
 		// Flip it to false and this command simply isn't generated.
@@ -172,8 +172,9 @@ There is no in-game `for` or `while`. The three runtime looping patterns are **f
 
 ### Recursion (loop a fixed/conditional number of times)
 
-A function that calls itself loops once per tick step. Use a score as the counter and `execute if`/`unless` as the
-guard so it stops.
+A function that calls itself runs again immediately, in the same tick, so the whole loop completes before the tick
+ends (the game caps it with the `max_command_sequence_length` gamerule). Use a score as the counter and `execute if`/`unless`
+as the guard so it stops; to spread iterations over several ticks, use `schedule` instead.
 
 ```kotlin
 load {

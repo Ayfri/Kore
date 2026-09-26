@@ -39,7 +39,7 @@ val attributeModifiersTest = Items.STONE_SWORD {
 		modifier(
 			type = Attributes.SCALE,
 			amount = 1.0,
-          name = "big",
+			name = "big",
 			operation = AttributeModifierOperation.ADD_VALUE,
 		)
 	}
@@ -79,7 +79,7 @@ val customNameTest = Items.STONE_SWORD {
 You can define the properties of fireworks, including the shape and colors of the explosions:
 
 ```kotlin
-import io.github.ayfri.kore.generated.FireworkExplosionShape
+import io.github.ayfri.kore.arguments.components.item.FireworkExplosionShape
 import io.github.ayfri.kore.arguments.colors.Color
 
 val fireworksTest = Items.FIREWORK_ROCKET {
@@ -131,9 +131,7 @@ A texture profile allows you to specify textures and models:
 
 ```kotlin
 Items.PLAYER_HEAD {
-	textureProfile(texture = "tex") {
-		model = MannequinModel.SLIM
-	}
+	textureProfile(texture = "tex", model = MannequinModel.SLIM)
 }
 ```
 
@@ -154,19 +152,21 @@ recipes {
 		key("A", Items.APPLE)
 
 		result(Items.ENCHANTED_GOLDEN_APPLE {
-			food(
-				nutrition = 10,
-				saturation = 5.0f,
-			) {
-				effect(
-					probability = 1f,
-					id = Effects.REGENERATION,
-					duration = 40,
-					amplifier = 1,
-					ambient = true,
-					showParticles = true,
-					showIcon = true
-				)
+			food(nutrition = 10, saturation = 5.0f)
+			consumable(consumeSeconds = 1.6f, animation = ConsumeAnimation.EAT, sound = SoundEvents.Entity.Generic.EAT) {
+				onConsumeEffects {
+					applyEffects(
+						probability = 1f,
+						Effect(
+							id = Effects.REGENERATION,
+							duration = 40,
+							amplifier = 1,
+							ambient = true,
+							showParticles = true,
+							showIcon = true
+						)
+					)
+				}
 			}
 		})
 	}
@@ -184,7 +184,7 @@ import io.github.ayfri.kore.utils.set
 
 // Define the item with a custom name
 val customStone = Items.STONE {
-	fireResistant()
+	damageResistant(Tags.DamageType.IS_FIRE)
 	customName(textComponent("Special Stone", Color.AQUA))
 	rarity(Rarities.EPIC)
 	lore(
@@ -303,46 +303,25 @@ runtime, use [Item Modifiers](/docs/data-driven/item-modifiers). Kore maps the v
 
 ## Custom Component
 
-You can create custom components by extending the
-`CustomComponent` class. Here's an example of a custom component that adds a custom attribute to an item:
+For a component Kore has no helper for (a modded one, or a brand-new vanilla one), wrap its raw NBT in a
+`CustomComponent` and store it under the component name. An extension on `ComponentsScope` gives it the same call
+syntax as the built-in helpers:
 
 ```kotlin
 package your.package
 
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.arguments.components.types.CustomComponent
+import io.github.ayfri.kore.arguments.components.item.CustomComponent
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
-import io.github.ayfri.kore.arguments.types.resources.SoundArgument
 import io.github.ayfri.kore.utils.nbt
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerialName
+import io.github.ayfri.kore.utils.set
 
-@Serializable
-data class UseComponent(
-	var function: FunctionArgument,
-	@SerialName("durability_damages") // properties aren't renamed to snake_case because of a limitation in KNBT library
-	var durabilityDamages: Int? = null, // optional property, equals to 0 in Minecraft
-	var cooldown: Float? = null, // optional property, equals to 0 in Minecraft
-	var consume: Boolean? = null, // optional property, equals to false in Minecraft
-	var sound: SoundArgument? = null, // optional property, equals to null in Minecraft
-) : CustomComponent(
-	nbt {
-		this["function"] = function
+fun ComponentsScope.use(function: FunctionArgument, damage: Int = 0, cooldown: Float = 0f) = apply {
+	this["mymod:use"] = CustomComponent(nbt {
+		this["function"] = function.asId()
 		this["damage"] = damage
 		this["cooldown"] = cooldown
-		this["consume"] = consume
-		this["sound"] = sound
-	}
-)
-
-fun ComponentsScope.use(
-	function: FunctionArgument,
-	damage: Int? = null,
-	cooldown: Float? = null,
-	consume: Boolean? = null,
-	sound: SoundArgument? = null,
-) = apply {
-	this["use_component"] = UseComponent(function, damage, cooldown, consume, sound)
+	})
 }
 ```
 
@@ -350,52 +329,46 @@ And here's how you can use this custom component in an item definition:
 
 ```kotlin
 import io.github.ayfri.kore.generated.Items
-import io.github.ayfri.kore.generated.Sounds
 import your.package.use
 
-val customItem = Items.DIAMOND_SWORD {
-	val myFunction = function("use_weapon") {
-		// Your function code here.
-	}
+val myFunction = function("use_weapon") {
+	// Your function code here.
+}
 
-	use(
-		function = myFunction,
-		durabilityDamages = 4,
-		cooldown = 1.5f,
-		sound = Sounds.Entity.Player.Attack.CRIT1
-	)
+val customItem = Items.DIAMOND_SWORD {
+	use(myFunction, damage = 4, cooldown = 1.5f)
 }
 // Result:
-minecraft:diamond_sword[use_component ={ function:"datapack:use_weapon", damage:4, cooldown:1.5f, sound:"entity/player/attack/crit1" }]
+// minecraft:diamond_sword[mymod:use={function:"datapack:use_weapon",damage:4,cooldown:1.5f}]
 ```
 
 ## Entity Variant Components (25w04a+)
 
 > *Introduced in snapshot [25w04a](https://www.minecraft.net/en-us/article/minecraft-snapshot-25w04a)*
 >
-> Entity variants such as axolotl colours, cat collars or tropical-fish patterns are now exposed as **data components
-** and can be used on entities, spawn-egg items, mob buckets and paintings. This replaces the old `type_specific` NBT fields.
+> Entity variants such as axolotl colours, cat collars or tropical-fish patterns are now exposed as **data components** and can be used on entities, spawn-egg items, mob buckets and paintings. This replaces the old `type_specific` NBT fields.
 
 Kore ships dedicated helpers for each of these components. You can attach them to an
 `Items.*` builder the exact same way you attach any other component:
 
 ```kotlin
-import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.arguments.enums.*
+import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.generated.PaintingVariants
 
 // Axolotl bucket with the blue variant
 val blueAxolotlBucket = Items.AXOLOTL_BUCKET {
-    axolotlVariant(AxolotlVariants.BLUE)
+	axolotlVariant(AxolotlVariants.BLUE)
 }
 
 // Cat spawn-egg with a red collar
 val redCollarCat = Items.CAT_SPAWN_EGG {
-    catCollar(DyeColors.RED)
+	catCollar(DyeColors.RED)
 }
 
 // Painting item selecting the "kebab" variant (namespace implied)
 val kebabPainting = Items.PAINTING {
-    paintingVariant(PaintingVariants.KEBAB)
+	paintingVariant(PaintingVariants.KEBAB)
 }
 ```
 
@@ -403,11 +376,11 @@ These components can also be queried inside predicates:
 
 ```kotlin
 predicate("only_blue_axolotls") {
-    entityProperties {
-        components {
-            axolotlVariant(AxolotlVariants.BLUE)
-        }
-    }
+	entityProperties {
+		components {
+			axolotlVariant(AxolotlVariants.BLUE)
+		}
+	}
 }
 ```
 
@@ -442,15 +415,16 @@ fun ComponentsScope.wolfVariant(variant: WolfVariants) { /*…*/ }
 
 Because the logic lives in regular data components, you automatically get:
 
-• Compatibility with `itemStack` / `Items.*` DSL • Predicate support through `components {}`
-• Correct serialisation back to the vanilla command-/NBT-syntax
+- Compatibility with the `itemStack` / `Items.*` DSL
+- Predicate support through `components {}`
+- Correct serialization back to the vanilla command and NBT syntax
 
 Feel free to mix several variant components on the same `ComponentsScope`:
 
 ```kotlin
 Items.WOLF_SPAWN_EGG {
-    wolfCollar(DyeColors.BLACK)
-    wolfVariant(WolfVariants.SNOWY)
+	wolfCollar(DyeColors.BLACK)
+	wolfVariant(WolfVariants.SNOWY)
 }
 ```
 
@@ -484,40 +458,40 @@ import io.github.ayfri.kore.generated.ItemComponentTypes
 
 // Match items with specific component values
 val damagedSword = Items.DIAMOND_SWORD.predicate {
-  damage(10)
+	damage(10)
 }
 // Result: minecraft:diamond_sword[damage=10]
 
 // Match any item with a component present (existence check)
 val hasInstrument = itemPredicate {
-  isPresent(ItemComponentTypes.INSTRUMENT)
+	isPresent(ItemComponentTypes.INSTRUMENT)
 }
 // Result: *[instrument]
 
 // Partial matching with ~ syntax
 val customDataMatch = Items.STONE.predicate {
-  customData {
-    this["myKey"] = "myValue"
-  }
-  partial(ItemComponentTypes.CUSTOM_DATA)
+	customData {
+		this["myKey"] = "myValue"
+	}
+	partial(ItemComponentTypes.CUSTOM_DATA)
 }
 // Result: minecraft:stone[custom_data~{myKey:"myValue"}]
 
 // Negated predicates (component must NOT have this value)
 val notDamaged = Items.DIAMOND_SWORD.predicate {
-  !damage(0)
+	!damage(0)
 }
 // Result: minecraft:diamond_sword[!damage=0]
 
 // Multiple alternatives with OR
 val multipleValues = Items.STONE.predicate {
-  damage(1) or damage(2) or damage(3)
+	damage(1) or damage(2) or damage(3)
 }
 // Result: minecraft:stone[damage=1|damage=2|damage=3]
 
 // Count predicate
 val stackOf10 = Items.DIAMOND.predicate {
-  count(10)
+	count(10)
 }
 // Result: minecraft:diamond[count=10]
 ```
@@ -531,10 +505,10 @@ command looks like `clear @s *[minecraft:item_name="Blank"] 2`. It breaks down i
 
 ```kotlin
 import io.github.ayfri.kore.commands.clear
-import io.github.ayfri.kore.commands.selectors.self
+import io.github.ayfri.kore.arguments.types.literals.self
 
 function("clear_blank_items") {
-  clear(self(), itemPredicate { itemName("Blank") }, 2)
+	clear(self(), itemPredicate { itemName("Blank") }, 2)
 }
 ```
 
@@ -553,24 +527,24 @@ import io.github.ayfri.kore.arguments.components.matchers.*
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 
 predicate("upgradeable_pickaxe") {
-  matchTool {
-    items(Items.DIAMOND_PICKAXE)
-    predicates {
-      // Match damage component with range
-      damage {
-        durability = rangeOrInt(1..100)
-        damage = rangeOrInt(0..10)
-      }
+	matchTool {
+		items(Items.DIAMOND_PICKAXE)
+		predicates {
+			// Match damage component with range
+			damage {
+				durability = rangeOrInt(1..100)
+				damage = rangeOrInt(0..10)
+			}
 
-      // Match enchantments
-      enchantments {
-        enchantment(Enchantments.SHARPNESS, level = 3)
-      }
+			// Match enchantments
+			enchantments {
+				enchantment(Enchantments.SHARPNESS, level = 3)
+			}
 
-      // Match potion contents
-      potionContents(Effects.SPEED, Effects.STRENGTH)
-    }
-  }
+			// Match potion contents
+			potionContents(Effects.SPEED, Effects.STRENGTH)
+		}
+	}
 }
 ```
 
@@ -581,7 +555,7 @@ use `isPresent`:
 
 ```kotlin
 val hasInstrument = itemPredicate {
-  isPresent(ItemComponentTypes.INSTRUMENT)
+	isPresent(ItemComponentTypes.INSTRUMENT)
 }
 // Result: *[instrument]
 ```
@@ -590,12 +564,12 @@ Inside a `predicates { }` / `subPredicates { }` block, use `exists`:
 
 ```kotlin
 predicate("has_instrument") {
-  matchTool {
-    predicates {
-      exists(ItemComponentTypes.INSTRUMENT)
-      exists(ItemComponentTypes.DAMAGE)
-    }
-  }
+	matchTool {
+		predicates {
+			exists(ItemComponentTypes.INSTRUMENT)
+			exists(ItemComponentTypes.DAMAGE)
+		}
+	}
 }
 ```
 
@@ -627,92 +601,97 @@ replaces them with upgraded versions:
 
 ```kotlin
 dataPack("tool_upgrades") {
-  // Predicate to find diamond swords that need upgrading
-  predicate("upgradeable_sword") {
-    matchTool {
-      items(Items.DIAMOND_SWORD)
-      predicates {
-        // Must have Sharpness enchantment
-        enchantments {
-          enchantment(Enchantments.SHARPNESS, level = rangeOrInt(1..4))
-        }
-        // Must be damaged (durability used)
-        damage {
-          damage = rangeOrInt(1..1000)
-        }
-      }
-    }
-  }
+	// Predicate to find diamond swords that need upgrading
+	predicate("upgradeable_sword") {
+		matchTool {
+			items(Items.DIAMOND_SWORD)
+			predicates {
+				// Must have Sharpness enchantment
+				enchantments {
+					enchantment(Enchantments.SHARPNESS, level = rangeOrInt(1..4))
+				}
+				// Must be damaged (durability used)
+				damage {
+					damage = rangeOrInt(1..1000)
+				}
+			}
+		}
+	}
 
-  // Function to check player's held item and upgrade it
-  function("check_upgrade") {
-    // Check if holding an upgradeable sword
-    execute {
-      ifCondition {
-        items(
-          self(),
-          ItemSlot.WEAPON_MAINHAND,
-          Items.DIAMOND_SWORD.predicate {
-            subPredicates {
-              enchantments {
-                enchantment(Enchantments.SHARPNESS, level = rangeOrInt(3..4))
-              }
-            }
-          }
-        )
-      }
-      run {
-        // Replace with netherite sword keeping enchantments
-        items.modify(self(), ItemSlot.WEAPON_MAINHAND, itemModifier("upgrade_to_netherite"))
-        tellraw(self(), textComponent("Your sword has been upgraded!", Color.GOLD))
-      }
-    }
-  }
+	// Swaps the item id while keeping every component, enchantments included
+	val upgradeToNetherite = itemModifier("upgrade_to_netherite") {
+		setItem(Items.NETHERITE_SWORD)
+	}
 
-  // Clear specific items from inventory using predicates
-  function("clear_broken_tools") {
-    // Clear any tool with 1 durability left
-    clear(allPlayers(), itemPredicate {
-      subPredicates {
-        damage {
-          durability = rangeOrInt(1)
-        }
-      }
-    })
-  }
+	// Function to check player's held item and upgrade it
+	function("check_upgrade") {
+		// Check if holding an upgradeable sword
+		execute {
+			ifCondition {
+				items(
+					self(),
+					WEAPON.MAINHAND,
+					Items.DIAMOND_SWORD.predicate {
+						subPredicates {
+							enchantments {
+								enchantment(Enchantments.SHARPNESS, level = rangeOrInt(3..4))
+							}
+						}
+					}
+				)
+			}
+			run {
+				// Replace with netherite sword keeping enchantments
+				items.modify(self(), WEAPON.MAINHAND, upgradeToNetherite)
+				tellraw(self(), textComponent("Your sword has been upgraded!", Color.GOLD))
+			}
+		}
+	}
 
-  // Give reward only if player has specific item combination
-  function("check_collection") {
-    execute {
-      // Check for a goat horn (any variant)
-      ifCondition {
-        items(
-          self(),
-          ItemSlot.INVENTORY,
-          itemPredicate {
-            isPresent(ItemComponentTypes.INSTRUMENT)
-          }
-        )
-      }
-      // Check for enchanted book with Mending
-      ifCondition {
-        items(
-          self(),
-          ItemSlot.INVENTORY,
-          Items.ENCHANTED_BOOK.predicate {
-            subPredicates {
-              storedEnchantments {
-                enchantment(Enchantments.MENDING)
-              }
-            }
-          }
-        )
-      }
-      run {
-        give(self(), Items.NETHER_STAR)
-      }
-    }
-  }
+	// Clear specific items from inventory using predicates
+	function("clear_broken_tools") {
+		// Clear any tool with 1 durability left
+		clear(allPlayers(), itemPredicate {
+			subPredicates {
+				damage {
+					durability = rangeOrInt(1)
+				}
+			}
+		})
+	}
+
+	// Give reward only if player has specific item combination
+	function("check_collection") {
+		execute {
+			// Check for a goat horn (any variant)
+			ifCondition {
+				items(
+					self(),
+					INVENTORY,
+					itemPredicate {
+						isPresent(ItemComponentTypes.INSTRUMENT)
+					}
+				)
+			}
+			// Check for enchanted book with Mending
+			ifCondition {
+				items(
+					self(),
+					INVENTORY,
+					Items.ENCHANTED_BOOK.predicate {
+						subPredicates {
+							storedEnchantments {
+								enchantment(Enchantments.MENDING)
+							}
+						}
+					}
+				)
+			}
+			run {
+				give(self(), Items.NETHER_STAR)
+			}
+		}
+	}
 }
 ```
 
