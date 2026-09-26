@@ -34,9 +34,10 @@ kotlin {
 	sourceSets {
 		commonMain {
 			dependencies {
-				implementation(libs.kotlinx.io)
-				implementation(libs.kotlinx.serialization)
+				// `Path` and `Json` are part of the public API (`mergeWithPacks`, `jsonEncoder`), so consumers need them on their classpath.
 				api(libs.knbt)
+				api(libs.kotlinx.io)
+				api(libs.kotlinx.serialization)
 			}
 			// KSP doesn't expose common-metadata output as a source dir automatically, unlike per-target KSP.
 			kotlin.srcDir(layout.buildDirectory.dir("generated/ksp/metadata/commonMain/kotlin"))
