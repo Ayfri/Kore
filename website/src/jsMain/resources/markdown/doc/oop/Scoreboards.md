@@ -179,8 +179,8 @@ function("sync") {
 }
 ```
 
-Each of these compiles to an `execute store result score ... run ...` chain, so you never have to write the store
-plumbing by hand.
+A score to score copy is a single `scoreboard players operation <this> = <source>`, the NBT and count copies compile to
+an `execute store result ... run ...` chain, so you never have to write the store plumbing by hand.
 
 ## Raw selectors and `@s`
 

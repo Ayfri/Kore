@@ -46,17 +46,19 @@ fun ScoreboardEntity.reset() = fn.scoreboard {
 	}
 }
 
+/** Copies this score into [target]'s [targetObjective] score. */
 context(fn: Function)
-fun ScoreboardEntity.copyTo(target: ScoreHolderArgument, sourceObjective: String) = fn.scoreboard {
-	objective(entity.asScoreHolder(), name) {
-		operation(Operation.SET, target, sourceObjective)
+fun ScoreboardEntity.copyTo(target: ScoreHolderArgument, targetObjective: String) = fn.scoreboard {
+	objective(target, targetObjective) {
+		operation(Operation.SET, entity.asScoreHolder(), name)
 	}
 }
 
+/** Copies [source]'s [sourceObjective] score into this score. */
 context(fn: Function)
 fun ScoreboardEntity.copyFrom(source: ScoreHolderArgument, sourceObjective: String) = fn.scoreboard {
-	objective(source, sourceObjective) {
-		operation(Operation.SET, entity.asScoreHolder(), name)
+	objective(entity.asScoreHolder(), name) {
+		operation(Operation.SET, source, sourceObjective)
 	}
 }
 

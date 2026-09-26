@@ -131,12 +131,14 @@ fun oopTests() = dataPack("oop") {
 			team = "red"
 		}
 
+		player.isPlayer assertsIs true
 		player.getScoreEntity("test").apply {
 			set(10) assertsIs "scoreboard players set @e[gamemode=survival,limit=1,name=Ayfri,team=red,type=minecraft:player] test 10"
 			add(5) assertsIs "scoreboard players add @e[gamemode=survival,limit=1,name=Ayfri,team=red,type=minecraft:player] test 5"
-			copyFrom(player.asSelector(), "foodLevel")
+			copyFrom(player.asSelector(), "foodLevel") assertsIs "scoreboard players operation @e[gamemode=survival,limit=1,name=Ayfri,team=red,type=minecraft:player] test = @e[gamemode=survival,limit=1,name=Ayfri,team=red,type=minecraft:player] foodLevel"
+			copyTo(player.asSelector(), "backup") assertsIs "scoreboard players operation @e[gamemode=survival,limit=1,name=Ayfri,team=red,type=minecraft:player] backup = @e[gamemode=survival,limit=1,name=Ayfri,team=red,type=minecraft:player] test"
 		}
-		lines.size assertsIs 3
+		lines.size assertsIs 4
 	}
 
 	function("scoreboard_objectives") {
