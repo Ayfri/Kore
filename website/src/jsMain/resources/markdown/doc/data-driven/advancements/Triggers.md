@@ -43,8 +43,9 @@ allayDropItemOnBlock("allay_drop") {
 **Description:**  
 Triggers when a player uses any block.
 
-**Properties:**  
-_None._
+**Properties:**
+
+- `location`: Conditions checked against the used block.
 
 **Example:**
 
@@ -54,6 +55,18 @@ anyBlockUse("use_block_while_sneaking") {
 		entityProperties {
 			flags {
 				isSneaking = true
+			}
+		}
+	}
+}
+
+anyBlockUse("use_crafting_table") {
+	location {
+		predicate {
+			locationCheck {
+				block {
+					blocks(Blocks.CRAFTING_TABLE)
+				}
 			}
 		}
 	}
@@ -316,8 +329,10 @@ curedZombieVillager("cure_zombie") {
 **Description:**  
 Triggers when a block is used with default interaction.
 
-**Properties:**  
-_None._
+**Properties:**
+
+- `location`: Conditions checked against the used block, set with `location { predicate { ... } }` like
+  [`anyBlockUse`](#anyblockuse).
 
 **Example:**
 
@@ -732,7 +747,11 @@ Triggers when a mob is killed near a sculk catalyst.
 ```kotlin
 killMobNearSculkCatalyst("kill_mob") {
 	entity {
-		entityType(EntityTypes.ZOMBIE)
+		conditions {
+			entityProperties {
+				entityType(EntityTypes.ZOMBIE)
+			}
+		}
 	}
 	killingBlow {
 		sourceEntity {

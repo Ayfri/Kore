@@ -175,14 +175,26 @@ private fun DataPack.allTriggersTests() {
 
 	advancement("any_block_use") {
 		criteria {
-			anyBlockUse("any_block_use")
+			anyBlockUse("any_block_use") {
+				location {
+					predicate { randomChance(0.5f) }
+				}
+			}
 		}
 	}
 	advancements.last() assertsIs """
 		{
 			"criteria": {
 				"any_block_use": {
-					"trigger": "minecraft:any_block_use"
+					"trigger": "minecraft:any_block_use",
+					"conditions": {
+						"location": [
+							{
+								"condition": "minecraft:random_chance",
+								"chance": 0.5
+							}
+						]
+					}
 				}
 			}
 		}
