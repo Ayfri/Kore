@@ -3,7 +3,6 @@ package io.github.ayfri.kore.features.advancements.triggers
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
 import io.github.ayfri.kore.features.predicates.sub.DamageSourcePredicate
-import io.github.ayfri.kore.features.predicates.sub.EntityPredicate
 import kotlinx.serialization.Serializable
 
 /**
@@ -15,7 +14,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class KillMobNearSculkCatalyst(
 	override var player: EntityOrPredicates? = null,
-	var entity: EntityPredicate? = null,
+	var entity: EntityOrPredicates? = null,
 	var killingBlow: DamageSourcePredicate? = null,
 ) : AdvancementTriggerCondition()
 
@@ -25,8 +24,8 @@ fun AdvancementCriteria.killMobNearSculkCatalyst(name: String, block: KillMobNea
 }
 
 /** Set the killed entity constraints. */
-fun KillMobNearSculkCatalyst.entity(block: EntityPredicate.() -> Unit) {
-	entity = EntityPredicate().apply(block)
+fun KillMobNearSculkCatalyst.entity(block: EntityOrPredicates.() -> Unit) {
+	entity = EntityOrPredicates().apply(block)
 }
 
 /** Set the killing blow constraints. */
