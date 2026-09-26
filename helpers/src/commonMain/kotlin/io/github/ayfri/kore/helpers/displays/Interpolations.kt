@@ -2,7 +2,8 @@ package io.github.ayfri.kore.helpers.displays
 
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.numbers.TimeNumber
-import io.github.ayfri.kore.arguments.types.literals.randomUUID
+import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
+import io.github.ayfri.kore.arguments.types.literals.entityUUID
 import io.github.ayfri.kore.commands.Command
 import io.github.ayfri.kore.commands.data
 import io.github.ayfri.kore.commands.summon
@@ -23,8 +24,7 @@ import net.benwoodworth.knbt.StringifiedNbt
 import net.benwoodworth.knbt.encodeToNbtTag
 import net.benwoodworth.knbt.nbtList
 
-data class DisplayEntityInterpolable(val entity: DisplayEntity, var lastPosition: Vec3) {
-	val selector = randomUUID()
+data class DisplayEntityInterpolable(val entity: DisplayEntity, var lastPosition: Vec3, val selector: UUIDArgument) {
 	var isSummoned = false
 
 	context(fn: Function)
@@ -79,7 +79,10 @@ data class DisplayEntityInterpolable(val entity: DisplayEntity, var lastPosition
 	}
 }
 
-fun DisplayEntity.interpolable(position: Vec3) = DisplayEntityInterpolable(this, position)
+/** Wraps this display for interpolation, its UUID hashes the display and [position], identical across builds and unique within the pack. */
+context(fn: Function)
+fun DisplayEntity.interpolable(position: Vec3) =
+	DisplayEntityInterpolable(this, position, fn.datapack.entityUUID("display:${entityType.asId()}:${toNbt()}:${position.asString()}"))
 
 /**
  * Returns a typed OOP entity handle for this interpolable.

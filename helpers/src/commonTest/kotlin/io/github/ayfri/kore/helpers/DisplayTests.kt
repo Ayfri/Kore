@@ -27,6 +27,8 @@ import io.github.ayfri.kore.helpers.displays.*
 import io.github.ayfri.kore.helpers.displays.entities.ItemDisplayModelMode
 import io.github.ayfri.kore.helpers.displays.maths.*
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldMatch
 import kotlin.uuid.Uuid
 
@@ -178,5 +180,23 @@ class DisplayTests : FunSpec({
 		dataPack("helpers_tests") {
 			load { displayToEntityTests() }
 		}
+	}
+
+	test("interpolable UUIDs are unique per display and identical across builds") {
+		fun build(): List<String> {
+			lateinit var lines: List<String>
+			dataPack("helpers_tests") {
+				load {
+					repeat(2) { blockDisplay { blockState(Blocks.STONE) }.interpolable(vec3(0, 0, 0)).summon() }
+					itemDisplay { item(Items.DIAMOND) }.interpolable(vec3(0, 0, 0)).summon()
+					lines = this.lines
+				}
+			}
+			return lines
+		}
+
+		val lines = build()
+		lines.distinct() shouldHaveSize 3
+		lines shouldBe build()
 	}
 })

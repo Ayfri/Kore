@@ -12,7 +12,6 @@ import io.github.ayfri.kore.arguments.types.DataArgument
 import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.ScoreHolderArgument
 import io.github.ayfri.kore.arguments.types.literals.allEntities
-import io.github.ayfri.kore.arguments.types.literals.randomUUID
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
@@ -132,7 +131,7 @@ fun InventoryManager<*>.generateSlotsListeners() {
 	listenersGenerated = true
 
 	val scoreName = getScoreName(dp)
-	val entityTag = randomUUID().asString()
+	val entityTag = "${scoreName}_marker"
 
 	dp.load("load_inventory_manager_$id") {
 		kill(allEntities {

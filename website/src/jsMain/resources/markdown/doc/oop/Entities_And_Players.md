@@ -82,9 +82,10 @@ function("spawn_display") {
 }
 ```
 
-Both spawn calls embed a random UUID in the summon NBT, which is what the returned handle filters on - so the
-handle resolves to that one instance even if several are spawned. Once you hold one it behaves like any other
-`Entity`: every extension on this page applies.
+Both spawn calls embed a UUID in the summon NBT, which is what the returned handle filters on - so the handle resolves
+to that one instance even if several are spawned. The UUID comes from `DataPack.entityUUID()`, a hash of the pack name,
+the entity and its position, so it stays the same across builds and differs between two identical entities. Once you
+hold one it behaves like any other `Entity`: every extension on this page applies.
 
 ```mcfunction
 kill @e[limit=1,nbt={UUID:[I;...]},type=minecraft:block_display]

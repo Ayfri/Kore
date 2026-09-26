@@ -149,7 +149,9 @@ transformation {
 ## Interpolations
 
 You can convert your display entity into an "interpolable" display entity by calling
-`interpolable()` on it. This will allow you to interpolate between the current transformation and the target transformation in a given time.
+`interpolable()` on it inside a function. This will allow you to interpolate between the current transformation and the target transformation in a given time.
+The interpolable gets a UUID hashed from the pack name, the display and its position, so it stays the same across
+builds and two identical displays still get different ones.
 
 ```kotlin
 val interpolableEntityDisplay = blockDisplay {
