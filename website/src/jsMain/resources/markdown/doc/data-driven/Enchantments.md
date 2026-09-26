@@ -105,7 +105,7 @@ enchantment("bow_enchant") {
 	supportedItems(Items.BOW, Items.CROSSBOW)
 
 	// Subset offered by the enchanting table
-	primaryItems(Tags.Item.ENCHANTABLE_BOW)
+	primaryItems(Tags.Item.Enchantable.BOW)
 }
 ```
 
@@ -115,7 +115,7 @@ Enchantments that cannot coexist:
 
 ```kotlin
 enchantment("protection_variant") {
-	exclusiveSet(Tags.Enchantment.EXCLUSIVE_SET_ARMOR)
+	exclusiveSet(Tags.Enchantment.ExclusiveSet.ARMOR)
 	// Or individual enchantments
 	exclusiveSet(Enchantments.PROTECTION, Enchantments.FIRE_PROTECTION)
 }
@@ -547,7 +547,7 @@ dataPack("custom_enchants") {
 	enchantment("vampiric") {
 		description = textComponent("Vampiric") { color = Color.DARK_RED }
 		supportedItems(Tags.Item.SWORDS)
-		primaryItems(Tags.Item.ENCHANTABLE_SWORD)
+		primaryItems(Tags.Item.Enchantable.SHARP_WEAPON)
 		exclusiveSet(Enchantments.MENDING)
 		weight = 2
 		maxLevel = 3

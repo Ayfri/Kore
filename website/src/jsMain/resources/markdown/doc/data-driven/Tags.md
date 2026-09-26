@@ -262,16 +262,12 @@ the [Commands](/docs/commands/commands) API surface:
 ```kotlin
 function("clear_valuables") {
 	// Clear all items matching a tag
-	clear(allPlayers(), tag = ItemTagArgument("valuable_gems", name))
-}
-
-function("kill_hostiles") {
-	// Kill entities matching a tag
-	kill(allEntities {
-		type = "#minecraft:raiders"
-	})
+	clear(allPlayers(), ItemPredicate(ItemTagArgument("valuable_gems", datapack.name)))
 }
 ```
+
+Filtering a selector by an entity type tag (`@e[type=#minecraft:raiders]`) isn't possible yet because the selector
+`type` option only accepts an `EntityTypeArgument`, not an `EntityTypeTagArgument`.
 
 ## Using Tags in Predicates
 

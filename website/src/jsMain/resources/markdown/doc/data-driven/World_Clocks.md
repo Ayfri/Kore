@@ -169,7 +169,7 @@ property on any `Function`:
 function("my_func") {
 	time.add(1000)
 	time.set(TimePeriod.NOON)
-	time.query(TimeType.DAYTIME)
+	time.query(TimeType.DAYS)
 }
 ```
 
@@ -184,7 +184,7 @@ function("my_func") {
 | `time.set(6000)`               | `time set 6000`                    | Jump to tick 6000                             |
 | `time.set(TimePeriod.NOON)`    | `time set noon`                    | Jump to noon                                  |
 | `time.set(marker)`             | `time set <ns>:<name>`             | Jump to a named time marker                   |
-| `time.query(TimeType.DAYTIME)` | `time query daytime`               | Output current daytime                        |
+| `time.query(TimeType.DAYS)`    | `time query day`                   | Output the clock time in days                 |
 | `time.query(timeline)`         | `time query <ns>:<timeline>`       | Output progress through a timeline            |
 | `time.queryRepetitions(tl)`    | `time query <ns>:<tl> repetitions` | Output how many times the timeline has looped |
 | `time.queryTime()`             | `time query time`                  | Output absolute game time                     |
@@ -198,7 +198,7 @@ subcommand to that specific clock:
 function("advance_season") {
 	time.of(seasonClock).add(6000)
 	time.of(seasonClock).set(timeMarker("summer", "mymod"))
-	time.of(seasonClock).query(TimeType.DAYTIME)
+	time.of(seasonClock).query(TimeType.DAYS)
 }
 ```
 
@@ -208,7 +208,7 @@ Or use the builder form to avoid repeating `of(seasonClock)`:
 function("advance_season") {
 	val seasonTime = time.of(seasonClock)
 	seasonTime.add(6000)
-	seasonTime.query(TimeType.DAYTIME)
+	seasonTime.query(TimeType.DAYS)
 }
 ```
 
@@ -258,9 +258,8 @@ When omitted, the standard overworld day clock is used.
 dataPack.dimensionType("twilight_dimension") {
 	defaultClock = dayClock
 	hasSkylight = true
-	natural = true
 	logicalHeight = 256
-	infiniburn = Tags.Block.INFINIBURN_OVERWORLD
+	infiniburn = listOf(Tags.Block.INFINIBURN_OVERWORLD)
 	minY = -64
 	height = 384
 	monsterSpawnBlockLightLimit = 0
@@ -302,10 +301,9 @@ dataPack("my_mod") {
 	// 3. Wire the clock to a custom dimension
 	val dimType = dimensionType("my_dimension_type") {
 		defaultClock = season
-		natural = true
 		hasSkylight = true
 		logicalHeight = 256
-		infiniburn = Tags.Block.INFINIBURN_OVERWORLD
+		infiniburn = listOf(Tags.Block.INFINIBURN_OVERWORLD)
 		minY = -64
 		height = 384
 		monsterSpawnBlockLightLimit = 0
@@ -325,7 +323,7 @@ dataPack("my_mod") {
 	// 6. Command: advance the season clock
 	function("tick_season") {
 		time.of(season).add(1)
-		time.of(season).query(TimeType.DAYTIME)
+		time.of(season).query(TimeType.DAYS)
 	}
 }
 ```

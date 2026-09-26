@@ -12,8 +12,7 @@ routeOverride: /docs/data-driven/trims
 # Trims
 
 Armor trims are a customization system that allows players to add decorative patterns to their armor pieces. Trims consist of two components:
-**materials** (which determine the color/texture) and **patterns
-** (which determine the shape/design). Kore provides type-safe DSL builders for creating custom trim materials and patterns.
+**materials** (which determine the color/texture) and **patterns** (which determine the shape/design). Kore provides type-safe DSL builders for creating custom trim materials and patterns.
 
 ## Trim Materials
 
@@ -91,7 +90,7 @@ Trim patterns define the visual design applied to armor. Each pattern specifies:
 ### Basic Usage
 
 ```kotlin
-trimPattern("stripes", Models.TRIMS_MODELS_ARMOR_COAST, textComponent("Stripes")) {
+trimPattern("stripes", Textures.Trims.Entity.Humanoid.COAST, textComponent("Stripes")) {
 	description("Striped Pattern", Color.GRAY)
 }
 ```
@@ -104,7 +103,7 @@ Setting
 `decal = true` makes the pattern render as an overlay, which is useful for patterns that should appear on top of the base armor texture without replacing it (similar to how netherite trim patterns work):
 
 ```kotlin
-trimPattern("overlay", Models.TRIMS_MODELS_ARMOR_SENTRY, textComponent("Overlay"), decal = true) {
+trimPattern("overlay", Textures.Trims.Entity.Humanoid.SENTRY, textComponent("Overlay"), decal = true) {
 	description("Overlay Pattern")
 }
 ```
@@ -115,7 +114,7 @@ A trim pattern generates JSON like this:
 
 ```json
 {
-	"asset_id": "minecraft:trims/models/armor/coast",
+	"asset_id": "minecraft:trims/entity/humanoid/coast",
 	"description": {
 		"text": "Striped Pattern",
 		"color": "gray"
@@ -128,7 +127,7 @@ With decal enabled:
 
 ```json
 {
-	"asset_id": "minecraft:trims/models/armor/sentry",
+	"asset_id": "minecraft:trims/entity/humanoid/sentry",
 	"description": {
 		"text": "Overlay Pattern"
 	},

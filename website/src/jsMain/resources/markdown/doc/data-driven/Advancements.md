@@ -43,7 +43,9 @@ dataPack("my_datapack") {
 		display(Items.DIAMOND, "My First Advancement", "Complete this challenge!")
 
 		criteria {
-			inventoryChanged("get_diamond", Items.DIAMOND)
+			inventoryChanged("get_diamond") {
+				item { items(Items.DIAMOND) }
+			}
 		}
 	}
 }
@@ -183,8 +185,7 @@ advancement("my_custom_tab") {
 
 ## Criteria
 
-Criteria define the conditions that must be met to complete the advancement. Each criterion has a **trigger
-** that activates when specific game events occur.
+Criteria define the conditions that must be met to complete the advancement. Each criterion has a **trigger** that activates when specific game events occur.
 
 ### Basic Criteria
 
@@ -207,8 +208,8 @@ Add multiple criteria to an advancement:
 ```kotlin
 advancement("multi_criteria") {
 	criteria {
-		inventoryChanged("get_diamond", Items.DIAMOND)
-		inventoryChanged("get_emerald", Items.EMERALD)
+		inventoryChanged("get_diamond") { item { items(Items.DIAMOND) } }
+		inventoryChanged("get_emerald") { item { items(Items.EMERALD) } }
 		enterBlock("enter_water") {
 			block = Blocks.WATER
 		}
@@ -246,7 +247,7 @@ Triggers are the events that activate criteria. Kore supports all vanilla trigge
 |--------------------------------|-------------------------------------------|
 | `allayDropItemOnBlock`         | Allay drops an item on a block            |
 | `anyBlockUse`                  | Player uses any block                     |
-| `avoidVibrations`              | Player avoids a vibration while sneaking  |
+| `avoidVibration`               | Player avoids a vibration while sneaking  |
 | `beeNestDestroyed`             | Player breaks a bee nest/beehive          |
 | `bredAnimals`                  | Player breeds two animals                 |
 | `brewedPotion`                 | Player takes item from brewing stand      |
@@ -355,8 +356,8 @@ Require specific criteria by name:
 ```kotlin
 advancement("single_requirement") {
 	criteria {
-		inventoryChanged("get_diamond", Items.DIAMOND)
-		inventoryChanged("get_emerald", Items.EMERALD)
+		inventoryChanged("get_diamond") { item { items(Items.DIAMOND) } }
+		inventoryChanged("get_emerald") { item { items(Items.EMERALD) } }
 	}
 
 	// Only diamond is required (emerald is optional)
@@ -371,8 +372,8 @@ Require multiple criteria (all must be met):
 ```kotlin
 advancement("and_requirements") {
 	criteria {
-		inventoryChanged("get_diamond", Items.DIAMOND)
-		inventoryChanged("get_emerald", Items.EMERALD)
+		inventoryChanged("get_diamond") { item { items(Items.DIAMOND) } }
+		inventoryChanged("get_emerald") { item { items(Items.EMERALD) } }
 	}
 
 	// Both required
@@ -387,9 +388,9 @@ Use nested lists for OR groups:
 ```kotlin
 advancement("or_requirements") {
 	criteria {
-		inventoryChanged("get_diamond", Items.DIAMOND)
-		inventoryChanged("get_emerald", Items.EMERALD)
-		inventoryChanged("get_gold", Items.GOLD_INGOT)
+		inventoryChanged("get_diamond") { item { items(Items.DIAMOND) } }
+		inventoryChanged("get_emerald") { item { items(Items.EMERALD) } }
+		inventoryChanged("get_gold") { item { items(Items.GOLD_INGOT) } }
 	}
 
 	// Need diamond OR emerald, AND gold
@@ -441,7 +442,7 @@ rewards {
 rewards {
 	function("celebration") {
 		say("You did it!")
-		playsound(Sounds.UI_TOAST_CHALLENGE_COMPLETE, PlaySoundMixer.MASTER, self())
+		playSound(SoundEvents.Ui.Toast.CHALLENGE_COMPLETE, PlaySoundMixer.MASTER, self())
 	}
 }
 
@@ -459,7 +460,7 @@ advancement("full_rewards") {
 		experience = 500
 		function("reward_function") {
 			give(self(), Items.DIAMOND, 10)
-			effect(self(), Effects.REGENERATION, 200, 2)
+			effect(self()) { give(Effects.REGENERATION, duration = 200, amplifier = 2) }
 		}
 		loots(
 			LootTables.Chests.END_CITY_TREASURE,
@@ -555,19 +556,13 @@ dataPack("adventure_pack") {
 
 		criteria {
 			location("visit_forest") {
-				location {
-					biome = Biomes.FOREST
-				}
+				conditions { locationCheck { biomes(Biomes.FOREST) } }
 			}
 			location("visit_desert") {
-				location {
-					biome = Biomes.DESERT
-				}
+				conditions { locationCheck { biomes(Biomes.DESERT) } }
 			}
 			location("visit_ocean") {
-				location {
-					biome = Biomes.OCEAN
-				}
+				conditions { locationCheck { biomes(Biomes.OCEAN) } }
 			}
 		}
 
@@ -616,7 +611,7 @@ dataPack("adventure_pack") {
 		rewards {
 			experience = 1000
 			function("master_reward") {
-				title(self(), textComponent("MASTER ADVENTURER", Color.GOLD), textComponent(""))
+				title(self(), TitleLocation.TITLE, textComponent("MASTER ADVENTURER", Color.GOLD))
 			}
 		}
 	}

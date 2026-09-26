@@ -68,23 +68,22 @@ predicate("inverted_test") {
 
 ### Available Conditions
 
-Conditions are categorized by their **loot context requirements
-**. Some conditions can be invoked from any context, while others require specific data to be available.
+Conditions are categorized by their **loot context requirements**. Some conditions can be invoked from any context, while others require specific data to be available.
 
 #### Universal Conditions (invokable from any context)
 
-| Condition                   | Description                                                                                                                                                                                                            |
-|-----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `allOf`                     | Evaluates a list of predicates and passes if **all** of them pass                                                                                                                                                      |
-| `anyOf`                     | Evaluates a list of predicates and passes if **any one** of them passes                                                                                                                                                |
-| `entityProperties`          | Checks properties of an entity                                                                                                                                                                                         |
-| `environmentAttributeCheck` | Passes if the specified environment attribute currently matches the given value                                                                                                                                        |
-| `inverted`                  | Inverts another predicate condition                                                                                                                                                                                    |
-| `randomChance`              | Passes if a random float between 0.0 and 1.0 is below the given `NumberProvider` value                                                                                                                                 |
-| `reference`                 | Invokes another predicate file and returns its result (cannot be cyclic)                                                                                                                                               |
-| `timeCheck`                 | Compares a world clock's time against a `NumberProvider` range (mandatory `clock` to select the clock, optional `period` for modulo) - see [World Clocks](/docs/data-driven/world-clocks#timecheckpredicatecondition) |
-| `valueCheck`                | Compares a `NumberProvider` value against another `NumberProvider` or range                                                                                                                                            |
-| `weatherCheck`              | Checks the current game weather (raining, thundering)                                                                                                                                                                  |
+| Condition                   | Description                                                                                                                                                                                                             |
+|-----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `allOf`                     | Evaluates a list of predicates and passes if **all** of them pass                                                                                                                                                       |
+| `anyOf`                     | Evaluates a list of predicates and passes if **any one** of them passes                                                                                                                                                 |
+| `entityProperties`          | Checks properties of an entity                                                                                                                                                                                          |
+| `environmentAttributeCheck` | Passes if the specified environment attribute currently matches the given value                                                                                                                                         |
+| `inverted`                  | Inverts another predicate condition                                                                                                                                                                                     |
+| `randomChance`              | Passes if a random float between 0.0 and 1.0 is below the given `NumberProvider` value                                                                                                                                  |
+| `reference`                 | Invokes another predicate file and returns its result (cannot be cyclic)                                                                                                                                                |
+| `timeCheck`                 | Compares a world clock's time against a `NumberProvider` range (mandatory `clock` to select the clock, optional `period` for modulo) - see [World Clocks](/docs/data-driven/world-clocks#timecheck-predicate-condition) |
+| `valueCheck`                | Compares a `NumberProvider` value against another `NumberProvider` or range                                                                                                                                             |
+| `weatherCheck`              | Checks the current game weather (raining, thundering)                                                                                                                                                                   |
 
 > `randomChance`, `timeCheck`, and `valueCheck` accept a [
 `NumberProvider`](/docs/data-driven/loot-tables#number-providers) for their numeric arguments, so you can use dynamic
@@ -557,7 +556,7 @@ predicate("enchanted_tool") {
 	matchTool {
 		items(Items.DIAMOND_PICKAXE)
 		predicates {
-			enchantments(enchantment(Enchantments.EFFICIENCY))
+			enchantments(Enchantments.EFFICIENCY)
 		}
 	}
 }

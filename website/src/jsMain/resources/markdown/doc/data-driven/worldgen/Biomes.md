@@ -140,16 +140,14 @@ leaving one empty simply means nothing of yours generates at that step.
 
 ```kotlin
 features {
-	fluidSprings = listOf(springPlaced)
-	lakes = listOf(...)
-	localModifications = listOf(...)
-	rawGeneration = listOf(...)
-	strongholds = listOf(...)
-	surfaceStructures = listOf(...)
-	topLayerModification = listOf(...)
-	undergroundDecoration = listOf(...)
+	fluidSprings = listOf(PlacedFeatures.SPRING_WATER)
+	lakes = listOf(PlacedFeatures.LAKE_LAVA_UNDERGROUND)
+	localModifications = listOf(PlacedFeatures.AMETHYST_GEODE)
+	surfaceStructures = listOf(PlacedFeatures.DESERT_WELL)
+	topLayerModification = listOf(PlacedFeatures.FREEZE_TOP_LAYER)
+	undergroundDecoration = listOf(PlacedFeatures.GLOW_LICHEN)
 	undergroundOres = listOf(orePlaced)
-	undergroundStructures = listOf(...)
+	undergroundStructures = listOf(PlacedFeatures.MONSTER_ROOM)
 	vegetalDecoration = listOf(treePlaced, flowerPlaced)
 }
 ```

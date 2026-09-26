@@ -113,7 +113,7 @@ recipes {
 		source(Items.WRITTEN_BOOK)
 		material(Items.WRITABLE_BOOK)
 		result(Items.WRITTEN_BOOK)
-		allowedGenerations = rangeOrInt(0, 2)
+		allowedGenerations = rangeOrInt(0..2)
 	}
 }
 ```
@@ -249,9 +249,6 @@ recipes {
 
 		// Set the result
 		result(Items.DIAMOND_PICKAXE)
-
-		// Optional: set category for recipe book
-		category = CraftingCategory.EQUIPMENT
 	}
 }
 ```
@@ -268,24 +265,22 @@ recipes {
 ```kotlin
 // 2x2 recipe
 craftingShaped("torch") {
-    pattern(
-	    "C",
-	    "S"
-    )
-    keys {
-	    "C" to Items.COAL
-	    "S" to Items.STICK
-    }
-	result(Items.TORCH)
-	count = 4
+	pattern(
+		"C",
+		"S"
+	)
+	keys {
+		"C" to Items.COAL
+		"S" to Items.STICK
+	}
+	result(Items.TORCH, count = 4)
 }
 
 // Using tags as ingredients
 craftingShaped("planks") {
 	pattern("L")
 	key("L", Tags.Item.LOGS)
-	result(Items.OAK_PLANKS)
-	count = 4
+	result(Items.OAK_PLANKS, count = 4)
 }
 ```
 
@@ -325,8 +320,7 @@ craftingShapeless("dye_mix") {
 	ingredient(Tags.Item.DYES)
 	ingredient(Tags.Item.DYES)
 
-	result(Items.MAGENTA_DYE)
-	count = 2
+	result(Items.MAGENTA_DYE, count = 2)
 }
 ```
 
@@ -476,10 +470,10 @@ The result item copies components from the base item.
 
 ```kotlin
 smithingTransform("custom_upgrade") {
-    template(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
-    base(Items.DIAMOND_SWORD)
+	template(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
+	base(Items.DIAMOND_SWORD)
 	addition(Items.NETHERITE_INGOT, Items.NETHERITE_SCRAP)  // Either works
-    result(Items.NETHERITE_SWORD)
+	result(Items.NETHERITE_SWORD)
 }
 ```
 
@@ -506,8 +500,7 @@ Single-item recipes for the stonecutter:
 recipes {
 	stoneCutting("stone_slab") {
 		ingredient(Items.STONE)
-		result(Items.STONE_SLAB)
-		count = 2
+		result(Items.STONE_SLAB, count = 2)
 	}
 
 	stoneCutting("stone_stairs") {
@@ -554,7 +547,7 @@ recipes {
 			" S"
 		)
 		keys {
-			"D" to Items.DAMAGED_DIAMOND
+			"D" to Items.DIAMOND
 			"S" to Items.STICK
 		}
 
@@ -577,33 +570,23 @@ recipes {
 
 ## Recipe Categories
 
-Organize recipes in the recipe book:
+The recipe book tab of `craftingDye`, `craftingImbue` and `craftingTransmute` recipes is set with `category`, a
+`RecipeCategory`:
 
 ```kotlin
-craftingShaped("tool") {
-	// ... pattern and keys
-	result(Items.DIAMOND_PICKAXE)
-	category = CraftingCategory.EQUIPMENT
-}
-
-smelting("food") {
-	// ... ingredient and result
-	category = SmeltingCategory.FOOD
+craftingTransmute("dyed_bundle") {
+	// ... input, material and result
+	category = RecipeCategory.EQUIPMENT
 }
 ```
-
-### Crafting Categories
 
 - `BUILDING` - Building blocks
 - `REDSTONE` - Redstone components
 - `EQUIPMENT` - Tools, weapons, armor
 - `MISC` - Everything else
 
-### Cooking Categories
-
-- `FOOD` - Food items
-- `BLOCKS` - Block transformations (sand → glass)
-- `MISC` - Everything else
+Setting a category on shaped, shapeless or cooking recipes isn't possible yet because those Kore recipe types don't
+expose the `category` field; the game then files them under its default tab.
 
 ## Recipe Groups
 
@@ -614,16 +597,14 @@ recipes {
 	craftingShaped("oak_planks") {
 		pattern("L")
 		key("L", Items.OAK_LOG)
-		result(Items.OAK_PLANKS)
-		count = 4
+		result(Items.OAK_PLANKS, count = 4)
 		group = "planks"
 	}
 
 	craftingShaped("birch_planks") {
 		pattern("L")
 		key("L", Items.BIRCH_LOG)
-		result(Items.BIRCH_PLANKS)
-		count = 4
+		result(Items.BIRCH_PLANKS, count = 4)
 		group = "planks"
 	}
 }
@@ -668,21 +649,21 @@ load {
 	recipeTake(self(), myRecipe)
 
 	// Give all recipes
-	recipeGive(allPlayers(), "*")
+	recipeGiveAll(allPlayers())
 }
 ```
 
 ## Overriding Vanilla Recipes
 
-Override vanilla recipes by using the minecraft namespace:
+A recipe overrides the vanilla one with the same id, so it has to live in the `minecraft` namespace. The recipe
+builders don't take a namespace yet because it lives on the `RecipeFile` wrapper, not on the recipe itself: set it on
+the file the builder just registered.
 
 ```kotlin
 dataPack("better_recipes") {
 	recipes {
 		// Override vanilla diamond sword recipe
 		craftingShaped("diamond_sword") {
-			namespace = "minecraft"
-
 			pattern(
 				" D ",
 				" D ",
@@ -698,86 +679,87 @@ dataPack("better_recipes") {
 				}
 			}
 		}
-    }
+	}
+	recipes.last().namespace = "minecraft"
 }
 ```
+
+The `RecipeArgument` returned by the builder still points at the pack namespace, so reference the overridden recipe
+as `RecipeArgument("diamond_sword", "minecraft")` instead.
 
 ## Full Example
 
 ```kotlin
 dataPack("custom_recipes") {
-    recipes {
-	    // Shaped crafting with components
-	    craftingShaped("legendary_sword") {
-            pattern(
-	            " N ",
-	            " N ",
-	            " B "
-            )
-            keys {
-	            "N" to Items.NETHERITE_INGOT
-	            "B" to Items.BLAZE_ROD
-            }
-		    result(Items.NETHERITE_SWORD) {
-			    customName(textComponent("Blade of Flames", Color.GOLD))
-                enchantments {
-	                enchantment(Enchantments.FIRE_ASPECT, 2)
-                    enchantment(Enchantments.SHARPNESS, 5)
-                }
-			    unbreakable()
-            }
-		    category = CraftingCategory.EQUIPMENT
-        }
+	recipes {
+		// Shaped crafting with components
+		craftingShaped("legendary_sword") {
+			pattern(
+				" N ",
+				" N ",
+				" B "
+			)
+			keys {
+				"N" to Items.NETHERITE_INGOT
+				"B" to Items.BLAZE_ROD
+			}
+			result(Items.NETHERITE_SWORD) {
+				customName(textComponent("Blade of Flames", Color.GOLD))
+				enchantments {
+					enchantment(Enchantments.FIRE_ASPECT, 2)
+					enchantment(Enchantments.SHARPNESS, 5)
+				}
+				unbreakable()
+			}
+		}
 
-	    // Shapeless recipe
-	    craftingShapeless("quick_tnt") {
-		    ingredient(Items.GUNPOWDER)
-		    ingredient(Items.GUNPOWDER)
-		    ingredient(Items.GUNPOWDER)
-		    ingredient(Items.GUNPOWDER)
-		    ingredient(Tags.Item.SAND)
-		    result(Items.TNT)
-	    }
+		// Shapeless recipe
+		craftingShapeless("quick_tnt") {
+			ingredient(Items.GUNPOWDER)
+			ingredient(Items.GUNPOWDER)
+			ingredient(Items.GUNPOWDER)
+			ingredient(Items.GUNPOWDER)
+			ingredient(Tags.Item.SAND)
+			result(Items.TNT)
+		}
 
-	    // Transmute recipe
-	    craftingTransmute("repaint_bed") {
-		    input(Tags.Item.BEDS)
-		    material(Items.WHITE_DYE)
-		    result(Items.WHITE_BED)
-	    }
+		// Transmute recipe
+		craftingTransmute("repaint_bed") {
+			input(Tags.Item.BEDS)
+			material(Items.WHITE_DYE)
+			result(Items.WHITE_BED)
+		}
 
-	    // Smelting with experience
-	    smelting("ancient_debris") {
-		    ingredient(Items.ANCIENT_DEBRIS)
-		    result(Items.NETHERITE_SCRAP)
-		    experience = 2.0
-		    cookingTime = 200
-		    category = SmeltingCategory.MISC
-	    }
+		// Smelting with experience
+		smelting("ancient_debris") {
+			ingredient(Items.ANCIENT_DEBRIS)
+			result(Items.NETHERITE_SCRAP)
+			experience = 2.0
+			cookingTime = 200
+		}
 
-	    // Smithing upgrade
-	    smithingTransform("netherite_boots") {
-		    template(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
-		    base(Items.DIAMOND_BOOTS)
-		    addition(Items.NETHERITE_INGOT)
-		    result(Items.NETHERITE_BOOTS)
-	    }
+		// Smithing upgrade
+		smithingTransform("netherite_boots") {
+			template(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
+			base(Items.DIAMOND_BOOTS)
+			addition(Items.NETHERITE_INGOT)
+			result(Items.NETHERITE_BOOTS)
+		}
 
-	    // Smithing trim
-	    smithingTrim("ward_trim") {
-		    template(Items.WARD_ARMOR_TRIM_SMITHING_TEMPLATE)
-		    base(Tags.Item.TRIMMABLE_ARMOR)
-		    addition(Tags.Item.TRIM_MATERIALS)
-		    pattern = TrimPatterns.WARD
-	    }
+		// Smithing trim
+		smithingTrim("ward_trim") {
+			template(Items.WARD_ARMOR_TRIM_SMITHING_TEMPLATE)
+			base(Tags.Item.TRIMMABLE_ARMOR)
+			addition(Tags.Item.TRIM_MATERIALS)
+			pattern = TrimPatterns.WARD
+		}
 
-	    // Stonecutting variants
-	    stoneCutting("cut_copper_slab") {
-		    ingredient(Items.COPPER_BLOCK)
-		    result(Items.CUT_COPPER_SLAB)
-		    count = 8
-	    }
-    }
+		// Stonecutting variants
+		stoneCutting("cut_copper_slab") {
+			ingredient(Items.COPPER_BLOCK)
+			result(Items.CUT_COPPER_SLAB, count = 8)
+		}
+	}
 
 	// Reference recipe in function
 	val beaconRecipe = recipesBuilder.craftingShaped("easy_beacon") {
@@ -805,7 +787,6 @@ dataPack("custom_recipes") {
 ```json
 {
 	"type": "minecraft:crafting_shaped",
-	"category": "equipment",
 	"pattern": [
 		" N ",
 		" N ",
@@ -837,9 +818,8 @@ dataPack("custom_recipes") {
 1. **Use meaningful names** - Recipe file names should describe the output
 2. **Group related recipes** - Use the `group` field for recipe book organization
 3. **Prefer tags** - Use item tags for flexible ingredient matching
-4. **Set categories** - Help players find recipes in the recipe book
-5. **Test in-game** - Verify recipes work as expected in all crafting interfaces
-6. **Consider balance** - Ensure custom recipes maintain game balance
+4. **Test in-game** - Verify recipes work as expected in all crafting interfaces
+5. **Consider balance** - Ensure custom recipes maintain game balance
 
 ## See Also
 

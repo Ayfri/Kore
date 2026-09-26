@@ -46,13 +46,13 @@ dataPack("my_datapack") {
 			rolls = constant(3f)
 
 			entries {
-				items(Items.DIAMOND) {
+				item(Items.DIAMOND) {
 					weight = 1
 				}
-				items(Items.GOLD_INGOT) {
+				item(Items.GOLD_INGOT) {
 					weight = 5
 				}
-				items(Items.IRON_INGOT) {
+				item(Items.IRON_INGOT) {
 					weight = 10
 				}
 			}
@@ -101,14 +101,12 @@ Apply item modifier functions to all items dropped by the table:
 ```kotlin
 lootTable("enchanted_loot") {
 	functions {
-		enchantRandomly {
-			options += Enchantments.LOOTING
-		}
+		enchantRandomly(Enchantments.LOOTING)
 	}
 
 	pool {
 		entries {
-			items(Items.DIAMOND_SWORD)
+			item(Items.DIAMOND_SWORD)
 		}
 	}
 }
@@ -137,7 +135,7 @@ lootTable("simple_pool") {
 		bonusRolls = constant(1f)
 
 		entries {
-			items(Items.EMERALD)
+			item(Items.EMERALD)
 		}
 	}
 }
@@ -155,7 +153,7 @@ lootTable("weather_dependent") {
 		}
 
 		entries {
-			items(Items.WATER_BUCKET)
+			item(Items.WATER_BUCKET)
 		}
 	}
 }
@@ -169,7 +167,7 @@ lootTable("modified_drops") {
 		rolls = constant(1f)
 
 		entries {
-			items(Items.DIAMOND_PICKAXE)
+			item(Items.DIAMOND_PICKAXE)
 		}
 
 		functions {
@@ -201,7 +199,7 @@ pool {
 	bonusRolls = constant(1f)  // +1 roll per luck level
 
 	entries {
-		items(Items.GOLD_INGOT)
+		item(Items.GOLD_INGOT)
 	}
 }
 ```
@@ -219,7 +217,7 @@ Drops a specific item:
 
 ```kotlin
 entries {
-	items(Items.DIAMOND) {
+	item(Items.DIAMOND) {
 		weight = 1
 		quality = 2
 		conditions {
@@ -278,9 +276,7 @@ A weighted entry that drops nothing (useful for rarity):
 
 ```kotlin
 entries {
-	empty {
-		weight = 10  // 10x more likely than weight=1 entries
-	}
+	empty(weight = 10) // 10x more likely than weight=1 entries
 }
 ```
 
@@ -294,17 +290,17 @@ Selects the first entry whose conditions pass:
 entries {
 	alternatives {
 		children {
-			items(Items.DIAMOND) {
+			item(Items.DIAMOND) {
 				conditions {
 					randomChance(0.1f)
 				}
 			}
-			items(Items.GOLD_INGOT) {
+			item(Items.GOLD_INGOT) {
 				conditions {
 					randomChance(0.3f)
 				}
 			}
-			items(Items.IRON_INGOT)  // Fallback
+			item(Items.IRON_INGOT)  // Fallback
 		}
 	}
 }
@@ -321,8 +317,8 @@ entries {
 			weatherCheck(raining = true)
 		}
 		children {
-			items(Items.WATER_BUCKET)
-			items(Items.FISH)
+			item(Items.WATER_BUCKET)
+			item(Items.COD)
 		}
 	}
 }
@@ -336,13 +332,13 @@ Children are added until one fails its conditions:
 entries {
 	sequence {
 		children {
-			items(Items.DIAMOND) {
+			item(Items.DIAMOND) {
 				conditions { randomChance(0.5f) }
 			}
-			items(Items.EMERALD) {
+			item(Items.EMERALD) {
 				conditions { randomChance(0.5f) }
 			}
-			items(Items.GOLD_INGOT)
+			item(Items.GOLD_INGOT)
 		}
 	}
 }
@@ -511,9 +507,7 @@ functions {
 	setCount(uniform(1f, 5f))
 
 	// Apply enchantments
-	enchantRandomly {
-		options += Enchantments.FORTUNE
-	}
+	enchantRandomly(Enchantments.FORTUNE)
 
 	// Set damage (durability)
 	setDamage(0.8f)
@@ -550,7 +544,7 @@ dataPack("treasure_hunt") {
 			rolls = constant(1f)
 
 			entries {
-				items(Items.NETHER_STAR)
+				item(Items.NETHER_STAR)
 			}
 		}
 
@@ -564,22 +558,20 @@ dataPack("treasure_hunt") {
 			}
 
 			entries {
-				items(Items.NETHERITE_SWORD) {
+				item(Items.NETHERITE_SWORD) {
 					weight = 1
 					functions {
 						enchantWithLevels(levels = constant(30f))
 						setName("Boss Slayer")
 					}
 				}
-				items(Items.DIAMOND_SWORD) {
+				item(Items.DIAMOND_SWORD) {
 					weight = 5
 					functions {
 						enchantWithLevels(levels = uniform(15f, 25f))
 					}
 				}
-				empty {
-					weight = 10
-				}
+				empty(weight = 10)
 			}
 		}
 
@@ -689,10 +681,16 @@ load {
 	loot(self(), myLootTable)
 
 	// Spawn loot at position
-	loot(vec3(0, 64, 0), myLootTable)
+	loot {
+		target { spawn(vec3(0, 64, 0)) }
+		source { loot(myLootTable) }
+	}
 
-	// Insert loot into container
-	loot(block(0, 64, 0), myLootTable)
+	// Insert loot into the container at 0 64 0
+	loot {
+		target { insert(vec3(0, 64, 0)) }
+		source { loot(myLootTable) }
+	}
 }
 ```
 
@@ -712,10 +710,10 @@ dataPack("better_zombies") {
 			rolls = constant(1f)
 
 			entries {
-				items(Items.ROTTEN_FLESH) {
+				item(Items.ROTTEN_FLESH) {
 					functions {
 						setCount(uniform(0f, 2f))
-						lootingEnchant(uniform(0f, 1f))
+						enchantedCountIncrease(Enchantments.LOOTING, uniform(0f, 1f))
 					}
 				}
 			}
@@ -730,7 +728,7 @@ dataPack("better_zombies") {
 			}
 
 			entries {
-				items(Items.DIAMOND)
+				item(Items.DIAMOND)
 			}
 		}
 	}

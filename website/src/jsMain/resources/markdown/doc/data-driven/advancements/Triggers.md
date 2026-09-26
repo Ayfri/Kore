@@ -49,10 +49,12 @@ _None._
 **Example:**
 
 ```kotlin
-anyBlockUse("use_block") {
+anyBlockUse("use_block_while_sneaking") {
 	conditions {
-		playerProperties {
-			lookingAt(Blocks.CRAFTING_TABLE)
+		entityProperties {
+			flags {
+				isSneaking = true
+			}
 		}
 	}
 }
@@ -60,22 +62,21 @@ anyBlockUse("use_block") {
 
 ---
 
-### `avoidVibrations`
+### `avoidVibration`
 
 **Description:**  
-Triggers when a player avoids vibrations.
+Triggers when a player avoids a vibration by sneaking.
 
-**Properties:**
-
-- `location`: The location where vibrations are avoided.
+**Properties:**  
+_None._
 
 **Example:**
 
 ```kotlin
-avoidVibrations("avoid_sculk") {
+avoidVibration("avoid_sculk") {
 	conditions {
-		location {
-			block = Blocks.SCULK_SENSOR
+		locationCheck {
+			block(Blocks.SCULK)
 		}
 	}
 }
@@ -181,7 +182,7 @@ Triggers when a player changes dimension.
 ```kotlin
 changedDimension("enter_nether") {
 	from = Dimensions.OVERWORLD
-	to = Dimensions.NETHER
+	to = Dimensions.THE_NETHER
 }
 ```
 
@@ -321,10 +322,12 @@ _None._
 **Example:**
 
 ```kotlin
-defaultBlockUse("use_default") {
+defaultBlockUse("use_default_in_nether") {
 	conditions {
-		playerProperties {
-			lookingAt(Blocks.CHEST)
+		entityProperties {
+			location {
+				dimension = Dimensions.THE_NETHER
+			}
 		}
 	}
 }
@@ -446,7 +449,18 @@ Triggers when an entity kills a player.
 - `killingBlow`: Details about the killing blow.
 
 **Example:**
-_Not provided in the original examples._
+
+```kotlin
+entityKilledPlayer("killed_by_creeper") {
+	entity {
+		conditions {
+			entityProperties {
+				entityType(EntityTypes.CREEPER)
+			}
+		}
+	}
+}
+```
 
 ---
 
@@ -564,7 +578,7 @@ _None._
 ```kotlin
 heroOfTheVillage("save_village") {
 	conditions {
-		location {
+		locationCheck {
 			dimension = Dimensions.OVERWORLD
 		}
 	}
@@ -668,7 +682,7 @@ itemUsedOnBlock("bone_meal_use") {
 ### `killedByArrow`
 
 **Description:**  
-Triggers when killed by a crossbow.
+Triggers when a player kills entities with arrows shot from a bow or crossbow.
 
 **Properties:**
 
@@ -795,7 +809,7 @@ Triggers every second based on location conditions.
 ```kotlin
 location("reach_end") {
 	conditions {
-		location {
+		locationCheck {
 			dimension = Dimensions.THE_END
 		}
 	}
@@ -845,7 +859,7 @@ Triggers when a block is placed.
 
 ```kotlin
 placedBlock("place_block") {
-	conditions {
+	location {
 		location {
 			biomes(Biomes.PLAINS)
 		}
@@ -969,6 +983,8 @@ playerShearedEquipment("shear_wolf_armor") {
 	}
 }
 ```
+
+---
 
 ### `recipeCrafted`
 
@@ -1132,8 +1148,10 @@ _None._
 ```kotlin
 startedRiding("ride_horse") {
 	conditions {
-		vehicle {
-			entityType(EntityTypes.HORSE)
+		entityProperties {
+			vehicle {
+				entityType(EntityTypes.HORSE)
+			}
 		}
 	}
 }
@@ -1277,7 +1295,7 @@ Triggers every tick (20 times per second).
 ```kotlin
 tick("game_tick") {
 	conditions {
-		timeCheck(WorldClocks.OVERWORLD, 6000..18000) // Daytime only
+		timeCheck(WorldClocks.OVERWORLD, 0f, 12000f, period = 24000) // daytime only
 	}
 }
 ```
@@ -1390,7 +1408,7 @@ Triggers when a player causes a raid in a village.
 ```kotlin
 voluntaryExile("raid_village") {
 	conditions {
-		location {
+		locationCheck {
 			dimension = Dimensions.OVERWORLD
 		}
 	}

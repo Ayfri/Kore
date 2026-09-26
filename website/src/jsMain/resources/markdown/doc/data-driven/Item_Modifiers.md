@@ -52,9 +52,7 @@ Use the `itemModifier` builder function to create item modifiers in Kore:
 ```kotlin
 dataPack("my_datapack") {
 	val modifier = itemModifier("fortune_bonus") {
-		enchantRandomly {
-			options += Enchantments.FORTUNE
-		}
+		enchantRandomly(Enchantments.FORTUNE)
 		setCount(uniform(1f, 5f))
 	}
 }
@@ -70,13 +68,11 @@ Apply modifiers to items using the `/item modify` command:
 
 ```kotlin
 load {
-	items {
-		// Modify item in player's mainhand
-		modify(self(), WEAPON.MAINHAND, modifier)
+	// Modify item in player's mainhand
+	items.modify(self(), WEAPON.MAINHAND, modifier)
 
-		// Modify item in container
-		modify(block(0, 64, 0), slot(0), modifier)
-	}
+	// Modify item in the first slot of the container at 0 64 0
+	items.modify(vec3(0, 64, 0), CONTAINER[0], modifier)
 }
 ```
 
@@ -98,7 +94,7 @@ lootTable("treasure") {
 		}
 
 		entries {
-			items(Items.DIAMOND) {
+			item(Items.DIAMOND) {
 				// Entry-level functions
 				functions {
 					setName("Lucky Diamond")
@@ -181,18 +177,20 @@ itemModifier("random_enchant") {
 
 	// From specific list
 	enchantRandomly {
-		options += Enchantments.SHARPNESS
-		options += Enchantments.SMITE
-		options += Enchantments.BANE_OF_ARTHROPODS
+		enchantments {
+			add(Enchantments.SHARPNESS)
+			add(Enchantments.SMITE)
+			add(Enchantments.BANE_OF_ARTHROPODS)
+		}
 	}
 
 	// Only compatible enchantments
 	enchantRandomly(onlyCompatible = true)
 
-  // Include the additional cost component from trade costs
-  enchantRandomly(Enchantments.SHARPNESS) {
-    includeAdditionalCostComponent = true
-  }
+	// Include the additional cost component from trade costs
+	enchantRandomly(Enchantments.SHARPNESS) {
+		includeAdditionalCostComponent = true
+	}
 }
 ```
 
@@ -211,10 +209,10 @@ itemModifier("table_enchant") {
 	// Limit to specific enchantments
 	enchantWithLevels(Enchantments.PROTECTION, levels = constant(30f))
 
-  // Include the additional cost component from trade costs
-  enchantWithLevels(levels = constant(30f)) {
-    includeAdditionalCostComponent = true
-  }
+	// Include the additional cost component from trade costs
+	enchantWithLevels(levels = constant(30f)) {
+		includeAdditionalCostComponent = true
+	}
 }
 ```
 
@@ -225,9 +223,9 @@ Sets specific enchantments and levels:
 ```kotlin
 itemModifier("specific_enchants") {
 	setEnchantments {
-		enchantment(Enchantments.SHARPNESS, 5)
-		enchantment(Enchantments.UNBREAKING, 3)
-		enchantment(Enchantments.MENDING, 1)
+		this[Enchantments.SHARPNESS] = constant(5f)
+		this[Enchantments.UNBREAKING] = constant(3f)
+		this[Enchantments.MENDING] = constant(1f)
 	}
 }
 ```
@@ -254,8 +252,7 @@ itemModifier("named") {
 	setName("Legendary Sword")
 
 	// Text component with formatting
-	setName(textComponent("Legendary Sword") {
-		color = Color.GOLD
+	setName(text("Legendary Sword", Color.GOLD) {
 		bold = true
 	})
 
@@ -293,10 +290,10 @@ itemModifier("components") {
 	setComponents {
 		customName(textComponent("Custom Item", Color.GOLD))
 		damage(10)
-		unbreakable(showInTooltip = false)
+		unbreakable()
 
 		// Remove component with !
-		!food {}
+		!ItemComponentTypes.FOOD
 	}
 }
 ```
@@ -308,7 +305,7 @@ Copy components from a source:
 ```kotlin
 itemModifier("copy_from_block") {
 	copyComponents {
-		source = Source.BLOCK_ENTITY
+		source = CopyComponentsSource.BLOCK_ENTITY
 
 		// Include specific components
 		include(ItemComponentTypes.CUSTOM_NAME, ItemComponentTypes.LORE)
@@ -328,7 +325,7 @@ itemModifier("named_drop") {
 	copyName(Source.BLOCK_ENTITY)
 	// Or from entity
 	copyName(Source.THIS)
-	copyName(Source.KILLER)
+	copyName(Source.ATTACKER)
 }
 ```
 
@@ -365,13 +362,9 @@ Copy NBT data to custom_data component:
 
 ```kotlin
 itemModifier("copy_nbt") {
-	copyCustomData {
-		source(Source.BLOCK_ENTITY)
-
-		operations {
-			operation("Items", "BlockItems", CopyOperation.REPLACE)
-			operation("Lock", "OriginalLock", CopyOperation.MERGE)
-		}
+	copyCustomData(Source.BLOCK_ENTITY) {
+		replace("Items", "BlockItems")
+		merge("Lock", "OriginalLock")
 	}
 }
 ```
@@ -386,12 +379,12 @@ Fill container items (bundles, shulker boxes):
 itemModifier("filled_bundle") {
 	setContents(ContentComponentTypes.BUNDLE_CONTENTS) {
 		entries {
-			items(Items.DIAMOND) {
+			item(Items.DIAMOND) {
 				functions {
 					setCount(16f)
 				}
 			}
-			items(Items.EMERALD) {
+			item(Items.EMERALD) {
 				functions {
 					setCount(32f)
 				}
@@ -434,7 +427,7 @@ Convert empty map to explorer map:
 ```kotlin
 itemModifier("treasure_map") {
 	explorationMap {
-		destination = Tags.Worldgen.Structure.BURIED_TREASURE
+		destination = Tags.Worldgen.Structure.ON_TREASURE_MAPS
 		decoration = MapDecorationTypes.RED_X
 		zoom = 2
 		searchRadius = 50
@@ -623,14 +616,14 @@ itemModifier("buffed") {
 			operation = AttributeModifierOperation.ADD_VALUE,
 			amount = constant(5f),
 			id = "bonus_damage",
-			slot = EquipmentSlot.MAINHAND
+			slot = listOf(EquipmentSlot.MAINHAND)
 		)
 		attribute(
 			attribute = Attributes.MOVEMENT_SPEED,
 			operation = AttributeModifierOperation.ADD_MULTIPLIED_BASE,
 			amount = constant(0.1f),
 			id = "speed_boost",
-			slot = EquipmentSlot.FEET
+			slot = listOf(EquipmentSlot.FEET)
 		)
 	}
 }
@@ -658,9 +651,7 @@ Copy block state to item:
 
 ```kotlin
 itemModifier("block_state") {
-	copyState(Blocks.FURNACE) {
-		properties("facing", "lit")
-	}
+	copyState(Blocks.FURNACE, "facing", "lit")
 }
 ```
 
@@ -673,19 +664,13 @@ Apply enchantment-based bonus formulas:
 ```kotlin
 itemModifier("fortune") {
 	// Ore drops formula
-	applyBonus(Enchantments.FORTUNE) {
-		formula = OreDrops()
-	}
+	applyBonus(Enchantments.FORTUNE, OreDrops)
 
 	// Uniform bonus
-	applyBonus(Enchantments.FORTUNE) {
-		formula = UniformBonusCount(bonusMultiplier = 1f)
-	}
+	applyBonus(Enchantments.FORTUNE, UniformBonusCount(bonusMultiplier = 1f))
 
 	// Binomial distribution
-	applyBonus(Enchantments.FORTUNE) {
-		formula = BinomialWithBonusCount(extra = 3, probability = 0.5f)
-	}
+	applyBonus(Enchantments.FORTUNE, BinomialWithBonusCount(extra = 3, probability = 0.5f))
 }
 ```
 
@@ -719,7 +704,7 @@ Set player head skin:
 
 ```kotlin
 itemModifier("head") {
-	fillPlayerHead(Source.KILLER)
+	fillPlayerHead(Source.ATTACKER)
 }
 ```
 
@@ -837,12 +822,11 @@ dataPack("legendary_items") {
 
 		// Guaranteed enchantments
 		setEnchantments {
-			enchantment(Enchantments.UNBREAKING, 3)
+			this[Enchantments.UNBREAKING] = constant(3f)
 		}
 
 		// Custom name with formatting
-		setName(textComponent("Legendary Weapon") {
-			color = Color.GOLD
+		setName(text("Legendary Weapon", Color.GOLD) {
 			bold = true
 		})
 
@@ -861,7 +845,7 @@ dataPack("legendary_items") {
 				operation = AttributeModifierOperation.ADD_VALUE,
 				amount = constant(5f),
 				id = "legendary_damage",
-				slot = EquipmentSlot.MAINHAND
+				slot = listOf(EquipmentSlot.MAINHAND)
 			)
 		}
 
@@ -875,7 +859,7 @@ dataPack("legendary_items") {
 			rolls = constant(1f)
 
 			entries {
-				items(Items.DIAMOND_SWORD) {
+				item(Items.DIAMOND_SWORD) {
 					functions {
 						reference(legendaryModifier)
 					}
@@ -886,9 +870,7 @@ dataPack("legendary_items") {
 
 	// Use with command
 	load {
-		items {
-			modify(self(), WEAPON.MAINHAND, legendaryModifier)
-		}
+		items.modify(self(), WEAPON.MAINHAND, legendaryModifier)
 	}
 }
 ```

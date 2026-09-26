@@ -111,7 +111,7 @@ A simple dialog with a single action button for displaying information:
 ```kotlin
 val noticeDialog = dialogBuilder.notice("achievement", "Achievement Unlocked!") {
 	bodies {
-		items(Items.DIAMOND_SWORD) {
+		item(Items.DIAMOND_SWORD) {
 			description = ItemDescription(textComponent("Your first diamond tool!"))
 			showTooltip = true
 		}
@@ -174,7 +174,7 @@ val menuDialog = dialogBuilder.multiAction("main_menu", "Server Menu") {
 		action("Quit") {
 			action {
 				dynamicRunCommand {
-					kick(allPlayers(), textComponent("Thanks for playing!"))
+					tellraw(allPlayers(), textComponent("Thanks for playing!"))
 				}
 			}
 		}
@@ -280,7 +280,7 @@ Display items with descriptions:
 
 ```kotlin
 bodies {
-	items(Items.ENCHANTED_BOOK) {
+	item(Items.ENCHANTED_BOOK) {
 		description = ItemDescription(textComponent("A mysterious tome"))
 		showTooltip = true
 		showDecorations = false
@@ -392,7 +392,7 @@ action {
 
 	// Dynamic commands with macros named after the inputs
 	dynamicRunCommand {
-		say("Player name is ${macro('username')}")
+		say("Player name is ${macro("username")}")
 	}
 
 	// Custom dynamic actions, for sending custom packets for server plugins/mods
@@ -515,7 +515,7 @@ val tutorialDialog = dialogBuilder.dialogList("tutorials", "Tutorial Menu") {
 
 	bodies {
 		plainMessage("Choose a tutorial to begin:")
-		items(Items.BOOK) {
+		item(Items.BOOK) {
 			description = ItemDescription(textComponent("Learn the basics"))
 		}
 	}
