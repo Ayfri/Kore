@@ -45,25 +45,26 @@ interface Color : Argument {
 		else -> error("Unknown color type: $this")
 	}
 
+	/** Aliases are getters, not fields: initializing an enum implementing [Color] runs this companion's init mid-enum-init, freezing fields as `null`. */
 	companion object {
-		val AQUA = FormattingColor.AQUA
-		val BLACK = FormattingColor.BLACK
-		val BLUE = FormattingColor.BLUE
-		val DARK_AQUA = FormattingColor.DARK_AQUA
-		val DARK_BLUE = FormattingColor.DARK_BLUE
-		val DARK_GRAY = FormattingColor.DARK_GRAY
-		val DARK_GREEN = FormattingColor.DARK_GREEN
-		val DARK_PURPLE = FormattingColor.DARK_PURPLE
-		val DARK_RED = FormattingColor.DARK_RED
-		val GOLD = FormattingColor.GOLD
-		val GRAY = FormattingColor.GRAY
-		val GREEN = FormattingColor.GREEN
-		val LIGHT_PURPLE = FormattingColor.LIGHT_PURPLE
-		val PINK = BossBarColor.PINK
-		val PURPLE = BossBarColor.PURPLE
-		val RED = FormattingColor.RED
-		val WHITE = FormattingColor.WHITE
-		val YELLOW = FormattingColor.YELLOW
+		val AQUA get() = FormattingColor.AQUA
+		val BLACK get() = FormattingColor.BLACK
+		val BLUE get() = FormattingColor.BLUE
+		val DARK_AQUA get() = FormattingColor.DARK_AQUA
+		val DARK_BLUE get() = FormattingColor.DARK_BLUE
+		val DARK_GRAY get() = FormattingColor.DARK_GRAY
+		val DARK_GREEN get() = FormattingColor.DARK_GREEN
+		val DARK_PURPLE get() = FormattingColor.DARK_PURPLE
+		val DARK_RED get() = FormattingColor.DARK_RED
+		val GOLD get() = FormattingColor.GOLD
+		val GRAY get() = FormattingColor.GRAY
+		val GREEN get() = FormattingColor.GREEN
+		val LIGHT_PURPLE get() = FormattingColor.LIGHT_PURPLE
+		val PINK get() = BossBarColor.PINK
+		val PURPLE get() = BossBarColor.PURPLE
+		val RED get() = FormattingColor.RED
+		val WHITE get() = FormattingColor.WHITE
+		val YELLOW get() = FormattingColor.YELLOW
 
 		/**
 		 * Variant serializer that emits and parses the correct format automatically:
