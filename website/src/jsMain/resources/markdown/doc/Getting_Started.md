@@ -34,7 +34,7 @@ By the end of this page, you will have:
 
 ## Prerequisites
 
-- [Java 21 (JDK 21)](https://jdk.java.net/archive/) or higher.
+- [Java 25 (JDK 25)](https://jdk.java.net/25/) or higher, required by both Kore and Minecraft 26.2.
 - Gradle (wrapper recommended: `./gradlew`).
 - IntelliJ IDEA (recommended) or another IDE with Kotlin support.
 - Basic understanding of Minecraft datapacks (helpful but not required).
