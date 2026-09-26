@@ -180,7 +180,7 @@ class Execute {
 	/** Runs a newly generated function with the given [name], [namespace] and [directory] as the final command of the execute chain. */
 	context(fn: Function)
 	fun run(name: String, namespace: String = fn.datapack.name, directory: String = "", block: Function.() -> Unit) =
-		fn.datapack.generatedFunction(name, namespace, directory, block)
+		fn.datapack.generatedFunction(name, namespace, directory, block).also { run = it }
 
 	/** Runs the given existing [function] as the final command of the execute chain. */
 	fun run(function: FunctionArgument) {
