@@ -192,20 +192,20 @@ class Test(val fn: Function) {
 		fn.addLine(command("test", literal("stop")))
 
 	/**
-	 * Verifies the given tests as a list.
+	 * Verifies every test matching [selector], use wildcards (`*`, `?`) to verify several at once.
 	 *
 	 * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/test)
 	 */
-	fun verify(tests: List<TestInstanceArgument>) =
-		fn.addLine(command("test", literal("verify"), *tests.toTypedArray()))
+	fun verify(selector: TestSelectorArgument) =
+		fn.addLine(command("test", literal("verify"), selector))
 
 	/**
-	 * Verifies the given tests.
+	 * Verifies the given [test].
 	 *
 	 * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/test)
 	 */
-	fun verify(vararg tests: TestInstanceArgument) =
-		fn.addLine(command("test", literal("verify"), *tests))
+	fun verify(test: TestInstanceArgument) =
+		fn.addLine(command("test", literal("verify"), test))
 }
 
 /** Opens the [Test] DSL. */

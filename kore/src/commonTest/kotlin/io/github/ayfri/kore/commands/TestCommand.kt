@@ -70,10 +70,8 @@ fun Function.testTests() {
 
 		stop() assertsIs "test stop"
 
-		val test1 = TestInstanceArgument("test1", "my_datapack")
-		val test2 = TestInstanceArgument("test2", "my_datapack")
-		verify(listOf(test1, test2)) assertsIs "test verify my_datapack:test1 my_datapack:test2"
-		verify(test1, test2) assertsIs "test verify my_datapack:test1 my_datapack:test2"
+		verify(TestInstanceArgument("test1", "my_datapack")) assertsIs "test verify my_datapack:test1"
+		verify(selector) assertsIs "test verify my_datapack:test_*"
 	}
 
 	// Test helper functions
