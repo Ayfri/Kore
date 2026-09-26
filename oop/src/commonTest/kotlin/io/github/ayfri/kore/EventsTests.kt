@@ -42,7 +42,7 @@ fun eventsTests() = dataPack("events_tests") {
 		player.onTick { say("Tick!") }
 		player.onUsedEnderEye { say("Used an ender eye!") }
 		player.onUsedTotem { say("Used a totem!") }
-		zombie.onDeath { self -> say("A ${self.type?.name} died!") }
+		zombie.onDeath { self -> say("A ${self.type?.asString()} died!") }
 	}
 
 	player.onKill { self -> say("${self.name} killed an entity!") }

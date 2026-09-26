@@ -31,7 +31,7 @@ open class Entity(
 	open val limitToOne: Boolean = true,
 ) {
 	/** Whether this entity currently resolves to a player selector. */
-	open val isPlayer get() = type?.name == "player"
+	open val isPlayer get() = type?.asString() == "minecraft:player"
 
 	/** The selected entity type, if one is constrained on the selector. */
 	open val type = selector.type

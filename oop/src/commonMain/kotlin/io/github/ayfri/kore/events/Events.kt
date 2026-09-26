@@ -6,6 +6,7 @@ import io.github.ayfri.kore.OopConstants
 import io.github.ayfri.kore.arguments.CONTENTS
 import io.github.ayfri.kore.arguments.components.buildPartial
 import io.github.ayfri.kore.arguments.components.predicate
+import io.github.ayfri.kore.arguments.types.ResourceLocationArgument
 import io.github.ayfri.kore.arguments.types.literals.allEntities
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
@@ -126,7 +127,7 @@ private fun DataPack.registerDeathEvent(entity: Entity, ns: String, block: Funct
 	ensureDeathTriggerSetup(ns)
 	addHandler(OopConstants.deathHandlersTag, ns, OopConstants.eventHandlerPrefix(OopConstants.deathEvent), block)
 
-	val entityTypeName = entity.selector.type?.name?.lowercase() ?: "generic"
+	val entityTypeName = (entity.selector.type as? ResourceLocationArgument)?.name?.lowercase() ?: "generic"
 	val lootTableName = OopConstants.deathTriggerLootTable(entityTypeName)
 	if (lootTables.none { it.fileName == lootTableName }) {
 		lootTable(lootTableName) {

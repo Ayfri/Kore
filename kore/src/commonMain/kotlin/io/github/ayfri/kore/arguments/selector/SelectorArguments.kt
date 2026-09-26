@@ -5,6 +5,8 @@ import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.numbers.ranges.*
 import io.github.ayfri.kore.arguments.scores.Scores
 import io.github.ayfri.kore.arguments.scores.SelectorScore
+import io.github.ayfri.kore.generated.arguments.EntityTypeOrTagArgument
+import io.github.ayfri.kore.generated.arguments.tagged.EntityTypeTagArgument
 import io.github.ayfri.kore.generated.arguments.types.AdvancementArgument
 import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
@@ -146,7 +148,7 @@ data class SelectorArguments(
 			else _teams += StringOption(value)
 		}
 
-	/** Filter by entity type for this selector (maps to the `type` argument). */
+	/** Filter by entity type or entity type tag for this selector (maps to the `type` argument). */
 	var type
 		get() = (_types.firstOrNull() ?: EntityTypeOption()).value
 		set(value) {
@@ -161,7 +163,7 @@ data class SelectorArguments(
 	/** Invert the next predicate option. */
 	operator fun PredicateArgument.not() = apply { _predicates += PredicateOption(invert = true) }
 	/** Invert the next entity type option. */
-	operator fun EntityTypeArgument.not() = apply { _types += EntityTypeOption(invert = true) }
+	operator fun EntityTypeOrTagArgument.not() = apply { _types += EntityTypeOption(invert = true) }
 
 	/** Prefix a string with '!' to invert string-based options. */
 	operator fun String.not() = "!$this"
@@ -232,8 +234,10 @@ data class SelectorArguments(
 					"tag" -> arguments._tags += StringOption(value, inverted)
 					"team" -> arguments._teams += StringOption(value, inverted)
 					"type" -> arguments._types +=
-						EntityTypeOption(value.ifEmpty { null }
-							?.let { parseResourceLocation(it, EntityTypeArgument::invoke) }, inverted)
+						EntityTypeOption(value.ifEmpty { null }?.let {
+							if (it.startsWith('#')) parseResourceLocation(it.drop(1), EntityTypeTagArgument::invoke)
+							else parseResourceLocation(it, EntityTypeArgument::invoke)
+						}, inverted)
 
 					"x" -> arguments.x = value.toDouble()
 					"x_rotation" -> arguments.xRotation = parseFloatRangeOrFloat(value)

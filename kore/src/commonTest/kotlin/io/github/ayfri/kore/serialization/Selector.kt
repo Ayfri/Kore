@@ -18,6 +18,7 @@ import io.github.ayfri.kore.features.predicates.sub.steppingOn
 import io.github.ayfri.kore.generated.Advancements
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.EntityTypes
+import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import io.kotest.core.spec.style.FunSpec
@@ -168,6 +169,14 @@ fun selectorTests() = dataPack("selector_tests") {
 	} assertsIs "@e[type=!minecraft:marker,type=!minecraft:player]"
 
 	allEntities {
+		type = Tags.EntityType.RAIDERS
+	} assertsIs "@e[type=#minecraft:raiders]"
+
+	allEntities {
+		type = !Tags.EntityType.RAIDERS
+	} assertsIs "@e[type=!#minecraft:raiders]"
+
+	allEntities {
 		xRotation = rangeOrDouble(1.5)
 		y = 5.0
 	} assertsIs "@e[x_rotation=1.5,y=5.0]"
@@ -194,6 +203,7 @@ fun selectorDeserializationTests() = listOf(
 	"@e[tag=!foo,tag=!bar]",
 	"@e[team=!]",
 	"@e[type=!minecraft:marker,type=!minecraft:player]",
+	"@e[type=#minecraft:raiders]",
 	"@e[x=1.0,y=2.0,z=3.0]",
 	"@e[x_rotation=1.5,y_rotation=..1.5]",
 ).forEach { Selector.fromString(it).toString() assertsIs it }

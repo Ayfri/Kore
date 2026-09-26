@@ -263,11 +263,11 @@ the [Commands](/docs/commands/commands) API surface:
 function("clear_valuables") {
 	// Clear all items matching a tag
 	clear(allPlayers(), ItemPredicate(ItemTagArgument("valuable_gems", datapack.name)))
+
+	// Target every raider, the selector `type` accepts entity types and entity type tags
+	kill(allEntities { type = Tags.EntityType.RAIDERS }) // kill @e[type=#minecraft:raiders]
 }
 ```
-
-Filtering a selector by an entity type tag (`@e[type=#minecraft:raiders]`) isn't possible yet because the selector
-`type` option only accepts an `EntityTypeArgument`, not an `EntityTypeTagArgument`.
 
 ## Using Tags in Predicates
 
