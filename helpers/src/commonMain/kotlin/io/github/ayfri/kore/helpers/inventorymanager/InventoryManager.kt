@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.helpers.inventorymanager
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.DataPackStateKey
 import io.github.ayfri.kore.arguments.CONTAINER
 import io.github.ayfri.kore.arguments.ItemSlotType
 import io.github.ayfri.kore.arguments.maths.Vec3
@@ -46,11 +47,15 @@ import net.benwoodworth.knbt.addNbtCompound
 data class InventoryManager<T : ContainerArgument>(val container: T) {
 	val slotsListeners = mutableListOf<SlotEventListener>()
 
-	/** Unique per manager, so two managers never share a score or a generated function. */
-	internal val id = counter++
 	internal var listenersGenerated = false
 
-	fun getScoreName(dataPack: DataPack) = "_inventory_manager_${dataPack.name}_click_listener_$id"
+	/** Index of this manager in [dataPack], by identity since equal containers make equal managers, so names only depend on the pack. */
+	internal fun id(dataPack: DataPack): Int {
+		val managers = dataPack.state(managersKey) { mutableListOf() }
+		return managers.indexOfFirst { it === this }.takeIf { it >= 0 } ?: managers.size.also { managers += this }
+	}
+
+	fun getScoreName(dataPack: DataPack) = "_inventory_manager_${dataPack.name}_click_listener_${id(dataPack)}"
 
 	/** Replace the given [slot] with air. */
 	context(fn: Function)
@@ -99,14 +104,14 @@ data class InventoryManager<T : ContainerArgument>(val container: T) {
 	companion object {
 		/** Tag assigned to helper marker entities used for block containers. */
 		var INVENTORY_MANAGER_ENTITY_TAG = "inventory_manager"
-		var counter = 0
+		private val managersKey = DataPackStateKey<MutableList<InventoryManager<*>>>("helpers.inventoryManagers")
 
-		/** Remove scoreboard objectives created by Inventory Manager across runs. */
+		/** Remove the scoreboard objectives of every Inventory Manager this pack registered so far. */
 		context(dp: DataPack)
 		fun removeClickDetectors() {
 			dp.load("inventory_manager_remover") {
-				repeat(counter) {
-					scoreboard.objectives.remove("_inventory_manager_${name}_click_listener_$it")
+				repeat(dp.stateOrNull(managersKey)?.size ?: 0) {
+					scoreboard.objectives.remove("_inventory_manager_${dp.name}_click_listener_$it")
 				}
 			}
 		}
@@ -130,6 +135,7 @@ fun InventoryManager<*>.generateSlotsListeners() {
 	if (listenersGenerated) return
 	listenersGenerated = true
 
+	val id = id(dp)
 	val scoreName = getScoreName(dp)
 	val entityTag = "${scoreName}_marker"
 

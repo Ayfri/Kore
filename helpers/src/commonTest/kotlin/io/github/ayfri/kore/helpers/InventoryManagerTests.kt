@@ -122,4 +122,23 @@ class InventoryManagerTests : FunSpec({
 			load { inventoryManagerTests() }
 		}
 	}
+
+	test("inventory manager names are numbered per pack") {
+		repeat(2) {
+			dataPack("helpers_tests") {
+				val first = inventoryManager(vec3(0, 0, 0))
+				val second = inventoryManager(vec3(0, 0, 0))
+
+				second.getScoreName(this) assertsIs "_inventory_manager_helpers_tests_click_listener_0"
+				first.getScoreName(this) assertsIs "_inventory_manager_helpers_tests_click_listener_1"
+				second.getScoreName(this) assertsIs "_inventory_manager_helpers_tests_click_listener_0"
+
+				InventoryManager.removeClickDetectors()
+				generatedFunctions.last().toString() assertsIs """
+					scoreboard objectives remove _inventory_manager_helpers_tests_click_listener_0
+					scoreboard objectives remove _inventory_manager_helpers_tests_click_listener_1
+				""".trimIndent()
+			}
+		}
+	}
 })

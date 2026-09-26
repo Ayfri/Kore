@@ -100,11 +100,11 @@ inventoryManager(chestPos) {
 - `setBlock(block)` - When the container is a position, place a block (e.g., a chest) before managing its contents.
 - `clear(slot)`, `clearAll()`, `clearAll(item)` - Utilities to wipe inventory content.
 
-Internally, Inventory Manager relies on a scoreboard objective and a tiny helper marker entity (for non-entity containers) to detect state transitions. Names are auto-namespaced and unique per datapack.
+Internally, Inventory Manager relies on a scoreboard objective and a tiny helper marker entity (for non-entity containers) to detect state transitions. Names are auto-namespaced and numbered in the order managers generate their listeners within the datapack, so the same pack always produces the same names.
 
 ## Removing detectors
 
-To clean up objectives created by Inventory Manager across runs:
+To clean up the objectives of every Inventory Manager the pack generated before this call:
 
 ```kotlin
 dataPack("my_dp") {
