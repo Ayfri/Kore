@@ -59,17 +59,19 @@ enum class Hand {
  */
 data object LootSource {
 	fun fish(lootTable: LootTableArgument, pos: Vec3, tool: ItemArgument? = null) = listOfNotNull(literal("fish"), lootTable, pos, tool)
-	fun fish(pos: Vec3, tool: ItemArgument? = null, lootTable: LootTable.() -> Unit) = listOf(literal("fish"), literal(snbtSerializer.encodeToString(lootTable)), pos, tool)
+	fun fish(pos: Vec3, tool: ItemArgument? = null, lootTable: LootTable.() -> Unit) = listOfNotNull(literal("fish"), inlineLootTable(lootTable), pos, tool)
 	fun fish(lootTable: LootTableArgument, pos: Vec3, hand: Hand) = listOf(literal("fish"), lootTable, pos, literal(hand.asArg()))
-	fun fish(pos: Vec3, hand: Hand, lootTable: LootTable.() -> Unit) = listOf(literal("fish"), literal(snbtSerializer.encodeToString(lootTable)), pos, literal(hand.asArg()))
+	fun fish(pos: Vec3, hand: Hand, lootTable: LootTable.() -> Unit) = listOf(literal("fish"), inlineLootTable(lootTable), pos, literal(hand.asArg()))
 
 	fun loot(lootTable: LootTableArgument) = listOf(literal("loot"), lootTable)
-	fun loot(lootTable: LootTable.() -> Unit) = listOf(literal("loot"), literal(snbtSerializer.encodeToString(LootTable().apply(lootTable))))
+	fun loot(lootTable: LootTable.() -> Unit) = listOf(literal("loot"), inlineLootTable(lootTable))
 
 	fun kill(targets: EntityArgument) = listOf(literal("kill"), targets)
 
 	fun mine(pos: Vec3, tool: ItemArgument? = null) = listOfNotNull(literal("mine"), pos, tool)
 	fun mine(pos: Vec3, hand: Hand) = listOf(literal("mine"), pos, literal(hand.asArg()))
+
+	private fun inlineLootTable(lootTable: LootTable.() -> Unit) = literal(snbtSerializer.encodeToString(LootTable().apply(lootTable)))
 }
 
 /**

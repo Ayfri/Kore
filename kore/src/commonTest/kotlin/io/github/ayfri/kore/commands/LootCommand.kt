@@ -29,6 +29,24 @@ fun Function.lootTests() {
 	} assertsIs "loot give @s fish minecraft:gameplay/cat_morning_gift ~ ~ ~"
 
 	loot(self()) {
+		fish(vec3(), Items.FISHING_ROD) {
+			pool {
+				rolls(1f)
+				entries { item(Items.COD) }
+			}
+		}
+	} assertsIs "loot give @s fish {pools:[{rolls:1.0f,entries:[{type:\"minecraft:item\",name:\"minecraft:cod\"}]}]} ~ ~ ~ minecraft:fishing_rod"
+
+	loot(self()) {
+		fish(vec3(), Hand.OFF_HAND) {
+			pool {
+				rolls(1f)
+				entries { item(Items.COD) }
+			}
+		}
+	} assertsIs "loot give @s fish {pools:[{rolls:1.0f,entries:[{type:\"minecraft:item\",name:\"minecraft:cod\"}]}]} ~ ~ ~ offhand"
+
+	loot(self()) {
 		kill(self())
 	} assertsIs "loot give @s kill @s"
 
