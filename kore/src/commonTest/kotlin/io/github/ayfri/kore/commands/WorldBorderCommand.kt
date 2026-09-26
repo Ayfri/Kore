@@ -7,6 +7,7 @@ import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 
 fun Function.worldBorderTests() {
 	worldBorder {
@@ -15,6 +16,7 @@ fun Function.worldBorderTests() {
 		add(1.0, 5.days) assertsIs "worldborder add 1 5d"
 		center(1.0, 2.0) assertsIs "worldborder center 1 2"
 		damageAmount(1f) assertsIs "worldborder damage amount 1"
+		damageAmount(0.2f).toString() shouldBe "worldborder damage amount 0.2"
 		damageBuffer(1.0) assertsIs "worldborder damage buffer 1"
 		damagePerBlock(1f) assertsIs "worldborder damage amount 1"
 		get() assertsIs "worldborder get"
