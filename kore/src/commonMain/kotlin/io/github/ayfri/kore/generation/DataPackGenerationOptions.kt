@@ -1,15 +1,16 @@
 package io.github.ayfri.kore.generation
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.utils.TemporaryFiles
 import io.github.ayfri.kore.utils.absolute
-import io.github.ayfri.kore.utils.makeDirectories
-import io.github.ayfri.kore.utils.resolve
 import io.github.ayfri.kore.utils.resolveSafe
 import kotlinx.io.files.Path
-import kotlinx.io.files.SystemTemporaryDirectory
 
 abstract class DataPackGenerationCommonOptions {
 	open var mergeWithPacks: List<Path> = emptyList()
+
+	/** Directories created only for this generation (unzipped or pre-generated packs), deleted once merging is done. */
+	internal val temporaryPaths = mutableListOf<Path>()
 }
 
 data class DataPackGenerationOptions(
@@ -34,7 +35,7 @@ fun DataPackGenerationOptions.mergeWithPacks(vararg packs: Path) {
 fun DataPackGenerationOptions.mergeWithPacks(vararg packs: DataPack) {
 	mergeWithPacks(*packs.map {
 		val previousPath = it.path
-		val tempPath = SystemTemporaryDirectory.resolve("datapack_${it.name}").apply { makeDirectories() }
+		val tempPath = TemporaryFiles.createTempDirectory("datapack_${it.name}").also(temporaryPaths::add)
 		it.path = tempPath
 		it.generate()
 		it.path = previousPath

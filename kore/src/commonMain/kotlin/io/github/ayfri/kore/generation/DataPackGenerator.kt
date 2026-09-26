@@ -28,7 +28,7 @@ data class DataPackGenerator(
 	var mode: DatapackGenerationMode = DatapackGenerationMode.FOLDER,
 ) {
 	private companion object {
-		val tagsToMerge = setOf("minecraft/tags/function/load.json", "minecraft/tags/functions/tick.json")
+		val tagsToMerge = setOf("minecraft/tags/function/load.json", "minecraft/tags/function/tick.json")
 	}
 
 	/** On the browser there is no real filesystem to resolve/create against, only the logical configured path. */
@@ -90,7 +90,12 @@ data class DataPackGenerator(
 				writeFile(path.toString(), generator.generateJsonWithLoadConditions(datapack))
 			}
 
-		if (options.mergeWithPacks.isNotEmpty()) mergeWithOtherPacks()
+		if (options.mergeWithPacks.isNotEmpty()) try {
+			mergeWithOtherPacks()
+		} finally {
+			options.temporaryPaths.forEach { it.deleteRecursively() }
+			options.temporaryPaths.clear()
+		}
 
 		val bytes = archive?.toByteArray()
 		if (bytes != null) platformWriteFile(outputPath, bytes)
@@ -110,7 +115,7 @@ data class DataPackGenerator(
 
 			var otherPackFile = otherPath
 			if (otherPath.toString().endsWith(".zip")) {
-				otherPackFile = platformUnzipToTempDir(otherPath)
+				otherPackFile = platformUnzipToTempDir(otherPath).also { options.temporaryPaths += it }
 				println("Unzipped pack '$otherPath' to: ${otherPackFile.absolute()}")
 			}
 

@@ -2,15 +2,14 @@ package io.github.ayfri.kore.generation.platform
 
 import io.github.ayfri.kore.generation.zip.readZipEntries
 import io.github.ayfri.kore.utils.TemporaryFiles
+import io.github.ayfri.kore.utils.deleteRecursively
 import io.github.ayfri.kore.utils.ensureParents
 import io.github.ayfri.kore.utils.makeDirectories
 import io.github.ayfri.kore.utils.nameWithoutExtension
-import io.github.ayfri.kore.utils.resolveSafe
-import io.github.ayfri.kore.utils.toSource
+import io.github.ayfri.kore.utils.readBytes
+import io.github.ayfri.kore.utils.resolve
 import io.github.ayfri.kore.utils.write
-import kotlinx.io.buffered
 import kotlinx.io.files.Path
-import kotlinx.io.readByteArray
 
 /**
  * Unzips [zipFile] into a fresh temporary directory and returns its path, driven entirely by the pure-Kotlin
@@ -22,16 +21,27 @@ internal fun commonUnzipToTempDir(zipFile: Path): Path {
 	val cleanName = zipFile.nameWithoutExtension.replace("[\\\\/:*?\"<>|]".toRegex(), "_")
 	val tempDir = TemporaryFiles.createTempDirectory("kore_unzipped_datapack_$cleanName")
 
-	val bytes = zipFile.toSource().buffered().readByteArray()
-	for (entry in readZipEntries(bytes)) {
-		val filePath = tempDir.resolveSafe(entry.name)
-		if (entry.isDirectory) {
-			filePath.makeDirectories()
-		} else {
-			filePath.ensureParents()
-			filePath.write(entry.content)
+	runCatching {
+		for (entry in readZipEntries(zipFile.readBytes())) {
+			val filePath = tempDir.resolve(safeEntryName(entry.name))
+			if (entry.isDirectory) {
+				filePath.makeDirectories()
+			} else {
+				filePath.ensureParents()
+				filePath.write(entry.content)
+			}
 		}
-	}
+	}.onFailure { tempDir.deleteRecursively() }.getOrThrow()
 
 	return tempDir
+}
+
+/** Rejects absolute names and `..` segments, so an entry can never be written outside the extraction directory (Zip Slip). */
+private fun safeEntryName(name: String): String {
+	val normalized = name.replace('\\', '/')
+	val segments = normalized.split('/')
+	require(!normalized.startsWith('/') && ':' !in normalized && segments.none { it == ".." }) {
+		"Refusing to extract zip entry '$name': it points outside the extraction directory."
+	}
+	return segments.filter { it.isNotEmpty() && it != "." }.joinToString("/")
 }
