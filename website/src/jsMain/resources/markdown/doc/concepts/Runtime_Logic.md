@@ -121,7 +121,7 @@ function("reward_rich_players") {
 	// runtime: "if the player's coins >= 100, run the reward"
 	execute {
 		ifCondition {
-			score(self(), "coins", rangeOrInt(100)) // matches 100..
+			score(self(), "coins", rangeOrIntStart(100)) // matches 100..
 		}
 
 		run {
@@ -139,12 +139,12 @@ second branch only runs when the first did not.
 ```kotlin
 function("check_score") {
 	execute {
-		ifCondition { score(self(), "coins", rangeOrInt(100)) }
+		ifCondition { score(self(), "coins", rangeOrIntStart(100)) }
 		run { say("rich") }
 	}
 
 	execute {
-		unlessCondition { score(self(), "coins", rangeOrInt(100)) }
+		unlessCondition { score(self(), "coins", rangeOrIntStart(100)) }
 		run { say("poor") }
 	}
 }
@@ -187,7 +187,7 @@ val tickFunction = function("countdown_tick") {
 
 	// keep going only while countdown > 0
 	execute {
-		ifCondition { score(self(), "countdown", rangeOrInt(1)) } // 1..
+		ifCondition { score(self(), "countdown", rangeOrIntStart(1)) } // 1..
 		run(this@function) // self-recursion: call this same function again
 	}
 }
