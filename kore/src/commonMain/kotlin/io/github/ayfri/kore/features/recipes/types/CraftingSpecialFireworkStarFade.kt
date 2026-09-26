@@ -41,6 +41,7 @@ data class CraftingSpecialFireworkStarFade(
  */
 fun Recipes.craftingSpecialFireworkStarFade(
 	name: String,
+	namespace: String? = null,
 	block: CraftingSpecialFireworkStarFade.() -> Unit
 ): RecipeArgument {
 	val recipe = RecipeFile(
@@ -50,8 +51,7 @@ fun Recipes.craftingSpecialFireworkStarFade(
 			target = listOf(),
 		).apply(block)
 	)
-	dp.recipes += recipe
-	return RecipeArgument(name, recipe.namespace ?: dp.name)
+	return register(recipe, namespace)
 }
 
 /** Sets the dye ingredient(s) to one or more specific items. */

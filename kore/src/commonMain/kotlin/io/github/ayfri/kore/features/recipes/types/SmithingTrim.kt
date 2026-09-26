@@ -4,7 +4,6 @@ import io.github.ayfri.kore.arguments.types.ItemOrTagArgument
 import io.github.ayfri.kore.features.recipes.RecipeFile
 import io.github.ayfri.kore.features.recipes.RecipeTypes
 import io.github.ayfri.kore.features.recipes.Recipes
-import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import io.github.ayfri.kore.generated.arguments.types.TrimPatternArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
@@ -42,13 +41,8 @@ data class SmithingTrim(
  * Docs: https://kore.ayfri.com/docs/data-driven/recipes
  * Minecraft Wiki: https://minecraft.wiki/w/Recipe#smithing_trim
  */
-fun Recipes.smithingTrim(name: String, block: SmithingTrim.() -> Unit): RecipeArgument {
-	val recipe = RecipeFile(name, SmithingTrim(
-		pattern = TrimPatternArgument("")
-	).apply(block))
-	dp.recipes += recipe
-	return RecipeArgument(name, recipe.namespace ?: dp.name)
-}
+fun Recipes.smithingTrim(name: String, namespace: String? = null, block: SmithingTrim.() -> Unit) =
+	register(RecipeFile(name, SmithingTrim(pattern = TrimPatternArgument("")).apply(block)), namespace)
 
 /** Sets the template slot to one or more specific items. */
 fun SmithingTrim.template(vararg items: ItemOrTagArgument) = apply { template = items.toList() }

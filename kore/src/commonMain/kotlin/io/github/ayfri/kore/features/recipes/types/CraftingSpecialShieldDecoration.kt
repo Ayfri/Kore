@@ -43,6 +43,7 @@ data class CraftingSpecialShieldDecoration(
  */
 fun Recipes.craftingSpecialShieldDecoration(
 	name: String,
+	namespace: String? = null,
 	block: CraftingSpecialShieldDecoration.() -> Unit
 ): RecipeArgument {
 	val recipe = RecipeFile(
@@ -52,8 +53,7 @@ fun Recipes.craftingSpecialShieldDecoration(
 			target = listOf(),
 		).apply(block)
 	)
-	dp.recipes += recipe
-	return RecipeArgument(name, recipe.namespace ?: dp.name)
+	return register(recipe, namespace)
 }
 
 /** Sets the banner ingredient to one or more specific items. */

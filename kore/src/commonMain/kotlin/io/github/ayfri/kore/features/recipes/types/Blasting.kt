@@ -5,8 +5,8 @@ import io.github.ayfri.kore.features.recipes.RecipeFile
 import io.github.ayfri.kore.features.recipes.RecipeTypes
 import io.github.ayfri.kore.features.recipes.Recipes
 import io.github.ayfri.kore.features.recipes.data.CraftingResult
-import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import io.github.ayfri.kore.serializers.InlinableList
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -21,8 +21,10 @@ import kotlinx.serialization.Serializable
 data class Blasting(
 	override var ingredient: InlinableList<ItemOrTagArgument> = emptyList(),
 	override var result: CraftingResult,
+	override var category: CookingRecipeCategory? = null,
 	override var group: String? = null,
 	override var experience: Double? = null,
+	@SerialName("cookingtime")
 	override var cookingTime: Int? = null,
 	var showNotification: Boolean? = null,
 ) : Recipe(), CookingRecipe {
@@ -38,8 +40,5 @@ data class Blasting(
  * Docs: https://kore.ayfri.com/docs/data-driven/recipes
  * Minecraft Wiki: https://minecraft.wiki/w/Recipe#blasting
  */
-fun Recipes.blasting(name: String, block: Blasting.() -> Unit): RecipeArgument {
-	val recipe = RecipeFile(name, Blasting(result = CraftingResult("")).apply(block))
-	dp.recipes += recipe
-	return RecipeArgument(name, recipe.namespace ?: dp.name)
-}
+fun Recipes.blasting(name: String, namespace: String? = null, block: Blasting.() -> Unit) =
+	register(RecipeFile(name, Blasting(result = CraftingResult("")).apply(block)), namespace)

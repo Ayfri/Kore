@@ -39,13 +39,13 @@ val CraftingSpecialShulkerBoxColoring = CraftingSpecial("shulkerboxcoloring")
  * Prefer the typed overload with a predefined constant where possible.
  * Produces `data/<namespace>/recipe/<name>.json`.
  */
-fun Recipes.craftingSpecial(name: String, craftingTypeName: String, block: CraftingSpecial.() -> Unit) =
-	dp.recipes.add(RecipeFile(name, CraftingSpecial(craftingTypeName).apply(block)))
+fun Recipes.craftingSpecial(name: String, craftingTypeName: String, namespace: String? = null, block: CraftingSpecial.() -> Unit) =
+	register(RecipeFile(name, CraftingSpecial(craftingTypeName).apply(block)), namespace)
 
 /**
  * Adds a `crafting_special_*` recipe to the data pack from a predefined [CraftingSpecial] constant.
  *
  * Produces `data/<namespace>/recipe/<name>.json`.
  */
-fun Recipes.craftingSpecial(name: String, craftingSpecial: CraftingSpecial) =
-	dp.recipes.add(RecipeFile(name, craftingSpecial))
+fun Recipes.craftingSpecial(name: String, craftingSpecial: CraftingSpecial, namespace: String? = null) =
+	register(RecipeFile(name, craftingSpecial), namespace)

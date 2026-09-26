@@ -49,7 +49,7 @@ data class CraftingTransmute(
  * Docs: https://kore.ayfri.com/docs/data-driven/recipes
  * Minecraft Wiki: https://minecraft.wiki/w/Recipe#crafting_transmute
  */
-fun Recipes.craftingTransmute(name: String, block: CraftingTransmute.() -> Unit): RecipeArgument {
+fun Recipes.craftingTransmute(name: String, namespace: String? = null, block: CraftingTransmute.() -> Unit): RecipeArgument {
 	val recipe = RecipeFile(
 		name, CraftingTransmute(
 			input = listOf(),
@@ -57,8 +57,7 @@ fun Recipes.craftingTransmute(name: String, block: CraftingTransmute.() -> Unit)
 			result = CraftingResult(id = ""),
 		).apply(block)
 	)
-	dp.recipes += recipe
-	return RecipeArgument(name, recipe.namespace ?: dp.name)
+	return register(recipe, namespace)
 }
 
 /** Sets the input (item to be transformed) to one or more specific items. */

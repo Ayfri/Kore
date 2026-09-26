@@ -41,7 +41,7 @@ data class CraftingSpecialMapExtending(
  * Docs: https://kore.ayfri.com/docs/data-driven/recipes
  * Minecraft Wiki: https://minecraft.wiki/w/Recipe#crafting_special_mapextending
  */
-fun Recipes.craftingSpecialMapExtending(name: String, block: CraftingSpecialMapExtending.() -> Unit): RecipeArgument {
+fun Recipes.craftingSpecialMapExtending(name: String, namespace: String? = null, block: CraftingSpecialMapExtending.() -> Unit): RecipeArgument {
 	val recipe = RecipeFile(
 		name, CraftingSpecialMapExtending(
 			map = listOf(),
@@ -49,8 +49,7 @@ fun Recipes.craftingSpecialMapExtending(name: String, block: CraftingSpecialMapE
 			result = CraftingResult(id = ""),
 		).apply(block)
 	)
-	dp.recipes += recipe
-	return RecipeArgument(name, recipe.namespace ?: dp.name)
+	return register(recipe, namespace)
 }
 
 /** Sets the map ingredient to one or more specific items. */

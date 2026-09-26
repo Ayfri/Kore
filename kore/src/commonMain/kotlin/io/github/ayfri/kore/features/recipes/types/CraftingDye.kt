@@ -48,7 +48,7 @@ data class CraftingDye(
  * Docs: https://kore.ayfri.com/docs/data-driven/recipes
  * Minecraft Wiki: https://minecraft.wiki/w/Recipe#crafting_dye
  */
-fun Recipes.craftingDye(name: String, block: CraftingDye.() -> Unit): RecipeArgument {
+fun Recipes.craftingDye(name: String, namespace: String? = null, block: CraftingDye.() -> Unit): RecipeArgument {
 	val recipe = RecipeFile(
 		name, CraftingDye(
 			dye = listOf(),
@@ -56,8 +56,7 @@ fun Recipes.craftingDye(name: String, block: CraftingDye.() -> Unit): RecipeArgu
 			target = listOf(),
 		).apply(block)
 	)
-	dp.recipes += recipe
-	return RecipeArgument(name, recipe.namespace ?: dp.name)
+	return register(recipe, namespace)
 }
 
 /** Sets the dye ingredient(s) to one or more specific items. */

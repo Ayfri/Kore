@@ -48,7 +48,7 @@ data class CraftingImbue(
  * Docs: https://kore.ayfri.com/docs/data-driven/recipes
  * Minecraft Wiki: https://minecraft.wiki/w/Recipe#crafting_imbue
  */
-fun Recipes.craftingImbue(name: String, block: CraftingImbue.() -> Unit): RecipeArgument {
+fun Recipes.craftingImbue(name: String, namespace: String? = null, block: CraftingImbue.() -> Unit): RecipeArgument {
 	val recipe = RecipeFile(
 		name, CraftingImbue(
 			material = listOf(),
@@ -56,8 +56,7 @@ fun Recipes.craftingImbue(name: String, block: CraftingImbue.() -> Unit): Recipe
 			source = listOf(),
 		).apply(block)
 	)
-	dp.recipes += recipe
-	return RecipeArgument(name, recipe.namespace ?: dp.name)
+	return register(recipe, namespace)
 }
 
 /** Sets the material (items to be imbued) to one or more specific items. */

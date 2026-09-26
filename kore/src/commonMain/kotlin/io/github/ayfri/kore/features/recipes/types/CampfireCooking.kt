@@ -5,8 +5,8 @@ import io.github.ayfri.kore.features.recipes.RecipeFile
 import io.github.ayfri.kore.features.recipes.RecipeTypes
 import io.github.ayfri.kore.features.recipes.Recipes
 import io.github.ayfri.kore.features.recipes.data.CraftingResult
-import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import io.github.ayfri.kore.serializers.InlinableList
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -21,8 +21,10 @@ import kotlinx.serialization.Serializable
 data class CampfireCooking(
 	override var ingredient: InlinableList<ItemOrTagArgument> = emptyList(),
 	override var result: CraftingResult,
+	override var category: CookingRecipeCategory? = null,
 	override var group: String? = null,
 	override var experience: Double? = null,
+	@SerialName("cookingtime")
 	override var cookingTime: Int? = null,
 	var showNotification: Boolean? = null,
 ) : Recipe(), CookingRecipe {
@@ -38,8 +40,5 @@ data class CampfireCooking(
  * Docs: https://kore.ayfri.com/docs/data-driven/recipes
  * Minecraft Wiki: https://minecraft.wiki/w/Recipe#campfire_cooking
  */
-fun Recipes.campfireCooking(name: String, block: CookingRecipe.() -> Unit): RecipeArgument {
-	val recipe = RecipeFile(name, CampfireCooking(result = CraftingResult("")).apply(block))
-	dp.recipes += recipe
-	return RecipeArgument(name, recipe.namespace ?: dp.name)
-}
+fun Recipes.campfireCooking(name: String, namespace: String? = null, block: CookingRecipe.() -> Unit) =
+	register(RecipeFile(name, CampfireCooking(result = CraftingResult("")).apply(block)), namespace)

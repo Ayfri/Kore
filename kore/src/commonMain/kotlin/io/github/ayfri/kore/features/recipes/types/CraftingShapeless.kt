@@ -6,7 +6,6 @@ import io.github.ayfri.kore.features.recipes.RecipeFile
 import io.github.ayfri.kore.features.recipes.RecipeTypes
 import io.github.ayfri.kore.features.recipes.Recipes
 import io.github.ayfri.kore.features.recipes.data.CraftingResult
-import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -20,6 +19,8 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class CraftingShapeless(
+	/** Optional recipe book category. */
+	var category: RecipeCategory? = null,
 	override var group: String? = null,
 	/** Each entry is one ingredient slot; call [ingredient] once per required item. */
 	var ingredients: List<InlinableList<ItemOrTagArgument>> = listOf(),
@@ -38,11 +39,8 @@ data class CraftingShapeless(
  * Docs: https://kore.ayfri.com/docs/data-driven/recipes
  * Minecraft Wiki: https://minecraft.wiki/w/Recipe#crafting_shapeless
  */
-fun Recipes.craftingShapeless(name: String, block: CraftingShapeless.() -> Unit): RecipeArgument {
-	val recipe = RecipeFile(name, CraftingShapeless(result = CraftingResult("")).apply(block))
-	dp.recipes += recipe
-	return RecipeArgument(name, recipe.namespace ?: dp.name)
-}
+fun Recipes.craftingShapeless(name: String, namespace: String? = null, block: CraftingShapeless.() -> Unit) =
+	register(RecipeFile(name, CraftingShapeless(result = CraftingResult("")).apply(block)), namespace)
 
 /** Adds one ingredient slot accepting any of the given items. */
 fun CraftingShapeless.ingredient(vararg items: ItemOrTagArgument) = apply { ingredients += listOf(items.toList()) }

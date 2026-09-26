@@ -45,7 +45,7 @@ data class CraftingDecoratedPot(
  * Docs: https://kore.ayfri.com/docs/data-driven/recipes
  * Minecraft Wiki: https://minecraft.wiki/w/Recipe#crafting_decorated_pot
  */
-fun Recipes.craftingDecoratedPot(name: String, block: CraftingDecoratedPot.() -> Unit): RecipeArgument {
+fun Recipes.craftingDecoratedPot(name: String, namespace: String? = null, block: CraftingDecoratedPot.() -> Unit): RecipeArgument {
 	val recipe = RecipeFile(
 		name, CraftingDecoratedPot(
 			back = listOf(),
@@ -55,8 +55,7 @@ fun Recipes.craftingDecoratedPot(name: String, block: CraftingDecoratedPot.() ->
 			right = listOf(),
 		).apply(block)
 	)
-	dp.recipes += recipe
-	return RecipeArgument(name, recipe.namespace ?: dp.name)
+	return register(recipe, namespace)
 }
 
 /** Sets the back sherd to one or more specific items. */

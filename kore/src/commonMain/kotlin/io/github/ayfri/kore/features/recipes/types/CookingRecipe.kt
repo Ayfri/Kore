@@ -11,6 +11,9 @@ import io.github.ayfri.kore.serializers.InlinableList
 interface CookingRecipe : IngredientsRecipe, ResultedRecipe {
 	override var ingredient: InlinableList<ItemOrTagArgument>
 
+	/** Optional recipe book category. */
+	var category: CookingRecipeCategory?
+
 	/** Optional recipe book group name. */
 	var group: String?
 

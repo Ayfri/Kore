@@ -41,6 +41,7 @@ data class CraftingSpecialBannerDuplicate(
  */
 fun Recipes.craftingSpecialBannerDuplicate(
 	name: String,
+	namespace: String? = null,
 	block: CraftingSpecialBannerDuplicate.() -> Unit
 ): RecipeArgument {
 	val recipe = RecipeFile(
@@ -49,8 +50,7 @@ fun Recipes.craftingSpecialBannerDuplicate(
 			result = CraftingResult(id = ""),
 		).apply(block)
 	)
-	dp.recipes += recipe
-	return RecipeArgument(name, recipe.namespace ?: dp.name)
+	return register(recipe, namespace)
 }
 
 /** Sets the source banner ingredient to one or more specific items. */

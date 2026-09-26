@@ -5,7 +5,6 @@ import io.github.ayfri.kore.features.recipes.RecipeFile
 import io.github.ayfri.kore.features.recipes.RecipeTypes
 import io.github.ayfri.kore.features.recipes.Recipes
 import io.github.ayfri.kore.features.recipes.data.CraftingResult
-import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -36,8 +35,5 @@ data class StoneCutting(
  * Docs: https://kore.ayfri.com/docs/data-driven/recipes
  * Minecraft Wiki: https://minecraft.wiki/w/Recipe#stonecutting
  */
-fun Recipes.stoneCutting(name: String, block: StoneCutting.() -> Unit): RecipeArgument {
-	val recipe = RecipeFile(name, StoneCutting(result = CraftingResult("")).apply(block))
-	dp.recipes += recipe
-	return RecipeArgument(name, recipe.namespace ?: dp.name)
-}
+fun Recipes.stoneCutting(name: String, namespace: String? = null, block: StoneCutting.() -> Unit) =
+	register(RecipeFile(name, StoneCutting(result = CraftingResult("")).apply(block)), namespace)

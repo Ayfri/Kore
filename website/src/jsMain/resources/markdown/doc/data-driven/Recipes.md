@@ -367,16 +367,33 @@ recipes {
 
 The result item copies all components from the input item.
 
+### Recipe Book Category
+
+Shaped, shapeless, dye, imbue and transmute recipes take an optional `category` (`BUILDING`, `EQUIPMENT`, `MISC` or
+`REDSTONE`) choosing the recipe book tab they show up in:
+
+```kotlin
+recipes {
+	craftingShapeless("quick_torch") {
+		category = RecipeCategory.EQUIPMENT
+		ingredient(Items.COAL)
+		ingredient(Items.STICK)
+		result(Items.TORCH, count = 4)
+	}
+}
+```
+
 ## Cooking Recipes
 
 All cooking recipes share a similar structure:
 
-| Property      | Description                       |
-|---------------|-----------------------------------|
-| `ingredient`  | Input item or tag                 |
-| `result`      | Output item                       |
-| `experience`  | XP awarded when collecting output |
-| `cookingTime` | Time in ticks                     |
+| Property      | Description                                                           |
+|---------------|-----------------------------------------------------------------------|
+| `ingredient`  | Input item or tag                                                     |
+| `result`      | Output item                                                           |
+| `category`    | Recipe book tab, a `CookingRecipeCategory` (`BLOCKS`, `FOOD`, `MISC`) |
+| `experience`  | XP awarded when collecting output                                     |
+| `cookingTime` | Time in ticks                                                         |
 
 ### Blasting (Blast Furnace)
 
@@ -655,15 +672,14 @@ load {
 
 ## Overriding Vanilla Recipes
 
-A recipe overrides the vanilla one with the same id, so it has to live in the `minecraft` namespace. The recipe
-builders don't take a namespace yet because it lives on the `RecipeFile` wrapper, not on the recipe itself: set it on
-the file the builder just registered.
+A recipe overrides the vanilla one with the same id, so it has to live in the `minecraft` namespace. Every recipe
+builder takes an optional `namespace` after the name, defaulting to the pack's:
 
 ```kotlin
 dataPack("better_recipes") {
 	recipes {
-		// Override vanilla diamond sword recipe
-		craftingShaped("diamond_sword") {
+		// Override vanilla diamond sword recipe, returns RecipeArgument minecraft:diamond_sword
+		craftingShaped("diamond_sword", namespace = "minecraft") {
 			pattern(
 				" D ",
 				" D ",
@@ -680,12 +696,8 @@ dataPack("better_recipes") {
 			}
 		}
 	}
-	recipes.last().namespace = "minecraft"
 }
 ```
-
-The `RecipeArgument` returned by the builder still points at the pack namespace, so reference the overridden recipe
-as `RecipeArgument("diamond_sword", "minecraft")` instead.
 
 ## Full Example
 

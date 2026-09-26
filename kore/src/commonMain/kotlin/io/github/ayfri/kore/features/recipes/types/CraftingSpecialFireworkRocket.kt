@@ -44,6 +44,7 @@ data class CraftingSpecialFireworkRocket(
  */
 fun Recipes.craftingSpecialFireworkRocket(
 	name: String,
+	namespace: String? = null,
 	block: CraftingSpecialFireworkRocket.() -> Unit
 ): RecipeArgument {
 	val recipe = RecipeFile(
@@ -54,8 +55,7 @@ fun Recipes.craftingSpecialFireworkRocket(
 			star = listOf(),
 		).apply(block)
 	)
-	dp.recipes += recipe
-	return RecipeArgument(name, recipe.namespace ?: dp.name)
+	return register(recipe, namespace)
 }
 
 /** Sets the fuel ingredient to one or more specific items. */

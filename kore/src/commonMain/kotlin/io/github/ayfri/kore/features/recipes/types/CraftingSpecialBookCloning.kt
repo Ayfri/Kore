@@ -44,7 +44,7 @@ data class CraftingSpecialBookCloning(
  * Docs: https://kore.ayfri.com/docs/data-driven/recipes
  * Minecraft Wiki: https://minecraft.wiki/w/Recipe#crafting_special_bookcloning
  */
-fun Recipes.craftingSpecialBookCloning(name: String, block: CraftingSpecialBookCloning.() -> Unit): RecipeArgument {
+fun Recipes.craftingSpecialBookCloning(name: String, namespace: String? = null, block: CraftingSpecialBookCloning.() -> Unit): RecipeArgument {
 	val recipe = RecipeFile(
 		name, CraftingSpecialBookCloning(
 			material = listOf(),
@@ -52,8 +52,7 @@ fun Recipes.craftingSpecialBookCloning(name: String, block: CraftingSpecialBookC
 			source = listOf(),
 		).apply(block)
 	)
-	dp.recipes += recipe
-	return RecipeArgument(name, recipe.namespace ?: dp.name)
+	return register(recipe, namespace)
 }
 
 /** Sets the material (blank books) to one or more specific items. */

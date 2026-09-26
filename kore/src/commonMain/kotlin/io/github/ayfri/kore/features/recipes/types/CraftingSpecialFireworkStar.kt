@@ -47,7 +47,7 @@ data class CraftingSpecialFireworkStar(
  * Docs: https://kore.ayfri.com/docs/data-driven/recipes
  * Minecraft Wiki: https://minecraft.wiki/w/Recipe#crafting_special_firework_star
  */
-fun Recipes.craftingSpecialFireworkStar(name: String, block: CraftingSpecialFireworkStar.() -> Unit): RecipeArgument {
+fun Recipes.craftingSpecialFireworkStar(name: String, namespace: String? = null, block: CraftingSpecialFireworkStar.() -> Unit): RecipeArgument {
 	val recipe = RecipeFile(
 		name, CraftingSpecialFireworkStar(
 			dye = listOf(),
@@ -58,8 +58,7 @@ fun Recipes.craftingSpecialFireworkStar(name: String, block: CraftingSpecialFire
 			twinkle = listOf(),
 		).apply(block)
 	)
-	dp.recipes += recipe
-	return RecipeArgument(name, recipe.namespace ?: dp.name)
+	return register(recipe, namespace)
 }
 
 /** Sets the dye ingredient(s) to one or more specific items. */

@@ -128,6 +128,42 @@ fun DataPack.recipeTest() {
 }
 
 private fun DataPack.allRecipeTypesTests() {
+	val overridden = recipesBuilder.craftingShapeless("diamond", "minecraft") {
+		category = RecipeCategory.MISC
+		ingredient(Items.DIAMOND_BLOCK)
+		result(Items.DIAMOND)
+	}
+	overridden.asId() assertsIs "minecraft:diamond"
+	recipes.last().namespace assertsIs "minecraft"
+	recipes.last() assertsIs """
+		{
+			"type": "minecraft:crafting_shapeless",
+			"category": "misc",
+			"ingredients": [
+				"minecraft:diamond_block"
+			],
+			"result": "minecraft:diamond"
+		}
+	""".trimIndent()
+
+	recipesBuilder.smelting("test_smelting") {
+		category = CookingRecipeCategory.FOOD
+		ingredient(Items.BEEF)
+		result(Items.COOKED_BEEF)
+		experience = 0.35
+		cookingTime = 200
+	}
+	recipes.last() assertsIs """
+		{
+			"type": "minecraft:smelting",
+			"ingredient": "minecraft:beef",
+			"result": "minecraft:cooked_beef",
+			"category": "food",
+			"experience": 0.35,
+			"cookingtime": 200
+		}
+	""".trimIndent()
+
 	recipesBuilder.craftingTransmute("test_crafting_transmute") {
 		input(Tags.Item.STONE_CRAFTING_MATERIALS)
 

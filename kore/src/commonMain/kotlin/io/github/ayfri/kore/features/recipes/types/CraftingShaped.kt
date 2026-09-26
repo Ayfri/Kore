@@ -7,7 +7,6 @@ import io.github.ayfri.kore.features.recipes.RecipeFile
 import io.github.ayfri.kore.features.recipes.RecipeTypes
 import io.github.ayfri.kore.features.recipes.Recipes
 import io.github.ayfri.kore.features.recipes.data.CraftingResult
-import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -21,6 +20,8 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class CraftingShaped(
+	/** Optional recipe book category. */
+	var category: RecipeCategory? = null,
 	override var group: String? = null,
 	/** Up to 3 rows defining the crafting pattern; each character maps to a [key] entry. */
 	var pattern: List<String> = emptyList(),
@@ -41,11 +42,8 @@ data class CraftingShaped(
  * Docs: https://kore.ayfri.com/docs/data-driven/recipes
  * Minecraft Wiki: https://minecraft.wiki/w/Recipe#crafting_shaped
  */
-fun Recipes.craftingShaped(name: String, block: CraftingShaped.() -> Unit): RecipeArgument {
-	val recipe = RecipeFile(name, CraftingShaped(result = CraftingResult("")).apply(block))
-	dp.recipes += recipe
-	return RecipeArgument(name, recipe.namespace ?: dp.name)
-}
+fun Recipes.craftingShaped(name: String, namespace: String? = null, block: CraftingShaped.() -> Unit) =
+	register(RecipeFile(name, CraftingShaped(result = CraftingResult("")).apply(block)), namespace)
 
 /** Maps [key] character to a list of accepted items. */
 fun CraftingShaped.key(key: String, ingredients: List<ItemArgument>) = this.key.put(key, ingredients.toList())

@@ -7,7 +7,6 @@ import io.github.ayfri.kore.features.recipes.RecipeFile
 import io.github.ayfri.kore.features.recipes.RecipeTypes
 import io.github.ayfri.kore.features.recipes.Recipes
 import io.github.ayfri.kore.features.recipes.data.CraftingResult
-import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -43,11 +42,8 @@ data class SmithingTransform(
  * Docs: https://kore.ayfri.com/docs/data-driven/recipes
  * Minecraft Wiki: https://minecraft.wiki/w/Recipe#smithing_transform
  */
-fun Recipes.smithingTransform(name: String, block: SmithingTransform.() -> Unit): RecipeArgument {
-	val recipe = RecipeFile(name, SmithingTransform(result = CraftingResult("")).apply(block))
-	dp.recipes += recipe
-	return RecipeArgument(name, recipe.namespace ?: dp.name)
-}
+fun Recipes.smithingTransform(name: String, namespace: String? = null, block: SmithingTransform.() -> Unit) =
+	register(RecipeFile(name, SmithingTransform(result = CraftingResult("")).apply(block)), namespace)
 
 /** Sets the template slot to one or more specific items. */
 fun SmithingTransform.template(vararg items: ItemArgument) = apply { template = items.toList() }

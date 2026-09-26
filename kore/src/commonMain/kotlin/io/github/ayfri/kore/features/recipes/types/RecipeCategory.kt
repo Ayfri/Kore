@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 /**
  * Category for crafting recipes, controlling placement in the recipe book.
  *
- * Used by [CraftingDye] and [CraftingImbue] recipes.
+ * Used by [CraftingDye], [CraftingImbue], [CraftingShaped], [CraftingShapeless] and [CraftingTransmute] recipes.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Recipe
  */
