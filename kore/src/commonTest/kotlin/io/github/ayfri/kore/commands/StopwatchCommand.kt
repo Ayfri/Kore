@@ -25,6 +25,8 @@ class StopwatchCommandTests : FunSpec({
 	test("stopwatch") {
 		dataPack("unit_tests") {
 			load { stopwatchTests() }
+			stopWatch("pack_level") assertsIs "unit_tests:pack_level"
+			load { stopWatch("nested") assertsIs "unit_tests:nested" }
 		}
 	}
 })

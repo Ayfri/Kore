@@ -10,9 +10,11 @@ import io.github.ayfri.kore.generated.arguments.types.StopwatchArgument
 context(dp: DataPack)
 fun stopWatch(id: String) = StopwatchArgument(id, dp.name)
 
-/** Creates a stopwatch identifier with the given id and using the function namespace. */
-context(fn: Function)
-fun stopWatch(id: String) = StopwatchArgument(id, fn.datapack.name)
+/**
+ * Creates a stopwatch identifier with the given id and using the function's datapack namespace.
+ * An extension rather than a context parameter, so it wins over the `DataPack` one inside `dataPack { function { } }`.
+ */
+fun Function.stopWatch(id: String) = StopwatchArgument(id, datapack.name)
 
 /** Creates a stopwatch identifier with the given id and namespace, defaults to minecraft. */
 fun stopWatch(id: String, namespace: String = "minecraft") = StopwatchArgument(id, namespace)
