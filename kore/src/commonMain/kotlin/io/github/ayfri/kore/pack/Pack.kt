@@ -2,7 +2,7 @@ package io.github.ayfri.kore.pack
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
-import io.github.ayfri.kore.utils.warn
+import io.github.ayfri.kore.utils.KoreLogger.warn
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient

@@ -72,7 +72,7 @@ fun functionsTests() = testDataPack("function_tests") {
 
 		function(callToGeneratedFunction) assertsIs "function my_namespace:$generatedFolder/my_functions/test"
 
-		function("test") {
+		function("inlinable_test") {
 			comment("This is a comment.")
 			addBlankLine()
 			addLine("# This is a comment.")

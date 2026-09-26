@@ -25,16 +25,16 @@ fun DialogActionContainer.dynamicRunCommand(template: String) = apply { action =
 
 /** Dynamically build a command to run, you can use macros with the same names as the inputs, undefined macros will just be replaced with an empty string. */
 fun DialogActionContainer.dynamicRunCommand(block: Function.() -> Command) = apply {
-	val result = emptyFunction { block() }
-	if (result.commandLines.size > 1) throw IllegalArgumentException("DynamicRunCommand without any Function or Datapack context can only accept a single command, other commands will be discarded.")
-	action = DynamicRunCommand(result.commandLines.last())
+	val commandLines = emptyFunction { block() }.commandLines
+	require(commandLines.size == 1) { "DynamicRunCommand without any Function or Datapack context accepts exactly one command, got ${commandLines.size}." }
+	action = DynamicRunCommand(commandLines.single())
 }
 
 /** Dynamically build a command to run, you can use macros with the same names as the inputs, undefined macros will just be replaced with an empty string. */
 fun DialogActionContainer.dynamicRunCommand(dp: DataPack, block: Function.() -> Command) = apply {
 	val result = Function("", "", datapack = dp).apply { block() }
-	if (result.commandLines.size == 1) {
-		action = DynamicRunCommand(result.commandLines.first())
+	result.commandLines.singleOrNull()?.let {
+		action = DynamicRunCommand(it)
 		return@apply
 	}
 	val newFunction = dp.generatedFunction(generatedFunctionName("generated", result.lines)) { lines += result.lines }

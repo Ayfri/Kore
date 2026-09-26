@@ -9,6 +9,7 @@ import io.github.ayfri.kore.optimization.passes.PruneUnreferencedGeneratedFuncti
 import io.github.ayfri.kore.optimization.passes.ReorderSelectorArgumentsPass
 import io.github.ayfri.kore.optimization.passes.SimplifyExecuteChainsPass
 import io.github.ayfri.kore.optimization.passes.WarnUnreachableCodePass
+import io.github.ayfri.kore.utils.KoreLogger
 
 /**
  * Whole-pack optimization settings, disabled by default so generation stays predictable.
@@ -59,6 +60,6 @@ internal fun DataPack.runOptimizationPasses() {
 
 	optimization.passes.forEach { pass ->
 		val result = pass.run(this)
-		if (optimization.verbose && result.changes > 0) println("[kore:${pass.name}] ${result.summary ?: "${result.changes} changes"}")
+		if (optimization.verbose && result.changes > 0) KoreLogger.info("[kore:${pass.name}] ${result.summary ?: "${result.changes} changes"}")
 	}
 }

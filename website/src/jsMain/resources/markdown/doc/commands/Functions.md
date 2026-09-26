@@ -5,7 +5,7 @@ nav-title: Functions
 description: Create Minecraft datapack functions with Kore's Kotlin DSL. Build tick.json and load.json tags, organize commands into reusable functions, and generate clean MCFunction output.
 keywords: datapack functions, mcfunction, tick.json datapack, load.json datapack, minecraft function tags, tags/function datapack, kore functions, datapack mcfunction generator, function scheduling, minecraft function creator
 date-created: 2024-04-06
-date-modified: 2026-07-02
+date-modified: 2026-09-26
 routeOverride: /docs/commands/functions
 ---
 
@@ -235,8 +235,21 @@ This will generate a function that will be called by the `execute` command.
 > (`load_<hash>`, `tick_<hash>` and `schedule_<hash>` for the other builders). The same body always gets the same name,
 > on every run and platform, and two builders producing the same body reuse a single function.
 
+Your own builders get the same naming with `hashedGeneratedFunction(prefix)`, which names the function
+`<prefix>_<hash of its body>`. `generatedFunctionName(prefix, lines)` returns that name alone, for a function you
+register yourself:
+
+```kotlin
+val onClick = hashedGeneratedFunction("on_click") {
+	say("clicked")
+}
+// data/<namespace>/function/generated_scopes/on_click_<hash>.mcfunction
+```
+
 Two generated functions can't share a path with different bodies: `generatedFunction("init")` called twice with two
-different blocks throws an `IllegalStateException` instead of silently keeping only the first one.
+different blocks throws an `IllegalStateException` instead of silently keeping only the first one. The same goes for
+any two files of the pack at generation time, two `function("init")` or two resources with one file name writing
+different contents throw instead of dropping one of them.
 
 If you want to turn that into an explicit project pattern, the [Cookbook](/docs/guides/cookbook) shows how to wrap
 reusable logic in `Function` extensions with or without dedicated generated functions.
@@ -267,17 +280,25 @@ This will add a command call to
 
 ```mcfunction
 say hello !
-tellraw @a {"text":"/say hello !","click_event":{"action":"suggest_command","command":"say hello !"},"hoverEvent":{"action":"show_text","value":{"text":"Click to copy command","color":"gray","italic":true}}}
+tellraw @a {"type":"text","click_event":{"action":"suggest_command","command":"/say hello !"},"hover_event":{"action":"show_text","value":{"type":"text","color":"gray","italic":true,"text":"Click to copy command"}},"text":"/say hello !"}
 ```
 
-The last example is a function call to `startDebug()` (which is called by the
-`debug` block), this will add log messages to the start and the end of the function, plus a log message for each command called inside the function.
+Calling `startDebug()` yourself, without the matching `endDebug()` the `debug` block adds, keeps debug mode on until
+the pack is written: every command gets its log message, and the written file also starts and ends with a message
+naming the function. `toString()` and `lines` never contain those two markers, only the written file does.
+
+```kotlin
+function("my_function") {
+	startDebug()
+	say("hello !")
+}
+```
 
 ```mcfunction
-tellraw @a [{"text":"Running function ","color":"gray","italic":true},{"text":"my_datapack:my_function","color":"white","bold":true,"click_event":{"action":"run_command","command":"function my_datapack:my_function"},"hoverEvent":{"action":"show_text","value":{"text":"Click to execute function","color":"gray","italic":true}},"italic":true}]
+tellraw @a [{"type":"text","color":"gray","italic":true,"text":"Running function "},{"type":"text","bold":true,"click_event":{"action":"run_command","command":"function my_datapack:my_function"},"color":"white","hover_event":{"action":"show_text","value":{"type":"text","color":"gray","italic":true,"text":"Click to execute function"}},"italic":true,"text":"my_datapack:my_function"}]
 say hello !
-tellraw @a {"text":"/say hello !","click_event":{"action":"suggest_command","command":"say hello !"},"hoverEvent":{"action":"show_text","value":{"text":"Click to copy command","color":"gray","italic":true}}}
-tellraw @a [{"text":"Finished running function ","color":"gray","italic":true},{"text":"my_datapack:my_function","color":"white","bold":true,"click_event":{"action":"run_command","command":"function my_datapack:my_function"},"hoverEvent":{"action":"show_text","value":{"text":"Click to execute function","color":"gray","italic":true}},"italic":true}]
+tellraw @a {"type":"text","click_event":{"action":"suggest_command","command":"/say hello !"},"hover_event":{"action":"show_text","value":{"type":"text","color":"gray","italic":true,"text":"Click to copy command"}},"text":"/say hello !"}
+tellraw @a [{"type":"text","color":"gray","italic":true,"text":"Finished running function "},{"type":"text","bold":true,"click_event":{"action":"run_command","command":"function my_datapack:my_function"},"color":"white","hover_event":{"action":"show_text","value":{"type":"text","color":"gray","italic":true,"text":"Click to execute function"}},"italic":true,"text":"my_datapack:my_function"}]
 ```
 
 You can call the command by clicking on the debug texts added.

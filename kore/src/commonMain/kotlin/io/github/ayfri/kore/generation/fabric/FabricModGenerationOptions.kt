@@ -5,10 +5,10 @@ import io.github.ayfri.kore.generation.DataPackJarGenerationOptions
 import io.github.ayfri.kore.generation.DataPackJarGenerationProvider
 import io.github.ayfri.kore.serializers.InlinableList
 import io.github.ayfri.kore.serializers.PathSerializer
+import io.github.ayfri.kore.utils.KoreLogger.warn
 import io.github.ayfri.kore.utils.absolute
 import io.github.ayfri.kore.utils.exists
 import io.github.ayfri.kore.utils.readText
-import io.github.ayfri.kore.utils.warn
 import kotlinx.io.files.Path
 import kotlinx.serialization.Serializable
 

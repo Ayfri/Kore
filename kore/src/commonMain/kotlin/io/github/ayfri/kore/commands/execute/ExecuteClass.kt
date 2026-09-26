@@ -157,12 +157,13 @@ class Execute {
 	fun run(block: Function.() -> Unit): FunctionArgument {
 		val function = Function("", "", datapack = fn.datapack).apply(block)
 
-		if (function.commandLines.isEmpty()) {
+		val commandLineCount = function.commandLines.size
+		if (commandLineCount == 0) {
 			run = emptyFunction(fn.datapack)
 			return run
 		}
 
-		if (function.commands.size == 1 && function.commandLines.size == 1) {
+		if (function.commands.size == 1 && commandLineCount == 1) {
 			val command = function.commands.single().also(::inlineTargets)
 			run = emptyFunction(fn.datapack) { addLine(command) }
 			return run

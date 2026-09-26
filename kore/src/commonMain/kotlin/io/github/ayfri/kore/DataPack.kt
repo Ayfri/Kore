@@ -66,6 +66,7 @@ import io.github.ayfri.kore.generation.platform.runSuspendBlocking
 import io.github.ayfri.kore.pack.*
 import io.github.ayfri.kore.serializers.JsonNamingSnakeCaseStrategy
 import io.github.ayfri.kore.utils.*
+import io.github.ayfri.kore.utils.KoreLogger.warn
 import kotlinx.io.files.Path
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -170,6 +171,10 @@ class DataPack(val name: String) {
 
 	private val states = mutableMapOf<DataPackStateKey<*>, Any>()
 
+	/** Lookups for [addGeneratedFunction], keyed on the body snapshot taken at registration, re-checked on each hit since `lines` stays mutable. */
+	private val generatedFunctionsByBody = HashMap<List<String>, Function>()
+	private val generatedFunctionsByPath = HashMap<String, Function>()
+
 	private fun <T : Generator> registerGenerator() = mutableListOf<T>().also { generators += it }
 
 	/**
@@ -198,15 +203,18 @@ class DataPack(val name: String) {
 	* Throws when another generated function already uses the same path with a different body.
 	*/
 	fun addGeneratedFunction(function: Function): FunctionArgument {
-		generatedFunctions.find { it.lines == function.lines }?.let {
-			return@addGeneratedFunction it
-		}
+		generatedFunctionsByBody[function.lines]?.takeIf { it.lines == function.lines }?.let { return it }
 
 		val path = function.getFinalPath()
-		check(generatedFunctions.none { it.getFinalPath() == path }) {
-			"Generated function '${function.asId()}' already exists with a different body, give one of them another name."
+		generatedFunctionsByPath[path]?.let { existing ->
+			check(existing.lines == function.lines) {
+				"Generated function '${function.asId()}' already exists with a different body, give one of them another name."
+			}
+			return existing
 		}
 
+		generatedFunctionsByPath[path] = function
+		generatedFunctionsByBody[function.lines.toList()] = function
 		generatedFunctions += function
 		return function
 	}
@@ -350,17 +358,21 @@ fun DataPack.folderName(folderName: String) {
  * is free to write the returned entries however it wants. For on-disk/archive generation on the JVM, use
  * [generate]/[generateZip]/[generateJar] instead.
  */
-fun DataPack.exportAsStrings(): Map<String, String> = buildMap {
-	put("pack.mcmeta", generatePackMCMetaFile())
+fun DataPack.exportAsStrings(): Map<String, String> = resourceFiles(linkedMapOf("pack.mcmeta" to generatePackMCMetaFile()))
 
-	(functions + generatedFunctions).distinctBy { it.getFinalPath() }.forEach {
-		put(it.getFinalPath().replace('\\', '/'), it.lines.joinToString("\n"))
+/**
+ * Adds every function and generator file to [files] as pack-relative path (`data/...`) to content. Two resources
+ * claiming one path must have the same content, else it throws instead of silently keeping one of them.
+ */
+internal fun DataPack.resourceFiles(files: MutableMap<String, String> = LinkedHashMap()): Map<String, String> {
+	fun add(path: String, content: String) = check(files.getOrPut(path) { content } == content) {
+		"Two resources of datapack '$name' write '$path' with different contents, rename one of them."
 	}
 
+	(functions + generatedFunctions).forEach { add(it.getFinalPath().replace('\\', '/'), it.fileContent()) }
 	generators.flatten().forEach {
-		put(
-			it.getPathFromDataDir(Path("data"), it.namespace ?: name).asInvariantPathSeparator,
-			it.generateJsonWithLoadConditions(this@exportAsStrings)
-		)
+		add(it.getPathFromDataDir(Path("data"), it.namespace ?: name).asInvariantPathSeparator, it.generateJsonWithLoadConditions(this))
 	}
+
+	return files
 }

@@ -5,8 +5,7 @@ import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.literals.time
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.functions.Function
-import io.github.ayfri.kore.functions.generatedFunction
-import io.github.ayfri.kore.functions.generatedFunctionName
+import io.github.ayfri.kore.functions.hashedGeneratedFunction
 
 /** DSL scope for a scheduled function reference. */
 class ScheduleFunction(private val fn: Function, val function: String) {
@@ -57,7 +56,5 @@ fun Function.schedule(delay: TimeNumber, function: FunctionArgument) =
 	ScheduleFunction(this, function.asString()).also { it.append(delay) }
 
 /** Schedules the generated function built from [function] to run after [delay]. @see [Minecraft wiki](https://minecraft.wiki/w/Commands/schedule) */
-fun Function.schedule(delay: TimeNumber, function: Function.() -> Unit): ScheduleFunction {
-	val body = Function("", "", datapack = datapack).apply(function).lines
-	return schedule(delay, datapack.generatedFunction(generatedFunctionName("schedule", body)) { lines += body })
-}
+fun Function.schedule(delay: TimeNumber, function: Function.() -> Unit) =
+	schedule(delay, datapack.hashedGeneratedFunction("schedule", block = function))

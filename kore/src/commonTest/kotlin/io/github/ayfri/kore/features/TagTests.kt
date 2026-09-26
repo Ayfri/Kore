@@ -58,4 +58,20 @@ class TagTests : FunSpec({
 			tagTests()
 		}
 	}
+
+	test("building a tag twice adds to the registered one") {
+		dataPack("tag_merge") {
+			functionTag("setup") { this += "a" }
+			functionTag("setup", replace = true) { this += "b" }
+			load("first") { say("first") }
+			load("second") { say("second") }
+			load("second") { say("second") }
+
+			tags.single { it.fileName == "setup" }.let { it.replace to it.values.map { entry -> entry.name } } assertsIs (true to listOf("a", "b"))
+			tags.single { it.fileName == "load" }.values.map { it.name } assertsIs listOf(
+				"tag_merge:generated_scopes/first",
+				"tag_merge:generated_scopes/second",
+			)
+		}
+	}
 })

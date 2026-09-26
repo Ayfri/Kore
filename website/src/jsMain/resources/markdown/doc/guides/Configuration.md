@@ -5,7 +5,7 @@ nav-title: Configuration
 description: Tune how Kore serializes your datapack - pretty-printed JSON, indentation, the generated functions folder, and debug comments on generated function calls.
 keywords: kore configuration, datapack pretty print, datapack json formatting, generated functions folder, kore settings, minecraft datapack debug, generated_scopes, mcfunction output
 date-created: 2024-04-06
-date-modified: 2026-09-05
+date-modified: 2026-09-26
 routeOverride: /docs/guides/configuration
 position: 2
 ---
@@ -76,6 +76,23 @@ calling function documenting that call, for example:
 
 This is controlled by `generateCommentOfGeneratedFunctionCall`. Default: `false`. Turn it on while debugging or learning
 generated control flow; turn it off for minimal `.mcfunction` output in releases.
+
+## Logging
+
+Kore and its modules print their progress and warnings (pack format mismatches, merged packs, optimization summaries,
+bindings downloads) through `KoreLogger`, a global object shared by every pack in the process. Raise its `level` to hide
+them, or replace its `handler` to send them to your own logger:
+
+```kotlin
+KoreLogger.level = KoreLogger.Level.WARN // keeps warnings, hides progress lines
+KoreLogger.level = KoreLogger.Level.OFF // silent
+
+KoreLogger.handler = { level, message ->
+	if (level == KoreLogger.Level.WARN) logger.warn(message) else logger.info(message)
+}
+```
+
+The default handler prints to the standard output, warnings in yellow.
 
 ## Development vs release setups
 

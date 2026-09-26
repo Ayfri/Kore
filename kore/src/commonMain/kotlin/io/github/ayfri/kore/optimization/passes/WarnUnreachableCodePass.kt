@@ -3,7 +3,7 @@ package io.github.ayfri.kore.optimization.passes
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.optimization.DataPackPass
 import io.github.ayfri.kore.optimization.PassResult
-import io.github.ayfri.kore.utils.warn
+import io.github.ayfri.kore.utils.KoreLogger.warn
 
 /**
  * Reports the commands sitting after an unconditional `return` in the same function, which the game never runs.

@@ -2,8 +2,8 @@ package io.github.ayfri.kore
 
 import io.github.ayfri.kore.generation.fabric.conditions.FABRIC_LOAD_CONDITIONS_KEY
 import io.github.ayfri.kore.generation.fabric.conditions.ResourceCondition
+import io.github.ayfri.kore.utils.KoreLogger.warn
 import io.github.ayfri.kore.utils.resolve
-import io.github.ayfri.kore.utils.warn
 import kotlinx.io.files.Path
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable

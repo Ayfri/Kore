@@ -42,8 +42,11 @@ open class Function(
 	internal var nextLineHasMacro = false
 	val lines = mutableListOf<String>()
 	val commands = mutableListOf<Command>()
-	val commandLines get() = lines.filter { !it.startsWith('#') && it.isNotBlank() && it.isNotEmpty() }
-	val isInlinable get() = commandLines.size == 1
+	/** A fresh filtered copy of [lines] on each access, read it once into a local when using it several times. */
+	val commandLines get() = lines.filter(::isCommandLine)
+	val isInlinable get() = lines.count(::isCommandLine) == 1
+
+	private fun isCommandLine(line: String) = line.isNotBlank() && !line.startsWith('#')
 
 	/** Adds an empty blank line to the function. */
 	fun addBlankLine() = lines.add("")
@@ -106,18 +109,13 @@ open class Function(
 	 */
 	fun getFinalPath() = "data/$namespace/function/${directory.ifNotEmpty { "$it/" }}$name.mcfunction"
 
-	/**
-	 * Injects the debug `tellraw` markers (start/finish) at the boundaries of this function's lines
-	 * when debug mode is active. Used by the JVM file generator before writing to disk.
-	 */
-	internal fun injectDebugMarkers() {
-		if (!debug) return
+	/** The `.mcfunction` file content, wrapped in the start/finish `tellraw` markers of [startDebug] while debug mode is on. */
+	internal fun fileContent(): String {
+		if (!debug) return toString()
 
-		lines.add(0, command("tellraw", allPlayers(), (textComponent("Running function ") {
-			color = Color.GRAY
+		fun marker(prefix: String) = command("tellraw", allPlayers(), (textComponent(prefix, Color.GRAY) {
 			italic = true
-		} + textComponent(asId()) {
-			color = Color.WHITE
+		} + textComponent(asId(), Color.WHITE) {
 			bold = true
 			italic = true
 
@@ -133,27 +131,9 @@ open class Function(
 					color = Color.GRAY
 				}
 			}
-		}).asJsonArg()).toString())
+		}).asJsonArg()).toString()
 
-		lines.add(command("tellraw", allPlayers(), (textComponent("Finished running function ", Color.GRAY) {
-			italic = true
-		} + text(asId(), Color.WHITE) {
-			bold = true
-			italic = true
-
-			clickEvent {
-				runCommand {
-					function(this@Function)
-				}
-			}
-
-			hoverEvent {
-				showText("Click to execute function") {
-					italic = true
-					color = Color.GRAY
-				}
-			}
-		}).asJsonArg()).toString())
+		return (listOf(marker("Running function ")) + lines + marker("Finished running function ")).joinToString("\n")
 	}
 
 	/** Clears all lines from the function. Useful for reusing the instance. */
@@ -209,8 +189,26 @@ fun DataPack.generatedFunction(name: String, namespace: String = this.name, dire
 		Function(name, namespace, "${configuration.generatedFunctionsFolder}${directory.ifNotEmpty { "/$it" }}", this).apply(block)
 	)
 
-/** Names a generated function after a hash of its [lines], so the name is stable across runs and platforms, unlike an identity `hashCode()`. */
-internal fun generatedFunctionName(prefix: String, lines: List<String>) = "${prefix}_${lines.hashCode().toUInt().toString(16)}"
+/**
+ * Names a function after [prefix] and a hash of its [lines], so the name is stable across runs and platforms, unlike an
+ * identity `hashCode()` of the lambda building it.
+ * ```
+ * generatedFunctionName("tick", listOf("say hi")) // "tick_<hex hash>", the same on every run, JVM or JS
+ * ```
+ */
+fun generatedFunctionName(prefix: String, lines: List<String>) = "${prefix}_${lines.hashCode().toUInt().toString(16)}"
+
+/**
+ * Generates a function named with [generatedFunctionName], from [prefix] and the lines [block] produces. Two calls
+ * building the same body share one function.
+ * ```
+ * hashedGeneratedFunction("on_click") { say("hi") } // generated_scopes/on_click_<hex hash>
+ * ```
+ */
+fun DataPack.hashedGeneratedFunction(prefix: String, namespace: String = this.name, directory: String = "", block: Function.() -> Unit) =
+	Function(prefix, namespace, directory, this).apply(block).lines.let { body ->
+		generatedFunction(generatedFunctionName(prefix, body), namespace, directory) { lines += body }
+	}
 
 /** Generate a function and register it in the load tag, executed once on world load, or when a `/reload` is executed. */
 fun DataPack.load(name: String? = null, namespace: String = this.name, directory: String = "", block: Function.() -> Unit) =
@@ -229,14 +227,12 @@ private fun DataPack.addToMinecraftTag(
 	directory: String,
 ): FunctionArgument {
 	val generatedFunction = when (functionName) {
-		null -> Function(fileName, namespace, directory, this).apply(block).lines.let { body ->
-			generatedFunction(generatedFunctionName(fileName, body), namespace, directory) { lines += body }
-		}
-
+		null -> hashedGeneratedFunction(fileName, namespace, directory, block)
 		else -> generatedFunction(functionName, namespace, directory, block)
 	}
 	functionTag(fileName, namespace = "minecraft") {
-		this += generatedFunction.asId()
+		val id = generatedFunction.asId()
+		if (values.none { it.name == id }) this += id
 	}
 
 	return generatedFunction

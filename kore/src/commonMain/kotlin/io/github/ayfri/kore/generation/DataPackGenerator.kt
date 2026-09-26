@@ -3,12 +3,14 @@ package io.github.ayfri.kore.generation
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.types.TaggedResourceLocationArgument
 import io.github.ayfri.kore.features.tags.Tag
-import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generation.platform.*
 import io.github.ayfri.kore.generation.zip.ZipWriter
 import io.github.ayfri.kore.optimization.runOptimizationPasses
 import io.github.ayfri.kore.pack.PackMCMeta
+import io.github.ayfri.kore.resourceFiles
 import io.github.ayfri.kore.utils.*
+import io.github.ayfri.kore.utils.KoreLogger.info
+import io.github.ayfri.kore.utils.KoreLogger.warn
 import kotlinx.io.files.Path
 
 enum class DatapackGenerationMode {
@@ -22,29 +24,29 @@ enum class DatapackGenerationMode {
  * [DataPack.generate]/[DataPack.generateJar]/[DataPack.generateZip] (synchronous, JVM/Node.js) or
  * [DataPack.generateZipBytes] (suspend, works everywhere including the browser) rather than this class directly.
  */
-data class DataPackGenerator(
-	var datapack: DataPack,
-	var options: DataPackGenerationCommonOptions = DataPackGenerationOptions(),
-	var mode: DatapackGenerationMode = DatapackGenerationMode.FOLDER,
+class DataPackGenerator(
+	val datapack: DataPack,
+	val options: DataPackGenerationCommonOptions = DataPackGenerationOptions(),
+	val mode: DatapackGenerationMode = DatapackGenerationMode.FOLDER,
 ) {
 	private companion object {
 		val tagsToMerge = setOf("minecraft/tags/function/load.json", "minecraft/tags/function/tick.json")
 	}
 
 	/** On the browser there is no real filesystem to resolve/create against, only the logical configured path. */
-	val dataPackPath: Path get() = if (platformRequiresSuspension) datapack.path else datapack.cleanPath
+	/** Resolved once, [DataPack.cleanPath] hits the filesystem on each access and every written file needs it. */
+	val dataPackPath: Path by lazy { if (platformRequiresSuspension) datapack.path else datapack.cleanPath }
 
-	val outputPath: Path
-		get() {
-			val folderName = datapack.folderName ?: datapack.name
-			return when (mode) {
-				DatapackGenerationMode.FOLDER -> dataPackPath.resolve(folderName)
-				DatapackGenerationMode.JAR -> dataPackPath.resolve("$folderName.jar")
-				DatapackGenerationMode.ZIP -> dataPackPath.resolve("$folderName.zip")
-			}
+	val outputPath: Path by lazy {
+		val folderName = datapack.folderName ?: datapack.name
+		when (mode) {
+			DatapackGenerationMode.FOLDER -> dataPackPath.resolve(folderName)
+			DatapackGenerationMode.JAR -> dataPackPath.resolve("$folderName.jar")
+			DatapackGenerationMode.ZIP -> dataPackPath.resolve("$folderName.zip")
 		}
+	}
 
-	val outputDataPath get() = outputPath.resolve("data")
+	val outputDataPath by lazy { outputPath.resolve("data") }
 
 	private val archive: ZipWriter? = when (mode) {
 		DatapackGenerationMode.JAR, DatapackGenerationMode.ZIP -> ZipWriter()
@@ -71,24 +73,10 @@ data class DataPackGenerator(
 
 		datapack.iconPath?.let { path -> platformReadFile(path)?.let { writeFile("pack.png", it) } }
 
-		datapack.functions.distinctBy(Function::getFinalPath).forEach {
-			val path = it.getFinalPath().replace("\\", "/")
-			writeFile(path, it.lines.joinToString("\n"))
+		datapack.resourceFiles().forEach { (path, content) ->
+			if (options.mergeWithPacks.isNotEmpty() && path.removePrefix("data/") in tagsToMerge) return@forEach
+			writeFile(path, content)
 		}
-
-		datapack.generatedFunctions.distinctBy(Function::getFinalPath).forEach {
-			val path = it.getFinalPath().replace("\\", "/")
-			writeFile(path, it.lines.joinToString("\n"))
-		}
-
-		datapack.generators.flatten()
-			.distinctBy { it.getFinalPath(datapack) }
-			.forEach { generator ->
-				val namespace = generator.namespace ?: datapack.name
-				val path = generator.getPathFromDataDir(outputDataPath, namespace)
-				if (options.mergeWithPacks.isNotEmpty() && path.dataRelativePath() in tagsToMerge) return@forEach
-				writeFile(path.toString(), generator.generateJsonWithLoadConditions(datapack))
-			}
 
 		if (options.mergeWithPacks.isNotEmpty()) try {
 			mergeWithOtherPacks()
@@ -106,7 +94,7 @@ data class DataPackGenerator(
 
 	private suspend fun mergeWithOtherPacks() {
 		val mergeWithPacks = options.mergeWithPacks.sortedBy { it.name }
-		println("Merging datapack with other packs: ${mergeWithPacks.joinToString(", ")}")
+		info("Merging datapack with other packs: ${mergeWithPacks.joinToString(", ")}")
 
 		val foundTags = tagsToMerge.associateWith { mutableListOf<Tag<TaggedResourceLocationArgument>>() }
 
@@ -116,11 +104,11 @@ data class DataPackGenerator(
 			var otherPackFile = otherPath
 			if (otherPath.toString().endsWith(".zip")) {
 				otherPackFile = platformUnzipToTempDir(otherPath).also { options.temporaryPaths += it }
-				println("Unzipped pack '$otherPath' to: ${otherPackFile.absolute()}")
+				info("Unzipped pack '$otherPath' to: ${otherPackFile.absolute()}")
 			}
 
 			if (otherPackFile == dataPackPath) {
-				println("Skipping merging with the current datapack.")
+				info("Skipping merging with the current datapack.")
 				return@forEach
 			}
 
@@ -134,7 +122,7 @@ data class DataPackGenerator(
 
 			val otherDataDir = otherPackFile.resolve("data")
 			if (!platformExists(otherDataDir)) {
-				println("The pack at '$otherPath' does not contain a data directory, skipping merge.")
+				info("The pack at '$otherPath' does not contain a data directory, skipping merge.")
 				return@forEach
 			}
 
@@ -144,7 +132,7 @@ data class DataPackGenerator(
 		foundTags.forEach tags@{ (tagPath, tags) ->
 			if (tags.isEmpty()) return@tags
 
-			println("Merging tags of: $tagPath")
+			info("Merging tags of: $tagPath")
 
 			val namespace = tagPath.substringBefore("/")
 			val tagFilename = tagPath.substringAfterLast("/").removeSuffix(".json")
@@ -214,9 +202,6 @@ data class DataPackGenerator(
 	}
 
 	private fun String.normalizePath() = replace("\\", "/")
-
-	private fun Path.dataRelativePath() =
-		toString().normalizePath().removePrefix(outputDataPath.toString().normalizePath()).removePrefix("/")
 
 	private fun Path.archiveRelativePath() = toString()
 		.removePrefix(outputPath.toString())
