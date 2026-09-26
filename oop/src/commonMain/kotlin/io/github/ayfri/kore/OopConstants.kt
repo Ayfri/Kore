@@ -96,20 +96,19 @@ data object OopConstants {
     fun advancementName(event: String) = "$advancementPrefix/$event"
     fun advancementNameForItem(event: String, itemName: String) = "$advancementPrefix/${event}_$itemName"
     fun cooldownInitFunctionName(name: String) = "cooldown_${name}_init"
-    fun cooldownReadyHandlerName(name: String, hashCode: Int) = "cooldown_${name}_ready_$hashCode"
+    fun cooldownReadyHandlerPrefix(name: String) = "cooldown_${name}_ready"
     fun cooldownTickFunctionName(name: String) = "cooldown_${name}_tick"
     fun deathTriggerLootTable(entityTypeName: String) = "$lootTablePrefix/death_trigger_$entityTypeName"
     fun dispatchFunctionName(event: String) = "dispatch_$event"
     fun dispatchFunctionNameForItem(event: String, itemName: String) = "dispatch_${event}_$itemName"
-    fun eventHandlerName(event: String, hashCode: Int) = "${event}_handler_$hashCode"
-    fun eventHandlerNameForItem(event: String, itemName: String, hashCode: Int) =
-        "${event}_${itemName}_handler_$hashCode"
+    fun eventHandlerPrefix(event: String) = "${event}_handler"
+    fun eventHandlerPrefixForItem(event: String, itemName: String) = "${event}_${itemName}_handler"
 
     fun eventTagName(event: String) = event
     fun eventTagNameForItem(event: String, itemName: String) = "${event}_$itemName"
     fun spawnerSpawnFunctionName(name: String) = "spawner_${name}_spawn"
-    fun stateHandlerName(stateName: String, hashCode: Int) = "state_${stateName}_handler_$hashCode"
-    fun timerCompleteFunctionName(name: String, hashCode: Int) = "timer_${name}_complete_$hashCode"
+    fun stateHandlerPrefix(stateName: String) = "state_${stateName}_handler"
+    fun timerCompleteFunctionPrefix(name: String) = "timer_${name}_complete"
     fun timerInitFunctionName(name: String) = "timer_${name}_init"
     fun timerTickFunctionName(name: String) = "timer_${name}_tick"
     fun worldEventTag(event: String, dimensionId: String?) =

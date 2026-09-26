@@ -56,7 +56,6 @@ private fun Function.callHandlers(handlers: FunctionTagArgument, dimension: Dime
 private fun DataPack.registerWorldEvent(
 	event: String,
 	dimension: DimensionArgument?,
-	hashCode: Int,
 	intoLoad: Boolean,
 	needsState: Boolean,
 	block: Function.() -> Unit,
@@ -65,7 +64,7 @@ private fun DataPack.registerWorldEvent(
 	val ns = name
 	val tagName = OopConstants.worldEventTag(event, dimension?.asId())
 	val handlers = FunctionTagArgument(tagName, ns)
-	val handlerFn = addHandler(tagName, ns, OopConstants.eventHandlerName(tagName, hashCode), block)
+	val handlerFn = addHandler(tagName, ns, OopConstants.eventHandlerPrefix(tagName), block)
 
 	if (state(initializedWorldDispatchers) { mutableSetOf() }.add(tagName)) {
 		if (needsState) ensureWorldStateSetup()
@@ -111,7 +110,7 @@ private fun edgeDispatcher(
 context(dp: DataPack)
 fun World.onDayStart(block: Function.() -> Unit) =
 	dp.registerWorldEvent(
-		OopConstants.dayStartEvent, dimension, block.hashCode(), intoLoad = false, needsState = true, block,
+		OopConstants.dayStartEvent, dimension, intoLoad = false, needsState = true, block,
 		edgeDispatcher(rising = true, dimension) { timeCheck(WorldClocks.OVERWORLD, 0f..11999f) })
 
 /**
@@ -123,7 +122,6 @@ fun World.onInterval(period: TimeNumber, block: Function.() -> Unit) =
 	dp.registerWorldEvent(
 		OopConstants.intervalEvent,
 		dimension,
-		block.hashCode(),
 		intoLoad = false,
 		needsState = true,
 		block
@@ -150,7 +148,6 @@ fun World.onLoad(block: Function.() -> Unit) =
 	dp.registerWorldEvent(
 		OopConstants.worldLoadEvent,
 		dimension,
-		block.hashCode(),
 		intoLoad = true,
 		needsState = false,
 		block
@@ -166,7 +163,7 @@ fun World.onMidnight(block: Function.() -> Unit) = onTimeOfDay(18000, block)
 context(dp: DataPack)
 fun World.onNightStart(block: Function.() -> Unit) =
 	dp.registerWorldEvent(
-		OopConstants.nightStartEvent, dimension, block.hashCode(), intoLoad = false, needsState = true, block,
+		OopConstants.nightStartEvent, dimension, intoLoad = false, needsState = true, block,
 		edgeDispatcher(rising = true, dimension) { timeCheck(WorldClocks.OVERWORLD, 13000f..23999f) })
 
 /** Runs [block] the tick it turns noon (`daytime` reaches `6000`), scoped to this world's dimension when set. */
@@ -177,28 +174,28 @@ fun World.onNoon(block: Function.() -> Unit) = onTimeOfDay(6000, block)
 context(dp: DataPack)
 fun World.onRainStart(block: Function.() -> Unit) =
 	dp.registerWorldEvent(
-		OopConstants.rainStartEvent, dimension, block.hashCode(), intoLoad = false, needsState = true, block,
+		OopConstants.rainStartEvent, dimension, intoLoad = false, needsState = true, block,
 		edgeDispatcher(rising = true, dimension) { weatherCheck(raining = true) })
 
 /** Runs [block] the tick precipitation stops, scoped to this world's dimension when set. */
 context(dp: DataPack)
 fun World.onRainStop(block: Function.() -> Unit) =
 	dp.registerWorldEvent(
-		OopConstants.rainStopEvent, dimension, block.hashCode(), intoLoad = false, needsState = true, block,
+		OopConstants.rainStopEvent, dimension, intoLoad = false, needsState = true, block,
 		edgeDispatcher(rising = false, dimension) { weatherCheck(raining = true) })
 
 /** Runs [block] the tick a thunderstorm starts, scoped to this world's dimension when set. */
 context(dp: DataPack)
 fun World.onThunderStart(block: Function.() -> Unit) =
 	dp.registerWorldEvent(
-		OopConstants.thunderStartEvent, dimension, block.hashCode(), intoLoad = false, needsState = true, block,
+		OopConstants.thunderStartEvent, dimension, intoLoad = false, needsState = true, block,
 		edgeDispatcher(rising = true, dimension) { weatherCheck(thundering = true) })
 
 /** Runs [block] the tick a thunderstorm stops, scoped to this world's dimension when set. */
 context(dp: DataPack)
 fun World.onThunderStop(block: Function.() -> Unit) =
 	dp.registerWorldEvent(
-		OopConstants.thunderStopEvent, dimension, block.hashCode(), intoLoad = false, needsState = true, block,
+		OopConstants.thunderStopEvent, dimension, intoLoad = false, needsState = true, block,
 		edgeDispatcher(rising = false, dimension) { weatherCheck(thundering = true) })
 
 /** Runs [block] every tick (20 times per second), scoped to this world's dimension when set. */
@@ -207,7 +204,6 @@ fun World.onTick(block: Function.() -> Unit) =
 	dp.registerWorldEvent(
 		OopConstants.worldTickEvent,
 		dimension,
-		block.hashCode(),
 		intoLoad = false,
 		needsState = false,
 		block
@@ -226,7 +222,6 @@ fun World.onTimeOfDay(time: Int, block: Function.() -> Unit) =
 	dp.registerWorldEvent(
 		"${OopConstants.timeOfDayEvent}_$time",
 		dimension,
-		block.hashCode(),
 		intoLoad = false,
 		needsState = false,
 		block

@@ -10,7 +10,7 @@ import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.features.tags.functionTag
 import io.github.ayfri.kore.functions.Function
-import io.github.ayfri.kore.functions.generatedFunction
+import io.github.ayfri.kore.functions.hashedGeneratedFunction
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.commands.function as functionCommand
 
@@ -39,11 +39,7 @@ data class GameStateManager(val states: List<GameState>) {
 	/** Runs [block] only when the current global state matches [state]. */
     context(fn: Function)
     fun whenState(state: GameState, block: Function.() -> Unit) {
-        val generated = fn.datapack.generatedFunction(
-            OopConstants.stateHandlerName(state.name, block.hashCode())
-        ) {
-            block()
-        }
+        val generated = fn.datapack.hashedGeneratedFunction(OopConstants.stateHandlerPrefix(state.name), block = block)
 
         fn.datapack.functionTag(OopConstants.stateWhenHandlersTag, namespace = OopConstants.namespace) {
             this += generated.asId()

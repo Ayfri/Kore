@@ -16,7 +16,7 @@ import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.entities.Entity
 import io.github.ayfri.kore.features.tags.functionTag
 import io.github.ayfri.kore.functions.Function
-import io.github.ayfri.kore.functions.generatedFunction
+import io.github.ayfri.kore.functions.hashedGeneratedFunction
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.functions.tick
 import io.github.ayfri.kore.commands.function as functionCommand
@@ -34,9 +34,7 @@ data class CooldownHandle(val cooldown: Cooldown) {
 	/** Runs [block] only when the cooldown is ready, then restarts it automatically. */
 	context(fn: Function)
 	fun ifReady(entity: Entity, block: Function.() -> Unit) {
-		val generated = fn.datapack.generatedFunction(
-			OopConstants.cooldownReadyHandlerName(cooldown.name, block.hashCode())
-		) {
+		val generated = fn.datapack.hashedGeneratedFunction(OopConstants.cooldownReadyHandlerPrefix(cooldown.name)) {
 			block()
 			scoreboard {
 				players {
