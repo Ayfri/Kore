@@ -214,8 +214,8 @@ See [Macros](/docs/commands/macros).
 
 # Generated Functions
 
-The same way the `load` and `tick` builders generate functions with random names, the
-`execute` builder also generates a function with a random name if you call multiple commands inside the `run` block.
+The same way the unnamed `load` and `tick` builders generate their own functions, the
+`execute` builder also generates a function if you call multiple commands inside the `run` block.
 
 ```kotlin
 execute {
@@ -226,14 +226,17 @@ execute {
 }
 ```
 
-This will generate a function with a random name that will be called by the `execute` command.
+This will generate a function that will be called by the `execute` command.
 
 > Note: The generated functions will be generated inside a folder named `generated_scopes` in the `functions` folder.
 > You can change the folder to whatever you want in [Configuration](/docs/guides/configuration).
 
-> Note: The generated name will have this pattern `generated_${hashCode()}`, where `hashCode()` is the hash code of the function.
-> This means that if you use the same
-`execute` builder multiple times, it will generate the same function name and reuse the same function.
+> Note: The generated name follows the pattern `generated_<hash>`, where `<hash>` is a hash of the function body
+> (`load_<hash>`, `tick_<hash>` and `schedule_<hash>` for the other builders). The same body always gets the same name,
+> on every run and platform, and two builders producing the same body reuse a single function.
+
+Two generated functions can't share a path with different bodies: `generatedFunction("init")` called twice with two
+different blocks throws an `IllegalStateException` instead of silently keeping only the first one.
 
 If you want to turn that into an explicit project pattern, the [Cookbook](/docs/guides/cookbook) shows how to wrap
 reusable logic in `Function` extensions with or without dedicated generated functions.

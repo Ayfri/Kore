@@ -151,10 +151,7 @@ With a JDK 25+ toolchain, `koreBuild` runs your entry point on a
 [JDK AOT cache](https://openjdk.org/jeps/514) stored in `build/kore-aot`. The first generation records which classes Kore
 loads, the next ones start with them already parsed and linked: on a small pack the generation drops from about 1s to
 under 0.4s. Your own classes load normally, so editing them keeps the cache valid, and a dependency or JDK update trains a new
-one on the next run.
-
-The only visible difference is the numeric suffix of generated function names (`generated_scopes/generated_1234...`),
-which comes from identity hash codes and changes once when the cache takes over. Set `aotCache = false` to turn it off.
+one on the next run. The generated pack is identical with or without it. Set `aotCache = false` to turn it off.
 
 ## Full configuration reference
 

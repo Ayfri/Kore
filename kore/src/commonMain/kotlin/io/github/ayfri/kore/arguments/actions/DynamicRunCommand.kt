@@ -5,6 +5,7 @@ import io.github.ayfri.kore.commands.Command
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.emptyFunction
 import io.github.ayfri.kore.functions.generatedFunction
+import io.github.ayfri.kore.functions.generatedFunctionName
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -31,13 +32,11 @@ fun DialogActionContainer.dynamicRunCommand(block: Function.() -> Command) = app
 
 /** Dynamically build a command to run, you can use macros with the same names as the inputs, undefined macros will just be replaced with an empty string. */
 fun DialogActionContainer.dynamicRunCommand(dp: DataPack, block: Function.() -> Command) = apply {
-	val result = emptyFunction { block() }
+	val result = Function("", "", datapack = dp).apply { block() }
 	if (result.commandLines.size == 1) {
 		action = DynamicRunCommand(result.commandLines.first())
 		return@apply
 	}
-	val newFunction = dp.generatedFunction("generated_${hashCode()}") {
-		block()
-	}
-	action = DynamicRunCommand("function ${newFunction.name}")
+	val newFunction = dp.generatedFunction(generatedFunctionName("generated", result.lines)) { lines += result.lines }
+	action = DynamicRunCommand("function ${newFunction.asId()}")
 }

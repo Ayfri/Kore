@@ -2,7 +2,6 @@ package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.assertions.assertsIs
-import io.github.ayfri.kore.assertions.assertsMatches
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
@@ -30,11 +29,19 @@ fun Function.returnCommand() {
 	}) {
 		say("test")
 		returnValue(0)
-	} assertsMatches Regex(
-		"""
-		execute unless block 0 0 0 minecraft:stone run return run function ${datapack.name}:${datapack.configuration.generatedFunctionsFolder}/generated_-?\d+
-	""".trimIndent()
-	)
+	} assertsIs "execute unless block 0 0 0 minecraft:stone run return run function ${datapack.name}:${datapack.configuration.generatedFunctionsFolder}/generated_22c2fa3a"
+
+	val firstBody = returnRun {
+		say("a1")
+		say("a2")
+	}
+	val secondBody = returnRun {
+		say("b1")
+		say("b2")
+	}
+	firstBody.toString() assertsIs "return run function ${datapack.name}:${datapack.configuration.generatedFunctionsFolder}/generated_39778c62"
+	secondBody.toString() assertsIs "return run function ${datapack.name}:${datapack.configuration.generatedFunctionsFolder}/generated_39779042"
+	datapack.generatedFunctions.takeLast(2).map { it.lines } assertsIs listOf(listOf("say a1", "say a2"), listOf("say b1", "say b2"))
 }
 
 class ReturnCommandTests : FunSpec({

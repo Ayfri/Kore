@@ -7,6 +7,7 @@ import io.github.ayfri.kore.commands.execute.ExecuteCondition
 import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.generatedFunction
+import io.github.ayfri.kore.functions.generatedFunctionName
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 
 /**
@@ -136,8 +137,8 @@ fun Function.returnRun(block: Function.() -> Command): Command {
 
 	if (function.lines.size == 1) return addLine(command("return", literal("run"), literal(function.lines[0])))
 
-	val name = "generated_${hashCode()}"
-	val generatedFunction = datapack.generatedFunction(name) { block() }
+	val name = generatedFunctionName("generated", function.lines)
+	val generatedFunction = datapack.generatedFunction(name) { lines += function.lines }
 	if (generatedFunction.name == name) comment("Generated function ${asString()}")
 
 	@Suppress("DEPRECATION_ERROR")

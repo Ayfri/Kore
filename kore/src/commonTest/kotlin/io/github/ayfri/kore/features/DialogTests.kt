@@ -245,6 +245,32 @@ fun DataPack.dialogTests() {
 		}
 	""".trimIndent()
 
+	dialogBuilder.serverLinks("multi_command_links", "links") {
+		exitAction("cancelled") {
+			action {
+				dynamicRunCommand(this@dialogTests) {
+					say("a")
+					say("b")
+				}
+			}
+		}
+	}
+
+	dialogs.last() assertsIs """
+		{
+			"type": "minecraft:server_links",
+			"title": "links",
+			"inputs": [],
+			"exit_action": {
+				"action": {
+					"type": "minecraft:dynamic/run_command",
+					"template": "function dialog:generated_scopes/generated_d04e3142"
+				},
+				"label": "cancelled"
+			}
+		}
+	""".trimIndent()
+
 	dialogBuilder.notice("round_trip_notice", "Welcome!") {}
 	roundTrip(dialogs.last().data)
 }

@@ -14,7 +14,7 @@ import io.github.ayfri.kore.helpers.sidebar.sidebar
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 
-private fun FunctionArgument.withStableNames() = toString().replace(Regex("generated_-?\\d+"), "generated")
+private fun FunctionArgument.withStableNames() = toString().replace(Regex("generated_[0-9a-f]+\\b"), "generated")
 
 class SidebarTests : FunSpec({
 	val lobby = sidebar("lobby") {

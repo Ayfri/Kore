@@ -47,11 +47,11 @@ import net.benwoodworth.knbt.addNbtCompound
 data class InventoryManager<T : ContainerArgument>(val container: T) {
 	val slotsListeners = mutableListOf<SlotEventListener>()
 
-	fun getScoreName(dataPack: DataPack) = "_inventory_manager_${dataPack.name}_click_listener_$counter"
+	/** Unique per manager, so two managers never share a score or a generated function. */
+	internal val id = counter++
+	internal var listenersGenerated = false
 
-	init {
-		counter++
-	}
+	fun getScoreName(dataPack: DataPack) = "_inventory_manager_${dataPack.name}_click_listener_$id"
 
 	/** Replace the given [slot] with air. */
 	context(fn: Function)
@@ -105,9 +105,9 @@ data class InventoryManager<T : ContainerArgument>(val container: T) {
 		/** Remove scoreboard objectives created by Inventory Manager across runs. */
 		context(dp: DataPack)
 		fun removeClickDetectors() {
-			dp.load("inventory_manager_${this.hashCode()}_remover") {
+			dp.load("inventory_manager_remover") {
 				repeat(counter) {
-					scoreboard.objectives.remove("_inventory_manager_${name}_click_detector_$it")
+					scoreboard.objectives.remove("_inventory_manager_${name}_click_listener_$it")
 				}
 			}
 		}
@@ -124,13 +124,17 @@ fun InventoryManager<*>.generateSlotsListeners() = generateSlotsListeners(fn.dat
 /**
  * Emit the `load` and `tick` functions that power all registered slot listeners for this manager.
  * Handles scoreboard set-up and entity scoping for both entity and block containers.
+ * Only the first call generates anything, so calling it inside an [inventoryManager] builder, which calls it too, is safe.
  */
 context(dp: DataPack)
 fun InventoryManager<*>.generateSlotsListeners() {
+	if (listenersGenerated) return
+	listenersGenerated = true
+
 	val scoreName = getScoreName(dp)
 	val entityTag = randomUUID().asString()
 
-	dp.load("load_inventory_manager_${hashCode()}") {
+	dp.load("load_inventory_manager_$id") {
 		kill(allEntities {
 			nbt = nbt {
 				this["Tags"] = nbtListOf(InventoryManager.INVENTORY_MANAGER_ENTITY_TAG)
@@ -147,7 +151,7 @@ fun InventoryManager<*>.generateSlotsListeners() {
 		}
 	}
 
-	dp.tick("tick_inventory_manager_${hashCode()}") {
+	dp.tick("tick_inventory_manager_$id") {
 		slotsListeners.forEach { slotListener ->
 			slotListener.onTick?.let(::apply)
 			slotListener.onTickFunction?.let { function(it) }

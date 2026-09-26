@@ -209,6 +209,9 @@ fun DataPack.generatedFunction(name: String, namespace: String = this.name, dire
 		Function(name, namespace, "${configuration.generatedFunctionsFolder}${directory.ifNotEmpty { "/$it" }}", this).apply(block)
 	)
 
+/** Names a generated function after a hash of its [lines], so the name is stable across runs and platforms, unlike an identity `hashCode()`. */
+internal fun generatedFunctionName(prefix: String, lines: List<String>) = "${prefix}_${lines.hashCode().toUInt().toString(16)}"
+
 /** Generate a function and register it in the load tag, executed once on world load, or when a `/reload` is executed. */
 fun DataPack.load(name: String? = null, namespace: String = this.name, directory: String = "", block: Function.() -> Unit) =
 	addToMinecraftTag("load", name, block, namespace, directory)
@@ -225,8 +228,13 @@ private fun DataPack.addToMinecraftTag(
 	namespace: String = this.name,
 	directory: String,
 ): FunctionArgument {
-	val name = functionName ?: "${fileName}_${block.hashCode()}"
-	val generatedFunction = generatedFunction(name, namespace, directory, block)
+	val generatedFunction = when (functionName) {
+		null -> Function(fileName, namespace, directory, this).apply(block).lines.let { body ->
+			generatedFunction(generatedFunctionName(fileName, body), namespace, directory) { lines += body }
+		}
+
+		else -> generatedFunction(functionName, namespace, directory, block)
+	}
 	functionTag(fileName, namespace = "minecraft") {
 		this += generatedFunction.asId()
 	}

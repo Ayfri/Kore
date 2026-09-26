@@ -13,6 +13,7 @@ import io.github.ayfri.kore.commands.function
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.emptyFunction
 import io.github.ayfri.kore.functions.generatedFunction
+import io.github.ayfri.kore.functions.generatedFunctionName
 import io.github.ayfri.kore.generated.arguments.types.DimensionArgument
 import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
@@ -167,7 +168,7 @@ class Execute {
 			return run
 		}
 
-		val name = "generated_${this.hashCode()}"
+		val name = generatedFunctionName("generated", function.lines)
 		val generatedFunction = fn.datapack.generatedFunction(name) { lines += function.lines }
 		if (generatedFunction.name == name && fn.datapack.configuration.generateCommentOfGeneratedFunctionCall) fn.comment("Generated function ${fn.asString()}")
 		run = generatedFunction

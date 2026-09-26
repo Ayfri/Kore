@@ -24,7 +24,6 @@ import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.arguments.types.literals.uuid
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.assertions.assertsIs
-import io.github.ayfri.kore.assertions.assertsMatches
 import io.github.ayfri.kore.commands.execute.Anchor
 import io.github.ayfri.kore.commands.execute.BlocksTestMode
 import io.github.ayfri.kore.commands.execute.Relation
@@ -374,9 +373,7 @@ fun Function.executeTests() {
 		run {
 			things.forEach { say(it) }
 		}
-	} assertsMatches Regex(
-		"""execute run function ${datapack.name}:${datapack.configuration.generatedFunctionsFolder}/generated_-?\d+"""
-	)
+	} assertsIs "execute run function ${datapack.name}:${datapack.configuration.generatedFunctionsFolder}/generated_3ffa686c"
 
 	datapack.generatedFunctions.last().commandLines assertsIs listOf("say a", "say b", "say c")
 }

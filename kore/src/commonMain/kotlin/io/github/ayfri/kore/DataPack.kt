@@ -182,10 +182,16 @@ class DataPack(val name: String) {
 	/**
 	* Adds or reuses a generated function. Two generated functions with the
 	* exact same body will be merged and the first instance will be returned.
+	* Throws when another generated function already uses the same path with a different body.
 	*/
 	fun addGeneratedFunction(function: Function): FunctionArgument {
 		generatedFunctions.find { it.lines == function.lines }?.let {
 			return@addGeneratedFunction it
+		}
+
+		val path = function.getFinalPath()
+		check(generatedFunctions.none { it.getFinalPath() == path }) {
+			"Generated function '${function.asId()}' already exists with a different body, give one of them another name."
 		}
 
 		generatedFunctions += function
