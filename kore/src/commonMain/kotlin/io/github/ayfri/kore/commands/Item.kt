@@ -43,15 +43,15 @@ data class Item(private val fn: Function) {
 
 	/** Applies [modifier] to the item stack in [container]'s [slot]. @see [Minecraft wiki](https://minecraft.wiki/w/Commands/item) */
 	fun modify(container: ContainerArgument, slot: ItemSlotType, modifier: ItemModifierArgument) =
-		fn.addLine(command("item", literal("modify"), literal(container.literalName), container, slot, literal(modifier.asString())))
+		fn.addLine(command("item", literal("modify"), *target(container), slot, literal(modifier.asString())))
 
 	/** Builds an item modifier with [block] and applies it to [container]'s [slot]. @see [Minecraft wiki](https://minecraft.wiki/w/Commands/item) */
 	fun modify(container: ContainerArgument, slot: ItemSlotType, block: ItemModifier.() -> Unit) =
-		fn.addLine(command("item", literal("modify"), literal(container.literalName), container, slot, literal(snbtSerializer.encodeToString(ItemModifier().apply(block)))))
+		fn.addLine(command("item", literal("modify"), *target(container), slot, literal(snbtSerializer.encodeToString(ItemModifier().apply(block)))))
 
 	/** Replaces [container]'s [slot] with [item]. @see [Minecraft wiki](https://minecraft.wiki/w/Commands/item) */
 	fun replace(container: ContainerArgument, slot: ItemSlotType, item: ItemArgument, count: Int? = null) =
-		fn.addLine(command("item", literal("replace"), literal(container.literalName), container, slot, literal("with"), item, int(count)))
+		fn.addLine(command("item", literal("replace"), *target(container), slot, literal("with"), item, int(count)))
 
 	/** Replaces [container]'s [slot] with the contents of [with]'s [withSlot]. @see [Minecraft wiki](https://minecraft.wiki/w/Commands/item) */
 	fun replace(
@@ -65,12 +65,10 @@ data class Item(private val fn: Function) {
 			command(
 				"item",
 				literal("replace"),
-				literal(container.literalName),
-				if (container is Vec3) literal(container.toStringTruncated()) else container,
+				*target(container),
 				slot,
 				literal("from"),
-				literal(with.literalName),
-				if (with is Vec3) literal(with.toStringTruncated()) else with,
+				*target(with),
 				withSlot,
 				literal(modifier?.asString())
 			)
@@ -88,16 +86,18 @@ data class Item(private val fn: Function) {
 			command(
 				"item",
 				literal("replace"),
-				literal(container.literalName),
-				if (container is Vec3) literal(container.toStringTruncated()) else container,
+				*target(container),
 				slot,
 				literal("from"),
-				literal(with.literalName),
-				if (with is Vec3) literal(with.toStringTruncated()) else with,
+				*target(with),
 				withSlot,
 				literal(snbtSerializer.encodeToString(ItemModifier().apply(block)))
 			)
 		)
+
+	/** `block <x y z>` or `entity <selector>`, block positions truncated to integers as `/item` requires. */
+	private fun target(container: ContainerArgument) =
+		arrayOf(literal(container.literalName), if (container is Vec3) literal(container.toStringTruncated()) else container)
 }
 
 /** Returns the reusable [Item] DSL. @see [Minecraft wiki](https://minecraft.wiki/w/Commands/item) */

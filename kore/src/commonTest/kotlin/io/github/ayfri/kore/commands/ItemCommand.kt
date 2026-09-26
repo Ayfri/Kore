@@ -12,6 +12,7 @@ import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 
 fun Function.itemTests() {
 	items {
@@ -25,6 +26,11 @@ fun Function.itemTests() {
 			WEAPON
 		) assertsIs "item replace block ~ ~ ~ enderchest.2 from block 0 0 0 weapon"
 	}
+
+	items.modify(vec3(0.5, 64.2, -0.5), WEAPON.MAINHAND, ItemModifierArgument("baz")).toString() shouldBe
+		"item modify block 0 64 -1 weapon.mainhand minecraft:baz"
+	items.replace(vec3(1.5, 2.5, 3.5), CONTAINER[0], Items.DIRT).toString() shouldBe
+		"item replace block 1 2 3 container.0 with minecraft:dirt"
 
 	itemSlot(self(), WEAPON) {
 		modify(ItemModifierArgument("baz")) assertsIs "item modify entity @s weapon minecraft:baz"
