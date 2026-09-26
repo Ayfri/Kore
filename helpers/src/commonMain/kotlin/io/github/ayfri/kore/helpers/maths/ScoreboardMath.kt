@@ -72,7 +72,7 @@ class MathHandle internal constructor(val datapack: DataPack, val objective: Str
 	/** Marker teleported around `0 0 0` to turn rotations into directions and back. */
 	internal val marker = uuid(HelpersConstants.mathMarkerUuid)
 	internal val storage = storage(HelpersConstants.mathStorage, datapack.name)
-	internal val home = vec3(HelpersConstants.mathEntitiesX, 0, HelpersConstants.mathEntitiesZ)
+	internal val home = vec3(HelpersConstants.mathEntitiesX.toDouble(), 0.0, HelpersConstants.mathEntitiesZ.toDouble())
 
 	/** Returns the fake player holding [value] on [objective], set once in the init function. */
 	fun constant(value: Int): ScoreboardEntity {

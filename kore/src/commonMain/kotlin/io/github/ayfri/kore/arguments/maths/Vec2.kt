@@ -4,6 +4,7 @@ import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.enums.Axis
 import io.github.ayfri.kore.arguments.numbers.PosNumber
 import io.github.ayfri.kore.arguments.numbers.pos
+import io.github.ayfri.kore.arguments.numbers.worldPosOf
 import io.github.ayfri.kore.arguments.numbers.toStringWithDecimal
 import kotlin.math.acos
 import kotlin.math.roundToInt
@@ -14,11 +15,12 @@ import kotlin.math.sqrt
  * so the second component is the world Z axis even though it is named [y].
  *
  * ```kotlin
- * vec2(3, -5).toVec3(64.0) // 3.0 64.0 -5.0
+ * vec2(3, -5).toVec3(64.0) // 3 64.0 -5
  * ```
  */
 data class Vec2(val x: PosNumber, val y: PosNumber) : Argument {
 	constructor(x: Number = 0, y: Number = 0) : this(x.pos, y.pos)
+	constructor(x: Int, y: Int) : this(x.pos, y.pos)
 
 	val array get() = doubleArrayOf(x.value, y.value)
 	val length get() = sqrt(lengthSquared)
@@ -53,6 +55,7 @@ data class Vec2(val x: PosNumber, val y: PosNumber) : Argument {
 	}
 
 	fun set(axis: Axis, value: Number) = set(axis, PosNumber(value.toDouble(), this[axis].type))
+	fun set(axis: Axis, value: Int) = set(axis, PosNumber(value.toDouble(), this[axis].type, isInteger = true))
 
 	fun set(axis: Axis, value: PosNumber) = when (axis) {
 		Axis.X -> copy(x = value)
@@ -100,12 +103,13 @@ data class Vec2(val x: PosNumber, val y: PosNumber) : Argument {
 	companion object {
 		fun fromString(string: String) = string.split(' ').let {
 			require(it.size == 2) { "Vec2 string must have exactly 2 components, got '$string'." }
-			Vec2(it[0].toDouble(), it[1].toDouble())
+			Vec2(worldPosOf(it[0]), worldPosOf(it[1]))
 		}
 	}
 }
 
 fun vec2(x: Number, y: Number) = Vec2(x, y)
+fun vec2(x: Int, y: Int) = Vec2(x, y)
 fun vec2(x: PosNumber, y: PosNumber) = Vec2(x, y)
 fun vec2(x: PosNumber.Type, y: PosNumber.Type) = Vec2(pos(type = x), pos(type = y))
 fun vec2(type: PosNumber.Type = PosNumber.Type.RELATIVE) = Vec2(pos(type = type), pos(type = type))

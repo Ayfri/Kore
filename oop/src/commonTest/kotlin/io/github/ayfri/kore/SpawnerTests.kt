@@ -18,7 +18,7 @@ fun spawnerTests() = dataPack("spawner_tests") {
 	}
 
 	function("spawn_at") {
-		zombieSpawner.spawnAt(vec3(50, 70, 50)) assertsIs "summon minecraft:zombie 50.0 70.0 50.0"
+		zombieSpawner.spawnAt(vec3(50, 70, 50)) assertsIs "summon minecraft:zombie 50 70 50"
 		lines.size assertsIs 1
 	}
 

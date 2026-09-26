@@ -12,7 +12,7 @@ import io.kotest.core.spec.style.FunSpec
 
 fun Function.summonTests() {
 	summon(EntityTypes.BAT) assertsIs "summon minecraft:bat ~ ~ ~"
-	summon(EntityTypes.BAT, vec3(1, 2, 3)) assertsIs "summon minecraft:bat 1.0 2.0 3.0"
+	summon(EntityTypes.BAT, vec3(1, 2, 3)) assertsIs "summon minecraft:bat 1 2 3"
 
 	summon(EntityTypes.BAT, vec3(1, 2, 3), nbt {
 		this["test"] = 1

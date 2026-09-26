@@ -4,6 +4,7 @@ import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.enums.Axis
 import io.github.ayfri.kore.arguments.numbers.PosNumber
 import io.github.ayfri.kore.arguments.numbers.pos
+import io.github.ayfri.kore.arguments.numbers.worldPosOf
 import io.github.ayfri.kore.arguments.numbers.toStringWithDecimal
 import io.github.ayfri.kore.arguments.types.ContainerArgument
 import io.github.ayfri.kore.arguments.types.DataArgument
@@ -18,7 +19,8 @@ import kotlin.math.sqrt
  * coordinate type (`~`, `^` or world).
  *
  * ```kotlin
- * vec3(1, 2, 3) + vec3(1, 0, 0) // 2.0 2.0 3.0
+ * vec3(1, 2, 3) + vec3(1, 0, 0) // 2 2 3, integers stay integers so the game centers x/z on the block
+ * vec3(1.5, 2, 3) // 1.5 2.0 3.0, any non-Int argument makes every component a decimal
  * vec3(0, 0, 1).local // ^ ^ ^1
  * ```
  */
@@ -32,6 +34,7 @@ data class Vec3(
 	val z: PosNumber,
 ) : Argument, ContainerArgument, DataArgument {
 	constructor(x: Number = 0, y: Number = 0, z: Number = 0) : this(x.pos, y.pos, z.pos)
+	constructor(x: Int, y: Int, z: Int) : this(x.pos, y.pos, z.pos)
 
 	val array get() = doubleArrayOf(x.value, y.value, z.value)
 	val length get() = sqrt(lengthSquared)
@@ -70,6 +73,7 @@ data class Vec3(
 	}
 
 	fun set(axis: Axis, value: Number) = set(axis, PosNumber(value.toDouble(), this[axis].type))
+	fun set(axis: Axis, value: Int) = set(axis, PosNumber(value.toDouble(), this[axis].type, isInteger = true))
 
 	fun set(axis: Axis, value: PosNumber) = when (axis) {
 		Axis.X -> copy(x = value)
@@ -115,12 +119,16 @@ data class Vec3(
 	companion object {
 		fun fromString(string: String) = string.split(' ').let {
 			require(it.size == 3) { "Vec3 string must have exactly 3 components, got '$string'." }
-			Vec3(it[0].toDouble(), it[1].toDouble(), it[2].toDouble())
+			val (x, y, z) = it.map(::worldPosOf)
+			Vec3(x, y, z)
 		}
 	}
 }
 
 fun vec3(x: Number, y: Number, z: Number) = Vec3(x, y, z)
+
+/** Integer coordinates, rendered `1 2 3` so the game centers x/z on the block, unlike `vec3(1.0, 2.0, 3.0)`. */
+fun vec3(x: Int, y: Int, z: Int) = Vec3(x, y, z)
 fun vec3(x: PosNumber, y: PosNumber, z: PosNumber) = Vec3(x, y, z)
 fun vec3(x: PosNumber.Type, y: PosNumber.Type, z: PosNumber.Type) = Vec3(pos(type = x), pos(type = y), pos(type = z))
 fun vec3(type: PosNumber.Type = PosNumber.Type.RELATIVE) = Vec3(pos(type = type), pos(type = type), pos(type = type))

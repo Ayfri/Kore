@@ -57,7 +57,7 @@ fun Function.mannequinSummonTests() {
 	val m = mannequin { pose = MannequinPose.STANDING }
 	val entity = m.summon(vec3(0, 0, 0))
 
-	lines[0] shouldMatch Regex("""summon minecraft:mannequin 0\.0 0\.0 0\.0 \{pose:"standing",UUID:\[I;.*?\]\}""")
+	lines[0] shouldMatch Regex("""summon minecraft:mannequin 0 0 0 \{pose:"standing",UUID:\[I;.*?\]\}""")
 	entity.kill()
 	lines[1] shouldMatch Regex("""kill @e\[limit=1,nbt=\{UUID:\[I;.*?\]\},type=minecraft:mannequin\]""")
 }

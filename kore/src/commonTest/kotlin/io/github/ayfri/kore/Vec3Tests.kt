@@ -10,6 +10,7 @@ import io.github.ayfri.kore.arguments.numbers.pos
 import io.github.ayfri.kore.arguments.numbers.relativePos
 import io.github.ayfri.kore.assertions.assertsIs
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import kotlin.math.PI
 import kotlin.math.sqrt
 
@@ -83,8 +84,20 @@ fun vec3Tests() {
 	Vec3.fromString("1.5 2.5 3") assertsIs vec3(1.5, 2.5, 3)
 
 	vec3(-1.5, 2.7, -0.2).toStringTruncated() assertsIs "-2 2 -1"
-	vec3(-3.0E7, 0, 1664).asString() assertsIs "-30000000.0 0.0 1664.0"
+	vec3(-3.0E7, 0, 1664).asString() shouldBe "-30000000.0 0.0 1664.0"
 	vec3(1.0E-4, 0, 0).relative.asString() assertsIs "~0.0001 ~ ~"
+}
+
+fun vec3IntegerRenderingTests() {
+	vec3(100, 64, 100).asString() shouldBe "100 64 100"
+	vec3(1.5, 2, 3).asString() shouldBe "1.5 2.0 3.0"
+	(vec3(1, 2, 3) + vec3(1, 0, 0)).asString() shouldBe "2 2 3"
+	(vec3(1, 2, 3) + 1.0).asString() shouldBe "2 3 4"
+	(vec3(1, 2, 3) * 0.5).asString() shouldBe "0.5 1.0 1.5"
+	(vec3(1, 2, 3) + vec3(0.5, 0.5, 0.5)).asString() shouldBe "1.5 2.5 3.5"
+	vec3(1, 2, 3).set(Axis.Y, 70).asString() shouldBe "1 70 3"
+	Vec3.fromString("1 2 3").asString() shouldBe "1 2 3"
+	vec2(3, -5).asString() shouldBe "3 -5"
 }
 
 fun posNumberToStringTests() {
@@ -132,5 +145,9 @@ class Vec3Tests : FunSpec({
 
 	test("vec3 type conversion toString") {
 		vec3TypeConversionToStringTests()
+	}
+
+	test("vec3 integer rendering") {
+		vec3IntegerRenderingTests()
 	}
 })
