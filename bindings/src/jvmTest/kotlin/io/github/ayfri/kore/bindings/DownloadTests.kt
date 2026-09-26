@@ -26,6 +26,14 @@ fun testParsingLogic() = newTest("parsing-logic") {
 	ghRef.repo assertsIs "repo"
 	ghRef.tag assertsIs "tag"
 	ghRef.assetName assertsIs "asset.zip"
+	GitHubDownloader.releaseAssetUrl(
+		"""{"assets":[{"name":"other.zip","browser_download_url":"https://x/other.zip"},{"name":"pack.zip","uploader":{"login":"u","id":1},"browser_download_url":"https://x/pack.zip"}]}""",
+		"pack.zip",
+	) assertsIs "https://x/pack.zip"
+	GitHubDownloader.releaseAssetUrl("""{"assets":[]}""", "pack.zip") assertsIs null
+	cacheFileName("https://cdn.example/a/Dungeons%20and%20Taverns%20v4.7.3.zip?ref=1") assertsIs "Dungeons and Taverns v4.7.3.zip"
+	cacheFileName("https://evil.example/x/..%2F..%2Fescape.zip") assertsIs ".._.._escape.zip"
+	cacheFileName("https://evil.example/x/..") assertsIs "_"
 	GitHubDownloader.buildApiHeaders(null).isEmpty() assertsIs true
 	GitHubDownloader.buildApiHeaders("token_123")["Authorization"] assertsIs "Bearer token_123"
 	val ghRefDottedRepo = GitHubDownloader.parseReference("xiaodou8593.math3.1:3.1.1")

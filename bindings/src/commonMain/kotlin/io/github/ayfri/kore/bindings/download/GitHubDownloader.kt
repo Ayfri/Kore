@@ -2,6 +2,10 @@ package io.github.ayfri.kore.bindings.download
 
 import io.github.ayfri.kore.bindings.getFromCacheOrDownload
 import kotlinx.io.files.Path
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 /**
  * Downloads datapacks from GitHub repositories.
@@ -89,24 +93,24 @@ internal data object GitHubDownloader : Downloader {
 		return GitHubRef(owner, repo, tag, assetName)
 	}
 
+	/** Returns the `browser_download_url` of the asset named [assetName] in a GitHub release API response. */
+	internal fun releaseAssetUrl(releaseJson: String, assetName: String) =
+		Json.parseToJsonElement(releaseJson).jsonObject["assets"]?.jsonArray
+			?.map { it.jsonObject }
+			?.firstOrNull { it["name"]?.jsonPrimitive?.content == assetName }
+			?.get("browser_download_url")?.jsonPrimitive?.content
+
 	/**
 	 * Downloads a specific release asset (.zip file).
 	 * Uses the GitHub Releases API to find the asset download URL.
 	 */
 	private suspend fun downloadReleaseAsset(ref: GitHubRef, skipCache: Boolean): Pair<Path, String> {
-		// Get release data from API
 		val releaseUrl = "$GITHUB_API_BASE/repos/${ref.owner}/${ref.repo}/releases/tags/${ref.tag}"
-		val releaseJson = fetchJsonString(releaseUrl, apiHeaders())
-
-		// Parse out the browser_download_url field for the matching asset
-		val assetNameEscaped = ref.assetName!!.replace(".", "\\.")
-		val assetPattern = """"name"\s*:\s*"$assetNameEscaped"[^}]*?"browser_download_url"\s*:\s*"([^"]+)"""".toRegex()
-		val match = assetPattern.find(releaseJson)
+		val downloadUrl = releaseAssetUrl(fetchJsonString(releaseUrl, apiHeaders()), ref.assetName!!)
 			?: throw IllegalArgumentException(
 				"Asset '${ref.assetName}' not found in release '${ref.tag}' of '${ref.owner}/${ref.repo}'"
 			)
 
-		val downloadUrl = match.groupValues[1]
 		println("Downloading release asset from GitHub: ${ref.owner}/${ref.repo}@${ref.tag}/${ref.assetName}")
 		return getFromCacheOrDownload(downloadUrl, skipCache)
 	}
@@ -146,14 +150,10 @@ internal data object GitHubDownloader : Downloader {
 	private suspend fun downloadDefaultBranch(ref: GitHubRef, skipCache: Boolean): Pair<Path, String> {
 		// Get repository info to find default branch
 		val repoUrl = "$GITHUB_API_BASE/repos/${ref.owner}/${ref.repo}"
-		val repoJson = fetchJsonString(repoUrl, apiHeaders())
-
-		// Extract default_branch from JSON
-		val branchPattern = """"default_branch"\s*:\s*"([^"]+)"""".toRegex()
-		val match = branchPattern.find(repoJson)
+		val defaultBranch = Json.parseToJsonElement(fetchJsonString(repoUrl, apiHeaders())).jsonObject["default_branch"]
+			?.jsonPrimitive?.content
 			?: throw IllegalArgumentException("Could not determine default branch for ${ref.owner}/${ref.repo}")
 
-		val defaultBranch = match.groupValues[1]
 		println("Downloading GitHub archive: ${ref.owner}/${ref.repo} (default branch: $defaultBranch)")
 
 		val downloadUrl = "$GITHUB_ARCHIVE/${ref.owner}/${ref.repo}/archive/refs/heads/$defaultBranch.zip"

@@ -7,6 +7,16 @@ import io.github.ayfri.kore.bindings.download.cacheWriteFile
 import io.github.ayfri.kore.bindings.download.httpRequest
 import kotlinx.io.files.Path
 
+private val unsafeFileNameCharacters = Regex("""[^\w .+-]|^\.+$""")
+
+/**
+ * Decoded last path segment of [url], with anything able to escape the cache folder replaced, since remote APIs
+ * control the download URLs.
+ */
+internal fun cacheFileName(url: String) = percentDecode(url.substringBefore('?').substringBefore('#').substringAfterLast('/'))
+	.replace(unsafeFileNameCharacters, "_")
+	.ifEmpty { "datapack.zip" }
+
 /**
  * Downloads a file from URL and caches it locally (filesystem on the JVM/Node.js, OPFS in the browser).
  * Returns the path to the cached file and the actual filename (decoded from URL).
@@ -23,9 +33,7 @@ internal suspend fun getFromCacheOrDownload(
 	requestHeaders: Map<String, String>,
 	skipCache: Boolean = false,
 ): Pair<Path, String> {
-	// Extract filename from URL and decode it
-	val encodedFileName = url.substringAfterLast('/').ifEmpty { "datapack.zip" }
-	val decodedFileName = percentDecode(encodedFileName)
+	val decodedFileName = cacheFileName(url)
 
 	// Include request options in cache key so different authenticated/custom payload downloads don't collide.
 	val cacheFingerprint = buildString {

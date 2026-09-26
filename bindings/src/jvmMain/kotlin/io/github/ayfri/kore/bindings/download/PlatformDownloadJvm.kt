@@ -3,11 +3,9 @@ package io.github.ayfri.kore.bindings.download
 import io.github.ayfri.kore.utils.ensureParents
 import io.github.ayfri.kore.utils.exists
 import io.github.ayfri.kore.utils.makeDirectories
-import io.github.ayfri.kore.utils.toSource
-import io.github.ayfri.kore.utils.write
-import kotlinx.io.buffered
+import io.github.ayfri.kore.utils.readBytes
+import io.github.ayfri.kore.utils.writeAtomically
 import kotlinx.io.files.Path
-import kotlinx.io.readByteArray
 import java.net.HttpURLConnection
 import java.net.URI
 
@@ -58,11 +56,11 @@ private val jvmCacheDir: Path by lazy {
 internal actual suspend fun cacheDir(): Path = jvmCacheDir
 
 internal actual suspend fun cacheReadFile(path: Path): ByteArray? =
-	if (path.exists()) path.toSource().buffered().readByteArray() else null
+	if (path.exists()) path.readBytes() else null
 
 internal actual suspend fun cacheWriteFile(path: Path, content: ByteArray) {
 	path.ensureParents()
-	path.write(content)
+	path.writeAtomically(content)
 }
 
 internal actual suspend fun cacheFileExists(path: Path): Boolean = path.exists()

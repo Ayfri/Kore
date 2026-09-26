@@ -4,11 +4,9 @@ import io.github.ayfri.kore.utils.ensureParents
 import io.github.ayfri.kore.utils.exists
 import io.github.ayfri.kore.utils.isDirectory
 import io.github.ayfri.kore.utils.makeDirectories
-import io.github.ayfri.kore.utils.toSource
-import io.github.ayfri.kore.utils.write
-import kotlinx.io.buffered
+import io.github.ayfri.kore.utils.readBytes
+import io.github.ayfri.kore.utils.writeAtomically
 import kotlinx.io.files.Path
-import kotlinx.io.readByteArray
 
 /**
  * Kotlin/JS compiles once for both `browser()` and `nodejs()`, so the two backends are picked at runtime rather
@@ -54,7 +52,7 @@ internal actual suspend fun cacheDir(): Path = if (isNode) nodeCacheDir else bro
 internal actual suspend fun cacheReadFile(path: Path): ByteArray? {
 	if (isNode) {
 		if (!path.exists() || path.isDirectory()) return null
-		return path.toSource().buffered().readByteArray()
+		return path.readBytes()
 	}
 	return Opfs.readFile(path)
 }
@@ -62,7 +60,7 @@ internal actual suspend fun cacheReadFile(path: Path): ByteArray? {
 internal actual suspend fun cacheWriteFile(path: Path, content: ByteArray) {
 	if (isNode) {
 		path.ensureParents()
-		path.write(content)
+		path.writeAtomically(content)
 	} else {
 		Opfs.writeFile(path, content)
 	}
