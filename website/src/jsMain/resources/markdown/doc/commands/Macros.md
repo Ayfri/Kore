@@ -86,14 +86,14 @@ Now you can access the macros on the `macros` property.
 
 This also allows validating macros that are required when calling the function with an NBT Compound.
 
-Exemple:
+Example:
 
 ```kotlin
 class TeleportMacros : Macros() {
 	val player by "player"
 }
 
-datapack {
+dataPack("my_datapack") {
 	val teleportToSpawn = function("teleport_to_spawn", ::TeleportMacros) {
 		teleport(player(macros.player), vec3())
 	}
@@ -112,7 +112,7 @@ When using macros, you can create a function with arguments that calls the funct
 
 ```kotlin
 fun main() {
-	dataPack {
+	dataPack("my_datapack") {
 		function("teleport_to_spawn") {
 			teleport(player(macro("player")), vec3())
 		}

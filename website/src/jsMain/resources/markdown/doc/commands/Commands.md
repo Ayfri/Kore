@@ -43,8 +43,7 @@ say Welcome to the server!
 
 ### Teleport Command
 
-The `teleport` (or
-`tp`) command instantly moves entities to a new location. You can teleport to absolute coordinates, relative positions, or another entity's location. Optionally specify rotation (yaw/pitch) for the entity to face after teleporting.
+The `teleport` command instantly moves entities to a new location. You can teleport to absolute coordinates, relative positions, or another entity's location. Optionally specify rotation (yaw/pitch) for the entity to face after teleporting.
 
 ```kotlin
 function("teleport_examples") {
@@ -61,9 +60,9 @@ function("teleport_examples") {
 Generated output:
 
 ```mcfunction
-tp @a 100 64 100
-tp @a @s
-tp @s 0 100 0 0 90
+teleport @a 100.0 64.0 100.0
+teleport @a @s
+teleport @s 0.0 100.0 0.0 0 90
 ```
 
 ### Give Command
@@ -146,7 +145,7 @@ Generated output:
 
 ```mcfunction
 gamemode creative @a
-gamemode survival Steve
+gamemode survival @a[limit=1,name=Steve]
 ```
 
 ### Time Command
@@ -167,7 +166,7 @@ function("time_control") {
 	time.resume()
 	time.set(TimePeriod.DAY) // jump to a named moment instead of a raw tick
 	time.set(6000)
-	time.query(TimeType.DAYTIME)
+	time.query(TimeType.DAYS)
 	time.queryTime()         // total ticks since the world was created
 }
 ```
@@ -181,7 +180,7 @@ time pause
 time resume
 time set day
 time set 6000
-time query daytime
+time query day
 time query time
 ```
 
@@ -258,7 +257,7 @@ function("season_control") {
 	time.of(seasonClock).resume()
 	time.of(seasonClock).set(TimePeriod.DAY)
 	time.of(seasonClock).set(timeMarker("summer", "mymod"))
-	time.of(seasonClock).query(TimeType.DAYTIME)
+	time.of(seasonClock).query(TimeType.DAYS)
 	time.of(seasonClock).query(Timelines.DAY)
 	time.of(seasonClock).queryRepetitions(Timelines.DAY)
 	time.of(seasonClock).queryTime()
@@ -269,16 +268,16 @@ function("season_control") {
 Generated output:
 
 ```mcfunction
-time of mymod:season add 6000
-time of mymod:season pause
-time of mymod:season resume
-time of mymod:season set day
-time of mymod:season set mymod:summer
-time of mymod:season query daytime
-time of mymod:season query minecraft:day
-time of mymod:season query minecraft:day repetitions
-time of mymod:season query time
-time of mymod:season rate 2
+time of my_datapack:season add 6000
+time of my_datapack:season pause
+time of my_datapack:season resume
+time of my_datapack:season set day
+time of my_datapack:season set mymod:summer
+time of my_datapack:season query day
+time of my_datapack:season query minecraft:day
+time of my_datapack:season query minecraft:day repetitions
+time of my_datapack:season query time
+time of my_datapack:season rate 2
 ```
 
 ### Weather Command
@@ -311,7 +310,7 @@ The
 function("spawn_mobs") {
 	summon(EntityTypes.ZOMBIE, vec3(0, 64, 0))
 	summon(EntityTypes.CREEPER, vec3()) {
-		this["CustomName"] = "\"Boom\""
+		this["CustomName"] = "Boom"
 		this["NoAI"] = true
 	}
 }
@@ -320,8 +319,8 @@ function("spawn_mobs") {
 Generated output:
 
 ```mcfunction
-summon minecraft:zombie 0 64 0
-summon minecraft:creeper ~ ~ ~ {CustomName:"\"Boom\"",NoAI:true}
+summon minecraft:zombie 0.0 64.0 0.0
+summon minecraft:creeper ~ ~ ~ {CustomName:"Boom",NoAI:1b}
 ```
 
 The trailing block is the raw [NBT builder](/docs/concepts/nbts), so entity tags are written by name and are not
@@ -353,29 +352,30 @@ function("build") {
 Generated output:
 
 ```mcfunction
-setblock 0 64 0 minecraft:diamond_block
-setblock 0 65 0 minecraft:stone replace
+setblock 0.0 64.0 0.0 minecraft:diamond_block
+setblock 0.0 65.0 0.0 minecraft:stone replace
 ```
 
 ### Fill Command
 
-The `fill` command fills a rectangular region with blocks. Modes include: `replace` (all blocks), `hollow` (only outer shell),
-`outline` (shell without clearing inside), `keep` (only air blocks), and `destroy` (drops items).
+The `fill` command fills a rectangular region with blocks. `FillOption` picks the mode: `HOLLOW` (outer shell, air
+inside), `OUTLINE` (shell without clearing inside), `KEEP` (only air blocks) and `DESTROY` (drops items). Passing a
+block filter instead emits `replace <filter>`, changing only the blocks that match it.
 
 ```kotlin
 function("fill_area") {
 	fill(vec3(0, 64, 0), vec3(10, 70, 10), Blocks.STONE)
-	fill(vec3(0, 64, 0), vec3(10, 70, 10), Blocks.AIR, FillMode.REPLACE)
-	fill(vec3(0, 64, 0), vec3(10, 70, 10), Blocks.GLASS, FillMode.HOLLOW)
+	fill(vec3(0, 64, 0), vec3(10, 70, 10), Blocks.AIR, Blocks.STONE)
+	fill(vec3(0, 64, 0), vec3(10, 70, 10), Blocks.GLASS, FillOption.HOLLOW)
 }
 ```
 
 Generated output:
 
 ```mcfunction
-fill 0 64 0 10 70 10 minecraft:stone
-fill 0 64 0 10 70 10 minecraft:air replace
-fill 0 64 0 10 70 10 minecraft:glass hollow
+fill 0.0 64.0 0.0 10.0 70.0 10.0 minecraft:stone
+fill 0.0 64.0 0.0 10.0 70.0 10.0 minecraft:air replace minecraft:stone
+fill 0.0 64.0 0.0 10.0 70.0 10.0 minecraft:glass hollow
 ```
 
 ### Enchant Command
@@ -438,8 +438,8 @@ Generated output:
 ```mcfunction
 spawnpoint
 spawnpoint @s
-spawnpoint @s 100 64 100
-spawnpoint @s 100 64 100 90 0
+spawnpoint @s 100.0 64.0 100.0
+spawnpoint @s 100.0 64.0 100.0 90 0
 ```
 
 ### SetWorldSpawn Command
@@ -459,8 +459,8 @@ Generated output:
 
 ```mcfunction
 setworldspawn
-setworldspawn 0 64 0
-setworldspawn 0 64 0 0 0
+setworldspawn 0.0 64.0 0.0
+setworldspawn 0.0 64.0 0.0 0 0
 ```
 
 ### StopSound Command
@@ -518,10 +518,10 @@ You can also use stopwatches in execute conditions:
 function("stopwatch_condition") {
 	execute {
 		ifCondition {
-			stopwatch(stopWatch("my_timer"), rangeOrInt(100))
+			stopwatch(stopWatch("my_timer"), rangeOrIntStart(100))
 		}
 		run {
-			say("Timer reached 100 ticks!")
+			say("Timer reached 100 seconds!")
 		}
 	}
 }
@@ -530,7 +530,7 @@ function("stopwatch_condition") {
 Generated output:
 
 ```mcfunction
-execute if stopwatch my_datapack:my_timer 100 run say Timer reached 100 ticks!
+execute if stopwatch my_datapack:my_timer 100.. run say Timer reached 100 seconds!
 ```
 
 ### Message Commands
@@ -670,7 +670,7 @@ function("execute_conditions") {
 Generated output:
 
 ```mcfunction
-execute as @e[limit=3,sort=random] if score @s points >= 10 run say You have enough points!
+execute as @e[limit=3,sort=random] if score @s points matches 10.. run say You have enough points!
 ```
 
 #### Execute Store
@@ -685,7 +685,7 @@ function("execute_store") {
 		}
 
 		run {
-			time.query(TimeType.DAYTIME)
+			time.query(TimeType.DAYS)
 		}
 	}
 }
@@ -694,7 +694,7 @@ function("execute_store") {
 Generated output:
 
 ```mcfunction
-execute store result score @s my_score run time query daytime
+execute store result score @s my_score run time query day
 ```
 
 ### Data Command
@@ -727,7 +727,7 @@ data get entity @s Inventory 1
 function("data_merge") {
 	data(self()) {
 		merge {
-			this["CustomName"] = "\"Hero\""
+			this["CustomName"] = "Hero"
 			this["Invulnerable"] = true
 		}
 	}
@@ -740,7 +740,7 @@ assignment patterns in commands, predicates, and chat-related APIs.
 Generated output:
 
 ```mcfunction
-data merge entity @s {CustomName:"\"Hero\"",Invulnerable:true}
+data merge entity @s {CustomName:"Hero",Invulnerable:1b}
 ```
 
 #### Data Modify
@@ -760,7 +760,7 @@ Generated output:
 
 ```mcfunction
 data modify entity @s Inventory append value "minecraft:diamond"
-data modify entity @s Tags prepend value "new_tag"
+data modify entity @s Tags prepend value new_tag
 data modify entity @s Health set value 20
 data modify entity @s Pos[0] set from entity @s Pos[0]
 ```
@@ -859,16 +859,16 @@ The
 
 ```kotlin
 function("bossbar_examples") {
-	bossbar.add("my_bar", textComponent("My Boss Bar"))
-	bossbar.set("my_bar") {
-		color(BossBarColor.RED)
-		max(100)
-		value(50)
-		visible(true)
-		players(allPlayers())
-		style(BossBarStyle.NOTCHED_10)
-	}
-	bossbar.remove("my_bar")
+	bossBars.add("my_bar", displayName = textComponent("My Boss Bar"))
+
+	val bar = bossBars.get("my_bar")
+	bar.setColor(BossBarColor.RED)
+	bar.setMax(100)
+	bar.setValue(50)
+	bar.setVisible(true)
+	bar.setPlayers(allPlayers())
+	bar.setStyle(BossBarStyle.NOTCHED_10)
+	bar.remove()
 }
 ```
 
@@ -898,16 +898,14 @@ The
 
 ```kotlin
 function("attribute_examples") {
-	attribute(self(), Attributes.MAX_HEALTH) {
-		get()
-		base.get()
-		base.set(40.0)
-	}
+	val maxHealth = attributes(self(), Attributes.MAX_HEALTH)
+	maxHealth.get()
+	maxHealth.base.get()
+	maxHealth.base.set(40.0)
 
-	attribute(self(), Attributes.MOVEMENT_SPEED) {
-		modifiers.add("speed_boost", 0.1, AttributeModifierOperation.ADD_VALUE)
-		modifiers.remove("speed_boost")
-	}
+	val speed = attributes(self(), Attributes.MOVEMENT_SPEED)
+	speed.modifiers.add("speed_boost", value = 0.1, operation = AttributeModifierOperation.ADD_VALUE)
+	speed.modifiers.remove("speed_boost")
 }
 ```
 
@@ -925,10 +923,18 @@ function("schedule_examples") {
 		say("This runs later!")
 	}
 
-	schedule.function(myFunction, 100.ticks)
-	schedule.function(myFunction, 5.seconds, ScheduleMode.REPLACE)
-	schedule.clear(myFunction)
+	schedule(100.ticks, myFunction)           // appends a new schedule
+	schedule(myFunction).replace(5.seconds)   // replaces any pending schedule of the function
+	schedule(myFunction).clear()
 }
+```
+
+Generated output:
+
+```mcfunction
+schedule function my_datapack:delayed_action 100 append
+schedule function my_datapack:delayed_action 5s replace
+schedule clear my_datapack:delayed_action
 ```
 
 ### Loot Command
@@ -1009,7 +1015,7 @@ function("loot_examples") {
 				pool {
 					rolls(1f)
 					entries {
-						items(Items.ANVIL)
+						item(Items.ANVIL)
 					}
 				}
 			}
@@ -1094,6 +1100,8 @@ Every builder also takes an optional trailing position, and `particle(Particles.
 particle with no extra data.
 
 ```kotlin
+import kotlin.math.PI
+
 function("special_particles") {
 	particles {
 		block(Blocks.STONE_SLAB(states = mapOf("half" to "top")))
@@ -1115,7 +1123,7 @@ function("special_particles") {
 		instantEffect(color = Color.GREEN)
 		tintedLeaves(Color.RED)
 
-		items(Items.DIAMOND_SWORD {
+		item(Items.DIAMOND_SWORD {
 			enchantments {
 				enchantment(Enchantments.SHARPNESS, 5)
 			}
@@ -1207,11 +1215,11 @@ function("clone_examples") {
 Generated output:
 
 ```mcfunction
-clone 0 64 0 10 74 10 100 64 100
-clone from minecraft:the_nether 0 64 0 10 74 10 to minecraft:overworld 0 64 0
-clone 0 64 0 10 74 10 100 64 100 masked move
-clone 0 64 0 10 74 10 100 64 100 filtered #minecraft:base_stone_overworld force
-clone 0 64 0 10 74 10 5 64 5 strict
+clone 0.0 64.0 0.0 10.0 74.0 10.0 100.0 64.0 100.0
+clone from minecraft:the_nether 0.0 64.0 0.0 10.0 74.0 10.0 to minecraft:overworld 0.0 64.0 0.0
+clone 0.0 64.0 0.0 10.0 74.0 10.0 100.0 64.0 100.0 masked move
+clone 0.0 64.0 0.0 10.0 74.0 10.0 100.0 64.0 100.0 filtered #minecraft:base_stone_overworld force
+clone 0.0 64.0 0.0 10.0 74.0 10.0 5.0 64.0 5.0 strict
 ```
 
 ### WorldBorder Command
@@ -1231,7 +1239,7 @@ function("worldborder_examples") {
 
 		center(0.0, 0.0)
 
-		damageAmount(0.2f) // damage per second per block past the buffer
+		damageAmount(0.5f) // damage per second per block past the buffer
 		damageBuffer(5.0)  // blocks of grace beyond the border before damage starts
 
 		setWarningDistance(10)
@@ -1249,7 +1257,7 @@ worldborder add 10 200
 worldborder set 1000
 worldborder set 500 6000
 worldborder center 0 0
-worldborder damage amount 0.2
+worldborder damage amount 0.5
 worldborder damage buffer 5
 worldborder warning distance 10
 worldborder warning time 15
@@ -1265,7 +1273,7 @@ the [Selectors](/docs/concepts/selectors) page alongside this reference:
 
 ```kotlin
 function("selector_examples") {
-	say(allPlayers())                         // @a
+	tellraw(allPlayers(), textComponent("Hi")) // @a
 	teleport(nearestPlayer(), vec3(0, 64, 0)) // @p
 	give(randomPlayer(), Items.DIAMOND)       // @r
 
@@ -1285,7 +1293,7 @@ function("selector_examples") {
 
 	kill(allEntities {
 		nbt = nbt {
-			this["CustomName"] = "\"Target\""
+			this["CustomName"] = "Target"
 		}
 	})
 }
@@ -1333,6 +1341,8 @@ Create your own command builders for mods or custom functionality. See [Function
 Function context:
 
 ```kotlin
+import io.github.ayfri.kore.functions.Function
+
 fun Function.myModCommand(target: EntityArgument, value: Int) =
 	addLine(command("mymod", literal(target.asString()), int(value)))
 

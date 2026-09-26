@@ -88,11 +88,11 @@ function("conditional") {
 		ifCondition {
 			entity(allPlayers())                 // at least one player exists
 			block(vec3(0, 63, 0), Blocks.STONE)  // block at pos is stone
-			score(self(), "coins", rangeOrInt(10)) // score matches 10..
+			score(self(), "coins", rangeOrIntStart(10)) // score matches 10..
 		}
 
 		unlessCondition {
-			score(self(), "frozen", rangeOrInt(1)) // and NOT frozen >= 1
+			score(self(), "frozen", rangeOrIntStart(1)) // and NOT frozen >= 1
 		}
 
 		run {
@@ -118,7 +118,7 @@ Available checks inside the condition block:
 | `predicate(...)`                            | A predicate passes (by id, name, or inline block)  |
 | `score(target, obj, range)`                 | A score matches an int range                       |
 | `score(target, obj, src, srcObj, relation)` | Two scores compare with a relation                 |
-| `stopwatch(id, range)`                      | A stopwatch has elapsed within a range (ms)        |
+| `stopwatch(id, range)`                      | A stopwatch's elapsed seconds are within a range   |
 
 ### Comparing scores fluently
 
@@ -127,12 +127,15 @@ Inside a condition block, `score(target, objective)` returns a handle with the f
 | Kotlin DSL                                        | Generated syntax                  |
 |---------------------------------------------------|-----------------------------------|
 | `score(self(), "points") equalTo 10`              | `if score @s points matches 10`   |
-| `score(self(), "points") greaterThan 10`          | `if score @s points > 10`         |
-| `score(self(), "points") greaterThanOrEqualTo 10` | `if score @s points >= 10`        |
-| `score(self(), "points") lessThan 10`             | `if score @s points < 10`         |
-| `score(self(), "points") lessThanOrEqualTo 10`    | `if score @s points <= 10`        |
+| `score(self(), "points") greaterThan 10`          | `if score @s points matches 11..` |
+| `score(self(), "points") greaterThanOrEqualTo 10` | `if score @s points matches 10..` |
+| `score(self(), "points") lessThan 10`             | `if score @s points matches ..9`  |
+| `score(self(), "points") lessThanOrEqualTo 10`    | `if score @s points matches ..10` |
 | `score(self(), "points") matches 1..5`            | `if score @s points matches 1..5` |
 | `score(self(), "a") equalTo score(self(), "b")`   | `if score @s a = @s b`            |
+
+Comparing with a literal always emits a `matches` range, since vanilla's `<`, `>` and `=` operators only compare two
+scores.
 
 The relation operators also accept another score handle to compare two scores directly:
 
@@ -194,7 +197,7 @@ function("count_players") {
 			score(literal("#total"), "players") // store the count into a fake player's score
 		}
 		run {
-			// `data get` returns the player count via the @a selector trick / entity count
+			// `data get` returns the numeric value stored at the path
 			data(storage("state", "my_pack")) { get("player_count") }
 		}
 	}
@@ -234,7 +237,7 @@ val reward = function("give_reward") {
 }
 
 execute {
-	ifCondition { score(self(), "coins", rangeOrInt(100)) }
+	ifCondition { score(self(), "coins", rangeOrIntStart(100)) }
 	run(reward)
 }
 

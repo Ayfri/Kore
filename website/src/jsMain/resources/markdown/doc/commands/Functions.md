@@ -117,7 +117,7 @@ For example:
 ```kotlin
 function("commands") {
 	say("Hello!") // say command
-	teleport(player("Steve"), 100.0, 64.0, 100.0) // tp command
+	teleport(player("Steve"), vec3(100.0, 64.0, 100.0)) // teleport command
 }
 ```
 
@@ -161,8 +161,8 @@ For commands that take complex types as arguments, you should use the `.asArg()`
 `literal()` function. For Argument types, you don't have to use this.
 
 See the code of the repository for more examples.<br>
-[Link to `time` command.](https://github.com/Ayfri/Kore/blob/master/kore/src/main/kotlin/commands/Time.kt)<br>
-[Link to `weather` command.](https://github.com/Ayfri/Kore/blob/master/kore/src/main/kotlin/commands/Weather.kt)
+[Link to `time` command.](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/commands/Time.kt)<br>
+[Link to `weather` command.](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/commands/Weather.kt)
 
 ## Complex Commands
 
