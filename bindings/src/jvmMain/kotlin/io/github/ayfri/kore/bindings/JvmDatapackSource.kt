@@ -3,7 +3,6 @@ package io.github.ayfri.kore.bindings
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import java.io.File
-import java.util.zip.ZipFile
 
 private fun Path.isZipFormat() = SystemFileSystem.metadataOrNull(this)?.isDirectory != true && File(toString()).extension == "zip"
 
@@ -15,27 +14,6 @@ private fun directoryToInMemoryDatapack(dirPath: Path): InMemoryDatapack {
 		if (file.isFile) {
 			val relative = file.relativeTo(root).invariantSeparatorsPath
 			files[relative] = file.readText()
-		}
-	}
-
-	return InMemoryDatapack(files)
-}
-
-/**
- * Reads a zip file via `java.util.zip`, far more tolerant of the extra-field/date quirks found
- * in real-world (non-Kore-generated) datapack zips than the pure-Kotlin `readZipDatapack` used
- * by the js() target.
- */
-private fun zipToInMemoryDatapack(zipPath: Path): InMemoryDatapack {
-	val files = mutableMapOf<String, String>()
-
-	ZipFile(File(zipPath.toString())).use { zip ->
-		val entries = zip.entries()
-		while (entries.hasMoreElements()) {
-			val entry = entries.nextElement()
-			if (entry.isDirectory) continue
-			val name = entry.name.replace('\\', '/').trimStart('/')
-			files[name] = zip.getInputStream(entry).bufferedReader().readText()
 		}
 	}
 
@@ -75,7 +53,7 @@ fun explore(inputPath: String): Datapack {
 	}
 
 	val inMemory = if (isZip) {
-		zipToInMemoryDatapack(path)
+		readZipDatapack(File(path.toString()).readBytes())
 	} else {
 		directoryToInMemoryDatapack(path)
 	}

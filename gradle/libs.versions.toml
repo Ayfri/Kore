@@ -4,7 +4,6 @@ jetbrains-compose = "1.11.1"
 joml = "1.10.8"
 knbt = "0.11.9"
 kobweb = "0.25.1"
-kompress = "2.3.1"
 kotest = "6.2.3"
 kotlin = "2.4.20"
 kotlin-dotenv = "6.5.1"
@@ -29,8 +28,6 @@ knbt = { module = "net.benwoodworth.knbt:knbt", version.ref = "knbt" }
 kobweb-core = { module = "com.varabyte.kobweb:kobweb-core", version.ref = "kobweb" }
 kobwebx-markdown = { module = "com.varabyte.kobwebx:kobwebx-markdown", version.ref = "kobweb" }
 kobwebx-silk-icons-lucide = { module = "com.varabyte.kobwebx:silk-icons-lucide", version.ref = "kobweb" }
-kompress-core = { module = "dev.karmakrafts.kompress:kompress-core", version.ref = "kompress" }
-kompress-zip = { module = "dev.karmakrafts.kompress:kompress-zip", version.ref = "kompress" }
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }

@@ -1,10 +1,6 @@
 package io.github.ayfri.kore.bindings
 
-import dev.karmakrafts.kompress.ExperimentalCompressionApi
-import dev.karmakrafts.kompress.archive.extract
-import dev.karmakrafts.kompress.zip.unzip
-import kotlinx.io.Buffer
-import kotlinx.io.readByteArray
+import io.github.ayfri.kore.generation.zip.readZipEntries
 
 /**
  * A datapack fully materialized in memory, keyed by normalized relative path
@@ -13,19 +9,11 @@ import kotlinx.io.readByteArray
 class InMemoryDatapack(val files: Map<String, String>)
 
 /**
- * Reads a zip-format datapack from raw bytes into memory using a pure-Kotlin,
- * multiplatform (incl. JS) DEFLATE/ZIP implementation - no filesystem access involved.
+ * Reads a zip-format datapack from raw bytes into memory through Kore's multiplatform [readZipEntries] (native
+ * `java.util.zip` inflate on the JVM, pure Kotlin on JS), no filesystem access involved.
  */
-@OptIn(ExperimentalCompressionApi::class)
-fun readZipDatapack(bytes: ByteArray): InMemoryDatapack {
-	val buffer = Buffer().apply { write(bytes) }
-	val entries = buffer.unzip().use { it.extract() }
-
-	val files = entries
-		.filterNot { (entry, _) -> entry.name.endsWith("/") }
-		.associate { (entry, content) ->
-			entry.name.replace('\\', '/').trimStart('/') to content.readByteArray().decodeToString()
-		}
-
-	return InMemoryDatapack(files)
-}
+fun readZipDatapack(bytes: ByteArray) = InMemoryDatapack(
+	readZipEntries(bytes)
+		.filterNot { it.isDirectory }
+		.associate { it.name.replace('\\', '/').trimStart('/') to it.content.decodeToString() }
+)

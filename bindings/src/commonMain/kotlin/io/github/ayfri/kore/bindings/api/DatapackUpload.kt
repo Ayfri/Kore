@@ -14,8 +14,8 @@ data class GeneratedDatapackSource(val objectName: String, val source: String)
 
 /**
  * Explores a datapack zip's raw bytes (e.g. from a browser `<input type="file">` upload, or any in-memory zip)
- * into a [Datapack]. Works identically on the JVM, Node.js, and the browser: unzipping goes through the
- * multiplatform `kompress` library via [readZipDatapack], never a filesystem.
+ * into a [Datapack]. Works identically on the JVM, Node.js, and the browser: unzipping goes through Kore's
+ * multiplatform zip reader via [readZipDatapack], never a filesystem.
  *
  * @param bytes the raw `.zip` file content
  * @param displayName the datapack's file name (e.g. `"my_datapack.zip"`), used to derive the package/object name

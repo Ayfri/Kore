@@ -2,9 +2,8 @@ package io.github.ayfri.kore.generation.zip
 
 /**
  * Pure-Kotlin RFC 1951 (raw DEFLATE) decoder, modeled after Mark Adler's public-domain `puff.c` reference
- * decoder. No platform library involved, so the same code decompresses ZIP entries on JVM, Node.js and the
- * browser - needed because third-party `.zip` datapacks (unlike this library's own STORE-only [ZipWriter])
- * are typically DEFLATE-compressed.
+ * decoder, decompressing ZIP entries on Node.js and the browser, which have no built-in synchronous inflate.
+ * Third-party `.zip` datapacks (unlike this library's own STORE-only [ZipWriter]) are typically DEFLATE-compressed.
  */
 internal object Inflate {
 	private const val MAX_BITS = 15
@@ -39,6 +38,8 @@ internal object Inflate {
 
 		fun bit(): Int {
 			if (bitCount == 0) {
+				/** Kotlin/JS doesn't bounds-check typed arrays, a truncated stream would read `undefined` as zeros forever. */
+				check(bytePos < input.size) { "Malformed DEFLATE stream: unexpected end of input." }
 				bitBuffer = input[bytePos++].toInt() and 0xFF
 				bitCount = 8
 			}
@@ -161,6 +162,7 @@ internal object Inflate {
 		var outputPos = start
 		while (true) {
 			val symbol = decodeSymbol(literalTree, reader)
+			check(symbol == 256 || outputPos < output.size) { "Malformed DEFLATE stream: output exceeds the declared size." }
 			when {
 				symbol < 256 -> output[outputPos++] = symbol.toByte()
 				symbol == 256 -> return outputPos

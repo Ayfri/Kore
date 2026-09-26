@@ -32,8 +32,6 @@ kotlin {
 	sourceSets {
 		commonMain.dependencies {
 			api(project(":kore"))
-			implementation(libs.kompress.core)
-			implementation(libs.kompress.zip)
 			implementation(libs.kotlinx.io)
 			implementation(libs.kotlinx.serialization)
 		}

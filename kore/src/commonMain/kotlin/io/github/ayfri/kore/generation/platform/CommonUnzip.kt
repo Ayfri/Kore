@@ -12,8 +12,7 @@ import io.github.ayfri.kore.utils.write
 import kotlinx.io.files.Path
 
 /**
- * Unzips [zipFile] into a fresh temporary directory and returns its path, driven entirely by the pure-Kotlin
- * [readZipEntries]/[io.github.ayfri.kore.generation.zip.Inflate]. Shared between the JVM and Node.js
+ * Unzips [zipFile] into a fresh temporary directory and returns its path, driven by [readZipEntries]. Shared between the JVM and Node.js
  * [platformUnzipToTempDir] implementations - both have a real filesystem to write extracted entries to; the
  * browser doesn't, so it keeps its own `actual` that throws.
  */

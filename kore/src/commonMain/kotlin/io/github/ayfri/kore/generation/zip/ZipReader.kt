@@ -1,11 +1,9 @@
 package io.github.ayfri.kore.generation.zip
 
 /**
- * Pure-Kotlin ZIP (PKZIP) archive reader: parses the central directory, then extracts each entry from its
- * local file header, decompressing STORE (method 0) or DEFLATE (method 8, via [Inflate]) entries. No platform
- * library involved, so the same code reads third-party `.zip` datapacks on JVM, Node.js and the browser.
+ * One entry read by [readZipEntries], its [name] never ending with `/`.
  */
-internal data class ZipEntryData(val name: String, val isDirectory: Boolean, val content: ByteArray)
+class ZipEntryData(val name: String, val isDirectory: Boolean, val content: ByteArray)
 
 private const val LOCAL_FILE_HEADER_SIGNATURE = 0x04034b50
 private const val CENTRAL_DIRECTORY_SIGNATURE = 0x02014b50
@@ -22,7 +20,15 @@ private fun ByteArray.readIntLe(offset: Int): Int =
 private fun ByteArray.readShortLe(offset: Int): Int =
 	(this[offset].toInt() and 0xFF) or ((this[offset + 1].toInt() and 0xFF) shl 8)
 
-internal fun readZipEntries(bytes: ByteArray): List<ZipEntryData> {
+/**
+ * Reads a ZIP (PKZIP) archive: parses the central directory, then extracts each entry from its local file header,
+ * decompressing STORE (method 0) or DEFLATE (method 8, see [platformInflate]) entries. The same code reads third-party
+ * `.zip` datapacks on the JVM, Node.js and the browser. ZIP64 archives and encrypted entries aren't supported.
+ * ```
+ * readZipEntries(bytes).filterNot { it.isDirectory }.map { it.name } // ["pack.mcmeta", "data/ns/function/a.mcfunction"]
+ * ```
+ */
+fun readZipEntries(bytes: ByteArray): List<ZipEntryData> {
 	val eocdOffset = findEndOfCentralDirectory(bytes)
 	val entryCount = bytes.readShortLe(eocdOffset + 10)
 	val centralDirectoryOffset = bytes.readIntLe(eocdOffset + 16)
@@ -71,7 +77,7 @@ private fun extractEntryContent(
 
 	return when (compressionMethod) {
 		0 -> compressed
-		8 -> Inflate.inflate(compressed, uncompressedSize)
+		8 -> platformInflate(compressed, uncompressedSize)
 		else -> error("Unsupported zip compression method $compressionMethod (only STORE and DEFLATE are supported).")
 	}
 }
