@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.events
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.DataPackStateKey
 import io.github.ayfri.kore.OopConstants
 import io.github.ayfri.kore.arguments.numbers.TimeNumber
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
@@ -23,12 +24,12 @@ import io.github.ayfri.kore.generated.arguments.types.DimensionArgument
 import io.github.ayfri.kore.world.World
 import io.github.ayfri.kore.commands.function as functionCommand
 
-private val initializedWorldState = mutableSetOf<String>()
-private val initializedWorldDispatchers = mutableSetOf<String>()
+private val worldStateInitialized = DataPackStateKey<Unit>("oop.worldState")
+private val initializedWorldDispatchers = DataPackStateKey<MutableSet<String>>("oop.worldDispatchers")
 
 private fun DataPack.ensureWorldStateSetup() {
-	if (name in initializedWorldState) return
-	initializedWorldState += name
+	if (stateOrNull(worldStateInitialized) != null) return
+	state(worldStateInitialized) {}
 
 	load(OopConstants.worldStateInitFunction) {
 		scoreboard {
@@ -66,9 +67,7 @@ private fun DataPack.registerWorldEvent(
 	val handlers = FunctionTagArgument(tagName, ns)
 	val handlerFn = addHandler(tagName, ns, OopConstants.eventHandlerName(tagName, hashCode), block)
 
-	val key = "$name:$tagName"
-	if (key !in initializedWorldDispatchers) {
-		initializedWorldDispatchers += key
+	if (state(initializedWorldDispatchers) { mutableSetOf() }.add(tagName)) {
 		if (needsState) ensureWorldStateSetup()
 
 		val dispatchName = OopConstants.dispatchFunctionName(tagName)

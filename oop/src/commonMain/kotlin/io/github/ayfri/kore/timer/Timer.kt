@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.timer
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.DataPackStateKey
 import io.github.ayfri.kore.OopConstants
 import io.github.ayfri.kore.arguments.numbers.TimeNumber
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
@@ -20,7 +21,7 @@ import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.functions.tick
 import io.github.ayfri.kore.commands.function as functionCommand
 
-private val initializedTimers = mutableSetOf<String>()
+private val initializedTimers = DataPackStateKey<MutableSet<String>>("oop.timers")
 
 /** Describes a timer that counts upward until it reaches [duration]. */
 data class Timer(
@@ -75,9 +76,7 @@ data class TimerHandle(val timer: Timer) {
 
 /** Registers a timer and its init/tick plumbing once per datapack. */
 fun DataPack.registerTimer(timer: Timer): TimerHandle {
-    val key = "$name:${timer.name}"
-    if (key !in initializedTimers) {
-        initializedTimers += key
+    if (state(initializedTimers) { mutableSetOf() }.add(timer.name)) {
 
         load(OopConstants.timerInitFunctionName(timer.name)) {
             scoreboard {

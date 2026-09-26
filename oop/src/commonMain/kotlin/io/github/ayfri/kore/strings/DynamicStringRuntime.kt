@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.strings
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.DataPackStateKey
 import io.github.ayfri.kore.OopConstants
 import io.github.ayfri.kore.arguments.types.resources.StorageArgument
 import io.github.ayfri.kore.arguments.types.resources.storage
@@ -102,8 +103,7 @@ class DynamicStringRuntime internal constructor(
 	}
 }
 
-/** [DataPack] has no `equals`/`hashCode` override, so this keys on instance identity. */
-private val runtimes = mutableMapOf<DataPack, DynamicStringRuntime>()
+private val runtimeKey = DataPackStateKey<DynamicStringRuntime>("oop.dynamicStrings")
 
 /**
  * Registers the shared infrastructure required by every [DynamicString] (load hook + scoreboard
@@ -113,7 +113,7 @@ private val runtimes = mutableMapOf<DataPack, DynamicStringRuntime>()
  * custom [config] to swap the underlying storage namespace / NBT roots / scoreboard objective.
  */
 fun DataPack.registerDynamicStrings(config: DynamicStringConfig = DynamicStringConfig()): DynamicStringRuntime =
-	runtimes.getOrPut(this) {
+	state(runtimeKey) {
 		load {
 			scoreboard {
 				objectives {
@@ -126,4 +126,4 @@ fun DataPack.registerDynamicStrings(config: DynamicStringConfig = DynamicStringC
 
 /** Returns the runtime previously created by [registerDynamicStrings] or throws if missing. */
 internal fun DataPack.requireDynamicStringRuntime(): DynamicStringRuntime =
-	runtimes[this] ?: error("registerDynamicStrings() must be called before any DynamicString helper.")
+	stateOrNull(runtimeKey) ?: error("registerDynamicStrings() must be called before any DynamicString helper.")

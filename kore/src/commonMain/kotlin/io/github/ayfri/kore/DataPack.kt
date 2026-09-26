@@ -168,7 +168,20 @@ class DataPack(val name: String) {
 		it.absolute()
 	}
 
+	private val states = mutableMapOf<DataPackStateKey<*>, Any>()
+
 	private fun <T : Generator> registerGenerator() = mutableListOf<T>().also { generators += it }
+
+	/**
+	 * Returns the state stored under [key] on this pack, creating it with [default] on first access. Modules keep their
+	 * per-pack bookkeeping here so it lives and dies with the pack, instead of in global maps.
+	 */
+	@Suppress("UNCHECKED_CAST")
+	fun <T : Any> state(key: DataPackStateKey<T>, default: () -> T) = states.getOrPut(key, default) as T
+
+	/** Returns the state stored under [key] on this pack, or `null` when nothing created it yet. */
+	@Suppress("UNCHECKED_CAST")
+	fun <T : Any> stateOrNull(key: DataPackStateKey<T>) = states[key] as T?
 
 	/**
 	* Adds a user-defined function to the datapack.
@@ -279,6 +292,18 @@ class DataPack(val name: String) {
 		/** The default folder where the generated functions are stored, can be changed with [Configuration.generatedFunctionsFolder]. */
 		const val DEFAULT_GENERATED_FUNCTIONS_FOLDER = "generated_scopes"
 	}
+}
+
+/**
+ * Typed key for [DataPack.state], compared by identity: declare each one once, as a top-level `val`.
+ *
+ * ```kotlin
+ * private val initializedTimers = DataPackStateKey<MutableSet<String>>("oop.timers")
+ * if (state(initializedTimers) { mutableSetOf() }.add(timer.name)) load("init") { ... }
+ * ```
+ */
+class DataPackStateKey<T : Any>(val name: String) {
+	override fun toString() = "DataPackStateKey($name)"
 }
 
 /** Creates a new [DataPack] and applies the provided configuration block. */

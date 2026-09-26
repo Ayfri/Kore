@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.helpers.raycast
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.DataPackStateKey
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.numbers.PosNumber
@@ -17,7 +18,7 @@ import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.helpers.HelpersConstants
 import io.github.ayfri.kore.commands.function as functionCommand
 
-private val initializedRaycastObjective = mutableSetOf<String>()
+private val raycastObjectiveInitialized = DataPackStateKey<Unit>("helpers.raycastObjective")
 
 /** Configures how a generated raycast behaves and which callbacks it should trigger. */
 data class RaycastConfig(
@@ -57,9 +58,8 @@ private fun DataPack.raycastFunction(name: String, block: Function.() -> Unit): 
 
 /** Ensures the shared scoreboard objective required by raycasts exists once per datapack. */
 private fun DataPack.ensureRaycastObjective() {
-	val key = name
-	if (key in initializedRaycastObjective) return
-	initializedRaycastObjective += key
+	if (stateOrNull(raycastObjectiveInitialized) != null) return
+	state(raycastObjectiveInitialized) {}
 
 	load(HelpersConstants.raycastInitFunction) {
 		scoreboard {

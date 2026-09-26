@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.events
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.DataPackStateKey
 import io.github.ayfri.kore.OopConstants
 import io.github.ayfri.kore.arguments.CONTENTS
 import io.github.ayfri.kore.arguments.components.buildPartial
@@ -38,7 +39,7 @@ import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import io.github.ayfri.kore.utils.nbt
 import net.benwoodworth.knbt.NbtByte
 
-private val initializedDeathDispatch = mutableSetOf<String>()
+private val initializedDeathDispatch = DataPackStateKey<MutableSet<String>>("oop.deathDispatch")
 
 internal fun DataPack.addHandler(
 	tagName: String,
@@ -99,9 +100,7 @@ private fun DataPack.advancementEventForItem(
 }
 
 internal fun DataPack.ensureDeathTriggerSetup(ns: String) {
-	val key = "$name:$ns"
-	if (key in initializedDeathDispatch) return
-	initializedDeathDispatch += key
+	if (!state(initializedDeathDispatch) { mutableSetOf() }.add(ns)) return
 
 	val deathPredicate = Items.STRUCTURE_VOID.predicate {
 		buildPartial(OopConstants.deathTriggerKey) { put(OopConstants.deathTriggerKey, NbtByte(1)) }

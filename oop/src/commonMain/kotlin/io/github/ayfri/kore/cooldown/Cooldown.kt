@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.cooldown
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.DataPackStateKey
 import io.github.ayfri.kore.OopConstants
 import io.github.ayfri.kore.arguments.numbers.TimeNumber
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
@@ -20,7 +21,7 @@ import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.functions.tick
 import io.github.ayfri.kore.commands.function as functionCommand
 
-private val initializedCooldowns = mutableSetOf<String>()
+private val initializedCooldowns = DataPackStateKey<MutableSet<String>>("oop.cooldowns")
 
 /** Describes a scoreboard-backed cooldown identified by [name] and measured with [duration]. */
 data class Cooldown(
@@ -75,9 +76,7 @@ data class CooldownHandle(val cooldown: Cooldown) {
 
 /** Registers a cooldown and its init/tick plumbing once per datapack. */
 fun DataPack.registerCooldown(cooldown: Cooldown): CooldownHandle {
-	val key = "$name:${cooldown.name}"
-	if (key !in initializedCooldowns) {
-		initializedCooldowns += key
+	if (state(initializedCooldowns) { mutableSetOf() }.add(cooldown.name)) {
 
 		load(OopConstants.cooldownInitFunctionName(cooldown.name)) {
 			scoreboard {

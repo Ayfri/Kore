@@ -35,4 +35,11 @@ class CooldownTests : FunSpec({
 	test("cooldown") {
 		cooldownTests()
 	}
+
+	test("a pack rebuilt with the same name keeps its cooldown init") {
+		repeat(2) {
+			dataPack("cooldown_rebuild") { registerCooldown("rebuild_cd", 2.seconds) }
+				.generatedFunctions.any { it.name == OopConstants.cooldownInitFunctionName("rebuild_cd") } assertsIs true
+		}
+	}
 })

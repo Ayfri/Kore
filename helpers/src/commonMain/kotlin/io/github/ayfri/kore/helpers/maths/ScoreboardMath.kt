@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.helpers.maths
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.DataPackStateKey
 import io.github.ayfri.kore.arguments.enums.DataType
 import io.github.ayfri.kore.arguments.enums.Relation
 import io.github.ayfri.kore.arguments.maths.vec2
@@ -44,7 +45,7 @@ private const val TRIG_QUARTER_RANGE = 10_000
 /** Past this, `h × z` (up to `TRIG_FIXED_POINT × range`) overflows an Int. */
 private const val TRIG_MAX_RANGE = Int.MAX_VALUE / TRIG_FIXED_POINT
 
-private val handles = mutableMapOf<Pair<DataPack, String>, MathHandle>()
+private val handles = DataPackStateKey<MutableMap<String, MathHandle>>("helpers.math")
 
 /**
  * Runtime math engine of a datapack, returned by [registerMath].
@@ -384,4 +385,4 @@ infix fun ScoreboardDelegate.sqrtTo(output: ScoreboardDelegate) = math.sqrt(this
  * Calling it again returns the same handle.
  */
 fun DataPack.registerMath(objective: String = HelpersConstants.mathObjective) =
-	handles.getOrPut(this to objective) { MathHandle(this, objective) }
+	state(handles) { mutableMapOf() }.getOrPut(objective) { MathHandle(this, objective) }

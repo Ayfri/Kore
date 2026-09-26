@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.gamestate
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.DataPackStateKey
 import io.github.ayfri.kore.OopConstants
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.arguments.scores.ScoreboardCriteria
@@ -13,7 +14,7 @@ import io.github.ayfri.kore.functions.generatedFunction
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.commands.function as functionCommand
 
-private val initializedStates = mutableSetOf<String>()
+private val gameStatesInitialized = DataPackStateKey<Unit>("oop.gameStates")
 
 /** Represents one logical gameplay state stored in the shared state objective. */
 data class GameState(val id: Int, val name: String)
@@ -82,9 +83,8 @@ class GameStateManagerBuilder {
 fun DataPack.registerGameStates(block: GameStateManagerBuilder.() -> Unit): GameStateManager {
     val manager = GameStateManagerBuilder().apply(block).build()
 
-    val key = "$name:game_state"
-    if (key !in initializedStates) {
-        initializedStates += key
+    if (stateOrNull(gameStatesInitialized) == null) {
+        state(gameStatesInitialized) {}
 
         load(OopConstants.stateInitFunction) {
             scoreboard {

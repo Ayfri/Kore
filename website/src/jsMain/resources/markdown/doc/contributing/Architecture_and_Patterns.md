@@ -163,6 +163,22 @@ Annotate the sealed base with `@GeneratedSealedSerializer`; the `kore-ksp` modul
 generates a reflection-free `fooSealedSerializer()` factory at compile time, which the family's serializer object passes
 to `NamespacedPolymorphicSerializer`'s constructor.
 
+### Per-pack state
+
+Helpers that must set something up once per datapack (a `load` function, a shared objective, a runtime object) keep
+that bookkeeping on the pack with `DataPack.state`, never in a top-level map or set. The state is released with the pack,
+and two packs sharing a name never see each other's state.
+
+```kotlin
+private val initializedTimers = DataPackStateKey<MutableSet<String>>("oop.timers")
+
+fun DataPack.registerTimer(timer: Timer) {
+	if (state(initializedTimers) { mutableSetOf() }.add(timer.name)) load("timer_${timer.name}_init") { /* ... */ }
+}
+```
+
+`stateOrNull(key)` reads the state without creating it.
+
 ## Fast heuristics when you are unsure where a change belongs
 
 - **Build, publishing, or versioning behavior** -> `build-logic/` and root Gradle metadata.
