@@ -172,7 +172,7 @@ data object PLAYER : ItemSlotWrapper {
 	val CURSOR = subType("cursor", 499)
 
 	/** The crafting slots of the player inventory. */
-	val CRAFTING = IndexedItemSlot(500, 504) { "${asString()}.crafting" }
+	val CRAFTING = IndexedItemSlot(500, 503) { "${asString()}.crafting" }
 }
 
 /** Saddle slot (400). */
@@ -181,7 +181,7 @@ val SADDLE = ItemSlotType(400) { "saddle" }
 /** Weapon slots (mainhand: 98, offhand: 99). */
 data object WEAPON : ItemSlotType, RangeItemSlot {
 	override val start = 98
-	override val endInclusive = 9
+	override val endInclusive = 99
 
 	override fun asIndex() = 98
 	override fun name() = "weapon"
