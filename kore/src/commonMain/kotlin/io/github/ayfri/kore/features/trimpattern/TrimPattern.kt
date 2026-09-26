@@ -6,7 +6,7 @@ import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.PlainTextComponent
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
-import io.github.ayfri.kore.arguments.types.resources.ModelArgument
+import io.github.ayfri.kore.arguments.types.ResourceLocationArgument
 import io.github.ayfri.kore.generated.arguments.types.TrimPatternArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -28,8 +28,11 @@ import kotlinx.serialization.Transient
 data class TrimPattern(
 	@Transient
 	override var fileName: String = "trim_pattern",
-	/** The texture asset to use for the trim pattern. */
-	var assetId: ModelArgument,
+	/**
+	 * Id of the pattern textures, `minecraft:coast` makes the game read `trims/entity/humanoid/coast` and
+	 * `trims/entity/humanoid_leggings/coast`. Not a texture path.
+	 */
+	var assetId: ResourceLocationArgument,
 	/** The description of the trim pattern. */
 	var description: ChatComponents,
 	/** Whether the pattern should render as a decal. */
@@ -47,17 +50,19 @@ fun TrimPattern.description(text: String = "", color: Color? = null, block: Plai
 /**
  * Create and register a trim pattern in this [DataPack].
  *
- * Produces `data/<namespace>/trim_pattern/<fileName>.json`.
+ * Produces `data/<namespace>/trim_pattern/<fileName>.json`. [assetId] defaults to the pattern's own id, so the
+ * textures go in `assets/<namespace>/textures/trims/entity/humanoid/<fileName>.png`; pass `TrimPatterns.COAST` to reuse
+ * the vanilla coast textures.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/trims
  * JSON format reference: https://minecraft.wiki/w/Tutorial:Adding_custom_trims
  */
 fun DataPack.trimPattern(
 	fileName: String = "trim_pattern",
-	assetId: ModelArgument,
+	assetId: ResourceLocationArgument = TrimPatternArgument(fileName, name),
 	description: ChatComponents = textComponent(),
 	decal: Boolean = false,
-	block: TrimPattern.() -> Unit
+	block: TrimPattern.() -> Unit = {},
 ): TrimPatternArgument {
 	val trimPattern = TrimPattern(fileName, assetId, description, decal).apply(block)
 	trimPatterns += trimPattern

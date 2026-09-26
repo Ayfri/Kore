@@ -83,19 +83,27 @@ trimMaterial("dark_quartz", Textures.Trims.ColorPalettes.QUARTZ) {
 
 Trim patterns define the visual design applied to armor. Each pattern specifies:
 
-- **Asset ID**: Points to the pattern texture model
+- **Asset ID**: The id the game builds the texture paths from, `minecraft:coast` reads
+  `textures/trims/entity/humanoid/coast.png` and `textures/trims/entity/humanoid_leggings/coast.png` from the resource
+  pack. It defaults to the pattern's own id
 - **Description**: The text shown in-game when hovering over trimmed armor
 - **Decal**: Whether the pattern should render as a decal overlay (like netherite patterns)
 
 ### Basic Usage
 
 ```kotlin
-trimPattern("stripes", Textures.Trims.Entity.Humanoid.COAST, textComponent("Stripes")) {
+// Reuses the vanilla coast textures
+trimPattern("stripes", TrimPatterns.COAST, textComponent("Stripes")) {
 	description("Striped Pattern", Color.GRAY)
+}
+
+// Asset id <namespace>:custom, textures in assets/<namespace>/textures/trims/entity/humanoid/custom.png
+trimPattern("custom") {
+	description("Custom Pattern")
 }
 ```
 
-This creates a trim pattern file at `data/<namespace>/trim_pattern/stripes.json`.
+This creates trim pattern files at `data/<namespace>/trim_pattern/stripes.json` and `custom.json`.
 
 ### Pattern as Decal
 
@@ -103,7 +111,7 @@ Setting
 `decal = true` makes the pattern render as an overlay, which is useful for patterns that should appear on top of the base armor texture without replacing it (similar to how netherite trim patterns work):
 
 ```kotlin
-trimPattern("overlay", Textures.Trims.Entity.Humanoid.SENTRY, textComponent("Overlay"), decal = true) {
+trimPattern("overlay", TrimPatterns.SENTRY, textComponent("Overlay"), decal = true) {
 	description("Overlay Pattern")
 }
 ```
@@ -114,7 +122,7 @@ A trim pattern generates JSON like this:
 
 ```json
 {
-	"asset_id": "minecraft:trims/entity/humanoid/coast",
+	"asset_id": "minecraft:coast",
 	"description": {
 		"text": "Striped Pattern",
 		"color": "gray"
@@ -127,7 +135,7 @@ With decal enabled:
 
 ```json
 {
-	"asset_id": "minecraft:trims/entity/humanoid/sentry",
+	"asset_id": "minecraft:sentry",
 	"description": {
 		"text": "Overlay Pattern"
 	},
