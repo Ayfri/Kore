@@ -175,12 +175,15 @@ These helpers are especially valuable when you would otherwise repeat the same `
 ```kotlin
 function("setup") {
 	player.batch("init_player") {
-		giveItem(Items.DIAMOND)
-		giveEffect(Effects.SPEED, duration = 200)
-		sendMessage("Welcome!")
+		give(self(), Items.DIAMOND)
+		effect(self()) { give(Effects.SPEED, duration = 200) }
+		tellraw(self(), "Welcome!")
 	}
 }
 ```
+
+The block receives a plain `Function` run `as` the entity, so it targets that entity with `self()`: the `Entity`
+extensions like `giveItem` need an entity receiver and aren't in scope there.
 
 `batch()` is a good fit for onboarding flows, class kits, respawn setup, or any repeated multi-command routine that
 should stay grouped under one entity context.
@@ -201,12 +204,12 @@ function("commands_demo") {
 	player.sendMessage("Hello!")
 	player.showTitle(textComponent("Title"), textComponent("Subtitle"))
 	player.showActionBar(textComponent("Action bar text"))
-	player.playSound(Sounds.ENTITY_EXPERIENCE_ORB_PICKUP)
+	player.playSound(SoundEvents.Entity.ExperienceOrb.PICKUP)
 	player.mount(zombie)
 	player.dismount()
 	player.clearItems()
 	player.giveItem(Items.DIAMOND)
-	player.replaceItem(ItemSlotType.MAINHAND, itemStack(Items.NETHERITE_SWORD))
+	player.replaceItem(WEAPON.MAINHAND, itemStack(Items.NETHERITE_SWORD))
 }
 ```
 
@@ -249,17 +252,17 @@ function("bridge_demo") {
 	val mobs = entity(EntityTypes.ZOMBIE, limitToOne = false)
 	mobs.storeCountIn(kills)
 	mobs.storeCountIn(player, "kore.mob_count")
-	mobs.storeCountIn(storage("kore", "stats"), "mob_count")
+	mobs.storeCountIn(storage("stats", "kore"), "mob_count")
 }
 ```
 
-| Function          | Description                                                        |
-|-------------------|--------------------------------------------------------------------|
-| `getScoreEntity`  | Get a [`ScoreboardEntity`](/docs/oop/scoreboards) for an objective |
-| `joinTeam`        | Join a [team](/docs/oop/teams) by name or `Team` handle             |
-| `leaveAnyTeam`    | Leave the current team                                              |
-| `setScore`        | Set a score without building a handle                               |
-| `storeCountIn`    | Store how many entities match this selector into a score, entity NBT, or storage NBT |
+| Function         | Description                                                                          |
+|------------------|--------------------------------------------------------------------------------------|
+| `getScoreEntity` | Get a [`ScoreboardEntity`](/docs/oop/scoreboards) for an objective                   |
+| `joinTeam`       | Join a [team](/docs/oop/teams) by name or `Team` handle                              |
+| `leaveAnyTeam`   | Leave the current team                                                               |
+| `setScore`       | Set a score without building a handle                                                |
+| `storeCountIn`   | Store how many entities match this selector into a score, entity NBT, or storage NBT |
 
 ## Entity Effects
 
@@ -294,9 +297,9 @@ dataPack("arena") {
 		player.joinTeam("red")
 
 		player.batch("round_start_player") {
-			giveItem(Items.DIAMOND)
-			giveEffect(Effects.SPEED, duration = 200)
-			showActionBar(textComponent("Fight!"))
+			give(self(), Items.DIAMOND)
+			effect(self()) { give(Effects.SPEED, duration = 200) }
+			title(self(), TitleLocation.ACTIONBAR, textComponent("Fight!"))
 		}
 
 		mobs.storeCountIn(player.getScoreEntity("mobs_left"))

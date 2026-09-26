@@ -86,16 +86,12 @@ dataPack("arena") {
 		scoreboard.objectives.add("kills", ScoreboardCriteria.DUMMY, textComponent("Kills"))
 		scoreboard.objectives.add("game_state", ScoreboardCriteria.DUMMY)
 		scoreboard.objectives.add("cooldown_dash", ScoreboardCriteria.DUMMY)
-		teams {
-			team("red") {
-				color = FormattingColor.RED
-				collisionRule = CollisionRule.PUSH_OTHER_TEAMS
-			}
-			team("blue") {
-				color = FormattingColor.BLUE
-				collisionRule = CollisionRule.PUSH_OTHER_TEAMS
-			}
-		}
+		teams.add("red")
+		teams.modify("red") { color(FormattingColor.RED) }
+		teams.modify("red") { collisionRule(CollisionRule.PUSH_OTHER_TEAMS) }
+		teams.add("blue")
+		teams.modify("blue") { color(FormattingColor.BLUE) }
+		teams.modify("blue") { collisionRule(CollisionRule.PUSH_OTHER_TEAMS) }
 	}
 
 	// --- Player setup, selector rebuilt in each function ---
@@ -129,12 +125,7 @@ dataPack("arena") {
 		execute {
 			asTarget(allPlayers())
 			run {
-				title(self()) {
-					title(textComponent("Game Started!") {
-						color = Color.GREEN
-						bold = true
-					})
-				}
+				title(self(), TitleLocation.TITLE, textComponent("Game Started!", Color.GREEN) { bold = true })
 			}
 		}
 	}
@@ -143,7 +134,7 @@ dataPack("arena") {
 	function("tick_cooldowns") {
 		execute {
 			ifCondition {
-				score(allPlayers(), "cooldown_dash", 1..Int.MAX_VALUE)
+				score(allPlayers(), "cooldown_dash", rangeOrIntStart(1))
 			}
 			run {
 				scoreboard.players.remove(allPlayers(), "cooldown_dash", 1)
@@ -167,13 +158,15 @@ dataPack("arena") {
 	val bluePlayer = player("BluePlayer")
 
 	// --- Teams ---
-	val redTeam = team("red") {
-		color = FormattingColor.RED
-		collisionRule = CollisionRule.PUSH_OTHER_TEAMS
-	}
-	val blueTeam = team("blue") {
-		color = FormattingColor.BLUE
-		collisionRule = CollisionRule.PUSH_OTHER_TEAMS
+	val redTeam = team("red")
+	val blueTeam = team("blue")
+	function("setup_teams") {
+		redTeam.ensureExists()
+		redTeam.setColor(FormattingColor.RED)
+		redTeam.setCollisionRule(CollisionRule.PUSH_OTHER_TEAMS)
+		blueTeam.ensureExists()
+		blueTeam.setColor(FormattingColor.BLUE)
+		blueTeam.setCollisionRule(CollisionRule.PUSH_OTHER_TEAMS)
 	}
 
 	// --- Scoreboard ---
@@ -196,14 +189,14 @@ dataPack("arena") {
 
 	// --- Player setup ---
 	function("join_red") {
-		redPlayer.joinTeam("red")
+		redPlayer.joinTeam(redTeam)
 		redPlayer.setGamemode(Gamemode.SURVIVAL)
 		redPlayer.giveEffect(Effects.SPEED, duration = 999999, amplifier = 1)
 		kills.getScore(redPlayer).set(0)
 	}
 
 	function("join_blue") {
-		bluePlayer.joinTeam("blue")
+		bluePlayer.joinTeam(blueTeam)
 		bluePlayer.setGamemode(Gamemode.SURVIVAL)
 		bluePlayer.giveEffect(Effects.SPEED, duration = 999999, amplifier = 1)
 		kills.getScore(bluePlayer).set(0)
@@ -212,14 +205,8 @@ dataPack("arena") {
 	// --- State transition ---
 	function("start_game") {
 		states.transitionTo("running")
-		redPlayer.showTitle(textComponent("Game Started!") {
-			color = Color.GREEN
-			bold = true
-		})
-		bluePlayer.showTitle(textComponent("Game Started!") {
-			color = Color.GREEN
-			bold = true
-		})
+		redPlayer.showTitle(textComponent("Game Started!", Color.GREEN) { bold = true })
+		bluePlayer.showTitle(textComponent("Game Started!", Color.GREEN) { bold = true })
 	}
 
 	// --- Spawning ---

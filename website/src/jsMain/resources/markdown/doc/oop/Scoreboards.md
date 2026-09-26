@@ -142,13 +142,13 @@ against it:
 function("next_wave") {
 	val wave = fakePlayer("wave").getScoreEntity("game_state")
 	wave += 1
-	wave.copyTo(storage("kore", "game"), "wave")
+	wave.copyTo(storage("game", "kore"), "wave")
 }
 ```
 
 ```mcfunction
 scoreboard players add #wave game_state 1
-execute store result storage kore:game wave int 1.0 run scoreboard players get #wave game_state
+execute store result storage kore:game wave int 1 run scoreboard players get #wave game_state
 ```
 
 `fakePlayer("wave")` and `fakePlayer("#wave")` both produce `#wave`. Use the `FakePlayer` constructor directly for
@@ -167,7 +167,7 @@ function("sync") {
 
 	// from NBT: scores are integers, so a scale converts fractional values
 	stat.copyDataFrom(player, "Inventory[0].count")
-	stat.copyDataFrom(storage("kore", "stats"), "charge")
+	stat.copyDataFrom(storage("stats", "kore"), "charge")
 
 	// from a live count of matching entities
 	stat.copyEntityCountFrom(entity(EntityTypes.ZOMBIE, limitToOne = false))
@@ -175,7 +175,7 @@ function("sync") {
 
 	// and back out into NBT
 	stat.copyTo(player, "kore.charge", DataType.INT)
-	stat.copyTo(storage("kore", "stats"), "charge", DataType.INT)
+	stat.copyTo(storage("stats", "kore"), "charge", DataType.INT)
 }
 ```
 
@@ -201,11 +201,11 @@ function("charge_up") {
 This emits `scoreboard players add @s last_crystal_charge 10`.
 
 `PlayerObjective` covers `set`, `add`, `remove`, `reset`, `get`, `enable`, `operation`, the `+=` / `-=` / `++` / `--`
-operators, and the `min` / `max` infix operations:
+operators (`++` / `--` need a `var`, Kotlin reassigns the variable), and the `min` / `max` infix operations:
 
 ```kotlin
 function("self_score_math") {
-	val mine = scoreboard.objective(self(), "score")
+	var mine = scoreboard.objective(self(), "score")
 	val best = scoreboard.objective(literal("#best"), "score")
 
 	mine++

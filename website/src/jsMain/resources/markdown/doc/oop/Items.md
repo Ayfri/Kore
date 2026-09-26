@@ -21,8 +21,8 @@ spawning, or embedding it in wider entity workflows.
 function("item_demo") {
 	val sword = itemStack(Items.DIAMOND_SWORD) {
 		enchantments {
-			sharpness(5)
-			unbreaking(3)
+			enchantment(Enchantments.SHARPNESS, 5)
+			enchantment(Enchantments.UNBREAKING, 3)
 		}
 	}
 	player.giveItem(sword)
@@ -48,11 +48,11 @@ are omitted, matching how vanilla serializes a stack with no component patch.
 function("stock_shop") {
 	val sword = itemStack(Items.DIAMOND_SWORD, 3) {
 		enchantments {
-			sharpness(5)
+			enchantment(Enchantments.SHARPNESS, 5)
 		}
 	}
 
-	data(storage("kore", "shop")).modify("offer.item", sword.toNbt())
+	data(storage("shop", "kore")).modify("offer.item", sword.toNbt())
 }
 ```
 
@@ -82,7 +82,7 @@ function("shop_display") {
 Generated output:
 
 ```mcfunction
-summon minecraft:item 0.0 0.0 0.0 {Invulnerable:1b,NoGravity:1b,Tags:["display"],Item:{id:"minecraft:diamond_sword",components:{custom_name:{text:"Shop",color:"gold"}}},PickupDelay:32767s,Age:-32768s,CustomName:{text:"Shop",color:"gold"},CustomNameVisible:1b}
+summon minecraft:item 0.0 0.0 0.0 {Invulnerable:1b,NoGravity:1b,Tags:["display"],Item:{id:"minecraft:diamond_sword",components:{custom_name:{text:"Shop",color:"gold"}}},PickupDelay:32767s,Age:-32768s,CustomName:{type:"text",color:"gold",text:"Shop"},CustomNameVisible:1b}
 ```
 
 `showcase = true` is a shortcut for a static display item: it sets `PickupDelay` and `Age` so the entity never
