@@ -25,81 +25,81 @@ private val initializedTimers = DataPackStateKey<MutableSet<String>>("oop.timers
 
 /** Describes a timer that counts upward until it reaches [duration]. */
 data class Timer(
-    val duration: TimeNumber = 100.ticks,
-    val name: String,
+	val duration: TimeNumber = 100.ticks,
+	val name: String,
 )
 
 /** Exposes helper operations for a registered [Timer]. */
 data class TimerHandle(val timer: Timer) {
 	/** Runs [block] once [entity] reaches the configured timer duration, then stops the timer. */
-    context(fn: Function)
-    fun onComplete(entity: Entity, block: Function.() -> Unit) {
-        val generated = fn.datapack.hashedGeneratedFunction(OopConstants.timerCompleteFunctionPrefix(timer.name)) {
-            block()
-            scoreboard {
-                players {
-                    set(entity.asSelector(), timer.name, -1)
-                }
-            }
-        }
+	context(fn: Function)
+	fun onComplete(entity: Entity, block: Function.() -> Unit) {
+		val generated = fn.datapack.hashedGeneratedFunction(OopConstants.timerCompleteFunctionPrefix(timer.name)) {
+			block()
+			scoreboard {
+				players {
+					set(entity.asSelector(), timer.name, -1)
+				}
+			}
+		}
 
-        fn.datapack.functionTag(OopConstants.timerCompleteHandlersTag, namespace = OopConstants.namespace) {
-            this += generated.asId()
-        }
+		fn.datapack.functionTag(OopConstants.timerCompleteHandlersTag, namespace = OopConstants.namespace) {
+			this += generated.asId()
+		}
 
-        fn.execute {
-            ifCondition {
-                score(entity.asSelector(), timer.name, rangeOrInt(timer.duration.value.toInt()))
-            }
-            run { functionCommand(generated) }
-        }
-    }
+		fn.execute {
+			ifCondition {
+				score(entity.asSelector(), timer.name, rangeOrInt(timer.duration.value.toInt()))
+			}
+			run { functionCommand(generated) }
+		}
+	}
 
 	/** Starts counting this timer from `0` for [entity]. */
-    context(fn: Function)
-    fun start(entity: Entity) = fn.scoreboard {
-        players {
-            set(entity.asSelector(), timer.name, 0)
-        }
-    }
+	context(fn: Function)
+	fun start(entity: Entity) = fn.scoreboard {
+		players {
+			set(entity.asSelector(), timer.name, 0)
+		}
+	}
 
 	/** Stops this timer for [entity] by setting its score to `-1`. */
-    context(fn: Function)
-    fun stop(entity: Entity) = fn.scoreboard {
-        players {
-            set(entity.asSelector(), timer.name, -1)
-        }
-    }
+	context(fn: Function)
+	fun stop(entity: Entity) = fn.scoreboard {
+		players {
+			set(entity.asSelector(), timer.name, -1)
+		}
+	}
 }
 
 /** Registers a timer and its init/tick plumbing once per datapack. */
 fun DataPack.registerTimer(timer: Timer): TimerHandle {
-    if (state(initializedTimers) { mutableSetOf() }.add(timer.name)) {
+	if (state(initializedTimers) { mutableSetOf() }.add(timer.name)) {
 
-        load(OopConstants.timerInitFunctionName(timer.name)) {
-            scoreboard {
-                objectives {
-                    add(timer.name, ScoreboardCriteria.DUMMY)
-                }
-            }
-        }
+		load(OopConstants.timerInitFunctionName(timer.name)) {
+			scoreboard {
+				objectives {
+					add(timer.name, ScoreboardCriteria.DUMMY)
+				}
+			}
+		}
 
-        tick(OopConstants.timerTickFunctionName(timer.name)) {
-            scoreboard {
-                players {
-                    add(allPlayers {
-                        scores {
-                            score(timer.name, rangeOrIntStart(0))
-                        }
-                    }, timer.name, 1)
-                }
-            }
-        }
-    }
+		tick(OopConstants.timerTickFunctionName(timer.name)) {
+			scoreboard {
+				players {
+					add(allPlayers {
+						scores {
+							score(timer.name, rangeOrIntStart(0))
+						}
+					}, timer.name, 1)
+				}
+			}
+		}
+	}
 
-    return TimerHandle(timer)
+	return TimerHandle(timer)
 }
 
 /** Creates and registers a timer from a name and duration. */
 fun DataPack.registerTimer(name: String, duration: TimeNumber = 100.ticks) =
-    registerTimer(Timer(name = name, duration = duration))
+	registerTimer(Timer(name = name, duration = duration))
