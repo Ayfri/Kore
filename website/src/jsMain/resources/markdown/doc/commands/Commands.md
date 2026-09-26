@@ -60,9 +60,9 @@ function("teleport_examples") {
 Generated output:
 
 ```mcfunction
-teleport @a 100.0 64.0 100.0
+teleport @a 100 64 100
 teleport @a @s
-teleport @s 0.0 100.0 0.0 0 90
+teleport @s 0 100 0 0 90
 ```
 
 ### Give Command
@@ -104,6 +104,26 @@ Generated output:
 ```mcfunction
 kill @e[type=minecraft:zombie]
 kill @s
+```
+
+### Kick Command
+
+The `kick` command disconnects players from the server, with an optional reason that can contain target selectors. It
+needs permission level 3, one above the default `function-permission-level` of 2, so a function only runs it on a server
+that raises this setting in `server.properties`.
+
+```kotlin
+function("kick_examples") {
+	kick(allPlayers())
+	kick(allPlayers(), "Server restarting")
+}
+```
+
+Generated output:
+
+```mcfunction
+kick @a
+kick @a Server restarting
 ```
 
 ### Effect Command
@@ -319,7 +339,7 @@ function("spawn_mobs") {
 Generated output:
 
 ```mcfunction
-summon minecraft:zombie 0.0 64.0 0.0
+summon minecraft:zombie 0 64 0
 summon minecraft:creeper ~ ~ ~ {CustomName:"Boom",NoAI:1b}
 ```
 
@@ -352,8 +372,8 @@ function("build") {
 Generated output:
 
 ```mcfunction
-setblock 0.0 64.0 0.0 minecraft:diamond_block
-setblock 0.0 65.0 0.0 minecraft:stone replace
+setblock 0 64 0 minecraft:diamond_block
+setblock 0 65 0 minecraft:stone replace
 ```
 
 ### Fill Command
@@ -373,9 +393,9 @@ function("fill_area") {
 Generated output:
 
 ```mcfunction
-fill 0.0 64.0 0.0 10.0 70.0 10.0 minecraft:stone
-fill 0.0 64.0 0.0 10.0 70.0 10.0 minecraft:air replace minecraft:stone
-fill 0.0 64.0 0.0 10.0 70.0 10.0 minecraft:glass hollow
+fill 0 64 0 10 70 10 minecraft:stone
+fill 0 64 0 10 70 10 minecraft:air replace minecraft:stone
+fill 0 64 0 10 70 10 minecraft:glass hollow
 ```
 
 ### Enchant Command
@@ -438,8 +458,8 @@ Generated output:
 ```mcfunction
 spawnpoint
 spawnpoint @s
-spawnpoint @s 100.0 64.0 100.0
-spawnpoint @s 100.0 64.0 100.0 90 0
+spawnpoint @s 100 64 100
+spawnpoint @s 100 64 100 90 0
 ```
 
 ### SetWorldSpawn Command
@@ -459,22 +479,23 @@ Generated output:
 
 ```mcfunction
 setworldspawn
-setworldspawn 0.0 64.0 0.0
-setworldspawn 0.0 64.0 0.0 0 0
+setworldspawn 0 64 0
+setworldspawn 0 64 0 0 0
 ```
 
 ### StopSound Command
 
 The
-`stopsound` command stops currently playing sounds for players. You can filter by sound source (master, music, weather, etc.) and specific sound. Useful for stopping looping sounds or music.
+`stopsound` command stops currently playing sounds for players. You can filter by sound source (master, music, weather, etc.) and specific sound event (from `SoundEvents`, not the sound files in `Sounds`). Useful for stopping looping sounds or music.
 
 ```kotlin
 function("stopsound_examples") {
 	stopSound(self())
 	stopSound(self(), PlaySoundMixer.MASTER)
-	stopSound(self(), PlaySoundMixer.MASTER, Sounds.Mob.Bat.TAKEOFF)
+	stopSound(self(), PlaySoundMixer.MASTER, SoundEvents.Entity.Bat.TAKEOFF)
+	stopSound(self(), sound = SoundEvents.Entity.Bat.TAKEOFF)
 	stopSoundAllSources(self())
-	stopSoundAllSources(self(), Sounds.Mob.Bat.TAKEOFF)
+	stopSoundAllSources(self(), SoundEvents.Entity.Bat.TAKEOFF)
 }
 ```
 
@@ -483,9 +504,10 @@ Generated output:
 ```mcfunction
 stopsound @s
 stopsound @s master
-stopsound @s master minecraft:mob/bat/takeoff
+stopsound @s master minecraft:entity.bat.takeoff
+stopsound @s * minecraft:entity.bat.takeoff
 stopsound @s *
-stopsound @s * minecraft:mob/bat/takeoff
+stopsound @s * minecraft:entity.bat.takeoff
 ```
 
 ### Stopwatch Command
@@ -1159,7 +1181,7 @@ particle item{item:{id:"minecraft:diamond_sword",components:{enchantments:{"mine
 particle sculk_charge 1.5707963267948966
 particle shriek 100
 particle trail{color:16733525,duration:10,target:[1,2,3]}
-particle vibration 1.0 2.0 3.0 10
+particle vibration 1 2 3 10
 ```
 
 ### Clone Command
@@ -1215,11 +1237,11 @@ function("clone_examples") {
 Generated output:
 
 ```mcfunction
-clone 0.0 64.0 0.0 10.0 74.0 10.0 100.0 64.0 100.0
-clone from minecraft:the_nether 0.0 64.0 0.0 10.0 74.0 10.0 to minecraft:overworld 0.0 64.0 0.0
-clone 0.0 64.0 0.0 10.0 74.0 10.0 100.0 64.0 100.0 masked move
-clone 0.0 64.0 0.0 10.0 74.0 10.0 100.0 64.0 100.0 filtered #minecraft:base_stone_overworld force
-clone 0.0 64.0 0.0 10.0 74.0 10.0 5.0 64.0 5.0 strict
+clone 0 64 0 10 74 10 100 64 100
+clone from minecraft:the_nether 0 64 0 10 74 10 to minecraft:overworld 0 64 0
+clone 0 64 0 10 74 10 100 64 100 masked move
+clone 0 64 0 10 74 10 100 64 100 filtered #minecraft:base_stone_overworld force
+clone 0 64 0 10 74 10 5 64 5 strict
 ```
 
 ### WorldBorder Command

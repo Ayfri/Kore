@@ -6,9 +6,9 @@ import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.literals.*
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
-import io.github.ayfri.kore.arguments.types.resources.SoundArgument
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.arguments.types.EnchantmentArgument
+import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.BiomeArgument
 import io.github.ayfri.kore.utils.asArg
 
@@ -71,6 +71,12 @@ fun Function.jfrStart() = addLine(command("jfr", literal("start")))
 /** Stops Java Flight Recorder tracing. */
 fun Function.jfrStop() = addLine(command("jfr", literal("stop")))
 
+/**
+ * Disconnects the [targets] players from the server, with an optional [reason] that can contain target selectors.
+ * Needs permission level 3, so a function only runs it when the server's `function-permission-level` is at least 3.
+ */
+fun Function.kick(targets: EntityArgument, reason: String? = null) = addLine(command("kick", targets, literal(reason)))
+
 /** Kills [targets], or the command source when omitted. */
 fun Function.kill(targets: EntityArgument? = null) = addLine(command("kill", targets))
 
@@ -120,17 +126,17 @@ fun Function.spawnPoint(target: EntityArgument? = null, pos: Vec3? = null, rotat
 fun Function.spectate(target: EntityArgument? = null, player: EntityArgument? = null) =
 	addLine(command("spectate", target, player))
 
-/** Stops [sound] from playing for [targets] on the selected [source]. */
+/** Stops the [sound] event from playing for [targets] on the selected [source], every source when only [sound] is given. */
 fun Function.stopSound(
 	targets: EntityArgument,
 	source: PlaySoundMixer? = null,
-	sound: SoundArgument? = null,
-) = addLine(command("stopsound", targets, literal(source?.asArg()), sound))
+	sound: SoundEventArgument? = null,
+) = addLine(command("stopsound", targets, literal(source?.asArg() ?: sound?.let { "*" }), sound))
 
-/** Stops [sound] from every source for [targets]. */
+/** Stops the [sound] event from every source for [targets]. */
 fun Function.stopSoundAllSources(
 	targets: EntityArgument,
-	sound: SoundArgument? = null,
+	sound: SoundEventArgument? = null,
 ) = addLine(command("stopsound", targets, all(), sound))
 
 /** Sends a team message as the command source. */

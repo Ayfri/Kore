@@ -1,8 +1,10 @@
 package io.github.ayfri.kore.commands
 
+import io.github.ayfri.kore.arguments.components.item.CustomComponent
 import io.github.ayfri.kore.arguments.enums.Difficulty
 import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.maths.vec3
+import io.github.ayfri.kore.arguments.types.literals.allPlayers
 import io.github.ayfri.kore.arguments.types.literals.rotation
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.arguments.types.literals.uuid
@@ -12,9 +14,11 @@ import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.Items
-import io.github.ayfri.kore.generated.Sounds
+import io.github.ayfri.kore.generated.SoundEvents
 import io.kotest.core.spec.style.FunSpec
 import net.benwoodworth.knbt.NbtInt
+
+private class DamageLikeComponent(damage: Int) : CustomComponent(NbtInt(damage))
 
 fun Function.commandsTests() {
 	debugStart() assertsIs "debug start"
@@ -39,6 +43,9 @@ fun Function.commandsTests() {
 	give(self(), Items.STONE {
 		addComponent("test", NbtInt(1))
 	}) assertsIs "give @s minecraft:stone[test=1]"
+	give(self(), Items.STONE {
+		this["test"] = DamageLikeComponent(2)
+	}) assertsIs "give @s minecraft:stone[test=2]"
 
 	help() assertsIs "help"
 	help("test") assertsIs "help test"
@@ -46,6 +53,9 @@ fun Function.commandsTests() {
 
 	jfrStart() assertsIs "jfr start"
 	jfrStop() assertsIs "jfr stop"
+
+	kick(allPlayers()) assertsIs "kick @a"
+	kick(allPlayers(), "Server restarting") assertsIs "kick @a Server restarting"
 
 	kill() assertsIs "kill"
 	kill(self()) assertsIs "kill @s"
@@ -67,12 +77,12 @@ fun Function.commandsTests() {
 	seed() assertsIs "seed"
 
 	setWorldSpawn() assertsIs "setworldspawn"
-	setWorldSpawn(vec3(1, 2, 3)) assertsIs "setworldspawn 1.0 2.0 3.0"
+	setWorldSpawn(vec3(1, 2, 3)) assertsIs "setworldspawn 1 2 3"
 	setWorldSpawn(vec3(), rotation()) assertsIs "setworldspawn ~ ~ ~ ~ ~"
 
 	spawnPoint() assertsIs "spawnpoint"
 	spawnPoint(self()) assertsIs "spawnpoint @s"
-	spawnPoint(self(), vec3(1, 2, 3)) assertsIs "spawnpoint @s 1.0 2.0 3.0"
+	spawnPoint(self(), vec3(1, 2, 3)) assertsIs "spawnpoint @s 1 2 3"
 	spawnPoint(self(), vec3(), rotation(90, 50)) assertsIs "spawnpoint @s ~ ~ ~ 90 50"
 
 	spectate() assertsIs "spectate"
@@ -84,10 +94,11 @@ fun Function.commandsTests() {
 	stopSound(
 		self(),
 		PlaySoundMixer.MASTER,
-		Sounds.Mob.Bat.TAKEOFF
-	) assertsIs "stopsound @s master minecraft:mob/bat/takeoff"
+		SoundEvents.Entity.Bat.TAKEOFF
+	) assertsIs "stopsound @s master minecraft:entity.bat.takeoff"
+	stopSound(self(), sound = SoundEvents.Entity.Bat.TAKEOFF) assertsIs "stopsound @s * minecraft:entity.bat.takeoff"
 	stopSoundAllSources(self()) assertsIs "stopsound @s *"
-	stopSoundAllSources(self(), Sounds.Mob.Bat.TAKEOFF) assertsIs "stopsound @s * minecraft:mob/bat/takeoff"
+	stopSoundAllSources(self(), SoundEvents.Entity.Bat.TAKEOFF) assertsIs "stopsound @s * minecraft:entity.bat.takeoff"
 
 	teamMsg("test") assertsIs "teammsg test"
 	tm("test") assertsIs "teammsg test"
