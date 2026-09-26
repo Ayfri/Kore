@@ -5,7 +5,7 @@ nav-title: GitHub Actions Publishing
 description: Automatically publish your Kore datapacks using GitHub Actions with mc-publish.
 keywords: minecraft, datapack, kore, github actions, publishing, automation, ci/cd
 date-created: 2025-09-30
-date-modified: 2026-06-24
+date-modified: 2026-09-26
 routeOverride: /docs/advanced/github-actions-publishing
 ---
 
@@ -118,8 +118,7 @@ For more control over the publishing process, you can customize various aspects:
 
     # Supported game versions
     game-versions: |
-		1.21.10
-		1.21.11
+      26.2
 
     # Mod loaders (if exporting to Jars)
     loaders: |
@@ -134,7 +133,7 @@ For more control over the publishing process, you can customize various aspects:
     # Platform-specific settings
     modrinth-featured: true
     curseforge-java-versions: |
-      Java 21
+      Java 25
     github-prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') }}
     github-draft: false
 ```
@@ -162,8 +161,8 @@ Gradle wrapper:
       - name: Set up JDK 25
         uses: actions/setup-java@v5
         with:
-			distribution: 'temurin'
-	        java-version: 25
+          distribution: 'temurin'
+          java-version: 25
 
       - name: Ensure Gradle is executable
         run: chmod +x gradlew
@@ -186,7 +185,7 @@ so you don't need a separate `setup-java` step:
 
       - name: Generate datapack
         env:
-			CI: "true"
+          CI: "true"
         run: ./kotlin run
 ```
 
@@ -258,8 +257,7 @@ modrinth-unfeature-mode: subset
 
 ```yaml
 curseforge-java-versions: |
-  Java 17
-  Java 21
+  Java 25
 curseforge-display-name: "My Awesome Datapack"
 ```
 
@@ -299,7 +297,7 @@ Maintain a `CHANGELOG.md` file following [Keep a Changelog](https://keepachangel
 ### Added
 
 - Initial release with basic functionality
-- Support for Minecraft 1.21
+- Support for Minecraft 26.2
 
 ### Changed
 
@@ -320,10 +318,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - name: Set up JDK 21
+      - name: Set up JDK 25
         uses: actions/setup-java@v5
         with:
-          java-version: '21'
+          java-version: '25'
           distribution: 'temurin'
       - name: Run tests
         run: ./gradlew test
@@ -400,8 +398,7 @@ jobs:
           files: out/*.zip
 
           game-versions: |
-			  1.21.10
-			  1.21.11
+            26.2
 
           modrinth-id: YOUR_MODRINTH_ID
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
