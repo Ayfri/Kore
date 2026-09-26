@@ -40,14 +40,14 @@ Think of Kore as a programmable build system for datapack content.
 
 Direct translation of what you already have:
 
-| Hand-written | Kore |
-|--------------|------|
-| `data/<ns>/function/feature/x.mcfunction` | `fun Function.x() = function("feature/x") { ... }` |
-| editing the `minecraft:load` tag | `load("...") { function(someFeature()) }` |
-| editing the `minecraft:tick` tag | `tick("...") { function(runtimeStep()) }` |
-| `@a[tag=fighter,gamemode=!spectator]` | typed selector builders, or `selector("@a[tag=fighter,gamemode=!spectator]")` to parse the vanilla string as-is |
-| JSON resource files | typed builders: `advancement`, `lootTable`, `recipe`, `predicate`, `enchantment`, `worldgen`, ... |
-| folder nesting | the path string in the builder (`"feature/combat/init"`) |
+| Hand-written                              | Kore                                                                                                            |
+|-------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
+| `data/<ns>/function/feature/x.mcfunction` | `fun Function.x() = function("feature/x") { ... }`                                                              |
+| editing the `minecraft:load` tag          | `load("...") { function(someFeature()) }`                                                                       |
+| editing the `minecraft:tick` tag          | `tick("...") { function(runtimeStep()) }`                                                                       |
+| `@a[tag=fighter,gamemode=!spectator]`     | typed selector builders, or `selector("@a[tag=fighter,gamemode=!spectator]")` to parse the vanilla string as-is |
+| JSON resource files                       | typed builders: `advancement`, `lootTable`, `recipes`, `predicate`, `enchantment`, `biome`, ...                 |
+| folder nesting                            | the path string in the builder (`"feature/combat/init"`)                                                        |
 
 Kore does not hide vanilla concepts. It formalizes them - the generated output is the same pack you would have written
 by hand, so anything you know about load order, tag dispatch, or `execute` semantics still applies.
@@ -58,7 +58,8 @@ Set expectations before you start:
 
 - **Not a resource pack tool.** Datapacks only.
 - **Some SNBT gaps.** Heterogeneous SNBT lists and operations like `bool(arg)`/`uuid(arg)` are not fully supported.
-- **No runtime optimization.** Execution cost is still defined by the commands you generate.
+- **No algorithmic optimization.** Execution cost is still defined by the commands you generate; the opt-in
+  [optimization passes](/docs/guides/optimization) only clean up `execute` chains, selectors and dead functions.
 - **`bindings` is experimental** and may change between versions.
 
 See [Known Issues](/docs/advanced/known-issues) for the current list.
@@ -218,7 +219,7 @@ fun DataPack.registerWave(config: WaveConfig) {
 
 	function("feature/waves/${config.id}_start") {
 		function(warning)
-		schedule.function(warning, config.warningSeconds.seconds)
+		schedule(config.warningSeconds.seconds, warning)
 	}
 }
 ```
@@ -292,7 +293,7 @@ fun DataPack.registerRewards() {
 	val bossDrop = lootTable("rewards/boss_drop") {
 		pool {
 			entries {
-				items(Items.DIAMOND)
+				item(Items.DIAMOND)
 			}
 		}
 	}
@@ -351,8 +352,8 @@ appears in twelve loot tables is written once:
 fun LootTable.commonJunkPool() = pool {
 	rolls = constant(1f)
 	entries {
-		items(Items.STRING) { weight = 5 }
-		items(Items.BONE) { weight = 3 }
+		item(Items.STRING) { weight = 5 }
+		item(Items.BONE) { weight = 3 }
 	}
 }
 

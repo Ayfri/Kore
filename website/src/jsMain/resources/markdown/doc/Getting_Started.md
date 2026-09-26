@@ -276,7 +276,7 @@ Example using extensions:
 
 ```kotlin
 fun DataPack.registerCoreFunctions() {
-	function("load") {
+	load("bootstrap") {
 		tellraw(allPlayers(), textComponent("[starter_kore] datapack loaded"))
 	}
 }
@@ -353,9 +353,9 @@ fun main() {
 
 		// 3) Custom enchantment definition (data-driven content)
 		enchantment("vampiric") {
-			description(textComponent("Vampiric"))
+			description("Vampiric")
 			supportedItems(Tags.Item.SWORDS)
-			primaryItems(Tags.Item.SWORD_ENCHANTABLE)
+			primaryItems(Tags.Item.Enchantable.SHARP_WEAPON)
 			weight = 2
 			maxLevel = 3
 			minCost(20, 15)
@@ -371,18 +371,16 @@ fun main() {
 
 				// Chance to heal attacker on hit
 				postAttack {
-					applyMobEffect(
-						PostAttackSpecifier.ATTACKER,
-						PostAttackSpecifier.ATTACKER,
-						Effects.INSTANT_HEALTH,
-					) {
-						minAmplifier(0)
-						maxAmplifier(0)
-						minDuration(1)
-						maxDuration(1)
+					on(PostAttackSpecifier.ATTACKER, PostAttackSpecifier.ATTACKER) {
+						applyMobEffect(Effects.INSTANT_HEALTH) {
+							minAmplifier(0)
+							maxAmplifier(0)
+							minDuration(1)
+							maxDuration(1)
 
-						requirements {
-							randomChance(linearLevelBased(0.08, 0.08))
+							requirements {
+								randomChance(enchantmentLevel(linearLevelBased(0.08f, 0.08f)))
+							}
 						}
 					}
 				}
@@ -431,7 +429,7 @@ Good expansion ideas after the custom enchantment:
 - Use extension functions on `DataPack` to keep your DSL composable.
 - If your IDE imports the wrong DSL symbol, qualify temporarily with `this.` in the builder scope, then fix the import.
 - Keep function names and file-like paths consistent (`feature/x`, `system/y`) to keep generated output predictable.
-- Re-declaring the same logical entry in Kore is idempotent: the last declaration wins.
+- Declare each function path once: two functions sharing a path with different bodies make generation throw.
 - Prefer `load {}` and `tick {}` builders over manual tag wiring for standard lifecycle hooks.
 
 ### Quick Kotlin learning resources

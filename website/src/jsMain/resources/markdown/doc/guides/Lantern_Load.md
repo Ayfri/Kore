@@ -92,9 +92,11 @@ least the requested one, and the patch version is ignored.
 
 ```mcfunction
 # my_pack:load/resolve
-execute if score bs.math.major load.status matches 3 if score bs.math.minor load.status matches 1.. run function my_pack:load/init
+execute if score bs.math.major load.status matches 3 if score bs.math.minor load.status matches 1.. if score bs.block.major load.status matches 2 if score bs.block.minor load.status matches 4.. run function my_pack:load/init
 execute unless score bs.math.major load.status matches 3 run tellraw @a {type:"text",color:"red",text:"[my_pack] Missing dependency bs.math 3.1."}
 execute if score bs.math.major load.status matches 3 unless score bs.math.minor load.status matches 1.. run tellraw @a {type:"text",color:"red",text:"[my_pack] Missing dependency bs.math 3.1."}
+execute unless score bs.block.major load.status matches 2 run tellraw @a {type:"text",color:"red",text:"[my_pack] Missing dependency bs.block 2.4."}
+execute if score bs.block.major load.status matches 2 unless score bs.block.minor load.status matches 4.. run tellraw @a {type:"text",color:"red",text:"[my_pack] Missing dependency bs.block 2.4."}
 ```
 
 `init` runs only when every guard passes, so your pack never half-initializes against a missing library. A dependency

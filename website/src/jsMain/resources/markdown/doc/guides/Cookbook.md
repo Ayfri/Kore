@@ -102,7 +102,7 @@ A selector is a value. Name it once and reuse it:
 
 ```kotlin
 val activePlayers = allPlayers {
-	scores = scores {
+	scores {
 		"round" greaterThanOrEqualTo 1
 		"lives" greaterThan 0
 	}
@@ -128,7 +128,6 @@ Define the item once with its components, and derive a predicate from that same 
 ```kotlin
 val arenaBlade = Items.DIAMOND_SWORD {
 	customName(textComponent("Arena Blade", Color.AQUA))
-	tooltipDisplay(showInTooltip = true)
 }
 
 val arenaBladePredicate = predicate("arena_blade") {
@@ -162,12 +161,12 @@ val explosionWarning = function("explosion_warning") {
 }
 
 val explodeNow = function("explode_now") {
-	summon(Entities.TNT, vec3())
+	summon(EntityTypes.TNT, vec3())
 }
 
 function("trigger_explosion") {
 	function(explosionWarning)
-	schedule.function(explodeNow, 5.seconds)
+	schedule(5.seconds, explodeNow)
 }
 ```
 

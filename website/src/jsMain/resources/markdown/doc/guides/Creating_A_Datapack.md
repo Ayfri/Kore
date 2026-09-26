@@ -98,8 +98,8 @@ Every datapack needs a `pack.mcmeta`. Kore always generates one; the `pack` bloc
 ```kotlin
 dataPack("mydatapack") {
 	pack {
-		minFormat(94)
-		maxFormat(94)
+		minFormat(107)
+		maxFormat(107)
 		description = textComponent("My Datapack")
 	}
 }
@@ -113,9 +113,9 @@ dataPack("mydatapack") {
 
 ```kotlin
 pack {
-	minFormat(94)        // plain integer
-	minFormat(94, 0)     // [major, minor] pair
-	maxFormat(94)
+	minFormat(107)        // plain integer
+	minFormat(107, 0)     // [major, minor] pair
+	maxFormat(107)
 }
 ```
 
@@ -123,22 +123,22 @@ You can also assign a `PackFormat` value directly:
 
 ```kotlin
 pack {
-	minFormat = packFormat(94)
-	maxFormat = packFormat(94)
+	minFormat = packFormat(107)
+	maxFormat = packFormat(107)
 }
 ```
 
 ### Targeting Minecraft 1.21.9+
 
 Since Minecraft 1.21.9 (25w31a), `min_format` and `max_format` are the primary fields in `pack.mcmeta`, and accept a
-`[major, minor]` pair to target snapshots or minor versions:
+`[major, minor]` pair to target snapshots or minor versions. Minecraft 26.2 uses data pack format `[107, 1]`:
 
 ```kotlin
 dataPack("my_datapack") {
 	pack {
-		minFormat(94, 1)
-		maxFormat(94, 1)
-		description = textComponent("Targeting 1.21.9")
+		minFormat(107, 1)
+		maxFormat(107, 1)
+		description = textComponent("Targeting 26.2")
 	}
 }
 ```
@@ -162,9 +162,9 @@ decimal value triggers a warning:
 ```kotlin
 dataPack("mydatapack") {
 	pack {
-		minFormat(94)
-		maxFormat(94)
-		packFormat = packFormat(94) // must stay a plain integer
+		minFormat(107)
+		maxFormat(107)
+		packFormat = packFormat(107) // must stay a plain integer
 	}
 }
 ```
@@ -386,27 +386,28 @@ dataPack("my_datapack") {
 
 ### Merging with existing datapacks
 
-`mergeWithDatapacks` folds other packs into the generated output, so you can ship one download that also contains a
+`mergeWithPacks` folds other packs into the generated output, so you can ship one download that also contains a
 dependency or a pack you do not own the source of:
 
 ```kotlin
+import kotlinx.io.files.Path
+
 dataPack("my_datapack") {
 	// datapack code here
 }.generate {
-	mergeWithDatapacks("existing_datapack 1", "existing_datapack 2")
+	mergeWithPacks(Path("existing_datapack_1"), Path("existing_datapack_2.zip"))
 }
 ```
 
-A path to a zip is treated as a datapack and merged too. Kore creates the temporary directory used for extraction
-automatically before unzipping, then merges the extracted files with the generated datapack. **This temporary folder is
-not removed automatically.**
+A path to a zip is treated as a datapack and merged too: Kore unzips it into a temporary directory, merges the
+extracted files with the generated datapack, then deletes that directory once merging is done.
 
 #### Pack format compatibility
 
 When merging, Kore checks whether the pack format ranges overlap and warns when they do not:
 
 ```kotlin
-val myDatapack1 = dataPack("my_datapack 1") {
+val myDatapack1 = dataPack("my_datapack_1") {
 	// datapack code here
 
 	pack {
@@ -415,7 +416,7 @@ val myDatapack1 = dataPack("my_datapack 1") {
 	}
 }
 
-val myDatapack2 = dataPack("my_datapack 2") {
+val myDatapack2 = dataPack("my_datapack_2") {
 	// datapack code here
 	pack {
 		minFormat(50)
@@ -424,7 +425,7 @@ val myDatapack2 = dataPack("my_datapack 2") {
 }
 
 myDatapack1.generate {
-	mergeWithDatapacks(myDatapack2)
+	mergeWithPacks(myDatapack2)
 }
 ```
 
@@ -443,7 +444,7 @@ Both packs' `minecraft:load` and `minecraft:tick` function tags are combined, so
 point:
 
 ```kotlin
-val myDatapack1 = dataPack("my_datapack 1") {
+val myDatapack1 = dataPack("my_datapack_1") {
 	// datapack code here
 
 	load("my_main_function") {
@@ -451,7 +452,7 @@ val myDatapack1 = dataPack("my_datapack 1") {
 	}
 }
 
-val myDatapack2 = dataPack("my_datapack 2") {
+val myDatapack2 = dataPack("my_datapack_2") {
 	// datapack code here
 	load("load") {
 		say("Hello Everyone!")
@@ -459,7 +460,7 @@ val myDatapack2 = dataPack("my_datapack 2") {
 }
 
 myDatapack1.generate {
-	mergeWithDatapacks(myDatapack2)
+	mergeWithPacks(myDatapack2)
 }
 ```
 
@@ -469,8 +470,8 @@ The resulting `load.json` contains both:
 {
 	"replace": false,
 	"values": [
-		"my_datapack_1:generated_scope/my_main_function",
-		"my_datapack_2:generated_scope/load"
+		"my_datapack_1:generated_scopes/my_main_function",
+		"my_datapack_2:generated_scopes/load"
 	]
 }
 ```

@@ -25,11 +25,11 @@ the library, so the same string goes in both blocks:
 ```kotlin
 plugins {
 	kotlin("jvm")
-	id("io.github.ayfri.kore") version "2.13.1-26.2"
+	id("io.github.ayfri.kore") version "2.14.0-26.2"
 }
 
 dependencies {
-	implementation("io.github.ayfri.kore:kore:2.13.1-26.2")
+	implementation("io.github.ayfri.kore:kore:2.14.0-26.2")
 }
 
 kore {

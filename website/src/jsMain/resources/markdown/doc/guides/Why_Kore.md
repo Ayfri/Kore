@@ -104,8 +104,9 @@ Being honest about the cost matters more than winning the comparison:
 - **Your collaborators will not touch a JVM toolchain.** Kore needs a JDK, Gradle, and a compile step between editing
   and `/reload` - slower than saving an `.mcfunction` and reloading.
 - **You need resource packs too.** Kore targets datapacks only, see [Known Issues](/docs/advanced/known-issues).
-- **You expect runtime gains.** Kore improves authoring, not in-game execution cost: the generated commands run exactly
-  as fast as the ones you would have written.
+- **You expect large runtime gains.** Kore improves authoring first: the generated commands run as fast as the ones you
+  would have written. The opt-in [optimization passes](/docs/guides/optimization) shave some cost (shorter `execute`
+  chains, conditions hoisted into selectors), but a slow algorithm stays slow.
 
 ## Next steps
 
