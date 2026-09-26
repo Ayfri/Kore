@@ -1,9 +1,7 @@
 package io.github.ayfri.kore.generation.platform
 
 import io.github.ayfri.kore.utils.*
-import kotlinx.io.buffered
 import kotlinx.io.files.Path
-import kotlinx.io.readByteArray
 
 internal actual val platformRequiresSuspension: Boolean = false
 
@@ -18,7 +16,7 @@ internal actual suspend fun platformCreateDirectories(path: Path) {
 
 internal actual suspend fun platformReadFile(path: Path): ByteArray? {
 	if (!path.exists() || path.isDirectory()) return null
-	return path.toSource().buffered().readByteArray()
+	return path.readBytes()
 }
 
 internal actual suspend fun platformExists(path: Path): Boolean = path.exists()

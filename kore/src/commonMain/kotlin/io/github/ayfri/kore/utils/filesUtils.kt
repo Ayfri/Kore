@@ -6,6 +6,7 @@ import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.files.SystemPathSeparator
 import kotlinx.io.files.SystemTemporaryDirectory
+import kotlinx.io.readByteArray
 import kotlinx.io.readString
 import kotlin.random.Random
 
@@ -33,17 +34,25 @@ fun Path.toSource() = SystemFileSystem.source(this)
 fun Path.toStringWithSeparator(separator: String = SystemPathSeparatorString) =
 	this.toString().replace(SystemPathSeparatorString, separator)
 
-fun Path.readText() = if (!this.isDirectory()) this.toSource().buffered().run {
-	readString()
-} else throw IOException("Cannot read directory as text")
-fun Path.writeText(content: String) = if (!this.isDirectory()) this.toSink().buffered().apply {
-	write(content.encodeToByteArray())
-	flush()
-} else throw IOException("Cannot write to directory")
-fun Path.write(array: ByteArray) = if (!this.isDirectory()) this.toSink().buffered().apply {
-	write(array)
-	flush()
-} else throw IOException("Cannot write to directory")
+fun Path.readBytes() = toSource().buffered().use { it.readByteArray() }
+fun Path.readText() = if (!this.isDirectory()) this.toSource().buffered().use { it.readString() }
+else throw IOException("Cannot read directory as text")
+fun Path.writeText(content: String) = write(content.encodeToByteArray())
+fun Path.write(array: ByteArray) = if (!this.isDirectory()) this.toSink().buffered().use { it.write(array) }
+else throw IOException("Cannot write to directory")
+
+/** Writes through a sibling `.part` file then moves it in place, so a crash never leaves a truncated file behind. */
+fun Path.writeAtomically(array: ByteArray) {
+	val partial = Path("$this.part")
+	partial.write(array)
+	SystemFileSystem.atomicMove(partial, this)
+}
+
+/** Deletes a directory tree. Follows symbolic links, so only use it on directories Kore created itself. */
+internal fun Path.deleteRecursively() {
+	if (isDirectory()) SystemFileSystem.list(this).forEach { it.deleteRecursively() }
+	SystemFileSystem.delete(this, mustExist = false)
+}
 
 data object TemporaryFiles {
 	fun createTempFile(suffix: String = ".tmp"): Path {
@@ -54,10 +63,12 @@ data object TemporaryFiles {
 		return tempFile
 	}
 
-	fun createTempDirectory(name: String): Path {
-		val tempDir = SystemTemporaryDirectory
-		return tempDir.resolve(name).apply { makeDirectories() }
-	}
+	/**
+	 * Creates a fresh directory named [name] plus a random suffix, failing if it already exists so a directory
+	 * planted in a shared temp folder is never reused.
+	 */
+	fun createTempDirectory(name: String): Path =
+		SystemTemporaryDirectory.resolve("${name}_${Random.nextLong().toULong().toString(16)}").apply { makeDirectories(force = true) }
 }
 
 

@@ -1,10 +1,8 @@
 package io.github.ayfri.kore.generation.platform
 
 import io.github.ayfri.kore.utils.*
-import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
-import kotlinx.io.readByteArray
 
 /**
  * Kotlin/JS compiles once for both `browser()` and `nodejs()`, so the two backends are picked at runtime rather
@@ -32,7 +30,7 @@ internal actual suspend fun platformCreateDirectories(path: Path) {
 internal actual suspend fun platformReadFile(path: Path): ByteArray? {
 	if (isNode) {
 		if (!path.exists() || path.isDirectory()) return null
-		return path.toSource().buffered().readByteArray()
+		return path.readBytes()
 	}
 	return Opfs.readFile(path)
 }

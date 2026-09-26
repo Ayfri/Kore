@@ -7,13 +7,11 @@ import io.github.ayfri.kore.generation.zip.parseLocalEntries
 import io.github.ayfri.kore.path
 import io.github.ayfri.kore.utils.TemporaryFiles
 import io.github.ayfri.kore.utils.exists
+import io.github.ayfri.kore.utils.readBytes
 import io.github.ayfri.kore.utils.readText
 import io.github.ayfri.kore.utils.resolveSafe
-import io.github.ayfri.kore.utils.toSource
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import kotlinx.io.buffered
-import kotlinx.io.readByteArray
 
 // SystemFileSystem only works in the Node subtarget; the browser subtarget has no filesystem and throws at runtime.
 private val isNodeJs: Boolean = js("typeof process !== 'undefined' && !!(process.versions && process.versions.node)") as Boolean
@@ -45,7 +43,7 @@ class NodeGenerateTests : FunSpec({
 		val zipFile = outDir.resolveSafe("node_generate_zip_test.zip")
 		zipFile.exists() shouldBe true
 
-		val entries = parseLocalEntries(zipFile.toSource().buffered().readByteArray())
+		val entries = parseLocalEntries(zipFile.readBytes())
 		entries.any { it.name == "data/node_generate_zip_test/function/hello.mcfunction" } shouldBe true
 	}
 })
