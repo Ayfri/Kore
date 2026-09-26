@@ -172,6 +172,30 @@ class KorePluginFunctionalTests : FunSpec({
 		}
 	}
 
+	test("a pack name that is not a plain folder name is rejected before anything is deleted") {
+		val project = TestProject(koreConfiguration = "\tworlds = listOf(\"MyWorld\")\n\tpackName = \"..\"")
+
+		try {
+			project.dataPacksDirectory("MyWorld").resolve("keep.txt").apply { parentFile.mkdirs() }.writeText("keep")
+
+			project.runAndFail("koreClean").output shouldContain "The pack name must be a plain folder name"
+			project.dataPacksDirectory("MyWorld").resolve("keep.txt").exists() shouldBe true
+		} finally {
+			project.delete()
+		}
+	}
+
+	test("cleanBeforeBuild never wipes an output directory containing the project") {
+		val project = TestProject(koreConfiguration = "\toutputDirectory = layout.projectDirectory")
+
+		try {
+			project.runAndFail("koreBuild")
+			project.root.resolve("build.gradle.kts").exists() shouldBe true
+		} finally {
+			project.delete()
+		}
+	}
+
 	test("additionalInputs makes an external file part of up-to-date checking") {
 		val project = TestProject(
 			koreConfiguration = "\tworlds = listOf(\"MyWorld\")\n\tadditionalInputs.from(file(\"assets\"))"

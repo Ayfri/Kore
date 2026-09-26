@@ -63,7 +63,8 @@ fun main() {
 
 `packName` must match the folder Kore writes, which is the datapack `name` unless you override it with `folderName`.
 The plugin also passes that value as the `kore.packName` system property, so `folderName(System.getProperty("kore.packName"))`
-keeps the two in sync automatically.
+keeps the two in sync automatically. It must be a plain folder name: an empty name, `.`, `..` or one containing a slash
+fails the build, since linking and `koreClean` would otherwise hit the whole `datapacks` folder.
 
 ## Tasks
 
@@ -134,7 +135,8 @@ symlinks without Developer Mode or administrator rights, in which case the plugi
 ## Keeping rebuilds correct
 
 `cleanBeforeBuild` is on by default: the output directory is wiped before each generation, so a resource you deleted
-from your Kotlin sources also disappears from the pack.
+from your Kotlin sources also disappears from the pack. Point `outputDirectory` at a dedicated folder: the build refuses
+to wipe one that contains the project.
 
 Up-to-date checks follow the runtime classpath. If your entry point reads files that are not on it, textures or an
 external JSON for instance, declare them so a change to one triggers a rebuild:

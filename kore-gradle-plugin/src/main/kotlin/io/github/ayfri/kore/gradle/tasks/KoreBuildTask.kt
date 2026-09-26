@@ -42,6 +42,10 @@ abstract class KoreBuildTask : JavaExec() {
 	@get:Internal
 	abstract val aotCacheDirectory: DirectoryProperty
 
+	/** Used to refuse wiping a [generatedDirectory] that contains the project itself. */
+	@get:Internal
+	abstract val projectDirectory: DirectoryProperty
+
 	@get:Inject
 	protected abstract val execOperations: ExecOperations
 
@@ -51,7 +55,13 @@ abstract class KoreBuildTask : JavaExec() {
 				"`kore.runtimeClasspath` explicitly (Kotlin Multiplatform projects need the latter)."
 		}
 
-		if (cleanBeforeBuild.get()) generatedDirectory.get().asFile.deleteRecursively()
+		if (cleanBeforeBuild.get()) {
+			val output = generatedDirectory.get().asFile.toPath().toAbsolutePath().normalize()
+			check(!projectDirectory.get().asFile.toPath().toAbsolutePath().normalize().startsWith(output)) {
+				"Refusing to wipe $output before the build since it contains the project, point `kore.outputDirectory` at a dedicated folder."
+			}
+			output.toFile().deleteRecursively()
+		}
 
 		val launcher = javaLauncher.orNull
 		if (aotCache.get() && launcher != null && launcher.metadata.languageVersion.canCompileOrRun(25)) execWithAotCache(launcher)

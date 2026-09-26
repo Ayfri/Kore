@@ -125,6 +125,7 @@ class KorePlugin : Plugin<Project> {
 			task.mainClass.set(kore.mainClass)
 			task.classpath = kore.runtimeClasspath
 			task.generatedDirectory.set(kore.outputDirectory)
+			task.projectDirectory.set(project.layout.projectDirectory)
 			task.cleanBeforeBuild.set(kore.cleanBeforeBuild)
 			task.aotCache.set(kore.aotCache)
 			task.aotCacheDirectory.set(project.layout.buildDirectory.dir("kore-aot"))
@@ -168,9 +169,14 @@ class KorePlugin : Plugin<Project> {
 				.ifEmpty { listOf(MinecraftLocator.resourcePacksDirectory(directory).absolutePath) }
 		}
 
-	/** Maps each target folder to the pack folder it receives. */
+	/** Maps each target folder to the pack folder it receives, rejecting names that would make linking or `koreClean` hit the target folder itself. */
 	private fun destinations(targets: Provider<List<String>>, packName: Provider<String>): Provider<List<File>> =
-		targets.zip(packName) { folders, name -> folders.map { File(it, name) } }
+		targets.zip(packName) { folders, name ->
+			require(name.isNotBlank() && name != "." && name != ".." && '/' !in name && '\\' !in name) {
+				"The pack name must be a plain folder name, got '$name'."
+			}
+			folders.map { File(it, name) }
+		}
 
 	private fun linkedPacks(
 		kore: KoreExtension,
