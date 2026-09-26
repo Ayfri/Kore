@@ -578,7 +578,7 @@ predicate("has_instrument") {
 | Matcher                   | Description                                    |
 |---------------------------|------------------------------------------------|
 | `attributeModifiers { }`  | Match attribute modifier properties            |
-| `bundlerContents { }`     | Match bundle contents                          |
+| `bundleContents { }`      | Match bundle contents                          |
 | `container { }`           | Match container slot contents                  |
 | `customData { }`          | Match custom NBT data                          |
 | `damage { }`              | Match damage/durability values                 |

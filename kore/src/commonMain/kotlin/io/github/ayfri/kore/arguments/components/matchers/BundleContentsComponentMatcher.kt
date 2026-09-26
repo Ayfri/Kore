@@ -5,14 +5,14 @@ import io.github.ayfri.kore.features.predicates.sub.ItemStackPredicate
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class BundlerContentsComponentMatcher(
+data class BundleContentsComponentMatcher(
 	var items: CollectionMatcher<ItemStackPredicate>? = null,
 ) : ComponentMatcher()
 
-fun DataComponentPredicate.bundlerContents(block: BundlerContentsComponentMatcher.() -> Unit) {
-	matchers += BundlerContentsComponentMatcher().apply(block)
+fun DataComponentPredicate.bundleContents(block: BundleContentsComponentMatcher.() -> Unit) {
+	matchers += BundleContentsComponentMatcher().apply(block)
 }
 
-fun BundlerContentsComponentMatcher.items(block: CollectionMatcher<ItemStackPredicate>.() -> Unit) {
+fun BundleContentsComponentMatcher.items(block: CollectionMatcher<ItemStackPredicate>.() -> Unit) {
 	items = CollectionMatcher<ItemStackPredicate>().apply(block)
 }

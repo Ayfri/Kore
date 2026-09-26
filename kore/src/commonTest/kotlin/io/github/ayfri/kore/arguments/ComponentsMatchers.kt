@@ -55,8 +55,8 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 		}
 	""".trimIndent()
 
-	val bundlerContents = DataComponentPredicate().apply {
-		bundlerContents {
+	val bundleContents = DataComponentPredicate().apply {
+		bundleContents {
 			items {
 				countElement(size = rangeOrInt(1), test = itemStackPredicate(Items.CAKE))
 				contains(itemStackPredicate(Items.APPLE))
@@ -64,9 +64,9 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 		}
 	}
 
-	jsonEncoder.encodeToString(bundlerContents) assertsIsJson """
+	jsonEncoder.encodeToString(bundleContents) assertsIsJson """
 		{
-			"minecraft:bundler_contents": {
+			"minecraft:bundle_contents": {
 				"items": {
 					"contains": [
 						{
