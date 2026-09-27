@@ -24,6 +24,8 @@ import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.helpers.displays.*
+import io.github.ayfri.kore.helpers.displays.entities.BillboardMode
+import io.github.ayfri.kore.helpers.displays.entities.Brightness
 import io.github.ayfri.kore.helpers.displays.entities.ItemDisplayModelMode
 import io.github.ayfri.kore.helpers.displays.maths.*
 import io.kotest.core.spec.style.FunSpec
@@ -124,6 +126,16 @@ fun Function.displayTests() {
 	}
 }
 
+fun Function.displayNbtTests() {
+	val textDisplay = textDisplay {
+		text("hi")
+		billboardMode = BillboardMode.CENTER
+		brightness = Brightness(block = 15, sky = 10)
+	}
+
+	summon(textDisplay.entityType, vec3(), textDisplay.toNbt()) assertsIs """summon minecraft:text_display ~ ~ ~ {text:"hi",billboard:"center",brightness:{block:15,sky:10}}"""
+}
+
 fun Function.displayEntitySelectorTests() {
 	val uuid = UUIDArgument(Uuid.parse("00000000-0000-0000-0000-000000000001"))
 
@@ -167,6 +179,12 @@ class DisplayTests : FunSpec({
 	test("display") {
 		dataPack("helpers_tests") {
 			load { displayTests() }
+		}
+	}
+
+	test("display nbt") {
+		dataPack("helpers_tests") {
+			load { displayNbtTests() }
 		}
 	}
 

@@ -5,7 +5,7 @@ nav-title: Display Entities
 description: A guide for creating Display Entities in the world.
 keywords: minecraft, datapack, kore, guide, display-entities
 date-created: 2024-04-06
-date-modified: 2026-08-14
+date-modified: 2026-09-27
 routeOverride: /docs/helpers/display-entities
 ---
 
@@ -19,7 +19,7 @@ items, or text.
 All display entities inherit these properties from the shared `DisplayEntity` base type:
 
 - `billboardMode` - how the display faces the camera (`FIXED`, `VERTICAL`, `HORIZONTAL`, `CENTER`).
-- `brightness` - optional block and light overrides for rendering.
+- `brightness` - overrides the block and sky light levels used for rendering (`Brightness(block = 15, sky = 15)`, 0 to 15).
 - `glowColorOverride` - replace the outline color with a custom RGB value.
 - `height` / `width` - resize the display bounds.
 - `interpolationDuration` / `startInterpolation` - animate transformation changes over time.

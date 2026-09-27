@@ -30,7 +30,7 @@ enum class BillboardMode {
 @Serializable
 data class Brightness(
 	var block: Int? = null,
-	var light: Int? = null,
+	var sky: Int? = null,
 )
 
 @Serializable(DisplayEntity.Companion.DisplayEntitySerializer::class)
@@ -93,7 +93,7 @@ sealed class DisplayEntity(
 		}
 
 		internal fun ClassSerialDescriptorBuilder.addDisplayEntity() {
-			element("billboard_mode", BillboardMode.serializer().descriptor)
+			element("billboard", BillboardMode.serializer().descriptor)
 			element("brightness", Brightness.serializer().descriptor)
 			element("glow_color_override", RGB.serializer().descriptor)
 			element<Int>("height")
