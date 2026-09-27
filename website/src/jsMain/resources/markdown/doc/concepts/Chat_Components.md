@@ -65,7 +65,8 @@ function line in two.
 ### Combined Components
 
 Components can be combined using the `+` operator, use the `text` function to create a simple text component and not a
-`ChatComponents`.
+`ChatComponents`. `+` returns new `ChatComponents` and leaves both sides untouched, so a shared prefix can be reused
+across messages.
 
 ```kotlin
 val combinedComponents = textComponent("Hello, ") + text("world!") {

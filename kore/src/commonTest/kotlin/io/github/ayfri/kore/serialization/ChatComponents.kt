@@ -52,6 +52,11 @@ fun chatComponentsTests() {
 		]
 	""".trimIndent()
 
+	val prefix = textComponent("[Kore] ")
+	prefix + text("first")
+	prefix + textComponent("second")
+	prefix assertsIsJson "\"[Kore] \""
+
 	val entityComponent = entityComponent(self(), separator = " ")
 	entityComponent assertsIsJson """
 		{

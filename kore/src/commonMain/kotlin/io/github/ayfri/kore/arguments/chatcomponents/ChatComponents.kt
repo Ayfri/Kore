@@ -26,18 +26,16 @@ data class ChatComponents(
 		if (onlySimpleComponents) requireSimpleComponents()
 	}
 
+	/** Returns new [ChatComponents] with [textComponent] appended, leaving this one untouched so a shared prefix can be reused. */
 	operator fun plus(textComponent: ChatComponent): ChatComponents {
 		if (onlySimpleComponents) throw ONLY_SIMPLE_COMPONENTS_EXCEPTION
-		list += textComponent
-		return this
+		return copy(list = (list + textComponent).toMutableList())
 	}
 
+	/** Returns new [ChatComponents] with the components of [chatComponents] appended, leaving both untouched. */
 	operator fun plus(chatComponents: ChatComponents): ChatComponents {
-		if (onlySimpleComponents) {
-			throw ONLY_SIMPLE_COMPONENTS_EXCEPTION
-		}
-		list += chatComponents.list
-		return this
+		if (onlySimpleComponents) throw ONLY_SIMPLE_COMPONENTS_EXCEPTION
+		return copy(list = (list + chatComponents.list).toMutableList())
 	}
 
 	override fun iterator() = list.iterator()
