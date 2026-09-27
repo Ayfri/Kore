@@ -12,8 +12,9 @@ class Matrix(collection: Collection<Float> = listOf()) {
 
 	var matrix = Matrix4f()
 
-	val values get() = matrix.transpose().get(FloatArray(16)).toMutableList()
-	val valuesAsArray: FloatArray get() = matrix.transpose().get(FloatArray(16))
+	/** Row-major elements, read from a transposed copy since [Matrix4f.transpose] works in place. */
+	val valuesAsArray: FloatArray get() = Matrix4f().set(matrix).transpose().get(FloatArray(16))
+	val values get() = valuesAsArray.toMutableList()
 
 	init {
 		when {
@@ -27,7 +28,8 @@ class Matrix(collection: Collection<Float> = listOf()) {
 		matrix[row, col] = value
 	}
 
-	operator fun times(other: Matrix) = apply { matrix.mul(other.matrix) }
+	/** Returns a new [Matrix] and leaves both operands untouched, unlike [multiply]. */
+	operator fun times(other: Matrix) = Matrix(Matrix4f().set(matrix).mul(other.matrix))
 
 	fun getTranslation() = Vec3f(matrix.m30, matrix.m31, matrix.m32)
 
@@ -67,7 +69,8 @@ class Matrix(collection: Collection<Float> = listOf()) {
 	override fun toString() = "Matrix(matrix=$matrix)"
 
 	companion object {
-		val IDENTITY = Matrix().apply(Matrix::setIdentity)
+		/** A new identity matrix on each access, so mutating one through [multiply] or [translate] can't leak into the others. */
+		val IDENTITY get() = Matrix()
 
 		fun fromRows(rows: List<List<Float>>) = Matrix(rows.flatMap {
 			require(it.size == 4) { "Matrix row must have exactly 4 elements" }

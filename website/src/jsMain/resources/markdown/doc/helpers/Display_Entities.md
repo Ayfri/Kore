@@ -151,6 +151,16 @@ transformation {
 }
 ```
 
+`Quaternion` and `Matrix` operators (`+`, `-`, `*`, `/`) return a new value and leave both operands untouched, while
+named methods like `normalize()`, `slerp()` or `multiply()` modify the receiver. `Quaternion.IDENTITY` and
+`Matrix.IDENTITY` give a new instance on each access, so modifying one never affects the others.
+
+Transformations can also be combined:
+
+- `a.interpolate(b, t)` returns the transformation `t` of the way from `a` (`0`) to `b` (`1`).
+- `a.invert()` returns the transformation undoing `a`, as a matrix.
+- `a.decompose()` splits a matrix transformation back into translation, rotations and scale.
+
 ## Interpolations
 
 You can convert your display entity into an "interpolable" display entity by calling

@@ -37,27 +37,40 @@ data class Transformation(
 	val decomposed get() = matrix == null
 
 	fun compose() {
-		if (!decomposed) return
-		matrix = Matrix().apply {
-			translation?.let(::translate)
-			multiply(Matrix.fromQuaternion(leftRotation))
-			scale(scale)
-			multiply(Matrix.fromQuaternion(rightRotation))
+		if (decomposed) matrix = toMatrix()
+	}
+
+	/** Returns this transformation split into translation, rotations and scale, read back from [matrix] with an SVD when it is set. */
+	fun decompose(): Transformation {
+		val affine = matrix?.copy()?.affine() ?: return this
+		val (left, scale, right) = Matrix3f(affine.matrix).svdDecompose()
+		return Transformation(affine.getTranslation(), Quaternion(left), Vec3f(scale), Quaternion(right))
+	}
+
+	/** Returns the transformation [t] of the way from this one to [other], `0` being this one and `1` being [other]. */
+	fun interpolate(other: Transformation, t: Float): Transformation {
+		val from = decompose()
+		val to = other.decompose()
+		val translation = when {
+			from.translation == null && to.translation == null -> null
+			else -> (from.translation ?: Vec3f()).lerp(to.translation ?: Vec3f(), t)
 		}
+		return Transformation(
+			translation,
+			Quaternion.slerp(from.leftRotation, to.leftRotation, t),
+			from.scale.lerp(to.scale, t),
+			Quaternion.slerp(from.rightRotation, to.rightRotation, t),
+		)
 	}
 
-	fun interpolate(other: Transformation, t: Float) = Transformation().apply {
-		translation = translation?.let { other.translation?.lerp(it, t) }
-		leftRotation = leftRotation.slerp(other.leftRotation, t)
-		scale = scale.lerp(other.scale, t)
-		rightRotation = rightRotation.slerp(other.rightRotation, t)
-	}
+	/** Returns the transformation undoing this one, as a matrix. */
+	fun invert() = Transformation(toMatrix().invert())
 
-	fun invert() = Transformation().apply {
-		translation = translation?.negate()
-		leftRotation = leftRotation.conjugate
-		scale = scale.reciprocal()
-		rightRotation = rightRotation.conjugate
+	private fun toMatrix() = matrix?.copy() ?: Matrix().apply {
+		translation?.let(::translate)
+		multiply(Matrix.fromQuaternion(leftRotation))
+		scale(scale)
+		multiply(Matrix.fromQuaternion(rightRotation))
 	}
 
 	override fun toString() = when {
@@ -66,7 +79,8 @@ data class Transformation(
 	}
 
 	companion object {
-		val IDENTITY = Transformation()
+		/** A new identity transformation on each access, since serializing one stores its composed matrix in it. */
+		val IDENTITY get() = Transformation()
 
 		object TransformationSerializer : KSerializer<Transformation> {
 			override val descriptor = serialDescriptor<FloatArray>()
@@ -82,13 +96,11 @@ data class Transformation(
 					else -> Matrix.IDENTITY
 				}
 
-				val affine = matrix.copy().affine()
-				val newTranslation = affine.getTranslation()
-				val (newLeft, newScale, newRight) = Matrix3f(affine.matrix).svdDecompose()
-				value.translation = newTranslation
-				value.leftRotation = Quaternion(newLeft)
-				value.scale = Vec3f(newScale)
-				value.rightRotation = Quaternion(newRight)
+				val decomposed = value.decompose()
+				value.translation = decomposed.translation
+				value.leftRotation = decomposed.leftRotation
+				value.scale = decomposed.scale
+				value.rightRotation = decomposed.rightRotation
 				value.compose()
 
 				matrix = value.matrix!!

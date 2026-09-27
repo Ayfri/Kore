@@ -4,6 +4,7 @@ import io.github.ayfri.kore.arguments.maths.Vec3f
 import io.github.ayfri.kore.helpers.displays.maths.internal.Quaternionf
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 class Quaternion(x: Float = 0f, y: Float = 0f, z: Float = 0f, w: Float = 1f) {
 	constructor(x: Number, y: Number, z: Number, w: Number) : this(x.toFloat(), y.toFloat(), z.toFloat(), w.toFloat())
@@ -21,23 +22,17 @@ class Quaternion(x: Float = 0f, y: Float = 0f, z: Float = 0f, w: Float = 1f) {
 	val w get() = quaternion.w
 
 	val lengthSquared get() = quaternion.lengthSquared()
-	val length get() = quaternion.x * quaternion.x + quaternion.y * quaternion.y + quaternion.z * quaternion.z + quaternion.w * quaternion.w
-	val conjugate get() = Quaternion(quaternion.conjugate())
+	val length get() = sqrt(lengthSquared)
+	val conjugate get() = Quaternion(quaternion.copy().conjugate())
 
+	/** Operators return a new [Quaternion] and leave both operands untouched, unlike [invert], [normalize] and [slerp]. */
 	operator fun unaryMinus() = Quaternion(-x, -y, -z, -w)
-	operator fun plus(other: Quaternion) = apply { quaternion.add(other.quaternion) }
-	operator fun minus(other: Quaternion) = apply {
-		quaternion.add(other.quaternion.apply {
-			x = -x
-			y = -y
-			z = -z
-			w = -w
-		})
-	}
+	operator fun plus(other: Quaternion) = Quaternion(quaternion.copy().add(other.quaternion))
+	operator fun minus(other: Quaternion) = plus(-other)
 
-	operator fun times(scalar: Float) = apply { quaternion.mul(scalar) }
-	operator fun times(other: Quaternion) = apply { quaternion.mul(other.quaternion) }
-	operator fun div(scalar: Float) = apply { quaternion.mul(1 / scalar) }
+	operator fun times(scalar: Float) = Quaternion(quaternion.copy().mul(scalar))
+	operator fun times(other: Quaternion) = Quaternion(quaternion.copy().mul(other.quaternion))
+	operator fun div(scalar: Float) = times(1 / scalar)
 
 	operator fun component1() = x
 	operator fun component2() = y
@@ -71,7 +66,8 @@ class Quaternion(x: Float = 0f, y: Float = 0f, z: Float = 0f, w: Float = 1f) {
 	override fun toString() = "Quaternion(quaternion=$quaternion)"
 
 	companion object {
-		val IDENTITY = Quaternion()
+		/** A new identity rotation on each access, so mutating one through [normalize] or [slerp] can't leak into the others. */
+		val IDENTITY get() = Quaternion()
 
 		fun fromAxisAngle(axis: Vec3f, angle: Float): Quaternion {
 			val halfSin = sin(angle * 0.5f)

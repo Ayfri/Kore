@@ -126,4 +126,52 @@ class TransformationRoundTripTests : FunSpec({
 		val q = Quaternion.fromAxisAngle(Vec3f(0.4f, 0.6f, 0.6928203f), 0.9f)
 		assertRoundTrips(Transformation(leftRotation = q))
 	}
+
+	test("quaternion operators leave their operands and the identity untouched") {
+		val a = Quaternion(0.1f, 0.2f, 0.3f, 0.9f)
+		val b = Quaternion(0.4f, -0.3f, 0.2f, 0.8f)
+		a + b
+		a - b
+		a * b
+		a * 2f
+		a / 2f
+		a.conjugate
+		a shouldBe Quaternion(0.1f, 0.2f, 0.3f, 0.9f)
+		b shouldBe Quaternion(0.4f, -0.3f, 0.2f, 0.8f)
+		(a - b).let { listOf(it.x, it.y, it.z, it.w) }.approx(listOf(-0.3f, 0.5f, 0.1f, 0.1f))
+
+		Quaternion.IDENTITY.slerp(b, 0.5f)
+		Quaternion.IDENTITY shouldBe Quaternion()
+		Quaternion(3f, 0f, 4f, 0f).length.approx(5f)
+	}
+
+	test("matrix values and operators leave the matrix untouched") {
+		val m = Matrix.fromValues(*FloatArray(16) { it.toFloat() })
+		val values = m.values.toList()
+		m.values.toList() shouldBe values
+		m * Matrix.IDENTITY
+		m.values.toList() shouldBe values
+	}
+
+	test("interpolate goes from this transformation to the other one") {
+		val from = Transformation(translation = Vec3f(0f, 0f, 0f))
+		val to = Transformation(translation = Vec3f(2f, 4f, 6f), scale = Vec3f(3f, 3f, 3f))
+
+		val half = from.interpolate(to, 0.5f)
+		listOf(half.translation!!.x, half.translation!!.y, half.translation!!.z).approx(listOf(1f, 2f, 3f))
+		listOf(half.scale.x, half.scale.y, half.scale.z).approx(listOf(2f, 2f, 2f))
+		from.interpolate(to, 0f).translation!!.x.approx(0f)
+	}
+
+	test("invert undoes the transformation") {
+		val t = Transformation(
+			translation = Vec3f(1.5f, -2.5f, 3.5f),
+			leftRotation = Quaternion.fromEulerAngles(0.4f, 0.6f, 0.9f),
+			scale = Vec3f(0.75f, 1.25f, 2f),
+		)
+		t.compose()
+
+		t.matrix!!.copy().multiply(t.invert().matrix!!).values.toList().approx(Matrix.IDENTITY.values.toList())
+		Quaternion.IDENTITY shouldBe Quaternion()
+	}
 })
