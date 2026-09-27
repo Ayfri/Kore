@@ -68,13 +68,14 @@ open class Function(
 
 	/**
 	 * Adds a [Command] to the function and stores its string form.
+	 * Line breaks inside it (e.g. from a text component) are escaped as `\n`/`\r`, as a raw one would split the command in two.
 	 * When debug mode is enabled, a `tellraw` entry showing the command
 	 * will also be appended.
 	 * Returns the given [Command] for fluent usage.
 	 */
 	open fun addLine(command: Command): Command {
 		commands += command
-		lines += handleMacro(command.toString())
+		lines += handleMacro(command.toString().replace("\r", "\\r").replace("\n", "\\n"))
 
 		if (nextLineHasMacro) command.hasMacro = true
 

@@ -5,7 +5,7 @@ nav-title: Chat Components
 description: A guide for creating Chat Components in a Minecraft datapack using Kore.
 keywords: minecraft, datapack, kore, guide, chat-components
 date-created: 2024-09-05
-date-modified: 2026-09-23
+date-modified: 2026-09-27
 routeOverride: /docs/concepts/chat-components
 ---
 
@@ -58,6 +58,9 @@ In-game output:<br>
 ![Simple Hello World in bold red](/doc/chat-components/hello-world.png)
 
 See how to set custom colors in the [Colors](/docs/concepts/colors) article.
+
+A line break in the text (`"line 1\nline 2"`) is written as the `\n` escape in commands, since a raw one would split the
+function line in two.
 
 ### Combined Components
 
