@@ -60,11 +60,16 @@ data class ChatComponents(
 		else -> toNbtList()
 	}
 
-	/** Collapses these components into a single [ChatComponent]: the first is the root, the rest become its `extra` siblings. */
+	/**
+	 * Collapses these components into a single [ChatComponent]: a copy of the first is the root, the rest are appended to its
+	 * `extra` siblings. The components themselves are left untouched.
+	 */
 	fun toComponent(): ChatComponent = when (list.size) {
 		0 -> text()
 		1 -> list[0]
-		else -> list[0].apply { extra = ChatComponents(list.drop(1).toMutableList()) }
+		else -> list[0].shallowCopy().apply {
+			extra = ChatComponents((extra?.list.orEmpty() + list.drop(1)).toMutableList())
+		}
 	}
 
 	override fun asString() = toNbtTag().toSnbt()

@@ -25,6 +25,7 @@ import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.Textures
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.set
+import io.github.ayfri.kore.utils.toSnbt
 import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
 
@@ -56,6 +57,10 @@ fun chatComponentsTests() {
 	prefix + text("first")
 	prefix + textComponent("second")
 	prefix assertsIsJson "\"[Kore] \""
+
+	val root = text("root") { extra = textComponent("own") }
+	ChatComponents(root, text("next")).toComponent().toNbtTag().toSnbt() assertsIs """{type:"text",extra:["own","next"],text:"root"}"""
+	root.extra assertsIs textComponent("own")
 
 	val entityComponent = entityComponent(self(), separator = " ")
 	entityComponent assertsIsJson """

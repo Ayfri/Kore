@@ -89,12 +89,38 @@ sealed class ChatComponent {
 		obfuscated?.let { this["obfuscated"] = it }
 		shadowColor?.let { this["shadow_color"] = it.toARGB().decimal }
 		strikethrough?.let { this["strikethrough"] = it }
-		if (extra == null) this["text"] = text
+		this["text"] = text
 		underlined?.let { this["underlined"] = it }
 	}
 
 	/** Returns a compact NBT representation: a bare [NbtString][net.benwoodworth.knbt.NbtString] when [containsOnlyText], otherwise [toNbtTag]. */
 	fun toNbt() = if (containsOnlyText()) text.nbt else toNbtTag()
+
+	/** Returns a copy of this component sharing its nested values, so reassigning a field of the copy leaves this one untouched. */
+	internal fun shallowCopy() = when (this) {
+		is AtlasObjectTextComponent -> copy()
+		is EntityComponent -> copy()
+		is KeybindComponent -> copy()
+		is NbtComponent -> copy()
+		is PlainTextComponent -> PlainTextComponent()
+		is PlayerObjectTextComponent -> copy()
+		is ScoreComponent -> copy()
+		is TranslatedTextComponent -> copy()
+	}.also {
+		it.text = text
+		it.bold = bold
+		it.clickEvent = clickEvent
+		it.color = color
+		it.extra = extra
+		it.font = font
+		it.hoverEvent = hoverEvent
+		it.insertion = insertion
+		it.italic = italic
+		it.obfuscated = obfuscated
+		it.shadowColor = shadowColor
+		it.strikethrough = strikethrough
+		it.underlined = underlined
+	}
 
 	override fun toString() =
 		"${type.name.pascalCase()}(text='$text', bold=$bold, clickEvent=$clickEvent, color=$color, extra=$extra, font=$font, hoverEvent=$hoverEvent, insertion=$insertion, italic=$italic, obfuscated=$obfuscated, shadowColor=$shadowColor, strikethrough=$strikethrough, underlined=$underlined)"
