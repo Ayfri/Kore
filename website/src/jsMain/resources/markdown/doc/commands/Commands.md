@@ -5,7 +5,7 @@ nav-title: Commands
 description: Every Minecraft command in a type-safe Kotlin DSL. From /say, /teleport, and /give to /execute, /data, /scoreboard, and /summon -- all with code examples and generated mcfunction output.
 keywords: minecraft commands, kore commands, kotlin commands dsl, mcfunction generator, execute command, data command, teleport command, summon command, minecraft command builder, type-safe commands
 date-created: 2026-02-03
-date-modified: 2026-08-14
+date-modified: 2026-09-27
 routeOverride: /docs/commands/commands
 ---
 
@@ -481,6 +481,30 @@ Generated output:
 setworldspawn
 setworldspawn 0 64 0
 setworldspawn 0 64 0 0 0
+```
+
+### PlaySound Command
+
+The `playsound` command plays a sound event (from `SoundEvents`) to players. Its arguments are positional, so when you
+skip one but give a later one, Kore fills the skipped ones with the game defaults: `master` for the source, `@s` for the
+target, `~ ~ ~` for the position and `1` for the volume and pitch.
+
+```kotlin
+function("playsound_examples") {
+	playSound(SoundEvents.Entity.Bat.TAKEOFF)
+	playSound(SoundEvents.Entity.Bat.TAKEOFF, target = allPlayers())
+	playSound(SoundEvents.Entity.Bat.TAKEOFF, volume = 2.0)
+	playSound(SoundEvents.Entity.Bat.TAKEOFF, PlaySoundMixer.PLAYER, allPlayers(), vec3(), 1.0, 2.0, 0.5)
+}
+```
+
+Generated output:
+
+```mcfunction
+playsound minecraft:entity.bat.takeoff
+playsound minecraft:entity.bat.takeoff master @a
+playsound minecraft:entity.bat.takeoff master @s ~ ~ ~ 2
+playsound minecraft:entity.bat.takeoff player @a ~ ~ ~ 1 2 0.5
 ```
 
 ### StopSound Command

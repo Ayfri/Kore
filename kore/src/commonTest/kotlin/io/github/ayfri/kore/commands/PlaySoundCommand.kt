@@ -20,6 +20,9 @@ fun Function.playSoundTests() {
 		pitch = 2.0,
 		minVolume = 1.0,
 	) assertsIs "playsound minecraft:entity.bat.takeoff master @a ~ ~ ~ 1 2 1"
+	playSound(SoundEvents.Entity.Bat.TAKEOFF, target = allPlayers()) assertsIs "playsound minecraft:entity.bat.takeoff master @a"
+	playSound(SoundEvents.Entity.Bat.TAKEOFF, volume = 2.0) assertsIs "playsound minecraft:entity.bat.takeoff master @s ~ ~ ~ 2"
+	playSound(SoundEvents.Entity.Bat.TAKEOFF, minVolume = 0.5) assertsIs "playsound minecraft:entity.bat.takeoff master @s ~ ~ ~ 1 1 0.5"
 }
 
 class PlaySoundCommandTests : FunSpec({

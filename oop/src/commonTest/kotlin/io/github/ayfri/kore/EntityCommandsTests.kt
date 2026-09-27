@@ -108,7 +108,7 @@ fun entityCommandsTests() = dataPack("entity_commands_tests") {
 	}
 
 	function("test_play_sound") {
-		player.playSound(SoundEvents.Entity.ExperienceOrb.PICKUP) assertsIs "playsound minecraft:entity.experience_orb.pickup @e[limit=1,name=TestPlayer,type=minecraft:player]"
+		player.playSound(SoundEvents.Entity.ExperienceOrb.PICKUP) assertsIs "playsound minecraft:entity.experience_orb.pickup master @e[limit=1,name=TestPlayer,type=minecraft:player]"
 		lines.size assertsIs 1
 	}
 
