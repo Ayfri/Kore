@@ -1,8 +1,6 @@
 package io.github.ayfri.kore.features.itemmodifiers.functions
 
-import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
-import io.github.ayfri.kore.arguments.chatcomponents.textComponent
-import io.github.ayfri.kore.arguments.components.item.WrittenPage
+import io.github.ayfri.kore.arguments.components.item.WritablePage
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.PredicateAsList
 import kotlinx.serialization.Serializable
@@ -15,14 +13,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SetBookCover(
 	override var conditions: PredicateAsList? = null,
-	var title: WrittenPage? = null,
+	/** Plain text up to 32 characters, with an optional filtered version, the game doesn't take a text component here. */
+	var title: WritablePage? = null,
 	var author: String? = null,
 	var generation: Int? = null,
 ) : ItemFunction()
 
-/** Add a `set_book_cover` step with a fully constructed [WrittenPage] title. */
+/** Add a `set_book_cover` step with a [WritablePage] title, to also give a filtered version. */
 fun ItemModifier.setBookCover(
-	title: WrittenPage? = null,
+	title: WritablePage? = null,
 	author: String? = null,
 	generation: Int? = null,
 	block: SetBookCover.() -> Unit = {},
@@ -36,16 +35,4 @@ fun ItemModifier.setBookCover(
 	author: String? = null,
 	generation: Int? = null,
 	block: SetBookCover.() -> Unit = {},
-) {
-	modifiers += SetBookCover(title = WrittenPage(textComponent(title)), author = author, generation = generation).apply(block)
-}
-
-/** Title convenience overload from chat components. */
-fun ItemModifier.setBookCover(
-	title: ChatComponents,
-	author: String? = null,
-	generation: Int? = null,
-	block: SetBookCover.() -> Unit = {},
-) {
-	modifiers += SetBookCover(title = WrittenPage(title), author = author, generation = generation).apply(block)
-}
+) = setBookCover(WritablePage(title), author, generation, block)

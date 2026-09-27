@@ -185,19 +185,12 @@ data class ItemPredicate(
 		val entries = mutableListOf<ComponentEntry>()
 		for ((key, values) in validEntries) {
 			val keyName = key.removePrefix("~").removePrefix("!")
-			val isChatComponent = componentsAlternatives[key]?.firstOrNull()?.isChatComponent() == true
 			values.nbtList.mapTo(entries) {
-				val value = when {
-					isChatComponent -> it.unescapeChatComponent()
-					it == nbt {} -> null
-					else -> it.toSnbt()
-				}
-
 				ComponentEntry(
 					key = keyName,
 					negated = "!" in key,
 					sign = if ("~" in key) "~" else "=",
-					value = value
+					value = if (it == nbt {}) null else it.toSnbt(),
 				)
 			}
 		}

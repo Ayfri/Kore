@@ -2,7 +2,6 @@ package io.github.ayfri.kore.arguments.components
 
 import io.github.ayfri.kore.arguments.components.item.CustomComponent
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
-import io.github.ayfri.kore.utils.unescape
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.MapSerializer
@@ -23,22 +22,6 @@ val jsonSerializer = Json {
 	classDiscriminatorMode = ClassDiscriminatorMode.NONE
 	namingStrategy = JsonNamingStrategy.SnakeCase
 }
-
-// `[\s\S]` is used instead of `.` (with DOT_MATCHES_ALL) since that RegexOption is JVM-only.
-private val QUOTED_CHAT_COMPONENT = Regex("\"\'\"([\\s\\S]+?)\"\'\"")
-private val QUOTED_JSON_COMPONENT = Regex("\"\'\\{([\\s\\S]+?)\\}\'\"")
-
-/**
- * SNBT serialization quotes and escapes chat components (and single-quotes JSON ones); this unwraps such a value
- * back to the inline form expected inside the `item[key=value]` command syntax.
- *
- * Only used for components where [Component.isChatComponent] is `true`.
- */
-internal fun NbtTag.unescapeChatComponent() = toString().unescape()
-	// The quotes are added by the serializer, we just need to unescape the string.
-	.replace(QUOTED_CHAT_COMPONENT, "'\"$1\"'")
-	// we also need a fix for JSON Components as they are serialized as JSON but single quoted.
-	.replace(QUOTED_JSON_COMPONENT, "'{$1}'")
 
 data object ComponentsSerializer : KSerializer<ComponentsScope> {
 	override val descriptor = buildClassSerialDescriptor("Components") {

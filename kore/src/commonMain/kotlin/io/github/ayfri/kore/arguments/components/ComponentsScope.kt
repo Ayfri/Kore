@@ -73,9 +73,5 @@ abstract class ComponentsScope(open val components: MutableMap<String, Component
 	}
 
 	override fun toString() = asNbt().entries
-		.joinToString(separator = ",", prefix = "[", postfix = "]") { (key, value) ->
-			val rendered =
-				if (components[key]?.isChatComponent() == true) value.unescapeChatComponent() else value.toSnbt()
-			"$key=$rendered"
-		}
+		.joinToString(separator = ",", prefix = "[", postfix = "]") { (key, value) -> "$key=${value.toSnbt()}" }
 }

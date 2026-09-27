@@ -195,31 +195,14 @@ data class ChatComponents(
 				else -> throw IllegalArgumentException("Unsupported decoder: $decoder")
 			}
 
-			/* Encode each component, if there's only one, encode it as a single component, if the component only contains a text, encode it as a string. */
-			override fun serialize(encoder: Encoder, value: ChatComponents) {
-				if (value.list.size == 1) encoder.encodeSerializableValue(ChatComponentSerializer, value.list[0])
-				else encoder.encodeComponents(descriptor, value.list)
-			}
-		}
-
-		/* Serializes ChatComponents to a string with escaped quotes for use in SNBT. */
-		data object ChatComponentsEscapedSerializer : KSerializer<ChatComponents> {
-			override val descriptor = ListSerializer(JsonElement.serializer()).descriptor
-
-			override fun deserialize(decoder: Decoder) = ChatComponents()
-
-			override fun serialize(encoder: Encoder, value: ChatComponents) = when (encoder) {
-				is NbtEncoder -> {
-					val snbtSerialized = value.asString()
-					encoder.encodeNbtTag(NbtString("'$snbtSerialized'"))
-				}
-
-				is JsonEncoder -> {
-					val snbtSerialized = value.asString()
-					encoder.encodeJsonElement(JsonPrimitive(snbtSerialized))
-				}
-
-				else -> throw IllegalArgumentException("Unsupported encoder: $encoder")
+			/*
+			 * A single component is encoded alone, a plain text one as a string. An NBT list goes through [toNbtList] since it
+			 * holds a single type, turning every element into a compound as soon as one isn't plain text.
+			 */
+			override fun serialize(encoder: Encoder, value: ChatComponents) = when {
+				value.list.size == 1 -> encoder.encodeSerializableValue(ChatComponentSerializer, value.list[0])
+				encoder is NbtEncoder -> encoder.encodeNbtTag(value.toNbtList())
+				else -> encoder.encodeComponents(descriptor, value.list)
 			}
 		}
 	}

@@ -5,7 +5,7 @@ nav-title: Item Modifiers
 description: Transform item stacks using Kore's type-safe DSL for loot functions - set counts, add enchantments, copy data, and more.
 keywords: minecraft, datapack, kore, item modifiers, loot functions, /item modify, components
 date-created: 2025-08-11
-date-modified: 2026-06-16
+date-modified: 2026-09-27
 routeOverride: /docs/data-driven/item-modifiers
 ---
 
@@ -568,7 +568,8 @@ itemModifier("firework") {
 
 #### setBookCover
 
-Set written book cover:
+Set written book cover. The title is plain text up to 32 characters, not a text component, pass
+`WritablePage("Adventure Log", filtered = "...")` to also give the version shown with chat filtering:
 
 ```kotlin
 itemModifier("book") {

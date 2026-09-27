@@ -425,7 +425,7 @@ fun DataPack.itemModifierTests() {
 	itemModifiers.last() assertsIs """
 		{
 			"function": "minecraft:set_book_cover",
-			"title": "\"Test Title\"",
+			"title": "Test Title",
 			"author": "Test Author",
 			"generation": 2
 		}
@@ -866,8 +866,8 @@ fun DataPack.itemModifierTests() {
 			"function": "minecraft:set_written_book_pages",
 			"pages": [
 				{
-					"raw": "\"test\"",
-					"filtered": "\"test2\""
+					"raw": "test",
+					"filtered": "test2"
 				}
 			],
 			"mode": "replace_all"

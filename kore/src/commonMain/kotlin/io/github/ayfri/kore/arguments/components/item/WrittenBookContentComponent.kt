@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.arguments.components.item
 
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
-import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
@@ -31,21 +30,11 @@ data class WrittenPage(
 			override fun serialize(encoder: Encoder, value: WrittenPage) {
 				if (value.filtered != null || !value.single) {
 					encoder.encodeStructure(descriptor) {
-						encodeSerializableElement(
-							descriptor,
-							0,
-							ChatComponents.Companion.ChatComponentsEscapedSerializer,
-							value.raw
-						)
-						if (value.filtered != null) encodeSerializableElement(
-							descriptor,
-							1,
-							ChatComponents.Companion.ChatComponentsEscapedSerializer,
-							value.filtered!!
-						)
+						encodeSerializableElement(descriptor, 0, ChatComponents.serializer(), value.raw)
+						value.filtered?.let { encodeSerializableElement(descriptor, 1, ChatComponents.serializer(), it) }
 					}
 				} else {
-					encoder.encodeSerializableValue(ChatComponents.Companion.ChatComponentsEscapedSerializer, value.raw)
+					encoder.encodeSerializableValue(ChatComponents.serializer(), value.raw)
 				}
 			}
 		}
@@ -75,25 +64,24 @@ private object WrittenPagesSerializer : KSerializer<List<WrittenPage>> {
 data class WrittenBookContentsComponent(
 	@Serializable(with = WrittenPagesSerializer::class)
 	var pages: List<WrittenPage>,
-	var title: WrittenPage,
+	/** Plain text up to 32 characters, with an optional filtered version, the game doesn't take a text component here. */
+	var title: WritablePage,
 	var author: String,
 	var generation: Int,
 	var resolved: Boolean,
-) : Component() {
-	override fun isChatComponent() = true
-}
+) : Component()
 
 /** Stores the signed pages, title, and author of a written book. */
 fun ComponentsScope.writtenBookContent(
 	pages: List<WrittenPage>,
-	title: WrittenPage,
+	title: WritablePage,
 	author: String,
 	generation: Int,
 	resolved: Boolean,
 ) = apply { this[ItemComponentTypes.WRITTEN_BOOK_CONTENT] = WrittenBookContentsComponent(pages, title, author, generation, resolved) }
 
 fun ComponentsScope.writtenBookContent(
-	title: WrittenPage,
+	title: WritablePage,
 	author: String,
 	generation: Int = 0,
 	resolved: Boolean = false,
@@ -104,26 +92,12 @@ fun ComponentsScope.writtenBookContent(
 }
 
 fun ComponentsScope.writtenBookContent(
-	title: ChatComponents,
-	author: String,
-	generation: Int = 0,
-	resolved: Boolean = false,
-	block: WrittenBookContentsComponent.() -> Unit,
-) = apply {
-	components["written_book_content"] =
-		WrittenBookContentsComponent(emptyList(), WrittenPage(title), author, generation, resolved).apply(block)
-}
-
-fun ComponentsScope.writtenBookContent(
 	title: String,
 	author: String,
 	generation: Int = 0,
 	resolved: Boolean = false,
 	block: WrittenBookContentsComponent.() -> Unit,
-) = apply {
-	components["written_book_content"] =
-		WrittenBookContentsComponent(emptyList(), WrittenPage(textComponent(title)), author, generation, resolved).apply(block)
-}
+) = writtenBookContent(WritablePage(title), author, generation, resolved, block)
 
 fun WrittenBookContentsComponent.page(text: ChatComponents, filtered: ChatComponents? = null) = apply {
 	pages += WrittenPage(text, filtered)

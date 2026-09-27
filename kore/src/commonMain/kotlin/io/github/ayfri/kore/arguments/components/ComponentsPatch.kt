@@ -100,7 +100,6 @@ open class ComponentsPatch(components: MutableMap<String, Component> = mutableMa
 	override fun toString() = asNbt().entries
 		.joinToString(separator = ",", prefix = "[", postfix = "]") { (key, value) ->
 			when {
-				components[key]?.isChatComponent() == true -> "$key=${value.unescapeChatComponent()}"
 				value == nbt {} && key.startsWith("!") -> key
 				else -> "$key=${value.toSnbt()}"
 			}

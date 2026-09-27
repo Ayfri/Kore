@@ -14,14 +14,6 @@ import net.benwoodworth.knbt.NbtTag
 @GeneratedSerializerMap
 @Serializable(with = Component.Companion.ComponentSerializer::class)
 abstract class Component {
-	/**
-	 * Whether this component wraps a chat component, so its SNBT value must be unescaped (and JSON ones single-quoted)
-	 * when rendered inside the `item[key=value]` command syntax. See [unescapeChatComponent].
-	 *
-	 * Defined as a function (not a property) so it is never picked up as a serializable field.
-	 */
-	open fun isChatComponent() = false
-
 	companion object {
 		class ComponentSerializer : KSerializer<Component> {
 			val kClass = Component::class

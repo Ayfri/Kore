@@ -21,8 +21,6 @@ import kotlinx.serialization.serializer
  */
 @Serializable(with = ItemNameComponent.Companion.ItemNameComponentSerializer::class)
 data class ItemNameComponent(val components: ChatComponents) : Component() {
-	override fun isChatComponent() = true
-
 	companion object {
 		data object ItemNameComponentSerializer : InlineAutoSerializer<ItemNameComponent, ChatComponents>(
 			serializer<ChatComponents>(),

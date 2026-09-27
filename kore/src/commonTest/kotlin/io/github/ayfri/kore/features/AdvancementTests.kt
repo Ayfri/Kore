@@ -1383,7 +1383,13 @@ private fun DataPack.componentsDisplay() {
 							"text": "Legendary Diamond Sword",
 							"color": "gold"
 						},
-						"lore": "[{type:\"text\",color:\"gold\",text:\"A blade of immense power\"}]"
+						"lore": [
+							{
+								"type": "text",
+								"color": "gold",
+								"text": "A blade of immense power"
+							}
+						]
 					}
 				},
 				"title": "Legendary Sword",

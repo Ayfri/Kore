@@ -27,7 +27,7 @@ fun itemComponentsTests() {
 	val b = Items.AIR {
 		copyFrom(a)
 	}
-	b.asString() assertsIs "minecraft:air[item_name=a]"
+	b.asString() assertsIs "minecraft:air[item_name=\"a\"]"
 
 	val stoneSword = Items.STONE_SWORD
 	val stone = Items.STONE
@@ -248,7 +248,13 @@ fun itemComponentsTests() {
 	customNameTest.asString() assertsIs "minecraft:stone_sword[custom_name={text:\"test\",color:\"aqua\"}]"
 
 	customNameTest.components!!.customName(textComponent("test"))
-	customNameTest.asString() assertsIs "minecraft:stone_sword[custom_name=test]"
+	customNameTest.asString() assertsIs "minecraft:stone_sword[custom_name=\"test\"]"
+
+	customNameTest.components!!.customName("""Hello "world" C:\temp""")
+	customNameTest.asString() assertsIs """minecraft:stone_sword[custom_name="Hello \"world\" C:\\temp"]"""
+
+	customNameTest.components!!.customName(textComponent("Legendary ", Color.GOLD) + text("Sword"))
+	customNameTest.asString() assertsIs """minecraft:stone_sword[custom_name=[{type:"text",color:"gold",text:"Legendary "},{type:"text",text:"Sword"}]]"""
 
 	val damageTest = stoneSword {
 		damage(5)
@@ -404,7 +410,7 @@ fun itemComponentsTests() {
 	val itemNameTest = stoneSword {
 		itemName(textComponent("test"))
 	}
-	itemNameTest.asString() assertsIs "minecraft:stone_sword[item_name=test]"
+	itemNameTest.asString() assertsIs "minecraft:stone_sword[item_name=\"test\"]"
 	itemNameTest.components!!.itemName("test", Color.AQUA)
 	itemNameTest.asString() assertsIs "minecraft:stone_sword[item_name={text:\"test\",color:\"aqua\"}]"
 
@@ -687,7 +693,7 @@ fun itemComponentsTests() {
 
 	val writtenBookTest = Items.WRITTEN_BOOK {
 		writtenBookContent(
-			title = textComponent("test"),
+			title = "test",
 			author = "test",
 			generation = 1,
 			resolved = true
@@ -695,7 +701,13 @@ fun itemComponentsTests() {
 			page(textComponent("test", Color.AQUA))
 		}
 	}
-	writtenBookTest.asString() assertsIs "minecraft:written_book[written_book_content={pages:['{type:\"text\",color:\"aqua\",text:\"test\"}'],title:'\"test\"',author:\"test\",generation:1,resolved:1b}]"
+	writtenBookTest.asString() assertsIs """minecraft:written_book[written_book_content={pages:[{text:"test",color:"aqua"}],title:"test",author:"test",generation:1,resolved:1b}]"""
+
+	writtenBookTest.components!!.writtenBookContent(WritablePage("test", "filtered"), "test") {
+		page(textComponent("first"))
+		page(textComponent("second"), textComponent("filtered"))
+	}
+	writtenBookTest.asString() assertsIs """minecraft:written_book[written_book_content={pages:[{raw:"first"},{raw:"second",filtered:"filtered"}],title:{raw:"test",filtered:"filtered"},author:"test",generation:0,resolved:0b}]"""
 
 	val weaponTest = stoneSword {
 		weapon(itemDamagePerAttack = 5, disableBlockingForSeconds = 5f)
