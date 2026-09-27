@@ -1,13 +1,14 @@
 package io.github.ayfri.kore.arguments.types.literals
 
 import io.github.ayfri.kore.arguments.Argument
+import io.github.ayfri.kore.utils.toSnbt
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
 import kotlin.jvm.JvmName
 
 @Serializable(with = Argument.ArgumentSerializer::class)
 data class CompoundArgument(val value: NbtCompound) : Argument {
-	override fun asString() = value.toString()
+	override fun asString() = value.toSnbt()
 }
 
 @JvmName("compoundNullable")

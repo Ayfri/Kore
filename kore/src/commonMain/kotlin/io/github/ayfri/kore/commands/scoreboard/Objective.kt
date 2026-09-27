@@ -15,8 +15,8 @@ import io.github.ayfri.kore.commands.Command
 import io.github.ayfri.kore.commands.command
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.utils.asArg
+import io.github.ayfri.kore.utils.encodeToSnbt
 import io.github.ayfri.kore.utils.snbtSerializer
-import kotlinx.serialization.encodeToString
 
 class Objective(private val fn: Function, val objective: String) {
 	fun player(target: ScoreHolderArgument) = PlayerObjective(fn, target, objective)
@@ -119,7 +119,7 @@ class Objective(private val fn: Function, val objective: String) {
 			literal(objective),
 			literal("numberformat"),
 			literal("styled"),
-			literal(snbtSerializer.encodeToString(style))
+			literal(snbtSerializer.encodeToSnbt(style))
 		)
 	)
 

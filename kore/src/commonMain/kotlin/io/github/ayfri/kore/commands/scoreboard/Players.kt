@@ -10,8 +10,8 @@ import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.commands.command
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.utils.asArg
+import io.github.ayfri.kore.utils.encodeToSnbt
 import io.github.ayfri.kore.utils.snbtSerializer
-import kotlinx.serialization.encodeToString
 
 class Players(private val fn: Function) {
 	fun add(target: ScoreHolderArgument, objective: String, score: Int) =
@@ -102,7 +102,7 @@ class Players(private val fn: Function) {
 			target,
 			literal(objective),
 			literal("styled"),
-			literal(snbtSerializer.encodeToString(style))
+			literal(snbtSerializer.encodeToSnbt(style))
 		)
 	)
 

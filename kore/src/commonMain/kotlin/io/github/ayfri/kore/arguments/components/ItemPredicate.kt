@@ -190,7 +190,7 @@ data class ItemPredicate(
 				val value = when {
 					isChatComponent -> it.unescapeChatComponent()
 					it == nbt {} -> null
-					else -> it.toString()
+					else -> it.toSnbt()
 				}
 
 				ComponentEntry(

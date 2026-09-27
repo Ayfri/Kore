@@ -2,6 +2,7 @@ package io.github.ayfri.kore.arguments.components
 
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.utils.nbt
+import io.github.ayfri.kore.utils.toSnbt
 import kotlinx.serialization.Serializable
 
 @Serializable(with = ComponentsSerializer::class)
@@ -101,7 +102,7 @@ open class ComponentsPatch(components: MutableMap<String, Component> = mutableMa
 			when {
 				components[key]?.isChatComponent() == true -> "$key=${value.unescapeChatComponent()}"
 				value == nbt {} && key.startsWith("!") -> key
-				else -> "$key=$value"
+				else -> "$key=${value.toSnbt()}"
 			}
 		}
 }

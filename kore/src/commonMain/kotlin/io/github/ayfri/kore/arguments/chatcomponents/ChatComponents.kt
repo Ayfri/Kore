@@ -4,6 +4,7 @@ import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
 import io.github.ayfri.kore.utils.nbtListOf
+import io.github.ayfri.kore.utils.toSnbt
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -66,7 +67,7 @@ data class ChatComponents(
 		else -> list[0].apply { extra = ChatComponents(list.drop(1).toMutableList()) }
 	}
 
-	override fun asString() = StringifiedNbt.encodeToString(toNbtTag())
+	override fun asString() = toNbtTag().toSnbt()
 
 	fun asJsonArg() = literal(toJsonString())
 

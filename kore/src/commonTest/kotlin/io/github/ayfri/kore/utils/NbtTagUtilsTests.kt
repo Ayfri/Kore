@@ -29,6 +29,18 @@ class NbtTagUtilsTests : FunSpec({
 		stringifiedNbt("12b".toNbtTag()) shouldBe "12b"
 	}
 
+	test("snbt strings escape backslashes, quotes and line breaks") {
+		val compound = nbt {
+			this["path"] = """C:\temp"""
+			this["quote"] = """say "hi" it's"""
+			this["lines"] = "a\nb"
+			this["it's \"key\""] = 1
+			this["say \"key\""] = 2
+		}
+
+		compound.toSnbt() shouldBe """{path:"C:\\temp",quote:"say \"hi\" it's",lines:"a\nb","it's \"key\"":1,'say "key"':2}"""
+	}
+
 	test("invalid snbt is rejected") {
 		shouldThrowAny { "{unclosed:1".toNbt() }
 	}

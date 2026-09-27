@@ -4,13 +4,12 @@ import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.generated.arguments.EntityTypeOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.serializers.ToStringSerializer
+import io.github.ayfri.kore.utils.toSnbt
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.jsonPrimitive
 import net.benwoodworth.knbt.NbtCompound
-import net.benwoodworth.knbt.StringifiedNbt
 
 /**
  * Base class for selector options that can be inverted (prefixed with `!`).
@@ -71,7 +70,7 @@ class GamemodeOption(
 class NbtCompoundOption(
 	override var value: NbtCompound? = null,
 	override var invert: Boolean = false,
-) : InvertableOption<NbtCompound>(NbtCompound.serializer(), StringifiedNbt::encodeToString)
+) : InvertableOption<NbtCompound>(NbtCompound.serializer(), NbtCompound::toSnbt)
 
 @Serializable(InvertableOption.Companion.InvertableOptionSerializer::class)
 class PredicateOption(

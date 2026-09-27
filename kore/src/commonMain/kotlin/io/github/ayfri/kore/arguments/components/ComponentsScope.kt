@@ -6,6 +6,7 @@ import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.generated.arguments.types.DataComponentTypeArgument
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.snbtSerializer
+import io.github.ayfri.kore.utils.toSnbt
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import net.benwoodworth.knbt.NbtCompound
@@ -74,7 +75,7 @@ abstract class ComponentsScope(open val components: MutableMap<String, Component
 	override fun toString() = asNbt().entries
 		.joinToString(separator = ",", prefix = "[", postfix = "]") { (key, value) ->
 			val rendered =
-				if (components[key]?.isChatComponent() == true) value.unescapeChatComponent() else value.toString()
+				if (components[key]?.isChatComponent() == true) value.unescapeChatComponent() else value.toSnbt()
 			"$key=$rendered"
 		}
 }

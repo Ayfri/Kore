@@ -10,8 +10,8 @@ import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
+import io.github.ayfri.kore.utils.encodeToSnbt
 import io.github.ayfri.kore.utils.snbtSerializer
-import kotlinx.serialization.encodeToString
 
 /** DSL scope for manipulating a single item slot. */
 data class ItemSlot(private val fn: Function, val container: ContainerArgument, val slot: ItemSlotType) {
@@ -47,7 +47,7 @@ data class Item(private val fn: Function) {
 
 	/** Builds an item modifier with [block] and applies it to [container]'s [slot]. @see [Minecraft wiki](https://minecraft.wiki/w/Commands/item) */
 	fun modify(container: ContainerArgument, slot: ItemSlotType, block: ItemModifier.() -> Unit) =
-		fn.addLine(command("item", literal("modify"), *target(container), slot, literal(snbtSerializer.encodeToString(ItemModifier().apply(block)))))
+		fn.addLine(command("item", literal("modify"), *target(container), slot, literal(snbtSerializer.encodeToSnbt(ItemModifier().apply(block)))))
 
 	/** Replaces [container]'s [slot] with [item]. @see [Minecraft wiki](https://minecraft.wiki/w/Commands/item) */
 	fun replace(container: ContainerArgument, slot: ItemSlotType, item: ItemArgument, count: Int? = null) =
@@ -91,7 +91,7 @@ data class Item(private val fn: Function) {
 				literal("from"),
 				*target(with),
 				withSlot,
-				literal(snbtSerializer.encodeToString(ItemModifier().apply(block)))
+				literal(snbtSerializer.encodeToSnbt(ItemModifier().apply(block)))
 			)
 		)
 

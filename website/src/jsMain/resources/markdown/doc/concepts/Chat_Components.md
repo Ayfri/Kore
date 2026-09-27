@@ -60,7 +60,7 @@ In-game output:<br>
 See how to set custom colors in the [Colors](/docs/concepts/colors) article.
 
 A line break in the text (`"line 1\nline 2"`) is written as the `\n` escape in commands, since a raw one would split the
-function line in two.
+function line in two, and a backslash is written as `\\` so the game doesn't read it as an escape.
 
 ### Combined Components
 

@@ -3,6 +3,7 @@ package io.github.ayfri.kore.utils
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -23,7 +24,58 @@ fun nbtList(block: NbtListBuilder<NbtCompound>.() -> Unit = {}) = buildNbtList(b
 
 fun NbtCompoundBuilder.nbt(name: String, block: NbtCompoundBuilder.() -> Unit = {}) = putNbtCompound(name, block)
 fun NbtCompoundBuilder.json(name: String, block: NbtCompoundBuilder.() -> Unit = {}) =
-	put(name, StringifiedNbt.encodeToString(buildNbtCompound(block)))
+	put(name, buildNbtCompound(block).toSnbt())
+
+/**
+ * SNBT form of this tag, like knbt's `toString()` but escaping backslashes and line breaks in strings too, which knbt
+ * writes raw so the game reads `a\b` as an escape: `NbtString("a\\b").toSnbt()` is `"a\\b"`.
+ */
+fun NbtTag.toSnbt(): String = buildString { appendSnbt(this@toSnbt) }
+
+/** Encodes [value] to SNBT, see [toSnbt]. */
+inline fun <reified T> StringifiedNbt.encodeToSnbt(value: T) = encodeToNbtTag(value).toSnbt()
+fun <T> StringifiedNbt.encodeToSnbt(serializer: SerializationStrategy<T>, value: T) = encodeToNbtTag(serializer, value).toSnbt()
+
+private fun StringBuilder.appendSnbt(tag: NbtTag): StringBuilder = when (tag) {
+	is NbtCompound -> {
+		append('{')
+		tag.entries.forEachIndexed { index, (key, value) ->
+			if (index > 0) append(',')
+			appendSnbtString(key, forceQuote = false).append(':').appendSnbt(value)
+		}
+		append('}')
+	}
+
+	is NbtList<*> -> {
+		append('[')
+		tag.forEachIndexed { index, value ->
+			if (index > 0) append(',')
+			appendSnbt(value)
+		}
+		append(']')
+	}
+
+	is NbtString -> appendSnbtString(tag.value, forceQuote = true)
+	else -> append(tag.toString())
+}
+
+/** Same quoting choices as knbt (bare safe keys, single quotes around a key holding only `"`), with full escaping. */
+private fun StringBuilder.appendSnbtString(value: String, forceQuote: Boolean): StringBuilder {
+	val isSafe = value.isNotEmpty() && value.all { it == '-' || it == '_' || it in 'a'..'z' || it in 'A'..'Z' || it in '0'..'9' }
+	if (!forceQuote && isSafe) return append(value)
+
+	val quote = if (!forceQuote && '"' in value && '\'' !in value) '\'' else '"'
+	append(quote)
+	value.forEach {
+		when (it) {
+			'\\', quote -> append('\\').append(it)
+			'\n' -> append("\\n")
+			'\r' -> append("\\r")
+			else -> append(it)
+		}
+	}
+	return append(quote)
+}
 
 /**
  * Parses an SNBT compound, the textual NBT form Minecraft accepts in commands: `"{Count:3b,tag:{x:1}}".toNbt()`.
@@ -38,13 +90,12 @@ fun String.toNbt() = StringifiedNbt.decodeFromString<NbtCompound>(this)
 /** Parses any SNBT value, including lists, arrays, and bare primitives. */
 fun String.toNbtTag() = StringifiedNbt.decodeFromString<NbtTag>(this)
 
-fun stringifiedNbt(nbt: NbtTag) = StringifiedNbt.encodeToString(nbt)
-fun stringifiedNbt(block: NbtCompoundBuilder.() -> Unit) = StringifiedNbt.encodeToString(buildNbtCompound(block))
-fun stringifiedNbtList(block: NbtListBuilder<NbtCompound>.() -> Unit) =
-	StringifiedNbt.encodeToString(buildNbtList(block))
+fun stringifiedNbt(nbt: NbtTag) = nbt.toSnbt()
+fun stringifiedNbt(block: NbtCompoundBuilder.() -> Unit) = buildNbtCompound(block).toSnbt()
+fun stringifiedNbtList(block: NbtListBuilder<NbtCompound>.() -> Unit) = buildNbtList(block).toSnbt()
 
-fun nbt(nbt: NbtTag) = literal(StringifiedNbt.encodeToString(nbt))
-fun nbtArg(nbt: NbtCompoundBuilder.() -> Unit) = literal(StringifiedNbt.encodeToString(buildNbtCompound(nbt)))
+fun nbt(nbt: NbtTag) = literal(nbt.toSnbt())
+fun nbtArg(nbt: NbtCompoundBuilder.() -> Unit) = literal(buildNbtCompound(nbt).toSnbt())
 fun nbtText(nbt: NbtTag) = literal(Json.encodeToString(NbtAsJsonSerializer, nbt))
 
 @JvmName("nbtNullable")

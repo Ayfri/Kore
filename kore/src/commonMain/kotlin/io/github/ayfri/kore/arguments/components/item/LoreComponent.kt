@@ -7,14 +7,13 @@ import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
+import io.github.ayfri.kore.utils.toSnbt
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import net.benwoodworth.knbt.StringifiedNbt
 
 /**
  * Represents the `minecraft:lore` item component, which adds tooltip lines below the item name for descriptions or flavor text.
@@ -34,7 +33,7 @@ data class LoreComponent(
 			override val descriptor = PrimitiveSerialDescriptor("LoreComponent", PrimitiveKind.STRING)
 			override fun deserialize(decoder: Decoder) = error("LoreComponent cannot be deserialized.")
 			override fun serialize(encoder: Encoder, value: LoreComponent) =
-				encoder.encodeString(StringifiedNbt.encodeToString(value.list.toNbtList()))
+				encoder.encodeString(value.list.toNbtList().toSnbt())
 		}
 	}
 }
