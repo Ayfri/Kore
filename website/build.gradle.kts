@@ -33,6 +33,9 @@ val minecraftVersion = providers.gradleProperty("minecraft.version").orElse("").
 /** Plain-text GitHub data (stars, latest release tag) written by the fetch tasks for the Open Graph cards. */
 val gitHubDataDir = layout.buildDirectory.dir("generated/github")
 
+/** The playground example list and each example's pack, written by `:playground-examples:generatePlaygroundExamples`. */
+val playgroundExamplesDir = layout.projectDirectory.dir("playground-examples/build/generated/playground")
+
 /** Open Graph cards only ship in the exported site, rendering them on every Markdown edit of the dev server costs seconds. */
 val renderOgImages = gradle.startParameter.taskNames.any { it.substringAfterLast(':') == "kobwebExport" }
 
@@ -739,11 +742,15 @@ tasks.named("kobwebExport") {
 
 // Ensure generated sources exist before KSP for JS runs
 tasks.matching { it.name == "kspKotlinJs" }.configureEach {
-	dependsOn("fetchGitHubReleases", "fetchGitHubStars")
+	dependsOn("fetchGitHubReleases", "fetchGitHubStars", ":playground-examples:generatePlaygroundExamples")
 }
 
 tasks.matching { it.name == "compileKotlinJs" }.configureEach {
-	dependsOn("fetchGitHubReleases", "fetchGitHubStars")
+	dependsOn("fetchGitHubReleases", "fetchGitHubStars", ":playground-examples:generatePlaygroundExamples")
+}
+
+tasks.matching { it.name == "jsProcessResources" }.configureEach {
+	dependsOn(":playground-examples:generatePlaygroundExamples")
 }
 
 // llms.txt/sitemap.xml/markdown-sources.json are written by kobwebxMarkdownProcess into a
@@ -785,7 +792,9 @@ kotlin {
 	sourceSets {
 		jsMain {
 			kotlin.srcDir("build/generated/kore/src/jsMain/kotlin")
+			kotlin.srcDir(playgroundExamplesDir.dir("kotlin"))
 			resources.srcDir(layout.buildDirectory.dir("generated/llms-resources"))
+			resources.srcDir(playgroundExamplesDir.dir("resources"))
 
 			dependencies {
 				// Minifier for the production bundle, see `webpack.config.d/00-bundle-speed.js`.

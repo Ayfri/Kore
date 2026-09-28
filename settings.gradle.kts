@@ -39,6 +39,9 @@ include(":oop")
 include(":helpers")
 include(":bindings")
 include(":website")
+// Not `:website:playground-examples`: it only runs Kore on the JVM, and nothing under `:website` may race the Kobweb dev server.
+include(":playground-examples")
+project(":playground-examples").projectDir = file("website/playground-examples")
 
 @Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
