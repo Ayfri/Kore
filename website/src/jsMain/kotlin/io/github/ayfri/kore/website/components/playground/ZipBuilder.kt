@@ -108,12 +108,12 @@ fun buildZip(files: List<GeneratedFile>): ByteArray {
 	return output.toByteArray()
 }
 
-/** Offers the archive as a download, named after the pack namespace when there is one. */
+/** Offers the archive as a download, named after the pack's own namespace, never the `minecraft` one its tags live in. */
 fun downloadZip(files: List<GeneratedFile>) {
-	val namespace = files.firstOrNull { it.path.startsWith("data/") }
-		?.path
-		?.removePrefix("data/")
-		?.substringBefore('/')
+	val namespace = files.asSequence()
+		.filter { it.path.startsWith("data/") }
+		.map { it.path.removePrefix("data/").substringBefore('/') }
+		.firstOrNull { it != "minecraft" }
 
 	val bytes = buildZip(files)
 	val blob = Blob(arrayOf(Uint8Array(bytes.toTypedArray())), BlobPropertyBag(type = "application/zip"))
