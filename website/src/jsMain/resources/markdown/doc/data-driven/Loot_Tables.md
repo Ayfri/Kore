@@ -230,6 +230,11 @@ entries {
 }
 ```
 
+The entry's `conditions` and `functions` live in the `features.loottables.entries` package, the pool's and table's in
+`features.loottables`. The loot table, item modifier and predicate builders are DSL-scoped, so calling a builder that
+only an enclosing pool or table has fails to compile rather than silently adding to that pool: import the entry's
+version when the compiler reports it.
+
 #### Loot Table Entry
 
 References another loot table:

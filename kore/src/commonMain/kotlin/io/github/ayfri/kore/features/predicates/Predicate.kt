@@ -2,6 +2,7 @@ package io.github.ayfri.kore.features.predicates
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
+import io.github.ayfri.kore.annotations.LootDsl
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.serializers.InlinableList
@@ -25,6 +26,7 @@ typealias PredicateAsList = @Serializable(Predicate.Companion.PredicateAsListSer
  * Docs: https://kore.ayfri.com/docs/data-driven/predicates
  * JSON format reference: https://minecraft.wiki/w/Predicate
  */
+@LootDsl
 @Serializable(with = Predicate.Companion.PredicateSerializer::class)
 data class Predicate(
 	override var fileName: String = "predicate",

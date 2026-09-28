@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.features.itemmodifiers.functions
 
+import io.github.ayfri.kore.annotations.LootDsl
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.PredicateAsList
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
@@ -18,6 +19,7 @@ import kotlinx.serialization.Serializable
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @GeneratedSealedSerializer
+@LootDsl
 @Serializable(with = ItemFunction.Companion.ItemFunctionSerializer::class)
 sealed class ItemFunction {
     /** Optional predicate conditions guarding this function. */

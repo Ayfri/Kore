@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.features.loottables
 
+import io.github.ayfri.kore.annotations.LootDsl
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifierAsList
 import io.github.ayfri.kore.features.loottables.entries.LootEntries
@@ -17,6 +18,7 @@ import kotlinx.serialization.Serializable
  * Docs: https://kore.ayfri.com/docs/data-driven/loot-tables
  * Minecraft Wiki: https://minecraft.wiki/w/Loot_table
  */
+@LootDsl
 @Serializable
 data class LootPool(
 	var rolls: NumberProvider,

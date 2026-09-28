@@ -2,6 +2,7 @@ package io.github.ayfri.kore.features.loottables
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
+import io.github.ayfri.kore.annotations.LootDsl
 import io.github.ayfri.kore.arguments.types.resources.RandomSequenceArgument
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifierAsList
@@ -21,6 +22,7 @@ import kotlinx.serialization.Transient
  * Docs: https://kore.ayfri.com/docs/data-driven/loot-tables
  * Minecraft Wiki: https://minecraft.wiki/w/Loot_table
  */
+@LootDsl
 @Serializable
 data class LootTable(
 	@Transient

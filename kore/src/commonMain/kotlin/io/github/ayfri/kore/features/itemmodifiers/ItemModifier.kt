@@ -2,6 +2,7 @@ package io.github.ayfri.kore.features.itemmodifiers
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
+import io.github.ayfri.kore.annotations.LootDsl
 import io.github.ayfri.kore.features.itemmodifiers.functions.ItemFunction
 import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
 import io.github.ayfri.kore.serializers.InlinableList
@@ -30,6 +31,7 @@ typealias ItemModifierAsList = @Serializable(with = ItemModifier.Companion.ItemM
  * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * Minecraft Wiki: https://minecraft.wiki/w/Item_modifier
  */
+@LootDsl
 @Serializable
 data class ItemModifier(
 	@Transient
