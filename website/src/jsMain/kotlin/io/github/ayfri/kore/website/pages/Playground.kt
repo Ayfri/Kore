@@ -1,10 +1,8 @@
 package io.github.ayfri.kore.website.pages
 
 import androidx.compose.runtime.*
-import com.varabyte.kobweb.core.AppGlobals
 import com.varabyte.kobweb.core.Page
-import com.varabyte.kobweb.silk.components.icons.lucide.LucideMaximize2
-import com.varabyte.kobweb.silk.components.icons.lucide.LucideMinimize2
+import io.github.ayfri.kore.website.components.common.BrandIconStyle
 import io.github.ayfri.kore.website.components.common.setDescription
 import io.github.ayfri.kore.website.components.common.setKeywords
 import io.github.ayfri.kore.website.components.layouts.PageLayout
@@ -14,16 +12,30 @@ import io.github.ayfri.kore.website.utils.onEvents
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.await
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.css.Style
-import org.jetbrains.compose.web.dom.*
+import org.jetbrains.compose.web.css.height
+import org.jetbrains.compose.web.css.px
+import org.jetbrains.compose.web.dom.Div
+import org.jetbrains.compose.web.dom.FileInput
 import org.w3c.dom.HTMLElement
+import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.events.Event
 import org.w3c.dom.events.KeyboardEvent
 import org.w3c.dom.events.MouseEvent
+import org.w3c.files.get
+import kotlin.js.Promise
 
 /** Quiet time after the last keystroke before type-checking and compiling what the editor holds. */
 private const val IDLE_DELAY_MS = 700L
+
+/** Past this an opened file is not a snippet, and Monaco would choke on it before the backend refuses it. */
+private const val MAX_OPENED_FILE_BYTES = 512 * 1024
+
+/** Height the editors keep when the bottom panel is dragged up. */
+private const val MIN_WORKSPACE_HEIGHT = 160
 
 /** What the wait looks like before the backend has said anything, worded from this visitor's own timings. */
 private fun compileHint(typicalMs: Int?) = when (typicalMs) {
@@ -31,30 +43,47 @@ private fun compileHint(typicalMs: Int?) = when (typicalMs) {
 	else -> "Your last compiles took about ${typicalMs / 1000}s. The result is cached, so running an unchanged snippet again is instant."
 }
 
+/** What a drag on one of the two resize handles is currently moving. */
+private enum class Resize {
+	COLUMNS,
+	NONE,
+	PANEL,
+}
+
 @Page
 @Composable
 fun PlaygroundPage() {
+	Style(BrandIconStyle)
 	Style(HomePageStyle)
 	Style(PlaygroundStyle)
 
 	val scope = rememberCoroutineScope()
 	val backendConfigured = remember { playgroundApiUrl != null }
 
+	var baseExample by remember { mutableStateOf(defaultExample) }
 	var busy by remember { mutableStateOf(false) }
 	var code by remember { mutableStateOf(defaultExample.code) }
+	var cursor by remember { mutableStateOf(CursorInfo(1, 1)) }
 	var diagnostics by remember { mutableStateOf(emptyList<PlaygroundDiagnostic>()) }
 	var editor by remember { mutableStateOf<CodeEditor?>(null) }
-	var maximizedPane by remember { mutableStateOf(MaximizedPane.NONE) }
-	var resizing by remember { mutableStateOf(false) }
-	var splitFraction by remember { mutableStateOf(PlaygroundStorage.splitFraction?.coerceIn(MIN_SPLIT, MAX_SPLIT) ?: DEFAULT_SPLIT) }
-	var workspace by remember { mutableStateOf<HTMLElement?>(null) }
 	var elapsedSeconds by remember { mutableStateOf(0) }
-	var typicalCompileMs by remember { mutableStateOf<Int?>(null) }
+	var fileInput by remember { mutableStateOf<HTMLInputElement?>(null) }
 	var initialCode by remember { mutableStateOf<String?>(null) }
+	var mainColumn by remember { mutableStateOf<HTMLElement?>(null) }
 	var output by remember { mutableStateOf<OutputState>(OutputState.Idle) }
-	var selectedExample by remember { mutableStateOf<PlaygroundExample?>(defaultExample) }
-	var shareLabel by remember { mutableStateOf("Share") }
+	var resizing by remember { mutableStateOf(Resize.NONE) }
 	var runnerPrewarmed by remember { mutableStateOf(false) }
+	var shareLabel by remember { mutableStateOf("Share") }
+	var shortcutsOpen by remember { mutableStateOf(false) }
+	var toast by remember { mutableStateOf<String?>(null) }
+	var typeChecked by remember { mutableStateOf(false) }
+	var typicalCompileMs by remember { mutableStateOf<Int?>(null) }
+	var workspace by remember { mutableStateOf<HTMLElement?>(null) }
+
+	fun notify(message: String) {
+		toast = message
+		BuildLog.add(LogLevel.INFO, message)
+	}
 
 	fun showDiagnostics(list: List<PlaygroundDiagnostic>) {
 		diagnostics = list
@@ -63,8 +92,14 @@ fun PlaygroundPage() {
 
 	/** Shows the pack an untouched example generates, computed at build time. False when [target] is not an example. */
 	suspend fun showPrecomputed(target: String): Boolean {
-		val files = playgroundExamplesByCode[target]?.precomputedFiles() ?: return false
-		if (code == target) output = OutputState.Ready(files, target, OutputOrigin.Precomputed)
+		val example = playgroundExamplesByCode[target] ?: return false
+		val files = example.precomputedFiles() ?: return false
+
+		if (code == target && (output as? OutputState.Ready)?.code != target) {
+			output = OutputState.Ready(files, target, OutputOrigin.Precomputed)
+			BuildLog.add(LogLevel.SUCCESS, "${example.title}: showing the pack generated at build time", "${files.size} files")
+		}
+
 		return true
 	}
 
@@ -72,7 +107,7 @@ fun PlaygroundPage() {
 	 * Compiles [target], runs it in a worker and shows the pack, unless the buffer moved on meanwhile.
 	 *
 	 * A [live] build is one the page started on idle: it keeps the current output on screen instead of a waiting
-	 * state, leaves compile errors to the squiggles and the problems strip, and drops a full compile queue
+	 * state, leaves compile errors to the squiggles and the problems panel, and drops a full compile queue
 	 * silently, since nobody pressed anything. Only a pack that fails while running replaces the output.
 	 */
 	suspend fun build(target: String, live: Boolean) {
@@ -81,18 +116,24 @@ fun PlaygroundPage() {
 		} catch (cancelled: CancellationException) {
 			throw cancelled
 		} catch (busyBackend: CompileBusyException) {
+			BuildLog.add(LogLevel.WARNING, "The compile backend is busy", busyBackend.message)
 			if (!live) output = OutputState.Failed("The compile backend is busy", busyBackend.message)
 			return
 		} catch (failure: Throwable) {
+			BuildLog.add(LogLevel.ERROR, "Could not reach the compile backend", failure.message)
 			if (!live) output = OutputState.Failed("Could not reach the compile backend", failure.message)
 			return
 		}
 
 		if (code != target) return
 		showDiagnostics(result.diagnostics)
+		typeChecked = true
 
 		if (!result.succeeded) {
+			BuildLog.add(LogLevel.ERROR, "Compilation failed", result.exception ?: "${result.errors.size} errors")
 			if (live) return
+
+			if (result.errors.isNotEmpty()) PlaygroundLayout.showPanel(PanelTab.PROBLEMS)
 			output = OutputState.Failed(
 				title = "Compilation failed",
 				detail = result.exception
@@ -102,7 +143,9 @@ fun PlaygroundPage() {
 			return
 		}
 
-		if (!result.cached) {
+		if (result.cached) BuildLog.add(LogLevel.SUCCESS, "Reused a cached compile")
+		else {
+			BuildLog.add(LogLevel.SUCCESS, "Compiled in ${result.durationMs / 100 / 10.0}s", "${result.chunks.size} modules")
 			PlaygroundStorage.recordCompile(result.durationMs)
 			typicalCompileMs = PlaygroundStorage.typicalCompileMs
 		}
@@ -115,18 +158,26 @@ fun PlaygroundPage() {
 
 		if (code != target) return
 
-		if (execution is RunResult.Success) {
-			PlaygroundStorage.libraries = result.evaluationOrder.dropLast(1).mapNotNull { chunk -> chunk.hash?.let { chunk.name to it } }
-		}
-
 		output = when (execution) {
-			is RunResult.Success -> OutputState.Ready(
-				files = execution.files,
-				code = target,
-				origin = OutputOrigin.Compiled(result.durationMs, execution.durationMs, result.cached),
-			)
+			is RunResult.Success -> {
+				PlaygroundStorage.libraries = result.evaluationOrder.dropLast(1).mapNotNull { chunk -> chunk.hash?.let { chunk.name to it } }
+				BuildLog.add(
+					LogLevel.SUCCESS,
+					"Generated ${execution.files.size} files in ${execution.durationMs}ms",
+					humanSize(execution.files.sumOf { it.content.length }),
+				)
 
-			is RunResult.Failure -> OutputState.Failed("The snippet failed while running", execution.message)
+				OutputState.Ready(
+					files = execution.files,
+					code = target,
+					origin = OutputOrigin.Compiled(result.durationMs, execution.durationMs, result.cached),
+				)
+			}
+
+			is RunResult.Failure -> {
+				BuildLog.add(LogLevel.ERROR, "The snippet failed while running", execution.message)
+				OutputState.Failed("The snippet failed while running", execution.message)
+			}
 		}
 	}
 
@@ -140,12 +191,16 @@ fun PlaygroundPage() {
 			try {
 				when {
 					showPrecomputed(target) -> Unit
-					!backendConfigured -> output = OutputState.Failed(
-						"Compiling is unavailable here",
-						"This deployment has no compile backend, so only the examples run as they are.",
-					)
+					!backendConfigured -> {
+						BuildLog.add(LogLevel.ERROR, "Compiling is unavailable here", "This deployment has no compile backend.")
+						output = OutputState.Failed(
+							"Compiling is unavailable here",
+							"This deployment has no compile backend, so only the examples run as they are.",
+						)
+					}
 
 					else -> {
+						BuildLog.add(LogLevel.INFO, "Run requested")
 						output = OutputState.Working("Compiling", compileHint(typicalCompileMs))
 						build(target, live = false)
 					}
@@ -156,13 +211,93 @@ fun PlaygroundPage() {
 		}
 	}
 
+	fun selectExample(example: PlaygroundExample) {
+		baseExample = example
+		editor?.replaceContent(example.code) ?: run { code = example.code }
+		// Under `lgMax` the sidebar covers the editor, so picking an example is also leaving it.
+		if (window.matchMedia("(max-width: 1023px)").matches) PlaygroundLayout.sidebarOpen = false
+	}
+
+	fun openFile(input: HTMLInputElement) {
+		val file = input.files?.get(0) ?: return
+		input.value = ""
+
+		if (file.size.toInt() > MAX_OPENED_FILE_BYTES) {
+			BuildLog.add(LogLevel.WARNING, "${file.name} is too large to open", humanSize(file.size.toInt()))
+			return
+		}
+
+		scope.launch {
+			val text = file.asDynamic().text().unsafeCast<Promise<String>>().await()
+			editor?.replaceContent(text) ?: run { code = text }
+			notify("Opened ${file.name}")
+		}
+	}
+
+	fun execute(command: PlaygroundCommand) {
+		val ready = output as? OutputState.Ready
+
+		when (command) {
+			PlaygroundCommand.DOWNLOAD_SOURCE -> {
+				downloadText(code, USER_FILE_NAME)
+				notify("Downloaded $USER_FILE_NAME")
+			}
+
+			PlaygroundCommand.DOWNLOAD_ZIP -> ready?.let {
+				downloadZip(it.files)
+				notify("Downloaded ${zipName(it.files)}")
+			}
+
+			PlaygroundCommand.FOCUS_MODE -> PlaygroundLayout.focusMode = !PlaygroundLayout.focusMode
+			PlaygroundCommand.OPEN_FILE -> fileInput?.click()
+			PlaygroundCommand.RESET -> editor?.replaceContent(baseExample.code) ?: run { code = baseExample.code }
+			PlaygroundCommand.RUN -> run()
+
+			PlaygroundCommand.SAVE -> {
+				PlaygroundStorage.draft = code
+				notify("Draft saved in this browser")
+			}
+
+			PlaygroundCommand.SHARE -> scope.launch {
+				val url = shareUrl(code)
+				window.history.replaceState(null, "", url)
+				runCatching { window.navigator.asDynamic().clipboard.writeText(url) }
+				notify("Share link copied")
+				shareLabel = "Copied"
+				delay(2000)
+				shareLabel = "Share"
+			}
+
+			PlaygroundCommand.SHORTCUTS -> shortcutsOpen = !shortcutsOpen
+			PlaygroundCommand.TOGGLE_AUTO_BUILD -> PlaygroundSettings.autoBuild = !PlaygroundSettings.autoBuild
+			PlaygroundCommand.TOGGLE_PANEL -> PlaygroundLayout.panelOpen = !PlaygroundLayout.panelOpen
+			PlaygroundCommand.TOGGLE_SIDEBAR -> PlaygroundLayout.sidebarOpen = !PlaygroundLayout.sidebarOpen
+		}
+	}
+
 	// A shared link wins over a restored draft, which wins over the default example. Resolved before the
 	// editor is created, since Monaco only reads its initial value once.
 	LaunchedEffect(Unit) {
-		code = sharedCode() ?: PlaygroundStorage.draft ?: defaultExample.code
-		selectedExample = playgroundExamplesByCode[code]
+		val shared = sharedCode()
+		val draft = PlaygroundStorage.draft
+		code = shared ?: draft ?: defaultExample.code
+		baseExample = playgroundExamplesByCode[code]
+			?: playgroundExamples.firstOrNull { it.slug == PlaygroundStorage.exampleSlug }
+			?: defaultExample
 		initialCode = code
 		typicalCompileMs = PlaygroundStorage.typicalCompileMs
+		// The examples start open only where they leave the editors enough room, a narrow screen always starts on the code.
+		val firstVisit = PlaygroundStorage.read("sidebarOpen") == null
+		if (window.matchMedia(if (firstVisit) "(max-width: 1439px)" else "(max-width: 1023px)").matches) PlaygroundLayout.sidebarOpen = false
+
+		BuildLog.add(
+			LogLevel.INFO,
+			when {
+				shared != null -> "Opened a shared snippet"
+				draft != null -> "Restored your last draft"
+				else -> "Loaded the ${baseExample.title} example"
+			},
+		)
 		showPrecomputed(code)
 	}
 
@@ -173,23 +308,27 @@ fun PlaygroundPage() {
 		PlaygroundStorage.draft = code
 	}
 
+	LaunchedEffect(baseExample) { PlaygroundStorage.exampleSlug = baseExample.slug }
+
 	// Typing back to an untouched example shows its pack again. Otherwise, once typing pauses, the JVM type-check and
 	// the real compile start together: the type-check draws squiggles in well under a second, a buffer that does not
 	// type-check fails the compile's first phase about as fast, and a clean one is linked and run without waiting for
 	// Run, so the pack is usually there before the click. A new keystroke cancels all of it, and a compile already
-	// sent still lands in the cache.
+	// sent still lands in the cache. With live rebuild off, only the type-check runs.
 	LaunchedEffect(code) {
 		if (initialCode == null) return@LaunchedEffect
 
 		if (code in playgroundExamplesByCode) {
 			showDiagnostics(emptyList())
+			typeChecked = true
 			showPrecomputed(code)
 			return@LaunchedEffect
 		}
 
 		if (!backendConfigured) return@LaunchedEffect
+		val autoBuild = PlaygroundSettings.autoBuild
 
-		if (!runnerPrewarmed) {
+		if (autoBuild && !runnerPrewarmed) {
 			runnerPrewarmed = true
 			scope.launch { prewarmRunner() }
 		}
@@ -198,17 +337,25 @@ fun PlaygroundPage() {
 
 		val target = code
 		launch {
-			val fresh = runCatching { highlightPlayground(target) }.getOrNull() ?: return@launch
+			val startedAt = window.performance.now()
+			val fresh = runCatching { highlightPlayground(target) }
+				.onFailure { BuildLog.add(LogLevel.WARNING, "Type-check failed", it.message) }
+				.getOrNull() ?: return@launch
+
+			val problems = fresh.filter { it.file == USER_FILE_NAME }
+			BuildLog.add(
+				LogLevel.INFO,
+				"Type-checked $USER_FILE_NAME in ${(window.performance.now() - startedAt).toInt()}ms",
+				problems.groupingBy { it.severity }.eachCount().entries.joinToString { (severity, count) -> "$count ${severity.name.lowercase()}" }
+					.ifEmpty { "no problems" },
+			)
+
+			typeChecked = true
 			// A Run in flight owns the markers: its JS diagnostics are the ones that matter.
 			if (!busy) showDiagnostics(fresh)
 		}
 
-		build(target, live = true)
-	}
-
-	LaunchedEffect(splitFraction) {
-		delay(200)
-		PlaygroundStorage.splitFraction = splitFraction
+		if (autoBuild) build(target, live = true)
 	}
 
 	LaunchedEffect(busy) {
@@ -219,31 +366,57 @@ fun PlaygroundPage() {
 		}
 	}
 
+	LaunchedEffect(toast) {
+		if (toast == null) return@LaunchedEffect
+		delay(2200)
+		toast = null
+	}
+
+	// Each new step the backend reports for any compile of this tab, joined or started here, lands in the build log.
+	val job = PlaygroundCompiler.running
+	LaunchedEffect(job, job?.progress?.label) {
+		job?.progress?.let { BuildLog.add(LogLevel.INFO, it.label, it.detail) }
+	}
+
 	document.onEvents(
 		"mousemove" to { event ->
-			val element = workspace
+			val mouse = event as MouseEvent
 
-			if (resizing && element != null) {
-				val rect = element.getBoundingClientRect()
-				splitFraction = (((event as MouseEvent).clientX - rect.left) / rect.width).coerceIn(MIN_SPLIT, MAX_SPLIT)
+			when (resizing) {
+				Resize.COLUMNS -> workspace?.getBoundingClientRect()?.let { rect ->
+					PlaygroundLayout.splitFraction = ((mouse.clientX - rect.left) / rect.width).coerceIn(PlaygroundLayout.SPLIT_RANGE)
+				}
+
+				Resize.PANEL -> mainColumn?.getBoundingClientRect()?.let { rect ->
+					val max = maxOf(PlaygroundLayout.PANEL_HEIGHTS.first, (rect.height - MIN_WORKSPACE_HEIGHT).toInt())
+					PlaygroundLayout.panelHeight = (rect.bottom - mouse.clientY).toInt().coerceIn(PlaygroundLayout.PANEL_HEIGHTS.first, max)
+				}
+
+				Resize.NONE -> Unit
 			}
 		},
-		"mouseup" to { resizing = false },
+		"mouseup" to { resizing = Resize.NONE },
 		key = resizing,
 	)
 
-	val currentRun by rememberUpdatedState(::run)
+	val currentExecute by rememberUpdatedState(::execute)
 
 	DisposableEffect(Unit) {
-		val listener = { event: dynamic ->
-			val keyboardEvent = event.unsafeCast<KeyboardEvent>()
+		val listener = { event: Event ->
+			val keyboard = event.unsafeCast<KeyboardEvent>()
 
-			if (keyboardEvent.key == "Enter" && (keyboardEvent.ctrlKey || keyboardEvent.metaKey)) {
-				keyboardEvent.preventDefault()
-				currentRun()
+			// Monaco stops the keys it handles itself, a command bound in the editor included, so these never run twice.
+			PlaygroundCommand.of(keyboard)?.takeUnless { keyboard.defaultPrevented }?.let {
+				keyboard.preventDefault()
+				currentExecute(it)
 			}
 
-			if (keyboardEvent.key == "Escape") maximizedPane = MaximizedPane.NONE
+			// One layer per press: the dialog, then a maximized pane, then focus mode.
+			if (keyboard.key == "Escape" && !keyboard.defaultPrevented) when {
+				shortcutsOpen -> shortcutsOpen = false
+				PlaygroundLayout.maximizedPane != MaximizedPane.NONE -> PlaygroundLayout.maximizedPane = MaximizedPane.NONE
+				else -> PlaygroundLayout.focusMode = false
+			}
 		}
 
 		document.addEventListener("keydown", listener)
@@ -251,8 +424,10 @@ fun PlaygroundPage() {
 	}
 
 	// A compile of this very buffer, started by the idle path or by Run, is what the output pane reports.
-	val compiling = PlaygroundCompiler.running?.takeIf { it.code == code }
+	val compiling = job?.takeIf { it.code == code }
 	val ready = output as? OutputState.Ready
+	val problems = diagnostics.filter { it.file == USER_FILE_NAME }
+	val dirty = code != baseExample.code
 	val shownOutput = when {
 		busy && output is OutputState.Working && compiling != null -> compiling.progress.let {
 			OutputState.Working(it.label, it.detail, it.fraction)
@@ -262,123 +437,157 @@ fun PlaygroundPage() {
 	}.withElapsed(elapsedSeconds, typicalCompileMs)
 
 	PageLayout("Playground - Try Kore in your browser") {
-		setDescription("Write Kotlin, get a Minecraft datapack. Try the Kore DSL in your browser with instant examples, live rebuilds and a zip download.")
+		setDescription("Write Kotlin, get a Minecraft datapack. Try the Kore DSL in a browser IDE with instant examples, live rebuilds and a zip download.")
 		setKeywords(
 			"kore playground", "kotlin datapack editor", "minecraft datapack generator online",
 			"try kore", "datapack builder", "kotlin dsl playground"
 		)
 
-		Div({ classes(HomePageStyle.page) }) {
-			Div({ classes(PlaygroundStyle.container) }) {
-				Header({ classes(PlaygroundStyle.header) }) {
-					Span({ classes(PlaygroundStyle.eyebrow) }) {
-						Text("Kore ${AppGlobals["projectVersion"] ?: "?"} · Minecraft ${AppGlobals["minecraftVersion"] ?: "?"}")
-					}
-					H1 { Text("Playground") }
-					P {
-						Text("Write Kore Kotlin and get the generated datapack back, nothing to install. Examples load instantly, and an edit rebuilds on its own once you stop typing.")
-					}
+		Div({ classes(HomePageStyle.page, PlaygroundStyle.page) }) {
+			Div({
+				classes(PlaygroundStyle.ide)
+				if (PlaygroundLayout.focusMode) classes(PlaygroundStyle.ideFocus)
+				when (resizing) {
+					Resize.COLUMNS -> classes(PlaygroundStyle.resizingColumns)
+					Resize.PANEL -> classes(PlaygroundStyle.resizingRows)
+					Resize.NONE -> Unit
 				}
-
-				PlaygroundToolbar(
-					selectedExample = selectedExample,
+			}) {
+				TitleBar(
+					example = baseExample,
+					dirty = dirty,
 					busy = busy,
 					canRun = backendConfigured || code in playgroundExamplesByCode,
+					hasPack = ready != null,
 					shareLabel = shareLabel,
-					onRun = ::run,
-					onSelectExample = { example ->
-						selectedExample = example
-						code = example.code
-						editor?.setValue(example.code)
-					},
-					onReset = {
-						val example = selectedExample ?: defaultExample
-						selectedExample = example
-						code = example.code
-						editor?.setValue(example.code)
-					},
-					onShare = {
-						scope.launch {
-							val url = shareUrl(code)
-							window.history.replaceState(null, "", url)
-							runCatching { window.navigator.asDynamic().clipboard.writeText(url) }
-							shareLabel = "Link copied"
-							delay(2000)
-							shareLabel = "Share"
-						}
-					},
+					onCommand = ::execute,
+					onOpenExamples = { PlaygroundLayout.toggleSidebar(SidebarView.EXAMPLES) },
 				)
 
-				Div({
-					classes(PlaygroundStyle.workspace)
-					ref {
-						workspace = it
-						onDispose { workspace = null }
+				Div({ classes(PlaygroundStyle.ideBody) }) {
+					ActivityBar(problems.size, ::execute)
+
+					if (PlaygroundLayout.sidebarOpen) {
+						SidePanel(baseExample, dirty, ::selectExample)
+						Div({
+							classes(PlaygroundStyle.sideScrim)
+							onClick { PlaygroundLayout.sidebarOpen = false }
+						})
 					}
 
-					style {
-						// A ratio rather than a column list, so the narrow-screen media query can still collapse to one column.
-						property("--playground-split", "${splitFraction / (1 - splitFraction)}fr")
-						property("user-select", if (resizing) "none" else "auto")
-					}
-				}) {
 					Div({
-						classes(PlaygroundStyle.pane)
-						if (maximizedPane == MaximizedPane.EDITOR) classes(PlaygroundStyle.paneMaximized)
-					}) {
-						Div({ classes(PlaygroundStyle.paneHeader) }) {
-							Div({ classes(PlaygroundStyle.paneHeading) }) {
-								Span({ classes(PlaygroundStyle.paneLabel) }) { Text("You write") }
-								Span({ classes(PlaygroundStyle.paneTitle) }) { Text(USER_FILE_NAME) }
-							}
-
-							Div({ classes(PlaygroundStyle.paneActions) }) {
-								Button({
-									classes(PlaygroundStyle.iconButton)
-									title(if (maximizedPane == MaximizedPane.EDITOR) "Exit fullscreen" else "Open fullscreen")
-									onClick { maximizedPane = maximizedPane.toggle(MaximizedPane.EDITOR) }
-								}) {
-									if (maximizedPane == MaximizedPane.EDITOR) LucideMinimize2() else LucideMaximize2()
-								}
-							}
+						classes(PlaygroundStyle.mainColumn)
+						ref {
+							mainColumn = it
+							onDispose { mainColumn = null }
 						}
+					}) {
+						Div({
+							classes(PlaygroundStyle.workspace)
+							ref {
+								workspace = it
+								onDispose { workspace = null }
+							}
 
-						initialCode?.let { value ->
-							MonacoEditor(
-								initialValue = value,
-								className = PlaygroundStyle.editor,
+							style {
+								// A ratio rather than a column list, so the narrow-screen media query can still collapse to one column.
+								val split = PlaygroundLayout.splitFraction
+								property("--playground-split", "${split / (1 - split)}fr")
+							}
+						}) {
+							EditorPane(
+								initialCode = initialCode,
+								editor = editor,
+								dirty = dirty,
+								errorCount = problems.count { it.severity == DiagnosticSeverity.ERROR },
 								onChange = {
 									code = it
-									selectedExample = playgroundExamplesByCode[it]
+									playgroundExamplesByCode[it]?.let { example -> baseExample = example }
 								},
-								onReady = { editor = it },
+								onCursor = { cursor = it },
+								onReady = { monaco, created ->
+									editor = created
+									created.registerCommands(monaco) { currentExecute(it) }
+								},
+								onReset = { execute(PlaygroundCommand.RESET) },
+							)
+
+							Div({
+								classes(PlaygroundStyle.splitter)
+								if (resizing == Resize.COLUMNS) classes(PlaygroundStyle.splitterActive)
+								attr("aria-orientation", "vertical")
+								attr("role", "separator")
+								title("Drag to resize, double-click to reset")
+								onDoubleClick { PlaygroundLayout.splitFraction = PlaygroundLayout.DEFAULT_SPLIT }
+								onMouseDown {
+									it.preventDefault()
+									resizing = Resize.COLUMNS
+								}
+							})
+
+							OutputPanel(
+								state = shownOutput,
+								backendConfigured = backendConfigured,
+								stale = ready != null && ready.code != code,
+								rebuild = compiling?.takeIf { !busy }?.progress,
+								onCopy = { text, what ->
+									runCatching { window.navigator.asDynamic().clipboard.writeText(text) }
+									notify("$what copied")
+								},
+								onShowProblems = { PlaygroundLayout.showPanel(if (problems.isEmpty()) PanelTab.LOG else PanelTab.PROBLEMS) },
 							)
 						}
 
-						ProblemsStrip(diagnostics) { diagnostic -> editor?.revealDiagnostic(diagnostic) }
-					}
+						if (PlaygroundLayout.panelOpen) {
+							Div({
+								classes(PlaygroundStyle.panelResizer)
+								if (resizing == Resize.PANEL) classes(PlaygroundStyle.splitterActive)
+								attr("aria-orientation", "horizontal")
+								attr("role", "separator")
+								title("Drag to resize")
+								onMouseDown {
+									it.preventDefault()
+									resizing = Resize.PANEL
+								}
+							})
 
-					Div({
-						classes(PlaygroundStyle.splitter)
-						if (resizing) classes(PlaygroundStyle.splitterActive)
-						attr("aria-orientation", "vertical")
-						attr("role", "separator")
-						title("Drag to resize, double-click to reset")
-						onDoubleClick { splitFraction = DEFAULT_SPLIT }
-						onMouseDown {
-							it.preventDefault()
-							resizing = true
+							Div({
+								classes(PlaygroundStyle.panelSlot)
+								style { height(PlaygroundLayout.panelHeight.px) }
+							}) {
+								BottomPanel(diagnostics, typeChecked, backendConfigured) { diagnostic -> editor?.revealDiagnostic(diagnostic) }
+							}
 						}
-					})
+					}
+				}
 
-					OutputPanel(
-						state = shownOutput,
-						backendConfigured = backendConfigured,
-						stale = ready != null && ready.code != code,
-						rebuild = compiling?.takeIf { !busy }?.progress,
-						maximized = maximizedPane == MaximizedPane.OUTPUT,
-						onToggleMaximize = { maximizedPane = maximizedPane.toggle(MaximizedPane.OUTPUT) },
-					)
+				StatusBar(
+					backendConfigured = backendConfigured,
+					activity = when {
+						job != null -> job.progress.label + if (busy && elapsedSeconds > 0) " ${elapsedSeconds}s" else ""
+						busy -> "Running"
+						else -> null
+					},
+					errors = problems.count { it.severity == DiagnosticSeverity.ERROR },
+					warnings = problems.count { it.severity == DiagnosticSeverity.WARNING },
+					cursor = cursor,
+					output = output,
+					onGoToLine = { editor?.runAction("editor.action.gotoLine") },
+				)
+
+				toast?.let { Toast(it) }
+				if (shortcutsOpen) ShortcutsDialog { shortcutsOpen = false }
+
+				FileInput {
+					classes(PlaygroundStyle.hiddenInput)
+					attr("accept", ".kt,.kts,.txt")
+					attr("aria-hidden", "true")
+					attr("tabindex", "-1")
+					ref {
+						fileInput = it
+						onDispose { fileInput = null }
+					}
+					onChange { event -> openFile(event.target) }
 				}
 			}
 		}
@@ -392,20 +601,6 @@ fun PlaygroundPage() {
 private suspend fun prewarmRunner() {
 	val libraries = PlaygroundStorage.libraries.map { (name, hash) -> CompiledChunk(name, ChunkStore.get(hash) ?: return, hash) }
 	if (libraries.isNotEmpty()) PackRunner.prewarm(libraries)
-}
-
-/** Share of the workspace width given to the editor, and the range the splitter may drag it through. */
-private const val DEFAULT_SPLIT = 0.55
-private const val MAX_SPLIT = 0.8
-private const val MIN_SPLIT = 0.2
-
-/** Which pane, if any, is currently taking over the viewport. */
-private enum class MaximizedPane {
-	EDITOR,
-	NONE,
-	OUTPUT;
-
-	fun toggle(pane: MaximizedPane) = if (this == pane) NONE else pane
 }
 
 /**

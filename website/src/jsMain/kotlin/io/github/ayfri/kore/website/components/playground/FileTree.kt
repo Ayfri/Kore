@@ -1,8 +1,6 @@
 package io.github.ayfri.kore.website.components.playground
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.remember
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideBraces
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideChevronDown
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideChevronRight
@@ -53,9 +51,14 @@ private fun collapseChain(folder: FileNode.Folder): FileNode.Folder {
 	return collapseChain(FileNode.Folder("${folder.name}/${onlyChild.name}", onlyChild.path, onlyChild.children))
 }
 
+/** Every folder path of the tree, what "collapse all" folds. */
+fun List<FileNode>.folderPaths(): List<String> = filterIsInstance<FileNode.Folder>().flatMap { listOf(it.path) + it.children.folderPaths() }
+
+private fun FileNode.Folder.fileCount(): Int = children.sumOf { if (it is FileNode.Folder) it.fileCount() else 1 }
+
 /** Picks the icon from the file extension, so a `.mcfunction` never looks like a `.json`. */
 @Composable
-private fun FileIcon(file: GeneratedFile) = when (file.extension) {
+fun FileIcon(file: GeneratedFile) = when (file.extension) {
 	"json" -> LucideBraces()
 	"mcfunction" -> LucideTerminal()
 	"mcmeta" -> LucideFileCog()
@@ -63,11 +66,9 @@ private fun FileIcon(file: GeneratedFile) = when (file.extension) {
 	else -> LucideFile()
 }
 
+/** The generated files as a tree, [collapsed] holding the folded folder paths so the caller can fold them all at once. */
 @Composable
-fun FileTree(files: List<GeneratedFile>, selectedPath: String?, onSelect: (String) -> Unit) {
-	val nodes = remember(files) { buildFileTree(files) }
-	val collapsed = remember(files) { mutableStateMapOf<String, Boolean>() }
-
+fun FileTree(nodes: List<FileNode>, selectedPath: String?, collapsed: MutableMap<String, Boolean>, onSelect: (String) -> Unit) {
 	Div({ classes(PlaygroundStyle.fileTree) }) {
 		TreeLevel(nodes, 0, selectedPath, collapsed, onSelect)
 	}
@@ -101,6 +102,7 @@ private fun TreeLevel(
 					}
 
 					Span({ classes(PlaygroundStyle.treeLabel) }) { Text(node.name) }
+					Span({ classes(PlaygroundStyle.treeCount) }) { Text(node.fileCount().toString()) }
 				}
 
 				if (!isCollapsed) TreeLevel(node.children, depth + 1, selectedPath, collapsed, onSelect)
@@ -109,7 +111,7 @@ private fun TreeLevel(
 			is FileNode.Leaf -> Button({
 				classes(*leafClasses(node.path == selectedPath))
 				style { paddingLeft(indentOf(depth)) }
-				title(node.path)
+				title("${node.path} · ${humanSize(node.file.content.length)}")
 				onClick { onSelect(node.path) }
 			}) {
 				Span({ classes(PlaygroundStyle.treeIcon, PlaygroundStyle.treeFileIcon) }) { FileIcon(node.file) }

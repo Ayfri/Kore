@@ -1,28 +1,18 @@
 package io.github.ayfri.kore.website.components.playground
 
 import androidx.compose.runtime.*
-import com.varabyte.kobweb.silk.components.icons.lucide.LucideCheck
-import com.varabyte.kobweb.silk.components.icons.lucide.LucideCopy
-import com.varabyte.kobweb.silk.components.icons.lucide.LucideDownload
-import com.varabyte.kobweb.silk.components.icons.lucide.LucideMaximize2
-import com.varabyte.kobweb.silk.components.icons.lucide.LucideMinimize2
+import com.varabyte.kobweb.silk.components.icons.lucide.*
 import io.github.ayfri.kore.website.components.common.CodeBlock
 import io.github.ayfri.kore.website.externals.Prism
 import io.github.ayfri.kore.website.utils.initMCFunctionHighlighting
 import kotlinx.browser.document
-import kotlinx.browser.window
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.width
-import org.jetbrains.compose.web.dom.Button
-import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.Span
-import org.jetbrains.compose.web.dom.Text
+import org.jetbrains.compose.web.dom.*
 
 private const val PREVIEW_ID = "playground-preview"
 
-/** Where a shown pack comes from, which is what the status strip tells the visitor. */
+/** Where a shown pack comes from, which is what the status bar tells the visitor. */
 sealed interface OutputOrigin {
 	/** An untouched example, run on the JVM when the site was built. */
 	data object Precomputed : OutputOrigin
@@ -66,21 +56,18 @@ private fun List<GeneratedFile>.firstShowcase() =
 	firstOrNull { it.extension == "mcfunction" } ?: firstOrNull { it.path != "pack.mcmeta" && "/tags/" !in it.path } ?: firstOrNull()
 
 /** Bytes as the visitor reads them, so a 12 KB pack does not show up as five digits. */
-private fun humanSize(bytes: Int) = when {
-	bytes < 1024 -> "$bytes bytes"
+fun humanSize(bytes: Int) = when {
+	bytes < 1024 -> "$bytes B"
 	else -> "${(bytes / 102.4).toInt() / 10.0} KB"
 }
 
-private fun OutputOrigin.describe() = when (this) {
-	OutputOrigin.Precomputed -> listOf("precomputed at build time")
-	is OutputOrigin.Compiled -> listOf(
-		if (cached) "reused a cached compile" else "compiled in ${compileMs / 100 / 10.0}s",
-		"ran in ${runMs}ms",
-	)
+fun OutputOrigin.describe() = when (this) {
+	OutputOrigin.Precomputed -> "precomputed at build time"
+	is OutputOrigin.Compiled -> if (cached) "reused a cached compile" else "compiled in ${compileMs / 100 / 10.0}s, ran in ${runMs}ms"
 }
 
 /**
- * The generated pack: a file tree, the selected file through Prism, and the actions on the whole pack.
+ * The generated pack: a filterable file tree, the selected file through Prism, and the actions on files and the pack.
  *
  * [stale] marks a pack built from an older buffer, and [rebuild] is the background compile of the current one, if any:
  * the old pack stays readable, dimmed, until the new one replaces it.
@@ -91,19 +78,23 @@ fun OutputPanel(
 	backendConfigured: Boolean,
 	stale: Boolean,
 	rebuild: CompileProgress?,
-	maximized: Boolean,
-	onToggleMaximize: () -> Unit,
+	onCopy: (text: String, what: String) -> Unit,
+	onShowProblems: () -> Unit,
 ) {
-	val scope = rememberCoroutineScope()
-
-	var copied by remember { mutableStateOf(false) }
-	var pretty by remember { mutableStateOf(PlaygroundStorage.prettyJson) }
+	var filter by remember { mutableStateOf("") }
 	var selectedPath by remember { mutableStateOf<String?>(null) }
 
+	val maximized = PlaygroundLayout.maximizedPane == MaximizedPane.OUTPUT
+	val pretty = PlaygroundSettings.prettyJson
+	val wrap = PlaygroundSettings.previewWrap
 	val files = (state as? OutputState.Ready)?.files.orEmpty()
+	val needle = filter.trim().lowercase()
+	val shown = remember(files, needle) { files.filter { needle in it.path.lowercase() } }
+	val nodes = remember(shown) { buildFileTree(shown) }
+	val collapsed = remember(files) { mutableStateMapOf<String, Boolean>() }
 	val selected = files.firstOrNull { it.path == selectedPath } ?: files.firstShowcase()
 
-	LaunchedEffect(selected?.path, selected?.content, pretty, maximized) {
+	LaunchedEffect(selected?.path, selected?.content, pretty, wrap, maximized) {
 		selected ?: return@LaunchedEffect
 		initMCFunctionHighlighting()
 		document.getElementById(PREVIEW_ID)?.let { Prism.highlightAllUnder(it) }
@@ -113,72 +104,53 @@ fun OutputPanel(
 		classes(PlaygroundStyle.pane)
 		if (maximized) classes(PlaygroundStyle.paneMaximized)
 	}) {
-		Div({ classes(PlaygroundStyle.paneHeader) }) {
-			Div({ classes(PlaygroundStyle.paneHeading) }) {
-				Span({ classes(PlaygroundStyle.paneLabel) }) { Text("Kore generates") }
-
-				selected?.let { file ->
-					Span({ classes(PlaygroundStyle.paneTitle) }) {
-						if (file.directory.isNotEmpty()) Span({ classes(PlaygroundStyle.pathPrefix) }) { Text("${file.directory}/") }
-						Text(file.name)
-					}
-				}
+		Div({ classes(PlaygroundStyle.tabStrip) }) {
+			Div({ classes(PlaygroundStyle.tab, PlaygroundStyle.tabActive) }) {
+				LucidePackage()
+				Text("Datapack")
+				if (state is OutputState.Ready) Span({ classes(PlaygroundStyle.tabMeta) }) { Text("${files.size} files") }
 			}
 
-			Div({ classes(PlaygroundStyle.paneActions) }) {
+			Div({ classes(PlaygroundStyle.tabActions) }) {
 				if (stale) Span({ classes(PlaygroundStyle.staleBadge) }) {
 					Span({
 						classes(PlaygroundStyle.staleDot)
 						if (rebuild != null) classes(PlaygroundStyle.staleDotPulsing)
 					})
-					Text(if (rebuild != null) "Edited, rebuilding" else "Edited")
+
+					Text(
+						when {
+							rebuild != null -> "Rebuilding"
+							PlaygroundSettings.autoBuild -> "Edited"
+							else -> "Edited, press Run"
+						}
+					)
 				}
 
-				if (state is OutputState.Ready) {
-					Button({
-						classes(PlaygroundStyle.iconButton)
-						if (pretty) classes(PlaygroundStyle.iconButtonActive)
-						onClick {
-							pretty = !pretty
-							PlaygroundStorage.prettyJson = pretty
-						}
-						title("Pretty-printed JSON, or the minified form Minecraft actually reads")
-					}) {
-						Text(if (pretty) "Pretty" else "Raw")
-					}
-
-					Button({
-						classes(PlaygroundStyle.iconButton)
-						title("Copy this file")
-						onClick {
-							val content = selected?.let { previewOf(it, pretty) } ?: return@onClick
-
-							scope.launch {
-								runCatching { window.navigator.asDynamic().clipboard.writeText(content) }
-								copied = true
-								delay(1500)
-								copied = false
-							}
-						}
-					}) {
-						if (copied) LucideCheck() else LucideCopy()
-					}
-
-					Button({
-						classes(PlaygroundStyle.iconButton)
-						title("Download the datapack")
-						onClick { downloadZip(state.files) }
-					}) {
-						LucideDownload()
-						Span({ classes(PlaygroundStyle.wideOnly) }) { Text(".zip") }
-					}
+				ToolButton(
+					"Toggle the file tree",
+					{ PlaygroundLayout.explorerOpen = !PlaygroundLayout.explorerOpen },
+					active = PlaygroundLayout.explorerOpen,
+				) {
+					LucidePanelLeft()
 				}
 
-				Button({
-					classes(PlaygroundStyle.iconButton)
-					title(if (maximized) "Exit fullscreen" else "Open fullscreen")
-					onClick { onToggleMaximize() }
-				}) {
+				ToolButton(
+					"Download the datapack",
+					{ downloadZip(files) },
+					enabled = state is OutputState.Ready,
+					keys = PlaygroundCommand.DOWNLOAD_ZIP.keys,
+					classes = arrayOf(PlaygroundStyle.toolButtonLabelled),
+				) {
+					LucideDownload()
+					Span({ classes(PlaygroundStyle.wideOnly) }) { Text(".zip") }
+				}
+
+				ToolButton(
+					if (maximized) "Exit fullscreen" else "Open fullscreen",
+					{ PlaygroundLayout.maximizedPane = PlaygroundLayout.maximizedPane.toggle(MaximizedPane.OUTPUT) },
+					active = maximized,
+				) {
 					if (maximized) LucideMinimize2() else LucideMaximize2()
 				}
 			}
@@ -191,32 +163,54 @@ fun OutputPanel(
 		}
 
 		when (state) {
-			is OutputState.Ready -> {
-				Div({
-					classes(PlaygroundStyle.outputBody)
-					if (stale) classes(PlaygroundStyle.staleBody)
-				}) {
-					FileTree(state.files, selected?.path) { selectedPath = it }
+			is OutputState.Ready -> Div({
+				classes(PlaygroundStyle.outputBody)
+				if (!PlaygroundLayout.explorerOpen) classes(PlaygroundStyle.outputBodyPreviewOnly)
+				if (stale) classes(PlaygroundStyle.staleBody)
+			}) {
+				if (PlaygroundLayout.explorerOpen) Div({ classes(PlaygroundStyle.explorer) }) {
+					Div({ classes(PlaygroundStyle.sectionHeader) }) {
+						Span({ classes(PlaygroundStyle.sectionTitle) }) {
+							Text("Files")
+							Span({ classes(PlaygroundStyle.treeCount) }) { Text(if (needle.isEmpty()) "${files.size}" else "${shown.size}/${files.size}") }
+						}
+
+						Span({ classes(PlaygroundStyle.sectionActions) }) {
+							ToolButton("Collapse all", { nodes.folderPaths().forEach { collapsed[it] = true } }) { LucideChevronsDownUp() }
+							ToolButton("Expand all", { collapsed.clear() }) { LucideChevronsUpDown() }
+						}
+					}
+
+					Div({ classes(PlaygroundStyle.searchBox, PlaygroundStyle.searchBoxCompact) }) {
+						LucideListFilter()
+						SearchInput(filter) {
+							classes(PlaygroundStyle.searchInput)
+							attr("placeholder", "Filter files")
+							attr("aria-label", "Filter the generated files")
+							onInput { filter = it.value }
+						}
+					}
+
+					FileTree(nodes, selected?.path, collapsed) { selectedPath = it }
+					if (shown.isEmpty()) Div({ classes(PlaygroundStyle.sideEmpty) }) { Text("No file matches \"$filter\".") }
+				}
+
+				Div({ classes(PlaygroundStyle.previewColumn) }) {
+					selected?.let { file -> PreviewHeader(file, pretty, wrap, onCopy) }
 
 					Div({
 						classes(PlaygroundStyle.preview)
+						if (wrap) classes(PlaygroundStyle.previewWrapped)
 						id(PREVIEW_ID)
 					}) {
 						selected?.let { file ->
 							// Prism rewrites the code element's children, detaching the text node Compose owns, so the
 							// subtree is rebuilt from scratch on every switch instead of patched in place.
-							key(file.path, file.content, pretty) {
-								CodeBlock(previewOf(file, pretty), grammarOf(file))
+							key(file.path, file.content, pretty, wrap) {
+								CodeBlock(previewOf(file, pretty), grammarOf(file), "line-numbers")
 							}
 						}
 					}
-				}
-
-				Div({ classes(PlaygroundStyle.statusStrip) }) {
-					Span { Text("${state.files.size} files") }
-					Span { Text(humanSize(state.files.sumOf { it.content.length })) }
-					state.origin.describe().forEach { Span { Text(it) } }
-					rebuild?.let { Span({ classes(PlaygroundStyle.statusAccent) }) { Text(it.label) } }
 				}
 			}
 
@@ -231,11 +225,22 @@ fun OutputPanel(
 			}
 
 			is OutputState.Failed -> Div({ classes(PlaygroundStyle.stateBox) }) {
+				Span({ classes(PlaygroundStyle.stateIcon, PlaygroundStyle.stateIconError) }) { LucideCircleX() }
 				Span({ classes(PlaygroundStyle.stateTitle) }) { Text(state.title) }
 				state.detail?.let { detail -> Div({ classes(PlaygroundStyle.errorText) }) { Text(detail) } }
+
+				Button({
+					classes(PlaygroundStyle.textButton)
+					onClick { onShowProblems() }
+				}) {
+					LucideCircleAlert()
+					Text("Show the problems and the build log")
+				}
 			}
 
 			OutputState.Idle -> Div({ classes(PlaygroundStyle.stateBox) }) {
+				Span({ classes(PlaygroundStyle.stateIcon) }) { LucidePackage() }
+
 				Span({ classes(PlaygroundStyle.stateTitle) }) {
 					Text(if (backendConfigured) "Nothing generated yet" else "Only the examples run here")
 				}
@@ -243,19 +248,61 @@ fun OutputPanel(
 				Span({ classes(PlaygroundStyle.stateDetail) }) {
 					Text(
 						when {
-							backendConfigured -> "Press Run, or stop typing for a moment: the pack rebuilds on its own and shows up here, ready to preview and download."
+							backendConfigured -> "Press Run, or stop typing for a moment with live rebuild on: the pack shows up here, ready to browse and download."
 							else -> "This deployment has no compile backend, so edited code cannot be built. Every example still shows its generated pack, and editing and sharing work."
 						}
 					)
 				}
+
+				if (backendConfigured) Span({ classes(PlaygroundStyle.stateDetail) }) { Keys(PlaygroundCommand.RUN.keys.orEmpty()) }
 			}
+		}
+	}
+}
+
+/** The selected file's path as a breadcrumb, and the actions on that one file. */
+@Composable
+private fun PreviewHeader(file: GeneratedFile, pretty: Boolean, wrap: Boolean, onCopy: (text: String, what: String) -> Unit) {
+	Div({ classes(PlaygroundStyle.previewHeader) }) {
+		Div({
+			classes(PlaygroundStyle.breadcrumb)
+			title(file.path)
+		}) {
+			if (file.directory.isNotEmpty()) {
+				Span({ classes(PlaygroundStyle.breadcrumbDirectory) }) { Text(file.directory.replace("/", " › ")) }
+				LucideChevronRight()
+			}
+
+			Span({ classes(PlaygroundStyle.breadcrumbFile) }) {
+				FileIcon(file)
+				Span({ classes(PlaygroundStyle.breadcrumbFileName) }) { Text(file.name) }
+			}
+
+			Span({ classes(PlaygroundStyle.tabMeta) }) { Text(humanSize(file.content.length)) }
+		}
+
+		Div({ classes(PlaygroundStyle.sectionActions) }) {
+			if (grammarOf(file) == "json") ToolButton(
+				if (pretty) "Pretty-printed, switch to the minified JSON Minecraft reads" else "Minified, switch to pretty-printed JSON",
+				{ PlaygroundSettings.prettyJson = !pretty },
+				active = pretty,
+				classes = arrayOf(PlaygroundStyle.toolButtonLabelled),
+			) {
+				LucideBraces()
+				Span({ classes(PlaygroundStyle.wideOnly) }) { Text(if (pretty) "Pretty" else "Raw") }
+			}
+
+			ToolButton("Wrap long lines", { PlaygroundSettings.previewWrap = !wrap }, active = wrap) { LucideTextWrap() }
+			ToolButton("Copy the path", { onCopy(file.path, "Path") }) { LucideLink2() }
+			ToolButton("Copy the content", { onCopy(previewOf(file, pretty), file.name) }) { LucideCopy() }
+			ToolButton("Download this file", { downloadText(previewOf(file, pretty), file.name) }) { LucideFileDown() }
 		}
 	}
 }
 
 /** A determinate bar for a known [fraction], a sweeping one otherwise. */
 @Composable
-private fun ProgressBar(fraction: Double?) = Div({
+fun ProgressBar(fraction: Double?) = Div({
 	classes(PlaygroundStyle.progressBar)
 	if (fraction == null) classes(PlaygroundStyle.progressBarPending)
 	else style { width((fraction * 100).percent) }

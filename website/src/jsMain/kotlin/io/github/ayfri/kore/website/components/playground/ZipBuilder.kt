@@ -108,20 +108,24 @@ fun buildZip(files: List<GeneratedFile>): ByteArray {
 	return output.toByteArray()
 }
 
-/** Offers the archive as a download, named after the pack's own namespace, never the `minecraft` one its tags live in. */
-fun downloadZip(files: List<GeneratedFile>) {
-	val namespace = files.asSequence()
-		.filter { it.path.startsWith("data/") }
-		.map { it.path.removePrefix("data/").substringBefore('/') }
-		.firstOrNull { it != "minecraft" }
+/** The archive's file name: the pack's own namespace, never the `minecraft` one its function tags live in. */
+fun zipName(files: List<GeneratedFile>) = files.asSequence()
+	.filter { it.path.startsWith("data/") }
+	.map { it.path.removePrefix("data/").substringBefore('/') }
+	.firstOrNull { it != "minecraft" }
+	.let { "${it ?: "kore-playground"}.zip" }
 
-	val bytes = buildZip(files)
-	val blob = Blob(arrayOf(Uint8Array(bytes.toTypedArray())), BlobPropertyBag(type = "application/zip"))
+fun downloadZip(files: List<GeneratedFile>) =
+	download(Blob(arrayOf(Uint8Array(buildZip(files).toTypedArray())), BlobPropertyBag(type = "application/zip")), zipName(files))
+
+fun downloadText(text: String, fileName: String) = download(Blob(arrayOf(text), BlobPropertyBag(type = "text/plain")), fileName)
+
+private fun download(blob: Blob, fileName: String) {
 	val url = URL.createObjectURL(blob)
 	val link = document.createElement("a") as HTMLAnchorElement
 
 	link.href = url
-	link.download = "${namespace ?: "kore-playground"}.zip"
+	link.download = fileName
 	link.click()
 	URL.revokeObjectURL(url)
 }

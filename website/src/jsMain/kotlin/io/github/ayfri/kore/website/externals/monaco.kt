@@ -22,6 +22,19 @@ import kotlin.js.Promise
 external interface Monaco {
 	val editor: MonacoEditor
 	val languages: MonacoLanguages
+
+	/** `monaco.KeyCode`, a numeric enum whose names match `KeyboardEvent.code` (`Enter`, `KeyS`...). */
+	@Suppress("PropertyName")
+	val KeyCode: Any
+
+	@Suppress("PropertyName")
+	val KeyMod: KeyMods
+}
+
+@Suppress("PropertyName")
+external interface KeyMods {
+	val CtrlCmd: Int
+	val Shift: Int
 }
 
 external interface MonacoEditor {
@@ -39,23 +52,67 @@ external interface Disposable {
 	fun dispose()
 }
 
-external interface TextModel
+external interface TextModel {
+	fun getFullModelRange(): Range
+	fun getLineCount(): Int
+	fun getValueLengthInRange(range: Range): Int
+}
 
 external interface Position {
 	val lineNumber: Int
 	val column: Int
 }
 
+external interface Range {
+	val endColumn: Int
+	val endLineNumber: Int
+	val startColumn: Int
+	val startLineNumber: Int
+}
+
+/** A [Range] that also knows which end the caret sits on. */
+external interface Selection : Range {
+	val positionColumn: Int
+	val positionLineNumber: Int
+}
+
+external interface CursorSelectionChangedEvent {
+	val secondarySelections: Array<Selection>
+	val selection: Selection
+}
+
+/** An entry of the editor's command palette (F1), optionally bound to keys and listed in the context menu. */
+external interface ActionDescriptor {
+	var contextMenuGroupId: String?
+	var contextMenuOrder: Double?
+	var id: String
+	var keybindings: Array<Int>?
+	var label: String
+	var run: (CodeEditor) -> Unit
+}
+
+external interface EditOperation {
+	var forceMoveMarkers: Boolean?
+	var range: Range
+	var text: String
+}
+
 external interface CodeEditor : Disposable {
-	fun getValue(): String
-	fun setValue(newValue: String)
+	fun addAction(descriptor: ActionDescriptor): Disposable
+	fun executeEdits(source: String, edits: Array<EditOperation>): Boolean
+	fun focus()
 	fun getModel(): TextModel?
 	fun getPosition(): Position?
-	fun setPosition(position: Position)
-	fun focus()
+	fun getValue(): String
 	fun layout()
-	fun revealLineInCenter(lineNumber: Int)
+	fun onDidChangeCursorSelection(listener: (CursorSelectionChangedEvent) -> Unit): Disposable
 	fun onDidChangeModelContent(listener: () -> Unit): Disposable
+	fun pushUndoStop(): Boolean
+	fun revealLineInCenter(lineNumber: Int)
+	fun setPosition(position: Position)
+	fun setValue(newValue: String)
+	fun trigger(source: String, handlerId: String, payload: Any?)
+	fun updateOptions(newOptions: EditorOptions)
 }
 
 /**
@@ -65,16 +122,22 @@ external interface CodeEditor : Disposable {
 external interface EditorOptions {
 	var automaticLayout: Boolean?
 	var bracketPairColorization: BracketPairColorizationOptions?
+	var cursorBlinking: String?
+	var cursorSmoothCaretAnimation: String?
+	var fixedOverflowWidgets: Boolean?
 	var fontFamily: String?
 	var fontLigatures: Boolean?
 	var fontSize: Int?
 	var guides: GuidesOptions?
 	var insertSpaces: Boolean?
 	var language: String?
+	var lineNumbers: String?
 	var minimap: MinimapOptions?
 	var padding: PaddingOptions?
 	var renderWhitespace: String?
 	var scrollBeyondLastLine: Boolean?
+	var smoothScrolling: Boolean?
+	var stickyScroll: StickyScrollOptions?
 	var tabSize: Int?
 	var theme: String?
 	var value: String?
@@ -82,6 +145,10 @@ external interface EditorOptions {
 }
 
 external interface BracketPairColorizationOptions {
+	var enabled: Boolean?
+}
+
+external interface StickyScrollOptions {
 	var enabled: Boolean?
 }
 
