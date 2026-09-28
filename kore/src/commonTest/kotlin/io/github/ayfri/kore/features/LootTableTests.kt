@@ -302,4 +302,42 @@ class LootTableTests : FunSpec({
 			lootTableTests()
 		}
 	}
+
+	test("item entry functions stay on the entry") {
+		dataPack("lootTable") {
+			pretty()
+
+			lootTable("nested_functions") {
+				pool {
+					entries {
+						item(Items.DIAMOND) {
+							functions { setCount(2f) }
+						}
+					}
+				}
+			}
+
+			lootTables.last() assertsIs """
+				{
+					"pools": [
+						{
+							"rolls": 1.0,
+							"entries": [
+								{
+									"type": "minecraft:item",
+									"name": "minecraft:diamond",
+									"functions": [
+										{
+											"function": "minecraft:set_count",
+											"count": 2.0
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			""".trimIndent()
+		}
+	}
 })
