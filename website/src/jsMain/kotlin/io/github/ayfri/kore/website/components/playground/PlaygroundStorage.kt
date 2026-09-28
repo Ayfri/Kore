@@ -7,9 +7,9 @@ import org.w3c.dom.set
 /**
  * Editor state that survives a reload, kept in `localStorage` under one prefix.
  *
- * Only what is cheap and safe to restore: the buffer the visitor was editing, the splitter position and
- * the JSON preview mode. Compiled chunks are deliberately not stored - a single compile is ~16 MB of
- * JavaScript, far past the 5 MB origin quota.
+ * Only what is cheap and safe to restore: the buffer the visitor was editing, the splitter position, the
+ * JSON preview mode and which chunks the last run used. The chunks themselves live in [ChunkStore]: a
+ * compile is ~16 MB of JavaScript, far past the 5 MB origin quota of `localStorage`.
  *
  * Every access goes through [runCatching]: `localStorage` throws outright in a Safari private window and
  * when storage is disabled, and losing a draft must never take the page down with it.
@@ -54,6 +54,14 @@ object PlaygroundStorage {
 	fun recordCompile(durationMs: Int) {
 		compileDurations = compileDurations + durationMs
 	}
+
+	/**
+	 * Names and hashes of the library chunks of the last run, in evaluation order: the texts sit in [ChunkStore], and
+	 * the next visit loads them into the worker as soon as an edit starts a compile.
+	 */
+	var libraries: List<Pair<String, String>>
+		get() = read("libraries")?.split(',')?.mapNotNull { entry -> entry.split(':').takeIf { it.size == 2 }?.let { it[0] to it[1] } }.orEmpty()
+		set(value) = write("libraries", value.joinToString(",") { (name, hash) -> "$name:$hash" })
 
 	/** Whether the output preview pretty-prints JSON. */
 	var prettyJson: Boolean

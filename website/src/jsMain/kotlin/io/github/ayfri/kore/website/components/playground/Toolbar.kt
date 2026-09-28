@@ -5,7 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.varabyte.kobweb.core.AppGlobals
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideChevronDown
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideLink
 import com.varabyte.kobweb.silk.components.icons.lucide.LucidePlay
@@ -18,10 +17,10 @@ import org.jetbrains.compose.web.dom.Span
 import org.jetbrains.compose.web.dom.Text
 
 /**
- * Actions above the workspace: run the snippet, swap in an example, share the buffer.
+ * Actions above the workspace: run the snippet, swap in an example, reset or share the buffer.
  *
- * Running needs a compile backend, so [canRun] is false whenever none is configured for the deployment;
- * the button stays visible but inert, and the output pane explains why.
+ * Running an untouched example needs no backend, so [canRun] is only false for an edited buffer on a deployment
+ * without one; the button stays visible but inert, and the output pane explains why.
  */
 @Composable
 fun PlaygroundToolbar(
@@ -43,10 +42,12 @@ fun PlaygroundToolbar(
 				onClick = { if (runnable) onRun() },
 				color = ButtonColor.PRIMARY,
 				icon = { LucidePlay() },
-				classes = playgroundButtonClasses(runnable),
+				classes = if (runnable) emptyArray() else arrayOf(PlaygroundStyle.disabledButton),
 			)
 
 			ExamplePicker(selectedExample, onSelectExample)
+
+			Span({ classes(PlaygroundStyle.shortcut) }) { Text("Ctrl + Enter runs") }
 		}
 
 		Div({ classes(PlaygroundStyle.toolbarGroup) }) {
@@ -55,7 +56,6 @@ fun PlaygroundToolbar(
 				onClick = onReset,
 				variant = ButtonVariant.GHOST,
 				icon = { LucideRotateCcw() },
-				classes = arrayOf(PlaygroundStyle.toolbarButton),
 			)
 
 			Button(
@@ -63,12 +63,7 @@ fun PlaygroundToolbar(
 				onClick = onShare,
 				variant = ButtonVariant.GHOST,
 				icon = { LucideLink() },
-				classes = arrayOf(PlaygroundStyle.toolbarButton),
 			)
-
-			Span({ classes(PlaygroundStyle.badge) }) {
-				Text("Kore ${AppGlobals["projectVersion"] ?: "?"} - MC ${AppGlobals["minecraftVersion"] ?: "?"}")
-			}
 		}
 	}
 }
@@ -84,7 +79,6 @@ private fun ExamplePicker(selectedExample: PlaygroundExample?, onSelectExample: 
 			onClick = { open = !open },
 			variant = ButtonVariant.OUTLINE,
 			icon = { LucideChevronDown() },
-			classes = arrayOf(PlaygroundStyle.toolbarButton),
 		)
 
 		if (open) {
@@ -99,7 +93,8 @@ private fun ExamplePicker(selectedExample: PlaygroundExample?, onSelectExample: 
 
 					examples.forEach { example ->
 						Div({
-							classes(*pickerEntryClasses(example == selectedExample))
+							classes(PlaygroundStyle.pickerEntry)
+							if (example == selectedExample) classes(PlaygroundStyle.pickerEntryActive)
 							onClick {
 								onSelectExample(example)
 								open = false
@@ -113,14 +108,4 @@ private fun ExamplePicker(selectedExample: PlaygroundExample?, onSelectExample: 
 			}
 		}
 	}
-}
-
-private fun pickerEntryClasses(active: Boolean) = when {
-	active -> arrayOf(PlaygroundStyle.pickerEntry, PlaygroundStyle.pickerEntryActive)
-	else -> arrayOf(PlaygroundStyle.pickerEntry)
-}
-
-private fun playgroundButtonClasses(enabled: Boolean) = when {
-	enabled -> arrayOf(PlaygroundStyle.toolbarButton)
-	else -> arrayOf(PlaygroundStyle.toolbarButton, PlaygroundStyle.disabledButton)
 }

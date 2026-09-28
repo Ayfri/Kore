@@ -1,13 +1,14 @@
 package io.github.ayfri.kore.website.components.playground
 
 import kotlinx.browser.window
-import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.w3c.dom.MessageEvent
 import org.w3c.dom.Worker
 import org.w3c.dom.url.URL
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
-import kotlin.coroutines.resume
 
 /** One entry of the generated datapack, exactly as `exportAsStrings()` produced it. */
 data class GeneratedFile(
@@ -25,142 +26,176 @@ sealed interface RunResult {
 }
 
 /**
- * Loads the chunks one at a time, announcing each before it runs, then reads the globals the harness left.
- *
- * `importScripts` is synchronous and evaluates in the worker's global scope, which is exactly what
- * concatenating the chunks used to do - except the loop can report between modules. That matters because
- * `Kore-kore.js` alone is 13.9 MB and takes most of the run.
+ * `load` evaluates the library chunks one at a time, announcing each before it runs; `run` evaluates an entry chunk
+ * and reads the globals the harness left. `importScripts` is synchronous and evaluates in the worker's global scope,
+ * which is exactly what concatenating the chunks would do, except the loop can report between modules.
  */
-private const val WORKER_LOADER = """
+private const val WORKER_SCRIPT = """
 self.onmessage = function (event) {
-	var chunks = event.data.chunks;
+	var data = event.data;
 
-	for (var index = 0; index < chunks.length; index++) {
-		self.postMessage({ loading: { index: index, total: chunks.length, name: chunks[index].name } });
+	if (data.kind === 'load') {
+		for (var index = 0; index < data.chunks.length; index++) {
+			self.postMessage({ id: data.id, loading: { index: index, total: data.chunks.length, name: data.chunks[index].name } });
 
-		try {
-			importScripts(chunks[index].url);
-		} catch (error) {
-			self.postMessage({ files: null, error: 'Loading ' + chunks[index].name + ' failed: ' + String(error) });
-			return;
+			try {
+				importScripts(data.chunks[index].url);
+			} catch (error) {
+				self.postMessage({ id: data.id, error: 'Loading ' + data.chunks[index].name + ' failed: ' + String(error) });
+				return;
+			}
 		}
+
+		self.postMessage({ id: data.id, done: true });
+		return;
 	}
 
+	globalThis.__koreFiles = null;
+	globalThis.__koreError = null;
+
 	try {
-		self.postMessage({ files: globalThis.__koreFiles || null, error: globalThis.__koreError || null });
+		importScripts(data.entry.url);
+		self.postMessage({ id: data.id, done: true, files: globalThis.__koreFiles, error: globalThis.__koreError });
 	} catch (error) {
-		self.postMessage({ files: null, error: String(error) });
+		self.postMessage({ id: data.id, error: 'Running ' + data.entry.name + ' failed: ' + String(error) });
 	}
 };
 """
 
+private fun blobUrl(text: String) = URL.createObjectURL(Blob(arrayOf(text), BlobPropertyBag(type = "text/javascript")))
+
+private fun message(id: Int, kind: String, block: (dynamic) -> Unit): dynamic {
+	val message = js("({})")
+	message.id = id
+	message.kind = kind
+	block(message)
+	return message
+}
+
+private fun chunkRef(name: String, url: String): dynamic {
+	val chunk = js("({})")
+	chunk.name = name
+	chunk.url = url
+	return chunk
+}
+
 /**
- * Runs the compiled program in a Web Worker and collects the datapack it produced.
+ * Runs compiled packs in a Web Worker kept warm between runs.
  *
- * [chunks] are the emitted modules **in evaluation order**, the order the backend topologically sorted them
- * into - never a hardcoded one, since it is neither alphabetical nor layered. Each is UMD with a
- * `globalThis` fallback, and a worker has neither `define` nor `exports`, so they take that fallback and
- * register themselves on `globalThis`: loading them in order is a complete program, no bundler involved.
- * The last one runs `mainWrapper()` on evaluation, which is what leaves the harness result behind.
+ * The chunks are UMD with a `globalThis` fallback, come in evaluation order, and the last one runs the harness
+ * `main()` when evaluated: loading them in order is a complete program, no bundler involved. The library chunks are
+ * 16 MB of JavaScript and, with the backend's anchor module, byte-identical from one compile to the next, so they are
+ * evaluated once per worker and each run only evaluates the snippet's own chunk: a few milliseconds instead of the
+ * ~1 s of parsing 16 MB again. A pack generated this way is identical to one from a fresh worker, checked across the
+ * examples; Kore keeps no global state between two `dataPack` calls beyond the public `Configuration.DEFAULT`.
  *
- * A worker rather than an iframe: the run is isolated, the UI thread stays responsive while a heavy pack
- * builds, and Kore needs no DOM. [timeoutMs] guards against a snippet that never returns - the worker is
- * terminated either way, so nothing survives a run.
+ * A worker rather than an iframe: the run is isolated from the page, the UI stays responsive while a heavy pack
+ * builds, and Kore needs no DOM. The watchdog terminates the worker when a step exceeds its budget, the snippet's own
+ * code being the only thing that can loop forever, and a new set of library hashes, or chunks without hashes from an
+ * older backend, start a fresh one.
  */
-suspend fun runCompiledPack(
-	chunks: List<CompiledChunk>,
-	timeoutMs: Int = 10_000,
-	onProgress: (CompileProgress) -> Unit = {},
-): RunResult = suspendCancellableCoroutine { continuation ->
-	val chunkUrls = chunks.map { URL.createObjectURL(Blob(arrayOf(it.text), BlobPropertyBag(type = "text/javascript"))) }
-	val loaderUrl = URL.createObjectURL(Blob(arrayOf(WORKER_LOADER), BlobPropertyBag(type = "text/javascript")))
-	val worker = Worker(loaderUrl)
-	val startedAt = window.performance.now()
-	var settled = false
+object PackRunner {
+	private val mutex = Mutex()
+	private val workerUrl by lazy { blobUrl(WORKER_SCRIPT) }
+	private val pending = mutableMapOf<Int, (dynamic) -> Unit>()
 
-	fun release() {
-		worker.terminate()
-		chunkUrls.forEach { URL.revokeObjectURL(it) }
-		URL.revokeObjectURL(loaderUrl)
-	}
+	private var worker: Worker? = null
+	private var librariesKey: String? = null
+	private var nextId = 0
 
-	fun finish(result: RunResult) {
-		if (settled) return
-		settled = true
-		release()
-		continuation.resume(result)
-	}
+	/** Loads [libraries] ahead of a run, typically while their compile is still on the backend. */
+	suspend fun prewarm(libraries: List<CompiledChunk>) = mutex.withLock { ensureLoaded(libraries, 30_000) {} }
 
-	// The watchdog is armed per step rather than once: loading 16 MB of modules is slow but bounded, and it
-	// is the snippet's own code - the last chunk, and only it - that can loop forever.
-	var watchdog = 0
+	suspend fun run(chunks: List<CompiledChunk>, timeoutMs: Int = 10_000, onProgress: (CompileProgress) -> Unit = {}) = mutex.withLock {
+		val startedAt = window.performance.now()
+		val entry = chunks.lastOrNull() ?: return@withLock RunResult.Failure("The compile returned no JavaScript.")
+		ensureLoaded(chunks.dropLast(1), timeoutMs, onProgress)?.let { return@withLock RunResult.Failure(it) }
 
-	fun arm() {
-		window.clearTimeout(watchdog)
+		val url = blobUrl(entry.text)
+		val outcome = request("run", timeoutMs, { it.entry = chunkRef(entry.name, url) })
+		URL.revokeObjectURL(url)
 
-		watchdog = window.setTimeout({
-			finish(RunResult.Failure("The snippet did not finish within ${timeoutMs / 1000}s and was stopped."))
-		}, timeoutMs)
-	}
+		val files = outcome.data?.files
+		when {
+			outcome.error != null -> RunResult.Failure(outcome.error).also { if (outcome.timedOut) reset() }
+			outcome.data?.error != null -> RunResult.Failure(outcome.data.error as String)
+			files == null || files == undefined -> RunResult.Failure("The snippet produced no datapack. Does it define `fun playground()`?")
 
-	arm()
-
-	worker.onmessage = { event: MessageEvent ->
-		val data = event.data.asDynamic()
-		val loading = data.loading
-
-		if (loading != null && loading != undefined) {
-			arm()
-			val index = (loading.index as? Int) ?: 0
-			val total = (loading.total as? Int) ?: chunks.size
-
-			onProgress(
-				CompileProgress(
-					label = "Running",
-					detail = "Loading ${loading.name as? String ?: "a module"} (${index + 1}/$total)",
-					fraction = (index + 1).toDouble() / total,
-				)
+			else -> RunResult.Success(
+				files = js("Object.keys")(files).unsafeCast<Array<String>>()
+					.map { GeneratedFile(it, files[it] as String) }
+					.sortedWith(compareBy({ it.path != "pack.mcmeta" }, { it.path })),
+				durationMs = (window.performance.now() - startedAt).toInt(),
 			)
-		} else {
+		}
+	}
+
+	/** Makes the worker hold exactly [libraries], starting a fresh one unless it already does. The error, if any. */
+	private suspend fun ensureLoaded(libraries: List<CompiledChunk>, timeoutMs: Int, onProgress: (CompileProgress) -> Unit): String? {
+		// A single bundle, or chunks from a backend that sends no hashes, never reuses a worker.
+		val key = libraries.takeIf { list -> list.isNotEmpty() && list.all { it.hash != null } }?.joinToString(",") { it.hash!! }
+		if (worker != null && key != null && key == librariesKey) return null
+
+		reset()
+		worker = Worker(workerUrl).also { it.onmessage = { event: MessageEvent -> dispatch(event.data.asDynamic()) } }
+
+		val urls = libraries.map { blobUrl(it.text) }
+		val loaded = request("load", timeoutMs, { it.chunks = libraries.mapIndexed { index, chunk -> chunkRef(chunk.name, urls[index]) }.toTypedArray() }) { loading ->
+			val index = (loading.index as? Int) ?: 0
+			val total = (loading.total as? Int) ?: libraries.size
+			onProgress(CompileProgress("Running", "Loading ${loading.name as? String ?: "a module"} (${index + 1}/$total)", (index + 1).toDouble() / total))
+		}
+		urls.forEach(URL::revokeObjectURL)
+
+		if (loaded.error != null) reset() else librariesKey = key
+		return loaded.error
+	}
+
+	private class Outcome(val data: dynamic, val error: String?, val timedOut: Boolean = false)
+
+	/** Posts one request and waits for its answer, re-arming the watchdog on every progress message. */
+	private suspend fun request(kind: String, timeoutMs: Int, fill: (dynamic) -> Unit, onLoading: (dynamic) -> Unit = {}): Outcome {
+		val id = nextId++
+		val answer = CompletableDeferred<Outcome>()
+		var watchdog = 0
+
+		fun arm() {
 			window.clearTimeout(watchdog)
-			val error = data.error as? String
+			watchdog = window.setTimeout({
+				answer.complete(Outcome(null, "The snippet did not finish within ${timeoutMs / 1000}s and was stopped.", timedOut = true))
+			}, timeoutMs)
+		}
 
-			when {
-				error != null -> finish(RunResult.Failure(error))
-				data.files == null -> finish(RunResult.Failure("The snippet produced no datapack. Does it define `fun playground()`?"))
-
-				else -> {
-					val files = js("Object.keys")(data.files).unsafeCast<Array<String>>()
-						.map { GeneratedFile(it, data.files[it] as String) }
-						.sortedWith(compareBy({ it.path != "pack.mcmeta" }, { it.path }))
-
-					finish(RunResult.Success(files, (window.performance.now() - startedAt).toInt()))
-				}
+		pending[id] = { data ->
+			val loading = data.loading
+			if (loading != null && loading != undefined) {
+				arm()
+				onLoading(loading)
+			} else {
+				answer.complete(Outcome(data, (data.error as? String)?.takeIf { data.done != true }))
 			}
 		}
-	}
 
-	worker.onerror = { event ->
-		window.clearTimeout(watchdog)
-		finish(RunResult.Failure(event.asDynamic().message as? String ?: "The snippet crashed while running."))
-	}
+		worker!!.onerror = { event -> answer.complete(Outcome(null, event.asDynamic().message as? String ?: "The snippet crashed while running.", timedOut = true)) }
+		arm()
+		worker!!.postMessage(message(id, kind, fill))
 
-	continuation.invokeOnCancellation {
-		window.clearTimeout(watchdog)
-
-		if (!settled) {
-			settled = true
-			release()
+		return try {
+			answer.await()
+		} finally {
+			window.clearTimeout(watchdog)
+			pending.remove(id)
 		}
 	}
 
-	val message = js("({})")
-	message.chunks = chunks.mapIndexed { index, chunk ->
-		val entry = js("({})")
-		entry.name = chunk.name
-		entry.url = chunkUrls[index]
-		entry
-	}.toTypedArray()
+	private fun dispatch(data: dynamic) {
+		pending[(data.id as? Int) ?: return]?.invoke(data)
+	}
 
-	worker.postMessage(message)
+	private fun reset() {
+		worker?.terminate()
+		worker = null
+		librariesKey = null
+		pending.clear()
+	}
 }

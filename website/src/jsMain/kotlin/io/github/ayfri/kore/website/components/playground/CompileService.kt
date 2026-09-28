@@ -1,9 +1,16 @@
 package io.github.ayfri.kore.website.components.playground
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.varabyte.kobweb.core.AppGlobals
 import kotlinx.browser.window
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.await
+import kotlinx.coroutines.launch
 import org.w3c.fetch.RequestInit
+import org.w3c.fetch.Response
 import kotlin.js.Promise
 
 /** Name of the file the user edits. Diagnostics are reported against it, so it must match the request. */
@@ -11,6 +18,11 @@ const val USER_FILE_NAME = "main.kt"
 
 /** Name of the generated file wrapping the user snippet, never shown in the editor. */
 const val HARNESS_FILE_NAME = "__harness.kt"
+
+/** What the backend names the entry chunk, the one carrying the harness `main`. */
+const val ENTRY_CHUNK_NAME = "playground.js"
+
+private const val NEWLINE = '\n'
 
 /**
  * Compile backend, injected as a Kobweb global so dev and prod point at different deployments.
@@ -52,14 +64,10 @@ data class PlaygroundDiagnostic(
  * Under the IR build cache the backend emits a module per library instead of a single bundle, and returns
  * them already topologically sorted, so evaluating [CompileResult.chunks] top to bottom needs no bundler.
  */
-/** What the backend names the entry chunk, the one carrying the harness `main`. */
-const val ENTRY_CHUNK_NAME = "playground.js"
-
-private const val NEWLINE = '\n'
-
 data class CompiledChunk(
 	val name: String,
 	val text: String,
+	val hash: String? = null,
 )
 
 data class CompileResult(
@@ -83,6 +91,96 @@ data class CompileResult(
 		get() = chunks.takeIf { it.isNotEmpty() } ?: listOfNotNull(jsCode).map { CompiledChunk(ENTRY_CHUNK_NAME, it) }
 }
 
+/**
+ * A step of the round-trip, as it happens, ready to be shown as-is.
+ *
+ * [fraction] is filled only where real progress is known - the download, and the chunk-by-chunk evaluation
+ * in the worker. A compile has no such measure, so the page falls back to elapsed time against what past
+ * compiles took.
+ */
+data class CompileProgress(
+	val label: String,
+	val detail: String? = null,
+	val fraction: Double? = null,
+)
+
+/** The backend's compile queue is full. A compile started on idle drops it silently, a Run reports it. */
+class CompileBusyException(message: String) : Exception(message)
+
+/** One compile, shared by everyone asking for the same buffer while it runs: a compile started on idle and the Run after it. */
+class CompileJob(val code: String) {
+	/** What the backend last reported, observable so the page can show the wait of a compile it joined rather than started. */
+	var progress by mutableStateOf(CompileProgress("Compiling", "Waiting for the compile backend."))
+		internal set
+
+	internal val result = CompletableDeferred<CompileResult>()
+}
+
+/**
+ * The page's single compile lane.
+ *
+ * The backend compiles one snippet at a time for everyone, so a tab never stacks a second request behind its own: a
+ * compile for another buffer waits for the running one, and one for the same buffer joins it, which is what makes the
+ * Run after an idle compile free. Jobs live in their own scope, so a caller giving up - a keystroke cancelling the idle
+ * compile - never abandons a half-read response, and the finished result still lands in the cache.
+ */
+object PlaygroundCompiler {
+	/** Enough for Run, edit, undo, Run. Every entry holds ~16 MB of JavaScript, so it stays tiny. */
+	private const val CACHE_SIZE = 2
+
+	private val scope = MainScope()
+	private val results = LinkedHashMap<String, CompileResult>()
+
+	var running by mutableStateOf<CompileJob?>(null)
+		private set
+
+	/** A successful compile of exactly [code], if one is still held. Failures are never kept, their diagnostics must follow the buffer. */
+	fun cached(code: String) = results[code]?.copy(cached = true)
+
+	suspend fun compile(code: String): CompileResult {
+		while (true) {
+			cached(code)?.let { return it }
+			val job = running ?: break
+			if (job.code == code) return job.result.await()
+			job.result.join()
+		}
+
+		val job = CompileJob(code)
+		running = job
+
+		scope.launch {
+			runCatching {
+				try {
+					stream(job, ChunkStore.knownHashes())
+				} catch (_: MissingChunkException) {
+					stream(job, emptySet())
+				}
+			}
+				.onSuccess { result ->
+					store(code, result)
+					job.result.complete(result)
+				}
+				.onFailure { job.result.completeExceptionally(it) }
+
+			running = null
+		}
+
+		return job.result.await()
+	}
+
+	fun persist(hash: String, text: String) {
+		scope.launch { ChunkStore.put(hash, text) }
+	}
+
+	private fun store(code: String, result: CompileResult) {
+		if (!result.succeeded) return
+
+		results.remove(code)
+		results[code] = result
+		while (results.size > CACHE_SIZE) results.remove(results.keys.first())
+	}
+}
+
 private fun projectFile(name: String, text: String): dynamic {
 	val file = js("({})")
 	file.name = name
@@ -90,14 +188,44 @@ private fun projectFile(name: String, text: String): dynamic {
 	return file
 }
 
-private fun parseChunks(jsFiles: dynamic): List<CompiledChunk> {
+private suspend fun post(url: String, body: dynamic): Response = window.fetch(
+	url,
+	RequestInit(
+		method = "POST",
+		headers = js("({ 'Content-Type': 'application/json' })"),
+		body = JSON.stringify(body),
+	)
+).await()
+
+private fun compileBody(code: String): dynamic {
+	val body = js("({})")
+	body.args = ""
+	body.files = arrayOf(projectFile(USER_FILE_NAME, code), projectFile(HARNESS_FILE_NAME, PLAYGROUND_HARNESS))
+	return body
+}
+
+/** Thrown when the backend left out a chunk the store said it held but no longer finds, so the compile is asked again. */
+private class MissingChunkException : Exception()
+
+/**
+ * The chunks of a response, texts left out by the backend filled back in from [ChunkStore].
+ *
+ * New texts are stored without waiting: writing 14 MB to Cache Storage must not delay the run.
+ */
+private suspend fun resolveChunks(jsFiles: dynamic): List<CompiledChunk> {
 	val count = (jsFiles?.length as? Int) ?: return emptyList()
 
-	return (0 until count).mapNotNull { index ->
+	return (0 until count).map { index ->
 		val chunk = jsFiles[index]
-		val text = chunk?.text as? String ?: return@mapNotNull null
+		val name = chunk.name as? String ?: "chunk-$index.js"
+		val hash = chunk.hash as? String
+		val text = chunk.text as? String
 
-		CompiledChunk(chunk.name as? String ?: "chunk-$index.js", text)
+		when {
+			text != null -> text.also { if (hash != null) PlaygroundCompiler.persist(hash, it) }
+			hash != null -> ChunkStore.get(hash) ?: throw MissingChunkException()
+			else -> throw MissingChunkException()
+		}.let { CompiledChunk(name, it, hash) }
 	}
 }
 
@@ -136,7 +264,7 @@ private fun parseDiagnostics(errors: dynamic): List<PlaygroundDiagnostic> {
  * harness is not sent, so every message describes [USER_FILE_NAME] at its real line.
  *
  * The two targets can disagree: anything JVM-only passes here and still fails the real compile, so
- * diagnostics coming back from [compilePlayground] always win.
+ * diagnostics coming back from a compile always win.
  */
 suspend fun highlightPlayground(code: String): List<PlaygroundDiagnostic> {
 	val api = playgroundApiUrl ?: error("No compile backend is configured for this deployment.")
@@ -146,33 +274,12 @@ suspend fun highlightPlayground(code: String): List<PlaygroundDiagnostic> {
 	body.confType = "java"
 	body.files = arrayOf(projectFile(USER_FILE_NAME, code))
 
-	val response = window.fetch(
-		"$api/api/compiler/highlight",
-		RequestInit(
-			method = "POST",
-			headers = js("({ 'Content-Type': 'application/json' })"),
-			body = JSON.stringify(body),
-		)
-	).await()
-
+	val response = post("$api/api/compiler/highlight", body)
 	if (!response.ok) error("Diagnostics backend answered ${response.status} ${response.statusText}.")
 
 	// The endpoint returns the per-file map directly, the same shape the compile response nests under `errors`.
 	return parseDiagnostics(response.json().await().asDynamic())
 }
-
-/**
- * A step of the round-trip, as it happens, ready to be shown as-is.
- *
- * [fraction] is filled only where real progress is known - the download, and the chunk-by-chunk evaluation
- * in the worker. A compile has no such measure, so the page falls back to elapsed time against what past
- * compiles took.
- */
-data class CompileProgress(
-	val label: String,
-	val detail: String? = null,
-	val fraction: Double? = null,
-)
 
 private fun humanBytes(bytes: Int) = when {
 	bytes >= 1024 * 1024 -> "${(bytes / 104_857.6).toInt() / 10.0} MB"
@@ -201,162 +308,115 @@ private fun progressOf(event: dynamic): CompileProgress? = when (event.event as?
 		else -> CompileProgress("Collecting output", "JavaScript linked in ${seconds((event.previousMs as? Int) ?: 0)}.")
 	}
 
-	"output" -> CompileProgress(
-		label = "Downloading",
-		detail = "${(event.chunks as? Int) ?: 0} modules, ${humanBytes((event.bytes as? Int) ?: 0)} of JavaScript.",
-		fraction = 0.0,
-	)
+	"output" -> {
+		val reused = (event.reused as? Int) ?: 0
+		CompileProgress(
+			label = "Downloading",
+			detail = "${(event.chunks as? Int) ?: 0} modules, ${humanBytes((event.bytes as? Int) ?: 0)} of JavaScript" +
+				if (reused > 0) ", $reused reused from earlier runs." else ".",
+			fraction = 0.0,
+		)
+	}
 
 	else -> null
 }
 
+/** The query telling the backend which chunk texts it can leave out. */
+private fun knownQuery(known: Set<String>) = if (known.isEmpty()) "" else "?known=${known.joinToString(",")}"
+
 /**
- * Compiles [code] while reporting what the backend is doing.
+ * Compiles [job]'s buffer while reporting what the backend is doing, [known] listing the chunk hashes already held.
  *
- * `POST /api/compiler/translate/js/stream` answers with newline-delimited JSON: progress lines first, the
- * usual compile result last. Every line reaches [onProgress] as it lands, which is what turns a 6-35 s
- * spinner into a named wait. A backend without the endpoint, or a browser without streaming bodies, falls
- * back to [compilePlayground] and the page behaves as it did before.
+ * `POST /api/compiler/translate/js/stream` answers with newline-delimited JSON: progress lines first, the usual
+ * compile result last. A backend without the endpoint, or a browser without streaming bodies, falls back to
+ * [compilePlain].
+ *
+ * Each network chunk is scanned once for line ends and a line is joined once: the result line alone is ~17 MB, and
+ * appending to one string then searching it from the start on every read made the download quadratic.
  */
-suspend fun compilePlaygroundStreaming(code: String, onProgress: (CompileProgress) -> Unit): CompileResult {
-	compileCache[code]?.let { return it.copy(cached = true) }
-
+private suspend fun stream(job: CompileJob, known: Set<String>): CompileResult {
 	val api = playgroundApiUrl ?: error("No compile backend is configured for this deployment.")
-
-	val body = js("({})")
-	body.args = ""
-	body.files = arrayOf(projectFile(USER_FILE_NAME, code), projectFile(HARNESS_FILE_NAME, PLAYGROUND_HARNESS))
-
 	val startedAt = window.performance.now()
-
-	val response = window.fetch(
-		"$api/api/compiler/translate/js/stream",
-		RequestInit(
-			method = "POST",
-			headers = js("({ 'Content-Type': 'application/json' })"),
-			body = JSON.stringify(body),
-		)
-	).await()
+	val response = post("$api/api/compiler/translate/js/stream${knownQuery(known)}", compileBody(job.code))
 
 	val stream = response.asDynamic().body
-	if (!response.ok || stream == null || stream == undefined) return compilePlayground(code)
+	if (!response.ok || stream == null || stream == undefined) return compilePlain(job.code, known)
 
 	val reader = stream.getReader()
 	val decoder = js("new TextDecoder()")
-	var pending = ""
-	var payload: dynamic = null
+	val line = mutableListOf<String>()
 	var downloaded = 0
 	var total = 0
 
-	while (payload == null) {
+	while (true) {
 		val step = (reader.read() as Promise<dynamic>).await()
 		if (step.done as Boolean) break
 
 		downloaded += (step.value.length as? Int) ?: 0
-		pending += decoder.decode(step.value, js("({ stream: true })")) as String
+		val text = decoder.decode(step.value, js("({ stream: true })")) as String
+		var start = 0
 
-		while (pending.contains(NEWLINE)) {
-			val line = pending.substringBefore(NEWLINE)
-			pending = pending.substringAfter(NEWLINE)
-			if (line.isBlank()) continue
-
-			val event = runCatching { JSON.parse<dynamic>(line) }.getOrNull() ?: continue
-
-			if (event.event == "result") {
-				payload = event.result
+		while (true) {
+			val end = text.indexOf(NEWLINE, start)
+			if (end < 0) {
+				line += text.substring(start)
 				break
 			}
 
-			if (event.event == "busy") error(event.message as? String ?: "The compile queue is full, retry shortly.")
-			if (event.event == "output") total = (event.bytes as? Int) ?: 0
+			line += text.substring(start, end)
+			start = end + 1
+			val event = runCatching { JSON.parse<dynamic>(line.joinToString("")) }.getOrNull()
+			line.clear()
+			if (event == null) continue
 
-			progressOf(event)?.let(onProgress)
+			when (event.event as? String) {
+				"result" -> {
+					runCatching { reader.cancel() }
+					return resultOf(event.result, (window.performance.now() - startedAt).toInt())
+				}
+
+				"busy" -> throw CompileBusyException(event.message as? String ?: "The compile queue is full, retry shortly.")
+				"error" -> error(event.message as? String ?: "The compile backend failed.")
+				"output" -> total = (event.bytes as? Int) ?: 0
+			}
+
+			progressOf(event)?.let { job.progress = it }
 		}
 
 		// The result is the last line and by far the largest, so everything arriving after `output` is it.
-		if (payload == null && total > 0) onProgress(
-			CompileProgress(
-				label = "Downloading",
-				detail = "${humanBytes(downloaded)} of ${humanBytes(total)}",
-				fraction = (downloaded.toDouble() / total).coerceIn(0.0, 1.0),
-			)
+		if (total > 0) job.progress = CompileProgress(
+			label = "Downloading",
+			detail = "${humanBytes(downloaded)} of ${humanBytes(total)}",
+			fraction = (downloaded.toDouble() / total).coerceIn(0.0, 1.0),
 		)
 	}
 
-	runCatching { reader.cancel() }
-
 	// No result line means the backend answered something else; the plain endpoint reports that properly.
-	if (payload == null) return compilePlayground(code)
-
-	val result = resultOf(payload, (window.performance.now() - startedAt).toInt())
-	cache(code, result)
-
-	return result
+	return compilePlain(job.code, known)
 }
 
 /**
- * Successful compiles of the last few buffers, so re-running an unchanged snippet costs nothing.
- *
- * A warm server still spends ~6 s and ~1.7 MB on a repeat, and pressing Run twice - or editing and undoing
- * in between - is the common case. Only successes are kept: a failure is cheap to redo and its diagnostics
- * must follow the current buffer. The entries hold every emitted chunk, ~16 MB of strings each, so the
- * cache is deliberately tiny.
- */
-private const val COMPILE_CACHE_SIZE = 2
-
-private val compileCache = LinkedHashMap<String, CompileResult>()
-
-private fun cache(code: String, result: CompileResult) {
-	if (!result.succeeded) return
-
-	compileCache.remove(code)
-	compileCache[code] = result
-
-	while (compileCache.size > COMPILE_CACHE_SIZE) compileCache.remove(compileCache.keys.first())
-}
-
-/**
- * Compiles [code] together with the hidden harness into JavaScript.
- *
- * The endpoint is `kotlin-compiler-server`'s `POST /api/compiler/translate/js`, which answers with the
- * compiled modules plus per-file diagnostics. The two files are sent separately so line numbers reported
+ * Compiles [code] together with the hidden harness through `POST /api/compiler/translate/js`, which answers with
+ * the compiled modules plus per-file diagnostics. The two files are sent separately so line numbers reported
  * for [USER_FILE_NAME] map straight onto the editor.
  */
-suspend fun compilePlayground(code: String): CompileResult {
-	compileCache[code]?.let { return it.copy(cached = true) }
-
+private suspend fun compilePlain(code: String, known: Set<String>): CompileResult {
 	val api = playgroundApiUrl ?: error("No compile backend is configured for this deployment.")
-
-	val body = js("({})")
-	body.args = ""
-	body.files = arrayOf(projectFile(USER_FILE_NAME, code), projectFile(HARNESS_FILE_NAME, PLAYGROUND_HARNESS))
-
 	val startedAt = window.performance.now()
+	val response = post("$api/api/compiler/translate/js${knownQuery(known)}", compileBody(code))
 
-	val response = window.fetch(
-		"$api/api/compiler/translate/js",
-		RequestInit(
-			method = "POST",
-			headers = js("({ 'Content-Type': 'application/json' })"),
-			body = JSON.stringify(body),
-		)
-	).await()
-
+	if (response.status.toInt() == 429) throw CompileBusyException("The compile queue is full, retry shortly.")
 	if (!response.ok) error("Compile backend answered ${response.status} ${response.statusText}.")
 
-	val result = resultOf(response.json().await().asDynamic(), (window.performance.now() - startedAt).toInt())
-
-	cache(code, result)
-
-	return result
+	return resultOf(response.json().await().asDynamic(), (window.performance.now() - startedAt).toInt())
 }
 
-private fun resultOf(payload: dynamic, durationMs: Int): CompileResult {
+private suspend fun resultOf(payload: dynamic, durationMs: Int): CompileResult {
 	val exception = payload.exception
 
 	return CompileResult(
 		jsCode = payload.jsCode as? String,
-		chunks = parseChunks(payload.jsFiles),
+		chunks = resolveChunks(payload.jsFiles),
 		diagnostics = parseDiagnostics(payload.errors),
 		exception = (exception?.message as? String)?.let { message ->
 			(exception.fullName as? String)?.let { "$it: $message" } ?: message

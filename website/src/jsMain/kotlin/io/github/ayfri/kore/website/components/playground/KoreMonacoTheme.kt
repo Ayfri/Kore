@@ -1,108 +1,109 @@
 package io.github.ayfri.kore.website.components.playground
 
+import io.github.ayfri.kore.website.CodeThemeStyle
 import io.github.ayfri.kore.website.externals.monaco.MonacoEditor
 import io.github.ayfri.kore.website.externals.monaco.ThemeData
 import io.github.ayfri.kore.website.externals.monaco.TokenThemeRule
+import org.jetbrains.compose.web.css.CSSColorValue
 
-const val MONACO_THEME_NAME = "material-darker"
+const val MONACO_THEME_NAME = "kore-dark"
 
-private fun rule(token: String, foreground: String, fontStyle: String? = null) =
+/** Monaco wants bare `RRGGBB` for token rules, the stylesheet colors are `#rrggbb`. */
+private fun CSSColorValue.hex() = toString().removePrefix("#")
+
+private fun rule(token: String, color: CSSColorValue, fontStyle: String? = null) =
 	(js("({})").unsafeCast<TokenThemeRule>()).apply {
 		this.token = token
-		this.foreground = foreground
+		foreground = color.hex()
 		if (fontStyle != null) this.fontStyle = fontStyle
 	}
 
 /**
- * Material Darker, matching the IntelliJ IDEA theme of the same name. Token colours line up with
- * [io.github.ayfri.kore.website.CodeThemeStyle] so playground code reads identically to the Prism-highlighted
- * snippets in the docs.
+ * The site's code theme, token for token with [CodeThemeStyle], so the editor reads like every other snippet on the
+ * site. The background is the pane surface (`--landing-surface-2`), which Monaco cannot read from CSS.
  */
-fun defineMaterialDarkerTheme(editor: MonacoEditor) {
+fun defineKoreTheme(editor: MonacoEditor) {
 	val colors = js("({})")
-	colors["editor.background"] = "#212121"
-	colors["editor.foreground"] = "#EEFFFF"
-	colors["editorLineNumber.foreground"] = "#424242"
-	colors["editorLineNumber.activeForeground"] = "#616161"
-	colors["editorCursor.foreground"] = "#FFCC00"
-	colors["editor.lineHighlightBackground"] = "#181818"
+	colors["editor.background"] = "#141c26"
+	colors["editor.foreground"] = "#dde3ea"
+	colors["editorLineNumber.foreground"] = "#4b5263"
+	colors["editorLineNumber.activeForeground"] = "#a6b4bd"
+	colors["editorCursor.foreground"] = "#1fd2f2"
+	colors["editor.lineHighlightBackground"] = "#ffffff0b"
 	colors["editor.lineHighlightBorder"] = "#00000000"
-	colors["editor.selectionBackground"] = "#353535"
-	colors["editor.inactiveSelectionBackground"] = "#29292980"
-	colors["editor.wordHighlightBackground"] = "#35353580"
-	colors["editor.wordHighlightBorder"] = "#89DDFF40"
-	colors["editor.findMatchBackground"] = "#FFCC0040"
-	colors["editor.findMatchHighlightBackground"] = "#FFCC0025"
-	colors["editorGutter.background"] = "#212121"
-	colors["editorIndentGuide.background1"] = "#424242"
-	colors["editorIndentGuide.activeBackground1"] = "#FF9800"
-	colors["editorBracketMatch.background"] = "#89DDFF20"
-	colors["editorBracketMatch.border"] = "#89DDFF"
+	colors["editor.selectionBackground"] = "#82aaff40"
+	colors["editor.inactiveSelectionBackground"] = "#82aaff20"
+	colors["editor.wordHighlightBackground"] = "#82aaff1a"
+	colors["editor.findMatchBackground"] = "#fec90740"
+	colors["editor.findMatchHighlightBackground"] = "#fec90720"
+	colors["editorGutter.background"] = "#141c26"
+	colors["editorIndentGuide.background1"] = "#ffffff17"
+	colors["editorIndentGuide.activeBackground1"] = "#08b6d680"
+	colors["editorBracketMatch.background"] = "#89ddff1a"
+	colors["editorBracketMatch.border"] = "#89ddff80"
+	colors["editorError.foreground"] = "#ff6b7f"
+	colors["editorWarning.foreground"] = "#ffcb6b"
 	colors["scrollbar.shadow"] = "#00000000"
-	colors["scrollbarSlider.background"] = "#61616180"
-	colors["scrollbarSlider.hoverBackground"] = "#616161C0"
-	colors["scrollbarSlider.activeBackground"] = "#616161"
-	colors["editorWidget.background"] = "#292929"
-	colors["editorSuggestWidget.background"] = "#292929"
-	colors["editorSuggestWidget.border"] = "#424242"
-	colors["editorSuggestWidget.selectedBackground"] = "#353535"
-	colors["minimap.background"] = "#1A1A1A"
+	colors["scrollbarSlider.background"] = "#ffffff14"
+	colors["scrollbarSlider.hoverBackground"] = "#ffffff24"
+	colors["scrollbarSlider.activeBackground"] = "#ffffff33"
+	colors["editorWidget.background"] = "#151c26"
+	colors["editorWidget.border"] = "#97b0ca2e"
+	colors["editorHoverWidget.background"] = "#151c26"
+	colors["editorHoverWidget.border"] = "#97b0ca2e"
+	colors["editorSuggestWidget.background"] = "#151c26"
+	colors["editorSuggestWidget.border"] = "#97b0ca2e"
+	colors["editorSuggestWidget.selectedBackground"] = "#08b6d624"
+	colors["focusBorder"] = "#08b6d680"
 
 	val themeData = (js("({})").unsafeCast<ThemeData>()).apply {
 		base = "vs-dark"
 		inherit = false
 		this.colors = colors
-		rules = arrayOf(
-			rule("", "EEFFFF"),
-			rule("identifier", "EEFFFF"),
+		rules = with(CodeThemeStyle) {
+			arrayOf(
+				rule("", textColor),
+				rule("identifier", textColor),
 
-			rule("comment", "616161", "italic"),
-			rule("comment.doc", "616161", "italic"),
+				rule("comment", commentColor, "italic"),
+				rule("comment.doc", commentColor, "italic"),
 
-			rule("keyword", "C792EA", "italic"),
-			rule("keyword.control", "C792EA", "italic"),
-			rule("storage.modifier", "C792EA", "italic"),
-			rule("annotation", "C792EA"),
-			rule("meta.preprocessor", "C792EA", "italic"),
+				rule("keyword", keywordColor, "italic"),
+				rule("keyword.control", keywordColor, "italic"),
+				rule("storage.modifier", keywordColor, "italic"),
+				rule("annotation", keywordColor, "italic"),
 
-			rule("keyword.type", "FFCB6B"),
-			rule("type", "FFCB6B"),
-			rule("type.identifier", "FFCB6B"),
-			rule("storage.type", "FFCB6B"),
+				rule("keyword.type", classColor),
+				rule("type", classColor),
+				rule("type.identifier", classColor),
+				rule("storage.type", classColor),
 
-			rule("identifier.function", "82AAFF"),
-			rule("function", "82AAFF"),
-			rule("support.function", "82AAFF"),
-			rule("entity.name.function", "82AAFF"),
-			rule("predefined", "82AAFF", "italic"),
-			rule("variable.predefined", "82AAFF", "italic"),
+				rule("identifier.function", functionColor),
+				rule("function", functionColor),
+				rule("predefined", functionColor),
 
-			rule("variable.parameter", "F78C6C"),
-			rule("constant", "F78C6C"),
-			rule("constant.numeric", "F78C6C"),
-			rule("constant.language", "FF5370"),
-			rule("number", "F78C6C"),
-			rule("number.float", "F78C6C"),
-			rule("number.hex", "F78C6C"),
+				rule("constant", numberColor),
+				rule("number", numberColor),
+				rule("number.float", numberColor),
+				rule("number.hex", numberColor),
 
-			rule("string", "C3E88D"),
-			rule("string.quoted", "C3E88D"),
-			rule("string.escape", "89DDFF"),
-			rule("string.escape.invalid", "FF5370"),
+				rule("string", stringColor),
+				rule("string.escape", punctuationColor),
+				rule("string.escape.invalid", propertyColor),
 
-			rule("operator", "89DDFF"),
-			rule("delimiter", "89DDFF"),
-			rule("delimiter.parenthesis", "89DDFF"),
-			rule("delimiter.bracket", "89DDFF"),
-			rule("delimiter.curly", "89DDFF"),
-			rule("delimiter.square", "89DDFF"),
-			rule("delimiter.angle", "89DDFF"),
-			rule("metatag", "89DDFF"),
+				rule("operator", punctuationColor),
+				rule("delimiter", punctuationColor),
+				rule("delimiter.parenthesis", punctuationColor),
+				rule("delimiter.bracket", punctuationColor),
+				rule("delimiter.curly", punctuationColor),
+				rule("delimiter.square", punctuationColor),
+				rule("delimiter.angle", punctuationColor),
 
-			rule("tag", "F07178"),
-			rule("attribute.name", "FFCB6B", "italic"),
-			rule("attribute.value", "C3E88D"),
-		)
+				rule("tag", propertyColor),
+				rule("attribute.name", classColor, "italic"),
+				rule("attribute.value", stringColor),
+			)
+		}
 	}
 
 	editor.defineTheme(MONACO_THEME_NAME, themeData)

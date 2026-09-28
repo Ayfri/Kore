@@ -17,7 +17,7 @@ private fun editorOptions(value: String): EditorOptions = (js("({})").unsafeCast
 	automaticLayout = true
 	bracketPairColorization = js("({ enabled: true })")
 	fontFamily = "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace"
-	fontLigatures = true
+	fontLigatures = false
 	fontSize = 14
 	guides = js("({ bracketPairs: true, highlightActiveBracketPair: true, highlightActiveIndentation: true, indentation: true })")
 	insertSpaces = false
@@ -121,7 +121,7 @@ fun MonacoEditor(
 			// The route can be left while the chunk is still downloading; don't build an orphan editor.
 			if (disposed) return@then
 
-			defineMaterialDarkerTheme(monaco.editor)
+			defineKoreTheme(monaco.editor)
 
 			val created = monaco.editor.create(element, editorOptions(initialValue))
 			instance = created

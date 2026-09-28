@@ -22,6 +22,14 @@ import org.jetbrains.compose.web.dom.Text
 
 private const val PREVIEW_ID = "playground-preview"
 
+/** Where a shown pack comes from, which is what the status strip tells the visitor. */
+sealed interface OutputOrigin {
+	/** An untouched example, run on the JVM when the site was built. */
+	data object Precomputed : OutputOrigin
+
+	data class Compiled(val compileMs: Int, val runMs: Int, val cached: Boolean) : OutputOrigin
+}
+
 sealed interface OutputState {
 	/** Nothing has been run yet in this session. */
 	data object Idle : OutputState
@@ -36,7 +44,8 @@ sealed interface OutputState {
 
 	data class Failed(val title: String, val detail: String? = null) : OutputState
 
-	data class Ready(val files: List<GeneratedFile>, val compileMs: Int, val runMs: Int, val cached: Boolean = false) : OutputState
+	/** The pack generated from [code], which may no longer be what the editor holds. */
+	data class Ready(val files: List<GeneratedFile>, val code: String, val origin: OutputOrigin) : OutputState
 }
 
 /** Picks the Prism grammar from the file extension; unknown extensions stay unhighlighted. */
@@ -52,16 +61,36 @@ private fun previewOf(file: GeneratedFile, pretty: Boolean): String {
 	return runCatching { JSON.stringify(JSON.parse<Any>(file.content), null, 2) }.getOrDefault(file.content)
 }
 
+/** The file a pack opens on: a function if there is one, else the first resource that is not a tag or `pack.mcmeta`. */
+private fun List<GeneratedFile>.firstShowcase() =
+	firstOrNull { it.extension == "mcfunction" } ?: firstOrNull { it.path != "pack.mcmeta" && "/tags/" !in it.path } ?: firstOrNull()
+
 /** Bytes as the visitor reads them, so a 12 KB pack does not show up as five digits. */
 private fun humanSize(bytes: Int) = when {
 	bytes < 1024 -> "$bytes bytes"
 	else -> "${(bytes / 102.4).toInt() / 10.0} KB"
 }
 
+private fun OutputOrigin.describe() = when (this) {
+	OutputOrigin.Precomputed -> listOf("precomputed at build time")
+	is OutputOrigin.Compiled -> listOf(
+		if (cached) "reused a cached compile" else "compiled in ${compileMs / 100 / 10.0}s",
+		"ran in ${runMs}ms",
+	)
+}
+
+/**
+ * The generated pack: a file tree, the selected file through Prism, and the actions on the whole pack.
+ *
+ * [stale] marks a pack built from an older buffer, and [rebuild] is the background compile of the current one, if any:
+ * the old pack stays readable, dimmed, until the new one replaces it.
+ */
 @Composable
 fun OutputPanel(
 	state: OutputState,
 	backendConfigured: Boolean,
+	stale: Boolean,
+	rebuild: CompileProgress?,
 	maximized: Boolean,
 	onToggleMaximize: () -> Unit,
 ) {
@@ -72,38 +101,43 @@ fun OutputPanel(
 	var selectedPath by remember { mutableStateOf<String?>(null) }
 
 	val files = (state as? OutputState.Ready)?.files.orEmpty()
-	val selected = files.firstOrNull { it.path == selectedPath } ?: files.firstOrNull()
+	val selected = files.firstOrNull { it.path == selectedPath } ?: files.firstShowcase()
 
-	LaunchedEffect(files) {
-		selectedPath = files.firstOrNull()?.path
-	}
-
-	LaunchedEffect(selected?.path, pretty, maximized) {
+	LaunchedEffect(selected?.path, selected?.content, pretty, maximized) {
 		selected ?: return@LaunchedEffect
 		initMCFunctionHighlighting()
 		document.getElementById(PREVIEW_ID)?.let { Prism.highlightAllUnder(it) }
 	}
 
-	Div({ classes(*paneClasses(maximized)) }) {
+	Div({
+		classes(PlaygroundStyle.pane)
+		if (maximized) classes(PlaygroundStyle.paneMaximized)
+	}) {
 		Div({ classes(PlaygroundStyle.paneHeader) }) {
-			Span({ classes(PlaygroundStyle.paneTitle) }) {
-				when (val file = selected) {
-					null -> Text("Output")
+			Div({ classes(PlaygroundStyle.paneHeading) }) {
+				Span({ classes(PlaygroundStyle.paneLabel) }) { Text("Kore generates") }
 
-					else -> {
-						if (file.directory.isNotEmpty()) {
-							Span({ classes(PlaygroundStyle.pathPrefix) }) { Text("${file.directory}/") }
-						}
-
+				selected?.let { file ->
+					Span({ classes(PlaygroundStyle.paneTitle) }) {
+						if (file.directory.isNotEmpty()) Span({ classes(PlaygroundStyle.pathPrefix) }) { Text("${file.directory}/") }
 						Text(file.name)
 					}
 				}
 			}
 
 			Div({ classes(PlaygroundStyle.paneActions) }) {
+				if (stale) Span({ classes(PlaygroundStyle.staleBadge) }) {
+					Span({
+						classes(PlaygroundStyle.staleDot)
+						if (rebuild != null) classes(PlaygroundStyle.staleDotPulsing)
+					})
+					Text(if (rebuild != null) "Edited, rebuilding" else "Edited")
+				}
+
 				if (state is OutputState.Ready) {
 					Button({
-						classes(*prettyToggleClasses(pretty))
+						classes(PlaygroundStyle.iconButton)
+						if (pretty) classes(PlaygroundStyle.iconButtonActive)
 						onClick {
 							pretty = !pretty
 							PlaygroundStorage.prettyJson = pretty
@@ -136,7 +170,7 @@ fun OutputPanel(
 						onClick { downloadZip(state.files) }
 					}) {
 						LucideDownload()
-						Text(".zip")
+						Span({ classes(PlaygroundStyle.wideOnly) }) { Text(".zip") }
 					}
 				}
 
@@ -150,9 +184,18 @@ fun OutputPanel(
 			}
 		}
 
+		rebuild?.let { progress ->
+			Div({ classes(PlaygroundStyle.rebuildTrack) }) {
+				ProgressBar(progress.fraction)
+			}
+		}
+
 		when (state) {
 			is OutputState.Ready -> {
-				Div({ classes(PlaygroundStyle.outputBody) }) {
+				Div({
+					classes(PlaygroundStyle.outputBody)
+					if (stale) classes(PlaygroundStyle.staleBody)
+				}) {
 					FileTree(state.files, selected?.path) { selectedPath = it }
 
 					Div({
@@ -162,7 +205,7 @@ fun OutputPanel(
 						selected?.let { file ->
 							// Prism rewrites the code element's children, detaching the text node Compose owns, so the
 							// subtree is rebuilt from scratch on every switch instead of patched in place.
-							key(file.path, pretty) {
+							key(file.path, file.content, pretty) {
 								CodeBlock(previewOf(file, pretty), grammarOf(file))
 							}
 						}
@@ -172,8 +215,8 @@ fun OutputPanel(
 				Div({ classes(PlaygroundStyle.statusStrip) }) {
 					Span { Text("${state.files.size} files") }
 					Span { Text(humanSize(state.files.sumOf { it.content.length })) }
-					Span { Text(if (state.cached) "reused a cached compile" else "compiled in ${state.compileMs / 1000.0}s") }
-					Span { Text("ran in ${state.runMs}ms") }
+					state.origin.describe().forEach { Span { Text(it) } }
+					rebuild?.let { Span({ classes(PlaygroundStyle.statusAccent) }) { Text(it.label) } }
 				}
 			}
 
@@ -183,10 +226,7 @@ fun OutputPanel(
 				state.hint?.let { hint -> Span({ classes(PlaygroundStyle.stateDetail) }) { Text(hint) } }
 
 				Div({ classes(PlaygroundStyle.progressTrack) }) {
-					Div({
-						classes(*progressBarClasses(state.fraction != null))
-						state.fraction?.let { fraction -> style { width((fraction * 100).percent) } }
-					})
+					ProgressBar(state.fraction)
 				}
 			}
 
@@ -197,14 +237,14 @@ fun OutputPanel(
 
 			OutputState.Idle -> Div({ classes(PlaygroundStyle.stateBox) }) {
 				Span({ classes(PlaygroundStyle.stateTitle) }) {
-					Text(if (backendConfigured) "Nothing generated yet" else "Compiling is unavailable here")
+					Text(if (backendConfigured) "Nothing generated yet" else "Only the examples run here")
 				}
 
 				Span({ classes(PlaygroundStyle.stateDetail) }) {
 					Text(
 						when {
-							backendConfigured -> "Run the snippet to build the datapack. The generated files show up here, ready to preview and download."
-							else -> "This deployment has no compile backend configured, so snippets cannot be built. The editor, the examples and shared links still work."
+							backendConfigured -> "Press Run, or stop typing for a moment: the pack rebuilds on its own and shows up here, ready to preview and download."
+							else -> "This deployment has no compile backend, so edited code cannot be built. Every example still shows its generated pack, and editing and sharing work."
 						}
 					)
 				}
@@ -213,17 +253,10 @@ fun OutputPanel(
 	}
 }
 
-private fun paneClasses(maximized: Boolean) = when {
-	maximized -> arrayOf(PlaygroundStyle.pane, PlaygroundStyle.paneMaximized)
-	else -> arrayOf(PlaygroundStyle.pane)
-}
-
-private fun progressBarClasses(determinate: Boolean) = when {
-	determinate -> arrayOf(PlaygroundStyle.progressBar)
-	else -> arrayOf(PlaygroundStyle.progressBar, PlaygroundStyle.progressBarPending)
-}
-
-private fun prettyToggleClasses(pretty: Boolean) = when {
-	pretty -> arrayOf(PlaygroundStyle.iconButton, PlaygroundStyle.iconButtonActive)
-	else -> arrayOf(PlaygroundStyle.iconButton)
-}
+/** A determinate bar for a known [fraction], a sweeping one otherwise. */
+@Composable
+private fun ProgressBar(fraction: Double?) = Div({
+	classes(PlaygroundStyle.progressBar)
+	if (fraction == null) classes(PlaygroundStyle.progressBarPending)
+	else style { width((fraction * 100).percent) }
+})
