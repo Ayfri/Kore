@@ -11,16 +11,29 @@ import io.github.ayfri.kore.website.externals.use
 import io.github.ayfri.kore.website.pages.PageNotFound
 import io.github.ayfri.kore.website.utils.jsObject
 import org.jetbrains.compose.web.css.Style
+import org.w3c.dom.parsing.DOMParser
 
+private val imageAttributes = setOf("alt", "height", "src", "width")
+private val imageTag = Regex("""^<img\s[^<>]*>$""", RegexOption.IGNORE_CASE)
 private val lineBreakTag = Regex("""^<br\s*/?>$""", RegexOption.IGNORE_CASE)
 private val safeUrlSchemes = setOf("http", "https", "mailto")
 private val urlScheme = Regex("^([^:/?#]+):")
 
 /** Browsers ignore whitespace and control characters inside a scheme, so `java\tscript:` must be caught as `javascript:`. */
+private fun isSafeUrl(url: String) = urlScheme.find(url.filter { it > ' ' })?.groupValues[1]?.lowercase().let { it == null || it in safeUrlSchemes }
+
 private fun neutralizeUnsafeHref(token: MarkedToken): Boolean {
-	val scheme = urlScheme.find(token.href.orEmpty().filter { it > ' ' })?.groupValues[1]?.lowercase()
-	if (scheme != null && scheme !in safeUrlSchemes) token.href = "#"
+	if (!isSafeUrl(token.href.orEmpty())) token.href = "#"
 	return false
+}
+
+/** GitHub stores dropped-in release images as raw `<img>` tags, parsed in an inert document and stripped down to [imageAttributes]. */
+private fun sanitizeImage(tag: String): String {
+	val image = DOMParser().parseFromString(tag, "text/html").body?.firstElementChild ?: return ""
+	image.getAttributeNames()
+		.filter { it !in imageAttributes || it == "src" && !isSafeUrl(image.getAttribute(it).orEmpty()) }
+		.forEach(image::removeAttribute)
+	return image.outerHTML
 }
 
 @App
@@ -32,8 +45,11 @@ fun AppEntry(content: @Composable () -> Unit) {
 			renderer = jsObject {
 				html = { token ->
 					val html = token.text.trim()
-					if (lineBreakTag.matches(html)) html
-					else token.text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;")
+					when {
+						lineBreakTag.matches(html) -> html
+						imageTag.matches(html) -> sanitizeImage(html)
+						else -> token.text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;")
+					}
 				}
 				image = ::neutralizeUnsafeHref
 				link = ::neutralizeUnsafeHref
