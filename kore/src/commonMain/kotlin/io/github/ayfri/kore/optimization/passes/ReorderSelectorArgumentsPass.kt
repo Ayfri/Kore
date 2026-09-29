@@ -6,6 +6,15 @@ import io.github.ayfri.kore.optimization.PassResult
 import io.github.ayfri.kore.optimization.utils.Selectors
 import io.github.ayfri.kore.optimization.utils.rewriteLines
 
+/** Cheapest first: a type check is a field read, a predicate runs a whole loot condition, NBT deserializes the entity. */
+private val PRIORITIES = listOf(
+	"type", "tag", "team", "scores", "level", "gamemode", "name", "limit", "sort",
+	"distance", "x", "y", "z", "dx", "dy", "dz", "x_rotation", "y_rotation",
+	"advancements", "predicate", "nbt",
+).withIndex().associate { (index, key) -> key to index }
+
+private val UNKNOWN_PRIORITY = PRIORITIES.getValue("advancements")
+
 /**
  * Sorts the arguments of every selector so the cheapest filters run first.
  *
@@ -16,15 +25,6 @@ import io.github.ayfri.kore.optimization.utils.rewriteLines
  * Docs: https://kore.ayfri.com/docs/guides/optimization
  */
 data object ReorderSelectorArgumentsPass : DataPackPass {
-	/** Cheapest first: a type check is a field read, a predicate runs a whole loot condition, NBT deserializes the entity. */
-	private val priorities = listOf(
-		"type", "tag", "team", "scores", "level", "gamemode", "name", "limit", "sort",
-		"distance", "x", "y", "z", "dx", "dy", "dz", "x_rotation", "y_rotation",
-		"advancements", "predicate", "nbt",
-	).withIndex().associate { (index, key) -> key to index }
-
-	private val unknownPriority = priorities.getValue("advancements")
-
 	override val name = "reorder-selector-arguments"
 
 	override fun run(dataPack: DataPack) = dataPack.rewriteLines(::reorder) { "reordered the selectors of $it lines" }
@@ -33,7 +33,7 @@ data object ReorderSelectorArgumentsPass : DataPackPass {
 		if (line.trimStart().startsWith('#')) return null
 
 		return Selectors.rewrite(line) { arguments ->
-			val sorted = arguments.sortedBy { priorities[it.substringBefore('=').trim()] ?: unknownPriority }
+			val sorted = arguments.sortedBy { PRIORITIES[it.substringBefore('=').trim()] ?: UNKNOWN_PRIORITY }
 			sorted.takeIf { it != arguments }
 		}
 	}

@@ -51,6 +51,22 @@ class OptimizationTests : FunSpec({
 		}
 	}
 
+	test("enabling the default optimization after construction runs every built-in pass") {
+		dataPack("optimization_tests") {
+			configuration.optimization.enabled = true
+			configuration.optimization shouldBe Optimization(enabled = true, passes = Optimization.defaultPasses())
+
+			val empty = function("empty") {}
+			function("caller") {
+				say("hello")
+				function(empty)
+			}
+
+			runOptimizationPasses()
+			functionNames() shouldBe listOf("caller")
+		}
+	}
+
 	test("custom passes are appended and built-in ones can be removed") {
 		val custom = object : DataPackPass {
 			override val name = "custom"

@@ -6,6 +6,10 @@ import io.github.ayfri.kore.optimization.DataPackPass
 import io.github.ayfri.kore.optimization.PassResult
 import io.github.ayfri.kore.optimization.utils.idsReferencedByResources
 
+/** `store` writes a result even when the call does nothing, `summon`/`on` change the executor, `return` exits the caller. */
+private val UNSAFE_CLAUSES = listOf("store ", "summon ", " on ", "return ")
+private val CALL_PATTERN = Regex("""^(?:execute\s+.*\brun\s+)?function\s+(\S+)(?:\s.*)?$""")
+
 /**
  * Removes user functions containing no command, and the calls made to them.
  *
@@ -16,10 +20,6 @@ import io.github.ayfri.kore.optimization.utils.idsReferencedByResources
  * Docs: https://kore.ayfri.com/docs/guides/optimization
  */
 data object PruneEmptyFunctionsPass : DataPackPass {
-	/** `store` writes a result even when the call does nothing, `summon`/`on` change the executor, `return` exits the caller. */
-	private val unsafeClauses = listOf("store ", "summon ", " on ", "return ")
-	private val callPattern = Regex("""^(?:execute\s+.*\brun\s+)?function\s+(\S+)(?:\s.*)?$""")
-
 	override val name = "prune-empty-functions"
 
 	override fun run(dataPack: DataPack): PassResult {
@@ -51,7 +51,6 @@ data object PruneEmptyFunctionsPass : DataPackPass {
 
 	private fun isRemovableCall(line: String, prunedIds: Set<String>): Boolean {
 		val trimmed = line.trim()
-		if (trimmed.startsWith('$') || unsafeClauses.any { it in trimmed }) return false
-		return callPattern.matchEntire(trimmed)?.groupValues?.get(1) in prunedIds
+		return !(trimmed.startsWith('$') || UNSAFE_CLAUSES.any { it in trimmed }) && CALL_PATTERN.matchEntire(trimmed)?.groupValues?.get(1) in prunedIds
 	}
 }

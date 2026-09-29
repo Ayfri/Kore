@@ -7,6 +7,9 @@ import io.github.ayfri.kore.optimization.utils.ExecuteChain
 import io.github.ayfri.kore.optimization.utils.Selectors
 import io.github.ayfri.kore.optimization.utils.rewriteLines
 
+private val CONDITION = Regex("""^if score @s (\S+) matches (\S+)$""")
+private val EXECUTOR_CHANGERS = setOf("as", "on", "store", "summon")
+
 /**
  * Moves the score conditions testing the executor into the selector that picked it.
  *
@@ -21,9 +24,6 @@ import io.github.ayfri.kore.optimization.utils.rewriteLines
  * Docs: https://kore.ayfri.com/docs/guides/optimization
  */
 data object HoistConditionsIntoSelectorsPass : DataPackPass {
-	private val condition = Regex("""^if score @s (\S+) matches (\S+)$""")
-	private val executorChangers = setOf("as", "on", "store", "summon")
-
 	override val name = "hoist-conditions-into-selectors"
 
 	override fun run(dataPack: DataPack) = dataPack.rewriteLines(::hoist) { "hoisted the conditions of $it execute chains" }
@@ -38,8 +38,8 @@ data object HoistConditionsIntoSelectorsPass : DataPackPass {
 			val scores = mutableListOf<String>()
 
 			for (next in index + 1 until clauses.size) {
-				if (clauses[next].substringBefore(' ') in executorChangers) break
-				val (objective, range) = condition.matchEntire(clauses[next])?.destructured ?: continue
+				if (clauses[next].substringBefore(' ') in EXECUTOR_CHANGERS) break
+				val (objective, range) = CONDITION.matchEntire(clauses[next])?.destructured ?: continue
 				scores += "$objective=$range"
 				clauses[next] = ""
 			}

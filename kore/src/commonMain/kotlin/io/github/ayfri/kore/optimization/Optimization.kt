@@ -23,7 +23,7 @@ import io.github.ayfri.kore.utils.KoreLogger
 data class Optimization(
 	var enabled: Boolean = false,
 	var verbose: Boolean = true,
-	var passes: MutableList<DataPackPass> = defaultPasses(),
+	var passes: MutableList<DataPackPass> = DefaultPasses(),
 ) {
 	/** Appends a custom pass, running after the ones already registered. */
 	operator fun plusAssign(pass: DataPackPass) {
@@ -36,6 +36,7 @@ data class Optimization(
 	}
 
 	companion object {
+		/** Passes keep their regexes and tables in top-level vals, loaded on their first run. */
 		fun defaultPasses(): MutableList<DataPackPass> = mutableListOf(
 			PruneEmptyFunctionsPass,
 			SimplifyExecuteChainsPass,
@@ -46,6 +47,18 @@ data class Optimization(
 			WarnUnreachableCodePass,
 		)
 	}
+}
+
+/** The [Optimization.defaultPasses], created on first access so a disabled default never loads the pass classes. */
+private class DefaultPasses : AbstractMutableList<DataPackPass>() {
+	private var created: MutableList<DataPackPass>? = null
+	private val passes get() = created ?: Optimization.defaultPasses().also { created = it }
+
+	override val size get() = passes.size
+	override fun get(index: Int) = passes[index]
+	override fun set(index: Int, element: DataPackPass) = passes.set(index, element)
+	override fun add(index: Int, element: DataPackPass) = passes.add(index, element)
+	override fun removeAt(index: Int) = passes.removeAt(index)
 }
 
 /** Enables the optimization passes on this configuration and lets the block tune them. */
