@@ -319,7 +319,6 @@ object PlaygroundStyle : StyleSheet() {
 	}
 
 	val toolButtonLabelled by style {
-		fontFamily(MONO, "monospace")
 		fontSize(0.72.cssRem)
 		gap(0.35.cssRem)
 		padding(0.px, 0.5.cssRem)
@@ -486,7 +485,6 @@ object PlaygroundStyle : StyleSheet() {
 		color(text)
 		cursor(Cursor.Pointer)
 		display(DisplayStyle.Flex)
-		fontFamily(MONO, "monospace")
 		fontSize(0.76.cssRem)
 		gap(0.45.cssRem)
 		minWidth(0.px)
@@ -560,7 +558,6 @@ object PlaygroundStyle : StyleSheet() {
 		color(muted)
 		cursor(Cursor.Pointer)
 		display(DisplayStyle.Flex)
-		fontFamily(MONO, "monospace")
 		fontSize(0.72.cssRem)
 		gap(0.3.cssRem)
 		height(1.9.cssRem)
@@ -1216,7 +1213,6 @@ object PlaygroundStyle : StyleSheet() {
 		color(muted)
 		cursor(Cursor.Pointer)
 		display(DisplayStyle.Flex)
-		fontFamily(MONO, "monospace")
 		fontSize(0.76.cssRem)
 		gap(0.3.cssRem)
 		paddingBottom(0.22.cssRem)
@@ -1265,10 +1261,6 @@ object PlaygroundStyle : StyleSheet() {
 
 	val treeFolder by style {
 		fontSize(0.72.cssRem)
-	}
-
-	val treeFile by style {
-		fontSize(0.76.cssRem)
 	}
 
 	val treeFileActive by style {
@@ -1565,7 +1557,6 @@ object PlaygroundStyle : StyleSheet() {
 		backgroundColor(Color.transparent)
 		border(0.px)
 		cursor(Cursor.Pointer)
-		fontFamily(MONO, "monospace")
 		fontSize(0.74.cssRem)
 		textAlign(TextAlign.Left)
 		transition(0.15.s, "background-color")
@@ -1695,7 +1686,6 @@ object PlaygroundStyle : StyleSheet() {
 		border(0.px)
 		color(Color("inherit"))
 		cursor(Cursor.Pointer)
-		fontFamily(MONO, "monospace")
 		fontSize(0.67.cssRem)
 		gap(0.55.cssRem)
 		transition(0.15.s, "background-color", "color")

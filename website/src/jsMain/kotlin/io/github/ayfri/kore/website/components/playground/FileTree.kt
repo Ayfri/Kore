@@ -150,6 +150,6 @@ private fun TreeLevel(
 private fun indentOf(depth: Int) = (INDENT_BASE + depth * INDENT_STEP).cssRem
 
 private fun leafClasses(active: Boolean) = when {
-	active -> arrayOf(PlaygroundStyle.treeRow, PlaygroundStyle.treeFile, PlaygroundStyle.treeFileActive)
-	else -> arrayOf(PlaygroundStyle.treeRow, PlaygroundStyle.treeFile)
+	active -> arrayOf(PlaygroundStyle.treeRow, PlaygroundStyle.treeFileActive)
+	else -> arrayOf(PlaygroundStyle.treeRow)
 }
