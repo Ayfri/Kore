@@ -8,7 +8,6 @@ import io.github.ayfri.kore.arguments.types.literals.int
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.literals.time
 import io.github.ayfri.kore.functions.Function
-import io.github.ayfri.kore.utils.asArg
 
 /**
  * Exposes the `worldborder` command.
@@ -29,7 +28,7 @@ class WorldBorder(private val fn: Function) {
 	fun center(x: Double, z: Double) = fn.addLine(command("worldborder", literal("center"), float(x), float(z)))
 
 	/** Recenters the world border using [PosNumber] coordinates (supports relative/local positions). */
-	fun center(x: PosNumber, z: PosNumber) = fn.addLine(command("worldborder", literal("center"), literal(x.asArg()), literal(z.asArg())))
+	fun center(x: PosNumber, z: PosNumber) = center(Vec2(x, z))
 
 	/** Sets damage dealt per block outside the border. */
 	fun damageAmount(amount: Float) = fn.addLine(command("worldborder", literal("damage"), literal("amount"), float(amount)))

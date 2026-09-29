@@ -1,6 +1,8 @@
 package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.numbers.days
+import io.github.ayfri.kore.arguments.numbers.localPos
+import io.github.ayfri.kore.arguments.numbers.relativePos
 import io.github.ayfri.kore.arguments.numbers.ticks
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
@@ -15,6 +17,7 @@ fun Function.worldBorderTests() {
 		add(1.0, 2) assertsIs "worldborder add 1 2"
 		add(1.0, 5.days) assertsIs "worldborder add 1 5d"
 		center(1.0, 2.0) assertsIs "worldborder center 1 2"
+		center(1.relativePos, 2.localPos) assertsIs "worldborder center ~1 ^2"
 		damageAmount(1f) assertsIs "worldborder damage amount 1"
 		damageAmount(0.2f).toString() shouldBe "worldborder damage amount 0.2"
 		damageBuffer(1.0) assertsIs "worldborder damage buffer 1"
