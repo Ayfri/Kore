@@ -26,12 +26,12 @@ import io.github.ayfri.kore.generated.StructureSets
 import io.github.ayfri.kore.generated.arguments.types.AdvancementArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
+import io.github.ayfri.kore.serializers.SealedDispatcher
 import io.github.ayfri.kore.serializers.TripleAsArraySerializer
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import io.kotest.core.spec.style.FunSpec
-import kotlinx.serialization.InternalSerializationApi
-import kotlinx.serialization.SealedClassSerializer
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
@@ -128,10 +128,15 @@ private inline fun <reified T> Any.assertsIsA(): T {
 @Serializable(with = Animal.Companion.AnimalSerializer::class)
 internal sealed class Animal {
 	companion object {
-		@OptIn(InternalSerializationApi::class)
-		data object AnimalSerializer : NamespacedPolymorphicSerializer<Animal>(
-			SealedClassSerializer("Animal", Animal::class, arrayOf(Cat::class, Dog::class), arrayOf(Cat.serializer(), Dog.serializer()))
-		)
+		data object AnimalSerializer : NamespacedPolymorphicSerializer<Animal>(object : SealedDispatcher<Animal>("Animal") {
+			@Suppress("UNCHECKED_CAST")
+			override fun serializerOf(value: Animal) = when (value) {
+				is Cat -> Cat.serializer()
+				is Dog -> Dog.serializer()
+			} as KSerializer<Animal>
+
+			override fun serializers() = listOf(Cat.serializer(), Dog.serializer())
+		})
 	}
 }
 
@@ -180,9 +185,16 @@ fun namespacedPolymorphicDeserializer() {
 @Serializable(with = Shape.Companion.ShapeSerializer::class)
 internal sealed class Shape {
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object ShapeSerializer : NamespacedPolymorphicSerializer<Shape>(
-			SealedClassSerializer("Shape", Shape::class, arrayOf(Circle::class, Square::class), arrayOf(Circle.serializer(), Square.serializer())),
+			object : SealedDispatcher<Shape>("Shape") {
+				@Suppress("UNCHECKED_CAST")
+				override fun serializerOf(value: Shape) = when (value) {
+					is Circle -> Circle.serializer()
+					is Square -> Square.serializer()
+				} as KSerializer<Shape>
+
+				override fun serializers() = listOf(Circle.serializer(), Square.serializer())
+			},
 			moveIntoProperty = "value",
 		)
 	}

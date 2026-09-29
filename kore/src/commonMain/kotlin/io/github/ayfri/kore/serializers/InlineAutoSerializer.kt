@@ -14,8 +14,8 @@ import kotlinx.serialization.encoding.Encoder
  * @param property Getter for the wrapped property.
  * @param factory Constructor reference building [T] from the property value.
  * @param serialName Optional distinct serial name for the descriptor. Needed when several subtypes of the same sealed
- *   hierarchy wrap the same property type (e.g. two `List<X>` matchers), so a [SealedClassSerializer][kotlinx.serialization.SealedClassSerializer]
- *   can tell them apart - otherwise they collide on the property serializer's name.
+ *   hierarchy wrap the same property type (e.g. two `List<X>` matchers), so a [SealedDispatcher] can tell them apart
+ *   when decoding - otherwise they collide on the property serializer's name.
  *
  * Example:
  * ```kotlin

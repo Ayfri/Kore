@@ -12,9 +12,9 @@ import kotlinx.serialization.encoding.Encoder
  * Needed when a `data object` serializer's supertype constructor would otherwise eagerly call another type's
  * `.serializer()` - fine normally, but a cycle between two *different* classes' companions (as opposed to a type
  * recursing into itself, which the compiler-generated serializer already handles lazily) deadlocks at class-init time
- * with an `ExceptionInInitializerError`: e.g. [SealedClassSerializer][kotlinx.serialization.SealedClassSerializer]
- * reads every subtype's `descriptor` eagerly to check for name collisions, which would otherwise force [provider] to
- * resolve the other class's serializer - including its own (still mid-init) descriptor - before it's ready.
+ * with an `ExceptionInInitializerError`: any serializer built during that init which reads the other class's
+ * `descriptor` forces [provider] to resolve the other class's serializer - including its own (still mid-init)
+ * descriptor - before it's ready.
  *
  * Example:
  * ```kotlin

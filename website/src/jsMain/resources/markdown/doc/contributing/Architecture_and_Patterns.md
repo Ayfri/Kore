@@ -161,7 +161,8 @@ New sealed hierarchies serialized with `NamespacedPolymorphicSerializer` (a `typ
 shape) must not enumerate subtypes by hand or via reflection.
 Annotate the sealed base with `@GeneratedSealedSerializer`; the `kore-ksp` module's `SealedSerializerProcessor`
 generates a reflection-free `fooSealedSerializer()` factory at compile time, which the family's serializer object passes
-to `NamespacedPolymorphicSerializer`'s constructor.
+to `NamespacedPolymorphicSerializer`'s constructor. The factory returns a `SealedDispatcher` that switches on the
+subtype's simple name, so serializing one subtype only loads that subtype, not the whole family.
 
 ### Per-pack state
 

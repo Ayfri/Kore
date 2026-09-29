@@ -1,17 +1,13 @@
 package io.github.ayfri.kore.features.timelines
 
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
-import io.github.ayfri.kore.serializers.ModuleOnlyDecoder
 import io.github.ayfri.kore.serializers.defaultContentName
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.findPolymorphicSerializer
 import kotlinx.serialization.json.*
-import kotlinx.serialization.modules.EmptySerializersModule
 
 /**
  * Easing type used to interpolate between keyframes in a timeline track.
@@ -23,15 +19,12 @@ import kotlinx.serialization.modules.EmptySerializersModule
 @Serializable(with = EasingType.Companion.EasingTypeSerializer::class)
 sealed class EasingType {
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object EasingTypeSerializer : KSerializer<EasingType> {
-			private val polymorphic = easingTypeSealedSerializer()
+			private val dispatcher = easingTypeSealedSerializer()
 			override val descriptor = buildClassSerialDescriptor("EasingType")
 
 			private val serialNameByContentName by lazy {
-				polymorphic.descriptor.getElementDescriptor(1)
-					.let { variants -> List(variants.elementsCount) { variants.getElementName(it) } }
-					.associateBy(::defaultContentName)
+				dispatcher.serializersBySerialName.keys.associateBy(::defaultContentName)
 			}
 
 			override fun deserialize(decoder: Decoder): EasingType {
@@ -42,10 +35,7 @@ sealed class EasingType {
 
 					else -> {
 						val name = element.jsonPrimitive.content
-						val serializer = polymorphic.findPolymorphicSerializerOrNull(
-							ModuleOnlyDecoder(EmptySerializersModule()),
-							serialNameByContentName[name] ?: name
-						)
+						val serializer = dispatcher.serializersBySerialName[serialNameByContentName[name] ?: name]
 							?: error("Unknown easing type: '$name'")
 						decoder.json.decodeFromJsonElement(serializer, JsonObject(emptyMap()))
 					}
@@ -65,7 +55,7 @@ sealed class EasingType {
 					})
 
 					else -> {
-						val actual = polymorphic.findPolymorphicSerializer(encoder, value)
+						val actual = dispatcher.serializerOf(value)
 						encoder.encodeJsonElement(JsonPrimitive(defaultContentName(actual.descriptor.serialName)))
 					}
 				}

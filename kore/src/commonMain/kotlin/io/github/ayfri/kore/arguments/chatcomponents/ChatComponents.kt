@@ -160,9 +160,8 @@ data class ChatComponents(
 			else -> text(tag.toString())
 		}
 
-		@OptIn(InternalSerializationApi::class)
 		private data object ChatComponentSerializer : KSerializer<ChatComponent> {
-			private val polymorphic = chatComponentSealedSerializer()
+			private val dispatcher = chatComponentSealedSerializer()
 			override val descriptor = NbtTag.serializer().descriptor
 
 			override fun deserialize(decoder: Decoder) = when (decoder) {
@@ -176,7 +175,7 @@ data class ChatComponents(
 					if (value.containsOnlyText()) encoder.encodeString(value.text)
 					else encoder.encodeSerializableValue(PlainTextComponent.serializer(), value)
 
-				else -> encoder.encodeSerializableValue(polymorphic.findPolymorphicSerializer(encoder, value), value)
+				else -> encoder.encodeSerializableValue(dispatcher.serializerOf(value), value)
 			}
 		}
 
