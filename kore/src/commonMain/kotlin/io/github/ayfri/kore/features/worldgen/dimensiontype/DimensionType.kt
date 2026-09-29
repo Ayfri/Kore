@@ -12,10 +12,8 @@ import io.github.ayfri.kore.generated.arguments.TimelineOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.DimensionTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.WorldClockArgument
 import io.github.ayfri.kore.serializers.InlinableList
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.json.Json
 
 /**
  * The rules of a world: its vertical bounds, its lighting, the mobs that can spawn in it and the environment
@@ -67,26 +65,7 @@ data class DimensionType(
 	var skybox: SkyboxType? = null,
 	var timelines: InlinableList<TimelineOrTagArgument>? = null,
 ) : Generator("dimension_type"), IntProviderScope {
-	@Transient
-	private lateinit var jsonEncoder: Json
-
-	override fun generateJson(dataPack: DataPack) = getJsonEncoder(dataPack).encodeToString(this)
-
-	@OptIn(ExperimentalSerializationApi::class)
-	fun getJsonEncoder(dataPack: DataPack) = when {
-		::jsonEncoder.isInitialized -> jsonEncoder
-
-		else -> {
-			jsonEncoder = Json {
-				prettyPrint = dataPack.jsonEncoder.configuration.prettyPrint
-				if (prettyPrint) prettyPrintIndent = dataPack.jsonEncoder.configuration.prettyPrintIndent
-				namingStrategy = dataPack.jsonEncoder.configuration.namingStrategy
-				encodeDefaults = true
-				explicitNulls = false
-			}
-			jsonEncoder
-		}
-	}
+	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
 /**
