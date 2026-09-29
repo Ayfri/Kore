@@ -4,6 +4,7 @@ import io.github.ayfri.kore.arguments.components.item.CustomComponent
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.generated.arguments.types.DataComponentTypeArgument
+import io.github.ayfri.kore.utils.jsonSerializer
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.snbtSerializer
 import io.github.ayfri.kore.utils.toSnbt

@@ -9,7 +9,9 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.ClassDiscriminatorMode
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNamingStrategy
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.enums.EnumEntries
@@ -39,6 +41,19 @@ open class EnumStringSerializer<T : Enum<T>>(
 
 	override fun serialize(encoder: Encoder, value: T) = encoder.encodeString(value.encode())
 }
+
+@OptIn(ExperimentalSerializationApi::class)
+private val lazyJsonSerializer = lazy {
+	Json {
+		classDiscriminatorMode = ClassDiscriminatorMode.NONE
+		encodeDefaults = false
+		ignoreUnknownKeys = true
+		namingStrategy = JsonNamingStrategy.SnakeCase
+	}
+}
+
+/** The JSON format of chat and item components outside a data pack file: snake_case keys, no defaults, no class discriminator. */
+val jsonSerializer get() = lazyJsonSerializer.value
 
 internal inline fun <reified T : @Serializable Any> T.asArg() = Json.encodeToJsonElement(this@asArg).jsonPrimitive.content
 

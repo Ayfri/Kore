@@ -3,6 +3,7 @@ package io.github.ayfri.kore.arguments.chatcomponents
 import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
+import io.github.ayfri.kore.utils.jsonSerializer
 import io.github.ayfri.kore.utils.toSnbt
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.ListSerializer
@@ -77,17 +78,6 @@ data class ChatComponents(
 	companion object {
 		val ONLY_SIMPLE_COMPONENTS_EXCEPTION =
 			IllegalArgumentException("This ChatComponent should only contain simple components.")
-
-		@OptIn(ExperimentalSerializationApi::class)
-		private val lazyJsonSerializer = lazy {
-			Json {
-				ignoreUnknownKeys = true
-				encodeDefaults = false
-				namingStrategy = JsonNamingStrategy.SnakeCase
-			}
-		}
-
-		val jsonSerializer get() = lazyJsonSerializer.value
 
 		/* Encodes a list of components as a serialized collection, each via [ChatComponentSerializer]. */
 		private fun Encoder.encodeComponents(descriptor: SerialDescriptor, components: List<ChatComponent>) =

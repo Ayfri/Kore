@@ -2,7 +2,6 @@ package io.github.ayfri.kore.arguments.components
 
 import io.github.ayfri.kore.arguments.components.item.CustomComponent
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
@@ -14,14 +13,6 @@ import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtDecoder
 import net.benwoodworth.knbt.NbtEncoder
 import net.benwoodworth.knbt.NbtTag
-
-@OptIn(ExperimentalSerializationApi::class)
-val jsonSerializer = Json {
-	prettyPrint = false
-	encodeDefaults = false
-	classDiscriminatorMode = ClassDiscriminatorMode.NONE
-	namingStrategy = JsonNamingStrategy.SnakeCase
-}
 
 data object ComponentsSerializer : KSerializer<ComponentsScope> {
 	override val descriptor = buildClassSerialDescriptor("Components") {
