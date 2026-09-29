@@ -56,6 +56,9 @@ val EDITOR_SHORTCUTS = listOf(
 	"Delete line" to listOf(MOD_KEY, "Shift", "K"),
 	"Fold or unfold region" to listOf(MOD_KEY, "Shift", "[ ]"),
 	"Suggest" to listOf(MOD_KEY, "Space"),
+	"Parameter hints" to listOf(MOD_KEY, "Shift", "Space"),
+	"Quick fix, import a name" to listOf("Alt", "Enter"),
+	"Optimize imports" to listOf("Shift", "Alt", "O"),
 )
 
 /**

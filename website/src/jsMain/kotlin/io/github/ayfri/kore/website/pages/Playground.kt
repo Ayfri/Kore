@@ -7,6 +7,8 @@ import io.github.ayfri.kore.website.components.common.setDescription
 import io.github.ayfri.kore.website.components.common.setKeywords
 import io.github.ayfri.kore.website.components.layouts.PageLayout
 import io.github.ayfri.kore.website.components.playground.*
+import io.github.ayfri.kore.website.components.playground.language.importOnTheFly
+import io.github.ayfri.kore.website.components.playground.language.registerKoreActions
 import io.github.ayfri.kore.website.externals.monaco.CodeEditor
 import io.github.ayfri.kore.website.utils.onEvents
 import kotlinx.browser.document
@@ -353,6 +355,10 @@ fun PlaygroundPage() {
 			typeChecked = true
 			// A Run in flight owns the markers: its JS diagnostics are the ones that matter.
 			if (!busy) showDiagnostics(fresh)
+
+			if (PlaygroundSettings.autoImport) editor?.importOnTheFly(problems, target)?.takeIf { it.isNotEmpty() }?.let { imported ->
+				BuildLog.add(LogLevel.INFO, "Imported ${imported.joinToString { it.substringAfterLast('.') }}", imported.joinToString("\n"))
+			}
 		}
 
 		if (autoBuild) build(target, live = true)
@@ -508,6 +514,9 @@ fun PlaygroundPage() {
 								onReady = { monaco, created ->
 									editor = created
 									created.registerCommands(monaco) { currentExecute(it) }
+									created.registerKoreActions(monaco) { imported ->
+										notify(if (imported.isEmpty()) "No missing import has a single match" else "Imported ${imported.joinToString { it.substringAfterLast('.') }}")
+									}
 								},
 								onReset = { execute(PlaygroundCommand.RESET) },
 							)

@@ -3,6 +3,8 @@ package io.github.ayfri.kore.website.components.playground
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.core.AppGlobals
 import com.varabyte.kobweb.core.isExporting
+import io.github.ayfri.kore.website.components.playground.language.MARKER_OWNER
+import io.github.ayfri.kore.website.components.playground.language.registerKoreLanguage
 import io.github.ayfri.kore.website.externals.monaco.CodeEditor
 import io.github.ayfri.kore.website.externals.monaco.Disposable
 import io.github.ayfri.kore.website.externals.monaco.EditorOptions
@@ -64,7 +66,7 @@ fun CodeEditor.showDiagnostics(diagnostics: List<PlaygroundDiagnostic>) {
 	val model = getModel() ?: return
 	val markers = diagnostics.filter { it.file == USER_FILE_NAME }.map(::markerOf).toTypedArray()
 
-	loadMonaco().then { monaco -> monaco.editor.setModelMarkers(model, "kore", markers) }
+	loadMonaco().then { monaco -> monaco.editor.setModelMarkers(model, MARKER_OWNER, markers) }
 }
 
 /** Moves the caret to [line]:[column], scrolls it into view and focuses the editor. */
@@ -157,6 +159,7 @@ fun MonacoEditor(
 			if (disposed) return@then
 
 			defineKoreTheme(monaco.editor)
+			registerKoreLanguage(monaco)
 
 			val editor = monaco.editor.create(element, editorOptions(initialValue))
 			created = editor

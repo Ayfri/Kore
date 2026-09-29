@@ -119,6 +119,7 @@ private fun SettingsView() = with(PlaygroundSettings) {
 		SettingSwitch("Line numbers", null, lineNumbers) { lineNumbers = it }
 		SettingSwitch("Show whitespace", "Draw tabs and spaces everywhere, not only in the selection.", renderWhitespace) { renderWhitespace = it }
 		SettingSwitch("Font ligatures", "Join operators like -> and != into one glyph.", fontLigatures) { fontLigatures = it }
+		SettingSwitch("Add imports on the fly", "Import a Kore name once it's typed, when a single declaration fits.", autoImport) { autoImport = it }
 
 		Div({ classes(PlaygroundStyle.sideCategory) }) { Text("Build") }
 		SettingSwitch("Live rebuild", "Type-check and rebuild once typing pauses. Off, only Run compiles.", autoBuild) { autoBuild = it }

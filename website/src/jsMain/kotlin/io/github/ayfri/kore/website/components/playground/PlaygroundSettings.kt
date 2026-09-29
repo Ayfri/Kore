@@ -12,6 +12,9 @@ object PlaygroundSettings {
 
 	/** Type-check and rebuild once typing pauses. Off, only Run compiles, and the squiggles still follow the buffer. */
 	var autoBuild by persisted("autoBuild", true)
+
+	/** Import a name the type-check can't resolve as soon as a single Kore declaration fits it, like IntelliJ's unambiguous imports on the fly. */
+	var autoImport by persisted("autoImport", true)
 	var fontLigatures by persisted("ligatures", false)
 	var fontSize by persisted("fontSize", DEFAULT_FONT_SIZE, FONT_SIZES)
 
@@ -27,6 +30,7 @@ object PlaygroundSettings {
 
 	fun reset() {
 		autoBuild = true
+		autoImport = true
 		fontLigatures = false
 		fontSize = DEFAULT_FONT_SIZE
 		jsonIndent = DEFAULT_JSON_INDENT

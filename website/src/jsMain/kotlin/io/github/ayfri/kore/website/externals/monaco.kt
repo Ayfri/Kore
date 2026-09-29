@@ -22,6 +22,7 @@ import kotlin.js.Promise
  */
 external interface Monaco {
 	val editor: MonacoEditor
+	val languages: MonacoLanguages
 
 	/** `monaco.KeyCode`, a numeric enum whose names match `KeyboardEvent.code` (`Enter`, `KeyS`...). */
 	@Suppress("PropertyName")
@@ -33,6 +34,7 @@ external interface Monaco {
 
 @Suppress("PropertyName")
 external interface KeyMods {
+	val Alt: Int
 	val CtrlCmd: Int
 	val Shift: Int
 }
@@ -40,16 +42,195 @@ external interface KeyMods {
 external interface MonacoEditor {
 	fun create(domElement: HTMLElement, options: EditorOptions): CodeEditor
 	fun defineTheme(themeName: String, themeData: ThemeData)
+	fun getModelMarkers(filter: MarkerFilter): Array<MarkerData>
 	fun setModelMarkers(model: TextModel, owner: String, markers: Array<MarkerData>)
+}
+
+external interface MarkerFilter {
+	var owner: String?
+}
+
+/** `monaco.languages`: the providers the playground registers for Kotlin, and the runtime enums their results use. */
+@Suppress("PropertyName")
+external interface MonacoLanguages {
+	val CompletionItemInsertTextRule: CompletionItemInsertTextRules
+	val CompletionItemKind: CompletionItemKinds
+	val CompletionItemTag: CompletionItemTags
+
+	fun registerCodeActionProvider(languageId: String, provider: CodeActionProvider, metadata: CodeActionProviderMetadata): Disposable
+	fun registerCompletionItemProvider(languageId: String, provider: CompletionItemProvider): Disposable
+	fun registerHoverProvider(languageId: String, provider: HoverProvider): Disposable
+	fun registerSignatureHelpProvider(languageId: String, provider: SignatureHelpProvider): Disposable
+}
+
+@Suppress("PropertyName")
+external interface CompletionItemInsertTextRules {
+	val InsertAsSnippet: Int
+}
+
+@Suppress("PropertyName")
+external interface CompletionItemKinds {
+	val Class: Int
+	val Constant: Int
+	val Enum: Int
+	val EnumMember: Int
+	val Function: Int
+	val Interface: Int
+	val Keyword: Int
+	val Method: Int
+	val Module: Int
+	val Property: Int
+	val TypeParameter: Int
+	val Variable: Int
+}
+
+@Suppress("PropertyName")
+external interface CompletionItemTags {
+	val Deprecated: Int
+}
+
+external interface MarkdownString {
+	var value: String
+}
+
+/** Providers below receive Monaco's context and cancellation token as `Any?`: they answer fast enough to never check them. */
+external interface CompletionItemProvider {
+	var provideCompletionItems: (model: TextModel, position: Position, context: Any?, token: Any?) -> Promise<CompletionList?>
+	var resolveCompletionItem: ((item: CompletionItem, token: Any?) -> CompletionItem)?
+	var triggerCharacters: Array<String>?
+}
+
+external interface CompletionList {
+	var incomplete: Boolean?
+	var suggestions: Array<CompletionItem>
+}
+
+/** `label` shows `detail` right after the name and `description` right-aligned, the way IntelliJ lays out a lookup. */
+external interface CompletionItemLabel {
+	var description: String?
+	var detail: String?
+	var label: String
+}
+
+external interface CompletionItem {
+	var additionalTextEdits: Array<EditOperation>?
+	var command: EditorCommand?
+	var detail: String?
+	var documentation: MarkdownString?
+	var filterText: String?
+	var insertText: String
+	var insertTextRules: Int?
+	var kind: Int
+	var label: CompletionItemLabel
+	var range: Range
+	var sortText: String?
+	var tags: Array<Int>?
+}
+
+external interface EditorCommand {
+	var id: String
+	var title: String
+}
+
+external interface Hover {
+	var contents: Array<MarkdownString>
+	var range: Range?
+}
+
+external interface HoverProvider {
+	var provideHover: (model: TextModel, position: Position, token: Any?) -> Promise<Hover?>
+}
+
+external interface ParameterInformation {
+	var documentation: MarkdownString?
+
+	/** Start and end offsets in the signature label, unambiguous where a parameter name also appears in a type. */
+	var label: Array<Int>
+}
+
+external interface SignatureInformation {
+	var documentation: MarkdownString?
+	var label: String
+	var parameters: Array<ParameterInformation>
+}
+
+external interface SignatureHelp {
+	var activeParameter: Int
+	var activeSignature: Int
+	var signatures: Array<SignatureInformation>
+}
+
+external interface SignatureHelpResult : Disposable {
+	var value: SignatureHelp
+}
+
+external interface SignatureHelpProvider {
+	var provideSignatureHelp: (model: TextModel, position: Position, token: Any?, context: Any?) -> Promise<SignatureHelpResult?>
+	var signatureHelpRetriggerCharacters: Array<String>?
+	var signatureHelpTriggerCharacters: Array<String>?
+}
+
+external interface CodeActionContext {
+	val markers: Array<MarkerData>
+	val only: String?
+}
+
+external interface TextEdit {
+	var range: Range
+	var text: String
+}
+
+external interface WorkspaceTextEdit {
+	var resource: Any
+	var textEdit: TextEdit
+	var versionId: Int?
+}
+
+external interface WorkspaceEdit {
+	var edits: Array<WorkspaceTextEdit>
+}
+
+external interface CodeAction {
+	var diagnostics: Array<MarkerData>?
+	var edit: WorkspaceEdit?
+	var isPreferred: Boolean?
+	var kind: String?
+	var title: String
+}
+
+external interface CodeActionList : Disposable {
+	var actions: Array<CodeAction>
+}
+
+external interface CodeActionProvider {
+	var provideCodeActions: (model: TextModel, range: Range, context: CodeActionContext, token: Any?) -> Promise<CodeActionList?>
+}
+
+external interface CodeActionProviderMetadata {
+	var providedCodeActionKinds: Array<String>?
 }
 
 external interface Disposable {
 	fun dispose()
 }
 
+external interface WordAtPosition {
+	val endColumn: Int
+	val startColumn: Int
+	val word: String
+}
+
 external interface TextModel {
+	/** The model's `monaco.Uri`, only ever handed back to Monaco in edits. */
+	val uri: Any
+
 	fun getFullModelRange(): Range
+	fun getOffsetAt(position: Position): Int
+	fun getValue(): String
 	fun getValueLengthInRange(range: Range): Int
+	fun getVersionId(): Int
+	fun getWordAtPosition(position: Position): WordAtPosition?
+	fun getWordUntilPosition(position: Position): WordAtPosition
 }
 
 external interface Position {
@@ -58,10 +239,10 @@ external interface Position {
 }
 
 external interface Range {
-	val endColumn: Int
-	val endLineNumber: Int
-	val startColumn: Int
-	val startLineNumber: Int
+	var endColumn: Int
+	var endLineNumber: Int
+	var startColumn: Int
+	var startLineNumber: Int
 }
 
 /** A [Range] that also knows which end the caret sits on. */
