@@ -142,6 +142,7 @@ external interface EditorOptions {
 	var theme: String?
 	var value: String?
 	var wordWrap: String?
+	var wordWrapIndicator: Boolean?
 }
 
 external interface BracketPairColorizationOptions {

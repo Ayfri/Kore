@@ -33,6 +33,7 @@ private fun editorOptions(value: String): EditorOptions = PlaygroundSettings.app
 	tabSize = 4
 	theme = MONACO_THEME_NAME
 	this.value = value
+	wordWrapIndicator = true
 })
 
 /** Where the caret is and how many characters are selected, for the status bar. */
