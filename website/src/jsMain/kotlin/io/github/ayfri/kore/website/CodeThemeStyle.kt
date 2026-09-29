@@ -257,17 +257,32 @@ object CodeThemeStyle : StyleSheet() {
 			color(stringColor)
 		}
 
-		scope("keyword", "annotation", "builtin", "symbol") style {
+		scope("keyword") style {
 			color(keywordColor)
 			fontStyle(FontStyle.Italic)
 		}
 
-		scope("punctuation", "operator") style {
+		scope("annotation") style {
+			color(keywordColor)
+		}
+
+		scope("escape", "operator", "punctuation") style {
 			color(punctuationColor)
 		}
 
 		scope("function") style {
 			color(functionColor)
+		}
+
+		/** Kotlin calls, italic like IntelliJ draws top-level and extension calls, which make up most Kore code. */
+		scope("call") style {
+			color(functionColor)
+			fontStyle(FontStyle.Italic)
+		}
+
+		scope("implicit-parameter") style {
+			color(numberColor)
+			fontWeight(700)
 		}
 
 		scope("class-name") style {

@@ -8,6 +8,7 @@ import kotlinx.html.script
 import kotlinx.html.unsafe
 import org.commonmark.ext.gfm.tables.TableCell
 import org.commonmark.node.*
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec
 import java.net.HttpURLConnection
 import java.net.URI
 import kotlin.time.Duration.Companion.seconds
@@ -31,6 +32,9 @@ val minecraftVersion = providers.gradleProperty("minecraft.version").orElse("").
 
 /** Plain-text GitHub data (stars, latest release tag) written by the fetch tasks for the Open Graph cards. */
 val gitHubDataDir = layout.buildDirectory.dir("generated/github")
+
+/** The playground example list and each example's pack, written by `:playground-examples:generatePlaygroundExamples`. */
+val playgroundExamplesDir = layout.projectDirectory.dir("playground-examples/build/generated/playground")
 
 /** Open Graph cards only ship in the exported site, rendering them on every Markdown edit of the dev server costs seconds. */
 val renderOgImages = gradle.startParameter.taskNames.any { it.substringAfterLast(':') == "kobwebExport" }
@@ -56,6 +60,8 @@ kobweb {
 			mapOf(
 				"docGroupOrder" to docGroupOrder.joinToString(","),
 				"minecraftVersion" to minecraftVersion,
+				// Compile backend for /playground. Empty here: the page stays usable and says compiling is off.
+				"playgroundApiUrl" to (findProperty("kore.playgroundApiUrl") as String? ?: ""),
 				"projectVersion" to Project.VERSION,
 				"websiteUrl" to Project.WEBSITE_URL,
 			)
@@ -523,6 +529,43 @@ kobweb {
 	}
 }
 
+// Monaco's ESM build is bundled ahead of time by esbuild into plain static assets, never by Kobweb's
+// webpack: `kobwebExport` copies exactly one script file, so any webpack code-split chunk would 404 in
+// production, and a static import would instead drag all ~6 MB of Monaco into the main bundle on every page.
+// The scripts are staged next to the Kotlin/JS `node_modules` so bare imports like `monaco-editor/...`
+// resolve, for both esbuild and Node itself.
+val stageMonacoBuild by tasks.registering(Copy::class) {
+	group = "kore"
+	description = "Stages the Monaco esbuild scripts next to the Kotlin/JS node_modules."
+
+	dependsOn(rootProject.tasks.named("kotlinNpmInstall"))
+
+	from(projectDir.resolve("monaco"))
+	into(rootProject.layout.buildDirectory.dir("js/monaco-build"))
+}
+
+val bundleMonaco by tasks.registering(Exec::class) {
+	group = "kore"
+	description = "Bundles Monaco's ESM distribution into the public resources, served at /monaco."
+
+	dependsOn(stageMonacoBuild)
+
+	val buildDir = rootProject.layout.buildDirectory.dir("js/monaco-build")
+	val outDir = projectDir.resolve("src/jsMain/resources/public/monaco")
+	val nodeExecutable = rootProject.extensions.getByType<NodeJsEnvSpec>().executable
+
+	inputs.dir(projectDir.resolve("monaco"))
+	inputs.property("monacoVersion", libs.versions.monaco.editor.get())
+	outputs.dir(outDir)
+
+	workingDir(buildDir)
+	commandLine(nodeExecutable.get(), "build-monaco.mjs", outDir.absolutePath)
+}
+
+tasks.matching { it.name == "jsProcessResources" }.configureEach {
+	dependsOn(bundleMonaco)
+}
+
 tasks.register("fetchGitHubReleases") {
 	group = "kore"
 	description = "Fetches GitHub releases and generates a Kotlin file with the data"
@@ -694,16 +737,20 @@ tasks.register("fetchGitHubStars") {
 }
 
 tasks.named("kobwebExport") {
-	dependsOn("fetchGitHubReleases", "fetchGitHubStars")
+	dependsOn("fetchGitHubReleases", "fetchGitHubStars", bundleMonaco)
 }
 
 // Ensure generated sources exist before KSP for JS runs
 tasks.matching { it.name == "kspKotlinJs" }.configureEach {
-	dependsOn("fetchGitHubReleases", "fetchGitHubStars")
+	dependsOn("fetchGitHubReleases", "fetchGitHubStars", ":playground-examples:generatePlaygroundExamples")
 }
 
 tasks.matching { it.name == "compileKotlinJs" }.configureEach {
-	dependsOn("fetchGitHubReleases", "fetchGitHubStars")
+	dependsOn("fetchGitHubReleases", "fetchGitHubStars", ":playground-examples:generatePlaygroundExamples")
+}
+
+tasks.matching { it.name == "jsProcessResources" }.configureEach {
+	dependsOn(":playground-examples:generatePlaygroundExamples")
 }
 
 // llms.txt/sitemap.xml/markdown-sources.json are written by kobwebxMarkdownProcess into a
@@ -745,11 +792,17 @@ kotlin {
 	sourceSets {
 		jsMain {
 			kotlin.srcDir("build/generated/kore/src/jsMain/kotlin")
+			kotlin.srcDir(playgroundExamplesDir.dir("kotlin"))
 			resources.srcDir(layout.buildDirectory.dir("generated/llms-resources"))
+			resources.srcDir(playgroundExamplesDir.dir("resources"))
 
 			dependencies {
 				// Minifier for the production bundle, see `webpack.config.d/00-bundle-speed.js`.
 				implementation(devNpm("@swc/core", libs.versions.swc.get()))
+				// Monaco is pre-bundled by esbuild into static assets (see bundleMonaco) and never imported
+				// from Kotlin, so both packages are build-time only.
+				implementation(devNpm("esbuild", libs.versions.esbuild.get()))
+				implementation(devNpm("monaco-editor", libs.versions.monaco.editor.get()))
 			}
 		}
 		commonMain {
