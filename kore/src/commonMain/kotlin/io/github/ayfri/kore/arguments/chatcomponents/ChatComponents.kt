@@ -83,11 +83,15 @@ data class ChatComponents(
 			IllegalArgumentException("This ChatComponent should only contain simple components.")
 
 		@OptIn(ExperimentalSerializationApi::class)
-		val jsonSerializer = Json {
-			ignoreUnknownKeys = true
-			encodeDefaults = false
-			namingStrategy = JsonNamingStrategy.SnakeCase
+		private val lazyJsonSerializer = lazy {
+			Json {
+				ignoreUnknownKeys = true
+				encodeDefaults = false
+				namingStrategy = JsonNamingStrategy.SnakeCase
+			}
 		}
+
+		val jsonSerializer get() = lazyJsonSerializer.value
 
 		/* Encodes a list of components as a serialized collection, each via [ChatComponentSerializer]. */
 		private fun Encoder.encodeComponents(descriptor: SerialDescriptor, components: List<ChatComponent>) =
@@ -98,18 +102,16 @@ data class ChatComponents(
 			}
 
 		/* Per-type serializers, keyed by the `type` discriminator Minecraft uses. */
-		private val componentSerializers = mapOf(
-			"keybind" to KeybindComponent.serializer(),
-			"nbt" to NbtComponent.serializer(),
-			"object" to ObjectTextComponent.serializer(),
-			"score" to ScoreComponent.serializer(),
-			"selector" to EntityComponent.serializer(),
-			"text" to PlainTextComponent.serializer(),
-			"translatable" to TranslatedTextComponent.serializer(),
-		)
-
-		private fun serializerForType(type: String) =
-			componentSerializers[type] ?: error("Unknown chat component type: '$type'.")
+		private fun serializerForType(type: String): KSerializer<out ChatComponent> = when (type) {
+			"keybind" -> KeybindComponent.serializer()
+			"nbt" -> NbtComponent.serializer()
+			"object" -> ObjectTextComponent.serializer()
+			"score" -> ScoreComponent.serializer()
+			"selector" -> EntityComponent.serializer()
+			"text" -> PlainTextComponent.serializer()
+			"translatable" -> TranslatedTextComponent.serializer()
+			else -> error("Unknown chat component type: '$type'.")
+		}
 
 		/* Minecraft allows omitting `type`; the present key then determines the component type, defaulting to text. */
 		private fun inferType(keys: Set<String>) = when {
