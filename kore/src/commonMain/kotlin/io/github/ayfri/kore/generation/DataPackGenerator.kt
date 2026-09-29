@@ -88,7 +88,7 @@ class DataPackGenerator(
 
 		val bytes = archive?.toByteArray()
 		if (bytes != null) {
-			createDirectoriesOnce(outputPath.parent)
+			createParentDirectoriesOnce(outputPath)
 			platformWriteFile(outputPath, bytes)
 		}
 
@@ -194,7 +194,7 @@ class DataPackGenerator(
 
 		when (mode) {
 			DatapackGenerationMode.FOLDER -> {
-				createDirectoriesOnce(finalPath.parent)
+				createParentDirectoriesOnce(finalPath)
 				platformWriteFile(finalPath, content)
 			}
 
@@ -208,8 +208,11 @@ class DataPackGenerator(
 		}
 	}
 
-	private suspend fun createDirectoriesOnce(directory: Path?) {
-		if (directory != null && createdDirectories.add(directory)) platformCreateDirectories(directory)
+	/** Skipped on OPFS, whose writes create their parents: kotlinx-io's `Path.parent` needs Node's `path` module, which browsers lack. */
+	private suspend fun createParentDirectoriesOnce(file: Path) {
+		if (platformRequiresSuspension) return
+		val directory = file.parent ?: return
+		if (createdDirectories.add(directory)) platformCreateDirectories(directory)
 	}
 
 	private fun String.normalizePath() = replace("\\", "/")
