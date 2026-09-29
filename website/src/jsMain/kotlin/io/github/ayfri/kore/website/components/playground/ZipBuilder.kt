@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.website.components.playground
 
 import kotlinx.browser.document
-import org.khronos.webgl.Uint8Array
 import org.w3c.dom.HTMLAnchorElement
 import org.w3c.dom.url.URL
 import org.w3c.files.Blob
@@ -16,16 +15,14 @@ import org.w3c.files.BlobPropertyBag
  * Minecraft reads exactly like a compressed one.
  */
 
-private val crcTable by lazy {
-	IntArray(256) { index ->
-		var value = index
+private val crcTable = IntArray(256) { index ->
+	var value = index
 
-		repeat(8) {
-			value = if (value and 1 != 0) (value ushr 1) xor 0xEDB88320.toInt() else value ushr 1
-		}
-
-		value
+	repeat(8) {
+		value = if (value and 1 != 0) (value ushr 1) xor 0xEDB88320.toInt() else value ushr 1
 	}
+
+	value
 }
 
 private fun crc32(bytes: ByteArray): Int {
@@ -38,26 +35,37 @@ private fun crc32(bytes: ByteArray): Int {
 	return crc.inv()
 }
 
-private fun MutableList<Byte>.writeShort(value: Int) {
-	add((value and 0xFF).toByte())
-	add(((value ushr 8) and 0xFF).toByte())
-}
+/** Writes little-endian zip fields into [buffer] from [position], so several writers can fill one buffer. */
+private class ZipWriter(val buffer: ByteArray, var position: Int = 0) {
+	fun writeShort(value: Int) {
+		buffer[position++] = value.toByte()
+		buffer[position++] = (value ushr 8).toByte()
+	}
 
-private fun MutableList<Byte>.writeInt(value: Int) {
-	writeShort(value and 0xFFFF)
-	writeShort((value ushr 16) and 0xFFFF)
+	fun writeInt(value: Int) {
+		writeShort(value)
+		writeShort(value ushr 16)
+	}
+
+	fun writeBytes(bytes: ByteArray) {
+		bytes.copyInto(buffer, position)
+		position += bytes.size
+	}
 }
 
 /** Builds a stored zip archive out of [files], entries kept in the order they are given. */
 fun buildZip(files: List<GeneratedFile>): ByteArray {
-	val output = mutableListOf<Byte>()
-	val central = mutableListOf<Byte>()
+	val entries = files.map { it.path.encodeToByteArray() to it.content.encodeToByteArray() }
+	/** Local headers take 30 bytes, central entries 46 and the end record 22, each followed by its variable-length fields. */
+	val centralOffset = entries.sumOf { (name, content) -> 30 + name.size + content.size }
+	val centralSize = entries.sumOf { (name) -> 46 + name.size }
+	val zip = ByteArray(centralOffset + centralSize + 22)
+	val output = ZipWriter(zip)
+	val central = ZipWriter(zip, centralOffset)
 
-	files.forEach { file ->
-		val name = file.path.encodeToByteArray()
-		val content = file.content.encodeToByteArray()
+	entries.forEach { (name, content) ->
 		val crc = crc32(content)
-		val offset = output.size
+		val offset = output.position
 
 		output.writeInt(0x04034B50)
 		output.writeShort(20)
@@ -70,8 +78,8 @@ fun buildZip(files: List<GeneratedFile>): ByteArray {
 		output.writeInt(content.size)
 		output.writeShort(name.size)
 		output.writeShort(0)
-		output.addAll(name.toTypedArray())
-		output.addAll(content.toTypedArray())
+		output.writeBytes(name)
+		output.writeBytes(content)
 
 		central.writeInt(0x02014B50)
 		central.writeShort(20)
@@ -90,22 +98,19 @@ fun buildZip(files: List<GeneratedFile>): ByteArray {
 		central.writeShort(0) // Internal attributes.
 		central.writeInt(0) // External attributes.
 		central.writeInt(offset)
-		central.addAll(name.toTypedArray())
+		central.writeBytes(name)
 	}
 
-	val centralOffset = output.size
-	output.addAll(central)
+	central.writeInt(0x06054B50)
+	central.writeShort(0)
+	central.writeShort(0)
+	central.writeShort(files.size)
+	central.writeShort(files.size)
+	central.writeInt(centralSize)
+	central.writeInt(centralOffset)
+	central.writeShort(0)
 
-	output.writeInt(0x06054B50)
-	output.writeShort(0)
-	output.writeShort(0)
-	output.writeShort(files.size)
-	output.writeShort(files.size)
-	output.writeInt(central.size)
-	output.writeInt(centralOffset)
-	output.writeShort(0)
-
-	return output.toByteArray()
+	return zip
 }
 
 /** The archive's file name: the pack's own namespace, never the `minecraft` one its function tags live in. */
@@ -116,7 +121,7 @@ fun zipName(files: List<GeneratedFile>) = files.asSequence()
 	.let { "${it ?: "kore-playground"}.zip" }
 
 fun downloadZip(files: List<GeneratedFile>) =
-	download(Blob(arrayOf(Uint8Array(buildZip(files).toTypedArray())), BlobPropertyBag(type = "application/zip")), zipName(files))
+	download(Blob(arrayOf(buildZip(files)), BlobPropertyBag(type = "application/zip")), zipName(files))
 
 fun downloadText(text: String, fileName: String) = download(Blob(arrayOf(text), BlobPropertyBag(type = "text/plain")), fileName)
 
