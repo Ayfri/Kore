@@ -1,19 +1,16 @@
 package io.github.ayfri.kore.utils
 
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationException
+import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.AbstractEncoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.ClassDiscriminatorMode
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNamingStrategy
-import kotlinx.serialization.json.encodeToJsonElement
-import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.modules.EmptySerializersModule
 import kotlin.enums.EnumEntries
 
 /**
@@ -55,7 +52,28 @@ private val lazyJsonSerializer = lazy {
 /** The JSON format of chat and item components outside a data pack file: snake_case keys, no defaults, no class discriminator. */
 val jsonSerializer get() = lazyJsonSerializer.value
 
-internal inline fun <reified T : @Serializable Any> T.asArg() = Json.encodeToJsonElement(this@asArg).jsonPrimitive.content
+/** Keeps the single value a serializer writes, so reading a value's serialized name builds no JSON tree. */
+@OptIn(ExperimentalSerializationApi::class)
+private class ArgEncoder : AbstractEncoder() {
+	override val serializersModule = EmptySerializersModule()
+	var result = ""
+
+	override fun beginStructure(descriptor: SerialDescriptor) =
+		throw SerializationException("${descriptor.serialName} doesn't serialize to a single value.")
+
+	override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int) {
+		result = enumDescriptor.getElementName(index)
+	}
+
+	override fun encodeValue(value: Any) {
+		result = value.toString()
+	}
+}
+
+internal fun <T> argOf(serializer: SerializationStrategy<T>, value: T) = ArgEncoder().apply { encodeSerializableValue(serializer, value) }.result
+
+/** The serialized form of this value, for command arguments like enum names. */
+internal inline fun <reified T : @Serializable Any> T.asArg() = argOf(serializer<T>(), this)
 
 /** The Minecraft name of a sealed subtype, the snake_case simple name of its [serialName]: `foo.BlendToGray` -> `blend_to_gray`. */
 internal fun defaultContentName(serialName: String) = serialName.substringAfterLast('.').snakeCase()
