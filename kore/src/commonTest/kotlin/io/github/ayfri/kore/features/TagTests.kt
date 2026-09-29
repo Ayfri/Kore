@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.arguments.types.resources.tagged.BlockTagArgument
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.function
 import io.github.ayfri.kore.commands.say
@@ -9,6 +10,7 @@ import io.github.ayfri.kore.features.tags.functionTag
 import io.github.ayfri.kore.features.tags.tag
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.generated.arguments.worldgen.tagged.BiomeTagArgument
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
 
@@ -56,6 +58,13 @@ class TagTests : FunSpec({
 		dataPack("features_tests") {
 			pretty()
 			tagTests()
+		}
+	}
+
+	test("a typed tag returns the argument of its registry") {
+		dataPack("typed_tags") {
+			tag<BiomeTagArgument>("hot", "worldgen/biome") { this += "minecraft:desert" }.asId() assertsIs "#typed_tags:hot"
+			tag<BlockTagArgument>("soft", "block") { this += "minecraft:white_wool" }.asId() assertsIs "#typed_tags:soft"
 		}
 	}
 

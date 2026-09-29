@@ -4,7 +4,7 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.types.ResourceLocationArgument
 import io.github.ayfri.kore.arguments.types.TaggedResourceLocationArgument
-import io.github.ayfri.kore.generated.tagArgumentFactories
+import io.github.ayfri.kore.generated.createTagArgument
 import io.github.ayfri.kore.utils.resolve
 import kotlinx.io.files.Path
 import kotlinx.serialization.KSerializer
@@ -141,7 +141,7 @@ inline fun <reified T : TaggedResourceLocationArgument> DataPack.tag(
 
 	tag.replace = tag.replace || replace
 	tag.apply(block)
-	return tagArgumentFactories.getValue(T::class)(fileName, tag.namespace ?: namespace) as T
+	return createTagArgument(T::class, fileName, tag.namespace ?: namespace) as T
 }
 
 @JvmName("tagUntyped")

@@ -183,7 +183,7 @@ suspend fun launchArgumentTypeGenerators(): List<TagArgumentInfo> {
 	return tagArguments
 }
 
-/** Emits `kore/src/commonMain/kotlin/io/github/ayfri/kore/generated/TagArgumentFactories.kt` mapping every `*TagArgument` KClass to its factory lambda. */
+/** Emits `kore/src/commonMain/kotlin/io/github/ayfri/kore/generated/TagArgumentFactories.kt`, creating a `*TagArgument` from its KClass. */
 fun generateTagArgumentFactories(tagArguments: List<TagArgumentInfo>) {
 	val generatedNames = tagArguments.map { it.simpleName }.toSet()
 	val allNames = (generatedNames + listOf(
@@ -208,17 +208,15 @@ fun generateTagArgumentFactories(tagArguments: List<TagArgumentInfo>) {
 		appendLine()
 	}
 
-	val factoryEntries = allNames.joinToString(",\n\t") { name ->
-		"$name::class to { name, namespace -> $name(name, namespace) }"
-	}
-
 	val content = buildString {
 		appendLine("// Automatically generated - do not modify!")
 		appendLine("// Minecraft version : $minecraftVersion")
 		appendLine(imports)
-		appendLine("val tagArgumentFactories: Map<KClass<out TaggedResourceLocationArgument>, (String, String) -> TaggedResourceLocationArgument> = mapOf(")
-		appendLine("\t$factoryEntries")
-		appendLine(")")
+		appendLine("/** Creates the [TaggedResourceLocationArgument] of the tag registry [type], e.g. a `BlockTagArgument` for `BlockTagArgument::class`. */")
+		appendLine("fun createTagArgument(type: KClass<out TaggedResourceLocationArgument>, name: String, namespace: String) = when (type.simpleName) {")
+		allNames.forEach { appendLine("\t\"$it\" -> $it(name, namespace)") }
+		appendLine("\telse -> error(\"Unknown tag argument type '\${type.simpleName}'.\")")
+		appendLine("}")
 	}
 
 	val file = java.io.File(libDir, "$GENERATED_FOLDER/TagArgumentFactories.kt")
