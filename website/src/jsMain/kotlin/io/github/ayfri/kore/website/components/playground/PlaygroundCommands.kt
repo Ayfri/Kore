@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.website.components.playground
 
-import io.github.ayfri.kore.website.externals.monaco.ActionDescriptor
 import io.github.ayfri.kore.website.externals.monaco.CodeEditor
 import io.github.ayfri.kore.website.externals.monaco.Monaco
+import io.github.ayfri.kore.website.utils.jsObject
 import kotlinx.browser.window
 import org.w3c.dom.events.KeyboardEvent
 
@@ -63,19 +63,19 @@ val EDITOR_SHORTCUTS = listOf(
  * Run in the context menu. Monaco stops a key it handles from reaching the page, so a shortcut never fires twice.
  */
 fun CodeEditor.registerCommands(monaco: Monaco, execute: (PlaygroundCommand) -> Unit) = PlaygroundCommand.entries.forEach { command ->
-	addAction(js("({})").unsafeCast<ActionDescriptor>().also { action ->
-		action.id = "kore.${command.name.lowercase()}"
-		action.label = "Kore: ${command.label}"
-		action.run = { execute(command) }
+	addAction(jsObject {
+		id = "kore.${command.name.lowercase()}"
+		label = "Kore: ${command.label}"
+		run = { execute(command) }
 
 		command.code?.let { code ->
 			val modifiers = monaco.KeyMod.CtrlCmd or (if (command.shift) monaco.KeyMod.Shift else 0)
-			action.keybindings = arrayOf(modifiers or monaco.KeyCode.asDynamic()[code] as Int)
+			keybindings = arrayOf(modifiers or monaco.KeyCode.asDynamic()[code] as Int)
 		}
 
 		if (command == PlaygroundCommand.RUN) {
-			action.contextMenuGroupId = "navigation"
-			action.contextMenuOrder = 0.0
+			contextMenuGroupId = "navigation"
+			contextMenuOrder = 0.0
 		}
 	})
 }

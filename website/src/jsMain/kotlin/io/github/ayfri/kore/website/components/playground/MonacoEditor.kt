@@ -5,29 +5,30 @@ import com.varabyte.kobweb.core.AppGlobals
 import com.varabyte.kobweb.core.isExporting
 import io.github.ayfri.kore.website.externals.monaco.CodeEditor
 import io.github.ayfri.kore.website.externals.monaco.Disposable
-import io.github.ayfri.kore.website.externals.monaco.EditOperation
 import io.github.ayfri.kore.website.externals.monaco.EditorOptions
 import io.github.ayfri.kore.website.externals.monaco.MarkerData
 import io.github.ayfri.kore.website.externals.monaco.Monaco
-import io.github.ayfri.kore.website.externals.monaco.Position
 import io.github.ayfri.kore.website.externals.monaco.loadMonaco
+import io.github.ayfri.kore.website.utils.jsObject
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Span
 import org.jetbrains.compose.web.dom.Text
 import org.w3c.dom.HTMLElement
 
 /** `fixedOverflowWidgets` lets hovers and suggestions escape the pane, whose `overflow: hidden` would clip them. */
-private fun editorOptions(value: String): EditorOptions = PlaygroundSettings.applyTo((js("({})").unsafeCast<EditorOptions>()).apply {
+private fun editorOptions(value: String): EditorOptions = PlaygroundSettings.applyTo(jsObject {
 	automaticLayout = true
-	bracketPairColorization = js("({ enabled: true })")
 	cursorBlinking = "smooth"
 	cursorSmoothCaretAnimation = "on"
 	fixedOverflowWidgets = true
 	fontFamily = "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace"
-	guides = js("({ bracketPairs: true, highlightActiveBracketPair: true, highlightActiveIndentation: true, indentation: true })")
+	guides = jsObject { bracketPairs = true }
 	insertSpaces = false
 	language = "kotlin"
-	padding = js("({ top: 12, bottom: 12 })")
+	padding = jsObject {
+		bottom = 12
+		top = 12
+	}
 	scrollBeyondLastLine = false
 	smoothScrolling = true
 	tabSize = 4
@@ -44,7 +45,7 @@ private const val MARKER_SEVERITY_ERROR = 8
 private const val MARKER_SEVERITY_WARNING = 4
 private const val MARKER_SEVERITY_INFO = 2
 
-private fun markerOf(diagnostic: PlaygroundDiagnostic): MarkerData = (js("({})").unsafeCast<MarkerData>()).apply {
+private fun markerOf(diagnostic: PlaygroundDiagnostic) = jsObject<MarkerData> {
 	severity = when (diagnostic.severity) {
 		DiagnosticSeverity.ERROR -> MARKER_SEVERITY_ERROR
 		DiagnosticSeverity.WARNING -> MARKER_SEVERITY_WARNING
@@ -68,9 +69,9 @@ fun CodeEditor.showDiagnostics(diagnostics: List<PlaygroundDiagnostic>) {
 
 /** Moves the caret to [line]:[column], scrolls it into view and focuses the editor. */
 fun CodeEditor.reveal(line: Int, column: Int) {
-	setPosition((js("({})").unsafeCast<Position>()).apply {
-		asDynamic().lineNumber = line
-		asDynamic().column = column
+	setPosition(jsObject {
+		this.column = column
+		lineNumber = line
 	})
 
 	revealLineInCenter(line)
@@ -84,7 +85,7 @@ fun CodeEditor.replaceContent(text: String) {
 	val model = getModel() ?: return setValue(text)
 
 	pushUndoStop()
-	executeEdits("kore", arrayOf((js("({})").unsafeCast<EditOperation>()).apply {
+	executeEdits("kore", arrayOf(jsObject {
 		range = model.getFullModelRange()
 		this.text = text
 		forceMoveMarkers = true
@@ -125,7 +126,7 @@ fun MonacoEditor(
 	val currentOnChange by rememberUpdatedState(onChange)
 	val currentOnCursor by rememberUpdatedState(onCursor)
 	val currentOnReady by rememberUpdatedState(onReady)
-	val options = PlaygroundSettings.applyTo(js("({})").unsafeCast<EditorOptions>())
+	val options = PlaygroundSettings.applyTo(jsObject {})
 	LaunchedEffect(instance, JSON.stringify(options)) { instance?.updateOptions(options) }
 
 	Div({ classes(className, PlaygroundStyle.editorHost) }) {

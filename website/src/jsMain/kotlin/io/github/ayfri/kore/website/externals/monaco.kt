@@ -5,6 +5,7 @@ import kotlinx.browser.window
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLLinkElement
 import org.w3c.dom.HTMLScriptElement
+import kotlin.js.Json
 import kotlin.js.Promise
 
 /**
@@ -21,7 +22,6 @@ import kotlin.js.Promise
  */
 external interface Monaco {
 	val editor: MonacoEditor
-	val languages: MonacoLanguages
 
 	/** `monaco.KeyCode`, a numeric enum whose names match `KeyboardEvent.code` (`Enter`, `KeyS`...). */
 	@Suppress("PropertyName")
@@ -40,12 +40,7 @@ external interface KeyMods {
 external interface MonacoEditor {
 	fun create(domElement: HTMLElement, options: EditorOptions): CodeEditor
 	fun defineTheme(themeName: String, themeData: ThemeData)
-	fun setTheme(themeName: String)
 	fun setModelMarkers(model: TextModel, owner: String, markers: Array<MarkerData>)
-}
-
-external interface MonacoLanguages {
-	fun registerCompletionItemProvider(languageSelector: String, provider: CompletionItemProvider): Disposable
 }
 
 external interface Disposable {
@@ -54,13 +49,12 @@ external interface Disposable {
 
 external interface TextModel {
 	fun getFullModelRange(): Range
-	fun getLineCount(): Int
 	fun getValueLengthInRange(range: Range): Int
 }
 
 external interface Position {
-	val lineNumber: Int
-	val column: Int
+	var column: Int
+	var lineNumber: Int
 }
 
 external interface Range {
@@ -102,9 +96,7 @@ external interface CodeEditor : Disposable {
 	fun executeEdits(source: String, edits: Array<EditOperation>): Boolean
 	fun focus()
 	fun getModel(): TextModel?
-	fun getPosition(): Position?
 	fun getValue(): String
-	fun layout()
 	fun onDidChangeCursorSelection(listener: (CursorSelectionChangedEvent) -> Unit): Disposable
 	fun onDidChangeModelContent(listener: () -> Unit): Disposable
 	fun pushUndoStop(): Boolean
@@ -121,7 +113,6 @@ external interface CodeEditor : Disposable {
  */
 external interface EditorOptions {
 	var automaticLayout: Boolean?
-	var bracketPairColorization: BracketPairColorizationOptions?
 	var cursorBlinking: String?
 	var cursorSmoothCaretAnimation: String?
 	var fixedOverflowWidgets: Boolean?
@@ -145,19 +136,12 @@ external interface EditorOptions {
 	var wordWrapIndicator: Boolean?
 }
 
-external interface BracketPairColorizationOptions {
-	var enabled: Boolean?
-}
-
 external interface StickyScrollOptions {
 	var enabled: Boolean?
 }
 
 external interface GuidesOptions {
 	var bracketPairs: Boolean?
-	var highlightActiveBracketPair: Boolean?
-	var highlightActiveIndentation: Boolean?
-	var indentation: Boolean?
 }
 
 external interface MinimapOptions {
@@ -173,7 +157,7 @@ external interface ThemeData {
 	var base: String
 	var inherit: Boolean
 	var rules: Array<TokenThemeRule>
-	var colors: dynamic
+	var colors: Json
 }
 
 external interface TokenThemeRule {
@@ -192,11 +176,6 @@ external interface MarkerData {
 	var endColumn: Int
 }
 
-external interface CompletionItemProvider {
-	var triggerCharacters: Array<String>?
-	val provideCompletionItems: (model: TextModel, position: Position) -> dynamic
-}
-
 private const val MONACO_BASE = "/monaco"
 
 private var loading: Promise<Monaco>? = null
@@ -209,7 +188,7 @@ private var loading: Promise<Monaco>? = null
  * webpack rewrites every `import()` it can see, and this URL must stay a runtime one so the language chunks
  * next to it resolve against `/monaco` in the exported site.
  */
-fun loadMonaco(): Promise<Monaco> = loading ?: Promise<Monaco> { resolve, reject ->
+fun loadMonaco(): Promise<Monaco> = loading ?: Promise { resolve, reject ->
 	val already = js("globalThis.monaco")
 	if (already != null && already != undefined) {
 		resolve(already.unsafeCast<Monaco>())

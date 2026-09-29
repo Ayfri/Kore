@@ -1,8 +1,7 @@
 package io.github.ayfri.kore.website.components.playground
 
 import io.github.ayfri.kore.website.externals.monaco.EditorOptions
-import io.github.ayfri.kore.website.externals.monaco.MinimapOptions
-import io.github.ayfri.kore.website.externals.monaco.StickyScrollOptions
+import io.github.ayfri.kore.website.utils.jsObject
 
 /** Editor, build and preview preferences from the settings panel, kept across visits. */
 object PlaygroundSettings {
@@ -45,9 +44,9 @@ object PlaygroundSettings {
 		options.fontLigatures = fontLigatures
 		options.fontSize = fontSize
 		options.lineNumbers = if (lineNumbers) "on" else "off"
-		options.minimap = js("({})").unsafeCast<MinimapOptions>().also { it.enabled = minimap }
+		options.minimap = jsObject { enabled = minimap }
 		options.renderWhitespace = if (renderWhitespace) "all" else "selection"
-		options.stickyScroll = js("({})").unsafeCast<StickyScrollOptions>().also { it.enabled = stickyScroll }
+		options.stickyScroll = jsObject { enabled = stickyScroll }
 		options.wordWrap = if (wordWrap) "on" else "off"
 		return options
 	}

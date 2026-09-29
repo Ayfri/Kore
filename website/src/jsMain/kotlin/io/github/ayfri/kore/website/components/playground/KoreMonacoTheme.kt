@@ -2,21 +2,26 @@ package io.github.ayfri.kore.website.components.playground
 
 import io.github.ayfri.kore.website.CodeThemeStyle
 import io.github.ayfri.kore.website.externals.monaco.MonacoEditor
-import io.github.ayfri.kore.website.externals.monaco.ThemeData
 import io.github.ayfri.kore.website.externals.monaco.TokenThemeRule
+import io.github.ayfri.kore.website.utils.jsObject
 import org.jetbrains.compose.web.css.CSSColorValue
+import kotlin.js.json
 
 const val MONACO_THEME_NAME = "kore-dark"
+
+private const val ACCENT = "#1fd2f2"
+private const val BORDER = "#97b0ca2e"
+private const val SURFACE = "#141c26"
+private const val WIDGET = "#151c26"
 
 /** Monaco wants bare `RRGGBB` for token rules, the stylesheet colors are `#rrggbb`. */
 private fun CSSColorValue.hex() = toString().removePrefix("#")
 
-private fun rule(token: String, color: CSSColorValue, fontStyle: String? = null) =
-	(js("({})").unsafeCast<TokenThemeRule>()).apply {
-		this.token = token
-		foreground = color.hex()
-		if (fontStyle != null) this.fontStyle = fontStyle
-	}
+private fun rule(token: String, color: CSSColorValue, fontStyle: String? = null) = jsObject<TokenThemeRule> {
+	this.token = token
+	foreground = color.hex()
+	if (fontStyle != null) this.fontStyle = fontStyle
+}
 
 /**
  * Styles the tokens of `website/monaco/kotlin-grammar.mjs` like IntelliJ's Material Darker scheme, in the colors of
@@ -24,104 +29,101 @@ private fun rule(token: String, color: CSSColorValue, fontStyle: String? = null)
  * can't be told apart without resolving. The background is the pane surface (`--landing-surface-2`), which Monaco
  * cannot read from CSS.
  */
-fun defineKoreTheme(editor: MonacoEditor) {
-	val colors = js("({})")
-	colors["editor.background"] = "#141c26"
-	colors["editor.foreground"] = "#dde3ea"
-	colors["editorLineNumber.foreground"] = "#4b5263"
-	colors["editorLineNumber.activeForeground"] = "#a6b4bd"
-	colors["editorCursor.foreground"] = "#1fd2f2"
-	colors["editor.lineHighlightBackground"] = "#ffffff0b"
-	colors["editor.lineHighlightBorder"] = "#00000000"
-	colors["editor.selectionBackground"] = "#82aaff40"
-	colors["editor.inactiveSelectionBackground"] = "#82aaff20"
-	colors["editor.wordHighlightBackground"] = "#82aaff1a"
-	colors["editor.findMatchBackground"] = "#fec90740"
-	colors["editor.findMatchHighlightBackground"] = "#fec90720"
-	colors["editorGutter.background"] = "#141c26"
-	colors["editorIndentGuide.background1"] = "#ffffff17"
-	colors["editorIndentGuide.activeBackground1"] = "#08b6d680"
-	colors["editorBracketMatch.background"] = "#89ddff1a"
-	colors["editorBracketMatch.border"] = "#89ddff80"
-	colors["editorError.foreground"] = "#ff6b7f"
-	colors["editorWarning.foreground"] = "#ffcb6b"
-	colors["scrollbar.shadow"] = "#00000000"
-	colors["scrollbarSlider.background"] = "#ffffff14"
-	colors["scrollbarSlider.hoverBackground"] = "#ffffff24"
-	colors["scrollbarSlider.activeBackground"] = "#ffffff33"
-	colors["editorWidget.background"] = "#151c26"
-	colors["editorWidget.border"] = "#97b0ca2e"
-	colors["editorHoverWidget.background"] = "#151c26"
-	colors["editorHoverWidget.border"] = "#97b0ca2e"
-	colors["editorSuggestWidget.background"] = "#151c26"
-	colors["editorSuggestWidget.border"] = "#97b0ca2e"
-	colors["editorSuggestWidget.selectedBackground"] = "#08b6d624"
-	colors["editorStickyScroll.background"] = "#141c26"
-	colors["editorStickyScroll.shadow"] = "#00000080"
-	colors["editorStickyScrollHover.background"] = "#1b2531"
-	colors["editorWhitespace.foreground"] = "#ffffff24"
-	colors["descriptionForeground"] = "#a6b4bd"
-	colors["focusBorder"] = "#08b6d680"
-	colors["input.background"] = "#0f141b"
-	colors["input.border"] = "#97b0ca2e"
-	colors["input.placeholderForeground"] = "#a6b4bd80"
-	colors["keybindingLabel.background"] = "#ffffff0f"
-	colors["keybindingLabel.border"] = "#97b0ca2e"
-	colors["keybindingLabel.bottomBorder"] = "#97b0ca2e"
-	colors["keybindingLabel.foreground"] = "#dde3ea"
-	colors["list.focusOutline"] = "#00000000"
-	colors["list.highlightForeground"] = "#1fd2f2"
-	colors["list.hoverBackground"] = "#ffffff0d"
-	colors["menu.background"] = "#151c26"
-	colors["menu.border"] = "#97b0ca2e"
-	colors["menu.foreground"] = "#dde3ea"
-	colors["menu.selectionBackground"] = "#08b6d633"
-	colors["menu.separatorBackground"] = "#97b0ca2e"
-	colors["minimap.background"] = "#141c26"
-	colors["pickerGroup.border"] = "#97b0ca2e"
-	colors["pickerGroup.foreground"] = "#08b6d6"
-	colors["progressBar.background"] = "#1fd2f2"
-	colors["quickInput.background"] = "#121922"
-	colors["quickInput.foreground"] = "#dde3ea"
-	colors["quickInputList.focusBackground"] = "#08b6d62e"
-	colors["quickInputList.focusForeground"] = "#f7f9fc"
-	colors["quickInputList.focusHighlightForeground"] = "#1fd2f2"
-	colors["widget.border"] = "#97b0ca2e"
-	colors["widget.shadow"] = "#00000080"
+fun defineKoreTheme(editor: MonacoEditor) = editor.defineTheme(MONACO_THEME_NAME, jsObject {
+	val text = CodeThemeStyle.textColor.toString()
 
-	val themeData = (js("({})").unsafeCast<ThemeData>()).apply {
-		base = "vs-dark"
-		inherit = false
-		this.colors = colors
-		rules = with(CodeThemeStyle) {
-			arrayOf(
-				rule("", textColor),
-				rule("identifier", textColor),
+	base = "vs-dark"
+	colors = json(
+		"descriptionForeground" to "#a6b4bd",
+		"editor.background" to SURFACE,
+		"editor.findMatchBackground" to "#fec90740",
+		"editor.findMatchHighlightBackground" to "#fec90720",
+		"editor.foreground" to text,
+		"editor.inactiveSelectionBackground" to "#82aaff20",
+		"editor.lineHighlightBackground" to "#ffffff0b",
+		"editor.lineHighlightBorder" to "#00000000",
+		"editor.selectionBackground" to "#82aaff40",
+		"editor.wordHighlightBackground" to "#82aaff1a",
+		"editorBracketMatch.background" to "#89ddff1a",
+		"editorBracketMatch.border" to "#89ddff80",
+		"editorCursor.foreground" to ACCENT,
+		"editorError.foreground" to "#ff6b7f",
+		"editorGutter.background" to SURFACE,
+		"editorHoverWidget.background" to WIDGET,
+		"editorHoverWidget.border" to BORDER,
+		"editorIndentGuide.activeBackground1" to "#08b6d680",
+		"editorIndentGuide.background1" to "#ffffff17",
+		"editorLineNumber.activeForeground" to "#a6b4bd",
+		"editorLineNumber.foreground" to "#4b5263",
+		"editorStickyScroll.background" to SURFACE,
+		"editorStickyScroll.shadow" to "#00000080",
+		"editorStickyScrollHover.background" to "#1b2531",
+		"editorSuggestWidget.background" to WIDGET,
+		"editorSuggestWidget.border" to BORDER,
+		"editorSuggestWidget.selectedBackground" to "#08b6d624",
+		"editorWarning.foreground" to "#ffcb6b",
+		"editorWhitespace.foreground" to "#ffffff24",
+		"editorWidget.background" to WIDGET,
+		"editorWidget.border" to BORDER,
+		"focusBorder" to "#08b6d680",
+		"input.background" to "#0f141b",
+		"input.border" to BORDER,
+		"input.placeholderForeground" to "#a6b4bd80",
+		"keybindingLabel.background" to "#ffffff0f",
+		"keybindingLabel.border" to BORDER,
+		"keybindingLabel.bottomBorder" to BORDER,
+		"keybindingLabel.foreground" to text,
+		"list.focusOutline" to "#00000000",
+		"list.highlightForeground" to ACCENT,
+		"list.hoverBackground" to "#ffffff0d",
+		"menu.background" to WIDGET,
+		"menu.border" to BORDER,
+		"menu.foreground" to text,
+		"menu.selectionBackground" to "#08b6d633",
+		"menu.separatorBackground" to BORDER,
+		"minimap.background" to SURFACE,
+		"pickerGroup.border" to BORDER,
+		"pickerGroup.foreground" to "#08b6d6",
+		"progressBar.background" to ACCENT,
+		"quickInput.background" to "#121922",
+		"quickInput.foreground" to text,
+		"quickInputList.focusBackground" to "#08b6d62e",
+		"quickInputList.focusForeground" to "#f7f9fc",
+		"quickInputList.focusHighlightForeground" to ACCENT,
+		"scrollbar.shadow" to "#00000000",
+		"scrollbarSlider.activeBackground" to "#ffffff33",
+		"scrollbarSlider.background" to "#ffffff14",
+		"scrollbarSlider.hoverBackground" to "#ffffff24",
+		"widget.border" to BORDER,
+		"widget.shadow" to "#00000080",
+	)
+	inherit = false
+	rules = with(CodeThemeStyle) {
+		arrayOf(
+			rule("", textColor),
+			rule("identifier", textColor),
 
-				rule("comment", commentColor, "italic"),
+			rule("comment", commentColor, "italic"),
 
-				rule("keyword", keywordColor, "italic"),
-				rule("annotation", keywordColor),
+			rule("keyword", keywordColor, "italic"),
+			rule("annotation", keywordColor),
 
-				rule("type", classColor),
-				rule("constant", textColor, "italic"),
+			rule("type", classColor),
+			rule("constant", textColor, "italic"),
 
-				rule("function", functionColor),
-				rule("function.call", functionColor, "italic"),
+			rule("function", functionColor),
+			rule("function.call", functionColor, "italic"),
 
-				rule("parameter", numberColor),
-				rule("parameter.implicit", numberColor, "bold"),
+			rule("parameter", numberColor),
+			rule("parameter.implicit", numberColor, "bold"),
 
-				rule("number", numberColor),
+			rule("number", numberColor),
 
-				rule("string", stringColor),
-				rule("string.escape", punctuationColor),
-				rule("string.escape.invalid", propertyColor),
+			rule("string", stringColor),
+			rule("string.escape", punctuationColor),
+			rule("string.escape.invalid", propertyColor),
 
-				rule("delimiter", punctuationColor),
-			)
-		}
+			rule("delimiter", punctuationColor),
+		)
 	}
-
-	editor.defineTheme(MONACO_THEME_NAME, themeData)
-}
+})
