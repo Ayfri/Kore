@@ -98,15 +98,11 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 						addProperty(
 							PropertySpec.builder("descriptor", ClassName("kotlinx.serialization.descriptors", "SerialDescriptor"))
 								.overrides()
-								.getter(
-									FunSpec.getterBuilder()
-										.addStatement(
-											"return %T(%S, %M)",
-											ClassName("kotlinx.serialization.descriptors", "PrimitiveSerialDescriptor"),
-											INTERFACE_NAME,
-											ClassName("kotlinx.serialization.descriptors", "PrimitiveKind").member("STRING")
-										)
-										.build()
+								.initializer(
+									"%T(%S, %M)",
+									ClassName("kotlinx.serialization.descriptors", "PrimitiveSerialDescriptor"),
+									INTERFACE_NAME,
+									ClassName("kotlinx.serialization.descriptors", "PrimitiveKind").member("STRING")
 								)
 								.build()
 						)
@@ -116,9 +112,9 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 								.addParameter("decoder", ClassName("kotlinx.serialization.encoding", "Decoder"))
 								.returns(gamerulesClass)
 								.addStatement(
-									"return fromString(decoder.decodeString()) ?: throw %T(%S)",
+									"return decoder.decodeString().let { fromString(it) ?: throw %T(%P) }",
 									ClassName("kotlin", "IllegalArgumentException"),
-									$$"Unknown '${name}' gamerule"
+									$$"Unknown gamerule '$it'."
 								)
 								.overrides()
 								.build()
