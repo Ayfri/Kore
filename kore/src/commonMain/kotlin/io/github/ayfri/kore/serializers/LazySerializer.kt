@@ -25,7 +25,7 @@ import kotlinx.serialization.encoding.Encoder
  * ```
  */
 class LazySerializer<T>(override val descriptor: SerialDescriptor, provider: () -> KSerializer<T>) : KSerializer<T> {
-	private val delegate by lazy(provider)
-	override fun serialize(encoder: Encoder, value: T) = delegate.serialize(encoder, value)
-	override fun deserialize(decoder: Decoder): T = delegate.deserialize(decoder)
+	private val delegate = lazy(provider)
+	override fun serialize(encoder: Encoder, value: T) = delegate.value.serialize(encoder, value)
+	override fun deserialize(decoder: Decoder): T = delegate.value.deserialize(decoder)
 }

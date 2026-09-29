@@ -28,7 +28,7 @@ sealed class EasingType {
 			private val polymorphic = easingTypeSealedSerializer()
 			override val descriptor = buildClassSerialDescriptor("EasingType")
 
-			private val serialNameByContentName by lazy {
+			private val serialNameByContentName = lazy {
 				polymorphic.descriptor.getElementDescriptor(1)
 					.let { variants -> List(variants.elementsCount) { variants.getElementName(it) } }
 					.associateBy(::defaultContentName)
@@ -44,7 +44,7 @@ sealed class EasingType {
 						val name = element.jsonPrimitive.content
 						val serializer = polymorphic.findPolymorphicSerializerOrNull(
 							ModuleOnlyDecoder(EmptySerializersModule()),
-							serialNameByContentName[name] ?: name
+							serialNameByContentName.value[name] ?: name
 						)
 							?: error("Unknown easing type: '$name'")
 						decoder.json.decodeFromJsonElement(serializer, JsonObject(emptyMap()))

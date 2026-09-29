@@ -57,20 +57,20 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 		if (useMinecraftPrefix) typeName.removePrefix("minecraft:") else typeName
 
 	@OptIn(ExperimentalSerializationApi::class)
-	private val serialNames: List<String> by lazy {
+	private val serialNames = lazy<List<String>> {
 		val descriptor = polymorphic.descriptor
 		if (descriptor.kind != PolymorphicKind.SEALED) return@lazy emptyList()
 		descriptor.getElementDescriptor(1)
 			.let { variants -> List(variants.elementsCount) { variants.getElementName(it) } }
 	}
 
-	private val serialNameByContent by lazy { serialNames.associateBy(contentName) }
+	private val serialNameByContent = lazy { serialNames.value.associateBy(contentName) }
 
 	/** Every subtype's Minecraft name, e.g. `["enchantments", "damage", ...]`. */
-	val contentNames get() = serialNames.map(contentName)
+	val contentNames get() = serialNames.value.map(contentName)
 
 	private fun generatedDeserializer(typeName: String): DeserializationStrategy<T> {
-		val serialName = serialNameByContent[normalize(typeName)] ?: normalize(typeName)
+		val serialName = serialNameByContent.value[normalize(typeName)] ?: normalize(typeName)
 		return polymorphic.findPolymorphicSerializerOrNull(ModuleOnlyDecoder(EmptySerializersModule()), serialName)
 			?: error("No subtype '$typeName' in $baseName")
 	}
@@ -120,14 +120,14 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 
 	// A bare (non-object) element has no discriminator to read, so try every subtype until one decodes it.
 	private fun deserializeBareJson(decoder: JsonDecoder, element: JsonElement): T {
-		val candidates = serialNames.map { name -> generatedDeserializer(contentName(name)) }
+		val candidates = serialNames.value.map { name -> generatedDeserializer(contentName(name)) }
 		return candidates.firstNotNullOfOrNull { serializer ->
 			runCatching { decoder.json.decodeFromJsonElement(serializer, element) }.getOrNull()
 		} ?: error("No subtype of $baseName can deserialize non-object JSON element: $element")
 	}
 
 	private fun deserializeBareNbt(decoder: NbtDecoder, tag: NbtTag): T {
-		val candidates = serialNames.map { name -> generatedDeserializer(contentName(name)) }
+		val candidates = serialNames.value.map { name -> generatedDeserializer(contentName(name)) }
 		return candidates.firstNotNullOfOrNull { serializer ->
 			runCatching { decoder.nbt.decodeFromNbtTag(serializer, tag) }.getOrNull()
 		} ?: error("No subtype of $baseName can deserialize non-compound NBT element: $tag")

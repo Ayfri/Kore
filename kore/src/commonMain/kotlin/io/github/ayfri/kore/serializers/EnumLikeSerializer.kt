@@ -40,17 +40,16 @@ open class EnumLikeSerializer<T : Any>(generated: KSerializer<T>) : KSerializer<
 	override val descriptor = PrimitiveSerialDescriptor(baseName, PrimitiveKind.STRING)
 
 	@OptIn(ExperimentalSerializationApi::class)
-	private val serialNames: List<String> by lazy {
+	private val serialNameByContentName = lazy<Map<String, String>> {
 		val descriptor = polymorphic.descriptor
-		if (descriptor.kind != PolymorphicKind.SEALED) return@lazy emptyList()
+		if (descriptor.kind != PolymorphicKind.SEALED) return@lazy emptyMap()
 		descriptor.getElementDescriptor(1)
 			.let { variants -> List(variants.elementsCount) { variants.getElementName(it) } }
+			.associateBy(::defaultContentName)
 	}
 
-	private val serialNameByContentName by lazy { serialNames.associateBy(::defaultContentName) }
-
 	private fun caseSerializer(contentName: String): DeserializationStrategy<T> {
-		val serialName = serialNameByContentName[contentName] ?: contentName
+		val serialName = serialNameByContentName.value[contentName] ?: contentName
 		return polymorphic.findPolymorphicSerializerOrNull(ModuleOnlyDecoder(EmptySerializersModule()), serialName)
 			?: error("No case '$contentName' in $baseName")
 	}
