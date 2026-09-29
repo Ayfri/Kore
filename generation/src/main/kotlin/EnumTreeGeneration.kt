@@ -104,8 +104,6 @@ fun generatePathEnumTree(paths: List<String>, generator: Generator) {
 							.build()
 					)
 				}
-
-				addAnnotation(serializableWith(ClassName("io.github.ayfri.kore.arguments", "Argument", "ArgumentSerializer")))
 			}
 		}.addEnumConstant(enumValue)
 	}
