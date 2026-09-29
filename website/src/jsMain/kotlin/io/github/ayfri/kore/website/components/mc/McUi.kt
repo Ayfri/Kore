@@ -3,11 +3,20 @@ package io.github.ayfri.kore.website.components.mc
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.compose.css.functions.CSSImage
+import com.varabyte.kobweb.compose.css.functions.blur
+import com.varabyte.kobweb.compose.css.functions.calc
 import io.github.ayfri.kore.website.components.common.mcTexture
+import io.github.ayfri.kore.website.utils.backgroundImages
+import io.github.ayfri.kore.website.utils.inset
+import io.github.ayfri.kore.website.utils.maskImage
+import io.github.ayfri.kore.website.utils.maskSize
+import io.github.ayfri.kore.website.utils.round
 import io.github.ayfri.kore.website.utils.transition
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
+import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.css.selectors.CSSSelector.PseudoElement.after
 import org.jetbrains.compose.web.css.selectors.CSSSelector.PseudoElement.before
 import org.jetbrains.compose.web.attributes.AttrsScope
@@ -38,10 +47,27 @@ fun gui(pixels: Number) = (pixels.toDouble() * 2).px
 private fun itemTexture(item: String) = mcTexture("item/$item")
 
 /** A `translate` rounded to whole pixels, so pixel art never lands between two screen pixels. */
-fun pixelTranslate(x: String, y: String = "0px") = "translate(round($x, 1px), round($y, 1px))"
+fun StyleScope.pixelTranslate(x: CSSLengthOrPercentageNumericValue, y: CSSLengthOrPercentageNumericValue = 0.px) =
+	translate(round(x, 1.px), round(y, 1.px))
 
 /** Half of the parent's size rounded to whole pixels, for `left` and `top`, see [pixelTranslate]. */
-const val PIXEL_HALF = "round(50%, 1px)"
+val PIXEL_HALF = round(50.percent, 1.px)
+
+/** A `background` of pixel-art [textures] (from `textures/`, the first on top), stretched over the element by default. */
+fun StyleScope.mcBackground(
+	vararg textures: String,
+	size: BackgroundSize = BackgroundSize.of(100.percent, 100.percent),
+	position: CSSPosition = CSSPosition(0.px, 0.px),
+	repeat: BackgroundRepeat? = null,
+) = background(Background.list(*textures.reversed().map {
+	Background.of(BackgroundImage.of(mcTexture(it)), repeat, size, BackgroundPosition.of(position))
+}.toTypedArray()))
+
+/** A 9-slice `border-image` of the pixel-art [texture], cut [slice] texture pixels from each edge and filling its middle. */
+fun StyleScope.mcBorderImage(texture: String, slice: Int) =
+	borderImage(BorderImage.of(CSSImage.of(mcTexture(texture)), BorderImageSlice.of { all(slice); fill() }))
+
+private val BottomEdgeY by StyleVariable<CSSLengthNumericValue>()
 
 /** The game draws text shadows in the text color at a quarter of its brightness: `(color & 0xFCFCFC) >> 2`. */
 private fun shadowOf(color: String) =
@@ -136,7 +162,7 @@ fun McItem(item: String, vararg extraClasses: String) {
 		classes(McUiStyle.item, *extraClasses)
 		attr("aria-label", item.replace('_', ' '))
 		attr("role", "img")
-		style { property("background-image", itemTexture(item)) }
+		style { backgroundImage(itemTexture(item)) }
 	})
 }
 
@@ -147,7 +173,7 @@ fun McStack(item: String, count: Int? = null, enchanted: Boolean = false) {
 		McItem(item)
 		if (enchanted) Span({
 			classes(McUiStyle.glint)
-			style { property("mask-image", itemTexture(item)) }
+			style { maskImage(itemTexture(item)) }
 		})
 		count?.takeIf { it > 1 }?.let { Div({ classes(McUiStyle.count) }) { McLine(it.toString()) } }
 	}
@@ -213,10 +239,10 @@ fun McContainer(
 		style {
 			height(gui(topEdge + rows.count() + bottomEdge))
 			width(gui(width))
-			property("--bottom-edge-y", gui(CONTAINER_EDGE - height))
-			property("background-image", mcTexture("gui/container/$texture"))
-			property("background-position", "0 ${gui(topEdge - rows.first)}")
-			property("background-size", "${gui(textureWidth)} auto")
+			setVariable(BottomEdgeY, gui(CONTAINER_EDGE - height))
+			backgroundImage(mcTexture("gui/container/$texture"))
+			backgroundPosition(BackgroundPosition.of(CSSPosition(0.px, gui(topEdge - rows.first))))
+			backgroundSize(BackgroundSize.of(gui(textureWidth), auto))
 		}
 	}) {
 		Div({
@@ -258,19 +284,19 @@ fun McBossBar(title: String, color: McBossBarColor, progress: Double, notches: I
 	fun layers(part: String) = listOfNotNull(
 		notches.takeIf { it > 0 }?.let { mcTexture("gui/sprites/boss_bar/notched_${it}_$part") },
 		mcTexture("gui/sprites/boss_bar/${name}_$part"),
-	).joinToString()
+	).toTypedArray()
 
 	Div({ classes(McUiStyle.bossBar) }) {
 		McLine(title)
 		Div({
 			classes(McUiStyle.bossBarTrack)
-			style { property("background-image", layers("background")) }
+			style { backgroundImages(*layers("background")) }
 		}) {
 			Div({
 				classes(McUiStyle.bossBarProgress)
 				style {
 					width((progress.coerceIn(0.0, 1.0) * 100).percent)
-					property("background-image", layers("progress"))
+					backgroundImages(*layers("progress"))
 				}
 			})
 		}
@@ -309,12 +335,12 @@ fun McSidebar(title: String, titleColor: String, lines: List<McSidebarLine>) {
 fun McTitle(title: String, color: String = McColor.WHITE, subtitle: String? = null, subtitleColor: String = McColor.WHITE) {
 	Div({
 		classes(McUiStyle.titleLine)
-		style { property("top", "calc($PIXEL_HALF - ${gui(40)})") }
+		style { top(Top.of(calc { PIXEL_HALF - gui(40) })) }
 	}) { McLine(title, color, scale = 4) }
 	subtitle?.let {
 		Div({
 			classes(McUiStyle.titleLine)
-			style { property("top", "calc($PIXEL_HALF + ${gui(10)})") }
+			style { top(Top.of(calc { PIXEL_HALF + gui(10) })) }
 		}) { McLine(it, subtitleColor, scale = 2) }
 	}
 }
@@ -377,8 +403,8 @@ fun McChatLine(vararg spans: McSpan, attrs: AttrsScope<HTMLDivElement>.() -> Uni
 
 object McUiStyle : StyleSheet() {
 	val glintScroll by keyframes {
-		from { property("background-position", "0 0") }
-		to { property("background-position", "${gui(-64)} ${gui(128)}") }
+		from { backgroundPosition(BackgroundPosition.of(CSSPosition(0.px, 0.px))) }
+		to { backgroundPosition(BackgroundPosition.of(CSSPosition(gui(-64), gui(128)))) }
 	}
 
 	/** No font size, so the line box is exactly the SVG's height and parents can still center it with `text-align`. */
@@ -400,8 +426,8 @@ object McUiStyle : StyleSheet() {
 	val tooltip by style {
 		padding(gui(4))
 		position(Position.Relative)
-		property("isolation", "isolate")
-		property("width", "max-content")
+		isolation(Isolation.Isolate)
+		width(Width.MaxContent)
 
 		child(self, universal) style { marginBottom(gui(1)) }
 		child(self, selector(":first-child:not(:only-child)")) style { marginBottom(gui(3)) }
@@ -411,20 +437,20 @@ object McUiStyle : StyleSheet() {
 			border(gui(9), LineStyle.Solid, Color.transparent)
 			position(Position.Absolute)
 			zIndex(-1)
-			property("border-image", "${mcTexture("gui/sprites/tooltip/background")} 9 fill")
-			property("content", "''")
-			property("image-rendering", "pixelated")
-			property("inset", gui(-8))
+			mcBorderImage("gui/sprites/tooltip/background", 9)
+			content("")
+			imageRendering(ImageRendering.Pixelated)
+			inset(gui(-8))
 		}
 
 		(self + after) style {
 			border(gui(10), LineStyle.Solid, Color.transparent)
 			position(Position.Absolute)
 			zIndex(-1)
-			property("border-image", "${mcTexture("gui/sprites/tooltip/frame")} 10 fill")
-			property("content", "''")
-			property("image-rendering", "pixelated")
-			property("inset", gui(-8))
+			mcBorderImage("gui/sprites/tooltip/frame", 10)
+			content("")
+			imageRendering(ImageRendering.Pixelated)
+			inset(gui(-8))
 		}
 	}
 
@@ -441,17 +467,17 @@ object McUiStyle : StyleSheet() {
 		height(gui(20))
 		justifyContent(JustifyContent.Center)
 		padding(gui(3), gui(4), 0.px)
-		property("border-image", "${mcTexture("gui/sprites/widget/button")} 3 fill")
-		property("box-sizing", "border-box")
-		property("image-rendering", "pixelated")
+		mcBorderImage("gui/sprites/widget/button", 3)
+		boxSizing(BoxSizing.BorderBox)
+		imageRendering(ImageRendering.Pixelated)
 
 		hover(self) style {
-			property("border-image-source", mcTexture("gui/sprites/widget/button_highlighted"))
+			borderImageSource(CSSImage.of(mcTexture("gui/sprites/widget/button_highlighted")))
 		}
 
 		(self + disabled) style {
 			cursor(Cursor.Default)
-			property("border-image-source", mcTexture("gui/sprites/widget/button_disabled"))
+			borderImageSource(CSSImage.of(mcTexture("gui/sprites/widget/button_disabled")))
 		}
 	}
 
@@ -460,8 +486,8 @@ object McUiStyle : StyleSheet() {
 		display(DisplayStyle.Block)
 		height(gui(16))
 		width(gui(16))
-		property("background-size", "100% 100%")
-		property("image-rendering", "pixelated")
+		backgroundSize(BackgroundSize.of(100.percent, 100.percent))
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val stack by style {
@@ -478,12 +504,12 @@ object McUiStyle : StyleSheet() {
 			timingFunction(AnimationTimingFunction.Linear)
 		}
 		position(Position.Absolute)
-		property("background", "${mcTexture("misc/enchanted_glint_item")} 0 0 / ${gui(64)}")
-		property("image-rendering", "pixelated")
-		property("inset", 0.px)
-		property("mask-size", "100% 100%")
-		property("mix-blend-mode", "plus-lighter")
-		property("opacity", 0.45)
+		mcBackground("misc/enchanted_glint_item", size = BackgroundSize.of(gui(64)))
+		imageRendering(ImageRendering.Pixelated)
+		inset(0.px)
+		maskSize(BackgroundSize.of(100.percent, 100.percent))
+		mixBlendMode(MixBlendMode.PlusLighter)
+		opacity(0.45)
 	}
 
 	/** The game draws counts right-aligned 1 px past the item, their baseline on the item's last row, the shadow 1 px further. */
@@ -491,7 +517,7 @@ object McUiStyle : StyleSheet() {
 		position(Position.Absolute)
 		right(gui(-2))
 		top(gui(9))
-		property("pointer-events", "none")
+		pointerEvents(PointerEvents.None)
 	}
 
 	val at by style {
@@ -499,21 +525,21 @@ object McUiStyle : StyleSheet() {
 	}
 
 	val centered by style {
-		property("transform", pixelTranslate("-50%"))
+		pixelTranslate((-50).percent)
 	}
 
 	val recipeBook by style {
 		height(gui(18))
 		width(gui(20))
-		property("background", "${mcTexture("gui/sprites/recipe_book/button")} 0 0 / 100% 100%")
-		property("image-rendering", "pixelated")
+		mcBackground("gui/sprites/recipe_book/button")
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val container by style {
 		flexShrink(0)
 		position(Position.Relative)
-		property("background-repeat", "no-repeat")
-		property("image-rendering", "pixelated")
+		backgroundRepeat(BackgroundRepeat.NoRepeat)
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val containerContent by style {
@@ -529,9 +555,9 @@ object McUiStyle : StyleSheet() {
 			position(Position.Absolute)
 			top(0.px)
 			width(100.percent)
-			property("background", "inherit")
-			property("background-position", "0 0")
-			property("content", "''")
+			background(Background.Inherit)
+			backgroundPosition(BackgroundPosition.of(CSSPosition(0.px, 0.px)))
+			content("")
 		}
 	}
 
@@ -542,9 +568,9 @@ object McUiStyle : StyleSheet() {
 			left(0.px)
 			position(Position.Absolute)
 			width(100.percent)
-			property("background", "inherit")
-			property("background-position", "0 var(--bottom-edge-y)")
-			property("content", "''")
+			background(Background.Inherit)
+			backgroundPosition(BackgroundPosition.of(CSSPosition(0.px, BottomEdgeY.value())))
+			content("")
 		}
 	}
 
@@ -553,8 +579,8 @@ object McUiStyle : StyleSheet() {
 		height(gui(32))
 		position(Position.Relative)
 		width(gui(160))
-		property("background", "${mcTexture("gui/sprites/toast/advancement")} 0 0 / 100% 100%")
-		property("image-rendering", "pixelated")
+		mcBackground("gui/sprites/toast/advancement")
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val bossBar by style {
@@ -566,22 +592,22 @@ object McUiStyle : StyleSheet() {
 	val bossBarTrack by style {
 		height(gui(5))
 		width(gui(182))
-		property("background-size", "100% 100%")
-		property("image-rendering", "pixelated")
+		backgroundSize(BackgroundSize.of(100.percent, 100.percent))
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	/** Every layer is sized to the full track, so a narrower element crops the progress instead of squashing it. */
 	val bossBarProgress by style {
 		height(100.percent)
 		transition(0.4.s, "width")
-		property("background-size", "${gui(182)} 100%")
-		property("image-rendering", "pixelated")
+		backgroundSize(BackgroundSize.of(gui(182), 100.percent))
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val sidebar by style {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
-		property("width", "max-content")
+		width(Width.MaxContent)
 	}
 
 	/** The game fills the title row at 40% opacity and the score rows at 30%, 1 px above each text. */
@@ -608,8 +634,8 @@ object McUiStyle : StyleSheet() {
 
 	val titleLine by style {
 		position(Position.Absolute)
-		property("left", PIXEL_HALF)
-		property("transform", pixelTranslate("-50%"))
+		left(Left.of(PIXEL_HALF))
+		pixelTranslate((-50).percent)
 	}
 
 	val hotbar by style {
@@ -622,20 +648,20 @@ object McUiStyle : StyleSheet() {
 	val heart by style {
 		height(gui(9))
 		width(gui(9))
-		property("background-size", "100%")
-		property("image-rendering", "pixelated")
+		backgroundSize(BackgroundSize.of(100.percent))
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val heartFull by style {
-		property("background-image", "${mcTexture("gui/sprites/hud/heart/full")}, ${mcTexture("gui/sprites/hud/heart/container")}")
+		backgroundImages(mcTexture("gui/sprites/hud/heart/full"), mcTexture("gui/sprites/hud/heart/container"))
 	}
 
 	val heartHalf by style {
-		property("background-image", "${mcTexture("gui/sprites/hud/heart/half")}, ${mcTexture("gui/sprites/hud/heart/container")}")
+		backgroundImages(mcTexture("gui/sprites/hud/heart/half"), mcTexture("gui/sprites/hud/heart/container"))
 	}
 
 	val heartEmpty by style {
-		property("background-image", mcTexture("gui/sprites/hud/heart/container"))
+		backgroundImage(mcTexture("gui/sprites/hud/heart/container"))
 	}
 
 	val cooldown by style {
@@ -655,7 +681,7 @@ object McUiStyle : StyleSheet() {
 	val chat by style {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
-		property("width", "max-content")
+		width(Width.MaxContent)
 	}
 
 	val chatLine by style {
@@ -669,49 +695,46 @@ object McUiStyle : StyleSheet() {
 		(self + before) style {
 			position(Position.Absolute)
 			zIndex(-1)
-			property("backdrop-filter", "blur(${gui(3)})")
-			property("background", "${mcTexture("gui/inworld_menu_background")} 0 0 / ${gui(32)}")
-			property("content", "''")
-			property("inset", 0.px)
+			backdropFilter(BackdropFilter.of(blur(gui(3))))
+			mcBackground("gui/inworld_menu_background", size = BackgroundSize.of(gui(32)))
+			content("")
+			inset(0.px)
 		}
 	}
 
 	/** A scene showing the world, from the panorama set as its `background-image`. */
 	val world by style {
 		position(Position.Relative)
-		property("background-position", "center")
-		property("background-size", "cover")
-		property("isolation", "isolate")
+		backgroundPosition(BackgroundPosition.of(CSSPosition.Center))
+		backgroundSize(BackgroundSize.Cover)
+		isolation(Isolation.Isolate)
 	}
 
 	val food by style {
 		height(gui(9))
 		width(gui(9))
-		property(
-			"background",
-			"${mcTexture("gui/sprites/hud/food_full")} 0 0 / 100%, ${mcTexture("gui/sprites/hud/food_empty")} 0 0 / 100%"
-		)
-		property("image-rendering", "pixelated")
+		mcBackground("gui/sprites/hud/food_full", "gui/sprites/hud/food_empty", size = BackgroundSize.of(100.percent))
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val experienceBar by style {
 		height(gui(5))
 		width(gui(182))
-		property("background", "${mcTexture("gui/sprites/hud/experience_bar_background")} 0 0 / 100%")
-		property("image-rendering", "pixelated")
+		mcBackground("gui/sprites/hud/experience_bar_background", size = BackgroundSize.of(100.percent))
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val hotbarBackground by style {
 		height(gui(22))
 		width(gui(182))
-		property("background", "${mcTexture("gui/sprites/hud/hotbar")} 0 0 / 100%")
-		property("image-rendering", "pixelated")
+		mcBackground("gui/sprites/hud/hotbar", size = BackgroundSize.of(100.percent))
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val hotbarSelection by style {
 		height(gui(23))
 		width(gui(24))
-		property("background", "${mcTexture("gui/sprites/hud/hotbar_selection")} 0 0 / 100%")
-		property("image-rendering", "pixelated")
+		mcBackground("gui/sprites/hud/hotbar_selection", size = BackgroundSize.of(100.percent))
+		imageRendering(ImageRendering.Pixelated)
 	}
 }

@@ -1,7 +1,9 @@
 package io.github.ayfri.kore.website.components.common
 
 import androidx.compose.runtime.Composable
+import com.varabyte.kobweb.compose.css.ColorInterpolationMethod
 import com.varabyte.kobweb.compose.css.borderLeft
+import com.varabyte.kobweb.compose.css.functions.colorMix
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.modifiers.ariaHidden
 import com.varabyte.kobweb.silk.components.icons.lucide.*
@@ -74,7 +76,7 @@ fun Callout(type: String, content: @Composable () -> Unit) {
 	Div({
 		classes(CalloutStyle.callout)
 		style {
-			property("background-color", "color-mix(in srgb, ${calloutType.color}, transparent 90%)")
+			backgroundColor(colorMix(ColorInterpolationMethod.Srgb, calloutType.color, Color.transparent to 90.percent))
 			borderLeft(4.px, LineStyle.Solid, calloutType.color)
 		}
 	}) {

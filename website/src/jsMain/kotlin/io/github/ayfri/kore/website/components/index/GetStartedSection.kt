@@ -3,6 +3,7 @@ package io.github.ayfri.kore.website.components.index
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.core.AppGlobals
+import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.components.common.BrandIcon
 import io.github.ayfri.kore.website.components.common.CodeBlock
 import io.github.ayfri.kore.website.components.common.Markdown
@@ -147,22 +148,22 @@ object GetStartedSectionStyle : StyleSheet() {
 		gridTemplateColumns("repeat(3, minmax(0, 1fr))")
 		margin(0.px, 0.px, 2.5.cssRem)
 		padding(0.px)
-		property("counter-reset", "step")
-		property("list-style", "none")
+		counterReset("step")
+		listStyle(ListStyle.None)
 
 		"li" style {
-			borderTop(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+			borderTop(1.px, LineStyle.Solid, LandingVars.Border.value())
 			paddingTop(1.3.cssRem)
-			property("counter-increment", "step")
+			counterIncrement("step")
 		}
 
 		"li::before" style {
-			color(Color("var(--landing-accent)"))
+			color(LandingVars.Accent.value())
 			display(DisplayStyle.Block)
 			fontFamily("JetBrains Mono", "monospace")
 			fontSize(0.85.cssRem)
 			marginBottom(0.6.cssRem)
-			property("content", "'0' counter(step)")
+			content(Content.list(Content.of("0"), counter("step")))
 		}
 
 		"h3" style {
@@ -177,7 +178,7 @@ object GetStartedSectionStyle : StyleSheet() {
 	}
 
 	val stepText by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontSize(0.98.cssRem)
 		lineHeight(1.6.number)
 		margin(0.5.cssRem, 0.px, 0.px)
@@ -186,8 +187,8 @@ object GetStartedSectionStyle : StyleSheet() {
 	}
 
 	val install by style {
-		backgroundColor(Color("var(--landing-surface-2)"))
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		backgroundColor(LandingVars.Pane.value())
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(1.1.cssRem)
 		marginX(auto)
 		maxWidth(52.cssRem)
@@ -195,7 +196,7 @@ object GetStartedSectionStyle : StyleSheet() {
 	}
 
 	val installBar by style {
-		borderBottom(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		borderBottom(1.px, LineStyle.Solid, LandingVars.Border.value())
 		display(DisplayStyle.Flex)
 		flexWrap(FlexWrap.Wrap)
 		gap(0.3.cssRem)
@@ -232,13 +233,13 @@ object GetStartedSectionStyle : StyleSheet() {
 	}
 
 	val toolsLabel by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontSize(0.9.cssRem)
 	}
 
 	val tool by style {
 		alignItems(AlignItems.Center)
-		color(Color("var(--landing-text)"))
+		color(LandingVars.Text.value())
 		display(DisplayStyle.Flex)
 		fontSize(0.92.cssRem)
 		fontWeight(500)
@@ -246,7 +247,7 @@ object GetStartedSectionStyle : StyleSheet() {
 		transition(0.2.s, "color")
 
 		hover(self) style {
-			color(Color("var(--landing-accent-strong)"))
+			color(LandingVars.AccentStrong.value())
 		}
 	}
 }

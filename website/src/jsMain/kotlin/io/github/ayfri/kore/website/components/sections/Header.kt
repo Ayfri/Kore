@@ -235,7 +235,7 @@ object HeaderStyle : StyleSheet() {
 		alignItems(AlignItems.Center)
 		display(DisplayStyle.Flex)
 		gap(0.5.cssRem)
-		property("margin-left", "auto")
+		marginLeft(auto)
 	}
 
 	val releaseBadge by style {
@@ -279,7 +279,7 @@ object HeaderStyle : StyleSheet() {
 		borderRadius(50.percent)
 		height(0.4.cssRem)
 		width(0.4.cssRem)
-		property("box-shadow", "0 0 0 3px ${GlobalStyle.linkColorHover.alpha(0.2)}")
+		boxShadow(0.px, 0.px, 0.px, 3.px, GlobalStyle.linkColorHover.alpha(0.2))
 	}
 
 	val iconButton by style {
@@ -374,7 +374,7 @@ object HeaderStyle : StyleSheet() {
 		gap(0.3.cssRem)
 		marginLeft(0.2.cssRem)
 		paddingLeft(0.6.cssRem)
-		property("font-variant-numeric", "tabular-nums")
+		fontVariantNumeric(FontVariantNumeric.TabularNums)
 	}
 
 	val githubStar by style {

@@ -5,9 +5,16 @@ import com.varabyte.kobweb.browser.storage.BooleanStorageKey
 import com.varabyte.kobweb.browser.storage.getItem
 import com.varabyte.kobweb.browser.storage.setItem
 import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.compose.css.AlignSelf
+import com.varabyte.kobweb.compose.css.functions.LinearGradient
+import com.varabyte.kobweb.compose.css.functions.calc
+import com.varabyte.kobweb.compose.css.functions.colorMix
+import com.varabyte.kobweb.compose.css.functions.linearGradient
+import com.varabyte.kobweb.compose.css.functions.toImage
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideChevronsDownUp
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideChevronsUpDown
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideExternalLink
+import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.components.common.BrandIcon
 import io.github.ayfri.kore.website.utils.*
 import kotlinx.browser.document
@@ -18,6 +25,7 @@ import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
+import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.*
 
 private val ShowPreReleasesStorageKey = BooleanStorageKey("kore.releases.showPreReleases", defaultValue = false)
@@ -261,7 +269,7 @@ object ReleasesListStyle : StyleSheet() {
 		minWidth(0.px)
 
 		lgMax(self) {
-			property("grid-row", "1")
+			gridRow("1")
 		}
 	}
 
@@ -283,7 +291,7 @@ object ReleasesListStyle : StyleSheet() {
 		}
 
 		"p" style {
-			color(Color("var(--landing-muted)"))
+			color(LandingVars.Muted.value())
 			fontSize(0.95.cssRem)
 			lineHeight(1.55.number)
 			margin(0.px)
@@ -292,7 +300,7 @@ object ReleasesListStyle : StyleSheet() {
 	}
 
 	val eyebrow by style {
-		color(Color("var(--landing-accent)"))
+		color(LandingVars.Accent.value())
 		fontFamily(MONO, "monospace")
 		fontSize(0.78.cssRem)
 		letterSpacing(1.5.px)
@@ -306,8 +314,8 @@ object ReleasesListStyle : StyleSheet() {
 
 	val resultBar by style {
 		alignItems(AlignItems.Baseline)
-		borderBottom(1.px, LineStyle.Solid, Color("var(--landing-border)"))
-		color(Color("var(--landing-muted)"))
+		borderBottom(1.px, LineStyle.Solid, LandingVars.Border.value())
+		color(LandingVars.Muted.value())
 		display(DisplayStyle.Flex)
 		flexWrap(FlexWrap.Wrap)
 		fontFamily(MONO, "monospace")
@@ -315,7 +323,7 @@ object ReleasesListStyle : StyleSheet() {
 		gap(0.4.cssRem, 1.cssRem)
 		justifyContent(JustifyContent.SpaceBetween)
 		paddingBottom(0.8.cssRem)
-		property("scroll-margin-top", "6rem")
+		scrollMarginTop(6.cssRem)
 	}
 
 	val resultHint by style {
@@ -339,10 +347,10 @@ object ReleasesListStyle : StyleSheet() {
 	}
 
 	val groupCount by style {
-		backgroundColor(Color("var(--landing-card)"))
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		backgroundColor(LandingVars.Card.value())
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(999.px)
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontFamily(MONO, "monospace")
 		fontSize(0.72.cssRem)
 		fontWeight(400)
@@ -359,23 +367,23 @@ object ReleasesListStyle : StyleSheet() {
 		gridTemplateColumns("6.5rem minmax(0, 1fr)")
 		paddingBottom(1.2.cssRem)
 		position(Position.Relative)
-		property("scroll-margin-top", "6rem")
+		scrollMarginTop(6.cssRem)
 		// Skip layout and paint for the entries that are off-screen, there are hundreds of them.
-		property("content-visibility", "auto")
+		contentVisibility(ContentVisibility.AUTO)
 		containIntrinsicSize(ContainIntrinsicSize.Auto(260.px))
 
 		self + before style {
-			backgroundColor(Color("var(--landing-border)"))
+			backgroundColor(LandingVars.Border.value())
 			bottom(0.px)
-			property("content", "''")
-			property("left", "calc(7.1rem - 1px)")
+			content("")
+			left(Left.of(calc { 7.1.cssRem - 1.px }))
 			position(Position.Absolute)
 			top(0.px)
 			width(2.px)
 		}
 
 		self + ":last-child::before" style {
-			property("bottom", "auto")
+			bottom(auto)
 			height(2.cssRem)
 		}
 
@@ -408,13 +416,13 @@ object ReleasesListStyle : StyleSheet() {
 	}
 
 	val relativeDate by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontSize(0.74.cssRem)
 	}
 
 	val card by style {
-		backgroundColor(Color("var(--landing-card)"))
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		backgroundColor(LandingVars.Card.value())
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(1.cssRem)
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
@@ -430,10 +438,10 @@ object ReleasesListStyle : StyleSheet() {
 
 		// The dot sits in the gap between the date rail and the card.
 		self + before style {
-			backgroundColor(Color("var(--landing-surface)"))
-			border(2.px, LineStyle.Solid, Color("var(--landing-muted)"))
+			backgroundColor(LandingVars.Surface.value())
+			border(2.px, LineStyle.Solid, LandingVars.Muted.value())
 			borderRadius(50.percent)
-			property("content", "''")
+			content("")
 			boxSizing(BoxSizing.BorderBox)
 			height(0.7.cssRem)
 			left((-0.95).cssRem)
@@ -444,14 +452,14 @@ object ReleasesListStyle : StyleSheet() {
 		}
 
 		hover(self) style {
-			backgroundColor(Color("color-mix(in srgb, var(--landing-card), #fff 2.5%)"))
+			backgroundColor(colorMix(ColorInterpolationMethod.Srgb, LandingVars.Card.value(), Color("#fff") to 2.5.percent))
 			borderColor(Color("rgba(8, 182, 214, 0.45)"))
 			boxShadow(0.px, 8.px, 24.px, (-12).px, rgba(0, 0, 0, 0.5))
 		}
 
 		self + ":hover::before" style {
-			borderColor(Color("var(--landing-accent-strong)"))
-			property("scale", "1.25")
+			borderColor(LandingVars.AccentStrong.value())
+			scale(1.25)
 		}
 
 		mdMax(self) {
@@ -468,8 +476,8 @@ object ReleasesListStyle : StyleSheet() {
 		boxShadow(0.px, 0.px, 0.px, 3.px, rgba(8, 182, 214, 0.08))
 
 		self + before style {
-			backgroundColor(Color("var(--landing-accent-strong)"))
-			borderColor(Color("var(--landing-accent-strong)"))
+			backgroundColor(LandingVars.AccentStrong.value())
+			borderColor(LandingVars.AccentStrong.value())
 			boxShadow(0.px, 0.px, 0.px, 4.px, rgba(8, 182, 214, 0.2))
 		}
 	}
@@ -497,7 +505,7 @@ object ReleasesListStyle : StyleSheet() {
 	}
 
 	val mcVersion by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontFamily(MONO, "monospace")
 		fontSize(0.85.cssRem)
 	}
@@ -513,7 +521,7 @@ object ReleasesListStyle : StyleSheet() {
 
 	val channelRelease by style {
 		backgroundColor(rgba(8, 182, 214, 0.1))
-		color(Color("var(--landing-accent-strong)"))
+		color(LandingVars.AccentStrong.value())
 	}
 
 	val channelCandidate by style {
@@ -523,7 +531,7 @@ object ReleasesListStyle : StyleSheet() {
 
 	val channelPreRelease by style {
 		backgroundColor(rgba(254, 201, 7, 0.1))
-		color(Color("var(--landing-gold)"))
+		color(LandingVars.Gold.value())
 	}
 
 	val channelSnapshot by style {
@@ -532,9 +540,9 @@ object ReleasesListStyle : StyleSheet() {
 	}
 
 	val pillLatest by style {
-		backgroundColor(Color("var(--landing-accent)"))
-		borderColor(Color("var(--landing-accent)"))
-		color(Color("var(--landing-surface)"))
+		backgroundColor(LandingVars.Accent.value())
+		borderColor(LandingVars.Accent.value())
+		color(LandingVars.Surface.value())
 	}
 
 	val links by style {
@@ -545,8 +553,8 @@ object ReleasesListStyle : StyleSheet() {
 
 	val externalLink by style {
 		alignItems(AlignItems.Center)
-		color(Color("var(--landing-muted)"))
-		property("display", "inline-flex")
+		color(LandingVars.Muted.value())
+		display(DisplayStyle.LegacyInlineFlex)
 		fontSize(0.8.cssRem)
 		gap(0.35.cssRem)
 		textDecorationLine(TextDecorationLine.None)
@@ -557,27 +565,32 @@ object ReleasesListStyle : StyleSheet() {
 		}
 
 		hover(self) style {
-			color(Color("var(--landing-accent-strong)"))
+			color(LandingVars.AccentStrong.value())
 		}
 	}
 
 	/** `calc-size()` animates the expansion to `auto`, the `max-height` fallback for older browsers makes collapsing instant. */
 	val body by style {
-		borderTop(1.px, LineStyle.Solid, Color("var(--landing-border)"))
-		property("height", "calc-size(auto, size)")
+		borderTop(1.px, LineStyle.Solid, LandingVars.Border.value())
+		height(autoSize())
 		overflow(Overflow.Hidden)
 		paddingTop(0.4.cssRem)
 		transition(0.4.s, "height")
 	}
 
 	val bodyCollapsed by style {
-		property("height", "calc-size(auto, min(size, 15rem))")
+		height(autoSize(15.cssRem))
 		maxHeight(15.cssRem)
-		property("mask-image", "linear-gradient(to bottom, #000 55%, transparent)")
+		maskImage(
+			linearGradient(LinearGradient.Direction.ToBottom) {
+				add(Color("#000"), 55.percent)
+				add(Color.transparent)
+			}.toImage()
+		)
 	}
 
 	val emptyBody by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontSize(0.9.cssRem)
 		fontStyle(FontStyle.Italic)
 		margin(0.px)
@@ -585,11 +598,11 @@ object ReleasesListStyle : StyleSheet() {
 
 	val expandButton by style {
 		alignItems(AlignItems.Center)
-		property("align-self", "flex-start")
+		alignSelf(AlignSelf.FlexStart)
 		backgroundColor(Color.transparent)
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(999.px)
-		color(Color("var(--landing-text)"))
+		color(LandingVars.Text.value())
 		cursor(Cursor.Pointer)
 		display(DisplayStyle.Flex)
 		fontSize(0.82.cssRem)
@@ -609,7 +622,7 @@ object ReleasesListStyle : StyleSheet() {
 
 	val emptyState by style {
 		alignItems(AlignItems.Center)
-		border(1.px, LineStyle.Dashed, Color("var(--landing-border)"))
+		border(1.px, LineStyle.Dashed, LandingVars.Border.value())
 		borderRadius(1.cssRem)
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
@@ -624,7 +637,7 @@ object ReleasesListStyle : StyleSheet() {
 		}
 
 		"p" style {
-			color(Color("var(--landing-muted)"))
+			color(LandingVars.Muted.value())
 			margin(0.px)
 		}
 	}

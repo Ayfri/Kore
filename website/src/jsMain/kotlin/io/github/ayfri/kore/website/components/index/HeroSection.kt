@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.core.AppGlobals
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideArrowRight
+import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.components.common.*
 import io.github.ayfri.kore.website.components.features.*
 import io.github.ayfri.kore.website.components.mc.*
@@ -271,7 +272,7 @@ private fun HeroShowcase() {
 private fun WorldPreview(face: Int, vararg extraClasses: String, content: @Composable () -> Unit) {
 	Div({
 		classes(McUiStyle.world, HeroSectionStyle.world, *extraClasses)
-		style { property("background-image", mcPanorama(face)) }
+		style { backgroundImage(mcPanorama(face)) }
 	}) { content() }
 }
 
@@ -295,9 +296,9 @@ object HeroSectionStyle : StyleSheet() {
 	val announcement by style {
 		alignItems(AlignItems.Center)
 		backgroundColor(rgba(21, 28, 38, 0.7))
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(999.px)
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		display(DisplayStyle.Flex)
 		fontSize(0.88.cssRem)
 		gap(0.6.cssRem)
@@ -309,14 +310,14 @@ object HeroSectionStyle : StyleSheet() {
 
 		hover(self) style {
 			borderColor(Color("rgba(8, 182, 214, 0.5)"))
-			color(Color("var(--landing-text)"))
+			color(LandingVars.Text.value())
 		}
 	}
 
 	val announcementBadge by style {
 		backgroundColor(rgba(8, 182, 214, 0.18))
 		borderRadius(999.px)
-		color(Color("var(--landing-accent-strong)"))
+		color(LandingVars.AccentStrong.value())
 		fontSize(0.78.cssRem)
 		fontWeight(600)
 		padding(0.15.cssRem, 0.6.cssRem)
@@ -341,7 +342,7 @@ object HeroSectionStyle : StyleSheet() {
 	}
 
 	val lead by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontSize(1.2.cssRem)
 		margin(1.4.cssRem, 0.px, 0.px)
 		maxWidth(40.cssRem)
@@ -385,7 +386,7 @@ object HeroSectionStyle : StyleSheet() {
 		backgroundColor(Color.transparent)
 		border(0.px)
 		borderRadius(0.5.cssRem)
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		cursor(Cursor.Pointer)
 		fontFamily("inherit")
 		fontSize(0.92.cssRem)
@@ -396,13 +397,13 @@ object HeroSectionStyle : StyleSheet() {
 		transition(0.2.s, "background-color", "color")
 
 		hover(self) style {
-			color(Color("var(--landing-text)"))
+			color(LandingVars.Text.value())
 		}
 	}
 
 	val tabActive by style {
 		backgroundColor(rgba(255, 255, 255, 0.06))
-		color(Color("var(--landing-text)"))
+		color(LandingVars.Text.value())
 	}
 
 	@OptIn(ExperimentalComposeWebApi::class)
@@ -413,12 +414,12 @@ object HeroSectionStyle : StyleSheet() {
 
 	/** Fills under the current tab while the showcase rotates, so it's clear it moves on by itself. */
 	val tabProgress by style {
-		backgroundColor(Color("var(--landing-accent)"))
+		backgroundColor(LandingVars.Accent.value())
 		bottom(0.px)
 		height(2.px)
 		left(0.px)
 		position(Position.Absolute)
-		property("transform-origin", "left")
+		transformOrigin(TransformOrigin.Left)
 		width(100.percent)
 		animation(progressFill) {
 			duration(EXAMPLE_MS.toDouble().ms)
@@ -427,8 +428,8 @@ object HeroSectionStyle : StyleSheet() {
 	}
 
 	val frame by style {
-		backgroundColor(Color("var(--landing-surface-2)"))
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		backgroundColor(LandingVars.Pane.value())
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(1.1.cssRem)
 		boxShadow(0.px, 40.px, 100.px, (-20).px, rgba(0, 0, 0, 0.6))
 		display(DisplayStyle.Grid)
@@ -444,7 +445,7 @@ object HeroSectionStyle : StyleSheet() {
 	}
 
 	val codePane by style {
-		borderRight(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		borderRight(1.px, LineStyle.Solid, LandingVars.Border.value())
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
 		minWidth(0.px)
@@ -465,12 +466,12 @@ object HeroSectionStyle : StyleSheet() {
 			height(100.percent)
 			margin(0.px)
 			overflowX(Overflow.Auto)
-			property("box-sizing", "border-box")
+			boxSizing(BoxSizing.BorderBox)
 		}
 
 		lgMax(self) {
 			borderRight(0.px, LineStyle.None, Color.transparent)
-			borderBottom(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+			borderBottom(1.px, LineStyle.Solid, LandingVars.Border.value())
 		}
 
 		smMax(self) {
@@ -479,21 +480,21 @@ object HeroSectionStyle : StyleSheet() {
 	}
 
 	val paneTitle by style {
-		borderBottom(1.px, LineStyle.Solid, Color("var(--landing-border)"))
-		color(Color("var(--landing-muted)"))
+		borderBottom(1.px, LineStyle.Solid, LandingVars.Border.value())
+		color(LandingVars.Muted.value())
 		fontSize(0.82.cssRem)
 		padding(0.7.cssRem, 1.1.cssRem)
 	}
 
 	val paneFooter by style {
-		borderTop(1.px, LineStyle.Solid, Color("var(--landing-border)"))
-		color(Color("var(--landing-muted)"))
+		borderTop(1.px, LineStyle.Solid, LandingVars.Border.value())
+		color(LandingVars.Muted.value())
 		fontSize(0.8.cssRem)
 		overflowWrap(OverflowWrap.Anywhere)
 		padding(0.7.cssRem, 1.1.cssRem)
 
 		"code" style {
-			color(Color("var(--landing-text)"))
+			color(LandingVars.Text.value())
 			fontFamily("JetBrains Mono", "monospace")
 		}
 	}
@@ -506,11 +507,11 @@ object HeroSectionStyle : StyleSheet() {
 
 	val world by style {
 		position(Position.Absolute)
-		property("inset", "0")
+		inset(0.px)
 
 		// GUI pixels are fixed size, so the whole HUD shrinks on phones instead of overflowing.
 		smMax(self) {
-			"> *" style { property("zoom", "0.75") }
+			"> *" style { zoom(0.75) }
 		}
 	}
 
@@ -524,15 +525,15 @@ object HeroSectionStyle : StyleSheet() {
 	val sidebar by style {
 		position(Position.Absolute)
 		right(0.px)
-		property("top", PIXEL_HALF)
-		property("transform", pixelTranslate("0px", "-50%"))
+		top(Top.of(PIXEL_HALF))
+		pixelTranslate(0.px, (-50).percent)
 	}
 
 	val bossBar by style {
 		position(Position.Absolute)
 		top(gui(2))
-		property("left", PIXEL_HALF)
-		property("transform", pixelTranslate("-50%"))
+		left(Left.of(PIXEL_HALF))
+		pixelTranslate((-50).percent)
 	}
 
 	val toast by style {

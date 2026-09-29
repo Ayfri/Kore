@@ -2,9 +2,13 @@ package io.github.ayfri.kore.website.components.updates
 
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.compose.css.AlignSelf
+import com.varabyte.kobweb.compose.css.functions.calc
+import com.varabyte.kobweb.compose.css.functions.linearGradient
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideFunnel
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideRotateCcw
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideSearch
+import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.attributes.InputType
@@ -193,8 +197,20 @@ object ReleaseFiltersStyle : StyleSheet() {
 
 	/** Sticky next to the timeline on large screens, a regular block above it under lg. */
 	val sidebar by style {
-		property("align-self", "start")
-		property("background", "linear-gradient(180deg, rgba(8, 182, 214, 0.09), rgba(8, 182, 214, 0.02) 45%), #1a2330")
+		alignSelf(AlignSelf.Start)
+		background(
+			Background.list(
+				Color("#1a2330"),
+				Background.of(
+					BackgroundImage.of(
+						linearGradient(180.deg) {
+							add(rgba(8, 182, 214, 0.09))
+							add(rgba(8, 182, 214, 0.02), 45.percent)
+						}
+					)
+				),
+			)
+		)
 		border(1.px, LineStyle.Solid, Color("rgba(151, 176, 202, 0.24)"))
 		boxShadow(0.px, 12.px, 32.px, (-16).px, rgba(0, 0, 0, 0.6))
 		borderRadius(1.cssRem)
@@ -202,16 +218,16 @@ object ReleaseFiltersStyle : StyleSheet() {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
 		gap(1.1.cssRem)
-		property("max-height", "calc(100vh - 7rem)")
+		maxHeight(calc { 100.vh - 7.cssRem })
 		overflowY(Overflow.Auto)
 		padding(1.1.cssRem)
 		position(Position.Sticky)
-		property("scrollbar-width", "thin")
+		scrollbarWidth(ScrollbarWidth.Thin)
 		top(6.cssRem)
 
 		lgMax(self) {
 			gap(0.8.cssRem)
-			property("max-height", "none")
+			maxHeight(MaxHeight.None)
 			overflowY(Overflow.Visible)
 			position(Position.Static)
 		}
@@ -220,7 +236,7 @@ object ReleaseFiltersStyle : StyleSheet() {
 	val search by style {
 		alignItems(AlignItems.Center)
 		backgroundColor(rgba(255, 255, 255, 0.05))
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(0.7.cssRem)
 		display(DisplayStyle.Flex)
 		gap(0.55.cssRem)
@@ -228,7 +244,7 @@ object ReleaseFiltersStyle : StyleSheet() {
 		transition(0.2.s, "border-color", "box-shadow")
 
 		"svg" style {
-			color(Color("var(--landing-muted)"))
+			color(LandingVars.Muted.value())
 			flexShrink(0)
 			fontSize(1.05.cssRem)
 		}
@@ -236,7 +252,7 @@ object ReleaseFiltersStyle : StyleSheet() {
 		"input" style {
 			backgroundColor(Color.transparent)
 			border(0.px)
-			color(Color("var(--landing-text)"))
+			color(LandingVars.Text.value())
 			fontSize(0.92.cssRem)
 			height(2.5.cssRem)
 			minWidth(0.px)
@@ -245,7 +261,7 @@ object ReleaseFiltersStyle : StyleSheet() {
 		}
 
 		"input::placeholder" style {
-			color(Color("var(--landing-muted)"))
+			color(LandingVars.Muted.value())
 		}
 
 		self + ":focus-within" style {
@@ -257,9 +273,9 @@ object ReleaseFiltersStyle : StyleSheet() {
 	val panelToggle by style {
 		alignItems(AlignItems.Center)
 		backgroundColor(rgba(255, 255, 255, 0.05))
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(0.7.cssRem)
-		color(Color("var(--landing-text)"))
+		color(LandingVars.Text.value())
 		cursor(Cursor.Pointer)
 		display(DisplayStyle.None)
 		fontSize(0.9.cssRem)
@@ -287,7 +303,7 @@ object ReleaseFiltersStyle : StyleSheet() {
 		lgMax(self) {
 			gridTemplateRows { size(0.fr) }
 			opacity(0)
-			property("visibility", "hidden")
+			visibility(Visibility.Hidden)
 		}
 	}
 
@@ -316,13 +332,13 @@ object ReleaseFiltersStyle : StyleSheet() {
 		gap(0.45.cssRem)
 
 		lgMin(self + ":not(:first-child)") {
-			borderTop(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+			borderTop(1.px, LineStyle.Solid, LandingVars.Border.value())
 			paddingTop(1.1.cssRem)
 		}
 	}
 
 	val groupLabel by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontFamily(MONO, "monospace")
 		fontSize(0.72.cssRem)
 		letterSpacing(1.5.px)
@@ -347,7 +363,7 @@ object ReleaseFiltersStyle : StyleSheet() {
 	}
 
 	val count by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontFamily(MONO, "monospace")
 		fontSize(0.72.cssRem)
 		marginRight(autoLength)
@@ -355,8 +371,8 @@ object ReleaseFiltersStyle : StyleSheet() {
 
 	@OptIn(ExperimentalComposeWebApi::class)
 	val switch by style {
-		property("appearance", "none")
-		backgroundColor(Color("var(--landing-border)"))
+		appearance(Appearance.None)
+		backgroundColor(LandingVars.Border.value())
 		borderRadius(999.px)
 		cursor(Cursor.Pointer)
 		flexShrink(0)
@@ -367,9 +383,9 @@ object ReleaseFiltersStyle : StyleSheet() {
 		width(2.cssRem)
 
 		self + before style {
-			backgroundColor(Color("var(--landing-text)"))
+			backgroundColor(LandingVars.Text.value())
 			borderRadius(50.percent)
-			property("content", "''")
+			content("")
 			height(0.8.cssRem)
 			left(0.15.cssRem)
 			position(Position.Absolute)
@@ -379,7 +395,7 @@ object ReleaseFiltersStyle : StyleSheet() {
 		}
 
 		self + checked style {
-			backgroundColor(Color("var(--landing-accent)"))
+			backgroundColor(LandingVars.Accent.value())
 		}
 
 		(self + checked + before) style {
@@ -387,14 +403,14 @@ object ReleaseFiltersStyle : StyleSheet() {
 		}
 
 		self + focusVisible style {
-			outline("2px solid var(--landing-accent-strong)")
-			property("outline-offset", "2px")
+			outline("2px solid ${LandingVars.AccentStrong.value()}")
+			outlineOffset(2.px)
 		}
 	}
 
 	val segmented by style {
 		backgroundColor(rgba(255, 255, 255, 0.05))
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(999.px)
 		display(DisplayStyle.Grid)
 		gap(0.25.cssRem)
@@ -406,24 +422,24 @@ object ReleaseFiltersStyle : StyleSheet() {
 		backgroundColor(Color.transparent)
 		border(0.px)
 		borderRadius(999.px)
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		cursor(Cursor.Pointer)
 		fontSize(0.85.cssRem)
 		padding(0.35.cssRem, 0.8.cssRem)
 		transition(0.2.s, "background-color", "color", "scale")
 
 		hover(self) style {
-			color(Color("var(--landing-text)"))
+			color(LandingVars.Text.value())
 		}
 
 		self + active style {
-			property("scale", "0.95")
+			scale(0.95)
 		}
 	}
 
 	val segmentActive by style {
 		backgroundColor(rgba(8, 182, 214, 0.22))
-		color(Color("var(--landing-text)"))
+		color(LandingVars.Text.value())
 	}
 
 	val versionRow by style {
@@ -435,11 +451,11 @@ object ReleaseFiltersStyle : StyleSheet() {
 	val versionChip by style {
 		alignItems(AlignItems.Center)
 		backgroundColor(Color.transparent)
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(0.45.cssRem)
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		cursor(Cursor.Pointer)
-		property("display", "inline-flex")
+		display(DisplayStyle.LegacyInlineFlex)
 		fontFamily(MONO, "monospace")
 		fontSize(0.76.cssRem)
 		gap(0.35.cssRem)
@@ -448,24 +464,24 @@ object ReleaseFiltersStyle : StyleSheet() {
 
 		hover(self) style {
 			backgroundColor(rgba(8, 182, 214, 0.08))
-			color(Color("var(--landing-text)"))
+			color(LandingVars.Text.value())
 		}
 
 		self + active style {
-			property("scale", "0.94")
+			scale(0.94)
 		}
 	}
 
 	val versionChipMain by style {
 		backgroundColor(rgba(255, 255, 255, 0.05))
-		color(Color("var(--landing-text)"))
+		color(LandingVars.Text.value())
 		fontWeight(600)
 	}
 
 	val versionChipSelected by style {
 		backgroundColor(rgba(8, 182, 214, 0.2))
 		borderColor(Color("rgba(8, 182, 214, 0.7)"))
-		color(Color("var(--landing-text)"))
+		color(LandingVars.Text.value())
 
 		hover(self) style {
 			backgroundColor(rgba(8, 182, 214, 0.28))
@@ -479,10 +495,10 @@ object ReleaseFiltersStyle : StyleSheet() {
 
 	val reset by style {
 		alignItems(AlignItems.Center)
-		property("align-self", "flex-start")
+		alignSelf(AlignSelf.FlexStart)
 		backgroundColor(Color.transparent)
 		border(0.px)
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		cursor(Cursor.Pointer)
 		display(DisplayStyle.Flex)
 		fontSize(0.85.cssRem)
@@ -491,7 +507,7 @@ object ReleaseFiltersStyle : StyleSheet() {
 		transition(0.2.s, "color")
 
 		hover(self) style {
-			color(Color("var(--landing-text)"))
+			color(LandingVars.Text.value())
 		}
 	}
 }

@@ -2,15 +2,24 @@ package io.github.ayfri.kore.website.components.features
 
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.compose.css.AlignSelf
+import com.varabyte.kobweb.compose.css.functions.RadialGradient
+import com.varabyte.kobweb.compose.css.functions.dropShadow
+import com.varabyte.kobweb.compose.css.functions.linearGradient
+import com.varabyte.kobweb.compose.css.functions.radialGradient
+import com.varabyte.kobweb.compose.css.functions.repeatingLinearGradient
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideFileBraces
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideFileCode
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideFolder
+import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.components.common.CodeBlock
 import io.github.ayfri.kore.website.components.common.mcTexture
 import io.github.ayfri.kore.website.components.mc.*
 import io.github.ayfri.kore.website.utils.Span
 import io.github.ayfri.kore.website.utils.animationDelay
 import io.github.ayfri.kore.website.utils.highlightCodeIn
+import io.github.ayfri.kore.website.utils.inset
+import io.github.ayfri.kore.website.utils.marginLeft
 import io.github.ayfri.kore.website.utils.smMax
 import io.github.ayfri.kore.website.utils.transition
 import kotlinx.coroutines.delay
@@ -18,6 +27,7 @@ import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
+import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.*
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLElement
@@ -202,7 +212,7 @@ fun ChatScene() {
 		}
 		Div({
 			classes(McUiStyle.world, FeatureVisualsStyle.chatScreen)
-			style { property("background-image", mcPanorama(1)) }
+			style { backgroundImage(mcPanorama(1)) }
 		}) {
 			McChat(FeatureVisualsStyle.hudChat) {
 				McChatLine("<Alex> ready?")
@@ -590,7 +600,7 @@ fun GameplayScene() {
 	Div({ classes(FeatureVisualsStyle.gameWrapper) }) {
 		Div({
 			classes(McUiStyle.world, FeatureVisualsStyle.mcScene)
-			style { property("background-image", mcPanorama(3)) }
+			style { backgroundImage(mcPanorama(3)) }
 		}) {
 			Div({
 				classes(FeatureVisualsStyle.nightOverlay)
@@ -718,7 +728,7 @@ fun ParticlesScene() {
 						top(y.percent)
 						opacity(0.35 + 0.65 * depth)
 						animationDelay((index * 40).ms)
-						property("transition-delay", "${index * 8}ms")
+						transitionDelay((index * 8).ms)
 					}
 				})
 			}
@@ -774,7 +784,7 @@ fun MenuScene() {
 	var pressed by remember { mutableStateOf<String?>(null) }
 	Div({
 		classes(McUiStyle.world, McUiStyle.menuBackground, FeatureVisualsStyle.mcScene, FeatureVisualsStyle.dialogScene)
-		style { property("background-image", mcPanorama(0)) }
+		style { backgroundImage(mcPanorama(0)) }
 	}) {
 		Div({ classes(FeatureVisualsStyle.dialog) }) {
 			McLine("Arena menu", McColor.WHITE)
@@ -835,8 +845,8 @@ object FeatureVisualsStyle : StyleSheet() {
 	private const val MONO = "JetBrains Mono"
 
 	val window by style {
-		backgroundColor(Color("var(--landing-surface-2)"))
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		backgroundColor(LandingVars.Pane.value())
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(1.cssRem)
 		boxShadow(0.px, 24.px, 60.px, 0.px, rgba(5, 12, 20, 0.5))
 		overflow(Overflow.Hidden)
@@ -853,7 +863,7 @@ object FeatureVisualsStyle : StyleSheet() {
 	val windowBar by style {
 		alignItems(AlignItems.Center)
 		backgroundColor(rgba(255, 255, 255, 0.03))
-		borderBottom(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		borderBottom(1.px, LineStyle.Solid, LandingVars.Border.value())
 		display(DisplayStyle.Flex)
 		gap(0.4.cssRem)
 		padding(0.6.cssRem, 0.9.cssRem)
@@ -867,7 +877,7 @@ object FeatureVisualsStyle : StyleSheet() {
 	}
 
 	val windowTitle by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontFamily(MONO, "monospace")
 		fontSize(0.78.cssRem)
 		marginLeft(0.5.cssRem)
@@ -875,7 +885,7 @@ object FeatureVisualsStyle : StyleSheet() {
 
 	val windowFooter by style {
 		alignItems(AlignItems.Center)
-		borderTop(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		borderTop(1.px, LineStyle.Solid, LandingVars.Border.value())
 		display(DisplayStyle.Flex)
 		flexWrap(FlexWrap.Wrap)
 		fontSize(0.8.cssRem)
@@ -883,13 +893,13 @@ object FeatureVisualsStyle : StyleSheet() {
 		padding(0.7.cssRem, 1.cssRem)
 
 		"code" style {
-			color(Color("var(--landing-accent-strong)"))
+			color(LandingVars.AccentStrong.value())
 			fontFamily(MONO, "monospace")
 		}
 	}
 
 	val footerLabel by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontFamily(MONO, "monospace")
 		fontSize(0.72.cssRem)
 		letterSpacing(1.px)
@@ -899,15 +909,15 @@ object FeatureVisualsStyle : StyleSheet() {
 	val outputHeader by style {
 		alignItems(AlignItems.Center)
 		backgroundColor(rgba(255, 255, 255, 0.03))
-		borderBottom(1.px, LineStyle.Solid, Color("var(--landing-border)"))
-		borderTop(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		borderBottom(1.px, LineStyle.Solid, LandingVars.Border.value())
+		borderTop(1.px, LineStyle.Solid, LandingVars.Border.value())
 		display(DisplayStyle.Flex)
 		gap(0.6.cssRem)
 		padding(0.45.cssRem, 1.cssRem)
 	}
 
 	val outputPath by style {
-		color(Color("var(--landing-text)"))
+		color(LandingVars.Text.value())
 		fontFamily(MONO, "monospace")
 		fontSize(0.78.cssRem)
 		overflowWrap(OverflowWrap.Anywhere)
@@ -936,7 +946,7 @@ object FeatureVisualsStyle : StyleSheet() {
 			duration(0.6.s)
 			iterationCount(null)
 		}
-		backgroundColor(Color("var(--landing-accent-strong)"))
+		backgroundColor(LandingVars.AccentStrong.value())
 		display(DisplayStyle.InlineBlock)
 		height(1.1.cssRem)
 		marginLeft(1.px)
@@ -975,21 +985,21 @@ object FeatureVisualsStyle : StyleSheet() {
 	val enumBadge by style {
 		backgroundColor(rgba(254, 201, 7, 0.18))
 		borderRadius(0.25.cssRem)
-		color(Color("var(--landing-gold)"))
+		color(LandingVars.Gold.value())
 		fontSize(0.7.cssRem)
 		fontWeight(700)
 		padding(0.px, 0.3.cssRem)
 	}
 
 	val suggestionName by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		flexGrow(1)
 
-		"b" style { color(Color("var(--landing-accent-strong)")) }
+		"b" style { color(LandingVars.AccentStrong.value()) }
 	}
 
 	val suggestionType by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontSize(0.75.cssRem)
 	}
 
@@ -1004,17 +1014,17 @@ object FeatureVisualsStyle : StyleSheet() {
 	val tooltipPlacement by style {
 		marginRight(1.cssRem)
 		marginTop((-3).cssRem)
-		property("align-self", "flex-end")
+		alignSelf(AlignSelf.FlexEnd)
 
 		smMax(self) {
 			marginRight(0.px)
 			marginTop((-1).cssRem)
-			property("align-self", "center")
+			alignSelf(AlignSelf.Center)
 		}
 	}
 
 	val chatScreen by style {
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(1.cssRem)
 		minHeight(9.cssRem)
 		overflow(Overflow.Hidden)
@@ -1029,7 +1039,7 @@ object FeatureVisualsStyle : StyleSheet() {
 		left(9.cssRem)
 		marginTop(0.px)
 		position(Position.Absolute)
-		property("align-self", "auto")
+		alignSelf(AlignSelf.Auto)
 		top(1.cssRem)
 	}
 
@@ -1051,13 +1061,13 @@ object FeatureVisualsStyle : StyleSheet() {
 	val treeRow by style {
 		alignItems(AlignItems.Center)
 		borderRadius(0.4.cssRem)
-		color(Color("var(--landing-text)"))
+		color(LandingVars.Text.value())
 		display(DisplayStyle.Flex)
 		lineHeight(1.1.cssRem)
 		whiteSpace(WhiteSpace.NoWrap)
 
 		"svg" style {
-			color(Color("var(--landing-accent)"))
+			color(LandingVars.Accent.value())
 			flexShrink(0)
 			marginRight(0.5.cssRem)
 		}
@@ -1075,20 +1085,20 @@ object FeatureVisualsStyle : StyleSheet() {
 	val treeOpen by style {
 		border(1.px, LineStyle.Solid, Color("rgba(8, 182, 214, 0.45)"))
 		borderRadius(999.px)
-		color(Color("var(--landing-accent-strong)"))
+		color(LandingVars.AccentStrong.value())
 		fontSize(0.65.cssRem)
-		property("margin-left", "auto")
+		marginLeft(auto)
 		marginRight(0.4.cssRem)
 		padding(0.px, 0.45.cssRem)
 		textTransform(TextTransform.Uppercase)
 	}
 
 	val treeDir by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 	}
 
 	val toastPlacement by style {
-		property("align-self", "flex-end")
+		alignSelf(AlignSelf.FlexEnd)
 	}
 
 	val mapRow by style {
@@ -1106,9 +1116,9 @@ object FeatureVisualsStyle : StyleSheet() {
 		padding(gui(7))
 		position(Position.Relative)
 		width(gui(142))
-		property("background", "${mcTexture("map/map_background")} 0 0 / 100% 100%")
-		property("box-sizing", "border-box")
-		property("image-rendering", "pixelated")
+		mcBackground("map/map_background")
+		boxSizing(BoxSizing.BorderBox)
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val mapCanvas by style {
@@ -1116,13 +1126,13 @@ object FeatureVisualsStyle : StyleSheet() {
 		display(DisplayStyle.Block)
 		height(100.percent)
 		width(100.percent)
-		property("image-rendering", "pixelated")
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val mapTooltip by style {
 		position(Position.Absolute)
 		zIndex(1)
-		property("pointer-events", "none")
+		pointerEvents(PointerEvents.None)
 	}
 
 	val knobs by style {
@@ -1138,7 +1148,7 @@ object FeatureVisualsStyle : StyleSheet() {
 	}
 
 	val knobLabel by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontFamily(MONO, "monospace")
 		fontSize(0.75.cssRem)
 	}
@@ -1155,34 +1165,68 @@ object FeatureVisualsStyle : StyleSheet() {
 		width(100.percent)
 	}
 
+	/** One direction of the block grid drawn over the ground: 1 px lines every 2.2rem, across [angle]. */
+	private fun groundGrid(angle: CSSAngleNumericValue) = Background.of(
+		BackgroundImage.of(
+			repeatingLinearGradient(angle) {
+				add(rgba(0, 0, 0, 0.12), 0.px, 1.px)
+				add(Color.transparent, 1.px, 2.2.cssRem)
+			}
+		),
+		BackgroundRepeat.NoRepeat,
+		BackgroundSize.of(100.percent, 45.percent),
+		BackgroundPosition.of(CSSPosition.Bottom),
+	)
+
 	val scene by style {
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(1.cssRem)
 		boxShadow(0.px, 24.px, 60.px, 0.px, rgba(5, 12, 20, 0.5))
 		overflow(Overflow.Hidden)
 		position(Position.Relative)
-		property("aspect-ratio", "16 / 10")
-		// Block grid lines only cover the ground (bottom 45%), layered over the sky/grass/dirt gradient.
-		property(
-			"background",
-			"repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.12) 0 1px, transparent 1px 2.2rem) bottom / 100% 45% no-repeat, " +
-				"repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.12) 0 1px, transparent 1px 2.2rem) bottom / 100% 45% no-repeat, " +
-				"linear-gradient(180deg, #6ea8ff 0%, #b3d3ff 55%, #6fb144 55%, #4f8a2f 62%, #7a5433 62%, #5a3d26 100%)"
+		aspectRatio(AspectRatio.of(16, 10))
+		// Block grid lines only cover the ground (bottom 45%), layered over the sky/grass/dirt gradient. `Background.list` goes bottom-to-top.
+		background(
+			Background.list(
+				Background.of(
+					BackgroundImage.of(
+						linearGradient(180.deg) {
+							add(Color("#6ea8ff"), 0.percent)
+							add(Color("#b3d3ff"), 55.percent)
+							add(Color("#6fb144"), 55.percent)
+							add(Color("#4f8a2f"), 62.percent)
+							add(Color("#7a5433"), 62.percent)
+							add(Color("#5a3d26"), 100.percent)
+						}
+					)
+				),
+				groundGrid(180.deg),
+				groundGrid(90.deg),
+			)
 		)
 		width(100.percent)
 	}
 
 	val nightScene by style {
-		property("background", "radial-gradient(circle at 50% 120%, #1c2a3a 0%, #0b1017 70%)")
+		background(
+			Background.of(
+				BackgroundImage.of(
+					radialGradient(RadialGradient.Shape.Circle(), CSSPosition(50.percent, 120.percent)) {
+						add(Color("#1c2a3a"), 0.percent)
+						add(Color("#0b1017"), 70.percent)
+					}
+				)
+			)
+		)
 	}
 
 	/** The frame of scenes drawing the world through [McUiStyle.world]. */
 	val mcScene by style {
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(1.cssRem)
 		boxShadow(0.px, 24.px, 60.px, 0.px, rgba(5, 12, 20, 0.5))
 		overflow(Overflow.Hidden)
-		property("aspect-ratio", "16 / 10")
+		aspectRatio(AspectRatio.of(16, 10))
 	}
 
 	val dialogScene by style {
@@ -1206,7 +1250,7 @@ object FeatureVisualsStyle : StyleSheet() {
 		opacity(0)
 		position(Position.Absolute)
 		transition(1.5.s, "opacity")
-		property("inset", 0.px)
+		inset(0.px)
 	}
 
 	val nightOverlayVisible by style {
@@ -1217,29 +1261,29 @@ object FeatureVisualsStyle : StyleSheet() {
 	val hudTop by style {
 		position(Position.Absolute)
 		top(gui(3))
-		property("left", PIXEL_HALF)
-		property("transform", pixelTranslate("-50%"))
+		left(Left.of(PIXEL_HALF))
+		pixelTranslate((-50).percent)
 	}
 
 	val hudTitle by style {
 		position(Position.Absolute)
-		property("left", PIXEL_HALF)
-		property("top", PIXEL_HALF)
-		property("transform", pixelTranslate("-50%", gui(-40).toString()))
+		left(Left.of(PIXEL_HALF))
+		top(Top.of(PIXEL_HALF))
+		pixelTranslate((-50).percent, gui(-40))
 	}
 
 	val hudSubtitle by style {
 		position(Position.Absolute)
-		property("left", PIXEL_HALF)
-		property("top", PIXEL_HALF)
-		property("transform", pixelTranslate("-50%", gui(10).toString()))
+		left(Left.of(PIXEL_HALF))
+		top(Top.of(PIXEL_HALF))
+		pixelTranslate((-50).percent, gui(10))
 	}
 
 	val hudSidebar by style {
 		position(Position.Absolute)
 		right(gui(1))
-		property("top", PIXEL_HALF)
-		property("transform", pixelTranslate("0px", "-50%"))
+		top(Top.of(PIXEL_HALF))
+		pixelTranslate(0.px, (-50).percent)
 	}
 
 	val hudChat by style {
@@ -1256,8 +1300,8 @@ object FeatureVisualsStyle : StyleSheet() {
 	val hudHotbar by style {
 		bottom(0.px)
 		position(Position.Absolute)
-		property("left", PIXEL_HALF)
-		property("transform", pixelTranslate("-50%"))
+		left(Left.of(PIXEL_HALF))
+		pixelTranslate((-50).percent)
 	}
 
 	val stateMachine by style {
@@ -1268,7 +1312,7 @@ object FeatureVisualsStyle : StyleSheet() {
 	}
 
 	val stateArrow by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 	}
 
 	val controls by style {
@@ -1279,10 +1323,10 @@ object FeatureVisualsStyle : StyleSheet() {
 
 
 	val pill by style {
-		backgroundColor(Color("var(--landing-card)"))
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		backgroundColor(LandingVars.Card.value())
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(999.px)
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		cursor(Cursor.Pointer)
 		fontFamily(MONO, "monospace")
 		fontSize(0.8.cssRem)
@@ -1292,7 +1336,7 @@ object FeatureVisualsStyle : StyleSheet() {
 	val pillActive by style {
 		backgroundColor(rgba(254, 178, 62, 0.15))
 		borderColor(Color("rgba(254, 178, 62, 0.6)"))
-		color(Color("var(--landing-text)"))
+		color(LandingVars.Text.value())
 	}
 
 	@OptIn(ExperimentalComposeWebApi::class)
@@ -1313,21 +1357,21 @@ object FeatureVisualsStyle : StyleSheet() {
 		marginTop((-8).px)
 		position(Position.Absolute)
 		transition(0.7.s, "left", "top", "opacity")
-		property("background-size", "contain")
-		property("image-rendering", "pixelated")
-		property("transition-timing-function", "cubic-bezier(0.22, 1, 0.36, 1)")
+		backgroundSize(BackgroundSize.Contain)
+		imageRendering(ImageRendering.Pixelated)
+		transitionTimingFunction(AnimationTimingFunction.cubicBezier(0.22, 1.0, 0.36, 1.0))
 		width(16.px)
 	}
 
 	val flame by style {
-		property("background-image", mcTexture("particle/flame"))
-		property("filter", "drop-shadow(0 0 4px rgba(255, 140, 30, 0.8))")
+		backgroundImage(mcTexture("particle/flame"))
+		filter(Filter.of(dropShadow(0.px, 0.px, 4.px, rgba(255, 140, 30, 0.8))))
 	}
 
 	/** First frame of the `end_rod` particle animation. */
 	val endRod by style {
-		property("background-image", mcTexture("particle/glitter_7"))
-		property("filter", "drop-shadow(0 0 4px rgba(220, 210, 255, 0.8))")
+		backgroundImage(mcTexture("particle/glitter_7"))
+		filter(Filter.of(dropShadow(0.px, 0.px, 4.px, rgba(220, 210, 255, 0.8))))
 	}
 
 	val player by style {
@@ -1347,19 +1391,24 @@ object FeatureVisualsStyle : StyleSheet() {
 		top(22.percent)
 		transition(0.2.s, "box-shadow")
 		width(7.5.percent)
-		property("background", "${mcTexture("block/target_side")} center / cover")
-		property("image-rendering", "pixelated")
+		mcBackground("block/target_side", size = BackgroundSize.Cover, position = CSSPosition.Center)
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val blockHit by style {
-		property("box-shadow", "0 0 0 3px #fff, 0 0 24px 6px rgba(255, 255, 255, 0.5)")
+		boxShadow(
+			BoxShadow.list(
+				BoxShadow.of(blurRadius = 0.px, spreadRadius = 3.px, color = Color("#fff")),
+				BoxShadow.of(blurRadius = 24.px, spreadRadius = 6.px, color = rgba(255, 255, 255, 0.5)),
+			)
+		)
 	}
 
 	val sceneLabel by style {
 		backgroundColor(rgba(15, 20, 27, 0.8))
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(0.4.cssRem)
-		color(Color("var(--landing-accent-strong)"))
+		color(LandingVars.AccentStrong.value())
 		fontFamily(MONO, "monospace")
 		fontSize(0.72.cssRem)
 		padding(0.2.cssRem, 0.5.cssRem)
@@ -1372,7 +1421,7 @@ object FeatureVisualsStyle : StyleSheet() {
 	}
 
 	val terminal by style {
-		color(Color("var(--landing-text)"))
+		color(LandingVars.Text.value())
 		fontFamily(MONO, "monospace")
 		fontSize(0.85.cssRem)
 		lineHeight(1.8.number)
@@ -1382,11 +1431,11 @@ object FeatureVisualsStyle : StyleSheet() {
 	}
 
 	val prompt by style {
-		color(Color("var(--landing-accent-strong)"))
+		color(LandingVars.AccentStrong.value())
 	}
 
 	val muted by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 	}
 
 	val success by style {
@@ -1402,10 +1451,10 @@ object FeatureVisualsStyle : StyleSheet() {
 	}
 
 	val targetBadge by style {
-		backgroundColor(Color("var(--landing-card)"))
+		backgroundColor(LandingVars.Card.value())
 		border(1.px, LineStyle.Solid, Color("rgba(254, 201, 7, 0.35)"))
 		borderRadius(999.px)
-		color(Color("var(--landing-text)"))
+		color(LandingVars.Text.value())
 		fontFamily(MONO, "monospace")
 		fontSize(0.8.cssRem)
 		padding(0.3.cssRem, 0.8.cssRem)

@@ -1,15 +1,16 @@
 package io.github.ayfri.kore.website.components.common
 
 import androidx.compose.runtime.Composable
-import com.varabyte.kobweb.compose.css.VerticalAlign
-import com.varabyte.kobweb.compose.css.verticalAlign
+import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.compose.css.functions.url
 import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.Span
 
 /** Vanilla textures from misode/mcmeta, hotlinked so Mojang assets never land in this repo. */
 const val MC_TEXTURES = "https://raw.githubusercontent.com/misode/mcmeta/assets/assets/minecraft/textures"
 
-fun mcTexture(path: String) = "url('$MC_TEXTURES/$path.png')"
+fun mcTexture(path: String) = url("$MC_TEXTURES/$path.png")
 
 /**
  * An inline pixelated vanilla texture, [path] being relative to `textures/` without extension.
@@ -24,7 +25,7 @@ fun McSprite(path: String, label: String) {
 		attr("aria-label", label)
 		attr("role", "img")
 		attr("title", label)
-		style { property("background-image", mcTexture(path)) }
+		style { backgroundImage(mcTexture(path)) }
 	})
 }
 
@@ -35,9 +36,9 @@ object McSpriteStyle : StyleSheet() {
 		marginRight(0.35.em)
 		verticalAlign(VerticalAlign.Middle)
 		width(1.5.em)
-		property("background-position", "top")
-		property("background-repeat", "no-repeat")
-		property("background-size", "100% auto")
-		property("image-rendering", "pixelated")
+		backgroundPosition(BackgroundPosition.of(CSSPosition.Top))
+		backgroundRepeat(BackgroundRepeat.NoRepeat)
+		backgroundSize(BackgroundSize.of(100.percent, auto))
+		imageRendering(ImageRendering.Pixelated)
 	}
 }

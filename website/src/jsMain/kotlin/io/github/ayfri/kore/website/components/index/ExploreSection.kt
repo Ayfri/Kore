@@ -3,6 +3,7 @@ package io.github.ayfri.kore.website.components.index
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideArrowUpRight
+import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.components.features.FeatureSectionsStyle
 import io.github.ayfri.kore.website.components.features.featureCategories
 import io.github.ayfri.kore.website.components.features.featureStats
@@ -55,8 +56,8 @@ object ExploreSectionStyle : StyleSheet() {
 
 	/** Tiles share 1 px borders like the stats above, drawn by the grid background showing through the gaps. */
 	val grid by style {
-		backgroundColor(Color("var(--landing-border)"))
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		backgroundColor(LandingVars.Border.value())
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(1.2.cssRem)
 		display(DisplayStyle.Grid)
 		gap(1.px)
@@ -74,8 +75,8 @@ object ExploreSectionStyle : StyleSheet() {
 
 	@OptIn(ExperimentalComposeWebApi::class)
 	val tile by style {
-		backgroundColor(Color("var(--landing-card)"))
-		color(Color("var(--landing-text)"))
+		backgroundColor(LandingVars.Card.value())
+		color(LandingVars.Text.value())
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
 		gap(0.7.cssRem)
@@ -86,7 +87,7 @@ object ExploreSectionStyle : StyleSheet() {
 		transition(0.2.s, "background-color")
 
 		"> svg" style {
-			color(Color("var(--landing-muted)"))
+			color(LandingVars.Muted.value())
 			position(Position.Absolute)
 			right(1.cssRem)
 			top(1.2.cssRem)
@@ -94,19 +95,19 @@ object ExploreSectionStyle : StyleSheet() {
 		}
 
 		hover(self) style {
-			backgroundColor(Color("var(--landing-surface-2)"))
-			color(Color("var(--landing-text)"))
+			backgroundColor(LandingVars.Pane.value())
+			color(LandingVars.Text.value())
 		}
 
 		child(hover(self), type("svg")) style {
-			color(Color("var(--landing-accent-strong)"))
+			color(LandingVars.AccentStrong.value())
 			transform { translate(2.px, (-2).px) }
 		}
 	}
 
 	val label by style {
 		alignItems(org.jetbrains.compose.web.css.AlignItems.Center)
-		color(Color("var(--landing-accent)"))
+		color(LandingVars.Accent.value())
 		display(DisplayStyle.Flex)
 		fontSize(0.85.cssRem)
 		fontWeight(500)

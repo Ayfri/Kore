@@ -17,7 +17,9 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.await
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.varabyte.kobweb.compose.css.setVariable
 import org.jetbrains.compose.web.css.Style
+import org.jetbrains.compose.web.css.fr
 import org.jetbrains.compose.web.css.height
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.Div
@@ -498,7 +500,7 @@ fun PlaygroundPage() {
 							style {
 								// A ratio rather than a column list, so the narrow-screen media query can still collapse to one column.
 								val split = PlaygroundLayout.splitFraction
-								property("--playground-split", "${split / (1 - split)}fr")
+								setVariable(PlaygroundVars.Split, (split / (1 - split)).fr)
 							}
 						}) {
 							EditorPane(

@@ -3,6 +3,7 @@ package io.github.ayfri.kore.website.components.common
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.compose.css.functions.colorMix
+import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.keywords.auto
@@ -66,10 +67,10 @@ object TabsStyle : StyleSheet() {
 	val container by style {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(1.2.cssRem)
 		overflow(Overflow.Hidden)
-		backgroundColor(Color("var(--landing-surface-2)"))
+		backgroundColor(LandingVars.Pane.value())
 		boxShadow(0.px, 20.px, 50.px, 0.px, rgba(5, 12, 20, 0.55))
 	}
 
@@ -78,11 +79,11 @@ object TabsStyle : StyleSheet() {
 		backgroundColor(
 			colorMix(
 				ColorInterpolationMethod.Srgb,
-				Color("var(--landing-surface)") to 55.percent,
+				LandingVars.Surface.value() to 55.percent,
 				Color.transparent
 			)
 		)
-		borderBottom(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		borderBottom(1.px, LineStyle.Solid, LandingVars.Border.value())
 		padding(0.35.cssRem)
 		gap(0.35.cssRem)
 
@@ -105,13 +106,13 @@ object TabsStyle : StyleSheet() {
 		backgroundColor(
 			colorMix(
 				ColorInterpolationMethod.Srgb,
-				Color("var(--landing-text)") to 4.percent,
+				LandingVars.Text.value() to 4.percent,
 				Color.transparent
 			)
 		)
 		borderRadius(0.4.cssRem)
 		border(0.px)
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		cursor(Cursor.Pointer)
 		fontFamily("JetBrains Mono", "IBM Plex Mono", "Consolas", "monospace")
 		fontSize(0.88.cssRem)
@@ -124,11 +125,11 @@ object TabsStyle : StyleSheet() {
 			backgroundColor(
 				colorMix(
 					ColorInterpolationMethod.Srgb,
-					Color("var(--landing-accent)") to 20.percent,
+					LandingVars.Accent.value() to 20.percent,
 					Color.transparent
 				)
 			)
-			color(Color("var(--landing-text)"))
+			color(LandingVars.Text.value())
 		}
 
 		lgMax(self) {
@@ -146,11 +147,11 @@ object TabsStyle : StyleSheet() {
 		backgroundColor(
 			colorMix(
 				ColorInterpolationMethod.Srgb,
-				Color("var(--landing-accent)") to 30.percent,
+				LandingVars.Accent.value() to 30.percent,
 				Color.transparent
 			)
 		)
-		color(Color("var(--landing-text)"))
+		color(LandingVars.Text.value())
 	}
 
 	val contentContainer by style {

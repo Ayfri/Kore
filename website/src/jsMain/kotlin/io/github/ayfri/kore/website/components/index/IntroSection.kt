@@ -6,6 +6,7 @@ import com.varabyte.kobweb.silk.components.icons.lucide.LucideArrowRight
 import com.varabyte.kobweb.silk.components.icons.lucide.LucidePackageCheck
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideRepeat
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideShieldCheck
+import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.components.features.FeatureSectionsStyle
 import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.css.*
@@ -73,7 +74,7 @@ object IntroSectionStyle : StyleSheet() {
 	}
 
 	val benefit by style {
-		borderTop(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		borderTop(1.px, LineStyle.Solid, LandingVars.Border.value())
 		paddingTop(1.5.cssRem)
 
 		"h3" style {
@@ -82,7 +83,7 @@ object IntroSectionStyle : StyleSheet() {
 		}
 
 		"p" style {
-			color(Color("var(--landing-muted)"))
+			color(LandingVars.Muted.value())
 			fontSize(1.cssRem)
 			lineHeight(1.6.number)
 			margin(0.px)
@@ -93,7 +94,7 @@ object IntroSectionStyle : StyleSheet() {
 		alignItems(AlignItems.Center)
 		backgroundColor(rgba(8, 182, 214, 0.12))
 		borderRadius(0.6.cssRem)
-		color(Color("var(--landing-accent-strong)"))
+		color(LandingVars.AccentStrong.value())
 		display(DisplayStyle.Flex)
 		fontSize(1.2.cssRem)
 		height(2.4.cssRem)

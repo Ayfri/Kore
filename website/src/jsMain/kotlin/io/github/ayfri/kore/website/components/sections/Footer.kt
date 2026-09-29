@@ -16,6 +16,7 @@ import io.github.ayfri.kore.website.utils.*
 import kotlin.js.Date
 import org.jetbrains.compose.web.attributes.ATarget
 import org.jetbrains.compose.web.attributes.target
+import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.AlignSelf
@@ -171,7 +172,7 @@ object FooterStyle : StyleSheet() {
 		gap(1.cssRem)
 
 		mdMax(self) {
-			property("grid-column", "1 / -1")
+			gridColumn(1, -1)
 		}
 	}
 
@@ -213,6 +214,7 @@ object FooterStyle : StyleSheet() {
 		}
 	}
 
+	@OptIn(ExperimentalComposeWebApi::class)
 	val coffee by style {
 		alignItems(AlignItems.Center)
 		alignSelf(AlignSelf.FlexStart)
@@ -229,7 +231,7 @@ object FooterStyle : StyleSheet() {
 		hover(self) style {
 			backgroundColor(Color("#ffe433"))
 			color(Color("#0d0c22"))
-			property("transform", "translateY(-1px)")
+			transform { translateY((-1).px) }
 		}
 	}
 
@@ -290,7 +292,7 @@ object FooterStyle : StyleSheet() {
 			color(GlobalStyle.altTextColor)
 			textDecorationColor(Color.transparent)
 			textDecorationLine(TextDecorationLine.Underline)
-			property("text-underline-offset", "3px")
+			textUnderlineOffset(TextUnderlineOffset.of(3.px))
 			transition(0.15.s, "color", "text-decoration-color")
 
 			hover(self) style {
@@ -308,6 +310,6 @@ object FooterStyle : StyleSheet() {
 		color(Color("#cf3f3f"))
 		fill(Color("#cf3f3f"))
 		fontSize(0.85.em)
-		property("vertical-align", "-0.1em")
+		verticalAlign((-0.1).em)
 	}
 }

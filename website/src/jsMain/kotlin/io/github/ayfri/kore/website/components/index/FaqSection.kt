@@ -4,10 +4,13 @@ import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideChevronRight
 import io.github.ayfri.kore.website.DISCORD_LINK
+import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.components.common.Markdown
 import io.github.ayfri.kore.website.components.features.FeatureSectionsStyle
+import io.github.ayfri.kore.website.utils.borderLeftColor
 import io.github.ayfri.kore.website.utils.marginX
 import io.github.ayfri.kore.website.utils.mdMax
+import io.github.ayfri.kore.website.utils.tapHighlightColor
 import io.github.ayfri.kore.website.utils.transition
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
@@ -123,13 +126,13 @@ object FaqSectionStyle : StyleSheet() {
 	}
 
 	val faqHint by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontSize(1.1.cssRem)
 		margin(0.px)
 	}
 
 	val faq by style {
-		borderTop(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		borderTop(1.px, LineStyle.Solid, LandingVars.Border.value())
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
 		marginX(auto)
@@ -138,17 +141,17 @@ object FaqSectionStyle : StyleSheet() {
 	}
 
 	val faqItem by style {
-		borderBottom(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		borderBottom(1.px, LineStyle.Solid, LandingVars.Border.value())
 		overflow(Overflow.Hidden)
 		padding(1.1.cssRem, 0.4.cssRem)
-		property("border-left", "2px solid transparent")
+		borderLeft(2.px, LineStyle.Solid, Color.transparent)
 		transition(0.25.s, "border-color", "background-color", "padding")
 	}
 
 	val faqItemOpened by style {
 		backgroundColor(rgba(8, 182, 214, 0.05))
 		paddingLeft(1.cssRem)
-		property("border-left-color", "var(--landing-accent-strong)")
+		borderLeftColor(LandingVars.AccentStrong.value())
 	}
 
 	val questionButton by style {
@@ -160,16 +163,16 @@ object FaqSectionStyle : StyleSheet() {
 		backgroundColor(Color.transparent)
 		border(0.px, LineStyle.Solid, Color.transparent)
 		padding(0.px)
-		color(Color("var(--landing-text)"))
+		color(LandingVars.Text.value())
 		cursor(Cursor.Pointer)
 		textAlign(TextAlign.Left)
 		fontFamily("inherit")
 		fontSize(1.05.cssRem)
 		fontWeight(600)
-		property("-webkit-tap-highlight-color", "transparent")
+		tapHighlightColor(Color.transparent)
 
 		hover(self) style {
-			color(Color("var(--landing-accent)"))
+			color(LandingVars.Accent.value())
 		}
 
 		mdMax(self) {
@@ -182,7 +185,7 @@ object FaqSectionStyle : StyleSheet() {
 	}
 
 	val questionIndicator by style {
-		color(Color("var(--landing-accent)"))
+		color(LandingVars.Accent.value())
 		display(DisplayStyle.Flex)
 		alignItems(org.jetbrains.compose.web.css.AlignItems.Center)
 		fontSize(1.6.cssRem)
@@ -237,7 +240,7 @@ object FaqSectionStyle : StyleSheet() {
 	val answer by style {
 		fontSize(1.02.cssRem)
 		fontWeight(FontWeight.Normal)
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		lineHeight(1.6.number)
 		marginTop(0.8.cssRem)
 		marginBottom(0.px)

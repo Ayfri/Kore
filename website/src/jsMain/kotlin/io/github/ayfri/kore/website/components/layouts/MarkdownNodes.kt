@@ -6,6 +6,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.ariaHidden
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideHash
 import io.github.ayfri.kore.website.components.common.BrandIcon
 import org.jetbrains.compose.web.attributes.AttrsScope
+import org.jetbrains.compose.web.css.textAlign
 import org.jetbrains.compose.web.dom.*
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLHeadingElement
@@ -42,7 +43,7 @@ fun InlineCode(text: String) = Code { Text(text) }
 fun MarkdownLeaf(tag: String, text: String, code: Boolean = false, href: String? = null, align: String? = null) {
 	TagElement<HTMLElement>(tag, {
 		href?.let { attr("href", it) }
-		align?.let { style { property("text-align", it) } }
+		align?.let { style { textAlign(it) } }
 	}) {
 		if (code) InlineCode(text) else Text(text)
 	}

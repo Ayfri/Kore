@@ -2,9 +2,12 @@ package io.github.ayfri.kore.website.components.index
 
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.compose.css.functions.RadialGradient
+import com.varabyte.kobweb.compose.css.functions.radialGradient
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideBookOpenText
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideFlaskConical
 import io.github.ayfri.kore.website.DISCORD_LINK
+import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.GITHUB_LINK
 import io.github.ayfri.kore.website.components.common.*
 import io.github.ayfri.kore.website.utils.*
@@ -57,7 +60,7 @@ fun CtaSection() {
 object CtaSectionStyle : StyleSheet() {
 	val cta by style {
 		alignItems(AlignItems.Center)
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(1.4.cssRem)
 		boxSizing(BoxSizing.BorderBox)
 		display(DisplayStyle.Flex)
@@ -68,9 +71,18 @@ object CtaSectionStyle : StyleSheet() {
 		padding(3.5.cssRem, 2.cssRem, 2.cssRem)
 		textAlign(TextAlign.Center)
 		width(90.percent)
-		property(
-			"background",
-			"radial-gradient(ellipse at 50% 0%, rgba(8, 182, 214, 0.16) 0%, transparent 60%), var(--landing-card)"
+		background(
+			Background.list(
+				LandingVars.Card.value(),
+				Background.of(
+					BackgroundImage.of(
+						radialGradient(RadialGradient.Shape.Ellipse(), CSSPosition(50.percent, 0.percent)) {
+							add(rgba(8, 182, 214, 0.16), 0.percent)
+							add(Color.transparent, 60.percent)
+						}
+					)
+				),
+			)
 		)
 
 		"h2" style {
@@ -82,7 +94,7 @@ object CtaSectionStyle : StyleSheet() {
 		}
 
 		"p" style {
-			color(Color("var(--landing-muted)"))
+			color(LandingVars.Muted.value())
 			fontSize(1.05.cssRem)
 			margin(0.px, 0.px, 1.8.cssRem)
 			maxWidth(38.cssRem)
@@ -104,7 +116,7 @@ object CtaSectionStyle : StyleSheet() {
 	}
 
 	val community by style {
-		borderTop(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		borderTop(1.px, LineStyle.Solid, LandingVars.Border.value())
 		display(DisplayStyle.Flex)
 		flexWrap(FlexWrap.Wrap)
 		gap(0.5.cssRem, 1.8.cssRem)
@@ -116,13 +128,13 @@ object CtaSectionStyle : StyleSheet() {
 
 	val communityLink by style {
 		alignItems(AlignItems.Center)
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		display(DisplayStyle.Flex)
 		gap(0.5.cssRem)
 		transition(0.2.s, "color")
 
 		hover(self) style {
-			color(Color("var(--landing-text)"))
+			color(LandingVars.Text.value())
 		}
 	}
 

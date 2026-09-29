@@ -6,6 +6,7 @@ import io.github.ayfri.kore.website.components.common.CodeBlock
 import io.github.ayfri.kore.website.externals.Prism
 import io.github.ayfri.kore.website.utils.initMCFunctionHighlighting
 import kotlinx.browser.document
+import com.varabyte.kobweb.compose.css.setVariable
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.width
 import org.jetbrains.compose.web.dom.*
@@ -205,7 +206,7 @@ fun OutputPanel(
 						if (wrap) classes(PlaygroundStyle.previewWrapped)
 						id(PREVIEW_ID)
 						// Two digits at least, so the code does not shift sideways between two files under 100 lines.
-						previewText?.let { text -> style { property("--line-digits", maxOf(2, (text.count { it == '\n' } + 1).toString().length)) } }
+						previewText?.let { text -> style { setVariable(PlaygroundVars.LineDigits, maxOf(2, (text.count { it == '\n' } + 1).toString().length)) } }
 					}) {
 						if (selected != null && previewText != null) {
 							// Prism rewrites the code element's children, detaching the text node Compose owns, so the

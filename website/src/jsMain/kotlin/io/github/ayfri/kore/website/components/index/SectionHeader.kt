@@ -2,6 +2,7 @@ package io.github.ayfri.kore.website.components.index
 
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
+import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.keywords.auto
@@ -52,7 +53,7 @@ object SectionHeaderStyle : StyleSheet() {
 	}
 
 	val subtitle by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontSize(1.1.cssRem)
 		margin(0.px)
 		textWrap(TextWrap.Pretty)

@@ -3,6 +3,7 @@ package io.github.ayfri.kore.website.components.updates
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
 import io.github.ayfri.kore.website.CodeThemeStyle
+import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.CodeBlock
 import io.github.ayfri.kore.website.externals.MarkedToken
@@ -108,7 +109,7 @@ object MarkdownRendererStyle : StyleSheet() {
 		}
 
 		":is(h4, h5, h6)" style {
-			color(Color("var(--landing-muted)"))
+			color(LandingVars.Muted.value())
 			fontSize(0.95.cssRem)
 		}
 
@@ -164,7 +165,7 @@ object MarkdownRendererStyle : StyleSheet() {
 		}
 
 		"li::marker" style {
-			color(Color("var(--landing-accent)"))
+			color(LandingVars.Accent.value())
 		}
 
 		"blockquote" style {

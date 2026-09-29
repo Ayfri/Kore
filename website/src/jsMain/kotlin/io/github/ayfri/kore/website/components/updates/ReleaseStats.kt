@@ -3,6 +3,7 @@ package io.github.ayfri.kore.website.components.updates
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.varabyte.kobweb.compose.css.*
+import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.JustifyContent
@@ -36,8 +37,8 @@ fun ReleaseStats(allReleases: List<GitHubRelease>) {
 
 object ReleaseStatsStyle : StyleSheet() {
 	val stats by style {
-		backgroundColor(Color("var(--landing-border)"))
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		backgroundColor(LandingVars.Border.value())
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(1.cssRem)
 		display(DisplayStyle.Grid)
 		gap(1.px)
@@ -51,7 +52,7 @@ object ReleaseStatsStyle : StyleSheet() {
 	}
 
 	val stat by style {
-		backgroundColor(Color("var(--landing-card)"))
+		backgroundColor(LandingVars.Card.value())
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
 		gap(0.15.cssRem)
@@ -60,7 +61,7 @@ object ReleaseStatsStyle : StyleSheet() {
 	}
 
 	val statValue by style {
-		color(Color("var(--landing-accent-strong)"))
+		color(LandingVars.AccentStrong.value())
 		fontFamily("JetBrains Mono", "monospace")
 		fontSize(1.2.cssRem)
 		fontWeight(700)
@@ -68,7 +69,7 @@ object ReleaseStatsStyle : StyleSheet() {
 	}
 
 	val statLabel by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontSize(0.78.cssRem)
 		whiteSpace(WhiteSpace.NoWrap)
 	}

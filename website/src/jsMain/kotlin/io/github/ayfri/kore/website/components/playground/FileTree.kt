@@ -10,6 +10,7 @@ import com.varabyte.kobweb.silk.components.icons.lucide.LucideFileText
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideFolder
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideFolderOpen
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideSquareTerminal
+import com.varabyte.kobweb.compose.css.setVariable
 import org.jetbrains.compose.web.css.cssRem
 import org.jetbrains.compose.web.css.paddingLeft
 import org.jetbrains.compose.web.dom.Button
@@ -127,7 +128,7 @@ private fun TreeLevel(
 
 				if (!isCollapsed) Div({
 					classes(PlaygroundStyle.treeGroup)
-					style { property("--tree-guide", (INDENT_BASE + depth * INDENT_STEP + CHEVRON_CENTER).cssRem) }
+					style { setVariable(PlaygroundVars.TreeGuide, (INDENT_BASE + depth * INDENT_STEP + CHEVRON_CENTER).cssRem) }
 				}) {
 					TreeLevel(node.children, depth + 1, selectedPath, collapsed, onSelect)
 				}

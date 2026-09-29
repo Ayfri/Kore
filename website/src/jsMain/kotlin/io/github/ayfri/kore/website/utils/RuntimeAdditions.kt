@@ -2,6 +2,7 @@ package io.github.ayfri.kore.website.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import io.github.ayfri.kore.website.HoverY
 import io.github.ayfri.kore.website.externals.Prism
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -47,8 +48,8 @@ private fun prepareHighlighting() {
 		val paddingTop = style.paddingTop.removeSuffix("px").toDouble()
 		val contentHeight = pre.scrollHeight - paddingTop - style.paddingBottom.removeSuffix("px").toDouble()
 		val y = event.clientY - pre.getBoundingClientRect().top - pre.clientTop + pre.scrollTop - paddingTop
-		if (y < 0 || y >= contentHeight) pre.style.removeProperty("--hover-y")
-		else pre.style.setProperty("--hover-y", "${paddingTop + floor(y / lineHeight) * lineHeight}px")
+		if (y < 0 || y >= contentHeight) pre.style.removeProperty("--${HoverY.name}")
+		else pre.style.setProperty("--${HoverY.name}", "${paddingTop + floor(y / lineHeight) * lineHeight}px")
 	})
 
 	highlightingReady = true

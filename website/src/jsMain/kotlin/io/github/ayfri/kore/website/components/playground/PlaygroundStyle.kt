@@ -3,8 +3,22 @@
 package io.github.ayfri.kore.website.components.playground
 
 import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.compose.css.functions.blur
+import com.varabyte.kobweb.compose.css.functions.calc
+import com.varabyte.kobweb.compose.css.functions.min
 import io.github.ayfri.kore.website.CodeThemeStyle
+import io.github.ayfri.kore.website.LandingVars
+import io.github.ayfri.kore.website.utils.borderBottomWidth
+import io.github.ayfri.kore.website.utils.borderTopColor
+import io.github.ayfri.kore.website.utils.clipPathInset
+import io.github.ayfri.kore.website.utils.fill
+import io.github.ayfri.kore.website.utils.important
+import io.github.ayfri.kore.website.utils.inset
 import io.github.ayfri.kore.website.utils.lgMax
+import io.github.ayfri.kore.website.utils.lineClamp
+import io.github.ayfri.kore.website.utils.marginLeft
+import io.github.ayfri.kore.website.utils.marginX
+import io.github.ayfri.kore.website.utils.marginY
 import io.github.ayfri.kore.website.utils.mdMax
 import io.github.ayfri.kore.website.utils.smMax
 import io.github.ayfri.kore.website.utils.transition
@@ -14,8 +28,22 @@ import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.css.keywords.auto
 
+/** CSS variables of the playground frame, set from its state or by hover rules. */
+object PlaygroundVars {
+	/** Digits of the previewed file's last line number, sizing the line-number gutter. */
+	val LineDigits by StyleVariable<Int>()
+
+	/** The editor column's share of the workspace, as an `fr` track. */
+	val Split by StyleVariable<CSSFlexNumericValue>()
+
+	val SplitterColor by StyleVariable<CSSColorValue>()
+
+	/** Left offset of a file tree row's indent guide. */
+	val TreeGuide by StyleVariable<CSSLengthNumericValue>()
+}
+
 /**
- * The playground's IDE frame, on top of the landing variables `HomePageStyle.page` defines (`--landing-*`).
+ * The playground's IDE frame, on top of the [LandingVars] `HomePageStyle.page` sets.
  *
  * Chrome (bars, sidebar, tab strips) sits on [chrome], code on [surface], the color Monaco's theme paints, so the
  * editors read as documents inside a darker shell.
@@ -23,15 +51,15 @@ import org.jetbrains.compose.web.css.keywords.auto
 object PlaygroundStyle : StyleSheet() {
 	private const val MONO = "JetBrains Mono"
 
-	private val accent = Color("var(--landing-accent)")
-	private val accentStrong = Color("var(--landing-accent-strong)")
+	private val accent = LandingVars.Accent.value()
+	private val accentStrong = LandingVars.AccentStrong.value()
 	private val border = rgba(151, 176, 202, 0.14)
 	private val chrome = Color("#0e131a")
 	private val chromeDeep = Color("#0b0f15")
-	private val muted = Color("var(--landing-muted)")
+	private val muted = LandingVars.Muted.value()
 	private val raised = Color("#18212c")
-	private val surface = Color("var(--landing-surface-2)")
-	private val text = Color("var(--landing-text)")
+	private val surface = LandingVars.Pane.value()
+	private val text = LandingVars.Text.value()
 
 	private val accentBorder = rgba(8, 182, 214, 0.45)
 	private val accentWash = rgba(8, 182, 214, 0.1)
@@ -52,8 +80,8 @@ object PlaygroundStyle : StyleSheet() {
 
 	/** A bar with no known fraction still has to look alive, so it sweeps instead of sitting still. */
 	val sweep by keyframes {
-		from { property("margin-left", "-40%") }
-		to { property("margin-left", "100%") }
+		from { marginLeft((-40).percent) }
+		to { marginLeft(100.percent) }
 	}
 
 	val pulse by keyframes {
@@ -87,13 +115,13 @@ object PlaygroundStyle : StyleSheet() {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
 		fontSize(0.8.cssRem)
-		property("height", "calc(100dvh - 4.5rem - 1px)")
+		height(calc { 100.dvh - 4.5.cssRem - 1.px })
 		minHeight(34.cssRem)
 		overflow(Overflow.Hidden)
 		position(Position.Relative)
 
 		lgMax(self) {
-			property("height", "auto")
+			height(auto)
 			minHeight(0.px)
 		}
 
@@ -107,9 +135,9 @@ object PlaygroundStyle : StyleSheet() {
 	}
 
 	val ideFocus by style {
-		property("border", "0")
+		border(0.px)
 		height(100.dvh)
-		property("inset", "0")
+		inset(0.px)
 		position(Position.Fixed)
 		zIndex(70)
 
@@ -120,12 +148,12 @@ object PlaygroundStyle : StyleSheet() {
 	}
 
 	val resizingColumns by style {
-		property("cursor", "col-resize")
+		cursor(Cursor.ColumnResize)
 		userSelect(UserSelect.None)
 	}
 
 	val resizingRows by style {
-		property("cursor", "row-resize")
+		cursor(Cursor.RowResize)
 		userSelect(UserSelect.None)
 	}
 
@@ -147,7 +175,7 @@ object PlaygroundStyle : StyleSheet() {
 	val workspace by style {
 		display(DisplayStyle.Grid)
 		flexGrow(1)
-		gridTemplateColumns("minmax(12rem, var(--playground-split, 1.2fr)) auto minmax(12rem, 1fr)")
+		gridTemplateColumns("minmax(12rem, ${PlaygroundVars.Split.value(1.2.fr)}) auto minmax(12rem, 1fr)")
 		minHeight(0.px)
 
 		lgMax(self) {
@@ -158,16 +186,16 @@ object PlaygroundStyle : StyleSheet() {
 
 	/** A hairline to the eye, a wider strip to the pointer. */
 	val splitter by style {
-		property("cursor", "col-resize")
+		cursor(Cursor.ColumnResize)
 		position(Position.Relative)
-		property("touch-action", "none")
+		touchAction(TouchAction.None)
 		width(5.px)
 		zIndex(2)
 
 		self + before style {
-			property("background-color", "var(--playground-splitter-color, rgba(151, 176, 202, 0.14))")
+			backgroundColor(PlaygroundVars.SplitterColor.value(border))
 			bottom(0.px)
-			property("content", "''")
+			content("")
 			left(2.px)
 			position(Position.Absolute)
 			top(0.px)
@@ -176,7 +204,7 @@ object PlaygroundStyle : StyleSheet() {
 		}
 
 		hover(self) style {
-			property("--playground-splitter-color", "var(--landing-accent)")
+			setVariable(PlaygroundVars.SplitterColor, accent)
 		}
 
 		lgMax(self) {
@@ -185,19 +213,19 @@ object PlaygroundStyle : StyleSheet() {
 	}
 
 	val splitterActive by style {
-		property("--playground-splitter-color", "var(--landing-accent-strong)")
+		setVariable(PlaygroundVars.SplitterColor, accentStrong)
 	}
 
 	val panelResizer by style {
 		flexShrink(0)
 		height(5.px)
-		property("cursor", "row-resize")
+		cursor(Cursor.RowResize)
 		position(Position.Relative)
-		property("touch-action", "none")
+		touchAction(TouchAction.None)
 
 		self + before style {
-			property("background-color", "var(--playground-splitter-color, rgba(151, 176, 202, 0.14))")
-			property("content", "''")
+			backgroundColor(PlaygroundVars.SplitterColor.value(border))
+			content("")
 			height(1.px)
 			left(0.px)
 			position(Position.Absolute)
@@ -207,7 +235,7 @@ object PlaygroundStyle : StyleSheet() {
 		}
 
 		hover(self) style {
-			property("--playground-splitter-color", "var(--landing-accent)")
+			setVariable(PlaygroundVars.SplitterColor, accent)
 		}
 
 		lgMax(self) {
@@ -221,7 +249,7 @@ object PlaygroundStyle : StyleSheet() {
 
 		lgMax(self) {
 			borderTop(1.px, LineStyle.Solid, border)
-			property("height", "16rem", important = true)
+			important { height(16.cssRem) }
 		}
 	}
 
@@ -230,7 +258,7 @@ object PlaygroundStyle : StyleSheet() {
 	}
 
 	val srOnly by style {
-		property("clip", "rect(0 0 0 0)")
+		clipPathInset(50.percent)
 		height(1.px)
 		overflow(Overflow.Hidden)
 		position(Position.Absolute)
@@ -244,11 +272,11 @@ object PlaygroundStyle : StyleSheet() {
 		alignItems(AlignItems.Center)
 		backgroundColor(rgba(255, 255, 255, 0.07))
 		border(1.px, LineStyle.Solid, rgba(255, 255, 255, 0.12))
-		property("border-bottom-width", "2px")
+		borderBottomWidth(2.px)
 		borderRadius(0.3.cssRem)
 		boxSizing(BoxSizing.BorderBox)
 		color(text)
-		property("display", "inline-flex")
+		display(DisplayStyle.LegacyInlineFlex)
 		fontFamily(MONO, "monospace")
 		fontSize(0.66.cssRem)
 		height(1.25.cssRem)
@@ -260,13 +288,13 @@ object PlaygroundStyle : StyleSheet() {
 
 	val keys by style {
 		alignItems(AlignItems.Center)
-		property("display", "inline-flex")
+		display(DisplayStyle.LegacyInlineFlex)
 		gap(0.2.cssRem)
 	}
 
 	val kotlinIcon by style {
 		color(CodeThemeStyle.keywordColor)
-		property("display", "inline-flex")
+		display(DisplayStyle.LegacyInlineFlex)
 		fontSize(0.9.cssRem)
 	}
 
@@ -277,7 +305,7 @@ object PlaygroundStyle : StyleSheet() {
 		borderRadius(0.4.cssRem)
 		color(muted)
 		cursor(Cursor.Pointer)
-		property("display", "inline-flex")
+		display(DisplayStyle.LegacyInlineFlex)
 		flexShrink(0)
 		height(1.75.cssRem)
 		justifyContent(JustifyContent.Center)
@@ -344,7 +372,7 @@ object PlaygroundStyle : StyleSheet() {
 		borderRadius(0.45.cssRem)
 		color(muted)
 		cursor(Cursor.Pointer)
-		property("display", "inline-flex")
+		display(DisplayStyle.LegacyInlineFlex)
 		fontSize(0.76.cssRem)
 		gap(0.4.cssRem)
 		padding(0.35.cssRem, 0.7.cssRem)
@@ -382,7 +410,7 @@ object PlaygroundStyle : StyleSheet() {
 		border(2.px, LineStyle.Solid, rgba(255, 255, 255, 0.15))
 		borderRadius(50.percent)
 		boxSizing(BoxSizing.BorderBox)
-		property("border-top-color", "currentColor")
+		borderTopColor(Color.currentColor)
 		display(DisplayStyle.InlineBlock)
 		flexShrink(0)
 		height(0.8.cssRem)
@@ -426,7 +454,7 @@ object PlaygroundStyle : StyleSheet() {
 		fontFamily("inherit")
 		fontSize(0.78.cssRem)
 		minWidth(0.px)
-		property("outline", "none")
+		outline("none")
 	}
 
 	// Title bar
@@ -505,7 +533,7 @@ object PlaygroundStyle : StyleSheet() {
 
 	val titleExampleName by style {
 		overflow(Overflow.Hidden)
-		property("text-overflow", "ellipsis")
+		textOverflow(TextOverflow.Ellipsis)
 		whiteSpace(WhiteSpace.NoWrap)
 	}
 
@@ -525,7 +553,7 @@ object PlaygroundStyle : StyleSheet() {
 		transition(0.15.s, "background-color", "opacity")
 
 		"svg" style {
-			property("fill", "currentColor")
+			fill(Color.currentColor)
 			height(0.85.cssRem)
 			width(0.85.cssRem)
 		}
@@ -627,7 +655,7 @@ object PlaygroundStyle : StyleSheet() {
 		(self + ".${toolButtonActive}" + before) style {
 			backgroundColor(accentStrong)
 			borderRadius(0.px, 2.px, 2.px, 0.px)
-			property("content", "''")
+			content("")
 			height(1.3.cssRem)
 			left((-0.3).cssRem)
 			position(Position.Absolute)
@@ -683,7 +711,7 @@ object PlaygroundStyle : StyleSheet() {
 
 		lgMax(self) {
 			bottom(0.px)
-			property("box-shadow", "1rem 0 2.5rem rgba(0, 0, 0, 0.5)")
+			boxShadow(1.cssRem, 0.px, 2.5.cssRem, color = rgba(0, 0, 0, 0.5))
 			left(2.9.cssRem)
 			position(Position.Absolute)
 			top(0.px)
@@ -702,7 +730,7 @@ object PlaygroundStyle : StyleSheet() {
 		lgMax(self) {
 			backgroundColor(rgba(4, 8, 12, 0.55))
 			display(DisplayStyle.Block)
-			property("inset", "0")
+			inset(0.px)
 			position(Position.Absolute)
 			zIndex(20)
 		}
@@ -785,7 +813,7 @@ object PlaygroundStyle : StyleSheet() {
 		fontFamily(MONO, "monospace")
 		fontSize(0.62.cssRem)
 		letterSpacing(0.px)
-		property("margin-left", "auto")
+		marginLeft(auto)
 		padding(0.05.cssRem, 0.4.cssRem)
 	}
 
@@ -814,7 +842,7 @@ object PlaygroundStyle : StyleSheet() {
 		flexShrink(0)
 		fontFamily(MONO, "monospace")
 		fontSize(0.66.cssRem)
-		property("font-variant-numeric", "tabular-nums")
+		fontVariantNumeric(FontVariantNumeric.TabularNums)
 		opacity(0.6)
 		transition(0.15.s, "color", "opacity")
 	}
@@ -837,10 +865,8 @@ object PlaygroundStyle : StyleSheet() {
 
 	val exampleDescription by style {
 		color(muted)
-		property("display", "-webkit-box")
 		fontSize(0.73.cssRem)
-		property("-webkit-box-orient", "vertical")
-		property("-webkit-line-clamp", "2")
+		lineClamp(2)
 		lineHeight(1.45.number)
 		overflow(Overflow.Hidden)
 	}
@@ -930,13 +956,13 @@ object PlaygroundStyle : StyleSheet() {
 	val switchThumb by style {
 		backgroundColor(Color("#f7f9fc"))
 		borderRadius(50.percent)
-		property("box-shadow", "0 1px 3px rgba(0, 0, 0, 0.4)")
-		property("height", "calc(1.05rem - 4px)")
+		boxShadow(0.px, 1.px, 3.px, color = rgba(0, 0, 0, 0.4))
+		height(calc { 1.05.cssRem - 4.px })
 		left(2.px)
 		position(Position.Absolute)
 		top(2.px)
 		transition(0.2.s, "transform")
-		property("width", "calc(1.05rem - 4px)")
+		width(calc { 1.05.cssRem - 4.px })
 	}
 
 	val stepper by style {
@@ -971,7 +997,7 @@ object PlaygroundStyle : StyleSheet() {
 
 	val paneMaximized by style {
 		height(100.dvh)
-		property("inset", "0")
+		inset(0.px)
 		maxHeight(100.dvh)
 		position(Position.Fixed)
 		zIndex(80)
@@ -985,7 +1011,7 @@ object PlaygroundStyle : StyleSheet() {
 	val tabStrip by style {
 		alignItems(AlignItems.Stretch)
 		backgroundColor(chrome)
-		property("box-shadow", "inset 0 -1px 0 $border")
+		boxShadow(0.px, (-1).px, 0.px, color = border, inset = true)
 		display(DisplayStyle.Flex)
 		flexShrink(0)
 		gap(0.5.cssRem)
@@ -1025,7 +1051,7 @@ object PlaygroundStyle : StyleSheet() {
 	/** Painted in the pane's color over the strip's bottom rule, so the tab reads as the pane's own top. */
 	val tabActive by style {
 		backgroundColor(surface)
-		property("box-shadow", "inset 0 2px 0 var(--landing-accent)")
+		boxShadow(0.px, 2.px, 0.px, color = accent, inset = true)
 		color(text)
 	}
 
@@ -1139,7 +1165,7 @@ object PlaygroundStyle : StyleSheet() {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
 		gap(0.6.cssRem)
-		property("inset", "0")
+		inset(0.px)
 		justifyContent(JustifyContent.Center)
 		position(Position.Absolute)
 	}
@@ -1189,16 +1215,16 @@ object PlaygroundStyle : StyleSheet() {
 		padding(0.px, 0.3.cssRem, 0.5.cssRem)
 	}
 
-	/** The children of an open folder, with the guide `--tree-guide` places under the folder's chevron. */
+	/** The children of an open folder, with the guide [PlaygroundVars.TreeGuide] places under the folder's chevron. */
 	val treeGroup by style {
 		position(Position.Relative)
 
 		self + before style {
 			backgroundColor(border)
 			bottom(0.px)
-			property("content", "''")
-			property("left", "var(--tree-guide)")
-			property("pointer-events", "none")
+			content("")
+			left(Left.of(PlaygroundVars.TreeGuide.value()))
+			pointerEvents(PointerEvents.None)
 			position(Position.Absolute)
 			top(0.px)
 			width(1.px)
@@ -1274,7 +1300,7 @@ object PlaygroundStyle : StyleSheet() {
 
 	val treeLabel by style {
 		overflow(Overflow.Hidden)
-		property("text-overflow", "ellipsis")
+		textOverflow(TextOverflow.Ellipsis)
 		whiteSpace(WhiteSpace.NoWrap)
 	}
 
@@ -1323,7 +1349,7 @@ object PlaygroundStyle : StyleSheet() {
 		minWidth(0.px)
 		opacity(0.7)
 		overflow(Overflow.Hidden)
-		property("text-overflow", "ellipsis")
+		textOverflow(TextOverflow.Ellipsis)
 	}
 
 	/** Never shrinks while the folders can, a weighted `flex-shrink` still takes a fraction of a pixel and shows an ellipsis. */
@@ -1347,7 +1373,7 @@ object PlaygroundStyle : StyleSheet() {
 	val breadcrumbFileName by style {
 		minWidth(0.px)
 		overflow(Overflow.Hidden)
-		property("text-overflow", "ellipsis")
+		textOverflow(TextOverflow.Ellipsis)
 	}
 
 	val preview by style {
@@ -1365,7 +1391,7 @@ object PlaygroundStyle : StyleSheet() {
 			flexGrow(1)
 			minWidth(100.percent)
 			overflow(Overflow.Visible)
-			property("width", "max-content")
+			width(Width.MaxContent)
 		}
 
 		"div.code-toolbar > .toolbar" style {
@@ -1383,23 +1409,23 @@ object PlaygroundStyle : StyleSheet() {
 			margin(0.px)
 			minWidth(100.percent)
 			overflow(Overflow.Visible)
-			property("padding", "0.45rem 1rem 0.7rem calc(var(--line-digits, 2) * 1ch + 1.55rem)")
+			padding(0.45.cssRem, 1.cssRem, 0.7.cssRem, calc { PlaygroundVars.LineDigits.value(2) * 1.ch + 1.55.cssRem })
 		}
 
-		/** As wide as the longest line number, `--line-digits` set from the file, plus the space before the code. */
+		/** As wide as the longest line number, [PlaygroundVars.LineDigits] set from the file, plus the space before the code. */
 		".line-numbers .line-numbers-rows" style {
-			property("left", "calc(var(--line-digits, 2) * -1ch - 1.2rem)")
-			property("width", "calc(var(--line-digits, 2) * 1ch + 0.65rem)")
+			left(Left.of(calc { PlaygroundVars.LineDigits.value(2) * (-1).ch - 1.2.cssRem }))
+			width(calc { PlaygroundVars.LineDigits.value(2) * 1.ch + 0.65.cssRem })
 		}
 	}
 
 	val previewWrapped by style {
 		"div.code-toolbar" style {
-			property("width", "100%")
+			width(100.percent)
 		}
 
 		":is(pre, pre[class*=\"language-\"], pre > code)" style {
-			property("overflow-wrap", "anywhere")
+			overflowWrap(OverflowWrap.Anywhere)
 			whiteSpace(WhiteSpace.PreWrap)
 		}
 	}
@@ -1485,7 +1511,7 @@ object PlaygroundStyle : StyleSheet() {
 		backgroundColor(accentStrong)
 		borderRadius(999.px)
 		height(100.percent)
-		property("transition", "width 0.25s ease")
+		transition(Transition.of("width", 0.25.s, AnimationTimingFunction.Ease))
 	}
 
 	val progressBarPending by style {
@@ -1507,7 +1533,7 @@ object PlaygroundStyle : StyleSheet() {
 
 		border(2.px, LineStyle.Solid, rgba(255, 255, 255, 0.08))
 		borderRadius(50.percent)
-		property("border-top-color", "var(--landing-accent-strong)")
+		borderTopColor(accentStrong)
 		height(1.4.cssRem)
 		width(1.4.cssRem)
 	}
@@ -1606,7 +1632,7 @@ object PlaygroundStyle : StyleSheet() {
 		flexGrow(1)
 		flexWrap(FlexWrap.Wrap)
 		minWidth(0.px)
-		property("overflow-wrap", "anywhere")
+		overflowWrap(OverflowWrap.Anywhere)
 		whiteSpace(WhiteSpace.PreWrap)
 	}
 
@@ -1733,7 +1759,7 @@ object PlaygroundStyle : StyleSheet() {
 		border(1.px, LineStyle.Solid, rgba(8, 182, 214, 0.35))
 		borderRadius(0.6.cssRem)
 		bottom(2.4.cssRem)
-		property("box-shadow", "0 0.8rem 2rem rgba(0, 0, 0, 0.5)")
+		boxShadow(0.px, 0.8.cssRem, 2.cssRem, color = rgba(0, 0, 0, 0.5))
 		color(text)
 		display(DisplayStyle.Flex)
 		fontSize(0.8.cssRem)
@@ -1751,9 +1777,9 @@ object PlaygroundStyle : StyleSheet() {
 	}
 
 	val dialogBackdrop by style {
-		property("backdrop-filter", "blur(2px)")
+		backdropFilter(BackdropFilter.of(blur(2.px)))
 		backgroundColor(rgba(4, 8, 12, 0.6))
-		property("inset", "0")
+		inset(0.px)
 		position(Position.Fixed)
 		zIndex(90)
 	}
@@ -1767,14 +1793,18 @@ object PlaygroundStyle : StyleSheet() {
 		backgroundColor(Color("#121922"))
 		border(1.px, LineStyle.Solid, border)
 		borderRadius(0.9.cssRem)
-		property("box-shadow", "0 2rem 4rem rgba(0, 0, 0, 0.6)")
+		bottom(auto)
+		boxShadow(0.px, 2.cssRem, 4.cssRem, color = rgba(0, 0, 0, 0.6))
 		// Centered by auto margins between `left: 0` and `right: 0`: a transform would fight the entry animation.
-		property("inset", "9vh 0 auto 0")
-		property("margin", "0 auto")
+		left(0.px)
+		marginX(auto)
+		marginY(0.px)
 		maxHeight(82.vh)
 		overflowY(Overflow.Auto)
 		position(Position.Fixed)
-		property("width", "min(46rem, calc(100vw - 2rem))")
+		right(0.px)
+		top(9.vh)
+		width(min(46.cssRem, calc { 100.vw - 2.cssRem }))
 		zIndex(91)
 
 		"h2" style {
@@ -1854,13 +1884,15 @@ object PlaygroundStyle : StyleSheet() {
 
 		".monaco-editor .quick-input-widget" style {
 			borderRadius(0.75.cssRem)
-			property("box-shadow", "0 1.25rem 3rem rgba(0, 0, 0, 0.55)")
+			boxShadow(0.px, 1.25.cssRem, 3.cssRem, color = rgba(0, 0, 0, 0.55))
 			fontFamily("IBM Plex Sans", "sans-serif")
-			property("left", "50%", important = true)
 			overflow(Overflow.Hidden)
-			property("top", "0.6rem", important = true)
 			transform { translateX((-50).percent) }
-			property("width", "min(38rem, calc(100% - 2rem))", important = true)
+			important {
+				left(50.percent)
+				top(0.6.cssRem)
+				width(min(38.cssRem, calc { 100.percent - 2.cssRem }))
+			}
 		}
 
 		".monaco-editor .quick-input-widget .quick-input-header" style {
@@ -1887,10 +1919,10 @@ object PlaygroundStyle : StyleSheet() {
 		".monaco-editor .quick-input-list .monaco-keybinding > .monaco-keybinding-key" style {
 			backgroundColor(rgba(255, 255, 255, 0.07))
 			border(1.px, LineStyle.Solid, rgba(255, 255, 255, 0.12))
-			property("border-bottom-width", "2px")
+			borderBottomWidth(2.px)
 			borderRadius(0.3.cssRem)
 			boxSizing(BoxSizing.BorderBox)
-			property("box-shadow", "none")
+			boxShadow(BoxShadow.None)
 			color(text)
 			fontFamily(MONO, "monospace")
 			fontSize(0.66.cssRem)

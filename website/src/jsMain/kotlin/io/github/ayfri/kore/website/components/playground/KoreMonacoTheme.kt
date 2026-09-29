@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.website.components.playground
 
 import io.github.ayfri.kore.website.CodeThemeStyle
+import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.externals.monaco.MonacoEditor
 import io.github.ayfri.kore.website.externals.monaco.TokenThemeRule
 import io.github.ayfri.kore.website.utils.jsObject
@@ -26,7 +27,7 @@ private fun rule(token: String, color: CSSColorValue, fontStyle: String? = null)
 /**
  * Styles the tokens of `website/monaco/kotlin-grammar.mjs` like IntelliJ's Material Darker scheme, in the colors of
  * [CodeThemeStyle]. Calls are italic like its top-level and extension calls, which make up most Kore code, member calls
- * can't be told apart without resolving. The background is the pane surface (`--landing-surface-2`), which Monaco
+ * can't be told apart without resolving. The background is the pane surface ([LandingVars.Pane]), which Monaco
  * cannot read from CSS.
  */
 fun defineKoreTheme(editor: MonacoEditor) = editor.defineTheme(MONACO_THEME_NAME, jsObject {

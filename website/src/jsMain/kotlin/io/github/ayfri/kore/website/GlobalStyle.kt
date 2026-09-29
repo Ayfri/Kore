@@ -1,13 +1,29 @@
 package io.github.ayfri.kore.website
 
+import com.varabyte.kobweb.compose.css.ScrollbarWidth
+import com.varabyte.kobweb.compose.css.StyleVariable
 import com.varabyte.kobweb.compose.css.TextDecorationLine
 import com.varabyte.kobweb.compose.css.scrollMarginTop
+import com.varabyte.kobweb.compose.css.scrollbarWidth
 import com.varabyte.kobweb.compose.css.textDecorationLine
-import io.github.ayfri.kore.website.utils.ScrollbarWidth
 import io.github.ayfri.kore.website.utils.scrollbarColor
-import io.github.ayfri.kore.website.utils.scrollbarWidth
 import io.github.ayfri.kore.website.utils.transition
 import org.jetbrains.compose.web.css.*
+
+/** The palette of the home, features, updates and playground pages (`--landing-*`), set on `HomePageStyle.page`. */
+object LandingVars {
+	val Accent by StyleVariable<CSSColorValue>()
+	val AccentStrong by StyleVariable<CSSColorValue>()
+	val Border by StyleVariable<CSSColorValue>()
+	val Card by StyleVariable<CSSColorValue>()
+	val Gold by StyleVariable<CSSColorValue>()
+	val Muted by StyleVariable<CSSColorValue>()
+
+	/** The surface of panes, tabs and code windows, a step above [Surface]. */
+	val Pane by StyleVariable<CSSColorValue>()
+	val Surface by StyleVariable<CSSColorValue>()
+	val Text by StyleVariable<CSSColorValue>()
+}
 
 object GlobalStyle : StyleSheet() {
 	val backgroundColor = Color("#24282e")
@@ -37,7 +53,7 @@ object GlobalStyle : StyleSheet() {
 	init {
 		universal {
 			scrollbarColor(scrollbarThumbColor, scrollbarBackgroundColor)
-			scrollbarWidth(ScrollbarWidth.THIN)
+			scrollbarWidth(ScrollbarWidth.Thin)
 		}
 
 		"body" {

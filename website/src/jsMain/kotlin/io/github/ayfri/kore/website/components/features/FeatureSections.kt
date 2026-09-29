@@ -2,12 +2,15 @@ package io.github.ayfri.kore.website.components.features
 
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.compose.css.AlignSelf
+import com.varabyte.kobweb.compose.css.functions.calc
 import com.varabyte.kobweb.compose.css.functions.linearGradient
 import com.varabyte.kobweb.core.AppGlobals
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideCircleX
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideCode
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideTriangleAlert
 import io.github.ayfri.kore.website.GlobalStyle
+import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.components.common.*
 import io.github.ayfri.kore.website.utils.*
 import kotlinx.browser.document
@@ -259,8 +262,8 @@ object FeatureSectionsStyle : StyleSheet() {
 	}
 
 	val stats by style {
-		backgroundColor(Color("var(--landing-border)"))
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		backgroundColor(LandingVars.Border.value())
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(1.2.cssRem)
 		display(DisplayStyle.Grid)
 		gap(1.px)
@@ -276,7 +279,7 @@ object FeatureSectionsStyle : StyleSheet() {
 	}
 
 	val stat by style {
-		backgroundColor(Color("var(--landing-card)"))
+		backgroundColor(LandingVars.Card.value())
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
 		gap(0.2.cssRem)
@@ -285,7 +288,7 @@ object FeatureSectionsStyle : StyleSheet() {
 	}
 
 	val statValue by style {
-		color(Color("var(--landing-accent-strong)"))
+		color(LandingVars.AccentStrong.value())
 		fontFamily(MONO, "monospace")
 		fontSize(1.9.cssRem)
 		fontWeight(700)
@@ -293,7 +296,7 @@ object FeatureSectionsStyle : StyleSheet() {
 	}
 
 	val statLabel by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontSize(0.88.cssRem)
 		whiteSpace(WhiteSpace.NoWrap)
 	}
@@ -332,24 +335,24 @@ object FeatureSectionsStyle : StyleSheet() {
 	}
 
 	val toc by style {
-		property("align-self", "start")
+		alignSelf(AlignSelf.Start)
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
 		gap(2.px)
-		property("max-height", "calc(100vh - 8rem)")
+		maxHeight(calc { 100.vh - 8.cssRem })
 		overflowY(Overflow.Auto)
 		position(Position.Sticky)
 		top(6.cssRem)
 
 		xlMax(self) {
-			backgroundColor(Color("var(--landing-surface)"))
-			borderBottom(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+			backgroundColor(LandingVars.Surface.value())
+			borderBottom(1.px, LineStyle.Solid, LandingVars.Border.value())
 			flexDirection(FlexDirection.Row)
 			gap(0.4.cssRem)
 			marginX((-5).vw)
 			overflowX(Overflow.Auto)
 			padding(0.5.cssRem, 5.vw)
-			property("scrollbar-width", "none")
+			scrollbarWidth(ScrollbarWidth.None)
 			top(4.5.cssRem)
 			zIndex(2)
 		}
@@ -361,7 +364,7 @@ object FeatureSectionsStyle : StyleSheet() {
 	}
 
 	val tocTitle by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontFamily(MONO, "monospace")
 		fontSize(0.72.cssRem)
 		letterSpacing(1.5.px)
@@ -377,7 +380,7 @@ object FeatureSectionsStyle : StyleSheet() {
 	val tocLink by style {
 		alignItems(AlignItems.Center)
 		borderRadius(0.5.cssRem)
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		display(DisplayStyle.Flex)
 		flexShrink(0)
 		fontSize(0.88.cssRem)
@@ -394,21 +397,21 @@ object FeatureSectionsStyle : StyleSheet() {
 
 		hover(self) style {
 			backgroundColor(rgba(8, 182, 214, 0.07))
-			color(Color("var(--landing-text)"))
+			color(LandingVars.Text.value())
 		}
 	}
 
 	val tocLinkActive by style {
 		backgroundColor(rgba(8, 182, 214, 0.14))
-		color(Color("var(--landing-text)"))
+		color(LandingVars.Text.value())
 
 		"svg" style {
-			color(Color("var(--landing-accent-strong)"))
+			color(LandingVars.AccentStrong.value())
 		}
 	}
 
 	val tocCount by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontFamily(MONO, "monospace")
 		fontSize(0.72.cssRem)
 		marginLeft(autoLength)
@@ -428,7 +431,7 @@ object FeatureSectionsStyle : StyleSheet() {
 		}
 
 		"p" style {
-			color(Color("var(--landing-muted)"))
+			color(LandingVars.Muted.value())
 			fontSize(1.05.cssRem)
 			margin(0.px)
 			maxWidth(44.cssRem)
@@ -440,19 +443,19 @@ object FeatureSectionsStyle : StyleSheet() {
 	}
 
 	val version by style {
-		color(Color("var(--landing-accent)"))
+		color(LandingVars.Accent.value())
 		fontFamily(MONO, "monospace")
 		fontSize(0.78.cssRem)
 	}
 
 	val block by style {
-		borderTop(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		borderTop(1.px, LineStyle.Solid, LandingVars.Border.value())
 		padding(2.8.cssRem, 0.px)
 		// Clears the sticky header, and the table of contents strip under xl, when jumping to an anchor.
-		property("scroll-margin-top", "5rem")
+		scrollMarginTop(5.cssRem)
 
 		xlMax(self) {
-			property("scroll-margin-top", "8rem")
+			scrollMarginTop(8.cssRem)
 		}
 	}
 
@@ -473,13 +476,13 @@ object FeatureSectionsStyle : StyleSheet() {
 		}
 
 		"h2 svg" style {
-			color(Color("var(--landing-accent)"))
+			color(LandingVars.Accent.value())
 			flexShrink(0)
 			fontSize(1.3.cssRem)
 		}
 
 		"p" style {
-			color(Color("var(--landing-muted)"))
+			color(LandingVars.Muted.value())
 			fontSize(1.02.cssRem)
 			margin(0.px)
 			maxWidth(46.cssRem)
@@ -494,7 +497,7 @@ object FeatureSectionsStyle : StyleSheet() {
 
 	val showcaseGrid by style {
 		alignItems(AlignItems.Stretch)
-		backgroundColor(Color("var(--landing-border)"))
+		backgroundColor(LandingVars.Border.value())
 		display(DisplayStyle.Grid)
 		gap(1.px)
 		gridTemplateColumns("repeat(2, minmax(0, 1fr))")
@@ -505,7 +508,7 @@ object FeatureSectionsStyle : StyleSheet() {
 	}
 
 	val codePanel by style {
-		backgroundColor(Color("var(--landing-surface-2)"))
+		backgroundColor(LandingVars.Pane.value())
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
 		gap(0.5.cssRem)
@@ -538,7 +541,7 @@ object FeatureSectionsStyle : StyleSheet() {
 	}
 
 	val codePanelLabel by style {
-		color(Color("var(--landing-accent)"))
+		color(LandingVars.Accent.value())
 		fontFamily(MONO, "monospace")
 		fontSize(0.75.cssRem)
 		letterSpacing(1.5.px)
@@ -546,7 +549,7 @@ object FeatureSectionsStyle : StyleSheet() {
 	}
 
 	val filePath by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontFamily(MONO, "monospace")
 		fontSize(0.78.cssRem)
 		overflowWrap(OverflowWrap.Anywhere)
@@ -567,7 +570,7 @@ object FeatureSectionsStyle : StyleSheet() {
 	}
 
 	val linkList by style {
-		borderTop(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		borderTop(1.px, LineStyle.Solid, LandingVars.Border.value())
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
 	}
@@ -580,7 +583,7 @@ object FeatureSectionsStyle : StyleSheet() {
 		mdMin(desc(self, className(linkList))) {
 			display(DisplayStyle.Grid)
 			gridTemplateColumns("repeat(2, minmax(0, 1fr))")
-			property("column-gap", "2.5rem")
+			columnGap(2.5.cssRem)
 		}
 	}
 
@@ -597,15 +600,15 @@ object FeatureSectionsStyle : StyleSheet() {
 		minWidth(0.px)
 
 		lgMin(self) {
-			property("align-self", "start")
+			alignSelf(AlignSelf.Start)
 			position(Position.Sticky)
 			top(8.cssRem)
 		}
 	}
 
 	val linkRow by style {
-		borderBottom(1.px, LineStyle.Solid, Color("var(--landing-border)"))
-		color(Color("var(--landing-text)"))
+		borderBottom(1.px, LineStyle.Solid, LandingVars.Border.value())
+		color(LandingVars.Text.value())
 		display(DisplayStyle.Grid)
 		gap(1.cssRem)
 		gridTemplateColumns("11rem minmax(0, 1fr)")
@@ -615,7 +618,7 @@ object FeatureSectionsStyle : StyleSheet() {
 
 		hover(self) style {
 			backgroundColor(rgba(8, 182, 214, 0.07))
-			color(Color("var(--landing-text)"))
+			color(LandingVars.Text.value())
 			paddingLeft(0.8.cssRem)
 		}
 
@@ -641,7 +644,7 @@ object FeatureSectionsStyle : StyleSheet() {
 
 	val previewing by style {
 		backgroundColor(rgba(8, 182, 214, 0.08))
-		property("border-left-color", "var(--landing-accent-strong)")
+		borderLeftColor(LandingVars.AccentStrong.value())
 		borderColor(Color("rgba(8, 182, 214, 0.6)"))
 	}
 
@@ -656,15 +659,15 @@ object FeatureSectionsStyle : StyleSheet() {
 	}
 
 	val sceneTabs by style {
-		backgroundColor(Color("var(--landing-card)"))
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		backgroundColor(LandingVars.Card.value())
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(999.px)
 		display(DisplayStyle.Flex)
 		gap(0.25.cssRem)
 		overflowX(Overflow.Auto)
 		padding(0.25.cssRem)
-		property("align-self", "flex-start")
-		property("scrollbar-width", "none")
+		alignSelf(AlignSelf.FlexStart)
+		scrollbarWidth(ScrollbarWidth.None)
 		maxWidth(100.percent)
 	}
 
@@ -672,7 +675,7 @@ object FeatureSectionsStyle : StyleSheet() {
 		backgroundColor(Color.transparent)
 		border(0.px)
 		borderRadius(999.px)
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		cursor(Cursor.Pointer)
 		flexShrink(0)
 		fontSize(0.82.cssRem)
@@ -680,13 +683,13 @@ object FeatureSectionsStyle : StyleSheet() {
 		transition(0.2.s, "background-color", "color")
 
 		hover(self) style {
-			color(Color("var(--landing-text)"))
+			color(LandingVars.Text.value())
 		}
 	}
 
 	val sceneTabActive by style {
 		backgroundColor(rgba(8, 182, 214, 0.22))
-		color(Color("var(--landing-text)"))
+		color(LandingVars.Text.value())
 	}
 
 	@OptIn(ExperimentalComposeWebApi::class)
@@ -709,7 +712,7 @@ object FeatureSectionsStyle : StyleSheet() {
 	}
 
 	val linkDescription by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontSize(0.9.cssRem)
 		lineHeight(1.5.number)
 	}
@@ -721,10 +724,10 @@ object FeatureSectionsStyle : StyleSheet() {
 	}
 
 	val chip by style {
-		backgroundColor(Color("var(--landing-card)"))
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		backgroundColor(LandingVars.Card.value())
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(0.6.cssRem)
-		color(Color("var(--landing-text)"))
+		color(LandingVars.Text.value())
 		fontSize(0.88.cssRem)
 		padding(0.4.cssRem, 0.75.cssRem)
 		textDecorationLine(TextDecorationLine.None)
@@ -736,7 +739,7 @@ object FeatureSectionsStyle : StyleSheet() {
 		hover(self) style {
 			backgroundColor(rgba(8, 182, 214, 0.12))
 			borderColor(Color("rgba(8, 182, 214, 0.6)"))
-			color(Color("var(--landing-text)"))
+			color(LandingVars.Text.value())
 		}
 	}
 
@@ -756,7 +759,7 @@ object FeatureSectionsStyle : StyleSheet() {
 		padding(1.3.cssRem)
 
 		"svg" style {
-			color(Color("var(--landing-gold)"))
+			color(LandingVars.Gold.value())
 			fontSize(1.4.cssRem)
 		}
 
@@ -768,7 +771,7 @@ object FeatureSectionsStyle : StyleSheet() {
 		}
 
 		"p" style {
-			color(Color("var(--landing-muted)"))
+			color(LandingVars.Muted.value())
 			fontSize(0.93.cssRem)
 			lineHeight(1.55.number)
 			margin(0.px)
@@ -776,7 +779,7 @@ object FeatureSectionsStyle : StyleSheet() {
 	}
 
 	val footnote by style {
-		color(Color("var(--landing-muted)"))
+		color(LandingVars.Muted.value())
 		fontSize(0.9.cssRem)
 		marginTop(1.5.cssRem)
 	}
@@ -787,10 +790,10 @@ object FeatureSectionsStyle : StyleSheet() {
 		backgroundImage(
 			linearGradient(120.deg) {
 				add(rgba(8, 182, 214, 0.1), 0.percent)
-				add(Color("var(--landing-card)"), 60.percent)
+				add(LandingVars.Card.value(), 60.percent)
 			}
 		)
-		border(1.px, LineStyle.Solid, Color("var(--landing-border)"))
+		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(1.2.cssRem)
 		display(DisplayStyle.Flex)
 		gap(1.5.cssRem)
@@ -804,7 +807,7 @@ object FeatureSectionsStyle : StyleSheet() {
 		}
 
 		"p" style {
-			color(Color("var(--landing-muted)"))
+			color(LandingVars.Muted.value())
 			margin(0.3.cssRem, 0.px, 0.px)
 		}
 

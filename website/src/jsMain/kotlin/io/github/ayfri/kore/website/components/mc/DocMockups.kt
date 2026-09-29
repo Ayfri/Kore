@@ -2,8 +2,10 @@ package io.github.ayfri.kore.website.components.mc
 
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.compose.css.functions.calc
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.mcTexture
+import io.github.ayfri.kore.website.utils.clipPathInset
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
@@ -37,7 +39,7 @@ private fun McScene(caption: String, kind: SceneKind, panorama: Int = 0, height:
 				SceneKind.SCREEN -> classes(McUiStyle.menuBackground, DocMockupsStyle.screen)
 			}
 			style {
-				property("background-image", mcPanorama(panorama))
+				backgroundImage(mcPanorama(panorama))
 				height?.let { height(gui(it)) }
 			}
 		}) { content() }
@@ -82,7 +84,7 @@ private fun McSlider(label: String, fraction: Double) {
 	Div({ classes(DocMockupsStyle.slider) }) {
 		Span({
 			classes(DocMockupsStyle.sliderHandle)
-			style { property("left", "calc($fraction * (100% - ${gui(6)}) - ${gui(1)})") }
+			style { left(Left.of(calc { fraction * (100.percent - gui(6)) - gui(1) })) }
 		})
 		McLine(label)
 	}
@@ -93,7 +95,7 @@ private fun McCheckbox(label: String, checked: Boolean) {
 	Div({ classes(DocMockupsStyle.checkboxRow) }) {
 		Span({
 			classes(DocMockupsStyle.checkbox)
-			style { property("background-image", mcTexture("gui/sprites/widget/checkbox${if (checked) "_selected" else ""}")) }
+			style { backgroundImage(mcTexture("gui/sprites/widget/checkbox${if (checked) "_selected" else ""}")) }
 		})
 		McLine(label, "#e0e0e0")
 	}
@@ -360,13 +362,13 @@ fun InventoryManagerMockup() = McScene("In game: taking the star out of the firs
 
 object DocMockupsStyle : StyleSheet() {
 	val furnaceFlameBurn by keyframes {
-		from { property("clip-path", "inset(0 0 0 0)") }
-		to { property("clip-path", "inset(93% 0 0 0)") }
+		from { clipPathInset(0.px) }
+		to { clipPathInset(93.percent, 0.px, 0.px, 0.px) }
 	}
 
 	val furnaceArrowFill by keyframes {
-		from { property("clip-path", "inset(0 100% 0 0)") }
-		to { property("clip-path", "inset(0 0 0 0)") }
+		from { clipPathInset(0.px, 100.percent, 0.px, 0.px) }
+		to { clipPathInset(0.px) }
 	}
 
 	val figure by style {
@@ -409,8 +411,13 @@ object DocMockupsStyle : StyleSheet() {
 		flexShrink(0)
 		height(gui(33))
 		justifyContent(JustifyContent.Center)
-		property("background", "${mcTexture("gui/inworld_header_separator")} 0 100% / ${gui(32)} ${gui(2)} repeat-x")
-		property("image-rendering", "pixelated")
+		mcBackground(
+			"gui/inworld_header_separator",
+			size = BackgroundSize.of(gui(32), gui(2)),
+			position = CSSPosition(0.px, 100.percent),
+			repeat = BackgroundRepeat.RepeatX,
+		)
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val dialogBody by style {
@@ -428,8 +435,8 @@ object DocMockupsStyle : StyleSheet() {
 		gap(gui(8))
 		height(gui(33))
 		justifyContent(JustifyContent.Center)
-		property("background", "${mcTexture("gui/inworld_footer_separator")} 0 0 / ${gui(32)} ${gui(2)} repeat-x")
-		property("image-rendering", "pixelated")
+		mcBackground("gui/inworld_footer_separator", size = BackgroundSize.of(gui(32), gui(2)), repeat = BackgroundRepeat.RepeatX)
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val buttonGrid by style {
@@ -471,9 +478,9 @@ object DocMockupsStyle : StyleSheet() {
 		border(gui(1), LineStyle.Solid, Color.transparent)
 		height(gui(20))
 		padding(gui(5), gui(3), 0.px)
-		property("border-image", "${mcTexture("gui/sprites/widget/text_field")} 1 fill")
-		property("box-sizing", "border-box")
-		property("image-rendering", "pixelated")
+		mcBorderImage("gui/sprites/widget/text_field", 1)
+		boxSizing(BoxSizing.BorderBox)
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val slider by style {
@@ -484,9 +491,9 @@ object DocMockupsStyle : StyleSheet() {
 		position(Position.Relative)
 		textAlign(TextAlign.Center)
 		width(gui(200))
-		property("border-image", "${mcTexture("gui/sprites/widget/slider")} 1 fill")
-		property("box-sizing", "border-box")
-		property("image-rendering", "pixelated")
+		mcBorderImage("gui/sprites/widget/slider", 1)
+		boxSizing(BoxSizing.BorderBox)
+		imageRendering(ImageRendering.Pixelated)
 
 		"div" style { position(Position.Relative) }
 	}
@@ -496,8 +503,8 @@ object DocMockupsStyle : StyleSheet() {
 		position(Position.Absolute)
 		top(gui(-1))
 		width(gui(8))
-		property("background", "${mcTexture("gui/sprites/widget/slider_handle")} 0 0 / 100% 100%")
-		property("image-rendering", "pixelated")
+		mcBackground("gui/sprites/widget/slider_handle")
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val checkboxRow by style {
@@ -513,15 +520,15 @@ object DocMockupsStyle : StyleSheet() {
 		flexShrink(0)
 		height(gui(17))
 		width(gui(17))
-		property("background-size", "100% 100%")
-		property("image-rendering", "pixelated")
+		backgroundSize(BackgroundSize.of(100.percent, 100.percent))
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val hudTop by style {
 		position(Position.Absolute)
 		top(gui(3))
-		property("left", PIXEL_HALF)
-		property("transform", pixelTranslate("-50%"))
+		left(Left.of(PIXEL_HALF))
+		pixelTranslate((-50).percent)
 	}
 
 	val hudTopRight by style {
@@ -535,21 +542,21 @@ object DocMockupsStyle : StyleSheet() {
 	val hudRight by style {
 		position(Position.Absolute)
 		right(gui(1))
-		property("top", PIXEL_HALF)
-		property("transform", pixelTranslate("0px", "-50%"))
+		top(Top.of(PIXEL_HALF))
+		pixelTranslate(0.px, (-50).percent)
 	}
 
 	val hudCentered by style {
 		position(Position.Absolute)
-		property("left", PIXEL_HALF)
-		property("transform", pixelTranslate("-50%"))
+		left(Left.of(PIXEL_HALF))
+		pixelTranslate((-50).percent)
 	}
 
 	val hudBottom by style {
 		bottom(0.px)
 		position(Position.Absolute)
-		property("left", PIXEL_HALF)
-		property("transform", pixelTranslate("-50%"))
+		left(Left.of(PIXEL_HALF))
+		pixelTranslate((-50).percent)
 	}
 
 	val hudChat by style {
@@ -586,15 +593,15 @@ object DocMockupsStyle : StyleSheet() {
 	val tradeArrow by style {
 		height(gui(9))
 		width(gui(10))
-		property("background", "${mcTexture("gui/sprites/container/villager/trade_arrow")} 0 0 / 100% 100%")
-		property("image-rendering", "pixelated")
+		mcBackground("gui/sprites/container/villager/trade_arrow")
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val scroller by style {
 		height(gui(27))
 		width(gui(6))
-		property("background", "${mcTexture("gui/sprites/container/villager/scroller_disabled")} 0 0 / 100% 100%")
-		property("image-rendering", "pixelated")
+		mcBackground("gui/sprites/container/villager/scroller_disabled")
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	/** Leaves room above the inventory for the tooltip pushed up by the screen's bottom. */
@@ -605,16 +612,16 @@ object DocMockupsStyle : StyleSheet() {
 	val slotHighlightBack by style {
 		height(gui(24))
 		width(gui(24))
-		property("background", "${mcTexture("gui/sprites/container/slot_highlight_back")} 0 0 / 100% 100%")
-		property("image-rendering", "pixelated")
+		mcBackground("gui/sprites/container/slot_highlight_back")
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val slotHighlightFront by style {
 		height(gui(24))
 		width(gui(24))
-		property("background", "${mcTexture("gui/sprites/container/slot_highlight_front")} 0 0 / 100% 100%")
-		property("image-rendering", "pixelated")
-		property("pointer-events", "none")
+		mcBackground("gui/sprites/container/slot_highlight_front")
+		imageRendering(ImageRendering.Pixelated)
+		pointerEvents(PointerEvents.None)
 	}
 
 	val furnaceFlame by style {
@@ -625,8 +632,8 @@ object DocMockupsStyle : StyleSheet() {
 		}
 		height(gui(14))
 		width(gui(14))
-		property("background", "${mcTexture("gui/sprites/container/furnace/lit_progress")} 0 0 / 100% 100%")
-		property("image-rendering", "pixelated")
+		mcBackground("gui/sprites/container/furnace/lit_progress")
+		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val furnaceArrow by style {
@@ -637,7 +644,7 @@ object DocMockupsStyle : StyleSheet() {
 		}
 		height(gui(16))
 		width(gui(24))
-		property("background", "${mcTexture("gui/sprites/container/furnace/burn_progress")} 0 0 / 100% 100%")
-		property("image-rendering", "pixelated")
+		mcBackground("gui/sprites/container/furnace/burn_progress")
+		imageRendering(ImageRendering.Pixelated)
 	}
 }

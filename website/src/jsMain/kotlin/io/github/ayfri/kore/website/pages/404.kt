@@ -111,7 +111,6 @@ object PageNotFoundStyle : StyleSheet() {
 				add(GlobalStyle.logoRightColor)
 			}
 		)
-		property("-webkit-background-clip", "text")
 		backgroundClip(BackgroundClip.Text)
 		color(Color.transparent)
 		userSelect(UserSelect.None)
