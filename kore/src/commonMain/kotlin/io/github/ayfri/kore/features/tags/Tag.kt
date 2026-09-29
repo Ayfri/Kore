@@ -15,7 +15,6 @@ import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.*
 import kotlin.jvm.JvmName
-import kotlin.reflect.KClass
 
 /**
  * Data-driven tag definition for Minecraft Java Edition.
@@ -36,11 +35,6 @@ data class Tag<out T : TaggedResourceLocationArgument>(
 	var replace: Boolean = false,
 	var values: List<TagEntry> = emptyList(),
 ) : Generator("tags") {
-
-	@Transient
-	@PublishedApi
-	internal var tagClass: KClass<out TaggedResourceLocationArgument> = TaggedResourceLocationArgument::class
-
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(TagSerializer, this)
 
 	override fun getPathFromDataDir(dir: Path, namespace: String): Path {
@@ -135,7 +129,6 @@ inline fun <reified T : TaggedResourceLocationArgument> DataPack.tag(
 	val tag = tags.find { it.fileName == fileName && it.type == type && it.namespace == namespace } as Tag<T>?
 		?: Tag<T>(fileName = fileName, type = type).also {
 			it.namespace = namespace
-			it.tagClass = T::class
 			tags += it
 		}
 
