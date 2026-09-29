@@ -1,29 +1,31 @@
 // Kotlin tokens for the playground editor, registered over Monaco's own grammar by `monaco.entry.mjs`: that one tags
 // every lowercase name `identifier`, so calls never get a color. The token kinds follow IntelliJ's Kotlin highlighting
 // as far as a lexer can tell them apart, `KoreMonacoTheme.kt` styles them like Material Darker. Brackets, comments and
-// auto-closing pairs still come from Monaco's own language configuration.
+// auto-closing pairs still come from Monaco's own language configuration. The keyword lists match the Prism ones in
+// `utils/KotlinHighlighting.kt`, which highlights the site's snippets the same way.
+
+// Keywords even right before `(` or `{` (`if (`, `init {`), where any other name is a call.
+const controlKeywords = [
+	'as', 'break', 'catch', 'class', 'constructor', 'context', 'continue', 'do', 'else', 'false', 'finally', 'for', 'fun', 'if',
+	'in', 'init', 'interface', 'is', 'null', 'object', 'package', 'return', 'super', 'suspend', 'this', 'throw', 'true', 'try',
+	'typealias', 'val', 'var', 'when', 'where', 'while',
+];
+
+// Keywords only when no `(` or `{` follows, so `data(...)` and `set(...)` read as the DSL calls they are. Annotation
+// use-site targets (`field`, `file`, `param`...) are left out, they are mostly variable names, and `it` is the implicit
+// lambda parameter.
+const softKeywords = [
+	'abstract', 'actual', 'annotation', 'by', 'companion', 'const', 'crossinline', 'data', 'dynamic', 'enum', 'expect',
+	'external', 'final', 'get', 'import', 'infix', 'inline', 'inner', 'internal', 'lateinit', 'noinline', 'open', 'operator',
+	'out', 'override', 'private', 'protected', 'public', 'reified', 'sealed', 'set', 'tailrec', 'vararg',
+];
+
 export const kotlinLanguage = {
 	defaultToken: '',
 	tokenPostfix: '.kt',
 
-	// Right before `(` or `{` these stay keywords (`if (`, `init {`), any other name is a call, so `data(...)` and
-	// `set(...)` read as the DSL functions they are.
-	controlKeywords: [
-		'as', 'break', 'catch', 'class', 'constructor', 'context', 'continue', 'do', 'else', 'false', 'finally', 'for', 'fun',
-		'if', 'in', 'init', 'interface', 'is', 'null', 'object', 'package', 'return', 'super', 'suspend', 'this', 'throw',
-		'true', 'try', 'typealias', 'val', 'var', 'when', 'where', 'while',
-	],
-
-	// Annotation use-site targets (`field`, `file`, `param`...) are left out, they are mostly variable names, and `it`
-	// is the implicit lambda parameter.
-	keywords: [
-		'abstract', 'actual', 'annotation', 'as', 'break', 'by', 'catch', 'class', 'companion', 'const', 'constructor',
-		'context', 'continue', 'crossinline', 'data', 'do', 'dynamic', 'else', 'enum', 'expect', 'external', 'false', 'final',
-		'finally', 'for', 'fun', 'get', 'if', 'import', 'in', 'infix', 'init', 'inline', 'inner', 'interface', 'internal', 'is',
-		'lateinit', 'noinline', 'null', 'object', 'open', 'operator', 'out', 'override', 'package', 'private', 'protected',
-		'public', 'reified', 'return', 'sealed', 'set', 'super', 'suspend', 'tailrec', 'this', 'throw', 'true', 'try',
-		'typealias', 'val', 'var', 'vararg', 'when', 'where', 'while',
-	],
+	controlKeywords,
+	keywords: [...controlKeywords, ...softKeywords],
 
 	binaryDigits: /[01]+(_+[01]+)*/,
 	digits: /\d+(_+\d+)*/,
