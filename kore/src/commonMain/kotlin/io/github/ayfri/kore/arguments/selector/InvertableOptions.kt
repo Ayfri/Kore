@@ -6,48 +6,28 @@ import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.serializers.ToStringSerializer
 import io.github.ayfri.kore.utils.toSnbt
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationStrategy
-import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.json.jsonPrimitive
 import net.benwoodworth.knbt.NbtCompound
 
 /**
  * Base class for selector options that can be inverted (prefixed with `!`).
  *
- * Provides consistent serialization and string rendering for inverted options.
+ * Two options are equal when they are of the same type and share their [value] and [invert].
  */
-sealed class InvertableOption<T>(
-	val kSerializer: SerializationStrategy<T>,
-	val serializer: (T) -> String = { json.encodeToJsonElement(kSerializer, it).jsonPrimitive.content },
-) {
+sealed class InvertableOption<T : Any> {
 	/** The option value, or null when not set. */
 	abstract var value: T?
 	/** Whether this option is inverted (prefixed with `!`). */
 	abstract var invert: Boolean
 
-	override fun toString() = when {
-		value == null -> ""
-		invert -> "!${serializer(value!!)}"
-		else -> serializer(value!!)
-	}
+	/** How [value] is written in the selector. */
+	protected abstract fun render(value: T): String
 
-	override fun hashCode(): Int {
-		var result = serializer.hashCode()
-		result = 31 * result + (value?.hashCode() ?: 0)
-		result = 31 * result + invert.hashCode()
-		return result
-	}
+	override fun toString() = value?.let { if (invert) "!${render(it)}" else render(it) } ?: ""
 
-	override fun equals(other: Any?): Boolean {
-		if (this === other) return true
-		if (other !is InvertableOption<*>) return false
+	override fun hashCode() = 31 * (value?.hashCode() ?: 0) + invert.hashCode()
 
-		if (serializer != other.serializer) return false
-		if (value != other.value) return false
-		if (invert != other.invert) return false
-
-		return true
-	}
+	override fun equals(other: Any?) =
+		other is InvertableOption<*> && other::class == this::class && other.value == value && other.invert == invert
 
 	companion object {
 		data object InvertableOptionSerializer : ToStringSerializer<InvertableOption<*>>()
@@ -58,31 +38,41 @@ sealed class InvertableOption<T>(
 class EntityTypeOption(
 	override var value: EntityTypeOrTagArgument? = null,
 	override var invert: Boolean = false,
-) : InvertableOption<EntityTypeOrTagArgument>(EntityTypeOrTagArgument.serializer())
+) : InvertableOption<EntityTypeOrTagArgument>() {
+	override fun render(value: EntityTypeOrTagArgument) = value.asString()
+}
 
 @Serializable(InvertableOption.Companion.InvertableOptionSerializer::class)
 class GamemodeOption(
 	override var value: Gamemode? = null,
 	override var invert: Boolean = false,
-) : InvertableOption<Gamemode>(Gamemode.serializer())
+) : InvertableOption<Gamemode>() {
+	override fun render(value: Gamemode) = value.name.lowercase()
+}
 
 @Serializable(InvertableOption.Companion.InvertableOptionSerializer::class)
 class NbtCompoundOption(
 	override var value: NbtCompound? = null,
 	override var invert: Boolean = false,
-) : InvertableOption<NbtCompound>(NbtCompound.serializer(), NbtCompound::toSnbt)
+) : InvertableOption<NbtCompound>() {
+	override fun render(value: NbtCompound) = value.toSnbt()
+}
 
 @Serializable(InvertableOption.Companion.InvertableOptionSerializer::class)
 class PredicateOption(
 	override var value: PredicateArgument? = null,
 	override var invert: Boolean = false,
-) : InvertableOption<PredicateArgument>(PredicateArgument.serializer())
+) : InvertableOption<PredicateArgument>() {
+	override fun render(value: PredicateArgument) = value.asString()
+}
 
 @Serializable(InvertableOption.Companion.InvertableOptionSerializer::class)
 class StringOption(
 	override var value: String? = null,
 	override var invert: Boolean = false,
-) : InvertableOption<String>(String.serializer()) {
+) : InvertableOption<String>() {
+	override fun render(value: String) = value
+
 	init {
 		value?.let {
 			if (it.startsWith("!")) {

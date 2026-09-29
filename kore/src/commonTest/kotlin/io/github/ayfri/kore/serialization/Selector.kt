@@ -217,6 +217,16 @@ class SelectorSerializationTests : FunSpec({
 		selectorDeserializationTests()
 	}
 
+	test("selector options are equal when their type, value and inversion match") {
+		(StringOption("foo") == StringOption("foo")) assertsIs true
+		(StringOption("foo").hashCode() == StringOption("foo").hashCode()) assertsIs true
+		(StringOption("!foo") == StringOption("foo", invert = true)) assertsIs true
+		(StringOption("foo") == StringOption("foo", invert = true)) assertsIs false
+		(GamemodeOption(Gamemode.CREATIVE) == GamemodeOption(Gamemode.CREATIVE)) assertsIs true
+		(GamemodeOption(Gamemode.CREATIVE) == GamemodeOption(Gamemode.SURVIVAL)) assertsIs false
+		(Selector.fromString("@e[tag=!foo,type=#minecraft:raiders]") == Selector.fromString("@e[tag=!foo,type=#minecraft:raiders]")) assertsIs true
+	}
+
 	test("selector arguments render sorted by name, empty when unset") {
 		SelectorArguments().asString() assertsIs ""
 		SelectorArguments(z = 3.0, limit = 1, sort = Sort.NEAREST).asString() assertsIs "limit=1,sort=nearest,z=3.0"

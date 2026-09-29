@@ -1,19 +1,5 @@
 package io.github.ayfri.kore.arguments.selector
 
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.ClassDiscriminatorMode
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonNamingStrategy
-
-@OptIn(ExperimentalSerializationApi::class)
-internal val json = Json {
-	allowStructuredMapKeys = true
-	classDiscriminatorMode = ClassDiscriminatorMode.NONE
-	explicitNulls = false
-	ignoreUnknownKeys = true
-	namingStrategy = JsonNamingStrategy.SnakeCase
-}
-
 /**
  * Represents a selector variable with optional selector arguments.
  *

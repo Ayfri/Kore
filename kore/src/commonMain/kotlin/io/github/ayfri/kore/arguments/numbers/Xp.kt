@@ -1,12 +1,9 @@
 package io.github.ayfri.kore.arguments.numbers
 
 import io.github.ayfri.kore.arguments.enums.ExperienceType
-import io.github.ayfri.kore.arguments.selector.json
-import kotlinx.serialization.json.encodeToJsonElement
-import kotlinx.serialization.json.jsonPrimitive
 
 data class Xp(val value: Long, val type: ExperienceType = ExperienceType.POINTS) : Comparable<Xp> {
-	val typeString get() = json.encodeToJsonElement(type).jsonPrimitive.content
+	val typeString get() = type.name.lowercase()
 
 	operator fun plus(other: Xp) = Xp(value + other.value, type)
 	operator fun plus(other: Number) = Xp(value + other.toLong(), type)

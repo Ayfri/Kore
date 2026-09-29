@@ -25,6 +25,9 @@ fun Function.experienceTests() {
 	xp(self()) {
 		add(1.levels) assertsIs "experience add @s 1 levels"
 	}
+
+	1.levels.typeString assertsIs "levels"
+	1.points.typeString assertsIs "points"
 }
 
 class ExperienceCommandTests : FunSpec({
