@@ -12,9 +12,17 @@ import kotlin.math.floor
 
 private var highlightingReady = false
 
-/** Every nested tab or 4-space run gets wrapped so CSS can draw an IntelliJ-like guide on it, the top level stays bare. */
-private val indentUnit = Regex("\t| {4}")
-private val leadingIndent = Regex("(^|\n)(\t| {4})([\t ]*)")
+/** Every nested tab or indent unit gets wrapped so CSS can draw an IntelliJ-like guide on it, the top level stays bare. */
+private class IndentGuides(spaces: Int) {
+	val leading = Regex("(^|\n)(\t| {$spaces})([\t ]*)")
+	val unit = Regex("\t| {$spaces}")
+}
+
+private val fourSpaceGuides = IndentGuides(4)
+private val twoSpaceGuides = IndentGuides(2)
+
+/** A line indented by exactly two spaces marks a 2-space block, whose guides then follow every level rather than every other one. */
+private val twoSpaceLine = Regex("^ {2}\\S", RegexOption.MULTILINE)
 
 private fun prepareHighlighting() {
 	if (highlightingReady) return
@@ -23,9 +31,10 @@ private fun prepareHighlighting() {
 	initMCFunctionHighlighting()
 
 	Prism.hooks.add("before-insert") { env ->
-		env.highlightedCode = env.highlightedCode.replace(leadingIndent) { match ->
+		val guides = if (twoSpaceLine.containsMatchIn(env.code)) twoSpaceGuides else fourSpaceGuides
+		env.highlightedCode = env.highlightedCode.replace(guides.leading) { match ->
 			val (lineStart, topLevel, nested) = match.destructured
-			lineStart + topLevel + nested.replace(indentUnit) { """<span class="token indent-guide">${it.value}</span>""" }
+			lineStart + topLevel + nested.replace(guides.unit) { """<span class="token indent-guide">${it.value}</span>""" }
 		}
 	}
 

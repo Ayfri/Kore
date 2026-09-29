@@ -111,6 +111,28 @@ private fun SettingsView() = with(PlaygroundSettings) {
 
 		Div({ classes(PlaygroundStyle.sideCategory) }) { Text("Preview") }
 		SettingSwitch("Pretty-print JSON", "Off, JSON shows minified, the way Minecraft reads it.", prettyJson) { prettyJson = it }
+
+		Div({ classes(PlaygroundStyle.settingRow, PlaygroundStyle.settingRowStatic) }) {
+			Span({ classes(PlaygroundStyle.settingText) }) {
+				Span({ classes(PlaygroundStyle.settingLabel) }) { Text("JSON indent") }
+				Span({ classes(PlaygroundStyle.settingDescription) }) { Text("Spaces per level of pretty-printed JSON.") }
+			}
+
+			Span({ classes(PlaygroundStyle.stepper) }) {
+				JSON_INDENTS.forEach { spaces ->
+					ToolButton(
+						"$spaces spaces",
+						{ jsonIndent = spaces },
+						active = jsonIndent == spaces,
+						enabled = prettyJson,
+						classes = arrayOf(PlaygroundStyle.toolButtonLabelled),
+					) {
+						Text(spaces.toString())
+					}
+				}
+			}
+		}
+
 		SettingSwitch("Wrap long lines", null, previewWrap) { previewWrap = it }
 	}
 

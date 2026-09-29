@@ -18,6 +18,9 @@ external interface PrismHooks {
 }
 
 external interface PrismHookEnv {
+	/** The raw text of the `code` element being highlighted. */
+	val code: String
+
 	/** HTML Prism is about to insert into the `code` element, only set from the `before-insert` hook onwards. */
 	var highlightedCode: String
 }

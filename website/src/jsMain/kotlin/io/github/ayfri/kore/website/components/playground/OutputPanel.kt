@@ -45,10 +45,11 @@ private fun grammarOf(file: GeneratedFile) = when (file.extension) {
 	else -> null
 }
 
-private fun previewOf(file: GeneratedFile, pretty: Boolean): String {
-	if (!pretty || grammarOf(file) != "json") return file.content
+/** The file as the preview shows it, its JSON re-indented by [indent] spaces, or left as generated when [indent] is null. */
+private fun previewOf(file: GeneratedFile, indent: Int?): String {
+	if (indent == null || grammarOf(file) != "json") return file.content
 
-	return runCatching { JSON.stringify(JSON.parse<Any>(file.content), null, 2) }.getOrDefault(file.content)
+	return runCatching { JSON.stringify(JSON.parse<Any>(file.content), null, indent) }.getOrDefault(file.content)
 }
 
 /** The file a pack opens on: a function if there is one, else the first resource that is not a tag or `pack.mcmeta`. */
@@ -85,7 +86,7 @@ fun OutputPanel(
 	var selectedPath by remember { mutableStateOf<String?>(null) }
 
 	val maximized = PlaygroundLayout.maximizedPane == MaximizedPane.OUTPUT
-	val pretty = PlaygroundSettings.prettyJson
+	val indent = PlaygroundSettings.jsonIndent.takeIf { PlaygroundSettings.prettyJson }
 	val wrap = PlaygroundSettings.previewWrap
 	val files = (state as? OutputState.Ready)?.files.orEmpty()
 	val needle = filter.trim().lowercase()
@@ -94,7 +95,7 @@ fun OutputPanel(
 	val collapsed = remember(files) { mutableStateMapOf<String, Boolean>() }
 	val selected = files.firstOrNull { it.path == selectedPath } ?: files.firstShowcase()
 
-	LaunchedEffect(selected?.path, selected?.content, pretty, wrap, maximized) {
+	LaunchedEffect(selected?.path, selected?.content, indent, wrap, maximized) {
 		selected ?: return@LaunchedEffect
 		initMCFunctionHighlighting()
 		document.getElementById(PREVIEW_ID)?.let { Prism.highlightAllUnder(it) }
@@ -196,7 +197,7 @@ fun OutputPanel(
 				}
 
 				Div({ classes(PlaygroundStyle.previewColumn) }) {
-					selected?.let { file -> PreviewHeader(file, pretty, wrap, onCopy) }
+					selected?.let { file -> PreviewHeader(file, indent, wrap, onCopy) }
 
 					Div({
 						classes(PlaygroundStyle.preview)
@@ -206,8 +207,8 @@ fun OutputPanel(
 						selected?.let { file ->
 							// Prism rewrites the code element's children, detaching the text node Compose owns, so the
 							// subtree is rebuilt from scratch on every switch instead of patched in place.
-							key(file.path, file.content, pretty, wrap) {
-								CodeBlock(previewOf(file, pretty), grammarOf(file), "line-numbers")
+							key(file.path, file.content, indent, wrap) {
+								CodeBlock(previewOf(file, indent), grammarOf(file), "line-numbers")
 							}
 						}
 					}
@@ -262,7 +263,9 @@ fun OutputPanel(
 
 /** The selected file's path as a breadcrumb, and the actions on that one file. */
 @Composable
-private fun PreviewHeader(file: GeneratedFile, pretty: Boolean, wrap: Boolean, onCopy: (text: String, what: String) -> Unit) {
+private fun PreviewHeader(file: GeneratedFile, indent: Int?, wrap: Boolean, onCopy: (text: String, what: String) -> Unit) {
+	val pretty = indent != null
+
 	Div({ classes(PlaygroundStyle.previewHeader) }) {
 		Div({
 			classes(PlaygroundStyle.breadcrumb)
@@ -294,8 +297,8 @@ private fun PreviewHeader(file: GeneratedFile, pretty: Boolean, wrap: Boolean, o
 
 			ToolButton("Wrap long lines", { PlaygroundSettings.previewWrap = !wrap }, active = wrap) { LucideTextWrap() }
 			ToolButton("Copy the path", { onCopy(file.path, "Path") }) { LucideLink2() }
-			ToolButton("Copy the content", { onCopy(previewOf(file, pretty), file.name) }) { LucideCopy() }
-			ToolButton("Download this file", { downloadText(previewOf(file, pretty), file.name) }) { LucideFileDown() }
+			ToolButton("Copy the content", { onCopy(previewOf(file, indent), file.name) }) { LucideCopy() }
+			ToolButton("Download this file", { downloadText(previewOf(file, indent), file.name) }) { LucideFileDown() }
 		}
 	}
 }
