@@ -1152,7 +1152,7 @@ object PlaygroundStyle : StyleSheet() {
 	val outputBody by style {
 		display(DisplayStyle.Grid)
 		flexGrow(1)
-		gridTemplateColumns("min(15rem, 38%) minmax(0, 1fr)")
+		gridTemplateColumns("min(16rem, 40%) minmax(0, 1fr)")
 		gridTemplateRows("minmax(0, 1fr)")
 		minHeight(0.px)
 
@@ -1189,7 +1189,23 @@ object PlaygroundStyle : StyleSheet() {
 		flexGrow(1)
 		minHeight(0.px)
 		overflowY(Overflow.Auto)
-		padding(0.px, 0.35.cssRem, 0.5.cssRem)
+		padding(0.px, 0.3.cssRem, 0.5.cssRem)
+	}
+
+	/** The children of an open folder, with the guide `--tree-guide` places under the folder's chevron. */
+	val treeGroup by style {
+		position(Position.Relative)
+
+		self + before style {
+			backgroundColor(border)
+			bottom(0.px)
+			property("content", "''")
+			property("left", "var(--tree-guide)")
+			property("pointer-events", "none")
+			position(Position.Absolute)
+			top(0.px)
+			width(1.px)
+		}
 	}
 
 	val treeRow by style {
@@ -1202,7 +1218,7 @@ object PlaygroundStyle : StyleSheet() {
 		display(DisplayStyle.Flex)
 		fontFamily(MONO, "monospace")
 		fontSize(0.76.cssRem)
-		gap(0.35.cssRem)
+		gap(0.3.cssRem)
 		paddingBottom(0.22.cssRem)
 		paddingRight(0.45.cssRem)
 		paddingTop(0.22.cssRem)
@@ -1222,10 +1238,18 @@ object PlaygroundStyle : StyleSheet() {
 		}
 	}
 
+	/** Files keep an empty one, so a folder's children all sit one step inside it. */
 	val treeChevron by style {
 		alignItems(AlignItems.Center)
 		display(DisplayStyle.Flex)
+		flexShrink(0)
 		opacity(0.7)
+		width(0.8.cssRem)
+
+		"svg" style {
+			height(0.8.cssRem)
+			width(0.8.cssRem)
+		}
 	}
 
 	val treeIcon by style {
