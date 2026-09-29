@@ -3,7 +3,6 @@ package io.github.ayfri.kore.features.loottables.entries.slotsource
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 /**
@@ -16,7 +15,6 @@ import kotlinx.serialization.Serializable
 @Serializable(with = SlotSource.Companion.SlotSourceSerializer::class)
 sealed class SlotSource {
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object SlotSourceSerializer : NamespacedPolymorphicSerializer<SlotSource>(slotSourceSealedSerializer())
 	}
 }

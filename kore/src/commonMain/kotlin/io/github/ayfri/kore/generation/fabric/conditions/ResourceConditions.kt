@@ -3,7 +3,6 @@ package io.github.ayfri.kore.generation.fabric.conditions
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -24,7 +23,6 @@ const val FABRIC_LOAD_CONDITIONS_KEY = "fabric:load_conditions"
 @Serializable(with = ResourceCondition.Companion.ResourceConditionSerializer::class)
 sealed class ResourceCondition {
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object ResourceConditionSerializer : NamespacedPolymorphicSerializer<ResourceCondition>(
 			resourceConditionSealedSerializer(),
 			outputName = "condition",

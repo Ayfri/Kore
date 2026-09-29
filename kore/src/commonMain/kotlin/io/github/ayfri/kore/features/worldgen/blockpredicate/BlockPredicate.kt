@@ -3,7 +3,6 @@ package io.github.ayfri.kore.features.worldgen.blockpredicate
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import io.github.ayfri.kore.serializers.TripleAsArray
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 /**
@@ -19,7 +18,6 @@ import kotlinx.serialization.Serializable
 @Serializable(with = BlockPredicate.Companion.BlockPredicateSerializer::class)
 sealed class BlockPredicate {
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object BlockPredicateSerializer :
 			NamespacedPolymorphicSerializer<BlockPredicate>(blockPredicateSealedSerializer())
 	}

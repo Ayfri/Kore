@@ -8,7 +8,6 @@ import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import io.github.ayfri.kore.utils.snbtSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.encodeToNbtTag
@@ -34,7 +33,6 @@ sealed class ObjectTextComponent : ChatComponent(), SimpleComponent {
 	}
 }
 
-@OptIn(InternalSerializationApi::class)
 data object ObjectTextComponentSerializer : NamespacedPolymorphicSerializer<ObjectTextComponent>(
 	objectTextComponentSealedSerializer(),
 	outputName = "object",

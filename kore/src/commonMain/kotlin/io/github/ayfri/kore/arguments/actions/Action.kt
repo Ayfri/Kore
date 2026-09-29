@@ -2,7 +2,6 @@ package io.github.ayfri.kore.arguments.actions
 
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 /** Marker interface for all action types ([ClickEvent], [DialogAction]). */
@@ -14,7 +13,6 @@ sealed interface ActionType
 @Serializable(with = Action.Companion.ActionSerializer::class)
 sealed class Action : ActionType {
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object ActionSerializer : NamespacedPolymorphicSerializer<Action>(actionSealedSerializer())
 	}
 }

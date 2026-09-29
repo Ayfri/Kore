@@ -7,7 +7,6 @@ import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.InlinableList
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 /**
@@ -34,7 +33,6 @@ sealed class StructureType {
 	abstract var terrainAdaptation: TerrainAdaptation?
 
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object StructureTypeSerializer :
 			NamespacedPolymorphicSerializer<StructureType>(structureTypeSealedSerializer())
 	}

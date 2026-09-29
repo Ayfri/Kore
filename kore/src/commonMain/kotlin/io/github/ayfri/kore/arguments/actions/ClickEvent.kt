@@ -3,7 +3,6 @@ package io.github.ayfri.kore.arguments.actions
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
@@ -17,7 +16,6 @@ import kotlinx.serialization.serializer
 @Serializable(with = ClickEvent.Companion.ClickEventSerializer::class)
 sealed interface ClickEvent : ActionType {
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object ClickEventSerializer : NamespacedPolymorphicSerializer<ClickEvent>(
 			clickEventSealedSerializer(),
 			outputName = "action",

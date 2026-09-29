@@ -12,7 +12,6 @@ import io.github.ayfri.kore.features.dialogs.control.DialogControl
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.InlinableList
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 @GeneratedSealedSerializer
@@ -41,7 +40,6 @@ sealed class DialogData {
 	abstract var pause: Boolean?
 
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object DialogDataSerializer : NamespacedPolymorphicSerializer<DialogData>(dialogDataSealedSerializer())
 	}
 }

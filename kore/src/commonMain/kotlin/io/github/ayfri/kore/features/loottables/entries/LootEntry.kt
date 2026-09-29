@@ -3,7 +3,6 @@ package io.github.ayfri.kore.features.loottables.entries
 import io.github.ayfri.kore.annotations.LootDsl
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 typealias LootEntries = MutableList<LootEntry>
@@ -19,7 +18,6 @@ typealias LootEntries = MutableList<LootEntry>
 @Serializable(with = LootEntry.Companion.LootEntrySerializer::class)
 sealed class LootEntry {
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object LootEntrySerializer : NamespacedPolymorphicSerializer<LootEntry>(lootEntrySealedSerializer())
 	}
 }

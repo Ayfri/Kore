@@ -5,7 +5,6 @@ import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.PredicateAsList
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 /**
@@ -26,7 +25,6 @@ sealed class ItemFunction {
     abstract var conditions: PredicateAsList?
 
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object ItemFunctionSerializer :
 			NamespacedPolymorphicSerializer<ItemFunction>(itemFunctionSealedSerializer(), outputName = "function")
 	}

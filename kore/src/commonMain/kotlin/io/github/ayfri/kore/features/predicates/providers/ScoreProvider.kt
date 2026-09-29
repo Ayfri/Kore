@@ -3,7 +3,6 @@ package io.github.ayfri.kore.features.predicates.providers
 import io.github.ayfri.kore.features.predicates.types.EntityTarget
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -16,7 +15,6 @@ import kotlinx.serialization.Serializable
 @Serializable(with = ScoreProvider.Companion.ScoreProviderSerializer::class)
 sealed class ScoreProvider {
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object ScoreProviderSerializer : NamespacedPolymorphicSerializer<ScoreProvider>(scoreProviderSealedSerializer())
 	}
 }

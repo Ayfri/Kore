@@ -5,7 +5,6 @@ import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 /**
@@ -24,7 +23,6 @@ sealed class ValueEffect : EnchantmentEffect {
 	var requirements: List<PredicateCondition>? = null
 
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object ValueEffectSerializer : NamespacedPolymorphicSerializer<ValueEffect>(valueEffectSealedSerializer())
 	}
 }

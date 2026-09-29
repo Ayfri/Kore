@@ -2,7 +2,6 @@ package io.github.ayfri.kore.features.worldgen.verticalanchors
 
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 /**
@@ -24,7 +23,6 @@ import kotlinx.serialization.Serializable
 @Serializable(with = VerticalAnchor.Companion.VerticalAnchorSerializer::class)
 sealed class VerticalAnchor {
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object VerticalAnchorSerializer :
 			NamespacedPolymorphicSerializer<VerticalAnchor>(verticalAnchorSealedSerializer(), skipOutputName = true)
 	}

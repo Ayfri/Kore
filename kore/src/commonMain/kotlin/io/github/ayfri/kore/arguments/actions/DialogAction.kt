@@ -3,7 +3,6 @@ package io.github.ayfri.kore.arguments.actions
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
@@ -15,7 +14,6 @@ import kotlinx.serialization.serializer
 @Serializable(with = DialogAction.Companion.DialogActionSerializer::class)
 sealed interface DialogAction : ActionType {
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object DialogActionSerializer :
 			NamespacedPolymorphicSerializer<DialogAction>(dialogActionSealedSerializer())
 	}

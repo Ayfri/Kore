@@ -3,7 +3,6 @@ package io.github.ayfri.kore.features.recipes.types
 import io.github.ayfri.kore.features.recipes.RecipeType
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 /**
@@ -21,7 +20,6 @@ sealed class Recipe {
 	open var group: String? = null
 
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object RecipeSerializer : NamespacedPolymorphicSerializer<Recipe>(recipeSealedSerializer())
 	}
 }

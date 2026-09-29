@@ -2,7 +2,6 @@ package io.github.ayfri.kore.features.testenvironments.types
 
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 /**
@@ -19,7 +18,6 @@ import kotlinx.serialization.Serializable
 @Serializable(with = TestEnvironment.Companion.TestEnvironmentSerializer::class)
 sealed class TestEnvironment {
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object TestEnvironmentSerializer :
 			NamespacedPolymorphicSerializer<TestEnvironment>(testEnvironmentSealedSerializer())
 	}

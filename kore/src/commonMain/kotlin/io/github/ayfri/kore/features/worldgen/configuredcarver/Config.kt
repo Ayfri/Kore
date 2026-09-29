@@ -9,7 +9,6 @@ import io.github.ayfri.kore.features.worldgen.verticalanchors.VerticalAnchor
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.InlinableList
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 /**
@@ -38,7 +37,6 @@ sealed class Config : FloatProviderScope, HeightProviderScope {
 	abstract var debugSettings: DebugSettings?
 
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object ConfigSerializer :
 			NamespacedPolymorphicSerializer<Config>(configSealedSerializer(), moveIntoProperty = "config")
 	}

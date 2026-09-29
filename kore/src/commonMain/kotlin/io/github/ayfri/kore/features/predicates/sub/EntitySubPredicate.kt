@@ -15,7 +15,6 @@ import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
 import io.github.ayfri.kore.utils.nbt as buildNbt
 import io.github.ayfri.kore.utils.snakeCase
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.MapSerializer
@@ -37,7 +36,6 @@ import net.benwoodworth.knbt.NbtTag
 @Serializable(with = EntitySubPredicate.Companion.EntitySubPredicateSerializer::class)
 sealed class EntitySubPredicate {
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object EntitySubPredicateSerializer : NamespacedPolymorphicSerializer<EntitySubPredicate>(
 			entitySubPredicateSealedSerializer(),
 			skipOutputName = true,

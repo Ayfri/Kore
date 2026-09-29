@@ -7,7 +7,6 @@ import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 /**
@@ -27,7 +26,6 @@ sealed class RootPlacer : BlockStateProviderScope, IntProviderScope {
 	abstract var aboveRootProvider: AboveRootPlacement?
 
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object RootPlacerSerializer : NamespacedPolymorphicSerializer<RootPlacer>(rootPlacerSealedSerializer())
 	}
 }

@@ -8,7 +8,6 @@ import io.github.ayfri.kore.arguments.types.resources.model
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
@@ -33,7 +32,6 @@ data class ProfileProperty(
 @Serializable(with = ProfileComponent.Companion.ProfileComponentSerializer::class)
 sealed class ProfileComponent : Component() {
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object ProfileComponentSerializer : NamespacedPolymorphicSerializer<ProfileComponent>(
 			profileComponentSealedSerializer(),
 			skipOutputName = true,

@@ -7,7 +7,6 @@ import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.sub.EntityPredicate
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -24,7 +23,6 @@ sealed class AdvancementTriggerCondition {
 	abstract var player: EntityOrPredicates?
 
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object AdvancementTriggerConditionDefaultSerializer : NamespacedPolymorphicSerializer<AdvancementTriggerCondition>(
 			advancementTriggerConditionSealedSerializer(),
 			outputName = "trigger",

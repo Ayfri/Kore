@@ -2,7 +2,6 @@ package io.github.ayfri.kore.features.worldgen.environmentattributes
 
 import io.github.ayfri.kore.serializers.EnumLikeSerializer
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 /**
@@ -87,7 +86,6 @@ sealed interface EnvironmentAttributeModifier {
 	) : Color
 
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object EnvironmentAttributeModifierSerializer :
 			EnumLikeSerializer<EnvironmentAttributeModifier>(environmentAttributeModifierSealedSerializer())
 	}

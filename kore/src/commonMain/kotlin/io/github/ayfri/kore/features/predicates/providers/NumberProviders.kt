@@ -5,7 +5,6 @@ import io.github.ayfri.kore.generated.arguments.types.EnvironmentAttributeArgume
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
@@ -26,7 +25,6 @@ import kotlinx.serialization.serializer
 @Serializable(with = NumberProvider.Companion.NumberProviderSerializer::class)
 sealed class NumberProvider {
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object NumberProviderSerializer :
 			NamespacedPolymorphicSerializer<NumberProvider>(numberProviderSealedSerializer())
 	}

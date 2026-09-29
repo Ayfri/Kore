@@ -3,7 +3,6 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 @GeneratedSealedSerializer
@@ -14,7 +13,6 @@ sealed class TrunkPlacer : IntProviderScope {
 	abstract var heightRandB: Int
 
 	companion object {
-		@OptIn(InternalSerializationApi::class)
 		data object TrunkPlacerSerializer : NamespacedPolymorphicSerializer<TrunkPlacer>(trunkPlacerSealedSerializer())
 	}
 }
