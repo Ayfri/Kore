@@ -6,8 +6,8 @@ import io.github.ayfri.kore.annotations.LootDsl
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.serializers.InlinableList
-import io.github.ayfri.kore.serializers.InlineSerializer
-import io.github.ayfri.kore.serializers.inlinableListSerializer
+import io.github.ayfri.kore.serializers.InlinableListSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 
@@ -35,13 +35,13 @@ data class Predicate(
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 
 	companion object {
-		data object PredicateSerializer : InlineSerializer<Predicate, InlinableList<PredicateCondition>>(
-			inlinableListSerializer(PredicateCondition.serializer()),
+		data object PredicateSerializer : InlineAutoSerializer<Predicate, InlinableList<PredicateCondition>>(
+			InlinableListSerializer(PredicateCondition.serializer()),
 			Predicate::predicateConditions,
 			{ Predicate(predicateConditions = it) },
 		)
 
-		data object PredicateAsListSerializer : InlineSerializer<Predicate, InlinableList<PredicateCondition>>(
+		data object PredicateAsListSerializer : InlineAutoSerializer<Predicate, InlinableList<PredicateCondition>>(
 			ListSerializer(PredicateCondition.serializer()),
 			Predicate::predicateConditions,
 			{ Predicate(predicateConditions = it) },

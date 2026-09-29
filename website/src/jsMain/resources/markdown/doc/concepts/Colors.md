@@ -5,7 +5,7 @@ nav-title: Colors
 description: Guide to using colors in Kore, including named colors, RGB/ARGB, dye colors, and how different contexts serialize them.
 keywords: minecraft, kore, colors, rgb, argb, dyes, components, particles
 date-created: 2025-08-11
-date-modified: 2026-02-04
+date-modified: 2026-09-29
 routeOverride: /docs/concepts/colors
 ---
 
@@ -95,7 +95,7 @@ Different Minecraft systems expect colors in different formats. Kore picks the r
 	- `mapColor(..)`: decimal
 	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/arguments/components/item/MapColorComponent.kt)
 	  ```kotlin
-	  InlineSerializer<MapColorComponent, RGB>(RGB.Companion.ColorAsDecimalSerializer, MapColorComponent::color)
+	  InlineAutoSerializer<MapColorComponent, RGB>(RGB.Companion.ColorAsDecimalSerializer, MapColorComponent::color, ::MapColorComponent)
 	  ```
 	- `potionContents(customColor=..)`: decimal
 	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/arguments/components/item/PotionContentsComponent.kt)

@@ -1,11 +1,12 @@
 package io.github.ayfri.kore.serializers
 
-import io.github.ayfri.kore.utils.nbt
+import io.github.ayfri.kore.utils.jsonKey
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
+import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtDecoder
 import net.benwoodworth.knbt.NbtEncoder
 import net.benwoodworth.knbt.nbtCompound
@@ -39,54 +40,36 @@ open class EitherInlineSerializer<T : Any>(
 ) : KSerializer<T> {
 	override val descriptor get() = delegate.descriptor
 
-	private fun jsonKey(json: Json, serialName: String): String {
-		val index = delegate.descriptor.getElementIndex(serialName)
-		return json.configuration.namingStrategy?.serialNameForJson(delegate.descriptor, index, serialName)
-			?: serialName
-	}
+	private val namesToInline get() = if (inline) propertyNamesToInline.asList() else emptyList()
 
-	override fun serialize(encoder: Encoder, value: T) {
-		when (encoder) {
-			is JsonEncoder -> {
-				val obj = encoder.json.encodeToJsonElement(delegate, value).jsonObject
-				if (inline) for (name in propertyNamesToInline) obj[jsonKey(encoder.json, name)]?.let {
-					encoder.encodeJsonElement(it)
-					return
-				}
-				encoder.encodeJsonElement(obj)
-			}
-
-			is NbtEncoder -> {
-				val compound = encoder.nbt.encodeToNbtTag(delegate, value).nbtCompound
-				if (inline) for (name in propertyNamesToInline) compound[name]?.let {
-					encoder.encodeNbtTag(it)
-					return
-				}
-				encoder.encodeNbtTag(compound)
-			}
-
-			else -> encoder.encodeSerializableValue(delegate, value)
+	override fun serialize(encoder: Encoder, value: T) = when (encoder) {
+		is JsonEncoder -> {
+			val obj = encoder.json.encodeToJsonElement(delegate, value).jsonObject
+			encoder.encodeJsonElement(namesToInline.firstNotNullOfOrNull { obj[descriptor.jsonKey(encoder.json, it)] } ?: obj)
 		}
+
+		is NbtEncoder -> {
+			val compound = encoder.nbt.encodeToNbtTag(delegate, value).nbtCompound
+			encoder.encodeNbtTag(namesToInline.firstNotNullOfOrNull { compound[it] } ?: compound)
+		}
+
+		else -> encoder.encodeSerializableValue(delegate, value)
 	}
 
 	override fun deserialize(decoder: Decoder): T = when (decoder) {
 		is JsonDecoder -> {
 			val element = decoder.decodeJsonElement()
-			val inlined = if (inline) propertyNamesToInline.firstNotNullOfOrNull { name ->
-				val wrapped = buildJsonObject { put(jsonKey(decoder.json, name), element) }
+			namesToInline.firstNotNullOfOrNull { name ->
+				val wrapped = JsonObject(mapOf(descriptor.jsonKey(decoder.json, name) to element))
 				runCatching { decoder.json.decodeFromJsonElement(delegate, wrapped) }.getOrNull()
-			} else null
-
-			inlined ?: decoder.json.decodeFromJsonElement(delegate, element)
+			} ?: decoder.json.decodeFromJsonElement(delegate, element)
 		}
 
 		is NbtDecoder -> {
 			val tag = decoder.decodeNbtTag()
-			val inlined = if (inline) propertyNamesToInline.firstNotNullOfOrNull { name ->
-				runCatching { decoder.nbt.decodeFromNbtTag(delegate, nbt { put(name, tag) }) }.getOrNull()
-			} else null
-
-			inlined ?: decoder.nbt.decodeFromNbtTag(delegate, tag)
+			namesToInline.firstNotNullOfOrNull { name ->
+				runCatching { decoder.nbt.decodeFromNbtTag(delegate, NbtCompound(mapOf(name to tag))) }.getOrNull()
+			} ?: decoder.nbt.decodeFromNbtTag(delegate, tag)
 		}
 
 		else -> decoder.decodeSerializableValue(delegate)

@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.serializers
 
-import io.github.ayfri.kore.utils.copyAllFrom
+import io.github.ayfri.kore.utils.defaultContentName
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -45,33 +45,22 @@ open class EnumLikeSerializer<T : Any>(private val dispatcher: SealedDispatcher<
 
 		val actual = dispatcher.serializerOf(value)
 		val name = defaultContentName(actual.descriptor.serialName)
-		val body = encoder.json.encodeToJsonElement(actual, value)
+		val body = encoder.json.encodeToJsonElement(actual, value).jsonObject
 
-		if (body is JsonObject && body.isEmpty()) {
-			encoder.encodeString(name)
-			return
-		}
-
-		encoder.encodeJsonElement(buildJsonObject {
-			put("type", name)
-			copyAllFrom(body as JsonObject, "type")
-		})
+		if (body.isEmpty()) encoder.encodeString(name)
+		else encoder.encodeJsonElement(JsonObject(mapOf<String, JsonElement>("type" to JsonPrimitive(name)) + (body - "type")))
 	}
 
 	override fun deserialize(decoder: Decoder): T {
 		require(decoder is JsonDecoder) { "$baseName can only be deserialized from JSON." }
 
 		return when (val element = decoder.decodeJsonElement()) {
-			is JsonObject -> {
-				val type = element.getValue("type").jsonPrimitive.content
-				decoder.json.decodeFromJsonElement(
-					caseSerializer(type),
-					buildJsonObject { copyAllFrom(element, "type") })
-			}
+			is JsonObject -> decoder.json.decodeFromJsonElement(
+				caseSerializer(element.getValue("type").jsonPrimitive.content),
+				JsonObject(element - "type"),
+			)
 
-			else -> decoder.json.decodeFromJsonElement(
-				caseSerializer(element.jsonPrimitive.content),
-				buildJsonObject {})
+			else -> decoder.json.decodeFromJsonElement(caseSerializer(element.jsonPrimitive.content), JsonObject(emptyMap()))
 		}
 	}
 }

@@ -1,18 +1,13 @@
 package io.github.ayfri.kore.serializers
 
-import io.github.ayfri.kore.utils.copyAllFrom
-import io.github.ayfri.kore.utils.nbt
-import io.github.ayfri.kore.utils.snakeCase
+import io.github.ayfri.kore.utils.defaultContentName
 import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.serialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 import net.benwoodworth.knbt.*
-
-internal fun defaultContentName(serialName: String) = serialName.substringAfterLast('.').snakeCase()
 
 /**
  * Serializes a sealed hierarchy as Minecraft's `{ "type": "<namespace:name>", ...fields }` shape, resolving every case
@@ -60,109 +55,70 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 	fun deserializeJsonElement(json: Json, typeName: String, element: JsonElement): T =
 		json.decodeFromJsonElement(generatedDeserializer(typeName), element)
 
-	private fun contentJson(jsonObject: JsonObject) = when (moveIntoProperty) {
-		null -> buildJsonObject { copyAllFrom(jsonObject, outputName) }
-		else -> jsonObject[moveIntoProperty]?.jsonObject ?: buildJsonObject {}
+	/** The fields of a serialized object, without the type name: at the top level or inside [moveIntoProperty]. */
+	private fun <E> content(fields: Map<String, E>, asObject: (E) -> Map<String, E>?) = when (moveIntoProperty) {
+		null -> fields - outputName
+		else -> fields[moveIntoProperty]?.let(asObject).orEmpty()
 	}
 
-	private fun contentNbt(nbtCompound: NbtCompound) = when (moveIntoProperty) {
-		null -> nbt { nbtCompound.filterKeys { it != outputName }.forEach { (key, tag) -> put(key, tag) } }
-		else -> nbtCompound[moveIntoProperty]?.nbtCompound ?: nbt {}
-	}
-
-	@OptIn(ExperimentalSerializationApi::class)
-	override fun deserialize(decoder: Decoder): T {
-		require(decoder is JsonDecoder || decoder is NbtDecoder) { "NamespacedPolymorphicSerializer can only be deserialized from Json or Nbt." }
-
-		return when (decoder) {
-			is JsonDecoder -> when (val element = decoder.decodeJsonElement()) {
-				is JsonObject -> {
-					val typeName = element[outputName]?.jsonPrimitive?.content
-						?: error("Missing '$outputName' field in JSON object for $baseName")
-					decoder.json.decodeFromJsonElement(generatedDeserializer(typeName), contentJson(element))
-				}
-
-				else -> deserializeBareJson(decoder, element)
-			}
-
-			is NbtDecoder -> when (val tag = decoder.decodeNbtTag()) {
-				is NbtCompound -> {
-					val typeName = tag[outputName]?.let { (it as NbtString).value }
-						?: error("Missing '$outputName' field in NBT compound for $baseName")
-					decoder.nbt.decodeFromNbtTag(generatedDeserializer(typeName), contentNbt(tag))
-				}
-
-				else -> deserializeBareNbt(decoder, tag)
-			}
-
-			else -> error("Unsupported decoder type")
+	/** The inverse of [content]: [fields] with [typeName] first, moved into [moveIntoProperty] when set. */
+	private fun <E> wrap(fields: Map<String, E>, typeName: E, toObject: (Map<String, E>) -> E) = buildMap {
+		if (!skipOutputName) put(outputName, typeName)
+		when (moveIntoProperty) {
+			null -> putAll(fields - outputName)
+			else -> if (!(skipEmptyOutput && fields.isEmpty())) put(moveIntoProperty, toObject(fields - outputName))
 		}
 	}
 
-	// A bare (non-object) element has no discriminator to read, so try every subtype until one decodes it.
-	private fun deserializeBareJson(decoder: JsonDecoder, element: JsonElement): T =
-		dispatcher.serializersBySerialName.values.firstNotNullOfOrNull { serializer ->
-			runCatching { decoder.json.decodeFromJsonElement(serializer, element) }.getOrNull()
-		} ?: error("No subtype of $baseName can deserialize non-object JSON element: $element")
+	/** A bare (non-object) value has no discriminator to read, so every subtype is tried until one decodes it. */
+	private inline fun decodeBare(value: Any, decode: (DeserializationStrategy<T>) -> T) =
+		dispatcher.serializersBySerialName.values.firstNotNullOfOrNull { runCatching { decode(it) }.getOrNull() }
+			?: error("No subtype of $baseName can deserialize non-object value: $value")
 
-	private fun deserializeBareNbt(decoder: NbtDecoder, tag: NbtTag): T =
-		dispatcher.serializersBySerialName.values.firstNotNullOfOrNull { serializer ->
-			runCatching { decoder.nbt.decodeFromNbtTag(serializer, tag) }.getOrNull()
-		} ?: error("No subtype of $baseName can deserialize non-compound NBT element: $tag")
-
-	private fun serializeJson(outputClassName: String, valueJson: JsonElement, encoder: JsonEncoder) {
-		if (valueJson !is JsonObject) {
-			encoder.encodeJsonElement(valueJson)
-			return
-		}
-
-		val finalJson = when (moveIntoProperty) {
-			null -> buildJsonObject {
-				if (!skipOutputName) put(outputName, outputClassName)
-				copyAllFrom(valueJson, outputName)
+	override fun deserialize(decoder: Decoder): T = when (decoder) {
+		is JsonDecoder -> when (val element = decoder.decodeJsonElement()) {
+			is JsonObject -> {
+				val typeName = element[outputName]?.jsonPrimitive?.content
+					?: error("Missing '$outputName' field in JSON object for $baseName")
+				decoder.json.decodeFromJsonElement(generatedDeserializer(typeName), JsonObject(content(element) { it as? JsonObject }))
 			}
 
-			else -> buildJsonObject {
-				if (!skipOutputName) put(outputName, outputClassName)
-				if (!(skipEmptyOutput && valueJson.isEmpty()))
-					putJsonObject(moveIntoProperty) { copyAllFrom(valueJson, outputName) }
-			}
+			else -> decodeBare(element) { decoder.json.decodeFromJsonElement(it, element) }
 		}
 
-		encoder.encodeJsonElement(finalJson)
-	}
-
-	private fun serializeNbt(outputClassName: String, valueNbt: NbtTag, encoder: NbtEncoder) {
-		if (valueNbt !is NbtCompound) {
-			encoder.encodeNbtTag(valueNbt)
-			return
-		}
-
-		val finalNbt = when (moveIntoProperty) {
-			null -> nbt {
-				if (!skipOutputName) put(outputName, NbtString(outputClassName))
-				valueNbt.filterKeys { it != outputName }.forEach { (key, tag) -> put(key, tag) }
+		is NbtDecoder -> when (val tag = decoder.decodeNbtTag()) {
+			is NbtCompound -> {
+				val typeName = (tag[outputName] as? NbtString)?.value
+					?: error("Missing '$outputName' field in NBT compound for $baseName")
+				decoder.nbt.decodeFromNbtTag(generatedDeserializer(typeName), NbtCompound(content(tag) { it as? NbtCompound }))
 			}
 
-			else -> nbt {
-				if (!skipOutputName) put(outputName, NbtString(outputClassName))
-				if (!(skipEmptyOutput && valueNbt.isEmpty()))
-					putNbtCompound(moveIntoProperty) { valueNbt.filterKeys { it != outputName }.forEach { (key, tag) -> put(key, tag) } }
-			}
+			else -> decodeBare(tag) { decoder.nbt.decodeFromNbtTag(it, tag) }
 		}
 
-		encoder.encodeNbtTag(finalNbt)
+		else -> error("$baseName can only be deserialized from JSON or NBT.")
 	}
 
 	override fun serialize(encoder: Encoder, value: T) {
-		require(encoder is JsonEncoder || encoder is NbtEncoder) { "PolymorphicTypeSerializer can only be serialized to Json or Nbt." }
-
 		val actual = dispatcher.serializerOf(value)
 		val outputClassName = namespaced(contentName(actual.descriptor.serialName))
 
 		when (encoder) {
-			is JsonEncoder -> serializeJson(outputClassName, encoder.json.encodeToJsonElement(actual, value), encoder)
-			is NbtEncoder -> serializeNbt(outputClassName, encoder.nbt.encodeToNbtTag(actual, value), encoder)
+			is JsonEncoder -> encoder.encodeJsonElement(
+				when (val body = encoder.json.encodeToJsonElement(actual, value)) {
+					is JsonObject -> JsonObject(wrap(body, JsonPrimitive(outputClassName), ::JsonObject))
+					else -> body
+				}
+			)
+
+			is NbtEncoder -> encoder.encodeNbtTag(
+				when (val body = encoder.nbt.encodeToNbtTag(actual, value)) {
+					is NbtCompound -> NbtCompound(wrap(body, NbtString(outputClassName), ::NbtCompound))
+					else -> body
+				}
+			)
+
+			else -> error("$baseName can only be serialized to JSON or NBT.")
 		}
 	}
 

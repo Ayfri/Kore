@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.serializers
 
-import io.github.ayfri.kore.utils.nbt
+import io.github.ayfri.kore.utils.jsonKey
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.encoding.Decoder
@@ -49,28 +49,18 @@ open class SinglePropertySimplifierSerializer<T : Any>(
 ) : KSerializer<T> {
 	override val descriptor get() = delegate.descriptor
 
-	private fun jsonKey(json: Json): String {
-		val index = delegate.descriptor.getElementIndex(propertyName)
-		return json.configuration.namingStrategy?.serialNameForJson(delegate.descriptor, index, propertyName)
-			?: propertyName
-	}
+	/** The value of the only entry of this object when its key is [key]. */
+	private fun <E> Map<String, E>.singleValueAt(key: String) = entries.singleOrNull()?.takeIf { it.key == key }?.value
 
 	override fun serialize(encoder: Encoder, value: T) = when (encoder) {
 		is JsonEncoder -> {
 			val obj = encoder.json.encodeToJsonElement(delegate, value).jsonObject
-			val key = jsonKey(encoder.json)
-			if (key in obj && obj.keys.all { it == key }) encoder.encodeJsonElement(obj.getValue(key))
-			else encoder.encodeJsonElement(obj)
+			encoder.encodeJsonElement(obj.singleValueAt(descriptor.jsonKey(encoder.json, propertyName)) ?: obj)
 		}
 
 		is NbtEncoder -> {
 			val compound = encoder.nbt.encodeToNbtTag(delegate, value).nbtCompound
-			if (propertyName in compound && compound.keys.all { it == propertyName }) encoder.encodeNbtTag(
-				compound.getValue(
-					propertyName
-				)
-			)
-			else encoder.encodeNbtTag(compound)
+			encoder.encodeNbtTag(compound.singleValueAt(propertyName) ?: compound)
 		}
 
 		else -> encoder.encodeSerializableValue(delegate, value)
@@ -79,14 +69,13 @@ open class SinglePropertySimplifierSerializer<T : Any>(
 	override fun deserialize(decoder: Decoder): T = when (decoder) {
 		is JsonDecoder -> {
 			val element = decoder.decodeJsonElement()
-			val obj = element as? JsonObject ?: buildJsonObject { put(jsonKey(decoder.json), element) }
+			val obj = element as? JsonObject ?: JsonObject(mapOf(descriptor.jsonKey(decoder.json, propertyName) to element))
 			decoder.json.decodeFromJsonElement(delegate, obj)
 		}
 
 		is NbtDecoder -> {
 			val tag = decoder.decodeNbtTag()
-			val compound = tag as? NbtCompound ?: nbt { put(propertyName, tag) }
-			decoder.nbt.decodeFromNbtTag(delegate, compound)
+			decoder.nbt.decodeFromNbtTag(delegate, tag as? NbtCompound ?: NbtCompound(mapOf(propertyName to tag)))
 		}
 
 		else -> decoder.decodeSerializableValue(delegate)

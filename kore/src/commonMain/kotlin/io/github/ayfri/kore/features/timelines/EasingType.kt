@@ -1,10 +1,9 @@
 package io.github.ayfri.kore.features.timelines
 
+import io.github.ayfri.kore.serializers.EnumLikeSerializer
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
-import io.github.ayfri.kore.serializers.defaultContentName
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
@@ -20,45 +19,26 @@ import kotlinx.serialization.json.*
 sealed class EasingType {
 	companion object {
 		data object EasingTypeSerializer : KSerializer<EasingType> {
-			private val dispatcher = easingTypeSealedSerializer()
-			override val descriptor = buildClassSerialDescriptor("EasingType")
-
-			private val serialNameByContentName = lazy {
-				dispatcher.serializersBySerialName.keys.associateBy(::defaultContentName)
-			}
+			private val simple = EnumLikeSerializer(easingTypeSealedSerializer())
+			override val descriptor = simple.descriptor
 
 			override fun deserialize(decoder: Decoder): EasingType {
-				require(decoder is JsonDecoder) { "EasingType can only be deserialized from Json" }
+				require(decoder is JsonDecoder) { "EasingType can only be deserialized from JSON." }
 				return when (val element = decoder.decodeJsonElement()) {
-					is JsonObject -> element["cubic_bezier"]!!.jsonArray.map { it.jsonPrimitive.float }
+					is JsonObject -> element.getValue("cubic_bezier").jsonArray.map { it.jsonPrimitive.float }
 						.let { (x1, y1, x2, y2) -> CubicBezier(x1, y1, x2, y2) }
 
-					else -> {
-						val name = element.jsonPrimitive.content
-						val serializer = dispatcher.serializersBySerialName[serialNameByContentName.value[name] ?: name]
-							?: error("Unknown easing type: '$name'")
-						decoder.json.decodeFromJsonElement(serializer, JsonObject(emptyMap()))
-					}
+					else -> decoder.json.decodeFromJsonElement(simple, element)
 				}
 			}
 
-			override fun serialize(encoder: Encoder, value: EasingType) {
-				require(encoder is JsonEncoder)
-				when (value) {
-					is CubicBezier -> encoder.encodeJsonElement(buildJsonObject {
-						putJsonArray("cubic_bezier") {
-							add(value.x1)
-							add(value.y1)
-							add(value.x2)
-							add(value.y2)
-						}
-					})
+			override fun serialize(encoder: Encoder, value: EasingType) = when (value) {
+				is CubicBezier -> encoder.encodeSerializableValue(
+					JsonObject.serializer(),
+					JsonObject(mapOf("cubic_bezier" to JsonArray(listOf(value.x1, value.y1, value.x2, value.y2).map(::JsonPrimitive)))),
+				)
 
-					else -> {
-						val actual = dispatcher.serializerOf(value)
-						encoder.encodeJsonElement(JsonPrimitive(defaultContentName(actual.descriptor.serialName)))
-					}
-				}
+				else -> simple.serialize(encoder, value)
 			}
 		}
 	}

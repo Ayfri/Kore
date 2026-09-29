@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.advancements
 
 import io.github.ayfri.kore.features.advancements.triggers.AdvancementTriggerCondition
-import io.github.ayfri.kore.serializers.InlineSerializer
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
@@ -16,7 +16,7 @@ import kotlinx.serialization.builtins.serializer
 @Serializable(with = AdvancementCriteria.Companion.AdvancementCriteriaSerializer::class)
 data class AdvancementCriteria(var criteria: AdvancementCriteriaMap = mutableMapOf()) {
 	companion object {
-		data object AdvancementCriteriaSerializer : InlineSerializer<AdvancementCriteria, Map<String, AdvancementTriggerCondition>>(
+		data object AdvancementCriteriaSerializer : InlineAutoSerializer<AdvancementCriteria, Map<String, AdvancementTriggerCondition>>(
 			MapSerializer(String.serializer(), AdvancementTriggerCondition.serializer()),
 			AdvancementCriteria::criteria,
 			{ AdvancementCriteria(it.toMutableMap()) },

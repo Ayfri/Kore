@@ -1,23 +1,21 @@
 package io.github.ayfri.kore.serializers
 
-import io.github.ayfri.kore.utils.copyAllFrom
-import io.github.ayfri.kore.utils.getPropertyContent
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonTransformingSerializer
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
+/** Serializes a worldgen provider as its bare value when its type is `minecraft:`[constantName], as-is otherwise. */
 open class ProviderSerializer<T : Any>(
 	kSerializer: KSerializer<T>,
 	private val constantName: String = "constant",
-	private val weightedListName: String = "weighted_list",
 	private val typePropertyName: String = "type",
 	private val valuePropertyName: String = "value",
 ) : JsonTransformingSerializer<T>(kSerializer) {
-	override fun transformSerialize(element: JsonElement) = when (val type = element.jsonObject.getPropertyContent(typePropertyName)) {
-		"minecraft:$constantName" -> element.jsonObject[valuePropertyName]!!
-		"minecraft:$weightedListName" -> element.jsonObject
-		else -> buildJsonObject {
-			put(typePropertyName, type)
-			copyAllFrom(element.jsonObject, typePropertyName)
-		}
+	override fun transformSerialize(element: JsonElement): JsonElement {
+		val provider = element.jsonObject
+		val isConstant = provider.getValue(typePropertyName).jsonPrimitive.content == "minecraft:$constantName"
+		return if (isConstant) provider.getValue(valuePropertyName) else provider
 	}
 }
