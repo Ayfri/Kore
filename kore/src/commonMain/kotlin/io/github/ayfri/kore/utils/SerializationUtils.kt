@@ -3,6 +3,7 @@ package io.github.ayfri.kore.utils
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -18,16 +19,24 @@ import kotlin.enums.EnumEntries
  *
  * @param T The enum type.
  * @param values The enum entries.
- * @param encode Transform an enum value to its serialized string.
- * @param decode Find an enum value from a deserialized string (defaults to matching by [encode]).
+ * @param encode Transform an enum value to its serialized string, decoding looks the string up the same way.
  */
 open class EnumStringSerializer<T : Enum<T>>(
 	private val values: EnumEntries<T>,
 	private val encode: T.() -> String,
-	private val decode: (String) -> T = { str -> values.first { it.encode() == str } },
 ) : KSerializer<T> {
 	override val descriptor = PrimitiveSerialDescriptor("EnumStringSerializer", PrimitiveKind.STRING)
-	override fun deserialize(decoder: Decoder): T = decode(decoder.decodeString())
+
+	private val byEncoded = lazy { values.associateBy { it.encode() } }
+
+	/** The entry serialized as [string], `null` when there is none. */
+	protected open fun decode(string: String) = byEncoded.value[string]
+
+	override fun deserialize(decoder: Decoder): T {
+		val string = decoder.decodeString()
+		return decode(string) ?: throw SerializationException("'$string' is not an entry of this enum.")
+	}
+
 	override fun serialize(encoder: Encoder, value: T) = encoder.encodeString(value.encode())
 }
 

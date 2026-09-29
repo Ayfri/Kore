@@ -14,7 +14,6 @@ import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.asArg
 import io.github.ayfri.kore.utils.encodeToSnbt
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encoding.Encoder
 
 /**
  * Target clause for the `/loot` command.
@@ -40,11 +39,7 @@ enum class Hand {
 	OFF_HAND;
 
 	companion object {
-		data object HandSerializer : LowercaseSerializer<Hand>(entries) {
-			override fun serialize(encoder: Encoder, value: Hand) {
-				encoder.encodeString(value.name.lowercase().replace("_", ""))
-			}
-		}
+		data object HandSerializer : LowercaseSerializer<Hand>(entries, { name.lowercase().replace("_", "") })
 	}
 }
 

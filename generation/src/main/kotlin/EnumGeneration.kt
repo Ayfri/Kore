@@ -40,8 +40,7 @@ fun generateEnum(
 
 		additionalEnumCode()
 
-		val encoderValue = if (parentArgumentType != null) "value.asId()" else null
-		addType(generateCompanion(name, encoderValue))
+		addType(generateCompanion(name, "asId()".takeIf { parentArgumentType != null }))
 	}
 
 	val file = generateFile(name, sourceUrl, enumType, additionalCode = additionalCode)

@@ -3,7 +3,6 @@ package io.github.ayfri.kore.arguments.numbers
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encoding.Encoder
 
 @Serializable(TimeType.Companion.TimeTypeSerializer::class)
 enum class TimeType(val unit: String, val commandName: String) {
@@ -12,9 +11,7 @@ enum class TimeType(val unit: String, val commandName: String) {
 	DAYS("d", "day");
 
 	companion object {
-		data object TimeTypeSerializer : LowercaseSerializer<TimeType>(entries) {
-			override fun serialize(encoder: Encoder, value: TimeType) = encoder.encodeString(value.unit)
-		}
+		data object TimeTypeSerializer : LowercaseSerializer<TimeType>(entries, { unit })
 	}
 }
 

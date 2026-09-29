@@ -10,8 +10,4 @@ private fun String.camelcase(): String {
 	}
 }
 
-open class CamelcaseSerializer<T : Enum<T>>(values: EnumEntries<T>) : EnumStringSerializer<T>(
-	values,
-	encode = { name.camelcase() },
-	decode = { str -> values.first { it.name.camelcase() == str } },
-)
+open class CamelcaseSerializer<T : Enum<T>>(values: EnumEntries<T>) : EnumStringSerializer<T>(values, { name.camelcase() })

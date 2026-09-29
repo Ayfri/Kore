@@ -125,28 +125,11 @@ fun generatePathEnumTree(paths: List<String>, generator: Generator) {
 	logGenerated("enum tree", name, "${paths.size} paths", file)
 }
 
-/** Applies [block] only when [condition] is true. */
-inline fun <T> T.letIf(
-	condition: Boolean,
-	block: (T) -> T,
-) = if (condition) block(this) else this
-
-/** Builds the `companion object` shared by every generated enum: a nested `<name>Serializer` object. */
-fun generateCompanion(name: String, encoderValue: String? = "value.asId()") =
-	TypeSpec.companionObjectBuilder().apply {
-		addType(
-			TypeSpec.objectBuilder(name.asSerializer())
-				.superclass(ClassName("$CODE_PACKAGE.serializers", "LowercaseSerializer").parameterizedBy(ClassName("", name)))
-				.addSuperclassConstructorParameter("entries")
-				.letIf(encoderValue != null) {
-					it.addFunction(
-						FunSpec.builder("serialize")
-							.addParameter("encoder", ClassName("kotlinx.serialization.encoding", "Encoder"))
-							.addParameter("value", ClassName("", name))
-							.addStatement("encoder.encodeString($encoderValue)")
-							.overrides()
-							.build()
-					)
-				}.build()
-		)
-	}.build()
+/** Builds the `companion object` shared by every generated enum: a nested `<name>Serializer` object, writing [transform] when set. */
+fun generateCompanion(name: String, transform: String? = null) =
+	TypeSpec.companionObjectBuilder().addType(
+		TypeSpec.objectBuilder(name.asSerializer())
+			.superclass(ClassName("$CODE_PACKAGE.serializers", "LowercaseSerializer").parameterizedBy(ClassName("", name)))
+			.addSuperclassConstructorParameter(if (transform == null) "entries" else "entries, { $transform }")
+			.build()
+	).build()

@@ -2,7 +2,6 @@ package io.github.ayfri.kore.commands.scoreboard
 
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encoding.Encoder
 
 @Serializable(Operation.Companion.OperationSerializer::class)
 enum class Operation(val symbol: String) {
@@ -17,8 +16,6 @@ enum class Operation(val symbol: String) {
 	MAX(">");
 
 	companion object {
-		data object OperationSerializer : LowercaseSerializer<Operation>(entries) {
-			override fun serialize(encoder: Encoder, value: Operation) = encoder.encodeString(value.symbol)
-		}
+		data object OperationSerializer : LowercaseSerializer<Operation>(entries, { symbol })
 	}
 }
