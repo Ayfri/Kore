@@ -33,10 +33,10 @@ open class EnumLikeSerializer<T : Any>(private val dispatcher: SealedDispatcher<
 
 	override val descriptor = PrimitiveSerialDescriptor(baseName, PrimitiveKind.STRING)
 
-	private val serialNameByContentName by lazy { dispatcher.serializersBySerialName.keys.associateBy(::defaultContentName) }
+	private val serialNameByContentName = lazy { dispatcher.serializersBySerialName.keys.associateBy(::defaultContentName) }
 
 	private fun caseSerializer(contentName: String): DeserializationStrategy<T> {
-		val serialName = serialNameByContentName[contentName] ?: contentName
+		val serialName = serialNameByContentName.value[contentName] ?: contentName
 		return dispatcher.serializersBySerialName[serialName] ?: error("No case '$contentName' in $baseName")
 	}
 

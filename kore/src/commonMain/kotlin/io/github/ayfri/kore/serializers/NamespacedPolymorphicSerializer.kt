@@ -46,13 +46,13 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 	private fun normalize(typeName: String) =
 		if (useMinecraftPrefix) typeName.removePrefix("minecraft:") else typeName
 
-	private val serialNameByContent by lazy { dispatcher.serializersBySerialName.keys.associateBy(contentName) }
+	private val serialNameByContent = lazy { dispatcher.serializersBySerialName.keys.associateBy(contentName) }
 
 	/** Every subtype's Minecraft name, e.g. `["enchantments", "damage", ...]`. */
 	val contentNames get() = dispatcher.serializersBySerialName.keys.map(contentName)
 
 	private fun generatedDeserializer(typeName: String): DeserializationStrategy<T> {
-		val serialName = serialNameByContent[normalize(typeName)] ?: normalize(typeName)
+		val serialName = serialNameByContent.value[normalize(typeName)] ?: normalize(typeName)
 		return dispatcher.serializersBySerialName[serialName] ?: error("No subtype '$typeName' in $baseName")
 	}
 

@@ -30,8 +30,7 @@ abstract class SealedDispatcher<T : Any>(val serialName: String) {
 	/** Every subtype's serializer, in the order bare values are tried when decoding. */
 	protected abstract fun serializers(): List<KSerializer<out T>>
 
-	/** Every subtype's serializer by serial name, loading the whole family on first access: only decoding needs it. */
-	val serializersBySerialName: Map<String, KSerializer<out T>> by lazy {
+	private val bySerialName = lazy {
 		val serializers = serializers()
 		serializers.associateBy { it.descriptor.serialName }.also { bySerialName ->
 			check(bySerialName.size == serializers.size) {
@@ -40,4 +39,7 @@ abstract class SealedDispatcher<T : Any>(val serialName: String) {
 			}
 		}
 	}
+
+	/** Every subtype's serializer by serial name, loading the whole family on first access: only decoding needs it. */
+	val serializersBySerialName: Map<String, KSerializer<out T>> get() = bySerialName.value
 }
