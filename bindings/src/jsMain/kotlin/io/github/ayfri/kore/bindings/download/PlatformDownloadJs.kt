@@ -7,6 +7,7 @@ import io.github.ayfri.kore.utils.makeDirectories
 import io.github.ayfri.kore.utils.readBytes
 import io.github.ayfri.kore.utils.writeAtomically
 import kotlinx.io.files.Path
+import org.khronos.webgl.Int8Array
 
 /**
  * Kotlin/JS compiles once for both `browser()` and `nodejs()`, so the two backends are picked at runtime rather
@@ -34,7 +35,7 @@ internal actual suspend fun httpRequest(
 	body: ByteArray?,
 ): HttpResponse {
 	val response = jsFetch(url, method, headers, body).await()
-	val bytes = if (method == "HEAD") ByteArray(0) else response.arrayBuffer().await().toByteArray()
+	val bytes = if (method == "HEAD") ByteArray(0) else Int8Array(response.arrayBuffer().await()).unsafeCast<ByteArray>()
 	return HttpResponse(response.status, bytes)
 }
 
@@ -85,7 +86,7 @@ private object Opfs {
 		val parent = directory(parts.dropLast(1), create = true)
 		val fileHandle = parent.getFileHandle(parts.last(), fileSystemHandleOptions(true)).await()
 		val writable = fileHandle.createWritable().await()
-		writable.write(content.toInt8Array()).await()
+		writable.write(content.unsafeCast<Int8Array>()).await()
 		writable.close().await()
 	}
 
@@ -95,7 +96,7 @@ private object Opfs {
 			val parent = directory(parts.dropLast(1), create = false)
 			val fileHandle = parent.getFileHandle(parts.last(), fileSystemHandleOptions(false)).await()
 			val file = fileHandle.getFile().await()
-			file.arrayBuffer().await().toByteArray()
+			Int8Array(file.arrayBuffer().await()).unsafeCast<ByteArray>()
 		} catch (_: Throwable) {
 			null
 		}

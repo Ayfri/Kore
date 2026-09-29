@@ -2,8 +2,6 @@ package io.github.ayfri.kore.bindings.download
 
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Int8Array
-import org.khronos.webgl.get
-import org.khronos.webgl.set
 import kotlin.js.Promise
 
 /**
@@ -59,17 +57,6 @@ internal suspend fun <T> Promise<T>.await(): T = kotlin.coroutines.suspendCorout
 	then({ continuation.resumeWith(Result.success(it)) }, { continuation.resumeWith(Result.failure(it)) })
 }
 
-internal fun ByteArray.toInt8Array(): Int8Array {
-	val array = Int8Array(size)
-	for (i in indices) array[i] = this[i]
-	return array
-}
-
-internal fun ArrayBuffer.toByteArray(): ByteArray {
-	val view = Int8Array(this)
-	return ByteArray(view.length) { view[it] }
-}
-
 /** Performs an HTTP request via the global `fetch` (available in browsers and Node.js 18+). */
 internal fun jsFetch(url: String, method: String, headers: Map<String, String>, body: ByteArray?): Promise<FetchResponse> {
 	val init: dynamic = js("({})")
@@ -77,7 +64,7 @@ internal fun jsFetch(url: String, method: String, headers: Map<String, String>, 
 	val headersObj: dynamic = js("({})")
 	headers.forEach { (key, value) -> headersObj[key] = value }
 	init.headers = headersObj
-	if (body != null) init.body = body.toInt8Array()
+	if (body != null) init.body = body.unsafeCast<Int8Array>()
 
 	val fetchFn = js("fetch")
 	return fetchFn(url, init).unsafeCast<Promise<FetchResponse>>()
