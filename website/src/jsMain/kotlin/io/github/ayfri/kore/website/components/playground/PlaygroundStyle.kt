@@ -233,7 +233,7 @@ object PlaygroundStyle : StyleSheet() {
 
 		lgMax(self) {
 			borderTop(1.px, LineStyle.Solid, border)
-			property("height", "16rem !important")
+			property("height", "16rem", important = true)
 		}
 	}
 
@@ -1322,7 +1322,8 @@ object PlaygroundStyle : StyleSheet() {
 		}
 
 		// Scrolling belongs to the pane, not to the code box, so the bar sits at the bottom edge either way.
-		"pre, pre[class*=\"language-\"]" style {
+		// Grouped in `:is`: a nested selector list only gets the class on its first entry, the others would apply page-wide.
+		":is(pre, pre[class*=\"language-\"])" style {
 			backgroundColor(Color.transparent)
 			boxSizing(BoxSizing.BorderBox)
 			flexGrow(1)
@@ -1339,7 +1340,7 @@ object PlaygroundStyle : StyleSheet() {
 			property("width", "100%")
 		}
 
-		"pre, pre[class*=\"language-\"], pre > code" style {
+		":is(pre, pre[class*=\"language-\"], pre > code)" style {
 			property("overflow-wrap", "anywhere")
 			whiteSpace(WhiteSpace.PreWrap)
 		}
@@ -1581,7 +1582,7 @@ object PlaygroundStyle : StyleSheet() {
 			display(DisplayStyle.None)
 		}
 
-		"pre, pre[class*=\"language-\"]" style {
+		":is(pre, pre[class*=\"language-\"])" style {
 			backgroundColor(Color.transparent)
 			fontSize(0.76.cssRem)
 			margin(0.px)
