@@ -53,6 +53,7 @@ class DataPackGenerator(
 		DatapackGenerationMode.FOLDER -> null
 	}
 	private val writtenArchiveEntries = mutableSetOf<String>()
+	private val createdDirectories = mutableSetOf<Path>()
 
 	/**
 	 * Generates the datapack. Returns the built archive bytes for [DatapackGenerationMode.JAR]/`.ZIP`
@@ -86,7 +87,10 @@ class DataPackGenerator(
 		}
 
 		val bytes = archive?.toByteArray()
-		if (bytes != null) platformWriteFile(outputPath, bytes)
+		if (bytes != null) {
+			createDirectoriesOnce(outputPath.parent)
+			platformWriteFile(outputPath, bytes)
+		}
 
 		datapack.generated = true
 		return bytes
@@ -189,7 +193,10 @@ class DataPackGenerator(
 		val finalPath = to.resolve(path.normalizePath())
 
 		when (mode) {
-			DatapackGenerationMode.FOLDER -> platformWriteFile(finalPath, content)
+			DatapackGenerationMode.FOLDER -> {
+				createDirectoriesOnce(finalPath.parent)
+				platformWriteFile(finalPath, content)
+			}
 
 			DatapackGenerationMode.JAR, DatapackGenerationMode.ZIP -> archive?.let {
 				val entryPath = finalPath.archiveRelativePath()
@@ -199,6 +206,10 @@ class DataPackGenerator(
 				it.addEntry(entryPath, content)
 			}
 		}
+	}
+
+	private suspend fun createDirectoriesOnce(directory: Path?) {
+		if (directory != null && createdDirectories.add(directory)) platformCreateDirectories(directory)
 	}
 
 	private fun String.normalizePath() = replace("\\", "/")

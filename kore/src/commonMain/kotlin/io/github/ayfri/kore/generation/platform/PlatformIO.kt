@@ -9,7 +9,8 @@ import kotlin.coroutines.startCoroutine
  * The only filesystem primitives the datapack generator needs per platform: JVM and Node.js both delegate
  * to the existing `kotlinx.io.files.SystemFileSystem`-based helpers in `utils/filesUtils.kt` (it already
  * supports both synchronously). The browser has no real filesystem and implements these against OPFS
- * (Origin Private File System), which is why the signatures are `suspend`.
+ * (Origin Private File System), which is why the signatures are `suspend`. [platformWriteFile] expects the parent
+ * directory to exist.
  */
 internal expect suspend fun platformWriteFile(path: Path, content: ByteArray)
 internal expect suspend fun platformCreateDirectories(path: Path)

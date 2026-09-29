@@ -5,10 +5,7 @@ import kotlinx.io.files.Path
 
 internal actual val platformRequiresSuspension: Boolean = false
 
-internal actual suspend fun platformWriteFile(path: Path, content: ByteArray) {
-	path.ensureParents()
-	path.write(content)
-}
+internal actual suspend fun platformWriteFile(path: Path, content: ByteArray) = path.write(content)
 
 internal actual suspend fun platformCreateDirectories(path: Path) {
 	path.makeDirectories()

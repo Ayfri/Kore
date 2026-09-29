@@ -38,8 +38,7 @@ fun Path.readBytes() = toSource().buffered().use { it.readByteArray() }
 fun Path.readText() = if (!this.isDirectory()) this.toSource().buffered().use { it.readString() }
 else throw IOException("Cannot read directory as text")
 fun Path.writeText(content: String) = write(content.encodeToByteArray())
-fun Path.write(array: ByteArray) = if (!this.isDirectory()) this.toSink().buffered().use { it.write(array) }
-else throw IOException("Cannot write to directory")
+fun Path.write(array: ByteArray) = this.toSink().buffered().use { it.write(array) }
 
 /** Writes through a sibling `.part` file then moves it in place, so a crash never leaves a truncated file behind. */
 fun Path.writeAtomically(array: ByteArray) {

@@ -15,12 +15,7 @@ private val isNode: Boolean =
 internal actual val platformRequiresSuspension: Boolean = !isNode
 
 internal actual suspend fun platformWriteFile(path: Path, content: ByteArray) {
-	if (isNode) {
-		path.ensureParents()
-		path.write(content)
-	} else {
-		Opfs.writeFile(path, content)
-	}
+	if (isNode) path.write(content) else Opfs.writeFile(path, content)
 }
 
 internal actual suspend fun platformCreateDirectories(path: Path) {
