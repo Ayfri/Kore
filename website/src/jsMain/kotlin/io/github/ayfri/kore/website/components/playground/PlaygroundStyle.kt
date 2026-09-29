@@ -1301,42 +1301,47 @@ object PlaygroundStyle : StyleSheet() {
 		gap(0.5.cssRem)
 		height(2.15.cssRem)
 		justifyContent(JustifyContent.SpaceBetween)
-		padding(0.px, 0.3.cssRem, 0.px, 0.8.cssRem)
+		padding(0.px, 0.3.cssRem, 0.px, 0.35.cssRem)
 	}
 
 	val breadcrumb by style {
 		alignItems(AlignItems.Center)
+		backgroundColor(Color.transparent)
+		border(0.px)
+		borderRadius(0.4.cssRem)
 		color(muted)
+		cursor(Cursor.Pointer)
 		display(DisplayStyle.Flex)
-		fontFamily(MONO, "monospace")
 		fontSize(0.72.cssRem)
-		gap(0.2.cssRem)
+		gap(0.5.cssRem)
+		height(1.75.cssRem)
 		minWidth(0.px)
 		overflow(Overflow.Hidden)
+		padding(0.px, 0.45.cssRem)
+		transition(0.15.s, "background-color")
 		whiteSpace(WhiteSpace.NoWrap)
 
-		"svg" style {
-			height(0.75.cssRem)
-			opacity(0.55)
-			width(0.75.cssRem)
+		hover(self) style {
+			backgroundColor(hoverWash)
 		}
 	}
 
-	/** The folders give way first, down to nothing, and only then the file name, each ending in an ellipsis. */
+	/** Takes what the file name leaves, so the folders give way first, down to nothing, and only then the name. */
 	val breadcrumbDirectory by style {
-		flexShrink(1000)
 		minWidth(0.px)
-		opacity(0.85)
+		opacity(0.7)
 		overflow(Overflow.Hidden)
 		property("text-overflow", "ellipsis")
 	}
 
+	/** Never shrinks while the folders can, a weighted `flex-shrink` still takes a fraction of a pixel and shows an ellipsis. */
 	val breadcrumbFile by style {
 		alignItems(AlignItems.Center)
 		color(text)
 		display(DisplayStyle.Flex)
+		flexShrink(0)
 		gap(0.3.cssRem)
-		marginRight(0.4.cssRem)
+		maxWidth(100.percent)
 		minWidth(0.px)
 
 		"svg" style {

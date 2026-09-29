@@ -261,27 +261,23 @@ fun OutputPanel(
 	}
 }
 
-/** The selected file's path as a breadcrumb, and the actions on that one file. */
+/** The selected file's name then its folder, which copies the path when clicked, and the actions on that one file. */
 @Composable
 private fun PreviewHeader(file: GeneratedFile, indent: Int?, wrap: Boolean, onCopy: (text: String, what: String) -> Unit) {
 	val pretty = indent != null
 
 	Div({ classes(PlaygroundStyle.previewHeader) }) {
-		Div({
+		Button({
 			classes(PlaygroundStyle.breadcrumb)
-			title(file.path)
+			title("${file.path} · ${humanSize(file.content.length)}\nClick to copy the path")
+			onClick { onCopy(file.path, "Path") }
 		}) {
-			if (file.directory.isNotEmpty()) {
-				Span({ classes(PlaygroundStyle.breadcrumbDirectory) }) { Text(file.directory.replace("/", " › ")) }
-				LucideChevronRight()
-			}
-
 			Span({ classes(PlaygroundStyle.breadcrumbFile) }) {
 				FileIcon(file)
 				Span({ classes(PlaygroundStyle.breadcrumbFileName) }) { Text(file.name) }
 			}
 
-			Span({ classes(PlaygroundStyle.tabMeta) }) { Text(humanSize(file.content.length)) }
+			if (file.directory.isNotEmpty()) Span({ classes(PlaygroundStyle.breadcrumbDirectory) }) { Text(file.directory) }
 		}
 
 		Div({ classes(PlaygroundStyle.sectionActions) }) {
@@ -296,7 +292,6 @@ private fun PreviewHeader(file: GeneratedFile, indent: Int?, wrap: Boolean, onCo
 			}
 
 			ToolButton("Wrap long lines", { PlaygroundSettings.previewWrap = !wrap }, active = wrap) { LucideTextWrap() }
-			ToolButton("Copy the path", { onCopy(file.path, "Path") }) { LucideLink2() }
 			ToolButton("Copy the content", { onCopy(previewOf(file, indent), file.name) }) { LucideCopy() }
 			ToolButton("Download this file", { downloadText(previewOf(file, indent), file.name) }) { LucideFileDown() }
 		}
