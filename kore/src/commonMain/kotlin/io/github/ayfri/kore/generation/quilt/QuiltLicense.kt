@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.generation.quilt
 
 import io.github.ayfri.kore.serializers.InlinableList
-import io.github.ayfri.kore.serializers.inlinableListSerializer
+import io.github.ayfri.kore.serializers.InlinableListSerializer
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encoding.Decoder
@@ -27,13 +27,11 @@ data class QuiltLicense(
 			override fun deserialize(decoder: Decoder) = error("QuiltLicense cannot be deserialized.")
 
 			override fun serialize(encoder: Encoder, value: QuiltLicense) {
-				require(value.identifier == null && value.licenses == null) { "QuiltLicense must have either identifier or licenses." }
+				require((value.identifier == null) != (value.licenses == null)) { "QuiltLicense must have either identifier or licenses." }
 
-				if (value.identifier != null) encoder.encodeString(value.identifier!!)
-				else encoder.encodeSerializableValue(
-					inlinableListSerializer(QuiltLicenseObject.serializer()),
-					value.licenses!!
-				)
+				val identifier = value.identifier
+				if (identifier != null) encoder.encodeString(identifier)
+				else encoder.encodeSerializableValue(InlinableListSerializer(QuiltLicenseObject.serializer()), value.licenses!!)
 			}
 		}
 	}
