@@ -15,7 +15,7 @@ kotlinx-io = "0.9.1"
 ktoml = "0.7.1"
 ktor = "3.5.2"
 marked = "18.0.9"
-monaco-editor = "0.56.0"
+monaco-editor = "0.57.0"
 swc = "1.16.1"
 vanniktech-publish = "0.37.0"
 
