@@ -4,55 +4,7 @@ import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.descriptors.element
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.encodeStructure
-
-@Serializable(WrittenPage.Companion.WrittenPageSerializer::class)
-data class WrittenPage(
-	var raw: ChatComponents,
-	var filtered: ChatComponents? = null,
-	var single: Boolean = true,
-) {
-	companion object {
-		object WrittenPageSerializer : KSerializer<WrittenPage> {
-			override val descriptor = buildClassSerialDescriptor("WrittenPage") {
-				element<ChatComponents>("raw")
-				element<ChatComponents?>("filtered")
-			}
-
-			override fun deserialize(decoder: Decoder) = error("Page deserialization is not supported.")
-			override fun serialize(encoder: Encoder, value: WrittenPage) {
-				if (value.filtered != null || !value.single) {
-					encoder.encodeStructure(descriptor) {
-						encodeSerializableElement(descriptor, 0, ChatComponents.serializer(), value.raw)
-						value.filtered?.let { encodeSerializableElement(descriptor, 1, ChatComponents.serializer(), it) }
-					}
-				} else {
-					encoder.encodeSerializableValue(ChatComponents.serializer(), value.raw)
-				}
-			}
-		}
-	}
-}
-
-private object WrittenPagesSerializer : KSerializer<List<WrittenPage>> {
-	override val descriptor = buildClassSerialDescriptor("Pages") {
-		element<List<WrittenPage>>("pages")
-	}
-
-	override fun deserialize(decoder: Decoder) = error("Pages deserialization is not supported.")
-	override fun serialize(encoder: Encoder, value: List<WrittenPage>) {
-		var values = value
-		if (values.size > 1) values = values.map { it.copy(single = false) }
-		encoder.encodeSerializableValue(ListSerializer(WrittenPage.serializer()), values)
-	}
-}
 
 /**
  * Represents the `minecraft:written_book_content` item component, which stores the signed pages, title, and author of a written book.
