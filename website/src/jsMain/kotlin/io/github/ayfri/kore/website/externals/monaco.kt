@@ -201,12 +201,9 @@ fun loadMonaco(): Promise<Monaco> = loading ?: Promise { resolve, reject ->
 	styles.href = "$MONACO_BASE/monaco.css"
 	document.head!!.appendChild(styles)
 
-	// The workers are bundled as classic (IIFE) scripts, so they start straight from their URL: same origin,
-	// no module worker, no blob proxy. Only Kotlin and JSON are bundled, so `json` is the only extra label.
-	js(
-		"globalThis.MonacoEnvironment = { getWorker: function (workerId, label) {" +
-			"return new Worker(label === 'json' ? '$MONACO_BASE/json.worker.js' : '$MONACO_BASE/editor.worker.js') } }"
-	)
+	// The worker is bundled as a classic (IIFE) script, so it starts straight from its URL: same origin, no module
+	// worker, no blob proxy. No language service is bundled, so the editor worker is the only one Monaco asks for.
+	js("globalThis.MonacoEnvironment = { getWorker: function () { return new Worker('$MONACO_BASE/editor.worker.js') } }")
 
 	window.addEventListener("monaco-ready", { resolve(js("globalThis.monaco").unsafeCast<Monaco>()) })
 	window.addEventListener("monaco-failed", { reject(RuntimeException("Failed to load the Monaco editor.")) })

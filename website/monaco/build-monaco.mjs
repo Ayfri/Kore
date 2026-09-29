@@ -6,36 +6,23 @@
 //
 // Usage: node build-monaco.mjs <outDir>
 import * as esbuild from 'esbuild';
+import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const outdir = process.argv[2] ?? path.resolve(here, '../src/jsMain/resources/public/monaco');
 
-// The playground only ever shows Kotlin sources and generated JSON, so every other language is dead weight.
-// JSON is the odd one out: it has no `languages/definitions/json`, its highlighting comes from the
-// LSP-backed service under `languages/features/json` instead - which is why it is kept on the other axis
-// and needs its own worker (see the `json.worker.js` build below).
-const keptDefinitions = new Set(['kotlin']);
-const keptFeatures = new Set(['json']);
-
-// `editor.main.js` hardcodes an import of all 82 grammars under `languages/definitions/<id>/register.js`
-// plus the four heavyweight language *services* under `languages/features/<id>/register.js` (css, html,
-// json, typescript). Stubbing them out beats hand-copying `editor.main.js` minus a few lines, which would
-// silently rot on every Monaco bump. The services matter most: each one transitively imports the editor
-// stylesheet, so esbuild duplicates the full 345 kB CSS into every one of their chunks.
-const stubUnusedLanguages = {
-	name: 'stub-unused-languages',
+// `editor.main.js` hardcodes imports of all 82 grammars under `languages/definitions/<id>/register.js`, the css,
+// html, json and typescript services under `languages/features/<id>/register.js` and an LSP client. The playground's
+// one editor is Kotlin (its JSON previews go through Prism), so everything else is stubbed out rather than hand-copying
+// `editor.main.js` minus a few lines, which would silently rot on every Monaco bump.
+const unused = /[\\/](languages[\\/](definitions|features)[\\/][^\\/]+[\\/]register|monaco-lsp-client[\\/]out[\\/]index)\.js$/;
+const kept = /[\\/]definitions[\\/]kotlin[\\/]/;
+const stubUnused = {
+	name: 'stub-unused',
 	setup(build) {
-		const register = /[\\/]languages[\\/](definitions|features)[\\/]([^\\/]+)[\\/]register\.js$/;
-
-		build.onResolve({ filter: register }, args => {
-			const [, kind, id] = register.exec(args.path);
-			const kept = kind === 'definitions' ? keptDefinitions : keptFeatures;
-			if (kept.has(id)) return null;
-			return { path: args.path, namespace: 'monaco-stub' };
-		});
-
+		build.onResolve({ filter: unused }, args => kept.test(args.path) ? null : { path: args.path, namespace: 'monaco-stub' });
 		build.onLoad({ filter: /.*/, namespace: 'monaco-stub' }, () => ({ contents: '', loader: 'js' }));
 	},
 };
@@ -45,11 +32,14 @@ const shared = {
 	legalComments: 'none',
 	loader: { '.ttf': 'dataurl' },
 	minify: true,
-	plugins: [stubUnusedLanguages],
+	plugins: [stubUnused],
 	target: 'es2020',
 };
 
-// The editor itself: ESM + splitting so each language grammar stays a lazily fetched chunk.
+// Chunk names are content hashes, so the previous build's chunks would otherwise pile up and ship.
+fs.rmSync(outdir, { force: true, recursive: true });
+
+// The editor itself: ESM + splitting so the Kotlin language configuration stays a lazily fetched chunk.
 const editor = await esbuild.build({
 	...shared,
 	entryPoints: [path.resolve(here, 'monaco.entry.mjs')],
@@ -60,15 +50,13 @@ const editor = await esbuild.build({
 	splitting: true,
 });
 
-// The web workers: IIFE so they can be started as classic workers from a static URL.
-for (const worker of ['editor.worker', 'json.worker']) {
-	await esbuild.build({
-		...shared,
-		entryPoints: [path.resolve(here, `${worker}.entry.mjs`)],
-		format: 'iife',
-		outfile: path.join(outdir, `${worker}.js`),
-	});
-}
+// The web worker: IIFE so it can be started as a classic worker from a static URL.
+await esbuild.build({
+	...shared,
+	entryPoints: [path.resolve(here, 'editor.worker.entry.mjs')],
+	format: 'iife',
+	outfile: path.join(outdir, 'editor.worker.js'),
+});
 
 const outputs = Object.entries(editor.metafile.outputs);
 const total = outputs.reduce((sum, [, o]) => sum + o.bytes, 0);
