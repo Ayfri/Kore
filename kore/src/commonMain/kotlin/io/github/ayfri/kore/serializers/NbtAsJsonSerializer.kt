@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.serializers
 
-import io.github.ayfri.kore.utils.nbtListOf
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
@@ -23,24 +22,20 @@ data object NbtAsJsonSerializer : KSerializer<NbtTag> {
 		else -> throw UnsupportedOperationException("NbtAsJsonSerializer can only be deserialized from Json or Nbt.")
 	}
 
+	/** NBT lists hold a single tag type, so a mixed JSON array falls back to a list of strings. */
 	private fun JsonElement.toNbtTag(): NbtTag = when (this) {
-		is JsonObject -> buildNbtCompound { this@toNbtTag.forEach { (key, value) -> put(key, value.toNbtTag()) } }
+		is JsonObject -> NbtCompound(mapValues { it.value.toNbtTag() })
 		is JsonArray -> map { it.toNbtTag() }.let { elements ->
-			if (elements.all { it is NbtCompound }) nbtListOf(elements.filterIsInstance<NbtCompound>())
-			else nbtListOf(elements.map { (it as? NbtString)?.value ?: it.toString() })
+			if (elements.distinctBy { it::class }.size <= 1) NbtList.of(*elements.toTypedArray())
+			else NbtList(elements.map { it as? NbtString ?: NbtString(it.toString()) })
 		}
 
 		is JsonPrimitive -> when {
 			isString -> NbtString(content)
-			booleanOrNull != null -> NbtByte((if (boolean) 1 else 0).toByte())
-			longOrNull != null -> long.let {
-				if (it in Int.MIN_VALUE.toLong()..Int.MAX_VALUE.toLong()) NbtInt(it.toInt()) else NbtLong(
-					it
-				)
-			}
-
-			doubleOrNull != null -> NbtDouble(double)
-			else -> NbtString(content)
+			else -> booleanOrNull?.let(::NbtByte)
+				?: longOrNull?.let { if (it in Int.MIN_VALUE..Int.MAX_VALUE) NbtInt(it.toInt()) else NbtLong(it) }
+				?: doubleOrNull?.let(::NbtDouble)
+				?: NbtString(content)
 		}
 	}
 
