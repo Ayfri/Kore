@@ -10,16 +10,14 @@ import io.github.ayfri.kore.generated.arguments.tagged.EntityTypeTagArgument
 import io.github.ayfri.kore.generated.arguments.types.AdvancementArgument
 import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
-import io.github.ayfri.kore.serializers.ToStringSerializer
-import kotlinx.serialization.*
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.StringifiedNbt
 
@@ -27,8 +25,6 @@ import net.benwoodworth.knbt.StringifiedNbt
  * Container for target selector arguments used to build Minecraft target selectors (e.g. `@p[distance=..]`).
  * See: https://minecraft.wiki/w/Target_selectors
  */
-@OptIn(ExperimentalSerializationApi::class)
-@KeepGeneratedSerializer
 @Serializable(SelectorArguments.Companion.SelectorArgumentsSerializer::class)
 data class SelectorArguments(
 	/** X coordinate for this selector. */
@@ -67,10 +63,8 @@ data class SelectorArguments(
 	 */
 	var dz: Double? = null,
 	/** X rotation range for this selector. */
-	@SerialName("x_rotation")
 	var xRotation: FloatRangeOrFloat? = null,
 	/** Y rotation range for this selector. */
-	@SerialName("y_rotation")
 	var yRotation: FloatRangeOrFloat? = null,
 	/** Advancements filter for this selector. */
 	var advancements: SelectorAdvancements? = null,
@@ -81,23 +75,15 @@ data class SelectorArguments(
 	/** Level range for this selector. */
 	var level: IntRangeOrInt? = null,
 	/** Scores filter for this selector. */
-	@Serializable(ScoresSerializer::class)
 	var scores: Scores<SelectorScore>? = null,
 	/** Sorting order for this selector. */
 	var sort: Sort? = null,
-	@SerialName("gamemode")
 	private var _gamemodes: MutableList<GamemodeOption> = mutableListOf(),
-	@SerialName("name")
 	private var _names: MutableList<StringOption> = mutableListOf(),
-	@SerialName("nbt")
 	private var _nbt: MutableList<NbtCompoundOption> = mutableListOf(),
-	@SerialName("predicate")
 	private var _predicates: MutableList<PredicateOption> = mutableListOf(),
-	@SerialName("tag")
 	private var _tags: MutableList<StringOption> = mutableListOf(),
-	@SerialName("team")
 	private var _teams: MutableList<StringOption> = mutableListOf(),
-	@SerialName("type")
 	private var _types: MutableList<EntityTypeOption> = mutableListOf(),
 ) {
 	/** Selected `Gamemode` for this selector (maps to the `gamemode` argument). */
@@ -167,6 +153,37 @@ data class SelectorArguments(
 
 	/** Prefix a string with '!' to invert string-based options. */
 	operator fun String.not() = "!$this"
+
+	/** The arguments as written between the selector brackets, sorted by name, e.g. `limit=1,tag=!foo`, empty when none is set. */
+	fun asString() = buildList {
+		fun argument(name: String, value: Any?) {
+			if (value != null) add("$name=$value")
+		}
+
+		fun arguments(name: String, options: List<InvertableOption<*>>) = options.forEach { add("$name=$it") }
+
+		argument("advancements", advancements?.asString())
+		argument("distance", distance?.asString())
+		argument("dx", dx)
+		argument("dy", dy)
+		argument("dz", dz)
+		arguments("gamemode", _gamemodes)
+		argument("level", level?.asString())
+		argument("limit", limit)
+		arguments("name", _names)
+		arguments("nbt", _nbt)
+		arguments("predicate", _predicates)
+		argument("scores", scores?.let { "{${it.scores.joinToString(",")}}" })
+		argument("sort", sort?.name?.lowercase())
+		arguments("tag", _tags)
+		arguments("team", _teams)
+		arguments("type", _types)
+		argument("x", x)
+		argument("x_rotation", xRotation?.asString())
+		argument("y", y)
+		argument("y_rotation", yRotation?.asString())
+		argument("z", z)
+	}.joinToString(",")
 
 	/** Copy all selector argument values from another instance. */
 	fun copyFrom(other: SelectorArguments) {
@@ -250,22 +267,12 @@ data class SelectorArguments(
 			return arguments
 		}
 
-		data object ScoresSerializer : ToStringSerializer<Scores<SelectorScore>>({ "{${scores.joinToString(",")}}" })
-
 		data object SelectorArgumentsSerializer : KSerializer<SelectorArguments> {
 			override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("SelectorNbtData", PrimitiveKind.STRING)
 
 			override fun deserialize(decoder: Decoder) = fromString(decoder.decodeString())
 
-			override fun serialize(encoder: Encoder, value: SelectorArguments) {
-				val arguments = json.encodeToJsonElement(generatedSerializer(), value).jsonObject
-				encoder.encodeString(arguments.entries.sortedBy { it.key }.flatMap { (key, element) ->
-					when (element) {
-						is JsonArray -> element.map { "$key=${it.jsonPrimitive.content}" }
-						else -> listOf("$key=${element.jsonPrimitive.content}")
-					}
-				}.joinToString(","))
-			}
+			override fun serialize(encoder: Encoder, value: SelectorArguments) = encoder.encodeString(value.asString())
 		}
 	}
 }

@@ -4,8 +4,6 @@ import io.github.ayfri.kore.arguments.Advancement
 import io.github.ayfri.kore.generated.arguments.types.AdvancementArgument
 import io.github.ayfri.kore.serializers.ToStringSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonEncoder
-import kotlinx.serialization.json.jsonPrimitive
 
 /**
  * Wrapper for advancement filters used in selectors (maps to the `advancements` selector argument).
@@ -14,23 +12,19 @@ import kotlinx.serialization.json.jsonPrimitive
  */
 @Serializable(with = SelectorAdvancements.Companion.SelectorAdvancementsSerializer::class)
 data class SelectorAdvancements(val advancements: Set<Advancement> = emptySet()) {
+	/** The advancements as written in a selector, e.g. `{minecraft:story/enchant_item={bar=true}}`. */
+	fun asString() = advancements.joinToString(",", "{", "}") { it.selectorString() }
+
 	companion object {
-		object SelectorAdvancementsSerializer : ToStringSerializer<SelectorAdvancements>({ encoder ->
-			require(encoder is JsonEncoder) { "SelectorAdvancements can only be serialized as Json" }
-			advancements.joinToString(",", "{", "}") {
-				encoder.json.encodeToJsonElement(SelectorAdvancementSerializer, it).jsonPrimitive.content
-			}
-		})
+		data object SelectorAdvancementsSerializer : ToStringSerializer<SelectorAdvancements>({ asString() })
 
-		object SelectorAdvancementSerializer : ToStringSerializer<Advancement>({
-			val criteria = when {
-				criteria.isNotEmpty() -> criteria.entries.joinToString(",", "{", "}") { "${it.key}=${it.value}" }
-				else -> ""
-			}
-
-			"${advancement.asString()}=${criteria.ifEmpty { done }}"
-		})
+		data object SelectorAdvancementSerializer : ToStringSerializer<Advancement>({ selectorString() })
 	}
+}
+
+private fun Advancement.selectorString() = when {
+	criteria.isEmpty() -> "${advancement.asString()}=$done"
+	else -> "${advancement.asString()}=${criteria.entries.joinToString(",", "{", "}") { "${it.key}=${it.value}" }}"
 }
 
 /**

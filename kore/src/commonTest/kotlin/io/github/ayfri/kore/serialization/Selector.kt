@@ -216,4 +216,9 @@ class SelectorSerializationTests : FunSpec({
 	test("selector deserialization") {
 		selectorDeserializationTests()
 	}
+
+	test("selector arguments render sorted by name, empty when unset") {
+		SelectorArguments().asString() assertsIs ""
+		SelectorArguments(z = 3.0, limit = 1, sort = Sort.NEAREST).asString() assertsIs "limit=1,sort=nearest,z=3.0"
+	}
 })

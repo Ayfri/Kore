@@ -1,11 +1,9 @@
 package io.github.ayfri.kore.arguments.selector
 
-import io.github.ayfri.kore.utils.unescape
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.ClassDiscriminatorMode
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNamingStrategy
-import kotlinx.serialization.json.encodeToJsonElement
 
 @OptIn(ExperimentalSerializationApi::class)
 internal val json = Json {
@@ -28,9 +26,8 @@ data class Selector(val base: SelectorType) {
 	/** Whether this selector targets players. */
 	val isPlayer get() = base.isPlayer
 
-	override fun toString() = when {
-		nbtData == SelectorArguments() -> "@${base.value}"
-		else -> "@${base.value}[${json.encodeToJsonElement(nbtData).toString().unescape()}]"
+	override fun toString() = nbtData.asString().let { arguments ->
+		if (arguments.isEmpty()) "@${base.value}" else "@${base.value}[$arguments]"
 	}
 
 	companion object {
