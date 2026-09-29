@@ -37,6 +37,13 @@ fun Function.placeTests() {
 	placeTemplate(
 		Structures.Fossil.SKULL_1,
 		vec3(),
+		TemplateRotation.CLOCKWISE_180,
+		TemplateMirror.FRONT_BACK
+	) assertsIs "place template minecraft:fossil/skull_1 ~ ~ ~ 180 front_back"
+
+	placeTemplate(
+		Structures.Fossil.SKULL_1,
+		vec3(),
 		TemplateRotation.NONE,
 		strict = true
 	) assertsIs "place template minecraft:fossil/skull_1 ~ ~ ~ none strict"

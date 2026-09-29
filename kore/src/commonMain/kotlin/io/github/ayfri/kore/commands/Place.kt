@@ -12,7 +12,6 @@ import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.TemplatePoolArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.asArg
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /** Places the configured [feature] at the executing position or at [pos]. */
@@ -53,14 +52,13 @@ fun Function.placeStructure(structure: ConfiguredStructureArgument, pos: Vec3? =
 enum class TemplateRotation {
 	NONE,
 	CLOCKWISE_90,
-
-	@SerialName("180")
 	CLOCKWISE_180,
-	COUNTERCLOCKWISE_90
-	;
+	COUNTERCLOCKWISE_90;
 
 	companion object {
-		data object TemplateRotationSerializer : LowercaseSerializer<TemplateRotation>(entries)
+		data object TemplateRotationSerializer : LowercaseSerializer<TemplateRotation>(entries, {
+			if (this == CLOCKWISE_180) "180" else name.lowercase()
+		})
 	}
 }
 
