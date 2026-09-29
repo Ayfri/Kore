@@ -1,15 +1,15 @@
 package io.github.ayfri.kore.commands
 
+import io.github.ayfri.kore.arguments.EnumArgument
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.serializers.LowercaseSerializer
-import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
 
 /** Load order used by `datapack enable`. */
 @Serializable(DatapackPriority.Companion.DatapackPrioritySerializer::class)
-enum class DatapackPriority {
+enum class DatapackPriority : EnumArgument {
 	FIRST,
 	LAST;
 
@@ -33,7 +33,7 @@ class DataPackCommandEntry(private val fn: Function, val name: String) {
 
 	/** Enables the datapack, optionally forcing it to load [priority] (first or last). */
 	fun enable(priority: DatapackPriority? = null) =
-		fn.addLine(command("datapack", literal("enable"), literal(name), literal(priority?.asArg())))
+		fn.addLine(command("datapack", literal("enable"), literal(name), priority))
 
 	/** Enables the datapack and places it first in the load order. */
 	fun enableFirst() = fn.addLine(command("datapack", literal("enable"), literal(name), literal("first")))

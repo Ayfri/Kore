@@ -5,7 +5,7 @@ nav-title: Functions
 description: Create Minecraft datapack functions with Kore's Kotlin DSL. Build tick.json and load.json tags, organize commands into reusable functions, and generate clean MCFunction output.
 keywords: datapack functions, mcfunction, tick.json datapack, load.json datapack, minecraft function tags, tags/function datapack, kore functions, datapack mcfunction generator, function scheduling, minecraft function creator
 date-created: 2024-04-06
-date-modified: 2026-09-26
+date-modified: 2026-09-29
 routeOverride: /docs/commands/functions
 ---
 
@@ -157,8 +157,24 @@ function("my_function") {
 }
 ```
 
-For commands that take complex types as arguments, you should use the `.asArg()` function inside
-`literal()` function. For Argument types, you don't have to use this.
+`Argument` types (selectors, positions, resource locations, ranges...) go into `command()` as they are, and so do the
+enums of Kore's commands like `Gamemode`, which are `EnumArgument`s written as their lowercase name:
+
+```kotlin
+fun Function.myMode(target: EntityArgument, mode: Gamemode) = addLine(command("my_mode", target, mode))
+```
+
+Your own enum becomes an argument the same way, overriding `asString()` when the game names an entry differently:
+
+```kotlin
+enum class Speed : EnumArgument {
+	SLOW,
+	FAST,
+	VERY_FAST;
+
+	override fun asString() = name.lowercase().replace("_", "")
+}
+```
 
 See the code of the repository for more examples.<br>
 [Link to `time` command.](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/commands/Time.kt)<br>

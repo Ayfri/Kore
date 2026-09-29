@@ -10,7 +10,6 @@ import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.arguments.types.EnchantmentArgument
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.BiomeArgument
-import io.github.ayfri.kore.utils.asArg
 
 /** Starts the debug profiler. */
 fun Function.debugStart() = addLine(command("debug", literal("start")))
@@ -19,10 +18,10 @@ fun Function.debugStart() = addLine(command("debug", literal("start")))
 fun Function.debugStop() = addLine(command("debug", literal("stop")))
 
 /** Sets the default gamemode. */
-fun Function.defaultGamemode(mode: Gamemode) = addLine(command("defaultgamemode", literal(mode.asArg())))
+fun Function.defaultGamemode(mode: Gamemode) = addLine(command("defaultgamemode", mode))
 
 /** Sets the world difficulty. */
-fun Function.difficulty(difficulty: Difficulty? = null) = addLine(command("difficulty", literal(difficulty?.asArg())))
+fun Function.difficulty(difficulty: Difficulty? = null) = addLine(command("difficulty", difficulty))
 
 /** Enchants [target] with [enchantment] at the optional [level]. */
 fun Function.enchant(target: EntityArgument, enchantment: EnchantmentArgument, level: Int? = null) =
@@ -46,7 +45,7 @@ fun Function.fillbiome(from: Vec3, to: Vec3, biome: BiomeArgument, filter: Biome
 
 /** Sets the current gamemode for [target] or the command source. */
 fun Function.gamemode(gamemode: Gamemode, target: EntityArgument? = null) =
-	addLine(command("gamemode", literal(gamemode.asArg()), target))
+	addLine(command("gamemode", gamemode, target))
 
 /** Gives [target] [item] with an optional [count]. */
 fun Function.give(target: EntityArgument, item: ItemArgument, count: Int? = null) =
@@ -131,7 +130,7 @@ fun Function.stopSound(
 	targets: EntityArgument,
 	source: PlaySoundMixer? = null,
 	sound: SoundEventArgument? = null,
-) = addLine(command("stopsound", targets, literal(source?.asArg() ?: sound?.let { "*" }), sound))
+) = addLine(command("stopsound", targets, source ?: sound?.let { literal("*") }, sound))
 
 /** Stops the [sound] event from every source for [targets]. */
 fun Function.stopSoundAllSources(

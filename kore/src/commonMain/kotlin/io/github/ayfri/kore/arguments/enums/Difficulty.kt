@@ -1,10 +1,11 @@
 package io.github.ayfri.kore.arguments.enums
 
+import io.github.ayfri.kore.arguments.EnumArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable(Difficulty.Companion.DifficultySerializer::class)
-enum class Difficulty {
+enum class Difficulty : EnumArgument {
 	PEACEFUL,
 	EASY,
 	NORMAL,

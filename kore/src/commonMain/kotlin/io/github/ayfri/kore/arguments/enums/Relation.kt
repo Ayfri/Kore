@@ -6,7 +6,6 @@ import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrIntEnd
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrIntStart
 import io.github.ayfri.kore.serializers.LowercaseSerializer
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable(Relation.Companion.RelationSerializer::class)
@@ -28,6 +27,6 @@ enum class Relation(val symbol: String) : Argument {
 	}
 
 	companion object {
-		data object RelationSerializer : KSerializer<Relation> by LowercaseSerializer(entries, { symbol })
+		data object RelationSerializer : LowercaseSerializer<Relation>(entries, { asString() })
 	}
 }

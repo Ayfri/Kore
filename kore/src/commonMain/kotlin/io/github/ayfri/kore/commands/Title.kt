@@ -1,17 +1,18 @@
 package io.github.ayfri.kore.commands
 
+import io.github.ayfri.kore.arguments.EnumArgument
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.numbers.TimeNumber
 import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.literals.float
 import io.github.ayfri.kore.arguments.types.literals.literal
+import io.github.ayfri.kore.arguments.types.literals.time
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.serializers.LowercaseSerializer
-import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
 
 @Serializable(TitleAction.Companion.TitleActionSerializer::class)
-enum class TitleAction {
+enum class TitleAction : EnumArgument {
 	CLEAR,
 	RESET;
 
@@ -21,7 +22,7 @@ enum class TitleAction {
 }
 
 @Serializable(TitleLocation.Companion.TitleLocationSerializer::class)
-enum class TitleLocation {
+enum class TitleLocation : EnumArgument {
 	TITLE,
 	SUBTITLE,
 	ACTIONBAR;
@@ -36,7 +37,7 @@ enum class TitleLocation {
  *
  * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/title)
  */
-fun Function.title(targets: EntityArgument, action: TitleAction) = addLine(command("title", targets, literal(action.asArg())))
+fun Function.title(targets: EntityArgument, action: TitleAction) = addLine(command("title", targets, action))
 
 /**
  * Sends a title, subtitle, or action bar message to [targets].
@@ -44,7 +45,7 @@ fun Function.title(targets: EntityArgument, action: TitleAction) = addLine(comma
  * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/title)
  */
 fun Function.title(targets: EntityArgument, location: TitleLocation, message: ChatComponents) =
-	addLine(command("title", targets, literal(location.asArg()), message.asSnbtArg()))
+	addLine(command("title", targets, location, message.asSnbtArg()))
 
 /**
  * Sets the title fade timings for [targets] in ticks.
@@ -60,4 +61,4 @@ fun Function.title(targets: EntityArgument, fadeIn: Double, stay: Double, fadeOu
  * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/title)
  */
 fun Function.title(targets: EntityArgument, fadeIn: TimeNumber, stay: TimeNumber, fadeOut: TimeNumber) =
-	addLine(command("title", targets, literal("times"), fadeIn.asArg(), stay.asArg(), fadeOut.asArg()))
+	addLine(command("title", targets, literal("times"), time(fadeIn), time(stay), time(fadeOut)))

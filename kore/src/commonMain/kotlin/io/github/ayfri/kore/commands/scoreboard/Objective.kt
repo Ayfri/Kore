@@ -14,7 +14,6 @@ import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.commands.Command
 import io.github.ayfri.kore.commands.command
 import io.github.ayfri.kore.functions.Function
-import io.github.ayfri.kore.utils.asArg
 import io.github.ayfri.kore.utils.encodeToSnbt
 
 class Objective(private val fn: Function, val objective: String) {
@@ -131,7 +130,7 @@ class Objective(private val fn: Function, val objective: String) {
 			literal("modify"),
 			literal(objective),
 			literal("rendertype"),
-			literal(renderType.asArg())
+			renderType
 		)
 	)
 
@@ -168,7 +167,7 @@ class Objective(private val fn: Function, val objective: String) {
 				literal("operation"),
 				target,
 				literal(objective),
-				literal(operation.asArg()),
+				operation,
 				source,
 				literal(sourceObjective)
 			)

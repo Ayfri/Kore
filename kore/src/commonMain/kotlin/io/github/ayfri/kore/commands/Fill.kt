@@ -1,16 +1,16 @@
 package io.github.ayfri.kore.commands
 
+import io.github.ayfri.kore.arguments.EnumArgument
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.serializers.LowercaseSerializer
-import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
 
 /** Behavior of the `/fill` command on existing blocks in the region. */
 @Serializable(FillOption.Companion.FillOptionSerializer::class)
-enum class FillOption {
+enum class FillOption : EnumArgument {
 	DESTROY,
 	HOLLOW,
 	KEEP,
@@ -30,7 +30,7 @@ enum class FillOption {
  * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/fill)
  */
 fun Function.fill(from: Vec3, to: Vec3, block: BlockArgument, fillOption: FillOption? = null, strict: Boolean = false) =
-	addLine(command("fill", from, to, block, literal(fillOption?.asArg()), literal(if (strict) "strict" else null)))
+	addLine(command("fill", from, to, block, fillOption, literal(if (strict) "strict" else null)))
 
 /**
  * Fills the cuboid region [[from], [to]] with [block], only replacing blocks matching [filter].
@@ -55,7 +55,7 @@ fun Function.fill(
 		block,
 		literal("replace"),
 		filter,
-		literal(fillOption?.asArg()),
+		fillOption,
 		literal(if (strict) "strict" else null)
 	)
 )

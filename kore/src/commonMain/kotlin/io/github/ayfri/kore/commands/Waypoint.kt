@@ -6,7 +6,6 @@ import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.arguments.types.WaypointStyleArgument
-import io.github.ayfri.kore.utils.asArg
 
 /**
  * DSL scope for the `waypoint modify <selector> …` command family.
@@ -24,16 +23,8 @@ data class WaypointModify(private val fn: Function, val selector: EntityArgument
 	fun colorReset() = fn.addLine(command("waypoint", literal("modify"), selector, literal("color"), literal("reset")))
 
 	/** Sets the waypoint icon style using a [WaypointStyleArgument] registry reference. */
-	fun style(style: WaypointStyleArgument) = fn.addLine(
-		command(
-			"waypoint",
-			literal("modify"),
-			selector,
-			literal("style"),
-			literal("set"),
-			literal(style.asArg())
-		)
-	)
+	fun style(style: WaypointStyleArgument) =
+		fn.addLine(command("waypoint", literal("modify"), selector, literal("style"), literal("set"), style))
 
 	/** Clears any custom waypoint style. */
 	fun styleReset() = fn.addLine(command("waypoint", literal("modify"), selector, literal("style"), literal("reset")))

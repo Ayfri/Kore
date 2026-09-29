@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.commands
 
+import io.github.ayfri.kore.arguments.EnumArgument
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.PlainTextComponent
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
@@ -8,33 +9,37 @@ import io.github.ayfri.kore.arguments.types.ScoreHolderArgument
 import io.github.ayfri.kore.arguments.types.literals.bool
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.functions.Function
-import io.github.ayfri.kore.serializers.CamelcaseSerializer
-import io.github.ayfri.kore.utils.asArg
+import io.github.ayfri.kore.serializers.LowercaseSerializer
+import io.github.ayfri.kore.utils.camelCase
 import kotlinx.serialization.Serializable
 
 /** Controls when entity nametags are rendered for players in a team. */
 @Serializable(Visibility.Companion.NametagVisibilitySerializer::class)
-enum class Visibility {
+enum class Visibility : EnumArgument {
 	ALWAYS,
 	HIDE_FOR_OTHER_TEAMS,
 	HIDE_FOR_OWN_TEAM,
 	NEVER;
 
+	override fun asString() = name.camelCase()
+
 	companion object {
-		data object NametagVisibilitySerializer : CamelcaseSerializer<Visibility>(entries)
+		data object NametagVisibilitySerializer : LowercaseSerializer<Visibility>(entries, { asString() })
 	}
 }
 
 /** Controls which entities can push and be pushed by team members. */
 @Serializable(CollisionRule.Companion.CollisionRuleSerializer::class)
-enum class CollisionRule {
+enum class CollisionRule : EnumArgument {
 	ALWAYS,
 	PUSH_OTHER_TEAMS,
 	PUSH_OWN_TEAM,
 	NEVER;
 
+	override fun asString() = name.camelCase()
+
 	companion object {
-		data object CollisionRuleSerializer : CamelcaseSerializer<CollisionRule>(entries)
+		data object CollisionRuleSerializer : LowercaseSerializer<CollisionRule>(entries, { asString() })
 	}
 }
 
@@ -46,7 +51,7 @@ enum class CollisionRule {
 class Modify(private val fn: Function, val team: String) {
 	/** Sets the collision behaviour for members of the team. */
 	fun collisionRule(rule: CollisionRule) =
-		fn.addLine(command("team", literal("modify"), literal(team), literal("collisionRule"), literal(rule.asArg())))
+		fn.addLine(command("team", literal("modify"), literal(team), literal("collisionRule"), rule))
 
 	/** Sets the team color, used by the nametag, chat prefix and score markers. */
 	fun color(color: FormattingColor) = fn.addLine(command("team", literal("modify"), literal(team), literal("color"), color))
@@ -56,7 +61,7 @@ class Modify(private val fn: Function, val team: String) {
 
 	/** Controls who can see a member's death message. */
 	fun deathMessageVisibility(visibility: Visibility) =
-		fn.addLine(command("team", literal("modify"), literal(team), literal("deathMessageVisibility"), literal(visibility.asArg())))
+		fn.addLine(command("team", literal("modify"), literal(team), literal("deathMessageVisibility"), visibility))
 
 	/** Sets the display [name] of the team using a rich chat component. */
 	fun displayName(name: ChatComponents) = fn.addLine(command("team", literal("modify"), literal(team), literal("displayName"), name))
@@ -71,7 +76,7 @@ class Modify(private val fn: Function, val team: String) {
 
 	/** Controls who can see a team member's nametag. */
 	fun nametagVisibility(visibility: Visibility) =
-		fn.addLine(command("team", literal("modify"), literal(team), literal("nametagVisibility"), literal(visibility.asArg())))
+		fn.addLine(command("team", literal("modify"), literal(team), literal("nametagVisibility"), visibility))
 
 	/** Sets a chat prefix for team members. */
 	fun prefix(prefix: ChatComponents) =

@@ -11,7 +11,6 @@ import io.github.ayfri.kore.commands.particle.ParticleMode
 import io.github.ayfri.kore.commands.particle.ParticleType
 import io.github.ayfri.kore.commands.particle.Particles
 import io.github.ayfri.kore.commands.particle.asParticleArg
-import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
 import io.github.ayfri.kore.generated.Particles as ParticleNames
 
@@ -40,7 +39,7 @@ fun Particles.tintedLeaves(
 			delta,
 			float(speed),
 			int(count),
-			literal(mode?.asArg()),
+			mode,
 			viewers?.let { int(it) }
 		)
 	)

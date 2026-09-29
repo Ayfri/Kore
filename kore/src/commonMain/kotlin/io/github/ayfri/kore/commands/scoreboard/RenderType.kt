@@ -1,10 +1,11 @@
 package io.github.ayfri.kore.commands.scoreboard
 
+import io.github.ayfri.kore.arguments.EnumArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable(RenderType.Companion.RenderTypeSerializer::class)
-enum class RenderType {
+enum class RenderType : EnumArgument {
 	HEARTS,
 	INTEGER;
 

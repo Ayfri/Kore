@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.commands
 
+import io.github.ayfri.kore.arguments.EnumArgument
 import io.github.ayfri.kore.arguments.numbers.TimeNumber
 import io.github.ayfri.kore.arguments.numbers.TimeType
 import io.github.ayfri.kore.arguments.types.literals.float
@@ -11,12 +12,11 @@ import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.arguments.types.TimelineArgument
 import io.github.ayfri.kore.generated.arguments.types.WorldClockArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
-import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
 
 /** Built-in markers accepted by `/time set`. */
 @Serializable(TimePeriod.Companion.TimeSpecSerializer::class)
-enum class TimePeriod {
+enum class TimePeriod : EnumArgument {
 	DAY,
 	NOON,
 	NIGHT,
@@ -129,7 +129,7 @@ data class TimeWithClock(private val fn: Function, private val clock: WorldClock
 	 * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/time)
 	 */
 	fun set(period: TimePeriod) =
-		fn.addLine(command("time", literal("of"), clock, literal("set"), literal(period.asArg())))
+		fn.addLine(command("time", literal("of"), clock, literal("set"), period))
 
 	/**
 	 * Sets this clock to a named time-marker resource location.
@@ -238,7 +238,7 @@ data class Time(private val fn: Function) {
 	 *
 	 * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/time)
 	 */
-	fun set(period: TimePeriod) = fn.addLine(command("time", literal("set"), literal(period.asArg())))
+	fun set(period: TimePeriod) = fn.addLine(command("time", literal("set"), period))
 
 	/**
 	 * Sets the world clock to a named time-marker resource location.

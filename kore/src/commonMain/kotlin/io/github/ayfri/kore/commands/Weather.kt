@@ -3,6 +3,7 @@ package io.github.ayfri.kore.commands
 import io.github.ayfri.kore.arguments.numbers.TimeNumber
 import io.github.ayfri.kore.arguments.types.literals.int
 import io.github.ayfri.kore.arguments.types.literals.literal
+import io.github.ayfri.kore.arguments.types.literals.time
 import io.github.ayfri.kore.functions.Function
 
 /**
@@ -31,18 +32,18 @@ fun Function.weatherThunder(duration: Int? = null) = addLine(command("weather", 
  *
  * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/weather)
  */
-fun Function.weatherClear(duration: TimeNumber) = addLine(command("weather", literal("clear"), duration.asArg()))
+fun Function.weatherClear(duration: TimeNumber) = addLine(command("weather", literal("clear"), time(duration)))
 
 /**
  * Sets the weather to rain or snowfall for an optional [duration].
  *
  * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/weather)
  */
-fun Function.weatherRain(duration: TimeNumber) = addLine(command("weather", literal("rain"), duration.asArg()))
+fun Function.weatherRain(duration: TimeNumber) = addLine(command("weather", literal("rain"), time(duration)))
 
 /**
  * Sets the weather to a thunderstorm for an optional [duration].
  *
  * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/weather)
  */
-fun Function.weatherThunder(duration: TimeNumber) = addLine(command("weather", literal("thunder"), duration.asArg()))
+fun Function.weatherThunder(duration: TimeNumber) = addLine(command("weather", literal("thunder"), time(duration)))

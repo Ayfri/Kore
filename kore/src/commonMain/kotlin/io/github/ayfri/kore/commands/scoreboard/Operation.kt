@@ -1,10 +1,11 @@
 package io.github.ayfri.kore.commands.scoreboard
 
+import io.github.ayfri.kore.arguments.EnumArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable(Operation.Companion.OperationSerializer::class)
-enum class Operation(val symbol: String) {
+enum class Operation(val symbol: String) : EnumArgument {
 	ADD("+="),
 	REMOVE("-="),
 	SET("="),
@@ -15,7 +16,9 @@ enum class Operation(val symbol: String) {
 	MIN("<"),
 	MAX(">");
 
+	override fun asString() = symbol
+
 	companion object {
-		data object OperationSerializer : LowercaseSerializer<Operation>(entries, { symbol })
+		data object OperationSerializer : LowercaseSerializer<Operation>(entries, { asString() })
 	}
 }

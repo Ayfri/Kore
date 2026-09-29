@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.commands
 
+import io.github.ayfri.kore.arguments.EnumArgument
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.PlainTextComponent
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
@@ -12,7 +13,6 @@ import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.resources.BossBarArgument
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.serializers.LowercaseSerializer
-import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
 
 /** Result slot queried by `bossbar get`. */
@@ -30,7 +30,7 @@ enum class BossBarGetResult {
 
 /** Visual style used by `bossbar set <id> style`. */
 @Serializable(BossBarStyle.Companion.BossBarStyleSerializer::class)
-enum class BossBarStyle {
+enum class BossBarStyle : EnumArgument {
 	NOTCHED_6,
 	NOTCHED_10,
 	NOTCHED_12,
@@ -97,7 +97,7 @@ class BossBar(private val fn: Function, val id: BossBarArgument) {
 	fun setPlayers(targets: EntityArgument) = fn.addLine(command("bossbar", literal("set"), id, literal("players"), targets))
 
 	/** Sets the visual [style]. */
-	fun setStyle(style: BossBarStyle) = fn.addLine(command("bossbar", literal("set"), id, literal("style"), literal(style.asArg())))
+	fun setStyle(style: BossBarStyle) = fn.addLine(command("bossbar", literal("set"), id, literal("style"), style))
 
 	/** Sets the current value. */
 	fun setValue(value: Int) = fn.addLine(command("bossbar", literal("set"), id, literal("value"), int(value)))

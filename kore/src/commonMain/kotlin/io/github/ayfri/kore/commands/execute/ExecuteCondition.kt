@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.commands.execute
 
 import io.github.ayfri.kore.arguments.Argument
+import io.github.ayfri.kore.arguments.EnumArgument
 import io.github.ayfri.kore.arguments.ItemSlot
 import io.github.ayfri.kore.arguments.components.ItemPredicate
 import io.github.ayfri.kore.arguments.enums.Relation
@@ -17,12 +18,11 @@ import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.generated.arguments.types.StopwatchArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
-import io.github.ayfri.kore.utils.asArg
 import io.github.ayfri.kore.utils.encodeToSnbt
 import kotlinx.serialization.Serializable
 
 @Serializable(BlocksTestMode.Companion.FillModeSerializer::class)
-enum class BlocksTestMode {
+enum class BlocksTestMode : EnumArgument {
 	ALL,
 	MASKED;
 
@@ -65,7 +65,7 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 				literal(start.toStringTruncated()),
 				literal(end.toStringTruncated()),
 				literal(destination.toStringTruncated()),
-				literal(mode.asArg())
+				mode
 			)
 		)
 
@@ -127,9 +127,9 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 
 	/** Checks if the score of [target] on [objective] matches the given [range]. */
 	fun score(target: ScoreHolderArgument, objective: String, range: IntRangeOrInt) =
-		addArguments(listOf(literal("score"), ex.targetArg(target), literal(objective), literal("matches"), literal(range.asArg())))
+		addArguments(listOf(literal("score"), ex.targetArg(target), literal(objective), literal("matches"), range))
 
 	/** Checks if the given stopwatch is running and has elapsed the given range, the range is in milliseconds. */
 	fun stopwatch(id: StopwatchArgument, range: IntRangeOrInt) =
-		addArguments(listOf(literal("stopwatch"), id, literal(range.asArg())))
+		addArguments(listOf(literal("stopwatch"), id, range))
 }

@@ -9,7 +9,6 @@ import io.github.ayfri.kore.arguments.types.literals.int
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.commands.command
 import io.github.ayfri.kore.functions.Function
-import io.github.ayfri.kore.utils.asArg
 import io.github.ayfri.kore.utils.encodeToSnbt
 
 class Players(private val fn: Function) {
@@ -130,7 +129,7 @@ class Players(private val fn: Function) {
 			literal("operation"),
 			target,
 			literal(objective),
-			literal(operation.asArg()),
+			operation,
 			source,
 			literal(sourceObjective)
 		)

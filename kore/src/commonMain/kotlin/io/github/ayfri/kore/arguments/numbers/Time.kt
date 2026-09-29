@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.arguments.numbers
 
-import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
@@ -26,7 +25,6 @@ data class TimeNumber(val value: Double, val type: TimeType = TimeType.TICKS) : 
 	override operator fun compareTo(other: TimeNumber) = value.compareTo(other.value)
 
 	fun asString() = toString()
-	fun asArg() = literal(asString())
 
 	fun inTicks() = when (type) {
 		TimeType.TICKS -> TimeNumber(value, TimeType.TICKS)

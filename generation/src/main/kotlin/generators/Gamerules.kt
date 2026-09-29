@@ -54,6 +54,13 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 				.build()
 		)
 
+		addFunction(
+			FunSpec.builder("asId")
+				.returns(String::class)
+				.addStatement("return %S + name.snakeCase()", "minecraft:")
+				.build()
+		)
+
 		addType(addGameruleChild("Int"))
 		addType(addGameruleChild("Boolean"))
 
@@ -82,10 +89,7 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 					FunSpec.builder("fromString")
 						.addParameter("name", String::class)
 						.returns(gamerulesClass.copy(nullable = true))
-						.addStatement(
-							"return values.firstOrNull { (%S + it.name.snakeCase()).equals(name, ignoreCase = true) }",
-							"minecraft:"
-						)
+						.addStatement("return values.firstOrNull { it.asId().equals(name, ignoreCase = true) }")
 						.build()
 				)
 
@@ -124,7 +128,7 @@ fun generateGamerulesEnums(gamerules: List<String>, sourceUrl: String) {
 							FunSpec.builder("serialize")
 								.addParameter("encoder", ClassName("kotlinx.serialization.encoding", "Encoder"))
 								.addParameter("value", gamerulesClass)
-								.addStatement("encoder.encodeString(%S + value.name.snakeCase())", "minecraft:")
+								.addStatement("encoder.encodeString(value.asId())")
 								.overrides()
 								.build()
 						)

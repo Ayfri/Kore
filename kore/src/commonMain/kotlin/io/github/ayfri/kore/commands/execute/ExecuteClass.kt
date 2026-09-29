@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.commands.execute
 
 import io.github.ayfri.kore.arguments.Argument
+import io.github.ayfri.kore.arguments.EnumArgument
 import io.github.ayfri.kore.arguments.enums.HeightMap
 import io.github.ayfri.kore.arguments.maths.Axes
 import io.github.ayfri.kore.arguments.maths.Vec3
@@ -18,11 +19,10 @@ import io.github.ayfri.kore.generated.arguments.types.DimensionArgument
 import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
-import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
 
 @Serializable(Anchor.Companion.AnchorSerializer::class)
-enum class Anchor {
+enum class Anchor : EnumArgument {
 	FEET,
 	EYES;
 
@@ -32,7 +32,7 @@ enum class Anchor {
 }
 
 @Serializable(Relation.Companion.RelationSerializer::class)
-enum class Relation {
+enum class Relation : EnumArgument {
 	ATTACKER,
 	CONTROLLER,
 	LEASHER,
@@ -75,7 +75,7 @@ class Execute {
 	fun align(axis: Axes, offset: Int? = null) = array.addAll(literal("align"), axis, int(offset))
 
 	/** Sets the execution anchor (`FEET` or `EYES`), affecting `^ ^ ^` local coordinates and `facing` behavior. */
-	fun anchored(anchor: Anchor) = array.addAll(literal("anchored"), literal(anchor.asArg()))
+	fun anchored(anchor: Anchor) = array.addAll(literal("anchored"), anchor)
 
 	/** Executes as the given target, changing the `@s` selector and the executor of the command. */
 	fun asTarget(target: EntityArgument) = array.addAll(literal("as"), target).also { asArg = target }
@@ -88,7 +88,7 @@ class Execute {
 
 	/** Rotates the execution to face the given entity, at its [anchor] (`FEET` or `EYES`). */
 	fun facingEntity(target: EntityArgument, anchor: Anchor) =
-		array.addAll(literal("facing"), literal("entity"), targetArg(target), literal(anchor.asArg()))
+		array.addAll(literal("facing"), literal("entity"), targetArg(target), anchor)
 
 	/** Sets the execution dimension to the given one. */
 	fun inDimension(dimension: DimensionArgument) = array.addAll(literal("in"), dimension)
@@ -124,10 +124,10 @@ class Execute {
 		array.addAll(ExecuteCondition(this, true).apply { predicates.forEach(::predicate) }.arguments)
 
 	/** Executes the command as/at an entity derived from the current executor via the given [relation] (e.g. `OWNER`, `VEHICLE`, `TARGET`). */
-	fun on(relation: Relation) = array.addAll(literal("on"), literal(relation.asArg()))
+	fun on(relation: Relation) = array.addAll(literal("on"), relation)
 
 	/** Sets the execution Y position to the top block matching the given heightmap at the current X/Z. */
-	fun positionedOver(heightMap: HeightMap) = array.addAll(literal("positioned"), literal("over"), literal(heightMap.asArg()))
+	fun positionedOver(heightMap: HeightMap) = array.addAll(literal("positioned"), literal("over"), heightMap)
 
 	/** Stores the return value of the chained command into the destination defined in [block]. */
 	fun storeResult(block: ExecuteStore.() -> List<Argument>) =

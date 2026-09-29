@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.commands.particle
 
+import io.github.ayfri.kore.arguments.EnumArgument
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.types.EntityArgument
@@ -10,12 +11,11 @@ import io.github.ayfri.kore.commands.command
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
-import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
 import io.github.ayfri.kore.generated.Particles as ParticlesNames
 
 @Serializable(ParticleMode.Companion.ParticleModeSerializer::class)
-enum class ParticleMode {
+enum class ParticleMode : EnumArgument {
 	NORMAL,
 	FORCE;
 
@@ -47,7 +47,7 @@ class Particles(internal val fn: Function) {
 		mode: ParticleMode? = null,
 		viewers: EntityArgument? = null,
 	) =
-		fn.addLine(command("particle", particle, pos, delta, float(speed), int(count), literal(mode?.asArg()), viewers))
+		fn.addLine(command("particle", particle, pos, delta, float(speed), int(count), mode, viewers))
 
 	/** Spawns the sculk charge particle.
 	 *
@@ -78,7 +78,7 @@ class Particles(internal val fn: Function) {
 				delta,
 				float(speed),
 				int(count),
-				literal(mode?.asArg()),
+				mode,
 				viewers
 			)
 		)
@@ -112,7 +112,7 @@ class Particles(internal val fn: Function) {
 				delta,
 				float(speed),
 				int(count),
-				literal(mode?.asArg()),
+				mode,
 				viewers
 			)
 		)
@@ -148,7 +148,7 @@ class Particles(internal val fn: Function) {
 				delta,
 				float(speed),
 				int(count),
-				literal(mode?.asArg()),
+				mode,
 				viewers
 			)
 		)
@@ -166,7 +166,7 @@ fun Function.particle(
 	count: Int,
 	mode: ParticleMode? = null,
 	viewers: EntityArgument? = null,
-) = addLine(command("particle", particle, pos, delta, float(speed), int(count), literal(mode?.asArg()), viewers))
+) = addLine(command("particle", particle, pos, delta, float(speed), int(count), mode, viewers))
 
 val Function.particles get() = Particles(this)
 fun Function.particles(block: Particles.() -> Unit) = Particles(this).block()

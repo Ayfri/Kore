@@ -1,11 +1,11 @@
 package io.github.ayfri.kore.commands
 
+import io.github.ayfri.kore.arguments.EnumArgument
 import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.arguments.types.AdvancementArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
-import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
 
 /**
@@ -17,7 +17,7 @@ import kotlinx.serialization.Serializable
  * - [UNTIL]: every advancement leading up to (but not including) the target
  */
 @Serializable(AdvancementRoute.Companion.AdvancementRouteSerializer::class)
-enum class AdvancementRoute {
+enum class AdvancementRoute : EnumArgument {
 	FROM,
 	ONLY,
 	THROUGH,
@@ -49,7 +49,7 @@ class Advancement(private val fn: Function) {
 		route: AdvancementRoute,
 		advancement: AdvancementArgument,
 		criterion: String? = null,
-	) = fn.addLine(command("advancement", literal("grant"), target, literal(route.asArg()), advancement, literal(criterion)))
+	) = fn.addLine(command("advancement", literal("grant"), target, route, advancement, literal(criterion)))
 
 	/**
 	 * Grants [advancement] only to [targets], optionally restricted to a single [criterion].
@@ -83,7 +83,7 @@ class Advancement(private val fn: Function) {
 		route: AdvancementRoute,
 		advancement: AdvancementArgument,
 		criterion: String? = null,
-	) = fn.addLine(command("advancement", literal("revoke"), target, literal(route.asArg()), advancement, literal(criterion)))
+	) = fn.addLine(command("advancement", literal("revoke"), target, route, advancement, literal(criterion)))
 
 	/**
 	 * Revokes [advancement] only from [targets], optionally restricted to a single [criterion].
@@ -126,7 +126,7 @@ class AdvancementTarget(private val fn: Function, private val target: EntityArgu
 		route: AdvancementRoute,
 		advancement: AdvancementArgument,
 		criterion: String? = null,
-	) = fn.addLine(command("advancement", literal("grant"), target, literal(route.asArg()), advancement, literal(criterion)))
+	) = fn.addLine(command("advancement", literal("grant"), target, route, advancement, literal(criterion)))
 
 	/**
 	 * Grants [advancement] only to the bound target.
@@ -156,7 +156,7 @@ class AdvancementTarget(private val fn: Function, private val target: EntityArgu
 		route: AdvancementRoute,
 		advancement: AdvancementArgument,
 		criterion: String? = null,
-	) = fn.addLine(command("advancement", literal("revoke"), target, literal(route.asArg()), advancement, literal(criterion)))
+	) = fn.addLine(command("advancement", literal("revoke"), target, route, advancement, literal(criterion)))
 
 	/**
 	 * Revokes [advancement] only from the bound target.

@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.commands
 
+import io.github.ayfri.kore.arguments.EnumArgument
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.types.EntityArgument
@@ -9,11 +10,10 @@ import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
-import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
 
 @Serializable(PlaySoundMixer.Companion.PlaySoundSourceSerializer::class)
-enum class PlaySoundMixer {
+enum class PlaySoundMixer : EnumArgument {
 	AMBIENT,
 	BLOCK,
 	HOSTILE,
@@ -59,7 +59,7 @@ fun Function.playSound(
 		command(
 			"playsound",
 			sound,
-			literal(finalSource?.asArg()),
+			finalSource,
 			finalTarget,
 			finalPos,
 			float(volume ?: 1.0.takeIf { pitch != null || minVolume != null }),

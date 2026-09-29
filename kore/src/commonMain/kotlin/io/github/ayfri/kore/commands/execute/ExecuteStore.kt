@@ -7,7 +7,6 @@ import io.github.ayfri.kore.arguments.types.ScoreHolderArgument
 import io.github.ayfri.kore.arguments.types.literals.float
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.resources.StorageArgument
-import io.github.ayfri.kore.utils.asArg
 
 class ExecuteStore(private val ex: Execute) {
 	fun block(
@@ -15,7 +14,7 @@ class ExecuteStore(private val ex: Execute) {
 		path: String,
 		type: DataType,
 		scale: Double,
-	) = listOf(literal("block"), pos, literal(path), literal(type.asArg()), float(scale))
+	) = listOf(literal("block"), pos, literal(path), type, float(scale))
 
 	fun bossBarMax(id: String) = listOf(literal("bossbar"), literal(id), literal("max"))
 	fun bossBarValue(id: String) = listOf(literal("bossbar"), literal(id), literal("value"))
@@ -23,7 +22,7 @@ class ExecuteStore(private val ex: Execute) {
 	fun entity(target: EntityArgument, path: String, type: DataType, scale: Double) = listOf(
 		literal("entity"), ex.targetArg(target),
 		literal(path),
-		literal(type.asArg()),
+		type,
 		float(scale)
 	)
 
@@ -32,7 +31,7 @@ class ExecuteStore(private val ex: Execute) {
 	fun storage(target: StorageArgument, path: String, type: DataType, scale: Double) = listOf(
 		literal("storage"), target,
 		literal(path),
-		literal(type.asArg()),
+		type,
 		float(scale)
 	)
 }

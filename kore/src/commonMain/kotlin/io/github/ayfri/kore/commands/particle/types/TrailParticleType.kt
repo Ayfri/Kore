@@ -13,7 +13,6 @@ import io.github.ayfri.kore.commands.particle.ParticleType
 import io.github.ayfri.kore.commands.particle.Particles
 import io.github.ayfri.kore.commands.particle.asParticleArg
 import io.github.ayfri.kore.serializers.TripleAsArray
-import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
 import io.github.ayfri.kore.generated.Particles as ParticlesNames
 
@@ -45,7 +44,7 @@ fun Particles.trail(
 		delta,
 		float(speed),
 		int(count),
-		literal(mode?.asArg()),
+		mode,
 		viewers
 	)
 )

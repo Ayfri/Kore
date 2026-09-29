@@ -6,7 +6,6 @@ import io.github.ayfri.kore.arguments.types.literals.RotationArgument
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.commands.execute.Anchor
 import io.github.ayfri.kore.functions.Function
-import io.github.ayfri.kore.utils.asArg
 
 /**
  * Teleports the executing entity to the [destination] entity and copies its rotation.
@@ -80,7 +79,7 @@ fun Function.teleport(
 		literal("facing"),
 		literal("entity"),
 		facing,
-		literal(facingAnchor?.asArg())
+		facingAnchor
 	)
 )
 

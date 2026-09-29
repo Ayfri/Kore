@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.Argument
+import io.github.ayfri.kore.arguments.EnumArgument
 import io.github.ayfri.kore.arguments.ItemSlotType
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.types.EntityArgument
@@ -11,7 +12,6 @@ import io.github.ayfri.kore.features.loottables.LootTable
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.arguments.types.LootTableArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
-import io.github.ayfri.kore.utils.asArg
 import io.github.ayfri.kore.utils.encodeToSnbt
 import kotlinx.serialization.Serializable
 
@@ -34,12 +34,14 @@ data object LootTarget {
 
 /** Hand selection used by loot and fishing sources. */
 @Serializable(Hand.Companion.HandSerializer::class)
-enum class Hand {
+enum class Hand : EnumArgument {
 	MAIN_HAND,
 	OFF_HAND;
 
+	override fun asString() = name.lowercase().replace("_", "")
+
 	companion object {
-		data object HandSerializer : LowercaseSerializer<Hand>(entries, { name.lowercase().replace("_", "") })
+		data object HandSerializer : LowercaseSerializer<Hand>(entries, { asString() })
 	}
 }
 
@@ -54,8 +56,8 @@ enum class Hand {
 data object LootSource {
 	fun fish(lootTable: LootTableArgument, pos: Vec3, tool: ItemArgument? = null) = listOfNotNull(literal("fish"), lootTable, pos, tool)
 	fun fish(pos: Vec3, tool: ItemArgument? = null, lootTable: LootTable.() -> Unit) = listOfNotNull(literal("fish"), inlineLootTable(lootTable), pos, tool)
-	fun fish(lootTable: LootTableArgument, pos: Vec3, hand: Hand) = listOf(literal("fish"), lootTable, pos, literal(hand.asArg()))
-	fun fish(pos: Vec3, hand: Hand, lootTable: LootTable.() -> Unit) = listOf(literal("fish"), inlineLootTable(lootTable), pos, literal(hand.asArg()))
+	fun fish(lootTable: LootTableArgument, pos: Vec3, hand: Hand) = listOf(literal("fish"), lootTable, pos, hand)
+	fun fish(pos: Vec3, hand: Hand, lootTable: LootTable.() -> Unit) = listOf(literal("fish"), inlineLootTable(lootTable), pos, hand)
 
 	fun loot(lootTable: LootTableArgument) = listOf(literal("loot"), lootTable)
 	fun loot(lootTable: LootTable.() -> Unit) = listOf(literal("loot"), inlineLootTable(lootTable))
@@ -63,7 +65,7 @@ data object LootSource {
 	fun kill(targets: EntityArgument) = listOf(literal("kill"), targets)
 
 	fun mine(pos: Vec3, tool: ItemArgument? = null) = listOfNotNull(literal("mine"), pos, tool)
-	fun mine(pos: Vec3, hand: Hand) = listOf(literal("mine"), pos, literal(hand.asArg()))
+	fun mine(pos: Vec3, hand: Hand) = listOf(literal("mine"), pos, hand)
 
 	private fun inlineLootTable(lootTable: LootTable.() -> Unit) = literal(encodeToSnbt(LootTable().apply(lootTable)))
 }

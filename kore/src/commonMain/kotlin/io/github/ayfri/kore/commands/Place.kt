@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.commands
 
+import io.github.ayfri.kore.arguments.EnumArgument
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.types.literals.float
 import io.github.ayfri.kore.arguments.types.literals.int
@@ -11,7 +12,6 @@ import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructu
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.TemplatePoolArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
-import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
 
 /** Places the configured [feature] at the executing position or at [pos]. */
@@ -49,22 +49,22 @@ fun Function.placeStructure(structure: ConfiguredStructureArgument, pos: Vec3? =
 
 /** Rotation applied to a placed template. */
 @Serializable(with = TemplateRotation.Companion.TemplateRotationSerializer::class)
-enum class TemplateRotation {
+enum class TemplateRotation : EnumArgument {
 	NONE,
 	CLOCKWISE_90,
 	CLOCKWISE_180,
 	COUNTERCLOCKWISE_90;
 
+	override fun asString() = if (this == CLOCKWISE_180) "180" else name.lowercase()
+
 	companion object {
-		data object TemplateRotationSerializer : LowercaseSerializer<TemplateRotation>(entries, {
-			if (this == CLOCKWISE_180) "180" else name.lowercase()
-		})
+		data object TemplateRotationSerializer : LowercaseSerializer<TemplateRotation>(entries, { asString() })
 	}
 }
 
 /** Mirror applied to a placed template. */
 @Serializable(with = TemplateMirror.Companion.TemplateMirrorSerializer::class)
-enum class TemplateMirror {
+enum class TemplateMirror : EnumArgument {
 	NONE,
 	FRONT_BACK,
 	LEFT_RIGHT;
@@ -97,8 +97,8 @@ fun Function.placeTemplate(
 		literal("template"),
 		template,
 		pos,
-		literal(rotation?.asArg()),
-		literal(mirror?.asArg()),
+		rotation,
+		mirror,
 		float(integrity),
 		int(seed),
 		literal(if (strict) "strict" else null)

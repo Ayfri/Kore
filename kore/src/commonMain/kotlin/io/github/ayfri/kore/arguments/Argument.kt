@@ -18,6 +18,16 @@ interface Argument {
 }
 
 /**
+ * An enum passed to commands as is, written as its lowercase name: `command("gamemode", Gamemode.CREATIVE)` gives
+ * `gamemode creative`. An entry the game names differently overrides [asString], and its serializer writes [asString].
+ */
+interface EnumArgument : Argument {
+	val name: String
+
+	override fun asString() = name.lowercase()
+}
+
+/**
  * Builds an [Argument] instance from its raw string form (e.g. `"minecraft:stone[...]{...}"`), dynamically
  * implementing whatever [Argument] sub-interfaces the deserialization target needs.
  *

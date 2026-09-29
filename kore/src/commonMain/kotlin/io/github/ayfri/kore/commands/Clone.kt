@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.commands
 
+import io.github.ayfri.kore.arguments.EnumArgument
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
@@ -7,11 +8,10 @@ import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.arguments.types.DimensionArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
-import io.github.ayfri.kore.utils.asArg
 import kotlinx.serialization.Serializable
 
 @Serializable(Type.Companion.TypeSerializer::class)
-private enum class Type {
+private enum class Type : EnumArgument {
 	FILTERED,
 	MASKED,
 	REPLACE;
@@ -23,7 +23,7 @@ private enum class Type {
 
 /** Clone mode controlling how the source region interacts with the destination. */
 @Serializable(CloneMode.Companion.CloneModeSerializer::class)
-enum class CloneMode {
+enum class CloneMode : EnumArgument {
 	FORCE,
 	MOVE,
 	NORMAL;
@@ -105,9 +105,9 @@ class Clone(private val fn: Function) {
 			*toArgs,
 			destination.truncate(),
 			literal(if (strict) "strict" else null),
-			literal(type?.asArg()),
+			type,
 			filter,
-			literal(cloneMode?.asArg())
+			cloneMode
 		)
 	)
 }
@@ -140,7 +140,7 @@ fun Function.cloneFiltered(begin: Vec3, end: Vec3, destination: Vec3, filter: Bl
 			literal(if (strict) "strict" else null),
 			literal("filtered"),
 			filter,
-			literal(mode?.asArg())
+			mode
 		)
 	)
 
@@ -161,7 +161,7 @@ fun Function.cloneMasked(begin: Vec3, end: Vec3, destination: Vec3, mode: CloneM
 			destination.truncate(),
 			literal(if (strict) "strict" else null),
 			literal("masked"),
-			literal(mode?.asArg())
+			mode
 		)
 	)
 
@@ -182,7 +182,7 @@ fun Function.cloneReplace(begin: Vec3, end: Vec3, destination: Vec3, mode: Clone
 			destination.truncate(),
 			literal(if (strict) "strict" else null),
 			literal("replace"),
-			literal(mode?.asArg())
+			mode
 		)
 	)
 

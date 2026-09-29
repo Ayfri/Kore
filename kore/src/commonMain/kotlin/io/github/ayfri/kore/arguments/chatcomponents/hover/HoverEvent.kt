@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.arguments.chatcomponents.hover
 
+import io.github.ayfri.kore.arguments.EnumArgument
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponent
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.text
@@ -11,7 +12,6 @@ import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
-import io.github.ayfri.kore.utils.asArg
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import kotlinx.serialization.Serializable
@@ -36,7 +36,7 @@ data class HoverEvent(
 	var contents: Contents? = null,
 ) {
 	fun toNbtTag() = nbt {
-		this["action"] = action.asArg()
+		this["action"] = action.asString()
 
 		when (action) {
 			HoverAction.SHOW_TEXT -> this["value"] = value
@@ -95,7 +95,7 @@ fun HoverEvent.showText(text: String, color: Color? = null, block: ChatComponent
 
 /** The three tooltip types a hover event can render. */
 @Serializable(HoverAction.Companion.HoverActionSerializer::class)
-enum class HoverAction {
+enum class HoverAction : EnumArgument {
 	/** Renders a text component tooltip. */
 	SHOW_TEXT,
 
