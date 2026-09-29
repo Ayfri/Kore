@@ -2,6 +2,7 @@ package io.github.ayfri.kore.website.components.playground
 
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideBookOpen
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideExternalLink
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideKeyboard
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideLibraryBig
 import com.varabyte.kobweb.silk.components.icons.lucide.LucidePanelBottom
@@ -43,12 +44,13 @@ fun ActivityBar(problemCount: Int, onCommand: (PlaygroundCommand) -> Unit) {
 			ActivityButton("Keyboard shortcuts", false, { onCommand(PlaygroundCommand.SHORTCUTS) }) { LucideKeyboard() }
 
 			A("/docs/home", {
-				classes(PlaygroundStyle.activityButton)
+				classes(PlaygroundStyle.toolButton, PlaygroundStyle.activityButton, PlaygroundStyle.iconSwap)
 				target(ATarget.Blank)
-				title("Kore documentation")
-				attr("aria-label", "Kore documentation")
+				title("Kore documentation, opens in a new tab")
+				attr("aria-label", "Kore documentation, opens in a new tab")
 			}) {
-				LucideBookOpen()
+				Span { LucideBookOpen() }
+				Span { LucideExternalLink() }
 			}
 		}
 	}

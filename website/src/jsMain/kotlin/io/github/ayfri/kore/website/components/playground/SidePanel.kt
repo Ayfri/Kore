@@ -1,10 +1,14 @@
 package io.github.ayfri.kore.website.components.playground
 
 import androidx.compose.runtime.*
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideBraces
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideFolder
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideGamepad2
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideMinus
 import com.varabyte.kobweb.silk.components.icons.lucide.LucidePlus
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideRotateCcw
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideSearch
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideSprout
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideX
 import org.jetbrains.compose.web.dom.*
 
@@ -50,17 +54,18 @@ private fun ExamplesView(current: PlaygroundExample, dirty: Boolean, onSelect: (
 
 		matches.forEach { (category, examples) ->
 			Div({ classes(PlaygroundStyle.sideCategory) }) {
+				CategoryIcon(category)
 				Text(category)
 				Span({ classes(PlaygroundStyle.treeCount) }) { Text(examples.size.toString()) }
 			}
 
-			examples.forEach { example ->
+			examples.forEachIndexed { index, example ->
 				Button({
 					classes(PlaygroundStyle.exampleEntry)
 					if (example == current) classes(PlaygroundStyle.exampleEntryActive)
 					onClick { onSelect(example) }
 				}) {
-					KotlinIcon()
+					Span({ classes(PlaygroundStyle.exampleIndex) }) { Text((index + 1).toString().padStart(2, '0')) }
 
 					Span({ classes(PlaygroundStyle.exampleText) }) {
 						Span({ classes(PlaygroundStyle.exampleTitle) }) {
@@ -80,6 +85,15 @@ private fun ExamplesView(current: PlaygroundExample, dirty: Boolean, onSelect: (
 	Div({ classes(PlaygroundStyle.sideFooter) }) {
 		Text("Every example is compiled and run when the site is built, so its pack shows instantly.")
 	}
+}
+
+/** Categories come as labels from `:playground-examples`, so one added there without an icon here gets a plain folder. */
+@Composable
+private fun CategoryIcon(category: String) = when (category) {
+	"Basics" -> LucideSprout()
+	"Data-driven" -> LucideBraces()
+	"Gameplay" -> LucideGamepad2()
+	else -> LucideFolder()
 }
 
 @Composable

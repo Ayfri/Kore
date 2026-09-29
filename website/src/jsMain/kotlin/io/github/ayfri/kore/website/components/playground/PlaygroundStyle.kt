@@ -43,7 +43,7 @@ object PlaygroundStyle : StyleSheet() {
 	private val warningColor = CodeThemeStyle.classColor
 
 	/** Height of every tab strip, which the rebuild hairline sits right under. */
-	private val TAB_STRIP_HEIGHT = 2.35.cssRem
+	private val TAB_STRIP_HEIGHT = 2.1.cssRem
 
 	val spin by keyframes {
 		from { transform { rotate(0.deg) } }
@@ -75,25 +75,19 @@ object PlaygroundStyle : StyleSheet() {
 
 	// Frame
 
+	/** Drops the bottom padding `HomePageStyle.page` gives the landing pages, so the frame runs edge to edge down to the footer. */
 	val page by style {
-		boxSizing(BoxSizing.BorderBox)
-		padding(0.75.cssRem, 0.75.cssRem, 0.px)
-
-		smMax(self) {
-			padding(0.px)
-		}
+		padding(0.px)
 	}
 
 	/** The site header is 4.5rem plus its 1px border; the frame fills what is left of the viewport. */
 	val ide by style {
 		backgroundColor(chrome)
-		border(1.px, LineStyle.Solid, border)
-		borderRadius(0.9.cssRem)
-		property("box-shadow", "0 1.5rem 3.5rem rgba(0, 0, 0, 0.45)")
+		borderBottom(1.px, LineStyle.Solid, border)
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
 		fontSize(0.8.cssRem)
-		property("height", "calc(100dvh - 4.5rem - 1px - 0.75rem)")
+		property("height", "calc(100dvh - 4.5rem - 1px)")
 		minHeight(34.cssRem)
 		overflow(Overflow.Hidden)
 		position(Position.Relative)
@@ -101,11 +95,6 @@ object PlaygroundStyle : StyleSheet() {
 		lgMax(self) {
 			property("height", "auto")
 			minHeight(0.px)
-		}
-
-		smMax(self) {
-			borderRadius(0.px)
-			property("border-width", "1px 0")
 		}
 
 		"button" style {
@@ -118,7 +107,6 @@ object PlaygroundStyle : StyleSheet() {
 	}
 
 	val ideFocus by style {
-		borderRadius(0.px)
 		property("border", "0")
 		height(100.dvh)
 		property("inset", "0")
@@ -668,6 +656,25 @@ object PlaygroundStyle : StyleSheet() {
 		top(0.1.cssRem)
 	}
 
+	/** Holds two icons and shows the second while hovered or focused, like the docs link turning into "opens in a new tab". */
+	val iconSwap by style {
+		"span" style {
+			display(DisplayStyle.Flex)
+		}
+
+		"span:last-child" style {
+			display(DisplayStyle.None)
+		}
+
+		(self + ":is(:hover, :focus-visible) span:first-child") style {
+			display(DisplayStyle.None)
+		}
+
+		(self + ":is(:hover, :focus-visible) span:last-child") style {
+			display(DisplayStyle.Flex)
+		}
+	}
+
 	val sidePanel by style {
 		backgroundColor(chrome)
 		borderRight(1.px, LineStyle.Solid, border)
@@ -746,10 +753,15 @@ object PlaygroundStyle : StyleSheet() {
 		display(DisplayStyle.Flex)
 		fontFamily(MONO, "monospace")
 		fontSize(0.63.cssRem)
-		justifyContent(JustifyContent.SpaceBetween)
+		gap(0.45.cssRem)
 		letterSpacing(1.4.px)
 		padding(0.75.cssRem, 0.5.cssRem, 0.3.cssRem)
 		textTransform(TextTransform.Uppercase)
+
+		"svg" style {
+			height(0.8.cssRem)
+			width(0.8.cssRem)
+		}
 	}
 
 	val sideEmpty by style {
@@ -781,35 +793,33 @@ object PlaygroundStyle : StyleSheet() {
 	}
 
 	val exampleEntry by style {
-		alignItems(AlignItems.FlexStart)
+		alignItems(AlignItems.Baseline)
 		backgroundColor(Color.transparent)
 		border(0.px)
-		borderRadius(0.5.cssRem)
+		borderRadius(0.45.cssRem)
 		color(text)
 		cursor(Cursor.Pointer)
 		display(DisplayStyle.Flex)
-		gap(0.6.cssRem)
+		gap(0.7.cssRem)
 		padding(0.5.cssRem, 0.6.cssRem)
 		textAlign(TextAlign.Left)
 		transition(0.15.s, "background-color")
 		width(100.percent)
-
-		".$kotlinIcon" style {
-			marginTop(0.15.cssRem)
-		}
 
 		hover(self) style {
 			backgroundColor(hoverWash)
 		}
 	}
 
-	val exampleEntryActive by style {
-		backgroundColor(accentWash)
-		property("box-shadow", "inset 2px 0 0 var(--landing-accent)")
-
-		hover(self) style {
-			backgroundColor(accentHover)
-		}
+	/** Its place in the category, which reads as a progression from the basics to the gameplay examples. */
+	val exampleIndex by style {
+		color(muted)
+		flexShrink(0)
+		fontFamily(MONO, "monospace")
+		fontSize(0.66.cssRem)
+		property("font-variant-numeric", "tabular-nums")
+		opacity(0.6)
+		transition(0.15.s, "color", "opacity")
 	}
 
 	val exampleText by style {
@@ -825,6 +835,7 @@ object PlaygroundStyle : StyleSheet() {
 		fontSize(0.82.cssRem)
 		fontWeight(600)
 		gap(0.4.cssRem)
+		transition(0.15.s, "color")
 	}
 
 	val exampleDescription by style {
@@ -835,6 +846,24 @@ object PlaygroundStyle : StyleSheet() {
 		property("-webkit-line-clamp", "2")
 		lineHeight(1.45.number)
 		overflow(Overflow.Hidden)
+	}
+
+	/** The open example is told apart by its accent title and number on a neutral wash, the row itself stays flat. */
+	val exampleEntryActive by style {
+		backgroundColor(rgba(255, 255, 255, 0.055))
+
+		".$exampleIndex" style {
+			color(accentStrong)
+			opacity(1)
+		}
+
+		".$exampleTitle" style {
+			color(accentStrong)
+		}
+
+		hover(self) style {
+			backgroundColor(rgba(255, 255, 255, 0.075))
+		}
 	}
 
 	val settingRow by style {
@@ -955,10 +984,11 @@ object PlaygroundStyle : StyleSheet() {
 		}
 	}
 
+	/** The bottom rule is an inset shadow, painted under the tabs, so the active tab covers it without overflowing the strip. */
 	val tabStrip by style {
 		alignItems(AlignItems.Stretch)
 		backgroundColor(chrome)
-		borderBottom(1.px, LineStyle.Solid, border)
+		property("box-shadow", "inset 0 -1px 0 $border")
 		display(DisplayStyle.Flex)
 		flexShrink(0)
 		gap(0.5.cssRem)
@@ -973,6 +1003,7 @@ object PlaygroundStyle : StyleSheet() {
 		display(DisplayStyle.Flex)
 		minWidth(0.px)
 		overflowX(Overflow.Auto)
+		overflowY(Overflow.Hidden)
 	}
 
 	val tab by style {
@@ -994,12 +1025,11 @@ object PlaygroundStyle : StyleSheet() {
 		}
 	}
 
-	/** Painted in the pane's color and pulled over the strip's border, so the tab reads as the pane's own top. */
+	/** Painted in the pane's color over the strip's bottom rule, so the tab reads as the pane's own top. */
 	val tabActive by style {
 		backgroundColor(surface)
 		property("box-shadow", "inset 0 2px 0 var(--landing-accent)")
 		color(text)
-		marginBottom((-1).px)
 	}
 
 	val tabButton by style {
@@ -1786,6 +1816,67 @@ object PlaygroundStyle : StyleSheet() {
 		borderRadius(0.3.cssRem)
 		fontFamily(MONO, "monospace")
 		padding(0.05.cssRem, 0.35.cssRem)
+	}
+
+	// Command palette, Monaco's quick input dressed like the IDE's own dialogs
+
+	init {
+		/** Monaco sizes the palette to 62% of the editor and pins it with an inline `left`, so its anchor spans the editor to recenter it. */
+		".overlayWidgets > div:has(> .quick-input-widget)" style {
+			width(100.percent)
+		}
+
+		".monaco-editor .quick-input-widget" style {
+			borderRadius(0.75.cssRem)
+			property("box-shadow", "0 1.25rem 3rem rgba(0, 0, 0, 0.55)")
+			fontFamily("IBM Plex Sans", "sans-serif")
+			property("left", "50%", important = true)
+			overflow(Overflow.Hidden)
+			property("top", "0.6rem", important = true)
+			transform { translateX((-50).percent) }
+			property("width", "min(38rem, calc(100% - 2rem))", important = true)
+		}
+
+		".monaco-editor .quick-input-widget .quick-input-header" style {
+			padding(0.5.cssRem, 0.5.cssRem, 0.4.cssRem)
+		}
+
+		".monaco-editor .quick-input-widget .monaco-inputbox" style {
+			borderRadius(0.5.cssRem)
+		}
+
+		".monaco-editor .quick-input-widget .monaco-inputbox > .ibwrapper > .input" style {
+			fontSize(0.85.cssRem)
+			padding(0.4.cssRem, 0.6.cssRem)
+		}
+
+		".monaco-editor .quick-input-list .monaco-list-row" style {
+			borderRadius(0.4.cssRem)
+		}
+
+		".monaco-editor .quick-input-list .monaco-keybinding" style {
+			gap(0.2.cssRem)
+		}
+
+		".monaco-editor .quick-input-list .monaco-keybinding > .monaco-keybinding-key" style {
+			backgroundColor(rgba(255, 255, 255, 0.07))
+			border(1.px, LineStyle.Solid, rgba(255, 255, 255, 0.12))
+			property("border-bottom-width", "2px")
+			borderRadius(0.3.cssRem)
+			boxSizing(BoxSizing.BorderBox)
+			property("box-shadow", "none")
+			color(text)
+			fontFamily(MONO, "monospace")
+			fontSize(0.66.cssRem)
+			height(1.15.cssRem)
+			margin(0.px)
+			minWidth(1.15.cssRem)
+			padding(0.px, 0.3.cssRem)
+		}
+
+		".monaco-editor .quick-input-list .monaco-keybinding-key-separator" style {
+			display(DisplayStyle.None)
+		}
 	}
 
 	/**
