@@ -1374,7 +1374,8 @@ object PlaygroundStyle : StyleSheet() {
 
 		// Scrolling belongs to the pane, not to the code box, so the bar sits at the bottom edge either way.
 		// Grouped in `:is`: a nested selector list only gets the class on its first entry, the others would apply page-wide.
-		":is(pre, pre[class*=\"language-\"])" style {
+		// `.line-numbers` outranks the site's `pre[class*='language-'].line-numbers` gutter, which a tie would leave in charge.
+		":is(pre, pre[class*=\"language-\"]).line-numbers" style {
 			backgroundColor(Color.transparent)
 			boxSizing(BoxSizing.BorderBox)
 			flexGrow(1)
@@ -1382,7 +1383,13 @@ object PlaygroundStyle : StyleSheet() {
 			margin(0.px)
 			minWidth(100.percent)
 			overflow(Overflow.Visible)
-			padding(0.7.cssRem, 1.cssRem, 0.7.cssRem, 3.4.cssRem)
+			property("padding", "0.45rem 1rem 0.7rem calc(var(--line-digits, 2) * 1ch + 1.55rem)")
+		}
+
+		/** As wide as the longest line number, `--line-digits` set from the file, plus the space before the code. */
+		".line-numbers .line-numbers-rows" style {
+			property("left", "calc(var(--line-digits, 2) * -1ch - 1.2rem)")
+			property("width", "calc(var(--line-digits, 2) * 1ch + 0.65rem)")
 		}
 	}
 

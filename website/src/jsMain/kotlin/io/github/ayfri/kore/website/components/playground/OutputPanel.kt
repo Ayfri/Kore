@@ -198,17 +198,20 @@ fun OutputPanel(
 
 				Div({ classes(PlaygroundStyle.previewColumn) }) {
 					selected?.let { file -> PreviewHeader(file, indent, wrap, onCopy) }
+					val previewText = selected?.let { previewOf(it, indent) }
 
 					Div({
 						classes(PlaygroundStyle.preview)
 						if (wrap) classes(PlaygroundStyle.previewWrapped)
 						id(PREVIEW_ID)
+						// Two digits at least, so the code does not shift sideways between two files under 100 lines.
+						previewText?.let { text -> style { property("--line-digits", maxOf(2, (text.count { it == '\n' } + 1).toString().length)) } }
 					}) {
-						selected?.let { file ->
+						if (selected != null && previewText != null) {
 							// Prism rewrites the code element's children, detaching the text node Compose owns, so the
 							// subtree is rebuilt from scratch on every switch instead of patched in place.
-							key(file.path, file.content, indent, wrap) {
-								CodeBlock(previewOf(file, indent), grammarOf(file), "line-numbers")
+							key(selected.path, selected.content, indent, wrap) {
+								CodeBlock(previewText, grammarOf(selected), "line-numbers")
 							}
 						}
 					}
