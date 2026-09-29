@@ -12,13 +12,15 @@ routeOverride: /docs/contributing/generation-pipeline
 # Contributing: The Generation Pipeline
 
 `generation/` is a standalone Kotlin/JVM app, not a library other modules depend on. Running it writes Kotlin files
-straight into [`kore/src/main/generated`][kore-generated] - it is the *only* thing allowed to touch that folder.
+straight into `kore/src/commonMain/kotlin/io/github/ayfri/kore/generated` - it is the *only* thing allowed to touch that
+folder. The folder is gitignored: every `kore` compilation regenerates it through the cacheable
+`:generation:generateSources` task.
 
 ## What it does
 
 `generation/src/main/kotlin/Main.kt` runs, in order:
 
-1. Clear `kore/src/main/generated` and (with `--reload-cache`) the download cache.
+1. Clear `kore/src/commonMain/kotlin/io/github/ayfri/kore/generated` and (with `--reload-cache`) the download cache.
 2. Download datapacks, the default datapack version, gamerules and item component types.
 3. Run every simple generator ([`launchAllSimpleGenerators`][generators-kt]) - lists and registries that become
    enums or enum trees.
@@ -69,8 +71,8 @@ registries the report doesn't expose or that already have a hand-written model (
 
 Add `--args='--reload-cache'` after bumping the Minecraft version to invalidate the download cache.
 
-Once it finishes, diff `kore/src/main/generated` and `kore/src/main/kotlin/io/github/ayfri/kore/generated` (the
-`Argument`-type files) to confirm the new registry produced the expected enum/argument shape before writing any DSL
+Once it finishes, read the new files in `kore/src/commonMain/kotlin/io/github/ayfri/kore/generated` (enums and
+`Argument` types alike) to confirm the new registry produced the expected enum/argument shape before writing any DSL
 code against it.
 
 ## See also
@@ -85,8 +87,6 @@ code against it.
 [generator-kt]: https://github.com/ayfri/kore/blob/master/generation/src/main/kotlin/generators/Generator.kt
 
 [generators-kt]: https://github.com/ayfri/kore/blob/master/generation/src/main/kotlin/generators/generators.kt
-
-[kore-generated]: https://github.com/ayfri/kore/tree/master/kore/src/main/generated
 
 [new-generator]: /docs/contributing/creating-a-new-generator
 

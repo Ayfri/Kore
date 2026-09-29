@@ -37,7 +37,7 @@ Use it to identify the right guide before touching code, tests, or documentation
 ## Contribution principles
 
 - Keep generated files generated: fix the generator or source pipeline, not `build/generated/...` or
-  `kore/src/main/generated`.
+  `kore/src/commonMain/kotlin/io/github/ayfri/kore/generated`.
 - Prefer existing serializers, typed arguments, and command helpers before introducing new abstractions.
 - Ship tests and docs with behavior changes, especially in `bindings/` and `kore/`.
 - Stay within one clear module boundary when possible; use [Architecture and Patterns][architecture] to decide where a

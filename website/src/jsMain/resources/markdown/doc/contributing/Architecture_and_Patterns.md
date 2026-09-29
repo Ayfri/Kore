@@ -64,7 +64,8 @@ git-excluded sandboxes are omitted on purpose.
 
 - Purpose: source-data processing and generated Kotlin/resource output.
 - Edit here when a generated enum, registry wrapper, or source-derived structure is wrong.
-- **Never** fix a generation issue by editing `kore/src/main/generated` or `build/generated/...` directly.
+- **Never** fix a generation issue by editing `kore/src/commonMain/kotlin/io/github/ayfri/kore/generated` or
+  `build/generated/...` directly.
 - Full walkthrough: [Contributing: The Generation Pipeline][generation-pipeline].
 
 ### [`helpers/`][helpers-root]
@@ -270,21 +271,21 @@ Content rules that keep the docs consistent and trustworthy:
 - [Contributing: Workflow][workflow]
 - [Multiplatform Support][multiplatform]
 
-[bindings-entities]: https://github.com/ayfri/kore/blob/master/bindings/src/main/kotlin/io/github/ayfri/kore/bindings/entities.kt
+[bindings-entities]: https://github.com/ayfri/kore/blob/master/bindings/src/commonMain/kotlin/io/github/ayfri/kore/bindings/entities.kt
 
-[bindings-explorer]: https://github.com/ayfri/kore/blob/master/bindings/src/main/kotlin/io/github/ayfri/kore/bindings/explorer.kt
+[bindings-explorer]: https://github.com/ayfri/kore/blob/master/bindings/src/commonMain/kotlin/io/github/ayfri/kore/bindings/explorer.kt
 
 [bindings-root]: https://github.com/ayfri/kore/tree/master/bindings
 
 [bindings-tests]: https://github.com/ayfri/kore/tree/master/bindings/src/commonTest/kotlin/io/github/ayfri/kore/bindings
 
-[bindings-writer]: https://github.com/ayfri/kore/blob/master/bindings/src/main/kotlin/io/github/ayfri/kore/bindings/writer.kt
+[bindings-writer]: https://github.com/ayfri/kore/blob/master/bindings/src/commonMain/kotlin/io/github/ayfri/kore/bindings/writer.kt
 
 [build-logic-root]: https://github.com/ayfri/kore/tree/master/build-logic
 
 [contributing]: /docs/contributing/contributing
 
-[datapack-kt]: https://github.com/ayfri/kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/DataPack.kt
+[datapack-kt]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/DataPack.kt
 
 [docs-root]: https://github.com/ayfri/kore/tree/master/website/src/jsMain/resources/markdown/doc
 
@@ -292,13 +293,13 @@ Content rules that keep the docs consistent and trustworthy:
 
 [generation-root]: https://github.com/ayfri/kore/tree/master/generation
 
-[generator-kt]: https://github.com/ayfri/kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/Generator.kt
+[generator-kt]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/Generator.kt
 
 [helpers-root]: https://github.com/ayfri/kore/tree/master/helpers
 
-[instrument-kt]: https://github.com/ayfri/kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/features/instruments/Instrument.kt
+[instrument-kt]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/features/instruments/Instrument.kt
 
-[instrument-tests]: https://github.com/ayfri/kore/blob/master/kore/src/test/kotlin/io/github/ayfri/kore/features/InstrumentTests.kt
+[instrument-tests]: https://github.com/ayfri/kore/blob/master/kore/src/commonTest/kotlin/io/github/ayfri/kore/features/InstrumentTests.kt
 
 [kore-root]: https://github.com/ayfri/kore/tree/master/kore
 
@@ -312,23 +313,23 @@ Content rules that keep the docs consistent and trustworthy:
 
 [project-kt]: https://github.com/ayfri/kore/blob/master/build-logic/convention/src/main/kotlin/Project.kt
 
-[serializer-either-inline]: https://github.com/ayfri/kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/serializers/EitherInlineSerializer.kt
+[serializer-either-inline]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/EitherInlineSerializer.kt
 
-[serializer-inline-auto]: https://github.com/ayfri/kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/serializers/InlineAutoSerializer.kt
+[serializer-inline-auto]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/InlineAutoSerializer.kt
 
-[serializer-inlinable-list]: https://github.com/ayfri/kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/serializers/InlinableListSerializer.kt
+[serializer-inlinable-list]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/InlinableListSerializer.kt
 
-[serializer-lowercase]: https://github.com/ayfri/kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/serializers/LowercaseSerializer.kt
+[serializer-lowercase]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/LowercaseSerializer.kt
 
-[serializer-namespaced]: https://github.com/ayfri/kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/serializers/NamespacedPolymorphicSerializer.kt
+[serializer-namespaced]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/NamespacedPolymorphicSerializer.kt
 
-[serializer-nbt-as-json]: https://github.com/ayfri/kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/serializers/NbtAsJsonSerializer.kt
+[serializer-nbt-as-json]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/NbtAsJsonSerializer.kt
 
-[serializer-provider]: https://github.com/ayfri/kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/serializers/ProviderSerializer.kt
+[serializer-provider]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/ProviderSerializer.kt
 
-[serializer-single-property]: https://github.com/ayfri/kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/serializers/SinglePropertySimplifierSerializer.kt
+[serializer-single-property]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/SinglePropertySimplifierSerializer.kt
 
-[serializer-to-string]: https://github.com/ayfri/kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/serializers/ToStringSerializer.kt
+[serializer-to-string]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/ToStringSerializer.kt
 
 [website-root]: https://github.com/ayfri/kore/tree/master/website
 

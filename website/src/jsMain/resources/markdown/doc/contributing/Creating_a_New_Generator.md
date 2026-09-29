@@ -35,12 +35,12 @@ What you want to mirror:
 - Test shape.
 
 If the feature needs a brand-new registry argument type, add it through the generation pipeline first - see
-[Contributing: The Generation Pipeline][generation-pipeline]. Do **not** hand-edit `kore/src/main/generated` or
-`build/generated/...`.
+[Contributing: The Generation Pipeline][generation-pipeline]. Do **not** hand-edit
+`kore/src/commonMain/kotlin/io/github/ayfri/kore/generated` or `build/generated/...`.
 
 ## 2) Create the feature class
 
-Place the feature in the matching package under `kore/src/main/kotlin/io/github/ayfri/kore/features/...`.
+Place the feature in the matching package under `kore/src/commonMain/kotlin/io/github/ayfri/kore/features/...`.
 
 ```kotlin
 package io.github.ayfri.kore.features.customrewards
@@ -125,7 +125,7 @@ This keeps JSON output aligned with the rest of Kore instead of creating one-off
 ## 6) Add tests immediately
 
 Generator changes in `kore` should ship with targeted tests under [
-`kore/src/test/kotlin/io/github/ayfri/kore`][kore-tests].
+`kore/src/commonTest/kotlin/io/github/ayfri/kore`][kore-tests].
 
 For a simple resource, the test usually follows this shape:
 
@@ -210,7 +210,7 @@ You are usually done when the feature includes all of the following:
 - A `DataPack` registration entry.
 - A `Generator` subclass with the correct path behavior.
 - Documentation updates in `website/.../markdown/doc`.
-- Tests in `kore/src/test`.
+- Tests in `kore/src/commonTest`.
 
 ## See also
 
@@ -225,18 +225,18 @@ You are usually done when the feature includes all of the following:
 
 [generation-pipeline]: /docs/contributing/generation-pipeline
 
-[damage-type]: https://github.com/ayfri/kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/features/damagetypes/DamageType.kt
+[damage-type]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/features/damagetypes/DamageType.kt
 
-[datapack-kt]: https://github.com/ayfri/kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/DataPack.kt
+[datapack-kt]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/DataPack.kt
 
 [docs-root]: https://github.com/ayfri/kore/tree/master/website/src/jsMain/resources/markdown/doc
 
-[generator-kt]: https://github.com/ayfri/kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/Generator.kt
+[generator-kt]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/Generator.kt
 
-[instrument-feature]: https://github.com/ayfri/kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/features/instruments/Instrument.kt
+[instrument-feature]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/features/instruments/Instrument.kt
 
-[kore-tests]: https://github.com/ayfri/kore/tree/master/kore/src/test/kotlin/io/github/ayfri/kore
+[kore-tests]: https://github.com/ayfri/kore/tree/master/kore/src/commonTest/kotlin/io/github/ayfri/kore
 
-[painting-variant]: https://github.com/ayfri/kore/blob/master/kore/src/main/kotlin/io/github/ayfri/kore/features/paintingvariant/PaintingVariant.kt
+[painting-variant]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/features/paintingvariant/PaintingVariant.kt
 
 [workflow]: /docs/contributing/contributing-workflow
