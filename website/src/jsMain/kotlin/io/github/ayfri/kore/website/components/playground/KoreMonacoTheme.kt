@@ -19,8 +19,10 @@ private fun rule(token: String, color: CSSColorValue, fontStyle: String? = null)
 	}
 
 /**
- * The site's code theme, token for token with [CodeThemeStyle], so the editor reads like every other snippet on the
- * site. The background is the pane surface (`--landing-surface-2`), which Monaco cannot read from CSS.
+ * Styles the tokens of `website/monaco/kotlin-grammar.mjs` like IntelliJ's Material Darker scheme, in the colors of
+ * [CodeThemeStyle]. Calls are italic like its top-level and extension calls, which make up most Kore code, member calls
+ * can't be told apart without resolving. The background is the pane surface (`--landing-surface-2`), which Monaco
+ * cannot read from CSS.
  */
 fun defineKoreTheme(editor: MonacoEditor) {
 	val colors = js("({})")
@@ -97,42 +99,26 @@ fun defineKoreTheme(editor: MonacoEditor) {
 				rule("identifier", textColor),
 
 				rule("comment", commentColor, "italic"),
-				rule("comment.doc", commentColor, "italic"),
 
 				rule("keyword", keywordColor, "italic"),
-				rule("keyword.control", keywordColor, "italic"),
-				rule("storage.modifier", keywordColor, "italic"),
-				rule("annotation", keywordColor, "italic"),
+				rule("annotation", keywordColor),
 
-				rule("keyword.type", classColor),
 				rule("type", classColor),
-				rule("type.identifier", classColor),
-				rule("storage.type", classColor),
+				rule("constant", textColor, "italic"),
 
-				rule("identifier.function", functionColor),
 				rule("function", functionColor),
-				rule("predefined", functionColor),
+				rule("function.call", functionColor, "italic"),
 
-				rule("constant", numberColor),
+				rule("parameter", numberColor),
+				rule("parameter.implicit", numberColor, "bold"),
+
 				rule("number", numberColor),
-				rule("number.float", numberColor),
-				rule("number.hex", numberColor),
 
 				rule("string", stringColor),
 				rule("string.escape", punctuationColor),
 				rule("string.escape.invalid", propertyColor),
 
-				rule("operator", punctuationColor),
 				rule("delimiter", punctuationColor),
-				rule("delimiter.parenthesis", punctuationColor),
-				rule("delimiter.bracket", punctuationColor),
-				rule("delimiter.curly", punctuationColor),
-				rule("delimiter.square", punctuationColor),
-				rule("delimiter.angle", punctuationColor),
-
-				rule("tag", propertyColor),
-				rule("attribute.name", classColor, "italic"),
-				rule("attribute.value", stringColor),
 			)
 		}
 	}
