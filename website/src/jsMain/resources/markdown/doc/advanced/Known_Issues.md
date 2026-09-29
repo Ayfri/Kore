@@ -5,7 +5,7 @@ nav-title: Known Issues
 description: Kore-focused limitations, documented DSL constraints, and generation rough edges with links to docs and source.
 keywords: kore, guide, documentation, known issues, compatibility, limitations, workarounds
 date-created: 2025-08-27
-date-modified: 2026-04-26
+date-modified: 2026-09-29
 routeOverride: /docs/advanced/known-issues
 ---
 
@@ -36,7 +36,7 @@ see [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore#what-kore-will-
 Kore builds NBT and SNBT through **[knbt](https://github.com/BenWoodworth/knbt)** (`StringifiedNbt` and builders). Entry
 points include [
 `NbtTagUtils.kt`](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/utils/NbtTagUtils.kt)
-and the `nbt { }` / `stringifiedNbt(...)` helpers used across commands and components.
+and the `nbt { }` / `toSnbt()` helpers used across commands and components.
 
 For normal day-to-day usage and examples, start with [NBTs](/docs/concepts/nbts); this section focuses on limitations
 and

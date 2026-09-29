@@ -1,9 +1,8 @@
 package io.github.ayfri.kore.arguments
 
 import io.github.ayfri.kore.arguments.components.ComponentsPatch
-import kotlinx.serialization.decodeFromString
+import io.github.ayfri.kore.utils.toNbt
 import net.benwoodworth.knbt.NbtCompound
-import net.benwoodworth.knbt.StringifiedNbt
 
 internal data class ParsedArgument(
 	val rawValue: String,
@@ -96,7 +95,5 @@ private fun parseNbt(value: String): NbtCompound? {
 	val nbtStart = value.indexOf('{')
 	if (nbtStart < 0) return null
 
-	return runCatching {
-		StringifiedNbt.decodeFromString<NbtCompound>(value.substring(nbtStart))
-	}.getOrNull()
+	return runCatching { value.substring(nbtStart).toNbt() }.getOrNull()
 }

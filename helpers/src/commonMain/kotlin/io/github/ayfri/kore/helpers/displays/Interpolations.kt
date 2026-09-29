@@ -19,10 +19,9 @@ import io.github.ayfri.kore.helpers.displays.entities.TextDisplay
 import io.github.ayfri.kore.helpers.displays.maths.Transformation
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
+import io.github.ayfri.kore.utils.snbtSerializer
 import net.benwoodworth.knbt.NbtCompound
-import net.benwoodworth.knbt.StringifiedNbt
 import net.benwoodworth.knbt.encodeToNbtTag
-import net.benwoodworth.knbt.nbtList
 
 data class DisplayEntityInterpolable(val entity: DisplayEntity, var lastPosition: Vec3, val selector: UUIDArgument) {
 	var isSummoned = false
@@ -36,7 +35,7 @@ data class DisplayEntityInterpolable(val entity: DisplayEntity, var lastPosition
 		val nbtCompound = nbt {
 			if (entity.interpolationDuration != duration) this["interpolation_duration"] = duration
 			this["start_interpolation"] = start
-			this["transformation"] = StringifiedNbt.encodeToNbtTag(transformation).nbtList
+			this["transformation"] = snbtSerializer.encodeToNbtTag(transformation)
 		}
 
 		entity.interpolationDuration = duration

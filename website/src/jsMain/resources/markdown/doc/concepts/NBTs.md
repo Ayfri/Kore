@@ -5,7 +5,7 @@ nav-title: NBTs
 description: Work with Minecraft NBT data in Kore using a shared Kotlin DSL across commands, predicates, and chat components. Includes SNBT helpers, path access, and reuse patterns.
 keywords: minecraft, datapack, kore, nbt, snbt, knbt, chat components, predicates, data command
 date-created: 2026-05-29
-date-modified: 2026-09-04
+date-modified: 2026-09-29
 routeOverride: /docs/concepts/nbts
 ---
 
@@ -120,8 +120,9 @@ This is especially useful for lists of compounds, where each element is itself a
 
 ### Raw SNBT when needed
 
-Most of the time you should prefer the typed builders above. If you need a hand-written SNBT fragment, Kore also exposes
-helpers such as `stringifiedNbt(...)` for contexts that accept SNBT text directly.
+Most of the time you should prefer the typed builders above. When an API takes SNBT text instead of an `NbtTag`, call
+`toSnbt()` on the tag: `nbt { this["Count"] = 3.toByte() }.toSnbt()` gives `{Count:3b}`, with strings fully escaped.
+`encodeToSnbt(value)` does the same for any `@Serializable` value.
 
 The reverse direction is `String.toNbt()`, which parses an SNBT compound back into an `NbtCompound`. It is the shortest
 way to reuse a snippet copied from a command or the wiki without transcribing it into a builder:
@@ -230,19 +231,19 @@ Examples appear in helper docs such as [Display Entities](/docs/helpers/display-
 
 Here is the short version of what you usually reach for:
 
-| Context                    | Typical methods                                        |
-|----------------------------|--------------------------------------------------------|
-| Build a compound           | `nbt { ... }`                                          |
-| Build a list from values   | `nbtListOf(...)`                                       |
-| Build a list with a DSL    | `nbtList { ... }`, `addNbtCompound { ... }`            |
-| Write entries              | `this["key"] = value`                                  |
-| Nest another compound      | `this["key"] = nbt { ... }`                            |
-| Reuse generated object NBT | `toNbt()`                                              |
-| Read NBT into chat         | `nbtComponent(path, block/entity/storage)`             |
-| Match NBT in a DSL         | context-specific `nbt { ... }` methods                 |
-| Hand-write SNBT text       | `stringifiedNbt(...)` when the target API expects text |
-| Parse an SNBT compound     | `"{...}".toNbt()`                                      |
-| Parse any SNBT value       | `"[I;1,2]".toNbtTag()`                                 |
+| Context                    | Typical methods                                          |
+|----------------------------|----------------------------------------------------------|
+| Build a compound           | `nbt { ... }`                                            |
+| Build a list from values   | `nbtListOf(...)`                                         |
+| Build a list with a DSL    | `nbtList { ... }`, `add(...)`, `addNbtCompound { ... }`  |
+| Write entries              | `this["key"] = value`                                    |
+| Nest another compound      | `this["key"] = nbt { ... }`                              |
+| Reuse generated object NBT | `toNbt()`                                                |
+| Read NBT into chat         | `nbtComponent(path, block/entity/storage)`               |
+| Match NBT in a DSL         | context-specific `nbt { ... }` methods                   |
+| Write SNBT text            | `tag.toSnbt()`, `encodeToSnbt(value)`                    |
+| Parse an SNBT compound     | `"{...}".toNbt()`                                        |
+| Parse any SNBT value       | `"[I;1,2]".toNbtTag()`                                   |
 
 ## Practical tips
 
@@ -261,9 +262,8 @@ memory with
 `Snbt` (stringified NBT) is the text form of that same data, written as a string such as
 `{CustomName:"Hero",Health:20}`.
 
-In Kore, you usually work with typed `Nbt` objects first, then let Kore serialize them when needed. Reach for SNBT
-helpers such as
-`stringifiedNbt(...)` when a target API specifically expects NBT as text instead of an `NbtTag` object, and
+In Kore, you usually work with typed `Nbt` objects first, then let Kore serialize them when needed. Reach for
+`toSnbt()` when a target API specifically expects NBT as text instead of an `NbtTag` object, and
 `String.toNbt()` / `String.toNbtTag()` to go the other way.
 
 ## Related pages

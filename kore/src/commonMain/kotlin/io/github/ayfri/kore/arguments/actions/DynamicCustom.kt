@@ -5,6 +5,7 @@ import io.github.ayfri.kore.utils.nbt
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompoundBuilder
+import net.benwoodworth.knbt.NbtString
 import net.benwoodworth.knbt.NbtTag
 
 /**
@@ -30,7 +31,7 @@ fun DialogActionContainer.dynamicCustom(id: String, additions: NbtTag? = null) =
 /** Sends a dynamically built custom packet to the dedicated server, not useful for datapacks on vanilla servers,
  * you can use macros with the same names as the inputs for a custom payload,
  * undefined macros will just be replaced with an empty string. */
-fun DialogActionContainer.dynamicCustom(id: String, additions: String) = apply { action = DynamicCustom(id, additions.nbt) }
+fun DialogActionContainer.dynamicCustom(id: String, additions: String) = apply { action = DynamicCustom(id, NbtString(additions)) }
 
 /** Sends a dynamically built custom packet to the dedicated server, not useful for datapacks on vanilla servers,
  * you can use macros with the same names as the inputs for a custom payload,

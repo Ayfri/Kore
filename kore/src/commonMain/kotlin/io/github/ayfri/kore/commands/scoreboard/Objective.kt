@@ -16,7 +16,6 @@ import io.github.ayfri.kore.commands.command
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.utils.asArg
 import io.github.ayfri.kore.utils.encodeToSnbt
-import io.github.ayfri.kore.utils.snbtSerializer
 
 class Objective(private val fn: Function, val objective: String) {
 	fun player(target: ScoreHolderArgument) = PlayerObjective(fn, target, objective)
@@ -119,7 +118,7 @@ class Objective(private val fn: Function, val objective: String) {
 			literal(objective),
 			literal("numberformat"),
 			literal("styled"),
-			literal(snbtSerializer.encodeToSnbt(style))
+			literal(encodeToSnbt(style))
 		)
 	)
 

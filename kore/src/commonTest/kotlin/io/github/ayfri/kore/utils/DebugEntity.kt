@@ -17,7 +17,6 @@ import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.EntityTypes
 import net.benwoodworth.knbt.put
 import net.benwoodworth.knbt.putNbtCompound
-import net.benwoodworth.knbt.putNbtList
 import kotlin.uuid.Uuid
 
 typealias DebugCallback = Function.(key: String, value: String) -> Command
@@ -134,9 +133,7 @@ data class DebugEntity(val data: Map<String, String> = mutableMapOf()) {
 				}
 			}
 
-			putNbtList("Tags") {
-				plus(randomTag)
-			}
+			this["Tags"] = nbtListOf(randomTag)
 		}
 
 		fn.scoreboard.objectives.remove(scoreName)

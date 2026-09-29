@@ -5,6 +5,7 @@ import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
 import io.github.ayfri.kore.utils.nbt
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompoundBuilder
+import net.benwoodworth.knbt.NbtString
 import net.benwoodworth.knbt.NbtTag
 
 @Serializable(with = CustomDataComponentMatcher.Companion.CustomDataComponentMatcherSerializer::class)
@@ -23,4 +24,4 @@ data class CustomDataComponentMatcher(
 fun DataComponentPredicate.customData(init: NbtCompoundBuilder.() -> Unit) =
 	apply { matchers += CustomDataComponentMatcher(nbt(init)) }
 
-fun DataComponentPredicate.customData(string: String) = apply { matchers += CustomDataComponentMatcher(string.nbt) }
+fun DataComponentPredicate.customData(string: String) = apply { matchers += CustomDataComponentMatcher(NbtString(string)) }

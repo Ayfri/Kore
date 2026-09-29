@@ -8,10 +8,7 @@ import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.utils.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
-import net.benwoodworth.knbt.NbtCompound
-import net.benwoodworth.knbt.encodeToNbtTag
-import net.benwoodworth.knbt.nbtCompound
-import net.benwoodworth.knbt.nbtList
+import net.benwoodworth.knbt.*
 
 const val COUNT_ITEM_PREDICATE = "count"
 
@@ -155,42 +152,31 @@ data class ItemPredicate(
 	}
 
 	fun buildPredicateString(): String {
-		val validEntries = asNbt().entries.filter { (_, values) -> values.nbtList.isNotEmpty() }
-			.map { (key, values) -> key to values.nbtList }
-			.toMutableList()
+		val validEntries = asNbt().mapTo(mutableListOf<Pair<String, List<NbtTag>>>()) { (key, values) -> key to values.nbtList }
 
-		val countSubPredicateKeys = countSubPredicates.map { (value, negated) ->
-			value to COUNT_ITEM_PREDICATE.negateIf(negated)
-		}
-
-		countSubPredicateKeys.forEach { (value, key) ->
-			validEntries += if (value.range != null) {
-				"~${key}" to nbtList {
-					this += snbtSerializer.encodeToNbtTag(Range(value.range.start!!, value.range.end!!)).nbtCompound
-				}
-			} else {
-				key to nbtListOf(value.int!!)
+		countSubPredicates.forEach { (value, negated) ->
+			val key = COUNT_ITEM_PREDICATE.negateIf(negated)
+			validEntries += when (value.range) {
+				null -> key to listOf(NbtInt(value.int!!))
+				else -> "~$key" to listOf(snbtSerializer.encodeToNbtTag(Range(value.range.start!!, value.range.end!!)))
 			}
 		}
 
 		subPredicates.forEach { subPredicate ->
-			val subPredicateEntries = snbtSerializer.encodeToNbtTag(subPredicate).nbtCompound
-			for ((key, value) in subPredicateEntries) {
-				val keyName = key.removePrefix("minecraft:")
+			snbtSerializer.encodeToNbtTag(subPredicate).nbtCompound.forEach { (key, value) ->
 				val prefix = if (value is NbtCompound) "~" else ""
-				validEntries += "$prefix$keyName" to snbtSerializer.encodeToNbtTag(listOf(value)).nbtList
+				validEntries += "$prefix${key.removePrefix("minecraft:")}" to listOf(value)
 			}
 		}
 
-		val entries = mutableListOf<ComponentEntry>()
-		for ((key, values) in validEntries) {
+		val entries = validEntries.flatMap { (key, values) ->
 			val keyName = key.removePrefix("~").removePrefix("!")
-			values.nbtList.mapTo(entries) {
+			values.map {
 				ComponentEntry(
 					key = keyName,
 					negated = "!" in key,
 					sign = if ("~" in key) "~" else "=",
-					value = if (it == nbt {}) null else it.toSnbt(),
+					value = if (it is NbtCompound && it.isEmpty()) null else it.toSnbt(),
 				)
 			}
 		}

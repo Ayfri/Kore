@@ -13,10 +13,10 @@ class NbtTagUtilsTests : FunSpec({
 	test("snbt strings round-trip through toNbt") {
 		val compound = """{Count:3b,tag:{x:1,name:"hello"}}""".toNbt()
 
-		stringifiedNbt(compound) shouldBe """{Count:3b,tag:{x:1,name:"hello"}}"""
+		compound.toSnbt() shouldBe """{Count:3b,tag:{x:1,name:"hello"}}"""
 		compound shouldBe nbt {
 			this["Count"] = 3.toByte()
-			nbt("tag") {
+			this["tag"] = nbt {
 				this["x"] = 1
 				this["name"] = "hello"
 			}
@@ -24,9 +24,16 @@ class NbtTagUtilsTests : FunSpec({
 	}
 
 	test("toNbtTag parses values that are not compounds") {
-		stringifiedNbt("[1,2,3]".toNbtTag()) shouldBe "[1,2,3]"
-		stringifiedNbt("[I;1,2]".toNbtTag()) shouldBe "[I;1,2]"
-		stringifiedNbt("12b".toNbtTag()) shouldBe "12b"
+		"[1,2,3]".toNbtTag().toSnbt() shouldBe "[1,2,3]"
+		"[I;1,2]".toNbtTag().toSnbt() shouldBe "[I;1,2]"
+		"12b".toNbtTag().toSnbt() shouldBe "12b"
+	}
+
+	test("nbtListOf builds typed lists") {
+		nbtListOf(1, 2, 3).toSnbt() shouldBe "[1,2,3]"
+		nbtListOf(0.5, 1.5).toSnbt() shouldBe "[0.5d,1.5d]"
+		nbtListOf("a", "b").toSnbt() shouldBe """["a","b"]"""
+		nbtListOf(nbt { this["x"] = 1 }).toSnbt() shouldBe "[{x:1}]"
 	}
 
 	test("snbt strings escape backslashes, quotes and line breaks") {

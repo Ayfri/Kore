@@ -19,7 +19,6 @@ import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.asArg
 import io.github.ayfri.kore.utils.encodeToSnbt
-import io.github.ayfri.kore.utils.snbtSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable(BlocksTestMode.Companion.FillModeSerializer::class)
@@ -104,7 +103,7 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 		listOf(
 			literal("predicate"),
 			literal(
-				snbtSerializer.encodeToSnbt(Predicate().apply(block))
+				encodeToSnbt(Predicate().apply(block))
 			),
 		)
 	)

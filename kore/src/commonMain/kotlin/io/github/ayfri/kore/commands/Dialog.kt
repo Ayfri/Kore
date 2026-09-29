@@ -6,7 +6,6 @@ import io.github.ayfri.kore.features.dialogs.DialogContainer
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.arguments.types.DialogArgument
 import io.github.ayfri.kore.utils.encodeToSnbt
-import io.github.ayfri.kore.utils.snbtSerializer
 import io.github.ayfri.kore.dataPack as dpFunction
 
 /** Shows [dialog] to [targets]. @see [Minecraft wiki](https://minecraft.wiki/w/Commands/dialog) */
@@ -18,7 +17,7 @@ fun Function.dialogShow(targets: EntityArgument, block: DialogContainer.() -> Di
 	val tempDp = dpFunction( "") {}
 	DialogContainer(tempDp).block()
 	if (tempDp.dialogs.isEmpty()) error("Please provide at least one dialog to show.")
-	return addLine(command("dialog", literal("show"), targets, literal(snbtSerializer.encodeToSnbt(tempDp.dialogs.first()))))
+	return addLine(command("dialog", literal("show"), targets, literal(encodeToSnbt(tempDp.dialogs.first()))))
 }
 
 /** Clears any dialog currently shown to [targets]. @see [Minecraft wiki](https://minecraft.wiki/w/Commands/dialog) */

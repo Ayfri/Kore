@@ -10,10 +10,10 @@ import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.utils.encodeToSnbt
 import io.github.ayfri.kore.utils.nbt
+import io.github.ayfri.kore.utils.toSnbt
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompoundBuilder
 import net.benwoodworth.knbt.NbtTag
-import net.benwoodworth.knbt.StringifiedNbt
 
 /**
  * Helpers that build the low-level `/data` subcommands used throughout Kore.
@@ -39,13 +39,13 @@ object DataModifyOperation {
 			int(end)
 		)
 
-	fun append(value: NbtTag) = listOf(literal("append"), literal("value"), literal(StringifiedNbt.encodeToSnbt(value)))
+	fun append(value: NbtTag) = listOf(literal("append"), literal("value"), literal(value.toSnbt()))
 	fun append(value: Int) = listOf(literal("append"), literal("value"), int(value))
 	fun append(value: Float) = listOf(literal("append"), literal("value"), float(value))
 	fun append(value: String) = listOf(literal("append"), literal("value"), literal(value))
 	fun append(value: Boolean) = listOf(literal("append"), literal("value"), bool(value))
 	inline fun <reified T : Any> append(value: @Serializable T) =
-		listOf(literal("append"), literal("value"), literal(StringifiedNbt.encodeToSnbt(value)))
+		listOf(literal("append"), literal("value"), literal(encodeToSnbt(value)))
 
 	fun insert(index: Int, from: DataArgument, path: String) =
 		listOf(literal("insert"), int(index), literal("from"), literal(from.literalName), from, literal(path))
@@ -63,14 +63,14 @@ object DataModifyOperation {
 		)
 
 	fun insert(index: Int, value: NbtTag) =
-		listOf(literal("insert"), int(index), literal("value"), literal(StringifiedNbt.encodeToSnbt(value)))
+		listOf(literal("insert"), int(index), literal("value"), literal(value.toSnbt()))
 
 	fun insert(index: Int, value: Int) = listOf(literal("insert"), int(index), literal("value"), int(value))
 	fun insert(index: Int, value: Float) = listOf(literal("insert"), int(index), literal("value"), float(value))
 	fun insert(index: Int, value: String) = listOf(literal("insert"), int(index), literal("value"), literal(value))
 	fun insert(index: Int, value: Boolean) = listOf(literal("insert"), int(index), literal("value"), bool(value))
 	inline fun <reified T : Any> insert(index: Int, value: @Serializable T) =
-		listOf(literal("insert"), int(index), literal("value"), literal(StringifiedNbt.encodeToSnbt(value)))
+		listOf(literal("insert"), int(index), literal("value"), literal(encodeToSnbt(value)))
 
 	fun merge(from: DataArgument, path: String) =
 		listOf(literal("merge"), literal("from"), literal(from.literalName), from, literal(path))
@@ -86,13 +86,13 @@ object DataModifyOperation {
 			int(end)
 		)
 
-	fun merge(value: NbtTag) = listOf(literal("merge"), literal("value"), literal(StringifiedNbt.encodeToSnbt(value)))
+	fun merge(value: NbtTag) = listOf(literal("merge"), literal("value"), literal(value.toSnbt()))
 	fun merge(value: Int) = listOf(literal("merge"), literal("value"), int(value))
 	fun merge(value: Float) = listOf(literal("merge"), literal("value"), float(value))
 	fun merge(value: String) = listOf(literal("merge"), literal("value"), literal(value))
 	fun merge(value: Boolean) = listOf(literal("merge"), literal("value"), bool(value))
 	inline fun <reified T : Any> merge(value: @Serializable T) =
-		listOf(literal("merge"), literal("value"), literal(StringifiedNbt.encodeToSnbt(value)))
+		listOf(literal("merge"), literal("value"), literal(encodeToSnbt(value)))
 
 	fun prepend(from: DataArgument, path: String) =
 		listOf(literal("prepend"), literal("from"), literal(from.literalName), from, literal(path))
@@ -108,13 +108,13 @@ object DataModifyOperation {
 			int(end)
 		)
 
-	fun prepend(value: NbtTag) = listOf(literal("prepend"), literal("value"), literal(StringifiedNbt.encodeToSnbt(value)))
+	fun prepend(value: NbtTag) = listOf(literal("prepend"), literal("value"), literal(value.toSnbt()))
 	fun prepend(value: Int) = listOf(literal("prepend"), literal("value"), int(value))
 	fun prepend(value: Float) = listOf(literal("prepend"), literal("value"), float(value))
 	fun prepend(value: String) = listOf(literal("prepend"), literal("value"), literal(value))
 	fun prepend(value: Boolean) = listOf(literal("prepend"), literal("value"), bool(value))
 	inline fun <reified T : Any> prepend(value: @Serializable T) =
-		listOf(literal("prepend"), literal("value"), literal(StringifiedNbt.encodeToSnbt(value)))
+		listOf(literal("prepend"), literal("value"), literal(encodeToSnbt(value)))
 
 	operator fun set(from: DataArgument, path: String) =
 		listOf(literal("set"), literal("from"), literal(from.literalName), from, literal(path))
@@ -122,13 +122,13 @@ object DataModifyOperation {
 	fun set(string: DataArgument, path: String, start: Int? = null, end: Int? = null) =
 		listOfNotNull(literal("set"), literal("string"), literal(string.literalName), string, literal(path), int(start), int(end))
 
-	fun set(value: NbtTag) = listOf(literal("set"), literal("value"), literal(StringifiedNbt.encodeToSnbt(value)))
+	fun set(value: NbtTag) = listOf(literal("set"), literal("value"), literal(value.toSnbt()))
 	fun set(value: Int) = listOf(literal("set"), literal("value"), int(value))
 	fun set(value: Float) = listOf(literal("set"), literal("value"), float(value))
 	fun set(value: String) = listOf(literal("set"), literal("value"), textComponent(value))
 	fun set(value: Boolean) = listOf(literal("set"), literal("value"), bool(value))
 	inline fun <reified T : Any> set(value: @Serializable T) =
-		listOf(literal("set"), literal("value"), literal(StringifiedNbt.encodeToSnbt(value)))
+		listOf(literal("set"), literal("value"), literal(encodeToSnbt(value)))
 }
 
 /**
@@ -153,7 +153,7 @@ class Data(val fn: Function, val target: DataArgument) {
 	 * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/data)
 	 */
 	fun merge(data: NbtTag) =
-		fn.addLine(command("data", literal("merge"), literal(target.literalName), target, literal(StringifiedNbt.encodeToSnbt(data))))
+		fn.addLine(command("data", literal("merge"), literal(target.literalName), target, literal(data.toSnbt())))
 
 	/**
 	 * Merges the compound built by [block] into the bound target.
@@ -168,7 +168,7 @@ class Data(val fn: Function, val target: DataArgument) {
 	 * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/data)
 	 */
 	inline fun <reified T : Any> merge(data: @Serializable T) =
-		fn.addLine(command("data", literal("merge"), literal(target.literalName), target, literal(StringifiedNbt.encodeToSnbt(data))))
+		fn.addLine(command("data", literal("merge"), literal(target.literalName), target, literal(encodeToSnbt(data))))
 
 	/**
 	 * Applies a `/data modify` operation to the bound target at [path].

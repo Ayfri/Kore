@@ -11,15 +11,14 @@ import io.github.ayfri.kore.generated.arguments.types.AdvancementArgument
 import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import kotlinx.serialization.KSerializer
+import io.github.ayfri.kore.utils.toNbt
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import net.benwoodworth.knbt.NbtCompound
-import net.benwoodworth.knbt.StringifiedNbt
 
 /**
  * Container for target selector arguments used to build Minecraft target selectors (e.g. `@p[distance=..]`).
@@ -236,7 +235,7 @@ data class SelectorArguments(
 					"name" -> arguments._names += StringOption(value, inverted)
 					"nbt" -> arguments._nbt +=
 						NbtCompoundOption(value.ifEmpty { null }
-							?.let { StringifiedNbt.decodeFromString<NbtCompound>(it) }, inverted)
+							?.toNbt(), inverted)
 
 					"predicate" -> arguments._predicates +=
 						PredicateOption(value.ifEmpty { null }

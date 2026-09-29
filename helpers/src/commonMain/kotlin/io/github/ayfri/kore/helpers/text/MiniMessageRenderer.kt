@@ -9,7 +9,7 @@ import io.github.ayfri.kore.arguments.chatcomponents.hover.HoverEvent
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.FormattingColor
 import io.github.ayfri.kore.arguments.colors.RGB
-import io.github.ayfri.kore.utils.nbt
+import net.benwoodworth.knbt.NbtString
 
 /** Configuration for the MiniMessage → text component renderer. */
 class MiniMessageRendererConfig {
@@ -584,7 +584,7 @@ private fun parseHoverEvent(args: List<String>, cfg: MiniMessageRendererConfig):
 				val id = args[1]
 				val count = args.getOrNull(2)?.toIntOrNull() ?: 1
 				val contentsItem = ContentsItem(id, count)
-				HoverEvent(HoverAction.SHOW_ITEM, "".nbt, contentsItem)
+				HoverEvent(HoverAction.SHOW_ITEM, NbtString(""), contentsItem)
 			} else null
 		}
 
@@ -596,7 +596,7 @@ private fun parseHoverEvent(args: List<String>, cfg: MiniMessageRendererConfig):
 				val nameComponent = name?.let { text(it) }
 				val contents =
 					ContentsEntityUUID(type, nameComponent, uuid)
-				HoverEvent(HoverAction.SHOW_ENTITY, "".nbt, contents)
+				HoverEvent(HoverAction.SHOW_ENTITY, NbtString(""), contents)
 			} else null
 		}
 

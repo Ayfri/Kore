@@ -12,7 +12,8 @@ import io.github.ayfri.kore.entities.Entity
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.scoreboard.ScoreboardEntity
 import io.github.ayfri.kore.scoreboard.copyTo
-import io.github.ayfri.kore.utils.stringifiedNbt
+import io.github.ayfri.kore.utils.nbt
+import io.github.ayfri.kore.utils.toSnbt
 import net.benwoodworth.knbt.NbtCompoundBuilder
 import net.benwoodworth.knbt.NbtTag
 
@@ -44,7 +45,7 @@ data class NbtPath(val segments: List<String> = emptyList()) {
 	operator fun get(index: Int) = withLastSuffix("[$index]")
 
 	/** Filters the last segment on a compound, producing `foo[{id:"minecraft:stone"}]`. */
-	fun matching(block: NbtCompoundBuilder.() -> Unit) = withLastSuffix("[${stringifiedNbt(block)}]")
+	fun matching(block: NbtCompoundBuilder.() -> Unit) = withLastSuffix("[${nbt(block).toSnbt()}]")
 
 	/** Selects every element of the last segment, producing `foo[]`. */
 	fun all() = withLastSuffix("[]")

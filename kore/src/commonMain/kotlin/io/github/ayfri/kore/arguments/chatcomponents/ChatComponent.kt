@@ -14,6 +14,7 @@ import io.github.ayfri.kore.utils.snbtSerializer
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import net.benwoodworth.knbt.NbtString
 import net.benwoodworth.knbt.encodeToNbtTag
 
 /**
@@ -93,8 +94,8 @@ sealed class ChatComponent {
 		underlined?.let { this["underlined"] = it }
 	}
 
-	/** Returns a compact NBT representation: a bare [NbtString][net.benwoodworth.knbt.NbtString] when [containsOnlyText], otherwise [toNbtTag]. */
-	fun toNbt() = if (containsOnlyText()) text.nbt else toNbtTag()
+	/** Returns a compact NBT representation: a bare [NbtString] when [containsOnlyText], otherwise [toNbtTag]. */
+	fun toNbt() = if (containsOnlyText()) NbtString(text) else toNbtTag()
 
 	/** Returns a copy of this component sharing its nested values, so reassigning a field of the copy leaves this one untouched. */
 	internal fun shallowCopy() = when (this) {
@@ -170,7 +171,7 @@ fun textComponent(text: String = "", color: Color? = null, block: PlainTextCompo
 
 /** Sets a [HoverEvent] on this component using a structured [block]. */
 fun ChatComponent.hoverEvent(action: HoverAction = HoverAction.SHOW_TEXT, block: HoverEvent.() -> Unit) =
-	apply { hoverEvent = HoverEvent(action, "".nbt).apply(block) }
+	apply { hoverEvent = HoverEvent(action, NbtString("")).apply(block) }
 
 /** Sets a [ClickEvent] on this component using a structured [block]. */
 fun ChatComponent.clickEvent(block: ClickEventContainer.() -> Unit) =

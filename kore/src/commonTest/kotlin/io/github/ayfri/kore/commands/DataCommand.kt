@@ -9,7 +9,11 @@ import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.utils.set
 import io.kotest.core.spec.style.FunSpec
+import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtInt
+
+@Serializable
+private data class DataPayload(val a: Int, val b: String)
 
 fun Function.dataTests() {
 	data(self()) {
@@ -18,6 +22,8 @@ fun Function.dataTests() {
 
 		merge(scoreComponent("foo", self())) assertsIs "data merge entity @s {score:{name:\"@s\",objective:\"foo\"}}"
 		merge { this["foo"] = "bar" } assertsIs "data merge entity @s {foo:\"bar\"}"
+		merge(DataPayload(1, "c")) assertsIs "data merge entity @s {a:1,b:\"c\"}"
+		modify("foo") { set(DataPayload(1, "c")) } assertsIs "data modify entity @s foo set value {a:1,b:\"c\"}"
 
 		modify("foo") { append(self(), "bar") } assertsIs "data modify entity @s foo append from entity @s bar"
 		modify("foo") { append(self(), "bar", 1) } assertsIs "data modify entity @s foo append string entity @s bar 1"

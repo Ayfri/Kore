@@ -16,6 +16,7 @@ import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.NbtString
 import net.benwoodworth.knbt.NbtTag
 
 /**
@@ -38,33 +39,8 @@ data class HoverEvent(
 		this["action"] = action.asArg()
 
 		when (action) {
-			HoverAction.SHOW_TEXT -> {
-				this["value"] = value
-			}
-
-			HoverAction.SHOW_ITEM -> {
-				// Ignore this.value
-				contents?.let {
-					val contentsTag = it.toNbtTag()
-					if (contentsTag is NbtCompound) {
-						contentsTag.forEach { (key, value) ->
-							this[key] = value
-						}
-					}
-				}
-			}
-
-			HoverAction.SHOW_ENTITY -> {
-				// Ignore this.value
-				contents?.let {
-					val contentsTag = it.toNbtTag()
-					if (contentsTag is NbtCompound) {
-						contentsTag.forEach { (key, value) ->
-							this[key] = value
-						}
-					}
-				}
-			}
+			HoverAction.SHOW_TEXT -> this["value"] = value
+			else -> (contents?.toNbtTag() as? NbtCompound)?.forEach { (key, value) -> this[key] = value }
 		}
 	}
 }
@@ -72,7 +48,7 @@ data class HoverEvent(
 /** Sets action to [HoverAction.SHOW_ENTITY] using the selector string of [entity]. */
 fun HoverEvent.showEntity(entity: EntityArgument) = apply {
 	action = HoverAction.SHOW_ENTITY
-	value = entity.asString().nbt
+	value = NbtString(entity.asString())
 }
 
 /** Sets action to [HoverAction.SHOW_ENTITY] with a structured [ContentsEntityUUID] payload. */
