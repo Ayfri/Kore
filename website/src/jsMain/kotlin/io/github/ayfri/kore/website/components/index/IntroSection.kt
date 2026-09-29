@@ -85,7 +85,7 @@ object IntroSectionStyle : StyleSheet() {
 		"p" style {
 			color(LandingVars.Muted.value())
 			fontSize(1.cssRem)
-			lineHeight(1.6.number)
+			lineHeight(1.6)
 			margin(0.px)
 		}
 	}

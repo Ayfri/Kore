@@ -85,7 +85,7 @@ object MarkdownRendererStyle : StyleSheet() {
 	val container by style {
 		color(GlobalStyle.textColor)
 		fontSize(0.95.cssRem)
-		lineHeight(1.65.number)
+		lineHeight(1.65)
 		maxWidth(100.percent)
 		overflowX(Overflow.Auto)
 

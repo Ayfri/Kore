@@ -286,14 +286,14 @@ object ReleasesListStyle : StyleSheet() {
 		"h1" style {
 			fontSize(1.9.cssRem)
 			letterSpacing((-0.6).px)
-			lineHeight(1.15.number)
+			lineHeight(1.15)
 			margin(0.px)
 		}
 
 		"p" style {
 			color(LandingVars.Muted.value())
 			fontSize(0.95.cssRem)
-			lineHeight(1.55.number)
+			lineHeight(1.55)
 			margin(0.px)
 			maxWidth(52.cssRem)
 		}

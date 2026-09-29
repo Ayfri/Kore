@@ -65,7 +65,7 @@ object ReleaseStatsStyle : StyleSheet() {
 		fontFamily("JetBrains Mono", "monospace")
 		fontSize(1.2.cssRem)
 		fontWeight(700)
-		lineHeight(1.2.number)
+		lineHeight(1.2)
 	}
 
 	val statLabel by style {

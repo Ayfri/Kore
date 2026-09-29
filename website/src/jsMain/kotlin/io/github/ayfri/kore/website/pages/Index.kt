@@ -12,6 +12,7 @@ import io.github.ayfri.kore.website.components.features.FeatureVisualsStyle
 import io.github.ayfri.kore.website.components.index.*
 import io.github.ayfri.kore.website.components.layouts.PageLayout
 import io.github.ayfri.kore.website.components.mc.McUiStyle
+import io.github.ayfri.kore.website.utils.lineHeight
 import io.github.ayfri.kore.website.utils.smMax
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
@@ -93,7 +94,7 @@ object HomePageStyle : StyleSheet() {
 		}
 
 		"p" style {
-			lineHeight(1.7.number)
+			lineHeight(1.7)
 		}
 	}
 

@@ -7,6 +7,7 @@ import io.github.ayfri.kore.website.GITHUB_LINK
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.setDescription
 import io.github.ayfri.kore.website.components.layouts.PageLayout
+import io.github.ayfri.kore.website.utils.lineHeight
 import io.github.ayfri.kore.website.utils.marginX
 import io.github.ayfri.kore.website.utils.marginY
 import io.github.ayfri.kore.website.utils.transition
@@ -91,7 +92,7 @@ object LegalNoticeStyle : StyleSheet() {
 	val page by style {
 		boxSizing(BoxSizing.BorderBox)
 		color(GlobalStyle.altTextColor)
-		lineHeight(1.7.number)
+		lineHeight(1.7)
 		marginX(auto)
 		maxWidth(48.cssRem)
 		padding(3.cssRem, 1.25.cssRem, 4.cssRem)

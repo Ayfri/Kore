@@ -9,6 +9,7 @@ import com.varabyte.kobweb.compose.css.functions.calc
 import io.github.ayfri.kore.website.components.common.mcTexture
 import io.github.ayfri.kore.website.utils.backgroundImages
 import io.github.ayfri.kore.website.utils.inset
+import io.github.ayfri.kore.website.utils.lineHeight
 import io.github.ayfri.kore.website.utils.maskImage
 import io.github.ayfri.kore.website.utils.maskSize
 import io.github.ayfri.kore.website.utils.round
@@ -410,7 +411,7 @@ object McUiStyle : StyleSheet() {
 	/** No font size, so the line box is exactly the SVG's height and parents can still center it with `text-align`. */
 	val line by style {
 		fontSize(0.px)
-		lineHeight(0.number)
+		lineHeight(0)
 
 		"svg" style {
 			display(DisplayStyle.InlineBlock)

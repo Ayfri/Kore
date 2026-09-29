@@ -180,7 +180,7 @@ object GetStartedSectionStyle : StyleSheet() {
 	val stepText by style {
 		color(LandingVars.Muted.value())
 		fontSize(0.98.cssRem)
-		lineHeight(1.6.number)
+		lineHeight(1.6)
 		margin(0.5.cssRem, 0.px, 0.px)
 
 		"p" style { margin(0.px) }

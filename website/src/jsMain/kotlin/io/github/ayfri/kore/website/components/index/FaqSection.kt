@@ -8,6 +8,7 @@ import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.components.common.Markdown
 import io.github.ayfri.kore.website.components.features.FeatureSectionsStyle
 import io.github.ayfri.kore.website.utils.borderLeftColor
+import io.github.ayfri.kore.website.utils.lineHeight
 import io.github.ayfri.kore.website.utils.marginX
 import io.github.ayfri.kore.website.utils.mdMax
 import io.github.ayfri.kore.website.utils.tapHighlightColor
@@ -190,7 +191,7 @@ object FaqSectionStyle : StyleSheet() {
 		alignItems(org.jetbrains.compose.web.css.AlignItems.Center)
 		fontSize(1.6.cssRem)
 		fontWeight(FontWeight.Normal)
-		lineHeight(1.number)
+		lineHeight(1)
 		justifyContent(org.jetbrains.compose.web.css.JustifyContent.Center)
 		transition(0.25.s, "color", "transform")
 		width(1.4.cssRem)
@@ -241,7 +242,7 @@ object FaqSectionStyle : StyleSheet() {
 		fontSize(1.02.cssRem)
 		fontWeight(FontWeight.Normal)
 		color(LandingVars.Muted.value())
-		lineHeight(1.6.number)
+		lineHeight(1.6)
 		marginTop(0.8.cssRem)
 		marginBottom(0.px)
 		paddingLeft(0.px)

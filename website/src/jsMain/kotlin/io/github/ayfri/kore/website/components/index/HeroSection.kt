@@ -326,7 +326,7 @@ object HeroSectionStyle : StyleSheet() {
 	val title by style {
 		fontSize(4.2.cssRem)
 		letterSpacing((-2).px)
-		lineHeight(1.05.number)
+		lineHeight(1.05)
 		margin(0.px)
 		maxWidth(15.em)
 		textWrap(TextWrap.Balance)

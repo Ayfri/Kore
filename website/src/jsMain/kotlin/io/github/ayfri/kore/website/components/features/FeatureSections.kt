@@ -292,7 +292,7 @@ object FeatureSectionsStyle : StyleSheet() {
 		fontFamily(MONO, "monospace")
 		fontSize(1.9.cssRem)
 		fontWeight(700)
-		lineHeight(1.2.number)
+		lineHeight(1.2)
 	}
 
 	val statLabel by style {
@@ -426,7 +426,7 @@ object FeatureSectionsStyle : StyleSheet() {
 		"h1" style {
 			fontSize(2.6.cssRem)
 			letterSpacing((-1).px)
-			lineHeight(1.1.number)
+			lineHeight(1.1)
 			margin(0.px)
 		}
 
@@ -714,7 +714,7 @@ object FeatureSectionsStyle : StyleSheet() {
 	val linkDescription by style {
 		color(LandingVars.Muted.value())
 		fontSize(0.9.cssRem)
-		lineHeight(1.5.number)
+		lineHeight(1.5)
 	}
 
 	val chipGrid by style {
@@ -773,7 +773,7 @@ object FeatureSectionsStyle : StyleSheet() {
 		"p" style {
 			color(LandingVars.Muted.value())
 			fontSize(0.93.cssRem)
-			lineHeight(1.55.number)
+			lineHeight(1.55)
 			margin(0.px)
 		}
 	}

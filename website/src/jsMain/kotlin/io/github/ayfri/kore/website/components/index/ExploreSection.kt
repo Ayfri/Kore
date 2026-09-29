@@ -117,7 +117,7 @@ object ExploreSectionStyle : StyleSheet() {
 	val headline by style {
 		fontSize(1.05.cssRem)
 		fontWeight(600)
-		lineHeight(1.35.number)
+		lineHeight(1.35)
 		paddingRight(1.2.cssRem)
 	}
 }

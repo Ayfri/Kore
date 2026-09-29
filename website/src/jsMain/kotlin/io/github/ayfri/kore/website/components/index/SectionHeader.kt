@@ -43,7 +43,7 @@ object SectionHeaderStyle : StyleSheet() {
 	val title by style {
 		fontSize(2.5.cssRem)
 		letterSpacing((-0.8).px)
-		lineHeight(1.15.number)
+		lineHeight(1.15)
 		margin(0.px)
 		textWrap(TextWrap.Balance)
 

@@ -19,6 +19,7 @@ import io.github.ayfri.kore.website.utils.Span
 import io.github.ayfri.kore.website.utils.animationDelay
 import io.github.ayfri.kore.website.utils.highlightCodeIn
 import io.github.ayfri.kore.website.utils.inset
+import io.github.ayfri.kore.website.utils.lineHeight
 import io.github.ayfri.kore.website.utils.marginLeft
 import io.github.ayfri.kore.website.utils.smMax
 import io.github.ayfri.kore.website.utils.transition
@@ -926,7 +927,7 @@ object FeatureVisualsStyle : StyleSheet() {
 	val editor by style {
 		fontFamily(MONO, "monospace")
 		fontSize(0.88.cssRem)
-		lineHeight(1.9.number)
+		lineHeight(1.9)
 		padding(1.cssRem, 1.2.cssRem)
 		position(Position.Relative)
 	}
@@ -974,7 +975,7 @@ object FeatureVisualsStyle : StyleSheet() {
 		cursor(Cursor.Pointer)
 		display(DisplayStyle.Flex)
 		gap(0.6.cssRem)
-		lineHeight(1.6.number)
+		lineHeight(1.6)
 		padding(0.1.cssRem, 0.5.cssRem)
 	}
 
@@ -1424,7 +1425,7 @@ object FeatureVisualsStyle : StyleSheet() {
 		color(LandingVars.Text.value())
 		fontFamily(MONO, "monospace")
 		fontSize(0.85.cssRem)
-		lineHeight(1.8.number)
+		lineHeight(1.8)
 		minHeight(12.5.cssRem)
 		padding(1.cssRem, 1.2.cssRem)
 		whiteSpace(WhiteSpace.PreWrap)

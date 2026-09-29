@@ -88,7 +88,7 @@ object CtaSectionStyle : StyleSheet() {
 		"h2" style {
 			fontSize(2.3.cssRem)
 			letterSpacing((-0.5).px)
-			lineHeight(1.15.number)
+			lineHeight(1.15)
 			margin(0.px, 0.px, 1.cssRem)
 			textWrap(TextWrap.Balance)
 		}

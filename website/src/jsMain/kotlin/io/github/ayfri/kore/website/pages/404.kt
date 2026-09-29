@@ -9,6 +9,7 @@ import com.varabyte.kobweb.core.rememberPageContext
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.LinkButton
 import io.github.ayfri.kore.website.components.layouts.PageLayout
+import io.github.ayfri.kore.website.utils.lineHeight
 import io.github.ayfri.kore.website.utils.mdMax
 import io.github.ayfri.kore.website.utils.transition
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
@@ -104,7 +105,7 @@ object PageNotFoundStyle : StyleSheet() {
 	val errorCode by style {
 		fontSize(12.cssRem)
 		fontWeight(900)
-		lineHeight(1.number)
+		lineHeight(1)
 		backgroundImage(
 			linearGradient(135.deg) {
 				add(GlobalStyle.logoLeftColor)
@@ -143,7 +144,7 @@ object PageNotFoundStyle : StyleSheet() {
 		color(GlobalStyle.altTextColor)
 		margin(0.px)
 		maxWidth(400.px)
-		lineHeight(1.6.number)
+		lineHeight(1.6)
 
 		mdMax(self) {
 			fontSize(1.cssRem)

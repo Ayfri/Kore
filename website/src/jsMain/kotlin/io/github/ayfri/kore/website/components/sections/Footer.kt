@@ -184,7 +184,7 @@ object FooterStyle : StyleSheet() {
 	val tagline by style {
 		color(GlobalStyle.altTextColor)
 		fontSize(0.95.cssRem)
-		lineHeight(1.5.number)
+		lineHeight(1.5)
 		margin(0.px)
 		maxWidth(18.cssRem)
 	}

@@ -16,6 +16,7 @@ import io.github.ayfri.kore.website.utils.important
 import io.github.ayfri.kore.website.utils.inset
 import io.github.ayfri.kore.website.utils.lgMax
 import io.github.ayfri.kore.website.utils.lineClamp
+import io.github.ayfri.kore.website.utils.lineHeight
 import io.github.ayfri.kore.website.utils.marginLeft
 import io.github.ayfri.kore.website.utils.marginX
 import io.github.ayfri.kore.website.utils.marginY
@@ -281,7 +282,7 @@ object PlaygroundStyle : StyleSheet() {
 		fontSize(0.66.cssRem)
 		height(1.25.cssRem)
 		justifyContent(JustifyContent.Center)
-		lineHeight(1.number)
+		lineHeight(1)
 		minWidth(1.25.cssRem)
 		padding(0.px, 0.3.cssRem)
 	}
@@ -801,7 +802,7 @@ object PlaygroundStyle : StyleSheet() {
 		color(muted)
 		flexShrink(0)
 		fontSize(0.72.cssRem)
-		lineHeight(1.5.number)
+		lineHeight(1.5)
 		padding(0.65.cssRem, 0.85.cssRem)
 	}
 
@@ -867,7 +868,7 @@ object PlaygroundStyle : StyleSheet() {
 		color(muted)
 		fontSize(0.73.cssRem)
 		lineClamp(2)
-		lineHeight(1.45.number)
+		lineHeight(1.45)
 		overflow(Overflow.Hidden)
 	}
 
@@ -932,7 +933,7 @@ object PlaygroundStyle : StyleSheet() {
 	val settingDescription by style {
 		color(muted)
 		fontSize(0.7.cssRem)
-		lineHeight(1.4.number)
+		lineHeight(1.4)
 	}
 
 	val switchTrack by style {
@@ -1467,7 +1468,7 @@ object PlaygroundStyle : StyleSheet() {
 
 	val stateDetail by style {
 		fontSize(0.84.cssRem)
-		lineHeight(1.55.number)
+		lineHeight(1.55)
 		maxWidth(36.cssRem)
 	}
 
@@ -1581,7 +1582,7 @@ object PlaygroundStyle : StyleSheet() {
 		color(text)
 		display(DisplayStyle.Flex)
 		gap(0.6.cssRem)
-		lineHeight(1.5.number)
+		lineHeight(1.5)
 		padding(0.2.cssRem, 1.cssRem)
 		width(100.percent)
 	}
