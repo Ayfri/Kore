@@ -36,6 +36,9 @@ val gitHubDataDir = layout.buildDirectory.dir("generated/github")
 /** The playground example list and each example's pack, written by `:playground-examples:generatePlaygroundExamples`. */
 val playgroundExamplesDir = layout.projectDirectory.dir("playground-examples/build/generated/playground")
 
+/** `public/playground-api.json`, the Kore API the playground editor completes, written by `:playground-examples:generatePlaygroundApiIndex`. */
+val playgroundApiDir = layout.projectDirectory.dir("playground-examples/build/generated/playground-api")
+
 /** Open Graph cards only ship in the exported site, rendering them on every Markdown edit of the dev server costs seconds. */
 val renderOgImages = gradle.startParameter.taskNames.any { it.substringAfterLast(':') == "kobwebExport" }
 
@@ -750,7 +753,7 @@ tasks.matching { it.name == "compileKotlinJs" }.configureEach {
 }
 
 tasks.matching { it.name == "jsProcessResources" }.configureEach {
-	dependsOn(":playground-examples:generatePlaygroundExamples")
+	dependsOn(":playground-examples:generatePlaygroundApiIndex", ":playground-examples:generatePlaygroundExamples")
 }
 
 // llms.txt/sitemap.xml/markdown-sources.json are written by kobwebxMarkdownProcess into a
@@ -794,6 +797,7 @@ kotlin {
 			kotlin.srcDir("build/generated/kore/src/jsMain/kotlin")
 			kotlin.srcDir(playgroundExamplesDir.dir("kotlin"))
 			resources.srcDir(layout.buildDirectory.dir("generated/llms-resources"))
+			resources.srcDir(playgroundApiDir.dir("resources"))
 			resources.srcDir(playgroundExamplesDir.dir("resources"))
 
 			dependencies {
