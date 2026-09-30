@@ -537,7 +537,7 @@ kobweb {
 // production, and a static import would instead drag all ~6 MB of Monaco into the main bundle on every page.
 // The scripts are staged next to the Kotlin/JS `node_modules` so bare imports like `monaco-editor/...`
 // resolve, for both esbuild and Node itself.
-val stageMonacoBuild by tasks.registering(Copy::class) {
+val stageMonacoBuild = tasks.register<Copy>("stageMonacoBuild") {
 	group = "kore"
 	description = "Stages the Monaco esbuild scripts next to the Kotlin/JS node_modules."
 
@@ -547,7 +547,7 @@ val stageMonacoBuild by tasks.registering(Copy::class) {
 	into(rootProject.layout.buildDirectory.dir("js/monaco-build"))
 }
 
-val bundleMonaco by tasks.registering(Exec::class) {
+val bundleMonaco = tasks.register<Exec>("bundleMonaco") {
 	group = "kore"
 	description = "Bundles Monaco's ESM distribution into the public resources, served at /monaco."
 
