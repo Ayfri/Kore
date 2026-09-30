@@ -65,16 +65,16 @@ data class AxisAngle4f(var x: Float = 0f, var y: Float = 0f, var z: Float = 1f, 
 
 				yy > zz -> {
 					y = kotlin.math.sqrt(yy)
-					val invZ = 1f / z
-					x = xy * invZ
-					z = yz * invZ
+					val invY = 1f / y
+					x = xy * invY
+					z = yz * invY
 				}
 
 				else -> {
 					z = kotlin.math.sqrt(zz)
-					val invY = 1f / y
-					x = xz * invY
-					y = yz * invY
+					val invZ = 1f / z
+					x = xz * invZ
+					y = yz * invZ
 				}
 			}
 			return@apply

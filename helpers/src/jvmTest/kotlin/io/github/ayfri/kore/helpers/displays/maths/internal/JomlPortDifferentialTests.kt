@@ -310,6 +310,20 @@ class JomlPortDifferentialTests : FunSpec({
 			val jm = m.toJoml()
 			AxisAngle4f().set(m).approx(JAxisAngle4f().set(jm))
 		}
+
+		test("set(Matrix4f) matches at exactly 180 degrees about a tilted axis dominated by y") {
+			val axis = floatArrayOf(0.3f, 0.9f, 0.3f).map { it / sqrt(0.99f) }
+			val m = Matrix4f().rotate(PI.toFloat(), axis[0], axis[1], axis[2])
+			val jm = m.toJoml()
+			AxisAngle4f().set(m).approx(JAxisAngle4f().set(jm))
+		}
+
+		test("set(Matrix4f) matches at exactly 180 degrees about a tilted axis dominated by z") {
+			val axis = floatArrayOf(0.3f, 0.3f, 0.9f).map { it / sqrt(0.99f) }
+			val m = Matrix4f().rotate(PI.toFloat(), axis[0], axis[1], axis[2])
+			val jm = m.toJoml()
+			AxisAngle4f().set(m).approx(JAxisAngle4f().set(jm))
+		}
 	}
 
 	context("JomlMath") {

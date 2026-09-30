@@ -2,7 +2,7 @@
 esbuild = "0.28.1"
 gradle-plugin-publish = "2.1.1"
 jetbrains-compose = "1.11.1"
-joml = "1.10.8"
+joml = "1.10.9"
 knbt = "0.11.9"
 kobweb = "0.25.1"
 kotest = "6.2.3"
