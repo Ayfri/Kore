@@ -15,6 +15,7 @@ import io.github.ayfri.kore.website.DISCORD_LINK
 import io.github.ayfri.kore.website.GITHUB_LINK
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.BrandIcon
+import io.github.ayfri.kore.website.components.layouts.PageTransitions
 import io.github.ayfri.kore.website.components.updates.GitHubRelease
 import io.github.ayfri.kore.website.gitHubStars
 import io.github.ayfri.kore.website.utils.*
@@ -43,7 +44,7 @@ private const val GET_STARTED_LINK = "/docs/getting-started"
 private fun GitHubRelease.isRecent(days: Int) = Date.now() - publishedTime <= days * 24 * 60 * 60 * 1000
 
 @Composable
-private fun NavLinks(activeTab: NavTab?, linkClass: String) = navTabs.forEach { tab ->
+private fun NavLinks(activeTab: NavTab?, linkClass: String, showIndicator: Boolean = false) = navTabs.forEach { tab ->
 	DomA(tab.link, {
 		classes(linkClass)
 		if (tab == activeTab) {
@@ -52,6 +53,7 @@ private fun NavLinks(activeTab: NavTab?, linkClass: String) = navTabs.forEach { 
 		}
 	}) {
 		Text(tab.name)
+		if (showIndicator && tab == activeTab) Span({ classes(HeaderStyle.navIndicator) })
 	}
 }
 
@@ -88,7 +90,7 @@ fun Header(latestRelease: GitHubRelease? = null) {
 			}
 
 			Nav({ classes(HeaderStyle.nav) }) {
-				NavLinks(activeTab, HeaderStyle.navLink)
+				NavLinks(activeTab, HeaderStyle.navLink, showIndicator = true)
 			}
 
 			Div({ classes(HeaderStyle.actions) }) {
@@ -171,6 +173,8 @@ object HeaderStyle : StyleSheet() {
 		borderBottom(1.px, LineStyle.Solid, dividerColor)
 		position(Position.Sticky)
 		top(0.px)
+		viewTransitionClass(PageTransitions.CHROME_CLASS)
+		viewTransitionName(PageTransitions.SITE_HEADER)
 		zIndex(50)
 	}
 
@@ -213,6 +217,7 @@ object HeaderStyle : StyleSheet() {
 		fontSize(0.95.cssRem)
 		fontWeight(500)
 		padding(0.45.cssRem, 0.75.cssRem)
+		position(Position.Relative)
 		whiteSpace(WhiteSpace.NoWrap)
 		transition(0.15.s, "color", "background-color")
 
@@ -229,6 +234,19 @@ object HeaderStyle : StyleSheet() {
 		hover(self) style {
 			color(GlobalStyle.textColor)
 		}
+	}
+
+	/** Glides to the new tab when a navigation changes section. */
+	val navIndicator by style {
+		backgroundColor(GlobalStyle.logoRightColor)
+		borderRadius(1.px)
+		bottom(0.1.cssRem)
+		height(2.px)
+		left(0.75.cssRem)
+		position(Position.Absolute)
+		right(0.75.cssRem)
+		viewTransitionClass(PageTransitions.MORPH_CLASS)
+		viewTransitionName(PageTransitions.NAV_INDICATOR)
 	}
 
 	val actions by style {

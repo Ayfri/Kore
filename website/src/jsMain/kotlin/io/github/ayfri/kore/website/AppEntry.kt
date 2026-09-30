@@ -8,6 +8,7 @@ import com.varabyte.kobweb.core.init.InitKobweb
 import com.varabyte.kobweb.core.init.InitKobwebContext
 import io.github.ayfri.kore.website.externals.MarkedToken
 import io.github.ayfri.kore.website.externals.use
+import io.github.ayfri.kore.website.components.layouts.PageTransitions
 import io.github.ayfri.kore.website.pages.PageNotFound
 import io.github.ayfri.kore.website.utils.jsObject
 import org.jetbrains.compose.web.css.Style
@@ -68,4 +69,5 @@ fun initKobweb(context: InitKobwebContext) {
 	context.router.setErrorPage {
 		PageNotFound()
 	}
+	PageTransitions.install()
 }

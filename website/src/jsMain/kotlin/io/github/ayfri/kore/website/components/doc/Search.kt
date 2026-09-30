@@ -2,7 +2,6 @@ package io.github.ayfri.kore.website.components.doc
 
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
-import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideSearch
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.docEntries
@@ -24,7 +23,6 @@ private const val MAX_RESULTS = 5
 fun Search() {
 	var query by remember { mutableStateOf("") }
 	var showResults by remember { mutableStateOf(false) }
-	val context = rememberPageContext()
 
 	val results = remember(query) {
 		if (query.isEmpty()) emptyList() else docEntries.filter { entry ->
@@ -71,11 +69,6 @@ fun Search() {
 					results.forEach { entry ->
 						A(entry.path, {
 							classes(SearchStyle.result)
-							onClick {
-								context.router.navigateTo(entry.path)
-								showResults = false
-								query = ""
-							}
 						}) {
 							H4 { Text(entry.title) }
 							P { Text(entry.desc) }

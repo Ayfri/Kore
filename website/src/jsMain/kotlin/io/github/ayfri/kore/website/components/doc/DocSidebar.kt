@@ -5,8 +5,11 @@ import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.compose.css.functions.blur
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideX
 import io.github.ayfri.kore.website.GlobalStyle
+import io.github.ayfri.kore.website.components.layouts.PageTransitions
 import io.github.ayfri.kore.website.utils.smMax
 import io.github.ayfri.kore.website.utils.transition
+import io.github.ayfri.kore.website.utils.viewTransitionClass
+import io.github.ayfri.kore.website.utils.viewTransitionName
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignSelf
 import org.jetbrains.compose.web.css.JustifyContent
@@ -56,6 +59,8 @@ data object DocSidebarStyle : StyleSheet() {
 		padding(0.5.cssRem)
 		position(Position.Sticky)
 		top(5.cssRem)
+		viewTransitionClass(PageTransitions.CHROME_CLASS)
+		viewTransitionName(PageTransitions.DOC_SIDEBAR)
 		width(22.cssRem)
 
 		smMax(self) {

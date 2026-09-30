@@ -201,6 +201,10 @@ fun StyleScope.scrollbarColor(
 	trackColor: CSSColorValue,
 ) = property("scrollbar-color", "$thumbColor $trackColor")
 
+fun StyleScope.viewTransitionClass(vararg classes: String) = property("view-transition-class", classes.joinToString(" "))
+
+fun StyleScope.viewTransitionName(name: String) = property("view-transition-name", name)
+
 fun StyleScope.zoom(factor: Number) = property("zoom", factor)
 
 inline val SelectorsScope.placeholder get() = selector("::placeholder")

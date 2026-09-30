@@ -1,0 +1,75 @@
+/*
+ * Cross-document view transitions, the element names and classes come from `PageTransitions` (components/layouts).
+ * Compose HTML can't write `@view-transition`, and its `insertRule` throws on these selectors in browsers that don't
+ * know them, so they live in this static sheet.
+ */
+
+@media (prefers-reduced-motion: no-preference) {
+	@view-transition {
+		navigation: auto;
+	}
+}
+
+::view-transition-group(*) {
+	animation-duration: 0.25s;
+	animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* The header and the doc sidebar stay put, only their active entry changes, so they switch without a crossfade. */
+::view-transition-old(.chrome) {
+	display: none;
+}
+
+::view-transition-new(.chrome) {
+	animation: none;
+}
+
+/* The nav tab underline glides to the new tab. */
+::view-transition-group(.morph) {
+	animation-duration: 0.4s;
+}
+
+@keyframes kore-enter-from-left {
+	from {
+		opacity: 0;
+		translate: -1.5rem;
+	}
+}
+
+@keyframes kore-enter-from-right {
+	from {
+		opacity: 0;
+		translate: 1.5rem;
+	}
+}
+
+@keyframes kore-exit-to-left {
+	to {
+		opacity: 0;
+		translate: -1.5rem;
+	}
+}
+
+@keyframes kore-exit-to-right {
+	to {
+		opacity: 0;
+		translate: 1.5rem;
+	}
+}
+
+/* Going further in the doc order pushes the page to the left, going back pulls it to the right. */
+html:active-view-transition-type(doc-forward)::view-transition-old(root) {
+	animation-name: kore-exit-to-left;
+}
+
+html:active-view-transition-type(doc-forward)::view-transition-new(root) {
+	animation-name: kore-enter-from-right;
+}
+
+html:active-view-transition-type(doc-backward)::view-transition-old(root) {
+	animation-name: kore-exit-to-right;
+}
+
+html:active-view-transition-type(doc-backward)::view-transition-new(root) {
+	animation-name: kore-enter-from-left;
+}
