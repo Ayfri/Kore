@@ -33,6 +33,7 @@ private val footerColumns = listOf(
 			"Getting Started" to "/docs/getting-started",
 			"Documentation" to "/docs/home",
 			"Features" to "/features",
+			"Playground" to "/playground",
 			"Updates" to "/updates",
 		)
 	),

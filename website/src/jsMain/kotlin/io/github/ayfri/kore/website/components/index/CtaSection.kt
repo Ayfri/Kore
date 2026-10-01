@@ -6,6 +6,7 @@ import com.varabyte.kobweb.compose.css.functions.RadialGradient
 import com.varabyte.kobweb.compose.css.functions.radialGradient
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideBookOpenText
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideFlaskConical
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideSquareCode
 import io.github.ayfri.kore.website.DISCORD_LINK
 import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.GITHUB_LINK
@@ -26,6 +27,7 @@ private val communityLinks = listOf(
 	CommunityLink("Discord", DISCORD_LINK) { Img("/discord-mark.svg", "") { classes(CtaSectionStyle.discordMark) } },
 	CommunityLink("GitHub", GITHUB_LINK) { BrandIcon("github") },
 	CommunityLink("Examples", "https://github.com/Kore-Minecraft/examples") { LucideFlaskConical() },
+	CommunityLink("Playground", "/playground") { LucideSquareCode() },
 	CommunityLink("Docs", "/docs/home") { LucideBookOpenText() },
 )
 

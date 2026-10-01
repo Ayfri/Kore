@@ -46,7 +46,7 @@ fun FaqSection() {
 		),
 		FaqItem(
 			"Do I need to know Kotlin or Gradle already?",
-			"Not really. Kore's DSL mirrors Minecraft's own structure, so if you can read a `.mcfunction` file you can read it, and your IDE autocompletes every command, item and enum. For the build side, the [Kore Template](https://github.com/Kore-Minecraft/Kore-Template) is a working project you clone and run, with nothing to configure by hand."
+			"Not really. Kore's DSL mirrors Minecraft's own structure, so if you can read a `.mcfunction` file you can read it, and your IDE autocompletes every command, item and enum. For the build side, the [Kore Template](https://github.com/Kore-Minecraft/Kore-Template) is a working project you clone and run, with nothing to configure by hand. To get a feel for it before installing anything, the [playground](/playground) runs Kore in your browser."
 		),
 		FaqItem(
 			"Does Kore keep up with recent Minecraft versions?",

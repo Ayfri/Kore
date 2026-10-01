@@ -208,7 +208,8 @@ fun HeroSection() {
 
 		Div({ classes(HeroSectionStyle.actions) }) {
 			LinkButton("Get started", "/docs/getting-started", color = ButtonColor.PRIMARY)
-			LinkButton("Explore features", "/features", variant = ButtonVariant.OUTLINE)
+			LinkButton("Try it in your browser", "/playground", variant = ButtonVariant.OUTLINE)
+			LinkButton("Explore features", "/features", variant = ButtonVariant.GHOST)
 		}
 
 		HeroShowcase()

@@ -14,6 +14,7 @@ import com.varabyte.kobweb.compose.css.functions.toImage
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideChevronsDownUp
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideChevronsUpDown
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideExternalLink
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideSquareCode
 import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.components.common.BrandIcon
 import io.github.ayfri.kore.website.utils.*
@@ -191,6 +192,12 @@ private fun ReleaseEntry(release: GitHubRelease, isLatest: Boolean) {
 						}) {
 							LucideExternalLink()
 							Text("Minecraft changelog")
+						}
+					}
+					if (isLatest) {
+						A("/playground", { classes(ReleasesListStyle.externalLink) }) {
+							LucideSquareCode()
+							Text("Try it in the playground")
 						}
 					}
 				}

@@ -19,9 +19,13 @@ data class ResourceChip(
 	val scene: Int? = null,
 )
 
-/** An interactive visual of a category, [content] receives a callback to switch to another scene of the same category. */
+/**
+ * An interactive visual of a category, [content] receives a callback to switch to another scene of the same category.
+ * [example] is the slug of the playground example showing the same thing as runnable code.
+ */
 data class Scene(
 	val name: String,
+	val example: String? = null,
 	val content: @Composable (open: (Int) -> Unit) -> Unit,
 )
 
@@ -240,8 +244,8 @@ val featureCategories = listOf(
 		icon = { LucideTerminal() },
 		scenes = listOf(
 			Scene("Autocomplete") { AutocompleteScene() },
-			Scene("Macros") { MacrosScene() },
-			Scene("Execute & selectors") { SelectorsScene() },
+			Scene("Macros", "macros") { MacrosScene() },
+			Scene("Execute & selectors", "selectors") { SelectorsScene() },
 		),
 		items = listOf(
 			FeatureItem("Every vanilla command", "From /say to /worldborder, with typed arguments, enums and named parameters.", "/docs/commands/commands", scene = 0),
@@ -259,7 +263,7 @@ val featureCategories = listOf(
 		tagline = "Build an item once with its name, lore and components, then reuse it anywhere an item is expected.",
 		icon = { LucideBraces() },
 		scenes = listOf(
-			Scene("Item tooltip") { TooltipScene() },
+			Scene("Item tooltip", "custom-item") { TooltipScene() },
 			Scene("Chat") { ChatScene() },
 			Scene("Storage") { StorageScene() },
 		),
@@ -281,9 +285,9 @@ val featureCategories = listOf(
 		icon = { LucideFileBraces() },
 		scenes = listOf(
 			Scene("Datapack tree") { open -> FileTreeScene(open) },
-			Scene("Loot table") { LootTableScene() },
-			Scene("Recipe") { RecipeScene() },
-			Scene("Advancement") { AdvancementScene() },
+			Scene("Loot table", "loot-table") { LootTableScene() },
+			Scene("Recipe", "recipes") { RecipeScene() },
+			Scene("Advancement", "advancement") { AdvancementScene() },
 		),
 		chips = listOf(
 			ResourceChip("Advancements", "/docs/data-driven/advancements", scene = 3),
@@ -419,6 +423,7 @@ val featureCategories = listOf(
 			FeatureItem("GameTest", "Write test instances and environments for Minecraft's built-in test framework.", "/docs/advanced/test-features"),
 			FeatureItem("Editor plugins", "Kore Assistant browses every declaration as a datapack tree and flags calls to functions declared nowhere. A VS Code extension is also available.", "https://plugins.jetbrains.com/plugin/27025-kore-assistant", logos = listOf("intellijidea", "visualstudiocode")),
 			FeatureItem("Project template", "Clone a working project with Gradle already set up and start writing your pack.", "https://github.com/Kore-Minecraft/Kore-Template", logos = listOf("github", "gradle")),
+			FeatureItem("Playground", "Write Kore in the browser, browse the generated files and download the pack as a zip, with nothing to install.", "/playground"),
 		),
 	),
 )

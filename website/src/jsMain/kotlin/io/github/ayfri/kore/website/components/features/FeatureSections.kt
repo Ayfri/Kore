@@ -6,6 +6,7 @@ import com.varabyte.kobweb.compose.css.AlignSelf
 import com.varabyte.kobweb.compose.css.functions.calc
 import com.varabyte.kobweb.compose.css.functions.linearGradient
 import com.varabyte.kobweb.core.AppGlobals
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideArrowRight
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideCircleX
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideCode
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideTriangleAlert
@@ -189,6 +190,12 @@ fun CategorySection(category: FeatureCategory) {
 							scenes[active].content { active = it }
 						}
 					}
+					scenes[active].example?.let { slug ->
+						DomA("/playground#example=$slug", { classes(FeatureSectionsStyle.sceneLink) }) {
+							Text("Try it in the playground")
+							LucideArrowRight()
+						}
+					}
 				}
 			}
 		}
@@ -224,10 +231,11 @@ fun FeaturesCta() {
 	Aside({ classes(FeatureSectionsStyle.cta) }) {
 		Div {
 			H2 { Text("Try it on your own pack") }
-			P("The getting started guide takes you from an empty folder to a pack running in your world.")
+			P("The getting started guide takes you from an empty folder to a pack running in your world. The playground lets you try Kore in your browser before installing anything.")
 		}
 		Div({ classes(FeatureSectionsStyle.ctaActions) }) {
 			LinkButton("Get started", "/docs/getting-started", color = ButtonColor.PRIMARY)
+			LinkButton("Open the playground", "/playground", variant = ButtonVariant.OUTLINE)
 			LinkButton("Migrate an existing pack", "/docs/guides/from-datapacks-to-kore", variant = ButtonVariant.OUTLINE)
 		}
 	}
@@ -708,6 +716,21 @@ object FeatureSectionsStyle : StyleSheet() {
 		animation(sceneIn) {
 			duration(0.35.s)
 			timingFunction(AnimationTimingFunction.EaseOut)
+		}
+	}
+
+	val sceneLink by style {
+		alignItems(AlignItems.Center)
+		alignSelf(AlignSelf.FlexStart)
+		color(LandingVars.Muted.value())
+		display(DisplayStyle.Flex)
+		fontSize(0.88.cssRem)
+		gap(0.4.cssRem)
+		textDecorationLine(TextDecorationLine.None)
+		transition(0.2.s, "color")
+
+		hover(self) style {
+			color(LandingVars.AccentStrong.value())
 		}
 	}
 
