@@ -5,7 +5,7 @@ nav-title: Predicates
 description: Create Minecraft predicates with Kore's type-safe Kotlin DSL. Covers entity properties, location, weather, time, enchantments, damage, and NBT checks. Use in execute if/unless, loot tables, and advancements.
 keywords: minecraft predicates, datapack conditions, execute if predicate, entity properties check, location check, weather check, time check, damage predicate, kore predicates, minecraft condition dsl
 date-created: 2024-01-08
-date-modified: 2026-08-21
+date-modified: 2026-10-02
 routeOverride: /docs/data-driven/predicates
 ---
 
@@ -563,7 +563,7 @@ predicate("enchanted_tool") {
 ```
 
 The `predicates { }` block accepts
-any [component matcher](/docs/concepts/components#component-matchers--item-predicates)
+any [component matcher](/docs/concepts/components#component-matchers-item-predicates)
 
 - `damage`, `enchantments`, `storedEnchantments`, `customData`, `container`, and more - so you can gate a predicate on
   arbitrary component state, not just enchantments. If you instead need the inline command-syntax form
@@ -608,7 +608,7 @@ Predicates are powerful tools for creating complex conditions in your datapack. 
 - [Loot Tables](/docs/data-driven/loot-tables) - Use predicates as conditions for loot entries
 - [Advancements](/docs/data-driven/advancements) - Use predicates as trigger conditions
 - [Item Modifiers](/docs/data-driven/item-modifiers) - Modify items conditionally with predicates
-- [Components](/docs/concepts/components#component-matchers--item-predicates) - Item predicates and component matchers
+- [Components](/docs/concepts/components#component-matchers-item-predicates) - Item predicates and component matchers
   in depth: command-syntax predicates, sub-predicate matchers, existence checks, and a complete tool-upgrade example
 - [Inventory Manager](/docs/helpers/inventory-manager) - Pair predicates with inventory management
 - [Villager Trades](/docs/data-driven/villager-trades) - Gate trade availability via `merchantPredicate`

@@ -221,7 +221,7 @@ kobweb {
 					val literal = it.plainText()
 					if (literal.isBlank()) return@joinToString ""
 					literal.lowercase().replace(Regex("[^a-z0-9]+"), "-")
-				}
+				}.trim('-')
 
 				// Ordered so "GitHub Actions" wins over "GitHub".
 				val brandIcons = listOf(
