@@ -7,13 +7,12 @@ import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.updates.GitHubRelease
 import io.github.ayfri.kore.website.components.updates.GitHubService
 import io.github.ayfri.kore.website.utils.compareMinecraftVersions
+import io.github.ayfri.kore.website.utils.externalTarget
 import io.github.ayfri.kore.website.utils.extractMainMinecraftVersion
 import io.github.ayfri.kore.website.utils.formatDate
+import io.github.ayfri.kore.website.utils.monoFont
 import io.github.ayfri.kore.website.utils.paddingX
 import io.github.ayfri.kore.website.utils.paddingY
-import io.github.ayfri.kore.website.utils.rel
-import org.jetbrains.compose.web.attributes.ATarget
-import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 
@@ -156,8 +155,7 @@ private fun TypeBadge(label: String) {
 private fun CoordinateLink(coordinate: String, url: String) {
 	A(url, {
 		classes(VersionMatrixStyle.coordinate)
-		target(ATarget.Blank)
-		rel("noopener", "noreferrer")
+		externalTarget(url)
 	}) {
 		Text("$MAVEN_GROUP:$MAVEN_ARTIFACT:$coordinate")
 	}
@@ -186,8 +184,8 @@ private object VersionMatrixStyle : StyleSheet() {
 
 	val coordinate by style {
 		color(GlobalStyle.linkColor)
-		fontFamily("Consolas", "Monaco", "Andale Mono", "Ubuntu Mono", "monospace")
 		fontSize(0.85.cssRem)
+		monoFont()
 		textDecoration("none")
 
 		hover(self) style {

@@ -10,9 +10,11 @@ import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.docEntries
 import io.github.ayfri.kore.website.utils.A
 import io.github.ayfri.kore.website.utils.marginY
+import io.github.ayfri.kore.website.utils.onEvents
 import io.github.ayfri.kore.website.utils.smMax
 import io.github.ayfri.kore.website.utils.transition
 import kotlinx.browser.sessionStorage
+import kotlinx.browser.window
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
@@ -276,14 +278,11 @@ fun DocTree() {
 		listElement?.scrollTop = savedScroll
 	}
 
-	DisposableEffect(listElement) {
-		val element = listElement ?: return@DisposableEffect onDispose { }
-		val listener: (Event) -> Unit = {
-			sessionStorage.setItem(DOC_TREE_SCROLL_KEY, element.scrollTop.toString())
-		}
-		element.addEventListener("scroll", listener)
-		onDispose { element.removeEventListener("scroll", listener) }
-	}
+	/** Every doc link is a full document load, so the scroll position only needs saving when the page goes away. */
+	window.onEvents(
+		"pagehide" to { _: Event -> listElement?.let { sessionStorage.setItem(DOC_TREE_SCROLL_KEY, it.scrollTop.toString()) } },
+		key = listElement,
+	)
 
 	val visibleNodes = remember(collapsedGroups) {
 		docNodes.filter { node -> collapsedGroups.none { node.groupPath.startsWith("$it/") } }

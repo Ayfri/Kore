@@ -1,13 +1,13 @@
 package io.github.ayfri.kore.website.components.common
 
 import androidx.compose.runtime.Composable
-import com.varabyte.kobweb.compose.css.ColorInterpolationMethod
-import com.varabyte.kobweb.compose.css.borderLeft
-import com.varabyte.kobweb.compose.css.functions.colorMix
+import com.varabyte.kobweb.compose.css.StyleVariable
+import com.varabyte.kobweb.compose.css.setVariable
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.modifiers.ariaHidden
 import com.varabyte.kobweb.silk.components.icons.lucide.*
 import io.github.ayfri.kore.website.GlobalStyle
+import io.github.ayfri.kore.website.utils.alpha
 import io.github.ayfri.kore.website.utils.marginY
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
@@ -26,13 +26,19 @@ enum class CalloutType(
 	TIP("Tip", Color("#28a745"), { LucideLightbulb(Modifier.ariaHidden()) }),
 	WARNING("Warning", Color("#ffc107"), { LucideTriangleAlert(Modifier.ariaHidden()) });
 
+	val className get() = "callout-${name.lowercase()}"
+
 	companion object {
 		fun fromString(value: String): CalloutType = entries.find { it.name.equals(value, ignoreCase = true) } ?: NOTE
 	}
 }
 
+private val CalloutColor by StyleVariable<CSSColorValue>()
+
 object CalloutStyle : StyleSheet() {
 	val callout by style {
+		backgroundColor(CalloutColor.value().alpha(0.1))
+		border(1.px, LineStyle.Solid, CalloutColor.value().alpha(0.35))
 		borderRadius(GlobalStyle.roundingButton)
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
@@ -43,6 +49,7 @@ object CalloutStyle : StyleSheet() {
 
 	val calloutTitle by style {
 		alignItems(AlignItems.Center)
+		color(CalloutColor.value())
 		display(DisplayStyle.Flex)
 		fontSize(1.1.cssRem)
 		fontWeight("bold")
@@ -58,6 +65,12 @@ object CalloutStyle : StyleSheet() {
 	}
 
 	init {
+		CalloutType.entries.forEach { type ->
+			className(type.className) style {
+				setVariable(CalloutColor, type.color)
+			}
+		}
+
 		".$calloutContent p" style {
 			margin(0.px)
 		}
@@ -73,19 +86,8 @@ object CalloutStyle : StyleSheet() {
 fun Callout(type: String, content: @Composable () -> Unit) {
 	val calloutType = CalloutType.fromString(type)
 
-	Div({
-		classes(CalloutStyle.callout)
-		style {
-			backgroundColor(colorMix(ColorInterpolationMethod.Srgb, calloutType.color, Color.transparent to 90.percent))
-			borderLeft(4.px, LineStyle.Solid, calloutType.color)
-		}
-	}) {
-		Div({
-			classes(CalloutStyle.calloutTitle)
-			style {
-				color(calloutType.color)
-			}
-		}) {
+	Div({ classes(CalloutStyle.callout, calloutType.className) }) {
+		Div({ classes(CalloutStyle.calloutTitle) }) {
 			calloutType.icon()
 			Text(calloutType.displayName)
 		}

@@ -3,7 +3,6 @@ package io.github.ayfri.kore.website.components.sections
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.compose.css.functions.blur
-import com.varabyte.kobweb.compose.css.functions.calc
 import com.varabyte.kobweb.compose.css.functions.saturate
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.modifiers.classNames
@@ -14,14 +13,14 @@ import com.varabyte.kobweb.silk.components.icons.lucide.LucideX
 import io.github.ayfri.kore.website.DISCORD_LINK
 import io.github.ayfri.kore.website.GITHUB_LINK
 import io.github.ayfri.kore.website.GlobalStyle
+import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.components.common.BrandIcon
+import io.github.ayfri.kore.website.components.common.ButtonStyle
 import io.github.ayfri.kore.website.components.layouts.PageTransitions
 import io.github.ayfri.kore.website.components.updates.GitHubRelease
 import io.github.ayfri.kore.website.gitHubStars
 import io.github.ayfri.kore.website.utils.*
 import kotlin.js.Date
-import org.jetbrains.compose.web.attributes.ATarget
-import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
@@ -78,7 +77,7 @@ fun Header(latestRelease: GitHubRelease? = null) {
 	Style(HeaderStyle)
 
 	Header({ classes(HeaderStyle.header) }) {
-		Div({ classes(HeaderStyle.bar) }) {
+		Div({ classes(SiteChromeStyle.container, HeaderStyle.bar) }) {
 			DomA("/", {
 				classes(HeaderStyle.brand)
 				attr("aria-label", "Kore home")
@@ -96,14 +95,14 @@ fun Header(latestRelease: GitHubRelease? = null) {
 				DomA(DISCORD_LINK, {
 					classes(HeaderStyle.iconButton)
 					attr("aria-label", "Discord")
-					target(ATarget.Blank)
+					externalTarget(DISCORD_LINK)
 				}) {
-					Img("/discord-mark.svg", "") { classes(HeaderStyle.discordMark) }
+					BrandIcon("discord")
 				}
 
 				DomA(GITHUB_LINK, {
-					classes(HeaderStyle.githubButton)
-					target(ATarget.Blank)
+					classes(SiteChromeStyle.outlineButton, HeaderStyle.githubButton)
+					externalTarget(GITHUB_LINK)
 				}) {
 					BrandIcon("github")
 					Text("GitHub")
@@ -115,7 +114,7 @@ fun Header(latestRelease: GitHubRelease? = null) {
 					}
 				}
 
-				DomA(GET_STARTED_LINK, { classes(HeaderStyle.getStarted) }) {
+				DomA(GET_STARTED_LINK, { classes(ButtonStyle.primaryContained, HeaderStyle.getStarted) }) {
 					Text("Get started")
 				}
 
@@ -135,23 +134,23 @@ fun Header(latestRelease: GitHubRelease? = null) {
 				NavLinks(activeTab, HeaderStyle.mobileLink)
 				recentRelease?.let { ReleaseLink(it, HeaderStyle.mobileLink) }
 
-				DomA(GET_STARTED_LINK, { classes(HeaderStyle.getStarted, HeaderStyle.getStartedMobile) }) {
+				DomA(GET_STARTED_LINK, { classes(ButtonStyle.primaryContained, HeaderStyle.getStarted, HeaderStyle.getStartedMobile) }) {
 					Text("Get started")
 				}
 
 				Div({ classes(HeaderStyle.mobileSocials) }) {
 					DomA(GITHUB_LINK, {
-						classes(HeaderStyle.mobileSocial)
-						target(ATarget.Blank)
+						classes(SiteChromeStyle.outlineButton, HeaderStyle.mobileSocial)
+						externalTarget(GITHUB_LINK)
 					}) {
 						BrandIcon("github")
 						Text("GitHub")
 					}
 					DomA(DISCORD_LINK, {
-						classes(HeaderStyle.mobileSocial)
-						target(ATarget.Blank)
+						classes(SiteChromeStyle.outlineButton, HeaderStyle.mobileSocial)
+						externalTarget(DISCORD_LINK)
 					}) {
-						Img("/discord-mark.svg", "") { classes(HeaderStyle.discordMark) }
+						BrandIcon("discord")
 						Text("Discord")
 					}
 				}
@@ -161,8 +160,8 @@ fun Header(latestRelease: GitHubRelease? = null) {
 }
 
 object HeaderStyle : StyleSheet() {
-	private val dividerColor = rgba(151, 176, 202, 0.14)
-	private val hoverBackground = rgba(255, 255, 255, 0.06)
+	private val dividerColor = LandingVars.Border.value()
+	private val hoverBackground = SiteChromeStyle.hoverBackground
 
 	val header by style {
 		backdropFilter(BackdropFilter.list(BackdropFilter.of(saturate(160.percent)), BackdropFilter.of(blur(12.px))))
@@ -177,14 +176,9 @@ object HeaderStyle : StyleSheet() {
 
 	val bar by style {
 		alignItems(AlignItems.Center)
-		boxSizing(BoxSizing.BorderBox)
 		display(DisplayStyle.Flex)
 		gap(2.cssRem)
 		height(4.5.cssRem)
-		marginX(auto)
-		maxWidth(100.percent)
-		paddingX(1.25.cssRem)
-		width(calc { 55.vw + 30.cssRem })
 	}
 
 	val brand by style {
@@ -278,15 +272,17 @@ object HeaderStyle : StyleSheet() {
 
 	val releaseVersion by style {
 		color(GlobalStyle.textColor)
-		fontFamily("JetBrains Mono", "monospace")
 		fontSize(0.8.cssRem)
 		fontWeight(600)
+		monoFont()
 	}
 
 	val iconButton by style {
 		alignItems(AlignItems.Center)
 		borderRadius(GlobalStyle.roundingButton)
+		color(GlobalStyle.textColor)
 		display(DisplayStyle.Flex)
+		fontSize(1.1.cssRem)
 		height(2.25.cssRem)
 		justifyContent(JustifyContent.Center)
 		width(2.25.cssRem)
@@ -294,6 +290,7 @@ object HeaderStyle : StyleSheet() {
 
 		hover(self) style {
 			backgroundColor(hoverBackground)
+			color(GlobalStyle.textColor)
 		}
 
 		mdMax(self) {
@@ -301,18 +298,10 @@ object HeaderStyle : StyleSheet() {
 		}
 	}
 
-	val discordMark by style {
-		height(1.1.cssRem)
-		opacity(0.85)
-		width(1.1.cssRem)
-	}
-
 	val getStarted by style {
 		alignItems(AlignItems.Center)
-		backgroundColor(GlobalStyle.buttonBackgroundColor)
 		borderRadius(GlobalStyle.roundingButton)
 		boxSizing(BoxSizing.BorderBox)
-		color(GlobalStyle.textColor)
 		display(DisplayStyle.Flex)
 		fontSize(0.9.cssRem)
 		fontWeight(600)
@@ -321,11 +310,6 @@ object HeaderStyle : StyleSheet() {
 		paddingX(0.9.cssRem)
 		whiteSpace(WhiteSpace.NoWrap)
 		transition(0.15.s, "background-color")
-
-		hover(self) style {
-			backgroundColor(GlobalStyle.buttonBackgroundColorHover)
-			color(GlobalStyle.textColor)
-		}
 
 		mdMax(self) {
 			display(DisplayStyle.None)
@@ -343,24 +327,10 @@ object HeaderStyle : StyleSheet() {
 	}
 
 	val githubButton by style {
-		alignItems(AlignItems.Center)
-		border(1.px, LineStyle.Solid, dividerColor)
-		borderRadius(GlobalStyle.roundingButton)
-		boxSizing(BoxSizing.BorderBox)
-		color(GlobalStyle.textColor)
-		display(DisplayStyle.Flex)
 		fontSize(0.9.cssRem)
 		fontWeight(600)
-		gap(0.5.cssRem)
 		height(2.25.cssRem)
 		paddingX(0.75.cssRem)
-		transition(0.15.s, "background-color", "border-color")
-
-		hover(self) style {
-			backgroundColor(hoverBackground)
-			borderColor(rgba(151, 176, 202, 0.3))
-			color(GlobalStyle.textColor)
-		}
 
 		mdMax(self) {
 			display(DisplayStyle.None)
@@ -440,21 +410,9 @@ object HeaderStyle : StyleSheet() {
 	}
 
 	val mobileSocial by style {
-		alignItems(AlignItems.Center)
-		border(1.px, LineStyle.Solid, dividerColor)
-		borderRadius(GlobalStyle.roundingButton)
-		color(GlobalStyle.textColor)
-		display(DisplayStyle.Flex)
 		flex(1)
 		fontSize(0.95.cssRem)
 		fontWeight(600)
-		gap(0.5.cssRem)
-		justifyContent(JustifyContent.Center)
 		padding(0.6.cssRem)
-
-		hover(self) style {
-			backgroundColor(hoverBackground)
-			color(GlobalStyle.textColor)
-		}
 	}
 }

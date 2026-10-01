@@ -29,25 +29,31 @@ private fun Element.replayHighlight() {
 	classList.add(MarkdownLayoutStyle.highlight)
 }
 
+private class TocHeading(val element: HTMLElement) {
+	val id = element.id
+	val indent = element.tagName.last().digitToInt() - 2
+	val text = element.textContent.orEmpty().trim()
+}
+
 @Composable
 fun TableOfContents() {
 	val currentPath = rememberPageContext().route.path
-	var headings by remember { mutableStateOf(emptyList<HTMLElement>()) }
+	var headings by remember { mutableStateOf(emptyList<TocHeading>()) }
 	var activeHeadingId by remember { mutableStateOf<String?>(null) }
 
 	LaunchedEffect(currentPath) {
-		headings = document.querySelectorAll(headingsSelector).asList().map { it as HTMLElement }
+		headings = document.querySelectorAll(headingsSelector).asList().map { TocHeading(it as HTMLElement) }
 	}
 
 	// `offsetTop` forces a layout, so heading positions are measured once and refreshed on resize, never on scroll.
-	var offsets by remember(headings) { mutableStateOf(headings.map { it.id to it.offsetTop }) }
+	var offsets by remember(headings) { mutableStateOf(headings.map { it.id to it.element.offsetTop }) }
 
 	window.onEvents(
 		"scroll" to { _: Event ->
 			val scrollPosition = window.scrollY + ACTIVE_HEADING_OFFSET_PX
 			activeHeadingId = offsets.lastOrNull { (_, top) -> top <= scrollPosition }?.first
 		},
-		"resize" to { _: Event -> offsets = headings.map { it.id to it.offsetTop } },
+		"resize" to { _: Event -> offsets = headings.map { it.id to it.element.offsetTop } },
 		"hashchange" to { _: Event ->
 			window.location.hash.takeIf(String::isNotEmpty)?.let { document.querySelector(it)?.replayHighlight() }
 		},
@@ -65,25 +71,21 @@ fun TableOfContents() {
 
 		Ul {
 			headings.forEach { heading ->
-				val headingName = heading.innerText.removePrefix("link").trim()
-				val isActive = heading.id == activeHeadingId
-
 				Li({
 					classes(TableOfContentsStyle.entry)
-					if (isActive) classes(TableOfContentsStyle.activeEntry)
-					title(headingName)
+					if (heading.id == activeHeadingId) classes(TableOfContentsStyle.activeEntry)
+					title(heading.text)
 					style {
-						marginLeft((heading.tagName.last().toString().toInt() - 2) * 0.75.cssRem)
+						marginLeft(heading.indent * 0.75.cssRem)
 					}
 					onClick {
-						val id = heading.id
-						if (id.isNotEmpty()) {
-							window.location.hash = "#$id"
-							heading.replayHighlight()
+						if (heading.id.isNotEmpty()) {
+							window.location.hash = "#${heading.id}"
+							heading.element.replayHighlight()
 						}
 					}
 				}) {
-					Text(headingName)
+					Text(heading.text)
 				}
 			}
 		}

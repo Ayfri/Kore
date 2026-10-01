@@ -7,12 +7,11 @@ import io.github.ayfri.kore.website.GITHUB_LINK
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.setDescription
 import io.github.ayfri.kore.website.components.layouts.PageLayout
+import io.github.ayfri.kore.website.utils.externalTarget
 import io.github.ayfri.kore.website.utils.lineHeight
 import io.github.ayfri.kore.website.utils.marginX
 import io.github.ayfri.kore.website.utils.marginY
 import io.github.ayfri.kore.website.utils.transition
-import org.jetbrains.compose.web.attributes.ATarget
-import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.*
@@ -20,7 +19,7 @@ import org.jetbrains.compose.web.dom.*
 private const val CONTACT_EMAIL = "pierre.ayfri@gmail.com"
 
 @Composable
-private fun ExternalLink(href: String, text: String) = A(href, { target(ATarget.Blank) }) { Text(text) }
+private fun ExternalLink(href: String, text: String) = A(href, { externalTarget(href) }) { Text(text) }
 
 @Page
 @Composable

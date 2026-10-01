@@ -34,7 +34,6 @@ private const val MOBILE_BREAKPOINT_PX = 768
 
 @Composable
 fun MarkdownLayout(content: @Composable () -> Unit) {
-	Style(BrandIconStyle)
 	Style(CalloutStyle)
 	Style(DocMockupsStyle)
 	Style(MarkdownLayoutStyle)

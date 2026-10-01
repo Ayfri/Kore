@@ -2,7 +2,6 @@ package io.github.ayfri.kore.website.components.sections
 
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
-import com.varabyte.kobweb.compose.css.functions.calc
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.modifiers.classNames
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideCoffee
@@ -10,20 +9,22 @@ import com.varabyte.kobweb.silk.components.icons.lucide.LucideHeart
 import io.github.ayfri.kore.website.DISCORD_LINK
 import io.github.ayfri.kore.website.GITHUB_LINK
 import io.github.ayfri.kore.website.GlobalStyle
+import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.WEBSITE_GITHUB_LINK
 import io.github.ayfri.kore.website.components.common.BrandIcon
 import io.github.ayfri.kore.website.utils.*
 import kotlin.js.Date
-import org.jetbrains.compose.web.attributes.ATarget
-import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.AlignSelf
 import org.jetbrains.compose.web.css.JustifyContent
-import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.dom.A as DomA
+
+private const val COFFEE_LINK = "https://www.buymeacoffee.com/ayfri"
+private const val KOBWEB_LINK = "https://kobweb.varabyte.com/"
+private const val LICENSE_LINK = "$GITHUB_LINK/blob/master/LICENSE"
 
 private class FooterColumn(val title: String, val links: List<Pair<String, String>>)
 
@@ -60,7 +61,7 @@ fun Footer() {
 	Style(FooterStyle)
 
 	Footer({ classes(FooterStyle.footer) }) {
-		Div({ classes(FooterStyle.container) }) {
+		Div({ classes(SiteChromeStyle.container) }) {
 			Div({ classes(FooterStyle.top) }) {
 				Div({ classes(FooterStyle.brand) }) {
 					DomA("/", { attr("aria-label", "Kore home") }) {
@@ -70,24 +71,24 @@ fun Footer() {
 
 					Div({ classes(FooterStyle.socials) }) {
 						DomA(GITHUB_LINK, {
-							classes(FooterStyle.social)
+							classes(SiteChromeStyle.outlineButton, FooterStyle.social)
 							attr("aria-label", "GitHub")
-							target(ATarget.Blank)
+							externalTarget(GITHUB_LINK)
 						}) {
 							BrandIcon("github")
 						}
 						DomA(DISCORD_LINK, {
-							classes(FooterStyle.social)
+							classes(SiteChromeStyle.outlineButton, FooterStyle.social)
 							attr("aria-label", "Discord")
-							target(ATarget.Blank)
+							externalTarget(DISCORD_LINK)
 						}) {
-							Img("/discord-mark.svg", "") { classes(FooterStyle.discordMark) }
+							BrandIcon("discord")
 						}
 					}
 
-					DomA("https://www.buymeacoffee.com/ayfri", {
+					DomA(COFFEE_LINK, {
 						classes(FooterStyle.coffee)
-						target(ATarget.Blank)
+						externalTarget(COFFEE_LINK)
 					}) {
 						LucideCoffee()
 						Text("Buy me a coffee")
@@ -102,7 +103,7 @@ fun Footer() {
 								Li {
 									DomA(link, {
 										classes(FooterStyle.columnLink)
-										if (!link.startsWith("/")) target(ATarget.Blank)
+										externalTarget(link)
 									}) {
 										Text(name)
 									}
@@ -118,13 +119,13 @@ fun Footer() {
 					Text("© ${Date().getFullYear()} ")
 					DomA("https://ayfri.com", { title("Hello :)") }) { Text("Ayfri") }
 					Text(" · ")
-					DomA("$GITHUB_LINK/blob/master/LICENSE", { target(ATarget.Blank) }) { Text("GPL-3.0 License") }
+					DomA(LICENSE_LINK, { externalTarget(LICENSE_LINK) }) { Text("GPL-3.0 License") }
 					Text(" · ")
 					DomA("/legal-notice") { Text("Legal Notice") }
 					Text(" · Built with ")
 					LucideHeart(Modifier.classNames(FooterStyle.heart))
 					Text(" and ")
-					DomA("https://kobweb.varabyte.com/", { target(ATarget.Blank) }) { Text("Kobweb") }
+					DomA(KOBWEB_LINK, { externalTarget(KOBWEB_LINK) }) { Text("Kobweb") }
 				}
 
 				P("Not an official Minecraft product. Not approved by or associated with Mojang or Microsoft.", FooterStyle.disclaimer)
@@ -134,20 +135,12 @@ fun Footer() {
 }
 
 object FooterStyle : StyleSheet() {
-	private val dividerColor =rgba(151, 176, 202, 0.14)
+	private val dividerColor = LandingVars.Border.value()
 
 	val footer by style {
 		backgroundColor(GlobalStyle.secondaryBackgroundColor)
 		borderTop(1.px, LineStyle.Solid, dividerColor)
 		width(100.percent)
-	}
-
-	val container by style {
-		boxSizing(BoxSizing.BorderBox)
-		marginX(auto)
-		maxWidth(100.percent)
-		paddingX(1.25.cssRem)
-		width(calc { 55.vw + 30.cssRem })
 	}
 
 	val top by style {
@@ -196,23 +189,10 @@ object FooterStyle : StyleSheet() {
 	}
 
 	val social by style {
-		alignItems(AlignItems.Center)
-		border(1.px, LineStyle.Solid, dividerColor)
-		borderRadius(GlobalStyle.roundingButton)
-		boxSizing(BoxSizing.BorderBox)
 		color(GlobalStyle.altTextColor)
-		display(DisplayStyle.Flex)
 		fontSize(1.05.cssRem)
 		height(2.25.cssRem)
-		justifyContent(JustifyContent.Center)
 		width(2.25.cssRem)
-		transition(0.15.s, "background-color", "border-color", "color")
-
-		hover(self) style {
-			backgroundColor(rgba(255, 255, 255, 0.06))
-			borderColor(rgba(151, 176, 202, 0.3))
-			color(GlobalStyle.textColor)
-		}
 	}
 
 	@OptIn(ExperimentalComposeWebApi::class)
@@ -234,12 +214,6 @@ object FooterStyle : StyleSheet() {
 			color(Color("#0d0c22"))
 			transform { translateY((-1).px) }
 		}
-	}
-
-	val discordMark by style {
-		height(1.05.cssRem)
-		opacity(0.85)
-		width(1.05.cssRem)
 	}
 
 	val column by style {
