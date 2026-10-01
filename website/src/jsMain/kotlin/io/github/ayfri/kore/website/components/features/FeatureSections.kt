@@ -67,10 +67,9 @@ fun FeaturesNav() {
 @Composable
 fun FeaturesHeader() {
 	Header({ classes(FeatureSectionsStyle.header) }) {
-		Span(
-			"Kore ${AppGlobals.getValue("projectVersion")} · Minecraft ${AppGlobals.getValue("minecraftVersion")}",
-			FeatureSectionsStyle.version
-		)
+		DomA("/updates", { classes(FeatureSectionsStyle.version) }) {
+			Text("Kore ${AppGlobals.getValue("projectVersion")} · Minecraft ${AppGlobals.getValue("minecraftVersion")}")
+		}
 		H1 { Text("Features") }
 		P("Everything Kore covers, grouped by area. Each entry links to its guide, and hovering one previews it in game.")
 	}
@@ -451,9 +450,16 @@ object FeatureSectionsStyle : StyleSheet() {
 	}
 
 	val version by style {
+		alignSelf(AlignSelf.FlexStart)
 		color(LandingVars.Accent.value())
 		fontFamily(MONO, "monospace")
 		fontSize(0.78.cssRem)
+		textDecorationLine(TextDecorationLine.None)
+		transition(0.2.s, "color")
+
+		hover(self) style {
+			color(LandingVars.AccentStrong.value())
+		}
 	}
 
 	val block by style {

@@ -50,7 +50,7 @@ fun FaqSection() {
 		),
 		FaqItem(
 			"Does Kore keep up with recent Minecraft versions?",
-			"Yes. Enums, registries and generated arguments are codegen'd straight from Minecraft's own data, so a version bump is a regeneration rather than a manual rewrite, and recent features like command macros, dialogs and timelines are supported. Every published artifact concatenates both versions: `2.8.0-26.1.2` is Kore 2.8.0 targeting Minecraft 26.1.2, so the game version a build targets is always in the version string."
+			"Yes. Enums, registries and generated arguments are codegen'd straight from Minecraft's own data, so a version bump is a regeneration rather than a manual rewrite, and recent features like command macros, dialogs and timelines are supported. Every published artifact concatenates both versions: `2.8.0-26.1.2` is Kore 2.8.0 targeting Minecraft 26.1.2, so the game version a build targets is always in the version string. Every release and its notes are on the [Updates](/updates) page."
 		),
 		FaqItem(
 			"Can I use Kore with other datapacks or mods?",

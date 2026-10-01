@@ -120,7 +120,10 @@ fun VersionMatrix() {
 private fun VersionRowLine(row: VersionRow, typeLabel: String, coordinateUrl: String) {
 	Tr {
 		Td { Text(row.minecraftVersion) }
-		Td { Text(row.koreVersion) }
+		Td {
+			// The Updates page hides unstable channels by default, so a snapshot's entry would be missing there.
+			if (row.isStable) A("/updates#release-${row.release.id}") { Text(row.koreVersion) } else Text(row.koreVersion)
+		}
 		Td { TypeBadge(typeLabel) }
 		Td { CoordinateLink(row.gradleCoordinate, coordinateUrl) }
 		Td { Text(formatDate(row.release.publishedAt)) }
