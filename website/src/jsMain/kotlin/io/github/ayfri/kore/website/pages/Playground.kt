@@ -279,12 +279,15 @@ fun PlaygroundPage() {
 		}
 	}
 
-	// A shared link wins over a restored draft, which wins over the default example. Resolved before the
+	// A shared link wins over a linked example, then a restored draft, then the default example. Resolved before the
 	// editor is created, since Monaco only reads its initial value once.
 	LaunchedEffect(Unit) {
 		val shared = sharedCode()
+		val linked = linkedExample()
 		val draft = PlaygroundStorage.draft
-		code = shared ?: draft ?: defaultExample.code
+		code = shared ?: linked?.code ?: draft ?: defaultExample.code
+		// Dropped once read, so reloading the page restores the visitor's edits instead of the example again.
+		if (linked != null) window.history.replaceState(null, "", window.location.pathname)
 		baseExample = playgroundExamplesByCode[code]
 			?: playgroundExamples.firstOrNull { it.slug == PlaygroundStorage.exampleSlug }
 			?: defaultExample
@@ -298,7 +301,7 @@ fun PlaygroundPage() {
 			LogLevel.INFO,
 			when {
 				shared != null -> "Opened a shared snippet"
-				draft != null -> "Restored your last draft"
+				linked == null && draft != null -> "Restored your last draft"
 				else -> "Loaded the ${baseExample.title} example"
 			},
 		)

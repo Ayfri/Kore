@@ -25,6 +25,9 @@ val playgroundExamplesByCode = playgroundExamples.associateBy { it.code }
 
 val defaultExample = playgroundExamples.first()
 
+/** The example a `/playground#example=<slug>` link opens, which is how the rest of the site points at one. */
+fun linkedExample() = window.location.hash.removePrefix("#example=").let { slug -> playgroundExamples.firstOrNull { it.slug == slug } }
+
 /**
  * The pack this example generates, computed on the JVM at build time: one small static fetch instead of a compile, so
  * most visitors, who run an example before editing anything, never wait on the backend at all.
