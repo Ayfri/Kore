@@ -2,7 +2,6 @@ package io.github.ayfri.kore.website.components.common
 
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
-import com.varabyte.kobweb.compose.css.functions.colorMix
 import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.css.*
@@ -18,8 +17,6 @@ data class Tab(
 
 @Composable
 fun Tabs(tabs: List<Tab>, className: String? = null, contentClassName: String? = null) {
-	Style(TabsStyle)
-
 	var selectedTab by remember { mutableStateOf(0) }
 
 	Div({
@@ -76,13 +73,7 @@ object TabsStyle : StyleSheet() {
 
 	val buttons by style {
 		display(DisplayStyle.Flex)
-		backgroundColor(
-			colorMix(
-				ColorInterpolationMethod.Srgb,
-				LandingVars.Surface.value() to 55.percent,
-				Color.transparent
-			)
-		)
+		backgroundColor(LandingVars.Surface.value().alpha(0.55))
 		borderBottom(1.px, LineStyle.Solid, LandingVars.Border.value())
 		padding(0.35.cssRem)
 		gap(0.35.cssRem)
@@ -103,32 +94,20 @@ object TabsStyle : StyleSheet() {
 	}
 
 	val button by style {
-		backgroundColor(
-			colorMix(
-				ColorInterpolationMethod.Srgb,
-				LandingVars.Text.value() to 4.percent,
-				Color.transparent
-			)
-		)
-		borderRadius(0.4.cssRem)
+		backgroundColor(LandingVars.Text.value().alpha(0.04))
 		border(0.px)
+		borderRadius(0.4.cssRem)
 		color(LandingVars.Muted.value())
 		cursor(Cursor.Pointer)
-		fontFamily("JetBrains Mono", "IBM Plex Mono", "Consolas", "monospace")
 		fontSize(0.88.cssRem)
 		fontWeight(500)
 		letterSpacing(0.2.px)
+		monoFont()
 		padding(0.4.cssRem, 0.85.cssRem)
 		transition(0.2.s, "background-color", "color")
 
 		hover(self) style {
-			backgroundColor(
-				colorMix(
-					ColorInterpolationMethod.Srgb,
-					LandingVars.Accent.value() to 20.percent,
-					Color.transparent
-				)
-			)
+			backgroundColor(LandingVars.Accent.value().alpha(0.2))
 			color(LandingVars.Text.value())
 		}
 
@@ -144,13 +123,7 @@ object TabsStyle : StyleSheet() {
 	}
 
 	val selected by style {
-		backgroundColor(
-			colorMix(
-				ColorInterpolationMethod.Srgb,
-				LandingVars.Accent.value() to 30.percent,
-				Color.transparent
-			)
-		)
+		backgroundColor(LandingVars.Accent.value().alpha(0.35))
 		color(LandingVars.Text.value())
 	}
 

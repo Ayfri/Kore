@@ -325,4 +325,17 @@ object CodeThemeStyle : StyleSheet() {
 			fontStyle(FontStyle.Italic)
 		}
 	}
+
+	/** On a container whose frame already titles its code blocks: drops Prism's toolbar, background and border. */
+	val bare by style {
+		"div.code-toolbar" style {
+			backgroundColor(Color.transparent)
+			border(0.px)
+			borderRadius(0.px)
+		}
+
+		"div.code-toolbar > .toolbar" style {
+			display(DisplayStyle.None)
+		}
+	}
 }

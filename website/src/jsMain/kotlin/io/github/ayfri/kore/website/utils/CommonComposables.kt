@@ -1,7 +1,9 @@
 package io.github.ayfri.kore.website.utils
 
 import androidx.compose.runtime.Composable
+import org.jetbrains.compose.web.attributes.ATarget
 import org.jetbrains.compose.web.attributes.AttrsScope
+import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.dom.*
 import org.w3c.dom.HTMLAnchorElement
 import org.w3c.dom.HTMLImageElement
@@ -21,7 +23,14 @@ fun A(href: String, content: String = "", vararg classes: String = arrayOf("link
 }
 
 fun AttrsScope<HTMLAnchorElement>.rel(vararg values: String) {
-    attr("rel", values.joinToString(" "))
+	attr("rel", values.joinToString(" "))
+}
+
+/** Opens [href] in a new tab when it leaves the site, the attributes every outbound link needs. */
+fun AttrsScope<HTMLAnchorElement>.externalTarget(href: String) {
+	if (!href.startsWith("http")) return
+	target(ATarget.Blank)
+	rel("noopener", "noreferrer")
 }
 
 @Composable

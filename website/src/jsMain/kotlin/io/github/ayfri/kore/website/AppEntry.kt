@@ -6,9 +6,12 @@ import com.varabyte.kobweb.core.App
 import com.varabyte.kobweb.core.KobwebApp
 import com.varabyte.kobweb.core.init.InitKobweb
 import com.varabyte.kobweb.core.init.InitKobwebContext
+import io.github.ayfri.kore.website.components.common.BrandIconStyle
+import io.github.ayfri.kore.website.components.common.ButtonStyle
+import io.github.ayfri.kore.website.components.common.TabsStyle
+import io.github.ayfri.kore.website.components.layouts.PageTransitions
 import io.github.ayfri.kore.website.externals.MarkedToken
 import io.github.ayfri.kore.website.externals.use
-import io.github.ayfri.kore.website.components.layouts.PageTransitions
 import io.github.ayfri.kore.website.pages.PageNotFound
 import io.github.ayfri.kore.website.utils.jsObject
 import org.jetbrains.compose.web.css.Style
@@ -60,6 +63,9 @@ fun AppEntry(content: @Composable () -> Unit) {
 
 	KobwebApp {
 		Style(GlobalStyle)
+		Style(BrandIconStyle)
+		Style(ButtonStyle)
+		Style(TabsStyle)
 		content()
 	}
 }

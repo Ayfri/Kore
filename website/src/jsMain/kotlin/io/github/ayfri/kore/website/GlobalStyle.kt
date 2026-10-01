@@ -5,12 +5,14 @@ import com.varabyte.kobweb.compose.css.StyleVariable
 import com.varabyte.kobweb.compose.css.TextDecorationLine
 import com.varabyte.kobweb.compose.css.scrollMarginTop
 import com.varabyte.kobweb.compose.css.scrollbarWidth
+import com.varabyte.kobweb.compose.css.setVariable
 import com.varabyte.kobweb.compose.css.textDecorationLine
 import io.github.ayfri.kore.website.utils.scrollbarColor
 import io.github.ayfri.kore.website.utils.transition
+import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
 
-/** The palette of the home, features, updates and playground pages (`--landing-*`), set on `HomePageStyle.page`. */
+/** The site palette (`--landing-*`), set on `:root`. */
 object LandingVars {
 	val Accent by StyleVariable<CSSColorValue>()
 	val AccentStrong by StyleVariable<CSSColorValue>()
@@ -45,12 +47,22 @@ object GlobalStyle : StyleSheet() {
 	val scrollbarBackgroundColor = Color("#181a1f")
 
 	val borderColor = Color("#8c9ab1")
-	val shadowColor = rgba(0, 0, 0, 0.7)
 
 	val roundingButton = 0.4.cssRem
-	val roundingSection = 0.8.cssRem
 
 	init {
+		":root" style {
+			setVariable(LandingVars.Accent, Color("#08b6d6"))
+			setVariable(LandingVars.AccentStrong, Color("#1fd2f2"))
+			setVariable(LandingVars.Border, rgba(151, 176, 202, 0.18))
+			setVariable(LandingVars.Card, Color("#151c26"))
+			setVariable(LandingVars.Gold, Color("#fec907"))
+			setVariable(LandingVars.Muted, Color("#a6b4bd"))
+			setVariable(LandingVars.Pane, Color("#141c26"))
+			setVariable(LandingVars.Surface, Color("#0f141b"))
+			setVariable(LandingVars.Text, Color("#f7f9fc"))
+		}
+
 		universal {
 			scrollbarColor(scrollbarThumbColor, scrollbarBackgroundColor)
 			scrollbarWidth(ScrollbarWidth.Thin)
@@ -95,7 +107,17 @@ object GlobalStyle : StyleSheet() {
 		}
 	}
 
-	val altText by style {
-		color(altTextColor)
+	/** The fade-up every entering panel, card and scene uses. */
+	@OptIn(ExperimentalComposeWebApi::class)
+	val rise by keyframes {
+		from {
+			opacity(0)
+			transform { translateY(0.5.cssRem) }
+		}
+
+		to {
+			opacity(1)
+			transform { translateY(0.px) }
+		}
 	}
 }

@@ -6,11 +6,15 @@ import com.varabyte.kobweb.compose.css.BackgroundRepeat
 import com.varabyte.kobweb.compose.css.BackgroundSize
 import com.varabyte.kobweb.compose.css.CSSLengthNumericValue
 import com.varabyte.kobweb.compose.css.CSSLengthOrPercentageNumericValue
+import com.varabyte.kobweb.compose.css.ColorInterpolationMethod
 import com.varabyte.kobweb.compose.css.Content
+import com.varabyte.kobweb.compose.css.TextTransform
 import com.varabyte.kobweb.compose.css.backgroundClip
 import com.varabyte.kobweb.compose.css.backgroundImage
+import com.varabyte.kobweb.compose.css.textTransform
 import com.varabyte.kobweb.compose.css.functions.CSSImage
 import com.varabyte.kobweb.compose.css.functions.CSSUrl
+import com.varabyte.kobweb.compose.css.functions.colorMix
 import com.varabyte.kobweb.compose.css.functions.linearGradient
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
@@ -209,5 +213,17 @@ fun StyleScope.zoom(factor: Number) = property("zoom", factor)
 
 inline val SelectorsScope.placeholder get() = selector("::placeholder")
 
-fun CSSColorValue.alpha(alpha: String) = Color(toString() + alpha)
-fun CSSColorValue.alpha(alpha: Double) = Color(toString() + (alpha * 255).toInt().toString(16).padStart(2, '0'))
+/** This color at [alpha] opacity (0 to 1), mixed by the browser so it works on short hex colors and `StyleVariable`s alike. */
+fun CSSColorValue.alpha(alpha: Double) = colorMix(ColorInterpolationMethod.Srgb, this to (alpha * 100).percent, Color.transparent)
+
+fun StyleScope.headingFont() = fontFamily("Sora", "Segoe UI", "sans-serif")
+fun StyleScope.monoFont() = fontFamily("JetBrains Mono", "monospace")
+fun StyleScope.sansFont() = fontFamily("IBM Plex Sans", "Inter", "Segoe UI", "sans-serif")
+
+/** The small uppercase mono caption above lists, panels and groups. */
+fun StyleScope.monoLabel(size: CSSNumeric) {
+	monoFont()
+	fontSize(size)
+	letterSpacing(1.5.px)
+	textTransform(TextTransform.Uppercase)
+}

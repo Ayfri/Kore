@@ -6,10 +6,9 @@ import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.utils.alpha
+import io.github.ayfri.kore.website.utils.externalTarget
 import io.github.ayfri.kore.website.utils.transition
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
-import org.jetbrains.compose.web.attributes.ATarget
-import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
@@ -33,17 +32,15 @@ enum class ButtonColor {
 fun LinkButton(
 	name: String,
 	link: String,
-	target: ATarget? = null,
 	variant: ButtonVariant = ButtonVariant.CONTAINED,
 	color: ButtonColor = ButtonColor.SECONDARY,
 	icon: @Composable () -> Unit = {},
 	vararg classes: String,
 ) {
-	Style(ButtonStyle)
 	A(link, {
 		classes(ButtonStyle.button, *classes)
 		classes(getVariantClass(variant, color))
-		target?.let { target(it) }
+		externalTarget(link)
 	}) {
 		icon()
 		Text(name)
@@ -59,7 +56,6 @@ fun Button(
 	icon: @Composable () -> Unit = {},
 	vararg classes: String,
 ) {
-	Style(ButtonStyle)
 	Button({
 		classes(ButtonStyle.button, *classes)
 		classes(getVariantClass(variant, color))
@@ -90,20 +86,21 @@ private fun getVariantClass(variant: ButtonVariant, color: ButtonColor) = when (
 	}
 }
 
+/** Each variant repeats its text color on hover, else the global `a:hover` rule outranks the class and tints link buttons teal. */
 object ButtonStyle : StyleSheet() {
 	@OptIn(ExperimentalComposeWebApi::class)
 	val button by style {
-		display(DisplayStyle.LegacyInlineFlex)
 		alignItems(AlignItems.Center)
-		justifyContent(JustifyContent.Center)
-		gap(0.5.cssRem)
-		padding(0.6.cssRem, 1.2.cssRem)
-		borderRadius(GlobalStyle.roundingButton)
-		fontWeight(FontWeight.Bold)
-		fontSize(1.1.cssRem)
-		textDecorationLine(TextDecorationLine.None)
-		cursor(Cursor.Pointer)
 		border(0.px)
+		borderRadius(GlobalStyle.roundingButton)
+		cursor(Cursor.Pointer)
+		display(DisplayStyle.LegacyInlineFlex)
+		fontSize(1.1.cssRem)
+		fontWeight(FontWeight.Bold)
+		gap(0.5.cssRem)
+		justifyContent(JustifyContent.Center)
+		padding(0.6.cssRem, 1.2.cssRem)
+		textDecorationLine(TextDecorationLine.None)
 		transition(0.2.s, "background-color", "color", "border-color", "transform")
 
 		self + hover style {
@@ -122,6 +119,7 @@ object ButtonStyle : StyleSheet() {
 
 		self + hover style {
 			backgroundColor(GlobalStyle.buttonBackgroundColorHover)
+			color(GlobalStyle.textColor)
 		}
 	}
 
@@ -131,6 +129,7 @@ object ButtonStyle : StyleSheet() {
 
 		self + hover style {
 			backgroundColor(GlobalStyle.secondaryBackgroundColor)
+			color(GlobalStyle.textColor)
 		}
 	}
 
@@ -140,6 +139,7 @@ object ButtonStyle : StyleSheet() {
 
 		self + hover style {
 			backgroundColor(GlobalStyle.logoRightColor.alpha(0.8))
+			color(GlobalStyle.textColor)
 		}
 	}
 
@@ -150,7 +150,8 @@ object ButtonStyle : StyleSheet() {
 		color(GlobalStyle.buttonBackgroundColor)
 
 		self + hover style {
-			backgroundColor(GlobalStyle.buttonBackgroundColor.alpha(0.1))
+			backgroundColor(GlobalStyle.buttonBackgroundColor.alpha(0.12))
+			color(GlobalStyle.buttonBackgroundColor)
 		}
 	}
 
@@ -161,6 +162,7 @@ object ButtonStyle : StyleSheet() {
 
 		self + hover style {
 			backgroundColor(GlobalStyle.textColor.alpha(0.05))
+			color(GlobalStyle.textColor)
 		}
 	}
 
@@ -170,7 +172,8 @@ object ButtonStyle : StyleSheet() {
 		color(GlobalStyle.logoRightColor)
 
 		self + hover style {
-			backgroundColor(GlobalStyle.logoRightColor.alpha(0.1))
+			backgroundColor(GlobalStyle.logoRightColor.alpha(0.12))
+			color(GlobalStyle.logoRightColor)
 		}
 	}
 
@@ -180,7 +183,8 @@ object ButtonStyle : StyleSheet() {
 		color(GlobalStyle.buttonBackgroundColor)
 
 		self + hover style {
-			backgroundColor(GlobalStyle.buttonBackgroundColor.alpha(0.1))
+			backgroundColor(GlobalStyle.buttonBackgroundColor.alpha(0.12))
+			color(GlobalStyle.buttonBackgroundColor)
 		}
 	}
 
@@ -199,7 +203,8 @@ object ButtonStyle : StyleSheet() {
 		color(GlobalStyle.logoRightColor)
 
 		self + hover style {
-			backgroundColor(GlobalStyle.logoRightColor.alpha(0.1))
+			backgroundColor(GlobalStyle.logoRightColor.alpha(0.12))
+			color(GlobalStyle.logoRightColor)
 		}
 	}
 }
