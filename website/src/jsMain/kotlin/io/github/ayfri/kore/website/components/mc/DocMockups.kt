@@ -171,7 +171,7 @@ fun BossBarMockup() {
 	)
 	var state by remember { mutableStateOf(states.first()) }
 	McScene("In game: the NOTCHED_10 bar at value ${state.value} of 200, click a call to apply it", SceneKind.HUD, panorama = 3, height = 70) {
-		Div({ classes(DocMockupsStyle.hudTop) }) {
+		Div({ classes(McUiStyle.hudTop) }) {
 			McBossBar("Phase 2", state.color, state.value / 200.0, notches = 10)
 		}
 		Div({ classes(DocMockupsStyle.hudControls) }) {
@@ -182,7 +182,7 @@ fun BossBarMockup() {
 
 @Composable
 fun SidebarMockup() = McScene("In game: the lobby sidebar after lobby.refresh(), with sample scores", SceneKind.HUD, panorama = 1, height = 100) {
-	Div({ classes(DocMockupsStyle.hudRight) }) {
+	Div({ classes(McUiStyle.hudRight) }) {
 		McSidebar(
 			"Sky Wars", McColor.GOLD, listOf(
 				McSidebarLine("Map: Floating Isles"),
@@ -284,7 +284,7 @@ fun LootChestMockup() {
 
 @Composable
 fun MarkdownRendererMockup() = McScene("In game: the four examples above sent to the chat", SceneKind.HUD, panorama = 4, height = 70) {
-	McChat(DocMockupsStyle.hudChat) {
+	McChat(McUiStyle.hudChat) {
 		McChatLine(McSpan("bold and ", bold = true), McSpan("italic", bold = true, italic = true), McSpan(" text", bold = true))
 		McChatLine(McSpan("Visit "), McSpan("Kore", McColor.GREEN, underlined = true))
 		McChatLine(McSpan("red text", "#ff0000"), McSpan(" normal text"))
@@ -295,7 +295,7 @@ fun MarkdownRendererMockup() = McScene("In game: the four examples above sent to
 /** The team prefix and color go inside the chat brackets, as they are part of the player's display name. */
 @Composable
 fun TeamChatMockup() = McScene("In game: the chat after player.joinTeam(red), next to a player without team", SceneKind.HUD, panorama = 5, height = 50) {
-	McChat(DocMockupsStyle.hudChat) {
+	McChat(McUiStyle.hudChat) {
 		McChatLine(McSpan("<"), McSpan("RED ", McColor.DARK_RED, bold = true), McSpan("Steve", McColor.DARK_RED), McSpan("> ready when you are"))
 		McChatLine(McSpan("<Alex> gl hf"))
 	}
@@ -348,7 +348,7 @@ fun TitleMockup() = McScene("In game: showTitle and showActionBar, after giveIte
 		classes(DocMockupsStyle.hudCentered)
 		style { bottom(gui(72 - 9)) }
 	}) { McLine("Action bar text") }
-	Div({ classes(DocMockupsStyle.hudBottom) }) { McHotbar(listOf("netherite_sword", "diamond")) }
+	Div({ classes(McUiStyle.hudBottom) }) { McHotbar(listOf("netherite_sword", "diamond")) }
 }
 
 @Composable
@@ -357,7 +357,7 @@ fun InventoryManagerMockup() = McScene("In game: taking the star out of the firs
 		classes(DocMockupsStyle.hudCentered)
 		style { bottom(gui(72 - 9)) }
 	}) { McLine("Stop taking me!", McColor.RED) }
-	Div({ classes(DocMockupsStyle.hudBottom) }) { McHotbar(listOf("nether_star"), enchanted = setOf("nether_star")) }
+	Div({ classes(McUiStyle.hudBottom) }) { McHotbar(listOf("nether_star"), enchanted = setOf("nether_star")) }
 }
 
 object DocMockupsStyle : StyleSheet() {
@@ -524,13 +524,6 @@ object DocMockupsStyle : StyleSheet() {
 		imageRendering(ImageRendering.Pixelated)
 	}
 
-	val hudTop by style {
-		position(Position.Absolute)
-		top(gui(3))
-		left(Left.of(PIXEL_HALF))
-		pixelTranslate((-50).percent)
-	}
-
 	val hudTopRight by style {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
@@ -539,30 +532,10 @@ object DocMockupsStyle : StyleSheet() {
 		top(0.px)
 	}
 
-	val hudRight by style {
-		position(Position.Absolute)
-		right(gui(1))
-		top(Top.of(PIXEL_HALF))
-		pixelTranslate(0.px, (-50).percent)
-	}
-
 	val hudCentered by style {
 		position(Position.Absolute)
 		left(Left.of(PIXEL_HALF))
 		pixelTranslate((-50).percent)
-	}
-
-	val hudBottom by style {
-		bottom(0.px)
-		position(Position.Absolute)
-		left(Left.of(PIXEL_HALF))
-		pixelTranslate((-50).percent)
-	}
-
-	val hudChat by style {
-		bottom(gui(8))
-		left(0.px)
-		position(Position.Absolute)
 	}
 
 	val screenControls by style {

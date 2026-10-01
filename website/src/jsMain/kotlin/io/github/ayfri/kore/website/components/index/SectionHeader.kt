@@ -10,22 +10,33 @@ import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.H2
 import org.jetbrains.compose.web.dom.Text
 
-/** The title block every homepage section opens with, so they all read as one page. */
+/** The title block every homepage section opens with, so they all read as one page. The home page injects [HomeSectionStyle]. */
 @Composable
 fun SectionHeader(title: String, subtitle: String? = null, centered: Boolean = true, content: @Composable () -> Unit = {}) {
-	Style(SectionHeaderStyle)
-
 	Div({
-		classes(SectionHeaderStyle.header)
-		if (centered) classes(SectionHeaderStyle.centered)
+		classes(HomeSectionStyle.header)
+		if (centered) classes(HomeSectionStyle.centered)
 	}) {
-		H2({ classes(SectionHeaderStyle.title) }) { Text(title) }
-		subtitle?.let { P(it, SectionHeaderStyle.subtitle) }
+		H2({ classes(HomeSectionStyle.title) }) { Text(title) }
+		subtitle?.let { P(it, HomeSectionStyle.subtitle) }
 		content()
 	}
 }
 
-object SectionHeaderStyle : StyleSheet() {
+object HomeSectionStyle : StyleSheet() {
+	/** The frame of every homepage section after the hero. */
+	val section by style {
+		boxSizing(BoxSizing.BorderBox)
+		marginX(auto)
+		maxWidth(80.cssRem)
+		padding(4.5.cssRem, 5.vw)
+		width(100.percent)
+
+		smMax(self) {
+			padding(3.cssRem, 1.1.cssRem)
+		}
+	}
+
 	val header by style {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)

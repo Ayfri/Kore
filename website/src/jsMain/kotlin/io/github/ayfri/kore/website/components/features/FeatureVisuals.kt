@@ -16,11 +16,14 @@ import io.github.ayfri.kore.website.components.common.CodeBlock
 import io.github.ayfri.kore.website.components.common.mcTexture
 import io.github.ayfri.kore.website.components.mc.*
 import io.github.ayfri.kore.website.utils.Span
+import io.github.ayfri.kore.website.utils.alpha
 import io.github.ayfri.kore.website.utils.animationDelay
 import io.github.ayfri.kore.website.utils.highlightCodeIn
 import io.github.ayfri.kore.website.utils.inset
 import io.github.ayfri.kore.website.utils.lineHeight
 import io.github.ayfri.kore.website.utils.marginLeft
+import io.github.ayfri.kore.website.utils.monoFont
+import io.github.ayfri.kore.website.utils.monoLabel
 import io.github.ayfri.kore.website.utils.smMax
 import io.github.ayfri.kore.website.utils.transition
 import kotlinx.coroutines.delay
@@ -215,7 +218,7 @@ fun ChatScene() {
 			classes(McUiStyle.world, FeatureVisualsStyle.chatScreen)
 			style { backgroundImage(mcPanorama(1)) }
 		}) {
-			McChat(FeatureVisualsStyle.hudChat) {
+			McChat(McUiStyle.hudChat) {
 				McChatLine("<Alex> ready?")
 				McChatLine("[Join the arena]", McColor.AQUA, underlined = hovered) {
 					classes(FeatureVisualsStyle.chatLink)
@@ -608,7 +611,7 @@ fun GameplayScene() {
 				if (night) classes(FeatureVisualsStyle.nightOverlayVisible)
 			})
 
-			Div({ classes(FeatureVisualsStyle.hudTop) }) {
+			Div({ classes(McUiStyle.hudTop) }) {
 				when (phase) {
 					GamePhase.LOBBY -> McBossBar("Waiting for players 3/8", McBossBarColor.YELLOW, 3 / 8.0)
 					GamePhase.PLAYING -> McBossBar("Round ends in 0:${secondsLeft.toString().padStart(2, '0')}", McBossBarColor.RED, remaining, notches = 10)
@@ -616,12 +619,9 @@ fun GameplayScene() {
 				}
 			}
 
-			title?.let {
-				Div({ classes(FeatureVisualsStyle.hudTitle) }) { McLine(it.title, it.color, scale = 4) }
-				Div({ classes(FeatureVisualsStyle.hudSubtitle) }) { McLine(it.subtitle, scale = 2) }
-			}
+			title?.let { McTitle(it.title, it.color, it.subtitle) }
 
-			Div({ classes(FeatureVisualsStyle.hudSidebar) }) {
+			Div({ classes(McUiStyle.hudRight) }) {
 				McSidebar(
 					"SKY WARS", McColor.GOLD, listOf(
 						McSidebarLine("State", value = phase.name.lowercase()),
@@ -634,11 +634,11 @@ fun GameplayScene() {
 				)
 			}
 
-			McChat(FeatureVisualsStyle.hudChat, FeatureVisualsStyle.aboveHotbar) {
+			McChat(McUiStyle.hudChat, McUiStyle.aboveHotbar) {
 				chat.takeLast(2).forEach { McChatLine(it.text, it.color) }
 			}
 
-			Div({ classes(FeatureVisualsStyle.hudHotbar) }) {
+			Div({ classes(McUiStyle.hudBottom) }) {
 				McHotbar(
 					if (phase == GamePhase.LOBBY) LOBBY_HOTBAR else KIT_HOTBAR,
 					enchanted = setOf("nether_star"),
@@ -775,7 +775,7 @@ fun RaycastScene() {
 			classes(FeatureVisualsStyle.block)
 			if (reached == steps) classes(FeatureVisualsStyle.blockHit)
 		})
-		if (reached == steps) McChat(FeatureVisualsStyle.hudChat) { McChatLine("Target acquired!") }
+		if (reached == steps) McChat(McUiStyle.hudChat) { McChatLine("Target acquired!") }
 		Span("raycast { step = 0.25; onHitBlock { ... } }", FeatureVisualsStyle.sceneLabel, FeatureVisualsStyle.labelLeft)
 	}
 }
@@ -843,8 +843,6 @@ fun TerminalScene() {
 }
 
 object FeatureVisualsStyle : StyleSheet() {
-	private const val MONO = "JetBrains Mono"
-
 	val window by style {
 		backgroundColor(LandingVars.Pane.value())
 		border(1.px, LineStyle.Solid, LandingVars.Border.value())
@@ -879,9 +877,9 @@ object FeatureVisualsStyle : StyleSheet() {
 
 	val windowTitle by style {
 		color(LandingVars.Muted.value())
-		fontFamily(MONO, "monospace")
 		fontSize(0.78.cssRem)
 		marginLeft(0.5.cssRem)
+		monoFont()
 	}
 
 	val windowFooter by style {
@@ -895,16 +893,13 @@ object FeatureVisualsStyle : StyleSheet() {
 
 		"code" style {
 			color(LandingVars.AccentStrong.value())
-			fontFamily(MONO, "monospace")
+			monoFont()
 		}
 	}
 
 	val footerLabel by style {
 		color(LandingVars.Muted.value())
-		fontFamily(MONO, "monospace")
-		fontSize(0.72.cssRem)
-		letterSpacing(1.px)
-		textTransform(TextTransform.Uppercase)
+		monoLabel(0.72.cssRem)
 	}
 
 	val outputHeader by style {
@@ -919,15 +914,15 @@ object FeatureVisualsStyle : StyleSheet() {
 
 	val outputPath by style {
 		color(LandingVars.Text.value())
-		fontFamily(MONO, "monospace")
 		fontSize(0.78.cssRem)
+		monoFont()
 		overflowWrap(OverflowWrap.Anywhere)
 	}
 
 	val editor by style {
-		fontFamily(MONO, "monospace")
 		fontSize(0.88.cssRem)
 		lineHeight(1.9)
+		monoFont()
 		padding(1.cssRem, 1.2.cssRem)
 		position(Position.Relative)
 	}
@@ -980,7 +975,7 @@ object FeatureVisualsStyle : StyleSheet() {
 	}
 
 	val suggestionActive by style {
-		backgroundColor(rgba(8, 182, 214, 0.22))
+		backgroundColor(LandingVars.Accent.value().alpha(0.2))
 	}
 
 	val enumBadge by style {
@@ -1046,16 +1041,16 @@ object FeatureVisualsStyle : StyleSheet() {
 
 	val sceneHint by style {
 		color(Color("#10213a"))
-		fontFamily(MONO, "monospace")
 		fontSize(0.72.cssRem)
+		monoFont()
 		position(Position.Absolute)
 		right(0.8.cssRem)
 		top(0.6.cssRem)
 	}
 
 	val tree by style {
-		fontFamily(MONO, "monospace")
 		fontSize(0.85.cssRem)
+		monoFont()
 		padding(0.7.cssRem, 0.6.cssRem)
 	}
 
@@ -1079,12 +1074,12 @@ object FeatureVisualsStyle : StyleSheet() {
 		transition(0.15.s, "background-color")
 
 		hover(self) style {
-			backgroundColor(rgba(8, 182, 214, 0.12))
+			backgroundColor(LandingVars.Accent.value().alpha(0.12))
 		}
 	}
 
 	val treeOpen by style {
-		border(1.px, LineStyle.Solid, Color("rgba(8, 182, 214, 0.45)"))
+		border(1.px, LineStyle.Solid, LandingVars.Accent.value().alpha(0.5))
 		borderRadius(999.px)
 		color(LandingVars.AccentStrong.value())
 		fontSize(0.65.cssRem)
@@ -1150,8 +1145,8 @@ object FeatureVisualsStyle : StyleSheet() {
 
 	val knobLabel by style {
 		color(LandingVars.Muted.value())
-		fontFamily(MONO, "monospace")
 		fontSize(0.75.cssRem)
+		monoFont()
 	}
 
 	val knobOptions by style {
@@ -1258,53 +1253,6 @@ object FeatureVisualsStyle : StyleSheet() {
 		opacity(1)
 	}
 
-	/** HUD placements follow the game: boss bars from the top, titles around the center, sidebar on the right edge. */
-	val hudTop by style {
-		position(Position.Absolute)
-		top(gui(3))
-		left(Left.of(PIXEL_HALF))
-		pixelTranslate((-50).percent)
-	}
-
-	val hudTitle by style {
-		position(Position.Absolute)
-		left(Left.of(PIXEL_HALF))
-		top(Top.of(PIXEL_HALF))
-		pixelTranslate((-50).percent, gui(-40))
-	}
-
-	val hudSubtitle by style {
-		position(Position.Absolute)
-		left(Left.of(PIXEL_HALF))
-		top(Top.of(PIXEL_HALF))
-		pixelTranslate((-50).percent, gui(10))
-	}
-
-	val hudSidebar by style {
-		position(Position.Absolute)
-		right(gui(1))
-		top(Top.of(PIXEL_HALF))
-		pixelTranslate(0.px, (-50).percent)
-	}
-
-	val hudChat by style {
-		bottom(gui(8))
-		left(0.px)
-		position(Position.Absolute)
-	}
-
-	/** The game keeps the chat 40 px above the bottom, clear of the hotbar. */
-	val aboveHotbar by style {
-		bottom(gui(40))
-	}
-
-	val hudHotbar by style {
-		bottom(0.px)
-		position(Position.Absolute)
-		left(Left.of(PIXEL_HALF))
-		pixelTranslate((-50).percent)
-	}
-
 	val stateMachine by style {
 		alignItems(AlignItems.Center)
 		display(DisplayStyle.Flex)
@@ -1329,8 +1277,8 @@ object FeatureVisualsStyle : StyleSheet() {
 		borderRadius(999.px)
 		color(LandingVars.Muted.value())
 		cursor(Cursor.Pointer)
-		fontFamily(MONO, "monospace")
 		fontSize(0.8.cssRem)
+		monoFont()
 		padding(0.3.cssRem, 0.8.cssRem)
 	}
 
@@ -1410,8 +1358,8 @@ object FeatureVisualsStyle : StyleSheet() {
 		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(0.4.cssRem)
 		color(LandingVars.AccentStrong.value())
-		fontFamily(MONO, "monospace")
 		fontSize(0.72.cssRem)
+		monoFont()
 		padding(0.2.cssRem, 0.5.cssRem)
 		position(Position.Absolute)
 		top(0.7.cssRem)
@@ -1423,10 +1371,10 @@ object FeatureVisualsStyle : StyleSheet() {
 
 	val terminal by style {
 		color(LandingVars.Text.value())
-		fontFamily(MONO, "monospace")
 		fontSize(0.85.cssRem)
 		lineHeight(1.8)
 		minHeight(12.5.cssRem)
+		monoFont()
 		padding(1.cssRem, 1.2.cssRem)
 		whiteSpace(WhiteSpace.PreWrap)
 	}
@@ -1456,8 +1404,8 @@ object FeatureVisualsStyle : StyleSheet() {
 		border(1.px, LineStyle.Solid, Color("rgba(254, 201, 7, 0.35)"))
 		borderRadius(999.px)
 		color(LandingVars.Text.value())
-		fontFamily(MONO, "monospace")
 		fontSize(0.8.cssRem)
+		monoFont()
 		padding(0.3.cssRem, 0.8.cssRem)
 	}
 }

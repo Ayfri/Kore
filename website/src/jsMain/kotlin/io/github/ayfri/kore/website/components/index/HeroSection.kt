@@ -4,6 +4,8 @@ import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.core.AppGlobals
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideArrowRight
+import io.github.ayfri.kore.website.CodeThemeStyle
+import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.components.common.*
 import io.github.ayfri.kore.website.components.features.*
@@ -134,25 +136,25 @@ private val bossChestLoot = mapOf(3 to "iron_ingot", 12 to "golden_apple", 23 to
 private val heroExamples = listOf(
 	HeroExample("Chat", "Welcome.kt", welcomeShowcase) {
 		WorldPreview(1) {
-			McChat(FeatureVisualsStyle.hudChat, FeatureVisualsStyle.aboveHotbar) { McChatLine("Welcome!", McColor.GOLD) }
-			Div({ classes(FeatureVisualsStyle.hudHotbar) }) { McHotbar(listOf("iron_sword")) }
+			McChat(McUiStyle.hudChat, McUiStyle.aboveHotbar) { McChatLine("Welcome!", McColor.GOLD) }
+			Div({ classes(McUiStyle.hudBottom) }) { McHotbar(listOf("iron_sword")) }
 		}
 	},
 	HeroExample("Titles", "Victory.kt", victoryShowcase) {
 		WorldPreview(3) {
 			McTitle("Victory!", McColor.GOLD)
-			Div({ classes(FeatureVisualsStyle.hudHotbar) }) { McHotbar(listOf("iron_sword")) }
+			Div({ classes(McUiStyle.hudBottom) }) { McHotbar(listOf("iron_sword")) }
 		}
 	},
 	HeroExample("Boss bars", "BossFight.kt", bossBarShowcase) {
 		WorldPreview(2) {
-			Div({ classes(HeroSectionStyle.bossBar) }) { McBossBar("Wither Storm", McBossBarColor.PURPLE, 150 / 200.0, notches = 10) }
-			Div({ classes(FeatureVisualsStyle.hudHotbar) }) { McHotbar(listOf("iron_sword")) }
+			Div({ classes(McUiStyle.hudTop) }) { McBossBar("Wither Storm", McBossBarColor.PURPLE, 150 / 200.0, notches = 10) }
+			Div({ classes(McUiStyle.hudBottom) }) { McHotbar(listOf("iron_sword")) }
 		}
 	},
 	HeroExample("Scoreboards", "Scores.kt", scoreboardShowcase) {
 		WorldPreview(0) {
-			Div({ classes(HeroSectionStyle.sidebar) }) {
+			Div({ classes(McUiStyle.hudRight) }) {
 				McSidebar(
 					"kills", McColor.WHITE, listOf(
 						McSidebarLine("Steve", value = "7", valueColor = McColor.RED),
@@ -161,7 +163,7 @@ private val heroExamples = listOf(
 					)
 				)
 			}
-			Div({ classes(FeatureVisualsStyle.hudHotbar) }) { McHotbar(listOf("iron_sword")) }
+			Div({ classes(McUiStyle.hudBottom) }) { McHotbar(listOf("iron_sword")) }
 		}
 	},
 	HeroExample("Recipes", "Recipes.kt", recipeShowcase) {
@@ -191,14 +193,13 @@ fun HeroSection() {
 
 	Section({ classes(HeroSectionStyle.hero) }) {
 		DomA("/updates", { classes(HeroSectionStyle.announcement) }) {
-			Span("New", HeroSectionStyle.announcementBadge)
 			Text("Kore ${AppGlobals.getValue("projectVersion")} supports Minecraft ${AppGlobals.getValue("minecraftVersion")}")
 			LucideArrowRight()
 		}
 
 		H1({ classes(HeroSectionStyle.title) }) {
 			Text("Minecraft datapacks, written in ")
-			Span("Kotlin", FeatureSectionsStyle.heroTitleAccent)
+			Span("Kotlin", HeroSectionStyle.titleAccent)
 		}
 
 		P(
@@ -233,28 +234,24 @@ private fun HeroShowcase() {
 	highlightCodeIn(SHOWCASE_ID, example)
 
 	Div({ classes(HeroSectionStyle.showcase) }) {
-		Div({ classes(HeroSectionStyle.tabs) }) {
-			heroExamples.forEachIndexed { index, entry ->
-				Button({
-					classes(HeroSectionStyle.tab)
-					if (index == example) classes(HeroSectionStyle.tabActive)
-					onClick {
-						example = index
-						autoplay = false
-					}
-				}) {
-					Text(entry.name)
-					if (index == example && autoplay) Span({ classes(HeroSectionStyle.tabProgress) })
-				}
-			}
-		}
+		Segmented(
+			heroExamples.indices.toList(),
+			example,
+			{
+				example = it
+				autoplay = false
+			},
+			{ heroExamples[it].name },
+			SegmentedStyle.flat,
+			HeroSectionStyle.tabs,
+		) { if (it == example && autoplay) Span({ classes(HeroSectionStyle.tabProgress) }) }
 
 		key(example) {
 			Div({
 				id(SHOWCASE_ID)
-				classes(HeroSectionStyle.frame, FeatureSectionsStyle.sceneBody)
+				classes(HeroSectionStyle.frame)
 			}) {
-				Div({ classes(HeroSectionStyle.codePane) }) {
+				Div({ classes(CodeThemeStyle.bare, HeroSectionStyle.codePane) }) {
 					Span(current.file, HeroSectionStyle.paneTitle)
 					CodeBlock(current.showcase.kotlin, "kotlin")
 					Div({ classes(HeroSectionStyle.paneFooter) }) {
@@ -296,32 +293,18 @@ object HeroSectionStyle : StyleSheet() {
 
 	val announcement by style {
 		alignItems(AlignItems.Center)
-		backgroundColor(rgba(21, 28, 38, 0.7))
-		border(1.px, LineStyle.Solid, LandingVars.Border.value())
-		borderRadius(999.px)
 		color(LandingVars.Muted.value())
 		display(DisplayStyle.Flex)
 		fontSize(0.88.cssRem)
-		gap(0.6.cssRem)
+		gap(0.4.cssRem)
 		marginBottom(1.8.cssRem)
-		padding(0.3.cssRem, 0.9.cssRem, 0.3.cssRem, 0.3.cssRem)
-		transition(0.2.s, "border-color", "color")
+		transition(0.2.s, "color")
 
 		"svg" style { fontSize(0.9.cssRem) }
 
 		hover(self) style {
-			borderColor(Color("rgba(8, 182, 214, 0.5)"))
 			color(LandingVars.Text.value())
 		}
-	}
-
-	val announcementBadge by style {
-		backgroundColor(rgba(8, 182, 214, 0.18))
-		borderRadius(999.px)
-		color(LandingVars.AccentStrong.value())
-		fontSize(0.78.cssRem)
-		fontWeight(600)
-		padding(0.15.cssRem, 0.6.cssRem)
 	}
 
 	val title by style {
@@ -340,6 +323,10 @@ object HeroSectionStyle : StyleSheet() {
 		xsMax(self) {
 			fontSize(2.2.cssRem)
 		}
+	}
+
+	val titleAccent by style {
+		color(LandingVars.Accent.value())
 	}
 
 	val lead by style {
@@ -377,34 +364,7 @@ object HeroSectionStyle : StyleSheet() {
 	}
 
 	val tabs by style {
-		display(DisplayStyle.Flex)
-		flexWrap(FlexWrap.Wrap)
-		gap(0.3.cssRem)
 		justifyContent(JustifyContent.Center)
-	}
-
-	val tab by style {
-		backgroundColor(Color.transparent)
-		border(0.px)
-		borderRadius(0.5.cssRem)
-		color(LandingVars.Muted.value())
-		cursor(Cursor.Pointer)
-		fontFamily("inherit")
-		fontSize(0.92.cssRem)
-		fontWeight(500)
-		overflow(Overflow.Hidden)
-		padding(0.5.cssRem, 1.cssRem)
-		position(Position.Relative)
-		transition(0.2.s, "background-color", "color")
-
-		hover(self) style {
-			color(LandingVars.Text.value())
-		}
-	}
-
-	val tabActive by style {
-		backgroundColor(rgba(255, 255, 255, 0.06))
-		color(LandingVars.Text.value())
 	}
 
 	@OptIn(ExperimentalComposeWebApi::class)
@@ -429,6 +389,10 @@ object HeroSectionStyle : StyleSheet() {
 	}
 
 	val frame by style {
+		animation(GlobalStyle.rise) {
+			duration(0.35.s)
+			timingFunction(AnimationTimingFunction.EaseOut)
+		}
 		backgroundColor(LandingVars.Pane.value())
 		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(1.1.cssRem)
@@ -451,23 +415,15 @@ object HeroSectionStyle : StyleSheet() {
 		flexDirection(FlexDirection.Column)
 		minWidth(0.px)
 
-		// Prism's language label and copy button are noise in a showcase, the pane already frames the code.
-		"div.code-toolbar > .toolbar" style { display(DisplayStyle.None) }
-
-		"div.code-toolbar" style {
-			backgroundColor(Color.transparent)
-			border(0.px)
-			borderRadius(0.px)
-			flexGrow(1)
-		}
+		"div.code-toolbar" style { flexGrow(1) }
 
 		"pre" style {
 			backgroundColor(Color.transparent)
+			boxSizing(BoxSizing.BorderBox)
 			fontSize(0.82.cssRem)
 			height(100.percent)
 			margin(0.px)
 			overflowX(Overflow.Auto)
-			boxSizing(BoxSizing.BorderBox)
 		}
 
 		lgMax(self) {
@@ -496,7 +452,7 @@ object HeroSectionStyle : StyleSheet() {
 
 		"code" style {
 			color(LandingVars.Text.value())
-			fontFamily("JetBrains Mono", "monospace")
+			monoFont()
 		}
 	}
 
@@ -520,21 +476,6 @@ object HeroSectionStyle : StyleSheet() {
 		alignItems(AlignItems.Center)
 		display(DisplayStyle.Flex)
 		justifyContent(JustifyContent.Center)
-	}
-
-	/** The game centers the sidebar vertically on the right edge of the screen. */
-	val sidebar by style {
-		position(Position.Absolute)
-		right(0.px)
-		top(Top.of(PIXEL_HALF))
-		pixelTranslate(0.px, (-50).percent)
-	}
-
-	val bossBar by style {
-		position(Position.Absolute)
-		top(gui(2))
-		left(Left.of(PIXEL_HALF))
-		pixelTranslate((-50).percent)
 	}
 
 	val toast by style {

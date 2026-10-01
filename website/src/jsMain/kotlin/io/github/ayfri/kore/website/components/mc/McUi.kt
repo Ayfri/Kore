@@ -738,4 +738,37 @@ object McUiStyle : StyleSheet() {
 		mcBackground("gui/sprites/hud/hotbar_selection", size = BackgroundSize.of(100.percent))
 		imageRendering(ImageRendering.Pixelated)
 	}
+
+	/** HUD placements follow the game, inside a positioned [world]: boss bars from the top, the sidebar centered on the right edge. */
+	val hudTop by style {
+		left(Left.of(PIXEL_HALF))
+		position(Position.Absolute)
+		top(gui(3))
+		pixelTranslate((-50).percent)
+	}
+
+	val hudRight by style {
+		position(Position.Absolute)
+		right(gui(1))
+		top(Top.of(PIXEL_HALF))
+		pixelTranslate(0.px, (-50).percent)
+	}
+
+	val hudBottom by style {
+		bottom(0.px)
+		left(Left.of(PIXEL_HALF))
+		position(Position.Absolute)
+		pixelTranslate((-50).percent)
+	}
+
+	val hudChat by style {
+		bottom(gui(8))
+		left(0.px)
+		position(Position.Absolute)
+	}
+
+	/** The game keeps the chat 40 px above the bottom, clear of the hotbar. */
+	val aboveHotbar by style {
+		bottom(gui(40))
+	}
 }

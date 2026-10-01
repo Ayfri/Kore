@@ -6,8 +6,7 @@ import com.varabyte.kobweb.silk.components.icons.lucide.LucideChevronRight
 import io.github.ayfri.kore.website.DISCORD_LINK
 import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.components.common.Markdown
-import io.github.ayfri.kore.website.components.features.FeatureSectionsStyle
-import io.github.ayfri.kore.website.utils.borderLeftColor
+import io.github.ayfri.kore.website.utils.alpha
 import io.github.ayfri.kore.website.utils.lineHeight
 import io.github.ayfri.kore.website.utils.marginX
 import io.github.ayfri.kore.website.utils.mdMax
@@ -64,7 +63,7 @@ fun FaqSection() {
 	var openedQuestionIndex by remember { mutableStateOf(0) }
 
 	Section({
-		classes(FeatureSectionsStyle.section, FaqSectionStyle.faqContainer)
+		classes(HomeSectionStyle.section, FaqSectionStyle.faqContainer)
 	}) {
 		SectionHeader("Questions people ask first") {
 			Markdown("Something else on your mind? Ask on [Discord]($DISCORD_LINK) or browse the [docs](/docs/home).", FaqSectionStyle.faqHint)
@@ -144,15 +143,12 @@ object FaqSectionStyle : StyleSheet() {
 	val faqItem by style {
 		borderBottom(1.px, LineStyle.Solid, LandingVars.Border.value())
 		overflow(Overflow.Hidden)
-		padding(1.1.cssRem, 0.4.cssRem)
-		borderLeft(2.px, LineStyle.Solid, Color.transparent)
-		transition(0.25.s, "border-color", "background-color", "padding")
+		padding(1.1.cssRem, 1.cssRem)
+		transition(0.25.s, "background-color")
 	}
 
 	val faqItemOpened by style {
-		backgroundColor(rgba(8, 182, 214, 0.05))
-		paddingLeft(1.cssRem)
-		borderLeftColor(LandingVars.AccentStrong.value())
+		backgroundColor(LandingVars.Accent.value().alpha(0.07))
 	}
 
 	val questionButton by style {

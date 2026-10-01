@@ -3,14 +3,10 @@ package io.github.ayfri.kore.website.components.index
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.core.AppGlobals
+import io.github.ayfri.kore.website.CodeThemeStyle
 import io.github.ayfri.kore.website.LandingVars
-import io.github.ayfri.kore.website.components.common.BrandIcon
-import io.github.ayfri.kore.website.components.common.CodeBlock
-import io.github.ayfri.kore.website.components.common.Markdown
-import io.github.ayfri.kore.website.components.features.FeatureSectionsStyle
+import io.github.ayfri.kore.website.components.common.*
 import io.github.ayfri.kore.website.utils.*
-import org.jetbrains.compose.web.attributes.ATarget
-import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
@@ -88,7 +84,7 @@ fun GetStartedSection() {
 
 	Section({
 		id("get-started")
-		classes(FeatureSectionsStyle.section)
+		classes(HomeSectionStyle.section)
 	}) {
 		SectionHeader(
 			"Up and running in a few minutes",
@@ -106,21 +102,15 @@ fun GetStartedSection() {
 
 		Div({ classes(GetStartedSectionStyle.install) }) {
 			Div({ classes(GetStartedSectionStyle.installBar) }) {
-				InstallationMethod.entries.forEach { entry ->
-					Button({
-						classes(HeroSectionStyle.tab)
-						if (entry == method) classes(HeroSectionStyle.tabActive)
-						onClick { method = entry }
-					}) { Text(entry.label) }
-				}
+				Segmented(InstallationMethod.entries, method, { method = it }, { it.label }, SegmentedStyle.flat)
 			}
 
 			Div({
 				id(INSTALL_CODE_ID)
-				classes(GetStartedSectionStyle.installCode)
+				classes(CodeThemeStyle.bare, GetStartedSectionStyle.installCode)
 			}) {
 				key(method) {
-					Span(method.file, HeroSectionStyle.paneTitle)
+					Span(method.file, GetStartedSectionStyle.fileName)
 					CodeBlock(method.code(version), method.language)
 				}
 			}
@@ -131,7 +121,7 @@ fun GetStartedSection() {
 			tools.forEach { tool ->
 				DomA(tool.link, {
 					classes(GetStartedSectionStyle.tool)
-					if (tool.link.startsWith("http")) target(ATarget.Blank)
+					externalTarget(tool.link)
 				}) {
 					BrandIcon(tool.icon)
 					Text(tool.name)
@@ -160,9 +150,9 @@ object GetStartedSectionStyle : StyleSheet() {
 		"li::before" style {
 			color(LandingVars.Accent.value())
 			display(DisplayStyle.Block)
-			fontFamily("JetBrains Mono", "monospace")
 			fontSize(0.85.cssRem)
 			marginBottom(0.6.cssRem)
+			monoFont()
 			content(Content.list(Content.of("0"), counter("step")))
 		}
 
@@ -197,23 +187,19 @@ object GetStartedSectionStyle : StyleSheet() {
 
 	val installBar by style {
 		borderBottom(1.px, LineStyle.Solid, LandingVars.Border.value())
-		display(DisplayStyle.Flex)
-		flexWrap(FlexWrap.Wrap)
-		gap(0.3.cssRem)
 		padding(0.5.cssRem)
+	}
+
+	val fileName by style {
+		borderBottom(1.px, LineStyle.Solid, LandingVars.Border.value())
+		color(LandingVars.Muted.value())
+		fontSize(0.82.cssRem)
+		padding(0.7.cssRem, 1.1.cssRem)
 	}
 
 	val installCode by style {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
-
-		"div.code-toolbar > .toolbar" style { display(DisplayStyle.None) }
-
-		"div.code-toolbar" style {
-			backgroundColor(Color.transparent)
-			border(0.px)
-			borderRadius(0.px)
-		}
 
 		"pre" style {
 			backgroundColor(Color.transparent)

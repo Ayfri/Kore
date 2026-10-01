@@ -7,7 +7,6 @@ import com.varabyte.kobweb.silk.components.icons.lucide.LucidePackageCheck
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideRepeat
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideShieldCheck
 import io.github.ayfri.kore.website.LandingVars
-import io.github.ayfri.kore.website.components.features.FeatureSectionsStyle
 import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
@@ -36,7 +35,7 @@ private val benefits = listOf(
 fun IntroSection() {
 	Style(IntroSectionStyle)
 
-	Section({ classes(FeatureSectionsStyle.section) }) {
+	Section({ classes(HomeSectionStyle.section) }) {
 		SectionHeader(
 			"Datapacks are code. Write them like code.",
 			"A datapack is the folder of commands and JSON files Minecraft loads to add recipes, loot, advancements, minigames or whole new worlds, no mod required. Kore lets you build one with a real programming language instead of by hand.",
@@ -92,7 +91,7 @@ object IntroSectionStyle : StyleSheet() {
 
 	val icon by style {
 		alignItems(AlignItems.Center)
-		backgroundColor(rgba(8, 182, 214, 0.12))
+		backgroundColor(LandingVars.Accent.value().alpha(0.12))
 		borderRadius(0.6.cssRem)
 		color(LandingVars.AccentStrong.value())
 		display(DisplayStyle.Flex)

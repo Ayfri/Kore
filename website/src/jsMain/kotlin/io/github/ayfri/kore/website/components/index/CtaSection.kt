@@ -12,8 +12,6 @@ import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.GITHUB_LINK
 import io.github.ayfri.kore.website.components.common.*
 import io.github.ayfri.kore.website.utils.*
-import org.jetbrains.compose.web.attributes.ATarget
-import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
@@ -24,7 +22,7 @@ import org.jetbrains.compose.web.dom.A as DomA
 private class CommunityLink(val name: String, val link: String, val icon: @Composable () -> Unit)
 
 private val communityLinks = listOf(
-	CommunityLink("Discord", DISCORD_LINK) { Img("/discord-mark.svg", "") { classes(CtaSectionStyle.discordMark) } },
+	CommunityLink("Discord", DISCORD_LINK) { BrandIcon("discord") },
 	CommunityLink("GitHub", GITHUB_LINK) { BrandIcon("github") },
 	CommunityLink("Examples", "https://github.com/Kore-Minecraft/examples") { LucideFlaskConical() },
 	CommunityLink("Playground", "/playground") { LucideSquareCode() },
@@ -40,16 +38,13 @@ fun CtaSection() {
 
 		P("The getting started guide takes you from an empty folder to a pack running in your world. Already have a datapack? Port it one piece at a time, the rest keeps working next to it.")
 
-		Div({ classes(CtaSectionStyle.actions) }) {
-			LinkButton("Get started", "/docs/getting-started", color = ButtonColor.PRIMARY)
-			LinkButton("Migrate an existing pack", "/docs/guides/from-datapacks-to-kore", variant = ButtonVariant.OUTLINE)
-		}
+		Div({ classes(CtaSectionStyle.actions) }) { CtaActions() }
 
 		Nav({ classes(CtaSectionStyle.community) }) {
 			communityLinks.forEach { link ->
 				DomA(link.link, {
 					classes(CtaSectionStyle.communityLink)
-					if (link.link.startsWith("http")) target(ATarget.Blank)
+					externalTarget(link.link)
 				}) {
 					link.icon()
 					Text(link.name)
@@ -57,6 +52,14 @@ fun CtaSection() {
 			}
 		}
 	}
+}
+
+/** The buttons closing the home and Features pages, [playground] adding the playground between the two guides. */
+@Composable
+fun CtaActions(playground: Boolean = false) {
+	LinkButton("Get started", "/docs/getting-started", color = ButtonColor.PRIMARY)
+	if (playground) LinkButton("Open the playground", "/playground", variant = ButtonVariant.OUTLINE)
+	LinkButton("Migrate an existing pack", "/docs/guides/from-datapacks-to-kore", variant = ButtonVariant.OUTLINE)
 }
 
 object CtaSectionStyle : StyleSheet() {
@@ -79,7 +82,7 @@ object CtaSectionStyle : StyleSheet() {
 				Background.of(
 					BackgroundImage.of(
 						radialGradient(RadialGradient.Shape.Ellipse(), CSSPosition(50.percent, 0.percent)) {
-							add(rgba(8, 182, 214, 0.16), 0.percent)
+							add(LandingVars.Accent.value().alpha(0.12), 0.percent)
 							add(Color.transparent, 60.percent)
 						}
 					)
@@ -138,11 +141,5 @@ object CtaSectionStyle : StyleSheet() {
 		hover(self) style {
 			color(LandingVars.Text.value())
 		}
-	}
-
-	val discordMark by style {
-		height(1.em)
-		opacity(0.85)
-		width(1.em)
 	}
 }

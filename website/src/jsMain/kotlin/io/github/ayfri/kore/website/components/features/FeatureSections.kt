@@ -3,6 +3,7 @@ package io.github.ayfri.kore.website.components.features
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.compose.css.AlignSelf
+import com.varabyte.kobweb.browser.dom.observers.IntersectionObserver
 import com.varabyte.kobweb.compose.css.functions.calc
 import com.varabyte.kobweb.compose.css.functions.linearGradient
 import com.varabyte.kobweb.core.AppGlobals
@@ -13,17 +14,17 @@ import com.varabyte.kobweb.silk.components.icons.lucide.LucideTriangleAlert
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.components.common.*
+import io.github.ayfri.kore.website.components.index.CtaActions
 import io.github.ayfri.kore.website.utils.*
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
-import org.jetbrains.compose.web.attributes.ATarget
-import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.*
+import org.w3c.dom.asList
 import org.w3c.dom.events.Event
 import org.jetbrains.compose.web.dom.A as DomA
 
@@ -38,16 +39,27 @@ private val navEntries = buildList {
 /** Distance from the viewport top under which a section counts as the one being read. */
 private const val ACTIVE_SECTION_OFFSET_PX = 160
 
-/** Sticky table of contents highlighting the section being read, a horizontal strip under the xl breakpoint. */
+/**
+ * Sticky table of contents highlighting the section being read, a horizontal strip under the xl breakpoint.
+ * The observer only fires when a block of the page enters or leaves the top [ACTIVE_SECTION_OFFSET_PX] of the viewport,
+ * so section positions are read on those crossings instead of on every scroll event.
+ */
 @Composable
 fun FeaturesNav() {
 	var active by remember { mutableStateOf(navEntries.first().id) }
+	var viewportHeight by remember { mutableStateOf(window.innerHeight) }
 
-	window.onEvents("scroll" to { _: Event ->
-		active = navEntries.lastOrNull {
-			(document.getElementById(it.id)?.getBoundingClientRect()?.top ?: Double.MAX_VALUE) <= ACTIVE_SECTION_OFFSET_PX
-		}?.id ?: navEntries.first().id
-	})
+	window.onEvents("resize" to { _: Event -> viewportHeight = window.innerHeight })
+
+	DisposableEffect(viewportHeight) {
+		val observer = IntersectionObserver(IntersectionObserver.Options(rootMargin = "0px 0px ${ACTIVE_SECTION_OFFSET_PX - viewportHeight}px 0px")) {
+			active = navEntries.lastOrNull {
+				(document.getElementById(it.id)?.getBoundingClientRect()?.top ?: Double.MAX_VALUE) <= ACTIVE_SECTION_OFFSET_PX
+			}?.id ?: navEntries.first().id
+		}
+		document.getElementById(navEntries.first().id)?.parentElement?.children?.asList()?.forEach(observer::observe)
+		onDispose { observer.disconnect() }
+	}
 
 	Nav({ classes(FeatureSectionsStyle.toc) }) {
 		Span("On this page", FeatureSectionsStyle.tocTitle)
@@ -129,9 +141,8 @@ fun CategorySection(category: FeatureCategory) {
 						category.items.forEach { item ->
 							DomA(item.href, {
 								classes(FeatureSectionsStyle.linkRow)
-								if (item.href.startsWith("http")) target(ATarget.Blank)
+								externalTarget(item.href)
 								item.scene?.let { scene ->
-									classes(FeatureSectionsStyle.previewable)
 									if (scenes.size > 1 && scene == active) classes(FeatureSectionsStyle.previewing)
 									onMouseEnter { active = scene }
 									onFocusIn { active = scene }
@@ -173,17 +184,7 @@ fun CategorySection(category: FeatureCategory) {
 					id(stageId)
 					classes(FeatureSectionsStyle.stage)
 				}) {
-					if (scenes.size > 1) {
-						Div({ classes(FeatureSectionsStyle.sceneTabs) }) {
-							scenes.forEachIndexed { index, scene ->
-								Button({
-									classes(FeatureSectionsStyle.sceneTab)
-									if (index == active) classes(FeatureSectionsStyle.sceneTabActive)
-									onClick { active = index }
-								}) { Text(scene.name) }
-							}
-						}
-					}
+					if (scenes.size > 1) Segmented(scenes.indices.toList(), active, { active = it }, { scenes[it].name })
 					key(active) {
 						Div({ classes(FeatureSectionsStyle.sceneBody) }) {
 							scenes[active].content { active = it }
@@ -232,11 +233,7 @@ fun FeaturesCta() {
 			H2 { Text("Try it on your own pack") }
 			P("The getting started guide takes you from an empty folder to a pack running in your world. The playground lets you try Kore in your browser before installing anything.")
 		}
-		Div({ classes(FeatureSectionsStyle.ctaActions) }) {
-			LinkButton("Get started", "/docs/getting-started", color = ButtonColor.PRIMARY)
-			LinkButton("Open the playground", "/playground", variant = ButtonVariant.OUTLINE)
-			LinkButton("Migrate an existing pack", "/docs/guides/from-datapacks-to-kore", variant = ButtonVariant.OUTLINE)
-		}
+		Div({ classes(FeatureSectionsStyle.ctaActions) }) { CtaActions(playground = true) }
 	}
 }
 
@@ -261,65 +258,6 @@ private fun Limit(title: String, description: String) {
 }
 
 object FeatureSectionsStyle : StyleSheet() {
-	private const val MONO = "JetBrains Mono"
-	private const val SANS = "IBM Plex Sans"
-
-	val heroTitleAccent by style {
-		textGradient(GlobalStyle.logoRightColor, GlobalStyle.logoLeftColor)
-	}
-
-	val stats by style {
-		backgroundColor(LandingVars.Border.value())
-		border(1.px, LineStyle.Solid, LandingVars.Border.value())
-		borderRadius(1.2.cssRem)
-		display(DisplayStyle.Grid)
-		gap(1.px)
-		gridTemplateColumns("repeat(4, minmax(0, 1fr))")
-		marginTop(0.8.cssRem)
-		maxWidth(52.cssRem)
-		overflow(Overflow.Hidden)
-		width(100.percent)
-
-		mdMax(self) {
-			gridTemplateColumns("repeat(2, minmax(0, 1fr))")
-		}
-	}
-
-	val stat by style {
-		backgroundColor(LandingVars.Card.value())
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Column)
-		gap(0.2.cssRem)
-		justifyContent(JustifyContent.Center)
-		padding(1.1.cssRem, 0.8.cssRem)
-	}
-
-	val statValue by style {
-		color(LandingVars.AccentStrong.value())
-		fontFamily(MONO, "monospace")
-		fontSize(1.9.cssRem)
-		fontWeight(700)
-		lineHeight(1.2)
-	}
-
-	val statLabel by style {
-		color(LandingVars.Muted.value())
-		fontSize(0.88.cssRem)
-		whiteSpace(WhiteSpace.NoWrap)
-	}
-
-	val section by style {
-		boxSizing(BoxSizing.BorderBox)
-		marginX(auto)
-		maxWidth(80.cssRem)
-		padding(4.5.cssRem, 5.vw)
-		width(100.percent)
-
-		smMax(self) {
-			padding(3.cssRem, 1.1.cssRem)
-		}
-	}
-
 	/** Under the xl breakpoint the table of contents turns into a strip above the content instead of a sidebar. */
 	val layout by style {
 		boxSizing(BoxSizing.BorderBox)
@@ -372,12 +310,9 @@ object FeatureSectionsStyle : StyleSheet() {
 
 	val tocTitle by style {
 		color(LandingVars.Muted.value())
-		fontFamily(MONO, "monospace")
-		fontSize(0.72.cssRem)
-		letterSpacing(1.5.px)
 		marginBottom(0.6.cssRem)
+		monoLabel(0.72.cssRem)
 		paddingLeft(0.7.cssRem)
-		textTransform(TextTransform.Uppercase)
 
 		xlMax(self) {
 			display(DisplayStyle.None)
@@ -403,13 +338,13 @@ object FeatureSectionsStyle : StyleSheet() {
 		}
 
 		hover(self) style {
-			backgroundColor(rgba(8, 182, 214, 0.07))
+			backgroundColor(LandingVars.Accent.value().alpha(0.07))
 			color(LandingVars.Text.value())
 		}
 	}
 
 	val tocLinkActive by style {
-		backgroundColor(rgba(8, 182, 214, 0.14))
+		backgroundColor(LandingVars.Accent.value().alpha(0.12))
 		color(LandingVars.Text.value())
 
 		"svg" style {
@@ -419,9 +354,9 @@ object FeatureSectionsStyle : StyleSheet() {
 
 	val tocCount by style {
 		color(LandingVars.Muted.value())
-		fontFamily(MONO, "monospace")
 		fontSize(0.72.cssRem)
 		marginLeft(autoLength)
+		monoFont()
 	}
 
 	val header by style {
@@ -452,8 +387,8 @@ object FeatureSectionsStyle : StyleSheet() {
 	val version by style {
 		alignSelf(AlignSelf.FlexStart)
 		color(LandingVars.Accent.value())
-		fontFamily(MONO, "monospace")
 		fontSize(0.78.cssRem)
+		monoFont()
 		textDecorationLine(TextDecorationLine.None)
 		transition(0.2.s, "color")
 
@@ -482,11 +417,11 @@ object FeatureSectionsStyle : StyleSheet() {
 		"h2" style {
 			alignItems(AlignItems.Center)
 			display(DisplayStyle.Flex)
-			fontFamily(SANS, "sans-serif")
 			fontSize(1.7.cssRem)
 			gap(0.65.cssRem)
 			letterSpacing((-0.4).px)
 			margin(0.px)
+			sansFont()
 		}
 
 		"h2 svg" style {
@@ -556,16 +491,13 @@ object FeatureSectionsStyle : StyleSheet() {
 
 	val codePanelLabel by style {
 		color(LandingVars.Accent.value())
-		fontFamily(MONO, "monospace")
-		fontSize(0.75.cssRem)
-		letterSpacing(1.5.px)
-		textTransform(TextTransform.Uppercase)
+		monoLabel(0.75.cssRem)
 	}
 
 	val filePath by style {
 		color(LandingVars.Muted.value())
-		fontFamily(MONO, "monospace")
 		fontSize(0.78.cssRem)
+		monoFont()
 		overflowWrap(OverflowWrap.Anywhere)
 	}
 
@@ -631,7 +563,7 @@ object FeatureSectionsStyle : StyleSheet() {
 		transition(0.2.s, "background-color", "padding")
 
 		hover(self) style {
-			backgroundColor(rgba(8, 182, 214, 0.07))
+			backgroundColor(LandingVars.Accent.value().alpha(0.07))
 			color(LandingVars.Text.value())
 			paddingLeft(0.8.cssRem)
 		}
@@ -651,19 +583,18 @@ object FeatureSectionsStyle : StyleSheet() {
 		gap(0.45.cssRem)
 	}
 
-	/** Rows and chips that preview a scene get an accent bar, so it's clear hovering them changes the visual. */
-	val previewable by style {
-		borderLeft(2.px, LineStyle.Solid, Color.transparent)
-	}
-
+	/** The row or chip whose scene the stage shows, tinted so it's clear hovering them changes the visual. */
 	val previewing by style {
-		backgroundColor(rgba(8, 182, 214, 0.08))
-		borderLeftColor(LandingVars.AccentStrong.value())
-		borderColor(Color("rgba(8, 182, 214, 0.6)"))
+		backgroundColor(LandingVars.Accent.value().alpha(0.12))
 	}
 
 	val chipPreviewable by style {
 		borderStyle(LineStyle.Dashed)
+
+		self + className(previewing) style {
+			backgroundColor(LandingVars.Accent.value().alpha(0.12))
+			borderColor(LandingVars.Accent.value().alpha(0.5))
+		}
 	}
 
 	val stage by style {
@@ -672,54 +603,8 @@ object FeatureSectionsStyle : StyleSheet() {
 		gap(0.8.cssRem)
 	}
 
-	val sceneTabs by style {
-		backgroundColor(LandingVars.Card.value())
-		border(1.px, LineStyle.Solid, LandingVars.Border.value())
-		borderRadius(999.px)
-		display(DisplayStyle.Flex)
-		gap(0.25.cssRem)
-		overflowX(Overflow.Auto)
-		padding(0.25.cssRem)
-		alignSelf(AlignSelf.FlexStart)
-		scrollbarWidth(ScrollbarWidth.None)
-		maxWidth(100.percent)
-	}
-
-	val sceneTab by style {
-		backgroundColor(Color.transparent)
-		border(0.px)
-		borderRadius(999.px)
-		color(LandingVars.Muted.value())
-		cursor(Cursor.Pointer)
-		flexShrink(0)
-		fontSize(0.82.cssRem)
-		padding(0.35.cssRem, 0.85.cssRem)
-		transition(0.2.s, "background-color", "color")
-
-		hover(self) style {
-			color(LandingVars.Text.value())
-		}
-	}
-
-	val sceneTabActive by style {
-		backgroundColor(rgba(8, 182, 214, 0.22))
-		color(LandingVars.Text.value())
-	}
-
-	@OptIn(ExperimentalComposeWebApi::class)
-	val sceneIn by keyframes {
-		from {
-			opacity(0)
-			transform { translateY(8.px) }
-		}
-		to {
-			opacity(1)
-			transform { translateY(0.px) }
-		}
-	}
-
 	val sceneBody by style {
-		animation(sceneIn) {
+		animation(GlobalStyle.rise) {
 			duration(0.35.s)
 			timingFunction(AnimationTimingFunction.EaseOut)
 		}
@@ -766,8 +651,8 @@ object FeatureSectionsStyle : StyleSheet() {
 		transition(0.2.s, "border-color", "background-color")
 
 		hover(self) style {
-			backgroundColor(rgba(8, 182, 214, 0.12))
-			borderColor(Color("rgba(8, 182, 214, 0.6)"))
+			backgroundColor(LandingVars.Accent.value().alpha(0.12))
+			borderColor(LandingVars.Accent.value().alpha(0.5))
 			color(LandingVars.Text.value())
 		}
 	}
@@ -793,10 +678,10 @@ object FeatureSectionsStyle : StyleSheet() {
 		}
 
 		"h3" style {
-			fontFamily(SANS, "sans-serif")
 			fontSize(1.1.cssRem)
 			fontWeight(600)
 			margin(0.6.cssRem, 0.px, 0.35.cssRem)
+			sansFont()
 		}
 
 		"p" style {
@@ -818,7 +703,7 @@ object FeatureSectionsStyle : StyleSheet() {
 		alignItems(AlignItems.Center)
 		backgroundImage(
 			linearGradient(120.deg) {
-				add(rgba(8, 182, 214, 0.1), 0.percent)
+				add(LandingVars.Accent.value().alpha(0.12), 0.percent)
 				add(LandingVars.Card.value(), 60.percent)
 			}
 		)

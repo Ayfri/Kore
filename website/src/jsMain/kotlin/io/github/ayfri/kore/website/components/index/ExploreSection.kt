@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideArrowUpRight
 import io.github.ayfri.kore.website.LandingVars
-import io.github.ayfri.kore.website.components.features.FeatureSectionsStyle
+import io.github.ayfri.kore.website.components.common.StatGrid
 import io.github.ayfri.kore.website.components.features.featureCategories
 import io.github.ayfri.kore.website.components.features.featureStats
 import io.github.ayfri.kore.website.utils.*
@@ -18,20 +18,13 @@ import org.jetbrains.compose.web.dom.A as DomA
 fun ExploreSection() {
 	Style(ExploreSectionStyle)
 
-	Section({ classes(FeatureSectionsStyle.section) }) {
+	Section({ classes(HomeSectionStyle.section) }) {
 		SectionHeader(
 			"Covers the whole game, not just commands",
 			"From a single /give to a custom dimension, everything a datapack can hold has a typed API. Pick an area to see it in action.",
 		)
 
-		Div({ classes(FeatureSectionsStyle.stats, ExploreSectionStyle.stats) }) {
-			featureStats.forEach { stat ->
-				Div({ classes(FeatureSectionsStyle.stat) }) {
-					Span(stat.value, FeatureSectionsStyle.statValue)
-					Span(stat.label, FeatureSectionsStyle.statLabel)
-				}
-			}
-		}
+		StatGrid(featureStats, ExploreSectionStyle.stats)
 
 		Div({ classes(ExploreSectionStyle.grid) }) {
 			featureCategories.forEach { category ->
@@ -51,7 +44,9 @@ fun ExploreSection() {
 object ExploreSectionStyle : StyleSheet() {
 	val stats by style {
 		marginBottom(2.cssRem)
+		marginTop(0.8.cssRem)
 		marginX(auto)
+		maxWidth(52.cssRem)
 	}
 
 	/** Tiles share 1 px borders like the stats above, drawn by the grid background showing through the gaps. */

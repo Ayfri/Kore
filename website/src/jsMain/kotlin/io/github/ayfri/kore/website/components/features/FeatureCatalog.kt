@@ -2,6 +2,7 @@ package io.github.ayfri.kore.website.components.features
 
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.silk.components.icons.lucide.*
+import io.github.ayfri.kore.website.components.common.Stat
 
 /** [scene] is the index of the category scene previewed when hovering the item, [logos] are `/icons/<name>.svg` brand icons. */
 data class FeatureItem(
@@ -41,11 +42,6 @@ data class FeatureCategory(
 	val scenes: List<Scene> = emptyList(),
 )
 
-data class FeatureStat(
-	val value: String,
-	val label: String,
-)
-
 data class ShowcaseFile(
 	val path: String,
 	val language: String,
@@ -59,10 +55,10 @@ data class Showcase(
 )
 
 val featureStats = listOf(
-	FeatureStat("65+", "typed commands"),
-	FeatureStat("50+", "JSON resource types"),
-	FeatureStat("80+", "generated registries"),
-	FeatureStat("4", "mod loaders to export to"),
+	Stat("65+", "typed commands"),
+	Stat("50+", "JSON resource types"),
+	Stat("80+", "generated registries"),
+	Stat("4", "mod loaders to export to"),
 )
 
 val showcases = listOf(
