@@ -5,7 +5,7 @@ nav-title: "Creating a New Generator"
 description: Step-by-step contributor guide for adding a new data-driven generator to Kore, from model and registration to tests and documentation.
 keywords: contributing, datapack, generator, kore, patterns, tests
 date-created: 2026-04-15
-date-modified: 2026-04-15
+date-modified: 2026-10-02
 routeOverride: /docs/contributing/creating-a-new-generator
 ---
 
@@ -22,9 +22,9 @@ Before creating files, pick the nearest generator already in Kore and mirror its
 
 Good references, in alphabetical order:
 
-- [`DamageType`][damage-type]
-- [`Instrument`][instrument-feature]
-- [`PaintingVariant`][painting-variant]
+- [`DamageType`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/features/damagetypes/DamageType.kt)
+- [`Instrument`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/features/instruments/Instrument.kt)
+- [`PaintingVariant`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/features/paintingvariant/PaintingVariant.kt)
 
 What you want to mirror:
 
@@ -35,7 +35,7 @@ What you want to mirror:
 - Test shape.
 
 If the feature needs a brand-new registry argument type, add it through the generation pipeline first - see
-[Contributing: The Generation Pipeline][generation-pipeline]. Do **not** hand-edit
+[Contributing: The Generation Pipeline](/docs/contributing/generation-pipeline). Do **not** hand-edit
 `kore/src/commonMain/kotlin/io/github/ayfri/kore/generated` or `build/generated/...`.
 
 ## 2) Create the feature class
@@ -67,7 +67,7 @@ data class CustomReward(
 
 Checklist for the class itself:
 
-- Extend [`Generator`][generator-kt] with the correct `resourceFolder`.
+- Extend [`Generator`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/Generator.kt) with the correct `resourceFolder`.
 - Keep `generateJson(dataPack)` thin and delegate to the shared encoder when the structure is straightforward.
 - Mark `fileName` as `@Transient`.
 - Make the feature `@Serializable`.
@@ -75,7 +75,7 @@ Checklist for the class itself:
 
 ## 3) Register the generator in `DataPack`
 
-Add the new list in [`DataPack.kt`][datapack-kt], in alphabetical order with the other registered generators.
+Add the new list in [`DataPack.kt`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/DataPack.kt), in alphabetical order with the other registered generators.
 
 ```kotlin
 val customRewards = registerGenerator<CustomReward>()
@@ -112,7 +112,7 @@ If the resource can be referenced by tags, preserve the corresponding `*OrTagArg
 
 ## 5) Reuse serializers and argument types
 
-Before adding custom serialization logic, check [Contributing: Architecture and Patterns][architecture].
+Before adding custom serialization logic, check [Contributing: Architecture and Patterns](/docs/contributing/architecture-and-patterns).
 
 In practice, the decision order is:
 
@@ -125,7 +125,7 @@ This keeps JSON output aligned with the rest of Kore instead of creating one-off
 ## 6) Add tests immediately
 
 Generator changes in `kore` should ship with targeted tests under [
-`kore/src/commonTest/kotlin/io/github/ayfri/kore`][kore-tests].
+`kore/src/commonTest/kotlin/io/github/ayfri/kore`](https://github.com/ayfri/kore/tree/master/kore/src/commonTest/kotlin/io/github/ayfri/kore).
 
 For a simple resource, the test usually follows this shape:
 
@@ -176,7 +176,7 @@ At minimum, validate:
 
 ## 7) Update documentation in the same PR
 
-Every user-visible feature needs docs under [`website/src/jsMain/resources/markdown/doc`][docs-root].
+Every user-visible feature needs docs under [`website/src/jsMain/resources/markdown/doc`](https://github.com/ayfri/kore/tree/master/website/src/jsMain/resources/markdown/doc).
 
 Typical documentation work includes:
 
@@ -185,7 +185,7 @@ Typical documentation work includes:
 - Updated links from entry pages when navigation changes.
 
 For page placement, routing, and required frontmatter keys, reuse the documentation contract described
-in [Contributing: Architecture and Patterns][architecture].
+in [Contributing: Architecture and Patterns](/docs/contributing/architecture-and-patterns).
 
 ## 8) Validate before opening the PR
 
@@ -214,29 +214,7 @@ You are usually done when the feature includes all of the following:
 
 ## See also
 
-- [Contributing: Architecture and Patterns][architecture]
-- [Contributing: Contributing][contributing]
-- [Contributing: The Generation Pipeline][generation-pipeline]
-- [Contributing: Workflow][workflow]
-
-[architecture]: /docs/contributing/architecture-and-patterns
-
-[contributing]: /docs/contributing/contributing
-
-[generation-pipeline]: /docs/contributing/generation-pipeline
-
-[damage-type]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/features/damagetypes/DamageType.kt
-
-[datapack-kt]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/DataPack.kt
-
-[docs-root]: https://github.com/ayfri/kore/tree/master/website/src/jsMain/resources/markdown/doc
-
-[generator-kt]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/Generator.kt
-
-[instrument-feature]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/features/instruments/Instrument.kt
-
-[kore-tests]: https://github.com/ayfri/kore/tree/master/kore/src/commonTest/kotlin/io/github/ayfri/kore
-
-[painting-variant]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/features/paintingvariant/PaintingVariant.kt
-
-[workflow]: /docs/contributing/contributing-workflow
+- [Contributing: Architecture and Patterns](/docs/contributing/architecture-and-patterns)
+- [Contributing: Contributing](/docs/contributing/contributing)
+- [Contributing: The Generation Pipeline](/docs/contributing/generation-pipeline)
+- [Contributing: Workflow](/docs/contributing/contributing-workflow)

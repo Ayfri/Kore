@@ -5,7 +5,7 @@ nav-title: "Architecture and Patterns"
 description: Detailed internal architecture, project layout, module responsibilities, and recurring implementation patterns for Kore contributors.
 keywords: architecture, bindings, commands, generator, kore, patterns, serializers, website
 date-created: 2026-04-10
-date-modified: 2026-07-12
+date-modified: 2026-10-02
 routeOverride: /docs/contributing/architecture-and-patterns
 ---
 
@@ -45,53 +45,53 @@ git-excluded sandboxes are omitted on purpose.
 
 ## Module boundaries and edit surfaces
 
-### [`bindings/`][bindings-root]
+### [`bindings/`](https://github.com/ayfri/kore/tree/master/bindings)
 
 - Purpose: datapack importer and Kotlin binding generator.
 - Typical flow: explorer -> normalized entities -> writer output.
-- Common edit surface: [`explorer.kt`][bindings-explorer], [`entities.kt`][bindings-entities], [
-  `writer.kt`][bindings-writer], then tests under [`bindings/src/commonTest`][bindings-tests].
+- Common edit surface: [`explorer.kt`](https://github.com/ayfri/kore/blob/master/bindings/src/commonMain/kotlin/io/github/ayfri/kore/bindings/explorer.kt), [`entities.kt`](https://github.com/ayfri/kore/blob/master/bindings/src/commonMain/kotlin/io/github/ayfri/kore/bindings/entities.kt), [
+  `writer.kt`](https://github.com/ayfri/kore/blob/master/bindings/src/commonMain/kotlin/io/github/ayfri/kore/bindings/writer.kt), then tests under [`bindings/src/commonTest`](https://github.com/ayfri/kore/tree/master/bindings/src/commonTest/kotlin/io/github/ayfri/kore/bindings).
 - Pattern to preserve: single-namespace packs stay compact, multi-namespace packs become namespace-nested objects, and
   worldgen content is grouped under `Worldgen`.
 
-### [`build-logic/`][build-logic-root]
+### [`build-logic/`](https://github.com/ayfri/kore/tree/master/build-logic)
 
 - Purpose: shared Gradle conventions, publishing logic, and project metadata.
-- Common edit surface: convention plugins and [`Project.kt`][project-kt].
+- Common edit surface: convention plugins and [`Project.kt`](https://github.com/ayfri/kore/blob/master/build-logic/convention/src/main/kotlin/Project.kt).
 - Edit here when changing build behavior, publication rules, or project versioning.
 
-### [`generation/`][generation-root]
+### [`generation/`](https://github.com/ayfri/kore/tree/master/generation)
 
 - Purpose: source-data processing and generated Kotlin/resource output.
 - Edit here when a generated enum, registry wrapper, or source-derived structure is wrong.
 - **Never** fix a generation issue by editing `kore/src/commonMain/kotlin/io/github/ayfri/kore/generated` or
   `build/generated/...` directly.
-- Full walkthrough: [Contributing: The Generation Pipeline][generation-pipeline].
+- Full walkthrough: [Contributing: The Generation Pipeline](/docs/contributing/generation-pipeline).
 
-### [`helpers/`][helpers-root]
+### [`helpers/`](https://github.com/ayfri/kore/tree/master/helpers)
 
 - Purpose: optional higher-level helpers built on the core DSL.
 - Edit here only when the issue explicitly targets helper abstractions or reusable convenience APIs.
 - Mirror core DSL patterns instead of creating a parallel architecture.
 
-### [`kore/`][kore-root]
+### [`kore/`](https://github.com/ayfri/kore/tree/master/kore)
 
 - Purpose: core DSL, typed arguments, command wrappers, serializers, worldgen builders, and data-driven resources.
 - Common edit surface: feature classes, `DataPack` registration, `Function` extensions, serializers, and tests under [
-  `kore/src/commonTest`][kore-tests].
+  `kore/src/commonTest`](https://github.com/ayfri/kore/tree/master/kore/src/commonTest/kotlin/io/github/ayfri/kore).
 - A typical change in this module touches one feature family end to end: model, registration, builder entry point,
   tests, and docs.
 
-### [`oop/`][oop-root]
+### [`oop/`](https://github.com/ayfri/kore/tree/master/oop)
 
 - Purpose: object-oriented abstractions layered on top of core Kore primitives.
 - Edit here when the issue is specifically about that façade, not when the underlying DSL itself is wrong.
 - Keep naming and behavior aligned with `kore/` to avoid divergent APIs.
 
-### [`website/`][website-root]
+### [`website/`](https://github.com/ayfri/kore/tree/master/website)
 
 - Purpose: documentation markdown, docs navigation, and frontend rendering.
-- Docs live in [`website/src/jsMain/resources/markdown/doc`][docs-root].
+- Docs live in [`website/src/jsMain/resources/markdown/doc`](https://github.com/ayfri/kore/tree/master/website/src/jsMain/resources/markdown/doc).
 - Edit this module in the same PR as any user-visible behavior change.
 
 ## Core patterns to reuse
@@ -121,20 +121,20 @@ This keeps generated commands deterministic and test-friendly.
 
 Most data-driven resources in `kore` follow one consistent model:
 
-1. A serializable feature class extends [`Generator`][generator-kt].
+1. A serializable feature class extends [`Generator`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/Generator.kt).
 2. The class defines its `resourceFolder`, transient `fileName`, and `generateJson(dataPack)` implementation.
-3. [`DataPack`][datapack-kt] registers a typed generator list through `registerGenerator<T>()`.
+3. [`DataPack`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/DataPack.kt) registers a typed generator list through `registerGenerator<T>()`.
 4. A `DataPack` extension function instantiates and registers the feature.
 5. The extension returns a typed `*Argument` for later references.
 
 Concrete references:
 
-- [`Generator.kt`][generator-kt]
-- [`DataPack.kt`][datapack-kt]
-- [`Instrument.kt`][instrument-kt]
-- [`InstrumentTests.kt`][instrument-tests]
+- [`Generator.kt`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/Generator.kt)
+- [`DataPack.kt`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/DataPack.kt)
+- [`Instrument.kt`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/features/instruments/Instrument.kt)
+- [`InstrumentTests.kt`](https://github.com/ayfri/kore/blob/master/kore/src/commonTest/kotlin/io/github/ayfri/kore/features/InstrumentTests.kt)
 
-For the procedural version of this pattern, use [Contributing: Creating a New Generator][new-generator].
+For the procedural version of this pattern, use [Contributing: Creating a New Generator](/docs/contributing/creating-a-new-generator).
 
 ### Serializer strategy
 
@@ -142,15 +142,15 @@ Prefer an existing serializer before creating a new one.
 
 Frequently reused serializers, in alphabetical order:
 
-- [`EitherInlineSerializer`][serializer-either-inline]
-- [`InlineAutoSerializer`][serializer-inline-auto]
-- [`InlinableListSerializer`][serializer-inlinable-list]
-- [`LowercaseSerializer`][serializer-lowercase]
-- [`NamespacedPolymorphicSerializer`][serializer-namespaced]
-- [`NbtAsJsonSerializer`][serializer-nbt-as-json]
-- [`ProviderSerializer`][serializer-provider]
-- [`SinglePropertySimplifierSerializer`][serializer-single-property]
-- [`ToStringSerializer`][serializer-to-string]
+- [`EitherInlineSerializer`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/EitherInlineSerializer.kt)
+- [`InlineAutoSerializer`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/InlineAutoSerializer.kt)
+- [`InlinableListSerializer`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/InlinableListSerializer.kt)
+- [`LowercaseSerializer`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/LowercaseSerializer.kt)
+- [`NamespacedPolymorphicSerializer`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/NamespacedPolymorphicSerializer.kt)
+- [`NbtAsJsonSerializer`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/NbtAsJsonSerializer.kt)
+- [`ProviderSerializer`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/ProviderSerializer.kt)
+- [`SinglePropertySimplifierSerializer`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/SinglePropertySimplifierSerializer.kt)
+- [`ToStringSerializer`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/ToStringSerializer.kt)
 
 Decision rule:
 
@@ -193,7 +193,7 @@ fun DataPack.registerTimer(timer: Timer) {
 
 - Feature tests usually assert emitted JSON payloads and generated command/resource lines.
 - Most specs build a `dataPack { }` in `commonTest` and never call `generate()`, so they run on the JVM, Node.js, and
-  a headless browser alike (see [Multiplatform Support][multiplatform]). The `testDataPack(...)` helper wraps real
+  a headless browser alike (see [Multiplatform Support](/docs/advanced/multiplatform)). The `testDataPack(...)` helper wraps real
   file/ZIP/JAR generation and is JVM/Node-only - keep specs that call it in `jvmTest`.
 - Serializer tests should focus on roundtrip behavior and JSON or SNBT shape checks.
 
@@ -242,7 +242,7 @@ Content rules that keep the docs consistent and trustworthy:
   phrasing like "now possible" or "new in this release" in body copy; that information belongs in commit messages and
   release notes, not in a reference page that must read correctly a year later.
 - **Cross-link inline, not in a pile.** Link related pages from the sentence that mentions the concept (for example,
-  link [Scoreboards][scoreboards-doc] the first time you mention scoreboards). Prefer one good inline link over a long
+  link [Scoreboards](/docs/concepts/scoreboards) the first time you mention scoreboards). Prefer one good inline link over a long
   trailing list. Keep any `See also` section short - three or four of the most relevant links, not a dump of everything
   related.
 - **Link to the Minecraft Wiki for vanilla concepts.** When a page touches a vanilla system (a command, a registry, an
@@ -252,8 +252,6 @@ Content rules that keep the docs consistent and trustworthy:
   wiki.
 - **Do not duplicate.** If a concept already has a home page, link it instead of re-explaining it. One source of truth
   per topic; everything else points at it.
-
-[scoreboards-doc]: /docs/concepts/scoreboards
 
 ## Why Kore uses these technical choices
 
@@ -265,72 +263,8 @@ Content rules that keep the docs consistent and trustworthy:
 
 ## See also
 
-- [Contributing: Contributing][contributing]
-- [Contributing: Creating a New Generator][new-generator]
-- [Contributing: The Generation Pipeline][generation-pipeline]
-- [Contributing: Workflow][workflow]
-- [Multiplatform Support][multiplatform]
-
-[bindings-entities]: https://github.com/ayfri/kore/blob/master/bindings/src/commonMain/kotlin/io/github/ayfri/kore/bindings/entities.kt
-
-[bindings-explorer]: https://github.com/ayfri/kore/blob/master/bindings/src/commonMain/kotlin/io/github/ayfri/kore/bindings/explorer.kt
-
-[bindings-root]: https://github.com/ayfri/kore/tree/master/bindings
-
-[bindings-tests]: https://github.com/ayfri/kore/tree/master/bindings/src/commonTest/kotlin/io/github/ayfri/kore/bindings
-
-[bindings-writer]: https://github.com/ayfri/kore/blob/master/bindings/src/commonMain/kotlin/io/github/ayfri/kore/bindings/writer.kt
-
-[build-logic-root]: https://github.com/ayfri/kore/tree/master/build-logic
-
-[contributing]: /docs/contributing/contributing
-
-[datapack-kt]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/DataPack.kt
-
-[docs-root]: https://github.com/ayfri/kore/tree/master/website/src/jsMain/resources/markdown/doc
-
-[generation-pipeline]: /docs/contributing/generation-pipeline
-
-[generation-root]: https://github.com/ayfri/kore/tree/master/generation
-
-[generator-kt]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/Generator.kt
-
-[helpers-root]: https://github.com/ayfri/kore/tree/master/helpers
-
-[instrument-kt]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/features/instruments/Instrument.kt
-
-[instrument-tests]: https://github.com/ayfri/kore/blob/master/kore/src/commonTest/kotlin/io/github/ayfri/kore/features/InstrumentTests.kt
-
-[kore-root]: https://github.com/ayfri/kore/tree/master/kore
-
-[kore-tests]: https://github.com/ayfri/kore/tree/master/kore/src/commonTest/kotlin/io/github/ayfri/kore
-
-[multiplatform]: /docs/advanced/multiplatform
-
-[new-generator]: /docs/contributing/creating-a-new-generator
-
-[oop-root]: https://github.com/ayfri/kore/tree/master/oop
-
-[project-kt]: https://github.com/ayfri/kore/blob/master/build-logic/convention/src/main/kotlin/Project.kt
-
-[serializer-either-inline]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/EitherInlineSerializer.kt
-
-[serializer-inline-auto]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/InlineAutoSerializer.kt
-
-[serializer-inlinable-list]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/InlinableListSerializer.kt
-
-[serializer-lowercase]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/LowercaseSerializer.kt
-
-[serializer-namespaced]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/NamespacedPolymorphicSerializer.kt
-
-[serializer-nbt-as-json]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/NbtAsJsonSerializer.kt
-
-[serializer-provider]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/ProviderSerializer.kt
-
-[serializer-single-property]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/SinglePropertySimplifierSerializer.kt
-
-[serializer-to-string]: https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/ToStringSerializer.kt
-
-[website-root]: https://github.com/ayfri/kore/tree/master/website
-
-[workflow]: /docs/contributing/contributing-workflow
+- [Contributing: Contributing](/docs/contributing/contributing)
+- [Contributing: Creating a New Generator](/docs/contributing/creating-a-new-generator)
+- [Contributing: The Generation Pipeline](/docs/contributing/generation-pipeline)
+- [Contributing: Workflow](/docs/contributing/contributing-workflow)
+- [Multiplatform Support](/docs/advanced/multiplatform)

@@ -5,7 +5,7 @@ nav-title: "Contributing Workflow"
 description: End-to-end workflow for opening issues, implementing changes, validating them, and preparing pull requests in Kore.
 keywords: contributing, docs, issues, kore, pull-request, quality, tests, workflow
 date-created: 2026-04-10
-date-modified: 2026-07-12
+date-modified: 2026-10-02
 routeOverride: /docs/contributing/contributing-workflow
 ---
 
@@ -22,7 +22,7 @@ Before writing code, make sure the scope is explicit.
 
 If you are opening an issue:
 
-- Pick the closest template in [`.github/ISSUE_TEMPLATE`][issue-templates].
+- Pick the closest template in [`.github/ISSUE_TEMPLATE`](https://github.com/ayfri/kore/tree/master/.github/ISSUE_TEMPLATE).
 - Search for duplicates first.
 - Include a minimal reproduction or explicit reproduction steps.
 - Include expected behavior, actual behavior, and the Kore + Minecraft versions you tested.
@@ -48,13 +48,13 @@ Useful scope labels when triaging work:
 
 Before implementation:
 
-- Confirm the target module in [Contributing: Architecture and Patterns][architecture].
+- Confirm the target module in [Contributing: Architecture and Patterns](/docs/contributing/architecture-and-patterns).
 - Identify symbol usages and nearby call paths.
 - Reuse an existing helper, serializer, or feature pattern when one already exists.
 
 This is the fastest way to avoid duplicate APIs and hidden coupling.
 
-If the change is a new data-driven feature in `kore`, use [Contributing: Creating a New Generator][new-generator]
+If the change is a new data-driven feature in `kore`, use [Contributing: Creating a New Generator](/docs/contributing/creating-a-new-generator)
 instead of inventing a new shape from scratch.
 
 ## 3) Implement with tests and docs in the same pass
@@ -62,14 +62,14 @@ instead of inventing a new shape from scratch.
 For `bindings` and `kore`, tests are expected alongside code changes.
 
 Test locations, per module (all four modules are Kotlin Multiplatform - see
-[Multiplatform Support][multiplatform]):
+[Multiplatform Support](/docs/advanced/multiplatform)):
 
 - `commonTest` for specs that build a `dataPack { }` in memory and assert JSON/command output; these run on the JVM,
   Node.js, and a headless browser.
 - `jvmTest` for specs that need real file I/O (`generate()`, `generateZip()`) or a JVM-only dependency.
 
-For example, [`bindings/src/commonTest/kotlin/io/github/ayfri/kore/bindings`][bindings-tests] and
-[`kore/src/commonTest/kotlin/io/github/ayfri/kore`][kore-tests].
+For example, [`bindings/src/commonTest/kotlin/io/github/ayfri/kore/bindings`](https://github.com/ayfri/kore/tree/master/bindings/src/commonTest/kotlin/io/github/ayfri/kore/bindings) and
+[`kore/src/commonTest/kotlin/io/github/ayfri/kore`](https://github.com/ayfri/kore/tree/master/kore/src/commonTest/kotlin/io/github/ayfri/kore).
 
 At minimum, validate:
 
@@ -77,7 +77,7 @@ At minimum, validate:
 - Regression behavior for bugs.
 - Serialization or deserialization shapes when JSON/NBT is involved.
 
-Any user-visible behavior change should update docs in [`website/src/jsMain/resources/markdown/doc`][docs-root].
+Any user-visible behavior change should update docs in [`website/src/jsMain/resources/markdown/doc`](https://github.com/ayfri/kore/tree/master/website/src/jsMain/resources/markdown/doc).
 
 Documentation updates usually include:
 
@@ -131,26 +131,8 @@ For the title and commit messages, follow conventional commits. Common examples:
 
 ## See also
 
-- [Contributing: Architecture and Patterns][architecture]
-- [Contributing: Contributing][contributing]
-- [Contributing: Creating a New Generator][new-generator]
-- [Contributing: CI/CD and Releases][releases]
-- [Multiplatform Support][multiplatform]
-
-[architecture]: /docs/contributing/architecture-and-patterns
-
-[bindings-tests]: https://github.com/ayfri/kore/tree/master/bindings/src/commonTest/kotlin/io/github/ayfri/kore/bindings
-
-[contributing]: /docs/contributing/contributing
-
-[docs-root]: https://github.com/ayfri/kore/tree/master/website/src/jsMain/resources/markdown/doc
-
-[issue-templates]: https://github.com/ayfri/kore/tree/master/.github/ISSUE_TEMPLATE
-
-[kore-tests]: https://github.com/ayfri/kore/tree/master/kore/src/commonTest/kotlin/io/github/ayfri/kore
-
-[multiplatform]: /docs/advanced/multiplatform
-
-[new-generator]: /docs/contributing/creating-a-new-generator
-
-[releases]: /docs/contributing/ci-cd-and-releases
+- [Contributing: Architecture and Patterns](/docs/contributing/architecture-and-patterns)
+- [Contributing: Contributing](/docs/contributing/contributing)
+- [Contributing: Creating a New Generator](/docs/contributing/creating-a-new-generator)
+- [Contributing: CI/CD and Releases](/docs/contributing/ci-cd-and-releases)
+- [Multiplatform Support](/docs/advanced/multiplatform)

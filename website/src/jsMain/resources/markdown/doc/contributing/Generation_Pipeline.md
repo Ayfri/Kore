@@ -5,7 +5,7 @@ nav-title: "Generation Pipeline"
 description: How Kore's generation module downloads Minecraft source data and codegens enums and argument types. Covers registries, data sources, caching, and the generator extension API for contributors.
 keywords: arguments, codegen, contributing, generation, kore, registries, minecraft data, enum generation, kotlin codegen, datapack generator internals
 date-created: 2026-07-01
-date-modified: 2026-07-01
+date-modified: 2026-10-02
 routeOverride: /docs/contributing/generation-pipeline
 ---
 
@@ -22,31 +22,31 @@ folder. The folder is gitignored: every `kore` compilation regenerates it throug
 
 1. Clear `kore/src/commonMain/kotlin/io/github/ayfri/kore/generated` and (with `--reload-cache`) the download cache.
 2. Download datapacks, the default datapack version, gamerules and item component types.
-3. Run every simple generator ([`launchAllSimpleGenerators`][generators-kt]) - lists and registries that become
+3. Run every simple generator ([`launchAllSimpleGenerators`](https://github.com/ayfri/kore/blob/master/generation/src/main/kotlin/generators/generators.kt)) - lists and registries that become
    enums or enum trees.
-4. Run the argument type generator ([`launchArgumentTypeGenerators`][arguments-kt]) - registries that become typed
+4. Run the argument type generator ([`launchArgumentTypeGenerators`](https://github.com/ayfri/kore/blob/master/generation/src/main/kotlin/generators/arguments.kt)) - registries that become typed
    `*Argument` / `*OrTagArgument` / `*TagArgument` interfaces.
 5. Write the resolved Minecraft version into the generated package.
 
-Source data is fetched from the [`PixiGeko/Minecraft-generated-data`][source-repo] GitHub repo, pinned to the
+Source data is fetched from the [`PixiGeko/Minecraft-generated-data`](https://github.com/PixiGeko/Minecraft-generated-data) GitHub repo, pinned to the
 `minecraft.version` in `gradle.properties`. Downloads are cached under `generation/build/cache`; pass
 `--reload-cache` to force a re-download after a Minecraft version bump.
 
 ## Adding a new generated list or registry
 
-Most new registries only need an entry in [`generators/generators.kt`][generators-kt], inside `lists` (plain
+Most new registries only need an entry in [`generators/generators.kt`](https://github.com/ayfri/kore/blob/master/generation/src/main/kotlin/generators/generators.kt), inside `lists` (plain
 resource lists, e.g. `loot_table`) or `registries` (vanilla registries, e.g. `item`):
 
 ```kotlin
 gen("TradeSets", "trade_set")
 ```
 
-`gen(name, fileName) { ... }` ([`generators/Generator.kt`][generator-kt]) takes the enum name and the upstream file
+`gen(name, fileName) { ... }` ([`generators/Generator.kt`](https://github.com/ayfri/kore/blob/master/generation/src/main/kotlin/generators/Generator.kt)) takes the enum name and the upstream file
 name, and exposes a small builder for the common cases:
 
 - `argumentClassName` - override the generated `*Argument` type name when it should differ from `name` (for example
   `"Model M"` routes the argument to `arguments/types/resources` instead of the generated tree - see the
-  `M`-suffix rule in [Contributing: Creating a New Generator][new-generator]).
+  `M`-suffix rule in [Contributing: Creating a New Generator](/docs/contributing/creating-a-new-generator)).
 - `transform { ... }` - strip a suffix/prefix from raw entries (`.json`, `.ogg`, `minecraft:`, ...).
 - `enumTree` / `separator` - force or configure a path-based enum tree instead of a flat enum, for entries that
   contain `/`.
@@ -58,7 +58,7 @@ Whether an entry lands in `lists` or `registries` only changes which upstream `.
 (`custom-generated/lists/...` vs `custom-generated/registries/...`); both feed the same enum/enum-tree codegen.
 
 Registries that need a typed argument (referenced from other DSL builders, taggable, etc.) are handled separately by
-`launchArgumentTypeGenerators()` in [`generators/arguments.kt`][arguments-kt] - it reads the registry list straight
+`launchArgumentTypeGenerators()` in [`generators/arguments.kt`](https://github.com/ayfri/kore/blob/master/generation/src/main/kotlin/generators/arguments.kt) - it reads the registry list straight
 from the datapack report (`minecraft-generated/reports/datapack.json`) rather than from `generators.kt`, so a
 vanilla registry usually needs no manual entry at all. `additionalTypes`/`ignoreList` in that file are only for
 registries the report doesn't expose or that already have a hand-written model (`block`, `item`, `tag`).
@@ -77,17 +77,5 @@ code against it.
 
 ## See also
 
-- [Contributing: Architecture and Patterns][architecture]
-- [Contributing: Creating a New Generator][new-generator]
-
-[architecture]: /docs/contributing/architecture-and-patterns
-
-[arguments-kt]: https://github.com/ayfri/kore/blob/master/generation/src/main/kotlin/generators/arguments.kt
-
-[generator-kt]: https://github.com/ayfri/kore/blob/master/generation/src/main/kotlin/generators/Generator.kt
-
-[generators-kt]: https://github.com/ayfri/kore/blob/master/generation/src/main/kotlin/generators/generators.kt
-
-[new-generator]: /docs/contributing/creating-a-new-generator
-
-[source-repo]: https://github.com/PixiGeko/Minecraft-generated-data
+- [Contributing: Architecture and Patterns](/docs/contributing/architecture-and-patterns)
+- [Contributing: Creating a New Generator](/docs/contributing/creating-a-new-generator)

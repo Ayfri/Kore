@@ -5,7 +5,7 @@ nav-title: Contributing
 description: Entry point for contributors who want to work on Kore architecture, workflows, and project quality.
 keywords: architecture, contributing, kore, patterns, quality, workflow
 date-created: 2026-04-10
-date-modified: 2026-04-15
+date-modified: 2026-10-02
 routeOverride: /docs/contributing/contributing
 ---
 
@@ -17,12 +17,12 @@ Use it to identify the right guide before touching code, tests, or documentation
 
 ## Choose the right guide
 
-- **Add a new data-driven feature:** read [Contributing: Creating a New Generator][new-generator] before editing `kore`.
-- **Add or update DSL features:** start with [Contributing: Architecture and Patterns][architecture], then
-  use [Contributing: Workflow][workflow].
-- **Add or fix a generated enum/registry/argument type:** read [Contributing: The Generation Pipeline][generation-pipeline].
-- **Prepare an issue or a pull request:** go straight to [Contributing: Workflow][workflow].
-- **Ship a release or update versions:** use [Contributing: CI/CD and Releases][releases].
+- **Add a new data-driven feature:** read [Contributing: Creating a New Generator](/docs/contributing/creating-a-new-generator) before editing `kore`.
+- **Add or update DSL features:** start with [Contributing: Architecture and Patterns](/docs/contributing/architecture-and-patterns), then
+  use [Contributing: Workflow](/docs/contributing/contributing-workflow).
+- **Add or fix a generated enum/registry/argument type:** read [Contributing: The Generation Pipeline](/docs/contributing/generation-pipeline).
+- **Prepare an issue or a pull request:** go straight to [Contributing: Workflow](/docs/contributing/contributing-workflow).
+- **Ship a release or update versions:** use [Contributing: CI/CD and Releases](/docs/contributing/ci-cd-and-releases).
 
 ## Repository map at a glance
 
@@ -40,23 +40,13 @@ Use it to identify the right guide before touching code, tests, or documentation
   `kore/src/commonMain/kotlin/io/github/ayfri/kore/generated`.
 - Prefer existing serializers, typed arguments, and command helpers before introducing new abstractions.
 - Ship tests and docs with behavior changes, especially in `bindings/` and `kore/`.
-- Stay within one clear module boundary when possible; use [Architecture and Patterns][architecture] to decide where a
+- Stay within one clear module boundary when possible; use [Architecture and Patterns](/docs/contributing/architecture-and-patterns) to decide where a
   change belongs.
 
 ## Suggested first pass for a newcomer
 
-1. Read [Contributing: Architecture and Patterns][architecture] to understand module boundaries.
-2. Read [Contributing: Workflow][workflow] to understand tests, docs, and PR expectations.
+1. Read [Contributing: Architecture and Patterns](/docs/contributing/architecture-and-patterns) to understand module boundaries.
+2. Read [Contributing: Workflow](/docs/contributing/contributing-workflow) to understand tests, docs, and PR expectations.
 3. Open one existing feature in `kore` end to end: feature class, `DataPack` registration, tests, then docs.
 4. If the change is data-driven, mirror the closest feature
-   with [Contributing: Creating a New Generator][new-generator].
-
-[architecture]: /docs/contributing/architecture-and-patterns
-
-[generation-pipeline]: /docs/contributing/generation-pipeline
-
-[new-generator]: /docs/contributing/creating-a-new-generator
-
-[releases]: /docs/contributing/ci-cd-and-releases
-
-[workflow]: /docs/contributing/contributing-workflow
+   with [Contributing: Creating a New Generator](/docs/contributing/creating-a-new-generator).
