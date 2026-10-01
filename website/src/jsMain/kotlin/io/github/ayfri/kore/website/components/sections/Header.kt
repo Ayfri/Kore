@@ -24,7 +24,6 @@ import org.jetbrains.compose.web.attributes.ATarget
 import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
-import org.jetbrains.compose.web.css.AlignSelf
 import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.*
@@ -58,11 +57,9 @@ private fun NavLinks(activeTab: NavTab?, linkClass: String, showIndicator: Boole
 }
 
 @Composable
-private fun ReleaseBadge(release: GitHubRelease, vararg extraClasses: String) = DomA("/updates#release-${release.id}", {
-	classes(HeaderStyle.releaseBadge, *extraClasses)
-}) {
-	Span({ classes(HeaderStyle.releaseDot) })
-	Text("${release.koreVersion} is out")
+private fun ReleaseLink(release: GitHubRelease, linkClass: String) = DomA("/updates#release-${release.id}", { classes(linkClass) }) {
+	Text("New in ")
+	Span({ classes(HeaderStyle.releaseVersion) }) { Text(release.koreVersion ?: release.name) }
 }
 
 @Composable
@@ -94,7 +91,7 @@ fun Header(latestRelease: GitHubRelease? = null) {
 			}
 
 			Div({ classes(HeaderStyle.actions) }) {
-				recentRelease?.let { ReleaseBadge(it) }
+				recentRelease?.let { ReleaseLink(it, HeaderStyle.releaseLink) }
 
 				DomA(DISCORD_LINK, {
 					classes(HeaderStyle.iconButton)
@@ -136,7 +133,7 @@ fun Header(latestRelease: GitHubRelease? = null) {
 		if (menuOpen) {
 			Nav({ classes(HeaderStyle.mobilePanel) }) {
 				NavLinks(activeTab, HeaderStyle.mobileLink)
-				recentRelease?.let { ReleaseBadge(it, HeaderStyle.releaseBadgeMobile) }
+				recentRelease?.let { ReleaseLink(it, HeaderStyle.mobileLink) }
 
 				DomA(GET_STARTED_LINK, { classes(HeaderStyle.getStarted, HeaderStyle.getStartedMobile) }) {
 					Text("Get started")
@@ -256,25 +253,22 @@ object HeaderStyle : StyleSheet() {
 		marginLeft(auto)
 	}
 
-	val releaseBadge by style {
-		alignItems(AlignItems.Center)
-		backgroundColor(GlobalStyle.linkColor.alpha(0.1))
-		border(1.px, LineStyle.Solid, GlobalStyle.linkColor.alpha(0.35))
-		borderRadius(999.px)
-		color(GlobalStyle.linkColorHover)
-		display(DisplayStyle.Flex)
-		fontSize(0.8.cssRem)
-		fontWeight(600)
-		gap(0.45.cssRem)
+	/** The underline propagates to the version span, so one teal line runs under the whole label on hover. */
+	val releaseLink by style {
+		borderRight(1.px, LineStyle.Solid, dividerColor)
+		color(GlobalStyle.altTextColor)
+		fontSize(0.85.cssRem)
 		marginRight(0.5.cssRem)
-		padding(0.25.cssRem, 0.7.cssRem)
+		paddingRight(1.cssRem)
+		textDecorationColor(Color.transparent)
+		textDecorationLine(TextDecorationLine.Underline)
+		textUnderlineOffset(TextUnderlineOffset.of(5.px))
 		whiteSpace(WhiteSpace.NoWrap)
-		transition(0.15.s, "background-color", "border-color")
+		transition(0.15.s, "color", "text-decoration-color")
 
 		hover(self) style {
-			backgroundColor(GlobalStyle.linkColor.alpha(0.2))
-			borderColor(GlobalStyle.linkColorHover.alpha(0.6))
-			color(GlobalStyle.linkColorHover)
+			color(GlobalStyle.textColor)
+			textDecorationColor(GlobalStyle.logoRightColor)
 		}
 
 		lgMax(self) {
@@ -282,22 +276,11 @@ object HeaderStyle : StyleSheet() {
 		}
 	}
 
-	val releaseBadgeMobile by style {
-		alignSelf(AlignSelf.FlexStart)
-		display(DisplayStyle.Flex)
-		margin(0.5.cssRem, 0.75.cssRem)
-
-		lgMax(self) {
-			display(DisplayStyle.Flex)
-		}
-	}
-
-	val releaseDot by style {
-		backgroundColor(GlobalStyle.linkColorHover)
-		borderRadius(50.percent)
-		height(0.4.cssRem)
-		width(0.4.cssRem)
-		boxShadow(0.px, 0.px, 0.px, 3.px, GlobalStyle.linkColorHover.alpha(0.2))
+	val releaseVersion by style {
+		color(GlobalStyle.textColor)
+		fontFamily("JetBrains Mono", "monospace")
+		fontSize(0.8.cssRem)
+		fontWeight(600)
 	}
 
 	val iconButton by style {
