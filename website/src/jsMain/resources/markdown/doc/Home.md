@@ -5,7 +5,7 @@ nav-title: Home
 description: Kore is a Kotlin DSL datapack generator for Minecraft Java Edition. Create datapacks with type-safe code instead of writing JSON and MCFunction by hand. Open-source and production-ready.
 keywords: minecraft datapack generator, datapack maker, minecraft data pack creator, kotlin datapack, kore, minecraft datapack dsl, datapack development, minecraft java edition, mcfunction generator, datapack library
 date-created: 2024-04-06
-date-modified: 2026-08-16
+date-modified: 2026-10-02
 routeOverride: /docs/home
 position: 0
 ---
@@ -25,6 +25,7 @@ raw datapacks? Read [Why Kore](/docs/guides/why-kore) or the migration-focused [
 - **Starter template**: use the `Kore Template` for a ready-to-run project: [
   `Kore Template`](https://github.com/Kore-Minecraft/Kore-Template).
 - **Build faster**: browse the [Cookbook](/docs/guides/cookbook) for practical patterns you can reuse.
+- **Try it first**: the [playground](/playground) runs Kore in your browser, with nothing to install.
 
 ### Minimal example
 
@@ -50,7 +51,8 @@ Kore Assistant brings gutter icons, hovers, and declaration navigation for the K
 
 {{{ .components.doc.FeatureGrid }}}
 
-Looking for something more specific? The full page list, with search, lives in the sidebar on the left.
+Looking for something more specific? The full page list, with search, lives in the sidebar on the left, and the
+[Features](/features) page lists everything Kore covers with in-game previews.
 
 ## Installable modules
 
@@ -98,7 +100,8 @@ what runs where.
 One Kore version per stable Minecraft version, the latest tagged pre-release as a separate `Snapshot` row, and the
 latest continuous `-SNAPSHOT` build from `master` as `Maven Snapshot`. Gradle coordinates link straight to Maven
 Central. Generated from GitHub releases and the current project version on every website build, so it always
-reflects the latest published version without manual edits.
+reflects the latest published version without manual edits. Each stable Kore version links to its release notes on
+the [Updates](/updates) page.
 
 {{{ .components.doc.VersionMatrix }}}
 

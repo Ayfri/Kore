@@ -475,7 +475,7 @@ Start here next:
 7. [Recipes](/docs/data-driven/recipes)
 8. [Enchantments](/docs/data-driven/enchantments)
 
-For the full index, see [Home](/docs/home).
+For the full index, see [Home](/docs/home), and for a tour of everything Kore covers, the [Features](/features) page.
 
 ## See also
 
