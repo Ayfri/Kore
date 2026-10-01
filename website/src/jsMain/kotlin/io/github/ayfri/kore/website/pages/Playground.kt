@@ -2,7 +2,6 @@ package io.github.ayfri.kore.website.pages
 
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.core.Page
-import io.github.ayfri.kore.website.components.common.BrandIconStyle
 import io.github.ayfri.kore.website.components.common.setDescription
 import io.github.ayfri.kore.website.components.common.setKeywords
 import io.github.ayfri.kore.website.components.layouts.PageLayout
@@ -57,7 +56,6 @@ private enum class Resize {
 @Page
 @Composable
 fun PlaygroundPage() {
-	Style(BrandIconStyle)
 	Style(HomePageStyle)
 	Style(PlaygroundStyle)
 

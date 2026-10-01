@@ -9,6 +9,7 @@ import com.varabyte.kobweb.silk.components.icons.lucide.LucideFunnel
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideRotateCcw
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideSearch
 import io.github.ayfri.kore.website.LandingVars
+import io.github.ayfri.kore.website.components.common.Segmented
 import io.github.ayfri.kore.website.utils.*
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.attributes.InputType
@@ -141,16 +142,13 @@ fun ReleaseFilters(
 				}
 
 				FilterGroup("Sort") {
-					Div({ classes(ReleaseFiltersStyle.segmented) }) {
-						SortOrder.entries.forEach { order ->
-							Button({
-								classes(ReleaseFiltersStyle.segment)
-								if (filterOptions.sortOrder == order) classes(ReleaseFiltersStyle.segmentActive)
-								attr("aria-pressed", "${filterOptions.sortOrder == order}")
-								onClick { onFilterChange(filterOptions.copy(sortOrder = order)) }
-							}) { Text(order.label) }
-						}
-					}
+					Segmented(
+						SortOrder.entries,
+						filterOptions.sortOrder,
+						{ onFilterChange(filterOptions.copy(sortOrder = it)) },
+						{ it.label },
+						ReleaseFiltersStyle.sortBar,
+					)
 				}
 
 				if (facets.versionGroups.isNotEmpty()) {
@@ -193,8 +191,6 @@ fun ReleaseFilters(
 }
 
 object ReleaseFiltersStyle : StyleSheet() {
-	private const val MONO = "JetBrains Mono"
-
 	/** Sticky next to the timeline on large screens, a regular block above it under lg. */
 	val sidebar by style {
 		alignSelf(AlignSelf.Start)
@@ -204,8 +200,8 @@ object ReleaseFiltersStyle : StyleSheet() {
 				Background.of(
 					BackgroundImage.of(
 						linearGradient(180.deg) {
-							add(rgba(8, 182, 214, 0.09))
-							add(rgba(8, 182, 214, 0.02), 45.percent)
+							add(LandingVars.Accent.value().alpha(0.07))
+							add(Color.transparent, 45.percent)
 						}
 					)
 				),
@@ -235,7 +231,7 @@ object ReleaseFiltersStyle : StyleSheet() {
 
 	val search by style {
 		alignItems(AlignItems.Center)
-		backgroundColor(rgba(255, 255, 255, 0.05))
+		backgroundColor(LandingVars.Text.value().alpha(0.06))
 		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(0.7.cssRem)
 		display(DisplayStyle.Flex)
@@ -265,14 +261,14 @@ object ReleaseFiltersStyle : StyleSheet() {
 		}
 
 		self + ":focus-within" style {
-			borderColor(Color("rgba(8, 182, 214, 0.6)"))
-			boxShadow(0.px, 0.px, 0.px, 3.px, rgba(8, 182, 214, 0.15))
+			borderColor(LandingVars.Accent.value().alpha(0.5))
+			boxShadow(0.px, 0.px, 0.px, 3.px, LandingVars.Accent.value().alpha(0.12))
 		}
 	}
 
 	val panelToggle by style {
 		alignItems(AlignItems.Center)
-		backgroundColor(rgba(255, 255, 255, 0.05))
+		backgroundColor(LandingVars.Text.value().alpha(0.06))
 		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(0.7.cssRem)
 		color(LandingVars.Text.value())
@@ -339,11 +335,8 @@ object ReleaseFiltersStyle : StyleSheet() {
 
 	val groupLabel by style {
 		color(LandingVars.Muted.value())
-		fontFamily(MONO, "monospace")
-		fontSize(0.72.cssRem)
-		letterSpacing(1.5.px)
 		marginBottom(0.2.cssRem)
-		textTransform(TextTransform.Uppercase)
+		monoLabel(0.72.cssRem)
 	}
 
 	val switchRow by style {
@@ -358,15 +351,15 @@ object ReleaseFiltersStyle : StyleSheet() {
 		userSelect(UserSelect.None)
 
 		hover(self) style {
-			backgroundColor(rgba(8, 182, 214, 0.07))
+			backgroundColor(LandingVars.Accent.value().alpha(0.07))
 		}
 	}
 
 	val count by style {
 		color(LandingVars.Muted.value())
-		fontFamily(MONO, "monospace")
 		fontSize(0.72.cssRem)
 		marginRight(autoLength)
+		monoFont()
 	}
 
 	@OptIn(ExperimentalComposeWebApi::class)
@@ -408,38 +401,12 @@ object ReleaseFiltersStyle : StyleSheet() {
 		}
 	}
 
-	val segmented by style {
-		backgroundColor(rgba(255, 255, 255, 0.05))
-		border(1.px, LineStyle.Solid, LandingVars.Border.value())
-		borderRadius(999.px)
+	/** Both sort orders share the sidebar width evenly. */
+	val sortBar by style {
+		backgroundColor(LandingVars.Text.value().alpha(0.06))
 		display(DisplayStyle.Grid)
-		gap(0.25.cssRem)
 		gridTemplateColumns("repeat(2, minmax(0, 1fr))")
-		padding(0.25.cssRem)
-	}
-
-	val segment by style {
-		backgroundColor(Color.transparent)
-		border(0.px)
-		borderRadius(999.px)
-		color(LandingVars.Muted.value())
-		cursor(Cursor.Pointer)
-		fontSize(0.85.cssRem)
-		padding(0.35.cssRem, 0.8.cssRem)
-		transition(0.2.s, "background-color", "color", "scale")
-
-		hover(self) style {
-			color(LandingVars.Text.value())
-		}
-
-		self + active style {
-			scale(0.95)
-		}
-	}
-
-	val segmentActive by style {
-		backgroundColor(rgba(8, 182, 214, 0.22))
-		color(LandingVars.Text.value())
+		width(100.percent)
 	}
 
 	val versionRow by style {
@@ -456,14 +423,14 @@ object ReleaseFiltersStyle : StyleSheet() {
 		color(LandingVars.Muted.value())
 		cursor(Cursor.Pointer)
 		display(DisplayStyle.LegacyInlineFlex)
-		fontFamily(MONO, "monospace")
 		fontSize(0.76.cssRem)
 		gap(0.35.cssRem)
+		monoFont()
 		padding(0.2.cssRem, 0.5.cssRem)
 		transition(0.2.s, "background-color", "border-color", "color", "scale")
 
 		hover(self) style {
-			backgroundColor(rgba(8, 182, 214, 0.08))
+			backgroundColor(LandingVars.Accent.value().alpha(0.07))
 			color(LandingVars.Text.value())
 		}
 
@@ -473,18 +440,18 @@ object ReleaseFiltersStyle : StyleSheet() {
 	}
 
 	val versionChipMain by style {
-		backgroundColor(rgba(255, 255, 255, 0.05))
+		backgroundColor(LandingVars.Text.value().alpha(0.06))
 		color(LandingVars.Text.value())
 		fontWeight(600)
 	}
 
 	val versionChipSelected by style {
-		backgroundColor(rgba(8, 182, 214, 0.2))
-		borderColor(Color("rgba(8, 182, 214, 0.7)"))
+		backgroundColor(LandingVars.Accent.value().alpha(0.2))
+		borderColor(LandingVars.Accent.value().alpha(0.5))
 		color(LandingVars.Text.value())
 
 		hover(self) style {
-			backgroundColor(rgba(8, 182, 214, 0.28))
+			backgroundColor(LandingVars.Accent.value().alpha(0.35))
 		}
 	}
 

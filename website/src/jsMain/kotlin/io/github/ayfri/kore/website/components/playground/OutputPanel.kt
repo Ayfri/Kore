@@ -2,6 +2,7 @@ package io.github.ayfri.kore.website.components.playground
 
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.silk.components.icons.lucide.*
+import io.github.ayfri.kore.website.CodeThemeStyle
 import io.github.ayfri.kore.website.components.common.CodeBlock
 import io.github.ayfri.kore.website.externals.Prism
 import io.github.ayfri.kore.website.utils.initMCFunctionHighlighting
@@ -202,7 +203,7 @@ fun OutputPanel(
 					val previewText = selected?.let { previewOf(it, indent) }
 
 					Div({
-						classes(PlaygroundStyle.preview)
+						classes(CodeThemeStyle.bare, PlaygroundStyle.preview)
 						if (wrap) classes(PlaygroundStyle.previewWrapped)
 						id(PREVIEW_ID)
 						// Two digits at least, so the code does not shift sideways between two files under 100 lines.

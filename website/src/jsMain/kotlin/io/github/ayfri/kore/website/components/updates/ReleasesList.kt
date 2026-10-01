@@ -15,14 +15,12 @@ import com.varabyte.kobweb.silk.components.icons.lucide.LucideChevronsDownUp
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideChevronsUpDown
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideExternalLink
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideSquareCode
+import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.LandingVars
 import io.github.ayfri.kore.website.components.common.BrandIcon
 import io.github.ayfri.kore.website.utils.*
 import kotlinx.browser.document
 import kotlinx.browser.localStorage
-import org.jetbrains.compose.web.ExperimentalComposeWebApi
-import org.jetbrains.compose.web.attributes.ATarget
-import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
@@ -178,8 +176,7 @@ private fun ReleaseEntry(release: GitHubRelease, isLatest: Boolean) {
 				Div({ classes(ReleasesListStyle.links) }) {
 					A(release.htmlUrl, {
 						classes(ReleasesListStyle.externalLink)
-						target(ATarget.Blank)
-						rel("noopener", "noreferrer")
+						externalTarget(release.htmlUrl)
 					}) {
 						BrandIcon("github")
 						Text(release.tagName)
@@ -187,8 +184,7 @@ private fun ReleaseEntry(release: GitHubRelease, isLatest: Boolean) {
 					buildMinecraftChangelogUrl(release)?.let { changelogUrl ->
 						A(changelogUrl, {
 							classes(ReleasesListStyle.externalLink)
-							target(ATarget.Blank)
-							rel("noopener", "noreferrer")
+							externalTarget(changelogUrl)
 						}) {
 							LucideExternalLink()
 							Text("Minecraft changelog")
@@ -234,21 +230,6 @@ private fun ReleaseEntry(release: GitHubRelease, isLatest: Boolean) {
 }
 
 object ReleasesListStyle : StyleSheet() {
-	private const val MONO = "JetBrains Mono"
-	private const val SANS = "IBM Plex Sans"
-
-	@OptIn(ExperimentalComposeWebApi::class)
-	val rise by keyframes {
-		from {
-			opacity(0)
-			transform { translateY(10.px) }
-		}
-		to {
-			opacity(1)
-			transform { translateY(0.px) }
-		}
-	}
-
 	/** Under the lg breakpoint the filters sidebar moves above the timeline. */
 	val layout by style {
 		boxSizing(BoxSizing.BorderBox)
@@ -281,7 +262,7 @@ object ReleasesListStyle : StyleSheet() {
 	}
 
 	val header by style {
-		animation(rise) {
+		animation(GlobalStyle.rise) {
 			duration(0.5.s)
 			timingFunction(AnimationTimingFunction.EaseOut)
 		}
@@ -308,10 +289,7 @@ object ReleasesListStyle : StyleSheet() {
 
 	val eyebrow by style {
 		color(LandingVars.Accent.value())
-		fontFamily(MONO, "monospace")
-		fontSize(0.78.cssRem)
-		letterSpacing(1.5.px)
-		textTransform(TextTransform.Uppercase)
+		monoLabel(0.78.cssRem)
 	}
 
 	val note by style {
@@ -325,10 +303,10 @@ object ReleasesListStyle : StyleSheet() {
 		color(LandingVars.Muted.value())
 		display(DisplayStyle.Flex)
 		flexWrap(FlexWrap.Wrap)
-		fontFamily(MONO, "monospace")
 		fontSize(0.8.cssRem)
 		gap(0.4.cssRem, 1.cssRem)
 		justifyContent(JustifyContent.SpaceBetween)
+		monoFont()
 		paddingBottom(0.8.cssRem)
 		scrollMarginTop(6.cssRem)
 	}
@@ -346,11 +324,11 @@ object ReleasesListStyle : StyleSheet() {
 	val groupTitle by style {
 		alignItems(AlignItems.Center)
 		display(DisplayStyle.Flex)
-		fontFamily(SANS, "sans-serif")
 		fontSize(1.25.cssRem)
 		gap(0.6.cssRem)
 		letterSpacing((-0.3).px)
 		margin(0.px, 0.px, 1.2.cssRem)
+		sansFont()
 	}
 
 	val groupCount by style {
@@ -358,9 +336,9 @@ object ReleasesListStyle : StyleSheet() {
 		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(999.px)
 		color(LandingVars.Muted.value())
-		fontFamily(MONO, "monospace")
 		fontSize(0.72.cssRem)
 		fontWeight(400)
+		monoFont()
 		padding(0.1.cssRem, 0.5.cssRem)
 	}
 
@@ -408,9 +386,9 @@ object ReleasesListStyle : StyleSheet() {
 		alignItems(AlignItems.FlexEnd)
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
-		fontFamily(MONO, "monospace")
 		fontSize(0.82.cssRem)
 		gap(0.2.cssRem)
+		monoFont()
 		paddingTop(1.35.cssRem)
 		textAlign(TextAlign.Right)
 
@@ -438,7 +416,7 @@ object ReleasesListStyle : StyleSheet() {
 		padding(1.3.cssRem, 1.8.cssRem)
 		position(Position.Relative)
 		transition(0.25.s, "border-color", "background-color", "box-shadow")
-		animation(rise) {
+		animation(GlobalStyle.rise) {
 			duration(0.4.s)
 			timingFunction(AnimationTimingFunction.EaseOut)
 		}
@@ -460,7 +438,7 @@ object ReleasesListStyle : StyleSheet() {
 
 		hover(self) style {
 			backgroundColor(colorMix(ColorInterpolationMethod.Srgb, LandingVars.Card.value(), Color("#fff") to 2.5.percent))
-			borderColor(Color("rgba(8, 182, 214, 0.45)"))
+			borderColor(LandingVars.Accent.value().alpha(0.5))
 			boxShadow(0.px, 8.px, 24.px, (-12).px, rgba(0, 0, 0, 0.5))
 		}
 
@@ -479,13 +457,13 @@ object ReleasesListStyle : StyleSheet() {
 	}
 
 	val cardLatest by style {
-		borderColor(Color("rgba(8, 182, 214, 0.5)"))
-		boxShadow(0.px, 0.px, 0.px, 3.px, rgba(8, 182, 214, 0.08))
+		borderColor(LandingVars.Accent.value().alpha(0.5))
+		boxShadow(0.px, 0.px, 0.px, 3.px, LandingVars.Accent.value().alpha(0.07))
 
 		self + before style {
 			backgroundColor(LandingVars.AccentStrong.value())
 			borderColor(LandingVars.AccentStrong.value())
-			boxShadow(0.px, 0.px, 0.px, 4.px, rgba(8, 182, 214, 0.2))
+			boxShadow(0.px, 0.px, 0.px, 4.px, LandingVars.Accent.value().alpha(0.2))
 		}
 	}
 
@@ -502,19 +480,19 @@ object ReleasesListStyle : StyleSheet() {
 		gap(0.5.cssRem, 0.6.cssRem)
 
 		"h3" style {
-			fontFamily(MONO, "monospace")
 			fontSize(1.35.cssRem)
 			fontWeight(700)
 			letterSpacing((-0.5).px)
 			margin(0.px)
 			marginRight(0.2.cssRem)
+			monoFont()
 		}
 	}
 
 	val mcVersion by style {
 		color(LandingVars.Muted.value())
-		fontFamily(MONO, "monospace")
 		fontSize(0.85.cssRem)
+		monoFont()
 	}
 
 	val pill by style {
@@ -527,7 +505,7 @@ object ReleasesListStyle : StyleSheet() {
 	}
 
 	val channelRelease by style {
-		backgroundColor(rgba(8, 182, 214, 0.1))
+		backgroundColor(LandingVars.Accent.value().alpha(0.12))
 		color(LandingVars.AccentStrong.value())
 	}
 
@@ -622,8 +600,8 @@ object ReleasesListStyle : StyleSheet() {
 		}
 
 		hover(self) style {
-			backgroundColor(rgba(8, 182, 214, 0.1))
-			borderColor(Color("rgba(8, 182, 214, 0.6)"))
+			backgroundColor(LandingVars.Accent.value().alpha(0.12))
+			borderColor(LandingVars.Accent.value().alpha(0.5))
 		}
 	}
 

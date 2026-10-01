@@ -3,6 +3,7 @@ package io.github.ayfri.kore.website.components.playground
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.varabyte.kobweb.silk.components.icons.lucide.*
+import io.github.ayfri.kore.website.CodeThemeStyle
 import io.github.ayfri.kore.website.components.common.CodeBlock
 import io.github.ayfri.kore.website.externals.Prism
 import kotlinx.browser.document
@@ -126,7 +127,7 @@ private fun Harness() {
 	}
 
 	Div({
-		classes(PlaygroundStyle.harness)
+		classes(CodeThemeStyle.bare, PlaygroundStyle.harness)
 		id(HARNESS_ID)
 	}) {
 		CodeBlock(PLAYGROUND_HARNESS, "kotlin", "line-numbers")

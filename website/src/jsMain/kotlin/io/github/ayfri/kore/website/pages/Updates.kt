@@ -2,7 +2,8 @@ package io.github.ayfri.kore.website.pages
 
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.core.Page
-import io.github.ayfri.kore.website.components.common.BrandIconStyle
+import io.github.ayfri.kore.website.components.common.SegmentedStyle
+import io.github.ayfri.kore.website.components.common.StatGridStyle
 import io.github.ayfri.kore.website.components.common.setDescription
 import io.github.ayfri.kore.website.components.common.setImage
 import io.github.ayfri.kore.website.components.common.setKeywords
@@ -16,7 +17,8 @@ import org.jetbrains.compose.web.dom.Div
 @Composable
 fun UpdatesPage() {
 	Style(HomePageStyle)
-	Style(BrandIconStyle)
+	Style(SegmentedStyle)
+	Style(StatGridStyle)
 
 	PageLayout("Kore Releases - Changelog & Version History") {
 		// PageLayout writes the site-wide defaults, so page-specific meta must be set after it, inside the content.

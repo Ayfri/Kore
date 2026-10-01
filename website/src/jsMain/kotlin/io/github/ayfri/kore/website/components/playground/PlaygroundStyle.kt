@@ -7,7 +7,9 @@ import com.varabyte.kobweb.compose.css.functions.blur
 import com.varabyte.kobweb.compose.css.functions.calc
 import com.varabyte.kobweb.compose.css.functions.min
 import io.github.ayfri.kore.website.CodeThemeStyle
+import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.LandingVars
+import io.github.ayfri.kore.website.utils.alpha
 import io.github.ayfri.kore.website.utils.borderBottomWidth
 import io.github.ayfri.kore.website.utils.borderTopColor
 import io.github.ayfri.kore.website.utils.clipPathInset
@@ -21,6 +23,9 @@ import io.github.ayfri.kore.website.utils.marginLeft
 import io.github.ayfri.kore.website.utils.marginX
 import io.github.ayfri.kore.website.utils.marginY
 import io.github.ayfri.kore.website.utils.mdMax
+import io.github.ayfri.kore.website.utils.monoFont
+import io.github.ayfri.kore.website.utils.monoLabel
+import io.github.ayfri.kore.website.utils.sansFont
 import io.github.ayfri.kore.website.utils.smMax
 import io.github.ayfri.kore.website.utils.transition
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
@@ -50,8 +55,6 @@ object PlaygroundVars {
  * editors read as documents inside a darker shell.
  */
 object PlaygroundStyle : StyleSheet() {
-	private const val MONO = "JetBrains Mono"
-
 	private val accent = LandingVars.Accent.value()
 	private val accentStrong = LandingVars.AccentStrong.value()
 	private val border = rgba(151, 176, 202, 0.14)
@@ -62,11 +65,7 @@ object PlaygroundStyle : StyleSheet() {
 	private val surface = LandingVars.Pane.value()
 	private val text = LandingVars.Text.value()
 
-	private val accentBorder = rgba(8, 182, 214, 0.45)
-	private val accentWash = rgba(8, 182, 214, 0.1)
-	private val accentHover = rgba(8, 182, 214, 0.16)
 	private val errorColor = Color("#ff6b7f")
-	private val hoverWash = rgba(255, 255, 255, 0.05)
 	private val infoColor = CodeThemeStyle.functionColor
 	private val successColor = CodeThemeStyle.stringColor
 	private val warningColor = CodeThemeStyle.classColor
@@ -88,18 +87,6 @@ object PlaygroundStyle : StyleSheet() {
 	val pulse by keyframes {
 		from { opacity(1) }
 		to { opacity(0.35) }
-	}
-
-	val rise by keyframes {
-		from {
-			opacity(0)
-			transform { translateY(0.5.cssRem) }
-		}
-
-		to {
-			opacity(1)
-			transform { translateY(0.px) }
-		}
 	}
 
 	// Frame
@@ -271,19 +258,19 @@ object PlaygroundStyle : StyleSheet() {
 
 	val kbd by style {
 		alignItems(AlignItems.Center)
-		backgroundColor(rgba(255, 255, 255, 0.07))
-		border(1.px, LineStyle.Solid, rgba(255, 255, 255, 0.12))
+		backgroundColor(text.alpha(0.06))
+		border(1.px, LineStyle.Solid, text.alpha(0.1))
 		borderBottomWidth(2.px)
 		borderRadius(0.3.cssRem)
 		boxSizing(BoxSizing.BorderBox)
 		color(text)
 		display(DisplayStyle.LegacyInlineFlex)
-		fontFamily(MONO, "monospace")
 		fontSize(0.66.cssRem)
 		height(1.25.cssRem)
 		justifyContent(JustifyContent.Center)
 		lineHeight(1)
 		minWidth(1.25.cssRem)
+		monoFont()
 		padding(0.px, 0.3.cssRem)
 	}
 
@@ -322,7 +309,7 @@ object PlaygroundStyle : StyleSheet() {
 		}
 
 		hover(self) style {
-			backgroundColor(hoverWash)
+			backgroundColor(text.alpha(0.06))
 			color(text)
 		}
 
@@ -338,11 +325,11 @@ object PlaygroundStyle : StyleSheet() {
 	}
 
 	val toolButtonActive by style {
-		backgroundColor(accentWash)
+		backgroundColor(accent.alpha(0.12))
 		color(accentStrong)
 
 		hover(self) style {
-			backgroundColor(accentHover)
+			backgroundColor(accent.alpha(0.2))
 			color(accentStrong)
 		}
 	}
@@ -385,7 +372,7 @@ object PlaygroundStyle : StyleSheet() {
 		}
 
 		hover(self) style {
-			borderColor(accentBorder)
+			borderColor(accent.alpha(0.5))
 			color(text)
 		}
 	}
@@ -408,7 +395,7 @@ object PlaygroundStyle : StyleSheet() {
 			iterationCount(null)
 		}
 
-		border(2.px, LineStyle.Solid, rgba(255, 255, 255, 0.15))
+		border(2.px, LineStyle.Solid, text.alpha(0.15))
 		borderRadius(50.percent)
 		boxSizing(BoxSizing.BorderBox)
 		borderTopColor(Color.currentColor)
@@ -420,7 +407,7 @@ object PlaygroundStyle : StyleSheet() {
 
 	val searchBox by style {
 		alignItems(AlignItems.Center)
-		backgroundColor(rgba(255, 255, 255, 0.04))
+		backgroundColor(text.alpha(0.04))
 		border(1.px, LineStyle.Solid, border)
 		borderRadius(0.45.cssRem)
 		color(muted)
@@ -438,7 +425,7 @@ object PlaygroundStyle : StyleSheet() {
 		}
 
 		(self + ":focus-within") style {
-			borderColor(accentBorder)
+			borderColor(accent.alpha(0.5))
 		}
 	}
 
@@ -527,7 +514,7 @@ object PlaygroundStyle : StyleSheet() {
 		}
 
 		hover(self) style {
-			backgroundColor(hoverWash)
+			backgroundColor(text.alpha(0.06))
 			borderColor(border)
 		}
 	}
@@ -604,8 +591,8 @@ object PlaygroundStyle : StyleSheet() {
 	}
 
 	val liveChipOn by style {
-		backgroundColor(accentWash)
-		borderColor(accentBorder)
+		backgroundColor(accent.alpha(0.12))
+		borderColor(accent.alpha(0.5))
 		color(accentStrong)
 
 		hover(self) style {
@@ -751,12 +738,9 @@ object PlaygroundStyle : StyleSheet() {
 		alignItems(AlignItems.Center)
 		color(muted)
 		display(DisplayStyle.Flex)
-		fontFamily(MONO, "monospace")
-		fontSize(0.66.cssRem)
 		fontWeight(600)
 		gap(0.45.cssRem)
-		letterSpacing(1.3.px)
-		textTransform(TextTransform.Uppercase)
+		monoLabel(0.66.cssRem)
 	}
 
 	val sectionActions by style {
@@ -777,12 +761,9 @@ object PlaygroundStyle : StyleSheet() {
 		alignItems(AlignItems.Center)
 		color(muted)
 		display(DisplayStyle.Flex)
-		fontFamily(MONO, "monospace")
-		fontSize(0.63.cssRem)
 		gap(0.45.cssRem)
-		letterSpacing(1.4.px)
+		monoLabel(0.63.cssRem)
 		padding(0.75.cssRem, 0.5.cssRem, 0.3.cssRem)
-		textTransform(TextTransform.Uppercase)
 
 		"svg" style {
 			height(0.8.cssRem)
@@ -807,14 +788,14 @@ object PlaygroundStyle : StyleSheet() {
 	}
 
 	val treeCount by style {
-		backgroundColor(rgba(255, 255, 255, 0.06))
+		backgroundColor(text.alpha(0.06))
 		borderRadius(999.px)
 		color(muted)
 		flexShrink(0)
-		fontFamily(MONO, "monospace")
 		fontSize(0.62.cssRem)
 		letterSpacing(0.px)
 		marginLeft(auto)
+		monoFont()
 		padding(0.05.cssRem, 0.4.cssRem)
 	}
 
@@ -833,7 +814,7 @@ object PlaygroundStyle : StyleSheet() {
 		width(100.percent)
 
 		hover(self) style {
-			backgroundColor(hoverWash)
+			backgroundColor(text.alpha(0.06))
 		}
 	}
 
@@ -841,9 +822,9 @@ object PlaygroundStyle : StyleSheet() {
 	val exampleIndex by style {
 		color(muted)
 		flexShrink(0)
-		fontFamily(MONO, "monospace")
 		fontSize(0.66.cssRem)
 		fontVariantNumeric(FontVariantNumeric.TabularNums)
+		monoFont()
 		opacity(0.6)
 		transition(0.15.s, "color", "opacity")
 	}
@@ -874,7 +855,7 @@ object PlaygroundStyle : StyleSheet() {
 
 	/** The open example is told apart by its accent title and number on a neutral wash, the row itself stays flat. */
 	val exampleEntryActive by style {
-		backgroundColor(rgba(255, 255, 255, 0.055))
+		backgroundColor(text.alpha(0.06))
 
 		".$exampleIndex" style {
 			color(accentStrong)
@@ -886,7 +867,7 @@ object PlaygroundStyle : StyleSheet() {
 		}
 
 		hover(self) style {
-			backgroundColor(rgba(255, 255, 255, 0.075))
+			backgroundColor(text.alpha(0.1))
 		}
 	}
 
@@ -906,7 +887,7 @@ object PlaygroundStyle : StyleSheet() {
 		width(100.percent)
 
 		hover(self) style {
-			backgroundColor(hoverWash)
+			backgroundColor(text.alpha(0.06))
 		}
 	}
 
@@ -937,7 +918,7 @@ object PlaygroundStyle : StyleSheet() {
 	}
 
 	val switchTrack by style {
-		backgroundColor(rgba(255, 255, 255, 0.12))
+		backgroundColor(text.alpha(0.1))
 		borderRadius(999.px)
 		flexShrink(0)
 		height(1.05.cssRem)
@@ -973,9 +954,9 @@ object PlaygroundStyle : StyleSheet() {
 	}
 
 	val stepperValue by style {
-		fontFamily(MONO, "monospace")
 		fontSize(0.76.cssRem)
 		minWidth(2.6.cssRem)
+		monoFont()
 		textAlign(TextAlign.Center)
 	}
 
@@ -1036,9 +1017,9 @@ object PlaygroundStyle : StyleSheet() {
 		color(muted)
 		display(DisplayStyle.Flex)
 		flexShrink(0)
-		fontFamily(MONO, "monospace")
 		fontSize(0.75.cssRem)
 		gap(0.45.cssRem)
+		monoFont()
 		padding(0.px, 0.9.cssRem)
 		position(Position.Relative)
 		whiteSpace(WhiteSpace.NoWrap)
@@ -1078,8 +1059,8 @@ object PlaygroundStyle : StyleSheet() {
 
 	val tabMeta by style {
 		color(muted)
-		fontFamily(MONO, "monospace")
 		fontSize(0.66.cssRem)
+		monoFont()
 		opacity(0.75)
 		whiteSpace(WhiteSpace.NoWrap)
 	}
@@ -1099,7 +1080,7 @@ object PlaygroundStyle : StyleSheet() {
 	}
 
 	val tabCount by style {
-		backgroundColor(rgba(255, 255, 255, 0.09))
+		backgroundColor(text.alpha(0.1))
 		borderRadius(999.px)
 		color(text)
 		fontSize(0.62.cssRem)
@@ -1109,16 +1090,16 @@ object PlaygroundStyle : StyleSheet() {
 	/** Shown over an output built from an older buffer, so a stale pack never passes for the current one. */
 	val staleBadge by style {
 		alignItems(AlignItems.Center)
-		backgroundColor(accentWash)
-		border(1.px, LineStyle.Solid, rgba(8, 182, 214, 0.35))
+		backgroundColor(accent.alpha(0.12))
+		border(1.px, LineStyle.Solid, accent.alpha(0.35))
 		borderRadius(999.px)
 		color(accentStrong)
 		display(DisplayStyle.Flex)
 		flexShrink(0)
-		fontFamily(MONO, "monospace")
 		fontSize(0.66.cssRem)
 		gap(0.4.cssRem)
 		marginRight(0.3.cssRem)
+		monoFont()
 		padding(0.1.cssRem, 0.55.cssRem)
 		whiteSpace(WhiteSpace.NoWrap)
 	}
@@ -1250,7 +1231,7 @@ object PlaygroundStyle : StyleSheet() {
 		width(100.percent)
 
 		hover(self) style {
-			backgroundColor(hoverWash)
+			backgroundColor(text.alpha(0.06))
 			color(text)
 		}
 
@@ -1291,11 +1272,11 @@ object PlaygroundStyle : StyleSheet() {
 	}
 
 	val treeFileActive by style {
-		backgroundColor(accentHover)
+		backgroundColor(accent.alpha(0.2))
 		color(text)
 
 		hover(self) style {
-			backgroundColor(accentHover)
+			backgroundColor(accent.alpha(0.2))
 		}
 	}
 
@@ -1341,7 +1322,7 @@ object PlaygroundStyle : StyleSheet() {
 		whiteSpace(WhiteSpace.NoWrap)
 
 		hover(self) style {
-			backgroundColor(hoverWash)
+			backgroundColor(text.alpha(0.06))
 		}
 	}
 
@@ -1384,19 +1365,11 @@ object PlaygroundStyle : StyleSheet() {
 		minHeight(0.px)
 		overflow(Overflow.Auto)
 
-		// The header above already shows the path and holds copy, so Prism's own chrome would only repeat it.
 		"div.code-toolbar" style {
-			backgroundColor(Color.transparent)
-			border(0.px)
-			borderRadius(0.px)
 			flexGrow(1)
 			minWidth(100.percent)
 			overflow(Overflow.Visible)
 			width(Width.MaxContent)
-		}
-
-		"div.code-toolbar > .toolbar" style {
-			display(DisplayStyle.None)
 		}
 
 		// Scrolling belongs to the pane, not to the code box, so the bar sits at the bottom edge either way.
@@ -1478,9 +1451,9 @@ object PlaygroundStyle : StyleSheet() {
 		borderRadius(0.6.cssRem)
 		boxSizing(BoxSizing.BorderBox)
 		color(errorColor)
-		fontFamily(MONO, "monospace")
 		fontSize(0.76.cssRem)
 		maxHeight(16.cssRem)
+		monoFont()
 		overflow(Overflow.Auto)
 		padding(0.7.cssRem, 0.9.cssRem)
 		textAlign(TextAlign.Left)
@@ -1489,7 +1462,7 @@ object PlaygroundStyle : StyleSheet() {
 	}
 
 	val progressTrack by style {
-		backgroundColor(rgba(255, 255, 255, 0.06))
+		backgroundColor(text.alpha(0.06))
 		borderRadius(999.px)
 		height(0.25.cssRem)
 		maxWidth(24.cssRem)
@@ -1532,7 +1505,7 @@ object PlaygroundStyle : StyleSheet() {
 			iterationCount(null)
 		}
 
-		border(2.px, LineStyle.Solid, rgba(255, 255, 255, 0.08))
+		border(2.px, LineStyle.Solid, text.alpha(0.1))
 		borderRadius(50.percent)
 		borderTopColor(accentStrong)
 		height(1.4.cssRem)
@@ -1555,9 +1528,9 @@ object PlaygroundStyle : StyleSheet() {
 
 	val panelBody by style {
 		flexGrow(1)
-		fontFamily(MONO, "monospace")
 		fontSize(0.74.cssRem)
 		minHeight(0.px)
+		monoFont()
 		overflowY(Overflow.Auto)
 		padding(0.25.cssRem, 0.px)
 	}
@@ -1596,7 +1569,7 @@ object PlaygroundStyle : StyleSheet() {
 		transition(0.15.s, "background-color")
 
 		hover(self) style {
-			backgroundColor(hoverWash)
+			backgroundColor(text.alpha(0.06))
 		}
 	}
 
@@ -1651,21 +1624,12 @@ object PlaygroundStyle : StyleSheet() {
 
 	val panelNote by style {
 		color(muted)
-		fontFamily("IBM Plex Sans", "sans-serif")
 		fontSize(0.76.cssRem)
 		padding(0.35.cssRem, 1.cssRem)
+		sansFont()
 	}
 
 	val harness by style {
-		"div.code-toolbar" style {
-			backgroundColor(Color.transparent)
-			border(0.px)
-		}
-
-		"div.code-toolbar > .toolbar" style {
-			display(DisplayStyle.None)
-		}
-
 		":is(pre, pre[class*=\"language-\"])" style {
 			backgroundColor(Color.transparent)
 			fontSize(0.76.cssRem)
@@ -1683,11 +1647,11 @@ object PlaygroundStyle : StyleSheet() {
 		color(muted)
 		display(DisplayStyle.Flex)
 		flexShrink(0)
-		fontFamily(MONO, "monospace")
 		fontSize(0.67.cssRem)
 		gap(0.5.cssRem)
 		height(1.6.cssRem)
 		justifyContent(JustifyContent.SpaceBetween)
+		monoFont()
 		overflow(Overflow.Hidden)
 		padding(0.px, 0.3.cssRem)
 	}
@@ -1725,7 +1689,7 @@ object PlaygroundStyle : StyleSheet() {
 		transition(0.15.s, "background-color", "color")
 
 		hover(self) style {
-			backgroundColor(hoverWash)
+			backgroundColor(text.alpha(0.06))
 			color(text)
 		}
 	}
@@ -1742,7 +1706,7 @@ object PlaygroundStyle : StyleSheet() {
 		transition(0.15.s, "background-color", "color")
 
 		hover(self) style {
-			backgroundColor(hoverWash)
+			backgroundColor(text.alpha(0.06))
 			color(text)
 		}
 	}
@@ -1751,13 +1715,13 @@ object PlaygroundStyle : StyleSheet() {
 
 	val toast by style {
 		alignItems(AlignItems.Center)
-		animation(rise) {
+		animation(GlobalStyle.rise) {
 			duration(0.2.s)
 			timingFunction(AnimationTimingFunction.EaseOut)
 		}
 
 		backgroundColor(raised)
-		border(1.px, LineStyle.Solid, rgba(8, 182, 214, 0.35))
+		border(1.px, LineStyle.Solid, accent.alpha(0.35))
 		borderRadius(0.6.cssRem)
 		bottom(2.4.cssRem)
 		boxShadow(0.px, 0.8.cssRem, 2.cssRem, color = rgba(0, 0, 0, 0.5))
@@ -1786,7 +1750,7 @@ object PlaygroundStyle : StyleSheet() {
 	}
 
 	val dialog by style {
-		animation(rise) {
+		animation(GlobalStyle.rise) {
 			duration(0.18.s)
 			timingFunction(AnimationTimingFunction.EaseOut)
 		}
@@ -1824,11 +1788,8 @@ object PlaygroundStyle : StyleSheet() {
 
 		"h3" style {
 			color(muted)
-			fontFamily(MONO, "monospace")
-			fontSize(0.64.cssRem)
-			letterSpacing(1.4.px)
 			margin(0.3.cssRem, 0.px, 0.45.cssRem)
-			textTransform(TextTransform.Uppercase)
+			monoLabel(0.64.cssRem)
 		}
 	}
 
@@ -1860,7 +1821,7 @@ object PlaygroundStyle : StyleSheet() {
 
 	val shortcutRow by style {
 		alignItems(AlignItems.Center)
-		borderBottom(1.px, LineStyle.Solid, rgba(255, 255, 255, 0.04))
+		borderBottom(1.px, LineStyle.Solid, text.alpha(0.04))
 		display(DisplayStyle.Flex)
 		fontSize(0.8.cssRem)
 		gap(1.cssRem)
@@ -1869,9 +1830,9 @@ object PlaygroundStyle : StyleSheet() {
 	}
 
 	val inlineCode by style {
-		backgroundColor(rgba(255, 255, 255, 0.06))
+		backgroundColor(text.alpha(0.06))
 		borderRadius(0.3.cssRem)
-		fontFamily(MONO, "monospace")
+		monoFont()
 		padding(0.05.cssRem, 0.35.cssRem)
 	}
 
@@ -1886,8 +1847,8 @@ object PlaygroundStyle : StyleSheet() {
 		".monaco-editor .quick-input-widget" style {
 			borderRadius(0.75.cssRem)
 			boxShadow(0.px, 1.25.cssRem, 3.cssRem, color = rgba(0, 0, 0, 0.55))
-			fontFamily("IBM Plex Sans", "sans-serif")
 			overflow(Overflow.Hidden)
+			sansFont()
 			transform { translateX((-50).percent) }
 			important {
 				left(50.percent)
@@ -1918,18 +1879,18 @@ object PlaygroundStyle : StyleSheet() {
 		}
 
 		".monaco-editor .quick-input-list .monaco-keybinding > .monaco-keybinding-key" style {
-			backgroundColor(rgba(255, 255, 255, 0.07))
-			border(1.px, LineStyle.Solid, rgba(255, 255, 255, 0.12))
+			backgroundColor(text.alpha(0.06))
+			border(1.px, LineStyle.Solid, text.alpha(0.1))
 			borderBottomWidth(2.px)
 			borderRadius(0.3.cssRem)
 			boxSizing(BoxSizing.BorderBox)
 			boxShadow(BoxShadow.None)
 			color(text)
-			fontFamily(MONO, "monospace")
 			fontSize(0.66.cssRem)
 			height(1.15.cssRem)
 			margin(0.px)
 			minWidth(1.15.cssRem)
+			monoFont()
 			padding(0.px, 0.3.cssRem)
 		}
 
