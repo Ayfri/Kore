@@ -5,7 +5,7 @@ nav-title: Getting Started
 description: Step-by-step guide to create your first Minecraft datapack with Kore. Set up a Kotlin project, write type-safe commands and functions, generate the datapack, and test in-game.
 keywords: minecraft datapack tutorial, kore getting started, create datapack with kotlin, minecraft datapack generator tutorial, kore setup guide, kotlin datapack beginner, minecraft function generator, datapack development guide
 date-created: 2025-08-21
-date-modified: 2026-07-02
+date-modified: 2026-10-02
 routeOverride: /docs/getting-started
 position: 1
 ---
@@ -20,7 +20,8 @@ calls also work on Node.js; see [Multiplatform Support](/docs/advanced/multiplat
 browser-only `exportAsStrings()` / `generateZipBytes()` alternatives.
 
 If you already have solid datapack experience and want an architecture-first migration guide, jump to
-[From Datapacks to Kore](/docs/guides/from-datapacks-to-kore).
+[From Datapacks to Kore](/docs/guides/from-datapacks-to-kore). To try Kore before setting anything up, the
+[playground](/playground) runs it in your browser and shows the generated pack.
 
 ## What you will build
 

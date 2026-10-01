@@ -5,7 +5,7 @@ nav-title: Multiplatform
 description: Kore's kore, oop, helpers, and bindings modules are Kotlin Multiplatform (JVM + JS). Generate real datapacks on Node.js, or export strings/zip bytes anywhere.
 keywords: kore, multiplatform, kotlin multiplatform, kotlin/js, jvm, kmp, nodejs, exportAsStrings, generateZipBytes, kotest, karma
 date-created: 2026-07-12
-date-modified: 2026-07-12
+date-modified: 2026-10-02
 routeOverride: /docs/advanced/multiplatform
 ---
 
@@ -81,9 +81,10 @@ val zipBytes: ByteArray = pack.generateZipBytes() // suspend, works on every tar
 function that stages files through the [Origin Private File System](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system)
 (OPFS) behind the scenes and returns the finished ZIP as a plain `ByteArray`, ready to hand to a `Blob` +
 `URL.createObjectURL` download link (both reachable via Kotlin/JS's `kotlinx.browser` / `org.w3c.dom` bindings, no
-extra dependency). This is the shape you'd use for something like an in-browser Kore playground: build the pack with
-the same DSL as the JVM guide, call `generateZipBytes()` (or `exportAsStrings()` if you'd rather hand off individual
-files instead of an archive), and wire the result into whichever browser API triggers the download.
+extra dependency). An in-browser tool builds the pack with the same DSL as the JVM guide, calls `generateZipBytes()`
+(or `exportAsStrings()` to hand off individual files instead of an archive), and wires the result into whichever
+browser API triggers the download. The site's [playground](/playground) works this way: it compiles your snippet to
+JavaScript, runs it in a worker and lists the files `exportAsStrings()` returns.
 
 ## `bindings` on JS
 

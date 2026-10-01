@@ -5,7 +5,7 @@ nav-title: Loot Tables
 description: Create and customize Minecraft loot tables using Kore's type-safe Kotlin DSL for drops, container contents, fishing, and more.
 keywords: minecraft, datapack, kore, loot tables, pools, entries, item modifiers, drops
 date-created: 2025-08-11
-date-modified: 2026-09-23
+date-modified: 2026-10-02
 routeOverride: /docs/data-driven/loot-tables
 ---
 
@@ -14,6 +14,9 @@ routeOverride: /docs/data-driven/loot-tables
 Loot tables are JSON files that dictate what items should generate in various game situations.
 They control drops from mobs and blocks, contents of naturally generated containers (chests, barrels, dispensers),
 fishing rewards, archaeology brushing results, bartering exchanges, and more.
+
+The [loot table example](/playground#example=loot-table) of the playground runs in your browser and shows the JSON it
+generates.
 
 ## Overview
 

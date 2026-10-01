@@ -5,13 +5,16 @@ nav-title: Advancements
 description: Create custom Minecraft advancements with Kore's Kotlin DSL. Covers all triggers, criteria, rewards (functions, loot, recipes), display settings, and frames. Replace hand-written JSON with type-safe Kotlin.
 keywords: minecraft advancements, datapack advancements, advancement triggers, using_item trigger, inventory_changed, minecraft achievement, kore advancements, custom advancements, advancement criteria, advancement rewards
 date-created: 2024-01-08
-date-modified: 2026-09-23
+date-modified: 2026-10-02
 routeOverride: /docs/data-driven/advancements
 ---
 
 # Advancements
 
 Advancements are a system in Minecraft Java Edition that guides players through the game by setting goals and challenges to complete. They serve as in-game achievements that track player progress across various activities.
+
+The [advancement example](/playground#example=advancement) of the playground runs in your browser and shows the JSON it
+generates.
 
 ## Overview
 

@@ -5,7 +5,7 @@ nav-title: Macros
 description: A guide for using macros in Minecraft functions.
 keywords: minecraft, datapack, kore, guide, macros, functions
 date-created: 2024-04-06
-date-modified: 2026-02-03
+date-modified: 2026-10-02
 routeOverride: /docs/commands/macros
 ---
 
@@ -15,7 +15,8 @@ Macros allow dynamic command arguments that are substituted at runtime. Added in
 reusable functions with parameters. They are one of the runtime tools covered
 in [Runtime Logic](/docs/concepts/runtime-logic),
 and their values typically come from [data storage](/docs/concepts/data-storage). For basic command usage, see
-[Commands](/docs/commands/commands).
+[Commands](/docs/commands/commands). The [macros example](/playground#example=macros) of the playground runs in your
+browser and shows the functions it generates.
 
 ## Using Macros
 

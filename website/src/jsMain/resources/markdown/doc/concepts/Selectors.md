@@ -5,7 +5,7 @@ nav-title: Selectors
 description: Build Minecraft target selectors in Kore with typed Kotlin builders. Compose entity filters, sorting, and score-based conditions instead of writing @e[...] strings by hand.
 keywords: minecraft, datapack, kore, selectors, target selectors, entities, players, commands
 date-created: 2026-04-21
-date-modified: 2026-08-14
+date-modified: 2026-10-02
 routeOverride: /docs/concepts/selectors
 ---
 
@@ -16,7 +16,9 @@ as
 typed builders, so you can compose filters in Kotlin instead of manually writing `@e[...]` strings.
 
 For the vanilla syntax reference, see
-the [Minecraft Wiki target selectors page](https://minecraft.wiki/w/Target_selectors).
+the [Minecraft Wiki target selectors page](https://minecraft.wiki/w/Target_selectors). The
+[selectors example](/playground#example=selectors) of the playground runs in your browser and shows the commands it
+generates.
 
 ## Base selector helpers
 

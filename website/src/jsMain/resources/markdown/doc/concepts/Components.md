@@ -5,7 +5,7 @@ nav-title: Components
 description: A guide for using components in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, components
 date-created: 2024-01-08
-date-modified: 2026-07-01
+date-modified: 2026-10-02
 routeOverride: /docs/concepts/components
 ---
 
@@ -17,7 +17,9 @@ In Minecraft, data components are structured key-value properties used to define
   `wolf/variant`, `cat/collar`). These follow the same component mechanics but target entity-specific customization.
 
 This page focuses on using item components with Kore. For the vanilla reference and exhaustive definitions, see
-the [Minecraft Wiki - Data component format](https://minecraft.wiki/w/Data_component_format).
+the [Minecraft Wiki - Data component format](https://minecraft.wiki/w/Data_component_format). The
+[custom item example](/playground#example=custom-item) of the playground builds an item with components and runs in your
+browser.
 
 The Kore library provides a comprehensive and user-friendly way to work with these components, enabling you to create custom items with ease. This article will guide you through the process of using components with Kore, showcasing examples and best practices.
 
