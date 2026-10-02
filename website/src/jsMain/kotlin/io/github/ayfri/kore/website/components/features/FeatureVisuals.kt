@@ -36,6 +36,8 @@ import org.jetbrains.compose.web.dom.*
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLElement
 import kotlin.math.*
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 /** An editor-like frame titled [title], usually a file name, around code or a file tree. */
 @Composable
@@ -572,7 +574,7 @@ fun GameplayScene() {
 		if (phase != GamePhase.PLAYING) return@LaunchedEffect
 		title = GameTitle("Fight!", "Round 1")
 		while (ticks < roundTicks) {
-			delay(TICK_MS)
+			delay(TICK_MS.milliseconds)
 			ticks++
 			when (ticks) {
 				roundTicks / 5 -> title = null
@@ -593,7 +595,7 @@ fun GameplayScene() {
 		if (dashes == 0) return@LaunchedEffect
 		dashTicks = DASH_COOLDOWN_TICKS
 		while (dashTicks > 0) {
-			delay(TICK_MS)
+			delay(TICK_MS.milliseconds)
 			dashTicks--
 		}
 	}
@@ -755,9 +757,9 @@ fun RaycastScene() {
 		while (true) {
 			for (step in 0..steps) {
 				reached = step
-				delay(70)
+				delay(70.milliseconds)
 			}
-			delay(1400)
+			delay(1400.milliseconds)
 		}
 	}
 	Div({ classes(FeatureVisualsStyle.scene, FeatureVisualsStyle.nightScene) }) {
@@ -816,9 +818,9 @@ fun TerminalScene() {
 		while (true) {
 			for (count in 1..terminalLines.size) {
 				shown = count
-				delay(if (count == 1) 900 else 450)
+				delay((if (count == 1) 900 else 450).milliseconds)
 			}
-			delay(3000)
+			delay(3.seconds)
 		}
 	}
 	Window("Terminal") {

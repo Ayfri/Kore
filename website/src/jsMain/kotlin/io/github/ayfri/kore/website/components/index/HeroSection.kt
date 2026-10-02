@@ -19,6 +19,7 @@ import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.dom.A as DomA
+import kotlin.time.Duration.Companion.milliseconds
 
 private class HeroExample(val name: String, val file: String, val showcase: Showcase, val preview: @Composable () -> Unit)
 
@@ -227,7 +228,7 @@ private fun HeroShowcase() {
 
 	LaunchedEffect(autoplay) {
 		while (autoplay) {
-			delay(EXAMPLE_MS)
+			delay(EXAMPLE_MS.milliseconds)
 			example = (example + 1) % heroExamples.size
 		}
 	}

@@ -30,9 +30,11 @@ import org.w3c.dom.events.KeyboardEvent
 import org.w3c.dom.events.MouseEvent
 import org.w3c.files.get
 import kotlin.js.Promise
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 /** Quiet time after the last keystroke before type-checking and compiling what the editor holds. */
-private const val IDLE_DELAY_MS = 700L
+private val IDLE_DELAY = 700.milliseconds
 
 /** Past this an opened file is not a snippet, and Monaco would choke on it before the backend refuses it. */
 private const val MAX_OPENED_FILE_BYTES = 512 * 1024
@@ -266,7 +268,7 @@ fun PlaygroundPage() {
 				runCatching { window.navigator.asDynamic().clipboard.writeText(url) }
 				notify("Share link copied")
 				shareLabel = "Copied"
-				delay(2000)
+				delay(2.seconds)
 				shareLabel = "Share"
 			}
 
@@ -309,7 +311,7 @@ fun PlaygroundPage() {
 	// Debounced through the effect itself: a new keystroke cancels the pending write.
 	LaunchedEffect(code) {
 		if (initialCode == null) return@LaunchedEffect
-		delay(400)
+		delay(400.milliseconds)
 		PlaygroundStorage.draft = code
 	}
 
@@ -338,7 +340,7 @@ fun PlaygroundPage() {
 			scope.launch { prewarmRunner() }
 		}
 
-		delay(IDLE_DELAY_MS)
+		delay(IDLE_DELAY)
 
 		val target = code
 		launch {
@@ -370,14 +372,14 @@ fun PlaygroundPage() {
 	LaunchedEffect(busy) {
 		elapsedSeconds = 0
 		while (busy) {
-			delay(1000)
+			delay(1.seconds)
 			elapsedSeconds++
 		}
 	}
 
 	LaunchedEffect(toast) {
 		if (toast == null) return@LaunchedEffect
-		delay(2200)
+		delay(2200.milliseconds)
 		toast = null
 	}
 
