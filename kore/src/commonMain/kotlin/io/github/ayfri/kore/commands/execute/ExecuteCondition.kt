@@ -108,6 +108,13 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 		)
 	)
 
+	/** Returns a handle on the score of [target] on [objective], to compare with the infix operators (`greaterThan`, `matches`...). */
+	fun score(target: ScoreHolderArgument, objective: String) = ExecuteScore(target, objective)
+
+	/** Checks the score of [target] on [objective] against [value] with the given [relation], always as a `matches` range. */
+	fun score(target: ScoreHolderArgument, objective: String, value: Int, relation: Relation) =
+		addScore(ExecuteScore(target, objective).asString(relation.applyAsRange(value)))
+
 	/** Compares the score of [target] on [objective] with the score of [source] on [sourceObjective] using the given [relation]. */
 	fun score(
 		target: ScoreHolderArgument,

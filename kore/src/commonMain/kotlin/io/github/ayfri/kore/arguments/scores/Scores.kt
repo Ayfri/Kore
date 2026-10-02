@@ -2,7 +2,6 @@ package io.github.ayfri.kore.arguments.scores
 
 import io.github.ayfri.kore.arguments.enums.Relation
 import io.github.ayfri.kore.arguments.numbers.ranges.*
-import io.github.ayfri.kore.arguments.types.ScoreHolderArgument
 import kotlin.ranges.IntRange as KotlinIntRange
 
 open class Scores<T : Score>(val scores: MutableSet<String> = mutableSetOf()) {
@@ -35,10 +34,6 @@ fun Scores<SelectorScore>.score(name: String, value: IntRangeOrInt) = addScore("
 fun Scores<SelectorScore>.score(name: String, value: KotlinIntRange) = addScore("$name=$value")
 fun Scores<SelectorScore>.score(name: String, value: Int, relation: Relation) =
 	addScore(SelectorScore(name).asString(relation.applyAsRange(value)))
-
-fun Scores<ExecuteScore>.score(holder: ScoreHolderArgument, name: String) = ExecuteScore(holder, name)
-fun Scores<ExecuteScore>.score(holder: ScoreHolderArgument, name: String, value: Int, relation: Relation) =
-	addScore(ExecuteScore(holder, name).asString(relation.applyAsRange(value)))
 
 context(scores: Scores<SelectorScore>)
 infix fun String.lessThan(value: Int) = scores.addScore("$this=${rangeOrIntEnd(value - 1)}")

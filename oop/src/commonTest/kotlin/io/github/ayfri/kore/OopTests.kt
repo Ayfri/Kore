@@ -9,7 +9,6 @@ import io.github.ayfri.kore.arguments.components.item.damage
 import io.github.ayfri.kore.arguments.enums.DataType
 import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
-import io.github.ayfri.kore.arguments.scores.score
 import io.github.ayfri.kore.arguments.types.resources.storage
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.bossbar.registerBossBar
