@@ -771,6 +771,31 @@ object PlaygroundStyle : StyleSheet() {
 		}
 	}
 
+	/** A category header that folds its examples, its leading chevron turning when open. */
+	val sideCategoryToggle by style {
+		backgroundColor(Color.transparent)
+		border(0.px)
+		cursor(Cursor.Pointer)
+		textAlign(TextAlign.Left)
+		transition(0.15.s, "color")
+		width(100.percent)
+
+		hover(self) style {
+			color(text)
+		}
+
+		"svg:first-child" style {
+			height(0.7.cssRem)
+			opacity(0.7)
+			transition(0.15.s, "transform")
+			width(0.7.cssRem)
+		}
+
+		(self + "[aria-expanded='true'] svg:first-child") style {
+			transform { rotate(90.deg) }
+		}
+	}
+
 	val sideEmpty by style {
 		color(muted)
 		fontSize(0.76.cssRem)
@@ -799,16 +824,17 @@ object PlaygroundStyle : StyleSheet() {
 		padding(0.05.cssRem, 0.4.cssRem)
 	}
 
+	/** One line per example, the icon standing for its topic; only the open example spells out its description. */
 	val exampleEntry by style {
-		alignItems(AlignItems.Baseline)
+		alignItems(AlignItems.FlexStart)
 		backgroundColor(Color.transparent)
 		border(0.px)
-		borderRadius(0.45.cssRem)
+		borderRadius(0.4.cssRem)
 		color(text)
 		cursor(Cursor.Pointer)
 		display(DisplayStyle.Flex)
-		gap(0.7.cssRem)
-		padding(0.5.cssRem, 0.6.cssRem)
+		gap(0.55.cssRem)
+		padding(0.32.cssRem, 0.55.cssRem, 0.32.cssRem, 1.15.cssRem)
 		textAlign(TextAlign.Left)
 		transition(0.15.s, "background-color")
 		width(100.percent)
@@ -816,53 +842,51 @@ object PlaygroundStyle : StyleSheet() {
 		hover(self) style {
 			backgroundColor(text.alpha(0.06))
 		}
-	}
 
-	/** Its place in the category, which reads as a progression from the basics to the gameplay examples. */
-	val exampleIndex by style {
-		color(muted)
-		flexShrink(0)
-		fontSize(0.66.cssRem)
-		fontVariantNumeric(FontVariantNumeric.TabularNums)
-		monoFont()
-		opacity(0.6)
-		transition(0.15.s, "color", "opacity")
+		"svg" style {
+			color(muted)
+			flexShrink(0)
+			height(0.85.cssRem)
+			marginTop(0.12.cssRem)
+			transition(0.15.s, "color")
+			width(0.85.cssRem)
+		}
 	}
 
 	val exampleText by style {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
-		gap(0.15.cssRem)
+		gap(0.2.cssRem)
 		minWidth(0.px)
 	}
 
 	val exampleTitle by style {
 		alignItems(AlignItems.Center)
 		display(DisplayStyle.Flex)
-		fontSize(0.82.cssRem)
-		fontWeight(600)
+		fontSize(0.8.cssRem)
+		fontWeight(500)
 		gap(0.4.cssRem)
+		lineHeight(1.35)
 		transition(0.15.s, "color")
 	}
 
 	val exampleDescription by style {
 		color(muted)
-		fontSize(0.73.cssRem)
-		lineClamp(2)
+		fontSize(0.72.cssRem)
 		lineHeight(1.45)
-		overflow(Overflow.Hidden)
 	}
 
-	/** The open example is told apart by its accent title and number on a neutral wash, the row itself stays flat. */
+	/** The open example is told apart by its accent icon and title on a neutral wash, the row itself stays flat. */
 	val exampleEntryActive by style {
 		backgroundColor(text.alpha(0.06))
-
-		".$exampleIndex" style {
-			color(accentStrong)
-			opacity(1)
-		}
+		padding(0.45.cssRem, 0.55.cssRem, 0.5.cssRem, 1.15.cssRem)
 
 		".$exampleTitle" style {
+			color(accentStrong)
+			fontWeight(600)
+		}
+
+		"svg" style {
 			color(accentStrong)
 		}
 

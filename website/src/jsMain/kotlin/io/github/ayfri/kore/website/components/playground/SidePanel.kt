@@ -1,14 +1,33 @@
 package io.github.ayfri.kore.website.components.playground
 
 import androidx.compose.runtime.*
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideAppWindow
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideBraces
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideChevronRight
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideCloudLightning
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideCrosshair
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideFileCode
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideFolder
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideGamepad2
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideGem
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideGrid3x3
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideHammer
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideHand
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideHourglass
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideListOrdered
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideMessageSquareText
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideMinus
+import com.varabyte.kobweb.silk.components.icons.lucide.LucidePanelRight
 import com.varabyte.kobweb.silk.components.icons.lucide.LucidePlus
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideRefreshCw
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideRotateCcw
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideSearch
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideSprout
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideSword
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideTags
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideTrophy
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideUsers
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideVariable
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideX
 import org.jetbrains.compose.web.dom.*
 
@@ -33,6 +52,7 @@ fun SidePanel(example: PlaygroundExample, dirty: Boolean, onSelectExample: (Play
 
 @Composable
 private fun ExamplesView(current: PlaygroundExample, dirty: Boolean, onSelect: (PlaygroundExample) -> Unit) {
+	var collapsed by remember { mutableStateOf(emptySet<String>()) }
 	var query by remember { mutableStateOf("") }
 	val needle = query.trim().lowercase()
 	val matches = playgroundExamplesByCategory.mapValues { (category, examples) ->
@@ -53,29 +73,40 @@ private fun ExamplesView(current: PlaygroundExample, dirty: Boolean, onSelect: (
 		if (matches.isEmpty()) Div({ classes(PlaygroundStyle.sideEmpty) }) { Text("No example matches \"$query\".") }
 
 		matches.forEach { (category, examples) ->
-			Div({ classes(PlaygroundStyle.sideCategory) }) {
+			// A search shows every match, folded categories included.
+			val open = needle.isNotEmpty() || category !in collapsed
+
+			Button({
+				classes(PlaygroundStyle.sideCategory, PlaygroundStyle.sideCategoryToggle)
+				attr("aria-expanded", open.toString())
+				onClick { collapsed = if (category in collapsed) collapsed - category else collapsed + category }
+			}) {
+				LucideChevronRight()
 				CategoryIcon(category)
 				Text(category)
 				Span({ classes(PlaygroundStyle.treeCount) }) { Text(examples.size.toString()) }
 			}
 
-			examples.forEachIndexed { index, example ->
+			if (open) examples.forEach { example ->
+				val active = example == current
+
 				Button({
 					classes(PlaygroundStyle.exampleEntry)
-					if (example == current) classes(PlaygroundStyle.exampleEntryActive)
+					if (active) classes(PlaygroundStyle.exampleEntryActive)
+					if (!active) title(example.description)
 					onClick { onSelect(example) }
 				}) {
-					Span({ classes(PlaygroundStyle.exampleIndex) }) { Text((index + 1).toString().padStart(2, '0')) }
+					ExampleIcon(example.slug)
 
 					Span({ classes(PlaygroundStyle.exampleText) }) {
 						Span({ classes(PlaygroundStyle.exampleTitle) }) {
 							Text(example.title)
-							if (example == current && dirty) Span({ classes(PlaygroundStyle.dirtyDot) }) {
+							if (active && dirty) Span({ classes(PlaygroundStyle.dirtyDot) }) {
 								Span({ classes(PlaygroundStyle.srOnly) }) { Text("edited") }
 							}
 						}
 
-						Span({ classes(PlaygroundStyle.exampleDescription) }) { Text(example.description) }
+						if (active) Span({ classes(PlaygroundStyle.exampleDescription) }) { Text(example.description) }
 					}
 				}
 			}
@@ -94,6 +125,29 @@ private fun CategoryIcon(category: String) = when (category) {
 	"Data-driven" -> LucideBraces()
 	"Gameplay" -> LucideGamepad2()
 	else -> LucideFolder()
+}
+
+/** What each example is about at a glance, by slug; one added in `:playground-examples` without an icon here gets a code file. */
+@Composable
+private fun ExampleIcon(slug: String) = when (slug) {
+	"advancement" -> LucideTrophy()
+	"custom-item" -> LucideSword()
+	"dialogs" -> LucideAppWindow()
+	"hello-world" -> LucideHand()
+	"item-modifiers" -> LucideHammer()
+	"load-and-tick" -> LucideRefreshCw()
+	"loot-table" -> LucideGem()
+	"macros" -> LucideVariable()
+	"predicates" -> LucideCloudLightning()
+	"raycast" -> LucideCrosshair()
+	"recipes" -> LucideGrid3x3()
+	"scheduling" -> LucideHourglass()
+	"scoreboards" -> LucideListOrdered()
+	"selectors" -> LucideUsers()
+	"sidebar" -> LucidePanelRight()
+	"tags" -> LucideTags()
+	"text-components" -> LucideMessageSquareText()
+	else -> LucideFileCode()
 }
 
 @Composable
