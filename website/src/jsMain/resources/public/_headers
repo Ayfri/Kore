@@ -5,3 +5,13 @@
   Referrer-Policy: strict-origin-when-cross-origin
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
+
+# Unhashed names, so no `immutable`: a revisit uses the cached copy at once and picks up a new build on the next visit.
+/markdown-sources.json
+  Cache-Control: public, max-age=0, stale-while-revalidate=2592000
+
+/monaco/*
+  Cache-Control: public, max-age=0, stale-while-revalidate=2592000
+
+/playground-api.json
+  Cache-Control: public, max-age=0, stale-while-revalidate=2592000
