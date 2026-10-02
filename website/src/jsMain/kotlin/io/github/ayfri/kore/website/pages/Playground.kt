@@ -317,11 +317,13 @@ fun PlaygroundPage() {
 
 	LaunchedEffect(baseExample) { PlaygroundStorage.exampleSlug = baseExample.slug }
 
-	// Typing back to an untouched example shows its pack again. Otherwise, once typing pauses, the JVM type-check and
-	// the real compile start together: the type-check draws squiggles in well under a second, a buffer that does not
-	// type-check fails the compile's first phase about as fast, and a clean one is linked and run without waiting for
-	// Run, so the pack is usually there before the click. A new keystroke cancels all of it, and a compile already
-	// sent still lands in the cache. With live rebuild off, only the type-check runs.
+	// Typing back to an untouched example shows its pack again, and to a buffer compiled before, its diagnostics. Otherwise,
+	// once typing pauses, the JVM type-check and the real compile start together: the type-check draws squiggles in well
+	// under a second, and a clean buffer is linked and run without waiting for Run, so the pack is usually there before
+	// the click. The backend compiles one snippet at a time for everyone, so a buffer that already failed its type-check
+	// is not compiled live, and a compile still waiting behind another one is dropped when the type-check finds errors.
+	// A new keystroke cancels all of it, and a compile already sent still lands in the cache. With live rebuild off, only
+	// the type-check runs.
 	LaunchedEffect(code) {
 		if (initialCode == null) return@LaunchedEffect
 
@@ -343,13 +345,24 @@ fun PlaygroundPage() {
 		delay(IDLE_DELAY)
 
 		val target = code
+		CompileMemo.get(target)?.let { compiled ->
+			typeChecked = true
+			if (!busy) showDiagnostics(compiled.diagnostics)
+			if (autoBuild) build(target, live = true)
+			return@LaunchedEffect
+		}
+
+		val liveBuild = if (autoBuild && !PlaygroundCompiler.failedTypeCheck(target)) launch { build(target, live = true) } else null
 		launch {
 			val startedAt = window.performance.now()
-			val fresh = runCatching { highlightPlayground(target) }
+			val fresh = runCatching { PlaygroundCompiler.typeCheck(target) }
 				.onFailure { BuildLog.add(LogLevel.WARNING, "Type-check failed", it.message) }
 				.getOrNull() ?: return@launch
 
 			val problems = fresh.filter { it.file == USER_FILE_NAME }
+			val waiting = PlaygroundCompiler.running.let { it != null && it.code != target }
+			if (waiting && problems.any { it.severity == DiagnosticSeverity.ERROR }) liveBuild?.cancel()
+
 			BuildLog.add(
 				LogLevel.INFO,
 				"Type-checked $USER_FILE_NAME in ${(window.performance.now() - startedAt).toInt()}ms",
@@ -365,8 +378,6 @@ fun PlaygroundPage() {
 				BuildLog.add(LogLevel.INFO, "Imported ${imported.joinToString { it.substringAfterLast('.') }}", imported.joinToString("\n"))
 			}
 		}
-
-		if (autoBuild) build(target, live = true)
 	}
 
 	LaunchedEffect(busy) {

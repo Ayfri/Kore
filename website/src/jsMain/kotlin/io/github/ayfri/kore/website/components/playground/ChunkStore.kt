@@ -17,7 +17,7 @@ import kotlin.js.Promise
 object ChunkStore {
 	private const val CACHE_NAME = "kore-playground-chunks-v1"
 
-	/** Eleven library chunks plus a few `Kore-kore.js` variants, the only big one. */
+	/** Twelve library chunks plus a few `Kore-kore.js` variants, the only big one. Entry chunks live in [CompileMemo]. */
 	private const val MAX_PERSISTED = 16
 
 	private const val MAX_IN_MEMORY = 16
@@ -51,7 +51,8 @@ object ChunkStore {
 		return text
 	}
 
-	suspend fun put(hash: String, text: String) {
+	/** Stores [hash] and evicts the oldest stored chunks, never one of [inUse], the chunks of the compile it comes from. */
+	suspend fun put(hash: String, text: String, inUse: Set<String>) {
 		remember(hash, text)
 		val hashes = persistedHashes()
 		if (hash in hashes) return
@@ -61,9 +62,10 @@ object ChunkStore {
 			(cache.put(keyOf(hash), Response(text)) as Promise<Unit>).await()
 			hashes += hash
 
-			// Cache Storage keeps insertion order, so the oldest chunks, the stale `Kore-kore.js` variants, go first.
+			// Cache Storage keeps insertion order and a reused chunk is never written again, so the oldest unused go first.
 			val requests = (cache.keys() as Promise<Array<dynamic>>).await()
-			requests.take((requests.size - MAX_PERSISTED).coerceAtLeast(0)).forEach { request ->
+			val stale = requests.filter { (it.url as String).substringAfterLast('/') !in inUse }
+			stale.take((requests.size - MAX_PERSISTED).coerceAtLeast(0)).forEach { request ->
 				(cache.delete(request) as Promise<Boolean>).await()
 				hashes -= (request.url as String).substringAfterLast('/')
 			}

@@ -125,21 +125,18 @@ class CompileJob(val code: String) {
  * compile - never abandons a half-read response, and the finished result still lands in the cache.
  */
 object PlaygroundCompiler {
-	/** Enough for Run, edit, undo, Run. Every entry holds ~16 MB of JavaScript, so it stays tiny. */
-	private const val CACHE_SIZE = 2
+	/** Enough for an undo history's worth of buffers, each a short list of diagnostics. */
+	private const val TYPE_CHECK_CACHE_SIZE = 32
 
 	private val scope = MainScope()
-	private val results = LinkedHashMap<String, CompileResult>()
+	private val typeChecks = LinkedHashMap<String, List<PlaygroundDiagnostic>>()
 
 	var running by mutableStateOf<CompileJob?>(null)
 		private set
 
-	/** A successful compile of exactly [code], if one is still held. Failures are never kept, their diagnostics must follow the buffer. */
-	fun cached(code: String) = results[code]?.copy(cached = true)
-
 	suspend fun compile(code: String): CompileResult {
 		while (true) {
-			cached(code)?.let { return it }
+			CompileMemo.get(code)?.let { return it }
 			val job = running ?: break
 			if (job.code == code) return job.result.await()
 			job.result.join()
@@ -156,10 +153,7 @@ object PlaygroundCompiler {
 					stream(job, emptySet())
 				}
 			}
-				.onSuccess { result ->
-					store(code, result)
-					job.result.complete(result)
-				}
+				.onSuccess { job.result.complete(it) }
 				.onFailure { job.result.completeExceptionally(it) }
 
 			running = null
@@ -168,16 +162,28 @@ object PlaygroundCompiler {
 		return job.result.await()
 	}
 
-	fun persist(hash: String, text: String) {
-		scope.launch { ChunkStore.put(hash, text) }
+	/** Whether the last type-check of exactly [code] still held reported an error. */
+	fun failedTypeCheck(code: String) = typeChecks[code]?.any { it.severity == DiagnosticSeverity.ERROR } == true
+
+	fun persist(hash: String, text: String, inUse: Set<String>) {
+		scope.launch { ChunkStore.put(hash, text, inUse) }
 	}
 
-	private fun store(code: String, result: CompileResult) {
-		if (!result.succeeded) return
-
-		results.remove(code)
-		results[code] = result
-		while (results.size > CACHE_SIZE) results.remove(results.keys.first())
+	/**
+	 * Diagnostics for [code] alone, without producing any JavaScript, from memory when this buffer was already checked.
+	 *
+	 * `POST /api/compiler/highlight` type-checks the snippet on the **JVM** and answers in well under a second,
+	 * against many seconds for the JS compile, which is what makes squiggles-while-typing affordable. The
+	 * harness is not sent, so every message describes [USER_FILE_NAME] at its real line.
+	 *
+	 * The two targets can disagree: anything JVM-only passes here and still fails the real compile, so
+	 * diagnostics coming back from a compile always win.
+	 */
+	suspend fun typeCheck(code: String): List<PlaygroundDiagnostic> {
+		val diagnostics = typeChecks.remove(code) ?: highlight(code)
+		typeChecks[code] = diagnostics
+		while (typeChecks.size > TYPE_CHECK_CACHE_SIZE) typeChecks.remove(typeChecks.keys.first())
+		return diagnostics
 	}
 }
 
@@ -205,15 +211,17 @@ private fun compileBody(code: String): dynamic {
 }
 
 /** Thrown when the backend left out a chunk the store said it held but no longer finds, so the compile is asked again. */
-private class MissingChunkException : Exception()
+internal class MissingChunkException : Exception()
 
 /**
  * The chunks of a response, texts left out by the backend filled back in from [ChunkStore].
  *
- * New texts are stored without waiting: writing 14 MB to Cache Storage must not delay the run.
+ * New library texts are stored without waiting: writing 14 MB to Cache Storage must not delay the run. The entry chunk
+ * changes with every buffer, so it stays in [CompileMemo] and never pushes a library chunk out of [ChunkStore].
  */
 private suspend fun resolveChunks(jsFiles: dynamic): List<CompiledChunk> {
 	val count = (jsFiles?.length as? Int) ?: return emptyList()
+	val hashes = (0 until count).mapNotNullTo(mutableSetOf()) { jsFiles[it].hash as? String }
 
 	return (0 until count).map { index ->
 		val chunk = jsFiles[index]
@@ -222,7 +230,7 @@ private suspend fun resolveChunks(jsFiles: dynamic): List<CompiledChunk> {
 		val text = chunk.text as? String
 
 		when {
-			text != null -> text.also { if (hash != null) PlaygroundCompiler.persist(hash, it) }
+			text != null -> text.also { if (hash != null && name != ENTRY_CHUNK_NAME) PlaygroundCompiler.persist(hash, it, hashes) }
 			hash != null -> ChunkStore.get(hash) ?: throw MissingChunkException()
 			else -> throw MissingChunkException()
 		}.let { CompiledChunk(name, it, hash) }
@@ -256,17 +264,7 @@ private fun parseDiagnostics(errors: dynamic): List<PlaygroundDiagnostic> {
 	}
 }
 
-/**
- * Diagnostics for [code] alone, without producing any JavaScript.
- *
- * `POST /api/compiler/highlight` type-checks the snippet on the **JVM** and answers in well under a second,
- * against many seconds for the JS compile, which is what makes squiggles-while-typing affordable. The
- * harness is not sent, so every message describes [USER_FILE_NAME] at its real line.
- *
- * The two targets can disagree: anything JVM-only passes here and still fails the real compile, so
- * diagnostics coming back from a compile always win.
- */
-suspend fun highlightPlayground(code: String): List<PlaygroundDiagnostic> {
+private suspend fun highlight(code: String): List<PlaygroundDiagnostic> {
 	val api = playgroundApiUrl ?: error("No compile backend is configured for this deployment.")
 
 	val body = js("({})")
@@ -372,7 +370,7 @@ private suspend fun stream(job: CompileJob, known: Set<String>): CompileResult {
 			when (event.event as? String) {
 				"result" -> {
 					runCatching { reader.cancel() }
-					return resultOf(event.result, (window.performance.now() - startedAt).toInt())
+					return memoized(job.code, event.result, (window.performance.now() - startedAt).toInt())
 				}
 
 				"busy" -> throw CompileBusyException(event.message as? String ?: "The compile queue is full, retry shortly.")
@@ -408,10 +406,13 @@ private suspend fun compilePlain(code: String, known: Set<String>): CompileResul
 	if (response.status.toInt() == 429) throw CompileBusyException("The compile queue is full, retry shortly.")
 	if (!response.ok) error("Compile backend answered ${response.status} ${response.statusText}.")
 
-	return resultOf(response.json().await().asDynamic(), (window.performance.now() - startedAt).toInt())
+	return memoized(code, response.json().await().asDynamic(), (window.performance.now() - startedAt).toInt())
 }
 
-private suspend fun resultOf(payload: dynamic, durationMs: Int): CompileResult {
+private suspend fun memoized(code: String, payload: dynamic, durationMs: Int) =
+	resultOf(payload, durationMs).also { if (it.succeeded) CompileMemo.put(code, payload) }
+
+internal suspend fun resultOf(payload: dynamic, durationMs: Int): CompileResult {
 	val exception = payload.exception
 
 	return CompileResult(
