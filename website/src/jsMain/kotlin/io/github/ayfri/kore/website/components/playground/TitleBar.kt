@@ -97,10 +97,6 @@ fun TitleBar(
 
 			ToolSeparator()
 
-			ToolButton("Keyboard shortcuts", { onCommand(PlaygroundCommand.SHORTCUTS) }, classes = arrayOf(PlaygroundStyle.wideOnly)) {
-				LucideKeyboard()
-			}
-
 			ToolButton(
 				if (PlaygroundLayout.focusMode) "Exit focus mode" else "Focus mode, the IDE takes the whole window",
 				{ onCommand(PlaygroundCommand.FOCUS_MODE) },
