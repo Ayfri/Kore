@@ -194,6 +194,9 @@ itemModifier("random_enchant") {
 }
 ```
 
+An empty enchantment list leaves `options` out of the JSON: the game reads `"options": []` as an empty candidate set and
+leaves the item unenchanted.
+
 #### enchantWithLevels
 
 Enchants as if using an enchanting table:

@@ -27,7 +27,7 @@ fun ItemModifier.enchantRandomly(
 	onlyCompatible: Boolean? = null,
 	block: EnchantRandomly.() -> Unit = {},
 ) {
-	modifiers += EnchantRandomly(options = enchantments, onlyCompatible = onlyCompatible).apply(block)
+	modifiers += EnchantRandomly(options = enchantments.ifEmpty { null }, onlyCompatible = onlyCompatible).apply(block)
 }
 
 /** Vararg convenience overload for `enchant_randomly`. */
@@ -35,7 +35,7 @@ fun ItemModifier.enchantRandomly(
 	vararg enchantments: EnchantmentOrTagArgument,
 	onlyCompatible: Boolean? = null, block: EnchantRandomly.() -> Unit = {},
 ) {
-	modifiers += EnchantRandomly(options = enchantments.toList(), onlyCompatible = onlyCompatible).apply(block)
+	modifiers += EnchantRandomly(options = enchantments.toList().ifEmpty { null }, onlyCompatible = onlyCompatible).apply(block)
 }
 
 /** Configure the candidate enchantments list. */

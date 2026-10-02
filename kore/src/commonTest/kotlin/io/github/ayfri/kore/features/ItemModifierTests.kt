@@ -167,6 +167,16 @@ fun DataPack.itemModifierTests() {
 		}
 	""".trimIndent()
 
+	itemModifier("enchant_randomly_any") {
+		enchantRandomly()
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:enchant_randomly"
+		}
+	""".trimIndent()
+
 	itemModifier("enchant_randomly_with_additional_cost") {
 		enchantRandomly(Enchantments.SHARPNESS) {
 			includeAdditionalCostComponent = true
