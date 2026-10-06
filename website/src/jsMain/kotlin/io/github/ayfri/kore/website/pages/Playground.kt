@@ -115,16 +115,30 @@ fun PlaygroundPage() {
 	 * silently, since nobody pressed anything. Only a pack that fails while running replaces the output.
 	 */
 	suspend fun build(target: String, live: Boolean) {
+		/** A live build of a buffer already compiled is the same use again, so only its first build counts. */
+		fun report(outcome: String, cached: Boolean = false, vararg extra: Pair<String, Any>) {
+			if (live && cached) return
+			PlaygroundAnalytics.track(
+				"playground_run",
+				"base_example" to baseExample.slug,
+				"outcome" to outcome,
+				"trigger" to if (live) "auto" else "run",
+				*extra,
+			)
+		}
+
 		val result = try {
 			PlaygroundCompiler.compile(target)
 		} catch (cancelled: CancellationException) {
 			throw cancelled
 		} catch (busyBackend: CompileBusyException) {
 			BuildLog.add(LogLevel.WARNING, "The compile backend is busy", busyBackend.message)
+			report("busy")
 			if (!live) output = OutputState.Failed("The compile backend is busy", busyBackend.message)
 			return
 		} catch (failure: Throwable) {
 			BuildLog.add(LogLevel.ERROR, "Could not reach the compile backend", failure.message)
+			report("unreachable")
 			if (!live) output = OutputState.Failed("Could not reach the compile backend", failure.message)
 			return
 		}
@@ -135,6 +149,7 @@ fun PlaygroundPage() {
 
 		if (!result.succeeded) {
 			BuildLog.add(LogLevel.ERROR, "Compilation failed", result.exception ?: "${result.errors.size} errors")
+			report("compile_error", result.cached)
 			if (live) return
 
 			if (result.errors.isNotEmpty()) PlaygroundLayout.showPanel(PanelTab.PROBLEMS)
@@ -170,6 +185,7 @@ fun PlaygroundPage() {
 					"Generated ${execution.files.size} files in ${execution.durationMs}ms",
 					humanSize(execution.files.sumOf { it.content.length }),
 				)
+				report("success", result.cached, "compile_ms" to result.durationMs, "files" to execution.files.size)
 
 				OutputState.Ready(
 					files = execution.files,
@@ -180,6 +196,7 @@ fun PlaygroundPage() {
 
 			is RunResult.Failure -> {
 				BuildLog.add(LogLevel.ERROR, "The snippet failed while running", execution.message)
+				report("runtime_error", result.cached)
 				OutputState.Failed("The snippet failed while running", execution.message)
 			}
 		}
@@ -194,7 +211,13 @@ fun PlaygroundPage() {
 
 			try {
 				when {
-					showPrecomputed(target) -> Unit
+					showPrecomputed(target) -> PlaygroundAnalytics.track(
+						"playground_run",
+						"base_example" to baseExample.slug,
+						"outcome" to "precomputed",
+						"trigger" to "run",
+					)
+
 					!backendConfigured -> {
 						BuildLog.add(LogLevel.ERROR, "Compiling is unavailable here", "This deployment has no compile backend.")
 						output = OutputState.Failed(
@@ -218,6 +241,7 @@ fun PlaygroundPage() {
 	fun selectExample(example: PlaygroundExample) {
 		baseExample = example
 		editor?.replaceContent(example.code) ?: run { code = example.code }
+		PlaygroundAnalytics.track("playground_example", "example" to example.slug)
 		// Under `lgMax` the sidebar covers the editor, so picking an example is also leaving it.
 		if (window.matchMedia("(max-width: 1023px)").matches) PlaygroundLayout.sidebarOpen = false
 	}
@@ -235,6 +259,7 @@ fun PlaygroundPage() {
 			val text = file.asDynamic().text().unsafeCast<Promise<String>>().await()
 			editor?.replaceContent(text) ?: run { code = text }
 			notify("Opened ${file.name}")
+			PlaygroundAnalytics.track("playground_open_file")
 		}
 	}
 
@@ -267,6 +292,7 @@ fun PlaygroundPage() {
 				window.history.replaceState(null, "", url)
 				runCatching { window.navigator.asDynamic().clipboard.writeText(url) }
 				notify("Share link copied")
+				PlaygroundAnalytics.track("playground_share", "base_example" to baseExample.slug)
 				shareLabel = "Copied"
 				delay(2.seconds)
 				shareLabel = "Share"
@@ -303,6 +329,16 @@ fun PlaygroundPage() {
 				shared != null -> "Opened a shared snippet"
 				linked == null && draft != null -> "Restored your last draft"
 				else -> "Loaded the ${baseExample.title} example"
+			},
+		)
+		PlaygroundAnalytics.track(
+			"playground_open",
+			"base_example" to baseExample.slug,
+			"entry" to when {
+				shared != null -> "shared"
+				linked != null -> "example_link"
+				draft != null -> "draft"
+				else -> "default"
 			},
 		)
 		showPrecomputed(code)

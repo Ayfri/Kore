@@ -133,4 +133,12 @@ private fun download(blob: Blob, fileName: String) {
 	link.download = fileName
 	link.click()
 	URL.revokeObjectURL(url)
+	PlaygroundAnalytics.track(
+		"playground_download",
+		"kind" to when {
+			fileName == USER_FILE_NAME -> "source"
+			blob.type == "application/zip" -> "zip"
+			else -> "file"
+		},
+	)
 }
