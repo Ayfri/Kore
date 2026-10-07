@@ -48,7 +48,7 @@ fun DataPack.registerTimerWithBossBar(
 ): TimerWithBossBar {
 	val timer = registerTimer(name, duration)
 	val bar = registerBossBar("${name}_bar", this.name) {
-		max = duration.value.toInt()
+		max = duration.inTicks().value.toInt()
 		value = 0
 		bossBarConfig()
 	}

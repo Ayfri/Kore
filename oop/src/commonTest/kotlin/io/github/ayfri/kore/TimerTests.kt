@@ -1,11 +1,13 @@
 package io.github.ayfri.kore
 
+import io.github.ayfri.kore.arguments.numbers.seconds
 import io.github.ayfri.kore.arguments.numbers.ticks
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.entities.player
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.timer.registerTimer
+import io.github.ayfri.kore.timer.registerTimerWithBossBar
 import io.kotest.core.spec.style.FunSpec
 
 fun timerTests() = dataPack("timer_tests") {
@@ -39,5 +41,18 @@ fun timerTests() = dataPack("timer_tests") {
 class TimerTests : FunSpec({
 	test("timer") {
 		timerTests()
+	}
+
+	test("timer durations in seconds are counted in ticks") {
+		dataPack("timer_seconds") {
+			val timed = registerTimerWithBossBar("round", 5.seconds)
+
+			function("on_complete") {
+				timed.timer.onComplete(player("Ayfri")) { say("done") }
+				lines[0].startsWith("execute if score @e[limit=1,name=Ayfri,type=minecraft:player] round matches 100 run ") assertsIs true
+			}
+
+			timed.bossBar.config.max assertsIs 100
+		}
 	}
 })

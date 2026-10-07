@@ -38,7 +38,7 @@ data class CooldownHandle(val cooldown: Cooldown) {
 			block()
 			scoreboard {
 				players {
-					set(entity.asSelector(), cooldown.name, cooldown.duration.value.toInt())
+					set(entity.asSelector(), cooldown.name, cooldown.duration.inTicks().value.toInt())
 				}
 			}
 		}
@@ -67,7 +67,7 @@ data class CooldownHandle(val cooldown: Cooldown) {
 	context(fn: Function)
 	fun start(entity: Entity) = fn.scoreboard {
 		players {
-			set(entity.asSelector(), cooldown.name, cooldown.duration.value.toInt())
+			set(entity.asSelector(), cooldown.name, cooldown.duration.inTicks().value.toInt())
 		}
 	}
 }

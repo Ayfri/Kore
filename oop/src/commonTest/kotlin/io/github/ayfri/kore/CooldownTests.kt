@@ -14,7 +14,7 @@ fun cooldownTests() = dataPack("cooldown_tests") {
 
 	function("test_cooldown") {
 		cd.start(player)
-		lines[0] assertsIs "scoreboard players set @e[limit=1,name=TestPlayer,type=minecraft:player] attack_cd 2"
+		lines[0] assertsIs "scoreboard players set @e[limit=1,name=TestPlayer,type=minecraft:player] attack_cd 40"
 
 		cd.ifReady(player) {
 			say("Cooldown ready!")
