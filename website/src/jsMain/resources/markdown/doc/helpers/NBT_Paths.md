@@ -5,7 +5,7 @@ nav-title: NBT Paths
 description: Build typed Minecraft NBT paths and split one NBT tree into static values plus runtime scores with the Kore helpers module.
 keywords: minecraft, datapack, kore, helpers, nbt, path, storage, execute store, resolve, score, macro
 date-created: 2026-09-04
-date-modified: 2026-09-04
+date-modified: 2026-10-07
 routeOverride: /docs/helpers/nbt-paths
 ---
 
@@ -13,6 +13,9 @@ routeOverride: /docs/helpers/nbt-paths
 
 Two related helpers for the NBT half of a datapack: `NbtPath` replaces interpolated path strings with typed segments,
 and `resolveNbt` writes one tree whose values mix literals and runtime scores.
+
+> [!FOOTPRINT]
+> Nothing at runtime: no objective, storage, entity, forceloaded chunk, tick or load function. `nbtPath` builds path strings in Kotlin, and `resolveNbt` writes into the storage, entity or block you pass, with one `execute store` per score.
 
 ## Typed paths
 

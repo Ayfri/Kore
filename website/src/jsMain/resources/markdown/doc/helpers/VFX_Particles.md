@@ -5,7 +5,7 @@ nav-title: VFX Particles
 description: "Generate geometric particle effects with Kore: circles, lines, spheres, spirals and helixes, in world, relative or local coordinates."
 keywords: minecraft, datapack, kore, helpers, vfx, particles, shape, circle, line, sphere, spiral, helix, geometry, coordinates, relative, local
 date-created: 2026-03-03
-date-modified: 2026-08-15
+date-modified: 2026-10-07
 routeOverride: /docs/helpers/vfx-particles
 ---
 
@@ -16,6 +16,9 @@ Each shape is emitted as a generated function containing pre-computed positions.
 
 This is especially useful when you want repeatable visual effects without manually writing dozens of particle commands.
 You describe the geometry once and then call the generated function wherever you need it.
+
+> [!FOOTPRINT]
+> One function per shape, `vfx_<name>`, holding one `particle` command per point and running only when you call it. No objective, storage, entity, forceloaded chunk, tick or load function.
 
 ## Drawing shapes
 

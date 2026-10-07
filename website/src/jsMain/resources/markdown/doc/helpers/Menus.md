@@ -5,7 +5,7 @@ nav-title: Menus
 description: "Build interactive Minecraft menus from dialogs with Kore: buttons running functions for any player, sub-pages, links, pause screen and Smithed menu."
 keywords: minecraft menu, datapack menu, dialog menu, datapack gui, minecraft dialog, trigger command, smithed data pack menu, pause screen, kore menu
 date-created: 2026-09-23
-date-modified: 2026-09-23
+date-modified: 2026-10-07
 routeOverride: /docs/helpers/menus
 ---
 
@@ -44,6 +44,14 @@ function("open_kits") { kits.open() }
 ```
 
 {{{ .components.mc.KitsMenuMockup }}}
+
+> [!FOOTPRINT]
+> - **Objectives:** `<pack>.menu.<name>`, with the `trigger` criterion.
+> - **Storage:** none.
+> - **Entities:** none.
+> - **Forceloaded chunks:** none.
+> - **Every tick:** `menu_<name>_tick` enables the trigger for every player and runs the dispatcher for the players who clicked.
+> - **Load and files:** `menu_<name>_load` creates the objective. Each page is a dialog, each button a function called by `menu_<name>_dispatch`. `pauseScreen` adds the menu to `#minecraft:pause_screen_additions`, `smithed` adds the `smithed:data_packs` dialog and the `#smithed:data_packs` tag.
 
 ## Buttons
 

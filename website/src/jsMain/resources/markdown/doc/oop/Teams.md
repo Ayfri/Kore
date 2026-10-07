@@ -5,7 +5,7 @@ nav-title: Teams
 description: Object-oriented team management with the Kore OOP module - create, configure, and manage Minecraft teams.
 keywords: minecraft, datapack, kore, oop, teams, scoreboard, collision, nametag, friendly fire
 date-created: 2026-03-03
-date-modified: 2026-09-23
+date-modified: 2026-10-07
 routeOverride: /docs/oop/teams
 ---
 
@@ -42,6 +42,9 @@ works with `Entity`.
 They also integrate nicely with `execute` conditions and score tracking helpers, which makes it easy to express checks
 like "does this team still have this player?" or "how many players are still alive in this team?" without rebuilding
 selectors by hand.
+
+> [!FOOTPRINT]
+> Only the teams you create, `ensureExists()` writes `team add`. No objective, storage, entity, forceloaded chunk, tick or load function.
 
 ## Reusing a team in other OOP features
 

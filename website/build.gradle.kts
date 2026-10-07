@@ -195,6 +195,7 @@ kobweb {
 
 						if (remainingText.isEmpty()) {
 							firstText.unlink()
+							if (firstChild.firstChild == null) firstChild.unlink()
 						} else {
 							firstText.literal = remainingText
 						}

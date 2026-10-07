@@ -5,7 +5,7 @@ nav-title: World Events
 description: React to world-level events in Minecraft with Kore's OOP module. Tick events, weather changes (rain/thunder), day/night cycle triggers (noon/midnight), and configurable interval timers.
 keywords: minecraft world events, datapack tick event, minecraft weather event, day night cycle datapack, kore world events, datapack interval timer, rain thunder event minecraft, world load event, datapack time of day
 date-created: 2026-06-23
-date-modified: 2026-06-23
+date-modified: 2026-10-07
 routeOverride: /docs/oop/world-events
 ---
 
@@ -20,6 +20,14 @@ scoreboards, and where a value has to be read at runtime you should reach for
 Like entity events, multiple handlers can be registered for the same event and they all fire together. Each event is
 backed by a function registered in the vanilla `tick`/`load` tag that dispatches to a per-event
 [function tag](https://minecraft.wiki/w/Tag#Function_tags).
+
+> [!FOOTPRINT]
+> - **Objectives:** `kore_world`, with `#<event>.now`, `.prev` and `.counter` holders for edge and interval events.
+> - **Storage:** none.
+> - **Entities:** none.
+> - **Forceloaded chunks:** none.
+> - **Every tick:** one `dispatch_<event>` function per tick, weather, day/night, time of day or interval event, and per dimension.
+> - **Load and files:** `kore_world_init` creates the objective, `onLoad` handlers run from `dispatch_on_world_load`. Each event gets a `#<pack>:<event>` tag and one function per handler.
 
 ## The world handle
 

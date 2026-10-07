@@ -5,7 +5,7 @@ nav-title: Raycasts
 description: Recursive raycast system with the Kore helpers module - step-based raycasting with block hit, max distance, and per-step callbacks.
 keywords: minecraft, datapack, kore, helpers, raycast, ray, block, hit, step, recursive
 date-created: 2026-03-03
-date-modified: 2026-04-01
+date-modified: 2026-10-07
 routeOverride: /docs/helpers/raycasts
 ---
 
@@ -17,6 +17,14 @@ precision scales with the step size.
 
 They are ideal for "look at" interactions, custom tools, line-of-sight checks, or visual debugging because the helper
 pre-builds the recursive command chain for you.
+
+> [!FOOTPRINT]
+> - **Objectives:** `kore_raycast`, shared by every ray.
+> - **Storage:** none.
+> - **Entities:** none. The caster carries the `kore_raycasting` tag while its ray runs, removed on hit or at max distance.
+> - **Forceloaded chunks:** none.
+> - **Every tick:** no, a cast runs within the tick it starts in.
+> - **Load and files:** `kore_raycast_init` creates the objective, and each ray gets `raycast_<name>_start`, `_step`, `_hit` and `_max`.
 
 ## API overview
 

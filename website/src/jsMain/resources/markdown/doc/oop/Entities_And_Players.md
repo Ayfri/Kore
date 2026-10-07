@@ -5,7 +5,7 @@ nav-title: Entities & Players
 description: Create and manage entities and players with the Kore OOP module - selectors, execute helpers, batch commands, entity commands, and entity effects.
 keywords: minecraft, datapack, kore, oop, entity, player, commands, execute, batch, effects, teleport, kill, damage
 date-created: 2026-03-03
-date-modified: 2026-08-14
+date-modified: 2026-10-07
 routeOverride: /docs/oop/entities-and-players
 ---
 
@@ -13,6 +13,9 @@ routeOverride: /docs/oop/entities-and-players
 
 The OOP module models Minecraft entities and players as Kotlin objects with selectors and context-aware
 extension functions.
+
+> [!FOOTPRINT]
+> Nothing of its own: a handle is a selector, and only the commands you call are written. Score operators against a plain `Int` add the `kore_constants` objective, see [Scoreboards](/docs/oop/scoreboards).
 
 ## Creating entities
 

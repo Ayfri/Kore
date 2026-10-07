@@ -5,7 +5,7 @@ nav-title: Display Entities
 description: A guide for creating Display Entities in the world.
 keywords: minecraft, datapack, kore, guide, display-entities
 date-created: 2024-04-06
-date-modified: 2026-09-27
+date-modified: 2026-10-07
 routeOverride: /docs/helpers/display-entities
 ---
 
@@ -13,6 +13,9 @@ routeOverride: /docs/helpers/display-entities
 
 Display entities share a common set of world-rendering options and then add a few type-specific fields for blocks,
 items, or text.
+
+> [!FOOTPRINT]
+> Only the entities you summon: each `summon` creates one display entity. No objective, storage, forceloaded chunk, tick or load function.
 
 ## Shared display settings
 

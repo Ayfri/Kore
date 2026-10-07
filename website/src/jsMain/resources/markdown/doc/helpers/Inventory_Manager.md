@@ -5,7 +5,7 @@ nav-title: Inventory Manager
 description: Listen to slot events and control containers (players, blocks) with Kore's Inventory Manager.
 keywords: minecraft, datapack, kore, inventory, container, slots, events, gui
 date-created: 2025-08-11
-date-modified: 2025-08-11
+date-modified: 2026-10-07
 routeOverride: /docs/helpers/inventory-manager
 ---
 
@@ -18,6 +18,14 @@ blocks and react to slot events.
 - Register slot listeners that fire when an item is taken from a slot.
 - Keep a slot populated, clear other slots, or run custom logic every tick.
 - Auto-generate the required load/tick functions and minimal scoreboards to drive the listeners.
+
+> [!FOOTPRINT]
+> - **Objectives:** `_inventory_manager_<pack>_click_listener_<n>`, one per manager.
+> - **Storage:** none.
+> - **Entities:** none on an entity container. A block container gets one `minecraft:marker` tagged `_inventory_manager_<pack>_click_listener_<n>_marker`, killed and summoned again on each load.
+> - **Forceloaded chunks:** none.
+> - **Every tick:** `tick_inventory_manager_<n>` checks each listener's slot, plus what `onTick` adds: `clearAllItemsNotInSlot()` tests the 36 inventory slots and the offhand.
+> - **Load and files:** `load_inventory_manager_<n>` creates the objective, and each handler gets its own `when_taken_event_<hash>` / `during_taken_event_<hash>` function.
 
 ## Quick start
 

@@ -5,7 +5,7 @@ nav-title: Scoreboards
 description: Object-oriented scoreboard management with the Kore OOP module - objectives, display slots, per-entity score operations, and score arithmetic operators.
 keywords: minecraft, datapack, kore, oop, scoreboard, objective, score, display slot, fake player, operators, constants
 date-created: 2026-03-03
-date-modified: 2026-09-04
+date-modified: 2026-10-07
 routeOverride: /docs/oop/scoreboards
 ---
 
@@ -17,6 +17,9 @@ Wraps [Minecraft scoreboards](https://minecraft.wiki/w/Scoreboard) with two dist
 - **`ScoreboardEntity`** - one entity's score *in* one objective. Read it, write it, copy it.
 
 That split mirrors how vanilla splits `scoreboard objectives ...` from `scoreboard players ...`.
+
+> [!FOOTPRINT]
+> Only the objectives you create. `*=`, `/=` and `%=` against a plain `Int` add the `kore_constants` objective and a `#<value>` holder, written inline the first time a function uses that value. No storage, entity, forceloaded chunk, tick or load function.
 
 ## Which handle do I need?
 

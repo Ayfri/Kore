@@ -5,7 +5,7 @@ nav-title: Timers
 description: Scoreboard-based timers with Kore's OOP module. Countdown timers, boss bar timers, tick-based schedules, and reusable handles. Build cooldowns and game timers without raw command blocks.
 keywords: timer datapack, minecraft timer, datapack timer, scoreboard timer, countdown timer, minecraft cooldown, boss bar timer, tick timer, kore timer, datapack schedule
 date-created: 2026-03-03
-date-modified: 2026-07-02
+date-modified: 2026-10-07
 routeOverride: /docs/oop/timers
 ---
 
@@ -18,6 +18,14 @@ When the score reaches the configured duration, completion handlers fire.
 This is a strong fit for round timers, capture phases, delayed rewards, warmups, or any mechanic that should complete
 after a predictable amount of [ticks](/docs/concepts/time). Durations are expressed as [
 `TimeNumber`](/docs/concepts/time) values - `5.seconds`, `200.ticks`, etc.
+
+> [!FOOTPRINT]
+> - **Objectives:** one per timer, named after it.
+> - **Storage:** none.
+> - **Entities:** none.
+> - **Forceloaded chunks:** none.
+> - **Every tick:** `timer_<name>_tick` adds 1 to every player at 0 or more. Only players count up.
+> - **Load and files:** `timer_<name>_init` creates the objective, `onComplete` blocks become functions listed in `#kore:timer_complete_handlers`, and `registerTimerWithBossBar` adds the boss bar `<pack>:<name>_bar`.
 
 ## Registering a timer
 

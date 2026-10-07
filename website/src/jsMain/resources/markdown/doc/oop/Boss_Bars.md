@@ -5,7 +5,7 @@ nav-title: Boss Bars
 description: Object-oriented boss bar management with the Kore OOP module - register, configure, show, hide, and update boss bars.
 keywords: minecraft, datapack, kore, oop, bossbar, boss bar, color, style, notched, team, handle, config
 date-created: 2026-03-03
-date-modified: 2026-04-01
+date-modified: 2026-10-07
 routeOverride: /docs/oop/boss-bars
 ---
 
@@ -18,6 +18,14 @@ This is useful when you want one place to configure a bar and then reuse it acro
 
 `BossBarConfig` stores the initial registration settings, while `BossBarHandle` exposes the runtime commands you call
 from functions.
+
+> [!FOOTPRINT]
+> - **Objectives:** none.
+> - **Storage:** none.
+> - **Entities:** none.
+> - **Forceloaded chunks:** none.
+> - **Every tick:** no.
+> - **Load and files:** `bossbar_<id>_init` creates the boss bar `<namespace>:<id>` (namespace `minecraft` by default) and applies its settings on every load.
 
 ## Registering a boss bar
 

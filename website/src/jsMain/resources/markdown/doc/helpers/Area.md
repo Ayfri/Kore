@@ -5,7 +5,7 @@ nav-title: Area
 description: Axis-aligned 3D bounding box with the Kore helpers module - geometric operations, containment checks, and spatial queries.
 keywords: minecraft, datapack, kore, helpers, area, bounding box, vec3, intersect, union, contains
 date-created: 2026-03-03
-date-modified: 2026-03-31
+date-modified: 2026-10-07
 routeOverride: /docs/helpers/area
 ---
 
@@ -16,6 +16,9 @@ operations useful for zone detection, region math, and spatial queries.
 
 Because it is purely geometric, `Area` is especially useful when you need to pre-compute regions in Kotlin and then
 reuse the resulting coordinates in multiple commands, predicates, or generated functions.
+
+> [!FOOTPRINT]
+> Nothing at runtime: no objective, storage, entity, forceloaded chunk, tick or load function. An `Area` is computed in Kotlin, only its coordinates end up in the commands you write.
 
 ## Creating an area
 

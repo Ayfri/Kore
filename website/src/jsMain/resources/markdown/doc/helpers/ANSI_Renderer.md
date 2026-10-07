@@ -5,7 +5,7 @@ nav-title: ANSI Renderer
 description: Convert ANSI SGR escape sequences into Minecraft text components with the Kore helpers module.
 keywords: minecraft, datapack, kore, helpers, ansi, sgr, escape, text, renderer, color, bold, italic
 date-created: 2026-03-03
-date-modified: 2026-03-31
+date-modified: 2026-10-07
 routeOverride: /docs/helpers/ansi-renderer
 ---
 
@@ -15,6 +15,9 @@ Converts text
 containing [ANSI SGR escape sequences](https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters)
 into Minecraft `ChatComponents` for use in [tellraw](https://minecraft.wiki/w/Commands/tellraw), title
 commands, or boss bar names. ANSI codes are stripped from the output and mapped to Minecraft text component styles.
+
+> [!FOOTPRINT]
+> Nothing at runtime: no objective, storage, entity, forceloaded chunk, tick or load function. The renderer runs while Kore builds the pack and returns `ChatComponents`.
 
 ## Basic usage
 

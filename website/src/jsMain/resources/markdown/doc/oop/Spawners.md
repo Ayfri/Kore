@@ -5,7 +5,7 @@ nav-title: Spawners
 description: Reusable entity spawner handles with the Kore OOP module - register, spawn, and batch-summon entities.
 keywords: minecraft, datapack, kore, oop, spawner, summon, entity, mob, wave
 date-created: 2026-03-03
-date-modified: 2026-03-31
+date-modified: 2026-10-07
 routeOverride: /docs/oop/spawners
 ---
 
@@ -14,6 +14,9 @@ routeOverride: /docs/oop/spawners
 Spawners wrap [entity summoning](https://minecraft.wiki/w/Commands/summon) into reusable, pre-configured handles.
 
 They are useful whenever the same mob or entity should be spawned multiple times with the same base configuration.
+
+> [!FOOTPRINT]
+> Only the entities you spawn, plus one `spawner_<name>_spawn` function per spawner for your own commands: Kore never calls it, `spawn()` writes the `summon` inline. No objective, storage, forceloaded chunk, tick or load function.
 
 ## Registering a spawner
 

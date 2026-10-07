@@ -5,7 +5,7 @@ nav-title: State Delegates
 description: Kotlin property delegates that map scoreboard objectives or NBT storage to simple var properties with the Kore helpers module.
 keywords: minecraft, datapack, kore, helpers, state, delegate, scoreboard, storage, nbt, property, operators, fake player
 date-created: 2026-03-03
-date-modified: 2026-09-04
+date-modified: 2026-10-07
 routeOverride: /docs/helpers/state-delegates
 ---
 
@@ -21,6 +21,9 @@ The two main delegate types are:
 
 - `ScoreboardDelegate` for integer scoreboard-backed state.
 - `StorageDelegate<T>` for NBT-backed storage paths.
+
+> [!FOOTPRINT]
+> Only the objective or storage path you name: a scoreboard delegate writes `scoreboard objectives add` once, in the function using it. No entity, forceloaded chunk, tick or load function.
 
 ## Scoreboard delegate
 

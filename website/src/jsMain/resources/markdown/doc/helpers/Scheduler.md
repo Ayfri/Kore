@@ -5,7 +5,7 @@ nav-title: Scheduler
 description: Schedule and loop tasks in Minecraft datapacks with Kore. Tick-based loops, delayed actions, repeating schedules, and timed callbacks without complex scoreboard chains.
 keywords: datapack scheduler, minecraft schedule, timer datapack, datapack loop, tick loop minecraft, schedule function, repeating task datapack, delay command minecraft, kore scheduler, datapack timer loop
 date-created: 2025-03-26
-date-modified: 2026-07-02
+date-modified: 2026-10-07
 routeOverride: /docs/helpers/scheduler
 ---
 
@@ -14,6 +14,14 @@ routeOverride: /docs/helpers/scheduler
 This document explains how to schedule and run tasks at specific times or intervals using Kore's built-in scheduler.
 Schedulers help automate recurring actions, delayed tasks, and cleanup when tasks are no longer needed. They are the
 higher-level way to do the time-based loops described in [Runtime Logic](/docs/concepts/runtime-logic).
+
+> [!FOOTPRINT]
+> - **Objectives:** none.
+> - **Storage:** none.
+> - **Entities:** none.
+> - **Forceloaded chunks:** none.
+> - **Every tick:** no, tasks run through `/schedule`.
+> - **Load and files:** `scheduler_setup` schedules every task on load. A task given as a block becomes `scheduler_task_<hash>`, a repeating one gets a `scheduler_<hash>` wrapper that schedules itself again.
 
 ## Overview
 

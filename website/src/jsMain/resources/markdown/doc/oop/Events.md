@@ -5,7 +5,7 @@ nav-title: Events
 description: Advancement-based event system for player and entity actions with the Kore OOP module.
 keywords: minecraft, datapack, kore, oop, events, advancement, player, entity, death, click, consume, kill, recipe, dimension, riding, tame, bed, target, fishing, crossbow, totem, tick, bucket, potion
 date-created: 2026-03-03
-date-modified: 2026-06-23
+date-modified: 2026-10-07
 routeOverride: /docs/oop/events
 ---
 
@@ -17,6 +17,14 @@ registered for the same event - they all fire together.
 
 This makes events a convenient bridge between vanilla triggers and OOP-style gameplay code: you register interest once,
 then let the generated dispatchers call your handlers when Minecraft reports the action.
+
+> [!FOOTPRINT]
+> - **Objectives:** none.
+> - **Storage:** none.
+> - **Entities:** none.
+> - **Forceloaded chunks:** none.
+> - **Every tick:** no for player events, each one is an advancement. `onDeath` adds `kore_oop_death_dispatcher` to `#minecraft:tick`, which checks every item entity.
+> - **Load and files:** per event, the advancement `kore_oop/<event>` and a `dispatch_<event>` function that revokes it and calls the `#<pack>:<event>` tag, plus one function per handler. `onDeath` adds the loot table `kore_oop/death_trigger_<type>`.
 
 ## Registering events
 

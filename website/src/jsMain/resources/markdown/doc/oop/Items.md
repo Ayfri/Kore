@@ -5,7 +5,7 @@ nav-title: Items
 description: Object-oriented item creation, spawning, and NBT serialization with the Kore OOP module.
 keywords: minecraft, datapack, kore, oop, items, item stack, summon, give, nbt, data modify
 date-created: 2026-03-03
-date-modified: 2026-09-04
+date-modified: 2026-10-07
 routeOverride: /docs/oop/items
 ---
 
@@ -14,6 +14,9 @@ routeOverride: /docs/oop/items
 The OOP module keeps item usage concise by letting you build an [item stack](https://minecraft.wiki/w/Item) once and
 then reuse it for giving,
 spawning, or embedding it in wider entity workflows.
+
+> [!FOOTPRINT]
+> Nothing of its own: each `summon()` creates one `minecraft:item` entity. No objective, storage, forceloaded chunk, tick or load function.
 
 ## Basic usage
 

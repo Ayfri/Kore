@@ -5,7 +5,7 @@ nav-title: Sidebars
 description: "Build server-style Minecraft sidebars with Kore: up to 15 text lines, right-aligned values, live scores, conditional lines and cheap refreshes."
 keywords: minecraft sidebar, datapack sidebar, scoreboard display, custom scoreboard, scoreboard lines, numberformat, kore sidebar, minigame scoreboard
 date-created: 2026-09-23
-date-modified: 2026-09-23
+date-modified: 2026-10-07
 routeOverride: /docs/helpers/sidebars
 ---
 
@@ -34,6 +34,14 @@ tick { lobby.refresh() }
 {{{ .components.mc.SidebarMockup }}}
 
 `sidebar(...)` only declares the sidebar, commands are emitted where you call its functions.
+
+> [!FOOTPRINT]
+> - **Objectives:** one named after the sidebar, removed and created again by `create()`, which also takes the `sidebar` display slot.
+> - **Storage:** none.
+> - **Entities:** none.
+> - **Forceloaded chunks:** none.
+> - **Every tick:** only if you call `refresh()` from a tick function, it rewrites the live lines.
+> - **Load and files:** none of its own, `create()` writes its commands into the function calling it.
 
 ## Lines
 

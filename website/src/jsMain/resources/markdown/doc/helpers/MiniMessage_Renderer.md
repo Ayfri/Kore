@@ -5,7 +5,7 @@ nav-title: MiniMessage Renderer
 description: Parse Adventure MiniMessage format into Minecraft text components with Kore. Supports colors, decorations, click/hover events, gradients, and fonts. Use as a MiniMessage viewer for rich text in datapacks.
 keywords: minimessage, minimessage viewer, minimessage renderer, minimessage parser, adventure text, minecraft text components, minimessage generator, mini message format, kore minimessage, minimessage to chat component
 date-created: 2026-03-03
-date-modified: 2026-07-02
+date-modified: 2026-10-07
 routeOverride: /docs/helpers/minimessage-renderer
 ---
 
@@ -20,6 +20,9 @@ MiniMessage is part of the [Adventure](https://github.com/KyoriPowered/adventure
 Velocity,
 and other Minecraft server platforms. You can preview MiniMessage text in the
 [MiniMessage Web Viewer](https://webui.advntr.dev/) without starting a Minecraft instance.
+
+> [!FOOTPRINT]
+> Nothing at runtime: no objective, storage, entity, forceloaded chunk, tick or load function. The renderer runs while Kore builds the pack and returns `ChatComponents`.
 
 ## Basic Usage
 

@@ -5,13 +5,16 @@ nav-title: Mannequins
 description: A guide for creating Mannequins in the world.
 keywords: minecraft, datapack, kore, guide, mannequins
 date-created: 2026-01-25
-date-modified: 2026-08-14
+date-modified: 2026-10-07
 routeOverride: /docs/helpers/mannequins
 ---
 
 # Mannequins
 
 Mannequins are special entities that can display player skins and textures. They are highly customizable, allowing you to change their profile, hidden layers, and main hand.
+
+> [!FOOTPRINT]
+> Only the entities you summon: each `summon` creates one `minecraft:mannequin`. No objective, storage, forceloaded chunk, tick or load function.
 
 ## Creating a Mannequin
 

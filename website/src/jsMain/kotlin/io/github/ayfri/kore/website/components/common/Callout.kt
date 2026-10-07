@@ -20,6 +20,7 @@ enum class CalloutType(
 ) {
 	CAUTION("Caution", Color("#ffc107"), { LucideOctagonAlert(Modifier.ariaHidden()) }),
 	DANGER("Danger", Color("#d73a49"), { LucideCircleX(Modifier.ariaHidden()) }),
+	FOOTPRINT("Footprint", Color("#049bb2"), { LucideFootprints(Modifier.ariaHidden()) }),
 	IMPORTANT("Important", Color("#8b5cf6"), { LucideMessageSquareWarning(Modifier.ariaHidden()) }),
 	INFO("Info", Color("#0078d4"), { LucideInfo(Modifier.ariaHidden()) }),
 	NOTE("Note", Color("#0078d4"), { LucideNotepadText(Modifier.ariaHidden()) }),

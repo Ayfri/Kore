@@ -5,7 +5,7 @@ nav-title: Markdown Renderer
 description: Convert Markdown-formatted text into Minecraft text components with the Kore helpers module.
 keywords: minecraft, datapack, kore, helpers, markdown, text, renderer, bold, italic, link, heading, list
 date-created: 2026-03-03
-date-modified: 2026-09-23
+date-modified: 2026-10-07
 routeOverride: /docs/helpers/markdown-renderer
 ---
 
@@ -13,6 +13,9 @@ routeOverride: /docs/helpers/markdown-renderer
 
 Converts [Markdown](https://commonmark.org/)-formatted text into Minecraft `ChatComponents` for use in
 [tellraw](https://minecraft.wiki/w/Commands/tellraw), title commands, or boss bar names.
+
+> [!FOOTPRINT]
+> Nothing at runtime: no objective, storage, entity, forceloaded chunk, tick or load function. The renderer runs while Kore builds the pack and returns `ChatComponents`.
 
 ## Basic usage
 

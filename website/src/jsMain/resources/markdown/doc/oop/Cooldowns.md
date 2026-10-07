@@ -5,7 +5,7 @@ nav-title: Cooldowns
 description: Scoreboard-based cooldown system with the Kore OOP module - register, start, check, and reset cooldowns.
 keywords: minecraft, datapack, kore, oop, cooldown, scoreboard, timer, tick
 date-created: 2026-03-03
-date-modified: 2026-03-31
+date-modified: 2026-10-07
 routeOverride: /docs/oop/cooldowns
 ---
 
@@ -18,6 +18,14 @@ When the score reaches 0 the cooldown is ready. Durations are expressed as [`Tim
 
 They are a good fit for abilities, interactions, item usage limits, or any mechanic that should be reusable for several
 players without hand-writing the decrement logic every time.
+
+> [!FOOTPRINT]
+> - **Objectives:** one per cooldown, named after it.
+> - **Storage:** none.
+> - **Entities:** none.
+> - **Forceloaded chunks:** none.
+> - **Every tick:** `cooldown_<name>_tick` removes 1 from every player above 0. Only players count down.
+> - **Load and files:** `cooldown_<name>_init` creates the objective. Each `ifReady` block becomes a `cooldown_<name>_ready_<hash>` function, listed in `#kore:cooldown_ready_handlers`.
 
 ## Registering a cooldown
 

@@ -30,6 +30,14 @@ function("dash") {
 Components are fixed-point with a `scale` of `1000` by default, so `1500` means `1.5` blocks. `math.vector` registers the
 three objectives in the math load function. Operations between two vectors expect the same scale.
 
+> [!FOOTPRINT]
+> - **Objectives:** `<name>_x`, `<name>_y` and `<name>_z` per vector, plus `kore_math`.
+> - **Storage:** `<pack>:kore_math`, holding the rotation matrix.
+> - **Entities:** one `minecraft:marker` and one `minecraft:text_display`, UUIDs `4b4f5245-0000-0000-0000-000000000001` and `...02`, tagged `kore.math`, `smithed.entity` and `smithed.strict`, summoned once at -30000000 0 1664 by the operations that read positions or directions.
+> - **Forceloaded chunks:** the one holding those entities, x -30000000 z 1664.
+> - **Every tick:** no.
+> - **Load and files:** `kore_math_init` creates the objectives, entities, storage and the `#<n>` constants.
+
 ## Reading vectors
 
 ```kotlin

@@ -5,7 +5,7 @@ nav-title: Dynamic Strings
 description: Manipulate Minecraft datapack strings with a Kotlin-like API - substring, split, join, replace, trim, pad and case conversion backed by NBT storage and macros.
 keywords: minecraft, datapack, kore, oop, string, nbt, storage, macro, substring, split, join, replace, trim, pad, concat
 date-created: 2026-04-16
-date-modified: 2026-09-06
+date-modified: 2026-10-07
 routeOverride: /docs/oop/dynamic-strings
 ---
 
@@ -17,6 +17,14 @@ strings can be manipulated with an idiomatic Kotlin API: `substring`, `split`, `
 
 Only the helpers you actually call are materialized as `mcfunction` files, so an unused API costs nothing in the
 generated pack.
+
+> [!FOOTPRINT]
+> - **Objectives:** `kore_string_len`.
+> - **Storage:** `kore_string_lib:memory`, shared by every pack using Kore strings.
+> - **Entities:** none.
+> - **Forceloaded chunks:** none.
+> - **Every tick:** no.
+> - **Load and files:** a load function creates the objective, and `lowercase`/`uppercase` add a `kore_string_<case>_table_init` load function filling their table. Only the operations you call get their `kore_string_*` functions.
 
 ## Quick start
 

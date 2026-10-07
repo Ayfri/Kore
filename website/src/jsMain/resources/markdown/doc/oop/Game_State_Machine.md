@@ -5,7 +5,7 @@ nav-title: Game State Machine
 description: Scoreboard-based game state machine with the Kore OOP module - register states, transition between them, and react to state changes.
 keywords: minecraft, datapack, kore, oop, game state, state machine, scoreboard, transition, lobby
 date-created: 2026-03-03
-date-modified: 2026-03-31
+date-modified: 2026-10-07
 routeOverride: /docs/oop/game-state-machine
 ---
 
@@ -16,6 +16,14 @@ and dispatches handlers when the state matches.
 
 It is a good fit for lobbies, round systems, multi-phase boss fights, tutorials, or any flow that repeatedly switches
 between a known set of named states.
+
+> [!FOOTPRINT]
+> - **Objectives:** `kore_state`, holding the state on `#game_state`.
+> - **Storage:** none.
+> - **Entities:** none.
+> - **Forceloaded chunks:** none.
+> - **Every tick:** no.
+> - **Load and files:** `kore_state_init` creates the objective and sets the first state back on every load and `/reload`. `whenState` blocks become functions listed in `#kore:state_when_handlers`.
 
 ## Registering states
 

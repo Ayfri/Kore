@@ -5,7 +5,7 @@ nav-title: Scoreboard Math
 description: Fast fixed-point sine, cosine, atan2 and exact integer square root on Minecraft scoreboards with Kore, shared functions and two commands per call.
 keywords: minecraft, datapack, kore, helpers, math, scoreboard, trigonometry, sine, cosine, atan2, sqrt, fixed point
 date-created: 2026-03-03
-date-modified: 2026-09-23
+date-modified: 2026-10-07
 routeOverride: /docs/helpers/scoreboard-math
 ---
 
@@ -27,6 +27,14 @@ function("orbit") {
 scoreboard players operation #x kore_math = @s angle
 execute store result score @s offset_x run function my_pack:generated_scopes/kore_math/cos_1
 ```
+
+> [!FOOTPRINT]
+> - **Objectives:** `kore_math`, with its `#<n>` constants.
+> - **Storage:** none, except for the routines listed in [Helper entities](#helper-entities).
+> - **Entities:** none, except for the routines listed in [Helper entities](#helper-entities).
+> - **Forceloaded chunks:** none, except for those same routines.
+> - **Every tick:** no.
+> - **Load and files:** `kore_math_init` creates the objective and constants, and each routine is one shared function under `generated_scopes/kore_math/`.
 
 ## Registering the module
 
