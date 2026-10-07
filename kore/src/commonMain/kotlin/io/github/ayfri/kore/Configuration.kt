@@ -8,7 +8,7 @@ import io.github.ayfri.kore.optimization.Optimization
 *
  * Docs: https://kore.ayfri.com/docs/guides/configuration
 *
-* @property generateCommentOfGeneratedFunctionCall - Whether to include a comment when an implicit generated function is called
+* @property generateCommentOfGeneratedFunctionCall - Whether each generated function starts with a `# Called by <id>` comment per function calling it
 * @property generatedFunctionsFolder - The folder where the generated functions are stored. Defaults to "generated_scopes".
 * @property optimization - The whole-pack optimization passes run before writing, disabled by default
 * @property prettyPrint - Whether to pretty print generated JSON

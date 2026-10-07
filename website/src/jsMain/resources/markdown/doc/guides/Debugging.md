@@ -18,20 +18,21 @@ generated pack back to the Kotlin that wrote it.
 
 ## Make the output readable first
 
-The defaults aim at releases. While debugging, turn on pretty-printed JSON and write the pack to a folder instead of a
-zip, so you can open and search it:
+The defaults aim at releases. While debugging, turn on pretty-printed JSON and caller comments, and write the pack to a
+folder instead of a zip, so you can open and search it:
 
 ```kotlin
 dataPack("my_pack") {
 	configuration {
 		prettyPrint = true
+		generateCommentOfGeneratedFunctionCall = true
 	}
 	// ...
 }.generate()
 ```
 
-[Configuration](/docs/guides/configuration#development-vs-release-setups) shows how to switch it from a build
-constant.
+[Configuration](/docs/guides/configuration#development-vs-release-setups) shows how to switch both flags from one
+build constant.
 
 ## Reading generated function names
 
@@ -48,7 +49,15 @@ The functions you name with `function("give_reward")` keep their name. The ones 
 The hash only depends on the commands inside, so the same body gets the same name on every build, and two places
 producing the same body share one file. Changing one command changes the name.
 
-To find who calls a generated function, search the pack for its name: the caller holds the
+With `generateCommentOfGeneratedFunctionCall` on, each generated function starts with the functions calling it:
+
+```mcfunction
+# Called by my_pack:shop/buy
+give @s minecraft:diamond
+tellraw @s "Reward!"
+```
+
+Without it, search the pack for the generated function's name, the caller holds the
 `function my_pack:generated_scopes/generated_<hash>` line. When a generated function keeps coming up, give it a real
 name instead:
 

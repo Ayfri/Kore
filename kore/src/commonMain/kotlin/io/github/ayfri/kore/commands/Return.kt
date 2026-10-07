@@ -137,9 +137,7 @@ fun Function.returnRun(block: Function.() -> Command): Command {
 
 	if (function.lines.size == 1) return addLine(command("return", literal("run"), literal(function.lines[0])))
 
-	val name = generatedFunctionName("generated", function.lines)
-	val generatedFunction = datapack.generatedFunction(name) { lines += function.lines }
-	if (generatedFunction.name == name) comment("Generated function ${asString()}")
+	val generatedFunction = datapack.generatedFunction(generatedFunctionName("generated", function.lines)) { lines += function.lines }
 
 	@Suppress("DEPRECATION_ERROR")
 	return returnRun(generatedFunction)

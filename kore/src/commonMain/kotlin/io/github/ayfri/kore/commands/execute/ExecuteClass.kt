@@ -169,9 +169,7 @@ class Execute {
 			return run
 		}
 
-		val name = generatedFunctionName("generated", function.lines)
-		val generatedFunction = fn.datapack.generatedFunction(name) { lines += function.lines }
-		if (generatedFunction.name == name && fn.datapack.configuration.generateCommentOfGeneratedFunctionCall) fn.comment("Generated function ${fn.asString()}")
+		val generatedFunction = fn.datapack.generatedFunction(generatedFunctionName("generated", function.lines)) { lines += function.lines }
 		run = generatedFunction
 
 		return generatedFunction

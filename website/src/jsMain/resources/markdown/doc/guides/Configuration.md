@@ -5,7 +5,7 @@ nav-title: Configuration
 description: Tune how Kore serializes your datapack - pretty-printed JSON, indentation, the generated functions folder, and debug comments on generated function calls.
 keywords: kore configuration, datapack pretty print, datapack json formatting, generated functions folder, kore settings, minecraft datapack debug, generated_scopes, mcfunction output
 date-created: 2024-04-06
-date-modified: 2026-09-26
+date-modified: 2026-10-07
 routeOverride: /docs/guides/configuration
 position: 2
 ---
@@ -67,15 +67,21 @@ The default folder name is `generated_scopes` (see `DataPack.DEFAULT_GENERATED_F
 Change `generatedFunctionsFolder` if you want a different directory name (shorter paths, naming that matches your
 project, or avoiding clashes with hand-written `function/` trees).
 
-## Comments on generated function calls (`generateCommentOfGeneratedFunctionCall`)
+## Callers of generated functions (`generateCommentOfGeneratedFunctionCall`)
 
-When Kore inserts a call to a newly generated function from an `execute` block, it can add a **comment line** in the
-calling function documenting that call, for example:
+When `generateCommentOfGeneratedFunctionCall` is `true`, every generated function starts with one comment per function
+calling it, so you can trace a `generated_scopes/` file back to the code that produced it:
 
-`# Generated function namespace:path/to/caller`
+```mcfunction
+# Called by my_pack:shop/buy
+# Called by my_pack:shop/sell
+give @s minecraft:diamond
+tellraw @s "Done!"
+```
 
-This is controlled by `generateCommentOfGeneratedFunctionCall`. Default: `false`. Turn it on while debugging or learning
-generated control flow; turn it off for minimal `.mcfunction` output in releases.
+A function calling it through a function tag (`#minecraft:tick`) isn't listed. The comments are added when the pack is
+written, so they never change the hash in a generated function's name. Default: `false`. Turn it on while debugging or
+learning generated control flow; turn it off for minimal `.mcfunction` output in releases.
 
 ## Logging
 
@@ -121,13 +127,13 @@ dataPack("mypack") {
 
 ## Reference
 
-| Option                                   | Description                                                        | Default              |
-|------------------------------------------|--------------------------------------------------------------------|----------------------|
-| `generateCommentOfGeneratedFunctionCall` | Insert a comment when calling a generated function from `execute`. | `false`              |
-| `generatedFunctionsFolder`               | Subfolder under `function/` for generated `.mcfunction` files.     | `"generated_scopes"` |
+| Option                                   | Description                                                                          | Default              |
+|------------------------------------------|--------------------------------------------------------------------------------------|----------------------|
+| `generateCommentOfGeneratedFunctionCall` | List the callers of each generated function in comments atop it.                     | `false`              |
+| `generatedFunctionsFolder`               | Subfolder under `function/` for generated `.mcfunction` files.                       | `"generated_scopes"` |
 | `optimization`                           | Whole-pack passes run before writing, see [Optimization](/docs/guides/optimization). | disabled             |
-| `prettyPrint`                            | Pretty-print JSON resources.                                       | `false`              |
-| `prettyPrintIndent`                      | Indent string when pretty-printing JSON.                           | `"\t"`               |
+| `prettyPrint`                            | Pretty-print JSON resources.                                                         | `false`              |
+| `prettyPrintIndent`                      | Indent string when pretty-printing JSON.                                             | `"\t"`               |
 
 ## What to read next
 

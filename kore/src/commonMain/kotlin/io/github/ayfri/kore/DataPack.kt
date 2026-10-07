@@ -374,10 +374,26 @@ internal fun DataPack.resourceFiles(files: MutableMap<String, String> = LinkedHa
 		"Two resources of datapack '$name' write '$path' with different contents, rename one of them."
 	}
 
-	(functions + generatedFunctions).forEach { add(it.getFinalPath().replace('\\', '/'), it.fileContent()) }
+	val callers = if (configuration.generateCommentOfGeneratedFunctionCall) functionCallers() else emptyMap()
+	functions.forEach { add(it.getFinalPath().replace('\\', '/'), it.fileContent()) }
+	generatedFunctions.forEach {
+		val header = callers[it.asId()]?.joinToString("") { caller -> "# Called by $caller\n" }.orEmpty()
+		add(it.getFinalPath().replace('\\', '/'), header + it.fileContent())
+	}
 	generators.flatten().forEach {
 		add(it.getPathFromDataDir(Path("data"), it.namespace ?: name).asInvariantPathSeparator, it.generateJsonWithLoadConditions(this))
 	}
 
 	return files
+}
+
+private val functionReference = Regex("""\bfunction ([a-z0-9_.-]+:[a-z0-9_./-]+)""")
+
+/** Maps each function id to the ids of the functions calling it, in pack order. */
+private fun DataPack.functionCallers() = buildMap<String, MutableSet<String>> {
+	(functions + generatedFunctions).forEach { caller ->
+		caller.lines.forEach { line ->
+			functionReference.findAll(line).forEach { getOrPut(it.groupValues[1]) { linkedSetOf() } += caller.asId() }
+		}
+	}
 }
