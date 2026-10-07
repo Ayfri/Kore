@@ -54,6 +54,8 @@ class TimerTests : FunSpec({
 			}
 
 			timed.bossBar.config.max assertsIs 100
+			generatedFunctions.single { it.name == OopConstants.timerBarTickFunctionName("round") }.toString() assertsIs
+				"execute as @e[limit=1,scores={round=0..}] store result bossbar timer_seconds:round_bar value run scoreboard players get @s round"
 		}
 	}
 })

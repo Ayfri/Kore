@@ -24,7 +24,7 @@ after a predictable amount of [ticks](/docs/concepts/time). Durations are expres
 > - **Storage:** none.
 > - **Entities:** none.
 > - **Forceloaded chunks:** none.
-> - **Every tick:** `timer_<name>_tick` adds 1 to every entity at 0 or more.
+> - **Every tick:** `timer_<name>_tick` adds 1 to every entity at 0 or more, and `registerTimerWithBossBar` adds `timer_<name>_bar_tick`, which copies the timer into the boss bar.
 > - **Load and files:** `timer_<name>_init` creates the objective, `onComplete` blocks become functions listed in `#kore:timer_complete_handlers`, and `registerTimerWithBossBar` adds the boss bar `<pack>:<name>_bar`.
 
 ## Registering a timer
@@ -92,4 +92,12 @@ function("boss_round") {
 ```
 
 The boss-bar variant is useful when you want a countdown that is both mechanical and visible to players without having
-to manually synchronize a separate UI layer.
+to manually synchronize a separate UI layer. Its max is the duration in ticks, and every tick copies the timer score
+into the bar:
+
+```mcfunction
+execute as @e[limit=1,scores={boss_timer=0..}] store result bossbar my_pack:boss_timer_bar value run scoreboard players get @s boss_timer
+```
+
+One bar shows one timer: when several entities run the same timer at once, the bar follows one of them. Register a
+timer per entity, or per team, to show each its own bar.

@@ -1,12 +1,21 @@
 package io.github.ayfri.kore.timer
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.OopConstants
 import io.github.ayfri.kore.arguments.numbers.TimeNumber
+import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrIntStart
+import io.github.ayfri.kore.arguments.scores.score
+import io.github.ayfri.kore.arguments.selector.scores
+import io.github.ayfri.kore.arguments.types.literals.allEntities
+import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.bossbar.BossBarConfig
 import io.github.ayfri.kore.bossbar.BossBarHandle
 import io.github.ayfri.kore.bossbar.registerBossBar
+import io.github.ayfri.kore.commands.execute.execute
+import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.entities.Entity
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.tick
 
 /** Couples a [TimerHandle] with a matching [BossBarHandle] for UI feedback. */
 data class TimerWithBossBar(
@@ -51,6 +60,13 @@ fun DataPack.registerTimerWithBossBar(
 		max = duration.inTicks().value.toInt()
 		value = 0
 		bossBarConfig()
+	}
+	tick(OopConstants.timerBarTickFunctionName(name)) {
+		execute {
+			asTarget(allEntities(true) { scores { score(name, rangeOrIntStart(0)) } })
+			storeResult { bossBarValue(bar.argument.asId()) }
+			run { scoreboard.players.get(self(), name) }
+		}
 	}
 	return TimerWithBossBar(timer, bar)
 }

@@ -109,6 +109,7 @@ data object OopConstants {
 	fun eventTagNameForItem(event: String, itemName: String) = "${event}_$itemName"
 	fun spawnerSpawnFunctionName(name: String) = "spawner_${name}_spawn"
 	fun stateHandlerPrefix(stateName: String) = "state_${stateName}_handler"
+	fun timerBarTickFunctionName(name: String) = "timer_${name}_bar_tick"
 	fun timerCompleteFunctionPrefix(name: String) = "timer_${name}_complete"
 	fun timerInitFunctionName(name: String) = "timer_${name}_init"
 	fun timerTickFunctionName(name: String) = "timer_${name}_tick"
