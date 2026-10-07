@@ -12,9 +12,7 @@ import io.github.ayfri.kore.website.components.index.*
 import io.github.ayfri.kore.website.components.layouts.PageLayout
 import io.github.ayfri.kore.website.components.mc.McUiStyle
 import io.github.ayfri.kore.website.utils.alpha
-import io.github.ayfri.kore.website.utils.headingFont
 import io.github.ayfri.kore.website.utils.lineHeight
-import io.github.ayfri.kore.website.utils.sansFont
 import io.github.ayfri.kore.website.utils.smMax
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
@@ -55,7 +53,6 @@ object HomePageStyle : StyleSheet() {
 		overflow(Overflow.Clip)
 		paddingBottom(2.5.cssRem)
 		position(Position.Relative)
-		sansFont()
 
 		// `Background.list` takes its layers bottom-to-top, the opposite of the CSS order.
 		background(
@@ -81,7 +78,6 @@ object HomePageStyle : StyleSheet() {
 
 		":is(h1, h2, h3)" style {
 			fontWeight(600)
-			headingFont()
 		}
 
 		"p" style {

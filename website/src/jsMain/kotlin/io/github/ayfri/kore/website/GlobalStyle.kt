@@ -7,6 +7,8 @@ import com.varabyte.kobweb.compose.css.scrollMarginTop
 import com.varabyte.kobweb.compose.css.scrollbarWidth
 import com.varabyte.kobweb.compose.css.setVariable
 import com.varabyte.kobweb.compose.css.textDecorationLine
+import io.github.ayfri.kore.website.utils.headingFont
+import io.github.ayfri.kore.website.utils.sansFont
 import io.github.ayfri.kore.website.utils.scrollbarColor
 import io.github.ayfri.kore.website.utils.transition
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
@@ -69,22 +71,13 @@ object GlobalStyle : StyleSheet() {
 		}
 
 		"body" {
-			fontFamily(
-				"-apple-system",
-				"BlinkMacSystemFont",
-				"Segoe UI",
-				"Roboto",
-				"Oxygen",
-				"Ubuntu",
-				"Cantarell",
-				"Fira Sans",
-				"Droid Sans",
-				"Helvetica Neue",
-				"sans-serif"
-			)
-
 			backgroundColor(backgroundColor)
 			color(textColor)
+			sansFont()
+		}
+
+		":is(h1, h2, h3)" style {
+			headingFont()
 		}
 
 		"html" style {
