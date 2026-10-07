@@ -92,13 +92,29 @@ class ScoreVector internal constructor(val math: MathHandle, val name: String, v
 	context(fn: Function)
 	infix fun setTo(other: ScoreVector) = components.zip(other.components).forEach { (component, source) -> component setTo source }
 
-	/** Reads the `Motion` of [source], in blocks per tick. */
+	/** Reads the `Motion` of [source], in blocks per tick, copying it to storage once instead of reading the entity three times. */
 	context(fn: Function)
-	fun setToMotion(source: EntityArgument) = readInto(source, "Motion")
+	fun setToMotion(source: EntityArgument) {
+		fn.data(math.storage) { modify("read", source, "Motion") }
+		components.forEachIndexed { index, component ->
+			fn.execute {
+				storeResult { score(component.entity.asScoreHolder(), component.name) }
+				run { data(math.storage) { get("read[$index]", scale.toDouble()) } }
+			}
+		}
+	}
 
-	/** Reads the position of [source]. */
+	/**
+	 * Reads the position of [source] off the math marker teleported onto it, since reading any field of a player's NBT
+	 * serializes the whole player, inventory included.
+	 */
 	context(fn: Function)
-	fun setToPosition(source: EntityArgument) = readInto(source, "Pos")
+	fun setToPosition(source: EntityArgument) {
+		math.ensureEntities()
+		fn.teleport(math.marker, source)
+		readInto(math.marker, "Pos")
+		math.parkMarker()
+	}
 
 	/** Sets this vector to the unit direction [source] looks at, the same direction as `^ ^ ^1`. */
 	context(fn: Function)

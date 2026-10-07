@@ -5,7 +5,7 @@ nav-title: Score Vectors
 description: Runtime 3D vectors on Minecraft scoreboards with Kore - look directions, dot and cross products, exact length, normalize, teleports and motion.
 keywords: minecraft, datapack, kore, helpers, vector, position, motion, velocity, normalize, dash, knockback, teleport, look direction
 date-created: 2026-09-23
-date-modified: 2026-09-23
+date-modified: 2026-10-07
 routeOverride: /docs/helpers/score-vectors
 ---
 
@@ -39,7 +39,9 @@ function("track_arrow") {
 }
 ```
 
-- `setToPosition(entity)` reads `Pos`, `setToMotion(entity)` reads `Motion`.
+- `setToPosition(entity)` reads the position off the math marker teleported onto the entity, never touching its NBT,
+  since reading any field of a player's NBT serializes the whole player. `setToMotion(entity)` copies `Motion` to
+  storage once and reads the three components from there.
 - `setToLookDirection(entity)` gives the unit vector the entity looks along, the direction of `^ ^ ^1`.
 - `set(x, y, z)` takes plain numbers, `set(0.0, 0.5, 0.0)` stores `0 500 0`.
 - `setTo(other)` copies another vector.

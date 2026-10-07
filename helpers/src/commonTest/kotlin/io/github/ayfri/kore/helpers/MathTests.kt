@@ -190,6 +190,22 @@ fun mathVectorTests() = dataPack("vector_tests") {
 		""".trimIndent()
 	}
 
+	function("read_position_and_motion") {
+		a.setToPosition(self())
+		a.setToMotion(self())
+		toString() assertsIs """
+			teleport 4b4f5245-0000-0000-0000-000000000001 @s
+			execute store result score #p a_x run data get entity 4b4f5245-0000-0000-0000-000000000001 Pos[0] 1000
+			execute store result score #p a_y run data get entity 4b4f5245-0000-0000-0000-000000000001 Pos[1] 1000
+			execute store result score #p a_z run data get entity 4b4f5245-0000-0000-0000-000000000001 Pos[2] 1000
+			execute in minecraft:overworld run teleport 4b4f5245-0000-0000-0000-000000000001 -30000000.0 0.0 1664.0
+			data modify storage vector_tests:kore_math read set from entity @s Motion
+			execute store result score #p a_x run data get storage vector_tests:kore_math read[0] 1000
+			execute store result score #p a_y run data get storage vector_tests:kore_math read[1] 1000
+			execute store result score #p a_z run data get storage vector_tests:kore_math read[2] 1000
+		""".trimIndent()
+	}
+
 	function("look_direction") {
 		a.setToLookDirection(self())
 		lines.first() assertsIs "execute in minecraft:overworld positioned 0.0 0.0 0.0 rotated as @s run teleport 4b4f5245-0000-0000-0000-000000000001 ^ ^ ^1"
