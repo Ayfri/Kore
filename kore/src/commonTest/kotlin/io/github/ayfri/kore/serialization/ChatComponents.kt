@@ -357,7 +357,7 @@ private fun chatComponentsExtra() {
 	val withExtraSingle = entityComponent(self()) {
 		extra = textComponent("test1")
 	}
-	withExtraSingle assertsIs """{type:"selector",extra:"test1",selector:"@s"}"""
+	withExtraSingle assertsIs """{type:"selector",extra:["test1"],selector:"@s"}"""
 }
 
 private fun chatComponentsOnClick() {
@@ -559,6 +559,8 @@ class ChatComponentsSerializationTests : FunSpec({
 		jsonSerializer.decodeFromString<ChatComponents>(jsonSerializer.encodeToString(components)) shouldBe components
 
 		(textComponent("a") + text("b", Color.RED)).asString() assertsIs """[{type:"text",text:"a"},{type:"text",color:"red",text:"b"}]"""
+		text("a") { extra = ChatComponents(text("b")) }.toNbtTag().toSnbt() assertsIs """{type:"text",extra:["b"],text:"a"}"""
+		jsonSerializer.encodeToString(text("a") { extra = ChatComponents(text("b")) }) assertsIs """{"text":"a","extra":["b"]}"""
 		components.toNbtList().toSnbt() assertsIs """[{type:"text",color:"red",text:"a"},{type:"text",text:"b"}]"""
 	}
 })

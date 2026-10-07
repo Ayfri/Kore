@@ -36,7 +36,7 @@ fun Function.itemTests() {
 		modify(ItemModifierArgument("baz")) assertsIs "item modify entity @s weapon minecraft:baz"
 		modify {
 			setLore(Source.THIS, "Inline Item Modifier")
-		} assertsIs "item modify entity @s weapon {modifiers:{function:\"minecraft:set_lore\",entity:\"this\",lore:\"Inline Item Modifier\"}}"
+		} assertsIs "item modify entity @s weapon {modifiers:{function:\"minecraft:set_lore\",entity:\"this\",lore:[\"Inline Item Modifier\"]}}"
 		replace(Items.DIRT) assertsIs "item replace entity @s weapon with minecraft:dirt"
 		replace(Items.BOW, 3) assertsIs "item replace entity @s weapon with minecraft:bow 3"
 		replace(vec3(0, 0, 0), WEAPON) assertsIs "item replace entity @s weapon from block 0 0 0 weapon"
@@ -47,7 +47,7 @@ fun Function.itemTests() {
 
 		replace(self(), SADDLE) {
 			setLore(Source.THIS, "Inline Item Modifier")
-		} assertsIs "item replace entity @s weapon from entity @s saddle {modifiers:{function:\"minecraft:set_lore\",entity:\"this\",lore:\"Inline Item Modifier\"}}"
+		} assertsIs "item replace entity @s weapon from entity @s saddle {modifiers:{function:\"minecraft:set_lore\",entity:\"this\",lore:[\"Inline Item Modifier\"]}}"
 	}
 }
 

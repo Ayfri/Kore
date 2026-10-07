@@ -175,7 +175,7 @@ data class ChatComponents(
 		/** Serializes [ChatComponents] as one text, through [rooted] so the first component's style stays its own. */
 		data object ChatComponentsSerializer : ChatComponentsListSerializer(rooted = true)
 
-		/** Serializes [ChatComponents] as a list of lines (`set_lore`), each element being one line. */
+		/** Serializes [ChatComponents] as a list of separate elements (`extra`, `set_lore` lines), a list even for a single one, as the game requires. */
 		data object ChatComponentsLinesSerializer : ChatComponentsListSerializer(rooted = false)
 
 		sealed class ChatComponentsListSerializer(private val rooted: Boolean) : KSerializer<ChatComponents> {
@@ -196,13 +196,13 @@ data class ChatComponents(
 			}
 
 			/*
-			 * A single component is encoded alone, a plain text one as a string. An NBT list goes through [toNbtList] since it
-			 * holds a single type, turning every element into a compound as soon as one isn't plain text.
+			 * A single text component is encoded alone, a plain text one as a string. An NBT list goes through [toNbtList] since
+			 * it holds a single type, turning every element into a compound as soon as one isn't plain text.
 			 */
 			override fun serialize(encoder: Encoder, value: ChatComponents) {
 				val components = if (rooted) value.rooted() else value
 				when {
-					components.list.size == 1 -> encoder.encodeSerializableValue(ChatComponentSerializer, components.list[0])
+					rooted && components.list.size == 1 -> encoder.encodeSerializableValue(ChatComponentSerializer, components.list[0])
 					encoder is NbtEncoder -> encoder.encodeNbtTag(components.toNbtList())
 					else -> encoder.encodeComponents(descriptor, components.list)
 				}

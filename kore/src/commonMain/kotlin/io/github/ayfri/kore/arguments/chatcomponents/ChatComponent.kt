@@ -83,7 +83,7 @@ sealed class ChatComponent {
 		bold?.let { this["bold"] = it }
 		clickEvent?.let { this["click_event"] = snbtSerializer.encodeToNbtTag(it) }
 		color?.let { this["color"] = it.asString() }
-		extra?.let { this["extra"] = it.list.singleOrNull()?.toNbt() ?: it.toNbtList() }
+		extra?.let { this["extra"] = it.toNbtList() }
 		font?.let { this["font"] = it }
 		hoverEvent?.let { this["hover_event"] = it.toNbtTag() }
 		insertion?.let { this["insertion"] = it }
