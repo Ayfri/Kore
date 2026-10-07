@@ -37,6 +37,7 @@ import io.github.ayfri.kore.functions.generatedFunctionName
 import io.github.ayfri.kore.functions.tick
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.generated.arguments.types.AdvancementArgument
 import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import io.github.ayfri.kore.utils.nbt
 import net.benwoodworth.knbt.NbtByte
@@ -69,8 +70,9 @@ private fun DataPack.advancementEvent(
 
 	val advName = OopConstants.advancementName(event)
 	if (!hasAdvancement(advName)) {
+		val advancement = AdvancementArgument(advName, name)
 		val dispatchFn = generatedFunction(OopConstants.dispatchFunctionName(event)) {
-			advancements.revokeEverything(self())
+			advancements.revoke(self(), advancement)
 			functionCommand(FunctionTagArgument(tagName, ns))
 		}
 		advancement(advName) {
@@ -92,8 +94,9 @@ private fun DataPack.advancementEventForItem(
 
 	val advName = OopConstants.advancementNameForItem(event, itemName)
 	if (!hasAdvancement(advName)) {
+		val advancement = AdvancementArgument(advName, name)
 		val dispatchFn = generatedFunction(OopConstants.dispatchFunctionNameForItem(event, itemName)) {
-			advancements.revokeEverything(self())
+			advancements.revoke(self(), advancement)
 			functionCommand(FunctionTagArgument(tagName, ns))
 		}
 		advancement(advName) {

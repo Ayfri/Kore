@@ -77,6 +77,11 @@ fun eventsTests() = dataPack("events_tests") {
 		)
 	} assertsIs true
 
+	generatedFunctions.first { it.name == OopConstants.dispatchFunctionName("on_block_use") }.lines.first() assertsIs
+		"advancement revoke @s only events_tests:${OopConstants.advancementName("on_block_use")}"
+	generatedFunctions.first { it.name == OopConstants.dispatchFunctionNameForItem("on_right_click", "stick") }.lines.first() assertsIs
+		"advancement revoke @s only events_tests:${OopConstants.advancementNameForItem("on_right_click", "stick")}"
+
 	lootTables.any { it.fileName.endsWith("death_trigger_zombie") } assertsIs true
 	generatedFunctions.any { it.name == OopConstants.deathDispatcherFunction } assertsIs true
 }
