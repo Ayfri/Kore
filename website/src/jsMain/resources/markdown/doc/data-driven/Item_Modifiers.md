@@ -5,7 +5,7 @@ nav-title: Item Modifiers
 description: Transform item stacks using Kore's type-safe DSL for loot functions - set counts, add enchantments, copy data, and more.
 keywords: minecraft, datapack, kore, item modifiers, loot functions, /item modify, components
 date-created: 2025-08-11
-date-modified: 2026-09-27
+date-modified: 2026-10-07
 routeOverride: /docs/data-driven/item-modifiers
 ---
 
@@ -359,6 +359,17 @@ itemModifier("custom_model") {
 		floats = listOf(1.0f, 2.0f),
 		strings = listOf("test1", "test2")
 	)
+}
+```
+
+Each float is a [number provider](/docs/data-driven/loot-tables#number-providers), so `floats(...)` can read it from a score or add
+several sources with `sum`, which also works as float math on scores:
+
+```kotlin
+itemModifier("model_from_score") {
+	setCustomModelData {
+		floats(sum(scoreNumber("charge", "#gun"), constant(0.5f)))
+	}
 }
 ```
 

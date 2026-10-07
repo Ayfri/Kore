@@ -22,6 +22,7 @@ import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.features.predicates.providers.enchantmentLevel
 import io.github.ayfri.kore.features.predicates.providers.intRange
 import io.github.ayfri.kore.features.predicates.providers.scoreNumber
+import io.github.ayfri.kore.features.predicates.providers.sum
 import io.github.ayfri.kore.features.predicates.types.EntityTarget
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.*
@@ -584,6 +585,37 @@ fun DataPack.itemModifierTests() {
 					true
 				],
 				"mode": "append"
+			}
+		}
+	""".trimIndent()
+
+	itemModifier("set_custom_model_data_providers") {
+		setCustomModelData {
+			floats(sum(scoreNumber("x", "#a"), constant(0.5f)))
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:set_custom_model_data",
+			"floats": {
+				"values": [
+					{
+						"type": "minecraft:sum",
+						"summands": [
+							{
+								"type": "minecraft:score",
+								"target": {
+									"type": "minecraft:fixed",
+									"name": "#a"
+								},
+								"score": "x"
+							},
+							0.5
+						]
+					}
+				],
+				"mode": "replace_all"
 			}
 		}
 	""".trimIndent()
