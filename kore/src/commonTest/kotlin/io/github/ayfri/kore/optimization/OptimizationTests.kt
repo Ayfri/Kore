@@ -155,8 +155,27 @@ class OptimizationTests : FunSpec({
 				addLine("return run function ${empty.asId()}")
 			}
 
-			PruneEmptyFunctionsPass.run(this).changes shouldBe 1
-			functions.first().lines.size shouldBe 3
+			PruneEmptyFunctionsPass.run(this).changes shouldBe 0
+			functions.last().lines.size shouldBe 3
+		}
+	}
+
+	test("empty functions still mentioned outside a plain call are kept") {
+		dataPack("optimization_tests") {
+			val scheduled = function("scheduled") {}
+			val tested = function("tested") {}
+			val macro = function("macro") {}
+			val called = function("called") {}
+
+			function("caller") {
+				addLine("schedule function ${scheduled.asId()} 1t")
+				addLine("execute if function ${tested.asId()} run say hi")
+				addLine("\$function ${macro.asId()} with storage ns:s \$(path)")
+				addLine("execute if function ${tested.asId()} run function ${called.asId()}")
+			}
+
+			PruneEmptyFunctionsPass.run(this).changes shouldBe 0
+			functionNames() shouldBe listOf("called", "caller", "macro", "scheduled", "tested")
 		}
 	}
 
@@ -168,6 +187,27 @@ class OptimizationTests : FunSpec({
 		SimplifyExecuteChainsPass.simplify("execute at @e[type=pig] at @e[type=pig] run say hi") shouldBe null
 		SimplifyExecuteChainsPass.simplify("execute if score @s obj matches 1 run say hi") shouldBe null
 		SimplifyExecuteChainsPass.simplify("\$execute as @s run say hi") shouldBe null
+		SimplifyExecuteChainsPass.simplify("execute positioned ~ ~1 ~ positioned ~ ~1 ~ run say hi") shouldBe null
+		SimplifyExecuteChainsPass.simplify("execute rotated ~10 0 rotated ~10 0 run say hi") shouldBe null
+		SimplifyExecuteChainsPass.simplify("execute positioned 0 64 0 positioned 0 64 0 run say hi") shouldBe "execute positioned 0 64 0 run say hi"
+		SimplifyExecuteChainsPass.simplify("execute as @a run execute at @s run say hi") shouldBe "execute as @a at @s run say hi"
+	}
+
+	test("existence tests stop at the first match") {
+		SimplifyExecuteChainsPass.simplify("execute if entity @e[type=pig,sort=nearest,limit=3] run say hi") shouldBe
+			"execute if entity @e[type=pig,limit=1] run say hi"
+		SimplifyExecuteChainsPass.simplify("execute unless entity @a run say hi") shouldBe "execute unless entity @a[limit=1] run say hi"
+		SimplifyExecuteChainsPass.simplify("execute if entity @e[type=pig,limit=1] run say hi") shouldBe null
+		SimplifyExecuteChainsPass.simplify("execute if entity @p[tag=a] run say hi") shouldBe null
+		SimplifyExecuteChainsPass.simplify("execute as @e[type=pig] run say hi") shouldBe null
+	}
+
+	test("an existence check guarding the removal of the same path is dropped") {
+		SimplifyExecuteChainsPass.simplify("execute if data storage ns:s a.b run data remove storage ns:s a.b") shouldBe "data remove storage ns:s a.b"
+		SimplifyExecuteChainsPass.simplify("execute as @e[type=pig] if data entity @s data.x run data remove entity @s data.x") shouldBe
+			"execute as @e[type=pig] run data remove entity @s data.x"
+		SimplifyExecuteChainsPass.simplify("execute if data storage ns:s a run data remove storage ns:s b") shouldBe null
+		SimplifyExecuteChainsPass.simplify("execute store success score #a obj if data storage ns:s a run data remove storage ns:s a") shouldBe null
 	}
 
 	test("unreferenced generated functions are pruned") {
@@ -248,6 +288,12 @@ class OptimizationTests : FunSpec({
 		HoistConditionsIntoSelectorsPass.hoist("execute as @e[scores={obj=2}] if score @s obj matches 1 run say hi") shouldBe null
 		HoistConditionsIntoSelectorsPass.hoist("execute as @a on owner if score @s obj matches 1 run say hi") shouldBe null
 		HoistConditionsIntoSelectorsPass.hoist("execute if score @s obj matches 1 run say hi") shouldBe null
+		HoistConditionsIntoSelectorsPass.hoist("execute as @e[sort=nearest,limit=1] if score @s obj matches 1 run say hi") shouldBe null
+		HoistConditionsIntoSelectorsPass.hoist("execute as @p if score @s obj matches 1 run say hi") shouldBe null
+		HoistConditionsIntoSelectorsPass.hoist("execute as @a if score @s a matches 1.. if score @s a matches ..5 run say hi") shouldBe
+			"execute as @a[scores={a=1..}] if score @s a matches ..5 run say hi"
+		HoistConditionsIntoSelectorsPass.hoist("execute as @a run execute if score @s a matches 1 run say hi") shouldBe
+			"execute as @a[scores={a=1}] run say hi"
 	}
 
 	test("identical generated functions are merged and their calls redirected") {
@@ -286,7 +332,9 @@ class OptimizationTests : FunSpec({
 		ExecuteChain.parse("execute positioned as @s positioned as @s run say hi")?.clauses shouldBe listOf("positioned as @s", "positioned as @s")
 		ExecuteChain.parse("execute facing entity @p eyes rotated as @s run say hi")?.clauses shouldBe listOf("facing entity @p eyes", "rotated as @s")
 		ExecuteChain.parse("execute store result score #a obj as @s run say hi")?.clauses shouldBe listOf("store result score #a obj", "as @s")
-		ExecuteChain.parse("execute at @s run execute as @a run say hi")?.command shouldBe "execute as @a run say hi"
+		ExecuteChain.parse("execute at @s run execute as @a run say hi") shouldBe ExecuteChain(listOf("at @s", "as @a"), "say hi")
+		ExecuteChain.parse("execute at @s run execute if entity @s") shouldBe ExecuteChain(listOf("at @s"), "execute if entity @s")
+		ExecuteChain.parse("execute if score @s run matches 1 run say hi") shouldBe null
 		ExecuteChain.parse("say hi") shouldBe null
 	}
 

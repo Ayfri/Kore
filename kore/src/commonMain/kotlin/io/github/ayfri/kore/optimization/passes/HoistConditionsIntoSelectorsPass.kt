@@ -9,6 +9,10 @@ import io.github.ayfri.kore.optimization.utils.rewriteLines
 
 private val CONDITION = Regex("""^if score @s (\S+) matches (\S+)$""")
 private val EXECUTOR_CHANGERS = setOf("as", "on", "store", "summon")
+/** `@p`, `@r` and `@n` carry an implicit `limit=1`, which picks one entity before the hoisted condition would filter. */
+private val SELECTOR = Regex("""^as @[aes](\[.*\])?$""")
+/** A `limit` applies after the filters, and the game keeps only the last value of an objective repeated in `scores`. */
+private val UNMERGEABLE_ARGUMENTS = setOf("limit", "scores")
 
 /**
  * Moves the score conditions testing the executor into the selector that picked it.
@@ -18,8 +22,8 @@ private val EXECUTOR_CHANGERS = setOf("as", "on", "store", "summon")
  * per marker, and one less command node in the chain. The range syntax is the same on both sides, so the rewrite is a
  * move, not a translation.
  *
- * A condition is only hoisted while nothing between the `as` and the condition can change the executor, and only into
- * a selector that carries no `scores` argument yet.
+ * A condition is only hoisted while nothing between the `as` and the condition can change the executor, only into an
+ * `@a`, `@e` or `@s` selector carrying neither `scores` nor `limit`, and only once per objective.
  *
  * Docs: https://kore.ayfri.com/docs/guides/optimization
  */
@@ -34,18 +38,21 @@ data object HoistConditionsIntoSelectorsPass : DataPackPass {
 		var hoisted = false
 
 		clauses.indices.forEach { index ->
-			val selector = clauses[index].takeIf { it.startsWith("as @") }?.removePrefix("as ") ?: return@forEach
-			val scores = mutableListOf<String>()
+			val selector = clauses[index].takeIf { SELECTOR.matches(it) }?.removePrefix("as ") ?: return@forEach
+			val scores = linkedMapOf<String, String>()
+			val removed = mutableListOf<Int>()
 
 			for (next in index + 1 until clauses.size) {
 				if (clauses[next].substringBefore(' ') in EXECUTOR_CHANGERS) break
 				val (objective, range) = CONDITION.matchEntire(clauses[next])?.destructured ?: continue
-				scores += "$objective=$range"
-				clauses[next] = ""
+				if (objective in scores) continue
+				scores[objective] = range
+				removed += next
 			}
 
 			if (scores.isEmpty()) return@forEach
-			val merged = withScores(selector, scores) ?: return@forEach
+			val merged = withScores(selector, scores.map { (objective, range) -> "$objective=$range" }) ?: return@forEach
+			removed.forEach { clauses[it] = "" }
 			clauses[index] = "as $merged"
 			hoisted = true
 		}
@@ -60,7 +67,7 @@ data object HoistConditionsIntoSelectorsPass : DataPackPass {
 		if (body.isEmpty()) return "${selector}[scores={${scores.joinToString(",")}}]"
 
 		val arguments = Selectors.splitArguments(body) ?: return null
-		if (arguments.any { it.substringBefore('=').trim() == "scores" }) return null
+		if (arguments.any { it.substringBefore('=').trim() in UNMERGEABLE_ARGUMENTS }) return null
 		return "${selector.substringBefore('[')}[${(arguments + "scores={${scores.joinToString(",")}}").joinToString(",")}]"
 	}
 }

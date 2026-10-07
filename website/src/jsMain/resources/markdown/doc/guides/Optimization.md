@@ -5,7 +5,7 @@ nav-title: Optimization
 description: Run whole-pack optimization passes before Kore writes your datapack, pruning dead functions, shortening execute chains and sorting selectors, or plug in your own.
 keywords: kore optimization, datapack dead code, prune empty mcfunction, datapack size, minecraft datapack optimization, kore configuration passes
 date-created: 2026-09-05
-date-modified: 2026-09-26
+date-modified: 2026-10-07
 routeOverride: /docs/guides/optimization
 position: 8
 ---
@@ -57,8 +57,10 @@ empty, since they do nothing in game.
 A function is kept when its id still appears in any resource, so a function listed in a function tag, used as an
 advancement reward or targeted by an item modifier survives even while empty.
 
-A call is only removed when removing it changes nothing. Lines carrying `store`, `summon`, `on` or `return` keep their
-call, because the `execute` chain itself has an effect there, and macro lines (starting with `$`) are left alone.
+A call is only removed when removing it changes nothing. Lines carrying `store`, `summon`, `on`, `return` or an
+`if function` condition keep their call, because the `execute` chain itself has an effect there, and macro lines
+(starting with `$`) are left alone. A function mentioned by any line that isn't a removable call (`schedule function`,
+`return run function`, a kept call) is kept too, so no line ever points at a missing function.
 
 Pruning repeats until nothing changes, so a function left empty by the removal of its own calls is pruned in turn:
 
@@ -73,10 +75,24 @@ function("caller") { function(relay) }
 
 Rewrites every `execute` chain into the shortest form running the exact same command.
 
-- `execute run <command>` loses its chain entirely.
+- `execute run <command>` loses its chain entirely, and `run execute` merges into one chain:
+  `execute as @a run execute at @s run say hi` becomes `execute as @a at @s run say hi`.
 - An `as @s` clause preceded by another `as` is dropped, since the executor it re-selects is already the current one.
-- A clause repeated right after itself is dropped when running it twice cannot fork the execution context, so
-  `at @s at @s` collapses while `at @e[type=pig] at @e[type=pig]` stays, the second one forking over every pig again.
+- A clause repeated right after itself is dropped when running it twice changes nothing, so `at @s at @s` collapses
+  while `at @e[type=pig] at @e[type=pig]` stays (the second one forks over every pig again), and so does
+  `positioned ~ ~1 ~ positioned ~ ~1 ~` (the second one moves one block further).
+- `if entity` and `unless entity` on `@e` or `@a` only test whether something matches, so they lose their `sort` and
+  get `limit=1`, which lets the game stop scanning at the first match instead of collecting and sorting every entity.
+- `if data <target> <path>` guarding a `data remove` of the same path is dropped, since the removal fails on its own
+  when the path is missing. A chain carrying `store` keeps it, the stored result being different.
+
+```
+execute if entity @e[type=zombie,sort=nearest] run say near
+execute if entity @e[type=zombie,limit=1] run say near
+
+execute if data storage ns:s queue[0] run data remove storage ns:s queue[0]
+data remove storage ns:s queue[0]
+```
 
 A leading `as @s` is kept: a function called from a function tag has no executor, so the chain must still fail there.
 Macro lines, and chains whose clauses contain a quoted string, are left alone.
@@ -94,7 +110,10 @@ The second form builds one execution context per matching entity instead of one 
 less. The range syntax is identical on both sides, so the rewrite is a move, not a translation.
 
 A condition is only hoisted while nothing between the `as` and the condition can change the executor (`as`, `on`,
-`summon`, `store`), and only into a selector that carries no `scores` argument yet.
+`summon`, `store`), and only into an `@a`, `@e` or `@s` selector carrying neither `scores` nor `limit`: a limit picks
+its entities before the hoisted condition would filter them, and `@p`, `@r` and `@n` carry an implicit `limit=1`.
+A second condition on an objective already hoisted stays a condition, since `scores` keeps only one range per
+objective.
 
 ## `reorder-selector-arguments`
 

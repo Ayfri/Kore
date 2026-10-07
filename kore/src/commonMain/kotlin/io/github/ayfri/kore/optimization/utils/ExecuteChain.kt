@@ -5,7 +5,8 @@ package io.github.ayfri.kore.optimization.utils
  *
  * It is deliberately partial: any shape it does not fully understand yields `null`, so a pass leaves the line untouched
  * rather than guessing. Chains carrying a quoted string in their clauses are refused too, since clause splitting works
- * on whitespace.
+ * on whitespace. A `run execute` is flattened into one chain, `execute as @a run execute at @s run say hi` parsing as
+ * `execute as @a at @s run say hi`, which the game runs identically.
  */
 internal data class ExecuteChain(val clauses: List<String>, val command: String) {
 	override fun toString() = if (clauses.isEmpty()) command else "execute ${clauses.joinToString(" ")} run $command"
@@ -21,7 +22,9 @@ internal data class ExecuteChain(val clauses: List<String>, val command: String)
 			val (rawClauses, command) = pattern.matchEntire(trimmed)?.destructured ?: return null
 			if ('"' in rawClauses || '\'' in rawClauses) return null
 
-			return ExecuteChain(splitClauses(rawClauses.split(' ').filter(String::isNotEmpty)) ?: return null, command)
+			val clauses = splitClauses(rawClauses.split(' ').filter(String::isNotEmpty)) ?: return null
+			val inner = if (command.startsWith("execute ")) parse(command) else null
+			return if (inner == null) ExecuteChain(clauses, command) else ExecuteChain(clauses + inner.clauses, inner.command)
 		}
 
 		/** Splits clause tokens using each subcommand's arity, `if`/`unless`/`store` running up to the next subcommand keyword. */
@@ -44,7 +47,10 @@ internal data class ExecuteChain(val clauses: List<String>, val command: String)
 				}
 
 				if (end > tokens.size) return null
-				clauses += tokens.subList(index, end).joinToString(" ")
+				val clause = tokens.subList(index, end)
+				/** An objective named like a keyword (`if score @s run matches 1 run ...`) cuts a score clause short of its 5 or 6 tokens. */
+				if (clause.getOrNull(1) == "score" && clause.size != 5 && clause.size != 6) return null
+				clauses += clause.joinToString(" ")
 				index = end
 			}
 
