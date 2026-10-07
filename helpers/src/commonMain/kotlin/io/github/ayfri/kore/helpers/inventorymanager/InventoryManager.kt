@@ -93,6 +93,14 @@ data class InventoryManager<T : ContainerArgument>(val container: T) {
 	context(fn: Function)
 	operator fun set(slot: ItemSlotType, item: ItemArgument) = replace(slot, item)
 
+	/**
+	 * Emit the `load` and `tick` functions that power all registered slot listeners for this manager.
+	 * Handles scoreboard set-up and entity scoping for both entity and block containers.
+	 * Only the first call generates anything, so calling it inside an [inventoryManager] builder, which calls it too, is safe.
+	 */
+	context(dp: DataPack)
+	fun generateSlotsListeners() = writeSlotsListeners()
+
 	/** Shortcut: assign an [item] into a numeric [slot] using `CONTAINER[index]`. */
 	context(fn: Function)
 	operator fun set(slot: Int, item: ItemArgument) = replace(CONTAINER[slot], item)
@@ -121,13 +129,8 @@ fun InventoryManager<*>.generateSlotsListeners(dp: DataPack) = with(dp) { genera
 context(fn: Function)
 fun InventoryManager<*>.generateSlotsListeners() = generateSlotsListeners(fn.datapack)
 
-/**
- * Emit the `load` and `tick` functions that power all registered slot listeners for this manager.
- * Handles scoreboard set-up and entity scoping for both entity and block containers.
- * Only the first call generates anything, so calling it inside an [inventoryManager] builder, which calls it too, is safe.
- */
 context(dp: DataPack)
-fun InventoryManager<*>.generateSlotsListeners() {
+private fun InventoryManager<*>.writeSlotsListeners() {
 	if (listenersGenerated) return
 	listenersGenerated = true
 
@@ -216,10 +219,9 @@ fun InventoryManager<Vec3>.setBlock(block: BlockArgument) = fn.setBlock(containe
 /** Create an Inventory Manager for the given [container]. */
 fun <T : ContainerArgument> inventoryManager(container: T) = InventoryManager(container)
 
-/** Create, configure via [block], then generate listeners using this datapack context. */
-context(fn: DataPack)
-fun <T : ContainerArgument> inventoryManager(container: T, block: InventoryManager<T>.() -> Unit) =
-	InventoryManager(container).apply(block).apply { generateSlotsListeners() }
+/** Create, configure via [block], then generate listeners in this datapack. */
+fun <T : ContainerArgument> DataPack.inventoryManager(container: T, block: InventoryManager<T>.() -> Unit) =
+	InventoryManager(container).apply(block).apply { generateSlotsListeners(this@inventoryManager) }
 
 /** Create, configure via [block], then generate listeners using the current function’s datapack. */
 context(fn: Function)

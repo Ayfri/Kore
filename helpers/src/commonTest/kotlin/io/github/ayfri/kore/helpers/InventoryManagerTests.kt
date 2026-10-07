@@ -18,10 +18,12 @@ import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.commands.TitleLocation
 import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
+import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.commands.tellraw
 import io.github.ayfri.kore.commands.title
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Items
@@ -165,6 +167,28 @@ class InventoryManagerTests : FunSpec({
 			tick shouldContain "execute if items entity @p hotbar.1 $tagged run item replace entity @p hotbar.1 with minecraft:air"
 			tick shouldContain "execute if items entity @p weapon.offhand $tagged run item replace entity @p weapon.offhand with minecraft:air"
 			(tick.any { "hotbar.0 " in it && it.startsWith("execute if items") }) shouldBe false
+		}
+	}
+
+	test("slot events resolve inside a function of a data pack") {
+		dataPack("helpers_tests") {
+			function("demo") {
+				val playerInv = inventoryManager(nearestPlayer())
+				playerInv.slotEvent(HOTBAR[0], Items.NETHER_STAR) {
+					onTake { say("taken") }
+					onceTaken { say("once") }
+					duringTake { setItemInSlot() }
+					event(SlotEventType.WHEN_TAKEN) { say("event") }
+				}
+				playerInv.generateSlotsListeners()
+
+				inventoryManager(vec3(0, -59, 0)) {
+					slotEvent(CONTAINER[0], Items.STICK) { onTake { say("chest") } }
+				}
+			}
+
+			generatedFunctions.count { it.name.startsWith("tick_inventory_manager_") } shouldBe 2
+			generatedFunctions.count { it.name.startsWith("when_taken_event_") } shouldBe 3
 		}
 	}
 

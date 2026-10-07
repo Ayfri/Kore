@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.helpers.inventorymanager
 
+import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.CONTAINER
 import io.github.ayfri.kore.arguments.CONTENTS
 import io.github.ayfri.kore.arguments.ItemSlotType
@@ -18,6 +19,7 @@ import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.items
 import io.github.ayfri.kore.commands.kill
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.functions.hashedGeneratedFunction
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.Items
@@ -63,6 +65,20 @@ data class SlotEventListener(
 	fun onTick(function: FunctionArgument) {
 		onTickFunction = function
 	}
+
+	/** Members win over the `context(fn: Function)` extensions, two extensions are ambiguous in a `function { }` of a `dataPack { }`. */
+	context(dp: DataPack)
+	fun duringTake(block: Function.() -> Unit) = event(SlotEventType.DURING_TAKEN, block)
+
+	context(dp: DataPack)
+	fun event(type: SlotEventType, block: Function.() -> Unit) =
+		events.add(SlotEvent(dp.hashedGeneratedFunction("${type.name.lowercase()}_event", block = block), type))
+
+	context(dp: DataPack)
+	fun onceTaken(block: Function.() -> Unit) = event(SlotEventType.ONCE_TAKEN, block)
+
+	context(dp: DataPack)
+	fun onTake(block: Function.() -> Unit) = event(SlotEventType.WHEN_TAKEN, block)
 
 	context(fn: Function)
 	fun clearAllItemsNotInSlot(fromContainer: ContainerArgument = container) = when (fromContainer) {
