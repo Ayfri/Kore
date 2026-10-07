@@ -18,11 +18,16 @@ import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.
 import io.github.ayfri.kore.features.enchantments.effects.special.start
 import io.github.ayfri.kore.features.enchantments.effects.value.requirements
 import io.github.ayfri.kore.features.enchantments.values.*
+import io.github.ayfri.kore.features.predicates.conditions.inverted
+import io.github.ayfri.kore.features.predicates.conditions.reference
 import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
+import io.github.ayfri.kore.features.predicates.predicate
+import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.features.worldgen.blockpredicate.matchingBlocks
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.utils.pretty
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 
 private const val DUMMY_ENCHANTMENT_CONTENT = """"description": "",
@@ -1426,6 +1431,42 @@ class EnchantmentTests : FunSpec({
 		dataPack("enchantment") {
 			pretty()
 			enchantmentTests()
+		}
+	}
+
+	test("predicate references are inlined, since the game rejects them in enchantments") {
+		dataPack("enchantment") {
+			val raining = predicate("raining") { weatherCheck(raining = true) }
+			val stormy = predicate("stormy") {
+				reference(raining)
+				weatherCheck(thundering = true)
+			}
+
+			enchantment("stormy") {
+				effects {
+					armorEffectiveness {
+						add(5) {
+							requirements {
+								inverted { reference(stormy) }
+							}
+						}
+					}
+				}
+			}
+
+			enchantments.last().generateJson(this) assertsIs """{"description":"","supported_items":[],"weight":1,"max_level":1,"min_cost":{"base":0,"per_level_above_first":0},"max_cost":{"base":0,"per_level_above_first":0},"anvil_cost":0,"slots":[],"effects":{"minecraft:armor_effectiveness":[{"effect":{"type":"minecraft:add","value":5},"requirements":{"condition":"minecraft:inverted","term":{"condition":"minecraft:all_of","terms":[{"condition":"minecraft:weather_check","raining":true},{"condition":"minecraft:weather_check","thundering":true}]}}}]}}"""
+
+			enchantment("missing") {
+				effects {
+					armorEffectiveness {
+						add(5) {
+							requirements { reference(PredicateArgument("missing", "other")) }
+						}
+					}
+				}
+			}
+
+			shouldThrow<IllegalStateException> { enchantments.last().generateJson(this) }
 		}
 	}
 })
