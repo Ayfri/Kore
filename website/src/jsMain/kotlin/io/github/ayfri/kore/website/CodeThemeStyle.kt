@@ -132,7 +132,6 @@ object CodeThemeStyle : StyleSheet() {
 			backgroundColor(rgba(255, 255, 255, 0.025))
 			borderBottom(1.px, LineStyle.Solid, chromeBorderColor)
 			display(DisplayStyle.Flex)
-			fontFamily("Roboto", "sans-serif")
 			fontSize(0.72.cssRem)
 			justifyContent(JustifyContent.SpaceBetween)
 			order(-1)

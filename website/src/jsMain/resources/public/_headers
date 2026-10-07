@@ -15,3 +15,13 @@
 
 /playground-api.json
   Cache-Control: public, max-age=0, stale-while-revalidate=2592000
+
+/prism.min.js
+  Cache-Control: public, max-age=0, stale-while-revalidate=2592000
+
+/view-transitions.css
+  Cache-Control: public, max-age=0, stale-while-revalidate=2592000
+
+# A font file never changes in place: a new version of a font gets a new file name.
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable

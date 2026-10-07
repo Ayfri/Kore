@@ -3,8 +3,10 @@ import com.varabyte.kobwebx.gradle.markdown.children
 import com.varabyte.kobwebx.gradle.markdown.handlers.NodeScope
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+import kotlinx.html.LinkAs
 import kotlinx.html.link
 import kotlinx.html.script
+import kotlinx.html.style
 import kotlinx.html.unsafe
 import org.commonmark.ext.gfm.tables.TableCell
 import org.commonmark.node.*
@@ -71,20 +73,35 @@ kobweb {
 		)
 
 		index {
-			head.apply {
-				add {
-					script("text/javascript", "/prism.min.js") {
-						attributes += "data-manual" to ""
+			// Deferred scripts run in document order, so the deferred Prism of the head is ready before the app starts.
+			scriptAttributes.put("defer", "")
+
+			head.add {
+				// The exported pages paint without the app, but its bundle sits at the end of a body that reaches 500 KB on /updates.
+				link("/website.js", "preload", htmlAs = LinkAs.script)
+				// The text and heading fonts show above the fold on every page, the code font only loads once a code block renders.
+				for (file in listOf("ibm-plex-sans", "sora")) {
+					link("/fonts/$file.woff2", "preload", "font/woff2", LinkAs.font) {
+						attributes["crossorigin"] = "anonymous"
 					}
 				}
-			}
-			head.add {
-				link("https://fonts.googleapis.com", "preconnect")
-				link("https://fonts.gstatic.com", "preconnect") {
-					attributes["crossorigin"] = "anonymous"
+				// Latin subsets of Google Fonts' variable files, other glyphs fall back to the next font of the stack.
+				style {
+					unsafe {
+						+"""
+							@font-face{font-display:swap;font-family:"IBM Plex Sans";font-weight:400 700;src:url(/fonts/ibm-plex-sans.woff2) format("woff2")}
+							@font-face{font-display:swap;font-family:"JetBrains Mono";font-style:italic;font-weight:400;src:url(/fonts/jetbrains-mono-italic.woff2) format("woff2")}
+							@font-face{font-display:swap;font-family:"JetBrains Mono";font-weight:400 700;src:url(/fonts/jetbrains-mono.woff2) format("woff2")}
+							@font-face{font-display:swap;font-family:"Sora";font-weight:600 700;src:url(/fonts/sora.woff2) format("woff2")}
+						""".trimIndent().replace("\n", "")
+					}
 				}
-				link("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=Sora:wght@600;700&family=Roboto:wght@100;300;500;900&display=swap", "stylesheet")
 				link("/view-transitions.css", "stylesheet")
+
+				script("text/javascript", "/prism.min.js") {
+					attributes["data-manual"] = ""
+					defer = true
+				}
 
 				// `pagereveal` fires before website.js runs: turns the doc direction `PageTransitions` stores on `pageswap` into a transition type.
 				script("text/javascript") {
