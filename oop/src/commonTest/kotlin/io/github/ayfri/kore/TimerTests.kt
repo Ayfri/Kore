@@ -35,7 +35,8 @@ fun timerTests() = dataPack("timer_tests") {
 	}
 
 	generatedFunctions.any { it.name == OopConstants.timerInitFunctionName("game_timer") } assertsIs true
-	generatedFunctions.any { it.name == OopConstants.timerTickFunctionName("game_timer") } assertsIs true
+	generatedFunctions.single { it.name == OopConstants.timerTickFunctionName("game_timer") }.toString() assertsIs
+		"scoreboard players add @e[scores={game_timer=0..}] game_timer 1"
 }
 
 class TimerTests : FunSpec({

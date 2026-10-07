@@ -24,7 +24,7 @@ after a predictable amount of [ticks](/docs/concepts/time). Durations are expres
 > - **Storage:** none.
 > - **Entities:** none.
 > - **Forceloaded chunks:** none.
-> - **Every tick:** `timer_<name>_tick` adds 1 to every player at 0 or more. Only players count up.
+> - **Every tick:** `timer_<name>_tick` adds 1 to every entity at 0 or more.
 > - **Load and files:** `timer_<name>_init` creates the objective, `onComplete` blocks become functions listed in `#kore:timer_complete_handlers`, and `registerTimerWithBossBar` adds the boss bar `<pack>:<name>_bar`.
 
 ## Registering a timer
@@ -36,7 +36,7 @@ val timer = registerTimer("round_timer", 5.seconds)
 This generates:
 
 - A **load function** that creates the scoreboard objective.
-- A **tick function** that increments the score for all players with score ≥ 0.
+- A **tick function** that increments the score of every entity with a score ≥ 0, players or not.
 
 ## Typical lifecycle
 

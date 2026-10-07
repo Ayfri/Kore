@@ -10,7 +10,7 @@ import io.github.ayfri.kore.arguments.numbers.ticks
 import io.github.ayfri.kore.arguments.scores.ScoreboardCriteria
 import io.github.ayfri.kore.arguments.scores.score
 import io.github.ayfri.kore.arguments.selector.scores
-import io.github.ayfri.kore.arguments.types.literals.allPlayers
+import io.github.ayfri.kore.arguments.types.literals.allEntities
 import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.entities.Entity
@@ -87,7 +87,7 @@ fun DataPack.registerTimer(timer: Timer): TimerHandle {
 		tick(OopConstants.timerTickFunctionName(timer.name)) {
 			scoreboard {
 				players {
-					add(allPlayers {
+					add(allEntities {
 						scores {
 							score(timer.name, rangeOrIntStart(0))
 						}

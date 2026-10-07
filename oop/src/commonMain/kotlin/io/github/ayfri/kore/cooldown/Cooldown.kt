@@ -10,7 +10,7 @@ import io.github.ayfri.kore.arguments.numbers.ticks
 import io.github.ayfri.kore.arguments.scores.ScoreboardCriteria
 import io.github.ayfri.kore.arguments.scores.score
 import io.github.ayfri.kore.arguments.selector.scores
-import io.github.ayfri.kore.arguments.types.literals.allPlayers
+import io.github.ayfri.kore.arguments.types.literals.allEntities
 import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.entities.Entity
@@ -87,7 +87,7 @@ fun DataPack.registerCooldown(cooldown: Cooldown): CooldownHandle {
 		tick(OopConstants.cooldownTickFunctionName(cooldown.name)) {
 			scoreboard {
 				players {
-					remove(allPlayers {
+					remove(allEntities {
 						scores {
 							score(cooldown.name, rangeOrIntStart(1))
 						}

@@ -24,7 +24,7 @@ players without hand-writing the decrement logic every time.
 > - **Storage:** none.
 > - **Entities:** none.
 > - **Forceloaded chunks:** none.
-> - **Every tick:** `cooldown_<name>_tick` removes 1 from every player above 0. Only players count down.
+> - **Every tick:** `cooldown_<name>_tick` removes 1 from every entity above 0.
 > - **Load and files:** `cooldown_<name>_init` creates the objective. Each `ifReady` block becomes a `cooldown_<name>_ready_<hash>` function, listed in `#kore:cooldown_ready_handlers`.
 
 ## Registering a cooldown
@@ -36,7 +36,7 @@ val cd = registerCooldown("attack_cd", 2.seconds)
 This generates:
 
 - A **load function** that creates the scoreboard objective.
-- A **tick function** that decrements the score for all players with score ≥ 1.
+- A **tick function** that decrements the score of every entity with a score ≥ 1, players or not.
 
 ## Typical usage pattern
 
@@ -74,7 +74,7 @@ function("combat") {
 
 | Function  | Description                                                    |
 |-----------|----------------------------------------------------------------|
-| `start`   | Set the player score to the configured duration                |
+| `start`   | Set the entity score to the configured duration                |
 | `ifReady` | Run a block only when the cooldown is ready                    |
 | `reset`   | Force the cooldown back to `0`                                 |
 | tick hook | Auto-generated function that decrements active cooldown scores |

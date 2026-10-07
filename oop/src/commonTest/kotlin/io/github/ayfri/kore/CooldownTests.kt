@@ -28,7 +28,8 @@ fun cooldownTests() = dataPack("cooldown_tests") {
 	}
 
 	generatedFunctions.any { it.name == OopConstants.cooldownInitFunctionName("attack_cd") } assertsIs true
-	generatedFunctions.any { it.name == OopConstants.cooldownTickFunctionName("attack_cd") } assertsIs true
+	generatedFunctions.single { it.name == OopConstants.cooldownTickFunctionName("attack_cd") }.toString() assertsIs
+		"scoreboard players remove @e[scores={attack_cd=1..}] attack_cd 1"
 }
 
 class CooldownTests : FunSpec({
