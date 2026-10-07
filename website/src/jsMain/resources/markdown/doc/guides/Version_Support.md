@@ -16,7 +16,7 @@ Every Kore artifact carries two versions in one string: the Kore version, then t
 
 ```kotlin
 dependencies {
-	implementation("io.github.ayfri.kore:kore:2.15.0-26.2") // Kore 2.15.0, for Minecraft 26.2
+	implementation("io.github.ayfri.kore:kore:2.16.0-26.2") // Kore 2.16.0, for Minecraft 26.2
 }
 ```
 
