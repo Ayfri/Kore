@@ -1,13 +1,17 @@
 package io.github.ayfri.kore.helpers.inventorymanager
 
 import io.github.ayfri.kore.arguments.CONTAINER
+import io.github.ayfri.kore.arguments.CONTENTS
 import io.github.ayfri.kore.arguments.ItemSlotType
+import io.github.ayfri.kore.arguments.components.buildPartial
 import io.github.ayfri.kore.arguments.components.item.customData
+import io.github.ayfri.kore.arguments.components.itemPredicate
 import io.github.ayfri.kore.arguments.components.predicate
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.types.ContainerArgument
 import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.literals.allEntities
+import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.commands.data
@@ -16,6 +20,7 @@ import io.github.ayfri.kore.commands.items
 import io.github.ayfri.kore.commands.kill
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.EntityTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
@@ -41,6 +46,10 @@ data class SlotEventListener(
 		get() = nbt {
 			this["slot_event_listener"] = randomTag
 		}
+
+	/** Matches any item carrying this listener's tag, `*[custom_data~{slot_event_listener:"<tag>"}]`. */
+	val taggedItemPredicate
+		get() = itemPredicate { buildPartial(ItemComponentTypes.CUSTOM_DATA) { this["slot_event_listener"] = randomTag } }
 
 	init {
 		item {
@@ -89,17 +98,11 @@ data class SlotEventListener(
 	}
 
 	context(fn: Function)
-	fun killAllItemsNotInSlot() = fn.kill(allEntities {
-		type = EntityTypes.ITEM
-
-		nbt = nbt {
-			this["Item"] = nbt {
-				this["components"] = nbt {
-					this["custom_data"] = randomTagNbt
-				}
-			}
-		}
-	})
+	fun killAllItemsNotInSlot() = fn.execute {
+		asTarget(allEntities { type = EntityTypes.ITEM })
+		ifCondition { items(self(), CONTENTS, taggedItemPredicate) }
+		run { kill(self()) }
+	}
 
 	context(fn: Function)
 	fun setItemInSlot() = fn.items.replace(container, slot, item)

@@ -4,8 +4,6 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.DataPackStateKey
 import io.github.ayfri.kore.arguments.CONTAINER
 import io.github.ayfri.kore.arguments.ItemSlotType
-import io.github.ayfri.kore.arguments.components.buildPartial
-import io.github.ayfri.kore.arguments.components.itemPredicate
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.arguments.scores.score
@@ -24,7 +22,6 @@ import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.functions.tick
 import io.github.ayfri.kore.generated.EntityTypes
-import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
 import io.github.ayfri.kore.utils.nbtListOf
@@ -163,9 +160,7 @@ fun InventoryManager<*>.generateSlotsListeners() {
 			slotListener.onTick?.let(::apply)
 			slotListener.onTickFunction?.let { function(it) }
 
-			val inSlot = itemPredicate {
-				buildPartial(ItemComponentTypes.CUSTOM_DATA) { this["slot_event_listener"] = slotListener.randomTag }
-			}
+			val inSlot = slotListener.taggedItemPredicate
 			val slotSource = if (container is EntityArgument) self() else container
 			val scoreBoardSelector = if (container is EntityArgument) self() else marker
 

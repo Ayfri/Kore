@@ -130,6 +130,7 @@ class InventoryManagerTests : FunSpec({
 			inventoryManager(vec3(0, -59, 0)) {
 				slotEvent(CONTAINER[0], Items.DIAMOND_SWORD) {
 					onTake(FunctionArgument("taken", "helpers_tests"))
+					onTick { killAllItemsNotInSlot() }
 				}
 			}
 
@@ -141,7 +142,10 @@ class InventoryManagerTests : FunSpec({
 				"summon minecraft:marker ~ ~ ~ {Tags:[\"${score}_marker\",\"inventory_manager\"]}",
 				"scoreboard players set $marker $score 0",
 			)
-			generatedFunctions.first { it.name.endsWith("tick_inventory_manager_0") }.lines.single() shouldBe
+			val tick = generatedFunctions.first { it.name.endsWith("tick_inventory_manager_0") }.lines
+			tick.first() shouldBe
+				"execute as @e[type=minecraft:item] if items entity @s contents *[custom_data~{slot_event_listener:\"73162f9e\"}] run kill @s"
+			tick.last() shouldBe
 				"execute if score $marker $score matches 0 unless items block 0 -59 0 container.0 *[custom_data~{slot_event_listener:\"73162f9e\"}] run function helpers_tests:generated_scopes/generated_96d32be4"
 		}
 	}
