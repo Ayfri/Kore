@@ -104,6 +104,29 @@ fun DataPack.itemModifierTests() {
 		}
 	""".trimIndent()
 
+	itemModifier("copy_custom_data_context") {
+		copyCustomData(Source.THIS) {
+			replace("Tags", "tags")
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:copy_custom_data",
+			"source": {
+				"type": "minecraft:context",
+				"target": "this"
+			},
+			"ops": [
+				{
+					"op": "replace",
+					"source": "Tags",
+					"target": "tags"
+				}
+			]
+		}
+	""".trimIndent()
+
 	itemModifier("copy_name") {
 		copyName(Source.ATTACKING_PLAYER)
 	}

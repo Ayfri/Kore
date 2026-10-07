@@ -26,7 +26,8 @@ sealed interface NbtProvider
 
 /** Use a loot-context source (e.g. `this`, `attacker`, `block_entity`). */
 @Serializable
-data class CopyNbtContext(val source: Source) : NbtProvider
+@SerialName("minecraft:context")
+data class CopyNbtContext(@SerialName("target") val source: Source) : NbtProvider
 
 @Serializable
 @SerialName("minecraft:storage")
