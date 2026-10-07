@@ -5,9 +5,11 @@ import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.entities.entity
 import io.github.ayfri.kore.entities.player
 import io.github.ayfri.kore.events.*
+import io.github.ayfri.kore.exportAsStrings
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.Items
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 
 fun eventsTests() = dataPack("events_tests") {
@@ -89,5 +91,38 @@ fun eventsTests() = dataPack("events_tests") {
 class EventsTests : FunSpec({
 	test("events") {
 		eventsTests()
+	}
+
+	test("death events track their entities and run only their own handlers") {
+		val files = dataPack("death_tests") {
+			entity(EntityTypes.ZOMBIE).onDeath { say("zombie died") }
+			entity(EntityTypes.ZOMBIE, limitToOne = false) { tag = "boss" }.onDeath { say("boss died") }
+		}.exportAsStrings()
+
+		val fn = "data/death_tests/function/generated_scopes"
+		val tracker = files.getValue("$fn/kore_oop_death_c3f864bc_tracker.mcfunction")
+		tracker.substringBefore(" run ") assertsIs "execute as @e[tag=!kore_oop_death_c3f864bc,type=minecraft:zombie]"
+		files.getValue("$fn/kore_oop_death_13e63c2c_tracker.mcfunction").substringBefore(" run ") assertsIs
+			"execute as @e[tag=boss,tag=!kore_oop_death_13e63c2c,type=minecraft:zombie]"
+		files["data/death_tests/function/${tracker.substringAfter("run function death_tests:")}.mcfunction"] assertsIs """
+			tag @s add kore_oop_death_c3f864bc
+			data modify entity @s DeathLootTable set value "death_tests:kore_oop/death_trigger_zombie"
+		""".trimIndent()
+		files["$fn/kore_oop_death_dispatcher.mcfunction"] assertsIs
+			"execute as @e[type=minecraft:item] if items entity @s contents minecraft:structure_void[custom_data~{kore_oop_death:1b}] at @s run function death_tests:generated_scopes/kore_oop_death_handle"
+		files["$fn/kore_oop_death_handle.mcfunction"] assertsIs """
+			execute if items entity @s contents *[custom_data~{tags:["kore_oop_death_c3f864bc"]}] run function #death_tests:kore_oop_death_c3f864bc
+			execute if items entity @s contents *[custom_data~{tags:["kore_oop_death_13e63c2c"]}] run function #death_tests:kore_oop_death_13e63c2c
+			kill @s
+		""".trimIndent()
+		files["data/death_tests/loot_table/kore_oop/death_trigger_zombie.json"] assertsIs
+			"""{"pools":[{"rolls":1.0,"entries":[{"type":"minecraft:loot_table","value":"minecraft:entities/zombie"}]},{"rolls":1.0,"entries":[{"type":"minecraft:item","name":"minecraft:structure_void","functions":[{"function":"minecraft:set_custom_data","tag":{"kore_oop_death":true}},{"function":"minecraft:copy_custom_data","source":{"type":"minecraft:context","target":"this"},"ops":[{"op":"replace","source":"Tags","target":"tags"}]}]}]}]}"""
+	}
+
+	test("death events refuse players and untyped entities") {
+		dataPack("death_errors") {
+			shouldThrow<IllegalArgumentException> { player("Steve").onDeath { say("died") } }
+			shouldThrow<IllegalArgumentException> { entity { tag = "x" }.onDeath { say("died") } }
+		}
 	}
 })

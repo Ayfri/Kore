@@ -40,9 +40,23 @@ import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.arguments.types.AdvancementArgument
 import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import io.github.ayfri.kore.utils.nbt
+import io.github.ayfri.kore.arguments.components.itemPredicate
+import io.github.ayfri.kore.commands.data
+import io.github.ayfri.kore.commands.tag
+import io.github.ayfri.kore.features.itemmodifiers.functions.CopyCustomData
+import io.github.ayfri.kore.features.itemmodifiers.functions.CopyCustomDataOperationType
+import io.github.ayfri.kore.features.itemmodifiers.functions.CopyNbtContext
+import io.github.ayfri.kore.features.itemmodifiers.functions.CopyNbtOperation
+import io.github.ayfri.kore.features.itemmodifiers.functions.Source
+import io.github.ayfri.kore.features.loottables.entries.LootTable as NestedLootTable
+import io.github.ayfri.kore.generated.ItemComponentTypes
+import io.github.ayfri.kore.generated.LootTables
+import io.github.ayfri.kore.generated.arguments.types.LootTableArgument
+import io.github.ayfri.kore.utils.nbtListOf
 import net.benwoodworth.knbt.NbtByte
 
-private val initializedDeathDispatch = DataPackStateKey<MutableSet<String>>("oop.deathDispatch")
+private val deathHandleFunctions = DataPackStateKey<MutableMap<String, Function>>("oop.deathDispatch")
+private val trackedDeaths = DataPackStateKey<MutableSet<String>>("oop.trackedDeaths")
 private val registeredHandlers = DataPackStateKey<MutableMap<String, FunctionArgument>>("oop.handlers")
 
 /** Registers [block] in the [tagName] function tag, named after [handlerPrefix] and a hash of its body, so the same body registers once. */
@@ -106,51 +120,79 @@ private fun DataPack.advancementEventForItem(
 	}
 }
 
-internal fun DataPack.ensureDeathTriggerSetup(ns: String) {
-	if (!state(initializedDeathDispatch) { mutableSetOf() }.add(ns)) return
-
-	val deathPredicate = Items.STRUCTURE_VOID.predicate {
-		buildPartial(OopConstants.deathTriggerKey) { put(OopConstants.deathTriggerKey, NbtByte(1)) }
-	}
-
-	tick(OopConstants.deathDispatcherFunction) {
+/** The function each death trigger item runs: one line per tracked selector calling its handlers, then `kill @s`. */
+private fun DataPack.deathHandleFunction(ns: String) = state(deathHandleFunctions) { mutableMapOf() }.getOrPut(ns) {
+	val handle = generatedFunction(OopConstants.deathHandleFunction, ns) { kill(self()) } as Function
+	tick(OopConstants.deathDispatcherFunction, ns) {
 		execute {
 			asTarget(allEntities { type = EntityTypes.ITEM })
-			ifCondition { items(self(), CONTENTS, deathPredicate) }
-			at(self())
-			run {
-				functionCommand(FunctionTagArgument(OopConstants.deathHandlersTag, ns))
-				kill(self())
+			ifCondition {
+				items(self(), CONTENTS, Items.STRUCTURE_VOID.predicate {
+					buildPartial(ItemComponentTypes.CUSTOM_DATA) { put(OopConstants.deathTriggerKey, NbtByte(1)) }
+				})
 			}
+			at(self())
+			run(handle)
+		}
+	}
+	handle
+}
+
+/** Drops the type's vanilla loot plus a structure void carrying the trigger key and the dying entity's `Tags`. */
+private fun DataPack.deathLootTable(type: String) = OopConstants.deathTriggerLootTable(type).also { name ->
+	if (lootTables.any { it.fileName == name }) return@also
+	lootTable(name) {
+		if (LootTables.Entities.entries.any { it.name.equals(type, ignoreCase = true) }) pool {
+			entries = listOf(NestedLootTable(LootTableArgument("entities/$type")))
+		}
+		pool {
+			entries = listOf(
+				Item(
+					name = Items.STRUCTURE_VOID,
+					functions = ItemModifier(
+						modifiers = listOf(
+							SetCustomData(tag = nbt { put(OopConstants.deathTriggerKey, NbtByte(1)) }),
+							CopyCustomData(
+								source = CopyNbtContext(Source.THIS),
+								ops = listOf(CopyNbtOperation(CopyCustomDataOperationType.REPLACE, "Tags", "tags")),
+							),
+						)
+					)
+				)
+			)
 		}
 	}
 }
 
 private fun DataPack.registerDeathEvent(entity: Entity, ns: String, block: Function.() -> Unit) {
-	ensureDeathTriggerSetup(ns)
-	addHandler(OopConstants.deathHandlersTag, ns, OopConstants.eventHandlerPrefix(OopConstants.deathEvent), block)
+	require(!entity.isPlayer) { "onDeath doesn't work on players, they have no death loot table." }
+	val type = requireNotNull((entity.type as? ResourceLocationArgument)?.name?.lowercase()) {
+		"onDeath needs an entity with a type, the death trigger is dropped through the loot table of that type."
+	}
 
-	val entityTypeName = (entity.selector.type as? ResourceLocationArgument)?.name?.lowercase() ?: "generic"
-	val lootTableName = OopConstants.deathTriggerLootTable(entityTypeName)
-	if (lootTables.none { it.fileName == lootTableName }) {
-		lootTable(lootTableName) {
-			pool {
-				val itemEntry = Item(
-					name = Items.STRUCTURE_VOID,
-					functions = ItemModifier(
-						modifiers = listOf(
-							SetCustomData(
-								tag = nbt {
-									put(OopConstants.deathTriggerKey, NbtByte(1))
-								}
-							)
-						)
-					)
-				)
-				entries = listOf(itemEntry)
+	val key = generatedFunctionName(OopConstants.deathTriggerKey, listOf(entity.asSelector(limitToOne = false).asString()))
+	addHandler(key, ns, OopConstants.eventHandlerPrefix(OopConstants.deathEvent), block)
+	if (!state(trackedDeaths) { mutableSetOf() }.add("$ns:$key")) return
+
+	val lootTableId = "$name:${deathLootTable(type)}"
+	tick(OopConstants.deathTrackerFunctionName(key), ns) {
+		execute {
+			asTarget(entity.asSelector(limitToOne = false) { tag = !key })
+			run {
+				tag(self()) { add(key) }
+				data(self()) { modify("DeathLootTable", lootTableId) }
 			}
 		}
 	}
+
+	val handle = deathHandleFunction(ns)
+	val call = Function("", ns, datapack = this).apply {
+		execute {
+			ifCondition { items(self(), CONTENTS, itemPredicate { buildPartial(ItemComponentTypes.CUSTOM_DATA) { put("tags", nbtListOf(key)) } }) }
+			run { functionCommand(FunctionTagArgument(key, ns)) }
+		}
+	}.lines
+	handle.lines.addAll(handle.lines.size - 1, call)
 }
 
 private fun DataPack.hasAdvancement(fileName: String) = advancements.any { it.fileName == fileName }

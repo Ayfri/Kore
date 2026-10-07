@@ -23,8 +23,8 @@ then let the generated dispatchers call your handlers when Minecraft reports the
 > - **Storage:** none.
 > - **Entities:** none.
 > - **Forceloaded chunks:** none.
-> - **Every tick:** no for player events, each one is an advancement. `onDeath` adds `kore_oop_death_dispatcher` to `#minecraft:tick`, which checks every item entity.
-> - **Load and files:** per event, the advancement `kore_oop/<event>` and a `dispatch_<event>` function that revokes it and calls the `#<pack>:<event>` tag, plus one function per handler. `onDeath` adds the loot table `kore_oop/death_trigger_<type>`.
+> - **Every tick:** no for player events, each one is an advancement. `onDeath` adds a `kore_oop_death_<hash>_tracker` function per selector, which tags the new matching entities, and `kore_oop_death_dispatcher`, which checks every item entity.
+> - **Load and files:** per event, the advancement `kore_oop/<event>` and a `dispatch_<event>` function that revokes it and calls the `#<pack>:<event>` tag, plus one function per handler. `onDeath` adds the entity tag `kore_oop_death_<hash>` per selector and the loot table `kore_oop/death_trigger_<type>`.
 
 ## Registering events
 
@@ -125,8 +125,16 @@ val zombie = entity(EntityTypes.ZOMBIE) {
 zombie.onDeath { self -> say("A ${self.type?.name} died!") }
 ```
 
-The death event uses a loot-table trigger: on death the entity drops a hidden item detected by a tick dispatcher that
-runs all death handlers then removes the item.
+The death event uses a loot-table trigger. Every tick, the entities matching the selector for the first time get a
+`kore_oop_death_<hash>` tag and a `DeathLootTable` that drops their usual loot plus a hidden structure void carrying
+their tags. A tick dispatcher finds that item, runs the handlers of every selector whose tag it carries, then removes
+it. Two selectors on the same type stay apart: here a zombie without `my_tag` runs no handler.
+
+The trigger relies on the death loot table, which only mobs have, so:
+
+- `onDeath` throws on a player or an entity without a type. A player's death is a `deathCount` objective instead.
+- Nothing fires while the `doMobLoot` game rule is off, and the tracker replaces a `DeathLootTable` set by another pack.
+- The handlers run as the dropped item, at the death position.
 
 ## See also
 
