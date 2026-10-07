@@ -48,14 +48,21 @@ data class ChatComponents(
 	fun toJsonString(json: Json = Json) = json.encodeToString(NbtAsJsonSerializer, toNbtTag())
 	fun toJsonListString(json: Json = Json) = json.encodeToString(NbtAsJsonSerializer, toNbtList())
 
+	/** Each component as one element, the shape of a list of lines like `lore`. A single text uses [toNbtTag] instead. */
 	fun toNbtList(): NbtTag = if (list.all { it.containsOnlyText() }) NbtList(list.map { NbtString(it.text) })
 	else NbtList(list.map { it.toNbtTag() })
 
 	fun toNbtTag(): NbtTag = when (list.size) {
 		0 -> NbtString("")
 		1 -> list[0].toNbt()
-		else -> toNbtList()
+		else -> rooted().toNbtList()
 	}
+
+	/**
+	 * The game reads `[a, b]` as `a` with `b` in its `extra`, so `b` inherits the style of `a`. An empty root first keeps
+	 * every component styled on its own: `text("a", RED) + text("b")` gives `["", {text:"a",color:"red"}, "b"]`.
+	 */
+	internal fun rooted() = if (list.size > 1 && !list[0].containsOnlyText()) copy(list = (listOf(text()) + list).toMutableList()) else this
 
 	/**
 	 * Collapses these components into a single [ChatComponent]: a copy of the first is the root, the rest are appended to its
@@ -165,17 +172,23 @@ data class ChatComponents(
 			}
 		}
 
-		data object ChatComponentsSerializer : KSerializer<ChatComponents> {
+		/** Serializes [ChatComponents] as one text, through [rooted] so the first component's style stays its own. */
+		data object ChatComponentsSerializer : ChatComponentsListSerializer(rooted = true)
+
+		/** Serializes [ChatComponents] as a list of lines (`set_lore`), each element being one line. */
+		data object ChatComponentsLinesSerializer : ChatComponentsListSerializer(rooted = false)
+
+		sealed class ChatComponentsListSerializer(private val rooted: Boolean) : KSerializer<ChatComponents> {
 			override val descriptor = ListSerializer(NbtTag.serializer()).descriptor
 
 			override fun deserialize(decoder: Decoder) = when (decoder) {
 				is JsonDecoder -> when (val element = decoder.decodeJsonElement()) {
-					is JsonArray -> ChatComponents(element.mapTo(mutableListOf(), ::decodeJson))
+					is JsonArray -> ChatComponents(element.mapTo(mutableListOf(), ::decodeJson)).unrooted()
 					else -> ChatComponents(decodeJson(element))
 				}
 
 				is NbtDecoder -> when (val tag = decoder.decodeNbtTag()) {
-					is NbtList<*> -> ChatComponents(tag.mapTo(mutableListOf()) { decodeNbt(decoder.nbt, it) })
+					is NbtList<*> -> ChatComponents(tag.mapTo(mutableListOf()) { decodeNbt(decoder.nbt, it) }).unrooted()
 					else -> ChatComponents(decodeNbt(decoder.nbt, tag))
 				}
 
@@ -186,11 +199,16 @@ data class ChatComponents(
 			 * A single component is encoded alone, a plain text one as a string. An NBT list goes through [toNbtList] since it
 			 * holds a single type, turning every element into a compound as soon as one isn't plain text.
 			 */
-			override fun serialize(encoder: Encoder, value: ChatComponents) = when {
-				value.list.size == 1 -> encoder.encodeSerializableValue(ChatComponentSerializer, value.list[0])
-				encoder is NbtEncoder -> encoder.encodeNbtTag(value.toNbtList())
-				else -> encoder.encodeComponents(descriptor, value.list)
+			override fun serialize(encoder: Encoder, value: ChatComponents) {
+				val components = if (rooted) value.rooted() else value
+				when {
+					components.list.size == 1 -> encoder.encodeSerializableValue(ChatComponentSerializer, components.list[0])
+					encoder is NbtEncoder -> encoder.encodeNbtTag(components.toNbtList())
+					else -> encoder.encodeComponents(descriptor, components.list)
+				}
 			}
+
+			private fun ChatComponents.unrooted() = if (!rooted || list.size < 2 || list[0] != text()) this else copy(list = list.drop(1).toMutableList())
 		}
 	}
 }

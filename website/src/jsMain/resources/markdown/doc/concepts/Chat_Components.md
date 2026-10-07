@@ -5,7 +5,7 @@ nav-title: Chat Components
 description: A guide for creating Chat Components in a Minecraft datapack using Kore.
 keywords: minecraft, datapack, kore, guide, chat-components
 date-created: 2024-09-05
-date-modified: 2026-09-27
+date-modified: 2026-10-07
 routeOverride: /docs/concepts/chat-components
 ---
 
@@ -78,6 +78,16 @@ val combinedComponents = textComponent("Hello, ") + text("world!") {
 In-game output:<br>
 ![Combined Hello World](/doc/chat-components/combined-hello-world.png)
 > (only the "world!" part is bold and red)
+
+The game reads a list `[a, b]` as `a` with `b` among its children, so `b` inherits the style of `a`. When the first
+component carries a style, Kore writes an empty root first, so each component keeps its own style:
+
+```kotlin
+textComponent("Gold ", Color.GOLD) + text("plain")
+// [{type:"text",text:""},{type:"text",color:"gold",text:"Gold "},{type:"text",text:"plain"}]
+```
+
+Item lore is the exception: its list holds one line per element, so it's written as is.
 
 ## EntityComponent
 

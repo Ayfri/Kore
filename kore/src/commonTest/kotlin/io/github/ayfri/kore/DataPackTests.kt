@@ -81,7 +81,7 @@ class DataPackTests : FunSpec({
 			}
 
 			fun marker(prefix: String) =
-				"""tellraw @a [{"type":"text","color":"gray","italic":true,"text":"$prefix"},{"type":"text","bold":true,"click_event":{"action":"run_command","command":"function debug_markers:traced"},"color":"white","hover_event":{"action":"show_text","value":{"type":"text","color":"gray","italic":true,"text":"Click to execute function"}},"italic":true,"text":"debug_markers:traced"}]"""
+				"""tellraw @a [{"type":"text","text":""},{"type":"text","color":"gray","italic":true,"text":"$prefix"},{"type":"text","bold":true,"click_event":{"action":"run_command","command":"function debug_markers:traced"},"color":"white","hover_event":{"action":"show_text","value":{"type":"text","color":"gray","italic":true,"text":"Click to execute function"}},"italic":true,"text":"debug_markers:traced"}]"""
 
 			val lines = exportAsStrings().getValue("data/debug_markers/function/traced.mcfunction").lines()
 			lines.first() assertsIs marker("Running function ")

@@ -43,7 +43,7 @@ fun asciiRendererTests() {
 	""".trimIndent()
 
 	ansiToTextComponents("\u001B[32mGreen\u001B[0m normal")[0].asString() assertsIs """
-		[{type:"text",color:"green",text:"Green"},{type:"text",text:" normal"}]
+		[{type:"text",text:""},{type:"text",color:"green",text:"Green"},{type:"text",text:" normal"}]
 	""".trimIndent()
 
 	ansiToTextComponents("\u001B[93mBright yellow")[0].asString() assertsIs """
@@ -55,7 +55,7 @@ fun asciiRendererTests() {
 	""".trimIndent()
 
 	ansiToTextComponents("\u001B[1;31mBold red\u001B[0m rest")[0].asString() assertsIs """
-		[{type:"text",bold:1b,color:"red",text:"Bold red"},{type:"text",text:" rest"}]
+		[{type:"text",text:""},{type:"text",bold:1b,color:"red",text:"Bold red"},{type:"text",text:" rest"}]
 	""".trimIndent()
 
 	ansiToTextComponents("\u001B[4;9mUnder+Strike")[0].asString() assertsIs """
@@ -67,7 +67,7 @@ fun asciiRendererTests() {
 	""".trimIndent()
 
 	ansiToTextComponents("\u001B[1mBold\u001B[22m not bold")[0].asString() assertsIs """
-		[{type:"text",bold:1b,text:"Bold"},{type:"text",text:" not bold"}]
+		[{type:"text",text:""},{type:"text",bold:1b,text:"Bold"},{type:"text",text:" not bold"}]
 	""".trimIndent()
 
 	ansiToTextComponents("\u001B[38;2;128;64;255mRGB text")[0].asString() assertsIs """
@@ -94,11 +94,11 @@ fun asciiRendererTests() {
 	ansiToTextComponents("\u001B[32mGreen\u001B[0m rest") {
 		color = Color.WHITE
 	}[0].asString() assertsIs """
-		[{type:"text",color:"green",text:"Green"},{type:"text",color:"white",text:" rest"}]
+		[{type:"text",text:""},{type:"text",color:"green",text:"Green"},{type:"text",color:"white",text:" rest"}]
 	""".trimIndent()
 
 	ansiToTextComponents("\u001B[31mA\u001B[32mB\u001B[34mC")[0].asString() assertsIs """
-		[{type:"text",color:"red",text:"A"},{type:"text",color:"green",text:"B"},{type:"text",color:"blue",text:"C"}]
+		[{type:"text",text:""},{type:"text",color:"red",text:"A"},{type:"text",color:"green",text:"B"},{type:"text",color:"blue",text:"C"}]
 	""".trimIndent()
 
 	ansiToTextComponents("\u001B[38;5;232mDarkest gray")[0].asString() assertsIs """
@@ -110,7 +110,7 @@ fun asciiRendererTests() {
 	""".trimIndent()
 
 	ansiToTextComponents("\u001B[31mRed\u001B[39m default")[0].asString() assertsIs """
-		[{type:"text",color:"red",text:"Red"},{type:"text",text:" default"}]
+		[{type:"text",text:""},{type:"text",color:"red",text:"Red"},{type:"text",text:" default"}]
 	""".trimIndent()
 
 	ansiToTextComponents("No escape sequences at all")[0].asString() assertsIs """

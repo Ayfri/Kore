@@ -15,6 +15,7 @@ import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtString
+import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.encodeToNbtTag
 
 /**
@@ -44,7 +45,7 @@ sealed class ChatComponent {
 	var color: Color? = null
 
 	/** Additional sibling components rendered after this one. They inherit but can override the parent's styling. */
-	var extra: ChatComponents? = null
+	var extra: @Serializable(ChatComponents.Companion.ChatComponentsLinesSerializer::class) ChatComponents? = null
 
 	/** Resource location of the font to use (e.g. `"minecraft:default"`). */
 	var font: String? = null
@@ -82,7 +83,7 @@ sealed class ChatComponent {
 		bold?.let { this["bold"] = it }
 		clickEvent?.let { this["click_event"] = snbtSerializer.encodeToNbtTag(it) }
 		color?.let { this["color"] = it.asString() }
-		extra?.let { this["extra"] = it.toNbtTag() }
+		extra?.let { this["extra"] = it.list.singleOrNull()?.toNbt() ?: it.toNbtList() }
 		font?.let { this["font"] = it }
 		hoverEvent?.let { this["hover_event"] = it.toNbtTag() }
 		insertion?.let { this["insertion"] = it }
@@ -95,7 +96,7 @@ sealed class ChatComponent {
 	}
 
 	/** Returns a compact NBT representation: a bare [NbtString] when [containsOnlyText], otherwise [toNbtTag]. */
-	fun toNbt() = if (containsOnlyText()) NbtString(text) else toNbtTag()
+	fun toNbt(): NbtTag = if (containsOnlyText()) NbtString(text) else toNbtTag()
 
 	/** Returns a copy of this component sharing its nested values, so reassigning a field of the copy leaves this one untouched. */
 	internal fun shallowCopy() = when (this) {

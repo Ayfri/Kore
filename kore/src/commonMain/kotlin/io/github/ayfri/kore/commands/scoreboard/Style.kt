@@ -11,7 +11,7 @@ data class Style(
 	var bold: Boolean? = null,
 	var clickEvent: ClickEvent? = null,
 	var color: Color? = null,
-	var extra: ChatComponents? = null,
+	var extra: @Serializable(ChatComponents.Companion.ChatComponentsLinesSerializer::class) ChatComponents? = null,
 	var font: String? = null,
 	var hoverEvent: HoverEvent? = null,
 	var insertion: String? = null,

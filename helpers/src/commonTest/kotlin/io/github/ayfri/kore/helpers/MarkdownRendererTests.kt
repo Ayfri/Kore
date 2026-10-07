@@ -121,7 +121,7 @@ fun markdownRendererTests() {
 
 	// Complete serialized text component checks
 	val boldSerialized = markdownToTextComponents("**hello** world")
-	boldSerialized[0].asString() assertsIs """[{type:"text",bold:1b,text:"hello"},{type:"text",text:" world"}]"""
+	boldSerialized[0].asString() assertsIs """[{type:"text",text:""},{type:"text",bold:1b,text:"hello"},{type:"text",text:" world"}]"""
 
 	val headingSerialized = markdownToTextComponents("# Title")
 	headingSerialized[0].asString() assertsIs """{type:"text",bold:1b,color:"gold",text:"Title"}"""
@@ -136,7 +136,7 @@ fun markdownRendererTests() {
 	hrSerialized[0].asString() assertsIs """{type:"text",color:"gray",strikethrough:1b,text:"────────────────────"}"""
 
 	val quoteSerialized = markdownToTextComponents("> hello")
-	quoteSerialized[0].asString() assertsIs """[{type:"text",color:"gray",text:"│ "},{type:"text",text:"hello"}]"""
+	quoteSerialized[0].asString() assertsIs """[{type:"text",text:""},{type:"text",color:"gray",text:"│ "},{type:"text",text:"hello"}]"""
 
 	val ulSerialized = markdownToTextComponents("- item")
 	ulSerialized[0].asString() assertsIs """["• ","item"]"""

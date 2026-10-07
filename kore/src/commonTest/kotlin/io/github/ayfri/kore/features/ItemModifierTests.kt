@@ -801,6 +801,7 @@ fun DataPack.itemModifierTests() {
 		{
 			"function": "minecraft:set_name",
 			"name": [
+				"",
 				{
 					"text": "Legendary ",
 					"color": "gold",

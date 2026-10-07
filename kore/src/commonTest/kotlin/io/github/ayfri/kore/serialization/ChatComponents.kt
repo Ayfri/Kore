@@ -23,11 +23,13 @@ import io.github.ayfri.kore.generated.Atlases
 import io.github.ayfri.kore.generated.Dialogs
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.Textures
+import io.github.ayfri.kore.utils.jsonSerializer
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.set
 import io.github.ayfri.kore.utils.toSnbt
 import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 
 fun chatComponentsTests() {
 	val simplePlainText = textComponent("Hello, world!")
@@ -548,5 +550,15 @@ private fun chatComponentAllFields() {
 class ChatComponentsSerializationTests : FunSpec({
 	test("chat components") {
 		chatComponentsTests()
+	}
+
+	test("a styled first component gets an empty root so its style stays its own") {
+		val components = textComponent("a", Color.RED) + text("b")
+		components.asString() assertsIs """[{type:"text",text:""},{type:"text",color:"red",text:"a"},{type:"text",text:"b"}]"""
+		jsonSerializer.encodeToString(components) assertsIs """["",{"text":"a","color":"red"},"b"]"""
+		jsonSerializer.decodeFromString<ChatComponents>(jsonSerializer.encodeToString(components)) shouldBe components
+
+		(textComponent("a") + text("b", Color.RED)).asString() assertsIs """[{type:"text",text:"a"},{type:"text",color:"red",text:"b"}]"""
+		components.toNbtList().toSnbt() assertsIs """[{type:"text",color:"red",text:"a"},{type:"text",text:"b"}]"""
 	}
 })

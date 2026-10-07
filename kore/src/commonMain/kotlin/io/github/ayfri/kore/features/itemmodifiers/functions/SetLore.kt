@@ -19,7 +19,7 @@ import kotlinx.serialization.Serializable
 data class SetLore(
 	override var conditions: PredicateAsList? = null,
 	var entity: Source? = null,
-	var lore: ChatComponents = textComponent(),
+	var lore: @Serializable(ChatComponents.Companion.ChatComponentsLinesSerializer::class) ChatComponents = textComponent(),
 ) : ItemFunction(), ModeHandler {
 	@Serializable
 	override var mode: Mode = Mode.REPLACE_ALL

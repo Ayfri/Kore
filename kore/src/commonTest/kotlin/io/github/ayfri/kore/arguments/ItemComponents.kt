@@ -254,7 +254,7 @@ fun itemComponentsTests() {
 	customNameTest.asString() assertsIs """minecraft:stone_sword[custom_name="Hello \"world\" C:\\temp"]"""
 
 	customNameTest.components!!.customName(textComponent("Legendary ", Color.GOLD) + text("Sword"))
-	customNameTest.asString() assertsIs """minecraft:stone_sword[custom_name=[{type:"text",color:"gold",text:"Legendary "},{type:"text",text:"Sword"}]]"""
+	customNameTest.asString() assertsIs """minecraft:stone_sword[custom_name=[{type:"text",text:""},{type:"text",color:"gold",text:"Legendary "},{type:"text",text:"Sword"}]]"""
 
 	val damageTest = stoneSword {
 		damage(5)
