@@ -32,6 +32,7 @@ import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 
 fun Function.inventoryManagerTests() {
@@ -147,6 +148,23 @@ class InventoryManagerTests : FunSpec({
 				"execute as @e[type=minecraft:item] if items entity @s contents *[custom_data~{slot_event_listener:\"73162f9e\"}] run kill @s"
 			tick.last() shouldBe
 				"execute if score $marker $score matches 0 unless items block 0 -59 0 container.0 *[custom_data~{slot_event_listener:\"73162f9e\"}] run function helpers_tests:generated_scopes/generated_96d32be4"
+		}
+	}
+
+	test("clearAllItemsNotInSlot only clears the slots holding the listener's item") {
+		dataPack("helpers_tests") {
+			inventoryManager(nearestPlayer()) {
+				slotEvent(HOTBAR[0], Items.NETHER_STAR) {
+					onTick { clearAllItemsNotInSlot() }
+				}
+			}
+
+			val tick = generatedFunctions.first { it.name.endsWith("tick_inventory_manager_0") }.lines
+			val tagged = "*[custom_data~{slot_event_listener:\"1ec09d\"}]"
+			tick.filter { it.startsWith("item ") } shouldBe emptyList()
+			tick shouldContain "execute if items entity @p hotbar.1 $tagged run item replace entity @p hotbar.1 with minecraft:air"
+			tick shouldContain "execute if items entity @p weapon.offhand $tagged run item replace entity @p weapon.offhand with minecraft:air"
+			(tick.any { "hotbar.0 " in it && it.startsWith("execute if items") }) shouldBe false
 		}
 	}
 

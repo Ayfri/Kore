@@ -6,7 +6,6 @@ import io.github.ayfri.kore.arguments.ItemSlotType
 import io.github.ayfri.kore.arguments.components.buildPartial
 import io.github.ayfri.kore.arguments.components.item.customData
 import io.github.ayfri.kore.arguments.components.itemPredicate
-import io.github.ayfri.kore.arguments.components.predicate
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.types.ContainerArgument
 import io.github.ayfri.kore.arguments.types.EntityArgument
@@ -70,11 +69,11 @@ data class SlotEventListener(
 		is EntityArgument -> fn.items {
 			fun executeIfItem(index: Int) = fn.execute {
 				ifCondition {
-					items(fromContainer, ItemSlotType.fromIndex(index, true), item.predicate())
+					items(fromContainer, ItemSlotType.fromIndex(index, true), taggedItemPredicate)
 				}
 
 				run {
-					fn.items.replace(fromContainer, ItemSlotType.fromIndex(index, true), Items.AIR)
+					items.replace(fromContainer, ItemSlotType.fromIndex(index, true), Items.AIR)
 				}
 			}
 
