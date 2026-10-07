@@ -4,12 +4,13 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.DataPackStateKey
 import io.github.ayfri.kore.arguments.CONTAINER
 import io.github.ayfri.kore.arguments.ItemSlotType
+import io.github.ayfri.kore.arguments.components.buildPartial
+import io.github.ayfri.kore.arguments.components.itemPredicate
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.arguments.scores.score
 import io.github.ayfri.kore.arguments.selector.scores
 import io.github.ayfri.kore.arguments.types.ContainerArgument
-import io.github.ayfri.kore.arguments.types.DataArgument
 import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.ScoreHolderArgument
 import io.github.ayfri.kore.arguments.types.literals.allEntities
@@ -23,13 +24,11 @@ import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.functions.tick
 import io.github.ayfri.kore.generated.EntityTypes
+import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
-import io.github.ayfri.kore.utils.nbt
-import io.github.ayfri.kore.utils.nbtList
 import io.github.ayfri.kore.utils.nbtListOf
 import io.github.ayfri.kore.utils.set
-import net.benwoodworth.knbt.addNbtCompound
 
 /**
  * Inventory Manager
@@ -139,20 +138,23 @@ fun InventoryManager<*>.generateSlotsListeners() {
 	val scoreName = getScoreName(dp)
 	val entityTag = "${scoreName}_marker"
 
-	dp.load("load_inventory_manager_$id") {
-		kill(allEntities {
-			nbt = nbt {
-				this["Tags"] = nbtListOf(InventoryManager.INVENTORY_MANAGER_ENTITY_TAG)
-			}
-		})
+	val marker = allEntities(true) {
+		type = EntityTypes.MARKER
+		tag = entityTag
+	}
 
+	dp.load("load_inventory_manager_$id") {
 		scoreboard.objectives.add(scoreName)
 		if (container is EntityArgument) scoreboard.players.set(container as ScoreHolderArgument, scoreName, 0)
 		else {
+			kill(allEntities {
+				type = EntityTypes.MARKER
+				tag = entityTag
+			})
 			summon(EntityTypes.MARKER) {
 				this["Tags"] = nbtListOf(entityTag, InventoryManager.INVENTORY_MANAGER_ENTITY_TAG)
 			}
-			scoreboard.players.set(allEntities { nbt = nbt { this["Tags"] = nbtListOf(entityTag) } }, scoreName, 0)
+			scoreboard.players.set(marker, scoreName, 0)
 		}
 	}
 
@@ -161,32 +163,11 @@ fun InventoryManager<*>.generateSlotsListeners() {
 			slotListener.onTick?.let(::apply)
 			slotListener.onTickFunction?.let { function(it) }
 
-			val containerNbt = nbt {
-				when (slotListener.container) {
-					is EntityArgument -> this["Inventory"] = nbtList {
-						addNbtCompound {
-							this["Slot"] = slotListener.slot.asIndex().toByte()
-							this["tag"] = slotListener.randomTagNbt
-						}
-					}
-
-					else -> this["Items"] = nbtList {
-						addNbtCompound {
-							this["Slot"] = slotListener.slot.asIndex().toByte()
-							this["tag"] = slotListener.randomTagNbt
-						}
-					}
-				}
+			val inSlot = itemPredicate {
+				buildPartial(ItemComponentTypes.CUSTOM_DATA) { this["slot_event_listener"] = slotListener.randomTag }
 			}
-
-			val scoreBoardSelector = when (container) {
-				is EntityArgument -> self()
-				else -> allEntities(true) {
-					nbt = nbt {
-						this["Tags"] = nbtListOf(entityTag)
-					}
-				}
-			}
+			val slotSource = if (container is EntityArgument) self() else container
+			val scoreBoardSelector = if (container is EntityArgument) self() else marker
 
 			slotListener.events.sortedBy {
 				when (it.type) {
@@ -197,18 +178,10 @@ fun InventoryManager<*>.generateSlotsListeners() {
 			}.forEach slotListenersLoop@{ (function, type) ->
 				if (type == SlotEventType.WHEN_TAKEN && slotListener.events.any { it.type == SlotEventType.DURING_TAKEN }) {
 					execute {
-						val targets = allEntities {
-							scores {
-								score(scoreName) greaterThanOrEqualTo 1
-							}
-
-							nbt = containerNbt
-						}
-
-						if (container is EntityArgument) asTarget(targets)
-						else ifCondition {
-							score(scoreBoardSelector, scoreName) equalTo 1
-							data(container as DataArgument, containerNbt.toString())
+						if (container is EntityArgument) asTarget(allEntities { scores { score(scoreName) greaterThanOrEqualTo 1 } })
+						ifCondition {
+							if (container !is EntityArgument) score(scoreBoardSelector, scoreName) equalTo 1
+							items(slotSource, slotListener.slot, inSlot)
 						}
 
 						run {
@@ -219,22 +192,9 @@ fun InventoryManager<*>.generateSlotsListeners() {
 				}
 
 				execute {
-					val targets = allEntities {
-						scores {
-							score(scoreName, rangeOrInt(0))
-						}
-
-						nbt = !containerNbt
-					}
-
-					if (container is EntityArgument) asTarget(targets)
-					else unlessCondition {
-						ifCondition {
-							score(scoreBoardSelector, scoreName) equalTo 0
-						}
-
-						data(container as DataArgument, containerNbt.toString())
-					}
+					if (container is EntityArgument) asTarget(allEntities { scores { score(scoreName, rangeOrInt(0)) } })
+					else ifCondition { score(scoreBoardSelector, scoreName) equalTo 0 }
+					unlessCondition { items(slotSource, slotListener.slot, inSlot) }
 
 					run {
 						if (type == SlotEventType.WHEN_TAKEN) scoreboard.players.set(scoreBoardSelector, scoreName, 1)

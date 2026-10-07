@@ -30,7 +30,9 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.helpers.inventorymanager.*
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
+import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 
 fun Function.inventoryManagerTests() {
 	val inventoryManager = inventoryManager(vec3(0, 0, 0))
@@ -120,6 +122,27 @@ class InventoryManagerTests : FunSpec({
 	test("inventory manager") {
 		dataPack("helpers_tests") {
 			load { inventoryManagerTests() }
+		}
+	}
+
+	test("slot listeners test the slot with an item predicate and find their marker by tag") {
+		dataPack("helpers_tests") {
+			inventoryManager(vec3(0, -59, 0)) {
+				slotEvent(CONTAINER[0], Items.DIAMOND_SWORD) {
+					onTake(FunctionArgument("taken", "helpers_tests"))
+				}
+			}
+
+			val score = "_inventory_manager_helpers_tests_click_listener_0"
+			val marker = "@e[limit=1,tag=${score}_marker,type=minecraft:marker]"
+			generatedFunctions.first { it.name.endsWith("load_inventory_manager_0") }.lines shouldBe listOf(
+				"scoreboard objectives add $score dummy",
+				"kill @e[tag=${score}_marker,type=minecraft:marker]",
+				"summon minecraft:marker ~ ~ ~ {Tags:[\"${score}_marker\",\"inventory_manager\"]}",
+				"scoreboard players set $marker $score 0",
+			)
+			generatedFunctions.first { it.name.endsWith("tick_inventory_manager_0") }.lines.single() shouldBe
+				"execute if score $marker $score matches 0 unless items block 0 -59 0 container.0 *[custom_data~{slot_event_listener:\"73162f9e\"}] run function helpers_tests:generated_scopes/generated_96d32be4"
 		}
 	}
 
