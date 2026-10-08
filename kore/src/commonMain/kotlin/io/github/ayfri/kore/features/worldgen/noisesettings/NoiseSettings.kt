@@ -7,7 +7,7 @@ import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.data.block.blockState
 import io.github.ayfri.kore.features.worldgen.dimension.biomesource.multinoise.MultiNoiseBiomeSourceParameters
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.Bandlands
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.SurfaceRule
+import io.github.ayfri.kore.features.worldgen.noisesettings.rules.MaterialRule
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.arguments.worldgen.types.NoiseSettingsArgument
 import kotlinx.serialization.Serializable
@@ -17,7 +17,7 @@ import kotlinx.serialization.Transient
  * Data-driven noise settings controlling terrain generation.
  *
  * Defines the vertical range, sea level, default terrain/fluid states, whether aquifers and ore
- * veins are enabled, the noise router graph, spawn targets and surface rules. Referenced by the
+ * veins are enabled, the noise router graph, spawn targets and material rules. Referenced by the
  * noise world generator.
  *
  * JSON format reference: https://minecraft.wiki/w/Noise_settings
@@ -36,7 +36,7 @@ data class NoiseSettings(
 	var noise: NoiseOptions = NoiseOptions(-64, 384, 1, 2),
 	var noiseRouter: NoiseRouter = NoiseRouter(),
 	var spawnTarget: List<MultiNoiseBiomeSourceParameters> = emptyList(),
-	var surfaceRule: SurfaceRule = Bandlands,
+	var materialRule: MaterialRule = Bandlands,
 ) : Generator("worldgen/noise_settings") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }

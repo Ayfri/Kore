@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions
 
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.SurfaceRulesScope
+import io.github.ayfri.kore.features.worldgen.noisesettings.rules.MaterialRulesScope
 import kotlinx.serialization.Serializable
 
 /**
@@ -10,11 +10,11 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Not(
-	var invert: SurfaceRuleCondition,
-) : SurfaceRuleCondition()
+	var invert: MaterialCondition,
+) : MaterialCondition()
 
 /** Creates a [Not] condition negating [invert]. */
-fun SurfaceRulesScope.not(invert: SurfaceRuleCondition) = Not(invert)
+fun MaterialRulesScope.not(invert: MaterialCondition) = Not(invert)
 
 /** Creates a [Not] condition negating the condition returned by [invert]. */
-fun SurfaceRulesScope.not(invert: SurfaceRulesScope.() -> SurfaceRuleCondition) = Not(invert())
+fun MaterialRulesScope.not(invert: MaterialRulesScope.() -> MaterialCondition) = Not(invert())

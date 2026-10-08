@@ -49,6 +49,8 @@ import io.github.ayfri.kore.features.worldgen.flatlevelgeneratorpreset.FlatLevel
 import io.github.ayfri.kore.features.worldgen.multinoisebiomesourceparameterlist.MultiNoiseBiomeSourceParameterList
 import io.github.ayfri.kore.features.worldgen.noise.Noise
 import io.github.ayfri.kore.features.worldgen.noisesettings.NoiseSettings
+import io.github.ayfri.kore.features.worldgen.noisesettings.rules.MaterialRuleFile
+import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.MaterialConditionFile
 import io.github.ayfri.kore.features.worldgen.placedfeature.PlacedFeature
 import io.github.ayfri.kore.features.worldgen.processorlist.ProcessorList
 import io.github.ayfri.kore.features.worldgen.structures.Structure
@@ -113,6 +115,8 @@ class DataPack(val name: String) {
 	val itemModifiers = registerGenerator<ItemModifier>()
 	val jukeboxSongs = registerGenerator<JukeboxSong>()
 	val lootTables = registerGenerator<LootTable>()
+	val materialConditions = registerGenerator<MaterialConditionFile>()
+	val materialRules = registerGenerator<MaterialRuleFile>()
 	val multiNoiseBiomeSourceParameterLists = registerGenerator<MultiNoiseBiomeSourceParameterList>()
 	val noises = registerGenerator<Noise>()
 	val noiseSettings = registerGenerator<NoiseSettings>()

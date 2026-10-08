@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions
 
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.SurfaceRulesScope
+import io.github.ayfri.kore.features.worldgen.noisesettings.rules.MaterialRulesScope
 import kotlinx.serialization.Serializable
 
 /**
@@ -16,16 +16,16 @@ data class Water(
 	var offset: Int = 0,
 	var surfaceDepthMultiplier: Int = 0,
 	var addStoneDepth: Boolean = false,
-) : SurfaceRuleCondition()
+) : MaterialCondition()
 
 /** Creates a [Water] condition with the given parameters. */
-fun SurfaceRulesScope.water(
+fun MaterialRulesScope.water(
 	offset: Int = 0,
 	surfaceDepthMultiplier: Int = 0,
 	addStoneDepth: Boolean = false,
 ) = Water(offset, surfaceDepthMultiplier, addStoneDepth)
 
 /** Creates a [Water] condition, further configured in [block]. */
-fun SurfaceRulesScope.water(
+fun MaterialRulesScope.water(
 	block: Water.() -> Unit,
 ) = Water().apply(block)

@@ -14,7 +14,7 @@ routeOverride: /docs/data-driven/worldgen/providers
 Most worldgen fields do not take a plain number: they take a **provider**, a small object the game samples at every position. That is how
 one ore configuration can produce veins of varying size, or one carver can dig tunnels at varying heights.
 
-Four families exist, and they show up across carvers, features, structures and surface rules:
+Four families exist, and they show up across carvers, features, structures and material rules:
 
 - **Vertical anchors** - a single Y level, expressed absolutely or relative to the world bounds.
 - **Height providers** - a distribution of vertical anchors.
@@ -35,7 +35,7 @@ dimension.
 | `aboveBottom(n)` | `{"above_bottom": n}` | `n` blocks above the bottom of the dimension, `0` being `min_y`.  |
 | `belowTop(n)`    | `{"below_top": n}`    | `n` blocks below the top of the dimension, larger values go down. |
 
-The builders extend `VerticalAnchorScope`, so they resolve inside a placed feature, a carver configuration, a `surfaceRules { }` block, and
+The builders extend `VerticalAnchorScope`, so they resolve inside a placed feature, a carver configuration, a `materialRules { }` block, and
 anywhere a height provider is being built.
 
 Reference: [Vertical anchor](https://minecraft.wiki/w/Custom_world_generation/vertical_anchor)
@@ -142,5 +142,5 @@ Reference: [Float provider](https://minecraft.wiki/w/Custom_world_generation/flo
 
 - [Carvers](/docs/data-driven/worldgen/carvers) - `y`, `yScale`, radius multipliers and canyon shape fields
 - [Features](/docs/data-driven/worldgen/features) - `heightRange`, `count` and the configured feature parameters
-- [Noise & Terrain](/docs/data-driven/worldgen/noise) - `yAbove` and `verticalGradient` surface rule conditions
+- [Noise & Terrain](/docs/data-driven/worldgen/noise) - `yAbove` and `verticalGradient` material rule conditions
 - [Structures](/docs/data-driven/worldgen/structures) - `startHeight` on jigsaw structures, `height` on nether fossils

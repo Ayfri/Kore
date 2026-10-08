@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Minecraft Noise Settings, Density Functions & Surface Rules with Kore
+title: Minecraft Noise Settings, Density Functions & Material Rules with Kore
 nav-title: Noise
-description: Shape Minecraft terrain from Kotlin - noise definitions, density functions, noise routers and surface rules, fully type-safe with Kore.
-keywords: minecraft datapack, kore, worldgen, noise settings, density function, noise router, surface rule, terrain generation, perlin noise, octaves
+description: Shape Minecraft terrain from Kotlin - noise definitions, density functions, noise routers and material rules, fully type-safe with Kore.
+keywords: minecraft datapack, kore, worldgen, noise settings, density function, noise router, material rule, terrain generation, perlin noise, octaves
 date-created: 2026-02-03
-date-modified: 2026-08-21
+date-modified: 2026-10-08
 routeOverride: /docs/data-driven/worldgen/noise
 ---
 
@@ -17,7 +17,7 @@ Noise, density functions and noise settings are the three layers that shape Mine
 2. **Density functions** (`worldgen/density_function`) - composable math nodes that sample noises and combine them into a density value for
    any 3D position.
 3. **Noise settings** (`worldgen/noise_settings`) - the terrain configuration a dimension points at: world bounds, default blocks, the noise
-   router wiring density functions to generation roles, and the surface rules painting the top layers.
+   router wiring density functions to generation roles, and the material rules painting the top layers.
 
 Minecraft decides whether a position is solid from the density value the router's `finalDensity` produces: positive density is a block,
 negative density is air (or fluid, below sea level).
@@ -233,7 +233,7 @@ val terrain = dp.noiseSettings("custom_terrain") {
 		finalDensity(DensityFunctions.Overworld.SLOPED_CHEESE)
 	}
 
-	surfaceRules {
+	materialRules {
 		block(Blocks.STONE)
 	}
 }
@@ -251,12 +251,12 @@ set to `true`.
 | `defaultFluid`         | `BlockState`                            | `water[level=0]`   | Fluid placed below `seaLevel` where density is negative |
 | `disableMobGeneration` | `Boolean`                               | `false`            | Skips mob spawning during chunk generation              |
 | `legacyRandomSource`   | `Boolean`                               | `false`            | Uses the pre-1.18 random source                         |
+| `materialRule`         | `MaterialRule`                          | `bandlands`        | Rule picking the block of each position, inline or ID   |
 | `noise`                | `NoiseOptions`                          | `(-64, 384, 1, 2)` | Vertical range and sampling resolution                  |
 | `noiseRouter`          | `NoiseRouter`                           | all zeroes         | Density functions wired to generation roles             |
 | `oreVeinsEnabled`      | `Boolean`                               | `false`            | Enables copper and iron ore veins                       |
 | `seaLevel`             | `Int`                                   | `63`               | Y level the default fluid fills up to                   |
 | `spawnTarget`          | `List<MultiNoiseBiomeSourceParameters>` | empty              | Climate parameters the world spawn point searches for   |
-| `surfaceRule`          | `SurfaceRule`                           | `bandlands`        | Rule painting surface blocks                            |
 
 ### Noise Options
 
@@ -293,35 +293,35 @@ noiseRouter {
 }
 ```
 
-| Field                     | Role                                                           |
-|---------------------------|----------------------------------------------------------------|
-| `barrier`                 | Aquifer barrier noise, separating fluid pockets from stone     |
-| `continents`              | Continentalness climate parameter, ocean vs inland             |
-| `depth`                   | Depth climate parameter, distance below the surface            |
-| `erosion`                 | Erosion climate parameter, flat vs mountainous                 |
-| `finalDensity`            | Final solid/air decision for every position                    |
-| `fluidLevelFloodedness`   | How often aquifers are filled                                  |
-| `fluidLevelSpread`        | How much aquifer fluid levels vary                             |
-| `lava`                    | Whether an aquifer holds lava instead of water                 |
-| `preliminarySurfaceLevel` | Estimated surface height, used by surface rules and structures |
-| `ridges`                  | Weirdness climate parameter, driving ridged terrain            |
-| `temperature`             | Temperature climate parameter for biome placement              |
-| `vegetation`              | Humidity climate parameter for biome placement                 |
-| `veinGap`                 | Gaps punched through ore veins                                 |
-| `veinRidged`              | Ore vein shape                                                 |
-| `veinToggle`              | Whether ore veins generate at a position                       |
+| Field                     | Role                                                            |
+|---------------------------|-----------------------------------------------------------------|
+| `barrier`                 | Aquifer barrier noise, separating fluid pockets from stone      |
+| `continents`              | Continentalness climate parameter, ocean vs inland              |
+| `depth`                   | Depth climate parameter, distance below the surface             |
+| `erosion`                 | Erosion climate parameter, flat vs mountainous                  |
+| `finalDensity`            | Final solid/air decision for every position                     |
+| `fluidLevelFloodedness`   | How often aquifers are filled                                   |
+| `fluidLevelSpread`        | How much aquifer fluid levels vary                              |
+| `lava`                    | Whether an aquifer holds lava instead of water                  |
+| `preliminarySurfaceLevel` | Estimated surface height, used by material rules and structures |
+| `ridges`                  | Weirdness climate parameter, driving ridged terrain             |
+| `temperature`             | Temperature climate parameter for biome placement               |
+| `vegetation`              | Humidity climate parameter for biome placement                  |
+| `veinGap`                 | Gaps punched through ore veins                                  |
+| `veinRidged`              | Ore vein shape                                                  |
+| `veinToggle`              | Whether ore veins generate at a position                        |
 
 Unset fields serialize as `0.0`, which means flat, featureless terrain - so a hand-written router usually starts from the vanilla density
 functions in the generated `DensityFunctions` object.
 
 Reference: [Noise router](https://minecraft.wiki/w/Noise_settings#Noise_router)
 
-### Surface Rules
+### Material Rules
 
-Surface rules decide which blocks replace the top layers of terrain. They are evaluated in order, and the first rule producing a block wins.
+Material rules decide which blocks replace the top layers of terrain. They are evaluated in order, and the first rule producing a block wins.
 
 ```kotlin
-surfaceRules {
+materialRules {
 	condition(biomes(Biomes.DESERT)) {
 		block(Blocks.SAND)
 	}
@@ -337,7 +337,7 @@ surfaceRules {
 }
 ```
 
-Every builder below lives on the `surfaceRules` scope, so nothing leaks into the global namespace and the IDE completes the whole rule set
+Every builder below lives on the `materialRules` scope, so nothing leaks into the global namespace and the IDE completes the whole rule set
 from inside the block.
 
 | Rule        | Builder                    | Description                                  |
@@ -351,7 +351,7 @@ A `condition` block holding a single rule serializes as that rule, several rules
 
 #### Conditions
 
-Condition builders live on the `surfaceRules` scope too, so they resolve without extra imports inside the block.
+Condition builders live on the `materialRules` scope too, so they resolve without extra imports inside the block.
 
 | Condition                   | Builder                                                      | Description                                         |
 |-----------------------------|--------------------------------------------------------------|-----------------------------------------------------|
@@ -392,7 +392,7 @@ condition(not(Steep)) {
 ```
 
 The vertical anchors used by `yAbove` and `verticalGradient` are built with `absolute(y)`, `aboveBottom(offset)` or
-`belowTop(offset)`, all scoped to the `surfaceRules { }` block:
+`belowTop(offset)`, all scoped to the `materialRules { }` block:
 
 ```kotlin
 condition(verticalGradient("bedrock_floor", aboveBottom(0), aboveBottom(5))) {
@@ -400,7 +400,32 @@ condition(verticalGradient("bedrock_floor", aboveBottom(0), aboveBottom(5))) {
 }
 ```
 
-Reference: [Surface rule](https://minecraft.wiki/w/Surface_rule)
+#### Material Rule and Condition Files
+
+Rules and conditions can live in their own files, `worldgen/material_rule/<name>.json` and `worldgen/material_condition/<name>.json`, and
+be used by ID wherever an inline one fits. `materialRule` holds the rules of its block, a single one as-is and several in a `sequence`,
+`materialCondition` the condition its block returns:
+
+```kotlin
+val highlands = materialCondition("highlands") { yAbove(absolute(120)) }
+
+val peaks = materialRule("peaks") {
+	condition(reference(highlands)) { block(Blocks.SNOW_BLOCK) }
+}
+
+noiseSettings("my_settings") {
+	materialRules {
+		rule(peaks)
+		rule(MaterialRules.Overworld.SURFACE)
+	}
+}
+```
+
+`rule(id)` appends a rule file, `reference(id)` turns a condition file into a condition, and `materialRule(id)` sets the noise settings'
+rule to a file, like vanilla's `materialRule(MaterialRules.Overworld)`. The vanilla files are typed in the generated `MaterialRules` and
+`MaterialConditions`.
+
+Reference: [Material rule](https://minecraft.wiki/w/Surface_rule)
 
 ---
 
@@ -414,5 +439,5 @@ settings wiring them together, and the dimension pointing at the result.
 - [Biomes](/docs/data-driven/worldgen/biomes) - the biomes a noise generator distributes over the terrain
 - [Carvers](/docs/data-driven/worldgen/carvers) - the caves cut out of the terrain afterwards
 - [Dimensions](/docs/data-driven/worldgen/dimensions) - the dimension pointing at noise settings
-- [Providers](/docs/data-driven/worldgen/providers) - the vertical anchors used by surface rule conditions
+- [Providers](/docs/data-driven/worldgen/providers) - the vertical anchors used by material rule conditions
 - [World Generation](/docs/data-driven/worldgen) - overview of the worldgen system

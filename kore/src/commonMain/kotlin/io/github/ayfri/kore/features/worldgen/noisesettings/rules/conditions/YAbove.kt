@@ -1,11 +1,11 @@
 package io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions
 
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.SurfaceRulesScope
+import io.github.ayfri.kore.features.worldgen.noisesettings.rules.MaterialRulesScope
 import io.github.ayfri.kore.features.worldgen.verticalanchors.VerticalAnchor
 import kotlinx.serialization.Serializable
 
 /**
- * Represents a condition that determines whether a surface rule should be executed.
+ * Represents a condition that determines whether a material rule should be executed.
  * YAbove is a condition that determines whether the Y value is above a certain anchor point.
  *
  * @property anchor The anchor point for the gradient comparison.
@@ -17,12 +17,12 @@ data class YAbove(
 	var anchor: VerticalAnchor,
 	var surfaceDepthMultiplier: Int = 0,
 	var addStoneDepth: Boolean = false,
-) : SurfaceRuleCondition()
+) : MaterialCondition()
 
 /**
  * Creates a [YAbove] instance with the given parameters.
  */
-fun SurfaceRulesScope.yAbove(
+fun MaterialRulesScope.yAbove(
 	anchor: VerticalAnchor,
 	surfaceDepthMultiplier: Int = 0,
 	addStoneDepth: Boolean = false,
@@ -31,7 +31,7 @@ fun SurfaceRulesScope.yAbove(
 /**
  * Creates a [YAbove] instance with the given parameters.
  */
-fun SurfaceRulesScope.yAbove(
+fun MaterialRulesScope.yAbove(
 	anchor: VerticalAnchor,
 	block: YAbove.() -> Unit,
 ) = YAbove(anchor).apply(block)

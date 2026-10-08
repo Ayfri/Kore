@@ -9,7 +9,7 @@ import kotlinx.serialization.Transient
 /**
  * A configured carver, a carver type paired with its configuration.
  *
- * Carvers run during the `carvers` generation step, after terrain noise and surface rules but before features, and
+ * Carvers run during the `carvers` generation step, after terrain noise and material rules but before features, and
  * remove terrain to form cave systems and canyons. Biomes reference them through their `carvers` list.
  *
  * Produces `data/<namespace>/worldgen/configured_carver/<fileName>.json`.

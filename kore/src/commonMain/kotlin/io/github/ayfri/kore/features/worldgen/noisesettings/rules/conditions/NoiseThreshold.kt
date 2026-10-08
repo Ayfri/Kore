@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions
 
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.SurfaceRulesScope
+import io.github.ayfri.kore.features.worldgen.noisesettings.rules.MaterialRulesScope
 import io.github.ayfri.kore.generated.arguments.worldgen.types.NoiseArgument
 import kotlinx.serialization.Serializable
 
@@ -18,15 +18,15 @@ data class NoiseThreshold(
 	var minThreshold: Double = 0.0,
 	var maxThreshold: Double = 0.0,
 	var is3d: Boolean? = null,
-) : SurfaceRuleCondition()
+) : MaterialCondition()
 
 /**
  * Creates a [NoiseThreshold] condition, true when [noise] falls between [minThreshold] and [maxThreshold].
  */
-fun SurfaceRulesScope.noiseThreshold(noise: NoiseArgument, minThreshold: Double = 0.0, maxThreshold: Double = 0.0) =
+fun MaterialRulesScope.noiseThreshold(noise: NoiseArgument, minThreshold: Double = 0.0, maxThreshold: Double = 0.0) =
 	NoiseThreshold(noise, minThreshold, maxThreshold)
 
 /**
  * Creates a [NoiseThreshold] condition, true when [noise] falls between [minThreshold] and [maxThreshold].
  */
-fun SurfaceRulesScope.noiseThreshold(noise: NoiseArgument, block: NoiseThreshold.() -> Unit) = NoiseThreshold(noise).apply(block)
+fun MaterialRulesScope.noiseThreshold(noise: NoiseArgument, block: NoiseThreshold.() -> Unit) = NoiseThreshold(noise).apply(block)

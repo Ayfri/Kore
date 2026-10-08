@@ -29,7 +29,7 @@ Reference: [World generation](https://minecraft.wiki/w/World_generation)
 | [Dimensions](/docs/data-driven/worldgen/dimensions)                         | Dimension types, dimensions, generators and biome sources                |
 | [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) | Visual, audio and gameplay rules shared by biomes and dimension types    |
 | [Features](/docs/data-driven/worldgen/features)                             | Configured and placed features: trees, ores, vegetation                  |
-| [Noise & Terrain](/docs/data-driven/worldgen/noise)                         | Noises, density functions, noise settings, noise routers, surface rules  |
+| [Noise & Terrain](/docs/data-driven/worldgen/noise)                         | Noises, density functions, noise settings, noise routers, material rules |
 | [Providers](/docs/data-driven/worldgen/providers)                           | Vertical anchors and the height, int and float providers used everywhere |
 | [Structures](/docs/data-driven/worldgen/structures)                         | Configured structures, template pools, processors and structure sets     |
 | [World Presets](/docs/data-driven/worldgen/world-presets)                   | World types in the world creation screen, and superflat presets          |
@@ -90,6 +90,8 @@ Replace `<ns>` with your namespace.
 | `dimension(...)`                | `data/<ns>/dimension/<name>.json`                            |
 | `dimensionType(...)`            | `data/<ns>/dimension_type/<name>.json`                       |
 | `flatLevelGeneratorPreset(...)` | `data/<ns>/worldgen/flat_level_generator_preset/<name>.json` |
+| `materialCondition(...)`        | `data/<ns>/worldgen/material_condition/<name>.json`          |
+| `materialRule(...)`             | `data/<ns>/worldgen/material_rule/<name>.json`               |
 | `noise(...)`                    | `data/<ns>/worldgen/noise/<name>.json`                       |
 | `noiseSettings(...)`            | `data/<ns>/worldgen/noise_settings/<name>.json`              |
 | `placedFeature(...)`            | `data/<ns>/worldgen/placed_feature/<name>.json`              |
@@ -139,7 +141,7 @@ fun DataPack.createCustomWorld() {
 			finalDensity(terrainDensity)
 		}
 
-		surfaceRules {
+		materialRules {
 			condition(stoneDepth(Surface.FLOOR)) {
 				block(Blocks.GRASS_BLOCK)
 			}

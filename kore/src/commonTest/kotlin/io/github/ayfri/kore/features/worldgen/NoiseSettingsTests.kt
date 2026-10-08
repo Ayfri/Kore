@@ -14,6 +14,7 @@ import io.github.ayfri.kore.features.worldgen.verticalanchors.belowTop
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.DensityFunctions
+import io.github.ayfri.kore.generated.MaterialRules
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
 
@@ -68,7 +69,7 @@ fun DataPack.noiseSettingsTests() {
 			0.0
 		)
 
-		surfaceRules {
+		materialRules {
 			bandlands()
 			block(Blocks.STONE)
 			condition(AbovePreliminarySurface) { block(Blocks.ANDESITE) }
@@ -142,7 +143,7 @@ fun DataPack.noiseSettingsTests() {
 					"offset": 0.0
 				}
 			],
-			"surface_rule": {
+			"material_rule": {
 				"type": "minecraft:sequence",
 				"sequence": [
 					{
@@ -349,11 +350,78 @@ fun DataPack.noiseSettingsTests() {
 	""".trimIndent()
 }
 
+fun DataPack.materialRuleTests() {
+	val highlands = materialCondition("highlands") { yAbove(absolute(120)) }
+
+	materialConditions.last() assertsIs """
+		{
+			"type": "minecraft:y_above",
+			"anchor": {
+				"absolute": 120
+			},
+			"surface_depth_multiplier": 0,
+			"add_stone_depth": false
+		}
+	""".trimIndent()
+
+	val peaks = materialRule("peaks") {
+		condition(reference(highlands)) { block(Blocks.SNOW_BLOCK) }
+	}
+
+	materialRules.last() assertsIs """
+		{
+			"type": "minecraft:condition",
+			"if_true": "noiseSettings:highlands",
+			"then_run": {
+				"type": "minecraft:block",
+				"result_state": {
+					"Name": "minecraft:snow_block"
+				}
+			}
+		}
+	""".trimIndent()
+
+	materialRule("overworld") {
+		condition(not(reference(highlands))) { rule(MaterialRules.Overworld.SURFACE) }
+		rule(peaks)
+	}
+
+	materialRules.last() assertsIs """
+		{
+			"type": "minecraft:sequence",
+			"sequence": [
+				{
+					"type": "minecraft:condition",
+					"if_true": {
+						"type": "minecraft:not",
+						"invert": "noiseSettings:highlands"
+					},
+					"then_run": "minecraft:overworld/surface"
+				},
+				"noiseSettings:peaks"
+			]
+		}
+	""".trimIndent()
+
+	noiseSettings("referenced_rule") {
+		materialRule(MaterialRules.Overworld)
+	}
+
+	jsonEncoder.encodeToString(MaterialRule.serializer(), noiseSettings.last().materialRule) assertsIs "\"minecraft:overworld\""
+}
+
 class NoiseSettingsTests : FunSpec({
 	test("noise settings") {
 		dataPack("noiseSettings") {
 			pretty()
 			noiseSettingsTests()
+		}
+	}
+
+	test("material rules") {
+		dataPack("noiseSettings") {
+			pretty()
+			materialRuleTests()
 		}
 	}
 })

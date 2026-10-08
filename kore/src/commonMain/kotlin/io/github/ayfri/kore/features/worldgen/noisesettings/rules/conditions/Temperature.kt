@@ -7,4 +7,4 @@ import kotlinx.serialization.Serializable
  * (snow, ice) to generate.
  */
 @Serializable
-data object Temperature : SurfaceRuleCondition()
+data object Temperature : MaterialCondition()

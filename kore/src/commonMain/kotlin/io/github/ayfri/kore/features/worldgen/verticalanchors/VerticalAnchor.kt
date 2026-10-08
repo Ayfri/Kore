@@ -8,14 +8,14 @@ import kotlinx.serialization.Serializable
  * A single Y level, expressed either absolutely or relative to one of the dimension's build limits.
  *
  * Vertical anchors are serialized as a one-key object such as `{ "absolute": 64 }`, never with a `type` field, and
- * are used by the height providers, the carver `lava_level`, and the `y_above` / `vertical_gradient` surface rule
+ * are used by the height providers, the carver `lava_level`, and the `y_above` / `vertical_gradient` material rule
  * conditions.
  *
  * Whatever the form, the resolved Y is clamped to the dimension's build height, so an anchor can never point outside
  * of `min_y` .. `min_y + height - 1`.
  *
  * Every builder is an extension on [VerticalAnchorScope], so [absolute], [aboveBottom] and [belowTop] only resolve
- * inside a block that actually accepts a vertical anchor, such as `cave("...") { }` or `surfaceRules { }`.
+ * inside a block that actually accepts a vertical anchor, such as `cave("...") { }` or `materialRules { }`.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Custom_world_generation/vertical_anchor
  */

@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions
 
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.SurfaceRulesScope
+import io.github.ayfri.kore.features.worldgen.noisesettings.rules.MaterialRulesScope
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
@@ -18,7 +18,7 @@ data class StoneDepth(
 	var surfaceType: Surface,
 	var addSurfaceDepth: Boolean = false,
 	var secondaryDepthRange: Int = 0,
-) : SurfaceRuleCondition()
+) : MaterialCondition()
 
 /**
  * The side of the terrain a [StoneDepth] condition measures from.
@@ -34,7 +34,7 @@ enum class Surface {
 }
 
 /** Creates a [StoneDepth] condition with the given parameters. */
-fun SurfaceRulesScope.stoneDepth(
+fun MaterialRulesScope.stoneDepth(
 	surfaceType: Surface,
 	offset: Double = 0.0,
 	addSurfaceDepth: Boolean = false,
@@ -42,7 +42,7 @@ fun SurfaceRulesScope.stoneDepth(
 ) = StoneDepth(offset, surfaceType, addSurfaceDepth, secondaryDepthRange)
 
 /** Creates a [StoneDepth] condition for [surfaceType], further configured in [block]. */
-fun SurfaceRulesScope.stoneDepth(
+fun MaterialRulesScope.stoneDepth(
 	surfaceType: Surface,
 	block: StoneDepth.() -> Unit,
 ) = StoneDepth(surfaceType = surfaceType).apply(block)

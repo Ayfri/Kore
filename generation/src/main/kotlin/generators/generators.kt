@@ -121,6 +121,8 @@ suspend fun launchAllSimpleGenerators(): List<Generator> {
 		gen("DensityFunctions", "worldgen/density_function"),
 		gen("Features", "worldgen/feature"),
 		gen("FlatLevelGeneratorPresets", "worldgen/flat_level_generator_preset"),
+		gen("MaterialConditions", "worldgen/material_condition"),
+		gen("MaterialRules", "worldgen/material_rule"),
 		gen("MultiNoiseBiomeSourceParameterLists", "worldgen/multi_noise_biome_source_parameter_list"),
 		gen("Noises", "worldgen/noise"),
 		gen("NoiseSettings", "worldgen/noise_settings") {

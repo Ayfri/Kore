@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions
 
-import io.github.ayfri.kore.features.worldgen.noisesettings.rules.SurfaceRulesScope
+import io.github.ayfri.kore.features.worldgen.noisesettings.rules.MaterialRulesScope
 import io.github.ayfri.kore.features.worldgen.verticalanchors.VerticalAnchor
 import kotlinx.serialization.Serializable
 
@@ -17,10 +17,10 @@ data class VerticalGradient(
 	var randomName: String,
 	var trueAtAndBelow: VerticalAnchor,
 	var falseAtAndAbove: VerticalAnchor,
-) : SurfaceRuleCondition()
+) : MaterialCondition()
 
 /** Creates a [VerticalGradient] condition with the given parameters. */
-fun SurfaceRulesScope.verticalGradient(
+fun MaterialRulesScope.verticalGradient(
 	randomName: String,
 	trueAtAndBelow: VerticalAnchor,
 	falseAtAndAbove: VerticalAnchor,
