@@ -32,6 +32,8 @@ fun generatePathEnumTree(paths: List<String>, generator: Generator) {
 	}
 
 	val topLevelInterfaceClassName = ClassName(GENERATED_PACKAGE, name)
+	val topLevelFolders = paths.filter { separator in it }.mapTo(mutableSetOf()) { it.substringBefore(separator) }
+	val topLevelLeavesWithFolder = mutableSetOf<String>()
 
 	for (path in paths) {
 		val parent = path.substringBeforeLast(separator)
@@ -40,6 +42,11 @@ fun generatePathEnumTree(paths: List<String>, generator: Generator) {
 		val enumValue = path.substringAfterLast(separator).snakeCase().uppercase()
 		val enumName = parent.substringAfterLast(separator).pascalCase()
 		val tagParent = tagsParents?.keys?.firstOrNull { parent.startsWith(it) }
+
+		if (separator !in path && path in topLevelFolders) {
+			topLevelLeavesWithFolder += path
+			continue
+		}
 
 		if (separator !in path) {
 			topLevel.addType(
@@ -119,7 +126,18 @@ fun generatePathEnumTree(paths: List<String>, generator: Generator) {
 		}
 	}
 
-	typeBuilders.firstOrNull()?.forEach { topLevel.addType(it.value.build()) }
+	/** A top-level file sharing its name with a folder (`overworld` and `overworld/surface`) becomes the folder type itself (an object) or its companion (an enum). */
+	fun TypeSpec.Builder.addTopLevelLeaf(path: String) = apply {
+		val leaf = if (enumConstants.isEmpty()) this else TypeSpec.companionObjectBuilder()
+		leaf.addSuperinterface(topLevelInterfaceClassName)
+		leaf.addProperty(PropertySpec.builder("name", String::class).overrides().initializer("%S", path).build())
+		if (leaf !== this) addType(leaf.build())
+	}
+
+	typeBuilders.firstOrNull()?.forEach { (path, typeBuilder) ->
+		if (path in topLevelLeavesWithFolder) typeBuilder.addTopLevelLeaf(path)
+		topLevel.addType(typeBuilder.build())
+	}
 
 	val file = generateFile(name, sourceUrl, topLevel)
 	logGenerated("enum tree", name, "${paths.size} paths", file)
