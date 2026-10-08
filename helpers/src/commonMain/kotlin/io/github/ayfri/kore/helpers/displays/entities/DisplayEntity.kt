@@ -73,7 +73,7 @@ sealed class DisplayEntity(
 		) {
 			value.billboardMode?.let { encodeSerializableElement(descriptor, offset, BillboardMode.serializer(), it) }
 			value.brightness?.let { encodeSerializableElement(descriptor, offset + 1, Brightness.serializer(), it) }
-			value.glowColorOverride?.let { encodeSerializableElement(descriptor, offset + 2, RGB.serializer(), it) }
+			value.glowColorOverride?.let { encodeSerializableElement(descriptor, offset + 2, RGB.Companion.ColorAsDecimalSerializer, it) }
 			value.height?.let { encodeIntElement(descriptor, offset + 3, it) }
 			value.interpolationDuration?.let { encodeIntElement(descriptor, offset + 4, it) }
 			value.startInterpolation?.let { encodeIntElement(descriptor, offset + 5, it) }
@@ -94,7 +94,7 @@ sealed class DisplayEntity(
 		internal fun ClassSerialDescriptorBuilder.addDisplayEntity() {
 			element("billboard", BillboardMode.serializer().descriptor)
 			element("brightness", Brightness.serializer().descriptor)
-			element("glow_color_override", RGB.serializer().descriptor)
+			element("glow_color_override", RGB.Companion.ColorAsDecimalSerializer.descriptor)
 			element<Int>("height")
 			element<Int>("interpolation_duration")
 			element<Int>("start_interpolation")

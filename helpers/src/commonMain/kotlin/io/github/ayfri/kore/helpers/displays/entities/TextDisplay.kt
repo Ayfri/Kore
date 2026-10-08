@@ -2,6 +2,7 @@ package io.github.ayfri.kore.helpers.displays.entities
 
 import io.github.ayfri.kore.arguments.chatcomponents.PlainTextComponent
 import io.github.ayfri.kore.arguments.colors.ARGB
+import io.github.ayfri.kore.arguments.colors.ColorAsARGBDecimalSerializer
 import io.github.ayfri.kore.generated.EntityTypes
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -32,7 +33,7 @@ data class TextDisplay(
 		object DisplayEntitySerializer : KSerializer<TextDisplay> {
 			override val descriptor = buildClassSerialDescriptor("TextDisplay") {
 				element("alignment", TextAlignment.serializer().descriptor)
-				element("background", ARGB.serializer().descriptor)
+				element("background", ColorAsARGBDecimalSerializer.descriptor)
 				element("default_background", Boolean.serializer().descriptor)
 				element("line_width", Int.serializer().descriptor)
 				element("see_through", Boolean.serializer().descriptor)
@@ -47,7 +48,7 @@ data class TextDisplay(
 			override fun serialize(encoder: Encoder, value: TextDisplay) {
 				encoder.encodeStructure(descriptor) {
 					value.alignment?.let { encodeSerializableElement(descriptor, 0, TextAlignment.serializer(), it) }
-					value.background?.let { encodeSerializableElement(descriptor, 1, ARGB.serializer(), it) }
+					value.background?.let { encodeSerializableElement(descriptor, 1, ColorAsARGBDecimalSerializer, it) }
 					value.defaultBackground?.let { encodeSerializableElement(descriptor, 2, Boolean.serializer(), it) }
 					value.lineWidth?.let { encodeSerializableElement(descriptor, 3, Int.serializer(), it) }
 					value.seeThrough?.let { encodeSerializableElement(descriptor, 4, Boolean.serializer(), it) }

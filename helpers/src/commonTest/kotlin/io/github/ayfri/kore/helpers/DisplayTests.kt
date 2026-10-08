@@ -1,5 +1,7 @@
 package io.github.ayfri.kore.helpers
 
+import io.github.ayfri.kore.arguments.colors.ARGB
+import io.github.ayfri.kore.arguments.colors.RGB
 import io.github.ayfri.kore.arguments.components.item.*
 import io.github.ayfri.kore.arguments.maths.Vec3f
 import io.github.ayfri.kore.arguments.maths.vec3
@@ -129,11 +131,13 @@ fun Function.displayTests() {
 fun Function.displayNbtTests() {
 	val textDisplay = textDisplay {
 		text("hi")
+		background = ARGB(128, 255, 0, 0)
 		billboardMode = BillboardMode.CENTER
 		brightness = Brightness(block = 15, sky = 10)
+		glowColorOverride = RGB(255, 0, 0)
 	}
 
-	summon(textDisplay.entityType, vec3(), textDisplay.toNbt()) assertsIs """summon minecraft:text_display ~ ~ ~ {text:"hi",billboard:"center",brightness:{block:15,sky:10}}"""
+	summon(textDisplay.entityType, vec3(), textDisplay.toNbt()) assertsIs """summon minecraft:text_display ~ ~ ~ {background:-2130771968,text:"hi",billboard:"center",brightness:{block:15,sky:10},glow_color_override:16711680}"""
 }
 
 fun Function.displayEntitySelectorTests() {
