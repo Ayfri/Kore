@@ -12,11 +12,14 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovid
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.*
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.cherryFoliagePlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.darkOakFoliagePlacer
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.poplarFoliagePlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.layersfeaturesize.threeLayersFeatureSize
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.alterGround
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.attachedToLeaves
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.shelfMushroom
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.cherryTrunkPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.darkOakTrunkPlacer
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.poplarTrunkPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeaturesBuilder
 import io.github.ayfri.kore.features.worldgen.configuredfeature.target
@@ -1627,6 +1630,83 @@ fun DataPack.configuredFeatureTests() {
 		{
 			"type": "minecraft:end_gateway",
 			"exact": true
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.endPodium("test_end_podium", active = true)
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:end_podium",
+			"active": true
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.tree("test_poplar") {
+		poplarTrunkPlacer {
+			baseHeight = 7
+			branchAmount = uniform(1, 4)
+			heightRandA = 4
+			trunkHeightAboveBranches = constant(4)
+		}
+		poplarFoliagePlacer {
+			height = uniform(5, 6)
+			sideHoleChance = 0.15
+		}
+		decorators { shelfMushroom(0.4) }
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:tree",
+			"below_trunk_provider": {
+				"type": "minecraft:rule_based_state_provider",
+				"rules": []
+			},
+			"minimum_size": {
+				"type": "minecraft:two_layers_feature_size"
+			},
+			"trunk_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:stone"
+				}
+			},
+			"foliage_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:stone"
+				}
+			},
+			"trunk_placer": {
+				"type": "minecraft:poplar_trunk_placer",
+				"base_height": 7,
+				"height_rand_a": 4,
+				"height_rand_b": 0,
+				"branch_amount": {
+					"type": "minecraft:uniform",
+					"min_inclusive": 1,
+					"max_inclusive": 4
+				},
+				"trunk_height_above_branches": 4
+			},
+			"foliage_placer": {
+				"type": "minecraft:poplar_foliage_placer",
+				"radius": 0,
+				"offset": 0,
+				"height": {
+					"type": "minecraft:uniform",
+					"min_inclusive": 5,
+					"max_inclusive": 6
+				},
+				"side_hole_chance": 0.15
+			},
+			"decorators": [
+				{
+					"type": "minecraft:shelf_mushroom",
+					"probability": 0.4
+				}
+			]
 		}
 	""".trimIndent()
 

@@ -72,6 +72,24 @@ tree("my_tree") {
 }
 ```
 
+Every vanilla trunk placer, foliage placer and decorator has its builder, like the poplar ones: a straight trunk branching where the
+rhombus-shaped foliage starts, with shelf mushrooms on the logs.
+
+```kotlin
+tree("my_poplar") {
+	poplarTrunkPlacer {
+		baseHeight = 7
+		branchAmount = uniform(1, 4)
+		trunkHeightAboveBranches = constant(4)
+	}
+	poplarFoliagePlacer {
+		height = uniform(5, 6)
+		sideHoleChance = 0.15
+	}
+	decorators { shelfMushroom(0.4) }
+}
+```
+
 ### Ore
 
 Ore features replace existing terrain blocks. `size` is the maximum vein size, and `discardChanceOnAirExposure` skips blocks exposed to air
@@ -125,6 +143,7 @@ Kore covers every vanilla configured feature type.
 | `deltaFeature(...)`               | Basalt delta with contents and rim   | Nether basalt deltas           |
 | `disk(...)`                       | Circular disk of blocks              | Clay, sand, gravel patches     |
 | `endGateway(...)`                 | End gateway portal                   | End outer islands              |
+| `endPodium(active)`               | End exit portal podium               | Dragon fight portal            |
 | `endSpike(...)`                   | End obsidian pillar with crystal     | The End respawn pillars        |
 | `fillLayer(...)`                  | A full layer of blocks               | Custom dimension layers        |
 | `fossil(...)`                     | Structure-based fossil               | Underground fossils            |
