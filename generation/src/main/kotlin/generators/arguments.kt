@@ -29,6 +29,11 @@ data class Registry(
 	var tags: Boolean,
 )
 
+/** Hand-written `kore` interfaces a registry's `*Argument` also implements, so commands accept its IDs next to other forms. */
+private val ADDITIONAL_SUPERINTERFACES = mapOf(
+	"minecraft:slot_source" to ClassName("io.github.ayfri.kore.arguments", "SlotsArgument"),
+)
+
 private val jsonDecoder = Json {
 	ignoreUnknownKeys = true
 }
@@ -111,6 +116,8 @@ fun processArgumentType(argumentType: ArgumentType): Map<String, TypeSpec.Builde
 		.addSuperinterface(resourceLocationClass)
 		.addAnnotation(serializableAnnotation)
 		.addType(generateCompanionObject("Argument"))
+
+	ADDITIONAL_SUPERINTERFACES[argumentType.name]?.let { argumentInterface.addSuperinterface(it) }
 
 	val result = mutableMapOf("${prefixPath}.${className}Argument" to argumentInterface)
 

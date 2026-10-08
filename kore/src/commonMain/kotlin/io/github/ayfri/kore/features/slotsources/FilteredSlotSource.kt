@@ -1,4 +1,4 @@
-package io.github.ayfri.kore.features.loottables.entries.slotsource
+package io.github.ayfri.kore.features.slotsources
 
 import io.github.ayfri.kore.features.predicates.sub.ItemStackPredicate
 import io.github.ayfri.kore.serializers.InlinableList
@@ -25,5 +25,5 @@ fun FilteredSlotSource.itemFilter(block: ItemStackPredicate.() -> Unit) {
 
 /** Configure the slot sources for this [FilteredSlotSource]. */
 fun FilteredSlotSource.slotSource(block: SlotSourcesBuilder.() -> Unit) {
-	slotSource = SlotSourcesBuilder().apply(block).build()
+	slotSource = buildSlotSources(block)
 }

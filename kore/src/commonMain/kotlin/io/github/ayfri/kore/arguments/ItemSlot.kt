@@ -6,7 +6,7 @@ package io.github.ayfri.kore.arguments
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Slot
  */
-interface ItemSlot : Argument
+interface ItemSlot : SlotsArgument
 
 /** A named node of the slot tree, like `armor` or `player`, which isn't a slot by itself unless it is an [ItemSlot] too. */
 interface ItemSlotWrapper : Argument {

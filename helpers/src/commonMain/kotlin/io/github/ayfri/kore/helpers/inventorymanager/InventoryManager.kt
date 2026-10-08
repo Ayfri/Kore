@@ -3,7 +3,7 @@ package io.github.ayfri.kore.helpers.inventorymanager
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.DataPackStateKey
 import io.github.ayfri.kore.arguments.CONTAINER
-import io.github.ayfri.kore.arguments.ItemSlotType
+import io.github.ayfri.kore.arguments.SlotsArgument
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.arguments.scores.score
@@ -53,9 +53,9 @@ data class InventoryManager<T : ContainerArgument>(val container: T) {
 
 	fun getScoreName(dataPack: DataPack) = "_inventory_manager_${dataPack.name}_click_listener_${id(dataPack)}"
 
-	/** Replace the given [slot] with air. */
+	/** Empty every slot selected by [slot]. */
 	context(fn: Function)
-	fun clear(slot: ItemSlotType) = fn.items.replace(container, slot, Items.AIR, 1)
+	fun clear(slot: SlotsArgument) = fn.items.fill(container, slot, Items.AIR)
 
 	/** Clear all items for this [container] (entity or block). */
 	context(fn: Function)
@@ -75,23 +75,27 @@ data class InventoryManager<T : ContainerArgument>(val container: T) {
 		else -> error("Cannot clear items from $container")
 	}
 
-	/** Apply an item [modifier] to the given [slot]. */
+	/** Fill every slot selected by [slot] with an [item] and optional [count]. */
 	context(fn: Function)
-	fun modify(slot: ItemSlotType, modifier: ItemModifierArgument) = fn.items.modify(container, slot, modifier)
+	fun fill(slot: SlotsArgument, item: ItemArgument, count: Int? = null) = fn.items.fill(container, slot, item, count)
 
-	/** Replace the given [slot] with an [item] and optional [count]. */
+	/** Apply an item [modifier] to every slot selected by [slot]. */
 	context(fn: Function)
-	fun replace(slot: ItemSlotType, item: ItemArgument, count: Int? = null) =
+	fun modify(slot: SlotsArgument, modifier: ItemModifierArgument) = fn.items.modify(container, slot, modifier)
+
+	/** Replace the first slot selected by [slot] with an [item] and optional [count]. */
+	context(fn: Function)
+	fun replace(slot: SlotsArgument, item: ItemArgument, count: Int? = null) =
 		fn.items.replace(container, slot, item, count)
 
-	/** Replace items by moving from [fromSlot] to [withSlot], optionally applying a [modifier]. */
+	/** Copy the items of [withSlot] into [slot], in order, optionally applying a [modifier]. */
 	context(fn: Function)
-	fun replace(fromSlot: ItemSlotType, withSlot: ItemSlotType, modifier: ItemModifierArgument? = null) =
-		fn.items.replace(container, fromSlot, container, withSlot, modifier)
+	fun replace(slot: SlotsArgument, withSlot: SlotsArgument, modifier: ItemModifierArgument? = null) =
+		fn.items.replace(container, slot, container, withSlot, modifier)
 
-	/** Shortcut: assign an [item] into a typed [slot]. */
+	/** Shortcut: assign an [item] into a [slot]. */
 	context(fn: Function)
-	operator fun set(slot: ItemSlotType, item: ItemArgument) = replace(slot, item)
+	operator fun set(slot: SlotsArgument, item: ItemArgument) = replace(slot, item)
 
 	/**
 	 * Emit the `load` and `tick` functions that power all registered slot listeners for this manager.

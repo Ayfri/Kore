@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.entities
 
-import io.github.ayfri.kore.arguments.ItemSlotType
+import io.github.ayfri.kore.arguments.SlotsArgument
 import io.github.ayfri.kore.arguments.enums.DataType
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.maths.coordinate
@@ -160,15 +160,15 @@ fun Entity.leaveAnyTeam() = fn.teams {
 	leave(asSelector())
 }.also { team = null }
 
-/** Replaces the item in [slot] for this entity. */
+/** Replaces the item in [slot], the first selected slot, for this entity. */
 context(fn: Function)
-fun Entity.replaceItem(slot: ItemSlotType, item: ItemStack) = fn.items {
+fun Entity.replaceItem(slot: SlotsArgument, item: ItemStack) = fn.items {
 	replace(asSelector(), slot, item.toItemArgument(), item.count?.toInt())
 }
 
-/** Replaces the item in [slot] for this entity. */
+/** Replaces the item in [slot], the first selected slot, for this entity. */
 context(fn: Function)
-fun Entity.replaceItem(slot: ItemSlotType, item: ItemArgument, count: Int = 1) = fn.items {
+fun Entity.replaceItem(slot: SlotsArgument, item: ItemArgument, count: Int = 1) = fn.items {
 	replace(asSelector(), slot, item, count)
 }
 

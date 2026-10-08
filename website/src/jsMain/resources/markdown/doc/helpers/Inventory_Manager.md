@@ -5,7 +5,7 @@ nav-title: Inventory Manager
 description: Listen to slot events and control containers (players, blocks) with Kore's Inventory Manager.
 keywords: minecraft, datapack, kore, inventory, container, slots, events, gui
 date-created: 2025-08-11
-date-modified: 2026-10-07
+date-modified: 2026-10-08
 routeOverride: /docs/helpers/inventory-manager
 ---
 
@@ -107,6 +107,9 @@ inventoryManager(chestPos) {
 - `generateSlotsListeners()` - Emits the `load`/`tick` functions and scoreboard wiring for all registered listeners.
 - `setBlock(block)` - When the container is a position, place a block (e.g., a chest) before managing its contents.
 - `clear(slot)`, `clearAll()`, `clearAll(item)` - Utilities to wipe inventory content.
+- `fill(slot, item)`, `replace(slot, item)`, `modify(slot, modifier)`, `manager[slot] = item` - `/item` on the managed
+  container. `slot` is any [slot selection](/docs/data-driven/slot-sources#in-commands): one slot, a range like `HOTBAR`
+  or a slot source. `fill` and `clear` write every selected slot, `replace` only the first one.
 
 Internally, Inventory Manager relies on a scoreboard objective and a tiny helper marker entity (for non-entity containers) to detect state transitions. Names are auto-namespaced and numbered in the order managers generate their listeners within the datapack, so the same pack always produces the same names.
 

@@ -27,6 +27,7 @@ import io.github.ayfri.kore.features.pigsoundvariants.PigSoundVariant
 import io.github.ayfri.kore.features.pigvariants.PigVariant
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.recipes.RecipeFile
+import io.github.ayfri.kore.features.slotsources.SlotSourceFile
 import io.github.ayfri.kore.features.sulfurcubearchetype.SulfurCubeArchetype
 import io.github.ayfri.kore.features.tags.Tag
 import io.github.ayfri.kore.features.testenvironments.TestEnvironmentFeature
@@ -129,6 +130,7 @@ class DataPack(val name: String) {
 	val predicates = registerGenerator<Predicate>()
 	val processorLists = registerGenerator<ProcessorList>()
 	val recipes = registerGenerator<RecipeFile>()
+	val slotSources = registerGenerator<SlotSourceFile>()
 	val structures = registerGenerator<Structure>()
 	val structureSets = registerGenerator<StructureSet>()
 	val sulfurCubeArchetypes = registerGenerator<SulfurCubeArchetype>()

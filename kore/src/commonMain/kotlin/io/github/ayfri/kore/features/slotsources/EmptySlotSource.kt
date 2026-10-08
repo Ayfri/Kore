@@ -1,4 +1,4 @@
-package io.github.ayfri.kore.features.loottables.entries.slotsource
+package io.github.ayfri.kore.features.slotsources
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

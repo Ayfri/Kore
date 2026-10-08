@@ -1,4 +1,4 @@
-package io.github.ayfri.kore.features.loottables.entries.slotsource
+package io.github.ayfri.kore.features.slotsources
 
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.SerialName
@@ -14,7 +14,7 @@ data class LimitSlotsSlotSource(
 
 /** Configure the slot sources for this [LimitSlotsSlotSource]. */
 fun LimitSlotsSlotSource.slotSource(block: SlotSourcesBuilder.() -> Unit) {
-	slotSource = SlotSourcesBuilder().apply(block).build()
+	slotSource = buildSlotSources(block)
 }
 
 /** Adds a limit slots slot source. */

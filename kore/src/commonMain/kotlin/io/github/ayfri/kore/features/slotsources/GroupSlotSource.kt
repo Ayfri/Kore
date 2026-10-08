@@ -1,4 +1,4 @@
-package io.github.ayfri.kore.features.loottables.entries.slotsource
+package io.github.ayfri.kore.features.slotsources
 
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.SerialName
@@ -13,5 +13,5 @@ data class GroupSlotSource(
 
 /** Adds a group slot source. */
 fun SlotSourcesBuilder.group(block: SlotSourcesBuilder.() -> Unit) {
-	sources += GroupSlotSource(SlotSourcesBuilder().apply(block).build())
+	sources += GroupSlotSource(buildSlotSources(block))
 }

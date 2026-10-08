@@ -5,7 +5,7 @@ nav-title: Execute
 description: Master the /execute command with Kore's type-safe DSL. Context subcommands (as, at, positioned), conditions (if/unless), stores (score, bossbar, storage), and the run clause. Full guide with mcfunction examples.
 keywords: minecraft execute command, execute as at positioned, execute if unless, execute store, datapack execute, kore execute, minecraft command conditions, execute run, context subcommands
 date-created: 2026-06-24
-date-modified: 2026-06-24
+date-modified: 2026-10-08
 routeOverride: /docs/commands/execute
 ---
 
@@ -118,6 +118,7 @@ Available checks inside the condition block:
 | `predicate(...)`                            | A predicate passes (by id, name, or inline block)  |
 | `score(target, obj, range)`                 | A score matches an int range                       |
 | `score(target, obj, src, srcObj, relation)` | Two scores compare with a relation                 |
+| `slots(source, slots)`                      | A container has any of the selected slots          |
 | `stopwatch(id, range)`                      | A stopwatch's elapsed seconds are within a range   |
 
 `inverted { }` flips the checks inside it, `if` becoming `unless` and the reverse. It lets a reusable condition block be

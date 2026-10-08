@@ -1,5 +1,7 @@
 package io.github.ayfri.kore.commands
 
+import io.github.ayfri.kore.arguments.CONTAINER
+import io.github.ayfri.kore.arguments.HOTBAR
 import io.github.ayfri.kore.arguments.PLAYER
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
@@ -168,6 +170,8 @@ fun Function.executeTests() {
 			function(FunctionArgument("test", datapack.name))
 			loaded(vec3(-2, -2, -2))
 			predicate("test")
+			slots(self(), HOTBAR)
+			slots(vec3(1.5, 64.2, -0.5), CONTAINER)
 		}
 
 		unlessCondition {
@@ -194,6 +198,8 @@ fun Function.executeTests() {
 			if function ${datapack.name}:test
 			if loaded -2 -2 -2
 			if predicate test
+			if slots entity @s hotbar.*
+			if slots block 1 64 -1 container.*
 			unless score $selectorAsString test matches ..1
 			store result block ~ ~ ~ test byte 1
 		run

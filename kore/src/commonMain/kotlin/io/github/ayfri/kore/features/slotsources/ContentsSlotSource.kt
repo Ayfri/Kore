@@ -1,10 +1,10 @@
-package io.github.ayfri.kore.features.loottables.entries.slotsource
+package io.github.ayfri.kore.features.slotsources
 
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** Selects all non-empty slots from the inventory component of one or more items. */
+/** Selects the slots stored in the [component] of the items selected by [slotSource], empty ones included. */
 @Serializable
 @SerialName("contents")
 data class ContentsSlotSource(
@@ -19,5 +19,5 @@ fun SlotSourcesBuilder.contents(component: InventoryComponentType, block: Conten
 
 /** Configure the slot sources for this [ContentsSlotSource]. */
 fun ContentsSlotSource.slotSource(block: SlotSourcesBuilder.() -> Unit) {
-	slotSource = SlotSourcesBuilder().apply(block).build()
+	slotSource = buildSlotSources(block)
 }

@@ -2,7 +2,7 @@ package io.github.ayfri.kore.commands.execute
 
 import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.EnumArgument
-import io.github.ayfri.kore.arguments.ItemSlot
+import io.github.ayfri.kore.arguments.SlotsArgument
 import io.github.ayfri.kore.arguments.components.ItemPredicate
 import io.github.ayfri.kore.arguments.enums.Relation
 import io.github.ayfri.kore.arguments.maths.Vec3
@@ -84,9 +84,16 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 	/** Checks if the given entity selector matches at least one entity. */
 	fun entity(target: EntityArgument) = addArguments(listOf(literal("entity"), ex.targetArg(target)))
 
-	/** Checks if the items in the given [slots] of the [source] container match the given [itemPredicate]. */
-	fun items(source: ContainerArgument, slots: ItemSlot, itemPredicate: ItemPredicate) =
-		addArguments(listOf(literal("items"), literal(source.literalName), source, slots, literal(itemPredicate.toString())))
+	/** Checks if the items in the given [slots] of the [source] container match the given [itemPredicate], returning how many do. */
+	fun items(source: ContainerArgument, slots: SlotsArgument, itemPredicate: ItemPredicate) =
+		addArguments(listOf(literal("items"), *container(source), slots, literal(itemPredicate.toString())))
+
+	/** Checks if the [source] container has any of the given [slots], returning how many it has. */
+	fun slots(source: ContainerArgument, slots: SlotsArgument) = addArguments(listOf(literal("slots"), *container(source), slots))
+
+	/** `block <x y z>` or `entity <selector>`, block positions truncated to integers as the game requires. */
+	private fun container(source: ContainerArgument) =
+		arrayOf(literal(source.literalName), if (source is Vec3) literal(source.toStringTruncated()) else ex.targetArg(source))
 
 	/** Checks if the given function returns a non-zero value (its return value is used as the condition). */
 	fun function(function: FunctionArgument) = addArguments(listOf(literal("function"), function))

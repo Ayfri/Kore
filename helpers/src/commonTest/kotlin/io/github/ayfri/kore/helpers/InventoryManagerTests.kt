@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.helpers
 
+import io.github.ayfri.kore.arguments.ARMOR
 import io.github.ayfri.kore.arguments.CONTAINER
 import io.github.ayfri.kore.arguments.HOTBAR
 import io.github.ayfri.kore.arguments.WEAPON
@@ -39,7 +40,12 @@ import io.kotest.matchers.shouldBe
 
 fun Function.inventoryManagerTests() {
 	val inventoryManager = inventoryManager(vec3(0, 0, 0))
-	inventoryManager.clear(WEAPON) assertsIs "item replace block 0 0 0 weapon with minecraft:air 1"
+	inventoryManager.clear(WEAPON) assertsIs "item fill block 0 0 0 weapon with minecraft:air"
+	inventoryManager.clear(CONTAINER) assertsIs "item fill block 0 0 0 container.* with minecraft:air"
+	inventoryManager.fill(HOTBAR, Items.BREAD, 16) assertsIs "item fill block 0 0 0 hotbar.* with minecraft:bread 16"
+	inventoryManager.replace(CONTAINER[0], CONTAINER[1]) assertsIs "item replace block 0 0 0 container.0 from block 0 0 0 container.1"
+	inventoryManager[ARMOR] = Items.DIAMOND_HELMET
+	lines.last() assertsIs "item replace block 0 0 0 armor.* with minecraft:diamond_helmet"
 	inventoryManager.clearAll() assertsIs "data remove block 0 0 0 Items"
 	inventoryManager.clearAll(Items.DIAMOND_SWORD {
 		damage(0)

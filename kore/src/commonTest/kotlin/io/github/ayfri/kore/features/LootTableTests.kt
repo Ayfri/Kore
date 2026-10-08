@@ -12,7 +12,7 @@ import io.github.ayfri.kore.features.itemmodifiers.functions.enchantRandomly
 import io.github.ayfri.kore.features.itemmodifiers.functions.setCount
 import io.github.ayfri.kore.features.loottables.*
 import io.github.ayfri.kore.features.loottables.entries.*
-import io.github.ayfri.kore.features.loottables.entries.slotsource.*
+import io.github.ayfri.kore.features.slotsources.*
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
 import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
 import io.github.ayfri.kore.features.predicates.providers.constant

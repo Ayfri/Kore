@@ -2,8 +2,9 @@ package io.github.ayfri.kore.features.loottables.entries
 
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifierAsList
-import io.github.ayfri.kore.features.loottables.entries.slotsource.SlotSource
-import io.github.ayfri.kore.features.loottables.entries.slotsource.SlotSourcesBuilder
+import io.github.ayfri.kore.features.slotsources.SlotSource
+import io.github.ayfri.kore.features.slotsources.SlotSourcesBuilder
+import io.github.ayfri.kore.features.slotsources.buildSlotSources
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.PredicateAsList
 import io.github.ayfri.kore.serializers.InlinableList
@@ -41,5 +42,5 @@ fun Slots.functions(block: ItemModifier.() -> Unit) {
 
 /** Configure the slot sources for this Slots entry. */
 fun Slots.slotSources(block: SlotSourcesBuilder.() -> Unit) {
-	slotSource = SlotSourcesBuilder().apply(block).build()
+	slotSource = buildSlotSources(block)
 }
