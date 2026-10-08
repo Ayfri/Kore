@@ -4,7 +4,13 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.kotest.core.spec.style.FunSpec
 
 fun itemSlotTests() {
+	ARMOR.asString() assertsIs "armor.*"
 	ARMOR.BODY.asString() assertsIs "armor.body"
+	HOTBAR.asString() assertsIs "hotbar.*"
+	HORSE.CHEST.asString() assertsIs "horse.chest"
+	WEAPON.asString() assertsIs "weapon"
+	WEAPON.all() assertsIs "weapon.*"
+	WEAPON.OFFHAND.asString() assertsIs "weapon.offhand"
 
 	CONTAINER[20].asString() assertsIs "container.20"
 
@@ -15,7 +21,6 @@ fun itemSlotTests() {
 	PLAYER.CURSOR.asString() assertsIs "player.cursor"
 	PLAYER.CRAFTING[0].asString() assertsIs "player.crafting.0"
 	PLAYER.CRAFTING.all() assertsIs "player.crafting.*"
-
 
 	ARMOR.BODY.asIndex() assertsIs 105
 	CONTAINER[7].asIndex() assertsIs 7

@@ -1,39 +1,32 @@
 package io.github.ayfri.kore.arguments
 
 /**
- * Represents a slot in an inventory or entity for item placement, is used in commands, NBT, and GUIs.
- * See: https://minecraft.wiki/w/Slot
+ * A slot selection written as a slot string in commands and slot sources: one slot (`armor.chest`, an [ItemSlotType])
+ * or every slot of a range (`hotbar.*`, a [RangeItemSlot]).
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Slot
  */
 interface ItemSlot : Argument
 
-/** Represents a named item slot, providing a string identifier. */
+/** A named node of the slot tree, like `armor` or `player`, which isn't a slot by itself unless it is an [ItemSlot] too. */
 interface ItemSlotWrapper : Argument {
 	override fun asString() = name()
 	fun name(): String
 }
 
 /**
- * Represents a range of item slots, such as a group of slots in a container or inventory.
- * See: https://minecraft.wiki/w/Slot
+ * A range of slots, like the hotbar or the armor, written `<name>.*` to select all of them.
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Slot
  */
-interface RangeItemSlot : Argument, ClosedRange<Int>, ItemSlotWrapper {
-	/** Returns a string representing all slots in the range (e.g., "armor.*"). */
+interface RangeItemSlot : ItemSlot, ClosedRange<Int>, ItemSlotWrapper {
+	override fun asString() = all()
+
+	/** The slot string selecting every slot of the range, like `armor.*`. */
 	fun all() = "${name()}.*"
 
-	/**
-	 * Returns the range as an ItemSlot.
-	 * Alias for [asString] or the object itself for clarity.
-	 *
-	 * Example:
-	 * ```
-	 * val range = ARMOR.range()
-	 * println(range) // "armor.*"
-	 * ```
-	 */
+	@Deprecated("A range is already the slot selection of all its slots.", ReplaceWith("this"))
 	fun range() = this
-
-	/** Returns the [ItemSlotType] at the given index within the range. */
-	operator fun get(index: Int) = ItemSlotType(start + index) { "${name()}.$index" }
 }
 
 /** Represents a specific item slot with an index. */
@@ -89,10 +82,10 @@ interface ItemSlotType : ItemSlot, ItemSlotWrapper {
 	}
 }
 
-/** Represents a range of indexed item slots. */
-interface IndexedItemSlot : ItemSlot, RangeItemSlot {
-	override fun asString() = all()
-	override fun range() = this
+/** A range of numbered slots, `hotbar.0` to `hotbar.8`. */
+interface IndexedItemSlot : RangeItemSlot {
+	/** Returns the [ItemSlotType] at the given index within the range. */
+	operator fun get(index: Int) = ItemSlotType(start + index) { "${name()}.$index" }
 
 	companion object {
 		/** Creates an [IndexedItemSlot] for the given range and name provider. */
@@ -105,7 +98,7 @@ interface IndexedItemSlot : ItemSlot, RangeItemSlot {
 }
 
 /** Helper to create a named sub-slot for a given [ItemSlotWrapper]. */
-private fun ItemSlotWrapper.subType(name: String, index: Int) = ItemSlotType(index) { "${asString()}.$name" }
+private fun ItemSlotWrapper.subType(name: String, index: Int) = ItemSlotType(index) { "${name()}.$name" }
 
 /** Armor slots (feet, legs, chest, head, body). See: https://minecraft.wiki/w/Slot */
 data object ARMOR : RangeItemSlot {
@@ -161,7 +154,7 @@ data object MOB : ItemSlotWrapper {
 	override fun name() = "mob"
 
 	/** The inventory slots of the mob (indices 300-307, slots 0-7). See: https://minecraft.wiki/w/Slot */
-	val INVENTORY = IndexedItemSlot(300, 307) { "${asString()}.inventory" }
+	val INVENTORY = IndexedItemSlot(300, 307) { "${name()}.inventory" }
 }
 
 /** Player-specific slots. */
@@ -172,18 +165,19 @@ data object PLAYER : ItemSlotWrapper {
 	val CURSOR = subType("cursor", 499)
 
 	/** The crafting slots of the player inventory. */
-	val CRAFTING = IndexedItemSlot(500, 503) { "${asString()}.crafting" }
+	val CRAFTING = IndexedItemSlot(500, 503) { "${name()}.crafting" }
 }
 
 /** Saddle slot (400). */
 val SADDLE = ItemSlotType(400) { "saddle" }
 
-/** Weapon slots (mainhand: 98, offhand: 99). */
+/** Weapon slots (mainhand: 98, offhand: 99), `weapon` alone being the mainhand and [all] both hands. */
 data object WEAPON : ItemSlotType, RangeItemSlot {
 	override val start = 98
 	override val endInclusive = 99
 
 	override fun asIndex() = 98
+	override fun asString() = name()
 	override fun name() = "weapon"
 
 	/** The mainhand slot of the weapon inventory. */
