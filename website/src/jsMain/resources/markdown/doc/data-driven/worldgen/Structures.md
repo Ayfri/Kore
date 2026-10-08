@@ -414,7 +414,7 @@ dp.structureSet("my_pyramids") {
 
 ### Placement
 
-Two placement types exist, and a set has exactly one. Without a call to either, it uses an empty random spread.
+Three placement types exist, and a set has exactly one. Without a call to any, it uses an empty random spread.
 
 **`randomSpreadPlacement(spreadType, spacing, separation)`** is the common one. The world is cut into a grid of `spacing` chunks; each cell
 gets at most one structure, placed at random inside it, never closer than `separation` chunks to the cell edge. `separation` must stay below
@@ -425,7 +425,10 @@ towards the cell center.
 `distance` chunks to the first ring, `spread` chunks of jitter, `count` structures in total. `preferredBiomes(...)` restricts where within a
 ring a structure may land.
 
-Both share these fields, set inside the trailing block:
+**`dimensionOriginPlacement()`** places a single structure at the dimension origin: the `spawn_target` of the noise settings for a noise
+dimension, chunk `0 0` otherwise.
+
+All three share these fields, set inside the trailing block:
 
 | Field                      | Meaning                                                                                      |
 |----------------------------|----------------------------------------------------------------------------------------------|

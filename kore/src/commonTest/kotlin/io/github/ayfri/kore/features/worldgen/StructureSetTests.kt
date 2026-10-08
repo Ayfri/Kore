@@ -87,6 +87,26 @@ fun DataPack.structureSetTests() {
 			}
 		}
 	""".trimIndent()
+
+	structureSet("my_origin_structure_set") {
+		structure(customStructure)
+		dimensionOriginPlacement { salt = 0 }
+	}
+
+	structureSets.last() assertsIs """
+		{
+			"structures": [
+				{
+					"structure": "$name:my_set_pyramid",
+					"weight": 1
+				}
+			],
+			"placement": {
+				"type": "minecraft:dimension_origin",
+				"salt": 0
+			}
+		}
+	""".trimIndent()
 }
 
 class StructureSetTests : FunSpec({

@@ -37,6 +37,16 @@ fun ConcentricRingsPlacement.preferredBiomes(vararg biomes: BiomeArgument) = app
 	preferredBiomes += biomes
 }
 
+@SerialName("minecraft:dimension_origin")
+@Serializable
+data class DimensionOriginPlacement(
+	override var salt: Int = 0,
+	override var frequencyReductionMethod: FrequencyReductionMethod? = null,
+	override var frequency: Double? = null,
+	override var exclusionZone: ExclusionZone? = null,
+	override var locateOffset: List<Int>? = null,
+) : Placement
+
 @SerialName("minecraft:random_spread")
 @Serializable
 data class RandomSpreadPlacement(

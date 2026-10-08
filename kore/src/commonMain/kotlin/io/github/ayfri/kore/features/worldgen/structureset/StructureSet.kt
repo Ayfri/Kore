@@ -72,6 +72,13 @@ fun StructureSet.concentricRingsPlacement(
 }
 
 /**
+ * Sets the placement to a single structure at the dimension origin: the noise settings' `spawn_target`, else chunk `0 0`.
+ */
+fun StructureSet.dimensionOriginPlacement(block: DimensionOriginPlacement.() -> Unit = {}) = run {
+	placement = DimensionOriginPlacement(salt = defaultSalt(fileName)).apply(block)
+}
+
+/**
  * Sets the placement to random spread.
  *
  * @param spreadType - The type of spread.
