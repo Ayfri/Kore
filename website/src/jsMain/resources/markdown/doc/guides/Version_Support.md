@@ -108,8 +108,7 @@ advancement("get_diamond") {
 }
 ```
 
-Fields the game ignores are deprecated with the reason and the field it reads instead, like
-`TrimMaterial.overrideArmorMaterials`, which points to `overrideArmorAssets`.
+Fields the game ignores are deprecated with the reason and the field it reads instead.
 
 ## Release notes
 

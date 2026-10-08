@@ -5,7 +5,7 @@ nav-title: Trims
 description: Create custom armor trim materials and patterns with Kore's type-safe DSL
 keywords: minecraft, datapack, kore, trims, armor, trim material, trim pattern, customization
 date-created: 2026-02-03
-date-modified: 2026-09-23
+date-modified: 2026-10-08
 routeOverride: /docs/data-driven/trims
 ---
 
@@ -18,15 +18,14 @@ Armor trims are a customization system that allows players to add decorative pat
 
 Trim materials define the color palette and appearance when a trim is applied to armor. Each material specifies:
 
-- **Asset name**: The color palette applied to the trim, written as its bare name (`amethyst`)
+- **Palette ID**: The palette texture coloring the trim, `minecraft:trim/amethyst` reads
+  `textures/palettes/trim/amethyst.png` from the resource pack
 - **Description**: The text shown in-game when hovering over trimmed armor
-- **Override armor assets**: Optional palettes swapped in on specific equipment, like vanilla gold using `gold_darker` on
-  gold armor so the trim stays visible
 
 ### Basic Usage
 
 ```kotlin
-trimMaterial("ruby", Textures.Trims.ColorPalettes.AMETHYST) {
+trimMaterial("ruby", Textures.Palettes.Trim.AMETHYST) {
 	description("Ruby", Color.RED)
 }
 ```
@@ -35,49 +34,25 @@ This creates a trim material file at `data/<namespace>/trim_material/ruby.json`:
 
 ```json
 {
-	"asset_name": "amethyst",
 	"description": {
 		"text": "Ruby",
 		"color": "red"
-	}
-}
-```
-
-### Palette Overrides per Equipment
-
-A trim in the same color as the armor it sits on disappears, so vanilla swaps in a darker palette on matching armor:
-
-```kotlin
-trimMaterial("custom_gold", Textures.Trims.ColorPalettes.GOLD) {
-	description("Custom Gold Trim", Color.GOLD)
-	overrideArmorAsset(EquipmentAssets.GOLD, Textures.Trims.ColorPalettes.GOLD_DARKER)
-}
-```
-
-```json
-{
-	"asset_name": "gold",
-	"description": {
-		"text": "Custom Gold Trim",
-		"color": "gold"
 	},
-	"override_armor_assets": {
-		"minecraft:gold": "gold_darker"
-	}
+	"palette_id": "minecraft:trim/amethyst"
 }
 ```
 
-`overrideArmorAssets` sets several overrides at once:
+A custom palette takes its path relative to `textures/palettes/`:
 
 ```kotlin
-trimMaterial("dark_quartz", Textures.Trims.ColorPalettes.QUARTZ) {
-	description("Dark Quartz")
-	overrideArmorAssets(
-		EquipmentAssets.DIAMOND to Textures.Trims.ColorPalettes.DIAMOND_DARKER,
-		EquipmentAssets.NETHERITE to Textures.Trims.ColorPalettes.NETHERITE_DARKER,
-	)
+// Reads assets/my_pack/textures/palettes/trim/ruby.png
+trimMaterial("ruby", TrimColorPaletteArgument("trim/ruby", "my_pack")) {
+	description("Ruby", Color.RED)
 }
 ```
+
+The darker palette vanilla uses on armor of the same color as the trim, like `gold_darker` on gold armor, isn't set by
+the trim material: the resource pack's equipment asset swaps it through `trim_palette_replacements`.
 
 ## Trim Patterns
 

@@ -96,9 +96,9 @@ suspend fun launchAllSimpleGenerators(): List<Generator> {
 			argumentClassName = "Model M"
 			transform { it.removeSuffix(".png") }
 			subInterfacesParents(
-				"ColorPalettes" to "arguments.types.TrimColorPaletteArgument",
 				"Moon" to "arguments.types.MoonPhaseArgument",
-				"Painting" to "arguments.types.PaintingAssetArgument"
+				"Painting" to "arguments.types.PaintingAssetArgument",
+				"Trim" to "arguments.types.TrimColorPaletteArgument",
 			)
 		},
 		gen("Timelines", "timeline"),
