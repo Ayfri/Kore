@@ -19,9 +19,10 @@ import kotlinx.serialization.Transient
  * JSON format reference: https://minecraft.wiki/w/Instrument_definition
  *
  * @param description - The text component used as a description in tooltips.
+ * @param durabilityDamage - The durability consumed on each use, non-negative.
  * @param range - The non-negative float for the audible range of the instrument.
  * @param soundEvent - The sound event to play for the instrument (string ID or sound event object).
- * @param useDuration - The non-negative float for how long the use duration is.
+ * @param useDuration - The non-negative float for how long the use duration is, `0` for no cooldown.
  */
 @Serializable
 data class Instrument(
@@ -31,6 +32,7 @@ data class Instrument(
 	var range: Float,
 	var useDuration: Float,
 	var description: ChatComponents,
+	var durabilityDamage: Int? = null,
 ) : Generator("instrument") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }

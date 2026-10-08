@@ -27,6 +27,22 @@ fun DataPack.instrumentTests() {
 	""".trimIndent()
 
 	roundTrip(instruments.first())
+
+	instrument("test_whistle", useDuration = 0f) {
+		durabilityDamage = 2
+	}
+
+	instruments.last() assertsIs """
+		{
+			"sound_event": "minecraft:item.goat_horn.sound.0",
+			"range": 256.0,
+			"use_duration": 0.0,
+			"description": "",
+			"durability_damage": 2
+		}
+	""".trimIndent()
+
+	roundTrip(instruments.last())
 }
 
 class InstrumentTests : FunSpec({
