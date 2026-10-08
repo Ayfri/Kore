@@ -111,7 +111,14 @@ ore("my_ore", size = 10, discardChanceOnAirExposure = 0.1) {
 
 `targets { }` is shared by `ore`, `scatteredOre` and `replaceSingleBlock`, the three features replacing terrain blocks; the first target
 matching a block wins. The rule test builders (`blockMatch`, `tagMatch`, `randomBlockMatch`, ...) are scoped to `target { }` and are the
-same ones the [structure processors](/docs/data-driven/worldgen/structures#rules) use.
+same ones the [structure processors](/docs/data-driven/worldgen/structures#rules) use. Vanilla bounds each ore target in height by
+combining them:
+
+```kotlin
+target(blockState(Blocks.IRON_ORE)) {
+	target = allOf(tagMatch(Tags.Block.STONE_ORE_REPLACEABLES), heightMatch(minInclusive = 0, maxInclusive = 2031))
+}
+```
 
 Reference: [Ore feature](https://minecraft.wiki/w/Ore_(feature))
 

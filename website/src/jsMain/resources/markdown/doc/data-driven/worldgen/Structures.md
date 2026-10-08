@@ -5,7 +5,7 @@ nav-title: Structures
 description: Build Minecraft structures with Kore - configured structures, jigsaw template pools, block processors and structure set placement.
 keywords: minecraft, datapack, kore, worldgen, structure, template pool, processor list, jigsaw, structure set
 date-created: 2026-02-03
-date-modified: 2026-09-26
+date-modified: 2026-10-08
 routeOverride: /docs/data-driven/worldgen/structures
 ---
 
@@ -148,9 +148,11 @@ processorList("mossify") {
 
 | Builder                                     | Matches                                                     |
 |---------------------------------------------|-------------------------------------------------------------|
+| `allOf(rules...)`                           | A block matching every rule test of `rules`                 |
 | `alwaysTrue()`                              | Any block, same as leaving the predicate to its default     |
 | `blockMatch(block)`                         | One block, whatever its block state properties are          |
 | `blockStateMatch(blockState)`               | One exact block state, every property having to match       |
+| `heightMatch(minInclusive, maxInclusive)`   | Any block whose Y level is between the two bounds           |
 | `randomBlockMatch(block, probability)`      | A block with a probability, clamped between `0.0` and `1.0` |
 | `randomBlockStateMatch(state, probability)` | A block state with a probability                            |
 | `tagMatch(tag)`                             | Any block of a block tag                                    |

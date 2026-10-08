@@ -26,6 +26,8 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.target
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.features.worldgen.intproviders.uniform
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.Surface
+import io.github.ayfri.kore.features.worldgen.ruletest.allOf
+import io.github.ayfri.kore.features.worldgen.ruletest.heightMatch
 import io.github.ayfri.kore.features.worldgen.ruletest.randomBlockMatch
 import io.github.ayfri.kore.features.worldgen.ruletest.tagMatch
 import io.github.ayfri.kore.generated.*
@@ -862,6 +864,43 @@ fun DataPack.configuredFeatureTests() {
 					},
 					"state": {
 						"Name": "minecraft:deepslate"
+					}
+				}
+			]
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.ore("test_ore_height", size = 9) {
+		targets {
+			target(blockState(Blocks.IRON_ORE)) {
+				target = allOf(tagMatch(Tags.Block.STONE_ORE_REPLACEABLES), heightMatch(minInclusive = 0, maxInclusive = 2031))
+			}
+		}
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:ore",
+			"size": 9,
+			"discard_chance_on_air_exposure": 0.0,
+			"targets": [
+				{
+					"target": {
+						"predicate_type": "minecraft:all_of",
+						"rules": [
+							{
+								"predicate_type": "minecraft:tag_match",
+								"tag": "minecraft:stone_ore_replaceables"
+							},
+							{
+								"predicate_type": "minecraft:height_match",
+								"max_inclusive": 2031,
+								"min_inclusive": 0
+							}
+						]
+					},
+					"state": {
+						"Name": "minecraft:iron_ore"
 					}
 				}
 			]
