@@ -26,6 +26,7 @@ suspend fun launchAllSimpleGenerators(): List<Generator> {
 		gen("CowSoundVariants", "cow_sound_variant"),
 		gen("CowVariants", "cow_variant"),
 		gen("DamageTypes", "damage_type"),
+		gen("DecoratedPotPatterns", "decorated_pot_pattern"),
 		gen("Dialogs", "dialog"),
 		gen("DimensionTypes", "dimension_type"),
 		gen("Dimensions", "dimensions"),
@@ -96,6 +97,7 @@ suspend fun launchAllSimpleGenerators(): List<Generator> {
 			argumentClassName = "Model M"
 			transform { it.removeSuffix(".png") }
 			subInterfacesParents(
+				"DecoratedPot" to "arguments.types.DecoratedPotPatternAssetArgument",
 				"Moon" to "arguments.types.MoonPhaseArgument",
 				"Painting" to "arguments.types.PaintingAssetArgument",
 				"Trim" to "arguments.types.TrimColorPaletteArgument",

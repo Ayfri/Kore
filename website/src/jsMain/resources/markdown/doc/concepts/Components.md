@@ -5,7 +5,7 @@ nav-title: Components
 description: A guide for using components in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, components
 date-created: 2024-01-08
-date-modified: 2026-10-02
+date-modified: 2026-10-08
 routeOverride: /docs/concepts/components
 ---
 
@@ -266,10 +266,11 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `ominousBottleAmplifier(..)`         | Sets the Bad Omen effect amplifier (0-4) when consuming an ominous bottle.                               |
 | `piercingWeapon(..) { .. }`          | Configures piercing weapon properties (knockback, dismount behavior).                                    |
 | `playerProfile(..)`                  | Sets the player skin displayed on a player head item.                                                    |
-| `potDecorations(..)`                 | Defines the pottery sherds or bricks on each face of a decorated pot.                                    |
+| `potDecorations(..)`                 | Defines the item stack on each face of a decorated pot (`back`, `left`, `right`, `front`).               |
 | `potionContents(..)`                 | Configures potion color, effects, and custom potion mixtures.                                            |
 | `potionDurationScale(..)`            | Multiplies the duration of potion effects from this item.                                                |
 | `providesBannerPatterns(..)`         | Registers this item as a banner pattern source for the loom.                                             |
+| `providesPotteryPattern(..)`         | Sets the pattern this item shows on the face of a decorated pot.                                         |
 | `providesTrimMaterial(..)`           | Registers this item as an armor trim material for the smithing table.                                    |
 | `rarity(..)`                         | Sets the item name color tier (common, uncommon, rare, epic).                                            |
 | `recipes(..)`                        | Unlocks specified recipes when this knowledge book is used.                                              |

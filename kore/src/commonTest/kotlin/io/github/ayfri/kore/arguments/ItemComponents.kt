@@ -13,6 +13,7 @@ import io.github.ayfri.kore.arguments.types.literals.randomUUID
 import io.github.ayfri.kore.arguments.types.resources.model
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.AttributeModifierOperation
+import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.data.item.builders.itemStack
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
@@ -508,7 +509,15 @@ fun itemComponentsTests() {
 	val potDecorationsTest = stone {
 		potDecorations(Items.ARMS_UP_POTTERY_SHERD, Items.SKULL_POTTERY_SHERD, Items.FRIEND_POTTERY_SHERD, Items.BRICK)
 	}
-	potDecorationsTest.asString() assertsIs """minecraft:stone[pot_decorations=["minecraft:arms_up_pottery_sherd","minecraft:skull_pottery_sherd","minecraft:friend_pottery_sherd","minecraft:brick"]]"""
+	potDecorationsTest.asString() assertsIs """minecraft:stone[pot_decorations={back:{id:"minecraft:arms_up_pottery_sherd"},front:{id:"minecraft:brick"},left:{id:"minecraft:skull_pottery_sherd"},right:{id:"minecraft:friend_pottery_sherd"}}]"""
+
+	potDecorationsTest.components!!.potDecorations(front = Items.ANGLER_POTTERY_SHERD)
+	potDecorationsTest.asString() assertsIs """minecraft:stone[pot_decorations={front:{id:"minecraft:angler_pottery_sherd"}}]"""
+
+	potDecorationsTest.components!!.potDecorations {
+		left = ItemStack(Items.PRIZE_POTTERY_SHERD, 2)
+	}
+	potDecorationsTest.asString() assertsIs """minecraft:stone[pot_decorations={left:{id:"minecraft:prize_pottery_sherd",count:2s}}]"""
 
 	val potionContentsTest = Items.POTION {
 		potionContents(
@@ -570,6 +579,11 @@ fun itemComponentsTests() {
 		providesBannerPatterns(Tags.BannerPattern.PatternItem.CREEPER, Tags.BannerPattern.PatternItem.SKULL)
 	}
 	providesBannerPatternsMultiTest.asString() assertsIs """minecraft:player_head[provides_banner_patterns=["#minecraft:pattern_item/creeper","#minecraft:pattern_item/skull"]]"""
+
+	val providesPotteryPatternTest = Items.BRICK {
+		providesPotteryPattern(DecoratedPotPatterns.ANGLER)
+	}
+	providesPotteryPatternTest.asString() assertsIs """minecraft:brick[provides_pottery_pattern="minecraft:angler"]"""
 
 	val providerTrimMaterialTest = Items.PLAYER_HEAD {
 		providesTrimMaterial(TrimMaterials.DIAMOND)

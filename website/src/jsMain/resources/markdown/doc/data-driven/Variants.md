@@ -2,17 +2,18 @@
 root: .components.layouts.MarkdownLayout
 title: Variants
 nav-title: Variants
-description: Define entity and painting variants with Kore's type-safe DSL
-keywords: minecraft, datapack, kore, variants, cat, cow, chicken, frog, pig, wolf, zombie nautilus, painting, sound variants
+description: Define entity, painting and decorated pot pattern variants with Kore's type-safe DSL
+keywords: minecraft, datapack, kore, variants, cat, cow, chicken, frog, pig, wolf, zombie nautilus, painting, decorated pot pattern, sound variants
 date-created: 2026-02-03
-date-modified: 2026-09-23
+date-modified: 2026-10-08
 routeOverride: /docs/data-driven/variants
 ---
 
 # Variants
 
 Variants allow you to customize the appearance and spawn conditions of various entities and paintings in Minecraft. Kore provides type-safe
-DSL builders for creating custom variants for cats, cows, chickens, frogs, pigs, wolves, zombie nautiluses, and paintings.
+DSL builders for creating custom variants for cats, cows, chickens, frogs, pigs, wolves, zombie nautiluses, paintings and decorated pot
+patterns.
 
 ## Entity Variants
 
@@ -653,6 +654,29 @@ Produces JSON:
 	"title": "Aztec"
 }
 ```
+
+### Decorated Pot Patterns
+
+A decorated pot pattern is the texture a pottery sherd shows on a face of a decorated pot, read from
+`textures/entity/decorated_pot/<path>.png`. An item shows it through its `providesPotteryPattern` component:
+
+```kotlin
+val star = decoratedPotPattern("star", DecoratedPotPatternAssetArgument("star_pottery_pattern", "my_pack"))
+
+val sherd = Items.BRICK {
+	providesPotteryPattern(star)
+}
+```
+
+Produces JSON:
+
+```json
+{
+	"asset_id": "my_pack:star_pottery_pattern"
+}
+```
+
+The vanilla textures are typed, like `Textures.Entity.DecoratedPot.ANGLER_POTTERY_PATTERN`.
 
 ### See Also
 
