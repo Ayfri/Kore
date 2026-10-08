@@ -525,7 +525,7 @@ private fun DataPack.allTriggersTests() {
 					"trigger": "minecraft:enter_block",
 					"conditions": {
 						"block": "minecraft:redstone_lamp",
-						"states": {
+						"state": {
 							"lit": "true"
 						}
 					}

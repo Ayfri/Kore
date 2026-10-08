@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
 data class EnterBlock(
 	override var player: EntityOrPredicates? = null,
 	var block: BlockArgument? = null,
-	var states: Map<String, String>? = null,
+	var state: Map<String, String>? = null,
 ) : AdvancementTriggerCondition()
 
 /** Add an `enterBlock` criterion, triggered when a player enters a specific block/state. */
@@ -23,7 +23,12 @@ fun AdvancementCriteria.enterBlock(name: String, block: EnterBlock.() -> Unit = 
 	criteria[name] = EnterBlock().apply(block)
 }
 
-/** Set the required block state map. */
+/** Requires the block state property [key] to equal [value]. */
+fun EnterBlock.state(key: String, value: String) {
+	state = mapOf(key to value)
+}
+
+/** Requires all the block state properties declared in [block]. */
 fun EnterBlock.states(block: MutableMap<String, String>.() -> Unit) {
-	states = buildMap(block)
+	state = buildMap(block)
 }

@@ -411,7 +411,7 @@ Triggers when a player enters a specific block.
 **Properties:**
 
 - `block`: The block being entered.
-- `states`: The state properties of the block.
+- `state`: The state properties of the block, set with `state(key, value)` or `states { }`.
 
 **Example:**
 
