@@ -9,7 +9,7 @@ import io.github.ayfri.kore.features.worldgen.blockpredicate.True
 import io.github.ayfri.kore.features.worldgen.blockpredicate.blockPredicate
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -33,7 +33,7 @@ data class Lake(
  * }
  * ```
  *
- * Produces `data/<namespace>/worldgen/configured_feature/<fileName>.json`.
+ * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#lake
  */
@@ -42,10 +42,10 @@ fun ConfiguredFeatures.lake(
 	fluid: BlockState = blockStateStone(),
 	barrier: BlockState = blockStateStone(),
 	block: Lake.() -> Unit = {},
-): ConfiguredFeatureArgument {
+): FeatureArgument {
 	val configuredFeature = ConfiguredFeature(fileName, Lake(fluid, barrier).apply(block))
 	dp.configuredFeatures += configuredFeature
-	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
+	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
 }
 
 /**

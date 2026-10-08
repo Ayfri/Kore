@@ -62,16 +62,16 @@ Produces:
 
 ## Available conditions
 
-| DSL call | Condition | Succeeds when |
-|----------|-----------|---------------|
-| `allModsLoaded("a", "b")` | `fabric:all_mods_loaded` | every listed mod is loaded |
-| `anyModsLoaded("a", "b")` | `fabric:any_mods_loaded` | at least one listed mod is loaded |
-| `tagsPopulated("minecraft:logs")` | `fabric:tags_populated` | every tag is populated (in `minecraft:item` by default) |
-| `tagsPopulated("stone", registry = "minecraft:block")` | `fabric:tags_populated` | every tag is populated in the given registry |
-| `registryContains("mymod:custom")` | `fabric:registry_contains` | the registry (`minecraft:item` by default) contains every id |
-| `registryContains("mymod:tree", registry = "worldgen/configured_feature")` | `fabric:registry_contains` | the given registry contains every id |
-| `featuresEnabled("minecraft:vanilla")` | `fabric:features_enabled` | every feature flag is enabled |
-| `conditionTrue()` | `fabric:true` | always |
+| DSL call                                                        | Condition                  | Succeeds when                                                |
+|-----------------------------------------------------------------|----------------------------|--------------------------------------------------------------|
+| `allModsLoaded("a", "b")`                                       | `fabric:all_mods_loaded`   | every listed mod is loaded                                   |
+| `anyModsLoaded("a", "b")`                                       | `fabric:any_mods_loaded`   | at least one listed mod is loaded                            |
+| `tagsPopulated("minecraft:logs")`                               | `fabric:tags_populated`    | every tag is populated (in `minecraft:item` by default)      |
+| `tagsPopulated("stone", registry = "minecraft:block")`          | `fabric:tags_populated`    | every tag is populated in the given registry                 |
+| `registryContains("mymod:custom")`                              | `fabric:registry_contains` | the registry (`minecraft:item` by default) contains every id |
+| `registryContains("mymod:tree", registry = "worldgen/feature")` | `fabric:registry_contains` | the given registry contains every id                         |
+| `featuresEnabled("minecraft:vanilla")`                          | `fabric:features_enabled`  | every feature flag is enabled                                |
+| `conditionTrue()`                                               | `fabric:true`              | always                                                       |
 
 ### Combinators
 

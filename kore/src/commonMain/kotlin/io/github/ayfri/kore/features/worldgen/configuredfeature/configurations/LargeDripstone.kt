@@ -9,7 +9,7 @@ import io.github.ayfri.kore.features.worldgen.floatproviders.FloatProviderScope
 import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -27,8 +27,8 @@ data class LargeDripstone(
 	var replaceableBlocks: InlinableList<BlockOrTagArgument> = emptyList(),
 ) : FeatureConfig(), FloatProviderScope, IntProviderScope
 
-fun ConfiguredFeatures.largeDripstone(fileName: String, block: LargeDripstone.() -> Unit = {}): ConfiguredFeatureArgument {
+fun ConfiguredFeatures.largeDripstone(fileName: String, block: LargeDripstone.() -> Unit = {}): FeatureArgument {
 	val configuredFeature = ConfiguredFeature(fileName, LargeDripstone().apply(block))
 	dp.configuredFeatures += configuredFeature
-	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
+	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
 }

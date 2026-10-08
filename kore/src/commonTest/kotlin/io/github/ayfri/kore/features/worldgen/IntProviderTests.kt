@@ -6,12 +6,12 @@ import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.worldgen.intproviders.*
 import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.count
 import io.github.ayfri.kore.features.worldgen.placedfeature.placedFeature
-import io.github.ayfri.kore.generated.ConfiguredFeatures
+import io.github.ayfri.kore.generated.Features
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.intProviderTests() {
-	placedFeature("biased_to_bottom_test", ConfiguredFeatures.ACACIA) {
+	placedFeature("biased_to_bottom_test", Features.ACACIA) {
 		count(biasedToBottom(1, 5))
 	}
 
@@ -31,7 +31,7 @@ fun DataPack.intProviderTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("clamped_test", ConfiguredFeatures.ACACIA) {
+	placedFeature("clamped_test", Features.ACACIA) {
 		count(clamped(1, 5, constant(3)))
 	}
 
@@ -52,7 +52,7 @@ fun DataPack.intProviderTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("clamped_normal_test", ConfiguredFeatures.ACACIA) {
+	placedFeature("clamped_normal_test", Features.ACACIA) {
 		count(clampedNormal(1, 5, 3.0f, 1.0f))
 	}
 
@@ -74,7 +74,7 @@ fun DataPack.intProviderTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("constant_test", ConfiguredFeatures.ACACIA) {
+	placedFeature("constant_test", Features.ACACIA) {
 		count(constant(5))
 	}
 
@@ -90,7 +90,7 @@ fun DataPack.intProviderTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("trapezoid_test", ConfiguredFeatures.ACACIA) {
+	placedFeature("trapezoid_test", Features.ACACIA) {
 		count(trapezoid(1, 5, 2))
 	}
 
@@ -111,7 +111,7 @@ fun DataPack.intProviderTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("uniform_test", ConfiguredFeatures.ACACIA) {
+	placedFeature("uniform_test", Features.ACACIA) {
 		count(uniform(1, 5))
 	}
 
@@ -131,7 +131,7 @@ fun DataPack.intProviderTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("weighted_list_test", ConfiguredFeatures.ACACIA) {
+	placedFeature("weighted_list_test", Features.ACACIA) {
 		count(weightedList {
 			entry(3, uniform(1, 5))
 			entry(1, constant(10))
@@ -166,7 +166,7 @@ fun DataPack.intProviderTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("weighted_list_pairs_test", ConfiguredFeatures.ACACIA) {
+	placedFeature("weighted_list_pairs_test", Features.ACACIA) {
 		count(weightedList(3 to uniform(1, 5), 1 to constant(10)))
 	}
 
@@ -198,7 +198,7 @@ fun DataPack.intProviderTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("weighted_list_of_entries_test", ConfiguredFeatures.ACACIA) {
+	placedFeature("weighted_list_of_entries_test", Features.ACACIA) {
 		count(weightedList(listOf(weightedListEntry(1, constant(4)))))
 	}
 

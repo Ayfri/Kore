@@ -22,7 +22,7 @@ data class HeightRange(
  * Adds a `height_range` placement modifier drawing the Y level from [height].
  *
  * ```kotlin
- * placedFeature("my_ore", ConfiguredFeatures.ORE_DIAMOND) {
+ * placedFeature("my_ore", Features.ORE_DIAMOND) {
  *     heightRange(uniformHeightProvider(aboveBottom(0), absolute(16)))
  * }
  * ```

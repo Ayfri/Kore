@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.PlacedFeatureArgument
 import kotlinx.serialization.Serializable
 
@@ -37,7 +37,7 @@ data class RandomPatch(
  * }
  * ```
  *
- * Produces `data/<namespace>/worldgen/configured_feature/<fileName>.json`.
+ * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#random_patch
  */
@@ -45,8 +45,8 @@ fun ConfiguredFeatures.randomPatch(
 	fileName: String,
 	feature: PlacedFeatureArgument,
 	block: RandomPatch.() -> Unit = {},
-): ConfiguredFeatureArgument {
+): FeatureArgument {
 	val configuredFeature = ConfiguredFeature(fileName, RandomPatch(feature).apply(block))
 	dp.configuredFeatures += configuredFeature
-	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
+	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
 }

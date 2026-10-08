@@ -9,7 +9,7 @@ import io.github.ayfri.kore.features.worldgen.blockpredicate.True
 import io.github.ayfri.kore.features.worldgen.blockpredicate.blockPredicate
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
 import kotlinx.serialization.Serializable
 
 /**
@@ -39,7 +39,7 @@ data class Spike(
  * }
  * ```
  *
- * Produces `data/<namespace>/worldgen/configured_feature/<fileName>.json`.
+ * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#spike
  */
@@ -47,10 +47,10 @@ fun ConfiguredFeatures.spike(
 	fileName: String,
 	state: BlockState = blockStateStone(),
 	block: Spike.() -> Unit = {},
-): ConfiguredFeatureArgument {
+): FeatureArgument {
 	val configuredFeature = ConfiguredFeature(fileName, Spike(state = state).apply(block))
 	dp.configuredFeatures += configuredFeature
-	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
+	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
 }
 
 /**

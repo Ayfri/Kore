@@ -10,7 +10,7 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatur
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
 import kotlinx.serialization.Serializable
 
 /**
@@ -44,7 +44,7 @@ data class HugeRedMushroom(
  * }
  * ```
  *
- * Produces `data/<namespace>/worldgen/configured_feature/<fileName>.json`.
+ * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#huge_red_mushroom
  */
@@ -52,10 +52,10 @@ fun ConfiguredFeatures.hugeRedMushroom(
 	fileName: String,
 	foliageRadius: Int? = null,
 	block: HugeRedMushroom.() -> Unit = {},
-): ConfiguredFeatureArgument {
+): FeatureArgument {
 	val configuredFeature = ConfiguredFeature(fileName, HugeRedMushroom(foliageRadius = foliageRadius).apply(block))
 	dp.configuredFeatures += configuredFeature
-	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
+	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
 }
 
 /**

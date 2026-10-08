@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.ProcessorListArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 import kotlinx.serialization.Serializable
@@ -23,11 +23,11 @@ fun ConfiguredFeatures.fossil(
 	overlayStructures: List<StructureArgument> = emptyList(),
 	fossilProcessors: ProcessorListArgument,
 	overlayProcessors: ProcessorListArgument,
-): ConfiguredFeatureArgument {
+): FeatureArgument {
 	val configuredFeature = ConfiguredFeature(
 		fileName,
 		Fossil(maxEmptyCornersAllowed, fossilStructures, overlayStructures, fossilProcessors, overlayProcessors),
 	)
 	dp.configuredFeatures += configuredFeature
-	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
+	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
 }

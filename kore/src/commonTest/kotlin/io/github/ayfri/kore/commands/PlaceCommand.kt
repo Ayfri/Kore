@@ -5,7 +5,7 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
-import io.github.ayfri.kore.generated.ConfiguredFeatures
+import io.github.ayfri.kore.generated.Features
 import io.github.ayfri.kore.generated.ConfiguredStructures
 import io.github.ayfri.kore.generated.Structures
 import io.github.ayfri.kore.generated.TemplatePools
@@ -13,7 +13,7 @@ import io.github.ayfri.kore.generated.arguments.types.JigsawArgument
 import io.kotest.core.spec.style.FunSpec
 
 fun Function.placeTests() {
-	placeFeature(ConfiguredFeatures.BONUS_CHEST, vec3()) assertsIs "place feature minecraft:bonus_chest ~ ~ ~"
+	placeFeature(Features.BONUS_CHEST, vec3()) assertsIs "place feature minecraft:bonus_chest ~ ~ ~"
 	placeJigsaw(
 		TemplatePools.AncientCity.SCULK,
 		JigsawArgument("baz"),

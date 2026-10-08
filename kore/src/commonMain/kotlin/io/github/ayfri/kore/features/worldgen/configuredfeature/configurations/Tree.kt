@@ -13,7 +13,7 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.t
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.TreeDecorator
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.FancyTrunkPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.TrunkPlacer
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
 import kotlinx.serialization.Serializable
 
 /**
@@ -82,16 +82,16 @@ fun Tree.decorators(block: MutableList<TreeDecorator>.() -> Unit) {
  * }
  * ```
  *
- * Produces `data/<namespace>/worldgen/configured_feature/<fileName>.json`.
+ * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
  */
-fun ConfiguredFeatures.tree(fileName: String, block: Tree.() -> Unit = {}): ConfiguredFeatureArgument {
+fun ConfiguredFeatures.tree(fileName: String, block: Tree.() -> Unit = {}): FeatureArgument {
 	val tree = Tree(
 		trunkPlacer = FancyTrunkPlacer(),
 		foliagePlacer = FancyFoliagePlacer(),
 	).apply(block)
 	val configuredFeature = ConfiguredFeature(fileName, tree)
 	dp.configuredFeatures += configuredFeature
-	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
+	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
 }

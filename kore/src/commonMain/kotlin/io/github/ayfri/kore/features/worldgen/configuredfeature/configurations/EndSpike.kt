@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
 import io.github.ayfri.kore.serializers.TripleAsArray
 import kotlinx.serialization.Serializable
 
@@ -22,8 +22,8 @@ data class EndSpikeEntry(
 	var guarded: Boolean? = null,
 )
 
-fun ConfiguredFeatures.endSpike(fileName: String, block: EndSpike.() -> Unit = {}): ConfiguredFeatureArgument {
+fun ConfiguredFeatures.endSpike(fileName: String, block: EndSpike.() -> Unit = {}): FeatureArgument {
 	val configuredFeature = ConfiguredFeature(fileName, EndSpike().apply(block))
 	dp.configuredFeatures += configuredFeature
-	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
+	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
 }

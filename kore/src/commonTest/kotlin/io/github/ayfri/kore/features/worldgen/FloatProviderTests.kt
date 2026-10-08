@@ -20,23 +20,21 @@ fun DataPack.floatProviderTests() {
 	configuredFeatures.last() assertsIs """
 		{
 			"type": "minecraft:large_dripstone",
-			"config": {
-				"column_radius": 0,
-				"height_scale": {
-					"type": "minecraft:clamped_normal",
-					"mean": 0.5,
-					"deviation": 0.1,
-					"min": 0.0,
-					"max": 1.0
-				},
-				"max_column_radius_to_cave_height_ratio": 0.0,
-				"stalactite_bluntness": 0.0,
-				"stalagmite_bluntness": 0.0,
-				"wind_speed": 0.0,
-				"min_radius_for_wind": 0,
-				"min_bluntness_for_wind": 0.0,
-				"replaceable_blocks": []
-			}
+			"column_radius": 0,
+			"height_scale": {
+				"type": "minecraft:clamped_normal",
+				"mean": 0.5,
+				"deviation": 0.1,
+				"min": 0.0,
+				"max": 1.0
+			},
+			"max_column_radius_to_cave_height_ratio": 0.0,
+			"stalactite_bluntness": 0.0,
+			"stalagmite_bluntness": 0.0,
+			"wind_speed": 0.0,
+			"min_radius_for_wind": 0,
+			"min_bluntness_for_wind": 0.0,
+			"replaceable_blocks": []
 		}
 	""".trimIndent()
 
@@ -47,17 +45,15 @@ fun DataPack.floatProviderTests() {
 	configuredFeatures.last() assertsIs """
 		{
 			"type": "minecraft:large_dripstone",
-			"config": {
-				"column_radius": 0,
-				"height_scale": 2.0,
-				"max_column_radius_to_cave_height_ratio": 0.0,
-				"stalactite_bluntness": 0.0,
-				"stalagmite_bluntness": 0.0,
-				"wind_speed": 0.0,
-				"min_radius_for_wind": 0,
-				"min_bluntness_for_wind": 0.0,
-				"replaceable_blocks": []
-			}
+			"column_radius": 0,
+			"height_scale": 2.0,
+			"max_column_radius_to_cave_height_ratio": 0.0,
+			"stalactite_bluntness": 0.0,
+			"stalagmite_bluntness": 0.0,
+			"wind_speed": 0.0,
+			"min_radius_for_wind": 0,
+			"min_bluntness_for_wind": 0.0,
+			"replaceable_blocks": []
 		}
 	""".trimIndent()
 
@@ -68,22 +64,20 @@ fun DataPack.floatProviderTests() {
 	configuredFeatures.last() assertsIs """
 		{
 			"type": "minecraft:large_dripstone",
-			"config": {
-				"column_radius": 0,
-				"height_scale": {
-					"type": "minecraft:trapezoid",
-					"min": 0.0,
-					"max": 1.0,
-					"plateau": 0.5
-				},
-				"max_column_radius_to_cave_height_ratio": 0.0,
-				"stalactite_bluntness": 0.0,
-				"stalagmite_bluntness": 0.0,
-				"wind_speed": 0.0,
-				"min_radius_for_wind": 0,
-				"min_bluntness_for_wind": 0.0,
-				"replaceable_blocks": []
-			}
+			"column_radius": 0,
+			"height_scale": {
+				"type": "minecraft:trapezoid",
+				"min": 0.0,
+				"max": 1.0,
+				"plateau": 0.5
+			},
+			"max_column_radius_to_cave_height_ratio": 0.0,
+			"stalactite_bluntness": 0.0,
+			"stalagmite_bluntness": 0.0,
+			"wind_speed": 0.0,
+			"min_radius_for_wind": 0,
+			"min_bluntness_for_wind": 0.0,
+			"replaceable_blocks": []
 		}
 	""".trimIndent()
 
@@ -94,21 +88,19 @@ fun DataPack.floatProviderTests() {
 	configuredFeatures.last() assertsIs """
 		{
 			"type": "minecraft:large_dripstone",
-			"config": {
-				"column_radius": 0,
-				"height_scale": {
-					"type": "minecraft:uniform",
-					"min_inclusive": 1.0,
-					"max_exclusive": 5.0
-				},
-				"max_column_radius_to_cave_height_ratio": 0.0,
-				"stalactite_bluntness": 0.0,
-				"stalagmite_bluntness": 0.0,
-				"wind_speed": 0.0,
-				"min_radius_for_wind": 0,
-				"min_bluntness_for_wind": 0.0,
-				"replaceable_blocks": []
-			}
+			"column_radius": 0,
+			"height_scale": {
+				"type": "minecraft:uniform",
+				"min_inclusive": 1.0,
+				"max_exclusive": 5.0
+			},
+			"max_column_radius_to_cave_height_ratio": 0.0,
+			"stalactite_bluntness": 0.0,
+			"stalagmite_bluntness": 0.0,
+			"wind_speed": 0.0,
+			"min_radius_for_wind": 0,
+			"min_bluntness_for_wind": 0.0,
+			"replaceable_blocks": []
 		}
 	""".trimIndent()
 }

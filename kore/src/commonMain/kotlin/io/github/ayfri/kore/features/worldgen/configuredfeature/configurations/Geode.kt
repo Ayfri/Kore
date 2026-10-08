@@ -10,7 +10,7 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovid
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.generated.Tags
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -101,12 +101,12 @@ fun Geode.crack(block: GeodeCrack.() -> Unit = {}) = crack.apply(block)
 /**
  * Creates a `geode` configured feature, the layered hollow spheres the amethyst geodes are made of.
  *
- * Produces `data/<namespace>/worldgen/configured_feature/<fileName>.json`.
+ * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#geode
  */
-fun ConfiguredFeatures.geode(fileName: String, block: Geode.() -> Unit = {}): ConfiguredFeatureArgument {
+fun ConfiguredFeatures.geode(fileName: String, block: Geode.() -> Unit = {}): FeatureArgument {
 	val configuredFeature = ConfiguredFeature(fileName, Geode().apply(block))
 	dp.configuredFeatures += configuredFeature
-	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
+	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
 }

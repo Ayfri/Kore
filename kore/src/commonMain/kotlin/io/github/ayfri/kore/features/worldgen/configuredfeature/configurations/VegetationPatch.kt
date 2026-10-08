@@ -10,7 +10,7 @@ import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.Surface
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.PlacedFeatureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
@@ -35,11 +35,11 @@ fun ConfiguredFeatures.vegetationPatch(
 	replaceable: InlinableList<BlockOrTagArgument>,
 	vegetationFeature: PlacedFeatureArgument,
 	block: VegetationPatch.() -> Unit = {},
-): ConfiguredFeatureArgument {
+): FeatureArgument {
 	val configuredFeature = ConfiguredFeature(
 		fileName,
 		VegetationPatch(surface, replaceable = replaceable, vegetationFeature = vegetationFeature).apply(block),
 	)
 	dp.configuredFeatures += configuredFeature
-	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
+	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
 }

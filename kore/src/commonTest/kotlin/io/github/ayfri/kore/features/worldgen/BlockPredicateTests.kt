@@ -10,14 +10,14 @@ import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.blockPredi
 import io.github.ayfri.kore.features.worldgen.placedfeature.placedFeature
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.Blocks
-import io.github.ayfri.kore.generated.ConfiguredFeatures
+import io.github.ayfri.kore.generated.Features
 import io.github.ayfri.kore.generated.Fluids
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
 
 private fun DataPack.assertPredicate(name: String, expected: String, block: BlockPredicatesScope.() -> Unit) {
-	placedFeature(name, ConfiguredFeatures.ACACIA) {
+	placedFeature(name, Features.ACACIA) {
 		blockPredicateFilter {
 			predicate = blockPredicate(block)
 		}

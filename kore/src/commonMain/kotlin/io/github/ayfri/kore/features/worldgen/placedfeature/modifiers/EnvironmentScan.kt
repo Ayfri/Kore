@@ -49,7 +49,7 @@ enum class SearchDirection {
  * The block predicate builders are scoped to [block].
  *
  * ```kotlin
- * placedFeature("my_feature", ConfiguredFeatures.ACACIA) {
+ * placedFeature("my_feature", Features.ACACIA) {
  *     environmentScan(SearchDirection.DOWN, maxSteps = constant(12)) {
  *         targetCondition { solid() }
  *         allowedSearchCondition { replaceable() }

@@ -7,7 +7,7 @@ import io.github.ayfri.kore.arguments.types.literals.int
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.arguments.types.JigsawArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.TemplatePoolArgument
@@ -15,7 +15,7 @@ import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
 /** Places the configured [feature] at the executing position or at [pos]. */
-fun Function.placeFeature(feature: ConfiguredFeatureArgument, pos: Vec3? = null) =
+fun Function.placeFeature(feature: FeatureArgument, pos: Vec3? = null) =
 	addLine(command("place", literal("feature"), feature, pos))
 
 /**

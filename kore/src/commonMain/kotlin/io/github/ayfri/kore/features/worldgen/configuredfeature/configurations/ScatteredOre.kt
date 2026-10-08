@@ -4,7 +4,7 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatur
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.Target
 import io.github.ayfri.kore.features.worldgen.configuredfeature.TargetsHolder
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
 import kotlinx.serialization.Serializable
 
 /**
@@ -37,7 +37,7 @@ data class ScatteredOre(
  * }
  * ```
  *
- * Produces `data/<namespace>/worldgen/configured_feature/<fileName>.json`.
+ * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature
  */
@@ -46,8 +46,8 @@ fun ConfiguredFeatures.scatteredOre(
 	size: Int = 0,
 	discardChanceOnAirExposure: Double = 0.0,
 	block: ScatteredOre.() -> Unit = {},
-): ConfiguredFeatureArgument {
+): FeatureArgument {
 	val configuredFeature = ConfiguredFeature(fileName, ScatteredOre(size, discardChanceOnAirExposure).apply(block))
 	dp.configuredFeatures += configuredFeature
-	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
+	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
 }

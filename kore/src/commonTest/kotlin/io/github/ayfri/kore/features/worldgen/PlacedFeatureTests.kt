@@ -7,13 +7,13 @@ import io.github.ayfri.kore.features.worldgen.blockpredicate.*
 import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.*
 import io.github.ayfri.kore.features.worldgen.placedfeature.placedFeature
 import io.github.ayfri.kore.generated.Biomes
-import io.github.ayfri.kore.generated.ConfiguredFeatures
+import io.github.ayfri.kore.generated.Features
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.placedFeatureTests() {
-	placedFeature("test", ConfiguredFeatures.ACACIA) {
+	placedFeature("test", Features.ACACIA) {
 		noiseThresholdCount {
 			noiseLevel = 2.0
 			belowNoise = 2
@@ -63,7 +63,7 @@ fun DataPack.placedFeatureTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("matching_biomes", ConfiguredFeatures.ACACIA) {
+	placedFeature("matching_biomes", Features.ACACIA) {
 		blockPredicateFilter {
 			predicate { matchingBiomes(Biomes.PLAINS, Biomes.SAVANNA) }
 		}
@@ -87,7 +87,7 @@ fun DataPack.placedFeatureTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("matching_biome_tag", ConfiguredFeatures.ACACIA) {
+	placedFeature("matching_biome_tag", Features.ACACIA) {
 		blockPredicateFilter {
 			predicate { matchingBiomes(Tags.Worldgen.Biome.IS_SAVANNA) }
 		}
@@ -108,7 +108,7 @@ fun DataPack.placedFeatureTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("fixed_placement", ConfiguredFeatures.END_PLATFORM) {
+	placedFeature("fixed_placement", Features.END_PLATFORM) {
 		fixedPlacement {
 			position(0, 0, 0)
 		}

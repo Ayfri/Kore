@@ -27,7 +27,7 @@ data class BlockPredicateFilter(
  * The block predicate builders are scoped to [block].
  *
  * ```kotlin
- * placedFeature("my_feature", ConfiguredFeatures.ACACIA) {
+ * placedFeature("my_feature", Features.ACACIA) {
  *     blockPredicateFilter {
  *         predicate { matchingBlockTag(Tags.Block.DIRT) }
  *     }

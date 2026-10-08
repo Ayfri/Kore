@@ -5,7 +5,7 @@ nav-title: Worldgen
 description: Build custom Minecraft world generation in Kotlin. Dimensions, biomes, noise, density functions, structures and features, type-safe, no hand-written JSON.
 keywords: minecraft worldgen, datapack worldgen, custom dimension minecraft, custom biome, noise settings minecraft, minecraft noise router, density function, datapack terrain generation, minecraft world preset, custom world generation
 date-created: 2025-08-11
-date-modified: 2026-08-21
+date-modified: 2026-10-08
 routeOverride: /docs/data-driven/worldgen
 ---
 
@@ -85,7 +85,7 @@ Replace `<ns>` with your namespace.
 |---------------------------------|--------------------------------------------------------------|
 | `biome(...)`                    | `data/<ns>/worldgen/biome/<name>.json`                       |
 | `configuredCarvers { ... }`     | `data/<ns>/worldgen/configured_carver/<name>.json`           |
-| `configuredFeatures { ... }`    | `data/<ns>/worldgen/configured_feature/<name>.json`          |
+| `configuredFeatures { ... }`    | `data/<ns>/worldgen/feature/<name>.json`                     |
 | `densityFunctions { ... }`      | `data/<ns>/worldgen/density_function/<name>.json`            |
 | `dimension(...)`                | `data/<ns>/dimension/<name>.json`                            |
 | `dimensionType(...)`            | `data/<ns>/dimension_type/<name>.json`                       |

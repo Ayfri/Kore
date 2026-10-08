@@ -5,7 +5,7 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatur
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
 import kotlinx.serialization.Serializable
 
 /**
@@ -40,7 +40,7 @@ data class NetherForestVegetation(
  * }
  * ```
  *
- * Produces `data/<namespace>/worldgen/configured_feature/<fileName>.json`.
+ * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#nether_forest_vegetation
  */
@@ -49,9 +49,9 @@ fun ConfiguredFeatures.netherForestVegetation(
 	spreadWidth: Int = 0,
 	spreadHeight: Int = 0,
 	block: NetherForestVegetation.() -> Unit = {},
-): ConfiguredFeatureArgument {
+): FeatureArgument {
 	val configuredFeature =
 		ConfiguredFeature(fileName, NetherForestVegetation(spreadWidth = spreadWidth, spreadHeight = spreadHeight).apply(block))
 	dp.configuredFeatures += configuredFeature
-	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
+	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
 }

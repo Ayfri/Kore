@@ -5,7 +5,7 @@ nav-title: Features
 description: Generate trees, ores and vegetation in Minecraft with Kore - configured features, placement modifiers and block state providers.
 keywords: minecraft, datapack, kore, worldgen, configured feature, placed feature, tree, ore, block state provider
 date-created: 2026-02-03
-date-modified: 2026-08-21
+date-modified: 2026-10-08
 routeOverride: /docs/data-driven/worldgen/features
 ---
 
@@ -27,7 +27,7 @@ References: [Configured feature](https://minecraft.wiki/w/Configured_feature), [
 ## Configured Features
 
 Each feature type is a function on `configuredFeaturesBuilder`, taking the file name first. One call produces one file and returns its
-`ConfiguredFeatureArgument`, so a configured feature always holds exactly one feature type.
+`FeatureArgument`, so a configured feature always holds exactly one feature type.
 
 Declare several at once inside a `configuredFeatures { }` block, or call `configuredFeaturesBuilder` directly to capture the argument:
 
@@ -39,6 +39,15 @@ val flower = dp.configuredFeaturesBuilder.simpleBlock("my_flower") {
 dp.configuredFeatures {
 	seagrass("my_seagrass", probability = 0.3)
 	desertWell("my_well")
+}
+```
+
+Each file lands in `data/<namespace>/worldgen/feature/<name>.json`, its fields next to `type`:
+
+```json
+{
+	"type": "minecraft:seagrass",
+	"probability": 0.3
 }
 ```
 

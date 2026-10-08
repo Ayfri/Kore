@@ -9,12 +9,12 @@ import io.github.ayfri.kore.features.worldgen.placedfeature.placedFeature
 import io.github.ayfri.kore.features.worldgen.verticalanchors.aboveBottom
 import io.github.ayfri.kore.features.worldgen.verticalanchors.absolute
 import io.github.ayfri.kore.features.worldgen.verticalanchors.belowTop
-import io.github.ayfri.kore.generated.ConfiguredFeatures
+import io.github.ayfri.kore.generated.Features
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.heightProviderTests() {
-	placedFeature("constant_absolute_test", ConfiguredFeatures.ACACIA) {
+	placedFeature("constant_absolute_test", Features.ACACIA) {
 		heightRange(constantAbsolute(32))
 	}
 
@@ -32,7 +32,7 @@ fun DataPack.heightProviderTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("constant_above_bottom_test", ConfiguredFeatures.ACACIA) {
+	placedFeature("constant_above_bottom_test", Features.ACACIA) {
 		heightRange(constantAboveBottom(8))
 	}
 
@@ -50,7 +50,7 @@ fun DataPack.heightProviderTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("constant_below_top_test", ConfiguredFeatures.ACACIA) {
+	placedFeature("constant_below_top_test", Features.ACACIA) {
 		heightRange(constantBelowTop(4))
 	}
 
@@ -68,7 +68,7 @@ fun DataPack.heightProviderTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("constant_anchor_test", ConfiguredFeatures.ACACIA) {
+	placedFeature("constant_anchor_test", Features.ACACIA) {
 		heightRange(constantHeightProvider(aboveBottom(16)))
 	}
 
@@ -86,7 +86,7 @@ fun DataPack.heightProviderTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("uniform_test", ConfiguredFeatures.ACACIA) {
+	placedFeature("uniform_test", Features.ACACIA) {
 		heightRange(uniformHeightProvider(aboveBottom(8), belowTop(2)))
 	}
 
@@ -110,7 +110,7 @@ fun DataPack.heightProviderTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("uniform_absolute_test", ConfiguredFeatures.ACACIA) {
+	placedFeature("uniform_absolute_test", Features.ACACIA) {
 		heightRange(uniformHeightProvider(0, 64))
 	}
 
@@ -134,7 +134,7 @@ fun DataPack.heightProviderTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("trapezoid_test", ConfiguredFeatures.ACACIA) {
+	placedFeature("trapezoid_test", Features.ACACIA) {
 		heightRange(trapezoidHeightProvider(absolute(0), absolute(128), plateau = 32))
 	}
 
@@ -159,7 +159,7 @@ fun DataPack.heightProviderTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("trapezoid_absolute_test", ConfiguredFeatures.ACACIA) {
+	placedFeature("trapezoid_absolute_test", Features.ACACIA) {
 		heightRange(trapezoidHeightProvider(0, 64))
 	}
 
@@ -183,7 +183,7 @@ fun DataPack.heightProviderTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("biased_to_bottom_test", ConfiguredFeatures.ACACIA) {
+	placedFeature("biased_to_bottom_test", Features.ACACIA) {
 		heightRange(biasedToBottomHeightProvider(aboveBottom(8), absolute(64), inner = 4))
 	}
 
@@ -208,7 +208,7 @@ fun DataPack.heightProviderTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("very_biased_to_bottom_test", ConfiguredFeatures.ACACIA) {
+	placedFeature("very_biased_to_bottom_test", Features.ACACIA) {
 		heightRange(veryBiasedToBottomHeightProvider(-64, 16))
 	}
 
@@ -232,7 +232,7 @@ fun DataPack.heightProviderTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("weighted_list_test", ConfiguredFeatures.ACACIA) {
+	placedFeature("weighted_list_test", Features.ACACIA) {
 		heightRange(weightedListHeightProvider {
 			entry(3, constantAbsolute(32))
 			entry(1, uniformHeightProvider(64, 96))
@@ -273,7 +273,7 @@ fun DataPack.heightProviderTests() {
 		}
 	""".trimIndent()
 
-	placedFeature("weighted_list_pairs_test", ConfiguredFeatures.ACACIA) {
+	placedFeature("weighted_list_pairs_test", Features.ACACIA) {
 		heightRange(weightedListHeightProvider(2 to constantBelowTop(1), 1 to constantAboveBottom(1)))
 	}
 

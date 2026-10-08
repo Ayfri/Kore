@@ -5,7 +5,7 @@ import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.data.block.blockStateStone
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -18,8 +18,8 @@ data class SpringFeature(
 	var validBlocks: InlinableList<BlockOrTagArgument> = emptyList(),
 ) : FeatureConfig()
 
-fun ConfiguredFeatures.springFeature(fileName: String, block: SpringFeature.() -> Unit = {}): ConfiguredFeatureArgument {
+fun ConfiguredFeatures.springFeature(fileName: String, block: SpringFeature.() -> Unit = {}): FeatureArgument {
 	val configuredFeature = ConfiguredFeature(fileName, SpringFeature().apply(block))
 	dp.configuredFeatures += configuredFeature
-	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
+	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
 }

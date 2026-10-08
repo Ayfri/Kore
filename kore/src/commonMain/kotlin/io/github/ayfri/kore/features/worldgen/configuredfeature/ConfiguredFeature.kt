@@ -3,7 +3,7 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.FeatureConfig
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
@@ -21,7 +21,7 @@ data class ConfiguredFeature(
 	@Transient
 	override var fileName: String = "configured_feature",
 	val featureConfig: FeatureConfig,
-) : Generator("worldgen/configured_feature") {
+) : Generator("worldgen/feature") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(featureConfig)
 }
 
@@ -31,7 +31,7 @@ data class ConfiguredFeature(
  *
  * Pass a [FeatureConfig] (e.g. ores, trees) and optionally adjust fields via [init].
  *
- * Produces `data/<namespace>/worldgen/configured_feature/<fileName>.json`.
+ * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
  * JSON format reference: https://minecraft.wiki/w/Configured_feature
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
@@ -40,10 +40,10 @@ fun DataPack.configuredFeature(
 	fileName: String = "configured_feature",
 	featureConfig: FeatureConfig,
 	init: ConfiguredFeature.() -> Unit = {},
-): ConfiguredFeatureArgument {
+): FeatureArgument {
 	val configuredFeature = ConfiguredFeature(fileName, featureConfig).apply(init)
 	configuredFeatures += configuredFeature
-	return ConfiguredFeatureArgument(fileName, configuredFeature.namespace ?: name)
+	return FeatureArgument(fileName, configuredFeature.namespace ?: name)
 }
 
 val DataPack.configuredFeaturesBuilder get() = ConfiguredFeatures(this)
@@ -51,7 +51,7 @@ val DataPack.configuredFeaturesBuilder get() = ConfiguredFeatures(this)
 /**
  * Declares configured features using Kore's DSL builder, one call per config type (e.g. [io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.geode]).
  *
- * Produces one `data/<namespace>/worldgen/configured_feature/<fileName>.json` per call inside [block].
+ * Produces one `data/<namespace>/worldgen/feature/<fileName>.json` per call inside [block].
  *
  * JSON format reference: https://minecraft.wiki/w/Configured_feature
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen

@@ -208,7 +208,7 @@ Kore provides helpers for all vanilla tag types:
 | `blockTag`                    | Blocks               | `tags/block`                                |
 | `catVariantTag`               | Cat variants         | `tags/cat_variant`                          |
 | `configuredCarverTag`         | World carvers        | `tags/worldgen/configured_carver`           |
-| `configuredFeatureTag`        | World features       | `tags/worldgen/configured_feature`          |
+| `configuredFeatureTag`        | World features       | `tags/worldgen/feature`                     |
 | `configuredStructureTag`      | Structures           | `tags/worldgen/structure`                   |
 | `damageTypeTag`               | Damage types         | `tags/damage_type`                          |
 | `enchantmentTag`              | Enchantments         | `tags/enchantment`                          |
@@ -361,4 +361,3 @@ With tag references:
 ### External Resources
 
 - [Minecraft Wiki: Tag (Java Edition)](https://minecraft.wiki/w/Tag_(Java_Edition)) - Complete reference for all tag types and vanilla tags
-

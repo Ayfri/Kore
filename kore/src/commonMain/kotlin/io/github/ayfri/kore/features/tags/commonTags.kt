@@ -47,13 +47,13 @@ fun DataPack.configuredCarverTag(
 	block: Tag<ConfiguredCarverTagArgument>.() -> Unit = {},
 ) = tag(fileName, "worldgen/configured_carver", namespace, replace, block)
 
-/** Create a configured feature tag. Produces `data/<namespace>/tags/worldgen/configured_feature/<fileName>.json`. */
+/** Create a configured feature tag. Produces `data/<namespace>/tags/worldgen/feature/<fileName>.json`. */
 fun DataPack.configuredFeatureTag(
 	fileName: String = "configured_feature",
 	namespace: String = name,
 	replace: Boolean = false,
-	block: Tag<ConfiguredFeatureTagArgument>.() -> Unit = {},
-) = tag(fileName, "worldgen/configured_feature", namespace, replace, block)
+	block: Tag<FeatureTagArgument>.() -> Unit = {},
+) = tag(fileName, "worldgen/feature", namespace, replace, block)
 
 /** Create a configured structure feature tag. Produces `data/<namespace>/tags/worldgen/structure/<fileName>.json`. */
 fun DataPack.configuredStructureTag(

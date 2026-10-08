@@ -5,7 +5,7 @@ import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProviderScope
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.PlacementModifier
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredFeatureArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.PlacedFeatureArgument
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -23,7 +23,7 @@ import kotlinx.serialization.Transient
 data class PlacedFeature(
 	@Transient
 	override var fileName: String = "placed_feature",
-	var feature: ConfiguredFeatureArgument,
+	var feature: FeatureArgument,
 	@SerialName("placement")
 	var placementModifiers: List<PlacementModifier> = emptyList(),
 ) : Generator("worldgen/placed_feature"), HeightProviderScope, IntProviderScope {
@@ -42,7 +42,7 @@ data class PlacedFeature(
  */
 fun DataPack.placedFeature(
 	fileName: String = "placed_feature",
-	feature: ConfiguredFeatureArgument,
+	feature: FeatureArgument,
 	block: PlacedFeature.() -> Unit,
 ): PlacedFeatureArgument {
 	val placedFeature = PlacedFeature(fileName, feature).apply(block)

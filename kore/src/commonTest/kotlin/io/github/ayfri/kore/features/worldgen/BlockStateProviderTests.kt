@@ -23,14 +23,12 @@ private fun DataPack.assertProvider(name: String, expected: String, block: Simpl
 	val template = """
 		{
 			"type": "minecraft:simple_block",
-			"config": {
-				"to_place": <provider>,
-				"schedule_tick": false
-			}
+			"to_place": <provider>,
+			"schedule_tick": false
 		}
 	""".trimIndent()
 
-	configuredFeatures.last() assertsIs template.replace("<provider>", expected.prependIndent("\t\t").trimStart())
+	configuredFeatures.last() assertsIs template.replace("<provider>", expected.prependIndent("\t").trimStart())
 }
 
 fun DataPack.blockStateProviderTests() {
