@@ -7,9 +7,9 @@ import io.github.ayfri.kore.arguments.components.matchers.damage
 import io.github.ayfri.kore.arguments.components.matchers.potionContents
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.assertions.assertsIs
-import io.github.ayfri.kore.generated.Effects
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.generated.Potions
 import io.github.ayfri.kore.utils.set
 import io.kotest.core.spec.style.FunSpec
 
@@ -55,14 +55,14 @@ fun itemPredicatesTests() {
 
 	val multipleSubPredicatesTest = Items.STONE.predicate {
 		subPredicates {
-			potionContents(Effects.SPEED, Effects.SLOWNESS)
+			potionContents(Potions.SWIFTNESS, Potions.SLOWNESS)
 		}
 		subPredicates {
-			potionContents(Effects.STRENGTH)
+			potionContents(Potions.STRENGTH)
 		}
 	}
 
-	multipleSubPredicatesTest.toString() assertsIs """minecraft:stone[potion_contents=["minecraft:speed","minecraft:slowness"]|potion_contents="minecraft:strength"]"""
+	multipleSubPredicatesTest.toString() assertsIs """minecraft:stone[potion_contents=["minecraft:swiftness","minecraft:slowness"]|potion_contents="minecraft:strength"]"""
 
 
 	val multipleComponentTest = Items.STONE.predicate {

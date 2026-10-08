@@ -544,7 +544,7 @@ predicate("upgradeable_pickaxe") {
 			}
 
 			// Match potion contents
-			potionContents(Effects.SPEED, Effects.STRENGTH)
+			potionContents(Potions.SWIFTNESS, Potions.STRENGTH)
 		}
 	}
 }
@@ -589,7 +589,7 @@ predicate("has_instrument") {
 | `fireworkExplosion { }`   | Match firework star properties                 |
 | `fireworks { }`           | Match firework rocket properties               |
 | `jukeboxPlayable { }`     | Match jukebox song                             |
-| `potionContents(..)`      | Match potion effects                           |
+| `potionContents(..)`      | Match potion types or a potion tag             |
 | `storedEnchantments { }`  | Match stored enchantments (enchanted books)    |
 | `trim { }`                | Match armor trim pattern/material              |
 | `villagerVariant(..)`     | Match the villager type of an entity           |

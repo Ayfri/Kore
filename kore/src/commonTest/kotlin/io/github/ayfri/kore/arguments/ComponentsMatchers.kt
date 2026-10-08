@@ -239,14 +239,14 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 
 
 	val potionContents = DataComponentPredicate().apply {
-		potionContents(Effects.HASTE, Effects.SPEED)
+		potionContents(Potions.LEAPING, Potions.SWIFTNESS)
 	}
 
 	jsonEncoder.encodeToString(potionContents) assertsIsJson """
 		{
 			"minecraft:potion_contents": [
-				"minecraft:haste",
-				"minecraft:speed"
+				"minecraft:leaping",
+				"minecraft:swiftness"
 			]
 		}
 	""".trimIndent()
