@@ -1,11 +1,11 @@
 [versions]
 esbuild = "0.28.2"
 gradle-plugin-publish = "2.2.1"
-jetbrains-compose = "1.12.1"
+jetbrains-compose = "1.12.2"
 joml = "1.10.9"
 knbt = "0.11.9"
 kobweb = "0.25.1"
-kotest = "6.2.5"
+kotest = "6.2.6"
 kotlin = "2.4.20"
 kotlin-dotenv = "6.5.1"
 kotlinpoet = "2.4.0"
