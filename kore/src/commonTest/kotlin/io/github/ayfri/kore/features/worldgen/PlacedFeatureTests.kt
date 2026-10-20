@@ -4,6 +4,8 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.worldgen.blockpredicate.*
+import io.github.ayfri.kore.features.worldgen.configuredfeature.VerticalDirection
+import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.*
 import io.github.ayfri.kore.features.worldgen.placedfeature.placedFeature
 import io.github.ayfri.kore.generated.Biomes
@@ -102,6 +104,28 @@ fun DataPack.placedFeatureTests() {
 					"predicate": {
 						"type": "minecraft:matching_biomes",
 						"biomes": "#minecraft:is_savanna"
+					}
+				}
+			]
+		}
+	""".trimIndent()
+
+	placedFeature("environment_scan", Features.ACACIA) {
+		environmentScan(VerticalDirection.DOWN, constant(12)) {
+			targetCondition { solid() }
+		}
+	}
+
+	placedFeatures.last() assertsIs """
+		{
+			"feature": "minecraft:acacia",
+			"placement": [
+				{
+					"type": "minecraft:environment_scan",
+					"direction_of_search": "down",
+					"max_steps": 12,
+					"target_condition": {
+						"type": "minecraft:solid"
 					}
 				}
 			]

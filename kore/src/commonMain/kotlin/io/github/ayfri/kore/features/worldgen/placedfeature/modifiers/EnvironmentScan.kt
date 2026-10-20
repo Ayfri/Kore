@@ -5,52 +5,41 @@ import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicateScope
 import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicatesScope
 import io.github.ayfri.kore.features.worldgen.blockpredicate.True
 import io.github.ayfri.kore.features.worldgen.blockpredicate.blockPredicate
+import io.github.ayfri.kore.features.worldgen.configuredfeature.VerticalDirection
 import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.features.worldgen.placedfeature.PlacedFeature
-import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
 /**
- * Placement modifier walking the world in [directionOfSearchDirection] until [targetCondition] passes, moving the
- * position to the block found, or discarding it when nothing is found within [maxSteps].
+ * Placement modifier walking the world in [directionOfSearch] until [targetCondition] passes, moving the position to
+ * the block found, or discarding it when nothing is found within [maxSteps].
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Placed_feature#environment_scan
  *
- * @property directionOfSearchDirection The direction the scan walks in.
+ * @property directionOfSearch The direction the scan walks in.
  * @property maxSteps The amount of blocks the scan walks through at most, between `1` and `32`.
  * @property targetCondition The condition a block has to pass to stop the scan.
  * @property allowedSearchCondition The condition every block walked through has to pass, always passing when `null`.
  */
 @Serializable
 data class EnvironmentScan(
-	var directionOfSearchDirection: SearchDirection,
+	var directionOfSearch: VerticalDirection,
 	var maxSteps: IntProvider = ConstantIntProvider(0),
 	var targetCondition: BlockPredicate = True,
 	var allowedSearchCondition: BlockPredicate? = null,
 ) : PlacementModifier(), BlockPredicateScope, IntProviderScope
 
-/** The direction an [EnvironmentScan] walks in. */
-@Serializable(with = SearchDirection.Companion.DirectionSerializer::class)
-enum class SearchDirection {
-	UP,
-	DOWN;
-
-	companion object {
-		data object DirectionSerializer : LowercaseSerializer<SearchDirection>(entries)
-	}
-}
-
 /**
- * Appends an `environment_scan` placement modifier, walking in [directionOfSearchDirection] until
+ * Appends an `environment_scan` placement modifier, walking in [directionOfSearch] until
  * [EnvironmentScan.targetCondition] passes.
  *
  * The block predicate builders are scoped to [block].
  *
  * ```kotlin
  * placedFeature("my_feature", Features.ACACIA) {
- *     environmentScan(SearchDirection.DOWN, maxSteps = constant(12)) {
+ *     environmentScan(VerticalDirection.DOWN, maxSteps = constant(12)) {
  *         targetCondition { solid() }
  *         allowedSearchCondition { replaceable() }
  *     }
@@ -60,11 +49,11 @@ enum class SearchDirection {
  * Minecraft Wiki: https://minecraft.wiki/w/Placed_feature#environment_scan
  */
 fun PlacedFeature.environmentScan(
-	directionOfSearchDirection: SearchDirection,
+	directionOfSearch: VerticalDirection,
 	maxSteps: IntProvider = ConstantIntProvider(0),
 	block: EnvironmentScan.() -> Unit = {},
 ) {
-	placementModifiers += EnvironmentScan(directionOfSearchDirection, maxSteps).apply(block)
+	placementModifiers += EnvironmentScan(directionOfSearch, maxSteps).apply(block)
 }
 
 /**
@@ -73,7 +62,7 @@ fun PlacedFeature.environmentScan(
  * A lone predicate is used as-is, several of them are wrapped in an `all_of`.
  *
  * ```kotlin
- * environmentScan(SearchDirection.DOWN, maxSteps = constant(12)) {
+ * environmentScan(VerticalDirection.DOWN, maxSteps = constant(12)) {
  *     targetCondition { solid() }
  * }
  * ```
@@ -91,7 +80,7 @@ fun EnvironmentScan.targetCondition(block: BlockPredicatesScope.() -> Unit) {
  * A lone predicate is used as-is, several of them are wrapped in an `all_of`.
  *
  * ```kotlin
- * environmentScan(SearchDirection.DOWN, maxSteps = constant(12)) {
+ * environmentScan(VerticalDirection.DOWN, maxSteps = constant(12)) {
  *     allowedSearchCondition { replaceable() }
  * }
  * ```
