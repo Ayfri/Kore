@@ -19,7 +19,7 @@ import kotlinx.serialization.Serializable
  * @property extraBranchSteps Number of steps in which extra branches can grow, at least `1`, `1` to `4` for vanilla mangroves.
  * @property extraBranchLength Length of the extra branches, at least `0`, `0` to `1` for vanilla mangroves.
  * @property placeBranchPerLogProbability Chance of each log producing a branch, `0.0` to `1.0`, `0.5` in vanilla.
- * @property canGrowthThrough A block, a block tag or a list of blocks the trunk can grow through.
+ * @property canGrowThrough A block, a block tag or a list of blocks the trunk can grow through.
  */
 @Serializable
 data class UpwardsBranchingTrunkPlacer(
@@ -29,7 +29,7 @@ data class UpwardsBranchingTrunkPlacer(
 	var extraBranchSteps: IntProvider = ConstantIntProvider(0),
 	var extraBranchLength: IntProvider = ConstantIntProvider(0),
 	var placeBranchPerLogProbability: Double = 0.0,
-	var canGrowthThrough: InlinableList<BlockOrTagArgument> = emptyList(),
+	var canGrowThrough: InlinableList<BlockOrTagArgument> = emptyList(),
 ) : TrunkPlacer()
 
 /**

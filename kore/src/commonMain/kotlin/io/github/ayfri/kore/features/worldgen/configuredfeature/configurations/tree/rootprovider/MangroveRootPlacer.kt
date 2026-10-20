@@ -38,7 +38,7 @@ data class MangroveRootPlacer(
  * @property maxRootWidth Maximum width of the roots, `1` to `12`, `8` for vanilla mangroves.
  * @property maxRootLength Maximum length of the roots, `1` to `64`, `15` for vanilla mangroves.
  * @property randomSkewChance Chance of a root skewing off its course, `0.0` to `1.0`, `0.2` for vanilla mangroves.
- * @property canGrowTrough A block, a block tag or a list of blocks the roots can grow through.
+ * @property canGrowThrough A block, a block tag or a list of blocks the roots can grow through.
  * @property muddyRootsIn A block, a block tag or a list of blocks that turn the roots into [muddyRootsProvider] when they
  * grow in them, mud and muddy mangrove roots for vanilla mangroves.
  * @property muddyRootsProvider The block states the roots turn into inside [muddyRootsIn].
@@ -48,7 +48,7 @@ data class MangroveRootPlacement(
 	var maxRootWidth: Int = 0,
 	var maxRootLength: Int = 0,
 	var randomSkewChance: Double = 0.0,
-	var canGrowTrough: InlinableList<BlockOrTagArgument> = emptyList(),
+	var canGrowThrough: InlinableList<BlockOrTagArgument> = emptyList(),
 	var muddyRootsIn: InlinableList<BlockOrTagArgument> = emptyList(),
 	var muddyRootsProvider: BlockStateProvider = SimpleStateProvider(),
 ) : BlockStateProviderScope

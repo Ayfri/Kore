@@ -3,6 +3,7 @@ package io.github.ayfri.kore.features.worldgen
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.StructureRotation
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.assertions.assertsIsJson
 import io.github.ayfri.kore.data.block.blockState
 import io.github.ayfri.kore.data.block.blockStateStone
 import io.github.ayfri.kore.dataPack
@@ -18,9 +19,12 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.t
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.alterGround
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.attachedToLeaves
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.shelfMushroom
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.rootprovider.mangroveRootPlacer
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.rootprovider.mangroveRootPlacement
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.cherryTrunkPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.darkOakTrunkPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.poplarTrunkPlacer
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.upwardsBranchingTrunkPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeaturesBuilder
 import io.github.ayfri.kore.features.worldgen.configuredfeature.target
@@ -1814,6 +1818,99 @@ fun DataPack.configuredFeatureTests() {
 				"hanging_leaves_extension_chance": 0.0
 			},
 			"decorators": []
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.tree("test_upwards_branching_tree") {
+		upwardsBranchingTrunkPlacer {
+			baseHeight = 2
+			heightRandA = 1
+			heightRandB = 4
+			extraBranchSteps = uniform(1, 4)
+			extraBranchLength = uniform(0, 1)
+			placeBranchPerLogProbability = 0.5
+			canGrowThrough = listOf(Tags.Block.MANGROVE_LOGS_CAN_GROW_THROUGH)
+		}
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:tree",
+			"below_trunk_provider": {
+				"type": "minecraft:rule_based_state_provider",
+				"rules": []
+			},
+			"minimum_size": {
+				"type": "minecraft:two_layers_feature_size"
+			},
+			"trunk_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:stone"
+				}
+			},
+			"foliage_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:stone"
+				}
+			},
+			"trunk_placer": {
+				"type": "minecraft:upwards_branching_trunk_placer",
+				"base_height": 2,
+				"height_rand_a": 1,
+				"height_rand_b": 4,
+				"extra_branch_steps": {
+					"type": "minecraft:uniform",
+					"min_inclusive": 1,
+					"max_inclusive": 4
+				},
+				"extra_branch_length": {
+					"type": "minecraft:uniform",
+					"min_inclusive": 0,
+					"max_inclusive": 1
+				},
+				"place_branch_per_log_probability": 0.5,
+				"can_grow_through": "#minecraft:mangrove_logs_can_grow_through"
+			},
+			"foliage_placer": {
+				"type": "minecraft:fancy_foliage_placer",
+				"radius": 0,
+				"offset": 0,
+				"height": 0
+			},
+			"decorators": []
+		}
+	""".trimIndent()
+
+	jsonEncoder.encodeToString(
+		mangroveRootPlacer {
+			mangroveRootPlacement {
+				canGrowThrough = listOf(Tags.Block.MANGROVE_ROOTS_CAN_GROW_THROUGH)
+			}
+		}
+	) assertsIsJson """
+		{
+			"root_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:stone"
+				}
+			},
+			"trunk_offset_y": 0,
+			"mangrove_root_placement": {
+				"max_root_width": 0,
+				"max_root_length": 0,
+				"random_skew_chance": 0.0,
+				"can_grow_through": "#minecraft:mangrove_roots_can_grow_through",
+				"muddy_roots_in": [],
+				"muddy_roots_provider": {
+					"type": "minecraft:simple_state_provider",
+					"state": {
+						"Name": "minecraft:stone"
+					}
+				}
+			}
 		}
 	""".trimIndent()
 
