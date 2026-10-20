@@ -22,6 +22,7 @@ import io.github.ayfri.kore.features.instruments.Instrument
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.jukeboxsongs.JukeboxSong
 import io.github.ayfri.kore.features.loottables.LootTable
+import io.github.ayfri.kore.features.numberproviders.NumberProviderFile
 import io.github.ayfri.kore.features.paintingvariant.PaintingVariant
 import io.github.ayfri.kore.features.pigsoundvariants.PigSoundVariant
 import io.github.ayfri.kore.features.pigvariants.PigVariant
@@ -123,6 +124,7 @@ class DataPack(val name: String) {
 	val multiNoiseBiomeSourceParameterLists = registerGenerator<MultiNoiseBiomeSourceParameterList>()
 	val noises = registerGenerator<Noise>()
 	val noiseSettings = registerGenerator<NoiseSettings>()
+	val numberProviders = registerGenerator<NumberProviderFile>()
 	val paintingVariants = registerGenerator<PaintingVariant>()
 	val pigSoundVariants = registerGenerator<PigSoundVariant>()
 	val pigVariants = registerGenerator<PigVariant>()

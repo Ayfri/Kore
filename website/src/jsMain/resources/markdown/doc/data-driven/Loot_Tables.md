@@ -229,6 +229,58 @@ pool {
 }
 ```
 
+### Number provider files
+
+A number provider can also live in its own file, `data/<namespace>/number_provider/<fileName>.json`, so the game components that take a number provider by ID can point at it. `numberProvider` takes a block returning the provider and gives back the reference to use:
+
+```kotlin
+val layers = numberProvider("my_layers") {
+	numberDispatcher(default = weightedListNumber {
+		entry(30, 1f)
+		entry(70, 0f)
+	}) {
+		case(1f) {
+			blockStateProperty(Blocks.COMPOSTER) {
+				this["level"] = "0"
+			}
+		}
+	}
+}
+```
+
+```json
+{
+	"type": "minecraft:number_dispatcher",
+	"cases": [
+		{
+			"condition": {
+				"condition": "minecraft:block_state_property",
+				"block": "minecraft:composter",
+				"properties": {
+					"level": "0"
+				}
+			},
+			"number_provider": 1.0
+		}
+	],
+	"default": {
+		"type": "minecraft:weighted_list",
+		"distribution": [
+			{ "data": 1.0, "weight": 30 },
+			{ "data": 0.0, "weight": 70 }
+		]
+	}
+}
+```
+
+A constant is written as a bare number, the way vanilla's `compostable/always_add_one.json` is:
+
+```kotlin
+numberProvider("always_add_one", 1f) // 1.0
+```
+
+The vanilla files are listed in `NumberProviders`, e.g. `NumberProviders.Compostable.LOW` for `minecraft:compostable/low`. A number provider can't reference a `number_provider` file by ID because Kore's `NumberProvider` has no reference type: only components like `compostable` take the ID.
+
 ## Entries
 
 Entries define what can be selected during a pool roll.

@@ -40,6 +40,7 @@ suspend fun launchAllSimpleGenerators(): List<Generator> {
 		gen("Models", "models") {
 			argumentClassName = "Model M"
 		},
+		gen("NumberProviders", "number_provider"),
 		gen("PaintingVariants", "painting_variant"),
 		gen("PigSoundVariants", "pig_sound_variant"),
 		gen("PigVariants", "pig_variant"),
