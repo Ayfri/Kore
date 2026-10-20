@@ -3,7 +3,10 @@ package io.github.ayfri.kore.website.components.doc
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideStar
 import io.github.ayfri.kore.website.GlobalStyle
+import io.github.ayfri.kore.website.PREFERRED_SOURCE_LINK
+import io.github.ayfri.kore.website.utils.externalTarget
 import io.github.ayfri.kore.website.utils.transition
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
@@ -62,6 +65,20 @@ object PageNavigationStyle : StyleSheet() {
 
 		self + hover style {
 			textDecorationLine(TextDecorationLine.Underline)
+		}
+	}
+
+	val preferredSource by style {
+		alignItems(AlignItems.Center)
+		color(GlobalStyle.altTextColor)
+		display(DisplayStyle.Flex)
+		flexWrap(FlexWrap.Wrap)
+		fontSize(0.85.cssRem)
+		gap(0.25.cssRem, 0.5.cssRem)
+
+		child(self, type("svg")) style {
+			flexShrink(0)
+			fontSize(1.1.em)
 		}
 	}
 
@@ -175,6 +192,19 @@ fun PageNavigation(currentPath: String, publishDate: String?, modifiedDate: Stri
 					Span({ classes(PageNavigationStyle.navLabel) }) { Text("Next →") }
 					Span({ classes(PageNavigationStyle.navTitle) }) { Text(nextEntry.navTitle) }
 				}
+			}
+		}
+
+		Div({
+			classes(PageNavigationStyle.preferredSource)
+		}) {
+			LucideStar()
+			Text("Prefer Kore docs in Google Search and AI Mode?")
+			A(PREFERRED_SOURCE_LINK, {
+				classes(PageNavigationStyle.editLink)
+				externalTarget(PREFERRED_SOURCE_LINK)
+			}) {
+				Text("Add kore.ayfri.com as a preferred source on Google")
 			}
 		}
 	}

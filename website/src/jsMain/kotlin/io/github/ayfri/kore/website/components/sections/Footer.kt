@@ -10,6 +10,7 @@ import io.github.ayfri.kore.website.DISCORD_LINK
 import io.github.ayfri.kore.website.GITHUB_LINK
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.LandingVars
+import io.github.ayfri.kore.website.PREFERRED_SOURCE_LINK
 import io.github.ayfri.kore.website.WEBSITE_GITHUB_LINK
 import io.github.ayfri.kore.website.components.common.BrandIcon
 import io.github.ayfri.kore.website.utils.*
@@ -52,6 +53,7 @@ private val footerColumns = listOf(
 			"Discord" to DISCORD_LINK,
 			"Slack #kore" to "https://kotlinlang.slack.com/archives/C066G9BF66A",
 			"Contact" to "mailto:pierre.ayfri@gmail.com",
+			"Google Preferred Source" to PREFERRED_SOURCE_LINK,
 		)
 	),
 )
