@@ -87,7 +87,8 @@ Int providers fill every field expecting a variable count or size: `count()` and
 | `weightedList { }`                                     | Randomly selects one entry from a weighted pool.                                    |
 
 ```kotlin
-count(constant(10))
+// A plain Int is a constant, only count() and countOnEveryLayer() accept it.
+count(10)
 count(biasedToBottom(3, 8))
 count(clampedNormal(1, 10, mean = 5.0f, deviation = 2.0f))
 

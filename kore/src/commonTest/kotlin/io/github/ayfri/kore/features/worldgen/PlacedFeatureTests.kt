@@ -5,6 +5,7 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.worldgen.blockpredicate.*
 import io.github.ayfri.kore.features.worldgen.configuredfeature.VerticalDirection
+import io.github.ayfri.kore.features.worldgen.heightproviders.constantAbsolute
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.features.worldgen.intproviders.uniform
 import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.*
@@ -112,7 +113,7 @@ fun DataPack.placedFeatureTests() {
 	""".trimIndent()
 
 	placedFeature("environment_scan", Features.ACACIA) {
-		environmentScan(VerticalDirection.DOWN, constant(12)) {
+		environmentScan(VerticalDirection.DOWN, 12) {
 			targetCondition { solid() }
 		}
 	}
@@ -168,6 +169,34 @@ fun DataPack.placedFeatureTests() {
 					"x": 0,
 					"y": -1,
 					"z": 0
+				}
+			]
+		}
+	""".trimIndent()
+
+	placedFeature("int_counts", Features.ACACIA) {
+		count(10)
+		countOnEveryLayer(3)
+		heightRange(constantAbsolute(64))
+	}
+
+	placedFeatures.last() assertsIs """
+		{
+			"feature": "minecraft:acacia",
+			"placement": [
+				{
+					"type": "minecraft:count",
+					"count": 10
+				},
+				{
+					"type": "minecraft:count_on_every_layer",
+					"count": 3
+				},
+				{
+					"type": "minecraft:height_range",
+					"height": {
+						"absolute": 64
+					}
 				}
 			]
 		}

@@ -6,9 +6,6 @@ import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicatesScop
 import io.github.ayfri.kore.features.worldgen.blockpredicate.True
 import io.github.ayfri.kore.features.worldgen.blockpredicate.blockPredicate
 import io.github.ayfri.kore.features.worldgen.configuredfeature.VerticalDirection
-import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
-import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
-import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.features.worldgen.placedfeature.PlacedFeature
 import kotlinx.serialization.Serializable
 
@@ -19,17 +16,17 @@ import kotlinx.serialization.Serializable
  * Minecraft Wiki: https://minecraft.wiki/w/Placed_feature#environment_scan
  *
  * @property directionOfSearch The direction the scan walks in.
- * @property maxSteps The amount of blocks the scan walks through at most, between `1` and `32`.
+ * @property maxSteps The amount of blocks the scan walks through at most, required, from `1` to `32`.
  * @property targetCondition The condition a block has to pass to stop the scan.
  * @property allowedSearchCondition The condition every block walked through has to pass, always passing when `null`.
  */
 @Serializable
 data class EnvironmentScan(
 	var directionOfSearch: VerticalDirection,
-	var maxSteps: IntProvider = ConstantIntProvider(0),
+	var maxSteps: Int,
 	var targetCondition: BlockPredicate = True,
 	var allowedSearchCondition: BlockPredicate? = null,
-) : PlacementModifier(), BlockPredicateScope, IntProviderScope
+) : PlacementModifier(), BlockPredicateScope
 
 /**
  * Appends an `environment_scan` placement modifier, walking in [directionOfSearch] until
@@ -39,7 +36,7 @@ data class EnvironmentScan(
  *
  * ```kotlin
  * placedFeature("my_feature", Features.ACACIA) {
- *     environmentScan(VerticalDirection.DOWN, maxSteps = constant(12)) {
+ *     environmentScan(VerticalDirection.DOWN, maxSteps = 12) {
  *         targetCondition { solid() }
  *         allowedSearchCondition { replaceable() }
  *     }
@@ -50,7 +47,7 @@ data class EnvironmentScan(
  */
 fun PlacedFeature.environmentScan(
 	directionOfSearch: VerticalDirection,
-	maxSteps: IntProvider = ConstantIntProvider(0),
+	maxSteps: Int,
 	block: EnvironmentScan.() -> Unit = {},
 ) {
 	placementModifiers += EnvironmentScan(directionOfSearch, maxSteps).apply(block)
@@ -62,7 +59,7 @@ fun PlacedFeature.environmentScan(
  * A lone predicate is used as-is, several of them are wrapped in an `all_of`.
  *
  * ```kotlin
- * environmentScan(VerticalDirection.DOWN, maxSteps = constant(12)) {
+ * environmentScan(VerticalDirection.DOWN, maxSteps = 12) {
  *     targetCondition { solid() }
  * }
  * ```
@@ -80,7 +77,7 @@ fun EnvironmentScan.targetCondition(block: BlockPredicatesScope.() -> Unit) {
  * A lone predicate is used as-is, several of them are wrapped in an `all_of`.
  *
  * ```kotlin
- * environmentScan(VerticalDirection.DOWN, maxSteps = constant(12)) {
+ * environmentScan(VerticalDirection.DOWN, maxSteps = 12) {
  *     allowedSearchCondition { replaceable() }
  * }
  * ```

@@ -26,10 +26,9 @@ References: [Configured feature](https://minecraft.wiki/w/Configured_feature), [
 
 ## Configured Features
 
-Each feature type is a function on `configuredFeaturesBuilder`, taking the file name first. One call produces one file and returns its
-`FeatureArgument`, so a configured feature always holds exactly one feature type.
-
-Declare several at once inside a `configuredFeatures { }` block, or call `configuredFeaturesBuilder` directly to capture the argument:
+Each feature type is a function on `configuredFeaturesBuilder`, taking the file name first: one call produces one file and returns its
+`FeatureArgument`, so a configured feature always holds exactly one feature type. Declare several at once inside a `configuredFeatures { }`
+block, or call `configuredFeaturesBuilder` directly to capture the argument:
 
 ```kotlin
 val flower = dp.configuredFeaturesBuilder.simpleBlock("my_flower") {
@@ -444,7 +443,7 @@ ones that ended up outside the biome.
 ```kotlin
 val treePlaced = dp.placedFeature("my_tree_placed", treeConfigured) {
 	inSquare()
-	count(constant(10))
+	count(10)
 	heightRange(uniformHeightProvider(64, 128))
 	biome()
 }
@@ -472,9 +471,10 @@ final position.
 | `surfaceRelativeThresholdFilter(...)` | Filters on the distance to the surface              |
 | `surfaceWaterDepthFilter(maxDepth)`   | Drops positions under deeper water than `maxDepth`  |
 
-`heightRange` and `count` take a height provider and an int provider; see [Providers](/docs/data-driven/worldgen/providers) for the
-distributions available. `offset` takes one int provider per axis: `constant(1)` moves every position the same way, `uniform(-2, 2)`
-scatters it.
+`count`, `countOnEveryLayer`, `heightRange` and `rarityFilter` have no default, the value is required. `count` and `countOnEveryLayer` take
+an int provider or a plain `Int` (`count(10)` is `count(constant(10))`), `heightRange` takes a height provider and `rarityFilter` a positive
+`Int`; see [Providers](/docs/data-driven/worldgen/providers) for the distributions available. `offset` takes one int provider per axis:
+`constant(1)` moves every position the same way, `uniform(-2, 2)` scatters it.
 
 Reference: [Placement modifier](https://minecraft.wiki/w/Placed_feature#Placement_modifiers)
 
@@ -495,7 +495,7 @@ fun DataPack.createForestFeatures() {
 
 	val oakTreePlaced = placedFeature("oak_tree_placed", oakTree) {
 		inSquare()
-		count(constant(8))
+		count(8)
 		heightRange(uniformHeightProvider(64, 100))
 		biome()
 	}
@@ -510,7 +510,7 @@ fun DataPack.createForestFeatures() {
 
 	val ironOrePlaced = placedFeature("iron_ore_placed", ironOre) {
 		inSquare()
-		count(constant(20))
+		count(20)
 		heightRange(uniformHeightProvider(-64, 72))
 		biome()
 	}
