@@ -89,6 +89,30 @@ tree("my_poplar") {
 }
 ```
 
+`rootPlacer` adds roots under the trunk and raises the trunk above them. Only the mangrove one exists, `mangroveRootPlacer`, with the vanilla
+mangrove values below: the roots grow up to 8 blocks wide and 15 long, skew off their course 20% of the time, turn muddy over mud, and get
+a moss carpet on top half of the time.
+
+```kotlin
+tree("my_mangrove") {
+	rootPlacer = mangroveRootPlacer {
+		rootProvider = simpleStateProvider(blockState(Blocks.MANGROVE_ROOTS, "waterlogged" to "false"))
+		trunkOffsetY = uniform(1, 3)
+		aboveRootPlacement(chance = 0.5) {
+			aboveRootProvider = simpleStateProvider(Blocks.MOSS_CARPET)
+		}
+		mangroveRootPlacement {
+			maxRootWidth = 8
+			maxRootLength = 15
+			randomSkewChance = 0.2
+			canGrowThrough = listOf(Tags.Block.MANGROVE_ROOTS_CAN_GROW_THROUGH)
+			muddyRootsIn = listOf(Blocks.MUD, Blocks.MUDDY_MANGROVE_ROOTS)
+			muddyRootsProvider = simpleStateProvider(blockState(Blocks.MUDDY_MANGROVE_ROOTS, "axis" to "y"))
+		}
+	}
+}
+```
+
 ### Ore
 
 Ore features replace existing terrain blocks. `size` is the maximum vein size, and `discardChanceOnAirExposure` skips blocks exposed to air

@@ -4,6 +4,7 @@ import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.Tree
 import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.serializers.InlinableList
@@ -54,18 +55,20 @@ data class MangroveRootPlacement(
 ) : BlockStateProviderScope
 
 /**
- * Creates a [MangroveRootPlacer] configured in [block].
+ * Creates a [MangroveRootPlacer] configured in [block], to assign to [Tree.rootPlacer].
  *
  * The block state provider and int provider builders are scoped to [block].
  *
  * ```kotlin
- * val roots = mangroveRootPlacer {
- *     rootProvider = simpleStateProvider(Blocks.MANGROVE_ROOTS)
- *     trunkOffsetY = uniform(1, 3)
- *     mangroveRootPlacement {
- *         maxRootWidth = 8
- *         maxRootLength = 15
- *         muddyRootsProvider = simpleStateProvider(Blocks.MUDDY_MANGROVE_ROOTS)
+ * tree("mangrove") {
+ *     rootPlacer = mangroveRootPlacer {
+ *         rootProvider = simpleStateProvider(Blocks.MANGROVE_ROOTS)
+ *         trunkOffsetY = uniform(1, 3)
+ *         mangroveRootPlacement {
+ *             maxRootWidth = 8
+ *             maxRootLength = 15
+ *             muddyRootsProvider = simpleStateProvider(Blocks.MUDDY_MANGROVE_ROOTS)
+ *         }
  *     }
  * }
  * ```

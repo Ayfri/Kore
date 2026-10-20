@@ -9,6 +9,7 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.t
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.FoliagePlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.layersfeaturesize.LayersFeatureSize
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.layersfeaturesize.TwoLayersFeatureSize
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.rootprovider.RootPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.TreeDecorator
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.FancyTrunkPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.TrunkPlacer
@@ -31,6 +32,7 @@ import kotlinx.serialization.Serializable
  * @property trunkProvider The block state provider of the trunk, which needs an `axis` property with a fancy trunk
  * placer.
  * @property foliageProvider The block state provider of the foliage.
+ * @property rootPlacer The placer of the roots, such as the mangrove roots, none when `null`.
  * @property trunkPlacer The shape of the trunk.
  * @property foliagePlacer The shape of the foliage.
  * @property decorators The decorators run once the tree is placed, such as the beehives and the cocoa beans.
@@ -42,6 +44,7 @@ data class Tree(
 	var minimumSize: LayersFeatureSize = TwoLayersFeatureSize(),
 	var trunkProvider: BlockStateProvider = SimpleStateProvider(),
 	var foliageProvider: BlockStateProvider = SimpleStateProvider(),
+	var rootPlacer: RootPlacer? = null,
 	var trunkPlacer: TrunkPlacer,
 	var foliagePlacer: FoliagePlacer,
 	var decorators: List<TreeDecorator> = emptyList(),

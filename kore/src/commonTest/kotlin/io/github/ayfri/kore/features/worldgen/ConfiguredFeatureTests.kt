@@ -15,13 +15,17 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.*
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.cherryFoliagePlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.darkOakFoliagePlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.poplarFoliagePlacer
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.randomSpreadFoliagePlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.layersfeaturesize.threeLayersFeatureSize
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.layersfeaturesize.twoLayersFeatureSize
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.alterGround
-import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.attachedToLeaves
-import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.shelfMushroom
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.rootprovider.aboveRootPlacement
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.rootprovider.mangroveRootPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.rootprovider.mangroveRootPlacement
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.attachedToLeaves
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.beehive
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.leaveVine
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.shelfMushroom
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.cherryTrunkPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.darkOakTrunkPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.poplarTrunkPlacer
@@ -1963,11 +1967,248 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	jsonEncoder.encodeToString(
-		mangroveRootPlacer {
+	configuredFeaturesBuilder.tree("mangrove") {
+		ignoreVines = true
+		belowTrunkProvider = ruleBasedStateProvider {
+			rule {
+				ifTrue {
+					not {
+						matchingBlockTag(tag = Tags.Block.CANNOT_REPLACE_BELOW_TREE_TRUNK)
+					}
+				}
+				then = simpleStateProvider(Blocks.DIRT)
+			}
+		}
+		minimumSize = twoLayersFeatureSize(limit = 2, upperSize = 2)
+		trunkProvider = simpleStateProvider(blockState(Blocks.MANGROVE_LOG, "axis" to "y"))
+		foliageProvider = simpleStateProvider(
+			blockState(
+				Blocks.MANGROVE_LEAVES,
+				"distance" to "7",
+				"persistent" to "false",
+				"waterlogged" to "false"
+			)
+		)
+		rootPlacer = mangroveRootPlacer {
+			rootProvider = simpleStateProvider(blockState(Blocks.MANGROVE_ROOTS, "waterlogged" to "false"))
+			trunkOffsetY = uniform(1, 3)
 			aboveRootPlacement(chance = 0.5) {
 				aboveRootProvider = simpleStateProvider(Blocks.MOSS_CARPET)
 			}
+			mangroveRootPlacement {
+				maxRootWidth = 8
+				maxRootLength = 15
+				randomSkewChance = 0.2
+				canGrowThrough = listOf(Tags.Block.MANGROVE_ROOTS_CAN_GROW_THROUGH)
+				muddyRootsIn = listOf(Blocks.MUD, Blocks.MUDDY_MANGROVE_ROOTS)
+				muddyRootsProvider = simpleStateProvider(blockState(Blocks.MUDDY_MANGROVE_ROOTS, "axis" to "y"))
+			}
+		}
+		upwardsBranchingTrunkPlacer {
+			baseHeight = 2
+			heightRandA = 1
+			heightRandB = 4
+			extraBranchSteps = uniform(1, 4)
+			extraBranchLength = uniform(0, 1)
+			placeBranchPerLogProbability = 0.5
+			canGrowThrough = listOf(Tags.Block.MANGROVE_LOGS_CAN_GROW_THROUGH)
+		}
+		randomSpreadFoliagePlacer(
+			radius = constant(3),
+			offset = constant(0),
+			foliageHeight = constant(2),
+			leafPlacementAttempts = 70
+		)
+		decorators {
+			leaveVine(0.125)
+			attachedToLeaves {
+				probability = 0.14
+				exclusionRadiusXZ = 1
+				exclusionRadiusY = 0
+				requiredEmptyBlocks = 2
+				blockProvider = randomizedIntStateProvider("age") {
+					values(0, 4)
+					source = simpleStateProvider(
+						blockState(
+							Blocks.MANGROVE_PROPAGULE,
+							"age" to "0",
+							"hanging" to "true",
+							"stage" to "0",
+							"waterlogged" to "false"
+						)
+					)
+				}
+				directions = listOf(Direction.DOWN)
+			}
+			beehive(0.01)
+		}
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:tree",
+			"ignore_vines": true,
+			"below_trunk_provider": {
+				"type": "minecraft:rule_based_state_provider",
+				"rules": [
+					{
+						"if_true": {
+							"type": "minecraft:not",
+							"predicate": {
+								"type": "minecraft:matching_block_tag",
+								"tag": "minecraft:cannot_replace_below_tree_trunk"
+							}
+						},
+						"then": {
+							"type": "minecraft:simple_state_provider",
+							"state": {
+								"Name": "minecraft:dirt"
+							}
+						}
+					}
+				]
+			},
+			"minimum_size": {
+				"type": "minecraft:two_layers_feature_size",
+				"limit": 2,
+				"upper_size": 2
+			},
+			"trunk_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:mangrove_log",
+					"Properties": {
+						"axis": "y"
+					}
+				}
+			},
+			"foliage_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:mangrove_leaves",
+					"Properties": {
+						"distance": "7",
+						"persistent": "false",
+						"waterlogged": "false"
+					}
+				}
+			},
+			"root_placer": {
+				"type": "minecraft:mangrove_root_placer",
+				"root_provider": {
+					"type": "minecraft:simple_state_provider",
+					"state": {
+						"Name": "minecraft:mangrove_roots",
+						"Properties": {
+							"waterlogged": "false"
+						}
+					}
+				},
+				"trunk_offset_y": {
+					"type": "minecraft:uniform",
+					"min_inclusive": 1,
+					"max_inclusive": 3
+				},
+				"above_root_placement": {
+					"above_root_provider": {
+						"type": "minecraft:simple_state_provider",
+						"state": {
+							"Name": "minecraft:moss_carpet"
+						}
+					},
+					"above_root_placement_chance": 0.5
+				},
+				"mangrove_root_placement": {
+					"max_root_width": 8,
+					"max_root_length": 15,
+					"random_skew_chance": 0.2,
+					"can_grow_through": "#minecraft:mangrove_roots_can_grow_through",
+					"muddy_roots_in": [
+						"minecraft:mud",
+						"minecraft:muddy_mangrove_roots"
+					],
+					"muddy_roots_provider": {
+						"type": "minecraft:simple_state_provider",
+						"state": {
+							"Name": "minecraft:muddy_mangrove_roots",
+							"Properties": {
+								"axis": "y"
+							}
+						}
+					}
+				}
+			},
+			"trunk_placer": {
+				"type": "minecraft:upwards_branching_trunk_placer",
+				"base_height": 2,
+				"height_rand_a": 1,
+				"height_rand_b": 4,
+				"extra_branch_steps": {
+					"type": "minecraft:uniform",
+					"min_inclusive": 1,
+					"max_inclusive": 4
+				},
+				"extra_branch_length": {
+					"type": "minecraft:uniform",
+					"min_inclusive": 0,
+					"max_inclusive": 1
+				},
+				"place_branch_per_log_probability": 0.5,
+				"can_grow_through": "#minecraft:mangrove_logs_can_grow_through"
+			},
+			"foliage_placer": {
+				"type": "minecraft:random_spread_foliage_placer",
+				"radius": 3,
+				"offset": 0,
+				"foliage_height": 2,
+				"leaf_placement_attempts": 70
+			},
+			"decorators": [
+				{
+					"type": "minecraft:leave_vine",
+					"probability": 0.125
+				},
+				{
+					"type": "minecraft:attached_to_leaves",
+					"probability": 0.14,
+					"exclusion_radius_xz": 1,
+					"exclusion_radius_y": 0,
+					"required_empty_blocks": 2,
+					"block_provider": {
+						"type": "minecraft:randomized_int_state_provider",
+						"property": "age",
+						"values": {
+							"type": "minecraft:uniform",
+							"min_inclusive": 0,
+							"max_inclusive": 4
+						},
+						"source": {
+							"type": "minecraft:simple_state_provider",
+							"state": {
+								"Name": "minecraft:mangrove_propagule",
+								"Properties": {
+									"age": "0",
+									"hanging": "true",
+									"stage": "0",
+									"waterlogged": "false"
+								}
+							}
+						}
+					},
+					"directions": [
+						"down"
+					]
+				},
+				{
+					"type": "minecraft:beehive",
+					"probability": 0.01
+				}
+			]
+		}
+	""".trimIndent()
+
+	jsonEncoder.encodeToString(
+		mangroveRootPlacer {
 			mangroveRootPlacement {
 				canGrowThrough = listOf(Tags.Block.MANGROVE_ROOTS_CAN_GROW_THROUGH)
 			}
@@ -1981,15 +2222,6 @@ fun DataPack.configuredFeatureTests() {
 				}
 			},
 			"trunk_offset_y": 0,
-			"above_root_placement": {
-				"above_root_provider": {
-					"type": "minecraft:simple_state_provider",
-					"state": {
-						"Name": "minecraft:moss_carpet"
-					}
-				},
-				"above_root_placement_chance": 0.5
-			},
 			"mangrove_root_placement": {
 				"max_root_width": 0,
 				"max_root_length": 0,
