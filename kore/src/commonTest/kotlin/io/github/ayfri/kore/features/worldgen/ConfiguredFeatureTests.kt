@@ -43,7 +43,10 @@ import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.features.worldgen.intproviders.uniform
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.Surface
 import io.github.ayfri.kore.features.worldgen.ruletest.allOf
+import io.github.ayfri.kore.features.worldgen.ruletest.anyOf
+import io.github.ayfri.kore.features.worldgen.ruletest.blockMatch
 import io.github.ayfri.kore.features.worldgen.ruletest.heightMatch
+import io.github.ayfri.kore.features.worldgen.ruletest.not
 import io.github.ayfri.kore.features.worldgen.ruletest.randomBlockMatch
 import io.github.ayfri.kore.features.worldgen.ruletest.tagMatch
 import io.github.ayfri.kore.generated.*
@@ -920,6 +923,75 @@ fun DataPack.configuredFeatureTests() {
 								"min_inclusive": 0
 							}
 						]
+					},
+					"state": {
+						"Name": "minecraft:iron_ore"
+					}
+				}
+			]
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.ore("test_ore_any_of", size = 9) {
+		targets {
+			target(blockState(Blocks.IRON_ORE)) {
+				target = anyOf(
+					tagMatch(Tags.Block.STONE_ORE_REPLACEABLES),
+					tagMatch(Tags.Block.DEEPSLATE_ORE_REPLACEABLES)
+				)
+			}
+		}
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:ore",
+			"size": 9,
+			"discard_chance_on_air_exposure": 0.0,
+			"targets": [
+				{
+					"target": {
+						"predicate_type": "minecraft:any_of",
+						"rules": [
+							{
+								"predicate_type": "minecraft:tag_match",
+								"tag": "minecraft:stone_ore_replaceables"
+							},
+							{
+								"predicate_type": "minecraft:tag_match",
+								"tag": "minecraft:deepslate_ore_replaceables"
+							}
+						]
+					},
+					"state": {
+						"Name": "minecraft:iron_ore"
+					}
+				}
+			]
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.ore("test_ore_not", size = 9) {
+		targets {
+			target(blockState(Blocks.IRON_ORE)) {
+				target = not(blockMatch(Blocks.BEDROCK))
+			}
+		}
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:ore",
+			"size": 9,
+			"discard_chance_on_air_exposure": 0.0,
+			"targets": [
+				{
+					"target": {
+						"predicate_type": "minecraft:not",
+						"rule": {
+							"predicate_type": "minecraft:block_match",
+							"block": "minecraft:bedrock"
+						}
 					},
 					"state": {
 						"Name": "minecraft:iron_ore"

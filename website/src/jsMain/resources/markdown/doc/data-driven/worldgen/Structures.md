@@ -150,9 +150,11 @@ processorList("mossify") {
 |---------------------------------------------|-------------------------------------------------------------|
 | `allOf(rules...)`                           | A block matching every rule test of `rules`                 |
 | `alwaysTrue()`                              | Any block, same as leaving the predicate to its default     |
+| `anyOf(rules...)`                           | A block matching at least one rule test of `rules`          |
 | `blockMatch(block)`                         | One block, whatever its block state properties are          |
 | `blockStateMatch(blockState)`               | One exact block state, every property having to match       |
 | `heightMatch(minInclusive, maxInclusive)`   | Any block whose Y level is between the two bounds           |
+| `not(rule)`                                 | A block that `rule` doesn't match                           |
 | `randomBlockMatch(block, probability)`      | A block with a probability, clamped between `0.0` and `1.0` |
 | `randomBlockStateMatch(state, probability)` | A block state with a probability                            |
 | `tagMatch(tag)`                             | Any block of a block tag                                    |
