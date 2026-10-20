@@ -124,7 +124,7 @@ data class GeodeLayers(
 data class GeodeCrack(
 	var generateCrackChance: Double? = null,
 	var baseCrackSize: Double? = null,
-	var crackPointOffset: Double? = null,
+	var crackPointOffset: Int? = null,
 )
 
 /**

@@ -520,7 +520,7 @@ fun DataPack.configuredFeatureTests() {
 		crack {
 			generateCrackChance = 0.5
 			baseCrackSize = 2.0
-			crackPointOffset = 2.0
+			crackPointOffset = 2
 		}
 		invalidBlocksThreshold = 1
 	}
@@ -572,7 +572,7 @@ fun DataPack.configuredFeatureTests() {
 			"crack": {
 				"generate_crack_chance": 0.5,
 				"base_crack_size": 2.0,
-				"crack_point_offset": 2.0
+				"crack_point_offset": 2
 			},
 			"invalid_blocks_threshold": 1
 		}
