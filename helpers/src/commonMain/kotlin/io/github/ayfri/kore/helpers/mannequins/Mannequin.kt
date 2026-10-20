@@ -4,7 +4,7 @@ import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.components.item.ProfileComponent
 import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
-import io.github.ayfri.kore.utils.snbtSerializer
+import io.github.ayfri.kore.utils.encodeToNbtTag
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -46,7 +46,7 @@ data class Mannequin(
 	 *
 	 * @return The NBT compound.
 	 */
-	fun toNbt() = snbtSerializer.encodeToNbtTag(serializer(), this).nbtCompound
+	fun toNbt() = encodeToNbtTag(serializer(), this).nbtCompound
 }
 
 /**

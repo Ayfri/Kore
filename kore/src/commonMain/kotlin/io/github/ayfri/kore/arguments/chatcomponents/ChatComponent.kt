@@ -7,16 +7,15 @@ import io.github.ayfri.kore.arguments.chatcomponents.hover.HoverEvent
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.ColorAsARGBDecimalSerializer
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
+import io.github.ayfri.kore.utils.encodeToNbtTag
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.pascalCase
 import io.github.ayfri.kore.utils.set
-import io.github.ayfri.kore.utils.snbtSerializer
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtString
 import net.benwoodworth.knbt.NbtTag
-import net.benwoodworth.knbt.encodeToNbtTag
 
 /**
  * Base class for all Minecraft text (chat) components. Holds the shared styling fields (bold, italic, color, events, etc.)
@@ -81,7 +80,7 @@ sealed class ChatComponent {
 	open fun toNbtTag() = nbt {
 		this["type"] = type.name.lowercase()
 		bold?.let { this["bold"] = it }
-		clickEvent?.let { this["click_event"] = snbtSerializer.encodeToNbtTag(it) }
+		clickEvent?.let { this["click_event"] = encodeToNbtTag(it) }
 		color?.let { this["color"] = it.asString() }
 		extra?.let { this["extra"] = it.toNbtList() }
 		font?.let { this["font"] = it }

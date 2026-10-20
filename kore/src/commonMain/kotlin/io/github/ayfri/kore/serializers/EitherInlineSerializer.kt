@@ -1,14 +1,15 @@
 package io.github.ayfri.kore.serializers
 
+import io.github.ayfri.kore.utils.decodeFromNbtTag
+import io.github.ayfri.kore.utils.encodeToNbtTag
 import io.github.ayfri.kore.utils.jsonKey
+import io.github.ayfri.kore.utils.snakeCaseKey
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 import net.benwoodworth.knbt.NbtCompound
-import net.benwoodworth.knbt.NbtDecoder
-import net.benwoodworth.knbt.NbtEncoder
 import net.benwoodworth.knbt.nbtCompound
 
 /**
@@ -48,12 +49,10 @@ open class EitherInlineSerializer<T : Any>(
 			encoder.encodeJsonElement(namesToInline.firstNotNullOfOrNull { obj[descriptor.jsonKey(encoder.json, it)] } ?: obj)
 		}
 
-		is NbtEncoder -> {
-			val compound = encoder.nbt.encodeToNbtTag(delegate, value).nbtCompound
-			encoder.encodeNbtTag(namesToInline.firstNotNullOfOrNull { compound[it] } ?: compound)
-		}
-
-		else -> encoder.encodeSerializableValue(delegate, value)
+		else -> encoder.nbtEncoder?.let { nbt ->
+			val compound = encodeToNbtTag(delegate, value).nbtCompound
+			nbt.encodeNbtTag(namesToInline.firstNotNullOfOrNull { compound[descriptor.snakeCaseKey(it)] } ?: compound)
+		} ?: encoder.encodeSerializableValue(delegate, value)
 	}
 
 	override fun deserialize(decoder: Decoder): T = when (decoder) {
@@ -65,13 +64,11 @@ open class EitherInlineSerializer<T : Any>(
 			} ?: decoder.json.decodeFromJsonElement(delegate, element)
 		}
 
-		is NbtDecoder -> {
-			val tag = decoder.decodeNbtTag()
+		else -> decoder.nbtDecoder?.let { nbt ->
+			val tag = nbt.decodeNbtTag()
 			namesToInline.firstNotNullOfOrNull { name ->
-				runCatching { decoder.nbt.decodeFromNbtTag(delegate, NbtCompound(mapOf(name to tag))) }.getOrNull()
-			} ?: decoder.nbt.decodeFromNbtTag(delegate, tag)
-		}
-
-		else -> decoder.decodeSerializableValue(delegate)
+				runCatching { decodeFromNbtTag(delegate, NbtCompound(mapOf(descriptor.snakeCaseKey(name) to tag))) }.getOrNull()
+			} ?: decodeFromNbtTag(delegate, tag)
+		} ?: decoder.decodeSerializableValue(delegate)
 	}
 }

@@ -1,6 +1,8 @@
 package io.github.ayfri.kore.serializers
 
+import io.github.ayfri.kore.utils.decodeFromNbtTag
 import io.github.ayfri.kore.utils.defaultContentName
+import io.github.ayfri.kore.utils.encodeToNbtTag
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.serialDescriptor
@@ -86,17 +88,15 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 			else -> decodeBare(element) { decoder.json.decodeFromJsonElement(it, element) }
 		}
 
-		is NbtDecoder -> when (val tag = decoder.decodeNbtTag()) {
+		else -> when (val tag = (decoder.nbtDecoder ?: error("$baseName can only be deserialized from JSON or NBT.")).decodeNbtTag()) {
 			is NbtCompound -> {
 				val typeName = (tag[outputName] as? NbtString)?.value
 					?: error("Missing '$outputName' field in NBT compound for $baseName")
-				decoder.nbt.decodeFromNbtTag(generatedDeserializer(typeName), NbtCompound(content(tag) { it as? NbtCompound }))
+				decodeFromNbtTag(generatedDeserializer(typeName), NbtCompound(content(tag) { it as? NbtCompound }))
 			}
 
-			else -> decodeBare(tag) { decoder.nbt.decodeFromNbtTag(it, tag) }
+			else -> decodeBare(tag) { decodeFromNbtTag(it, tag) }
 		}
-
-		else -> error("$baseName can only be deserialized from JSON or NBT.")
 	}
 
 	override fun serialize(encoder: Encoder, value: T) {
@@ -111,14 +111,12 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 				}
 			)
 
-			is NbtEncoder -> encoder.encodeNbtTag(
-				when (val body = encoder.nbt.encodeToNbtTag(actual, value)) {
+			else -> (encoder.nbtEncoder ?: error("$baseName can only be serialized to JSON or NBT.")).encodeNbtTag(
+				when (val body = encodeToNbtTag(actual, value)) {
 					is NbtCompound -> NbtCompound(wrap(body, NbtString(outputClassName), ::NbtCompound))
 					else -> body
 				}
 			)
-
-			else -> error("$baseName can only be serialized to JSON or NBT.")
 		}
 	}
 

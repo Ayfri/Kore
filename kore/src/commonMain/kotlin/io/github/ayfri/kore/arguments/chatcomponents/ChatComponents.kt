@@ -3,6 +3,9 @@ package io.github.ayfri.kore.arguments.chatcomponents
 import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
+import io.github.ayfri.kore.serializers.nbtDecoder
+import io.github.ayfri.kore.serializers.nbtEncoder
+import io.github.ayfri.kore.utils.decodeFromNbtTag
 import io.github.ayfri.kore.utils.jsonSerializer
 import io.github.ayfri.kore.utils.toSnbt
 import kotlinx.serialization.*
@@ -135,18 +138,18 @@ data class ChatComponents(
 			else -> text((element as JsonPrimitive).content)
 		}
 
-		private fun decodeNbt(nbt: NbtFormat, tag: NbtTag): ChatComponent = when (tag) {
+		private fun decodeNbt(tag: NbtTag): ChatComponent = when (tag) {
 			is NbtList<*> -> {
 				require(tag.isNotEmpty()) { "Cannot decode an empty list as a chat component." }
-				decodeNbt(nbt, tag[0]).also { root ->
+				decodeNbt(tag[0]).also { root ->
 					if (tag.size > 1) root.extra =
-						ChatComponents(tag.drop(1).mapTo(mutableListOf()) { decodeNbt(nbt, it) })
+						ChatComponents(tag.drop(1).mapTo(mutableListOf()) { decodeNbt(it) })
 				}
 			}
 
 			is NbtCompound -> {
 				val type = (tag["type"] as? NbtString)?.value ?: inferType(tag.keys)
-				nbt.decodeFromNbtTag(serializerForType(type), NbtCompound(tag.filterKeys { it != "type" }))
+				decodeFromNbtTag(serializerForType(type), NbtCompound(tag.filterKeys { it != "type" }))
 			}
 
 			is NbtString -> text(tag.value)
@@ -155,12 +158,11 @@ data class ChatComponents(
 
 		private data object ChatComponentSerializer : KSerializer<ChatComponent> {
 			private val dispatcher = chatComponentSealedSerializer()
-			override val descriptor = NbtTag.serializer().descriptor
+			override val descriptor = SerialDescriptor("ChatComponent", NbtTag.serializer().descriptor)
 
 			override fun deserialize(decoder: Decoder) = when (decoder) {
 				is JsonDecoder -> decodeJson(decoder.decodeJsonElement())
-				is NbtDecoder -> decodeNbt(decoder.nbt, decoder.decodeNbtTag())
-				else -> throw IllegalArgumentException("Unsupported decoder: $decoder")
+				else -> decodeNbt(decoder.nbtDecoder?.decodeNbtTag() ?: throw IllegalArgumentException("Unsupported decoder: $decoder"))
 			}
 
 			override fun serialize(encoder: Encoder, value: ChatComponent) = when (value) {
@@ -187,12 +189,10 @@ data class ChatComponents(
 					else -> ChatComponents(decodeJson(element))
 				}
 
-				is NbtDecoder -> when (val tag = decoder.decodeNbtTag()) {
-					is NbtList<*> -> ChatComponents(tag.mapTo(mutableListOf()) { decodeNbt(decoder.nbt, it) }).unrooted()
-					else -> ChatComponents(decodeNbt(decoder.nbt, tag))
+				else -> when (val tag = decoder.nbtDecoder?.decodeNbtTag() ?: throw IllegalArgumentException("Unsupported decoder: $decoder")) {
+					is NbtList<*> -> ChatComponents(tag.mapTo(mutableListOf()) { decodeNbt(it) }).unrooted()
+					else -> ChatComponents(decodeNbt(tag))
 				}
-
-				else -> throw IllegalArgumentException("Unsupported decoder: $decoder")
 			}
 
 			/*
@@ -203,8 +203,7 @@ data class ChatComponents(
 				val components = if (rooted) value.rooted() else value
 				when {
 					rooted && components.list.size == 1 -> encoder.encodeSerializableValue(ChatComponentSerializer, components.list[0])
-					encoder is NbtEncoder -> encoder.encodeNbtTag(components.toNbtList())
-					else -> encoder.encodeComponents(descriptor, components.list)
+					else -> encoder.nbtEncoder?.encodeNbtTag(components.toNbtList()) ?: encoder.encodeComponents(descriptor, components.list)
 				}
 			}
 

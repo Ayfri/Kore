@@ -8,12 +8,12 @@ import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
+import io.github.ayfri.kore.serializers.nbtEncoder
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import net.benwoodworth.knbt.NbtEncoder
 import net.benwoodworth.knbt.NbtTag
 
 /**
@@ -31,10 +31,8 @@ data class LoreComponent(
 		data object LoreComponentSerializer : KSerializer<LoreComponent> {
 			override val descriptor = ListSerializer(NbtTag.serializer()).descriptor
 			override fun deserialize(decoder: Decoder) = error("LoreComponent cannot be deserialized.")
-			override fun serialize(encoder: Encoder, value: LoreComponent) = when (encoder) {
-				is NbtEncoder -> encoder.encodeNbtTag(value.list.toNbtList())
-				else -> encoder.encodeSerializableValue(NbtAsJsonSerializer, value.list.toNbtList())
-			}
+			override fun serialize(encoder: Encoder, value: LoreComponent) =
+				encoder.nbtEncoder?.encodeNbtTag(value.list.toNbtList()) ?: encoder.encodeSerializableValue(NbtAsJsonSerializer, value.list.toNbtList())
 		}
 	}
 }

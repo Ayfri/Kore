@@ -2,13 +2,14 @@ package io.github.ayfri.kore.arguments.components
 
 import io.github.ayfri.kore.arguments.components.item.CustomComponent
 import io.github.ayfri.kore.serializers.GeneratedSerializerMap
+import io.github.ayfri.kore.serializers.nbtEncoder
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.serialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonEncoder
-import net.benwoodworth.knbt.NbtEncoder
 import net.benwoodworth.knbt.NbtTag
 
 @GeneratedSerializerMap
@@ -18,14 +19,14 @@ abstract class Component {
 		class ComponentSerializer : KSerializer<Component> {
 			val kClass = Component::class
 
-			override val descriptor = serialDescriptor<NbtTag>()
+			override val descriptor = SerialDescriptor("Component", serialDescriptor<NbtTag>())
 
 			override fun deserialize(decoder: Decoder) = error("${kClass.simpleName} cannot be deserialized")
 
 			@Suppress("UNCHECKED_CAST")
 			override fun serialize(encoder: Encoder, value: Component) {
 				require(kClass.isInstance(value) && value::class != kClass) { "Value must be instance of ${kClass.simpleName}" }
-				require(encoder is NbtEncoder || encoder is JsonEncoder) { "Components can only be serialized to Nbt or Json" }
+				require(encoder.nbtEncoder != null || encoder is JsonEncoder) { "Components can only be serialized to Nbt or Json" }
 
 				encoder.encodeSerializableValue(componentSerializerFor(value), value)
 			}

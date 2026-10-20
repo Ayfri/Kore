@@ -146,7 +146,7 @@ data class ItemPredicate(
 		componentsAlternatives.forEach { (key, value) ->
 			put(
 				key,
-				snbtSerializer.encodeToNbtTag(listSerializer, value)
+				encodeToNbtTag(listSerializer, value)
 			)
 		}
 	}
@@ -158,12 +158,12 @@ data class ItemPredicate(
 			val key = COUNT_ITEM_PREDICATE.negateIf(negated)
 			validEntries += when (value.range) {
 				null -> key to listOf(NbtInt(value.int!!))
-				else -> "~$key" to listOf(snbtSerializer.encodeToNbtTag(Range(value.range.start!!, value.range.end!!)))
+				else -> "~$key" to listOf(encodeToNbtTag(Range(value.range.start!!, value.range.end!!)))
 			}
 		}
 
 		subPredicates.forEach { subPredicate ->
-			snbtSerializer.encodeToNbtTag(subPredicate).nbtCompound.forEach { (key, value) ->
+			encodeToNbtTag(subPredicate).nbtCompound.forEach { (key, value) ->
 				val prefix = if (value is NbtCompound) "~" else ""
 				validEntries += "$prefix${key.removePrefix("minecraft:")}" to listOf(value)
 			}

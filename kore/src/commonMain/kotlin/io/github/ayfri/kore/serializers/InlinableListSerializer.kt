@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.serializers
 
+import io.github.ayfri.kore.utils.decodeFromNbtTag
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -7,7 +8,6 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonDecoder
-import net.benwoodworth.knbt.NbtDecoder
 import net.benwoodworth.knbt.NbtList
 
 typealias InlinableList<T> = @Serializable(with = InlinableListSerializer::class) List<T>
@@ -22,12 +22,12 @@ open class InlinableListSerializer<T>(private val kSerializer: KSerializer<T>) :
 			else -> listOf(decoder.json.decodeFromJsonElement(kSerializer, element))
 		}
 
-		is NbtDecoder -> when (val tag = decoder.decodeNbtTag()) {
-			is NbtList<*> -> tag.map { decoder.nbt.decodeFromNbtTag(kSerializer, it) }
-			else -> listOf(decoder.nbt.decodeFromNbtTag(kSerializer, tag))
-		}
-
-		else -> decoder.decodeSerializableValue(listSerializer)
+		else -> decoder.nbtDecoder?.let { nbt ->
+			when (val tag = nbt.decodeNbtTag()) {
+				is NbtList<*> -> tag.map { decodeFromNbtTag(kSerializer, it) }
+				else -> listOf(decodeFromNbtTag(kSerializer, tag))
+			}
+		} ?: decoder.decodeSerializableValue(listSerializer)
 	}
 
 	override fun serialize(encoder: Encoder, value: List<T>) = when (value.size) {

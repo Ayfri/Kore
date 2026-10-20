@@ -12,16 +12,12 @@ data object NbtAsJsonSerializer : KSerializer<NbtTag> {
 	override val descriptor = JsonElement.serializer().descriptor
 
 	override fun serialize(encoder: Encoder, value: NbtTag) {
-		when (encoder) {
-			is NbtEncoder -> encoder.encodeNbtTag(value)
-			else -> encoder.encodeSerializableValue(JsonElement.serializer(), value.toJsonElement())
-		}
+		encoder.nbtEncoder?.encodeNbtTag(value) ?: encoder.encodeSerializableValue(JsonElement.serializer(), value.toJsonElement())
 	}
 
 	override fun deserialize(decoder: Decoder) = when (decoder) {
-		is NbtDecoder -> decoder.decodeNbtTag()
 		is JsonDecoder -> decoder.decodeJsonElement().toNbtTag()
-		else -> throw UnsupportedOperationException("NbtAsJsonSerializer can only be deserialized from Json or Nbt.")
+		else -> decoder.nbtDecoder?.decodeNbtTag() ?: throw UnsupportedOperationException("NbtAsJsonSerializer can only be deserialized from Json or Nbt.")
 	}
 
 	/**

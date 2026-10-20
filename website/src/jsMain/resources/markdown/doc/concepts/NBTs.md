@@ -122,7 +122,8 @@ This is especially useful for lists of compounds, where each element is itself a
 
 Most of the time you should prefer the typed builders above. When an API takes SNBT text instead of an `NbtTag`, call
 `toSnbt()` on the tag: `nbt { this["Count"] = 3.toByte() }.toSnbt()` gives `{Count:3b}`, with strings fully escaped.
-`encodeToSnbt(value)` does the same for any `@Serializable` value.
+`encodeToSnbt(value)` does the same for any `@Serializable` value, and `decodeFromSnbt<T>(snbt)` reads it back, with the
+property names in snake_case both ways.
 
 The reverse direction is `String.toNbt()`, which parses an SNBT compound back into an `NbtCompound`. It is the shortest
 way to reuse a snippet copied from a command or the wiki without transcribing it into a builder:
@@ -242,6 +243,7 @@ Here is the short version of what you usually reach for:
 | Read NBT into chat         | `nbtComponent(path, block/entity/storage)`               |
 | Match NBT in a DSL         | context-specific `nbt { ... }` methods                   |
 | Write SNBT text            | `tag.toSnbt()`, `encodeToSnbt(value)`                    |
+| Parse SNBT into a class    | `decodeFromSnbt<T>("{...}")`                             |
 | Parse an SNBT compound     | `"{...}".toNbt()`                                        |
 | Parse any SNBT value       | `"[I;1,2]".toNbtTag()`                                   |
 

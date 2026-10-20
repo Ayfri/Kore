@@ -1,6 +1,8 @@
 package io.github.ayfri.kore.utils
 
 import io.github.ayfri.kore.serializers.DataPackShapedSerializer
+import io.github.ayfri.kore.serializers.snakeCased
+import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.decodeFromString
@@ -60,9 +62,21 @@ operator fun NbtCompoundBuilder.set(name: String, value: LongArray) = put(name, 
  */
 fun NbtTag.toSnbt(): String = buildString { appendSnbt(this@toSnbt) }
 
-/** Encodes [value] to SNBT with [snbtSerializer], see [toSnbt]. */
-inline fun <reified T> encodeToSnbt(value: T) = snbtSerializer.encodeToNbtTag(value).toSnbt()
-fun <T> encodeToSnbt(serializer: SerializationStrategy<T>, value: T) = snbtSerializer.encodeToNbtTag(serializer, value).toSnbt()
+/** Encodes [value] with [snbtSerializer], writing the element names of classes in snake_case like the data pack JSON: `maxDamage` -> `max_damage`. */
+inline fun <reified T> encodeToNbtTag(value: T) = encodeToNbtTag(serializer<T>(), value)
+fun <T> encodeToNbtTag(serializer: SerializationStrategy<T>, value: T) = snbtSerializer.encodeToNbtTag(serializer.snakeCased(), value)
+
+/** Encodes [value] to SNBT, see [encodeToNbtTag] and [toSnbt]. */
+inline fun <reified T> encodeToSnbt(value: T) = encodeToNbtTag(value).toSnbt()
+fun <T> encodeToSnbt(serializer: SerializationStrategy<T>, value: T) = encodeToNbtTag(serializer, value).toSnbt()
+
+/** Decodes [tag] with [snbtSerializer], reading the element names of classes in snake_case, the inverse of [encodeToNbtTag]. */
+inline fun <reified T> decodeFromNbtTag(tag: NbtTag) = decodeFromNbtTag(serializer<T>(), tag)
+fun <T> decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtTag) = snbtSerializer.decodeFromNbtTag(deserializer.snakeCased(), tag)
+
+/** Decodes SNBT to a [T], the inverse of [encodeToSnbt]: `decodeFromSnbt<Inner>("{inner_value:1}")`. */
+inline fun <reified T> decodeFromSnbt(snbt: String) = decodeFromSnbt(serializer<T>(), snbt)
+fun <T> decodeFromSnbt(deserializer: DeserializationStrategy<T>, snbt: String) = snbtSerializer.decodeFromString(deserializer.snakeCased(), snbt)
 
 /** Encodes a data pack resource to SNBT like its data pack file (snake_case keys, defaults), see [DataPackShapedSerializer]. */
 inline fun <reified T> encodeToDataPackSnbt(value: T) = encodeToDataPackSnbt(serializer<T>(), value)

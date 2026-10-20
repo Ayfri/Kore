@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
+import io.github.ayfri.kore.serializers.nbtEncoder
 import io.github.ayfri.kore.serializers.splitNamespacedId
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
@@ -18,7 +19,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.put
 import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.NbtCompoundBuilder
-import net.benwoodworth.knbt.NbtEncoder
 import net.benwoodworth.knbt.NbtString
 
 /**
@@ -39,13 +39,6 @@ data class BlockEntityDataComponent(
 			override val descriptor = NbtCompound.serializer().descriptor
 
 			override fun serialize(encoder: Encoder, value: BlockEntityDataComponent) = when (encoder) {
-				is NbtEncoder -> {
-					encoder.encodeNbtTag(nbt {
-						this["id"] = value.id.asId()
-						value.data?.forEach { (key, value) -> this[key] = value }
-					})
-				}
-
 				is JsonEncoder -> {
 					encoder.encodeJsonElement(buildJsonObject {
 						val data = value.data ?: nbt {}
@@ -56,7 +49,10 @@ data class BlockEntityDataComponent(
 					})
 				}
 
-				else -> error("BlockEntityDataComponent is not serializable.")
+				else -> (encoder.nbtEncoder ?: error("BlockEntityDataComponent is not serializable.")).encodeNbtTag(nbt {
+					this["id"] = value.id.asId()
+					value.data?.forEach { (key, value) -> this[key] = value }
+				})
 			}
 
 			override fun deserialize(decoder: Decoder): BlockEntityDataComponent {

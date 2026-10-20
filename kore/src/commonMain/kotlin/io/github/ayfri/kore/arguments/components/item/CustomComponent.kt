@@ -3,9 +3,9 @@ package io.github.ayfri.kore.arguments.components.item
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
 import io.github.ayfri.kore.serializers.ToStringSerializer
+import io.github.ayfri.kore.serializers.nbtEncoder
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encoding.Encoder
-import net.benwoodworth.knbt.NbtEncoder
 import net.benwoodworth.knbt.NbtTag
 
 /**
@@ -26,8 +26,8 @@ open class CustomComponent(open val nbt: NbtTag) : Component() {
 
 	companion object {
 		object CustomComponentSerializer : ToStringSerializer<CustomComponent>() {
-			override fun serialize(encoder: Encoder, value: CustomComponent) = when (encoder) {
-				is NbtEncoder -> encoder.encodeSerializableValue(NbtTag.serializer(), value.nbt)
+			override fun serialize(encoder: Encoder, value: CustomComponent) = when {
+				encoder.nbtEncoder != null -> encoder.encodeSerializableValue(NbtTag.serializer(), value.nbt)
 				else -> encoder.encodeSerializableValue(NbtAsJsonSerializer, value.nbt)
 			}
 		}

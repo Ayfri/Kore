@@ -4,7 +4,7 @@ import io.github.ayfri.kore.arguments.colors.RGB
 import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
 import io.github.ayfri.kore.helpers.displays.maths.Transformation
 import io.github.ayfri.kore.serializers.LowercaseSerializer
-import io.github.ayfri.kore.utils.snbtSerializer
+import io.github.ayfri.kore.utils.encodeToNbtTag
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -51,7 +51,7 @@ sealed class DisplayEntity(
 
 	// Passed explicitly since the reified serializer() lookup for a sealed class with a custom serializer
 	// resolves via a runtime KClass fallback on Kotlin/JS (no reflection there), throwing at runtime.
-	open fun toNbt() = snbtSerializer.encodeToNbtTag(DisplayEntitySerializer<DisplayEntity>(), this).nbtCompound
+	open fun toNbt() = encodeToNbtTag(DisplayEntitySerializer<DisplayEntity>(), this).nbtCompound
 
 	companion object {
 		class DisplayEntitySerializer<T : DisplayEntity> : KSerializer<T> {

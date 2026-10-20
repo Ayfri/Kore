@@ -2,6 +2,8 @@ package io.github.ayfri.kore.arguments.components
 
 import io.github.ayfri.kore.arguments.components.item.CustomComponent
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
+import io.github.ayfri.kore.serializers.nbtDecoder
+import io.github.ayfri.kore.serializers.nbtEncoder
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
@@ -10,8 +12,6 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 import net.benwoodworth.knbt.NbtCompound
-import net.benwoodworth.knbt.NbtDecoder
-import net.benwoodworth.knbt.NbtEncoder
 import net.benwoodworth.knbt.NbtTag
 
 data object ComponentsSerializer : KSerializer<ComponentsScope> {
@@ -29,11 +29,6 @@ data object ComponentsSerializer : KSerializer<ComponentsScope> {
 	 * [Component] is not a sealed hierarchy and has no name to serializer registry to dispatch on.
 	 */
 	override fun deserialize(decoder: Decoder) = when (decoder) {
-		is NbtDecoder -> {
-			val compound = decoder.decodeNbtTag() as? NbtCompound ?: error("A components map must be an NBT compound.")
-			Components(compound.mapValuesTo(mutableMapOf()) { (_, value) -> CustomComponent(value) })
-		}
-
 		is JsonDecoder -> {
 			val json = decoder.decodeJsonElement() as? JsonObject ?: error("A components map must be a JSON object.")
 			Components(json.mapValuesTo(mutableMapOf()) { (_, value) ->
@@ -41,12 +36,15 @@ data object ComponentsSerializer : KSerializer<ComponentsScope> {
 			})
 		}
 
-		else -> error("This serializer can only be used with Nbt or Json")
+		else -> {
+			val compound = (decoder.nbtDecoder ?: error("This serializer can only be used with Nbt or Json")).decodeNbtTag() as? NbtCompound
+				?: error("A components map must be an NBT compound.")
+			Components(compound.mapValuesTo(mutableMapOf()) { (_, value) -> CustomComponent(value) })
+		}
 	}
 
 	override fun serialize(encoder: Encoder, value: ComponentsScope) = when (encoder) {
-		is NbtEncoder -> encoder.encodeNbtTag(value.asNbt())
 		is JsonEncoder -> encoder.encodeJsonElement(value.asJson())
-		else -> error("This serializer can only be used with Nbt or Json")
+		else -> encoder.nbtEncoder?.encodeNbtTag(value.asNbt()) ?: error("This serializer can only be used with Nbt or Json")
 	}
 }

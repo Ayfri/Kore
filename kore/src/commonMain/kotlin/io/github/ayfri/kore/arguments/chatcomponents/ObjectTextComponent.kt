@@ -5,12 +5,11 @@ import io.github.ayfri.kore.arguments.types.resources.ModelArgument
 import io.github.ayfri.kore.generated.arguments.types.AtlasArgument
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
+import io.github.ayfri.kore.utils.encodeToNbtTag
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
-import io.github.ayfri.kore.utils.snbtSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import net.benwoodworth.knbt.encodeToNbtTag
 
 /**
  * A `minecraft:object` component that renders a 3D object inline in text. Use [AtlasObjectTextComponent] for a sprite,
@@ -70,7 +69,7 @@ data class PlayerObjectTextComponent(
 ) : ObjectTextComponent() {
 	override fun toNbtTag() = nbt {
 		super.toNbtTag().entries.forEach { (key, value) -> this[key] = value }
-		this["player"] = snbtSerializer.encodeToNbtTag(player)
+		this["player"] = encodeToNbtTag(player)
 		hat?.let { this["hat"] = it }
 	}
 }

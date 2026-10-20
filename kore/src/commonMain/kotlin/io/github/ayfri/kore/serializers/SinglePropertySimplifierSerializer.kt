@@ -1,14 +1,15 @@
 package io.github.ayfri.kore.serializers
 
+import io.github.ayfri.kore.utils.decodeFromNbtTag
+import io.github.ayfri.kore.utils.encodeToNbtTag
 import io.github.ayfri.kore.utils.jsonKey
+import io.github.ayfri.kore.utils.snakeCaseKey
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 import net.benwoodworth.knbt.NbtCompound
-import net.benwoodworth.knbt.NbtDecoder
-import net.benwoodworth.knbt.NbtEncoder
 import net.benwoodworth.knbt.nbtCompound
 
 /**
@@ -58,12 +59,10 @@ open class SinglePropertySimplifierSerializer<T : Any>(
 			encoder.encodeJsonElement(obj.singleValueAt(descriptor.jsonKey(encoder.json, propertyName)) ?: obj)
 		}
 
-		is NbtEncoder -> {
-			val compound = encoder.nbt.encodeToNbtTag(delegate, value).nbtCompound
-			encoder.encodeNbtTag(compound.singleValueAt(propertyName) ?: compound)
-		}
-
-		else -> encoder.encodeSerializableValue(delegate, value)
+		else -> encoder.nbtEncoder?.let { nbt ->
+			val compound = encodeToNbtTag(delegate, value).nbtCompound
+			nbt.encodeNbtTag(compound.singleValueAt(descriptor.snakeCaseKey(propertyName)) ?: compound)
+		} ?: encoder.encodeSerializableValue(delegate, value)
 	}
 
 	override fun deserialize(decoder: Decoder): T = when (decoder) {
@@ -73,11 +72,9 @@ open class SinglePropertySimplifierSerializer<T : Any>(
 			decoder.json.decodeFromJsonElement(delegate, obj)
 		}
 
-		is NbtDecoder -> {
-			val tag = decoder.decodeNbtTag()
-			decoder.nbt.decodeFromNbtTag(delegate, tag as? NbtCompound ?: NbtCompound(mapOf(propertyName to tag)))
-		}
-
-		else -> decoder.decodeSerializableValue(delegate)
+		else -> decoder.nbtDecoder?.let { nbt ->
+			val tag = nbt.decodeNbtTag()
+			decodeFromNbtTag(delegate, tag as? NbtCompound ?: NbtCompound(mapOf(descriptor.snakeCaseKey(propertyName) to tag)))
+		} ?: decoder.decodeSerializableValue(delegate)
 	}
 }
