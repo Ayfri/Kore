@@ -6,7 +6,6 @@ import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.ToStringSerializer
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /** The shape of a firework star explosion. */
@@ -35,11 +34,8 @@ enum class FireworkExplosionShape {
 data class FireworkExplosionComponent(
 	var shape: FireworkExplosionShape,
 	var colors: List<@Serializable(RGB.Companion.ColorAsDecimalSerializer::class) RGB>? = null,
-	@SerialName("fade_colors")
 	var fadeColors: List<@Serializable(RGB.Companion.ColorAsDecimalSerializer::class) RGB>? = null,
-	@SerialName("has_trail")
 	var hasTrail: Boolean? = null,
-	@SerialName("has_twinkle")
 	var hasTwinkle: Boolean? = null,
 ) : Component()
 

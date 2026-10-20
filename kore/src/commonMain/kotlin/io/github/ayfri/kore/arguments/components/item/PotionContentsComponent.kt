@@ -9,7 +9,6 @@ import io.github.ayfri.kore.generated.arguments.types.PotionArgument
 import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /** A single status effect entry used in potion/death-protection components. */
@@ -19,9 +18,7 @@ data class Effect(
 	val duration: Int,
 	val amplifier: Byte,
 	var ambient: Boolean,
-	@SerialName("show_particles")
 	var showParticles: Boolean,
-	@SerialName("show_icon")
 	var showIcon: Boolean,
 )
 
@@ -36,12 +33,9 @@ data class Effect(
 @Serializable(with = PotionContentsComponent.Companion.PotionContentsComponentSerializer::class)
 data class PotionContentsComponent(
 	var potion: PotionArgument,
-	@SerialName("custom_color")
 	@Serializable(RGB.Companion.ColorAsDecimalSerializer::class)
 	var customColor: RGB? = null,
-	@SerialName("custom_effects")
 	var customEffects: List<Effect>? = null,
-	@SerialName("custom_name")
 	var customName: String? = null,
 ) : Component() {
 	companion object {

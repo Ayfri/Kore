@@ -5,18 +5,14 @@ import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
 /** A single bee stored inside a hive: its [entityData], time spent in the hive and minimum stay. */
 @Serializable
 data class BeeData(
-	@SerialName("entity_data")
 	var entityData: Map<String, String>,
-	@SerialName("ticks_in_hive")
 	var ticksInHive: Int,
-	@SerialName("min_ticks_in_hive")
 	var minTicksInHive: Int,
 )
 

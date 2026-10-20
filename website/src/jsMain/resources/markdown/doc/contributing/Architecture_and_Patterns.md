@@ -5,7 +5,7 @@ nav-title: "Architecture and Patterns"
 description: Detailed internal architecture, project layout, module responsibilities, and recurring implementation patterns for Kore contributors.
 keywords: architecture, bindings, commands, generator, kore, patterns, serializers, website
 date-created: 2026-04-10
-date-modified: 2026-10-02
+date-modified: 2026-10-20
 routeOverride: /docs/contributing/architecture-and-patterns
 ---
 
@@ -164,6 +164,18 @@ Annotate the sealed base with `@GeneratedSealedSerializer`; the `kore-ksp` modul
 generates a reflection-free `fooSealedSerializer()` factory at compile time, which the family's serializer object passes
 to `NamespacedPolymorphicSerializer`'s constructor. The factory returns a `SealedDispatcher` that switches on the
 subtype's simple name, so serializing one subtype only loads that subtype, not the whole family.
+
+### Property names
+
+Properties are written in snake_case in both JSON and SNBT, so `maxDamage` becomes `max_damage` with no annotation.
+`@JsonSerialName("Name")` overrides the key in both formats, as `BlockState` does for `Name` and `Properties`.
+A `@SerialName` is only needed on a sealed subtype (its `type` name) or when the key isn't the snake_case of the
+property, and in SNBT it is snake_cased as well, so a key such as `Name` needs `@JsonSerialName`.
+Map keys and raw `NbtCompound` content are never renamed.
+
+SNBT is read the same way: `decodeFromSnbt` and `decodeFromNbtTag` look the keys of a class up under their snake_case
+names. A serializer that reads NBT by hand goes through `Decoder.nbtDecoder` instead of an `is NbtDecoder` check, and
+decodes nested values with `decodeFromNbtTag`.
 
 ### Per-pack state
 

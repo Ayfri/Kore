@@ -6,7 +6,6 @@ import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.DamageTypeOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.serializers.InlinableList
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -25,19 +24,12 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class BlocksAttacks(
-	@SerialName("block_delay_seconds")
 	var blockDelaySeconds: Float = 0f,
-	@SerialName("block_sound")
 	var blockSound: SoundEventArgument? = null,
-	@SerialName("bypassed_by")
 	var bypassedBy: InlinableList<DamageTypeOrTagArgument>? = null,
-	@SerialName("damage_reductions")
 	var damageReductions: List<DamageReduction>? = null,
-	@SerialName("disable_cooldown_scale")
 	var disableCooldownScale: Float = 1f,
-	@SerialName("disabled_sound")
 	var disabledSound: SoundEventArgument? = null,
-	@SerialName("item_damage")
 	var itemDamage: ItemDamage? = null,
 ) : Component()
 
@@ -53,7 +45,6 @@ data class BlocksAttacks(
 data class DamageReduction(
 	var base: Float,
 	var factor: Float,
-	@SerialName("horizontal_blocking_angle")
 	var horizontalBlockingAngle: Float? = null,
 	var type: InlinableList<DamageTypeOrTagArgument>? = null,
 )

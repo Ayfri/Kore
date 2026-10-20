@@ -5,7 +5,6 @@ import io.github.ayfri.kore.arguments.components.item.ProfileComponent
 import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.encodeToNbtTag
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import net.benwoodworth.knbt.nbtCompound
@@ -27,12 +26,9 @@ import net.benwoodworth.knbt.nbtCompound
 @Serializable
 data class Mannequin(
 	var description: ChatComponents? = null,
-	@SerialName("hidden_layers")
 	var hiddenLayers: List<MannequinLayer>? = null,
-	@SerialName("hide_description")
 	var hideDescription: Boolean? = null,
 	var immovable: Boolean? = null,
-	@SerialName("main_hand")
 	var mainHand: MannequinHand? = null,
 	var pose: MannequinPose? = null,
 	var profile: ProfileComponent? = null,

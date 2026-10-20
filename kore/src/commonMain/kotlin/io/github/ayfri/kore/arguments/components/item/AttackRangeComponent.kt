@@ -3,7 +3,6 @@ package io.github.ayfri.kore.arguments.components.item
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -14,17 +13,11 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class AttackRangeComponent(
-	@SerialName("hitbox_margin")
 	var hitboxMargin: Float? = null,
-	@SerialName("max_creative_reach")
 	var maxCreativeReach: Float? = null,
-	@SerialName("max_reach")
 	var maxReach: Float? = null,
-	@SerialName("min_creative_reach")
 	var minCreativeReach: Float? = null,
-	@SerialName("min_reach")
 	var minReach: Float? = null,
-	@SerialName("mob_factor")
 	var mobFactor: Float? = null,
 ) : Component()
 

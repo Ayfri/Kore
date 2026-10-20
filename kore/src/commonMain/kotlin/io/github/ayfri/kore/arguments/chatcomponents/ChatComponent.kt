@@ -12,7 +12,6 @@ import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.pascalCase
 import io.github.ayfri.kore.utils.set
 import kotlinx.serialization.EncodeDefault
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtString
 import net.benwoodworth.knbt.NbtTag
@@ -37,7 +36,6 @@ sealed class ChatComponent {
 	var bold: Boolean? = null
 
 	/** Action executed when the player clicks on this component. */
-	@SerialName("click_event")
 	var clickEvent: ClickEvent? = null
 
 	/** Color of the text. Accepts named colors or hex values via [Color]. */
@@ -50,7 +48,6 @@ sealed class ChatComponent {
 	var font: String? = null
 
 	/** Event shown in a tooltip when the player hovers over this component. */
-	@SerialName("hover_event")
 	var hoverEvent: HoverEvent? = null
 
 	/** Text inserted into the chat input box when the player shift-clicks this component. */
@@ -63,7 +60,6 @@ sealed class ChatComponent {
 	var obfuscated: Boolean? = null
 
 	/** ARGB color of the drop shadow cast by this text, written as an ARGB int since the game rejects color names here. */
-	@SerialName("shadow_color")
 	@Serializable(ColorAsARGBDecimalSerializer::class)
 	var shadowColor: Color? = null
 

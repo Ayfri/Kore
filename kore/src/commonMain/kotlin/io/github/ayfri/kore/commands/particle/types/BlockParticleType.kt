@@ -13,13 +13,11 @@ import io.github.ayfri.kore.commands.particle.Particles
 import io.github.ayfri.kore.commands.particle.asParticleArg
 import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import io.github.ayfri.kore.generated.Particles as ParticlesNames
 
 @Serializable
 data class BlockParticleType(
-	@SerialName("block_state")
 	var blockState: BlockState,
 ) : ParticleData()
 

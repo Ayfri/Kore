@@ -9,7 +9,6 @@ import io.github.ayfri.kore.generated.arguments.EntityTypeOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.EquipmentAssetArgument
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.serializers.InlinableList
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -21,22 +20,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class EquippableComponent(
 	var slot: EquipmentSlot,
-	@SerialName("asset_id")
 	var assetId: EquipmentAssetArgument,
-	@SerialName("allowed_entities")
 	var allowedEntities: InlinableList<EntityTypeOrTagArgument>? = null,
-	@SerialName("camera_overlay")
 	var cameraOverlay: ModelArgument? = null,
-	@SerialName("can_be_sheared")
 	var canBeSheared: Boolean? = null,
-	@SerialName("damage_on_hurt")
 	var damageOnHurt: Boolean? = null,
 	var dispensable: Boolean? = null,
-	@SerialName("equip_on_interact")
 	var equipOnInteract: Boolean? = null,
-	@SerialName("equip_sound")
 	var equipSound: SoundEventArgument? = null,
-	@SerialName("shearing_sound")
 	var shearingSound: SoundEventArgument? = null,
 	var swappable: Boolean? = null,
 ) : Component()

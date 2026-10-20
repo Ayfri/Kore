@@ -3,14 +3,12 @@ package io.github.ayfri.kore.arguments.components.item
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class FoodComponent(
 	var nutrition: Int,
 	var saturation: Float,
-	@SerialName("can_always_eat")
 	var canAlwaysEat: Boolean? = null,
 ) : Component()
 

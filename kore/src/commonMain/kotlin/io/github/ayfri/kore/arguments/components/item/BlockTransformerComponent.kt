@@ -11,7 +11,6 @@ import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.serializers.DataPackShapedSerializer
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.LowercaseSerializer
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
@@ -72,18 +71,17 @@ enum class BlockTransformType {
  */
 @Serializable
 data class BlockTransformerRule(
-	@SerialName("block_state_provider")
 	@Serializable(with = BlockStateProviderComponentSerializer::class)
 	var blockStateProvider: BlockStateProvider,
-	@SerialName("consume_on_use") var consumeOnUse: Boolean? = null,
-	@SerialName("disallowed_faces") var disallowedFaces: List<Direction>? = null,
-	@SerialName("drop_strategy") var dropStrategy: BlockTransformDropStrategy? = null,
-	@SerialName("item_damage_per_use") var itemDamagePerUse: Int? = null,
+	var consumeOnUse: Boolean? = null,
+	var disallowedFaces: List<Direction>? = null,
+	var dropStrategy: BlockTransformDropStrategy? = null,
+	var itemDamagePerUse: Int? = null,
 	var loot: LootTableArgument? = null,
 	var particle: BlockTransformParticle? = null,
 	var sound: SoundEventArgument? = null,
-	@SerialName("transform_type") var transformType: BlockTransformType? = null,
-	@SerialName("update_from_neighbors") var updateFromNeighbors: Boolean? = null,
+	var transformType: BlockTransformType? = null,
+	var updateFromNeighbors: Boolean? = null,
 ) {
 	companion object {
 		data object BlockStateProviderComponentSerializer :

@@ -4,7 +4,6 @@ import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.ConsumeCooldownGroupArgument
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -16,7 +15,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UseCooldownComponent(
 	var seconds: Float,
-	@SerialName("cooldown_group")
 	var cooldownGroup: ConsumeCooldownGroupArgument? = null,
 ) : Component()
 

@@ -8,7 +8,6 @@ import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.snakeCase
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /** The first-person animation played while the item is being consumed. */
@@ -40,13 +39,10 @@ enum class ConsumeAnimation {
  */
 @Serializable
 data class ConsumableComponent(
-	@SerialName("consume_seconds")
 	var consumeSeconds: Float,
 	var animation: ConsumeAnimation,
 	var sound: SoundEventArgument,
-	@SerialName("has_consume_particles")
 	var hasConsumeParticles: Boolean,
-	@SerialName("on_consume_effects")
 	var onConsumeEffects: Map<String, ConsumeEffect>? = null,
 ) : Component()
 

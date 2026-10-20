@@ -12,15 +12,12 @@ import io.github.ayfri.kore.commands.particle.ParticleMode
 import io.github.ayfri.kore.commands.particle.ParticleType
 import io.github.ayfri.kore.commands.particle.Particles
 import io.github.ayfri.kore.commands.particle.asParticleArg
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import io.github.ayfri.kore.generated.Particles as ParticlesNames
 
 @Serializable
 data class DustColorTransition(
-	@SerialName("from_color")
 	var fromColor: @Serializable(ColorAsDecimalSerializer::class) Color,
-	@SerialName("to_color")
 	var toColor: @Serializable(ColorAsDecimalSerializer::class) Color,
 	var scale: Double,
 ) : ParticleData()

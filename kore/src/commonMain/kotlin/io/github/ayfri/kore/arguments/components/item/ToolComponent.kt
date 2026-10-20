@@ -5,7 +5,6 @@ import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.InlinableList
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /** A mining rule that applies a speed multiplier and/or correct-drops flag to specific blocks. */
@@ -13,7 +12,6 @@ import kotlinx.serialization.Serializable
 data class ToolRule(
 	var blocks: InlinableList<BlockOrTagArgument>,
 	var speed: Float? = null,
-	@SerialName("correct_for_drops")
 	var correctForDrops: Boolean? = null,
 )
 
@@ -26,11 +24,8 @@ data class ToolRule(
 @Serializable
 data class ToolComponent(
 	var rules: List<ToolRule>,
-	@SerialName("default_mining_speed")
 	var defaultMiningSpeed: Float? = null,
-	@SerialName("damage_per_block")
 	var damagePerBlock: Int? = null,
-	@SerialName("can_destroy_blocks_in_creative")
 	var canDestroyBlocksInCreative: Boolean? = null,
 ) : Component()
 
