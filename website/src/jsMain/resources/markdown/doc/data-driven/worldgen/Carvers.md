@@ -23,7 +23,8 @@ Two carver types exist:
 A carver replaces every block it carves with air, or with water or lava below the aquifer fluid level. It never carves the bottom layer or
 the top 7 blocks of the generation range.
 
-References: [Carver definition](https://minecraft.wiki/w/Carver_definition), [Carver](https://minecraft.wiki/w/Carver)
+References: [Carver definition](https://minecraft.wiki/w/Carver_definition), [Carver](https://minecraft.wiki/w/Carver), misode's
+[carver generator](https://misode.github.io/worldgen/carver/)
 
 ## Declaring Carvers
 

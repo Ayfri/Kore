@@ -20,7 +20,9 @@ declared in two files:
 The split is what lets one tree configuration be placed densely in a forest and sparsely in plains. A biome only ever references placed
 features, listed per [decoration step](/docs/data-driven/worldgen#decoration-steps).
 
-References: [Configured feature](https://minecraft.wiki/w/Configured_feature), [Placed feature](https://minecraft.wiki/w/Placed_feature)
+References: [Configured feature](https://minecraft.wiki/w/Configured_feature), [Placed feature](https://minecraft.wiki/w/Placed_feature),
+misode's [feature](https://misode.github.io/worldgen/feature/) and [placed feature](https://misode.github.io/worldgen/placed-feature/)
+generators
 
 ---
 

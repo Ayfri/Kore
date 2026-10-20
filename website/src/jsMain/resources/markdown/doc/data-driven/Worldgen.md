@@ -5,7 +5,7 @@ nav-title: Worldgen
 description: Build custom Minecraft world generation in Kotlin. Dimensions, biomes, noise, density functions, structures and features, type-safe, no hand-written JSON.
 keywords: minecraft worldgen, datapack worldgen, custom dimension minecraft, custom biome, noise settings minecraft, minecraft noise router, density function, datapack terrain generation, minecraft world preset, custom world generation
 date-created: 2025-08-11
-date-modified: 2026-10-08
+date-modified: 2026-10-20
 routeOverride: /docs/data-driven/worldgen
 ---
 
@@ -33,6 +33,9 @@ Reference: [World generation](https://minecraft.wiki/w/World_generation)
 | [Providers](/docs/data-driven/worldgen/providers)                           | Vertical anchors and the height, int and float providers used everywhere |
 | [Structures](/docs/data-driven/worldgen/structures)                         | Configured structures, template pools, processors and structure sets     |
 | [World Presets](/docs/data-driven/worldgen/world-presets)                   | World types in the world creation screen, and superflat presets          |
+
+[misode's generators](https://misode.github.io/) edit each of these files in a form, with the vanilla files as presets, handy to compare a
+Kore output with the game's own.
 
 ## How A Chunk Is Built
 

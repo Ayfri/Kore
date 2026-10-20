@@ -23,7 +23,9 @@ Minecraft decides whether a position is solid from the density value the router'
 negative density is air (or fluid, below sea level).
 
 References: [Noise](https://minecraft.wiki/w/Noise), [Density function](https://minecraft.wiki/w/Density_function),
-[Noise settings](https://minecraft.wiki/w/Noise_settings)
+[Noise settings](https://minecraft.wiki/w/Noise_settings), misode's [noise](https://misode.github.io/worldgen/noise/),
+[density function](https://misode.github.io/worldgen/density-function/) and [noise settings](https://misode.github.io/worldgen/noise-settings/)
+generators
 
 ---
 

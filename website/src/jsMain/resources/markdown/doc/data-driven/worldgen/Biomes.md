@@ -32,7 +32,8 @@ val myBiome = dp.biome("my_biome") {
 }
 ```
 
-References: [Biome](https://minecraft.wiki/w/Biome), [Biome definition](https://minecraft.wiki/w/Biome_definition)
+References: [Biome](https://minecraft.wiki/w/Biome), [Biome definition](https://minecraft.wiki/w/Biome_definition), misode's
+[biome generator](https://misode.github.io/worldgen/biome/)
 
 ## Where Biomes Land In The World
 
