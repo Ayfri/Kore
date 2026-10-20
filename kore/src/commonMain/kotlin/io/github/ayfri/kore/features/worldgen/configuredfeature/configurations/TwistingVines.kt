@@ -19,9 +19,9 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class TwistingVines(
-	var spreadWidth: Int = 0,
-	var spreadHeight: Int = 0,
-	var maxHeight: Int = 0,
+	var spreadWidth: Int = 1,
+	var spreadHeight: Int = 1,
+	var maxHeight: Int = 1,
 ) : FeatureConfig()
 
 /**
@@ -39,8 +39,8 @@ data class TwistingVines(
  */
 fun ConfiguredFeatures.twistingVines(
 	fileName: String,
-	spreadWidth: Int = 0,
-	spreadHeight: Int = 0,
-	maxHeight: Int = 0,
+	spreadWidth: Int = 1,
+	spreadHeight: Int = 1,
+	maxHeight: Int = 1,
 	block: TwistingVines.() -> Unit = {},
 ) = dp.configuredFeature(fileName, TwistingVines(spreadWidth, spreadHeight, maxHeight).apply(block))

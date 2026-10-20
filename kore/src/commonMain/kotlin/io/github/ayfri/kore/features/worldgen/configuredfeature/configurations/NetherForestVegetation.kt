@@ -23,8 +23,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class NetherForestVegetation(
 	var stateProvider: BlockStateProvider = SimpleStateProvider(),
-	var spreadWidth: Int = 0,
-	var spreadHeight: Int = 0,
+	var spreadWidth: Int = 1,
+	var spreadHeight: Int = 1,
 ) : FeatureConfig(), BlockStateProviderScope
 
 /**
@@ -50,8 +50,8 @@ data class NetherForestVegetation(
  */
 fun ConfiguredFeatures.netherForestVegetation(
 	fileName: String,
-	spreadWidth: Int = 0,
-	spreadHeight: Int = 0,
+	spreadWidth: Int = 1,
+	spreadHeight: Int = 1,
 	block: NetherForestVegetation.() -> Unit = {},
 ) =
 	dp.configuredFeature(fileName, NetherForestVegetation(spreadWidth = spreadWidth, spreadHeight = spreadHeight).apply(block))

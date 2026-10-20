@@ -44,15 +44,15 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class RootSystem(
-	var requiredVerticalSpaceForTree: Int = 0,
-	var rootRadius: Int = 0,
+	var requiredVerticalSpaceForTree: Int = 1,
+	var rootRadius: Int = 1,
 	var rootReplaceable: InlinableList<BlockOrTagArgument> = emptyList(),
-	var rootPlacementAttempts: Int = 0,
-	var rootColumnMaxHeight: Int = 0,
-	var hangingRootRadius: Int = 0,
-	var hangingRootsVerticalSpan: Int = 0,
+	var rootPlacementAttempts: Int = 1,
+	var rootColumnMaxHeight: Int = 1,
+	var hangingRootRadius: Int = 1,
+	var hangingRootsVerticalSpan: Int = 1,
 	var hangingRootPlacementAttempts: Int = 0,
-	var allowedVerticalWaterForTree: Int = 0,
+	var allowedVerticalWaterForTree: Int = 1,
 	var rootStateProvider: BlockStateProvider = SimpleStateProvider(),
 	var hangingRootStateProvider: BlockStateProvider = SimpleStateProvider(),
 	var allowedTreePosition: BlockPredicate = True,

@@ -807,6 +807,22 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
+	configuredFeaturesBuilder.netherForestVegetation("test_nether_forest_vegetation_default")
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:nether_forest_vegetation",
+			"state_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:stone"
+				}
+			},
+			"spread_width": 1,
+			"spread_height": 1
+		}
+	""".trimIndent()
+
 	configuredFeatures {
 		netherrackReplaceBlobs(
 			"test_netherrack_replace_blobs",
@@ -1132,7 +1148,7 @@ fun DataPack.configuredFeatureTests() {
 		hangingRootRadius = 2
 		hangingRootsVerticalSpan = 2
 		hangingRootPlacementAttempts = 4
-		allowedVerticalWaterForTree = 0
+		allowedVerticalWaterForTree = 1
 		rootStateProvider = simpleStateProvider(Blocks.DIRT)
 		hangingRootStateProvider = simpleStateProvider(Blocks.DIRT)
 		levelTestDistance = 5
@@ -1150,7 +1166,7 @@ fun DataPack.configuredFeatureTests() {
 			"hanging_root_radius": 2,
 			"hanging_roots_vertical_span": 2,
 			"hanging_root_placement_attempts": 4,
-			"allowed_vertical_water_for_tree": 0,
+			"allowed_vertical_water_for_tree": 1,
 			"root_state_provider": {
 				"type": "minecraft:simple_state_provider",
 				"state": {
@@ -1168,6 +1184,41 @@ fun DataPack.configuredFeatureTests() {
 			},
 			"level_test_distance": 5,
 			"max_level_deviation": 1,
+			"feature": "minecraft:acacia"
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.rootSystem("test_root_system_default", feature = PlacedFeatures.ACACIA)
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:root_system",
+			"required_vertical_space_for_tree": 1,
+			"root_radius": 1,
+			"root_replaceable": [],
+			"root_placement_attempts": 1,
+			"root_column_max_height": 1,
+			"hanging_root_radius": 1,
+			"hanging_roots_vertical_span": 1,
+			"hanging_root_placement_attempts": 0,
+			"allowed_vertical_water_for_tree": 1,
+			"root_state_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:stone"
+				}
+			},
+			"hanging_root_state_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:stone"
+				}
+			},
+			"allowed_tree_position": {
+				"type": "minecraft:true"
+			},
+			"level_test_distance": 0,
+			"max_level_deviation": 0,
 			"feature": "minecraft:acacia"
 		}
 	""".trimIndent()
@@ -2036,6 +2087,17 @@ fun DataPack.configuredFeatureTests() {
 			"spread_width": 8,
 			"spread_height": 4,
 			"max_height": 16
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.twistingVines("test_twisting_vines_default")
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:twisting_vines",
+			"spread_width": 1,
+			"spread_height": 1,
+			"max_height": 1
 		}
 	""".trimIndent()
 
