@@ -17,7 +17,7 @@ import kotlinx.serialization.Serializable
  *
  * @property rootProvider The block states making up the roots, mangrove roots in vanilla.
  * @property trunkOffsetY How far the trunk is moved upwards, `1` to `3` for vanilla mangroves.
- * @property aboveRootProvider The blocks placed on top of the roots, a moss carpet half of the time for vanilla mangroves,
+ * @property aboveRootPlacement The blocks placed on top of the roots, a moss carpet half of the time for vanilla mangroves,
  * none when `null`.
  * @property mangroveRootPlacement The shape of the roots and the blocks they turn into over mud.
  */
@@ -25,7 +25,7 @@ import kotlinx.serialization.Serializable
 data class MangroveRootPlacer(
 	override var rootProvider: BlockStateProvider = SimpleStateProvider(),
 	override var trunkOffsetY: IntProvider = ConstantIntProvider(0),
-	override var aboveRootProvider: AboveRootPlacement? = null,
+	override var aboveRootPlacement: AboveRootPlacement? = null,
 	var mangroveRootPlacement: MangroveRootPlacement = MangroveRootPlacement(),
 ) : RootPlacer()
 

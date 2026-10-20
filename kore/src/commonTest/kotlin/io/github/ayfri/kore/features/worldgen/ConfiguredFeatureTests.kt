@@ -19,6 +19,7 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.t
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.alterGround
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.attachedToLeaves
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.shelfMushroom
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.rootprovider.aboveRootPlacement
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.rootprovider.mangroveRootPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.rootprovider.mangroveRootPlacement
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.cherryTrunkPlacer
@@ -1964,6 +1965,9 @@ fun DataPack.configuredFeatureTests() {
 
 	jsonEncoder.encodeToString(
 		mangroveRootPlacer {
+			aboveRootPlacement(chance = 0.5) {
+				aboveRootProvider = simpleStateProvider(Blocks.MOSS_CARPET)
+			}
 			mangroveRootPlacement {
 				canGrowThrough = listOf(Tags.Block.MANGROVE_ROOTS_CAN_GROW_THROUGH)
 			}
@@ -1977,6 +1981,15 @@ fun DataPack.configuredFeatureTests() {
 				}
 			},
 			"trunk_offset_y": 0,
+			"above_root_placement": {
+				"above_root_provider": {
+					"type": "minecraft:simple_state_provider",
+					"state": {
+						"Name": "minecraft:moss_carpet"
+					}
+				},
+				"above_root_placement_chance": 0.5
+			},
 			"mangrove_root_placement": {
 				"max_root_width": 0,
 				"max_root_length": 0,
