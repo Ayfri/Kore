@@ -16,9 +16,7 @@ data class Inverted(
 
 /** Adds an [Inverted] condition negating the single condition declared in [term]. */
 fun Predicate.inverted(term: Predicate.() -> Unit) {
-	val conditions = Predicate().apply(term).predicateConditions
-	require(conditions.size == 1) { "'inverted' takes exactly one condition, got ${conditions.size}." }
-	predicateConditions += Inverted(conditions.first())
+	predicateConditions += Inverted(singleCondition("inverted", term))
 }
 
 /** Adds an [Inverted] condition negating [term]. */

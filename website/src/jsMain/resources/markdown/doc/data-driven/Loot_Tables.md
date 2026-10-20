@@ -190,13 +190,33 @@ The builders are extensions on `NumberProviderScope`, so they only resolve insid
 | Provider                          | Description                                               | Example                                                                 |
 |-----------------------------------|-----------------------------------------------------------|-------------------------------------------------------------------------|
 | `binomial(n, p)`                  | Binomial distribution                                     | `binomial(5f, 0.5f)`                                                    |
+| `conditionalNumber(...)`          | One value when a condition passes, another otherwise      | `conditionalNumber(5f, 2f) { killedByPlayer() }`                        |
 | `constant(value)`                 | Fixed value                                               | `constant(5f)`                                                          |
 | `enchantmentLevel(...)`           | Based on enchantment level (requires enchantment context) | `enchantmentLevel(5)`                                                   |
 | `environmentAttribute(attribute)` | Current value of a numeric env attribute                  | `environmentAttribute(EnvironmentAttributes.Visual.FOG_START_DISTANCE)` |
+| `numberDispatcher(...) { }`       | Value of the first matching case, or a default            | `numberDispatcher(default = 0f) { case(1f) { killedByPlayer() } }`      |
 | `scoreNumber(...)`                | Value from a scoreboard objective                         | `scoreNumber("kills", EntityTarget.THIS)`                               |
 | `storageNumber(storage, path)`    | Value from command storage                                | `storageNumber("my_pack:data", "player.health")`                        |
 | `sum(...)`                        | Sum of multiple providers                                 | `sum(constant(1f), uniform(1f, 3f))`                                    |
 | `uniform(min, max)`               | Random value between min and max                          | `uniform(1f, 5f)`                                                       |
+| `weightedListNumber { }`          | Value of one entry, picked by weight                      | `weightedListNumber { entry(30, 1f); entry(70, 0f) }`                   |
+
+`conditionalNumber`, `numberDispatcher` and `weightedListNumber` nest other providers, and the conditions are the ones of [predicates](/docs/data-driven/predicates). A condition is either passed as a value (`conditionalNumber(SurvivesExplosion, 1f)`) or declared in a block holding exactly one condition. `onFalse` and `default` are `0` when omitted.
+
+```kotlin
+pool {
+	rolls = conditionalNumber(3f, 1f) { killedByPlayer() }
+
+	bonusRolls = numberDispatcher(default = weightedListNumber {
+		entry(30, 1f)
+		entry(70, 0f)
+	}) {
+		case(2f) { killedByPlayer() }
+	}
+}
+```
+
+This writes `weighted_list` as `{"type": "minecraft:weighted_list", "distribution": [{"data": 1.0, "weight": 30}, {"data": 0.0, "weight": 70}]}`.
 
 ```kotlin
 pool {

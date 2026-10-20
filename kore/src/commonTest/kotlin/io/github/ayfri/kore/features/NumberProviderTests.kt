@@ -5,8 +5,11 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.loottables.lootTable
 import io.github.ayfri.kore.features.loottables.pool
+import io.github.ayfri.kore.features.predicates.conditions.SurvivesExplosion
+import io.github.ayfri.kore.features.predicates.conditions.blockStateProperty
 import io.github.ayfri.kore.features.predicates.providers.*
 import io.github.ayfri.kore.features.predicates.types.EntityTarget
+import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.EnvironmentAttributes
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
@@ -26,6 +29,65 @@ fun DataPack.numberProviderTests() {
 						"type": "minecraft:binomial",
 						"n": 5.0,
 						"p": 0.5
+					},
+					"entries": []
+				}
+			]
+		}
+	""".trimIndent()
+
+	lootTable("conditional_test") {
+		pool {
+			rolls = conditionalNumber(5f, 2f) {
+				blockStateProperty(Blocks.COMPOSTER) {
+					this["level"] = "0"
+				}
+			}
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"rolls": {
+						"type": "minecraft:conditional",
+						"condition": {
+							"condition": "minecraft:block_state_property",
+							"block": "minecraft:composter",
+							"properties": {
+								"level": "0"
+							}
+						},
+						"on_false": 2.0,
+						"on_true": 5.0
+					},
+					"entries": []
+				}
+			]
+		}
+	""".trimIndent()
+
+	lootTable("conditional_without_on_false_test") {
+		pool {
+			rolls = conditionalNumber(SurvivesExplosion, uniform(1f, 3f))
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"rolls": {
+						"type": "minecraft:conditional",
+						"condition": {
+							"condition": "minecraft:survives_explosion"
+						},
+						"on_true": {
+							"type": "minecraft:uniform",
+							"min": 1.0,
+							"max": 3.0
+						}
 					},
 					"entries": []
 				}
@@ -83,6 +145,95 @@ fun DataPack.numberProviderTests() {
 					"rolls": {
 						"type": "minecraft:environment_attribute",
 						"attribute": "minecraft:gameplay/baby_villager_activity"
+					},
+					"entries": []
+				}
+			]
+		}
+	""".trimIndent()
+
+	lootTable("number_dispatcher_test") {
+		pool {
+			rolls = numberDispatcher(default = weightedListNumber {
+				entry(30, 1f)
+				entry(70, 0f)
+			}) {
+				case(1f) {
+					blockStateProperty(Blocks.COMPOSTER) {
+						this["level"] = "0"
+					}
+				}
+				case(SurvivesExplosion, constant(2f))
+			}
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"rolls": {
+						"type": "minecraft:number_dispatcher",
+						"cases": [
+							{
+								"condition": {
+									"condition": "minecraft:block_state_property",
+									"block": "minecraft:composter",
+									"properties": {
+										"level": "0"
+									}
+								},
+								"number_provider": 1.0
+							},
+							{
+								"condition": {
+									"condition": "minecraft:survives_explosion"
+								},
+								"number_provider": 2.0
+							}
+						],
+						"default": {
+							"type": "minecraft:weighted_list",
+							"distribution": [
+								{
+									"data": 1.0,
+									"weight": 30
+								},
+								{
+									"data": 0.0,
+									"weight": 70
+								}
+							]
+						}
+					},
+					"entries": []
+				}
+			]
+		}
+	""".trimIndent()
+
+	lootTable("number_dispatcher_without_default_test") {
+		pool {
+			rolls = numberDispatcher {
+				case(SurvivesExplosion, 4f)
+			}
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"rolls": {
+						"type": "minecraft:number_dispatcher",
+						"cases": [
+							{
+								"condition": {
+									"condition": "minecraft:survives_explosion"
+								},
+								"number_provider": 4.0
+							}
+						]
 					},
 					"entries": []
 				}
@@ -249,6 +400,38 @@ fun DataPack.numberProviderTests() {
 						"type": "minecraft:uniform",
 						"min": 1.0,
 						"max": 5.0
+					},
+					"entries": []
+				}
+			]
+		}
+	""".trimIndent()
+
+	lootTable("weighted_list_test") {
+		pool {
+			rolls = weightedListNumber {
+				entry(30, 1f)
+				entry(70, 0f)
+			}
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"rolls": {
+						"type": "minecraft:weighted_list",
+						"distribution": [
+							{
+								"data": 1.0,
+								"weight": 30
+							},
+							{
+								"data": 0.0,
+								"weight": 70
+							}
+						]
 					},
 					"entries": []
 				}

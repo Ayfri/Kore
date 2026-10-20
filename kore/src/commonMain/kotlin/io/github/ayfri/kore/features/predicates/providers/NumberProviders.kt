@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.predicates.providers
 
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.generated.arguments.types.EnvironmentAttributeArgument
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
@@ -41,6 +42,23 @@ sealed class NumberProvider {
 @SerialName("binomial")
 @Serializable
 data class BinomialNumberProvider(var n: NumberProvider, var p: NumberProvider) : NumberProvider()
+
+/**
+ * Returns [onTrue] when [condition] passes, [onFalse] otherwise.
+ *
+ * Minecraft Wiki: [Number provider - conditional](https://minecraft.wiki/w/Number_provider#conditional)
+ *
+ * @property condition The predicate condition evaluated against the loot context.
+ * @property onFalse The provider used when [condition] fails, `0` when `null`.
+ * @property onTrue The provider used when [condition] passes.
+ */
+@SerialName("conditional")
+@Serializable
+data class ConditionalNumberProvider(
+	var condition: PredicateCondition,
+	var onFalse: NumberProvider? = null,
+	var onTrue: NumberProvider,
+) : NumberProvider()
 
 /**
  * Always returns the same number.
@@ -88,6 +106,33 @@ data class EnchantmentLevelNumberProvider(var amount: LevelBased) : NumberProvid
 data class EnvironmentAttributeNumberProvider(
 	var attribute: EnvironmentAttributeArgument,
 ) : NumberProvider()
+
+/**
+ * Returns the provider of the first case of [cases] whose condition passes, [default] when none does.
+ *
+ * Minecraft Wiki: [Number provider - number_dispatcher](https://minecraft.wiki/w/Number_provider#number_dispatcher)
+ *
+ * @property cases The cases, checked in order.
+ * @property default The provider used when no case matches, `0` when `null`.
+ */
+@SerialName("number_dispatcher")
+@Serializable
+data class NumberDispatcherNumberProvider(
+	var cases: List<NumberDispatcherCase>,
+	var default: NumberProvider? = null,
+) : NumberProvider()
+
+/**
+ * One case of a [NumberDispatcherNumberProvider].
+ *
+ * @property condition The predicate condition that selects this case.
+ * @property numberProvider The provider used when [condition] passes.
+ */
+@Serializable
+data class NumberDispatcherCase(
+	var condition: PredicateCondition,
+	var numberProvider: NumberProvider,
+)
 
 /**
  * Returns the value a score holder has on a scoreboard objective, optionally scaled.
@@ -140,3 +185,23 @@ data class SumNumberProvider(var summands: List<NumberProvider>) : NumberProvide
 @SerialName("uniform")
 @Serializable
 data class UniformNumberProvider(var min: NumberProvider, var max: NumberProvider) : NumberProvider()
+
+/**
+ * Returns the value of one provider of [distribution], picked with a probability of its weight over the total weight.
+ *
+ * Minecraft Wiki: [Number provider - weighted_list](https://minecraft.wiki/w/Number_provider#weighted_list)
+ *
+ * @property distribution The entries to draw from, which must not be empty.
+ */
+@SerialName("weighted_list")
+@Serializable
+data class WeightedListNumberProvider(var distribution: List<WeightedListNumberProviderEntry>) : NumberProvider()
+
+/**
+ * One entry of a [WeightedListNumberProvider].
+ *
+ * @property data The provider used when this entry is drawn.
+ * @property weight Relative chance of drawing this entry, compared to the other entries of the list.
+ */
+@Serializable
+data class WeightedListNumberProviderEntry(var data: NumberProvider, var weight: Int)

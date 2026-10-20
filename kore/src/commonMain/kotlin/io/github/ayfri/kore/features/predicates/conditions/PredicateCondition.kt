@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.features.predicates.conditions
 
+import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import kotlinx.serialization.Serializable
@@ -23,4 +24,11 @@ sealed class PredicateCondition {
 			outputName = "condition"
 		)
 	}
+}
+
+/** Returns the one condition declared by [block], failing with a message naming [builder] otherwise. */
+internal fun singleCondition(builder: String, block: Predicate.() -> Unit): PredicateCondition {
+	val conditions = Predicate().apply(block).predicateConditions
+	require(conditions.size == 1) { "'$builder' takes exactly one condition, got ${conditions.size}." }
+	return conditions.first()
 }
