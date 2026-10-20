@@ -2062,7 +2062,7 @@ fun DataPack.configuredFeatureTests() {
 		depth = constant(3)
 		verticalRange = 3
 		vegetationChance = 0.5
-		xzRadius = 2
+		xzRadius = constant(2)
 	}
 
 	configuredFeatures.last() assertsIs """
@@ -2110,7 +2110,7 @@ fun DataPack.configuredFeatureTests() {
 		depth = constant(2)
 		verticalRange = 8
 		vegetationChance = 0.5
-		xzRadius = 3
+		xzRadius = uniform(4, 7)
 	}
 
 	configuredFeatures.last() assertsIs """
@@ -2122,7 +2122,11 @@ fun DataPack.configuredFeatureTests() {
 			"extra_bottom_block_chance": 0.0,
 			"extra_edge_column_chance": 0.0,
 			"vegetation_chance": 0.5,
-			"xz_radius": 3,
+			"xz_radius": {
+				"type": "minecraft:uniform",
+				"min_inclusive": 4,
+				"max_inclusive": 7
+			},
 			"replaceable": "#minecraft:dirt",
 			"ground_state": {
 				"type": "minecraft:simple_state_provider",

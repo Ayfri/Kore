@@ -30,7 +30,7 @@ import kotlinx.serialization.Serializable
  * @property extraBottomBlockChance Chance, `0` to `1`, to add one more block to the depth of a column.
  * @property extraEdgeColumnChance Chance, `0` to `1`, to add a column next to the edge of the patch.
  * @property vegetationChance Chance, `0` to `1`, to run [vegetationFeature] on a column.
- * @property xzRadius Horizontal radius of the patch.
+ * @property xzRadius Horizontal radius of the patch, an int provider, a uniform `4` to `7` in vanilla.
  * @property replaceable A block, a block tag or a list of blocks the ground can replace.
  * @property groundState The block state provider of the ground.
  * @property vegetationFeature The placed feature run on top of the columns.
@@ -38,12 +38,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class WaterloggedVegetationPatch(
 	var surface: Surface,
-	var depth: IntProvider = ConstantIntProvider(0),
-	var verticalRange: Int = 0,
+	var depth: IntProvider = ConstantIntProvider(1),
+	var verticalRange: Int = 1,
 	var extraBottomBlockChance: Double = 0.0,
 	var extraEdgeColumnChance: Double = 0.0,
 	var vegetationChance: Double = 0.0,
-	var xzRadius: Int = 0,
+	var xzRadius: IntProvider = ConstantIntProvider(0),
 	var replaceable: InlinableList<BlockOrTagArgument>,
 	var groundState: BlockStateProvider = SimpleStateProvider(),
 	var vegetationFeature: PlacedFeatureArgument,
@@ -68,7 +68,7 @@ data class WaterloggedVegetationPatch(
  *     extraBottomBlockChance = 0.8
  *     extraEdgeColumnChance = 0.7
  *     vegetationChance = 0.1
- *     xzRadius = 7
+ *     xzRadius = uniform(4, 7)
  * }
  * ```
  *
