@@ -31,6 +31,14 @@ fun DataPack.blockTag(
 	block: Tag<BlockTagArgument>.() -> Unit = {},
 ) = tag(fileName, "block", namespace, replace, block)
 
+/** Create a carver tag. Produces `data/<namespace>/tags/worldgen/carver/<fileName>.json`. */
+fun DataPack.carverTag(
+	fileName: String = "carver",
+	namespace: String = name,
+	replace: Boolean = false,
+	block: Tag<CarverTagArgument>.() -> Unit = {},
+) = tag(fileName, "worldgen/carver", namespace, replace, block)
+
 /** Create a cat variant tag. Produces `data/<namespace>/tags/cat_variant/<fileName>.json`. */
 fun DataPack.catVariantTag(
 	fileName: String = "cat_variant",
@@ -38,14 +46,6 @@ fun DataPack.catVariantTag(
 	replace: Boolean = false,
 	block: Tag<CatVariantTagArgument>.() -> Unit = {},
 ) = tag(fileName, "cat_variant", namespace, replace, block)
-
-/** Create a configured carver tag. Produces `data/<namespace>/tags/worldgen/configured_carver/<fileName>.json`. */
-fun DataPack.configuredCarverTag(
-	fileName: String = "configured_carver",
-	namespace: String = name,
-	replace: Boolean = false,
-	block: Tag<ConfiguredCarverTagArgument>.() -> Unit = {},
-) = tag(fileName, "worldgen/configured_carver", namespace, replace, block)
 
 /** Create a configured feature tag. Produces `data/<namespace>/tags/worldgen/feature/<fileName>.json`. */
 fun DataPack.configuredFeatureTag(

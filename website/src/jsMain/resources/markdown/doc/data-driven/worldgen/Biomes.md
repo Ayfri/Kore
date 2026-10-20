@@ -124,11 +124,11 @@ References: [Mob spawning](https://minecraft.wiki/w/Biome_definition#Mob_spawnin
 
 ## Carvers
 
-`carvers` is a flat list of configured carver IDs, or a single carver tag. They run during the `carvers` step, after the terrain noise and
-before any feature.
+`carvers` is a flat list of carver IDs, or a single carver tag. They run during the `carvers` step, after the terrain noise and before any
+feature.
 
 ```kotlin
-carvers(myCaveCarver, ConfiguredCarvers.CAVE)
+carvers(myCaveCarver, Carvers.CAVE)
 ```
 
 See [Carvers](/docs/data-driven/worldgen/carvers).
@@ -158,7 +158,7 @@ See [Features](/docs/data-driven/worldgen/features).
 
 ```kotlin
 fun DataPack.highlandsBiome(treePlaced: PlacedFeatureArgument, orePlaced: PlacedFeatureArgument) {
-	val cave = configuredCarversBuilder.cave("highlands_cave") {
+	val cave = carversBuilder.cave("highlands_cave") {
 		probability = 0.08
 		y = uniformHeightProvider(absolute(32), absolute(128))
 		floorLevel = constant(-0.2f)

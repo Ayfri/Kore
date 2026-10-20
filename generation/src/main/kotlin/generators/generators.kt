@@ -77,7 +77,7 @@ suspend fun launchAllSimpleGenerators(): List<Generator> {
 				"villager_trade" to "VillagerTradeTag",
 				"zombie_nautilus_variant" to "ZombieNautilusVariantTag",
 				"worldgen/biome" to "worldgen.BiomeTag",
-				"worldgen/configured_carver" to "worldgen.ConfiguredCarverTag",
+				"worldgen/carver" to "worldgen.CarverTag",
 				"worldgen/density_function" to "worldgen.DensityFunctionTag",
 				"worldgen/feature" to "worldgen.FeatureTag",
 				"worldgen/flat_level_generator_preset" to "worldgen.FlatLevelGeneratorPresetTag",
@@ -119,7 +119,7 @@ suspend fun launchAllSimpleGenerators(): List<Generator> {
 		gen("BiomePresets", "worldgen/multi_noise_biome_source_parameter_list") {
 			argumentClassName = "MultiNoiseBiomeSourceParameterList"
 		},
-		gen("ConfiguredCarvers", "worldgen/configured_carver"),
+		gen("Carvers", "worldgen/carver"),
 		gen("DensityFunctions", "worldgen/density_function"),
 		gen("Features", "worldgen/feature"),
 		gen("FlatLevelGeneratorPresets", "worldgen/flat_level_generator_preset"),
@@ -238,7 +238,7 @@ suspend fun launchAllSimpleGenerators(): List<Generator> {
 		gen("VillagerTypes", "villager_type"),
 
 		// Worldgen
-		gen("Carvers", "worldgen/carver"),
+		gen("CarverTypes", "worldgen/carver_type"),
 	)
 
 	val allGenerators = lists.setUrlWithType("lists") + registries.setUrlWithType("registries")

@@ -25,7 +25,7 @@ Reference: [World generation](https://minecraft.wiki/w/World_generation)
 |-----------------------------------------------------------------------------|--------------------------------------------------------------------------|
 | [Biomes](/docs/data-driven/worldgen/biomes)                                 | Climate, colors, mob spawns, carver and feature lists                    |
 | [Block Predicates](/docs/data-driven/worldgen/block-predicates)             | Tests on the block at a position, used by features and enchantments      |
-| [Carvers](/docs/data-driven/worldgen/carvers)                               | Caves, nether caves and canyons                                          |
+| [Carvers](/docs/data-driven/worldgen/carvers)                               | Caves and canyons                                                        |
 | [Dimensions](/docs/data-driven/worldgen/dimensions)                         | Dimension types, dimensions, generators and biome sources                |
 | [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) | Visual, audio and gameplay rules shared by biomes and dimension types    |
 | [Features](/docs/data-driven/worldgen/features)                             | Configured and placed features: trees, ores, vegetation                  |
@@ -84,7 +84,7 @@ Replace `<ns>` with your namespace.
 | Kore API                        | Output path                                                  |
 |---------------------------------|--------------------------------------------------------------|
 | `biome(...)`                    | `data/<ns>/worldgen/biome/<name>.json`                       |
-| `configuredCarvers { ... }`     | `data/<ns>/worldgen/configured_carver/<name>.json`           |
+| `carvers { ... }`               | `data/<ns>/worldgen/carver/<name>.json`                      |
 | `configuredFeatures { ... }`    | `data/<ns>/worldgen/feature/<name>.json`                     |
 | `densityFunctions { ... }`      | `data/<ns>/worldgen/density_function/<name>.json`            |
 | `dimension(...)`                | `data/<ns>/dimension/<name>.json`                            |

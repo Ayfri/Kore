@@ -206,8 +206,8 @@ Kore provides helpers for all vanilla tag types:
 | `bannerPatternTag`            | Banner patterns      | `tags/banner_pattern`                       |
 | `biomeTag`                    | Biomes               | `tags/worldgen/biome`                       |
 | `blockTag`                    | Blocks               | `tags/block`                                |
+| `carverTag`                   | World carvers        | `tags/worldgen/carver`                      |
 | `catVariantTag`               | Cat variants         | `tags/cat_variant`                          |
-| `configuredCarverTag`         | World carvers        | `tags/worldgen/configured_carver`           |
 | `configuredFeatureTag`        | World features       | `tags/worldgen/feature`                     |
 | `configuredStructureTag`      | Structures           | `tags/worldgen/structure`                   |
 | `damageTypeTag`               | Damage types         | `tags/damage_type`                          |

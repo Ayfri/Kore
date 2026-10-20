@@ -648,13 +648,13 @@ fun itemComponentsTests() {
 				speed = 0.5f,
 				correctForDrops = true,
 				Tags.Block.BASE_STONE_OVERWORLD,
-				Tags.Block.OVERWORLD_CARVER_REPLACEABLES,
+				Tags.Block.LOGS,
 				Blocks.HAY_BLOCK
 			)
 			defaultMiningSpeed = 2.0f
 		}
 	}
-	toolTest.asString() assertsIs """minecraft:stone_sword[tool={rules:[{blocks:["#minecraft:base_stone_overworld","#minecraft:overworld_carver_replaceables","minecraft:hay_block"],speed:0.5f,correct_for_drops:1b}],default_mining_speed:2.0f}]"""
+	toolTest.asString() assertsIs """minecraft:stone_sword[tool={rules:[{blocks:["#minecraft:base_stone_overworld","#minecraft:logs","minecraft:hay_block"],speed:0.5f,correct_for_drops:1b}],default_mining_speed:2.0f}]"""
 
 	val tooltipDisplayTest = stoneSword {
 		tooltipDisplay(false, ItemComponentTypes.BANNER_PATTERNS, ItemComponentTypes.INSTRUMENT)

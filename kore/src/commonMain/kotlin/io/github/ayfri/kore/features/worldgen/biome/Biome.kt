@@ -5,7 +5,7 @@ import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.features.worldgen.biome.types.*
 import io.github.ayfri.kore.features.worldgen.environmentattributes.EnvironmentAttributesScope
 import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.ConfiguredCarverOrTagArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.CarverOrTagArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.BiomeArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
@@ -32,7 +32,7 @@ data class Biome(
 	var effects: BiomeEffects = BiomeEffects(),
 	var spawners: Spawners = Spawners(),
 	var spawnCosts: Map<EntityTypeArgument, SpawnCost> = mapOf(),
-	var carvers: InlinableList<ConfiguredCarverOrTagArgument> = emptyList(),
+	var carvers: InlinableList<CarverOrTagArgument> = emptyList(),
 	var features: Features = Features(),
 ) : Generator("worldgen/biome") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
@@ -58,13 +58,13 @@ fun Biome.attributes(init: EnvironmentAttributesScope.() -> Unit) {
 	attributes = EnvironmentAttributesScope().apply(init)
 }
 
-/** Sets the configured carvers running in this biome. */
-fun Biome.carvers(vararg values: ConfiguredCarverOrTagArgument) {
+/** Sets the carvers running in this biome. */
+fun Biome.carvers(vararg values: CarverOrTagArgument) {
 	carvers = values.toList()
 }
 
-/** Sets the configured carvers running in this biome, from a list built in [init]. */
-fun Biome.carvers(init: MutableList<ConfiguredCarverOrTagArgument>.() -> Unit) {
+/** Sets the carvers running in this biome, from a list built in [init]. */
+fun Biome.carvers(init: MutableList<CarverOrTagArgument>.() -> Unit) {
 	carvers = buildList(init)
 }
 

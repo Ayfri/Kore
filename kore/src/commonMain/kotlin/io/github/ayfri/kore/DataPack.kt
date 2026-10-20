@@ -42,7 +42,7 @@ import io.github.ayfri.kore.features.wolfsoundvariants.WolfSoundVariant
 import io.github.ayfri.kore.features.wolfvariants.WolfVariant
 import io.github.ayfri.kore.features.worldclock.WorldClock
 import io.github.ayfri.kore.features.worldgen.biome.Biome
-import io.github.ayfri.kore.features.worldgen.configuredcarver.ConfiguredCarver
+import io.github.ayfri.kore.features.worldgen.carver.Carver
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunction
 import io.github.ayfri.kore.features.worldgen.dimension.Dimension
@@ -95,12 +95,12 @@ class DataPack(val name: String) {
 	val advancements = registerGenerator<Advancement>()
 	val bannerPatterns = registerGenerator<BannerPattern>()
 	val biomes = registerGenerator<Biome>()
+	val carvers = registerGenerator<Carver>()
 	val catSoundVariants = registerGenerator<CatSoundVariant>()
 	val catVariants = registerGenerator<CatVariant>()
 	val chatTypes = registerGenerator<ChatType>()
 	val chickenSoundVariants = registerGenerator<ChickenSoundVariant>()
 	val chickenVariants = registerGenerator<ChickenVariant>()
-	val configuredCarvers = registerGenerator<ConfiguredCarver>()
 	val configuredFeatures = registerGenerator<ConfiguredFeature>()
 	val cowSoundVariants = registerGenerator<CowSoundVariant>()
 	val cowVariants = registerGenerator<CowVariant>()

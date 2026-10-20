@@ -13,7 +13,7 @@ import io.github.ayfri.kore.features.worldgen.environmentattributes.EnvironmentA
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.fogColor
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.skyColor
 import io.github.ayfri.kore.functions.load
-import io.github.ayfri.kore.generated.ConfiguredCarvers
+import io.github.ayfri.kore.generated.Carvers
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.PlacedFeatures
 import io.github.ayfri.kore.utils.pretty
@@ -52,7 +52,7 @@ fun DataPack.biomeTests() {
 			spawnCost(EntityTypes.ZOMBIE, 1f, 1f)
 		}
 
-		carvers(ConfiguredCarvers.CANYON, ConfiguredCarvers.NETHER_CAVE, ConfiguredCarvers.CAVE)
+		carvers(Carvers.CANYON, Carvers.NETHER_CAVE, Carvers.CAVE)
 
 		features {
 			rawGeneration = listOf(PlacedFeatures.ORE_DIAMOND, PlacedFeatures.ORE_DIAMOND_LARGE)

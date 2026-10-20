@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.features.worldgen.verticalanchors
 
 /**
- * Builder scope for [vertical anchors][VerticalAnchor], the single Y levels shared by the height providers, the
- * carver configurations and the material rule conditions.
+ * Builder scope for [vertical anchors][VerticalAnchor], the single Y levels shared by the height providers and the
+ * material rule conditions.
  *
  * Every vertical anchor builder ([absolute], [aboveBottom], [belowTop]) is an extension on this interface, so they
  * only resolve inside a block that actually accepts a vertical anchor, such as `cave("...") { }`, `materialRules { }`
@@ -17,7 +17,7 @@ interface VerticalAnchorScope
  *
  * ```kotlin
  * cave("my_cave") {
- *     lavaLevel = absolute(-54)
+ *     y = uniformHeightProvider(absolute(-54), absolute(64))
  * }
  * ```
  *
@@ -30,7 +30,7 @@ fun VerticalAnchorScope.absolute(absolute: Int) = Absolute(absolute)
  *
  * ```kotlin
  * cave("my_cave") {
- *     lavaLevel = aboveBottom(31)
+ *     y = uniformHeightProvider(aboveBottom(8), absolute(180))
  * }
  * ```
  *
@@ -44,7 +44,7 @@ fun VerticalAnchorScope.aboveBottom(aboveBottom: Int) = AboveBottom(aboveBottom)
  *
  * ```kotlin
  * cave("my_cave") {
- *     lavaLevel = belowTop(10)
+ *     y = uniformHeightProvider(absolute(0), belowTop(10))
  * }
  * ```
  *

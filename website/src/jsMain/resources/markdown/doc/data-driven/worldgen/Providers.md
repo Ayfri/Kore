@@ -5,7 +5,7 @@ nav-title: Providers
 description: Vertical anchors, height providers, int providers and float providers - the randomized values shared by every Kore worldgen builder.
 keywords: minecraft, datapack, kore, worldgen, vertical anchor, height provider, int provider, float provider, uniform, trapezoid
 date-created: 2026-08-21
-date-modified: 2026-08-21
+date-modified: 2026-10-20
 routeOverride: /docs/data-driven/worldgen/providers
 ---
 
@@ -35,9 +35,6 @@ dimension.
 | `aboveBottom(n)` | `{"above_bottom": n}` | `n` blocks above the bottom of the dimension, `0` being `min_y`.  |
 | `belowTop(n)`    | `{"below_top": n}`    | `n` blocks below the top of the dimension, larger values go down. |
 
-The builders extend `VerticalAnchorScope`, so they resolve inside a placed feature, a carver configuration, a `materialRules { }` block, and
-anywhere a height provider is being built.
-
 Reference: [Vertical anchor](https://minecraft.wiki/w/Custom_world_generation/vertical_anchor)
 
 ## Height Providers
@@ -55,8 +52,7 @@ carver and `startHeight` on a jigsaw structure take.
 | `veryBiasedToBottomHeightProvider(min, max, inner)`                      | Same shape with a sharper falloff, the vanilla diamond pattern.           |
 | `weightedListHeightProvider { }`                                         | Picks one of the nested providers, by weight.                             |
 
-Every builder except `weightedListHeightProvider` also takes plain `Int` bounds, read as absolute Y coordinates. They extend
-`HeightProviderScope`, which itself extends `VerticalAnchorScope`, so anchors are available in the same block.
+Every builder except `weightedListHeightProvider` also takes plain `Int` bounds, read as absolute Y coordinates.
 
 ```kotlin
 heightRange(uniformHeightProvider(minInclusive = 0, maxInclusive = 64))
@@ -88,9 +84,6 @@ Int providers fill every field expecting a variable count or size: `count()` and
 | `clamped(minInclusive, maxInclusive, source)`          | Evaluates `source` and clamps its result to `[min, max]`.                           |
 | `weightedList { }`                                     | Randomly selects one entry from a weighted pool.                                    |
 
-The builders extend `IntProviderScope`, so they resolve inside a placed feature, a configured feature configuration, a `processorList { }`
-block, a dimension type and an enchantment provider.
-
 ```kotlin
 count(constant(10))
 count(biasedToBottom(3, 8))
@@ -113,8 +106,8 @@ Reference: [Int provider](https://minecraft.wiki/w/Custom_world_generation/int_p
 
 ## Float Providers
 
-Float providers fill float fields such as `yScale` and `floorLevel` on carvers, `radius` on foliage placers, `heightScale` and
-`stalactiteBluntness` on features, and `volume` or `pitch` on enchantment effects.
+Float providers fill float fields such as `roomVerticalRadiusMultiplier` and `floorLevel` on carvers, `radius` on foliage placers,
+`heightScale` and `stalactiteBluntness` on features, and `volume` or `pitch` on enchantment effects.
 
 | Builder                                    | Behavior                                                                                  |
 |--------------------------------------------|-------------------------------------------------------------------------------------------|
@@ -123,13 +116,10 @@ Float providers fill float fields such as `yScale` and `floorLevel` on carvers, 
 | `trapezoid(min, max, plateau)`             | Trapezoid distribution over `[min, max]` with a flat top of width `plateau`.              |
 | `clampedNormal(mean, deviation, min, max)` | Samples a normal distribution (`mean`/`deviation`) and clamps the result to `[min, max]`. |
 
-The builders extend `FloatProviderScope`, so they resolve inside a carver configuration, a configured feature configuration and the
-`play_sound` / `spawn_particles` enchantment effects.
-
 ```kotlin
-yScale = constant(1.5f)
+floorLevel = constant(-0.5f)
 pitch = uniform(0.8f, 1.2f)
-floorLevel = clampedNormal(mean = 0.5f, deviation = 0.2f, min = 0.0f, max = 1.0f)
+roomVerticalRadiusMultiplier = clampedNormal(mean = 0.5f, deviation = 0.2f, min = 0.0f, max = 1.0f)
 thickness = trapezoid(min = 0.0f, max = 2.0f, plateau = 0.5f)
 ```
 
@@ -140,7 +130,7 @@ Reference: [Float provider](https://minecraft.wiki/w/Custom_world_generation/flo
 
 ## See Also
 
-- [Carvers](/docs/data-driven/worldgen/carvers) - `y`, `yScale`, radius multipliers and canyon shape fields
+- [Carvers](/docs/data-driven/worldgen/carvers) - `y`, `count`, radius multipliers and canyon shape fields
 - [Features](/docs/data-driven/worldgen/features) - `heightRange`, `count` and the configured feature parameters
 - [Noise & Terrain](/docs/data-driven/worldgen/noise) - `yAbove` and `verticalGradient` material rule conditions
 - [Structures](/docs/data-driven/worldgen/structures) - `startHeight` on jigsaw structures, `height` on nether fossils
