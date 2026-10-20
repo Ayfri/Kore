@@ -24,6 +24,8 @@ import io.github.ayfri.kore.features.predicates.providers.intRange
 import io.github.ayfri.kore.features.predicates.providers.scoreNumber
 import io.github.ayfri.kore.features.predicates.providers.sum
 import io.github.ayfri.kore.features.predicates.types.EntityTarget
+import io.github.ayfri.kore.features.worldgen.configuredfeature.Direction
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
@@ -485,6 +487,39 @@ fun DataPack.itemModifierTests() {
 				"!damage": {},
 				"!test": {},
 				"!test2": {}
+			}
+		}
+	""".trimIndent()
+
+	itemModifier("set_components_block_transformer") {
+		setComponents {
+			blockTransformer {
+				rule(simpleStateProvider(Blocks.DIRT_PATH)) {
+					disallowedFaces = listOf(Direction.DOWN)
+					sound = SoundEvents.Item.Shovel.FLATTEN
+				}
+			}
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"function": "minecraft:set_components",
+			"components": {
+				"block_transformer": [
+					{
+						"block_state_provider": {
+							"type": "minecraft:simple_state_provider",
+							"state": {
+								"Name": "minecraft:dirt_path"
+							}
+						},
+						"disallowed_faces": [
+							"down"
+						],
+						"sound": "minecraft:item.shovel.flatten"
+					}
+				]
 			}
 		}
 	""".trimIndent()

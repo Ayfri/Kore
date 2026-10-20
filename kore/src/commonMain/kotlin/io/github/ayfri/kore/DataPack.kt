@@ -286,20 +286,14 @@ class DataPack(val name: String) {
 	private var jsonEncoderCacheKey: Pair<Boolean, String>? = null
 	private lateinit var jsonEncoderCacheValue: Json
 
-	@OptIn(ExperimentalSerializationApi::class)
 	val jsonEncoder: Json
 		get() {
 			val key = configuration.prettyPrint to configuration.prettyPrintIndent
 			if (jsonEncoderCacheKey != key) {
 				jsonEncoderCacheKey = key
-				jsonEncoderCacheValue = Json {
+				jsonEncoderCacheValue = Json(jsonFormat) {
 					prettyPrint = configuration.prettyPrint
 					if (prettyPrint) prettyPrintIndent = configuration.prettyPrintIndent
-					encodeDefaults = true
-					explicitNulls = false
-					ignoreUnknownKeys = true
-					namingStrategy = JsonNamingSnakeCaseStrategy
-					useAlternativeNames = false
 				}
 			}
 			return jsonEncoderCacheValue
@@ -308,6 +302,16 @@ class DataPack(val name: String) {
 	companion object {
 		/** The default folder where the generated functions are stored, can be changed with [Configuration.generatedFunctionsFolder]. */
 		const val DEFAULT_GENERATED_FUNCTIONS_FOLDER = "generated_scopes"
+
+		/** The JSON settings of every data pack file, [jsonEncoder] adds the pack's pretty printing on top. */
+		@OptIn(ExperimentalSerializationApi::class)
+		val jsonFormat = Json {
+			encodeDefaults = true
+			explicitNulls = false
+			ignoreUnknownKeys = true
+			namingStrategy = JsonNamingSnakeCaseStrategy
+			useAlternativeNames = false
+		}
 	}
 }
 

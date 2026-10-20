@@ -15,10 +15,20 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.data.item.builders.itemStack
+import io.github.ayfri.kore.features.worldgen.blockpredicate.matchingBlocks
+import io.github.ayfri.kore.features.worldgen.configuredfeature.Direction
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.copyPropertiesProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.noise
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.noiseProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.rule
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.ruleBasedStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.states
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.utils.set
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 
 fun itemComponentsTests() {
 	val a = Items.AIR {
@@ -123,6 +133,45 @@ fun itemComponentsTests() {
 		}
 	}
 	blockStateTest.asString() assertsIs """minecraft:stone[block_state={test:"test"}]"""
+
+	val blockTransformerTest = Items.COPPER_AXE {
+		blockTransformer {
+			rule(ruleBasedStateProvider {
+				rule(copyPropertiesProvider(simpleStateProvider(Blocks.STRIPPED_OAK_LOG, mapOf("axis" to "y")))) {
+					matchingBlocks(Blocks.OAK_LOG)
+				}
+			}) {
+				itemDamagePerUse = 1
+				sound = SoundEvents.Item.Axe.STRIP
+			}
+			rule(simpleStateProvider(Blocks.DIRT)) {
+				consumeOnUse = false
+				disallowedFaces = listOf(Direction.DOWN, Direction.UP)
+				dropStrategy = BlockTransformDropStrategy.CLICKED_FACE
+				loot = LootTables.Till.ROOTED_DIRT
+				particle = BlockTransformParticle.WAX_OFF
+				transformType = BlockTransformType.COPPER_CHEST
+			}
+		}
+	}
+	blockTransformerTest.asString() assertsIs """minecraft:copper_axe[block_transformer=[{block_state_provider:{type:"minecraft:rule_based_state_provider",rules:[{if_true:{type:"minecraft:matching_blocks",blocks:"minecraft:oak_log"},then:{type:"minecraft:copy_properties_provider",source_block_state_provider:{type:"minecraft:simple_state_provider",state:{Name:"minecraft:stripped_oak_log",Properties:{axis:"y"}}}}}]},item_damage_per_use:1,sound:"minecraft:item.axe.strip"},{block_state_provider:{type:"minecraft:simple_state_provider",state:{Name:"minecraft:dirt"}},consume_on_use:0b,disallowed_faces:["down","up"],drop_strategy:"clicked_face",loot:"minecraft:till/rooted_dirt",particle:"wax_off",transform_type:"copper_chest"}]]"""
+
+	val blockTransformerNumbersTest = Items.COPPER_AXE {
+		blockTransformer {
+			rule(noiseProvider {
+				scale = 1.0
+				noise(-3, 0.5, 0.25)
+				states(Blocks.MOSS_BLOCK, Blocks.STONE)
+			})
+			rule(noiseProvider {
+				seed = 3000000000
+				scale = 0.5
+				noise(2, 1.0, 1.0)
+				states(Blocks.DIRT)
+			})
+		}
+	}
+	blockTransformerNumbersTest.asString() shouldBe """minecraft:copper_axe[block_transformer=[{block_state_provider:{type:"minecraft:noise_provider",seed:0,noise:{firstOctave:-3,amplitudes:[0.5d,0.25d]},scale:1,states:[{Name:"minecraft:moss_block"},{Name:"minecraft:stone"}]}},{block_state_provider:{type:"minecraft:noise_provider",seed:3000000000L,noise:{firstOctave:2,amplitudes:[1,1]},scale:0.5d,states:[{Name:"minecraft:dirt"}]}}]]"""
 
 	val breakSoundTest = Items.DIAMOND_SWORD {
 		breakSound(SoundEvents.Ambient.CAVE)
