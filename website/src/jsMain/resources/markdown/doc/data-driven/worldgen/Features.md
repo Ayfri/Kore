@@ -90,7 +90,24 @@ tree("my_poplar") {
 ```
 
 The other decorators are `alterGround`, `attachedToLeaves`, `attachedToLogs`, `beehive`, `cocoa`, `creakingHeart`, `leaveVine`, `paleMoss`,
-`placeOnGround` and `trunkVine`. `attachedToLogs` always takes at least one direction, given as its arguments.
+`placeOnGround` and `trunkVine`.
+
+A `fallenTree` takes the same decorators twice: `stumpDecorators` for the stump, `logDecorators` for the log lying next to it, whose
+length is `logLength`. `attachedToLogs` always takes at least one direction, given as its arguments.
+
+```kotlin
+fallenTree("my_fallen_oak") {
+	trunkProvider = simpleStateProvider(blockState(Blocks.OAK_LOG, "axis" to "y"))
+	logLength = uniform(4, 7)
+	stumpDecorators { trunkVine() }
+	logDecorators {
+		attachedToLogs(Direction.UP) {
+			probability = 0.1
+			blockProvider = simpleStateProvider(Blocks.RED_MUSHROOM)
+		}
+	}
+}
+```
 
 `rootPlacer` adds roots under the trunk and raises the trunk above them. Only the mangrove one exists, `mangroveRootPlacer`, with the vanilla
 mangrove values below: the roots grow up to 8 blocks wide and 15 long, skew off their course 20% of the time, turn muddy over mud, and get
@@ -275,6 +292,7 @@ Kore covers every vanilla configured feature type.
 | `endGateway(...)`                  | End gateway portal                   | End outer islands              |
 | `endPodium(active)`                | End exit portal podium               | Dragon fight portal            |
 | `endSpike(...)`                    | End obsidian pillar with crystal     | The End respawn pillars        |
+| `fallenTree(...)`                  | A tree trunk lying on the ground     | Fallen oak, birch, spruce logs |
 | `fillLayer(...)`                   | A full layer of blocks               | Custom dimension layers        |
 | `fossil(...)`                      | Structure-based fossil               | Underground fossils            |
 | `geode(...)`                       | Hollow structure with layered shells | Amethyst geodes                |

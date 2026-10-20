@@ -31,6 +31,7 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.t
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.paleMoss
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.placeOnGround
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.shelfMushroom
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.trunkVine
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.cherryTrunkPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.darkOakTrunkPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.poplarTrunkPlacer
@@ -2645,6 +2646,147 @@ fun DataPack.configuredFeatureTests() {
 					"probability": 0.1
 				}
 			]
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.fallenTree("fallen_oak_tree") {
+		trunkProvider = simpleStateProvider(blockState(Blocks.OAK_LOG, "axis" to "y"))
+		logLength = uniform(4, 7)
+		stumpDecorators { trunkVine() }
+		logDecorators {
+			attachedToLogs(Direction.UP) {
+				probability = 0.1
+				blockProvider = weightedStateProvider {
+					entry(Blocks.RED_MUSHROOM, weight = 2)
+					entry(Blocks.BROWN_MUSHROOM, weight = 1)
+				}
+			}
+		}
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:fallen_tree",
+			"log_decorators": [
+				{
+					"type": "minecraft:attached_to_logs",
+					"block_provider": {
+						"type": "minecraft:weighted_state_provider",
+						"entries": [
+							{
+								"weight": 2,
+								"data": {
+									"type": "minecraft:simple_state_provider",
+									"state": {
+										"Name": "minecraft:red_mushroom"
+									}
+								}
+							},
+							{
+								"weight": 1,
+								"data": {
+									"type": "minecraft:simple_state_provider",
+									"state": {
+										"Name": "minecraft:brown_mushroom"
+									}
+								}
+							}
+						]
+					},
+					"directions": [
+						"up"
+					],
+					"probability": 0.1
+				}
+			],
+			"log_length": {
+				"type": "minecraft:uniform",
+				"min_inclusive": 4,
+				"max_inclusive": 7
+			},
+			"stump_decorators": [
+				{
+					"type": "minecraft:trunk_vine"
+				}
+			],
+			"trunk_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:oak_log",
+					"Properties": {
+						"axis": "y"
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.fallenTree("fallen_poplar_tree") {
+		trunkProvider = simpleStateProvider(blockState(Blocks.POPLAR_LOG, "axis" to "y"))
+		logLength = uniform(4, 7)
+		logDecorators {
+			attachedToLogs(Direction.UP) {
+				probability = 0.1
+				blockProvider = simpleStateProvider(Blocks.BROWN_MUSHROOM)
+			}
+			shelfMushroom(0.8)
+		}
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:fallen_tree",
+			"log_decorators": [
+				{
+					"type": "minecraft:attached_to_logs",
+					"block_provider": {
+						"type": "minecraft:simple_state_provider",
+						"state": {
+							"Name": "minecraft:brown_mushroom"
+						}
+					},
+					"directions": [
+						"up"
+					],
+					"probability": 0.1
+				},
+				{
+					"type": "minecraft:shelf_mushroom",
+					"probability": 0.8
+				}
+			],
+			"log_length": {
+				"type": "minecraft:uniform",
+				"min_inclusive": 4,
+				"max_inclusive": 7
+			},
+			"stump_decorators": [],
+			"trunk_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:poplar_log",
+					"Properties": {
+						"axis": "y"
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.fallenTree("test_fallen_tree_default")
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:fallen_tree",
+			"log_decorators": [],
+			"log_length": 0,
+			"stump_decorators": [],
+			"trunk_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:stone"
+				}
+			}
 		}
 	""".trimIndent()
 
