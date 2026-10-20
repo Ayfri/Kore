@@ -136,6 +136,77 @@ blockColumn("cave_vines", direction = Direction.DOWN) {
 }
 ```
 
+### Columns, Pillars And Spreads
+
+Three features build the basalt deltas and the glowstone of the Nether. Their predicate properties (`canReplace`, `continueThrough`) take
+the [block predicate](/docs/data-driven/worldgen/block-predicates) builders.
+
+`steppedColumnCluster` grows a cluster of columns up from the ground, each one stepping down towards its edges.
+
+| Property          | Range    | Tuning                                                                                         |
+|-------------------|----------|------------------------------------------------------------------------------------------------|
+| `columnCount`     | 1..150   | How many columns the cluster has, more columns make a denser, wider cluster.                   |
+| `clusterReach`    | 0..13    | How far from the placement position columns can start, capped by `height`.                     |
+| `columnReach`     | 0..3     | How wide each column is, `0` gives one-block-wide spikes.                                      |
+| `height`          | 1..10    | How tall the columns are.                                                                      |
+| `canReplace`      | -        | The blocks a column can grow into.                                                             |
+| `continueThrough` | -        | The blocks a growing column goes through instead of stopping, such as its own block.           |
+| `cannotPlaceOn`   | -        | A block, a block tag or a list of blocks a column cannot start from.                           |
+
+```kotlin
+steppedColumnCluster("basalt_cluster") {
+	block = simpleStateProvider(Blocks.BASALT)
+	canReplace { matchingBlocks(Blocks.AIR, Blocks.LAVA) }
+	continueThrough { matchingBlocks(Blocks.BASALT) }
+	cannotPlaceOn(Blocks.LAVA)
+	columnCount = constant(50)
+	clusterReach = constant(5)
+	columnReach = uniform(2, 3)
+	height = uniform(5, 10)
+}
+```
+
+`singleBlockPillar` stacks one block after the other, up or down from the placement position.
+
+| Property           | Default | Tuning                                                                          |
+|--------------------|---------|---------------------------------------------------------------------------------|
+| `direction`        | `UP`    | `VerticalDirection.UP` grows towards the sky, `DOWN` hangs from a ceiling.      |
+| `chanceToContinue` | `1`     | Chance (`0` to `1`) to place one more block, lower values give shorter pillars. |
+| `canReplace`       | any     | The blocks the pillar can grow into.                                            |
+| `capFeature`       | none    | A placed feature run at the end of the pillar.                                  |
+
+```kotlin
+singleBlockPillar("basalt_pillar", VerticalDirection.DOWN) {
+	block = simpleStateProvider(Blocks.BASALT)
+	canReplace { matchingBlocks(Blocks.AIR) }
+	chanceToContinue = 0.9f
+}
+```
+
+`randomNeighborSpread` tries random positions around the placement position and places `block` on the replaceable ones that touch an
+accepted neighbor, so a blob grows outwards from the blocks it is attached to.
+
+| Property            | Range    | Tuning                                                                              |
+|---------------------|----------|-------------------------------------------------------------------------------------|
+| `attempts`          | 1..3000  | How many positions are tried, more attempts give a bigger blob.                     |
+| `xzOffset`          | -16..16  | Horizontal spread of the attempts, a `trapezoid` keeps most near the center.        |
+| `yOffset`           | -16..16  | Vertical spread of the attempts, `uniform(-11, 0)` only grows downwards.            |
+| `acceptedNeighbors` | -        | A block, a block tag or a list of blocks one of which must touch the position.      |
+| `canReplace`        | -        | The blocks that can be replaced.                                                    |
+
+```kotlin
+randomNeighborSpread("glowstone_extra") {
+	block = simpleStateProvider(Blocks.GLOWSTONE)
+	acceptedNeighbors(Blocks.GLOWSTONE)
+	canReplace { matchingBlocks(Blocks.AIR) }
+	attempts = constant(1500)
+	xzOffset = trapezoid(-7, 7, 0)
+	yOffset = uniform(-11, 0)
+}
+```
+
+`xzOffset` is written `xy_offset` in the JSON, the name Minecraft 26.3-snapshot-2 reads.
+
 ### All Feature Types
 
 Kore covers every vanilla configured feature type.
@@ -143,7 +214,6 @@ Kore covers every vanilla configured feature type.
 | Builder                           | Places                               | Vanilla use                    |
 |-----------------------------------|--------------------------------------|--------------------------------|
 | `bamboo(probability)`             | Bamboo stalks                        | Jungle bamboo                  |
-| `basaltColumns(reach, height)`    | Paired basalt pillar columns         | Nether basalt deltas           |
 | `blockBlob(...)`                  | Small block blob on a surface        | Mossy cobblestone in forests   |
 | `blockColumn(...)`                | Vertical stack of blocks with layers | Custom pillars                 |
 | `blockPile(...)`                  | Piles of blocks                      | Pumpkin/melon patches          |
@@ -166,6 +236,7 @@ Kore covers every vanilla configured feature type.
 | `netherrackReplaceBlobs(...)`     | Blobs replacing netherrack           | Nether gravel/blackstone blobs |
 | `ore(...)`                        | Ore vein replacing terrain           | Every overworld ore            |
 | `randomBooleanSelector(...)`      | One of two features, at random       | Symmetric ore variants         |
+| `randomNeighborSpread(...)`       | Blocks spreading from neighbors      | Nether glowstone blobs         |
 | `randomSelector(...)`             | Weighted random feature picker       | Mixed ore deposits             |
 | `replaceSingleBlock(...)`         | Blocks replaced by rule targets      | Custom block swaps             |
 | `rootSystem(...)`                 | Roots under a tree                   | Mangrove roots                 |
@@ -176,10 +247,12 @@ Kore covers every vanilla configured feature type.
 | `sequence(...)`                   | Several features, in order           | Multi-step feature chains      |
 | `simpleBlock(...)`                | A single block state                 | Flowers, mushrooms             |
 | `simpleRandomSelector(...)`       | Uniform random feature picker        | Coral type variety             |
+| `singleBlockPillar(...)`          | One-block-wide pillar, up or down    | Basalt delta pillars           |
 | `speleothem(...)`                 | Single pointed speleothem            | Cave stalactites/stalagmites   |
 | `speleothemCluster(...)`          | Dense speleothem growth              | Cave speleothem rooms          |
 | `spike(...)`                      | Tall spiky columns                   | Ice spikes in frozen biomes    |
 | `springFeature(...)`              | Fluid source block                   | Water/lava springs             |
+| `steppedColumnCluster(...)`       | Cluster of stepped columns           | Basalt delta columns           |
 | `template(...)`                   | A weighted structure template        | Random structure variants      |
 | `tree(...)`                       | A tree, trunk and foliage            | Every vanilla tree             |
 | `twistingVines(...)`              | Twisting vine growth                 | Warped forest floors           |
@@ -190,7 +263,7 @@ Kore covers every vanilla configured feature type.
 
 ### Features Without Configuration
 
-Eighteen feature types have no fields at all. Their builders take only a file name and nothing else:
+Sixteen feature types have no fields at all. Their builders take only a file name and nothing else:
 
 ```kotlin
 configuredFeatures {
@@ -199,8 +272,8 @@ configuredFeatures {
 }
 ```
 
-`basaltPillar`, `blueIce`, `bonusChest`, `chorusPlant`, `coralClaw`, `coralMushroom`, `coralTree`, `desertWell`, `endIsland`,
-`endPlatform`, `freezeTopLayer`, `glowstoneBlob`, `kelp`, `monsterRoom`, `noOp`, `vines`, `voidStartPlatform`, `weepingVines`.
+`blueIce`, `bonusChest`, `chorusPlant`, `coralClaw`, `coralMushroom`, `coralTree`, `desertWell`, `endIsland`, `endPlatform`,
+`freezeTopLayer`, `kelp`, `monsterRoom`, `noOp`, `vines`, `voidStartPlatform`, `weepingVines`.
 
 Reference: [Feature types](https://minecraft.wiki/w/Configured_feature#Types)
 

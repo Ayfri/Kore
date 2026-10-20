@@ -8,6 +8,7 @@ import io.github.ayfri.kore.data.block.blockStateStone
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.worldgen.blockpredicate.*
 import io.github.ayfri.kore.features.worldgen.configuredfeature.Direction
+import io.github.ayfri.kore.features.worldgen.configuredfeature.VerticalDirection
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.*
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.*
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.cherryFoliagePlacer
@@ -51,24 +52,6 @@ fun DataPack.configuredFeatureTests() {
 		{
 			"type": "minecraft:bamboo",
 			"probability": 0.5
-		}
-	""".trimIndent()
-
-	configuredFeaturesBuilder.basaltColumns("test_basalt_columns", reach = 3, height = 6)
-
-	configuredFeatures.last() assertsIs """
-		{
-			"type": "minecraft:basalt_columns",
-			"reach": 3,
-			"height": 6
-		}
-	""".trimIndent()
-
-	configuredFeaturesBuilder.basaltPillar("test_basalt_pillar")
-
-	configuredFeatures.last() assertsIs """
-		{
-			"type": "minecraft:basalt_pillar"
 		}
 	""".trimIndent()
 
@@ -566,14 +549,6 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.glowstoneBlob("test_glowstone_blob")
-
-	configuredFeatures.last() assertsIs """
-		{
-			"type": "minecraft:glowstone_blob"
-		}
-	""".trimIndent()
-
 	configuredFeaturesBuilder.hugeBrownMushroom("test_huge_brown_mushroom") {
 		canPlaceOn { solid() }
 	}
@@ -952,6 +927,46 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
+	configuredFeaturesBuilder.randomNeighborSpread("test_random_neighbor_spread") {
+		block = simpleStateProvider(Blocks.GLOWSTONE)
+		acceptedNeighbors(Blocks.GLOWSTONE, Blocks.NETHERRACK)
+		canReplace { matchingBlocks(Blocks.AIR) }
+		attempts = constant(1500)
+		xzOffset = uniform(-7, 7)
+		yOffset = uniform(-11, 0)
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:random_neighbor_spread",
+			"accepted_neighbors": [
+				"minecraft:glowstone",
+				"minecraft:netherrack"
+			],
+			"attempts": 1500,
+			"block": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:glowstone"
+				}
+			},
+			"can_replace": {
+				"type": "minecraft:matching_blocks",
+				"blocks": "minecraft:air"
+			},
+			"xy_offset": {
+				"type": "minecraft:uniform",
+				"min_inclusive": -7,
+				"max_inclusive": 7
+			},
+			"y_offset": {
+				"type": "minecraft:uniform",
+				"min_inclusive": -11,
+				"max_inclusive": 0
+			}
+		}
+	""".trimIndent()
+
 	configuredFeaturesBuilder.randomPatch("test_random_patch_defaults", PlacedFeatures.FLOWER_DEFAULT)
 
 	configuredFeatures.last() assertsIs """
@@ -1311,6 +1326,46 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
+	configuredFeaturesBuilder.singleBlockPillar("test_single_block_pillar_defaults")
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:single_block_pillar",
+			"block": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:stone"
+				}
+			},
+			"direction": "up"
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.singleBlockPillar("test_single_block_pillar", VerticalDirection.DOWN) {
+		block = simpleStateProvider(Blocks.BASALT)
+		canReplace { replaceable() }
+		capFeature = PlacedFeatures.ACACIA
+		chanceToContinue = 0.5f
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:single_block_pillar",
+			"block": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:basalt"
+				}
+			},
+			"can_replace": {
+				"type": "minecraft:replaceable"
+			},
+			"cap_feature": "minecraft:acacia",
+			"chance_to_continue": 0.5,
+			"direction": "down"
+		}
+	""".trimIndent()
+
 	configuredFeaturesBuilder.spike("test_spike", state = blockStateStone()) {
 		canPlaceOn { solid() }
 		canReplace { solid() }
@@ -1352,6 +1407,49 @@ fun DataPack.configuredFeatureTests() {
 				"minecraft:stone",
 				"minecraft:gravel"
 			]
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.steppedColumnCluster("test_stepped_column_cluster") {
+		block = simpleStateProvider(Blocks.BASALT)
+		canReplace { matchingBlocks(Blocks.LAVA) }
+		continueThrough { replaceable() }
+		cannotPlaceOn(Blocks.LAVA)
+		columnReach = constant(1)
+		columnCount = uniform(1, 4)
+		height = uniform(2, 5)
+		clusterReach = constant(3)
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:stepped_column_cluster",
+			"block": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:basalt"
+				}
+			},
+			"can_replace": {
+				"type": "minecraft:matching_blocks",
+				"blocks": "minecraft:lava"
+			},
+			"cannot_place_on": "minecraft:lava",
+			"cluster_reach": 3,
+			"column_count": {
+				"type": "minecraft:uniform",
+				"min_inclusive": 1,
+				"max_inclusive": 4
+			},
+			"column_reach": 1,
+			"continue_through": {
+				"type": "minecraft:replaceable"
+			},
+			"height": {
+				"type": "minecraft:uniform",
+				"min_inclusive": 2,
+				"max_inclusive": 5
+			}
 		}
 	""".trimIndent()
 
