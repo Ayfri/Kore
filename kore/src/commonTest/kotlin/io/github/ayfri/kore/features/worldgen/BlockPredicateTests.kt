@@ -8,6 +8,8 @@ import io.github.ayfri.kore.features.worldgen.blockpredicate.*
 import io.github.ayfri.kore.features.worldgen.configuredfeature.Direction
 import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.blockPredicateFilter
 import io.github.ayfri.kore.features.worldgen.placedfeature.placedFeature
+import io.github.ayfri.kore.features.worldgen.verticalanchors.aboveBottom
+import io.github.ayfri.kore.features.worldgen.verticalanchors.absolute
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Features
@@ -97,6 +99,22 @@ fun DataPack.blockPredicateTests() {
 		""".trimIndent()
 	) {
 		hasSturdyFace(Direction.UP) { offset(0, -1, 0) }
+	}
+
+	assertPredicate(
+		"height_range", """
+			{
+				"type": "minecraft:height_range",
+				"max_inclusive": {
+					"absolute": 64
+				},
+				"min_inclusive": {
+					"above_bottom": 8
+				}
+			}
+		""".trimIndent()
+	) {
+		heightRange(aboveBottom(8), absolute(64))
 	}
 
 	assertPredicate(

@@ -1,5 +1,7 @@
 package io.github.ayfri.kore.features.worldgen.blockpredicate
 
+import io.github.ayfri.kore.features.worldgen.verticalanchors.VerticalAnchorScope
+
 /**
  * Builder scope for block predicates, the tests on the state of a block shared by the placed features, the configured
  * features and the enchantment effects.
@@ -27,7 +29,7 @@ interface BlockPredicateScope {
  *
  * @property predicates The predicates appended so far.
  */
-class BlockPredicatesScope : BlockPredicateScope {
+class BlockPredicatesScope : BlockPredicateScope, VerticalAnchorScope {
 	val predicates = mutableListOf<BlockPredicate>()
 
 	override fun addBlockPredicate(predicate: BlockPredicate) {

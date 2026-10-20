@@ -5,7 +5,7 @@ nav-title: Block Predicates
 description: Test blocks during world generation with Kore's block predicate DSL - solid, matching blocks, fluids, biomes, tags and offsets.
 keywords: minecraft, datapack, kore, worldgen, block predicate, placement condition, matching blocks, would survive
 date-created: 2026-08-19
-date-modified: 2026-08-21
+date-modified: 2026-10-20
 routeOverride: /docs/data-driven/worldgen/block-predicates
 ---
 
@@ -84,6 +84,7 @@ predicate {
 | `alwaysTrue()`                   | Always                                                            |
 | `anyOf { }`                      | At least one child predicate passes                               |
 | `hasSturdyFace(direction)`       | The block has a full supporting surface on that face              |
+| `heightRange(min, max)`          | The Y level is between both vertical anchors, included            |
 | `insideWorldBounds()`            | The position is inside the height limits of the world             |
 | `matchingBiomes(biomes)`         | The biome is one of the given biomes or in the given biome tag    |
 | `matchingBlockTag(tag)`          | The block is in the given block tag                               |
