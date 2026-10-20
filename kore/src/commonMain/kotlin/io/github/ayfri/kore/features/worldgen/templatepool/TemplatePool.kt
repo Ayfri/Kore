@@ -24,7 +24,7 @@ import kotlinx.serialization.Transient
 data class TemplatePool(
 	@Transient
 	override var fileName: String = "template_pool",
-	var fallback: TemplatePoolArgument = TemplatePools.Empty,
+	var fallback: TemplatePoolArgument = TemplatePools.EMPTY,
 	override val elements: MutableList<TemplatePoolEntry> = mutableListOf(),
 ) : Generator("worldgen/template_pool"), PoolEntriesScope {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
@@ -35,7 +35,7 @@ data class TemplatePool(
  *
  * ```kotlin
  * val houses = templatePool("village/houses") {
- *     fallback = TemplatePools.Empty
+ *     fallback = TemplatePools.EMPTY
  *
  *     single(Structures.Village.Plains.Houses.PLAINS_SMALL_HOUSE_1, weight = 3)
  *     empty(weight = 1)

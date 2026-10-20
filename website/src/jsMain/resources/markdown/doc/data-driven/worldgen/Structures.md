@@ -167,7 +167,7 @@ its `size` budget.
 
 ```kotlin
 val pool = dp.templatePool("my_pool") {
-	fallback = TemplatePools.Empty
+	fallback = TemplatePools.EMPTY
 
 	single(Structures.Village.Plains.TownCenters.PLAINS_FOUNTAIN_01, ProcessorLists.EMPTY, weight = 3)
 	feature(PlacedFeatures.PILE_HAY, weight = 1)
@@ -175,7 +175,7 @@ val pool = dp.templatePool("my_pool") {
 }
 ```
 
-`fallback` is the pool used when a piece cannot connect any further - usually `TemplatePools.Empty`, which is also the default.
+`fallback` is the pool used when a piece cannot connect any further - usually `TemplatePools.EMPTY`, which is also the default.
 
 | Builder                              | `element_type`                         | Places                                                       |
 |--------------------------------------|----------------------------------------|--------------------------------------------------------------|
@@ -361,10 +361,10 @@ themed variants without duplicating every pool.
 ```kotlin
 poolAliases {
 	// Always resolve this alias to that pool.
-	directPoolAlias(TemplatePools.Empty, housesPool)
+	directPoolAlias(TemplatePools.EMPTY, housesPool)
 
 	// Draw the target from a weighted list, per instance.
-	randomPoolAlias(TemplatePools.Empty) {
+	randomPoolAlias(TemplatePools.EMPTY) {
 		weightedPoolEntry(1, desertHouses)
 		weightedPoolEntry(2, plainsHouses)
 	}
@@ -372,8 +372,8 @@ poolAliases {
 	// Draw a whole group of aliases at once, keeping a variant coherent.
 	randomGroupPoolAlias {
 		weightedGroupEntry(1) {
-			directPoolAlias(TemplatePools.Empty, desertHouses)
-			directPoolAlias(TemplatePools.Empty, desertStreets)
+			directPoolAlias(TemplatePools.EMPTY, desertHouses)
+			directPoolAlias(TemplatePools.EMPTY, desertStreets)
 		}
 	}
 }

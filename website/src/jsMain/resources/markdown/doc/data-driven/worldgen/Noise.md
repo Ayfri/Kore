@@ -61,7 +61,7 @@ A file name holding slashes lands in subfolders, so `noise("cave/entrance")` wri
 | `firstOctave` | `Int`          | Starting octave, negative values are larger scale. Lower means larger features.                | `-10`, and `-12` in `temperature_large`                             |
 | `amplitudes`  | `List<Double>` | Amplitude weight per octave, `0.0` skipping one. A higher weight makes that octave count more. | `listOf(1.5, 0.0, 1.0, 0.0, 0.0, 0.0)`, same in `temperature_large` |
 
-Every call returns a `NoiseArgument`. Vanilla noises are available as `Noises.AquiferBarrier`, `Noises.Continentalness` and so on, and can be
+Every call returns a `NoiseArgument`. Vanilla noises are available as `Noises.AQUIFER_BARRIER`, `Noises.CONTINENTALNESS` and so on, and can be
 passed anywhere a `NoiseArgument` is expected.
 
 ---
@@ -76,7 +76,7 @@ Declare them inside a `densityFunctions { ... }` block, one builder call per fil
 ```kotlin
 dp.densityFunctions {
 	val base = constant("base", 1.0)
-	val hills = noise("hills", Noises.Continentalness, xzScale = 0.25, yScale = 0.0)
+	val hills = noise("hills", Noises.CONTINENTALNESS, xzScale = 0.25, yScale = 0.0)
 
 	abs("abs_hills", hills)
 	add("terrain", base, hills)
@@ -167,11 +167,11 @@ dp.densityFunctions {
 		toValue = -1.0
 	}
 
-	shiftedNoise("shifted_hills", Noises.Continentalness) {
+	shiftedNoise("shifted_hills", Noises.CONTINENTALNESS) {
 		xzScale = 0.25
 		yScale = 0.0
-		shiftX(DensityFunctions.ShiftX)
-		shiftZ(DensityFunctions.ShiftZ)
+		shiftX(DensityFunctions.SHIFT_X)
+		shiftZ(DensityFunctions.SHIFT_Z)
 	}
 
 	intervalSelect("cave_shape") {

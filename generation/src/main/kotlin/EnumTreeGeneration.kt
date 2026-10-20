@@ -4,8 +4,9 @@ import generators.Generator
 
 /**
  * Generates a sealed hierarchy of nested `object`/`enum class` declarations from `/`-separated resource paths
- * (e.g. `worldgen/biome/plains`): one nesting level per path segment, one `enum class` per leaf directory. Used
- * instead of [generateEnum] whenever entries contain [Generator.separator].
+ * (e.g. `worldgen/biome/plains`): one nesting level per path segment, one `enum class` per leaf directory, and a
+ * SCREAMING_CASE `data object` per root file, so `Recipes.STONE` reads like the enum entries of `Recipes.Brewing`.
+ * Used instead of [generateEnum] whenever entries contain [Generator.separator].
  */
 fun generatePathEnumTree(paths: List<String>, generator: Generator) {
 	val name = generator.name
@@ -51,7 +52,7 @@ fun generatePathEnumTree(paths: List<String>, generator: Generator) {
 		if (separator !in path) {
 			topLevel.addType(
 				TypeSpec
-					.objectBuilder(enumName)
+					.objectBuilder(enumValue)
 					.apply {
 						addModifiers(KModifier.DATA)
 						addSuperinterface(topLevelInterfaceClassName)

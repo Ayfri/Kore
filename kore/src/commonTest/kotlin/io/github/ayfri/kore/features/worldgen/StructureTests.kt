@@ -124,7 +124,7 @@ fun DataPack.structureTests() {
 		}
 	""".trimIndent()
 
-	structuresBuilder.jigsaw("my_jigsaw", startPool = TemplatePools.Empty) {
+	structuresBuilder.jigsaw("my_jigsaw", startPool = TemplatePools.EMPTY) {
 		biomes(Biomes.DESERT, Biomes.BADLANDS)
 		step = GenerationStep.TOP_LAYER_MODIFICATION
 		startHeight = constantAbsolute(10)
@@ -133,15 +133,15 @@ fun DataPack.structureTests() {
 		maxDistanceFromCenter(80)
 		useExpansionHack = false
 		poolAliases {
-			directPoolAlias(TemplatePools.Empty, TemplatePools.Empty)
-			randomPoolAlias(TemplatePools.Empty) {
-				weightedPoolEntry(1, TemplatePools.Empty)
+			directPoolAlias(TemplatePools.EMPTY, TemplatePools.EMPTY)
+			randomPoolAlias(TemplatePools.EMPTY) {
+				weightedPoolEntry(1, TemplatePools.EMPTY)
 			}
 			randomGroupPoolAlias {
 				weightedGroupEntry(1) {
-					directPoolAlias(TemplatePools.Empty, TemplatePools.Empty)
-					randomPoolAlias(TemplatePools.Empty) {
-						weightedPoolEntry(1, TemplatePools.Empty)
+					directPoolAlias(TemplatePools.EMPTY, TemplatePools.EMPTY)
+					randomPoolAlias(TemplatePools.EMPTY) {
+						weightedPoolEntry(1, TemplatePools.EMPTY)
 					}
 				}
 			}
@@ -218,7 +218,7 @@ fun DataPack.structureTests() {
 		}
 	""".trimIndent()
 
-	structuresBuilder.jigsaw("my_padded_jigsaw", startPool = TemplatePools.Empty) {
+	structuresBuilder.jigsaw("my_padded_jigsaw", startPool = TemplatePools.EMPTY) {
 		biomes(Biomes.DEEP_DARK)
 		size = 7
 		dimensionPadding(10)

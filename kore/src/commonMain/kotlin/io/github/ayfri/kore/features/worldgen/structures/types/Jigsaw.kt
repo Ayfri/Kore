@@ -88,9 +88,9 @@ fun StructuresScope.jigsaw(
  *
  * ```kotlin
  * poolAliases {
- *     directPoolAlias(TemplatePools.Empty, housesPool)
+ *     directPoolAlias(TemplatePools.EMPTY, housesPool)
  *
- *     randomPoolAlias(TemplatePools.Empty) {
+ *     randomPoolAlias(TemplatePools.EMPTY) {
  *         weightedPoolEntry(1, desertHouses)
  *         weightedPoolEntry(2, plainsHouses)
  *     }

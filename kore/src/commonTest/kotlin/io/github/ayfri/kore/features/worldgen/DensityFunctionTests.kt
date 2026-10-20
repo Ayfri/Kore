@@ -235,7 +235,7 @@ fun DataPack.densityFunctionTests() {
 		}
 	""".trimIndent()
 
-	densityFunctionsBuilder.noise("noise", Noises.Calcite, xzScale = 0.5, yScale = 0.25)
+	densityFunctionsBuilder.noise("noise", Noises.CALCITE, xzScale = 0.5, yScale = 0.25)
 
 	densityFunctions.last() assertsIs """
 		{
@@ -293,7 +293,7 @@ fun DataPack.densityFunctionTests() {
 		}
 	""".trimIndent()
 
-	densityFunctionsBuilder.shift("shift", Noises.Calcite)
+	densityFunctionsBuilder.shift("shift", Noises.CALCITE)
 
 	densityFunctions.last() assertsIs """
 		{
@@ -302,7 +302,7 @@ fun DataPack.densityFunctionTests() {
 		}
 	""".trimIndent()
 
-	densityFunctionsBuilder.shiftA("shift_a", Noises.Calcite)
+	densityFunctionsBuilder.shiftA("shift_a", Noises.CALCITE)
 
 	densityFunctions.last() assertsIs """
 		{
@@ -311,7 +311,7 @@ fun DataPack.densityFunctionTests() {
 		}
 	""".trimIndent()
 
-	densityFunctionsBuilder.shiftB("shift_b", Noises.Calcite)
+	densityFunctionsBuilder.shiftB("shift_b", Noises.CALCITE)
 
 	densityFunctions.last() assertsIs """
 		{
@@ -320,10 +320,10 @@ fun DataPack.densityFunctionTests() {
 		}
 	""".trimIndent()
 
-	densityFunctionsBuilder.shiftedNoise("shifted_noise", Noises.Calcite) {
+	densityFunctionsBuilder.shiftedNoise("shifted_noise", Noises.CALCITE) {
 		xzScale = 0.1
 		yScale = 1.0
-		noise = Noises.Calcite
+		noise = Noises.CALCITE
 
 		shiftX(1.0)
 		shiftY(DensityFunctions.Overworld.BASE_3D_NOISE)
