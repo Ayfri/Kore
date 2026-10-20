@@ -15,7 +15,6 @@ import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.serializers.InlinableList
-import io.github.ayfri.kore.serializers.JsonSerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -35,7 +34,6 @@ import kotlinx.serialization.Serializable
  * @property block The block state provider of the placed blocks.
  * @property canReplace The blocks that can be replaced.
  * @property xzOffset Horizontal range of the random offset applied to every attempt, `-16` to `16`.
- * Serialized as `xy_offset` in 26.3-snapshot-2.
  * @property yOffset Vertical range of the random offset applied to every attempt, `-16` to `16`.
  */
 @Serializable
@@ -44,8 +42,6 @@ data class RandomNeighborSpread(
 	var attempts: IntProvider = ConstantIntProvider(1),
 	var block: BlockStateProvider = SimpleStateProvider(),
 	var canReplace: BlockPredicate = True,
-	/** The key is `xy_offset` in 26.3-snapshot-2 and `xz_offset` from snapshot 3 on. */
-	@JsonSerialName("xy_offset")
 	var xzOffset: IntProvider = ConstantIntProvider(0),
 	var yOffset: IntProvider = ConstantIntProvider(0),
 ) : FeatureConfig(), BlockPredicateScope, BlockStateProviderScope, IntProviderScope

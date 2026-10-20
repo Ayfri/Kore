@@ -262,8 +262,6 @@ randomNeighborSpread("glowstone_extra") {
 }
 ```
 
-`xzOffset` is written `xy_offset` in the JSON, the name Minecraft 26.3-snapshot-2 reads.
-
 ### Overlay And Patchy Squares
 
 `overlay` places every placed feature of its list, whether or not the others were placed, where `sequence` stops at the first one that

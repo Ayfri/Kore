@@ -1056,7 +1056,7 @@ fun DataPack.configuredFeatureTests() {
 				"type": "minecraft:matching_blocks",
 				"blocks": "minecraft:air"
 			},
-			"xy_offset": {
+			"xz_offset": {
 				"type": "minecraft:uniform",
 				"min_inclusive": -7,
 				"max_inclusive": 7

@@ -87,7 +87,7 @@ Int providers fill every field expecting a variable count or size: `count()` and
 | `uniform(minInclusive, maxInclusive)`                  | Uniform random integer in `[min, max]`.                                             | `placed_feature/blue_ice` `count`               |
 | `biasedToBottom(minInclusive, maxInclusive)`           | Random integer in `[min, max]`, weighted towards the minimum.                       | `placed_feature/glowstone_extra` `count`        |
 | `veryBiasedToBottom(minInclusive, maxInclusive)`       | Random integer in `[min, max]`, strongly weighted towards the minimum.              | `carver/cave` `count`                           |
-| `trapezoid(min, max, plateau)`                         | Trapezoid distribution over `[min, max]` with a flat top of width `plateau`.        | `feature/glowstone_extra` `xy_offset`           |
+| `trapezoid(min, max, plateau)`                         | Trapezoid distribution over `[min, max]` with a flat top of width `plateau`.        | `feature/glowstone_extra` `xz_offset`           |
 | `clampedNormal(minInclusive, maxInclusive, mean, dev)` | Samples a normal distribution (`mean`/`dev`) and clamps the result to `[min, max]`. | `placed_feature/pointed_dripstone` `offset` `x` |
 | `clamped(minInclusive, maxInclusive, source)`          | Evaluates `source` and clamps its result to `[min, max]`.                           | `placed_feature/forest_flowers` `count`         |
 | `weightedList { }`                                     | Randomly selects one entry from a weighted pool.                                    | `placed_feature/bamboo_vegetation` `count`      |
