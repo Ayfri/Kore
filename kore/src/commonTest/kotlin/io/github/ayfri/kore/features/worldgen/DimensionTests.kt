@@ -28,6 +28,7 @@ fun DataPack.dimensionTests() {
 			settings = noiseSettings("default_noise_settings") {},
 			biomeSource = multiNoise {
 				this += multiNoiseEntry(Biomes.BEACH) {
+					humidity = doubleOrPair(-0.2, 0.4)
 					weirdness = doubleOrPair(0.5)
 				}
 			}
@@ -47,7 +48,10 @@ fun DataPack.dimensionTests() {
 							"biome": "minecraft:beach",
 							"parameters": {
 								"temperature": 0.0,
-								"humidity": 0.0,
+								"humidity": [
+									-0.2,
+									0.4
+								],
 								"continentalness": 0.0,
 								"erosion": 0.0,
 								"weirdness": 0.5,

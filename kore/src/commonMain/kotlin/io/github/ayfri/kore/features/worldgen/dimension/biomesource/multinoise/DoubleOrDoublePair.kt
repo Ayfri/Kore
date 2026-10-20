@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.worldgen.dimension.biomesource.multinoise
 
 import io.github.ayfri.kore.serializers.EitherInlineSerializer
+import io.github.ayfri.kore.serializers.PairAsArray
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
@@ -10,7 +11,7 @@ import kotlinx.serialization.Serializable
 @Serializable(with = DoubleOrDoublePair.Companion.DoubleOrDoublePairSerializer::class)
 data class DoubleOrDoublePair(
 	val number: Double? = null,
-	val pair: Pair<Double, Double>? = null
+	val pair: PairAsArray<Double, Double>? = null
 ) {
 	companion object {
 		data object DoubleOrDoublePairSerializer :
