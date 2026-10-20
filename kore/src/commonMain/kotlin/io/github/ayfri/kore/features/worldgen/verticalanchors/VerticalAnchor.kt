@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
  * Whatever the form, the resolved Y is clamped to the dimension's build height, so an anchor can never point outside
  * of `min_y` .. `min_y + height - 1`.
  *
- * Every builder is an extension on [VerticalAnchorScope], so [absolute], [aboveBottom] and [belowTop] only resolve
+ * Every builder is an extension on [VerticalAnchorScope], so [absolute], [aboveBottom], [belowTop] and [relativeToSeaLevel] only resolve
  * inside a block that actually accepts a vertical anchor, such as `cave("...") { }` or `materialRules { }`.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Custom_world_generation/vertical_anchor
@@ -63,3 +63,15 @@ data class AboveBottom(var aboveBottom: Int) : VerticalAnchor()
  */
 @Serializable
 data class BelowTop(var belowTop: Int) : VerticalAnchor()
+
+/**
+ * A Y level given as an offset from the sea level of the dimension, negative values being below it.
+ *
+ * Serialized as `{ "relative_to_sea_level": <offset> }`.
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Custom_world_generation/vertical_anchor
+ *
+ * @property relativeToSeaLevel The number of blocks above the sea level, negative to go below it.
+ */
+@Serializable
+data class RelativeToSeaLevel(var relativeToSeaLevel: Int) : VerticalAnchor()

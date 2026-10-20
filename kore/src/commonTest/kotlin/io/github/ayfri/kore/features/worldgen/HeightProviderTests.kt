@@ -9,6 +9,7 @@ import io.github.ayfri.kore.features.worldgen.placedfeature.placedFeature
 import io.github.ayfri.kore.features.worldgen.verticalanchors.aboveBottom
 import io.github.ayfri.kore.features.worldgen.verticalanchors.absolute
 import io.github.ayfri.kore.features.worldgen.verticalanchors.belowTop
+import io.github.ayfri.kore.features.worldgen.verticalanchors.relativeToSeaLevel
 import io.github.ayfri.kore.generated.Features
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
@@ -80,6 +81,30 @@ fun DataPack.heightProviderTests() {
 					"type": "minecraft:height_range",
 					"height": {
 						"above_bottom": 16
+					}
+				}
+			]
+		}
+	""".trimIndent()
+
+	placedFeature("relative_to_sea_level_test", Features.ACACIA) {
+		heightRange(uniformHeightProvider(relativeToSeaLevel(-10), relativeToSeaLevel(10)))
+	}
+
+	placedFeatures.last() assertsIs """
+		{
+			"feature": "minecraft:acacia",
+			"placement": [
+				{
+					"type": "minecraft:height_range",
+					"height": {
+						"type": "minecraft:uniform",
+						"min_inclusive": {
+							"relative_to_sea_level": -10
+						},
+						"max_inclusive": {
+							"relative_to_sea_level": 10
+						}
 					}
 				}
 			]

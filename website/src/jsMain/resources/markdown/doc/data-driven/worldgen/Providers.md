@@ -29,11 +29,12 @@ list.
 A vertical anchor is one Y level. It serializes as a one-key object, and the resolved Y is always clamped to the build height of the
 dimension.
 
-| Builder          | JSON                  | Meaning                                                           |
-|------------------|-----------------------|-------------------------------------------------------------------|
-| `absolute(y)`    | `{"absolute": y}`     | Absolute Y coordinate, the one shown on the F3 screen.            |
-| `aboveBottom(n)` | `{"above_bottom": n}` | `n` blocks above the bottom of the dimension, `0` being `min_y`.  |
-| `belowTop(n)`    | `{"below_top": n}`    | `n` blocks below the top of the dimension, larger values go down. |
+| Builder                 | JSON                           | Meaning                                                                       |
+|-------------------------|--------------------------------|-------------------------------------------------------------------------------|
+| `absolute(y)`           | `{"absolute": y}`              | Absolute Y coordinate, the one shown on the F3 screen.                        |
+| `aboveBottom(n)`        | `{"above_bottom": n}`          | `n` blocks above the bottom of the dimension, `0` being `min_y`.              |
+| `belowTop(n)`           | `{"below_top": n}`             | `n` blocks below the top of the dimension, larger values go down.             |
+| `relativeToSeaLevel(n)` | `{"relative_to_sea_level": n}` | `n` blocks above the sea level of the dimension, negative values go below it. |
 
 Reference: [Vertical anchor](https://minecraft.wiki/w/Custom_world_generation/vertical_anchor)
 

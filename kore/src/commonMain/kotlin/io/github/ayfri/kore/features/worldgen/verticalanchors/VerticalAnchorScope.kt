@@ -4,7 +4,7 @@ package io.github.ayfri.kore.features.worldgen.verticalanchors
  * Builder scope for [vertical anchors][VerticalAnchor], the single Y levels shared by the height providers and the
  * material rule conditions.
  *
- * Every vertical anchor builder ([absolute], [aboveBottom], [belowTop]) is an extension on this interface, so they
+ * Every vertical anchor builder ([absolute], [aboveBottom], [belowTop], [relativeToSeaLevel]) is an extension on this interface, so they
  * only resolve inside a block that actually accepts a vertical anchor, such as `cave("...") { }`, `materialRules { }`
  * or any height provider builder.
  *
@@ -51,3 +51,17 @@ fun VerticalAnchorScope.aboveBottom(aboveBottom: Int) = AboveBottom(aboveBottom)
  * Minecraft Wiki: https://minecraft.wiki/w/Custom_world_generation/vertical_anchor
  */
 fun VerticalAnchorScope.belowTop(belowTop: Int) = BelowTop(belowTop)
+
+/**
+ * Creates a [RelativeToSeaLevel] anchor [relativeToSeaLevel] blocks above the sea level of the dimension, negative
+ * values going below it.
+ *
+ * ```kotlin
+ * cave("my_cave") {
+ *     y = uniformHeightProvider(relativeToSeaLevel(-10), relativeToSeaLevel(10))
+ * }
+ * ```
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Custom_world_generation/vertical_anchor
+ */
+fun VerticalAnchorScope.relativeToSeaLevel(relativeToSeaLevel: Int) = RelativeToSeaLevel(relativeToSeaLevel)
