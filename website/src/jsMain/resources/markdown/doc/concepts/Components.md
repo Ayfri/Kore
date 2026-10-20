@@ -152,6 +152,22 @@ Options of a rule:
 - `sound`: the sound played on success (default none).
 - `transformType`: `SINGLE_BLOCK` or `COPPER_CHEST`, which also transforms the other half of a double copper chest (default `SINGLE_BLOCK`).
 
+### Compostable
+
+`compostable` makes an item usable in a composter. It takes the ID of a [number provider file](/docs/data-driven/loot-tables#number-provider-files)
+giving the number of layers added, either a vanilla one from `NumberProviders.Compostable` or one of your own.
+
+```kotlin
+val seeds = Items.WHEAT_SEEDS {
+	compostable(NumberProviders.Compostable.LOW)
+}
+
+val layers = numberProvider("my_layers", 1f)
+val sapling = Items.OAK_SAPLING {
+	compostable(layers)
+}
+```
+
 ### Profile
 
 The profile component can be either a player profile or a texture-based profile.
@@ -265,6 +281,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `canBreak(..)`                       | Restricts which blocks this item can break in Adventure mode.                                            |
 | `canPlaceOn(..)`                     | Restricts which blocks this item can be placed on in Adventure mode.                                     |
 | `chargedProjectiles(..)`             | Stores projectiles loaded into a crossbow.                                                               |
+| `compostable(..)`                    | Makes the item usable in a composter, adding the layers a number provider file gives.                    |
 | `consumable(..) { .. }`              | Makes the item consumable with configurable eating time, animation, sound, and effects.                  |
 | `container(..)`                      | Stores items inside a container item (e.g., shulker box).                                                |
 | `containerLoot(..)`                  | References a loot table to generate container contents when opened.                                      |

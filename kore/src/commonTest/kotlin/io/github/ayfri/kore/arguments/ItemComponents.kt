@@ -26,6 +26,7 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovid
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.states
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
+import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
 import io.github.ayfri.kore.utils.set
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -269,6 +270,16 @@ fun itemComponentsTests() {
 		})
 	}
 	containerTest.asString() assertsIs """minecraft:stone[container=[{slot:10,item:{id:"minecraft:diamond"}},{slot:98,item:{id:"minecraft:dirt",components:{damage:1}}}]]"""
+
+	val compostableTest = stone {
+		compostable(NumberProviders.Compostable.LOW)
+	}
+	compostableTest.asString() assertsIs """minecraft:stone[compostable={layers:"minecraft:compostable/low"}]"""
+
+	val customCompostableTest = stone {
+		compostable(NumberProviderArgument("my_layers", "my_pack"))
+	}
+	customCompostableTest.asString() assertsIs """minecraft:stone[compostable={layers:"my_pack:my_layers"}]"""
 
 	val containerLootTest = stone {
 		containerLoot(LootTables.Gameplay.PANDA_SNEEZE, 123)
