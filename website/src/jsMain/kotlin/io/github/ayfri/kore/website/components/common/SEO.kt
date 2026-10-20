@@ -50,6 +50,12 @@ fun setCanonical(url: String) {
 	metaName("twitter:url", url)
 }
 
+/** Links the Markdown copy of the page generated at build time, `null` removes the link on pages that have none. */
+fun setMarkdownAlternate(url: String?) {
+	if (url == null) removeAllInHead("link[type='text/markdown']")
+	else upsert("link[type='text/markdown']", "link", "rel" to "alternate", "type" to "text/markdown", "href" to url)
+}
+
 fun setType(type: String) = metaProperty("og:type", type)
 
 fun setTwitterCard(card: String) = metaName("twitter:card", card)

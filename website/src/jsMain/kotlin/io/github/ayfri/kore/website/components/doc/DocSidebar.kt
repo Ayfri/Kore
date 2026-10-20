@@ -15,12 +15,14 @@ import org.jetbrains.compose.web.css.AlignSelf
 import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
+import org.jetbrains.compose.web.dom.Nav
 
 @Composable
 fun DocSidebar(revealed: Boolean, onClose: () -> Unit) {
 	Style(DocSidebarStyle)
 
-	Div({
+	Nav({
+		attr("aria-label", "Documentation")
 		classes(DocSidebarStyle.sidebar, "sidebar")
 		if (revealed) classes("reveal")
 	}) {

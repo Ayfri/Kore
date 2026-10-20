@@ -15,7 +15,7 @@ import org.jetbrains.compose.web.dom.Main
 import org.w3c.dom.url.URL
 
 @Composable
-fun PageLayout(title: String, content: @Composable () -> Unit) {
+fun PageLayout(title: String, markdownPath: String? = null, content: @Composable () -> Unit) {
 	Style(CodeThemeStyle)
 	Style(SiteChromeStyle)
 
@@ -26,6 +26,7 @@ fun PageLayout(title: String, content: @Composable () -> Unit) {
 	url.hash = ""
 
 	setCanonical(url.href)
+	setMarkdownAlternate(markdownPath?.let { "$baseUrl$it.md" })
 	setTitle("$title | Kore")
 	setDescription("Kore is a modern, type-safe Kotlin datapack generator for Minecraft. Open-source and easy to use. Create datapacks without writing JSON or MCFunction by hand.")
 	setKeywords(

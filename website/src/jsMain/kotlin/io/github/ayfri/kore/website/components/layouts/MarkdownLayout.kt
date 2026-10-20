@@ -80,7 +80,7 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 		)
 	}
 
-	PageLayout(markdownData["nav-title"]?.get(0) ?: "Untitled") {
+	PageLayout(markdownData["nav-title"]?.get(0) ?: "Untitled", markdownPath = context.route.path) {
 		Button({
 			classes(MarkdownLayoutStyle.revealButton)
 			onClick { revealed = !revealed }

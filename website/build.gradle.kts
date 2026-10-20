@@ -56,6 +56,19 @@ data class DocEntry(
 	val position: Int? = null,
 )
 
+/** A GitHub release read back from `releases.tsv`, tagged `v<kore version>-<minecraft version>`. */
+data class ReleaseEntry(val tag: String, val prerelease: Boolean, val published: String) {
+	val coordinate = tag.removePrefix("v")
+	val koreVersion = coordinate.substringBefore('-')
+	val minecraftVersion = coordinate.substringAfter('-', "")
+
+	/** Same rule as the site's version matrix: a plain Minecraft release (`26.2`, `1.21.4`), never a snapshot, pre-release or release candidate. */
+	val isStable = !prerelease && Regex("""\d+\.\d+(\.\d+)?""").matches(minecraftVersion)
+
+	/** Zero-padded numbers, so plain string comparison orders `26.10` after `26.2`. */
+	val minecraftSortKey = minecraftVersion.split('.').joinToString(".") { it.padStart(4, '0') }
+}
+
 kobweb {
 	val projectGroup = group
 	val projectLogger = logger
@@ -97,6 +110,7 @@ kobweb {
 					}
 				}
 				link("/view-transitions.css", "stylesheet")
+				link("/llms.txt", "describedby")
 
 				script("text/javascript", "/prism.min.js") {
 					attributes["data-manual"] = ""
@@ -272,7 +286,6 @@ kobweb {
 
 		// Capture values outside the callback for configuration cache compatibility
 		val docGroupOrder = docGroupOrder
-		val projectName = project.name
 		val projectDir = project.projectDir
 		val markdownDir = projectDir.resolve("src/jsMain/resources/markdown")
 		// Kobweb flattens a "public" subfolder of resources to the site root, so the generated dir must mirror that layout for llms.txt/sitemap.xml/etc. to end up at the site root.
@@ -362,58 +375,140 @@ kobweb {
 				return@Comparator compareValues(a.navTitle, b.navTitle)
 			})
 
-			// Generate llms.txt (documentation index for LLMs) grouped by sections
 			val baseUrl = Project.WEBSITE_URL // Also available as AppGlobals["websiteUrl"]
+			val githubUrl = "https://${Project.GITHUB_URL}"
+			val summary = "Kore is an open-source Kotlin DSL and library that generates type-safe Minecraft Java Edition datapacks: functions, commands, loot tables, recipes, advancements, worldgen and more are written as Kotlin code instead of JSON and MCFunction by hand."
+
+			val mavenKore = "${Project.GROUP}:kore"
+			val releases = gitHubDataDir.resolve("releases.tsv").takeIf { it.exists() }?.readLines().orEmpty()
+				.filter { it.isNotBlank() }
+				.map { line -> line.split('\t').let { (tag, prerelease, published) -> ReleaseEntry(tag, prerelease.toBoolean(), published) } }
+				.filter { it.minecraftVersion.isNotEmpty() }
+				.sortedByDescending { it.published }
+			val latestStable = releases.firstOrNull { it.isStable }
+			// The newest release overall, when it is not stable, is the pre-release newer than the latest stable one.
+			val latestPreRelease = releases.firstOrNull()?.takeIf { !it.isStable }
+
+			/** One row per Minecraft drop like the home page widget: hotfixes fold into their `26.x`, or into the same Kore version before 26. */
+			val stableRows = releases.filter { it.isStable }
+				.distinctBy { it.minecraftVersion }
+				.groupBy { if (it.minecraftVersion.startsWith("1.")) "kore:${it.koreVersion}" else "mc:${it.minecraftVersion.split('.').take(2).joinToString(".")}" }
+				.map { (_, rows) -> rows.maxBy { it.minecraftSortKey } }
+				.sortedByDescending { it.minecraftSortKey }
+			val versionMatrix = if (releases.isEmpty()) "Every version is listed at $baseUrl/updates.\n" else buildString {
+				appendLine("| Minecraft version | Kore version | Type | Gradle coordinate | Published |")
+				appendLine("| --- | --- | --- | --- | --- |")
+				appendLine("| $minecraftVersion | ${Project.VERSION} | Maven Snapshot | `$mavenKore:${Project.VERSION}-$minecraftVersion-SNAPSHOT` | master (continuous) |")
+				latestPreRelease?.let { appendLine("| ${it.minecraftVersion} | ${it.koreVersion} | Snapshot | `$mavenKore:${it.coordinate}` | ${it.published.take(10)} |") }
+				stableRows.forEach { appendLine("| ${it.minecraftVersion} | ${it.koreVersion} | Stable | `$mavenKore:${it.coordinate}` | ${it.published.take(10)} |") }
+			}
+			// The home page topic cards, read from the widget source so the links can't drift from it.
+			val featureGrid = projectDir.resolve("src/jsMain/kotlin/io/github/ayfri/kore/website/components/doc/FeatureCards.kt").readText()
+				.substringAfter("fun FeatureGrid()")
+				.split("FeatureCard(").drop(1)
+				.mapNotNull { card ->
+					val title = Regex("""title = "([^"]*)"""").find(card)?.groupValues?.get(1) ?: return@mapNotNull null
+					val links = Regex("""FeatureLink\("([^"]*)", "([^"]*)"\)""").findAll(card).joinToString(", ") { "[${it.groupValues[2]}](${it.groupValues[1]})" }
+					"- **$title**: $links"
+				}.joinToString("\n", postfix = "\n")
+			val widgets = mapOf("FeatureGrid" to featureGrid, "VersionMatrix" to versionMatrix)
+			val routes = sortedEntries.map { it.slugs.joinToString("/") }.toSet()
+
+			val frontMatterRegex = Regex("""\A---\r?\n.*?\r?\n---\r?\n""", RegexOption.DOT_MATCHES_ALL)
+			val fenceRegex = Regex("""(?ms)^[ \t]*(?<fence>`{3,}|~{3,}).*?^[ \t]*\k<fence>[`~]*[ \t]*$""")
+			val widgetRegex = Regex("""(?m)^\{\{\{\s*([^\s}]+)\s*\}\}\}[ \t]*\r?\n?""")
+			val spriteRegex = Regex("""(?<!`)!\[[^\]]*]\(mc:[^)]*\) ?""")
+			val docLinkRegex = Regex("""]\(/(docs/[^)#\s]*)(#[^)\s]*)?\)""")
+			val rootRelativeRegex = Regex("""]\(/(?!/)""")
+			val blankRunRegex = Regex("""\n{3,}""")
+
+			/** Outside code fences: widgets become Markdown (mockups vanish), `mc:` sprites go, root-relative links turn absolute. */
+			fun String.toPlainMarkdown(): String {
+				val fences = fenceRegex.findAll(this).map { it.value }.toList()
+				val prose = fenceRegex.split(this).map { chunk ->
+					chunk
+						.replace(widgetRegex) { widgets[it.groupValues[1].substringAfterLast('.')].orEmpty() }
+						.replace(spriteRegex, "")
+						.replace(docLinkRegex) { if (it.groupValues[1] in routes) "]($baseUrl/${it.groupValues[1]}.md${it.groupValues[2]})" else it.value }
+						.replace(rootRelativeRegex, "]($baseUrl/")
+						.replace(blankRunRegex, "\n\n")
+				}
+				return prose.indices.joinToString("") { prose[it] + fences.getOrElse(it) { "" } }
+			}
+
+			/** The page as clean Markdown: its own H1 (the frontmatter title when it has none), the description, the update date and the canonical URL, then the body. */
+			fun DocEntry.toMarkdown(): String {
+				val body = file.readText().replace(frontMatterRegex, "").toPlainMarkdown().trim()
+				val ownHeading = body.startsWith("# ")
+				return buildString {
+					appendLine("# ${if (ownHeading) body.substringBefore('\n').removePrefix("# ") else title}")
+					appendLine()
+					appendLine("> $desc")
+					appendLine()
+					appendLine("Updated ${dateModified.take(10)}. Canonical: $baseUrl/${slugs.joinToString("/")}")
+					appendLine()
+					append(if (ownHeading) body.substringAfter('\n', "").trimStart() else body)
+				}
+			}
+
+			// Group entries by their first slug (section)
+			val groupedEntries = sortedEntries.groupBy { it.slugs.getOrNull(1) ?: "other" }
+			// Single-page sections outside `docGroupOrder` (home, getting started) come first.
+			val orderedGroups = groupedEntries.keys.sortedBy { if (it in docGroupOrder) getGroupPriority(it) else -1 }
+
+			val groupLabels = mapOf("data-driven" to "Data-driven", "getting-started" to "Getting started", "oop" to "OOP")
+			val latestVersions = latestStable?.let { stable ->
+				val preRelease = latestPreRelease?.let { ", the latest pre-release is `$mavenKore:${it.coordinate}` for Minecraft ${it.minecraftVersion}" }.orEmpty()
+				"The latest stable release is `$mavenKore:${stable.coordinate}` for Minecraft ${stable.minecraftVersion}$preRelease."
+			} ?: "The current versions are listed at $baseUrl/updates."
+
+			// llms.txt: the llmstxt.org index, every page linking to its Markdown copy.
 			val llmsContent = buildString {
-				appendLine("# $projectName Documentation")
-				appendLine("> Documentation index generated for LLMs.")
-				appendLine("Complete llms-full.txt available at: $baseUrl/llms-full.txt")
+				appendLine("# Kore")
+				appendLine()
+				appendLine("> $summary")
+				appendLine()
+				appendLine("Kore is published on Maven Central under the group `io.github.ayfri.kore` (artifacts `kore`, `oop`, `helpers` and `bindings`, all Kotlin Multiplatform for the JVM and JavaScript). $latestVersions Releases are versioned `<kore version>-<minecraft version>`, a Gradle project adds one with `implementation(\"$mavenKore:<version>\")` and the Getting Started page covers the setup. Source code, issues and releases: $githubUrl")
+				appendLine()
+				appendLine("Every documentation page below links to its Markdown copy, the same URL without the `.md` suffix is the HTML page.")
 				appendLine()
 
-				// Group entries by their first slug (section)
-				val groupedEntries = sortedEntries.groupBy { it.slugs.getOrNull(1) ?: "other" }
-				val orderedGroups = groupedEntries.keys.sortedBy { getGroupPriority(it) }
-
 				orderedGroups.forEach { group ->
-					val groupTitle = group.replace("-", " ").replaceFirstChar { it.uppercase() }
-					appendLine("## $groupTitle")
+					appendLine("## ${groupLabels[group] ?: group.replaceFirstChar { it.uppercase() }}")
 					appendLine()
 
 					groupedEntries[group]?.forEach { entry ->
-						val route = entry.slugs.joinToString("/")
-						append("- [${entry.title}]($baseUrl/$route)")
+						append("- [${entry.title}]($baseUrl/${entry.slugs.joinToString("/")}.md)")
 						if (entry.desc.isNotBlank()) append(": ${entry.desc}")
 						appendLine()
 					}
 					appendLine()
 				}
-			}
 
-			// Generate llms-full.txt (full raw content for LLMs) grouped by sections
-			val llmsFullContent = buildString {
-				appendLine("# $projectName Full Documentation")
+				appendLine("## Optional")
 				appendLine()
-
-				val groupedEntries = sortedEntries.groupBy { it.slugs.getOrNull(1) ?: "other" }
-				val orderedGroups = groupedEntries.keys.sortedBy { getGroupPriority(it) }
-
-				orderedGroups.forEach { group ->
-					val groupTitle = group.replace("-", " ").replaceFirstChar { it.uppercase() }
-					appendLine("# $groupTitle")
-					appendLine()
-
-					groupedEntries[group]?.forEach { entry ->
-						appendLine("## ${entry.title}")
-						appendLine(entry.file.readText())
-						appendLine("\n---\n")
-					}
-				}
+				appendLine("- [Full documentation]($baseUrl/llms-full.txt): every page in one file")
+				appendLine("- [Playground]($baseUrl/playground): write and run Kore code in the browser")
+				appendLine("- [Releases]($baseUrl/updates): changelog of every Kore version")
+				appendLine("- [GitHub repository]($githubUrl): source code, issues and releases")
+				appendLine("- [Kore Template](https://github.com/Kore-Minecraft/Kore-Template): ready-to-run starter project")
+				appendLine("- [Kore Skill](https://github.com/Kore-Minecraft/Kore-Skill): agent skill for writing Kore code")
+				appendLine("- [Discord](https://discord.ayfri.com): community support")
 			}
+
+			// llms-full.txt: the same pages as the .md copies, concatenated in the llms.txt order.
+			val pageMarkdown = orderedGroups.flatMap { groupedEntries.getValue(it) }.associateWith { it.toMarkdown() }
+			val llmsFullContent = "# Kore documentation\n\n> $summary\n\n" + pageMarkdown.values.joinToString("\n\n---\n\n") + "\n"
 
 			// Write files to a generated resources directory (never checked into sources)
 			llmsResourcesDir.mkdirs()
 			llmsResourcesDir.resolve("llms.txt").writeText(llmsContent)
 			llmsResourcesDir.resolve("llms-full.txt").writeText(llmsFullContent)
+
+			llmsResourcesDir.resolve("docs").deleteRecursively()
+			pageMarkdown.forEach { (entry, markdown) ->
+				llmsResourcesDir.resolve("${entry.slugs.joinToString("/")}.md").apply { parentFile.mkdirs() }.writeText(markdown + "\n")
+			}
 
 			val markdownSources = markdownFiles.associate { docArticle ->
 				docArticle.filePath.replace('\\', '/') to markdownDir.resolve(docArticle.filePath).readText()
@@ -602,7 +697,8 @@ tasks.register("fetchGitHubReleases") {
 	val outFile =
 		layout.buildDirectory.file("generated/kore/src/jsMain/kotlin/io/github/ayfri/kore/website/gitHubReleases.kt")
 	val latestTagFile = gitHubDataDir.map { it.file("latest-release-tag.txt") }
-	outputs.files(outFile, latestTagFile)
+	val releasesFile = gitHubDataDir.map { it.file("releases.tsv") }
+	outputs.files(outFile, latestTagFile, releasesFile)
 
 	doLast {
 		fun String.escapeForKotlinRawString() = replace("\"\"\"", "\\\"\\\"\\\"").replace("$", "${'$'}{'$'}")
@@ -640,6 +736,13 @@ tasks.register("fetchGitHubReleases") {
 		// Same pick as `GitHubService.latestRelease`, ISO timestamps sort chronologically as strings.
 		val latestTag = allReleases.filter { it["published_at"] != null }.maxByOrNull { it["published_at"] as String }?.get("tag_name") as String?
 		latestTagFile.get().asFile.apply { parentFile.mkdirs() }.writeText(latestTag.orEmpty())
+
+		// `tag<TAB>prerelease<TAB>published_at` per published release, newest first, for the llms.txt versions and the home page version matrix.
+		releasesFile.get().asFile.writeText(
+			allReleases.filter { it["published_at"] != null }
+				.sortedByDescending { it["published_at"] as String }
+				.joinToString("") { "${it["tag_name"]}\t${it["prerelease"]}\t${it["published_at"]}\n" }
+		)
 
 		// Always write a file, even if it is empty
 		val targetFile = outFile.get().asFile
@@ -782,8 +885,8 @@ tasks.matching { it.name == "jsProcessResources" }.configureEach {
 	dependsOn(":playground-examples:generatePlaygroundApiIndex", ":playground-examples:generatePlaygroundExamples")
 }
 
-// llms.txt/sitemap.xml/markdown-sources.json are written by kobwebxMarkdownProcess into a
-// generated resources dir; make the dependency explicit so caching/ordering can't skip them.
+// llms.txt, llms-full.txt, the per-page .md copies, sitemap.xml and markdown-sources.json are written by
+// kobwebxMarkdownProcess into a generated resources dir, which carries no task dependency as a source set.
 tasks.matching { it.name == "jsProcessResources" }.configureEach {
 	dependsOn("kobwebxMarkdownProcess")
 }
@@ -792,7 +895,13 @@ tasks.matching { it.name == "jsProcessResources" }.configureEach {
 tasks.matching { it.name == "kobwebxMarkdownProcess" }.configureEach {
 	dependsOn("fetchGitHubReleases", "fetchGitHubStars")
 	inputs.dir(gitHubDataDir).withPropertyName("gitHubData").optional()
+	inputs.property("minecraftVersion", minecraftVersion)
+	inputs.property("projectVersion", Project.VERSION)
 	inputs.property("renderOgImages", renderOgImages)
+	/** The `process` callback generating the files lives in this script and Gradle can't fingerprint a lambda. */
+	inputs.file(buildFile).withPropertyName("generatorScript")
+	inputs.file(layout.projectDirectory.file("src/jsMain/kotlin/io/github/ayfri/kore/website/components/doc/FeatureCards.kt")).withPropertyName("featureCards")
+	outputs.dir(layout.buildDirectory.dir("generated/llms-resources")).withPropertyName("llmsResources")
 }
 
 // The export discards the source map (`includeSourceMap = false`), so building it only slows minification down.

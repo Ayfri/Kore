@@ -22,6 +22,12 @@
 /view-transitions.css
   Cache-Control: public, max-age=0, stale-while-revalidate=2592000
 
+# The generated Markdown copies of the doc pages, the only files ending in `.md`: they point back to the llms.txt covering them and to their HTML page.
+/*.md
+  Content-Type: text/markdown; charset=utf-8
+  Link: </llms.txt>; rel="describedby"
+  Link: <https://kore.ayfri.com/:splat>; rel="canonical"
+
 # A font file never changes in place: a new version of a font gets a new file name.
 /fonts/*
   Cache-Control: public, max-age=31536000, immutable
