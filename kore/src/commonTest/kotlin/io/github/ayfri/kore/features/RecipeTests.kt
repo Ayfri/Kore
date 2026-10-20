@@ -4,6 +4,8 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.components.item.damage
 import io.github.ayfri.kore.arguments.components.item.enchantment
 import io.github.ayfri.kore.arguments.components.item.enchantments
+import io.github.ayfri.kore.arguments.components.item.potionContents
+import io.github.ayfri.kore.arguments.components.matchers.potions
 import io.github.ayfri.kore.arguments.types.literals.allPlayers
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.recipeGive
@@ -14,6 +16,7 @@ import io.github.ayfri.kore.features.recipes.types.*
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.generated.Potions
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.generated.TrimPatterns
 import io.github.ayfri.kore.utils.pretty
@@ -373,6 +376,58 @@ private fun DataPack.allRecipeTypesTests() {
 			"base": "minecraft:diamond_sword",
 			"addition": "minecraft:netherite_ingot",
 			"pattern": "minecraft:silence"
+		}
+	""".trimIndent()
+
+	recipesBuilder.brewing("lingering_potion_awkward_blaze_powder") {
+		input(Items.LINGERING_POTION) { potions(Potions.AWKWARD) }
+		reagent(Items.BLAZE_POWDER)
+		output(Items.LINGERING_POTION) {
+			potionContents(Potions.STRENGTH)
+		}
+	}
+	recipes.last() assertsIs """
+		{
+			"type": "minecraft:brewing",
+			"input": {
+				"item": "minecraft:lingering_potion",
+				"potion_contents": {
+					"potions": "minecraft:awkward"
+				}
+			},
+			"output": {
+				"id": "minecraft:lingering_potion",
+				"components": {
+					"potion_contents": "minecraft:strength"
+				}
+			},
+			"reagent": {
+				"item": "minecraft:blaze_powder"
+			}
+		}
+	""".trimIndent()
+
+	recipesBuilder.brewing("test_brewing_tag") {
+		input(Items.POTION)
+		reagent(Tags.Item.SMELTS_TO_GLASS, Items.SUGAR)
+		output(Items.SPLASH_POTION, count = 2)
+	}
+	recipes.last() assertsIs """
+		{
+			"type": "minecraft:brewing",
+			"input": {
+				"item": "minecraft:potion"
+			},
+			"output": {
+				"id": "minecraft:splash_potion",
+				"count": 2
+			},
+			"reagent": {
+				"item": [
+					"#minecraft:smelts_to_glass",
+					"minecraft:sugar"
+				]
+			}
 		}
 	""".trimIndent()
 }

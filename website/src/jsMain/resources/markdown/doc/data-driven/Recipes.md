@@ -5,7 +5,7 @@ nav-title: Recipes
 description: Create custom Minecraft recipes using Kore's type-safe Kotlin DSL for crafting, smelting, smithing, and more.
 keywords: minecraft, datapack, kore, recipes, crafting, smelting, smithing, stonecutting
 date-created: 2024-01-08
-date-modified: 2026-10-02
+date-modified: 2026-10-20
 routeOverride: /docs/data-driven/recipes
 ---
 
@@ -26,10 +26,11 @@ Recipes have several key characteristics:
 
 ### Recipe Types
 
-| Type                                  | Workstation                                                    | Description                         |
-|---------------------------------------|----------------------------------------------------------------|-------------------------------------|
-| `blasting`                            | ![Blast Furnace](mc:block/blast_furnace_front) Blast Furnace   | Faster ore smelting                 |
-| `campfire_cooking`                    | ![Campfire](mc:item/campfire) Campfire                         | Slow food cooking                   |
+| Type                                  | Workstation                                                     | Description                         |
+|---------------------------------------|-----------------------------------------------------------------|-------------------------------------|
+| `blasting`                            | ![Blast Furnace](mc:block/blast_furnace_front) Blast Furnace    | Faster ore smelting                 |
+| `brewing`                             | ![Brewing Stand](mc:item/brewing_stand) Brewing Stand           | Brew potions from a reagent         |
+| `campfire_cooking`                    | ![Campfire](mc:item/campfire) Campfire                          | Slow food cooking                   |
 | `crafting_decorated_pot`              | ![Crafting Table](mc:block/crafting_table_front) Crafting Table | Craft a decorated pot from sherds   |
 | `crafting_dye`                        | ![Crafting Table](mc:block/crafting_table_front) Crafting Table | Dye an item with a dye              |
 | `crafting_imbue`                      | ![Crafting Table](mc:block/crafting_table_front) Crafting Table | Imbue items (e.g. tip arrows)       |
@@ -44,11 +45,11 @@ Recipes have several key characteristics:
 | `crafting_special_shielddecoration`   | ![Crafting Table](mc:block/crafting_table_front) Crafting Table | Apply a banner to a shield          |
 | `crafting_special_*`                  | ![Crafting Table](mc:block/crafting_table_front) Crafting Table | Remaining hardcoded special recipes |
 | `crafting_transmute`                  | ![Crafting Table](mc:block/crafting_table_front) Crafting Table | Transform item with material        |
-| `smelting`                            | ![Furnace](mc:block/furnace_front) Furnace                     | Standard smelting                   |
+| `smelting`                            | ![Furnace](mc:block/furnace_front) Furnace                      | Standard smelting                   |
 | `smithing_transform`                  | ![Smithing Table](mc:block/smithing_table_front) Smithing Table | Upgrade items                       |
 | `smithing_trim`                       | ![Smithing Table](mc:block/smithing_table_front) Smithing Table | Apply armor trims                   |
-| `smoking`                             | ![Smoker](mc:block/smoker_front) Smoker                        | Faster food cooking                 |
-| `stonecutting`                        | ![Stonecutter](mc:block/stonecutter_saw) Stonecutter           | Cut blocks                          |
+| `smoking`                             | ![Smoker](mc:block/smoker_front) Smoker                         | Faster food cooking                 |
+| `stonecutting`                        | ![Stonecutter](mc:block/stonecutter_saw) Stonecutter            | Cut blocks                          |
 
 ## File Structure
 
@@ -384,6 +385,50 @@ recipes {
 	}
 }
 ```
+
+## Brewing Recipes
+
+A `brewing` recipe turns an `input` potion and a `reagent` into the `output` item. `input` and `reagent` take items or
+item tags, and can be restricted to a `potion_contents` component predicate with the `potionContents` block:
+
+```kotlin
+recipes {
+	brewing("lingering_potion_awkward_blaze_powder") {
+		input(Items.LINGERING_POTION) { potions(Potions.AWKWARD) }
+		reagent(Items.BLAZE_POWDER)
+		output(Items.LINGERING_POTION) {
+			potionContents(Potions.STRENGTH)
+		}
+	}
+}
+```
+
+This generates:
+
+```json
+{
+	"type": "minecraft:brewing",
+	"input": {
+		"item": "minecraft:lingering_potion",
+		"potion_contents": {
+			"potions": "minecraft:awkward"
+		}
+	},
+	"output": {
+		"id": "minecraft:lingering_potion",
+		"components": {
+			"potion_contents": "minecraft:strength"
+		}
+	},
+	"reagent": {
+		"item": "minecraft:blaze_powder"
+	}
+}
+```
+
+The predicate also matches active effects through `effects { ... }`, see
+[Components](/docs/concepts/components). `output` takes an item, an optional `count` and a component patch,
+like `result` does on the other recipes.
 
 ## Cooking Recipes
 

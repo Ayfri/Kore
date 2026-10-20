@@ -14,6 +14,7 @@ fun interface RecipeType {
 
 data object RecipeTypes {
 	val BLASTING = RecipeType { "blasting" }
+	val BREWING = RecipeType { "brewing" }
 	val CAMPFIRE_COOKING = RecipeType { "campfire_cooking" }
 	val CRAFTING_DECORATED_POT = RecipeType { "crafting_decorated_pot" }
 	val CRAFTING_DYE = RecipeType { "crafting_dye" }
