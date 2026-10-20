@@ -326,7 +326,7 @@ fun DataPack.configuredFeatureTests() {
 	configuredFeatures.last() assertsIs """
 		{
 			"type": "minecraft:delta_feature",
-			"content": {
+			"contents": {
 				"Name": "minecraft:stone"
 			},
 			"rim": {
