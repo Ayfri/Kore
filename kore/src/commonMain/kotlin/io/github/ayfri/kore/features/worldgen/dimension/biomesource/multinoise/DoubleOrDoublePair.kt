@@ -22,3 +22,4 @@ data class DoubleOrDoublePair(
 fun doubleOrPair(number: Double) = DoubleOrDoublePair(number = number)
 fun doubleOrPair(pair: Pair<Double, Double>) = DoubleOrDoublePair(pair = pair)
 fun doubleOrPair(first: Double, second: Double) = DoubleOrDoublePair(pair = first to second)
+fun doubleOrPair(range: ClosedFloatingPointRange<Double>) = doubleOrPair(range.start, range.endInclusive)

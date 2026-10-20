@@ -3,7 +3,6 @@ package io.github.ayfri.kore.features.worldgen
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
-import io.github.ayfri.kore.features.worldgen.dimension.biomesource.multinoise.multiNoiseBiomeSourceParameters
 import io.github.ayfri.kore.features.worldgen.noise.noise
 import io.github.ayfri.kore.features.worldgen.noisesettings.*
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.*
@@ -59,15 +58,19 @@ fun DataPack.noiseSettingsTests() {
 			veinGap(7.5)
 		}
 
-		spawnTarget += multiNoiseBiomeSourceParameters(
-			0.0,
-			0.0,
-			0.0,
-			0.0,
-			0.0,
-			0.0,
-			0.0
-		)
+		spawnTargetPoint {
+			this[DensityFunctions.Overworld.CONTINENTS] = -0.11..1.0
+			this[DensityFunctions.Overworld.EROSION] = -1.0..1.0
+			this[DensityFunctions.Overworld.RIDGES] = -1.0..-0.16
+			this[DensityFunctions.Overworld.TEMPERATURE] = -1.0..1.0
+			this[DensityFunctions.Overworld.VEGETATION] = -1.0..1.0
+		}
+
+		spawnTargetPoint {
+			this[DensityFunctions.Overworld.CONTINENTS] = -0.11..1.0
+			this[DensityFunctions.Overworld.RIDGES] = 0.16..1.0
+			this[DensityFunctions.Overworld.DEPTH] = 0.5
+		}
 
 		materialRules {
 			bandlands()
@@ -134,13 +137,37 @@ fun DataPack.noiseSettingsTests() {
 			},
 			"spawn_target": [
 				{
-					"temperature": 0.0,
-					"humidity": 0.0,
-					"continentalness": 0.0,
-					"erosion": 0.0,
-					"weirdness": 0.0,
-					"depth": 0.0,
-					"offset": 0.0
+					"minecraft:overworld/continents": [
+						-0.11,
+						1.0
+					],
+					"minecraft:overworld/erosion": [
+						-1.0,
+						1.0
+					],
+					"minecraft:overworld/ridges": [
+						-1.0,
+						-0.16
+					],
+					"minecraft:overworld/temperature": [
+						-1.0,
+						1.0
+					],
+					"minecraft:overworld/vegetation": [
+						-1.0,
+						1.0
+					]
+				},
+				{
+					"minecraft:overworld/continents": [
+						-0.11,
+						1.0
+					],
+					"minecraft:overworld/ridges": [
+						0.16,
+						1.0
+					],
+					"minecraft:overworld/depth": 0.5
 				}
 			],
 			"material_rule": {

@@ -5,10 +5,12 @@ import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
 import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.data.block.blockState
-import io.github.ayfri.kore.features.worldgen.dimension.biomesource.multinoise.MultiNoiseBiomeSourceParameters
+import io.github.ayfri.kore.features.worldgen.dimension.biomesource.multinoise.DoubleOrDoublePair
+import io.github.ayfri.kore.features.worldgen.dimension.biomesource.multinoise.doubleOrPair
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.Bandlands
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.MaterialRule
 import io.github.ayfri.kore.generated.Blocks
+import io.github.ayfri.kore.generated.arguments.worldgen.types.DensityFunctionArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.NoiseSettingsArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -21,6 +23,9 @@ import kotlinx.serialization.Transient
  * noise world generator.
  *
  * JSON format reference: https://minecraft.wiki/w/Noise_settings
+ *
+ * @property spawnTarget The points of climate space the world spawn is searched in, each mapping density functions to the
+ * value or `[min, max]` range they must have there, see [spawnTargetPoint].
  */
 @Serializable
 data class NoiseSettings(
@@ -35,7 +40,7 @@ data class NoiseSettings(
 	var defaultFluid: BlockState = blockState(Blocks.WATER, mapOf("level" to "0")),
 	var noise: NoiseOptions = NoiseOptions(-64, 384, 1, 2),
 	var noiseRouter: NoiseRouter = NoiseRouter(),
-	var spawnTarget: List<MultiNoiseBiomeSourceParameters> = emptyList(),
+	var spawnTarget: List<Map<DensityFunctionArgument, DoubleOrDoublePair>> = emptyList(),
 	var materialRule: MaterialRule = Bandlands,
 ) : Generator("worldgen/noise_settings") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
@@ -65,6 +70,36 @@ fun NoiseSettings.noiseOptions(
 	sizeHorizontal: Int,
 	sizeVertical: Int,
 ) = NoiseOptions(minY, height, sizeHorizontal, sizeVertical).also { noise = it }
+
+/**
+ * Appends a [NoiseSettings.spawnTarget] point filled in [init]: the world spawn is searched where every given density
+ * function is inside its value or `min..max` range, and a spawn is accepted if it matches any point.
+ *
+ * ```kotlin
+ * spawnTargetPoint {
+ *     this[DensityFunctions.Overworld.CONTINENTS] = -0.11..1.0
+ *     this[DensityFunctions.Overworld.RIDGES] = 0.0
+ * }
+ * ```
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/noise
+ */
+fun NoiseSettings.spawnTargetPoint(init: MutableMap<DensityFunctionArgument, DoubleOrDoublePair>.() -> Unit) {
+	spawnTarget += buildMap(init)
+}
+
+/** Requires the density function [key] to equal [value] at the spawn. */
+operator fun MutableMap<DensityFunctionArgument, DoubleOrDoublePair>.set(key: DensityFunctionArgument, value: Double) {
+	this[key] = doubleOrPair(value)
+}
+
+/** Requires the density function [key] to be inside [range] at the spawn. */
+operator fun MutableMap<DensityFunctionArgument, DoubleOrDoublePair>.set(
+	key: DensityFunctionArgument,
+	range: ClosedFloatingPointRange<Double>,
+) {
+	this[key] = doubleOrPair(range)
+}
 
 /** Sets the default block state for this [NoiseSettings]. */
 fun NoiseSettings.defaultBlock(block: BlockArgument, properties: MutableMap<String, String>.() -> Unit = {}) =

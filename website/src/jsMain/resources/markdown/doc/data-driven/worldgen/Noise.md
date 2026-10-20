@@ -5,7 +5,7 @@ nav-title: Noise
 description: Shape Minecraft terrain from Kotlin - noise definitions, density functions, noise routers and material rules, fully type-safe with Kore.
 keywords: minecraft datapack, kore, worldgen, noise settings, density function, noise router, material rule, terrain generation, perlin noise, octaves
 date-created: 2026-02-03
-date-modified: 2026-10-08
+date-modified: 2026-10-20
 routeOverride: /docs/data-driven/worldgen/noise
 ---
 
@@ -244,19 +244,48 @@ val terrain = dp.noiseSettings("custom_terrain") {
 Defaults below are Kore's, which are not always vanilla's - the Overworld for instance ships with `aquifersEnabled` and `oreVeinsEnabled`
 set to `true`.
 
-| Property               | Type                                    | Kore default       | Description                                             |
-|------------------------|-----------------------------------------|--------------------|---------------------------------------------------------|
-| `aquifersEnabled`      | `Boolean`                               | `false`            | Generates local water/lava tables instead of a flat sea |
-| `defaultBlock`         | `BlockState`                            | `stone`            | Block placed where density is positive                  |
-| `defaultFluid`         | `BlockState`                            | `water[level=0]`   | Fluid placed below `seaLevel` where density is negative |
-| `disableMobGeneration` | `Boolean`                               | `false`            | Skips mob spawning during chunk generation              |
-| `legacyRandomSource`   | `Boolean`                               | `false`            | Uses the pre-1.18 random source                         |
-| `materialRule`         | `MaterialRule`                          | `bandlands`        | Rule picking the block of each position, inline or ID   |
-| `noise`                | `NoiseOptions`                          | `(-64, 384, 1, 2)` | Vertical range and sampling resolution                  |
-| `noiseRouter`          | `NoiseRouter`                           | all zeroes         | Density functions wired to generation roles             |
-| `oreVeinsEnabled`      | `Boolean`                               | `false`            | Enables copper and iron ore veins                       |
-| `seaLevel`             | `Int`                                   | `63`               | Y level the default fluid fills up to                   |
-| `spawnTarget`          | `List<MultiNoiseBiomeSourceParameters>` | empty              | Climate parameters the world spawn point searches for   |
+| Property               | Type                                                     | Kore default       | Description                                             |
+|------------------------|----------------------------------------------------------|--------------------|---------------------------------------------------------|
+| `aquifersEnabled`      | `Boolean`                                                | `false`            | Generates local water/lava tables instead of a flat sea |
+| `defaultBlock`         | `BlockState`                                             | `stone`            | Block placed where density is positive                  |
+| `defaultFluid`         | `BlockState`                                             | `water[level=0]`   | Fluid placed below `seaLevel` where density is negative |
+| `disableMobGeneration` | `Boolean`                                                | `false`            | Skips mob spawning during chunk generation              |
+| `legacyRandomSource`   | `Boolean`                                                | `false`            | Uses the pre-1.18 random source                         |
+| `materialRule`         | `MaterialRule`                                           | `bandlands`        | Rule picking the block of each position, inline or ID   |
+| `noise`                | `NoiseOptions`                                           | `(-64, 384, 1, 2)` | Vertical range and sampling resolution                  |
+| `noiseRouter`          | `NoiseRouter`                                            | all zeroes         | Density functions wired to generation roles             |
+| `oreVeinsEnabled`      | `Boolean`                                                | `false`            | Enables copper and iron ore veins                       |
+| `seaLevel`             | `Int`                                                    | `63`               | Y level the default fluid fills up to                   |
+| `spawnTarget`          | `List<Map<DensityFunctionArgument, DoubleOrDoublePair>>` | empty              | Climate points the world spawn is searched in           |
+
+### Spawn Target
+
+`spawnTargetPoint` adds one point of climate space: the density functions it lists, each set to a value or a `min..max` range, and the
+world spawn is searched where all of them match. A spawn matching any point is accepted, so several points describe several areas. Narrow
+a range to restrict the spawn, widen it to `-1.0..1.0` to ignore that function. Vanilla's overworld spawns on land (`continents` from
+`-0.11`) away from the `ridges` values near `0`, so it has one point per side (only the first is shown):
+
+```kotlin
+spawnTargetPoint {
+	this[DensityFunctions.Overworld.CONTINENTS] = -0.11..1.0
+	this[DensityFunctions.Overworld.EROSION] = -1.0..1.0
+	this[DensityFunctions.Overworld.RIDGES] = -1.0..-0.16
+	this[DensityFunctions.Overworld.TEMPERATURE] = -1.0..1.0
+	this[DensityFunctions.Overworld.VEGETATION] = -1.0..1.0
+}
+```
+
+Each point is a JSON object keyed by density function ID, and a lone number, such as `this[DensityFunctions.Overworld.DEPTH] = 0.5`,
+replaces a range:
+
+```json
+"spawn_target": [
+	{
+		"minecraft:overworld/continents": [-0.11, 1.0],
+		"minecraft:overworld/ridges": [-1.0, -0.16]
+	}
+]
+```
 
 ### Noise Options
 
