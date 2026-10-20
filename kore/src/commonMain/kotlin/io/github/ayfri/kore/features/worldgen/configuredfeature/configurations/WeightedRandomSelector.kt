@@ -8,12 +8,12 @@ import kotlinx.serialization.Serializable
 /**
  * A single weighted entry of a [WeightedRandomSelector].
  *
- * @property feature The placed feature this entry resolves to.
+ * @property data The placed feature this entry resolves to.
  * @property weight This entry's weight, relative to the other entries of the selector.
  */
 @Serializable
 data class WeightedPlacedFeature(
-	var feature: PlacedFeatureArgument,
+	var data: PlacedFeatureArgument,
 	var weight: Int,
 )
 

@@ -2140,11 +2140,11 @@ fun DataPack.configuredFeatureTests() {
 			"type": "minecraft:weighted_random_selector",
 			"features": [
 				{
-					"feature": "minecraft:acacia",
+					"data": "minecraft:acacia",
 					"weight": 3
 				},
 				{
-					"feature": "minecraft:oak",
+					"data": "minecraft:oak",
 					"weight": 1
 				}
 			]
