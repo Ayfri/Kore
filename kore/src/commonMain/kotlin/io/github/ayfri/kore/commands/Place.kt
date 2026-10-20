@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.types.literals.float
 import io.github.ayfri.kore.arguments.types.literals.int
 import io.github.ayfri.kore.arguments.types.literals.literal
+import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.arguments.types.JigsawArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
@@ -12,11 +13,29 @@ import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructu
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.TemplatePoolArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
+import io.github.ayfri.kore.utils.encodeToDataPackSnbt
 import kotlinx.serialization.Serializable
+import io.github.ayfri.kore.dataPack as dpFunction
 
 /** Places the configured [feature] at the executing position or at [pos]. */
 fun Function.placeFeature(feature: FeatureArgument, pos: Vec3? = null) =
 	addLine(command("place", literal("feature"), feature, pos))
+
+/**
+ * Builds a configured feature with [block] and places it inline, as SNBT, at the executing position or at [pos].
+ *
+ * The feature isn't written to the pack, so the file name given to the builder is unused.
+ *
+ * ```
+ * placeFeature(vec3(0, 64, 0)) { simpleBlock("unused") { toPlace = simpleStateProvider(Blocks.STONE) } }
+ * ```
+ */
+fun Function.placeFeature(pos: Vec3? = null, block: ConfiguredFeatures.() -> FeatureArgument): Command {
+	val tempDp = dpFunction("") {}
+	ConfiguredFeatures(tempDp).block()
+	if (tempDp.configuredFeatures.isEmpty()) error("Please provide a configured feature to place.")
+	return addLine(command("place", literal("feature"), literal(encodeToDataPackSnbt(tempDp.configuredFeatures.first().featureConfig)), pos))
+}
 
 /**
  * Starts jigsaw generation from the given template [pool] and [target] pool element.

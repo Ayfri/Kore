@@ -5,7 +5,7 @@ nav-title: Commands
 description: Every Minecraft command in a type-safe Kotlin DSL. From /say, /teleport, and /give to /execute, /data, /scoreboard, and /summon -- all with code examples and generated mcfunction output.
 keywords: minecraft commands, kore commands, kotlin commands dsl, mcfunction generator, execute command, data command, teleport command, summon command, minecraft command builder, type-safe commands
 date-created: 2026-02-03
-date-modified: 2026-09-27
+date-modified: 2026-10-20
 routeOverride: /docs/commands/commands
 ---
 
@@ -481,6 +481,32 @@ Generated output:
 setworldspawn
 setworldspawn 0 64 0
 setworldspawn 0 64 0 0 0
+```
+
+### Place Command
+
+The `place` command generates features, jigsaw structures, structures and templates. `placeFeature` takes a feature
+ID, or builds a configured feature inline with the [worldgen features](/docs/data-driven/worldgen/features) builders, which writes it as
+SNBT in the command instead of a file in the pack. The name given to the builder isn't used:
+
+```kotlin
+function("place_examples") {
+	placeFeature(Features.BONUS_CHEST, vec3())
+	placeFeature(vec3(0, 64, 0)) {
+		simpleBlock("inline", scheduleTick = true) {
+			toPlace = simpleStateProvider(blockState(Blocks.DIAMOND_BLOCK))
+		}
+	}
+	placeStructure(ConfiguredStructures.MINESHAFT, vec3())
+}
+```
+
+Generated output:
+
+```mcfunction
+place feature minecraft:bonus_chest ~ ~ ~
+place feature {type:"minecraft:simple_block",to_place:{type:"minecraft:simple_state_provider",state:{Name:"minecraft:diamond_block"}},schedule_tick:1b} 0 64 0
+place structure minecraft:mineshaft ~ ~ ~
 ```
 
 ### PlaySound Command

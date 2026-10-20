@@ -1,7 +1,10 @@
 package io.github.ayfri.kore.utils
 
+import io.github.ayfri.kore.serializers.DataPackShapedSerializer
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.*
 import kotlin.jvm.JvmName
 
@@ -60,6 +63,10 @@ fun NbtTag.toSnbt(): String = buildString { appendSnbt(this@toSnbt) }
 /** Encodes [value] to SNBT with [snbtSerializer], see [toSnbt]. */
 inline fun <reified T> encodeToSnbt(value: T) = snbtSerializer.encodeToNbtTag(value).toSnbt()
 fun <T> encodeToSnbt(serializer: SerializationStrategy<T>, value: T) = snbtSerializer.encodeToNbtTag(serializer, value).toSnbt()
+
+/** Encodes a data pack resource to SNBT like its data pack file (snake_case keys, defaults), see [DataPackShapedSerializer]. */
+inline fun <reified T> encodeToDataPackSnbt(value: T) = encodeToDataPackSnbt(serializer<T>(), value)
+fun <T> encodeToDataPackSnbt(serializer: KSerializer<T>, value: T) = encodeToSnbt(DataPackShapedSerializer(serializer), value)
 
 private fun StringBuilder.appendSnbt(tag: NbtTag): StringBuilder = when (tag) {
 	is NbtCompound -> {

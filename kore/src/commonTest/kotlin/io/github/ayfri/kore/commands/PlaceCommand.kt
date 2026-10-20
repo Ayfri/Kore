@@ -2,9 +2,13 @@ package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.data.block.blockState
 import io.github.ayfri.kore.dataPack
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.simpleBlock
+import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Features
 import io.github.ayfri.kore.generated.ConfiguredStructures
 import io.github.ayfri.kore.generated.Structures
@@ -58,6 +62,16 @@ class PlaceCommandTests : FunSpec({
 	test("place") {
 		dataPack("unit_tests") {
 			load { placeTests() }
+		}
+	}
+
+	test("place inline feature") {
+		dataPack("unit_tests") {
+			load {
+				placeFeature(vec3(0, 64, 0)) {
+					simpleBlock("inline", scheduleTick = true) { toPlace = simpleStateProvider(blockState(Blocks.DIAMOND_BLOCK)) }
+				} assertsIs """place feature {type:"minecraft:simple_block",to_place:{type:"minecraft:simple_state_provider",state:{Name:"minecraft:diamond_block"}},schedule_tick:1b} 0 64 0"""
+			}
 		}
 	}
 })
