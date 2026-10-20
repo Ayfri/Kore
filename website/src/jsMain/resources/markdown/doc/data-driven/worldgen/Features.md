@@ -89,6 +89,9 @@ tree("my_poplar") {
 }
 ```
 
+The other decorators are `alterGround`, `attachedToLeaves`, `attachedToLogs`, `beehive`, `cocoa`, `creakingHeart`, `leaveVine`, `paleMoss`,
+`placeOnGround` and `trunkVine`. `attachedToLogs` always takes at least one direction, given as its arguments.
+
 `rootPlacer` adds roots under the trunk and raises the trunk above them. Only the mangrove one exists, `mangroveRootPlacer`, with the vanilla
 mangrove values below: the roots grow up to 8 blocks wide and 15 long, skew off their course 20% of the time, turn muddy over mud, and get
 a moss carpet on top half of the time.

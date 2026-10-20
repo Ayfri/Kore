@@ -23,8 +23,13 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.t
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.rootprovider.mangroveRootPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.rootprovider.mangroveRootPlacement
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.attachedToLeaves
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.attachedToLogs
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.beehive
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.creakingHeart
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.directions
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.leaveVine
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.paleMoss
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.placeOnGround
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.shelfMushroom
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.cherryTrunkPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.darkOakTrunkPlacer
@@ -2038,7 +2043,7 @@ fun DataPack.configuredFeatureTests() {
 						)
 					)
 				}
-				directions = listOf(Direction.DOWN)
+				directions(Direction.DOWN)
 			}
 			beehive(0.01)
 		}
@@ -2202,6 +2207,442 @@ fun DataPack.configuredFeatureTests() {
 				{
 					"type": "minecraft:beehive",
 					"probability": 0.01
+				}
+			]
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.tree("pale_oak") {
+		ignoreVines = true
+		belowTrunkProvider = ruleBasedStateProvider {
+			rule {
+				ifTrue {
+					not {
+						matchingBlockTag(tag = Tags.Block.CANNOT_REPLACE_BELOW_TREE_TRUNK)
+					}
+				}
+				then = simpleStateProvider(Blocks.DIRT)
+			}
+		}
+		minimumSize = threeLayersFeatureSize { upperSize = 2 }
+		trunkProvider = simpleStateProvider(blockState(Blocks.PALE_OAK_LOG, "axis" to "y"))
+		foliageProvider = simpleStateProvider(
+			blockState(
+				Blocks.PALE_OAK_LEAVES,
+				"distance" to "7",
+				"persistent" to "false",
+				"waterlogged" to "false"
+			)
+		)
+		darkOakTrunkPlacer(baseHeight = 6, heightRandA = 2, heightRandB = 1)
+		darkOakFoliagePlacer()
+		decorators(paleMoss(groundProbability = 0.8, leavesProbability = 0.15, trunkProbability = 0.4))
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:tree",
+			"ignore_vines": true,
+			"below_trunk_provider": {
+				"type": "minecraft:rule_based_state_provider",
+				"rules": [
+					{
+						"if_true": {
+							"type": "minecraft:not",
+							"predicate": {
+								"type": "minecraft:matching_block_tag",
+								"tag": "minecraft:cannot_replace_below_tree_trunk"
+							}
+						},
+						"then": {
+							"type": "minecraft:simple_state_provider",
+							"state": {
+								"Name": "minecraft:dirt"
+							}
+						}
+					}
+				]
+			},
+			"minimum_size": {
+				"type": "minecraft:three_layers_feature_size",
+				"upper_size": 2
+			},
+			"trunk_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:pale_oak_log",
+					"Properties": {
+						"axis": "y"
+					}
+				}
+			},
+			"foliage_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:pale_oak_leaves",
+					"Properties": {
+						"distance": "7",
+						"persistent": "false",
+						"waterlogged": "false"
+					}
+				}
+			},
+			"trunk_placer": {
+				"type": "minecraft:dark_oak_trunk_placer",
+				"base_height": 6,
+				"height_rand_a": 2,
+				"height_rand_b": 1
+			},
+			"foliage_placer": {
+				"type": "minecraft:dark_oak_foliage_placer",
+				"radius": 0,
+				"offset": 0
+			},
+			"decorators": [
+				{
+					"type": "minecraft:pale_moss",
+					"ground_probability": 0.8,
+					"leaves_probability": 0.15,
+					"trunk_probability": 0.4
+				}
+			]
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.tree("pale_oak_creaking") {
+		minimumSize = threeLayersFeatureSize { upperSize = 2 }
+		darkOakTrunkPlacer(baseHeight = 6, heightRandA = 2, heightRandB = 1)
+		darkOakFoliagePlacer()
+		decorators {
+			paleMoss(groundProbability = 0.8, leavesProbability = 0.15, trunkProbability = 0.4)
+			creakingHeart(1.0)
+		}
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:tree",
+			"below_trunk_provider": {
+				"type": "minecraft:rule_based_state_provider",
+				"rules": []
+			},
+			"minimum_size": {
+				"type": "minecraft:three_layers_feature_size",
+				"upper_size": 2
+			},
+			"trunk_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:stone"
+				}
+			},
+			"foliage_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:stone"
+				}
+			},
+			"trunk_placer": {
+				"type": "minecraft:dark_oak_trunk_placer",
+				"base_height": 6,
+				"height_rand_a": 2,
+				"height_rand_b": 1
+			},
+			"foliage_placer": {
+				"type": "minecraft:dark_oak_foliage_placer",
+				"radius": 0,
+				"offset": 0
+			},
+			"decorators": [
+				{
+					"type": "minecraft:pale_moss",
+					"ground_probability": 0.8,
+					"leaves_probability": 0.15,
+					"trunk_probability": 0.4
+				},
+				{
+					"type": "minecraft:creaking_heart",
+					"probability": 1.0
+				}
+			]
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.tree("oak_leaf_litter") {
+		decorators {
+			placeOnGround {
+				blockStateProvider = weightedStateProvider {
+					for (facing in listOf("north", "east", "south", "west")) {
+						entry(blockState(Blocks.LEAF_LITTER, "facing" to facing, "segment_amount" to "1"))
+					}
+				}
+				height = 2
+				radius = 4
+				tries = 96
+			}
+			placeOnGround {
+				blockStateProvider = weightedStateProvider {
+					entry(blockState(Blocks.LEAF_LITTER, "facing" to "north", "segment_amount" to "4"))
+				}
+				height = 2
+				tries = 150
+			}
+		}
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:tree",
+			"below_trunk_provider": {
+				"type": "minecraft:rule_based_state_provider",
+				"rules": []
+			},
+			"minimum_size": {
+				"type": "minecraft:two_layers_feature_size"
+			},
+			"trunk_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:stone"
+				}
+			},
+			"foliage_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:stone"
+				}
+			},
+			"trunk_placer": {
+				"type": "minecraft:fancy_trunk_placer",
+				"base_height": 0,
+				"height_rand_a": 0,
+				"height_rand_b": 0
+			},
+			"foliage_placer": {
+				"type": "minecraft:fancy_foliage_placer",
+				"radius": 0,
+				"offset": 0,
+				"height": 0
+			},
+			"decorators": [
+				{
+					"type": "minecraft:place_on_ground",
+					"block_state_provider": {
+						"type": "minecraft:weighted_state_provider",
+						"entries": [
+							{
+								"weight": 1,
+								"data": {
+									"type": "minecraft:simple_state_provider",
+									"state": {
+										"Name": "minecraft:leaf_litter",
+										"Properties": {
+											"facing": "north",
+											"segment_amount": "1"
+										}
+									}
+								}
+							},
+							{
+								"weight": 1,
+								"data": {
+									"type": "minecraft:simple_state_provider",
+									"state": {
+										"Name": "minecraft:leaf_litter",
+										"Properties": {
+											"facing": "east",
+											"segment_amount": "1"
+										}
+									}
+								}
+							},
+							{
+								"weight": 1,
+								"data": {
+									"type": "minecraft:simple_state_provider",
+									"state": {
+										"Name": "minecraft:leaf_litter",
+										"Properties": {
+											"facing": "south",
+											"segment_amount": "1"
+										}
+									}
+								}
+							},
+							{
+								"weight": 1,
+								"data": {
+									"type": "minecraft:simple_state_provider",
+									"state": {
+										"Name": "minecraft:leaf_litter",
+										"Properties": {
+											"facing": "west",
+											"segment_amount": "1"
+										}
+									}
+								}
+							}
+						]
+					},
+					"height": 2,
+					"radius": 4,
+					"tries": 96
+				},
+				{
+					"type": "minecraft:place_on_ground",
+					"block_state_provider": {
+						"type": "minecraft:weighted_state_provider",
+						"entries": [
+							{
+								"weight": 1,
+								"data": {
+									"type": "minecraft:simple_state_provider",
+									"state": {
+										"Name": "minecraft:leaf_litter",
+										"Properties": {
+											"facing": "north",
+											"segment_amount": "4"
+										}
+									}
+								}
+							}
+						]
+					},
+					"height": 2,
+					"tries": 150
+				}
+			]
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.tree("test_place_on_ground_default") {
+		decorators { placeOnGround() }
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:tree",
+			"below_trunk_provider": {
+				"type": "minecraft:rule_based_state_provider",
+				"rules": []
+			},
+			"minimum_size": {
+				"type": "minecraft:two_layers_feature_size"
+			},
+			"trunk_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:stone"
+				}
+			},
+			"foliage_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:stone"
+				}
+			},
+			"trunk_placer": {
+				"type": "minecraft:fancy_trunk_placer",
+				"base_height": 0,
+				"height_rand_a": 0,
+				"height_rand_b": 0
+			},
+			"foliage_placer": {
+				"type": "minecraft:fancy_foliage_placer",
+				"radius": 0,
+				"offset": 0,
+				"height": 0
+			},
+			"decorators": [
+				{
+					"type": "minecraft:place_on_ground",
+					"block_state_provider": {
+						"type": "minecraft:simple_state_provider",
+						"state": {
+							"Name": "minecraft:stone"
+						}
+					}
+				}
+			]
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.tree("test_attached_to_logs") {
+		decorators {
+			attachedToLogs(Direction.UP) {
+				probability = 0.1
+				blockProvider = weightedStateProvider {
+					entry(Blocks.RED_MUSHROOM, weight = 2)
+					entry(Blocks.BROWN_MUSHROOM, weight = 1)
+				}
+			}
+		}
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:tree",
+			"below_trunk_provider": {
+				"type": "minecraft:rule_based_state_provider",
+				"rules": []
+			},
+			"minimum_size": {
+				"type": "minecraft:two_layers_feature_size"
+			},
+			"trunk_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:stone"
+				}
+			},
+			"foliage_provider": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:stone"
+				}
+			},
+			"trunk_placer": {
+				"type": "minecraft:fancy_trunk_placer",
+				"base_height": 0,
+				"height_rand_a": 0,
+				"height_rand_b": 0
+			},
+			"foliage_placer": {
+				"type": "minecraft:fancy_foliage_placer",
+				"radius": 0,
+				"offset": 0,
+				"height": 0
+			},
+			"decorators": [
+				{
+					"type": "minecraft:attached_to_logs",
+					"block_provider": {
+						"type": "minecraft:weighted_state_provider",
+						"entries": [
+							{
+								"weight": 2,
+								"data": {
+									"type": "minecraft:simple_state_provider",
+									"state": {
+										"Name": "minecraft:red_mushroom"
+									}
+								}
+							},
+							{
+								"weight": 1,
+								"data": {
+									"type": "minecraft:simple_state_provider",
+									"state": {
+										"Name": "minecraft:brown_mushroom"
+									}
+								}
+							}
+						]
+					},
+					"directions": [
+						"up"
+					],
+					"probability": 0.1
 				}
 			]
 		}
