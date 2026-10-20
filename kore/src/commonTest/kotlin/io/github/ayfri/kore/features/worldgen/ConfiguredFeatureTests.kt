@@ -581,36 +581,28 @@ fun DataPack.configuredFeatureTests() {
 
 	configuredFeaturesBuilder.hugeFungus("test_huge_fungus") {
 		planted = true
-		hatState = simpleStateProvider(Blocks.DIRT)
-		stemState = simpleStateProvider(Blocks.STONE)
+		hatState = blockState(Blocks.DIRT)
+		stemState = blockState(Blocks.CRIMSON_STEM, "axis" to "y")
+		validBaseBlock = blockState(Blocks.CRIMSON_NYLIUM)
 	}
 
 	configuredFeatures.last() assertsIs """
 		{
 			"type": "minecraft:huge_fungus",
 			"hat_state": {
-				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:dirt"
-				}
+				"Name": "minecraft:dirt"
 			},
 			"decor_state": {
-				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"Name": "minecraft:stone"
 			},
 			"stem_state": {
-				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
+				"Name": "minecraft:crimson_stem",
+				"Properties": {
+					"axis": "y"
 				}
 			},
 			"valid_base_block": {
-				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"Name": "minecraft:crimson_nylium"
 			},
 			"replaceable_blocks": {
 				"type": "minecraft:true"
