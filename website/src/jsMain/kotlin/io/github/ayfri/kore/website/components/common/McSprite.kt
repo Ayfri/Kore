@@ -3,6 +3,10 @@ package io.github.ayfri.kore.website.components.common
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.compose.css.functions.url
+import io.github.ayfri.kore.website.utils.maskImage
+import io.github.ayfri.kore.website.utils.maskPosition
+import io.github.ayfri.kore.website.utils.maskRepeat
+import io.github.ayfri.kore.website.utils.maskSize
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.Span
@@ -17,15 +21,27 @@ fun mcTexture(path: String) = url("$MC_TEXTURES/$path.png")
  * Drawn as a background showing the top frame, so animated strips like `block/furnace_front_on` stay square.
  *
  * In doc markdown: `![Crafting Table](mc:block/crafting_table_front)`.
+ *
+ * Grayscale textures the game colors at runtime (leaves, grass) take a [tint], multiplied over the texture and clipped to its alpha.
  */
 @Composable
-fun McSprite(path: String, label: String) {
+fun McSprite(path: String, label: String, tint: CSSColorValue? = null) {
 	Span({
 		classes(McSpriteStyle.sprite)
 		attr("aria-label", label)
 		attr("role", "img")
 		attr("title", label)
-		style { backgroundImage(mcTexture(path)) }
+		style {
+			backgroundImage(mcTexture(path))
+			tint?.let {
+				backgroundBlendMode(BackgroundBlendMode.Multiply)
+				backgroundColor(it)
+				maskImage(mcTexture(path))
+				maskPosition(BackgroundPosition.of(CSSPosition.Top))
+				maskRepeat(BackgroundRepeat.NoRepeat)
+				maskSize(BackgroundSize.of(100.percent, auto))
+			}
+		}
 	})
 }
 

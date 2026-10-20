@@ -229,6 +229,10 @@ the same pixels. Text is drawn as SVG pixel squares by `McFont.kt`, from glyph b
 rendering blurs pixel fonts. `McText` takes a list of `McSpan` runs (color, bold, italic, underlined, strikethrough)
 for lines mixing styles, like chat messages built from several text components.
 
+Interactive explainers (sliders that redraw a distribution, for example) live in `components/doc/`, like `ProviderExplorer`.
+Embed one the same way, right after the table it illustrates, and write the sentence introducing it so the page reads
+fine without it: the `.md` copies and `llms.txt` drop the widget line.
+
 Keep routes stable, keep navigation intentional, and update entry pages when a new doc should become discoverable.
 
 ### How to write a documentation page

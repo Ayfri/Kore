@@ -86,6 +86,11 @@ Int providers fill every field expecting a variable count or size: `count()` and
 | `clamped(minInclusive, maxInclusive, source)`          | Evaluates `source` and clamps its result to `[min, max]`.                           |
 | `weightedList { }`                                     | Randomly selects one entry from a weighted pool.                                    |
 
+Each provider has its own distribution shape. The explorer below samples one 10 000 times with the game's formulas, for your
+parameters or a vanilla value, and prints the matching Kotlin call and JSON (every provider above except `weightedList`).
+
+{{{ .components.doc.ProviderExplorer }}}
+
 ```kotlin
 // A plain Int is a constant, only count() and countOnEveryLayer() accept it.
 count(10)
@@ -125,6 +130,8 @@ pitch = uniform(0.8f, 1.2f)
 roomVerticalRadiusMultiplier = clampedNormal(mean = 0.5f, deviation = 0.2f, min = 0.0f, max = 1.0f)
 thickness = trapezoid(min = 0.0f, max = 2.0f, plateau = 0.5f)
 ```
+
+The explorer under the [int providers](#int-providers) table also covers the float providers.
 
 `constant`, `uniform`, `trapezoid` and `clampedNormal` are named the same for ints and floats. A block accepting both, such as
 `largeDripstone { }`, tells them apart by argument type: `constant(3)` builds an int provider and `constant(3f)` a float one.
