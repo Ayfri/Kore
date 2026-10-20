@@ -32,6 +32,7 @@ import io.github.ayfri.kore.features.worldgen.ruletest.heightMatch
 import io.github.ayfri.kore.features.worldgen.ruletest.randomBlockMatch
 import io.github.ayfri.kore.features.worldgen.ruletest.tagMatch
 import io.github.ayfri.kore.generated.*
+import io.github.ayfri.kore.generated.arguments.worldgen.tagged.PlacedFeatureTagArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
@@ -924,6 +925,61 @@ fun DataPack.configuredFeatureTests() {
 			"type": "minecraft:random_boolean_selector",
 			"feature_false": "minecraft:fossil_lower",
 			"feature_true": "minecraft:fossil_upper"
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.overlay("test_overlay", PlacedFeatures.ACACIA, PlacedFeatures.ACACIA_CHECKED)
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:overlay",
+			"features": [
+				"minecraft:acacia",
+				"minecraft:acacia_checked"
+			]
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.overlay("test_overlay_single", PlacedFeatures.ACACIA)
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:overlay",
+			"features": "minecraft:acacia"
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.overlay("test_overlay_tag", PlacedFeatureTagArgument("my_features", "test"))
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:overlay",
+			"features": "#test:my_features"
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.projectedRandomPatchySquare("test_projected_random_patchy_square") {
+		block = simpleStateProvider(Blocks.BASALT)
+		projectThrough { matchingBlocks(Blocks.AIR) }
+		maxProjectionHeight = 3
+		size = constant(3)
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:projected_random_patchy_square",
+			"block": {
+				"type": "minecraft:simple_state_provider",
+				"state": {
+					"Name": "minecraft:basalt"
+				}
+			},
+			"max_projection_height": 3,
+			"project_through": {
+				"type": "minecraft:matching_blocks",
+				"blocks": "minecraft:air"
+			},
+			"size": 3
 		}
 	""".trimIndent()
 

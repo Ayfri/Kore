@@ -207,59 +207,88 @@ randomNeighborSpread("glowstone_extra") {
 
 `xzOffset` is written `xy_offset` in the JSON, the name Minecraft 26.3-snapshot-2 reads.
 
+### Overlay And Patchy Squares
+
+`overlay` places every placed feature of its list, whether or not the others were placed, where `sequence` stops at the first one that
+isn't. A single feature or tag is written as a bare string.
+
+```kotlin
+overlay("basalt_pillars", PlacedFeatures.BASALT_BLOBS, PlacedFeatures.BASALT_PILLAR)
+```
+
+`projectedRandomPatchySquare` places `block` in a patchy square around the placement position, each column projected onto the surface it
+reaches through `projectThrough`. Vanilla caps its basalt pillars with it.
+
+| Property              | Range  | Tuning                                                                      |
+|-----------------------|--------|-----------------------------------------------------------------------------|
+| `size`                | 1..16  | How big the square is.                                                      |
+| `maxProjectionHeight` | 0..    | How far, in blocks, a column is projected to find the surface.              |
+| `projectThrough`      | -      | The blocks a projection passes through, usually air.                        |
+
+```kotlin
+projectedRandomPatchySquare("basalt_cap") {
+	block = simpleStateProvider(Blocks.BASALT)
+	projectThrough { matchingBlocks(Blocks.AIR) }
+	maxProjectionHeight = 3
+	size = constant(3)
+}
+```
+
 ### All Feature Types
 
 Kore covers every vanilla configured feature type.
 
-| Builder                           | Places                               | Vanilla use                    |
-|-----------------------------------|--------------------------------------|--------------------------------|
-| `bamboo(probability)`             | Bamboo stalks                        | Jungle bamboo                  |
-| `blockBlob(...)`                  | Small block blob on a surface        | Mossy cobblestone in forests   |
-| `blockColumn(...)`                | Vertical stack of blocks with layers | Custom pillars                 |
-| `blockPile(...)`                  | Piles of blocks                      | Pumpkin/melon patches          |
-| `deltaFeature(...)`               | Basalt delta with contents and rim   | Nether basalt deltas           |
-| `disk(...)`                       | Circular disk of blocks              | Clay, sand, gravel patches     |
-| `endGateway(...)`                 | End gateway portal                   | End outer islands              |
-| `endPodium(active)`               | End exit portal podium               | Dragon fight portal            |
-| `endSpike(...)`                   | End obsidian pillar with crystal     | The End respawn pillars        |
-| `fillLayer(...)`                  | A full layer of blocks               | Custom dimension layers        |
-| `fossil(...)`                     | Structure-based fossil               | Underground fossils            |
-| `geode(...)`                      | Hollow structure with layered shells | Amethyst geodes                |
-| `hugeBrownMushroom(...)`          | Large brown mushroom                 | Swamp/mushroom island fungi    |
-| `hugeFungus(...)`                 | Huge nether fungus                   | Crimson/warped forests         |
-| `hugeRedMushroom(...)`            | Large red mushroom                   | Swamp/mushroom island fungi    |
-| `iceberg(...)`                    | Iceberg                              | Frozen ocean icebergs          |
-| `lake(...)`                       | Liquid pool                          | Underground lava lakes         |
-| `largeDripstone(...)`             | Tall stalactite or stalagmite        | Cave ceilings/floors           |
-| `multifaceGrowth(block, ...)`     | Multi-face block spread              | Glow lichen, sculk vein        |
-| `netherForestVegetation(...)`     | Nether plant scatter                 | Warped/crimson forest floors   |
-| `netherrackReplaceBlobs(...)`     | Blobs replacing netherrack           | Nether gravel/blackstone blobs |
-| `ore(...)`                        | Ore vein replacing terrain           | Every overworld ore            |
-| `randomBooleanSelector(...)`      | One of two features, at random       | Symmetric ore variants         |
-| `randomNeighborSpread(...)`       | Blocks spreading from neighbors      | Nether glowstone blobs         |
-| `randomSelector(...)`             | Weighted random feature picker       | Mixed ore deposits             |
-| `replaceSingleBlock(...)`         | Blocks replaced by rule targets      | Custom block swaps             |
-| `rootSystem(...)`                 | Roots under a tree                   | Mangrove roots                 |
-| `scatteredOre(...)`               | Scattered ore deposits               | Nether gold ore blobs          |
-| `sculkPatch(...)`                 | Sculk spread with catalyst           | Ancient city surroundings      |
-| `seaPickle(count)`                | Sea pickle colonies                  | Warm ocean floors              |
-| `seagrass(probability)`           | Seagrass                             | Ocean floors                   |
-| `sequence(...)`                   | Several features, in order           | Multi-step feature chains      |
-| `simpleBlock(...)`                | A single block state                 | Flowers, mushrooms             |
-| `simpleRandomSelector(...)`       | Uniform random feature picker        | Coral type variety             |
-| `singleBlockPillar(...)`          | One-block-wide pillar, up or down    | Basalt delta pillars           |
-| `speleothem(...)`                 | Single pointed speleothem            | Cave stalactites/stalagmites   |
-| `speleothemCluster(...)`          | Dense speleothem growth              | Cave speleothem rooms          |
-| `spike(...)`                      | Tall spiky columns                   | Ice spikes in frozen biomes    |
-| `springFeature(...)`              | Fluid source block                   | Water/lava springs             |
-| `steppedColumnCluster(...)`       | Cluster of stepped columns           | Basalt delta columns           |
-| `template(...)`                   | A weighted structure template        | Random structure variants      |
-| `tree(...)`                       | A tree, trunk and foliage            | Every vanilla tree             |
-| `twistingVines(...)`              | Twisting vine growth                 | Warped forest floors           |
-| `underwaterMagma(...)`            | Underwater magma blocks              | Ocean floors                   |
-| `vegetationPatch(...)`            | Vegetation on surfaces               | Cave moss patches              |
-| `waterloggedVegetationPatch(...)` | Waterlogged vegetation patches       | Underwater cave plants         |
-| `weightedRandomSelector(...)`     | Weighted random feature picker       | Mixed ore/vegetation deposits  |
+| Builder                            | Places                               | Vanilla use                    |
+|------------------------------------|--------------------------------------|--------------------------------|
+| `bamboo(probability)`              | Bamboo stalks                        | Jungle bamboo                  |
+| `blockBlob(...)`                   | Small block blob on a surface        | Mossy cobblestone in forests   |
+| `blockColumn(...)`                 | Vertical stack of blocks with layers | Custom pillars                 |
+| `blockPile(...)`                   | Piles of blocks                      | Pumpkin/melon patches          |
+| `deltaFeature(...)`                | Basalt delta with contents and rim   | Nether basalt deltas           |
+| `disk(...)`                        | Circular disk of blocks              | Clay, sand, gravel patches     |
+| `endGateway(...)`                  | End gateway portal                   | End outer islands              |
+| `endPodium(active)`                | End exit portal podium               | Dragon fight portal            |
+| `endSpike(...)`                    | End obsidian pillar with crystal     | The End respawn pillars        |
+| `fillLayer(...)`                   | A full layer of blocks               | Custom dimension layers        |
+| `fossil(...)`                      | Structure-based fossil               | Underground fossils            |
+| `geode(...)`                       | Hollow structure with layered shells | Amethyst geodes                |
+| `hugeBrownMushroom(...)`           | Large brown mushroom                 | Swamp/mushroom island fungi    |
+| `hugeFungus(...)`                  | Huge nether fungus                   | Crimson/warped forests         |
+| `hugeRedMushroom(...)`             | Large red mushroom                   | Swamp/mushroom island fungi    |
+| `iceberg(...)`                     | Iceberg                              | Frozen ocean icebergs          |
+| `lake(...)`                        | Liquid pool                          | Underground lava lakes         |
+| `largeDripstone(...)`              | Tall stalactite or stalagmite        | Cave ceilings/floors           |
+| `multifaceGrowth(block, ...)`      | Multi-face block spread              | Glow lichen, sculk vein        |
+| `netherForestVegetation(...)`      | Nether plant scatter                 | Warped/crimson forest floors   |
+| `netherrackReplaceBlobs(...)`      | Blobs replacing netherrack           | Nether gravel/blackstone blobs |
+| `ore(...)`                         | Ore vein replacing terrain           | Every overworld ore            |
+| `overlay(...)`                     | Several features, all of them placed | Basalt delta pillars           |
+| `projectedRandomPatchySquare(...)` | Patchy square projected on a surface | Basalt pillar caps             |
+| `randomBooleanSelector(...)`       | One of two features, at random       | Symmetric ore variants         |
+| `randomNeighborSpread(...)`        | Blocks spreading from neighbors      | Nether glowstone blobs         |
+| `randomSelector(...)`              | Weighted random feature picker       | Mixed ore deposits             |
+| `replaceSingleBlock(...)`          | Blocks replaced by rule targets      | Custom block swaps             |
+| `rootSystem(...)`                  | Roots under a tree                   | Mangrove roots                 |
+| `scatteredOre(...)`                | Scattered ore deposits               | Nether gold ore blobs          |
+| `sculkPatch(...)`                  | Sculk spread with catalyst           | Ancient city surroundings      |
+| `seaPickle(count)`                 | Sea pickle colonies                  | Warm ocean floors              |
+| `seagrass(probability)`            | Seagrass                             | Ocean floors                   |
+| `sequence(...)`                    | Several features, in order           | Multi-step feature chains      |
+| `simpleBlock(...)`                 | A single block state                 | Flowers, mushrooms             |
+| `simpleRandomSelector(...)`        | Uniform random feature picker        | Coral type variety             |
+| `singleBlockPillar(...)`           | One-block-wide pillar, up or down    | Basalt delta pillars           |
+| `speleothem(...)`                  | Single pointed speleothem            | Cave stalactites/stalagmites   |
+| `speleothemCluster(...)`           | Dense speleothem growth              | Cave speleothem rooms          |
+| `spike(...)`                       | Tall spiky columns                   | Ice spikes in frozen biomes    |
+| `springFeature(...)`               | Fluid source block                   | Water/lava springs             |
+| `steppedColumnCluster(...)`        | Cluster of stepped columns           | Basalt delta columns           |
+| `template(...)`                    | A weighted structure template        | Random structure variants      |
+| `tree(...)`                        | A tree, trunk and foliage            | Every vanilla tree             |
+| `twistingVines(...)`               | Twisting vine growth                 | Warped forest floors           |
+| `underwaterMagma(...)`             | Underwater magma blocks              | Ocean floors                   |
+| `vegetationPatch(...)`             | Vegetation on surfaces               | Cave moss patches              |
+| `waterloggedVegetationPatch(...)`  | Waterlogged vegetation patches       | Underwater cave plants         |
+| `weightedRandomSelector(...)`      | Weighted random feature picker       | Mixed ore/vegetation deposits  |
 
 ### Features Without Configuration
 
