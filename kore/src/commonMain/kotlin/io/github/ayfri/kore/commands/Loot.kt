@@ -12,7 +12,7 @@ import io.github.ayfri.kore.features.loottables.LootTable
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.arguments.types.LootTableArgument
 import io.github.ayfri.kore.serializers.LowercaseSerializer
-import io.github.ayfri.kore.utils.encodeToSnbt
+import io.github.ayfri.kore.utils.encodeToDataPackSnbt
 import kotlinx.serialization.Serializable
 
 /**
@@ -67,7 +67,7 @@ data object LootSource {
 	fun mine(pos: Vec3, tool: ItemArgument? = null) = listOfNotNull(literal("mine"), pos, tool)
 	fun mine(pos: Vec3, hand: Hand) = listOf(literal("mine"), pos, hand)
 
-	private fun inlineLootTable(lootTable: LootTable.() -> Unit) = literal(encodeToSnbt(LootTable().apply(lootTable)))
+	private fun inlineLootTable(lootTable: LootTable.() -> Unit) = literal(encodeToDataPackSnbt(LootTable().apply(lootTable)))
 }
 
 /**

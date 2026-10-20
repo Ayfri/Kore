@@ -35,7 +35,7 @@ fun Function.lootTests() {
 				entries { item(Items.COD) }
 			}
 		}
-	} assertsIs "loot give @s fish {pools:[{rolls:1.0f,entries:[{type:\"minecraft:item\",name:\"minecraft:cod\"}]}]} ~ ~ ~ minecraft:fishing_rod"
+	} assertsIs "loot give @s fish {pools:[{rolls:1,entries:[{type:\"minecraft:item\",name:\"minecraft:cod\"}]}]} ~ ~ ~ minecraft:fishing_rod"
 
 	loot(self()) {
 		fish(vec3(), Hand.OFF_HAND) {
@@ -44,7 +44,7 @@ fun Function.lootTests() {
 				entries { item(Items.COD) }
 			}
 		}
-	} assertsIs "loot give @s fish {pools:[{rolls:1.0f,entries:[{type:\"minecraft:item\",name:\"minecraft:cod\"}]}]} ~ ~ ~ offhand"
+	} assertsIs "loot give @s fish {pools:[{rolls:1,entries:[{type:\"minecraft:item\",name:\"minecraft:cod\"}]}]} ~ ~ ~ offhand"
 
 	loot(self()) {
 		kill(self())
@@ -144,7 +144,7 @@ fun Function.lootTests() {
 				}
 			}
 		}
-	} assertsIs "loot give @s loot {pools:[{rolls:1.0f,entries:[{type:\"minecraft:item\",name:\"minecraft:anvil\"}]}]}"
+	} assertsIs "loot give @s loot {pools:[{rolls:1,entries:[{type:\"minecraft:item\",name:\"minecraft:anvil\"}]}]}"
 }
 
 class LootCommandTests : FunSpec({

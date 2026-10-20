@@ -3,11 +3,11 @@ package io.github.ayfri.kore.features.slotsources
 import io.github.ayfri.kore.arguments.SlotsArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import io.github.ayfri.kore.serializers.InlinableListSerializer
-import io.github.ayfri.kore.utils.encodeToSnbt
+import io.github.ayfri.kore.utils.encodeToDataPackSnbt
 
 /** Slot sources written inline in a command, as SNBT. */
 data class InlineSlotSource(var sources: InlinableList<SlotSource>) : SlotsArgument {
-	override fun asString() = encodeToSnbt(InlinableListSerializer(SlotSource.serializer()), sources)
+	override fun asString() = encodeToDataPackSnbt(InlinableListSerializer(SlotSource.serializer()), sources)
 }
 
 /**

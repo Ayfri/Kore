@@ -11,7 +11,7 @@ import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
-import io.github.ayfri.kore.utils.encodeToSnbt
+import io.github.ayfri.kore.utils.encodeToDataPackSnbt
 
 /**
  * How `/item` spreads the source items over the destination slots.
@@ -82,7 +82,7 @@ data class Item(private val fn: Function) {
 
 	/** Builds an item modifier with [block] and applies it to [container]'s [slot]. @see [Minecraft wiki](https://minecraft.wiki/w/Commands/item) */
 	fun modify(container: ContainerArgument, slot: SlotsArgument, block: ItemModifier.() -> Unit) =
-		fn.addLine(command("item", literal("modify"), *target(container), slot, literal(encodeToSnbt(ItemModifier().apply(block)))))
+		fn.addLine(command("item", literal("modify"), *target(container), slot, literal(encodeToDataPackSnbt(ItemModifier().apply(block)))))
 
 	/** Edits [container]'s [slot] with [item], spread following [mode]. @see [Minecraft wiki](https://minecraft.wiki/w/Commands/item) */
 	fun edit(mode: ItemEditMode, container: ContainerArgument, slot: SlotsArgument, item: ItemArgument, count: Int? = null) =
@@ -106,7 +106,7 @@ data class Item(private val fn: Function) {
 		with: ContainerArgument,
 		withSlot: SlotsArgument,
 		block: ItemModifier.() -> Unit,
-	) = editFrom(mode, container, slot, with, withSlot, literal(encodeToSnbt(ItemModifier().apply(block))))
+	) = editFrom(mode, container, slot, with, withSlot, literal(encodeToDataPackSnbt(ItemModifier().apply(block))))
 
 	/** Fills [container]'s [slot] with [item]. @see [Minecraft wiki](https://minecraft.wiki/w/Commands/item) */
 	fun fill(container: ContainerArgument, slot: SlotsArgument, item: ItemArgument, count: Int? = null) =
