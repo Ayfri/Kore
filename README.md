@@ -14,6 +14,9 @@
 	<a href="https://discord.gg/BySjRNQ9Je">
 		<img src="https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white&style=flat-square" alt="Discord">
 	</a>
+	<a href="https://www.google.com/preferences/source?q=kore.ayfri.com">
+		<img src="https://img.shields.io/badge/Google-Preferred_source-4285F4?logo=google&logoColor=white&style=flat-square" alt="Add kore.ayfri.com as a preferred source on Google">
+	</a>
 </p>
 <hr>
 
