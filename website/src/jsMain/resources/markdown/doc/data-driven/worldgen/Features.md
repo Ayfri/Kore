@@ -379,12 +379,13 @@ the `then` of a rule.
 
 | Builder                                    | Picks the state from                                              |
 |--------------------------------------------|-------------------------------------------------------------------|
-| `copyPropertiesProvider(provider)`         | Another provider, with the existing block's properties copied     |
+| `copyPropertiesProvider(source)`           | A source provider, with the existing block's properties copied    |
 | `dualNoiseProvider { }`                    | Two Perlin noises, one selecting the variety, one picking a state |
 | `noiseProvider { }`                        | A single Perlin noise mapped onto a list of states                |
 | `noiseThresholdProvider { }`               | A Perlin noise compared against a threshold                       |
+| `randomBlockProvider(blocks)`              | The default state of a random block or block tag                  |
 | `randomizedIntStateProvider(property) { }` | Another provider, with one integer property randomized            |
-| `rotatedBlockProvider(block)`              | A fixed block with a random `axis`                                |
+| `rotatedBlockProvider(state, direction)`   | A block or provider, rotated on its `axis` or `facing`            |
 | `ruleBasedStateProvider { }`               | Ordered block predicate rules, with an optional fallback          |
 | `simpleStateProvider(block)`               | A fixed block                                                     |
 | `weightedStateProvider { }`                | A weighted random pick across several providers                   |
@@ -393,13 +394,25 @@ Reference: [Block state provider](https://minecraft.wiki/w/Block_state_provider)
 
 ### Simple And Rotated
 
-Both take a block, a block plus a property map, or a block plus a block state builder. `rotatedBlockProvider` ignores the `axis` of the
-state it is given and randomizes it at every position.
+Both take a block, a block plus a property map, or a block plus a block state builder. `rotatedBlockProvider` also takes another provider,
+and rotates the `axis` of a log or the `facing` of a dispenser towards `direction`, or towards a random one at every position when
+`direction` is omitted.
 
 ```kotlin
 simpleStateProvider(Blocks.DANDELION)
 simpleStateProvider(Blocks.OAK_LOG, mapOf("axis" to "y"))
 rotatedBlockProvider(Blocks.OAK_LOG)
+rotatedBlockProvider(Blocks.DISPENSER, Direction.NORTH)
+rotatedBlockProvider(weightedStateProvider { entry(Blocks.OAK_LOG) }, Direction.UP)
+```
+
+### Random Block
+
+`randomBlockProvider` places the default state of a random block among the blocks or block tags it is given.
+
+```kotlin
+randomBlockProvider(Blocks.DANDELION, Blocks.POPPY)
+randomBlockProvider(Tags.Block.FLOWERS)
 ```
 
 ### Weighted

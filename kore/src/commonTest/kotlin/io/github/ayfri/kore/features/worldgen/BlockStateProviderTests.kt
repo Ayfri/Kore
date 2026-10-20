@@ -14,6 +14,7 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.S
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.simpleBlock
 import io.github.ayfri.kore.features.worldgen.intproviders.uniform
 import io.github.ayfri.kore.generated.Blocks
+import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
 
@@ -61,7 +62,7 @@ fun DataPack.blockStateProviderTests() {
 		"copy_properties_provider", """
 			{
 				"type": "minecraft:copy_properties_provider",
-				"source_block_state_provider": {
+				"source": {
 					"type": "minecraft:simple_state_provider",
 					"state": {
 						"Name": "minecraft:waxed_copper_block"
@@ -76,11 +77,78 @@ fun DataPack.blockStateProviderTests() {
 			{
 				"type": "minecraft:rotated_block_provider",
 				"state": {
-					"Name": "minecraft:oak_log"
+					"type": "minecraft:simple_state_provider",
+					"state": {
+						"Name": "minecraft:oak_log"
+					}
 				}
 			}
 		""".trimIndent()
 	) { rotatedBlockProvider(Blocks.OAK_LOG) }
+
+	assertProvider(
+		"rotated_block_provider_direction", """
+			{
+				"type": "minecraft:rotated_block_provider",
+				"direction": "north",
+				"state": {
+					"type": "minecraft:simple_state_provider",
+					"state": {
+						"Name": "minecraft:dispenser"
+					}
+				}
+			}
+		""".trimIndent()
+	) { rotatedBlockProvider(Blocks.DISPENSER, Direction.NORTH) }
+
+	assertProvider(
+		"rotated_block_provider_nested", """
+			{
+				"type": "minecraft:rotated_block_provider",
+				"direction": "up",
+				"state": {
+					"type": "minecraft:weighted_state_provider",
+					"entries": [
+						{
+							"weight": 1,
+							"data": {
+								"type": "minecraft:simple_state_provider",
+								"state": {
+									"Name": "minecraft:oak_log"
+								}
+							}
+						}
+					]
+				}
+			}
+		""".trimIndent()
+	) {
+		rotatedBlockProvider(
+			weightedStateProvider { entry(Blocks.OAK_LOG) },
+			Direction.UP,
+		)
+	}
+
+	assertProvider(
+		"random_block_provider", """
+			{
+				"type": "minecraft:random_block_provider",
+				"blocks": [
+					"minecraft:dandelion",
+					"minecraft:poppy"
+				]
+			}
+		""".trimIndent()
+	) { randomBlockProvider(Blocks.DANDELION, Blocks.POPPY) }
+
+	assertProvider(
+		"random_block_provider_tag", """
+			{
+				"type": "minecraft:random_block_provider",
+				"blocks": "#minecraft:flowers"
+			}
+		""".trimIndent()
+	) { randomBlockProvider(Tags.Block.FLOWERS) }
 
 	assertProvider(
 		"weighted_state_provider", """
@@ -110,7 +178,10 @@ fun DataPack.blockStateProviderTests() {
 						"data": {
 							"type": "minecraft:rotated_block_provider",
 							"state": {
-								"Name": "minecraft:oak_log"
+								"type": "minecraft:simple_state_provider",
+								"state": {
+									"Name": "minecraft:oak_log"
+								}
 							}
 						}
 					}
