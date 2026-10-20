@@ -76,10 +76,10 @@ val cave = carversBuilder.cave("my_cave") { probability = 0.15 }
 
 ## Shared Configuration
 
-| Field         | Type                                                    | Default               | Meaning                                   |
-|---------------|---------------------------------------------------------|-----------------------|-------------------------------------------|
-| `probability` | `Double` in `[0, 1]`                                    | `0.1`                 | Chance for each chunk to attempt a carve. |
-| `y`           | [Height provider](/docs/data-driven/worldgen/providers) | `constantAbsolute(0)` | Height at which the carve starts.         |
+| Field         | Type                                                                     | Default               | Meaning                                   |
+|---------------|--------------------------------------------------------------------------|-----------------------|-------------------------------------------|
+| `probability` | `Double` in `[0, 1]`                                                     | `0.1`                 | Chance for each chunk to attempt a carve. |
+| `y`           | [Height provider](/docs/data-driven/worldgen/providers#vertical-anchors) | `constantAbsolute(0)` | Height at which the carve starts.         |
 
 ## Cave
 

@@ -36,6 +36,12 @@ the build height of the dimension.
 | `belowTop(n)`           | `{"below_top": n}`             | `n` blocks below the top of the dimension, larger values go down.             |
 | `relativeToSeaLevel(n)` | `{"relative_to_sea_level": n}` | `n` blocks above the sea level of the dimension, negative values go below it. |
 
+In the Overworld, `aboveBottom(0)` is Y -64, `belowTop(0)` is Y 319 and `relativeToSeaLevel(0)` is Y 63. The Nether and the End resolve
+against the 128 blocks of their noise settings: bottom Y 0, top Y 127, sea level 32 and 0. The diagram below places each anchor on the
+world column and shades the range of a `uniformHeightProvider`, next to its Kotlin call and JSON:
+
+{{{ .components.doc.WorldHeightDiagram }}}
+
 Reference: [Vertical anchor](https://minecraft.wiki/w/Custom_world_generation/vertical_anchor)
 
 ## Height Providers
