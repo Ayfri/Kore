@@ -1322,7 +1322,7 @@ fun DataPack.configuredFeatureTests() {
 		spreadAttempts = 45
 		growthRounds = 1
 		spreadRounds = 2
-		extraRateGrowths = constant(0)
+		extraRareGrowths = constant(0)
 		catalystChance = 0.5
 	}
 
@@ -1334,7 +1334,7 @@ fun DataPack.configuredFeatureTests() {
 			"spread_attempts": 45,
 			"growth_rounds": 1,
 			"spread_rounds": 2,
-			"extra_rate_growths": 0,
+			"extra_rare_growths": 0,
 			"catalyst_chance": 0.5
 		}
 	""".trimIndent()

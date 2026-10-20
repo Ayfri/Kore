@@ -21,17 +21,17 @@ import kotlinx.serialization.Serializable
  * @property spreadAttempts Number of attempts to spread, `1` to `64`.
  * @property growthRounds Number of times the patch grows, `0` to `8`.
  * @property spreadRounds Number of times the patch spreads, `0` to `8`.
- * @property extraRateGrowths Number of extra rare growths, the sculk shriekers, of the patch.
+ * @property extraRareGrowths Number of extra rare growths, the sculk shriekers, of the patch.
  * @property catalystChance Chance, `0` to `1`, of placing a sculk catalyst.
  */
 @Serializable
 data class SculkPatch(
-	var chargeCount: Int = 0,
-	var amountPerCharge: Int = 0,
-	var spreadAttempts: Int = 0,
+	var chargeCount: Int = 1,
+	var amountPerCharge: Int = 1,
+	var spreadAttempts: Int = 1,
 	var growthRounds: Int = 0,
 	var spreadRounds: Int = 0,
-	var extraRateGrowths: IntProvider = ConstantIntProvider(0),
+	var extraRareGrowths: IntProvider = ConstantIntProvider(0),
 	var catalystChance: Double = 0.0,
 ) : FeatureConfig(), IntProviderScope
 
@@ -47,7 +47,7 @@ data class SculkPatch(
  *     spreadAttempts = 64
  *     growthRounds = 0
  *     spreadRounds = 1
- *     extraRateGrowths = uniform(1, 3)
+ *     extraRareGrowths = uniform(1, 3)
  *     catalystChance = 0.5
  * }
  * ```
