@@ -5,7 +5,7 @@ nav-title: Features
 description: Generate trees, ores and vegetation in Minecraft with Kore - configured features, placement modifiers and block state providers.
 keywords: minecraft, datapack, kore, worldgen, configured feature, placed feature, tree, ore, block state provider
 date-created: 2026-02-03
-date-modified: 2026-10-08
+date-modified: 2026-10-20
 routeOverride: /docs/data-driven/worldgen/features
 ---
 
@@ -217,6 +217,7 @@ the `then` of a rule.
 
 | Builder                                    | Picks the state from                                              |
 |--------------------------------------------|-------------------------------------------------------------------|
+| `copyPropertiesProvider(provider)`         | Another provider, with the existing block's properties copied     |
 | `dualNoiseProvider { }`                    | Two Perlin noises, one selecting the variety, one picking a state |
 | `noiseProvider { }`                        | A single Perlin noise mapped onto a list of states                |
 | `noiseThresholdProvider { }`               | A Perlin noise compared against a threshold                       |

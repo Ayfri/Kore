@@ -58,6 +58,20 @@ fun DataPack.blockStateProviderTests() {
 	) { simpleStateProvider(Blocks.OAK_LOG, mapOf("axis" to "y")) }
 
 	assertProvider(
+		"copy_properties_provider", """
+			{
+				"type": "minecraft:copy_properties_provider",
+				"source_block_state_provider": {
+					"type": "minecraft:simple_state_provider",
+					"state": {
+						"Name": "minecraft:waxed_copper_block"
+					}
+				}
+			}
+		""".trimIndent()
+	) { copyPropertiesProvider(simpleStateProvider(Blocks.WAXED_COPPER_BLOCK)) }
+
+	assertProvider(
 		"rotated_block_provider", """
 			{
 				"type": "minecraft:rotated_block_provider",
