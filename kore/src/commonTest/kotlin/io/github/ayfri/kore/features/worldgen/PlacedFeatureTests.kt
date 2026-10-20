@@ -6,6 +6,7 @@ import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.worldgen.blockpredicate.*
 import io.github.ayfri.kore.features.worldgen.configuredfeature.VerticalDirection
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
+import io.github.ayfri.kore.features.worldgen.intproviders.uniform
 import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.*
 import io.github.ayfri.kore.features.worldgen.placedfeature.placedFeature
 import io.github.ayfri.kore.generated.Biomes
@@ -127,6 +128,46 @@ fun DataPack.placedFeatureTests() {
 					"target_condition": {
 						"type": "minecraft:solid"
 					}
+				}
+			]
+		}
+	""".trimIndent()
+
+	placedFeature("offset", Features.ACACIA) {
+		offset(constant(1), uniform(-2, 2), constant(0))
+	}
+
+	placedFeatures.last() assertsIs """
+		{
+			"feature": "minecraft:acacia",
+			"placement": [
+				{
+					"type": "minecraft:offset",
+					"x": 1,
+					"y": {
+						"type": "minecraft:uniform",
+						"min_inclusive": -2,
+						"max_inclusive": 2
+					},
+					"z": 0
+				}
+			]
+		}
+	""".trimIndent()
+
+	placedFeature("offset_defaults", Features.ACACIA) {
+		offset(y = constant(-1))
+	}
+
+	placedFeatures.last() assertsIs """
+		{
+			"feature": "minecraft:acacia",
+			"placement": [
+				{
+					"type": "minecraft:offset",
+					"x": 0,
+					"y": -1,
+					"z": 0
 				}
 			]
 		}

@@ -467,13 +467,14 @@ final position.
 | `inSquare()`                          | Randomizes X and Z inside the chunk                 |
 | `noiseBasedCount(...)`                | Count driven by the noise value at the position     |
 | `noiseThresholdCount(...)`            | One of two counts, chosen by a noise threshold      |
-| `randomOffset(xzSpread, ySpread)`     | Scatters the position within an XZ/Y radius         |
+| `offset(x, y, z)`                     | Shifts the position, each axis `-16..16`            |
 | `rarityFilter(chance)`                | Keeps the position with a `1/chance` probability    |
 | `surfaceRelativeThresholdFilter(...)` | Filters on the distance to the surface              |
 | `surfaceWaterDepthFilter(maxDepth)`   | Drops positions under deeper water than `maxDepth`  |
 
 `heightRange` and `count` take a height provider and an int provider; see [Providers](/docs/data-driven/worldgen/providers) for the
-distributions available.
+distributions available. `offset` takes one int provider per axis: `constant(1)` moves every position the same way, `uniform(-2, 2)`
+scatters it.
 
 Reference: [Placement modifier](https://minecraft.wiki/w/Placed_feature#Placement_modifiers)
 
