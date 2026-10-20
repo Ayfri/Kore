@@ -5,7 +5,7 @@ nav-title: Biomes
 description: Define Minecraft biomes with climate, colors, mob spawns, carvers and features using Kore's type-safe Kotlin DSL.
 keywords: minecraft, datapack, kore, worldgen, biome, carver, spawner, biome effects, climate parameters
 date-created: 2026-02-03
-date-modified: 2026-08-21
+date-modified: 2026-10-20
 routeOverride: /docs/data-driven/worldgen/biomes
 ---
 
@@ -39,27 +39,32 @@ References: [Biome](https://minecraft.wiki/w/Biome), [Biome definition](https://
 The vanilla Overworld places biomes in a 6-dimensional climate space. Each biome claims an interval on every axis, and the game picks the
 closest match for a position. These are the same six parameters a `multiNoise` biome source lists per entry:
 
-| Parameter         | Controls                                                    |
-|-------------------|-------------------------------------------------------------|
-| `temperature`     | Snow and ice coverage, vegetation types                     |
-| `humidity`        | Vegetation density, arid to humid                           |
-| `continentalness` | Ocean, beach or inland                                      |
-| `erosion`         | Flat versus mountainous terrain                             |
-| `weirdness`       | Biome variants, for example Jungle to Bamboo Jungle         |
-| `depth`           | Surface versus cave biome                                   |
+| Parameter         | Controls                                            | Vanilla range                                                                                                                                                                    |
+|-------------------|-----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `temperature`     | Snow and ice coverage, vegetation types             | 5 bands: `-1.0..-0.45`, `-0.45..-0.15`, `-0.15..0.2`, `0.2..0.55`, `0.55..1.0`                                                                                                   |
+| `humidity`        | Vegetation density, arid to humid                   | 5 bands: `-1.0..-0.35`, `-0.35..-0.1`, `-0.1..0.1`, `0.1..0.3`, `0.3..1.0`                                                                                                       |
+| `continentalness` | Ocean, beach or inland                              | Mushroom fields `-1.2..-1.05`, deep ocean `-1.05..-0.455`, ocean `-0.455..-0.19`, coast `-0.19..-0.11`, near inland `-0.11..0.03`, mid inland `0.03..0.3`, far inland `0.3..1.0` |
+| `erosion`         | Flat versus mountainous terrain                     | 7 bands: `-1.0..-0.78`, `-0.78..-0.375`, `-0.375..-0.2225`, `-0.2225..0.05`, `0.05..0.45`, `0.45..0.55`, `0.55..1.0`                                                             |
+| `weirdness`       | Biome variants, for example Jungle to Bamboo Jungle | `-1.0..1.0`, cut into slices at `±0.05`, `±0.2667`, `±0.4`, `±0.5667`, `±0.7667` and `±0.9333`. A slice entirely below `0.0` picks the standard biome, the others its variant    |
+| `depth`           | Surface versus cave biome                           | Surface biomes at `0.0` and `1.0`, cave biomes in `0.2..0.9`, `deep_dark` at `1.1`                                                                                               |
+
+The vanilla Overworld uses the built-in `overworld` multi-noise preset, so these bands are fixed in the game and not in a datapack file
+(bounds above are rounded to four decimals). In its table of standard middle-terrain biomes, `snowy_plains` sits at temperature
+`-1.0..-0.45` with humidity `-1.0..0.1`, `dark_forest` at temperature `-0.15..0.2` with humidity `0.3..1.0`, and `desert` at temperature
+`0.55..1.0` with every humidity.
 
 The `temperature` and `downfall` fields on the biome itself are a different thing: they drive in-world behavior such as snow instead of
 rain, water freezing, and cauldrons filling.
 
 ## Climate Fields
 
-| Field                      | Type      | Default | Effect                                                                       |
-|----------------------------|-----------|---------|------------------------------------------------------------------------------|
-| `temperature`              | `Float`   | `0.8`   | Below `0.15`, precipitation falls as snow and water freezes.                 |
-| `downfall`                 | `Float`   | `0.4`   | Wetness, driving foliage tinting and how fast fire spreads.                  |
-| `hasPrecipitation`         | `Boolean` | `true`  | Whether rain or snow falls at all.                                           |
-| `temperatureModifier`      | enum      | none    | `FROZEN` applies the noise-based warm patches of the frozen ocean.           |
-| `creatureSpawnProbability` | `Float?`  | none    | Chance per chunk for the initial creature spawn during world generation.     |
+| Field                      | Type      | Default | Vanilla                                              | Effect                                                                   |
+|----------------------------|-----------|---------|------------------------------------------------------|--------------------------------------------------------------------------|
+| `temperature`              | `Float`   | `0.8`   | `plains` `0.8`, `snowy_plains` `0.0`, `desert` `2.0` | Below `0.15`, precipitation falls as snow and water freezes.             |
+| `downfall`                 | `Float`   | `0.4`   | `plains` `0.4`, `snowy_plains` `0.5`, `desert` `0.0` | Wetness, driving foliage tinting and how fast fire spreads.              |
+| `hasPrecipitation`         | `Boolean` | `true`  | `desert` `false`                                     | Whether rain or snow falls at all.                                       |
+| `temperatureModifier`      | enum      | none    | `frozen_ocean` `FROZEN`                              | `FROZEN` applies the noise-based warm patches of the frozen ocean.       |
+| `creatureSpawnProbability` | `Float?`  | none    | `snowy_plains` `0.07`                                | Chance per chunk for the initial creature spawn during world generation. |
 
 ## Colors And Atmosphere
 

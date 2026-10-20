@@ -49,15 +49,15 @@ Reference: [Vertical anchor](https://minecraft.wiki/w/Custom_world_generation/ve
 A height provider picks a Y level between two anchors, following a distribution. It is what `heightRange()` on a placed feature, `y` on a
 carver and `startHeight` on a jigsaw structure take.
 
-| Builder                                                                  | Behavior                                                                  |
-|--------------------------------------------------------------------------|---------------------------------------------------------------------------|
-| `constantHeightProvider(anchor)`                                         | Always the given anchor. Serializes as the bare anchor, with no wrapper.  |
-| `constantAbsolute(y)` / `constantAboveBottom(n)` / `constantBelowTop(n)` | Shorthands for `constantHeightProvider` on each anchor form.              |
-| `uniformHeightProvider(min, max)`                                        | Equal chance at every level between both bounds, included.                |
-| `trapezoidHeightProvider(min, max, plateau)`                             | Flat top of `plateau` blocks in the middle, linear falloff on both sides. |
-| `biasedToBottomHeightProvider(min, max, inner)`                          | Uniform over the `inner` bottom blocks, exponential falloff above them.   |
-| `veryBiasedToBottomHeightProvider(min, max, inner)`                      | Same shape with a sharper falloff, the vanilla diamond pattern.           |
-| `weightedListHeightProvider { }`                                         | Picks one of the nested providers, by weight.                             |
+| Builder                                                                  | Behavior                                                                  | Vanilla example                                                           |
+|--------------------------------------------------------------------------|---------------------------------------------------------------------------|---------------------------------------------------------------------------|
+| `constantHeightProvider(anchor)`                                         | Always the given anchor. Serializes as the bare anchor, with no wrapper.  | `structure/abandoned_camp_forest` `start_height`                          |
+| `constantAbsolute(y)` / `constantAboveBottom(n)` / `constantBelowTop(n)` | Shorthands for `constantHeightProvider` on each anchor form.              | `structure/abandoned_camp_forest` `start_height` is `constantAbsolute(0)` |
+| `uniformHeightProvider(min, max)`                                        | Equal chance at every level between both bounds, included.                | `carver/cave` `y`, `placed_feature/amethyst_geode` `height_range`         |
+| `trapezoidHeightProvider(min, max, plateau)`                             | Flat top of `plateau` blocks in the middle, linear falloff on both sides. | `placed_feature/ore_diamond` `height_range`                               |
+| `biasedToBottomHeightProvider(min, max, inner)`                          | Uniform over the `inner` bottom blocks, exponential falloff above them.   | -                                                                         |
+| `veryBiasedToBottomHeightProvider(min, max, inner)`                      | Same shape with a sharper falloff.                                        | `placed_feature/spring_lava` `height_range`                               |
+| `weightedListHeightProvider { }`                                         | Picks one of the nested providers, by weight.                             | -                                                                         |
 
 Every builder except `weightedListHeightProvider` also takes plain `Int` bounds, read as absolute Y coordinates.
 
@@ -81,16 +81,16 @@ Reference: [Height provider](https://minecraft.wiki/w/Custom_world_generation/he
 Int providers fill every field expecting a variable count or size: `count()` and `countOnEveryLayer()` on placed features, the `limit` of a
 `capped` processor, the layer heights of a `blockColumn`, and so on.
 
-| Builder                                                | Behavior                                                                            |
-|--------------------------------------------------------|-------------------------------------------------------------------------------------|
-| `constant(value)`                                      | Always returns `value`. Serializes as a plain integer, no wrapper object.           |
-| `uniform(minInclusive, maxInclusive)`                  | Uniform random integer in `[min, max]`.                                             |
-| `biasedToBottom(minInclusive, maxInclusive)`           | Random integer in `[min, max]`, weighted towards the minimum.                       |
-| `veryBiasedToBottom(minInclusive, maxInclusive)`       | Random integer in `[min, max]`, strongly weighted towards the minimum.              |
-| `trapezoid(min, max, plateau)`                         | Trapezoid distribution over `[min, max]` with a flat top of width `plateau`.        |
-| `clampedNormal(minInclusive, maxInclusive, mean, dev)` | Samples a normal distribution (`mean`/`dev`) and clamps the result to `[min, max]`. |
-| `clamped(minInclusive, maxInclusive, source)`          | Evaluates `source` and clamps its result to `[min, max]`.                           |
-| `weightedList { }`                                     | Randomly selects one entry from a weighted pool.                                    |
+| Builder                                                | Behavior                                                                            | Vanilla example                                 |
+|--------------------------------------------------------|-------------------------------------------------------------------------------------|-------------------------------------------------|
+| `constant(value)`                                      | Always returns `value`. Serializes as a plain integer, no wrapper object.           | `placed_feature/basalt_blobs` `count`           |
+| `uniform(minInclusive, maxInclusive)`                  | Uniform random integer in `[min, max]`.                                             | `placed_feature/blue_ice` `count`               |
+| `biasedToBottom(minInclusive, maxInclusive)`           | Random integer in `[min, max]`, weighted towards the minimum.                       | `placed_feature/glowstone_extra` `count`        |
+| `veryBiasedToBottom(minInclusive, maxInclusive)`       | Random integer in `[min, max]`, strongly weighted towards the minimum.              | `carver/cave` `count`                           |
+| `trapezoid(min, max, plateau)`                         | Trapezoid distribution over `[min, max]` with a flat top of width `plateau`.        | `feature/glowstone_extra` `xy_offset`           |
+| `clampedNormal(minInclusive, maxInclusive, mean, dev)` | Samples a normal distribution (`mean`/`dev`) and clamps the result to `[min, max]`. | `placed_feature/pointed_dripstone` `offset` `x` |
+| `clamped(minInclusive, maxInclusive, source)`          | Evaluates `source` and clamps its result to `[min, max]`.                           | `placed_feature/forest_flowers` `count`         |
+| `weightedList { }`                                     | Randomly selects one entry from a weighted pool.                                    | `placed_feature/bamboo_vegetation` `count`      |
 
 Each provider has its own distribution shape. The explorer below samples one 10 000 times with the game's formulas, for your
 parameters or a vanilla value, and prints the matching Kotlin call and JSON (every provider above except `weightedList`).
@@ -123,12 +123,12 @@ Reference: [Int provider](https://minecraft.wiki/w/Custom_world_generation/int_p
 Float providers fill float fields such as `roomVerticalRadiusMultiplier` and `floorLevel` on carvers, `radius` on foliage placers,
 `heightScale` and `stalactiteBluntness` on features, and `volume` or `pitch` on enchantment effects.
 
-| Builder                                    | Behavior                                                                                  |
-|--------------------------------------------|-------------------------------------------------------------------------------------------|
-| `constant(value)`                          | Always returns `value`. Serializes as a plain float, no wrapper object.                   |
-| `uniform(minInclusive, maxExclusive)`      | Uniform random float in `[min, max)`. `maxExclusive` cannot be less than `minInclusive`.  |
-| `trapezoid(min, max, plateau)`             | Trapezoid distribution over `[min, max]` with a flat top of width `plateau`.              |
-| `clampedNormal(mean, deviation, min, max)` | Samples a normal distribution (`mean`/`deviation`) and clamps the result to `[min, max]`. |
+| Builder                                    | Behavior                                                                                  | Vanilla example                                     |
+|--------------------------------------------|-------------------------------------------------------------------------------------------|-----------------------------------------------------|
+| `constant(value)`                          | Always returns `value`. Serializes as a plain float, no wrapper object.                   | `carver/nether_cave` `horizontal_radius_multiplier` |
+| `uniform(minInclusive, maxExclusive)`      | Uniform random float in `[min, max)`. `maxExclusive` cannot be less than `minInclusive`.  | `carver/cave` `horizontal_radius_multiplier`        |
+| `trapezoid(min, max, plateau)`             | Trapezoid distribution over `[min, max]` with a flat top of width `plateau`.              | `carver/cave` `thickness`                           |
+| `clampedNormal(mean, deviation, min, max)` | Samples a normal distribution (`mean`/`deviation`) and clamps the result to `[min, max]`. | `feature/dripstone_cluster` `wetness`               |
 
 ```kotlin
 floorLevel = constant(-0.5f)

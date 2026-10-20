@@ -54,10 +54,10 @@ val hills = dp.noise("hills") {
 A file name holding slashes lands in subfolders, so `noise("cave/entrance")` writes
 `data/<namespace>/worldgen/noise/cave/entrance.json`.
 
-| Field         | Type           | Description                                        |
-|---------------|----------------|----------------------------------------------------|
-| `firstOctave` | `Int`          | Starting octave, negative values are larger scale. |
-| `amplitudes`  | `List<Double>` | Amplitude weight per octave, `0.0` skipping one.   |
+| Field         | Type           | Description                                                                                    | Vanilla `temperature`                                               |
+|---------------|----------------|------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
+| `firstOctave` | `Int`          | Starting octave, negative values are larger scale. Lower means larger features.                | `-10`, and `-12` in `temperature_large`                             |
+| `amplitudes`  | `List<Double>` | Amplitude weight per octave, `0.0` skipping one. A higher weight makes that octave count more. | `listOf(1.5, 0.0, 1.0, 0.0, 0.0, 0.0)`, same in `temperature_large` |
 
 Every call returns a `NoiseArgument`. Vanilla noises are available as `Noises.AquiferBarrier`, `Noises.Continentalness` and so on, and can be
 passed anywhere a `NoiseArgument` is expected.
