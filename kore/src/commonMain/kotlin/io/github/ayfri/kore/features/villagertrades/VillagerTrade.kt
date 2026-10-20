@@ -10,6 +10,7 @@ import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifierAsList
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.NumberProvider
+import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.arguments.EnchantmentOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.VillagerTradeArgument
@@ -39,7 +40,7 @@ data class VillagerTrade(
 	var reputationDiscount: NumberProvider? = null,
 	var wants: ItemStack,
 	var xp: NumberProvider? = null,
-) : Generator("villager_trade") {
+) : Generator("villager_trade"), NumberProviderScope {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 

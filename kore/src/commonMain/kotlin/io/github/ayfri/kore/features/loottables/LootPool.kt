@@ -9,6 +9,7 @@ import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.PredicateAsList
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.NumberProvider
+import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.features.predicates.providers.constant
 import kotlinx.serialization.Serializable
 
@@ -26,7 +27,7 @@ data class LootPool(
 	var conditions: PredicateAsList? = null,
 	var entries: List<LootEntry> = emptyList(),
 	var functions: ItemModifierAsList? = null,
-)
+) : NumberProviderScope
 
 /** Set the number of rolls. */
 fun LootPool.rolls(value: NumberProvider) {

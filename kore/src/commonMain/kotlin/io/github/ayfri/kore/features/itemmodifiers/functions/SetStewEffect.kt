@@ -2,8 +2,8 @@ package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.providers.ConstantNumberProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProvider
-import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.generated.arguments.types.PotionArgument
 import kotlinx.serialization.Serializable
 
@@ -24,7 +24,7 @@ data class SetStewEffect(
 @Serializable
 data class PotionEffect(
 	var type: PotionArgument,
-	var duration: NumberProvider = constant(0f),
+	var duration: NumberProvider = ConstantNumberProvider(0f),
 )
 
 /** Add a `set_stew_effect` step via a builder list. */
@@ -32,7 +32,11 @@ fun ItemModifier.setStewEffect(effects: MutableList<PotionEffect>.() -> Unit) =
 	SetStewEffect(effects = buildList(effects)).also { modifiers += it }
 
 /** Add a single-entry `set_stew_effect` step. */
-fun ItemModifier.setStewEffect(type: PotionArgument, duration: NumberProvider = constant(0f), block: SetStewEffect.() -> Unit = {}) {
+fun ItemModifier.setStewEffect(
+	type: PotionArgument,
+	duration: NumberProvider = ConstantNumberProvider(0f),
+	block: SetStewEffect.() -> Unit = {},
+) {
 	modifiers += SetStewEffect(
 		effects = listOf(
 			PotionEffect(
@@ -44,6 +48,6 @@ fun ItemModifier.setStewEffect(type: PotionArgument, duration: NumberProvider = 
 }
 
 /** Append one stew effect entry to the builder list. */
-fun MutableList<PotionEffect>.potionEffect(type: PotionArgument, duration: NumberProvider = constant(0f)) {
+fun MutableList<PotionEffect>.potionEffect(type: PotionArgument, duration: NumberProvider = ConstantNumberProvider(0f)) {
 	add(PotionEffect(type, duration))
 }

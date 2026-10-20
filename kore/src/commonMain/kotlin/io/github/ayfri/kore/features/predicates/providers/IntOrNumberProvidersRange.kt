@@ -33,16 +33,16 @@ data class IntOrNumberProvidersRange(
 fun intValue(value: Int) = IntOrNumberProvidersRange(value)
 
 /** Creates an [IntOrNumberProvidersRange] between [min] and [max], both included. */
-fun intRange(min: NumberProvider, max: NumberProvider) = IntOrNumberProvidersRange(range = uniform(min, max))
+fun intRange(min: NumberProvider, max: NumberProvider) = IntOrNumberProvidersRange(range = UniformNumberProvider(min, max))
 
 /** Creates an [IntOrNumberProvidersRange] between [min] and [max], both included. */
-fun intRange(min: Float, max: NumberProvider) = IntOrNumberProvidersRange(range = uniform(min, max))
+fun intRange(min: Float, max: NumberProvider) = intRange(ConstantNumberProvider(min), max)
 
 /** Creates an [IntOrNumberProvidersRange] between [min] and [max], both included. */
-fun intRange(min: NumberProvider, max: Float) = IntOrNumberProvidersRange(range = uniform(min, max))
+fun intRange(min: NumberProvider, max: Float) = intRange(min, ConstantNumberProvider(max))
 
 /** Creates an [IntOrNumberProvidersRange] between [min] and [max], both included. */
-fun intRange(min: Float, max: Float) = IntOrNumberProvidersRange(range = uniform(min, max))
+fun intRange(min: Float, max: Float) = intRange(ConstantNumberProvider(min), ConstantNumberProvider(max))
 
 /** Creates an [IntOrNumberProvidersRange] spanning [range], both bounds included. */
 fun intRange(range: ClosedFloatingPointRange<Float>) = intRange(range.start, range.endInclusive)

@@ -4,6 +4,7 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.annotations.LootDsl
 import io.github.ayfri.kore.features.itemmodifiers.functions.ItemFunction
+import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import io.github.ayfri.kore.serializers.InlinableListSerializer
@@ -37,7 +38,7 @@ data class ItemModifier(
 	@Transient
 	override var fileName: String = "item_modifier",
 	var modifiers: InlinableList<ItemFunction> = emptyList(),
-) : Generator("item_modifier") {
+) : Generator("item_modifier"), NumberProviderScope {
 	override fun generateJson(dataPack: DataPack) =
 		dataPack.jsonEncoder.encodeToString(InlinableListSerializer(ItemFunction.serializer()), modifiers)
 

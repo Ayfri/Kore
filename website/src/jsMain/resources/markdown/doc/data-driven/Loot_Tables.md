@@ -185,6 +185,8 @@ lootTable("modified_drops") {
 
 Number providers determine dynamic numeric values for rolls, counts, and other quantities.
 
+The builders are extensions on `NumberProviderScope`, so they only resolve inside the blocks that accept a number provider: loot tables and pools, item modifiers and their functions, predicates, villager trades and trade sets.
+
 | Provider                          | Description                                               | Example                                                                 |
 |-----------------------------------|-----------------------------------------------------------|-------------------------------------------------------------------------|
 | `binomial(n, p)`                  | Binomial distribution                                     | `binomial(5f, 0.5f)`                                                    |

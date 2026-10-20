@@ -5,8 +5,8 @@ import io.github.ayfri.kore.arguments.colors.ColorAsDecimalSerializer
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.types.ListOperation
 import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.providers.ConstantNumberProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProvider
-import io.github.ayfri.kore.features.predicates.providers.constant
 import kotlinx.serialization.Serializable
 
 /**
@@ -39,7 +39,7 @@ fun ItemModifier.setCustomModelData(
 ) = SetCustomModelData(
 	colors = colors?.let(::ListOperation),
 	flags = flags?.let(::ListOperation),
-	floats = floats?.let { ListOperation(it.map(::constant)) },
+	floats = floats?.let { ListOperation(it.map(::ConstantNumberProvider)) },
 	strings = strings?.let(::ListOperation),
 ).apply(block).also { modifiers += it }
 

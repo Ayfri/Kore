@@ -3,6 +3,7 @@ package io.github.ayfri.kore.features.itemmodifiers.functions
 import io.github.ayfri.kore.annotations.LootDsl
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import kotlinx.serialization.Serializable
@@ -20,7 +21,7 @@ import kotlinx.serialization.Serializable
 @GeneratedSealedSerializer
 @LootDsl
 @Serializable(with = ItemFunction.Companion.ItemFunctionSerializer::class)
-sealed class ItemFunction {
+sealed class ItemFunction : NumberProviderScope {
     /** Optional predicate conditions guarding this function. */
     abstract var conditions: PredicateAsList?
 

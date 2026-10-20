@@ -16,8 +16,8 @@ import kotlinx.serialization.serializer
  * A [ConstantNumberProvider] is inlined to its value, so `constant(5f)` serializes as `5.0` instead of an object
  * with a `type` field. Every other type keeps its `type` field.
  *
- * Every builder is a top-level function (e.g. [constant], [uniform]), since number providers appear in contexts that
- * share no common builder scope.
+ * Every builder is an extension on [NumberProviderScope] (e.g. [constant], [uniform]), so they only resolve inside a
+ * block that actually accepts a number provider.
  *
  * Minecraft Wiki: [Number provider](https://minecraft.wiki/w/Number_provider)
  */

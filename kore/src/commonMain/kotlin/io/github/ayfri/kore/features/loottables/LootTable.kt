@@ -7,6 +7,7 @@ import io.github.ayfri.kore.arguments.types.resources.RandomSequenceArgument
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifierAsList
 import io.github.ayfri.kore.features.predicates.providers.NumberProvider
+import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.generated.arguments.types.LootTableArgument
 import kotlinx.serialization.Serializable
@@ -31,7 +32,7 @@ data class LootTable(
 	var pools: List<LootPool>? = null,
 	var randomSequence: RandomSequenceArgument? = null,
 	var type: LootTableType? = null,
-) : Generator("loot_table") {
+) : Generator("loot_table"), NumberProviderScope {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 

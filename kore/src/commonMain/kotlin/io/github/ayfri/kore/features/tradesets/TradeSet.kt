@@ -3,7 +3,9 @@ package io.github.ayfri.kore.features.tradesets
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.types.resources.RandomSequenceArgument
+import io.github.ayfri.kore.features.predicates.providers.ConstantNumberProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProvider
+import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.features.predicates.providers.uniform
 import io.github.ayfri.kore.generated.arguments.VillagerTradeOrTagArgument
@@ -36,10 +38,10 @@ data class TradeSet(
 	@Transient
 	override var fileName: String = "trade_set",
 	var allowDuplicates: Boolean? = null,
-	var amount: NumberProvider = constant(1f),
+	var amount: NumberProvider = ConstantNumberProvider(1f),
 	var randomSequence: RandomSequenceArgument? = null,
 	var trades: InlinableList<VillagerTradeOrTagArgument> = emptyList(),
-) : Generator("trade_set") {
+) : Generator("trade_set"), NumberProviderScope {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 
