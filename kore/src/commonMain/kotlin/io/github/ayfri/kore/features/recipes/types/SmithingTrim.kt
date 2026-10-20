@@ -29,7 +29,7 @@ data class SmithingTrim(
 	var pattern: TrimPatternArgument,
 	var showNotification: Boolean? = null,
 ) : Recipe() {
-	override val type = RecipeTypes.SMITHING_TRANSFORM
+	override val type = RecipeTypes.SMITHING_TRIM
 }
 
 /**

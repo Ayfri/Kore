@@ -12,16 +12,6 @@ fun interface RecipeType {
 	}
 }
 
-data object CraftingSpecial {
-	operator fun invoke(group: String) = CraftingSpecialEntry(group)
-}
-
-@Serializable(RecipeType.Companion.RecipeTypeSerializer::class)
-class CraftingSpecialEntry(group: String) : RecipeType {
-	val group = group.lowercase().replace(' ', '_')
-	override fun toString() = "crafting_special_$group"
-}
-
 data object RecipeTypes {
 	val BLASTING = RecipeType { "blasting" }
 	val CAMPFIRE_COOKING = RecipeType { "campfire_cooking" }
@@ -30,7 +20,6 @@ data object RecipeTypes {
 	val CRAFTING_IMBUE = RecipeType { "crafting_imbue" }
 	val CRAFTING_SHAPED = RecipeType { "crafting_shaped" }
 	val CRAFTING_SHAPELESS = RecipeType { "crafting_shapeless" }
-	val CRAFTING_SPECIAL = CraftingSpecial
 	val CRAFTING_TRANSMUTE = RecipeType { "crafting_transmute" }
 	val SMELTING = RecipeType { "smelting" }
 	val SMITHING_TRANSFORM = RecipeType { "smithing_transform" }
@@ -38,20 +27,7 @@ data object RecipeTypes {
 	val SMOKING = RecipeType { "smoking" }
 	val STONECUTTING = RecipeType { "stonecutting" }
 
-	val values = listOf(
-		BLASTING,
-		CAMPFIRE_COOKING,
-		CRAFTING_DECORATED_POT,
-		CRAFTING_DYE,
-		CRAFTING_IMBUE,
-		CRAFTING_SHAPED,
-		CRAFTING_SHAPELESS,
-		CRAFTING_SPECIAL,
-		CRAFTING_TRANSMUTE,
-		SMELTING,
-		SMITHING_TRANSFORM,
-		SMITHING_TRIM,
-		SMOKING,
-		STONECUTTING,
-	)
+	/** `RecipeTypes.CRAFTING_SPECIAL("book cloning")` is `crafting_special_book_cloning`. */
+	@Suppress("FunctionName")
+	fun CRAFTING_SPECIAL(group: String) = RecipeType { "crafting_special_${group.lowercase().replace(' ', '_')}" }
 }
