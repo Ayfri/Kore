@@ -3,9 +3,8 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
 import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.data.block.blockStateStone
-import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
-import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -27,11 +26,7 @@ fun ConfiguredFeatures.speleothem(
 	chanceOfSpreadRadius2: Double? = null,
 	chanceOfSpreadRadius3: Double? = null,
 	block: Speleothem.() -> Unit = {},
-): FeatureArgument {
-	val configuredFeature = ConfiguredFeature(
-		fileName,
-		Speleothem(chanceOfTallerGeneration, chanceOfDirectionalSpread, chanceOfSpreadRadius2, chanceOfSpreadRadius3).apply(block),
-	)
-	dp.configuredFeatures += configuredFeature
-	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
-}
+) = dp.configuredFeature(
+	fileName,
+	Speleothem(chanceOfTallerGeneration, chanceOfDirectionalSpread, chanceOfSpreadRadius2, chanceOfSpreadRadius3).apply(block),
+)

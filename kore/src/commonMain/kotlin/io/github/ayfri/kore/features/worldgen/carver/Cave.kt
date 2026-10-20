@@ -7,7 +7,6 @@ import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.verticalanchors.Absolute
-import io.github.ayfri.kore.generated.arguments.worldgen.types.CarverArgument
 import kotlinx.serialization.Serializable
 
 /**
@@ -58,5 +57,5 @@ data class Cave(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/carvers
  * Minecraft Wiki: https://minecraft.wiki/w/Carver_definition
  */
-fun CarversScope.cave(fileName: String = "cave", init: Cave.() -> Unit = {}): CarverArgument =
+fun CarversScope.cave(fileName: String = "cave", init: Cave.() -> Unit = {}) =
 	dp.carver(fileName, Cave().apply(init))

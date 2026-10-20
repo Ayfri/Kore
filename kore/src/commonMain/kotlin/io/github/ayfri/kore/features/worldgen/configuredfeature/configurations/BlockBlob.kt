@@ -7,9 +7,8 @@ import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicateScope
 import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicatesScope
 import io.github.ayfri.kore.features.worldgen.blockpredicate.True
 import io.github.ayfri.kore.features.worldgen.blockpredicate.blockPredicate
-import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
-import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import kotlinx.serialization.Serializable
 
 /**
@@ -46,11 +45,7 @@ fun ConfiguredFeatures.blockBlob(
 	fileName: String,
 	state: BlockState = blockStateStone(),
 	block: BlockBlob.() -> Unit = {},
-): FeatureArgument {
-	val configuredFeature = ConfiguredFeature(fileName, BlockBlob(state = state).apply(block))
-	dp.configuredFeatures += configuredFeature
-	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
-}
+) = dp.configuredFeature(fileName, BlockBlob(state = state).apply(block))
 
 /**
  * Sets [BlockBlob.canPlaceOn] to the predicate built in [block], the blocks the blob may be placed on.

@@ -2,7 +2,6 @@ package io.github.ayfri.kore.features.worldgen.structures.types
 
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -40,4 +39,4 @@ data class DesertPyramid(
 fun StructuresScope.desertPyramid(
 	fileName: String = "desert_pyramid",
 	init: DesertPyramid.() -> Unit = {},
-): ConfiguredStructureArgument = dp.structure(fileName, DesertPyramid().apply(init))
+) = dp.structure(fileName, DesertPyramid().apply(init))

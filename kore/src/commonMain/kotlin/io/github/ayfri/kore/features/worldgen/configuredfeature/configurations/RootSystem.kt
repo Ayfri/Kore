@@ -6,12 +6,11 @@ import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicateScope
 import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicatesScope
 import io.github.ayfri.kore.features.worldgen.blockpredicate.True
 import io.github.ayfri.kore.features.worldgen.blockpredicate.blockPredicate
-import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
-import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import io.github.ayfri.kore.generated.arguments.worldgen.types.PlacedFeatureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
@@ -47,11 +46,7 @@ fun ConfiguredFeatures.rootSystem(
 	fileName: String,
 	feature: PlacedFeatureArgument,
 	block: RootSystem.() -> Unit = {},
-): FeatureArgument {
-	val configuredFeature = ConfiguredFeature(fileName, RootSystem(feature = feature).apply(block))
-	dp.configuredFeatures += configuredFeature
-	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
-}
+) = dp.configuredFeature(fileName, RootSystem(feature = feature).apply(block))
 
 /**
  * Sets [RootSystem.allowedTreePosition] to the predicate built in [block], the positions the tree may be placed at.

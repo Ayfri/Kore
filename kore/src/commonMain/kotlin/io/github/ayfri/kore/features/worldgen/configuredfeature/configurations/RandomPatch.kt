@@ -1,8 +1,7 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
-import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
-import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import io.github.ayfri.kore.generated.arguments.worldgen.types.PlacedFeatureArgument
 import kotlinx.serialization.Serializable
 
@@ -45,8 +44,4 @@ fun ConfiguredFeatures.randomPatch(
 	fileName: String,
 	feature: PlacedFeatureArgument,
 	block: RandomPatch.() -> Unit = {},
-): FeatureArgument {
-	val configuredFeature = ConfiguredFeature(fileName, RandomPatch(feature).apply(block))
-	dp.configuredFeatures += configuredFeature
-	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
-}
+) = dp.configuredFeature(fileName, RandomPatch(feature).apply(block))

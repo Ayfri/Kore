@@ -25,11 +25,10 @@ data class ConfiguredFeature(
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(featureConfig)
 }
 
-// TODO : #32
 /**
- * Creates a configured feature using a builder block.
+ * Registers a configured feature, the single registration point of every `ConfiguredFeatures` builder (`ore`, `tree`...).
  *
- * Pass a [FeatureConfig] (e.g. ores, trees) and optionally adjust fields via [init].
+ * Pass a [FeatureConfig] and optionally adjust the [ConfiguredFeature] via [init], e.g. to override its namespace.
  *
  * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *

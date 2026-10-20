@@ -1,8 +1,7 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
-import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
-import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import io.github.ayfri.kore.generated.arguments.worldgen.types.PlacedFeatureArgument
 import kotlinx.serialization.Serializable
 
@@ -16,8 +15,4 @@ fun ConfiguredFeatures.randomBooleanSelector(
 	fileName: String,
 	featureFalse: PlacedFeatureArgument,
 	featureTrue: PlacedFeatureArgument,
-): FeatureArgument {
-	val configuredFeature = ConfiguredFeature(fileName, RandomBooleanSelector(featureFalse, featureTrue))
-	dp.configuredFeatures += configuredFeature
-	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
-}
+) = dp.configuredFeature(fileName, RandomBooleanSelector(featureFalse, featureTrue))

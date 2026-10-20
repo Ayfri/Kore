@@ -1,8 +1,7 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
-import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
-import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -18,8 +17,4 @@ fun ConfiguredFeatures.twistingVines(
 	spreadHeight: Int = 0,
 	maxHeight: Int = 0,
 	block: TwistingVines.() -> Unit = {},
-): FeatureArgument {
-	val configuredFeature = ConfiguredFeature(fileName, TwistingVines(spreadWidth, spreadHeight, maxHeight).apply(block))
-	dp.configuredFeatures += configuredFeature
-	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
-}
+) = dp.configuredFeature(fileName, TwistingVines(spreadWidth, spreadHeight, maxHeight).apply(block))

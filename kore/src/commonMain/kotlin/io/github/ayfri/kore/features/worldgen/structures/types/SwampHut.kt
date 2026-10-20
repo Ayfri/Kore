@@ -2,7 +2,6 @@ package io.github.ayfri.kore.features.worldgen.structures.types
 
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -45,4 +44,4 @@ data class SwampHut(
 fun StructuresScope.swampHut(
 	fileName: String = "swamp_hut",
 	init: SwampHut.() -> Unit = {},
-): ConfiguredStructureArgument = dp.structure(fileName, SwampHut().apply(init))
+) = dp.structure(fileName, SwampHut().apply(init))

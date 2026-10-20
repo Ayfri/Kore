@@ -5,16 +5,15 @@ import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicateScope
 import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicatesScope
 import io.github.ayfri.kore.features.worldgen.blockpredicate.True
 import io.github.ayfri.kore.features.worldgen.blockpredicate.blockPredicate
-import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.Direction
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
-import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
 import kotlinx.serialization.Serializable
 
 /**
@@ -130,14 +129,8 @@ fun ConfiguredFeatures.blockColumn(
 	prioritizeTip: Boolean = false,
 	layers: List<Layer> = emptyList(),
 	block: BlockColumn.() -> Unit = {},
-): FeatureArgument {
-	val configuredFeature = ConfiguredFeature(
-		fileName,
-		BlockColumn(direction, prioritizeTip = prioritizeTip, layers = layers).apply(block),
-	)
-	dp.configuredFeatures += configuredFeature
-	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
-}
+) =
+	dp.configuredFeature(fileName, BlockColumn(direction, prioritizeTip = prioritizeTip, layers = layers).apply(block))
 
 /**
  * Sets [BlockColumn.allowedPlacement] to the predicate built in [block], the blocks the column may be placed in.

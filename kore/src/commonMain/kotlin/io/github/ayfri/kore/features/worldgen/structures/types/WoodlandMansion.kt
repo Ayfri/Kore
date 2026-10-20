@@ -2,7 +2,6 @@ package io.github.ayfri.kore.features.worldgen.structures.types
 
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -44,4 +43,4 @@ data class WoodlandMansion(
 fun StructuresScope.woodlandMansion(
 	fileName: String = "woodland_mansion",
 	init: WoodlandMansion.() -> Unit = {},
-): ConfiguredStructureArgument = dp.structure(fileName, WoodlandMansion().apply(init))
+) = dp.structure(fileName, WoodlandMansion().apply(init))

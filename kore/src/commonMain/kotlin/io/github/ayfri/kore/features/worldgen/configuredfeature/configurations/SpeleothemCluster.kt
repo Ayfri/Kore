@@ -3,12 +3,11 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
 import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.data.block.blockStateStone
-import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
-import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -30,8 +29,5 @@ data class SpeleothemCluster(
 	var replaceableBlocks: InlinableList<BlockOrTagArgument> = emptyList(),
 ) : FeatureConfig(), IntProviderScope
 
-fun ConfiguredFeatures.speleothemCluster(fileName: String, block: SpeleothemCluster.() -> Unit = {}): FeatureArgument {
-	val configuredFeature = ConfiguredFeature(fileName, SpeleothemCluster().apply(block))
-	dp.configuredFeatures += configuredFeature
-	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
-}
+fun ConfiguredFeatures.speleothemCluster(fileName: String, block: SpeleothemCluster.() -> Unit = {}) =
+	dp.configuredFeature(fileName, SpeleothemCluster().apply(block))

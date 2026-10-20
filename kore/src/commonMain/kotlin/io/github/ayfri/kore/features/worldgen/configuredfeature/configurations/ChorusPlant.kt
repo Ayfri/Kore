@@ -1,15 +1,10 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
-import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
-import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import kotlinx.serialization.Serializable
 
 @Serializable
 data object ChorusPlant : FeatureConfig()
 
-fun ConfiguredFeatures.chorusPlant(fileName: String): FeatureArgument {
-	val configuredFeature = ConfiguredFeature(fileName, ChorusPlant)
-	dp.configuredFeatures += configuredFeature
-	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
-}
+fun ConfiguredFeatures.chorusPlant(fileName: String) = dp.configuredFeature(fileName, ChorusPlant)

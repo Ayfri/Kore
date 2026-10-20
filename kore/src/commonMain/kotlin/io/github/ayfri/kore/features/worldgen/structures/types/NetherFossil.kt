@@ -6,7 +6,6 @@ import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProviderScop
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.features.worldgen.verticalanchors.Absolute
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -49,4 +48,4 @@ data class NetherFossil(
 fun StructuresScope.netherFossil(
 	fileName: String = "nether_fossil",
 	init: NetherFossil.() -> Unit = {},
-): ConfiguredStructureArgument = dp.structure(fileName, NetherFossil().apply(init))
+) = dp.structure(fileName, NetherFossil().apply(init))

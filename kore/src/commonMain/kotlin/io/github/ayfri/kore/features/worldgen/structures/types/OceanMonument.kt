@@ -2,7 +2,6 @@ package io.github.ayfri.kore.features.worldgen.structures.types
 
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
@@ -45,4 +44,4 @@ data class OceanMonument(
 fun StructuresScope.oceanMonument(
 	fileName: String = "ocean_monument",
 	init: OceanMonument.() -> Unit = {},
-): ConfiguredStructureArgument = dp.structure(fileName, OceanMonument().apply(init))
+) = dp.structure(fileName, OceanMonument().apply(init))

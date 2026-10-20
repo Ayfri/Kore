@@ -5,12 +5,11 @@ import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicateScope
 import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicatesScope
 import io.github.ayfri.kore.features.worldgen.blockpredicate.True
 import io.github.ayfri.kore.features.worldgen.blockpredicate.blockPredicate
-import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
-import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import kotlinx.serialization.Serializable
 
 /**
@@ -52,11 +51,7 @@ fun ConfiguredFeatures.hugeRedMushroom(
 	fileName: String,
 	foliageRadius: Int? = null,
 	block: HugeRedMushroom.() -> Unit = {},
-): FeatureArgument {
-	val configuredFeature = ConfiguredFeature(fileName, HugeRedMushroom(foliageRadius = foliageRadius).apply(block))
-	dp.configuredFeatures += configuredFeature
-	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
-}
+) = dp.configuredFeature(fileName, HugeRedMushroom(foliageRadius = foliageRadius).apply(block))
 
 /**
  * Sets [HugeRedMushroom.canPlaceOn] to the predicate built in [block], the ground blocks the mushroom may grow on.

@@ -5,7 +5,6 @@ import io.github.ayfri.kore.features.worldgen.floatproviders.FloatProvider
 import io.github.ayfri.kore.features.worldgen.heightproviders.ConstantHeightProvider
 import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProvider
 import io.github.ayfri.kore.features.worldgen.verticalanchors.Absolute
-import io.github.ayfri.kore.generated.arguments.worldgen.types.CarverArgument
 import kotlinx.serialization.Serializable
 
 /**
@@ -86,5 +85,5 @@ fun Canyon.shape(init: CanyonShapeConfig.() -> Unit = {}) {
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/carvers
  * Minecraft Wiki: https://minecraft.wiki/w/Carver_definition
  */
-fun CarversScope.canyon(fileName: String = "canyon", init: Canyon.() -> Unit = {}): CarverArgument =
+fun CarversScope.canyon(fileName: String = "canyon", init: Canyon.() -> Unit = {}) =
 	dp.carver(fileName, Canyon().apply(init))

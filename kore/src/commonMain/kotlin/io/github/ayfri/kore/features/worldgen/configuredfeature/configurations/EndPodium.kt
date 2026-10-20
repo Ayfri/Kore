@@ -1,8 +1,7 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
-import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
-import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import kotlinx.serialization.Serializable
 
 /**
@@ -20,8 +19,5 @@ data class EndPodium(
  *
  * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  */
-fun ConfiguredFeatures.endPodium(fileName: String, active: Boolean? = null): FeatureArgument {
-	val configuredFeature = ConfiguredFeature(fileName, EndPodium(active))
-	dp.configuredFeatures += configuredFeature
-	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
-}
+fun ConfiguredFeatures.endPodium(fileName: String, active: Boolean? = null) =
+	dp.configuredFeature(fileName, EndPodium(active))

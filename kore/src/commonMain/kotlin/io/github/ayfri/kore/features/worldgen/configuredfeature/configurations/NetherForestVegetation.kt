@@ -1,11 +1,10 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
-import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
-import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import kotlinx.serialization.Serializable
 
 /**
@@ -49,9 +48,5 @@ fun ConfiguredFeatures.netherForestVegetation(
 	spreadWidth: Int = 0,
 	spreadHeight: Int = 0,
 	block: NetherForestVegetation.() -> Unit = {},
-): FeatureArgument {
-	val configuredFeature =
-		ConfiguredFeature(fileName, NetherForestVegetation(spreadWidth = spreadWidth, spreadHeight = spreadHeight).apply(block))
-	dp.configuredFeatures += configuredFeature
-	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
-}
+) =
+	dp.configuredFeature(fileName, NetherForestVegetation(spreadWidth = spreadWidth, spreadHeight = spreadHeight).apply(block))

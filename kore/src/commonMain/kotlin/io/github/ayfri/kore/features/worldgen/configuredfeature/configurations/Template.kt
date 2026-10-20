@@ -1,9 +1,8 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
 import io.github.ayfri.kore.arguments.StructureRotation
-import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
-import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 import kotlinx.serialization.Serializable
 
@@ -33,14 +32,8 @@ fun structureTemplate(
 	rotations: List<StructureRotation>? = null,
 ) = WeightedStructureTemplateEntry(StructureTemplateEntry(id, rotations), weight)
 
-fun ConfiguredFeatures.template(fileName: String, vararg templates: WeightedStructureTemplateEntry): FeatureArgument {
-	val configuredFeature = ConfiguredFeature(fileName, Template(templates.toList()))
-	dp.configuredFeatures += configuredFeature
-	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
-}
+fun ConfiguredFeatures.template(fileName: String, vararg templates: WeightedStructureTemplateEntry) =
+	dp.configuredFeature(fileName, Template(templates.toList()))
 
-fun ConfiguredFeatures.template(fileName: String, templates: List<WeightedStructureTemplateEntry>): FeatureArgument {
-	val configuredFeature = ConfiguredFeature(fileName, Template(templates))
-	dp.configuredFeatures += configuredFeature
-	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
-}
+fun ConfiguredFeatures.template(fileName: String, templates: List<WeightedStructureTemplateEntry>) =
+	dp.configuredFeature(fileName, Template(templates))

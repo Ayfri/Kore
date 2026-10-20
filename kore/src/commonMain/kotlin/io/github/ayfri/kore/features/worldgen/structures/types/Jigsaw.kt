@@ -8,7 +8,6 @@ import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.*
 import io.github.ayfri.kore.features.worldgen.verticalanchors.Absolute
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
-import io.github.ayfri.kore.generated.arguments.worldgen.types.ConfiguredStructureArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.TemplatePoolArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
@@ -82,7 +81,7 @@ fun StructuresScope.jigsaw(
 	fileName: String = "jigsaw",
 	startPool: TemplatePoolArgument,
 	init: Jigsaw.() -> Unit = {},
-): ConfiguredStructureArgument = dp.structure(fileName, Jigsaw(startPool = startPool).apply(init))
+) = dp.structure(fileName, Jigsaw(startPool = startPool).apply(init))
 
 /**
  * Rewires the pools some aliases resolve to, drawn once per structure instance.

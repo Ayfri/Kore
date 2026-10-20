@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
-import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
@@ -13,7 +12,7 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.t
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.TreeDecorator
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.FancyTrunkPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.TrunkPlacer
-import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import kotlinx.serialization.Serializable
 
 /**
@@ -86,12 +85,10 @@ fun Tree.decorators(block: MutableList<TreeDecorator>.() -> Unit) {
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
  */
-fun ConfiguredFeatures.tree(fileName: String, block: Tree.() -> Unit = {}): FeatureArgument {
-	val tree = Tree(
+fun ConfiguredFeatures.tree(fileName: String, block: Tree.() -> Unit = {}) = dp.configuredFeature(
+	fileName,
+	Tree(
 		trunkPlacer = FancyTrunkPlacer(),
 		foliagePlacer = FancyFoliagePlacer(),
-	).apply(block)
-	val configuredFeature = ConfiguredFeature(fileName, tree)
-	dp.configuredFeatures += configuredFeature
-	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
-}
+	).apply(block),
+)

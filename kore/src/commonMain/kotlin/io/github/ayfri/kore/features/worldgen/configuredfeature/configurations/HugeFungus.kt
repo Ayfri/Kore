@@ -5,12 +5,11 @@ import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicateScope
 import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicatesScope
 import io.github.ayfri.kore.features.worldgen.blockpredicate.True
 import io.github.ayfri.kore.features.worldgen.blockpredicate.blockPredicate
-import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
-import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import kotlinx.serialization.Serializable
 
 /**
@@ -53,11 +52,8 @@ data class HugeFungus(
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#huge_fungus
  */
-fun ConfiguredFeatures.hugeFungus(fileName: String, block: HugeFungus.() -> Unit = {}): FeatureArgument {
-	val configuredFeature = ConfiguredFeature(fileName, HugeFungus().apply(block))
-	dp.configuredFeatures += configuredFeature
-	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
-}
+fun ConfiguredFeatures.hugeFungus(fileName: String, block: HugeFungus.() -> Unit = {}) =
+	dp.configuredFeature(fileName, HugeFungus().apply(block))
 
 /**
  * Sets [HugeFungus.replaceableBlocks] to the predicate built in [block], the blocks the fungus may grow through.

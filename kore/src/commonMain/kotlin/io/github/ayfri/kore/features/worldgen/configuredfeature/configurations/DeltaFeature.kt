@@ -2,13 +2,12 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
 import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.data.block.blockStateStone
-import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
-import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -26,11 +25,7 @@ fun ConfiguredFeatures.deltaFeature(
 	size: IntProvider = ConstantIntProvider(0),
 	rimSize: IntProvider = ConstantIntProvider(0),
 	block: DeltaFeature.() -> Unit = {},
-): FeatureArgument {
-	val configuredFeature = ConfiguredFeature(fileName, DeltaFeature(content, rim, size, rimSize).apply(block))
-	dp.configuredFeatures += configuredFeature
-	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
-}
+) = dp.configuredFeature(fileName, DeltaFeature(content, rim, size, rimSize).apply(block))
 
 fun ConfiguredFeatures.deltaFeature(
 	fileName: String,
@@ -38,8 +33,4 @@ fun ConfiguredFeatures.deltaFeature(
 	rim: BlockState = blockStateStone(),
 	size: Int,
 	rimSize: Int,
-): FeatureArgument {
-	val configuredFeature = ConfiguredFeature(fileName, DeltaFeature(content, rim, constant(size), constant(rimSize)))
-	dp.configuredFeatures += configuredFeature
-	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
-}
+) = dp.configuredFeature(fileName, DeltaFeature(content, rim, constant(size), constant(rimSize)))

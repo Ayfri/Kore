@@ -1,15 +1,10 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
-import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
-import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import kotlinx.serialization.Serializable
 
 @Serializable
 data object Kelp : FeatureConfig()
 
-fun ConfiguredFeatures.kelp(fileName: String): FeatureArgument {
-	val configuredFeature = ConfiguredFeature(fileName, Kelp)
-	dp.configuredFeatures += configuredFeature
-	return FeatureArgument(fileName, configuredFeature.namespace ?: dp.name)
-}
+fun ConfiguredFeatures.kelp(fileName: String) = dp.configuredFeature(fileName, Kelp)
