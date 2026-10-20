@@ -131,6 +131,26 @@ fun DataPack.intProviderTests() {
 		}
 	""".trimIndent()
 
+	placedFeature("very_biased_to_bottom_test", Features.ACACIA) {
+		count(veryBiasedToBottom(0, 14))
+	}
+
+	placedFeatures.last() assertsIs """
+		{
+			"feature": "minecraft:acacia",
+			"placement": [
+				{
+					"type": "minecraft:count",
+					"count": {
+						"type": "minecraft:very_biased_to_bottom",
+						"min_inclusive": 0,
+						"max_inclusive": 14
+					}
+				}
+			]
+		}
+	""".trimIndent()
+
 	placedFeature("weighted_list_test", Features.ACACIA) {
 		count(weightedList {
 			entry(3, uniform(1, 5))

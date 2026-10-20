@@ -15,7 +15,7 @@ import io.github.ayfri.kore.features.worldgen.floatproviders.trapezoid
 import io.github.ayfri.kore.features.worldgen.floatproviders.uniform
 import io.github.ayfri.kore.features.worldgen.heightproviders.constantAboveBottom
 import io.github.ayfri.kore.features.worldgen.heightproviders.uniformHeightProvider
-import io.github.ayfri.kore.features.worldgen.intproviders.uniform
+import io.github.ayfri.kore.features.worldgen.intproviders.veryBiasedToBottom
 import io.github.ayfri.kore.features.worldgen.verticalanchors.aboveBottom
 import io.github.ayfri.kore.features.worldgen.verticalanchors.absolute
 import io.github.ayfri.kore.generated.Carvers
@@ -27,7 +27,7 @@ fun DataPack.carverTests() {
 		cave("default_cave")
 
 		cave("my_cave") {
-			count = uniform(0, 14)
+			count = veryBiasedToBottom(0, 14)
 			floorLevel = uniform(-1.0f, -0.4f)
 			horizontalRadiusMultiplier = uniform(0.7f, 1.4f)
 			probability = 0.15
@@ -76,7 +76,7 @@ fun DataPack.carverTests() {
 		{
 			"type": "minecraft:cave",
 			"count": {
-				"type": "minecraft:uniform",
+				"type": "minecraft:very_biased_to_bottom",
 				"min_inclusive": 0,
 				"max_inclusive": 14
 			},

@@ -33,7 +33,7 @@ the values that differ from it.
 fun DataPack.myCarvers() {
 	carvers {
 		cave("my_cave") {
-			count = uniform(0, 14)
+			count = veryBiasedToBottom(0, 14)
 			floorLevel = uniform(-1.0f, -0.4f)
 			horizontalRadiusMultiplier = uniform(0.7f, 1.4f)
 			probability = 0.15
@@ -50,7 +50,7 @@ fun DataPack.myCarvers() {
 ```json
 {
 	"type": "minecraft:cave",
-	"count": { "type": "minecraft:uniform", "min_inclusive": 0, "max_inclusive": 14 },
+	"count": { "type": "minecraft:very_biased_to_bottom", "min_inclusive": 0, "max_inclusive": 14 },
 	"floor_level": { "type": "minecraft:uniform", "min_inclusive": -1.0, "max_exclusive": -0.4 },
 	"horizontal_radius_multiplier": { "type": "minecraft:uniform", "min_inclusive": 0.7, "max_exclusive": 1.4 },
 	"probability": 0.15,

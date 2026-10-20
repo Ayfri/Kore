@@ -74,6 +74,19 @@ fun IntProviderScope.trapezoid(min: Int, max: Int, plateau: Int) = TrapezoidIntP
 fun IntProviderScope.uniform(minInclusive: Int, maxInclusive: Int) = UniformIntProvider(minInclusive, maxInclusive)
 
 /**
+ * Creates a `very_biased_to_bottom` int provider drawing between [minInclusive] and [maxInclusive], strongly favouring
+ * the lowest values.
+ *
+ * ```kotlin
+ * count(veryBiasedToBottom(0, 14))
+ * ```
+ *
+ * Minecraft Wiki: https://minecraft.wiki/w/Custom_world_generation/int_provider
+ */
+fun IntProviderScope.veryBiasedToBottom(minInclusive: Int, maxInclusive: Int) =
+	VeryBiasedToBottomIntProvider(minInclusive, maxInclusive)
+
+/**
  * Creates a `weighted_list` int provider drawing from [distribution], which must not be empty.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Custom_world_generation/int_provider

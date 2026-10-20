@@ -79,6 +79,7 @@ Int providers fill every field expecting a variable count or size: `count()` and
 | `constant(value)`                                      | Always returns `value`. Serializes as a plain integer, no wrapper object.           |
 | `uniform(minInclusive, maxInclusive)`                  | Uniform random integer in `[min, max]`.                                             |
 | `biasedToBottom(minInclusive, maxInclusive)`           | Random integer in `[min, max]`, weighted towards the minimum.                       |
+| `veryBiasedToBottom(minInclusive, maxInclusive)`       | Random integer in `[min, max]`, strongly weighted towards the minimum.              |
 | `trapezoid(min, max, plateau)`                         | Trapezoid distribution over `[min, max]` with a flat top of width `plateau`.        |
 | `clampedNormal(minInclusive, maxInclusive, mean, dev)` | Samples a normal distribution (`mean`/`dev`) and clamps the result to `[min, max]`. |
 | `clamped(minInclusive, maxInclusive, source)`          | Evaluates `source` and clamps its result to `[min, max]`.                           |

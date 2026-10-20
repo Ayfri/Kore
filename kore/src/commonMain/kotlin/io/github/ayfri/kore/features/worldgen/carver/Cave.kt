@@ -47,7 +47,7 @@ data class Cave(
  *     cave("my_cave") {
  *         probability = 0.15
  *         y = uniformHeightProvider(aboveBottom(8), absolute(180))
- *         count = uniform(0, 14)
+ *         count = veryBiasedToBottom(0, 14)
  *         floorLevel = uniform(-1f, -0.4f)
  *     }
  * }
