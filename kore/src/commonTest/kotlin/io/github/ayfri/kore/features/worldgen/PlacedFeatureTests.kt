@@ -202,6 +202,62 @@ fun DataPack.placedFeatureTests() {
 		}
 	""".trimIndent()
 
+	placedFeature("cuboid", Features.ACACIA) {
+		cuboid(4, 2)
+	}
+
+	placedFeatures.last() assertsIs """
+		{
+			"feature": "minecraft:acacia",
+			"placement": [
+				{
+					"type": "minecraft:cuboid",
+					"xz_size": 4,
+					"y_size": 2
+				}
+			]
+		}
+	""".trimIndent()
+
+	placedFeature("cuboid_full", Features.ACACIA) {
+		cuboid(uniform(2, 6), constant(3), includeEdges = false, includeInterior = true)
+	}
+
+	placedFeatures.last() assertsIs """
+		{
+			"feature": "minecraft:acacia",
+			"placement": [
+				{
+					"type": "minecraft:cuboid",
+					"include_edges": false,
+					"include_interior": true,
+					"xz_size": {
+						"type": "minecraft:uniform",
+						"min_inclusive": 2,
+						"max_inclusive": 6
+					},
+					"y_size": 3
+				}
+			]
+		}
+	""".trimIndent()
+
+	placedFeature("random_chance", Features.ACACIA) {
+		randomChance(0.25f)
+	}
+
+	placedFeatures.last() assertsIs """
+		{
+			"feature": "minecraft:acacia",
+			"placement": [
+				{
+					"type": "minecraft:random_chance",
+					"chance": 0.25
+				}
+			]
+		}
+	""".trimIndent()
+
 	placedFeature("fixed_placement", Features.END_PLATFORM) {
 		fixedPlacement {
 			position(0, 0, 0)

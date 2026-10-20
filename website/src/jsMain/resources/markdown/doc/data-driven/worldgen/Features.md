@@ -531,6 +531,7 @@ final position.
 | `carvingMask(step)`                   | Keeps only blocks carved by `air` or `liquid`       | -                                                                         |
 | `count(n)`                            | Repeats the position `n` times per chunk            | `ore_diamond`, `7`                                                        |
 | `countOnEveryLayer(n)`                | Repeats `n` times on every solid layer              | `delta`, `40`                                                             |
+| `cuboid(xzSize, ySize)`               | Spreads the position over a cuboid around it        | -                                                                         |
 | `environmentScan(...)`                | Scans up or down for a valid position               | `cave_vines`, scans `up` for at most `12` steps                           |
 | `fixedPlacement(...)`                 | Replaces positions with absolute coordinates        | `end_platform`, `[100, 49, 0]`                                            |
 | `heightMap(type)`                     | Moves the position onto a heightmap                 | `bamboo_light`, `MOTION_BLOCKING`                                         |
@@ -539,13 +540,15 @@ final position.
 | `noiseBasedCount(...)`                | Count driven by the noise value at the position     | `kelp_cold`, `noiseToCountRatio = 120`, `noiseFactor = 80.0`              |
 | `noiseThresholdCount(...)`            | One of two counts, chosen by a noise threshold      | `flower_plains`, `noiseLevel = -0.8`, `belowNoise = 15`, `aboveNoise = 4` |
 | `offset(x, y, z)`                     | Shifts the position, each axis `-16..16`            | `cave_vines`, `y = -1`                                                    |
+| `randomChance(chance)`                | Keeps the position with a `0..1` probability        | -                                                                         |
 | `rarityFilter(chance)`                | Keeps the position with a `1/chance` probability    | `lake_lava_surface`, `200`                                                |
 | `surfaceRelativeThresholdFilter(...)` | Filters on the distance to the surface              | `glow_lichen`, `OCEAN_FLOOR_WG` with `maxInclusive = -13`                 |
 | `surfaceWaterDepthFilter(maxDepth)`   | Drops positions under deeper water than `maxDepth`  | `dark_forest_vegetation`, `0`                                             |
 
-`count`, `countOnEveryLayer`, `heightRange` and `rarityFilter` have no default, the value is required. `count` and `countOnEveryLayer` take
-an int provider or a plain `Int` (`count(10)` is `count(constant(10))`), `heightRange` takes a height provider and `rarityFilter` a positive
-`Int`; see [Providers](/docs/data-driven/worldgen/providers) for the distributions available. `offset` takes one int provider per axis:
+`count`, `countOnEveryLayer`, `cuboid`, `heightRange`, `randomChance` and `rarityFilter` have no default, the value is required. `count`,
+`countOnEveryLayer` and `cuboid` take int providers or plain `Int`s (`count(10)` is `count(constant(10))`), `heightRange` takes a height
+provider, `randomChance` a `Float` from `0` to `1` and `rarityFilter` a positive `Int`; `cuboid` also takes optional `includeEdges` and
+`includeInterior` booleans, both `true` in the game when left out; see [Providers](/docs/data-driven/worldgen/providers) for the distributions available. `offset` takes one int provider per axis:
 `constant(1)` moves every position the same way, `uniform(-2, 2)` scatters it.
 
 Reference: [Placement modifier](https://minecraft.wiki/w/Placed_feature#Placement_modifiers)
