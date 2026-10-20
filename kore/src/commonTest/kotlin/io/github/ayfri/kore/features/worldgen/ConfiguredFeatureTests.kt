@@ -40,7 +40,9 @@ import io.github.ayfri.kore.generated.arguments.worldgen.tagged.PlacedFeatureTag
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
+import io.github.ayfri.kore.features.worldgen.floatproviders.clampedNormal
 import io.github.ayfri.kore.features.worldgen.floatproviders.constant as constantFloat
+import io.github.ayfri.kore.features.worldgen.floatproviders.uniform as uniformFloat
 
 fun DataPack.configuredFeatureTests() {
 	configuredFeaturesBuilder.endPlatform("end_platform")
@@ -374,9 +376,9 @@ fun DataPack.configuredFeatureTests() {
 		maxStalagmiteStalactiteHeightDiff = 3
 		heightDeviation = 2
 		speleothemBlockLayerThickness = constant(1)
-		density = constant(2)
-		wetness = constant(1)
-		chanceOfSpeleothemAtMaxDistanceFromCenter = 2
+		density = uniformFloat(0.3f, 0.7f)
+		wetness = clampedNormal(mean = 0.1f, deviation = 0.3f, min = 0.1f, max = 0.9f)
+		chanceOfSpeleothemAtMaxDistanceFromCenter = 0.1f
 		maxDistanceFromEdgeAffectingChanceOfSpeleothem = 4
 		maxDistanceFromCenterAffectingHeightBias = 6
 		baseBlock = blockState(Blocks.DRIPSTONE_BLOCK)
@@ -393,9 +395,19 @@ fun DataPack.configuredFeatureTests() {
 			"max_stalagmite_stalactite_height_diff": 3,
 			"height_deviation": 2,
 			"speleothem_block_layer_thickness": 1,
-			"density": 2,
-			"wetness": 1,
-			"chance_of_speleothem_at_max_distance_from_center": 2,
+			"density": {
+				"type": "minecraft:uniform",
+				"min_inclusive": 0.3,
+				"max_exclusive": 0.7
+			},
+			"wetness": {
+				"type": "minecraft:clamped_normal",
+				"mean": 0.1,
+				"deviation": 0.3,
+				"min": 0.1,
+				"max": 0.9
+			},
+			"chance_of_speleothem_at_max_distance_from_center": 0.1,
 			"max_distance_from_edge_affecting_chance_of_speleothem": 4,
 			"max_distance_from_center_affecting_height_bias": 6,
 			"base_block": {

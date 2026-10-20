@@ -5,6 +5,9 @@ import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.data.block.blockStateStone
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
+import io.github.ayfri.kore.features.worldgen.floatproviders.ConstantFloatProvider
+import io.github.ayfri.kore.features.worldgen.floatproviders.FloatProvider
+import io.github.ayfri.kore.features.worldgen.floatproviders.FloatProviderScope
 import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
@@ -27,8 +30,8 @@ import kotlinx.serialization.Serializable
  * `64`.
  * @property heightDeviation Deviation of the speleothem height, `1` to `64`.
  * @property speleothemBlockLayerThickness Thickness of the layer of base blocks, up to `128`.
- * @property density Density of the speleothems, `0` to `2`.
- * @property wetness Wetness of the cluster, `0` to `2`.
+ * @property density Float provider of the density of the speleothems, `0` to `2`.
+ * @property wetness Float provider of the wetness of the cluster, `0` to `2`.
  * @property chanceOfSpeleothemAtMaxDistanceFromCenter Chance, `0` to `1`, of a speleothem at the maximum distance from
  * the center.
  * @property maxDistanceFromEdgeAffectingChanceOfSpeleothem Distance from the edge over which the chance of a speleothem
@@ -41,26 +44,26 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class SpeleothemCluster(
-	var floorToCeilingSearchRange: Int = 0,
+	var floorToCeilingSearchRange: Int = 1,
 	var height: IntProvider = ConstantIntProvider(0),
 	var radius: IntProvider = ConstantIntProvider(0),
 	var maxStalagmiteStalactiteHeightDiff: Int = 0,
-	var heightDeviation: Int = 0,
+	var heightDeviation: Int = 1,
 	var speleothemBlockLayerThickness: IntProvider = ConstantIntProvider(0),
-	var density: IntProvider = ConstantIntProvider(0),
-	var wetness: IntProvider = ConstantIntProvider(0),
-	var chanceOfSpeleothemAtMaxDistanceFromCenter: Int = 0,
-	var maxDistanceFromEdgeAffectingChanceOfSpeleothem: Int = 0,
-	var maxDistanceFromCenterAffectingHeightBias: Int = 0,
+	var density: FloatProvider = ConstantFloatProvider(0f),
+	var wetness: FloatProvider = ConstantFloatProvider(0f),
+	var chanceOfSpeleothemAtMaxDistanceFromCenter: Float = 0f,
+	var maxDistanceFromEdgeAffectingChanceOfSpeleothem: Int = 1,
+	var maxDistanceFromCenterAffectingHeightBias: Int = 1,
 	var baseBlock: BlockState = blockStateStone(),
 	var pointedBlock: BlockState = blockStateStone(),
 	var replaceableBlocks: InlinableList<BlockOrTagArgument> = emptyList(),
-) : FeatureConfig(), IntProviderScope
+) : FeatureConfig(), FloatProviderScope, IntProviderScope
 
 /**
  * Creates a `speleothem_cluster` configured feature, configured in [block].
  *
- * The int provider builders are scoped to [block].
+ * The int provider and float provider builders are scoped to [block].
  *
  * ```kotlin
  * speleothemCluster("dripstone_cluster") {
@@ -70,6 +73,9 @@ data class SpeleothemCluster(
  *     maxStalagmiteStalactiteHeightDiff = 1
  *     heightDeviation = 3
  *     speleothemBlockLayerThickness = uniform(2, 4)
+ *     density = uniform(0.3f, 0.7f)
+ *     wetness = clampedNormal(mean = 0.1f, deviation = 0.3f, min = 0.1f, max = 0.9f)
+ *     chanceOfSpeleothemAtMaxDistanceFromCenter = 0.1f
  *     maxDistanceFromEdgeAffectingChanceOfSpeleothem = 3
  *     maxDistanceFromCenterAffectingHeightBias = 8
  *     baseBlock = blockState(Blocks.DRIPSTONE_BLOCK)
