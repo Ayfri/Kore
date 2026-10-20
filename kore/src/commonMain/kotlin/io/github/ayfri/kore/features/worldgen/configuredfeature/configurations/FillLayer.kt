@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#fill_layer
  *
  * @property state The block state filling the layer.
- * @property height The layer to fill, counted from the bottom of the world, `0` to `4064`.
+ * @property height The layer to fill, `0` to `4064` blocks above the placement position (the world bottom by default).
  */
 @Serializable
 data class FillLayer(

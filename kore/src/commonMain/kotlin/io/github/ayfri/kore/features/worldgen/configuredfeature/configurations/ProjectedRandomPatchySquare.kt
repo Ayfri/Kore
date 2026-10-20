@@ -18,16 +18,18 @@ import kotlinx.serialization.Serializable
 /**
  * Configuration for the `projected_random_patchy_square` feature.
  *
- * Places [block] in a patchy square around the placement position, each column projected onto the surface it reaches
- * through [projectThrough]. Vanilla caps the end of its basalt pillars with it.
+ * Covers a square of side `2 * size + 1` centered on the placement position, keeping each column with a probability that
+ * falls off towards the corners (the center cross is always kept). Each kept column is projected downward through the
+ * blocks matching [projectThrough], for at most [maxProjectionHeight] steps, and [block] is placed where it stops.
+ * Vanilla caps the end of its basalt pillars with it.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#projected_random_patchy_square
  *
  * @property block The block state provider of the placed blocks.
- * @property maxProjectionHeight How far, in blocks, a column is projected to find the surface, `0` or more.
- * @property projectThrough The blocks a projection passes through before reaching the surface.
- * @property size Size of the square, `1` to `16`.
+ * @property maxProjectionHeight The most steps down a column is projected, `0` or more, `0` behaving like `1`.
+ * @property projectThrough The blocks a projection passes through while moving down.
+ * @property size Half the side of the square, `1` to `16`, sampled once per placement.
  */
 @Serializable
 data class ProjectedRandomPatchySquare(

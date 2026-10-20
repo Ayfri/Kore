@@ -226,15 +226,16 @@ singleBlockPillar("basalt_pillar", VerticalDirection.DOWN) {
 }
 ```
 
-`randomNeighborSpread` tries random positions around the placement position and places `block` on the replaceable ones that touch an
-accepted neighbor, so a blob grows outwards from the blocks it is attached to.
+`randomNeighborSpread` sets `block` on the placement position, then tries random positions around it and places `block` on each one that
+passes `canReplace` and has exactly one of its 6 face neighbors in `acceptedNeighbors`, so a blob grows outwards from the blocks it is
+attached to.
 
 | Property            | Range    | Tuning                                                                              |
 |---------------------|----------|-------------------------------------------------------------------------------------|
 | `attempts`          | 1..3000  | How many positions are tried, more attempts give a bigger blob.                     |
 | `xzOffset`          | -16..16  | Horizontal spread of the attempts, a `trapezoid` keeps most near the center.        |
 | `yOffset`           | -16..16  | Vertical spread of the attempts, `uniform(-11, 0)` only grows downwards.            |
-| `acceptedNeighbors` | -        | A block, a block tag or a list of blocks one of which must touch the position.      |
+| `acceptedNeighbors` | -        | A block, a block tag or a list of blocks, exactly one face neighbor has to be one.  |
 | `canReplace`        | -        | The blocks that can be replaced.                                                    |
 
 ```kotlin
@@ -259,14 +260,16 @@ isn't. A single feature or tag is written as a bare string.
 overlay("basalt_pillars", PlacedFeatures.BASALT_BLOBS, PlacedFeatures.BASALT_PILLAR)
 ```
 
-`projectedRandomPatchySquare` places `block` in a patchy square around the placement position, each column projected onto the surface it
-reaches through `projectThrough`. Vanilla caps its basalt pillars with it.
+`projectedRandomPatchySquare` covers a square of side `2 * size + 1` centered on the placement position, keeping each column with a
+probability that falls off towards the corners (the center cross is always kept). Each kept column is projected downward through the
+blocks matching `projectThrough`, for at most `maxProjectionHeight` steps, and `block` is placed where it stops. Vanilla caps its basalt
+pillars with it.
 
 | Property              | Range  | Tuning                                                                      |
 |-----------------------|--------|-----------------------------------------------------------------------------|
-| `size`                | 1..16  | How big the square is.                                                      |
-| `maxProjectionHeight` | 0..    | How far, in blocks, a column is projected to find the surface.              |
-| `projectThrough`      | -      | The blocks a projection passes through, usually air.                        |
+| `size`                | 1..16  | Half the side of the square, sampled once per placement.                    |
+| `maxProjectionHeight` | 0..    | The most steps down a column is projected, `0` behaving like `1`.           |
+| `projectThrough`      | -      | The blocks a projection passes through while moving down, usually air.      |
 
 ```kotlin
 projectedRandomPatchySquare("basalt_cap") {

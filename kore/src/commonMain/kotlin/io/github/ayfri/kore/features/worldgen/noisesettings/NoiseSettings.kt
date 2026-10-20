@@ -24,8 +24,9 @@ import kotlinx.serialization.Transient
  *
  * JSON format reference: https://minecraft.wiki/w/Noise_settings
  *
- * @property spawnTarget The points of climate space the world spawn is searched in, each mapping density functions to the
- * value or `[min, max]` range they must have there, see [spawnTargetPoint].
+ * @property spawnTarget The points of climate space the world spawn prefers, each mapping density functions to the value or
+ * `[min, max]` range wanted there, see [spawnTargetPoint]. Candidates are scored by how far their climate is outside the
+ * closest point (lower is better) plus their distance from `0, 0`, so it is a preference, not a filter.
  */
 @Serializable
 data class NoiseSettings(
@@ -72,8 +73,9 @@ fun NoiseSettings.noiseOptions(
 ) = NoiseOptions(minY, height, sizeHorizontal, sizeVertical).also { noise = it }
 
 /**
- * Appends a [NoiseSettings.spawnTarget] point filled in [init]: the world spawn is searched where every given density
- * function is inside its value or `min..max` range, and a spawn is accepted if it matches any point.
+ * Appends a [NoiseSettings.spawnTarget] point filled in [init]: the world spawn prefers where every given density
+ * function is inside its value or `min..max` range. Candidates are scored by how far their climate is outside the closest
+ * point (lower is better) plus their distance from `0, 0`, so a point is a preference, not a filter.
  *
  * ```kotlin
  * spawnTargetPoint {

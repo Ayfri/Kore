@@ -20,7 +20,8 @@ Two carver types exist:
 - `cave` - Winding tunnel systems, sometimes branching out of a circular room.
 - `canyon` - Deep ravines with steep walls.
 
-Which blocks a carver removes isn't configurable because Minecraft 26.3 dropped `replaceable`.
+A carver replaces every block it carves with air, or with water or lava below the aquifer fluid level. It never carves the bottom layer or
+the top 7 blocks of the generation range.
 
 References: [Carver definition](https://minecraft.wiki/w/Carver_definition), [Carver](https://minecraft.wiki/w/Carver)
 

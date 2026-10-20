@@ -9,8 +9,8 @@ import kotlinx.serialization.Serializable
 /**
  * Placement modifier moving the position by an offset drawn from each axis' provider.
  *
- * Vanilla uses it to place a feature next to the one before it, such as the pillars around a basalt pillar, or one
- * block lower.
+ * Vanilla uses it to scatter forest flowers and bamboo by up to 7 blocks on X and Z, to place the four pillars next to a
+ * basalt pillar, and to move one block up or down for pointed dripstone.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Placed_feature#offset

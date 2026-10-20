@@ -21,19 +21,21 @@ import kotlinx.serialization.Serializable
 /**
  * Configuration for the `random_neighbor_spread` feature.
  *
- * Picks random positions around the placement position and places [block] on the replaceable ones that touch one of
- * the [acceptedNeighbors], so a blob grows outwards from the blocks it is attached to. Vanilla grows the extra
- * glowstone around the glowstone blobs of the Nether with it.
+ * Sets [block] on the placement position, then picks [attempts] random positions around it and places [block] on each
+ * one that passes [canReplace] and has exactly one of its 6 face neighbours in [acceptedNeighbors], so a blob grows
+ * outwards from the blocks it is attached to. Vanilla grows the extra glowstone around the glowstone blobs of the Nether
+ * with it.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#random_neighbor_spread
  *
- * @property acceptedNeighbors A block, a block tag or a list of blocks one of which must touch the position.
+ * @property acceptedNeighbors A block, a block tag or a list of blocks, exactly one of the 6 face neighbours of a position
+ * having to be one of them.
  * @property attempts Number of random positions tried, `1` to `3000`.
  * @property block The block state provider of the placed blocks.
  * @property canReplace The blocks that can be replaced.
  * @property xzOffset Horizontal range of the random offset applied to every attempt, `-16` to `16`.
- * Serialized as `xy_offset`.
+ * Serialized as `xy_offset` in 26.3-snapshot-2.
  * @property yOffset Vertical range of the random offset applied to every attempt, `-16` to `16`.
  */
 @Serializable
@@ -42,7 +44,7 @@ data class RandomNeighborSpread(
 	var attempts: IntProvider = ConstantIntProvider(1),
 	var block: BlockStateProvider = SimpleStateProvider(),
 	var canReplace: BlockPredicate = True,
-	/** Written `xy_offset`, a 26.3-snapshot-2 typo fixed to `xz_offset` in a later snapshot. */
+	/** The key is `xy_offset` in 26.3-snapshot-2 and `xz_offset` from snapshot 3 on. */
 	@JsonSerialName("xy_offset")
 	var xzOffset: IntProvider = ConstantIntProvider(0),
 	var yOffset: IntProvider = ConstantIntProvider(0),
@@ -73,8 +75,8 @@ fun ConfiguredFeatures.randomNeighborSpread(fileName: String, block: RandomNeigh
 	dp.configuredFeature(fileName, RandomNeighborSpread().apply(block))
 
 /**
- * Sets [RandomNeighborSpread.acceptedNeighbors] to [blocks], the blocks (or block tags) one of which must touch the
- * position.
+ * Sets [RandomNeighborSpread.acceptedNeighbors] to [blocks], the blocks (or block tags) exactly one of the 6 face
+ * neighbours of a position has to be.
  *
  * ```kotlin
  * randomNeighborSpread("glowstone_extra") {

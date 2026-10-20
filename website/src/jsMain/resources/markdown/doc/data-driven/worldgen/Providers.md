@@ -26,8 +26,8 @@ list.
 
 ## Vertical Anchors
 
-A vertical anchor is one Y level. It serializes as a one-key object, and the resolved Y is always clamped to the build height of the
-dimension.
+A vertical anchor is one Y level. It serializes as a one-key object, and the resolved Y is never clamped, so an anchor can point outside
+the build height of the dimension.
 
 | Builder                 | JSON                           | Meaning                                                                       |
 |-------------------------|--------------------------------|-------------------------------------------------------------------------------|

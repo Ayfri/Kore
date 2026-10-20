@@ -10,7 +10,8 @@ import kotlinx.serialization.Serializable
  * Configuration for the `overlay` feature.
  *
  * Places every feature of [features] in order, whether or not the others were placed, unlike `sequence` which stops
- * at the first failure. Vanilla grows a basalt pillar and the four pillars around it with it, and builds their cap.
+ * at the first failure. Vanilla grows a basalt pillar with it, then the four pillars next to it, the cap of the first pillar
+ * being an overlay too.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#overlay

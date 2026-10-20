@@ -256,14 +256,15 @@ set to `true`.
 | `noiseRouter`          | `NoiseRouter`                                            | all zeroes         | Density functions wired to generation roles             |
 | `oreVeinsEnabled`      | `Boolean`                                                | `false`            | Enables copper and iron ore veins                       |
 | `seaLevel`             | `Int`                                                    | `63`               | Y level the default fluid fills up to                   |
-| `spawnTarget`          | `List<Map<DensityFunctionArgument, DoubleOrDoublePair>>` | empty              | Climate points the world spawn is searched in           |
+| `spawnTarget`          | `List<Map<DensityFunctionArgument, DoubleOrDoublePair>>` | empty              | Climate points the world spawn prefers                  |
 
 ### Spawn Target
 
-`spawnTargetPoint` adds one point of climate space: the density functions it lists, each set to a value or a `min..max` range, and the
-world spawn is searched where all of them match. A spawn matching any point is accepted, so several points describe several areas. Narrow
-a range to restrict the spawn, widen it to `-1.0..1.0` to ignore that function. Vanilla's overworld spawns on land (`continents` from
-`-0.11`) away from the `ridges` values near `0`, so it has one point per side (only the first is shown):
+`spawnTargetPoint` adds one point of climate space: the density functions it lists, each set to a value or a `min..max` range. The world
+spawn prefers where all of them match, but it is a preference, not a filter: every candidate is scored by how far its climate is outside
+the closest point (lower is better), plus its distance from `0, 0`, so the search still ends somewhere when nothing matches. Several points
+describe several preferred areas. Narrow a range to steer the spawn, widen it to `-1.0..1.0` to ignore that function. Vanilla's overworld
+prefers land (`continents` from `-0.11`) away from the `ridges` values near `0`, so it has one point per side (only the first is shown):
 
 ```kotlin
 spawnTargetPoint {
