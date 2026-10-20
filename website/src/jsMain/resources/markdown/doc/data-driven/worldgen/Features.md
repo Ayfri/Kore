@@ -38,7 +38,7 @@ val flower = dp.configuredFeaturesBuilder.simpleBlock("my_flower") {
 }
 
 dp.configuredFeatures {
-	seagrass("my_seagrass", probability = 0.3)
+	bamboo("my_bamboo", probability = 0.3)
 	desertWell("my_well")
 }
 ```
@@ -47,7 +47,7 @@ Each file lands in `data/<namespace>/worldgen/feature/<name>.json`, its fields n
 
 ```json
 {
-	"type": "minecraft:seagrass",
+	"type": "minecraft:bamboo",
 	"probability": 0.3
 }
 ```
@@ -303,6 +303,8 @@ Kore covers every vanilla configured feature type.
 | `blockBlob(...)`                   | Small block blob on a surface        | Mossy cobblestone in forests   |
 | `blockColumn(...)`                 | Vertical stack of blocks with layers | Custom pillars                 |
 | `blockPile(...)`                   | Piles of blocks                      | Pumpkin/melon patches          |
+| `coralClaw(feature)`               | A claw-shaped coral                  | Warm ocean vegetation          |
+| `coralTree(feature)`               | A branching coral tree               | Warm ocean vegetation          |
 | `deltaFeature(...)`                | Basalt delta with contents and rim   | Nether basalt deltas           |
 | `disk(...)`                        | Circular disk of blocks              | Clay, sand, gravel patches     |
 | `endGateway(...)`                  | End gateway portal                   | End outer islands              |
@@ -331,8 +333,6 @@ Kore covers every vanilla configured feature type.
 | `rootSystem(...)`                  | Roots under a tree                   | Mangrove roots                 |
 | `scatteredOre(...)`                | Scattered ore deposits               | Nether gold ore blobs          |
 | `sculkPatch(...)`                  | Sculk spread with catalyst           | Ancient city surroundings      |
-| `seaPickle(count)`                 | Sea pickle colonies                  | Warm ocean floors              |
-| `seagrass(probability)`            | Seagrass                             | Ocean floors                   |
 | `sequence(...)`                    | Several features, in order           | Multi-step feature chains      |
 | `simpleBlock(...)`                 | A single block state                 | Flowers, mushrooms             |
 | `simpleRandomSelector(...)`        | Uniform random feature picker        | Coral type variety             |
@@ -352,7 +352,7 @@ Kore covers every vanilla configured feature type.
 
 ### Features Without Configuration
 
-Sixteen feature types have no fields at all. Their builders take only a file name and nothing else:
+Twelve feature types have no fields at all. Their builders take only a file name and nothing else:
 
 ```kotlin
 configuredFeatures {
@@ -361,8 +361,8 @@ configuredFeatures {
 }
 ```
 
-`blueIce`, `bonusChest`, `chorusPlant`, `coralClaw`, `coralMushroom`, `coralTree`, `desertWell`, `endIsland`, `endPlatform`,
-`freezeTopLayer`, `kelp`, `monsterRoom`, `noOp`, `vines`, `voidStartPlatform`, `weepingVines`.
+`blueIce`, `bonusChest`, `chorusPlant`, `desertWell`, `endIsland`, `endPlatform`, `freezeTopLayer`, `monsterRoom`, `noOp`, `vines`,
+`voidStartPlatform`, `weepingVines`.
 
 Reference: [Feature types](https://minecraft.wiki/w/Configured_feature#Types)
 

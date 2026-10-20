@@ -48,6 +48,7 @@ import io.github.ayfri.kore.features.worldgen.ruletest.randomBlockMatch
 import io.github.ayfri.kore.features.worldgen.ruletest.tagMatch
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.arguments.worldgen.tagged.PlacedFeatureTagArgument
+import io.github.ayfri.kore.generated.arguments.worldgen.types.PlacedFeatureArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
@@ -211,27 +212,21 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.coralClaw("test_coral_claw")
+	configuredFeaturesBuilder.coralClaw("test_coral_claw", PlacedFeatureArgument("coral_overlay", "test"))
 
 	configuredFeatures.last() assertsIs """
 		{
-			"type": "minecraft:coral_claw"
+			"type": "minecraft:coral_claw",
+			"feature": "test:coral_overlay"
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.coralMushroom("test_coral_mushroom")
+	configuredFeaturesBuilder.coralTree("test_coral_tree", PlacedFeatureArgument("coral_overlay", "test"))
 
 	configuredFeatures.last() assertsIs """
 		{
-			"type": "minecraft:coral_mushroom"
-		}
-	""".trimIndent()
-
-	configuredFeaturesBuilder.coralTree("test_coral_tree")
-
-	configuredFeatures.last() assertsIs """
-		{
-			"type": "minecraft:coral_tree"
+			"type": "minecraft:coral_tree",
+			"feature": "test:coral_overlay"
 		}
 	""".trimIndent()
 
@@ -691,14 +686,6 @@ fun DataPack.configuredFeatureTests() {
 			"state": {
 				"Name": "minecraft:dirt"
 			}
-		}
-	""".trimIndent()
-
-	configuredFeaturesBuilder.kelp("test_kelp")
-
-	configuredFeatures.last() assertsIs """
-		{
-			"type": "minecraft:kelp"
 		}
 	""".trimIndent()
 
@@ -1410,24 +1397,6 @@ fun DataPack.configuredFeatureTests() {
 			"spread_rounds": 2,
 			"extra_rare_growths": 0,
 			"catalyst_chance": 0.5
-		}
-	""".trimIndent()
-
-	configuredFeatures { seaPickle("test_sea_pickle", count = constant(3)) }
-
-	configuredFeatures.last() assertsIs """
-		{
-			"type": "minecraft:sea_pickle",
-			"count": 3
-		}
-	""".trimIndent()
-
-	configuredFeaturesBuilder.seagrass("test_seagrass", probability = 0.5)
-
-	configuredFeatures.last() assertsIs """
-		{
-			"type": "minecraft:seagrass",
-			"probability": 0.5
 		}
 	""".trimIndent()
 
