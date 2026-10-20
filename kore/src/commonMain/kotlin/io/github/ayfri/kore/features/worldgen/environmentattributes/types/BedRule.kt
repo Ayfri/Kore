@@ -24,12 +24,18 @@ enum class BedSleepRule {
 	}
 }
 
-/** Controls Bed behavior: sleeping, respawn point setting, explosion, and error messages. */
+/**
+ * Controls Bed behavior: sleeping, respawn point setting, destruction, and error messages.
+ *
+ * @property destroyOnLeave Whether the bed is destroyed when the player leaves it. Defaults to `false`.
+ * @property destroyOnUse Whether the bed is destroyed (it explodes) when used. Defaults to `false`.
+ */
 @Serializable
 data class BedRule(
 	var canSleep: BedSleepRule,
 	var canSetSpawn: BedSleepRule,
-	var explodes: Boolean? = null,
+	var destroyOnLeave: Boolean? = null,
+	var destroyOnUse: Boolean? = null,
 	var errorMessage: ChatComponents? = null,
 ) : EnvironmentAttributesType()
 
@@ -43,17 +49,42 @@ fun EnvironmentAttributesScope.bedRule(
 		this[EnvironmentAttributes.Gameplay.BED_RULE] = environmentAttributeValue(rule.apply(block), mod)
 	}
 
-/** Sets the bed rule attribute, controlling sleep, respawn, and explosion behavior. */
+/** Sets the bed rule attribute, controlling sleep, respawn, and destruction behavior. */
 fun EnvironmentAttributesScope.bedRule(
 	canSleep: BedSleepRule = BedSleepRule.WHEN_DARK,
 	canSetSpawn: BedSleepRule = BedSleepRule.WHEN_DARK,
-	explodes: Boolean? = null,
+	destroyOnLeave: Boolean? = null,
+	destroyOnUse: Boolean? = null,
 	errorMessage: ChatComponents? = null,
 	mod: EnvironmentAttributeModifier.OVERRIDE? = null,
 	block: BedRule.() -> Unit = {},
 ) = apply {
 	this[EnvironmentAttributes.Gameplay.BED_RULE] = environmentAttributeValue(
-		BedRule(canSleep, canSetSpawn, explodes, errorMessage).apply(block), mod
+		BedRule(canSleep, canSetSpawn, destroyOnLeave, destroyOnUse, errorMessage).apply(block), mod
+	)
+}
+
+/** Sets the straw bed rule attribute from an existing [BedRule] instance. */
+fun EnvironmentAttributesScope.strawBedRule(
+	rule: BedRule,
+	mod: EnvironmentAttributeModifier.OVERRIDE? = null,
+	block: BedRule.() -> Unit = {},
+) = apply {
+	this[EnvironmentAttributes.Gameplay.STRAW_BED_RULE] = environmentAttributeValue(rule.apply(block), mod)
+}
+
+/** Sets the straw bed rule attribute, controlling sleep, respawn, and destruction behavior of straw beds. */
+fun EnvironmentAttributesScope.strawBedRule(
+	canSleep: BedSleepRule = BedSleepRule.WHEN_DARK,
+	canSetSpawn: BedSleepRule = BedSleepRule.WHEN_DARK,
+	destroyOnLeave: Boolean? = null,
+	destroyOnUse: Boolean? = null,
+	errorMessage: ChatComponents? = null,
+	mod: EnvironmentAttributeModifier.OVERRIDE? = null,
+	block: BedRule.() -> Unit = {},
+) = apply {
+	this[EnvironmentAttributes.Gameplay.STRAW_BED_RULE] = environmentAttributeValue(
+		BedRule(canSleep, canSetSpawn, destroyOnLeave, destroyOnUse, errorMessage).apply(block), mod
 	)
 }
 

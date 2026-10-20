@@ -179,7 +179,7 @@ attributes {
 | Builder                          | Value                    | Default     | Interp. | Resolved at        | Controls                                                         |
 |----------------------------------|--------------------------|-------------|---------|--------------------|------------------------------------------------------------------|
 | `babyVillagerActivity(activity)` | Activity                 | `idle`      | No      | Villager           | What baby villagers do.                                          |
-| `bedRule(...)`                   | Object                   | `when_dark` | No      | Bed head           | Whether a bed lets you sleep, set spawn, or explodes.            |
+| `bedRule(...)`                   | Object                   | `when_dark` | No      | Bed head           | Whether a bed lets you sleep, set spawn, or is destroyed.        |
 | `beesStayInHive(bool)`           | Boolean                  | `false`     | No      | Hive               | Whether bees stay inside their hive.                             |
 | `canPillagerPatrolSpawn(bool)`   | Boolean                  | `true`      | No      | Patrol spawn       | Whether pillager patrols spawn.                                  |
 | `canStartRaid(bool)`             | Boolean                  | `true`      | No      | Raid start         | Whether Raid Omen can start a raid.                              |
@@ -194,6 +194,7 @@ attributes {
 | `respawnAnchorWorks(bool)`       | Boolean                  | `false`     | No      | Respawn anchor     | Whether a respawn anchor sets spawn instead of exploding.        |
 | `skyLightLevel(float)`           | Float, 0 to 15           | `15.0`      | No      | Whole dimension    | Sky light level of the dimension.                                |
 | `snowGolemMelts(bool)`           | Boolean                  | `false`     | No      | Snow golem         | Whether snow golems take damage.                                 |
+| `strawBedRule(...)`              | Object                   | `when_dark` | No      | Straw bed head     | Whether a straw bed lets you sleep, set spawn, or is destroyed.  |
 | `surfaceSlimeSpawnChance(float)` | Float                    | `0.0`       | Yes     | Spawn position     | Chance for surface slimes to spawn.                              |
 | `turtleEggHatchChance(float)`    | Float                    | `0.0`       | Yes     | Turtle egg         | Chance for turtle eggs to hatch.                                 |
 | `villagerActivity(activity)`     | Activity                 | `idle`      | No      | Villager           | What villagers do.                                               |
@@ -213,17 +214,26 @@ attributes {
 
 ### Bed Rule
 
-`canSleep` and `canSetSpawn` each take `BedSleepRule.ALWAYS`, `WHEN_DARK` or `NEVER`. `explodes` makes the bed detonate on interaction, and
-`errorMessage` replaces the message shown when sleeping is refused.
+`canSleep` and `canSetSpawn` each take `BedSleepRule.ALWAYS`, `WHEN_DARK` or `NEVER`. `destroyOnUse` destroys the bed (it explodes) when it is
+used, `destroyOnLeave` destroys it when the player leaves it (both default to `false`), and `errorMessage` replaces the message shown when
+sleeping is refused.
 
 ```kotlin
 attributes {
 	bedRule(
 		canSleep = BedSleepRule.NEVER,
 		canSetSpawn = BedSleepRule.NEVER,
-		explodes = true,
+		destroyOnUse = true,
 		errorMessage = textComponent("The beds here do not like you."),
 	)
+}
+```
+
+`strawBedRule` takes the same arguments and applies to straw beds.
+
+```kotlin
+attributes {
+	strawBedRule(canSleep = BedSleepRule.ALWAYS, canSetSpawn = BedSleepRule.NEVER, destroyOnLeave = true)
 }
 ```
 

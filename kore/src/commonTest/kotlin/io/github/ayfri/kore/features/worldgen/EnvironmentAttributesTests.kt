@@ -150,7 +150,8 @@ fun DataPack.environmentAttributesTests() {
 			bedRule(
 				canSleep = BedSleepRule.ALWAYS,
 				canSetSpawn = BedSleepRule.WHEN_DARK,
-				explodes = false,
+				destroyOnLeave = true,
+				destroyOnUse = false,
 				errorMessage = textComponent("Cannot sleep here"),
 			)
 		}
@@ -163,8 +164,43 @@ fun DataPack.environmentAttributesTests() {
 				"minecraft:gameplay/bed_rule": {
 					"can_sleep": "always",
 					"can_set_spawn": "when_dark",
-					"explodes": false,
+					"destroy_on_leave": true,
+					"destroy_on_use": false,
 					"error_message": "Cannot sleep here"
+				}
+			},
+			"has_skylight": true,
+			"has_ceiling": false,
+			"has_ender_dragon_fight": false,
+			"coordinate_scale": 1.0,
+			"ambient_light": 0.0,
+			"logical_height": 384,
+			"infiniburn": "#minecraft:infiniburn_overworld",
+			"min_y": -64,
+			"height": 384,
+			"monster_spawn_light_level": 0,
+			"monster_spawn_block_light_limit": 0
+		}
+	""".trimIndent()
+
+	dimensionType("env_attr_straw_bed_rule") {
+		attributes {
+			strawBedRule(
+				canSleep = BedSleepRule.NEVER,
+				canSetSpawn = BedSleepRule.NEVER,
+				destroyOnUse = true,
+			)
+		}
+		monsterSpawnLightLevel = constant(0)
+	}
+
+	dimensionTypes.last() assertsIs """
+		{
+			"attributes": {
+				"minecraft:gameplay/straw_bed_rule": {
+					"can_sleep": "never",
+					"can_set_spawn": "never",
+					"destroy_on_use": true
 				}
 			},
 			"has_skylight": true,

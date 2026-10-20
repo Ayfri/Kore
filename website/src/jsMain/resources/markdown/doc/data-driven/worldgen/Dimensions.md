@@ -80,7 +80,7 @@ val netherLike = dp.dimensionType("nether_like") {
 		waterEvaporates(true)
 		piglinsZombify(false)
 		respawnAnchorWorks(true)
-		bedRule(canSleep = BedSleepRule.NEVER, canSetSpawn = BedSleepRule.NEVER, explodes = true)
+		bedRule(canSleep = BedSleepRule.NEVER, canSetSpawn = BedSleepRule.NEVER, destroyOnUse = true)
 	}
 }
 ```
