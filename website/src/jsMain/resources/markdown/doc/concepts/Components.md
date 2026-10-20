@@ -609,6 +609,23 @@ predicate("upgradeable_pickaxe") {
 }
 ```
 
+`potionContents` matches the potions of the item, given as potions or a potion tag, and its active effects. The block form sets both
+`potions` and `effects`, `effects` taking the same `contains`, `countElement` and `size` checks as the other collection matchers. Each
+element is a map of mob effects to a `mobEffectPredicate`, like the entity `effects` predicate:
+
+```kotlin
+import io.github.ayfri.kore.features.predicates.sub.mobEffectPredicate
+
+predicates {
+	potionContents {
+		potions(Potions.SWIFTNESS, Potions.STRONG_SWIFTNESS)
+		effects {
+			contains(mapOf(Effects.SPEED to mobEffectPredicate { amplifier = rangeOrInt(1) }))
+		}
+	}
+}
+```
+
 ### Existence Checks
 
 You can check if a component exists on an item without matching a specific value. In an item predicate (command form),
@@ -648,7 +665,7 @@ predicate("has_instrument") {
 | `fireworkExplosion { }`   | Match firework star properties                 |
 | `fireworks { }`           | Match firework rocket properties               |
 | `jukeboxPlayable { }`     | Match jukebox song                             |
-| `potionContents(..)`      | Match potion types or a potion tag             |
+| `potionContents(..)`      | Match potions, a potion tag or active effects  |
 | `storedEnchantments { }`  | Match stored enchantments (enchanted books)    |
 | `trim { }`                | Match armor trim pattern/material              |
 | `villagerVariant(..)`     | Match the villager type of an entity           |

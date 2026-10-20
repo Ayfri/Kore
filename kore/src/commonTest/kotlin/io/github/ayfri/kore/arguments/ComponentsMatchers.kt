@@ -12,6 +12,7 @@ import io.github.ayfri.kore.assertions.assertsIsJson
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.predicates.sub.itemStackPredicate
+import io.github.ayfri.kore.features.predicates.sub.mobEffectPredicate
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.utils.pretty
@@ -244,10 +245,38 @@ fun componentsMatchersTests() = dataPack("componentsMatchersTests") {
 
 	jsonEncoder.encodeToString(potionContents) assertsIsJson """
 		{
-			"minecraft:potion_contents": [
-				"minecraft:leaping",
-				"minecraft:swiftness"
-			]
+			"minecraft:potion_contents": {
+				"potions": [
+					"minecraft:leaping",
+					"minecraft:swiftness"
+				]
+			}
+		}
+	""".trimIndent()
+
+	val potionContentsEffects = DataComponentPredicate().apply {
+		potionContents {
+			potions(Potions.SWIFTNESS)
+			effects {
+				contains(mapOf(Effects.SPEED to mobEffectPredicate { amplifier = rangeOrInt(1) }))
+			}
+		}
+	}
+
+	jsonEncoder.encodeToString(potionContentsEffects) assertsIsJson """
+		{
+			"minecraft:potion_contents": {
+				"effects": {
+					"contains": [
+						{
+							"minecraft:speed": {
+								"amplifier": 1
+							}
+						}
+					]
+				},
+				"potions": "minecraft:swiftness"
+			}
 		}
 	""".trimIndent()
 

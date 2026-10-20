@@ -4,9 +4,12 @@ import io.github.ayfri.kore.arguments.components.*
 import io.github.ayfri.kore.arguments.components.item.customData
 import io.github.ayfri.kore.arguments.components.item.damage
 import io.github.ayfri.kore.arguments.components.matchers.damage
+import io.github.ayfri.kore.arguments.components.matchers.effects
 import io.github.ayfri.kore.arguments.components.matchers.potionContents
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.features.predicates.sub.mobEffectPredicate
+import io.github.ayfri.kore.generated.Effects
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.Potions
@@ -62,7 +65,20 @@ fun itemPredicatesTests() {
 		}
 	}
 
-	multipleSubPredicatesTest.toString() assertsIs """minecraft:stone[potion_contents=["minecraft:swiftness","minecraft:slowness"]|potion_contents="minecraft:strength"]"""
+	multipleSubPredicatesTest.toString() assertsIs """minecraft:stone[potion_contents~{potions:["minecraft:swiftness","minecraft:slowness"]}|potion_contents~{potions:"minecraft:strength"}]"""
+
+
+	val potionEffectsTest = Items.POTION.predicate {
+		subPredicates {
+			potionContents {
+				effects {
+					contains(mapOf(Effects.SPEED to mobEffectPredicate { amplifier = rangeOrInt(1) }))
+				}
+			}
+		}
+	}
+
+	potionEffectsTest.toString() assertsIs """minecraft:potion[potion_contents~{effects:{contains:[{"minecraft:speed":{amplifier:1}}]}}]"""
 
 
 	val multipleComponentTest = Items.STONE.predicate {
