@@ -15,28 +15,28 @@ import kotlinx.serialization.Serializable
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#random_selector
  *
  * @property features The entries rolled in order.
- * @property default The placed feature run when no entry succeeds, the game requires it.
+ * @property default The placed feature run when no entry succeeds.
  */
 @Serializable
 data class RandomSelector(
 	var features: List<RandomSelectorFeature> = emptyList(),
-	var default: PlacedFeatureArgument? = null,
+	var default: PlacedFeatureArgument,
 ) : FeatureConfig()
 
 /**
  * An entry of a [RandomSelector].
  *
- * @property chance Chance, `0` to `1`, that this entry is picked, the game requires it.
+ * @property chance Chance, `0` to `1`, that this entry is picked.
  * @property feature The placed feature run when the entry is picked.
  */
 @Serializable
 data class RandomSelectorFeature(
-	var chance: Float? = null,
+	var chance: Float,
 	var feature: PlacedFeatureArgument,
 )
 
 /** Appends an entry running [feature] with the given [chance]. */
-fun RandomSelector.feature(feature: PlacedFeatureArgument, chance: Float? = null) {
+fun RandomSelector.feature(feature: PlacedFeatureArgument, chance: Float) {
 	features += RandomSelectorFeature(chance, feature)
 }
 
@@ -57,6 +57,6 @@ fun RandomSelector.feature(feature: PlacedFeatureArgument, chance: Float? = null
  */
 fun ConfiguredFeatures.randomSelector(
 	fileName: String,
-	default: PlacedFeatureArgument? = null,
+	default: PlacedFeatureArgument,
 	block: RandomSelector.() -> Unit = {},
 ) = dp.configuredFeature(fileName, RandomSelector(default = default).apply(block))
