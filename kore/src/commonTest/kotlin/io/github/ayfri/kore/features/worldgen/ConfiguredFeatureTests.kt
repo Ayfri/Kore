@@ -419,25 +419,49 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
+	configuredFeaturesBuilder.endSpike("test_end_spike_default")
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:end_spike",
+			"spikes": []
+		}
+	""".trimIndent()
+
 	configuredFeaturesBuilder.endSpike("test_end_spike") {
 		crystalInvulnerable = true
-		spikes += EndSpikeEntry(radius = 5, height = 60, guarded = false)
+		crystalBeamTarget = Triple(0, 80, 0)
+		spike {
+			centerX = 12
+			centerZ = -34
+			radius = 5
+			height = 60
+			guarded = false
+		}
+		spike {
+			radius = 3
+		}
 	}
 
 	configuredFeatures.last() assertsIs """
 		{
 			"type": "minecraft:end_spike",
-			"crystal_invulnerable": true,
 			"crystal_beam_target": [
 				0,
-				0,
+				80,
 				0
 			],
+			"crystal_invulnerable": true,
 			"spikes": [
 				{
-					"radius": 5,
+					"centerX": 12,
+					"centerZ": -34,
+					"guarded": false,
 					"height": 60,
-					"guarded": false
+					"radius": 5
+				},
+				{
+					"radius": 3
 				}
 			]
 		}
