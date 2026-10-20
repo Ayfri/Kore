@@ -627,6 +627,34 @@ spectate @s
 spectate @s @s
 ```
 
+### PostEffect Command
+
+The `posteffect` command applies, lists and removes client-side post-processing shaders on players. Vanilla ships the
+`PostEffects` `BLUR`, `CREEPER`, `ENTITY_OUTLINE`, `INVERT` and `SPIDER`. Custom post effects are resource-pack shaders,
+so a datapack references them through `PostEffectArgument`:
+
+```kotlin
+function("posteffect_examples") {
+	postEffect {
+		add(allPlayers(), PostEffects.CREEPER)
+		add(self(), PostEffectArgument("glitch", "my_pack")) // my_pack:glitch from a resource pack
+		list(self())
+		remove(allPlayers(), PostEffects.INVERT)
+		clear(allPlayers())
+	}
+}
+```
+
+Generated output:
+
+```mcfunction
+posteffect add @a minecraft:creeper
+posteffect add @s my_pack:glitch
+posteffect list @s
+posteffect remove @a minecraft:invert
+posteffect clear @a
+```
+
 ### Debug Commands
 
 These commands are server debugging utilities. `debug` starts/stops profiling and creates a report.

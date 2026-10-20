@@ -53,6 +53,7 @@ suspend fun downloadRegistriesList(): Map<String, Registry> {
 		"minecraft:jigsaw" to Registry(elements = false, stable = true, tags = false),
 		"minecraft:moon_phase" to Registry(elements = false, stable = true, tags = false),
 		"minecraft:painting_asset" to Registry(elements = false, stable = true, tags = false),
+		"minecraft:post_effect" to Registry(elements = false, stable = true, tags = false),
 		"minecraft:stopwatch" to Registry(elements = false, stable = true, tags = false),
 		"minecraft:trim_color_palette" to Registry(elements = false, stable = true, tags = false),
 		"minecraft:waypoint_style" to Registry(elements = false, stable = true, tags = false),

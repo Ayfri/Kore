@@ -44,6 +44,7 @@ suspend fun launchAllSimpleGenerators(): List<Generator> {
 		gen("PaintingVariants", "painting_variant"),
 		gen("PigSoundVariants", "pig_sound_variant"),
 		gen("PigVariants", "pig_variant"),
+		gen("PostEffects", "post_effect"),
 		gen("Recipes", "recipe"),
 		gen("Sounds", "sounds") {
 			argumentClassName = "Sound M"
