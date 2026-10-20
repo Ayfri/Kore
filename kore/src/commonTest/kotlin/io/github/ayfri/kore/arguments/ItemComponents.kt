@@ -152,10 +152,11 @@ fun itemComponentsTests() {
 				loot = LootTables.Till.ROOTED_DIRT
 				particle = BlockTransformParticle.WAX_OFF
 				transformType = BlockTransformType.COPPER_CHEST
+				updateFromNeighbors = false
 			}
 		}
 	}
-	blockTransformerTest.asString() assertsIs """minecraft:copper_axe[block_transformer=[{block_state_provider:{type:"minecraft:rule_based_state_provider",rules:[{if_true:{type:"minecraft:matching_blocks",blocks:"minecraft:oak_log"},then:{type:"minecraft:copy_properties_provider",source_block_state_provider:{type:"minecraft:simple_state_provider",state:{Name:"minecraft:stripped_oak_log",Properties:{axis:"y"}}}}}]},item_damage_per_use:1,sound:"minecraft:item.axe.strip"},{block_state_provider:{type:"minecraft:simple_state_provider",state:{Name:"minecraft:dirt"}},consume_on_use:0b,disallowed_faces:["down","up"],drop_strategy:"clicked_face",loot:"minecraft:till/rooted_dirt",particle:"wax_off",transform_type:"copper_chest"}]]"""
+	blockTransformerTest.asString() assertsIs """minecraft:copper_axe[block_transformer=[{block_state_provider:{type:"minecraft:rule_based_state_provider",rules:[{if_true:{type:"minecraft:matching_blocks",blocks:"minecraft:oak_log"},then:{type:"minecraft:copy_properties_provider",source_block_state_provider:{type:"minecraft:simple_state_provider",state:{Name:"minecraft:stripped_oak_log",Properties:{axis:"y"}}}}}]},item_damage_per_use:1,sound:"minecraft:item.axe.strip"},{block_state_provider:{type:"minecraft:simple_state_provider",state:{Name:"minecraft:dirt"}},consume_on_use:0b,disallowed_faces:["down","up"],drop_strategy:"clicked_face",loot:"minecraft:till/rooted_dirt",particle:"wax_off",transform_type:"copper_chest",update_from_neighbors:0b}]]"""
 
 	val blockTransformerNumbersTest = Items.COPPER_AXE {
 		blockTransformer {

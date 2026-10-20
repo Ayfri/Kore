@@ -151,6 +151,7 @@ Options of a rule:
 - `particle`: `NONE`, `SCRAPE`, `WAX_OFF` or `WAX_ON`, spawned on success (default `NONE`).
 - `sound`: the sound played on success (default none).
 - `transformType`: `SINGLE_BLOCK` or `COPPER_CHEST`, which also transforms the other half of a double copper chest (default `SINGLE_BLOCK`).
+- `updateFromNeighbors`: whether the transformed block updates its shape from its neighbors (default `true`).
 
 ### Compostable
 

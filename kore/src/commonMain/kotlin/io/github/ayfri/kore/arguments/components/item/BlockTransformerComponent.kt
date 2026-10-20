@@ -68,6 +68,7 @@ enum class BlockTransformType {
  * @property sound The sound played on success. Defaults to no sound.
  * @property transformType Whether a single block is transformed, or both halves of a double copper chest with
  * `copper_chest`. Defaults to `single_block`.
+ * @property updateFromNeighbors Whether the transformed block updates its shape from its neighbors. Defaults to `true`.
  */
 @Serializable
 data class BlockTransformerRule(
@@ -82,6 +83,7 @@ data class BlockTransformerRule(
 	var particle: BlockTransformParticle? = null,
 	var sound: SoundEventArgument? = null,
 	@SerialName("transform_type") var transformType: BlockTransformType? = null,
+	@SerialName("update_from_neighbors") var updateFromNeighbors: Boolean? = null,
 ) {
 	companion object {
 		data object BlockStateProviderComponentSerializer :
