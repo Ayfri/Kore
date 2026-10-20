@@ -42,7 +42,7 @@ fun DataPack.configuredFeature(
 ): FeatureArgument {
 	val configuredFeature = ConfiguredFeature(fileName, featureConfig).apply(init)
 	configuredFeatures += configuredFeature
-	return FeatureArgument(fileName, configuredFeature.namespace ?: name)
+	return FeatureArgument(configuredFeature.fileName, configuredFeature.namespace ?: name)
 }
 
 val DataPack.configuredFeaturesBuilder get() = ConfiguredFeatures(this)
