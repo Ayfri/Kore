@@ -17,6 +17,6 @@ data object Project {
 	// Meta
 	const val DESCRIPTION = "A Kotlin DSL to create Minecraft datapacks."
 	val COPYRIGHT_YEAR = Year.now().value.toString()
-	const val LICENSE = "MIT"
-	const val LICENSE_URL = "https://opensource.org/licenses/MIT"
+	const val LICENSE = "GNU General Public License v3.0"
+	const val LICENSE_URL = "https://www.gnu.org/licenses/gpl-3.0.html"
 }
