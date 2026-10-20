@@ -17,13 +17,18 @@ import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import kotlinx.serialization.Serializable
 
 /**
- * Configuration for the `block_column` feature, stacking [layers] one after the other along [direction].
+ * Configuration for the `block_column` feature.
  *
+ * Stacks [layers] one after the other along [direction] from the placement position, stopping at the first position
+ * that fails [allowedPlacement]. Vanilla grows cacti, sugar cane and cave vines with it.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#block_column
  *
  * @property direction The direction the layers are stacked in.
  * @property allowedPlacement The predicate every position of the column has to pass.
- * @property prioritizeTip Whether a column that does not fit is trimmed from its base instead of from its tip.
+ * @property prioritizeTip Whether a column that does not fit is cut from the layers at its start instead of from its
+ * tip.
  * @property layers The layers, stacked in order starting from the placement position.
  */
 @Serializable
@@ -37,9 +42,10 @@ data class BlockColumn(
 /**
  * A single layer of a [BlockColumn]: [height] blocks given by [provider].
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#block_column
  *
- * @property height The amount of blocks this layer is made of.
+ * @property height The amount of blocks this layer is made of, `0` or more.
  * @property provider The block states making up this layer.
  */
 @Serializable
@@ -121,6 +127,7 @@ fun LayersScope.layer(height: IntProvider = ConstantIntProvider(0), provider: Bl
  *
  * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#block_column
  */
 fun ConfiguredFeatures.blockColumn(

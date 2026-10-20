@@ -7,13 +7,16 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeatur
 import kotlinx.serialization.Serializable
 
 /**
- * Places a vein of blocks replacing the terrain, spreading the blocks around instead of packing them, used by the
- * nether ores.
+ * Configuration for the `scattered_ore` feature.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature
+ * Places a vein of blocks replacing the terrain, with the blocks spread around the placement position instead of packed
+ * in a blob. Vanilla generates the ancient debris with it.
  *
- * @property size The maximum amount of blocks of a vein.
- * @property discardChanceOnAirExposure The chance to skip a block of the vein exposed to air, between `0.0` and `1.0`.
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#scattered_ore
+ *
+ * @property size Size of the vein, `0` to `64`, the vein places at most this many blocks.
+ * @property discardChanceOnAirExposure Chance, `0` to `1`, to skip a block of the vein exposed to air.
  * @property targets The replacement targets, the first matching one wins.
  */
 @Serializable
@@ -24,13 +27,13 @@ data class ScatteredOre(
 ) : FeatureConfig(), TargetsHolder
 
 /**
- * Creates a `scattered_ore` configured feature, spreading veins of up to [size] blocks.
+ * Creates a `scattered_ore` configured feature spreading veins of up to [size] blocks, configured in [block].
  *
  * ```kotlin
- * scatteredOre("nether_gold", size = 10) {
+ * scatteredOre("ancient_debris", size = 3, discardChanceOnAirExposure = 1.0) {
  *     targets {
- *         target(blockState(Blocks.NETHER_GOLD_ORE)) {
- *             target = blockMatch(Blocks.NETHERRACK)
+ *         target(blockState(Blocks.ANCIENT_DEBRIS)) {
+ *             target = tagMatch(Tags.Block.BASE_STONE_NETHER)
  *         }
  *     }
  * }
@@ -38,7 +41,8 @@ data class ScatteredOre(
  *
  * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#scattered_ore
  */
 fun ConfiguredFeatures.scatteredOre(
 	fileName: String,

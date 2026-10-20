@@ -5,6 +5,16 @@ import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import kotlinx.serialization.Serializable
 
+/**
+ * Places the small leaf bush of the jungle bushes.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
+ *
+ * @property radius Horizontal radius of the bush, `0` to `16`, `2` for vanilla jungle bushes.
+ * @property offset Vertical offset from the top of the trunk to the foliage, `0` to `16`, `1` for vanilla jungle bushes.
+ * @property height Height of the bush, `0` to `16`, `2` for vanilla jungle bushes.
+ */
 @Serializable
 data class BushFoliagePlacer(
 	override var radius: IntProvider = ConstantIntProvider(0),
@@ -12,6 +22,18 @@ data class BushFoliagePlacer(
 	var height: Int = 0,
 ) : FoliagePlacer()
 
+/**
+ * Sets [Tree.foliagePlacer] to a [BushFoliagePlacer].
+ *
+ * ```kotlin
+ * tree("jungle_bush") {
+ *     bushFoliagePlacer(radius = constant(2), offset = constant(1), height = 2)
+ * }
+ * ```
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
+ */
 fun Tree.bushFoliagePlacer(
 	radius: IntProvider = ConstantIntProvider(0),
 	offset: IntProvider = ConstantIntProvider(0),

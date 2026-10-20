@@ -11,6 +11,21 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatur
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import kotlinx.serialization.Serializable
 
+/**
+ * Configuration for the `lake` feature.
+ *
+ * Carves a pocket at the placement position, fills it with [fluid] and lines it with [barrier]. Vanilla digs the lava
+ * lakes of the overworld, on the surface and underground, with it.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#lake
+ *
+ * @property fluid The block filling the lake.
+ * @property barrier The block lining the lake, air leaves the surrounding blocks unchanged.
+ * @property canPlaceFeature The predicate the blocks the lake is placed in have to pass.
+ * @property canReplaceWithAirOrFluid The blocks the lake can replace with [fluid] or air.
+ * @property canReplaceWithBarrier The blocks the lake can replace with [barrier].
+ */
 @Serializable
 data class Lake(
 	var fluid: BlockState = blockStateStone(),
@@ -34,6 +49,7 @@ data class Lake(
  *
  * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#lake
  */
 fun ConfiguredFeatures.lake(

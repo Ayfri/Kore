@@ -14,10 +14,15 @@ import kotlinx.serialization.Serializable
 /**
  * Configuration for the `spike` feature.
  *
- * Generates tall, spiky columns of a given block. The block material, the surface it can appear on,
- * and the blocks it can replace are all configurable.
+ * Grows a tall, thin spire of [state] up from the ground. Vanilla builds the packed ice spikes of the ice spikes biome
+ * with it.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#spike
+ *
+ * @property canPlaceOn The blocks the spike can grow on.
+ * @property canReplace The blocks the spike can replace.
+ * @property state The block state of the spike.
  */
 @Serializable
 data class Spike(
@@ -27,19 +32,20 @@ data class Spike(
 ) : FeatureConfig(), BlockPredicateScope
 
 /**
- * Creates a `spike` configured feature, placing spiky columns of [state].
+ * Creates a `spike` configured feature growing spires of [state], configured in [block].
  *
  * The block predicate builders are scoped to [block].
  *
  * ```kotlin
  * spike("ice_spike", state = blockState(Blocks.PACKED_ICE)) {
- *     canPlaceOn { matchingBlockTag(Tags.Block.SNOW) }
- *     canReplace { replaceable() }
+ *     canPlaceOn { matchingBlocks(Blocks.SNOW_BLOCK) }
+ *     canReplace { matchingBlockTag(Tags.Block.ICE_SPIKE_REPLACEABLE) }
  * }
  * ```
  *
  * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#spike
  */
 fun ConfiguredFeatures.spike(
@@ -55,7 +61,7 @@ fun ConfiguredFeatures.spike(
  *
  * ```kotlin
  * spike("ice_spike", state = blockState(Blocks.PACKED_ICE)) {
- *     canPlaceOn { matchingBlockTag(Tags.Block.SNOW) }
+ *     canPlaceOn { matchingBlocks(Blocks.SNOW_BLOCK) }
  * }
  * ```
  *
@@ -72,7 +78,7 @@ fun Spike.canPlaceOn(block: BlockPredicatesScope.() -> Unit) {
  *
  * ```kotlin
  * spike("ice_spike", state = blockState(Blocks.PACKED_ICE)) {
- *     canReplace { replaceable() }
+ *     canReplace { matchingBlockTag(Tags.Block.ICE_SPIKE_REPLACEABLE) }
  * }
  * ```
  *

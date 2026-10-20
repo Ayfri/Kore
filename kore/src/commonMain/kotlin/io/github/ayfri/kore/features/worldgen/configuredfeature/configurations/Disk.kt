@@ -17,15 +17,19 @@ import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import kotlinx.serialization.Serializable
 
 /**
- * Configuration for the `disk` feature, a flat horizontal disk of blocks replacing the terrain, such as the clay and
- * gravel patches of the riverbeds.
+ * Configuration for the `disk` feature.
  *
+ * Replaces the blocks matching [target] in a flat horizontal disk of the placement position. Vanilla makes the clay,
+ * gravel, sand and grass disks and the ice patches of the ice spikes with it.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#disk
  *
  * @property stateProvider The block states placed inside the disk.
  * @property target The predicate the replaced blocks have to pass.
- * @property radius The horizontal radius of the disk.
- * @property halfHeight The amount of blocks placed above and below the center layer.
+ * @property radius Horizontal radius of the disk, `0` to `8`.
+ * @property halfHeight Half of the height of the disk, `0` to `4`: the amount of blocks replaced above and below the
+ * center layer.
  */
 @Serializable
 data class Disk(
@@ -41,7 +45,7 @@ data class Disk(
  * The block predicate and block state provider builders are scoped to [block].
  *
  * ```kotlin
- * disk("clay_disk", radius = constant(3)) {
+ * disk("clay_disk", radius = uniform(2, 3), halfHeight = 1) {
  *     stateProvider = simpleStateProvider(Blocks.CLAY)
  *     target { matchingBlocks(Blocks.DIRT, Blocks.CLAY) }
  * }
@@ -49,6 +53,7 @@ data class Disk(
  *
  * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#disk
  */
 fun ConfiguredFeatures.disk(
@@ -61,6 +66,13 @@ fun ConfiguredFeatures.disk(
 /**
  * Creates a `disk` configured feature with a constant [radius].
  *
+ * ```kotlin
+ * disk("clay_disk", radius = 3, halfHeight = 1) {
+ *     stateProvider = simpleStateProvider(Blocks.CLAY)
+ * }
+ * ```
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#disk
  */
 fun ConfiguredFeatures.disk(

@@ -8,14 +8,17 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeatur
 import kotlinx.serialization.Serializable
 
 /**
- * Configuration for the `nether_forest_vegetation` feature, the roots and fungi scattered over the nether forest
- * floors.
+ * Configuration for the `nether_forest_vegetation` feature.
  *
+ * Scatters blocks over the floor around the placement position. Vanilla scatters the roots, fungi and sprouts of the
+ * crimson and warped forests with it.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#nether_forest_vegetation
  *
- * @property stateProvider The block states scattered over the floor.
- * @property spreadWidth The horizontal size of the area the blocks are scattered in.
- * @property spreadHeight The vertical size of the area the blocks are scattered in.
+ * @property stateProvider The block state provider of the scattered blocks.
+ * @property spreadWidth Horizontal size of the area the blocks are scattered in, `1` or more.
+ * @property spreadHeight Vertical size of the area the blocks are scattered in, `1` or more.
  */
 @Serializable
 data class NetherForestVegetation(
@@ -25,22 +28,24 @@ data class NetherForestVegetation(
 ) : FeatureConfig(), BlockStateProviderScope
 
 /**
- * Creates a `nether_forest_vegetation` configured feature, scattering the blocks given by
- * [NetherForestVegetation.stateProvider].
+ * Creates a `nether_forest_vegetation` configured feature scattering [NetherForestVegetation.stateProvider] over an
+ * area of [spreadWidth] by [spreadHeight], configured in [block].
  *
  * The block state provider builders are scoped to [block].
  *
  * ```kotlin
  * netherForestVegetation("crimson_roots", spreadWidth = 8, spreadHeight = 4) {
  *     stateProvider = weightedStateProvider {
- *         entry(Blocks.CRIMSON_ROOTS, weight = 2)
- *         entry(Blocks.CRIMSON_FUNGUS)
+ *         entry(Blocks.CRIMSON_ROOTS, weight = 87)
+ *         entry(Blocks.CRIMSON_FUNGUS, weight = 11)
+ *         entry(Blocks.WARPED_FUNGUS)
  *     }
  * }
  * ```
  *
  * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#nether_forest_vegetation
  */
 fun ConfiguredFeatures.netherForestVegetation(

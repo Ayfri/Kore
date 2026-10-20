@@ -15,12 +15,15 @@ import kotlinx.serialization.Serializable
 /**
  * Configuration for the `huge_brown_mushroom` feature.
  *
+ * Grows a huge brown mushroom, a flat wide cap on a stem. Vanilla uses it in the mushroom fields and the dark forest.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#huge_brown_mushroom
  *
  * @property canPlaceOn The ground blocks the mushroom may grow on.
  * @property capProvider The block states making up the cap.
  * @property stemProvider The block states making up the stem.
- * @property foliageRadius The horizontal radius of the cap, `2` when `null`.
+ * @property foliageRadius The horizontal radius of the cap, `2` when `null`, `3` in vanilla.
  */
 @Serializable
 data class HugeBrownMushroom(
@@ -37,7 +40,7 @@ data class HugeBrownMushroom(
  *
  * ```kotlin
  * hugeBrownMushroom("brown_mushroom") {
- *     canPlaceOn { matchingBlockTag(Tags.Block.MUSHROOM_GROW_BLOCK) }
+ *     canPlaceOn { matchingBlockTag(Tags.Block.HUGE_BROWN_MUSHROOM_CAN_PLACE_ON) }
  *     capProvider = simpleStateProvider(Blocks.BROWN_MUSHROOM_BLOCK)
  *     stemProvider = simpleStateProvider(Blocks.MUSHROOM_STEM)
  * }
@@ -45,6 +48,7 @@ data class HugeBrownMushroom(
  *
  * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#huge_brown_mushroom
  */
 fun ConfiguredFeatures.hugeBrownMushroom(
@@ -60,7 +64,7 @@ fun ConfiguredFeatures.hugeBrownMushroom(
  *
  * ```kotlin
  * hugeBrownMushroom("brown_mushroom") {
- *     canPlaceOn { matchingBlockTag(Tags.Block.MUSHROOM_GROW_BLOCK) }
+ *     canPlaceOn { matchingBlockTag(Tags.Block.HUGE_BROWN_MUSHROOM_CAN_PLACE_ON) }
  * }
  * ```
  *

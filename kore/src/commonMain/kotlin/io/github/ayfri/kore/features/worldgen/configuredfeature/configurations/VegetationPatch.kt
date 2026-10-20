@@ -14,6 +14,27 @@ import io.github.ayfri.kore.generated.arguments.worldgen.types.PlacedFeatureArgu
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
+/**
+ * Configuration for the `vegetation_patch` feature.
+ *
+ * Covers the floor or the ceiling of a cave with a patch of [groundState], then runs [vegetationFeature] on top of it.
+ * Vanilla grows the moss patches of the lush caves with it.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#vegetation_patch
+ *
+ * @property surface Whether the patch covers the [Surface.FLOOR] or the [Surface.CEILING].
+ * @property depth Number of ground blocks placed in each column, `1` to `128`.
+ * @property verticalRange How far up or down from the placement position each column searches for a surface, `1` to
+ * `256`.
+ * @property extraBottomBlockChance Chance, `0` to `1`, to add one more block to the depth of a column.
+ * @property extraEdgeColumnChance Chance, `0` to `1`, to add a column next to the edge of the patch.
+ * @property vegetationChance Chance, `0` to `1`, to run [vegetationFeature] on a column.
+ * @property xzRadius Horizontal radius of the patch.
+ * @property replaceable A block, a block tag or a list of blocks the ground can replace.
+ * @property groundState The block state provider of the ground.
+ * @property vegetationFeature The placed feature run on top of the columns.
+ */
 @Serializable
 data class VegetationPatch(
 	var surface: Surface,
@@ -28,6 +49,33 @@ data class VegetationPatch(
 	var vegetationFeature: PlacedFeatureArgument,
 ) : FeatureConfig(), BlockStateProviderScope, IntProviderScope
 
+/**
+ * Creates a `vegetation_patch` configured feature covering the [surface] and running [vegetationFeature] on top,
+ * configured in [block].
+ *
+ * The block state provider and int provider builders are scoped to [block].
+ *
+ * ```kotlin
+ * vegetationPatch(
+ *     "moss_patch",
+ *     surface = Surface.FLOOR,
+ *     replaceable = listOf(Tags.Block.MOSS_REPLACEABLE),
+ *     vegetationFeature = PlacedFeatures.PATCH_GRASS_PLAIN,
+ * ) {
+ *     groundState = simpleStateProvider(Blocks.MOSS_BLOCK)
+ *     depth = constant(1)
+ *     verticalRange = 5
+ *     extraEdgeColumnChance = 0.3
+ *     vegetationChance = 0.8
+ *     xzRadius = 7
+ * }
+ * ```
+ *
+ * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#vegetation_patch
+ */
 fun ConfiguredFeatures.vegetationPatch(
 	fileName: String,
 	surface: Surface,

@@ -5,6 +5,16 @@ import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import kotlinx.serialization.Serializable
 
+/**
+ * Places the crooked trunk of the azalea trees, bending sideways at the top, with a horizontal branch on top of it.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
+ *
+ * @property bendLength Length of the horizontal branch on top of the trunk, `1` to `64`, `1` to `2` for vanilla azaleas.
+ * @property minHeightForLeaves Height from which the trunk blocks get leaves attached, at least `1`. `null` leaves it
+ * out, so the game uses `1`; vanilla azaleas use `3`.
+ */
 @Serializable
 data class BendingTrunkPlacer(
 	override var baseHeight: Int = 0,
@@ -14,6 +24,18 @@ data class BendingTrunkPlacer(
 	var minHeightForLeaves: Int? = null,
 ) : TrunkPlacer()
 
+/**
+ * Sets [Tree.trunkPlacer] to a [BendingTrunkPlacer].
+ *
+ * ```kotlin
+ * tree("azalea") {
+ *     bendingTrunkPlacer(baseHeight = 4, heightRandA = 2, bendLength = uniform(1, 2), minHeightForLeaves = 3)
+ * }
+ * ```
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
+ */
 fun Tree.bendingTrunkPlacer(
 	baseHeight: Int = 0,
 	heightRandA: Int = 0,

@@ -14,10 +14,14 @@ import kotlinx.serialization.Serializable
 /**
  * Configuration for the `block_blob` feature.
  *
- * Places a small blob of blocks (e.g. mossy cobblestone) on the ground. The block used and the
- * surface it can appear on are both configurable.
+ * Places a rounded boulder of [state] on the ground. Vanilla builds the mossy cobblestone boulders of the old growth
+ * taigas with it.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#block_blob
+ *
+ * @property canPlaceOn The blocks the boulder can be placed on.
+ * @property state The block state the boulder is made of.
  */
 @Serializable
 data class BlockBlob(
@@ -26,19 +30,20 @@ data class BlockBlob(
 ) : FeatureConfig(), BlockPredicateScope
 
 /**
- * Creates a `block_blob` configured feature, placing blobs of [state] on the blocks matching
+ * Creates a `block_blob` configured feature, placing boulders of [state] on the blocks matching
  * [BlockBlob.canPlaceOn].
  *
  * The block predicate builders are scoped to [block].
  *
  * ```kotlin
- * blockBlob("mossy_blob", state = blockState(Blocks.MOSSY_COBBLESTONE)) {
- *     canPlaceOn { matchingBlockTag(Tags.Block.DIRT) }
+ * blockBlob("mossy_boulder", state = blockState(Blocks.MOSSY_COBBLESTONE)) {
+ *     canPlaceOn { matchingBlockTag(Tags.Block.FOREST_ROCK_CAN_PLACE_ON) }
  * }
  * ```
  *
  * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#block_blob
  */
 fun ConfiguredFeatures.blockBlob(
@@ -48,13 +53,13 @@ fun ConfiguredFeatures.blockBlob(
 ) = dp.configuredFeature(fileName, BlockBlob(state = state).apply(block))
 
 /**
- * Sets [BlockBlob.canPlaceOn] to the predicate built in [block], the blocks the blob may be placed on.
+ * Sets [BlockBlob.canPlaceOn] to the predicate built in [block], the blocks the boulder may be placed on.
  *
  * A lone predicate is used as-is, several of them are wrapped in an `all_of`.
  *
  * ```kotlin
- * blockBlob("mossy_blob", state = blockState(Blocks.MOSSY_COBBLESTONE)) {
- *     canPlaceOn { matchingBlockTag(Tags.Block.DIRT) }
+ * blockBlob("mossy_boulder", state = blockState(Blocks.MOSSY_COBBLESTONE)) {
+ *     canPlaceOn { matchingBlockTag(Tags.Block.FOREST_ROCK_CAN_PLACE_ON) }
  * }
  * ```
  *

@@ -8,13 +8,16 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeatur
 import kotlinx.serialization.Serializable
 
 /**
- * Configuration for the `simple_block` feature, placing a single block at the position, the base of most of the
- * vanilla vegetation features.
+ * Configuration for the `simple_block` feature.
  *
+ * Places a single block at the placement position. Vanilla builds most of its flowers, grass, bushes, mushrooms,
+ * pumpkins and melons with it, repeated by placement modifiers.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#simple_block
  *
- * @property toPlace The block state placed at the position.
- * @property scheduleTick Whether the placed block gets a block tick scheduled, updating right after placement.
+ * @property toPlace The block state provider of the placed block.
+ * @property scheduleTick Whether a block update is scheduled for the placed block.
  */
 @Serializable
 data class SimpleBlock(
@@ -23,18 +26,22 @@ data class SimpleBlock(
 ) : FeatureConfig(), BlockStateProviderScope
 
 /**
- * Creates a `simple_block` configured feature, placing the block given by [SimpleBlock.toPlace].
+ * Creates a `simple_block` configured feature placing the block given by [SimpleBlock.toPlace], configured in [block].
  *
  * The block state provider builders are scoped to [block].
  *
  * ```kotlin
- * simpleBlock("dandelion") {
- *     toPlace = simpleStateProvider(Blocks.DANDELION)
+ * simpleBlock("flower_default") {
+ *     toPlace = weightedStateProvider {
+ *         entry(Blocks.POPPY, weight = 2)
+ *         entry(Blocks.DANDELION)
+ *     }
  * }
  * ```
  *
  * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#simple_block
  */
 fun ConfiguredFeatures.simpleBlock(

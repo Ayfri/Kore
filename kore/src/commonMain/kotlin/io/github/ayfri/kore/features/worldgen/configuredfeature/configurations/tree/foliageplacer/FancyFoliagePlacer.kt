@@ -5,6 +5,16 @@ import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import kotlinx.serialization.Serializable
 
+/**
+ * Places the leaf clusters at the end of the branches of the large (fancy) oak trees.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
+ *
+ * @property radius Horizontal radius of the leaves, `0` to `16`, `2` for vanilla large oaks.
+ * @property offset Vertical offset from the top of the trunk to the foliage, `0` to `16`, `4` for vanilla large oaks.
+ * @property height Height of the leaves, `0` to `16`, `4` for vanilla large oaks.
+ */
 @Serializable
 data class FancyFoliagePlacer(
 	override var radius: IntProvider = ConstantIntProvider(0),
@@ -12,6 +22,18 @@ data class FancyFoliagePlacer(
 	var height: Int = 0,
 ) : FoliagePlacer()
 
+/**
+ * Sets [Tree.foliagePlacer] to a [FancyFoliagePlacer].
+ *
+ * ```kotlin
+ * tree("fancy_oak") {
+ *     fancyFoliagePlacer(radius = constant(2), offset = constant(4), height = 4)
+ * }
+ * ```
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
+ */
 fun Tree.fancyFoliagePlacer(
 	radius: IntProvider = ConstantIntProvider(0),
 	offset: IntProvider = ConstantIntProvider(0),

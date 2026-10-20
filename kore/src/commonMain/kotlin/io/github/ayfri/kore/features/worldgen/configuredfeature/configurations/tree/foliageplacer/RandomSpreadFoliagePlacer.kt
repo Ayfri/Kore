@@ -5,6 +5,19 @@ import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import kotlinx.serialization.Serializable
 
+/**
+ * Scatters leaves at random positions around the top of the trunk, giving the irregular crowns of the azalea and
+ * mangrove trees.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
+ *
+ * @property radius Horizontal radius of the area the leaves are scattered in, `0` to `16`, `3` for vanilla trees.
+ * @property offset Vertical offset from the top of the trunk to the foliage, `0` to `16`.
+ * @property foliageHeight Height of the area the leaves are scattered in, `1` to `512`, `2` for vanilla trees.
+ * @property leafPlacementAttempts Number of random positions tried for a leaf, `0` to `256`, `50` for vanilla azalea
+ * trees and `70` for vanilla mangroves.
+ */
 @Serializable
 data class RandomSpreadFoliagePlacer(
 	override var radius: IntProvider = ConstantIntProvider(0),
@@ -13,6 +26,23 @@ data class RandomSpreadFoliagePlacer(
 	var leafPlacementAttempts: Int = 0,
 ) : FoliagePlacer()
 
+/**
+ * Sets [Tree.foliagePlacer] to a [RandomSpreadFoliagePlacer].
+ *
+ * ```kotlin
+ * tree("azalea") {
+ *     randomSpreadFoliagePlacer(
+ *         radius = constant(3),
+ *         offset = constant(0),
+ *         foliageHeight = constant(2),
+ *         leafPlacementAttempts = 50,
+ *     )
+ * }
+ * ```
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
+ */
 fun Tree.randomSpreadFoliagePlacer(
 	radius: IntProvider = ConstantIntProvider(0),
 	offset: IntProvider = ConstantIntProvider(0),

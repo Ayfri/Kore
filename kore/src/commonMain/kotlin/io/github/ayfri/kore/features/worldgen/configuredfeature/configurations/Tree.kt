@@ -18,14 +18,19 @@ import kotlinx.serialization.Serializable
 /**
  * Configuration for the `tree` feature.
  *
+ * Grows a tree made of a trunk, foliage and optional decorations. Vanilla grows all its trees with it, from the oaks
+ * and the spruces to the azaleas, the mangroves and the jungle bushes.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
  *
- * @property ignoreVines Whether the tree grows through the vines instead of being blocked by them.
- * @property belowTrunkProvider The [RuleBasedStateProvider] placing a block beneath the trunk, such as the podzol of
- * the spruce trees, placing nothing when it has no rule.
- * @property minimumSize The vertical space the tree needs to grow.
- * @property trunkProvider The block states making up the trunk.
- * @property foliageProvider The block states making up the foliage.
+ * @property ignoreVines Whether the tree grows even when vines block it, `false` in vanilla when `null`.
+ * @property belowTrunkProvider The [RuleBasedStateProvider] replacing the block below the trunk, such as the dirt
+ * under most trees, placing nothing when it has no rule.
+ * @property minimumSize The width the tree needs at each height to be placed.
+ * @property trunkProvider The block state provider of the trunk, which needs an `axis` property with a fancy trunk
+ * placer.
+ * @property foliageProvider The block state provider of the foliage.
  * @property trunkPlacer The shape of the trunk.
  * @property foliagePlacer The shape of the foliage.
  * @property decorators The decorators run once the tree is placed, such as the beehives and the cocoa beans.
@@ -70,7 +75,8 @@ fun Tree.decorators(block: MutableList<TreeDecorator>.() -> Unit) {
 }
 
 /**
- * Creates a `tree` configured feature, using a [FancyTrunkPlacer] and a [FancyFoliagePlacer] by default.
+ * Creates a `tree` configured feature, using a [FancyTrunkPlacer] and a [FancyFoliagePlacer] unless [block] sets
+ * others.
  *
  * The block state provider builders are scoped to [block].
  *
@@ -83,6 +89,7 @@ fun Tree.decorators(block: MutableList<TreeDecorator>.() -> Unit) {
  *
  * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
  */
 fun ConfiguredFeatures.tree(fileName: String, block: Tree.() -> Unit = {}) = dp.configuredFeature(

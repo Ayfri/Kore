@@ -10,14 +10,16 @@ import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
 /**
- * Places the arching aerial roots of the mangrove trees.
+ * Places the arching aerial roots of the mangrove trees, raising the trunk above them.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
  *
- * @property rootProvider The block states making up the roots.
- * @property trunkOffsetY The vertical offset applied to the trunk once the roots are placed.
- * @property aboveRootProvider The blocks placed on top of the roots, none when `null`.
- * @property mangroveRootPlacement The shape and the substitutions of the roots.
+ * @property rootProvider The block states making up the roots, mangrove roots in vanilla.
+ * @property trunkOffsetY How far the trunk is moved upwards, `1` to `3` for vanilla mangroves.
+ * @property aboveRootProvider The blocks placed on top of the roots, a moss carpet half of the time for vanilla mangroves,
+ * none when `null`.
+ * @property mangroveRootPlacement The shape of the roots and the blocks they turn into over mud.
  */
 @Serializable
 data class MangroveRootPlacer(
@@ -30,14 +32,16 @@ data class MangroveRootPlacer(
 /**
  * The shape of the roots placed by a [MangroveRootPlacer] and the blocks they turn into over mud.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
  *
- * @property maxRootWidth The maximum horizontal distance a root may reach from the trunk.
- * @property maxRootLength The maximum amount of blocks a single root is made of.
- * @property randomSkewChance The chance of a root stepping sideways, between `0.0` and `1.0`.
- * @property canGrowTrough The blocks the roots may grow through.
- * @property muddyRootsIn The blocks the roots turn into [muddyRootsProvider] in.
- * @property muddyRootsProvider The block states replacing the roots inside [muddyRootsIn].
+ * @property maxRootWidth Maximum width of the roots, `1` to `12`, `8` for vanilla mangroves.
+ * @property maxRootLength Maximum length of the roots, `1` to `64`, `15` for vanilla mangroves.
+ * @property randomSkewChance Chance of a root skewing off its course, `0.0` to `1.0`, `0.2` for vanilla mangroves.
+ * @property canGrowTrough A block, a block tag or a list of blocks the roots can grow through.
+ * @property muddyRootsIn A block, a block tag or a list of blocks that turn the roots into [muddyRootsProvider] when they
+ * grow in them, mud and muddy mangrove roots for vanilla mangroves.
+ * @property muddyRootsProvider The block states the roots turn into inside [muddyRootsIn].
  */
 @Serializable
 data class MangroveRootPlacement(
@@ -50,24 +54,23 @@ data class MangroveRootPlacement(
 ) : BlockStateProviderScope
 
 /**
- * Creates a `mangrove_root_placer`, placing the arching aerial roots of the mangrove trees.
+ * Creates a [MangroveRootPlacer] configured in [block].
  *
- * The block state provider builders are scoped to [block].
+ * The block state provider and int provider builders are scoped to [block].
  *
  * ```kotlin
- * tree("mangrove") {
- *     rootPlacer = mangroveRootPlacer {
- *         rootProvider = simpleStateProvider(Blocks.MANGROVE_ROOTS)
- *         trunkOffsetY = uniform(1, 3)
- *         mangroveRootPlacement {
- *             maxRootWidth = 8
- *             maxRootLength = 15
- *             muddyRootsProvider = simpleStateProvider(Blocks.MUDDY_MANGROVE_ROOTS)
- *         }
+ * val roots = mangroveRootPlacer {
+ *     rootProvider = simpleStateProvider(Blocks.MANGROVE_ROOTS)
+ *     trunkOffsetY = uniform(1, 3)
+ *     mangroveRootPlacement {
+ *         maxRootWidth = 8
+ *         maxRootLength = 15
+ *         muddyRootsProvider = simpleStateProvider(Blocks.MUDDY_MANGROVE_ROOTS)
  *     }
  * }
  * ```
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
  */
 fun mangroveRootPlacer(block: MangroveRootPlacer.() -> Unit = {}) = MangroveRootPlacer().apply(block)
@@ -77,6 +80,18 @@ fun mangroveRootPlacer(block: MangroveRootPlacer.() -> Unit = {}) = MangroveRoot
  *
  * The block state provider builders are scoped to [block].
  *
+ * ```kotlin
+ * mangroveRootPlacer {
+ *     mangroveRootPlacement {
+ *         maxRootWidth = 8
+ *         maxRootLength = 15
+ *         randomSkewChance = 0.2
+ *         muddyRootsIn = listOf(Blocks.MUD, Blocks.MUDDY_MANGROVE_ROOTS)
+ *     }
+ * }
+ * ```
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
  */
 fun MangroveRootPlacer.mangroveRootPlacement(block: MangroveRootPlacement.() -> Unit = {}) =

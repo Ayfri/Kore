@@ -7,12 +7,16 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeatur
 import kotlinx.serialization.Serializable
 
 /**
- * Places a vein of blocks replacing the terrain, the classic ore generation.
+ * Configuration for the `ore` feature.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Ore_(feature)
+ * Places a vein of blocks replacing the terrain around the placement position. Vanilla generates its ore veins with
+ * it, along with the dirt, gravel and stone variant blobs and the nether magma blocks.
  *
- * @property size The maximum amount of blocks of a vein.
- * @property discardChanceOnAirExposure The chance to skip a block of the vein exposed to air, between `0.0` and `1.0`.
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#ore
+ *
+ * @property size Size of the vein, `0` to `64`, the vein places at most this many blocks.
+ * @property discardChanceOnAirExposure Chance, `0` to `1`, to skip a block of the vein exposed to air.
  * @property targets The replacement targets, the first matching one wins.
  */
 @Serializable
@@ -23,7 +27,7 @@ data class Ore(
 ) : FeatureConfig(), TargetsHolder
 
 /**
- * Creates an `ore` configured feature, placing veins of up to [size] blocks.
+ * Creates an `ore` configured feature placing veins of up to [size] blocks, configured in [block].
  *
  * ```kotlin
  * ore("iron_ore", size = 9) {
@@ -37,7 +41,8 @@ data class Ore(
  *
  * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Ore_(feature)
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#ore
  */
 fun ConfiguredFeatures.ore(
 	fileName: String,

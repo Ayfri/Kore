@@ -18,9 +18,12 @@ data class WeightedPlacedFeature(
 )
 
 /**
- * Configuration for the `weighted_random_selector` feature, picking one of [features] with a probability
- * proportional to its weight.
+ * Configuration for the `weighted_random_selector` feature.
  *
+ * Runs one of the [features], picked with a probability proportional to its weight. Vanilla uses it to choose between
+ * the sizes of its basalt columns and of its sulfur springs.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#weighted_random_selector
  *
  * @property features The weighted entries to pick from.
@@ -36,18 +39,19 @@ fun WeightedRandomSelector.feature(feature: PlacedFeatureArgument, weight: Int) 
 }
 
 /**
- * Creates a `weighted_random_selector` configured feature, picking one of [WeightedRandomSelector.features] with a
- * probability proportional to its weight.
+ * Creates a `weighted_random_selector` configured feature running one of its entries by weight, configured in
+ * [block].
  *
  * ```kotlin
- * weightedRandomSelector("mixed_ore") {
- *     feature(PlacedFeatures.ORE_IRON, weight = 3)
- *     feature(PlacedFeatures.ORE_GOLD, weight = 1)
+ * weightedRandomSelector("mixed_trees") {
+ *     feature(PlacedFeatures.OAK_CHECKED, weight = 3)
+ *     feature(PlacedFeatures.BIRCH_CHECKED, weight = 1)
  * }
  * ```
  *
  * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#weighted_random_selector
  */
 fun ConfiguredFeatures.weightedRandomSelector(

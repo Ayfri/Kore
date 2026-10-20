@@ -6,15 +6,18 @@ import io.github.ayfri.kore.generated.arguments.worldgen.types.PlacedFeatureArgu
 import kotlinx.serialization.Serializable
 
 /**
- * Tries to place [feature] several times around the origin, at random offsets, which is how the vanilla flower,
- * grass and mushroom patches are generated.
+ * Configuration for the `random_patch` feature.
  *
+ * Tries to place [feature] several times around the placement position, at random offsets. Vanilla doesn't use it, its
+ * flower, grass and bush patches are `simple_block` features repeated by placement modifiers.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#random_patch
  *
  * @property feature The placed feature attempted at each try.
- * @property tries How many placements are attempted, `128` by default.
- * @property xzSpread Maximum horizontal offset of an attempt from the origin, `7` by default.
- * @property ySpread Maximum vertical offset of an attempt from the origin, `3` by default.
+ * @property tries Number of attempts, `1` or more, `128` in vanilla when `null`.
+ * @property xzSpread Maximum horizontal offset of an attempt, `0` or more, `7` in vanilla when `null`.
+ * @property ySpread Maximum vertical offset of an attempt, `0` or more, `3` in vanilla when `null`.
  */
 @Serializable
 data class RandomPatch(
@@ -25,19 +28,19 @@ data class RandomPatch(
 ) : FeatureConfig()
 
 /**
- * Creates a `random_patch` configured feature attempting [feature] [tries] times around the origin.
+ * Creates a `random_patch` configured feature attempting [feature] several times around the placement position,
+ * configured in [block].
  *
  * ```kotlin
- * configuredFeatures {
- *     randomPatch("dandelion_patch", PlacedFeatures.FLOWER_DEFAULT) {
- *         tries = 64
- *         xzSpread = 5
- *     }
+ * randomPatch("dandelion_patch", PlacedFeatures.FLOWER_DEFAULT) {
+ *     tries = 64
+ *     xzSpread = 5
  * }
  * ```
  *
  * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#random_patch
  */
 fun ConfiguredFeatures.randomPatch(

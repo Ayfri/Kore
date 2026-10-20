@@ -15,12 +15,15 @@ import kotlinx.serialization.Serializable
 /**
  * Configuration for the `huge_red_mushroom` feature.
  *
+ * Grows a huge red mushroom, a domed cap on a stem. Vanilla uses it in the mushroom fields and the dark forest.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#huge_red_mushroom
  *
  * @property canPlaceOn The ground blocks the mushroom may grow on.
  * @property capProvider The block states making up the cap.
  * @property stemProvider The block states making up the stem.
- * @property foliageRadius The horizontal radius of the cap, `2` when `null`.
+ * @property foliageRadius The horizontal radius of the cap, `2` when `null`, as in vanilla.
  */
 @Serializable
 data class HugeRedMushroom(
@@ -37,7 +40,7 @@ data class HugeRedMushroom(
  *
  * ```kotlin
  * hugeRedMushroom("red_mushroom") {
- *     canPlaceOn { matchingBlockTag(Tags.Block.MUSHROOM_GROW_BLOCK) }
+ *     canPlaceOn { matchingBlockTag(Tags.Block.HUGE_RED_MUSHROOM_CAN_PLACE_ON) }
  *     capProvider = simpleStateProvider(Blocks.RED_MUSHROOM_BLOCK)
  *     stemProvider = simpleStateProvider(Blocks.MUSHROOM_STEM)
  * }
@@ -45,6 +48,7 @@ data class HugeRedMushroom(
  *
  * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#huge_red_mushroom
  */
 fun ConfiguredFeatures.hugeRedMushroom(
@@ -60,7 +64,7 @@ fun ConfiguredFeatures.hugeRedMushroom(
  *
  * ```kotlin
  * hugeRedMushroom("red_mushroom") {
- *     canPlaceOn { matchingBlockTag(Tags.Block.MUSHROOM_GROW_BLOCK) }
+ *     canPlaceOn { matchingBlockTag(Tags.Block.HUGE_RED_MUSHROOM_CAN_PLACE_ON) }
  * }
  * ```
  *

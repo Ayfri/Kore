@@ -8,8 +8,11 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeatur
 import kotlinx.serialization.Serializable
 
 /**
- * Configuration for the `block_pile` feature, a small pile of blocks such as the hay and melon piles of the villages.
+ * Configuration for the `block_pile` feature.
  *
+ * Places a small pile of blocks. Vanilla uses it for the hay, melon, pumpkin, snow and ice piles.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#block_pile
  *
  * @property stateProvider The block states making up the pile.
@@ -32,6 +35,7 @@ data class BlockPile(
  *
  * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#block_pile
  */
 fun ConfiguredFeatures.blockPile(fileName: String, block: BlockPile.() -> Unit = {}) =

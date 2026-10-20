@@ -6,11 +6,12 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovid
 import kotlinx.serialization.Serializable
 
 /**
- * Replaces the ground blocks beneath a placed tree, such as the podzol under the spruce trees.
+ * Replaces the ground around the base of the tree, such as the podzol under the mega pine and mega spruce trees.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#alter_ground
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
  *
- * @property provider The block states replacing the ground.
+ * @property provider The rule-based state provider choosing the blocks replacing the ground.
  */
 @Serializable
 data class AlterGround(
@@ -18,43 +19,64 @@ data class AlterGround(
 ) : TreeDecorator(), BlockStateProviderScope
 
 /**
- * Creates an `alter_ground` tree decorator replacing the ground with [provider].
+ * Creates an [AlterGround] replacing the ground with [provider].
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#alter_ground
+ * ```kotlin
+ * tree("mega_pine") {
+ *     val podzol = ruleBasedStateProvider { rule(simpleStateProvider(Blocks.PODZOL)) { solid() } }
+ *     decorators(alterGround(podzol))
+ * }
+ * ```
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
  */
 fun BlockStateProviderScope.alterGround(provider: BlockStateProvider) = AlterGround(provider)
 
 /**
- * Creates an `alter_ground` tree decorator replacing the ground with the [RuleBasedStateProvider] built in [block].
+ * Creates an [AlterGround] replacing the ground with the [RuleBasedStateProvider] built in [block].
  *
  * ```kotlin
- * alterGround {
- *     rule(simpleStateProvider(Blocks.PODZOL)) { solid() }
+ * tree("mega_pine") {
+ *     decorators(alterGround { rule(simpleStateProvider(Blocks.PODZOL)) { solid() } })
  * }
  * ```
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#alter_ground
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
  */
 fun BlockStateProviderScope.alterGround(block: RuleBasedStateProvider.() -> Unit) =
 	AlterGround(RuleBasedStateProvider().apply(block))
 
-/** Appends an `alter_ground` tree decorator replacing the ground with [provider]. */
+/**
+ * Appends an [AlterGround] replacing the ground with [provider].
+ *
+ * ```kotlin
+ * tree("mega_pine") {
+ *     val podzol = ruleBasedStateProvider { rule(simpleStateProvider(Blocks.PODZOL)) { solid() } }
+ *     decorators { alterGround(podzol) }
+ * }
+ * ```
+ */
 fun MutableList<TreeDecorator>.alterGround(provider: BlockStateProvider) {
 	this += AlterGround(provider)
 }
 
 /**
- * Appends an `alter_ground` tree decorator replacing the ground with the [RuleBasedStateProvider] built in [block].
+ * Appends an [AlterGround] replacing the ground with the [RuleBasedStateProvider] built in [block].
  *
  * ```kotlin
- * decorators {
- *     alterGround {
- *         rule(simpleStateProvider(Blocks.PODZOL)) { solid() }
+ * tree("mega_pine") {
+ *     decorators {
+ *         alterGround {
+ *             rule(simpleStateProvider(Blocks.PODZOL)) { solid() }
+ *         }
  *     }
  * }
  * ```
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#alter_ground
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
  */
 fun MutableList<TreeDecorator>.alterGround(block: RuleBasedStateProvider.() -> Unit) {
 	this += AlterGround(RuleBasedStateProvider().apply(block))

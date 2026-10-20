@@ -5,6 +5,16 @@ import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import kotlinx.serialization.Serializable
 
+/**
+ * Places the leaves of the mega jungle trees, on top of the trunk and at the end of its branches.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
+ *
+ * @property radius Horizontal radius of the leaves, `0` to `16`, `2` for vanilla mega jungle trees.
+ * @property offset Vertical offset from the top of the trunk to the foliage, `0` to `16`.
+ * @property height Height of the leaves, `0` to `16`, `2` for vanilla mega jungle trees.
+ */
 @Serializable
 data class JungleFoliagePlacer(
 	override var radius: IntProvider = ConstantIntProvider(0),
@@ -12,6 +22,18 @@ data class JungleFoliagePlacer(
 	var height: Int = 0,
 ) : FoliagePlacer()
 
+/**
+ * Sets [Tree.foliagePlacer] to a [JungleFoliagePlacer].
+ *
+ * ```kotlin
+ * tree("mega_jungle") {
+ *     jungleFoliagePlacer(radius = constant(2), height = 2)
+ * }
+ * ```
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
+ */
 fun Tree.jungleFoliagePlacer(
 	radius: IntProvider = ConstantIntProvider(0),
 	offset: IntProvider = ConstantIntProvider(0),

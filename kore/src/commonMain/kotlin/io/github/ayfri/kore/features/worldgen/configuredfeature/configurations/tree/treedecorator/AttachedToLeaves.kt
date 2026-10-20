@@ -8,16 +8,20 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Attaches blocks to the leaves of a placed tree, such as the cocoa beans of the jungle trees.
+ * Attaches blocks to the exposed faces of the leaves in the given directions, such as the hanging propagules of the
+ * mangrove trees.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#attached_to_leaves
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
  *
- * @property probability The chance of attaching a block to a given leaf block, between `0.0` and `1.0`.
- * @property exclusionRadiusXZ The horizontal distance kept between two attached blocks.
- * @property exclusionRadiusY The vertical distance kept between two attached blocks.
- * @property requiredEmptyBlocks The amount of empty blocks needed in the chosen direction.
+ * @property probability Chance of attaching a block to a leaf, `0.0` to `1.0`, `0.14` for vanilla mangroves.
+ * @property exclusionRadiusXZ Minimum horizontal distance between two attached blocks, `0` to `16`, `1` for vanilla
+ * mangroves. Serialized as `exclusion_radius_xz`.
+ * @property exclusionRadiusY Minimum vertical distance between two attached blocks, `0` to `16`, `0` for vanilla mangroves.
+ * @property requiredEmptyBlocks Number of empty blocks needed in the attachment direction, `1` to `16`, `2` for vanilla
+ * mangroves.
  * @property blockProvider The block states attached to the leaves.
- * @property directions The directions a block may be attached in.
+ * @property directions The directions blocks are attached in, at least one.
  */
 @Serializable
 data class AttachedToLeaves(
@@ -31,28 +35,42 @@ data class AttachedToLeaves(
 ) : TreeDecorator(), BlockStateProviderScope
 
 /**
- * Creates an `attached_to_leaves` tree decorator.
+ * Creates an [AttachedToLeaves] configured in [block].
  *
  * The block state provider builders are scoped to [block].
  *
  * ```kotlin
- * attachedToLeaves {
+ * val propagules = attachedToLeaves {
  *     probability = 0.14
  *     exclusionRadiusXZ = 1
  *     requiredEmptyBlocks = 2
- *     blockProvider = simpleStateProvider(Blocks.COCOA)
- *     directions(Direction.NORTH, Direction.SOUTH)
+ *     blockProvider = simpleStateProvider(Blocks.MANGROVE_PROPAGULE)
+ *     directions(Direction.DOWN)
  * }
  * ```
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#attached_to_leaves
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
  */
 fun attachedToLeaves(block: AttachedToLeaves.() -> Unit = {}) = AttachedToLeaves().apply(block)
 
 /**
- * Appends an `attached_to_leaves` tree decorator configured in [block].
+ * Appends an [AttachedToLeaves] configured in [block].
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#attached_to_leaves
+ * ```kotlin
+ * tree("mangrove") {
+ *     decorators {
+ *         attachedToLeaves {
+ *             probability = 0.14
+ *             blockProvider = simpleStateProvider(Blocks.MANGROVE_PROPAGULE)
+ *             directions(Direction.DOWN)
+ *         }
+ *     }
+ * }
+ * ```
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
  */
 fun MutableList<TreeDecorator>.attachedToLeaves(block: AttachedToLeaves.() -> Unit = {}) {
 	this += AttachedToLeaves().apply(block)

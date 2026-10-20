@@ -10,6 +10,21 @@ import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import kotlinx.serialization.Serializable
 
+/**
+ * Configuration for the `delta_feature` feature.
+ *
+ * Fills a pool at the placement position with [content], ringed by a rim of [rim]. It only replaces blocks that have
+ * air above and no air beside them, so it never generates underwater. Vanilla makes the lava pools of the basalt
+ * deltas, rimmed with magma blocks, with it.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#delta_feature
+ *
+ * @property content The block state filling the inside of the pool.
+ * @property rim The block state of the rim around the pool.
+ * @property size Size of the inside of the pool, `0` to `16`.
+ * @property rimSize Size of the rim around the pool, `0` to `16`.
+ */
 @Serializable
 data class DeltaFeature(
 	var content: BlockState = blockStateStone(),
@@ -18,6 +33,23 @@ data class DeltaFeature(
 	var rimSize: IntProvider = ConstantIntProvider(0),
 ) : FeatureConfig(), IntProviderScope
 
+/**
+ * Creates a `delta_feature` configured feature with a [content] pool ringed by [rim], their sizes being int providers.
+ *
+ * The int provider builders are scoped to [block].
+ *
+ * ```kotlin
+ * deltaFeature("lava_delta", content = blockState(Blocks.LAVA), rim = blockState(Blocks.MAGMA_BLOCK)) {
+ *     size = uniform(3, 7)
+ *     rimSize = uniform(0, 2)
+ * }
+ * ```
+ *
+ * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#delta_feature
+ */
 fun ConfiguredFeatures.deltaFeature(
 	fileName: String,
 	content: BlockState = blockStateStone(),
@@ -27,6 +59,16 @@ fun ConfiguredFeatures.deltaFeature(
 	block: DeltaFeature.() -> Unit = {},
 ) = dp.configuredFeature(fileName, DeltaFeature(content, rim, size, rimSize).apply(block))
 
+/**
+ * Creates a `delta_feature` configured feature with a constant [size] and [rimSize].
+ *
+ * ```kotlin
+ * deltaFeature("lava_delta", content = blockState(Blocks.LAVA), rim = blockState(Blocks.MAGMA_BLOCK), size = 5, rimSize = 1)
+ * ```
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#delta_feature
+ */
 fun ConfiguredFeatures.deltaFeature(
 	fileName: String,
 	content: BlockState = blockStateStone(),

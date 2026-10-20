@@ -13,16 +13,21 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeatur
 import kotlinx.serialization.Serializable
 
 /**
- * Configuration for the `huge_fungus` feature, the crimson and warped fungi of the nether forests.
+ * Configuration for the `huge_fungus` feature.
  *
+ * Grows a huge fungus, a stem topped with a hat and decorated with shroomlights. Vanilla grows the crimson and warped
+ * fungi of the nether forests with it, in a generated and a planted variant each.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#huge_fungus
  *
- * @property hatState The block states making up the hat.
- * @property decorState The block states of the shroomlights decorating the hat.
- * @property stemState The block states making up the stem.
- * @property validBaseBlock The block the fungus has to grow on, given as a provider whose state is compared.
- * @property replaceableBlocks The blocks the fungus may grow through.
- * @property planted Whether the fungus grew from a planted fungus rather than from world generation.
+ * @property hatState The block making up the hat.
+ * @property decorState The block decorating the hat, shroomlights in vanilla.
+ * @property stemState The block making up the stem.
+ * @property validBaseBlock The block the fungus has to grow on, nylium in vanilla.
+ * @property replaceableBlocks The blocks the fungus may replace as it grows.
+ * @property planted Whether the fungus is planted, `false` when `null`. A fungus that isn't planted can't exceed the
+ * world ceiling and doesn't drop items from the blocks it replaces.
  */
 @Serializable
 data class HugeFungus(
@@ -50,6 +55,7 @@ data class HugeFungus(
  *
  * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#huge_fungus
  */
 fun ConfiguredFeatures.hugeFungus(fileName: String, block: HugeFungus.() -> Unit = {}) =

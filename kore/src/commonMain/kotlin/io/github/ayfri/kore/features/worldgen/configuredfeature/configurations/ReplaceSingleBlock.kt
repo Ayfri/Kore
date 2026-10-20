@@ -7,9 +7,13 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeatur
 import kotlinx.serialization.Serializable
 
 /**
- * Replaces the single block at the placement position, when it matches one of the targets, used by the emerald ore.
+ * Configuration for the `replace_single_block` feature.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature
+ * Replaces the block at the placement position when it matches one of the targets. Vanilla doesn't use it, its
+ * emerald ore is an `ore` feature.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#replace_single_block
  *
  * @property targets The replacement targets, the first matching one wins.
  */
@@ -19,7 +23,8 @@ data class ReplaceSingleBlock(
 ) : FeatureConfig(), TargetsHolder
 
 /**
- * Creates a `replace_single_block` configured feature, replacing one block when it matches one of the targets.
+ * Creates a `replace_single_block` configured feature replacing one block when it matches one of the targets,
+ * configured in [block].
  *
  * ```kotlin
  * replaceSingleBlock("emerald_ore") {
@@ -33,7 +38,8 @@ data class ReplaceSingleBlock(
  *
  * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#replace_single_block
  */
 fun ConfiguredFeatures.replaceSingleBlock(
 	fileName: String,
