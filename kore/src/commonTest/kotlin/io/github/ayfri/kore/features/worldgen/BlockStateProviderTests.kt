@@ -204,11 +204,12 @@ fun DataPack.blockStateProviderTests() {
 				"type": "minecraft:noise_provider",
 				"seed": 2345,
 				"noise": {
-					"firstOctave": -3,
-					"amplitudes": [
+					"amplitude_modifiers": [
 						1.0,
 						1.0
-					]
+					],
+					"base_octave": -3,
+					"octave_count": 2
 				},
 				"scale": 0.05,
 				"states": [
@@ -236,10 +237,11 @@ fun DataPack.blockStateProviderTests() {
 				"type": "minecraft:dual_noise_provider",
 				"seed": 2345,
 				"noise": {
-					"firstOctave": -3,
-					"amplitudes": [
+					"amplitude_modifiers": [
 						1.0
-					]
+					],
+					"base_octave": -3,
+					"octave_count": 1
 				},
 				"scale": 0.05,
 				"variety": {
@@ -248,11 +250,12 @@ fun DataPack.blockStateProviderTests() {
 					"max_inclusive": 3
 				},
 				"slow_noise": {
-					"firstOctave": -10,
-					"amplitudes": [
+					"amplitude_modifiers": [
 						1.0,
 						1.0
-					]
+					],
+					"base_octave": -10,
+					"octave_count": 2
 				},
 				"slow_scale": 0.005,
 				"states": [
@@ -283,10 +286,11 @@ fun DataPack.blockStateProviderTests() {
 				"type": "minecraft:noise_threshold_provider",
 				"seed": 2345,
 				"noise": {
-					"firstOctave": -3,
-					"amplitudes": [
+					"amplitude_modifiers": [
 						1.0
-					]
+					],
+					"base_octave": -3,
+					"octave_count": 1
 				},
 				"scale": 0.05,
 				"threshold": -0.8,

@@ -178,7 +178,7 @@ fun itemComponentsTests() {
 			})
 		}
 	}
-	blockTransformerNumbersTest.asString() shouldBe """minecraft:copper_axe[block_transformer=[{block_state_provider:{type:"minecraft:noise_provider",seed:0,noise:{firstOctave:-3,amplitudes:[0.5d,0.25d]},scale:1,states:[{Name:"minecraft:moss_block"},{Name:"minecraft:stone"}]}},{block_state_provider:{type:"minecraft:noise_provider",seed:3000000000L,noise:{firstOctave:2,amplitudes:[1,1]},scale:0.5d,states:[{Name:"minecraft:dirt"}]}}]]"""
+	blockTransformerNumbersTest.asString() shouldBe """minecraft:copper_axe[block_transformer=[{block_state_provider:{type:"minecraft:noise_provider",seed:0,noise:{amplitude_modifiers:[0.5d,0.25d],base_octave:-3,octave_count:2},scale:1,states:[{Name:"minecraft:moss_block"},{Name:"minecraft:stone"}]}},{block_state_provider:{type:"minecraft:noise_provider",seed:3000000000L,noise:{amplitude_modifiers:[1,1],base_octave:2,octave_count:2},scale:0.5d,states:[{Name:"minecraft:dirt"}]}}]]"""
 
 	val breakSoundTest = Items.DIAMOND_SWORD {
 		breakSound(SoundEvents.Ambient.CAVE)

@@ -5,7 +5,7 @@ nav-title: Worldgen
 description: Build custom Minecraft world generation in Kotlin. Dimensions, biomes, noise, density functions, structures and features, type-safe, no hand-written JSON.
 keywords: minecraft worldgen, datapack worldgen, custom dimension minecraft, custom biome, noise settings minecraft, minecraft noise router, density function, datapack terrain generation, minecraft world preset, custom world generation
 date-created: 2025-08-11
-date-modified: 2026-10-20
+date-modified: 2026-10-21
 routeOverride: /docs/data-driven/worldgen
 ---
 
@@ -115,8 +115,8 @@ together, a biome, a dimension type and the dimension itself.
 fun DataPack.createCustomWorld() {
 	// 1) A Perlin noise, sampled by the density function below.
 	val hills = noise("hills") {
-		firstOctave = -5
-		amplitudes(1.0, 0.5, 0.25)
+		baseOctave = -5
+		amplitudeModifiers(1.0, 0.5, 0.25)
 	}
 
 	// 2) Density functions: hills on top of a gradient turning solid into air with height.

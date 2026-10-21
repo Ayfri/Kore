@@ -428,9 +428,9 @@ weightedStateProvider {
 
 ### Noise-Based
 
-The three noise-based providers share `seed`, `scale` and a `noise { }` block. `noise(firstOctave, vararg amplitudes)` is the short form and
-`noise(firstOctave) { }` the receiver form; `dualNoiseProvider` gets the same pair as `slowNoise`. `states(...)` takes either blocks or
-block states.
+The three noise-based providers share `seed`, `scale` and a `noise { }` block. `noise(baseOctave, vararg amplitudeModifiers)` is the short form, which also sets `octaveCount` to the number of modifiers,
+and `noise(baseOctave) { }` the receiver form over `NoiseParameters` (`amplitudeModifiers(...)`, `baseAmplitude`, `normalize`, `octaveCount`);
+`dualNoiseProvider` gets the same pair as `slowNoise`. `states(...)` takes either blocks or block states.
 
 ```kotlin
 noiseProvider {

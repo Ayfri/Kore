@@ -6,6 +6,8 @@ import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.features.worldgen.intproviders.UniformIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.uniform
+import io.github.ayfri.kore.features.worldgen.noise.NoiseParameters
+import io.github.ayfri.kore.features.worldgen.noise.noiseParameters
 import kotlinx.serialization.Serializable
 
 /**
@@ -27,10 +29,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DualNoiseProvider(
 	override var seed: Long = 0,
-	override var noise: Noise = Noise(),
+	override var noise: NoiseParameters = NoiseParameters(),
 	override var scale: Double = 0.0,
 	var variety: IntProvider = ConstantIntProvider(1),
-	var slowNoise: Noise = Noise(),
+	var slowNoise: NoiseParameters = NoiseParameters(),
 	var slowScale: Double = 0.0,
 	override var states: List<BlockState> = emptyList(),
 ) : BlockStateProvider(), NoiseBasedStateProvider, BlockStatesHolder, IntProviderScope
@@ -70,19 +72,27 @@ fun DualNoiseProvider.variety(min: Int, max: Int) {
 }
 
 /**
- * Sets [DualNoiseProvider.slowNoise] to the parameters built in [block], starting at [firstOctave].
+ * Sets [DualNoiseProvider.slowNoise] to the parameters built in [block], starting at [baseOctave].
+ *
+ * ```kotlin
+ * slowNoise(baseOctave = -10) { amplitudeModifiers(1.0, 1.0) }
+ * ```
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Noise_settings
  */
-fun DualNoiseProvider.slowNoise(firstOctave: Int = 0, block: Noise.() -> Unit = {}) {
-	slowNoise = Noise(firstOctave).apply(block)
+fun DualNoiseProvider.slowNoise(baseOctave: Int = 0, block: NoiseParameters.() -> Unit = {}) {
+	slowNoise = noiseParameters(baseOctave, block)
 }
 
 /**
- * Sets [DualNoiseProvider.slowNoise] to [firstOctave] and [amplitudes], one amplitude per successive octave.
+ * Sets [DualNoiseProvider.slowNoise] to [baseOctave] and [amplitudeModifiers], one modifier per octave, which also sets the octave count.
+ *
+ * ```kotlin
+ * slowNoise(-10, 1.0, 1.0)
+ * ```
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Noise_settings
  */
-fun DualNoiseProvider.slowNoise(firstOctave: Int, vararg amplitudes: Double) {
-	slowNoise = Noise(firstOctave, amplitudes.toList())
+fun DualNoiseProvider.slowNoise(baseOctave: Int, vararg amplitudeModifiers: Double) {
+	slowNoise = noiseParameters(baseOctave, *amplitudeModifiers)
 }

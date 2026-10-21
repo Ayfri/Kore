@@ -3,6 +3,7 @@ package io.github.ayfri.kore.features.worldgen
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
+import io.github.ayfri.kore.features.worldgen.noise.amplitudeModifiers
 import io.github.ayfri.kore.features.worldgen.noise.noise
 import io.github.ayfri.kore.features.worldgen.noisesettings.*
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.*
@@ -19,8 +20,8 @@ import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.noiseSettingsTests() {
 	val myNoise = noise("my_noise") {
-		firstOctave = 0
-		amplitudes = listOf(1.0, 1.0)
+		baseOctave = 0
+		amplitudeModifiers(1.0, 1.0)
 	}
 
 	noiseSettings("my_noise_settings") {

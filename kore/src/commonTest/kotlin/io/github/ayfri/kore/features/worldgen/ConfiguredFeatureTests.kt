@@ -121,7 +121,7 @@ fun DataPack.configuredFeatureTests() {
 		layers {
 			layer {
 				provider = dualNoiseProvider {
-					slowNoise(firstOctave = 1, 1.2)
+					slowNoise(baseOctave = 1, 1.2)
 					variety(1, 2)
 					scale = 1.0
 					slowScale = 1.0
@@ -161,8 +161,7 @@ fun DataPack.configuredFeatureTests() {
 						"type": "minecraft:dual_noise_provider",
 						"seed": 0,
 						"noise": {
-							"firstOctave": 0,
-							"amplitudes": []
+							"base_octave": 0
 						},
 						"scale": 1.0,
 						"variety": {
@@ -171,10 +170,11 @@ fun DataPack.configuredFeatureTests() {
 							"max_inclusive": 2
 						},
 						"slow_noise": {
-							"firstOctave": 1,
-							"amplitudes": [
+							"amplitude_modifiers": [
 								1.2
-							]
+							],
+							"base_octave": 1,
+							"octave_count": 1
 						},
 						"slow_scale": 1.0,
 						"states": [

@@ -4,6 +4,7 @@ import io.github.ayfri.kore.arguments.types.resources.BlockArgument
 import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.data.block.blockState
 import io.github.ayfri.kore.data.block.blockStateStone
+import io.github.ayfri.kore.features.worldgen.noise.NoiseParameters
 import kotlinx.serialization.Serializable
 
 /**
@@ -24,7 +25,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class NoiseThresholdProvider(
 	override var seed: Long = 0,
-	override var noise: Noise = Noise(),
+	override var noise: NoiseParameters = NoiseParameters(),
 	override var scale: Double = 0.0,
 	var threshold: Double = 0.0,
 	var highChance: Double = 0.0,

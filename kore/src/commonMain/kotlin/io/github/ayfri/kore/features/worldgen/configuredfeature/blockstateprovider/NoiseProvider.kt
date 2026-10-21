@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider
 
 import io.github.ayfri.kore.data.block.BlockState
+import io.github.ayfri.kore.features.worldgen.noise.NoiseParameters
 import kotlinx.serialization.Serializable
 
 /**
@@ -19,7 +20,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class NoiseProvider(
 	override var seed: Long = 0,
-	override var noise: Noise = Noise(),
+	override var noise: NoiseParameters = NoiseParameters(),
 	override var scale: Double = 0.0,
 	override var states: List<BlockState> = emptyList(),
 ) : BlockStateProvider(), NoiseBasedStateProvider, BlockStatesHolder
