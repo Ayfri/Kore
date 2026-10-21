@@ -5,7 +5,7 @@ nav-title: Noise
 description: Shape Minecraft terrain from Kotlin - noise definitions, density functions, noise routers and material rules, fully type-safe with Kore.
 keywords: minecraft datapack, kore, worldgen, noise settings, density function, noise router, material rule, terrain generation, perlin noise, octaves
 date-created: 2026-02-03
-date-modified: 2026-10-21
+date-modified: 2026-10-22
 routeOverride: /docs/data-driven/worldgen/noise
 ---
 
@@ -79,7 +79,8 @@ passed anywhere a `NoiseArgument` is expected.
 ## Density Functions
 
 Density functions are math nodes evaluated per position. Each one lives in its own file and holds exactly one node type, so composing them
-means referencing other density function files.
+means referencing other density function files. The game evaluates density functions and noises in single precision, so setups
+that depend on exact rounding can give slightly different terrain than the same values in double precision.
 
 Declare them inside a `densityFunctions { ... }` block, one builder call per file:
 
