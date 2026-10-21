@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.arguments
 
+import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.text
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
@@ -28,6 +29,7 @@ import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
 import io.github.ayfri.kore.utils.set
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
@@ -690,6 +692,32 @@ fun itemComponentsTests() {
 		repairCost(5)
 	}
 	repairCostTest.asString() assertsIs """minecraft:stone_sword[repair_cost=5]"""
+
+	val signTextFrontTest = Items.OAK_SIGN {
+		signTextFront(text(), text(), text(), text()) {
+			color = DyeColors.BLACK
+			hasGlowingText = false
+		}
+	}
+	signTextFrontTest.asString() assertsIs """minecraft:oak_sign[sign_text_front={color:"black",has_glowing_text:0b,messages:["","","",""]}]"""
+
+	val signTextBackTest = Items.OAK_SIGN {
+		signTextBack(text("Closed", Color.RED), text(), text("Back soon"), text()) {
+			filteredMessages = ChatComponents(text("***"), text("***"), text("***"), text("***"))
+			hasGlowingText = true
+		}
+	}
+	signTextBackTest.asString() assertsIs """minecraft:oak_sign[sign_text_back={filtered_messages:["***","***","***","***"],has_glowing_text:1b,messages:[{type:"text",color:"red",text:"Closed"},{type:"text",text:""},{type:"text",text:"Back soon"},{type:"text",text:""}]}]"""
+
+	val signTextBothSidesTest = Items.OAK_SIGN {
+		signTextFront(text("a"), text("b"), text("c"), text("d"))
+		signTextBack(text("e"), text("f"), text("g"), text("h"))
+	}
+	signTextBothSidesTest.asString() assertsIs """minecraft:oak_sign[sign_text_front={messages:["a","b","c","d"]},sign_text_back={messages:["e","f","g","h"]}]"""
+
+	shouldThrow<IllegalArgumentException> {
+		Items.OAK_SIGN { signTextFront(text("a"), text("b")) }
+	}
 
 	val storedEnchantmentsTest = stoneSword {
 		storedEnchantments(mapOf(Enchantments.SHARPNESS to 5))

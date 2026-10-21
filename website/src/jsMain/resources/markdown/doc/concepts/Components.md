@@ -193,6 +193,24 @@ val dust = Items.BLAZE_POWDER {
 }
 ```
 
+### Sign text
+
+`signTextFront` and `signTextBack` store the text of one side of a sign on an item, so a placed sign keeps it. Both take exactly 4
+lines, one component each (anything else throws), and share the same options in their block: `color` (a `DyeColors`),
+`hasGlowingText` and `filteredMessages`, the 4 lines shown to players with the profanity filter on.
+
+```kotlin
+val sign = Items.OAK_SIGN {
+	signTextFront(text("Shop", Color.GOLD), text(), text("Open"), text()) {
+		color = DyeColors.BLACK
+		hasGlowingText = true
+	}
+	signTextBack(text("Closed"), text(), text(), text())
+}
+```
+
+When a line is styled, every line is written as a compound, since a list holds a single type in NBT.
+
 ### Profile
 
 The profile component can be either a player profile or a texture-based profile.
@@ -360,6 +378,8 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `recipes(..)`                        | Unlocks specified recipes when this knowledge book is used.                                              |
 | `repairable(..)`                     | Defines which items can repair this item on an anvil.                                                    |
 | `repairCost(..)`                     | Sets the anvil repair cost penalty for combining or renaming.                                            |
+| `signTextBack(..) { .. }`            | Sets the text of the back of a sign, 4 lines with color, glow and filtered lines.                        |
+| `signTextFront(..) { .. }`           | Sets the text of the front of a sign, 4 lines with color, glow and filtered lines.                       |
 | `storedEnchantments(..)`             | Stores enchantments in an enchanted book for anvil application.                                          |
 | `sulfurCubeContent(..)`              | Stores the item held inside a sulfur cube.                                                               |
 | `suspiciousStewEffectsComponent(..)` | Defines the status effects applied when consuming suspicious stew.                                       |
