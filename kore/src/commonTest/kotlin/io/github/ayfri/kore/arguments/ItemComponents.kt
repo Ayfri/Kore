@@ -7,6 +7,8 @@ import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.consumable.applyEffects
 import io.github.ayfri.kore.arguments.components.consumable.playSound
 import io.github.ayfri.kore.arguments.components.consumable.teleportRandomly
+import io.github.ayfri.kore.arguments.components.data.ResolvableNumber
+import io.github.ayfri.kore.arguments.components.data.resolvableNumber
 import io.github.ayfri.kore.arguments.components.item.*
 import io.github.ayfri.kore.arguments.enums.DyeColors
 import io.github.ayfri.kore.arguments.maths.vec3
@@ -28,6 +30,7 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovid
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
+import io.github.ayfri.kore.utils.decodeFromSnbt
 import io.github.ayfri.kore.utils.set
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -187,6 +190,11 @@ fun itemComponentsTests() {
 	}
 	brewingFuelTest.asString() assertsIs """minecraft:blaze_powder[brewing_fuel={speed_multiplier:"minecraft:brewing/speed_default",uses:"minecraft:brewing/uses_default"}]"""
 
+	val numberBrewingFuelTest = Items.BLAZE_POWDER {
+		brewingFuel(speedMultiplier = 2f, uses = 20)
+	}
+	numberBrewingFuelTest.asString() assertsIs """minecraft:blaze_powder[brewing_fuel={speed_multiplier:2.0f,uses:20}]"""
+
 	val bucketEntityDataTest = Items.WATER_BUCKET {
 		bucketEntityData {
 			this["test"] = "test"
@@ -288,6 +296,38 @@ fun itemComponentsTests() {
 		compostable(NumberProviderArgument("my_layers", "my_pack"))
 	}
 	customCompostableTest.asString() assertsIs """minecraft:stone[compostable={layers:"my_pack:my_layers"}]"""
+
+	val intCompostableTest = stone {
+		compostable(1)
+	}
+	intCompostableTest.asString() assertsIs """minecraft:stone[compostable={layers:1}]"""
+
+	val floatCompostableTest = stone {
+		compostable(0.5f)
+	}
+	floatCompostableTest.asString() assertsIs """minecraft:stone[compostable={layers:0.5f}]"""
+
+	val numberCookingFuelTest = Items.COAL {
+		cookingFuel(burnTime = 200, speedMultiplier = 1.5f)
+	}
+	numberCookingFuelTest.asString() assertsIs """minecraft:coal[cooking_fuel={burn_time:200,speed_multiplier:1.5f}]"""
+
+	val intCookingFuelTest = stone {
+		cookingFuel(200)
+	}
+	intCookingFuelTest.asString() assertsIs """minecraft:stone[cooking_fuel={burn_time:200,speed_multiplier:"minecraft:cooking/speed_default"}]"""
+
+	val mixedCookingFuelTest = stone {
+		cookingFuel(resolvableNumber(NumberProviders.Cooking.TIME_COAL), resolvableNumber(2))
+	}
+	mixedCookingFuelTest.asString() assertsIs """minecraft:stone[cooking_fuel={burn_time:"minecraft:cooking/time_coal",speed_multiplier:2}]"""
+
+	decodeFromSnbt<CookingFuelComponent>("{burn_time:200,speed_multiplier:1.5f}") assertsIs
+		CookingFuelComponent(resolvableNumber(200), resolvableNumber(1.5f))
+	val decodedCookingFuel = decodeFromSnbt<CookingFuelComponent>("{burn_time:\"minecraft:cooking/time_coal\",speed_multiplier:2}")
+	decodedCookingFuel.burnTime.id!!.asString() assertsIs "minecraft:cooking/time_coal"
+	decodedCookingFuel.speedMultiplier assertsIs resolvableNumber(2)
+	decodeFromSnbt<ResolvableNumber>("1.5f") assertsIs resolvableNumber(1.5f)
 
 	val cookingFuelTest = Items.OAK_BOAT {
 		cookingFuel(NumberProviders.Cooking.TIME_BOATS)

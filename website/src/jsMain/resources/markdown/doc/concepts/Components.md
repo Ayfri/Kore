@@ -155,12 +155,17 @@ Options of a rule:
 
 ### Compostable
 
-`compostable` makes an item usable in a composter. It takes the ID of a [number provider file](/docs/data-driven/loot-tables#number-provider-files)
-giving the number of layers added, either a vanilla one from `NumberProviders.Compostable` or one of your own.
+`compostable` makes an item usable in a composter. It takes the number of layers added as a plain number (`Int` or `Float`) or as the ID
+of a [number provider file](/docs/data-driven/loot-tables#number-provider-files), either a vanilla one from `NumberProviders.Compostable`
+or one of your own.
 
 ```kotlin
 val seeds = Items.WHEAT_SEEDS {
 	compostable(NumberProviders.Compostable.LOW)
+}
+
+val pumpkin = Items.PUMPKIN {
+	compostable(1)
 }
 
 val layers = numberProvider("my_layers", 1f)
@@ -172,10 +177,11 @@ val sapling = Items.OAK_SAPLING {
 ### Cooking and brewing fuel
 
 `cookingFuel` makes an item burn in furnaces, smokers and blast furnaces, `brewingFuel` makes it power a brewing stand. Their fields
-are IDs of [number provider files](/docs/data-driven/loot-tables#number-provider-files), either vanilla ones from
+are plain numbers or IDs of [number provider files](/docs/data-driven/loot-tables#number-provider-files), either vanilla ones from
 `NumberProviders.Cooking` / `NumberProviders.Brewing` or your own. `cookingFuel` takes the burn time in ticks and a cooking speed
 (vanilla `NumberProviders.Cooking.SPEED_DEFAULT` when omitted), `brewingFuel` takes both a speed and the number of brews, which
-have no default. There is no `#brewing_fuel` item tag: an item is a brewing fuel through this component.
+have no default. An `Int` prints without decimals and a `Float` with them, and `resolvableNumber(...)` wraps either form or an ID,
+to mix numbers and IDs in one component. There is no `#brewing_fuel` item tag: an item is a brewing fuel through this component.
 
 ```kotlin
 val stick = Items.STICK {
@@ -188,8 +194,20 @@ val charcoal = Items.CHARCOAL {
 	cookingFuel(burnTime, speed)
 }
 
+val coal = Items.COAL {
+	cookingFuel(burnTime = 200, speedMultiplier = 1.5f)
+}
+
+val mixed = Items.BLAZE_ROD {
+	cookingFuel(resolvableNumber(NumberProviders.Cooking.TIME_COAL), resolvableNumber(2))
+}
+
 val dust = Items.BLAZE_POWDER {
 	brewingFuel(NumberProviders.Brewing.SPEED_DEFAULT, NumberProviders.Brewing.USES_DEFAULT)
+}
+
+val crystal = Items.AMETHYST_SHARD {
+	brewingFuel(speedMultiplier = 2f, uses = 20)
 }
 ```
 
@@ -351,17 +369,17 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `blockState(..)`                     | Sets block state properties (e.g., facing, powered) when the item is placed.                             |
 | `blockTransformer { .. }`            | Turns the block the item is used on into another one (strip logs, scrape or wax copper, till dirt).      |
 | `breakSound(..)`                     | Specifies the sound played when the item breaks from durability loss.                                    |
-| `brewingFuel(..)`                    | Makes the item a brewing stand fuel, with a speed and a number of brews from number provider files.      |
+| `brewingFuel(..)`                    | Makes the item a brewing stand fuel, with a speed and a number of brews, as numbers or provider files.   |
 | `bucketEntityData(..)`               | Stores entity data for mobs captured in buckets (e.g., fish, axolotl).                                   |
 | `bundleContents(..)`                 | Defines the items stored inside a bundle.                                                                |
 | `canBreak(..)`                       | Restricts which blocks this item can break in Adventure mode.                                            |
 | `canPlaceOn(..)`                     | Restricts which blocks this item can be placed on in Adventure mode.                                     |
 | `chargedProjectiles(..)`             | Stores projectiles loaded into a crossbow.                                                               |
-| `compostable(..)`                    | Makes the item usable in a composter, adding the layers a number provider file gives.                    |
+| `compostable(..)`                    | Makes the item usable in a composter, adding the layers of a number or a number provider file.           |
 | `consumable(..) { .. }`              | Makes the item consumable with configurable eating time, animation, sound, and effects.                  |
 | `container(..)`                      | Stores items inside a container item (e.g., shulker box).                                                |
 | `containerLoot(..)`                  | References a loot table to generate container contents when opened.                                      |
-| `cookingFuel(..)`                    | Makes the item a furnace fuel, with a burn time and a cooking speed from number provider files.          |
+| `cookingFuel(..)`                    | Makes the item a furnace fuel, with a burn time and a cooking speed, as numbers or provider files.       |
 | `customData(..)`                     | Attaches arbitrary custom NBT data for use by datapacks or mods.                                         |
 | `customModelData(..)`                | Provides numeric values for custom item model selection in resource packs.                               |
 | `customName(..)`                     | Sets a custom display name for the item (supports text components).                                      |
