@@ -1071,7 +1071,7 @@ dataPack("legendary_items") {
 - [Loot Tables](/docs/data-driven/loot-tables) - Use item modifiers in loot tables
 - [Commands](/docs/commands/commands) - Using the `/item` command
 - [Villager Trades](/docs/data-driven/villager-trades) - Apply item modifiers to villager trade outputs via
-  `givenItemModifiers`
+  `givenItemModifier`
 
 ### External Resources
 

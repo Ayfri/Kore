@@ -3,10 +3,13 @@ package io.github.ayfri.kore.features
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
+import io.github.ayfri.kore.features.itemmodifiers.functions.explosionDecay
 import io.github.ayfri.kore.features.itemmodifiers.functions.limitCount
+import io.github.ayfri.kore.features.itemmodifiers.functions.reference
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.features.villagertrades.*
 import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
 
@@ -36,7 +39,7 @@ fun DataPack.villagerTradeTests() {
 		wants(Items.WHEAT, count = 10)
 		additionalWants(Items.PAPER, count = 1)
 		gives(Items.EMERALD)
-		givenItemModifiers {
+		givenItemModifier {
 			limitCount(2)
 		}
 		maxUses = constant(3f)
@@ -48,7 +51,7 @@ fun DataPack.villagerTradeTests() {
 				"id": "minecraft:paper",
 				"count": 1
 			},
-			"given_item_modifiers": {
+			"given_item_modifier": {
 				"type": "minecraft:limit_count",
 				"limit": 2
 			},
@@ -59,6 +62,55 @@ fun DataPack.villagerTradeTests() {
 			"wants": {
 				"id": "minecraft:wheat",
 				"count": 10
+			}
+		}
+	""".trimIndent()
+
+	villagerTrade("trade_with_two_modifiers") {
+		wants(Items.EMERALD)
+		gives(Items.IRON_BOOTS)
+		givenItemModifier {
+			limitCount(2)
+			explosionDecay()
+		}
+	}
+
+	villagerTrades.last() assertsIs """
+		{
+			"given_item_modifier": [
+				{
+					"type": "minecraft:limit_count",
+					"limit": 2
+				},
+				{
+					"type": "minecraft:explosion_decay"
+				}
+			],
+			"gives": {
+				"id": "minecraft:iron_boots"
+			},
+			"wants": {
+				"id": "minecraft:emerald"
+			}
+		}
+	""".trimIndent()
+
+	villagerTrade("trade_with_modifier_id") {
+		wants(Items.EMERALD)
+		gives(Items.IRON_BOOTS)
+		givenItemModifier {
+			reference(ItemModifierArgument("enchant_boots", "my_pack"))
+		}
+	}
+
+	villagerTrades.last() assertsIs """
+		{
+			"given_item_modifier": "my_pack:enchant_boots",
+			"gives": {
+				"id": "minecraft:iron_boots"
+			},
+			"wants": {
+				"id": "minecraft:emerald"
 			}
 		}
 	""".trimIndent()

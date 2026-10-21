@@ -22,7 +22,7 @@ import kotlinx.serialization.Transient
  * Data-driven villager trade definition.
  *
  * Defines a single trade offer: the item(s) the villager wants, the item it gives,
- * optional item modifier functions applied to the result, use limits, and XP rewards.
+ * an optional item modifier applied to the result, use limits, and XP rewards.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/villager-trades
  * Minecraft Wiki: https://minecraft.wiki/w/Villager_trade_definition
@@ -33,7 +33,7 @@ data class VillagerTrade(
 	override var fileName: String = "villager_trade",
 	var additionalWants: ItemStack? = null,
 	var doubleTradePriceEnchantments: InlinableList<EnchantmentOrTagArgument>? = null,
-	var givenItemModifiers: InlinableItemModifier? = null,
+	var givenItemModifier: InlinableItemModifier? = null,
 	var gives: ItemStack,
 	var maxUses: NumberProvider? = null,
 	var merchantPredicate: PredicateCondition? = null,
@@ -69,9 +69,12 @@ fun VillagerTrade.additionalWants(id: ItemArgument, count: Short? = null, block:
 	additionalWants = itemStack(id, count, block)
 }
 
-/** Set item modifier functions applied to the output item. */
-fun VillagerTrade.givenItemModifiers(block: ItemModifier.() -> Unit) {
-	givenItemModifiers = ItemModifier().apply(block)
+/**
+ * Set the item modifier applied to the output item: one function is written as an object, several as a list, and an
+ * item modifier ID through `reference(...)`.
+ */
+fun VillagerTrade.givenItemModifier(block: ItemModifier.() -> Unit) {
+	givenItemModifier = ItemModifier().apply(block)
 }
 
 /** Set the item the villager offers in return. */

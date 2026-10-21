@@ -5,7 +5,7 @@ nav-title: Villager Trades
 description: Define custom villager trades and trade sets for Minecraft 26.1+ with Kore's type-safe Kotlin DSL. Configure items, prices, demand, and profession-level trade tables without hand-writing JSON.
 keywords: minecraft villager trade, custom villager trades, datapack trade_set, datapack villager_trade, kore villager trades, minecraft merchant trades, custom trades datapack, profession trades, villager trade generator
 date-created: 2026-06-15
-date-modified: 2026-08-20
+date-modified: 2026-10-21
 routeOverride: /docs/data-driven/villager-trades
 ---
 
@@ -97,7 +97,7 @@ All fields are optional except `wants` and `gives`, which must be set before the
 |--------------------------------|--------------------------------------------|-----------------------------------------------------------------------------------|
 | `additionalWants`              | `ItemStack?`                               | Second item slot the villager requests alongside `wants`.                         |
 | `doubleTradePriceEnchantments` | `InlinableList<EnchantmentOrTagArgument>?` | Enchantments on the player's item that double the trade cost.                     |
-| `givenItemModifiers`           | `InlinableItemModifier?`                   | Item modifier functions applied to the output item before delivery.               |
+| `givenItemModifier`            | `InlinableItemModifier?`                   | Item modifier applied to the output item before delivery.                         |
 | `gives`                        | `ItemStack?`                               | Item the villager offers in return. **Required.**                                 |
 | `maxUses`                      | `NumberProvider?`                          | Maximum uses before the trade locks. Unlocks when the villager restocks.          |
 | `merchantPredicate`            | `PredicateCondition?`                      | Condition checked against the merchant entity; trade only appears when it passes. |
@@ -107,7 +107,7 @@ All fields are optional except `wants` and `gives`, which must be set before the
 
 ### Applying Item Modifiers to the Output
 
-Use `givenItemModifiers` to run item modifier functions on the item the villager gives.
+Use `givenItemModifier` to run an item modifier on the item the villager gives.
 This is how you add random enchantments, custom lore, or any other post-processing:
 
 ```kotlin
@@ -115,11 +115,20 @@ datapack.villagerTrade("random_enchanted_book") {
     wants(Items.EMERALD, count = 10)
     additionalWants(Items.BOOK)
     gives(Items.ENCHANTED_BOOK)
-    givenItemModifiers {
+    givenItemModifier {
         enchantRandomly()
     }
     maxUses = constant(1f)
     xp = constant(15f)
+}
+```
+
+One function is written as an object, several functions as a list. An item modifier file is applied by its ID with
+`reference`:
+
+```kotlin
+givenItemModifier {
+    reference(ItemModifierArgument("enchant_boots", "mypack"))
 }
 ```
 
