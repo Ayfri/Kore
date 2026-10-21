@@ -189,7 +189,7 @@ val charcoal = Items.CHARCOAL {
 }
 
 val dust = Items.BLAZE_POWDER {
-	brewingFuel(NumberProviders.Cooking.SPEED_DEFAULT, NumberProviders.Brewing.USES_DEFAULT)
+	brewingFuel(NumberProviders.Brewing.SPEED_DEFAULT, NumberProviders.Brewing.USES_DEFAULT)
 }
 ```
 

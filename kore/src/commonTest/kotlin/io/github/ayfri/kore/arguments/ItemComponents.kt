@@ -183,9 +183,9 @@ fun itemComponentsTests() {
 	breakSoundTest.asString() assertsIs """minecraft:diamond_sword[break_sound="minecraft:ambient.cave"]"""
 
 	val brewingFuelTest = Items.BLAZE_POWDER {
-		brewingFuel(NumberProviders.Cooking.SPEED_DEFAULT, NumberProviders.Brewing.USES_DEFAULT)
+		brewingFuel(NumberProviders.Brewing.SPEED_DEFAULT, NumberProviders.Brewing.USES_DEFAULT)
 	}
-	brewingFuelTest.asString() assertsIs """minecraft:blaze_powder[brewing_fuel={speed_multiplier:"minecraft:cooking/speed_default",uses:"minecraft:brewing/uses_default"}]"""
+	brewingFuelTest.asString() assertsIs """minecraft:blaze_powder[brewing_fuel={speed_multiplier:"minecraft:brewing/speed_default",uses:"minecraft:brewing/uses_default"}]"""
 
 	val bucketEntityDataTest = Items.WATER_BUCKET {
 		bucketEntityData {

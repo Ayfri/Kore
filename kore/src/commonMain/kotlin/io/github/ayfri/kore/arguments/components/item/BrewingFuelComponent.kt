@@ -23,7 +23,7 @@ data class BrewingFuelComponent(
  * Makes the item a brewing stand fuel brewing [uses] times, at the speed [speedMultiplier] gives.
  *
  * ```
- * brewingFuel(NumberProviders.Cooking.SPEED_DEFAULT, NumberProviders.Brewing.USES_DEFAULT)
+ * brewingFuel(NumberProviders.Brewing.SPEED_DEFAULT, NumberProviders.Brewing.USES_DEFAULT)
  * ```
  */
 fun ComponentsScope.brewingFuel(speedMultiplier: NumberProviderArgument, uses: NumberProviderArgument) =
