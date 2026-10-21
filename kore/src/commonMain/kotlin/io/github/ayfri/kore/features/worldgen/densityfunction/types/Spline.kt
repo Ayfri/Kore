@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.worldgen.densityfunction.types
 
-import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunction
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionsScope
 import io.github.ayfri.kore.generated.arguments.worldgen.types.DensityFunctionArgument
 import io.github.ayfri.kore.serializers.EitherInlineSerializer
@@ -72,11 +71,7 @@ fun DensityFunctionsScope.spline(
 	fileName: String,
 	coordinate: DensityFunctionArgument,
 	block: MutableList<SplinePoint>.() -> Unit = {},
-): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, Spline(SplineValue(spline = CubicSpline(coordinate, buildList(block)))))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+) = register(fileName, Spline(SplineValue(spline = CubicSpline(coordinate, buildList(block)))))
 
 /**
  * Adds a `spline` density function to the data pack, always outputting [constant].
@@ -86,11 +81,7 @@ fun DensityFunctionsScope.spline(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/noise
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.spline(fileName: String, constant: Float): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, Spline(SplineValue(constant = constant)))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+fun DensityFunctionsScope.spline(fileName: String, constant: Float) = register(fileName, Spline(SplineValue(constant = constant)))
 
 /** Appends a control point holding the constant [value]. */
 fun MutableList<SplinePoint>.point(location: Float, value: Float, derivative: Float = 0.0f) =

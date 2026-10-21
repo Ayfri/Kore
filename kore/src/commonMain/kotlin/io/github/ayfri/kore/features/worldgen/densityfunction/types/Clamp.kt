@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.worldgen.densityfunction.types
 
-import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunction
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionOrDouble
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionsScope
 import io.github.ayfri.kore.features.worldgen.densityfunction.densityFunctionOrDouble
@@ -27,11 +26,8 @@ data class Clamp(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.clamp(fileName: String, constant: Double, min: Double = 0.0, max: Double = 0.0): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, Clamp(densityFunctionOrDouble(constant), min, max))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+fun DensityFunctionsScope.clamp(fileName: String, constant: Double, min: Double = 0.0, max: Double = 0.0) =
+	register(fileName, Clamp(densityFunctionOrDouble(constant), min, max))
 
 /**
  * Adds a `clamp` density function to the data pack, restricting [reference] between [min] and [max].
@@ -46,8 +42,4 @@ fun DensityFunctionsScope.clamp(
 	reference: DensityFunctionArgument,
 	min: Double = 0.0,
 	max: Double = 0.0,
-): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, Clamp(densityFunctionOrDouble(reference), min, max))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+) = register(fileName, Clamp(densityFunctionOrDouble(reference), min, max))

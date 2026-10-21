@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.worldgen.densityfunction.types
 
-import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunction
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionOrDouble
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionsScope
 import io.github.ayfri.kore.features.worldgen.densityfunction.densityFunctionOrDouble
@@ -33,11 +32,7 @@ data class RangeChoice(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.rangeChoice(fileName: String, block: RangeChoice.() -> Unit): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, RangeChoice().also(block))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+fun DensityFunctionsScope.rangeChoice(fileName: String, block: RangeChoice.() -> Unit) = register(fileName, RangeChoice().also(block))
 
 /** Sets [RangeChoice.input] to [constant]. */
 fun RangeChoice.input(constant: Double) = run { input = densityFunctionOrDouble(constant) }

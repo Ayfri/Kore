@@ -1,8 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.densityfunction.types
 
-import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunction
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionsScope
-import io.github.ayfri.kore.generated.arguments.worldgen.types.DensityFunctionArgument
 import kotlinx.serialization.Serializable
 
 /**
@@ -34,11 +32,7 @@ fun DensityFunctionsScope.yClampedGradient(
 	toY: Int = 0,
 	fromValue: Double = 0.0,
 	toValue: Double = 0.0,
-): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, YClampedGradient(fromY, toY, fromValue, toValue))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+) = register(fileName, YClampedGradient(fromY, toY, fromValue, toValue))
 
 /**
  * Adds a `y_clamped_gradient` density function to the data pack, linearly interpolating between
@@ -50,8 +44,5 @@ fun DensityFunctionsScope.yClampedGradient(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.yClampedGradient(fileName: String, block: YClampedGradient.() -> Unit): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, YClampedGradient().apply(block))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+fun DensityFunctionsScope.yClampedGradient(fileName: String, block: YClampedGradient.() -> Unit) =
+	register(fileName, YClampedGradient().apply(block))

@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.worldgen.densityfunction.types
 
-import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunction
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionOrDouble
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionsScope
 import io.github.ayfri.kore.features.worldgen.densityfunction.densityFunctionOrDouble
@@ -26,11 +25,8 @@ data class BlendDensity(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.blendDensity(fileName: String, constant: Double): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, BlendDensity(densityFunctionOrDouble(constant)))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+fun DensityFunctionsScope.blendDensity(fileName: String, constant: Double) =
+	register(fileName, BlendDensity(densityFunctionOrDouble(constant)))
 
 /**
  * Adds a `blend_density` density function to the data pack, blending [reference] across chunk generation
@@ -41,8 +37,5 @@ fun DensityFunctionsScope.blendDensity(fileName: String, constant: Double): Dens
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.blendDensity(fileName: String, reference: DensityFunctionArgument): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, BlendDensity(densityFunctionOrDouble(reference)))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+fun DensityFunctionsScope.blendDensity(fileName: String, reference: DensityFunctionArgument) =
+	register(fileName, BlendDensity(densityFunctionOrDouble(reference)))

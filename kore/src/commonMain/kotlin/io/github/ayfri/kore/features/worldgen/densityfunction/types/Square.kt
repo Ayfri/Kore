@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.worldgen.densityfunction.types
 
-import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunction
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionOrDouble
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionsScope
 import io.github.ayfri.kore.features.worldgen.densityfunction.densityFunctionOrDouble
@@ -25,11 +24,7 @@ data class Square(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.square(fileName: String, constant: Double): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, Square(densityFunctionOrDouble(constant)))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+fun DensityFunctionsScope.square(fileName: String, constant: Double) = register(fileName, Square(densityFunctionOrDouble(constant)))
 
 /**
  * Adds a `square` density function to the data pack, outputting [reference] raised to the power of 2 (x^2).
@@ -39,8 +34,5 @@ fun DensityFunctionsScope.square(fileName: String, constant: Double): DensityFun
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.square(fileName: String, reference: DensityFunctionArgument): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, Square(densityFunctionOrDouble(reference)))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+fun DensityFunctionsScope.square(fileName: String, reference: DensityFunctionArgument) =
+	register(fileName, Square(densityFunctionOrDouble(reference)))

@@ -1,8 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.densityfunction.types
 
-import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunction
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionsScope
-import io.github.ayfri.kore.generated.arguments.worldgen.types.DensityFunctionArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.NoiseArgument
 import kotlinx.serialization.Serializable
 
@@ -32,8 +30,4 @@ fun DensityFunctionsScope.noise(
 	noise: NoiseArgument,
 	xzScale: Double = 0.0,
 	yScale: Double = 0.0,
-): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, Noise(noise, xzScale, yScale))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+) = register(fileName, Noise(noise, xzScale, yScale))

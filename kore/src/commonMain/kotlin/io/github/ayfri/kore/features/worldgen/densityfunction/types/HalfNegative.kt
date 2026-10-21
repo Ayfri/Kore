@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.worldgen.densityfunction.types
 
-import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunction
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionOrDouble
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionsScope
 import io.github.ayfri.kore.features.worldgen.densityfunction.densityFunctionOrDouble
@@ -26,11 +25,8 @@ data class HalfNegative(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.halfNegative(fileName: String, constant: Double): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, HalfNegative(densityFunctionOrDouble(constant)))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+fun DensityFunctionsScope.halfNegative(fileName: String, constant: Double) =
+	register(fileName, HalfNegative(densityFunctionOrDouble(constant)))
 
 /**
  * Adds a `half_negative` density function to the data pack, returning half of [reference] when it's
@@ -41,8 +37,5 @@ fun DensityFunctionsScope.halfNegative(fileName: String, constant: Double): Dens
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.halfNegative(fileName: String, reference: DensityFunctionArgument): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, HalfNegative(densityFunctionOrDouble(reference)))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+fun DensityFunctionsScope.halfNegative(fileName: String, reference: DensityFunctionArgument) =
+	register(fileName, HalfNegative(densityFunctionOrDouble(reference)))

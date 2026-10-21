@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.worldgen.densityfunction.types
 
-import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunction
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionOrDouble
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionsScope
 import io.github.ayfri.kore.features.worldgen.densityfunction.densityFunctionOrDouble
@@ -26,11 +25,8 @@ data class CacheAllInCell(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.cacheAllInCell(fileName: String, constant: Double): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, CacheAllInCell(densityFunctionOrDouble(constant)))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+fun DensityFunctionsScope.cacheAllInCell(fileName: String, constant: Double) =
+	register(fileName, CacheAllInCell(densityFunctionOrDouble(constant)))
 
 /**
  * Adds a `cache_all_in_cell` density function to the data pack, caching [reference] for the duration of the
@@ -41,8 +37,5 @@ fun DensityFunctionsScope.cacheAllInCell(fileName: String, constant: Double): De
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.cacheAllInCell(fileName: String, reference: DensityFunctionArgument): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, CacheAllInCell(densityFunctionOrDouble(reference)))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+fun DensityFunctionsScope.cacheAllInCell(fileName: String, reference: DensityFunctionArgument) =
+	register(fileName, CacheAllInCell(densityFunctionOrDouble(reference)))

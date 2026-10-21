@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.worldgen.densityfunction.types
 
-import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunction
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionsScope
 import io.github.ayfri.kore.generated.arguments.worldgen.types.DensityFunctionArgument
 import kotlinx.serialization.Serializable
@@ -23,8 +22,4 @@ data class Invert(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.invert(fileName: String, argument: DensityFunctionArgument): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, Invert(argument))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+fun DensityFunctionsScope.invert(fileName: String, argument: DensityFunctionArgument) = register(fileName, Invert(argument))

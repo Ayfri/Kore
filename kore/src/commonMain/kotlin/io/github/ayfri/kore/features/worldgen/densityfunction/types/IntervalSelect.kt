@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.worldgen.densityfunction.types
 
-import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunction
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionOrDouble
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionsScope
 import io.github.ayfri.kore.features.worldgen.densityfunction.densityFunctionOrDouble
@@ -32,11 +31,8 @@ data class IntervalSelect(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.intervalSelect(fileName: String, block: IntervalSelect.() -> Unit = {}): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, IntervalSelect().also(block))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+fun DensityFunctionsScope.intervalSelect(fileName: String, block: IntervalSelect.() -> Unit = {}) =
+	register(fileName, IntervalSelect().also(block))
 
 /** Sets [IntervalSelect.input] to [constant]. */
 fun IntervalSelect.input(constant: Double) = run { input = densityFunctionOrDouble(constant) }

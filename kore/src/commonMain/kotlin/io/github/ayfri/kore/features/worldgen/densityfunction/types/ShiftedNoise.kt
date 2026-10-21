@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.worldgen.densityfunction.types
 
-import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunction
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionOrDouble
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionsScope
 import io.github.ayfri.kore.features.worldgen.densityfunction.densityFunctionOrDouble
@@ -35,11 +34,8 @@ data class ShiftedNoise(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.shiftedNoise(fileName: String, noise: NoiseArgument, block: ShiftedNoise.() -> Unit = {}): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, ShiftedNoise(noise).apply(block))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+fun DensityFunctionsScope.shiftedNoise(fileName: String, noise: NoiseArgument, block: ShiftedNoise.() -> Unit = {}) =
+	register(fileName, ShiftedNoise(noise).apply(block))
 
 /** Sets [ShiftedNoise.shiftX] to [constant]. */
 fun ShiftedNoise.shiftX(constant: Double) = run { shiftX = densityFunctionOrDouble(constant) }

@@ -1,8 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.densityfunction.types
 
-import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunction
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionsScope
-import io.github.ayfri.kore.generated.arguments.worldgen.types.DensityFunctionArgument
 import kotlinx.serialization.Serializable
 
 /**
@@ -37,11 +35,7 @@ fun DensityFunctionsScope.oldBlendedNoise(
 	xzFactor: Double = 0.0,
 	yFactor: Double = 0.0,
 	smearScaleMultiplier: Double = 0.0,
-): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, OldBlendedNoise(xzScale, yScale, xzFactor, yFactor, smearScaleMultiplier))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+) = register(fileName, OldBlendedNoise(xzScale, yScale, xzFactor, yFactor, smearScaleMultiplier))
 
 /**
  * Adds an `old_blended_noise` density function to the data pack, sampling the legacy blended noise used
@@ -52,8 +46,5 @@ fun DensityFunctionsScope.oldBlendedNoise(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.oldBlendedNoise(fileName: String, block: OldBlendedNoise.() -> Unit): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, OldBlendedNoise().apply(block))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+fun DensityFunctionsScope.oldBlendedNoise(fileName: String, block: OldBlendedNoise.() -> Unit) =
+	register(fileName, OldBlendedNoise().apply(block))

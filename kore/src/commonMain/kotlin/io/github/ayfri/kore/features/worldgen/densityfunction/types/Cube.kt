@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.worldgen.densityfunction.types
 
-import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunction
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionOrDouble
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionsScope
 import io.github.ayfri.kore.features.worldgen.densityfunction.densityFunctionOrDouble
@@ -25,11 +24,7 @@ data class Cube(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.cube(fileName: String, constant: Double): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, Cube(densityFunctionOrDouble(constant)))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+fun DensityFunctionsScope.cube(fileName: String, constant: Double) = register(fileName, Cube(densityFunctionOrDouble(constant)))
 
 /**
  * Adds a `cube` density function to the data pack, outputting [reference] raised to the power of 3 (x^3).
@@ -39,8 +34,5 @@ fun DensityFunctionsScope.cube(fileName: String, constant: Double): DensityFunct
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.cube(fileName: String, reference: DensityFunctionArgument): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, Cube(densityFunctionOrDouble(reference)))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+fun DensityFunctionsScope.cube(fileName: String, reference: DensityFunctionArgument) =
+	register(fileName, Cube(densityFunctionOrDouble(reference)))

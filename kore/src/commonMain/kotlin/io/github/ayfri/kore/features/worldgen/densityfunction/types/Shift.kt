@@ -1,8 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.densityfunction.types
 
-import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunction
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionsScope
-import io.github.ayfri.kore.generated.arguments.worldgen.types.DensityFunctionArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.NoiseArgument
 import kotlinx.serialization.Serializable
 
@@ -25,8 +23,4 @@ data class Shift(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.shift(fileName: String, argument: NoiseArgument): DensityFunctionArgument {
-	val densityFunction = DensityFunction(fileName, Shift(argument))
-	dp.densityFunctions += densityFunction
-	return DensityFunctionArgument(fileName, densityFunction.namespace ?: dp.name)
-}
+fun DensityFunctionsScope.shift(fileName: String, argument: NoiseArgument) = register(fileName, Shift(argument))
