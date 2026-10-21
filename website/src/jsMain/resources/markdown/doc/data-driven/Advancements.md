@@ -429,12 +429,14 @@ advancement("rewarding_advancement") {
 
 ### Reward Properties
 
-| Property     | Type                       | Description                       |
-|--------------|----------------------------|-----------------------------------|
-| `experience` | `Int?`                     | Experience points awarded         |
-| `function`   | `FunctionArgument?`        | Function to execute on completion |
-| `loot`       | `List<LootTableArgument>?` | Loot tables to roll               |
-| `recipes`    | `List<RecipeArgument>?`    | Recipes to unlock                 |
+| Property     | Type                                     | Description                                                  |
+|--------------|------------------------------------------|--------------------------------------------------------------|
+| `experience` | `Int?`                                   | Experience points awarded                                    |
+| `function`   | `FunctionArgument?`                      | Function to execute on completion                            |
+| `loot`       | `InlinableList<LootTableOrTagArgument>?` | Loot tables or `#tag` to roll, one is written without a list |
+| `recipes`    | `List<RecipeArgument>?`                  | Recipes to unlock                                            |
+
+`loots(...)` takes loot table IDs and loot table tags. Recipe tags aren't possible because the game doesn't load tags for recipes.
 
 ### Function Rewards
 

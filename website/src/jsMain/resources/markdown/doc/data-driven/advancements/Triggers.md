@@ -304,22 +304,19 @@ consumeItem("eat_apple") {
 ### `crafterRecipeCrafted`
 
 **Description:**  
-Triggers when a recipe is crafted.
+Triggers when a crafter crafts a recipe.
 
 **Properties:**
 
-- `recipeId`: The ID of the crafted recipe.
+- `recipes`: The crafted recipes, one or several recipe IDs, passed after the criterion name. Recipe tags aren't possible because the game doesn't load tags for recipes.
 - `ingredients`: The ingredients used in the recipe.
 
 **Example:**
 
 ```kotlin
-crafterRecipeCrafted("craft_diamond") {
-	recipeId = Recipes.DIAMOND
-	ingredient(Items.DIAMOND) {
-		components {
-			damage(0)
-		}
+crafterRecipeCrafted("crafter_crafted_crafter", Recipes.CRAFTER) {  // "recipes": "minecraft:crafter"
+	ingredient {
+		items(Items.DIAMOND)
 	}
 }
 ```
@@ -953,12 +950,18 @@ Triggers when container loot is generated.
 
 **Properties:**
 
-- `lootTable`: The loot table used to generate the container loot.
+- `lootTables`: The loot tables used to generate the container loot, loot table IDs or loot table tags, passed after the criterion name.
 
 **Example:**
 
 ```kotlin
-playerGeneratesContainerLoot("find_treasure", LootTables.Chests.BURIED_TREASURE)
+playerGeneratesContainerLoot("find_treasure", LootTables.Chests.BURIED_TREASURE) {}  // "loot_tables": "minecraft:chests/buried_treasure"
+
+playerGeneratesContainerLoot(
+	"dig_pyramid",
+	LootTables.Archaeology.DESERT_PYRAMID,
+	LootTables.Archaeology.DESERT_WELL,
+) {}  // "loot_tables": ["minecraft:archaeology/desert_pyramid", "minecraft:archaeology/desert_well"]
 ```
 
 ---
@@ -1070,18 +1073,15 @@ Triggers when a recipe is crafted.
 
 **Properties:**
 
-- `recipeId`: The ID of the crafted recipe.
+- `recipes`: The crafted recipes, one or several recipe IDs, passed after the criterion name. Recipe tags aren't possible because the game doesn't load tags for recipes.
 - `ingredients`: The ingredients used in the recipe.
 
 **Example:**
 
 ```kotlin
-recipeCrafted("craft_diamond") {
-	recipeId = Recipes.DIAMOND
-	ingredient(Items.DIAMOND) {
-		components {
-			damage(0)
-		}
+recipeCrafted("craft_pickaxe", Recipes.DIAMOND_PICKAXE, Recipes.IRON_PICKAXE) {
+	ingredient {
+		items(Items.DIAMOND)
 	}
 }
 ```
@@ -1095,12 +1095,13 @@ Triggers when a recipe is unlocked.
 
 **Properties:**
 
-- `recipe`: The recipe that was unlocked.
+- `recipes`: The recipes that unlock it, one or several recipe IDs, passed after the criterion name. Recipe tags aren't possible because the game doesn't load tags for recipes.
 
 **Example:**
 
 ```kotlin
-recipeUnlocked("unlock_recipe", Recipes.DIAMOND)
+recipeUnlocked("unlock_recipe", Recipes.DIAMOND)  // "recipes": "minecraft:diamond"
+recipeUnlocked("unlock_boats", Recipes.OAK_BOAT, Recipes.BIRCH_BOAT)
 ```
 
 ---

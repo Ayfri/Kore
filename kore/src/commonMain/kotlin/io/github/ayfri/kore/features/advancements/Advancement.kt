@@ -12,8 +12,9 @@ import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.sub.EntityPredicate
 import io.github.ayfri.kore.generated.arguments.types.AdvancementArgument
-import io.github.ayfri.kore.generated.arguments.types.LootTableArgument
+import io.github.ayfri.kore.generated.arguments.LootTableOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
+import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
@@ -211,7 +212,7 @@ fun Advancement.rewards(block: AdvancementReward.() -> Unit) {
 fun Advancement.rewards(
 	function: FunctionArgument? = null,
 	experience: Int? = null,
-	loot: List<LootTableArgument>? = null,
+	loot: InlinableList<LootTableOrTagArgument>? = null,
 	recipes: List<RecipeArgument>? = null,
 ) {
 	rewards = AdvancementReward(experience, function, loot, recipes)

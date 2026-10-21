@@ -6,8 +6,9 @@ import io.github.ayfri.kore.commands.Command
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.functions.generatedFunction
-import io.github.ayfri.kore.generated.arguments.types.LootTableArgument
+import io.github.ayfri.kore.generated.arguments.LootTableOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
+import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
 /**
@@ -22,8 +23,8 @@ data class AdvancementReward(
 	var experience: Int? = null,
 	/** The function to be called when the advancement is completed. */
 	var function: FunctionArgument? = null,
-	/** The loot table to be used when the advancement is completed. */
-	var loot: List<LootTableArgument>? = null,
+	/** The loot tables, or `#tag`, rolled when the advancement is completed. */
+	var loot: InlinableList<LootTableOrTagArgument>? = null,
 	/** The recipes to be unlocked when the advancement is completed. */
 	var recipes: List<RecipeArgument>? = null,
 )
@@ -45,8 +46,14 @@ fun AdvancementReward.function(name: String? = null, block: Function.() -> Comma
 	function(dp, name, block)
 }
 
-/** Set the loot table rewards. */
-fun AdvancementReward.loots(vararg loot: LootTableArgument) {
+/**
+ * Set the loot table rewards, loot table IDs or loot table tags.
+ *
+ * ```
+ * loots(LootTables.Chests.IGLOO_CHEST)  // "loot": "minecraft:chests/igloo_chest"
+ * ```
+ */
+fun AdvancementReward.loots(vararg loot: LootTableOrTagArgument) {
 	this.loot = loot.toList()
 }
 

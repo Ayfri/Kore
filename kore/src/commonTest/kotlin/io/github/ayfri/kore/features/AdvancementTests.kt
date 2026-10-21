@@ -29,6 +29,7 @@ import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Advancements
 import io.github.ayfri.kore.generated.Enchantments
+import io.github.ayfri.kore.generated.arguments.tagged.LootTableTagArgument
 import io.github.ayfri.kore.generated.arguments.tagged.PotionTagArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.utils.pretty
@@ -126,9 +127,7 @@ fun DataPack.advancementTests() {
 			"rewards": {
 				"experience": 10,
 				"function": "features_tests:gradient",
-				"loot": [
-					"minecraft:chests/igloo_chest"
-				],
+				"loot": "minecraft:chests/igloo_chest",
 				"recipes": [
 					"minecraft:polished_blackstone_brick_stairs_from_polished_blackstone_bricks_stonecutting"
 				]
@@ -572,7 +571,7 @@ private fun DataPack.allTriggersTests() {
 								}
 							}
 						],
-						"recipe_id": "minecraft:polished_blackstone_brick_stairs_from_polished_blackstone_bricks_stonecutting"
+						"recipes": "minecraft:polished_blackstone_brick_stairs_from_polished_blackstone_bricks_stonecutting"
 					}
 				}
 			}
@@ -1187,7 +1186,50 @@ private fun DataPack.allTriggersTests() {
 				"player_generates_container_loot": {
 					"trigger": "minecraft:player_generates_container_loot",
 					"conditions": {
-						"loot_table": "minecraft:chests/igloo_chest"
+						"loot_tables": "minecraft:chests/igloo_chest"
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	advancement("generates_loot_list") {
+		criteria {
+			playerGeneratesContainerLoot(
+				"generates_loot_list",
+				LootTables.Archaeology.DESERT_PYRAMID,
+				LootTables.Archaeology.DESERT_WELL,
+			) {}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"generates_loot_list": {
+					"trigger": "minecraft:player_generates_container_loot",
+					"conditions": {
+						"loot_tables": [
+							"minecraft:archaeology/desert_pyramid",
+							"minecraft:archaeology/desert_well"
+						]
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	advancement("generates_loot_tag") {
+		criteria {
+			playerGeneratesContainerLoot("generates_loot_tag", LootTableTagArgument("chests", "my_pack")) {}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"generates_loot_tag": {
+					"trigger": "minecraft:player_generates_container_loot",
+					"conditions": {
+						"loot_tables": "#my_pack:chests"
 					}
 				}
 			}
@@ -1304,7 +1346,35 @@ private fun DataPack.allTriggersTests() {
 				"recipe_crafted": {
 					"trigger": "minecraft:recipe_crafted",
 					"conditions": {
-						"recipe_id": "minecraft:polished_blackstone_brick_stairs_from_polished_blackstone_bricks_stonecutting"
+						"recipes": "minecraft:polished_blackstone_brick_stairs_from_polished_blackstone_bricks_stonecutting"
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	advancement("recipe_crafted_two") {
+		criteria {
+			recipeCrafted("recipe_crafted_two", Recipes.DIAMOND_PICKAXE, Recipes.DIAMOND_AXE) {
+				ingredient { items = listOf(Items.DIAMOND) }
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"recipe_crafted_two": {
+					"trigger": "minecraft:recipe_crafted",
+					"conditions": {
+						"ingredients": [
+							{
+								"items": "minecraft:diamond"
+							}
+						],
+						"recipes": [
+							"minecraft:diamond_pickaxe",
+							"minecraft:diamond_axe"
+						]
 					}
 				}
 			}
@@ -1325,7 +1395,73 @@ private fun DataPack.allTriggersTests() {
 				"recipe_unlocked": {
 					"trigger": "minecraft:recipe_unlocked",
 					"conditions": {
-						"recipe": "minecraft:polished_blackstone_brick_stairs_from_polished_blackstone_bricks_stonecutting"
+						"recipes": "minecraft:polished_blackstone_brick_stairs_from_polished_blackstone_bricks_stonecutting"
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	advancement("recipe_unlocked_two") {
+		criteria {
+			recipeUnlocked("recipe_unlocked_two", Recipes.OAK_BOAT, Recipes.BIRCH_BOAT)
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"recipe_unlocked_two": {
+					"trigger": "minecraft:recipe_unlocked",
+					"conditions": {
+						"recipes": [
+							"minecraft:oak_boat",
+							"minecraft:birch_boat"
+						]
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	advancement("reward_loot_list") {
+		criteria {
+			recipeUnlocked("has_the_recipe", Recipes.OAK_BOAT)
+		}
+		rewards {
+			loots(LootTables.Chests.IGLOO_CHEST, LootTableTagArgument("chests", "my_pack"))
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"has_the_recipe": {
+					"trigger": "minecraft:recipe_unlocked",
+					"conditions": {
+						"recipes": "minecraft:oak_boat"
+					}
+				}
+			},
+			"rewards": {
+				"loot": [
+					"minecraft:chests/igloo_chest",
+					"#my_pack:chests"
+				]
+			}
+		}
+	""".trimIndent()
+
+	advancement("has_the_recipe") {
+		criteria {
+			recipeUnlocked("has_the_recipe", Recipes.OAK_BOAT)
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"has_the_recipe": {
+					"trigger": "minecraft:recipe_unlocked",
+					"conditions": {
+						"recipes": "minecraft:oak_boat"
 					}
 				}
 			}
