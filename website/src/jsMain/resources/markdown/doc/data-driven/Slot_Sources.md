@@ -5,7 +5,7 @@ nav-title: Slot Sources
 description: Select inventory slots in Minecraft loot tables, /item and /execute with Kore's type-safe slot source DSL and slot source files.
 keywords: minecraft, datapack, kore, slot sources, slot_source, item command, execute if items, execute if slots, loot tables
 date-created: 2026-10-08
-date-modified: 2026-10-08
+date-modified: 2026-10-21
 routeOverride: /docs/data-driven/slot-sources
 ---
 
@@ -42,7 +42,7 @@ val hands = slotSource("hands") {
 }
 ```
 
-Another slot source points to a file with `reference(hands)`, which writes `{"type": "minecraft:reference", "name": "<namespace>:hands"}`.
+Another slot source points to a file with `reference(hands)`, which writes the bare string `"<namespace>:hands"`, see [Reference](#reference). A file can also be a reference alone: `slotSource("alias") { reference(hands) }` is written `"<namespace>:hands"`.
 
 ## In Commands
 
@@ -50,7 +50,7 @@ Another slot source points to a file with `reference(hands)`, which writes `{"ty
 
 - a slot or a range, written as a slot string: `ARMOR.CHEST` is `armor.chest`, `HOTBAR` and `HOTBAR.all()` are `hotbar.*`;
 - a slot source file, like `hands` above;
-- an inline slot source, `inlineSlotSource { ... }`, written as SNBT.
+- an inline slot source, `inlineSlotSource { ... }`, written as SNBT. A lone `reference(hands)` is the quoted ID: `item fill entity @s "my_pack:hands" with minecraft:stone`.
 
 ```kotlin
 function("give_kit") {
@@ -172,13 +172,22 @@ slotSources {
 
 ### Reference
 
-Selects the slots of a slot source file:
+Selects the slots of a slot source file, written as its bare ID. `reference(id)` takes the `SlotSourceArgument` returned by `slotSource`, or a `SlotSourceTagArgument` to select the slots of every source of a tag:
 
 ```kotlin
 slotSources {
+	reference(hands)  // "my_pack:hands"
+}
+
+slotSource("everything") {
 	reference(hands)
+	reference(SlotSourceTagArgument("armor_slots", "my_pack"))  // "#my_pack:armor_slots"
 }
 ```
+
+Every `slot_source` field (`contents`, `filtered`, `limitSlots`, the `slots` loot entry), the `terms` of a `group`, a slot source file and an inline slot source accept an ID, a tag, a list of them or inline sources. A list can't mix references and inline values, the game rejects it.
+
+A slot source that references itself, directly or through other files, makes the pack fail to load.
 
 ## See Also
 

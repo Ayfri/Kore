@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 
 /**
  * A selection of inventory slots, used by the `slots` loot entry, `/item`, `/execute if items|slots` and slot source files.
+ * A [SlotSourceReference] is the bare string of the ID of a slot source file.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/slot-sources
  * Minecraft Wiki: https://minecraft.wiki/w/Slot_source

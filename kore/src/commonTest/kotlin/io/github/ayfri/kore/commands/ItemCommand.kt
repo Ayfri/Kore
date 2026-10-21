@@ -41,9 +41,12 @@ fun Function.itemTests() {
 			"""item fill entity @s {type:"minecraft:slot_range",slots:"weapon.*"} with minecraft:torch"""
 		replace(self(), inlineSlotSource {
 			slotRange(SlotSourceOrigin.CONTAINER, HOTBAR)
-			reference(SlotSourceArgument("hands", "my_pack"))
+			slotRange(WEAPON.all())
 		}, Items.STICK) assertsIs
-			"""item replace entity @s [{type:"minecraft:slot_range",source:"container",slots:"hotbar.*"},{type:"minecraft:reference",name:"my_pack:hands"}] with minecraft:stick"""
+			"""item replace entity @s [{type:"minecraft:slot_range",source:"container",slots:"hotbar.*"},{type:"minecraft:slot_range",slots:"weapon.*"}] with minecraft:stick"""
+		replace(self(), inlineSlotSource {
+			reference(SlotSourceArgument("hands", "my_pack"))
+		}, Items.STICK) assertsIs """item replace entity @s "my_pack:hands" with minecraft:stick"""
 	}
 
 	items.modify(vec3(0.5, 64.2, -0.5), WEAPON.MAINHAND, ItemModifierArgument("baz")).toString() shouldBe

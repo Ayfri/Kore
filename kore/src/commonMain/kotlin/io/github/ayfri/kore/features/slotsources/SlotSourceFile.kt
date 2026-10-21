@@ -8,7 +8,8 @@ import io.github.ayfri.kore.serializers.InlinableListSerializer
 import kotlinx.serialization.Transient
 
 /**
- * Data-driven slot source, usable by ID in `/item`, `/execute if items|slots` and `reference` slot sources.
+ * Data-driven slot source, usable by ID in `/item`, `/execute if items|slots` and in other slot sources through
+ * [SlotSourceReference]. A file holding one reference is the bare string of its ID.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/slot-sources
  * Minecraft Wiki: https://minecraft.wiki/w/Slot_source
