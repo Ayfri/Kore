@@ -10,6 +10,7 @@ import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.itemmodifiers.functions.condition
 import io.github.ayfri.kore.features.itemmodifiers.functions.enchantRandomly
 import io.github.ayfri.kore.features.itemmodifiers.functions.explosionDecay
+import io.github.ayfri.kore.features.itemmodifiers.functions.reference
 import io.github.ayfri.kore.features.itemmodifiers.functions.setCount
 import io.github.ayfri.kore.features.loottables.*
 import io.github.ayfri.kore.features.loottables.entries.*
@@ -22,6 +23,8 @@ import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.LootTables
 import io.github.ayfri.kore.generated.Tags
+import io.github.ayfri.kore.generated.arguments.tagged.ItemModifierTagArgument
+import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
@@ -355,6 +358,56 @@ fun DataPack.lootTableTests() {
 							"condition": "my_pack:lucky"
 						}
 					],
+					"rolls": 1.0
+				}
+			]
+		}
+	""".trimIndent()
+	roundTrip(lootTables.last())
+
+	lootTable("modifier_ids") {
+		pool {
+			rolls = constant(1f)
+			modifier { reference(ItemModifierTagArgument("buffs", "my_pack")) }
+
+			entries {
+				item(Items.DIAMOND) {
+					modifier { reference(ItemModifierArgument("shiny", "my_pack")) }
+				}
+
+				item(Items.GOLD_INGOT) {
+					modifier {
+						reference(ItemModifierArgument("shiny", "my_pack"))
+						setCount(2f)
+					}
+				}
+			}
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"entries": [
+						{
+							"type": "minecraft:item",
+							"name": "minecraft:diamond",
+							"modifier": "my_pack:shiny"
+						},
+						{
+							"type": "minecraft:item",
+							"name": "minecraft:gold_ingot",
+							"modifier": [
+								"my_pack:shiny",
+								{
+									"type": "minecraft:set_count",
+									"count": 2.0
+								}
+							]
+						}
+					],
+					"modifier": "#my_pack:buffs",
 					"rolls": 1.0
 				}
 			]

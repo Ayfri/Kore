@@ -29,10 +29,14 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovid
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
+import io.github.ayfri.kore.generated.arguments.tagged.ItemModifierTagArgument
+import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.set
+import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.types.shouldBeInstanceOf
 
 fun DataPack.itemModifierTests() {
 	itemModifier("apply_bonus") {
@@ -376,15 +380,72 @@ fun DataPack.itemModifierTests() {
 	""".trimIndent()
 
 	itemModifier("reference") {
-		reference("kore:my_modifier")
+		reference(ItemModifierArgument("my_modifier", "kore"))
+	}
+
+	itemModifiers.last() assertsIs "\"kore:my_modifier\""
+	roundTrip(itemModifiers.last())
+
+	itemModifier("reference_tag") {
+		reference(ItemModifierTagArgument("my_tag", "kore"))
+	}
+
+	itemModifiers.last() assertsIs "\"#kore:my_tag\""
+
+	itemModifier("two_references") {
+		reference(ItemModifierArgument("a", "kore"))
+		reference(ItemModifierTagArgument("b", "kore"))
+	}
+
+	itemModifiers.last() assertsIs """
+		[
+			"kore:a",
+			"#kore:b"
+		]
+	""".trimIndent()
+
+	itemModifier("reference_mixed") {
+		reference(ItemModifierArgument("a", "kore"))
+		setCount(1f)
+	}
+
+	itemModifiers.last() assertsIs """
+		[
+			"kore:a",
+			{
+				"type": "minecraft:set_count",
+				"count": 1.0
+			}
+		]
+	""".trimIndent()
+
+	itemModifier("reference_modify_contents") {
+		modifyContents(ContentComponentTypes.BUNDLE_CONTENTS) {
+			modifiers { reference(ItemModifierTagArgument("my_tag", "kore")) }
+		}
 	}
 
 	itemModifiers.last() assertsIs """
 		{
-			"type": "minecraft:reference",
-			"name": "kore:my_modifier"
+			"type": "minecraft:modify_contents",
+			"component": "bundle_contents",
+			"modifier": "#kore:my_tag"
 		}
 	""".trimIndent()
+
+	itemModifier("reference_sequence") {
+		sequence {
+			reference(ItemModifierArgument("a", "kore"))
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:sequence",
+			"functions": "kore:a"
+		}
+	""".trimIndent()
+	roundTrip(itemModifiers.last())
 
 	itemModifier("sequence") {
 		sequence {
@@ -1108,6 +1169,17 @@ fun DataPack.itemModifierTests() {
 			}
 		}
 	""".trimIndent()
+
+	val id = jsonEncoder.decodeFromString(ItemFunction.serializer(), "\"my_pack:m\"")
+		.shouldBeInstanceOf<ItemModifierReference>().id
+	id.shouldBeInstanceOf<ItemModifierArgument>().asString() assertsIs "my_pack:m"
+
+	val tag = jsonEncoder.decodeFromString(ItemFunction.serializer(), "\"#my_pack:t\"")
+		.shouldBeInstanceOf<ItemModifierReference>().id
+	tag.shouldBeInstanceOf<ItemModifierTagArgument>().asString() assertsIs "#my_pack:t"
+
+	shouldThrowAny { jsonEncoder.decodeFromString(ItemFunction.serializer(), "5.0") }
+	shouldThrowAny { jsonEncoder.decodeFromString(ItemFunction.serializer(), """{"type":"minecraft:reference","name":"my_pack:m"}""") }
 }
 
 class ItemModifierTests : FunSpec({

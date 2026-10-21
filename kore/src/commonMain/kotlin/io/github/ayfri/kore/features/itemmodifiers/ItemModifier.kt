@@ -30,7 +30,8 @@ typealias InlinableItemModifier = @Serializable(with = ItemModifier.Companion.In
  *
  * Item modifiers are ordered lists of functions used by loot tables and commands to transform
  * items (set components, set lore, enchant, map exploration data, etc.). Kore serializes a single
- * function as a bare object and several ones as the vanilla JSON array (`sequence` shorthand).
+ * function as a bare object and several ones as the vanilla JSON array (`sequence` shorthand). A file holding one
+ * [reference][io.github.ayfri.kore.features.itemmodifiers.functions.reference] is the bare string of its ID.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * Minecraft Wiki: https://minecraft.wiki/w/Item_modifier

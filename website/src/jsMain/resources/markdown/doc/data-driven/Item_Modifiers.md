@@ -43,7 +43,7 @@ Item modifiers are stored as JSON files in data packs at:
 data/<namespace>/item_modifier/<name>.json
 ```
 
-A file holds one function written as an object (`{ "type": "minecraft:set_count", ... }`), or several functions written as a list. Each function names its kind in `type`.
+A file holds one function written as an object (`{ "type": "minecraft:set_count", ... }`), several functions written as a list, or the bare ID of another item modifier (`"my_pack:base"`) or an item modifier tag (`"#my_pack:buffs"`). Each function names its kind in `type`.
 
 For complete JSON specification, see the [Minecraft Wiki - Item modifier](https://minecraft.wiki/w/Item_modifier).
 
@@ -91,21 +91,21 @@ Use functions directly in loot tables at table, pool, or entry level:
 
 ```kotlin
 lootTable("treasure") {
-	// Table-level functions (applied to all drops)
-	functions {
+	// Table-level modifier (applied to all drops)
+	modifier {
 		enchantRandomly()
 	}
 
 	pool {
-		// Pool-level functions
-		functions {
+		// Pool-level modifier
+		modifier {
 			setCount(uniform(1f, 3f))
 		}
 
 		entries {
 			item(Items.DIAMOND) {
-				// Entry-level functions
-				functions {
+				// Entry-level modifier
+				modifier {
 					setName("Lucky Diamond")
 				}
 			}
@@ -113,6 +113,8 @@ lootTable("treasure") {
 	}
 }
 ```
+
+Each `modifier` also takes an item modifier ID, `modifier { reference(baseModifier) }`, see [reference](#reference).
 
 ## Function Reference
 
@@ -800,18 +802,30 @@ itemModifier("filter") {
 
 #### reference
 
-Reference another item modifier:
+Wherever the game expects item functions, it also accepts the ID of an item modifier file, or a `#tag` of item modifiers, written as a bare string. `reference(id)` builds it, and `itemModifier(...)` returns the ID to pass:
 
 ```kotlin
 val baseModifier = itemModifier("base") {
 	setCount(1f)
 }
 
-itemModifier("extended") {
+itemModifier("combined") {
 	reference(baseModifier)
-	enchantRandomly()
+	reference(ItemModifierTagArgument("buffs", "my_pack"))  // ["my_pack:base", "#my_pack:buffs"]
+}
+
+itemModifier("shortcut") {
+	reference(baseModifier)
+}
+
+lootTable("tagged") {
+	modifier { reference(ItemModifierTagArgument("buffs", "my_pack")) }  // "modifier": "#my_pack:buffs"
 }
 ```
+
+The `shortcut` file is the bare string `"my_pack:base"`. A list can't mix references and inline values, the game rejects it.
+
+A reference has no `condition` of its own: wrap it in a `sequence { }` function to guard it. An item modifier that references itself, directly or through other files, makes the pack fail to load.
 
 ## Conditions
 
@@ -912,7 +926,7 @@ dataPack("legendary_items") {
 
 			entries {
 				item(Items.DIAMOND_SWORD) {
-					functions {
+					modifier {
 						reference(legendaryModifier)
 					}
 				}

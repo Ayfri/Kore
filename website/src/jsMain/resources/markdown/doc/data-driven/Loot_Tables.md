@@ -115,6 +115,18 @@ lootTable("enchanted_loot") {
 }
 ```
 
+Each `modifier` (table, pool and entry) also takes the ID of an [item modifier file](/docs/data-driven/item-modifiers#reference) or an item modifier tag, written as a bare string:
+
+```kotlin
+val sharpen = itemModifier("sharpen") {
+	enchantRandomly(Enchantments.SHARPNESS)
+}
+
+lootTable("sharp_loot") {
+	modifier { reference(sharpen) }  // "modifier": "my_pack:sharpen"
+}
+```
+
 ## Pools
 
 Each pool represents an independent set of rolls. A table can have multiple pools that all contribute to the final loot.
