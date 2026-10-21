@@ -424,6 +424,22 @@ class LootTableTests : FunSpec({
 		}
 	}
 
+	test("archaeology loot context is written with the game's spelling") {
+		dataPack("lootTable") {
+			pretty()
+
+			lootTable("archaeology") {
+				type = LootTableType.ARCHAEOLOGY
+			}
+
+			lootTables.last() assertsIs """
+				{
+					"type": "archaeology"
+				}
+			""".trimIndent()
+		}
+	}
+
 	test("item entry modifier stays on the entry") {
 		dataPack("lootTable") {
 			pretty()
