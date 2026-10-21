@@ -18,13 +18,16 @@ import io.github.ayfri.kore.features.slotsources.*
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
 import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
 import io.github.ayfri.kore.features.predicates.providers.constant
+import io.github.ayfri.kore.features.predicates.providers.reference
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.LootTables
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.generated.arguments.tagged.ItemModifierTagArgument
+import io.github.ayfri.kore.generated.arguments.tagged.LootTableTagArgument
 import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
+import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
@@ -125,7 +128,6 @@ fun DataPack.lootTableTests() {
 						},
 						{
 							"type": "minecraft:loot_table",
-							"value": "minecraft:gameplay/piglin_bartering",
 							"condition": {
 								"type": "minecraft:weather_check",
 								"raining": true
@@ -137,7 +139,8 @@ fun DataPack.lootTableTests() {
 									"chance": 0.5
 								},
 								"count": 1.0
-							}
+							},
+							"value": "minecraft:gameplay/piglin_bartering"
 						},
 						{
 							"type": "minecraft:sequence",
@@ -145,7 +148,7 @@ fun DataPack.lootTableTests() {
 								{
 									"type": "minecraft:tag",
 									"expand": true,
-									"name": "minecraft:boats"
+									"items": "#minecraft:boats"
 								}
 							]
 						}
@@ -437,6 +440,183 @@ class LootTableTests : FunSpec({
 					"type": "archaeology"
 				}
 			""".trimIndent()
+		}
+	}
+
+	test("new loot context types are written with the game's names") {
+		dataPack("lootTable") {
+			pretty()
+
+			listOf(
+				LootTableType.CONTAINER_PROCESS to "container_process",
+				LootTableType.ENCHANTED_DAMAGE to "enchanted_damage",
+				LootTableType.ENCHANTED_ENTITY to "enchanted_entity",
+				LootTableType.ENCHANTED_ITEM to "enchanted_item",
+				LootTableType.ENCHANTED_LOCATION to "enchanted_location",
+				LootTableType.HIT_BLOCK to "hit_block",
+			).forEach { (contextType, name) ->
+				lootTable("context_$name") {
+					type = contextType
+				}
+
+				lootTables.last() assertsIs """
+					{
+						"type": "$name"
+					}
+				""".trimIndent()
+				roundTrip(lootTables.last())
+			}
+		}
+	}
+
+	test("loot table entry with loot table IDs") {
+		dataPack("lootTable") {
+			pretty()
+
+			lootTable("reward") {
+				type = LootTableType.CHEST
+
+				pool {
+					entries {
+						lootTable(LootTables.Chests.TrialChambers.REWARD_RARE) { weight = 8 }
+						lootTable(LootTables.Chests.TrialChambers.REWARD_COMMON) { weight = 2 }
+						lootTable(LootTables.Equipment.TRIAL_CHAMBER, LootTables.Equipment.TRIAL_CHAMBER_MELEE)
+					}
+				}
+			}
+
+			lootTables.last() assertsIs """
+				{
+					"pools": [
+						{
+							"entries": [
+								{
+									"type": "minecraft:loot_table",
+									"value": "minecraft:chests/trial_chambers/reward_rare",
+									"weight": 8
+								},
+								{
+									"type": "minecraft:loot_table",
+									"value": "minecraft:chests/trial_chambers/reward_common",
+									"weight": 2
+								},
+								{
+									"type": "minecraft:loot_table",
+									"value": [
+										"minecraft:equipment/trial_chamber",
+										"minecraft:equipment/trial_chamber_melee"
+									]
+								}
+							],
+							"rolls": 1.0
+						}
+					],
+					"type": "chest"
+				}
+			""".trimIndent()
+			roundTrip(lootTables.last())
+		}
+	}
+
+	test("loot table entry with a loot table tag and expand") {
+		dataPack("lootTable") {
+			pretty()
+
+			lootTable("tagged") {
+				pool {
+					entries {
+						lootTable(LootTableTagArgument("trial_loot", "my_pack"), expand = true)
+					}
+				}
+			}
+
+			lootTables.last() assertsIs """
+				{
+					"pools": [
+						{
+							"entries": [
+								{
+									"type": "minecraft:loot_table",
+									"expand": true,
+									"value": "#my_pack:trial_loot"
+								}
+							],
+							"rolls": 1.0
+						}
+					]
+				}
+			""".trimIndent()
+			roundTrip(lootTables.last())
+		}
+	}
+
+	test("tag entry with a tag and with several items") {
+		dataPack("lootTable") {
+			pretty()
+
+			lootTable("tags") {
+				pool {
+					entries {
+						tag(Tags.Item.CREEPER_DROP_MUSIC_DISCS, expand = true)
+						tag(Items.APPLE, Items.CARROT) { weight = 2 }
+						tag(Tags.Item.ARROWS)
+					}
+				}
+			}
+
+			lootTables.last() assertsIs """
+				{
+					"pools": [
+						{
+							"entries": [
+								{
+									"type": "minecraft:tag",
+									"expand": true,
+									"items": "#minecraft:creeper_drop_music_discs"
+								},
+								{
+									"type": "minecraft:tag",
+									"items": [
+										"minecraft:apple",
+										"minecraft:carrot"
+									],
+									"weight": 2
+								},
+								{
+									"type": "minecraft:tag",
+									"items": "#minecraft:arrows"
+								}
+							],
+							"rolls": 1.0
+						}
+					]
+				}
+			""".trimIndent()
+			roundTrip(lootTables.last())
+		}
+	}
+
+	test("pool rolls accept a number provider ID") {
+		dataPack("lootTable") {
+			pretty()
+
+			lootTable("rolls_reference") {
+				pool {
+					rolls = reference(NumberProviderArgument("rolls", "my_pack"))
+				}
+			}
+
+			lootTables.last() assertsIs """
+				{
+					"pools": [
+						{
+							"entries": [],
+							"rolls": "my_pack:rolls"
+						}
+					]
+				}
+			""".trimIndent()
+			roundTrip(lootTables.last())
 		}
 	}
 

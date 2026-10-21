@@ -94,8 +94,21 @@ lootTable("entity_drops") {
 ```
 
 Available types: `ADVANCEMENT_ENTITY`, `ADVANCEMENT_LOCATION`, `ADVANCEMENT_REWARD`, `ARCHAEOLOGY`, `BARTER`, `BLOCK`,
-`BLOCK_USE`, `CHEST`, `COMMAND`, `EMPTY`, `ENTITY`, `EQUIPMENT`, `FISHING`, `GIFT`, `GENERIC`, `SELECTOR`, `SHEARING`,
-`VAULT`, `VILLAGER_TRADE`.
+`BLOCK_INTERACT`, `BLOCK_USE`, `CHEST`, `COMMAND`, `COMMAND_SLOT_SOURCE`, `CONTAINER_PROCESS`, `EMPTY`,
+`ENCHANTED_DAMAGE`, `ENCHANTED_ENTITY`, `ENCHANTED_ITEM`, `ENCHANTED_LOCATION`, `ENTITY`, `ENTITY_INTERACT`,
+`EQUIPMENT`, `FISHING`, `GENERIC`, `GIFT`, `HIT_BLOCK`, `SELECTOR`, `SHEARING`, `VAULT`, `VILLAGER_TRADE`.
+
+The types used by [enchantment](/docs/data-driven/enchantments) effects and by container processing provide these
+parameters:
+
+| Type                 | Parameters                                                                                                    |
+|----------------------|---------------------------------------------------------------------------------------------------------------|
+| `CONTAINER_PROCESS`  | block entity, block state, container, origin                                                                  |
+| `ENCHANTED_DAMAGE`   | this entity, enchantment level, origin, damage source, optionally the direct attacker and the attacker         |
+| `ENCHANTED_ENTITY`   | this entity, enchantment level, origin                                                                        |
+| `ENCHANTED_ITEM`     | tool, enchantment level                                                                                       |
+| `ENCHANTED_LOCATION` | this entity, enchantment level, origin, whether the enchantment is active                                     |
+| `HIT_BLOCK`          | this entity, enchantment level, origin, block state                                                           |
 
 ### Global Modifier
 
@@ -348,7 +361,7 @@ version when the compiler reports it.
 
 #### Loot Table Entry
 
-References another loot table:
+Drops the items of other loot tables, given by ID or by loot table tag. The entry's `value` is one ID, a list of IDs or a tag:
 
 ```kotlin
 entries {
@@ -361,18 +374,44 @@ entries {
 }
 ```
 
-#### Tag Entry
+```json
+{
+	"type": "minecraft:loot_table",
+	"modifier": {
+		"type": "minecraft:set_count",
+		"count": 2.0
+	},
+	"value": "minecraft:gameplay/piglin_bartering",
+	"weight": 1
+}
+```
 
-Drops items from an item tag:
+With several loot tables, `expand = true` picks one of them at random, while the default drops all of them. A loot table tag is written `#my_pack:my_tag`:
 
 ```kotlin
 entries {
-	tag(Tags.Item.ARROWS) {
-		expand = true  // Each item becomes a separate entry
-		weight = 1
-	}
+	lootTable(LootTables.Equipment.TRIAL_CHAMBER, LootTables.Equipment.TRIAL_CHAMBER_MELEE, expand = true)
+	lootTable(LootTableTagArgument("trial_loot", "my_pack"))
 }
 ```
+
+The game also accepts a loot table written in place of an ID, which isn't possible in Kore because `value` only takes loot table IDs and tags. Declare the table with `lootTable("...")` and point at it.
+
+#### Tag Entry
+
+Drops items from an item tag, or from a list of items. `items` is written as a bare string when it holds one element:
+
+```kotlin
+entries {
+	tag(Tags.Item.ARROWS, expand = true) {  // "items": "#minecraft:arrows", one arrow picked at random
+		weight = 1
+	}
+
+	tag(Items.APPLE, Items.CARROT)          // "items": ["minecraft:apple", "minecraft:carrot"], drops both
+}
+```
+
+`expand = true` picks one item at random, while the default drops all of them.
 
 #### Dynamic Entry
 
@@ -488,7 +527,7 @@ Singleton entries share these properties:
 | `condition` | `PredicateCondition?`    | Entry only available if the condition passes             |
 | `modifier`  | `InlinableItemModifier?` | Item modifier applied to this entry's items              |
 
-`alternatives`, `group` and `sequence` entries have `condition` and `modifier` too.
+`alternatives`, `group` and `sequence` entries have `condition` and `modifier` too. `loot_table` and `tag` entries also take `expand` (`Boolean?`): `true` picks one loot table or item at random, the default drops all of them.
 
 ## Conditions (Predicates)
 
@@ -684,7 +723,7 @@ dataPack("treasure_hunt") {
 			"entries": [
 				{
 					"type": "minecraft:loot_table",
-					"name": "minecraft:chests/end_city_treasure"
+					"value": "minecraft:chests/end_city_treasure"
 				}
 			],
 			"rolls": {

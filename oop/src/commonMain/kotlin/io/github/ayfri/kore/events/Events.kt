@@ -143,7 +143,7 @@ private fun DataPack.deathLootTable(type: String) = OopConstants.deathTriggerLoo
 	if (lootTables.any { it.fileName == name }) return@also
 	lootTable(name) {
 		if (LootTables.Entities.entries.any { it.name.equals(type, ignoreCase = true) }) pool {
-			entries = listOf(NestedLootTable(LootTableArgument("entities/$type")))
+			entries = listOf(NestedLootTable(value = listOf(LootTableArgument("entities/$type"))))
 		}
 		pool {
 			entries = listOf(
