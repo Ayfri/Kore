@@ -14,15 +14,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UsingItem(
 	override var player: EntityOrPredicates? = null,
-	var item: ItemStackPredicate? = null,
-) : AdvancementTriggerCondition()
+	override var item: ItemStackPredicate? = null,
+) : AdvancementTriggerCondition(), ItemTrigger
 
 /** Add a `usingItem` criterion, triggered while an item is being used. */
 fun AdvancementCriteria.usingItem(name: String, block: UsingItem.() -> Unit = {}) {
 	criteria[name] = UsingItem().apply(block)
-}
-
-/** Set the item constraints. */
-fun UsingItem.item(block: ItemStackPredicate.() -> Unit) {
-	item = ItemStackPredicate().apply(block)
 }

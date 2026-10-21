@@ -14,21 +14,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PlayerKilledEntity(
 	override var player: EntityOrPredicates? = null,
-	var entity: EntityOrPredicates? = null,
-	var killingBlow: DamageSourcePredicate? = null,
-) : AdvancementTriggerCondition()
+	override var entity: EntityOrPredicates? = null,
+	override var killingBlow: DamageSourcePredicate? = null,
+) : AdvancementTriggerCondition(), EntityTrigger, KillingBlowTrigger
 
 /** Add a `playerKilledEntity` criterion, triggered when a player kills an entity. */
 fun AdvancementCriteria.playerKilledEntity(name: String, block: PlayerKilledEntity.() -> Unit = {}) {
 	criteria[name] = PlayerKilledEntity().apply(block)
-}
-
-/** Set the killed entity constraints. */
-fun PlayerKilledEntity.entity(block: EntityOrPredicates.() -> Unit) {
-	entity = EntityOrPredicates().apply(block)
-}
-
-/** Set the killing blow constraints. */
-fun PlayerKilledEntity.killingBlow(block: DamageSourcePredicate.() -> Unit) {
-	killingBlow = DamageSourcePredicate().apply(block)
 }

@@ -14,15 +14,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AnyBlockUse(
 	override var player: EntityOrPredicates? = null,
-	var location: LocationOrPredicates? = null,
-) : AdvancementTriggerCondition()
+	override var location: LocationOrPredicates? = null,
+) : AdvancementTriggerCondition(), LocationTrigger
 
 /** Add an `anyBlockUse` criterion, triggered when a player uses any block. */
 fun AdvancementCriteria.anyBlockUse(name: String, block: AnyBlockUse.() -> Unit = {}) {
 	criteria[name] = AnyBlockUse().apply(block)
-}
-
-/** Set the location constraints, checked against the used block. */
-fun AnyBlockUse.location(block: LocationOrPredicates.() -> Unit) {
-	location = LocationOrPredicates().apply(block)
 }

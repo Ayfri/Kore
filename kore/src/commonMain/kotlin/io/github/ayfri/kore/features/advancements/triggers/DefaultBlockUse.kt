@@ -14,15 +14,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DefaultBlockUse(
 	override var player: EntityOrPredicates? = null,
-	var location: LocationOrPredicates? = null,
-) : AdvancementTriggerCondition()
+	override var location: LocationOrPredicates? = null,
+) : AdvancementTriggerCondition(), LocationTrigger
 
 /** Add a `defaultBlockUse` criterion, triggered when a block is used with default interaction. */
 fun AdvancementCriteria.defaultBlockUse(name: String, block: DefaultBlockUse.() -> Unit = {}) {
 	criteria[name] = DefaultBlockUse().apply(block)
-}
-
-/** Set the location constraints, checked against the used block. */
-fun DefaultBlockUse.location(block: LocationOrPredicates.() -> Unit) {
-	location = LocationOrPredicates().apply(block)
 }

@@ -14,15 +14,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ShotCrossbow(
 	override var player: EntityOrPredicates? = null,
-	var item: ItemStackPredicate? = null,
-) : AdvancementTriggerCondition()
+	override var item: ItemStackPredicate? = null,
+) : AdvancementTriggerCondition(), ItemTrigger
 
 /** Add a `shotCrossbow` criterion. */
 fun AdvancementCriteria.shotCrossbow(name: String, block: ShotCrossbow.() -> Unit = {}) {
 	criteria[name] = ShotCrossbow().apply(block)
-}
-
-/** Set the crossbow item constraints. */
-fun ShotCrossbow.item(block: ItemStackPredicate.() -> Unit) {
-	item = ItemStackPredicate().apply(block)
 }

@@ -14,21 +14,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PlayerInteractedWithEntity(
 	override var player: EntityOrPredicates? = null,
-	var item: ItemStackPredicate? = null,
-	var entity: EntityOrPredicates? = null,
-) : AdvancementTriggerCondition()
+	override var item: ItemStackPredicate? = null,
+	override var entity: EntityOrPredicates? = null,
+) : AdvancementTriggerCondition(), EntityTrigger, ItemTrigger
 
 /** Add a `playerInteractedWithEntity` criterion, triggered when a player interacts with an entity. */
 fun AdvancementCriteria.playerInteractedWithEntity(name: String, block: PlayerInteractedWithEntity.() -> Unit = {}) {
 	criteria[name] = PlayerInteractedWithEntity().apply(block)
-}
-
-/** Set the item constraints. */
-fun PlayerInteractedWithEntity.item(block: ItemStackPredicate.() -> Unit) {
-	item = ItemStackPredicate().apply(block)
-}
-
-/** Set the entity constraints. */
-fun PlayerInteractedWithEntity.entity(block: EntityOrPredicates.() -> Unit) {
-	entity = EntityOrPredicates().apply(block)
 }

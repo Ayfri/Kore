@@ -14,15 +14,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PlacedBlock(
 	override var player: EntityOrPredicates? = null,
-	var location: LocationOrPredicates? = null,
-) : AdvancementTriggerCondition()
+	override var location: LocationOrPredicates? = null,
+) : AdvancementTriggerCondition(), LocationTrigger
 
 /** Add a `placedBlock` criterion, triggered when a block is placed. */
 fun AdvancementCriteria.placedBlock(name: String, block: PlacedBlock.() -> Unit = {}) {
 	criteria[name] = PlacedBlock().apply(block)
-}
-
-/** Set the location constraints. */
-fun PlacedBlock.location(block: LocationOrPredicates.() -> Unit) {
-	location = LocationOrPredicates().apply(block)
 }

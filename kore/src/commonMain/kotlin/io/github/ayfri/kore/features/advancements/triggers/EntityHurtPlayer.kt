@@ -14,15 +14,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class EntityHurtPlayer(
 	override var player: EntityOrPredicates? = null,
-	var damage: DamagePredicate? = null,
-) : AdvancementTriggerCondition()
+	override var damage: DamagePredicate? = null,
+) : AdvancementTriggerCondition(), DamageTrigger
 
 /** Add an `entityHurtPlayer` criterion, triggered when a player takes damage from an entity. */
 fun AdvancementCriteria.entityHurtPlayer(name: String, block: EntityHurtPlayer.() -> Unit = {}) {
 	criteria[name] = EntityHurtPlayer().apply(block)
-}
-
-/** Set the damage constraints. */
-fun EntityHurtPlayer.damage(block: DamagePredicate.() -> Unit) {
-	damage = DamagePredicate().apply(block)
 }

@@ -17,8 +17,8 @@ data class ItemDurabilityChanged(
 	override var player: EntityOrPredicates? = null,
 	var delta: IntRangeOrIntJson? = null,
 	var durability: IntRangeOrIntJson? = null,
-	var item: ItemStackPredicate? = null,
-) : AdvancementTriggerCondition()
+	override var item: ItemStackPredicate? = null,
+) : AdvancementTriggerCondition(), ItemTrigger
 
 /** Add an `itemDurabilityChanged` criterion, triggered when an item's durability changes. */
 fun AdvancementCriteria.itemDurabilityChanged(name: String, block: ItemDurabilityChanged.() -> Unit = {}) {
@@ -33,9 +33,4 @@ fun ItemDurabilityChanged.delta(block: IntRangeOrIntJson.() -> Unit) {
 /** Set the durability constraints. */
 fun ItemDurabilityChanged.durability(block: IntRangeOrIntJson.() -> Unit) {
 	durability = IntRangeOrIntJson().apply(block)
-}
-
-/** Set the item constraints. */
-fun ItemDurabilityChanged.item(block: ItemStackPredicate.() -> Unit) {
-	item = ItemStackPredicate().apply(block)
 }

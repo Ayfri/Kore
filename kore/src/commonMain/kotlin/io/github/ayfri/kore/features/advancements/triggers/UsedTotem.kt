@@ -14,15 +14,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UsedTotem(
 	override var player: EntityOrPredicates? = null,
-	var item: ItemStackPredicate? = null,
-) : AdvancementTriggerCondition()
+	override var item: ItemStackPredicate? = null,
+) : AdvancementTriggerCondition(), ItemTrigger
 
 /** Add a `usedTotem` criterion, triggered when a totem of undying is used. */
 fun AdvancementCriteria.usedTotem(name: String, block: UsedTotem.() -> Unit = {}) {
 	criteria[name] = UsedTotem().apply(block)
-}
-
-/** Set the item constraints. */
-fun UsedTotem.item(block: ItemStackPredicate.() -> Unit) {
-	item = ItemStackPredicate().apply(block)
 }

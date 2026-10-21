@@ -18,8 +18,8 @@ data class PlayerShearedEquipment(
 	/** The entity that was sheared. */
 	var entity: EntityPredicate? = null,
 	/** The sheared item. */
-	var item: ItemStackPredicate? = null,
-) : AdvancementTriggerCondition()
+	override var item: ItemStackPredicate? = null,
+) : AdvancementTriggerCondition(), ItemTrigger
 
 /** Add a [`playerShearedEquipment`][PlayerShearedEquipment] criterion */
 fun AdvancementCriteria.playerShearedEquipment(name: String, block: PlayerShearedEquipment.() -> Unit = {}) {
@@ -29,9 +29,4 @@ fun AdvancementCriteria.playerShearedEquipment(name: String, block: PlayerSheare
 /** Set the sheared entity whose quipment was sheared constraints. */
 fun PlayerShearedEquipment.entity(block: EntityPredicate.() -> Unit) {
 	entity = EntityPredicate().apply(block)
-}
-
-/** Set the sheared off equipment item constraints. */
-fun PlayerShearedEquipment.item(block: ItemStackPredicate.() -> Unit) {
-	item = ItemStackPredicate().apply(block)
 }

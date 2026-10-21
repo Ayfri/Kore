@@ -14,15 +14,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ItemUsedOnBlock(
 	override var player: EntityOrPredicates? = null,
-	var location: LocationOrPredicates? = null,
-) : AdvancementTriggerCondition()
+	override var location: LocationOrPredicates? = null,
+) : AdvancementTriggerCondition(), LocationTrigger
 
 /** Add an `itemUsedOnBlock` criterion, triggered when an item is used on a block. */
 fun AdvancementCriteria.itemUsedOnBlock(name: String, block: ItemUsedOnBlock.() -> Unit = {}) {
 	criteria[name] = ItemUsedOnBlock().apply(block)
-}
-
-/** Set the location constraints. */
-fun ItemUsedOnBlock.location(block: LocationOrPredicates.() -> Unit) {
-	location = LocationOrPredicates().apply(block)
 }

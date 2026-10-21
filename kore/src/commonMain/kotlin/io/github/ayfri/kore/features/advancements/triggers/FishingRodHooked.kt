@@ -14,24 +14,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FishingRodHooked(
 	override var player: EntityOrPredicates? = null,
-	var entity: EntityOrPredicates? = null,
-	var item: ItemStackPredicate? = null,
+	override var entity: EntityOrPredicates? = null,
+	override var item: ItemStackPredicate? = null,
 	var rod: ItemStackPredicate? = null,
-) : AdvancementTriggerCondition()
+) : AdvancementTriggerCondition(), EntityTrigger, ItemTrigger
 
 /** Add a `fishingRodHooked` criterion, triggered when a fishing rod is hooked. */
 fun AdvancementCriteria.fishingRodHooked(name: String, block: FishingRodHooked.() -> Unit = {}) {
 	criteria[name] = FishingRodHooked().apply(block)
-}
-
-/** Set the entity constraints. */
-fun FishingRodHooked.entity(block: EntityOrPredicates.() -> Unit) {
-	entity = EntityOrPredicates().apply(block)
-}
-
-/** Set the item constraints. */
-fun FishingRodHooked.item(block: ItemStackPredicate.() -> Unit) {
-	item = ItemStackPredicate().apply(block)
 }
 
 /** Set the rod constraints. */

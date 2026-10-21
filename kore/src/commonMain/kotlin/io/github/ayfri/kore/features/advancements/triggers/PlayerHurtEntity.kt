@@ -14,21 +14,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PlayerHurtEntity(
 	override var player: EntityOrPredicates? = null,
-	var damage: DamagePredicate? = null,
-	var entity: EntityOrPredicates? = null,
-) : AdvancementTriggerCondition()
+	override var damage: DamagePredicate? = null,
+	override var entity: EntityOrPredicates? = null,
+) : AdvancementTriggerCondition(), DamageTrigger, EntityTrigger
 
 /** Add a `playerHurtEntity` criterion, triggered when a player hurts an entity. */
 fun AdvancementCriteria.playerHurtEntity(name: String, block: PlayerHurtEntity.() -> Unit = {}) {
 	criteria[name] = PlayerHurtEntity().apply(block)
-}
-
-/** Set the damage constraints. */
-fun PlayerHurtEntity.damage(block: DamagePredicate.() -> Unit) {
-	damage = DamagePredicate().apply(block)
-}
-
-/** Set the entity constraints. */
-fun PlayerHurtEntity.entity(block: EntityOrPredicates.() -> Unit) {
-	entity = EntityOrPredicates().apply(block)
 }

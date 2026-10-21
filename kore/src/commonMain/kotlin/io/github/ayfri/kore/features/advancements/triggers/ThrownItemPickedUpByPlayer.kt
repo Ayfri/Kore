@@ -14,21 +14,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ThrownItemPickedUpByPlayer(
 	override var player: EntityOrPredicates? = null,
-	var entity: EntityOrPredicates? = null,
-	var item: ItemStackPredicate? = null,
-) : AdvancementTriggerCondition()
+	override var entity: EntityOrPredicates? = null,
+	override var item: ItemStackPredicate? = null,
+) : AdvancementTriggerCondition(), EntityTrigger, ItemTrigger
 
 /** Add a `thrownItemPickedUpByPlayer` criterion, triggered when a thrown item is picked up by a player. */
 fun AdvancementCriteria.thrownItemPickedUpByPlayer(name: String, block: ThrownItemPickedUpByPlayer.() -> Unit = {}) {
 	criteria[name] = ThrownItemPickedUpByPlayer().apply(block)
-}
-
-/** Set the picker entity constraints. */
-fun ThrownItemPickedUpByPlayer.entity(block: EntityOrPredicates.() -> Unit) {
-	entity = EntityOrPredicates().apply(block)
-}
-
-/** Set the item constraints. */
-fun ThrownItemPickedUpByPlayer.item(block: ItemStackPredicate.() -> Unit) {
-	item = ItemStackPredicate().apply(block)
 }

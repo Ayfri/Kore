@@ -15,16 +15,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class EnchantedItem(
 	override var player: EntityOrPredicates? = null,
-	var item: ItemStackPredicate? = null,
+	override var item: ItemStackPredicate? = null,
 	var levels: IntRangeOrIntJson? = null,
-) : AdvancementTriggerCondition()
+) : AdvancementTriggerCondition(), ItemTrigger
 
 /** Add an `enchantedItem` criterion, triggered when an item is enchanted. */
 fun AdvancementCriteria.enchantedItem(name: String, block: EnchantedItem.() -> Unit = {}) {
 	criteria[name] = EnchantedItem().apply(block)
-}
-
-/** Set the item constraints. */
-fun EnchantedItem.item(block: ItemStackPredicate.() -> Unit) {
-	item = ItemStackPredicate().apply(block)
 }

@@ -17,9 +17,9 @@ import kotlinx.serialization.Serializable
 data class BeeNestDestroyed(
 	override var player: EntityOrPredicates? = null,
 	var block: BlockArgument? = null,
-	var item: ItemStackPredicate? = null,
+	override var item: ItemStackPredicate? = null,
 	var numBeesInside: IntRangeOrIntJson? = null,
-) : AdvancementTriggerCondition()
+) : AdvancementTriggerCondition(), ItemTrigger
 
 /** Add a `beeNestDestroyed` criterion. */
 fun AdvancementCriteria.beeNestDestroyed(
@@ -30,9 +30,4 @@ fun AdvancementCriteria.beeNestDestroyed(
 	init: BeeNestDestroyed.() -> Unit,
 ) {
 	criteria[name] = BeeNestDestroyed(block = block, item = item, numBeesInside = numBeesInside).apply(init)
-}
-
-/** Define the item used in the destruction. */
-fun BeeNestDestroyed.item(block: ItemStackPredicate.() -> Unit) {
-	item = ItemStackPredicate().apply(block)
 }
