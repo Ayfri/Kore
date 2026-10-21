@@ -5,7 +5,7 @@ nav-title: Getting Started
 description: Step-by-step guide to create your first Minecraft datapack with Kore. Set up a Kotlin project, write type-safe commands and functions, generate the datapack, and test in-game.
 keywords: minecraft datapack tutorial, kore getting started, create datapack with kotlin, minecraft datapack generator tutorial, kore setup guide, kotlin datapack beginner, minecraft function generator, datapack development guide
 date-created: 2025-08-21
-date-modified: 2026-10-02
+date-modified: 2026-10-21
 routeOverride: /docs/getting-started
 position: 1
 ---
@@ -35,7 +35,7 @@ By the end of this page, you will have:
 
 ## Prerequisites
 
-- [Java 25 (JDK 25)](https://jdk.java.net/25/) or higher, required by both Kore and Minecraft 26.2.
+- [Java {{java.version}} (JDK {{java.version}})](https://jdk.java.net/{{java.version}}/) or higher, required by both Kore and Minecraft {{mc.version}}.
 - Gradle (wrapper recommended: `./gradlew`).
 - IntelliJ IDEA (recommended) or another IDE with Kotlin support.
 - Basic understanding of Minecraft datapacks (helpful but not required).
@@ -137,7 +137,7 @@ For your first datapack, use only `kore`.
 
 ```kotlin
 dependencies {
-	implementation("io.github.ayfri.kore:kore:VERSION")
+	implementation("io.github.ayfri.kore:kore:{{kore.release}}")
 }
 ```
 
@@ -145,9 +145,13 @@ dependencies {
 
 ```groovy
 dependencies {
-    implementation 'io.github.ayfri.kore:kore:VERSION'
+    implementation 'io.github.ayfri.kore:kore:{{kore.release}}'
 }
 ```
+
+`{{kore.release}}` is the latest stable release, for Minecraft {{mc.version}}. Kore also publishes builds for
+Minecraft snapshots, the newest release including them is `{{kore.snapshot}}`: snapshot features can still change
+from one snapshot to the next, see [Version Support](/docs/guides/version-support#snapshot-and-pre-release-builds).
 
 #### Snapshot builds (latest unreleased changes)
 
@@ -160,7 +164,7 @@ repositories {
 }
 
 dependencies {
-	implementation("io.github.ayfri.kore:kore:VERSION-SNAPSHOT")
+	implementation("io.github.ayfri.kore:kore:{{kore.mavenSnapshot}}")
 }
 ```
 
@@ -170,7 +174,7 @@ Kore relies on context parameters, which are stable since Kotlin 2.4. Make sure 
 
 ```kotlin
 kotlin {
-	jvmToolchain(25)
+	jvmToolchain({{java.version}})
 }
 ```
 
@@ -451,8 +455,8 @@ Good expansion ideas after the custom enchantment:
 
 ### Java/Kotlin toolchain errors
 
-- Confirm JDK 25 is installed and selected by Gradle.
-- Confirm `jvmToolchain(25)` is configured.
+- Confirm JDK {{java.version}} is installed and selected by Gradle.
+- Confirm `jvmToolchain({{java.version}})` is configured.
 
 ### Datapack generates but does not work in-game
 

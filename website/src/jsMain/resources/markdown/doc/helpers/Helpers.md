@@ -5,7 +5,7 @@ nav-title: Helpers Utilities
 description: Overview of helper-focused utilities in Kore - renderers, displays, inventories, mannequins, math, NBT paths, raycasts, scheduling, and state delegates.
 keywords: minecraft, datapack, kore, helpers, ansi, markdown, minimessage, raycast, math, vector, area, state, nbt, vfx, particles, text, display, inventory, mannequin, scheduler, menu, dialog, sidebar
 date-created: 2026-03-31
-date-modified: 2026-09-23
+date-modified: 2026-10-21
 routeOverride: /docs/helpers/utilities
 position: 0
 ---
@@ -37,7 +37,7 @@ particle utilities on top of Kore.
 
 ```kotlin
 dependencies {
-  implementation("io.github.ayfri.kore:helpers:VERSION")
+  implementation("io.github.ayfri.kore:helpers:{{kore.release}}")
 }
 ```
 

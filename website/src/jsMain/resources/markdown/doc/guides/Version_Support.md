@@ -5,7 +5,7 @@ nav-title: Version Support
 description: Which Minecraft version each Kore release targets, how to read versions like 2.15.0-26.2, what counts as a breaking change and how deprecations migrate.
 keywords: kore version, kore minecraft version, datapack library versioning, kore breaking changes, kore deprecation, kore snapshot builds, pack format
 date-created: 2026-10-07
-date-modified: 2026-10-07
+date-modified: 2026-10-21
 routeOverride: /docs/guides/version-support
 position: 9
 ---
@@ -16,7 +16,7 @@ Every Kore artifact carries two versions in one string: the Kore version, then t
 
 ```kotlin
 dependencies {
-	implementation("io.github.ayfri.kore:kore:2.16.0-26.2") // Kore 2.16.0, for Minecraft 26.2
+	implementation("io.github.ayfri.kore:kore:{{kore.release}}") // Kore {{kore.version}}, for Minecraft {{mc.version}}
 }
 ```
 
@@ -33,7 +33,7 @@ the Minecraft version:
 | `2.15.0-26.2`            | `2.15.0` | 26.2                         |
 | `2.13.1-26.2-pre-3`      | `2.13.1` | 26.2 Pre-Release 3           |
 | `2.12.0-26.2-snapshot-8` | `2.12.0` | 26.2 Snapshot 8              |
-| `2.15.0-SNAPSHOT`        | `2.15.0` | continuous build of `master` |
+| `2.15.0-26.2-SNAPSHOT`   | `2.15.0` | continuous build of `master` |
 
 That is why the string isn't plain semver: tools comparing versions have to split it first. The Kore part follows its
 own numbering:

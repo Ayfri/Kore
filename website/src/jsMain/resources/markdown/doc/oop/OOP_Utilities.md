@@ -5,7 +5,7 @@ nav-title: OOP Utilities
 description: Overview of object-oriented gameplay utilities in the Kore OOP module - entities, teams, scoreboards, items, events, timers, spawners, and state machines.
 keywords: minecraft, datapack, kore, oop, entity, player, commands, teams, scoreboard, items, events, cooldown, bossbar, effects, timer, spawner, gamestate
 date-created: 2026-02-21
-date-modified: 2026-08-14
+date-modified: 2026-10-21
 routeOverride: /docs/oop/oop-utilities
 position: 0
 ---
@@ -22,7 +22,7 @@ Add the `oop` artifact when you want object-oriented gameplay abstractions on to
 
 ```kotlin
 dependencies {
-  implementation("io.github.ayfri.kore:oop:VERSION")
+  implementation("io.github.ayfri.kore:oop:{{kore.release}}")
 }
 ```
 

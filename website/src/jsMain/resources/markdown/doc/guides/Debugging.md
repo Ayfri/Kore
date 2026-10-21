@@ -5,7 +5,7 @@ nav-title: Debugging
 description: Trace an in-game datapack error back to the Kotlin that wrote it, read generated function names, validate the output with Spyglass and catch load errors in CI.
 keywords: kore debugging, datapack debugging, minecraft function error, failed to load function, spyglass datapack, packtest, debug function, generated_scopes
 date-created: 2026-10-07
-date-modified: 2026-10-07
+date-modified: 2026-10-21
 routeOverride: /docs/guides/debugging
 position: 10
 ---
@@ -110,7 +110,7 @@ pin the game version in a `spyglass.json` at its root:
 ```json
 {
 	"env": {
-		"gameVersion": "26.2"
+		"gameVersion": "{{mc.version}}"
 	}
 }
 ```

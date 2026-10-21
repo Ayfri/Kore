@@ -227,6 +227,24 @@ Required frontmatter keys, in alphabetical order:
 - `routeOverride`
 - `title`
 
+Versions that change with each release are placeholders, a key between double curly braces, expanded at build time
+in prose, links and code blocks, the `.md` copies and `llms-full.txt` included:
+
+| Key                  | Value                                                                                |
+|----------------------|--------------------------------------------------------------------------------------|
+| `java.version`       | Java version required by `mc.version`                                                |
+| `kore.mavenSnapshot` | Maven snapshot coordinate of `master` (`<Kore version>-<master Minecraft>-SNAPSHOT`) |
+| `kore.release`       | Latest stable release, e.g. `2.16.0-26.2`                                            |
+| `kore.snapshot`      | Latest release for a Minecraft snapshot, or `kore.release` when there is none newer  |
+| `kore.version`       | Kore part of `kore.release`                                                          |
+| `mc.packFormatMajor` | Data pack format of `mc.version`, major part                                         |
+| `mc.packFormatMinor` | Data pack format of `mc.version`, minor part                                         |
+| `mc.version`         | Minecraft version of `kore.release`                                                  |
+
+The values come from the GitHub releases and PixiGeko's `versions_data.json`, fetched once per build directory:
+rerun `fetchGitHubReleases` and `fetchMinecraftVersions` with `--rerun` to refresh a local copy. An unknown key, a
+placeholder in the frontmatter or a heading, or an export without any stable release fails the build.
+
 An image whose destination starts with `mc:` renders a vanilla texture inline, the path being relative to `textures/`
 without extension, e.g. `![Furnace](mc:block/furnace_front)`. Use it only where seeing the in-game block, item or GUI
 sprite tells the reader something (a workstation column, frame styles), never as decoration, and check the path

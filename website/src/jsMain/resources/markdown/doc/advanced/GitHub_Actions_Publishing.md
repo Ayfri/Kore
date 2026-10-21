@@ -5,7 +5,7 @@ nav-title: GitHub Actions Publishing
 description: Automatically publish your Kore datapacks using GitHub Actions with mc-publish.
 keywords: minecraft, datapack, kore, github actions, publishing, automation, ci/cd
 date-created: 2025-09-30
-date-modified: 2026-09-26
+date-modified: 2026-10-21
 routeOverride: /docs/advanced/github-actions-publishing
 ---
 
@@ -58,12 +58,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Set up JDK 25
+      - name: Set up JDK {{java.version}}
         uses: actions/setup-java@v5
         with:
           cache: gradle
           distribution: 'temurin'
-          java-version: 25
+          java-version: {{java.version}}
 
       - name: Ensure Gradle is executable
         run: chmod +x gradlew
@@ -118,7 +118,7 @@ For more control over the publishing process, you can customize various aspects:
 
     # Supported game versions
     game-versions: |
-      26.2
+      {{mc.version}}
 
     # Mod loaders (if exporting to Jars)
     loaders: |
@@ -133,7 +133,7 @@ For more control over the publishing process, you can customize various aspects:
     # Platform-specific settings
     modrinth-featured: true
     curseforge-java-versions: |
-      Java 25
+      Java {{java.version}}
     github-prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') }}
     github-draft: false
 ```
@@ -158,11 +158,11 @@ The default [Kore-Template](https://github.com/Ayfri/Kore-Template) is a Gradle 
 Gradle wrapper:
 
 ```yaml
-      - name: Set up JDK 25
+      - name: Set up JDK {{java.version}}
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: 25
+          java-version: {{java.version}}
 
       - name: Ensure Gradle is executable
         run: chmod +x gradlew
@@ -257,7 +257,7 @@ modrinth-unfeature-mode: subset
 
 ```yaml
 curseforge-java-versions: |
-  Java 25
+  Java {{java.version}}
 curseforge-display-name: "My Awesome Datapack"
 ```
 
@@ -318,10 +318,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - name: Set up JDK 25
+      - name: Set up JDK {{java.version}}
         uses: actions/setup-java@v5
         with:
-          java-version: '25'
+          java-version: '{{java.version}}'
           distribution: 'temurin'
       - name: Run tests
         run: ./gradlew test
@@ -372,12 +372,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Set up JDK 25
+      - name: Set up JDK {{java.version}}
         uses: actions/setup-java@v5
         with:
           cache: gradle
           distribution: 'temurin'
-          java-version: 25
+          java-version: {{java.version}}
 
       - name: Ensure Gradle is executable
         run: chmod +x gradlew
@@ -398,7 +398,7 @@ jobs:
           files: out/*.zip
 
           game-versions: |
-            26.2
+            {{mc.version}}
 
           modrinth-id: YOUR_MODRINTH_ID
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}

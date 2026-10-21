@@ -5,7 +5,7 @@ nav-title: Gradle Plugin
 description: Generate your Kore datapack from Gradle, copy it straight into your Minecraft worlds, and reload a running server automatically on every source change.
 keywords: kore gradle plugin, minecraft datapack watch mode, datapack live reload, datapack hot reload, gradle continuous build, minecraft rcon reload, datapack development loop
 date-created: 2026-09-04
-date-modified: 2026-09-29
+date-modified: 2026-10-21
 routeOverride: /docs/guides/gradle-plugin
 position: 6
 ---
@@ -25,11 +25,11 @@ the library, so the same string goes in both blocks:
 ```kotlin
 plugins {
 	kotlin("jvm")
-	id("io.github.ayfri.kore") version "2.16.0-26.2"
+	id("io.github.ayfri.kore") version "{{kore.release}}"
 }
 
 dependencies {
-	implementation("io.github.ayfri.kore:kore:2.16.0-26.2")
+	implementation("io.github.ayfri.kore:kore:{{kore.release}}")
 }
 
 kore {

@@ -98,8 +98,8 @@ Every datapack needs a `pack.mcmeta`. Kore always generates one; the `pack` bloc
 ```kotlin
 dataPack("mydatapack") {
 	pack {
-		minFormat(111)
-		maxFormat(111)
+		minFormat({{mc.packFormatMajor}})
+		maxFormat({{mc.packFormatMajor}})
 		description = textComponent("My Datapack")
 	}
 }
@@ -113,9 +113,9 @@ dataPack("mydatapack") {
 
 ```kotlin
 pack {
-	minFormat(111)        // plain integer
-	minFormat(111, 0)     // [major, minor] pair
-	maxFormat(111)
+	minFormat({{mc.packFormatMajor}})        // plain integer
+	minFormat({{mc.packFormatMajor}}, {{mc.packFormatMinor}})     // [major, minor] pair
+	maxFormat({{mc.packFormatMajor}})
 }
 ```
 
@@ -123,22 +123,23 @@ You can also assign a `PackFormat` value directly:
 
 ```kotlin
 pack {
-	minFormat = packFormat(111)
-	maxFormat = packFormat(111)
+	minFormat = packFormat({{mc.packFormatMajor}})
+	maxFormat = packFormat({{mc.packFormatMajor}})
 }
 ```
 
 ### Targeting Minecraft 1.21.9+
 
 Since Minecraft 1.21.9 (25w31a), `min_format` and `max_format` are the primary fields in `pack.mcmeta`, and accept a
-`[major, minor]` pair to target snapshots or minor versions. Minecraft 26.2 uses data pack format `[107, 1]`:
+`[major, minor]` pair to target snapshots or minor versions. Minecraft {{mc.version}} uses data pack format
+`[{{mc.packFormatMajor}}, {{mc.packFormatMinor}}]`:
 
 ```kotlin
 dataPack("my_datapack") {
 	pack {
-		minFormat(107, 1)
-		maxFormat(107, 1)
-		description = textComponent("Targeting 26.2")
+		minFormat({{mc.packFormatMajor}}, {{mc.packFormatMinor}})
+		maxFormat({{mc.packFormatMajor}}, {{mc.packFormatMinor}})
+		description = textComponent("Targeting {{mc.version}}")
 	}
 }
 ```
@@ -162,9 +163,9 @@ decimal value triggers a warning:
 ```kotlin
 dataPack("mydatapack") {
 	pack {
-		minFormat(111)
-		maxFormat(111)
-		packFormat = packFormat(111) // must stay a plain integer
+		minFormat({{mc.packFormatMajor}})
+		maxFormat({{mc.packFormatMajor}})
+		packFormat = packFormat({{mc.packFormatMajor}}) // must stay a plain integer
 	}
 }
 ```

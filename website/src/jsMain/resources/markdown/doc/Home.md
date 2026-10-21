@@ -5,7 +5,7 @@ nav-title: Home
 description: Kore is a Kotlin DSL datapack generator for Minecraft Java Edition. Create datapacks with type-safe code instead of writing JSON and MCFunction by hand. Open-source and production-ready.
 keywords: minecraft datapack generator, datapack maker, minecraft data pack creator, kotlin datapack, kore, minecraft datapack dsl, datapack development, minecraft java edition, mcfunction generator, datapack library
 date-created: 2024-04-06
-date-modified: 2026-10-20
+date-modified: 2026-10-21
 routeOverride: /docs/home
 position: 0
 ---
@@ -21,7 +21,7 @@ raw datapacks? Read [Why Kore](/docs/guides/why-kore) or the migration-focused [
 ## Quick start
 
 - **Getting started**: Check out the [Getting Started](/docs/getting-started) guide for a step-by-step introduction to creating your first datapack.
-- **Prerequisites**: Java 25 (JDK 25) and a Kotlin 2.4+ build environment.
+- **Prerequisites**: Java {{java.version}} (JDK {{java.version}}) and a Kotlin 2.4+ build environment.
 - **Starter template**: use the `Kore Template` for a ready-to-run project: [
   `Kore Template`](https://github.com/Kore-Minecraft/Kore-Template).
 - **Build faster**: browse the [Cookbook](/docs/guides/cookbook) for practical patterns you can reuse.
@@ -67,9 +67,9 @@ what runs where.
 ### `kore` - Core DSL
 
 - Build datapacks with the main Kore DSL.
-- Artifact: `io.github.ayfri.kore:kore:VERSION`
+- Artifact: `io.github.ayfri.kore:kore:{{kore.release}}`
 - Snapshot builds from each commit on `master`: add `https://central.sonatype.com/repository/maven-snapshots/` and use
-  `VERSION-SNAPSHOT`
+  `{{kore.mavenSnapshot}}`
 
 ### `oop` - Object-oriented gameplay utilities
 
@@ -77,7 +77,7 @@ what runs where.
   timers.
 - Especially useful when several gameplay systems need to exchange data cleanly, such as syncing a `Team` with a boss
   bar or reusing an `Entity` handle across scoreboards and commands.
-- Artifact: `io.github.ayfri.kore:oop:VERSION`
+- Artifact: `io.github.ayfri.kore:oop:{{kore.release}}`
 - Explore: [OOP Utilities](/docs/oop/oop-utilities)
 
 ### `helpers` - Utility-focused helpers
@@ -86,13 +86,13 @@ what runs where.
   utilities.
 - These helpers complement the core DSL well for advanced text pipelines, reusable state access, geometric particles, or
   command-heavy math routines.
-- Artifact: `io.github.ayfri.kore:helpers:VERSION`
+- Artifact: `io.github.ayfri.kore:helpers:{{kore.release}}`
 - Explore: [Helpers Utilities](/docs/helpers/utilities)
 
 ### `bindings` - Datapack importer
 
 - Import existing datapacks and generate type-safe Kotlin bindings for their functions, resources, and tags.
-- Artifact: `io.github.ayfri.kore:bindings:VERSION`
+- Artifact: `io.github.ayfri.kore:bindings:{{kore.release}}`
 - Explore: [Bindings](/docs/advanced/bindings)
 
 ## Version Matrix

@@ -5,7 +5,7 @@ nav-title: Bindings
 description: Import existing datapacks and generate Kotlin bindings.
 keywords: kore, bindings, import, datapack, github, modrinth, curseforge
 date-created: 2026-01-23
-date-modified: 2026-09-26
+date-modified: 2026-10-21
 routeOverride: /docs/advanced/bindings
 position: 3
 ---
@@ -25,7 +25,7 @@ Add the `bindings` artifact when you want to import an existing datapack and gen
 
 ```kotlin
 dependencies {
-	implementation("io.github.ayfri.kore:bindings:VERSION")
+	implementation("io.github.ayfri.kore:bindings:{{kore.release}}")
 }
 ```
 

@@ -5,7 +5,7 @@ nav-title: Multiplatform
 description: Kore's kore, oop, helpers, and bindings modules are Kotlin Multiplatform (JVM + JS). Generate real datapacks on Node.js, or export strings/zip bytes anywhere.
 keywords: kore, multiplatform, kotlin multiplatform, kotlin/js, jvm, kmp, nodejs, exportAsStrings, generateZipBytes, kotest, karma
 date-created: 2026-07-12
-date-modified: 2026-10-02
+date-modified: 2026-10-21
 routeOverride: /docs/advanced/multiplatform
 ---
 
@@ -13,7 +13,7 @@ routeOverride: /docs/advanced/multiplatform
 
 `kore`, `oop`, `helpers`, and `bindings` are all **Kotlin Multiplatform** libraries: each declares a `jvm()` target and a
 `js { browser(); nodejs() }` target, built from a shared `commonMain` source set. There is no separate "Kore JS"
-artifact - the same `io.github.ayfri.kore:<module>:VERSION` coordinates publish JVM, JS, and common metadata variants
+artifact - the same `io.github.ayfri.kore:<module>:{{kore.release}}` coordinates publish JVM, JS, and common metadata variants
 side by side.
 
 ## What runs where
@@ -115,7 +115,7 @@ kotlin {
 
 	sourceSets {
 		commonMain.dependencies {
-			implementation("io.github.ayfri.kore:kore:VERSION")
+			implementation("io.github.ayfri.kore:kore:{{kore.release}}")
 		}
 	}
 }
