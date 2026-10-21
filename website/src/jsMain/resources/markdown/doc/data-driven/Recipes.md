@@ -5,7 +5,7 @@ nav-title: Recipes
 description: Create custom Minecraft recipes using Kore's type-safe Kotlin DSL for crafting, smelting, smithing, and more.
 keywords: minecraft, datapack, kore, recipes, crafting, smelting, smithing, stonecutting
 date-created: 2024-01-08
-date-modified: 2026-10-20
+date-modified: 2026-10-22
 routeOverride: /docs/data-driven/recipes
 ---
 
@@ -221,10 +221,12 @@ recipes {
 	craftingSpecialMapExtending("extended_map") {
 		map(Items.FILLED_MAP)
 		material(Items.PAPER)
-		result(Items.FILLED_MAP)
 	}
 }
 ```
+
+The `result` is optional: without it the result is the input map and the recipe writes `"result": {}`. Like
+`craftingTransmute`, `result` also takes `count` and `components`, see [Transmute Crafting](#transmute-crafting).
 
 ### Shaped Crafting
 
@@ -369,6 +371,52 @@ recipes {
 ```
 
 The result item copies all components from the input item.
+
+The `result` is optional. Without it the result is the input item itself, and the recipe writes `"result": {}`. This is
+how vanilla clones maps:
+
+```kotlin
+recipes {
+	craftingTransmute("map_cloning") {
+		input(Items.FILLED_MAP)
+		material(Items.MAP)
+	}
+}
+```
+
+```json
+{
+	"type": "minecraft:crafting_transmute",
+	"input": "minecraft:filled_map",
+	"material": "minecraft:map",
+	"result": {}
+}
+```
+
+The result is a `TransmuteResult` with optional `id`, `count` and `components`. Setting only the item writes the bare
+item ID (`"result": "minecraft:red_bundle"`), any other field writes an object:
+
+```kotlin
+recipes {
+	craftingTransmute("red_bundle_pair") {
+		input(Items.BLACK_BUNDLE)
+		material(Items.RED_DYE)
+		result(Items.RED_BUNDLE, count = 2)
+	}
+}
+```
+
+```json
+{
+	"type": "minecraft:crafting_transmute",
+	"input": "minecraft:black_bundle",
+	"material": "minecraft:red_dye",
+	"result": {
+		"count": 2,
+		"id": "minecraft:red_bundle"
+	}
+}
+```
 
 ### Recipe Book Category
 

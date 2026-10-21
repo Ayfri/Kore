@@ -6,7 +6,7 @@ import io.github.ayfri.kore.arguments.types.resources.tagged.ItemTagArgument
 import io.github.ayfri.kore.features.recipes.RecipeFile
 import io.github.ayfri.kore.features.recipes.RecipeTypes
 import io.github.ayfri.kore.features.recipes.Recipes
-import io.github.ayfri.kore.features.recipes.data.CraftingResult
+import io.github.ayfri.kore.features.recipes.data.TransmuteResult
 import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.SerialName
@@ -14,6 +14,8 @@ import kotlinx.serialization.Serializable
 
 /**
  * Recipe for extending a map by combining it with paper.
+ *
+ * The `result` is optional: without it the result is the input map and the recipe writes `"result": {}`.
  *
  * Produces `data/<namespace>/recipe/<fileName>.json`.
  *
@@ -27,8 +29,9 @@ data class CraftingSpecialMapExtending(
 	var map: InlinableList<ItemOrTagArgument>,
 	/** The paper ingredient used to extend the map. */
 	var material: InlinableList<ItemOrTagArgument>,
-	override var result: CraftingResult,
-) : Recipe(), ResultedRecipe {
+	/** The extended map; without an `id` it is the input map. */
+	override var result: TransmuteResult = TransmuteResult(),
+) : Recipe(), TransmuteResultedRecipe {
 	override val type = RecipeTypes.CRAFTING_SPECIAL("mapextending")
 }
 
@@ -46,7 +49,6 @@ fun Recipes.craftingSpecialMapExtending(name: String, namespace: String? = null,
 		name, CraftingSpecialMapExtending(
 			map = listOf(),
 			material = listOf(),
-			result = CraftingResult(id = ""),
 		).apply(block)
 	)
 	return register(recipe, namespace)

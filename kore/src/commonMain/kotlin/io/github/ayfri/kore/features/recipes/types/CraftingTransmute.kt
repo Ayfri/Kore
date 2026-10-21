@@ -7,7 +7,7 @@ import io.github.ayfri.kore.arguments.types.resources.tagged.ItemTagArgument
 import io.github.ayfri.kore.features.recipes.RecipeFile
 import io.github.ayfri.kore.features.recipes.RecipeTypes
 import io.github.ayfri.kore.features.recipes.Recipes
-import io.github.ayfri.kore.features.recipes.data.CraftingResult
+import io.github.ayfri.kore.features.recipes.data.TransmuteResult
 import io.github.ayfri.kore.generated.arguments.types.RecipeArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
@@ -16,6 +16,7 @@ import kotlinx.serialization.Serializable
  * Crafting table recipe that transforms an item while preserving its data components.
  *
  * The `input` item is combined with a `material` to produce `result`, copying components from the input.
+ * The `result` is optional: without it the result is the input item and the recipe writes `"result": {}`.
  * Produces `data/<namespace>/recipe/<fileName>.json`.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/recipes
@@ -34,9 +35,10 @@ data class CraftingTransmute(
 	var material: InlinableList<ItemOrTagArgument>,
 	/** How many material items are consumed per craft; can be a range or exact int. */
 	var materialCount: IntRangeOrIntJson? = null,
-	override var result: CraftingResult,
+	/** The crafted item; without an `id` it is the input item. */
+	override var result: TransmuteResult = TransmuteResult(),
 	var showNotification: Boolean? = null,
-) : Recipe(), ResultedRecipe {
+) : Recipe(), TransmuteResultedRecipe {
 	override val type = RecipeTypes.CRAFTING_TRANSMUTE
 }
 
@@ -54,7 +56,6 @@ fun Recipes.craftingTransmute(name: String, namespace: String? = null, block: Cr
 		name, CraftingTransmute(
 			input = listOf(),
 			material = listOf(),
-			result = CraftingResult(id = ""),
 		).apply(block)
 	)
 	return register(recipe, namespace)

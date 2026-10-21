@@ -10,6 +10,7 @@ import io.github.ayfri.kore.arguments.types.literals.allPlayers
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.recipeGive
 import io.github.ayfri.kore.dataPack
+import io.github.ayfri.kore.features.recipes.data.TransmuteResult
 import io.github.ayfri.kore.features.recipes.recipes
 import io.github.ayfri.kore.features.recipes.recipesBuilder
 import io.github.ayfri.kore.features.recipes.types.*
@@ -21,6 +22,7 @@ import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.generated.TrimPatterns
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
+import kotlinx.serialization.json.Json
 
 fun DataPack.recipeTest() {
 	recipes {
@@ -183,11 +185,55 @@ private fun DataPack.allRecipeTypesTests() {
 			"input": "#minecraft:stone_crafting_materials",
 			"material": "#minecraft:repairs_diamond_armor",
 			"result": {
-				"id": "minecraft:diamond",
 				"components": {
 					"damage": 4,
 					"!enchantments": {}
-				}
+				},
+				"id": "minecraft:diamond"
+			}
+		}
+	""".trimIndent()
+
+	recipesBuilder.craftingTransmute("test_crafting_transmute_no_result") {
+		input(Items.FILLED_MAP)
+		material(Items.MAP)
+	}
+	recipes.last() assertsIs """
+		{
+			"type": "minecraft:crafting_transmute",
+			"input": "minecraft:filled_map",
+			"material": "minecraft:map",
+			"result": {}
+		}
+	""".trimIndent()
+
+	recipesBuilder.craftingTransmute("test_crafting_transmute_bare_result") {
+		input(Items.BLACK_BUNDLE)
+		material(Items.RED_DYE)
+		result(Items.RED_BUNDLE)
+	}
+	recipes.last() assertsIs """
+		{
+			"type": "minecraft:crafting_transmute",
+			"input": "minecraft:black_bundle",
+			"material": "minecraft:red_dye",
+			"result": "minecraft:red_bundle"
+		}
+	""".trimIndent()
+
+	recipesBuilder.craftingTransmute("test_crafting_transmute_count") {
+		input(Items.BLACK_BUNDLE)
+		material(Items.RED_DYE)
+		result(Items.RED_BUNDLE, count = 2)
+	}
+	recipes.last() assertsIs """
+		{
+			"type": "minecraft:crafting_transmute",
+			"input": "minecraft:black_bundle",
+			"material": "minecraft:red_dye",
+			"result": {
+				"count": 2,
+				"id": "minecraft:red_bundle"
 			}
 		}
 	""".trimIndent()
@@ -330,6 +376,19 @@ private fun DataPack.allRecipeTypesTests() {
 		}
 	""".trimIndent()
 
+	recipesBuilder.craftingSpecialMapExtending("test_crafting_special_mapextending_no_result") {
+		map(Items.FILLED_MAP)
+		material(Items.PAPER)
+	}
+	recipes.last() assertsIs """
+		{
+			"type": "minecraft:crafting_special_mapextending",
+			"map": "minecraft:filled_map",
+			"material": "minecraft:paper",
+			"result": {}
+		}
+	""".trimIndent()
+
 	recipesBuilder.craftingSpecialShieldDecoration("test_crafting_special_shielddecoration") {
 		banner(Tags.Item.BANNERS)
 		target(Items.SHIELD)
@@ -438,5 +497,25 @@ class RecipeTests : FunSpec({
 			pretty()
 			recipeTest()
 		}
+	}
+
+	test("transmute result round trip") {
+		val json = Json {
+			encodeDefaults = true
+			explicitNulls = false
+		}
+
+		json.encodeToString(TransmuteResult()) assertsIs "{}"
+		json.encodeToString(TransmuteResult(id = "minecraft:filled_map")) assertsIs "\"minecraft:filled_map\""
+		json.encodeToString(TransmuteResult(count = 2, id = "minecraft:filled_map")) assertsIs """{"count":2,"id":"minecraft:filled_map"}"""
+
+		json.decodeFromString<TransmuteResult>("{}") assertsIs TransmuteResult()
+		json.decodeFromString<TransmuteResult>("\"minecraft:filled_map\"") assertsIs TransmuteResult(id = "minecraft:filled_map")
+		json.decodeFromString<TransmuteResult>("""{"count":2,"id":"minecraft:filled_map"}""") assertsIs
+			TransmuteResult(count = 2, id = "minecraft:filled_map")
+
+		roundTrip(TransmuteResult())
+		roundTrip(TransmuteResult(id = "minecraft:filled_map"))
+		roundTrip(TransmuteResult(count = 2, id = "minecraft:filled_map"))
 	}
 })
