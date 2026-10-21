@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.generated.arguments.EnchantmentOrTagArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class EnchantRandomly(
-	override var conditions: PredicateAsList? = null,
+	override var condition: PredicateCondition? = null,
 	var includeAdditionalCostComponent: Boolean? = null,
 	var options: InlinableList<EnchantmentOrTagArgument>? = null,
 	var onlyCompatible: Boolean? = null,

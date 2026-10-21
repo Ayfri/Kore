@@ -5,7 +5,7 @@ import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
@@ -29,7 +29,7 @@ enum class SetNameTarget {
  */
 @Serializable
 data class SetName(
-	override var conditions: PredicateAsList? = null,
+	override var condition: PredicateCondition? = null,
 	var entity: Source? = null,
 	var name: ChatComponents,
 	var target: SetNameTarget? = null,

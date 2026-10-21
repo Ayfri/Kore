@@ -5,7 +5,7 @@ import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.types.Mode
 import io.github.ayfri.kore.features.itemmodifiers.types.ModeHandler
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import kotlinx.serialization.Serializable
 
 /**
@@ -17,7 +17,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class SetLore(
-	override var conditions: PredicateAsList? = null,
+	override var condition: PredicateCondition? = null,
 	var entity: Source? = null,
 	var lore: @Serializable(ChatComponents.Companion.ChatComponentsLinesSerializer::class) ChatComponents = textComponent(),
 ) : ItemFunction(), ModeHandler {

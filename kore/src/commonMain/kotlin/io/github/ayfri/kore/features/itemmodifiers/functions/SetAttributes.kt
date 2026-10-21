@@ -4,7 +4,7 @@ import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.data.item.AttributeModifier
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.NumberProvider
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.generated.arguments.types.AttributeArgument
@@ -19,7 +19,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class SetAttributes(
-	override var conditions: PredicateAsList? = null,
+	override var condition: PredicateCondition? = null,
 	val modifiers: MutableList<AttributeModifier> = mutableListOf(),
 	var replace: Boolean? = null,
 ) : ItemFunction()

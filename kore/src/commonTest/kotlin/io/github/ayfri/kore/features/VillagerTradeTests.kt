@@ -48,12 +48,10 @@ fun DataPack.villagerTradeTests() {
 				"id": "minecraft:paper",
 				"count": 1
 			},
-			"given_item_modifiers": [
-				{
-					"function": "minecraft:limit_count",
-					"limit": 2
-				}
-			],
+			"given_item_modifiers": {
+				"type": "minecraft:limit_count",
+				"limit": 2
+			},
 			"gives": {
 				"id": "minecraft:emerald"
 			},

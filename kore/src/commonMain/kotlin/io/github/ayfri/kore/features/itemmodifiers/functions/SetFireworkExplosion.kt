@@ -3,7 +3,7 @@ package io.github.ayfri.kore.features.itemmodifiers.functions
 import io.github.ayfri.kore.arguments.colors.RGB
 import io.github.ayfri.kore.arguments.components.item.FireworkExplosionShape
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class SetFireworkExplosion(
-	override var conditions: PredicateAsList? = null,
+	override var condition: PredicateCondition? = null,
 	var shape: FireworkExplosionShape,
 	var colors: List<@Serializable(RGB.Companion.ColorAsDecimalSerializer::class) RGB>? = null,
 	var fadeColors: List<@Serializable(RGB.Companion.ColorAsDecimalSerializer::class) RGB>? = null,

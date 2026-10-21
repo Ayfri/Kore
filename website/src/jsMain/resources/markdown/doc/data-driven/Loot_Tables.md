@@ -76,7 +76,7 @@ A loot table consists of:
 |------------------|--------------------------|-----------------------------------------------------|
 | `type`           | `LootTableType`          | Optional context type for validation                |
 | `pools`          | `List<LootPool>`         | One or more pools that generate items               |
-| `functions`      | `ItemModifier`           | Optional global item functions applied to all drops |
+| `functions`      | `InlinableItemModifier?` | Optional global item functions applied to all drops |
 | `randomSequence` | `RandomSequenceArgument` | Optional deterministic random sequence              |
 
 ### Setting the Type
@@ -127,7 +127,7 @@ Each pool represents an independent set of rolls. A table can have multiple pool
 | `bonusRolls` | `NumberProvider`  | Additional rolls per luck level                |
 | `conditions` | `Predicate`       | Conditions that must pass for pool to activate |
 | `entries`    | `List<LootEntry>` | Possible entries to select from                |
-| `functions`  | `ItemModifier`    | Functions applied to items from this pool      |
+| `functions`  | `InlinableItemModifier?` | Functions applied to items from this pool      |
 
 ### Basic Pool
 
@@ -451,7 +451,7 @@ Singleton entries share these properties:
 | `weight`     | `Int`          | Selection weight (higher = more likely)                  |
 | `quality`    | `Int`          | Modifies weight based on luck: `weight + quality × luck` |
 | `conditions` | `Predicate`    | Entry only available if conditions pass                  |
-| `functions`  | `ItemModifier` | Functions applied to this entry's items                  |
+| `functions`  | `InlinableItemModifier?` | Functions applied to this entry's items                  |
 
 ## Conditions (Predicates)
 
@@ -504,14 +504,14 @@ functions {
 
 	// Conditional function
 	setCount(10f) {
-		conditions {
+		condition {
 			killedByPlayer()
 		}
 	}
 }
 ```
 
-See [Item Modifiers](/docs/data-driven/item-modifiers) for the complete list of available functions.
+A single function is written as an object, several ones as a list. See [Item Modifiers](/docs/data-driven/item-modifiers) for the complete list of available functions.
 
 ## Full Example
 
@@ -579,11 +579,9 @@ dataPack("treasure_hunt") {
 ```json
 {
 	"type": "minecraft:entity",
-	"functions": [
-		{
-			"function": "minecraft:enchant_randomly"
-		}
-	],
+	"functions": {
+		"type": "minecraft:enchant_randomly"
+	},
 	"pools": [
 		{
 			"rolls": 1.0,
@@ -609,11 +607,11 @@ dataPack("treasure_hunt") {
 					"weight": 1,
 					"functions": [
 						{
-							"function": "minecraft:enchant_with_levels",
+							"type": "minecraft:enchant_with_levels",
 							"levels": 30.0
 						},
 						{
-							"function": "minecraft:set_name",
+							"type": "minecraft:set_name",
 							"name": "Boss Slayer"
 						}
 					]
@@ -622,16 +620,14 @@ dataPack("treasure_hunt") {
 					"type": "minecraft:item",
 					"name": "minecraft:diamond_sword",
 					"weight": 5,
-					"functions": [
-						{
-							"function": "minecraft:enchant_with_levels",
-							"levels": {
-								"type": "minecraft:uniform",
-								"min": 15.0,
-								"max": 25.0
-							}
+					"functions": {
+						"type": "minecraft:enchant_with_levels",
+						"levels": {
+							"type": "minecraft:uniform",
+							"min": 15.0,
+							"max": 25.0
 						}
-					]
+					}
 				},
 				{
 					"type": "minecraft:empty",

@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.loottables.entries
 
+import io.github.ayfri.kore.features.itemmodifiers.InlinableItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.itemmodifiers.ItemModifierAsList
 import io.github.ayfri.kore.features.slotsources.SlotSource
 import io.github.ayfri.kore.features.slotsources.SlotSourcesBuilder
 import io.github.ayfri.kore.features.slotsources.buildSlotSources
@@ -20,7 +20,7 @@ import kotlinx.serialization.Serializable
 data class Slots(
 	var slotSource: InlinableList<SlotSource> = emptyList(),
 	var conditions: PredicateAsList? = null,
-	var functions: ItemModifierAsList? = null,
+	var functions: InlinableItemModifier? = null,
 	var quality: Int? = null,
 	var weight: Int? = null,
 ) : LootEntry()

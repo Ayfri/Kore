@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import kotlinx.serialization.Serializable
 
 /**
@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Discard(
-	override var conditions: PredicateAsList? = null,
+	override var condition: PredicateCondition? = null,
 ) : ItemFunction()
 
 /** Replaces the item with an empty one. */

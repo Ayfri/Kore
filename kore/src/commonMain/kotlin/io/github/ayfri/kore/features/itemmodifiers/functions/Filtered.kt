@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.arguments.types.ItemOrTagArgument
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.sub.ItemStackPredicate
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Filtered(
-	override var conditions: PredicateAsList? = null,
+	override var condition: PredicateCondition? = null,
 	var itemFilter: ItemStackPredicate = ItemStackPredicate(),
 	var onFail: InlinableList<ItemFunction>? = null,
 	var onPass: InlinableList<ItemFunction>? = null,

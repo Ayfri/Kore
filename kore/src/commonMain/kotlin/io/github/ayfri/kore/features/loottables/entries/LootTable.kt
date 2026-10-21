@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.loottables.entries
 
+import io.github.ayfri.kore.features.itemmodifiers.InlinableItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.itemmodifiers.ItemModifierAsList
 import io.github.ayfri.kore.features.predicates.PredicateAsList
 import io.github.ayfri.kore.generated.arguments.types.LootTableArgument
 import kotlinx.serialization.Serializable
@@ -16,7 +16,7 @@ import kotlinx.serialization.Serializable
 data class LootTable(
 	var value: LootTableArgument,
 	var conditions: PredicateAsList? = null,
-	var functions: ItemModifierAsList? = null,
+	var functions: InlinableItemModifier? = null,
 	var quality: Int? = null,
 	var weight: Int? = null,
 ) : LootEntry()

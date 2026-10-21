@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.NumberProvider
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.generated.arguments.EnchantmentOrTagArgument
@@ -17,7 +17,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class EnchantWithLevels(
-	override var conditions: PredicateAsList? = null,
+	override var condition: PredicateCondition? = null,
 	var levels: NumberProvider,
 	var includeAdditionalCostComponent: Boolean? = null,
 	var options: InlinableList<EnchantmentOrTagArgument>? = null,

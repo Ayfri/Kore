@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.arguments.components.item.WritablePage
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import kotlinx.serialization.Serializable
 /**
  * Sets title/author/generation for written books. Mirrors `minecraft:set_book_cover`.
@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class SetBookCover(
-	override var conditions: PredicateAsList? = null,
+	override var condition: PredicateCondition? = null,
 	/** Plain text up to 32 characters, with an optional filtered version, the game doesn't take a text component here. */
 	var title: WritablePage? = null,
 	var author: String? = null,

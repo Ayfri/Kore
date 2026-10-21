@@ -4,7 +4,7 @@ import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.ColorAsDecimalSerializer
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.types.ListOperation
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.ConstantNumberProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProvider
 import kotlinx.serialization.Serializable
@@ -22,8 +22,8 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class SetCustomModelData(
-	override var conditions: PredicateAsList? = null,
 	var colors: ListOperation<@Serializable(ColorAsDecimalSerializer::class) Color>? = null,
+	override var condition: PredicateCondition? = null,
 	var flags: ListOperation<Boolean>? = null,
 	var floats: ListOperation<NumberProvider>? = null,
 	var strings: ListOperation<String>? = null,

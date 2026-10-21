@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.formulas.Formula
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.generated.arguments.types.EnchantmentArgument
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -22,7 +22,7 @@ import kotlinx.serialization.json.*
  */
 @Serializable(with = ApplyBonus.Companion.ApplyBonusSerializer::class)
 data class ApplyBonus(
-	override var conditions: PredicateAsList? = null,
+	override var condition: PredicateCondition? = null,
 	var enchantment: EnchantmentArgument,
 	var formula: Formula,
 ) : ItemFunction() {
@@ -39,8 +39,8 @@ data class ApplyBonus(
 				val formulaJson = json.encodeToJsonElement(Formula.serializer(), value.formula).jsonObject
 
 				val result = buildJsonObject {
-					value.conditions?.let {
-						put("conditions", json.encodeToJsonElement(PredicateAsList.serializer(), it))
+					value.condition?.let {
+						put("condition", json.encodeToJsonElement(PredicateCondition.serializer(), it))
 					}
 					put("enchantment", json.encodeToJsonElement(value.enchantment))
 					formulaJson.forEach { (key, v) -> put(key, v) }

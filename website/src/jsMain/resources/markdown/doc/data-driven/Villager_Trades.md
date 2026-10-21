@@ -97,7 +97,7 @@ All fields are optional except `wants` and `gives`, which must be set before the
 |--------------------------------|--------------------------------------------|-----------------------------------------------------------------------------------|
 | `additionalWants`              | `ItemStack?`                               | Second item slot the villager requests alongside `wants`.                         |
 | `doubleTradePriceEnchantments` | `InlinableList<EnchantmentOrTagArgument>?` | Enchantments on the player's item that double the trade cost.                     |
-| `givenItemModifiers`           | `ItemModifierAsList?`                      | Item modifier functions applied to the output item before delivery.               |
+| `givenItemModifiers`           | `InlinableItemModifier?`                   | Item modifier functions applied to the output item before delivery.               |
 | `gives`                        | `ItemStack?`                               | Item the villager offers in return. **Required.**                                 |
 | `maxUses`                      | `NumberProvider?`                          | Maximum uses before the trade locks. Unlocks when the villager restocks.          |
 | `merchantPredicate`            | `PredicateCondition?`                      | Condition checked against the merchant entity; trade only appears when it passes. |

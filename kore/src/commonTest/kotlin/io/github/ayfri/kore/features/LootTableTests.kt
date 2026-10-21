@@ -7,8 +7,9 @@ import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.loot
 import io.github.ayfri.kore.dataPack
-import io.github.ayfri.kore.features.itemmodifiers.functions.conditions
+import io.github.ayfri.kore.features.itemmodifiers.functions.condition
 import io.github.ayfri.kore.features.itemmodifiers.functions.enchantRandomly
+import io.github.ayfri.kore.features.itemmodifiers.functions.explosionDecay
 import io.github.ayfri.kore.features.itemmodifiers.functions.setCount
 import io.github.ayfri.kore.features.loottables.*
 import io.github.ayfri.kore.features.loottables.entries.*
@@ -61,7 +62,7 @@ fun DataPack.lootTableTests() {
 
 					functions {
 						setCount(1f) {
-							conditions {
+							condition {
 								randomChance(0.5f)
 							}
 						}
@@ -83,12 +84,10 @@ fun DataPack.lootTableTests() {
 
 	lootTables.last() assertsIs """
 		{
-			"functions": [
-				{
-					"function": "minecraft:enchant_randomly",
-					"options": "minecraft:looting"
-				}
-			],
+			"functions": {
+				"type": "minecraft:enchant_randomly",
+				"options": "minecraft:looting"
+			},
 			"pools": [
 				{
 					"rolls": 2.0,
@@ -132,18 +131,14 @@ fun DataPack.lootTableTests() {
 									"raining": true
 								}
 							],
-							"functions": [
-								{
-									"function": "minecraft:set_count",
-									"conditions": [
-										{
-											"type": "minecraft:random_chance",
-											"chance": 0.5
-										}
-									],
-									"count": 1.0
-								}
-							]
+							"functions": {
+								"type": "minecraft:set_count",
+								"condition": {
+									"type": "minecraft:random_chance",
+									"chance": 0.5
+								},
+								"count": 1.0
+							}
 						},
 						{
 							"type": "minecraft:sequence",
@@ -156,12 +151,10 @@ fun DataPack.lootTableTests() {
 							]
 						}
 					],
-					"functions": [
-						{
-							"function": "minecraft:set_count",
-							"count": 1.0
-						}
-					]
+					"functions": {
+						"type": "minecraft:set_count",
+						"count": 1.0
+					}
 				}
 			]
 		}
@@ -293,6 +286,27 @@ fun DataPack.lootTableTests() {
 		}
 	}
 	roundTrip(lootTables.last())
+
+	lootTable("round_trip_modifiers") {
+		functions {
+			setCount(1f) {
+				condition {
+					randomChance(0.5f)
+					weatherCheck(true)
+				}
+			}
+			explosionDecay()
+		}
+
+		pool {
+			entries {
+				item(Items.DIAMOND) {
+					functions { setCount(2f) }
+				}
+			}
+		}
+	}
+	roundTrip(lootTables.last())
 }
 
 class LootTableTests : FunSpec({
@@ -326,12 +340,10 @@ class LootTableTests : FunSpec({
 								{
 									"type": "minecraft:item",
 									"name": "minecraft:diamond",
-									"functions": [
-										{
-											"function": "minecraft:set_count",
-											"count": 2.0
-										}
-									]
+									"functions": {
+										"type": "minecraft:set_count",
+										"count": 2.0
+									}
 								}
 							]
 						}

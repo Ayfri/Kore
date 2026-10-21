@@ -11,23 +11,26 @@ import io.github.ayfri.kore.serializers.InlinableListSerializer
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.builtins.ListSerializer
 
 /**
- * Inline serializer alias used when an item-modifier must be embedded as a raw JSON array
- * (e.g. inside the `sequence` or `filtered` function payloads). It serializes only the
- * underlying list of item functions.
+ * An [ItemModifier] embedded as a field (e.g. inside a `sequence` function or a loot table): a single function is
+ * written bare, several ones as a list (the vanilla `sequence` shorthand).
+ *
+ * ```
+ * [setCount]                -> { "type": "minecraft:set_count", ... }
+ * [setCount, explosionDecay] -> [ { "type": "minecraft:set_count", ... }, { "type": "minecraft:explosion_decay" } ]
+ * ```
  *
  * See docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  */
-typealias ItemModifierAsList = @Serializable(with = ItemModifier.Companion.ItemModifierAsListSerializer::class) ItemModifier
+typealias InlinableItemModifier = @Serializable(with = ItemModifier.Companion.InlinableItemModifierSerializer::class) ItemModifier
 
 /**
  * Data-driven container for loot/item functions applied to items.
  *
  * Item modifiers are ordered lists of functions used by loot tables and commands to transform
- * items (set components, set lore, enchant, map exploration data, etc.). Kore serializes this
- * as the vanilla JSON array format expected by Minecraft.
+ * items (set components, set lore, enchant, map exploration data, etc.). Kore serializes a single
+ * function as a bare object and several ones as the vanilla JSON array (`sequence` shorthand).
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * Minecraft Wiki: https://minecraft.wiki/w/Item_modifier
@@ -43,8 +46,8 @@ data class ItemModifier(
 		dataPack.jsonEncoder.encodeToString(InlinableListSerializer(ItemFunction.serializer()), modifiers)
 
 	companion object {
-		data object ItemModifierAsListSerializer : InlineAutoSerializer<ItemModifier, InlinableList<ItemFunction>>(
-			ListSerializer(ItemFunction.serializer()),
+		data object InlinableItemModifierSerializer : InlineAutoSerializer<ItemModifier, InlinableList<ItemFunction>>(
+			InlinableListSerializer(ItemFunction.serializer()),
 			ItemModifier::modifiers,
 			{ ItemModifier(modifiers = it) },
 		)

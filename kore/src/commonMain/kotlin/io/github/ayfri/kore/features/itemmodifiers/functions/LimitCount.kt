@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.IntOrNumberProvidersRange
 import io.github.ayfri.kore.features.predicates.providers.intRange
 import io.github.ayfri.kore.features.predicates.providers.intValue
@@ -16,7 +16,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class LimitCount(
-	override var conditions: PredicateAsList? = null,
+	override var condition: PredicateCondition? = null,
 	val limit: IntOrNumberProvidersRange,
 ) : ItemFunction()
 

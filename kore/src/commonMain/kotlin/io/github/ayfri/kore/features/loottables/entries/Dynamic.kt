@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.loottables.entries
 
+import io.github.ayfri.kore.features.itemmodifiers.InlinableItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.itemmodifiers.ItemModifierAsList
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.PredicateAsList
 import io.github.ayfri.kore.serializers.LowercaseSerializer
@@ -31,7 +31,7 @@ enum class LootEntryDynamicName {
 data class Dynamic(
 	var name: LootEntryDynamicName,
 	var conditions: PredicateAsList? = null,
-	var functions: ItemModifierAsList? = null,
+	var functions: InlinableItemModifier? = null,
 	var quality: Int? = null,
 	var weight: Int? = null,
 ) : LootEntry()

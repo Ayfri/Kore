@@ -2,8 +2,8 @@ package io.github.ayfri.kore.features.loottables.entries
 
 import io.github.ayfri.kore.arguments.types.TaggedResourceLocationArgument
 import io.github.ayfri.kore.arguments.types.resources.tagged.ItemTagArgument
+import io.github.ayfri.kore.features.itemmodifiers.InlinableItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.itemmodifiers.ItemModifierAsList
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.PredicateAsList
 import kotlinx.serialization.Serializable
@@ -18,7 +18,7 @@ import kotlinx.serialization.Serializable
 data class Tag(
 	var conditions: PredicateAsList? = null,
 	var expand: Boolean,
-	var functions: ItemModifierAsList? = null,
+	var functions: InlinableItemModifier? = null,
 	@Serializable(TaggedResourceLocationArgument.TaggedResourceLocationUnPrefixedSerializer::class)
 	var name: ItemTagArgument,
 	var quality: Int? = null,

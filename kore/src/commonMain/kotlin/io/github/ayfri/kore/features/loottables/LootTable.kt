@@ -4,8 +4,8 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.annotations.LootDsl
 import io.github.ayfri.kore.arguments.types.resources.RandomSequenceArgument
+import io.github.ayfri.kore.features.itemmodifiers.InlinableItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.itemmodifiers.ItemModifierAsList
 import io.github.ayfri.kore.features.predicates.providers.NumberProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.features.predicates.providers.constant
@@ -28,7 +28,7 @@ import kotlinx.serialization.Transient
 data class LootTable(
 	@Transient
 	override var fileName: String = "loot_table",
-	var functions: ItemModifierAsList? = null,
+	var functions: InlinableItemModifier? = null,
 	var pools: List<LootPool>? = null,
 	var randomSequence: RandomSequenceArgument? = null,
 	var type: LootTableType? = null,

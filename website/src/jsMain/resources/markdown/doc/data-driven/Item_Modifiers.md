@@ -18,7 +18,7 @@ Item modifiers (also called loot functions) transform item stacks by adjusting c
 Item modifiers have several key characteristics:
 
 - **Composable**: Chain multiple functions together for complex transformations
-- **Conditional**: Each function can have predicate conditions
+- **Conditional**: Each function can have a predicate condition
 - **Context-aware**: Access loot context for killer, tool, block entity, etc.
 - **Reusable**: Define once as a file, reference anywhere
 
@@ -42,6 +42,8 @@ Item modifiers are stored as JSON files in data packs at:
 ```
 data/<namespace>/item_modifier/<name>.json
 ```
+
+A file holds one function written as an object (`{ "type": "minecraft:set_count", ... }`), or several functions written as a list. Each function names its kind in `type`.
 
 For complete JSON specification, see the [Minecraft Wiki - Item modifier](https://minecraft.wiki/w/Item_modifier).
 
@@ -126,7 +128,7 @@ itemModifier("set_count") {
 
 	// With condition
 	setCount(10f) {
-		conditions {
+		condition {
 			killedByPlayer()
 		}
 	}
@@ -757,6 +759,8 @@ itemModifier("complex") {
 }
 ```
 
+A `sequence` holding a single function writes it as an object, several ones as a list.
+
 #### discard
 
 Replaces the produced item stack with an empty one:
@@ -804,23 +808,44 @@ itemModifier("extended") {
 
 ## Conditions
 
-Every function can have conditions that must pass:
+Every function can have one `condition` that must pass:
 
 ```kotlin
 itemModifier("conditional") {
 	setCount(10f) {
-		conditions {
-			// Multiple conditions are AND-ed
+		condition {
+			// Several conditions are written as one all_of, so they are AND-ed
 			killedByPlayer()
 			randomChance(0.5f)
 		}
 	}
 
 	enchantRandomly {
-		conditions {
+		condition {
 			weatherCheck(raining = true)
 		}
 	}
+}
+```
+
+The first function is written as:
+
+```json
+{
+	"type": "minecraft:set_count",
+	"condition": {
+		"type": "minecraft:all_of",
+		"terms": [
+			{
+				"type": "minecraft:killed_by_player"
+			},
+			{
+				"type": "minecraft:random_chance",
+				"chance": 0.5
+			}
+		]
+	},
+	"count": 10.0
 }
 ```
 
@@ -833,7 +858,7 @@ dataPack("legendary_items") {
 	val legendaryModifier = itemModifier("legendary_weapon") {
 		// High-level enchantments
 		enchantWithLevels(levels = constant(30f)) {
-			conditions {
+			condition {
 				randomChance(0.3f)
 			}
 		}
@@ -898,23 +923,21 @@ dataPack("legendary_items") {
 ```json
 [
 	{
-		"function": "minecraft:enchant_with_levels",
-		"levels": 30.0,
-		"conditions": [
-			{
-				"type": "minecraft:random_chance",
-				"chance": 0.3
-			}
-		]
+		"type": "minecraft:enchant_with_levels",
+		"condition": {
+			"type": "minecraft:random_chance",
+			"chance": 0.3
+		},
+		"levels": 30.0
 	},
 	{
-		"function": "minecraft:set_enchantments",
+		"type": "minecraft:set_enchantments",
 		"enchantments": {
 			"minecraft:unbreaking": 3
 		}
 	},
 	{
-		"function": "minecraft:set_name",
+		"type": "minecraft:set_name",
 		"name": {
 			"text": "Legendary Weapon",
 			"color": "gold",
@@ -922,7 +945,7 @@ dataPack("legendary_items") {
 		}
 	},
 	{
-		"function": "minecraft:set_lore",
+		"type": "minecraft:set_lore",
 		"lore": [
 			{
 				"text": "Forged in ancient flames",
@@ -939,7 +962,7 @@ dataPack("legendary_items") {
 		"mode": "replace_all"
 	},
 	{
-		"function": "minecraft:set_attributes",
+		"type": "minecraft:set_attributes",
 		"modifiers": [
 			{
 				"attribute": "minecraft:attack_damage",
@@ -952,7 +975,7 @@ dataPack("legendary_items") {
 		"replace": false
 	},
 	{
-		"function": "minecraft:set_damage",
+		"type": "minecraft:set_damage",
 		"damage": 1.0
 	}
 ]

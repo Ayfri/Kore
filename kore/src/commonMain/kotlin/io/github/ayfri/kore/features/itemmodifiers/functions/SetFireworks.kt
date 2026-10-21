@@ -5,7 +5,7 @@ import io.github.ayfri.kore.arguments.components.item.FireworkExplosionShape
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.types.Mode
 import io.github.ayfri.kore.features.itemmodifiers.types.ModeHandler
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import kotlinx.serialization.Serializable
 
 /** Holder for the explosion list with list-operation metadata (mode, offset, size). */
@@ -32,7 +32,7 @@ data class SetFireworksExplosions(
  */
 @Serializable
 data class SetFireworks(
-	override var conditions: PredicateAsList? = null,
+	override var condition: PredicateCondition? = null,
 	var flightDuration: Int? = null,
 	var explosions: SetFireworksExplosions? = null,
 ) : ItemFunction()

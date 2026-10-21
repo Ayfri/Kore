@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
@@ -33,7 +33,7 @@ enum class CopyComponentsSource {
  */
 @Serializable
 data class CopyComponents(
-	override var conditions: PredicateAsList? = null,
+	override var condition: PredicateCondition? = null,
 	var source: CopyComponentsSource = CopyComponentsSource.BLOCK_ENTITY,
 	var include: List<String> = emptyList(),
 	var exclude: List<String> = emptyList(),

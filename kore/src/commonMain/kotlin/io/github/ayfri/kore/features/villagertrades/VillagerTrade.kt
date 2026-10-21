@@ -6,8 +6,8 @@ import io.github.ayfri.kore.arguments.components.Components
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.data.item.builders.itemStack
+import io.github.ayfri.kore.features.itemmodifiers.InlinableItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.itemmodifiers.ItemModifierAsList
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.NumberProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
@@ -33,7 +33,7 @@ data class VillagerTrade(
 	override var fileName: String = "villager_trade",
 	var additionalWants: ItemStack? = null,
 	var doubleTradePriceEnchantments: InlinableList<EnchantmentOrTagArgument>? = null,
-	var givenItemModifiers: ItemModifierAsList? = null,
+	var givenItemModifiers: InlinableItemModifier? = null,
 	var gives: ItemStack,
 	var maxUses: NumberProvider? = null,
 	var merchantPredicate: PredicateCondition? = null,
@@ -71,7 +71,7 @@ fun VillagerTrade.additionalWants(id: ItemArgument, count: Short? = null, block:
 
 /** Set item modifier functions applied to the output item. */
 fun VillagerTrade.givenItemModifiers(block: ItemModifier.() -> Unit) {
-	givenItemModifiers = ItemModifierAsList().apply(block)
+	givenItemModifiers = ItemModifier().apply(block)
 }
 
 /** Set the item the villager offers in return. */

@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.features.itemmodifiers.functions
 
+import io.github.ayfri.kore.features.itemmodifiers.InlinableItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.itemmodifiers.ItemModifierAsList
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import kotlinx.serialization.Serializable
 
 /**
@@ -13,8 +13,8 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Sequence(
-	override var conditions: PredicateAsList? = null,
-	val functions: ItemModifierAsList? = null,
+	override var condition: PredicateCondition? = null,
+	val functions: InlinableItemModifier? = null,
 ) : ItemFunction()
 
 /** Add a `sequence` step from a nested builder. */

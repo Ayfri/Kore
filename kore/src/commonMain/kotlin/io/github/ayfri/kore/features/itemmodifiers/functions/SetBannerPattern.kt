@@ -3,7 +3,7 @@ package io.github.ayfri.kore.features.itemmodifiers.functions
 import io.github.ayfri.kore.arguments.colors.FormattingColor
 import io.github.ayfri.kore.data.item.BannerPattern
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.generated.arguments.types.BannerPatternArgument
 import kotlinx.serialization.Serializable
 
@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class SetBannerPattern(
-	override var conditions: PredicateAsList? = null,
+	override var condition: PredicateCondition? = null,
 	var patterns: List<BannerPattern>,
 	var append: Boolean? = null,
 ) : ItemFunction()

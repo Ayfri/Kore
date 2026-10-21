@@ -3,7 +3,7 @@ package io.github.ayfri.kore.features.itemmodifiers.functions
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.loottables.entries.LootEntries
 import io.github.ayfri.kore.features.loottables.entries.LootEntry
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
@@ -28,8 +28,8 @@ enum class ContentComponentTypes {
  */
 @Serializable
 data class SetContents(
-	override var conditions: PredicateAsList? = null,
 	var component: ContentComponentTypes? = null,
+	override var condition: PredicateCondition? = null,
 	var entries: List<LootEntry> = emptyList(),
 ) : ItemFunction()
 

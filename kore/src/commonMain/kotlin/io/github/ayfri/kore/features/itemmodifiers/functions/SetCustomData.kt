@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
 import io.github.ayfri.kore.utils.nbt
 import kotlinx.serialization.Serializable
@@ -16,7 +16,7 @@ import net.benwoodworth.knbt.NbtTag
  */
 @Serializable
 data class SetCustomData(
-	override var conditions: PredicateAsList? = null,
+	override var condition: PredicateCondition? = null,
 	@Serializable(with = NbtAsJsonSerializer::class)
 	val tag: NbtTag,
 ) : ItemFunction()

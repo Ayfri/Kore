@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.NumberProvider
 import io.github.ayfri.kore.generated.arguments.types.EnchantmentArgument
 import kotlinx.serialization.Serializable
@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class SetEnchantments(
-	override var conditions: PredicateAsList? = null,
+	override var condition: PredicateCondition? = null,
 	var enchantments: Map<EnchantmentArgument, NumberProvider> = emptyMap(),
 	var add: Boolean? = null,
 ) : ItemFunction()

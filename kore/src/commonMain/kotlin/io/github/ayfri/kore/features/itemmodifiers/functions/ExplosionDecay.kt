@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import kotlinx.serialization.Serializable
 
 /**
@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
  * See also: https://minecraft.wiki/w/Item_modifier
  */
 @Serializable
-data class ExplosionDecay(override var conditions: PredicateAsList? = null) : ItemFunction()
+data class ExplosionDecay(override var condition: PredicateCondition? = null) : ItemFunction()
 
 /** Add an `explosion_decay` step. */
 fun ItemModifier.explosionDecay(block: ExplosionDecay.() -> Unit = {}) {

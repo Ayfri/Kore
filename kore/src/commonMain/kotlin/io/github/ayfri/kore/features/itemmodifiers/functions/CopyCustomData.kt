@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class CopyCustomData(
-	override var conditions: PredicateAsList? = null,
+	override var condition: PredicateCondition? = null,
 	var source: NbtProvider,
 	var ops: List<CopyNbtOperation> = emptyList(),
 ) : ItemFunction()

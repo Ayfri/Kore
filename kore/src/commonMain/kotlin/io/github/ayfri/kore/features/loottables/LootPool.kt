@@ -1,8 +1,8 @@
 package io.github.ayfri.kore.features.loottables
 
 import io.github.ayfri.kore.annotations.LootDsl
+import io.github.ayfri.kore.features.itemmodifiers.InlinableItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.itemmodifiers.ItemModifierAsList
 import io.github.ayfri.kore.features.loottables.entries.LootEntries
 import io.github.ayfri.kore.features.loottables.entries.LootEntry
 import io.github.ayfri.kore.features.predicates.Predicate
@@ -26,7 +26,7 @@ data class LootPool(
 	var bonusRolls: NumberProvider? = null,
 	var conditions: PredicateAsList? = null,
 	var entries: List<LootEntry> = emptyList(),
-	var functions: ItemModifierAsList? = null,
+	var functions: InlinableItemModifier? = null,
 ) : NumberProviderScope
 
 /** Set the number of rolls. */
@@ -69,5 +69,5 @@ fun LootPool.entries(block: LootEntries.() -> Unit) {
 
 /** Set item modifier functions applied to the pool outputs, see [ItemModifiers](https://kore.ayfri.com/docs/data-driven/item-modifiers). */
 fun LootPool.functions(block: ItemModifier.() -> Unit) {
-	functions = ItemModifierAsList().apply(block)
+	functions = ItemModifier().apply(block)
 }

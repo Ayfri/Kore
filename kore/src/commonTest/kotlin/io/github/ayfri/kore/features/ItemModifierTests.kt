@@ -40,7 +40,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:apply_bonus",
+			"type": "minecraft:apply_bonus",
 			"enchantment": "minecraft:sharpness",
 			"formula": "minecraft:binomial_with_bonus_count",
 			"parameters": {
@@ -59,7 +59,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:copy_components",
+			"type": "minecraft:copy_components",
 			"source": "block_entity",
 			"include": [
 				"minecraft:block_entity_data"
@@ -81,7 +81,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:copy_custom_data",
+			"type": "minecraft:copy_custom_data",
 			"source": {
 				"type": "minecraft:storage",
 				"source": "kore:test"
@@ -114,7 +114,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:copy_custom_data",
+			"type": "minecraft:copy_custom_data",
 			"source": {
 				"type": "minecraft:context",
 				"target": "this"
@@ -135,7 +135,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:copy_name",
+			"type": "minecraft:copy_name",
 			"source": "attacking_player"
 		}
 	""".trimIndent()
@@ -146,7 +146,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:copy_state",
+			"type": "minecraft:copy_state",
 			"block": "minecraft:oak_log",
 			"properties": [
 				"axis",
@@ -161,7 +161,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:discard"
+			"type": "minecraft:discard"
 		}
 	""".trimIndent()
 
@@ -171,7 +171,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:enchanted_count_increase",
+			"type": "minecraft:enchanted_count_increase",
 			"enchantment": "minecraft:sharpness",
 			"count": 1.0,
 			"limit": 5
@@ -184,7 +184,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:enchant_randomly",
+			"type": "minecraft:enchant_randomly",
 			"options": [
 				"minecraft:sharpness",
 				"minecraft:looting"
@@ -199,7 +199,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:enchant_randomly"
+			"type": "minecraft:enchant_randomly"
 		}
 	""".trimIndent()
 
@@ -211,7 +211,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:enchant_randomly",
+			"type": "minecraft:enchant_randomly",
 			"include_additional_cost_component": true,
 			"options": "minecraft:sharpness"
 		}
@@ -223,7 +223,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:enchant_with_levels",
+			"type": "minecraft:enchant_with_levels",
 			"levels": 5.0,
 			"options": "minecraft:sharpness"
 		}
@@ -237,7 +237,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:enchant_with_levels",
+			"type": "minecraft:enchant_with_levels",
 			"levels": 30.0,
 			"include_additional_cost_component": false
 		}
@@ -255,7 +255,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:exploration_map",
+			"type": "minecraft:exploration_map",
 			"destination": "minecraft:mineshaft",
 			"decoration": "minecraft:frame",
 			"zoom": 1,
@@ -270,7 +270,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:explosion_decay"
+			"type": "minecraft:explosion_decay"
 		}
 	""".trimIndent()
 
@@ -280,7 +280,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:fill_player_head",
+			"type": "minecraft:fill_player_head",
 			"entity": "this"
 		}
 	""".trimIndent()
@@ -301,15 +301,15 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:filtered",
+			"type": "minecraft:filtered",
 			"item_filter": {
 				"items": "minecraft:apple"
 			},
 			"on_fail": {
-				"function": "minecraft:discard"
+				"type": "minecraft:discard"
 			},
 			"on_pass": {
-				"function": "minecraft:set_name",
+				"type": "minecraft:set_name",
 				"name": "Test"
 			}
 		}
@@ -321,7 +321,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:furnace_smelt"
+			"type": "minecraft:furnace_smelt"
 		}
 	""".trimIndent()
 
@@ -336,7 +336,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:limit_count",
+			"type": "minecraft:limit_count",
 			"limit": {
 				"min": {
 					"type": "minecraft:score",
@@ -365,10 +365,10 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:modify_contents",
+			"type": "minecraft:modify_contents",
 			"component": "bundle_contents",
 			"modifier": {
-				"function": "minecraft:set_name",
+				"type": "minecraft:set_name",
 				"name": "Test"
 			}
 		}
@@ -380,7 +380,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:reference",
+			"type": "minecraft:reference",
 			"name": "kore:my_modifier"
 		}
 	""".trimIndent()
@@ -394,14 +394,14 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:sequence",
+			"type": "minecraft:sequence",
 			"functions": [
 				{
-					"function": "minecraft:set_item",
+					"type": "minecraft:set_item",
 					"item": "minecraft:apple"
 				},
 				{
-					"function": "minecraft:set_name",
+					"type": "minecraft:set_name",
 					"name": {
 						"text": "Test",
 						"color": "black",
@@ -421,7 +421,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_attributes",
+			"type": "minecraft:set_attributes",
 			"modifiers": [
 				{
 					"attribute": "minecraft:scale",
@@ -443,7 +443,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_banner_pattern",
+			"type": "minecraft:set_banner_pattern",
 			"patterns": [
 				{
 					"pattern": "minecraft:creeper",
@@ -460,7 +460,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_book_cover",
+			"type": "minecraft:set_book_cover",
 			"title": "Test Title",
 			"author": "Test Author",
 			"generation": 2
@@ -478,7 +478,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_components",
+			"type": "minecraft:set_components",
 			"components": {
 				"custom_name": {
 					"text": "Test",
@@ -504,7 +504,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_components",
+			"type": "minecraft:set_components",
 			"components": {
 				"block_transformer": [
 					{
@@ -536,7 +536,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_contents",
+			"type": "minecraft:set_contents",
 			"component": "bundle_contents",
 			"entries": [
 				{
@@ -554,7 +554,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_count",
+			"type": "minecraft:set_count",
 			"count": 5.0,
 			"add": true
 		}
@@ -568,7 +568,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_custom_data",
+			"type": "minecraft:set_custom_data",
 			"tag": {
 				"test": 1
 			}
@@ -586,7 +586,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_custom_model_data",
+			"type": "minecraft:set_custom_model_data",
 			"colors": {
 				"values": [
 					16733525,
@@ -630,7 +630,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_custom_model_data",
+			"type": "minecraft:set_custom_model_data",
 			"colors": {
 				"values": [
 					16733525
@@ -655,7 +655,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_custom_model_data",
+			"type": "minecraft:set_custom_model_data",
 			"floats": {
 				"values": [
 					{
@@ -684,7 +684,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_damage",
+			"type": "minecraft:set_damage",
 			"damage": 0.5,
 			"add": true
 		}
@@ -698,7 +698,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_enchantments",
+			"type": "minecraft:set_enchantments",
 			"enchantments": {
 				"minecraft:sharpness": 2.0
 			},
@@ -717,7 +717,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_firework_explosion",
+			"type": "minecraft:set_firework_explosion",
 			"shape": "star",
 			"colors": [
 				16733525
@@ -748,7 +748,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_fireworks",
+			"type": "minecraft:set_fireworks",
 			"flight_duration": 5,
 			"explosions": {
 				"values": [
@@ -775,7 +775,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_instrument",
+			"type": "minecraft:set_instrument",
 			"options": [
 				"minecraft:admire_goat_horn",
 				"minecraft:sing_goat_horn"
@@ -789,7 +789,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_item",
+			"type": "minecraft:set_item",
 			"item": "minecraft:apple"
 		}
 	""".trimIndent()
@@ -800,8 +800,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_loot_table",
-			"type": "minecraft:chest",
+			"type": "minecraft:set_loot_table",
 			"name": "minecraft:chests/simple_dungeon",
 			"seed": 42
 		}
@@ -817,7 +816,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_lore",
+			"type": "minecraft:set_lore",
 			"lore": [
 				{
 					"text": "Test",
@@ -840,7 +839,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_name",
+			"type": "minecraft:set_name",
 			"entity": "this",
 			"name": {
 				"text": "Test",
@@ -857,7 +856,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_name",
+			"type": "minecraft:set_name",
 			"name": [
 				"",
 				{
@@ -876,7 +875,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_ominous_bottle_amplifier",
+			"type": "minecraft:set_ominous_bottle_amplifier",
 			"amplifier": 5
 		}
 	""".trimIndent()
@@ -887,7 +886,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_potion",
+			"type": "minecraft:set_potion",
 			"id": "minecraft:healing"
 		}
 	""".trimIndent()
@@ -898,7 +897,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_random_dyes",
+			"type": "minecraft:set_random_dyes",
 			"number_of_dyes": 3.0
 		}
 	""".trimIndent()
@@ -909,7 +908,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_random_potion",
+			"type": "minecraft:set_random_potion",
 			"options": [
 				"minecraft:healing",
 				"minecraft:swiftness"
@@ -925,7 +924,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_stew_effect",
+			"type": "minecraft:set_stew_effect",
 			"effects": [
 				{
 					"type": "minecraft:night_vision",
@@ -944,7 +943,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_writable_book_pages",
+			"type": "minecraft:set_writable_book_pages",
 			"pages": [
 				{
 					"raw": "test",
@@ -964,7 +963,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:set_written_book_pages",
+			"type": "minecraft:set_written_book_pages",
 			"pages": [
 				{
 					"raw": "test",
@@ -981,7 +980,7 @@ fun DataPack.itemModifierTests() {
 			destination = Tags.Worldgen.Structure.MINESHAFT
 			skipExistingChunks = true
 
-			conditions {
+			condition {
 				randomChance(0.5f)
 				weatherCheck(true)
 			}
@@ -993,23 +992,26 @@ fun DataPack.itemModifierTests() {
 	itemModifiers.last() assertsIs """
 		[
 			{
-				"function": "minecraft:exploration_map",
-				"conditions": [
-					{
-						"type": "minecraft:random_chance",
-						"chance": 0.5
-					},
-					{
-						"type": "minecraft:weather_check",
-						"raining": true
-					}
-				],
+				"type": "minecraft:exploration_map",
+				"condition": {
+					"type": "minecraft:all_of",
+					"terms": [
+						{
+							"type": "minecraft:random_chance",
+							"chance": 0.5
+						},
+						{
+							"type": "minecraft:weather_check",
+							"raining": true
+						}
+					]
+				},
 				"destination": "minecraft:mineshaft",
 				"decoration": "minecraft:banner_black",
 				"skip_existing_chunks": true
 			},
 			{
-				"function": "minecraft:set_instrument",
+				"type": "minecraft:set_instrument",
 				"options": "#minecraft:goat_horns"
 			}
 		]
@@ -1021,6 +1023,58 @@ fun DataPack.itemModifierTests() {
 		}
 	}
 
+	itemModifier("single_condition") {
+		setCount(1f) {
+			condition {
+				randomChance(0.5f)
+			}
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:set_count",
+			"condition": {
+				"type": "minecraft:random_chance",
+				"chance": 0.5
+			},
+			"count": 1.0
+		}
+	""".trimIndent()
+
+	itemModifier("single_function_sequence") {
+		sequence {
+			setItem(Items.APPLE)
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:sequence",
+			"functions": {
+				"type": "minecraft:set_item",
+				"item": "minecraft:apple"
+			}
+		}
+	""".trimIndent()
+
+	itemModifier("two_functions") {
+		setItem(Items.APPLE)
+		explosionDecay()
+	}
+
+	itemModifiers.last() assertsIs """
+		[
+			{
+				"type": "minecraft:set_item",
+				"item": "minecraft:apple"
+			},
+			{
+				"type": "minecraft:explosion_decay"
+			}
+		]
+	""".trimIndent()
+
 	itemModifier("toggle_tooltips") {
 		toggleTooltips {
 			toggle(true, ItemComponentTypes.TRIM, ItemComponentTypes.CAN_PLACE_ON)
@@ -1030,7 +1084,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifiers.last() assertsIs """
 		{
-			"function": "minecraft:toggle_tooltips",
+			"type": "minecraft:toggle_tooltips",
 			"toggles": {
 				"minecraft:trim": true,
 				"minecraft:can_place_on": true,
