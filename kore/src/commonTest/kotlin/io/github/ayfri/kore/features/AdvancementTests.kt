@@ -4,7 +4,10 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.item.*
+import io.github.ayfri.kore.arguments.components.matchers.enchantmentPredicate
+import io.github.ayfri.kore.arguments.components.matchers.enchantments
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
+import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrIntStart
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.AttributeModifierOperation
@@ -220,7 +223,9 @@ private fun DataPack.allTriggersTests() {
 
 	advancement("bee_nest_destroyed") {
 		criteria {
-			beeNestDestroyed("bee_nest_destroyed", block = Blocks.BEE_NEST, numBeesInside = rangeOrInt(1)) {}
+			beeNestDestroyed("bee_nest_destroyed", numBeesInside = rangeOrInt(1)) {
+				blocks(Blocks.BEE_NEST)
+			}
 		}
 	}
 	advancements.last() assertsIs """
@@ -229,8 +234,73 @@ private fun DataPack.allTriggersTests() {
 				"bee_nest_destroyed": {
 					"trigger": "minecraft:bee_nest_destroyed",
 					"conditions": {
-						"block": "minecraft:bee_nest",
+						"blocks": "minecraft:bee_nest",
 						"num_bees_inside": 1
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	advancement("silk_touch_nest") {
+		criteria {
+			beeNestDestroyed("silk_touch_nest", numBeesInside = rangeOrInt(3)) {
+				blocks(Blocks.BEE_NEST)
+				item {
+					predicates {
+						enchantments(enchantmentPredicate(Enchantments.SILK_TOUCH, levels = rangeOrIntStart(1)))
+					}
+				}
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"silk_touch_nest": {
+					"trigger": "minecraft:bee_nest_destroyed",
+					"conditions": {
+						"blocks": "minecraft:bee_nest",
+						"item": {
+							"predicates": {
+								"minecraft:enchantments": [
+									{
+										"enchantments": "minecraft:silk_touch",
+										"levels": {
+											"min": 1
+										}
+									}
+								]
+							}
+						},
+						"num_bees_inside": 3
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	advancement("bee_nest_state") {
+		criteria {
+			beeNestDestroyed("bee_nest_state") {
+				blocks(Blocks.BEE_NEST, Blocks.BEEHIVE)
+				state("honey_level", "5")
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"bee_nest_state": {
+					"trigger": "minecraft:bee_nest_destroyed",
+					"conditions": {
+						"blocks": [
+							"minecraft:bee_nest",
+							"minecraft:beehive"
+						],
+						"state": {
+							"honey_level": "5"
+						}
 					}
 				}
 			}
@@ -518,7 +588,7 @@ private fun DataPack.allTriggersTests() {
 	advancement("enter_block") {
 		criteria {
 			enterBlock("enter_block") {
-				block = Blocks.REDSTONE_LAMP
+				blocks(Blocks.REDSTONE_LAMP)
 				states {
 					this["lit"] = "true"
 				}
@@ -531,10 +601,54 @@ private fun DataPack.allTriggersTests() {
 				"enter_block": {
 					"trigger": "minecraft:enter_block",
 					"conditions": {
-						"block": "minecraft:redstone_lamp",
+						"blocks": "minecraft:redstone_lamp",
 						"state": {
 							"lit": "true"
 						}
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	advancement("enter_lava") {
+		criteria {
+			enterBlock("enter_lava") {
+				blocks(Blocks.LAVA)
+				state("level", "0")
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"enter_lava": {
+					"trigger": "minecraft:enter_block",
+					"conditions": {
+						"blocks": "minecraft:lava",
+						"state": {
+							"level": "0"
+						}
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	advancement("enter_logs") {
+		criteria {
+			enterBlock("enter_logs") {
+				blocks(Tags.Block.LOGS)
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"enter_logs": {
+					"trigger": "minecraft:enter_block",
+					"conditions": {
+						"blocks": "#minecraft:logs"
 					}
 				}
 			}
@@ -1186,6 +1300,50 @@ private fun DataPack.allTriggersTests() {
 			"criteria": {
 				"slide_down_block": {
 					"trigger": "minecraft:slide_down_block"
+				}
+			}
+		}
+	""".trimIndent()
+
+	advancement("honey_block_slide") {
+		criteria {
+			slideDownBlock("honey_block_slide") {
+				blocks(Blocks.HONEY_BLOCK)
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"honey_block_slide": {
+					"trigger": "minecraft:slide_down_block",
+					"conditions": {
+						"blocks": "minecraft:honey_block"
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	advancement("slide_down_state") {
+		criteria {
+			slideDownBlock("slide_down_state") {
+				blocks(Blocks.HONEY_BLOCK)
+				state("facing", "north")
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"slide_down_state": {
+					"trigger": "minecraft:slide_down_block",
+					"conditions": {
+						"blocks": "minecraft:honey_block",
+						"state": {
+							"facing": "north"
+						}
+					}
 				}
 			}
 		}

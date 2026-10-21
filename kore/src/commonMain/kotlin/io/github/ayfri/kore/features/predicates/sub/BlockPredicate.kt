@@ -24,8 +24,8 @@ data class BlockPredicate(
 	var components: ComponentsPatch? = null,
 	@Serializable(NbtCompoundAsJsonSerializer::class) var nbt: NbtCompound? = null,
 	var predicates: DataComponentPredicate? = null,
-	var state: Map<String, String>? = null,
-)
+	override var state: Map<String, String>? = null,
+) : StateHolder
 
 /** Creates a [BlockPredicate] matching any of [blocks]. */
 fun blockPredicate(vararg blocks: BlockOrTagArgument, init: BlockPredicate.() -> Unit = {}) =
@@ -49,14 +49,4 @@ fun BlockPredicate.nbt(block: NbtCompoundBuilder.() -> Unit) {
 /** Tests data component values on the block entity. */
 fun BlockPredicate.predicates(block: DataComponentPredicate.() -> Unit) {
 	predicates = DataComponentPredicate().apply(block)
-}
-
-/** Requires the block state property [key] to equal [value]. */
-fun BlockPredicate.state(key: String, value: String) {
-	state = mapOf(key to value)
-}
-
-/** Requires all the block state properties declared in [block]. */
-fun BlockPredicate.states(block: MutableMap<String, String>.() -> Unit) {
-	state = buildMap(block)
 }

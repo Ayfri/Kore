@@ -12,8 +12,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FluidPredicate(
 	var fluids: InlinableList<FluidOrTagArgument>? = null,
-	var state: Map<String, String>? = null,
-)
+	override var state: Map<String, String>? = null,
+) : StateHolder
 
 /** Creates a [FluidPredicate] matching any of [fluids]. */
 fun fluidPredicate(vararg fluids: FluidOrTagArgument, init: FluidPredicate.() -> Unit = {}) =
@@ -22,19 +22,4 @@ fun fluidPredicate(vararg fluids: FluidOrTagArgument, init: FluidPredicate.() ->
 /** Restricts this predicate to the given [fluids]. */
 fun FluidPredicate.fluids(vararg fluids: FluidOrTagArgument) {
 	this.fluids = fluids.toList()
-}
-
-/** Requires all the given fluid [states]. */
-fun FluidPredicate.states(vararg states: Pair<String, String>) {
-	state = states.toMap()
-}
-
-/** Requires all the given fluid [states]. */
-fun FluidPredicate.states(states: Map<String, String>) {
-	state = states
-}
-
-/** Requires all the fluid states declared in [states]. */
-fun FluidPredicate.states(states: MutableMap<String, String>.() -> Unit) {
-	state = buildMap(states)
 }

@@ -127,16 +127,18 @@ Triggers when a bee nest is destroyed.
 
 **Properties:**
 
-- `block`: The type of block that was destroyed.
+- `blocks`: The blocks that were destroyed, block IDs or block tags, set with `blocks(...)`.
 - `item`: The item involved in the destruction.
 - `numBeesInside`: The number of bees that were inside the nest.
+- `state`: The state properties of the block, set with `state(key, value)` or `states { }`.
 
 **Example:**
 
 ```kotlin
 beeNestDestroyed("destroy_nest") {
-	block = Blocks.BEE_NEST
+	blocks(Blocks.BEE_NEST, Blocks.BEEHIVE)  // "blocks": ["minecraft:bee_nest", "minecraft:beehive"]
 	numBeesInside = rangeOrInt(1)
+	state("honey_level", "5")
 	item {
 		items(Items.HONEYCOMB)
 	}
@@ -432,17 +434,22 @@ Triggers when a player enters a specific block.
 
 **Properties:**
 
-- `block`: The block being entered.
+- `blocks`: The blocks being entered, block IDs or block tags, set with `blocks(...)`.
 - `state`: The state properties of the block, set with `state(key, value)` or `states { }`.
 
 **Example:**
 
 ```kotlin
 enterBlock("enter_block") {
-	block = Blocks.REDSTONE_LAMP
+	blocks(Blocks.REDSTONE_LAMP)
 	states {
 		this["lit"] = "true"
 	}
+}
+
+enterBlock("enter_lava") {
+	blocks(Blocks.LAVA)
+	state("level", "0")  // "state": { "level": "0" }
 }
 ```
 
@@ -1161,15 +1168,14 @@ Triggers when sliding down a block.
 
 **Properties:**
 
-- `block`: The block being slid down.
+- `blocks`: The blocks being slid down, block IDs or block tags, set with `blocks(...)`.
+- `state`: The state properties of the block, set with `state(key, value)` or `states { }`.
 
 **Example:**
 
 ```kotlin
 slideDownBlock("slide_down") {
-	block {
-		blocks(Blocks.SNOW_BLOCK)
-	}
+	blocks(Blocks.HONEY_BLOCK)  // "blocks": "minecraft:honey_block"
 }
 ```
 

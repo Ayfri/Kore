@@ -1,10 +1,22 @@
 package io.github.ayfri.kore.features.advancements.triggers
 
+import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
 import io.github.ayfri.kore.features.advancements.LocationOrPredicates
 import io.github.ayfri.kore.features.predicates.sub.DamagePredicate
 import io.github.ayfri.kore.features.predicates.sub.DamageSourcePredicate
 import io.github.ayfri.kore.features.predicates.sub.ItemStackPredicate
+import io.github.ayfri.kore.serializers.InlinableList
+
+/** A trigger with a `blocks` field. */
+interface BlocksTrigger {
+	var blocks: InlinableList<BlockOrTagArgument>?
+}
+
+/** Match any of the given [blocks], block IDs or block tags. */
+fun BlocksTrigger.blocks(vararg blocks: BlockOrTagArgument) {
+	this.blocks = blocks.toList()
+}
 
 /** A trigger with a `damage` field. */
 interface DamageTrigger {
