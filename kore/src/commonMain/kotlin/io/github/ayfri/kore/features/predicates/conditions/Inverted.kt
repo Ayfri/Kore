@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.predicates.conditions
 
 import io.github.ayfri.kore.features.predicates.Predicate
+import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import kotlinx.serialization.Serializable
 
 /**
@@ -22,4 +23,9 @@ fun Predicate.inverted(term: Predicate.() -> Unit) {
 /** Adds an [Inverted] condition negating [term]. */
 fun Predicate.inverted(term: PredicateCondition) {
 	predicateConditions += Inverted(term)
+}
+
+/** Adds an [Inverted] condition negating the predicate [term], written as its bare ID. */
+fun Predicate.inverted(term: PredicateArgument) {
+	predicateConditions += Inverted(PredicateReference(term))
 }

@@ -4,9 +4,11 @@ import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
+import io.github.ayfri.kore.features.predicates.conditions.PredicateReference
 import io.github.ayfri.kore.features.predicates.conditions.singleCondition
 import io.github.ayfri.kore.features.predicates.types.EntityTarget
 import io.github.ayfri.kore.generated.arguments.types.EnvironmentAttributeArgument
+import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 
 /** Creates a [BinomialNumberProvider] returning the number of successes of [n] trials of probability [p]. */
 fun NumberProviderScope.binomial(n: NumberProvider, p: NumberProvider) = BinomialNumberProvider(n, p)
@@ -36,6 +38,23 @@ fun NumberProviderScope.conditionalNumber(
 /** Creates a [ConditionalNumberProvider] returning [onTrue] when [condition] passes, [onFalse] otherwise. */
 fun NumberProviderScope.conditionalNumber(condition: PredicateCondition, onTrue: Float, onFalse: Float? = null) =
 	ConditionalNumberProvider(condition, onFalse?.let(::constant), constant(onTrue))
+
+/**
+ * Creates a [ConditionalNumberProvider] returning [onTrue] when the predicate [condition] passes, [onFalse] otherwise.
+ *
+ * ```
+ * conditionalNumber(PredicateArgument("fast_cooking", "my_pack"), 800f, 1600f)  // "condition": "my_pack:fast_cooking"
+ * ```
+ */
+fun NumberProviderScope.conditionalNumber(
+	condition: PredicateArgument,
+	onTrue: NumberProvider,
+	onFalse: NumberProvider? = null,
+) = ConditionalNumberProvider(PredicateReference(condition), onFalse, onTrue)
+
+/** Creates a [ConditionalNumberProvider] returning [onTrue] when the predicate [condition] passes, [onFalse] otherwise. */
+fun NumberProviderScope.conditionalNumber(condition: PredicateArgument, onTrue: Float, onFalse: Float? = null) =
+	conditionalNumber(condition, constant(onTrue), onFalse?.let(::constant))
 
 /**
  * Creates a [ConditionalNumberProvider] returning [onTrue] when the single condition declared in [condition] passes,
@@ -145,6 +164,12 @@ class NumberDispatcherBuilder internal constructor() : NumberProviderScope {
 
 	/** Adds a case returning [numberProvider] when [condition] passes. */
 	fun case(condition: PredicateCondition, numberProvider: Float) = case(condition, constant(numberProvider))
+
+	/** Adds a case returning [numberProvider] when the predicate [condition] passes. */
+	fun case(condition: PredicateArgument, numberProvider: NumberProvider) = case(PredicateReference(condition), numberProvider)
+
+	/** Adds a case returning [numberProvider] when the predicate [condition] passes. */
+	fun case(condition: PredicateArgument, numberProvider: Float) = case(condition, constant(numberProvider))
 
 	/** Adds a case returning [numberProvider] when the single condition declared in [condition] passes. */
 	fun case(numberProvider: NumberProvider, condition: Predicate.() -> Unit) =

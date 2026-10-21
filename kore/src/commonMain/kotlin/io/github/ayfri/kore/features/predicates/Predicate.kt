@@ -5,6 +5,7 @@ import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.annotations.LootDsl
 import io.github.ayfri.kore.features.predicates.conditions.AllOf
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
+import io.github.ayfri.kore.features.predicates.conditions.PredicateReference
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.serializers.InlinableList
@@ -33,7 +34,10 @@ data class Predicate(
 	override var fileName: String = "predicate",
 	var predicateConditions: InlinableList<PredicateCondition> = emptyList(),
 ) : Generator("predicate"), NumberProviderScope {
-	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
+	override fun generateJson(dataPack: DataPack): String {
+		require(toCondition() !is PredicateReference) { "Predicate file '$fileName' must hold an inline condition, not a reference." }
+		return dataPack.jsonEncoder.encodeToString(this)
+	}
 
 	companion object {
 		data object PredicateSerializer : InlineAutoSerializer<Predicate, PredicateCondition>(

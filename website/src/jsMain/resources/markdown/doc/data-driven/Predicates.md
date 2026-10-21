@@ -18,7 +18,7 @@ Predicates can be used in:
 - **Commands**: Via [`execute if predicate`](/docs/commands/execute) or target selector argument `predicate=`
 - **Loot tables**: As conditions for loot entries
 - **Advancements**: As trigger conditions
-- **Other predicates**: Via the `reference` condition
+- **Other predicates**: By their ID, see [Referencing Other Predicates](#referencing-other-predicates)
 
 Kore provides a type-safe DSL to create predicates, eliminating the need to write raw JSON.
 
@@ -117,7 +117,7 @@ Conditions are categorized by their **loot context requirements**. Some conditio
 | `environmentAttributeCheck` | Passes if the specified environment attribute currently matches the given value                                                                                                                                         |
 | `inverted`                  | Inverts another predicate condition                                                                                                                                                                                     |
 | `randomChance`              | Passes if a random float between 0.0 and 1.0 is below the given `NumberProvider` value                                                                                                                                  |
-| `reference`                 | Invokes another predicate file and returns its result (cannot be cyclic)                                                                                                                                                |
+| `reference`                 | Invokes another predicate by ID (cannot be cyclic), written as the bare ID string                                                                                                                                       |
 | `timeCheck`                 | Compares a world clock's time against a `NumberProvider` range (mandatory `clock` to select the clock, optional `period` for modulo) - see [World Clocks](/docs/data-driven/world-clocks#timecheck-predicate-condition) |
 | `valueCheck`                | Compares a `NumberProvider` value against another `NumberProvider` or range                                                                                                                                             |
 | `weatherCheck`              | Checks the current game weather (raining, thundering)                                                                                                                                                                   |
@@ -611,8 +611,9 @@ any [component matcher](/docs/concepts/components#component-matchers-item-predic
 
 ## Referencing Other Predicates
 
-Use the `reference` condition to invoke another predicate file, which keeps larger predicate sets composable in the same
-spirit as helper extraction in the [Cookbook](/docs/guides/cookbook):
+Use `reference` to invoke another predicate by ID, which keeps larger predicate sets composable in the same spirit as
+helper extraction in the [Cookbook](/docs/guides/cookbook). A reference is written as the bare ID string wherever the
+game expects a condition:
 
 ```kotlin
 val basePredicate = predicate("base_check") {
@@ -622,18 +623,50 @@ val basePredicate = predicate("base_check") {
 predicate("combined_check") {
 	allOf {
 		reference(basePredicate)
-		randomChance(0.5f)
+		reference("my_pack:other_check")
 	}
 }
 ```
 
-> **Warning**: Cyclic references (predicate A references B, which references A) will cause a parsing failure.
+```json
+{
+	"type": "minecraft:all_of",
+	"terms": [
+		"my_pack:base_check",
+		"my_pack:other_check"
+	]
+}
+```
+
+`inverted(basePredicate)` writes `"term": "my_pack:base_check"`, and item modifier `condition(basePredicate)`, loot
+pool and entry `condition(basePredicate)`, `conditionalNumber(basePredicate, 800f, 1600f)` and number dispatcher
+`case(basePredicate, 2f)` take the ID the same way.
+
+A predicate tag is only accepted in the terms of an `allOf` or an `anyOf`:
+
+```kotlin
+predicate("any_night_like") {
+	anyOf { reference(PredicateTagArgument("night_like", "my_pack")) }
+}
+```
+
+```json
+{
+	"type": "minecraft:any_of",
+	"terms": "#my_pack:night_like"
+}
+```
+
+A list can't mix references and inline values, the game rejects it.
+
+A predicate file can't be a bare reference because the game reads the file as an inline condition: Kore throws when it
+generates one. Cyclic references (predicate A references B, which references A) make the pack fail to load.
 
 ## Best Practices
 
 1. **Descriptive names**: Give your predicates names that reflect their purpose (e.g., `is_holding_sword`, `in_rain_at_night`)
 2. **Logical composition**: Use `allOf` and `anyOf` to combine multiple conditions clearly
-3. **Reusability**: Keep predicates focused on a single concern and use `reference` to compose them
+3. **Reusability**: Keep predicates focused on a single concern and use `reference` to compose them (inside `allOf` or `anyOf`)
 4. **Context awareness
    **: Be mindful of which loot context your predicate will be invoked from. Context-dependent conditions will silently fail if required data is missing
 5. **Testing**: Test your predicates in-game using `/execute if predicate <name>` to verify they work as expected

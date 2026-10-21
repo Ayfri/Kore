@@ -5,7 +5,7 @@ nav-title: "Architecture and Patterns"
 description: Detailed internal architecture, project layout, module responsibilities, and recurring implementation patterns for Kore contributors.
 keywords: architecture, bindings, commands, generator, kore, patterns, serializers, website
 date-created: 2026-04-10
-date-modified: 2026-10-20
+date-modified: 2026-10-21
 routeOverride: /docs/contributing/architecture-and-patterns
 ---
 
@@ -143,6 +143,7 @@ Prefer an existing serializer before creating a new one.
 Frequently reused serializers, in alphabetical order:
 
 - [`EitherInlineSerializer`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/EitherInlineSerializer.kt)
+- [`IdOrTagReferenceSerializer`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/IdOrTagReferenceSerializer.kt), a reference wrapping a registry ID or `#tag` argument, written and read as a bare string
 - [`InlineAutoSerializer`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/InlineAutoSerializer.kt)
 - [`InlinableListSerializer`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/InlinableListSerializer.kt)
 - [`LowercaseSerializer`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/LowercaseSerializer.kt)

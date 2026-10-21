@@ -5,7 +5,7 @@ nav-title: Enchantments
 description: Create custom Minecraft enchantments using Kore's type-safe Kotlin DSL with support for all vanilla effect components and level-based values.
 keywords: minecraft, datapack, kore, enchantments, effects, custom enchantments
 date-created: 2025-03-02
-date-modified: 2026-10-07
+date-modified: 2026-10-21
 routeOverride: /docs/data-driven/enchantments
 ---
 
@@ -516,8 +516,9 @@ effects {
 Every effect accepts a `requirements` block holding [predicate](/docs/data-driven/predicates) conditions, lifted next
 to the effect in the generated JSON. The `requirements` field holds one condition: a block with several conditions is
 written as one `minecraft:all_of`. The game validates enchantments without access to other files and refuses to load
-one holding a `reference` condition, so Kore copies the condition of each referenced predicate of the pack in its place,
-and throws for a predicate defined outside the pack:
+one holding a predicate ID, so Kore copies the condition of each referenced predicate of the pack in its place (in the
+`requirements`, and in the `terms` and `term` of the conditions nested in them), and throws for a predicate or a tag
+defined outside the pack:
 
 ```kotlin
 effects {

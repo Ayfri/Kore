@@ -12,6 +12,7 @@ import io.github.ayfri.kore.arguments.enums.AxolotlVariants
 import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.assertions.assertsThrows
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.*
@@ -19,6 +20,7 @@ import io.github.ayfri.kore.features.predicates.predicate
 import io.github.ayfri.kore.features.predicates.providers.*
 import io.github.ayfri.kore.features.predicates.sub.*
 import io.github.ayfri.kore.features.predicates.types.EntityTarget
+import io.github.ayfri.kore.generated.arguments.tagged.PredicateTagArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.MoonPhaseValue
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.beesStayInHive
@@ -26,7 +28,9 @@ import io.github.ayfri.kore.features.worldgen.environmentattributes.types.moonPh
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.set
+import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.types.shouldBeInstanceOf
 
 fun DataPack.predicateTests() {
 	predicate("all_of") {
@@ -622,27 +626,97 @@ fun DataPack.predicateTests() {
 		}
 	""".trimIndent()
 
-	predicate("reference") {
+	predicate("reference_all_of") {
+		allOf {
+			reference("kore:test")
+			reference(PredicateArgument("other", "kore"))
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:all_of",
+			"terms": [
+				"kore:test",
+				"kore:other"
+			]
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
+
+	predicate("reference_any_of_tag") {
+		anyOf { reference(PredicateTagArgument("night_like", "kore")) }
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:any_of",
+			"terms": "#kore:night_like"
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
+
+	predicate("reference_inverted") {
+		inverted(PredicateArgument("test", "kore"))
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:inverted",
+			"term": "kore:test"
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
+
+	predicate("reference_mixed") {
+		reference(PredicateArgument("a", "my_pack"))
+		randomChance(0.5f)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:all_of",
+			"terms": [
+				"my_pack:a",
+				{
+					"type": "minecraft:random_chance",
+					"chance": 0.5
+				}
+			]
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
+
+	predicate("reference_mixed_any_of") {
+		anyOf {
+			randomChance(0.5f)
+			reference("my_pack:a")
+			reference(PredicateTagArgument("t", "my_pack"))
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:any_of",
+			"terms": [
+				{
+					"type": "minecraft:random_chance",
+					"chance": 0.5
+				},
+				"my_pack:a",
+				"#my_pack:t"
+			]
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
+
+	predicate("only_reference") {
 		reference("kore:test")
 	}
 
-	predicates.last() assertsIs """
-		{
-			"type": "minecraft:reference",
-			"name": "kore:test"
-		}
-	""".trimIndent()
-
-	predicate("reference_argument") {
-		reference(PredicateArgument("test", "kore"))
+	assertsThrows("Predicate file 'only_reference' must hold an inline condition, not a reference.") {
+		predicates.last().generateJson(this)
 	}
-
-	predicates.last() assertsIs """
-		{
-			"type": "minecraft:reference",
-			"name": "kore:test"
-		}
-	""".trimIndent()
 
 	predicate("survives_explosion") {
 		survivesExplosion()
@@ -883,6 +957,17 @@ fun DataPack.predicateTests() {
 		Predicate.serializer(),
 		"""{"type":"minecraft:all_of","terms":{"type":"minecraft:killed_by_player"}}""",
 	).predicateConditions assertsIs listOf(AllOf(listOf(KilledByPlayer())))
+
+	val id = jsonEncoder.decodeFromString(PredicateCondition.serializer(), "\"my_pack:a\"")
+		.shouldBeInstanceOf<PredicateReference>().id
+	id.shouldBeInstanceOf<PredicateArgument>().asString() assertsIs "my_pack:a"
+
+	val tag = jsonEncoder.decodeFromString(PredicateCondition.serializer(), "\"#my_pack:t\"")
+		.shouldBeInstanceOf<PredicateReference>().id
+	tag.shouldBeInstanceOf<PredicateTagArgument>().asString() assertsIs "#my_pack:t"
+
+	shouldThrowAny { jsonEncoder.decodeFromString(PredicateCondition.serializer(), "5.0") }
+	shouldThrowAny { jsonEncoder.decodeFromString(PredicateCondition.serializer(), """{"type":"minecraft:reference","name":"my_pack:a"}""") }
 }
 
 class PredicateTests : FunSpec({

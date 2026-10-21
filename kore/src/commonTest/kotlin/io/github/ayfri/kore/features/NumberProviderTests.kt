@@ -11,6 +11,7 @@ import io.github.ayfri.kore.features.predicates.providers.*
 import io.github.ayfri.kore.features.predicates.types.EntityTarget
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.EnvironmentAttributes
+import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
 
@@ -89,6 +90,62 @@ fun DataPack.numberProviderTests() {
 							"min": 1.0,
 							"max": 3.0
 						}
+					}
+				}
+			]
+		}
+	""".trimIndent()
+
+	lootTable("conditional_reference_test") {
+		pool {
+			rolls = conditionalNumber(PredicateArgument("block/fast_cooking"), 800f, 1600f)
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"entries": [],
+					"rolls": {
+						"type": "minecraft:conditional",
+						"condition": "minecraft:block/fast_cooking",
+						"on_false": 1600.0,
+						"on_true": 800.0
+					}
+				}
+			]
+		}
+	""".trimIndent()
+
+	lootTable("case_reference_test") {
+		pool {
+			rolls = numberDispatcher {
+				case(PredicateArgument("is_night", "my_pack"), 2f)
+				case(SurvivesExplosion, 1f)
+			}
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"entries": [],
+					"rolls": {
+						"type": "minecraft:number_dispatcher",
+						"cases": [
+							{
+								"condition": "my_pack:is_night",
+								"number_provider": 2.0
+							},
+							{
+								"condition": {
+									"type": "minecraft:survives_explosion"
+								},
+								"number_provider": 1.0
+							}
+						]
 					}
 				}
 			]

@@ -7,10 +7,12 @@ import io.github.ayfri.kore.features.loottables.entries.LootEntries
 import io.github.ayfri.kore.features.loottables.entries.LootEntry
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
+import io.github.ayfri.kore.features.predicates.conditions.PredicateReference
 import io.github.ayfri.kore.features.predicates.providers.NumberProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.features.predicates.toCondition
+import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import kotlinx.serialization.Serializable
 
 /**
@@ -53,6 +55,11 @@ fun LootPool.condition(vararg value: PredicateCondition) {
 /** Define the predicate condition via a builder, several conditions being wrapped in an `all_of`, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
 fun LootPool.condition(block: Predicate.() -> Unit) {
 	condition = Predicate().apply(block).toCondition()
+}
+
+/** Set the condition to the predicate [predicate], written as its bare ID. */
+fun LootPool.condition(predicate: PredicateArgument) {
+	condition = PredicateReference(predicate)
 }
 
 /** Replace entries with the provided list. */

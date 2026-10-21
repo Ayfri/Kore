@@ -29,6 +29,7 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovid
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
+import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.set
 import io.kotest.core.spec.style.FunSpec
@@ -1041,6 +1042,21 @@ fun DataPack.itemModifierTests() {
 			"count": 1.0
 		}
 	""".trimIndent()
+
+	itemModifier("condition_predicate_id") {
+		setCount(1f) {
+			condition(PredicateArgument("is_night", "my_pack"))
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:set_count",
+			"condition": "my_pack:is_night",
+			"count": 1.0
+		}
+	""".trimIndent()
+	roundTrip(itemModifiers.last())
 
 	itemModifier("single_function_sequence") {
 		sequence {

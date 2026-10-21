@@ -64,23 +64,26 @@ data class Enchantment(
 		dataPack.jsonEncoder.encodeToString(JsonElement.serializer(), dataPack.inlinePredicateReferences(dataPack.jsonEncoder.encodeToJsonElement(this)))
 }
 
+private val predicateKeys = setOf("condition", "requirements", "term", "terms")
+
 /**
- * Replaces every `reference` condition of [element] with the condition of the predicate it names. The game validates
- * enchantments without access to other files and refuses to load one holding a reference, so a predicate defined
- * outside this pack throws.
+ * Replaces every predicate ID of [element], a string under a `condition`, `requirements`, `term` or `terms` key (alone
+ * or in a list), with the condition of the predicate it names. The game validates enchantments without access to other
+ * files and refuses to load one holding a reference, so a predicate defined outside this pack, or a tag, throws.
  */
-private fun DataPack.inlinePredicateReferences(element: JsonElement, visited: Set<String> = emptySet()): JsonElement = when (element) {
-	is JsonArray -> JsonArray(element.map { inlinePredicateReferences(it, visited) })
-	is JsonObject -> {
-		val id = (element["name"] as? JsonPrimitive)?.content
-		if (id == null || (element["type"] as? JsonPrimitive)?.content != "minecraft:reference") JsonObject(element.mapValues { inlinePredicateReferences(it.value, visited) })
-		else {
-			val (path, namespace) = id.splitNamespacedId()
-			check("$namespace:$path" !in visited) { "Predicate '$namespace:$path' references itself." }
-			val predicate = predicates.firstOrNull { it.fileName == path && (it.namespace ?: name) == namespace }
-				?: error("Predicate '$namespace:$path' isn't defined in this pack, and enchantments can't reference one: write its conditions inline.")
-			inlinePredicateReferences(jsonEncoder.encodeToJsonElement(predicate), visited + "$namespace:$path")
-		}
+private fun DataPack.inlinePredicateReferences(
+	element: JsonElement,
+	visited: Set<String> = emptySet(),
+	isPredicate: Boolean = false,
+): JsonElement = when {
+	element is JsonArray -> JsonArray(element.map { inlinePredicateReferences(it, visited, isPredicate) })
+	element is JsonObject -> JsonObject(element.mapValues { (key, value) -> inlinePredicateReferences(value, visited, key in predicateKeys) })
+	isPredicate && element is JsonPrimitive && element.isString -> {
+		val (path, namespace) = element.content.splitNamespacedId()
+		check("$namespace:$path" !in visited) { "Predicate '$namespace:$path' references itself." }
+		val predicate = predicates.firstOrNull { it.fileName == path && (it.namespace ?: name) == namespace }
+			?: error("Predicate '$namespace:$path' isn't defined in this pack, and enchantments can't reference one: write its conditions inline.")
+		inlinePredicateReferences(jsonEncoder.encodeToJsonElement(predicate), visited + "$namespace:$path")
 	}
 
 	else -> element

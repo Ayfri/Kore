@@ -22,6 +22,7 @@ import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.LootTables
 import io.github.ayfri.kore.generated.Tags
+import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
 
@@ -327,6 +328,38 @@ fun DataPack.lootTableTests() {
 			}
 		}
 	}
+	roundTrip(lootTables.last())
+
+	lootTable("predicate_ids") {
+		pool {
+			rolls = constant(1f)
+			condition(PredicateArgument("is_night", "my_pack"))
+
+			entries {
+				item(Items.DIAMOND) {
+					condition(PredicateArgument("lucky", "my_pack"))
+				}
+			}
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"condition": "my_pack:is_night",
+					"entries": [
+						{
+							"type": "minecraft:item",
+							"name": "minecraft:diamond",
+							"condition": "my_pack:lucky"
+						}
+					],
+					"rolls": 1.0
+				}
+			]
+		}
+	""".trimIndent()
 	roundTrip(lootTables.last())
 }
 

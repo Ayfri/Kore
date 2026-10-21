@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 
 /**
  * One check of a [Predicate][io.github.ayfri.kore.features.predicates.Predicate], serialized as
- * `{ "type": "<type>", ... }`.
+ * `{ "type": "<type>", ... }`, or as the bare string of its ID for a [PredicateReference].
  *
  * Every builder is an extension on `Predicate` (e.g. `randomChance`, `entityProperties`), so they only resolve
  * inside a `predicate("...") { }` block, and each one appends its condition to the predicate.

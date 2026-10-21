@@ -18,8 +18,10 @@ import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.
 import io.github.ayfri.kore.features.enchantments.effects.special.start
 import io.github.ayfri.kore.features.enchantments.effects.value.requirements
 import io.github.ayfri.kore.features.enchantments.values.*
+import io.github.ayfri.kore.features.predicates.conditions.anyOf
 import io.github.ayfri.kore.features.predicates.conditions.inverted
 import io.github.ayfri.kore.features.predicates.conditions.reference
+import io.github.ayfri.kore.features.predicates.conditions.timeCheck
 import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
 import io.github.ayfri.kore.features.predicates.predicate
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
@@ -1509,6 +1511,32 @@ class EnchantmentTests : FunSpec({
 			}
 
 			shouldThrow<IllegalStateException> { enchantments.last().generateJson(this) }
+		}
+	}
+
+	test("a predicate ID in a predicate position is inlined and any other string is left alone") {
+		dataPack("enchantment") {
+			val raining = predicate("raining") { weatherCheck(raining = true) }
+			val night = predicate("night") { timeCheck(WorldClocks.OVERWORLD, 13000f..23000f) }
+
+			enchantment("rainy") {
+				description("enchantment:raining")
+				effects {
+					armorEffectiveness {
+						add(5) {
+							requirements {
+								anyOf {
+									reference(raining)
+									reference(night)
+								}
+							}
+						}
+						add(2) { requirements { reference(raining) } }
+					}
+				}
+			}
+
+			enchantments.last().generateJson(this) assertsIs """{"description":"enchantment:raining","supported_items":[],"weight":1,"max_level":1,"min_cost":{"base":0,"per_level_above_first":0},"max_cost":{"base":0,"per_level_above_first":0},"anvil_cost":0,"slots":[],"effects":{"minecraft:armor_effectiveness":[{"effect":{"type":"minecraft:add","value":5},"requirements":{"type":"minecraft:any_of","terms":[{"type":"minecraft:weather_check","raining":true},{"type":"minecraft:time_check","clock":"minecraft:overworld","value":{"min":13000.0,"max":23000.0}}]}},{"effect":{"type":"minecraft:add","value":2},"requirements":{"type":"minecraft:weather_check","raining":true}}]}}"""
 		}
 	}
 })

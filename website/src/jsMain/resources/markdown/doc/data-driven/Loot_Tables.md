@@ -201,7 +201,7 @@ The builders are extensions on `NumberProviderScope`, so they only resolve insid
 | `uniform(min, max)`               | Random value between min and max                          | `uniform(1f, 5f)`                                                       |
 | `weightedListNumber { }`          | Value of one entry, picked by weight                      | `weightedListNumber { entry(30, 1f); entry(70, 0f) }`                   |
 
-`conditionalNumber`, `numberDispatcher` and `weightedListNumber` nest other providers, and the conditions are the ones of [predicates](/docs/data-driven/predicates). A condition is either passed as a value (`conditionalNumber(SurvivesExplosion, 1f)`) or declared in a block holding exactly one condition. `onFalse` and `default` are `0` when omitted.
+`conditionalNumber`, `numberDispatcher` and `weightedListNumber` nest other providers, and the conditions are the ones of [predicates](/docs/data-driven/predicates). A condition is either passed as a value (`conditionalNumber(SurvivesExplosion, 1f)`), as a predicate ID (`conditionalNumber(fastCooking, 800f, 1600f)`) or declared in a block holding exactly one condition. `onFalse` and `default` are `0` when omitted.
 
 Every number provider computes a 32-bit float, and an integer field rounds it. `scoreNumber` and the ranges of `entityScores` therefore stay exact only up to 16,777,216 (2²⁴): past it, neighboring scores read as the same value ([MC-254370](https://bugs.mojang.com/browse/MC-254370)). To compare larger scores exactly, test them with `execute if score`, or store the high and low parts on two objectives and check each one. A `sum` of the parts is a float again and loses the same precision.
 
@@ -482,6 +482,16 @@ pool {
 			items = listOf(Items.DIAMOND_PICKAXE)
 		}
 	}
+}
+```
+
+A pool or an entry can also point at a predicate file by ID, written as the bare ID string:
+
+```kotlin
+val isNight = predicate("is_night") { timeCheck(WorldClocks.OVERWORLD, 13000f..23000f) }
+
+pool {
+	condition(isNight)  // "condition": "my_pack:is_night"
 }
 ```
 

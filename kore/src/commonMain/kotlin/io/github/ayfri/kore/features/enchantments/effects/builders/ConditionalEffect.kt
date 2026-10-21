@@ -30,7 +30,7 @@ fun ConditionalEffect.requirements(block: Predicate.() -> Unit) =
 
 /**
  * Sets [ConditionalEffect.requirements] to the [predicates] registered in this pack, whose conditions the enchantment
- * copies inline when generated, since the game rejects a `reference` condition in an enchantment.
+ * copies inline when generated, since the game rejects a predicate ID in an enchantment.
  */
 fun ConditionalEffect.requirements(vararg predicates: PredicateArgument) = apply {
 	requirements = Predicate().apply { predicates.forEach { reference(it) } }.toCondition()

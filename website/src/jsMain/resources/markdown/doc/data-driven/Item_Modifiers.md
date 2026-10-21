@@ -856,6 +856,8 @@ The first function is written as:
 }
 ```
 
+A function can also point at a predicate file by ID: `condition(isNight)` writes `"condition": "my_pack:is_night"`.
+
 See [Predicates](/docs/data-driven/predicates) for all available conditions.
 
 ## Full Example

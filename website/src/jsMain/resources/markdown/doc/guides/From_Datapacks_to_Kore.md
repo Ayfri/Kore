@@ -5,7 +5,7 @@ nav-title: Datapack Veterans
 description: Port an existing hand-written datapack to Kore without a rewrite - vanilla-to-Kotlin mapping, slice-by-slice migration, project structure and common mistakes.
 keywords: datapack migration, migrate datapack to kotlin, mcfunction to kotlin, kore migration guide, datapack architecture, datapack refactor, advanced datapack development
 date-created: 2026-04-22
-date-modified: 2026-08-05
+date-modified: 2026-10-21
 routeOverride: /docs/guides/from-datapacks-to-kore
 position: 4
 ---
@@ -283,7 +283,7 @@ fun DataPack.registerCombatRules() {
 ```
 
 Compare that with the vanilla version, where the second predicate embeds
-`{"type": "minecraft:reference", "name": "mypack:rules/is_active_fighter"}` - a string nothing checks.
+`"mypack:rules/is_active_fighter"` - a string nothing checks.
 
 The same holds across resource kinds. A `LootTableArgument` feeds the `loot` command, the `containerLoot` item
 component, and advancement rewards:
