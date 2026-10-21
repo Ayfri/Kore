@@ -8,6 +8,15 @@ import net.benwoodworth.knbt.*
 import kotlin.math.abs
 import kotlin.math.floor
 
+/** [NbtAsJsonSerializer] for a field typed [NbtCompound]: a JSON object in JSON, a compound in NBT. */
+data object NbtCompoundAsJsonSerializer : KSerializer<NbtCompound> {
+	override val descriptor = NbtAsJsonSerializer.descriptor
+
+	override fun serialize(encoder: Encoder, value: NbtCompound) = NbtAsJsonSerializer.serialize(encoder, value)
+
+	override fun deserialize(decoder: Decoder) = NbtAsJsonSerializer.deserialize(decoder) as NbtCompound
+}
+
 data object NbtAsJsonSerializer : KSerializer<NbtTag> {
 	override val descriptor = JsonElement.serializer().descriptor
 

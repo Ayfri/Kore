@@ -93,21 +93,70 @@ fun DataPack.predicateTests() {
 		}
 	""".trimIndent()
 
-	predicate("block_state_property") {
-		blockStateProperty(Blocks.REDSTONE_LAMP) {
-			this["facing"] = "north"
-			this["lit"] = "true"
+	predicate("match_block") {
+		matchBlock(Blocks.WHEAT) { state("age", "7") }
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:match_block",
+			"blocks": "minecraft:wheat",
+			"state": {
+				"age": "7"
+			}
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
+
+	predicate("match_block_list") {
+		matchBlock(Blocks.SMOKER, Blocks.BLAST_FURNACE)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:match_block",
+			"blocks": [
+				"minecraft:smoker",
+				"minecraft:blast_furnace"
+			]
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
+
+	predicate("match_block_full") {
+		matchBlock(Tags.Block.LOGS) {
+			nbt {
+				this["foo"] = "bar"
+			}
+			states {
+				this["axis"] = "y"
+				this["lit"] = "true"
+			}
 		}
 	}
 
 	predicates.last() assertsIs """
 		{
-			"type": "minecraft:block_state_property",
-			"block": "minecraft:redstone_lamp",
-			"properties": {
-				"facing": "north",
+			"type": "minecraft:match_block",
+			"blocks": "#minecraft:logs",
+			"nbt": {
+				"foo": "bar"
+			},
+			"state": {
+				"axis": "y",
 				"lit": "true"
 			}
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
+
+	predicate("match_block_empty") {
+		matchBlock()
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:match_block"
 		}
 	""".trimIndent()
 

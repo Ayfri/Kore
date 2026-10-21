@@ -6,8 +6,9 @@ import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.loottables.lootTable
 import io.github.ayfri.kore.features.loottables.pool
 import io.github.ayfri.kore.features.predicates.conditions.SurvivesExplosion
-import io.github.ayfri.kore.features.predicates.conditions.blockStateProperty
+import io.github.ayfri.kore.features.predicates.conditions.matchBlock
 import io.github.ayfri.kore.features.predicates.providers.*
+import io.github.ayfri.kore.features.predicates.sub.state
 import io.github.ayfri.kore.features.predicates.types.EntityTarget
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.EnvironmentAttributes
@@ -45,8 +46,8 @@ fun DataPack.numberProviderTests() {
 	lootTable("conditional_test") {
 		pool {
 			rolls = conditionalNumber(5f, 2f) {
-				blockStateProperty(Blocks.COMPOSTER) {
-					this["level"] = "0"
+				matchBlock(Blocks.COMPOSTER) {
+					state("level", "0")
 				}
 			}
 		}
@@ -60,9 +61,9 @@ fun DataPack.numberProviderTests() {
 					"rolls": {
 						"type": "minecraft:conditional",
 						"condition": {
-							"type": "minecraft:block_state_property",
-							"block": "minecraft:composter",
-							"properties": {
+							"type": "minecraft:match_block",
+							"blocks": "minecraft:composter",
+							"state": {
 								"level": "0"
 							}
 						},
@@ -221,8 +222,8 @@ fun DataPack.numberProviderTests() {
 				entry(70, 0f)
 			}) {
 				case(1f) {
-					blockStateProperty(Blocks.COMPOSTER) {
-						this["level"] = "0"
+					matchBlock(Blocks.COMPOSTER) {
+						state("level", "0")
 					}
 				}
 				case(SurvivesExplosion, constant(2f))
@@ -240,9 +241,9 @@ fun DataPack.numberProviderTests() {
 						"cases": [
 							{
 								"condition": {
-									"type": "minecraft:block_state_property",
-									"block": "minecraft:composter",
-									"properties": {
+									"type": "minecraft:match_block",
+									"blocks": "minecraft:composter",
+									"state": {
 										"level": "0"
 									}
 								},

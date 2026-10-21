@@ -5,11 +5,12 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.assertions.assertsThrows
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.numberproviders.numberProvider
-import io.github.ayfri.kore.features.predicates.conditions.blockStateProperty
+import io.github.ayfri.kore.features.predicates.conditions.matchBlock
 import io.github.ayfri.kore.features.predicates.providers.numberDispatcher
 import io.github.ayfri.kore.features.predicates.providers.reference
 import io.github.ayfri.kore.features.predicates.providers.uniform
 import io.github.ayfri.kore.features.predicates.providers.weightedListNumber
+import io.github.ayfri.kore.features.predicates.sub.state
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.NumberProviders
 import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
@@ -40,8 +41,8 @@ fun DataPack.numberProviderFileTests() {
 			},
 		) {
 			case(1f) {
-				blockStateProperty(Blocks.COMPOSTER) {
-					this["level"] = "0"
+				matchBlock(Blocks.COMPOSTER) {
+					state("level", "0")
 				}
 			}
 		}
@@ -53,9 +54,9 @@ fun DataPack.numberProviderFileTests() {
 			"cases": [
 				{
 					"condition": {
-						"type": "minecraft:block_state_property",
-						"block": "minecraft:composter",
-						"properties": {
+						"type": "minecraft:match_block",
+						"blocks": "minecraft:composter",
+						"state": {
 							"level": "0"
 						}
 					},

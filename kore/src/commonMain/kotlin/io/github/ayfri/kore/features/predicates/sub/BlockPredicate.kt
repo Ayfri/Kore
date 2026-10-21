@@ -4,6 +4,7 @@ import io.github.ayfri.kore.arguments.components.ComponentsPatch
 import io.github.ayfri.kore.arguments.components.matchers.DataComponentPredicate
 import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
 import io.github.ayfri.kore.serializers.InlinableList
+import io.github.ayfri.kore.serializers.NbtCompoundAsJsonSerializer
 import io.github.ayfri.kore.utils.nbt as buildNbt
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
@@ -21,7 +22,7 @@ import net.benwoodworth.knbt.NbtCompoundBuilder
 data class BlockPredicate(
 	var blocks: InlinableList<BlockOrTagArgument>? = null,
 	var components: ComponentsPatch? = null,
-	var nbt: NbtCompound? = null,
+	@Serializable(NbtCompoundAsJsonSerializer::class) var nbt: NbtCompound? = null,
 	var predicates: DataComponentPredicate? = null,
 	var state: Map<String, String>? = null,
 )

@@ -274,8 +274,8 @@ val layers = numberProvider("my_layers") {
 		entry(70, 0f)
 	}) {
 		case(1f) {
-			blockStateProperty(Blocks.COMPOSTER) {
-				this["level"] = "0"
+			matchBlock(Blocks.COMPOSTER) {
+				state("level", "0")
 			}
 		}
 	}
@@ -288,9 +288,9 @@ val layers = numberProvider("my_layers") {
 	"cases": [
 		{
 			"condition": {
-				"type": "minecraft:block_state_property",
-				"block": "minecraft:composter",
-				"properties": {
+				"type": "minecraft:match_block",
+				"blocks": "minecraft:composter",
+				"state": {
 					"level": "0"
 				}
 			},

@@ -164,16 +164,51 @@ have optional context with graceful fallback behavior (noted in the table):
 
 | Condition                        | Required Context            | Description                                                                           |
 |----------------------------------|-----------------------------|---------------------------------------------------------------------------------------|
-| `blockStateProperty`             | Block state                 | Checks the mined block and its block states                                           |
 | `damageSourceProperties`         | Origin + damage source      | Checks properties of the damage source                                                |
 | `enchantmentActiveCheck`         | Enchantment active status   | Checks if an enchantment is active (only usable from `enchanted_location` context)    |
 | `entityScores`                   | Specified entity            | Checks scoreboard scores of an entity against `NumberProvider` ranges                 |
 | `killedByPlayer`                 | `attacking_player` entity   | Checks if there is an attacking player entity                                         |
 | `locationCheck`                  | Origin                      | Checks the current location against location criteria (supports offsets)              |
+| `matchBlock`                     | Block state                 | Checks the mined block, its block states and its block entity                         |
 | `matchTool`                      | Tool                        | Checks tool used to mine the block                                                    |
 | `randomChanceWithEnchantedBonus` | Attacker entity (optional)  | Random chance modified by enchantment level (level 0 if no attacker)                  |
 | `survivesExplosion`              | Explosion radius (optional) | Returns success with 1 ÷ explosion radius probability (always passes if no explosion) |
 | `tableBonus`                     | Tool (optional)             | Passes with probability from a list indexed by enchantment power (level 0 if no tool) |
+
+## Match Block
+
+`matchBlock` checks the block of the loot context, such as the block a loot table drops from. It takes the blocks or
+block tags to match, and a block with the same checks as the `can_place_on` and `can_break` item components: `state`,
+`states`, `nbt`, `components` and `predicates`. A single block or tag is written as a string, several as a list.
+
+```kotlin
+predicate("mature_wheat") {
+	matchBlock(Blocks.WHEAT) { state("age", "7") }
+}
+
+predicate("furnaces") {
+	matchBlock(Blocks.SMOKER, Blocks.BLAST_FURNACE)
+}
+
+predicate("lit_logs") {
+	matchBlock(Tags.Block.LOGS) {
+		states {
+			this["axis"] = "y"
+			this["lit"] = "true"
+		}
+	}
+}
+```
+
+```json
+{
+	"type": "minecraft:match_block",
+	"blocks": "minecraft:wheat",
+	"state": {
+		"age": "7"
+	}
+}
+```
 
 ## Entity Properties
 
