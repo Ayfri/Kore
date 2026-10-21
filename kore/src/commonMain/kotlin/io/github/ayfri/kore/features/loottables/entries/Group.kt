@@ -1,12 +1,9 @@
 package io.github.ayfri.kore.features.loottables.entries
 
 import io.github.ayfri.kore.features.itemmodifiers.InlinableItemModifier
-import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
-import io.github.ayfri.kore.features.predicates.conditions.PredicateReference
 import io.github.ayfri.kore.features.predicates.toCondition
-import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import kotlinx.serialization.Serializable
 
 /**
@@ -17,10 +14,10 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Group(
-	var children: List<LootEntry>,
-	var condition: PredicateCondition? = null,
-	var modifier: InlinableItemModifier? = null,
-) : LootEntry()
+	override var children: List<LootEntry>,
+	override var condition: PredicateCondition? = null,
+	override var modifier: InlinableItemModifier? = null,
+) : LootEntry(), CompositeLootEntry
 
 /** Add a Group entry with an optional condition. */
 fun LootEntries.group(children: List<LootEntry> = emptyList(), condition: Predicate.() -> Unit = {}) {
@@ -30,24 +27,4 @@ fun LootEntries.group(children: List<LootEntry> = emptyList(), condition: Predic
 /** Add and configure a Group entry. */
 fun LootEntries.group(group: Group.() -> Unit = {}) {
 	add(Group(emptyList()).apply(group))
-}
-
-/** Configure child entries. */
-fun Group.children(block: LootEntries.() -> Unit) {
-	children = buildList(block)
-}
-
-/** Set the condition, several conditions being wrapped in an `all_of`, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
-fun Group.condition(block: Predicate.() -> Unit) {
-	condition = Predicate().apply(block).toCondition()
-}
-
-/** Set the condition to the predicate [predicate], written as its bare ID. */
-fun Group.condition(predicate: PredicateArgument) {
-	condition = PredicateReference(predicate)
-}
-
-/** Set the item modifier, see [ItemModifiers](https://kore.ayfri.com/docs/data-driven/item-modifiers). */
-fun Group.modifier(block: ItemModifier.() -> Unit) {
-	modifier = ItemModifier().apply(block)
 }
