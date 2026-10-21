@@ -29,9 +29,7 @@ import io.kotest.core.spec.style.FunSpec
 fun DataPack.environmentAttributesTests() {
 	dimensionType("env_attr_ambient_particles") {
 		attributes {
-			ambientParticles(
-				Particle(ParticleOptions(Particles.ASH), 0.01f),
-			)
+			ambientParticles { particle(Particles.ASH, 0.01f) }
 		}
 		monsterSpawnLightLevel = constant(0)
 	}
@@ -866,10 +864,7 @@ fun DataPack.environmentAttributesTests() {
 
 	dimensionType("env_attr_ambient_particles_append") {
 		attributes {
-			ambientParticles(
-				Particle(ParticleOptions(Particles.WHITE_ASH), 0.1f),
-				mod = EnvironmentAttributeModifier.APPEND,
-			)
+			ambientParticles(EnvironmentAttributeModifier.APPEND) { particle(Particles.WHITE_ASH, 0.1f) }
 		}
 		monsterSpawnLightLevel = constant(0)
 	}

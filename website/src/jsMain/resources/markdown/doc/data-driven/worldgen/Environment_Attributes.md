@@ -120,14 +120,14 @@ Color builders take an `Int` hex literal, a `Color`, or an `rgb(r, g, b)` / `ARG
 
 ### Ambient Particles
 
-`ambientParticles` takes `Particle` entries as varargs or a list, each pairing a particle type with the chance to spawn it in an empty
-space. The `entry(...)` helper inside the block is the shortest form.
+`ambientParticles` takes one `particle(type, probability)` per entry in its block, pairing a particle type with the chance to spawn it in
+an empty space.
 
 ```kotlin
 attributes {
 	ambientParticles {
-		entry(Particles.ASH, probability = 0.01f)
-		entry(Particles.WHITE_ASH, probability = 0.005f)
+		particle(Particles.ASH, probability = 0.01f)
+		particle(Particles.WHITE_ASH, probability = 0.005f)
 	}
 }
 ```
@@ -137,7 +137,7 @@ particles of its dimension for instance, instead of replacing them.
 
 ```kotlin
 attributes {
-	ambientParticles(Particle(ParticleOptions(Particles.WHITE_ASH), 0.1f), mod = EnvironmentAttributeModifier.APPEND)
+	ambientParticles(EnvironmentAttributeModifier.APPEND) { particle(Particles.WHITE_ASH, 0.1f) }
 }
 ```
 

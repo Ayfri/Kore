@@ -26,14 +26,10 @@ data class BackgroundMusic(
 
 /** Sets the background music attribute, controlling which music tracks are played. */
 fun EnvironmentAttributesScope.backgroundMusic(
-	default: MusicTrack? = null,
-	creative: MusicTrack? = null,
-	underwater: MusicTrack? = null,
 	mod: EnvironmentAttributeModifier.OVERRIDE? = null,
 	block: BackgroundMusic.() -> Unit = {},
 ) = apply {
-	this[EnvironmentAttributes.Audio.BACKGROUND_MUSIC] =
-		environmentAttributeValue(BackgroundMusic(default, creative, underwater).apply(block), mod)
+	this[EnvironmentAttributes.Audio.BACKGROUND_MUSIC] = environmentAttributeValue(BackgroundMusic().apply(block), mod)
 }
 
 fun BackgroundMusic.default(

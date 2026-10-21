@@ -41,25 +41,12 @@ data class ParticleValue(
  * Sets the ambient particles attribute, controlling particles that randomly spawn around the camera.
  *
  * ```
- * ambientParticles(listOf(Particle(ParticleOptions(Particles.ASH), 0.01f)), EnvironmentAttributeModifier.APPEND)
+ * ambientParticles(EnvironmentAttributeModifier.APPEND) { particle(Particles.ASH, 0.01f) }
  * ```
  * [EnvironmentAttributeModifier.APPEND] adds the particles after the ones of the lower-priority source instead of replacing them.
  */
-fun EnvironmentAttributesScope.ambientParticles(
-	list: List<Particle>,
-	mod: EnvironmentAttributeModifier.List? = null,
-	block: ParticleValue.() -> Unit = {},
-) = apply {
-	this[EnvironmentAttributes.Visual.AMBIENT_PARTICLES] = environmentAttributeValue(ParticleValue(list).apply(block), mod)
-}
-
-fun EnvironmentAttributesScope.ambientParticles(
-	vararg list: Particle,
-	mod: EnvironmentAttributeModifier.List? = null,
-	block: ParticleValue.() -> Unit = {},
-) = apply {
-	this[EnvironmentAttributes.Visual.AMBIENT_PARTICLES] =
-		environmentAttributeValue(ParticleValue(list.toList()).apply(block), mod)
+fun EnvironmentAttributesScope.ambientParticles(mod: EnvironmentAttributeModifier.List? = null, block: ParticleValue.() -> Unit) = apply {
+	this[EnvironmentAttributes.Visual.AMBIENT_PARTICLES] = environmentAttributeValue(ParticleValue().apply(block), mod)
 }
 
 /** Sets the default particle dripped from Dripstone blocks when no fluid is placed above. */
@@ -72,6 +59,7 @@ fun EnvironmentAttributesScope.defaultDripstoneParticle(
 		environmentAttributeValue(ParticleOptions(type).apply(block), mod)
 }
 
-fun ParticleValue.entry(particle: ParticleTypeArgument, probability: Float) = apply {
-	list += Particle(ParticleOptions(particle), probability)
+/** Adds an ambient particle with the chance to spawn it in an empty space. */
+fun ParticleValue.particle(type: ParticleTypeArgument, probability: Float) = apply {
+	list += Particle(ParticleOptions(type), probability)
 }

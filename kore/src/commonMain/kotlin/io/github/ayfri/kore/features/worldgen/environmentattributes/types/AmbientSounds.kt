@@ -30,21 +30,17 @@ data class AmbientSounds(
 
 /** Sets the ambient sounds attribute, controlling looping, mood, and additional sounds. */
 fun EnvironmentAttributesScope.ambientSounds(
-	additions: List<AdditionalSound>? = null,
 	loop: SoundEventArgument? = null,
-	mood: MoodSound? = null,
 	mod: EnvironmentAttributeModifier.OVERRIDE? = null,
 	block: AmbientSounds.() -> Unit = {},
 ) = apply {
-	this[EnvironmentAttributes.Audio.AMBIENT_SOUNDS] =
-		environmentAttributeValue(AmbientSounds(additions, loop, mood).apply(block), mod)
+	this[EnvironmentAttributes.Audio.AMBIENT_SOUNDS] = environmentAttributeValue(AmbientSounds(loop = loop).apply(block), mod)
 }
 
-fun AmbientSounds.additions(vararg list: AdditionalSound) = apply {
-	additions = (additions ?: listOf()) + list
+/** Adds a sound randomly played around the camera, with its chance per tick. */
+fun AmbientSounds.addition(sound: SoundEventArgument, tickChance: Float) = apply {
+	additions = (additions ?: listOf()) + AdditionalSound(sound, tickChance)
 }
-
-fun AmbientSounds.addition(sound: SoundEventArgument, tickChance: Float) = additions(AdditionalSound(sound, tickChance))
 
 fun AmbientSounds.mood(
 	sound: SoundEventArgument? = null,

@@ -39,16 +39,6 @@ data class BedRule(
 	var errorMessage: ChatComponents? = null,
 ) : EnvironmentAttributesType()
 
-/** Sets the bed rule attribute from an existing [BedRule] instance. */
-fun EnvironmentAttributesScope.bedRule(
-	rule: BedRule,
-	mod: EnvironmentAttributeModifier.OVERRIDE? = null,
-	block: BedRule.() -> Unit = {},
-) =
-	apply {
-		this[EnvironmentAttributes.Gameplay.BED_RULE] = environmentAttributeValue(rule.apply(block), mod)
-	}
-
 /** Sets the bed rule attribute, controlling sleep, respawn, and destruction behavior. */
 fun EnvironmentAttributesScope.bedRule(
 	canSleep: BedSleepRule = BedSleepRule.WHEN_DARK,
@@ -62,15 +52,6 @@ fun EnvironmentAttributesScope.bedRule(
 	this[EnvironmentAttributes.Gameplay.BED_RULE] = environmentAttributeValue(
 		BedRule(canSleep, canSetSpawn, destroyOnLeave, destroyOnUse, errorMessage).apply(block), mod
 	)
-}
-
-/** Sets the straw bed rule attribute from an existing [BedRule] instance. */
-fun EnvironmentAttributesScope.strawBedRule(
-	rule: BedRule,
-	mod: EnvironmentAttributeModifier.OVERRIDE? = null,
-	block: BedRule.() -> Unit = {},
-) = apply {
-	this[EnvironmentAttributes.Gameplay.STRAW_BED_RULE] = environmentAttributeValue(rule.apply(block), mod)
 }
 
 /** Sets the straw bed rule attribute, controlling sleep, respawn, and destruction behavior of straw beds. */
