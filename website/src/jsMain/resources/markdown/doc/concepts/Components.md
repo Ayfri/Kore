@@ -211,6 +211,38 @@ val sign = Items.OAK_SIGN {
 
 When a line is styled, every line is written as a compound, since a list holds a single type in NBT.
 
+### Mob visibility
+
+`mobVisibility` scales the range at which mobs detect whoever carries the item, for the entity types and entity type tags it lists.
+`0.0` reduces the range to 2 blocks, `10.0` multiplies it by ten (values outside 0 to 10 throw), and stacked items never exceed `10.0`.
+
+```kotlin
+val mask = Items.CARVED_PUMPKIN {
+	mobVisibility(0f, EntityTypes.ENDERMAN, Tags.EntityType.SKELETONS)
+}
+```
+
+### Villager food
+
+`villagerFood` makes villagers eat the item, restoring `nutrition` hunger (at least 1, otherwise it throws).
+
+```kotlin
+val bread = Items.BREAD {
+	villagerFood(2)
+}
+```
+
+### Waxed
+
+`waxed` is an empty marker keeping a sign item waxed, so the placed sign can't be edited.
+
+```kotlin
+val sign = Items.OAK_SIGN {
+	signTextFront(text("Welcome"), text(), text(), text())
+	waxed()
+}
+```
+
 ### Profile
 
 The profile component can be either a player profile or a texture-based profile.
@@ -364,6 +396,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `maxDamage(..)`                      | Sets the maximum durability before the item breaks.                                                      |
 | `maxStackSize(..)`                   | Overrides how many items can stack in a single inventory slot (1-99).                                    |
 | `minimumAttackCharge(..)`            | Sets the minimum attack charge (0.0-1.0) required for full damage.                                       |
+| `mobVisibility(..)`                  | Scales the range at which mobs of given entity types or tags detect the holder (0.0-10.0).               |
 | `noteBlockSound(..)`                 | Specifies the sound a note block plays when this player head is above it.                                |
 | `ominousBottleAmplifier(..)`         | Sets the Bad Omen effect amplifier (0-4) when consuming an ominous bottle.                               |
 | `piercingWeapon(..) { .. }`          | Configures piercing weapon properties (knockback, dismount behavior).                                    |
@@ -392,6 +425,8 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `useCooldown(..)`                    | Applies a cooldown period after using this item.                                                         |
 | `useEffects(..)`                     | Configures use effects like allowing sprinting, interacting vibrations and speed multiplier while using. |
 | `useRemainder(..)`                   | Specifies an item left behind after this item is fully consumed.                                         |
+| `villagerFood(..)`                   | Makes villagers eat the item, restoring the given nutrition.                                             |
+| `waxed()`                            | Keeps a sign item waxed, so the placed sign can't be edited.                                             |
 | `weapon(..)`                         | Configures melee weapon properties like damage and attack speed.                                         |
 | `writableBookContent(..)`            | Stores editable pages in a book and quill.                                                               |
 | `writtenBookContent(..)`             | Stores signed book content including title, author, and pages.                                           |
@@ -497,6 +532,7 @@ The full list of variant helpers currently included in Kore is:
 - `catCollar(..)` / `catVariant(..)`
 - `chickenVariant(..)`
 - `cowVariant(..)`
+- `cushionColor(..)`
 - `foxVariant(..)`
 - `frogVariant(..)`
 - `horseVariant(..)`

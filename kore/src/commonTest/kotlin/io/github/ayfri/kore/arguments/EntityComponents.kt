@@ -27,6 +27,10 @@ fun entityComponentsTests() {
 		cowVariant(CowVariants.WARM)
 	} assertsIs "minecraft:cow_spawn_egg[cow_variant=\"minecraft:warm\"]"
 
+	Items.BLACK_CUSHION {
+		cushionColor(DyeColors.RED)
+	} assertsIs "minecraft:black_cushion[cushion/color=\"red\"]"
+
 	Items.FOX_SPAWN_EGG {
 		foxVariant(FoxVariants.SNOW)
 	} assertsIs "minecraft:fox_spawn_egg[fox_variant=\"snow\"]"

@@ -566,6 +566,20 @@ fun itemComponentsTests() {
 	}
 	minimumAttackChargeTest.asString() assertsIs """minecraft:stone_sword[minimum_attack_charge=0.5f]"""
 
+	val mobVisibilityTest = Items.CARVED_PUMPKIN {
+		mobVisibility(0f, EntityTypes.ZOMBIE, Tags.EntityType.SKELETONS)
+	}
+	mobVisibilityTest.asString() assertsIs """minecraft:carved_pumpkin[mob_visibility={targeting_entity_types:["minecraft:zombie","#minecraft:skeletons"],visibility:0.0f}]"""
+
+	val mobVisibilitySingleTest = Items.CARVED_PUMPKIN {
+		mobVisibility(2.5f, EntityTypes.ENDERMAN)
+	}
+	mobVisibilitySingleTest.asString() assertsIs """minecraft:carved_pumpkin[mob_visibility={targeting_entity_types:"minecraft:enderman",visibility:2.5f}]"""
+
+	shouldThrow<IllegalArgumentException> {
+		Items.CARVED_PUMPKIN { mobVisibility(11f, EntityTypes.ZOMBIE) }
+	}
+
 	val noteBlockSoundTest = Items.PLAYER_HEAD {
 		noteBlockSound(Sounds.Mob.Cow.SAY1)
 	}
@@ -826,6 +840,20 @@ fun itemComponentsTests() {
 		page(textComponent("second"), textComponent("filtered"))
 	}
 	writtenBookTest.asString() assertsIs """minecraft:written_book[written_book_content={pages:[{raw:"first"},{raw:"second",filtered:"filtered"}],title:{raw:"test",filtered:"filtered"},author:"test",generation:0,resolved:0b}]"""
+
+	val villagerFoodTest = Items.BREAD {
+		villagerFood(1)
+	}
+	villagerFoodTest.asString() assertsIs """minecraft:bread[villager_food={nutrition:1}]"""
+
+	shouldThrow<IllegalArgumentException> {
+		Items.BREAD { villagerFood(0) }
+	}
+
+	val waxedTest = Items.OAK_SIGN {
+		waxed()
+	}
+	waxedTest.asString() assertsIs """minecraft:oak_sign[waxed={}]"""
 
 	val weaponTest = stoneSword {
 		weapon(itemDamagePerAttack = 5, disableBlockingForSeconds = 5f)
