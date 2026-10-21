@@ -126,6 +126,45 @@ Conditions are categorized by their **loot context requirements**. Some conditio
 `NumberProvider`](/docs/data-driven/loot-tables#number-providers) for their numeric arguments, so you can use dynamic
 > values like scoreboard scores, enchantment levels, or environment attributes instead of plain floats.
 
+A number provider file can also be used by ID through `reference(...)`, in `randomChance` and in the bounds of
+`valueCheck`, `timeCheck` and `entityScores` ranges:
+
+```kotlin
+val chance = NumberProviderArgument("drop_chance", "my_pack")
+
+predicate("lucky") {
+	randomChance(reference(chance))
+	valueCheck(scoreNumber("kills", EntityTarget.THIS), intRange(reference(chance), 10f))
+}
+```
+
+```json
+{
+  "type": "minecraft:all_of",
+  "terms": [
+    {
+      "type": "minecraft:random_chance",
+      "chance": "my_pack:drop_chance"
+    },
+    {
+      "type": "minecraft:value_check",
+      "value": {
+        "type": "minecraft:score",
+        "target": {
+          "type": "minecraft:context",
+          "target": "this"
+        },
+        "score": "kills"
+      },
+      "range": {
+        "min": "my_pack:drop_chance",
+        "max": 10.0
+      }
+    }
+  ]
+}
+```
+
 ### Environment Attribute Check
 
 `environmentAttributeCheck` passes when the specified environment attribute equals the given value.
@@ -347,6 +386,44 @@ predicate("entity_check") {
 ## Sub-Predicates
 
 Sub-predicates are nested data structures that allow you to define specific properties to check within a predicate condition. Each condition type can have its own set of sub-predicates.
+
+### Damage Source Tags
+
+`damageSourceProperties` (and the `type` of an advancement trigger's `damage`) matches the damage type against damage
+types and damage type tags. `tag(...)` takes any number of damage types or tags and writes a tag or a single type as a
+bare string and several as a list. `expected = false` requires the damage type to match none of them.
+
+```kotlin
+predicate("fire_damage") {
+	damageSourceProperties {
+		tag(Tags.DamageType.IS_FIRE)
+		tag(Tags.DamageType.BYPASSES_INVULNERABILITY, expected = false)
+		tag(DamageTypes.LAVA, DamageTypes.IN_FIRE)
+	}
+}
+```
+
+```json
+{
+  "type": "minecraft:damage_source_properties",
+  "predicate": {
+    "tags": [
+      {
+        "expected": true,
+        "id": "#minecraft:is_fire"
+      },
+      {
+        "expected": false,
+        "id": "#minecraft:bypasses_invulnerability"
+      },
+      {
+        "expected": true,
+        "id": ["minecraft:lava", "minecraft:in_fire"]
+      }
+    ]
+  }
+}
+```
 
 ### Entity Sub-Predicates
 

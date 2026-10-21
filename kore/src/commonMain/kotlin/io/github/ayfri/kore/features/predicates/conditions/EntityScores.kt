@@ -8,6 +8,8 @@ import kotlinx.serialization.Serializable
 /**
  * Passes when every scoreboard objective of [scores] holds a value within its range for the entity designated by [entity].
  *
+ * The bounds of each range can be number provider IDs through `reference(...)`.
+ *
  * Docs: https://kore.ayfri.com/docs/data-driven/predicates
  * Minecraft Wiki: [Predicate - entity_scores](https://minecraft.wiki/w/Predicate#entity_scores)
  */

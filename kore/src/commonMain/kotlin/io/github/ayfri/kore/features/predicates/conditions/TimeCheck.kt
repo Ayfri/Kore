@@ -10,6 +10,8 @@ import kotlinx.serialization.Serializable
 /**
  * Passes when the total ticks of [clock], optionally divided modulo [period], fall within [value].
  *
+ * The bounds of [value] can be number provider IDs through `reference(...)`.
+ *
  * Docs: https://kore.ayfri.com/docs/data-driven/predicates
  * Minecraft Wiki: [Predicate - time_check](https://minecraft.wiki/w/Predicate#time_check)
  */

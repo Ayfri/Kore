@@ -8,6 +8,8 @@ import kotlinx.serialization.Serializable
 /**
  * Passes with the probability given by [chance], clamped between `0` and `1`.
  *
+ * [chance] can be a number provider ID: `randomChance(reference(NumberProviderArgument("c", "my_pack")))` writes `"chance": "my_pack:c"`.
+ *
  * Docs: https://kore.ayfri.com/docs/data-driven/predicates
  * Minecraft Wiki: [Predicate - random_chance](https://minecraft.wiki/w/Predicate#random_chance)
  */

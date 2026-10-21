@@ -21,6 +21,7 @@ import io.github.ayfri.kore.features.predicates.providers.*
 import io.github.ayfri.kore.features.predicates.sub.*
 import io.github.ayfri.kore.features.predicates.types.EntityTarget
 import io.github.ayfri.kore.generated.arguments.tagged.PredicateTagArgument
+import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.MoonPhaseValue
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.beesStayInHive
@@ -186,13 +187,48 @@ fun DataPack.predicateTests() {
 				},
 				"tags": [
 					{
-						"id": "#minecraft:is_projectile",
-						"expected": true
+						"expected": true,
+						"id": "#minecraft:is_projectile"
 					}
 				]
 			}
 		}
 	""".trimIndent()
+	roundTrip(predicates.last())
+
+	predicate("damage_source_tags") {
+		damageSourceProperties {
+			tag(Tags.DamageType.IS_FIRE)
+			tag(Tags.DamageType.BYPASSES_INVULNERABILITY, expected = false)
+			tag(DamageTypes.LAVA, DamageTypes.IN_FIRE)
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:damage_source_properties",
+			"predicate": {
+				"tags": [
+					{
+						"expected": true,
+						"id": "#minecraft:is_fire"
+					},
+					{
+						"expected": false,
+						"id": "#minecraft:bypasses_invulnerability"
+					},
+					{
+						"expected": true,
+						"id": [
+							"minecraft:lava",
+							"minecraft:in_fire"
+						]
+					}
+				]
+			}
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
 
 	predicate("enchantment_active_check") {
 		enchantmentActiveCheck(true)
@@ -958,6 +994,72 @@ fun DataPack.predicateTests() {
 					"type": "minecraft:killed_by_player"
 				}
 			]
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
+
+	val chance = NumberProviderArgument("drop_chance", "my_pack")
+
+	predicate("random_chance_reference") {
+		randomChance(reference(chance))
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:random_chance",
+			"chance": "my_pack:drop_chance"
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
+
+	predicate("value_check_reference") {
+		valueCheck(reference(chance), intRange(reference(chance), 10f))
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:value_check",
+			"value": "my_pack:drop_chance",
+			"range": {
+				"min": "my_pack:drop_chance",
+				"max": 10.0
+			}
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
+
+	predicate("time_check_reference") {
+		timeCheck(WorldClocks.OVERWORLD, reference(chance), 6000f)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:time_check",
+			"clock": "minecraft:overworld",
+			"value": {
+				"min": "my_pack:drop_chance",
+				"max": 6000.0
+			}
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
+
+	predicate("entity_scores_reference") {
+		entityScores(EntityTarget.THIS) {
+			this["kills"] = intRange(reference(chance), reference(NumberProviders.Cooking.TIME_COAL))
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:entity_scores",
+			"entity": "this",
+			"scores": {
+				"kills": {
+					"min": "my_pack:drop_chance",
+					"max": "minecraft:cooking/time_coal"
+				}
+			}
 		}
 	""".trimIndent()
 	roundTrip(predicates.last())

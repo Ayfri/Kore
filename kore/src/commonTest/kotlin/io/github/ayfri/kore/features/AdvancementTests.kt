@@ -547,6 +547,77 @@ private fun DataPack.allTriggersTests() {
 		}
 	""".trimIndent()
 
+	advancement("deflect_arrow") {
+		criteria {
+			entityHurtPlayer("deflected_projectile") {
+				damage {
+					blocked = true
+					type {
+						tag(Tags.DamageType.IS_PROJECTILE)
+					}
+				}
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"deflected_projectile": {
+					"trigger": "minecraft:entity_hurt_player",
+					"conditions": {
+						"damage": {
+							"blocked": true,
+							"type": {
+								"tags": [
+									{
+										"expected": true,
+										"id": "#minecraft:is_projectile"
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	advancement("damage_type_list") {
+		criteria {
+			entityHurtPlayer("not_fire") {
+				damage {
+					type {
+						tag(DamageTypes.LAVA, DamageTypes.IN_FIRE, expected = false)
+					}
+				}
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"not_fire": {
+					"trigger": "minecraft:entity_hurt_player",
+					"conditions": {
+						"damage": {
+							"type": {
+								"tags": [
+									{
+										"expected": false,
+										"id": [
+											"minecraft:lava",
+											"minecraft:in_fire"
+										]
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
 	advancement("entity_killed_player") {
 		criteria {
 			entityKilledPlayer("entity_killed_player")

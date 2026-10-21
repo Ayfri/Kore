@@ -1,20 +1,21 @@
 package io.github.ayfri.kore.features.predicates.sub
 
-import io.github.ayfri.kore.arguments.Argument
-import io.github.ayfri.kore.generated.Tags
+import io.github.ayfri.kore.generated.arguments.DamageTypeOrTagArgument
+import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
 /**
- * Requires the damage type to be in (or out of) a damage type tag.
+ * Requires the damage type to match (or not match) one of the given damage types or damage type tags.
+ *
+ * [id] is a damage type, a `#tag` or a list of them, a single entry being written bare.
  *
  * Minecraft Wiki: [Predicate](https://minecraft.wiki/w/Predicate)
  */
 @Serializable
 data class DamageTagPredicate(
-	@Serializable(Argument.ArgumentSerializer::class)
-	var id: Tags.DamageType,
-	/** Whether the damage type is expected to have or not have the tag. */
+	/** Whether the damage type is expected to match or not to match [id]. */
 	var expected: Boolean,
+	var id: InlinableList<DamageTypeOrTagArgument>,
 )
 
 /**
@@ -48,7 +49,14 @@ fun DamageSourcePredicate.sourceEntity(init: EntityPredicate.() -> Unit) {
 	sourceEntity = EntityPredicate().apply(init)
 }
 
-/** Requires the damage type to be in [id], or out of it when [expected] is `false`. */
-fun DamageSourcePredicate.tag(id: Tags.DamageType, expected: Boolean = true) {
-	tags = (tags ?: emptyList()) + DamageTagPredicate(id, expected)
+/**
+ * Requires the damage type to be one of [ids] (damage types or damage type tags), or none of them when [expected] is `false`.
+ *
+ * ```
+ * tag(Tags.DamageType.IS_FIRE)                         // "id": "#minecraft:is_fire"
+ * tag(DamageTypes.LAVA, DamageTypes.IN_FIRE)           // "id": ["minecraft:lava", "minecraft:in_fire"]
+ * ```
+ */
+fun DamageSourcePredicate.tag(vararg ids: DamageTypeOrTagArgument, expected: Boolean = true) {
+	tags = (tags ?: emptyList()) + DamageTagPredicate(expected, ids.toList())
 }

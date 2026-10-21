@@ -5,7 +5,7 @@ nav-title: Advancements Triggers
 description: A guide for using advancements triggers in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, advancements, triggers
 date-created: 2024-08-01
-date-modified: 2026-09-23
+date-modified: 2026-10-21
 routeOverride: /docs/data-driven/advancements/triggers
 ---
 
@@ -448,6 +448,24 @@ entityHurtPlayer("hurt_player") {
 			tag(Tags.DamageType.IS_FALL)
 		}
 	}
+}
+```
+
+`tag` takes any number of damage types or damage type tags, and `expected = false` excludes them:
+
+```kotlin
+type {
+	tag(Tags.DamageType.IS_PROJECTILE)
+	tag(DamageTypes.LAVA, DamageTypes.IN_FIRE, expected = false)
+}
+```
+
+```json
+"type": {
+  "tags": [
+    { "expected": true, "id": "#minecraft:is_projectile" },
+    { "expected": false, "id": ["minecraft:lava", "minecraft:in_fire"] }
+  ]
 }
 ```
 

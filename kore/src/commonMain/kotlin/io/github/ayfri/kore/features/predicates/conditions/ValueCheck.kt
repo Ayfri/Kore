@@ -7,7 +7,8 @@ import kotlinx.serialization.Serializable
 /**
  * Passes when the number produced by [value] falls within [range].
  *
- * Both bounds are clamped to an integer by the game.
+ * Both bounds are clamped to an integer by the game. [value] and the bounds of [range] can be number provider IDs
+ * through `reference(...)`.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/predicates
  * Minecraft Wiki: [Predicate - value_check](https://minecraft.wiki/w/Predicate#value_check)
