@@ -359,6 +359,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | Helper                               | Description                                                                                              |
 |--------------------------------------|----------------------------------------------------------------------------------------------------------|
 | `additionalTradeCost(..)`            | Sets an extra emerald cost added on top of the base price for villager trades.                           |
+| `attackAnimation(..)`                | Sets the arm-swing animation (`whack` or `stab`) and its duration when attacking with the item.          |
 | `attackRange(..)`                    | Configures the attack range of an item (min/max reach, hitbox margin, mob factor).                       |
 | `attributeModifiers(..)`             | Modifies entity attributes (e.g., attack damage, speed, armor) when the item is equipped or held.        |
 | `bannerPatterns(..)`                 | Defines the layered patterns displayed on a banner or shield.                                            |
@@ -401,6 +402,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `glider()`                           | Enables elytra-like gliding when equipped in the chest slot.                                             |
 | `instrument(..)`                     | Specifies the goat horn sound variant when the item is used.                                             |
 | `intangibleProjectile()`             | Makes projectiles from this item pass through entities without collision.                                |
+| `interactAnimation(..)`              | Sets the arm-swing animation (`whack` or `stab`) and its duration when using the item.                   |
 | `itemModel(..)`                      | Overrides the item's model with a custom model resource location.                                        |
 | `itemName(..)`                       | Sets the item's base name (different from custom name; not italicized).                                  |
 | `jukeboxPlayable(..)`                | Allows the item to be played in a jukebox with a specified music disc track.                             |
@@ -433,7 +435,6 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `storedEnchantments(..)`             | Stores enchantments in an enchanted book for anvil application.                                          |
 | `sulfurCubeContent(..)`              | Stores the item held inside a sulfur cube.                                                               |
 | `suspiciousStewEffectsComponent(..)` | Defines the status effects applied when consuming suspicious stew.                                       |
-| `swingAnimation(..)`                 | Configures the swing animation type (none, stab, whack) and duration.                                    |
 | `tool { .. }`                        | Configures mining speeds, suitable blocks, and durability cost for tools.                                |
 | `tooltipDisplay(..)`                 | Controls which tooltip sections are shown or hidden.                                                     |
 | `tooltipStyle(..)`                   | Applies a custom tooltip background/border style from a resource pack.                                   |

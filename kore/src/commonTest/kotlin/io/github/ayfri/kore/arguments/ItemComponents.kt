@@ -11,6 +11,7 @@ import io.github.ayfri.kore.arguments.components.data.ResolvableNumber
 import io.github.ayfri.kore.arguments.components.data.resolvableNumber
 import io.github.ayfri.kore.arguments.components.item.*
 import io.github.ayfri.kore.arguments.enums.DyeColors
+import io.github.ayfri.kore.arguments.enums.SwingAnimationType
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.types.literals.randomUUID
 import io.github.ayfri.kore.arguments.types.resources.model
@@ -56,6 +57,16 @@ fun itemComponentsTests() {
 		additionalTradeCost(3)
 	}
 	additionalTradeCostTest.asString() assertsIs """minecraft:emerald[additional_trade_cost=3]"""
+
+	val attackAnimationTest = stoneSword {
+		attackAnimation(SwingAnimationType.STAB, duration = 10)
+	}
+	attackAnimationTest.asString() assertsIs """minecraft:stone_sword[attack_animation={duration:10,type:"stab"}]"""
+
+	val attackAnimationEmptyTest = stoneSword {
+		attackAnimation()
+	}
+	attackAnimationEmptyTest.asString() assertsIs """minecraft:stone_sword[attack_animation={}]"""
 
 	val attackRangeTest = stoneSword {
 		attackRange(hitboxMargin = 0.5f, maxReach = 3.0f, minReach = 1.0f, mobFactor = 0.8f)
@@ -511,6 +522,11 @@ fun itemComponentsTests() {
 	}
 	intangibleProjectileTest.asString() assertsIs """minecraft:crossbow[intangible_projectile={}]"""
 
+	val interactAnimationTest = stoneSword {
+		interactAnimation { type = SwingAnimationType.WHACK }
+	}
+	interactAnimationTest.asString() assertsIs """minecraft:stone_sword[interact_animation={type:"whack"}]"""
+
 	val kineticWeaponTest = stoneSword {
 		kineticWeapon {
 			damageMultiplier = 2.0f
@@ -789,11 +805,6 @@ fun itemComponentsTests() {
 		}
 	}
 	suspiciousStewTest.asString() assertsIs """minecraft:suspicious_stew[suspicious_stew_effects=[{id:"minecraft:poison",duration:100}]]"""
-
-	val swingAnimationTest = stoneSword {
-		swingAnimation(SwingAnimationType.STAB, duration = 10)
-	}
-	swingAnimationTest.asString() assertsIs """minecraft:stone_sword[swing_animation={duration:10,type:"stab"}]"""
 
 	val toolTest = stoneSword {
 		tool {
