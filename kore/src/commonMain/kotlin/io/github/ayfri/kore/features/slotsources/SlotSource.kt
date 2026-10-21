@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.slotsources
 
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
+import io.github.ayfri.kore.serializers.InlinableList
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import kotlinx.serialization.Serializable
@@ -62,3 +63,13 @@ class SlotSourcesBuilder {
 
 /** Collects the slot sources appended in [block] into a list. */
 internal fun buildSlotSources(block: SlotSourcesBuilder.() -> Unit) = SlotSourcesBuilder().apply(block).build()
+
+/** Slot source wrapping the slot sources it applies to. */
+interface SlotSourceHolder {
+	var slotSource: InlinableList<SlotSource>
+}
+
+/** Configure the slot sources this slot source applies to. */
+fun SlotSourceHolder.slotSource(block: SlotSourcesBuilder.() -> Unit) {
+	slotSource = buildSlotSources(block)
+}

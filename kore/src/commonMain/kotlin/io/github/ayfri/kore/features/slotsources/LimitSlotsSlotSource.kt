@@ -9,13 +9,8 @@ import kotlinx.serialization.Serializable
 @SerialName("limit_slots")
 data class LimitSlotsSlotSource(
 	var limit: Int = 0,
-	var slotSource: InlinableList<SlotSource> = emptyList(),
-) : SlotSource()
-
-/** Configure the slot sources for this [LimitSlotsSlotSource]. */
-fun LimitSlotsSlotSource.slotSource(block: SlotSourcesBuilder.() -> Unit) {
-	slotSource = buildSlotSources(block)
-}
+	override var slotSource: InlinableList<SlotSource> = emptyList(),
+) : SlotSource(), SlotSourceHolder
 
 /** Adds a limit slots slot source. */
 fun SlotSourcesBuilder.limitSlots(limit: Int, block: LimitSlotsSlotSource.() -> Unit = {}) {

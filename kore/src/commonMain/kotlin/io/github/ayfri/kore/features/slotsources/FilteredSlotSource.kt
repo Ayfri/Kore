@@ -10,8 +10,8 @@ import kotlinx.serialization.Serializable
 @SerialName("filtered")
 data class FilteredSlotSource(
 	var itemFilter: ItemStackPredicate = ItemStackPredicate(),
-	var slotSource: InlinableList<SlotSource> = emptyList(),
-) : SlotSource()
+	override var slotSource: InlinableList<SlotSource> = emptyList(),
+) : SlotSource(), SlotSourceHolder
 
 /** Adds a filtered slot source. */
 fun SlotSourcesBuilder.filtered(block: FilteredSlotSource.() -> Unit = {}) {
@@ -21,9 +21,4 @@ fun SlotSourcesBuilder.filtered(block: FilteredSlotSource.() -> Unit = {}) {
 /** Configure the item filter predicate for this [FilteredSlotSource]. */
 fun FilteredSlotSource.itemFilter(block: ItemStackPredicate.() -> Unit) {
 	itemFilter = ItemStackPredicate().apply(block)
-}
-
-/** Configure the slot sources for this [FilteredSlotSource]. */
-fun FilteredSlotSource.slotSource(block: SlotSourcesBuilder.() -> Unit) {
-	slotSource = buildSlotSources(block)
 }

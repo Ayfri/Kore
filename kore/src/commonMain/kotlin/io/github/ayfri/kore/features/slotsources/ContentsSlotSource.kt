@@ -9,15 +9,10 @@ import kotlinx.serialization.Serializable
 @SerialName("contents")
 data class ContentsSlotSource(
 	var component: InventoryComponentType,
-	var slotSource: InlinableList<SlotSource> = emptyList(),
-) : SlotSource()
+	override var slotSource: InlinableList<SlotSource> = emptyList(),
+) : SlotSource(), SlotSourceHolder
 
 /** Adds a contents slot source. */
 fun SlotSourcesBuilder.contents(component: InventoryComponentType, block: ContentsSlotSource.() -> Unit = {}) {
 	sources += ContentsSlotSource(component).apply(block)
-}
-
-/** Configure the slot sources for this [ContentsSlotSource]. */
-fun ContentsSlotSource.slotSource(block: SlotSourcesBuilder.() -> Unit) {
-	slotSource = buildSlotSources(block)
 }
