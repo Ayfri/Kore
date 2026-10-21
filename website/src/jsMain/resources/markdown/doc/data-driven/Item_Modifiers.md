@@ -161,6 +161,14 @@ itemModifier("damage") {
 }
 ```
 
+The count, damage, level, amplifier and duration fields of item functions are [number providers](/docs/data-driven/loot-tables#number-providers), so each also accepts a number provider ID through `reference(...)`:
+
+```kotlin
+itemModifier("count_from_provider") {
+	setCount(reference(NumberProviderArgument("n", "my_pack")))  // "count": "my_pack:n"
+}
+```
+
 #### limitCount
 
 Clamps stack count to a range:
@@ -384,6 +392,19 @@ itemModifier("model_from_score") {
 }
 ```
 
+Each color is either a fixed `Color`, written as its decimal RGB value, or a number provider computing that value:
+
+```kotlin
+itemModifier("model_colors") {
+	setCustomModelData {
+		colors(Color.RED, Color.BLUE)                // "values": [16733525, 5592575]
+		colors(scoreNumber("tint", "#shirt"))        // "values": [{ "type": "minecraft:score", ... }]
+	}
+}
+```
+
+Each `colors(...)` call replaces the whole list. To mix fixed colors and providers in one list, set `colors` to a `ListOperation` of `CustomModelDataColor`.
+
 #### copyCustomData
 
 Copy NBT data to custom_data component:
@@ -503,7 +524,11 @@ Set the amplifier of an ominous bottle:
 
 ```kotlin
 itemModifier("ominous_bottle") {
+	// Fixed amplifier, written as the number provider 5.0
 	setOminousBottleAmplifier(5)
+
+	// Amplifier drawn from a number provider
+	setOminousBottleAmplifier(uniform(2f, 4f))
 }
 ```
 

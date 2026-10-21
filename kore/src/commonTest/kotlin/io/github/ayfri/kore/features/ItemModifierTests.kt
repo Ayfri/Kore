@@ -21,6 +21,7 @@ import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.features.predicates.providers.enchantmentLevel
 import io.github.ayfri.kore.features.predicates.providers.intRange
+import io.github.ayfri.kore.features.predicates.providers.reference
 import io.github.ayfri.kore.features.predicates.providers.scoreNumber
 import io.github.ayfri.kore.features.predicates.providers.sum
 import io.github.ayfri.kore.features.predicates.providers.uniform
@@ -32,6 +33,7 @@ import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.arguments.tagged.ItemModifierTagArgument
 import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
+import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.set
@@ -741,6 +743,52 @@ fun DataPack.itemModifierTests() {
 		}
 	""".trimIndent()
 
+	itemModifier("set_custom_model_data_color_providers") {
+		setCustomModelData {
+			colors(scoreNumber("tint", "#a"))
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:set_custom_model_data",
+			"colors": {
+				"values": [
+					{
+						"type": "minecraft:score",
+						"target": {
+							"type": "minecraft:fixed",
+							"name": "#a"
+						},
+						"score": "tint"
+					}
+				],
+				"mode": "replace_all"
+			}
+		}
+	""".trimIndent()
+
+	roundTrip(itemModifiers.last())
+
+	itemModifier("set_custom_model_data_color_builder") {
+		setCustomModelData {
+			colors(Color.RED, Color.BLUE)
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:set_custom_model_data",
+			"colors": {
+				"values": [
+					16733525,
+					5592575
+				],
+				"mode": "replace_all"
+			}
+		}
+	""".trimIndent()
+
 	itemModifier("set_damage") {
 		setDamage(0.5f, add = true)
 	}
@@ -939,7 +987,44 @@ fun DataPack.itemModifierTests() {
 	itemModifiers.last() assertsIs """
 		{
 			"type": "minecraft:set_ominous_bottle_amplifier",
-			"amplifier": 5
+			"amplifier": 5.0
+		}
+	""".trimIndent()
+
+	itemModifier("set_ominous_bottle_amplifier_provider") {
+		setOminousBottleAmplifier(uniform(2f, 4f))
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:set_ominous_bottle_amplifier",
+			"amplifier": {
+				"type": "minecraft:uniform",
+				"min": 2.0,
+				"max": 4.0
+			}
+		}
+	""".trimIndent()
+
+	itemModifier("set_ominous_bottle_amplifier_reference") {
+		setOminousBottleAmplifier(reference(NumberProviderArgument("amplifier", "my_pack")))
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:set_ominous_bottle_amplifier",
+			"amplifier": "my_pack:amplifier"
+		}
+	""".trimIndent()
+
+	itemModifier("set_count_reference") {
+		setCount(reference(NumberProviderArgument("n", "my_pack")))
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:set_count",
+			"count": "my_pack:n"
 		}
 	""".trimIndent()
 
