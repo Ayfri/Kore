@@ -244,7 +244,7 @@ pool {
 }
 ```
 
-The `summands` of a `sum` also take a tag of number providers, `sum(NumberProviderTagArgument("bonuses", "my_pack"))`, which writes `"summands": "#my_pack:bonuses"`. A tag is only valid there. A list can't mix references and inline values, the game rejects it.
+The `summands` of a `sum` also take a tag of number providers, `sum(NumberProviderTagArgument("bonuses", "my_pack"))`, which writes `"summands": "#my_pack:bonuses"`. A tag is only valid there, as the whole `summands`. A list can mix IDs and inline values.
 
 A provider that references itself, directly or through other files, makes the pack fail to load.
 

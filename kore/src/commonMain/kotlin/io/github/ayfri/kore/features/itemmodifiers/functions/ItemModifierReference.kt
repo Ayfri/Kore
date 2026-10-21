@@ -13,8 +13,8 @@ import kotlinx.serialization.Serializable
  * function is expected. A tag (`"#my_pack:my_tag"`) applies every modifier it holds. A cyclic reference makes the pack
  * fail to load.
  *
- * It has no [condition] of its own, so one to guard it must wrap it in a `sequence`. A list can't mix references and
- * inline values, the game rejects it.
+ * It has no [condition] of its own, so one to guard it must wrap it in a `sequence`. A list can mix IDs and inline
+ * values, but a tag can't be one of its elements, only the whole list.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * Minecraft Wiki: [Item modifier](https://minecraft.wiki/w/Item_modifier)

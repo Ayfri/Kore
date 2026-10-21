@@ -11,7 +11,7 @@ routeOverride: /docs/data-driven/advancements/triggers
 
 ## Predicate fields
 
-The `player` of every trigger and the entity and location fields of a trigger (`parent`, `victim`, `bystander`, `location`...) each hold one predicate, checked with the entity as `this`, as an inline condition or the ID of a predicate file. Several conditions are written as an `all_of`, and a predicate tag isn't possible because the game only accepts a tag in the `terms` of an `all_of` or an `any_of`.
+The `player` of every trigger and the entity and location fields of a trigger (`parent`, `victim`, `bystander`, `location`...) each hold one predicate, checked with the entity as `this`, as an inline condition or the ID of a predicate file. Several conditions are written as an `all_of`, and a predicate tag isn't possible because the game only accepts a tag as the whole `terms` of an `all_of` or an `any_of`.
 
 ```kotlin
 bredAnimals("breed_cows") {

@@ -245,7 +245,7 @@ advancement("conditional_criteria") {
 }
 ```
 
-`conditionEntity { }` checks the player against an entity predicate, as an `entity_properties` condition on `this`. A predicate tag isn't possible in these fields because the game only accepts a tag in the `terms` of an `all_of` or an `any_of`.
+`conditionEntity { }` checks the player against an entity predicate, as an `entity_properties` condition on `this`. A predicate tag isn't possible in these fields because the game only accepts a tag as the whole `terms` of an `all_of` or an `any_of`.
 
 For a complete guide on predicates, see the [Predicates](/docs/data-driven/predicates) documentation.
 

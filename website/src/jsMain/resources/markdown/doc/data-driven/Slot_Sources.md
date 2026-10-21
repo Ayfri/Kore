@@ -179,13 +179,17 @@ slotSources {
 	reference(hands)  // "my_pack:hands"
 }
 
-slotSource("everything") {
+slotSource("hands_and_hotbar") {
 	reference(hands)
+	slotRange(SlotSourceOrigin.THIS, HOTBAR)  // ["my_pack:hands", {"type": "minecraft:slot_range", ...}]
+}
+
+slotSource("armor") {
 	reference(SlotSourceTagArgument("armor_slots", "my_pack"))  // "#my_pack:armor_slots"
 }
 ```
 
-Every `slot_source` field (`contents`, `filtered`, `limitSlots`, the `slots` loot entry), the `terms` of a `group`, a slot source file and an inline slot source accept an ID, a tag, a list of them or inline sources. A list can't mix references and inline values, the game rejects it.
+Every `slot_source` field (`contents`, `filtered`, `limitSlots`, the `slots` loot entry), the `terms` of a `group`, a slot source file and an inline slot source accept an ID, a tag, an inline source or a list mixing IDs and inline sources. A tag can't be one of the list's elements, only the whole list.
 
 A slot source that references itself, directly or through other files, makes the pack fail to load.
 

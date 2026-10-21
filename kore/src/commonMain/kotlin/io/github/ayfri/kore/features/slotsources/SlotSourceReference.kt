@@ -9,7 +9,8 @@ import kotlinx.serialization.Serializable
 /**
  * Selects the slots of the slot source [id] points to, written as the bare string `"my_pack:my_slot_source"` wherever a
  * slot source is expected. A tag (`"#my_pack:my_tag"`) selects the slots of every slot source it holds. A cyclic
- * reference makes the pack fail to load. A list can't mix references and inline values, the game rejects it.
+ * reference makes the pack fail to load. A list can mix IDs and inline
+ * sources, but a tag can't be one of its elements, only the whole list.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/slot-sources
  * Minecraft Wiki: https://minecraft.wiki/w/Slot_source

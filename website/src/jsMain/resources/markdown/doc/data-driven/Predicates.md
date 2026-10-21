@@ -754,7 +754,7 @@ predicate("combined_check") {
 pool and entry `condition(basePredicate)`, `conditionalNumber(basePredicate, 800f, 1600f)` and number dispatcher
 `case(basePredicate, 2f)` take the ID the same way.
 
-A predicate tag is only accepted in the terms of an `allOf` or an `anyOf`:
+A predicate tag is only accepted as the whole terms of an `allOf` or an `anyOf`:
 
 ```kotlin
 predicate("any_night_like") {
@@ -769,7 +769,7 @@ predicate("any_night_like") {
 }
 ```
 
-A list can't mix references and inline values, the game rejects it.
+A list can mix IDs and inline conditions, but a tag can't be one of its terms, only the whole list.
 
 A predicate file can't be a bare reference because the game reads the file as an inline condition: Kore throws when it
 generates one. Cyclic references (predicate A references B, which references A) make the pack fail to load.

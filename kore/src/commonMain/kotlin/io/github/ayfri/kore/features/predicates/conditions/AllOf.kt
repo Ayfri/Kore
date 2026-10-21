@@ -5,8 +5,8 @@ import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
 /**
- * Passes when every condition in [terms] passes. A single term is written inline, without the array. A list can't mix
- * predicate IDs and inline conditions, the game rejects it.
+ * Passes when every condition in [terms] passes. A single term is written inline, without the array. The list can mix
+ * predicate IDs and inline conditions, but a predicate tag can't be one of the terms, only all of them.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/predicates
  * Minecraft Wiki: [Predicate - all_of](https://minecraft.wiki/w/Predicate#all_of)

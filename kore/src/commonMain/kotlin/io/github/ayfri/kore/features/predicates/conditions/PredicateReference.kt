@@ -11,9 +11,9 @@ import kotlinx.serialization.Serializable
 
 /**
  * Passes when the predicate [id] points to passes, written as the bare string `"my_pack:my_predicate"` wherever a
- * condition is expected. A tag (`"#my_pack:my_tag"`) is only valid in a list position: `all_of` and `any_of` terms.
+ * condition is expected. A tag (`"#my_pack:my_tag"`) is only valid as the whole `terms` of `all_of` and `any_of`.
  * A cyclic reference makes the pack fail to load, and a predicate file can't be a reference alone.
- * A list can't mix references and inline values, the game rejects it.
+ * A list can mix IDs and inline conditions.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/predicates
  * Minecraft Wiki: [Predicate](https://minecraft.wiki/w/Predicate)
@@ -56,7 +56,7 @@ fun Predicate.reference(predicate: Predicate) {
 
 /**
  * Adds a [PredicateReference] condition pointing at the predicate tag [tag], written `"#my_pack:my_tag"`. The game only
- * accepts a tag in a list position, so use it inside [allOf] or [anyOf].
+ * accepts a tag as the whole terms of [allOf] or [anyOf], so make it their only term.
  *
  * ```
  * anyOf { reference(PredicateTagArgument("night_like", "my_pack")) }  // "terms": "#my_pack:night_like"

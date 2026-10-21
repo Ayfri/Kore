@@ -863,7 +863,7 @@ val baseModifier = itemModifier("base") {
 
 itemModifier("combined") {
 	reference(baseModifier)
-	reference(ItemModifierTagArgument("buffs", "my_pack"))  // ["my_pack:base", "#my_pack:buffs"]
+	setCount(2f)  // ["my_pack:base", {"function": "minecraft:set_count", "count": 2.0}]
 }
 
 itemModifier("shortcut") {
@@ -875,7 +875,7 @@ lootTable("tagged") {
 }
 ```
 
-The `shortcut` file is the bare string `"my_pack:base"`. A list can't mix references and inline values, the game rejects it.
+The `shortcut` file is the bare string `"my_pack:base"`. A list can mix IDs and inline values, but a tag can't be one of its elements, only the whole list.
 
 A reference has no `condition` of its own: wrap it in a `sequence { }` function to guard it. An item modifier that references itself, directly or through other files, makes the pack fail to load.
 
