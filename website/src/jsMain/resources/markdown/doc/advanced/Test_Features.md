@@ -5,7 +5,7 @@ nav-title: Test Features
 description: A comprehensive guide for creating test instances and test environments in Minecraft's GameTest framework with Kore.
 keywords: minecraft, datapack, kore, guide, test, testing, environment, instance, gametest, automation
 date-created: 2025-01-08
-date-modified: 2026-08-18
+date-modified: 2026-10-21
 routeOverride: /docs/advanced/test-features
 ---
 
@@ -169,6 +169,7 @@ All available properties for a test instance:
 | `required`                         | `Boolean`                 | Whether the test must pass for the suite to succeed. |
 | `manualOnly`                       | `Boolean`                 | Whether the test is only run manually.               |
 | `skyAccess`                        | `Boolean`                 | Whether the structure needs sky access.              |
+| `dimension`                        | `DimensionArgument`       | Dimension the test runs in (default: overworld).     |
 | `rotation(rot)`                    | `StructureRotation`       | Rotation applied to the structure.                   |
 
 Rotation helpers: `noRotation()`, `clockwise90()`, `rotate180()`, `counterclockwise90()`.

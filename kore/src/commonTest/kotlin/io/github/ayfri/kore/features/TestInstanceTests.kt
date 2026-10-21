@@ -6,8 +6,11 @@ import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.testenvironments.enums.Weather
 import io.github.ayfri.kore.features.testenvironments.testEnvironmentsBuilder
+import io.github.ayfri.kore.features.testinstances.enums.TestType
+import io.github.ayfri.kore.features.testinstances.testInstance
 import io.github.ayfri.kore.features.testinstances.testInstances
 import io.github.ayfri.kore.functions.function
+import io.github.ayfri.kore.generated.Dimensions
 import io.github.ayfri.kore.generated.Structures
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
@@ -32,6 +35,22 @@ fun DataPack.testInstanceTests() {
 				"environment": "features_tests:test_env",
 				"max_ticks": 100,
 				"structure": "minecraft:village/common/iron_golem",
+				"type": "block_based"
+			}
+		""".trimIndent()
+
+		testInstance("nether_test") {
+			dimension = Dimensions.THE_NETHER
+			environment(environment)
+			structure(Structures.Igloo.TOP)
+		}
+
+		testInstances.last() assertsIs """
+			{
+				"dimension": "minecraft:the_nether",
+				"environment": "features_tests:test_env",
+				"max_ticks": 100,
+				"structure": "minecraft:igloo/top",
 				"type": "block_based"
 			}
 		""".trimIndent()
@@ -68,6 +87,18 @@ fun DataPack.testInstanceTests() {
 			}
 		""".trimIndent()
 	}
+
+	testInstance("end_test", environment, 100, Structures.Igloo.TOP, TestType.BLOCK_BASED, dimension = Dimensions.THE_END)
+
+	testInstances.last() assertsIs """
+		{
+			"dimension": "minecraft:the_end",
+			"environment": "features_tests:test_env",
+			"max_ticks": 100,
+			"structure": "minecraft:igloo/top",
+			"type": "block_based"
+		}
+	""".trimIndent()
 }
 
 class TestInstanceTests : FunSpec({

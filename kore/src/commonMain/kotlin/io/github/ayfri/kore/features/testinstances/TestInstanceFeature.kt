@@ -4,6 +4,7 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.StructureRotation
 import io.github.ayfri.kore.features.testinstances.enums.TestType
+import io.github.ayfri.kore.generated.arguments.types.DimensionArgument
 import io.github.ayfri.kore.generated.arguments.types.TestEnvironmentArgument
 import io.github.ayfri.kore.generated.arguments.types.TestInstanceArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
@@ -39,6 +40,7 @@ data class TestInstanceFeature(
  * @param maxTicks Maximum number of game ticks before the test times out
  * @param structure The structure template containing all blocks and entities needed for the test
  * @param type The test execution type (BLOCK_BASED for redstone logic, FUNCTION for programmatic control)
+ * @param dimension Optional dimension the test runs in, the game defaults to `minecraft:overworld` when omitted
  * @param function Optional fully qualified Java method reference for function-based tests (e.g., "com.example.MyMod::myTest")
  * @param manualOnly Whether the test should only run when manually triggered (not in automated runs)
  * @param maxAttempts Maximum number of test attempts for retry logic
@@ -56,6 +58,7 @@ fun DataPack.testInstance(
 	maxTicks: Int,
 	structure: StructureArgument,
 	type: TestType,
+	dimension: DimensionArgument? = null,
 	function: String? = null,
 	manualOnly: Boolean? = null,
 	maxAttempts: Int? = null,
@@ -69,6 +72,7 @@ fun DataPack.testInstance(
 	val testInstance = TestInstanceFeature(
 		fileName,
 		TestInstance(
+			dimension = dimension,
 			environment = environment,
 			function = function,
 			manualOnly = manualOnly,
