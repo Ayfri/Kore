@@ -134,6 +134,7 @@ node classes.
 | `clamp`                | `clamp(...)`              | Restricts the input between `min` and `max`.                                  |
 | `constant`             | `constant(...)`           | A fixed value, ignoring the input position.                                   |
 | `cube`                 | `cube(...)`               | Raises the input to the power of 3 (x³).                                      |
+| `distance_to_point`    | `distanceToPoint(...)`    | Distance from the sampled position to a block position, in one of 4 metrics.  |
 | `div`                  | `div(...)`                | Divides the first input by the second.                                        |
 | `end_outer_islands`    | `endOuterIslands(...)`    | Samples the End's outer islands, without the central island. No parameters.   |
 | `find_top_surface`     | `findTopSurface(...)`     | Scans a column for the topmost position where a density is above zero.        |
@@ -161,6 +162,7 @@ node classes.
 | `shift_b`              | `shiftB(...)`             | Samples a noise at `(z/4, x/4, 0)`, scaled back up by 4.                      |
 | `shifted_noise`        | `shiftedNoise(...)`       | Like `noise`, but with the sampled coordinates shifted.                       |
 | `sign`                 | `sign(...)`               | Outputs the sign of the input.                                                |
+| `slice`                | `slice(...)`              | Evaluates the input with one axis coordinate fixed, flattening 3D to 2D.      |
 | `spline`               | `spline(...)`             | Cubic spline interpolating control points over a coordinate.                  |
 | `sqrt`                 | `sqrt(...)`               | Takes the square root of the input.                                           |
 | `square`               | `square(...)`             | Raises the input to the power of 2 (x²).                                      |
@@ -243,6 +245,17 @@ dp.densityFunctions {
 		toValue = 1.0
 		tiling = TilingMode.MIRRORED_REPEAT
 	}
+}
+```
+
+`distanceToPoint` measures the distance to a block position with a `DistanceMetric` (`EUCLIDEAN` by default, `EUCLIDEAN_SQUARED`,
+`MANHATTAN` or `CHEBYSHEV`), and `slice` evaluates a function with one axis fixed. Chained, they give a distance field that is the same at
+every Y, the base of a disc like the End's main island:
+
+```kotlin
+dp.densityFunctions {
+	val distance = distanceToPoint("end/distance", 0, 0, 0)
+	slice("end/disc", Axis.Y, 0, distance)
 }
 ```
 

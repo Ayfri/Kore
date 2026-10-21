@@ -139,6 +139,34 @@ fun DataPack.densityFunctionTests() {
 		}
 	""".trimIndent()
 
+	val endDistance = densityFunctionsBuilder.distanceToPoint("end/distance", 0, 0, 0)
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:distance_to_point",
+			"metric": "euclidean",
+			"point": [
+				0,
+				0,
+				0
+			]
+		}
+	""".trimIndent()
+
+	densityFunctionsBuilder.distanceToPoint("manhattan", 8, 64, -8, DistanceMetric.MANHATTAN)
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:distance_to_point",
+			"metric": "manhattan",
+			"point": [
+				8,
+				64,
+				-8
+			]
+		}
+	""".trimIndent()
+
 	densityFunctionsBuilder.div("div", 0.2734375, DensityFunctions.Overworld.FACTOR)
 
 	densityFunctions.last() assertsIs """
@@ -540,6 +568,17 @@ fun DataPack.densityFunctionTests() {
 		{
 			"type": "minecraft:sign",
 			"input": -2.0
+		}
+	""".trimIndent()
+
+	densityFunctionsBuilder.slice("end/disc", Axis.Y, 0, endDistance)
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:slice",
+			"axis": "y",
+			"coordinate": 0,
+			"input": "$name:end/distance"
 		}
 	""".trimIndent()
 
