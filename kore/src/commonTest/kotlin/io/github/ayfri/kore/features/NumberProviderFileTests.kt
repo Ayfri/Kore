@@ -2,14 +2,17 @@ package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.assertions.assertsThrows
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.numberproviders.numberProvider
 import io.github.ayfri.kore.features.predicates.conditions.blockStateProperty
 import io.github.ayfri.kore.features.predicates.providers.numberDispatcher
+import io.github.ayfri.kore.features.predicates.providers.reference
 import io.github.ayfri.kore.features.predicates.providers.uniform
 import io.github.ayfri.kore.features.predicates.providers.weightedListNumber
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.NumberProviders
+import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
 
@@ -76,6 +79,12 @@ fun DataPack.numberProviderFileTests() {
 	""".trimIndent()
 
 	NumberProviders.Compostable.LOW.asId() assertsIs "minecraft:compostable/low"
+
+	numberProvider("reference_file") { reference(NumberProviderArgument("range", "number_provider_file_tests")) }
+
+	assertsThrows("Number provider file 'reference_file' must hold an inline provider, not a reference.") {
+		numberProviders.last().generateJson(this)
+	}
 }
 
 class NumberProviderFileTests : FunSpec({

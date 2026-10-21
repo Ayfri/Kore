@@ -4,6 +4,7 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.features.predicates.providers.ConstantNumberProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProvider
+import io.github.ayfri.kore.features.predicates.providers.NumberProviderReference
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
 import kotlinx.serialization.Transient
@@ -20,8 +21,10 @@ data class NumberProviderFile(
 	override var fileName: String = "number_provider",
 	var provider: NumberProvider,
 ) : Generator("number_provider") {
-	override fun generateJson(dataPack: DataPack) =
-		dataPack.jsonEncoder.encodeToString(NumberProvider.serializer(), provider)
+	override fun generateJson(dataPack: DataPack): String {
+		require(provider !is NumberProviderReference) { "Number provider file '$fileName' must hold an inline provider, not a reference." }
+		return dataPack.jsonEncoder.encodeToString(NumberProvider.serializer(), provider)
+	}
 }
 
 /**

@@ -2,8 +2,13 @@ package io.github.ayfri.kore.features.predicates.providers
 
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
+import io.github.ayfri.kore.generated.arguments.NumberProviderOrTagArgument
+import io.github.ayfri.kore.generated.arguments.tagged.NumberProviderTagArgument
 import io.github.ayfri.kore.generated.arguments.types.EnvironmentAttributeArgument
+import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
+import io.github.ayfri.kore.serializers.IdOrTagReferenceSerializer
+import io.github.ayfri.kore.serializers.InlinableList
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import kotlinx.serialization.SerialName
@@ -15,7 +20,8 @@ import kotlinx.serialization.serializer
  * modifiers, the predicates and the trades.
  *
  * A [ConstantNumberProvider] is inlined to its value, so `constant(5f)` serializes as `5.0` instead of an object
- * with a `type` field. Every other type keeps its `type` field.
+ * with a `type` field, and a [NumberProviderReference] is the bare string of its ID. Every other provider is an
+ * object that always carries its `type` field: the game rejects one without it.
  *
  * Every builder is an extension on [NumberProviderScope] (e.g. [constant], [uniform]), so they only resolve inside a
  * block that actually accepts a number provider.
@@ -152,6 +158,29 @@ data class ScoreNumberProvider(
 ) : NumberProvider()
 
 /**
+ * Returns the number provider [id] points to, written as the bare string `"my_pack:my_provider"` wherever a number
+ * provider is expected. A tag (`"#my_pack:my_tag"`) is only valid in the `summands` of a `sum`.
+ * A cyclic reference makes the pack fail to load. A list can't mix references and inline values, the game rejects it.
+ *
+ * Minecraft Wiki: [Number provider](https://minecraft.wiki/w/Number_provider)
+ *
+ * @property id The ID of the number provider file, or of the number provider tag in a `sum`.
+ */
+@Serializable(with = NumberProviderReference.Companion.NumberProviderReferenceSerializer::class)
+data class NumberProviderReference(var id: NumberProviderOrTagArgument) : NumberProvider() {
+	companion object {
+		data object NumberProviderReferenceSerializer :
+			IdOrTagReferenceSerializer<NumberProviderReference, NumberProviderOrTagArgument>(
+				NumberProviderReference::id,
+				::NumberProviderReference,
+				{ name, namespace -> NumberProviderArgument(name, namespace) },
+				{ name, namespace -> NumberProviderTagArgument(name, namespace) },
+				"number_provider_reference",
+			)
+	}
+}
+
+/**
  * Returns a number read from command storage.
  *
  * Minecraft Wiki: [Number provider - storage](https://minecraft.wiki/w/Number_provider#storage)
@@ -168,11 +197,11 @@ data class StorageNumberProvider(var storage: String, var path: String) : Number
  *
  * Minecraft Wiki: [Number provider - sum](https://minecraft.wiki/w/Number_provider#sum)
  *
- * @property summands The providers whose values are added together.
+ * @property summands The providers whose values are added together: one provider, a list, or a tag of number providers.
  */
 @SerialName("sum")
 @Serializable
-data class SumNumberProvider(var summands: List<NumberProvider>) : NumberProvider()
+data class SumNumberProvider(var summands: InlinableList<NumberProvider>) : NumberProvider()
 
 /**
  * Returns a number drawn uniformly between [min] and [max], both included.

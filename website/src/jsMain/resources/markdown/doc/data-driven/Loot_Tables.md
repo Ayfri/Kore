@@ -195,13 +195,33 @@ The builders are extensions on `NumberProviderScope`, so they only resolve insid
 | `enchantmentLevel(...)`           | Based on enchantment level (requires enchantment context) | `enchantmentLevel(5)`                                                   |
 | `environmentAttribute(attribute)` | Current value of a numeric env attribute                  | `environmentAttribute(EnvironmentAttributes.Visual.FOG_START_DISTANCE)` |
 | `numberDispatcher(...) { }`       | Value of the first matching case, or a default            | `numberDispatcher(default = 0f) { case(1f) { killedByPlayer() } }`      |
+| `reference(id)`                   | Number provider file, written as its ID                   | `reference(NumberProviders.Cooking.TIME_COAL)`                          |
 | `scoreNumber(...)`                | Value from a scoreboard objective                         | `scoreNumber("kills", EntityTarget.THIS)`                               |
 | `storageNumber(storage, path)`    | Value from command storage                                | `storageNumber("my_pack:data", "player.health")`                        |
-| `sum(...)`                        | Sum of multiple providers                                 | `sum(constant(1f), uniform(1f, 3f))`                                    |
+| `sum(...)`                        | Sum of multiple providers, or of a tag of providers       | `sum(constant(1f), uniform(1f, 3f))`                                    |
 | `uniform(min, max)`               | Random value between min and max                          | `uniform(1f, 5f)`                                                       |
 | `weightedListNumber { }`          | Value of one entry, picked by weight                      | `weightedListNumber { entry(30, 1f); entry(70, 0f) }`                   |
 
 `conditionalNumber`, `numberDispatcher` and `weightedListNumber` nest other providers, and the conditions are the ones of [predicates](/docs/data-driven/predicates). A condition is either passed as a value (`conditionalNumber(SurvivesExplosion, 1f)`), as a predicate ID (`conditionalNumber(fastCooking, 800f, 1600f)`) or declared in a block holding exactly one condition. `onFalse` and `default` are `0` when omitted.
+
+A constant is the bare number (`5.0`), and every other provider is an object that always carries its `type`: the game rejects `{"min": 1, "max": 2}`, it has to be `{"type": "minecraft:uniform", "min": 1, "max": 2}`.
+
+### Number provider IDs
+
+Wherever a number provider is expected (`rolls`, `min`, `max`, `on_true`, the item modifier counts...), the game also accepts the ID of a [number provider file](#number-provider-files), written as a bare string. `reference(id)` builds it, and `numberProvider(...)` returns the ID to pass:
+
+```kotlin
+val bonus = numberProvider("bonus") { uniform(1f, 3f) }
+
+pool {
+	rolls = reference(bonus)  // "rolls": "my_pack:bonus"
+	bonusRolls = uniform(reference(NumberProviders.Cooking.TIME_COAL), constant(5f))
+}
+```
+
+The `summands` of a `sum` also take a tag of number providers, `sum(NumberProviderTagArgument("bonuses", "my_pack"))`, which writes `"summands": "#my_pack:bonuses"`. A tag is only valid there. A list can't mix references and inline values, the game rejects it.
+
+A provider that references itself, directly or through other files, makes the pack fail to load.
 
 Every number provider computes a 32-bit float, and an integer field rounds it. `scoreNumber` and the ranges of `entityScores` therefore stay exact only up to 16,777,216 (2²⁴): past it, neighboring scores read as the same value ([MC-254370](https://bugs.mojang.com/browse/MC-254370)). To compare larger scores exactly, test them with `execute if score`, or store the high and low parts on two objectives and check each one. A `sum` of the parts is a float again and loses the same precision.
 
@@ -281,7 +301,7 @@ A constant is written as a bare number, the way vanilla's `compostable/always_ad
 numberProvider("always_add_one", 1f) // 1.0
 ```
 
-The vanilla files are listed in `NumberProviders`, e.g. `NumberProviders.Compostable.LOW` for `minecraft:compostable/low`. A number provider can't reference a `number_provider` file by ID because Kore's `NumberProvider` has no reference type: only components like `compostable` take the ID.
+The vanilla files are listed in `NumberProviders`, e.g. `NumberProviders.Compostable.LOW` for `minecraft:compostable/low`. Number providers, including the ones of other number provider files, can reference a file by its ID with `reference(id)`, see [Number provider IDs](#number-provider-ids). A file itself can't be a bare reference because the game reads it as an inline provider, so Kore throws when generating one.
 
 ## Entries
 

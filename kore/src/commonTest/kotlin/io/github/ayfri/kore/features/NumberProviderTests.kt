@@ -11,9 +11,14 @@ import io.github.ayfri.kore.features.predicates.providers.*
 import io.github.ayfri.kore.features.predicates.types.EntityTarget
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.EnvironmentAttributes
+import io.github.ayfri.kore.generated.NumberProviders
+import io.github.ayfri.kore.generated.arguments.tagged.NumberProviderTagArgument
+import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.utils.pretty
+import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.types.shouldBeInstanceOf
 
 fun DataPack.numberProviderTests() {
 	lootTable("binomial_test") {
@@ -495,6 +500,130 @@ fun DataPack.numberProviderTests() {
 			]
 		}
 	""".trimIndent()
+
+	lootTable("reference_test") {
+		pool {
+			rolls = reference(NumberProviderArgument("r", "my_pack"))
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"entries": [],
+					"rolls": "my_pack:r"
+				}
+			]
+		}
+	""".trimIndent()
+
+	lootTable("reference_nested_test") {
+		pool {
+			rolls = uniform(reference(NumberProviders.Cooking.TIME_COAL), constant(5f))
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"entries": [],
+					"rolls": {
+						"type": "minecraft:uniform",
+						"min": "minecraft:cooking/time_coal",
+						"max": 5.0
+					}
+				}
+			]
+		}
+	""".trimIndent()
+	roundTrip(lootTables.last())
+
+	lootTable("sum_references_test") {
+		pool {
+			rolls = sum(reference(NumberProviderArgument("a", "my_pack")), reference(NumberProviderArgument("b", "my_pack")))
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"entries": [],
+					"rolls": {
+						"type": "minecraft:sum",
+						"summands": [
+							"my_pack:a",
+							"my_pack:b"
+						]
+					}
+				}
+			]
+		}
+	""".trimIndent()
+
+	lootTable("sum_tag_test") {
+		pool {
+			rolls = sum(NumberProviderTagArgument("t", "my_pack"))
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"entries": [],
+					"rolls": {
+						"type": "minecraft:sum",
+						"summands": "#my_pack:t"
+					}
+				}
+			]
+		}
+	""".trimIndent()
+	roundTrip(lootTables.last())
+
+	lootTable("sum_mixed_test") {
+		pool {
+			rolls = sum(reference(NumberProviderArgument("a", "my_pack")), constant(1f))
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"entries": [],
+					"rolls": {
+						"type": "minecraft:sum",
+						"summands": [
+							"my_pack:a",
+							1.0
+						]
+					}
+				}
+			]
+		}
+	""".trimIndent()
+	roundTrip(lootTables.last())
+
+	jsonEncoder.decodeFromString(NumberProvider.serializer(), "5.0") assertsIs ConstantNumberProvider(5f)
+
+	jsonEncoder.decodeFromString(NumberProvider.serializer(), "\"my_pack:r\"")
+		.shouldBeInstanceOf<NumberProviderReference>().id
+		.shouldBeInstanceOf<NumberProviderArgument>().asString() assertsIs "my_pack:r"
+
+	jsonEncoder.decodeFromString(NumberProvider.serializer(), "\"#my_pack:t\"")
+		.shouldBeInstanceOf<NumberProviderReference>().id
+		.shouldBeInstanceOf<NumberProviderTagArgument>().asString() assertsIs "#my_pack:t"
+
+	jsonEncoder.decodeFromString(NumberProvider.serializer(), """{"type":"minecraft:sum","summands":"#my_pack:t"}""")
+		.shouldBeInstanceOf<SumNumberProvider>().summands.single()
+		.shouldBeInstanceOf<NumberProviderReference>().id
+		.shouldBeInstanceOf<NumberProviderTagArgument>().asString() assertsIs "#my_pack:t"
+
+	shouldThrowAny { jsonEncoder.decodeFromString(NumberProvider.serializer(), """{"min":1,"max":2}""") }
 }
 
 class NumberProviderTests : FunSpec({

@@ -7,7 +7,9 @@ import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.conditions.PredicateReference
 import io.github.ayfri.kore.features.predicates.conditions.singleCondition
 import io.github.ayfri.kore.features.predicates.types.EntityTarget
+import io.github.ayfri.kore.generated.arguments.tagged.NumberProviderTagArgument
 import io.github.ayfri.kore.generated.arguments.types.EnvironmentAttributeArgument
+import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 
 /** Creates a [BinomialNumberProvider] returning the number of successes of [n] trials of probability [p]. */
@@ -107,6 +109,15 @@ fun NumberProviderScope.numberDispatcher(default: NumberProvider? = null, block:
 fun NumberProviderScope.numberDispatcher(default: Float, block: NumberDispatcherBuilder.() -> Unit) =
 	numberDispatcher(constant(default), block)
 
+/**
+ * Creates a [NumberProviderReference] pointing at the number provider [id], written as a bare string.
+ *
+ * ```
+ * reference(NumberProviderArgument("compost_chance", "my_pack"))  // "my_pack:compost_chance"
+ * ```
+ */
+fun NumberProviderScope.reference(id: NumberProviderArgument) = NumberProviderReference(id)
+
 /** Creates a [ScoreNumberProvider] reading [score] from the loot context entity [target], optionally scaled by [scale]. */
 fun NumberProviderScope.scoreNumber(score: String, target: EntityTarget, scale: Float? = null) =
 	ScoreNumberProvider(contextScore(target), score, scale)
@@ -126,6 +137,15 @@ fun NumberProviderScope.sum(vararg summands: NumberProvider) = SumNumberProvider
 
 /** Creates a [SumNumberProvider] adding every provider of [summands]. */
 fun NumberProviderScope.sum(summands: List<NumberProvider>) = SumNumberProvider(summands)
+
+/**
+ * Creates a [SumNumberProvider] adding every number provider of the tag [tag], written `"#my_pack:my_tag"`.
+ *
+ * ```
+ * sum(NumberProviderTagArgument("bonuses", "my_pack"))  // "summands": "#my_pack:bonuses"
+ * ```
+ */
+fun NumberProviderScope.sum(tag: NumberProviderTagArgument) = SumNumberProvider(listOf(NumberProviderReference(tag)))
 
 /** Creates a [UniformNumberProvider] drawing between [min] and [max], both included. */
 fun NumberProviderScope.uniform(min: NumberProvider, max: NumberProvider) = UniformNumberProvider(min, max)
