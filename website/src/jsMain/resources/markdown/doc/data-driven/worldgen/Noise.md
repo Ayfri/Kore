@@ -246,13 +246,22 @@ Noise settings are the complete terrain configuration for a dimension. A dimensi
 ```kotlin
 val terrain = dp.noiseSettings("custom_terrain") {
 	seaLevel = 63
-	aquifersEnabled = true
-	oreVeinsEnabled = true
 
 	noiseOptions(minY = -64, height = 384, sizeHorizontal = 1, sizeVertical = 2)
 
 	defaultBlock(Blocks.STONE)
 	defaultFluid(Blocks.WATER) { this["level"] = "0" }
+
+	aquifers {
+		barrier(DensityFunctions.Overworld.BASE_3D_NOISE)
+		surfaceLevel(DensityFunctions.Overworld.PRELIMINARY_SURFACE_LEVEL)
+	}
+
+	oreVein(Blocks.COPPER_ORE, Blocks.RAW_COPPER_BLOCK, Blocks.GRANITE) {
+		density(DensityFunctions.Overworld.OreVein.COPPER_DENSITY)
+		fillerGap(DensityFunctions.Overworld.OreVein.GAP)
+		richness(DensityFunctions.Overworld.OreVein.RICHNESS)
+	}
 
 	noiseRouter {
 		finalDensity(DensityFunctions.Overworld.SLOPED_CHEESE)
@@ -266,12 +275,11 @@ val terrain = dp.noiseSettings("custom_terrain") {
 
 ### Properties
 
-Defaults below are Kore's, which are not always vanilla's - the Overworld for instance ships with `aquifersEnabled` and `oreVeinsEnabled`
-set to `true`.
+Defaults below are Kore's, which are not always vanilla's - the Overworld for instance ships with `aquifers` and two `oreVeins`.
 
 | Property               | Type                                                     | Kore default       | Description                                             |
 |------------------------|----------------------------------------------------------|--------------------|---------------------------------------------------------|
-| `aquifersEnabled`      | `Boolean`                                                | `false`            | Generates local water/lava tables instead of a flat sea |
+| `aquifers`             | `Aquifers?`                                              | `null`             | Local water/lava pockets instead of a flat sea          |
 | `defaultBlock`         | `BlockState`                                             | `stone`            | Block placed where density is positive                  |
 | `defaultFluid`         | `BlockState`                                             | `water[level=0]`   | Fluid placed below `seaLevel` where density is negative |
 | `disableMobGeneration` | `Boolean`                                                | `false`            | Skips mob spawning during chunk generation              |
@@ -279,7 +287,7 @@ set to `true`.
 | `materialRule`         | `MaterialRule`                                           | `bandlands`        | Rule picking the block of each position, inline or ID   |
 | `noise`                | `NoiseOptions`                                           | `(-64, 384, 1, 2)` | Vertical range and sampling resolution                  |
 | `noiseRouter`          | `NoiseRouter`                                            | all zeroes         | Density functions wired to generation roles             |
-| `oreVeinsEnabled`      | `Boolean`                                                | `false`            | Enables copper and iron ore veins                       |
+| `oreVeins`             | `List<OreVein>?`                                         | `null`             | Large veins of ore and raw ore blocks                   |
 | `seaLevel`             | `Int`                                                    | `63`               | Y level the default fluid fills up to                   |
 | `spawnTarget`          | `List<Map<DensityFunctionArgument, DoubleOrDoublePair>>` | empty              | Climate points the world spawn prefers                  |
 
@@ -342,34 +350,62 @@ function, which is overloaded for both a `Double` and a `DensityFunctionArgument
 
 ```kotlin
 noiseRouter {
-	barrier(0.5)
-	lava(DensityFunctions.End.BASE_3D_NOISE)
+	continents(DensityFunctions.Overworld.CONTINENTS)
 	finalDensity(myTerrainDensity)
+	preliminarySurfaceLevel(63.0)
 }
 ```
 
 | Field                     | Role                                                            |
 |---------------------------|-----------------------------------------------------------------|
-| `barrier`                 | Aquifer barrier noise, separating fluid pockets from stone      |
 | `continents`              | Continentalness climate parameter, ocean vs inland              |
 | `depth`                   | Depth climate parameter, distance below the surface             |
 | `erosion`                 | Erosion climate parameter, flat vs mountainous                  |
 | `finalDensity`            | Final solid/air decision for every position                     |
-| `fluidLevelFloodedness`   | How often aquifers are filled                                   |
-| `fluidLevelSpread`        | How much aquifer fluid levels vary                              |
-| `lava`                    | Whether an aquifer holds lava instead of water                  |
 | `preliminarySurfaceLevel` | Estimated surface height, used by material rules and structures |
 | `ridges`                  | Weirdness climate parameter, driving ridged terrain             |
 | `temperature`             | Temperature climate parameter for biome placement               |
 | `vegetation`              | Humidity climate parameter for biome placement                  |
-| `veinGap`                 | Gaps punched through ore veins                                  |
-| `veinRidged`              | Ore vein shape                                                  |
-| `veinToggle`              | Whether ore veins generate at a position                        |
 
 Unset fields serialize as `0.0`, which means flat, featureless terrain - so a hand-written router usually starts from the vanilla density
 functions in the generated `DensityFunctions` object.
 
 Reference: [Noise router](https://minecraft.wiki/w/Noise_settings#Noise_router)
+
+### Aquifers
+
+`aquifers { }` carves the local water and lava pockets. Without it, the terrain is only flooded up to `seaLevel`, like the Nether and the End
+in vanilla. Every field is a `DensityFunctionOrDouble`, set with the matching function, overloaded for a `Double` and a
+`DensityFunctionArgument`, and unset fields serialize as `0.0`.
+
+| Field                   | Role                                                       |
+|-------------------------|------------------------------------------------------------|
+| `barrier`               | Noise separating the fluid pockets from the stone          |
+| `exclusion`             | Density below which no aquifer generates                   |
+| `fluidLevelFloodedness` | How often the aquifers are filled                          |
+| `fluidLevelSpread`      | How much the fluid level of the aquifers varies            |
+| `lava`                  | Whether an aquifer holds lava instead of water             |
+| `surfaceLevel`          | Surface height the aquifers are placed relative to         |
+
+### Ore Veins
+
+`oreVein(oreBlock, rawOreBlock, fillerBlock)` adds one large vein, repeatable. `rawOreChance` is the chance, from `0.0` to `1.0`, of a raw
+ore block instead of the ore (default `0.02`, like vanilla). The block takes the density functions of the vein, unset ones serializing as
+`0.0`:
+
+```kotlin
+oreVein(Blocks.DEEPSLATE_IRON_ORE, Blocks.RAW_IRON_BLOCK, Blocks.TUFF, rawOreChance = 0.02f) {
+	density(DensityFunctions.Overworld.OreVein.IRON_DENSITY)
+	fillerGap(DensityFunctions.Overworld.OreVein.GAP)
+	richness(DensityFunctions.Overworld.OreVein.RICHNESS)
+}
+```
+
+| Field       | Role                                                          |
+|-------------|---------------------------------------------------------------|
+| `density`   | Where the vein generates, positive inside the vein            |
+| `fillerGap` | Noise below which the filler block is skipped                 |
+| `richness`  | Chance of an ore block instead of a filler block in the vein  |
 
 ### Material Rules
 

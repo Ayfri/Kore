@@ -18,12 +18,14 @@ import kotlinx.serialization.Transient
 /**
  * Data-driven noise settings controlling terrain generation.
  *
- * Defines the vertical range, sea level, default terrain/fluid states, whether aquifers and ore
- * veins are enabled, the noise router graph, spawn targets and material rules. Referenced by the
+ * Defines the vertical range, sea level, default terrain/fluid states, the aquifers and ore
+ * veins, the noise router graph, spawn targets and material rules. Referenced by the
  * noise world generator.
  *
  * JSON format reference: https://minecraft.wiki/w/Noise_settings
  *
+ * @property aquifers The local water and lava pockets, see [aquifers]. Without them the terrain is only flooded up to [seaLevel].
+ * @property oreVeins The large ore veins, see [oreVein].
  * @property spawnTarget The points of climate space the world spawn prefers, each mapping density functions to the value or
  * `[min, max]` range wanted there, see [spawnTargetPoint]. Candidates are scored by how far their climate is outside the
  * closest point (lower is better) plus their distance from `0, 0`, so it is a preference, not a filter.
@@ -32,17 +34,17 @@ import kotlinx.serialization.Transient
 data class NoiseSettings(
 	@Transient
 	override var fileName: String = "noise_settings",
-	var seaLevel: Int = 63,
-	var disableMobGeneration: Boolean = false,
-	var aquifersEnabled: Boolean = false,
-	var oreVeinsEnabled: Boolean = false,
-	var legacyRandomSource: Boolean = false,
+	var aquifers: Aquifers? = null,
 	var defaultBlock: BlockState = blockState(Blocks.STONE),
 	var defaultFluid: BlockState = blockState(Blocks.WATER, mapOf("level" to "0")),
+	var disableMobGeneration: Boolean = false,
+	var legacyRandomSource: Boolean = false,
+	var materialRule: MaterialRule = Bandlands,
 	var noise: NoiseOptions = NoiseOptions(-64, 384, 1, 2),
 	var noiseRouter: NoiseRouter = NoiseRouter(),
+	var oreVeins: List<OreVein>? = null,
+	var seaLevel: Int = 63,
 	var spawnTarget: List<Map<DensityFunctionArgument, DoubleOrDoublePair>> = emptyList(),
-	var materialRule: MaterialRule = Bandlands,
 ) : Generator("worldgen/noise_settings") {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }

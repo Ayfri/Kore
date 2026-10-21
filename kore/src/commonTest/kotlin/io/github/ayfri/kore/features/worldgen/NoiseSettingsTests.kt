@@ -26,9 +26,28 @@ fun DataPack.noiseSettingsTests() {
 	noiseSettings("my_noise_settings") {
 		seaLevel = 42
 		disableMobGeneration = true
-		aquifersEnabled = true
-		oreVeinsEnabled = true
 		legacyRandomSource = true
+
+		aquifers {
+			barrier(0.5)
+			exclusion(DensityFunctions.Overworld.EROSION)
+			fluidLevelFloodedness(1.5)
+			fluidLevelSpread(2.5)
+			lava(DensityFunctions.End.BASE_3D_NOISE)
+			surfaceLevel(DensityFunctions.Overworld.PRELIMINARY_SURFACE_LEVEL)
+		}
+
+		oreVein(Blocks.COPPER_ORE, Blocks.RAW_COPPER_BLOCK, Blocks.GRANITE) {
+			density(DensityFunctions.Overworld.OreVein.COPPER_DENSITY)
+			fillerGap(DensityFunctions.Overworld.OreVein.GAP)
+			richness(DensityFunctions.Overworld.OreVein.RICHNESS)
+		}
+
+		oreVein(Blocks.DEEPSLATE_IRON_ORE, Blocks.RAW_IRON_BLOCK, Blocks.TUFF, rawOreChance = 0.05f) {
+			density(DensityFunctions.Overworld.OreVein.IRON_DENSITY)
+			fillerGap(0.25)
+			richness(0.75)
+		}
 
 		defaultBlock(Blocks.REDSTONE_LAMP) {
 			this["lit"] = "true"
@@ -41,21 +60,14 @@ fun DataPack.noiseSettingsTests() {
 		noiseOptions(-64, 384, 1, 2)
 
 		noiseRouter {
-			barrier(0.5)
-			fluidLevelFloodedness(1.5)
-			fluidLevelSpread(2.5)
-			lava(DensityFunctions.End.BASE_3D_NOISE)
+			continents(DensityFunctions.Overworld.CONTINENTS)
+			depth(DensityFunctions.Overworld.DEPTH)
+			erosion(DensityFunctions.Overworld.EROSION)
+			finalDensity(DensityFunctions.Overworld.SLOPED_CHEESE)
+			preliminarySurfaceLevel(4.5)
+			ridges(DensityFunctions.Overworld.RIDGES)
 			temperature(DensityFunctions.Overworld.BASE_3D_NOISE)
 			vegetation(3.5)
-			continents(DensityFunctions.Overworld.CONTINENTS)
-			erosion(DensityFunctions.Overworld.EROSION)
-			depth(DensityFunctions.Overworld.DEPTH)
-			ridges(DensityFunctions.Overworld.RIDGES)
-			preliminarySurfaceLevel(4.5)
-			finalDensity(DensityFunctions.Overworld.SLOPED_CHEESE)
-			veinToggle(5.5)
-			veinRidged(6.5)
-			veinGap(7.5)
 		}
 
 		spawnTargetPoint {
@@ -95,11 +107,14 @@ fun DataPack.noiseSettingsTests() {
 
 	noiseSettings.last() assertsIs """
 		{
-			"sea_level": 42,
-			"disable_mob_generation": true,
-			"aquifers_enabled": true,
-			"ore_veins_enabled": true,
-			"legacy_random_source": true,
+			"aquifers": {
+				"barrier": 0.5,
+				"exclusion": "minecraft:overworld/erosion",
+				"fluid_level_floodedness": 1.5,
+				"fluid_level_spread": 2.5,
+				"lava": "minecraft:end/base_3d_noise",
+				"surface_level": "minecraft:overworld/preliminary_surface_level"
+			},
 			"default_block": {
 				"Name": "minecraft:redstone_lamp",
 				"Properties": {
@@ -112,64 +127,8 @@ fun DataPack.noiseSettingsTests() {
 					"level": "0"
 				}
 			},
-			"noise": {
-				"min_y": -64,
-				"height": 384,
-				"size_horizontal": 1,
-				"size_vertical": 2
-			},
-			"noise_router": {
-				"barrier": 0.5,
-				"fluid_level_floodedness": 1.5,
-				"fluid_level_spread": 2.5,
-				"lava": "minecraft:end/base_3d_noise",
-				"temperature": "minecraft:overworld/base_3d_noise",
-				"vegetation": 3.5,
-				"continents": "minecraft:overworld/continents",
-				"erosion": "minecraft:overworld/erosion",
-				"depth": "minecraft:overworld/depth",
-				"ridges": "minecraft:overworld/ridges",
-				"preliminary_surface_level": 4.5,
-				"final_density": "minecraft:overworld/sloped_cheese",
-				"vein_toggle": 5.5,
-				"vein_ridged": 6.5,
-				"vein_gap": 7.5
-			},
-			"spawn_target": [
-				{
-					"minecraft:overworld/continents": [
-						-0.11,
-						1.0
-					],
-					"minecraft:overworld/erosion": [
-						-1.0,
-						1.0
-					],
-					"minecraft:overworld/ridges": [
-						-1.0,
-						-0.16
-					],
-					"minecraft:overworld/temperature": [
-						-1.0,
-						1.0
-					],
-					"minecraft:overworld/vegetation": [
-						-1.0,
-						1.0
-					]
-				},
-				{
-					"minecraft:overworld/continents": [
-						-0.11,
-						1.0
-					],
-					"minecraft:overworld/ridges": [
-						0.16,
-						1.0
-					],
-					"minecraft:overworld/depth": 0.5
-				}
-			],
+			"disable_mob_generation": true,
+			"legacy_random_source": true,
 			"material_rule": {
 				"type": "minecraft:sequence",
 				"sequence": [
@@ -372,7 +331,91 @@ fun DataPack.noiseSettingsTests() {
 						]
 					}
 				]
-			}
+			},
+			"noise": {
+				"min_y": -64,
+				"height": 384,
+				"size_horizontal": 1,
+				"size_vertical": 2
+			},
+			"noise_router": {
+				"continents": "minecraft:overworld/continents",
+				"depth": "minecraft:overworld/depth",
+				"erosion": "minecraft:overworld/erosion",
+				"final_density": "minecraft:overworld/sloped_cheese",
+				"preliminary_surface_level": 4.5,
+				"ridges": "minecraft:overworld/ridges",
+				"temperature": "minecraft:overworld/base_3d_noise",
+				"vegetation": 3.5
+			},
+			"ore_veins": [
+				{
+					"density": "minecraft:overworld/ore_vein/copper_density",
+					"filler_block": {
+						"Name": "minecraft:granite"
+					},
+					"filler_gap": "minecraft:overworld/ore_vein/gap",
+					"ore_block": {
+						"Name": "minecraft:copper_ore"
+					},
+					"raw_ore_block": {
+						"Name": "minecraft:raw_copper_block"
+					},
+					"raw_ore_chance": 0.02,
+					"richness": "minecraft:overworld/ore_vein/richness"
+				},
+				{
+					"density": "minecraft:overworld/ore_vein/iron_density",
+					"filler_block": {
+						"Name": "minecraft:tuff"
+					},
+					"filler_gap": 0.25,
+					"ore_block": {
+						"Name": "minecraft:deepslate_iron_ore"
+					},
+					"raw_ore_block": {
+						"Name": "minecraft:raw_iron_block"
+					},
+					"raw_ore_chance": 0.05,
+					"richness": 0.75
+				}
+			],
+			"sea_level": 42,
+			"spawn_target": [
+				{
+					"minecraft:overworld/continents": [
+						-0.11,
+						1.0
+					],
+					"minecraft:overworld/erosion": [
+						-1.0,
+						1.0
+					],
+					"minecraft:overworld/ridges": [
+						-1.0,
+						-0.16
+					],
+					"minecraft:overworld/temperature": [
+						-1.0,
+						1.0
+					],
+					"minecraft:overworld/vegetation": [
+						-1.0,
+						1.0
+					]
+				},
+				{
+					"minecraft:overworld/continents": [
+						-0.11,
+						1.0
+					],
+					"minecraft:overworld/ridges": [
+						0.16,
+						1.0
+					],
+					"minecraft:overworld/depth": 0.5
+				}
+			]
 		}
 	""".trimIndent()
 }
