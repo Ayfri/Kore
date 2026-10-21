@@ -5,7 +5,7 @@ nav-title: Features
 description: Generate trees, ores and vegetation in Minecraft with Kore - configured features, placement modifiers and block state providers.
 keywords: minecraft, datapack, kore, worldgen, configured feature, placed feature, tree, ore, block state provider
 date-created: 2026-02-03
-date-modified: 2026-10-20
+date-modified: 2026-10-21
 routeOverride: /docs/data-driven/worldgen/features
 ---
 
@@ -319,7 +319,6 @@ Kore covers every vanilla configured feature type.
 | `lake(...)`                        | Liquid pool                          | Underground lava lakes         |
 | `largeDripstone(...)`              | Tall stalactite or stalagmite        | Cave ceilings/floors           |
 | `multifaceGrowth(block, ...)`      | Multi-face block spread              | Glow lichen, sculk vein        |
-| `netherForestVegetation(...)`      | Nether plant scatter                 | Warped/crimson forest floors   |
 | `netherrackReplaceBlobs(...)`      | Blobs replacing netherrack           | Nether gravel/blackstone blobs |
 | `ore(...)`                         | Ore vein replacing terrain           | Every overworld ore            |
 | `overlay(...)`                     | Several features, all of them placed | Basalt delta pillars           |
@@ -342,7 +341,6 @@ Kore covers every vanilla configured feature type.
 | `steppedColumnCluster(...)`        | Cluster of stepped columns           | Basalt delta columns           |
 | `template(...)`                    | A weighted structure template        | Random structure variants      |
 | `tree(...)`                        | A tree, trunk and foliage            | Every vanilla tree             |
-| `twistingVines(...)`               | Twisting vine growth                 | Warped forest floors           |
 | `underwaterMagma(...)`             | Underwater magma blocks              | Ocean floors                   |
 | `vegetationPatch(...)`             | Vegetation on surfaces               | Cave moss patches              |
 | `waterloggedVegetationPatch(...)`  | Waterlogged vegetation patches       | Underwater cave plants         |
@@ -350,7 +348,7 @@ Kore covers every vanilla configured feature type.
 
 ### Features Without Configuration
 
-Twelve feature types have no fields at all. Their builders take only a file name and nothing else:
+Eleven feature types have no fields at all. Their builders take only a file name and nothing else:
 
 ```kotlin
 configuredFeatures {
@@ -360,7 +358,7 @@ configuredFeatures {
 ```
 
 `blueIce`, `bonusChest`, `chorusPlant`, `desertWell`, `endIsland`, `endPlatform`, `freezeTopLayer`, `monsterRoom`, `noOp`, `vines`,
-`voidStartPlatform`, `weepingVines`.
+`voidStartPlatform`.
 
 Reference: [Feature types](https://minecraft.wiki/w/Configured_feature#Types)
 

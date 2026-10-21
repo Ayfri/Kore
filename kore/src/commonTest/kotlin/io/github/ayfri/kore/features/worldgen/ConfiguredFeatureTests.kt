@@ -790,40 +790,6 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.netherForestVegetation("test_nether_forest_vegetation", spreadWidth = 8, spreadHeight = 4) {
-		stateProvider = simpleStateProvider(Blocks.STONE)
-	}
-
-	configuredFeatures.last() assertsIs """
-		{
-			"type": "minecraft:nether_forest_vegetation",
-			"state_provider": {
-				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
-			},
-			"spread_width": 8,
-			"spread_height": 4
-		}
-	""".trimIndent()
-
-	configuredFeaturesBuilder.netherForestVegetation("test_nether_forest_vegetation_default")
-
-	configuredFeatures.last() assertsIs """
-		{
-			"type": "minecraft:nether_forest_vegetation",
-			"state_provider": {
-				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
-			},
-			"spread_width": 1,
-			"spread_height": 1
-		}
-	""".trimIndent()
-
 	configuredFeatures {
 		netherrackReplaceBlobs(
 			"test_netherrack_replace_blobs",
@@ -2948,28 +2914,6 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.twistingVines("test_twisting_vines", spreadWidth = 8, spreadHeight = 4, maxHeight = 16)
-
-	configuredFeatures.last() assertsIs """
-		{
-			"type": "minecraft:twisting_vines",
-			"spread_width": 8,
-			"spread_height": 4,
-			"max_height": 16
-		}
-	""".trimIndent()
-
-	configuredFeaturesBuilder.twistingVines("test_twisting_vines_default")
-
-	configuredFeatures.last() assertsIs """
-		{
-			"type": "minecraft:twisting_vines",
-			"spread_width": 1,
-			"spread_height": 1,
-			"max_height": 1
-		}
-	""".trimIndent()
-
 	configuredFeaturesBuilder.underwaterMagma(
 		"test_underwater_magma", floorSearchRange = 3,
 		placementRadiusAroundFloor = 1,
@@ -3066,14 +3010,6 @@ fun DataPack.configuredFeatureTests() {
 				}
 			},
 			"vegetation_feature": "minecraft:acacia"
-		}
-	""".trimIndent()
-
-	configuredFeaturesBuilder.weepingVines("test_weeping_vines")
-
-	configuredFeatures.last() assertsIs """
-		{
-			"type": "minecraft:weeping_vines"
 		}
 	""".trimIndent()
 
