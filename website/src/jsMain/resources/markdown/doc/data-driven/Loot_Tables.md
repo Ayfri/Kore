@@ -5,7 +5,7 @@ nav-title: Loot Tables
 description: Create and customize Minecraft loot tables using Kore's type-safe Kotlin DSL for drops, container contents, fishing, and more.
 keywords: minecraft, datapack, kore, loot tables, pools, entries, item modifiers, drops
 date-created: 2025-08-11
-date-modified: 2026-10-08
+date-modified: 2026-10-21
 routeOverride: /docs/data-driven/loot-tables
 ---
 
@@ -202,6 +202,8 @@ The builders are extensions on `NumberProviderScope`, so they only resolve insid
 | `weightedListNumber { }`          | Value of one entry, picked by weight                      | `weightedListNumber { entry(30, 1f); entry(70, 0f) }`                   |
 
 `conditionalNumber`, `numberDispatcher` and `weightedListNumber` nest other providers, and the conditions are the ones of [predicates](/docs/data-driven/predicates). A condition is either passed as a value (`conditionalNumber(SurvivesExplosion, 1f)`) or declared in a block holding exactly one condition. `onFalse` and `default` are `0` when omitted.
+
+Every number provider computes a 32-bit float, and an integer field rounds it. `scoreNumber` and the ranges of `entityScores` therefore stay exact only up to 16,777,216 (2²⁴): past it, neighboring scores read as the same value ([MC-254370](https://bugs.mojang.com/browse/MC-254370)). To compare larger scores exactly, test them with `execute if score`, or store the high and low parts on two objectives and check each one. A `sum` of the parts is a float again and loses the same precision.
 
 ```kotlin
 pool {
