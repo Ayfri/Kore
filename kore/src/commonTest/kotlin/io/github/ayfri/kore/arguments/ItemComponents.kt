@@ -180,6 +180,11 @@ fun itemComponentsTests() {
 	}
 	breakSoundTest.asString() assertsIs """minecraft:diamond_sword[break_sound="minecraft:ambient.cave"]"""
 
+	val brewingFuelTest = Items.BLAZE_POWDER {
+		brewingFuel(NumberProviders.Cooking.SPEED_DEFAULT, NumberProviders.Brewing.USES_DEFAULT)
+	}
+	brewingFuelTest.asString() assertsIs """minecraft:blaze_powder[brewing_fuel={speed_multiplier:"minecraft:cooking/speed_default",uses:"minecraft:brewing/uses_default"}]"""
+
 	val bucketEntityDataTest = Items.WATER_BUCKET {
 		bucketEntityData {
 			this["test"] = "test"
@@ -281,6 +286,16 @@ fun itemComponentsTests() {
 		compostable(NumberProviderArgument("my_layers", "my_pack"))
 	}
 	customCompostableTest.asString() assertsIs """minecraft:stone[compostable={layers:"my_pack:my_layers"}]"""
+
+	val cookingFuelTest = Items.OAK_BOAT {
+		cookingFuel(NumberProviders.Cooking.TIME_BOATS)
+	}
+	cookingFuelTest.asString() assertsIs """minecraft:oak_boat[cooking_fuel={burn_time:"minecraft:cooking/time_boats",speed_multiplier:"minecraft:cooking/speed_default"}]"""
+
+	val customCookingFuelTest = stone {
+		cookingFuel(NumberProviderArgument("burn", "my_pack"), NumberProviderArgument("speed", "my_pack"))
+	}
+	customCookingFuelTest.asString() assertsIs """minecraft:stone[cooking_fuel={burn_time:"my_pack:burn",speed_multiplier:"my_pack:speed"}]"""
 
 	val containerLootTest = stone {
 		containerLoot(LootTables.Gameplay.PANDA_SNEEZE, 123)

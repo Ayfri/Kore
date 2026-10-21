@@ -5,7 +5,7 @@ nav-title: Components
 description: A guide for using components in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, components
 date-created: 2024-01-08
-date-modified: 2026-10-20
+date-modified: 2026-10-21
 routeOverride: /docs/concepts/components
 ---
 
@@ -169,6 +169,30 @@ val sapling = Items.OAK_SAPLING {
 }
 ```
 
+### Cooking and brewing fuel
+
+`cookingFuel` makes an item burn in furnaces, smokers and blast furnaces, `brewingFuel` makes it power a brewing stand. Their fields
+are IDs of [number provider files](/docs/data-driven/loot-tables#number-provider-files), either vanilla ones from
+`NumberProviders.Cooking` / `NumberProviders.Brewing` or your own. `cookingFuel` takes the burn time in ticks and a cooking speed
+(vanilla `NumberProviders.Cooking.SPEED_DEFAULT` when omitted), `brewingFuel` takes both a speed and the number of brews, which
+have no default. There is no `#brewing_fuel` item tag: an item is a brewing fuel through this component.
+
+```kotlin
+val stick = Items.STICK {
+	cookingFuel(NumberProviders.Cooking.TIME_COAL)
+}
+
+val burnTime = numberProvider("long_burn", 6400f)
+val speed = numberProvider("fast_burn", 2f)
+val charcoal = Items.CHARCOAL {
+	cookingFuel(burnTime, speed)
+}
+
+val dust = Items.BLAZE_POWDER {
+	brewingFuel(NumberProviders.Cooking.SPEED_DEFAULT, NumberProviders.Brewing.USES_DEFAULT)
+}
+```
+
 ### Profile
 
 The profile component can be either a player profile or a texture-based profile.
@@ -277,6 +301,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `blockState(..)`                     | Sets block state properties (e.g., facing, powered) when the item is placed.                             |
 | `blockTransformer { .. }`            | Turns the block the item is used on into another one (strip logs, scrape or wax copper, till dirt).      |
 | `breakSound(..)`                     | Specifies the sound played when the item breaks from durability loss.                                    |
+| `brewingFuel(..)`                    | Makes the item a brewing stand fuel, with a speed and a number of brews from number provider files.      |
 | `bucketEntityData(..)`               | Stores entity data for mobs captured in buckets (e.g., fish, axolotl).                                   |
 | `bundleContents(..)`                 | Defines the items stored inside a bundle.                                                                |
 | `canBreak(..)`                       | Restricts which blocks this item can break in Adventure mode.                                            |
@@ -286,6 +311,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `consumable(..) { .. }`              | Makes the item consumable with configurable eating time, animation, sound, and effects.                  |
 | `container(..)`                      | Stores items inside a container item (e.g., shulker box).                                                |
 | `containerLoot(..)`                  | References a loot table to generate container contents when opened.                                      |
+| `cookingFuel(..)`                    | Makes the item a furnace fuel, with a burn time and a cooking speed from number provider files.          |
 | `customData(..)`                     | Attaches arbitrary custom NBT data for use by datapacks or mods.                                         |
 | `customModelData(..)`                | Provides numeric values for custom item model selection in resource packs.                               |
 | `customName(..)`                     | Sets a custom display name for the item (supports text components).                                      |
