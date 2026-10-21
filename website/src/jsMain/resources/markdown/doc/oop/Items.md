@@ -5,7 +5,7 @@ nav-title: Items
 description: Object-oriented item creation, spawning, and NBT serialization with the Kore OOP module.
 keywords: minecraft, datapack, kore, oop, items, item stack, summon, give, nbt, data modify
 date-created: 2026-03-03
-date-modified: 2026-10-07
+date-modified: 2026-10-21
 routeOverride: /docs/oop/items
 ---
 
@@ -105,6 +105,7 @@ These come from `EntitySummonData` and apply to every entity summoned through th
 | `glowing`                        | `Glowing`                     |
 | `hasVisualFire`                  | `HasVisualFire`               |
 | `invulnerable`                   | `Invulnerable`                |
+| `invulnerableTime`               | `invulnerable_time`           |
 | `motion` / `motion(dx, dy, dz)`  | `Motion`                      |
 | `noGravity`                      | `NoGravity`                   |
 | `onGround`                       | `OnGround`                    |
@@ -113,6 +114,8 @@ These come from `EntitySummonData` and apply to every entity summoned through th
 | `rotation` / `rotation(yaw, pitch)` | `Rotation`                 |
 | `silent`                         | `Silent`                      |
 | `tags`                           | `Tags`                        |
+
+`invulnerableTime` is a number of ticks during which the entity ignores damage, written as the lowercase `invulnerable_time` tag, while `invulnerable` makes it immune for good.
 
 `motion(dx, dy, dz)` and `rotation(yaw, pitch)` are helper functions so you do not have to build the underlying
 `Triple` or `Vec2` yourself:

@@ -78,6 +78,11 @@ fun oopTests() = dataPack("oop") {
 		lines.size assertsIs 1
 	}
 
+	function("summon_item_entity_invulnerable_time") {
+		itemStack(Items.DIAMOND_SWORD).summon { invulnerableTime = 60 } assertsIs """summon minecraft:item 0.0 0.0 0.0 {invulnerable_time:60,Item:{id:"minecraft:diamond_sword"}}"""
+		lines.size assertsIs 1
+	}
+
 	function("item_stack_roundtrip") {
 		val item = itemStack(Items.DIAMOND_SWORD)
 

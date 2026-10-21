@@ -26,6 +26,9 @@ sealed class EntitySummonData {
 	var glowing: Boolean? = null
 	var hasVisualFire: Boolean? = null
 	var invulnerable: Boolean? = null
+
+	/** Ticks of temporary damage immunity: the entity ignores damage while this is above 0 or while [invulnerable] is true. */
+	var invulnerableTime: Int? = null
 	var motion: Triple<Double, Double, Double>? = null
 	var noGravity: Boolean? = null
 	var onGround: Boolean? = null
@@ -64,6 +67,8 @@ fun EntitySummonData.applyCommonEntitySummonNbt(nbt: NbtCompoundBuilder) {
 		glowing?.let { put("Glowing", it) }
 		hasVisualFire?.let { put("HasVisualFire", it) }
 		invulnerable?.let { put("Invulnerable", it) }
+		/** The game writes this tag in lowercase snake_case, unlike the PascalCase root tags around it. */
+		invulnerableTime?.let { put("invulnerable_time", it) }
 		motion?.let { (dx, dy, dz) ->
 			put("Motion", nbtList<NbtDouble> {
 				add(NbtDouble(dx))
