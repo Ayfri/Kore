@@ -329,7 +329,7 @@ Kore covers every vanilla configured feature type.
 | `replaceSingleBlock(...)`          | Blocks replaced by rule targets      | Custom block swaps             |
 | `rootSystem(...)`                  | Roots under a tree                   | Mangrove roots                 |
 | `scatteredOre(...)`                | Scattered ore deposits               | Nether gold ore blobs          |
-| `sculkPatch(...)`                  | Sculk spread with catalyst           | Ancient city surroundings      |
+| `sculkPatch(...)`                  | Sculk spread from charges            | Deep dark sculk patches        |
 | `sequence(...)`                    | Several features, in order           | Multi-step feature chains      |
 | `simpleBlock(...)`                 | A single block state                 | Flowers, mushrooms             |
 | `simpleRandomSelector(...)`        | Uniform random feature picker        | Coral type variety             |
