@@ -56,10 +56,9 @@ fun DataPack.structureTests() {
 					"bounding_box": "full",
 					"spawns": [
 						{
+							"count": 4,
 							"type": "minecraft:zombie",
-							"weight": 1,
-							"minCount": 4,
-							"maxCount": 4
+							"weight": 1
 						}
 					]
 				}
@@ -100,10 +99,13 @@ fun DataPack.structureTests() {
 					"bounding_box": "piece",
 					"spawns": [
 						{
+							"count": {
+								"type": "minecraft:uniform",
+								"min_inclusive": 2,
+								"max_inclusive": 3
+							},
 							"type": "minecraft:blaze",
-							"weight": 10,
-							"minCount": 2,
-							"maxCount": 3
+							"weight": 10
 						}
 					]
 				}
@@ -322,10 +324,13 @@ fun DataPack.structureTests() {
 					"bounding_box": "full",
 					"spawns": [
 						{
+							"count": {
+								"type": "minecraft:uniform",
+								"min_inclusive": 2,
+								"max_inclusive": 4
+							},
 							"type": "minecraft:guardian",
-							"weight": 20,
-							"minCount": 2,
-							"maxCount": 4
+							"weight": 20
 						}
 					]
 				},
@@ -452,10 +457,9 @@ fun DataPack.structureTests() {
 					"bounding_box": "piece",
 					"spawns": [
 						{
+							"count": 1,
 							"type": "minecraft:cat",
-							"weight": 1,
-							"minCount": 1,
-							"maxCount": 1
+							"weight": 1
 						}
 					]
 				},
@@ -463,10 +467,9 @@ fun DataPack.structureTests() {
 					"bounding_box": "piece",
 					"spawns": [
 						{
+							"count": 1,
 							"type": "minecraft:witch",
-							"weight": 1,
-							"minCount": 1,
-							"maxCount": 1
+							"weight": 1
 						}
 					]
 				}

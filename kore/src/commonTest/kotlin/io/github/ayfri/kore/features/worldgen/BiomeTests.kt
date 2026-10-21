@@ -12,6 +12,7 @@ import io.github.ayfri.kore.features.worldgen.biome.types.*
 import io.github.ayfri.kore.features.worldgen.environmentattributes.EnvironmentAttributeModifier
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.fogColor
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.skyColor
+import io.github.ayfri.kore.features.worldgen.intproviders.uniform
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Carvers
 import io.github.ayfri.kore.generated.EntityTypes
@@ -42,8 +43,7 @@ fun DataPack.biomeTests() {
 			creature {
 				spawner(EntityTypes.ZOMBIE) {
 					weight = 1
-					minCount = 1
-					maxCount = 2
+					count = uniform(1, 2)
 				}
 			}
 		}
@@ -80,10 +80,13 @@ fun DataPack.biomeTests() {
 			"spawners": {
 				"creature": [
 					{
+						"count": {
+							"type": "minecraft:uniform",
+							"min_inclusive": 1,
+							"max_inclusive": 2
+						},
 						"type": "minecraft:zombie",
-						"weight": 1,
-						"minCount": 1,
-						"maxCount": 2
+						"weight": 1
 					}
 				]
 			},
@@ -187,64 +190,72 @@ fun DataPack.biomeTests() {
 			"spawners": {
 				"ambient": [
 					{
+						"count": 8,
 						"type": "minecraft:bat",
-						"weight": 10,
-						"minCount": 8,
-						"maxCount": 8
+						"weight": 10
 					}
 				],
 				"axolotls": [
 					{
+						"count": {
+							"type": "minecraft:uniform",
+							"min_inclusive": 4,
+							"max_inclusive": 6
+						},
 						"type": "minecraft:axolotl",
-						"weight": 10,
-						"minCount": 4,
-						"maxCount": 6
+						"weight": 10
 					}
 				],
 				"misc": [
 					{
+						"count": 1,
 						"type": "minecraft:oak_boat",
-						"weight": 1,
-						"minCount": 1,
-						"maxCount": 1
+						"weight": 1
 					}
 				],
 				"monster": [
 					{
+						"count": 4,
 						"type": "minecraft:zombie",
-						"weight": 100,
-						"minCount": 4,
-						"maxCount": 4
+						"weight": 100
 					},
 					{
+						"count": 4,
 						"type": "minecraft:skeleton",
-						"weight": 100,
-						"minCount": 4,
-						"maxCount": 4
+						"weight": 100
 					}
 				],
 				"underground_water_creature": [
 					{
+						"count": {
+							"type": "minecraft:uniform",
+							"min_inclusive": 4,
+							"max_inclusive": 6
+						},
 						"type": "minecraft:glow_squid",
-						"weight": 10,
-						"minCount": 4,
-						"maxCount": 6
+						"weight": 10
 					}
 				],
 				"water_ambient": [
 					{
+						"count": {
+							"type": "minecraft:uniform",
+							"min_inclusive": 3,
+							"max_inclusive": 6
+						},
 						"type": "minecraft:cod",
-						"weight": 10,
-						"minCount": 3,
-						"maxCount": 6
+						"weight": 10
 					}
 				],
 				"water_creature": [
 					{
+						"count": {
+							"type": "minecraft:uniform",
+							"min_inclusive": 1,
+							"max_inclusive": 4
+						},
 						"type": "minecraft:squid",
-						"weight": 10,
-						"minCount": 1,
-						"maxCount": 4
+						"weight": 10
 					}
 				]
 			},

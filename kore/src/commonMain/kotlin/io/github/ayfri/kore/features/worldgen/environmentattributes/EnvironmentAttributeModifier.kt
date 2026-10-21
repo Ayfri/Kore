@@ -26,9 +26,25 @@ sealed interface EnvironmentAttributeModifier {
 	@Serializable(with = EnvironmentAttributeModifierSerializer::class)
 	sealed interface Float : EnvironmentAttributeModifier
 
+	/** Modifiers applicable to list environment attributes, like `ambient_particles`. */
+	@Serializable(with = EnvironmentAttributeModifierSerializer::class)
+	sealed interface List : EnvironmentAttributeModifier
+
+	/** Modifiers applicable to the `natural_mob_spawns` environment attribute. */
+	@Serializable(with = EnvironmentAttributeModifierSerializer::class)
+	sealed interface NaturalMobSpawns : EnvironmentAttributeModifier
+
 	/** Replaces the preceding value entirely. Supported by all attribute types. */
 	@Serializable
-	data object OVERRIDE : Boolean, Float, Color
+	data object OVERRIDE : Boolean, Float, Color, List, NaturalMobSpawns
+
+	/** Adds the entries of the argument after the ones of the preceding list value. */
+	@Serializable
+	data object APPEND : List
+
+	/** Merges the argument into the preceding mob spawns: its categories and spawn costs replace the matching ones. */
+	@Serializable
+	data object OVERLAY : NaturalMobSpawns
 
 	/** Logical AND on the preceding boolean value. */
 	@Serializable

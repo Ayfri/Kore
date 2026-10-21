@@ -80,10 +80,6 @@ fun Biome.spawnCosts(init: MutableMap<EntityTypeArgument, SpawnCost>.() -> Unit)
 	spawnCosts = buildMap(init)
 }
 
-fun MutableMap<EntityTypeArgument, SpawnCost>.spawnCost(type: EntityTypeArgument, energyBudget: Float, charge: Float) {
-	this[type] = SpawnCost(energyBudget, charge)
-}
-
 fun Biome.spawners(init: Spawners.() -> Unit) {
 	spawners = Spawners().apply(init)
 }

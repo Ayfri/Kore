@@ -7,12 +7,19 @@ import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.rgb
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
+import io.github.ayfri.kore.features.worldgen.biome.types.ambient
+import io.github.ayfri.kore.features.worldgen.biome.types.creature
+import io.github.ayfri.kore.features.worldgen.biome.types.monster
+import io.github.ayfri.kore.features.worldgen.biome.types.spawnCost
+import io.github.ayfri.kore.features.worldgen.biome.types.spawner
 import io.github.ayfri.kore.features.worldgen.dimensiontype.attributes
 import io.github.ayfri.kore.features.worldgen.dimensiontype.dimensionType
 import io.github.ayfri.kore.features.worldgen.environmentattributes.EnvironmentAttributeModifier
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.*
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
+import io.github.ayfri.kore.features.worldgen.intproviders.uniform
 import io.github.ayfri.kore.generated.Activities
+import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.Particles
 import io.github.ayfri.kore.generated.SoundEvents
 import io.github.ayfri.kore.generated.Textures
@@ -710,6 +717,177 @@ fun DataPack.environmentAttributesTests() {
 		{
 			"attributes": {
 				"minecraft:visual/sunrise_sunset_color": "#80ff8000"
+			},
+			"has_skylight": true,
+			"has_ceiling": false,
+			"has_ender_dragon_fight": false,
+			"coordinate_scale": 1.0,
+			"ambient_light": 0.0,
+			"logical_height": 384,
+			"infiniburn": "#minecraft:infiniburn_overworld",
+			"min_y": -64,
+			"height": 384,
+			"monster_spawn_light_level": 0,
+			"monster_spawn_block_light_limit": 0
+		}
+	""".trimIndent()
+
+	dimensionType("env_attr_natural_mob_spawns") {
+		attributes {
+			creatureWorldGenSpawnProbability(0.07f)
+			naturalMobSpawns {
+				spawnsByCategory {
+					ambient {
+						spawner(EntityTypes.BAT, weight = 10, minCount = 8)
+					}
+					creature {
+						spawner(EntityTypes.SHEEP, weight = 12, minCount = 4)
+						spawner(EntityTypes.HORSE, weight = 5, minCount = 2, maxCount = 6)
+						spawner(EntityTypes.DONKEY) {
+							weight = 1
+							count = uniform(1, 3)
+						}
+					}
+				}
+			}
+		}
+		monsterSpawnLightLevel = constant(0)
+	}
+
+	dimensionTypes.last() assertsIs """
+		{
+			"attributes": {
+				"minecraft:gameplay/creature_world_gen_spawn_probability": 0.07,
+				"minecraft:gameplay/natural_mob_spawns": {
+					"spawn_costs": {},
+					"spawns_by_category": {
+						"ambient": [
+							{
+								"count": 8,
+								"type": "minecraft:bat",
+								"weight": 10
+							}
+						],
+						"creature": [
+							{
+								"count": 4,
+								"type": "minecraft:sheep",
+								"weight": 12
+							},
+							{
+								"count": {
+									"type": "minecraft:uniform",
+									"min_inclusive": 2,
+									"max_inclusive": 6
+								},
+								"type": "minecraft:horse",
+								"weight": 5
+							},
+							{
+								"count": {
+									"type": "minecraft:uniform",
+									"min_inclusive": 1,
+									"max_inclusive": 3
+								},
+								"type": "minecraft:donkey",
+								"weight": 1
+							}
+						]
+					}
+				}
+			},
+			"has_skylight": true,
+			"has_ceiling": false,
+			"has_ender_dragon_fight": false,
+			"coordinate_scale": 1.0,
+			"ambient_light": 0.0,
+			"logical_height": 384,
+			"infiniburn": "#minecraft:infiniburn_overworld",
+			"min_y": -64,
+			"height": 384,
+			"monster_spawn_light_level": 0,
+			"monster_spawn_block_light_limit": 0
+		}
+	""".trimIndent()
+
+	dimensionType("env_attr_natural_mob_spawns_overlay") {
+		attributes {
+			naturalMobSpawns(EnvironmentAttributeModifier.OVERLAY) {
+				spawnCosts {
+					spawnCost(EntityTypes.ZOMBIE, 1f, 0.5f)
+				}
+				spawnsByCategory {
+					monster {
+						spawner(EntityTypes.CREEPER, weight = 100, minCount = 4)
+					}
+				}
+			}
+		}
+		monsterSpawnLightLevel = constant(0)
+	}
+
+	dimensionTypes.last() assertsIs """
+		{
+			"attributes": {
+				"minecraft:gameplay/natural_mob_spawns": {
+					"argument": {
+						"spawn_costs": {
+							"minecraft:zombie": {
+								"energy_budget": 1.0,
+								"charge": 0.5
+							}
+						},
+						"spawns_by_category": {
+							"monster": [
+								{
+									"count": 4,
+									"type": "minecraft:creeper",
+									"weight": 100
+								}
+							]
+						}
+					},
+					"modifier": "overlay"
+				}
+			},
+			"has_skylight": true,
+			"has_ceiling": false,
+			"has_ender_dragon_fight": false,
+			"coordinate_scale": 1.0,
+			"ambient_light": 0.0,
+			"logical_height": 384,
+			"infiniburn": "#minecraft:infiniburn_overworld",
+			"min_y": -64,
+			"height": 384,
+			"monster_spawn_light_level": 0,
+			"monster_spawn_block_light_limit": 0
+		}
+	""".trimIndent()
+
+	dimensionType("env_attr_ambient_particles_append") {
+		attributes {
+			ambientParticles(
+				Particle(ParticleOptions(Particles.WHITE_ASH), 0.1f),
+				mod = EnvironmentAttributeModifier.APPEND,
+			)
+		}
+		monsterSpawnLightLevel = constant(0)
+	}
+
+	dimensionTypes.last() assertsIs """
+		{
+			"attributes": {
+				"minecraft:visual/ambient_particles": {
+					"argument": [
+						{
+							"options": {
+								"type": "minecraft:white_ash"
+							},
+							"probability": 0.1
+						}
+					],
+					"modifier": "append"
+				}
 			},
 			"has_skylight": true,
 			"has_ceiling": false,

@@ -37,10 +37,17 @@ data class ParticleValue(
 	}
 }
 
-/** Sets the ambient particles attribute, controlling particles that randomly spawn around the camera. */
+/**
+ * Sets the ambient particles attribute, controlling particles that randomly spawn around the camera.
+ *
+ * ```
+ * ambientParticles(listOf(Particle(ParticleOptions(Particles.ASH), 0.01f)), EnvironmentAttributeModifier.APPEND)
+ * ```
+ * [EnvironmentAttributeModifier.APPEND] adds the particles after the ones of the lower-priority source instead of replacing them.
+ */
 fun EnvironmentAttributesScope.ambientParticles(
 	list: List<Particle>,
-	mod: EnvironmentAttributeModifier.OVERRIDE? = null,
+	mod: EnvironmentAttributeModifier.List? = null,
 	block: ParticleValue.() -> Unit = {},
 ) = apply {
 	this[EnvironmentAttributes.Visual.AMBIENT_PARTICLES] = environmentAttributeValue(ParticleValue(list).apply(block), mod)
@@ -48,7 +55,7 @@ fun EnvironmentAttributesScope.ambientParticles(
 
 fun EnvironmentAttributesScope.ambientParticles(
 	vararg list: Particle,
-	mod: EnvironmentAttributeModifier.OVERRIDE? = null,
+	mod: EnvironmentAttributeModifier.List? = null,
 	block: ParticleValue.() -> Unit = {},
 ) = apply {
 	this[EnvironmentAttributes.Visual.AMBIENT_PARTICLES] =

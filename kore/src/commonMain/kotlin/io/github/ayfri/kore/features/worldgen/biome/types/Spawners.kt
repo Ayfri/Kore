@@ -1,11 +1,15 @@
 package io.github.ayfri.kore.features.worldgen.biome.types
 
+import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
+import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
+import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
+import io.github.ayfri.kore.features.worldgen.intproviders.UniformIntProvider
 import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
-import io.github.ayfri.kore.serializers.JsonSerialName
 import kotlinx.serialization.Serializable
 
 /**
- * The mobs a biome spawns naturally, one weighted list per mob category.
+ * The mobs spawned naturally, one weighted list per mob category, the `spawns_by_category` of
+ * [io.github.ayfri.kore.features.worldgen.environmentattributes.types.NaturalMobSpawns].
  *
  * A category left to `null` is left out of the file entirely. A structure landing in the biome can replace these lists
  * through its [io.github.ayfri.kore.features.worldgen.structures.SpawnOverrides].
@@ -31,18 +35,16 @@ data class Spawners(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/biomes
  * Minecraft Wiki: https://minecraft.wiki/w/Biome_definition
  *
+ * @property count The pack size spawned at once, a constant or an int provider like `uniform(2, 6)`.
  * @property type The entity spawned.
  * @property weight The relative chance this entry is drawn, against the other entries of the category.
- * @property minCount The smallest pack size spawned at once.
- * @property maxCount The largest pack size spawned at once.
  */
 @Serializable
 data class Spawn(
+	var count: IntProvider = ConstantIntProvider(1),
 	var type: EntityTypeArgument,
 	var weight: Int = 1,
-	@JsonSerialName("minCount") var minCount: Int = 0,
-	@JsonSerialName("maxCount") var maxCount: Int = 0,
-)
+) : IntProviderScope
 
 /** Sets the `ambient` spawns, the bats and the fireflies. */
 fun Spawners.ambient(init: MutableList<Spawn>.() -> Unit) {
@@ -84,12 +86,19 @@ fun Spawners.waterCreature(init: MutableList<Spawn>.() -> Unit) {
 	waterCreature = buildList(init)
 }
 
-/** Adds a spawn entry of a fixed pack size to the category being built. */
-fun MutableList<Spawn>.spawner(type: EntityTypeArgument, weight: Int, minCount: Int = 0, maxCount: Int = 0) {
-	add(Spawn(type, weight, minCount, maxCount))
+/**
+ * Adds a spawn entry to the category being built, spawning [minCount] to [maxCount] mobs at once.
+ *
+ * ```
+ * spawner(EntityTypes.COW, weight = 8, minCount = 2, maxCount = 4)  // "count": {"type": "minecraft:uniform", ...}
+ * spawner(EntityTypes.BAT, weight = 10, minCount = 8)              // "count": 8
+ * ```
+ */
+fun MutableList<Spawn>.spawner(type: EntityTypeArgument, weight: Int, minCount: Int = 1, maxCount: Int = minCount) {
+	add(Spawn(if (minCount == maxCount) ConstantIntProvider(minCount) else UniformIntProvider(minCount, maxCount), type, weight))
 }
 
 /** Adds a spawn entry to the category being built, its weight and pack size being reachable through [init]. */
 fun MutableList<Spawn>.spawner(type: EntityTypeArgument, init: Spawn.() -> Unit = {}) {
-	add(Spawn(type).apply(init))
+	add(Spawn(type = type).apply(init))
 }

@@ -5,7 +5,7 @@ nav-title: Environment Attributes
 description: Data-driven visual, audio and gameplay rules for Minecraft biomes and dimensions - fog, sky, music, mob behavior - with Kore's DSL.
 keywords: minecraft, datapack, kore, worldgen, environment attributes, biome, dimension type, fog, sky color, music, modifiers
 date-created: 2026-02-09
-date-modified: 2026-08-21
+date-modified: 2026-10-21
 routeOverride: /docs/data-driven/worldgen/environment-attributes
 ---
 
@@ -47,12 +47,14 @@ attributes {
 
 Which modifiers apply depends on the value type of the attribute:
 
-| Value type  | Available modifiers                                                     |
-|-------------|-------------------------------------------------------------------------|
-| **Boolean** | `OVERRIDE`, `AND`, `NAND`, `OR`, `NOR`, `XOR`, `XNOR`                   |
-| **Float**   | `OVERRIDE`, `ADD`, `SUBTRACT`, `MULTIPLY`, `MINIMUM`, `MAXIMUM`         |
-| **Color**   | `OVERRIDE`, `ADD`, `SUBTRACT`, `MULTIPLY`, `ALPHA_BLEND`, `BlendToGray` |
-| **Object**  | `OVERRIDE` only                                                         |
+| Value type             | Available modifiers                                                     |
+|------------------------|-------------------------------------------------------------------------|
+| **Boolean**            | `OVERRIDE`, `AND`, `NAND`, `OR`, `NOR`, `XOR`, `XNOR`                   |
+| **Float**              | `OVERRIDE`, `ADD`, `SUBTRACT`, `MULTIPLY`, `MINIMUM`, `MAXIMUM`         |
+| **Color**              | `OVERRIDE`, `ADD`, `SUBTRACT`, `MULTIPLY`, `ALPHA_BLEND`, `BlendToGray` |
+| **List**               | `OVERRIDE`, `APPEND`                                                    |
+| **Natural mob spawns** | `OVERRIDE`, `OVERLAY`                                                   |
+| **Object**             | `OVERRIDE` only                                                         |
 
 `ALPHA_BLEND` takes an ARGB argument and does traditional alpha blending; an alpha of `1` behaves as an override. `BlendToGray` is the one
 modifier carrying data of its own:
@@ -130,6 +132,15 @@ attributes {
 }
 ```
 
+With `EnvironmentAttributeModifier.APPEND`, the particles are added after the ones of the lower-priority source, a biome keeping the
+particles of its dimension for instance, instead of replacing them.
+
+```kotlin
+attributes {
+	ambientParticles(Particle(ParticleOptions(Particles.WHITE_ASH), 0.1f), mod = EnvironmentAttributeModifier.APPEND)
+}
+```
+
 ---
 
 ## Audio
@@ -185,10 +196,12 @@ attributes {
 | `canStartRaid(bool)`             | Boolean                  | `true`      | No      | Raid start         | Whether Raid Omen can start a raid.                              |
 | `catWakingUpGiftChance(float)`   | Float                    | `0.0`       | Yes     | Cat                | Chance for a cat to leave a waking-up gift.                      |
 | `creakingActive(bool)`           | Boolean                  | `false`     | No      | Creaking           | Whether the Creaking is active.                                  |
+| `creatureWorldGenSpawnProbability(float)` | Float, 0 to 0.9999999 | `0.1`   | No      | Chunk generation   | Chance per chunk for the initial creature spawn at world generation. |
 | `eyeblossomOpen(state)`          | `TRUE`/`FALSE`/`DEFAULT` | `DEFAULT`   | No      | Eyeblossom         | Whether eyeblossoms are open.                                    |
 | `fastLava(bool)`                 | Boolean                  | `false`     | No      | Whole dimension    | Lava spreading faster, further, and pushing harder.              |
 | `increasedFireBurnout(bool)`     | Boolean                  | `false`     | No      | Burning fire block | Whether fire blocks burn out faster.                             |
 | `monstersBurn(bool)`             | Boolean                  | `false`     | No      | Mob                | Whether monsters burn in sunlight.                               |
+| `naturalMobSpawns(...)`          | Object                   | `{}`        | No      | Spawn position     | The mobs spawned naturally and their spawn costs.                |
 | `netherPortalSpawnsPiglin(bool)` | Boolean                  | `false`     | No      | Nether portal      | Whether nether portal blocks spawn piglins.                      |
 | `piglinsZombify(bool)`           | Boolean                  | `true`      | No      | Zombifying entity  | Whether piglins and hoglins zombify.                             |
 | `respawnAnchorWorks(bool)`       | Boolean                  | `false`     | No      | Respawn anchor     | Whether a respawn anchor sets spawn instead of exploding.        |
@@ -211,6 +224,75 @@ attributes {
 	eyeblossomOpen(EyeblossomOpenState.TRUE)
 }
 ```
+
+### Natural Mob Spawns
+
+`naturalMobSpawns` sets the mobs spawning naturally, one weighted list per mob category, and the spawn costs capping their density. It
+belongs in the attributes of a [biome](/docs/data-driven/worldgen/biomes) or a dimension type, and `creatureWorldGenSpawnProbability`
+sets the chance per chunk of the initial creature spawn at world generation.
+
+`spawner(type, weight, minCount, maxCount)` writes a constant `count` when both are equal and a `uniform` one otherwise. Set `count`
+inside the block for another [int provider](/docs/data-driven/worldgen/providers). A `spawnCost(type, energyBudget, charge)` makes a
+mob spend `charge` from a shared `energyBudget`, so a crowded area stops spawning it.
+
+```kotlin
+attributes {
+	creatureWorldGenSpawnProbability(0.07f)
+	naturalMobSpawns {
+		spawnsByCategory {
+			ambient {
+				spawner(EntityTypes.BAT, weight = 10, minCount = 8)
+			}
+			creature {
+				spawner(EntityTypes.SHEEP, weight = 12, minCount = 4)
+				spawner(EntityTypes.HORSE, weight = 5, minCount = 2, maxCount = 6)
+				spawner(EntityTypes.DONKEY) {
+					weight = 1
+					count = uniform(1, 3)
+				}
+			}
+		}
+		spawnCosts {
+			spawnCost(EntityTypes.ZOMBIE, energyBudget = 1.0f, charge = 0.5f)
+		}
+	}
+}
+```
+
+```json
+{
+	"minecraft:gameplay/creature_world_gen_spawn_probability": 0.07,
+	"minecraft:gameplay/natural_mob_spawns": {
+		"spawn_costs": { "minecraft:zombie": { "energy_budget": 1.0, "charge": 0.5 } },
+		"spawns_by_category": {
+			"ambient": [{ "count": 8, "type": "minecraft:bat", "weight": 10 }],
+			"creature": [
+				{ "count": 4, "type": "minecraft:sheep", "weight": 12 },
+				{ "count": { "type": "minecraft:uniform", "min_inclusive": 2, "max_inclusive": 6 }, "type": "minecraft:horse", "weight": 5 },
+				{ "count": { "type": "minecraft:uniform", "min_inclusive": 1, "max_inclusive": 3 }, "type": "minecraft:donkey", "weight": 1 }
+			]
+		}
+	}
+}
+```
+
+By default the value overrides the one of the lower-priority source. With `EnvironmentAttributeModifier.OVERLAY`, the categories and spawn
+costs set here replace the matching ones and the others are kept, so a biome can change the monsters of its dimension and leave the
+creatures alone:
+
+```kotlin
+attributes {
+	naturalMobSpawns(EnvironmentAttributeModifier.OVERLAY) {
+		spawnsByCategory {
+			monster {
+				spawner(EntityTypes.CREEPER, weight = 100, minCount = 4)
+			}
+		}
+	}
+}
+```
+
+Structures replace these lists inside their bounding box through [spawn overrides](/docs/data-driven/worldgen/structures).
 
 ### Bed Rule
 

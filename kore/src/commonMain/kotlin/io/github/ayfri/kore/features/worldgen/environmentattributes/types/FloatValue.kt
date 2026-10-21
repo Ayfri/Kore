@@ -32,6 +32,14 @@ fun EnvironmentAttributesScope.cloudFogEndDistance(value: Float, mod: Environmen
 	this[EnvironmentAttributes.Visual.CLOUD_FOG_END_DISTANCE] = environmentAttributeValue(FloatValue(value), mod)
 }
 
+/** The chance per chunk of the initial creature spawn during world generation, from `0` to `0.9999999`. Defaults to `0.1`. */
+fun EnvironmentAttributesScope.creatureWorldGenSpawnProbability(
+	value: Float,
+	mod: EnvironmentAttributeModifier.Float? = null,
+) = apply {
+	this[EnvironmentAttributes.Gameplay.CREATURE_WORLD_GEN_SPAWN_PROBABILITY] = environmentAttributeValue(FloatValue(value), mod)
+}
+
 /** The distance in blocks from the camera at which fog ends. */
 fun EnvironmentAttributesScope.fogEndDistance(value: Float, mod: EnvironmentAttributeModifier.Float? = null) = apply {
 	this[EnvironmentAttributes.Visual.FOG_END_DISTANCE] = environmentAttributeValue(FloatValue(value), mod)
