@@ -8,6 +8,7 @@ import kotlinx.io.files.Path
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 
 /**
@@ -34,22 +35,24 @@ abstract class Generator(@Transient val resourceFolder: String = "") {
 	/** Generates the JSON content for the generator. */
 	abstract fun generateJson(dataPack: DataPack): String
 
+	/** Generates the JSON content as a [JsonElement], parsed from [generateJson] unless a generator builds it directly. */
+	open fun generateJsonElement(dataPack: DataPack): JsonElement = dataPack.jsonEncoder.parseToJsonElement(generateJson(dataPack))
+
 	/**
 	 * Generates the JSON content, wrapping it with the Fabric [FABRIC_LOAD_CONDITIONS_KEY] array when [loadConditions]
 	 * is set. Conditions are only applied when the generated JSON root is an object; array-form resources (multi-entry
 	 * predicates/item modifiers) emit a warning and are left untouched.
 	 */
 	fun generateJsonWithLoadConditions(dataPack: DataPack): String {
-		val json = generateJson(dataPack)
-		if (fabricLoadConditions.isEmpty()) return json
+		if (fabricLoadConditions.isEmpty()) return generateJson(dataPack)
 
-		val element = dataPack.jsonEncoder.parseToJsonElement(json)
+		val element = generateJsonElement(dataPack)
 		if (element !is JsonObject) {
 			warn(
 				"Cannot attach Fabric load conditions to '${namespace ?: dataPack.name}:$fileName' ($resourceFolder): " +
 					"its JSON root is not an object, so conditions are ignored."
 			)
-			return json
+			return dataPack.jsonEncoder.encodeToString(JsonElement.serializer(), element)
 		}
 
 		val conditions =

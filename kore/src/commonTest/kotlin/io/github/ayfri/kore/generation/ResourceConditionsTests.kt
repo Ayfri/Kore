@@ -115,6 +115,8 @@ fun DataPack.resourceConditionsTests() {
 		}
 	""".trimIndent()
 
+	advancements.last().generateJsonElement(this).toString() assertsIs """{"criteria":{}}"""
+
 	predicate("multi_ignored") {
 		fabricLoadConditions {
 			allModsLoaded("create")

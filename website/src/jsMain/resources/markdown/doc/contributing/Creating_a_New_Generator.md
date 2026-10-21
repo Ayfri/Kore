@@ -5,7 +5,7 @@ nav-title: "Creating a New Generator"
 description: Step-by-step contributor guide for adding a new data-driven generator to Kore, from model and registration to tests and documentation.
 keywords: contributing, datapack, generator, kore, patterns, tests
 date-created: 2026-04-15
-date-modified: 2026-10-02
+date-modified: 2026-10-21
 routeOverride: /docs/contributing/creating-a-new-generator
 ---
 
@@ -69,6 +69,8 @@ Checklist for the class itself:
 
 - Extend [`Generator`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/Generator.kt) with the correct `resourceFolder`.
 - Keep `generateJson(dataPack)` thin and delegate to the shared encoder when the structure is straightforward.
+  `generateJsonElement(dataPack)` returns the same content as a `JsonElement`, parsed from `generateJson` by default:
+  override it only when the generator builds a `JsonElement` anyway.
 - Mark `fileName` as `@Transient`.
 - Make the feature `@Serializable`.
 - Only override `getPathFromDataDir(...)` when the resource path is genuinely special.
