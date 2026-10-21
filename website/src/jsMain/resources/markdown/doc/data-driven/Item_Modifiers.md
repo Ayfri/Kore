@@ -549,7 +549,7 @@ Set suspicious stew effects:
 ```kotlin
 itemModifier("stew") {
 	setStewEffect {
-		potionEffect(Potions.NIGHT_VISION, constant(200f))
+		potionEffect(Effects.NIGHT_VISION, constant(200f))
 	}
 }
 ```

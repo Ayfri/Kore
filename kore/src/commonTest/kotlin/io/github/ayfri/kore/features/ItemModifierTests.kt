@@ -23,6 +23,7 @@ import io.github.ayfri.kore.features.predicates.providers.enchantmentLevel
 import io.github.ayfri.kore.features.predicates.providers.intRange
 import io.github.ayfri.kore.features.predicates.providers.scoreNumber
 import io.github.ayfri.kore.features.predicates.providers.sum
+import io.github.ayfri.kore.features.predicates.providers.uniform
 import io.github.ayfri.kore.features.predicates.types.EntityTarget
 import io.github.ayfri.kore.features.worldgen.configuredfeature.Direction
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
@@ -980,7 +981,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifier("set_stew_effect") {
 		setStewEffect {
-			potionEffect(Potions.NIGHT_VISION, constant(200f))
+			potionEffect(Effects.NIGHT_VISION, constant(200f))
 		}
 	}
 
@@ -991,6 +992,37 @@ fun DataPack.itemModifierTests() {
 				{
 					"type": "minecraft:night_vision",
 					"duration": 200.0
+				}
+			]
+		}
+	""".trimIndent()
+
+	itemModifier("set_stew_effect_mob_effects") {
+		setStewEffect {
+			potionEffect(Effects.NIGHT_VISION, uniform(7f, 10f))
+			potionEffect(Effects.JUMP_BOOST, uniform(4f, 7f))
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:set_stew_effect",
+			"effects": [
+				{
+					"type": "minecraft:night_vision",
+					"duration": {
+						"type": "minecraft:uniform",
+						"min": 7.0,
+						"max": 10.0
+					}
+				},
+				{
+					"type": "minecraft:jump_boost",
+					"duration": {
+						"type": "minecraft:uniform",
+						"min": 4.0,
+						"max": 7.0
+					}
 				}
 			]
 		}

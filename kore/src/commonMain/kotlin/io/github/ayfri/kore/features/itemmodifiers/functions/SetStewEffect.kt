@@ -4,12 +4,12 @@ import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.ConstantNumberProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProvider
-import io.github.ayfri.kore.generated.arguments.types.PotionArgument
+import io.github.ayfri.kore.generated.arguments.types.MobEffectArgument
 import kotlinx.serialization.Serializable
 
 /**
  * Sets suspicious-stew effects. Mirrors `minecraft:set_stew_effect`.
- * Each entry defines an effect id and a duration as a number provider.
+ * Each entry defines a mob effect id (`Effects.NIGHT_VISION`) and a duration as a number provider.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
@@ -23,7 +23,7 @@ data class SetStewEffect(
 /** Single stew effect entry. */
 @Serializable
 data class PotionEffect(
-	var type: PotionArgument,
+	var type: MobEffectArgument,
 	var duration: NumberProvider = ConstantNumberProvider(0f),
 )
 
@@ -33,7 +33,7 @@ fun ItemModifier.setStewEffect(effects: MutableList<PotionEffect>.() -> Unit) =
 
 /** Add a single-entry `set_stew_effect` step. */
 fun ItemModifier.setStewEffect(
-	type: PotionArgument,
+	type: MobEffectArgument,
 	duration: NumberProvider = ConstantNumberProvider(0f),
 	block: SetStewEffect.() -> Unit = {},
 ) {
@@ -48,6 +48,6 @@ fun ItemModifier.setStewEffect(
 }
 
 /** Append one stew effect entry to the builder list. */
-fun MutableList<PotionEffect>.potionEffect(type: PotionArgument, duration: NumberProvider = ConstantNumberProvider(0f)) {
+fun MutableList<PotionEffect>.potionEffect(type: MobEffectArgument, duration: NumberProvider = ConstantNumberProvider(0f)) {
 	add(PotionEffect(type, duration))
 }
