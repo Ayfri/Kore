@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.itemmodifiers.functions.Source
+import io.github.ayfri.kore.features.itemmodifiers.functions.explosionDecay
 import io.github.ayfri.kore.features.itemmodifiers.functions.setLore
 import io.github.ayfri.kore.features.slotsources.SlotSourceOrigin
 import io.github.ayfri.kore.features.slotsources.inlineSlotSource
@@ -54,7 +55,11 @@ fun Function.itemTests() {
 		modify(ItemModifierArgument("baz")) assertsIs "item modify entity @s weapon minecraft:baz"
 		modify {
 			setLore(Source.THIS, "Inline Item Modifier")
-		} assertsIs "item modify entity @s weapon {modifiers:{type:\"minecraft:set_lore\",entity:\"this\",lore:[\"Inline Item Modifier\"],mode:\"replace_all\"}}"
+		} assertsIs "item modify entity @s weapon {type:\"minecraft:set_lore\",entity:\"this\",lore:[\"Inline Item Modifier\"],mode:\"replace_all\"}"
+		modify {
+			setLore(Source.THIS, "Inline Item Modifier")
+			explosionDecay()
+		} assertsIs "item modify entity @s weapon [{type:\"minecraft:set_lore\",entity:\"this\",lore:[\"Inline Item Modifier\"],mode:\"replace_all\"},{type:\"minecraft:explosion_decay\"}]"
 		replace(Items.DIRT) assertsIs "item replace entity @s weapon with minecraft:dirt"
 		replace(Items.BOW, 3) assertsIs "item replace entity @s weapon with minecraft:bow 3"
 		fill(Items.ARROW) assertsIs "item fill entity @s weapon with minecraft:arrow"
@@ -67,7 +72,7 @@ fun Function.itemTests() {
 
 		replace(self(), SADDLE) {
 			setLore(Source.THIS, "Inline Item Modifier")
-		} assertsIs "item replace entity @s weapon from entity @s saddle {modifiers:{type:\"minecraft:set_lore\",entity:\"this\",lore:[\"Inline Item Modifier\"],mode:\"replace_all\"}}"
+		} assertsIs "item replace entity @s weapon from entity @s saddle {type:\"minecraft:set_lore\",entity:\"this\",lore:[\"Inline Item Modifier\"],mode:\"replace_all\"}"
 	}
 }
 

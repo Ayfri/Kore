@@ -5,7 +5,7 @@ nav-title: Item Modifiers
 description: Transform item stacks using Kore's type-safe DSL for loot functions - set counts, add enchantments, copy data, and more.
 keywords: minecraft, datapack, kore, item modifiers, loot functions, /item modify, components
 date-created: 2025-08-11
-date-modified: 2026-10-07
+date-modified: 2026-10-21
 routeOverride: /docs/data-driven/item-modifiers
 ---
 
@@ -75,8 +75,15 @@ load {
 
 	// Modify item in the first slot of the container at 0 64 0
 	items.modify(vec3(0, 64, 0), CONTAINER[0], modifier)
+
+	// Inline modifier, no file needed
+	items.modify(self(), WEAPON.MAINHAND) {
+		setCount(2f)
+	}
 }
 ```
+
+An inline modifier is written in the command as SNBT, in the same shape as a file: one function as an object, several as a list.
 
 ### In Loot Tables
 
