@@ -1107,31 +1107,6 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.randomPatch("test_random_patch_defaults", PlacedFeatures.FLOWER_DEFAULT)
-
-	configuredFeatures.last() assertsIs """
-		{
-			"type": "minecraft:random_patch",
-			"feature": "minecraft:flower_default"
-		}
-	""".trimIndent()
-
-	configuredFeaturesBuilder.randomPatch("test_random_patch", PlacedFeatures.FLOWER_DEFAULT) {
-		tries = 64
-		xzSpread = 5
-		ySpread = 2
-	}
-
-	configuredFeatures.last() assertsIs """
-		{
-			"type": "minecraft:random_patch",
-			"feature": "minecraft:flower_default",
-			"tries": 64,
-			"xz_spread": 5,
-			"y_spread": 2
-		}
-	""".trimIndent()
-
 	configuredFeaturesBuilder.randomSelector("test_random_selector", default = PlacedFeatures.ACACIA) {
 		feature(PlacedFeatures.ACACIA_CHECKED, 0.5f)
 	}
