@@ -4,8 +4,11 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.arguments.enums.Axis
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
+import io.github.ayfri.kore.features.roundTrip
 import io.github.ayfri.kore.features.worldgen.densityfunction.densityFunctionsBuilder
+import io.github.ayfri.kore.features.worldgen.densityfunction.noiseOrParameters
 import io.github.ayfri.kore.features.worldgen.densityfunction.types.*
+import io.github.ayfri.kore.features.worldgen.noise.noiseParameters
 import io.github.ayfri.kore.generated.DensityFunctions
 import io.github.ayfri.kore.generated.Noises
 import io.github.ayfri.kore.utils.pretty
@@ -398,6 +401,22 @@ fun DataPack.densityFunctionTests() {
 		}
 	""".trimIndent()
 
+	densityFunctionsBuilder.noise("noise_inline", noiseParameters(-7) { baseAmplitude = 0.5 }, xzScale = 1.0, yScale = 1.0)
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:noise",
+			"noise": {
+				"base_amplitude": 0.5,
+				"base_octave": -7
+			},
+			"xz_scale": 1.0,
+			"y_scale": 1.0
+		}
+	""".trimIndent()
+
+	roundTrip(densityFunctions.last().type)
+
 	densityFunctionsBuilder.oldBlendedNoise("old_blended_noise") {
 		xzScale = 1.0
 		yScale = 1.0
@@ -511,6 +530,24 @@ fun DataPack.densityFunctionTests() {
 		}
 	""".trimIndent()
 
+	densityFunctionsBuilder.shift("shift_inline", noiseParameters(-3, 1.0, 1.0))
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:shift",
+			"noise": {
+				"amplitude_modifiers": [
+					1.0,
+					1.0
+				],
+				"base_octave": -3,
+				"octave_count": 2
+			}
+		}
+	""".trimIndent()
+
+	roundTrip(densityFunctions.last().type)
+
 	densityFunctionsBuilder.shiftA("shift_a", Noises.OFFSET)
 
 	densityFunctions.last() assertsIs """
@@ -543,7 +580,7 @@ fun DataPack.densityFunctionTests() {
 	densityFunctionsBuilder.shiftedNoise("shifted_noise", Noises.CALCITE) {
 		xzScale = 0.1
 		yScale = 1.0
-		noise = Noises.CALCITE
+		noise = noiseOrParameters(Noises.CALCITE)
 
 		shiftX(1.0)
 		shiftY(DensityFunctions.Overworld.BASE_3D_NOISE)
@@ -561,6 +598,34 @@ fun DataPack.densityFunctionTests() {
 			"shift_z": "minecraft:nether/base_3d_noise"
 		}
 	""".trimIndent()
+
+	roundTrip(densityFunctions.last().type)
+
+	densityFunctionsBuilder.shiftedNoise("shifted_noise_inline", noiseParameters(-3, 1.0, 1.0)) {
+		xzScale = 0.25
+		shiftX(DensityFunctions.Overworld.BASE_3D_NOISE)
+	}
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:shifted_noise",
+			"noise": {
+				"amplitude_modifiers": [
+					1.0,
+					1.0
+				],
+				"base_octave": -3,
+				"octave_count": 2
+			},
+			"xz_scale": 0.25,
+			"y_scale": 0.0,
+			"shift_x": "minecraft:overworld/base_3d_noise",
+			"shift_y": 0.0,
+			"shift_z": 0.0
+		}
+	""".trimIndent()
+
+	roundTrip(densityFunctions.last().type)
 
 	densityFunctionsBuilder.sign("sign", -2.0)
 

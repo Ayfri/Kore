@@ -2,20 +2,23 @@ package io.github.ayfri.kore.features.worldgen.densityfunction.types
 
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionOrDouble
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionsScope
+import io.github.ayfri.kore.features.worldgen.densityfunction.NoiseOrParameters
 import io.github.ayfri.kore.features.worldgen.densityfunction.densityFunctionOrDouble
+import io.github.ayfri.kore.features.worldgen.densityfunction.noiseOrParameters
+import io.github.ayfri.kore.features.worldgen.noise.NoiseParameters
 import io.github.ayfri.kore.generated.arguments.worldgen.types.DensityFunctionArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.NoiseArgument
 import kotlinx.serialization.Serializable
 
 /**
- * Samples [noise] like [Noise], but offsets the sampled coordinates by [shiftX], [shiftY] and [shiftZ]
+ * Samples [noise], a noise file ID or inline parameters, like [Noise], but offsets the sampled coordinates by [shiftX], [shiftY] and [shiftZ]
  * before scaling.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
 @Serializable
 data class ShiftedNoise(
-	var noise: NoiseArgument,
+	var noise: NoiseOrParameters,
 	var xzScale: Double = 0.0,
 	var yScale: Double = 0.0,
 	var shiftX: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
@@ -35,7 +38,20 @@ data class ShiftedNoise(
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
 fun DensityFunctionsScope.shiftedNoise(fileName: String, noise: NoiseArgument, block: ShiftedNoise.() -> Unit = {}) =
-	register(fileName, ShiftedNoise(noise).apply(block))
+	register(fileName, ShiftedNoise(noiseOrParameters(noise)).apply(block))
+
+/**
+ * Adds a `shifted_noise` density function to the data pack, sampling the inline noise [parameters] like a regular
+ * `noise` function but with its coordinates offset by [ShiftedNoise.shiftX], [ShiftedNoise.shiftY] and
+ * [ShiftedNoise.shiftZ]. Set [ShiftedNoise.xzScale], [ShiftedNoise.yScale] and the shift offsets in [block].
+ *
+ * Produces `data/<namespace>/worldgen/density_function/<fileName>.json`.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
+ * Minecraft Wiki: https://minecraft.wiki/w/Density_function
+ */
+fun DensityFunctionsScope.shiftedNoise(fileName: String, parameters: NoiseParameters, block: ShiftedNoise.() -> Unit = {}) =
+	register(fileName, ShiftedNoise(noiseOrParameters(parameters)).apply(block))
 
 /** Sets [ShiftedNoise.shiftX] to [constant]. */
 fun ShiftedNoise.shiftX(constant: Double) = run { shiftX = densityFunctionOrDouble(constant) }

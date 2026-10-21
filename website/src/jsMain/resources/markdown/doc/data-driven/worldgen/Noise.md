@@ -111,7 +111,25 @@ val terrain = with(dp.densityFunctionsBuilder) {
 ```
 
 Most builders accept either a `Double` or a `DensityFunctionArgument` for their inputs, in every combination. `constant` takes a `Double`
-only, and `noise`, `shift`, `shiftA`, `shiftB` and `shiftedNoise` take a `NoiseArgument`, since they sample a noise definition directly.
+only, and `noise`, `shift`, `shiftA`, `shiftB` and `shiftedNoise` take either a `NoiseArgument` or inline noise parameters built with
+`noiseParameters(...)`, since they sample a noise directly. Their `noise` property is a `NoiseOrParameters`, set with `noiseOrParameters(...)`.
+
+```kotlin
+dp.densityFunctions {
+	shift("shift_inline", noiseParameters(-3, 1.0, 1.0))
+}
+```
+
+```json
+{
+	"type": "minecraft:shift",
+	"noise": {
+		"amplitude_modifiers": [1.0, 1.0],
+		"base_octave": -3,
+		"octave_count": 2
+	}
+}
+```
 
 The JSON fields follow the game: single-input nodes (`abs`, `cube`, `negate`, `reciprocal`...) write `input`, two-input nodes (`add`, `div`,
 `max`, `min`, `mul`, `sub`) write `left` and `right`, `constant` writes `value` and the shift nodes write `noise`. The same names are the properties of the
@@ -150,16 +168,16 @@ node classes.
 | `min`                  | `min(...)`                | Smaller of two inputs.                                                        |
 | `mul`                  | `mul(...)`                | Multiplies two inputs.                                                        |
 | `negate`               | `negate(...)`             | Flips the sign of the input.                                                  |
-| `noise`                | `noise(...)`              | Samples a noise definition, scaled horizontally and vertically.               |
+| `noise`                | `noise(...)`              | Samples a noise ID or inline parameters, scaled horizontally and vertically.  |
 | `old_blended_noise`    | `oldBlendedNoise(...)`    | Legacy blended noise used before the 1.18 terrain rewrite.                    |
 | `pow`                  | `pow(...)`                | Raises `base` to the power of `exponent`.                                     |
 | `quarter_negative`     | `quarterNegative(...)`    | Quarters the input when negative, otherwise leaves it unchanged.              |
 | `range_choice`         | `rangeChoice(...)`        | Picks between two inputs based on whether a value falls within a range.       |
 | `reciprocal`           | `reciprocal(...)`         | Reciprocal (1 / x) of the input.                                              |
 | `round`                | `round(...)`              | Rounds the input to the nearest multiple of `multiple` (1 by default).        |
-| `shift`                | `shift(...)`              | Samples a noise at `(x/4, y/4, z/4)`, scaled back up by 4.                    |
-| `shift_a`              | `shiftA(...)`             | Samples a noise at `(x/4, 0, z/4)`, scaled back up by 4.                      |
-| `shift_b`              | `shiftB(...)`             | Samples a noise at `(z/4, x/4, 0)`, scaled back up by 4.                      |
+| `shift`                | `shift(...)`              | Samples a noise ID or inline parameters at `(x/4, y/4, z/4)`, scaled up by 4. |
+| `shift_a`              | `shiftA(...)`             | Samples a noise ID or inline parameters at `(x/4, 0, z/4)`, scaled up by 4.   |
+| `shift_b`              | `shiftB(...)`             | Samples a noise ID or inline parameters at `(z/4, x/4, 0)`, scaled up by 4.   |
 | `shifted_noise`        | `shiftedNoise(...)`       | Like `noise`, but with the sampled coordinates shifted.                       |
 | `sign`                 | `sign(...)`               | Outputs the sign of the input.                                                |
 | `slice`                | `slice(...)`              | Evaluates the input with one axis coordinate fixed, flattening 3D to 2D.      |
