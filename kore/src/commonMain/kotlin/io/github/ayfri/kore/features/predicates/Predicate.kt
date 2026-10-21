@@ -11,9 +11,6 @@ import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
-
-typealias PredicateAsList = @Serializable(Predicate.Companion.PredicateAsListSerializer::class) Predicate
 
 /**
  * Data-driven predicate definition for Minecraft Java Edition.
@@ -44,12 +41,6 @@ data class Predicate(
 			PredicateCondition.serializer(),
 			Predicate::toCondition,
 			{ Predicate(predicateConditions = listOf(it)) },
-		)
-
-		data object PredicateAsListSerializer : InlineAutoSerializer<Predicate, InlinableList<PredicateCondition>>(
-			ListSerializer(PredicateCondition.serializer()),
-			Predicate::predicateConditions,
-			{ Predicate(predicateConditions = it) },
 		)
 	}
 }

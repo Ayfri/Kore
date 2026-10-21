@@ -9,6 +9,29 @@ date-modified: 2026-10-21
 routeOverride: /docs/data-driven/advancements/triggers
 ---
 
+## Predicate fields
+
+The `player` of every trigger and the entity and location fields of a trigger (`parent`, `victim`, `bystander`, `location`...) each hold one predicate, checked with the entity as `this`, as an inline condition or the ID of a predicate file. Several conditions are written as an `all_of`, and a predicate tag isn't possible because the game only accepts a tag in the `terms` of an `all_of` or an `any_of`.
+
+```kotlin
+bredAnimals("breed_cows") {
+	condition(PredicateArgument("is_lucky", "my_pack"))  // "player": "my_pack:is_lucky"
+
+	parent {
+		conditionEntity { entityType(EntityTypes.COW) }  // entity_properties on this
+	}
+
+	child {
+		condition {  // two conditions, an all_of
+			randomChance(0.5f)
+			killedByPlayer()
+		}
+	}
+}
+```
+
+In a location field, `location { }` is written as a `location_check`, and `predicate { }` or `predicate(PredicateArgument(...))` set any condition.
+
 ## Available Triggers
 
 Below is the comprehensive list of available trigger types. Each trigger includes a description, its properties with explanations, and an example usage in Kotlin.
@@ -22,7 +45,7 @@ Triggers when an allay drops an item on a block.
 
 **Properties:**
 
-- `location`: The location where the item is dropped.
+- `location`: The location where the item is dropped, as a `location_check` for `location { }` or any predicate with `predicate { }`.
 
 **Example:**
 
@@ -45,13 +68,13 @@ Triggers when a player uses any block.
 
 **Properties:**
 
-- `location`: Conditions checked against the used block.
+- `location`: One predicate checked against the used block.
 
 **Example:**
 
 ```kotlin
 anyBlockUse("use_block_while_sneaking") {
-	conditions {
+	condition {
 		entityProperties {
 			flags {
 				isSneaking = true
@@ -87,7 +110,7 @@ _None._
 
 ```kotlin
 avoidVibration("avoid_sculk") {
-	conditions {
+	condition {
 		locationCheck {
 			block(Blocks.SCULK)
 		}
@@ -138,21 +161,21 @@ Triggers when animals are bred.
 ```kotlin
 bredAnimals("breed_animals") {
 	child {
-		conditions {
+		condition {
 			entityProperties {
 				entityType(EntityTypes.COW)
 			}
 		}
 	}
 	parent {
-		conditions {
+		condition {
 			entityProperties {
 				entityType(EntityTypes.COW)
 			}
 		}
 	}
 	partner {
-		conditions {
+		condition {
 			entityProperties {
 				entityType(EntityTypes.COW)
 			}
@@ -208,19 +231,18 @@ Triggers when lightning is channeled.
 
 **Properties:**
 
-- `victims`: A list of entities affected by the lightning.
+- `victims`: A list of predicates, each one checked against the entities struck by the lightning. An entry is an inline condition or the ID of a predicate file, and a single victim is still written as a list.
 
 **Example:**
 
 ```kotlin
 channeledLightning("lightning_rod") {
 	victim {
-		conditions {
-			entityProperties {
-				entityType(EntityTypes.CREEPER)
-			}
+		conditionEntity {
+			entityType(EntityTypes.CREEPER)
 		}
 	}
+	victim(PredicateArgument("is_villager", "my_pack"))  // "my_pack:is_villager"
 }
 ```
 
@@ -306,14 +328,14 @@ Triggers when a zombie villager is cured.
 ```kotlin
 curedZombieVillager("cure_zombie") {
 	villager {
-		conditions {
+		condition {
 			entityProperties {
 				entityType(EntityTypes.VILLAGER)
 			}
 		}
 	}
 	zombie {
-		conditions {
+		condition {
 			entityProperties {
 				entityType(EntityTypes.ZOMBIE)
 			}
@@ -331,14 +353,14 @@ Triggers when a block is used with default interaction.
 
 **Properties:**
 
-- `location`: Conditions checked against the used block, set with `location { predicate { ... } }` like
+- `location`: One predicate checked against the used block, set with `location { predicate { ... } }` like
   [`anyBlockUse`](#anyblockuse).
 
 **Example:**
 
 ```kotlin
 defaultBlockUse("use_default_in_nether") {
-	conditions {
+	condition {
 		entityProperties {
 			location {
 				dimension = Dimensions.THE_NETHER
@@ -369,7 +391,7 @@ effectsChanged("get_effect") {
 		duration = rangeOrInt(100..200)
 	}
 	source {
-		conditions {
+		condition {
 			entityProperties {
 				entityType(EntityTypes.WITCH)
 			}
@@ -486,7 +508,7 @@ Triggers when an entity kills a player.
 ```kotlin
 entityKilledPlayer("killed_by_creeper") {
 	entity {
-		conditions {
+		condition {
 			entityProperties {
 				entityType(EntityTypes.CREEPER)
 			}
@@ -610,7 +632,7 @@ _None._
 
 ```kotlin
 heroOfTheVillage("save_village") {
-	conditions {
+	condition {
 		locationCheck {
 			dimension = Dimensions.OVERWORLD
 		}
@@ -739,7 +761,7 @@ killedByArrow("killed_by_arrow") {
 	uniqueEntityTypes = rangeOrInt(1..5)
 
 	victim {
-		conditions {
+		condition {
 			entityProperties {
 				entityType(EntityTypes.PLAYER)
 			}
@@ -765,7 +787,7 @@ Triggers when a mob is killed near a sculk catalyst.
 ```kotlin
 killMobNearSculkCatalyst("kill_mob") {
 	entity {
-		conditions {
+		condition {
 			entityProperties {
 				entityType(EntityTypes.ZOMBIE)
 			}
@@ -820,7 +842,7 @@ Triggers on a lightning strike.
 lightningStrike("struck") {
 	bystander {
 		type {
-			conditions {
+			condition {
 				entityProperties {
 					entityType(EntityTypes.CREEPER)
 				}
@@ -845,7 +867,7 @@ Triggers every second based on location conditions.
 
 ```kotlin
 location("reach_end") {
-	conditions {
+	condition {
 		locationCheck {
 			dimension = Dimensions.THE_END
 		}
@@ -987,7 +1009,7 @@ Triggers when a player kills an entity.
 ```kotlin
 playerKilledEntity("kill_mob") {
 	entity {
-		conditions {
+		condition {
 			entityProperties {
 				entityType(EntityTypes.ZOMBIE)
 			}
@@ -1184,7 +1206,7 @@ _None._
 
 ```kotlin
 startedRiding("ride_horse") {
-	conditions {
+	condition {
 		entityProperties {
 			vehicle {
 				entityType(EntityTypes.HORSE)
@@ -1258,7 +1280,7 @@ Triggers when a target block is hit.
 targetHit("hit_target") {
 	signalStrength = rangeOrInt(1..15)
 	projectile {
-		conditions {
+		condition {
 			entityProperties {
 				entityType(EntityTypes.ARROW)
 			}
@@ -1331,7 +1353,7 @@ Triggers every tick (20 times per second).
 
 ```kotlin
 tick("game_tick") {
-	conditions {
+	condition {
 		timeCheck(WorldClocks.OVERWORLD, 0f, 12000f, period = 24000) // daytime only
 	}
 }
@@ -1420,7 +1442,7 @@ villagerTrade("trade") {
 		items(Items.EMERALD)
 	}
 	villager {
-		conditions {
+		condition {
 			entityProperties {
 				team = "villager"
 			}
@@ -1444,7 +1466,7 @@ Triggers when a player causes a raid in a village.
 
 ```kotlin
 voluntaryExile("raid_village") {
-	conditions {
+	condition {
 		locationCheck {
 			dimension = Dimensions.OVERWORLD
 		}

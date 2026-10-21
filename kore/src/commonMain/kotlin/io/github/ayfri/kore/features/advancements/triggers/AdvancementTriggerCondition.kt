@@ -1,10 +1,13 @@
 package io.github.ayfri.kore.features.advancements.triggers
 
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
-import io.github.ayfri.kore.features.advancements.conditions
+import io.github.ayfri.kore.features.advancements.asEntityOrPredicates
+import io.github.ayfri.kore.features.advancements.condition
+import io.github.ayfri.kore.features.advancements.entityOrPredicates
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.sub.EntityPredicate
+import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import kotlinx.serialization.SerialName
@@ -31,22 +34,27 @@ sealed class AdvancementTriggerCondition {
 	}
 }
 
-/** Set the entity condition, deprecated, prefer using [conditions] instead. */
+/** Check the player against [entity], as an `entity_properties` condition on `this`. */
 fun AdvancementTriggerCondition.conditionEntity(entity: EntityPredicate) {
-	player = EntityOrPredicates(legacyEntity = entity)
+	player = entity.asEntityOrPredicates()
 }
 
-/** Set the entity condition, deprecated, prefer using [conditions] instead. */
+/** Check the player against the predicate built by [entity], as an `entity_properties` condition on `this`. */
 fun AdvancementTriggerCondition.conditionEntity(entity: EntityPredicate.() -> Unit) {
-	player = EntityOrPredicates(legacyEntity = EntityPredicate().apply(entity))
+	player = EntityPredicate().apply(entity).asEntityOrPredicates()
 }
 
-/** Set the predicate conditions. */
-fun AdvancementTriggerCondition.conditions(vararg conditions: PredicateCondition) {
-	this.player = EntityOrPredicates().conditions(*conditions)
+/** Set the player condition, several ones being merged into an `all_of`. */
+fun AdvancementTriggerCondition.condition(vararg conditions: PredicateCondition) {
+	player = EntityOrPredicates().condition(*conditions)
 }
 
-/** Set the predicate conditions. */
-fun AdvancementTriggerCondition.conditions(block: Predicate.() -> Unit) {
-	player = EntityOrPredicates().conditions(block)
+/** Set the player condition declared by [block], several ones being merged into an `all_of`. */
+fun AdvancementTriggerCondition.condition(block: Predicate.() -> Unit) {
+	player = entityOrPredicates(block)
+}
+
+/** Set the player condition to the predicate file [predicate], written as its bare ID. */
+fun AdvancementTriggerCondition.condition(predicate: PredicateArgument) {
+	player = EntityOrPredicates().condition(predicate)
 }

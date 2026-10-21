@@ -5,7 +5,7 @@ nav-title: Advancements
 description: Create custom Minecraft advancements with Kore's Kotlin DSL. Covers all triggers, criteria, rewards (functions, loot, recipes), display settings, and frames. Replace hand-written JSON with type-safe Kotlin.
 keywords: minecraft advancements, datapack advancements, advancement triggers, using_item trigger, inventory_changed, minecraft achievement, kore advancements, custom advancements, advancement criteria, advancement rewards
 date-created: 2024-01-08
-date-modified: 2026-10-02
+date-modified: 2026-10-21
 routeOverride: /docs/data-driven/advancements
 ---
 
@@ -222,7 +222,7 @@ advancement("multi_criteria") {
 
 ### Criteria with Predicate Conditions
 
-Add predicate conditions to criteria for additional checks:
+Every trigger checks one predicate on the player (`player` in the JSON), and the entity and location fields of a trigger (`entity`, `victims`, `location`...) each check one too. A predicate is written as one inline condition, several ones being merged into an `all_of`, or as the ID of a predicate file:
 
 ```kotlin
 advancement("conditional_criteria") {
@@ -231,14 +231,21 @@ advancement("conditional_criteria") {
 			item {
 				items = listOf(Items.GOLDEN_APPLE)
 			}
-			conditions {
+			// Two conditions, written as an all_of
+			condition {
 				randomChance(0.5f)  // 50% chance
 				timeCheck(WorldClocks.OVERWORLD, 6000f..18000f)  // Daytime only
 			}
 		}
+
+		consumeItem("eat_apple_with_file") {
+			condition(PredicateArgument("is_lucky", "my_pack"))  // "player": "my_pack:is_lucky"
+		}
 	}
 }
 ```
+
+`conditionEntity { }` checks the player against an entity predicate, as an `entity_properties` condition on `this`. A predicate tag isn't possible in these fields because the game only accepts a tag in the `terms` of an `all_of` or an `any_of`.
 
 For a complete guide on predicates, see the [Predicates](/docs/data-driven/predicates) documentation.
 
@@ -559,13 +566,13 @@ dataPack("adventure_pack") {
 
 		criteria {
 			location("visit_forest") {
-				conditions { locationCheck { biomes(Biomes.FOREST) } }
+				condition { locationCheck { biomes(Biomes.FOREST) } }
 			}
 			location("visit_desert") {
-				conditions { locationCheck { biomes(Biomes.DESERT) } }
+				condition { locationCheck { biomes(Biomes.DESERT) } }
 			}
 			location("visit_ocean") {
-				conditions { locationCheck { biomes(Biomes.OCEAN) } }
+				condition { locationCheck { biomes(Biomes.OCEAN) } }
 			}
 		}
 

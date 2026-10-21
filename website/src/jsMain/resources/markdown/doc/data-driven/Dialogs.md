@@ -5,7 +5,7 @@ nav-title: Dialogs
 description: Create interactive dialog screens in Minecraft with Kore's comprehensive dialog system.
 keywords: minecraft, datapack, kore, dialogs, ui, interactive, forms, confirmation, notice
 date-created: 2025-09-18
-date-modified: 2026-09-23
+date-modified: 2026-10-21
 routeOverride: /docs/data-driven/dialogs
 ---
 
@@ -577,7 +577,7 @@ val firstDeathScoreboard = "first_death"
 advancement("first_death") {
 	criteria {
 		tick("check_each_ticks") {
-			conditions {
+			condition {
 				entityProperties {
 					nbt {
 						this["Health"] = 0f

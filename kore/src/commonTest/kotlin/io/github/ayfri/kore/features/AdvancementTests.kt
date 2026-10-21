@@ -23,6 +23,7 @@ import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Advancements
 import io.github.ayfri.kore.generated.Enchantments
+import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
 
@@ -76,31 +77,34 @@ fun DataPack.advancementTests() {
 				"test": {
 					"trigger": "minecraft:consume_item",
 					"conditions": {
-						"player": [
-							{
-								"type": "minecraft:random_chance",
-								"chance": 0.5
-							},
-							{
-								"type": "minecraft:time_check",
-								"clock": "minecraft:overworld",
-								"value": {
-									"min": 10.0,
-									"max": 20.0
-								}
-							},
-							{
-								"type": "minecraft:any_of",
-								"terms": {
+						"player": {
+							"type": "minecraft:all_of",
+							"terms": [
+								{
+									"type": "minecraft:random_chance",
+									"chance": 0.5
+								},
+								{
 									"type": "minecraft:time_check",
 									"clock": "minecraft:overworld",
 									"value": {
 										"min": 10.0,
 										"max": 20.0
 									}
+								},
+								{
+									"type": "minecraft:any_of",
+									"terms": {
+										"type": "minecraft:time_check",
+										"clock": "minecraft:overworld",
+										"value": {
+											"min": 10.0,
+											"max": 20.0
+										}
+									}
 								}
-							}
-						],
+							]
+						},
 						"item": {
 							"items": "minecraft:enchanted_golden_apple"
 						}
@@ -161,8 +165,11 @@ private fun DataPack.allTriggersTests() {
 					"trigger": "minecraft:allay_drop_item_on_block",
 					"conditions": {
 						"location": {
-							"block": {
-								"blocks": "minecraft:stone"
+							"type": "minecraft:location_check",
+							"predicate": {
+								"block": {
+									"blocks": "minecraft:stone"
+								}
 							}
 						}
 					}
@@ -186,12 +193,10 @@ private fun DataPack.allTriggersTests() {
 				"any_block_use": {
 					"trigger": "minecraft:any_block_use",
 					"conditions": {
-						"location": [
-							{
-								"type": "minecraft:random_chance",
-								"chance": 0.5
-							}
-						]
+						"location": {
+							"type": "minecraft:random_chance",
+							"chance": 0.5
+						}
 					}
 				}
 			}
@@ -317,7 +322,7 @@ private fun DataPack.allTriggersTests() {
 					}
 				}
 
-				conditions {
+				condition {
 					randomChance(0.5f)
 					timeCheck(WorldClocks.OVERWORLD, 10f..20f)
 				}
@@ -330,20 +335,23 @@ private fun DataPack.allTriggersTests() {
 				"consume_item": {
 					"trigger": "minecraft:consume_item",
 					"conditions": {
-						"player": [
-							{
-								"type": "minecraft:random_chance",
-								"chance": 0.5
-							},
-							{
-								"type": "minecraft:time_check",
-								"clock": "minecraft:overworld",
-								"value": {
-									"min": 10.0,
-									"max": 20.0
+						"player": {
+							"type": "minecraft:all_of",
+							"terms": [
+								{
+									"type": "minecraft:random_chance",
+									"chance": 0.5
+								},
+								{
+									"type": "minecraft:time_check",
+									"clock": "minecraft:overworld",
+									"value": {
+										"min": 10.0,
+										"max": 20.0
+									}
 								}
-							}
-						],
+							]
+						},
 						"item": {
 							"items": "minecraft:enchanted_golden_apple",
 							"components": {
@@ -362,7 +370,7 @@ private fun DataPack.allTriggersTests() {
 				"crafter_recipe_crafted",
 				Recipes.POLISHED_BLACKSTONE_BRICK_STAIRS_FROM_POLISHED_BLACKSTONE_BRICKS_STONECUTTING
 			) {
-				conditions {
+				condition {
 					randomChance(0.5f)
 					timeCheck(WorldClocks.OVERWORLD, 10f..20f)
 				}
@@ -382,20 +390,23 @@ private fun DataPack.allTriggersTests() {
 				"crafter_recipe_crafted": {
 					"trigger": "minecraft:crafter_recipe_crafted",
 					"conditions": {
-						"player": [
-							{
-								"type": "minecraft:random_chance",
-								"chance": 0.5
-							},
-							{
-								"type": "minecraft:time_check",
-								"clock": "minecraft:overworld",
-								"value": {
-									"min": 10.0,
-									"max": 20.0
+						"player": {
+							"type": "minecraft:all_of",
+							"terms": [
+								{
+									"type": "minecraft:random_chance",
+									"chance": 0.5
+								},
+								{
+									"type": "minecraft:time_check",
+									"clock": "minecraft:overworld",
+									"value": {
+										"min": 10.0,
+										"max": 20.0
+									}
 								}
-							}
-						],
+							]
+						},
 						"ingredients": [
 							{
 								"items": "minecraft:enchanted_golden_apple",
@@ -449,7 +460,7 @@ private fun DataPack.allTriggersTests() {
 					duration = rangeOrInt(100..200)
 				}
 				source {
-					conditions {
+					condition {
 						entityProperties {
 							entityType(EntityTypes.WITCH)
 						}
@@ -476,15 +487,13 @@ private fun DataPack.allTriggersTests() {
 								}
 							}
 						},
-						"source": [
-							{
-								"type": "minecraft:entity_properties",
-								"entity": "this",
-								"predicate": {
-									"minecraft:entity_type": "minecraft:witch"
-								}
+						"source": {
+							"type": "minecraft:entity_properties",
+							"entity": "this",
+							"predicate": {
+								"minecraft:entity_type": "minecraft:witch"
 							}
-						]
+						}
 					}
 				}
 			}
@@ -653,7 +662,7 @@ private fun DataPack.allTriggersTests() {
 				}
 
 				cause {
-					conditions {
+					condition {
 						entityProperties {
 							entityType(EntityTypes.PLAYER)
 						}
@@ -686,15 +695,13 @@ private fun DataPack.allTriggersTests() {
 								"max": 20.0
 							}
 						},
-						"cause": [
-							{
-								"type": "minecraft:entity_properties",
-								"entity": "this",
-								"predicate": {
-									"minecraft:entity_type": "minecraft:player"
-								}
+						"cause": {
+							"type": "minecraft:entity_properties",
+							"entity": "this",
+							"predicate": {
+								"minecraft:entity_type": "minecraft:player"
 							}
-						]
+						}
 					}
 				}
 			}
@@ -836,7 +843,7 @@ private fun DataPack.allTriggersTests() {
 				uniqueEntityTypes = rangeOrInt(1..5)
 
 				victim {
-					conditions {
+					condition {
 						entityProperties {
 							entityType(EntityTypes.PLAYER)
 						}
@@ -864,15 +871,13 @@ private fun DataPack.allTriggersTests() {
 							"max": 5
 						},
 						"victims": [
-							[
-								{
-									"type": "minecraft:entity_properties",
-									"entity": "this",
-									"predicate": {
-										"minecraft:entity_type": "minecraft:player"
-									}
+							{
+								"type": "minecraft:entity_properties",
+								"entity": "this",
+								"predicate": {
+									"minecraft:entity_type": "minecraft:player"
 								}
-							]
+							}
 						]
 					}
 				}
@@ -1027,7 +1032,11 @@ private fun DataPack.allTriggersTests() {
 							"items": "minecraft:iron_ingot"
 						},
 						"entity": {
-							"minecraft:entity_type": "minecraft:iron_golem"
+							"type": "minecraft:entity_properties",
+							"entity": "this",
+							"predicate": {
+								"minecraft:entity_type": "minecraft:iron_golem"
+							}
 						}
 					}
 				}
@@ -1476,11 +1485,273 @@ private fun DataPack.componentsDisplay() {
 	""".trimIndent()
 }
 
+private fun DataPack.triggerPredicateFieldsTests() {
+	advancement("very_very_frightening") {
+		criteria {
+			channeledLightning("struck_villager") {
+				victim {
+					conditionEntity {
+						entityType(EntityTypes.VILLAGER)
+					}
+				}
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"struck_villager": {
+					"trigger": "minecraft:channeled_lightning",
+					"conditions": {
+						"victims": [
+							{
+								"type": "minecraft:entity_properties",
+								"entity": "this",
+								"predicate": {
+									"minecraft:entity_type": "minecraft:villager"
+								}
+							}
+						]
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	advancement("lightning_rod_with_villager_no_fire") {
+		criteria {
+			lightningStrike("strike") {
+				bystander {
+					conditionEntity {
+						entityType(EntityTypes.VILLAGER)
+					}
+				}
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"strike": {
+					"trigger": "minecraft:lightning_strike",
+					"conditions": {
+						"bystander": {
+							"type": "minecraft:entity_properties",
+							"entity": "this",
+							"predicate": {
+								"minecraft:entity_type": "minecraft:villager"
+							}
+						}
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	advancement("victim_ids") {
+		criteria {
+			channeledLightning("struck") {
+				victim(PredicateArgument("is_villager", "my_pack"))
+				victim {
+					conditionEntity {
+						entityType(EntityTypes.VILLAGER)
+					}
+				}
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"struck": {
+					"trigger": "minecraft:channeled_lightning",
+					"conditions": {
+						"victims": [
+							"my_pack:is_villager",
+							{
+								"type": "minecraft:entity_properties",
+								"entity": "this",
+								"predicate": {
+									"minecraft:entity_type": "minecraft:villager"
+								}
+							}
+						]
+					}
+				}
+			}
+		}
+	""".trimIndent()
+	roundTrip(advancements.last())
+
+	advancement("player_id") {
+		criteria {
+			consumeItem("consumed") {
+				condition(PredicateArgument("is_hungry", "my_pack"))
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"consumed": {
+					"trigger": "minecraft:consume_item",
+					"conditions": {
+						"player": "my_pack:is_hungry"
+					}
+				}
+			}
+		}
+	""".trimIndent()
+	roundTrip(advancements.last())
+
+	advancement("player_entity_properties") {
+		criteria {
+			consumeItem("consumed") {
+				conditionEntity {
+					entityType(EntityTypes.PLAYER)
+				}
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"consumed": {
+					"trigger": "minecraft:consume_item",
+					"conditions": {
+						"player": {
+							"type": "minecraft:entity_properties",
+							"entity": "this",
+							"predicate": {
+								"minecraft:entity_type": "minecraft:player"
+							}
+						}
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	advancement("entity_id") {
+		criteria {
+			bredAnimals("bred") {
+				parent {
+					condition(PredicateArgument("is_cow", "my_pack"))
+				}
+				child {
+					condition {
+						randomChance(0.5f)
+						randomChance(0.25f)
+					}
+				}
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"bred": {
+					"trigger": "minecraft:bred_animals",
+					"conditions": {
+						"child": {
+							"type": "minecraft:all_of",
+							"terms": [
+								{
+									"type": "minecraft:random_chance",
+									"chance": 0.5
+								},
+								{
+									"type": "minecraft:random_chance",
+									"chance": 0.25
+								}
+							]
+						},
+						"parent": "my_pack:is_cow"
+					}
+				}
+			}
+		}
+	""".trimIndent()
+	roundTrip(advancements.last())
+
+	advancement("location_id") {
+		criteria {
+			anyBlockUse("any") {
+				location {
+					predicate(PredicateArgument("is_farm", "my_pack"))
+				}
+			}
+			placedBlock("placed") {
+				location {
+					location {
+						biomes(Biomes.PLAINS)
+					}
+				}
+			}
+			allayDropItemOnBlock("allay") {
+				predicate {
+					randomChance(0.5f)
+					randomChance(0.25f)
+				}
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"any": {
+					"trigger": "minecraft:any_block_use",
+					"conditions": {
+						"location": "my_pack:is_farm"
+					}
+				},
+				"placed": {
+					"trigger": "minecraft:placed_block",
+					"conditions": {
+						"location": {
+							"type": "minecraft:location_check",
+							"predicate": {
+								"biomes": "minecraft:plains"
+							}
+						}
+					}
+				},
+				"allay": {
+					"trigger": "minecraft:allay_drop_item_on_block",
+					"conditions": {
+						"location": {
+							"type": "minecraft:all_of",
+							"terms": [
+								{
+									"type": "minecraft:random_chance",
+									"chance": 0.5
+								},
+								{
+									"type": "minecraft:random_chance",
+									"chance": 0.25
+								}
+							]
+						}
+					}
+				}
+			}
+		}
+	""".trimIndent()
+	roundTrip(advancements.last())
+}
+
 class AdvancementTests : FunSpec({
 	test("advancement") {
 		dataPack("features_tests") {
 			pretty()
 			advancementTests()
+		}
+	}
+
+	test("trigger predicate fields") {
+		dataPack("features_tests") {
+			pretty()
+			triggerPredicateFieldsTests()
 		}
 	}
 })

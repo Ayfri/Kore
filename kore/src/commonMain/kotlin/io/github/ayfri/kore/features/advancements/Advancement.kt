@@ -122,7 +122,7 @@ fun AdvancementDisplay.icon(icon: ItemArgument, count: Int? = null, components: 
 	"Use AdvancementDisplay.criteria { ... } instead.",
 	ReplaceWith(
 		"criteria { this[name] = triggerCondition.apply { conditionEntity(condition) } }",
-		"io.github.ayfri.kore.features.advancements.triggers.conditions"
+		"io.github.ayfri.kore.features.advancements.triggers.conditionEntity"
 	)
 )
 fun Advancement.criteria(
@@ -130,14 +130,14 @@ fun Advancement.criteria(
 	triggerCondition: AdvancementTriggerCondition,
 	condition: EntityPredicate? = null,
 ) {
-	criteria.criteria[name] = triggerCondition.apply { this.player = EntityOrPredicates(condition) }
+	criteria.criteria[name] = triggerCondition.apply { this.player = condition?.asEntityOrPredicates() }
 }
 
 @Deprecated(
 	"Use AdvancementDisplay.criteria { ... } instead.",
 	ReplaceWith(
-		"criteria { this[name] = triggerCondition.apply { conditions(conditions) }}",
-		"io.github.ayfri.kore.features.advancements.triggers.conditions"
+		"criteria { this[name] = triggerCondition.apply { condition(*conditions) }}",
+		"io.github.ayfri.kore.features.advancements.triggers.condition"
 	)
 )
 fun Advancement.criteria(
@@ -145,14 +145,14 @@ fun Advancement.criteria(
 	triggerCondition: AdvancementTriggerCondition,
 	vararg conditions: PredicateCondition,
 ) {
-	criteria.criteria[name] = triggerCondition.apply { this.player = EntityOrPredicates().conditions(*conditions) }
+	criteria.criteria[name] = triggerCondition.apply { this.player = EntityOrPredicates().condition(*conditions) }
 }
 
 @Deprecated(
 	"Use AdvancementDisplay.criteria { ... } instead.",
 	ReplaceWith(
-		"criteria { this[name] = triggerCondition.apply { conditions { block() } } }",
-		"io.github.ayfri.kore.features.advancements.triggers.conditions"
+		"criteria { this[name] = triggerCondition.apply { condition { block() } } }",
+		"io.github.ayfri.kore.features.advancements.triggers.condition"
 	)
 )
 fun Advancement.criteria(
@@ -161,7 +161,7 @@ fun Advancement.criteria(
 	block: Predicate.() -> Unit,
 ) {
 	criteria.criteria[name] = triggerCondition.apply {
-		player = EntityOrPredicates(predicateConditions = Predicate().apply(block))
+		player = entityOrPredicates(block)
 	}
 }
 

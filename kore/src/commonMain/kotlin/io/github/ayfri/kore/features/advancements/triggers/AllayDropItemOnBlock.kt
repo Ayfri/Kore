@@ -4,7 +4,9 @@ import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
 import io.github.ayfri.kore.features.advancements.LocationOrPredicates
 import io.github.ayfri.kore.features.predicates.Predicate
+import io.github.ayfri.kore.features.predicates.conditions.LocationCheck
 import io.github.ayfri.kore.features.predicates.sub.LocationPredicate
+import io.github.ayfri.kore.features.predicates.toCondition
 import kotlinx.serialization.Serializable
 
 /**
@@ -21,13 +23,12 @@ data class AllayDropItemOnBlock(
 
 /** Add an `allayDropItemOnBlock` criterion, triggered when an allay drops an item on a block. */
 fun AdvancementCriteria.allayDropItemOnBlock(name: String, location: LocationPredicate, block: AllayDropItemOnBlock.() -> Unit) {
-	criteria[name] = AllayDropItemOnBlock(location = LocationOrPredicates(location)).apply(block)
+	criteria[name] = AllayDropItemOnBlock(location = LocationOrPredicates(LocationCheck(predicate = location))).apply(block)
 }
 
 /** Add an `allayDropItemOnBlock` criterion, triggered when an allay drops an item on a block. */
 fun AdvancementCriteria.allayDropItemOnBlock(name: String, predicate: Predicate, block: AllayDropItemOnBlock.() -> Unit) {
-	criteria[name] =
-		AllayDropItemOnBlock(location = LocationOrPredicates(predicateConditions = predicate.predicateConditions)).apply(block)
+	criteria[name] = AllayDropItemOnBlock(location = LocationOrPredicates(predicate.toCondition())).apply(block)
 }
 
 /** Add an `allayDropItemOnBlock` criterion, triggered when an allay drops an item on a block. */
@@ -35,12 +36,12 @@ fun AdvancementCriteria.allayDropItemOnBlock(name: String, block: AllayDropItemO
 	criteria[name] = AllayDropItemOnBlock().apply(block)
 }
 
-/** Set the location condition, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
+/** Set the location condition, as a `location_check` condition. */
 fun AllayDropItemOnBlock.location(block: LocationPredicate.() -> Unit) {
-	location = LocationOrPredicates(LocationPredicate().apply(block))
+	location = LocationOrPredicates(LocationCheck(predicate = LocationPredicate().apply(block)))
 }
 
-/** Set the predicate conditions, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
+/** Set the predicate condition, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
 fun AllayDropItemOnBlock.predicate(predicate: Predicate.() -> Unit) {
-	location = LocationOrPredicates(predicateConditions = Predicate().apply(predicate).predicateConditions)
+	location = LocationOrPredicates(Predicate().apply(predicate).toCondition())
 }

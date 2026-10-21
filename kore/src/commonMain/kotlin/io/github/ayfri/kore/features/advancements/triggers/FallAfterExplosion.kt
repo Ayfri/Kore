@@ -2,10 +2,12 @@ package io.github.ayfri.kore.features.advancements.triggers
 
 import io.github.ayfri.kore.features.advancements.AdvancementCriteria
 import io.github.ayfri.kore.features.advancements.EntityOrPredicates
+import io.github.ayfri.kore.features.advancements.asEntityOrPredicates
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.sub.DistancePredicate
 import io.github.ayfri.kore.features.predicates.sub.EntityPredicate
 import io.github.ayfri.kore.features.predicates.sub.LocationPredicate
+import io.github.ayfri.kore.features.predicates.toCondition
 import kotlinx.serialization.Serializable
 
 /**
@@ -42,12 +44,12 @@ fun FallAfterExplosion.cause(block: EntityOrPredicates.() -> Unit) {
 	cause = EntityOrPredicates().apply(block)
 }
 
-/** Set the cause constraints, deprecated, prefer using Predicates instead. */
+/** Set the cause constraints, as an `entity_properties` condition on `this`. */
 fun FallAfterExplosion.cause(entity: EntityPredicate) {
-	cause = EntityOrPredicates(legacyEntity = entity)
+	cause = entity.asEntityOrPredicates()
 }
 
 /** Set the cause constraints, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
 fun FallAfterExplosion.cause(predicate: Predicate) {
-	cause = EntityOrPredicates(predicateConditions = predicate)
+	cause = EntityOrPredicates(predicate.toCondition())
 }
