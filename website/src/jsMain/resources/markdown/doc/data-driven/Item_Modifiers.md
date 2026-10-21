@@ -863,7 +863,7 @@ val baseModifier = itemModifier("base") {
 
 itemModifier("combined") {
 	reference(baseModifier)
-	setCount(2f)  // ["my_pack:base", {"function": "minecraft:set_count", "count": 2.0}]
+	setCount(2f)  // ["my_pack:base", {"type": "minecraft:set_count", "count": 2.0}]
 }
 
 itemModifier("shortcut") {
