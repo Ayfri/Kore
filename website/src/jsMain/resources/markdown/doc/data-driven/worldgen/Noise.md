@@ -144,12 +144,14 @@ node classes.
 | `interpolated`         | `interpolated(...)`       | Interpolates the input across the surrounding grid cells.                     |
 | `interval_select`      | `intervalSelect(...)`     | Picks one of several functions from where the input falls between thresholds. |
 | `lerp`                 | `lerp(...)`               | Interpolates from `first` to `second` by `alpha`.                             |
+| `log`                  | `log(...)`                | Takes the logarithm of the input.                                             |
 | `max`                  | `max(...)`                | Larger of two inputs.                                                         |
 | `min`                  | `min(...)`                | Smaller of two inputs.                                                        |
 | `mul`                  | `mul(...)`                | Multiplies two inputs.                                                        |
 | `negate`               | `negate(...)`             | Flips the sign of the input.                                                  |
 | `noise`                | `noise(...)`              | Samples a noise definition, scaled horizontally and vertically.               |
 | `old_blended_noise`    | `oldBlendedNoise(...)`    | Legacy blended noise used before the 1.18 terrain rewrite.                    |
+| `pow`                  | `pow(...)`                | Raises `base` to the power of `exponent`.                                     |
 | `quarter_negative`     | `quarterNegative(...)`    | Quarters the input when negative, otherwise leaves it unchanged.              |
 | `range_choice`         | `rangeChoice(...)`        | Picks between two inputs based on whether a value falls within a range.       |
 | `reciprocal`           | `reciprocal(...)`         | Reciprocal (1 / x) of the input.                                              |
@@ -158,7 +160,9 @@ node classes.
 | `shift_a`              | `shiftA(...)`             | Samples a noise at `(x/4, 0, z/4)`, scaled back up by 4.                      |
 | `shift_b`              | `shiftB(...)`             | Samples a noise at `(z/4, x/4, 0)`, scaled back up by 4.                      |
 | `shifted_noise`        | `shiftedNoise(...)`       | Like `noise`, but with the sampled coordinates shifted.                       |
+| `sign`                 | `sign(...)`               | Outputs the sign of the input.                                                |
 | `spline`               | `spline(...)`             | Cubic spline interpolating control points over a coordinate.                  |
+| `sqrt`                 | `sqrt(...)`               | Takes the square root of the input.                                           |
 | `square`               | `square(...)`             | Raises the input to the power of 2 (x²).                                      |
 | `squeeze`              | `squeeze(...)`            | Clamps the input to [-1, 1], then applies `x/2 - x³/24`.                      |
 | `sub`                  | `sub(...)`                | Subtracts the second input from the first.                                    |

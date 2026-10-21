@@ -311,6 +311,15 @@ fun DataPack.densityFunctionTests() {
 		}
 	""".trimIndent()
 
+	densityFunctionsBuilder.log("log", DensityFunctions.Overworld.BASE_3D_NOISE)
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:log",
+			"input": "minecraft:overworld/base_3d_noise"
+		}
+	""".trimIndent()
+
 	densityFunctionsBuilder.max("max", DensityFunctions.Overworld.BASE_3D_NOISE, DensityFunctions.Nether.BASE_3D_NOISE)
 
 	densityFunctions.last() assertsIs """
@@ -377,6 +386,26 @@ fun DataPack.densityFunctionTests() {
 			"xz_factor": 80.0,
 			"y_factor": 160.0,
 			"smear_scale_multiplier": 8.0
+		}
+	""".trimIndent()
+
+	densityFunctionsBuilder.pow("pow", DensityFunctions.Overworld.BASE_3D_NOISE, 2.0)
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:pow",
+			"base": "minecraft:overworld/base_3d_noise",
+			"exponent": 2.0
+		}
+	""".trimIndent()
+
+	densityFunctionsBuilder.pow("pow_constants", 2.0, 0.5)
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:pow",
+			"base": 2.0,
+			"exponent": 0.5
 		}
 	""".trimIndent()
 
@@ -505,6 +534,15 @@ fun DataPack.densityFunctionTests() {
 		}
 	""".trimIndent()
 
+	densityFunctionsBuilder.sign("sign", -2.0)
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:sign",
+			"input": -2.0
+		}
+	""".trimIndent()
+
 	densityFunctionsBuilder.spline("spline_constant", 1.5f)
 
 	densityFunctions.last() assertsIs """
@@ -554,6 +592,15 @@ fun DataPack.densityFunctionTests() {
 					}
 				]
 			}
+		}
+	""".trimIndent()
+
+	densityFunctionsBuilder.sqrt("sqrt", DensityFunctions.Overworld.BASE_3D_NOISE)
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:sqrt",
+			"input": "minecraft:overworld/base_3d_noise"
 		}
 	""".trimIndent()
 
