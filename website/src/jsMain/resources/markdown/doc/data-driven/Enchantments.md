@@ -514,9 +514,10 @@ effects {
 ## Requirements (Conditions)
 
 Every effect accepts a `requirements` block holding [predicate](/docs/data-driven/predicates) conditions, lifted next
-to the effect in the generated JSON. The game validates enchantments without access to other files and refuses to load
-one holding a `reference` condition, so Kore copies the conditions of each referenced predicate of the pack in its place
-(an `all_of` when it holds several), and throws for a predicate defined outside the pack:
+to the effect in the generated JSON. The `requirements` field holds one condition: a block with several conditions is
+written as one `minecraft:all_of`. The game validates enchantments without access to other files and refuses to load
+one holding a `reference` condition, so Kore copies the condition of each referenced predicate of the pack in its place,
+and throws for a predicate defined outside the pack:
 
 ```kotlin
 effects {

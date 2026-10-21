@@ -3,7 +3,7 @@ package io.github.ayfri.kore.features.enchantments.effects.builders
 import io.github.ayfri.kore.features.enchantments.effects.EnchantmentEffect
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
-import io.github.ayfri.kore.serializers.InlinableList
+import io.github.ayfri.kore.features.predicates.toCondition
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
@@ -36,15 +36,15 @@ enum class EquipmentDropsSpecifier {
  *
  * @property enchanted The side that has to carry the enchantment for the entry to apply.
  * @property effect The effect applied to the drop chance.
- * @property requirements The conditions the entry applies under, always applying when `null`.
+ * @property requirements The condition the entry applies under, always applying when `null`.
  */
 @Serializable
 data class EquipmentDropsConditionalEffect(
 	var enchanted: EquipmentDropsSpecifier,
 	var effect: EnchantmentEffect,
-	var requirements: InlinableList<PredicateCondition>? = null,
+	var requirements: PredicateCondition? = null,
 )
 
-/** Sets [EquipmentDropsConditionalEffect.requirements] to the predicate conditions built in [block]. */
+/** Sets [EquipmentDropsConditionalEffect.requirements] to the predicate conditions built in [block], an `all_of` when there are several. */
 fun EquipmentDropsConditionalEffect.requirements(block: Predicate.() -> Unit) =
-	apply { requirements = Predicate().apply(block).predicateConditions }
+	apply { requirements = Predicate().apply(block).toCondition() }

@@ -13,6 +13,7 @@ import io.github.ayfri.kore.features.enchantments.values.Constant
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.enchantments.values.LevelBasedScope
 import io.github.ayfri.kore.features.predicates.Predicate
+import io.github.ayfri.kore.features.predicates.toCondition
 import io.github.ayfri.kore.generated.arguments.EntityTypeOrTagArgument
 import io.github.ayfri.kore.generated.arguments.MobEffectOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
@@ -47,7 +48,7 @@ class EntityEffectAllOfScope internal constructor(internal val allOf: AllOf = Al
 
 /** Sets the conditions the whole `all_of` block runs under. */
 fun EntityEffectAllOfScope.requirements(block: Predicate.() -> Unit = {}) {
-	allOf.requirements = Predicate().apply(block).predicateConditions
+	allOf.requirements = Predicate().apply(block).toCondition()
 }
 
 /**

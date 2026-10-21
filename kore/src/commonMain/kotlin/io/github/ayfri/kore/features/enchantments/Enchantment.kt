@@ -65,23 +65,21 @@ data class Enchantment(
 }
 
 /**
- * Replaces every `reference` condition of [element] with the conditions of the predicate it names, an `all_of` when it
- * holds several. The game validates enchantments without access to other files and refuses to load one holding a
- * reference, so a predicate defined outside this pack throws.
+ * Replaces every `reference` condition of [element] with the condition of the predicate it names. The game validates
+ * enchantments without access to other files and refuses to load one holding a reference, so a predicate defined
+ * outside this pack throws.
  */
 private fun DataPack.inlinePredicateReferences(element: JsonElement, visited: Set<String> = emptySet()): JsonElement = when (element) {
 	is JsonArray -> JsonArray(element.map { inlinePredicateReferences(it, visited) })
 	is JsonObject -> {
 		val id = (element["name"] as? JsonPrimitive)?.content
-		if (id == null || (element["condition"] as? JsonPrimitive)?.content != "minecraft:reference") JsonObject(element.mapValues { inlinePredicateReferences(it.value, visited) })
+		if (id == null || (element["type"] as? JsonPrimitive)?.content != "minecraft:reference") JsonObject(element.mapValues { inlinePredicateReferences(it.value, visited) })
 		else {
 			val (path, namespace) = id.splitNamespacedId()
 			check("$namespace:$path" !in visited) { "Predicate '$namespace:$path' references itself." }
 			val predicate = predicates.firstOrNull { it.fileName == path && (it.namespace ?: name) == namespace }
 				?: error("Predicate '$namespace:$path' isn't defined in this pack, and enchantments can't reference one: write its conditions inline.")
-			val conditions = inlinePredicateReferences(jsonEncoder.encodeToJsonElement(predicate), visited + "$namespace:$path")
-			if (conditions !is JsonArray) conditions
-			else JsonObject(mapOf("condition" to JsonPrimitive("minecraft:all_of"), "terms" to conditions))
+			inlinePredicateReferences(jsonEncoder.encodeToJsonElement(predicate), visited + "$namespace:$path")
 		}
 	}
 

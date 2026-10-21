@@ -26,7 +26,7 @@ fun DataPack.predicateEntitySubPredicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:components": {
@@ -50,7 +50,7 @@ fun DataPack.predicateEntitySubPredicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:distance": {
@@ -81,7 +81,7 @@ fun DataPack.predicateEntitySubPredicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:effects": {
@@ -105,7 +105,7 @@ fun DataPack.predicateEntitySubPredicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:entity_tags": {
@@ -131,7 +131,7 @@ fun DataPack.predicateEntitySubPredicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:entity_type": [
@@ -154,7 +154,7 @@ fun DataPack.predicateEntitySubPredicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:equipment": {
@@ -185,7 +185,7 @@ fun DataPack.predicateEntitySubPredicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:flags": {
@@ -219,7 +219,7 @@ fun DataPack.predicateEntitySubPredicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:location": {
@@ -269,7 +269,7 @@ fun DataPack.predicateEntitySubPredicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:movement": {
@@ -304,7 +304,7 @@ fun DataPack.predicateEntitySubPredicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:movement_affected_by": {
@@ -326,7 +326,7 @@ fun DataPack.predicateEntitySubPredicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:nbt": {
@@ -346,7 +346,7 @@ fun DataPack.predicateEntitySubPredicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:passenger": {
@@ -364,7 +364,7 @@ fun DataPack.predicateEntitySubPredicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:periodic_tick": 20
@@ -382,7 +382,7 @@ fun DataPack.predicateEntitySubPredicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:predicates": {
@@ -400,7 +400,7 @@ fun DataPack.predicateEntitySubPredicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:slots": {
@@ -422,7 +422,7 @@ fun DataPack.predicateEntitySubPredicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:stepping_on": {
@@ -444,7 +444,7 @@ fun DataPack.predicateEntitySubPredicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:targeted_entity": {
@@ -462,7 +462,7 @@ fun DataPack.predicateEntitySubPredicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:team": "red"
@@ -480,7 +480,7 @@ fun DataPack.predicateEntitySubPredicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:vehicle": {

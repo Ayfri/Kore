@@ -29,7 +29,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:type_specific/fishing_hook": {
@@ -51,7 +51,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:type_specific/lightning": {
@@ -79,7 +79,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:type_specific/lightning": {
@@ -116,7 +116,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:type_specific/player": {
@@ -155,7 +155,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:type_specific/player": {
@@ -193,7 +193,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:type_specific/player": {
@@ -234,7 +234,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:type_specific/raider": {
@@ -255,7 +255,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:type_specific/sheep": {
@@ -275,7 +275,7 @@ fun DataPack.predicateEntityTypeSpecificTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:type_specific/cube_mob": {

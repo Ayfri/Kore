@@ -95,7 +95,7 @@ fun DataPack.lootTableTests() {
 					"bonus_rolls": 1.0,
 					"conditions": [
 						{
-							"condition": "minecraft:weather_check",
+							"type": "minecraft:weather_check",
 							"raining": true
 						}
 					],
@@ -128,7 +128,7 @@ fun DataPack.lootTableTests() {
 							"value": "minecraft:gameplay/piglin_bartering",
 							"conditions": [
 								{
-									"condition": "minecraft:weather_check",
+									"type": "minecraft:weather_check",
 									"raining": true
 								}
 							],
@@ -137,7 +137,7 @@ fun DataPack.lootTableTests() {
 									"function": "minecraft:set_count",
 									"conditions": [
 										{
-											"condition": "minecraft:random_chance",
+											"type": "minecraft:random_chance",
 											"chance": 0.5
 										}
 									],

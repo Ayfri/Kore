@@ -100,8 +100,8 @@ when you leave it out.
 ## Limitation: object-form resources only
 
 Conditions are injected at the JSON **root**, which must be an object. That covers recipes, advancements, loot tables,
-and single-entry predicates or item modifiers.
+predicates (several conditions are written as one `all_of`), and single-function item modifiers.
 
-Predicates and item modifiers with **multiple** entries serialize as a top-level JSON array, which has no root to attach
+Item modifiers with **multiple** functions serialize as a top-level JSON array, which has no root to attach
 `fabric:load_conditions` to. Kore emits a warning and generates the file without conditions in that case. Wrap the logic
-differently (for example a single `allOf`/`anyOf` predicate) if you need conditions on it.
+differently (for example a single `sequence` function) if you need conditions on it.

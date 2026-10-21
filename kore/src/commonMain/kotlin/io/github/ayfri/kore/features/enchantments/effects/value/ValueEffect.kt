@@ -3,6 +3,7 @@ package io.github.ayfri.kore.features.enchantments.effects.value
 import io.github.ayfri.kore.features.enchantments.effects.EnchantmentEffect
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
+import io.github.ayfri.kore.features.predicates.toCondition
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import kotlinx.serialization.Serializable
@@ -19,15 +20,15 @@ import kotlinx.serialization.Serializable
 @GeneratedSealedSerializer
 @Serializable(with = ValueEffect.Companion.ValueEffectSerializer::class)
 sealed class ValueEffect : EnchantmentEffect {
-	/** The conditions the effect runs under, always running when `null`. Only honored at the top level of a component. */
-	var requirements: List<PredicateCondition>? = null
+	/** The condition the effect runs under, always running when `null`. Only honored at the top level of a component. */
+	var requirements: PredicateCondition? = null
 
 	companion object {
 		data object ValueEffectSerializer : NamespacedPolymorphicSerializer<ValueEffect>(valueEffectSealedSerializer())
 	}
 }
 
-/** Sets [ValueEffect.requirements] to the predicate conditions built in [block]. */
+/** Sets [ValueEffect.requirements] to the predicate conditions built in [block], an `all_of` when there are several. */
 fun ValueEffect.requirements(block: Predicate.() -> Unit = {}) {
-	requirements = Predicate().apply(block).predicateConditions
+	requirements = Predicate().apply(block).toCondition()
 }

@@ -996,11 +996,11 @@ fun DataPack.itemModifierTests() {
 				"function": "minecraft:exploration_map",
 				"conditions": [
 					{
-						"condition": "minecraft:random_chance",
+						"type": "minecraft:random_chance",
 						"chance": 0.5
 					},
 					{
-						"condition": "minecraft:weather_check",
+						"type": "minecraft:weather_check",
 						"raining": true
 					}
 				],

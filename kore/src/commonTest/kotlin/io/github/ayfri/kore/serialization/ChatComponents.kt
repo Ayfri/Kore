@@ -304,7 +304,7 @@ fun chatComponentsTests() {
 
 		predicates.last() assertsIs """
 			{
-				"condition": "minecraft:match_tool",
+				"type": "minecraft:match_tool",
 				"predicate": {
 					"components": {
 						"lore": [
@@ -329,7 +329,7 @@ fun chatComponentsTests() {
 
 		predicates.last() assertsIs """
 			{
-				"condition": "minecraft:match_tool",
+				"type": "minecraft:match_tool",
 				"predicate": {
 					"components": {
 						"lore": [

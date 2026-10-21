@@ -3,11 +3,11 @@ package io.github.ayfri.kore.features.predicates
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.annotations.LootDsl
+import io.github.ayfri.kore.features.predicates.conditions.AllOf
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.serializers.InlinableList
-import io.github.ayfri.kore.serializers.InlinableListSerializer
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -21,8 +21,8 @@ typealias PredicateAsList = @Serializable(Predicate.Companion.PredicateAsListSer
  * returning pass or fail. Predicates are used in commands, loot tables, advancements,
  * and other data-driven features to filter or trigger actions based on game state.
  *
- * Kore serializes predicates as either a single object or an array of conditions,
- * matching the vanilla format. See the Minecraft Wiki for the full JSON structure and usage.
+ * Kore serializes a predicate as a single condition, several conditions being wrapped in an `all_of`
+ * (see [toCondition]), matching the vanilla format. See the Minecraft Wiki for the full JSON structure and usage.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/predicates
  * JSON format reference: https://minecraft.wiki/w/Predicate
@@ -36,10 +36,10 @@ data class Predicate(
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 
 	companion object {
-		data object PredicateSerializer : InlineAutoSerializer<Predicate, InlinableList<PredicateCondition>>(
-			InlinableListSerializer(PredicateCondition.serializer()),
-			Predicate::predicateConditions,
-			{ Predicate(predicateConditions = it) },
+		data object PredicateSerializer : InlineAutoSerializer<Predicate, PredicateCondition>(
+			PredicateCondition.serializer(),
+			Predicate::toCondition,
+			{ Predicate(predicateConditions = listOf(it)) },
 		)
 
 		data object PredicateAsListSerializer : InlineAutoSerializer<Predicate, InlinableList<PredicateCondition>>(
@@ -49,6 +49,17 @@ data class Predicate(
 		)
 	}
 }
+
+/**
+ * The conditions of this predicate as a single condition: the condition itself when there is exactly one, an
+ * [AllOf] of them otherwise (an empty one when there are none).
+ *
+ * ```
+ * Predicate().apply { randomChance(0.5f) }.toCondition()                   // RandomChance
+ * Predicate().apply { randomChance(0.5f); killedByPlayer() }.toCondition() // AllOf with both terms
+ * ```
+ */
+internal fun Predicate.toCondition(): PredicateCondition = predicateConditions.singleOrNull() ?: AllOf(predicateConditions)
 
 /**
  * Create and register a predicate in this [DataPack].

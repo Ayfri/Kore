@@ -87,7 +87,7 @@ scoreboard, compares it to the previous tick, runs the handlers on a transition,
 
 ```mcfunction
 # dispatch_on_rain_start
-execute store result score #on_rain_start.now kore_world if predicate {condition:"minecraft:weather_check",raining:1b}
+execute store result score #on_rain_start.now kore_world if predicate {type:"minecraft:weather_check",raining:1b}
 execute if score #on_rain_start.now kore_world matches 1 if score #on_rain_start.prev kore_world matches 0 run function #my_pack:on_rain_start
 scoreboard players operation #on_rain_start.prev kore_world = #on_rain_start.now kore_world
 ```

@@ -2,6 +2,7 @@ package io.github.ayfri.kore.features.enchantments.effects.builders
 
 import io.github.ayfri.kore.features.enchantments.effects.special.EmptyConditionalEffect
 import io.github.ayfri.kore.features.predicates.Predicate
+import io.github.ayfri.kore.features.predicates.toCondition
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
@@ -43,7 +44,7 @@ data class EmptyConditionalEffectBuilder(var effects: List<EmptyConditionalEffec
  * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#damage_immunity
  */
 fun EmptyConditionalEffectBuilder.requirements(block: Predicate.() -> Unit = {}) =
-	apply { effects += EmptyConditionalEffect(requirements = Predicate().apply(block).predicateConditions) }
+	apply { effects += EmptyConditionalEffect(requirements = Predicate().apply(block).toCondition()) }
 
 /** Appends an entry applying unconditionally. */
 fun EmptyConditionalEffectBuilder.always() = apply { effects += EmptyConditionalEffect() }

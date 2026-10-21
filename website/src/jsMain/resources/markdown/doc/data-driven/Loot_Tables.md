@@ -256,7 +256,7 @@ val layers = numberProvider("my_layers") {
 	"cases": [
 		{
 			"condition": {
-				"condition": "minecraft:block_state_property",
+				"type": "minecraft:block_state_property",
 				"block": "minecraft:composter",
 				"properties": {
 					"level": "0"
@@ -599,7 +599,7 @@ dataPack("treasure_hunt") {
 			"bonus_rolls": 0.5,
 			"conditions": [
 				{
-					"condition": "minecraft:killed_by_player"
+					"type": "minecraft:killed_by_player"
 				}
 			],
 			"entries": [

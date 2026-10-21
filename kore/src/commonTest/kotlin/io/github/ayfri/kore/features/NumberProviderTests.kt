@@ -53,7 +53,7 @@ fun DataPack.numberProviderTests() {
 					"rolls": {
 						"type": "minecraft:conditional",
 						"condition": {
-							"condition": "minecraft:block_state_property",
+							"type": "minecraft:block_state_property",
 							"block": "minecraft:composter",
 							"properties": {
 								"level": "0"
@@ -81,7 +81,7 @@ fun DataPack.numberProviderTests() {
 					"rolls": {
 						"type": "minecraft:conditional",
 						"condition": {
-							"condition": "minecraft:survives_explosion"
+							"type": "minecraft:survives_explosion"
 						},
 						"on_true": {
 							"type": "minecraft:uniform",
@@ -177,7 +177,7 @@ fun DataPack.numberProviderTests() {
 						"cases": [
 							{
 								"condition": {
-									"condition": "minecraft:block_state_property",
+									"type": "minecraft:block_state_property",
 									"block": "minecraft:composter",
 									"properties": {
 										"level": "0"
@@ -187,7 +187,7 @@ fun DataPack.numberProviderTests() {
 							},
 							{
 								"condition": {
-									"condition": "minecraft:survives_explosion"
+									"type": "minecraft:survives_explosion"
 								},
 								"number_provider": 2.0
 							}
@@ -229,7 +229,7 @@ fun DataPack.numberProviderTests() {
 						"cases": [
 							{
 								"condition": {
-									"condition": "minecraft:survives_explosion"
+									"type": "minecraft:survives_explosion"
 								},
 								"number_provider": 4.0
 							}

@@ -13,6 +13,7 @@ import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
+import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.*
 import io.github.ayfri.kore.features.predicates.predicate
 import io.github.ayfri.kore.features.predicates.providers.*
@@ -39,18 +40,18 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:all_of",
+			"type": "minecraft:all_of",
 			"terms": [
 				{
-					"condition": "minecraft:enchantment_active_check",
+					"type": "minecraft:enchantment_active_check",
 					"active": false
 				},
 				{
-					"condition": "minecraft:random_chance",
+					"type": "minecraft:random_chance",
 					"chance": 0.25
 				},
 				{
-					"condition": "minecraft:time_check",
+					"type": "minecraft:time_check",
 					"clock": "minecraft:overworld",
 					"value": {
 						"min": 10.0,
@@ -58,7 +59,7 @@ fun DataPack.predicateTests() {
 					}
 				},
 				{
-					"condition": "minecraft:weather_check",
+					"type": "minecraft:weather_check",
 					"raining": false,
 					"thundering": true
 				}
@@ -75,14 +76,14 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:any_of",
+			"type": "minecraft:any_of",
 			"terms": [
 				{
-					"condition": "minecraft:killed_by_player",
+					"type": "minecraft:killed_by_player",
 					"inverse": true
 				},
 				{
-					"condition": "minecraft:survives_explosion"
+					"type": "minecraft:survives_explosion"
 				}
 			]
 		}
@@ -97,7 +98,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:block_state_property",
+			"type": "minecraft:block_state_property",
 			"block": "minecraft:redstone_lamp",
 			"properties": {
 				"facing": "north",
@@ -121,7 +122,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:damage_source_properties",
+			"type": "minecraft:damage_source_properties",
 			"predicate": {
 				"direct_entity": {
 					"minecraft:entity_type": "minecraft:zombie"
@@ -146,7 +147,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:enchantment_active_check",
+			"type": "minecraft:enchantment_active_check",
 			"active": true
 		}
 	""".trimIndent()
@@ -249,7 +250,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_properties",
+			"type": "minecraft:entity_properties",
 			"entity": "this",
 			"predicate": {
 				"minecraft:components": {
@@ -354,7 +355,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:entity_scores",
+			"type": "minecraft:entity_scores",
 			"entity": "this",
 			"scores": {
 				"kills": {
@@ -372,7 +373,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:environment_attribute_check",
+			"type": "minecraft:environment_attribute_check",
 			"attribute": "minecraft:gameplay/bees_stay_in_hive",
 			"value": true
 		}
@@ -384,7 +385,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:environment_attribute_check",
+			"type": "minecraft:environment_attribute_check",
 			"attribute": "minecraft:visual/sky_light_factor",
 			"value": 0.5
 		}
@@ -399,7 +400,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:environment_attribute_check",
+			"type": "minecraft:environment_attribute_check",
 			"attribute": "minecraft:visual/moon_phase",
 			"value": "minecraft:environment/celestial/moon/full_moon"
 		}
@@ -413,18 +414,21 @@ fun DataPack.predicateTests() {
 	}
 
 	predicates.last() assertsIs """
-		[
-			{
-				"condition": "minecraft:environment_attribute_check",
-				"attribute": "minecraft:visual/moon_phase",
-				"value": "minecraft:environment/celestial/moon/full_moon"
-			},
-			{
-				"condition": "minecraft:environment_attribute_check",
-				"attribute": "minecraft:gameplay/bees_stay_in_hive",
-				"value": true
-			}
-		]
+		{
+			"type": "minecraft:all_of",
+			"terms": [
+				{
+					"type": "minecraft:environment_attribute_check",
+					"attribute": "minecraft:visual/moon_phase",
+					"value": "minecraft:environment/celestial/moon/full_moon"
+				},
+				{
+					"type": "minecraft:environment_attribute_check",
+					"attribute": "minecraft:gameplay/bees_stay_in_hive",
+					"value": true
+				}
+			]
+		}
 	""".trimIndent()
 
 	predicate("inverted") {
@@ -435,9 +439,9 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:inverted",
+			"type": "minecraft:inverted",
 			"term": {
-				"condition": "minecraft:random_chance",
+				"type": "minecraft:random_chance",
 				"chance": 0.1
 			}
 		}
@@ -449,9 +453,9 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:inverted",
+			"type": "minecraft:inverted",
 			"term": {
-				"condition": "minecraft:survives_explosion"
+				"type": "minecraft:survives_explosion"
 			}
 		}
 	""".trimIndent()
@@ -462,7 +466,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:killed_by_player",
+			"type": "minecraft:killed_by_player",
 			"inverse": true
 		}
 	""".trimIndent()
@@ -495,7 +499,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:location_check",
+			"type": "minecraft:location_check",
 			"offsetX": 1,
 			"offsetY": 2,
 			"offsetZ": 3,
@@ -552,7 +556,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:match_tool",
+			"type": "minecraft:match_tool",
 			"predicate": {
 				"items": [
 					"minecraft:diamond_pickaxe",
@@ -584,7 +588,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:match_tool",
+			"type": "minecraft:match_tool",
 			"predicate": {
 				"items": [
 					"minecraft:diamond_pickaxe",
@@ -600,7 +604,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:random_chance",
+			"type": "minecraft:random_chance",
 			"chance": 0.4
 		}
 	""".trimIndent()
@@ -611,7 +615,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:random_chance_with_enchanted_bonus",
+			"type": "minecraft:random_chance_with_enchanted_bonus",
 			"unenchanted_chance": 1.0,
 			"enchanted_chance": 2,
 			"enchantment": "minecraft:fortune"
@@ -624,7 +628,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:reference",
+			"type": "minecraft:reference",
 			"name": "kore:test"
 		}
 	""".trimIndent()
@@ -635,7 +639,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:reference",
+			"type": "minecraft:reference",
 			"name": "kore:test"
 		}
 	""".trimIndent()
@@ -646,7 +650,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:survives_explosion"
+			"type": "minecraft:survives_explosion"
 		}
 	""".trimIndent()
 
@@ -656,7 +660,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:table_bonus",
+			"type": "minecraft:table_bonus",
 			"enchantment": "minecraft:looting",
 			"chances": [
 				0.1,
@@ -675,7 +679,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:table_bonus",
+			"type": "minecraft:table_bonus",
 			"enchantment": "minecraft:fortune",
 			"chances": [
 				0.1,
@@ -690,7 +694,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:time_check",
+			"type": "minecraft:time_check",
 			"clock": "minecraft:overworld",
 			"value": {
 				"min": 5.0,
@@ -705,7 +709,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:time_check",
+			"type": "minecraft:time_check",
 			"clock": "minecraft:the_end",
 			"value": {
 				"min": 0.0,
@@ -721,7 +725,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:value_check",
+			"type": "minecraft:value_check",
 			"value": {
 				"type": "minecraft:score",
 				"target": {
@@ -743,7 +747,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:value_check",
+			"type": "minecraft:value_check",
 			"value": {
 				"type": "minecraft:score",
 				"target": {
@@ -765,7 +769,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:value_check",
+			"type": "minecraft:value_check",
 			"value": {
 				"type": "minecraft:sum",
 				"summands": [
@@ -791,7 +795,7 @@ fun DataPack.predicateTests() {
 
 	predicates.last() assertsIs """
 		{
-			"condition": "minecraft:weather_check",
+			"type": "minecraft:weather_check",
 			"raining": true,
 			"thundering": false
 		}
@@ -801,6 +805,84 @@ fun DataPack.predicateTests() {
 		randomChance(0.4f)
 	}
 	roundTrip(predicates.last())
+
+	predicate("one_condition") {
+		randomChance(0.5f)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:random_chance",
+			"chance": 0.5
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
+
+	predicate("two_conditions") {
+		randomChance(0.5f)
+		killedByPlayer()
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:all_of",
+			"terms": [
+				{
+					"type": "minecraft:random_chance",
+					"chance": 0.5
+				},
+				{
+					"type": "minecraft:killed_by_player"
+				}
+			]
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
+
+	predicate("no_condition") {}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:all_of",
+			"terms": []
+		}
+	""".trimIndent()
+
+	predicate("all_of_single_term") {
+		allOf {
+			killedByPlayer()
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:all_of",
+			"terms": {
+				"type": "minecraft:killed_by_player"
+			}
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
+
+	predicate("any_of_single_term") {
+		anyOf {
+			survivesExplosion()
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:any_of",
+			"terms": {
+				"type": "minecraft:survives_explosion"
+			}
+		}
+	""".trimIndent()
+
+	jsonEncoder.decodeFromString(
+		Predicate.serializer(),
+		"""{"type":"minecraft:all_of","terms":{"type":"minecraft:killed_by_player"}}""",
+	).predicateConditions assertsIs listOf(AllOf(listOf(KilledByPlayer())))
 }
 
 class PredicateTests : FunSpec({

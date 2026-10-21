@@ -4,6 +4,8 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.advancements.advancement
+import io.github.ayfri.kore.features.itemmodifiers.functions.setCount
+import io.github.ayfri.kore.features.itemmodifiers.itemModifier
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
 import io.github.ayfri.kore.features.predicates.predicate
 import io.github.ayfri.kore.generation.fabric.conditions.ResourceCondition
@@ -117,7 +119,18 @@ fun DataPack.resourceConditionsTests() {
 
 	advancements.last().generateJsonElement(this).toString() assertsIs """{"criteria":{}}"""
 
-	predicate("multi_ignored") {
+	itemModifier("multi_ignored") {
+		fabricLoadConditions {
+			allModsLoaded("create")
+		}
+		setCount(1f)
+		setCount(2f)
+	}
+
+	val multi = itemModifiers.last()
+	multi.generateJsonWithLoadConditions(this) assertsIs multi.generateJson(this)
+
+	predicate("multi_attached") {
 		fabricLoadConditions {
 			allModsLoaded("create")
 		}
@@ -125,8 +138,29 @@ fun DataPack.resourceConditionsTests() {
 		randomChance(0.25f)
 	}
 
-	val multi = predicates.last()
-	multi.generateJsonWithLoadConditions(this) assertsIs multi.generateJson(this)
+	predicates.last().generateJsonWithLoadConditions(this) assertsIs """
+		{
+			"fabric:load_conditions": [
+				{
+					"condition": "fabric:all_mods_loaded",
+					"values": [
+						"create"
+					]
+				}
+			],
+			"type": "minecraft:all_of",
+			"terms": [
+				{
+					"type": "minecraft:random_chance",
+					"chance": 0.5
+				},
+				{
+					"type": "minecraft:random_chance",
+					"chance": 0.25
+				}
+			]
+		}
+	""".trimIndent()
 }
 
 class ResourceConditionsTests : FunSpec({

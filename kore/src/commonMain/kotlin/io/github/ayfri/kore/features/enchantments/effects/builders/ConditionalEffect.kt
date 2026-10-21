@@ -4,8 +4,8 @@ import io.github.ayfri.kore.features.enchantments.effects.EnchantmentEffect
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.conditions.reference
+import io.github.ayfri.kore.features.predicates.toCondition
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
-import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
 /**
@@ -16,22 +16,22 @@ import kotlinx.serialization.Serializable
  * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#Effect_components
  *
  * @property effect The effect run by the entry.
- * @property requirements The conditions the entry runs under, always running when `null`.
+ * @property requirements The condition the entry runs under, always running when `null`.
  */
 @Serializable
 data class ConditionalEffect(
 	var effect: EnchantmentEffect,
-	var requirements: InlinableList<PredicateCondition>? = null,
+	var requirements: PredicateCondition? = null,
 )
 
-/** Sets [ConditionalEffect.requirements] to the predicate conditions built in [block]. */
+/** Sets [ConditionalEffect.requirements] to the predicate conditions built in [block], an `all_of` when there are several. */
 fun ConditionalEffect.requirements(block: Predicate.() -> Unit) =
-	apply { requirements = Predicate().apply(block).predicateConditions }
+	apply { requirements = Predicate().apply(block).toCondition() }
 
 /**
  * Sets [ConditionalEffect.requirements] to the [predicates] registered in this pack, whose conditions the enchantment
  * copies inline when generated, since the game rejects a `reference` condition in an enchantment.
  */
 fun ConditionalEffect.requirements(vararg predicates: PredicateArgument) = apply {
-	requirements = Predicate().apply { predicates.forEach { reference(it) } }.predicateConditions
+	requirements = Predicate().apply { predicates.forEach { reference(it) } }.toCondition()
 }

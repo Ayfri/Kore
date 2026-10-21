@@ -10,6 +10,7 @@ import io.github.ayfri.kore.features.enchantments.values.Constant
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.enchantments.values.LevelBasedScope
 import io.github.ayfri.kore.features.predicates.Predicate
+import io.github.ayfri.kore.features.predicates.toCondition
 
 /**
  * Receiver of the [ValueEffect] builders, implemented by every component that computes a number.
@@ -38,7 +39,7 @@ class ValueEffectAllOfScope internal constructor(internal val allOf: AllOf = All
 
 /** Sets the conditions the whole `all_of` block applies under. */
 fun ValueEffectAllOfScope.requirements(block: Predicate.() -> Unit = {}) {
-	allOf.requirements = Predicate().apply(block).predicateConditions
+	allOf.requirements = Predicate().apply(block).toCondition()
 }
 
 /**

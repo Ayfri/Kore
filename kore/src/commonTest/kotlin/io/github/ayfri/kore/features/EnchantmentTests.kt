@@ -163,7 +163,7 @@ fun DataPack.enchantmentTests() {
 							"value": 5
 						},
 						"requirements": {
-							"condition": "minecraft:weather_check",
+							"type": "minecraft:weather_check",
 							"raining": true
 						}
 					},
@@ -240,8 +240,50 @@ fun DataPack.enchantmentTests() {
 							]
 						},
 						"requirements": {
-							"condition": "minecraft:weather_check",
+							"type": "minecraft:weather_check",
 							"raining": true
+						}
+					}
+				]
+			}
+		}
+	""".trimIndent()
+
+	enchantment("two_requirements") {
+		effects {
+			damage {
+				add(2) {
+					requirements {
+						weatherCheck(raining = true)
+						weatherCheck(thundering = true)
+					}
+				}
+			}
+		}
+	}
+
+	enchantments.last() assertsIs """
+		{
+			$DUMMY_ENCHANTMENT_CONTENT
+			"effects": {
+				"minecraft:damage": [
+					{
+						"effect": {
+							"type": "minecraft:add",
+							"value": 2
+						},
+						"requirements": {
+							"type": "minecraft:all_of",
+							"terms": [
+								{
+									"type": "minecraft:weather_check",
+									"raining": true
+								},
+								{
+									"type": "minecraft:weather_check",
+									"thundering": true
+								}
+							]
 						}
 					}
 				]
@@ -433,7 +475,7 @@ fun DataPack.enchantmentTests() {
 					{
 						"effect": {},
 						"requirements": {
-							"condition": "minecraft:weather_check",
+							"type": "minecraft:weather_check",
 							"raining": true
 						}
 					},
@@ -509,7 +551,7 @@ fun DataPack.enchantmentTests() {
 							"value": 5
 						},
 						"requirements": {
-							"condition": "minecraft:weather_check",
+							"type": "minecraft:weather_check",
 							"raining": true
 						}
 					},
@@ -633,7 +675,7 @@ fun DataPack.enchantmentTests() {
 							]
 						},
 						"requirements": {
-							"condition": "minecraft:weather_check",
+							"type": "minecraft:weather_check",
 							"raining": true
 						}
 					},
@@ -651,7 +693,7 @@ fun DataPack.enchantmentTests() {
 							"max_damage": 2
 						},
 						"requirements": {
-							"condition": "minecraft:weather_check",
+							"type": "minecraft:weather_check",
 							"raining": false
 						}
 					},
@@ -945,7 +987,7 @@ fun DataPack.enchantmentTests() {
 							"max_amplifier": 0
 						},
 						"requirements": {
-							"condition": "minecraft:weather_check",
+							"type": "minecraft:weather_check",
 							"raining": true
 						}
 					},
@@ -1454,7 +1496,7 @@ class EnchantmentTests : FunSpec({
 				}
 			}
 
-			enchantments.last().generateJson(this) assertsIs """{"description":"","supported_items":[],"weight":1,"max_level":1,"min_cost":{"base":0,"per_level_above_first":0},"max_cost":{"base":0,"per_level_above_first":0},"anvil_cost":0,"slots":[],"effects":{"minecraft:armor_effectiveness":[{"effect":{"type":"minecraft:add","value":5},"requirements":{"condition":"minecraft:inverted","term":{"condition":"minecraft:all_of","terms":[{"condition":"minecraft:weather_check","raining":true},{"condition":"minecraft:weather_check","thundering":true}]}}}]}}"""
+			enchantments.last().generateJson(this) assertsIs """{"description":"","supported_items":[],"weight":1,"max_level":1,"min_cost":{"base":0,"per_level_above_first":0},"max_cost":{"base":0,"per_level_above_first":0},"anvil_cost":0,"slots":[],"effects":{"minecraft:armor_effectiveness":[{"effect":{"type":"minecraft:add","value":5},"requirements":{"type":"minecraft:inverted","term":{"type":"minecraft:all_of","terms":[{"type":"minecraft:weather_check","raining":true},{"type":"minecraft:weather_check","thundering":true}]}}}]}}"""
 
 			enchantment("missing") {
 				effects {

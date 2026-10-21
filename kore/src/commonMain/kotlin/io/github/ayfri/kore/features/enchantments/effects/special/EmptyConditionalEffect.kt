@@ -2,7 +2,6 @@ package io.github.ayfri.kore.features.enchantments.effects.special
 
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
-import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
 /**
@@ -12,10 +11,10 @@ import kotlinx.serialization.Serializable
  * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#damage_immunity
  *
  * @property effect The always empty payload of the entry.
- * @property requirements The conditions the entry applies under, always applying when `null`.
+ * @property requirements The condition the entry applies under, always applying when `null`.
  */
 @Serializable
 data class EmptyConditionalEffect(
 	val effect: Map<String, String> = emptyMap(),
-	var requirements: InlinableList<PredicateCondition>? = null,
+	var requirements: PredicateCondition? = null,
 ) : SpecialEnchantmentEffect()

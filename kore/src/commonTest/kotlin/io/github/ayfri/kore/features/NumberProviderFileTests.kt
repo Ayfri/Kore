@@ -50,7 +50,7 @@ fun DataPack.numberProviderFileTests() {
 			"cases": [
 				{
 					"condition": {
-						"condition": "minecraft:block_state_property",
+						"type": "minecraft:block_state_property",
 						"block": "minecraft:composter",
 						"properties": {
 							"level": "0"

@@ -902,7 +902,7 @@ dataPack("legendary_items") {
 		"levels": 30.0,
 		"conditions": [
 			{
-				"condition": "minecraft:random_chance",
+				"type": "minecraft:random_chance",
 				"chance": 0.3
 			}
 		]

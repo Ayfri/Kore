@@ -5,7 +5,7 @@ nav-title: Predicates
 description: Create Minecraft predicates with Kore's type-safe Kotlin DSL. Covers entity properties, location, weather, time, enchantments, damage, and NBT checks. Use in execute if/unless, loot tables, and advancements.
 keywords: minecraft predicates, datapack conditions, execute if predicate, entity properties check, location check, weather check, time check, damage predicate, kore predicates, minecraft condition dsl
 date-created: 2024-01-08
-date-modified: 2026-10-02
+date-modified: 2026-10-21
 routeOverride: /docs/data-driven/predicates
 ---
 
@@ -39,7 +39,44 @@ The `predicate` function creates and registers a predicate in your DataPack. It 
 
 ## Conditions
 
-Predicates can have multiple conditions that must be met. You can combine them using `allOf` or `anyOf`:
+A predicate file holds **one** condition, whose JSON object names its kind in the `type` key. Declaring several
+conditions in a `predicate { }` block writes them as the terms of one `minecraft:all_of`, so both predicates below
+produce the same file:
+
+```kotlin
+predicate("two_conditions") {
+	randomChance(0.5f)
+	weatherCheck(raining = true)
+}
+
+predicate("explicit_all_of") {
+	allOf {
+		randomChance(0.5f)
+		weatherCheck(raining = true)
+	}
+}
+```
+
+```json
+{
+	"type": "minecraft:all_of",
+	"terms": [
+		{
+			"type": "minecraft:random_chance",
+			"chance": 0.5
+		},
+		{
+			"type": "minecraft:weather_check",
+			"raining": true
+		}
+	]
+}
+```
+
+A block with one condition writes that condition alone, and an empty block writes an `all_of` without terms, which
+always passes. `terms` of `allOf` and `anyOf` is written inline, without the array, when it holds a single condition.
+
+You can combine conditions using `allOf` or `anyOf`:
 
 ```kotlin
 predicate("complex_test") {
@@ -74,8 +111,8 @@ Conditions are categorized by their **loot context requirements**. Some conditio
 
 | Condition                   | Description                                                                                                                                                                                                             |
 |-----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `allOf`                     | Evaluates a list of predicates and passes if **all** of them pass                                                                                                                                                       |
-| `anyOf`                     | Evaluates a list of predicates and passes if **any one** of them passes                                                                                                                                                 |
+| `allOf`                     | Evaluates its conditions and passes if **all** of them pass                                                                                                                                                             |
+| `anyOf`                     | Evaluates its conditions and passes if **any one** of them passes                                                                                                                                                       |
 | `entityProperties`          | Checks properties of an entity                                                                                                                                                                                          |
 | `environmentAttributeCheck` | Passes if the specified environment attribute currently matches the given value                                                                                                                                         |
 | `inverted`                  | Inverts another predicate condition                                                                                                                                                                                     |

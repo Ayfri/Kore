@@ -283,7 +283,7 @@ fun DataPack.registerCombatRules() {
 ```
 
 Compare that with the vanilla version, where the second predicate embeds
-`{"condition": "minecraft:reference", "name": "mypack:rules/is_active_fighter"}` - a string nothing checks.
+`{"type": "minecraft:reference", "name": "mypack:rules/is_active_fighter"}` - a string nothing checks.
 
 The same holds across resource kinds. A `LootTableArgument` feeds the `loot` command, the `containerLoot` item
 component, and advancement rewards:

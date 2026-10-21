@@ -78,11 +78,11 @@ fun DataPack.advancementTests() {
 					"conditions": {
 						"player": [
 							{
-								"condition": "minecraft:random_chance",
+								"type": "minecraft:random_chance",
 								"chance": 0.5
 							},
 							{
-								"condition": "minecraft:time_check",
+								"type": "minecraft:time_check",
 								"clock": "minecraft:overworld",
 								"value": {
 									"min": 10.0,
@@ -90,17 +90,15 @@ fun DataPack.advancementTests() {
 								}
 							},
 							{
-								"condition": "minecraft:any_of",
-								"terms": [
-									{
-										"condition": "minecraft:time_check",
-										"clock": "minecraft:overworld",
-										"value": {
-											"min": 10.0,
-											"max": 20.0
-										}
+								"type": "minecraft:any_of",
+								"terms": {
+									"type": "minecraft:time_check",
+									"clock": "minecraft:overworld",
+									"value": {
+										"min": 10.0,
+										"max": 20.0
 									}
-								]
+								}
 							}
 						],
 						"item": {
@@ -190,7 +188,7 @@ private fun DataPack.allTriggersTests() {
 					"conditions": {
 						"location": [
 							{
-								"condition": "minecraft:random_chance",
+								"type": "minecraft:random_chance",
 								"chance": 0.5
 							}
 						]
@@ -334,11 +332,11 @@ private fun DataPack.allTriggersTests() {
 					"conditions": {
 						"player": [
 							{
-								"condition": "minecraft:random_chance",
+								"type": "minecraft:random_chance",
 								"chance": 0.5
 							},
 							{
-								"condition": "minecraft:time_check",
+								"type": "minecraft:time_check",
 								"clock": "minecraft:overworld",
 								"value": {
 									"min": 10.0,
@@ -386,11 +384,11 @@ private fun DataPack.allTriggersTests() {
 					"conditions": {
 						"player": [
 							{
-								"condition": "minecraft:random_chance",
+								"type": "minecraft:random_chance",
 								"chance": 0.5
 							},
 							{
-								"condition": "minecraft:time_check",
+								"type": "minecraft:time_check",
 								"clock": "minecraft:overworld",
 								"value": {
 									"min": 10.0,
@@ -480,7 +478,7 @@ private fun DataPack.allTriggersTests() {
 						},
 						"source": [
 							{
-								"condition": "minecraft:entity_properties",
+								"type": "minecraft:entity_properties",
 								"entity": "this",
 								"predicate": {
 									"minecraft:entity_type": "minecraft:witch"
@@ -619,7 +617,7 @@ private fun DataPack.allTriggersTests() {
 						},
 						"cause": [
 							{
-								"condition": "minecraft:entity_properties",
+								"type": "minecraft:entity_properties",
 								"entity": "this",
 								"predicate": {
 									"minecraft:entity_type": "minecraft:player"
@@ -797,7 +795,7 @@ private fun DataPack.allTriggersTests() {
 						"victims": [
 							[
 								{
-									"condition": "minecraft:entity_properties",
+									"type": "minecraft:entity_properties",
 									"entity": "this",
 									"predicate": {
 										"minecraft:entity_type": "minecraft:player"
