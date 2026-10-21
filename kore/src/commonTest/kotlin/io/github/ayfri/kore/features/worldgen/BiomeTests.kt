@@ -10,9 +10,12 @@ import io.github.ayfri.kore.features.roundTrip
 import io.github.ayfri.kore.features.worldgen.biome.*
 import io.github.ayfri.kore.features.worldgen.biome.types.*
 import io.github.ayfri.kore.features.worldgen.environmentattributes.EnvironmentAttributeModifier
+import io.github.ayfri.kore.features.worldgen.environmentattributes.types.creatureWorldGenSpawnProbability
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.fogColor
+import io.github.ayfri.kore.features.worldgen.environmentattributes.types.naturalMobSpawns
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.skyColor
-import io.github.ayfri.kore.features.worldgen.intproviders.uniform
+import io.github.ayfri.kore.features.worldgen.environmentattributes.types.spawnCosts
+import io.github.ayfri.kore.features.worldgen.environmentattributes.types.spawnsByCategory
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Carvers
 import io.github.ayfri.kore.generated.EntityTypes
@@ -26,7 +29,6 @@ fun DataPack.biomeTests() {
 		downfall = 0.4f
 		hasPrecipitation = true
 		temperatureModifier = TemperatureModifier.NONE
-		creatureSpawnProbability = null
 
 		attributes {
 			fogColor(rgb(255, 255, 0), EnvironmentAttributeModifier.ADD)
@@ -38,18 +40,6 @@ fun DataPack.biomeTests() {
 			foliageColor = Color.PURPLE
 			grassColor = Color.WHITE
 			dryFoliageColor = Color.BLACK
-		}
-		spawners {
-			creature {
-				spawner(EntityTypes.ZOMBIE) {
-					weight = 1
-					count = uniform(1, 2)
-				}
-			}
-		}
-
-		spawnCosts {
-			spawnCost(EntityTypes.ZOMBIE, 1f, 1f)
 		}
 
 		carvers(Carvers.CANYON, Carvers.NETHER_CAVE, Carvers.CAVE)
@@ -76,25 +66,6 @@ fun DataPack.biomeTests() {
 				"grass_color": 16777215,
 				"foliage_color": 11141375,
 				"dry_foliage_color": 0
-			},
-			"spawners": {
-				"creature": [
-					{
-						"count": {
-							"type": "minecraft:uniform",
-							"min_inclusive": 1,
-							"max_inclusive": 2
-						},
-						"type": "minecraft:zombie",
-						"weight": 1
-					}
-				]
-			},
-			"spawn_costs": {
-				"minecraft:zombie": {
-					"energy_budget": 1.0,
-					"charge": 1.0
-				}
 			},
 			"carvers": [
 				"minecraft:canyon",
@@ -125,7 +96,40 @@ fun DataPack.biomeTests() {
 		downfall = 0.8f
 		hasPrecipitation = true
 		temperatureModifier = TemperatureModifier.FROZEN
-		creatureSpawnProbability = 0.1f
+
+		attributes {
+			creatureWorldGenSpawnProbability(0.1f)
+			naturalMobSpawns {
+				spawnsByCategory {
+					ambient {
+						spawner(EntityTypes.BAT, weight = 10, minCount = 8, maxCount = 8)
+					}
+					axolotls {
+						spawner(EntityTypes.AXOLOTL, weight = 10, minCount = 4, maxCount = 6)
+					}
+					misc {
+						spawner(EntityTypes.OAK_BOAT, weight = 1, minCount = 1, maxCount = 1)
+					}
+					monster {
+						spawner(EntityTypes.ZOMBIE, weight = 100, minCount = 4, maxCount = 4)
+						spawner(EntityTypes.SKELETON, weight = 100, minCount = 4, maxCount = 4)
+					}
+					undergroundWaterCreature {
+						spawner(EntityTypes.GLOW_SQUID, weight = 10, minCount = 4, maxCount = 6)
+					}
+					waterAmbient {
+						spawner(EntityTypes.COD, weight = 10, minCount = 3, maxCount = 6)
+					}
+					waterCreature {
+						spawner(EntityTypes.SQUID, weight = 10, minCount = 1, maxCount = 4)
+					}
+				}
+				spawnCosts {
+					spawnCost(EntityTypes.ZOMBIE, 0.5f, 0.5f)
+					spawnCost(EntityTypes.SKELETON, 0.5f, 0.5f)
+				}
+			}
+		}
 
 		effects {
 			waterColor = Color.AQUA
@@ -133,36 +137,6 @@ fun DataPack.biomeTests() {
 			foliageColor = Color.GRAY
 			dryFoliageColor = Color.GRAY
 			grassColorModifier = GrassColorModifier.SWAMP
-		}
-
-		spawners {
-			ambient {
-				spawner(EntityTypes.BAT, weight = 10, minCount = 8, maxCount = 8)
-			}
-			axolotls {
-				spawner(EntityTypes.AXOLOTL, weight = 10, minCount = 4, maxCount = 6)
-			}
-			misc {
-				spawner(EntityTypes.OAK_BOAT, weight = 1, minCount = 1, maxCount = 1)
-			}
-			monster {
-				spawner(EntityTypes.ZOMBIE, weight = 100, minCount = 4, maxCount = 4)
-				spawner(EntityTypes.SKELETON, weight = 100, minCount = 4, maxCount = 4)
-			}
-			undergroundWaterCreature {
-				spawner(EntityTypes.GLOW_SQUID, weight = 10, minCount = 4, maxCount = 6)
-			}
-			waterAmbient {
-				spawner(EntityTypes.COD, weight = 10, minCount = 3, maxCount = 6)
-			}
-			waterCreature {
-				spawner(EntityTypes.SQUID, weight = 10, minCount = 1, maxCount = 4)
-			}
-		}
-
-		spawnCosts {
-			spawnCost(EntityTypes.ZOMBIE, 0.5f, 0.5f)
-			spawnCost(EntityTypes.SKELETON, 0.5f, 0.5f)
 		}
 
 		features {
@@ -175,99 +149,103 @@ fun DataPack.biomeTests() {
 
 	biomes.last() assertsIs """
 		{
+			"attributes": {
+				"minecraft:gameplay/creature_world_gen_spawn_probability": 0.1,
+				"minecraft:gameplay/natural_mob_spawns": {
+					"spawn_costs": {
+						"minecraft:zombie": {
+							"energy_budget": 0.5,
+							"charge": 0.5
+						},
+						"minecraft:skeleton": {
+							"energy_budget": 0.5,
+							"charge": 0.5
+						}
+					},
+					"spawns_by_category": {
+						"ambient": [
+							{
+								"count": 8,
+								"type": "minecraft:bat",
+								"weight": 10
+							}
+						],
+						"axolotls": [
+							{
+								"count": {
+									"type": "minecraft:uniform",
+									"min_inclusive": 4,
+									"max_inclusive": 6
+								},
+								"type": "minecraft:axolotl",
+								"weight": 10
+							}
+						],
+						"misc": [
+							{
+								"count": 1,
+								"type": "minecraft:oak_boat",
+								"weight": 1
+							}
+						],
+						"monster": [
+							{
+								"count": 4,
+								"type": "minecraft:zombie",
+								"weight": 100
+							},
+							{
+								"count": 4,
+								"type": "minecraft:skeleton",
+								"weight": 100
+							}
+						],
+						"underground_water_creature": [
+							{
+								"count": {
+									"type": "minecraft:uniform",
+									"min_inclusive": 4,
+									"max_inclusive": 6
+								},
+								"type": "minecraft:glow_squid",
+								"weight": 10
+							}
+						],
+						"water_ambient": [
+							{
+								"count": {
+									"type": "minecraft:uniform",
+									"min_inclusive": 3,
+									"max_inclusive": 6
+								},
+								"type": "minecraft:cod",
+								"weight": 10
+							}
+						],
+						"water_creature": [
+							{
+								"count": {
+									"type": "minecraft:uniform",
+									"min_inclusive": 1,
+									"max_inclusive": 4
+								},
+								"type": "minecraft:squid",
+								"weight": 10
+							}
+						]
+					}
+				}
+			},
 			"temperature": -0.5,
 			"downfall": 0.8,
 			"has_precipitation": true,
 			"temperature_modifier": "frozen",
-			"creature_spawn_probability": 0.1,
 			"effects": {
 				"water_color": 5636095,
 				"grass_color": 16777215,
 				"foliage_color": 11184810,
 				"dry_foliage_color": 11184810,
 				"grass_color_modifier": "swamp"
-			},
-			"spawners": {
-				"ambient": [
-					{
-						"count": 8,
-						"type": "minecraft:bat",
-						"weight": 10
-					}
-				],
-				"axolotls": [
-					{
-						"count": {
-							"type": "minecraft:uniform",
-							"min_inclusive": 4,
-							"max_inclusive": 6
-						},
-						"type": "minecraft:axolotl",
-						"weight": 10
-					}
-				],
-				"misc": [
-					{
-						"count": 1,
-						"type": "minecraft:oak_boat",
-						"weight": 1
-					}
-				],
-				"monster": [
-					{
-						"count": 4,
-						"type": "minecraft:zombie",
-						"weight": 100
-					},
-					{
-						"count": 4,
-						"type": "minecraft:skeleton",
-						"weight": 100
-					}
-				],
-				"underground_water_creature": [
-					{
-						"count": {
-							"type": "minecraft:uniform",
-							"min_inclusive": 4,
-							"max_inclusive": 6
-						},
-						"type": "minecraft:glow_squid",
-						"weight": 10
-					}
-				],
-				"water_ambient": [
-					{
-						"count": {
-							"type": "minecraft:uniform",
-							"min_inclusive": 3,
-							"max_inclusive": 6
-						},
-						"type": "minecraft:cod",
-						"weight": 10
-					}
-				],
-				"water_creature": [
-					{
-						"count": {
-							"type": "minecraft:uniform",
-							"min_inclusive": 1,
-							"max_inclusive": 4
-						},
-						"type": "minecraft:squid",
-						"weight": 10
-					}
-				]
-			},
-			"spawn_costs": {
-				"minecraft:zombie": {
-					"energy_budget": 0.5,
-					"charge": 0.5
-				},
-				"minecraft:skeleton": {
-					"energy_budget": 0.5,
-					"charge": 0.5
-				}
 			},
 			"carvers": [],
 			"features": [

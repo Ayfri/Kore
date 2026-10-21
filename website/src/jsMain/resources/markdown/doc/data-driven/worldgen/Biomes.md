@@ -5,7 +5,7 @@ nav-title: Biomes
 description: Define Minecraft biomes with climate, colors, mob spawns, carvers and features using Kore's type-safe Kotlin DSL.
 keywords: minecraft, datapack, kore, worldgen, biome, carver, spawner, biome effects, climate parameters
 date-created: 2026-02-03
-date-modified: 2026-10-20
+date-modified: 2026-10-21
 routeOverride: /docs/data-driven/worldgen/biomes
 ---
 
@@ -59,13 +59,12 @@ rain, water freezing, and cauldrons filling.
 
 ## Climate Fields
 
-| Field                      | Type      | Default | Vanilla                                              | Effect                                                                   |
-|----------------------------|-----------|---------|------------------------------------------------------|--------------------------------------------------------------------------|
-| `temperature`              | `Float`   | `0.8`   | `plains` `0.8`, `snowy_plains` `0.0`, `desert` `2.0` | Below `0.15`, precipitation falls as snow and water freezes.             |
-| `downfall`                 | `Float`   | `0.4`   | `plains` `0.4`, `snowy_plains` `0.5`, `desert` `0.0` | Wetness, driving foliage tinting and how fast fire spreads.              |
-| `hasPrecipitation`         | `Boolean` | `true`  | `desert` `false`                                     | Whether rain or snow falls at all.                                       |
-| `temperatureModifier`      | enum      | none    | `frozen_ocean` `FROZEN`                              | `FROZEN` applies the noise-based warm patches of the frozen ocean.       |
-| `creatureSpawnProbability` | `Float?`  | none    | `snowy_plains` `0.07`                                | Chance per chunk for the initial creature spawn during world generation. |
+| Field                 | Type      | Default | Vanilla                                              | Effect                                                             |
+|-----------------------|-----------|---------|------------------------------------------------------|--------------------------------------------------------------------|
+| `temperature`         | `Float`   | `0.8`   | `plains` `0.8`, `snowy_plains` `0.0`, `desert` `2.0` | Below `0.15`, precipitation falls as snow and water freezes.       |
+| `downfall`            | `Float`   | `0.4`   | `plains` `0.4`, `snowy_plains` `0.5`, `desert` `0.0` | Wetness, driving foliage tinting and how fast fire spreads.        |
+| `hasPrecipitation`    | `Boolean` | `true`  | `desert` `false`                                     | Whether rain or snow falls at all.                                 |
+| `temperatureModifier` | enum      | none    | `frozen_ocean` `FROZEN`                              | `FROZEN` applies the noise-based warm patches of the frozen ocean. |
 
 ## Colors And Atmosphere
 
@@ -98,18 +97,27 @@ Reference: [Biome definition - Effects](https://minecraft.wiki/w/Biome_definitio
 
 ## Mob Spawns
 
-`spawners` declares what may spawn per mob category. Within a category, `weight` is a relative probability against the other entries, and
-`minCount`/`maxCount` bound the size of a spawned group.
+Mob spawns are the `natural_mob_spawns` [environment attribute](/docs/data-driven/worldgen/environment-attributes#natural-mob-spawns), set
+in the `attributes { }` block of the biome (or of a dimension type), as is the `creatureWorldGenSpawnProbability` of the initial creature
+spawn during world generation.
+
+`spawnsByCategory` declares what may spawn per mob category. Within a category, `weight` is a relative probability against the other
+entries, and `count` is the size of a spawned group, written by `minCount`/`maxCount` or set to any int provider.
 
 ```kotlin
-spawners {
-	creature {
-		spawner(EntityTypes.COW, weight = 6, minCount = 2, maxCount = 4)
-		spawner(EntityTypes.SHEEP, weight = 8, minCount = 2, maxCount = 4)
-	}
-	monster {
-		spawner(EntityTypes.SKELETON, weight = 80, minCount = 1, maxCount = 2)
-		spawner(EntityTypes.ZOMBIE, weight = 80, minCount = 1, maxCount = 2)
+attributes {
+	creatureWorldGenSpawnProbability(0.07f)
+	naturalMobSpawns {
+		spawnsByCategory {
+			creature {
+				spawner(EntityTypes.COW, weight = 6, minCount = 2, maxCount = 4)
+				spawner(EntityTypes.SHEEP, weight = 8, minCount = 2, maxCount = 4)
+			}
+			monster {
+				spawner(EntityTypes.SKELETON, weight = 80, minCount = 1, maxCount = 2)
+				spawner(EntityTypes.ZOMBIE, weight = 80, minCount = 1, maxCount = 2)
+			}
+		}
 	}
 }
 ```
@@ -120,8 +128,10 @@ Categories: `ambient`, `axolotls`, `creature`, `misc`, `monster`, `undergroundWa
 area stops spawning before it becomes a mob farm.
 
 ```kotlin
-spawnCosts {
-	spawnCost(EntityTypes.COW, energyBudget = 1.2f, charge = 0.1f)
+naturalMobSpawns {
+	spawnCosts {
+		spawnCost(EntityTypes.COW, energyBudget = 1.2f, charge = 0.1f)
+	}
 }
 ```
 
@@ -179,24 +189,24 @@ fun DataPack.highlandsBiome(treePlaced: PlacedFeatureArgument, orePlaced: Placed
 			fogColor(0xBFEFFF)
 			skyColor(0x99D9FF)
 			waterFogColor(0x0A2C4F)
+			naturalMobSpawns {
+				spawnsByCategory {
+					creature {
+						spawner(EntityTypes.COW, 6, 2, 4)
+						spawner(EntityTypes.SHEEP, 8, 2, 4)
+					}
+					monster {
+						spawner(EntityTypes.SKELETON, 80, 1, 2)
+					}
+				}
+				spawnCosts {
+					spawnCost(EntityTypes.COW, 1.2f, 0.1f)
+				}
+			}
 		}
 
 		effects {
 			waterColor = color(0x34A7F0)
-		}
-
-		spawners {
-			creature {
-				spawner(EntityTypes.COW, 6, 2, 4)
-				spawner(EntityTypes.SHEEP, 8, 2, 4)
-			}
-			monster {
-				spawner(EntityTypes.SKELETON, 80, 1, 2)
-			}
-		}
-
-		spawnCosts {
-			spawnCost(EntityTypes.COW, 1.2f, 0.1f)
 		}
 
 		carvers(cave)

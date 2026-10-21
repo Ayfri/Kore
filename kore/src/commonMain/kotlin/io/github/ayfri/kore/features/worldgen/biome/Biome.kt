@@ -4,7 +4,6 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.features.worldgen.biome.types.*
 import io.github.ayfri.kore.features.worldgen.environmentattributes.EnvironmentAttributesScope
-import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.CarverOrTagArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.BiomeArgument
 import io.github.ayfri.kore.serializers.InlinableList
@@ -14,8 +13,8 @@ import kotlinx.serialization.Transient
 /**
  * Data-driven biome definition.
  *
- * Controls temperature, downfall, precipitation, visual effects (sky, fog, water), mob spawns,
- * terrain carvers, and the list of placed features that populate the biome.
+ * Controls temperature, downfall, precipitation, visual effects (sky, fog, water), terrain carvers, and the list of
+ * placed features that populate the biome. Mob spawns are the `natural_mob_spawns` environment attribute of [attributes].
  *
  * JSON format reference: https://minecraft.wiki/w/Biome_definition
  */
@@ -28,10 +27,7 @@ data class Biome(
 	var downfall: Float = 0.4f,
 	var hasPrecipitation: Boolean = true,
 	var temperatureModifier: TemperatureModifier? = null,
-	var creatureSpawnProbability: Float? = null,
 	var effects: BiomeEffects = BiomeEffects(),
-	var spawners: Spawners = Spawners(),
-	var spawnCosts: Map<EntityTypeArgument, SpawnCost> = mapOf(),
 	var carvers: InlinableList<CarverOrTagArgument> = emptyList(),
 	var features: Features = Features(),
 ) : Generator("worldgen/biome") {
@@ -41,7 +37,7 @@ data class Biome(
 /**
  * Creates a biome using a builder block.
  *
- * Configure effects, spawners, carvers, and features in the builder.
+ * Configure attributes, effects, carvers, and features in the builder.
  *
  * Produces `data/<namespace>/worldgen/biome/<fileName>.json`.
  *
@@ -74,12 +70,4 @@ fun Biome.effects(init: BiomeEffects.() -> Unit) {
 
 fun Biome.features(init: Features.() -> Unit) {
 	features = Features().apply(init)
-}
-
-fun Biome.spawnCosts(init: MutableMap<EntityTypeArgument, SpawnCost>.() -> Unit) {
-	spawnCosts = buildMap(init)
-}
-
-fun Biome.spawners(init: Spawners.() -> Unit) {
-	spawners = Spawners().apply(init)
 }
