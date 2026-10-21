@@ -1,7 +1,10 @@
 package io.github.ayfri.kore.features.loottables.entries
 
+import io.github.ayfri.kore.features.itemmodifiers.InlinableItemModifier
+import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.Predicate
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
+import io.github.ayfri.kore.features.predicates.toCondition
 import kotlinx.serialization.Serializable
 
 /**
@@ -13,19 +16,26 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Alternatives(
 	var children: List<LootEntry>,
-	var conditions: PredicateAsList? = null,
+	var condition: PredicateCondition? = null,
+	var modifier: InlinableItemModifier? = null,
 ) : LootEntry()
 
-/** Add an Alternatives entry with optional conditions. */
-fun LootEntries.alternatives(children: List<LootEntry> = emptyList(), conditions: Alternatives.() -> Unit = {}) {
-	add(Alternatives(children).apply(conditions))
+/** Add an Alternatives entry with optional condition and modifier. */
+fun LootEntries.alternatives(children: List<LootEntry> = emptyList(), block: Alternatives.() -> Unit = {}) {
+	add(Alternatives(children).apply(block))
 }
+
 /** Configure child entries. */
 fun Alternatives.children(block: LootEntries.() -> Unit) {
 	children = buildList(block)
 }
 
-/** Set conditions for this entry, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
-fun Alternatives.conditions(block: Predicate.() -> Unit) {
-	conditions = Predicate().apply(block)
+/** Set the condition, several conditions being wrapped in an `all_of`, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
+fun Alternatives.condition(block: Predicate.() -> Unit) {
+	condition = Predicate().apply(block).toCondition()
+}
+
+/** Set the item modifier, see [ItemModifiers](https://kore.ayfri.com/docs/data-driven/item-modifiers). */
+fun Alternatives.modifier(block: ItemModifier.() -> Unit) {
+	modifier = ItemModifier().apply(block)
 }

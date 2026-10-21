@@ -6,15 +6,15 @@ import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.loottables.entries.LootEntries
 import io.github.ayfri.kore.features.loottables.entries.LootEntry
 import io.github.ayfri.kore.features.predicates.Predicate
-import io.github.ayfri.kore.features.predicates.PredicateAsList
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.NumberProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.features.predicates.providers.constant
+import io.github.ayfri.kore.features.predicates.toCondition
 import kotlinx.serialization.Serializable
 
 /**
- * A pool of rolls that yields entries, optionally guarded by conditions and modified by functions.
+ * A pool of rolls that yields entries, optionally guarded by a condition and modified by an item modifier.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/loot-tables
  * Minecraft Wiki: https://minecraft.wiki/w/Loot_table
@@ -22,11 +22,11 @@ import kotlinx.serialization.Serializable
 @LootDsl
 @Serializable
 data class LootPool(
-	var rolls: NumberProvider,
 	var bonusRolls: NumberProvider? = null,
-	var conditions: PredicateAsList? = null,
+	var condition: PredicateCondition? = null,
 	var entries: List<LootEntry> = emptyList(),
-	var functions: InlinableItemModifier? = null,
+	var modifier: InlinableItemModifier? = null,
+	var rolls: NumberProvider,
 ) : NumberProviderScope
 
 /** Set the number of rolls. */
@@ -45,16 +45,14 @@ fun LootPool.bonusRolls(value: NumberProvider) {
 /** Set the number of bonus rolls as a constant. */
 fun LootPool.bonusRolls(value: Float) = bonusRolls(constant(value))
 
-/** Add predicate conditions. */
-fun LootPool.conditions(vararg value: PredicateCondition) {
-	conditions = conditions?.also {
-		it.predicateConditions += value.toList()
-	} ?: Predicate(predicateConditions = value.toList())
+/** Set the predicate condition, several conditions being wrapped in an `all_of`. */
+fun LootPool.condition(vararg value: PredicateCondition) {
+	condition = Predicate(predicateConditions = value.toList()).toCondition()
 }
 
-/** Define predicate conditions via a builder, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
-fun LootPool.conditions(block: Predicate.() -> Unit) {
-	conditions = Predicate().apply(block)
+/** Define the predicate condition via a builder, several conditions being wrapped in an `all_of`, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
+fun LootPool.condition(block: Predicate.() -> Unit) {
+	condition = Predicate().apply(block).toCondition()
 }
 
 /** Replace entries with the provided list. */
@@ -67,7 +65,7 @@ fun LootPool.entries(block: LootEntries.() -> Unit) {
 	entries = buildList(block)
 }
 
-/** Set item modifier functions applied to the pool outputs, see [ItemModifiers](https://kore.ayfri.com/docs/data-driven/item-modifiers). */
-fun LootPool.functions(block: ItemModifier.() -> Unit) {
-	functions = ItemModifier().apply(block)
+/** Set the item modifier applied to the pool outputs, see [ItemModifiers](https://kore.ayfri.com/docs/data-driven/item-modifiers). */
+fun LootPool.modifier(block: ItemModifier.() -> Unit) {
+	modifier = ItemModifier().apply(block)
 }

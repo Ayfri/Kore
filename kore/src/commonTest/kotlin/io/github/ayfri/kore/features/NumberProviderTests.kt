@@ -25,12 +25,12 @@ fun DataPack.numberProviderTests() {
 		{
 			"pools": [
 				{
+					"entries": [],
 					"rolls": {
 						"type": "minecraft:binomial",
 						"n": 5.0,
 						"p": 0.5
-					},
-					"entries": []
+					}
 				}
 			]
 		}
@@ -50,6 +50,7 @@ fun DataPack.numberProviderTests() {
 		{
 			"pools": [
 				{
+					"entries": [],
 					"rolls": {
 						"type": "minecraft:conditional",
 						"condition": {
@@ -61,8 +62,7 @@ fun DataPack.numberProviderTests() {
 						},
 						"on_false": 2.0,
 						"on_true": 5.0
-					},
-					"entries": []
+					}
 				}
 			]
 		}
@@ -78,6 +78,7 @@ fun DataPack.numberProviderTests() {
 		{
 			"pools": [
 				{
+					"entries": [],
 					"rolls": {
 						"type": "minecraft:conditional",
 						"condition": {
@@ -88,8 +89,7 @@ fun DataPack.numberProviderTests() {
 							"min": 1.0,
 							"max": 3.0
 						}
-					},
-					"entries": []
+					}
 				}
 			]
 		}
@@ -105,8 +105,8 @@ fun DataPack.numberProviderTests() {
 		{
 			"pools": [
 				{
-					"rolls": 5.0,
-					"entries": []
+					"entries": [],
+					"rolls": 5.0
 				}
 			]
 		}
@@ -122,11 +122,11 @@ fun DataPack.numberProviderTests() {
 		{
 			"pools": [
 				{
+					"entries": [],
 					"rolls": {
 						"type": "minecraft:enchantment_level",
 						"amount": 5
-					},
-					"entries": []
+					}
 				}
 			]
 		}
@@ -142,11 +142,11 @@ fun DataPack.numberProviderTests() {
 		{
 			"pools": [
 				{
+					"entries": [],
 					"rolls": {
 						"type": "minecraft:environment_attribute",
 						"attribute": "minecraft:gameplay/baby_villager_activity"
-					},
-					"entries": []
+					}
 				}
 			]
 		}
@@ -172,6 +172,7 @@ fun DataPack.numberProviderTests() {
 		{
 			"pools": [
 				{
+					"entries": [],
 					"rolls": {
 						"type": "minecraft:number_dispatcher",
 						"cases": [
@@ -205,8 +206,7 @@ fun DataPack.numberProviderTests() {
 								}
 							]
 						}
-					},
-					"entries": []
+					}
 				}
 			]
 		}
@@ -224,6 +224,7 @@ fun DataPack.numberProviderTests() {
 		{
 			"pools": [
 				{
+					"entries": [],
 					"rolls": {
 						"type": "minecraft:number_dispatcher",
 						"cases": [
@@ -234,8 +235,7 @@ fun DataPack.numberProviderTests() {
 								"number_provider": 4.0
 							}
 						]
-					},
-					"entries": []
+					}
 				}
 			]
 		}
@@ -251,6 +251,7 @@ fun DataPack.numberProviderTests() {
 		{
 			"pools": [
 				{
+					"entries": [],
 					"rolls": {
 						"type": "minecraft:score",
 						"target": {
@@ -258,8 +259,7 @@ fun DataPack.numberProviderTests() {
 							"target": "this"
 						},
 						"score": "kills"
-					},
-					"entries": []
+					}
 				}
 			]
 		}
@@ -275,6 +275,7 @@ fun DataPack.numberProviderTests() {
 		{
 			"pools": [
 				{
+					"entries": [],
 					"rolls": {
 						"type": "minecraft:score",
 						"target": {
@@ -282,8 +283,7 @@ fun DataPack.numberProviderTests() {
 							"name": "Steve"
 						},
 						"score": "kills"
-					},
-					"entries": []
+					}
 				}
 			]
 		}
@@ -299,6 +299,7 @@ fun DataPack.numberProviderTests() {
 		{
 			"pools": [
 				{
+					"entries": [],
 					"rolls": {
 						"type": "minecraft:score",
 						"target": {
@@ -306,8 +307,7 @@ fun DataPack.numberProviderTests() {
 							"name": "Steve"
 						},
 						"score": "kills"
-					},
-					"entries": []
+					}
 				}
 			]
 		}
@@ -323,6 +323,7 @@ fun DataPack.numberProviderTests() {
 		{
 			"pools": [
 				{
+					"entries": [],
 					"rolls": {
 						"type": "minecraft:score",
 						"target": {
@@ -331,8 +332,7 @@ fun DataPack.numberProviderTests() {
 						},
 						"score": "kills",
 						"scale": 0.5
-					},
-					"entries": []
+					}
 				}
 			]
 		}
@@ -348,12 +348,12 @@ fun DataPack.numberProviderTests() {
 		{
 			"pools": [
 				{
+					"entries": [],
 					"rolls": {
 						"type": "minecraft:storage",
 						"storage": "my_pack:data",
 						"path": "player.health"
-					},
-					"entries": []
+					}
 				}
 			]
 		}
@@ -369,6 +369,7 @@ fun DataPack.numberProviderTests() {
 		{
 			"pools": [
 				{
+					"entries": [],
 					"rolls": {
 						"type": "minecraft:sum",
 						"summands": [
@@ -379,8 +380,7 @@ fun DataPack.numberProviderTests() {
 								"max": 3.0
 							}
 						]
-					},
-					"entries": []
+					}
 				}
 			]
 		}
@@ -396,12 +396,12 @@ fun DataPack.numberProviderTests() {
 		{
 			"pools": [
 				{
+					"entries": [],
 					"rolls": {
 						"type": "minecraft:uniform",
 						"min": 1.0,
 						"max": 5.0
-					},
-					"entries": []
+					}
 				}
 			]
 		}
@@ -420,6 +420,7 @@ fun DataPack.numberProviderTests() {
 		{
 			"pools": [
 				{
+					"entries": [],
 					"rolls": {
 						"type": "minecraft:weighted_list",
 						"distribution": [
@@ -432,8 +433,7 @@ fun DataPack.numberProviderTests() {
 								"weight": 70
 							}
 						]
-					},
-					"entries": []
+					}
 				}
 			]
 		}

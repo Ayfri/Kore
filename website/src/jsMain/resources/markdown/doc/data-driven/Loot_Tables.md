@@ -76,7 +76,7 @@ A loot table consists of:
 |------------------|--------------------------|-----------------------------------------------------|
 | `type`           | `LootTableType`          | Optional context type for validation                |
 | `pools`          | `List<LootPool>`         | One or more pools that generate items               |
-| `functions`      | `InlinableItemModifier?` | Optional global item functions applied to all drops |
+| `modifier`       | `InlinableItemModifier?` | Optional item modifier applied to all drops         |
 | `randomSequence` | `RandomSequenceArgument` | Optional deterministic random sequence              |
 
 ### Setting the Type
@@ -97,13 +97,13 @@ Available types: `ADVANCEMENT_ENTITY`, `ADVANCEMENT_LOCATION`, `ADVANCEMENT_REWA
 `BLOCK_USE`, `CHEST`, `COMMAND`, `EMPTY`, `ENTITY`, `EQUIPMENT`, `FISHING`, `GIFT`, `GENERIC`, `SELECTOR`, `SHEARING`,
 `VAULT`, `VILLAGER_TRADE`.
 
-### Global Functions
+### Global Modifier
 
-Apply item modifier functions to all items dropped by the table:
+Apply an item modifier to all items dropped by the table, one function being written bare and several ones as a list:
 
 ```kotlin
 lootTable("enchanted_loot") {
-	functions {
+	modifier {
 		enchantRandomly(Enchantments.LOOTING)
 	}
 
@@ -121,13 +121,13 @@ Each pool represents an independent set of rolls. A table can have multiple pool
 
 ### Pool Properties
 
-| Property     | Type              | Description                                    |
-|--------------|-------------------|------------------------------------------------|
-| `rolls`      | `NumberProvider`  | How many times to select from entries          |
-| `bonusRolls` | `NumberProvider`  | Additional rolls per luck level                |
-| `conditions` | `Predicate`       | Conditions that must pass for pool to activate |
-| `entries`    | `List<LootEntry>` | Possible entries to select from                |
-| `functions`  | `InlinableItemModifier?` | Functions applied to items from this pool      |
+| Property     | Type                     | Description                                                          |
+|--------------|--------------------------|----------------------------------------------------------------------|
+| `rolls`      | `NumberProvider`         | How many times to select from entries                                |
+| `bonusRolls` | `NumberProvider`         | Additional rolls per luck level                                      |
+| `condition`  | `PredicateCondition?`    | Condition that must pass for the pool to activate, several are AND-ed |
+| `entries`    | `List<LootEntry>`        | Possible entries to select from                                      |
+| `modifier`   | `InlinableItemModifier?` | Item modifier applied to items from this pool                        |
 
 ### Basic Pool
 
@@ -151,7 +151,7 @@ lootTable("weather_dependent") {
 	pool {
 		rolls = constant(1f)
 
-		conditions {
+		condition {
 			weatherCheck(raining = true)
 		}
 
@@ -162,7 +162,7 @@ lootTable("weather_dependent") {
 }
 ```
 
-### Pool with Functions
+### Pool with a Modifier
 
 ```kotlin
 lootTable("modified_drops") {
@@ -173,7 +173,7 @@ lootTable("modified_drops") {
 			item(Items.DIAMOND_PICKAXE)
 		}
 
-		functions {
+		modifier {
 			setDamage(0.5f)
 			enchantWithLevels(levels = constant(30f))
 		}
@@ -299,17 +299,17 @@ entries {
 	item(Items.DIAMOND) {
 		weight = 1
 		quality = 2
-		conditions {
+		condition {
 			randomChance(0.5f)
 		}
-		functions {
+		modifier {
 			setCount(uniform(1f, 3f))
 		}
 	}
 }
 ```
 
-The entry's `conditions` and `functions` live in the `features.loottables.entries` package, the pool's and table's in
+The entry's `condition` and `modifier` live in the `features.loottables.entries` package, the pool's and table's in
 `features.loottables`. The loot table, item modifier and predicate builders are DSL-scoped, so calling a builder that
 only an enclosing pool or table has fails to compile rather than silently adding to that pool: import the entry's
 version when the compiler reports it.
@@ -322,7 +322,7 @@ References another loot table:
 entries {
 	lootTable(LootTables.Gameplay.PIGLIN_BARTERING) {
 		weight = 1
-		functions {
+		modifier {
 			setCount(2f)
 		}
 	}
@@ -368,19 +368,19 @@ entries {
 
 #### Alternatives
 
-Selects the first entry whose conditions pass:
+Selects the first entry whose condition passes:
 
 ```kotlin
 entries {
 	alternatives {
 		children {
 			item(Items.DIAMOND) {
-				conditions {
+				condition {
 					randomChance(0.1f)
 				}
 			}
 			item(Items.GOLD_INGOT) {
-				conditions {
+				condition {
 					randomChance(0.3f)
 				}
 			}
@@ -392,13 +392,16 @@ entries {
 
 #### Group
 
-All children are added to the pool if conditions pass:
+All children are added to the pool if the condition passes. Composite entries take a `modifier` like singleton entries:
 
 ```kotlin
 entries {
 	group {
-		conditions {
+		condition {
 			weatherCheck(raining = true)
+		}
+		modifier {
+			setCount(2f)
 		}
 		children {
 			item(Items.WATER_BUCKET)
@@ -410,17 +413,17 @@ entries {
 
 #### Sequence
 
-Children are added until one fails its conditions:
+Children are added until one fails its condition:
 
 ```kotlin
 entries {
 	sequence {
 		children {
 			item(Items.DIAMOND) {
-				conditions { randomChance(0.5f) }
+				condition { randomChance(0.5f) }
 			}
 			item(Items.EMERALD) {
-				conditions { randomChance(0.5f) }
+				condition { randomChance(0.5f) }
 			}
 			item(Items.GOLD_INGOT)
 		}
@@ -446,21 +449,23 @@ entries {
 
 Singleton entries share these properties:
 
-| Property     | Type           | Description                                              |
-|--------------|----------------|----------------------------------------------------------|
-| `weight`     | `Int`          | Selection weight (higher = more likely)                  |
-| `quality`    | `Int`          | Modifies weight based on luck: `weight + quality × luck` |
-| `conditions` | `Predicate`    | Entry only available if conditions pass                  |
-| `functions`  | `InlinableItemModifier?` | Functions applied to this entry's items                  |
+| Property    | Type                     | Description                                              |
+|-------------|--------------------------|----------------------------------------------------------|
+| `weight`    | `Int`                    | Selection weight (higher = more likely)                  |
+| `quality`   | `Int`                    | Modifies weight based on luck: `weight + quality × luck` |
+| `condition` | `PredicateCondition?`    | Entry only available if the condition passes             |
+| `modifier`  | `InlinableItemModifier?` | Item modifier applied to this entry's items              |
+
+`alternatives`, `group` and `sequence` entries have `condition` and `modifier` too.
 
 ## Conditions (Predicates)
 
-Conditions control when pools, entries, or functions apply. They use the same Predicate system as advancements.
+A pool or an entry holds one `condition`. Several conditions declared in its block are wrapped in an `all_of`, the same way as in a [predicate](/docs/data-driven/predicates) file.
 
 ```kotlin
 pool {
-	conditions {
-		// Multiple conditions are AND-ed
+	condition {
+		// Multiple conditions are AND-ed in an all_of
 		weatherCheck(raining = true)
 		randomChance(0.5f)
 
@@ -482,14 +487,14 @@ pool {
 
 See [Predicates](/docs/data-driven/predicates) for the complete list of available conditions.
 
-## Functions (Item Modifiers)
+## Modifiers (Item Modifiers)
 
-Functions transform the generated items. They can be applied at table, pool, or entry level.
+A `modifier` transforms the generated items. It can be set at table, pool, or entry level.
 
 ### Common Functions
 
 ```kotlin
-functions {
+modifier {
 	// Set stack count
 	setCount(uniform(1f, 5f))
 
@@ -522,7 +527,7 @@ dataPack("treasure_hunt") {
 		type = LootTableType.ENTITY
 
 		// Global enchantment on all drops
-		functions {
+		modifier {
 			enchantRandomly()
 		}
 
@@ -540,21 +545,21 @@ dataPack("treasure_hunt") {
 			rolls = constant(1f)
 			bonusRolls = constant(0.5f)
 
-			conditions {
+			condition {
 				killedByPlayer()
 			}
 
 			entries {
 				item(Items.NETHERITE_SWORD) {
 					weight = 1
-					functions {
+					modifier {
 						enchantWithLevels(levels = constant(30f))
 						setName("Boss Slayer")
 					}
 				}
 				item(Items.DIAMOND_SWORD) {
 					weight = 5
-					functions {
+					modifier {
 						enchantWithLevels(levels = uniform(15f, 25f))
 					}
 				}
@@ -579,33 +584,30 @@ dataPack("treasure_hunt") {
 ```json
 {
 	"type": "minecraft:entity",
-	"functions": {
+	"modifier": {
 		"type": "minecraft:enchant_randomly"
 	},
 	"pools": [
 		{
-			"rolls": 1.0,
 			"entries": [
 				{
 					"type": "minecraft:item",
 					"name": "minecraft:nether_star"
 				}
-			]
+			],
+			"rolls": 1.0
 		},
 		{
-			"rolls": 1.0,
 			"bonus_rolls": 0.5,
-			"conditions": [
-				{
-					"type": "minecraft:killed_by_player"
-				}
-			],
+			"condition": {
+				"type": "minecraft:killed_by_player"
+			},
 			"entries": [
 				{
 					"type": "minecraft:item",
 					"name": "minecraft:netherite_sword",
 					"weight": 1,
-					"functions": [
+					"modifier": [
 						{
 							"type": "minecraft:enchant_with_levels",
 							"levels": 30.0
@@ -620,7 +622,7 @@ dataPack("treasure_hunt") {
 					"type": "minecraft:item",
 					"name": "minecraft:diamond_sword",
 					"weight": 5,
-					"functions": {
+					"modifier": {
 						"type": "minecraft:enchant_with_levels",
 						"levels": {
 							"type": "minecraft:uniform",
@@ -633,20 +635,21 @@ dataPack("treasure_hunt") {
 					"type": "minecraft:empty",
 					"weight": 10
 				}
-			]
+			],
+			"rolls": 1.0
 		},
 		{
-			"rolls": {
-				"type": "minecraft:uniform",
-				"min": 1.0,
-				"max": 3.0
-			},
 			"entries": [
 				{
 					"type": "minecraft:loot_table",
 					"name": "minecraft:chests/end_city_treasure"
 				}
-			]
+			],
+			"rolls": {
+				"type": "minecraft:uniform",
+				"min": 1.0,
+				"max": 3.0
+			}
 		}
 	]
 }
@@ -694,7 +697,7 @@ dataPack("better_zombies") {
 
 			entries {
 				item(Items.ROTTEN_FLESH) {
-					functions {
+					modifier {
 						setCount(uniform(0f, 2f))
 						enchantedCountIncrease(Enchantments.LOOTING, uniform(0f, 1f))
 					}
@@ -706,7 +709,7 @@ dataPack("better_zombies") {
 		pool {
 			rolls = constant(1f)
 
-			conditions {
+			condition {
 				randomChance(0.1f)
 			}
 

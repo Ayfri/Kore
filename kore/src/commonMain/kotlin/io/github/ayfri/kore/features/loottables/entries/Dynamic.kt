@@ -3,7 +3,8 @@ package io.github.ayfri.kore.features.loottables.entries
 import io.github.ayfri.kore.features.itemmodifiers.InlinableItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.Predicate
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
+import io.github.ayfri.kore.features.predicates.toCondition
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
@@ -30,8 +31,8 @@ enum class LootEntryDynamicName {
 @Serializable
 data class Dynamic(
 	var name: LootEntryDynamicName,
-	var conditions: PredicateAsList? = null,
-	var functions: InlinableItemModifier? = null,
+	var condition: PredicateCondition? = null,
+	var modifier: InlinableItemModifier? = null,
 	var quality: Int? = null,
 	var weight: Int? = null,
 ) : LootEntry()
@@ -41,12 +42,12 @@ fun LootEntries.dynamic(name: LootEntryDynamicName, block: Dynamic.() -> Unit = 
 	add(Dynamic(name).apply(block))
 }
 
-/** Set conditions, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
-fun Dynamic.conditions(block: Predicate.() -> Unit) {
-	conditions = Predicate().apply(block)
+/** Set the condition, several conditions being wrapped in an `all_of`, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
+fun Dynamic.condition(block: Predicate.() -> Unit) {
+	condition = Predicate().apply(block).toCondition()
 }
 
-/** Set item modifier functions, see [ItemModifiers](https://kore.ayfri.com/docs/data-driven/item-modifiers). */
-fun Dynamic.functions(block: ItemModifier.() -> Unit) {
-	functions = ItemModifier().apply(block)
+/** Set the item modifier, see [ItemModifiers](https://kore.ayfri.com/docs/data-driven/item-modifiers). */
+fun Dynamic.modifier(block: ItemModifier.() -> Unit) {
+	modifier = ItemModifier().apply(block)
 }

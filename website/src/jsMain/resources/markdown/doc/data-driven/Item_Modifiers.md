@@ -406,12 +406,12 @@ itemModifier("filled_bundle") {
 	setContents(ContentComponentTypes.BUNDLE_CONTENTS) {
 		entries {
 			item(Items.DIAMOND) {
-				functions {
+				modifier {
 					setCount(16f)
 				}
 			}
 			item(Items.EMERALD) {
-				functions {
+				modifier {
 					setCount(32f)
 				}
 			}

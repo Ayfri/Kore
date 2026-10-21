@@ -1,7 +1,10 @@
 package io.github.ayfri.kore.features.loottables.entries
 
+import io.github.ayfri.kore.features.itemmodifiers.InlinableItemModifier
+import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.Predicate
-import io.github.ayfri.kore.features.predicates.PredicateAsList
+import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
+import io.github.ayfri.kore.features.predicates.toCondition
 import kotlinx.serialization.Serializable
 
 /**
@@ -13,12 +16,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Group(
 	var children: List<LootEntry>,
-	var conditions: PredicateAsList? = null,
+	var condition: PredicateCondition? = null,
+	var modifier: InlinableItemModifier? = null,
 ) : LootEntry()
 
-/** Add a Group entry with optional conditions. */
-fun LootEntries.group(children: List<LootEntry> = emptyList(), conditions: Predicate.() -> Unit = {}) {
-	add(Group(children, Predicate().apply(conditions)))
+/** Add a Group entry with an optional condition. */
+fun LootEntries.group(children: List<LootEntry> = emptyList(), condition: Predicate.() -> Unit = {}) {
+	add(Group(children, Predicate().apply(condition).takeIf { it.predicateConditions.isNotEmpty() }?.toCondition()))
 }
 
 /** Add and configure a Group entry. */
@@ -31,7 +35,12 @@ fun Group.children(block: LootEntries.() -> Unit) {
 	children = buildList(block)
 }
 
-/** Set conditions for this entry, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
-fun Group.conditions(block: Predicate.() -> Unit) {
-	conditions = Predicate().apply(block)
+/** Set the condition, several conditions being wrapped in an `all_of`, see [Predicates](https://kore.ayfri.com/docs/data-driven/predicates). */
+fun Group.condition(block: Predicate.() -> Unit) {
+	condition = Predicate().apply(block).toCondition()
+}
+
+/** Set the item modifier, see [ItemModifiers](https://kore.ayfri.com/docs/data-driven/item-modifiers). */
+fun Group.modifier(block: ItemModifier.() -> Unit) {
+	modifier = ItemModifier().apply(block)
 }

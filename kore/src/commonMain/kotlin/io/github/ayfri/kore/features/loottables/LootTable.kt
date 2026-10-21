@@ -17,8 +17,8 @@ import kotlinx.serialization.Transient
  * Data-driven loot table definition.
  *
  * Loot tables control what items are generated in contexts like chests, entities, fishing,
- * and block drops. Configure pools, entries and conditions, and optionally apply global item
- * modifier functions to post-process the generated items.
+ * and block drops. Configure pools, entries and conditions, and optionally apply a global item
+ * modifier to post-process the generated items.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/loot-tables
  * Minecraft Wiki: https://minecraft.wiki/w/Loot_table
@@ -28,7 +28,7 @@ import kotlinx.serialization.Transient
 data class LootTable(
 	@Transient
 	override var fileName: String = "loot_table",
-	var functions: InlinableItemModifier? = null,
+	var modifier: InlinableItemModifier? = null,
 	var pools: List<LootPool>? = null,
 	var randomSequence: RandomSequenceArgument? = null,
 	var type: LootTableType? = null,
@@ -40,7 +40,7 @@ data class LootTable(
  * Creates a loot table using a builder block.
  *
  * Produces `data/<namespace>/loot_table/<fileName>.json`. Use the DSL to add pools and
- * table-wide item modifier functions.
+ * a table-wide item modifier.
  */
 fun DataPack.lootTable(fileName: String = "loot_table", init: LootTable.() -> Unit = {}): LootTableArgument {
 	val lootTable = LootTable(fileName).apply(init)
@@ -49,12 +49,12 @@ fun DataPack.lootTable(fileName: String = "loot_table", init: LootTable.() -> Un
 }
 
 /**
- * Define global item modifier functions applied to the whole loot table.
+ * Define the item modifier applied to the whole loot table, one function written bare and several as a list.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/loot-tables
  */
-fun LootTable.functions(block: ItemModifier.() -> Unit) {
-	functions = ItemModifier().apply(block)
+fun LootTable.modifier(block: ItemModifier.() -> Unit) {
+	modifier = ItemModifier().apply(block)
 }
 
 /**
@@ -63,5 +63,5 @@ fun LootTable.functions(block: ItemModifier.() -> Unit) {
  * Docs: https://kore.ayfri.com/docs/data-driven/loot-tables
  */
 fun LootTable.pool(rolls: NumberProvider = constant(1f), block: LootPool.() -> Unit = {}) {
-	pools = (pools ?: emptyList()) + LootPool(rolls).apply(block)
+	pools = (pools ?: emptyList()) + LootPool(rolls = rolls).apply(block)
 }

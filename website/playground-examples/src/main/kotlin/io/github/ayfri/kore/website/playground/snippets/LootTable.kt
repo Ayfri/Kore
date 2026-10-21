@@ -5,10 +5,10 @@ import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.commands.loot
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.itemmodifiers.functions.setCount
-import io.github.ayfri.kore.features.loottables.conditions
+import io.github.ayfri.kore.features.loottables.condition
 import io.github.ayfri.kore.features.loottables.entries
-import io.github.ayfri.kore.features.loottables.entries.functions
 import io.github.ayfri.kore.features.loottables.entries.item
+import io.github.ayfri.kore.features.loottables.entries.modifier
 import io.github.ayfri.kore.features.loottables.lootTable
 import io.github.ayfri.kore.features.loottables.pool
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
@@ -26,7 +26,7 @@ fun playground() = dataPack("treasure") {
 
 			entries {
 				item(Items.DIAMOND) {
-					functions {
+					modifier {
 						setCount(2f)
 					}
 				}
@@ -34,7 +34,7 @@ fun playground() = dataPack("treasure") {
 				item(Items.EMERALD)
 			}
 
-			conditions {
+			condition {
 				randomChance(0.5f)
 			}
 		}

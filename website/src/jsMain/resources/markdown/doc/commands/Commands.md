@@ -5,7 +5,7 @@ nav-title: Commands
 description: Every Minecraft command in a type-safe Kotlin DSL. From /say, /teleport, and /give to /execute, /data, /scoreboard, and /summon -- all with code examples and generated mcfunction output.
 keywords: minecraft commands, kore commands, kotlin commands dsl, mcfunction generator, execute command, data command, teleport command, summon command, minecraft command builder, type-safe commands
 date-created: 2026-02-03
-date-modified: 2026-10-20
+date-modified: 2026-10-21
 routeOverride: /docs/commands/commands
 ---
 
@@ -1135,7 +1135,7 @@ loot insert ~ ~ ~ kill @s
 loot replace block ~ ~ ~ container.0 loot minecraft:gameplay/cat_morning_gift
 loot replace entity @s armor.head loot minecraft:gameplay/cat_morning_gift
 loot replace entity @s mob.inventory.0 loot minecraft:gameplay/cat_morning_gift
-loot give @s loot {pools:[{rolls:1.0f,entries:[{type:"minecraft:item",name:"minecraft:anvil"}]}]}
+loot give @s loot {pools:[{entries:[{type:"minecraft:item",name:"minecraft:anvil"}],rolls:1.0f}]}
 ```
 
 The `target` block chooses where items go (`give`, `insert` into a container, `replaceBlock`, `replaceEntity`) and the

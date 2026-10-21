@@ -149,7 +149,7 @@ private fun DataPack.deathLootTable(type: String) = OopConstants.deathTriggerLoo
 			entries = listOf(
 				Item(
 					name = Items.STRUCTURE_VOID,
-					functions = ItemModifier(
+					modifier = ItemModifier(
 						modifiers = listOf(
 							SetCustomData(tag = nbt { put(OopConstants.deathTriggerKey, NbtByte(1)) }),
 							CopyCustomData(
