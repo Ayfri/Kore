@@ -123,9 +123,10 @@ fun DataPack.createCustomWorld() {
 	val terrainDensity = with(densityFunctionsBuilder) {
 		val hillsNoise = noise("hills_noise", hills, xzScale = 0.35, yScale = 0.0)
 
-		val gradient = yClampedGradient("height_gradient") {
-			fromY = 0
-			toY = 128
+		val gradient = gradient("height_gradient") {
+			axis = Axis.Y
+			fromCoordinate = 0
+			toCoordinate = 128
 			fromValue = 1.0
 			toValue = -1.0
 		}

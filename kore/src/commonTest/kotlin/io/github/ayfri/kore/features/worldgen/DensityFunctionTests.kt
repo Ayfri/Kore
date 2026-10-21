@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.arguments.enums.Axis
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.worldgen.densityfunction.densityFunctionsBuilder
@@ -209,6 +210,40 @@ fun DataPack.densityFunctionTests() {
 			"type": "minecraft:floor",
 			"input": 3.5,
 			"multiple": "minecraft:overworld/factor"
+		}
+	""".trimIndent()
+
+	densityFunctionsBuilder.gradient("y", Axis.Y, fromCoordinate = -4064, toCoordinate = 4062, fromValue = -4064.0, toValue = 4062.0)
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:gradient",
+			"axis": "y",
+			"from_coordinate": -4064,
+			"from_value": -4064.0,
+			"to_coordinate": 4062,
+			"to_value": 4062.0
+		}
+	""".trimIndent()
+
+	densityFunctionsBuilder.gradient("x_stripes") {
+		axis = Axis.X
+		fromCoordinate = 0
+		toCoordinate = 16
+		fromValue = -1.0
+		toValue = 1.0
+		tiling = TilingMode.MIRRORED_REPEAT
+	}
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:gradient",
+			"axis": "x",
+			"from_coordinate": 0,
+			"from_value": -1.0,
+			"tiling": "mirrored_repeat",
+			"to_coordinate": 16,
+			"to_value": 1.0
 		}
 	""".trimIndent()
 
@@ -566,23 +601,6 @@ fun DataPack.densityFunctionTests() {
 			"type": "minecraft:truncate",
 			"input": "minecraft:overworld/base_3d_noise",
 			"multiple": 0.25
-		}
-	""".trimIndent()
-
-	densityFunctionsBuilder.yClampedGradient("y_clamped_gradient") {
-		fromY = -64
-		toY = 320
-		fromValue = -1.0
-		toValue = 1.0
-	}
-
-	densityFunctions.last() assertsIs """
-		{
-			"type": "minecraft:y_clamped_gradient",
-			"from_y": -64,
-			"to_y": 320,
-			"from_value": -1.0,
-			"to_value": 1.0
 		}
 	""".trimIndent()
 }

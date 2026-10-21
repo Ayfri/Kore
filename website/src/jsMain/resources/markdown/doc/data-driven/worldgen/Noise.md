@@ -105,7 +105,7 @@ node, or to return one node out of a group, `dp.densityFunctionsBuilder` exposes
 dp.densityFunctionsBuilder.abs("abs_base_3d_noise", DensityFunctions.Overworld.BASE_3D_NOISE)
 
 val terrain = with(dp.densityFunctionsBuilder) {
-	val gradient = yClampedGradient("gradient") { fromY = 0; toY = 128; fromValue = 1.0; toValue = -1.0 }
+	val gradient = gradient("gradient") { axis = Axis.Y; fromCoordinate = 0; toCoordinate = 128; fromValue = 1.0; toValue = -1.0 }
 	add("terrain", DensityFunctions.Overworld.BASE_3D_NOISE, gradient)
 }
 ```
@@ -139,6 +139,7 @@ node classes.
 | `find_top_surface`     | `findTopSurface(...)`     | Scans a column for the topmost position where a density is above zero.        |
 | `flat_cache`           | `flatCache(...)`          | Caches the input per 4x4 column, computed once at Y=0.                        |
 | `floor`                | `floor(...)`              | Rounds the input down to a multiple of `multiple` (1 by default).             |
+| `gradient`             | `gradient(...)`           | Linear gradient between two values along any axis, with a tiling mode.        |
 | `half_negative`        | `halfNegative(...)`       | Halves the input when negative, otherwise leaves it unchanged.                |
 | `interpolated`         | `interpolated(...)`       | Interpolates the input across the surrounding grid cells.                     |
 | `interval_select`      | `intervalSelect(...)`     | Picks one of several functions from where the input falls between thresholds. |
@@ -162,7 +163,6 @@ node classes.
 | `squeeze`              | `squeeze(...)`            | Clamps the input to [-1, 1], then applies `x/2 - x³/24`.                      |
 | `sub`                  | `sub(...)`                | Subtracts the second input from the first.                                    |
 | `truncate`             | `truncate(...)`           | Rounds the input towards zero to a multiple of `multiple` (1 by default).     |
-| `y_clamped_gradient`   | `yClampedGradient(...)`   | Linear gradient between two values as Y goes from one bound to another.       |
 
 All builders live in `io.github.ayfri.kore.features.worldgen.densityfunction.types` and take the file's name as their first argument.
 
@@ -195,9 +195,10 @@ dp.densityFunctions {
 		whenOutOfRange(1.0)
 	}
 
-	yClampedGradient("depth_bias") {
-		fromY = -64
-		toY = 320
+	gradient("depth_bias") {
+		axis = Axis.Y
+		fromCoordinate = -64
+		toCoordinate = 320
 		fromValue = 1.0
 		toValue = -1.0
 	}
@@ -223,6 +224,23 @@ dp.densityFunctions {
 
 `intervalSelect` holds one more function than it has thresholds: the first function applies below the first threshold, each following one
 applies between two consecutive thresholds, and the last one applies at or above the last threshold. Thresholds must be sorted ascending.
+
+`gradient` goes linearly from `fromValue` to `toValue` as the `axis` coordinate goes from `fromCoordinate` to `toCoordinate`, which have to
+differ. `tiling` sets the value past that range: `CLAMP_TO_EDGE` (the default, left out of the file) holds the edge value, `REPEAT` restarts
+the gradient and `MIRRORED_REPEAT` goes back and forth:
+
+```kotlin
+dp.densityFunctions {
+	gradient("x_stripes") {
+		axis = Axis.X
+		fromCoordinate = 0
+		toCoordinate = 16
+		fromValue = -1.0
+		toValue = 1.0
+		tiling = TilingMode.MIRRORED_REPEAT
+	}
+}
+```
 
 ### Splines
 
